@@ -2534,7 +2534,7 @@ static bool defineWorld()
       return false;
    }
 
-   maxTankHeight = world->getMaxWorldHeight() + 1.0f + ((JumpVelocity*JumpVelocity) / (2.0f * -BZDB->eval(StateDatabase::BZDB_GRAVITY)));
+   maxTankHeight = world->getMaxWorldHeight() + 1.0f + ((BZDB->eval(StateDatabase::BZDB_JUMPVELOCITY)*BZDB->eval(StateDatabase::BZDB_JUMPVELOCITY)) / (2.0f * -BZDB->eval(StateDatabase::BZDB_GRAVITY)));
 
    // package up world
   world->packDatabase();
@@ -3165,7 +3165,7 @@ static void resetFlag(int flagIndex)
     // random position (not in a building)
     float r = TankRadius;
     if (pFlagInfo->flag.desc == Flags::Obesity)
-       r *= 2.0f * ObeseFactor;
+      r *= 2.0f * BZDB->eval(StateDatabase::BZDB_OBESEFACTOR);
     WorldInfo::ObstacleLocation *obj;
     pFlagInfo->flag.position[0] = (WorldSize - BaseSize) * ((float)bzfrand() - 0.5f);
     pFlagInfo->flag.position[1] = (WorldSize - BaseSize) * ((float)bzfrand() - 0.5f);
@@ -3957,14 +3957,14 @@ static void shotFired(int playerIndex, void *buf, int len)
       tankSpeed *= BZDB->eval(StateDatabase::BZDB_VELOCITYAD);
   }
   else if (firingInfo.flag == Flags::Thief) {
-      tankSpeed *= ThiefVelAd;
+      tankSpeed *= BZDB->eval(StateDatabase::BZDB_THIEFVELAD);
   }
-  else if ((firingInfo.flag == Flags::Burrow) && (firingInfo.shot.pos[2] < MuzzleHeight)) {
-      tankSpeed *= BurrowVelAd;
+  else if ((firingInfo.flag == Flags::Burrow) && (firingInfo.shot.pos[2] < BZDB->eval(StateDatabase::BZDB_MUZZLEHEIGHT))) {
+      tankSpeed *= BZDB->eval(StateDatabase::BZDB_BURROWSPEEDAD);
   }
   else {
       //If shot is different height than player, can't be sure they didn't drop V in air
-      if (shooter.lastState.pos[2] != (shot.pos[2]-MuzzleHeight))
+      if (shooter.lastState.pos[2] != (shot.pos[2]-BZDB->eval(StateDatabase::BZDB_MUZZLEHEIGHT)))
 	tankSpeed *= BZDB->eval(StateDatabase::BZDB_VELOCITYAD);
   }
 
@@ -3993,7 +3993,7 @@ static void shotFired(int playerIndex, void *buf, int len)
 
   float front = MuzzleFront;
   if (firingInfo.flag == Flags::Obesity)
-    front *= ObeseFactor;
+    front *= BZDB->eval(StateDatabase::BZDB_OBESEFACTOR);
 
   float delta = dx*dx + dy*dy + dz*dz;
   if (delta > (BZDB->eval(StateDatabase::BZDB_TANKSPEED) * BZDB->eval(StateDatabase::BZDB_VELOCITYAD) + front) *
@@ -5058,7 +5058,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
       else if ( (state.pos[0] >= WorldSize*0.5f + fudge) || (state.pos[0] <= -WorldSize*0.5f - fudge))
 	InBounds = false;
 
-      if (state.pos[2]<BurrowDepth)
+      if (state.pos[2]<BZDB->eval(StateDatabase::BZDB_BURROWDEPTH))
 	InBounds = false;
 
 
@@ -5088,7 +5088,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 	if (flag[player[t].flag].flag.desc == Flags::Velocity)
 	  maxPlanarSpeedSqr *= BZDB->eval(StateDatabase::BZDB_VELOCITYAD)*BZDB->eval(StateDatabase::BZDB_VELOCITYAD);
 	else if (flag[player[t].flag].flag.desc == Flags::Thief)
-	  maxPlanarSpeedSqr *= ThiefVelAd * ThiefVelAd;
+	  maxPlanarSpeedSqr *= BZDB->eval(StateDatabase::BZDB_THIEFVELAD) * BZDB->eval(StateDatabase::BZDB_THIEFVELAD);
 	else {
 	  // If player is moving vertically, or not alive the speed checks seem to be problematic
 	  // If this happens, just log it for now, but don't actually kick

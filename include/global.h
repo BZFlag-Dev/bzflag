@@ -132,26 +132,6 @@ enum GameStyle {
 			RabbitChaseGameStyle =	0x0200  // rabbit chase
 };
 
-// Super flag characteristic modifiers
-const float		SRRadiusMult =	2.0;		// 200% normal radius
-const float		ShockAdLife =	0.20f;		// 20% normal lifetime
-const float		ShockInRadius =	6.0f;	// size of tank
-const float		ShockOutRadius=	2.0f * BoxBase;	// size of building
-const float		JumpVelocity =	19.0f;		// m/s
-const float		IdentityRange =	50.0f;		// meters
-const float		ObeseFactor =	2.5f;		// 250% normal size
-const float		WideAngleAng =	M_PI / 1.8f;	// 100 degree fov
-const float		MomentumLinAcc=	1.0f;		//
-const float		MomentumAngAcc=	1.0f;		//
-const float		ThiefVelAd =    1.67f;          // 66% faster
-const float		ThiefTinyFactor=0.5f;		// 50% smaller
-const float		ThiefAdShotVel =1000.0f;	//1000x faster shots
-const float		ThiefAdRate =   10.0f;		//10x faster reload
-const float		BurrowDepth =   0.2f-MuzzleHeight; 
-const float		BurrowVelAd =   0.66f;
-const float		BurrowAngAd = 0.5f;
-
-
 // map object flags
 #define _DRIVE_THRU	0x01
 #define _SHOOT_THRU 0x02

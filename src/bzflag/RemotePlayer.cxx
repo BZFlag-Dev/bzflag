@@ -49,12 +49,12 @@ void			RemotePlayer::addShot(const FiringInfo& info)
   // shot origin is muzzle for other shots
   else {
     float front = MuzzleFront;
-    if (info.flag == Flags::Obesity) front *= ObeseFactor;
+    if (info.flag == Flags::Obesity) front *= BZDB->eval(StateDatabase::BZDB_OBESEFACTOR);
     else if (info.flag == Flags::Tiny) front *= BZDB->eval(StateDatabase::BZDB_TINYFACTOR);
-    else if (info.flag == Flags::Thief) front *= ThiefTinyFactor;
+    else if (info.flag == Flags::Thief) front *= BZDB->eval(StateDatabase::BZDB_THIEFTINYFACTOR);
     newpos[0] = info.shot.pos[0]-(front * f[0]);
     newpos[1] = info.shot.pos[1]-(front * f[1]);
-    newpos[2] = info.shot.pos[2]-(front * f[2])-MuzzleHeight;
+    newpos[2] = info.shot.pos[2]-(front * f[2])-BZDB->eval(StateDatabase::BZDB_MUZZLEHEIGHT);
   }
   move(newpos, getAngle());
   setDeadReckoning();

@@ -91,9 +91,9 @@ Player::~Player()
 
 float			Player::getRadius() const
 {
-  if (flag == Flags::Obesity) return TankRadius * ObeseFactor;
+  if (flag == Flags::Obesity) return TankRadius * BZDB->eval(StateDatabase::BZDB_OBESEFACTOR);
   if (flag == Flags::Tiny)    return TankRadius * BZDB->eval(StateDatabase::BZDB_TINYFACTOR);
-  if (flag == Flags::Thief)   return TankRadius * ThiefTinyFactor;
+  if (flag == Flags::Thief)   return TankRadius * BZDB->eval(StateDatabase::BZDB_THIEFTINYFACTOR);
   return TankRadius;
 }
 
@@ -101,12 +101,12 @@ void			Player::getMuzzle(float* m) const
 {
   // okay okay, I should really compute the up vector instead of using [0,0,1]
   float front = MuzzleFront;
-  if (flag == Flags::Obesity) front *= ObeseFactor;
+  if (flag == Flags::Obesity) front *= BZDB->eval(StateDatabase::BZDB_OBESEFACTOR);
   else if (flag == Flags::Tiny) front *= BZDB->eval(StateDatabase::BZDB_TINYFACTOR);
-  else if (flag == Flags::Thief) front *= ThiefTinyFactor;
+  else if (flag == Flags::Thief) front *= BZDB->eval(StateDatabase::BZDB_THIEFTINYFACTOR);
   m[0] = state.pos[0] + front * forward[0];
   m[1] = state.pos[1] + front * forward[1];
-  m[2] = state.pos[2] + front * forward[2] + MuzzleHeight;
+  m[2] = state.pos[2] + front * forward[2] + BZDB->eval(StateDatabase::BZDB_MUZZLEHEIGHT);
 }
 
 void			Player::move(const float* _pos, float _azimuth)
@@ -498,7 +498,7 @@ void			Player::doDeadReckoning()
   // anymore)
   float groundLimit = 0.0f;
   if (getFlag() == Flags::Burrow)
-    groundLimit = BurrowDepth;
+    groundLimit = BZDB->eval(StateDatabase::BZDB_BURROWDEPTH);
 
   if (predictedPos[2] < groundLimit) {
     predictedPos[2] = groundLimit;

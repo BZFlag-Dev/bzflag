@@ -23,10 +23,10 @@
   //Modifiers for Normal, Obese. Tiny and Thin
 static const GLfloat styleFactors[5][3] = {
 			{ 1.0f, 1.0f, 1.0f },
-			{ ObeseFactor, ObeseFactor, 1.0f },
+			{ BZDB->eval(StateDatabase::BZDB_OBESEFACTOR), BZDB->eval(StateDatabase::BZDB_OBESEFACTOR), 1.0f },
 			{ BZDB->eval(StateDatabase::BZDB_TINYFACTOR), BZDB->eval(StateDatabase::BZDB_TINYFACTOR), 1.0f },
 			{ 1.0f, 0.0f, 1.0f },
-			{ ThiefTinyFactor, ThiefTinyFactor, 1.0f }
+			{ BZDB->eval(StateDatabase::BZDB_THIEFTINYFACTOR), BZDB->eval(StateDatabase::BZDB_THIEFTINYFACTOR), 1.0f }
 		};
 
 // parts: body, turret, barrel, left tread, right tread
@@ -200,7 +200,7 @@ void			TankSceneNode::setNormal()
 void			TankSceneNode::setObese()
 {
   style = TankRenderNode::Obese;
-  setRadius(ObeseFactor * ObeseFactor * baseRadius);
+  setRadius(BZDB->eval(StateDatabase::BZDB_OBESEFACTOR) * BZDB->eval(StateDatabase::BZDB_OBESEFACTOR) * baseRadius);
 }
 
 void			TankSceneNode::setTiny()
@@ -218,7 +218,7 @@ void			TankSceneNode::setNarrow()
 void			TankSceneNode::setThief()
 {
   style = TankRenderNode::Thief;
-  setRadius(ThiefTinyFactor*ThiefTinyFactor*baseRadius);
+  setRadius(BZDB->eval(StateDatabase::BZDB_THIEFTINYFACTOR)*BZDB->eval(StateDatabase::BZDB_THIEFTINYFACTOR)*baseRadius);
 }
 
 void			TankSceneNode::setExplodeFraction(float t)

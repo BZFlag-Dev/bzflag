@@ -4076,7 +4076,8 @@ static void		checkEnvironment()
     // identify closest flag
     const float* tpos = myTank->getPosition();
     std::string message("Closest Flag: ");
-    float minDist = IdentityRange * IdentityRange;
+    float minDist = BZDB->eval(StateDatabase::BZDB_IDENTIFYRANGE);
+    minDist*= minDist;
     int closestFlag = -1;
     for (int i = 0; i < numFlags; i++) {
       if (world->getFlag(i).desc == Flags::Null ||
@@ -4148,7 +4149,7 @@ static void		checkEnvironment()
 	 ((player[i]->getFlag() == Flags::Steamroller) || ((myTank->getFlag() == Flags::Burrow) && player[i]->isAlive()))) {
 	const float* pos = player[i]->getPosition();
 	if (!(flagd == Flags::PhantomZone && myTank->isFlagActive())) {
-	  const float radius = myRadius + SRRadiusMult * player[i]->getRadius();
+		const float radius = myRadius + BZDB->eval(StateDatabase::BZDB_SRRADIUSMULT) * player[i]->getRadius();
 	  if (hypot(hypot(myPos[0] - pos[0], myPos[1] - pos[1]), myPos[2] - pos[2]) < radius)
 	    gotBlowedUp(myTank, GotRunOver, player[i]->getId());
 	}
@@ -4536,7 +4537,7 @@ static void		checkEnvironment(RobotPlayer* tank)
     const float myRadius = tank->getRadius();
     if (((myTank->getFlag() == Flags::Steamroller) || ((tank->getFlag() == Flags::Burrow) && myTank->isAlive())) && !myTank->isPaused()) {
       const float* pos = myTank->getPosition();
-      const float radius = myRadius + SRRadiusMult * myTank->getRadius();
+      const float radius = myRadius + BZDB->eval(StateDatabase::BZDB_SRRADIUSMULT) * myTank->getRadius();
       if (hypot(hypot(myPos[0] - pos[0], myPos[1] - pos[1]), myPos[2] - pos[2]) < radius) {
 	gotBlowedUp(tank, GotRunOver, myTank->getId());
 	dead = true;
@@ -4546,7 +4547,7 @@ static void		checkEnvironment(RobotPlayer* tank)
       if (player[i] && !player[i]->isPaused() &&
 	  ((player[i]->getFlag() == Flags::Steamroller) || ((tank->getFlag() == Flags::Burrow) && player[i]->isAlive()))) {
 	  const float* pos = player[i]->getPosition();
-	  const float radius = myRadius + SRRadiusMult * player[i]->getRadius();
+	  const float radius = myRadius + BZDB->eval(StateDatabase::BZDB_SRRADIUSMULT) * player[i]->getRadius();
 	  if (hypot(hypot(myPos[0] - pos[0], myPos[1] - pos[1]), myPos[2] - pos[2]) < radius) {
 	    gotBlowedUp(tank, GotRunOver, player[i]->getId());
 	    dead = true;

@@ -473,9 +473,9 @@ float			SegmentedShotStrategy::checkHit(const BaseLocalPlayer* tank,
 
   // get tank radius
   float radius = TankRadius;
-  if (tank->getFlag() == Flags::Obesity)   radius *= ObeseFactor;
+  if (tank->getFlag() == Flags::Obesity)   radius *= BZDB->eval(StateDatabase::BZDB_OBESEFACTOR);
   else if (tank->getFlag() == Flags::Tiny) radius *= BZDB->eval(StateDatabase::BZDB_TINYFACTOR);
-  else if (tank->getFlag() == Flags::Thief) radius *= ThiefTinyFactor;
+  else if (tank->getFlag() == Flags::Thief) radius *= BZDB->eval(StateDatabase::BZDB_THIEFTINYFACTOR);
   const float radius2 = radius * radius;
 
   // tank is positioned from it's bottom so shift position up by
@@ -798,7 +798,7 @@ ThiefStrategy::ThiefStrategy(ShotPath* path) :
 {
   // speed up shell and decrease lifetime
   FiringInfo& f = getFiringInfo(path);
-  setReloadTime(path->getReloadTime() / ThiefAdRate);
+  setReloadTime(path->getReloadTime() / BZDB->eval(StateDatabase::BZDB_THIEFADRATE));
 
   // make segments
   f.shot.vel[0] /= 4.0f;
@@ -806,9 +806,9 @@ ThiefStrategy::ThiefStrategy(ShotPath* path) :
   f.shot.vel[2] /= 4.0f;
 
   makeSegments(Stop);
-  f.shot.vel[0] *= 4.0f * ThiefAdShotVel;
-  f.shot.vel[1] *= 4.0f * ThiefAdShotVel;
-  f.shot.vel[2] *= 4.0f * ThiefAdShotVel;
+  f.shot.vel[0] *= 4.0f * BZDB->eval(StateDatabase::BZDB_THIEFADSHOTVEL);
+  f.shot.vel[1] *= 4.0f * BZDB->eval(StateDatabase::BZDB_THIEFADSHOTVEL);
+  f.shot.vel[2] *= 4.0f * BZDB->eval(StateDatabase::BZDB_THIEFADSHOTVEL);
   setCurrentTime(getLastTime());
   endTime = f.lifetime;
 
@@ -1268,9 +1268,9 @@ float			GuidedMissileStrategy::checkHit(const BaseLocalPlayer* tank,
 
   // get tank radius
   float radius = TankRadius;
-  if (tank->getFlag() == Flags::Obesity)   radius *= ObeseFactor;
+  if (tank->getFlag() == Flags::Obesity)   radius *= BZDB->eval(StateDatabase::BZDB_OBESEFACTOR);
   else if (tank->getFlag() == Flags::Tiny) radius *= BZDB->eval(StateDatabase::BZDB_TINYFACTOR);
-  else if (tank->getFlag() == Flags::Thief) radius *= ThiefTinyFactor;
+  else if (tank->getFlag() == Flags::Thief) radius *= BZDB->eval(StateDatabase::BZDB_THIEFTINYFACTOR);
   const float radius2 = radius * radius;
 
   // tank is positioned from it's bottom so shift position up by
@@ -1438,15 +1438,15 @@ void			GuidedMissileStrategy::radarRender() const
 
 ShockWaveStrategy::ShockWaveStrategy(ShotPath* path) :
 				ShotStrategy(path),
-				radius(ShockInRadius),
-				radius2(ShockInRadius * ShockInRadius)
+				radius(BZDB->eval(StateDatabase::BZDB_SHOCKINRADIUS)),
+				radius2(radius * radius)
 {
   // setup shot
   FiringInfo& f = getFiringInfo(path);
-  f.lifetime *= ShockAdLife;
+  f.lifetime *= BZDB->eval(StateDatabase::BZDB_SHOCKADLIFE);
 
   // make scene node
-  shockNode = new SphereSceneNode(path->getPosition(), ShockInRadius);
+  shockNode = new SphereSceneNode(path->getPosition(), BZDB->eval(StateDatabase::BZDB_SHOCKINRADIUS));
   Player* p = lookupPlayer(path->getPlayer());
   TeamColor team = p ? p->getTeam() : RogueTeam;
   const float* c = Team::getRadarColor(team);
@@ -1460,12 +1460,12 @@ ShockWaveStrategy::~ShockWaveStrategy()
 
 void			ShockWaveStrategy::update(float dt)
 {
-  radius += dt * (ShockOutRadius - ShockInRadius) / getPath().getLifetime();
+  radius += dt * (BZDB->eval(StateDatabase::BZDB_SHOCKOUTRADIUS) - BZDB->eval(StateDatabase::BZDB_SHOCKINRADIUS)) / getPath().getLifetime();
   radius2 = radius * radius;
 
   // update shock wave scene node
-  const GLfloat frac = (radius - ShockInRadius) /
-			(ShockOutRadius - ShockInRadius);
+  const GLfloat frac = (radius - BZDB->eval(StateDatabase::BZDB_SHOCKINRADIUS)) /
+			(BZDB->eval(StateDatabase::BZDB_SHOCKOUTRADIUS) - BZDB->eval(StateDatabase::BZDB_SHOCKINRADIUS));
   shockNode->move(getPath().getPosition(), radius);
   Player* p = lookupPlayer(getPath().getPlayer());
   const LocalPlayer* myTank = LocalPlayer::getMyTank();
@@ -1474,7 +1474,7 @@ void			ShockWaveStrategy::update(float dt)
   shockNode->setColor(c[0], c[1], c[2], 0.75f - 0.5f * frac);
 
   // expire when full size
-  if (radius >= ShockOutRadius) setExpired();
+  if (radius >= BZDB->eval(StateDatabase::BZDB_SHOCKOUTRADIUS)) setExpired();
 }
 
 float			ShockWaveStrategy::checkHit(const BaseLocalPlayer* tank,
