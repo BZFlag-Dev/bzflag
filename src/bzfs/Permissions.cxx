@@ -69,7 +69,7 @@ bool removeGroup(PlayerAccessInfo& info, const std::string &group)
   return false;
 }
 
-bool hasPerm(PlayerAccessInfo& info, AccessPerm right)
+bool hasPerm(PlayerAccessInfo& info, PlayerAccessInfo::AccessPerm right)
 {
   if (info.explicitDenys.test(right))
     return false;
@@ -136,69 +136,69 @@ void setUserPassword(const std::string &nick, const std::string &pass)
   passwordDatabase[str1] = pass.size()==32 ? pass : MD5(pass).hexdigest();
 }
 
-std::string nameFromPerm(AccessPerm perm)
+std::string nameFromPerm(PlayerAccessInfo::AccessPerm perm)
 {
   switch (perm) {
-    case idleStats: return "idleStats";
-    case lagStats: return "lagStats";
-    case flagMod: return "flagMod";
-    case flagHistory: return "flagHistory";
-    case lagwarn: return "lagwarn";
-    case kick: return "kick";
-    case ban: return "ban";
-    case banlist: return "banlist";
-    case unban: return "unban";
-    case countdown: return "countdown";
-    case endGame: return "endGame";
-    case shutdownServer: return "shutdownServer";
-    case superKill: return "superKill";
-    case playerList: return "playerList";
-    case info: return "info";
-    case listPerms: return "listPerms";
-    case showOthers: return "showOthers";
-    case removePerms: return "removePerms";
-    case setPassword: return "setPassword";
-    case setPerms: return "setPerms";
-    case setAll: return "setAll";
-    case setVar: return "setVar";
-    case poll: return "poll";
-    case vote: return "vote";
-    case veto: return "veto";
-  default: return NULL;
+    case PlayerAccessInfo::idleStats: return "idleStats";
+    case PlayerAccessInfo::lagStats: return "lagStats";
+    case PlayerAccessInfo::flagMod: return "flagMod";
+    case PlayerAccessInfo::flagHistory: return "flagHistory";
+    case PlayerAccessInfo::lagwarn: return "lagwarn";
+    case PlayerAccessInfo::kick: return "kick";
+    case PlayerAccessInfo::ban: return "ban";
+    case PlayerAccessInfo::banlist: return "banlist";
+    case PlayerAccessInfo::unban: return "unban";
+    case PlayerAccessInfo::countdown: return "countdown";
+    case PlayerAccessInfo::endGame: return "endGame";
+    case PlayerAccessInfo::shutdownServer: return "shutdownServer";
+    case PlayerAccessInfo::superKill: return "superKill";
+    case PlayerAccessInfo::playerList: return "playerList";
+    case PlayerAccessInfo::info: return "info";
+    case PlayerAccessInfo::listPerms: return "listPerms";
+    case PlayerAccessInfo::showOthers: return "showOthers";
+    case PlayerAccessInfo::removePerms: return "removePerms";
+    case PlayerAccessInfo::setPassword: return "setPassword";
+    case PlayerAccessInfo::setPerms: return "setPerms";
+    case PlayerAccessInfo::setAll: return "setAll";
+    case PlayerAccessInfo::setVar: return "setVar";
+    case PlayerAccessInfo::poll: return "poll";
+    case PlayerAccessInfo::vote: return "vote";
+    case PlayerAccessInfo::veto: return "veto";
+  default: return "";
   };
 }
 
-AccessPerm permFromName(const std::string &name)
+PlayerAccessInfo::AccessPerm permFromName(const std::string &name)
 {
-  if (name == "IDLESTATS") return idleStats;
-  if (name == "LAGSTATS") return lagStats;
-  if (name == "FLAGMOD") return flagMod;
-  if (name == "FLAGHISTORY") return flagHistory;
-  if (name == "LAGWARN") return lagwarn;
-  if (name == "KICK") return kick;
-  if (name == "BAN") return ban;
-  if (name == "BANLIST") return banlist;
-  if (name == "UNBAN") return unban;
-  if (name == "COUNTDOWN") return countdown;
-  if (name == "ENDGAME") return endGame;
-  if (name == "SHUTDOWNSERVER") return shutdownServer;
-  if (name == "SUPERKILL") return superKill;
-  if (name == "PLAYERLIST") return playerList;
-  if (name == "INFO") return info;
-  if (name == "LISTPERMS") return listPerms;
-  if (name == "SHOWOTHERS") return showOthers;
-  if (name == "REMOVEPERMS") return removePerms;
-  if (name == "SETPASSWORD") return setPassword;
-  if (name == "SETPERMS") return setPerms;
-  if (name == "SETVAR") return setVar;
-  if (name == "SETALL") return setAll;
-  if (name == "POLL") return poll;
-  if (name == "VOTE") return vote;
-  if (name == "VETO") return veto;
-  return lastPerm;
+  if (name == "IDLESTATS") return PlayerAccessInfo::idleStats;
+  if (name == "LAGSTATS") return PlayerAccessInfo::lagStats;
+  if (name == "FLAGMOD") return PlayerAccessInfo::flagMod;
+  if (name == "FLAGHISTORY") return PlayerAccessInfo::flagHistory;
+  if (name == "LAGWARN") return PlayerAccessInfo::lagwarn;
+  if (name == "KICK") return PlayerAccessInfo::kick;
+  if (name == "BAN") return PlayerAccessInfo::ban;
+  if (name == "BANLIST") return PlayerAccessInfo::banlist;
+  if (name == "UNBAN") return PlayerAccessInfo::unban;
+  if (name == "COUNTDOWN") return PlayerAccessInfo::countdown;
+  if (name == "ENDGAME") return PlayerAccessInfo::endGame;
+  if (name == "SHUTDOWNSERVER") return PlayerAccessInfo::shutdownServer;
+  if (name == "SUPERKILL") return PlayerAccessInfo::superKill;
+  if (name == "PLAYERLIST") return PlayerAccessInfo::playerList;
+  if (name == "INFO") return PlayerAccessInfo::info;
+  if (name == "LISTPERMS") return PlayerAccessInfo::listPerms;
+  if (name == "SHOWOTHERS") return PlayerAccessInfo::showOthers;
+  if (name == "REMOVEPERMS") return PlayerAccessInfo::removePerms;
+  if (name == "SETPASSWORD") return PlayerAccessInfo::setPassword;
+  if (name == "SETPERMS") return PlayerAccessInfo::setPerms;
+  if (name == "SETVAR") return PlayerAccessInfo::setVar;
+  if (name == "SETALL") return PlayerAccessInfo::setAll;
+  if (name == "POLL") return PlayerAccessInfo::poll;
+  if (name == "VOTE") return PlayerAccessInfo::vote;
+  if (name == "VETO") return PlayerAccessInfo::veto;
+  return PlayerAccessInfo::lastPerm;
 }
 
-void parsePermissionString(const std::string &permissionString, std::bitset<lastPerm> &perms)
+void parsePermissionString(const std::string &permissionString, std::bitset<PlayerAccessInfo::lastPerm> &perms)
 {
   if (permissionString.length() < 1)
     return;
@@ -209,8 +209,8 @@ void parsePermissionString(const std::string &permissionString, std::bitset<last
 
   while (permStream >> word) {
     makeupper(word);
-    AccessPerm perm = permFromName(word);
-    if (perm != lastPerm)
+    PlayerAccessInfo::AccessPerm perm = permFromName(word);
+    if (perm != PlayerAccessInfo::lastPerm)
       perms.set(perm);
   }
 }
@@ -326,14 +326,14 @@ bool writePermsFile(const std::string &filename)
     }
     out << std::endl;
     // allows
-    for (i = 0; i < lastPerm; i++)
+    for (i = 0; i < PlayerAccessInfo::lastPerm; i++)
       if (itr->second.explicitAllows.test(i))
-	out << nameFromPerm((AccessPerm) i);
+	out << nameFromPerm((PlayerAccessInfo::AccessPerm) i);
     out << std::endl;
     // denys
-    for (i = 0; i < lastPerm; i++)
+    for (i = 0; i < PlayerAccessInfo::lastPerm; i++)
       if (itr->second.explicitDenys.test(i))
-	out << nameFromPerm((AccessPerm) i);
+	out << nameFromPerm((PlayerAccessInfo::AccessPerm) i);
     out << std::endl;
     itr++;
   }

@@ -303,7 +303,7 @@ int getPlayerIDByRegName(const std::string &regName)
   return -1;
 }
 
-bool hasPerm(int playerIndex, AccessPerm right)
+bool hasPerm(int playerIndex, PlayerAccessInfo::AccessPerm right)
 {
   return player[playerIndex].Admin || hasPerm(player[playerIndex].accessInfo, right);
 }
@@ -3951,21 +3951,21 @@ static void parseCommand(const char *message, int t)
     }
 
   // /set sets a world configuration variable that gets sent to all clients
-  } else if ((hasPerm(t, setVar) || hasPerm(t, setAll)) && strncmp(message + 1, "set", 3) == 0) {
+  } else if ((hasPerm(t, PlayerAccessInfo::setVar) || hasPerm(t, PlayerAccessInfo::setAll)) && strncmp(message + 1, "set", 3) == 0) {
     sendMessage(ServerPlayer, t, CMDMGR->run(message+1).c_str());
   // /shutdownserver terminates the server
-  } else if (hasPerm(t, shutdownServer) &&
+  } else if (hasPerm(t, PlayerAccessInfo::shutdownServer) &&
 	    strncmp(message + 1, "shutdownserver", 8) == 0) {
     done = true;
   // /superkill closes all player connections
-  } else if (hasPerm(t, superKill) && strncmp(message + 1, "superkill", 8) == 0) {
+  } else if (hasPerm(t, PlayerAccessInfo::superKill) && strncmp(message + 1, "superkill", 8) == 0) {
     for (i = 0; i < curMaxPlayers; i++)
       removePlayer(i, "/superkill");
     gameOver = true;
     if (clOptions->timeManualStart)
       countdownActive = false;
   // /gameover command allows operator to end the game
-  } else if (hasPerm(t, endGame) && strncmp(message + 1, "gameover", 8) == 0) {
+  } else if (hasPerm(t, PlayerAccessInfo::endGame) && strncmp(message + 1, "gameover", 8) == 0) {
     void *buf, *bufStart = getDirectMessageBuffer();
     buf = nboPackUByte(bufStart, t);
     buf = nboPackUShort(buf, uint16_t(NoTeam));
@@ -3975,7 +3975,7 @@ static void parseCommand(const char *message, int t)
       countdownActive = false;
 #ifdef TIMELIMIT
   // /countdown starts timed game, if start is manual, everyone is allowed to
-  } else if ((hasPerm(t, countdown) || clOptions->timeManualStart) &&
+  } else if ((hasPerm(t, PlayerAccessInfo::countdown) || clOptions->timeManualStart) &&
 	    strncmp(message + 1, "countdown", 9) == 0) {
     if (clOptions->timeLimit > 0.0f) {
       gameStartTime = TimeKeeper::getCurrent();
@@ -4022,7 +4022,7 @@ static void parseCommand(const char *message, int t)
       zapFlag(i);
 #endif
   // /flag command allows operator to control flags
-  } else if (hasPerm(t, flagMod) && strncmp(message + 1, "flag ", 5) == 0) {
+  } else if (hasPerm(t, PlayerAccessInfo::flagMod) && strncmp(message + 1, "flag ", 5) == 0) {
     if (strncmp(message + 6, "reset", 5) == 0) {
       bool onlyUnused = strncmp(message + 11, " unused", 7) == 0;
       for (int i = 0; i < numFlags; i++) {
@@ -4078,7 +4078,7 @@ static void parseCommand(const char *message, int t)
       }
     }
   // /kick command allows operator to remove players
-  } else if (hasPerm(t, kick) && strncmp(message + 1, "kick ", 5) == 0) {
+  } else if (hasPerm(t, PlayerAccessInfo::kick) && strncmp(message + 1, "kick ", 5) == 0) {
     int i;
     const char *victimname = message + 6;
     for (i = 0; i < curMaxPlayers; i++)
@@ -4096,12 +4096,12 @@ static void parseCommand(const char *message, int t)
     }
   }
   // /banlist command shows ips that are banned
-  else if (hasPerm(t, banlist) &&
+  else if (hasPerm(t, PlayerAccessInfo::banlist) &&
 	  strncmp(message+1, "banlist", 7) == 0) {
 	clOptions->acl.sendBans(t);
   }
   // /ban command allows operator to ban players based on ip
-  else if (hasPerm(t, ban) && strncmp(message+1, "ban", 3) == 0) {
+  else if (hasPerm(t, PlayerAccessInfo::ban) && strncmp(message+1, "ban", 3) == 0) {
     char *ips = (char *) (message + 5);
     char *time = strchr(ips, ' ');
     int period = 0;
@@ -4122,7 +4122,7 @@ static void parseCommand(const char *message, int t)
     }
   }
   // /unban command allows operator to remove ips from the banlist
-  else if (hasPerm(t, unban) && strncmp(message+1, "unban", 5) == 0) {
+  else if (hasPerm(t, PlayerAccessInfo::unban) && strncmp(message+1, "unban", 5) == 0) {
     if (clOptions->acl.unban(message + 7))
       strcpy(reply, "removed IP pattern");
     else
@@ -4130,7 +4130,7 @@ static void parseCommand(const char *message, int t)
     sendMessage(ServerPlayer, t, reply, true);
   }
   // /lagwarn - set maximum allowed lag
-  else if (hasPerm(t, lagwarn) && strncmp(message+1, "lagwarn",7) == 0) {
+  else if (hasPerm(t, PlayerAccessInfo::lagwarn) && strncmp(message+1, "lagwarn",7) == 0) {
     if (message[8] == ' ') {
       const char *maxlag = message + 9;
       clOptions->lagwarnthresh = (float) (atoi(maxlag) / 1000.0);
@@ -4144,7 +4144,7 @@ static void parseCommand(const char *message, int t)
     }
   }
   // /lagstats gives simple statistics about players' lags
-  else if (hasPerm(t, lagStats) && strncmp(message+1, "lagstats",8) == 0) {
+  else if (hasPerm(t, PlayerAccessInfo::lagStats) && strncmp(message+1, "lagstats",8) == 0) {
     for (int i = 0; i < curMaxPlayers; i++) {
       if (player[i].state > PlayerInLimbo && player[i].team != ObserverTeam) {
 	sprintf(reply,"%-16s : %4dms (%d) %s", player[i].callSign,
@@ -4157,7 +4157,7 @@ static void parseCommand(const char *message, int t)
     }
   }
   // /idlestats gives a list of players' idle times
-  else if (hasPerm(t, idleStats) && strncmp(message+1, "idlestats",9) == 0) {
+  else if (hasPerm(t, PlayerAccessInfo::idleStats) && strncmp(message+1, "idlestats",9) == 0) {
     TimeKeeper now=TimeKeeper::getCurrent();
     for (int i = 0; i < curMaxPlayers; i++) {
       if (player[i].state > PlayerInLimbo && player[i].team != ObserverTeam) {
@@ -4168,7 +4168,7 @@ static void parseCommand(const char *message, int t)
     }
   }
   // /flaghistory gives history of what flags player has carried
-  else if (hasPerm(t, flagHistory) && strncmp(message+1, "flaghistory", 11 ) == 0) {
+  else if (hasPerm(t, PlayerAccessInfo::flagHistory) && strncmp(message+1, "flaghistory", 11 ) == 0) {
     for (int i = 0; i < curMaxPlayers; i++)
       if (player[i].state > PlayerInLimbo && player[i].team != ObserverTeam) {
 	char flag[MessageLen];
@@ -4188,7 +4188,7 @@ static void parseCommand(const char *message, int t)
       }
   }
   // /playerlist dumps a list of players with IPs etc.
-  else if (hasPerm(t, playerList) && strncmp(message+1, "playerlist", 10) == 0) {
+  else if (hasPerm(t, PlayerAccessInfo::playerList) && strncmp(message+1, "playerlist", 10) == 0) {
     for (int i = 0; i < curMaxPlayers; i++) {
       if (player[i].state > PlayerInLimbo) {
 	sprintf(reply,"[%d]%-16s: %s%s",i,player[i].callSign,
@@ -4356,7 +4356,7 @@ static void parseCommand(const char *message, int t)
       userDatabase.erase(itr2);
       updateDatabases();
       sendMessage(ServerPlayer, t, "Your callsign has been deregistered");
-    } else if (strlen(message) > 12 && hasPerm(t, setAll)) {
+    } else if (strlen(message) > 12 && hasPerm(t, PlayerAccessInfo::setAll)) {
       // removing someone else's
       std::string name = message + 12;
       makeupper(name);
@@ -4403,7 +4403,7 @@ static void parseCommand(const char *message, int t)
       } else {
 	sendMessage(ServerPlayer, t, "You are not identified");
       }
-    } else if (hasPerm(t, showOthers)) { // show groups for other player
+    } else if (hasPerm(t, PlayerAccessInfo::showOthers)) { // show groups for other player
       char *p1 = strchr(message + 1, '\"');
       char *p2 = 0;
       if (p1) p2 = strchr(p1 + 1, '\"');
@@ -4446,10 +4446,10 @@ static void parseCommand(const char *message, int t)
       line = itr->first + ":   ";
       sendMessage(ServerPlayer, t, line.c_str());
 
-      for (int i = 0; i < lastPerm; i++) {
+      for (int i = 0; i < PlayerAccessInfo::lastPerm; i++) {
 	if (itr->second.explicitAllows.test(i)) {
 	  line = "     ";
-	  line += nameFromPerm((AccessPerm)i);
+	  line += nameFromPerm((PlayerAccessInfo::AccessPerm)i);
 	  sendMessage(ServerPlayer, t, line.c_str());
 	}
       }
@@ -4463,16 +4463,16 @@ static void parseCommand(const char *message, int t)
       line = itr->first + ":   ";
       sendMessage(ServerPlayer, t, line.c_str());
 
-      for (int i = 0; i < lastPerm; i++) {
+      for (int i = 0; i < PlayerAccessInfo::lastPerm; i++) {
 	if (itr->second.explicitAllows.test(i)) {
 	  line = "     ";
-	  line += nameFromPerm((AccessPerm)i);
+	  line += nameFromPerm((PlayerAccessInfo::AccessPerm)i);
 	  sendMessage(ServerPlayer, t, line.c_str());
 	}
       }
       itr++;
     }
-  } else if ((hasPerm(t, setPerms) || hasPerm(t, setAll)) &&
+  } else if ((hasPerm(t, PlayerAccessInfo::setPerms) || hasPerm(t, PlayerAccessInfo::setAll)) &&
 	     strncmp(message + 1, "setgroup", 8) == 0) {
     char *p1 = strchr(message + 1, '\"');
     char *p2 = 0;
@@ -4488,7 +4488,7 @@ static void parseCommand(const char *message, int t)
 
       if (userExists(settie)) {
 	bool canset = true;
-	if (!hasPerm(t, setAll))
+	if (!hasPerm(t, PlayerAccessInfo::setAll))
 	  canset = hasGroup(player[t].accessInfo, group.c_str());
 	if (!canset) {
 	  sendMessage(ServerPlayer, t, "You do not have permission to set this group");
@@ -4513,7 +4513,7 @@ static void parseCommand(const char *message, int t)
 	sendMessage(ServerPlayer, t, "There is no user by that name");
       }
     }
-  } else if ((hasPerm(t, setPerms) || hasPerm(t, setAll)) &&
+  } else if ((hasPerm(t, PlayerAccessInfo::setPerms) || hasPerm(t, PlayerAccessInfo::setAll)) &&
 	     strncmp(message + 1, "removegroup", 11) == 0) {
     char *p1 = strchr(message + 1, '\"');
     char *p2 = 0;
@@ -4528,7 +4528,7 @@ static void parseCommand(const char *message, int t)
       makeupper(group);
       if (userExists(settie)) {
 	bool canset = true;
-	if (!hasPerm(t, setAll))
+	if (!hasPerm(t, PlayerAccessInfo::setAll))
 	  canset = hasGroup(player[t].accessInfo, group.c_str());
 	if (!canset) {
 	  sendMessage(ServerPlayer, t, "You do not have permission to remove this group");
@@ -4553,7 +4553,7 @@ static void parseCommand(const char *message, int t)
 	sendMessage(ServerPlayer, t, "There is no user by that name");
       }
     }
-  } else if (hasPerm(t, setAll) && strncmp(message + 1, "reload", 6) == 0) {
+  } else if (hasPerm(t, PlayerAccessInfo::setAll) && strncmp(message + 1, "reload", 6) == 0) {
     groupAccess.clear();
     userDatabase.clear();
     passwordDatabase.clear();
@@ -4564,22 +4564,22 @@ static void parseCommand(const char *message, int t)
     std::map<std::string, PlayerAccessInfo>::iterator itr = groupAccess.find("DEFAULT");
     if (itr == groupAccess.end()) {
       PlayerAccessInfo info;
-      info.explicitAllows[idleStats] = true;
-      info.explicitAllows[lagStats] = true;
-      info.explicitAllows[flagHistory] = true;
+      info.explicitAllows[PlayerAccessInfo::idleStats] = true;
+      info.explicitAllows[PlayerAccessInfo::lagStats] = true;
+      info.explicitAllows[PlayerAccessInfo::flagHistory] = true;
       groupAccess["DEFAULT"] = info;
     }
     itr = groupAccess.find("REGISTERED");
     if (itr == groupAccess.end()) {
       PlayerAccessInfo info;
-      info.explicitAllows[vote] = true;
-      info.explicitAllows[poll] = true;
+      info.explicitAllows[PlayerAccessInfo::vote] = true;
+      info.explicitAllows[PlayerAccessInfo::poll] = true;
       groupAccess["REGISTERED"] = info;
     }
     itr = groupAccess.find("ADMIN");
     if (itr == groupAccess.end()) {
       PlayerAccessInfo info;
-      for (int i = 0; i < lastPerm; i++)
+      for (int i = 0; i < PlayerAccessInfo::lastPerm; i++)
 	info.explicitAllows[i] = true;
       groupAccess["ADMIN"] = info;
     }
@@ -4609,7 +4609,7 @@ static void parseCommand(const char *message, int t)
 #endif
 
     /* make sure player has permission to request a poll */
-    if (!hasPerm(t, poll)) {
+    if (!hasPerm(t, PlayerAccessInfo::poll)) {
       sprintf(reply,"%s, you are presently not authorized to run /poll", player[t].callSign);
       sendMessage(ServerPlayer, t, reply, true);
       return;
@@ -4832,7 +4832,7 @@ static void parseCommand(const char *message, int t)
       sendMessage(ServerPlayer, t, reply, true);
 #endif
 
-      if (!hasPerm(t, vote)) {
+      if (!hasPerm(t, PlayerAccessInfo::vote)) {
 	sprintf(reply,"%s, you do not presently have permission to vote (must /identify first)", player[t].callSign);
 	sendMessage(ServerPlayer, t, reply, true);
 	return;
@@ -4850,7 +4850,7 @@ static void parseCommand(const char *message, int t)
       sendMessage(ServerPlayer, t, reply, true);
 #endif
 
-      if (!hasPerm(t, veto)) {
+      if (!hasPerm(t, PlayerAccessInfo::veto)) {
 	sprintf(reply,"%s, you do not have permission to veto the poll", player[t].callSign);
 	sendMessage(ServerPlayer, t, reply, true);
       }
@@ -4878,7 +4878,7 @@ static void parseCommand(const char *message, int t)
     sendMessage(ServerPlayer, t, reply, true);
 #endif
 
-    if (!hasPerm(t, vote)) {
+    if (!hasPerm(t, PlayerAccessInfo::vote)) {
       /* permission denied for /vote */
       sprintf(reply,"%s, you are presently not authorized to run /vote", player[t].callSign);
       sendMessage(ServerPlayer, t, reply, true);
@@ -5015,7 +5015,7 @@ static void parseCommand(const char *message, int t)
     sendMessage(ServerPlayer, t, reply, true);
 #endif
 
-    if (!hasPerm(t, veto)) {
+    if (!hasPerm(t, PlayerAccessInfo::veto)) {
       /* permission denied for /veto */
       sprintf(reply,"%s, you are presently not authorized to run /veto", player[t].callSign);
       sendMessage(ServerPlayer, t, reply, true);
@@ -5711,22 +5711,22 @@ int main(int argc, char **argv)
   std::map<std::string, PlayerAccessInfo>::iterator itr = groupAccess.find("DEFAULT");
   if (itr == groupAccess.end()) {
     PlayerAccessInfo info;
-    info.explicitAllows[idleStats] = true;
-    info.explicitAllows[lagStats] = true;
-    info.explicitAllows[flagHistory] = true;
+    info.explicitAllows[PlayerAccessInfo::idleStats] = true;
+    info.explicitAllows[PlayerAccessInfo::lagStats] = true;
+    info.explicitAllows[PlayerAccessInfo::flagHistory] = true;
     groupAccess["DEFAULT"] = info;
   }
   itr = groupAccess.find("REGISTERED");
   if (itr == groupAccess.end()) {
     PlayerAccessInfo info;
-    info.explicitAllows[vote] = true;
-    info.explicitAllows[poll] = true;
+    info.explicitAllows[PlayerAccessInfo::vote] = true;
+    info.explicitAllows[PlayerAccessInfo::poll] = true;
     groupAccess["REGISTERED"] = info;
   }
   itr = groupAccess.find("ADMIN");
   if (itr == groupAccess.end()) {
     PlayerAccessInfo info;
-    for (int i = 0; i < lastPerm; i++)
+    for (int i = 0; i < PlayerAccessInfo::lastPerm; i++)
       info.explicitAllows[i] = true;
     groupAccess["ADMIN"] = info;
   }
