@@ -8,13 +8,13 @@ bzfls \- BZFlag game server-list server
 \fBBzfls\fR keeps a list of \fBbzfs\fR servers.  It's used to help
 \fBBZFlag\fR clients find available servers on the internet.
 .PP
-It is a script that run under the control of a web server.
-You have the availability of 3 bzfls script. They provide the same
-functionality, so use the one the best match your system.
+It is a script that runs under the control of a web server.
+You have the availability of 3 bzfls scripts. They provide the same
+functionality, so use the one that best matches your system.
 .PP
 \fBbzfls.pl\fR
 .PP
-A perl script that uses SQLite database. SQLite uses a file
+A Perl script that uses SQLite database. SQLite uses a file
 to mantain its memory
 .PP
 \fBbzflsMy.php\fR

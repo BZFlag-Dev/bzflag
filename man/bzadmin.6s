@@ -87,8 +87,8 @@ and the default value is 5154.
 \fIcommand\fR
 You can specify messages and commands to send to the server on the
 command line. If any such commands are specified, bzadmin will
-exit as soon as those commands has been sent, without starting
-an user interface.
+exit as soon as those commands have been sent, without starting
+a user interface.
 .RE
 .SS Examples
 .RS

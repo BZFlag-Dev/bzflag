@@ -104,7 +104,7 @@ This option can be used multiple times to define a multiline message.
 .B -autoTeam
 Automatically assign players to teams when they connect so that there
 are an equal number of players on all available teams.  Players are
-placed on teams that have the fewest players, otherwise they will be
+placed on teams that have the fewest players; otherwise they will be
 placed on the weakest team.  Weakest team is the team with the lowest
 combined kill ratio.
 .TP
@@ -135,7 +135,7 @@ bzfs options, rather than setting them on the command line.
 .TP
 .B -cr\fR
 Enables the capture-the-flag style game with random map.  You can
-optionally specify a building density by providing an number (default
+optionally specify a building density by providing a number (default
 is 5).  One team flag per team is provided, but more can be added thru +f team.
 By default, the free-for-all style is used.
 .TP
@@ -355,10 +355,10 @@ Set BZDB variable \fIname\fR to \fIvalue\fR
 Restrict flag \fIid\fR to \fInum\fR shots.
 .TP
 \fB\-spamtime \fItime\fR
-make <time> be the required time in seconds between messages sent that are alike.
+Make <time> be the required time in seconds between messages sent that are alike.
 .TP
 \fB\-spamwarn \fIwarnLimit\fR
-warn a spammer that sends messages before -spamtime times out <warnLimit> many times.
+Warn a spammer that sends messages before -spamtime times out <warnLimit> many times.
 .TP
 \fB\-speedtol \fIfactor\fR
 Override the default speed auto kick factor. The factor should not be less then 1.0. The factor is a multiplier.
@@ -435,7 +435,7 @@ The length of time the players are able to vote
 Reads a specific world layout for the game map.
 .TP
 \fB-worldsize \fIworld-size\fR
-changes the size for random maps
+Changes the size for random maps
 .RE
 .SS Notes
 The server uses nearly zero CPU time when nobody is playing, and even
@@ -612,7 +612,7 @@ Kick all players off the server
 Ends the current game
 .TP
 .B /flag reset {unused}
-Repositions flags. If unused is specified, flags carried by tanks are not effected.
+Repositions flags. If unused is specified, flags carried by tanks are not affected.
 .TP
 .B /flag up
 Removes all flags from the game

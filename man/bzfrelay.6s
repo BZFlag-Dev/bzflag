@@ -13,7 +13,7 @@ bzfrelay \- BZFlag game server firewall relay
 [\fB\-s [\fIaddress\fR][:\fIport\fR]]
 \fIaddress\fR[:\fIport\fR]
 .SH DESCRIPTION
-\fBBzfrelay\fR relays communication between bzflag and bzfs.  It's
+\fBBzfrelay\fR relays communication between bzflag and bzfs.  Its
 primary purpose is to provide a tunnel to bzfs through a firewall.
 .PP
 Because security is a prime concern on a firewall, users are
@@ -31,7 +31,7 @@ access the filesystem, report system resources, etc.
 .TP 15
 \fB\-a \fIaddress\fR \fImask\fR
 Allow addresses matching \fIaddress\fR and \fImask\fR.  An address
-\fIsrc\fR matches iff (\fIsrc\fR & \fImask\fR) == (\fIaddress\fR &
+\fIsrc\fR matches if (\fIsrc\fR & \fImask\fR) == (\fIaddress\fR &
 \fImask\fR).  This option may appear any number of times.
 .TP
 \fB\-d\fR
@@ -59,7 +59,7 @@ the default reconnection port number.
 .TP
 \fB\-r \fIaddress\fR \fImask\fR
 Reject addresses matching \fIaddress\fR and \fImask\fR.  An address
-\fIsrc\fR matches iff (\fIsrc\fR & \fImask\fR) == (\fIaddress\fR &
+\fIsrc\fR matches if (\fIsrc\fR & \fImask\fR) == (\fIaddress\fR &
 \fImask\fR).  This option may appear any number of times.
 .TP
 \fB\-s [\fIaddress\fR][:\fIport\fR]

@@ -47,7 +47,7 @@ team, subtracts one from that team's score, and adds one to your
 team's score.  In free-for-all, there are no team flags or team
 bases.  The object is simply to get as high a score as possible.
 In rabbit-hunt, the lead player is chosen as the target for all
-other players. When the rabbit(target) is destroyed, the live player
+other players. When the rabbit (target) is destroyed, the live player
 with the next highest score becomes the rabbit. The object is to
 remain the rabbit for as long as possible. The rabbit is marked as
 a white tank.
@@ -168,7 +168,7 @@ Specifies the callsign you want, and the host running the \fBbzfs\fR
 server. Multiple independent games can be run on a single network, or
 even on different ports on a single computer. Which server and port you
 choose decides which game you enter.
-The callsign and the port is optional. If you don't specify a port the
+The callsign and the port are optional. If you don't specify a port the
 standard server port will be used, and if you don't specify a callsign the
 callsign used for the previous game is used.  If that cannot be found
 then the callsign is the value of the \fBBZFLAGID\fR environment variable.
@@ -228,7 +228,7 @@ pause the game.
 The
 .IR Pause
 key pauses and resumes play.  When paused, the tank cannot be
-destroyed nor can it's shots destroy other players.  The reload
+destroyed nor can its shots destroy other players.  The reload
 countdown is suspended and the radar and view are blanked when
 paused.  A paused tank has a transparent black sphere surrounding
 it.  Since a paused tank is invulnerable a player could cheat by
@@ -254,7 +254,6 @@ key toggles the score display when alive and not paused.
 The
 .IR b
 key toggles binoculars, which gives a close up view of distant objects.
-The
 The
 .IR 9
 key toggles Otto, the automatic pilot, on and off.
@@ -326,7 +325,7 @@ key will send a private message to another player. You can choose the
 recipient by using the left and right arrow keys.
 .IR o
 toggles the quick-admin interface. Use the arrow keys to select a
-command, then fill in the necessary parameters
+command, and then fill in the necessary parameters
 .SS Scoring
 An individual's score is the difference between that player's wins and
 losses.  A win is scored for each enemy tank destroyed.  A loss is
