@@ -10,8 +10,11 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+/* interface header */
 #include "TimeKeeper.h"
 
+/* implementation system headers */
+#include <time.h>
 #if !defined(_WIN32)
 #include <sys/time.h>
 #include <sys/types.h>
@@ -23,6 +26,11 @@ static unsigned int	lastTime = 0;
 static LARGE_INTEGER	qpcLastTime;
 static double		qpcFrequency = 0.0;
 #endif /* !defined(_WIN32) */
+#include <string>
+
+/* implementation common headers */
+#include "TextUtils.h"
+
 
 TimeKeeper TimeKeeper::currentTime;
 TimeKeeper TimeKeeper::tickTime;
@@ -113,12 +121,26 @@ const TimeKeeper& TimeKeeper::getNullTime(void)
   return nullTime;
 }
 
+const char *TimeKeeper::timestamp(void) // const
+{
+  time_t tnow = time(0);
+  struct tm *now = localtime(&tnow);
+  now->tm_year += 1900;
+  ++now->tm_mon;
+  
+  return string_util::format("%04d-%02d-%02d %02d:%02d:%02d",
+			     now->tm_year,
+			     now->tm_mon,
+			     now->tm_mday,
+			     now->tm_hour,
+			     now->tm_min,
+			     now->tm_sec).c_str();
+}
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

@@ -10,7 +10,7 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-/*
+/**
  * TimeKeeper:
  *	Standard way to keep track of time in game.
  *
@@ -25,6 +25,7 @@
 
 #include "common.h"
 
+
 /** TimeKeeper keeps time.  It's useful to determine how much time has
  * elapsed from some other point in time.  Use getCurrent() to return a
  * timekeeper object set to the current time.  You can then use subsequent
@@ -32,46 +33,49 @@
  * elapsed float time value.
  */
 class TimeKeeper {
-  public:
-			TimeKeeper();
-			TimeKeeper(const TimeKeeper&);
-			~TimeKeeper();
-    TimeKeeper&		operator=(const TimeKeeper&);
+public:
+  TimeKeeper();
+  TimeKeeper(const TimeKeeper&);
+  ~TimeKeeper();
+  TimeKeeper&		operator=(const TimeKeeper&);
 
-    float		operator-(const TimeKeeper&) const;
-    bool		operator<=(const TimeKeeper&) const;
-    TimeKeeper&		operator+=(float);
-    TimeKeeper&		operator+=(const TimeKeeper&) ;
+  float		operator-(const TimeKeeper&) const;
+  bool		operator<=(const TimeKeeper&) const;
+  TimeKeeper&		operator+=(float);
+  TimeKeeper&		operator+=(const TimeKeeper&) ;
 
-    /** returns how many seconds have elapsed since epoch, Jan 1, 1970 */
-    float               getSeconds(void) const;
+  /** returns how many seconds have elapsed since epoch, Jan 1, 1970 */
+  float               getSeconds(void) const;
 
-    /** returns a timekeeper representing the current time */
-    static const TimeKeeper&	getCurrent(void);
+  /** returns a timekeeper representing the current time */
+  static const TimeKeeper&	getCurrent(void);
 
-    /** returns a timekeeper representing the time of program execution */
-    static const TimeKeeper&	getStartTime(void);
+  /** returns a timekeeper representing the time of program execution */
+  static const TimeKeeper&	getStartTime(void);
 
-    /** sets the time to the current time (recalculates) */
-    static void			setTick(void);
-    /** returns a timekeeper that is updated periodically via setTick */
-    static const TimeKeeper&	getTick(void); // const
+  /** sets the time to the current time (recalculates) */
+  static void			setTick(void);
+  /** returns a timekeeper that is updated periodically via setTick */
+  static const TimeKeeper&	getTick(void); // const
 
-    /** returns a timekeeper representing +Inf */
-    static const TimeKeeper&	getSunExplodeTime(void);
-    /** returns a timekeeper representing -Inf */
-    static const TimeKeeper&	getSunGenesisTime(void);
-    /** returns a timekeeper representing an unset timekeeper */
-    static const TimeKeeper&	getNullTime(void);
+  /** returns a timekeeper representing +Inf */
+  static const TimeKeeper&	getSunExplodeTime(void);
+  /** returns a timekeeper representing -Inf */
+  static const TimeKeeper&	getSunGenesisTime(void);
+  /** returns a timekeeper representing an unset timekeeper */
+  static const TimeKeeper&	getNullTime(void);
+
+  /** returns a string of the local time */
+  static const char *timestamp(void);
 
 private:
-    double		seconds;
-    static TimeKeeper	currentTime;
-    static TimeKeeper	tickTime;
-    static TimeKeeper	sunExplodeTime;
-    static TimeKeeper	sunGenesisTime;
-    static TimeKeeper	nullTime;
-    static TimeKeeper	startTime;
+  double		seconds;
+  static TimeKeeper	currentTime;
+  static TimeKeeper	tickTime;
+  static TimeKeeper	sunExplodeTime;
+  static TimeKeeper	sunGenesisTime;
+  static TimeKeeper	nullTime;
+  static TimeKeeper	startTime;
 };
 
 //
@@ -84,7 +88,7 @@ inline TimeKeeper::TimeKeeper() : seconds(0.0)
 }
 
 inline TimeKeeper::TimeKeeper(const TimeKeeper& t) :
-				seconds(t.seconds)
+  seconds(t.seconds)
 {
   // do nothing
 }
@@ -129,10 +133,9 @@ inline float		TimeKeeper::getSeconds(void) const
 #endif // BZF_TIME_KEEPER_H
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-
