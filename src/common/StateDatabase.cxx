@@ -67,7 +67,8 @@ void			StateDatabase::set(const std::string& name,
 			    index->second.value != "FALSE" &&
 			    index->second.value != "no" &&
 			    index->second.value != "No" &&
-			    index->second.value != "NO");
+			    index->second.value != "NO" &&
+			    index->second.value != "disable");
     notify(index);
   }
 }

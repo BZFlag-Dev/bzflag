@@ -268,8 +268,7 @@ static void		setRadarColor(TeamColor team, const std::string& value)
   Team::setColors(team, Team::getTankColor(team), color);
 }
 
-static void		setVisual(BzfVisual* visual,
-				const ResourceDatabase& resources)
+static void		setVisual(BzfVisual* visual)
 {
   // sine qua non
   visual->setLevel(0);
@@ -278,8 +277,7 @@ static void		setVisual(BzfVisual* visual,
 
   // ask for a zbuffer if not disabled.  we might choose not to use it
   // if we do ask for it.
-  if (!resources.hasValue("zbuffer") ||
-	resources.getValue("zbuffer") != "disable")
+  if (!BZDB->isSet("zbuffer") || BZDB->get("zbuffer") != "disable")
     visual->setDepth(16);
 
   // optional
@@ -620,9 +618,10 @@ static void		parse(int argc, char** argv,
 	usage();
       }
       if (strcmp(argv[i], "on") == 0) {
-	resources.addValue("zbuffer", "1");
+	BZDB->set("zbuffer", "1");
       }
       else if (strcmp(argv[i], "off") == 0) {
+	BZDB->set("zbuffer", "disable");
 	resources.addValue("zbuffer", "disable");
       }
       else {
@@ -1008,7 +1007,7 @@ int			main(int argc, char** argv)
 
   // choose visual
   BzfVisual* visual = platformFactory->createVisual(display);
-  setVisual(visual, db);
+  setVisual(visual);
 
   // make the window
   BzfWindow* window = platformFactory->createWindow(display, visual);
