@@ -67,7 +67,7 @@ const float				PyrHeight =		10.25f;				// meters
 
 // box geometry
 const float				BoxBase = 		30.0f;				// meters
-const float				BoxHeight = 	56.52f;				// meters
+const float				BoxHeight = 	9.42f;				// meters
 
 // teleporter geometry (My God, it's full of stars...)
 const float				TeleUnit =		1.12f;				// meters
