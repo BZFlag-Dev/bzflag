@@ -23,6 +23,9 @@
 
 #include "common.h"
 #include <vector>
+#ifdef HAVE_SDL
+#include "SDL.h"
+#endif
 
 class BzfDisplay;
 
@@ -70,9 +73,9 @@ class BzfWindow {
     virtual void	freeContext() = 0;
 
     virtual void	initJoystick(const char* joystickName);
-    virtual bool	joystick() const { return false; }
-    virtual void	getJoy(int& x, int& y) const { x = 0; y = 0; }
-    virtual unsigned long getJoyButtons() const { return 0; }
+    virtual bool	joystick() const;
+    virtual void	getJoy(int& x, int& y) const;
+    virtual unsigned long getJoyButtons() const;
 
     void		callExposeCallbacks() const;
     void		addExposeCallback(void (*cb)(void*), void* data);
@@ -86,6 +89,10 @@ class BzfWindow {
     const BzfDisplay*	display;
     std::vector<BzfWindowCB>	exposeCallbacks;
     std::vector<BzfWindowCB>	resizeCallbacks;
+#ifdef HAVE_SDL
+    SDL_Joystick                *joystickID;
+    int                         joystickButtons;
+#endif
 };
 
 #endif // BZF_WINDOW_H
