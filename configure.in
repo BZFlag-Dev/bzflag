@@ -8,10 +8,15 @@ MINOR_VERSION=`sed -e 's/#.*define.*BZ_MINOR_VERSION[^0-9]*\(.*\)/\1/' -e t -e d
 REV=`sed -e 's/#.*define.*BZ_REV[^0-9]*\(.*\)/\1/' -e t -e d < \$srcdir/src/date/buildDate.cxx`
 
 CONF_DATE=`date -u +%Y%m%d`
-echo "BZFlag-$MAJOR_VERSION.$MINOR_VERSION.$REV.$CONF_DATE"
+BZFLAG_VERSION="$MAJOR_VERSION.$MINOR_VERSION.$REV"
+echo "BZFlag-$BZFLAG_VERSION.$CONF_DATE"
 AC_CANONICAL_SYSTEM
-AM_INIT_AUTOMAKE(bzflag, $MAJOR_VERSION.$MINOR_VERSION.$REV.$CONF_DATE)
+AM_INIT_AUTOMAKE(bzflag, $BZFLAG_VERSION.$CONF_DATE)
 AM_CONFIG_HEADER(include/config.h)
+
+AC_SUBST(MAJOR_VERSION)
+AC_SUBST(MINOR_VERSION)
+AC_SUBST(BZFLAG_VERSION)
 
 # Let the C++ code know about OS and user
 AC_DEFINE_UNQUOTED(BZ_BUILD_OS, "$host_os", [BZFlag System Environment])
@@ -721,6 +726,7 @@ AC_OUTPUT(bzflag.info
 	src/obstacle/Makefile
 	src/ogl/Makefile
 	src/platform/Makefile
+	src/platform/MacOSX/BZFlag-Info.plist
 	src/platform/MacOSX/Makefile
 	src/regex/Makefile
 	src/scene/Makefile
@@ -737,7 +743,7 @@ echo "CPPFLAGS are $CPPFLAGS"
 echo "LIBS are $LIBS"
 
 AC_MSG_RESULT([])
-AC_MSG_RESULT([BZFlag-$MAJOR_VERSION.$MINOR_VERSION.$REV.$CONF_DATE with the following:])
+AC_MSG_RESULT([BZFlag-$BZFLAG_VERSION.$CONF_DATE with the following:])
 if test "x$CURSES_LIB" = x; then
        AC_MSG_RESULT([     no curses!])
 else
