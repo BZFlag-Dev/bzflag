@@ -292,6 +292,16 @@ RemotePlayer *findBestTarget()
     		 (player[t]->getFlag() == Flags::Cloaking && myTank->getFlag() == Flags::Laser))
         continue;
 
+			//perform a draft that has us chase the proposed opponent if they have our flag
+      if (World::getWorld()->allowTeamFlags() &&
+      	  (myTank->getTeam() == RedTeam && player[t]->getFlag() == Flags::RedTeam) ||
+      	  (myTank->getTeam() == GreenTeam && player[t]->getFlag() == Flags::GreenTeam) ||
+      	  (myTank->getTeam() == BlueTeam && player[t]->getFlag() == Flags::BlueTeam) ||
+	  			(myTank->getTeam() == PurpleTeam && player[t]->getFlag() == Flags::PurpleTeam)) {
+				target = player[t];
+      	break;
+			}
+
       float d = TargetingUtils::getTargetDistance( pos, player[t]->getPosition());
       bool isObscured = TargetingUtils::isLocationObscured( pos, player[t]->getPosition());
       if (isObscured) //demote the priority of obscured enemies
