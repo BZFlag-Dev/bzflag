@@ -19,6 +19,7 @@ EXTRA_DIST = \
 	mrtg-bzflag.pl	\
 	multilingualSwearList.txt	\
 	rebuild-bzflag	\
+	serverstats.sh	\
 	simpleSwearList.txt	\
 	snap.sh		\
 	tar		\
