@@ -3005,7 +3005,7 @@ static WorldInfo *defineTeamWorld()
 	cerr << "need some teams, use -mp" << endl;
 	exit(20);
       }
-      const int numBoxes = int((0.5 + 0.6 * bzfrand()) * CitySize * CitySize);
+      const int numBoxes = int((0.5 + 0.4 * bzfrand()) * CitySize * CitySize);
       for (i = 0; i < numBoxes;) {
         if (randomHeights)
           h = BoxHeight * (2.0f * (float)bzfrand() + 0.5f);
@@ -3031,7 +3031,7 @@ static WorldInfo *defineTeamWorld()
 
       // make pyramids
       h = PyrHeight;
-      const int numPyrs = int((0.5 + 0.6 * bzfrand()) * CitySize * CitySize * 2);
+      const int numPyrs = int((0.5 + 0.4 * bzfrand()) * CitySize * CitySize * 2);
       for (i = 0; i < numPyrs; i++) {
         if (randomHeights)
           h = PyrHeight * (2.0f * (float)bzfrand() + 0.5f);
@@ -6235,11 +6235,11 @@ int main(int argc, char **argv)
     // check for list server socket connected
     for (i = 0; i < listServerLinksCount; i++)
       if (listServerLinks[i].socket != NotConnected)
-	FD_SET(listServerLinks[i].socket, &write_set);
+        FD_SET(listServerLinks[i].socket, &write_set);
 
     // find timeout when next flag would hit ground
     TimeKeeper tm = TimeKeeper::getCurrent();
-    // lets start by waiting 0.25 sec
+    // lets start by waiting 3 sec
     float waitTime = 3.0f;
 #ifdef TIMELIMIT
     if (countdownActive && timeLimit > 0.0f)
@@ -6257,7 +6257,8 @@ int main(int argc, char **argv)
     // get time for next lagping
     for (int p=0;p<maxPlayers;p++)
     {
-      if (player[p].state == PlayerAlive && player[p].nextping - tm < waitTime)
+      if (player[p].state == PlayerAlive &&
+          player[p].trypings && player[p].nextping - tm < waitTime)
         waitTime = player[p].nextping - tm;
     }
 
@@ -6460,7 +6461,9 @@ int main(int argc, char **argv)
       for (i = 0; i < maxPlayers; i++) {
 	// check the initial contact port.  if any activity or
 	// we've waited a while, then shut it down
-	if (player[i].state == PlayerAccept && tm - player[i].time > DisconnectTimeout)
+        if (player[i].state == PlayerAccept &&
+            (FD_ISSET(player[i].fd, &read_set) ||
+            tm - player[i].time > DisconnectTimeout))
 	  shutdownAcceptClient(i);
       }
 
