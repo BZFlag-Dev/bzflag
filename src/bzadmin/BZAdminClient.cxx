@@ -255,22 +255,20 @@ BZAdminClient::getServerString(std::string& str, ColorCode& colorCode) {
         }
       }
       
-      // is the message for me?
+      // format the message depending on src and dst
       TeamColor dstTeam = (dst >= 244 && dst <= 250 ?
 			   TeamColor(250 - dst) : NoTeam);
-      if (dst == AllPlayers || src == me || dst == me || dstTeam == myTeam) {
-	if (returnString == "CLIENTQUERY") {
-	  sendMessage(std::string("bzadmin ") + getAppVersion(), src);
-	  if (ui != NULL)
-	    ui->outputMessage("    [Sent versioninfo per request]", Default);
-	  return NoMessage;
-	}
-	else {
-	  returnString = formatMessage((char*)vbuf, src, dst, dstTeam, me);
-	  PlayerIdMap::const_iterator iter = players.find(src);
-	  colorCode = (iter == players.end() ? 
-		       colorMap[NoTeam] : colorMap[iter->second.team]);
-	}
+      if (returnString == "CLIENTQUERY") {
+	sendMessage(std::string("bzadmin ") + getAppVersion(), src);
+	if (ui != NULL)
+	  ui->outputMessage("    [Sent versioninfo per request]", Default);
+	return NoMessage;
+      }
+      else {
+	returnString = formatMessage((char*)vbuf, src, dst, dstTeam, me);
+	PlayerIdMap::const_iterator iter = players.find(src);
+	colorCode = (iter == players.end() ? 
+		     colorMap[NoTeam] : colorMap[iter->second.team]);
       }
       break;
     }
@@ -395,7 +393,9 @@ std::string BZAdminClient::formatMessage(const std::string& msg, PlayerId src,
 
   // public or team message
   else {
-    if (dstTeam != NoTeam)
+    if (dst == AdminPlayers)
+      formatted += "[Admin] ";
+    else if (dstTeam != NoTeam)
       formatted += "[Team] ";
     formatted += srcName;
     formatted += ": ";
