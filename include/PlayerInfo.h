@@ -103,7 +103,7 @@ public:
   bool        hasStartedToNotRespond();
   void        hasSent(char message[]);
   bool        hasPlayedEarly();
-  void        setPlayedEarly();
+  void        setPlayedEarly(bool early = true);
   void        setReplayState(PlayerReplayState state);
   void        updateIdleTime();
   PlayerReplayState getReplayState();

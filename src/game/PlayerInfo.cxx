@@ -374,8 +374,8 @@ bool PlayerInfo::hasPlayedEarly() {
   return returnValue;
 };
 
-void PlayerInfo::setPlayedEarly() {
-  playedEarly = true;
+void PlayerInfo::setPlayedEarly(bool early) {
+  playedEarly = early;
 };
 
 void PlayerInfo::updateIdleTime() {
