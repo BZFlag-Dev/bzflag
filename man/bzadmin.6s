@@ -1,0 +1,88 @@
+.TH bzadmin 6
+.SH NAME
+bzadmin \- a text based client for BZFlag
+.SH SYNOPSIS
+.sS
+.B bzadmin
+[\fB\-help\fR]
+[\fB\-stdboth\fR]
+[\fB\-stdin\fR]
+[\fB\-stdout \fR]
+[\fB\-team \fR{\fIred\fR | \fIgreen\fR | \fIblue\fR | \fIpurple\fR | \fIrogue\fR}]
+\fIcallsign@hostname\fR:[\fIport\fR] [\fIcommand\fR] [\fIcommand\fR] ...
+.SH DESCRIPTION
+.B bzadmin
+is a textbased client for the game BZFlag. It can't be used for
+playing, but it can be used to see when players join and leave the
+game, to see the chat messages, and to send messages and commands
+to the server.
+.PP
+When you start bzadmin without any command line options other than
+callsign and hostname a simple curses-based user interface will be
+started (unless you built bzadmin without curses support). This 
+interface is divided into three rectangles; the output window
+(which covers almost all of the terminal), the target window, and
+the input window. 
+.PP
+The output window is where messages from the server will be shown. 
+.PP
+The target window shows the name of the player that
+will receive your next message, or 'all' if it will be a public message.
+You can change target by using the left and right arrow keys.
+.PP
+The input window is where you type your messages. It also supports tab
+completion of commands and callsigns. You can clear the input window 
+with the key combination \fBCtrl-U\fR, and you can generate a \fB/kick\fR
+command for the current target with the F5 key (if the current target
+is a player).
+.SS Options
+.RS
+.TP 15
+.B -help
+Show a simple help text.
+.TP
+.B -stdboth
+Turns off the curses interface and uses the standard in and standard out
+streams instead. This can be useful for scripting and other things.
+.TP
+\fB-stdin\fR
+Turns off the curses interface and reads commands from the standard in
+stream instead. Anything that is sent from the server will be ignored.
+.TP
+\fB-stdout\fR
+Turns off the curses interface and writes the messages from the server
+to the standard out stream. The user can't send any commands or messages
+with this mode.
+.TP
+\fB\-team \fR{\fIred\fR | \fIgreen\fR | \fIblue\fR | \fIpurple\fR | \fIrogue\fR}
+Select the team for your client. This will only affect which team messages
+you will be able to see.
+.TP
+\fIcallsign@hostname\fR[\fI:port\fR]
+Specifies the callsign that you want your client to use, and the
+hostname where the BZFlag server is. bzadmin always joins as an 
+observer, but don't add '@' in the beginning of the callsign - it
+will be added automatically. The port number is optional, and the
+default value is 5154.
+.TP
+\fIcommand\fR
+You can specify messages and commands to send to the server on the
+command line. If any such commands are specified, bzadmin will
+exit as soon as those commands has been sent.
+.RE
+.SS Examples
+.RS
+.TP 15
+\fBbzadmin -team blue admin@localhost:5155\fR
+.br
+Join the game on localhost, port 5155, using the callsign '@admin'.
+.TP
+\fBbzadmin admin@localhost '/passwd secretpass' '/ban 192.168.0.2'
+.br
+Connect to the server at localhost and ban the IP 192.168.0.2.
+.TP
+\fBbzadmin -stdout spy@bzserver.xy | grep magicword\fR
+Connect to bzserver.xy and print all server messages that contain 'magicword'.
+.RE
+.SH SEE ALSO
+bzfls(6), bzfs(6), bzflag(6)
