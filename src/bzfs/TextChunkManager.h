@@ -16,7 +16,7 @@
 #include <vector>
 #include <map>
 #include <string>
-#include <fstream.h>
+#include <fstream>
 
 #include "global.h"
 
