@@ -1740,13 +1740,14 @@ static void		doAutoPilot(float &rotation, float &speed)
 
 	// weave towards the player
 	const Player *target = myTank->getTarget();
-	if (distance > 40.0f) {
+	if (distance > 50.0f) {
 	  float enemyUnitVec[2] = { cos(enemyAzimuth), sin(enemyAzimuth) };
 	  float myUnitVec[2] = { cos(myAzimuth), sin(myAzimuth) };
-	  if ((myUnitVec[0]*enemyUnitVec[0] + myUnitVec[1]*enemyUnitVec[1]) < 0.866f) {
-	    //if target is more than 30 degrees away, turn as fast as you can
+	  float dotProd = (myUnitVec[0]*enemyUnitVec[0] + myUnitVec[1]*enemyUnitVec[1]);
+	  if (dotProd < 0.95f) {
+	    //if target is more than 15 degrees away, turn as fast as you can
 	    rotation *= M_PI / (2.0f * fabs(rotation));
-	    speed = 0.0f;
+	    speed = dotProd; //go forward inverse rel to how much you need to turn
 	  }
 	  else {
 	    int period = int(TimeKeeper::getCurrent().getSeconds());
@@ -1754,7 +1755,7 @@ static void		doAutoPilot(float &rotation, float &speed)
 	    rotation += bias;
 	    if (rotation < -1.0f * M_PI) rotation += 2.0f * M_PI;
 	    if (rotation > 1.0f * M_PI) rotation -= 2.0f * M_PI;
-	    speed = M_PI/2.0f - fabs(rotation);
+	    speed = 1.0;
 	  }
 	}
 	else if (target->getFlag() != Flags::Burrow) {
