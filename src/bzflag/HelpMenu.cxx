@@ -456,6 +456,7 @@ Help6Menu::Help6Menu() : HelpMenu("Flags III")
   list.push_back(createLabel("can't see anything on radar", "Jamming (JM)"));
   list.push_back(createLabel("fish eye view out the window", "Wide Angle (WA)"));
   list.push_back(createLabel("can't jump in the air", "No Jumping (NJ)"));
+  list.push_back(createLabel("can't stop firing", "Trigger Happy (TR)"));
 }
 
 float Help6Menu::getLeftSide(int width, int)

@@ -156,7 +156,7 @@ namespace Flags {
     *Shield, *Steamroller, *ShockWave, *PhantomZone, *Genocide, *Jumping,
     *Identify, *Cloaking, *Useless, *Masquerade, *Seer, *Thief, *Burrow,
     *Colorblindness, *Obesity, *LeftTurnOnly, *RightTurnOnly, *Momentum, *Blindness,
-    *Jamming, *WideAngle, *NoJumping;
+    *Jamming, *WideAngle, *NoJumping, *TriggerHappy;
 
   void init();
 }

@@ -576,6 +576,9 @@ Gives the tank a fish eye lens that's rather disorienting.
 .TP
 .B No Jumping (NJ)
 Tank is not allowed to jump.
+.TP
+.B Trigger Happy (TR)
+Tank can't stop shooting.  Watch out for that richochet.
 .SS Observing
 If a server is full or if you just want to watch a battle without interfering
 in it, you can use the observer mode. To join a server as an observer, select

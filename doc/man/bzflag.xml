@@ -770,6 +770,18 @@ a Stealth with Blindness is the stuff legends are made of.</para>
 <para>Gives the tank a fish eye lens that's rather disorienting.</para>
 </listitem>
 </varlistentry>
+<varlistentry>
+<term><emphasis remap='B'>No Jumping (NJ)</emphasis></term>
+<listitem>
+<para>Tank can't jump </para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><emphasis remap='B'>Trigger Happy (TR)</emphasis></term>
+<listitem>
+<para>Can't stop firing.  Watch out for that richocet!</para>
+</listitem>
+</varlistentry>
 </variablelist> <!-- .TP -->
 </refsect2>
 

@@ -69,6 +69,7 @@ namespace Flags {
   FlagType *Jamming;
   FlagType *WideAngle;
   FlagType *NoJumping;
+  FlagType *TriggerHappy;
 
   void init()
   {
@@ -151,6 +152,8 @@ namespace Flags {
 						    "Wide Angle (-WA):  Fish-eye lens distorts view.");
     NoJumping               = new FlagType( "No Jumping", "NJ", FlagSticky, NormalShot, FlagBad, NoTeam,
 						    "No Jumping (-NJ):  Tank can't jump.");
+    TriggerHappy            = new FlagType( "Trigger Happy", "TR", FlagSticky, NormalShot, FlagBad, NoTeam,
+						    "Trigger Happy (-TR):  Tank can't stop firing.");
   }
 }
 

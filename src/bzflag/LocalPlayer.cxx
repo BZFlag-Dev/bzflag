@@ -921,6 +921,11 @@ bool			LocalPlayer::fireShot()
   else
     playLocalSound(SFX_FIRE);
   }
+
+  if (getFlag() == Flags::TriggerHappy) {
+    // make sure all the shots don't go off at once
+    forceReload(BZDB.eval(StateDatabase::BZDB_RELOADTIME) / numShots);
+  }
   return true;
 }
 

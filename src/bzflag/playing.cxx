@@ -4998,7 +4998,9 @@ static void		playingLoop()
       if (myTank->isAlive() && !myTank->isPaused()) {
 	doMotion();
 	if (hud->getHunting()) setHuntTarget(); //spot hunt target
-	if (fireButton && myTank->getFlag() == Flags::MachineGun && myTank->getTeam() != ObserverTeam)
+	if (myTank->getTeam() != ObserverTeam &&
+	   ((fireButton && myTank->getFlag() == Flags::MachineGun) ||
+            (myTank->getFlag() == Flags::TriggerHappy)))
 	  myTank->fireShot();
       }
       else {
