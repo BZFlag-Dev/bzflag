@@ -41,8 +41,8 @@ INSTALL_DATA_DIR = /usr/share/bzflag
 # tools
 #
 AR	= /usr/bin/ar cru
-CC	= /usr/bin/gcc
-CXX	= /usr/bin/g++
+CC	= /usr/bin/gcc-3.1
+CXX	= /usr/bin/g++-3.1
 CD	= cd
 CP	= /bin/cp
 LD	= /usr/bin/ld
