@@ -4059,7 +4059,8 @@ static void resetFlag(int flagIndex)
     while (topmosttype != NOT_IN_BUILDING) {
 	if ((clOptions.flagsOnBuildings && (topmosttype == IN_BOX)) 
 		&&  (world->inRect(obj->pos, obj->rotation, obj->size, 
-		pFlagInfo->flag.position[0], pFlagInfo->flag.position[1], 0.0f))) {
+		pFlagInfo->flag.position[0], pFlagInfo->flag.position[1], 0.0f))
+		&& (obj->pos[2] < (pFlagInfo->flag.position[2] + flagHeight)) && ((obj->pos[2] + obj->size[2]) > pFlagInfo->flag.position[2])) {
 	  pFlagInfo->flag.position[2] = obj->pos[2] + obj->size[2];
 	}
 	else {
