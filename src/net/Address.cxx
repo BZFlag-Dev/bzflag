@@ -110,16 +110,16 @@ bool			Address::isAny() const
 bool			Address::isPrivate() const
 {
   // 127.0.0.0/8
-  if (addr[0].s_addr & 0xff000000 == 0x7f000000)
+  if ((addr[0].s_addr & htonl(0xff000000u)) == htonl(0x7f000000u))
     return(true);
   // 10.0.0.0/8
-  if (addr[0].s_addr & 0xff000000 == 0x0a000000)
+  if ((addr[0].s_addr & htonl(0xff000000u)) == htonl(0x0a000000u))
     return(true);
   // 172.16.0.0/12
-  if (addr[0].s_addr & 0xfff00000 == 0xac100000)
+  if ((addr[0].s_addr & htonl(0xfff00000u)) == htonl(0xac100000u))
     return(true);
   // 192.168.0.0/16
-  if (addr[0].s_addr & 0xffff0000 == 0xc0a80000)
+  if ((addr[0].s_addr & htonl(0xffff0000u)) == htonl(0xc0a80000u))
     return(true);
   return(false);
 }
