@@ -383,6 +383,8 @@ getting the world database
 	| 00 | 00 | 73 | 6b |                           MsgSuperKill
 	+----+----+----+----+
 
+</screen>
+<para>
 Client sends MsgGetWorld requests until it has read the entire world database.
 Clients should send an `offset' of 0 for the first request and increase `offset'
 by however much data was sent in reply.
@@ -398,34 +400,44 @@ database.  The client should immediately close the connection to the server.
 
 No other messages should be returned by the server as long as the client sends
 only MsgGetWorld requests.
+</para>
+<screen>
 
 The `data' has the following encoding:
 
-	+----+----+----+----+----+----+----+----+
-	| 73 | 74 | 00 | 18 |  style  | players |       WorldCodeStyle, length of data
-	+----+----+----+----+----+----+----+----+
-	|  shots  |  flags  |linear acceleration|
-	+----+----+----+----+----+----+----+----+
-	|angulr acceleration| shake t | shake w |
-	+----+----+----+----+----+----+----+----+
-	|    server time    |
 	+----+----+----+----+
+	| 00 | 1E | 73 | 74 |        length of data, WorldCodeStyle 
+	+----+----+----+----+----+----+
+	| version |      worldsize    |
+        +----+----+----+----+----+----+----+----+
+        |  style  | mxPlyrs | mxShots | mxFlags |
+        +----+----+----+----+----+----+----+----+
+	|linear acceleration|angulr acceleration|
+	+----+----+----+----+----+----+----+----+
+	| shake t | shake w |    epoch offset   |
+	+----+----+----+----+----+----+----+----+
 
 Values are:
+  version:      version of the bzw format
+  worldsize:    size in meters of world
   style:        bitfield of game style
-  players:      maximum number of players
-  shots:        maximum number of shots at once per player
-  flags:        maximum number of flags that may exist at once
+  maxPlayrs:    maximum number of players
+  maxShots:     maximum number of shots at once per player
+  maxFlags:     maximum number of flags that may exist at once
   linear acc.:  linear acceleration limit (float)
   angulr acc.:  angular acceleration limit (float)
   shake t:      time to shake a bad flag (1/10ths of seconds)
   shake w:      number of wins to shake a bad flag
-  server time:  seconds since midnight Jan 1, 1970 GMT on the server, used when
+  epoch offset: seconds since midnight Jan 1, 1970 GMT on the server, used when
 		synchronizing times across clients
 
+</screen>
+<para>
 The rest of the world database is encoded in individual blocks decribing each
 object.  Only permanent immovable objects are included.  The encodings for each
 type of object are:
+</para>
+<screen>
 
   team base:
 	+----+----+----+----+----+----+----+----+
