@@ -108,17 +108,20 @@ void CustomSphere::write(WorldInfo *world) const
                       (float)j / (float)(4 * (i + 1)));
       float v_angle = ((M_PI / 2.0f) * 
                       (float)(divisions - i - 1) / (float)(divisions));
+      float delta[3];
+      delta[0] = size[0] * (cos(h_angle) * cos(v_angle));
+      delta[1] = size[1] * (sin(h_angle) * cos(v_angle));
+      delta[2] = size[2] * sin(v_angle);
       // vertex
-      v[0] = pos[0] + (size[0] * cos(h_angle) * cos(v_angle));
-      v[1] = pos[1] + (size[1] * sin(h_angle) * cos(v_angle));
-      v[2] = pos[2] + (size[2] * sin(v_angle));
+      v[0] = pos[0] + delta[0];
+      v[1] = pos[1] + delta[1];
+      v[2] = pos[2] + delta[2];
       vertices.push_back(v);
       // normal
-      vec3sub(n.data, v.data, pos);
-      const float len = 1.0f / vec3dot(v.data, v.data);
-      n[0] *= len;
-      n[1] *= len;
-      n[2] *= len;
+      const float len = 1.0f / sqrtf(vec3dot(delta, delta));
+      n[0] = delta[0] * len;
+      n[1] = delta[1] * len;
+      n[2] = delta[2] * len;
       normals.push_back(v);
       // texcoord
       t[0] = (float)j / (float)(4 * (i + 1));
