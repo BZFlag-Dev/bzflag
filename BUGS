@@ -1,16 +1,6 @@
 recent bugs
 ------------
 
-- bzfs sends two messages every cycle to players who ought to be
-  kicked automatically but are protected - one from the kick code,
-  to tell them they're being kicked, then one from the antikick code,
-  to tell them they're protected.  lather, rinse, repeat every server 
-  cycle.  Fills up logs and floods connections.
-
-- Antikick code appears to prevent dropping players who are unresponsive
-  (e.g. too many bytes queued).  This exacerbates the above problem
-  and is probably an issue in and of itself.
-
 - teleporting is blocking when going from a ground teleporter to
   a teleporter sitting on a mesh object. fix during next protocol
   breakage  (workaround by dropping the ground teleporter by a

@@ -2253,15 +2253,6 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
     return;
 
   if (notify) {
-    // if the player has the antikick permission, they are protected
-    // from a kick attempt on non-silent player removals.
-    if (playerData->accessInfo.hasPerm(PlayerAccessInfo::antikick)) {
-      char kickmessage[MessageLen];
-      sprintf(kickmessage, "You were just protected from being kicked for: %s", reason);
-      sendMessage(ServerPlayer, playerIndex, kickmessage);
-      return;
-    }
-
     // send a super kill to be polite
     // send message to one player
     // do not use directMessage as he can remove player

@@ -14,7 +14,6 @@ BZFlag 2.0.1
 * Fixed 2 flag per team selecting ctf on world & CommandLine - Alfredo Tupone
 * Fixed lag warning counted twice - Alfredo Tupone
 * Allow user to select which physical joystick axes to use - Daniel Remenak
-* Fixed antikick so that it actually prevents most kicks - Sean Morrison
 * Fix a number of server crash bugs - Daniel Remenak
 * ctf make restarting on base even when dead - Anonymous 
 * Fixed weirdness on Console Panel when disabling chat display - Alfredo Tupone
