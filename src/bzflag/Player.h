@@ -99,12 +99,13 @@ public:
   const ShotStatistics*	getShotStatistics() const;
 
   void		addToScene(SceneDatabase*, TeamColor effectiveTeam,
-			   bool inCockpit, bool showIDL);
+                           bool inCockpit, bool seerView,
+                           bool showTreads, bool showIDL);
+			   
   virtual void	addShots(SceneDatabase*, bool colorblind) const;
   void		setLandingSpeed(float velocity);
   void		spawnEffect();
   void		fireJumpJets();
-  bool		needsToBeRendered(bool cloaked, bool showTreads);
 
   bool		isAlive() const;
   bool		isPaused() const;
@@ -206,6 +207,7 @@ private:
   TankIDLSceneNode*	tankIDLNode;
   SphereSceneNode*	pausedSphere;
   GLfloat		color[4];
+  GLfloat		teleAlpha;
   std::string		userTexture;
   static int		tankTexture;
   static int		tankOverideTexture;

@@ -4469,15 +4469,16 @@ void drawFrame(const float dt)
     SceneDatabase* scene = sceneRenderer->getSceneDatabase();
     if (scene && myTank) {
 
-      // add my tank if required
+      const bool seerView = (myTank->getFlag() == Flags::Seer);
       const bool showTreads = BZDB.isTrue("showTreads");
+      
+      // add my tank if required
+      const bool inCockpit = (!devDriving || (roamView == roamViewFP));
       const bool showMyTreads = showTreads ||
-				(devDriving && (roamView != roamViewFP));
-      const bool cloaked = (myTank->getFlag() == Flags::Cloaking);
-      const bool inCockpit = (!devDriving || (roamView != roamViewFP));
-      if (myTank->needsToBeRendered(cloaked, showMyTreads)) {
-	myTank->addToScene(scene, myTank->getTeam(), inCockpit, showMyTreads);
-      }
+                                (devDriving && (roamView != roamViewFP));
+      myTank->addToScene(scene, myTank->getTeam(),
+                         inCockpit, seerView,
+                         showMyTreads, showMyTreads /*showIDL*/);
 
       // add my shells
       myTank->addShots(scene, false);
@@ -4511,18 +4512,16 @@ void drawFrame(const float dt)
 	    }
 	  }
 
-	  const bool cloaked = (player[i]->getFlag() == Flags::Cloaking) &&
-			       (myTank->getFlag() != Flags::Seer);
-	  const bool following = (roaming && !devDriving) &&
+	  const bool following = roaming && !devDriving &&
 				 (roamView == roamViewFP) &&
 				 (roamTrackWinner == i);
 	  const bool showPlayer = !following || showTreads;
 	  const bool inCockpit = following && showTreads;
 
 	  // add player tank if required
-	  if (player[i]->needsToBeRendered(cloaked, showPlayer)) {
-	    player[i]->addToScene(scene, effectiveTeam, inCockpit, showPlayer);
-	  }
+          myTank->addToScene(scene, myTank->getTeam(),
+                             inCockpit, seerView,
+                             showPlayer, showPlayer /*showIDL*/);
 	}
       }
 

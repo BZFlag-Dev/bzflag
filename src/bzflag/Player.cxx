@@ -112,6 +112,7 @@ Player::Player(const PlayerId& _id, TeamColor _team,
   alpha = 1.0f;
   alphaRate = 0.0f;
   alphaTarget = 1.0f;
+  teleAlpha = 1.0f;
 
   lastTrackDraw = TimeKeeper::getCurrent();
 
@@ -528,17 +529,18 @@ void Player::updateTranslucency(float dt)
 
   // set the tankNode color
   if (isPhantomZoned()) {
+    teleAlpha = 1.0f;
     color[3] = 0.25f; // barely visible, regardless of teleporter proximity
-  }
-  else if (alpha == 0.0f) {
-    color[3] = 0.0f;
-  }
-  else {
+  } else {
     teleporterProximity =
       World::getWorld()->getProximity(state.pos, BZDBCache::tankRadius);
-    color[3] = alpha * (1.0f - (0.75f * teleporterProximity));
+    teleAlpha = (1.0f - (0.75f * teleporterProximity));
+    if (alpha == 0.0f) {
+      color[3] = 0.0f; // not trusting FP accuracy
+    } else {
+      color[3] = teleAlpha * alpha;
+    }
   }
-  tankNode->setColor(color);
 
   return;
 }
@@ -726,8 +728,6 @@ void Player::setVisualTeam (TeamColor visualTeam)
     color[1] = _color[1];
     color[2] = _color[2];
   }
-  color[3] = isPhantomZoned() ? 0.5f : 1.0f;
-  tankNode->setColor(color);
   tankNode->setMaterial(OpenGLMaterial(tankSpecular, emissive, shininess));
   tankNode->setTexture(tankTexture);
 
@@ -763,14 +763,44 @@ void Player::addRemoteSound(int sound)
 
 
 void Player::addToScene(SceneDatabase* scene, TeamColor effectiveTeam,
-			bool inCockpit, bool showIDL)
+			bool inCockpit, bool seerView,
+			bool showTreads, bool showIDL)
 {
   if (!isAlive() && !isExploding()) {
-    return;
+    return; // don't draw anything
+  }
+  
+  // is this tank fully cloaked?
+  const bool cloaked = (flagType == Flags::Cloaking) && (color[3] == 0.0f);
+  
+  if (cloaked && !seerView) {
+    return; // don't draw anything
+  }
+  
+  // setup the visibility properties
+  if (inCockpit && !showTreads) {  
+    tankNode->setOnlyShadows(true);
+  } else {
+    tankNode->setOnlyShadows(false);
   }
 
-  tankNode->move(state.pos, forward);
+  // adjust alpha for seerView
+  if (seerView && (color[3] != 1.0f)) {
+    if (isPhantomZoned()) {
+      color[3] = 0.25f;
+    } else if (teleAlpha != 1.0) {
+      color[3] = teleAlpha;
+    } else {
+      color[3] = 1.0f;
+    }
+  } 
+
+  // setup the color and material
   setVisualTeam(effectiveTeam);
+  tankNode->setColor(color);
+  
+  // place the tank
+  tankNode->move(state.pos, forward);
 
   // only use dimensions if we aren't at steady state.
   // this is done because it's more expensive to use
@@ -834,7 +864,7 @@ void Player::addToScene(SceneDatabase* scene, TeamColor effectiveTeam,
       tankNode->setClipPlane(plane);
     } // isCrossingWall()
   }   // isAlive()
-  else if (isExploding() && state.pos[2] > ZERO_TOLERANCE) {
+  else if (isExploding() && (state.pos[2] > ZERO_TOLERANCE)) {
     float t = (TimeKeeper::getTick() - explodeTime) /
 	      BZDB.eval(StateDatabase::BZDB_EXPLODETIME);
     if (t > 1.0f) {
@@ -853,27 +883,6 @@ void Player::addToScene(SceneDatabase* scene, TeamColor effectiveTeam,
 		       1.5f * BZDBCache::tankRadius * dimensionsScale[0]);
     scene->addDynamicSphere(pausedSphere);
   }
-}
-
-
-bool Player::needsToBeRendered(bool cloaked, bool showTreads)
-{
-  if (cloaked && !showTreads) {
-    return false;
-  }
-
-  // setup the visibility properties
-  if (cloaked) {
-    tankNode->setCloaked(true); // show the fading effect
-  }
-  else if (!showTreads) {
-    tankNode->setHidden(true); // just shadows
-  }
-  else {
-    tankNode->setHidden(false); // show all
-  }
-
-  return true;
 }
 
 
@@ -1264,7 +1273,7 @@ void Player::setDeadReckoning(float timestamp)
   // at first stage, Delta time is computed as the average of the last
   // differences in time (local & remote) the values is then updated
   // with the new samples, smoothed with the old values
-  float alpha = 1.0f / float(deadReckoningState + 1);
+  float alphaFactor = 1.0f / float(deadReckoningState + 1);
   if (deadReckoningState >= DRStateStable) {
     if (fabs(offset) > maxToleratedJitter) {
       // Put a threshold on untimed measurement
@@ -1275,17 +1284,17 @@ void Player::setDeadReckoning(float timestamp)
     else if (offset > 0) {
       // fast alignment to the packet that take less travel time
       // that's for trying to have less lag
-      alpha = 1.0f;
+      alphaFactor = 1.0f;
     }
   }
   // alpha filtering
-  deltaTime = deltaTime + (offset * alpha);
+  deltaTime = deltaTime + (offset * alphaFactor);
   if (discardUpdate) {
     return;
   }
-  // when alpha is 1, that really means we are re-initializing deltaTime
-  // so offset should be zero
-  if (alpha == 1.0f) {
+  // when alphaFactor is 1, that really means we are
+  // re-initializing deltaTime so offset should be zero
+  if (alphaFactor == 1.0f) {
     offset = 0.0f;
   }
   if (deadReckoningState < DRStateStable) {

@@ -93,19 +93,16 @@ class TankSceneNode : public SceneNode {
     void		setTiny();
     void		setNarrow();
     void		setThief();
+
     void		setClipPlane(const GLfloat* plane);
     void		setExplodeFraction(float t);
     void		setJumpJets(float scale);
+
     void		setInTheCockpit(bool value);
+    void		setOnlyShadows(bool value);
+
     void		rebuildExplosion();
-
     void		addTreadOffsets(float left, float right);
-
-    // hidden still renders shadow (turns off cloaked)
-    void		setHidden(bool hidden);
-
-    // cloaked renders nothing if color[3] = 0.0f (turns off hidden)
-    void		setCloaked(bool cloaked);
 
     static void		setMaxLOD(int maxLevel);
 
@@ -160,7 +157,8 @@ class TankSceneNode : public SceneNode {
     float		leftWheelOffset;
     float		rightWheelOffset;
     bool		useDimensions;
-    bool		useOverride, hidden, cloaked;
+    bool		useOverride;
+    bool		onlyShadows;
     bool		transparent, sort;
     float		explodeFraction;
     bool		clip;

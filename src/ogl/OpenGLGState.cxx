@@ -1438,6 +1438,10 @@ void bzDeleteTextures(GLsizei count, const GLuint *textures)
   return;
 }
 
+
+//
+// Test for matrix underflows (overflows are not yet tested)
+//
 #ifdef DEBUG_GL_MATRIX_STACKS
 
 static GLenum matrixMode = GL_MODELVIEW;

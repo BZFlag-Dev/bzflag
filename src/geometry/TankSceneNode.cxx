@@ -43,9 +43,8 @@ TankSceneNode::TankSceneNode(const GLfloat pos[3], const GLfloat forward[3]) :
 				leftTreadOffset(0.0f), rightTreadOffset(0.0f),
 				leftWheelOffset(0.0f), rightWheelOffset(0.0f),
 				useDimensions(false), useOverride(false),
-				hidden(false), cloaked(false),
-				clip(false), inTheCockpit(false),
-				tankRenderNode(this),
+				onlyShadows(false), clip(false),
+				inTheCockpit(false), tankRenderNode(this),
 				shadowRenderNode(this),
 				tankSize(TankGeometryEnums::Normal)
 {
@@ -225,10 +224,12 @@ void TankSceneNode::notifyStyleChange()
 
 void TankSceneNode::addRenderNodes(SceneRenderer& renderer)
 {
-  // don't draw hidden tanks.  this is mainly to avoid drawing player's
+  // don't draw onlyShadows tanks.  this is mainly to avoid drawing player's
   // tank when player is using view from tank.  can't simply not include
   // player, though, cos then we wouldn't get the tank's shadow.
-  if (hidden || (cloaked && (color[3] == 0.0f))) return;
+  if (onlyShadows) {
+    return;
+  }
 
   // pick level of detail
   const GLfloat* sphere = getSphere();
@@ -286,10 +287,6 @@ void TankSceneNode::addRenderNodes(SceneRenderer& renderer)
 
 void TankSceneNode::addShadowNodes(SceneRenderer& renderer)
 {
-  if (cloaked && (color[3] == 0.0f)) {
-    return;
-  }
-
   // use HighTankLOD shadows in experimental mode
   if (TankSceneNode::maxLevel == -1) {
     shadowRenderNode.setTankLOD (HighTankLOD);
@@ -302,10 +299,6 @@ void TankSceneNode::addShadowNodes(SceneRenderer& renderer)
 
 void TankSceneNode::addLight(SceneRenderer& renderer)
 {
-  if (cloaked && (color[3] == 0.0f)) {
-    return;
-  }
-
   if (jumpJetsOn) {
     // the real light
     jumpJetsRealLight.setColor(jumpJetsScale * 1.0f,
@@ -418,25 +411,16 @@ void TankSceneNode::setClipPlane(const GLfloat* plane)
 }
 
 
-void TankSceneNode::setHidden(bool _hidden)
-{
-  hidden = _hidden;
-  cloaked = false;
-  return;
-}
-
-
-void TankSceneNode::setCloaked(bool _cloaked)
-{
-  cloaked = _cloaked;
-  hidden = false;
-  return;
-}
-
-
 void TankSceneNode::setMaxLOD(int _maxLevel)
 {
   maxLevel = _maxLevel;
+  return;
+}
+
+
+void TankSceneNode::setOnlyShadows(bool _onlyShadows)
+{
+  onlyShadows = _onlyShadows;
   return;
 }
 
