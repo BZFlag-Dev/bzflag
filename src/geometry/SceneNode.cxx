@@ -39,7 +39,7 @@ SceneNode::SceneNode() : styleMailbox(0)
   setRadius(0.0f);
 
   if (maxLOD < 0) {
-    maxLOD = BZDB->eval(StateDatabase::BZDB_MAXLOD);
+    maxLOD = int(BZDB->eval(StateDatabase::BZDB_MAXLOD));
     BZDB->addCallback(StateDatabase::BZDB_MAXLOD, callback, NULL);
   }
 }
@@ -49,10 +49,10 @@ SceneNode::~SceneNode()
   // do nothing
 }
 
-void SceneNode::callback(const std::string& name, void *userData)
+void SceneNode::callback(const std::string& name, void *)
 {
   if (name == StateDatabase::BZDB_MAXLOD) 
-    maxLOD = BZDB->eval(StateDatabase::BZDB_MAXLOD);
+    maxLOD = int(BZDB->eval(StateDatabase::BZDB_MAXLOD));
 }
 
 #if defined(sun)

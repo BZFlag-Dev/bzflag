@@ -61,7 +61,7 @@ Obstacle::~Obstacle()
   // do nothing
 }
 
-void Obstacle::callback(const std::string &name, void *userData)
+void Obstacle::callback(const std::string &name, void *)
 {
   if (name == StateDatabase::BZDB_TANKHEIGHT)
     tankHeight = BZDB->eval(StateDatabase::BZDB_TANKHEIGHT);
