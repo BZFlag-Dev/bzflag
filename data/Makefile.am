@@ -12,6 +12,7 @@ EXTRA_DIST = \
 	burrow.wav	\
 	caution.png	\
 	clouds.png	\
+	deadunder.png	\
 	explode1.png	\
 	explosion.wav	\
 	fire.wav	\

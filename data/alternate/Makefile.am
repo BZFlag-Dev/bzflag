@@ -5,6 +5,7 @@ EXTRA_DIST = \
 	boxwall.png		\
 	caution.png		\
 	clouds.png		\
+	deadunder.png		\
 	explode1.png		\
 	explode2.png		\
 	green_basetop.png	\
