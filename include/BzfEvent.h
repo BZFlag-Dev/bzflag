@@ -74,7 +74,13 @@ class BzfKeyEvent {
 			F12,
 			LeftMouse,
 			MiddleMouse,
-			RightMouse
+			RightMouse,
+			Button4,
+			Button5,
+			Button6,
+			Button7,
+			Button8,
+			Button9
     };
     enum {
 			ShiftKey = 1,

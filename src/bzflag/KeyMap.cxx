@@ -116,7 +116,13 @@ const char*		BzfKeyMap::eventNames[] = {
 				"F12",
 				"Left Mouse",
 				"Middle Mouse",
-				"Right Mouse"
+				"Right Mouse",
+				"Button 4",
+				"Button 5",
+				"Button 6",
+				"Button 7",
+				"Button 8",
+				"Button 9"
 			};
 
 BzfKeyMap::BzfKeyMap()

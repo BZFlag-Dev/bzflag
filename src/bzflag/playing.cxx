@@ -1253,6 +1253,12 @@ static void		doMotion()
       static const BzfKeyEvent::Button button_map[] = { BzfKeyEvent::LeftMouse,
 				BzfKeyEvent::MiddleMouse,
 				BzfKeyEvent::RightMouse,
+				BzfKeyEvent::Button4,
+				BzfKeyEvent::Button5,
+				BzfKeyEvent::Button6,
+				BzfKeyEvent::Button7,
+				BzfKeyEvent::Button8,
+				BzfKeyEvent::Button9,
 				BzfKeyEvent::F1,
 				BzfKeyEvent::F2,
 				BzfKeyEvent::F3,
@@ -1265,9 +1271,10 @@ static void		doMotion()
       };
 
       static unsigned long old_buttons = 0;
+      const int button_count = sizeof(button_map) / sizeof(button_map[0]);
       unsigned long new_buttons = mainWindow->getJoyButtonSet();
       if (old_buttons != new_buttons)
-	for (int j = 0; j<12; j++)
+	for (int j = 0; j<button_count; j++)
 	  if ((old_buttons & (1<<j)) != (new_buttons & (1<<j))) {
 	    BzfKeyEvent ev;
 	    ev.button = button_map[j];
