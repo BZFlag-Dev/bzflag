@@ -75,12 +75,6 @@ public:
   static bool initHandlers(struct sockaddr_in addr);
   static void destroyHandlers();
 
-  /** Class-Wide update
-      Should be called any available time to update NetHandler internal
-      structure.
-  */
-  static void updateHandlers();
-
   /** General function to support the select statement
    */
   static void setFd(fd_set *read_set, fd_set *write_set, int &maxFile);

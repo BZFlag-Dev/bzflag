@@ -613,16 +613,9 @@ in_addr NetHandler::getIPAddress() {
   return uaddr.sin_addr;
 }
 
-void NetHandler::updateHandlers() {
-#ifdef HAVE_ADNS_H
-  for (int h = 0; h < maxHandlers; h++)
-    if (netPlayer[h])
-      netPlayer[h]->adns->checkDNSResolution();
-#endif
-}
-
 const char *NetHandler::getHostname() {
 #ifdef HAVE_ADNS_H
+  adns->checkDNSResolution();
   return adns->getHostname();
 #else
   return NULL;

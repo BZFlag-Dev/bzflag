@@ -4147,7 +4147,6 @@ int main(int argc, char **argv)
     }
 
     int h;
-    NetHandler::updateHandlers();
     for (h = 0; h < curMaxPlayers; h++) {
       NetHandler *handler = NetHandler::getHandler(h);
       if (handler) {
