@@ -2814,6 +2814,15 @@ static Player*		addPlayer(PlayerId id, void* msg, int showMessage)
     player[i]->changeScore(short(wins), short(losses), short(tks));
   }
 
+#ifdef ROBOT
+  if (PlayerType(type) == ComputerPlayer)
+    for (int i = 0; i < numRobots; i++)
+      if (!strncmp(robots[i]->getCallSign(), callsign, CallSignLen)) {
+	robots[i]->setTeam(TeamColor(team));
+	break;
+      }
+#endif
+
   if (showMessage) {
     std::string message("joining as a");
     switch (PlayerType(type)) {
