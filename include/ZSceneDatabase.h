@@ -19,6 +19,7 @@
 
 #include "common.h"
 #include "SceneDatabase.h"
+#include "Octree.h"
 
 class ZSceneDatabase : public SceneDatabase {
   friend class ZSceneIterator;
@@ -43,6 +44,7 @@ class ZSceneDatabase : public SceneDatabase {
     int			dynamicCount;
     int			dynamicSize;
     SceneNode**		dynamicList;
+    
 };
 
 class ZSceneIterator : public SceneIterator {
@@ -50,14 +52,23 @@ class ZSceneIterator : public SceneIterator {
 			ZSceneIterator(const ZSceneDatabase*);
     virtual		~ZSceneIterator();
 
-    virtual void	resetFrustum(const ViewFrustum*);
-    virtual void	reset();
-    virtual SceneNode*	getNext();
+    void	resetFrustum(const ViewFrustum*);
+    void	reset();
+    SceneNode*	getNext();
+    void		drawCuller();
 
   private:
     const ZSceneDatabase* db;
-    bool		staticDone, dynamicDone;
-    int			staticIndex, dynamicIndex;
+    bool		culledDone, dynamicDone;
+    int			culledIndex, dynamicIndex;
+
+    Octree*             octree;
+    SceneNode**         culledList;
+    int			culledCount;
+    int			cullDepth;
+    int			cullElements;
+    
+    void                makeCuller();
 };
 
 #endif // BZF_Z_SCENE_DATABASE_H

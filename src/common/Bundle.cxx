@@ -25,6 +25,7 @@
 
 // local implementation headers
 #include "StateDatabase.h"
+#include "AnsiCodes.h"
 
 Bundle::Bundle(const Bundle *pBundle)
 {
@@ -135,7 +136,8 @@ std::string Bundle::getLocalString(const std::string &key) const
     if (BZDB.getDebug()) {
       if (unmapped.find( key ) == unmapped.end( )) {
         unmapped.insert( key );
-	std::string debugStr = "Unmapped Locale String: " + key + "\n";
+    std::string stripped = stripAnsiCodes (key);
+	std::string debugStr = "Unmapped Locale String: " + stripped + "\n";
 	DEBUG1("%s", debugStr.c_str());
       }
     }

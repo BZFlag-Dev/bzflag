@@ -6,6 +6,7 @@ MAINTAINERCLEANFILES = \
 	Makefile.in
 
 libSceneDB_a_SOURCES =			\
+	Octree.cxx					\
 	SceneDatabase.cxx		\
 	ZSceneDatabase.cxx		\
 	BSPSceneDatabase.cxx    

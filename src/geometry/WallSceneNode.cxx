@@ -10,6 +10,7 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+#include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
 #include "common.h"
@@ -71,7 +72,12 @@ bool			WallSceneNode::cull(const ViewFrustum& frustum) const
   const GLfloat* plane = getPlane();
   if (eye[0]*plane[0] + eye[1]*plane[1] + eye[2]*plane[2] + plane[3] <= 0.0f)
     return true;
-
+    
+  // if the Visibility culler tells us that we're
+  // fully visible, then skip the rest of these tests
+  if (octreeState == OctreeVisible)
+    return false;
+ 
   // get signed distance of wall center to each frustum side.
   // if more than radius outside then cull
   int i;
@@ -81,7 +87,8 @@ bool			WallSceneNode::cull(const ViewFrustum& frustum) const
     const GLfloat* norm = frustum.getSide(i);
     d[i] = sphere[0] * norm[0] + sphere[1] * norm[1] +
 		sphere[2] * norm[2] + norm[3];
-    if (d[i] < 0.0f && (d2[i] = d[i]*d[i]) > sphere[3]) return true;
+    if (d[i] < 0.0f && (d2[i] = d[i]*d[i]) > sphere[3])
+      return true;
   }
 
   // see if center of wall is inside each frustum side
@@ -244,6 +251,15 @@ void			WallSceneNode::setLightedModulateColor(
   lightedModulateColor[3] = rgba[3];
   if (oldTransparent != (lightedModulateColor[3] != 1.0f))
     forceNotifyStyleChange();
+}
+
+bool			WallSceneNode::isTransparent() const
+{
+  if (color[3] < 1.0f) {
+    return true;
+  } else {
+    return false;
+  }
 }
 
 void			WallSceneNode::setMaterial(const OpenGLMaterial& mat)
@@ -458,6 +474,27 @@ void			WallSceneNode::splitEdge(const GLfloat* p1,
   p[2] = p1[2] + t * e[2];
   uv[0] = uv1[0] + t * (uv2[0] - uv1[0]);
   uv[1] = uv1[1] + t * (uv2[1] - uv1[1]);
+}
+
+
+void			WallSceneNode::getExtents (float* mins, float* maxs) const
+{
+  for (int i = 0; i < 3; i++) {
+    mins[i] = -1234.0f;
+    maxs[i] = +1234.0f;
+  }
+  return;
+}
+
+
+bool			WallSceneNode::inAxisBox (const float*, const float*) const
+{
+  // this should never happen, only the TriWallSceneNode
+  // and QuadWallSceneNode version of this function will
+  // be called
+  printf ("WallSceneNode::inAxisBox() was called!\n");
+  exit (1);
+  return false;
 }
 
 // Local Variables: ***

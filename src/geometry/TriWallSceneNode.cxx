@@ -14,6 +14,7 @@
 #include "common.h"
 #include "TriWallSceneNode.h"
 #include "SceneRenderer.h"
+#include "Intersect.h"
 
 //
 // TriWallSceneNode::Geometry
@@ -83,6 +84,11 @@ void			TriWallSceneNode::Geometry::drawV() const
 void			TriWallSceneNode::Geometry::drawVT() const
 {
   RENDER(EMITVT)
+}
+
+const GLfloat*		TriWallSceneNode::Geometry::getVertex(int i) const
+{
+  return vertex[i];
 }
 
 //
@@ -207,6 +213,42 @@ void			TriWallSceneNode::addShadowNodes(
 				SceneRenderer& renderer)
 {
   renderer.addShadowNode(shadowNode);
+}
+
+void                    TriWallSceneNode::getExtents(float* mins, float* maxs) const
+{
+  int i, j;
+  
+  for (i = 0; i < 3; i++) {
+    mins[i] = +MAXFLOAT;
+    maxs[i] = -MAXFLOAT;
+  }
+  
+  for (i = 0; i < 3; i++) {
+    const float* point = nodes[0]->getVertex(i);
+    for (j = 0; j < 3; j++) {
+      if (point[j] < mins[j]) {
+        mins[j] = point[j];
+      }
+      if (point[j] > maxs[j]) {
+        maxs[j] = point[j];
+      }
+    }
+  }
+  return;
+}
+
+bool                    TriWallSceneNode::inAxisBox(const float* mins, 
+                                                    const float* maxs) const
+{
+  float myMins[3], myMaxs[3];
+  getExtents (myMins, myMaxs);
+  for (int i = 0; i < 3; i++) {
+    if ((myMins[i] > maxs[i]) || (myMaxs[i] < mins[i])) {
+      return false;
+    }
+  }
+  return true;
 }
 
 // Local Variables: ***

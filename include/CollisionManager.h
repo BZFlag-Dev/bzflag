@@ -31,7 +31,7 @@ const int GridSizeX = 32;
 const int GridSizeY = 32;
 
 
-typedef std::vector<const Obstacle *> ObstacleList;
+typedef std::vector<Obstacle *> ObstacleList;
 
 
 class CollisionManager {
@@ -63,7 +63,7 @@ class CollisionManager {
     typedef struct {
       int count;
       float pos[3]; // center of cell
-      std::vector<const Obstacle *> objs;
+      std::vector<Obstacle *> objs;
     } GridCell;
 
     typedef std::vector<const GridCell *> CellList;

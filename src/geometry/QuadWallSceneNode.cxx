@@ -15,6 +15,7 @@
 #include "QuadWallSceneNode.h"
 #include "ViewFrustum.h"
 #include "SceneRenderer.h"
+#include "Intersect.h"
 
 //
 // QuadWallSceneNode::Geometry
@@ -112,6 +113,11 @@ void			QuadWallSceneNode::Geometry::drawV() const
 void			QuadWallSceneNode::Geometry::drawVT() const
 {
   RENDER(EMITVT)
+}
+
+const GLfloat*		QuadWallSceneNode::Geometry::getVertex(int i) const
+{
+  return vertex[i];
 }
 
 //
@@ -319,6 +325,42 @@ void			QuadWallSceneNode::addShadowNodes(
 				SceneRenderer& renderer)
 {
   renderer.addShadowNode(shadowNode);
+}
+
+void                    QuadWallSceneNode::getExtents(float* mins, float* maxs) const
+{
+  int i, j;
+  
+  for (i = 0; i < 3; i++) {
+    mins[i] = +MAXFLOAT;
+    maxs[i] = -MAXFLOAT;
+  }
+  
+  for (i = 0; i < 4; i++) {
+    const float* point = nodes[0]->getVertex(i);
+    for (j = 0; j < 3; j++) {
+      if (point[j] < mins[j]) {
+        mins[j] = point[j];
+      }
+      if (point[j] > maxs[j]) {
+        maxs[j] = point[j];
+      }
+    }
+  }
+  return;
+}
+
+bool                    QuadWallSceneNode::inAxisBox(const float* mins, 
+                                                     const float* maxs) const
+{
+  float myMins[3], myMaxs[3];
+  getExtents (myMins, myMaxs);
+  for (int i = 0; i < 3; i++) {
+    if ((myMins[i] > maxs[i]) || (myMaxs[i] < mins[i])) {
+      return false;
+    }
+  }
+  return true;
 }
 
 // Local Variables: ***

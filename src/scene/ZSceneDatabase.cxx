@@ -19,6 +19,8 @@
 #include "SceneNode.h"
 #include "ZSceneDatabase.h"
 #include "SphereSceneNode.h"
+#include "Octree.h"
+#include "StateDatabase.h"
 
 ZSceneDatabase::ZSceneDatabase() :
 				staticCount(0),
@@ -34,8 +36,9 @@ ZSceneDatabase::ZSceneDatabase() :
 ZSceneDatabase::~ZSceneDatabase()
 {
   // free static nodes
-  for (int i = 0; i < staticCount; i++)
+  for (int i = 0; i < staticCount; i++) {
     delete staticList[i];
+  }
 
   // free lists
   delete[] staticList;
@@ -97,40 +100,93 @@ SceneIterator*		ZSceneDatabase::getRenderIterator()
   return new ZSceneIterator(this);
 }
 
+
 //
 // ZSceneIterator
 //
 
 ZSceneIterator::ZSceneIterator(const ZSceneDatabase* _db) :
-				SceneIterator(),
-				db(_db)
+				SceneIterator(), db(_db)
 {
+  cullDepth = BZDB.evalInt(StateDatabase::BZDB_CULLDEPTH);
+  cullElements = BZDB.evalInt(StateDatabase::BZDB_CULLELEMENTS);
+  octree = NULL;
+  culledList = NULL;
+  if (cullDepth > 0) {
+    makeCuller();
+  }
+  else {
+    culledList = db->staticList;
+    culledCount = db->staticCount;
+  }
   reset();
 }
 
 ZSceneIterator::~ZSceneIterator()
 {
-  // do nothing
+  delete octree;
+  if (culledList != db->staticList) {
+    delete culledList;
+  }
 }
 
-void			ZSceneIterator::resetFrustum(const ViewFrustum*)
+void			ZSceneIterator::makeCuller()
 {
-  // do nothing
+  delete octree;
+  octree = new Octree;
+  octree->addNodes (db->staticList, db->staticCount, cullDepth, cullElements);
+  if (culledList != db->staticList) {
+    delete culledList;
+  }
+  // make scratch pad for the culler
+  culledList = new (SceneNode*)[db->staticCount];
+}
+
+void			ZSceneIterator::resetFrustum(const ViewFrustum* frustum)
+{
+  const int currentDepth = BZDB.evalInt(StateDatabase::BZDB_CULLDEPTH);
+  const int currentElements = BZDB.evalInt(StateDatabase::BZDB_CULLELEMENTS);
+
+  if ((currentDepth != cullDepth) || (currentElements != cullElements)) {
+
+    cullDepth = currentDepth;
+    cullElements = currentElements;
+
+    delete octree;
+    octree = NULL;
+
+    if (cullDepth > 0) {
+      makeCuller();
+    }
+    else {
+      if (culledList != db->staticList) {
+        delete culledList;
+      }
+      culledList = db->staticList;
+      culledCount = db->staticCount;
+    }
+  }
+
+  // cull if we're supposed to
+  if (octree) {
+    culledCount = octree->getFrustumList (culledList, db->staticCount,
+                                          (const Frustum *) frustum);
+  }
 }
 
 void			ZSceneIterator::reset()
 {
-  staticIndex = 0;
-  staticDone = (db->staticCount == staticIndex);
+  culledIndex = 0;
+  culledDone = (culledCount == culledIndex);
   dynamicIndex = 0;
   dynamicDone = (db->dynamicCount == dynamicIndex);
 }
 
 SceneNode*		ZSceneIterator::getNext()
 {
-  if (!staticDone) {
-    SceneNode* node = db->staticList[staticIndex++];
-    staticDone = (db->staticCount == staticIndex);
+  if (!culledDone) {
+    SceneNode* node = culledList[culledIndex++];
+    culledDone = (culledIndex >= culledCount);
     return node;
   }
   if (!dynamicDone) {
@@ -141,6 +197,36 @@ SceneNode*		ZSceneIterator::getNext()
   return NULL;
 }
 
+
+// the callback function from the Culler
+static void drawLines (int vertices, const float points[][3], bool partial)
+{
+  GLfloat defaultColor[4] = {1.0f, 0.0f, 0.0f, 0.75f};
+  GLfloat partialColor[4] = {0.0f, 0.0f, 1.0f, 0.75f};
+  
+  if (partial) {
+    glColor4fv (partialColor);
+  } else {
+    glColor4fv (defaultColor);
+  }
+  glBegin (GL_LINE_STRIP);
+  for (int i = 0; i < vertices; i++) {
+    glVertex3fv (points[i]);
+  }
+  glEnd ();
+}
+
+void        		ZSceneIterator::drawCuller()
+{
+  if (octree) {
+    // setup to draw lines
+    glDisable (GL_TEXTURE_2D);
+    octree->draw (drawLines);
+    glEnable (GL_TEXTURE_2D);
+  }
+  return;
+}
+
 // Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***
@@ -148,4 +234,3 @@ SceneNode*		ZSceneIterator::getNext()
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

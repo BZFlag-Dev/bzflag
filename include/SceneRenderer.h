@@ -74,6 +74,7 @@ public:
   bool		useStencil() const;
   int			useQuality() const;
   bool		useDepthComplexity() const;
+  bool		useCullingTree() const;
   bool		useWireframe() const;
   bool		useHiddenLine() const;
   float		getPanelOpacity() const;
@@ -88,6 +89,7 @@ public:
   void		setZBufferSplit(bool on);
   void		setQuality(int value);
   void		setDepthComplexity(bool on);
+  void		setCullingTree(bool on);
   void		setWireframe(bool on);
   void		setHiddenLine(bool on);
   void		setPanelOpacity(float opacity);
@@ -175,6 +177,7 @@ private:
   bool		abgr;
   int			useQualityValue;
   bool		useDepthComplexityOn;
+  bool		useCullingTreeOn;
   bool		useWireframeOn;
   bool		useHiddenLineOn;
   float		panelOpacity;

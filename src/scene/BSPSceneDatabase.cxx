@@ -236,6 +236,7 @@ SceneIterator*		BSPSceneDatabase::getRenderIterator()
   return new BSPSceneIterator(this);
 }
 
+
 //
 // BSPSceneIterator
 //
@@ -333,6 +334,11 @@ restart:
 
   assert(0);
   return NULL;
+}
+
+void        		BSPSceneIterator::drawCuller()
+{
+  return;
 }
 
 // Local Variables: ***

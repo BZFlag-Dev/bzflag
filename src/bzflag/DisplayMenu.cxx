@@ -177,6 +177,16 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
   options->push_back(std::string("On"));
   option->update();
   list.push_back(option);
+
+  option = new HUDuiList;
+  option->setFontFace(fontFace);
+  option->setLabel("Culling Tree:");
+  option->setCallback(callback, (void*)"d");
+  options = &option->getList();
+  options->push_back(std::string("Off"));
+  options->push_back(std::string("On"));
+  option->update();
+  list.push_back(option);
 #endif
 
   BzfWindow* window = getMainWindow()->getWindow();
@@ -271,6 +281,7 @@ void			DisplayMenu::resize(int width, int height)
     ((HUDuiList*)list[i++])->setIndex(renderer->useHiddenLine() ? 1 : 0);
     ((HUDuiList*)list[i++])->setIndex(renderer->useWireframe() ? 1 : 0);
     ((HUDuiList*)list[i++])->setIndex(renderer->useDepthComplexity() ? 1 : 0);
+    ((HUDuiList*)list[i++])->setIndex(renderer->useCullingTree() ? 1 : 0);
 #endif
 
     if (!BZDBCache::texture)
@@ -358,6 +369,9 @@ void			DisplayMenu::callback(HUDuiControl* w, void* data) {
     break;
   case 'c':
     sceneRenderer->setDepthComplexity(list->getIndex() != 0);
+    break;
+  case 'd':
+    sceneRenderer->setCullingTree(list->getIndex() != 0);
     break;
 #endif
   case 'g':

@@ -8,6 +8,8 @@ libGame_a_SOURCES = 			\
 	CommandsStandard.cxx		\
 	DelayQueue.cxx			\
 	DirectoryNames.cxx		\
+	Frustum.cxx			\
+	Intersect.cxx			\
 	LagInfo.cxx			\
 	NetHandler.cxx			\
 	PlayerInfo.cxx			\

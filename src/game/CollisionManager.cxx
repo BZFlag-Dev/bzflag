@@ -25,8 +25,9 @@
 
 
 
-CollisionManager::CollisionManager () : WorldSize(0.0f)
+CollisionManager::CollisionManager ()
 {
+  WorldSize = 0.0f;
 }
 
 CollisionManager::~CollisionManager ()
@@ -104,9 +105,20 @@ ObstacleList CollisionManager::getObstacles (const float *pos, float radius) con
     const GridCell* cell = *cit;
     for (ObstacleList::const_iterator oit = cell->objs.begin();
          oit != cell->objs.end(); oit++) {
-      // FIXME - make sure there are no duplicates?
-      olist.push_back(*oit);
+      Obstacle* obs = *oit;
+      // if collisionState is true, then this obstacle
+      // has already been added to the return list.
+      if (!obs->collisionState) {
+        olist.push_back(obs);
+        obs->collisionState = true;
+      }
     }
+  }
+  
+  // clear the collisionState on the obstacles
+  for (ObstacleList::iterator clear_it = olist.begin();
+       clear_it != olist.end(); clear_it++) {
+    (*clear_it)->collisionState = false;
   }
 
   return olist;  
@@ -168,9 +180,10 @@ void CollisionManager::load (std::vector<BoxBuilding>     &boxes,
   CellList::const_iterator cit;
 
   // Boxes
-  for (std::vector<BoxBuilding>::const_iterator it_box = boxes.begin();
+  for (std::vector<BoxBuilding>::iterator it_box = boxes.begin();
        it_box != boxes.end(); it_box++) {
-    const BoxBuilding* box = (const BoxBuilding *) &(*it_box);
+    BoxBuilding* box = (BoxBuilding *) &(*it_box);
+    box->collisionState = false;
     float dx = box->getWidth();
     float dy = box->getBreadth();
     float radius = sqrtf (dx*dx + dy*dy);
@@ -184,9 +197,10 @@ void CollisionManager::load (std::vector<BoxBuilding>     &boxes,
   }
 
   // Pyramids  
-  for (std::vector<PyramidBuilding>::const_iterator it_pyr = pyrs.begin();
+  for (std::vector<PyramidBuilding>::iterator it_pyr = pyrs.begin();
        it_pyr != pyrs.end(); it_pyr++) {
-    const PyramidBuilding* pyr = (const PyramidBuilding *) &(*it_pyr);
+    PyramidBuilding* pyr = (PyramidBuilding *) &(*it_pyr);
+    pyr->collisionState = false;
     float dx = pyr->getWidth();
     float dy = pyr->getBreadth();
     float radius = sqrtf (dx*dx + dy*dy);
@@ -200,9 +214,10 @@ void CollisionManager::load (std::vector<BoxBuilding>     &boxes,
   }
   
   // Teleporters
-  for (std::vector<Teleporter>::const_iterator it_tele = teles.begin();
+  for (std::vector<Teleporter>::iterator it_tele = teles.begin();
        it_tele != teles.end(); it_tele++) {
-    const Teleporter* tele = (const Teleporter *) &(*it_tele);
+    Teleporter* tele = (Teleporter *) &(*it_tele);
+    tele->collisionState = false;
     float dx = tele->getWidth();
     float dy = tele->getBreadth();
     float radius = sqrtf (dx*dx + dy*dy);
@@ -216,9 +231,10 @@ void CollisionManager::load (std::vector<BoxBuilding>     &boxes,
   }
   
   // Bases
-  for (std::vector<BaseBuilding>::const_iterator it_base = bases.begin();
+  for (std::vector<BaseBuilding>::iterator it_base = bases.begin();
        it_base != bases.end(); it_base++) {
-    const BaseBuilding* base = (const BaseBuilding *) &(*it_base);
+    BaseBuilding* base = (BaseBuilding *) &(*it_base);
+    base->collisionState = false;
     float dx = base->getWidth();
     float dy = base->getBreadth();
     float radius = sqrtf (dx*dx + dy*dy);

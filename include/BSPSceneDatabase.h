@@ -85,9 +85,10 @@ class BSPSceneIterator : public SceneIterator {
 			BSPSceneIterator(const BSPSceneDatabase*);
     virtual		~BSPSceneIterator();
 
-    virtual void	resetFrustum(const ViewFrustum*);
-    virtual void	reset();
-    virtual SceneNode*	getNext();
+    void	        resetFrustum(const ViewFrustum*);
+    void	        reset();
+    SceneNode*	        getNext();
+    void		drawCuller();
 
   private:
     const BSPSceneDatabase*	db;

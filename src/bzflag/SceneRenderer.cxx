@@ -94,6 +94,7 @@ SceneRenderer::SceneRenderer() :
 				abgr(false),
 				useQualityValue(2),
 				useDepthComplexityOn(false),
+				useCullingTreeOn(false),
 				useWireframeOn(false),
 				useHiddenLineOn(false),
 				panelOpacity(0.3f),
@@ -287,6 +288,11 @@ bool			SceneRenderer::useDepthComplexity() const
   return useDepthComplexityOn;
 }
 
+bool			SceneRenderer::useCullingTree() const
+{
+  return useCullingTreeOn;
+}
+
 void			SceneRenderer::setDepthComplexity(bool on)
 {
   if (on) {
@@ -295,6 +301,10 @@ void			SceneRenderer::setDepthComplexity(bool on)
     if (bits < 3) return;
   }
   useDepthComplexityOn = on;
+}
+void			SceneRenderer::setCullingTree(bool on)
+{
+  useCullingTreeOn = on;
 }
 
 
@@ -396,7 +406,14 @@ void			SceneRenderer::setSceneDatabase(SceneDatabase* db)
   if (scene) {
     sceneIterator = scene->getRenderIterator();
     inOrder = scene->isOrdered();
-    if (sceneIterator) sceneIterator->resetFrustum(&frustum);
+    if (sceneIterator) {
+      sceneIterator->resetFrustum(&frustum);
+      sceneIterator->reset();
+      SceneNode* node;
+      while ((node = sceneIterator->getNext()) != NULL) {
+	node->octreeState = SceneNode::OctreeCulled;
+      }
+    }
   }
   else {
     sceneIterator = NULL;
@@ -527,7 +544,7 @@ void			SceneRenderer::render(
 
   // avoid OpenGL calls as long as possible -- there's a good
   // chance we're waiting on the vertical retrace.
-
+  
   // set the view frustum
   if (sceneIterator) sceneIterator->resetFrustum(&frustum);
 
@@ -584,6 +601,12 @@ void			SceneRenderer::render(
     // sort ordered list in reverse depth order
     if (!inOrder)
       orderedList.sort(frustum.getEye());
+  }
+  else {
+    sceneIterator->reset();
+    SceneNode* node;
+    while ((node = sceneIterator->getNext()) != NULL)
+      node->getRenderNodes(*this);
   }
 
   // prepare transforms
@@ -693,6 +716,7 @@ void			SceneRenderer::render(
     }
 
     frustum.executeProjection();
+    
     if (BZDB.isTrue("zbuffer")) glEnable(GL_DEPTH_TEST);
 
     if (useHiddenLineOn) {
@@ -703,6 +727,10 @@ void			SceneRenderer::render(
 #endif
     }
 
+    if (sceneIterator && useCullingTreeOn) {
+      sceneIterator->drawCuller();
+    }
+    
     doRender();
 
     if (useHiddenLineOn) {

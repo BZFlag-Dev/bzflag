@@ -42,7 +42,11 @@ class QuadWallSceneNode : public WallSceneNode {
 
     void		addRenderNodes(SceneRenderer&);
     void		addShadowNodes(SceneRenderer&);
-
+    
+    void                getExtents(float* mins, float* maxs) const;
+    bool                inAxisBox (const float* mins,
+                                   const float* maxs) const;
+    
   private:
     void		init(const GLfloat base[3],
 				const GLfloat uEdge[3],
@@ -67,6 +71,7 @@ class QuadWallSceneNode : public WallSceneNode {
 			~Geometry();
 	void		setStyle(int _style) { style = _style; }
 	void		render();
+	const GLfloat*  getVertex(int i) const;
 	const GLfloat*	getPosition() { return wall->getSphere(); }
       private:
 	void		drawV() const;

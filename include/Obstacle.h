@@ -154,6 +154,11 @@ class Obstacle {
       @see setZFlip()
   */
   bool getZFlip(void) const;
+
+  /** This boolean is used by CollisionManager.
+      Someone else can 'friend'ify it later.
+  */
+  bool collisionState;
   
  protected:
   /** This function checks if a moving horizontal rectangle will hit a 

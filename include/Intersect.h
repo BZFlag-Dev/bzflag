@@ -19,6 +19,13 @@
 
 #include "common.h"
 #include "Ray.h"
+#include "Frustum.h"
+
+enum IntersectLevel {
+  Outside,
+  Partial,
+  Contained
+};
 
 // returns normal to 2d rect (size 2dx x 2dy) by point p
 void			getNormalRect(const float* p, const float* boxPos,
@@ -51,18 +58,18 @@ float			timeRayHitsPyramids(const Ray& r,
 					    float dx, float dy, float dz,
 					    bool flipZ);
 
-// true iff rectangles intersect (in z = const plane)
+// true if rectangles intersect (in z = const plane)
 bool			testRectRect(const float* p1, float angle1,
 					float dx1, float dy1,
 					const float* p2, float angle2,
 					float dx2, float dy2);
 
-// true iff first rectangle contains second intersect (in z = const plane)
+// true if first rectangle contains second intersect (in z = const plane)
 bool			testRectInRect(const float* bigPos, float angle1,
 					float dx1, float dy1,
 					const float* smallPos, float angle2,
 					float dx2, float dy2);
-
+					
 // return t at which ray intersects 2d rect (size 2dx x 2dy) and side
 // of intersection.  0,1,2,3 for east, north, west, south;  -1 if never;
 // -2 if starts inside.
@@ -73,6 +80,18 @@ float			timeAndSideRayHitsOrigRect(
 float			timeAndSideRayHitsRect(const Ray& r,
 					const float* boxPos, float boxAngle,
 					float dx, float dy, int& side);
+
+// true if tri-plane touches the axis aligned box
+bool			testTriPlaneInAxisBox(const float** points,
+                                              const float* plane,
+                                              const float* boxMins,
+                                              const float* boxMaxs);
+
+// return level of axis box intersection with Frumstum
+// possible values are Outside, Partial, and Contained
+IntersectLevel          testAxisBoxInFrustum(const float* boxMins,
+					     const float* boxMax,
+					     const Frustum* frustum);
 
 
 #endif // BZF_INTERSECT_H

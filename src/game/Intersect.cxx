@@ -657,6 +657,80 @@ bool			testRectInRect(const float* p1, float angle1,
   return true;
 }
 
+// true if tri-plane touches the axis aligned box
+bool			testTriPlaneInAxisBox(const float** points,
+									  const float* plane,
+                                      const float* boxMins,
+                                      const float* boxMaxs)
+{
+  int p, a;
+  // FIXME - not even close to right
+  for (p = 0; p < 3; p++) {
+    for (a = 0; a < 3; a++) {
+      if ((points[p][a] < boxMins[a]) || (points[p][a] > boxMaxs[a])) {
+        break;
+	  }
+    }
+    if (a >= 3) {
+	  return true;
+	}
+  }
+  plane = plane; // FIXME - warnings
+  return false;
+}
+
+
+// return level of axis box intersection with Frumstum
+// possible values are Outside, Partial, and Contained
+IntersectLevel          testAxisBoxInFrustum(const float* boxMins,
+					     const float* boxMaxs,
+					     const Frustum* frustum)
+{
+  // FIXME - use a sphere test first? 
+
+  static int s, t;
+  static float i[3]; // inside point  (assuming partial)
+  static float o[3]; // outside point (assuming partial)
+  static float len;
+  static const float* p; // the plane
+  IntersectLevel result = Contained;
+
+  // FIXME - 0 is the near clip plane, not that useful really?
+  //         OpenGL should easily clip the few items sneak in
+
+  for (s = 1 /* NOTE: not 0 */; s < 5; s++) {
+  
+    p = frustum->getSide(s);
+
+    // setup the inside/outside corners
+    // this can be determined easily based
+    // on the normal vector for the plane
+    for (t = 0; t < 3; t++) {
+      if (p[t] > 0.0f) {
+        i[t] = boxMaxs[t];
+        o[t] = boxMins[t];
+      } else {
+        i[t] = boxMins[t];
+        o[t] = boxMaxs[t];
+      }
+    }
+    // check the inside length
+    len = (p[0] * i[0]) + (p[1] * i[1]) + (p[2] * i[2]) + p[3];
+    if (len < 0.0f) {
+      return Outside;
+    }
+
+    // check the outside length
+    len = (p[0] * o[0]) + (p[1] * o[1]) + (p[2] * o[2]) + p[3];
+    if (len < 0.0f) {
+      result = Partial; // partial at best
+    }
+  }
+
+  return result;
+}
+
+
 // Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***

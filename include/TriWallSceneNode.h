@@ -35,6 +35,10 @@ class TriWallSceneNode : public WallSceneNode {
     void		addRenderNodes(SceneRenderer&);
     void		addShadowNodes(SceneRenderer&);
 
+    void                getExtents(float* mins, float* maxs) const;
+    bool                inAxisBox (const float* mins,
+                                   const float* maxs) const;
+
   protected:
     class Geometry : public RenderNode {
       public:
@@ -48,6 +52,7 @@ class TriWallSceneNode : public WallSceneNode {
 			~Geometry();
 	void		setStyle(int _style) { style = _style; }
 	void		render();
+	const GLfloat*  getVertex(int i) const;
 	const GLfloat*	getPosition() { return wall->getSphere(); }
       private:
 	void		drawV() const;

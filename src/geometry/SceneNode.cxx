@@ -25,7 +25,7 @@ void			(__stdcall *SceneNode::color4fv)(const GLfloat*);
 #endif
 void			(*SceneNode::stipple)(GLfloat);
 
-SceneNode::SceneNode() : styleMailbox(0)
+SceneNode::SceneNode() : octreeState(OctreeCulled), styleMailbox(0)
 {
   static bool init = false;
   if (!init) {
@@ -102,6 +102,21 @@ const GLfloat*		SceneNode::getSphere() const
   return sphere;
 }
 
+void		        SceneNode::getExtents(float* mins, float* maxs) const
+{
+  const float radius = sqrtf (sphere[3]);
+  for (int i = 0; i < 3; i++) {
+    mins[i] = sphere[i] - radius;
+    maxs[i] = sphere[i] + radius;
+  }
+  return;
+}
+
+bool	                SceneNode::isTransparent() const
+{
+  return false;
+}
+
 void			SceneNode::setRadius(GLfloat radiusSquared)
 {
   sphere[3] = radiusSquared;
@@ -140,6 +155,8 @@ void			SceneNode::getRenderNodes(SceneRenderer& renderer)
     }
     addRenderNodes(renderer);
   }
+  // reset the cull state
+  octreeState = OctreeCulled;
 }
 
 void			SceneNode::forceNotifyStyleChange()
@@ -242,6 +259,19 @@ GLfloat3Array&		GLfloat3Array::operator=(const GLfloat3Array& a)
     ::memcpy(data, a.data, size * sizeof(GLfloat3));
   }
   return *this;
+}
+
+bool SceneNode::inAxisBox (const float* mins, const float* maxs) const
+{
+  const GLfloat* sphere = getSphere();
+  const float radius = sqrtf (sphere[3]);
+  for (int i = 0; i < 3; i++) {
+    if (((float)sphere[i] + radius) < mins[i]) 
+      return false;
+    if (((float)sphere[i] - radius) > maxs[i]) 
+      return false;
+  }
+  return true;
 }
 
 // Local Variables: ***
