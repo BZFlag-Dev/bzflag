@@ -6,10 +6,6 @@ recent bugs
 - VC 7.1 release builds do not work, link errors in texture manager. It seems to have
   to do with the singleton, the class defines a deconstructor, but the header dosn't have one.
 
-- if a modified client sends an invalid id back to the server, the invalid id
-  gets propagated to all clients  1) Server should
-  check that id's are valid to not propagate garbage 
-
 - Address Exception reported when unpacking a FlagType in MsgFlagUpdate on client
   in Rabbit game. The reported message buffer address was bad (ie 0xbfffd7ed)
   Could we be running off the end of the packet (ie count is fubar'ed?)
