@@ -74,22 +74,22 @@ EffectsMenu::EffectsMenu()
   option->update();
   list.push_back(option);
 
-  // Animated Treads
+  // Display Treads
   option = new HUDuiList;
   option->setFontFace(fontFace);
-  option->setLabel("Animated Treads:");
-  option->setCallback(callback, (void*)"a");
+  option->setLabel("Display Treads:");
+  option->setCallback(callback, (void*)"T");
   options = &option->getList();
   options->push_back(std::string("Off"));
   options->push_back(std::string("On"));
   option->update();
   list.push_back(option);
 
-  // Display Treads
+  // Animated Treads
   option = new HUDuiList;
   option->setFontFace(fontFace);
-  option->setLabel("Display Treads:");
-  option->setCallback(callback, (void*)"T");
+  option->setLabel("Animated Treads:");
+  option->setCallback(callback, (void*)"a");
   options = &option->getList();
   options->push_back(std::string("Off"));
   options->push_back(std::string("On"));
@@ -163,15 +163,19 @@ void EffectsMenu::resize(int width, int height)
   for (i = 1; i < count; i++) {
     list[i]->setFontSize(fontSize);
     list[i]->setPosition(x, y);
-    y -= 1.0f * h;
+    if ((i == 2) || (i == 4)) {
+      y -= 1.75f * h;
+    } else {
+      y -= 1.0f * h;
+    }
   }
 
   // load current settings
   i = 1;
   ((HUDuiList*)list[i++])->setIndex(int((BZDB.eval("userRainScale") * 10.0f) + 0.5f));
   ((HUDuiList*)list[i++])->setIndex(BZDB.isTrue("userMirror") ? 1 : 0);
-  ((HUDuiList*)list[i++])->setIndex(BZDB.isTrue("animatedTreads") ? 1 : 0);
   ((HUDuiList*)list[i++])->setIndex(BZDB.isTrue("showTreads") ? 1 : 0);
+  ((HUDuiList*)list[i++])->setIndex(BZDB.isTrue("animatedTreads") ? 1 : 0);
   ((HUDuiList*)list[i++])->setIndex(int((TrackMarks::getUserFade() * 10.0f) + 0.5f));
   TrackMarks::AirCullStyle style = TrackMarks::getAirCulling();
   if (style == TrackMarks::NoAirCull) {
@@ -198,13 +202,13 @@ void EffectsMenu::callback(HUDuiControl* w, void* data)
       BZDB.set("userMirror", list->getIndex() ? "1" : "0");
       break;
     }
+    case 'T': {
+      BZDB.set("showTreads", list->getIndex() ? "1" : "0");
+      break;
+    }
     case 'a': {
       BZDB.set("animatedTreads", list->getIndex() ? "1" : "0");
       RENDERER.setRebuildTanks();
-      break;
-    }
-    case 'T': {
-      BZDB.set("showTreads", list->getIndex() ? "1" : "0");
       break;
     }
     case 't': {
