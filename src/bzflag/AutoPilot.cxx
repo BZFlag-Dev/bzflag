@@ -484,17 +484,17 @@ bool lookForFlag(float &rotation, float &speed)
       continue;
 
     if (world->getFlag(i).type->flagTeam != NoTeam)
-      teamFlag = i;
+		teamFlag = i;
     const float* fpos = world->getFlag(i).position;
     if (fpos[2] == pos[2]) {
       float dist = TargetingUtils::getTargetDistance(pos, fpos);
       bool isTargetObscured = TargetingUtils::isLocationObscured(pos, fpos);
       if (isTargetObscured)
-	dist *= 1.25f;
+		dist *= 1.25f;
 
       if ((dist < 200.0f) && (dist < minDist)) {
-	minDist = dist;
-	closestFlag = i;
+		minDist = dist;
+		closestFlag = i;
       }
     }
   }
@@ -502,10 +502,10 @@ bool lookForFlag(float &rotation, float &speed)
   if (teamFlag != -1 && (minDist < 10.0f || closestFlag == -1))
     closestFlag = teamFlag; //FIXME: should a team flag be more significant than a closer flag?
   if (closestFlag != -1) {
-    if (minDist < 10.0f || teamFlag != -1) {
+    if (minDist < 10.0f) {
       if (myTank->getFlag() != Flags::Null) {
-	serverLink->sendDropFlag(myTank->getPosition());
-	handleFlagDropped(myTank);
+		serverLink->sendDropFlag(myTank->getPosition());
+		handleFlagDropped(myTank);
       }
     }
 
