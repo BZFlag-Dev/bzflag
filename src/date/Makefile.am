@@ -1,6 +1,8 @@
 noinst_HEADERS =	\
 	buildDate.cxx
 
+DISTCLEANFILES = buildDate.o
+
 MAINTAINERCLEANFILES = \
 	Makefile.in
 

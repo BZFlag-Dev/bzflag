@@ -11,7 +11,7 @@ bzfquery.6: $(top_srcdir)/misc/bzfquery.pl
 
 EXTRA_DIST = bzflag.6s bzfrelay.6s bzfs.6s bzfls.6s bzadmin.6s
 
-DISTCLEANFILES = bzflag.6 bzfrelay.6 bzfs.6 bzfls.6 bzadmin.6
+DISTCLEANFILES = bzflag.6 bzfrelay.6 bzfs.6 bzfls.6 bzadmin.6 bzfquery.6
 
 MAINTAINERCLEANFILES = \
 	Makefile.in

@@ -1,4 +1,4 @@
-SUBDIRS = man faq guide howto man
+SUBDIRS = man faq guide howto
 
 EXTRA_DIST =
 

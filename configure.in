@@ -432,6 +432,7 @@ AC_OUTPUT(bzflag.spec
 	doc/guide/Commands/Makefile
 	doc/guide/Flags/Makefile
 	doc/guide/Geometry/Makefile
+	doc/guide/Installation/Makefile
 	doc/guide/Tactics/Makefile
 	doc/howto/Makefile
 	doc/man/Makefile
