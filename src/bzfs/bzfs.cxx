@@ -4600,14 +4600,19 @@ int main(int argc, char **argv)
 	      } else if (action == "set") {
 		std::vector<std::string> args = TextUtils::tokenize(target.c_str(), " ", 2, true);
 		if (args.size() < 2) {
-		  DEBUG1("Poll set taking action: no action taken, not enough parameters (%s).",
+		  DEBUG1("Poll set taking action: no action taken, not enough parameters (%s).\n",
 			 (args.size() > 0 ? args[0].c_str() : "No parameters."));
 		}
-		DEBUG1("Poll set taking action: setting %s to %s", 
+		DEBUG1("Poll set taking action: setting %s to %s\n", 
 		       args[0].c_str(), args[1].c_str());
 		BZDB.set(args[0], args[1], StateDatabase::User);
 	      } else if (action == "flagreset") {
-		CMDMGR.run("flag reset unused");
+		DEBUG1("Poll flagreset taking action: resetting unused flags.\n");
+		for (int f = 0; f < numFlags; f++) {
+		  FlagInfo &flag = *FlagInfo::get(f);
+		  if (flag.player == -1)
+		    resetFlag(flag);
+		}
 	      }
 	    } /* end if poll is successful */
 
