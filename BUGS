@@ -1,6 +1,10 @@
 recent bugs
 ------------
 
+- Something is wrong with the lifetime for thief shots. They seem to linger
+  around too long when viewed from another tank. Probably something is at
+  fault with the code which the reload/lifetime management.
+
 - tanks only check their bottoms as regards hit detection against pyramids
 
 - resetting key map doesn't seem to fully erase the current bindings before
