@@ -3243,7 +3243,7 @@ static void removePlayer(int playerIndex)
     // if player had flag then flag just disappears.  it'd be nice
     // to have it fly as if dropped, but we've no idea what the
     // player's position is.
-    if (player[playerIndex].flag != NoFlag)
+    if (player[playerIndex].flag != -1)
       zapFlag(player[playerIndex].flag);
 
     // if player had radio then release it
