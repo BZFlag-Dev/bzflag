@@ -35,6 +35,7 @@ static const char copyright[] = "Copyright (c) 1993 - 2004 Tim Riker";
 #include <iomanip>
 
 #if defined(_WIN32)
+#define WINVER 0x0400
 #include <windows.h>
 #define popen _popen
 #define pclose _pclose
@@ -59,7 +60,6 @@ static const char copyright[] = "Copyright (c) 1993 - 2004 Tim Riker";
 #include <time.h>
 
 // common-interface headers
-#include "common.h"
 #include "global.h"
 #include "Protocol.h"
 #include "Address.h"
@@ -77,6 +77,7 @@ static const char copyright[] = "Copyright (c) 1993 - 2004 Tim Riker";
 #include "CommandManager.h"
 #include "BZDBCache.h"
 #include "TextUtils.h"
+#include "common.h"
 
 /* bzfs class-specific headers */
 #include "version.h"

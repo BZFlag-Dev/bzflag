@@ -212,6 +212,11 @@ SOURCE=..\..\src\bzflag\sound.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\bzflag\stars.cxx
+# PROP Exclude_From_Build 1
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\bzflag\TargetingUtils.cxx
 # End Source File
 # Begin Source File
@@ -576,10 +581,6 @@ SOURCE=..\..\include\StateDatabase.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\src\bzflag\stars.h
-# End Source File
-# Begin Source File
-
 SOURCE=..\..\include\TankSceneNode.h
 # End Source File
 # Begin Source File
@@ -629,10 +630,6 @@ SOURCE=..\..\include\WallSceneNode.h
 # Begin Source File
 
 SOURCE=..\..\include\WordFilter.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\include\win32.h
 # End Source File
 # Begin Source File
 

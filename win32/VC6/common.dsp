@@ -214,10 +214,6 @@ SOURCE=..\..\include\common.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\include\win32.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\config.h
 # End Source File
 # Begin Source File

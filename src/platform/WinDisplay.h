@@ -16,7 +16,7 @@
 
 #ifndef BZF_WINDISPLAY_H
 #define	BZF_WINDISPLAY_H
-
+#define WINVER 0x0400
 #include <windows.h>
 #include "common.h"
 #include "BzfDisplay.h"

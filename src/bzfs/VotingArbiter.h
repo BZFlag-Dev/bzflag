@@ -13,6 +13,10 @@
 #ifndef __VOTINGARBITER_H__
 #define __VOTINGARBITER_H__
 
+#ifdef _WIN32
+#include "win32.h"
+#endif //_WIN32
+
 #include <string>
 #include <iostream>
 #include <deque>

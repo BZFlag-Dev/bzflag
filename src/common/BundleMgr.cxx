@@ -18,6 +18,7 @@
 #include <sys/types.h>
 #include <dirent.h>
 #else
+#define WINVER 0x0400
 #include <windows.h>
 #endif
 

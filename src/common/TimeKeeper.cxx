@@ -17,6 +17,7 @@
 #include <sys/types.h>
 static struct timeval	lastTime = { 0, 0 };
 #else /* !defined(_WIN32) */
+#define WINVER 0x0400
 #include <windows.h>
 #include <mmsystem.h>
 #include "common.h"

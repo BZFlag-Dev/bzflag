@@ -13,6 +13,7 @@
 #include <string.h>
 // glu used to resample textures for mipmaps;  should use something better.
 #ifdef _WIN32
+#define WINVER 0x0400
 #include <windows.h>
 #endif
 

@@ -15,6 +15,7 @@
 
 #ifndef _VC5_6_CONFIG
 #define _VC5_6_CONFIG
+
 /* Time Bomb expiration */
 /* #undef TIME_BOMB */
 
@@ -29,9 +30,6 @@
 
 /* On windows, strcasecmp is really stricmp */
 #define HAVE_STRICMP 1
-
-/* windows version constant */
-#define _WIN32_WINNT 0x0400
 
 // define our OS
 #ifndef BZ_BUILD_OS
@@ -52,20 +50,25 @@
 #endif
 
 #ifndef DEBUG
-#ifdef _DEBUG
-	#define DEBUG 1
+  #ifdef _DEBUG
+	  #define DEBUG 1
+  #else
+	  #define DEBUG 0
+  #endif
+#endif
+
+#define WINVER 0x0400
+#define _WIN32_WINNT 0x0400
+
+#if(1)
+  #include "ATLbase.h"
+  #if defined(_MSC_VER) && (_MSC_VER == 1200)
+    inline void W32_DEBUG_TRACE (const char* buffer ) {ATLTRACE(buffer);}
+  #else ifdef(_MSC_VER) && (_MSC_VER == 1100)
+    inline void W32_DEBUG_TRACE (const char* buffer ) {ATLTRACE(buffer);}
+  #endif
 #else
-	#define DEBUG 0
-#endif
-#endif
-
-#include "ATLbase.h"
-
-#if defined(_MSC_VER) && (_MSC_VER == 1200)
-  inline void W32_DEBUG_TRACE (const char* buffer ) {ATLTRACE2(atlTraceUser, 0, buffer);}
-#elif defined(_MSC_VER) && (_MSC_VER == 1100)
-  inline void W32_DEBUG_TRACE (const char* buffer ) {ATLTRACE(buffer);}
+  inline void W32_DEBUG_TRACE (const char* buffer){return;}
 #endif
 
-
-#endif //_VC5_6_CONFIG
+#endif //_VC5_6_CONFIG=======
