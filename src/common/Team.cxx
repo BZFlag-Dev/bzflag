@@ -21,12 +21,26 @@ float			Team::tankColor[NumTeams][3] = {
 				{ 1.0f, 0.0f, 1.0f }
 			};
 float			Team::radarColor[NumTeams][3] = {
-				{ 1.0f, 1.0f, 0.0f },
-				{ 1.0f, 0.0f, 0.0f },
-				{ 0.0f, 1.0f, 0.0f },
-				{ 0.25f, 0.25, 1.0f },	// blue is hard to see
-				{ 1.0f, 0.0f, 1.0f }
+//				{ 1.0f, 1.0f, 0.0f },
+//				{ 1.0f, 0.0f, 0.0f },
+//				{ 0.0f, 1.0f, 0.0f },
+//				{ 0.25f, 0.25, 1.0f },	// blue is hard to see
+//				{ 1.0f, 0.0f, 1.0f }
+				{ 1.0f, 1.0f, 0.0f }, // rogue
+				{ 1.0f, 0.25f, 0.25f }, //red
+				{ 0.5f, 1.0f, 0.5f }, //green
+				{ 0.75f, 0.75, 1.0f },	// blue is hard to see
+				{ 1.0f, 0.5f, 1.0f } //purple
 			};
+// taken from old console team messge colors
+//static const GLfloat    teamMsgColor[][3] = {
+//                                { 1.0, 1.0, 0.5 },    // broadcast
+//                                { 1.0, 0.5, 0.5 },    // red
+//                                { 0.5, 1.0, 0.5 },    // green
+//                                { 0.5, 0.5, 1.0 },    // blue
+//                                { 1.0, 0.5, 1.0 }     // purple
+//                        };
+
 
 void*			Team::pack(void* buf) const
 {
