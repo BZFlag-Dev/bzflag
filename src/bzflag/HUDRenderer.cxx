@@ -1301,7 +1301,7 @@ void			HUDRenderer::renderRoaming(SceneRenderer& renderer)
 
   // get view metrics
   const int width = renderer.getWindow().getWidth();
-  const int height = renderer.getWindow().getViewHeight();
+  const int height = renderer.getWindow().getHeight();
   const int viewHeight = renderer.getWindow().getViewHeight();
   const int ox = renderer.getWindow().getOriginX();
   const int oy = renderer.getWindow().getOriginY();
@@ -1328,7 +1328,7 @@ void			HUDRenderer::renderRoaming(SceneRenderer& renderer)
   if (showCompose)
     renderCompose(renderer);
 
-  // tell player what to do to start/resume playing
+  // display game over
   LocalPlayer* myTank = LocalPlayer::getMyTank();
   if (myTank && globalClock.isOn()) {
     float y = 0.5f * (float)height + bigFont.getSpacing();
