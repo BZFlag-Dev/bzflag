@@ -1649,7 +1649,9 @@ static void		handleServerMessage(boolean human, uint16_t code,
 	if (!strncmp((char *)msg,"CLIENTQUERY",strlen("CLIENTQUERY"))) {
 		char messageBuffer[MessageLen];
 		memset(messageBuffer, 0, MessageLen);
-		sprintf(messageBuffer,"Version 1.7fx3");
+		sprintf(messageBuffer,"Version %d.%d%c%d",
+		(VERSION / 10000000) % 100, (VERSION / 100000) % 100,
+		(char)('a' - 1 + (VERSION / 1000) % 100), VERSION % 1000);
 		if (startupInfo.useUDPconnection) strcat(messageBuffer,"+UDP");
 
         nboPackString(messageMessage + PlayerIdPLen + 2,

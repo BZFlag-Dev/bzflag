@@ -528,6 +528,13 @@ static void removeClient(int index)
 // start the server
 static boolean serverStart()
 {
+#if defined(_WIN32)
+  const BOOL optOn = TRUE;
+  BOOL opt = optOn;
+#else
+  const int optOn = 1;
+  int opt = optOn;
+#endif
   maxFileDescriptor = 0;
 
   // init addr:port structure
@@ -552,6 +559,15 @@ static boolean serverStart()
     nerror("couldn't make connect socket");
     return False;
   }
+#ifdef SO_REUSEADDR
+  /* set reuse address */
+  opt = optOn;
+  if (setsockopt(wksSocket, SOL_SOCKET, SO_REUSEADDR, (SSOType)&opt, sizeof(opt)) < 0) {
+    nerror("serverStart: setsockopt SO_REUSEADDR");
+    close(wksSocket);
+    return False;
+  }
+#endif
   if (bind(wksSocket, (const struct sockaddr*)&addr, sizeof(addr)) == -1) {
     nerror("couldn't bind connect socket");
     close(wksSocket);
