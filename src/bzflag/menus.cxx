@@ -1792,8 +1792,8 @@ class HelpMenu : public HUDDialog {
     virtual float	getLeftSide(int width, int height);
 
   private:
-    HelpMenuDefaultKey	defaultKey;
-    static HelpMenu**	helpMenus;
+    HelpMenuDefaultKey			defaultKey;
+    static HelpMenu**			helpMenus;
 };
 
 bool			HelpMenuDefaultKey::keyPress(const BzfKeyEvent& key)
@@ -1896,8 +1896,21 @@ class Help1Menu : public HelpMenu {
 
     void		resize(int width, int height);
 
+    void		onScan(const std::string& name, bool, const std::string&);
+    static void		onScanCB(const std::string& name, bool press,
+				 const std::string& cmd, void* userData);
+
   protected:
     float		getLeftSide(int width, int height);
+
+  private:
+    void		initKeymap(const std::string& name, int index);
+    struct keymap {
+      int index;	// ui label index
+      std::string key1;
+      std::string key2;
+    };
+    std::map<std::string, keymap>	mappable;
 };
 
 Help1Menu::Help1Menu() : HelpMenu("Controls")
@@ -1908,18 +1921,18 @@ Help1Menu::Help1Menu() : HelpMenu("Controls")
   list.push_back(createLabel("fires shot"));
   list.push_back(createLabel("drops flag (if not bad)"));
   list.push_back(createLabel("identifies player (locks on GM)"));
-  list.push_back(createLabel("jump (if allowed)"));
   list.push_back(createLabel("short radar range"));
   list.push_back(createLabel("medium radar range"));
   list.push_back(createLabel("long radar range"));
-  list.push_back(createLabel("toggle binoculars"));
-  list.push_back(createLabel("toggle heads-up flag help"));
-  list.push_back(createLabel("send message to teammates"));
   list.push_back(createLabel("send message to everybody"));
+  list.push_back(createLabel("send message to teammates"));
   list.push_back(createLabel("send message to nemesis"));
   list.push_back(createLabel("send message to recipient"));
+  list.push_back(createLabel("jump (if allowed)"));
+  list.push_back(createLabel("toggle binoculars"));
   list.push_back(createLabel("toggle score sheet"));
   list.push_back(createLabel("toggle tank labels"));
+  list.push_back(createLabel("toggle heads-up flag help"));
   list.push_back(createLabel("set time of day backward"));
   list.push_back(createLabel("set time of day forward"));
   list.push_back(createLabel("pause/resume"));
@@ -1935,6 +1948,62 @@ Help1Menu::Help1Menu() : HelpMenu("Controls")
   list.push_back(createLabel("Hunt"));
   list.push_back(createLabel("Auto Pilot"));
   list.push_back(createLabel("show/dismiss menu", "Esc:"));
+
+  initKeymap("fire", 2);
+  initKeymap("drop", 3);
+  initKeymap("identify", 4);
+  initKeymap("set displayRadarRange 1.0", 5);
+  initKeymap("set displayRadarRange 0.5", 6);
+  initKeymap("set displayRadarRange 0.25", 7);
+  initKeymap("send all", 8);
+  initKeymap("send team", 9);
+  initKeymap("send nemesis", 10);
+  initKeymap("send recipient", 11);
+  initKeymap("jump", 12);
+  initKeymap("toggle displayBinoculars", 13);
+  initKeymap("toggle displayScore", 14);
+  initKeymap("toggle displayLabels", 15);
+  initKeymap("toggle displayFlagHelp", 16);
+  initKeymap("time backward", 17);
+  initKeymap("time forward", 18);
+  initKeymap("pause", 19);
+  initKeymap("destruct", 20);
+  initKeymap("quit", 21);
+  initKeymap("scrollpanel up", 22);
+  initKeymap("scrollpanel down", 23);
+  initKeymap("toggle slowKeyboard", 24);
+  initKeymap("toggle displayRadarFlags", 25);
+  initKeymap("toggle displayMainFlags", 26);
+  initKeymap("silence", 27);
+  initKeymap("servercommand", 28);
+  initKeymap("hunt", 29);
+  initKeymap("autopilot", 30);
+}
+void			Help1Menu::onScan(const std::string& name, bool press,
+					  const std::string& cmd)
+{
+  if (!press)
+    return;
+  std::map<std::string, keymap>::iterator it = mappable.find(cmd);
+  if (it == mappable.end())
+    return;
+  if (it->second.key1.empty())
+    it->second.key1 = name;
+  else if (it->second.key2.empty())
+    it->second.key2 = name;
+}
+
+void		Help1Menu::onScanCB(const std::string& name, bool press,
+			 const std::string& cmd, void* userData)
+{
+  reinterpret_cast<Help1Menu*>(userData)->onScan(name, press, cmd);
+}
+
+void			Help1Menu::initKeymap(const std::string& name, int index)
+{
+  mappable[name].key1 = "";
+  mappable[name].key2 = "";
+  mappable[name].index = index;
 }
 
 float			Help1Menu::getLeftSide(int width, int height)
