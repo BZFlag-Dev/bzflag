@@ -1233,12 +1233,32 @@ void handleShowgroupCmd(GameKeeper::Player *playerData, const char *message)
 
   // something is wrong
   if (settie != "") {
+    int playerIndex = getTarget(settie.c_str());
+    // once for global groups
+    if (playerIndex < curMaxPlayers) {
+      PlayerAccessInfo &info = GameKeeper::Player::getPlayerByIndex(playerIndex)->accessInfo;
+      std::string line = "Global Groups for ";
+      line += settie;
+      line += ": ";
+      std::vector<std::string>::iterator itr = info.groups.begin();
+      while (itr != info.groups.end()) {
+	line += *itr;
+	line += " ";
+	itr++;
+      }
+      while (line.size() > (unsigned int)MessageLen) {
+	sendMessage(ServerPlayer, t, line.substr(0, MessageLen).c_str());
+	line.erase(line.begin(), line.begin() + (MessageLen - 1));
+      }
+      sendMessage(ServerPlayer, t, line.c_str());
+    }
+    // once for local groups
     if (userExists(settie)) {
       PlayerAccessInfo &info = PlayerAccessInfo::getUserInfo(settie);
 
-      std::string line = "Groups for ";
+      std::string line = "Local groups for ";
       line += settie;
-      line += ", ";
+      line += ": ";
       std::vector<std::string>::iterator itr = info.groups.begin();
       while (itr != info.groups.end()) {
 	line += *itr;
