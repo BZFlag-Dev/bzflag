@@ -333,6 +333,10 @@ SOURCE=..\src\bzflag\texture.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\include\TextUtils.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\src\bzflag\World.h
 # End Source File
 # Begin Source File
