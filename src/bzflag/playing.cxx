@@ -203,6 +203,8 @@ static ServerLink*	robotServer[MAX_ROBOTS];
 extern struct tm	userTime;
 static double		userTimeEpochOffset;
 
+static bool             entered = false;
+
 StartupInfo::StartupInfo() : hasConfiguration(false),
 			     autoConnect(false),
 			     serverPort(ServerPort),
@@ -1359,6 +1361,8 @@ static bool removePlayer (PlayerId id)
   return true;
 }
 
+static void enteringServer(void *buf);
+
 static void		handleServerMessage(bool human, uint16_t code,
 					    uint16_t, void* msg)
 {
@@ -1382,6 +1386,22 @@ static void		handleServerMessage(bool human, uint16_t code,
       printError("Server forced a disconnect");
       serverError = true;
       break;
+
+    case MsgAccept:
+      break;
+
+    case MsgReject: {
+      void *buf;
+      char buffer[MessageLen];
+      uint16_t rejcode;
+      std::string reason;
+      buf = nboUnpackUShort (msg, rejcode); // filler for now
+      buf = nboUnpackString (buf, buffer, MessageLen);
+      buffer[MessageLen - 1] = '\0';
+      reason = buffer;
+      printError(reason);
+      break;
+    }
 
     case MsgTimeUpdate: {
       uint16_t timeLeft;
@@ -1444,48 +1464,16 @@ static void		handleServerMessage(bool human, uint16_t code,
       PlayerId id;
       msg = nboUnpackUByte(msg, id);
 #if defined(FIXME) && defined(ROBOT)
-      for (int i = 0; i < numRobots; i++) {
-	void *tmpbuf = msg;
-	uint16_t team, type, wins, losses, tks;
-	char callsign[CallSignLen];
-	char email[EmailLen];
-	tmpbuf = nboUnpackUShort(tmpbuf, type);
-	tmpbuf = nboUnpackUShort(tmpbuf, team);
-	tmpbuf = nboUnpackUShort(tmpbuf, wins);
-	tmpbuf = nboUnpackUShort(tmpbuf, losses);
-	tmpbuf = nboUnpackUShort(tmpbuf, tks);
-	tmpbuf = nboUnpackString(tmpbuf, callsign, CallSignLen);
-	tmpbuf = nboUnpackString(tmpbuf, email, EmailLen);
-	std::cerr << "id " << id.port << ':' <<
-	  id.number << ':' <<
-	  callsign << ' ' <<
-	  robots[i]->getId().port << ':' <<
-	  robots[i]->getId().number << ':' <<
-	  robots[i]->getCallsign() << std::endl;
-	if (strncmp(robots[i]->getCallSign(), callsign, CallSignLen)) {
-	  // check for real robot id
-	  char buffer[100];
-	  snprintf(buffer, 100, "id test %p %p %p %8.8x %8.8x\n",
-		   robots[i], tmpbuf, msg, *(int *)tmpbuf, *((int *)tmpbuf + 1));
-	  std::cerr << buffer;
-	  if (tmpbuf < (char *)msg + len) {
-	    PlayerId id;
-	    tmpbuf = nboUnpackUByte(tmpbuf, id);
-	    robots[i]->id.serverHost = id.serverHost;
-	    robots[i]->id.port = id.port;
-	    robots[i]->id.number = id.number;
-	    robots[i]->server->send(MsgIdAck, 0, NULL);
-	  }
-	}
-      }
+      saveRobotInfo(id, msg);
 #endif
       if (id == myTank->getId()) {
-	std::cerr << "WARNING: found my own id in MsgAddPlayer packet\n";
-	break;		// that's odd -- it's me!
+	// it's me!  should be the end of updates
+	enteringServer(msg);
+      } else {
+	addPlayer(id, msg, entered);
+	updateNumPlayers();
+	checkScores = true;
       }
-      addPlayer(id, msg, true);
-      updateNumPlayers();
-      checkScores = true;
       break;
     }
 
@@ -3369,6 +3357,113 @@ static void		addRobots()
 
 #endif
 
+static void enteringServer(void *buf)
+{
+  // the server sends back the team the player was joined to
+  void *tmpbuf = buf;
+  uint16_t team, type;
+  tmpbuf = nboUnpackUShort(tmpbuf, type);
+  tmpbuf = nboUnpackUShort(tmpbuf, team);
+
+  // if server assigns us a different team, display a message
+  std::string teamMsg;
+  if (myTank->getTeam() != AutomaticTeam) {
+    teamMsg = TextUtils::format("%s team was unavailable, you were joined ",
+				Team::getName(myTank->getTeam()));
+    if ((TeamColor)team == ObserverTeam) {
+      teamMsg += "as an Observer";
+    } else {
+      teamMsg += TextUtils::format("to the %s",
+				   Team::getName((TeamColor)team));
+    }
+  } else {
+    if ((TeamColor)team == ObserverTeam) {
+      teamMsg = "You were joined as an observer";
+    } else {
+      if (team != RogueTeam)
+	teamMsg = TextUtils::format("You joined the %s",
+				    Team::getName((TeamColor)team));
+      else
+	teamMsg = TextUtils::format("You joined as a %s",
+				    Team::getName((TeamColor)team));
+    }
+  }
+  if (myTank->getTeam() != (TeamColor)team) {
+    myTank->setTeam((TeamColor)team);
+    hud->setAlert(1, teamMsg.c_str(), 8.0f,
+		  (TeamColor)team==ObserverTeam?true:false);
+    addMessage(NULL, teamMsg.c_str(), 3, true);
+  }
+  controlPanel->setControlColor(Team::getRadarColor(myTank->getTeam()));
+  radar->setControlColor(Team::getRadarColor(myTank->getTeam()));
+  roaming = (myTank->getTeam() == ObserverTeam);
+
+  // scan through flags and, for flags on
+  // tanks, tell the tank about its flag.
+  const int maxFlags = world->getMaxFlags();
+  for (int i = 0; i < maxFlags; i++) {
+    const Flag& flag = world->getFlag(i);
+    if (flag.status == FlagOnTank) {
+      for (int j = 0; j < curMaxPlayers; j++) {
+	if (player[j] && player[j]->getId() == flag.owner) {
+	  player[j]->setFlag(flag.type);
+	  break;
+	}
+      }
+    }
+  }
+
+  // use parallel UDP if desired and using server relay
+  if (startupInfo.useUDPconnection)
+    serverLink->sendUDPlinkRequest();
+  else
+    printError("No UDP connection, see Options to enable.");
+
+  // send my version string
+  serverLink->sendVersionString();
+
+  // Sending our credential to the server
+  ClientAuthentication::sendCredential(*serverLink);
+
+  // add robot tanks
+#if defined(ROBOT)
+  addRobots();
+#endif
+
+  // resize background and adjust time (this is needed even if we
+  // don't sync with the server)
+  sceneRenderer->getBackground()->resize();
+  if (!BZDB.isTrue(StateDatabase::BZDB_SYNCTIME)) {
+    updateDaylight(epochOffset, *sceneRenderer);
+  } else {
+    epochOffset = double(world->getEpochOffset());
+    updateDaylight(epochOffset, *sceneRenderer);
+    lastEpochOffset = epochOffset;
+  }
+
+  // restore the sound
+  if (savedVolume != -1) {
+    setSoundVolume(savedVolume);
+    savedVolume = -1;
+  }
+
+  // initialize some other stuff
+  updateNumPlayers();
+  updateFlag(Flags::Null);
+  updateHighScores();
+  hud->setHeading(myTank->getAngle());
+  hud->setAltitude(myTank->getPosition()[2]);
+  hud->setTimeLeft(-1);
+  fireButton = false;
+  firstLife = true;
+
+  BZDB.setBool("displayMainFlags", true);
+  BZDB.setBool("displayRadarFlags", true);
+  BZDB.setBool("displayConsoleAndRadar", true);
+
+  entered = true;
+}
+
 static void cleanWorldCache()
 {
   char buffer[10];
@@ -3680,143 +3775,50 @@ static World*		makeWorld(ServerLink* serverLink)
   return worldBuilder.getWorld();
 }
 
-static bool		enterServer(ServerLink* serverLink, World* world,
-				    LocalPlayer* myTank)
+#if defined(FIXME) && defined(ROBOT)
+static void saveRobotInfo(Playerid id, void *msg)
 {
-
-  time_t timeout=time(0) + 15;  // give us 15 sec
-
-  if (world->allowRabbit() && myTank->getTeam() != ObserverTeam)
-    myTank->setTeam(RogueTeam);
-
-  // tell server we want to join
-  serverLink->sendEnter(TankPlayer, myTank->getTeam(),
-			myTank->getCallSign(), myTank->getEmailAddress());
-
-  // see if the server is feeling agreeable
-  uint16_t code, rejcode;
-  std::string reason;
-  if (!serverLink->readEnter(reason, code, rejcode)) {
-    printError(reason);
-    return false;
-  }
-
-  // get updates
-  uint16_t len;
-  char msg[MaxPacketLen];
-
-  if (serverLink->read(code, len, msg, -1) < 0) {
-    goto failed;
-  }
-  while (code == MsgAddPlayer || code == MsgTeamUpdate ||
-	 code == MsgFlagUpdate || code == MsgUDPLinkRequest ||
-	 code == MsgSetVar) {
-    void* buf = msg;
-    switch (code) {
-      case MsgAddPlayer: {
+  for (int i = 0; i < numRobots; i++) {
+    void *tmpbuf = msg;
+    uint16_t team, type, wins, losses, tks;
+    char callsign[CallSignLen];
+    char email[EmailLen];
+    tmpbuf = nboUnpackUShort(tmpbuf, type);
+    tmpbuf = nboUnpackUShort(tmpbuf, team);
+    tmpbuf = nboUnpackUShort(tmpbuf, wins);
+    tmpbuf = nboUnpackUShort(tmpbuf, losses);
+    tmpbuf = nboUnpackUShort(tmpbuf, tks);
+    tmpbuf = nboUnpackString(tmpbuf, callsign, CallSignLen);
+    tmpbuf = nboUnpackString(tmpbuf, email, EmailLen);
+    std::cerr << "id " << id.port << ':' <<
+      id.number << ':' <<
+      callsign << ' ' <<
+      robots[i]->getId().port << ':' <<
+      robots[i]->getId().number << ':' <<
+      robots[i]->getCallsign() << std::endl;
+    if (strncmp(robots[i]->getCallSign(), callsign, CallSignLen)) {
+      // check for real robot id
+      char buffer[100];
+      snprintf(buffer, 100, "id test %p %p %p %8.8x %8.8x\n",
+	       robots[i], tmpbuf, msg, *(int *)tmpbuf, *((int *)tmpbuf + 1));
+      std::cerr << buffer;
+      if (tmpbuf < (char *)msg + len) {
 	PlayerId id;
-	buf = nboUnpackUByte(buf, id);
-	if (id == myTank->getId()) {
-	  // it's me!  end of updates
-
-	  // the server sends back the team the player was joined to
-	  void *tmpbuf = buf;
-	  uint16_t team, type;
-	  tmpbuf = nboUnpackUShort(tmpbuf, type);
-	  tmpbuf = nboUnpackUShort(tmpbuf, team);
-
-	  // if server assigns us a different team, display a message
-	  std::string teamMsg;
-	  if (myTank->getTeam() != AutomaticTeam) {
-	    teamMsg = TextUtils::format("%s team was unavailable, you were joined ",
-					  Team::getName(myTank->getTeam()));
-	    if ((TeamColor)team == ObserverTeam) {
-	      teamMsg += "as an Observer";
-	    } else {
-	      teamMsg += TextUtils::format("to the %s",
-					     Team::getName((TeamColor)team));
-	    }
-	  } else {
-	    if ((TeamColor)team == ObserverTeam) {
-	      teamMsg = "You were joined as an observer";
-	    } else {
-	      if (team != RogueTeam)
-		teamMsg = TextUtils::format("You joined the %s",Team::getName((TeamColor)team));
-	      else
-		teamMsg = TextUtils::format("You joined as a %s",Team::getName((TeamColor)team));
-	    }
-	  }
-	  if (myTank->getTeam() != (TeamColor)team) {
-	    myTank->setTeam((TeamColor)team);
-	    hud->setAlert(1, teamMsg.c_str(), 8.0f, (TeamColor)team==ObserverTeam?true:false);
-	    addMessage(NULL, teamMsg.c_str(), 3, true);
-	  }
-	  controlPanel->setControlColor(Team::getRadarColor(myTank->getTeam()));
-	  radar->setControlColor(Team::getRadarColor(myTank->getTeam()));
-	  roaming = (myTank->getTeam() == ObserverTeam);
-
-	  // scan through flags and, for flags on
-	  // tanks, tell the tank about its flag.
-	  const int maxFlags = world->getMaxFlags();
-	  for (int i = 0; i < maxFlags; i++) {
-	    const Flag& flag = world->getFlag(i);
-	    if (flag.status == FlagOnTank) {
-	      for (int j = 0; j < curMaxPlayers; j++) {
-		if (player[j] && player[j]->getId() == flag.owner) {
-		  player[j]->setFlag(flag.type);
-		  break;
-		}
-	      }
-	    }
-	  }
-	  return true;
-	}
-	addPlayer(id, buf, false);
-	break;
-      }
-      case MsgTeamUpdate: {
-	uint8_t  numTeams;
-	uint16_t team;
-	buf = nboUnpackUByte(buf,numTeams);
-	for (int i = 0; i < numTeams; i++) {
-	  buf = nboUnpackUShort(buf, team);
-	  buf = teams[int(team)].unpack(buf);
-	}
-	break;
-      }
-      case MsgFlagUpdate: {
-	uint16_t count;
-	uint16_t flag;
-	buf = nboUnpackUShort(buf, count);
-	for (int i = 0; i < count; i++) {
-	  buf = nboUnpackUShort(buf, flag);
-	  buf = world->getFlag(int(flag)).unpack(buf);
-	  world->initFlag(int(flag));
-	}
-	break;
-      }
-      case MsgUDPLinkRequest:
-	printError("*** Received UDP Link Request");
-	// internally <- TimRiker says huh? what's "internally" mean?
-	break;
-      case MsgSetVar: {
-	buf = handleMsgSetVars(buf);
-	break;
+	tmpbuf = nboUnpackUByte(tmpbuf, id);
+	robots[i]->id.serverHost = id.serverHost;
+	robots[i]->id.port = id.port;
+	robots[i]->id.number = id.number;
+	robots[i]->server->send(MsgIdAck, 0, NULL);
       }
     }
-
-    if (time(0)>timeout) goto failed;
-
-    if (serverLink->read(code, len, msg, -1) < 0) goto failed;
   }
-
- failed:
-  printError("Communication error joining game");
-  return false;
 }
+#endif
 
 void		leaveGame()
 {
+  entered = false;
+
   // delete scene database
   sceneRenderer->setSceneDatabase(NULL);
 
@@ -4010,61 +4012,12 @@ static bool		joinGame(const StartupInfo* info,
   myTank->setTeam(info->team);
   LocalPlayer::setMyTank(myTank);
 
-  // enter server
-  if (!enterServer(serverLink, world, myTank)) {
-    delete myTank;
-    myTank = NULL;
-    leaveGame();
-    return false;
-  }
+  if (world->allowRabbit() && myTank->getTeam() != ObserverTeam)
+    myTank->setTeam(RogueTeam);
 
-  // use parallel UDP if desired and using server relay
-  if (startupInfo.useUDPconnection)
-    serverLink->sendUDPlinkRequest();
-  else
-    printError("No UDP connection, see Options to enable.");
-
-  // send my version string
-  serverLink->sendVersionString();
-
-  // Sending our credential to the server
-  ClientAuthentication::sendCredential(*serverLink);
-
-  // add robot tanks
-#if defined(ROBOT)
-  addRobots();
-#endif
-
-  // resize background and adjust time (this is needed even if we
-  // don't sync with the server)
-  sceneRenderer->getBackground()->resize();
-  if (!BZDB.isTrue(StateDatabase::BZDB_SYNCTIME)) {
-    updateDaylight(epochOffset, *sceneRenderer);
-  } else {
-    epochOffset = double(world->getEpochOffset());
-    updateDaylight(epochOffset, *sceneRenderer);
-    lastEpochOffset = epochOffset;
-  }
-
-  // restore the sound
-  if (savedVolume != -1) {
-    setSoundVolume(savedVolume);
-    savedVolume = -1;
-  }
-
-  // initialize some other stuff
-  updateNumPlayers();
-  updateFlag(Flags::Null);
-  updateHighScores();
-  hud->setHeading(myTank->getAngle());
-  hud->setAltitude(myTank->getPosition()[2]);
-  hud->setTimeLeft(-1);
-  fireButton = false;
-  firstLife = true;
-
-  BZDB.setBool("displayMainFlags", true);
-  BZDB.setBool("displayRadarFlags", true);
-  BZDB.setBool("displayConsoleAndRadar", true);
+  // tell server we want to join
+  serverLink->sendEnter(TankPlayer, myTank->getTeam(),
+			myTank->getCallSign(), myTank->getEmailAddress());
 
   return true;
 }
@@ -5004,7 +4957,8 @@ static void		playingLoop()
     }
 
 #ifdef ROBOT
-    updateRobots(dt);
+    if (entered)
+      updateRobots(dt);
 #endif
 
     // prep the HUD
@@ -5038,7 +4992,8 @@ static void		playingLoop()
     checkEnvironment();
 
 #ifdef ROBOT
-    checkEnvironmentForRobots();
+    if (entered)
+      checkEnvironmentForRobots();
 #endif
 
     // send my data
@@ -5047,7 +5002,8 @@ static void		playingLoop()
     }
 
 #ifdef ROBOT
-    sendRobotUpdates();
+    if (entered)
+      sendRobotUpdates();
 #endif
   }
 
