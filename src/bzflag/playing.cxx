@@ -5020,7 +5020,8 @@ static bool		enterServer(ServerLink* serverLink, World* world,
 	goto failed;
   }
   while (code == MsgAddPlayer || code == MsgTeamUpdate ||
-	 code == MsgFlagUpdate || code == MsgUDPLinkRequest) {
+	 code == MsgFlagUpdate || code == MsgUDPLinkRequest ||
+	 code == MsgSetVar) {
     void* buf = msg;
     switch (code) {
       case MsgAddPlayer: {
@@ -5066,6 +5067,40 @@ static bool		enterServer(ServerLink* serverLink, World* world,
 	printError("*** Received UDP Link Granted");
 	// internally
 	break;
+      case MsgSetVar: {
+	uint16_t numVars;
+	uint8_t oldNLen = 30, oldVLen = 30;
+	uint8_t nameLen, valueLen;
+
+	char* name = new char[oldNLen+1];
+	char* value = new char[oldVLen+1];
+
+	buf = nboUnpackUShort(buf,numVars);
+	for (int i = 0; i < numVars; i++) {
+	  buf = nboUnpackUByte(buf, nameLen);
+	  if (nameLen > oldNLen) {
+	    delete[] name;
+	    name = new char[nameLen+1];
+	    oldNLen = nameLen;
+	  }
+	  buf = nboUnpackString(buf, name, nameLen);
+	  name[nameLen] = '\0';
+
+	  buf = nboUnpackUByte(buf, valueLen);
+	  if (valueLen > oldVLen) {
+	    delete[] value;
+	    value = new char[valueLen+1];
+	    oldVLen = valueLen;
+	  }
+	  buf = nboUnpackString(buf, value, valueLen);
+	  value[valueLen] = '\0';
+	  BZDB->set(name, value);
+	}
+	delete[] name;
+	delete[] value;
+	break;
+	}
+
     }
 
     if (time(0)>timeout) goto failed;

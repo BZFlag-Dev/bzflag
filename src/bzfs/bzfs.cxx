@@ -97,6 +97,7 @@ const int udpBufSize = 128000;
 float	WorldSize = DEFAULT_WORLD;
 bool    gotWorld = false;
 
+static void directMessage(int playerIndex, uint16_t code, int len, const void *msg);
 void sendMessage(int playerIndex, PlayerId targetPlayer, const char *message, bool fullBuffer=false);
 
 // every ListServerReAddTime server add ourself to the list
@@ -361,6 +362,60 @@ class ListServerLink {
     int socket;
     const char *nextMessage;
 };
+
+class PackVars
+{
+public:
+  PackVars( void *buffer, int playerIndex )
+  {
+     bufStart = (char *)buffer;
+     buf = nboPackUShort(bufStart, 0);//placeholder
+     playerId = playerIndex;
+     len = sizeof(uint16_t);
+     count = 0;
+  }
+
+  ~PackVars()
+  {
+    if (len > sizeof(uint16_t)) {
+      nboPackUShort(bufStart,count);
+      directMessage(playerId, MsgSetVar, len, bufStart);
+    }
+  }
+
+  static void packIt(const std::string &key, void *pv)
+  {
+     ((PackVars *) pv)->sendPackVars(key);
+  }
+
+  void sendPackVars(const std::string &key)
+  {
+    std::string value = BZDB->get(key);
+    int pairLen = key.length() + 1 + value.length() + 1;
+    if ((pairLen + len) > (MaxPacketLen - 2*sizeof(short))) {
+      nboPackUShort(bufStart,count);
+      count = 0;
+      directMessage(playerId, MsgSetVar, len, bufStart);
+      buf = nboPackUShort(bufStart,0); //placeholder
+      len = sizeof(uint16_t);
+    }
+
+    buf = nboPackUByte(buf, key.length());
+    buf = nboPackString(buf, key.c_str(), key.length());
+    buf = nboPackUByte(buf, value.length());
+    buf = nboPackString(buf, value.c_str(), value.length());
+    len += pairLen;
+    count++;
+  }
+
+private:
+  void *buf, *bufStart;
+  int playerId;
+  int len;
+  int count;
+
+};
+
 
 // Command Line Options
 static CmdLineOptions *clOptions;
@@ -2905,6 +2960,10 @@ static void addPlayer(int playerIndex)
   directMessage(playerIndex, MsgAccept, (char*)buf-(char*)bufStart, bufStart);
 
   //send SetVars
+  { // scoping is mandatory
+     PackVars pv(bufStart, playerIndex);
+     BZDB->iterate( PackVars::packIt, &pv);
+  }
 
 
   // abort if we hung up on the client
