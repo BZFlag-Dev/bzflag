@@ -92,6 +92,7 @@ static const char copyright[] = "Copyright (c) 1993 - 2003 Tim Riker";
 #include "BZDBCache.h"
 #include "WordFilter.h"
 #include "TextUtils.h"
+#include "TextureManager.h"
 
 
 // versioning that makes us recompile every time
@@ -6951,7 +6952,7 @@ void			startPlaying(BzfDisplay* _display,
   sceneRenderer->setSceneDatabase(NULL);
   delete zScene;
   delete bspScene;
-  ShotStrategy::done();
+  TextureManager::terminate();
   World::done();
   zScene = NULL;
   bspScene = NULL;
