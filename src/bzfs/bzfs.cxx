@@ -3827,10 +3827,14 @@ int main(int argc, char **argv)
   /* load the bad word filter if it was set */
   if (clOptions->filterFilename.length() != 0) {
     if (clOptions->filterChat || clOptions->filterCallsigns) {
-      if (debugLevel >= 1)
-	DEBUG1("Loading %s\nLoaded %u words\n", clOptions->filterFilename.c_str(), clOptions->filter.loadFromFile(clOptions->filterFilename, true));
-      else
+      if (debugLevel >= 1) {
+ 	unsigned int count;
+ 	DEBUG1("Loading %s\n", clOptions->filterFilename.c_str());
+ 	count = clOptions->filter.loadFromFile(clOptions->filterFilename, true);
+ 	DEBUG1("Loaded %u words\n", count);
+      } else {
 	clOptions->filter.loadFromFile(clOptions->filterFilename, false);
+      }
     } else {
       DEBUG1("Bad word filter specified without -filterChat or -filterCallsigns\n");
     }
