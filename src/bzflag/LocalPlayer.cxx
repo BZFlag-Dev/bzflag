@@ -549,6 +549,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
   bool expelled;
   const Obstacle* obstacle;
   float timeStep = dt;
+  int   stucked  = false;
   if (location != Dead && location != Exploding) {
     location = OnGround;
 
@@ -558,10 +559,12 @@ void			LocalPlayer::doUpdateMotion(float dt)
   // try to see if we are stuck on a building
   obstacle = getHitBuilding(newPos, newAzimuth, newPos, newAzimuth, phased,
 			    expelled);
-  if (obstacle && expelled)
+  if (obstacle && expelled) {
     stuckingFrameCount++;
-  else
+    stucked = true;
+  } else {
     stuckingFrameCount = 0;
+  }
 
   if (stuckingFrameCount > 100) {
     stuckingFrameCount = 0;
@@ -725,7 +728,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
 
   // pick new location if we haven't already done so
   if (location == OnGround) {
-    if (obstacle && !expelled) {
+    if (obstacle && (!expelled || stucked)) {
       location = InBuilding;
     }
     else if (newPos[2] > 0.0f) {
