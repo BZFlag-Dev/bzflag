@@ -32,16 +32,22 @@
 /* Enabling Snapping */
 #define SNAPPING 1
 
-/* On windows, strcasecmp is really stricmp */
+/* On windows, strcasecmp is really strcmp */
 #define HAVE_STRICMP 1
 
 // define our OS
 
 #ifndef BZ_BUILD_OS
 	#ifdef _DEBUG
+		#define DEBUG
 		#define BZ_BUILD_OS			"W32VC71D"
 	#else
 		#define BZ_BUILD_OS			"W32VC71"
 	#endif //_DEBUG
 #endif //BZ_BUILD_OS
 
+#include <stdio.h>
+#ifndef DEBUG_TRACE
+#define DEBUG_TRACE
+inline void W32_DEBUG_TRACE (const char* buffer ) {printf("%s",buffer);}
+#endif

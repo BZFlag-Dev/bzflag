@@ -132,7 +132,7 @@ void			openSound(const char*)
   // open audio data files
   if (!allocAudioSamples()) {
     PlatformFactory::getMedia()->closeAudio();
-#if DEBUG
+#ifndef DEBUG
     std::cout << "WARNING: Unable to open audio data files" << std::endl;
 #endif
     return;					// couldn't get samples
@@ -142,7 +142,7 @@ void			openSound(const char*)
   if (!PlatformFactory::getMedia()->startAudioThread(audioLoop, NULL)) {
     PlatformFactory::getMedia()->closeAudio();
     freeAudioSamples();
-#if DEBUG
+#ifndef DEBUG
     std::cout << "WARNING: Unable to start the audio thread" << std::endl;
 #endif
     return;

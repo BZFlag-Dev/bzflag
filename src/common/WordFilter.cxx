@@ -20,7 +20,7 @@
 #include "WordFilter.h"
 
 // implementation-specific headers
-#if DEBUG
+#ifdef DEBUG
 #  include "TimeKeeper.h"
 #endif
 
@@ -285,7 +285,7 @@ bool WordFilter::aggressiveFilter(char *input) const
   /* finally filter the input.  only filter actual alphanumerics. */
   for (unsigned int i=0; i < matchCount; i++) {
     /* !!! debug */
-#if DEBUG
+#ifndef DEBUG
     char tmp[256] = {0};
     strncpy(tmp, input + matchPair[i*2], matchPair[(i*2)+1]);
     std::cout << "Matched: [" << tmp << "]" << std::endl;
@@ -876,7 +876,7 @@ unsigned int WordFilter::loadFromFile(const std::string &fileName, bool verbose)
  */
 bool WordFilter::filter(char *input, bool simple) const
 {
-#if DEBUG
+#ifndef DEBUG
   TimeKeeper before = TimeKeeper::getCurrent();
 #endif
   bool filtered;
@@ -885,7 +885,7 @@ bool WordFilter::filter(char *input, bool simple) const
   } else {
     filtered = aggressiveFilter(input);
   }
-#if DEBUG
+#ifndef DEBUG
   TimeKeeper after = TimeKeeper::getCurrent();
   std::cout << "Time elapsed: " << after - before << " seconds" << std::endl;
 #endif

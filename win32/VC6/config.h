@@ -46,3 +46,15 @@
  		#endif //_DEBUG
  	#endif //_MSC_VER == 1200
 #endif
+
+#ifndef DEBUG
+#ifdef _DEBUG
+	#define DEBUG 1
+#else
+	#define DEBUG 0
+#endif
+#endif
+
+#include "ATLbase.h"
+
+inline void W32_DEBUG_TRACE (const char* buffer ) {ATLTRACE2(atlTraceUser, ATL_TRACE_LEVEL, buffer);}

@@ -116,7 +116,7 @@ unsigned char*		BzfMedia::readImage(const std::string& filename,
   image = doReadImage(name.c_str(), width, height, depth);
   if (image) return image;
 
-#if DEBUG
+#ifndef DEBUG
   std::cout << "Unable to locate [" << filename << "] image file (media dir is set to " << mediaDir << ")" << std::endl;
 #endif
 
@@ -198,7 +198,7 @@ float*			BzfMedia::readSound(const std::string& filename,
   sound = doReadSound(name.c_str(), numFrames, rate);
   if (sound) return sound;
 
-#if DEBUG
+#ifndef DEBUG
 std::cout << "Unable to locate [" << filename << "] audio file (media dir is set to " << mediaDir << ")" << std::endl;
 #endif
 

@@ -10,9 +10,6 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifdef _WIN32
-#include "ATLbase.h"
-#endif
 
 #include "bzfio.h"
 #include "common.h"
@@ -26,9 +23,7 @@ void formatDebug(const char* fmt, ...)
     vsnprintf(buffer, 8192, fmt, args);
     va_end(args);
     #if defined(_WIN32)
-      #if defined(_DEBUG)
-        ATLTRACE2(atlTraceUser, ATL_TRACE_LEVEL, buffer);
-      #endif
+		W32_DEBUG_TRACE(buffer);
     #else
       std::cout << buffer;
     #endif

@@ -36,7 +36,7 @@
 #endif
 
 /* These will track glBegin/End pairs to make sure that they match */
-#if DEBUG
+#ifndef DEBUG
 extern int __beginendCount;
 #define glBegin(_value) {\
   if (__beginendCount==0) { \
@@ -47,14 +47,14 @@ extern int __beginendCount;
   } \
   glBegin(_value);\
 }
-#define glEnd(_value) {\
+#define glEnd() {\
   if (__beginendCount==0) { \
     std::cerr << "ERROR: glEnd called on " << __FILE__ << ':' << __LINE__ << " without calling glBegin before\n"; \
     assert(__beginendCount!=0 && "glEnd called without glBegin"); \
   } else {\
     __beginendCount--;\
   } \
-  glEnd(_value);\
+  glEnd();\
 }
 #endif
 

@@ -17,9 +17,9 @@
 #ifndef BZF_WINDISPLAY_H
 #define	BZF_WINDISPLAY_H
 
+#include <windows.h>
 #include "common.h"
 #include "BzfDisplay.h"
-#include <windows.h>
 #include "bzfgl.h"
 
 class BzfKeyEvent;
