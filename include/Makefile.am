@@ -37,7 +37,7 @@ noinst_HEADERS =		\
 	KeyManager.h		\
 	Language.h		\
 	LaserSceneNode.h	\
-	Locale.h		\
+	bz_Locale.h		\
 	md5.h			\
 	multicast.h		\
 	network.h		\
