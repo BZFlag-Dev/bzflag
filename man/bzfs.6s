@@ -46,6 +46,7 @@ bzfs \- BZFlag game server
 [\fB\-synctime\fR]
 [\fB\-t\fR]
 [\fB\-time \fItime-limit\fR]
+[\fB\-tk\fR]
 [\fB\-ttl \fIttl\fR]
 [\fB\-version\fR]
 [\fB\-world \fIworld-file\fR]
@@ -242,6 +243,11 @@ Adds teleporters to the game.
 \fB\-time\fI time-limit\fR
 Sets a time limit on the game to \fItime-limit\fR.  The game will be
 stopped \fItime-limit\fR seconds after the first player connects.
+.TP
+.B -tk
+Changes the default behaviour where a player dies when he kills a teammate.
+When using this option, he will just get a -1 score penalty for the kill but 
+stay alive.
 .TP
 \fB-ttl\fI time-to-live\fR
 Sets the maximum number of hops a ``ping'' reply will take.  This

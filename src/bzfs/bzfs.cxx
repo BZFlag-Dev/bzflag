@@ -593,6 +593,8 @@ static boolean randomHeights;
 static boolean randomCTF;
 // True if -t on cmd line
 static boolean useTeleporters;
+// False if -tk on cmd line
+static boolean teamKillerDies;
 // True if -fb on cmd line
 static boolean flagsOnBuildings;
 // True if -g on cmd line
@@ -4336,8 +4338,9 @@ static void playerKilled(int victimIndex, int killerIndex,
 #endif
   if (winningTeam != (int)NoTeam)
     checkTeamScore(killerIndex, winningTeam);
-  // kill team killers
-  if ((victimIndex != killerIndex) && (player[victimIndex].team != RogueTeam) &&
+  // kill team killers if not -tk
+  if (teamKillerDies && (victimIndex != killerIndex) &&
+      (player[victimIndex].team != RogueTeam) &&
       (player[victimIndex].team == player[killerIndex].team))
     playerKilled(killerIndex, killerIndex, -1);
 }
@@ -5271,6 +5274,7 @@ static const char *usageString =
 #ifdef TIMELIMIT
 "[-time <seconds>] "
 #endif
+"[-tk] "
 "[-ttl <ttl>] "
 "[-version] "
 "[-world <filename>]";
@@ -5352,6 +5356,7 @@ static void extraUsage(const char *pname)
 #ifdef TIMELIMIT
   cout << "\t -time: set time limit on each game" << endl;
 #endif
+  cout << "\t -tk: player does not die when killing a teammate" << endl;
   cout << "\t -ttl: time-to-live for pings (default=" << pingTTL << ")" << endl;
   cout << "\t -version: print version and exit" << endl;
   cout << "\t -world: world file to load" << endl;
@@ -5471,6 +5476,7 @@ static void parse(int argc, char **argv)
   randomBoxes = False;
   randomHeights = False;
   useTeleporters = False;
+  teamKillerDies = True;
   flagsOnBuildings = False;
   oneGameOnly = False;
   numExtraFlags = 0;
@@ -5628,6 +5634,10 @@ static void parse(int argc, char **argv)
 	usage(argv[0]);
       }
       debug += count;
+    }
+    else if (strcmp(argv[i], "-tk") == 0) {
+      // team killer does not die
+      teamKillerDies = False;
     }
     else if (strcmp(argv[i], "-fb") == 0) {
       // flags on buildings
