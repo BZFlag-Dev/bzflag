@@ -1,5 +1,6 @@
 recent bugs
 ------------
+- tanks only check they're bottoms as regards hit detection against pyramids
 
 - resetting key map doesn't seem to fully erase the current bindings before
   reapplying defaults
