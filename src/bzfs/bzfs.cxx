@@ -3109,7 +3109,7 @@ static void playerAlive(int playerIndex)
 
   // make sure the user identifies themselves if required.
   if (!player[playerIndex].accessInfo.verified && userExists(player[playerIndex].regName) && hasPerm(getUserInfo(player[playerIndex].regName), PlayerAccessInfo::requireIdentify)) {
-    sendMessage(ServerPlayer, playerIndex, "This call sign is registered.  You must identify yourself before playing or use a different callsign.");
+    sendMessage(ServerPlayer, playerIndex, "This callsign is registered.  You must identify yourself before playing or use a different callsign.");
     removePlayer(playerIndex, "unidentified");
     return;
   }
