@@ -151,6 +151,10 @@ SOURCE=..\..\src\bzfs\Permissions.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\bzfs\TeamBases.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\bzfs\TextChunkManager.cxx
 # End Source File
 # Begin Source File
@@ -316,6 +320,10 @@ SOURCE=..\..\include\StateDatabase.h
 # Begin Source File
 
 SOURCE=..\..\include\Team.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\bzfs\TeamBases.h
 # End Source File
 # Begin Source File
 
