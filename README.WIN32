@@ -13,6 +13,21 @@ use VC++ projects).
 So, to build bzflag on Win32, get Visual C++ or something
 that can read Visual C++ projects and workspaces.  Then:
 
+Configure the Vorbis Sound library. (One time setup)
+  * download the sdk at 
+		http://www.vorbis.com/files/1.0/windows/OggVorbis-win32sdk-1.0.zip
+  * unzip to any location that is convenient
+  * From the Tools menu in MSVC, select the 'options' menu item
+  * Select the directory tab
+  * Choose 'Include files' from the 'Show Directories for' item
+  * Add an entry to the include directory
+	  ie: E:\OGGVORBIS-WIN32SDK-1.0\INCLUDE
+  * Choose 'Library files' from the Show Directories for' item
+  * Add an entry to the library directory
+      ie: E:\OGGVORBIS-WIN32SDK-1.0\LIB
+
+  Now you can build BZFlag, to do this, do:
+
   * open win32\bzflag.dsw
   * select `bzflag Release' as the active configuration
   * build
