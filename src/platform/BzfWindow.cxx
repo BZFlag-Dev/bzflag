@@ -26,7 +26,9 @@ BzfWindow::BzfWindow(const BzfDisplay* _display) : display(_display)
 
 BzfWindow::~BzfWindow()
 {
-  // do nothing
+#ifdef HAVE_SDL
+  SDL_QuitSubSystem(SDL_INIT_JOYSTICK);
+#endif
 }
 
 void			BzfWindow::callExposeCallbacks() const
