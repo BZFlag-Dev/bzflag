@@ -61,25 +61,21 @@ bzflag_SOURCES = 			\
 
 noinst_HEADERS = \
 	stars.cxx
-if WIN32
-LDADD = ../net/libNet.a			\
-	../common/libCommon.a		\
-	../obstacle/libObstacle.a	\
-	../platform/libPlatform.a	\
-	../ogl/libGLKit.a		\
-	../scene/libSceneDB.a		\
-	../geometry/libGeometry.a	\
-	bzflag.res
-else
-LDADD = ../net/libNet.a			\
+COMMON_ADD =				\
+	../net/libNet.a			\
 	../common/libCommon.a		\
 	../obstacle/libObstacle.a	\
 	../platform/libPlatform.a	\
 	../ogl/libGLKit.a		\
 	../scene/libSceneDB.a		\
 	../geometry/libGeometry.a
+if WIN32
+  LDADD = $(COMMON_ADD) bzflag.res $(GLIBS)
+else
+  LDADD = $(COMMON_ADD) $(GLIBS)
 endif
 EXTRA_DIST = bzflag.bmp
+AM_CPPFLAGS = $(X_CFLAGS)
 
 bzflag.res: bzflag.rc bzflag.ico
 	windres -i bzflag.rc -o bzflag.res -O coff

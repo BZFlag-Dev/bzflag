@@ -86,44 +86,38 @@ AC_SUBST(CONFIG)
 
 AC_PATH_XTRA
 
-CPPFLAGS=$X_CFLAGS
 LDFLAGS=$X_LIBS
 case $host_os in
-     solaris*)	LIBS="-lresolv -lsocket -lnsl";;
-     irix*) LIBS="-lXsgivc -lX11 -laudio";;
+  solaris*)
+    GLIBS="-lresolv -laudio";
+    LIBS="-lsocket -lnsl";
+    LDFLAGS="$LDFLAGS -L/usr/demo/SOUND/lib";;
+  irix*)
+    GLIBS="-lXsgivc -lX11 -laudio";;
 esac;
 
 AC_CHECK_LIB(m, sqrtf)
 
-if test x$X_DISPLAY_MISSING != x; then
-if test "x$EXTRA_LIBS" != x; then
-   LIBS="$EXTRA_LIBS $LIBS";
-fi
-   LIBS="-lX11 $LIBS";
-if test "x$X_PRE_LIBS" != x; then
-   LIBS="$X_PRE_LIBS $LIBS";
-fi
+CPPFLAGS=
+if test x$X_DISPLAY_MISSING = x; then
+  GLIBS="$X_PRE_LIBS -lX11 $EXTRA_LIBS"
 fi
 
-AC_CHECK_LIB(Xext, XextAddDisplay)
+AC_CHECK_LIB(Xext, XextAddDisplay, [GLIBS="-lXext $GLIBS"], [], $GLIBS)
 
 if test $host_os = linux-gnu; then
-   AC_CHECK_LIB(Xxf86vm, XF86VidModeGetAllModeLines)
-   AC_CHECK_LIB(Xi, XListInputDevices)
+  AC_CHECK_LIB(Xxf86vm, XF86VidModeGetAllModeLines, [GLIBS="-lXxf86vm $GLIBS"], [], $GLIBS)
+  AC_CHECK_LIB(Xi, XListInputDevices, [GLIBS="-lXi $GLIBS"], [], $GLIBS)
 fi
 
 if test $host_os = mingw32; then
-   LIBS="-mwindows -lgdi32 -lws2_32 -ldsound -lwinmm -lglu32 -lopengl32 $LIBS"
+  LIBS="-mwindows -lgdi32 -lws2_32 -ldsound -lwinmm $LIBS"
+  GLIBS="-lglu32 -lopengl32"
 else
-   AC_CHECK_LIB(GL, glBegin)
-   AC_CHECK_LIB(GLU, gluScaleImage)
+  AC_CHECK_LIB(GL, glBegin, [GLIBS="-lGL $GLIBS"], [], $GLIBS)
+  AC_CHECK_LIB(GLU, gluScaleImage, [GLIBS="-lGLU $GLIBS"], [], $GLIBS)
 fi
-
-case $host_os in
-     solaris*)
-	LDFLAGS="$LDFLAGS -L/usr/demo/SOUND/lib";
-	LIBS="-laudio $LIBS";;
-esac
+AC_SUBST(GLIBS)
 
 case $host_os in
      macos|darwin*)
