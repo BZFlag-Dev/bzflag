@@ -1,10 +1,6 @@
 recent bugs
 ------------
 
-- when one tank gets very close to a teleporter, the animated treads look
-  funny from the perspective of a second tank (looks like the wheels
-  disappear or something)
-
 - when a shield flag is dropped due to its owner being shot, it is not
   always zapped like it should be.
 

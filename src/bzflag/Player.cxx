@@ -496,6 +496,8 @@ void			Player::addToScene(SceneDatabase* scene,
   else {
     tankNode->setDimensions(dimensionsScale);
   }
+  
+  tankNode->setInTheCockpit(inCockpit);
 
   // reset the clipping plane
   tankNode->setClipPlane(NULL);

@@ -94,6 +94,7 @@ class TankSceneNode : public SceneNode {
     void		setThief();
     void		setClipPlane(const GLfloat* plane);
     void		setExplodeFraction(float t);
+    void		setInTheCockpit(bool value);
     void		rebuildExplosion();
     
     void		addTreadOffsets(float left, float right);
@@ -115,12 +116,15 @@ class TankSceneNode : public SceneNode {
 	void		setShadow();
 	void		setTankLOD(TankGeometryEnums::TankLOD);
 	void		setTankSize(TankGeometryEnums::TankSize);
-	void		sortOrder(bool above, bool towards);
+	void		sortOrder(bool above, bool towards, bool left);
 	void		render();
 	const GLfloat*	getPosition() { return sceneNode->getSphere(); }
 
-	void		renderParts();
 	void		renderPart(TankGeometryEnums::TankPart part);
+	void		renderParts();
+	void		renderTopParts();
+	void		renderLeftParts();
+	void		renderRightParts();
 	void		renderLights();
         void		setupPartColor(TankGeometryEnums::TankPart part);
         bool		setupTextureMatrix(TankGeometryEnums::TankPart part);
@@ -132,6 +136,7 @@ class TankSceneNode : public SceneNode {
 	const GLfloat*	color;
 	GLfloat		alpha;
 	bool		isShadow;
+	bool		left;
 	bool		above;
 	bool		towards;
 	bool		isExploding;
@@ -154,6 +159,7 @@ class TankSceneNode : public SceneNode {
     bool		transparent, sort;
     float		explodeFraction;
     bool		clip;
+    bool		inTheCockpit;
     GLfloat		colorOverride[4];
     GLfloat		color[4];
     GLdouble		clipPlane[4];
@@ -162,8 +168,8 @@ class TankSceneNode : public SceneNode {
     TankRenderNode	tankRenderNode;
     TankRenderNode	shadowRenderNode;
     TankGeometryEnums::TankSize tankSize;
-	GLfloat vel[TankGeometryEnums::LastTankPart][2];
-	GLfloat spin[TankGeometryEnums::LastTankPart][4];
+    GLfloat vel[TankGeometryEnums::LastTankPart][2];
+    GLfloat spin[TankGeometryEnums::LastTankPart][4];
 
     static int			maxLevel;
     static const int		numLOD;

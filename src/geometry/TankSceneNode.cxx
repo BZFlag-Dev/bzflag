@@ -38,7 +38,7 @@ TankSceneNode::TankSceneNode(const GLfloat pos[3], const GLfloat forward[3]) :
                                 leftWheelOffset(0.0f), rightWheelOffset(0.0f), 
                                 useDimensions(false), useOverride(false),
 				hidden(false), cloaked(false),
-				clip(false),
+				clip(false), inTheCockpit(false),
 				tankRenderNode(this),
 				shadowRenderNode(this),
 				tankSize(TankGeometryEnums::Normal)
@@ -231,13 +231,19 @@ void TankSceneNode::addRenderNodes(SceneRenderer& renderer)
     const GLfloat* eye = view.getEye();
     GLfloat dx = eye[0] - sphere[0];
     GLfloat dy = eye[1] - sphere[1];
-    const GLfloat d = dx * dx + dy * dy;
-    dx += cosf(azimuth * M_PI / 180.0f);
-    dy += sinf(azimuth * M_PI / 180.0f);
-    const bool towards = d < (dx * dx + dy * dy);
-    // note: above test should take elevation into account
-    const bool above = sphere[2] > eye[2];
-    tankRenderNode.sortOrder(above, towards);
+    const float radians = azimuth * M_PI / 180.0f;
+    const float cos_val = cos(radians);
+    const float sin_val = sin(radians);
+
+    const float frontDot = (cos_val * dx) + (sin_val * dy);
+    const bool towards = (frontDot > 0.0f);
+
+    const float leftDot = (-sin_val * dx) + (cos_val * dy);
+    const bool left = (leftDot > 0.0f);
+
+    const bool above = eye[2] > sphere[2];
+    
+    tankRenderNode.sortOrder(above, towards, left);
   }
 
   renderer.addRenderNode(&tankRenderNode, &gstate);
@@ -336,6 +342,12 @@ void TankSceneNode::setCloaked(bool _cloaked)
 void TankSceneNode::setMaxLOD(int _maxLevel)
 {
   maxLevel = _maxLevel;
+}
+
+
+void TankSceneNode::setInTheCockpit(bool value)
+{
+  inTheCockpit = value;
 }
 
 
@@ -662,10 +674,11 @@ void TankSceneNode::TankRenderNode::setShadow()
 
 
 void TankSceneNode::TankRenderNode::sortOrder(
-				bool _above, bool _towards)
+				bool _above, bool _towards, bool _left)
 {
   above = _above;
   towards = _towards;
+  left = _left;
 }
 
 
@@ -790,58 +803,85 @@ void TankSceneNode::TankRenderNode::render()
 }
 
 
-void TankSceneNode::TankRenderNode::renderParts()
+void TankSceneNode::TankRenderNode::renderTopParts()
 {
-  // draw parts in back to front order
-  if (!above) {
-    renderPart(LeftCasing);
-    renderPart(RightCasing);
-    if (drawLOD == HighTankLOD) {
-      for (int i = 0; i < 4; i++) {
-        // don't need the middle two wheels for shadows
-        if (isShadow && ((i == 1) || (i == 2)) && !isExploding) {
-          continue;
-        }
-        renderPart((TankPart)(LeftWheel0 + i));
-        renderPart((TankPart)(RightWheel0 + i));
-      }
-      renderPart(LeftTread);
-      renderPart(RightTread);
-    }
-    renderPart(Body);
-    if (towards) {
-      renderPart(Turret);
-      renderPart(Barrel);
-    }
-    else {
-      renderPart(Barrel);
-      renderPart(Turret);
-    }
+  if (towards) {
+    renderPart(Turret);
+    renderPart(Barrel);
   }
   else {
-    if (towards) {
-      renderPart(Turret);
-      renderPart(Barrel);
-    }
-    else {
-      renderPart(Barrel);
-      renderPart(Turret);
-    }
-    renderPart(Body);
-    renderPart(LeftCasing);
-    renderPart(RightCasing);
-    if (drawLOD == HighTankLOD) {
-      for (int i = 0; i < 4; i++) {
-        if (isShadow && ((i == 1) || (i == 2)) && !isExploding) {
-          continue;
-        }
-        renderPart((TankPart)(LeftWheel0 + i));
-        renderPart((TankPart)(RightWheel0 + i));
-      }
-      renderPart(LeftTread);
-      renderPart(RightTread);
-    }
+    renderPart(Barrel);
+    renderPart(Turret);
   }
+  return;
+}
+
+
+void TankSceneNode::TankRenderNode::renderLeftParts()
+{
+  renderPart(LeftCasing);
+  if (drawLOD == HighTankLOD) {
+    for (int i = 0; i < 4; i++) {
+      // don't need the middle two wheels for shadows
+      if (isShadow && ((i == 1) || (i == 2)) && !isExploding) {
+        continue;
+      }
+      renderPart((TankPart)(LeftWheel0 + i));
+    }
+    renderPart(LeftTread);
+  }
+  return;
+}
+
+
+void TankSceneNode::TankRenderNode::renderRightParts()
+{
+  renderPart(RightCasing);
+  if (drawLOD == HighTankLOD) {
+    for (int i = 0; i < 4; i++) {
+      // don't need the middle two wheels for shadows
+      if (isShadow && ((i == 1) || (i == 2)) && !isExploding) {
+        continue;
+      }
+      renderPart((TankPart)(RightWheel0 + i));
+    }
+    renderPart(RightTread);
+  }
+  return;
+}
+
+
+void TankSceneNode::TankRenderNode::renderParts()
+{
+  if (!above) {
+    renderTopParts();
+  }
+  
+  if (left) {
+    renderRightParts();
+  } else {
+    renderLeftParts();
+  }
+  
+  if (!sceneNode->inTheCockpit) {
+    renderPart(Body);
+  }
+
+  if (left) {
+    renderLeftParts();
+  } else {
+    renderRightParts();
+  }
+  
+  if (sceneNode->inTheCockpit) {
+    renderPart(Body);
+  }
+  
+  if (above) {
+    renderTopParts();
+  }
+  
+  return;
 }
 
 
