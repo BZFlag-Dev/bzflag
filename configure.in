@@ -230,6 +230,8 @@ AC_CHECK_LIB(m, sqrtf)
 
 # Check for functions
 AC_CHECK_FUNCS(\
+	Sleep \
+	WaitForSingleObject \
 	asinf \
 	atan2f \
 	atanf \
@@ -243,9 +245,12 @@ AC_CHECK_FUNCS(\
 	hypotf \
 	logf \
 	powf \
+	select \
 	sinf \
+	snooze \
 	sqrtf \
 	tanf \
+	usleep \
 )
 
 # for BeOS - old network stack don't have those libs ( move it in the case switch ?)
