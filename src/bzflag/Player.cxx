@@ -799,7 +799,8 @@ void Player::addToScene(SceneDatabase* scene, TeamColor effectiveTeam,
 	}
       }
     }
-    else if ((getFlag() == Flags::Burrow) && (getPosition()[2] < 0.0f)) {
+    else if (getPosition()[2] < 0.0f) {
+      // this should only happen with Burrow flags
       GLfloat plane[4];
       plane[0] = plane[1] = 0.0f;
       plane[2] = 1.0f;
@@ -963,16 +964,16 @@ bool Player::validTeamTarget(const Player *possibleTarget) const
 void Player::getDeadReckoning(float* predictedPos, float* predictedAzimuth,
 			      float* predictedVel, float dt) const
 {
-  predictedVel[2] = inputVel[2];
-  predictedPos[2] = inputPos[2];
   *predictedAzimuth = inputAzimuth;
   
   if (inputStatus & PlayerState::Paused) {
     // don't move when paused
     predictedPos[0] = inputPos[0];
     predictedPos[1] = inputPos[1];
+    predictedPos[2] = inputPos[2];
     predictedVel[0] = 0.0f;
     predictedVel[1] = 0.0f;
+    predictedVel[2] = 0.0f;
   }
   else if (inputStatus & PlayerState::Falling) {
     // no control when falling
@@ -985,13 +986,14 @@ void Player::getDeadReckoning(float* predictedPos, float* predictedAzimuth,
       *predictedAzimuth += (dt * inputAngVel);
     }
     // following the parabola
-    predictedVel[2] = inputVel[2] + BZDBCache::gravity * dt;
+    predictedVel[2] = inputVel[2] + (BZDBCache::gravity * dt);
     predictedPos[2] = inputPos[2] + (inputVel[2] * dt) +
                       (0.5f * BZDBCache::gravity * dt * dt);
   }
   else {
-    // always zero when not falling
-    predictedVel[2] = 0.0f;
+    // velocity[2] is zero when not falling, except for Burrow flag
+    predictedVel[2] = inputVel[2];
+    predictedPos[2] = inputPos[2] + (inputVel[2] * dt);
     
     // different algorithms for tanks moving in
     // a straight line vs. turning in a circle
@@ -1161,8 +1163,8 @@ void Player::doDeadReckoning()
   if (getFlag() == Flags::Burrow) {
     groundLimit = BZDB.eval(StateDatabase::BZDB_BURROWDEPTH);
   }
-
-  if (predictedPos[2] < groundLimit) {
+  // the velocity check is for when a Burrow flag is dropped
+  if ((predictedPos[2] < groundLimit) && (predictedVel[2] <= 0.0f)) {
     predictedPos[2] = groundLimit;
     predictedVel[2] = 0.0f;
     inputStatus &= ~PlayerState::Falling;
@@ -1187,10 +1189,15 @@ void Player::doDeadReckoning()
     }
   }
 
+  // FIXME - this still needs work      
+  //         also calculate a more accurate landing speed?
+  
   // check for a jump
-  if (((oldStatus & PlayerState::Falling) == 0) &&
-      ((inputStatus & PlayerState::Falling) != 0) &&
-      (predictedVel[2] > 0.0f)) {
+  if ((state.velocity[2] > oldZSpeed) && (state.velocity[2] > 0.0f) &&
+      (state.pos[2] > 0.0f)) {
+//    if (((oldStatus & PlayerState::Falling) == 0) &&
+//        ((inputStatus & PlayerState::Falling) != 0) &&
+//        (predictedVel[2] > 0.0f)) {
     // setup the sound
     if (BZDB.isTrue("remoteSounds")) {
       if (state.jumpJetsScale > 0.0f) {
@@ -1206,7 +1213,7 @@ void Player::doDeadReckoning()
   }
   
   // copy some old state
-  oldZSpeed = inputVel[2];
+  oldZSpeed = state.velocity[2];
   oldStatus = inputStatus;
 
   move(predictedPos, predictedAzimuth);
@@ -1315,16 +1322,6 @@ void Player::setDeadReckoning()
   }
   
   return;
-}
-
-bool Player::isOnDeath() const
-{
-  const PhysicsDriver* phydrv = PHYDRVMGR.getDriver(state.phydrv);
-  if ((phydrv != NULL) && phydrv->getIsDeath()) {
-    return true;
-  } else {
-    return false;
-  }
 }
 
 

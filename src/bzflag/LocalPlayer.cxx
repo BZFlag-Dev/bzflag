@@ -1251,15 +1251,15 @@ void			LocalPlayer::doJump()
       return;
     }
     wingsFlapCount--;
-  } else if (location != OnGround && location != OnBuilding) {
+  } else if ((location != OnGround) && (location != OnBuilding)) {
     // can't jump unless on the ground or a building
     if (flag != Flags::Wings)
       return;
     if (wingsFlapCount <= 0)
       return;
-     wingsFlapCount--;
-  } else if ((flag != Flags::Bouncy)
-    &&       ((flag != Flags::Jumping && !World::getWorld()->allowJumping()) ||
+    wingsFlapCount--;
+  } else if ((flag != Flags::Bouncy) &&
+             ((flag != Flags::Jumping && !World::getWorld()->allowJumping()) ||
 	      (flag == Flags::NoJumping))) {
     return;
   }

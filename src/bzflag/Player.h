@@ -100,7 +100,6 @@ public:
   bool		isExploding() const;
   bool		isCrossingWall() const;
   bool		isNotResponding() const;
-  bool		isOnDeath() const;
   void		resetNotResponding();
   bool		isHunted() const;
   void		setHunted(bool _hunted);
