@@ -838,7 +838,7 @@ static void sendMessageToListServerForReal(int index)
 	      clOptions->publicizedAddress.c_str(),
 	      getServerVersion(),
 	      gameInfo,
-	      clOptions->publicizedTitle);
+	      url_encode(clOptions->publicizedTitle).c_str());
     } else {
       sprintf(msg, "%s %s %s %s %.*s %.256s\n\n", link.nextMessage,
 	      clOptions->publicizedAddress.c_str(),
