@@ -42,6 +42,11 @@
 -file ../../data/ricochet.wav ricochet.wav
 -file ../../data/shock.wav shock.wav
 -file ../../data/teleport.wav teleport.wav
+-file ../../data/phantom.wav phantom.wav
+-file ../../data/missile.wav missile.wav
+-file ../../data/jump.wav jump.wav
+-file ../../data/land.wav land.wav
+-file ../../data/killteam.wav killteam.wav
 -popdir
 -pushdir doc
 -file ../../LICENSE LICENSE
