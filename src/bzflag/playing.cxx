@@ -1654,130 +1654,119 @@ static void		doMotion()
   float rotation, speed;
 
   if (myTank->isAutoPilot()) {
-	//FIXME bot motion
-	static TimeKeeper lastShot;
-	PlayerId t;
-	PlayerId target = maxPlayers;
+    //FIXME bot motion
+    static TimeKeeper lastShot;
+    PlayerId t;
+    PlayerId target = maxPlayers;
 
-        const bool phased = (myTank->getFlag() == Flags::OscillationOverthruster) ||
-				(myTank->getFlag() == Flags::PhantomZone);
-	bool expelled;
-	const Obstacle *obstacle = myTank->getHitBuilding(myTank->getPosition(), myTank->getAngle(), phased, expelled);
+    const bool phased = myTank->getFlag() == Flags::OscillationOverthruster ||
+                        myTank->getFlag() == Flags::PhantomZone;
+    bool expelled;
+    const Obstacle *obstacle = myTank->getHitBuilding(myTank->getPosition(), myTank->getAngle(), phased, expelled);
 
-	//If right next to a building, try to shake free, Roger's not too good at this tho, help
-	if (obstacle && !phased) {
-	  float hitPos[3];
-	  float normal[3];
+    //If right next to a building, try to shake free, Roger's not too good at this tho, help
+    if (obstacle && !phased) {
+      const float *hitPos = myTank->getPosition();
+      const float hitAzimuth = myTank->getAngle();
+      float normal[3];
+      myTank->getHitNormal(obstacle, myTank->getPosition(), myTank->getAngle(), hitPos, hitAzimuth, normal);
 
-	  memcpy( hitPos, myTank->getPosition(), 3*sizeof(float));
-	  float hitAzimuth = myTank->getAngle();
-	
-          myTank->getHitNormal(obstacle, myTank->getPosition(), myTank->getAngle(), hitPos, hitAzimuth, normal);
-
-	  rotation = normal[1] - normal[0];
-	  speed = -0.5f;
+      rotation = normal[1] - normal[0];
+      speed = -0.5f;
+    }
+    else {
+      const float *mp = myTank->getPosition();
+      float distance = Infinity;
+      for (t = 0; t < maxPlayers; t++) {
+	if (t != myTank->getId() && player[t] &&
+	    player[t]->isAlive() && !player[t]->isPaused() &&
+	    !player[t]->isNotResponding() &&
+	    (myTank->getTeam() == RogueTeam || player[t]->getTeam() != myTank->getTeam())) {
+	  const float *tp = player[t]->getPosition();
+	  float d = hypotf(tp[0] - mp[0], tp[1] - mp[1]);
+	  if (d < distance) {
+	    target = t;
+	    distance = d;
+	  }
 	}
-	else {
-		const float *mp = myTank->getPosition();
-		float distance = Infinity;
-		for (t = 0; t < maxPlayers; t++) {
-			if ((t != myTank->getId()) && player[t] &&
-					player[t]->isAlive() &&
-					!player[t]->isPaused() &&
-					!player[t]->isNotResponding() &&
-					((myTank->getTeam() == RogueTeam) ||
-					(player[t]->getTeam() != myTank->getTeam()))) {
-				const float *tp = player[t]->getPosition();
-				float d = hypotf(tp[0] - mp[0], tp[1] - mp[1]);
-				if (d < distance) {
-					target = t;
-					distance = d;
-				}
-			}
-		}
-		if (target == maxPlayers) {
-			// wander around aimlessly
-			// FIXME should go flag hunting ;-)
-			int period = TimeKeeper::getCurrent().getSeconds();
-			float bias = ((period % 10) < 5) ? (M_PI/6.0f) : (-M_PI/6.0f);
-			rotation = bias + (bzfrand() - 0.5f) * (M_PI/12.0f);
-			speed = 1.0f;
-		}
-		else {
-			myTank->setTarget(player[target]);
-			// blindly head towards the player
-			const float *tp = player[target]->getPosition();
-			float azimuth = atan2f(tp[1] - mp[1], tp[0] - mp[0]);
-			if (azimuth < 0.0f) azimuth += 2.0f * M_PI;
-			rotation = atan2f(tp[1] - mp[1], tp[0] - mp[0]) - myTank->getAngle();
-			if (rotation < -1 * M_PI) rotation += 2.0f * M_PI;
-			if (fabs(rotation) > M_PI / 2)
-				speed = -0.5f;
-			else
-				speed =	1.0f;
-			if (rotation > 1.0f)
-				rotation = 1.0f;
-			else if (rotation < -1.0f)
-				rotation = -1.0f;
-			if (speed == 1.0f)
-				speed = 1.0f - fabs(rotation);
+      }
+      if (target == maxPlayers) {
+        // wander around aimlessly
+        // FIXME should go flag hunting ;-)
+        int period = int(TimeKeeper::getCurrent().getSeconds());
+        float bias = ((period % 10) < 5) ? M_PI/6.0f : -M_PI/6.0f;
+        rotation = bias + (bzfrand() - 0.5f) * M_PI/12.0f;
+        speed = 1.0f;
+      }
+      else {
+        myTank->setTarget(player[target]);
+        // blindly head towards the player
+        const float *tp = player[target]->getPosition();
+        float azimuth = atan2f(tp[1] - mp[1], tp[0] - mp[0]);
+        if (azimuth < 0.0f) azimuth += 2.0f * M_PI;
+        rotation = atan2f(tp[1] - mp[1], tp[0] - mp[0]) - myTank->getAngle();
+        if (rotation < -1 * M_PI) rotation += 2.0f * M_PI;
+        if (fabs(rotation) > M_PI / 2)
+          speed = -0.5f;
+        else
+          speed = 1.0f;
+        if (rotation > 1.0f)
+          rotation = 1.0f;
+        else if (rotation < -1.0f)
+          rotation = -1.0f;
+        if (speed == 1.0f)
+          speed = 1.0f - fabs(rotation);
+ 
+        //fire too, why not?
+        TimeKeeper now = TimeKeeper::getCurrent();
+	if (now - lastShot >= 0.5f) {
+	  if (fabs(rotation) < 2.0f * BZDB->eval(StateDatabase::BZDB_TARGETINGANGLE)) {
+	    const float *vel = myTank->getVelocity();
+	    const float *pos = myTank->getPosition();
+	    float dir[3] = {vel[0] * cosf(azimuth), vel[1] * sinf(azimuth), 0.0f};
+	    Ray tankRay(pos, dir);
+	    distance += BZDB->eval(StateDatabase::BZDB_TANKLENGTH);
+	    const Obstacle *building = ShotStrategy::getFirstBuilding(tankRay, -0.5f, distance);
+	    if (!building) {
+	       // for some reason Roger likes to shoot himself if right next to a building, help!!
+	       myTank->fireShot();
+	       lastShot = now;
+	    }
+          }
+        }
+      }
 
-			//fire too, why not?
-			TimeKeeper now = TimeKeeper::getCurrent();
-			if (now - lastShot >= 0.5f) {
-			  if (fabs(rotation) < (2.0f * BZDB->eval(StateDatabase::BZDB_TARGETINGANGLE))) {
-			     const float *vel, *pos;
-			     float dir[3];
-			     vel = myTank->getVelocity();
-			     pos = myTank->getPosition();
-			     dir[0] = vel[0] * cosf(azimuth);
-			     dir[1] = vel[1] * sinf(azimuth);
-			     dir[2] = 0.0f;
-			     Ray  tankRay(pos, dir);
-			     distance += BZDB->eval(StateDatabase::BZDB_TANKLENGTH);
-			     const Obstacle *building = ShotStrategy::getFirstBuilding(tankRay, -0.5f, distance);
-			     if (!building) {
-				// for some reason Roger likes to shoot himself if right next to a building, help!!
-				myTank->fireShot();
-				lastShot = now;
-			     }
-			  }
-			}
-		}
-
-		if (World::getWorld()->allowJumping() || (myTank->getFlag() == Flags::Jumping)) {
-		   //teach autopilot bad habits
-		   const float *apPos = myTank->getPosition();
-		   for (t = 0; t < maxPlayers; t++) {
-			if ((t == myTank->getId()) || (player[t] == NULL) || !player[t]->isAlive() ||
-			    player[t]->isPaused())
-			    continue;
-			int maxShots = player[t]->getMaxShots();
-			for (int s = 0; s < maxShots; s++) {
-			  ShotPath* shot = player[t]->getShot(s);
-			  if (shot == NULL)
-			    continue;
-			  const float* shotPos = shot->getPosition();
-			  if (fabs(shotPos[2] - apPos[2]) > BZDB->eval(StateDatabase::BZDB_TANKHEIGHT))
-			    continue;
-			  float dist = hypot(shotPos[0] - apPos[0], shotPos[1] - apPos[1]);
-			  if (dist < BZDB->eval(StateDatabase::BZDB_TANKLENGTH) * 2.0f) {
-			    myTank->jump();
-			    s = maxShots;
-			    t = maxPlayers;
-			  }
-			}
-
-		   }
-		}
-	}
+      if (World::getWorld()->allowJumping() || (myTank->getFlag() == Flags::Jumping)) {
+        //teach autopilot bad habits
+        const float *apPos = myTank->getPosition();
+        for (t = 0; t < maxPlayers; t++) {
+	  if (t == myTank->getId() || !player[t] || !player[t]->isAlive() ||
+	      player[t]->isPaused())
+	    continue;
+	  const int maxShots = player[t]->getMaxShots();
+	  for (int s = 0; s < maxShots; s++) {
+	    ShotPath* shot = player[t]->getShot(s);
+	    if (!shot)
+	      continue;
+	    const float* shotPos = shot->getPosition();
+	    if (fabs(shotPos[2] - apPos[2]) > BZDB->eval(StateDatabase::BZDB_TANKHEIGHT))
+	      continue;
+	    const float dist = hypot(shotPos[0] - apPos[0], shotPos[1] - apPos[1]);
+	    if (dist < BZDB->eval(StateDatabase::BZDB_TANKLENGTH) * 2.0f) {
+	      myTank->jump();
+	      s = maxShots;
+	      t = maxPlayers;
+	    }
+	  }
+        }
+      }
+    }
 
 #ifdef DEBUG_ROBOT
-	// FIXME speed should drop as distance goes from say 40 to 0?
-	printf("p%d an%f az%f dis%f r%f s%f mp %3.1f:%3.1f tp %3.1f:%3.1f\n",
-			target, myTank->getAngle(), azimuth, distance,
-			rotation, speed,
-			mp[0],mp[1],tp[0],tp[1]);
+    // FIXME speed should drop as distance goes from say 40 to 0?
+    printf("p%d an%f az%f dis%f r%f s%f mp %3.1f:%3.1f tp %3.1f:%3.1f\n",
+           target, myTank->getAngle(), azimuth, distance,
+           rotation, speed, mp[0],mp[1],tp[0],tp[1]);
 #endif
 
   }
@@ -1818,38 +1807,40 @@ static void		doMotion()
     if (mainWindow->joystick()) {
       mainWindow->getJoyPosition(mx, my);
 
-      static const BzfKeyEvent::Button button_map[] = { BzfKeyEvent::LeftMouse,
-				BzfKeyEvent::MiddleMouse,
-				BzfKeyEvent::RightMouse,
-				BzfKeyEvent::BZ_Mouse_Button_4,
-				BzfKeyEvent::BZ_Mouse_Button_5,
-				BzfKeyEvent::BZ_Mouse_Button_6,
-				BzfKeyEvent::BZ_Mouse_Button_7,
-				BzfKeyEvent::BZ_Mouse_Button_8,
-				BzfKeyEvent::BZ_Mouse_Button_9,
-				BzfKeyEvent::F1,
-				BzfKeyEvent::F2,
-				BzfKeyEvent::F3,
-				BzfKeyEvent::F4,
-				BzfKeyEvent::F5,
-				BzfKeyEvent::F6,
-				BzfKeyEvent::F7,
-				BzfKeyEvent::F8,
-				BzfKeyEvent::F9
+      static const BzfKeyEvent::Button button_map[] = {
+          BzfKeyEvent::LeftMouse,
+          BzfKeyEvent::MiddleMouse,
+          BzfKeyEvent::RightMouse,
+          BzfKeyEvent::BZ_Mouse_Button_4,
+          BzfKeyEvent::BZ_Mouse_Button_5,
+          BzfKeyEvent::BZ_Mouse_Button_6,
+          BzfKeyEvent::BZ_Mouse_Button_7,
+          BzfKeyEvent::BZ_Mouse_Button_8,
+          BzfKeyEvent::BZ_Mouse_Button_9,
+          BzfKeyEvent::F1,
+          BzfKeyEvent::F2,
+          BzfKeyEvent::F3,
+          BzfKeyEvent::F4,
+          BzfKeyEvent::F5,
+          BzfKeyEvent::F6,
+          BzfKeyEvent::F7,
+          BzfKeyEvent::F8,
+          BzfKeyEvent::F9
       };
 
       static unsigned long old_buttons = 0;
       const int button_count = sizeof(button_map) / sizeof(button_map[0]);
       unsigned long new_buttons = mainWindow->getJoyButtonSet();
       if (old_buttons != new_buttons)
-	for (int j = 0; j<button_count; j++)
+        for (int j = 0; j<button_count; j++) {
 	  if ((old_buttons & (1<<j)) != (new_buttons & (1<<j))) {
 	    BzfKeyEvent ev;
 	    ev.button = button_map[j];
 	    ev.ascii = 0;
 	    ev.shift = 0;
 	    doKeyPlaying(ev, (new_buttons&(1<<j)) != 0);
-	  }
+          }
+        }
       old_buttons = new_buttons;
     } else
       mainWindow->getMousePosition(mx, my);
