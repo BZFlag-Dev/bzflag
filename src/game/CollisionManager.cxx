@@ -25,7 +25,7 @@
 
 
 
-CollisionManager::CollisionManager ()
+CollisionManager::CollisionManager () : WorldSize(0.0f)
 {
 }
 
