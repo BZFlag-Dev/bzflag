@@ -13,6 +13,8 @@
 #ifndef __SERVERMENU_H__
 #define __SERVERMENU_H__
 
+#include "common.h"
+
 /* system interface headers */
 #include <string>
 #include <vector>
