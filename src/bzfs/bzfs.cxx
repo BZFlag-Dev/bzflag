@@ -2158,9 +2158,11 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
       if (clOptions->oneGameOnly) {
 	done = true;
 	exitCode = 0;
-      } else if ((clOptions->worldFile == "") && (!defineWorld())) {
-	done = true;
-	exitCode = 1;
+      } else if (!Replay::enabled()) {
+        if ((clOptions->worldFile == "") && (!defineWorld())) {
+	  done = true;
+	  exitCode = 1;
+	}
       } else {
 	// republicize ourself.  this dereferences the URL chain
 	// again so we'll notice any pointer change when any game

@@ -603,18 +603,6 @@ bool Record::enabled ()
 }
 
 
-int Record::getSize ()
-{
-  return RecordMaxBytes;
-}
-
-
-int Record::getRate ()
-{
-  return (int)(RecordUpdateRate / (RRtime)1000000);
-}
-
-
 void Record::sendHelp (int playerIndex)
 {
   sendMessage(ServerPlayer, playerIndex, "usage:");

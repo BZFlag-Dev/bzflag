@@ -41,9 +41,6 @@ namespace Record {
   
   extern bool enabled ();
 
-  extern int getSize (); // returned in bytes, _not_ Mbytes
-  extern int getRate ();
-
   extern bool addPacket (uint16_t code, int len, const void * data,
                          uint16_t mode = RealPacket);
                                                   
@@ -60,13 +57,9 @@ namespace Replay {
   extern bool play (int playerIndex);
   extern bool skip (int playerIndex, int seconds); // 0 secs jumps to next packet
   extern bool pause (int playerIndex);
-//FIXME  extern bool jumpto (int playerIndex, int seconds);
   
   extern bool enabled ();
   extern bool playing ();
-
-  extern int getMaxBytes ();
-  extern const char * getFileName ();
 
   extern float nextTime ();
   extern bool sendPackets ();
