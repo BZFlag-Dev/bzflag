@@ -838,7 +838,7 @@ ThiefStrategy::ThiefStrategy(ShotPath* path) :
   thiefNodes = new LaserSceneNode*[numSegments];
 
   TextureManager &tm = TextureManager::instance();
-  OpenGLTexture *texture = tm.getTexture("theif");
+  OpenGLTexture *texture = tm.getTexture("thief");
 
   for (int i = 0; i < numSegments; i++) {
     const ShotPathSegment& segment = getSegments()[i];
