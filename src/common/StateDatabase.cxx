@@ -22,6 +22,12 @@
 #include <iostream>
 #include <math.h>
 
+const std::string StateDatabase::BZDB_GRAVITY		= std::string("_gravity");
+const std::string StateDatabase::BZDB_WORLDSIZE		= std::string("_worldSize");
+const std::string StateDatabase::BZDB_BASESIZE		= std::string("_baseSize");
+const std::string StateDatabase::BZDB_TANKLENGTH	= std::string("_tankLength");
+const std::string StateDatabase::BZDB_TANKWIDTH		= std::string("_tankWidth");
+
 //
 // StateDatabase::Item
 //
