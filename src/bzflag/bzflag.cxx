@@ -831,16 +831,6 @@ int			main(int argc, char** argv)
     BZDB->addCallback(defaultDBItems[i].name, defaultDBItems[i].callback, NULL);
   }
 
-  for (i = 0; i < countof(globalDBItems); ++i) {
-    assert(globalDBItems[i].name != NULL);
-    if (globalDBItems[i].value != NULL) {
-      BZDB->set(globalDBItems[i].name, globalDBItems[i].value);
-      BZDB->setDefault(globalDBItems[i].name, globalDBItems[i].value);
-    }
-    BZDB->setPersistent(globalDBItems[i].name, globalDBItems[i].persistent);
-    BZDB->setPermission(globalDBItems[i].name, globalDBItems[i].permission);
-  }
-
   // read resources
   {
     if (CFGMGR->read(getConfigFileName()))
