@@ -13,6 +13,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include "common.h"
+#include "StateDatabase.h"
 #include "LocalPlayer.h"
 #include "World.h"
 #include "SceneDatabase.h"
@@ -723,7 +724,7 @@ void			LocalPlayer::setDesiredSpeed(float fracOfMaxSpeed)
     fracOfMaxSpeed *= BurrowVelAd;
 
   // set desired speed
-  desiredSpeed = fracOfMaxSpeed * TankSpeed;
+  desiredSpeed = fracOfMaxSpeed * BZDB->eval(StateDatabase::BZDB_TANKSPEED);
 }
 
 void			LocalPlayer::setDesiredAngVel(float fracOfMaxAngVel)

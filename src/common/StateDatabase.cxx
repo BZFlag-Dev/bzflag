@@ -26,6 +26,7 @@ const std::string StateDatabase::BZDB_GRAVITY		= std::string("_gravity");
 const std::string StateDatabase::BZDB_TANKLENGTH	= std::string("_tankLength");
 const std::string StateDatabase::BZDB_TANKWIDTH		= std::string("_tankWidth");
 const std::string StateDatabase::BZDB_TANKHEIGHT	= std::string("_tankHeight");
+const std::string StateDatabase::BZDB_TANKSPEED         = std::string("_tankSpeed");
 const std::string StateDatabase::BZDB_MUZZLEHEIGHT	= std::string("_muzzleHeight");
 const std::string StateDatabase::BZDB_MUZZLEFRONT	= std::string("_muzzleFront");
 const std::string StateDatabase::BZDB_SHOTRADIUS	= std::string("_shotRadius");

@@ -2073,17 +2073,17 @@ static std::string cmdRoam(const std::string&, const CommandManager::ArgList& ar
     if (args.size() != 2)
       return "usage: roam translate {left|right|forward|backward|up|down|stop}";
     if (args[1] == "left") {
-      roamDPos[1] = 4.0f * TankSpeed;
+      roamDPos[1] = 4.0f * BZDB->eval(StateDatabase::BZDB_TANKSPEED);
     } else if (args[1] == "right") {
-      roamDPos[1] = -4.0f * TankSpeed;
+      roamDPos[1] = -4.0f * BZDB->eval(StateDatabase::BZDB_TANKSPEED);
     } else if (args[1] == "forward") {
-      roamDPos[0] = 4.0f * TankSpeed;
+      roamDPos[0] = 4.0f * BZDB->eval(StateDatabase::BZDB_TANKSPEED);
     } else if (args[1] == "backward") {
-      roamDPos[0] = -4.0f * TankSpeed;
+      roamDPos[0] = -4.0f * BZDB->eval(StateDatabase::BZDB_TANKSPEED);
     } else if (args[1] == "up") {
-      roamDPos[2] = 4.0f * TankSpeed;
+      roamDPos[2] = 4.0f * BZDB->eval(StateDatabase::BZDB_TANKSPEED);
     } else if (args[1] == "down") {
-      roamDPos[2] = -4.0f * TankSpeed;
+      roamDPos[2] = -4.0f * BZDB->eval(StateDatabase::BZDB_TANKSPEED);
     } else if (args[1] == "stop") {
       roamDTheta  = 0.0f;
       roamDPhi    = 0.0f;
