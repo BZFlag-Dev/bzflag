@@ -49,7 +49,6 @@ class BoxBuilding : public Obstacle {
 
     void		getCorner(int index, float* pos) const;
 
-  private:
     static std::string	typeName;
 };
 

@@ -1709,15 +1709,17 @@ static void		doMotion()
         const float *tp = player[target]->getPosition();
         float azimuth = atan2f(tp[1] - pos[1], tp[0] - pos[0]);
         if (azimuth < 0.0f) azimuth += 2.0f * M_PI;
-        rotation = atan2f(tp[1] - pos[1], tp[0] - pos[0]) - myTank->getAngle();
+	float playerAngle = atan2f(tp[1] - pos[1], tp[0] - pos[0]);
+        rotation = playerAngle - myTank->getAngle();
         if (rotation < -1 * M_PI) rotation += 2.0f * M_PI;
         int period = int(TimeKeeper::getCurrent().getSeconds());
 
 	bool shotFired = false;
         TimeKeeper now = TimeKeeper::getCurrent();
 	if (now - lastShot >= (1.0f / World::getWorld()->getMaxShots())) {
-	  if (fabs(rotation) < BZDB->eval(StateDatabase::BZDB_LOCKONANGLE)) {
-	    float dir[3] = {cosf(azimuth), sinf(azimuth), 0.0f};
+	  if ((fabs(rotation) < BZDB->eval(StateDatabase::BZDB_LOCKONANGLE))
+	  ||  (distance < 50.0f)) {
+	    float dir[3] = {cosf(playerAngle), sinf(playerAngle), 0.0f};
 	    pos[2] += BZDB->eval(StateDatabase::BZDB_MUZZLEHEIGHT);
 	    Ray tankRay(pos, dir);
 	    pos[2] -= BZDB->eval(StateDatabase::BZDB_MUZZLEHEIGHT);
@@ -1727,6 +1729,11 @@ static void		doMotion()
 	       myTank->fireShot();
 	       lastShot = now;
 	       shotFired = true;
+	    }
+	    else if ((distance > 15.f) && (distance < 40.0f) 
+		 && (building->getType() == BoxBuilding::typeName)
+		 && (((building->getPosition()[2] - pos[2] + building->getHeight()) ) < 17.0f)) {
+	       myTank->jump();
 	    }
           }
         }
