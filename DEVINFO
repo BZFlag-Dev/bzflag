@@ -52,6 +52,15 @@ Header files exported from a library go into the include off the top-level.
 Header files for classes introduced in an application directory should never go
 into include.
 
+Don't put interface headers into common.h.  Class interface headers should 
+include just what is necessary to make the interface work.  The .cxx 
+implementation file should include it's interface and whatever else it 
+might need specific to the implementation.  For C code, the header file 
+should include everything the C code needs (otherwise there's no point to the 
+header).
+
+Ideally, there would be one class per file.
+
 C++ features
 ------------
 Earlier versions of BZFlag avoided certain features of C++ that have matured
