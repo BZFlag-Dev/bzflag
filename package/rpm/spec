@@ -14,9 +14,9 @@
 %define version 1.7g1
 %define release 1
 
-%define bzbindir	/usr/X11R6/bin
+%define bzbindir	/usr/bin
 %define bzdatadir	/usr/share/%{name}/
-%define bzmandir	/usr/share/man
+%define bzmandir	/usr/man
 %define bzdocdir	/usr/share/doc/%{name}-%{version}
 
 name:		%{name}
@@ -46,36 +46,15 @@ styles are available.
 %setup -q
 
 %build
-%ifarch ppc
-make linux-ppc
-%else
-%ifarch i386 i486 i586 i686
-make linux-i386
-%else
-make linux
-%endif
-%endif
-make ACXXOPTS="$RPM_OPT_FLAGS" ACOPTS="$RPM_OPT_FLAGS"		\
-	INSTALL_DATA_DIR=%{bzdatadir}				\
-	all
+CFLAGS="$RPM_OPT_FLAGS" CXXFLAGS="$RPM_OPT_FLAGS"		\
+	./configure --prefix=/usr
+make
 
 %install
-rm -rf $RPM_BUILD_ROOT
-mkdir -p $RPM_BUILD_ROOT%{bzdocdir}
-mkdir -p $RPM_BUILD_ROOT%{bzbindir}
-mkdir -p $RPM_BUILD_ROOT%{bzdatadir}
-mkdir -p $RPM_BUILD_ROOT%{bzmandir}/man6
-mkdir -p $RPM_BUILD_ROOT/usr/X11R6/bin
-install -m644 package/rpm/README.linux $RPM_BUILD_ROOT%{bzdocdir}/README
-install -m644 LICENSE $RPM_BUILD_ROOT%{bzdocdir}
-install -m644 man/*.6 $RPM_BUILD_ROOT%{bzmandir}/man6
-gzip $RPM_BUILD_ROOT%{bzmandir}/man6/*.6
-install -m644 data/*.rgb data/*.wav $RPM_BUILD_ROOT%{bzdatadir}
-# note bzfls/bzfrelay/bzfs might want to live in /usr/bin/
-install bin/* $RPM_BUILD_ROOT%{bzbindir}
+make DESTDIR=$RPM_BUILD_ROOT install
 
 %clean
-rm -rf $RPM_BUILD_ROOT
+[ ${RPM_BUILD_ROOT} != "/" ] && rm -rf ${RPM_BUILD_ROOT}
 
 # note -- bzflag must be setuid root to use 3Dfx drivers without /dev/3dfx
 %files
@@ -85,4 +64,4 @@ rm -rf $RPM_BUILD_ROOT
 %dir %{bzdatadir}/*
 %doc %{bzdocdir}/*
 %doc %{bzmandir}/man6/*
-%attr(755,root,root) /usr/X11R6/bin/*
+%attr(755,root,root) %{bzbindir}/*
