@@ -673,8 +673,7 @@ void			dumpResources(BzfDisplay* display,
 
   BZDB->set("panelopacity", string_util::format("%f", renderer.getPanelOpacity()));
 
-  BZDB->set("radarsize", string_util::format("%f", renderer.getRadarSize()));
-  db.addValue("radarsize", string_util::format("%f", renderer.getRadarSize()));
+  BZDB->set("radarsize", string_util::format("%d", renderer.getRadarSize()));
 
   BZDB->set("mouseboxsize", string_util::format("%f", renderer.getMaxMotionFactor()));
   db.addValue("mouseboxsize", string_util::format("%f", renderer.getMaxMotionFactor()));
@@ -1130,8 +1129,8 @@ int			main(int argc, char** argv)
 
     if (BZDB->isSet("panelopacity"))
       renderer.setPanelOpacity(BZDB->eval("panelopacity"));
-    if (db.hasValue("radarsize"))
-      renderer.setRadarSize(atoi(db.getValue("radarsize").c_str()));
+    if (BZDB->isSet("radarsize"))
+      renderer.setRadarSize(atoi(BZDB->get("radarsize").c_str()));
     if (db.hasValue("mouseboxsize"))
       renderer.setMaxMotionFactor(atoi(db.getValue("mouseboxsize").c_str()));
     if (db.hasValue("underline"))
