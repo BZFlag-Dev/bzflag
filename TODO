@@ -7,6 +7,10 @@ THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
 
 THESE ARE LOWER PRIORITY
 
+* unable to remap the respawn binding (it's not "specifically/individually"
+  provided on the key binding menu) without manually editing the config file
+  needs to be decoupled from identify and added to menu.
+
 * do ansi color in curses bzadmin
 
 * Need to use different, clearly disjoint numbering system on bzfs.  perhaps just
