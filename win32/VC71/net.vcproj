@@ -163,6 +163,7 @@
 		</Configuration>
 		<Configuration
 			Name="KRB5 Release|Win32"
+			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="1">
 			<Tool
 				Name="VCCLCompilerTool"/>
@@ -228,7 +229,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\src\net\AdnsHandler.cxx">
+				RelativePath="..\..\src\net\AresHandler.cxx">
 			</File>
 			<File
 				RelativePath="..\..\src\net\multicast.cxx">
@@ -354,7 +355,7 @@
 				RelativePath="..\..\include\Address.h">
 			</File>
 			<File
-				RelativePath="..\..\include\AdnsHandler.h">
+				RelativePath="..\..\include\AresHandler.h">
 			</File>
 			<File
 				RelativePath="..\..\include\bzfio.h">
