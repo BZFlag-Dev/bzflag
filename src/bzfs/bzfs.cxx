@@ -107,6 +107,8 @@ static TimeKeeper lastWorldParmChange;
 // city geometry
 static const float	AvenueSize =	2.0f * BoxBase;	// meters
 
+static bool             isIdentifyFlagIn = false;
+
 
 void sendMessage(int playerIndex, PlayerId targetPlayer, const char *message, bool fullBuffer=false);
 
@@ -625,14 +627,22 @@ static int pread(int playerIndex, int l)
 }
 
 
+static void *flagPack(void *buf, int flagIndex)
+{
+  buf = nboPackUShort(buf, flagIndex);
+  bool hide = flag[flagIndex].flag.type->flagTeam
+    == ::NoTeam && !isIdentifyFlagIn;
+  buf = flag[flagIndex].flag.pack(buf, hide);
+  return buf;
+}
+
 void sendFlagUpdate(int flagIndex = -1, int playerIndex = -1)
 {
   void *buf, *bufStart = getDirectMessageBuffer();
 
   if (flagIndex != -1) {
     buf = nboPackUShort(bufStart,1);
-    buf = nboPackUShort(buf, flagIndex);
-    buf = flag[flagIndex].flag.pack(buf);
+    buf = flagPack(buf, flagIndex);
     if (playerIndex == -1)
       broadcastMessage(MsgFlagUpdate, (char*)buf - (char*)bufStart, bufStart);
     else
@@ -655,8 +665,7 @@ void sendFlagUpdate(int flagIndex = -1, int playerIndex = -1)
 	      buf = nboPackUShort(bufStart,0); //placeholder
 	  }
 
-	  buf = nboPackUShort(buf, flagIndex);
-	  buf = flag[flagIndex].flag.pack(buf);
+	  buf = flagPack(buf, flagIndex);
 	  length += sizeof(uint16_t)+FlagPLen;
 	  cnt++;
 	}
@@ -4874,6 +4883,11 @@ int main(int argc, char **argv)
   if (userDatabaseFile.size())
     readPermsFile(userDatabaseFile);
 
+  if (clOptions->flagCount[Flags::Identify] > 0)
+    isIdentifyFlagIn = true;
+  if ((clOptions->numExtraFlags > 0)
+      && !clOptions->flagDisallowed[Flags::Identify])
+    isIdentifyFlagIn = true;
 
   /* MAIN SERVER RUN LOOP
    *

@@ -158,6 +158,13 @@ void* FlagType::pack(void* buf) const
   return buf;
 }
 
+void* FlagType::fakePack(void* buf) const
+{
+  buf = nboPackUByte(buf, 'P');
+  buf = nboPackUByte(buf, 'Z');
+  return buf;
+}
+
 void* FlagType::unpack(void* buf, FlagType* &type)
 {
   unsigned char abbv[3] = {0,0,0};
@@ -172,9 +179,12 @@ void* FlagType::unpack(void* buf, FlagType* &type)
   return flagMap;
 }
 
-void*			Flag::pack(void* buf) const
+void*			Flag::pack(void* buf, bool hide) const
 {
-  buf = type->pack(buf);
+  if (hide)
+    buf = type->fakePack(buf);
+  else
+    buf = type->pack(buf);
   buf = nboPackUShort(buf, uint16_t(status));
   buf = nboPackUShort(buf, uint16_t(endurance));
   buf = nboPackUByte(buf, owner);

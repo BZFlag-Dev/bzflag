@@ -107,6 +107,7 @@ class FlagType {
 
     const float*	getColor();
     void* pack(void* buf) const;
+    void* fakePack(void* buf) const;
     static void* unpack(void* buf, FlagType* &desc);
     /** Static wrapper function that makes sure that the flag map is
 	initialized before it's used. */
@@ -127,7 +128,7 @@ class FlagType {
 
 class Flag {
   public:
-    void*		pack(void*) const;
+    void*		pack(void*, bool hide = false) const;
     void*		unpack(void*);
 
     static FlagSet&	getGoodFlags();
