@@ -2940,8 +2940,8 @@ static bool		gotBlowedUp(BaseLocalPlayer* tank,
 
   // print reason if it's my tank
   if ((tank == myTank) &&
-      ((reason < LastReason) && blowedUpMessage[reason]) ||
-      (reason == PhysicsDriverDeath)) {
+      (((reason < LastReason) && blowedUpMessage[reason]) ||
+       (reason == PhysicsDriverDeath))) {
 
     std::string blowedUpNotice;
     if (reason < LastReason) {
