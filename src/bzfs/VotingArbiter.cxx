@@ -247,17 +247,44 @@ bool VotingArbiter::isPollSuccessful(void) const
   if (!this->knowsPoll()) {
     return false;
   }
-  unsigned long int votes = _votingBooth->getVoteCount(1);
+  unsigned long int yesVotes = this->getYesCount();
+  unsigned long int noVotes = this->getNoCount();
+  unsigned long int abstainVotes = this->getAbstainCount();
+  double total = (double)yesVotes + (double)noVotes + (double)abstainVotes;
 
-  //ensure minimum votage
-  if (votes < _votesRequired) {
+  // ensure minimum votage (and sanity zero-div check)
+  if ((yesVotes + noVotes < _votesRequired) || (yesVotes + noVotes == 0)) {
     return false;
   }
 
   //  std::cout << "Percentage successful is " << ((double)votes * (double)100.0 / (double)_maxVotes) << " with " << votes << " votes and " << _maxVotes << "max votes required" << std::endl;
 
   // were there enough votes?
-  if (((double)votes * (double)100.0 / (double)_maxVotes) > (double)_votePercentage) {
+  if (( (double)100.0 * (double)yesVotes / total) >= (double)_votePercentage) {
+    return true;
+  }
+  
+  return false;
+}
+
+bool VotingArbiter::isPollSureToFail(void) const
+{
+  if (!this->knowsPoll()) {
+    return true; // hrm, maybe false
+  }
+
+  unsigned long int yesVotes = this->getYesCount();
+  unsigned long int noVotes = this->getNoCount();
+  unsigned long int abstainVotes = this->getAbstainCount();
+  double total = (double)yesVotes + (double)noVotes + (double)abstainVotes;
+
+  // there is a poll, but nobody is allowed to vote
+  if (total <= 0.1) {
+    return true;
+  }
+
+  // were there enough no votes to ensure failure?
+  if (( (double)100.0 * (double)noVotes / total) >= (double)100.0 - (double)_votePercentage) {
     return true;
   }
   

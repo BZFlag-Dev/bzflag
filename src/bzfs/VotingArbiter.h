@@ -188,6 +188,11 @@ private:
    */
   bool isPollSuccessful(void) const;
 
+  /** returns truthfully if the poll is bound to fail given the 
+   * known votes and required vote percentage
+   */
+  bool isPollSureToFail(void) const;
+
   /** returns how much time (in seconds) is remaining on a poll, if one is
    * active
    */
