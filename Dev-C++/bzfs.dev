@@ -2020,7 +2020,7 @@ BuildCmd=
 [Unit198]
 FileName=..\src\game\BzMaterial.cxx
 CompileCpp=1
-Folder=bzfs/Source Files/common
+Folder=Source Files/common
 Compile=1
 Link=1
 Priority=1000
@@ -2030,7 +2030,7 @@ BuildCmd=
 [Unit199]
 FileName=..\src\obstacle\SphereObstacle.cxx
 CompileCpp=1
-Folder=bzfs/Source Files/common
+Folder=Source Files/bzfs
 Compile=1
 Link=1
 Priority=1000
@@ -2040,7 +2040,7 @@ BuildCmd=
 [Unit200]
 FileName=..\src\obstacle\ArcObstacle.cxx
 CompileCpp=1
-Folder=bzfs/Source Files/common
+Folder=Source Files/bzfs
 Compile=1
 Link=1
 Priority=1000
@@ -2050,7 +2050,7 @@ BuildCmd=
 [Unit201]
 FileName=..\src\obstacle\ConeObstacle.cxx
 CompileCpp=1
-Folder=bzfs/Source Files/common
+Folder=Source Files/bzfs
 Compile=1
 Link=1
 Priority=1000
@@ -2060,7 +2060,7 @@ BuildCmd=
 [Unit202]
 FileName=..\src\bzfs\CustomMaterial.cxx
 CompileCpp=1
-Folder=bzfs/Source Files/common
+Folder=Source Files/bzfs
 Compile=1
 Link=1
 Priority=1000

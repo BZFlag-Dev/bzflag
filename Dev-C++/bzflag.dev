@@ -9,7 +9,7 @@ CppCompiler=-DHAVE_HYPOTF -DHAVE_STD_COUNT -DHAVE_ASINF -DHAVE_ATAN2F -DHAVE_ATA
 Includes=..\include;..\win32;.
 Linker=-lmingw32 -lstdc++ -lsdl -lws2_32 -ldsound -lwinmm -lglu32 -lopengl32 -lkernel32 -luser32 -lgdi32 -lwinspool -lcomdlg32 -ladvapi32 -lshell32 -lole32 -loleaut32 -luuid -lodbc32 -lodbccp32_@@_
 Libs=
-UnitCount=333
+UnitCount=332
 Folders="Header Files","Header Files/bzflag","Header Files/common","Header Files/net","Header Files/regex","Header Files/zlib","Resource Files","Source Files","Source Files/bzflag","Source Files/common","Source Files/models","Source Files/net","Source Files/regex","Source Files/zlib"
 ObjFiles=
 PrivateResource=bzflag_private.rc
@@ -2988,16 +2988,6 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit308]
-FileName=..\src\obstacle\TetraSceneNodeGenerator.cxx
-CompileCpp=1
-Folder=Source Files/bzflag
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit310]
 FileName=..\include\bzfSDL.h
 CompileCpp=1
 Folder=Header Files/bzflag
@@ -3007,27 +2997,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit311]
-FileName=..\src\bzflag\ShotStats.cxx
-CompileCpp=1
-Folder=Source Files/bzflag
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit309]
-FileName=..\src\geometry\EighthDTetraSceneNode.cxx
-CompileCpp=1
-Folder=Source Files/bzflag
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit312]
+[Unit310]
 FileName=..\src\bzflag\ShotStatsDefaultKey.cxx
 CompileCpp=1
 Folder=Source Files/bzflag
@@ -3037,8 +3007,38 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit313]
+[Unit311]
 FileName=..\src\bzflag\ShotStatistics.cxx
+CompileCpp=1
+Folder=Source Files/bzflag
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit309]
+FileName=..\src\bzflag\ShotStats.cxx
+CompileCpp=1
+Folder=Source Files/bzflag
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit312]
+FileName=..\src\geometry\MeshPolySceneNode.cxx
+CompileCpp=1
+Folder=Source Files/bzflag
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit313]
+FileName=..\src\obstacle\MeshFace.cxx
 CompileCpp=1
 Folder=Source Files/bzflag
 Compile=1
@@ -3088,26 +3088,6 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit315]
-FileName=..\src\obstacle\MeshFace.cxx
-CompileCpp=1
-Folder=Source Files/bzflag
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit316]
-FileName=..\src\obstacle\MeshObstacle.cxx
-CompileCpp=1
-Folder=Source Files/bzflag
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit317]
 FileName=..\src\obstacle\MeshSceneNodeGenerator.cxx
 CompileCpp=1
 Folder=Source Files/bzflag
@@ -3117,7 +3097,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit318]
+[Unit316]
 FileName=..\src\game\DynamicColor.cxx
 CompileCpp=1
 Folder=Source Files/common
@@ -3127,7 +3107,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit319]
+[Unit317]
 FileName=..\src\game\TextureMatrix.cxx
 CompileCpp=1
 Folder=Source Files/bzflag
@@ -3137,7 +3117,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit320]
+[Unit318]
 FileName=..\include\WallSceneNode.h
 CompileCpp=1
 Folder=Header Files/bzflag
@@ -3147,7 +3127,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit321]
+[Unit319]
 FileName=..\src\bzflag\ForceFeedback.cxx
 CompileCpp=1
 Folder=Source Files/bzflag
@@ -3157,7 +3137,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit322]
+[Unit320]
 FileName=..\src\bzflag\motd.cxx
 CompileCpp=1
 Folder=Source Files/bzflag
@@ -3167,7 +3147,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit323]
+[Unit321]
 FileName=..\src\common\URLManager.cxx
 CompileCpp=1
 Folder=Source Files/common
@@ -3177,7 +3157,7 @@ Priority=1000
 OverrideBuildCmd=1
 BuildCmd=$(CPP) -c ../src/common/URLManager.cxx -o ../src/bzflag/URLManager.o -I"C:/Dev-Cpp/include/c++/backward"  -I"C:/Dev-Cpp/include"  -I"C:/Dev-Cpp/include/c++"  -I"C:/Dev-Cpp/include/c++/mingw32"  -I"../include"  -I"../win32"  -I"."  -DHAVE_ASINF -DHAVE_ATAN2F -DHAVE_ATANF -DHAVE_COSF -DHAVE_EXPF -DHAVE_FABSF -DHAVE_FLOORF -DHAVE_FMODF -DHAVE_LOGF -DHAVE_POWF -DHAVE_SINF -DHAVE_SQRTF -DHAVE_TANF -DHAVE_SDL=1 -DBUILD_REGEX=1 -D__GNUWIN32__ -D_WINDOWS -DWIN32 -D_MBCS -Wall -W -fexpensive-optimizations -O3
 
-[Unit324]
+[Unit322]
 FileName=..\src\bzflag\ClientAuthentication.cxx
 CompileCpp=1
 Folder=Source Files/bzflag
@@ -3187,7 +3167,7 @@ Priority=1000
 OverrideBuildCmd=1
 BuildCmd=$(CPP) -c ../src/bzflag/ClientAuthentication.cxx -o ../src/bzflag/ClientAuthentication.o -I"C:/Dev-Cpp/include/c++/backward"  -I"C:/Dev-Cpp/include"  -I"C:/Dev-Cpp/include/c++"  -I"C:/Dev-Cpp/include/c++/mingw32"  -I"../include"  -I"../win32"  -I"."  -DHAVE_ASINF -DHAVE_ATAN2F -DHAVE_ATANF -DHAVE_COSF -DHAVE_EXPF -DHAVE_FABSF -DHAVE_FLOORF -DHAVE_FMODF -DHAVE_LOGF -DHAVE_POWF -DHAVE_SINF -DHAVE_SQRTF -DHAVE_TANF -DHAVE_SDL=1 -DBUILD_REGEX=1 -D__GNUWIN32__ -D_WINDOWS -DWIN32 -D_MBCS -Wall -W -fexpensive-optimizations -O2
 
-[Unit325]
+[Unit323]
 FileName=..\src\bzflag\LoginMenu.cxx
 CompileCpp=1
 Folder=Source Files/bzflag
@@ -3197,7 +3177,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit326]
+[Unit324]
 FileName=..\src\geometry\AnimatedTreads.cxx
 CompileCpp=1
 Folder=Source Files/bzflag
@@ -3207,10 +3187,30 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit327]
+[Unit325]
 FileName=..\src\geometry\TankGeometryMgr.cxx
 CompileCpp=1
 Folder=Source Files/bzflag
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit326]
+FileName=..\src\common\TextUtils.cxx
+CompileCpp=1
+Folder=Source Files/common
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit327]
+FileName=..\src\common\AutoCompleter.cxx
+CompileCpp=1
+Folder=Source Files/common
 Compile=1
 Link=1
 Priority=1000
@@ -3228,9 +3228,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit330]
-FileName=..\src\game\BzMaterial.cxx
+FileName=..\src\obstacle\ArcObstacle.cxx
 CompileCpp=1
-Folder=Source Files/bzflag
+Folder=Source Files/common
 Compile=1
 Link=1
 Priority=1000
@@ -3238,9 +3238,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit328]
-FileName=..\src\common\TextUtils.cxx
+FileName=..\src\game\BzMaterial.cxx
 CompileCpp=1
-Folder=Source Files/common
+Folder=Source Files/bzflag
 Compile=1
 Link=1
 Priority=1000
@@ -3308,7 +3308,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit331]
-FileName=..\src\obstacle\SphereObstacle.cxx
+FileName=..\src\obstacle\ConeObstacle.cxx
 CompileCpp=1
 Folder=Source Files/common
 Compile=1
@@ -3318,9 +3318,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit332]
-FileName=..\src\obstacle\ArcObstacle.cxx
+FileName=..\src\geometry\MeshFragSceneNode.cxx
 CompileCpp=1
-Folder=Source Files/common
+Folder=Source Files/bzflag
 Compile=1
 Link=1
 Priority=1000
@@ -3398,7 +3398,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit314]
-FileName=..\src\geometry\MeshPolySceneNode.cxx
+FileName=..\src\obstacle\MeshObstacle.cxx
 CompileCpp=1
 Folder=Source Files/bzflag
 Compile=1
@@ -3418,7 +3418,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit329]
-FileName=..\src\common\AutoCompleter.cxx
+FileName=..\src\obstacle\SphereObstacle.cxx
 CompileCpp=1
 Folder=Source Files/common
 Compile=1
