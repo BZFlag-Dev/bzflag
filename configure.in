@@ -241,6 +241,11 @@ if test x$enable_timebomb = xyes; then
    AC_DEFINE(TIME_BOMB, "3/13/1998", [Time Bomb expiration])
 fi
 
+AC_ARG_WITH(SDL, [  --with-SDL              use Simple DirectMedia Layer])
+if test x$with_SDL = xyes; then
+   AM_PATH_SDL(, AC_DEFINE(USE_SDL, 1, [Using SDL]))
+fi
+
 AC_ARG_ENABLE(debug, [  --enable-debug          turn on debugging])
 AM_CONDITIONAL(DEBUG, test x$enable_debug = xyes)
 if test x$enable_debug = xyes; then
