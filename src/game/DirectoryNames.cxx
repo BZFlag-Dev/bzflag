@@ -106,7 +106,7 @@ extern std::string		getCacheDirName()
 extern std::string		getRecordDirName()
 {
   std::string name = getConfigDirName();
-  name += "captured";
+  name += "recordings";
   return name;
 }
 
