@@ -256,7 +256,8 @@ bool WordFilter::aggressiveFilter(char *input) const
 	  filtered = true;
 	  matched = true;
 	  // zappo! .. erase stuff that has been filtered to speed up future checks
-	  memset(sInput + startOffset, ' ', endOffset - startOffset);
+	  // fill with some non-whitespace alpha that is not the start/end of a suffix to prevent rematch
+	  memset(sInput + startOffset, 'W', endOffset - startOffset);
 
 	} else if ( regCode == REG_NOMATCH ) {
 	  // do nothing
