@@ -2261,6 +2261,9 @@ static void addPlayer(int playerIndex)
   } else if (t == NoTeam) {
     rejectPlayer(playerIndex, RejectBadTeam);
         return;
+  } else if (t == ObserverTeam && player[playerIndex].type == ComputerPlayer) {
+    rejectPlayer(playerIndex, RejectServerFull);
+    return;
   } else if (numplayersobs == maxPlayers) {
     // server is full
     rejectPlayer(playerIndex, RejectServerFull);
