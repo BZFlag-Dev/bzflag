@@ -318,6 +318,10 @@ SOURCE=..\..\src\bzflag\FlashClock.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\bzflag\ForceFeedback.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\bzflag\GuidedMissleStrategy.cxx
 # End Source File
 # Begin Source File
@@ -743,6 +747,10 @@ SOURCE=..\..\include\FlagWarpSceneNode.h
 # Begin Source File
 
 SOURCE=..\..\src\bzflag\FlashClock.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\bzflag\ForceFeedback.h
 # End Source File
 # Begin Source File
 
