@@ -7,6 +7,7 @@ bzfs \- BZFlag game server
 [\fB\-a \fIvelocity\fR \fIrotation\fR]
 [\fB\-b\fR]
 [\fB\-c\fR]
+[\fB\-cr\fR]
 [\fB\+f \fR{\fIgood\fR|\fIflag-id\fR}]
 [\fB\-f \fR{\fIbad\fR|\fIflag-id\fR}]
 [\fB\-g\fR]
@@ -60,6 +61,10 @@ When \fB-c\fR is supplied, this option randomly rotates the buildings.
 .B -c
 Enables the capture-the-flag style game.  By default, the free-for-all
 style is used.
+.TP
+.B -cr
+Enables the capture-the-flag style game with random map.  By default,
+the free-for-all style is used.
 .TP
 \fB+f\fR {\fIgood\fR|\fIflag-id\fR}
 Forces the existence of the given flag.  If specified multiple times
