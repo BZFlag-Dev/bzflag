@@ -21,6 +21,7 @@ noinst_HEADERS =		\
 	CommandsStandard.h	\
 	ConfigFileManager.h	\
 	Country.h		\
+	DelayQueue.h		\
 	DisplayListManager.h	\
 	DrawablesManager.h	\
 	EighthDBaseSceneNode.h	\
@@ -37,6 +38,7 @@ noinst_HEADERS =		\
 	Language.h		\
 	LaserSceneNode.h	\
 	MediaFile.h		\
+	NetHandler.h		\
 	Obstacle.h		\
 	ObstacleSceneNodeGenerator.h	\
 	OpenGLDisplayList.h	\
@@ -47,8 +49,10 @@ noinst_HEADERS =		\
 	OpenGLTexture.h		\
 	PTSceneNode.h		\
 	Pack.h			\
+	Permissions.h		\
 	Ping.h			\
 	PlatformFactory.h	\
+	PlayerInfo.h		\
 	PlayerState.h		\
 	PolyWallSceneNode.h	\
 	Protocol.h		\
