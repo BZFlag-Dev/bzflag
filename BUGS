@@ -1,6 +1,8 @@
 recent bugs
 ------------
 
+- key control is borked turning on a physics driver.
+
 - in teleporter with (isValid() == false) can mess up the linking
 
 - when a shield flag is dropped due to its owner being shot, it is not
