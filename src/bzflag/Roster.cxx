@@ -82,7 +82,10 @@ Player* getPlayerByName(const char* name)
   for (int i = 0; i < curMaxPlayers; i++)
     if (player[i] && strcmp( player[i]->getCallSign(), name ) == 0)
       return player[i];
-  WorldPlayer *worldWeapons = World::getWorld()->getWorldWeapons();
+  World *world = World::getWorld();
+  if (!world)
+    return NULL;
+  WorldPlayer *worldWeapons = world->getWorldWeapons();
   if (strcmp(worldWeapons->getCallSign(), name) == 0)
     return worldWeapons;
   return NULL;
