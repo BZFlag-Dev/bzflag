@@ -85,6 +85,7 @@ class EvdevJoystick : public BzfJoystick {
 
     void        poll();
     void        setButton(int button_num, int state);
+    int         mapButton(int bit_num);
     void        ffResetRumble();
 
     std::map<std::string,EvdevJoystickInfo> joysticks;

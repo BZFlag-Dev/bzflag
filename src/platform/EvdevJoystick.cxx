@@ -225,21 +225,49 @@ void                    EvdevJoystick::poll()
       break;
 
     case EV_KEY:
-      /* Just map linux input bits directly to bits in 'buttons' */
-      setButton(ev.code, ev.value);
+      setButton(mapButton(ev.code), ev.value);
       break;
 
     }
   }
 }
 
+int                     EvdevJoystick::mapButton(int bit_num)
+{
+  /* Given an evdev button number, map it back to a small integer that most
+   * people would consider the button's actual number. This also ensures
+   * that we can fit all buttons in "buttons" as long as the number of buttons
+   * is less than the architecture's word size ;)
+   *
+   * We just scan through the joystick's keybits, counting how many
+   * set bits we encounter before this one. If the indicated bit isn't
+   * set in keybits, this is a bad event and we return -1.
+   * If this linear scan becomes a noticeable performance drain, this could
+   * easily be precomputed and stored in an std:map.
+   */
+  int i;
+  int button_num = 0;
+  const int total_bits = sizeof(currentJoystick->keybit)*sizeof(unsigned long)*8;
+
+  for (i=0; i<total_bits; i++) {
+    if (i == bit_num)
+      return button_num;
+    if (test_bit(i, currentJoystick->keybit))
+      button_num++;
+  }
+  return -1;
+}
+
 void                    EvdevJoystick::setButton(int button_num, int state)
 {
-  int mask = 1<<button_num;
-  if (state)
-    buttons |= mask;
-  else
-    buttons &= ~mask;
+
+  if (button_num >= 0) {
+    int mask = 1<<button_num;
+    if (state)
+      buttons |= mask;
+    else
+      buttons &= ~mask;
+  }
 }
 
 void			EvdevJoystick::getJoy(int& x, int& y)
