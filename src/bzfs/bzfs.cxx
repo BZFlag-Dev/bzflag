@@ -1272,14 +1272,12 @@ static void acceptClient()
   PlayerId playerIndex;
 
   // find open slot in players list
-  
   PlayerId minPlayerId = 0;
   PlayerId maxPlayerId = (PlayerId)maxPlayers;
   if (Replay::enabled()) {
      minPlayerId = MaxPlayers;
      maxPlayerId = MaxPlayers + ReplayObservers;
   }
-
   for (playerIndex = minPlayerId; playerIndex < maxPlayerId; playerIndex++) {
     if (!player[playerIndex].exist()) {
       break;
@@ -1396,7 +1394,7 @@ void sendMessage(int playerIndex, PlayerId targetPlayer, const char *message, bo
     broadcast = true;
   }
     
-  if (Record::enabled() && !broadcast) {
+  if (Record::enabled() && !broadcast) { // don't record twice
     Record::addPacket (MsgMessage, len, bufStart, HiddenPacket);
   }
 }
@@ -3614,8 +3612,11 @@ int main(int argc, char **argv)
     }
   }
   
-  
-  if (Replay::enabled()) {
+  // enable replay server mode
+  if (clOptions->replayServer) {
+
+    Replay::init();
+    
     // maxPlayers is sent in the world data to the client.
     // the client then uses this to setup it's players
     // data structure, so we need to send it the largest
@@ -3623,19 +3624,15 @@ int main(int argc, char **argv)
     maxPlayers = MaxPlayers + ReplayObservers;
     
     if (clOptions->maxTeam[ObserverTeam] == 0) {
-      std::cerr << "ERROR: Replay server requires at least 1 observer" << std::endl;
-#if defined(_WIN32)
-      WSACleanup();
-#endif /* defined(_WIN32) */
-      return 1;
+      std::cerr << "replay needs at least 1 observer, set to 1" << std::endl;
+      clOptions->maxTeam[ObserverTeam] = 1;
     }
     else if (clOptions->maxTeam[ObserverTeam] > ReplayObservers) {
-      std::cerr << "WARNING: Replay observer count set to " << 
-        ReplayObservers << std::endl;
+      std::cerr << "observer count limited to " << ReplayObservers << 
+                   " for replay" << std::endl;
       clOptions->maxTeam[ObserverTeam] = ReplayObservers;
     }
   }
-      
 
   /* load the bad word filter if it was set */
   if (clOptions->filterFilename.length() != 0) {
@@ -3653,10 +3650,6 @@ int main(int argc, char **argv)
     }
   }
   
-  // enable replay server mode
-  if (clOptions->replayServer) {
-    Replay::init();
-  }
 
   /* initialize the poll arbiter for voting if necessary */
   if (clOptions->voteTime > 0) {

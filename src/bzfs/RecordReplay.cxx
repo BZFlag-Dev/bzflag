@@ -166,7 +166,8 @@ static bool saveHeader (int playerIndex, FILE *f);
 static bool loadHeader (ReplayHeader *h, FILE *f);
 static bool replaceFlagTypes (ReplayHeader *h);
 static bool replaceWorldDatabase (ReplayHeader *h);
-static bool modifyWorldDatabase ();
+static void getWorldParamPtrs (char* world,
+                               char* &maxPlayers, char* &timeStamp);
 static bool flagIsActive (FlagType *type);
 static bool packFlagTypes (char *flags, u32 *flagsSize);
 
@@ -1501,6 +1502,10 @@ loadHeader (ReplayHeader *h, FILE *f)
 
   if (replaced) {  
     // FIXME - PRINT A BIG WARNING HERE? KICK EVERYONE?
+    sendMessage (ServerPlayer, AllPlayers,
+                 "An incompatible recording has been loaded");
+    sendMessage (ServerPlayer, AllPlayers,
+                 "Please rejoin or face the consequences (client crashes)");
   }
   
   return true;
@@ -1609,24 +1614,43 @@ replaceFlagTypes (ReplayHeader *h)
 static bool
 replaceWorldDatabase (ReplayHeader *h)
 {
-  // FIXME - modify the world first
-  // copy the current timestamp into
-  // the header world, and change the
-  // header maxPlayers to 216...
+  char *nowPlayersPtr, *nowTimeStampPtr;
+  char *hdrPlayersPtr, *hdrTimeStampPtr;
+  unsigned short nowMaxPlayers, hdrMaxPlayers;
+  unsigned int nowTimeStamp, hdrTimeStamp;
 
-  modifyWorldDatabase ();
+  getWorldParamPtrs (worldDatabase, nowPlayersPtr, nowTimeStampPtr);
+  getWorldParamPtrs (h->world, hdrPlayersPtr, hdrTimeStampPtr);
+  
+  // save the originals
+  nboUnpackUShort (nowPlayersPtr, nowMaxPlayers);  
+  nboUnpackUInt (nowTimeStampPtr, nowTimeStamp);  
+  nboUnpackUShort (hdrPlayersPtr, hdrMaxPlayers);  
+  nboUnpackUInt (hdrTimeStampPtr, hdrTimeStamp);  
+  DEBUG3 ("Current maxPlayers = %i\n", (int)nowMaxPlayers);
+  DEBUG3 ("Current timeStamp  = 0x%X\n", nowTimeStamp);
+  DEBUG3 ("Header maxPlayers  = %i\n", (int)hdrMaxPlayers);
+  DEBUG3 ("Header timeStamp   = 0x%X\n", hdrTimeStamp);
+  
+  // setup the header params like the current world to compare
+  nboPackUShort (hdrPlayersPtr, nowMaxPlayers);  
+  nboPackUInt (hdrTimeStampPtr, nowTimeStamp);  
 
   if ((h->worldSize != worldDatabaseSize) ||
       (memcmp (h->world, worldDatabase, h->worldSize) != 0)) {
     //
     // they don't match, replace the world
     //
-    char *tmp = worldDatabase;
 
     DEBUG3 ("Replay: replacing World Database\n");
     
+    char *oldWorld = worldDatabase;
     worldDatabase = h->world;
     worldDatabaseSize = h->worldSize;
+    
+    // setup for the hash
+    nboPackUShort (hdrPlayersPtr, hdrMaxPlayers);  
+    nboPackUInt (hdrTimeStampPtr, 0);  
     
     MD5 md5;
     md5.update ((unsigned char *)worldDatabase, worldDatabaseSize);
@@ -1635,7 +1659,11 @@ replaceWorldDatabase (ReplayHeader *h)
     hexDigest[0] = h->realHash[0];
     strncpy (hexDigest + 1, hash.c_str(), sizeof (hexDigest) - 1);
 
-    delete[] tmp;
+    // revert to the header time, and reset maxPlayers
+    nboPackUShort (hdrPlayersPtr, MaxPlayers + ReplayObservers);  
+    nboPackUInt (hdrTimeStampPtr, hdrTimeStamp);  
+    
+    delete[] oldWorld;
     return true;   // the world was replaced
   }
 
@@ -1644,66 +1672,13 @@ replaceWorldDatabase (ReplayHeader *h)
 }
 
 
-static bool
-modifyWorldDatabase ()
+static void
+getWorldParamPtrs (char* world, char* &maxPlayers, char* &timeStamp)
 {
-  // for record files, use a different MD5 hash.
-  // data that is modified for replay mode is ignored.
-  
-  unsigned short max_players, num_flags;
-  unsigned int   timestamp;
-  char *buf;
-
-  // zero maxPlayers, numFlags, and the timestamp
-  
-  if (worldDatabase == NULL) {
-    return false;
-  }
-  else {
-    buf = worldDatabase;
-  }
-  
-  buf += sizeof (unsigned short) * 4 + sizeof (float);     // at maxPlayers
-  buf = (char*)nboUnpackUShort (buf, max_players);
-  buf -= sizeof (unsigned short);      // rewind
-  buf = (char*)nboPackUShort (buf, 0); // clear
-  
-  buf += sizeof (unsigned short);                          // at numFlags
-  buf = (char*)nboUnpackUShort (buf, num_flags);
-  buf -= sizeof (unsigned short);      // rewind
-  buf = (char*)nboPackUShort (buf, 0); // clear
-
-  buf += sizeof (unsigned short) * 2 + sizeof (float) * 2; // at timestamp
-  buf = (char*)nboUnpackUInt (buf, timestamp);
-  buf -= sizeof (unsigned int);        // rewind
-  buf = (char*)nboPackUInt (buf, 0);   // clear
-  
-  // calculate the hash
-  
-  MD5 md5;
-  md5.update ((unsigned char *)worldDatabase, worldDatabaseSize);
-  md5.finalize ();
-  //if (clOptions->worldFile == NULL)
-  //result = "t";
-  //else
-  //result = "p";
-  //result += md5.hexdigest();
-
-  // put them back the way they were
-  
-  buf = worldDatabase;
-  
-  buf += sizeof (unsigned short) * 4 + sizeof (float);     // at maxPlayers
-  buf = (char*)nboPackUShort (buf, max_players);
-  
-  buf += sizeof (unsigned short);                          // at numFlags
-  buf = (char*)nboPackUShort (buf, num_flags);
-
-  buf += sizeof (unsigned short) * 2 + sizeof (float) * 2; // at timestamp
-  buf = (char*)nboPackUInt (buf, timestamp);
-
-  return true;
-}
+  maxPlayers = world + sizeof(unsigned short)*4 + sizeof(float)*1;
+  timeStamp = maxPlayers + sizeof(unsigned short)*5 + sizeof(float)*2;
+  return;
+}  
 
 
 static bool
