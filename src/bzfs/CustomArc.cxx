@@ -36,6 +36,7 @@ CustomArc::CustomArc()
   size[0] = size[1] = size[2] = 10.0f;
   ratio = 1.0f;
   angle = 360.0f;
+  texsize[0] = texsize[1] = texsize[2] = texsize[3] = -4.0f;
   useNormals = true;
 
   // setup the default textures
@@ -70,6 +71,10 @@ bool CustomArc::read(const char *cmd, std::istream& input)
   else if (strcasecmp(cmd, "ratio") == 0) {
     input >> ratio;
   }
+  else if (strcasecmp(cmd, "texsize") == 0) {
+    input >> texsize[0] >> texsize[1] >> texsize[2] >> texsize[3];
+    printf ("%f %f %f %f\n", texsize[0], texsize[1], texsize[2], texsize[3]);
+  }
   else if (strcasecmp(cmd, "flatshading") == 0) {
     useNormals = false;
   }
@@ -78,7 +83,7 @@ bool CustomArc::read(const char *cmd, std::istream& input)
       return false;
     }
     MeshMaterial defMat; // default material
-    for (int i = 0; i < 6; i++) {
+    for (int i = 0; i < MaterialCount; i++) {
       materials[i].copyDiffs(modedMat, defMat);
     }
   }
@@ -100,12 +105,12 @@ bool CustomArc::parseSideMaterials(const char* cmd, std::istream& input,
 {
   // NOTE: "end" can not be used because it will be picked-off
   //       as a block terminator at the BZWReader level.
-  const char* sideNames[6] =
+  const char* sideNames[MaterialCount] =
     { "top", "bottom", "inside", "outside", "startside", "endside" };
 
   error = false;
 
-  for (int n = 0; n < 6; n++) {
+  for (int n = 0; n < MaterialCount; n++) {
     if (strcasecmp (cmd, sideNames[n]) == 0) {
       std::string line, matcmd;
       std::getline(input, line);
@@ -142,31 +147,44 @@ void CustomArc::write(WorldInfo *world) const
 
   // validity checking
   if ((sz[0] < minSize) || (sz[1] < minSize) || (sz[2] < minSize) ||
+      (fabsf(texsize[0]) < minSize) || (fabsf(texsize[1]) < minSize) ||
+      (fabsf(texsize[2]) < minSize) || (fabsf(texsize[3]) < minSize) ||
       (ratio < 0.0f) || (ratio > 1.0f)) {
     return;
   }
 
-  float r = rotation;
-  float a = angle * (M_PI / 180.f); // convert to radians
-
-  // limit angle and rotation to [0, (M_PI * 2)]
-/*
-  if (a < 0.0f) {
-    // put us on the positive side
-    a = a - (M_PI * 2.0f) * floorf (a / (M_PI * 2.0f));
-  } else {
-    a = fmodf(a, M_PI * 2.0f);
+  // adjust the texture sizes   FIXME: finish texsz[2] & texsz[3]
+  float texsz[4];
+  memcpy (texsz, texsize, sizeof(float[4]));
+  if (texsz[0] < 0.0f) {
+    // unless you want to do elliptic integrals, here's
+    // the Ramanujan approximation for the circumference
+    // of an ellipse  (it will be rounded anyways)
+    const float circ = 
+      M_PI * ((3.0f * (sz[0] + sz[1])) -
+              sqrtf ((sz[0] + (3.0f * sz[1])) * (sz[1] + (3.0f * sz[0]))));
+    // make sure it's an integral number so that the edges line up
+    texsz[0] = -floorf(circ / texsz[0]);
+  }
+  if (texsz[1] < 0.0f) {
+    texsz[1] = -(sz[2] / texsz[1]);
   }
 
+  // setup the angles  
+  float r = rotation;
+  float a = angle;
+  if (a > +360.0f) {
+    a = +360.0f;
+  }
+  if (a < -360.0f) {
+    a = -360.0f;
+  }
+  a = a * (M_PI / 180.0f); // convert to radians
   if (a < 0.0f) {
     r = r + a;
-    a = fabsf(a);
+    a = -a;
   }
-  r = fmodf(r, M_PI * 2.0f);
-  if (r < 0.0f) {
-    r = r - ((M_PI * 2.0f) * floorf (r / (M_PI * 2.0f)));
-  }
-*/
+
   // more validity checking
   if ((int) ((a + minSize) / (M_PI * 0.5f)) > divisions) {
     return;
@@ -194,17 +212,17 @@ void CustomArc::write(WorldInfo *world) const
   const float squish = sz[1] / sz[0];
 
   if (isPie) {
-    makePie(isCircle, a, r, sz[2], outrad, squish, world);
+    makePie(isCircle, a, r, sz[2], outrad, squish, texsz, world);
   } else {
-    makeRing(isCircle, a, r, sz[2], inrad, outrad, squish, world);
+    makeRing(isCircle, a, r, sz[2], inrad, outrad, squish, texsz, world);
   }
 
   return;
 }
 
 
-void CustomArc::makePie(bool isCircle, float a, float r,
-                        float h, float radius, float squish,
+void CustomArc::makePie(bool isCircle, float a, float r, float h,
+                        float radius, float squish, float texsz[4],
                         WorldInfo* world) const
 {
   int i;
@@ -216,6 +234,14 @@ void CustomArc::makePie(bool isCircle, float a, float r,
   std::vector<cfvec3> normals;
   std::vector<cfvec2> texcoords;
 
+  // setup the texsize across the disc
+  if (texsz[2] < 0.0f) {
+    texsz[2] = -((2.0f * radius) / texsz[2]);
+  }
+  if (texsz[3] < 0.0f) {
+    texsz[3] = -((2.0f * radius * squish) / texsz[3]);
+  }
+
   const float astep = a / (float) divisions;
 
   for (i = 0; i < (divisions + 1); i++) {
@@ -226,9 +252,12 @@ void CustomArc::makePie(bool isCircle, float a, float r,
     // vertices and normals
     if (!isCircle || (i != divisions)) {
       cfvec3 v, n;
+      float delta[2];
+      delta[0] = cos_val * radius;
+      delta[1] = (sin_val * radius) * squish;
       // vertices
-      v[0] = pos[0] + (cos_val * radius);
-      v[1] = pos[1] + (squish * (sin_val * radius));
+      v[0] = pos[0] + delta[0];
+      v[1] = pos[1] + delta[1];
       v[2] = pos[2];
       vertices.push_back(v);
       v[2] = v[2] + h;
@@ -236,8 +265,8 @@ void CustomArc::makePie(bool isCircle, float a, float r,
       // normal
       if (useNormals) {
         n[2] = 0.0f;
-        n[0] = cos_val;
-        n[1] = sin_val * squish;
+        n[0] = cos_val * squish;
+        n[1] = sin_val;
         float len = 1.0f / sqrtf((n[0] * n[0]) + (n[1] * n[1]));
         n[0] = n[0] * len;
         n[1] = n[1] * len;
@@ -248,10 +277,11 @@ void CustomArc::makePie(bool isCircle, float a, float r,
     // texture coordinates (around the edge)
     cfvec2 t;
     t[0] = (float) i / (float) divisions;
+    t[0] = texsz[0] * t[0];
     t[1] = 0.0f;
     texcoords.push_back(t);
     // outside texcoord
-    t[1] = 1.0f;
+    t[1] = texsz[1] * 1.0f;
     texcoords.push_back(t);
   }
 
@@ -261,8 +291,8 @@ void CustomArc::makePie(bool isCircle, float a, float r,
     float cos_val = cos(ang);
     float sin_val = sin(ang);
     cfvec2 t;
-    t[0] = 0.5f + (0.5f * cos_val);
-    t[1] = 0.5f + (0.5f * sin_val);
+    t[0] = texsz[2] * (0.5f + (0.5f * cos_val));
+    t[1] = texsz[3] * (0.5f + (0.5f * sin_val));
     texcoords.push_back(t);
   }
 
@@ -275,7 +305,8 @@ void CustomArc::makePie(bool isCircle, float a, float r,
   v[2] = pos[2] + h;
   vertices.push_back(v); // top
   cfvec2 t;
-  t[0] = t[1] = 0.5f;
+  t[0] = texsz[2] * 0.5f;
+  t[1] = texsz[3] * 0.5f;
   texcoords.push_back(t);
 
   // setup the face count
@@ -355,9 +386,9 @@ void CustomArc::makePie(bool isCircle, float a, float r,
 }
 
 
-void CustomArc::makeRing(bool isCircle, float a, float r,
-                         float h, float inrad, float outrad,
-                         float squish, WorldInfo* world) const
+void CustomArc::makeRing(bool isCircle, float a, float r, float h,
+                         float inrad, float outrad, float squish,
+                         float texsz[4], WorldInfo* world) const
 {
   int i;
 
@@ -412,10 +443,11 @@ void CustomArc::makeRing(bool isCircle, float a, float r,
     cfvec2 t;
     // inside texcoord
     t[0] = (float) i / (float) divisions;
+    t[0] = texsz[0] * t[0];
     t[1] = 0.0f;
     texcoords.push_back(t);
     // outside texcoord
-    t[1] = 1.0f;
+    t[1] = texsz[1] * 1.0f;
     texcoords.push_back(t);
   }
 

@@ -977,11 +977,11 @@ meshes, mesh faces, arcs, and spheres. Here are the properties:
 
 \fB  texture\fR filename  # set working texture (without PNG extension)
 .br
-\fB  notexture\fR  # specify that no texture is to be used
+\fB  notexture\fR         # specify that no texture is to be used
 .br
-\fB  notexalpha\fR  # do not use the texture's alpha channel
+\fB  notexcolor\fR        # the color is not applied to the texture
 .br
-\fB  notexcolor\fR  # the color is not applied to the texture
+\fB  notexalpha\fR        # don't use the texture's alpha channel
 .br
   # if a texture is specified, but not found, the default texture
 .br
@@ -993,9 +993,11 @@ meshes, mesh faces, arcs, and spheres. Here are the properties:
 .br
 \fB  dyncol\fR -1                 # dynamic color  (-1 for none)
 .br
-\fB  ambient\fR 0.2 0.2 0.2 1.0   # ambient color
+\fB  ambient\fR  0.2 0.2 0.2 1.0  # ambient color
 .br
-\fB  diffuse\fR 0.8 0.8 0.8 1.0   # diffuse color (\fBmain color\fR)
+\fB  diffuse\fR  0.8 0.8 0.8 1.0  # diffuse color (\fBmain color\fR)
+.br
+\fB  color\fR    0.8 0.8 0.8 1.0  # synonym for 'diffuse'
 .br
 \fB  specular\fR 0.0 0.0 0.0 1.0  # specular color
 .br

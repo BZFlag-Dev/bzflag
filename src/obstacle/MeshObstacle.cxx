@@ -138,8 +138,13 @@ bool MeshObstacle::addFace(const std::vector<int>& _vertices,
   }
   MeshFace* face = new MeshFace(this, count, v, n, t, _material,
                                 driveThrough, shootThrough);
-  faces[faceCount] = face;
-  faceCount++;
+  if (face->isValid()) {
+    faces[faceCount] = face;
+    faceCount++;
+  } else {
+    delete face;
+    return false;
+  }
 
   return true;
 }

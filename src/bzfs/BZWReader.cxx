@@ -42,6 +42,7 @@
 #include "CustomTextureMatrix.h"
 #include "CustomMesh.h"
 #include "CustomArc.h"
+#include "CustomCone.h"
 #include "CustomSphere.h"
 #include "CustomWaterLevel.h"
 
@@ -145,6 +146,8 @@ bool BZWReader::readWorldStream(std::vector<WorldFileObject*>& wlist)
       newObject = new CustomMesh;
     } else if (strcasecmp(buffer, "arc") == 0) {
       newObject = new CustomArc;
+    } else if (strcasecmp(buffer, "cone") == 0) {
+      newObject = new CustomCone;
     } else if (strcasecmp(buffer, "sphere") == 0) {
       newObject = new CustomSphere;
     } else if (strcasecmp(buffer, "weapon") == 0) {

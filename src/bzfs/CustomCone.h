@@ -10,8 +10,8 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef __CUSTOM_SPHERE_H__
-#define __CUSTOM_SPHERE_H__
+#ifndef __CUSTOM_CONE_H__
+#define __CUSTOM_CONE_H__
 
 /* interface header */
 #include "WorldFileObstacle.h"
@@ -23,22 +23,33 @@
 #include "MeshMaterial.h"
 
 
-class CustomSphere : public WorldFileObstacle {
+class CustomCone : public WorldFileObstacle {
   public:
-    CustomSphere();
-    ~CustomSphere();
-    virtual bool read(const char *cmd, std::istream& input);
+    CustomCone();
+    ~CustomCone();
+    virtual bool read(const char* cmd, std::istream& input);
     virtual void write(WorldInfo*) const;
 
   private:
+    bool parseSideMaterials(const char* cmd, std::istream& input,
+                            bool& error);
+    enum {
+      Edge,
+      Bottom,
+      StartFace,
+      EndFace,
+      MaterialCount
+    };
+
     int divisions;
+    float angle;
     float texsize[2];
     bool useNormals;
-    MeshMaterial material;
+    MeshMaterial materials[4];
 };
 
 
-#endif  /* __CUSTOM_SPHERE_H__ */
+#endif  /* __CUSTOM_CONE_H__ */
 
 // Local variables: ***
 // mode: C++ ***

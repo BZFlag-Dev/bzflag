@@ -20,6 +20,8 @@ bzfs_SOURCES = \
 	CustomBase.h \
 	CustomBox.cxx \
 	CustomBox.h \
+	CustomCone.cxx \
+	CustomCone.h \
 	CustomDynamicColor.cxx \
 	CustomDynamicColor.h \
 	CustomGate.cxx \

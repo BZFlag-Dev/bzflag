@@ -34,6 +34,7 @@ CustomSphere::CustomSphere()
   pos[2] = 10.0f;
   size[0] = size[1] = size[2] = 10.0f;
   material.texture = "boxwall";
+  texsize[0] = texsize[1] = -4.0f;
   useNormals = true;
   return;
 }
@@ -57,6 +58,9 @@ bool CustomSphere::read(const char *cmd, std::istream& input)
     input >> radius;
     size[0] = size[1] = size[2] = radius;
   }
+  else if (strcasecmp(cmd, "texsize") == 0) {
+    input >> texsize[0] >> texsize[1];
+  }
   else if (strcasecmp(cmd, "flatshading") == 0) {
     useNormals = false;
   }
@@ -78,16 +82,33 @@ void CustomSphere::write(WorldInfo *world) const
   int i, j, q;
   cfvec3 v, n;
   cfvec2 t;
-  float sz[3];
+  float sz[3], texsz[2];
   const float minSize = 1.0e-6f; // cheezy / lazy
 
   // absolute the sizes
   sz[0] = fabsf(size[0]);
   sz[1] = fabsf(size[1]);
   sz[2] = fabsf(size[2]);
+  
+  // adjust the texture sizes
+  memcpy (texsz, texsize, sizeof(float[2]));
+  if (texsz[0] < 0.0f) {
+    // unless you want to do elliptic integrals, here's
+    // the Ramanujan approximation for the circumference
+    // of an ellipse  (it will be rounded anyways)
+    const float circ = 
+      M_PI * ((3.0f * (sz[0] + sz[1])) -
+              sqrtf ((sz[0] + (3.0f * sz[1])) * (sz[1] + (3.0f * sz[0]))));
+    // make sure it's an integral number so that the edges line up
+    texsz[0] = -floorf(circ / texsz[0]);
+  }
+  if (texsz[1] < 0.0f) {
+    texsz[1] = -((2.0f * sz[2]) / texsz[1]);
+  }
+  
 
   // validity checking
-  if ((divisions < 1) ||
+  if ((divisions < 1) || (texsz[0] < minSize) || (texsz[1] < minSize) ||
       (sz[0] < minSize) || (sz[1] < minSize) || (sz[2] < minSize)) {
     return;
   }
@@ -127,27 +148,32 @@ void CustomSphere::write(WorldInfo *world) const
                       (float)j / (float)(4 * (i + 1)));
       float v_angle = ((M_PI / 2.0f) *
                       (float)(divisions - i - 1) / (float)(divisions));
-      float delta[3];
-      delta[0] = sz[0] * (cos(h_angle) * cos(v_angle));
-      delta[1] = sz[1] * (sin(h_angle) * cos(v_angle));
-      delta[2] = sz[2] * sin(v_angle);
+      float unit[3];
+      unit[0] = cos(h_angle) * cos(v_angle);
+      unit[1] = sin(h_angle) * cos(v_angle);
+      unit[2] = sin(v_angle);
       // vertex
-      v[0] = pos[0] + delta[0];
-      v[1] = pos[1] + delta[1];
-      v[2] = pos[2] + delta[2];
+      v[0] = pos[0] + (sz[0] * unit[0]);
+      v[1] = pos[1] + (sz[1] * unit[1]);
+      v[2] = pos[2] + (sz[2] * unit[2]);
       vertices.push_back(v);
       // normal
       if (useNormals) {
-        const float len = 1.0f / sqrtf(vec3dot(delta, delta));
-        n[0] = delta[0] * len;
-        n[1] = delta[1] * len;
-        n[2] = delta[2] * len;
-        normals.push_back(v);
+        n[0] = unit[0] / sz[0];
+        n[1] = unit[1] / sz[1];
+        n[2] = unit[2] / sz[2];
+        const float len = 1.0f / sqrtf(vec3dot(n.data, n.data));
+        n[0] = n[0] * len;
+        n[1] = n[1] * len;
+        n[2] = n[2] * len;
+        normals.push_back(n);
       }
       // texcoord
       t[0] = (float)j / (float)(4 * (i + 1));
+      t[0] = t[0] * texsz[0];
       t[1] = (float)(divisions - i - 1) / (float)divisions;
       t[1] = 0.5f + (0.5f * t[1]);
+      t[1] = t[1] * texsz[1];
       texcoords.push_back(t);
 
       // the bottom hemisphere
@@ -161,7 +187,7 @@ void CustomSphere::write(WorldInfo *world) const
           normals.push_back(n);
         }
         // texcoord
-        t[1] = 1.0f - t[1];
+        t[1] = texsz[1] - t[1];
         texcoords.push_back(t);
       }
     }
@@ -170,19 +196,20 @@ void CustomSphere::write(WorldInfo *world) const
   // the closing strip of texture coordinates
 //  const int texStripOffset = (2 * ringOffset) + (divisions * 4) + 1;
   const int texStripOffset = texcoords.size();
-  t[0] = 0.5f; // weirdness
-  t[1] = 1.0f;
+  t[0] = texsz[0] * 0.5f; // weirdness
+  t[1] = texsz[1] * 1.0f;
   texcoords.push_back(t);
   t[1] = 0.0f;
   texcoords.push_back(t);
   for (i = 0; i < divisions; i++) {
-    t[0] = 1.0f;
+    t[0] = texsz[0] * 1.0f;
     t[1] = (float)(divisions - i - 1) / (float)divisions;
     t[1] = 0.5f + (0.5f * t[1]);
+    t[1] = texsz[1] * t[1];
     texcoords.push_back(t);
     // the bottom hemisphere
     if (i != (divisions - 1)) {
-      t[1] = 1.0f - t[1];
+      t[1] = texsz[1] - t[1];
       texcoords.push_back(t);
     }
   }
