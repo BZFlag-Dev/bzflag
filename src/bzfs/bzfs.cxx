@@ -113,12 +113,6 @@ void makeupper(std::string& str)
 
 void sendMessage(int playerIndex, PlayerId targetPlayer, const char *message, bool fullBuffer=false);
 
-// DisconnectTimeout is how long to wait for a reconnect before
-// giving up.  this should be pretty short to avoid bad clients
-// from using up our resources, but long enough to allow for
-// even a slow client/connection.
-static const float DisconnectTimeout = 10.0f;
-
 // every ListServerReAddTime server add ourself to the list
 // server again.  this is in case the list server has reset
 // or dropped us for some reason.
@@ -554,7 +548,7 @@ private:
 struct CmdLineOptions
 {
   CmdLineOptions()
-  : wksPort(ServerPort), reconnectPort(ServerPort+1), gameStyle(PlainGameStyle), servermsg(NULL),
+  : wksPort(ServerPort), gameStyle(PlainGameStyle), servermsg(NULL),
     advertisemsg(NULL), worldFile(NULL), pingInterface(NULL), publicizedTitle(NULL),
     listServerURL(DefaultListServerURL), password(NULL), maxShots(1), maxTeamScore(0), maxPlayerScore(0),
     maxObservers(3), numExtraFlags(0), teamKillerKickRatio(0), numAllowedFlags(0), shakeWins(0), shakeTimeout(0), teamFlagTimeout(30),
@@ -576,7 +570,6 @@ struct CmdLineOptions
   }
 
   int			wksPort;
-  int			reconnectPort;
   int			gameStyle;
 
   const char		*servermsg;
