@@ -67,7 +67,7 @@
     #else
       #define BZ_BUILD_OS			"linux-DevC++-gcc"
     #endif //DEBUG
-  #else if defined(_WIN32)
+  #elif defined(_WIN32)
     #ifdef DEBUG
       #define BZ_BUILD_OS			"W32-DevC++-MinGW32D"
     #else
@@ -80,7 +80,9 @@
   #ifndef WINVER
     #define WINVER 0x0400
   #endif
-  #define _WIN32_WINNT 0x0400
+  #ifndef _WIN32_WINNT
+    #define _WIN32_WINNT 0x0400
+  #endif
   #include <Windows.h>
 #endif //WIN32
 
