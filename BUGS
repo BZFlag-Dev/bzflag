@@ -1,6 +1,12 @@
 recent bugs
 ------------
 
+- SDL/X11 builds have wrong colors in with 8 bit color depths
+
+- SDL/X11 crashes on at least one configuration (Debian, MGA) when changing
+  resolution or switching from fullscreen to window; this used to work in
+  earlier 1.11 versions
+
 - sometimes players will recieve the message "So-and-so destroyed by server"
   instead of "So-and-so killed by such-and-such".  Appears to depend on
   So-and-so's player slot.
