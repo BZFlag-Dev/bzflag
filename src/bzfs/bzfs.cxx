@@ -334,18 +334,20 @@ public:
 
   void filter(char *input)
   {
+    static std::string 
+      alphabet("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ");
     if (badWords.size() == 0) // all words allowed -> skip processing
       return;
     std::string line = input;
-    int startPos = line.find_first_not_of("\t \r\n");
+    int startPos = line.find_first_of(alphabet);
     while (startPos >= 0) {
-      int endPos = line.find_first_of("\t \r\n", startPos+1);
+      int endPos = line.find_first_not_of(alphabet, startPos+1);
       if (endPos < 0)
 	endPos = line.length();
       std::string word = line.substr(startPos, endPos-startPos);
       if (badWords.find(word) != badWords.end())
 	 memset(input+startPos,'*', endPos-startPos);
-      startPos = line.find_first_not_of("\t \r\n", endPos);
+      startPos = line.find_first_of(alphabet, endPos);
     }
   }
 
