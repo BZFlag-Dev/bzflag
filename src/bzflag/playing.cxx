@@ -229,20 +229,6 @@ static char		*worldDatabase = NULL;
 static bool		isCacheTemp;
 static std::ostream	*cacheOut = NULL;
 
-StartupInfo::StartupInfo() : hasConfiguration(false),
-			     autoConnect(false),
-			     serverPort(ServerPort),
-			     team(AutomaticTeam),
-			     listServerURL(DefaultListServerURL),
-			     listServerPort(ServerPort + 1)
-{
-  strcpy(serverName, "");
-  strcpy(callsign, "");
-  strcpy(password, "");
-  strcpy(email, "default");
-  joystickName = "joystick";
-  joystick = false;
-}
 
 // access silencePlayers from bzflag.cxx
 std::vector<std::string>& getSilenceList()
