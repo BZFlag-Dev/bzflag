@@ -4,6 +4,8 @@ recent bugs
   populated by the FlagDesc singletons, because they haven't been create yet.
   Need a way to mandate that all FlagDesc's ctor first;
 
+- when a shot is fired, the tank drops its current flag
+
 - When a rabbit pauses and no other players are in the game, the server will
   choose the pauser as the rabbit again. Then the player will again request
   that the server choose a different player, thus leading to a happy
