@@ -92,6 +92,7 @@ static const char copyright[] = "Copyright (c) 1993 - 2003 Tim Riker";
 #include "WordFilter.h"
 #include "TextUtils.h"
 #include "TextureManager.h"
+#include "TargetingUtils.h"
 #include "../zlib/zconf.h"
 #include "../zlib/zlib.h"
 
@@ -1590,12 +1591,12 @@ static void		doAutoPilot(float &rotation, float &speed)
   const bool phased = myTank->getFlag() == Flags::OscillationOverthruster ||
     myTank->getFlag() == Flags::PhantomZone;
   bool expelled;
-  const Obstacle *obstacle = myTank->getHitBuilding(pos, myTank->getAngle(), phased, expelled);
+  const Obstacle *obstacle = myTank->getHitBuilding(pos, myAzimuth, phased, expelled);
 
   //If right next to a building, try to shake free, Roger's not too good at this tho, help
   if (obstacle && !phased) {
     float normal[3];
-    if (!myTank->getHitNormal(obstacle, pos, myTank->getAngle(), pos, myTank->getAngle(), normal))
+    if (!myTank->getHitNormal(obstacle, pos, myAzimuth, pos, myAzimuth, normal))
       obstacle->getNormal(pos,normal);
 
     rotation = normal[1] - normal[0];
@@ -1606,11 +1607,13 @@ static void		doAutoPilot(float &rotation, float &speed)
     for (t = 0; t < curMaxPlayers; t++) {
       if (t != myTank->getId() && player[t] &&
 	  player[t]->isAlive() && !player[t]->isPaused() &&
-	  !player[t]->isNotResponding() && player[t]->getFlag() != Flags::Stealth &&
+	  !player[t]->isNotResponding() &&
 	  myTank->validTeamTarget(player[t])) {
-	const float *tp = player[t]->getPosition();
-	float d = hypotf(tp[0] - pos[0], tp[1] - pos[1]);
+	float d = TargetingUtils::getTargetDistance( pos, player[t]->getPosition());
 	if (d < distance) {
+	  if ((player[t]->getFlag() != Flags::Stealth)
+          ||  ((!TargetingUtils::isLocationObscured( pos, player[t]->getPosition())) &&  
+	      (TargetingUtils::getTargetAngleDifference(pos, myAzimuth, player[t]->getPosition()) <= 30.0f)))
 	  target = t;
 	  distance = d;
 	}
@@ -1630,7 +1633,7 @@ static void		doAutoPilot(float &rotation, float &speed)
 
       bool shotFired = false;
 
-      float dir[3] = {cosf(myTank->getAngle()), sinf(myTank->getAngle()), 0.0f};
+      float dir[3] = {cosf(myAzimuth), sinf(myAzimuth), 0.0f};
       pos[2] += BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT);
       Ray tankRay(pos, dir);
       pos[2] -= BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT);
@@ -1645,7 +1648,7 @@ static void		doAutoPilot(float &rotation, float &speed)
 		!player[t]->isNotResponding()) {
 
 	      const float *tp = player[t]->getPosition();
-	      float dist = hypotf(tp[0] - pos[0], tp[1] - pos[1]);
+	      float dist = TargetingUtils::getTargetDistance( pos, tp );
 	      if (dist <= BZDB.eval(StateDatabase::BZDB_SHOCKOUTRADIUS)) {
 		if (!myTank->validTeamTarget(player[t])) {
 		  hasSWTarget = false;
@@ -1679,19 +1682,17 @@ static void		doAutoPilot(float &rotation, float &speed)
 	      const float *tp = player[t]->getPosition();
 	      if ((myTank->getFlag() == Flags::GuidedMissile) || (fabs(pos[2] - tp[2]) < 2.0f * BZDBCache::tankHeight)) {
 
-		float targetAngle = atan2f(tp[1] - pos[1], tp[0] - pos[0]);
-		float targetRotation = targetAngle - myTank->getAngle();
-		if (targetRotation < -1.0f * M_PI) targetRotation += 2.0f * M_PI;
-		if (targetRotation > 1.0f * M_PI) targetRotation -= 2.0f * M_PI;
+		float targetDiff = TargetingUtils::getTargetAngleDifference(pos, myAzimuth, tp );
 
-		if ((fabs(targetRotation) < errorLimit)
-		    ||  ((distance < (2.0f * BZDB.eval(StateDatabase::BZDB_SHOTSPEED))) && (fabs(targetRotation) < closeErrorLimit))) {
-		  float d = hypotf(tp[0] - pos[0], tp[1] - pos[1]);
-		  const Obstacle *building = NULL;
+		if ((targetDiff < errorLimit)
+		    ||  ((distance < (2.0f * BZDB.eval(StateDatabase::BZDB_SHOTSPEED))) && (targetDiff < closeErrorLimit))) {
+		  bool isTargetObscured;
 		  if (myTank->getFlag() != Flags::SuperBullet)
-		    building = ShotStrategy::getFirstBuilding(tankRay, -0.5f, d);
+		    isTargetObscured = TargetingUtils::isLocationObscured( pos, tp );
+		  else
+		    isTargetObscured = false;
 
-		  if (!building) {
+		  if (!isTargetObscured) {
 		    myTank->fireShot();
 		    lastShot = now;
 		    shotFired = true;
@@ -1713,8 +1714,7 @@ static void		doAutoPilot(float &rotation, float &speed)
 	      world->getFlag(i).status != FlagOnGround) continue;
 	  const float* fpos = world->getFlag(i).position;
 	  if (fpos[2] == pos[2]) {
-	    const float dist = (pos[0] - fpos[0]) * (pos[0] - fpos[0]) +
-	      (pos[1] - fpos[1]) * (pos[1] - fpos[1]);
+	    float dist = TargetingUtils::getTargetDistance( pos, fpos );
 	    if ((dist < (5.0f * BZDBCache::flagRadius)) && (dist < minDist)) {
 	      minDist = dist;
 	      closestFlag = i;
@@ -1729,10 +1729,8 @@ static void		doAutoPilot(float &rotation, float &speed)
 
       if (closestFlag != -1) {
 	const float *fpos = world->getFlag(closestFlag).position;
-	float flagAzimuth = atan2f(fpos[1] - pos[1], fpos[0] - pos[0]);
-	rotation = flagAzimuth - myAzimuth;
-	if (rotation < -1.0f * M_PI) rotation += 2.0f * M_PI;
-	if (rotation > 1.0f * M_PI) rotation -= 2.0f * M_PI;
+	float flagAzimuth = TargetingUtils::getTargetAzimuth( pos, fpos );
+	rotation = TargetingUtils::getTargetRotation( myAzimuth, flagAzimuth );
 	speed = M_PI/2.0f - fabs(rotation);
       }
       else { //figure out my rotation to my target
@@ -1747,10 +1745,9 @@ static void		doAutoPilot(float &rotation, float &speed)
 	if (enemyPos[2] < 0.0f) //Roger doesn't worry about burrow
 	  enemyPos[2] = 0.0;
 
-	enemyAzimuth = atan2f(tp[1] - pos[1], tp[0] - pos[0]);
-	rotation = enemyAzimuth - myTank->getAngle();
-	if (rotation < -1.0f * M_PI) rotation += 2.0f * M_PI;
-	if (rotation > 1.0f * M_PI) rotation -= 2.0f * M_PI;
+
+	enemyAzimuth = TargetingUtils::getTargetAzimuth( pos, tp );
+	rotation = TargetingUtils::getTargetRotation( myAzimuth, enemyAzimuth );
 
 	//If we are driving relatively towards our target and a building pops up jump over it
 	if (fabs(rotation) < BZDB.eval(StateDatabase::BZDB_LOCKONANGLE)) {
@@ -1812,12 +1809,13 @@ static void		doAutoPilot(float &rotation, float &speed)
 	    if (!shot || shot->isExpired())
               continue;
             // ignore invisible bullets completely for now (even when visible)
+	    // Theoretically, Roger could determine shot location, just from the sound
             if (shot->getFlag() == Flags::InvisibleBullet)
               continue;
 	    const float* shotPos = shot->getPosition();
 	    if ((fabs(shotPos[2] - pos[2]) > BZDBCache::tankHeight) && (shot->getFlag() != Flags::GuidedMissile))
 	      continue;
-	    const float dist = (float)hypot(shotPos[0] - pos[0], shotPos[1] - pos[1]);
+	    const float dist = TargetingUtils::getTargetDistance( pos, shotPos );
 	    if (dist < 100.0f) {
 	      const float *shotVel = shot->getVelocity();
 	      float shotAngle = atan2f(shotVel[1],shotVel[0]);
@@ -1842,11 +1840,11 @@ static void		doAutoPilot(float &rotation, float &speed)
 	      }
 	      else if (dotProd > 0.97f) {
 		speed = 1.0;
-		float rotation1 = (shotAngle + M_PI/2.0f) - myTank->getAngle();
+		float rotation1 = (shotAngle + M_PI/2.0f) - myAzimuth;
 		if (rotation1 < -1.0f * M_PI) rotation1 += 2.0f * M_PI;
 		if (rotation1 > 1.0f * M_PI) rotation1 -= 2.0f * M_PI;
 
-		float rotation2 = (shotAngle - M_PI/2.0f) - myTank->getAngle();
+		float rotation2 = (shotAngle - M_PI/2.0f) - myAzimuth;
 		if (rotation2 < -1.0f * M_PI) rotation2 += 2.0f * M_PI;
 		if (rotation2 > 1.0f * M_PI) rotation2 -= 2.0f * M_PI;
 
