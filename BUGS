@@ -4,8 +4,6 @@ recent bugs
 - bzfrelay is probably broken for current net protocol. Should be just
   forwarding TCP and UDP packets on a single port.
 
-- can't ctrl-c quit the bzfs server from win32
-
 - quol reports that his 1.10.3 server is requiring identification, although
   require identify is not listed anywhere in his group file.  problem still
   happens if he moves the group file out of the way. larsl wonders if this
