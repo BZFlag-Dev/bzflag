@@ -17,6 +17,8 @@
 #include <queue>
 #include "BzfMedia.h"
 
+using std::queue;
+
 class MacMedia : public BzfMedia {
   public:
     MacMedia();
