@@ -1,6 +1,12 @@
 recent bugs
 ------------
 
+- if you jump up and hit a flipped pyramid you will stick to it until you
+  move again
+
+- some clients gets pushed upwards and backwards when they drive into a
+  pyramid, it looks like a small jump (even on no-jump servers)
+
 - bzadmin seems to be less responsive over the network than bzflag - a 
   bzadmin client can get kicked from a very active game by the server 
   for causing it to queue too many packages (there's a limit at 20kB, when I
