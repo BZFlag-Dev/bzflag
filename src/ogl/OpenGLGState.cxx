@@ -10,16 +10,50 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+#include "common.h"
+
+/* interface header */
+#include "OpenGLGState.h"
+
+/* system headers */
 #include <stdio.h>
 #include <string.h>
 #include <assert.h>
-#include "common.h"
+
+#if defined(HAVE_X11_XLIB_H) and !defined(__APPLE__)
+#  include <X11/Xlib.h>
+#endif
+
+#ifdef HAVE_GL_GLX_H
+#  include <GL/glx.h>
+#endif
+
+#ifdef HAVE_AGL_AGL_H
+#  include <AGL/agl.h>
+#endif
+
+/* common implementation headers */
 #include "bzfio.h" // for DEBUG1
 #include "OpenGLGState.h"
 #include "TextureManager.h"
 #include "TextureMatrix.h"
 #include "OpenGLMaterial.h"
 #include "RenderNode.h"
+
+
+#ifdef HAVE_AGLGETCURRENNTCONTEXT
+#  define GET_CURRENT_CONTEXT aglGetCurrentContext
+#endif
+#ifdef HAVE_WGLGETCURRENTCONTEXT
+#  define GET_CURRENT_CONTEXT wglGetCurrentContext
+#endif
+#ifdef HAVE_GLXGETCURRENTCONTEXT
+#  define GET_CURRENT_CONTEXT glXGetCurrentContext
+#endif
+#define GET_CURRENT_CONTEXT aglGetCurrentContext
+#ifndef GET_CURRENT_CONTEXT
+#  error ERROR: Do not know how to get the current OpenGL context on this system
+#endif
 
 
 // for tracking glBegin/End pairs; see include/bzfgl.h
@@ -1428,34 +1462,20 @@ void bzDeleteTextures(GLsizei count, const GLuint *textures)
   return;
 }
 
-
-#ifndef _WIN32
-#include <X11/Xlib.h>
-#include <GL/glx.h>
 bool OpenGLGState::haveGLContext()
 {
-  if (glXGetCurrentContext() != NULL) {
+  if (GET_CURRENT_CONTEXT() != NULL) {
     return true;
   } else {
     return false;
   }
 }
-#else
-bool OpenGLGState::haveGLContext()
-  if (wglGetCurrentContext() != NULL) {
-    return true;
-  } else {
-    return false;
-  }
-}
-#endif
 
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-
