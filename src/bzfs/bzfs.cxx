@@ -1372,7 +1372,7 @@ static int uread(int *playerIndex, int *nopackets)
 
   *nopackets = 0;
 
-  if ((n = recvfrom(udpSocket, (char *)ubuf, MaxPacketLen, MSG_DONTWAIT|MSG_PEEK, (struct sockaddr*)&uaddr, &recvlen)) != -1) {
+  if ((n = recvfrom(udpSocket, (char *)ubuf, MaxPacketLen, MSG_PEEK, (struct sockaddr*)&uaddr, &recvlen)) != -1) {
     uint16_t len, lseqno;
     void *pmsg;
     for (*playerIndex = 0; *playerIndex < MaxPlayers; (*playerIndex)++) {
@@ -1410,7 +1410,7 @@ static int uread(int *playerIndex, int *nopackets)
     }
 
     // get the packet
-    n = recv(udpSocket, (char *)ubuf, MaxPacketLen, MSG_DONTWAIT);
+    n = recv(udpSocket, (char *)ubuf, MaxPacketLen, 0);
     if (*playerIndex == MaxPlayers) {
       // no match, discard packet
       *playerIndex = 0;
@@ -1883,6 +1883,9 @@ static boolean serverStart()
       close(udpSocket);
       return False;
     }
+    // don't buffer info, send it immediately
+    BzfNetwork::setNonBlocking(udpSocket);
+
     maxFileDescriptor = udpSocket;
   }
 
