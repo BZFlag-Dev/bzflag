@@ -50,8 +50,10 @@ void	_debugLookups(const std::string &name)
     }
 
     for (std::multimap<int,std::string>::iterator it2 = order.begin(); it2 != order.end(); ++it2) {
+      if (-it2->first / interval < 1.0f)
+        break;
       char data[100];
-      sprintf(data, "%s = %f accesses/sec", it2->second.c_str(), -it2->first / interval);
+      sprintf(data, "%-25s = %.2f acc/sec", it2->second.c_str(), -it2->first / interval);
       std::cout << data << std::endl;
     }
     last = now;
