@@ -13,11 +13,7 @@
 #ifndef __VOTINGARBITER_H__
 #define __VOTINGARBITER_H__
 
-#ifdef _WIN32
-#include "win32.h"
-#endif //_WIN32
-
-#include <string>
+#include "common.h"
 #include <iostream>
 #include <deque>
 
@@ -120,14 +116,14 @@ private:
     */
   inline std::string getPollAction(void) const;
 
-  /** return a string representing the player being voted upon
+  /** return a string representing the target (player or setting) being voted upon
     */
-  inline std::string getPollPlayer(void) const;
+  inline std::string getPollTarget(void) const;
 
   /** return a string representing the IP of the player being voted
     * upon, this is mostly useful for placing a ban.
     */
-  inline std::string getPollPlayerIP(void) const;
+  inline std::string getPollTargetIP(void) const;
 
   /** return a string representing the player who requested the poll
     */
@@ -144,6 +140,9 @@ private:
   /** convenience method to attempt to start a ban poll
     */
   bool pollToBan(std::string player, std::string playerRequesting, std::string playerIP);
+  /** convenience method to attempt to start a set poll
+    */
+  bool pollToSet(std::string setting, std::string playerRequesting);
 
   /** halt/close the poll if it is open
    */
@@ -316,12 +315,12 @@ inline std::string VotingArbiter::getPollAction(void) const
   return _action;
 }
 
-inline std::string VotingArbiter::getPollPlayer(void) const
+inline std::string VotingArbiter::getPollTarget(void) const
 {
   return _pollee.size() == 0 ? "nobody" : _pollee;
 }
 
-inline std::string VotingArbiter::getPollPlayerIP(void) const
+inline std::string VotingArbiter::getPollTargetIP(void) const
 {
   return _polleeIP.size() == 0 ? "" : _polleeIP;
 }
