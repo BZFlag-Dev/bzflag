@@ -14,9 +14,7 @@
 #include "JoinMenu.h"
 
 /* common implementation headers */
-#include "BzfMedia.h"
 #include "FontManager.h"
-#include "PlatformFactory.h"
 #include "Protocol.h"
 #include "ServerList.h"
 #include "StartupInfo.h"
