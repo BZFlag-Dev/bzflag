@@ -868,11 +868,13 @@ int			main(int argc, char** argv)
 
   // read resources
   {
-    CFGMGR->read(getConfigFileName());
-    startupInfo.hasConfiguration = true;
+    if (CFGMGR->read(getConfigFileName()))
+      startupInfo.hasConfiguration = true;
 
 #if !defined(_WIN32) & !defined(macintosh)
-    CFGMGR->read(getConfigFileName2());
+    if (!startupInfo.hasConfiguration)
+      if (CFGMGR->read(getConfigFileName2()))
+        startupInfo.hasConfiguration = true;
 #endif
   }
 
