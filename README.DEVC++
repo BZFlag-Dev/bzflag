@@ -10,11 +10,6 @@ is quite easy.
 3. The binary should be in each project's corresponding main source
    directory, such as src/bzflag/ for BZFlag client.
 
-4. MinGW32 (the compiler used by Dev-C++) will bloat compiled executables
-   because it adds a minimal debugging table, so you may want to run "strip",
-   a debug table remove located in the "\bin\" directory of Dev-C++, on the
-   outputed .exe's to remove nearly half of the original file size.
-
 SDL is needed for the current building style, which is considerably smaller
 than DirectX SDK, and is available from:
 
@@ -25,3 +20,6 @@ one for MinGW32 so it works nicely (however, a VC++ one may also work). Place
 the .a files in your "/lib/" directory of Dev-C++, and the headers in "/include/".
 Also, make sure you put "SDL.dll" somewhere in your PATH environment variable, such
 as "c:\WINDOWS\".
+
+The outputed executables should be stripped already by "ld" (command line option "-s"),
+so there is no need to use "strip" or take away any further symbol/debug tables.
