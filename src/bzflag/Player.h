@@ -141,8 +141,8 @@ private:
   GLfloat		color[4];
   TeamColor		drawTeam;		// the team I actualy use to draw
   std::string		userTexture;
-  static OpenGLTexture* tankTexture;
-  static OpenGLTexture* tankOverideTexture;
+  static int            tankTexture;
+  static int            tankOverideTexture;
 
   // permanent data
   TeamColor		team;			// my team

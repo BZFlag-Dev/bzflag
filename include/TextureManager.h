@@ -9,6 +9,8 @@
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
+#ifndef _TEXTURE_MANAGER_H
+#define _TEXTURE_MANAGER_H
 
 #include <string>
 #include <map>
@@ -49,7 +51,7 @@ typedef std::map<int, ImageInfo*> TextureIDMap;
 class TextureManager : public Singleton<TextureManager>
 {
 public:
-  OpenGLTexture* getTexture( const char* name, bool reportFail = true );
+ // OpenGLTexture* getTexture( const char* name, bool reportFail = true );
   int getTextureID( const char* name, bool reportFail = true );
   int addTexture( const char*, OpenGLTexture *texture  );
   
@@ -59,7 +61,9 @@ public:
   const ImageInfo& getInfo ( int id );
   const ImageInfo& getInfo ( const char* name );
 
-  int newTexture ( const char* name, int x, int y, unsigned char* data, OpenGLTexture::Filter filter );
+  float GetAspectRatio ( int id );
+
+  int newTexture ( const char* name, int x, int y, unsigned char* data, OpenGLTexture::Filter filter, bool repeat = true, int format = 0 );
 protected:
   friend class Singleton<TextureManager>;
 
@@ -77,6 +81,7 @@ private:
   TextureNameMap textureNames;
 };
 
+#endif//_TEXTURE_MANAGER_H
 
 // Local Variables: ***
 // mode: C++ ***

@@ -156,7 +156,7 @@ void			TankSceneNode::setMaterial(const OpenGLMaterial& mat)
   forceNotifyStyleChange();
 }
 
-void			TankSceneNode::setTexture(const OpenGLTexture& texture)
+void			TankSceneNode::setTexture(const int texture)
 {
   OpenGLGStateBuilder builder(gstate);
   builder.setTexture(texture);

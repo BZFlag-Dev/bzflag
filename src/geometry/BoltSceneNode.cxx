@@ -84,11 +84,11 @@ void			BoltSceneNode::setColorblind(bool _colorblind)
   colorblind = _colorblind;
 }
 
-void			BoltSceneNode::setTexture(const OpenGLTexture& texture)
+void			BoltSceneNode::setTexture(const int texture)
 {
   OpenGLGStateBuilder builder(gstate);
   builder.setTexture(texture);
-  builder.enableTexture(texture.isValid());
+  builder.enableTexture(texture>=0);
   gstate = builder.getState();
   forceNotifyStyleChange();
 }

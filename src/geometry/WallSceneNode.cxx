@@ -254,7 +254,7 @@ void			WallSceneNode::setMaterial(const OpenGLMaterial& mat)
   forceNotifyStyleChange();
 }
 
-void			WallSceneNode::setTexture(const OpenGLTexture& tex)
+void			WallSceneNode::setTexture(const int tex)
 {
   OpenGLGStateBuilder builder(gstate);
   builder.setTexture(tex);

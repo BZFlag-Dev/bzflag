@@ -97,7 +97,7 @@ class TankSceneNode : public SceneNode {
 				 GLfloat b, GLfloat a = 1.0f);
     void		setColor(const GLfloat* rgba);
     void		setMaterial(const OpenGLMaterial&);
-    void		setTexture(const OpenGLTexture&);
+    void		setTexture(const int);
 
     void		notifyStyleChange(const SceneRenderer&);
     void		addRenderNodes(SceneRenderer&);

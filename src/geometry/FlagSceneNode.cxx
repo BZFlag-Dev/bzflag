@@ -103,11 +103,11 @@ void			FlagSceneNode::setColor(const GLfloat* rgba)
   if (oldTransparent != transparent) forceNotifyStyleChange();
 }
 
-void			FlagSceneNode::setTexture(const OpenGLTexture& texture)
+void			FlagSceneNode::setTexture(const int texture)
 {
   OpenGLGStateBuilder builder(gstate);
   builder.setTexture(texture);
-  builder.enableTexture(texture.isValid());
+  builder.enableTexture(texture>=0);
   gstate = builder.getState();
   forceNotifyStyleChange();
 }

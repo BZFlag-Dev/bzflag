@@ -29,7 +29,7 @@ static const float	MaxUpdateTime = 1.0f;		// seconds
 // Player
 //
 
-OpenGLTexture*		Player::tankTexture = NULL;
+int		Player::tankTexture = -1;
 
 Player::Player(const PlayerId& _id, TeamColor _team,
 	       const char* name, const char* _email, const PlayerType _type) :
@@ -273,17 +273,17 @@ void			Player::setVisualTeam (TeamColor visualTeam)
   texName += BZDB.get("tankTexture");
 
   // now after we did all that, see if they have a user texture
-  tankTexture = NULL;
+  tankTexture = -1;
   if (userTexture.size())
-    tankTexture = tm.getTexture(userTexture.c_str(),false);
+    tankTexture = tm.getTextureID(userTexture.c_str(),false);
 
   // if the user load failed try our calculated texture
-  if (!tankTexture || !tankTexture->isValid())
-    tankTexture = tm.getTexture(texName.c_str(),false);
+  if (tankTexture < 0)
+    tankTexture = tm.getTextureID(texName.c_str(),false);
 
   // change color of tank
   const float* _color = Team::getTankColor(visualTeam);
-  if (BZDB.isTrue("texture") && tankTexture && tankTexture->isValid()){	// color is in the image
+  if (BZDB.isTrue("texture") && tankTexture >= 0){	// color is in the image
     color[0] = 1.0f;
     color[1] = 1.0f;
     color[2] = 1.0f;
@@ -305,7 +305,7 @@ void			Player::setVisualTeam (TeamColor visualTeam)
   color[3] = (getFlag() == Flags::PhantomZone) && isFlagActive() ? 0.5f : 1.0f;
   tankNode->setColor(color);
   tankNode->setMaterial(OpenGLMaterial(tankSpecular, emissive, shininess));
-  tankNode->setTexture(*tankTexture);
+  tankNode->setTexture(tankTexture);
 }
 
 

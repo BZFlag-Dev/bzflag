@@ -32,7 +32,7 @@ class BoltSceneNode : public ShotSceneNode {
     void		setSize(float radius);
     void		setColor(GLfloat r, GLfloat g, GLfloat b);
     void		setColor(const GLfloat* rgb);
-    void		setTexture(const OpenGLTexture&);
+    void		setTexture(const int);
     void		setColorblindTexture(const OpenGLTexture&);
     void		setTextureAnimation(int cu, int cv);
 

@@ -16,9 +16,9 @@
 #include "BillboardSceneNode.h"
 #include "ViewFrustum.h"
 #include "SceneRenderer.h"
-#include "OpenGLTexture.h"
 #include "StateDatabase.h"
 #include "BZDBCache.h"
+#include "TextureManager.h"
 
 BillboardSceneNode::BillboardSceneNode(const GLfloat pos[3]) :
 				show(false),
@@ -229,10 +229,12 @@ void			BillboardSceneNode::setColor(const GLfloat* rgba)
 }
 
 void			BillboardSceneNode::setTexture(
-				const OpenGLTexture& texture)
+				const int texture)
 {
-  hasTexture = texture.isValid();
-  hasTextureAlpha = hasTexture && texture.hasAlpha();
+  hasTexture = texture >= 0;
+  TextureManager &tm = TextureManager::instance();
+
+  hasTextureAlpha = hasTexture && tm.getInfo(texture).alpha;
   hasAlpha = (color[3] != 1.0f || hasTextureAlpha);
   OpenGLGStateBuilder builder(gstate);
   builder.setTexture(texture);

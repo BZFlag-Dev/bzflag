@@ -65,7 +65,7 @@ TextureManager::~TextureManager()
   textureIDs.clear();
 }
 
-OpenGLTexture* TextureManager::getTexture( const char* name, bool reportFail )
+/*OpenGLTexture* TextureManager::getTexture( const char* name, bool reportFail )
 {
   if (!name)
   	return NULL;
@@ -84,7 +84,7 @@ OpenGLTexture* TextureManager::getTexture( const char* name, bool reportFail )
 	    return textureIDs[id]->texture;
   }  
   return NULL;
-}
+} */
 
 int TextureManager::getTextureID( const char* name, bool reportFail )
 {
@@ -136,6 +136,16 @@ bool TextureManager::bind ( const char* name )
   }
   return true;
 }
+
+float TextureManager::GetAspectRatio ( int id )
+{
+  TextureIDMap::iterator it = textureIDs.find(id);
+  if (it == textureIDs.end())
+    return 0.0;
+
+  return (float)it->second->y/(float)it->second->x;
+}
+
 
 const ImageInfo& TextureManager::getInfo ( int id )
 {
@@ -224,9 +234,9 @@ OpenGLTexture* TextureManager::loadTexture(FileTextureInit &init, bool reportFai
   return texture;
 }
 
-int TextureManager::newTexture ( const char* name, int x, int y, unsigned char* data, OpenGLTexture::Filter filter )
+int TextureManager::newTexture ( const char* name, int x, int y, unsigned char* data, OpenGLTexture::Filter filter, bool repeat, int format  )
 {
-  return addTexture(name,new OpenGLTexture(x,y,data,filter));
+  return addTexture(name,new OpenGLTexture(x,y,data,filter,repeat,format));
 }
 
 

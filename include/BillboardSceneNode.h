@@ -48,7 +48,7 @@ class BillboardSceneNode : public SceneNode {
     void		setColor(GLfloat r, GLfloat g,
 				GLfloat b, GLfloat a = 1.0f);
     void		setColor(const GLfloat* rgba);
-    void		setTexture(const OpenGLTexture&);
+    void		setTexture(const int);
     void		setTextureAnimation(int cu, int cv);
 
     void		move(const GLfloat pos[3]);

@@ -4869,7 +4869,7 @@ MainMenu::MainMenu() : HUDDialog(), joinMenu(NULL),
 
   // load title
 
-  OpenGLTexture *title = tm.getTexture( "title" );
+  int title = tm.getTextureID( "title" );
 
   // add controls
   std::vector<HUDuiControl*>& list = getControls();
@@ -4878,7 +4878,7 @@ MainMenu::MainMenu() : HUDDialog(), joinMenu(NULL),
 
   textureLabel = new HUDuiTextureLabel;
   textureLabel->setFont(font);
-  textureLabel->setTexture(*title);
+  textureLabel->setTexture(title);
   textureLabel->setString("BZFlag");
   list.push_back(textureLabel);
 

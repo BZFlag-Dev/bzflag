@@ -116,8 +116,12 @@ OpenGLTexFont::Rep::Rep(int dx, int dy, const unsigned char* pixels) :
       data[i + j * dx] = pixels[4 * (i + (j + 28) * dx)];
 
   // make texture
-  texture = OpenGLTexture(dx, dy - 28, pixels + 4 * 28 * dx,
-		OpenGLTexture::Linear, true, format);
+  TextureManager &tm = TextureManager::instance();
+
+  char  temp[512];
+  sprintf(temp,"%d",(int)this);
+
+  texture = tm.newTexture(temp,dx, dy - 28, (unsigned char*)(pixels + 4 * 28 * dx),OpenGLTexture::Linear, true, format);
 
   // font constants
   const int tmpAscent = getValue(pixels, dx, 0, 0);
@@ -453,7 +457,7 @@ OpenGLTexFont&		OpenGLTexFont::operator=(const OpenGLTexFont& f)
 
 bool			OpenGLTexFont::isValid() const
 {
-  return rep->texture.isValid();
+  return rep->texture >=0;
 }
 
 void			OpenGLTexFont::setSize(float _width, float _height)

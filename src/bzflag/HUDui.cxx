@@ -94,7 +94,7 @@ bool			HUDuiDefaultKey::keyRelease(const BzfKeyEvent&)
 //
 
 OpenGLGState*		HUDuiControl::gstate;
-OpenGLTexture*		HUDuiControl::arrow;
+int       		HUDuiControl::arrow;
 int			HUDuiControl::arrowFrame = 0;
 TimeKeeper		HUDuiControl::lastTime;
 int			HUDuiControl::totalCount = 0;
@@ -111,12 +111,12 @@ HUDuiControl::HUDuiControl() : showingFocus(true),
   if (totalCount == 0) {
     // load arrow texture
     TextureManager &tm = TextureManager::instance();
-    arrow = tm.getTexture( "menu_arrow" );
+    arrow = tm.getTextureID( "menu_arrow" );
 
     // make gstate for focus arrow
     gstate = new OpenGLGState;
     OpenGLGStateBuilder builder(*gstate);
-    builder.setTexture(*arrow);
+    builder.setTexture(arrow);
     builder.setBlending();
 //    builder.setSmoothing();
     builder.enableTextureReplace();
@@ -133,7 +133,7 @@ HUDuiControl::~HUDuiControl()
 {
   if (--totalCount == 0) {
     delete gstate;
-    arrow = NULL;
+    arrow = -1;
     gstate = NULL;
   }
 }
@@ -264,11 +264,14 @@ void			HUDuiControl::renderFocus()
 {
   float fh2 = 0;// = floorf(0.5f * fontHeight);
 
+  TextureManager &tm = TextureManager::instance();
+  const ImageInfo &info = tm.getInfo(arrow);
+  
   if (gstate->isTextured()) { // asumes there are w/h fames of animation h x h in each image
-    float imageSize = (float)arrow->getHeight();
+    float imageSize = (float)info.y;
     int uFrames = 1;
     if (imageSize != 0)
-      uFrames = int(arrow->getWidth()/imageSize); // 4;
+      uFrames = int(info.x/imageSize); // 4;
     int vFrames = 1; // 4;
     float du = 1.0f / (float)uFrames;
     float dv = 1.0f / (float)vFrames;
@@ -731,7 +734,7 @@ HUDuiTextureLabel::~HUDuiTextureLabel()
 {
 }
 
-void			HUDuiTextureLabel::setTexture(const OpenGLTexture& t)
+void			HUDuiTextureLabel::setTexture(const int t)
 {
   OpenGLGStateBuilder builder(gstate);
   builder.setTexture(t);
@@ -746,13 +749,15 @@ void			HUDuiTextureLabel::doRender()
 
   // render string if texture filter is Off, otherwise draw the texture
   // about the same size and position as the string would be.
-  if (OpenGLTexture::getFilter() == OpenGLTexture::Off || !gstate.isTextured() || !texture.isValid()) {
+  if (OpenGLTexture::getFilter() == OpenGLTexture::Off || !gstate.isTextured() || texture < 0) {
     HUDuiLabel::doRender();
   }
   else { // why use a font? it's an image, use the image size, let every pixel be seen!!! :)
     const OpenGLTexFont& font = getFont();
     const float height = font.getHeight();//texture.getHeight();//
-    const float width = height * (float)texture.getWidth()/(float)texture.getHeight();//font.getWidth(getString());
+    TextureManager  &tm = TextureManager::instance();
+
+    const float width = height * 1.0f/tm.GetAspectRatio(texture);//font.getWidth(getString());
     const float descent = font.getDescent();
     const float x = getX();
     const float y = getY();

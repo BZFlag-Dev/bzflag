@@ -20,7 +20,6 @@
 #include "common.h"
 #include "bzfgl.h"
 
-class OpenGLTexture;
 class OpenGLMaterial;
 class OpenGLGStateRep;
 class OpenGLGStateState;
@@ -110,7 +109,7 @@ class OpenGLGStateBuilder {
     void		resetBlending();
     void		resetSmoothing();
     void		resetAlphaFunc();
-    void		setTexture(const OpenGLTexture& texture);
+    void		setTexture(const int texture);
     void		setMaterial(const OpenGLMaterial& material);
     void		setBlending(GLenum sFactor = GL_SRC_ALPHA,
 				    GLenum dFactor = GL_ONE_MINUS_SRC_ALPHA);

@@ -43,11 +43,11 @@ LaserSceneNode::~LaserSceneNode()
   // do nothing
 }
 
-void			LaserSceneNode::setTexture(const OpenGLTexture& texture)
+void			LaserSceneNode::setTexture(const int texture)
 {
   OpenGLGStateBuilder builder(gstate);
   builder.setTexture(texture);
-  builder.enableTexture(texture.isValid());
+  builder.enableTexture(texture>=0);
   gstate = builder.getState();
   forceNotifyStyleChange();
 }

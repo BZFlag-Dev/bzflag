@@ -96,7 +96,7 @@ class HUDuiControl {
 
     void		render();
 
-    static OpenGLTexture getArrow() { return *arrow; }
+    static int getArrow() { return arrow; }
 
   protected:
     virtual void	onSetFont();
@@ -121,7 +121,7 @@ class HUDuiControl {
     HUDuiCallback	cb;
     void*		userData;
     static OpenGLGState* gstate;
-    static OpenGLTexture* arrow;
+    static int          arrow;
     static int		arrowFrame;
     static TimeKeeper	lastTime;
     static int		totalCount;
@@ -200,14 +200,14 @@ class HUDuiTextureLabel : public HUDuiLabel {
 			HUDuiTextureLabel();
 			~HUDuiTextureLabel();
 
-    void		setTexture(const OpenGLTexture&);
+    void		setTexture(const int);
 
   protected:
     void		doRender();
 
   private:
     OpenGLGState	gstate;
-    OpenGLTexture	texture;
+    int         	texture;
 };
 
 //

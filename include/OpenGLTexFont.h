@@ -18,7 +18,7 @@
 #define	BZF_OPENGLTEXFONT_H
 
 #include "common.h"
-#include "OpenGLTexture.h"
+#include "TextureManager.h"
 #include "OpenGLGState.h"
 #include <string>
 
@@ -131,7 +131,7 @@ class OpenGLTexFont {
 
       public:
 	int		refCount;
-	OpenGLTexture	texture;
+	int     	texture;
 	OpenGLGState	gstate;
 	float		ascent;
 	float		descent;

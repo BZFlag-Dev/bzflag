@@ -146,21 +146,22 @@ SceneDatabaseBuilder::SceneDatabaseBuilder(const SceneRenderer* _renderer) :
 
 
   // make styles -- first the outer wall
-  OpenGLTexture *wallTexture = tm.getTexture( "wall" );
+  int wallTexture = tm.getTextureID( "wall" );
   wallTexWidth = wallTexHeight = 10.0f;
-  if (wallTexture->isValid())
-    wallTexWidth = wallTexture->getAspectRatio() * wallTexHeight;
+  if (wallTexture>=0)
+    wallTexWidth = tm.GetAspectRatio(wallTexture) * wallTexHeight;
 
 
   // make box styles
-  OpenGLTexture *boxTexture = tm.getTexture( "boxwall" );
+  int boxTexture = tm.getTextureID( "boxwall" );
   boxTexWidth = boxTexHeight = 0.2f * BZDB.eval(StateDatabase::BZDB_BOXHEIGHT);
-  if (boxTexture->isValid())
-    boxTexWidth = boxTexture->getAspectRatio() * boxTexHeight;
+  if (boxTexture>=0)
+    boxTexWidth = tm.GetAspectRatio(boxTexture) * boxTexHeight;
 
 
   // lower maximum tank lod if lowdetail is true
-  if (renderer->useQuality() == 0) TankSceneNode::setMaxLOD(2);
+  if (renderer->useQuality() == 0)
+    TankSceneNode::setMaxLOD(2);
 }
 
 SceneDatabaseBuilder::~SceneDatabaseBuilder()
@@ -228,19 +229,17 @@ void			SceneDatabaseBuilder::addWall(SceneDatabase* db,
   ObstacleSceneNodeGenerator* nodeGen = o.newSceneNodeGenerator();
 
   TextureManager &tm = TextureManager::instance();
-  OpenGLTexture *wallTexture = NULL;// = tm.getTexture( "wall" );
+  int wallTexture = -1;
 
   bool  useColorTexture = false;
 
   // try object, standard, then default
   if (o.userTextures[0].size())
-    wallTexture = tm.getTexture(o.userTextures[0].c_str(),false);
-  if (!wallTexture || !wallTexture->isValid())
-    wallTexture = tm.getTexture("std_wall",false);
-  if (!wallTexture || !wallTexture->isValid())
-    wallTexture = tm.getTexture( "wall" );
+    wallTexture = tm.getTextureID(o.userTextures[0].c_str(),false);
+  if (wallTexture < 0)
+    wallTexture = tm.getTextureID( "wall" );
   else
-    useColorTexture = wallTexture && wallTexture->isValid();
+    useColorTexture = wallTexture>=0;
 
   while ((node = nodeGen->getNextNode(o.getBreadth() / wallTexWidth,
 				o.getHeight() / wallTexHeight, wallLOD))) {
@@ -249,7 +248,7 @@ void			SceneDatabaseBuilder::addWall(SceneDatabase* db,
     node->setLightedColor(wallLightedColors[0]);
     node->setLightedModulateColor(wallLightedModulateColors[0]);
     node->setMaterial(wallMaterial);
-    node->setTexture(*wallTexture);
+    node->setTexture(wallTexture);
     node->setUseColorTexture(useColorTexture);
 
     db->addStaticNode(node);
@@ -266,25 +265,25 @@ void			SceneDatabaseBuilder::addBox(SceneDatabase* db,
   WallSceneNode* node;
   ObstacleSceneNodeGenerator* nodeGen = o.newSceneNodeGenerator();
   TextureManager &tm = TextureManager::instance();
-  OpenGLTexture *boxTexture = NULL;
+  int    boxTexture = -1;
   bool  useColorTexture[2] = {false,false};
 
   // try object, standard, then default
   if (o.userTextures[0].size())
-    boxTexture = tm.getTexture(o.userTextures[0].c_str(),false);
-  if (!boxTexture || !boxTexture->isValid())
-    boxTexture = tm.getTexture(BZDB.get("boxWallTexture").c_str(),true);
+    boxTexture = tm.getTextureID(o.userTextures[0].c_str(),false);
+  if (boxTexture < 0)
+    boxTexture = tm.getTextureID(BZDB.get("boxWallTexture").c_str(),true);
    
-  useColorTexture[0] = boxTexture && boxTexture->isValid();
+  useColorTexture[0] = boxTexture >= 0;
 
-  OpenGLTexture *boxTopTexture = NULL;
+  int boxTopTexture = -1;
 
   if (o.userTextures[1].size())
-    boxTopTexture = tm.getTexture(o.userTextures[1].c_str(),false);
-  if (!boxTopTexture || !boxTopTexture->isValid())
-    boxTopTexture = tm.getTexture(BZDB.get("boxTopTexture").c_str(),true);
+    boxTopTexture = tm.getTextureID(o.userTextures[1].c_str(),false);
+  if (boxTopTexture < 0)
+    boxTopTexture = tm.getTextureID(BZDB.get("boxTopTexture").c_str(),true);
 
-  useColorTexture[1] = boxTopTexture && boxTopTexture->isValid();
+  useColorTexture[1] = boxTopTexture >= 0;
 
   float texutureFactor = BZDB.eval("boxWallTexRepeat");
   if (BZDB.eval("useQuality")>=3)
@@ -304,11 +303,11 @@ void			SceneDatabaseBuilder::addBox(SceneDatabase* db,
     node->setLightedModulateColor(boxLightedModulateColors[part]);
     node->setMaterial(boxMaterial);
     if (part < 4){
-      node->setTexture(*boxTexture);
+      node->setTexture(boxTexture);
       node->setUseColorTexture(useColorTexture[0]);
     }
     else{
-      node->setTexture(*boxTopTexture);
+      node->setTexture(boxTopTexture);
       node->setUseColorTexture(useColorTexture[1]);
     }
 
@@ -327,16 +326,16 @@ void			SceneDatabaseBuilder::addPyramid(SceneDatabase* db,
   ObstacleSceneNodeGenerator* nodeGen = o.newSceneNodeGenerator();
 
   TextureManager &tm = TextureManager::instance();
-  OpenGLTexture *pyramidTexture = NULL;//tm.getTexture( "pyrwall" );
+  int pyramidTexture = -1;
 
   bool useColorTexture = false;
   // try object, standard, then default
   if (o.userTextures[0].size())
-    pyramidTexture = tm.getTexture(o.userTextures[0].c_str(),false);
-  if (!pyramidTexture || !pyramidTexture->isValid())
-    pyramidTexture = tm.getTexture(BZDB.get("pyrWallTexture").c_str(),false);
+    pyramidTexture = tm.getTextureID(o.userTextures[0].c_str(),false);
+  if (pyramidTexture < 0)
+    pyramidTexture = tm.getTextureID(BZDB.get("pyrWallTexture").c_str(),false);
 
-  useColorTexture = pyramidTexture && pyramidTexture->isValid();
+  useColorTexture = pyramidTexture >= 0;
 
   // Using boxTexHeight since it's (currently) the same and it's already available
   float texutureFactor = BZDB.eval("pryWallTexRepeat");
@@ -351,7 +350,7 @@ void			SceneDatabaseBuilder::addPyramid(SceneDatabase* db,
     node->setLightedColor(pyramidLightedColors[part]);
     node->setLightedModulateColor(pyramidLightedModulateColors[part]);
     node->setMaterial(pyramidMaterial);
-    node->setTexture(*pyramidTexture);
+    node->setTexture(pyramidTexture);
     node->setUseColorTexture(useColorTexture);
 
     db->addStaticNode(node);
@@ -367,37 +366,37 @@ void			SceneDatabaseBuilder::addBase(SceneDatabase *db,
   ObstacleSceneNodeGenerator *nodeGen = o.newSceneNodeGenerator();
 
   TextureManager &tm = TextureManager::instance();
-  OpenGLTexture *boxTexture = NULL;//tm.getTexture( "boxwall" );
+  int   boxTexture = -1;
 
   bool  useColorTexture[2] = {false,false};
 
   // try object, standard, then default
   if (o.userTextures[0].size())
-    boxTexture = tm.getTexture(o.userTextures[0].c_str(),false);
-  if (!boxTexture || !boxTexture->isValid())
+    boxTexture = tm.getTextureID(o.userTextures[0].c_str(),false);
+  if (boxTexture < 0)
   {
     std::string teamBase = Team::getImagePrefix((TeamColor)o.getTeam());
     teamBase+=BZDB.get("baseWallTexture");
-    boxTexture = tm.getTexture(teamBase.c_str(),false);
+    boxTexture = tm.getTextureID(teamBase.c_str(),false);
   }
-  if (!boxTexture || !boxTexture->isValid())
-    boxTexture = tm.getTexture( BZDB.get("boxWallTexture").c_str() );
+  if (boxTexture < 0)
+    boxTexture = tm.getTextureID( BZDB.get("boxWallTexture").c_str() );
 
-  useColorTexture[0] = boxTexture && boxTexture->isValid();
+  useColorTexture[0] = boxTexture >= 0;
 
-  OpenGLTexture *baseTopTexture = NULL;
+  int   baseTopTexture = -1;
 
   if (o.userTextures[1].size())
-    baseTopTexture = tm.getTexture(o.userTextures[1].c_str(),false);
-  if (!baseTopTexture || !baseTopTexture->isValid()){
+    baseTopTexture = tm.getTextureID(o.userTextures[1].c_str(),false);
+  if (baseTopTexture < 0){
     std::string teamBase = Team::getImagePrefix((TeamColor)o.getTeam());
     teamBase+=BZDB.get("baseTopTexture").c_str();
-    baseTopTexture = tm.getTexture(teamBase.c_str(),false);
+    baseTopTexture = tm.getTextureID(teamBase.c_str(),false);
   }
-  if (!baseTopTexture || !baseTopTexture->isValid())
-    baseTopTexture = NULL;
+  if (baseTopTexture < 0)
+    baseTopTexture = -1;
   else
-    useColorTexture[1] = baseTopTexture && baseTopTexture->isValid();
+    useColorTexture[1] = baseTopTexture >= 0;
 
   // this assumes bases have 6 parts - if they don't, it still works
   int part = 0;
@@ -414,12 +413,12 @@ void			SceneDatabaseBuilder::addBase(SceneDatabase *db,
       node->setLightedColor(boxLightedColors[part - 2]);
       node->setLightedModulateColor(boxLightedModulateColors[part - 2]);
       node->setMaterial(boxMaterial);
-      node->setTexture(*boxTexture);
+      node->setTexture(boxTexture);
       node->setUseColorTexture(useColorTexture[0]);
     }
     else{
       if (useColorTexture[1]){  // only set the texture if we have one and are using it
-        node->setTexture(*baseTopTexture);
+        node->setTexture(baseTopTexture);
         node->setUseColorTexture(useColorTexture[1]);
       }
     }
@@ -438,17 +437,17 @@ void			SceneDatabaseBuilder::addTeleporter(SceneDatabase* db,
   ObstacleSceneNodeGenerator* nodeGen = o.newSceneNodeGenerator();
 
   TextureManager &tm = TextureManager::instance();
-  OpenGLTexture *teleporterTexture = NULL;//tm.getTexture( "caution" );
+  int             teleporterTexture = -1;
 
   bool  useColorTexture = false;
 
   // try object, standard, then default
   if (o.userTextures[0].size())
-    teleporterTexture = tm.getTexture(o.userTextures[0].c_str(),false);
-  if (!teleporterTexture || !teleporterTexture->isValid())
-    teleporterTexture = tm.getTexture(BZDB.get("cautionTexture").c_str(),true);
+    teleporterTexture = tm.getTextureID(o.userTextures[0].c_str(),false);
+  if (teleporterTexture < 0)
+    teleporterTexture = tm.getTextureID(BZDB.get("cautionTexture").c_str(),true);
    
-  useColorTexture = BZDB.isTrue("texture") && teleporterTexture && teleporterTexture->isValid();
+  useColorTexture = teleporterTexture >= 0;
 
   while ((node = nodeGen->getNextNode(1.0, o.getHeight() / o.getBreadth(),
 							teleporterLOD))) {
@@ -458,7 +457,7 @@ void			SceneDatabaseBuilder::addTeleporter(SceneDatabase* db,
       node->setLightedColor(teleporterLightedColors[0]);
       node->setLightedModulateColor(teleporterLightedModulateColors[0]);
       node->setMaterial(teleporterMaterial);
-      node->setTexture(*teleporterTexture);
+      node->setTexture(teleporterTexture);
       node->setUseColorTexture(useColorTexture);
    }
     else if (part >= 2 && part <= 11) {
@@ -467,7 +466,7 @@ void			SceneDatabaseBuilder::addTeleporter(SceneDatabase* db,
       node->setLightedColor(teleporterLightedColors[1]);
       node->setLightedModulateColor(teleporterLightedModulateColors[1]);
       node->setMaterial(teleporterMaterial);
-      node->setTexture(*teleporterTexture);
+      node->setTexture(teleporterTexture);
       node->setUseColorTexture(useColorTexture);
    }
     else {

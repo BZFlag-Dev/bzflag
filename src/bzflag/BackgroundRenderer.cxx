@@ -84,13 +84,14 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
   // ground
   {
     // load texture for normal ground
-    OpenGLTexture *groundTexture = NULL;
-    
-    if (userTextures[0].size())
-      groundTexture = tm.getTexture( userTextures[0].c_str(),false );
+   // OpenGLTexture *groundTexture = NULL;
+    int groundTextureID = -1;
 
-    if (!groundTexture || !groundTexture->isValid())
-      groundTexture = tm.getTexture( BZDB.get("stdGroundTexture").c_str(),true );
+    if (userTextures[0].size())
+      groundTextureID = tm.getTextureID( userTextures[0].c_str(),false );
+
+    if (groundTextureID <0)
+      groundTextureID = tm.getTextureID( BZDB.get("stdGroundTexture").c_str(),true );
 
     // gstates
     gstate.reset();
@@ -99,20 +100,20 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
     gstate.setMaterial(defaultMaterial);
     groundGState[1] = gstate.getState();
     gstate.reset();
-    gstate.setTexture(*groundTexture);
+    gstate.setTexture(groundTextureID);
     groundGState[2] = gstate.getState();
     gstate.reset();
     gstate.setMaterial(defaultMaterial);
-    gstate.setTexture(*groundTexture);
+    gstate.setTexture(groundTextureID);
     groundGState[3] = gstate.getState();
 
     // load texture for inverted ground
-    groundTexture = NULL;
+    groundTextureID = -1;
     if (userTextures[1].size())
-      groundTexture = tm.getTexture( userTextures[1].c_str(),false );
+      groundTextureID = tm.getTextureID( userTextures[1].c_str(),false );
 
-    if (!groundTexture || !groundTexture->isValid())
-      groundTexture = tm.getTexture( BZDB.get("zoneGroundTexture").c_str(),false );
+    if (groundTextureID <0)
+      groundTextureID = tm.getTextureID( BZDB.get("zoneGroundTexture").c_str(),false );
 
     // gstates
     gstate.reset();
@@ -121,11 +122,11 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
     gstate.setMaterial(defaultMaterial);
     invGroundGState[1] = gstate.getState();
     gstate.reset();
-    gstate.setTexture(*groundTexture);
+    gstate.setTexture(groundTextureID <0);
     invGroundGState[2] = gstate.getState();
     gstate.reset();
     gstate.setMaterial(defaultMaterial);
-    gstate.setTexture(*groundTexture);
+    gstate.setTexture(groundTextureID <0);
     invGroundGState[3] = gstate.getState();
   }
 
@@ -151,10 +152,10 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
   sunShadowsGState = gstate.getState();
 
  /* useMoonTexture = BZDB.isTrue("texture") && (BZDB.eval("useQuality")>2);
-  OpenGLTexture *moonTexture = NULL;
+  int moonTexture = -1;
   if (useMoonTexture){
-    moonTexture = tm.getTexture( "moon" );
-    useMoonTexture = moonTexture && moonTexture->isValid();
+    moonTexture = tm.getTextureID( "moon" );
+    useMoonTexture = moonTexture>= 0;
   }*/
   // sky stuff
   gstate.reset();
@@ -180,14 +181,14 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
 
   // make cloud stuff
   cloudsAvailable = false;
-  OpenGLTexture *cloudsTexture = tm.getTexture( "clouds" );
-  if (cloudsTexture->isValid()) {
+  int cloudsTexture = tm.getTextureID( "clouds" );
+  if (cloudsTexture >=0) {
     cloudsAvailable = true;
     gstate.reset();
     gstate.setShading();
     gstate.setBlending((GLenum)GL_SRC_ALPHA, (GLenum)GL_ONE_MINUS_SRC_ALPHA);
     gstate.setMaterial(defaultMaterial);
-    gstate.setTexture(*cloudsTexture);
+    gstate.setTexture(cloudsTexture);
     gstate.setAlphaFunc();
     cloudsGState = gstate.getState();
   }
@@ -195,18 +196,19 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
   // make mountain stuff
   mountainsAvailable = false;
   {
-    OpenGLTexture *mountainTexture;
+    int mountainTexture;
     int width  = 0;
     int height = 0;
-	numMountainTextures = 0;
+	numMountainTextures = -1;
 	bool done = false;
 	while (!done){
 		char text[256];
 		sprintf(text,"mountain%d",numMountainTextures+1);
-		mountainTexture = tm.getTexture(text,false);
-		if (mountainTexture && mountainTexture->isValid()){
-			height = mountainTexture->getHeight();
-			width += mountainTexture->getWidth();
+		mountainTexture = tm.getTextureID(text,false);
+		if (mountainTexture>=0){
+                        const ImageInfo &info = tm.getInfo(mountainTexture);
+			height = info.y;
+			width += info.x;
 			numMountainTextures++;
 		}
 		else
@@ -239,7 +241,7 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
       for (i = 0; i < numMountainTextures; i++) {
 		char text[256];
 		sprintf(text,"mountain%d",i+1);
-		gstate.setTexture(*tm.getTexture(text));
+		gstate.setTexture(tm.getTextureID(text));
 		mountainsGState[i] = gstate.getState();
       }
       mountainsList = new OpenGLDisplayList[numMountainTextures];

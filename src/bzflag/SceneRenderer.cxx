@@ -163,7 +163,7 @@ SceneRenderer::SceneRenderer(MainWindow& _window) :
 /* FIXME
   // load flare light texture
   OpenGLGStateBuilder builder;
-  builder.setTexture(getTexture("flare", OpenGLTexture::Max));
+  builder.setTexture(tm.getTextureID("flare", OpenGLTexture::Max));
   flareGState = builder.getState();
 */
 

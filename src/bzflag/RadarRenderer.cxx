@@ -200,14 +200,14 @@ void			RadarRenderer::render(SceneRenderer& renderer,
   OpenGLGState::resetState();
 
   TextureManager &tm = TextureManager::instance();
-  OpenGLTexture *noiseTexture = tm.getTexture( "noise" );
+  int noiseTexture = tm.getTextureID( "noise" );
 
   // if jammed then draw white noise.  occasionally draw a good frame.
   if (jammed && bzfrand() > decay) {
 
     glColor3f(1.0,1.0,1.0);
 
-    if (noiseTexture != NULL && renderer.useQuality()>0) {
+    if (noiseTexture >=0  && renderer.useQuality()>0) {
 
       const int sequences = 10;
 
@@ -229,9 +229,9 @@ void			RadarRenderer::render(SceneRenderer& renderer,
       int noisePattern = 4 * int(floor(sequences * bzfrand()));
 
       glEnable(GL_TEXTURE_2D);
-      noiseTexture->execute();
-      glBegin(GL_QUADS);
+      tm.bind(noiseTexture);
 
+      glBegin(GL_QUADS);
 	glTexCoord2f(np[noisePattern+0],np[noisePattern+1]);
 	glVertex2f(-range,-range);
 	glTexCoord2f(np[noisePattern+2],np[noisePattern+1]);
@@ -245,10 +245,10 @@ void			RadarRenderer::render(SceneRenderer& renderer,
       glDisable(GL_TEXTURE_2D);
     }
 
-    else if (noiseTexture != NULL && BZDB.isTrue("texture") &&
+    else if (noiseTexture >= 0 && BZDB.isTrue("texture") &&
 	renderer.useQuality()==0) {
       glEnable(GL_TEXTURE_2D);
-      noiseTexture->execute();
+      tm.bind(noiseTexture);
       glBegin(GL_QUADS);
 
 	glTexCoord2f(0,0);

@@ -13,7 +13,7 @@
 #include <string.h>
 #include "common.h"
 #include "OpenGLGState.h"
-#include "OpenGLTexture.h"
+#include "TextureManager.h"
 #include "OpenGLMaterial.h"
 #include "RenderNode.h"
 
@@ -38,7 +38,7 @@ class OpenGLGStateState {
     void		enableTexture(bool);
     void		enableTextureReplace(bool);
     void		enableMaterial(bool);
-    void		setTexture(const OpenGLTexture&);
+    void		setTexture(const int tex);
     void		setMaterial(const OpenGLMaterial&);
     void		setBlending(GLenum sFactor, GLenum dFactor);
     void		setStipple(float alpha);
@@ -50,7 +50,7 @@ class OpenGLGStateState {
     bool		isBlended() const
 				{ return unsorted.hasBlending; }
     bool		isTextured() const
-				{ return sorted.texture.isValid(); }
+				{ return sorted.texture >= 0; }
     bool		isTextureReplace() const
 				{ return sorted.hasTextureReplace; }
     bool		isLighted() const
@@ -73,7 +73,7 @@ class OpenGLGStateState {
 	bool		hasTexture;
 	bool		hasTextureReplace;
 	bool		hasMaterial;
-	OpenGLTexture	texture;
+	int       	texture;
 	OpenGLMaterial	material;
     };
 
@@ -164,7 +164,7 @@ void			OpenGLGStateState::Sorted::reset()
   hasTexture = false;
   hasTextureReplace = false;
   hasMaterial = false;
-  texture = OpenGLTexture();
+  texture = -1;
   material = OpenGLMaterial();
 }
 
@@ -249,8 +249,10 @@ void			OpenGLGStateState::reset()
 
 void			OpenGLGStateState::enableTexture(bool on)
 {
-  if (on) sorted.hasTexture = sorted.texture.isValid();
-  else sorted.hasTexture = false;
+  if (on)
+    sorted.hasTexture = sorted.texture >= 0;
+  else
+    sorted.hasTexture = false;
 }
 
 void			OpenGLGStateState::enableTextureReplace(bool)
@@ -269,9 +271,9 @@ void			OpenGLGStateState::enableMaterial(bool on)
 }
 
 void			OpenGLGStateState::setTexture(
-					const OpenGLTexture& _texture)
+					const int _texture)
 {
-  sorted.hasTexture = _texture.isValid();
+  sorted.hasTexture = _texture>=0;
   sorted.texture = _texture;
 }
 
@@ -360,16 +362,17 @@ void			OpenGLGStateState::resetOpenGLState() const
 void			OpenGLGStateState::setOpenGLState(
 				const OpenGLGStateState* oldState) const
 {
+  TextureManager &tm = TextureManager::instance();
   if (oldState == this) return;
   if (oldState) {
     // texture mapping
     if (sorted.hasTexture) {
       if (oldState->sorted.hasTexture) {
 	if (sorted.texture != oldState->sorted.texture)
-	  sorted.texture.execute();
+          tm.bind(sorted.texture);
       }
       else {
-	sorted.texture.execute();
+	tm.bind(sorted.texture);
 	glEnable(GL_TEXTURE_2D);
       }
       if (!oldState->sorted.hasTextureReplace && sorted.hasTextureReplace)
@@ -498,7 +501,7 @@ void			OpenGLGStateState::setOpenGLState(
   else {
     // texture mapping
     if (sorted.hasTexture) {
-      sorted.texture.execute();
+      tm.bind(sorted.texture);
       glEnable(GL_TEXTURE_2D);
       if (sorted.hasTextureReplace)
 	glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, MY_GL_REPLACE);
@@ -1114,7 +1117,7 @@ void			OpenGLGStateBuilder::resetAlphaFunc()
 }
 
 void			OpenGLGStateBuilder::setTexture(
-					const OpenGLTexture& texture)
+					const int texture)
 {
   state->setTexture(texture);
 }

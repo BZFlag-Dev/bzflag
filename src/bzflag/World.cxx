@@ -39,7 +39,7 @@
 #include "TextUtils.h"
 #include "TextureManager.h"
 
-static OpenGLTexture*	flagTexture = NULL;
+static int	flagTexture = -1;
 
 //
 // World
@@ -84,7 +84,7 @@ World::~World()
 void			World::init()
 {
   TextureManager &tm = TextureManager::instance();
-  flagTexture = tm.getTexture( "flag" );
+  flagTexture = tm.getTextureID( "flag" );
 }
 
 void			World::done()
@@ -94,7 +94,7 @@ void			World::done()
 
 void			World::setFlagTexture(FlagSceneNode* flag)
 {
-  flag->setTexture(*flagTexture);
+  flag->setTexture(flagTexture);
 }
 
 void			World::setWorld(World* _playingField)
@@ -973,7 +973,7 @@ void			WorldBuilder::preGetWorld()
     world->flags[i].position[2] = 0.0f;
     world->flagNodes[i] = new FlagSceneNode(world->flags[i].position);
     world->flagWarpNodes[i] = new FlagWarpSceneNode(world->flags[i].position);
-    world->flagNodes[i]->setTexture(*flagTexture);
+    world->flagNodes[i]->setTexture(flagTexture);
   }
 
   // prepare inside nodes arrays

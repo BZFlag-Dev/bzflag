@@ -347,9 +347,9 @@ SegmentedShotStrategy::SegmentedShotStrategy(ShotPath* _path, bool transparent) 
 	  imageName += BZDB.get("superPrefix");
   imageName += BZDB.get("boltTexture");
 
-  OpenGLTexture *texture = tm.getTexture(imageName.c_str());
-  if (texture && texture->isValid())
-    boltSceneNode->setTexture(*texture);
+ int texture = tm.getTextureID(imageName.c_str());
+  if (texture >= 0)
+    boltSceneNode->setTexture(texture);
 }
 
 SegmentedShotStrategy::~SegmentedShotStrategy()
@@ -555,9 +555,9 @@ void			SegmentedShotStrategy::addShot(
     TextureManager &tm = TextureManager::instance();
 	std::string imageName = Team::getImagePrefix(team);
 	imageName +="bolt";
-    OpenGLTexture *texture = tm.getTexture(imageName.c_str());
-    if (texture && texture->isValid())
-      boltSceneNode->setTexture(*texture);
+    int texture = tm.getTextureID(imageName.c_str());
+    if (texture >= 0)
+      boltSceneNode->setTexture(texture);
   }
   scene->addDynamicNode(boltSceneNode);
 }
@@ -842,7 +842,7 @@ ThiefStrategy::ThiefStrategy(ShotPath* path) :
   thiefNodes = new LaserSceneNode*[numSegments];
 
   TextureManager &tm = TextureManager::instance();
-  OpenGLTexture *texture = tm.getTexture("thief");
+  int texture = tm.getTextureID("thief");
 
   for (int i = 0; i < numSegments; i++) {
     const ShotPathSegment& segment = getSegments()[i];
@@ -854,8 +854,8 @@ ThiefStrategy::ThiefStrategy(ShotPath* path) :
     dir[1] = t * rawdir[1];
     dir[2] = t * rawdir[2];
     thiefNodes[i] = new LaserSceneNode(ray.getOrigin(), dir);
-    if (texture && texture->isValid())
-      thiefNodes[i]->setTexture(*texture);
+    if (texture >= 0)
+      thiefNodes[i]->setTexture(texture);
   }
   setCurrentSegment(numSegments - 1);
 }
@@ -993,7 +993,7 @@ LaserStrategy::LaserStrategy(ShotPath* path) :
   TextureManager &tm = TextureManager::instance();
   std::string imageName = Team::getImagePrefix(tmpTeam);
   imageName +="bolt";
-  OpenGLTexture *texture = tm.getTexture(imageName.c_str());
+  int texture = tm.getTextureID(imageName.c_str());
 
   for (int i = 0; i < numSegments; i++) {
     const ShotPathSegment& segment = getSegments()[i];
@@ -1005,8 +1005,8 @@ LaserStrategy::LaserStrategy(ShotPath* path) :
     dir[1] = t * rawdir[1];
     dir[2] = t * rawdir[2];
     laserNodes[i] = new LaserSceneNode(ray.getOrigin(), dir);
-    if (texture && texture->isValid())
-      laserNodes[i]->setTexture(*texture);
+    if (texture >= 0)
+      laserNodes[i]->setTexture(texture);
   }
   setCurrentSegment(numSegments - 1);
 }
@@ -1073,10 +1073,10 @@ GuidedMissileStrategy::GuidedMissileStrategy(ShotPath* _path) :
 {
   ptSceneNode = new BoltSceneNode(_path->getPosition());
   TextureManager &tm = TextureManager::instance();
-  OpenGLTexture *texture = tm.getTexture("missile");
+  int texture = tm.getTextureID("missile");
 
-  if (texture && texture->isValid()) {
-    ptSceneNode->setTexture(*texture);
+  if (texture >= 0) {
+    ptSceneNode->setTexture(texture);
     ptSceneNode->setTextureAnimation(4, 4);
     ptSceneNode->setColor(1.0f, 0.2f, 0.0f);
     ptSceneNode->setFlares(true);

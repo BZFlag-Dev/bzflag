@@ -6977,14 +6977,14 @@ void			startPlaying(BzfDisplay* _display,
 	  char text[256];
 	  sprintf(text,"explode%d",explostion);
 
-	  OpenGLTexture *tex = tm.getTexture( text, false );
+	  int tex = tm.getTextureID( text, false );
 	  
-	  if (!tex || !tex->isValid())
+	  if (tex < 0)
 		  done = true;
-      else {
+          else {
 		// make explosion scene node
 		BillboardSceneNode* explosion = new BillboardSceneNode(zero);
-		explosion->setTexture(*tex);
+		explosion->setTexture(tex);
 		explosion->setTextureAnimation(8, 8);
 		explosion->setLight();
 		explosion->setLightColor(1.0f, 0.8f, 0.5f);

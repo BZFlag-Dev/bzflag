@@ -26,7 +26,7 @@ class LaserSceneNode : public SceneNode {
 					const GLfloat forward[3]);
 			~LaserSceneNode();
 
-    void		setTexture(const OpenGLTexture&);
+    void		setTexture(const int);
 
     bool		cull(const ViewFrustum&) const;
 
