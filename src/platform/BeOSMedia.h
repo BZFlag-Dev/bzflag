@@ -26,11 +26,11 @@ class BeOSMedia : public BzfMedia {
 public:
   BeOSMedia();
   ~BeOSMedia();
-/*
-  BzfDisplay*			createDisplay(const char* name, const char*videoFormat);
-  BzfVisual*	createVisual(const BzfDisplay*);
-  BzfWindow*	createWindow(const BzfDisplay*, BzfVisual*);
-*/
+  /*
+    BzfDisplay*			createDisplay(const char* name, const char*videoFormat);
+    BzfVisual*	createVisual(const BzfDisplay*);
+    BzfWindow*	createWindow(const BzfDisplay*, BzfVisual*);
+  */
   bool				openAudio();
   void				closeAudio();
   bool				startAudioThread(void (*)(void*), void*);
@@ -48,23 +48,25 @@ public:
   // sleep for given number of seconds
   virtual void	sleep(float timeInSeconds);
 
+  // sleep for given number of seconds
+  double	stopwatch(bool start);
 private:
   BeOSMedia(const BeOSMedia&);
   BeOSMedia& operator=(const BeOSMedia&);
-/*
-  bool				checkForAudioHardware();
-  bool				openAudioHardware();
-  bool				openIoctl(int cmd, void* value, bool req = true);
-*/
+  /*
+    bool				checkForAudioHardware();
+    bool				openAudioHardware();
+    bool				openIoctl(int cmd, void* value, bool req = true);
+  */
   static void			audioThreadInit(void*);
-/*
-  void				writeAudioFrames8Bit(
-							const float* samples, int numFrames);
-  void				writeAudioFrames16Bit(
-							const float* samples, int numFrames);
-*/
+  /*
+    void				writeAudioFrames8Bit(
+    const float* samples, int numFrames);
+    void				writeAudioFrames16Bit(
+    const float* samples, int numFrames);
+  */
   static void			audioplay_callback(void *cookie, void *buffer, size_t bufferSize,
-							const media_raw_audio_format &format);
+						   const media_raw_audio_format &format);
 
 private:
   bool				audioReady;
@@ -77,10 +79,11 @@ private:
 
   void*				outputBuffer;
   thread_id			childThreadID;
-//  void			*audioThreadCookie;
+  //  void			*audioThreadCookie;
   BSoundPlayer			*soundPlayer;
   bool				audioHasQuit;
   bool				checkLowWater;
+  sem_id			lowWaterSem;
 
   /* ring buffer */
   sem_id			audioInputSem;
@@ -88,11 +91,12 @@ private:
   sem_id			audioOutputSem;
   int				audioOutputIndex;
 
-/*
-  int				chunksPending;
-  double			chunkTime;
-  double			chunksPerSecond;
-*/
+  bigtime_t			stopWatchStart;
+  /*
+    int				chunksPending;
+    double			chunkTime;
+    double			chunksPerSecond;
+  */
 };
 
 #endif // BZF_BEOS_MEDIA_H

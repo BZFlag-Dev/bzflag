@@ -66,13 +66,13 @@ bool					BeOSDisplay::isEventPending() const
   if (beosWin && beosWin->currentOglContext == find_thread(NULL)) {
     beosWin->yieldCurrent();
   }
-//  snooze(10000);
+  //  snooze(10000);
   return (port_buffer_size_etc(eventPort, B_TIMEOUT, 0LL) > 0);
 }
 
 bool					BeOSDisplay::getEvent(BzfEvent& event) const
 {
-//printf("BeOSDisplay::getEvent()\n");
+  //printf("BeOSDisplay::getEvent()\n");
   bool is_current_ogl = false;
   status_t err;
   int32 what;
@@ -83,7 +83,7 @@ bool					BeOSDisplay::getEvent(BzfEvent& event) const
   err = read_port_etc(eventPort, &what, (void *)&event, sizeof(BzfEvent), B_TIMEOUT, 0LL);
   if (is_current_ogl)
     beosWin->makeCurrent();
-//printf("<BeOSDisplay::getEvent()\n");
+  //printf("<BeOSDisplay::getEvent()\n");
   return (err >= B_OK);
 }
 

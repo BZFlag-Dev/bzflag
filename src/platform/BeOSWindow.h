@@ -64,25 +64,25 @@ public:
   virtual void		freeContext();
 
 
-/*
-  virtual void		initJoystick(const char* joystickName);
-  virtual bool		joystick() const { return false; }
-  virtual void		getJoystick(float& x, float& y) const
-							{ x = 0.0f; y = 0.0f; }
-  virtual unsigned long getJoyButtons() const { return 0; }
-*/
+  /*
+    virtual void		initJoystick(const char* joystickName);
+    virtual bool		joystick() const { return false; }
+    virtual void		getJoystick(float& x, float& y) const
+    { x = 0.0f; y = 0.0f; }
+    virtual unsigned long getJoyButtons() const { return 0; }
+  */
   /* other methods */
 
-//  bool				applyVisual(BeOSVisual* _visual);
+  //  bool				applyVisual(BeOSVisual* _visual);
 
 private:
-friend class BeOSDisplay;
-#ifdef BEOS_USE_GL2
-friend class MyGLWindow;
+  friend class BeOSDisplay;
+  //#ifdef BEOS_USE_GL2
+  friend class MyGLWindow;
   MyGLWindow				*bWindow;
-#else
-  BGLView				*glView;
-#endif
+  //#else
+  //  BGLView				*glView;
+  //#endif
   const BeOSDisplay			*display;
   const BeOSVisual			*visual;
   BView					*utilView;
