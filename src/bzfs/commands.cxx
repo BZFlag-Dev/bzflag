@@ -39,6 +39,7 @@
 #include "LagInfo.h"
 #include "NetHandler.h"
 #include "PlayerInfo.h"
+#include "TimeKeeper.h"
 #include "VotingArbiter.h"
 #include "global.h"
 #include "version.h"
@@ -82,9 +83,6 @@ extern bool gameOver;
 extern char *getDirectMessageBuffer();
 extern void broadcastMessage(uint16_t code, int len, const void *msg);
 
-// externs needed by the countdown command
-#include "TimeKeeper.h"
-extern TimeKeeper gameStartTime;
 #include "PlayerInfo.h"
 extern TeamInfo team[NumTeams];
 extern void sendTeamUpdate(int playerIndex = -1, int teamIndex1 = -1, int teamIndex2 = -1);
