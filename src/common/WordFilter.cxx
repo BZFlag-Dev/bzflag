@@ -737,8 +737,8 @@ WordFilter::~WordFilter(void)
     for (i = filters[j].begin();
 	 i != filters[j].end();
 	 ++i) {
-	freeCount++;
       if (i->compiled) {
+	freeCount++;
 	regfree(i->compiled);
 	free(i->compiled);
       }
@@ -748,8 +748,8 @@ WordFilter::~WordFilter(void)
   for (i = prefixes.begin();
        i != prefixes.end();
        ++i) {
-      freeCount++;
     if (i->compiled) {
+      freeCount++;
       regfree(i->compiled);
       free(i->compiled);
     }
@@ -758,8 +758,8 @@ WordFilter::~WordFilter(void)
   for (i = suffixes.begin();
        i != suffixes.end();
        ++i) {
-      freeCount++;
     if (i->compiled) {
+      freeCount++;
       regfree(i->compiled);
       free(i->compiled);
     }
