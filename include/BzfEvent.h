@@ -75,13 +75,17 @@ class BzfKeyEvent {
 			LeftMouse,
 			MiddleMouse,
 			RightMouse,
+			BZ_Mouse_Button_1,
+			BZ_Mouse_Button_2,
+			BZ_Mouse_Button_3,
 			BZ_Mouse_Button_4,
 			BZ_Mouse_Button_5,
 			BZ_Mouse_Button_6,
 			BZ_Mouse_Button_7,
 			BZ_Mouse_Button_8,
 			BZ_Mouse_Button_9,
-			Tab
+			BZ_Mouse_Button_10,
+			LastButton
     };
     enum {
 			ShiftKey = 1,

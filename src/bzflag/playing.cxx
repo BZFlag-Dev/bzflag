@@ -4915,9 +4915,9 @@ static void		playingLoop()
 
     if (mainWindow->joystick()) {
       static const BzfKeyEvent::Button button_map[] = {
-	BzfKeyEvent::LeftMouse,
-	BzfKeyEvent::MiddleMouse,
-	BzfKeyEvent::RightMouse,
+	BzfKeyEvent::BZ_Mouse_Button_1,
+	BzfKeyEvent::BZ_Mouse_Button_2,
+	BzfKeyEvent::BZ_Mouse_Button_3,
 	BzfKeyEvent::BZ_Mouse_Button_4,
 	BzfKeyEvent::BZ_Mouse_Button_5,
 	BzfKeyEvent::BZ_Mouse_Button_6,
