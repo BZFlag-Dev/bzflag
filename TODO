@@ -6,8 +6,10 @@ THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
 * 1/2 the board split diagonally does not draw the ground for TimRiker
   Debian unstable powerpc with a Radeon 9200. Worked fine a few days ago
 
-* bzflag should display errors from DB. if you put an invalid char
-  in your password, then you no longer get a list of servers
+* If you put an invalid char in your password, then you no longer get a 
+  list of servers.  BZ will handle the ERROR: message, just send the
+  server list under it and it'll parse that too, as if the ERROR was
+  a TOKEN or NOTOK.
 
 * bzadmin needs to handle central registration. get a cookie from
   db and present it to a server. Might add full LIST support while
