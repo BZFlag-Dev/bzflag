@@ -69,7 +69,13 @@ bool WordFilter::simpleFilter(char *input) const
 
 bool WordFilter::aggressiveFilter(char *input) const
 {
-#if HAVE_REGEX_H
+#ifndef HAVE_REGEX_H
+
+  std::cerr << "Regular expressions are not available (using the simple filter)" << std::endl;
+  return simpleFilter(input);
+
+#else /* HAVE_REGEX_H */
+
   bool filtered = false;
   regmatch_t match[1];
   if (input == NULL) return false;
@@ -101,7 +107,7 @@ bool WordFilter::aggressiveFilter(char *input) const
   for (int counter = 0; counter < inputLength; counter++) {
     char c = tolower(sInput[counter]);
 
-    if (!isAlphabetic(previousChar) && isVisible(c)) {
+    if (!isalpha(previousChar) && isVisible(c)) {
 
       // expand punctuation to potential alphabetic characters
       if (isPunctuation(c)) {
@@ -125,9 +131,9 @@ bool WordFilter::aggressiveFilter(char *input) const
    */
   for (ExpCompareSet::iterator i = prefixes.begin(); i != prefixes.end(); ++i) {
     if (regexec(i->compiled, sInput.c_str(), 1, match, 0) == 0) {
-      if ( (match[0].rm_eo < inputLength) && isAlphabetic(sInput[match[0].rm_eo]) ) {
+      if ( (match[0].rm_eo < inputLength) && isalpha(sInput[match[0].rm_eo]) ) {
 	/* do not forget to make sure this is a true prefix */
-	if ( (match[0].rm_so > 0) && isAlphabetic(sInput[match[0].rm_so - 1]) ) {
+	if ( (match[0].rm_so > 0) && isalpha(sInput[match[0].rm_so - 1]) ) {
 	  continue;
 	}
 
@@ -168,7 +174,7 @@ bool WordFilter::aggressiveFilter(char *input) const
 //std::cout << "We matched ... ";
 
 	  /* make sure we only match on word boundaries */
-	  if ( (startOffset>1) && (isAlphabetic(sInput[startOffset-1])) ) {
+	  if ( (startOffset>1) && (isalpha(sInput[startOffset-1])) ) {
 
 //std::cout << "but didn't match a word beginning" << std::endl;
 
@@ -180,7 +186,7 @@ bool WordFilter::aggressiveFilter(char *input) const
 
 //std::cout << "checking prefix: " << j->word << std::endl;
 
-		if ( (match[0].rm_so > 1) && (isAlphabetic(sInput[match[0].rm_so - 1])) ) {
+		if ( (match[0].rm_so > 1) && (isalpha(sInput[match[0].rm_so - 1])) ) {
 		  /* we matched, but we are still in the middle of a word */
 		  continue;
 		}
@@ -203,7 +209,7 @@ bool WordFilter::aggressiveFilter(char *input) const
 
 //std::cout << "is endoffset alphabetic: " << input[endOffset] << std::endl;
 
-	  if ( (endOffset<inputLength-1) && (isAlphabetic(sInput[endOffset])) ) {
+	  if ( (endOffset<inputLength-1) && (isalpha(sInput[endOffset])) ) {
 
 //std::cout << "but didn't match a word ending" << std::endl;
 
@@ -220,7 +226,7 @@ bool WordFilter::aggressiveFilter(char *input) const
 
 		/* again, make sure we are now at a word end */
 		if ( (match[0].rm_eo < inputLength - endOffset) &&
-		     (isAlphabetic(sInput[endOffset + match[0].rm_eo])) ) {
+		     (isalpha(sInput[endOffset + match[0].rm_eo])) ) {
 		  /* we matched, but we are still in the middle of a word */
 		  continue;
 		}
@@ -293,10 +299,6 @@ bool WordFilter::aggressiveFilter(char *input) const
 
   return filtered;
 
-#else /* HAVE_REGEX_H */
-  std::cerr << "Regular expressions are not available (use the simple filter)" << std::endl;
-  return simpleFilter(input);
-
 #endif /* HAVE_REGEX_H */
 } // end aggressiveFilter
 
@@ -333,13 +335,13 @@ std::string WordFilter::l33tspeakSetFromCharacter(const char c) const
 {
   std::string set = "";
 
-  if (!isAlphanumeric(c)) {
+  if (!isalnum(c)) {
     /* escape the non-alphanumeric (punctuation or control chars) */
     set = "  ";
     set[0] = '\\';
     set[1] = c;
     return set;
-  } else if (isWhitespace(c)) {
+  } else if (isspace(c)) {
     set = " ";
     set[0] = c;
     return set;
@@ -869,15 +871,17 @@ unsigned int WordFilter::loadFromFile(const std::string &fileName, bool verbose)
  */
 bool WordFilter::filter(char *input, bool simple) const
 {
+#if DEBUG
   TimeKeeper before = TimeKeeper::getCurrent();
+#endif
   bool filtered;
   if (simple) {
     filtered = simpleFilter(input);
   } else {
     filtered = aggressiveFilter(input);
   }
+#if DEBUG
   TimeKeeper after = TimeKeeper::getCurrent();
-#if 1
   std::cout << "Time elapsed: " << after - before << " seconds" << std::endl;
 #endif
   return filtered;

@@ -28,6 +28,7 @@
 #include <fstream>
 #include <iostream>
 
+#include <ctype.h>
 #include <sys/types.h>
 
 #if HAVE_REGEX_H
@@ -41,8 +42,9 @@
 
 
 /* words are stored by the index of their first letter of
-* UTF-8 format.
-*/
+ * UTF-8 format.  it would be nice to eventually support
+ * full indexing of 
+ */
 static const unsigned short int MAX_FILTER_SETS = 256;
 
 
