@@ -1073,6 +1073,10 @@ void handlePollCmd(int t, const char *message)
 	sendMessage(ServerPlayer, AllPlayers, reply, true);
       }
     }
+    
+    unsigned int necessaryToSucceed = (unsigned int)((clOptions->votePercentage / 100.0) * (double)available);
+    sprintf(reply, "%d player%s available, %d affirming vote%s required to pass the poll (%f %%)", available, available==1?"":"s", necessaryToSucceed, necessaryToSucceed==1?"":"s", clOptions->votePercentage);
+    sendMessage(ServerPlayer, AllPlayers, reply, true);
 
     // set the number of available voters
     arbiter->setAvailableVoters(available);
