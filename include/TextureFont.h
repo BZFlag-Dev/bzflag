@@ -27,60 +27,95 @@
 
 #define MAX_TEXTURE_FONT_CHARS	(128)
 
-typedef struct {
-  int initialDist;
-  int charWidth;
-  int whiteSpaceDist;
-  int fullWidth; // initialDist + charWidth + whiteSpaceDist
-  int startX;
-  int endX;
-  int startY;
-  int endY;
-} trFontMetrics;
-
-class TextureFont {
+class ImageFont {
 public:
-  TextureFont();
-  ~TextureFont();
+  ImageFont();
+  virtual ~ImageFont();
 
-  int getSize(void);
-  const char* getFaceName(void);
+  int getSize() const;
+  const char* getFaceName() const;
 
   bool load(OSFile &file);
 
-  void build(void);
+  virtual void build() = 0;
+  virtual bool isBuilt() const = 0;
 
-  bool isBuilt(void) {return textureID != -1;}
+  virtual void filter(bool dofilter) = 0;
+  virtual void drawString(float scale, GLfloat color[3], const char *str, int len) = 0;
 
-  void drawString(float scale, GLfloat color[3], const char *str, int len);
+  float getStrLength(float scale, const char *str, int len) const;
 
-  float getStrLength(float scale, const char *str, int len);
-  
-  int getTextureID() const;
+  virtual void free() = 0;
 
-  void free(void);
-
-private:
-  void preLoadLists(void);
-
-  unsigned int	listIDs[MAX_TEXTURE_FONT_CHARS];
-  trFontMetrics	fontMetrics[MAX_TEXTURE_FONT_CHARS];
+protected:
+  struct FontMetrics {
+    int initialDist;
+    int charWidth;
+    int whiteSpaceDist;
+    int fullWidth; // initialDist + charWidth + whiteSpaceDist
+    int startX;
+    int endX;
+    int startY;
+    int endY;
+  };
+  FontMetrics	fontMetrics[MAX_TEXTURE_FONT_CHARS];
 
   std::string faceName;
   std::string texture;
   int	      size;
-  int	      textureID;
   int	      textureXSize;
   int	      textureYSize;
   int	      textureZStep;
   int	      numberOfCharacters;
+
+private:
+  // don't copy me
+  ImageFont(const ImageFont&);
+  ImageFont &operator=(const ImageFont&);
+};
+
+///////////////////////
+
+class TextureFont : public ImageFont {
+public:
+  TextureFont();
+  virtual ~TextureFont();
+
+  virtual void build();
+  virtual bool isBuilt() const {return textureID != -1;}
+
+  virtual void filter(bool dofilter);
+  virtual void drawString(float scale, GLfloat color[3], const char *str, int len);
+
+  virtual void free();
+
+private:
+  void preLoadLists();
+
+  unsigned int	listIDs[MAX_TEXTURE_FONT_CHARS];
+
+  int	      textureID;
   OpenGLGState gstate;
 };
 
-inline int TextureFont::getTextureID() const
-{
-  return textureID;
-}
+///////////////////////
 
+class BitmapFont : public ImageFont {
+public:
+  BitmapFont();
+  virtual ~BitmapFont();
+
+  virtual void build();
+  virtual bool isBuilt() const {return loaded;}
+
+  virtual void filter(bool dofilter);
+  virtual void drawString(float scale, GLfloat color[3], const char *str, int len);
+
+  virtual void free();
+
+private:
+  unsigned char *bitmaps[MAX_TEXTURE_FONT_CHARS];
+  bool        loaded;
+};
 
 #endif //_TEXTURE_FONT_H_

@@ -31,12 +31,6 @@
 template <>
 FontManager* Singleton<FontManager>::_instance = (FontManager*)0;
 
-/*
-typedef std::map<int, TextureFont*> FontSizeMap;
-typedef std::vector<FontSizeMap>  FontFaceList;
-typedef std::map<std::string, int>  FontFaceMap;
-*/
-
 // ANSI code GLFloat equivalents - these should line up with the enums in AnsiCodes.h
 static GLfloat BrightColors[8][3] = {
   {1.0f,1.0f,0.0f}, // yellow
@@ -132,6 +126,9 @@ void FontManager::loadAll(std::string directory)
   if (directory.size() == 0)
     return;
 
+  const bool bitmapRenderer = BZDB.isTrue("useBitmapFontRenderer");
+  canScale = !bitmapRenderer;
+
   // save this in case we have to rebuild
   fontDirectory = directory;
 
@@ -143,7 +140,11 @@ void FontManager::loadAll(std::string directory)
     std::string ext = file.getExtension();
 
     if (TextUtils::compare_nocase(ext, "fmt") == 0) {
-      TextureFont *pFont = new TextureFont;
+      ImageFont *pFont;
+      if (bitmapRenderer)
+        pFont = new BitmapFont;
+      else
+        pFont = new TextureFont;
       if (pFont) {
         if (pFont->load(file)) {
           std::string  str = TextUtils::toupper(pFont->getFaceName());
@@ -232,7 +233,7 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
     return;
   }
 
-  TextureFont* pFont = getClosestRealSize(faceID, size, size);
+  ImageFont* pFont = getClosestRealSize(faceID, size, size);
 
   if (!pFont) {
     DEBUG2("Could not find applicable font size for rendering; font face ID %d, "
@@ -242,15 +243,13 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
 
   float scale = size / (float)pFont->getSize();
   
-  // texture filtering is off by default for fonts.
+  // filtering is off by default for fonts.
   // if the font is large enough, and the scaling factor
-  // is not an integer, then turn on the max filtering.
-  bool textureFiltering = false;
+  // is not an integer, then request filtering
+  bool filtering = false;
   if ((size > 12.0f) && (fabsf(scale - floorf(scale + 0.5f)) > 0.001f)) {
-    textureFiltering = true;
-    int texID = pFont->getTextureID();
-    TextureManager& tm = TextureManager::instance();
-    tm.setTextureFilter(texID, OpenGLTexture::Max);
+    pFont->filter(true);
+    filtering = true;
   } else {
     // no filtering - clamp to aligned coordinates
     x = floorf(x);
@@ -272,6 +271,8 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
   bool underline = false;
   // negatives are invalid, we use them to signal "no change"
   GLfloat color[3] = {-1.0f, -1.0f, -1.0f};
+
+  OpenGLGState::resetState(); // FIXME for bitmap renderer, full reset needed?
 
 
   /*
@@ -386,11 +387,9 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
     }
   }
 
-  // revert the texture filtering state  
-  if (textureFiltering) {
-    int texID = pFont->getTextureID();
-    TextureManager& tm = TextureManager::instance();
-    tm.setTextureFilter(texID, OpenGLTexture::Nearest);
+  // revert the filtering state
+  if (filtering) {
+    pFont->filter(false);
   }
 
   return;  
@@ -414,7 +413,7 @@ float FontManager::getStrLength(int faceID, float size,	const std::string &text,
     return 0.0f;
   }
 
-  TextureFont* pFont = getClosestRealSize(faceID, size, size);
+  ImageFont* pFont = getClosestRealSize(faceID, size, size);
 
   if (!pFont) {
     DEBUG2("Could not find applicable font size for sizing; font face ID %d, "
@@ -465,45 +464,35 @@ void FontManager::unloadAll(void)
   }
 }
 
-TextureFont* FontManager::getClosestSize(int faceID, float size)
+ImageFont* FontManager::getClosestSize(int faceID, float size, bool bigger)
 {
   if (fontFaces[faceID].size() == 0)
     return NULL;
 
-  // only have 1 so this is easy
-  if (fontFaces[faceID].size() == 1)
-    return fontFaces[faceID].begin()->second;
+  const int rsize = int(size + 0.5f);
 
-  TextureFont*	pFont = NULL;
-
-  // find the first one that is equal or bigger
-  FontSizeMap::iterator itr = fontFaces[faceID].begin();
-
-  FontSizeMap::iterator lastFace = fontFaces[faceID].end();
-  while (itr != lastFace) {
-    if (size <= itr->second->getSize()) {
-      pFont = itr->second;
-      itr = lastFace;
-    } else {
-      itr++;
-    }
+  const FontSizeMap &sizes = fontFaces[faceID];
+  FontSizeMap::const_iterator itr = sizes.lower_bound(rsize);
+  if (bigger) {
+    if (itr == sizes.end())
+      itr--;
+  } else {
+    if (itr != sizes.begin() && itr->first != rsize)
+      itr--;
   }
-  // if we don't have one that is larger then take the largest one we have and pray for good scaling
-  if (!pFont)
-    pFont = fontFaces[faceID].rbegin()->second;
 
-  return pFont;
+  return itr->second;
 }
 
-TextureFont*    FontManager::getClosestRealSize(int faceID, float desiredSize, float &actualSize)
+ImageFont*    FontManager::getClosestRealSize(int faceID, float desiredSize, float &actualSize)
 {
   /*
    * tiny fonts scale poorly, this function will return the nearest unscaled size of a font
    * if the font is too tiny to scale, and a scaled size if it's big enough.
    */
 
-  TextureFont* font = getClosestSize(faceID, desiredSize);
-  if (desiredSize < 14.0f) {
+  ImageFont* font = getClosestSize(faceID, desiredSize, canScale ? true : false);
+  if (!canScale || desiredSize < 14.0f) {
     // get the next biggest font size from requested
     if (!font) {
       DEBUG2("Could not find applicable font size for sizing; font face ID %d, "

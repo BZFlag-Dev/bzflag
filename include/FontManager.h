@@ -22,10 +22,12 @@
 #include <vector>
 
 #include "Singleton.h"
-#include "TextureFont.h"
+#include "bzfgl.h"
 #include "AnsiCodes.h"
 
-typedef std::map<int, TextureFont*> FontSizeMap;
+class ImageFont;
+
+typedef std::map<int, ImageFont*> FontSizeMap;
 typedef std::vector<FontSizeMap>    FontFaceList;
 typedef std::map<std::string, int>  FontFaceMap;
 
@@ -67,8 +69,8 @@ protected:
 
 private:
   void		getPulseColor(const GLfloat* color, GLfloat* pulseColor) const;
-  TextureFont*	getClosestSize(int faceID, float size);
-  TextureFont*	getClosestRealSize(int faceID, float desiredSize, float &actualSize);
+  ImageFont*	getClosestSize(int faceID, float size, bool bigger);
+  ImageFont*	getClosestRealSize(int faceID, float desiredSize, float &actualSize);
   FontFaceMap	faceNames;
   FontFaceList  fontFaces;
 
@@ -79,6 +81,7 @@ private:
   static void	initContext(void *data);
   static GLfloat underlineColor[3];
   float		 dimFactor;
+  bool           canScale;
 };
 
 inline void FontManager::setDimFactor(float newDimFactor)
