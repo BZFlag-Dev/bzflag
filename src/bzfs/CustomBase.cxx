@@ -24,7 +24,7 @@
 // external dependancies
 extern const int CtfTeams;
 extern CmdLineOptions *clOptions;
-extern BasesList bases;
+extern BasesList *bases;
 
 CustomBase::CustomBase()
 {
@@ -55,7 +55,9 @@ bool CustomBase::read(const char *cmd, std::istream& input) {
 
 void CustomBase::write(WorldInfo* world) const {
   float safety[] = { 0.0f, 0.0f, 0.0f };
-  bases[color]->addBase( pos, size, rotation, safety );
+  if (bases->find( color ) == bases->end())
+    (*bases)[color] = new TeamBases((TeamColor)color);
+  (*bases)[color]->addBase( pos, size, rotation, safety );
 
   world->addBase(pos[0], pos[1], pos[2], rotation, size[0], size[1], size[2],
 		 driveThrough, shootThrough);

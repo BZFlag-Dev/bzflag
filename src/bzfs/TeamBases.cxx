@@ -70,6 +70,13 @@ TeamBases::TeamBases(TeamColor team, bool initDefault)
 
 void TeamBases::addBase( const float *position, const float *size, float rotation, const float *safetyZone )
 {
+  TeamBase base;
+  memcpy( &base.position, position, sizeof( base.position ));
+  memcpy( &base.size, size, sizeof( base.size ));
+  memcpy( &base.safetyZone, safetyZone, sizeof( base.safetyZone ));
+  base.rotation = rotation;
+
+  teamBases.push_back( base );
 }
 
 TeamColor TeamBases::getTeam() const

@@ -87,7 +87,7 @@ static WorldInfo *world = NULL;
 static char *worldDatabase = NULL;
 static uint32_t worldDatabaseSize = 0;
 
-BasesList bases;
+BasesList *bases;
 
 // FIXME - define a well-known constant for a null playerid in address.h?
 // might be handy in other players, too.
@@ -1276,7 +1276,7 @@ static WorldInfo *defineWorldFromFile(const char *filename)
 
   if (clOptions->gameStyle & TeamFlagGameStyle) {
     for (int i = RedTeam; i <= PurpleTeam; i++) {
-      if ((clOptions->maxTeam[i] > 0) && bases.find(i) == bases.end()) {
+      if ((clOptions->maxTeam[i] > 0) && bases->find(i) == bases->end()) {
 	printf("base was not defined for team %i capture the flag game style removed.\n", i);
 	clOptions->gameStyle &= (~TeamFlagGameStyle);
 	break;
@@ -1317,7 +1317,7 @@ static WorldInfo *defineTeamWorld()
 
     // set team base and team flag safety positions
     for (int t = RedTeam; t <= PurpleTeam; t++)
-      bases[t] = new TeamBases((TeamColor)t, true);
+      (*bases)[t] = new TeamBases((TeamColor)t, true);
 
     // make walls
     const float wallHeight = BZDB.eval(StateDatabase::BZDB_WALLHEIGHT);
@@ -1330,7 +1330,7 @@ static WorldInfo *defineTeamWorld()
     // make pyramids
     if (!clOptions->randomCTF || (clOptions->maxTeam[1] > 0)) {
       // around red base
-      const float *pos = bases[RedTeam]->getBasePosition(0);
+      const float *pos = (*bases)[RedTeam]->getBasePosition(0);
       world->addPyramid(
 	  pos[0] + 0.5f * BaseSize - pyrBase,
 	  pos[1] - 0.5f * BaseSize - pyrBase, 0.0f, 0.0f,
@@ -1351,7 +1351,7 @@ static WorldInfo *defineTeamWorld()
 
     if (!clOptions->randomCTF || (clOptions->maxTeam[2] > 0)) {
       // around green base
-      const float *pos = bases[GreenTeam]->getBasePosition(0);
+      const float *pos = (*bases)[GreenTeam]->getBasePosition(0);
       world->addPyramid(
 	  pos[0] - 0.5f * BaseSize + pyrBase,
 	  pos[1] - 0.5f * BaseSize - pyrBase, 0.0f, 0.0f,
@@ -1372,7 +1372,7 @@ static WorldInfo *defineTeamWorld()
 
     if (!clOptions->randomCTF || (clOptions->maxTeam[3] > 0)) {
       // around blue base
-      const float *pos = bases[BlueTeam]->getBasePosition(0);
+      const float *pos = (*bases)[BlueTeam]->getBasePosition(0);
       world->addPyramid(
 	  pos[0] - 0.5f * BaseSize - pyrBase,
 	  pos[1] + 0.5f * BaseSize - pyrBase, 0.0f, 0.0f,
@@ -1393,7 +1393,7 @@ static WorldInfo *defineTeamWorld()
 
     if (!clOptions->randomCTF || (clOptions->maxTeam[4] > 0)) {
       // around purple base
-      const float *pos = bases[PurpleTeam]->getBasePosition(0);
+      const float *pos = (*bases)[PurpleTeam]->getBasePosition(0);
       world->addPyramid(
 	  pos[0] - 0.5f * BaseSize - pyrBase,
 	  pos[1] - 0.5f * BaseSize + pyrBase, 0.0f, 0.0f,
@@ -1422,10 +1422,10 @@ static WorldInfo *defineTeamWorld()
 	fprintf(stderr, "need some teams, use -mp");
 	exit(20);
       }
-      const float *redPosition = bases[RedTeam]->getBasePosition(0);
-      const float *greenPosition = bases[GreenTeam]->getBasePosition(0);
-      const float *bluePosition = bases[BlueTeam]->getBasePosition(0);
-      const float *purplePosition = bases[PurpleTeam]->getBasePosition(0);
+      const float *redPosition = (*bases)[RedTeam]->getBasePosition(0);
+      const float *greenPosition = (*bases)[GreenTeam]->getBasePosition(0);
+      const float *bluePosition = (*bases)[BlueTeam]->getBasePosition(0);
+      const float *purplePosition = (*bases)[PurpleTeam]->getBasePosition(0);
 
       const int numBoxes = int((0.5 + 0.4 * bzfrand()) * actCitySize * actCitySize);
       const float boxHeight = BZDB.eval(StateDatabase::BZDB_BOXHEIGHT);
@@ -1861,7 +1861,7 @@ static bool defineWorld()
   // time-of-day will go here
   buf = nboPackUInt(buf, 0);
   if (clOptions->gameStyle & TeamFlagGameStyle) {
-    for (BasesList::iterator it = bases.begin(); it != bases.end(); ++it)
+    for (BasesList::iterator it = bases->begin(); it != bases->end(); ++it)
       buf = it->second->pack(buf);
   }
   buf = nboPackString(buf, world->getDatabase(), world->getDatabaseSize());
@@ -1901,7 +1901,7 @@ static TeamColor whoseBase(float x, float y, float z)
   float highest = -1;
   int highestteam = -1;
 
-  for (BasesList::iterator it = bases.begin(); it != bases.end(); ++it) {
+  for (BasesList::iterator it = bases->begin(); it != bases->end(); ++it) {
     if (clOptions->randomCTF && (clOptions->maxTeam[it->second->getTeam()] == 0))
       continue;
     float baseZ = it->second->findBaseZ(x,y,z);
@@ -2515,8 +2515,8 @@ void resetFlag(int flagIndex)
   // reposition flag
   if (pFlagInfo->flag.type->flagTeam != ::NoTeam) {
     int teamIndex = pFlagInfo->flag.type->flagTeam;
-    const float *pos = bases[teamIndex]->getBasePosition(0);
-    const float *size = bases[teamIndex]->getBaseSize(0);
+    const float *pos = (*bases)[teamIndex]->getBasePosition(0);
+    const float *size = (*bases)[teamIndex]->getBaseSize(0);
     pFlagInfo->flag.position[0] = pos[0];
     pFlagInfo->flag.position[1] = pos[1];
     pFlagInfo->flag.position[2] = pos[2] + size[2];
@@ -2897,7 +2897,7 @@ static void getSpawnLocation(int playerId, float* spawnpos, float *azimuth)
   const float tankRadius = BZDB.eval(StateDatabase::BZDB_TANKRADIUS);
   const TeamColor team = player[playerId].team;
   if (player[playerId].restartOnBase && (player[playerId].type != ComputerPlayer) && (team <= PurpleTeam)) {
-    bases[team]->getRandomPosition( spawnpos[0], spawnpos[1], spawnpos[2] );
+    (*bases)[team]->getRandomPosition( spawnpos[0], spawnpos[1], spawnpos[2] );
     player[playerId].restartOnBase = false;
   }
   else {
@@ -3396,7 +3396,7 @@ static void dropFlag(int playerIndex, float pos[3])
     drpFlag.flag.landingPosition[2] = topmost->pos[2] + topmost->size[2];
   }
   else if (isTeamFlag && (teamBase != NoTeam) && (teamBase != flagTeam)) {
-    bases[teamBase]->getSafetyZone( drpFlag.flag.landingPosition[0],
+    (*bases)[teamBase]->getSafetyZone( drpFlag.flag.landingPosition[0],
                                     drpFlag.flag.landingPosition[1],
                                     drpFlag.flag.landingPosition[2] );
   }
@@ -3424,8 +3424,8 @@ static void dropFlag(int playerIndex, float pos[3])
 	drpFlag.flag.landingPosition[2] = 0.0f;
     }
     else {// oh well, whatcha gonna do?
-	const float *pos = bases[flagTeam]->getBasePosition(0);
-	const float *size = bases[flagTeam]->getBaseSize(0);
+	const float *pos = (*bases)[flagTeam]->getBasePosition(0);
+	const float *size = (*bases)[flagTeam]->getBaseSize(0);
 	drpFlag.flag.landingPosition[0] = pos[0];
 	drpFlag.flag.landingPosition[1] = pos[1];
 	drpFlag.flag.landingPosition[2] = pos[2] + size[2];
@@ -4461,6 +4461,7 @@ int main(int argc, char **argv)
 
   BZDBCache::init();
 
+  bases = new BasesList();
   // parse arguments
   parse(argc, argv, *clOptions);
 
@@ -5153,6 +5154,7 @@ int main(int argc, char **argv)
   delete[] flag;  flag = NULL;
   delete world; world = NULL;
   delete[] worldDatabase; worldDatabase = NULL;
+  delete bases; bases = NULL;
   delete votingarbiter; votingarbiter = NULL;
 #if defined(_WIN32)
   WSACleanup();
