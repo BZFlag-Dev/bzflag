@@ -30,9 +30,13 @@
 #  include <CoreServices/CoreServices.h>
 #endif
 
+#ifdef _WIN32
+#  define DIRECTORY_SEPARATOR '\\'
+#else
+#  define DIRECTORY_SEPARATOR '/'
+#endif
 
 // NOTE: terminate all strings with either '/' or '\\'
-
 
 std::string		getConfigDirName()
 {
@@ -106,7 +110,8 @@ extern std::string		getCacheDirName()
 extern std::string		getRecordDirName()
 {
   std::string name = getConfigDirName();
-  name += "recordings/";
+  name += "recordings";
+  name += DIRECTORY_SEPARATOR;
   return name;
 }
 
@@ -114,7 +119,8 @@ extern std::string		getRecordDirName()
 extern std::string		getScreenShotDirName()
 {
   std::string name = getConfigDirName();
-  name += "screenshots/";
+  name += "screenshots";
+  name += DIRECTORY_SEPARATOR;
   return name;
 }
 
