@@ -31,9 +31,9 @@ private:
 	PNGPalette* readPalette(PNGChunk *c);
 	unsigned char *getLineBuffer(bool active=true);
 	void switchLineBuffers();
+	bool filter();
 
 	static unsigned char	pngHeader[8];
-	bool					valid;
 	unsigned char			bitDepth;
 	unsigned char			colorDepth;
 	unsigned char			compressionMethod;

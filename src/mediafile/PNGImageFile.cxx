@@ -28,18 +28,19 @@
 
 unsigned char PNGImageFile::pngHeader[8] = { 137, 80, 78, 71, 13, 10, 26, 10 };
 
-PNGImageFile::PNGImageFile(std::istream* stream) : ImageFile(stream), valid(true) 
+PNGImageFile::PNGImageFile(std::istream* stream) : ImageFile(stream)
 {
+	lineBuffers[0] = NULL;
+	lineBuffers[1] = NULL;
+
 	char buffer[8];
 	stream->read(buffer, 8);
 	if (strncmp((char*)pngHeader, buffer, 8) != 0) {
-		valid = false;
 		return;
 	}
 
 	PNGChunk *c = PNGChunk::readChunk(stream);
 	if (c->getType() != PNGChunk::IHDR) {
-		valid = false;
 		delete c;
 		return;
 	}
@@ -81,16 +82,22 @@ PNGImageFile::PNGImageFile(std::istream* stream) : ImageFile(stream), valid(true
 	lineBuffers[1] = new unsigned char[lineBufferSize];
 	activeBufferIndex = 0;
 
+	//Temporary
+	if (colorDepth != 2)
+		return;
+	if (bitDepth != 8)
+		return;
+
+
 	init(3, width, height);
-	valid = true;
 }
 
 PNGImageFile::~PNGImageFile()
 {
-	if (valid) {
+	if (lineBuffers[0] != NULL)
 		delete lineBuffers[0];
+	if (lineBuffers[1] != NULL)
 		delete lineBuffers[1];
-	}
 }
 
 std::string				PNGImageFile::getExtension()
@@ -127,15 +134,18 @@ bool					PNGImageFile::read(void* buffer)
 
 		err = inflateInit(&stream);
 		if (err != Z_OK) {
-			delete[] line;
 			delete c;
 			return false;
 		}
 
 		err = inflate(&stream, Z_FINISH);
 		while (err == Z_BUF_ERROR) {
-			//ignore filter bit for now, assume None!!!
-			//also assume rgb (2)
+
+			if (!filter()) {
+				delete c;
+				return false;
+			}
+
 			memcpy( ((unsigned char *)buffer)+bufferPos, line+1, lineBufferSize-1 );
 			bufferPos += lineBufferSize-1;
 
@@ -145,8 +155,8 @@ bool					PNGImageFile::read(void* buffer)
 			stream.avail_out = lineBufferSize;
 			err = inflate(&stream, Z_FINISH);
 		}
+
 		if (err != Z_STREAM_END) {
-			delete[] line;
 			delete c;
 			return false;
 		}
@@ -155,9 +165,6 @@ bool					PNGImageFile::read(void* buffer)
 		delete c;
 		c = PNGChunk::readChunk(getStream());
 	}
-
-	delete[] line;
-
 
 	delete c;
 	return true;
@@ -187,6 +194,31 @@ unsigned char *PNGImageFile::getLineBuffer(bool active)
 void PNGImageFile::switchLineBuffers()
 {
 	activeBufferIndex = 1 - activeBufferIndex;
+}
+
+bool PNGImageFile::filter()
+{
+	int	len = lineBufferSize;
+	unsigned char *pData = getLineBuffer();
+
+	switch (*pData) {
+		case 0:
+			return true;
+
+		case 1:
+		{
+			unsigned char last = 0;
+			for (int i = 1; i < lineBufferSize; i++) {
+				*(pData+i) += last;
+				last = *(pData+i);
+			}
+			return true;
+			break;
+		}
+
+		default:
+			return false;
+	}
 }
 
 
