@@ -160,24 +160,24 @@ end
 
 # base guard posts
 box
-position 392.5 0.0 30.0
+position 392.5 0.0 29.0
 rotation 0.0
-size     7.5 7.5 15.0
+size     7.5 7.5 16.0
 end
 box
-position -392.5 0.0 30.0
+position -392.5 0.0 29.0
 rotation 0.0
-size     7.5 7.5 15.0
+size     7.5 7.5 16.0
 end
 box
-position 0.0 392.5 30.0
+position 0.0 392.5 29.0
 rotation 0.0
-size     7.5 7.5 15.0
+size     7.5 7.5 16.0
 end
 box
-position 0.0 -392.5 30.0
+position 0.0 -392.5 29.0
 rotation 0.0
-size     7.5 7.5 15.0
+size     7.5 7.5 16.0
 end
 
 # walkways on edges
