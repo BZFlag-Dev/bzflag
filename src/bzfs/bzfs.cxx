@@ -3827,14 +3827,10 @@ int main(int argc, char **argv)
   /* load the bad word filter if it was set */
   if (clOptions->filterFilename.length() != 0) {
     if (clOptions->filterChat || clOptions->filterCallsigns) {
-      if (debugLevel >= 1) {
-	unsigned int count;
-	DEBUG1("Loading %s\n", clOptions->filterFilename.c_str());
-	count = clOptions->filter.loadFromFile(clOptions->filterFilename, true);
-	DEBUG1("Loaded %u words\n", count);
-      } else {
+      if (debugLevel >= 1)
+	DEBUG1("Loading %s\nLoaded %u words\n", clOptions->filterFilename.c_str(), clOptions->filter.loadFromFile(clOptions->filterFilename, true));
+      else
 	clOptions->filter.loadFromFile(clOptions->filterFilename, false);
-      }
     } else {
       DEBUG1("Bad word filter specified without -filterChat or -filterCallsigns\n");
     }
@@ -3844,13 +3840,15 @@ int main(int argc, char **argv)
   /* initialize the poll arbiter for voting if necessary */
   if (clOptions->voteTime > 0) {
     votingarbiter = new VotingArbiter(clOptions->voteTime, clOptions->vetoTime, clOptions->votesRequired, clOptions->votePercentage, clOptions->voteRepeatTime);
-    DEBUG1("There is a voting arbiter with the following settings:\n");
-    DEBUG1("\tvote time is %d seconds\n", clOptions->voteTime);
-    DEBUG1("\tveto time is %d seconds\n", clOptions->vetoTime);
-    DEBUG1("\tvotes required are %d\n", clOptions->votesRequired);
-    DEBUG1("\tvote percentage necessary is %f\n", clOptions->votePercentage);
-    DEBUG1("\tvote repeat time is %d seconds\n", clOptions->voteRepeatTime);
-    DEBUG1("\tavailable voters is initially set to %d\n", maxPlayers);
+    DEBUG1("There is a voting arbiter with the following settings:\n" \
+           "\tvote time is %d seconds\n" \
+           "\tveto time is %d seconds\n" \
+           "\tvotes required are %d\n" \
+           "\tvote percentage necessary is %f\n" \
+           "\tvote repeat time is %d seconds\n" \
+           "\tavailable voters is initially set to %d\n",
+           clOptions->voteTime, clOptions->vetoTime, clOptions->votesRequired, clOptions->votePercentage, clOptions->voteRepeatTime,
+           maxPlayers);
 
     // override the default voter count to the max number of players possible
     votingarbiter->setAvailableVoters(maxPlayers);
@@ -4231,7 +4229,7 @@ int main(int argc, char **argv)
 	  }
 
 	  /* the poll either terminates by itself or via a veto command */
-	  if (votingarbiter->isPollExpired()) {
+	  if (0/*votingarbiter->isPollExpired()*/) {
 
 	    /* maybe successful, maybe not */
 	    if (votingarbiter->isPollSuccessful()) {
