@@ -20,10 +20,6 @@
 /* local implementation headers */
 #include "WorldWeapons.h"
 
-/* FIXME - external dependancies */
-extern WorldWeapons  wWeapons;
-
-
 TimeKeeper CustomWeapon::sync = TimeKeeper::getCurrent();
 
 const float CustomWeapon::minWeaponDelay = 0.1f;
