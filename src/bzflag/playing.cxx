@@ -5191,6 +5191,8 @@ static bool		enterServer(ServerLink* serverLink, World* world,
 				    LocalPlayer* myTank)
 {
 
+  time_t timeout=time(0) + 15;  // give us 15 sec
+
   if (world->allowRabbit() && myTank->getTeam() != ObserverTeam)
     myTank->setTeam(RogueTeam);
 
@@ -5311,6 +5313,8 @@ static bool		enterServer(ServerLink* serverLink, World* world,
       break;
     }
     }
+
+    if (time(0)>timeout) goto failed;
 
     if (serverLink->read(code, len, msg, -1) < 0) goto failed;
   }
