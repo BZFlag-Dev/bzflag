@@ -49,6 +49,15 @@ extern int __beginendCount;
 
 #define _GL_INVALID_ID 0xFFFFFFFF
 
+// The following are temporary until a 
+// proper context manager is in place.
+#ifndef glDeleteLists
+# define glDeleteLists(base,count) 
+#endif
+#ifndef glDeleteTextures
+# define glDeleteTextures(count,textures) 
+#endif
+
 
 #endif /* __BZFGL_H__ */
 
