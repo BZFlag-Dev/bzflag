@@ -1,6 +1,5 @@
 SUBDIRS = \
 	3D \
-	date \
 	regex \
 	common \
 	net \
@@ -8,11 +7,12 @@ SUBDIRS = \
 	geometry \
 	obstacle \
 	zlib \
-	bzfs \
 	ogl \
 	scene \
 	platform \
 	mediafile \
+	date \
+	bzfs \
 	bzflag \
 	bzadmin
 
