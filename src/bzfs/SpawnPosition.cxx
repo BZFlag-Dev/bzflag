@@ -181,16 +181,17 @@ const bool SpawnPosition::isImminentlyDangerous() const
 {
   for (int i = 0; i < curMaxPlayers; i++) {
     if (player[i].isAlive() && areFoes(player[i].getTeam(), team)) {
-      std::string pflag = flag[player[i].getFlag()].flag.type->flagAbbv;
+      const FlagInfo *finfo =&flag[player[i].getFlag()];
+      const FlagType *ftype = finfo->flag.type;
       float *enemyPos = lastState[i].pos;
       float enemyAngle = lastState[i].azimuth;
       // check for dangerous flags, etc
       // FIXME: any more?
-      if (pflag == "L") {  // don't spawn in the line of sight of an L
+      if (ftype == Flags::Laser) {  // don't spawn in the line of sight of an L
 	if (isFacing(enemyPos, enemyAngle, M_PI / 9)) { // he's looking within 20 degrees of spawn point
 	  return true;	// eek, don't spawn here
 	}
-      } else if (pflag == "SW") {  // don't spawn next to a SW
+      } else if (ftype == Flags::ShockWave) {  // don't spawn next to a SW
 	if (distanceFrom(enemyPos) < safeSWRadius) { // too close to SW
 	  return true;	// eek, don't spawn here
 	}
