@@ -122,7 +122,7 @@ ShotPath *findWorstBullet(float &minDistance)
       }
     }
   }
-
+	float oldDistance = minDistance;
   WorldPlayer *wp = World::getWorld()->getWorldWeapons();
   for (int w = 0; w < wp->getMaxShots(); w++) {
     ShotPath* shot = wp->getShot(w);
@@ -154,6 +154,8 @@ ShotPath *findWorstBullet(float &minDistance)
       minPath = shot;
     }
   }
+	if (oldDistance < minDistance)
+		minDistance = oldDistance; //pick the closer bullet
   return minPath;
 }
 
