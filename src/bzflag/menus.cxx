@@ -1838,12 +1838,12 @@ void			OptionsMenu::callback(HUDuiControl* w, void* data)
       sceneRenderer->notifyStyleChange();
       break; */
 
-    case '5':
+    case '6':
       {
       sceneRenderer->setQuality(list->getIndex());
 
       int filter = 0;
-      if (list->getIndex()>2)
+      if (list->getIndex()>=2)
 	filter = 6;
 
       OpenGLTexture::setFilter((OpenGLTexture::Filter)filter);
@@ -1857,12 +1857,12 @@ void			OptionsMenu::callback(HUDuiControl* w, void* data)
       }
       break;
 
-    case '6':
+    case '7':
       BZDB.set("shadows", list->getIndex() ? "1" : "0");
       sceneRenderer->notifyStyleChange();
       break;
 
-    case '7':
+    case '8':
       BZDB.set("zbuffer", list->getIndex() ? "1" : "0");
       // FIXME - test for whether the z buffer will work
       setSceneDatabase();
