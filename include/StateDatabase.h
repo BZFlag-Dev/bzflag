@@ -64,6 +64,17 @@ public:
 				    const std::string& value,
 				    Permission access = Client);
 
+  void				set(const std::string& name,
+                                    const int& value,
+                                    Permission access = Client);
+
+  void				set(const std::string& name,
+                                    const bool& value,
+                                    Permission access = Client);
+
+  void				set(const std::string& name,
+                                    const float& value,
+                                    Permission access = Client);
   /** allow setting name/pointer pairs.  this allows simple object
    * pointer storage into the bzdb via pointer address serialization.
    */
@@ -134,6 +145,7 @@ public:
    * the string as an expression
    */
   float				eval(const std::string& name);
+  int				evalI(const std::string& name);
 
   /** return true if the value associated with a name indicates
    * logical true, which is when the value is not empty and not
