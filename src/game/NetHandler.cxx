@@ -16,6 +16,69 @@
 // system headers
 #include <errno.h>
 
+const int udpBufSize = 128000;
+
+bool NetHandler::initNetwork(struct sockaddr_in addr) {
+  // udp socket
+  int n;
+  // we open a udp socket on the same port if alsoUDP
+  if ((udpSocket = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
+      nerror("couldn't make udp connect socket");
+      return false;
+  }
+
+  // increase send/rcv buffer size
+  n = setsockopt(udpSocket, SOL_SOCKET, SO_SNDBUF, (SSOType) &udpBufSize,
+		 sizeof(int));
+  if (n < 0) {
+    nerror("couldn't increase udp send buffer size");
+    close(udpSocket);
+    return false;
+  }
+  n = setsockopt(udpSocket, SOL_SOCKET, SO_RCVBUF, (SSOType) &udpBufSize,
+		 sizeof(int));
+  if (n < 0) {
+      nerror("couldn't increase udp receive buffer size");
+      close(udpSocket);
+      return false;
+  }
+  if (bind(udpSocket, (struct sockaddr *) &addr, sizeof(addr)) == -1) {
+      nerror("couldn't bind udp listen port");
+      close(udpSocket);
+      return false;
+  }
+  // don't buffer info, send it immediately
+  BzfNetwork::setNonBlocking(udpSocket);
+  return true;
+}
+
+int NetHandler::getUdpSocket() {
+  return udpSocket;
+}
+
+int NetHandler::udpReceive(char *buffer, struct sockaddr *uaddr) {
+  AddrLen recvlen = sizeof(uaddr);
+  int n;
+  while (true) {
+    n = recvfrom(udpSocket, buffer, MaxPacketLen, 0, uaddr, &recvlen);
+    if ((n < 0) || (n >= 4))
+      break;
+  }
+  return n;
+}
+
+void NetHandler::fdSetUdp(fd_set *read_set, int &maxFile) {
+  _FD_SET(udpSocket, read_set);
+  if (udpSocket > maxFile)
+    maxFile = udpSocket;
+}
+
+bool NetHandler::isUdpFdSet(fd_set *read_set) {
+  return FD_ISSET(udpSocket, read_set);
+}
+
+int NetHandler::udpSocket = -1;
+
 NetHandler::NetHandler(PlayerInfo* _info, const struct sockaddr_in &clientAddr,
 		       int _playerIndex, int _fd)
   : info(_info), playerIndex(_playerIndex), fd(_fd), tcplen(0),
@@ -195,7 +258,7 @@ int NetHandler::bufferedSend(const void *buffer, size_t length) {
   return 0;
 }
 
-int NetHandler::pwrite(const void *b, int l, int udpSocket) {
+int NetHandler::pwrite(const void *b, int l) {
 
   if (l == 0) {
     return 0;
@@ -218,14 +281,14 @@ int NetHandler::pwrite(const void *b, int l, int udpSocket) {
     case MsgPlayerUpdate:
     case MsgGMUpdate:
     case MsgLagPing:
-      udpSend(udpSocket, b, l);
+      udpSend(b, l);
       return 0;
     }
   }
 
   // always sent MsgUDPLinkRequest over udp with udpSend
   if (code == MsgUDPLinkRequest) {
-    udpSend(udpSocket, b, l);
+    udpSend(b, l);
     return 0;
   }
 
@@ -346,7 +409,7 @@ void NetHandler::dumpMessageStats() {
 }
 #endif
 
-void NetHandler::udpSend(int udpSocket, const void *b, size_t l) {
+void NetHandler::udpSend(const void *b, size_t l) {
 #ifdef TESTLINK
   if ((random()%LINKQUALITY) == 0) {
     DEBUG1("Drop Packet due to Test\n");
@@ -367,8 +430,7 @@ void NetHandler::UdpInfo() {
 	 inet_ntoa(uaddr.sin_addr), ntohs(uaddr.sin_port));
 }
 
-void NetHandler::debugUdpRead(int n,
-			      struct sockaddr_in &_uaddr, int udpSocket) {
+void NetHandler::debugUdpRead(int n, struct sockaddr_in &_uaddr) {
   DEBUG4("Player %s [%d] uread() %s:%d len %d from %s:%d on %i\n",
 	 info->getCallSign(), playerIndex, inet_ntoa(uaddr.sin_addr),
 	 ntohs(uaddr.sin_port), n, inet_ntoa(_uaddr.sin_addr),

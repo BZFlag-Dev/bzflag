@@ -33,8 +33,6 @@ CmdLineOptions *clOptions;
 Address serverAddress;
 // well known service socket
 static int wksSocket;
-// udpSocket should also be on serverAddress
-static int udpSocket;
 bool handlePings = true;
 static PingPacket pingReply;
 // highest fd used
@@ -122,7 +120,7 @@ static void pwrite(int playerIndex, const void *b, int l)
 {
   if (!netPlayer[playerIndex])
     return;
-  int result = netPlayer[playerIndex]->pwrite(b, l, udpSocket);
+  int result = netPlayer[playerIndex]->pwrite(b, l);
   if (result == -1)
     removePlayer(playerIndex, "ECONNRESET/EPIPE", false);
 }
@@ -260,8 +258,6 @@ static int uread(int *playerIndex, int *nopackets, int& n,
     }
   }
 
-  // get the packet
-  n = recv(udpSocket, (char *)ubuf, MaxPacketLen, 0);
   if (pi == curMaxPlayers) {
     // no match, discard packet
     DEBUG2("uread() discard packet! %s:%d choices p(l) h:p", inet_ntoa(uaddr.sin_addr), ntohs(uaddr.sin_port));
@@ -281,7 +277,7 @@ static int uread(int *playerIndex, int *nopackets, int& n,
     return 0;
   }
 
-  netPlayer[pi]->debugUdpRead(n, uaddr, udpSocket);
+  netPlayer[pi]->debugUdpRead(n, uaddr);
 
   if (n > 0) {
     *nopackets = 1;
@@ -580,40 +576,12 @@ static bool serverStart()
     close(wksSocket);
     return false;
   }
-  // udp socket
-  int n;
-  // we open a udp socket on the same port if alsoUDP
-  if ((udpSocket = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
-      nerror("couldn't make udp connect socket");
-      return false;
-  }
 
-    // increase send/rcv buffer size
-  n = setsockopt(udpSocket,SOL_SOCKET,SO_SNDBUF,(SSOType)&udpBufSize,sizeof(int));
-  if (n < 0) {
-      nerror("couldn't increase udp send buffer size");
-      close(wksSocket);
-      close(udpSocket);
-      return false;
-  }
-
-  n = setsockopt(udpSocket,SOL_SOCKET,SO_RCVBUF,(SSOType)&udpBufSize,sizeof(int));
-  if (n < 0) {
-      nerror("couldn't increase udp receive buffer size");
-      close(wksSocket);
-      close(udpSocket);
-      return false;
-  }
   addr.sin_port = htons(clOptions->wksPort);
-  if (bind(udpSocket, (struct sockaddr *) &addr, sizeof(addr)) == -1) {
-      nerror("couldn't bind udp listen port");
-      close(wksSocket);
-      close(udpSocket);
-      return false;
+  if (!NetHandler::initNetwork(addr)) {
+    close(wksSocket);
+    return false;
   }
-  // don't buffer info, send it immediately
-  BzfNetwork::setNonBlocking(udpSocket);
-
   for (int i = 0; i < MaxPlayers; i++) {	// no connections
     player[i].resetComm();
   }
@@ -1426,27 +1394,16 @@ static void acceptClient()
 }
 
 
-static void respondToPing()
+static void respondToPing(Address addr)
 {
-  // get and discard ping packet
-  struct sockaddr_in addr;
-  if (!PingPacket::isRequest(udpSocket, &addr)) return;
-
-  // if I'm ignoring pings and the ping is not from a connected host
-  // then ignore the ping.
-  if (!handlePings) {
-      return;
-  }
-
-  // reply with current game info on udpSocket
-  pingReply.sourceAddr = Address(addr);
+  // reply with current game info
+  pingReply.sourceAddr = addr;
   pingReply.rogueCount = (uint8_t)team[0].team.size;
   pingReply.redCount = (uint8_t)team[1].team.size;
   pingReply.greenCount = (uint8_t)team[2].team.size;
   pingReply.blueCount = (uint8_t)team[3].team.size;
   pingReply.purpleCount = (uint8_t)team[4].team.size;
   pingReply.observerCount = (uint8_t)team[5].team.size;
-  pingReply.write(udpSocket, &addr);
 }
 
 
@@ -3999,9 +3956,7 @@ int main(int argc, char **argv)
     _FD_SET(wksSocket, &read_set);
     if (wksSocket > maxFileDescriptor)
       maxFileDescriptor = wksSocket;
-    _FD_SET(udpSocket, &read_set);
-    if (udpSocket > maxFileDescriptor)
-      maxFileDescriptor = udpSocket;
+    NetHandler::fdSetUdp(&read_set, maxFileDescriptor);
 
     // check for list server socket connected
     if (listServerLinksCount)
@@ -4444,21 +4399,15 @@ int main(int argc, char **argv)
 	    listServerLink->read();
 
       // check if we have any UDP packets pending
-      if (FD_ISSET(udpSocket, &read_set)) {
+      if (NetHandler::isUdpFdSet(&read_set)) {
 	TimeKeeper receiveTime = TimeKeeper::getCurrent();
 	while (true) {
 	  struct sockaddr_in uaddr;
 	  unsigned char ubuf[MaxPacketLen];
-	  AddrLen recvlen = sizeof(uaddr);
-	  int n = recvfrom(udpSocket, (char *) ubuf, MaxPacketLen, MSG_PEEK,
-	      (struct sockaddr*)&uaddr, &recvlen);
+	  int n = NetHandler::udpReceive((char *) ubuf,
+					 (struct sockaddr *) &uaddr);
 	  if (n < 0)
 	    break;
-	  if (n < 4) {
-	    // flush malformed packet
-	    recvfrom(udpSocket, (char *) ubuf, MaxPacketLen, 0, (struct sockaddr *)&uaddr, &recvlen);
-	    continue;
-	  }
 
 	  // read head
 	  uint16_t len, code;
@@ -4466,9 +4415,12 @@ int main(int argc, char **argv)
 	  buf = nboUnpackUShort(buf, len);
 	  buf = nboUnpackUShort(buf, code);
 	  if (n == 6 && len == 2 && code == MsgPingCodeRequest) {
-	    respondToPing();
-	    // flush PingCodeRequest packet (since we don't do a uread in this case)
-	    recvfrom(udpSocket, (char *) ubuf, MaxPacketLen, 0, (struct sockaddr *)&uaddr, &recvlen);
+	    // if I'm ignoring pings and the ping is not from a connected host
+	    // then ignore the ping.
+	    if (handlePings) {
+	      respondToPing(Address(uaddr));
+	      pingReply.write(NetHandler::getUdpSocket(), &uaddr);
+	    }
 	    continue;
 	  }
 

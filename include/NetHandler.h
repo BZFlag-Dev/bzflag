@@ -43,11 +43,17 @@ public:
 	  int _playerIndex, int _fd);
   ~NetHandler();
 
+  static bool initNetwork(struct sockaddr_in addr);
+  static int  getUdpSocket();
+  static int  udpReceive(char *buffer, struct sockaddr *uaddr);
+  static void fdSetUdp(fd_set *read_set, int &maxFile);
+  static bool isUdpFdSet(fd_set *read_set);
+
   void        fdSet(fd_set *read_set, fd_set *write_set, int &maxFile);
   int         fdIsSet(fd_set *set);
   void        setUdpOut();
   bool        setUdpIn(struct sockaddr_in &_uaddr);
-  int         pwrite(const void *b, int l, int udpSocket);
+  int         pwrite(const void *b, int l);
   RxStatus    receive(size_t length);
   void       *getTcpBuffer();
   void        cleanTcp();
@@ -59,12 +65,13 @@ public:
 #endif
   bool        isMyUdpAddrPort(struct sockaddr_in &uaddr);
   void        UdpInfo();
-  void        debugUdpRead(int n, struct sockaddr_in &_uaddr, int udpSocket);
+  void        debugUdpRead(int n, struct sockaddr_in &_uaddr);
   void        getPlayerList(char *list); 
 private:
   int  send(const void *buffer, size_t length);
-  void udpSend(int udpSocket, const void *b, size_t l);
+  void udpSend(const void *b, size_t l);
   int  bufferedSend(const void *buffer, size_t length);
+  static int                udpSocket;
   PlayerInfo               *info;
   struct sockaddr_in        uaddr;
   int                       playerIndex;
