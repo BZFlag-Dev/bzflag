@@ -1128,6 +1128,17 @@ int			main(int argc, char** argv)
   // to be bound for the first time.
   MainWindow* pmainWindow = new MainWindow(window);
   MainWindow& mainWindow = *pmainWindow;
+  std::string videoFormat;
+  int format = -1;
+  if (BZDB.isSet("resolution")) {
+    videoFormat = BZDB.get("resolution");
+    if (videoFormat.length() != 0) {
+      format = display->findResolution(videoFormat.c_str());
+      if (format >= 0) {
+	display->setFullScreenFormat(format);
+      }
+    }
+  };
   // set fullscreen again so MainWindow object knows it's full screen
   if (useFullscreen)
     // this will also call window create

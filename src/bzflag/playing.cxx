@@ -5483,7 +5483,6 @@ void			startPlaying(BzfDisplay* _display,
     if (videoFormat.length() != 0) {
       format = display->findResolution(videoFormat.c_str());
       if (format >= 0) {
-	display->setFullScreenFormat(format);
 	mainWindow->getWindow()->callResizeCallbacks();
       }
     }
