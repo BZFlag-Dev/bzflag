@@ -1700,7 +1700,7 @@ static void		doMotion()
       }
       else {
         myTank->setTarget(player[target]);
-        // blindly head towards the player
+        // weave towards the player
         const float *tp = player[target]->getPosition();
         float azimuth = atan2f(tp[1] - mp[1], tp[0] - mp[0]);
         if (azimuth < 0.0f) azimuth += 2.0f * M_PI;
@@ -1710,17 +1710,15 @@ static void		doMotion()
           speed = -0.5f;
         else
           speed = 1.0f;
-        if (rotation > 1.0f)
-          rotation = 1.0f;
-        else if (rotation < -1.0f)
-          rotation = -1.0f;
-        if (speed == 1.0f)
-          speed = 1.0f - fabs(rotation);
+        int period = int(TimeKeeper::getCurrent().getSeconds());
+        float bias = ((period % 4) < 2) ? M_PI/9.0f : -M_PI/9.0f;
+	rotation += bias;
+        speed = 1.0f;
  
         //fire too, why not?
         TimeKeeper now = TimeKeeper::getCurrent();
 	if (now - lastShot >= 0.5f) {
-	  if (fabs(rotation) < 2.0f * BZDB->eval(StateDatabase::BZDB_TARGETINGANGLE)) {
+	  if (fabs(rotation) < BZDB->eval(StateDatabase::BZDB_TARGETINGANGLE)) {
 	    const float *vel = myTank->getVelocity();
 	    const float *pos = myTank->getPosition();
 	    float dir[3] = {vel[0] * cosf(azimuth), vel[1] * sinf(azimuth), 0.0f};
@@ -1728,7 +1726,7 @@ static void		doMotion()
 	    distance += BZDB->eval(StateDatabase::BZDB_TANKLENGTH);
 	    const Obstacle *building = ShotStrategy::getFirstBuilding(tankRay, -0.5f, distance);
 	    if (!building) {
-	       // for some reason Roger likes to shoot himself if right next to a building, help!!
+	       // for some reason Roger likes to shoot himself(rico) if right next to a building, help!!
 	       myTank->fireShot();
 	       lastShot = now;
 	    }
