@@ -18,6 +18,7 @@ CXXFILES =				\
 	MediaFile.cxx			\
 	AudioFile.cxx			\
 	WaveAudioFile.cxx		\
+	OggAudioFile.cxx		\
 	ImageFile.cxx			\
 	SGIImageFile.cxx		\
 	PNGImageFile.cxx		\

@@ -36,6 +36,7 @@ DEPLIBS =				\
 
 LLDLIBS =				\
 	$(DEPLIBS)			\
+	$(AUDIO_LIBS)			\
 	$(IMAGE_LIBS)			\
 	$(GL_LIBS)			\
 	$(DISPLAY_LIBS)			\

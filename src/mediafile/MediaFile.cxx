@@ -115,6 +115,7 @@ uint32_t				MediaFile::swap32BE(uint32_t* d)
 #include "SGIImageFile.h"
 #include "PNGImageFile.h"
 #include "WaveAudioFile.h"
+#include "OggAudioFile.h"
 #define OPENMEDIA(_T)												\
 do {																\
 	stream = FILEMGR->createDataInStream(filename, true);			\
@@ -226,6 +227,9 @@ float*					MediaFile::readSound(
 	AudioFile* file = NULL;
 	if (file == NULL)
 		OPENMEDIA(WaveAudioFile);
+	if (file == NULL) {
+		OPENMEDIA(OggAudioFile);
+	}
 
 	// read the audio
 	float* audio = NULL;

@@ -102,6 +102,8 @@ PDIRT    = *.[deou] a.out core ar.tmp.*
 # libraries
 #
 AUDIO_LIBS =				\
+	-lvorbisfile			\
+	-lvorbis			\
 	$(NULL)
 
 DISPLAY_LIBS =				\
