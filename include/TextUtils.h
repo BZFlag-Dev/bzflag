@@ -94,8 +94,8 @@ namespace TextUtils {
       if (i >= maxlength) {
         return 0;
       }
-      if (std::tolower(*p1) != std::tolower(*p2)) {
-        return (std::tolower(*p1) < std::tolower(*p2)) ? -1 : 1;
+      if (::tolower(*p1) != ::tolower(*p2)) {
+        return (::tolower(*p1) < ::tolower(*p2)) ? -1 : 1;
       }
       ++p1;
       ++p2;
