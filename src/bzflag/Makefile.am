@@ -173,6 +173,7 @@ LDADD =	\
 	../common/libCommon.a		\
 	../game/libGame.a		\
 	../obstacle/libObstacle.a	\
+	../obstacle/libObstacleGL.a	\
 	$(NACLIB)			\
 	../platform/libPlatform.a	\
 	../ogl/libGLKit.a		\

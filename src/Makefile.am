@@ -6,9 +6,9 @@ SUBDIRS = \
 	common \
 	net \
 	game \
-	bzfs \
 	geometry \
 	obstacle \
+	bzfs \
 	ogl \
 	scene \
 	platform \

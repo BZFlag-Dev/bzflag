@@ -50,8 +50,6 @@ class BoxBuilding : public Obstacle {
 				float height,
 				float* normal) const;
 
-    ObstacleSceneNodeGenerator*	newSceneNodeGenerator() const;
-
     void		getCorner(int index, float* pos) const;
 
     static std::string	typeName;

@@ -27,9 +27,6 @@
 #include "Ray.h"
 #include <string>
 
-class ObstacleSceneNodeGenerator;
-class WallSceneNode;
-
 /** This ABC represents a (normally) solid object in a world. It has pure 
     virtual functions for getting information about it's size, checking ray
     intersections, checking point intersections, computing normals etc.
@@ -64,6 +61,9 @@ class Obstacle {
   
   /** This function returns the position of this obstacle. */
   const float* getPosition() const;
+  
+  /** This function returns the sizes of this obstacle. */
+  const float* getSize() const;
   
   /** This function returns the obstacle's rotation around its own Y axis. */
   float getRotation() const;
@@ -138,10 +138,6 @@ class Obstacle {
 			    float halfWidth, float halfBreadth,
 			    float height, float* normal) const = 0;
   
-  /** This function returns a pointer to an ObstacleSceneNodeGenerator for this
-      obstacle. */
-  virtual ObstacleSceneNodeGenerator* newSceneNodeGenerator() const = 0;
-  
   /** This function returns @c true if tanks can pass through this object,
       @c false if they can't. */
   bool isDriveThrough() const;
@@ -189,10 +185,8 @@ class Obstacle {
   
  protected:
   float		pos[3];
+  float     size[3]; // width, breadth, height
   float		angle;
-  float		width;
-  float		breadth;
-  float		height;
   bool		driveThrough;
   bool		shootThrough;
   bool		ZFlip;
@@ -207,6 +201,11 @@ inline const float*	Obstacle::getPosition() const
   return pos;
 }
 
+inline const float*	Obstacle::getSize() const
+{
+  return size;
+}
+
 inline float		Obstacle::getRotation() const
 {
   return angle;
@@ -214,17 +213,17 @@ inline float		Obstacle::getRotation() const
 
 inline float		Obstacle::getWidth() const
 {
-  return width;
+  return size[0];
 }
 
 inline float		Obstacle::getBreadth() const
 {
-  return breadth;
+  return size[1];
 }
 
 inline float		Obstacle::getHeight() const
 {
-  return height;
+  return size[2];
 }
 
 inline void		Obstacle::get3DNormal(const float *p, float *n) const

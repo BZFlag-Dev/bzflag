@@ -3,14 +3,15 @@ noinst_LIBRARIES = libGame.a
 MAINTAINERCLEANFILES = \
 	Makefile.in
 
-libGame_a_SOURCES = \
+libGame_a_SOURCES = 			\
 	CommandsStandard.cxx		\
 	DelayQueue.cxx			\
+	DirectoryNames.cxx		\
 	LagInfo.cxx			\
 	NetHandler.cxx			\
 	PlayerInfo.cxx			\
-	VotingArbiter.cxx		\
-	DirectoryNames.cxx
+	Ray.cxx				\
+	VotingArbiter.cxx
 
 EXTRA_DIST = \
 	README

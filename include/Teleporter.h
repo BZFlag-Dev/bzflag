@@ -58,7 +58,6 @@ class Teleporter : public Obstacle {
 				const float* pIn, const float* dIn, float aIn,
 				float* pOut, float* dOut, float* aOut) const;
 
-    ObstacleSceneNodeGenerator*	newSceneNodeGenerator() const;
     std::string	        userTextures[1];
   private:
     float		border;

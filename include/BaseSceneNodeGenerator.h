@@ -10,23 +10,21 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef __WALLSCENENODEGENERATOR_H__
-#define __WALLSCENENODEGENERATOR_H__
+#ifndef __BASESCENENODEGENERATOR_H__
+#define __BASESCENENODEGENERATOR_H__
 
 #include "ObstacleSceneNodeGenerator.h"
+#include "BaseBuilding.h"
 
-class WallSceneNodeGenerator : public ObstacleSceneNodeGenerator {
-  friend class WallObstacle;
+class BaseSceneNodeGenerator : public ObstacleSceneNodeGenerator {
+  friend class SceneDatabaseBuilder;
+			~BaseSceneNodeGenerator();
   public:
-			~WallSceneNodeGenerator();
-
     WallSceneNode*	getNextNode(float, float, bool);
-
   protected:
-			WallSceneNodeGenerator(const WallObstacle*);
-
+			BaseSceneNodeGenerator(const BaseBuilding *);
   private:
-    const WallObstacle*	wall;
+    const BaseBuilding *base;
 };
 
 #endif

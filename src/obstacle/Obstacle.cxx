@@ -20,24 +20,22 @@
 Obstacle::Obstacle()
 {
   memset(pos, 0, sizeof(float) * 3);
+  memset(size, 0, sizeof(float) * 3);
   angle = 0;
-  width = 0;
-  breadth = 0;
-  height = 0;
   driveThrough = false;
   shootThrough = false;
 }
 
 Obstacle::Obstacle(const float* _pos, float _angle,
 				float _width, float _breadth, float _height, bool drive, bool shoot) :
-				angle(_angle),
-				width(_width),
-				breadth(_breadth),
-				height(_height)
+				angle(_angle)
 {
   pos[0] = _pos[0];
   pos[1] = _pos[1];
   pos[2] = _pos[2];
+  size[0] = _width;
+  size[1] = _breadth;
+  size[2] = _height;
 
   driveThrough = drive;
   shootThrough = shoot;

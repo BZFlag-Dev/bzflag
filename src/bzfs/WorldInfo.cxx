@@ -45,16 +45,9 @@ void WorldInfo::addWall(float x, float y, float z, float r, float w, float h)
   if ((z + h) > maxHeight)
     maxHeight = z+h;
 
-  int i = walls.size();
-  walls.resize(i+1);
-  walls[i].pos[0] = x;
-  walls[i].pos[1] = y;
-  walls[i].pos[2] = z;
-  walls[i].rotation = r;
-  walls[i].size[0] = w;
-  // no depth to walls
-  walls[i].size[1] = 0.0f;
-  walls[i].size[2] = h;
+  const float pos[3] = {x, y, z};
+  WallObstacle wall (pos, r, w, h);
+  walls.push_back (wall);
 }
 
 void WorldInfo::addBox(float x, float y, float z, float r, float w, float d, float h, bool drive, bool shoot)
@@ -62,17 +55,9 @@ void WorldInfo::addBox(float x, float y, float z, float r, float w, float d, flo
   if ((z + h) > maxHeight)
     maxHeight = z+h;
 
-  int i = boxes.size();
-  boxes.resize(i+1);
-  boxes[i].pos[0] = x;
-  boxes[i].pos[1] = y;
-  boxes[i].pos[2] = z;
-  boxes[i].rotation = r;
-  boxes[i].size[0] = w;
-  boxes[i].size[1] = d;
-  boxes[i].size[2] = h;
-  boxes[i].driveThrough = drive;
-  boxes[i].shootThrough = shoot;
+  const float pos[3] = {x, y, z};
+  BoxBuilding box (pos, r, w, d, h, drive, shoot, false);
+  boxes.push_back (box);
 }
 
 void WorldInfo::addPyramid(float x, float y, float z, float r, float w, float d, float h, bool drive, bool shoot, bool flipZ)
@@ -80,18 +65,12 @@ void WorldInfo::addPyramid(float x, float y, float z, float r, float w, float d,
   if ((z + h) > maxHeight)
     maxHeight = z+h;
 
-  int i = pyramids.size();
-  pyramids.resize(i+1);
-  pyramids[i].pos[0] = x;
-  pyramids[i].pos[1] = y;
-  pyramids[i].pos[2] = z;
-  pyramids[i].rotation = r;
-  pyramids[i].size[0] = w;
-  pyramids[i].size[1] = d;
-  pyramids[i].size[2] = h;
-  pyramids[i].driveThrough = drive;
-  pyramids[i].shootThrough = shoot;
-  pyramids[i].flipZ = flipZ;
+  const float pos[3] = {x, y, z};
+  PyramidBuilding pyr (pos, r, w, d, h, drive, shoot);
+  if (flipZ) {
+    pyr.setZFlip();
+  }
+  pyramids.push_back (pyr);
 }
 
 void WorldInfo::addTeleporter(float x, float y, float z, float r, float w, float d, float h, float b, bool drive, bool shoot)
@@ -99,21 +78,14 @@ void WorldInfo::addTeleporter(float x, float y, float z, float r, float w, float
   if ((z + h) > maxHeight)
     maxHeight = z+h;
 
-  int i = teleporters.size();
-  teleporters.resize(i+1);
-  teleporters[i].pos[0] = x;
-  teleporters[i].pos[1] = y;
-  teleporters[i].pos[2] = z;
-  teleporters[i].rotation = r;
-  teleporters[i].size[0] = w;
-  teleporters[i].size[1] = d;
-  teleporters[i].size[2] = h;
-  teleporters[i].driveThrough = drive;
-  teleporters[i].shootThrough = shoot;
-  teleporters[i].border = b;
-  // default link through
-  teleporters[i].to[0] = i * 2 + 1;
-  teleporters[i].to[1] = i * 2;
+  const float pos[3] = {x, y, z};
+  Teleporter tele (pos, r, w, d, h, b, drive, shoot);
+  teleporters.push_back (tele);
+
+  // default to passthru linkage
+  int index = teleporters.size() - 1;
+  setTeleporterTarget ((index * 2) + 1, (index * 2));
+  setTeleporterTarget ((index * 2), (index * 2) + 1);
 }
 
 void WorldInfo::addBase(float x, float y, float z, float r, float w, float d, float h, bool drive, bool shoot)
@@ -121,17 +93,14 @@ void WorldInfo::addBase(float x, float y, float z, float r, float w, float d, fl
   if ((z + h) > maxHeight)
     maxHeight = z+h;
 
-  int i = bases.size();
-  bases.resize(i+1);
-  bases[i].pos[0] = x;
-  bases[i].pos[1] = y;
-  bases[i].pos[2] = z;
-  bases[i].rotation = r;
-  bases[i].size[0] = w;
-  bases[i].size[1] = d;
-  bases[i].size[2] = h;
-  bases[i].driveThrough = drive;
-  bases[i].shootThrough = shoot;
+  const float pos[3] = {x, y, z};
+  const float size[3] = {w, d, h};
+  BaseBuilding base (pos, r, size, 0 /* fake the team */);
+  bases.push_back (base);
+  
+  //FIXME - warnings
+  drive = drive;
+  shoot = shoot;  
 }
 
 void WorldInfo::addLink(int from, int to)
@@ -142,7 +111,7 @@ void WorldInfo::addLink(int from, int to)
      ((unsigned(to) > teleporters.size() * 2 + 1) && (to != -1))) {
     DEBUG1("Warning: bad teleporter link dropped from=%d to=%d\n", from, to);
   } else {
-    teleporters[from / 2].to[from % 2] = to;
+    setTeleporterTarget (from, to);
   }
 }
 
@@ -154,6 +123,15 @@ void WorldInfo::addZone(const CustomZone *zone)
 float WorldInfo::getMaxWorldHeight()
 {
   return maxHeight;
+}
+
+void WorldInfo::setTeleporterTarget(int src, int tgt)
+{
+  if ((int)teleportTargets.size() < src+1)
+    teleportTargets.resize(((src/2)+1)*2);
+
+  // record target in source entry
+  teleportTargets[src] = tgt;
 }
 
 bool WorldInfo::rectHitCirc(float dx, float dy, const float *p, float r) const
@@ -203,69 +181,68 @@ bool WorldInfo::inRect(const float *p1, float angle, const float *size, float x,
   return rectHitCirc(size[0], size[1], pb, r);
 }
 
-InBuildingType WorldInfo::inBuilding(ObstacleLocation **location,
+InBuildingType WorldInfo::inBuilding(Obstacle **location,
 				     float x, float y, float z, float r,
 				     float height)
 {
-  ObstacleLocationList::iterator it;
-  PyramidList::iterator pyrit;
-  TeleporterList::iterator telit;
-
   if (height < Epsilon)
     height = Epsilon;
 
-  for (it = bases.begin(); it != bases.end(); ++it) {
-    ObstacleLocation &base = *it;
-    if ((base.pos[2] < (z + height))
-	&& ((base.pos[2] + base.size[2]) > z)
-	&& (inRect(base.pos, base.rotation, base.size, x, y, r))) {
+  for (std::vector<BaseBuilding>::iterator base_it = bases.begin();
+       base_it != bases.end(); ++base_it) {
+    BaseBuilding &base = *base_it;
+    if ((base.getPosition()[2] < (z + height))
+	&& ((base.getPosition()[2] + base.getHeight()) > z)
+	&& (inRect(base.getPosition(), base.getRotation(), base.getSize(), x, y, r))) {
       if (location != NULL)
 	*location = &base;
       return IN_BASE;
     }
   }
-  for (it = boxes.begin(); it != boxes.end(); ++it) {
-    ObstacleLocation &box = *it;
-    if ((box.pos[2] < (z + height))
-	&& ((box.pos[2] + box.size[2]) > z)
-	&& (inRect(box.pos, box.rotation, box.size, x, y, r))) {
+  for (std::vector<BoxBuilding>::iterator box_it = boxes.begin();
+       box_it != boxes.end(); ++box_it) {
+    BoxBuilding &box = *box_it;
+    if ((box.getPosition()[2] < (z + height))
+	&& ((box.getPosition()[2] + box.getHeight()) > z)
+	&& (inRect(box.getPosition(), box.getRotation(), box.getSize(), x, y, r))) {
       if (location != NULL)
 	*location = &box;
-      if (box.driveThrough) return IN_BOX_DRIVETHROUGH;
+      if (box.isDriveThrough()) return IN_BOX_DRIVETHROUGH;
       else return IN_BOX_NOTDRIVETHROUGH;
     }
   }
-  for (pyrit = pyramids.begin(); pyrit != pyramids.end(); ++pyrit) {
-    ObstacleLocation &pyr = *pyrit;
-    if ((pyr.pos[2] < (z + height))
-	&& ((pyr.pos[2] + pyr.size[2]) > z)
-	&& (inRect(pyr.pos, pyr.rotation, pyr.size,x,y,r))) {
+  for (std::vector<PyramidBuilding>::iterator pyr_it = pyramids.begin();
+       pyr_it != pyramids.end(); ++pyr_it) {
+    PyramidBuilding &pyr = *pyr_it;
+    if ((pyr.getPosition()[2] < (z + height))
+	&& ((pyr.getPosition()[2] + pyr.getHeight()) > z)
+	&& (inRect(pyr.getPosition(), pyr.getRotation(), pyr.getSize(),x,y,r))) {
       if (location != NULL)
 	*location = &pyr;
       return IN_PYRAMID;
     }
   }
-  for (telit = teleporters.begin(); telit != teleporters.end(); ++telit) {
-    Teleporter &tele = *telit;
-    if ((tele.pos[2] < (z + height))
-	&& ((tele.pos[2] + tele.size[2]) > z)
-	&& (inRect(tele.pos, tele.rotation, tele.size, x, y, r))) {
-      static ObstacleLocation __teleporter;
-      __teleporter = tele;
+  for (std::vector<Teleporter>::iterator tele_it = teleporters.begin();
+       tele_it != teleporters.end(); ++tele_it) {
+    Teleporter &tele = *tele_it;
+    if ((tele.getPosition()[2] < (z + height))
+	&& ((tele.getPosition()[2] + tele.getHeight()) > z)
+	&& (inRect(tele.getPosition(), tele.getRotation(), tele.getSize(), x, y, r))) {
       if (location != NULL)
-	*location = &__teleporter;
+        *location = &tele;      
       return IN_TELEPORTER;
     }
   }
 
   if (location != NULL)
-    *location = (ObstacleLocation *)NULL;
+    *location = (Obstacle *)NULL;
+    
   return NOT_IN_BUILDING;
 }
 
 bool WorldInfo::getZonePoint(const std::string &qualifier, float *pt)
 {
-  ObstacleLocation *loc;
+  Obstacle* loc;
   InBuildingType type;
 
   if (!entryZones.getZonePoint(qualifier, pt))
@@ -275,13 +252,13 @@ bool WorldInfo::getZonePoint(const std::string &qualifier, float *pt)
   if (type == NOT_IN_BUILDING)
     pt[2] = 0.0f;
   else
-    pt[2] = loc->pos[2] + loc->size[2];
+    pt[2] = loc->getPosition()[2] + loc->getSize()[2];
   return true;
 }
 
 bool WorldInfo::getSafetyPoint(const std::string &qualifier, const float *pos, float *pt)
 {
-  ObstacleLocation *loc;
+  Obstacle *loc;
   InBuildingType type;
 
   if (!entryZones.getSafetyPoint(qualifier, pos, pt))
@@ -291,7 +268,7 @@ bool WorldInfo::getSafetyPoint(const std::string &qualifier, const float *pos, f
   if (type == NOT_IN_BUILDING)
     pt[2] = 0.0f;
   else
-    pt[2] = loc->pos[2] + loc->size[2];
+    pt[2] = loc->getPosition()[2] + loc->getSize()[2];
   return true;
 }
 
@@ -312,81 +289,83 @@ int WorldInfo::packDatabase()
   database = new char[databaseSize];
   void *databasePtr = database;
 
-  // define i out here so we avoid the loop variable scope debates
-  ObstacleLocationList::iterator it;
   unsigned char	bitMask;
 
   // add walls  
-  for (it = walls.begin(); it != walls.end(); ++it) {
-    ObstacleLocation &wall = *it;
+  for (std::vector<WallObstacle>::iterator wall_it = walls.begin();
+       wall_it != walls.end(); ++wall_it) {
+    WallObstacle &wall = *wall_it;
     databasePtr = nboPackUShort(databasePtr, WorldCodeWallSize);
     databasePtr = nboPackUShort(databasePtr, WorldCodeWall);
-    databasePtr = nboPackVector(databasePtr, wall.pos);
-    databasePtr = nboPackFloat(databasePtr, wall.rotation);
-    databasePtr = nboPackFloat(databasePtr, wall.size[0]);
+    databasePtr = nboPackVector(databasePtr, wall.getPosition());
+    databasePtr = nboPackFloat(databasePtr, wall.getRotation());
+    databasePtr = nboPackFloat(databasePtr, wall.getSize()[1]);
     // walls have no depth
-    databasePtr = nboPackFloat(databasePtr, wall.size[2]);
+    databasePtr = nboPackFloat(databasePtr, wall.getSize()[2]);
   }
 
   // add boxes
-  for (it = boxes.begin(); it != boxes.end(); ++it) {
-    ObstacleLocation &box = *it;
+  for (std::vector<BoxBuilding>::iterator box_it = boxes.begin();
+       box_it != boxes.end(); ++box_it) {
+    BoxBuilding &box = *box_it;
     databasePtr = nboPackUShort(databasePtr, WorldCodeBoxSize);
     databasePtr = nboPackUShort(databasePtr, WorldCodeBox);
-    databasePtr = nboPackVector(databasePtr, box.pos);
-    databasePtr = nboPackFloat(databasePtr, box.rotation);
-    databasePtr = nboPackVector(databasePtr, box.size);
+    databasePtr = nboPackVector(databasePtr, box.getPosition());
+    databasePtr = nboPackFloat(databasePtr, box.getRotation());
+    databasePtr = nboPackVector(databasePtr, box.getSize());
     bitMask = 0;
-    if (box.driveThrough)
+    if (box.isDriveThrough())
       bitMask |= _DRIVE_THRU;
-    if (box.shootThrough)
+    if (box.isShootThrough())
       bitMask |= _SHOOT_THRU;
     databasePtr = nboPackUByte(databasePtr, bitMask);
   }
 
   // add pyramids
-  for (PyramidList::iterator pyr_it = pyramids.begin(); pyr_it != pyramids.end(); ++pyr_it) {
-    Pyramid &pyr = *pyr_it;
+  for (std::vector<PyramidBuilding>::iterator pyr_it = pyramids.begin();
+       pyr_it != pyramids.end(); ++pyr_it) {
+    PyramidBuilding &pyr = *pyr_it;
     databasePtr = nboPackUShort(databasePtr, WorldCodePyramidSize);
     databasePtr = nboPackUShort(databasePtr, WorldCodePyramid);
-    databasePtr = nboPackVector(databasePtr, pyr.pos);
-    databasePtr = nboPackFloat(databasePtr, pyr.rotation);
-    databasePtr = nboPackVector(databasePtr, pyr.size);
+    databasePtr = nboPackVector(databasePtr, pyr.getPosition());
+    databasePtr = nboPackFloat(databasePtr, pyr.getRotation());
+    databasePtr = nboPackVector(databasePtr, pyr.getSize());
     bitMask = 0;
-    if (pyr.driveThrough)
+    if (pyr.isDriveThrough())
       bitMask |= _DRIVE_THRU;
-    if (pyr.shootThrough)
+    if (pyr.isShootThrough())
       bitMask |= _SHOOT_THRU;
-    if (pyr.flipZ)
+    if (pyr.getZFlip())
       bitMask |= _FLIP_Z;
     databasePtr = nboPackUByte(databasePtr, bitMask);
   }
 
   // add teleporters
   int i = 0;
-  for (TeleporterList::iterator telit = teleporters.begin(); telit != teleporters.end(); ++telit, i++) {
-    Teleporter &tele = *telit;
+  for (std::vector<Teleporter>::iterator tele_it = teleporters.begin();
+       tele_it != teleporters.end(); ++tele_it, i++) {
+    Teleporter &tele = *tele_it;
     databasePtr = nboPackUShort(databasePtr, WorldCodeTeleporterSize);
     databasePtr = nboPackUShort(databasePtr, WorldCodeTeleporter);
-    databasePtr = nboPackVector(databasePtr, tele.pos);
-    databasePtr = nboPackFloat(databasePtr, tele.rotation);
-    databasePtr = nboPackVector(databasePtr, tele.size);
-    databasePtr = nboPackFloat(databasePtr, tele.border);
+    databasePtr = nboPackVector(databasePtr, tele.getPosition());
+    databasePtr = nboPackFloat(databasePtr, tele.getRotation());
+    databasePtr = nboPackVector(databasePtr, tele.getSize());
+    databasePtr = nboPackFloat(databasePtr, tele.getBorder());
     bitMask = 0;
-    if (tele.driveThrough)
+    if (tele.isDriveThrough())
       bitMask |= _DRIVE_THRU;
-    if (tele.shootThrough)
+    if (tele.isShootThrough())
       bitMask |= _SHOOT_THRU;
     databasePtr = nboPackUByte(databasePtr, bitMask);
     // and each link
     databasePtr = nboPackUShort(databasePtr, WorldCodeLinkSize);
     databasePtr = nboPackUShort(databasePtr, WorldCodeLink);
     databasePtr = nboPackUShort(databasePtr, uint16_t(i * 2));
-    databasePtr = nboPackUShort(databasePtr, uint16_t(tele.to[0]));
+    databasePtr = nboPackUShort(databasePtr, uint16_t(teleportTargets[i * 2]));
     databasePtr = nboPackUShort(databasePtr, WorldCodeLinkSize);
     databasePtr = nboPackUShort(databasePtr, WorldCodeLink);
     databasePtr = nboPackUShort(databasePtr, uint16_t(i * 2 + 1));
-    databasePtr = nboPackUShort(databasePtr, uint16_t(tele.to[1]));
+    databasePtr = nboPackUShort(databasePtr, uint16_t(teleportTargets[i * 2 + 1]));
   }
   
   databasePtr = wWeapons.pack (databasePtr);

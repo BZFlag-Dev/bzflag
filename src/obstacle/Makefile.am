@@ -1,4 +1,7 @@
+
 if CLIENT_INCLUDED
+noinst_LIBRARIES = libObstacle.a libObstacleGL.a
+else
 noinst_LIBRARIES = libObstacle.a
 endif
 
@@ -7,27 +10,27 @@ MAINTAINERCLEANFILES = \
 
 libObstacle_a_SOURCES =			\
 	BaseBuilding.cxx		\
-	BaseSceneNodeGenerator.cxx	\
-	BaseSceneNodeGenerator.h	\
 	BoxBuilding.cxx			\
-	BoxSceneNodeGenerator.cxx	\
-	BoxSceneNodeGenerator.h		\
-	EmptySceneNodeGenerator.cxx	\
-	EmptySceneNodeGenerator.h	\
 	Intersect.cxx			\
 	Obstacle.cxx			\
-	ObstacleSceneNodeGenerator.cxx  \
-	PyramidSceneNodeGenerator.cxx	\
-	PyramidSceneNodeGenerator.h	\
 	PyramidBuilding.cxx		\
 	Teleporter.cxx			\
+	WallObstacle.cxx
+
+if CLIENT_INCLUDED
+libObstacleGL_a_SOURCES =		\
+	BaseSceneNodeGenerator.cxx	\
+	BoxSceneNodeGenerator.cxx	\
+	EmptySceneNodeGenerator.cxx	\
+	Intersect.cxx			\
+	ObstacleSceneNodeGenerator.cxx  \
+	PyramidSceneNodeGenerator.cxx	\
 	TeleporterSceneNodeGenerator.cxx\
-	TeleporterSceneNodeGenerator.h	\
-	WallObstacle.cxx		\
-	WallSceneNodeGenerator.cxx \
-	WallSceneNodeGenerator.h
-	
+	WallSceneNodeGenerator.cxx
+endif
+
 	
 
 EXTRA_DIST = \
 	README
+	

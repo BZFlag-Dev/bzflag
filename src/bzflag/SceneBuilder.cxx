@@ -30,6 +30,11 @@
 #include "StateDatabase.h"
 #include "TextureManager.h"
 #include "ObstacleSceneNodeGenerator.h"
+#include "BoxSceneNodeGenerator.h"
+#include "PyramidSceneNodeGenerator.h"
+#include "BaseSceneNodeGenerator.h"
+#include "TeleporterSceneNodeGenerator.h"
+#include "WallSceneNodeGenerator.h"
 
 //
 // SceneDatabaseBuilder
@@ -232,7 +237,7 @@ void			SceneDatabaseBuilder::addWall(SceneDatabase* db,
 {
   int part = 0;
   WallSceneNode* node;
-  ObstacleSceneNodeGenerator* nodeGen = o.newSceneNodeGenerator();
+  ObstacleSceneNodeGenerator* nodeGen = new WallSceneNodeGenerator (&o);
 
   TextureManager &tm = TextureManager::instance();
   int wallTexture = -1;
@@ -269,7 +274,7 @@ void			SceneDatabaseBuilder::addBox(SceneDatabase* db,
   // this assumes boxes have six parts:  four sides, a roof, and a bottom.
   int part = 0;
   WallSceneNode* node;
-  ObstacleSceneNodeGenerator* nodeGen = o.newSceneNodeGenerator();
+  ObstacleSceneNodeGenerator* nodeGen = new BoxSceneNodeGenerator(&o);
   TextureManager &tm = TextureManager::instance();
   int    boxTexture = -1;
   bool  useColorTexture[2] = {false,false};
@@ -329,7 +334,7 @@ void			SceneDatabaseBuilder::addPyramid(SceneDatabase* db,
   // this assumes pyramids have four parts:  four sides
   int part = 0;
   WallSceneNode* node;
-  ObstacleSceneNodeGenerator* nodeGen = o.newSceneNodeGenerator();
+  ObstacleSceneNodeGenerator* nodeGen = new PyramidSceneNodeGenerator(&o);
 
   TextureManager &tm = TextureManager::instance();
   int pyramidTexture = -1;
@@ -369,7 +374,7 @@ void			SceneDatabaseBuilder::addBase(SceneDatabase *db,
 						const BaseBuilding &o)
 {
   WallSceneNode *node;
-  ObstacleSceneNodeGenerator *nodeGen = o.newSceneNodeGenerator();
+  ObstacleSceneNodeGenerator* nodeGen = new BaseSceneNodeGenerator(&o);
 
   TextureManager &tm = TextureManager::instance();
   int   boxTexture = -1;
@@ -442,7 +447,7 @@ void			SceneDatabaseBuilder::addTeleporter(SceneDatabase* db,
   // this assumes teleporters have fourteen parts:  12 border sides, 2 faces
   int part = 0;
   WallSceneNode* node;
-  ObstacleSceneNodeGenerator* nodeGen = o.newSceneNodeGenerator();
+  ObstacleSceneNodeGenerator* nodeGen = new TeleporterSceneNodeGenerator(&o);
 
   TextureManager &tm = TextureManager::instance();
   int             teleporterTexture = -1;

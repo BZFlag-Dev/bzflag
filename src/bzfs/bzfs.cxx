@@ -1802,7 +1802,7 @@ void resetFlag(int flagIndex)
     float r = BZDB.eval(StateDatabase::BZDB_TANKRADIUS);
     if (pFlagInfo->flag.type == Flags::Obesity)
       r *= 2.0f * BZDB.eval(StateDatabase::BZDB_OBESEFACTOR);
-    ObstacleLocation *obj;
+    Obstacle *obj;
     float worldSize = BZDB.eval(StateDatabase::BZDB_WORLDSIZE);
     if (!world->getZonePoint( std::string(pFlagInfo->flag.type->flagAbbv), pFlagInfo->flag.position)) {
       pFlagInfo->flag.position[0] = (worldSize - baseSize) * ((float)bzfrand() - 0.5f);
@@ -1833,10 +1833,11 @@ void resetFlag(int flagIndex)
       }
       else if ((clOptions->flagsOnBuildings
 	  && ((topmosttype == IN_BOX_NOTDRIVETHROUGH) || (topmosttype == IN_BASE)))
-	  && (obj->pos[2] < (pFlagInfo->flag.position[2] + flagHeight - Epsilon))
-	  && ((obj->pos[2] + obj->size[2] - Epsilon) > pFlagInfo->flag.position[2])
-	  && (world->inRect(obj->pos, obj->rotation, obj->size, pFlagInfo->flag.position[0], pFlagInfo->flag.position[1], 0.0f))) {
-	pFlagInfo->flag.position[2] = obj->pos[2] + obj->size[2];
+	  && (obj->getPosition()[2] < (pFlagInfo->flag.position[2] + flagHeight - Epsilon))
+	  && ((obj->getPosition()[2] + obj->getSize()[2] - Epsilon) > pFlagInfo->flag.position[2])
+	  && (world->inRect(obj->getPosition(), obj->getRotation(), obj->getSize(),
+	                    pFlagInfo->flag.position[0], pFlagInfo->flag.position[1], 0.0f))) {
+	pFlagInfo->flag.position[2] = obj->getPosition()[2] + obj->getSize()[2];
       }
       else {
 	pFlagInfo->flag.position[0] = (worldSize - baseSize) * ((float)bzfrand() - 0.5f);
@@ -2465,9 +2466,9 @@ static void dropFlag(int playerIndex, float pos[3])
     pos[2] = 0.0;
 
   assert(world != NULL);
-  ObstacleLocation* container;
+  Obstacle* container;
   int topmosttype = NOT_IN_BUILDING;
-  ObstacleLocation* topmost = 0;
+  Obstacle* topmost = 0;
   // player wants to drop flag.  we trust that the client won't tell
   // us to drop a sticky flag until the requirements are satisfied.
   const int flagIndex = playerData->player.getFlag();
@@ -2501,7 +2502,7 @@ static void dropFlag(int playerIndex, float pos[3])
   if (topmosttype != NOT_IN_BUILDING) {
     topmost = container;
     int tmp;
-    for (float i = container->pos[2] + container->size[2];
+    for (float i = container->getPosition()[2] + container->getSize()[2];
 	 (tmp = world->inBuilding(&container,
 				  pos[0], pos[1], i, 0,
 				  BZDB.eval(StateDatabase::BZDB_FLAGHEIGHT))) !=
@@ -2525,14 +2526,14 @@ static void dropFlag(int playerIndex, float pos[3])
   float deadUnder = BZDB.eval(StateDatabase::BZDB_DEADUNDER);
   float obstacleTop = 0.0f;
   if (topmosttype != NOT_IN_BUILDING) {
-    obstacleTop = topmost->pos[2] + topmost->size[2];
+    obstacleTop = topmost->getPosition()[2] + topmost->getSize()[2];
   }
 
   // figure out landing spot -- if flag in a Bad Place
   // when dropped, move to safety position or make it going
   TeamColor teamBase = whoseBase(pos[0], pos[1],
 				 (topmosttype == NOT_IN_BUILDING ? pos[2] :
-				  topmost->pos[2] + topmost->size[2] + 0.01f));
+				  topmost->getPosition()[2] + topmost->getSize()[2] + 0.01f));
 
   if (drpFlag.flag.status == FlagGoing) {
     drpFlag.flag.landingPosition[0] = pos[0];

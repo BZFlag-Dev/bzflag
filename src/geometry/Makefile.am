@@ -9,7 +9,6 @@ endif
 
 libGeometry_a_SOURCES  =		\
 	ViewFrustum.cxx			\
-	Ray.cxx				\
 	SceneNode.cxx			\
 	WallSceneNode.cxx		\
 	QuadWallSceneNode.cxx		\

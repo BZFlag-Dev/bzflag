@@ -15,10 +15,7 @@
 #include "global.h"
 #include "PyramidBuilding.h"
 #include "Intersect.h"
-#include "TriWallSceneNode.h"
-#include "QuadWallSceneNode.h"
 #include "BZDBCache.h"
-#include "PyramidSceneNodeGenerator.h"
 
 std::string		PyramidBuilding::typeName("PyramidBuilding");
 
@@ -283,11 +280,6 @@ bool			PyramidBuilding::getHitNormal(
   if (flip)
     normal[2] = -normal[2];
   return true;
-}
-
-ObstacleSceneNodeGenerator*	PyramidBuilding::newSceneNodeGenerator() const
-{
-  return new PyramidSceneNodeGenerator(this);
 }
 
 void			PyramidBuilding::getCorner(int index,

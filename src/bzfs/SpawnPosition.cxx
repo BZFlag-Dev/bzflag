@@ -54,7 +54,7 @@ SpawnPosition::SpawnPosition(int playerId, bool onGroundOnly, bool notNearEdges)
     safeDistance = tankRadius * 20; // FIXME: is this a good value?
     const float size = BZDB.eval(StateDatabase::BZDB_WORLDSIZE);
     const float maxWorldHeight = world->getMaxWorldHeight();
-    ObstacleLocation *building = NULL;
+    Obstacle *building = NULL;
 
     // keep track of how much time we spend searching for a location
     TimeKeeper start = TimeKeeper::getCurrent();
@@ -96,7 +96,7 @@ SpawnPosition::SpawnPosition(int playerId, bool onGroundOnly, bool notNearEdges)
         int lastType = type;
 	int retriesRemaining = 100; // don't climb forever
         while (type != NOT_IN_BUILDING) {
-          testPos[2] = building->pos[2] + building->size[2] + 0.0001f;
+          testPos[2] = building->getPosition()[2] + building->getHeight() + 0.0001f;
           tries++;
           lastType = type;
           type = world->inBuilding(&building, testPos[0], testPos[1], testPos[2],

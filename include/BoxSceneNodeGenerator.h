@@ -10,28 +10,24 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef __BASESCENENODEGENERATOR_H__
-#define __BASESCENENODEGENERATOR_H__
+#ifndef __BOXSCENENODEGENERATOR_H__
+#define __BOXSCENENODEGENERATOR_H__
 
 #include "ObstacleSceneNodeGenerator.h"
+#include "BoxBuilding.h"
 
-class BaseSceneNodeGenerator : public ObstacleSceneNodeGenerator {
-  friend class BaseBuilding;
-			~BaseSceneNodeGenerator();
+class BoxSceneNodeGenerator : public ObstacleSceneNodeGenerator {
+  friend class SceneDatabaseBuilder;
   public:
+			~BoxSceneNodeGenerator();
+
     WallSceneNode*	getNextNode(float, float, bool);
+
   protected:
-			BaseSceneNodeGenerator(const BaseBuilding *);
+			BoxSceneNodeGenerator(const BoxBuilding*);
+
   private:
-    const BaseBuilding *base;
+    const BoxBuilding*	box;
 };
 
 #endif
-
-// Local Variables: ***
-// mode:C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
-// End: ***
-// ex: shiftwidth=2 tabstop=8

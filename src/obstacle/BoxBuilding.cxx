@@ -17,8 +17,6 @@
 #include "Intersect.h"
 #include "QuadWallSceneNode.h"
 #include "BZDBCache.h"
-#include "EmptySceneNodeGenerator.h"
-#include "BoxSceneNodeGenerator.h"
 
 std::string		BoxBuilding::typeName("BoxBuilding");
 
@@ -161,14 +159,6 @@ bool			BoxBuilding::getHitNormal(
   return Obstacle::getHitNormal(pos1, azimuth1, pos2, azimuth2, width, breadth,
 			getPosition(), getRotation(), getWidth(), getBreadth(),
 			getHeight(), normal) >= 0.0f;
-}
-
-ObstacleSceneNodeGenerator*	BoxBuilding::newSceneNodeGenerator() const
-{
-  if (noNodes)
-    return new EmptySceneNodeGenerator();
-  else
-    return new BoxSceneNodeGenerator(this);
 }
 
 void			BoxBuilding::getCorner(int index, float* pos) const

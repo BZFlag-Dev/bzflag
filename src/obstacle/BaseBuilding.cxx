@@ -15,9 +15,7 @@
 #include "BaseBuilding.h"
 #include "global.h"
 #include "Intersect.h"
-#include "QuadWallSceneNode.h"
 #include "BZDBCache.h"
-#include "BaseSceneNodeGenerator.h"
 
 std::string		BaseBuilding::typeName("BaseBuilding");
 
@@ -158,11 +156,6 @@ bool			BaseBuilding::getHitNormal(const float *pos1, float azimuth1,
   return Obstacle::getHitNormal(pos1, azimuth1, pos2, azimuth2, halfWidth, halfBreadth,
 			getPosition(), getRotation(), getWidth(), getBreadth(),
 			getHeight(), normal) >= 0.0f;
-}
-
-ObstacleSceneNodeGenerator* BaseBuilding::newSceneNodeGenerator() const
-{
-  return new BaseSceneNodeGenerator(this);
 }
 
 void			BaseBuilding::getCorner(int index, float *pos) const

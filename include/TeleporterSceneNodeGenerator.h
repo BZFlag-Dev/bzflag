@@ -9,32 +9,25 @@
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
- 
- #ifndef __PYRAMIDSCENENODEGENERATOR_H__
- #define __PYRAMIDSCENENODEGENERATOR_H__
- 
- #include "ObstacleSceneNodeGenerator.h"
 
- class PyramidSceneNodeGenerator : public ObstacleSceneNodeGenerator {
-  friend class PyramidBuilding;
+#ifndef __TELEPORTERSCENENODEGENERATOR_H__
+#define __TELEPORTERSCENENODEGENERATOR_H__
+
+#include "ObstacleSceneNodeGenerator.h"
+#include "Teleporter.h"
+
+class TeleporterSceneNodeGenerator : public ObstacleSceneNodeGenerator {
+  friend class SceneDatabaseBuilder;
   public:
-			~PyramidSceneNodeGenerator();
+			~TeleporterSceneNodeGenerator();
 
     WallSceneNode*	getNextNode(float, float, bool);
 
   protected:
-			PyramidSceneNodeGenerator(const PyramidBuilding*);
+			TeleporterSceneNodeGenerator(const Teleporter*);
 
   private:
-    const PyramidBuilding*	pyramid;
+    const Teleporter*	teleporter;
 };
 
 #endif
-
-// Local Variables: ***
-// mode:C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
-// End: ***
-// ex: shiftwidth=2 tabstop=8

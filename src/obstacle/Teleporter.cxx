@@ -15,9 +15,7 @@
 #include "global.h"
 #include "Teleporter.h"
 #include "Intersect.h"
-#include "QuadWallSceneNode.h"
 #include "BZDBCache.h"
-#include "TeleporterSceneNodeGenerator.h"
 
 std::string		Teleporter::typeName("Teleporter");
 
@@ -321,11 +319,6 @@ bool			Teleporter::getHitNormal(
 			pos2, azimuth2, width, breadth,
 			getPosition(), getRotation(), getWidth(), getBreadth(),
 			getHeight(), normal) >= 0.0f;
-}
-
-ObstacleSceneNodeGenerator*	Teleporter::newSceneNodeGenerator() const
-{
-  return new TeleporterSceneNodeGenerator(this);
 }
 
 // Local Variables: ***

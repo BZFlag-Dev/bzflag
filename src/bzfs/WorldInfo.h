@@ -20,52 +20,18 @@
 #include <string>
 #include "EntryZones.h"
 
+#include "BoxBuilding.h"
+#include "PyramidBuilding.h"
+#include "BaseBuilding.h"
+#include "Teleporter.h"
+#include "WallObstacle.h"
+
 class WorldFileLocation;
 class CustomZone;
 
 typedef std::vector<std::string> QualifierList;
 
 typedef enum { NOT_IN_BUILDING, IN_BASE, IN_BOX_NOTDRIVETHROUGH, IN_BOX_DRIVETHROUGH, IN_PYRAMID, IN_TELEPORTER } InBuildingType;
-
-struct ObstacleLocation {
-public:
-  float pos[3];
-  float rotation;
-  float size[3];
-  bool shootThrough;
-  bool driveThrough;
-  ObstacleLocation &operator=(const ObstacleLocation &ol)
-  {
-    memcpy(pos, ol.pos, sizeof(float) * 3);
-    rotation = ol.rotation;
-    memcpy(size, ol.size, sizeof(float) * 3);
-    shootThrough = ol.shootThrough;
-    driveThrough = ol.driveThrough;
-    return *this;
-  }
-};
-
-typedef std::vector<ObstacleLocation> ObstacleLocationList;
-
-struct Teleporter : public ObstacleLocation {
-public:
-  float border;
-  int to[2];
-};
-
-typedef std::vector<Teleporter> TeleporterList;
-
-struct Pyramid : public ObstacleLocation {
-public:
-  bool flipZ;
-  Pyramid &operator=(const Pyramid &p)
-  {
-    flipZ = p.flipZ;
-    return *this;
-  }
-};
-
-typedef std::vector<Pyramid> PyramidList;
 
 
 class WorldInfo {
@@ -96,6 +62,7 @@ public:
 private:
 
   bool rectHitCirc(float dx, float dy, const float *p, float r) const;
+  void setTeleporterTarget(int src, int tgt);
 
 public:
 
@@ -104,7 +71,7 @@ public:
    * location will return a pointer to the world colliding object
    * Checking is quite raw
    */
-  InBuildingType inBuilding(ObstacleLocation **location,
+  InBuildingType inBuilding(Obstacle **obstacle,
 			    float x, float y, float z,
 			    float radius, float height = 0.0f);
   /** check collision between a rectangle and a circle
@@ -116,12 +83,16 @@ private:
   float size[2];
   float gravity;
   float maxHeight;
-  ObstacleLocationList walls;
-  ObstacleLocationList boxes;
-  ObstacleLocationList bases;
-  PyramidList	       pyramids;
-  TeleporterList       teleporters;
+
+  std::vector<BoxBuilding> boxes;
+  std::vector<BaseBuilding> bases;
+  std::vector<PyramidBuilding> pyramids;
+  std::vector<WallObstacle> walls;
+  std::vector<Teleporter> teleporters;
+
   EntryZones	       entryZones;
+  std::vector<int> teleportTargets;
+
   char *database;
   int databaseSize;
 };

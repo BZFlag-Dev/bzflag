@@ -74,6 +74,7 @@ REGEX = \
 endif
 
 LDADD = \
+	../obstacle/libObstacle.a	\
 	../game/libGame.a	\
 	../net/libNet.a		\
 	../common/libCommon.a	\

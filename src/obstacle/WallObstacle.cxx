@@ -14,8 +14,6 @@
 #include "common.h"
 #include "WallObstacle.h"
 #include "Intersect.h"
-#include "QuadWallSceneNode.h"
-#include "WallSceneNodeGenerator.h"
 
 std::string		WallObstacle::typeName("WallObstacle");
 
@@ -113,11 +111,6 @@ bool			WallObstacle::getHitNormal(
 {
   getNormal(NULL, normal);
   return true;
-}
-
-ObstacleSceneNodeGenerator*	WallObstacle::newSceneNodeGenerator() const
-{
-  return new WallSceneNodeGenerator(this);
 }
 
 // Local Variables: ***
