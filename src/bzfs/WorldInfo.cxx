@@ -269,7 +269,7 @@ int WorldInfo::packDatabase()
   databaseSize = (2 + 6 * 4) * numWalls +
     (1 + 2 + 7 * 4) * numBoxes +
     (1 + 2 + 7 * 4) * numPyramids +
-    (2 + 2 + 8 * 4) * numTeleporters +
+    (1 + 2 + 8 * 4) * numTeleporters +
     (2 + 2 * 2) * 2 * numTeleporters;
   database = new char[databaseSize];
   void *databasePtr = database;
