@@ -93,17 +93,7 @@ static const char copyright[] = "Copyright (c) 1993 - 2004 Tim Riker";
 #include "PackVars.h"
 #include "TeamBases.h"
 #include "ListServerConnection.h"
-
-// types for reading world files
-#include "WorldFileObstacle.h"
-#include "CustomBox.h"
-#include "CustomPyramid.h"
-#include "CustomGate.h"
-#include "CustomLink.h"
-#include "CustomBase.h"
-#include "CustomWeapon.h"
-#include "CustomWorld.h"
-
+#include "BZWReader.h"
 
 #endif
 

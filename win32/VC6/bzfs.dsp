@@ -107,6 +107,10 @@ SOURCE=..\..\src\bzfs\bzfs.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\bzfs\BZWReader.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\bzfs\CmdLineOptions.cxx
 # End Source File
 # Begin Source File
@@ -204,6 +208,10 @@ SOURCE=..\..\src\bzfs\bzfs.h
 # Begin Source File
 
 SOURCE=..\..\include\bzsignal.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\bzfs\BZWReader.h
 # End Source File
 # Begin Source File
 
