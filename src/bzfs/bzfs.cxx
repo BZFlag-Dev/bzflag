@@ -3136,8 +3136,8 @@ static WorldInfo *defineTeamWorld()
 	if (hypotf(fabs(x-basePos[1][0]),fabs(y-basePos[1][1])) > BoxBase*4 &&
 	    hypotf(fabs(-x-basePos[1][0]),fabs(-y-basePos[1][1])) > BoxBase*4 &&
 	    hypotf(fabs(x),fabs(y)) > WorldSize/12)
-	  if ((numTeams <= 2) || (hypotf(fabs(x-basePos[2][0]),fabs(y-basePos[2][1])) > BoxBase*4 &&
-	      hypotf(fabs(-x-basePos[2][0]),fabs(-y-basePos[2][1])) > BoxBase*4)) {
+	  if ((numTeams <= 2) || (hypotf(fabs(x-basePos[3][0]),fabs(y-basePos[3][1])) > BoxBase*4 &&
+	      hypotf(fabs(-x-basePos[3][0]),fabs(-y-basePos[3][1])) > BoxBase*4)) {
 	    float angle=2.0f * M_PI * (float)bzfrand();
 	    world->addBox(x,y,0.0f, angle, BoxBase, BoxBase, h);
 	    world->addBox(-x,-y,0.0f, angle, BoxBase, BoxBase, h);
@@ -3162,8 +3162,8 @@ static WorldInfo *defineTeamWorld()
 	if (hypotf(fabs(x-basePos[1][0]),fabs(y-basePos[1][1])) > PyrBase*4 &&
 	    hypotf(fabs(-x-basePos[1][0]),fabs(-y-basePos[1][1])) > PyrBase*4 &&
 	    hypotf(fabs(x),fabs(y)) > WorldSize/12)
-	  if ((numTeams <= 2) || (hypotf(fabs(x-basePos[2][0]),fabs(y-basePos[2][1])) > PyrBase*4 &&
-	      hypotf(fabs(-x-basePos[2][0]),fabs(-y-basePos[2][1])) > PyrBase*4)) {
+	  if ((numTeams <= 2) || (hypotf(fabs(x-basePos[3][0]),fabs(y-basePos[3][1])) > PyrBase*4 &&
+	      hypotf(fabs(-x-basePos[3][0]),fabs(-y-basePos[3][1])) > PyrBase*4)) {
 	    float angle=2.0f * M_PI * (float)bzfrand();
 	    world->addPyramid(x,y, 0.0f, angle,PyrBase, PyrBase, h);
 	    world->addPyramid(-x,-y, 0.0f, angle,PyrBase, PyrBase, h);
