@@ -4744,7 +4744,7 @@ int main(int argc, char **argv)
 	// if player is the rabbit, anoint a new one
 	if (!oldnr && player[h].notResponding && h == rabbitIndex)
 	  anointNewRabbit();
-	// if player is holding a team flag, drop it
+	// if player is holding a flag, drop it
 	if (!oldnr && player[h].notResponding) {
 	  for (int j = 0; j < numFlags; j++) {
 	    if (flag[j].player == h) {
