@@ -40,7 +40,7 @@
 #endif
 
 #ifndef BZ_REV
-#define BZ_REV                  7
+#define BZ_REV                  8
 #endif
 
 #ifndef BZ_BUILD_TYPE
