@@ -953,7 +953,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>English</string>
 	<key>CFBundleExecutable</key>
-	<string></string>
+	<string>libMediaFile</string>
 	<key>CFBundleGetInfoString</key>
 	<string></string>
 	<key>CFBundleIconFile</key>
@@ -1560,6 +1560,7 @@
 				PRODUCT_NAME = libz;
 				SECTORDER_FLAGS = "";
 				SKIP_INSTALL = YES;
+				USE_GCC3_PFE_SUPPORT = NO;
 				WARNING_CFLAGS = "-Wmost -Wno-four-char-constants -Wno-unknown-pragmas";
 				WRAPPER_EXTENSION = framework;
 			};
@@ -1577,7 +1578,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>English</string>
 	<key>CFBundleExecutable</key>
-	<string></string>
+	<string>libz</string>
 	<key>CFBundleGetInfoString</key>
 	<string></string>
 	<key>CFBundleIconFile</key>
@@ -2333,6 +2334,7 @@
 				4E030E8B048EDFB50009E055,
 				4E030E8D048EE6750009E055,
 				14C1C1D704B6430800A80164,
+				7B85239204BA77A300FEBA07,
 			);
 			isa = PBXFrameworksBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2974,6 +2976,7 @@
 				1401FCCA04B57C2200A80164,
 				1401FCCB04B57C2200A80164,
 				14ACDFC104B666F700A80164,
+				7B79F0B104BA74F400FEBA07,
 			);
 			isa = PBXGroup;
 			name = include;
@@ -4833,6 +4836,8 @@
 				14ACDFD904B6B05F00A80164,
 				1404B12804B8798200A80164,
 				1404B12904B8798200A80164,
+				7B79F0C504BA753400FEBA07,
+				7B79F0C604BA753400FEBA07,
 			);
 			isa = PBXGroup;
 			path = bzfs;
@@ -4870,6 +4875,7 @@
 				14C1C1BE04B63D2500A80164,
 				14C1C1D004B63FE400A80164,
 				14ACDFBF04B665F900A80164,
+				7B79F0AF04BA74BD00FEBA07,
 			);
 			isa = PBXGroup;
 			path = common;
@@ -6230,6 +6236,7 @@
 				4E030DC9048EAD560009E055,
 				1495362A049CEBF900A80164,
 				14ACDFC204B666F700A80164,
+				7B79F0B204BA74F400FEBA07,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -6266,6 +6273,7 @@
 				14C1C1C104B63D2500A80164,
 				14C1C1D104B63FE400A80164,
 				14ACDFC004B665F900A80164,
+				7B79F0B004BA74BD00FEBA07,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -6588,7 +6596,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>English</string>
 	<key>CFBundleExecutable</key>
-	<string></string>
+	<string>libGeometry</string>
 	<key>CFBundleGetInfoString</key>
 	<string></string>
 	<key>CFBundleIconFile</key>
@@ -6768,6 +6776,7 @@
 				4E030E5C048EDAF80009E055,
 				4E030E5D048EDB030009E055,
 				14C1C1D504B6413400A80164,
+				7B85239104BA771E00FEBA07,
 			);
 			isa = PBXFrameworksBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -7357,6 +7366,7 @@
 				14ACDFDB04B6B05F00A80164,
 				14ACDFDD04B6B05F00A80164,
 				1404B12B04B8798200A80164,
+				7B79F0C804BA753400FEBA07,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -7368,6 +7378,7 @@
 				14ACDFDA04B6B05F00A80164,
 				14ACDFDC04B6B05F00A80164,
 				1404B12A04B8798200A80164,
+				7B79F0C704BA753400FEBA07,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -8598,6 +8609,8 @@
 				4EDCB338049A491F001DADFE,
 				4EDCB339049A4922001DADFE,
 				4EDCB33A049A4926001DADFE,
+				7B85238504BA75A100FEBA07,
+				7B85238704BA75AA00FEBA07,
 			);
 			isa = PBXCopyFilesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -8640,6 +8653,88 @@
 		};
 		4EDCB33B049A4DD6001DADFE = {
 			fileRef = 4E030CDB048E70E80009E055;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+//4E0
+//4E1
+//4E2
+//4E3
+//4E4
+//7B0
+//7B1
+//7B2
+//7B3
+//7B4
+		7B79F0AF04BA74BD00FEBA07 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = KeyManager.cxx;
+			refType = 4;
+		};
+		7B79F0B004BA74BD00FEBA07 = {
+			fileRef = 7B79F0AF04BA74BD00FEBA07;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		7B79F0B104BA74F400FEBA07 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = KeyManager.h;
+			refType = 4;
+		};
+		7B79F0B204BA74F400FEBA07 = {
+			fileRef = 7B79F0B104BA74F400FEBA07;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		7B79F0C504BA753400FEBA07 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = Permissions.cxx;
+			refType = 4;
+		};
+		7B79F0C604BA753400FEBA07 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = Permissions.h;
+			refType = 4;
+		};
+		7B79F0C704BA753400FEBA07 = {
+			fileRef = 7B79F0C504BA753400FEBA07;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		7B79F0C804BA753400FEBA07 = {
+			fileRef = 7B79F0C604BA753400FEBA07;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		7B85238504BA75A100FEBA07 = {
+			fileRef = 1401FD3004B62E5E00A80164;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		7B85238704BA75AA00FEBA07 = {
+			fileRef = 14C1C19004B63B8C00A80164;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		7B85239104BA771E00FEBA07 = {
+			fileRef = 14C1C19004B63B8C00A80164;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		7B85239204BA77A300FEBA07 = {
+			fileRef = 14C1C19004B63B8C00A80164;
 			isa = PBXBuildFile;
 			settings = {
 			};
