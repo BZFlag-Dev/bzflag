@@ -138,6 +138,8 @@ extern std::string		getTempDirName()
 {
 // FIXME: needs something for Windows and maybe other platforms
 #if defined(_WIN32)
+	std::string name = getConfigDirName();
+	name += "temp";
 #else
   std::string name;
   if (getenv("TMPDIR")) {
