@@ -1368,7 +1368,7 @@ static int uread(int *playerIndex, int *nopackets)
   struct sockaddr_in uaddr;
   unsigned char ubuf[MaxPacketLen];
   AddrLen recvlen = sizeof(uaddr);
-  UDEBUG("Into UREAD\n");
+  //UDEBUG("Into UREAD\n");
 
   *nopackets = 0;
 
@@ -1377,7 +1377,8 @@ static int uread(int *playerIndex, int *nopackets)
     void *pmsg;
     for (*playerIndex = 0; *playerIndex < MaxPlayers; (*playerIndex)++) {
       if ((player[*playerIndex].ulinkup) &&
-          memcmp(&uaddr, &player[*playerIndex].uaddr, sizeof(uaddr)) == 0) {
+	  (player[*playerIndex].uaddr.sin_port == uaddr.sin_port) &&
+	  (memcmp(&player[*playerIndex].uaddr.sin_addr, &uaddr.sin_addr, sizeof(uaddr.sin_addr)) == 0)) {
 	break;
       }
     }
@@ -1385,7 +1386,8 @@ static int uread(int *playerIndex, int *nopackets)
       // didn't find player so test for exact match new player
       for (*playerIndex = 0; *playerIndex < MaxPlayers; (*playerIndex)++) {
 	if (!player[*playerIndex].ulinkup &&
-            memcmp(&uaddr, &player[*playerIndex].uaddr, sizeof(uaddr)) == 0) {
+	    (player[*playerIndex].uaddr.sin_port == uaddr.sin_port) &&
+	    (memcmp(&player[*playerIndex].uaddr.sin_addr, &uaddr.sin_addr, sizeof(uaddr.sin_addr)) == 0)) {
 	  UMDEBUG("uread() exact udp up for player %d %s:%d\n",
 	      *playerIndex, inet_ntoa(player[*playerIndex].uaddr.sin_addr),
 	      ntohs(player[*playerIndex].uaddr.sin_port));
@@ -1413,11 +1415,21 @@ static int uread(int *playerIndex, int *nopackets)
     n = recv(udpSocket, (char *)ubuf, MaxPacketLen, 0);
     if (*playerIndex == MaxPlayers) {
       // no match, discard packet
+      UMDEBUG("uread() discard packet! %s:%d choices p(l) h:p", inet_ntoa(uaddr.sin_addr), ntohs(uaddr.sin_port));
+      for (*playerIndex = 0; *playerIndex < MaxPlayers; (*playerIndex)++) {
+	if (player[*playerIndex].fd != -1) {
+	  UMDEBUG(" %d(%d) %s:%d", 
+	      *playerIndex, player[*playerIndex].ulinkup,
+	      inet_ntoa(player[*playerIndex].uaddr.sin_addr),
+	      ntohs(player[*playerIndex].uaddr.sin_port));
+	}
+      }
+      UMDEBUG("\n");
       *playerIndex = 0;
       return 0;
     }
 
-    fprintf(stderr, "uread() player %d %s:%d len %d from %s:%d on %i\n", 
+    UMDEBUG("uread() player %d %s:%d len %d from %s:%d on %i\n", 
 	*playerIndex, inet_ntoa(player[*playerIndex].uaddr.sin_addr),
 	ntohs(player[*playerIndex].uaddr.sin_port), n, inet_ntoa(uaddr.sin_addr),
 	ntohs(uaddr.sin_port), udpSocket);
