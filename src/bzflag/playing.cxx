@@ -2008,31 +2008,7 @@ static void		handleServerMessage(bool human, uint16_t code,
       break;
     }
 
-    // CLIENTQUERY hack
-    // TODO: this is obsoleted by /clientquery server command.  Take it out sometime.
-    if (!strncmp((char*)msg,"CLIENTQUERY",strlen("CLIENTQUERY"))) {
-      char messageBuffer[MessageLen];
-      memset(messageBuffer, 0, MessageLen);
-      sprintf(messageBuffer,"Version %s", getAppVersion());
-      if (startupInfo.useUDPconnection)
-	strcat(messageBuffer,"+UDP");
-
-      char response[PlayerIdPLen + MessageLen];
-      void* buf = response;
-      buf = nboPackUByte(buf, src);
-      nboPackString(buf, messageBuffer, MessageLen);
-      serverLink->send(MsgMessage, sizeof(response), response);
-      const char *oldcolor = NULL;
-      if (dstTeam == RogueTeam || srcPlayer->getTeam() == NoTeam)
-        oldcolor = ColorStrings[RogueTeam];
-      else if (srcPlayer->getTeam() == ObserverTeam)
-        oldcolor = ColorStrings[CyanColor];
-      else
-	oldcolor = ColorStrings[srcPlayer->getTeam()];
-
-      addMessage(srcPlayer,"[Sent versioninfo per request]", false, oldcolor);
-      break;
-    } else if (fromServer) {
+    if (fromServer) {
       /* if the server tells us that we need to identify, and we have
        * already stored a password key for this server -- send it on
        * over back to auto-identify.
