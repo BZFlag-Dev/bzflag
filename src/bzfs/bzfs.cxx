@@ -2720,6 +2720,8 @@ void resetFlag(int flagIndex)
 	  && (world->inRect(obj->pos, obj->rotation, obj->size, pFlagInfo->flag.position[0], pFlagInfo->flag.position[1], 0.0f)))
       {
 	pFlagInfo->flag.position[2] = obj->pos[2] + obj->size[2];
+	// avoid inf-looping from rounding errors
+	break;
       }
       else
       {
