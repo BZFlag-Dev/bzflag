@@ -536,13 +536,8 @@ void handleLagstatsCmd(int t, const char *)
   char reply[MessageLen] = {0};
 
   for (int i = 0; i < curMaxPlayers; i++) {
-    if (player[i].isPlaying() && player[i].type == TankPlayer) {
-      sprintf(reply,"%-16s : %3d +- %2dms %s", player[i].callSign,
-	      int(player[i].lagavg * 1000),
-	      int(player[i].jitteravg * 1000),
-	      player[i].isAccessVerified() ? "(R)" : "");
-      if (player[i].lostavg >= 0.01f)
-	sprintf(reply + strlen(reply), " %d%% lost/ooo", int(player[i].lostavg * 100));
+    player[i].getLagStats(reply);
+    if (strlen(reply)) {
       sendMessage(ServerPlayer, t, reply, true);
     }
   }

@@ -647,13 +647,7 @@ static void sendPlayerUpdate(int playerIndex, int index)
   void *buf, *bufStart = getDirectMessageBuffer();
   PlayerInfo *pPlayer = &player[playerIndex];
   buf = nboPackUByte(bufStart, playerIndex);
-  buf = nboPackUShort(buf, uint16_t(pPlayer->type));
-  buf = nboPackUShort(buf, uint16_t(pPlayer->team));
-  buf = nboPackUShort(buf, uint16_t(pPlayer->wins));
-  buf = nboPackUShort(buf, uint16_t(pPlayer->losses));
-  buf = nboPackUShort(buf, uint16_t(pPlayer->tks));
-  buf = nboPackString(buf, pPlayer->callSign, CallSignLen);
-  buf = nboPackString(buf, pPlayer->email, EmailLen);
+  buf = pPlayer->packUpdate(buf);
   if (playerIndex == index) {
     // send all players info about player[playerIndex]
     for (int i = 0; i < curMaxPlayers; i++)
@@ -1903,14 +1897,13 @@ static void addPlayer(int playerIndex)
 
   // reject player if asks for bogus team or rogue and rogues aren't allowed
   // or if the team is full or if the server is full
-  if (player[playerIndex].type != TankPlayer &&
-      player[playerIndex].type != ComputerPlayer) {
+  if (!player[playerIndex].isHuman() && !player[playerIndex].isBot()) {
     rejectPlayer(playerIndex, RejectBadType);
         return;
   } else if (t == NoTeam) {
     rejectPlayer(playerIndex, RejectBadTeam);
         return;
-  } else if (t == ObserverTeam && player[playerIndex].type == ComputerPlayer) {
+  } else if (t == ObserverTeam && player[playerIndex].isBot()) {
     rejectPlayer(playerIndex, RejectServerFull);
     return;
   } else if (numplayersobs == maxPlayers) {
@@ -1963,7 +1956,7 @@ static void addPlayer(int playerIndex)
   // send new player updates on each player, all existing flags, and all teams.
   // don't send robots any game info.  watch out for connection being closed
   // because of an error.
-  if (player[playerIndex].type != ComputerPlayer) {
+  if (!player[playerIndex].isBot()) {
     int i;
     if (player[playerIndex].isConnected()) {
       sendTeamUpdate(playerIndex);
@@ -1997,7 +1990,8 @@ static void addPlayer(int playerIndex)
 
 #ifdef TIMELIMIT
   // send time update to new player if we're counting down
-  if (countdownActive && clOptions->timeLimit > 0.0f && player[playerIndex].type != ComputerPlayer) {
+  if (countdownActive && clOptions->timeLimit > 0.0f
+      && !player[playerIndex].isBot()) {
     float timeLeft = clOptions->timeLimit - (TimeKeeper::getCurrent() - gameStartTime);
     if (timeLeft < 0.0f) {
       // oops
@@ -2536,7 +2530,8 @@ static void getSpawnLocation(int playerId, float* spawnpos, float *azimuth)
     player[playerId].setRestartOnBase(false);
   }
   else {
-    bool onGroundOnly = (!clOptions->respawnOnBuildings) || (player[playerId].type == ComputerPlayer);
+    bool onGroundOnly = !clOptions->respawnOnBuildings
+      || player[playerId].isBot();
     const float size = BZDB.eval(StateDatabase::BZDB_WORLDSIZE);
     ObstacleLocation *building;
 
@@ -2723,7 +2718,8 @@ static void playerAlive(int playerIndex)
     return;
   }
   
-  if (player[playerIndex].type == ComputerPlayer && BZDB.isTrue(StateDatabase::BZDB_DISABLEBOTS)) {
+  if (player[playerIndex].isBot()
+      && BZDB.isTrue(StateDatabase::BZDB_DISABLEBOTS)) {
     sendMessage(ServerPlayer, playerIndex, "I'm sorry, we do not allow bots on this server.");
     removePlayer(playerIndex, "ComputerPlayer");
     return;
@@ -3524,15 +3520,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
   switch (code) {
     // player joining
     case MsgEnter: {
-      // data: type, team, name, email
-      uint16_t type;
-      int16_t team;
-      buf = nboUnpackUShort(buf, type);
-      buf = nboUnpackShort(buf, team);
-      player[t].type = PlayerType(type);
-      player[t].team = TeamColor(team);
-      buf = nboUnpackString(buf, player[t].callSign, CallSignLen);
-      buf = nboUnpackString(buf, player[t].email, EmailLen);
+      buf = player[t].unpackEnter(buf);
       addPlayer(t);
       player[t].debugAdd(t);
       break;
@@ -3842,7 +3830,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
       buf = state.unpack(buf);
       if (t != id) {
 	// Should be a Robot or a cheater
-	if ((id >= curMaxPlayers) || (player[id].type != ComputerPlayer)) {
+	if ((id >= curMaxPlayers) || !player[id].isBot()) {
 	  // FIXME - Commented out autokick occasionally being kicked
 	  // out with Robot
 	  // Should check why!
@@ -4385,7 +4373,7 @@ int main(int argc, char **argv)
     bool someoneIsConnected = false;
     for (p = 0; p < curMaxPlayers; p++) {
       if (player[p].isPlaying() &&
-	  player[p].type == TankPlayer &&
+	  player[p].isHuman() &&
 	  player[p].nextping - tm < waitTime) {
 	waitTime = player[p].nextping - tm;
 	someoneIsConnected = true;
@@ -4774,7 +4762,7 @@ int main(int argc, char **argv)
 
     // send lag pings
     for (int j=0;j<curMaxPlayers;j++) {
-      if (player[j].isPlaying() && player[j].type == TankPlayer
+      if (player[j].isPlaying() && player[j].isHuman()
 	  && player[j].nextping-tm < 0) {
 	player[j].pingseqno = (player[j].pingseqno + 1) % 10000;
 	if (player[j].pingpending) // ping lost
@@ -4925,7 +4913,7 @@ int main(int argc, char **argv)
 
 	  // simple ruleset, if player sends a MsgShotBegin over TCP
 	  // he/she must not be using the UDP link
-	  if (clOptions->requireUDP && (player[i].type != ComputerPlayer)) {
+	  if (clOptions->requireUDP && !player[i].isBot()) {
 	    if (code == MsgShotBegin) {
 	      char message[MessageLen];
 	      sprintf(message,"Your end is not using UDP, turn on udp");

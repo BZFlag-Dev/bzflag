@@ -452,6 +452,51 @@ void PlayerInfo::setDead() {
   state = PlayerDead;
 };
 
+bool PlayerInfo::isBot() {
+  return type == ComputerPlayer;
+};
+
+bool PlayerInfo::isHuman() {
+  return type == TankPlayer;
+};
+
+void *PlayerInfo::packUpdate(void *buf) {
+  buf = nboPackUShort(buf, uint16_t(type));
+  buf = nboPackUShort(buf, uint16_t(team));
+  buf = nboPackUShort(buf, uint16_t(wins));
+  buf = nboPackUShort(buf, uint16_t(losses));
+  buf = nboPackUShort(buf, uint16_t(tks));
+  buf = nboPackString(buf, callSign, CallSignLen);
+  buf = nboPackString(buf, email, EmailLen);
+  return buf;
+};
+
+void *PlayerInfo::unpackEnter(void *buf) {
+  // data: type, team, name, email
+  uint16_t _type;
+  int16_t _team;
+  buf = nboUnpackUShort(buf, _type);
+  buf = nboUnpackShort(buf, _team);
+  type = PlayerType(_type);
+  team = TeamColor(_team);
+  buf = nboUnpackString(buf, callSign, CallSignLen);
+  buf = nboUnpackString(buf, email, EmailLen);
+  return buf;
+};
+
+void PlayerInfo::getLagStats(char* msg) {
+  if ((state > PlayerInLimbo) && (type == TankPlayer)) {
+    sprintf(msg,"%-16s : %3d +- %2dms %s", callSign,
+	    int(lagavg * 1000),
+	    int(jitteravg * 1000),
+	    accessInfo.verified ? "(R)" : "");
+    if (lostavg >= 0.01f)
+      sprintf(msg + strlen(msg), " %d%% lost/ooo", int(lostavg * 100));
+  } else {
+    msg[0] = 0;
+  }
+};
+
 // Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***

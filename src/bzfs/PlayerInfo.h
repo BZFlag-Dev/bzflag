@@ -132,6 +132,11 @@ public:
   bool        isDead();
   void        setAlive();
   void        setDead();
+  bool        isBot();
+  bool        isHuman();
+  void       *packUpdate(void *buf);
+  void       *unpackEnter(void *buf);
+  void        getLagStats(char* msg);
 private:
     // player access
     PlayerAccessInfo accessInfo;
@@ -154,9 +159,9 @@ private:
 #endif
     // current state of player
     ClientState state;
-public:
     // type of player
     PlayerType type;
+public:
     // player's pseudonym
     char callSign[CallSignLen];
     // player's email address
