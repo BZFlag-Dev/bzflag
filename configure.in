@@ -290,8 +290,6 @@ AC_OUTPUT(Makefile
           package/Makefile
           data/Makefile
           data/l10n/Makefile
-          bzwtransform/Makefile
-          debian/Makefile
           misc/Makefile
           include/Makefile
           package/linux/Makefile

@@ -1,4 +1,4 @@
-SUBDIRS = src man package data bzwtransform debian misc include
+SUBDIRS = src man package data misc include
 
 package: FORCE
 	cd package && $(MAKE) targets

@@ -1,1 +1,0 @@
-EXTRA_DIST = bzwTransform.cxx input.bzt
