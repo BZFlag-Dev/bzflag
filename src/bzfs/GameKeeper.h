@@ -49,6 +49,7 @@ public:
     ~Player();
 
     int            getIndex();
+    static int     getFreeIndex(int min, int max);
     static Player *getPlayerByIndex(int _playerIndex);
     static int     count();
     static void    updateLatency(float &waitTime);
@@ -65,6 +66,8 @@ public:
     void          *packAdminInfo(void *buf);
     void          *packPlayerUpdate(void *buf);
     void           signingOn(bool ctf);
+    void           close();
+    static void    clean();
 
     // players
     PlayerInfo        player;
@@ -84,8 +87,9 @@ public:
     Score             score;
     Authentication    authentication;
   private:
-    static Player *playerList[PlayerSlot];
-    int    playerIndex;
+    static Player    *playerList[PlayerSlot];
+    int               playerIndex;
+    bool              closed;
   };
   class Flag {
   };
@@ -100,6 +104,10 @@ inline GameKeeper::Player *GameKeeper::Player::getPlayerByIndex(int
 								_playerIndex)
 {
   if (_playerIndex < 0 || _playerIndex >= PlayerSlot)
+    return NULL;
+  if (!playerList[_playerIndex])
+    return NULL;
+  if (playerList[_playerIndex]->closed)
     return NULL;
   return playerList[_playerIndex];
 }

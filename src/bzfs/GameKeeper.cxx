@@ -26,7 +26,7 @@ GameKeeper::Player::Player(int _playerIndex,
 			   const struct sockaddr_in &clientAddr, int fd):
   player(_playerIndex), lagInfo(&player),
   lastState(&::lastState[_playerIndex]),
-  playerIndex(_playerIndex)
+  playerIndex(_playerIndex), closed(false)
 {
   playerList[playerIndex] = this;
 
@@ -48,7 +48,8 @@ int GameKeeper::Player::count()
   int     count = 0;
 
   for (int i = 0; i < PlayerSlot; i++)
-    if ((playerData = playerList[i]) && playerData->player.isPlaying())
+    if ((playerData = playerList[i]) && !playerData->closed
+	&& playerData->player.isPlaying())
       count++;
   return count;
 }
@@ -59,7 +60,7 @@ void GameKeeper::Player::updateLatency(float &waitTime)
   int p;
 
   for (p = 0; p < PlayerSlot; p++)
-    if ((playerData = playerList[p])) {
+    if ((playerData = playerList[p]) && !playerData->closed) {
 
       // get time for next lagping
       playerData->lagInfo.updateLatency(waitTime);
@@ -80,7 +81,8 @@ void GameKeeper::Player::dumpScore()
   std::cout << "\n#players\n";
   int p;
   for (p = 0; p < PlayerSlot; p++)
-    if ((playerData = playerList[p]) && playerData->player.isPlaying()) {
+    if ((playerData = playerList[p]) && !playerData->closed
+	&& playerData->player.isPlaying()) {
       playerData->score.dump();
       std::cout << ' ' << playerData->player.getCallSign() << std::endl;
     }
@@ -96,8 +98,8 @@ int GameKeeper::Player::anointRabbit(int oldRabbit)
   bool    goodRabbitSelected = false;
 
   for (i = 0; i < PlayerSlot; i++)
-    if ((playerData = playerList[i]))
-      if (playerData->player.canBeRabbit(true)) {
+    if ((playerData = playerList[i]) && !playerData->closed
+	&& playerData->player.canBeRabbit(true)) {
 	bool  goodRabbit = i != oldRabbit && playerData->player.isAlive();
 	float ratio      = playerData->score.ranking();
 	bool  select     = false;
@@ -148,13 +150,13 @@ std::vector<int> GameKeeper::Player::allowed(PlayerAccessInfo::AccessPerm
   Player* playerData;
 
   if (targetPlayer != -1) {
-    if ((playerData = playerList[targetPlayer]) &&
-	playerData->accessInfo.hasPerm(right))
+    if ((playerData = playerList[targetPlayer]) && !playerData->closed
+	&& playerData->accessInfo.hasPerm(right))
       receivers.push_back(targetPlayer);
   } else {
     for (int i = 0; i < PlayerSlot; i++)
-      if ((playerData = playerList[i]) &&
-	  playerData->accessInfo.hasPerm(right))
+      if ((playerData = playerList[i]) && !playerData->closed
+	  && playerData->accessInfo.hasPerm(right))
 	receivers.push_back(i);
   }
 
@@ -172,6 +174,8 @@ bool GameKeeper::Player::loadEnterData(void *buf,
   for (int i = 0; i < PlayerSlot; i++) {
     Player *otherData = playerList[i];
     if (i == playerIndex || !otherData || !otherData->player.isPlaying())
+      continue;
+    if (otherData->closed)
       continue;
     if (!strcasecmp(otherData->player.getCallSign(), player.getCallSign())) {
       rejectCode   = RejectRepeatCallsign;
@@ -193,8 +197,8 @@ int GameKeeper::Player::getPlayerIDByName(const std::string &name)
 {
   Player* playerData;
   for (int i = 0; i < PlayerSlot; i++)
-    if ((playerData = playerList[i]) &&
-	(playerData->accessInfo.getName() == name))
+    if ((playerData = playerList[i]) && !playerData->closed
+	&& (playerData->accessInfo.getName() == name))
       return i;
   return -1;
 }
@@ -203,8 +207,29 @@ void GameKeeper::Player::reloadAccessDatabase()
 {
   Player* playerData;
   for (int i = 0; i < PlayerSlot; i++)
-    if ((playerData = playerList[i]))
+    if ((playerData = playerList[i]) && !playerData->closed)
       playerData->accessInfo.reloadInfo();
+}
+
+void GameKeeper::Player::close()
+{
+  closed = true;
+}
+
+void GameKeeper::Player::clean()
+{
+  Player* playerData;
+  for (int i = 0; i < PlayerSlot; i++)
+    if ((playerData = playerList[i]) && playerData->closed)
+      delete playerData;  
+}
+
+int GameKeeper::Player::getFreeIndex(int min, int max)
+{
+  for (int i = min; i < max; i++)
+    if (!playerList[i])
+      return i;
+  return max;
 }
 
 // Local Variables: ***

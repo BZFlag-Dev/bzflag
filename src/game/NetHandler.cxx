@@ -68,7 +68,7 @@ void NetHandler::destroyHandlers() {
 void NetHandler::setFd(fd_set *read_set, fd_set *write_set, int &maxFile) {
   for (int i = 0; i < maxHandlers; i++) {
     NetHandler *player = netPlayer[i];
-    if (player) {
+    if (player && !player->closed) {
       _FD_SET(player->fd, read_set);
       if (player->outmsgSize > 0)
 	_FD_SET(player->fd, write_set);
@@ -114,7 +114,8 @@ int NetHandler::udpReceive(char *buffer, struct sockaddr_in *uaddr,
   int pi;
   udpLinkRequest = false;
   for (pi = 0; pi < maxHandlers; pi++)
-    if (netPlayer[pi] && netPlayer[pi]->isMyUdpAddrPort(*uaddr)) {
+    if (netPlayer[pi] && !netPlayer[pi]->closed
+	&& netPlayer[pi]->isMyUdpAddrPort(*uaddr)) {
       id = pi;
       break;
     }
@@ -122,7 +123,8 @@ int NetHandler::udpReceive(char *buffer, struct sockaddr_in *uaddr,
     // It is a UDP lInk Request ... try to match it
     uint8_t index;
     buf = nboUnpackUByte(buf, index);
-    if ((index < maxHandlers) && netPlayer[index] && !netPlayer[index]->udpin)
+    if ((index < maxHandlers) && netPlayer[index] && !netPlayer[index]->closed
+	&& !netPlayer[index]->udpin)
       if (!memcmp(&netPlayer[index]->uaddr.sin_addr, &uaddr->sin_addr,
 		  sizeof(uaddr->sin_addr))) {
 	id = index;
@@ -151,7 +153,7 @@ than %s:%d\n",
     DEBUG2("uread() discard packet! %s:%d choices p(l) h:p",
 	   inet_ntoa(uaddr->sin_addr), ntohs(uaddr->sin_port));
     for (pi = 0; pi < maxHandlers; pi++) {
-      if (netPlayer[pi])
+      if (netPlayer[pi] && !netPlayer[pi]->closed)
 	DEBUG3(" %d(%d-%d) %s:%d", pi, netPlayer[pi]->udpin,
 	       netPlayer[pi]->udpout,
 	       inet_ntoa(netPlayer[pi]->uaddr.sin_addr),
@@ -482,7 +484,7 @@ void NetHandler::flushUDP()
 
 void NetHandler::flushAllUDP() {
   for (int i = 0; i < maxHandlers; i++) {
-    if (netPlayer[i])
+    if (netPlayer[i] && !netPlayer[i]->closed)
       netPlayer[i]->flushUDP();
   }
   pendingUDP = false;
@@ -637,7 +639,8 @@ int NetHandler::whoIsAtIP(const std::string& IP) {
   NetHandler *player;
   for (int v = 0; v < maxHandlers; v++) {
     player = netPlayer[v];
-    if (player && !strcmp(player->peer.getDotNotation().c_str(), IP.c_str())) {
+    if (player && !player->closed
+	&& !strcmp(player->peer.getDotNotation().c_str(), IP.c_str())) {
       position = v;
       break;
     }

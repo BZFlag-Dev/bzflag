@@ -1343,11 +1343,7 @@ static void acceptClient()
      minPlayerId = MaxPlayers;
      maxPlayerId = MaxPlayers + ReplayObservers;
   }
-  for (playerIndex = minPlayerId; playerIndex < maxPlayerId; playerIndex++) {
-    if (!GameKeeper::Player::getPlayerByIndex(playerIndex)) {
-      break;
-    }
-  }
+  playerIndex = GameKeeper::Player::getFreeIndex(minPlayerId, maxPlayerId);
 
   if (playerIndex < maxPlayerId) {
     DEBUG1("Player [%d] accept() from %s:%d on %i\n", playerIndex,
@@ -2170,7 +2166,7 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
     sendTeamUpdate(-1, teamNum);
   }
 
-  delete playerData;
+  playerData->close();
 
   if (wasPlaying) {
     // 'fixing' the count after deleting player 
@@ -4795,6 +4791,9 @@ int main(int argc, char **argv)
 
     // Fire world weapons
     world->getWorldWeapons().fire();
+
+    // Clean pending players
+    GameKeeper::Player::clean();
   }
 
   serverStop();
