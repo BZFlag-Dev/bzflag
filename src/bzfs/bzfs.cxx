@@ -2302,6 +2302,9 @@ static char *getDirectMessageBuffer()
   return &sMsgBuf[2*sizeof(short)];
 }
 
+// FIXME? 4 bytes before msg must be valid memory, will get filled in with len+code
+// usually, the caller gets a buffer via getDirectMessageBuffer(), but for example
+// for MsgBeginShot the receiving buffer gets used directly
 static void directMessage(int playerIndex, uint16_t code, int len, const void *msg)
 {
   if (player[playerIndex].fd == NotConnected)
@@ -2310,11 +2313,6 @@ static void directMessage(int playerIndex, uint16_t code, int len, const void *m
   // send message to one player
   void *bufStart = (char *)msg - 2*sizeof(short);
 
-  if (bufStart != sMsgBuf) {
-    DEBUG1("PROGRAMMING ERROR: NOT USING DIRECT MESSAGE BUFFER");
-    memmove(getDirectMessageBuffer(), msg, len);
-    bufStart = sMsgBuf;
-  }
   void *buf = bufStart;
   buf = nboPackUShort(buf, uint16_t(len));
   buf = nboPackUShort(buf, code);
@@ -5334,7 +5332,7 @@ static void shotFired(int playerIndex, void *buf, int len)
     } // end is limit 
   } // end of player has flag 
 
-  broadcastMessage(MsgShotBegin, len, buf); 
+  broadcastMessage(MsgShotBegin, len, buf);
 
 }
 
