@@ -130,6 +130,7 @@ AC_LANG_RESTORE
 AC_CHECK_HEADERS( \
 	GL/glx.h \
 	X11/Xlib.h \
+	bstring.h \
 	linux/input.h \
 	sys/param.h \
 	unistd.h \
