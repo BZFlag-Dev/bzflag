@@ -5633,6 +5633,7 @@ void			startPlaying(BzfDisplay* _display,
     joinRequested    = true;
     controlPanel->addMessage("Trying...");
   } else {
+    mainMenu->createControls();
     HUDDialogStack::get()->push(mainMenu);
   }
 

@@ -39,8 +39,6 @@ void leaveGame();
 MainMenu::MainMenu() : HUDDialog(), joinMenu(NULL), loginMenu(NULL),
 		       optionsMenu(NULL), quitMenu(NULL)
 {
-  // add controls
-  createControls();
 }
 
 void	  MainMenu::createControls()
