@@ -1756,7 +1756,7 @@ murrda			# es - shit (slang)
 nema			# es - cock/penis (n~ema)
 nido			# es - cunt (mexican slang)
 ojete                   # es - asshole
-orto			# es - ass (argentinian and uruguayan)
+# orto			# es - ass (argentinian and uruguayan)
 panocha                 # es - pussy (extremely vulgar, mex)
 peha                    # es - dick
 pelotuda		# es - dumbass
