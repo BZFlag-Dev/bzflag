@@ -1,7 +1,7 @@
 [Project]
 FileName=bzadmin-pdcurses.dev
 Name=bzadmin-pdcurses
-UnitCount=37
+UnitCount=38
 Type=1
 Ver=1
 ObjFiles=
@@ -398,14 +398,14 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit38]
-FileName=..\src\bzadmin\CursesMenu.cxx
+FileName=..\src\common\TextUtils.cxx
 CompileCpp=1
-Folder=Source Files/UI
+Folder=Source Files/Common
 Compile=1
 Link=1
 Priority=1000
 OverrideBuildCmd=0
-BuildCmd=$(CPP) -c CursesMenu.cxx -o ../src/bzadmin/CursesMenu.o $(CXXFLAGS)
+BuildCmd=
 
 [Unit39]
 FileName=..\src\bzflag\ServerLink.h

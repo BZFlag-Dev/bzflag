@@ -1,7 +1,7 @@
 [Project]
 FileName=bzadmin.dev
 Name=bzadmin
-UnitCount=41
+UnitCount=42
 Type=1
 Ver=1
 ObjFiles=
@@ -458,9 +458,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit42]
-FileName=..\src\bzflag\ServerLink.h
+FileName=..\src\common\TextUtils.cxx
 CompileCpp=1
-Folder=Header Files/Common
+Folder=Source Files/Common
 Compile=1
 Link=1
 Priority=1000
