@@ -141,7 +141,7 @@ bool URLManager::beginGet(const std::string)
 #endif
 {
 #ifdef HAVE_CURL
-  CURLcode result;
+  CURLcode result = CURLE_OK;
   if (!easyHandle) {
     return false;
   }
