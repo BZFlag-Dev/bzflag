@@ -29,13 +29,13 @@ BZFlag 1.11.x (development)
 * Added animated effects for T, N, TH, O, and CL flags - Anonymous
 * BZAdmin now tells more specific reasons why it could not connect - Ian Agar
 * Client shows a MessageOfTheDay from the master server on launch - Jeff Myers
-* Add generic URL retreval class - Jeff Myers, Alfredo Tupone
+* Add generic URL retrieval class - Jeff Myers, Alfredo Tupone
 * Windows Multimedia and DirectInput joystick support - Daniel Remenak
 * bzfs can now announce to multiple public list servers - Sean Morrison
 * Global public server bans - Jeff M., Alfredo T., Daniel R., Sean M., Bryan J.
 * Linux event device joystick and force feedback support - Micah Dowty
 * Inform banned users of reason, originator, and source on login - Jeff Myers
-* Added the SHORTBAN bzfs priviledge - Anonymous, Daniel Leeds
+* Added the SHORTBAN bzfs privilege - Anonymous, Daniel Leeds
 * Added /date and /time to request server date and time - Ian Agar
 * Added arc, cone, and sphere map objects - Anonymous
 * Added user specified dynamic colors - Anonymous
