@@ -7,9 +7,10 @@
 # unexpand -t 8 -a file > file2  (then do some moving)
 #
 # That program takes the tab positions into account.
-# I don't know how standard it is, but I would suggest
-# having the script simply bail on that conversion if
-# it isn't present.
+# I don't know how standard it is (it is in the debian
+# coreutils package if that's any indication), but I
+# would suggest having the script simply bail on that
+# conversion if it isn't present.
 
 
 # Note: this script will not alter any files that already
