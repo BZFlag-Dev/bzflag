@@ -31,6 +31,9 @@
 /* On windows, strcasecmp is really stricmp */
 #define HAVE_STRICMP 1
 
+/* Define to 1 if you have regex stuff available */
+/* undef HAVE_REGEX_H */
+
 // define our OS
 #ifndef BZ_BUILD_OS
  	#if defined(_MSC_VER) && (_MSC_VER == 1100)

@@ -13,12 +13,6 @@
 #ifndef __WORDFILTER_H__
 #define __WORDFILTER_H__
 
-#ifdef _WIN32
-#  undef HAVE_REGEX_H
-#else
-#  define HAVE_REGEX_H 1
-#endif
-
 #include <string>
 #include <vector>
 #include <set>
