@@ -105,7 +105,6 @@ static const char copyright[] = "Copyright (c) 1993 - 2003 Tim Riker";
 #include "PackVars.h"
 
 // types for reading world files
-#include "WorldFileObject.h"
 #include "WorldFileObstacle.h"
 #include "CustomBox.h"
 #include "CustomPyramid.h"
