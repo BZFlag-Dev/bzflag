@@ -134,6 +134,22 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
   option->update();
   list.push_back(option);
 
+  option = new HUDuiList;
+  option->setFontFace(fontFace);
+  option->setLabel("Depth Buffer:");
+  option->setCallback(callback, (void*)"8");
+  options = &option->getList();
+  GLint value;
+  glGetIntegerv(GL_DEPTH_BITS, &value);
+  if (value == 0) {
+    options->push_back(std::string("Not available"));
+  } else {
+    options->push_back(std::string("Off"));
+    options->push_back(std::string("On"));
+  }
+  option->update();
+  list.push_back(option);
+
 #if defined(DEBUG_RENDERING)
   option = new HUDuiList;
   option->setFontFace(fontFace);
@@ -281,6 +297,7 @@ void			DisplayMenu::resize(int width, int height)
     tex = (HUDuiList*)list[i++];
     ((HUDuiList*)list[i++])->setIndex(renderer->useQuality());
     ((HUDuiList*)list[i++])->setIndex(BZDB.isTrue("shadows"));
+    ((HUDuiList*)list[i++])->setIndex(BZDBCache::zbuffer);
 #if defined(DEBUG_RENDERING)
     ((HUDuiList*)list[i++])->setIndex(renderer->useHiddenLine() ? 1 : 0);
     ((HUDuiList*)list[i++])->setIndex(renderer->useWireframe() ? 1 : 0);
