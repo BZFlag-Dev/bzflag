@@ -10,9 +10,9 @@ BZFlag 1.7e3
 * USB joystick support - Nick Sayer
 * new (faster?) radar jamming code - Mathias Gumz
 * sort by score - Colin Bayer
-* world file rad -> deg - TimR
-* add player flag display to HUD - TimR (prompted by Colin Bayer)
-* random height pyramids too - TimR
+* world file rad -> deg - Tim Riker
+* add player flag display to HUD - Tim Riker (prompted by Colin Bayer)
+* random height pyramids too - Tim Riker
 * dim rogue color when blind - Colin Bayer
 * colorize shots on radar - Colin Bayer
 
@@ -23,7 +23,7 @@ BZFlag 1.7e2
 * limbo flag bugfix - chestal
 * *bsd cleanups from new ports maintainer - Nick Sayer
 * scrollback cleanups - crs
-* minimum size now 256x192 - TimR
+* minimum size now 256x192 - Tim Riker
 * various bug fixes - many
 
 BZFlag 1.7e1
@@ -35,21 +35,21 @@ BZFlag 1.7e1
 * Explosions are larger - frank
 * Scrollback and Line wrap (use pageup/down keys) - Digit1
 * radar tank dots are larger - frank
-* robots have playerxx names and player's email - TimR
-* colorize console messages - TimR
+* robots have playerxx names and player's email - Tim Riker
+* colorize console messages - Tim Riker
 * robots score when killing 'owner' - chestal <thilo@unix-ag.org>
 * flags under high buildings - Jeremiah
 * "world" section in world from file - Jeremiah
 * dim paused/nr tanks on radar - chestal
-* fix bzfls for servers on non-5155 - TimR
+* fix bzfls for servers on non-5155 - Tim Riker
 * pgup/pgdn support in help menu - Kris Verbeeck
-* stop using signal() as suggested by Frank Thilo - TimR
+* stop using signal() as suggested by Frank Thilo - Tim Riker
 * Triple buffering support (actually n way buffering) - XiGraphics
 * Joystick support - XiGraphics
 * teleporter shot handling improved - chestal
-* udp network code reworking to select() on one server port - TimR
+* udp network code reworking to select() on one server port - Tim Riker
 * rogue tank placement on enter - chestal
-* pseudo variable height buildings in cf mode - TimR
+* pseudo variable height buildings in cf mode - Tim Riker
 * don't drain and flush audio on solaris - frank
 * alpha Macintosh port - Darrell Walisser <dwaliss1@purdue.edu>
 * quick message support - Kris Verbeeck
