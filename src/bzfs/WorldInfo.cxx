@@ -201,6 +201,9 @@ InBuildingType WorldInfo::inBuilding(ObstacleLocation **location,
   PyramidList::iterator pyrit;
   TeleporterList::iterator telit;
 
+  if (height < Epsilon)
+    height = Epsilon;
+
   for (it = bases.begin(); it != bases.end(); ++it) {
     ObstacleLocation &base = *it;
     if ((base.pos[2] < (z + height))
