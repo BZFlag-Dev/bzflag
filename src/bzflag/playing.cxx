@@ -2588,7 +2588,7 @@ static void		handleServerMessage(bool human, uint16_t code,
           
           int playerIndex = lookupPlayerIndex(playerId);        
           Player* player = getPlayerByIndex(playerIndex);
-          
+
           if (player != NULL) {
             int color = player->getTeam();
             if ((color < 0) || (color > 4)) {
