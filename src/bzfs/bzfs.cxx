@@ -863,11 +863,13 @@ static void sendMessageToListServerForReal(int index)
       // encode ping reply as ascii hex digits
       char gameInfo[PingPacketHexPackedSize];
       pingReply.packHex(gameInfo);
-      sprintf(msg, "GET http://%s%s?action=SETNUM&nameport=%s&gameinfo=%s\n", 
+      sprintf(msg, "GET http://%s%s?action=ADD&nameport=%s&version=%s&gameinfo=%s&title=%s\n", 
 	      link.hostname.c_str(),
 	      link.pathname.c_str(),
 	      clOptions->publicizedAddress.c_str(),
-	      gameInfo);
+	      getServerVersion(),
+	      gameInfo,
+	      url_encode(clOptions->publicizedTitle).c_str());
     }
   }
   DEBUG3("%s",msg);
