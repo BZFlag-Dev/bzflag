@@ -284,7 +284,7 @@ in the \fInum-flags\fR total.
 Antidote flags are provided for players with bad flags.
 .TP
 \fB-sl \fIid num\fR
-Restrict flag \fIid\fR to \fInum\R shots.
+Restrict flag \fIid\fR to \fInum\fR shots.
 .TP
 \fB\-speedtol \fIfactor\fR
 Override the default speed auto kick factor. The factor should not be less then 1.0. The factor is a multiplyer.
