@@ -181,16 +181,6 @@ BZAdminClient::ServerCode BZAdminClient::getServerString(std::string& str) {
 	}
       }
       
-      // parse banlist
-      static int parsingBanlist = 0;
-       if (parsingBanlist == 0 && returnString == "IP Ban List")
-	parsingBanlist = 1;
-      else if (parsingBanlist == 1 && returnString == "-----------")
-	parsingBanlist = 2;
-      else if (parsingBanlist == 2) {
-	ui->outputMessage("--- PARSING BAN LIST");
-      }
-
       // is the message for me?
       TeamColor dstTeam = (dst >= 244 && dst <= 250 ?
 			   TeamColor(250 - dst) : NoTeam);
