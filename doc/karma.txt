@@ -27,7 +27,8 @@ There are two main objectives:
 The player database keeps entries for registered players. Each entry must at
 least contain the player's callsign, email address and some data to allow
 for authentication. This data must be accessible by public bzfs servers so
-that these can screen joining players.
+that these can screen joining players. Any changes require private key signed
+updates.
 
 
 3) Karma System:
@@ -38,7 +39,7 @@ reputation within the community, i.e. well-known and nice players should
 have a high karma value whereas known cheaters will hopefully get a low
 value. 
 
-BZFlag servers can access this information and for example prevent peopel
+BZFlag servers can access this information and for example prevent people
 with too bad karma from joining the server. Players must have some means to
 rate other players, thus modifying their karma. It is important that the
 karma system is balanced and robust against abuse.
@@ -63,12 +64,14 @@ a) player database / authentication
 * Should a client be able to manage several identities from which a player
   can choose?
   
-* Should it be possible to play without registering as a guest?
+* It be possible to play without registering as a guest on open servers. This
+  might just be a transparent temporary registration if that is easier to
+  deal with.
   
 * Security issues: Should the private key be encrypted with a passphrase?
-  Should the list server and each bzflag server also have to authenticate
+  Should the list server and each BZFlag server also have to authenticate
   themselves? I guess we do not have too high security standards here, so
-  for example we do not need to encrypt all communication to prevent sessin
+  for example we do not need to encrypt all communication to prevent session
   hijacking and other attacks.
   
 * Is it a good idea to allow a registered player to authenticate himself and
@@ -80,7 +83,7 @@ a) player database / authentication
 * The data that is stored for each player in the database could include:
   - callsign (required)
   - public key (required)
-  - email address
+  - email address (required)
   - full name
   - statistics: time of registration (age), last time of play, total playing
                 time, time spent on different servers, with different
@@ -95,14 +98,14 @@ a) player database / authentication
   server settings. 
   
 * Registration process: 
-  Registration should be easy and can either be done with the bzflag client
-  or an extra executable for maanging identities. The client will connect to
+  Registration should be easy and can either be done with the BZFlag client
+  or an extra executable for managing identities. The client will connect to
   the list server and send the data for the new player. The list server will
   acknowledge this if there is no callsign clash.
   
   For changing the player data (like email address) later on, the client
   first needs to successfully authenticate itself by using the usual
-  challenge/responce procedure.
+  challenge/response procedure.
   
 
 
@@ -111,7 +114,7 @@ b) karma system
 * A new player starts with a neutral karma value, I guess 0 is a natural
   starting point :-). Karma might be an integer of a floating point value.
   
-* Each bzflag server can be configured to require a minimum karma value for
+* Each BZFlag server can be configured to require a minimum karma value for
   each player. When a player does not meet this criterion, he will be
   rejected. Hopefully, this reduced cheating on these 'high quality'
   servers. Of course there should also be some servers which are open to
@@ -120,31 +123,41 @@ b) karma system
   and thus allowing everyone to play on their server or requiring very high
   karma and possible improve the quality of people playing, but at the cost of
   ruling out many players and possibly having a very empty server.
+
+* the server could also be configured with a minimum admin karma. Players that
+  meet the criteria would be able to change server options, kick players etc.
+  We may want multiple levels of admin access.
   
 * There must be a convenient way for a player to rate another player. I
   guess it's best to be able to do this in-game.
   Should rating just be done by using +/- resp. up/down? Or by giving a
   value from -5 to 5? For this to be easy, the player to be rated must be
-  selected in some way. How?
+  selected in some way. How? A player should be able to see the rank he has
+  given other players easily. Perhaps even on the scoreboard.
   
 * When doing ratings in-game, either the client or the server must send
-  messages to the list server. It's probably best if the client does this
-  directly, as it must be made sure that these ratings are really originating
-  from the correct player. The server might otherwise fake ratings.
+  messages to the list server. It's probably best if the client sends a
+  signed update to the server and the server forwards it (with game updates
+  as well) to the list server and then updates the rated player info if the
+  list server verifies the signed update packet. The signature is required
+  so that the list server can verify the source of the ranking.
+  Servers might otherwise fake ratings.
   
-* Should karma value and/or individual ratings be publicy visible / visible
-  to the player himself?
+* Should karma value and/or individual ratings be publicly visible / visible
+  to the player himself? Tim thinks so. Players should be able to see who
+  has ranked them, but not what rank they have been given. They should be
+  able to see all the players they have ranked at what rank they have given
+  them. They should also be able to see any player's rank including their own.
   
-* The karma value of a palyer must be calculated as a function of all
+* The karma value of a player must be calculated as a function of all
   individual ratings from other players. This must be done in a 'fair' way
   that is robust against misuse. A possible misuse would be a player A
   registering a lot of identities and giving a low rating to player B with
-  all of his identities. So, ratings must be weighted by karma or player
+  all of his identities. So, ratings must be weighted by karma and player
   age. This must be designed very carefully, so I suggest stealing this
   from somewhere.
-  Depending on the exact formula used it might be necessary to not only
-  store the resulting karma value for each player, but also every rating
-  given.
+  It will be necessary to store the resulting karma value for each player
+  as well as every rating given.
 
 * Do we want or need some privileged players whose ratings have more weight?
   This might be needed to get the system started.
