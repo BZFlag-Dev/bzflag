@@ -133,6 +133,12 @@ public:
   static int  whoIsAtIP(const std::string& IP);
   in_addr     getIPAddress();
   const char *getHostname();
+  /**
+     Notify that the channel is going to be close.
+     In the meantime any pwrite call will do nothing.
+     Cannot be undone.
+  */
+  void        closing();
 
 private:
   int  send(const void *buffer, size_t length);
@@ -165,6 +171,9 @@ private:
   int tcplen;
   // current TCP msg
   char tcpmsg[MaxPacketLen];
+
+  // Closing flag
+  bool closed;
 
   // output buffer
   int outmsgOffset;

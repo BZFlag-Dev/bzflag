@@ -188,7 +188,7 @@ NetHandler *NetHandler::netPlayer[maxHandlers] = {NULL};
 
 NetHandler::NetHandler(PlayerInfo* _info, const struct sockaddr_in &clientAddr,
 		       int _playerIndex, int _fd)
-  : info(_info), playerIndex(_playerIndex), fd(_fd), tcplen(0),
+  : info(_info), playerIndex(_playerIndex), fd(_fd), tcplen(0), closed(false),
     outmsgOffset(0), outmsgSize(0), outmsgCapacity(0), outmsg(NULL),
     udpin(false), udpout(false), toBeKicked(false) {
   // store address information for player
@@ -358,12 +358,20 @@ int NetHandler::bufferedSend(const void *buffer, size_t length) {
   return 0;
 }
 
+void NetHandler::closing()
+{
+  closed = true;
+}
+
 int NetHandler::pwrite(const void *b, int l) {
 
   if (l == 0) {
     return 0;
   }
   
+  if (closed)
+    return 0;
+
   void *buf = (void *)b;
   uint16_t len, code;
   buf = nboUnpackUShort(buf, len);
