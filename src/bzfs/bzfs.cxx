@@ -3445,6 +3445,7 @@ static void randomFlag(int flagIndex)
 {
   // pick a random flag
   //FIXME for now just save an iterator that loops over all flags in order
+  //      but skips team flags
   static std::set<FlagDesc*>::iterator randomIt = allowedFlags.end();
 
   if (randomIt == allowedFlags.end()) {
@@ -3456,6 +3457,20 @@ static void randomFlag(int flagIndex)
       randomIt = allowedFlags.begin();
     }
   }
+  std::set<FlagDesc*>::iterator startIt = randomIt;
+  do {
+    if (randomIt == allowedFlags.end())
+      randomIt = allowedFlags.begin();
+    if ((*randomIt)->flagTeam != NoTeam)
+      randomIt++;
+    else
+      break;
+    if (randomIt == startIt) {
+      fprintf(stderr, 
+	      "can't use random flags when only team flags are allowed\n");
+      exit(20);
+    }
+  } while (true);
 
   flag[flagIndex].flag.desc = *randomIt;
   addFlag(flagIndex);
