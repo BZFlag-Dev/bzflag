@@ -16,10 +16,6 @@ static const char copyright[] = "Copyright (c) 1993 - 2004 Tim Riker";
 #pragma warning( 4 : 4786 )
 #endif
 
-#ifdef _WIN32
-#include "win32.h"
-#endif
-
 #include "common.h"
 
 // system includes

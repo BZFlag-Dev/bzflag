@@ -27,6 +27,10 @@
 #  pragma warning(disable: 4355)
 #endif // _MSC_VER
 
+#ifdef _WIN32
+#include "win32.h"
+#endif
+
 #include <string>
 #include <sstream>
 #include <vector>

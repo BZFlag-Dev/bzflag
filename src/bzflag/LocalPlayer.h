@@ -13,10 +13,6 @@
 #ifndef	BZF_LOCAL_PLAYER_H
 #define	BZF_LOCAL_PLAYER_H
 
-#ifdef _WIN32
-#include "win32.h"
-#endif
-
 #include "common.h"
 #include "Player.h"
 #include "ShotPath.h"

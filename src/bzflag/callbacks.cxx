@@ -10,10 +10,6 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifdef _WIN32
-#include "win32.h"
-#endif
-
 #include "common.h"
 #include "LocalPlayer.h"
 #include "HUDRenderer.h"
