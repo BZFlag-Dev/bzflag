@@ -1,6 +1,12 @@
 recent bugs
 ------------
 
+- Something is wrong with the shininess I think. When I play on rabbit
+  server with only one other player which is rabbit. When I set the time of
+  day close to sunrise, as soon as the rabbit becomes visible in 3D view,
+  all buildings will turn to shiny-white. As soon as rabbit is killed,
+  it turns back to normal. Also normal, when I switch off lighting.
+
 - Server handles MsgKilled correctly, but client displays it as 'killed by                       
   unknown>'; killer id is -1=InvalidPlayer, why not ServerPlayer?  
 
