@@ -23,6 +23,7 @@
 #include <vector>
 #include <string>
 #include <map>
+#include <stdlib.h>
 
 /* local impl. headers */
 #include "WinWindow.h"
@@ -30,6 +31,7 @@
 #include "TextUtils.h"
 
 std::vector<DIDEVICEINSTANCE> DXJoystick::devices;
+std::map<std::string, LPDIRECTINPUTEFFECT> DXJoystick::effectDatabase;
 
 DXJoystick::DXJoystick() : device(NULL)
 {
@@ -330,48 +332,63 @@ void	      DXJoystick::ffRumble(int count, float delay, float duration,
 
   constantForce.lMagnitude = (LONG)(DI_FFNOMINALMAX * combined);
 
-  /*
-   * Build the actual effect
-   */
-  DWORD axes[2] = {DIJOFS_X, DIJOFS_Y};
-  LONG  dir[2] = {1, 1};
+  HRESULT success = DI_OK;
 
-  LPDIRECTINPUTEFFECT createdEffect;
+  // Generate a string to identify a specific rumble effect,
+  // based on the paramaters of the rumble
+  std::string effectType = TextUtils::format("%d|%d|%d|%d|%d", count, delay, duration, strong_motor, weak_motor);
 
-  DIEFFECT effect;
-  effect.dwSize = sizeof(DIEFFECT);
-  // coordinate system really doesn't matter for rumbles but we need to specify it.
-  effect.dwFlags = DIEFF_OBJECTOFFSETS | DIEFF_CARTESIAN;
-  // duration
-  effect.dwDuration = (DWORD)(duration * DI_SECONDS);
-  // defaults
-  effect.dwSamplePeriod = 0;
-  effect.dwGain = DI_FFNOMINALMAX;
-  effect.dwTriggerButton = DIEB_NOTRIGGER;
-  effect.dwTriggerRepeatInterval = 0;
-  // x and y axes
-  effect.cAxes = 2;
-  effect.rgdwAxes = &axes[0];
-  // direction doesn't matter
-  effect.rglDirection = &dir[0];
-  // no envelope
-  effect.lpEnvelope = NULL;
-  // use the constant force data
-  effect.cbTypeSpecificParams = sizeof(DICONSTANTFORCE);
-  effect.lpvTypeSpecificParams = &constantForce;
-  // start delay
-  effect.dwStartDelay = (DWORD)(delay * DI_SECONDS);
+  // Check if we need to create the effect
+  EffectMap::iterator itr = effectDatabase.find(effectType);
+  if (itr == effectDatabase.end()) {
 
-  // create the effect
-  HRESULT success = device->CreateEffect(GUID_ConstantForce, &effect, &createdEffect, NULL);
+    /*
+     * Wasn't in effect database, so build it
+     */
+    DWORD axes[2] = {DIJOFS_X, DIJOFS_Y};
+    LONG  dir[2] = {1, 1};
 
-  if (success != DI_OK) {
-    DXError("Could not create rumble effect", success);
-    return;
+    LPDIRECTINPUTEFFECT createdEffect;
+
+    DIEFFECT effect;
+    effect.dwSize = sizeof(DIEFFECT);
+    // coordinate system really doesn't matter for rumbles but we need to specify it.
+    effect.dwFlags = DIEFF_OBJECTOFFSETS | DIEFF_CARTESIAN;
+    // duration
+    effect.dwDuration = (DWORD)(duration * DI_SECONDS);
+    // defaults
+    effect.dwSamplePeriod = 0;
+    effect.dwGain = DI_FFNOMINALMAX;
+    effect.dwTriggerButton = DIEB_NOTRIGGER;
+    effect.dwTriggerRepeatInterval = 0;
+    // x and y axes
+    effect.cAxes = 2;
+    effect.rgdwAxes = &axes[0];
+    // direction doesn't matter
+    effect.rglDirection = &dir[0];
+    // no envelope
+    effect.lpEnvelope = NULL;
+    // use the constant force data
+    effect.cbTypeSpecificParams = sizeof(DICONSTANTFORCE);
+    effect.lpvTypeSpecificParams = &constantForce;
+    // start delay
+    effect.dwStartDelay = (DWORD)(delay * DI_SECONDS);
+
+    // create the effect
+    success = device->CreateEffect(GUID_ConstantForce, &effect, &createdEffect, NULL);
+
+    if (success != DI_OK) {
+      DXError("Could not create rumble effect", success);
+      return;
+    }
+
+	// Store the effect for later use
+	effectDatabase[effectType] = createdEffect;
   }
 
   // play the thing
-  success = createdEffect->Start(count, 0);
+  if (effectDatabase[effectType])
+    success = effectDatabase[effectType]->Start(count, 0);
 
   if (success != DI_OK) {
     // uh-oh, no worky
