@@ -614,6 +614,9 @@ AC_CHECK_FUNCS(\
 	CGLGetCurrentContext \
 	Sleep \
 	WaitForSingleObject \
+	_stricmp \
+	_strnicmp \
+	_vsnprintf \
 	asinf \
 	atan2f \
 	atanf \

@@ -60,9 +60,13 @@ extern int debugLevel;
 #  include <sys/param.h>
 #endif
 
-#if defined HAVE_STRICMP
+#ifdef HAVE__STRICMP
 #  define strcasecmp _stricmp
+#endif
+#ifdef HAVE__STRNICMP
 #  define strncasecmp _strnicmp
+#endif
+#ifdef HAVE__VSNPRINTF
 #  define vsnprintf _vsnprintf
 #endif
 

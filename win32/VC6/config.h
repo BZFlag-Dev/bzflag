@@ -110,7 +110,13 @@
 /* Define to 1 if you have the `wglGetCurrentContext' function. */
 #define HAVE_WGLGETCURRENTCONTEXT 1
 
-/* Define to 1 if you have the `vsnprintf' function. */
-#define HAVE_VSNPRINTF 1
+/* Define to 1 if you have the `_stricmp' function */
+#define HAVE__STRICMP
+
+/* Define to 1 if you have the `_strnicmp' function */
+#define HAVE__STRNICMP
+
+/* Define to 1 if you have the `_vsnprintf' function */
+#define HAVE__VSNPRINTF
 
 #endif //_VC5_6_CONFIG
