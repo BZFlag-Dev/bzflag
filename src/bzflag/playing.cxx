@@ -3720,6 +3720,9 @@ static void enteringServer(void *buf)
     }
   }
 
+  // clear now invalid token
+  startupInfo.token[0] = '\0';
+
   // send my version string
   serverLink->sendVersionString();
 
