@@ -281,7 +281,7 @@ const char *PlayerInfo::getClientVersion() {
 std::string PlayerInfo::getIdleStat() {
   std::string reply;
   if ((state > PlayerInLimbo) && (team != ObserverTeam)) {
-    reply = TextUtils::format("%-16s : %4ds", callSign,
+    reply = TextUtils::format("%s\t: %4ds", callSign,
 				int(now - lastupdate));
     if (paused) {
       reply += TextUtils::format("  paused %4ds", int(now - pausedSince));

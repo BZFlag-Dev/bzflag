@@ -46,9 +46,9 @@ void			printFatalError(const char* fmt, ...);
 // ControlPanelMessage
 //
 
-ControlPanelMessage::ControlPanelMessage(const std::string& _string)
+ControlPanelMessage::ControlPanelMessage(const std::string& _string) :
+  string(_string), numlines(0)
 {
-  this->string = _string;
 }
 
 void ControlPanelMessage::breakLines(float maxLength, int fontFace, float fontSize)
@@ -63,6 +63,7 @@ void ControlPanelMessage::breakLines(float maxLength, int fontFace, float fontSi
   int lastTab = string.rfind('\t');
 
   lines.clear();
+  numlines=0;
 
   // in order for the new font engine to draw successive lines in the right
   // color, it needs to be fed the right ansi codes at the beginning of each
@@ -81,7 +82,7 @@ void ControlPanelMessage::breakLines(float maxLength, int fontFace, float fontSi
     } else {
       n = 0;
       while ((n < lineLen) &&
-	     (fm.getStrLength(fontFace, fontSize, std::string(msg).substr(0, n)) < maxLength)) {
+	     (fm.getStrLength(fontFace, fontSize, string.substr(0, n)) < maxLength)) {
 	if (msg[n] == ESC_CHAR) {
 	  // clear the cumulative codes when we hit a reset
 	  // the reset itself will start the new cumulative string.
@@ -111,7 +112,7 @@ void ControlPanelMessage::breakLines(float maxLength, int fontFace, float fontSi
 	if (TextUtils::isWhitespace(msg[n])) {
 	  lastWhitespace = n;
 	  // Tabs break out into their own message.  These get dealt with
-	  // in ::render, which will increment x instead of y.
+	  // in ControlPanel::render, which will increment x instead of y.
 	  if (msg[n] == '\t')
 	    break;
 	}
@@ -122,7 +123,10 @@ void ControlPanelMessage::breakLines(float maxLength, int fontFace, float fontSi
       n = lastWhitespace;
 
     // message
-    lines.push_back(cumulativeANSICodes + std::string(msg, n));
+    lines.push_back(cumulativeANSICodes + std::string(msg,n));
+
+    if (msg[n] != '\t')
+      numlines++;
 
     // account for portion broken
     msg += n;
@@ -365,7 +369,8 @@ void			ControlPanel::render(SceneRenderer& renderer)
   }
   for (j = 0; i >= 0 && j < maxLines; i--) {
     // draw each line of text
-    int numLines = messages[messageMode][i].lines.size();
+    int numLines = messages[messageMode][i].numlines;
+    int numStrings = messages[messageMode][i].lines.size();
     int msgy = numLines - 1;
     int msgx = 0;
 
@@ -375,16 +380,16 @@ void			ControlPanel::render(SceneRenderer& renderer)
 
     bool isTab = false;
 
-    for (int l = 0; l < numLines; l++)  {
+    for (int l = 0; l < numStrings; l++)  {
       assert(msgy >= 0);
 
-      std::string msg = messages[messageMode][i].lines[l];
+      const std::string &msg = messages[messageMode][i].lines[l];
 
       // Tab chars move horizontally instead of vertically
       // It doesn't matter where in the string the tab char is
       // Usually it will be like <ansi><ansi><ansi>\ttext
       // We use 1 tabstop spaced 1/3 of the way across the controlpanel
-      isTab = (msg.find('\t', 0) != std::string::npos);
+      isTab = (msg.find('\t') != std::string::npos);
       if (isTab) {
 	msgx += messageAreaPixels[2] / 3;
 	msgy++;
@@ -397,9 +402,7 @@ void			ControlPanel::render(SceneRenderer& renderer)
 	fm.drawString(fx + msgx, fy + msgy * lineHeight, 0, fontFace, fontSize, msg);
 
       // next line
-      if (!isTab) {
-	msgy--;
-      }
+      msgy--;
     }
     j += numLines;
     fy += int(lineHeight * numLines);

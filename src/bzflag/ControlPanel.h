@@ -27,13 +27,13 @@
 class RadarRenderer;
 class SceneRenderer;
 
-class ControlPanelMessage {
-  public:
+struct ControlPanelMessage {
 			ControlPanelMessage(const std::string&);
     void		breakLines(float maxLength, int fontFace, float fontSize);
 
     std::string		string;
     std::vector<std::string>	lines;
+    int numlines;
 };
 
 class ControlPanel {

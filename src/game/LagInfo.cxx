@@ -48,7 +48,7 @@ void LagInfo::getLagStats(char* msg) const
     if (lastLag > lag)
       lag = lastLag;
   }
-  sprintf(msg,"%s \t: %3d +- %2dms", info->getCallSign(),
+  sprintf(msg,"%s\t: %3d +- %2dms", info->getCallSign(),
 	  lag, int(jitteravg * 1000));
   if (lostavg >= 0.01f)
     sprintf(msg + strlen(msg), " %d%% lost/ooo", int(lostavg * 100));
