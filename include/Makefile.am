@@ -1,36 +1,36 @@
 noinst_HEADERS =		\
 	Address.h		\
+	BSPSceneDatabase.h	\
+	BZDBCache.h		\
 	BaseBuilding.h		\
 	BaseResources.h		\
 	BillboardSceneNode.h	\
 	BoltSceneNode.h		\
 	BoxBuilding.h		\
-	BSPSceneDatabase.h	\
 	Bundle.h		\
 	BundleMgr.h		\
-	BZDBCache.h		\
 	BzfDisplay.h		\
 	BzfEvent.h		\
-	bzfgl.h			\
-	bzfio.h			\
 	BzfMedia.h		\
 	BzfVisual.h		\
 	BzfWindow.h		\
-	bzsignal.h		\
 	CallbackList.h		\
 	CommandManager.h	\
 	CommandsStandard.h	\
-	common.h		\
 	ConfigFileManager.h	\
 	EighthDBaseSceneNode.h	\
 	EighthDBoxSceneNode.h	\
-	EighthDimSceneNode.h	\
 	EighthDPyrSceneNode.h	\
+	EighthDimSceneNode.h	\
 	ErrorHandler.h		\
 	FileManager.h		\
 	Flag.h			\
 	FlagSceneNode.h		\
 	FlagWarpSceneNode.h	\
+	bzfgl.h			\
+	bzfio.h			\
+	bzsignal.h		\
+	common.h		\
 	global.h		\
 	Intersect.h		\
 	KeyManager.h		\
@@ -55,6 +55,7 @@ noinst_HEADERS =		\
 	PTSceneNode.h		\
 	PyramidBuilding.h	\
 	QuadWallSceneNode.h	\
+	regex.h			\
 	Ray.h			\
 	RenderNode.h		\
 	resource.h		\
