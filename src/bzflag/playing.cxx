@@ -476,6 +476,11 @@ class ComposeDefaultKey : public HUDuiDefaultKey {
     bool		keyRelease(const BzfKeyEvent&);
 };
 
+void printout(const std::string& name, void*)
+{
+  std::cout << name << " = " << BZDB->get(name) << std::endl;
+}
+
 bool			ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
 {
   bool sendIt;
@@ -518,6 +523,8 @@ bool			ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
 	  message += (silence + 8);
 	  addMessage(NULL, message);
 	}
+      } else if (strncmp(silence, "DUMP", 4) == 0) {
+	BZDB->iterate(printout, NULL);
       } else if (strncmp(silence, "UNSILENCE", 9) == 0) {
 	Player *loudmouth = getPlayerByName(silence + 10);
 	if (loudmouth) {
@@ -6358,8 +6365,8 @@ void			startPlaying(BzfDisplay* _display,
 #endif /* !defined(_WIN32) */
 
   // set the resolution (only if in full screen mode)
-  if (!BZDB->isSet("_window") && resources->hasValue("resolution")) {
-    std::string videoFormat = resources->getValue("resolution");
+  if (!BZDB->isSet("_window") && BZDB->isSet("resolution")) {
+    std::string videoFormat = BZDB->get("resolution");
     if (videoFormat.length() != 0) {
       const int format = display->findResolution(videoFormat.c_str());
       if (display->isValidResolution(format) &&

@@ -619,7 +619,7 @@ void			dumpResources(BzfDisplay* display,
   // collect new configuration
   db.addValue("udpnet", startupInfo.useUDPconnection ? "yes" : "no");
   db.addValue("callsign", startupInfo.callsign);
-  db.addValue("team", Team::getName(startupInfo.team));
+  BZDB->set("team", Team::getName(startupInfo.team));
   db.addValue("server", startupInfo.serverName);
   if (startupInfo.serverPort != ServerPort) {
     char buf[20];
@@ -651,7 +651,6 @@ void			dumpResources(BzfDisplay* display,
   if (display->getResolution() != -1 &&
       display->getResolution(display->getResolution())) {
     BZDB->set("resolution", display->getResolution(display->getResolution())->name);
-    db.addValue("resolution", display->getResolution(display->getResolution())->name);
   }
   {
     BzfKeyMap& map = getBzfKeyMap();
@@ -837,8 +836,8 @@ int			main(int argc, char** argv)
 					sizeof(startupInfo.callsign) - 1);
       startupInfo.callsign[sizeof(startupInfo.callsign) - 1] = '\0';
     }
-    if (db.hasValue("team")) {
-      std::string value = db.getValue("team");
+    if (BZDB->isSet("team")) {
+      std::string value = BZDB->get("team");
       for (int i = 0; i < NumTeams; i++)
 	if (value == Team::getName((TeamColor)i)) {
 	  startupInfo.team = (TeamColor)i;
