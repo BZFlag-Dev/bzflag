@@ -187,8 +187,8 @@ void			HUDuiControl::setCallback(HUDuiCallback _cb, void* _ud)
 void			HUDuiControl::onSetFont()
 {
   if (fontFace >= 0) {
-    fontHeight = fontSize;
     FontManager &fm = FontManager::instance();
+    fontHeight = fm.getStrHeight(fontFace, fontSize, label);
     trueLabelWidth = fm.getStrLength(fontFace, fontSize, label);
   } else {
     fontHeight = 11.0f;
@@ -218,7 +218,7 @@ void			HUDuiControl::doCallback()
 
 void			HUDuiControl::renderFocus()
 {
-  float fh2 = 0;// = floorf(0.5f * fontHeight);
+  float fh2;
 
   TextureManager &tm = TextureManager::instance();
   const ImageInfo &info = tm.getInfo(arrow);
@@ -256,8 +256,7 @@ void			HUDuiControl::renderFocus()
       lastTime = nowTime;
       if (++arrowFrame == uFrames * vFrames) arrowFrame = 0;
     }
-  }
-  else {
+  } else {
     fh2 = floorf(0.5f * fontHeight);
     gstate->setState();
     glColor3f(1.0f, 1.0f, 1.0f);
