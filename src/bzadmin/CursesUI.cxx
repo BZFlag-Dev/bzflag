@@ -157,8 +157,9 @@ bool CursesUI::checkCommand(string& str) {
 
     // command history
   case KEY_UP:
-    if (currentHistory != 0)
-      --currentHistory;
+    if (currentHistory == 0 || history.size() == 0)
+      return false;
+    --currentHistory;
     cmd = history[currentHistory];
     updateCmdWin();
     return false;
