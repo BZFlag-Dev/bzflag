@@ -196,22 +196,28 @@ void Bundle::ensureNormalText(std::string &msg)
 	msg[i] = 'u';
 	i++;
         msg.insert(i, 1, 'e');
+      break;
       case 'Ü':
 	msg[i] = 'U';
 	i++;
-	msg.insert(i, 1, 'e');
+        msg.insert(i, 1, 'e');
+      break;
       case 'ñ':
 	msg[i] = 'n';
       break;
       case 'Š':
-      case 'ß':
 	msg[i] = 'S';
       break;
       case 'Ÿ':
 	msg[i] = 'Y';
       break;
       case 'š':
-	msg[i] = 's';
+        msg[i] = 's';
+      break;
+      case 'ß':
+        msg[i] = 's';
+        i++;
+        msg.insert(i, 1, 's');
       break;
       case '¿':
       case '¡':
