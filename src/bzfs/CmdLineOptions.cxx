@@ -538,11 +538,12 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
 	// the cmd line options. But for now just override them on the spot
 	parse(ac, av, options);
 
-	options.numAllowedFlags = 0;
-
 	for (int i = 0; i < ac; i++)
 	  delete[] av[i];
 	delete[] av;
+
+	options.numAllowedFlags = 0;
+
     } else if (strcmp(argv[i], "-cr") == 0) {
       // CTF with random world
       options.randomCTF = true;
@@ -976,9 +977,12 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       checkArgc(1, i, argc, argv[i]);
       options.worldFile = argv[i];
       int ac;
-      char **av;
-      av = parseWorldOptions(argv[i], ac);
+      char **av = parseWorldOptions(argv[i], ac);
       parse(ac, av, options, true); // true - from a world file
+      
+      for (int i = 0; i < ac; i++)
+        delete[] av[i];
+      delete[] av;
 
       options.numAllowedFlags = 0; // FIXME - Huh, does a reset?
 
