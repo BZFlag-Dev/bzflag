@@ -338,7 +338,7 @@ static bool checkAuthorizations(BzMaterialManager::TextureSet& set)
   
   BzMaterialManager::TextureSet::iterator set_it;
   
-  std::map<std::string, bool> hostMap;
+  std::map<std::string, bool> hostAccess;
   std::map<std::string, bool>::iterator host_it;
   
   // get the list of hosts to check
@@ -346,21 +346,14 @@ static bool checkAuthorizations(BzMaterialManager::TextureSet& set)
     const std::string& url = *set_it;
     std::string hostname;
     if (parseHostname(url, hostname)) {
-      hostMap[hostname] = true;
+      hostAccess[hostname] = true;
     }
   }
   
   // check the hosts
-  for (host_it = hostMap.begin(); host_it != hostMap.end(); host_it++) {
+  for (host_it = hostAccess.begin(); host_it != hostAccess.end(); host_it++) {
     const std::string& host = host_it->first;
-    printf ("Checking host: %s ", host.c_str());//FIXME
-    if (authorizedServer(host)) {
-      host_it->second = true;
-      printf ("passed\n");//FIXME
-    } else {    
-      host_it->second = false;
-      printf ("failed\n");//FIXME
-    }
+    host_it->second = authorizedServer(host);
   }
   
   // clear any unauthorized urls
@@ -370,7 +363,7 @@ static bool checkAuthorizations(BzMaterialManager::TextureSet& set)
     next_it++;
     const std::string& url = *set_it;
     std::string hostname;
-    if (parseHostname(url, hostname) && !hostMap[hostname]) {
+    if (parseHostname(url, hostname) && !hostAccess[hostname]) {
       hostFailed = true;
       // remove the url
       set.erase(set_it);
