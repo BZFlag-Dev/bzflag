@@ -731,7 +731,9 @@ void			ControlPanel::addMessage(const std::string& line,
     fflush(stdout);
   }
 
-  changedMessage = numBuffers;
+  // need to refresh console if new msg is visible on current tab
+  if (messageMode == MessageAll || messageMode == mode)
+    changedMessage = numBuffers;
 }
 
 void			ControlPanel::setRadarRenderer(RadarRenderer* rr)
