@@ -135,7 +135,7 @@ static RRpacket *ReplayPos = NULL;
 static TimeKeeper StartTime;
 
 static RRbuffer ReplayBuf = {0, 0, NULL, NULL}; // for replaying
-static RRbuffer RecordBuf = {0, 0, NULL, NULL};  // for capturing
+static RRbuffer RecordBuf = {0, 0, NULL, NULL};  // for recording
 
 static FILE *ReplayFile = NULL;
 static FILE *RecordFile = NULL;
@@ -171,6 +171,7 @@ static RRpacket *loadPacket (FILE *f);            // makes a new packet
 static bool saveHeader (int playerIndex, RRtime filetime, FILE *f);
 static bool loadHeader (ReplayHeader *h, FILE *f);
 static bool saveFileTime (RRtime filetime, FILE *f);
+static bool loadFileTime (RRtime *filetime, FILE *f);
 static bool replaceFlagTypes (ReplayHeader *h);
 static bool replaceWorldDatabase (ReplayHeader *h);
 static bool flagIsActive (FlagType *type);
@@ -187,9 +188,9 @@ static void addHeadPacket (RRbuffer *b, RRpacket *p); // add to the head
 static void addTailPacket (RRbuffer *b, RRpacket *p); // add to the tail
 static RRpacket *delTailPacket (RRbuffer *b);         // delete from the tail
 static RRpacket *delHeadPacket (RRbuffer *b);         // delete from the head
-static void freeBuffer (RRbuffer *buf);           // clean it out
+static void freeBuffer (RRbuffer *buf);               // clean it out
 static void initPacket (u16 mode, u16 code, int len, const void *data,
-                          RRpacket *p);             // copy params into packet
+                          RRpacket *p);               // copy params into packet
 
 static RRtime getRRtime ();
 static void *nboPackRRtime (void *buf, RRtime value);
@@ -714,9 +715,7 @@ bool Replay::loadFile(int playerIndex, const char *filename)
   }
   
   replayReset();
-  if (Replaying) {
-    resetStates ();
-  }
+  resetStates ();
   
   ReplayFile = openFile (filename, "rb");
   if (ReplayFile == NULL) {
@@ -787,11 +786,11 @@ bool Replay::loadFile(int playerIndex, const char *filename)
 }
 
 
-static bool isRecordFile (const char *filename)
+static FILE *
+getRecordFile (const char *filename)
 {
   u32 magic;
   char buffer[sizeof(magic)];
-  bool retval = true;
   
   FILE *file = fopen (filename, "rb");
   if (file == NULL) {
@@ -799,17 +798,18 @@ static bool isRecordFile (const char *filename)
   }
   else {
     if (fread (buffer, sizeof(magic), 1, file) <= 0) {
-      retval = false;
+      fclose (file);
+      return NULL;
     }
     else {
       nboUnpackUInt (buffer, magic);
       if (magic != ReplayMagic) {
-        retval = false;
+        fclose (file);
+        return false;
       }
     }
   }  
-  fclose (file);
-  return retval;
+  return file;
 }
 
 
@@ -838,10 +838,16 @@ bool Replay::sendFileList(int playerIndex)
   while ((de = readdir (dir)) != NULL) {
     std::string name = RecordDir;
     name += de->d_name;
-    if (isRecordFile (name.c_str())) {
-      snprintf (buffer, MessageLen, "file:  %s", de->d_name);
-      sendMessage (ServerPlayer, playerIndex, buffer, true);
-      count++;
+    FILE *file = getRecordFile (name.c_str());
+    if (file != NULL) {
+      RRtime filetime;
+      if (loadFileTime (&filetime, file)) {
+        snprintf (buffer, MessageLen, "file:  %-24s  [%.3f secs]",
+                  de->d_name, (float)filetime/1000000.0f);
+        sendMessage (ServerPlayer, playerIndex, buffer, true);
+        count++;
+      }
+      fclose (file);
     }
   }
   
@@ -893,9 +899,8 @@ bool Replay::play(int playerIndex)
     return false;
   }
   
-  DEBUG3 ("Replay::play()\n");
-  
   Replaying = true;
+  
   if (ReplayPos != NULL) {
     ReplayOffset = getRRtime () - ReplayPos->timestamp;
   }
@@ -1876,6 +1881,22 @@ saveFileTime (RRtime filetime, FILE *f)
   if (fwrite (buffer, sizeof(RRtime), 1, f) == 0) {
     return false;
   }
+  return true;
+}
+
+
+static bool
+loadFileTime (RRtime *filetime, FILE *f)
+{
+  rewind (f);
+  if (fseek (f, sizeof (u32) * 3, SEEK_SET) < 0) {
+    return false;
+  }
+  char buffer[sizeof(RRtime)];
+  if (fread (buffer, sizeof(RRtime), 1, f) == 0) {
+    return false;
+  }
+  nboUnpackRRtime (buffer, *filetime);
   return true;
 }
 
