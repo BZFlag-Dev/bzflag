@@ -3994,6 +3994,10 @@ int main(int argc, char **argv)
    **/
   int i;
   while (!done) {
+  
+    // see if the octree needs to be reloaded
+    world->checkCollisionManager();
+  
     maxFileDescriptor = 0;
     // prepare select set
     fd_set read_set, write_set;

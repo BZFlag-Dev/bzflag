@@ -42,8 +42,7 @@ typedef enum {
   IN_BOX_DRIVETHROUGH,
   IN_PYRAMID,
   IN_TETRA,
-  IN_TELEPORTER,
-  IN_WALL
+  IN_TELEPORTER
 } InBuildingType;
 
 

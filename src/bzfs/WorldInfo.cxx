@@ -155,7 +155,7 @@ WorldWeapons& WorldInfo::getWorldWeapons()
 
 void                    WorldInfo::loadCollisionManager()
 {
-  collisionManager.load(walls, boxes, bases, pyramids, tetras, teleporters);
+  collisionManager.load(boxes, bases, pyramids, tetras, teleporters);
   return;
 }
 
@@ -163,7 +163,7 @@ void                    WorldInfo::checkCollisionManager()
 {
   if (collisionManager.needReload()) {
     // reload the collision grid
-    collisionManager.load(walls, boxes, bases, pyramids, tetras, teleporters);
+    collisionManager.load(boxes, bases, pyramids, tetras, teleporters);
   }
   return;
 }
@@ -219,16 +219,14 @@ InBuildingType WorldInfo::cylinderInBuilding(const Obstacle **location,
 				             const float* pos, float radius,
                                              float height)
 {
-  checkCollisionManager(); // FIXME - this is lame
-
   if (height < Epsilon) {
     height = Epsilon;
   }
     
   *location = NULL;
-  
-  const ObsList* olist = collisionManager.cylinderTest (pos, radius, height);
 
+  // check everything but walls  
+  const ObsList* olist = collisionManager.cylinderTest (pos, radius, height);
   for (int i = 0; i < olist->count; i++) {
     const Obstacle* obs = olist->list[i];
     if (obs->inCylinder(pos, radius, height)) {
@@ -252,17 +250,15 @@ InBuildingType WorldInfo::boxInBuilding(const Obstacle **location,
 				        const float* pos, float angle,
 				        float width, float breadth, float height)
 {
-  checkCollisionManager(); // FIXME - this is lame
-
   if (height < Epsilon) {
     height = Epsilon;
   }
     
   *location = NULL;
   
+  // check everything but walls  
   const ObsList* olist =
     collisionManager.boxTest (pos, angle, width, breadth, height);
-
   for (int i = 0; i < olist->count; i++) {
     const Obstacle* obs = olist->list[i];
     if (obs->inBox(pos, angle, width, breadth, height)) {
@@ -298,9 +294,6 @@ InBuildingType WorldInfo::classifyHit (const Obstacle* obstacle)
   }
   else if (obstacle->getType() == Teleporter::getClassName()) {
     return IN_TELEPORTER;
-  }
-  else if (obstacle->getType() == WallObstacle::getClassName()) {
-    return IN_WALL;
   }
   else {
     // FIXME - choke here?

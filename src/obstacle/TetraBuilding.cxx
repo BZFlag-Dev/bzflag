@@ -248,7 +248,7 @@ float TetraBuilding::intersect(const Ray& ray) const
         order[j - 1] = tmp;
     }
   }
-    
+  
   // see if the point is within the face
   for (p = 0; p < 4; p++) {
     int target = order[p];
@@ -276,6 +276,7 @@ float TetraBuilding::intersect(const Ray& ray) const
       }      
     }
     if (gotFirstHit) {
+      lastPlaneShot = p;
       return targetTime;
     }
   }
@@ -284,24 +285,11 @@ float TetraBuilding::intersect(const Ray& ray) const
 }
 
 
-void TetraBuilding::get3DNormal(const float* p, float* n) const
+void TetraBuilding::get3DNormal(const float* /*p*/, float* n) const
 {
-  // FIXME: this is silly, we should just use the computations in
-  // intersect() to pull out this information, maybe have intersect
-  // return an 'int' relating to a collision code (each obstacle 
-  // type gets to define its own, for tetra (1-4 = planes, 5-10 = edges)? 
-  float closestDist = -Infinity;
-  int closestPlane = -1;
-  for (int i = 0; i < 4; i++) {
-    float d = (planes[i][0] * p[0]) +
-              (planes[i][1] * p[1]) +
-              (planes[i][2] * p[2]) + planes[i][3];
-    if (fabsf(d) < fabsf(closestDist)) {
-      closestDist = d;
-      closestPlane = i;
-    }
-  }
-  memcpy (n, planes[closestPlane], sizeof(float[3]));
+  // intersect() must be called on this obstacle
+  // before this function can be used. 
+  memcpy (n, planes[lastPlaneShot], sizeof(float[3]));
   return;
 }
 

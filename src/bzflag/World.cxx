@@ -81,7 +81,7 @@ void			World::done()
 
 void                    World::loadCollisionManager()
 {
-  collisionManager.load(walls, boxes, basesR, pyramids, tetras, teleporters);
+  collisionManager.load(boxes, basesR, pyramids, tetras, teleporters);
   return;
 }
 
@@ -89,7 +89,7 @@ void                    World::checkCollisionManager()
 {
   if (collisionManager.needReload()) {
     // reload the collision grid
-    collisionManager.load(walls, boxes, basesR, pyramids, tetras, teleporters);
+    collisionManager.load(boxes, basesR, pyramids, tetras, teleporters);
   }
   return;
 }
@@ -186,8 +186,8 @@ TeamColor		World::whoseBase(const float* pos) const
 const Obstacle*		World::inBuilding(const float* pos, 
                                           float radius, float height) const
 {
+  // check everything but walls
   const ObsList* olist = collisionManager.cylinderTest (pos, radius, height);
-  
   for (int i = 0; i < olist->count; i++) {
     const Obstacle* obs = olist->list[i];
     if (obs->inCylinder(pos, radius, height)) {
@@ -201,12 +201,21 @@ const Obstacle*		World::inBuilding(const float* pos,
 const Obstacle*		World::hitBuilding(const float* pos, float angle,
                                            float dx, float dy, float dz) const
 {
+  // check walls
+  std::vector<WallObstacle>::const_iterator wallScan = walls.begin();
+  while (wallScan != walls.end()) {
+    const WallObstacle& wall = *wallScan;
+    if (wall.inBox(pos, angle, dx, dy, dz)) {
+      return &wall;
+    }
+    wallScan++;
+  }
+
+  // check everything else
   const ObsList* olist = collisionManager.boxTest (pos, angle, dx, dy, dz);
-  
   for (int i = 0; i < olist->count; i++) {
     const Obstacle* obs = olist->list[i];
-    if (!obs->isDriveThrough()
-        && obs->inBox(pos, angle, dx, dy, dz)) {
+    if (!obs->isDriveThrough() && obs->inBox(pos, angle, dx, dy, dz)) {
       return obs;
     }
   }
@@ -218,9 +227,19 @@ const Obstacle*		World::hitBuilding(const float* oldPos, float oldAngle,
 					   const float* pos, float angle,
 					   float dx, float dy, float dz) const
 {
+  // check walls
+  std::vector<WallObstacle>::const_iterator wallScan = walls.begin();
+  while (wallScan != walls.end()) {
+    const WallObstacle& wall = *wallScan;
+    if (wall.inMovingBox(oldPos, oldAngle, pos, angle, dx, dy, dz)) {
+      return &wall;
+    }
+    wallScan++;
+  }
+
+  // check everything else
   const ObsList* olist = 
     collisionManager.movingBoxTest (oldPos, oldAngle, pos, angle, dx, dy, dz);
-    
   for (int i = 0; i < olist->count; i++) {
     const Obstacle* obs = olist->list[i];
     if (!obs->isDriveThrough()

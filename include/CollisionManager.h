@@ -21,7 +21,6 @@
 /* common interface headers */
 #include "Ray.h"
 #include "Obstacle.h"
-#include "WallObstacle.h"
 #include "BoxBuilding.h"
 #include "PyramidBuilding.h"
 #include "TetraBuilding.h"
@@ -35,9 +34,8 @@ typedef struct {
 } ObsList;
 
 typedef union {
-  ObsList array[6];
+  ObsList array[5];
   struct {
-    ObsList walls;
     ObsList boxes;
     ObsList bases;
     ObsList pyrs;
@@ -58,8 +56,7 @@ class CollisionManager {
     CollisionManager();
     ~CollisionManager();
     
-    void load (std::vector<WallObstacle>    &walls,
-               std::vector<BoxBuilding>     &boxes,
+    void load (std::vector<BoxBuilding>     &boxes,
                std::vector<BaseBuilding>    &bases,
                std::vector<PyramidBuilding> &pyrs,
                std::vector<TetraBuilding>   &tetras,

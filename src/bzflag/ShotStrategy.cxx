@@ -96,10 +96,26 @@ const Obstacle* ShotStrategy::getFirstBuilding(const Ray& ray,
 					       float min, float& t)
 {
   const Obstacle* closestObstacle = NULL;
+  
+  // check walls
+  const std::vector<WallObstacle> &walls = World::getWorld()->getWalls();
+  std::vector<WallObstacle>::const_iterator it = walls.begin();
+  while (it != walls.end()) {
+    const WallObstacle& wall = *it;
+    if (!wall.isShootThrough()) {
+      const float wallt = wall.intersect(ray);
+      if (wallt > min && wallt < t) {
+        t = wallt;
+        closestObstacle = &wall;
+      }
+    }
+    it++;
+  }
 
+  //check everything else
   const CollisionManager* colMgr = World::getCollisionManager();
   if (colMgr == NULL) {
-    return NULL;
+    return closestObstacle;
   }
   
   const ObsList* olist = colMgr->rayTest (&ray);
@@ -127,110 +143,6 @@ const Obstacle* ShotStrategy::getFirstBuilding(const Ray& ray,
   }
         
   return closestObstacle;
-/*
-  // check walls
-  {
-    const std::vector<WallObstacle> &walls = World::getWorld()->getWalls();
-    std::vector<WallObstacle>::const_iterator it = walls.begin();
-    while (it != walls.end()) {
-      const WallObstacle& wall = *it;
-      if (!wall.isShootThrough()) {
-	const float wallt = wall.intersect(ray);
-	if (wallt > min && wallt < t) {
-	  t = wallt;
-	  closestObstacle = &wall;
-	}
-      }
-      it++;
-    }
-  }
-
-  // check teleporter borders
-  {
-    const std::vector<Teleporter> &teleporters = World::getWorld()->getTeleporters();
-    std::vector<Teleporter>::const_iterator it = teleporters.begin();
-    while (it != teleporters.end()) {
-      const Teleporter& teleporter = *it;
-      if (!teleporter.isShootThrough()) {
-	const float telet = teleporter.intersect(ray);
-	int face;
-	if (telet > min && telet < t && teleporter.isTeleported(ray, face) < 0.0f) {
-	  t = telet;
-	  closestObstacle = &teleporter;
-	}
-      }
-      it++;
-    }
-  }
-
-  // check boxes
-  {
-    const std::vector<BoxBuilding> &boxes = World::getWorld()->getBoxes();
-    std::vector<BoxBuilding>::const_iterator it = boxes.begin();
-    while (it != boxes.end()) {
-      const BoxBuilding& box = *it;
-      if (!box.isShootThrough()) {
-	const float boxt = box.intersect(ray);
-	if (boxt > min && boxt < t) {
-	  t = boxt;
-	  closestObstacle = &box;
-	}
-      }
-      it++;
-    }
-  }
-
-  // check bases
-  {
-    const std::vector<BaseBuilding> &bases = World::getWorld()->getBases();
-    std::vector<BaseBuilding>::const_iterator it = bases.begin();
-    while (it != bases.end()) {
-      const BaseBuilding& base = *it;
-      if (!base.isShootThrough()) {
-	const float baset = base.intersect(ray);
-	if (baset > min && baset < t) {
-	  t = baset;
-	  closestObstacle = &base;
-	}
-      }
-      it++;
-    }
-  }
-
-  // check pyramids
-  {
-    const std::vector<PyramidBuilding> &pyramids = World::getWorld()->getPyramids();
-    std::vector<PyramidBuilding>::const_iterator it = pyramids.begin();
-    while (it != pyramids.end()) {
-      const PyramidBuilding& pyramid = *it;
-      if (!pyramid.isShootThrough()) {
-	const float pyramidt = pyramid.intersect(ray);
-	if (pyramidt > min && pyramidt < t) {
-	  t = pyramidt;
-	  closestObstacle = &pyramid;
-	}
-      }
-      it++;
-    }
-  }
-
-  // check tetrahedrons
-  {
-    const std::vector<TetraBuilding> &tetras = World::getWorld()->getTetras();
-    std::vector<TetraBuilding>::const_iterator it = tetras.begin();
-    while (it != tetras.end()) {
-      const TetraBuilding& tetra = *it;
-      if (!tetra.isShootThrough()) {
-        const float tetrat = tetra.intersect(ray);
-        if (tetrat > min && tetrat < t) {
-          t = tetrat;
-          closestObstacle = &tetra;
-        }
-      }
-      it++;
-    }
-  }
-*/
 }
 
 void ShotStrategy::reflect(float* v, const float* n) // const

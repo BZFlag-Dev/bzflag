@@ -75,6 +75,8 @@ class TetraBuilding : public Obstacle {
     bool visible[4];      // is this plane visible?
     bool colored[4];      // is this plane colored?
     float colors[4][4];   // RGBA color specifications per plane
+    
+    mutable unsigned char lastPlaneShot;
 };  
 
 

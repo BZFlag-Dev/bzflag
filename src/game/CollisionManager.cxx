@@ -112,7 +112,7 @@ void CollisionManager::clear ()
   FullList.list = NULL;
   FullList.count = 0;
   
-  for (int i = 0; i < 6; i++) {
+  for (int i = 0; i < 5; i++) {
     SplitPad.array[i].list = NULL;
     SplitPad.array[i].count = 0;
     SplitList.array[i].list = NULL;
@@ -224,8 +224,7 @@ const ObsList *CollisionManager::rayTest (const Ray* ray) const
 }
 
 
-void CollisionManager::load (std::vector<WallObstacle>    &walls,
-                             std::vector<BoxBuilding>     &boxes,
+void CollisionManager::load (std::vector<BoxBuilding>     &boxes,
                              std::vector<BaseBuilding>    &bases,
                              std::vector<PyramidBuilding> &pyrs,
                              std::vector<TetraBuilding>   &tetras,
@@ -240,8 +239,8 @@ void CollisionManager::load (std::vector<WallObstacle>    &walls,
   minElements = BZDB.evalInt (StateDatabase::BZDB_COLDETELEMENTS);
   
   // determine the total number of obstacles
-  int fullCount = walls.size() + boxes.size() + bases.size() +
-                  pyrs.size() + tetras.size() + teles.size();
+  int fullCount = boxes.size() + bases.size() +pyrs.size() +
+                  tetras.size() + teles.size();
                    
   // get the memory for the full list and the scratch pad
   FullPad.list = new Obstacle*[fullCount];
@@ -249,10 +248,6 @@ void CollisionManager::load (std::vector<WallObstacle>    &walls,
   FullList.count = 0;
   
   // add everything to the full list                   
-  for (std::vector<WallObstacle>::iterator it_wall = walls.begin();
-       it_wall != walls.end(); it_wall++) {
-    addToFullList((Obstacle*) &(*it_wall));
-  }
   for (std::vector<BoxBuilding>::iterator it_box = boxes.begin();
        it_box != boxes.end(); it_box++) {
     addToFullList((Obstacle*) &(*it_box));
@@ -288,9 +283,6 @@ void CollisionManager::load (std::vector<WallObstacle>    &walls,
   
   // setup the split list
   Obstacle** listPtr = FullList.list;
-  SplitList.named.walls.list = listPtr;
-  SplitList.named.walls.count = walls.size();
-  listPtr = listPtr + walls.size();
   SplitList.named.boxes.list = listPtr;
   SplitList.named.boxes.count = boxes.size();
   listPtr = listPtr + boxes.size();
