@@ -10,8 +10,8 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-/* TankSceneNode:
- *	Encapsulates information for rendering a tank
+/* TankGeometryMgr:
+ *	Generates the display lists for TankSceneNodes
  */
 
 #ifndef	BZF_TANK_GEOMETRY_MGR_H
