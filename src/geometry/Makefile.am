@@ -1,5 +1,3 @@
-AUTOMAKE_OPTIONS = subdir-objects
-
 noinst_SUBDIRS = models
 
 MAINTAINERCLEANFILES = \
@@ -31,18 +29,18 @@ libGeometry_a_SOURCES  =		\
 	FlagWarpSceneNode.cxx		\
 	TankSceneNode.cxx		\
 	BillboardSceneNode.cxx		\
-	models/lowtank/barrel.cxx	\
-	models/lowtank/body.cxx		\
-	models/lowtank/ltread.cxx	\
-	models/lowtank/rtread.cxx	\
-	models/lowtank/turret.cxx	\
-	models/medtank/barrel.cxx	\
-	models/medtank/body.cxx		\
-	models/medtank/ltread.cxx	\
-	models/medtank/rtread.cxx	\
-	models/medtank/turret.cxx	\
-	models/hitank/barrel.cxx	\
-	models/hitank/body.cxx		\
-	models/hitank/ltread.cxx	\
-	models/hitank/rtread.cxx	\
-	models/hitank/turret.cxx
+	models/tank/high_barrel.cxx	\
+	models/tank/high_body.cxx	\
+	models/tank/high_ltread.cxx	\
+	models/tank/high_rtread.cxx	\
+	models/tank/high_turret.cxx	\
+	models/tank/low_barrel.cxx	\
+	models/tank/low_body.cxx	\
+	models/tank/low_ltread.cxx	\
+	models/tank/low_rtread.cxx	\
+	models/tank/low_turret.cxx	\
+	models/tank/medium_barrel.cxx	\
+	models/tank/medium_body.cxx	\
+	models/tank/medium_ltread.cxx	\
+	models/tank/medium_rtread.cxx	\
+	models/tank/medium_turret.cxx
