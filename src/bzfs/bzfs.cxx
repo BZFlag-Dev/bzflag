@@ -604,6 +604,7 @@ bool CustomWorld::read(const char *cmd, istream& input)
 {
   if (strcmp(cmd, "size") == 0) {
     input >> size;
+	size *=2;
     BZDB->set(StateDatabase::BZDB_WORLDSIZE, string_util::format("%d", size));
   }
   else if (strcmp(cmd, "flagHeight") == 0)

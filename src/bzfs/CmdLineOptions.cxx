@@ -912,7 +912,7 @@ void parse(int argc, char **argv, CmdLineOptions &options)
 	fprintf(stderr, "argument expected for \"%s\"\n", argv[i]);
 	usage(argv[0]);
       }
-      BZDB->set(StateDatabase::BZDB_WORLDSIZE, argv[i]);
+      BZDB->set(StateDatabase::BZDB_WORLDSIZE, argv[i]*2);
       fprintf(stderr, "using world size of \"%f\"\n", BZDB->eval(StateDatabase::BZDB_WORLDSIZE));
     } else {
       fprintf(stderr, "bad argument \"%s\"\n", argv[i]);
