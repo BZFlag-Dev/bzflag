@@ -1545,6 +1545,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 	tank->setVelocity(zero);
 	tank->setAngularVelocity(0.0f);
 	tank->setDeadReckoning();
+	tank->spawnEffect();
 	if (tank==myTank) {
 	  playLocalSound(SFX_POP);
 	  myTank->setSpawning(false);
@@ -1592,7 +1593,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 	float explodePos[3];
 	explodePos[0] = pos[0];
 	explodePos[1] = pos[1];
-	explodePos[2] = pos[2] + BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT);
+	explodePos[2] = pos[2] + victimPlayer->getMuzzleHeight();
 	addTankExplosion(explodePos);
       }
       if (killerLocal) {
@@ -1880,7 +1881,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 	  float explodePos[3];
 	  explodePos[0] = pos[0];
 	  explodePos[1] = pos[1];
-	  explodePos[2] = pos[2] + BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT);
+	  explodePos[2] = pos[2] + player[i]->getMuzzleHeight();
 	  addTankExplosion(explodePos);
 	}
       }
@@ -2380,7 +2381,7 @@ static void		updateFlags(float dt)
 	const float* pos = tank->getPosition();
 	flag.position[0] = pos[0];
 	flag.position[1] = pos[1];
-	flag.position[2] = pos[2] + BZDBCache::tankHeight;
+	flag.position[2] = pos[2] + tank->getDimensions()[2];
       }
     }
     world->updateFlag(i, dt);
@@ -2649,7 +2650,7 @@ static bool		gotBlowedUp(BaseLocalPlayer* tank,
       float explodePos[3];
       explodePos[0] = pos[0];
       explodePos[1] = pos[1];
-      explodePos[2] = pos[2] + BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT);
+      explodePos[2] = pos[2] + tank->getMuzzleHeight();
       addTankExplosion(explodePos);
     }
 
@@ -2777,8 +2778,6 @@ static void		checkEnvironment()
   // see if i've been shot
   const ShotPath* hit = NULL;
   float minTime = Infinity;
-  float waterLevel = World::getWorld()->getWaterLevel();
-
 
   if (myTank->getFlag() != Flags::Thief)
     myTank->checkHit(myTank, hit, minTime);
@@ -2789,6 +2788,9 @@ static void		checkEnvironment()
 
   // Check Server Shots
   myTank->checkHit( World::getWorld()->getWorldWeapons(), hit, minTime);
+
+  // used later
+  float waterLevel = World::getWorld()->getWaterLevel();
 
   if (hit) {
     // i got shot!  terminate the shot that hit me and blow up.
@@ -2816,12 +2818,10 @@ static void		checkEnvironment()
       if (hitter) hitter->endShot(hit->getShotId());
     }
   }
-
   // if not dead yet, see if i've dropped below the death level
   else if ((waterLevel > 0.0f) && (myTank->getPosition()[2] <= waterLevel)) {
     gotBlowedUp(myTank, WaterDeath, ServerPlayer);
   }
-
   // if not dead yet, see if i got run over by the steamroller
   else {
     const float* myPos = myTank->getPosition();
@@ -4115,24 +4115,28 @@ void			drawFrame(const float dt)
     sceneRenderer->getBackground()->addCloudDrift(1.0f * dt, 0.731f * dt);
 
     // get tank camera info
+    float muzzleHeight;
     if (!myTank) {
       myTankPos = defaultPos;
       myTankDir = defaultDir;
+      muzzleHeight = BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT);
       fov = 60.0f;
     } else {
       myTankPos = myTank->getPosition();
       myTankDir = myTank->getForward();
+      muzzleHeight = myTank->getMuzzleHeight();
 
-      if (myTank->getFlag() == Flags::WideAngle)
+      if (myTank->getFlag() == Flags::WideAngle) {
 	fov = 120.0f;
-      else
+      } else {
 	fov = BZDB.eval("displayFOV");
-      if (viewType == SceneRenderer::ThreeChannel)
+      }
+      if (viewType == SceneRenderer::ThreeChannel) {
 	fov *= 0.75f;
+      }
     }
     fov *= M_PI / 180.0f;
 
-    float muzzleHeight = BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT);
     // set projection and view
     eyePoint[0] = myTankPos[0];
     eyePoint[1] = myTankPos[1];
@@ -4872,9 +4876,6 @@ static void		playingLoop()
     if ((myTank != NULL) && (myTank->queryInputChange() == true))
       controlPanel->addMessage(LocalPlayer::getInputMethodName(myTank->getInputMethod()) + " movement");
 
-    // reposition flags
-    updateFlags(dt);
-
     // adjust properties based on flags (dimensions, cloaking, etc...)
     if (myTank) {
       myTank->updateFlagProperties(dt);
@@ -4884,6 +4885,9 @@ static void		playingLoop()
         player[i]->updateFlagProperties(dt);
       }
     }
+
+    // reposition flags
+    updateFlags(dt);
 
     // update explosion animations
     updateExplosions(dt);

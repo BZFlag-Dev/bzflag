@@ -594,8 +594,10 @@ void			LocalPlayer::doUpdateMotion(float dt)
 
   if (gettingSound) {
     // play landing sound if we weren't on something and now we are
-    if (oldLocation == InAir && (location == OnGround || location == OnBuilding))
+    if (oldLocation == InAir && (location == OnGround || location == OnBuilding)) {
       playLocalSound(SFX_LAND);
+      setLanded(oldVelocity[2]);
+    }
     else if (location == OnGround && oldPosition[2] == 0.0f && newPos[2] < 0.f)
       playLocalSound(SFX_BURROW);
   }

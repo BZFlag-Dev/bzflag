@@ -62,6 +62,7 @@ public:
   float		getAngularVelocity() const;
   float		getRadius() const;
   void		getMuzzle(float*) const;
+  float		getMuzzleHeight() const;
   short		getWins() const;
   short		getLosses() const;
   short		getTeamKills() const;
@@ -86,6 +87,8 @@ public:
   virtual void	addShots(SceneDatabase*, bool colorblind) const;
   void		setHidden(bool hidden = true);
   void		setCloaked(bool cloaked = true);
+  void		setLanded(float velocity);
+  void		spawnEffect();
 
   bool		isAlive() const;
   bool		isPaused() const;
@@ -220,6 +223,8 @@ private:
   int                   deadReckoningState;     // 0 -> not received any sample
                                                 // 1 -> 1 sample rx
                                                 // 2 -> 2 or more sample rx
+  float			oldZSpeed;		// old tank vertical speed
+  int			oldStatus;		// old tank status bits
 };
 
 // shot data goes in LocalPlayer or RemotePlayer so shot type isn't lost.

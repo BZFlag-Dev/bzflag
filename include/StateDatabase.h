@@ -260,6 +260,7 @@ public:
   static const std::string	BZDB_SHOTRANGE;
   static const std::string	BZDB_SHOTTAILLENGTH;
   static const std::string	BZDB_SHOTSKEEPVERTICALV;
+  static const std::string	BZDB_SQUISHFACTOR;
   static const std::string	BZDB_SRRADIUSMULT;
   static const std::string	BZDB_SYNCTIME;
   static const std::string	BZDB_TANKANGVEL;

@@ -88,6 +88,7 @@ const struct GlobalDBItem globalDBItems[] = {
   { "_shotSpeed",		"100.0",			false, StateDatabase::Locked},
   { "_shotsKeepVerticalVelocity",	"0",			false, StateDatabase::Locked},
   { "_srRadiusMult",		"2.0",				false, StateDatabase::Locked},
+  { "_squishFactor",		"0.25",				false, StateDatabase::Locked},
   { "_syncTime",		"0",				false, StateDatabase::Locked},
   { "_tankExplosionSize",	"3.5 * _tankLength",		false, StateDatabase::Locked},
   { "_tankAngVel",		"0.785398",			false, StateDatabase::Locked},

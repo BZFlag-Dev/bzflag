@@ -4,6 +4,8 @@
 BZFlag 1.12.0  (was 1.11.x)
 ---------------------------
 
+* Added tank spawn expansion effect - Dave Rodgers
+* Added tank squishiness - Dave Rodgers, Dave Brosius
 * Added animated effects for T, N, TH, O, and CL flags - Dave Rodgers
 * BZAdmin now tells more specific reasons why it could not connect - Ian Agar
 * Client shows a MessageOfTheDay from the master server on launch

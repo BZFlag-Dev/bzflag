@@ -169,7 +169,7 @@ void GuidedMissileStrategy::update(float dt)
     desiredDir[0] = targetPos[0] - nextPos[0];
     desiredDir[1] = targetPos[1] - nextPos[1];
     desiredDir[2] = targetPos[2] - nextPos[2];
-    desiredDir[2] += BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT);	// aim for turret
+    desiredDir[2] += 0.5f * target->getDimensions()[2]; // aim for the heart
 
     // compute desired angles
     float newAzimuth = atan2f(desiredDir[1], desiredDir[0]);
@@ -295,10 +295,7 @@ float GuidedMissileStrategy::checkHit(const BaseLocalPlayer* tank, float positio
     return minTime;
 
   // get tank radius
-  float radius = BZDBCache::tankRadius;
-  if (tank->getFlag() == Flags::Obesity)   radius *= BZDB.eval(StateDatabase::BZDB_OBESEFACTOR);
-  else if (tank->getFlag() == Flags::Tiny) radius *= BZDB.eval(StateDatabase::BZDB_TINYFACTOR);
-  else if (tank->getFlag() == Flags::Thief) radius *= BZDB.eval(StateDatabase::BZDB_THIEFTINYFACTOR);
+  float radius = tank->getRadius();
   const float radius2 = radius * radius;
 
   float shotRadius = BZDB.eval(StateDatabase::BZDB_SHOTRADIUS);

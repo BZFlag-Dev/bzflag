@@ -552,9 +552,9 @@ bool fireAtTank()
   float myAzimuth = myTank->getAngle();
 
   float dir[3] = {cosf(myAzimuth), sinf(myAzimuth), 0.0f};
-  pos[2] += BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT);
+  pos[2] += myTank->getMuzzleHeight();
   Ray tankRay(pos, dir);
-  pos[2] -= BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT);
+  pos[2] -= myTank->getMuzzleHeight();
 
   if (myTank->getFlag() == Flags::ShockWave) {
     TimeKeeper now = TimeKeeper::getTick();

@@ -130,31 +130,26 @@ short		Player::getRabbitScore() const
 
 float			Player::getRadius() const
 {
-  float tankRadius = BZDBCache::tankRadius;
-  if (flagType == Flags::Obesity) {
-    return tankRadius * BZDB.eval(StateDatabase::BZDB_OBESEFACTOR);
-  }
-  else if (flagType == Flags::Tiny) {
-    return tankRadius * BZDB.eval(StateDatabase::BZDB_TINYFACTOR);
-  }
-  else if (flagType == Flags::Thief) {
-    return tankRadius * BZDB.eval(StateDatabase::BZDB_THIEFTINYFACTOR);
-  }
-  else {
-    return tankRadius;
-  }
+  // NOTE: this encompasses everything but Narrow
+  //       the Obese, Tiny, and Thief flags adjust
+  //       the radius, but Narrow does not.
+  return (dimensionsScale[0] * BZDBCache::tankRadius);
 }
 
 void			Player::getMuzzle(float* m) const
 {
-  // okay okay, I should really compute the up vector instead of using [0,0,1]
+  // NOTE: like getRadius(), we only use dimensionsScale[0]
   float front = BZDB.eval(StateDatabase::BZDB_MUZZLEFRONT);
-  if (flagType == Flags::Obesity) front *= BZDB.eval(StateDatabase::BZDB_OBESEFACTOR);
-  else if (flagType == Flags::Tiny) front *= BZDB.eval(StateDatabase::BZDB_TINYFACTOR);
-  else if (flagType == Flags::Thief) front *= BZDB.eval(StateDatabase::BZDB_THIEFTINYFACTOR);
-  m[0] = state.pos[0] + front * forward[0];
-  m[1] = state.pos[1] + front * forward[1];
-  m[2] = state.pos[2] + front * forward[2] + BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT);
+  float height = BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT);
+  m[0] = state.pos[0] + (front * forward[0] * dimensionsScale[0]);
+  m[1] = state.pos[1] + (front * forward[1] * dimensionsScale[0]);
+  m[2] = state.pos[2] + (height * dimensionsScale[2]);
+  return;
+}
+
+float			Player::getMuzzleHeight() const
+{
+  return (dimensionsScale[2] * BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT));
 }
 
 void			Player::move(const float* _pos, float _azimuth)
@@ -539,6 +534,36 @@ void			Player::setCloaked(bool invisible)
   tankNode->setCloaked(invisible);
 }
 
+void			Player::setLanded(float velocity)
+{
+  const float gravity = BZDB.eval(StateDatabase::BZDB_GRAVITY);
+  const float effectTime = BZDB.eval(StateDatabase::BZDB_FLAGEFFECTTIME);
+  float squishiness = BZDB.eval(StateDatabase::BZDB_SQUISHFACTOR);
+  if (velocity > 0.0f) {
+    velocity = 0.0f;
+  }
+  if (squishiness < 0.0f) {
+    squishiness = 0.0f;
+  }
+  dimensionsScale[2] = gravity / (gravity + (velocity * squishiness));
+  dimensionsRate[2] = (1.0f - dimensionsScale[2]) / effectTime;
+  return;
+}
+
+void			Player::spawnEffect()
+{
+  const float squishiness = BZDB.eval(StateDatabase::BZDB_SQUISHFACTOR);
+  if (squishiness > 0.0f) {
+    const float effectTime = BZDB.eval(StateDatabase::BZDB_FLAGEFFECTTIME);
+    const float factor = 1.0f / effectTime;
+    for (int i = 0; i < 3; i++) {
+      dimensionsRate[i] = factor;
+      dimensionsScale[i] = 0.01f;
+    }
+  }
+  return;
+}
+
 int			Player::getMaxShots() const
 {
   return World::getWorld()->getMaxShots();
@@ -717,7 +742,7 @@ void			Player::doDeadReckoning()
   float groundLimit = 0.0f;
   if (getFlag() == Flags::Burrow)
     groundLimit = BZDB.eval(StateDatabase::BZDB_BURROWDEPTH);
-
+    
   if (predictedPos[2] < groundLimit) {
     predictedPos[2] = groundLimit;
     predictedVel[2] = 0.0f;
@@ -726,6 +751,13 @@ void			Player::doDeadReckoning()
     inputSpeedAzimuth = inputAzimuth;
   }
 
+  if (((oldStatus & PlayerState::Falling) != 0) &&
+      ((inputStatus & PlayerState::Falling) == 0)) {
+    setLanded(oldZSpeed);
+  }
+  oldZSpeed = inputZSpeed;
+  oldStatus = inputStatus;
+  
   move(predictedPos, predictedAzimuth);
   setVelocity(predictedVel);
 }

@@ -164,14 +164,8 @@ float			SegmentedShotStrategy::checkHit(const BaseLocalPlayer* tank,
   // expired shot can't hit anything
   if (getPath().isExpired()) return minTime;
 
-  float scaleFactor = 1.0f;
-
-  if (tank->getFlag() == Flags::Obesity)   scaleFactor = BZDB.eval(StateDatabase::BZDB_OBESEFACTOR);
-  else if (tank->getFlag() == Flags::Tiny) scaleFactor = BZDB.eval(StateDatabase::BZDB_TINYFACTOR);
-  else if (tank->getFlag() == Flags::Thief) scaleFactor = BZDB.eval(StateDatabase::BZDB_THIEFTINYFACTOR);
-
   // get tank radius
-  float radius = BZDBCache::tankRadius * scaleFactor;
+  float radius = tank->getRadius();
   const float radius2 = radius * radius;
 
   // tank is positioned from it's bottom so shift position up by
@@ -180,7 +174,7 @@ float			SegmentedShotStrategy::checkHit(const BaseLocalPlayer* tank,
   float lastTankPositionRaw[3];
   lastTankPositionRaw[0] = tankLastMotionRaw.getOrigin()[0];
   lastTankPositionRaw[1] = tankLastMotionRaw.getOrigin()[1];
-  lastTankPositionRaw[2] = tankLastMotionRaw.getOrigin()[2] + 0.5f * BZDBCache::tankHeight * scaleFactor;
+  lastTankPositionRaw[2] = tankLastMotionRaw.getOrigin()[2] + 0.5f * tank->getDimensions()[2];
   Ray tankLastMotion(lastTankPositionRaw, tankLastMotionRaw.getDirection());
 
   // if bounding box of tank and entire shot doesn't overlap then no hit
