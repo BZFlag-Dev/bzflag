@@ -461,11 +461,21 @@ void TankSceneNode::rebuildExplosion()
 void TankSceneNode::renderRadar()
 {
   const float angleCopy = azimuth; 
+  const float* sphere = getSphere();
   float posCopy[3];
-  memcpy(posCopy, getSphere(), sizeof(float[3]));
+  memcpy(posCopy, sphere, sizeof(float[3]));
   
-  const float origin[3] = { 0.0f, 0.0f, 0.0f };
-  setCenter(origin);
+  // allow negative values for burrowed clipping
+  float tankPos[3];
+  tankPos[0] = 0.0f;
+  tankPos[1] = 0.0f;
+  if (sphere[2] >= 0.0f) {
+    tankPos[2] = 0.0f;
+  } else {
+    tankPos[2] = sphere[2];
+  }
+  
+  setCenter(tankPos);
   azimuth = 0.0f;
 
   gstate.setState();
