@@ -437,7 +437,9 @@ static void		recalcEventDistance(SoundEvent* e)
     e->dx *= d;
     e->dy *= d;
     e->d = sqrtf(d2 + d3);
-    float minEventDist = 20.0f * BZDB->eval(StateDatabase::BZDB_TANKRADIUS);
+    // Since we are on a forked process, we cannot use BZDB_TANKRADIUS
+    // We put in the old tankRadius value (4.32)
+    float minEventDist = 20.0f * 4.32f;
     e->amplitude = (e->d < minEventDist) ? 1.0f : minEventDist / e->d;
 
     // compute distance to each ear
