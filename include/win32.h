@@ -57,6 +57,8 @@ typedef unsigned int	uint32_t;
 #  define hypotf	(float)hypot
 #  define snprintf	_snprintf
 
+#  define PATH_MAX	MAX_PATH
+
 #endif // _MSC_VER
 #endif // __WIN32_H__
 

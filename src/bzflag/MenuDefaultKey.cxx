@@ -28,7 +28,7 @@ MenuDefaultKey MenuDefaultKey::instance;
 MenuDefaultKey::MenuDefaultKey() { }
 MenuDefaultKey::~MenuDefaultKey() { }
 
-static MenuDefaultKey* MenuDefaultKey::getInstance()
+MenuDefaultKey* MenuDefaultKey::getInstance()
 { 
   return &instance; 
 }

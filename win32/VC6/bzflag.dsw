@@ -83,6 +83,9 @@ Package=<4>
     Begin Project Dependency
     Project_Dep_Name 3D
     End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name menus
+    End Project Dependency
 }}}
 
 ###############################################################################
@@ -208,6 +211,24 @@ Package=<4>
     End Project Dependency
     Begin Project Dependency
     Project_Dep_Name common
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "menus"=.\menus.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name common
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name ogl
     End Project Dependency
 }}}
 

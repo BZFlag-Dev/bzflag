@@ -18,9 +18,9 @@
 #define	BZF_COMMON_H
 
 //Uncomment to use SDL instead of platform-native code
-//#ifndef HAVE_SDL
-//#define HAVE_SDL 1
-//#endif
+#ifndef HAVE_SDL
+#define HAVE_SDL 1
+#endif
 
 // this should always be the very FIRST header
 #include "config.h"
