@@ -25,9 +25,9 @@ OggAudioFile::OggAudioFile(std::istream* in) : AudioFile(in)
 	cb.tell_func = OAFTell;
 
 	OAFInputBundle* bundle = new OAFInputBundle;
-	in->seekg(0, ios::end);
+	in->seekg(0, std::ios::end);
 	bundle->input = in; bundle->length = std::streamoff(in->tellg());
-	in->seekg(0, ios::beg);
+	in->seekg(0, std::ios::beg);
 
 	if(ov_open_callbacks(bundle, &file, NULL, 0, cb) < 0) {
 		std::cout << "OggAudioFile() failed: call to ov_open_callbacks failed\n";
