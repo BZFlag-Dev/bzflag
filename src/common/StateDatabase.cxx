@@ -120,7 +120,6 @@ const std::string StateDatabase::BZDB_SHOCKOUTRADIUS    = std::string("_shockOut
 const std::string StateDatabase::BZDB_SHOTRADIUS	= std::string("_shotRadius");
 const std::string StateDatabase::BZDB_SHOTRANGE         = std::string("_shotRange");
 const std::string StateDatabase::BZDB_SHOTSPEED         = std::string("_shotSpeed");
-const std::string StateDatabase::BZDB_SHOTLENGTH	= std::string("_shotLength");
 const std::string StateDatabase::BZDB_SHOTTAILLENGTH	= std::string("_shotTailLength");
 const std::string StateDatabase::BZDB_SRRADIUSMULT	= std::string("_srRadiusMult");
 const std::string StateDatabase::BZDB_TANKANGVEL        = std::string("_tankAngVel");
