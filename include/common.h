@@ -35,6 +35,7 @@
 #include <stddef.h>
 #include <string>
 #include <stdarg.h>
+#include <stdio.h>
 
 // some platforms don't have float versions of the math library
 #if defined(_old_linux_) || defined(sun)
