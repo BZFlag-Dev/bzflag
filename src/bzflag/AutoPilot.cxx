@@ -502,7 +502,7 @@ bool navigate( float &rotation, float &speed)
 			serverLink->sendDropFlag(myTank->getPosition());
 			handleFlagDropped(myTank);
 		}
-  	if ((((int) *(world->getBase(myTank->getTeam()))+3 >= (int) *(myTank->getPosition())) ||
+  	if ((((int) *(world->getBase(myTank->getTeam()))+2 >= (int) *(myTank->getPosition())) ||
  				 (temp[0] == pos[0] && temp[1] == pos[1])) &&
   			myTank->getFlag()->flagTeam == myTank->getTeam()) {
 			serverLink->sendDropFlag(myTank->getPosition());
