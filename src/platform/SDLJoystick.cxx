@@ -22,6 +22,7 @@
 #include <vector>
 #include <string>
 #include <string.h>
+#include <ctype.h>
 
 /* implementation headers */
 #include "ErrorHandler.h"
