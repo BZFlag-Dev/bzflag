@@ -71,5 +71,3 @@ msgstr "Tastenbelegung aendern"
 
 msgid "GUI Options"
 msgstr "GUI Optionen"
-
-
