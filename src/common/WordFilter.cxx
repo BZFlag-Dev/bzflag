@@ -853,7 +853,12 @@ unsigned int WordFilter::loadFromFile(const std::string &fileName, bool verbose)
     */
 
     if (verbose) {
-      std::cout << ".";
+      static int counter=0;
+      if (counter-- <= 0) {
+	std::cout << ".";
+	std::cout.flush();
+	counter=100;
+      }
     }
 
     bool added = addToFilter(filterWord, "");
