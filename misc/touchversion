@@ -17,15 +17,15 @@ eval `grep "^VERSIONNUM *= *" $root/configure.in | sed -e 's/ *//g'`
 
 # config.h files
 for file in \
-	$root/win32/config.h \
-	$root/src/platform/MacBZFlag-prefix.h \
-	$root/src/platform/MacOSX/MacBZFlag-prefix.h \
-	; do
+  $root/win32/config.h \
+  $root/src/platform/MacBZFlag-prefix.h \
+  $root/src/platform/MacOSX/MacBZFlag-prefix.h \
+  ; do
   if [ ! -w $file ]; then
     echo "$file not found or not writable."
   else
     sed -e "s/#define VERSION \".*/#define VERSION \"$BZVERSION\"/g" \
-	-e "s/#define BZVERSION [0-9]*/#define BZVERSION $VERSIONNUM/g"< $file > $tmp
+        -e "s/#define BZVERSION [0-9]*/#define BZVERSION $VERSIONNUM/g"< $file > $tmp
     cat $tmp > $file
   fi
 done
@@ -33,15 +33,15 @@ done
 # dsp and vcproj
 # vcproj's are gone?
 for file in \
-	$root/win32/*.dsp \
-	$root/src/platform/MacBZFlag-prefix.h \
-	$root/src/platform/MacOSX/MacBZFlag-prefix.h \
-	; do
+  $root/win32/*.dsp \
+  $root/src/platform/MacBZFlag-prefix.h \
+  $root/src/platform/MacOSX/MacBZFlag-prefix.h \
+  ; do
   if [ ! -w $file ]; then
     echo "$file not found or not writable."
   else
     sed -e "s/VERSION=[0-9]*/VERSION=$VERSIONNUM/g" \
-	-e "s/VERSIONNUM=[0-9]*/VERSIONNUM=$BZVERSION/g"< $file > $tmp
+        -e "s/VERSIONNUM=[0-9]*/VERSIONNUM=$BZVERSION/g"< $file > $tmp
     cat $tmp > $file
   fi
 done
@@ -84,3 +84,12 @@ else
 fi
 
 rm $tmp
+
+# Local Variables: ***
+# mode:sh ***
+# tab-width: 8 ***
+# sh-indentation: 2 ***
+# sh-basic-offset: 2 ***
+# indent-tabs-mode: t ***
+# End: ***
+# ex: shiftwidth=2 tabstop=8

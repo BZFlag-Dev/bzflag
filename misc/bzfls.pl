@@ -162,4 +162,10 @@ elsif ( $action eq "SETNUM" ) {
 # Unknown command ....
 else { print "Unknown command: '$action'\n"; }
 
+# Local Variables: ***
+# mode:Perl ***
+# tab-width: 8 ***
+# c-basic-offset: 2 ***
+# indent-tabs-mode: t ***
+# End: ***
 # ex: shiftwidth=2 tabstop=8

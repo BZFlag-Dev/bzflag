@@ -93,3 +93,11 @@ if ($#ARGV == 0) {
 } else {
   print("$totalPlayers\n$totalServers\nunknown uptime\nBZFlag players/servers\n");
 }
+
+# Local Variables: ***
+# mode:Perl ***
+# tab-width: 8 ***
+# c-basic-offset: 2 ***
+# indent-tabs-mode: t ***
+# End: ***
+# ex: shiftwidth=2 tabstop=8

@@ -6,3 +6,4 @@
 BZLOGFILE=/tmp/bzfs.log
 
 nohup /usr/local/bin/bzfs $* > $BZLOGFILE &
+

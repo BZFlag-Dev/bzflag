@@ -1,5 +1,5 @@
 #!/bin/sh
-# BZFlaga
+# BZFlag
 # NOTE: update all three lines below
 # Copyright (c) 1993 - 2003 Tim Riker
 OLDCOPYRIGHTTEXT='Copyright (c) 1993 - 2003'
@@ -10,14 +10,14 @@ NEWCOPYRIGHTTEXT='Copyright (c) 1993 - 2003'
 
 # bzflag top-level dir
 for root in . .. ; do
- if [ -r $root/config ] ; then
-  break
- fi
+  if [ -r $root/config ] ; then
+    break
+  fi
 done
 
 if [ -r $root/bin/bzfs ] ; then
- echo "$0 should be run only after a make pristine!"
- exit 1
+  echo "$0 should be run only after a make pristine!"
+  exit 1
 fi
 
 rm -f updatecopyright.tmp
@@ -25,11 +25,20 @@ files=`find $root -type f | grep -v updatecopyright`
 
 # do replacement
 for file in $files; do
- if [ ! -w ${file} ]; then
-  echo "${file} not found or not writable."
-  continue
- fi
- sed -e "s/${OLDCOPYRIGHTTEXT}/${NEWCOPYRIGHTTEXT}/" < ${file} > updatecopyright.tmp
- mv updatecopyright.tmp ${file}
+  if [ ! -w ${file} ]; then
+    echo "${file} not found or not writable."
+    continue
+  fi
+  sed -e "s/${OLDCOPYRIGHTTEXT}/${NEWCOPYRIGHTTEXT}/" < ${file} > updatecopyright.tmp
+  mv updatecopyright.tmp ${file}
 done
 rm -f updatecopyright.tmp
+
+# Local Variables: ***
+# mode:sh ***
+# tab-width: 8 ***
+# sh-indentation: 2 ***
+# sh-basic-offset: 2 ***
+# indent-tabs-mode: t ***
+# End: ***
+# ex: shiftwidth=2 tabstop=8
