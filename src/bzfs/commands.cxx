@@ -998,8 +998,8 @@ void handleShowgroupCmd(int t, const char *message)
 	itr++;
       }
       while (line.size() > MessageLen) {
-        sendMessage(ServerPlayer, t, getUpTo(line, MessageLen).c_str());
-      	line.erase(line.begin(), line.begin() + (MessageLen - 1));
+        sendMessage(ServerPlayer, t, line.substr(0, MessageLen).c_str());
+        line.erase(line.begin(), line.begin() + (MessageLen - 1));
 			}
       sendMessage(ServerPlayer, t, line.c_str());
     } else {

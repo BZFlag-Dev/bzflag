@@ -498,22 +498,6 @@ inline int firstNonalphabetic(const std::string &input, unsigned short int max=4
   return i;
 }
 
-
-/** return a string containing all the characters in
- * "std::string line" up to "int limit"
- */
-inline std::string getUpTo(std::string line, int limit)
-{
-  if ((int) line.size() == 0 ||
-  		(int) line.size() == limit ||
-    	(int) line.size() < limit)
-  	return line;
-	std::string temp = "";
-  for (int c = 0;c <= limit-1;c++)
-  	temp += line[c];
-	return temp;
-}
-
 /** url-encodes a string
  */
 inline std::string url_encode(std::string text)
