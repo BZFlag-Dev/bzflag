@@ -354,11 +354,11 @@ public:
     int numBans = banList.getLength();
     for (int i = 0; i < numBans; i++) {
       in_addr mask = banList[i];
-      if (ntohl(mask.s_addr) & 0x00ffffff == 0x00ffffff)
+      if ((ntohl(mask.s_addr) & 0x00ffffff) == 0x00ffffff)
         mask.s_addr = htonl((ntohl(mask.s_addr) & 0xff000000) | (ntohl(ipAddr.s_addr) & 0x00ffffff));
-	  else if (ntohl(mask.s_addr) & 0x0000ffff == 0x0000ffff)
+	  else if ((ntohl(mask.s_addr) & 0x0000ffff) == 0x0000ffff)
         mask.s_addr = htonl((ntohl(mask.s_addr) & 0xffff0000) | (ntohl(ipAddr.s_addr) & 0x0000ffff));
-	  else if (ntohl(mask.s_addr) & 0x000000ff == 0x000000ff)
+	  else if ((ntohl(mask.s_addr) & 0x000000ff) == 0x000000ff)
         mask.s_addr = htonl((ntohl(mask.s_addr) & 0xffffff00) | (ntohl(ipAddr.s_addr) & 0x000000ff));
 
       if (mask.s_addr == ipAddr.s_addr)
@@ -4706,7 +4706,9 @@ static void parseCommand(const char *message, int t)
   }
   // /ban command allows operator to ban players based on ip
   else if (player[t].Admin && strncmp(message+1, "ban", 3) == 0) {
-	acl.ban(message + 5);
+    acl.ban(message + 5);
+    char reply[MessageLen] = "IP pattern added to banlist";
+    sendMessage(t, player[t].id, player[t].team, reply);
     char kickmessage[MessageLen];
     for (int i = 0; i < maxPlayers; i++) {
 		if ((player[i].fd != NotConnected) && (!acl.validate( player[i].taddr.sin_addr))) {
