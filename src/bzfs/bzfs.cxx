@@ -4103,6 +4103,8 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 	      maxPlanarSpeedSqr *= BZDB.eval(StateDatabase::BZDB_VELOCITYAD) * BZDB.eval(StateDatabase::BZDB_VELOCITYAD);
 	    else if (flag[player[t].flag].flag.type == Flags::Thief)
 	      maxPlanarSpeedSqr *= BZDB.eval(StateDatabase::BZDB_THIEFVELAD) * BZDB.eval(StateDatabase::BZDB_THIEFVELAD);
+	    else if (flag[player[t].flag].flag.type == Flags::Agility)
+	      maxPlanarSpeedSqr *= BZDB.eval(StateDatabase::BZDB_AGILITYADVEL) * BZDB.eval(StateDatabase::BZDB_AGILITYADVEL);
  	    else if ((flag[player[t].flag].flag.type == Flags::Burrow) &&
 	      (player[t].lastState.pos[2] == state.pos[2]) && 
 	      (player[t].lastState.velocity[2] == state.velocity[2]) &&
