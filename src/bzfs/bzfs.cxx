@@ -3101,6 +3101,9 @@ static void shotFired(int playerIndex, void *buf, int len)
     } // end is limit
   } // end of player has flag
 
+  if (firingInfo.flagType == Flags::GuidedMissile)
+    playerData->player.endShotCredit--;
+  
   broadcastMessage(MsgShotBegin, len, buf);
 
 }
@@ -3410,6 +3413,7 @@ possible attack from %s\n",
 	if ((si < -1) || (si >= clOptions->maxShots))
 	  break;
       }
+      playerData->player.endShotCredit--;
       playerKilled(t, lookupPlayer(killer), reason, shot, flagType, phydrv);
 
       break;
@@ -3466,6 +3470,29 @@ possible attack from %s\n",
     case MsgShotEnd: {
       if (playerData->player.isObserver())
 	break;
+	  
+      // endShot anti-cheat
+      playerData->player.endShotCredit++;
+  
+      int pFlag = playerData->player.getFlag();
+      if (pFlag >= 0) {
+        FlagInfo &flag = *FlagInfo::get(pFlag);
+        if (flag.flag.type == Flags::Shield) {
+          //sendMessage(ServerPlayer, AdminPlayers, "has Shield");
+          playerData->player.endShotCredit--;
+        }
+      }
+      const int endShotLimit =  (int) BZDB.eval(StateDatabase::BZDB_ENDSHOTDETECTION);
+      if ((endShotLimit > 0) && (playerData->player.endShotCredit > endShotLimit)) {  // default endShotLimit 2
+        char testmessage[MessageLen];
+        sprintf(testmessage, "Kicking Player %s EndShot credit: %d \n", playerData->player.getCallSign(), playerData->player.endShotCredit );
+        DEBUG1("endShot Detection: %s\n", testmessage);
+        sendMessage(ServerPlayer, AdminPlayers, testmessage);
+        sendMessage(ServerPlayer, t, "Autokick: wrong end shots detected.");
+        removePlayer(t, "EndShot");
+      }
+      // endShotDetection finished  
+	  
       // data: shooter id, shot number, reason
       PlayerId sourcePlayer;
       int16_t shot;

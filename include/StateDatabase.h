@@ -210,6 +210,7 @@ public:
   static const std::string	BZDB_CULLELEMENTS;
   static const std::string	BZDB_CULLOCCLUDERS;
   static const std::string	BZDB_DISABLEBOTS;
+  static const std::string	BZDB_ENDSHOTDETECTION;
   static const std::string	BZDB_EXPLODETIME;
   static const std::string	BZDB_FLAGALTITUDE;
   static const std::string	BZDB_FLAGEFFECTTIME;

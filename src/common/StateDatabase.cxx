@@ -98,6 +98,7 @@ const std::string StateDatabase::BZDB_CULLDEPTH		= std::string("_cullDepth");
 const std::string StateDatabase::BZDB_CULLELEMENTS      = std::string("_cullElements");
 const std::string StateDatabase::BZDB_CULLOCCLUDERS     = std::string("_cullOccluders");
 const std::string StateDatabase::BZDB_DISABLEBOTS       = std::string("_disableBots");
+const std::string StateDatabase::BZDB_ENDSHOTDETECTION       = std::string("_endShotDetection");
 const std::string StateDatabase::BZDB_EXPLODETIME       = std::string("_explodeTime");
 const std::string StateDatabase::BZDB_FLAGALTITUDE      = std::string("_flagAltitude");
 const std::string StateDatabase::BZDB_FLAGEFFECTTIME    = std::string("_flagEffectTime");
@@ -938,4 +939,3 @@ float StateDatabase::evaluate(Expression e) const
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

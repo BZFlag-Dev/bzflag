@@ -114,6 +114,7 @@ public:
   void setTrackerID(unsigned short int t);
   unsigned short int trackerID();
   static TimeKeeper now;
+  int endShotCredit;
 
 private:
 
