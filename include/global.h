@@ -24,6 +24,7 @@
 
 // values affecting struct and class layout
 const int		CallSignLen = 32;	// including terminating NUL
+const int		PasswordLen = 32;   // including terminating NUL
 const int		EmailLen = 128;		// including terminating NUL
 const int		MessageLen = 128;	// including terminating NUL
 

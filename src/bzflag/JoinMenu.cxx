@@ -71,6 +71,14 @@ JoinMenu::JoinMenu() : serverStartMenu(NULL), serverMenu(NULL)
   callsign->setString(info->callsign);
   list.push_back(callsign);
 
+  password = new HUDuiTypeIn;
+  password->setObfuscation(true);
+  password->setFontFace(fontFace);
+  password->setLabel("Password:");
+  password->setMaxLength(CallSignLen - 1);
+  password->setString(info->password);
+  list.push_back(password);
+  
   team = new HUDuiList;
   team->setFontFace(fontFace);
   team->setLabel("Team:");

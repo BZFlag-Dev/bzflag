@@ -57,6 +57,7 @@ class JoinMenu : public HUDDialog {
   private:
     float		center;
     HUDuiTypeIn*	callsign;
+	HUDuiTypeIn*	password;
     HUDuiTypeIn*	email;
     HUDuiList*		team;
     HUDuiTypeIn*	server;

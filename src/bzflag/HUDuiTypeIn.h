@@ -27,6 +27,7 @@ class HUDuiTypeIn : public HUDuiControl {
 			HUDuiTypeIn();
 			~HUDuiTypeIn();
 
+	void		setObfuscation(bool on);
     int			getMaxLength() const;
     std::string		getString() const;
 
@@ -44,6 +45,7 @@ class HUDuiTypeIn : public HUDuiControl {
     std::string		string;
     int			cursorPos;
     bool		allowEdit;
+	bool		obfuscate;
 };
 
 #endif // __HUDUITYPEIN_H__

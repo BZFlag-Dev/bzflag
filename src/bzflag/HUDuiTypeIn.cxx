@@ -38,10 +38,16 @@ HUDuiTypeIn::HUDuiTypeIn()
 : HUDuiControl(), maxLength(0), cursorPos(0)
 {
   allowEdit = true; //by default allow editing
+  obfuscate = false;
 }
 
 HUDuiTypeIn::~HUDuiTypeIn()
 {
+}
+
+void		HUDuiTypeIn::setObfuscation(bool on)
+{
+	obfuscate = on;
 }
 
 int			HUDuiTypeIn::getMaxLength() const
@@ -172,11 +178,16 @@ void			HUDuiTypeIn::doRender()
   glColor3fv(hasFocus() ? textColor : dimTextColor);
 
   FontManager &fm = FontManager::instance();
-
-  fm.drawString(getX(), getY(), 0, getFontFace(), getFontSize(), string);
+  std::string renderStr;
+  if (obfuscate) {
+	renderStr.append(string.size(), '*'); 
+  }
+  else
+    renderStr = string;
+  fm.drawString(getX(), getY(), 0, getFontFace(), getFontSize(), renderStr);
 
   // find the position of where to draw the input cursor
-  float start = fm.getStrLength(getFontFace(), getFontSize(), string.substr(0, cursorPos));
+  float start = fm.getStrLength(getFontFace(), getFontSize(), renderStr.substr(0, cursorPos));
 
   if (HUDui::getFocus() == this && allowEdit) {
     fm.drawString(getX() + start, getY(), 0, getFontFace(), getFontSize(), "_");

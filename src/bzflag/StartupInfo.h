@@ -32,6 +32,7 @@ class StartupInfo
   bool useUDPconnection;
   TeamColor team;
   char callsign[CallSignLen];
+  char password[PasswordLen];
   char email[EmailLen];
   std::string listServerURL;
   int listServerPort;
