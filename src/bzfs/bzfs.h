@@ -31,9 +31,6 @@
 // must be before windows.h
 #include "network.h"
 
-#if defined(_WIN32)
-#define sleep(_x) Sleep(1000 * (_x))
-#endif /* defined(_WIN32) */
 #endif
 
 // Local Variables: ***
