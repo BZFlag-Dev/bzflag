@@ -50,6 +50,14 @@ bool isAlphanumeric(const char c)
   return false;
 }
 
+#if defined (UINT8_MAX)
+static const unsigned short int MAX_FILTERS = UINT8_MAX;
+#else
+static const unsigned short int MAX_FILTERS = 2048;  
+#endif
+
+static const unsigned short int MAX_WORDS = 256;
+
 
 /** WordFilter will load a list of words and phrases from a file or one at
  * a time or manually.
@@ -127,13 +135,6 @@ class WordFilter
     }
   };
 
-#if defined (UINT8_MAX)
-  static const unsigned short int MAX_FILTERS = UINT8_MAX;
-#else
-  static const unsigned short int MAX_FILTERS = 2048;  
-#endif
-
-  static const unsigned short int MAX_WORDS = 256;
 
   /** main collection of what to filter.  items are stored into
    * the array indexed by the first character of the filter word.
