@@ -5729,7 +5729,6 @@ static void		playingLoop()
 {
   static const float	defaultPos[3] = { 0.0f, 0.0f, 0.0f };
   static const float	defaultDir[3] = { 1.0f, 0.0f, 0.0f };
-  static const GLfloat  colorblindColor[3] = { 0.25f, 0.25f, 0.25f };
   const float* myTankPos;
   const float* myTankDir;
   GLfloat eyePoint[3];
