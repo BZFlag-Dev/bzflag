@@ -111,12 +111,12 @@
 #define HAVE_WGLGETCURRENTCONTEXT 1
 
 /* Define to 1 if you have the `_stricmp' function */
-#define HAVE__STRICMP
+#define HAVE__STRICMP 1
 
 /* Define to 1 if you have the `_strnicmp' function */
-#define HAVE__STRNICMP
+#define HAVE__STRNICMP 1
 
 /* Define to 1 if you have the `_vsnprintf' function */
-#define HAVE__VSNPRINTF
+#define HAVE__VSNPRINTF 1
 
 #endif //_VC5_6_CONFIG
