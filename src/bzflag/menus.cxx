@@ -2667,12 +2667,20 @@ void			ServerMenu::checkEchos()
 
     // check broadcast and multicast sockets
     ServerItem serverInfo;
-    if (pingInSocket != -1 && FD_ISSET(pingInSocket, &read_set))
-      if (serverInfo.ping.read(pingInSocket, NULL))
-	addToListWithLookup(serverInfo);
-    if (pingBcastSocket != -1 && FD_ISSET(pingBcastSocket, &read_set))
-      if (serverInfo.ping.read(pingBcastSocket, NULL))
-	addToListWithLookup(serverInfo);
+	sockaddr_in addr;
+
+    if (pingInSocket != -1 && FD_ISSET(pingInSocket, &read_set)) {
+		if (serverInfo.ping.read(pingInSocket, &addr)) {
+			serverInfo.ping.serverId.serverHost = addr.sin_addr;
+			addToListWithLookup(serverInfo);
+		}
+	}
+	if (pingBcastSocket != -1 && FD_ISSET(pingBcastSocket, &read_set)) {
+		if (serverInfo.ping.read(pingBcastSocket, &addr)) {
+			serverInfo.ping.serverId.serverHost = addr.sin_addr;
+			addToListWithLookup(serverInfo);
+		}
+	}
 
     // check list servers
     for (i = 0; i < numListServers; i++) {
