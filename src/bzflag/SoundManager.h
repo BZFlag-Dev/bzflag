@@ -22,8 +22,8 @@
 
 #define SOUNDMGR (SoundManager::getInstance())
 
-const float			SpeedOfSound = 343.0;				// meters/sec
-const float			MinEventDist = 86.4;				// meters
+const float			SpeedOfSound = 343.0f;				// meters/sec
+const float			MinEventDist = 86.4f;				// meters
 const int			MaxEvents = 30;
 const float			InterAuralDistance = 0.1f;			// meters
 

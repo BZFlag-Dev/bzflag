@@ -338,7 +338,7 @@ void					ViewItemRadar::drawTank(float x, float y, float z, float minsize)
 
 	// Does not change with height.
 #ifdef WIN32
-	s = std::_cpp_max(atof(BZDB->get("tankRadius").c_str()), minsize);
+	s = std::_cpp_max((float)atof(BZDB->get("tankRadius").c_str()), minsize);
 #else
 	s = std::max(float(atof(BZDB->get("tankRadius").c_str())), minsize);
 #endif
