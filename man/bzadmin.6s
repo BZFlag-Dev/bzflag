@@ -14,7 +14,7 @@ bzadmin \- a text based client for BZFlag
 is a textbased client for the game BZFlag. It can't be used for
 playing, but it can be used to see when players join and leave the
 game, to see the chat messages, and to send messages and commands
-to the server.
+to the server, as well as see several other vital game messages.
 .PP
 When you start bzadmin without any command line options other than
 callsign and hostname a simple curses-based user interface will be
