@@ -278,18 +278,18 @@ void			HUDuiControl::renderFocus()
 	fh2 = floorf(0.5f * imageSize);
     gstate->setState();
     glColor3f(1.0f, 1.0f, 1.0f);
-	float imageXShift = -fh2;
+	float imageXShift = 1;//fh2;
 	float imageYShift = -fh2 + fontHeight * 0.5f;
-
+    float outputSize = fh2;
     glBegin(GL_QUADS);
       glTexCoord2f(u, v);
-      glVertex2f(x + imageXShift - imageSize, y + imageYShift);
+      glVertex2f(x + imageXShift - outputSize, y + imageYShift);
       glTexCoord2f(u + du, v);
       glVertex2f(x + imageXShift , y + imageYShift);
       glTexCoord2f(u + du, v + dv);
-      glVertex2f(x + imageXShift , y + imageSize + imageYShift);
+      glVertex2f(x + imageXShift , y + outputSize + imageYShift);
       glTexCoord2f(u, v + dv);
-      glVertex2f(x + imageXShift - imageSize, y + imageSize + imageYShift);
+      glVertex2f(x + imageXShift - outputSize, y + outputSize + imageYShift);
     glEnd();
 
     TimeKeeper nowTime = TimeKeeper::getCurrent();
@@ -730,8 +730,8 @@ void			HUDuiTextureLabel::doRender()
   }
   else { // why use a font? it's an image, use the image size, let every pixel be seen!!! :)
     const OpenGLTexFont& font = getFont();
-    const float width = texture.getWidth();//font.getWidth(getString());
-    const float height = texture.getHeight();//font.getHeight();
+    const float height = font.getHeight();//texture.getHeight();//
+    const float width = height * (float)texture.getWidth()/(float)texture.getHeight();//font.getWidth(getString());
     const float descent = font.getDescent();
     const float x = getX();
     const float y = getY();
