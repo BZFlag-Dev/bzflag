@@ -31,6 +31,7 @@ const struct GlobalDBItem globalDBItems[] = {
   { "_burrowDepth",		"-1.32",			false, StateDatabase::Locked},
   { "_burrowSpeedAd",		"0.80",				false, StateDatabase::Locked},
   { "_explodeTime",		"5.0",				false, StateDatabase::Locked},
+  { "_fakeLag",			"500.0",				false, StateDatabase::Locked},
   { "_flagAltitude",		"11.0",				false, StateDatabase::Locked},
   { "_flagHeight",		"10.0",				false, StateDatabase::Locked},
   { "_flagPoleWidth",		"0.025",                        false, StateDatabase::Locked},

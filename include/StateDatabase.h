@@ -197,6 +197,7 @@ public:
   static const std::string	BZDB_BURROWANGULARAD;
   static const std::string	BZDB_DISABLEBOTS;
   static const std::string	BZDB_EXPLODETIME;
+  static const std::string	BZDB_FAKELAG;
   static const std::string	BZDB_FLAGALTITUDE;
   static const std::string	BZDB_FLAGHEIGHT;
   static const std::string	BZDB_FLAGPOLEWIDTH; 

@@ -276,9 +276,11 @@ void dumpPlayerMessageStats(int playerIndex)
 static void pwrite(int playerIndex, const void *b, int l)
 {
   PlayerInfo& p = player[playerIndex];
-  if (p.fd == NotConnected || l == 0)
-    return;
 
+  if (p.fd == NotConnected || l == 0) {
+    return;
+  }
+  
   void *buf = (void *)b;
   uint16_t len, code;
   buf = nboUnpackUShort(buf, len);
@@ -979,12 +981,24 @@ static void serverStop()
 }
 
 
-static void relayPlayerPacket(int index, uint16_t len, const void *rawbuf)
+static void relayPlayerPacket(int index, uint16_t len, const void *rawbuf, uint16_t code)
 {
   // relay packet to all players except origin
-  for (int i = 0; i < curMaxPlayers; i++)
-    if (i != index && player[i].state > PlayerInLimbo)
-      pwrite(i, rawbuf, len + 4);
+  for (int i = 0; i < curMaxPlayers; i++) {
+    PlayerInfo& pi = player[i];
+    if (i != index && pi.state > PlayerInLimbo) {
+      if ((code == MsgPlayerUpdate) && (pi.flag >= 0) && 
+          (flag[pi.flag].flag.type == Flags::Lag)) {
+        // delay sending to this player
+        pi.delayq.addPacket (len+4, rawbuf, BZDB.eval (StateDatabase::BZDB_FAKELAG));
+        return;
+      } 
+      else {
+        // send immediately
+        pwrite(i, rawbuf, len + 4);
+      }
+    }
+  }
 }
 
 static WorldInfo *defineTeamWorld()
@@ -2036,6 +2050,8 @@ static void addPlayer(int playerIndex)
   player[playerIndex].uqueue = NULL;
   player[playerIndex].dqueue = NULL;
 
+  player[playerIndex].delayq.init();
+
   player[playerIndex].lagavg = 0;
   player[playerIndex].lagcount = 0;
   player[playerIndex].laglastwarn = 0;
@@ -2517,6 +2533,7 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
 
   player[playerIndex].uqueue = NULL;
   player[playerIndex].dqueue = NULL;
+  player[playerIndex].delayq.dequeuePackets();
   player[playerIndex].lastRecvPacketNo = 0;
   player[playerIndex].lastSendPacketNo = 0;
 
@@ -4177,7 +4194,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
       // a server-only hack; but the check does not hurt, either
       if (player[t].team == ObserverTeam)
 	break;
-      relayPlayerPacket(t, len, rawbuf);
+      relayPlayerPacket(t, len, rawbuf, code);
       break;
 
     // FIXME handled inside uread, but not discarded
@@ -4571,6 +4588,16 @@ int main(int argc, char **argv)
       }
     }
 
+    // get time for next delayed packet (Lag Flag)
+    for (int p = 0; p < curMaxPlayers; p++) {
+      if (player[p].state > PlayerInLimbo) {
+        float nextTime = player[p].delayq.nextPacketTime();
+        if (nextTime < waitTime) {
+          waitTime = nextTime;
+        }
+      }
+    }
+
     // if there are world weapons, update much more frequently
     if (someoneIsConnected && wWeapons.count() > 0) {
       waitTime *= 0.1f;  // a tenth of what we would have waited
@@ -4613,6 +4640,16 @@ int main(int argc, char **argv)
       }
     }
 #endif
+
+    // send delayed packets  ???
+    for (int p = 0; p < curMaxPlayers; p++) {
+      void *data;
+      int length;
+      if (player[p].delayq.getPacket(&length, &data)) {
+        pwrite (p, data, length);
+        free (data);
+      }
+    }
 
     // kick idle players
     if (clOptions->idlekickthresh > 0) {

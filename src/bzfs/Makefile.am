@@ -26,6 +26,8 @@ bzfs_SOURCES = \
 	CustomWorld.h \
 	CustomZone.cxx \
 	CustomZone.h \
+	DelayQueue.cxx \
+	DelayQueue.h \
 	EntryZones.cxx \
 	EntryZones.h \
 	FlagInfo.cxx \

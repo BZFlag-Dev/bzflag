@@ -33,6 +33,7 @@
 #include "Team.h"
 #include "Protocol.h"
 #include "Flag.h"
+#include "DelayQueue.h"
 
 // bzfs-specific headers
 
@@ -145,6 +146,9 @@ struct PlayerInfo {
     struct PacketQueue *dqueue;
     unsigned short lastRecvPacketNo;
     unsigned short lastSendPacketNo;
+    
+    // DelayQueue for "Lag Flag"
+    DelayQueue delayq;
 
     std::string clientVersion;
 
