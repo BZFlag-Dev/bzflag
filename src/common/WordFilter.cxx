@@ -266,20 +266,40 @@ std::string WordFilter::l33tspeakSetFromCharacter(const char c) const
 
   if (!isAlphanumeric(c)) {
     /* escape the non-alphanumeric (punctuation or control chars) */
+    set = "  ";
     set[0] = '\\';
     set[1] = c;
+    return set;
+  } else if (isWhitespace(c)) {
+    set = " ";
+    set[0] = c;
     return set;
   }
 
   switch(c) {
-    case 'l':
-      set = "li1!|/\\";
+    case 'a':
+      set = "a4@";
       break;
-    case 'i':
-      set = "il|!/\\";
+    case 'b':
+      set = "b8";
+      break;
+    case 'c':
+      set = "c\\(";
       break;
     case 'e':
       set = "e3";
+      break;
+    case 'g':
+      set = "g9";
+      break;
+    case 'i':
+      set = "il|!\\/";
+      break;
+    case 'l':
+      set = "li1!|\\/";
+      break;
+    case 'o':
+      set ="o0";
       break;
     case 's':
       // dollarsign $ may not be the first char..
@@ -288,26 +308,12 @@ std::string WordFilter::l33tspeakSetFromCharacter(const char c) const
     case 't':
       set = "t+";
       break;
-    case 'c':
-      set = "c\\{(";
-      break;
-    case 'a':
-      set = "a4@";
-      break;
-    case 'b':
-      set = "b8";
-      break;
-    case 'o':
-      set ="o0";
-      break;
-    case 'g':
-      set = "g9";
-      break;
     case 'z':
       set = "zs";
       break;
     default:
-      set = "c";
+      set = " ";
+      set[0] = c;
       break;
   }
 
@@ -343,14 +349,19 @@ std::string WordFilter::expressionFromString(const std::string &word) const
 	expression.append("[fp]+h?");
       }
     } else {
-      if ( charSet.size() == 1 ) {
+
+      if ( charSet.size() >= 1 ) {
 	/* appends characters classes */
 	expression.append("[");
 	expression.append(charSet);
 	expression.append("]");
-      } else {
+      } else if (charSet.size() == 1) {
 	/* append single characters */
 	expression.append(charSet);
+      } else {
+        std::cout << "ERROR: l33t-speak returned an empty string" << std::endl;
+        std::cout << "ERROR: This should never happen" << std::endl;
+	exit(1);
       }
 
       /* ensure we don't capture non-printables after end of word. these do
@@ -366,7 +377,7 @@ std::string WordFilter::expressionFromString(const std::string &word) const
 
   } // end iteration over word letters
 
-  //  std::cout << "[" <<  expression << "]" << std::endl;
+  std::cout << "EXP: " <<  expression << std::endl;
 
   return expression;
 }
