@@ -74,7 +74,7 @@ extern float roamZoom, roamDZoom;
 extern bool roamButton;
 #include "World.h"
 extern World* world;
-void setRoamingLabel(bool force);
+void setRoamingLabel();
 extern void warnAboutMainFlags();
 extern void warnAboutRadarFlags();
 extern void warnAboutRadar();
@@ -695,7 +695,7 @@ std::string cmdRoam(const std::string&, const CommandManager::ArgList& args)
 	      roamTrackTank = -1;
 	  }
 	}
-	setRoamingLabel(true);
+	setRoamingLabel();
       } else if (args[2] == "backward") {
 	// FIXME
       } else {
@@ -725,7 +725,7 @@ std::string cmdRoam(const std::string&, const CommandManager::ArgList& args)
 	    }
 	  }
 	}
-	setRoamingLabel(true);
+	setRoamingLabel();
       } else if (args[2] == "backward") {
 	if (roamView == roamViewFree) {
 	  // do nothing
@@ -748,7 +748,7 @@ std::string cmdRoam(const std::string&, const CommandManager::ArgList& args)
 	    }
 	  }
 	}
-	setRoamingLabel(true);
+	setRoamingLabel();
       } else {
 	return "usage: roam cycle {type|subject} {forward|backward}";
       }

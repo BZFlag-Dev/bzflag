@@ -84,7 +84,7 @@ void selectNextRecipient (bool forward, bool robotIn);
 void handleFlagDropped(Player* tank);
 void setTarget();
 bool shouldGrabMouse();
-void setRoamingLabel(bool force);
+void setRoamingLabel();
 
 extern HUDRenderer	*hud;
 extern char		messageMessage[PlayerIdPLen + MessageLen];

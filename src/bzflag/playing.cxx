@@ -564,7 +564,7 @@ float roamTheta = 0.0f, roamDTheta = 0.0f;
 float roamPhi = 0.0f, roamDPhi = 0.0f;
 float roamZoom = 60.0f, roamDZoom = 0.0f;
 
-void setRoamingLabel(bool)
+void setRoamingLabel()
 {
   if (!player) {
     return;
@@ -4491,7 +4491,7 @@ void drawFrame(const float dt)
     if (roaming) {
       hud->setAltitude(-1.0f);
       float roamViewAngle;
-      setRoamingLabel(false);
+      setRoamingLabel();
       if ((roamView != roamViewFree) &&
 	  ((player && player[roamTrackWinner]) || (devDriving && myTank))) {
 	Player *target;
@@ -5275,7 +5275,7 @@ static void		playingLoop()
     if (roaming) {
       setupRoamingCamera(dt);
     }
-    setRoamingLabel(false);
+    setRoamingLabel();
 
     // update test video format timer
     if (testVideoFormatTimer > 0.0f) {
