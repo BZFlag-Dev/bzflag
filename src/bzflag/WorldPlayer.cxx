@@ -15,7 +15,7 @@
 #include "WorldPlayer.h"
 
 WorldPlayer::WorldPlayer() :
-   Player(ServerPlayer, RogueTeam, "world weapon", "")
+   Player(ServerPlayer, RogueTeam, "world weapon", "", ComputerPlayer)
 {
 }
 

@@ -33,12 +33,13 @@ OpenGLTexture*		Player::tankTexture = NULL;
 int			Player::totalCount = 0;
 
 Player::Player(const PlayerId& _id, TeamColor _team,
-		const char* name, const char* _email) :
+		const char* name, const char* _email, const PlayerType _type) :
 				notResponding(false),
 				autoPilot(false),
 				hunted(false),
 				id(_id),
 				team(_team),
+				type(_type),
 				flag(Flags::Null),
 				fromTeleporter(0),
 				toTeleporter(0),

@@ -15,8 +15,9 @@
 #include "World.h"
 
 RemotePlayer::RemotePlayer(const PlayerId& id, TeamColor team,
-					const char* name, const char* email) :
-				Player(id, team, name, email)
+					const char* name, const char* email,
+			   const PlayerType type) :
+				Player(id, team, name, email, type)
 {
   numShots = World::getWorld()->getMaxShots();
   shots = new RemoteShotPath*[numShots];

@@ -33,13 +33,15 @@ const int		PlayerUpdatePLen = PlayerIdPLen + 38;
 class Player {
   public:
 			Player(const PlayerId&, TeamColor,
-				const char* callsign, const char* emailAddress);
+				const char* callsign, const char* emailAddress,
+			       const PlayerType);
     virtual		~Player();
 
     PlayerId		getId() const;
     TeamColor		getTeam() const;
     const char*		getCallSign() const;
     const char*		getEmailAddress() const;
+    const PlayerType    getPlayerType() const;
     FlagDesc*		getFlag() const;
     long		getOrder() const;
     short		getStatus() const;
@@ -142,6 +144,7 @@ class Player {
     TeamColor		team;			// my team
     char		callSign[CallSignLen];	// my pseudonym
     char		email[EmailLen];	// my email address
+    PlayerType          type;                   // Human/Computer
 
     // relatively stable data
     FlagDesc*		flag;			// flag I'm holding
@@ -201,6 +204,11 @@ inline const char*	Player::getCallSign() const
 inline const char*	Player::getEmailAddress() const
 {
   return email;
+}
+
+inline const PlayerType	Player::getPlayerType() const
+{
+  return type;
 }
 
 inline FlagDesc*	Player::getFlag() const

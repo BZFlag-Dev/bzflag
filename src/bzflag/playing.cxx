@@ -2723,7 +2723,8 @@ static Player*		addPlayer(PlayerId id, void* msg, int showMessage)
   }
   // add player
   if (PlayerType(type) == TankPlayer || PlayerType(type) == ComputerPlayer) {
-    player[i] = new RemotePlayer(id, TeamColor(team), callsign, email);
+    player[i] = new RemotePlayer(id, TeamColor(team), callsign, email,
+				 PlayerType(type));
     player[i]->changeScore(short(wins), short(losses), short(tks));
   }
 
