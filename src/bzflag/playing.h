@@ -21,10 +21,10 @@
 #pragma warning( 4 : 4786 )
 #endif
 
-#include "common.h"
-#include "global.h"
 #include <string>
 #include <vector>
+#include "common.h"
+#include "global.h"
 
 class SceneRenderer;
 class BzfKeyMap;

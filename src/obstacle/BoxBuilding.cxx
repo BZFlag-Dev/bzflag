@@ -11,6 +11,7 @@
  */
 
 #include <math.h>
+#include "common.h"
 #include "BoxBuilding.h"
 #include "Intersect.h"
 #include "QuadWallSceneNode.h"

@@ -13,6 +13,7 @@
 #if defined(_MACOSX_)
 #include <OpenGL/gl.h>
 #endif
+#include "common.h"
 
 static const GLfloat	stars[][6] = {
 			{ 1.00f, 1.00f, 1.00f, -0.18746032f, 0.93921369f, -0.28763914f },

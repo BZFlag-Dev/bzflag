@@ -17,8 +17,8 @@
 #ifndef	BZF_OPENGL_GSTATE_H
 #define	BZF_OPENGL_GSTATE_H
 
-#include "bzfgl.h"
 #include "common.h"
+#include "bzfgl.h"
 #if defined(_MACOSX_)
 #include <OpenGL/gl.h>
 #endif

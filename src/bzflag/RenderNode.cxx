@@ -10,8 +10,9 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include "RenderNode.h"
 #include <string.h>
+#include "common.h"
+#include "RenderNode.h"
 
 //
 // RenderNodeList

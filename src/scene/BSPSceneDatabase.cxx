@@ -14,6 +14,7 @@
  *
  */
 
+#include "common.h"
 #include "SceneNode.h"
 #include "BSPSceneDatabase.h"
 #include "ViewFrustum.h"

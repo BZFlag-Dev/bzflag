@@ -11,6 +11,7 @@
  */
 
 #include <math.h>
+#include "common.h"
 #include "TriWallSceneNode.h"
 #include "SceneRenderer.h"
 

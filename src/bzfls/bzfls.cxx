@@ -27,9 +27,9 @@ static const char copyright[] = "Copyright (c) 1993 - 2003 Tim Riker";
 #include <ctype.h>
 #include <sys/types.h>
 #include <errno.h>
-#include "bzsignal.h"
 #include <time.h>
 #include "common.h"
+#include "bzsignal.h"
 #include "global.h"
 #include "Protocol.h"
 #include "Ping.h"

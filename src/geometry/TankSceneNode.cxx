@@ -10,13 +10,14 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+#include <stdlib.h>
+#include <math.h>
+#include <string.h>
+#include "common.h"
 #include "global.h"
 #include "TankSceneNode.h"
 #include "ViewFrustum.h"
 #include "SceneRenderer.h"
-#include <stdlib.h>
-#include <math.h>
-#include <string.h>
 
   //Modifiers for Normal, Obese. Tiny and Thin
 static const GLfloat styleFactors[4][3] = {

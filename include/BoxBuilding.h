@@ -17,6 +17,7 @@
 #ifndef	BZF_BOX_BUILDING_H
 #define	BZF_BOX_BUILDING_H
 
+#include "common.h"
 #include "Obstacle.h"
 
 class BoxBuilding : public Obstacle {

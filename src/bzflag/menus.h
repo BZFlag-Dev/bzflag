@@ -22,9 +22,10 @@
 #pragma warning( 4 : 4786 )
 #endif
 
+#include <string>
+#include "common.h"
 #include "HUDDialog.h"
 #include "OpenGLTexFont.h"
-#include <string>
 #include "Ping.h"
 
 class JoinMenu;

@@ -16,9 +16,6 @@
 
 #if !defined(WIN32)
 
-#include "ErrorHandler.h"
-#include "network.h"
-#include "Address.h"
 #include <stdio.h>
 #include <fcntl.h>
 #include <string.h>
@@ -26,7 +23,10 @@
 #include <errno.h>
 #include <vector>
 #include <string>
-
+#include "common.h"
+#include "ErrorHandler.h"
+#include "network.h"
+#include "Address.h"
 
 #if defined(_old_linux_)
 #define hstrerror(x) sys_errlist[x]

@@ -10,12 +10,13 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+#include <math.h>
+#include "common.h"
 #include "sound.h"
 #include "global.h"
 #include "TimeKeeper.h"
 #include "PlatformFactory.h"
 #include "BzfMedia.h"
-#include <math.h>
 
 const float		SpeedOfSound = 343.0f;			// meters/sec
 const float		MinEventDist = 20.0f * TankRadius;	// meters

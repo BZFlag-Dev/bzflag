@@ -17,8 +17,8 @@
 #ifndef	BZF_OPENGL_DISPLAYLIST_H
 #define	BZF_OPENGL_DISPLAYLIST_H
 
-#include "bzfgl.h"
 #include "common.h"
+#include "bzfgl.h"
 
 class OpenGLDisplayList {
   public:

@@ -11,6 +11,7 @@
  */
 
 #include <string.h>
+#include "common.h"
 #include "SceneNode.h"
 #include "SceneRenderer.h"
 

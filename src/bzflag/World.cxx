@@ -16,6 +16,7 @@
 #endif
 
 #include <string.h>
+#include "common.h"
 #include "World.h"
 #include "global.h"
 #include "Pack.h"

@@ -13,6 +13,7 @@
 #include <stdio.h>
 #include <sys/types.h>
 #include <time.h>
+#include "common.h"
 #include "TimeBomb.h"
 
 #if !defined(TIME_BOMB)

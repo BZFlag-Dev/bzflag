@@ -10,9 +10,10 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+#include <string.h>
+#include "common.h"
 #include "Pack.h"
 #include "network.h"
-#include <string.h>
 
 #define	ADV(_b, _t)	((void*)(((char*)(_b)) + sizeof(_t)))
 

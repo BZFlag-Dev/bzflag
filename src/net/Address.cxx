@@ -10,13 +10,14 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include "Address.h"
 #include <string.h>
 #include <sys/types.h>
 #if !defined(_WIN32)
 #include <unistd.h>
-#include "bzsignal.h"
 #include <setjmp.h>
+#include "common.h"
+#include "Address.h"
+#include "bzsignal.h"
 #include "ErrorHandler.h"
 #endif
 

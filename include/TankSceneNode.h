@@ -17,6 +17,7 @@
 #ifndef	BZF_TANK_SCENE_NODE_H
 #define	BZF_TANK_SCENE_NODE_H
 
+#include "common.h"
 #include "SceneNode.h"
 #include "OpenGLTexture.h"
 

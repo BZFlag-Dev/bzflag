@@ -8,6 +8,7 @@
 #include <string>
 #include <vector>
 #include <map>
+#include "common.h"
 
 typedef std::map<std::string, std::string> BundleStringMap;
 

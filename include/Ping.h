@@ -22,11 +22,12 @@
 	#pragma warning(disable: 4786)
 #endif
 
+#include <fstream>
+#include "common.h"
 #include "Address.h"
 #include "Pack.h"
 #include "multicast.h"
 #include "bzfio.h"
-#include <fstream>
 
 static const int	PingPacketHexPackedSize = 2 * 2 * 18;
 

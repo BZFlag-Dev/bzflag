@@ -21,6 +21,7 @@
 #ifndef	BZF_RENDER_NODE_H
 #define	BZF_RENDER_NODE_H
 
+#include "common.h"
 #include "OpenGLGState.h"
 
 class RenderNode {

@@ -11,6 +11,7 @@
  */
 
 #include <math.h>
+#include "common.h"
 #include "Team.h"
 #include "Flag.h"
 #include "Pack.h"

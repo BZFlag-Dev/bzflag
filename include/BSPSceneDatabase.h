@@ -22,6 +22,7 @@
 #endif
 
 #include <vector>
+#include "common.h"
 #include "bzfgl.h"
 #include "common.h"
 #include "SceneDatabase.h"

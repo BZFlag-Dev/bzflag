@@ -17,9 +17,9 @@
 #ifndef	BZF_KEYMAP_H
 #define	BZF_KEYMAP_H
 
+#include <string>
 #include "common.h"
 #include "BzfEvent.h"
-#include <string>
 
 class BzfKeyMap {
   public:

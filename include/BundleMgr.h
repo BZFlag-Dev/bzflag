@@ -8,6 +8,7 @@
 #include <string>
 #include <vector>
 #include <map>
+#include "common.h"
 
 #ifdef _MACOSX_
 #include <CoreFoundation/CoreFoundation.h>

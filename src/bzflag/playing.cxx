@@ -45,6 +45,7 @@ static const char copyright[] = "Copyright (c) 1993 - 2003 Tim Riker";
 #endif
 
 // yikes! that's a lotsa includes!
+#include "common.h"
 #include "playing.h"
 #include "BzfDisplay.h"
 #include "BzfEvent.h"

@@ -12,6 +12,7 @@
 
 #include <math.h>
 #include <string.h>
+#include "common.h"
 #include "bzfgl.h"
 #include "ViewFrustum.h"
 

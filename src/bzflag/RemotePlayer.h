@@ -13,6 +13,7 @@
 #ifndef	BZF_REMOTE_PLAYER_H
 #define	BZF_REMOTE_PLAYER_H
 
+#include "common.h"
 #include "Player.h"
 #include "ShotPath.h"
 

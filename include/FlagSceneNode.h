@@ -17,6 +17,7 @@
 #ifndef	BZF_FLAG_SCENE_NODE_H
 #define	BZF_FLAG_SCENE_NODE_H
 
+#include "common.h"
 #include "SceneNode.h"
 
 class FlagSceneNode : public SceneNode {

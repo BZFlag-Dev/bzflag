@@ -16,6 +16,7 @@
 
 #include <stdlib.h>
 #include <math.h>
+#include "common.h"
 #include "FlagSceneNode.h"
 #include "ViewFrustum.h"
 #include "SceneRenderer.h"

@@ -17,6 +17,7 @@
 #if defined(_WIN32)
 #include <windows.h>
 #endif
+#include "common.h"
 #include "BundleMgr.h"
 #include "Bundle.h"
 

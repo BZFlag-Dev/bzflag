@@ -12,6 +12,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include "common.h"
 #include "texture.h"
 #include "ErrorHandler.h"
 #include "PlatformFactory.h"

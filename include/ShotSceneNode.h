@@ -17,6 +17,7 @@
 #ifndef	BZF_SHOT_SCENE_NODE_H
 #define	BZF_SHOT_SCENE_NODE_H
 
+#include "common.h"
 #include "SceneNode.h"
 
 class ShotSceneNode : public SceneNode {

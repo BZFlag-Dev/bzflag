@@ -18,6 +18,7 @@
 #ifndef	BZF_SHELL_SCENE_NODE_H
 #define	BZF_SHELL_SCENE_NODE_H
 
+#include "common.h"
 #include "ShotSceneNode.h"
 
 const GLfloat		ShellRadius = 0.5f;

@@ -17,10 +17,10 @@
 #ifndef	BZF_TEXTURE_H
 #define	BZF_TEXTURE_H
 
+#include <string>
 #include "common.h"
 #include "OpenGLTexture.h"
 #include "OpenGLTexFont.h"
-#include <string>
 
 unsigned char*		getTextureImage(const std::string& file,
 				int& width, int& height, int& depth);

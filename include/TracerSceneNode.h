@@ -18,6 +18,7 @@
 #ifndef	BZF_TRACER_SCENE_NODE_H
 #define	BZF_TRACER_SCENE_NODE_H
 
+#include "common.h"
 #include "ShotSceneNode.h"
 #include "OpenGLLight.h"
 

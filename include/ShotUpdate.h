@@ -24,6 +24,7 @@
 #define	BZF_SHOT_UPDATE_H
 
 #include <math.h>
+#include "common.h"
 #include "Address.h"
 #include "Flag.h"
 

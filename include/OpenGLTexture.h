@@ -41,8 +41,8 @@
 #ifndef	BZF_OPENGL_TEXTURE_H
 #define	BZF_OPENGL_TEXTURE_H
 
-#include "bzfgl.h"
 #include "common.h"
+#include "bzfgl.h"
 
 class OpenGLTexture {
   public:

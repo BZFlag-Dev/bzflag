@@ -1,4 +1,4 @@
-dist_pkgdata_DATA = \
+EXTRA_DIST = \
 	bzflag_da.po	\
 	bzflag_en_US_redneck.po	\
 	bzflag_it.po	\
@@ -14,3 +14,10 @@ dist_pkgdata_DATA = \
 
 MAINTAINERCLEANFILES = \
 	Makefile.in
+
+install-data-local:
+	$(mkinstalldirs) $(DESTDIR)$(datadir)/bzflag/l10n
+	$(INSTALL_DATA) $(PO_FILES) $(DESTDIR)$(datadir)/bzflag/l10n
+
+uninstall-local:
+	cd $(DESTDIR)$(pkgdatadir)/bzflag/l10n; rm -rf *

@@ -5,6 +5,7 @@
 #include <string>
 #include <fstream>
 #include <stdio.h>
+#include "common.h"
 #include "Bundle.h"
 
 Bundle::Bundle(const Bundle *pBundle)

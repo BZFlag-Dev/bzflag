@@ -18,6 +18,7 @@
 #ifndef BZF_EIGHTHD_BASE_SCENE_NODE_H
 #define BZF_EIGHTHD_BASE_SCENE_NODE_H
 
+#include "common.h"
 #include "EighthDimSceneNode.h"
 
 class EighthDBaseSceneNode : public EighthDimSceneNode {

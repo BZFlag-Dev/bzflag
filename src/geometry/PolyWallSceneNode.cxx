@@ -11,6 +11,7 @@
  */
 
 #include <math.h>
+#include "common.h"
 #include "PolyWallSceneNode.h"
 #include "SceneRenderer.h"
 

@@ -15,6 +15,7 @@
  */
 
 #include <string.h>
+#include "common.h"
 #include "SceneNode.h"
 #include "ZSceneDatabase.h"
 #include "SphereSceneNode.h"

@@ -13,9 +13,9 @@
 #include <stdio.h>
 #include <string.h>
 #include <errno.h>
+#include "common.h"
 #include "udpnetwork.h"
 #include "ErrorHandler.h"
-
 
 int			openUDPNetwork(int port, struct sockaddr_in* addr)
 {

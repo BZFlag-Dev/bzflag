@@ -13,6 +13,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <errno.h>
+#include "common.h"
 #include "multicast.h"
 #include "ErrorHandler.h"
 

@@ -21,9 +21,10 @@
 	#pragma warning(disable: 4786)
 #endif
 
+#include <vector>
+#include "common.h"
 #include "LocalPlayer.h"
 #include "Region.h"
-#include <vector>
 
 class ServerLink;
 

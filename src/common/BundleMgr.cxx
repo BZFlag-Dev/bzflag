@@ -10,6 +10,7 @@
 #endif
 
 #include <string>
+#include "common.h"
 #include "BundleMgr.h"
 #include "Bundle.h"
 

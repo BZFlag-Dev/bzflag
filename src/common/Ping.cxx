@@ -13,6 +13,7 @@
 #include <string.h>
 #include <math.h>
 #include <ctype.h>
+#include "common.h"
 #include "global.h"
 #include "Ping.h"
 #include "Protocol.h"

@@ -12,6 +12,7 @@
 
 #include <stdlib.h>
 #include <math.h>
+#include "common.h"
 #include "WallSceneNode.h"
 #include "ViewFrustum.h"
 #include "SceneRenderer.h"

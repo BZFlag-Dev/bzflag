@@ -10,11 +10,12 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+#include <string.h>
+#include "common.h"
 #include "OpenGLGState.h"
 #include "OpenGLTexture.h"
 #include "OpenGLMaterial.h"
 #include "RenderNode.h"
-#include <string.h>
 
 static GLenum		MY_GL_REPLACE = GL_MODULATE;
 

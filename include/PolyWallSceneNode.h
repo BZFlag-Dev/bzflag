@@ -18,6 +18,7 @@
 #ifndef	BZF_POLY_WALL_SCENE_NODE_H
 #define	BZF_POLY_WALL_SCENE_NODE_H
 
+#include "common.h"
 #include "WallSceneNode.h"
 
 class PolyWallSceneNode : public WallSceneNode {

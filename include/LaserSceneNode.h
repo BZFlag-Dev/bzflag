@@ -17,6 +17,7 @@
 #ifndef	BZF_LASER_SCENE_NODE_H
 #define	BZF_LASER_SCENE_NODE_H
 
+#include "common.h"
 #include "SceneNode.h"
 
 class LaserSceneNode : public SceneNode {

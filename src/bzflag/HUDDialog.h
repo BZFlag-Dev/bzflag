@@ -18,6 +18,7 @@
 #ifndef	BZF_HUDDIALOG_H
 #define	BZF_HUDDIALOG_H
 
+#include "common.h"
 #include "HUDui.h"
 
 #if defined(_WIN32)

@@ -12,6 +12,7 @@
 
 #include <stdlib.h>
 #include <math.h>
+#include "common.h"
 #include "EighthDBaseSceneNode.h"
 #include "SceneRenderer.h"
 

@@ -13,6 +13,7 @@
 #ifndef	BZF_LOCAL_PLAYER_H
 #define	BZF_LOCAL_PLAYER_H
 
+#include "common.h"
 #include "Player.h"
 #include "ShotPath.h"
 #include "FlagSceneNode.h"

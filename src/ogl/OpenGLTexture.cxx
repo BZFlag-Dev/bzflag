@@ -10,8 +10,6 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include "OpenGLTexture.h"
-#include "OpenGLGState.h"
 #include <string.h>
 // glu used to resample textures for mipmaps;  should use something better.
 #if defined(_MACOSX_)
@@ -19,6 +17,9 @@
 #else
 #include <GL/glu.h>
 #endif
+#include "common.h"
+#include "OpenGLTexture.h"
+#include "OpenGLGState.h"
 
 #if defined(GL_VERSION_1_1)
 #  define	BZF_TEXTURE_OBJECT

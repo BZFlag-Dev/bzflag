@@ -18,8 +18,8 @@
 #ifndef	BZF_DAYLIGHT_H
 #define	BZF_DAYLIGHT_H
 
-#include "bzfgl.h"
 #include "common.h"
+#include "bzfgl.h"
 
 // julian day of midnight 1/1/1970
 static const double	unixEpoch = 2440587.5;

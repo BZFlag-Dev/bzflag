@@ -11,6 +11,7 @@
  */
 
 #include <math.h>
+#include "common.h"
 #include "LaserSceneNode.h"
 #include "SceneRenderer.h"
 #include "OpenGLTexture.h"

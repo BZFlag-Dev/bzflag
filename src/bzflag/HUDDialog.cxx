@@ -10,6 +10,7 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+#include "common.h"
 #include "HUDDialog.h"
 #include "playing.h"
 #include "MainWindow.h"

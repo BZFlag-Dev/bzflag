@@ -19,6 +19,7 @@ static struct timeval	lastTime = { 0, 0 };
 #else /* !defined(_WIN32) */
 #include <windows.h>
 #include <mmsystem.h>
+#include "common.h"
 static unsigned int	lastTime = 0;
 static LARGE_INTEGER	qpcLastTime;
 static double		qpcFrequency = 0.0;

@@ -30,8 +30,8 @@
 #ifndef	BZF_OPENGL_MATERIAL_H
 #define	BZF_OPENGL_MATERIAL_H
 
-#include "bzfgl.h"
 #include "common.h"
+#include "bzfgl.h"
 
 class OpenGLMaterial {
   public:

@@ -17,6 +17,7 @@
 #include <sys/types.h>
 #include <ctype.h>
 #include <time.h>
+#include "common.h"
 #include "ServerLink.h"
 #include "Pack.h"
 #include "LocalPlayer.h"

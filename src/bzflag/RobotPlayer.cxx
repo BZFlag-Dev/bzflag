@@ -16,11 +16,12 @@
 
 //#define SHOOTING_FIX
 
+#include <stdlib.h>
+#include <math.h>
+#include "common.h"
 #include "RobotPlayer.h"
 #include "World.h"
 #include "ServerLink.h"
-#include <stdlib.h>
-#include <math.h>
 
 RobotPlayer::RobotPlayer(const PlayerId& _id, const char* _name,
 				ServerLink* _server,

@@ -17,6 +17,7 @@
 #ifndef	BZF_TRI_WALL_SCENE_NODE_H
 #define	BZF_TRI_WALL_SCENE_NODE_H
 
+#include "common.h"
 #include "WallSceneNode.h"
 
 class TriWallSceneNode : public WallSceneNode {

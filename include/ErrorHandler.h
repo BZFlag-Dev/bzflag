@@ -23,6 +23,7 @@
 
 #include <vector>
 #include <string>
+#include "common.h"
 #include "Bundle.h"
 
 typedef void		(*ErrorCallback)(const char*);

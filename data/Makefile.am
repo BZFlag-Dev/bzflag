@@ -1,6 +1,6 @@
 SUBDIRS = l10n
 
-dist_pkgdata_DATA = \
+EXTRA_DIST = \
 	bbolt.rgb	\
 	explode1.rgb	\
 	glaser.rgb	\
@@ -62,3 +62,10 @@ dist_pkgdata_DATA = \
 
 MAINTAINERCLEANFILES = \
 	Makefile.in
+
+install-data-local:
+	$(mkinstalldirs) $(DESTDIR)$(datadir)/bzflag
+	$(INSTALL_DATA) $(EXTRA_DIST) $(DESTDIR)$(datadir)/bzflag
+
+uninstall-local:
+	cd $(DESTDIR)$(datadir)/bzflag; rm -rf *

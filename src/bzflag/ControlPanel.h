@@ -17,6 +17,7 @@
 	#pragma warning(disable: 4786)
 #endif
 
+#include "common.h"
 #include "MainWindow.h"
 #include "global.h"
 #include "OpenGLTexture.h"

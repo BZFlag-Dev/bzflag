@@ -18,8 +18,8 @@
 #ifndef	BZF_HUD_RENDERER_H
 #define	BZF_HUD_RENDERER_H
 
-#include "global.h"
 #include "common.h"
+#include "global.h"
 #include "OpenGLTexFont.h"
 #include "TimeKeeper.h"
 #include "HUDui.h"

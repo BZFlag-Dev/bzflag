@@ -20,8 +20,8 @@
 #ifndef	BZF_BACKGROUND_RENDERER_H
 #define	BZF_BACKGROUND_RENDERER_H
 
-#include "bzfgl.h"
 #include "common.h"
+#include "bzfgl.h"
 #include "OpenGLGState.h"
 #include "OpenGLDisplayList.h"
 

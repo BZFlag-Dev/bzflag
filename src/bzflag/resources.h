@@ -21,11 +21,10 @@
 	#pragma warning(disable: 4786)
 #endif
 
-
-#include "common.h"
-#include "bzfio.h"
 #include <string>
 #include <vector>
+#include "common.h"
+#include "bzfio.h"
 
 class ResourceDatabase {
   public:

@@ -11,6 +11,7 @@
  */
 
 #include <math.h>
+#include "common.h"
 #include "Intersect.h"
 
 bool			testCircleCircle(const float* o1, float r1,

@@ -13,6 +13,7 @@
 #include <string>
 #include <string.h>
 #include <math.h>
+#include "common.h"
 #include "OpenGLTexFont.h"
 #include "global.h"		// for TeamColor enum
 #include "Team.h"		// for TeamColor colors

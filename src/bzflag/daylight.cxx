@@ -11,6 +11,7 @@
  */
 
 #include <math.h>
+#include "common.h"
 #include "daylight.h"
 
 static const double	radPerDeg = M_PI / 180.0;

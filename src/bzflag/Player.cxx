@@ -11,6 +11,7 @@
  */
 
 #include <string.h>
+#include "common.h"
 #include "Player.h"
 #include "World.h"
 #include "TankSceneNode.h"

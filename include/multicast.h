@@ -17,10 +17,11 @@
 #ifndef	BZF_MULTICAST_H
 #define	BZF_MULITCAST_H
 
+#include <sys/types.h>
+#include "common.h"
 #include "network.h"
 #include "common.h"
 #include "Address.h"
-#include <sys/types.h>
 
 /* openBroadcast:
  *	port:		port number

@@ -17,10 +17,10 @@
 #ifndef	BZF_UDPNET_H
 #define	BZF_UDPNET_H
 
+#include <sys/types.h>
 #include "network.h"
 #include "common.h"
 #include "Address.h"
-#include <sys/types.h>
 
 /* openUDPnetwork:
  *	port:		port number

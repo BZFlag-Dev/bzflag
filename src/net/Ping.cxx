@@ -18,12 +18,13 @@
 #include <string.h>
 #include <math.h>
 #include <ctype.h>
+#include <fstream>
+#include "common.h"
 #include "global.h"
 #include "Ping.h"
 #include "Protocol.h"
 #include "TimeKeeper.h"
 #include "bzfio.h"
-#include <fstream>
 
 //
 // PingPacket

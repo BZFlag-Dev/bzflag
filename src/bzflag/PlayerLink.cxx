@@ -11,6 +11,7 @@
  */
 
 #include <string.h>
+#include "common.h"
 #include "PlayerLink.h"
 #include "ServerLink.h"
 #include "Pack.h"

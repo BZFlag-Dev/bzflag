@@ -10,6 +10,9 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+#include <stdlib.h>
+#include <math.h>
+#include "common.h"
 #include "LocalPlayer.h"
 #include "World.h"
 #include "SceneDatabase.h"
@@ -17,8 +20,6 @@
 #include "sound.h"
 #include "Flag.h"
 #include "BzfEvent.h"
-#include <stdlib.h>
-#include <math.h>
 
 //
 // BaseLocalPlayer

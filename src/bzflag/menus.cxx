@@ -24,6 +24,7 @@
 #include <ctype.h>
 #include <errno.h>
 #include <map>
+#include "common.h"
 #include "bzsignal.h"
 #if defined(_WIN32)
 #define _POSIX_

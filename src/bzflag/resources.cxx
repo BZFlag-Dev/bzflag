@@ -13,12 +13,13 @@
 	#pragma warning(disable: 4786)
 #endif
 
+#include <ctype.h>
+#include "common.h"
 #include "resources.h"
 #include "BzfDisplay.h"
 #include "network.h"
 #include "ErrorHandler.h"
 #include "bzfio.h"
-#include <ctype.h>
 
 //
 // ResourceDatabase

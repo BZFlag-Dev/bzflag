@@ -24,6 +24,7 @@
 #ifndef	BZF_WALL_SCENE_NODE_H
 #define	BZF_WALL_SCENE_NODE_H
 
+#include "common.h"
 #include "SceneNode.h"
 
 class WallSceneNode : public SceneNode {

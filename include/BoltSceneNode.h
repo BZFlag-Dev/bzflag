@@ -17,6 +17,7 @@
 #ifndef	BZF_BOLT_SCENE_NODE_H
 #define	BZF_BOLT_SCENE_NODE_H
 
+#include "common.h"
 #include "ShotSceneNode.h"
 #include "OpenGLLight.h"
 

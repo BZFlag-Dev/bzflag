@@ -21,8 +21,8 @@
 	#pragma warning(disable: 4786)
 #endif
 
-#include "common.h"
 #include <vector>
+#include "common.h"
 
 class RegionPoint {
   public:

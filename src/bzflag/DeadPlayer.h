@@ -21,6 +21,7 @@
 #ifndef	BZF_DEADPLAYER_H
 #define	BZF_DEADPLAYER_H
 
+#include "common.h"
 #include "Player.h"
 
 class DeadPlayer : public Player {

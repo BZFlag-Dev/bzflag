@@ -33,6 +33,7 @@ documentation and/or software.
 #include <string>
 #include <iostream>
 #include <stdio.h>
+#include "common.h"
 #include "md5.h"
 
 // Constants for MD5Transform routine.

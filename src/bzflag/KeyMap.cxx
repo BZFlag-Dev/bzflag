@@ -10,8 +10,8 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include "KeyMap.h"
 #include <ctype.h>
+#include "KeyMap.h"
 
 const BzfKeyEvent	BzfKeyMap::defaults1[] = {
 				{ 0, BzfKeyEvent::LeftMouse, 0 },

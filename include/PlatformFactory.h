@@ -17,6 +17,8 @@
 #ifndef BZF_PLATFORM_FACTORY_H
 #define	BZF_PLATFORM_FACTORY_H
 
+#include "common.h"
+
 class BzfDisplay;
 class BzfVisual;
 class BzfWindow;

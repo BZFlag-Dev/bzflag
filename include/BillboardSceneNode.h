@@ -17,6 +17,7 @@
 #ifndef	BZF_BILLBOARD_SCENE_NODE_H
 #define	BZF_BILLBOARD_SCENE_NODE_H
 
+#include "common.h"
 #include "SceneNode.h"
 #include "OpenGLLight.h"
 

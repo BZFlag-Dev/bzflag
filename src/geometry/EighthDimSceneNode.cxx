@@ -13,6 +13,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#include "common.h"
 #include "EighthDimSceneNode.h"
 #include "SceneRenderer.h"
 

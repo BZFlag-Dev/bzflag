@@ -13,6 +13,7 @@
 #ifndef	BZF_PLAYERSTATE_H
 #define	BZF_PLAYERSTATE_H
 
+#include "common.h"
 
 class PlayerState
 {

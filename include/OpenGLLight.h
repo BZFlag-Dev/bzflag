@@ -22,8 +22,8 @@
 #endif
 
 #include <vector>
-#include "bzfgl.h"
 #include "common.h"
+#include "bzfgl.h"
 
 typedef std::vector<GLuint> OpenGLLightDLStack;
 

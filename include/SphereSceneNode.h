@@ -17,6 +17,7 @@
 #ifndef	BZF_SPHERE_SCENE_NODE_H
 #define	BZF_SPHERE_SCENE_NODE_H
 
+#include "common.h"
 #include "SceneNode.h"
 
 const int		SphereRes = 8;
