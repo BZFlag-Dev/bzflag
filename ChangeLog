@@ -2,6 +2,8 @@
 			     BZFlag release notes
 
 * add new updates here without heading until a release
+* possible win32 installer bug - Chris Walters
+* gcc 3.1+ patches - David Trowbridge
 
 BZFlag 1.7e6 or Armoured Smashing Fist 2002 (was 1.7e5)
 -------------------------------------------------------

@@ -338,8 +338,8 @@ int			installFile(const char* path, Uncompressor& stream,
 	}
 	n -= bytes;
 	totalSpace += bytes;
-	(*fileCB)((size - n) / (size / 100));
-	(*totalCB)(totalSpace / (requiredSpace / 100));
+	(*fileCB)(100 * (size - n) / size);
+	(*totalCB)(100 * totalSpace / requiredSpace);
 
 	// send some windows messages
 	if (doMessages())
