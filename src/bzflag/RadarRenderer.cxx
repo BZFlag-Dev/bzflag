@@ -13,6 +13,7 @@
 #include <stdlib.h>
 #include "bzfgl.h"
 #include "global.h"
+#include "OpenGLTexture.h"
 #include "RadarRenderer.h"
 #include "SceneRenderer.h"
 #include "MainWindow.h"
@@ -47,15 +48,12 @@ RadarRenderer::RadarRenderer(const SceneRenderer& renderer,
   glGetIntergerv(GL_SAMPLES_SGIS, &bits);
   if (bits > 0) smooth = False;
 #endif
-#ifdef GL_ABGR_EXT
-  noiseFormat = renderer.useABGR() ? GL_ABGR_EXT : GL_RGBA;
-#else
-  noiseFormat = GL_RGBA;
-#endif
-  makeNoise();
 
   // watch for context recreation
   OpenGLGState::registerContextInitializer(initContext, (void*)this);
+  if (makeNoise()==true)
+    makeNoiseTexture();
+  else noiseTexture=0;
 }
 
 RadarRenderer::~RadarRenderer()
@@ -92,19 +90,25 @@ void			RadarRenderer::freeList()
   list = 0;
 }
 
-void			RadarRenderer::makeNoise()
+boolean			RadarRenderer::makeNoise()
 {
   delete[] noise;
-  const int size = 8 * w * h;
-  noise = new unsigned char[size + 4];
-  if (!noise) return;
-  for (int i = 0; i <= size; i += 4) {
+  const int size = 4 * 128 * 128;
+  noise = new unsigned char[size];
+  if (!noise) return false;
+  for (int i = 0; i < size; i += 4 ) {
     unsigned char n = (unsigned char)floor(256.0 * bzfrand());
     noise[i+0] = n;
     noise[i+1] = n;
     noise[i+2] = n;
     noise[i+3] = n;
   }
+  return true;
+}
+
+void			RadarRenderer::makeNoiseTexture()
+{
+  noiseTexture = new OpenGLTexture(128,128,noise,OpenGLTexture::Nearest);
 }
 
 void			RadarRenderer::drawShot(const ShotPath* shot)
@@ -173,12 +177,65 @@ void			RadarRenderer::render(SceneRenderer& renderer,
 
   // if jammed then draw white noise.  occasionally draw a good frame.
   if (jammed && bzfrand() > decay) {
-    // pick a random pixel from the first half of noise and render
-    // a block pixels with it in the lower left corner.
-    int offset = 4 * int(floor(w * h * bzfrand()));
-    glRasterPos2f(-range, -range);
-    glDrawPixels(w, h, noiseFormat, GL_UNSIGNED_BYTE,
-		(GLubyte*)(((unsigned long)noise & ~3) + 4) + offset);
+
+    glColor3f(1.0,1.0,1.0);
+
+    if (noiseTexture != 0 && renderer.useQuality()>0) {
+
+      const int sequences = 10;
+
+      static float np[] =
+          { 0, 0, 1, 1,
+            1, 1, 0, 0,
+            0.5 , 0.5, 1.5, 1.5,
+            1.5, 1.5, 0.5, 0.5,
+            0.25, 0.25, 1.25, 1.25,
+            1.25, 1.25, 0.25, 0.25,
+            0, 0.5, 1, 1.5,
+            1, 1.5, 0, 0.5,
+            0.5, 0, 1.5, 1,
+            1.4, 1, 0.5, 0,
+            0.75, 0.75, 1.75, 1.75,
+            1.75, 1.75, 0.75, 0.75,
+          };
+
+      int noisePattern = 4 * int(floor(sequences * bzfrand()));
+
+      glEnable(GL_TEXTURE_2D);
+      noiseTexture->execute();
+      glBegin(GL_QUADS);
+
+        glTexCoord2f(np[noisePattern+0],np[noisePattern+1]);
+        glVertex2f(-range,-range);
+        glTexCoord2f(np[noisePattern+2],np[noisePattern+1]);
+        glVertex2f( range,-range);
+        glTexCoord2f(np[noisePattern+2],np[noisePattern+3]);
+        glVertex2f( range, range);
+        glTexCoord2f(np[noisePattern+0],np[noisePattern+3]);
+        glVertex2f(-range, range);
+
+      glEnd();
+      glDisable(GL_TEXTURE_2D);
+    }
+
+    else if (noiseTexture != 0 && renderer.useTexture()==true &&
+	renderer.useQuality()==0) {
+      glEnable(GL_TEXTURE_2D);
+      noiseTexture->execute();
+      glBegin(GL_QUADS);
+
+        glTexCoord2f(0,0);
+        glVertex2f(-range,-range);
+        glTexCoord2f(1,0);
+        glVertex2f( range,-range);
+        glTexCoord2f(1,1);
+        glVertex2f( range, range);
+        glTexCoord2f(0,1);
+        glVertex2f(-range, range);
+
+      glEnd();
+      glDisable(GL_TEXTURE_2D);
+    }
     if (decay > 0.015f) decay *= 0.5f;
   }
 

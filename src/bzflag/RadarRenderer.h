@@ -46,10 +46,11 @@ class RadarRenderer {
 
   private:
     // no copying
-			RadarRenderer(const RadarRenderer&);
+    RadarRenderer(const RadarRenderer&);
     RadarRenderer&	operator=(const RadarRenderer&);
 
-    void		makeNoise();
+    boolean		makeNoise();
+    void		makeNoiseTexture();
     void		drawShot(const ShotPath*);
     void		drawTank(float x, float y, float z, float ps);
 
@@ -67,8 +68,8 @@ class RadarRenderer {
     boolean		jammed;
     double		decay;
     GLuint		list;
-    unsigned char*	noise;
-    GLenum		noiseFormat;
+    unsigned char	*noise;
+    OpenGLTexture	*noiseTexture;
 };
 
 //

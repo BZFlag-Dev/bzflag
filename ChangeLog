@@ -8,6 +8,7 @@ BZFlag 1.7e3
 * win32 audio thread fix for win2k - crs
 * send to nemesis - Dave Brosius
 * USB joystick support - Nick Sayer
+* new (faster?) radar jamming code - Mathias Gumz
 
 BZFlag 1.7e2
 ------------
