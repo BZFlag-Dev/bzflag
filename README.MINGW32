@@ -16,11 +16,10 @@ to install it and stay updated.
 If you want to build using SDL support, you should get SDL at libsdl.org and
 follow instruction to install it under MinGW.
 
-If you want to build without using SDL, you have to get yourself a couples of
-header files to
-interface the DirectX MS subsystem. They are normally parts of any Microsoft
-development kit; you can get from your Visual C installation or from MSDN on
-internet.
+If you want to build without using SDL, you have to get yourself a couple of
+header files to interface the MS DirectX subsystem. They are normally part 
+of any Microsoft development kit; you can get from your Visual C installation 
+or from MSDN on internet.
 Any way you got these files, you should copy either on the MinGW installation,
 under the include directory or, if you don't like to clutter the MinGW
 installation, just put under src/platform.
@@ -46,7 +45,7 @@ Executable file are puts on src/bzflag/bzflag src/bzfs/bzfs ...
 When you are confident of the compilation result you can run make install and
 then make a link to the application (e.g. on your Desktop) to run this bejoux.
 
-To get the needed file from the Microsoft DirectX SDK
+To get the needed DirectX header files from the Microsoft DirectX SDK:
 
     * Go to http://msdn.microsoft.com/downloads/
     * Select the DirectX 9.0 Software Development Kit
