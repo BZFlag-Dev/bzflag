@@ -153,7 +153,9 @@ void			ControlPanel::render(SceneRenderer& renderer)
   const int x = window.getOriginX();
   const int y = window.getOriginY();
   const int w = window.getWidth();
-  const bool showTabs = BZDB.isTrue("showtabs");
+  const int tabStyle = (int)BZDB.eval("showtabs");
+  const bool showTabs = (tabStyle > 0);
+  tabsOnRight = (tabStyle == 2);
 
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();

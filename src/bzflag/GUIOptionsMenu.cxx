@@ -164,6 +164,17 @@ GUIOptionsMenu::GUIOptionsMenu()
   options->push_back(std::string("on"));
   option->update();
   list.push_back(option);
+  // Tabs
+  option = new HUDuiList;
+  option->setFontFace(fontFace);
+  option->setLabel("Control panel tabs:");
+  option->setCallback(callback, (void*)"t");
+  options = &option->getList();
+  options->push_back(std::string("off"));
+  options->push_back(std::string("left"));
+  options->push_back(std::string("right"));
+  option->update();
+  list.push_back(option);
   // Underline color
   option = new HUDuiList;
   option->setFontFace(fontFace);
@@ -244,6 +255,7 @@ void			GUIOptionsMenu::resize(int width, int height)
     ((HUDuiList*)list[i++])->setIndex(renderer->getMaxMotionFactor());
     i++; // locale
     ((HUDuiList*)list[i++])->setIndex(BZDB.isTrue("colorful") ? 1 : 0);
+    ((HUDuiList*)list[i++])->setIndex(static_cast<int>(BZDB.eval("showtabs")));
 
     // underline color - does this HAVE to be so complicated?
     std::vector<std::string>* options = &((HUDuiList*)list[i++])->getList();
@@ -309,6 +321,12 @@ void			GUIOptionsMenu::callback(HUDuiControl* w, void* data)
     case 'c':
       {
 	BZDB.set("colorful", list->getIndex() ? "1" : "0");
+	break;
+      }
+
+    case 't':
+      {
+	BZDB.set("showtabs", string_util::format("%d", list->getIndex()));
 	break;
       }
 
