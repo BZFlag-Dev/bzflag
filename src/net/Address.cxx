@@ -98,7 +98,6 @@ BzfString		Address::getDotNotation() const
 
 #if !defined(_WIN32)
 static jmp_buf alarmEnv;
-#endif
 static void		onAlarm(int)
 {
   // jump back to setjmp.  this handles the race condition where we
@@ -107,6 +106,7 @@ static void		onAlarm(int)
   // wait).
   longjmp(alarmEnv, 1);
 }
+#endif
 
 Address			Address::getHostAddress(const char* hname)
 {
