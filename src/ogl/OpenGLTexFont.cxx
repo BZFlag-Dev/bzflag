@@ -18,7 +18,7 @@
 #include <string>
 #include <string.h>
 #include <math.h>
-#include "TimeKeeper.h"
+#include <time.h>
 #include "OpenGLTexFont.h"
 
 
@@ -577,8 +577,7 @@ void			OpenGLTexFont::draw(const char* string, int length,
       OpenGLTexFont::BitmapRep::setState();
   }
 
-  float blinkTime = TimeKeeper::getCurrent().getSeconds();
-
+  float blinkTime = (float)((int)time(NULL));
 
   for (int i = 0; i < length; i++) {
     const unsigned int c = (unsigned int)string[i];
@@ -868,10 +867,9 @@ std::string OpenGLTexFont::getUnderlineColor()
 
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-
