@@ -232,13 +232,13 @@ void			ControlPanel::render(SceneRenderer& renderer)
       // FIXME: need a menu config option to toggle which side
       if (tabsOnRight) {
 	// draw the tabs on the right side
-	fm.drawString(messageAreaPixels[0] + messageAreaPixels[2] - totalTabWidth + drawnTabWidth + int(charWidth * 2.0f),
-		      messageAreaPixels[1] + messageAreaPixels[3] - int(lineHeight + 2.0f) + ay,
+	fm.drawString(messageAreaPixels[0] + messageAreaPixels[2] - totalTabWidth + drawnTabWidth + floorf(charWidth * 2.0f),
+		      messageAreaPixels[1] + messageAreaPixels[3] - floorf(lineHeight + 2.0f) + ay,
 		      0.0f, fontFace, (float)fontSize, (*tabs)[tab]);
       } else {
 	// draw the tabs on the left side
-	fm.drawString(messageAreaPixels[0] + drawnTabWidth + int(charWidth * 2.0),
-		      messageAreaPixels[1] + messageAreaPixels[3] - int(lineHeight + 2.0f) + ay,
+	fm.drawString(messageAreaPixels[0] + drawnTabWidth + floorf(charWidth * 2.0f),
+		      messageAreaPixels[1] + messageAreaPixels[3] - floorf(lineHeight + 2.0f) + ay,
 		      0.0f, fontFace, (float)fontSize, (*tabs)[tab]);
       }
       drawnTabWidth += long(tabTextWidth[tab]);
