@@ -72,15 +72,12 @@ public:
   static bool initHandlers(struct sockaddr_in addr);
   static void destroyHandlers();
 
-  /** General function to support the select statement
-   */
+  // General function to support the select statement
   static void setFd(fd_set *read_set, fd_set *write_set, int &maxFile);
   static bool isUdpFdSet(fd_set *read_set);
   bool	isFdSet(fd_set *set);
 
-  /**
-     return the opened socket, usable from all other network internal client
-  */
+  // return the opened socket, usable from all other network internal client
   static int  getUdpSocket();
 
   /**
@@ -112,33 +109,28 @@ public:
   RxStatus    tcpReceive();
   void       *getTcpBuffer();
 
-  /**
-     Request if there is any buffered udp messages waiting to be sent
-  */
-  static bool anyUDPPending() {return pendingUDP;};
+  // Request if there is any buffered udp messages waiting to be sent
+  static bool	anyUDPPending() {return pendingUDP;};
 
-  /**
-     Send all buffered UDP messages, if any
-  */
-  void	flushUDP();
-  static void flushAllUDP();
+  // Send all buffered UDP messages, if any
+  void		flushUDP();
+  static void	flushAllUDP();
 
-  int	 pwrite(const void *b, int l);
-  int	 pflush(fd_set *set);
-  std::string reasonToKick();
-  void	getPlayerList(char *list);
-  const char *getTargetIP();
-  int	 sizeOfIP();
-  void       *packAdminInfo(void *buf);
-  static int  whoIsAtIP(const std::string& IP);
-  in_addr     getIPAddress();
-  const char *getHostname();
-  /**
-     Notify that the channel is going to be close.
-     In the meantime any pwrite call will do nothing.
-     Cannot be undone.
-  */
-  void	closing();
+  int		pwrite(const void *b, int l);
+  int		pflush(fd_set *set);
+  std::string	reasonToKick();
+  void		getPlayerList(char *list);
+  const char*	getTargetIP();
+  int		sizeOfIP();
+  void*		packAdminInfo(void *buf);
+  static int	whoIsAtIP(const std::string& IP);
+  in_addr	getIPAddress();
+  const char*	getHostname();
+
+  // Notify that the channel is going to be close.
+  // In the meantime any pwrite call will do nothing.
+  // Cannot be undone.
+  void		closing();
 
 private:
   int  send(const void *buffer, size_t length);
@@ -154,18 +146,18 @@ private:
   AdnsHandler *adns;
 #endif
 
-//On win32, a socket is typedef UINT_PTR SOCKET;
-//Hopefully int will be ok
+  // On win32, a socket is typedef UINT_PTR SOCKET;
+  // Hopefully int will be ok
   static int		udpSocket;
-  static NetHandler	*netPlayer[maxHandlers];
-  PlayerInfo	       *info;
+  static NetHandler*	netPlayer[maxHandlers];
+  PlayerInfo*		info;
   struct sockaddr_in	uaddr;
-  int		       playerIndex;
+  int			playerIndex;
   // socket file descriptor
-  int		       fd;
+  int			fd;
 
   // peer's network address
-  Address		   peer;
+  Address peer;
 
   // input buffers
   // bytes read in current msg
@@ -180,18 +172,18 @@ private:
   int outmsgOffset;
   int outmsgSize;
   int outmsgCapacity;
-  char *outmsg;
+  char* outmsg;
 
-  char	udpOutputBuffer[MaxPacketLen];
-  int	 udpOutputLen;
+  char udpOutputBuffer[MaxPacketLen];
+  int udpOutputLen;
   static bool pendingUDP;
 
   // UDP connection
   bool udpin; // udp inbound up, player is sending us udp
   bool udpout; // udp outbound up, we can send udp
 
-  bool		      toBeKicked;
-  std::string	       toBeKickedReason;
+  bool toBeKicked;
+  std::string toBeKickedReason;
 
   // time accepted
   TimeKeeper time;
