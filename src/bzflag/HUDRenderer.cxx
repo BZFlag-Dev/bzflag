@@ -1578,13 +1578,10 @@ void			HUDRenderer::drawPlayerScore(const Player* player,
     strcpy(kills, "");
 
   // "Purple Team" is longest possible string for flag indicator
-  char flag[64]="";
+  std::string flag;
   FlagType* flagd = player->getFlag();
-  if (flagd != Flags::Null) {
-    sprintf(flag,"/%s",
-	    flagd->endurance == FlagNormal ?
-	    flagd->flagName : flagd->flagAbbv);
-  }
+  if (flagd != Flags::Null)
+    flag = flagd->endurance == FlagNormal ? flagd->flagName : flagd->flagAbbv;
 
   // indicate tanks which are paused or not responding
   char status[5]="";
@@ -1599,7 +1596,7 @@ void			HUDRenderer::drawPlayerScore(const Player* player,
   const float x5 = x2 + (scoreLabelWidth - huntedArrow);
   const float callSignWidth = minorFont.getWidth(player->getCallSign());
   const float emailWidth = minorFont.getWidth(email);
-  const float flagWidth = minorFont.getWidth(flag);
+  const float flagWidth = minorFont.getWidth(flag.c_str());
   hudSColor3fv(Team::getRadarColor(player->getTeam()));
   if (player->getTeam() != ObserverTeam) {
     minorFont.draw(score, x1, y);
