@@ -23,6 +23,7 @@
 #include <arpa/inet.h>
 #include <netdb.h>
 #include <arpa/nameser.h>
+#include <arpa/nameser_compat.h>
 #endif
 
 #include <stdio.h>
