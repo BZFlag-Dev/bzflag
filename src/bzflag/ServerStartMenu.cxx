@@ -260,7 +260,7 @@ ServerStartMenu::~ServerStartMenu()
 {
 }
 
-void ServerStartMenu::scanWorldFiles (std::string& searchDir,
+void ServerStartMenu::scanWorldFiles (const std::string& searchDir,
                                       std::vector<std::string>* items)
 {
 #ifdef _WIN32

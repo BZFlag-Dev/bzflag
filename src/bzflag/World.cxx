@@ -21,6 +21,7 @@
 #include "StateDatabase.h"
 #include "BZDBCache.h"
 #include "TextureManager.h"
+#include "FileManager.h"
 
 
 //
@@ -635,10 +636,13 @@ static void writeBZDBvar (const std::string& name, void *userData)
 
 bool			World::writeWorld(std::string filename)
 {
-  std::ofstream out(filename.c_str());
-  if (!out)
+  std::ostream *stream = FILEMGR.createDataOutStream(filename.c_str());
+  if (stream == NULL)
     return false;
-    
+
+  // for notational convenience    
+  std::ostream& out = *stream;
+  
   time_t nowTime = time (NULL);
   out << "# BZFlag client: saved world on " << ctime(&nowTime) << std::endl;
 
@@ -874,7 +878,7 @@ bool			World::writeWorld(std::string filename)
     }
   }
 
-  out.close();
+  delete stream;
 
   return true;
 }

@@ -88,9 +88,11 @@ void SaveWorldMenu::execute()
     if (success) {
       std::string newLabel = "File Saved: ";
       newLabel += fullname;
-      status->setString( newLabel );
+      status->setString(newLabel);
     } else {
-      status->setString( "Error saving file" );
+      std::string newLabel = "Error Saving: ";
+      newLabel += fullname;
+      status->setString(newLabel);
     }
   }
   const OpenGLTexFont& font = status->getFont();

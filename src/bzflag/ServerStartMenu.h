@@ -41,7 +41,8 @@ private:
   HUDuiLabel* createLabel(const char*);
   void setStatus(const char*, const std::vector<std::string> *parms = NULL);
   void loadSettings();
-  void scanWorldFiles (std::string& searchDir, std::vector<std::string>* items);
+  void scanWorldFiles (const std::string& searchDir, 
+                       std::vector<std::string>* items);
 
 private:
   float center;
