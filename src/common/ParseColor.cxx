@@ -21,7 +21,7 @@
 
 typedef struct {
   const char* name;
-  const float value[4];
+  float value[4];
 } ColorSet;
 
 
