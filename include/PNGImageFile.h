@@ -33,15 +33,21 @@ private:
 	void switchLineBuffers();
 	bool filter();
 
-	static unsigned char	pngHeader[8];
-	unsigned char			bitDepth;
-	unsigned char			colorDepth;
-	unsigned char			compressionMethod;
-	unsigned char			filterMethod;
-	unsigned char			interlaceMethod;
-	unsigned char			*lineBuffers[2];
-	int						activeBufferIndex;
-	int						lineBufferSize;
+	static unsigned char			PNGHEADER[8];
+	static const unsigned char		FILTER_NONE;
+	static const unsigned char		FILTER_SUB;
+	static const unsigned char		FILTER_UP;
+	static const unsigned char		FILTER_AVERAGE;
+	static const unsigned char		FILTER_PAETH;
+
+	unsigned char					bitDepth;
+	unsigned char					colorDepth;
+	unsigned char					compressionMethod;
+	unsigned char					filterMethod;
+	unsigned char					interlaceMethod;
+	unsigned char					*lineBuffers[2];
+	int								activeBufferIndex;
+	int								lineBufferSize;
 };
 
 class PNGRGB

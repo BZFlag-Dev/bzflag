@@ -26,7 +26,13 @@
 // PNGImageFile
 //
 
-unsigned char PNGImageFile::pngHeader[8] = { 137, 80, 78, 71, 13, 10, 26, 10 };
+unsigned char		PNGImageFile::PNGHEADER[8] = { 137, 80, 78, 71, 13, 10, 26, 10 };
+
+const unsigned char PNGImageFile::FILTER_NONE = 0;
+const unsigned char PNGImageFile::FILTER_SUB = 1;
+const unsigned char PNGImageFile::FILTER_UP = 2;
+const unsigned char PNGImageFile::FILTER_AVERAGE = 3;
+const unsigned char PNGImageFile::FILTER_PAETH = 4;
 
 PNGImageFile::PNGImageFile(std::istream* stream) : ImageFile(stream)
 {
@@ -35,7 +41,7 @@ PNGImageFile::PNGImageFile(std::istream* stream) : ImageFile(stream)
 
 	char buffer[8];
 	stream->read(buffer, 8);
-	if (strncmp((char*)pngHeader, buffer, 8) != 0) {
+	if (strncmp((char*)PNGHEADER, buffer, 8) != 0) {
 		return;
 	}
 
@@ -56,30 +62,37 @@ PNGImageFile::PNGImageFile(std::istream* stream) : ImageFile(stream)
 	data = (unsigned char *)nboUnpackUByte(data, filterMethod);
 	data = (unsigned char *)nboUnpackUByte(data, interlaceMethod);
 
+	int channels;
 	switch (colorDepth) {
 		case 0:
 			lineBufferSize = (width * (8/bitDepth))+1;
+			channels = 1;
 		break;
 
 		case 2:
 			lineBufferSize = (width * 3 * (8/bitDepth))+1;
+			channels = 3;
 		break;
 
 		case 3:
 			lineBufferSize = (width * (8/bitDepth))+1;
+			channels = 3;
 		break;
 
 		case 4:
 			lineBufferSize = (width * 2 * (8/bitDepth))+1;
+			channels = 2;
 		break;
 
 		case 6:
 			lineBufferSize = (width * 4 * (8/bitDepth))+1;
+			channels = 4;
 		break;
 	}
 
 	lineBuffers[0] = new unsigned char[lineBufferSize];
 	lineBuffers[1] = new unsigned char[lineBufferSize];
+	memset(lineBuffers[1], 0, lineBufferSize);
 	activeBufferIndex = 0;
 
 	//Temporary
@@ -89,7 +102,7 @@ PNGImageFile::PNGImageFile(std::istream* stream) : ImageFile(stream)
 		return;
 
 
-	init(3, width, height);
+	init(channels, width, height);
 }
 
 PNGImageFile::~PNGImageFile()
@@ -146,7 +159,7 @@ bool					PNGImageFile::read(void* buffer)
 				return false;
 			}
 
-			memcpy( ((unsigned char *)buffer)+bufferPos, line+1, lineBufferSize-1 );
+			memcpy(((unsigned char *)buffer)+bufferPos, line+1, lineBufferSize-1);
 			bufferPos += lineBufferSize-1;
 
 			switchLineBuffers();
@@ -202,16 +215,25 @@ bool PNGImageFile::filter()
 	unsigned char *pData = getLineBuffer();
 
 	switch (*pData) {
-		case 0:
+		case FILTER_NONE:
 			return true;
 
-		case 1:
+		case FILTER_SUB:
 		{
 			unsigned char last = 0;
 			for (int i = 1; i < lineBufferSize; i++) {
 				*(pData+i) += last;
 				last = *(pData+i);
 			}
+			return true;
+			break;
+		}
+
+		case FILTER_UP:
+		{
+			unsigned char *up = getLineBuffer(false);
+			for (int i = 1; i < lineBufferSize; i++)
+				*(pData+i) += *(up+i);
 			return true;
 			break;
 		}
