@@ -35,7 +35,7 @@ copyright:	1993 - 2000 Tim Riker
 packager:	Tim Riker <Tim@Rikers.org>
 url:		http://BZFlag.SourceForge.net/
 summary:	multiplayer 3D tank battle game
-source:		http://download.sourceforge.net/bzflag/%{name}-%{version}.src.tar.gz
+source:		http://download.SourceForge.net/bzflag/%{name}-%{version}.src.tar.gz
 buildroot:	/var/tmp/%{name}-%{version}-%{release}-root
 
 # all we want here is to remove glide, but RPM does not provide a way. ;-(

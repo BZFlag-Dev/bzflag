@@ -20,7 +20,7 @@
 #include "ErrorHandler.h"
 #endif
 
-#if !defined(inet_aton)
+#if defined(sun)
   // Solaris...
   extern "C" int inet_aton(const char *, struct in_addr *);
 #endif
