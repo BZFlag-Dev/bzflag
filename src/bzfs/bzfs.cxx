@@ -988,7 +988,7 @@ static WorldInfo *defineTeamWorld()
 			   0.5f * teleWidth, teleBreadth, 2.0f * teleHeight, teleWidth);
       world->addTeleporter( 3.5f * teleBreadth,  3.5f * teleBreadth, 0.0f, 0.25f * M_PI,
 			   0.5f * teleWidth, teleBreadth, 2.0f * teleHeight, teleWidth);
-
+//
       world->addLink(0, 14);
       world->addLink(1, 7);
       world->addLink(2, 12);
@@ -1368,7 +1368,8 @@ void sendMessage(int playerIndex, PlayerId targetPlayer, const char *message, bo
   // send MsgMessage
 
   if (strlen(message) > (unsigned)MessageLen) {
-    DEBUG1("WARNING: Network message being sent is too long! (cutoff at %d)\n", MessageLen);
+    DEBUG1("WARNING: Network message being sent is too long! (message is %d, cutoff at %d)\n",
+    		    strlen(message), MessageLen);
   }
 
   // if fullBuffer=true, it means, that caller already passed a buffer
