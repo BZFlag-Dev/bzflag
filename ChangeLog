@@ -4,6 +4,14 @@
 BZFlag 2.0.1
 ------------
 
+* Message spam fixed - Alfredo Tupone
+* Fixed no flag on building - Alfredo Tupone
+* Fixed MsgQueryPlayer eventually sending AddPlayer to all - Alfredo Tupone
+* Removing kicking player for missing packet - Alfredo Tupone
+* Player is unpaused when coming alive - Alfredo Tupone
+* Observer of winner not updating the flag fixed - Alfredo Tupone
+* Fixed 2 flag per team selecting ctf on world & CommandLine - Alfredo Tupone
+* Fixed lag warning counted twice - Alfredo Tupone
 * Allow user to select which physical joystick axes to use - Daniel Remenak
 * Fixed antikick so that it actually prevents most kicks - Sean Morrison
 * Fix a number of server crash bugs - Daniel Remenak
