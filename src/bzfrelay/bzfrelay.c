@@ -410,7 +410,7 @@ static int		testAddress(const AddressSet* list, const struct in_addr* addr)
 static int		isSocketConnected(int fd)
 {
   struct sockaddr_in addr;
-  int addrlen = sizeof(addr);
+  socklen_t addrlen = sizeof(addr);
   return (getpeername(fd, (struct sockaddr*)&addr, &addrlen) >= 0);
 }
 
@@ -486,7 +486,8 @@ static int		createConnectingSocket(struct sockaddr_in* addr)
 
 static int		acceptConnection(int listener, struct sockaddr_in* addr)
 {
-  int fd, flag, addrlen;
+  int fd, flag;
+  socklen_t addrlen;
 
   /* accept connection */
   addrlen = sizeof(*addr);
@@ -836,7 +837,7 @@ static void		readHello(Relay* relay, struct sockaddr_in* serverAddr)
 static void		connectToServerAgain(Relay* relay,
 				struct sockaddr_in* listenAddr)
 {
-  int addrlen;
+  socklen_t addrlen;
   struct sockaddr_in addr;
   struct timezone tz;
 

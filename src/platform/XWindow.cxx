@@ -666,7 +666,7 @@ void			XWindow::reactivateAll()
 #ifdef XIJOYSTICK
 
 /* Initialize an XInput joystick */
-void			XWindow::initJoystick(char* joystickName)
+void			XWindow::initJoystick(const char* joystickName)
 {
   XAnyClassPtr c;
   XValuatorInfo *v = NULL;
