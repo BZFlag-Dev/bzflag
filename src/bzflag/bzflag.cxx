@@ -696,7 +696,7 @@ void			dumpResources(BzfDisplay* display,
   if ((int)list.size() < maxListSize) maxListSize = list.size();
   for (int i = 0; i < maxListSize; i++) {
     sprintf(buffer,"silencedPerson%d",i);
-    db.addValue(buffer, list[i]);
+    BZDB->set(string_util::format("silencedPerson%d", i), list[i]);
   }
 
   BZDB->set("serverCacheAge", string_util::format("%1d", (long)ServerMenu::getMaxCacheAge()));
@@ -1168,11 +1168,11 @@ int			main(int argc, char** argv)
   for (int i = 0; keepGoing && (i < maxListSize); i++) {
     sprintf(buffer,"silencedPerson%d",i); // could do %-10d
 
-    if (db.hasValue(buffer)) {
-      list.push_back(db.getValue(buffer));
+    if (BZDB->isSet(buffer)) {
+      list.push_back(BZDB->get(buffer));
       // remove the value from the database so when we save
       // it saves the list's new values in order
-      db.removeValue(buffer);
+      BZDB->unset(buffer);
     } else
       keepGoing = false;
   }
