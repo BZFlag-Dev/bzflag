@@ -9,6 +9,9 @@ THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
 
 THESE ARE LOWER PRIORITY
 
+* Fix the Windows version of bzadmin so that EOF quits the program, like
+  the UNIX version (see checkCommand() in StdBothUI.cxx).
+
 - bzflag should use the system-supplied zlib if available. Check in
   configure and use system if it's good.
 
