@@ -474,7 +474,9 @@ bool MeshFace::isCrossing(const float* /*p*/, float /*angle*/,
                           float /*dx*/, float /*dy*/, float /*height*/,
                           float* _plane) const
 {
-  memcpy(_plane, plane, sizeof(float[4]));
+  if (_plane != NULL) {
+    memcpy(_plane, plane, sizeof(float[4]));
+  }
   return true;
 }
 
