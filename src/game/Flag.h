@@ -67,7 +67,7 @@ public:
 	      abbv(_abbv),
 	      type(_type),
 		  help(_help) { }
-	    FlagTable(FlagTable& _ft) :
+	    FlagTable(const FlagTable& _ft) :
 	      name(_ft.name),
 	      abbv(_ft.abbv),
 	      type(_ft.type),
