@@ -23,6 +23,7 @@ PlayerState::PlayerState()
 
 void*	PlayerState::pack(void* buf)
 {
+  order++;
   buf = nboPackInt(buf, int32_t(order));
   buf = nboPackShort(buf, int16_t(status));
   buf = nboPackVector(buf, pos);
