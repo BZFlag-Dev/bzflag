@@ -262,27 +262,34 @@ void			HUDuiControl::doCallback()
 
 void			HUDuiControl::renderFocus()
 {
-  const float fh2 = floorf(0.5f * fontHeight);
+  float fh2 = 0;// = floorf(0.5f * fontHeight);
 
-  if (gstate->isTextured()) {
-    static const int uFrames = 1; // 4;
-    static const int vFrames = 1; // 4;
-    static const float du = 1.0f / (float)uFrames;
-    static const float dv = 1.0f / (float)vFrames;
+  if (gstate->isTextured()) { // asumes there are w/h fames of animatin h x h in each image
+	float imageSize = arrow->getHeight();
+    int uFrames = 1;
+	if (imageSize != 0)
+		uFrames = arrow->getWidth()/imageSize; // 4;
+    int vFrames = 1; // 4;
+    float du = 1.0f / (float)uFrames;
+    float dv = 1.0f / (float)vFrames;
 
-    const float u = (float)(arrowFrame % uFrames) / (float)uFrames;
-    const float v = (float)(arrowFrame / uFrames) / (float)vFrames;
+    float u = (float)(arrowFrame % uFrames) / (float)uFrames;
+    float v = (float)(arrowFrame / uFrames) / (float)vFrames;
+	fh2 = floorf(0.5f * imageSize);
     gstate->setState();
     glColor3f(1.0f, 1.0f, 1.0f);
+	float imageXShift = -fh2;
+	float imageYShift = -fh2 + fontHeight * 0.5f;
+
     glBegin(GL_QUADS);
       glTexCoord2f(u, v);
-      glVertex2f(x - fh2 - fontHeight, y);
+      glVertex2f(x + imageXShift - imageSize, y + imageYShift);
       glTexCoord2f(u + du, v);
-      glVertex2f(x - fh2 - 1.0f, y);
+      glVertex2f(x + imageXShift , y + imageYShift);
       glTexCoord2f(u + du, v + dv);
-      glVertex2f(x - fh2 - 1.0f, y + fontHeight - 1.0f);
+      glVertex2f(x + imageXShift , y + imageSize + imageYShift);
       glTexCoord2f(u, v + dv);
-      glVertex2f(x - fh2 - fontHeight, y + fontHeight - 1.0f);
+      glVertex2f(x + imageXShift - imageSize, y + imageSize + imageYShift);
     glEnd();
 
     TimeKeeper nowTime = TimeKeeper::getCurrent();
@@ -293,6 +300,7 @@ void			HUDuiControl::renderFocus()
   }
 
   else {
+	fh2 = floorf(0.5f * fontHeight);
     gstate->setState();
     glColor3f(1.0f, 1.0f, 1.0f);
     glBegin(GL_TRIANGLES);
