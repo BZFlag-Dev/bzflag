@@ -30,10 +30,13 @@ public:
   void addZone( const CustomZone *zone );
   void calculateQualifierLists();
   bool getZonePoint( const std::string &qualifier, float *pt ) const;
+  bool getSafetyPoint( const std::string &qualifier, const float *pos, float *pt ) const;
+  static const char *getSafetyPrefix ();
 private:
   ZoneList zones;
   QualifierMap qmap;
 };
+
 
 #endif
 

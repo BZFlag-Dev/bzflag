@@ -66,7 +66,7 @@ bool CustomZone::read(const char *cmd, std::istream& input) {
     if (qualifiers.size() == 0)
       return false;
   }
-  else if (strcmp(cmd, "team") == 0) {
+  else if ((strcmp(cmd, "team") == 0) || (strcmp(cmd, "safety") == 0)) {
     std::string args;
     int color;
 
@@ -76,12 +76,16 @@ bool CustomZone::read(const char *cmd, std::istream& input) {
     while (parms >> color) {
       if ((color < 0) || (color >= CtfTeams))
         return false;
-      qualifiers.push_back(std::string(Team::getName((TeamColor)color)));
+      std::string qual = std::string(Team::getName((TeamColor)color));
+      if (strcmp(cmd, "safety") == 0) {
+        qual = EntryZones::getSafetyPrefix() + qual;
+      }
+      qualifiers.push_back(qual);
     }
     input.putback('\n');
     if (qualifiers.size() == 0)
       return false;
-}
+  }
   else if (!WorldFileLocation::read(cmd, input))
       return false;
 
@@ -108,6 +112,18 @@ void CustomZone::getRandomPoint(float *pt) const
   pt[2] += pos[2];
 }
 
+float CustomZone::getDistToPoint (const float *_pos) const
+{
+  // FIXME - should use proper minimum distance from
+  // the zone edge, and maybe -1.0f if its inside the zone
+  float v[3], dist;
+  v[0] = _pos[0] - pos[0];
+  v[1] = _pos[1] - pos[1];
+  v[2] = _pos[2] - pos[2];
+  dist = sqrtf (v[0]*v[0] + v[1]*v[1] + v[2]*v[2]);
+  
+  return dist;
+}
 
 // Local variables: ***
 // mode:C++ ***

@@ -2601,21 +2601,24 @@ static void dropFlag(int playerIndex, float pos[3])
     // people were cheating by dropping their flag above the nearest
     // convenient building which makes it fly all the way back to
     // your own base.  make it fly to the center of the board.
-    topmosttype = world->inBuilding(&container,
-				    0.0f, 0.0f, 0.0f,
-				    BZDB.eval(StateDatabase::BZDB_TANKRADIUS),
-				    BZDB.eval(StateDatabase::BZDB_FLAGHEIGHT));
-    if (topmosttype == NOT_IN_BUILDING) {
-	drpFlag.flag.landingPosition[0] = 0.0f;
+    std::string teamName = Team::getName ((TeamColor) flagTeam);
+    if (!world->getSafetyPoint(teamName, pos, drpFlag.flag.landingPosition)) {
+      topmosttype = world->inBuilding(&container,
+  				     0.0f, 0.0f, 0.0f,
+				     BZDB.eval(StateDatabase::BZDB_TANKRADIUS),
+				     BZDB.eval(StateDatabase::BZDB_FLAGHEIGHT));
+      if (topmosttype == NOT_IN_BUILDING) {
+        drpFlag.flag.landingPosition[0] = 0.0f;
 	drpFlag.flag.landingPosition[1] = 0.0f;
 	drpFlag.flag.landingPosition[2] = 0.0f;
-    }
-    else {// oh well, whatcha gonna do?
+      }
+      else {// oh well, whatcha gonna do?
 	TeamBases &teamBases = bases[flagTeam];
 	const TeamBase &base = teamBases.getRandomBase(flagIndex); 
 	drpFlag.flag.landingPosition[0] = base.position[0];
 	drpFlag.flag.landingPosition[1] = base.position[1];
 	drpFlag.flag.landingPosition[2] = base.position[2] + base.size[2];
+      }
     }
   }
   else

@@ -11,10 +11,12 @@
  */
 
 #include "common.h"
+#include "global.h"
 #include "WorldInfo.h"
 #include "EntryZones.h"
 #include "CustomZone.h"
 #include <string>
+
 
 EntryZones::EntryZones()
 {
@@ -69,11 +71,51 @@ bool EntryZones::getZonePoint(const std::string &qualifier, float *pt) const
       break;
   }
 
-  if (vit == qPairList.end())
+  if (vit == qPairList.end()) {
     return false; // ??
+  }
 
   int zoneIndex = vit->first;
   CustomZone *zone = ((CustomZone *) &zones[zoneIndex]);
   zone->getRandomPoint(pt);
   return true;
+}
+
+bool EntryZones::getSafetyPoint( const std::string &qualifier,
+                                 const float *pos, float *pt ) const
+{
+  std::string safetyString = EntryZones::getSafetyPrefix() + qualifier;
+  
+  QualifierMap::const_iterator mit = qmap.find(safetyString);
+  if (mit == qmap.end())
+    return false;
+
+  const QPairList &qPairList = mit->second;
+
+  int closest = -1;
+  float minDist = +Infinity;
+  QPairList::const_iterator vit;
+  for (vit = qPairList.begin(); vit != qPairList.end(); ++vit) {
+    int index = vit->first;
+    CustomZone *zone = ((CustomZone *) &zones[index]);
+    float dist = zone->getDistToPoint (pos);
+    if (dist < minDist) {
+      closest = index;
+      minDist = dist;
+    }
+  }
+
+  if (closest == -1) {
+    return false;
+  }
+
+  CustomZone *zone = ((CustomZone *) &zones[closest]);
+  zone->getRandomPoint(pt);
+  
+  return true;
+}                                 
+
+const char * EntryZones::getSafetyPrefix ()
+{
+  return "$";
 }

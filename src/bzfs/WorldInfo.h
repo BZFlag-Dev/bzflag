@@ -87,6 +87,7 @@ public:
   void addEntryZone( QualifierList &qualifiers, WorldFileLocation *zone );
   float getMaxWorldHeight();
   bool getZonePoint(const std::string &qualifier, float *pt);
+  bool getSafetyPoint(const std::string &qualifier, const float *pos, float *pt);
   void finishWorld();
   int packDatabase();
   void *getDatabase() const;

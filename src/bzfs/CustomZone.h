@@ -19,7 +19,6 @@
 #include "WorldInfo.h"
 #include "EntryZones.h"
 
-
 class CustomZone : public WorldFileLocation {
 public:
   CustomZone();
@@ -29,6 +28,7 @@ public:
   const QualifierList &getQualifiers() const;
   float getArea() const;
   void getRandomPoint(float *pt) const;
+  float getDistToPoint (const float *pos) const;
 protected:
   QualifierList qualifiers;
 };
@@ -40,12 +40,19 @@ inline const QualifierList& CustomZone::getQualifiers() const
 
 inline float CustomZone::getArea() const
 {
-  float h;
-  if (size[2] < 1.0f)
-    h = 1.0f;
-  else
-    h = size[2];
-  return size[0] * size[1] * h;
+  float x = 1.0f, y = 1.0f, z = 1.0f;
+
+  if (size[0] > 1.0f) {
+    x = size[0]; 
+  }
+  if (size[1] > 1.0f) {
+    y = size[1]; 
+  }
+  if (size[2] > 1.0f) {
+    z = size[2]; 
+  }
+
+  return (x * y * z);
 }
 
 #endif  /* __CUSTOMZONE_H__ */

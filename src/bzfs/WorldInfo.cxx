@@ -19,7 +19,6 @@
 #include "Protocol.h"
 #include "Intersect.h"
 
-
 WorldInfo::WorldInfo() :
   maxHeight(0),
   database(NULL)
@@ -263,6 +262,22 @@ bool WorldInfo::getZonePoint(const std::string &qualifier, float *pt)
   InBuildingType type;
 
   if (!entryZones.getZonePoint(qualifier, pt))
+    return false;
+
+  type = inBuilding(&loc, pt[0], pt[1], 0.0f, 1.0f, pt[2]);
+  if (type == NOT_IN_BUILDING)
+    pt[2] = 0.0f;
+  else
+    pt[2] = loc->pos[2];
+  return true;
+}
+
+bool WorldInfo::getSafetyPoint(const std::string &qualifier, const float *pos, float *pt)
+{
+  ObstacleLocation *loc;
+  InBuildingType type;
+
+  if (!entryZones.getSafetyPoint(qualifier, pos, pt))
     return false;
 
   type = inBuilding(&loc, pt[0], pt[1], 0.0f, 1.0f, pt[2]);
