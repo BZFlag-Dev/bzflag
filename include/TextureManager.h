@@ -50,12 +50,12 @@ public:
 
 protected:
   friend class Singleton<TextureManager>;
-  ~TextureManager();
 
 private:
   TextureManager();
   TextureManager(const TextureManager &tm);
   TextureManager& operator=(const TextureManager &tm);
+  ~TextureManager();
 
   OpenGLTexture* loadTexture( FileTextureInit &init );
   void           loadBigTexture(TextureType type, FileTextureInit &init);
