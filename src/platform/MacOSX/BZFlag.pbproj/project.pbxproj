@@ -7463,10 +7463,9 @@
 			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
-			name = texture.cxx;
-			path = /archive/BZ/bzflag/src/bzflag/texture.cxx;
-			refType = 0;
-			sourceTree = "<absolute>";
+			path = texture.cxx;
+			refType = 4;
+			sourceTree = "<group>";
 		};
 		4E030C4A048E70E70009E055 = {
 			expectedFileType = sourcecode.cpp.cpp;
