@@ -4563,8 +4563,10 @@ int main(int argc, char **argv)
   } else {
     DEBUG1("Running a private server with the following settings:\n");
   }
-  DEBUG1("\trunning on local port %d\n", clOptions->wksPort);
-  DEBUG1("\twith title of [%s]\n", clOptions->publicizedTitle.c_str());
+  // print networking info
+  DEBUG1("\tlistening on %s:%i\n",
+      serverAddress.getDotNotation().c_str(), clOptions->wksPort);
+  DEBUG1("\twith title of \"%s\"\n", clOptions->publicizedTitle.c_str());
 
   // prep ping reply
   pingReply.serverId.serverHost = serverAddress;
@@ -4596,11 +4598,6 @@ int main(int argc, char **argv)
 #endif /* defined(_WIN32) */
     fprintf(stderr, "Something failed\n");
     return 1;
-  }
-  if (clOptions->debug >= 2) {
-    // print networking info
-    fprintf(stderr, "listening on %s:%i\n",
-	serverAddress.getDotNotation().c_str(), clOptions->wksPort);
   }
 
   TimeKeeper lastSuperFlagInsertion = TimeKeeper::getCurrent();
