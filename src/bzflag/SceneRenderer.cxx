@@ -10,6 +10,7 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+#include "common.h"
 #include "bzfgl.h"
 #include "SceneRenderer.h"
 #include "BackgroundRenderer.h"

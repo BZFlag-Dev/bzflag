@@ -15,8 +15,8 @@
  */
 
 #include <string.h>
-#include "ZSceneDatabase.h"
 #include "SceneNode.h"
+#include "ZSceneDatabase.h"
 #include "SphereSceneNode.h"
 
 ZSceneDatabase::ZSceneDatabase() :

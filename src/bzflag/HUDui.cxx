@@ -12,6 +12,7 @@
 
 #include <math.h>
 #include <ctype.h>
+#include "common.h"
 #include "bzfgl.h"
 #include "HUDui.h"
 #include "World.h"

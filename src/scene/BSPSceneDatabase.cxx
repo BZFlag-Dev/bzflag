@@ -14,9 +14,9 @@
  *
  */
 
+#include "SceneNode.h"
 #include "BSPSceneDatabase.h"
 #include "ViewFrustum.h"
-#include "SceneNode.h"
 #include "SphereSceneNode.h"
 #include "WallSceneNode.h"
 

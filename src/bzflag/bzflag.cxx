@@ -27,6 +27,7 @@
 #include <pwd.h>
 #endif /* defined(_WIN32) */
 #include <stdarg.h>
+#include "common.h"
 #include "bzfio.h"
 #include <fstream>
 #include "bzfgl.h"
