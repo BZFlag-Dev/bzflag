@@ -734,12 +734,31 @@ static bool		needsFullscreen()
 //	initialize application and enter event loop
 //
 
-#if defined(_WIN32)
+#if defined(_WIN32) && !defined(USE_SDL)
 int			myMain(int argc, char** argv)
 #else /* defined(_WIN32) */
 int			main(int argc, char** argv)
 #endif /* defined(_WIN32) */
 {
+#ifdef _WIN32
+  // startup winsock
+  static const int major = 2, minor = 2;
+  WSADATA wsaData;
+  if (WSAStartup(MAKEWORD(major, minor), &wsaData)) {
+    printFatalError("Failed to initialize winsock.  Terminating.\n");
+    return 1;
+  }
+  if (LOBYTE(wsaData.wVersion) != major ||
+      HIBYTE(wsaData.wVersion) != minor) {
+    printFatalError("Version mismatch in winsock;"
+		    "  got %d.%d.  Terminating.\n",
+		    (int)LOBYTE(wsaData.wVersion),
+		    (int)HIBYTE(wsaData.wVersion));
+    WSACleanup();
+    return 1;
+  }
+#endif
+
   BZDB.setDebug(true);
   WordFilter *filter = (WordFilter *)NULL;
 
@@ -1283,6 +1302,11 @@ int			main(int argc, char** argv)
   delete platformFactory;
   delete bm;
 
+#ifdef _WIN32
+  // clean up
+  WSACleanup();
+#endif
+
   // clean up singletons
   //  delete FILEMGR;
   //  delete CMDMGR;
@@ -1291,7 +1315,7 @@ int			main(int argc, char** argv)
   return 0;
 }
 
-#if defined(_WIN32)
+#if defined(_WIN32) && !defined(USE_SDL)
 
 //
 // WinMain()
@@ -1355,29 +1379,9 @@ int WINAPI		WinMain(HINSTANCE, HINSTANCE, LPSTR _cmdLine, int)
     while (isspace(*scan) && *scan != 0) scan++;
   }
 
-  // startup winsock
-  {
-    static const int major = 2, minor = 2;
-    WSADATA wsaData;
-    if (WSAStartup(MAKEWORD(major, minor), &wsaData)) {
-      printFatalError("Failed to initialize winsock.  Terminating.\n");
-      return 1;
-    }
-    if (LOBYTE(wsaData.wVersion) != major ||
-	HIBYTE(wsaData.wVersion) != minor) {
-      printFatalError("Version mismatch in winsock;"
-			"  got %d.%d.  Terminating.\n",
-			(int)LOBYTE(wsaData.wVersion),
-			(int)HIBYTE(wsaData.wVersion));
-      WSACleanup();
-      return 1;
-    }
-  }
-
   const int exitCode = myMain(argc, argv);
 
   // clean up and return exit code
-  WSACleanup();
   delete[] argv;
   delete[] appName;
   free(cmdLine);
