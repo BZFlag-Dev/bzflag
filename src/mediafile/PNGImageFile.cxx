@@ -121,7 +121,7 @@ PNGImageFile::PNGImageFile(std::istream* stream) : ImageFile(stream), palette(NU
 
   init(channels, width, height);
 
-  DEBUG4("Read PNG: Width %d, Height %d, Bit depth %d, Color depth %d, Filter Method %d, Interlace Method %d.\n", width, height, bitDepth, colorDepth, filterMethod, interlaceMethod);
+  DEBUG4("Read PNG: Width %d, Height %d, Bit depth %d, Color type %d, Filter Method %d, Interlace Method %d, Channels %d.\n", width, height, bitDepth, colorDepth, filterMethod, interlaceMethod, channels);
 }
 
 /*
@@ -287,6 +287,7 @@ bool PNGImageFile::expand()
   unsigned char *pData = getLineBuffer();
 
   int width = getWidth();
+  int channels = getNumChannels();
   switch (bitDepth)  {
     case 1:
     {
@@ -358,8 +359,8 @@ bool PNGImageFile::expand()
 
     case 16:
     {
-      for (int i = 0; i < width; i++) {
-	*(pData+i+1) = (*pData + 2*i + 1);
+      for (int i = 0; i < width*channels; i++) {
+	*(pData+i+1) = (*(pData + 2*i + 1));
       }
     }
     break;
