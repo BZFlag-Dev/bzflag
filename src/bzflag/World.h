@@ -120,6 +120,8 @@ class World {
     static void		done();
     static void		setFlagTexture(FlagSceneNode*);
 
+    boolean		writeWorld(std::string &filename);
+
 
   private:
     // disallow copy and assignment

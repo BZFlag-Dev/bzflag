@@ -552,7 +552,13 @@ bool			ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
 	    }
 	  }
 	}
-      } if (message == "/set") {
+      } else if (strncmp(silence, "SAVEWORLD", 9 ) == 0) {
+	std::string path = silence + 10;
+	if (World::getWorld()->writeWorld(path))
+	  addMessage(NULL, "World Saved");
+	else
+	  addMessage(NULL, "Invalid path specified");
+      } else if (message == "/set") {
 	BZDB->iterate(listSetVars, NULL);
       } else {
 	int i, mhLen = messageHistory.size();

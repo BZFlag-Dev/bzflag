@@ -16,6 +16,7 @@
 #endif
 
 #include <string.h>
+#include <fstream>
 #include "common.h"
 #include "playing.h"
 #include "World.h"
@@ -631,6 +632,106 @@ void			World::addFlags(SceneDatabase* scene)
       scene->addDynamicNode(flagWarpNodes[i]);
   }
 }
+
+boolean			World::writeWorld(std::string &filename)
+{
+  std::ofstream out(filename.c_str());
+  if (!out)
+    return false;
+
+  // Write bases
+  {
+    for (std::vector<BaseBuilding>::iterator it = basesR.begin(); it != basesR.end(); ++it) {
+      BaseBuilding base = *it;
+      out << "base" << std::endl;
+      const float *pos = base.getPosition();
+      out << "\tposition " << pos[0] << " " << pos[1] << " " << pos[2] << std::endl;
+      out << "\tsize " << base.getWidth() << " " << base.getBreadth() << " " << base.getHeight() << std::endl;
+      out << "\trotation " << ((base.getRotation() * 180.0) / M_PI) << std::endl;
+      if (base.isDriveThrough())
+        out << "drivethrough" << std::endl;
+      if (base.isShootThrough())
+        out << "shootthrough" << std::endl;
+      out << "end" << std::endl;
+      out << std::endl;
+    }
+  }
+
+  // Write boxes
+
+  {
+    for (std::vector<BoxBuilding>::iterator it = boxes.begin(); it != boxes.end(); ++it) {
+      BoxBuilding box = *it;
+      out << "box" << std::endl;
+      const float *pos = box.getPosition();
+      out << "\tposition " << pos[0] << " " << pos[1] << " " << pos[2] << std::endl;
+      out << "\tsize " << box.getWidth() << " " << box.getBreadth() << " " << box.getHeight() << std::endl;
+      out << "\trotation " << ((box.getRotation() * 180.0) / M_PI) << std::endl;	
+      if (box.isDriveThrough())
+        out << "drivethrough" << std::endl;
+      if (box.isShootThrough())
+        out << "shootthrough" << std::endl;
+      out << "end" << std::endl;
+      out << std::endl;
+    }
+  }
+
+  // Write pyramids
+
+  {
+    for (std::vector<PyramidBuilding>::iterator it = pyramids.begin(); it != pyramids.end(); ++it) {
+      PyramidBuilding pyr = *it;
+      out << "pyramid" << std::endl;
+      const float *pos = pyr.getPosition();
+      out << "\tposition " << pos[0] << " " << pos[1] << " " << pos[2] << std::endl;
+      out << "\tsize " << pyr.getWidth() << " " << pyr.getBreadth() << " " << pyr.getHeight() << std::endl;
+      out << "\trotation " << ((pyr.getRotation() * 180.0) / M_PI) << std::endl;
+      if (pyr.isDriveThrough())
+        out << "drivethrough" << std::endl;
+      if (pyr.isShootThrough())
+        out << "shootthrough" << std::endl;
+      if (pyr.getZFlip())
+        out << "flipz" << std::endl;
+      out << "end" << std::endl;
+      out << std::endl;
+    }
+  }
+
+  // Write Teleporters
+
+  {
+    for (std::vector<Teleporter>::iterator it = teleporters.begin(); it != teleporters.end(); ++it) {
+      Teleporter tele = *it;
+      out << "teleporter" << std::endl;
+      const float *pos = tele.getPosition();
+      out << "\tposition " << pos[0] << " " << pos[1] << " " << pos[2] << std::endl;
+      out << "\tsize " << tele.getWidth() << " " << tele.getBreadth() << " " << tele.getHeight() << std::endl;
+      out << "\trotation " << ((tele.getRotation() * 180.0) / M_PI) << std::endl;
+      out << "\tborder " << tele.getBorder() << std::endl;
+      out << "end" << std::endl;
+      out << std::endl;
+    }
+  }
+
+  // Write links
+
+  {
+    int from = 0;
+    for (std::vector<int>::iterator it = teleportTargets.begin(); it != teleportTargets.end(); ++it, ++from) {
+      int to = *it;
+      out << "link" << std::endl;
+      out << "\tfrom " << from << std::endl;
+      out << "\tto " << to << std::endl;
+      out << "end" << std::endl;
+      out << std::endl;
+    }
+  }
+
+  out.close();
+
+  return true;
+}
+
 
 //
 // WorldBuilder
