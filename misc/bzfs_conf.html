@@ -23,267 +23,276 @@
 	
 			function buildConfig()
 			{
-				var console = window.open("","untitled_bz.conf","width=600,height=300,resizable");
-				console.document.open("text/html");
-				var d = console.document;
-				var mainform = document.forms["main"];
+				try
+				{
+					var console = window.open("","untitled_bz.conf","width=600,height=300,resizable");
+					console.document.open("text/html");
+					var d = console.document;
+					var mainform = document.forms["main"];
+	
+					d.writeln("<html><body><p>");
+					d.writeln("#This is a bzfs configuration file.<br/>");
+					d.writeln("#Copy and paste into a simple text file and name it like <i>sample.conf</i>.<br/>");
+					d.writeln("#Use it like <code>bzfs -conf <i>sample.conf</i></code><br/><br/>");
+	
+					if (mainform.port.value != 5155) {
+						d.writeln("#Initial port clients connect on<br/>");
+						d.writeln("-p " + mainform.port.value + "<br/><br/>");
+					}
+					
+					if (mainform.reconnect_port.value != 5156) {
+						d.writeln("#Reconnect port<br/>");
+						d.writeln("-pr " + mainform.reconnect_port.value+"<br/><br/>");
+					}
+	
+					if (mainform.udp.value == "required") {
+						d.writeln("#Require UDP<br/>");
+						d.writeln("-requireudp<br/><br/>");
+					}
+					else if (mainform.udp.value == "none") {
+						d.writeln("#Disallow UDP<br/>");
+						d.writeln("-noudp<br/><br/>");
+					}
+	
+					if (mainform.listen_interface.value.length > 0) {
+						d.writeln("#Listen on this network interface<br/>");
+						d.writeln("-i " + mainform.listen_interface.value + "<br/><br/>");
+					}
+	
+					if (mainform.public_description.value.length > 0) {
+						d.writeln("#Public description for the server<br/>");
+						d.writeln("-public \"" + mainform.public_description.value + "\"<br/><br/>");
+					}
+	
+					if (mainform.public_address.value.length > 0) {
+						d.writeln("#Public network address for the server<br/>");
+						d.writeln("-publicaddr " + mainform.public_address.value + "<br/><br/>");
+					}
+	
+					if (mainform.public_list_server.value.length > 0) {
+						d.writeln("#Public List server to register with<br/>")
+						d.writeln("-publiclist " + mainform.public_list_server.value + "<br/><br/>");
+					}
+	
+					if (mainform.server_message.value.length > 0) {
+						d.writeln("#Server Message displayed when player joins<br/>");
+						d.writeln("-srvmsg \"" + mainform.server_message.value + "\"<br/><br/>");
+					}
+	
+					if (!mainform.respond_pings.checked) {
+						d.writeln("#Server will not respond to pings<br/>");
+						d.writeln("-q<br/><br/>");
+					}
+	
+					if (!mainform.ping_ttl.value.disabled && mainform.ping_ttl.value != 8) {
+						d.writeln("# Time to Live for Ping<br/>");
+						d.writeln("-ttl " + mainform.ping_ttl.value + "<br/><br/>");
+					}
+	
+					if (mainform.sync_time.checked) {
+						d.writeln("#Synchronize time of day on all clients<br/>");
+						d.writeln("-synctime<br/><br/>");
+					}
+	
+					if (mainform.lag_warn_time.value != 0) {
+						d.writeln("#Lag Warning threshold time [ms]<br/>");
+						d.writeln("-lagwarn " + mainform.lag_warn_time.value + "<br/><br/>");
+					}
+	
+					if (mainform.lag_drop_time.value != 0) {
+						d.writeln("#Drop player after this many lag warnings<br/>");
+						d.writeln("-lagdrop " + mainform.lag_drop_time.value + "<br/><br/>");
+					}
+	
+					if (mainform.ban_list.value.length > 0) {
+						d.writeln("#Ban players based on ip addresses<br/>");
+						d.writeln("-ban \"" + mainform.ban_list.value + "\"<br/><br/>");
+					}
+	
+					if (mainform.idle_kick_time.value != 0) {
+						d.writeln("#Idle Kick Threshold [s]<br/>");
+						d.writeln("-maxidle " + mainform.idle_kick_time.value + "<br/><br/>");
+					}
+	
+					if (!mainform.team_killers_die.checked) {
+						d.writeln("#Player does not die when killing a teammate<br/>");
+						d.writeln("-tk<br/><br/>");
+					}
+	
+					if (mainform.team_killer_kick_ratio.value != 0) {
+						d.writeln("#Team killer to wins percentage (1-100) above which player is kicked<br/>");
+						d.writeln("-tkkr " + mainform.team_killer_kick_ratio.value + "<br/><br/>");
+					}
+	
+					if (mainform.advertisement_message.value.length > 0) {
+						d.writeln("#Message that is broadcast every 15 minutes<br/>");
+						d.writeln("-admsg \"" + mainform.advertisement_message.value + "<br/><br/>");
+					}
+	
+					if (mainform.debug_level.value != 0) {
+						d.writeln("#Increase debugging level<br/>");
+						d.write("-");
+						for (i = 0; i < mainform.debug_level.value; i++)
+							d.write("d");
+						d.writeln("<br/><br/>");
+					}
+	
+					if (mainform.password.value.length > 0) {
+						d.writeln("#Administrator's password<br/>");
+						d.writeln("-password \"" + mainform.password.value + "\"<br/><br/>");
+					}
+	
+					if (mainform.world_type.checked && (mainform.world_file.value.length > 0)) {
+						d.writeln("#World file to load<br/>");
+						d.writeln("-world \"" + mainform.world_file.value + "\"<br/><br/>");
+					}
+	
+					if (mainform.game_style.value == "ctf") {
+						d.writeln("#Capture the flag game style<br/>");
+						d.writeln("-c<br/><br/>");
+					}
+	
+					if (mainform.flags_on_buildings.checked) {
+						d.writeln("#Flags on buildings<br/>");
+						d.writeln("-fb<br/><br/>");
+					}
+	
+					if ((!mainform.randomly_orient_buildings.disabled) && mainform.randomly_orient_buildings.checked) {
+						d.writeln("#Randomly orient buildings<br/>");
+						d.writeln("-b<br/><br/>");
+					}
+	
+					if ((!mainform.random_building_heights.disabled) && mainform.random_building_heights.checked) {
+						d.writeln("#Randomly height buildings buildings<br/>");
+						d.writeln("-h<br/><br/>");
+					}
+	
+					if (mainform.maximum_acceleration.checked) {
+						d.writeln("#Limit Acceleration<br/>");
+						d.writeln("-a<br/><br/>");
+					}
+	
+					if ((!mainform.balanced_ctf_map.disabled) && mainform.balanced_ctf_map.checked) {
+						d.writeln("#Balanced capture the flag world<br/>");
+						d.writeln("-cr<br/><br/>");
+					}
+	
+					if (mainform.exit_one_game.checked) {
+						d.writeln("#Serve one game and exit<br/>");
+						d.writeln("-g<br/><br/>");
+					}
+	
+					if (mainform.maximum_players.value != 40) {
+						d.writeln("#Maximum number of players<br/>");
+						d.writeln("-mp " + mainform.maximum_players.value + "<br/><br/>");
+					}
+	
+					if (mainform.maximum_observers.value != 3) {
+						d.writeln("#Maximum number of additional observers allowed<br/>");
+						d.writeln("-mo " + mainform.maximum_observers.value + "<br/><br/>");
+					}
+	
+					if (mainform.maximum_team_score.value > 0) {
+						d.writeln("#Maximum Team score limit on game<br/>");
+						d.writeln("-mts " + mainform.maximum_team_score.value + "<br/><br/>");
+					}
+					
+					if (mainform.maximum_player_score.value > 0) {
+						d.writeln("#Maximum Player score limit on game<br/>");
+						d.writeln("-mps " + mainform.maximum_player_score.value + "<br/><br/>");
+					}
+	
+					if (mainform.mandatory_superflags.value != 16) {
+						d.writeln("#Number of superflags that must exist at all times<br/>");
+						d.writeln("+s " + mainform.mandatory_superflags.value + "<br/><br/>");
+					}
+	
+					if (mainform.allowed_superflags.value != 16) {
+						d.writeln("#Number of superflags that may exist at any time<br/>");
+						d.writeln("-s " + mainform.allowed_superflags.value + "<br/><br/>");
+					}
+	
+					if ((!mainform.allow_teleporters.disabled) && mainform.allow_teleporters.checked) {
+						d.writeln("#Allow random teleporters<br/>");
+						d.writeln("-t<br/><br/>");
+					}
+	
+					if (mainform.insert_antidote_flags.checked) {
+						d.writeln("#Insert antidote superflags<br/>");
+						d.writeln("-sa<br/><br/>");
+					}
+	
+					if (mainform.allow_jumping.checked) {
+						d.writeln("#Tanks can jump<br/>");
+						d.writeln("-j<br/><br/>");
+					}
+	
+					if (mainform.max_concurrent_shots.value != 1) {
+						d.writeln("#Maximum concurrent shots<br/>");
+						d.writeln("-ms " + mainform.max_concurrent_shots.value + "<br/><br/>");
+					}
+	
+					if (mainform.allow_richochet.checked) {
+						d.writeln("#Ordinance richochets<br/>");
+						d.writeln("+r<br/><br/>");
+					}
+	
+					if ((!mainform.allow_rogues.disabled) && mainform.allow_rogues.checked) {
+						d.writeln("#Allow rogue tanks<br/>");
+						d.writeln("-r<br/><br/>");
+					}
+	
+					if (mainform.bad_flag_shake_time.value > 0) {
+						d.writeln("#Bad Flag shake time [s]<br/>");
+						d.writeln("-st " + mainform.bad_flag_shake_time.value + "<br/><br/>");
+					}
+	
+					if (mainform.bad_flag_shake_wins.value > 0) {
+						d.writeln("#Bad Flag shake wins<br/>");
+						d.writeln("-sw " + mainform.bad_flag_shake_wins.value + "<br/><br/>");
+					}
 
-				d.writeln("<html><body><p>");
-				d.writeln("#This is a bzfs configuration file.<br/>");
-				d.writeln("#Copy and paste into a simple text file and name it like <i>sample.conf</i>.<br/>");
-				d.writeln("#Use it like <code>bzfs -conf <i>sample.conf</i></code><br/><br/>");
-
-				if (mainform.port.value != 5155) {
-					d.writeln("#Initial port clients connect on<br/>");
-					d.writeln("-p " + mainform.port.value + "<br/>");
-				}
-				
-				if (mainform.reconnect_port.value != 5156) {
-					d.writeln("#Reconnect port<br/>");
-					d.writeln("-pr " + mainform.reconnect_port.value+"<br/>");
-				}
-
-				if (mainform.udp.value == "required") {
-					d.writeln("#Require UDP<br/>");
-					d.writeln("-requireudp<br/>");
-				}
-				else if (mainform.udp.value == "none") {
-					d.writeln("#Disallow UDP<br/>");
-					d.writeln("-noudp<br/>");
-				}
-
-				if (mainform.listen_interface.value.length > 0) {
-					d.writeln("#Listen on this network interface<br/>");
-					d.writeln("-i " + mainform.listen_interface.value + "<br/>");
-				}
-
-				if (mainform.public_description.value.length > 0) {
-					d.writeln("#Public description for the server<br/>");
-					d.writeln("-public \"" + mainform.public_description.value + "\"<br/>");
-				}
-
-				if (mainform.public_address.value.length > 0) {
-					d.writeln("#Public network address for the server<br/>");
-					d.writeln("-publicaddr " + mainform.public_address.value + "<br/>");
-				}
-
-				if (mainform.public_list_server.value.length > 0) {
-					d.writeln("#Public List server to register with<br/>")
-					d.writeln("-publiclist " + mainform.public_list_server.value + "<br/>");
-				}
-
-				if (mainform.server_message.value.length > 0) {
-					d.writeln("#Server Message displayed when player joins<br/>");
-					d.writeln("-srvmsg \"" + mainform.server_message.value + "\"<br/>");
-				}
-
-				if (!mainform.respond_pings.checked) {
-					d.writeln("#Server will not respond to pings<br/>");
-					d.writeln("-q<br/>");
-				}
-
-				if (!mainform.ping_ttl.value.disabled && mainform.ping_ttl.value != 8) {
-					d.writeln("# Time to Live for Ping<br/>");
-					d.writeln("-ttl " + mainform.ping_ttl.value + "<br/>");
-				}
-
-				if (mainform.sync_time.checked) {
-					d.writeln("#Synchronize time of day on all clients<br/>");
-					d.writeln("-synctime<br/>");
-				}
-
-				if (mainform.lag_warn_time.value != 0) {
-					d.writeln("#Lag Warning threshold time [ms]");
-					d.writeln("-lagwarn " + mainform.lag_warn_time.value + "<br/>");
-				}
-
-				if (mainform.lag_drop_time.value != 0) {
-					d.writeln("#Drop player after this many lag warnings");
-					d.writeln("-lagdrop " + mainform.lag_drop_time.value + "<br/>");
-				}
-
-				if (mainform.ban_list.value.length > 0) {
-					d.writeln("#Ban players based on ip addresses");
-					d.writeln("-ban \"" + mainform.ban_list.value + "\"<br/>");
-				}
-
-				if (mainform.idle_kick_time.value != 0) {
-					d.writeln("#Idle Kick Threshold [s]");
-					d.writeln("-maxidle " + mainform.idle_kick_time.value + "<br/>");
-				}
-
-				if (!mainform.team_killers_die.checked) {
-					d.writeln("#Player does not die when killing a teammate<br/>");
-					d.writeln("-tk<br/>");
-				}
-
-				if (mainform.team_killer_kick_ratio.value != 0) {
-					d.writeln("#Team killer to wins percentage (1-100) above which player is kicked");
-					d.writeln("-tkkr " + mainform.team_killer_kick_ratio.value + "<br/>");
-				}
-
-				if (mainform.advertisement_message.value.length > 0) {
-					d.writeln("#Message that is broadcast every 15 minutes<br/>");
-					d.writeln("-admsg \"" + mainform.advertisement_message.value + "<br/>");
-				}
-
-				if (mainform.debug_level.value != 0) {
-					d.writeln("#Increase debugging level<br/>");
-					d.write("-");
-					for (i = 0; i < mainform.debug_level.value; i++)
-						d.write("d");
-					d.writeln("");
-				}
-
-				if (mainform.password.value.length > 0) {
-					d.writeln("#Administrator's password<br/>");
-					d.writeln("-password \"" + mainform.password.value + "\"<br/>");
-				}
-
-				if (mainform.world_type.checked && (mainform.world_file.value.length > 0)) {
-					d.writeln("#World file to load<br/>");
-					d.writeln("-world \"" + mainform.world_file.value + "\"<br/>");
-				}
-
-				if (mainform.game_style.value == "ctf") {
-					d.writeln("#Capture the flag game style<br/>");
-					d.writeln("-c<br/>");
-				}
-
-				if (mainform.flags_on_buildings.checked) {
-					d.writeln("#Flags on buildings<br/>");
-					d.writeln("-fb<br/>");
-				}
-
-				if ((!mainform.randomly_orient_buildings.disabled) && mainform.randomly_orient_buildings.checked) {
-					d.writeln("#Randomly orient buildings<br/>");
-					d.writeln("-b<br/>");
-				}
-
-				if ((!mainform.random_building_heights.disabled) && mainform.random_building_heights.checked) {
-					d.writeln("#Randomly height buildings buildings<br/>");
-					d.writeln("-h<br/>");
-				}
-
-				if (mainform.maximum_acceleration.checked) {
-					d.writeln("#Limit Acceleration<br/>");
-					d.writeln("-a<br/>");
-				}
-
-				if ((!mainform.balanced_ctf_map.disabled) && mainform.balanced_ctf_map.checked) {
-					d.writeln("#Balanced capture the flag world<br/>");
-					d.writeln("-cr<br/>");
-				}
-
-				if (mainform.exit_one_game.checked) {
-					d.writeln("#Serve one game and exit<br/>");
-					d.writeln("-g<br/>");
-				}
-
-				if (mainform.maximum_players.value != 40) {
-					d.writeln("#Maximum number of players<br/>");
-					d.writeln("-mp " + mainform.maximum_players.value + "<br/>");
-				}
-
-				if (mainform.maximum_observers.value != 3) {
-					d.writeln("#Maximum number of additional observers allowed<br/>");
-					d.writeln("-mo " + mainform.maximum_observers.value + "<br/>");
-				}
-
-				if (mainform.maximum_team_score.value > 0) {
-					d.writeln("#Maximum Team score limit on game<br/>");
-					d.writeln("-mts " + mainform.maximum_team_score.value + "<br/>");
-				}
-				
-				if (mainform.maximum_player_score.value > 0) {
-					d.writeln("#Maximum Player score limit on game<br/>");
-					d.writeln("-mps " + mainform.maximum_player_score.value + "<br/>");
-				}
-
-				if (mainform.mandatory_superflags.value != 16) {
-					d.writeln("#Number of superflags that must exist at all times<br/>");
-					d.writeln("+s " + mainform.mandatory_superflags.value + "<br/>");
-				}
-
-				if (mainform.allowed_superflags.value != 16) {
-					d.writeln("#Number of superflags that may exist at any time<br/>");
-					d.writeln("-s " + mainform.allowed_superflags.value + "<br/>");
-				}
-
-				if ((!mainform.allow_teleporters.disabled) && mainform.allow_teleporters.checked) {
-					d.writeln("#Allow random teleporters<br/>");
-					d.writeln("-t<br/>");
-				}
-
-				if (mainform.insert_antidote_flags.checked) {
-					d.writeln("#Insert antidote superflags<br/>");
-					d.writeln("-sa<br/>");
-				}
-
-				if (mainform.allow_jumping.checked) {
-					d.writeln("#Tanks can jump<br/>");
-					d.writeln("-j<br/>");
-				}
-
-				if (mainform.max_concurrent_shots.value != 1) {
-					d.writeln("#Maximum concurrent shots<br/>");
-					d.writeln("-ms " + mainform.max_concurrent_shots.value + "<br/>");
-				}
-
-				if (mainform.allow_richochet.checked) {
-					d.writeln("#Ordinance richochets<br/>");
-					d.writeln("+r<br/>");
-				}
-
-				if ((!mainform.allow_rogues.disabled) && mainform.allow_rogues.checked) {
-					d.writeln("#Allow rogue tanks<br/>");
-					d.writeln("-r<br/>");
-				}
-
-				if (mainform.bad_flag_shake_time.value > 0) {
-					d.writeln("#Bad Flag shake time [s]<br/>");
-					d.writeln("-st " + mainform.bad_flag_shake_time.value + "<br/>");
-				}
-
-				if (mainform.bad_flag_shake_wins.value > 0) {
-					d.writeln("#Bad Flag shake wins<br/>");
-					d.writeln("-sw " + mainform.bad_flag_shake_wins.value + "<br/>");
-				}
-
-				if (mainform.good_mand_flag.value > 0) {
-					d.write("+f good");
-					if (mainform.good_mand_flag.value > 1)
-						d.write("{"+mainform.good_mand_flag.value+"}");
-					d.write(" ");
-				}
-
-				for (var i = 0; i < flags.length; i++) {
-					var el = flags[i].toLowerCase() + "_mand_flag";
-					var cnt = mainform.elements[el].value;
-					if (cnt > 0) {
-						d.write("+f " + flags[i]);
-						if (cnt > 1)
-							d.write("{"+cnt+"}");
+					d.writeln("#Mandatory flags<br/>");
+					if (mainform.good_mand_flag.value > 0) {
+						d.write("+f good");
+						if (mainform.good_mand_flag.value > 1)
+							d.write("{"+mainform.good_mand_flag.value+"}");
 						d.write(" ");
 					}
-				}
-				d.writeln("");
-				
-				if (mainform.bad_forbid_flag.checked > 0)
-					d.write("-f bad ");
 
-				for (var i = 0; i < flags.length; i++) {
-					var el = flags[i].toLowerCase() + "_forbid_flag";
-					if (mainform.elements[el].checked) {
-						d.write("-f " + flags[i] + " ");
+					for (var i = 0; i < flags.length; i++) {
+						var el = flags[i].toLowerCase() + "_mand_flag";
+						var cnt = mainform.elements[el].value;
+						if (cnt > 0) {
+							d.write("+f " + flags[i]);
+							if (cnt > 1)
+								d.write("{"+cnt+"}");
+							d.write(" ");
+						}
 					}
+					d.writeln("<br/><br/>");
+					
+					d.writeln("#Forbidden flags<br/>");
+					if (mainform.bad_forbid_flag.checked > 0)
+						d.write("-f bad ");
+	
+					for (var i = 0; i < flags.length; i++) {
+						var el = flags[i].toLowerCase() + "_forbid_flag";
+						if (mainform.elements[el].checked) {
+							d.write("-f " + flags[i] + " ");
+						}
+					}
+					d.writeln("<br/><br/>");
+	
+	
+					d.writeln("</p></body></html>");
+	
+					d.close();
 				}
-				d.writeln("");
-
-
-				d.writeln("</p></body></html>");
-
-				d.close();
+				catch (e)
+				{
+					d.writeln("Problem building configuration file: " + e.toString());
+				}
 				return false;
 			}
 		</script>
@@ -504,7 +513,7 @@
 					<legend>Mandatory Flags</legend>
 					<table width="100%">
 						<tr>
-							<td align="right">(good)</td><td><input type="text" name="good_mand_flag" value="0" size="3"/></td>
+							<td align="right">(good)</td><td><input type="text" id="gd" name="good_mand_flag" value="0" size="3"/></td>
 						</tr>
 						<tr>
 							<td align="right">(V)</td><td><input type="text" name="v_mand_flag" value="0" size="3"/></td>
@@ -523,9 +532,9 @@
 							<td align="right">(T)</td><td><input type="text" name="t_mand_flag" value="0" size="3"/></td>
 						</tr>
 						<tr>
-							<td align="right">(N)</td><td><input type="text" name="l_mand_flag" value="0" size="3"/></td>
-							<td align="right">(SH)</td><td><input type="text" name="r_mand_flag" value="0" size="3"/></td>
-							<td align="right">(SR)</td><td><input type="text" name="sb_mand_flag" value="0" size="3"/></td>
+							<td align="right">(N)</td><td><input type="text" name="n_mand_flag" value="0" size="3"/></td>
+							<td align="right">(SH)</td><td><input type="text" name="sh_mand_flag" value="0" size="3"/></td>
+							<td align="right">(SR)</td><td><input type="text" name="sr_mand_flag" value="0" size="3"/></td>
 							<td align="right">(SW)</td><td><input type="text" name="sw_mand_flag" value="0" size="3"/></td>
 							<td align="right">(PZ)</td><td><input type="text" name="pz_mand_flag" value="0" size="3"/></td>
 							<td align="right">(G)</td><td><input type="text" name="g_mand_flag" value="0" size="3"/></td>
@@ -572,9 +581,9 @@
 							<td align="right">(T)</td><td><input type="checkbox" name="t_forbid_flag"/></td>
 						</tr>
 						<tr>
-							<td align="right">(N)</td><td><input type="checkbox" name="l_forbid_flag"/></td>
-							<td align="right">(SH)</td><td><input type="checkbox" name="r_forbid_flag"/></td>
-							<td align="right">(SR)</td><td><input type="checkbox" name="sb_forbid_flag"/></td>
+							<td align="right">(N)</td><td><input type="checkbox" name="n_forbid_flag"/></td>
+							<td align="right">(SH)</td><td><input type="checkbox" name="sh_forbid_flag"/></td>
+							<td align="right">(SR)</td><td><input type="checkbox" name="sr_forbid_flag"/></td>
 							<td align="right">(SW)</td><td><input type="checkbox" name="sw_forbid_flag"/></td>
 							<td align="right">(PZ)</td><td><input type="checkbox" name="pz_forbid_flag"/></td>
 							<td align="right">(G)</td><td><input type="checkbox" name="g_forbid_flag"/></td>
