@@ -113,6 +113,7 @@ WeatherRenderer::WeatherRenderer ()
 
 WeatherRenderer::~WeatherRenderer ()
 {
+  freeContext(); // free the display lists
   BZDB.removeCallback ("_rainType", bzdbCallBack, this);
   BZDB.removeCallback ("_rainDensity", bzdbCallBack, this);
   BZDB.removeCallback ("_rainSpread", bzdbCallBack, this);
@@ -588,14 +589,19 @@ void WeatherRenderer::freeContext (void)
 
 void WeatherRenderer::rebuildContext (void)
 {
-  buildPuddleList ();
   buildDropList ();
+  buildPuddleList ();
+  return;
 }
 
 
 void WeatherRenderer::buildDropList (bool draw)
 {
   if (!draw) {
+    if (dropList != INVALID_GL_LIST_ID) {
+      glDeleteLists(dropList, 1);
+      dropList = INVALID_GL_LIST_ID;
+    }
     dropList = glGenLists(1);
     glNewList(dropList, GL_COMPILE);
   }
@@ -675,6 +681,10 @@ void WeatherRenderer::buildPuddleList (bool draw)
 {
   float scale = 1;
   if (!draw) {
+    if (puddleList != INVALID_GL_LIST_ID) {
+      glDeleteLists(puddleList, 1);
+      puddleList = INVALID_GL_LIST_ID;
+    }
     puddleList = glGenLists(1);
     glNewList(puddleList, GL_COMPILE);
   }

@@ -212,7 +212,7 @@ void WorldInfo::makeWaterMaterial()
 {
   // the texture matrix
   TextureMatrix* texmat = new TextureMatrix;
-  texmat->setName("defaultWaterLevel");
+  texmat->setName("WaterMaterial");
   texmat->setDynamicShift(0.05f, 0.0f);
   texmat->finalize();
   int texmatIndex = TEXMATRIXMGR.addMatrix(texmat);
@@ -221,7 +221,7 @@ void WorldInfo::makeWaterMaterial()
   BzMaterial material;
   const float diffuse[4] = {0.65f, 1.0f, 0.5f, 0.9f};
   material.reset();
-  material.setName("defaultWaterLevel");
+  material.setName("WaterMaterial");
   material.setTexture("water");
   material.setTextureMatrix(texmatIndex); // generate a default later
   material.setDiffuse(diffuse);

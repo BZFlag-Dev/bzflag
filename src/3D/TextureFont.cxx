@@ -202,46 +202,42 @@ void TextureFont::preLoadLists(void)
     return;
   }
 
-  glPushMatrix();
   for (int i = 0; i < numberOfCharacters; i++) {
     if (listIDs[i] != INVALID_GL_LIST_ID) {
       glDeleteLists(listIDs[i], 1);
       listIDs[i] = INVALID_GL_LIST_ID; // make it a habit
     }
-    glLoadIdentity();
-
     listIDs[i] = glGenLists(1);
     glNewList(listIDs[i], GL_COMPILE);
+    {
+      glTranslatef((float)fontMetrics[i].initialDist, 0, 0);
 
-    glTranslatef((float)fontMetrics[i].initialDist, 0, 0);
+      float fFontY = (float)fontMetrics[i].endY - fontMetrics[i].startY;
+      float fFontX = (float)fontMetrics[i].endX - fontMetrics[i].startX;
 
-    float fFontY = (float)fontMetrics[i].endY - fontMetrics[i].startY;
-    float fFontX = (float)fontMetrics[i].endX - fontMetrics[i].startX;
+      glBegin(GL_QUADS);
+        glNormal3f(0.0f, 0.0f, 1.0f);
+        glTexCoord2f((float)fontMetrics[i].startX / (float)textureXSize,
+                     1.0f - (float)fontMetrics[i].startY / (float)textureYSize);
+        glVertex3f(0.0f, fFontY, 0.0f);
 
-    glBegin(GL_QUADS);
-      glNormal3f(0.0f, 0.0f, 1.0f);
-      glTexCoord2f((float)fontMetrics[i].startX / (float)textureXSize,
-                   1.0f - (float)fontMetrics[i].startY / (float)textureYSize);
-      glVertex3f(0.0f, fFontY, 0.0f);
+        glTexCoord2f((float)fontMetrics[i].startX / (float)textureXSize,
+                     1.0f - (float)fontMetrics[i].endY / (float)textureYSize);
+        glVertex3f(0.0f, 0.0f, 0.0f);
 
-      glTexCoord2f((float)fontMetrics[i].startX / (float)textureXSize,
-                   1.0f - (float)fontMetrics[i].endY / (float)textureYSize);
-      glVertex3f(0.0f, 0.0f, 0.0f);
+        glTexCoord2f((float)fontMetrics[i].endX / (float)textureXSize,
+                     1.0f - (float)fontMetrics[i].endY / (float)textureYSize);
+        glVertex3f(fFontX, 0.0f, 0.0f);
 
-      glTexCoord2f((float)fontMetrics[i].endX / (float)textureXSize,
-                   1.0f - (float)fontMetrics[i].endY / (float)textureYSize);
-      glVertex3f(fFontX, 0.0f, 0.0f);
+        glTexCoord2f((float)fontMetrics[i].endX / (float)textureXSize,
+                     1.0f - (float)fontMetrics[i].startY / (float)textureYSize);
+        glVertex3f(fFontX, fFontY, 0.0f);
+      glEnd();
 
-      glTexCoord2f((float)fontMetrics[i].endX / (float)textureXSize,
-                   1.0f - (float)fontMetrics[i].startY / (float)textureYSize);
-      glVertex3f(fFontX, fFontY, 0.0f);
-    glEnd();
-
-    glTranslatef(fFontX, 0.0f, 0.0f);
-
+      glTranslatef(fFontX, 0.0f, 0.0f);
+    }
     glEndList();
   }
-  glPopMatrix();
 
   // create GState
   OpenGLGStateBuilder builder(gstate);
@@ -271,12 +267,20 @@ float TextureFont::getStrLength(float scale, const char *str, int len)
     charToUse -= 32;
 
     if (charToUse == 0) {
-      if (i == 0)
-	totalLen += fontMetrics[charToUse].initialDist + fontMetrics[charToUse].charWidth + fontMetrics[charToUse].whiteSpaceDist;
-      else
-	totalLen += fontMetrics[lastCharacter].whiteSpaceDist + fontMetrics[charToUse].whiteSpaceDist + fontMetrics[charToUse].initialDist + fontMetrics[charToUse].charWidth;
+      if (i == 0) {
+	totalLen += fontMetrics[charToUse].initialDist +
+	            fontMetrics[charToUse].charWidth +
+	            fontMetrics[charToUse].whiteSpaceDist;
+      } else {
+	totalLen += fontMetrics[lastCharacter].whiteSpaceDist +
+	            fontMetrics[charToUse].whiteSpaceDist +
+	            fontMetrics[charToUse].initialDist +
+	            fontMetrics[charToUse].charWidth;
+      }
     } else {
-      totalLen += fontMetrics[charToUse].endX - fontMetrics[charToUse].startX + fontMetrics[charToUse].initialDist;
+      totalLen += fontMetrics[charToUse].endX -
+                  fontMetrics[charToUse].startX +
+                  fontMetrics[charToUse].initialDist;
     }
   }
 
@@ -327,10 +331,16 @@ void TextureFont::drawString(float scale, GLfloat color[3], const char *str,
     charToUse -= 32;
 
     if (charToUse == 0) {
-      if (i == 0)
-	glTranslatef((float)fontMetrics[charToUse].initialDist + (float)fontMetrics[charToUse].charWidth + (float)fontMetrics[charToUse].whiteSpaceDist, 0, 0);
-      else
-	glTranslatef((float)fontMetrics[lastCharacter].whiteSpaceDist + (float)fontMetrics[charToUse].whiteSpaceDist + fontMetrics[charToUse].initialDist + (float)fontMetrics[charToUse].charWidth, 0, 0);
+      if (i == 0) {
+	glTranslatef((float)fontMetrics[charToUse].initialDist + 
+	             (float)fontMetrics[charToUse].charWidth +
+	             (float)fontMetrics[charToUse].whiteSpaceDist, 0.0f, 0.0f);
+      } else {
+	glTranslatef((float)fontMetrics[lastCharacter].whiteSpaceDist +
+	             (float)fontMetrics[charToUse].whiteSpaceDist +
+	             (float)fontMetrics[charToUse].initialDist +
+                     (float)fontMetrics[charToUse].charWidth, 0.0f, 0.0f);
+      }
     } else {
       glCallList(listIDs[charToUse]);
     }

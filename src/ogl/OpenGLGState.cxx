@@ -1139,6 +1139,7 @@ void OpenGLGState::registerContextInitializer(
                      void* userData)
 {
   if ((freeCallback == NULL) || (initCallback == NULL)) {
+    DEBUG1("registerContextInitializer() error\n");
     return;
   }
   new ContextInitializer(freeCallback, initCallback, userData);
@@ -1150,16 +1151,22 @@ void OpenGLGState::unregisterContextInitializer(
 		     OpenGLContextFunction initCallback,
 		     void* userData)
 {
-  delete ContextInitializer::find(freeCallback, initCallback, userData);
+  ContextInitializer* ci = 
+    ContextInitializer::find(freeCallback, initCallback, userData);
+  if (ci == NULL) {
+    DEBUG1("unregisterContextInitializer() error\n");
+  }
+  delete ci;
 }
 
 
 void OpenGLGState::initContext()
 {
-  DEBUG1("OpenGLGState::initContext() called\n");
 
   // call all of the freeing functions first
+  DEBUG1("ContextInitializer::executeFreeFuncs() start\n");
   ContextInitializer::executeFreeFuncs();
+  DEBUG1("ContextInitializer::executeFreeFuncs() end\n");
   
   // initialize GL state
   initGLState();
@@ -1168,7 +1175,9 @@ void OpenGLGState::initContext()
   resetState();
 
   // call all initializers
+  DEBUG1("ContextInitializer::executeInitFuncs() start\n");
   ContextInitializer::executeInitFuncs();
+  DEBUG1("ContextInitializer::executeInitFuncs() end\n");
 
   // initialize the GL state again in case one of the initializers
   // messed it up.
@@ -1184,6 +1193,7 @@ void OpenGLGState::initContext()
   glLoadIdentity();
   glEnable(GL_SCISSOR_TEST);
   glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
+
 }
 
 
@@ -1352,6 +1362,13 @@ static void contextInitError(const char* message)
 }
 
 
+#undef glNewList
+void bzNewList(GLuint list, GLenum mode)
+{
+  glNewList(list, mode);
+  return;
+}
+
 #undef glGenLists
 GLuint bzGenLists(GLsizei count)
 {
@@ -1359,16 +1376,6 @@ GLuint bzGenLists(GLsizei count)
     contextFreeError ("bzGenLists() is having issues");
   }
   return glGenLists(count);
-}
-
-
-#undef glGenTextures
-void bzGenTextures(GLsizei count, GLuint *textures)
-{
-  if (OpenGLGState::getExecutingFreeFuncs()) {
-    contextFreeError ("bzGenTextures() is having issues");
-  }
-  return glGenTextures(count, textures);
 }
 
 
@@ -1381,6 +1388,15 @@ void bzDeleteLists(GLuint base, GLsizei count)
   glDeleteLists(base, count);
 }
 
+
+#undef glGenTextures
+void bzGenTextures(GLsizei count, GLuint *textures)
+{
+  if (OpenGLGState::getExecutingFreeFuncs()) {
+    contextFreeError ("bzGenTextures() is having issues");
+  }
+  return glGenTextures(count, textures);
+}
 
 #undef glDeleteTextures
 void bzDeleteTextures(GLsizei count, const GLuint *textures)

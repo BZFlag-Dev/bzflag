@@ -27,10 +27,8 @@
 #include "bzfgl.h"
 #include "ViewFrustum.h"
 
-typedef std::vector<GLuint> OpenGLLightDLStack;
 
 class OpenGLLight {
-  friend class OpenGLLightCleanup;
   public:
 			OpenGLLight();
 			OpenGLLight(const OpenGLLight&);
@@ -66,7 +64,6 @@ class OpenGLLight {
     void		makeLists();
     void		freeLists();
     void		genLight(GLenum light) const;
-    static void		cleanup();
 
   private:
     static void		freeContext(void*);
@@ -80,12 +77,8 @@ class OpenGLLight {
     GLfloat		importance;
     bool		onlyReal;
     bool		onlyGround;
-    GLuint		listBase;
-    GLuint*		list;
-    GLuint		mailbox;
+    GLuint*		lists;
     static GLint	maxLights;
-    GLuint		lightList;
-    static OpenGLLightDLStack oldLists;
 };
 
 //

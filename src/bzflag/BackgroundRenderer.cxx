@@ -332,6 +332,7 @@ void			BackgroundRenderer::notifyStyleChange()
 
 void		BackgroundRenderer::resize() {
   resizeSky();
+  doFreeDisplayLists();
   doInitDisplayLists();
 }
 
@@ -370,6 +371,10 @@ void			BackgroundRenderer::setCelestial(
   doSunset = getSunsetTop(sunDirection, sunsetTop);
 
   // make pretransformed display list for sun
+  if (sunXFormList != INVALID_GL_LIST_ID) {
+    glDeleteLists(sunXFormList, 1);
+    sunXFormList = INVALID_GL_LIST_ID;
+  }
   sunXFormList = glGenLists(1);
   glNewList(sunXFormList, GL_COMPILE);
   {
@@ -404,6 +409,10 @@ void			BackgroundRenderer::setCelestial(
   const float limbAngle = atan2f(sun2[2], sun2[1]);
 
   int moonSegements = (int)BZDB.eval("moonSegments");
+  if (moonList != INVALID_GL_LIST_ID) {
+    glDeleteLists(moonList, 1);
+    moonList = INVALID_GL_LIST_ID;
+  }
   moonList = glGenLists(1);
   glNewList(moonList, GL_COMPILE);
   {
@@ -433,6 +442,10 @@ void			BackgroundRenderer::setCelestial(
   glEndList();
 
   // make pretransformed display list for stars
+  if (starXFormList != INVALID_GL_LIST_ID) {
+    glDeleteLists(starXFormList, 1);
+    starXFormList = INVALID_GL_LIST_ID;
+  }
   starXFormList = glGenLists(1);
   glNewList(starXFormList, GL_COMPILE);
   {

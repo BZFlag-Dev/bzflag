@@ -16,17 +16,11 @@
 #include "OpenGLGState.h"
 #include "ViewFrustum.h"
 
-static class OpenGLLightCleanup {
-  public:
-			OpenGLLightCleanup() { }
-			~OpenGLLightCleanup() { OpenGLLight::cleanup(); }
-} cleanup;
 
-GLint			OpenGLLight::maxLights = 0;
-OpenGLLightDLStack	OpenGLLight::oldLists;
+GLint OpenGLLight::maxLights = 0;
 
 
-OpenGLLight::OpenGLLight() : mailbox(0)
+OpenGLLight::OpenGLLight()
 {
   pos[0] = 0.0f;
   pos[1] = 0.0f;
@@ -55,10 +49,11 @@ OpenGLLight::OpenGLLight() : mailbox(0)
   onlyReal = false;
   onlyGround = false;
   makeLists();
+  return;
 }
 
 
-OpenGLLight::OpenGLLight(const OpenGLLight& l) : mailbox(0)
+OpenGLLight::OpenGLLight(const OpenGLLight& l)
 {
   pos[0] = l.pos[0];
   pos[1] = l.pos[1];
@@ -71,18 +66,11 @@ OpenGLLight::OpenGLLight(const OpenGLLight& l) : mailbox(0)
   atten[0] = l.atten[0];
   atten[1] = l.atten[1];
   atten[2] = l.atten[2];
+  maxDist = l.maxDist;
+  onlyReal = l.onlyReal;
+  onlyGround = l.onlyGround;
   makeLists();
-}
-
-
-OpenGLLight::~OpenGLLight()
-{
-  OpenGLGState::unregisterContextInitializer(freeContext,
-                                             initContext, (void*)this);
-
-  // put display lists on oldLists list
-  oldLists.push_back(listBase);
-  delete[] list;
+  return;
 }
 
 
@@ -101,8 +89,37 @@ OpenGLLight& OpenGLLight::operator=(const OpenGLLight& l)
     atten[0] = l.atten[0];
     atten[1] = l.atten[1];
     atten[2] = l.atten[2];
+    maxDist = l.maxDist;
+    onlyReal = l.onlyReal;
+    onlyGround = l.onlyGround;
   }
   return *this;
+}
+
+
+void OpenGLLight::makeLists()
+{
+  const int numLights = getMaxLights();
+
+  // invalidate the lists
+  lists = new GLuint[numLights];
+  for (int i = 0; i < numLights; i++) {
+    lists[i] = INVALID_GL_LIST_ID;
+  }
+
+  OpenGLGState::registerContextInitializer(freeContext,
+                                           initContext, (void*)this);
+  return;
+}
+
+
+OpenGLLight::~OpenGLLight()
+{
+  OpenGLGState::unregisterContextInitializer(freeContext,
+                                             initContext, (void*)this);
+  freeLists();
+  delete[] lists;
+  return;
 }
 
 
@@ -157,6 +174,22 @@ void OpenGLLight::setAttenuation(int index, GLfloat value)
 {
   freeLists();
   atten[index] = value;
+}
+
+
+void OpenGLLight::setOnlyReal(bool value)
+{
+  freeLists();
+  onlyReal = value;
+  return;
+}
+
+
+void OpenGLLight::setOnlyGround(bool value)
+{
+  freeLists();
+  onlyGround = value;
+  return;
 }
 
 
@@ -223,29 +256,30 @@ void OpenGLLight::setImportance(const ViewFrustum& frustum)
 }
 
 
+void OpenGLLight::enableLight(int index, bool on) // const
+{
+  if (on) {
+    glEnable((GLenum)(GL_LIGHT0 + index));
+  } else {
+    glDisable((GLenum)(GL_LIGHT0 + index));
+  }
+  return;
+}
+
+
 void OpenGLLight::execute(int index) const
 {
-  if (list[index] != mailbox) {
-    list[index] = mailbox;
-    glNewList(listBase + index, GL_COMPILE);
+  // setup the light parameters (buffered in
+  // a display list), but do not turn it on.
+  if (lists[index] != INVALID_GL_LIST_ID) {
+    glCallList(lists[index]);
+  } 
+  else {
+    lists[index] = glGenLists(1);
+    glNewList(lists[index], GL_COMPILE_AND_EXECUTE);
     genLight((GLenum)(GL_LIGHT0 + index));
     glEndList();
   }
-  glCallList(listBase + index);
-  return;
-}
-
-
-void OpenGLLight::setOnlyReal(bool value)
-{
-  onlyReal = value;
-  return;
-}
-
-
-void OpenGLLight::setOnlyGround(bool value)
-{
-  onlyGround = value;
   return;
 }
 
@@ -259,80 +293,43 @@ void OpenGLLight::genLight(GLenum light) const
   glLightf(light, GL_CONSTANT_ATTENUATION, atten[0]);
   glLightf(light, GL_LINEAR_ATTENUATION, atten[1]);
   glLightf(light, GL_QUADRATIC_ATTENUATION, atten[2]);
-}
-
-
-void OpenGLLight::makeLists()
-{
-  // make all lights dirty
-  const int numLights = getMaxLights();
-  list = new GLuint[numLights];
-  for (int i = 0; i < numLights; i++)
-    list[i] = mailbox;
-  freeLists();
-
-  // make display lists
-  const int count = oldLists.size();
-  if (count != 0) {
-    listBase = oldLists[count - 1];
-    oldLists.pop_back();
-  }
-  else {
-    listBase = glGenLists(numLights);
-  }
-
-  // watch for context recreation
-  OpenGLGState::registerContextInitializer(freeContext,
-                                           initContext, (void*)this);
+  return;
 }
 
 
 void OpenGLLight::freeLists()
 {
-  mailbox++;
+  const int numLights = getMaxLights();
+  for (int i = 0; i < numLights; i++) {
+    if (lists[i] != INVALID_GL_LIST_ID) {
+      glDeleteLists(lists[i], 1);
+      lists[i] = INVALID_GL_LIST_ID;
+    }
+  }
+  return;
 }
 
 
 GLint OpenGLLight::getMaxLights()
 {
-  if (maxLights == 0)
+  if (maxLights == 0) {
     glGetIntegerv(GL_MAX_LIGHTS, &maxLights);
-  return maxLights;
-}
-
-
-void OpenGLLight::enableLight(int index,
-						bool on) // const
-{
-  if (on) glEnable((GLenum)(GL_LIGHT0 + index));
-  else glDisable((GLenum)(GL_LIGHT0 + index));
-}
-
-
-void OpenGLLight::cleanup()
-{
-  // free all display lists on oldLists list
-  const int count = oldLists.size();
-  for (int i = 0; i < count; i++) {
-    // FIXME -- can't call safely since context is probably gone
-    // glDeleteLists(oldLists[i], getMaxLights());
   }
+  return maxLights;
 }
 
 
 void OpenGLLight::freeContext(void* self)
 {
-  // FIXME: all of this code is horrible, and yet still
-  //        not as bad as most of the Rep() garbage, stunning
-
-  // cause display list to be recreated on next execute()
   ((OpenGLLight*)self)->freeLists();
+  return;
 }
 
 
 void OpenGLLight::initContext(void* /*self*/)
 {
-  // the next execute() should make new lists, do nothing
+  // execute() will rebuild the lists
+  return;
 }
 
 

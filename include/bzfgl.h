@@ -65,6 +65,7 @@ extern int __beginendCount;
  * sections (freeing and initializing).
  */
 #ifdef DEBUG
+#  define glNewList(list,mode)			bzNewList((list), (mode))
 #  define glGenLists(count)			bzGenLists((count))
 #  define glGenTextures(count, textures)	bzGenTextures((count), (textures))
 #  define glDeleteLists(base, count)		bzDeleteLists((base), (count))
@@ -72,6 +73,7 @@ extern int __beginendCount;
 #endif // DEBUG
 
 // these are housed at the end of OpenGLGState.cxx, for now
+extern void   bzNewList(GLuint list, GLenum mode);
 extern GLuint bzGenLists(GLsizei count);
 extern void   bzGenTextures(GLsizei count, GLuint *textures);
 extern void   bzDeleteLists(GLuint base, GLsizei count);

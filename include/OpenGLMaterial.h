@@ -52,7 +52,6 @@ class OpenGLMaterial {
     GLfloat		getShininess() const;
 
     bool		isValid() const;
-    GLuint		getList() const;
     void		execute() const;
 
   private:
@@ -72,7 +71,6 @@ class OpenGLMaterial {
 	static void	freeContext(void*);
 	static void	initContext(void*);
       public:
-	bool		init;
 	int		refCount;
 	Rep*		prev;
 	Rep*		next;

@@ -114,7 +114,7 @@ void WaveGeometry::waveFlag(float dt)
     glTexCoord2f(x, 0.0f);
     glVertex3fv(v2);
   }
-  glEnd();
+  glEnd();  
   glEndList();
 }
 

@@ -91,10 +91,8 @@ OpenGLTexture::~OpenGLTexture()
                                              static_initContext, (void*)this);
   // free image data
   delete[] image;
-  if (list != INVALID_GL_TEXTURE_ID) {
-    glDeleteTextures(1, &list);
-    list = INVALID_GL_TEXTURE_ID; // make it a habit
-  }
+  freeContext();
+  return;
 }
 
 

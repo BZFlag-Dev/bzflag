@@ -87,18 +87,7 @@ FontManager::FontManager() : Singleton<FontManager>(), dimFactor(0.7f)
 
 FontManager::~FontManager()
 {
-  faceNames.clear();
-
-  FontFaceList::iterator faceItr = fontFaces.begin();
-
-  while (faceItr != fontFaces.end()) {
-    FontSizeMap::iterator itr = faceItr->begin();
-    while (itr != faceItr->end()) {
-      delete(itr->second);
-      itr++;
-    }
-    faceItr++;
-  }
+  clear();
   OpenGLGState::unregisterContextInitializer(freeContext, initContext,
                                              (void*)this);
   return;
@@ -121,44 +110,18 @@ void FontManager::initContext(void* data)
 
 void FontManager::clear(void)	// clear all the lists
 {
-  /* FIXME - this comment block is the "right" code, but
-   * on Windows at least, switching resolutions messes
-   * up the GL stuff for build.
-   * Instead, we just delete all the fonts and load them
-   * again, as fresh fonts seem to work OK.
-   * This is not good, and should be fixed, but the
-   * problem is probably related to the GL context and
-   * is much deeper, so we work around it for now.
+  // destroy all the fonts
+  faceNames.clear();
   FontFaceList::iterator faceItr = fontFaces.begin();
-
   while (faceItr != fontFaces.end()) {
     FontSizeMap::iterator itr = faceItr->begin();
     while (itr != faceItr->end()) {
-      if (itr->second->isBuilt())
-	itr->second->build();
+      delete(itr->second);
       itr++;
     }
     faceItr++;
   }
-   */
-
-  /* FIXME: this code block is bad.  Remove when above
-   * problem is fixed.
-   */
-  {
-    // destroy all the fonts
-    faceNames.clear();
-    FontFaceList::iterator faceItr = fontFaces.begin();
-    while (faceItr != fontFaces.end()) {
-      FontSizeMap::iterator itr = faceItr->begin();
-      while (itr != faceItr->end()) {
-	delete(itr->second);
-	itr++;
-      }
-      faceItr++;
-    }
-    fontFaces.clear();
-  }
+  fontFaces.clear();
   return;
 }
 
