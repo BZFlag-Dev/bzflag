@@ -18,7 +18,7 @@
 #include "OpenGLTexture.h"
 #include "Singleton.h"
 
-typedef enum  {
+typedef enum {
 	Off,
 	Nearest,
 	Linear,
@@ -44,7 +44,7 @@ typedef  struct
   bool  alpha;
   OpenGLTexture *texture;
   std::string   name;
-}ImageInfo;
+} ImageInfo;
 
 class TextureManager;
 
@@ -96,10 +96,10 @@ private:
   TextureNameMap textureNames;
 
   eTextureFilter currentMaxFilter;
-  std::string	 configFilterValues[Max];
+  std::string	 configFilterValues[Max + 1];
 };
 
-#endif//_TEXTURE_MANAGER_H
+#endif //_TEXTURE_MANAGER_H
 
 // Local Variables: ***
 // mode: C++ ***
