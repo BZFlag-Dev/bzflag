@@ -21,6 +21,7 @@ else
  sed -e "s/@VERSION@/$version/g" -e "s/@DATE@/$date/g" < debian/changelog.in > debian/changelog
 fi
 echo "Starting on $date to build:"
+arch=$(dpkg-architecture -qDEB_HOST_ARCH)
 echo "../bzflag_${version}.${arch}.deb"
 echo "../bzflag-server_${version}_${arch}.deb"
 echo -n "debian/changelog entry: "
@@ -33,7 +34,6 @@ head -n 1 debian/changelog
 chmod +x debian/rules misc/tar
 # cvs/non-cvs builds should conflict and replace each other.
 PATH=`pwd`/misc:$PATH dpkg-buildpackage -us -uc -rfakeroot
-arch=$(dpkg-architecture -qDEB_HOST_ARCH)
 echo "now do \"debsign\" and then a \"dupload ../bzflag_${version}_${arch}.changes\""
 if [ "$1" == "release" ] ; then
  echo "don't forget to copy new changelog entry to changelog.in"
