@@ -1344,10 +1344,11 @@ static void patchMessage(PlayerId fromId, PlayerId toId, const void *msg)
       ;;
     case MsgDropFlag:
     case MsgGrabFlag:
-      if (len > 28)
+       if (len > 28) {
 	// server version
 	patchPlayerId(fromId, toId, msg, 4);
 	patchPlayerId(fromId, toId, msg, 20);
+       }
       break;
       ;;
     case MsgFlagUpdate:
