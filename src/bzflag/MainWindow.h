@@ -52,7 +52,6 @@ class MainWindow {
     void		setPosition(int x, int y);
     void		setSize(int width, int height);
     void		setMinSize(int width, int height);
-    void		setPanelRatio(float);
     void		setFullscreen();
     void		setNoMouseGrab();
 
@@ -87,7 +86,6 @@ class MainWindow {
     BzfWindow*		window;
     boolean		quit;
     Quadrant		quadrant;
-    float		panelRatio;
     boolean		isFullscreen;
     boolean		allowMouseGrab;
     int			zoomFactor;

@@ -22,7 +22,6 @@ MainWindow::MainWindow(BzfWindow* _window) :
 				window(_window),
 				quit(False),
 				quadrant(FullWindow),
-				panelRatio(0.2f),
 				isFullscreen(False),
 				allowMouseGrab(True),
 				zoomFactor(1),
@@ -65,12 +64,6 @@ void			MainWindow::setPosition(int x, int y)
 void			MainWindow::setSize(int width, int height)
 {
   window->setSize(width, height);
-  resize();
-}
-
-void			MainWindow::setPanelRatio(float _panelRatio)
-{
-  panelRatio = _panelRatio;
   resize();
 }
 

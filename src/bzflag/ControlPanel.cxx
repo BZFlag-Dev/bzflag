@@ -80,11 +80,6 @@ ControlPanel::ControlPanel(MainWindow& _mainWindow, SceneRenderer& renderer) :
   messageAreaUV[2] = dx * 199.0f;
   messageAreaUV[3] = dy * 42.0f;
 
-  // set panel ratio in main window.  ratio is panel width to height.
-  // compute ratio based on the fact that the radar should be square.
-  ratio = (iHeight / iWidth);
-  window.setPanelRatio(ratio);
-
   // other initialization
   width = 1;
   blanking = 0;
