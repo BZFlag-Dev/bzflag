@@ -42,7 +42,6 @@ void EntryZones::calculateQualifierLists()
     for (vit = qPairList.begin(); vit != qPairList.end(); ++vit) {
       std::pair<int,float> &p = *vit;
       int zoneIndex = p.first;
-      const WorldFileLocation &loc = zones[zoneIndex];
       p.second = ((CustomZone *) &zones[zoneIndex])->getArea();
       total += p.second;
     }
