@@ -33,13 +33,62 @@
 int			flagChunks = 8;		// draw flag as 8 quads
 bool		    geoPole = false;	// draw the pole as quads
 
-const float		FlagSceneNode::RippleSpeed1 = 2.4f * M_PI;
-const float		FlagSceneNode::RippleSpeed2 = 1.724f * M_PI;
-const float		FlagSceneNode::DroopFactor = 0.0f;
-
 static const GLfloat	Unit = 0.8f;		// meters
 const GLfloat		FlagSceneNode::Width = 1.5f * Unit;
 const GLfloat		FlagSceneNode::Height = Unit;
+
+class WaveGeometry {
+public:
+
+  WaveGeometry();
+
+  void refer() { refCount++; };
+  void unrefer() { refCount--; };
+
+  void waveFlag(float dt);
+
+  float	wave0[maxChunks];
+  float	wave1[maxChunks];
+  float	wave2[maxChunks];
+private:
+  int                   refCount;
+  float	                ripple1, ripple2;
+  static const float	RippleSpeed1;
+  static const float	RippleSpeed2;
+};
+
+const float		WaveGeometry::RippleSpeed1 = 2.4f * M_PI;
+const float		WaveGeometry::RippleSpeed2 = 1.724f * M_PI;
+
+WaveGeometry::WaveGeometry() : refCount(0)
+{ 
+  ripple1 = 2.0f * M_PI * (float)bzfrand();
+  ripple2 = 2.0f * M_PI * (float)bzfrand();
+}
+
+void WaveGeometry::waveFlag(float dt)
+{ 
+  if (!refCount)
+    return;
+  ripple1 += dt * RippleSpeed1;
+  if (ripple1 >= 2.0f * M_PI) ripple1 -= 2.0f * M_PI;
+  ripple2 += dt * RippleSpeed2;
+  if (ripple2 >= 2.0f * M_PI) ripple2 -= 2.0f * M_PI;
+  float sinRipple2  = sinf(ripple2);
+  float sinRipple2S = sinf(ripple2 + 1.16f * M_PI);
+  for (int i = 0; i <= flagChunks; i++) {
+    const float x      = float(i) / float(flagChunks);
+    const float damp   = 0.1f * x;
+    const float angle1 = ripple1 - 4.0f * M_PI * x;
+    const float angle2 = angle1 - 0.28f * M_PI;
+
+    wave0[i] = damp * sinf(angle1);
+    wave1[i] = damp * (sinf(angle2) + sinRipple2S);
+    wave2[i] = wave0[i] + damp * sinRipple2;
+  }
+}
+
+WaveGeometry allWaves[8];
 
 FlagSceneNode::FlagSceneNode(const GLfloat pos[3]) :
 				billboard(true),
@@ -51,8 +100,6 @@ FlagSceneNode::FlagSceneNode(const GLfloat pos[3]) :
   setColor(1.0f, 1.0f, 1.0f, 1.0f);
   setCenter(pos);
   setRadius(6.0f * Unit * Unit);
-  ripple1 = 2.0f * M_PI * (float)bzfrand();
-  ripple2 = 2.0f * M_PI * (float)bzfrand();
   geoPole = false;
 }
 
@@ -61,13 +108,11 @@ FlagSceneNode::~FlagSceneNode()
   // do nothing
 }
 
-void			FlagSceneNode::waveFlag(float dt, float /*_droop*/)
+void			FlagSceneNode::waveFlag(float dt)
 {
-  ripple1 += dt * RippleSpeed1;
-  if (ripple1 >= 2.0f * M_PI) ripple1 -= 2.0f * M_PI;
-  ripple2 += dt * RippleSpeed2;
-  if (ripple2 >= 2.0f * M_PI) ripple2 -= 2.0f * M_PI;
-  renderNode.doWave();
+  for (int i = 0; i < 8; i++) {
+    allWaves[i].waveFlag(dt);
+  }
 }
 
 void			FlagSceneNode::move(const GLfloat pos[3])
@@ -158,17 +203,18 @@ FlagSceneNode::FlagRenderNode::FlagRenderNode(
 				const FlagSceneNode* _sceneNode) :
 				sceneNode(_sceneNode)
 {
-  recomputeWave = true;
+  waveReference = (int)(8.0 * bzfrand());
+  if (waveReference >= 8)
+    waveReference = 7;
+  allWaves[waveReference].refer();
+  wave0 = allWaves[waveReference].wave0;
+  wave1 = allWaves[waveReference].wave1;
+  wave2 = allWaves[waveReference].wave2;
 }
 
 FlagSceneNode::FlagRenderNode::~FlagRenderNode()
 {
-  // do nothing
-}
-
-void			FlagSceneNode::FlagRenderNode::doWave()
-{
-  recomputeWave = true;
+  allWaves[waveReference].unrefer();
 }
 
 void			FlagSceneNode::FlagRenderNode::render()
@@ -187,21 +233,6 @@ void			FlagSceneNode::FlagRenderNode::render()
       myStipple(sceneNode->color[3]);
 
     if (sceneNode->billboard) {
-      if (recomputeWave) {
-	float sinRipple2  = sinf(sceneNode->ripple2);
-	float sinRipple2S = sinf(sceneNode->ripple2 + 1.16f * M_PI);
-	for (int i = 0; i <= flagChunks; i++) {
-	  const float x      = float(i) / float(flagChunks);
-	  const float damp   = 0.1f * x;
-	  const float angle1 = sceneNode->ripple1 - 4.0f * M_PI * x;
-	  const float angle2 = angle1 - 0.28f * M_PI;
-
-	  wave0[i] = damp * sinf(angle1);
-	  wave1[i] = damp * (sinf(angle2) + sinRipple2S);
-	  wave2[i] = wave0[i] + damp * sinRipple2;
-	}
-	recomputeWave = false;
-      }
       RENDERER.getViewFrustum().executeBillboard();
       glBegin(GL_QUAD_STRIP);
 	for (int i = 0; i <= flagChunks; i++) {

@@ -560,7 +560,6 @@ void			World::updateFlag(int index, float dt)
   GLfloat alpha = color[3];
   Flag& flag = flags[index];
 
-  float droop = 0.0f;
   switch (flag.status) {
     default:
       // do nothing (don't move cos either it's not moving or we
@@ -667,7 +666,6 @@ void			World::updateFlag(int index, float dt)
       }
       break;
   }
-  flagNodes[index]->waveFlag(dt, droop);
 
   // update alpha if changed
   if (alpha != color[3])

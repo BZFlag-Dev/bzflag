@@ -727,10 +727,6 @@ void			LocalPlayer::doUpdateMotion(float dt)
       server->sendDropFlag(getPosition());
     }
   }
-  // don't forget to wave
-  if (antidoteFlag) {
-    antidoteFlag->waveFlag(dt, 0.0f);
-  }
 
   if ((getFlag() == Flags::Bouncy) && ((location == OnGround) || (location == OnBuilding))) {
     if (oldLocation != InAir) {

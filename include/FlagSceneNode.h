@@ -26,7 +26,7 @@ class FlagSceneNode : public SceneNode {
 			FlagSceneNode(const GLfloat pos[3]);
 			~FlagSceneNode();
 
-    void		waveFlag(float dt, float droop);
+    static void		waveFlag(float dt);
     void		move(const GLfloat pos[3]);
     void		turn(GLfloat angle);
     void		setBillboard(bool billboard);
@@ -47,21 +47,19 @@ class FlagSceneNode : public SceneNode {
 			FlagRenderNode(const FlagSceneNode*);
 			~FlagRenderNode();
 	void		render();
-	void		doWave();
 	const GLfloat*	getPosition() { return sceneNode->getSphere(); }
       private:
 	const FlagSceneNode* sceneNode;
-	float		wave0[maxChunks];
-	float		wave1[maxChunks];
-	float		wave2[maxChunks];
-	bool		 recomputeWave;
+        int             waveReference;
+	float	       *wave0;
+	float	       *wave1;
+	float	       *wave2;
     };
     friend class FlagRenderNode;
 
   private:
     bool		billboard;
     GLfloat		angle;
-    float		ripple1, ripple2;
     GLfloat		color[4];
     bool		transparent;
     bool		texturing;
@@ -69,9 +67,6 @@ class FlagSceneNode : public SceneNode {
     FlagRenderNode	renderNode;
     static const GLfloat Width;
     static const GLfloat Height;
-    static const float	RippleSpeed1;
-    static const float	RippleSpeed2;
-    static const float	DroopFactor;
 };
 
 #endif // BZF_FLAG_SCENE_NODE_H

@@ -99,6 +99,7 @@ static const char copyright[] = "Copyright (c) 1993 - 2004 Tim Riker";
 #include "URLManager.h"
 #include "TrackMarks.h"
 #include "md5.h"
+#include "FlagSceneNode.h"
 
 // versioning that makes us recompile every time
 #include "version.h"
@@ -2623,6 +2624,7 @@ static void		updateFlags(float dt)
     }
     world->updateFlag(i, dt);
   }
+  FlagSceneNode::waveFlag(dt);
 }
 
 bool			addExplosion(const float* _pos,
