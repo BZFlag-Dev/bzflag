@@ -76,20 +76,20 @@ class OpenGLTexFont {
     void		draw(const char* string, int length,
 				float x, float y, float z = 0.0f) const;
 
-    /**
-     * strips the ansi codes from an input string for
-     * up to length characters.  the new length of the
-     * string is returned.  the input string is
-     * destructively modified (and clipped with a zero
-     * char).
+    /** Strips all ansi control codes from a string.
+     strips the ansi codes from an input string for
+     up to length characters.  the new length of the
+     string is returned.  the input string is
+     destructively modified (and clipped with a zero
+     char).
      */
     static int		stripAnsiCodes (char* string, int length);
 
-    /**
-     * returns the length of a string. ansi codes that
-     * may be present are taken into account.  only 
-     * printable characters are included in the string
-     * length (i.e. the ansi code chars are not counted)
+    /** Length of the string sans ansi control codes.
+     returns the length of a string. ansi codes that
+     may be present are taken into account.  only
+     printable characters are included in the string
+     length (i.e. the ansi code chars are not counted)
      */
     static int		rawStrlen (const char* string, int length);
 
