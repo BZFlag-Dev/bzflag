@@ -185,7 +185,11 @@ BZAdminClient::getServerString(std::string& str, ColorCode& colorCode) {
       // parse playerlist
       if (src == ServerPlayer && returnString[0] == '[') {
 	char* ipHere;
+#ifdef _WIN32
+	p = PlayerId(atol(returnString.c_str() + 1);
+#else
 	p = PlayerId(std::strtol(returnString.c_str() + 1, &ipHere, 10));
+#endif
 	if (ipHere[0] == ']') {
 	  std::vector<std::string> tokens;
 	  tokens = string_util::tokenize(ipHere + 1, " ");
