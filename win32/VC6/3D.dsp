@@ -93,7 +93,75 @@ SOURCE=..\..\src\3D\TextureManager.cxx
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
 # Begin Source File
 
+SOURCE=..\..\include\Bundle.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\bzfgl.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\bzfio.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\CallbackList.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\common.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\config.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\ErrorHandler.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\global.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\MediaFile.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\OpenGLGState.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\OpenGLTexFont.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\OpenGLTexture.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\Singleton.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\StateDatabase.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\texture.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\include\TextureManager.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\TextUtils.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\win32.h
 # End Source File
 # End Group
 # End Target

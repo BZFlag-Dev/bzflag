@@ -313,6 +313,10 @@ SOURCE=..\..\include\BzfWindow.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\include\bzsignal.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\include\CallbackList.h
 # End Source File
 # Begin Source File
@@ -374,6 +378,14 @@ SOURCE=..\..\include\FileManager.h
 # Begin Source File
 
 SOURCE=..\..\include\Flag.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\FlagSceneNode.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\FlagWarpSceneNode.h
 # End Source File
 # Begin Source File
 
@@ -597,6 +609,10 @@ SOURCE=..\..\include\texture.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\include\TextureManager.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\include\TextUtils.h
 # End Source File
 # Begin Source File
@@ -621,6 +637,10 @@ SOURCE=..\..\include\WallSceneNode.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\include\win32.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\include\WordFilter.h
 # End Source File
 # Begin Source File
@@ -630,6 +650,14 @@ SOURCE=..\..\src\bzflag\World.h
 # Begin Source File
 
 SOURCE=..\..\src\bzflag\WorldPlayer.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\zlib\zconf.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\zlib\zlib.h
 # End Source File
 # Begin Source File
 
@@ -644,21 +672,5 @@ SOURCE=..\..\include\ZSceneDatabase.h
 SOURCE=.\bzflag.ico
 # End Source File
 # End Group
-# Begin Source File
-
-SOURCE=..\..\include\bzsignal.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\config.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\include\FlagSceneNode.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\include\FlagWarpSceneNode.h
-# End Source File
 # End Target
 # End Project

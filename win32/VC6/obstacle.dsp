@@ -155,6 +155,10 @@ SOURCE=..\..\include\global.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\include\Intersect.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\include\Obstacle.h
 # End Source File
 # Begin Source File
@@ -204,6 +208,10 @@ SOURCE=..\..\include\WallObstacle.h
 # Begin Source File
 
 SOURCE=..\..\include\WallSceneNode.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\win32.h
 # End Source File
 # End Group
 # End Target

@@ -127,7 +127,27 @@ SOURCE=..\..\src\bzadmin\UIMap.cxx
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
 # Begin Source File
 
+SOURCE=..\..\include\Address.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\bzadmin\AutoCompleter.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\BaseBuilding.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\BoxBuilding.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\Bundle.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\BundleMgr.h
 # End Source File
 # Begin Source File
 
@@ -139,7 +159,71 @@ SOURCE=..\..\src\bzadmin\BZAdminUI.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\include\BzfEvent.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\bzfgl.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\bzfio.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\CallbackList.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\bzadmin\colors.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\common.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\config.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\bzadmin\CursesUI.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\EighthDimSceneNode.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\ErrorHandler.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\Flag.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\FlagSceneNode.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\global.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\bzflag\LocalPlayer.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\Obstacle.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\OpenGLGState.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\OpenGLTexture.h
 # End Source File
 # Begin Source File
 
@@ -147,7 +231,59 @@ SOURCE=..\..\src\bzadmin\OptionParser.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\include\Pack.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\bzadmin\pdcurses_adapter.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\bzflag\Player.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\bzadmin\PlayerInfo.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\PlayerState.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\PyramidBuilding.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\Ray.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\RenderNode.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\SceneNode.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\bzflag\ServerLink.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\bzflag\ShotPath.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\ShotUpdate.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\Singleton.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\StateDatabase.h
 # End Source File
 # Begin Source File
 
@@ -163,7 +299,35 @@ SOURCE=..\..\src\bzadmin\StdOutUI.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\include\Team.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\Teleporter.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\TextUtils.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\TimeKeeper.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\bzadmin\UIMap.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\WallObstacle.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\win32.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\bzflag\World.h
 # End Source File
 # End Group
 # Begin Group "Resource Files"

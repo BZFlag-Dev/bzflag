@@ -351,6 +351,10 @@ SOURCE=..\..\include\VotingBooth.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\include\win32.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\include\WordFilter.h
 # End Source File
 # Begin Source File

@@ -153,6 +153,10 @@ SOURCE=..\..\src\mediafile\WaveAudioFile.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\include\win32.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\zlib\zconf.h
 # End Source File
 # Begin Source File
