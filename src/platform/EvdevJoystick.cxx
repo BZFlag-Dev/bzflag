@@ -19,6 +19,7 @@
 /* system headers */
 #include <vector>
 #include <string>
+#include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
 #include <linux/input.h>
@@ -34,11 +35,30 @@
 	(((1UL << ((nr) & 31)) & (((const unsigned int *) addr)[(nr) >> 5])) != 0)
 
 
+
+bool             EvdevJoystick::isEvdevAvailable()
+{
+  /* Test whether this driver should be used without actually
+   * loading it. Will return false if no event devices can be
+   * located, or if it has been specifically disabled by setting
+   * the environment variable BZFLAG_ENABLE_EVDEV=0
+   */
+
+  char *envvar = getenv("BZFLAG_ENABLE_EVDEV");
+  if (envvar)
+    return atoi(envvar) != 0;
+
+  std::map<std::string,EvdevJoystickInfo> joysticks;
+  scanForJoysticks(joysticks);
+  return !joysticks.empty();
+}
+
+
 EvdevJoystick::EvdevJoystick()
 {
   joystickfd = 0;
   currentJoystick = NULL;
-  scanForJoysticks();
+  scanForJoysticks(joysticks);
 }
 
 EvdevJoystick::~EvdevJoystick()
@@ -46,7 +66,8 @@ EvdevJoystick::~EvdevJoystick()
   initJoystick("");
 }
 
-void			EvdevJoystick::scanForJoysticks()
+void             EvdevJoystick::scanForJoysticks(std::map<std::string,
+							EvdevJoystickInfo> &joysticks)
 {
   joysticks.clear();
 

@@ -65,10 +65,18 @@ class EvdevJoystick : public BzfJoystick {
     unsigned long getJoyButtons();
     void        getJoyDevices(std::vector<std::string> &list) const;
 
+    /* Test whether this driver should be used without actually
+     * loading it. Will return false if no event devices can be
+     * located, or if it has been specifically disabled by setting
+     * the environment variable BZFLAG_ENABLE_EVDEV=0
+     */
+    static bool isEvdevAvailable();
+
   private:
-    void        scanForJoysticks();
-    bool        collectJoystickBits(int fd, struct EvdevJoystickInfo &info);
-    bool        isJoystick(struct EvdevJoystickInfo &info);
+    static void scanForJoysticks(std::map<std::string,EvdevJoystickInfo> &joysticks);
+    static bool collectJoystickBits(int fd, struct EvdevJoystickInfo &info);
+    static bool isJoystick(struct EvdevJoystickInfo &info);
+
     void        poll();
     void        setButton(int button_num, int state);
 
