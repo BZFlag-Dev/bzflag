@@ -6,64 +6,62 @@ MAINTAINERCLEANFILES = \
 	Makefile.in
 
 bzflag_SOURCES =			\
-	MainWindow.cxx			\
-	MainWindow.h			\
-	ControlPanel.cxx		\
-	ControlPanel.h			\
-	World.cxx			\
-	World.h				\
-	SceneBuilder.cxx		\
-	SceneBuilder.h			\
-	SceneRenderer.cxx		\
+	ActionBinding.cxx		\
+	ActionBinding.h			\
 	BackgroundRenderer.cxx		\
 	BackgroundRenderer.h		\
+	ControlPanel.cxx		\
+	ControlPanel.h			\
 	CommandsStandard.cxx		\
-	RadarRenderer.cxx		\
-	RadarRenderer.h			\
+	HUDDialog.cxx			\
+	HUDDialog.h			\
 	HUDRenderer.cxx			\
 	HUDRenderer.h			\
 	HUDui.cxx			\
 	HUDui.h				\
+	LocalPlayer.cxx			\
+	LocalPlayer.h			\
+	MainWindow.cxx			\
+	MainWindow.h			\
+	Player.cxx			\
+	Player.h			\
+	RadarRenderer.cxx		\
+	RadarRenderer.h			\
+	Region.cxx			\
+	Region.h			\
+	RemotePlayer.cxx		\
+	RemotePlayer.h			\
+	RobotPlayer.cxx			\
+	RobotPlayer.h			\
+	SceneBuilder.cxx		\
+	SceneBuilder.h			\
+	SceneRenderer.cxx		\
+	ServerListCache.cxx		\
+	ServerListCache.h		\
+	ServerLink.cxx			\
+	ServerLink.h			\
 	ShotPath.cxx			\
 	ShotPath.h			\
 	ShotStrategy.cxx		\
 	ShotStrategy.h			\
-	Region.cxx			\
-	Region.h			\
-	Player.cxx			\
-	Player.h			\
-	playing.cxx			\
-	playing.h			\
-	LocalPlayer.cxx			\
-	LocalPlayer.h			\
-	RemotePlayer.cxx		\
-	RemotePlayer.h			\
+	TextureManager.cxx		\
+	World.cxx			\
+	World.h				\
 	WorldPlayer.cxx			\
 	WorldPlayer.h			\
-	RobotPlayer.cxx			\
-	RobotPlayer.h			\
-	ServerLink.cxx			\
-	ServerLink.h			\
+	bzflag.cxx			\
 	callbacks.h			\
 	callbacks.cxx			\
 	daylight.cxx			\
 	daylight.h			\
-	texture.cxx			\
-	sound.cxx			\
-	sound.h				\
-	bzflag.cxx			\
-	HUDDialog.cxx			\
-	HUDDialog.h			\
 	menus.cxx			\
 	menus.h				\
-	ServerListCache.cxx		\
-	ServerListCache.h		\
-	ActionBinding.cxx		\
-	ActionBinding.h			\
-	TextureManager.cxx
-
-noinst_HEADERS = \
-	stars.cxx
+	playing.cxx			\
+	playing.h			\
+	sound.cxx			\
+	sound.h				\
+	stars.h				\
+	texture.cxx
 
 if WIN32
 RESOURCE = bzflag.res

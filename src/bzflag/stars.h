@@ -10,9 +10,8 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef FIXME_BFLAG_CXX_INCLUDE
-#error "Do not compile this file directly"
-#endif
+#ifndef __STARS_H__
+#define __STARS_H__
 
 static const GLfloat	stars[][6] = {
 			{ 1.00f, 1.00f, 1.00f, -0.18746032f, 0.93921369f, -0.28763914f },
@@ -416,6 +415,9 @@ static const GLfloat	stars[][6] = {
 			{ 0.37f, 0.37f, 0.37f, 0.19701055f, -0.56322998f, 0.80247045f },
 			{ 0.37f, 0.37f, 0.37f, 0.17973220f, -0.12412395f, -0.97585326f }
 			};
+
+#endif /* __STARS_H__ */
+
 
 // Local Variables: ***
 // mode:C++ ***

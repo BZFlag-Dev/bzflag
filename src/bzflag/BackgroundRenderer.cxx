@@ -10,13 +10,14 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+/* system headers */
+#include <string.h>
+
+/* common headers */
 #include "common.h"
 #include "global.h"
-#include "BackgroundRenderer.h"
-#include "SceneRenderer.h"
 #include "SceneDatabase.h"
 #include "SceneNode.h"
-#include "MainWindow.h"
 #include "World.h"
 #include "Team.h"
 #include "texture.h"
@@ -26,9 +27,16 @@
 #include "ViewFrustum.h"
 #include "StateDatabase.h"
 #include "BZDBCache.h"
-#include "TextureManager.h"
 #include "MediaFile.h"
-#include <string.h>
+
+/* interface header */
+#include "BackgroundRenderer.h"
+
+/* client-specific headers */
+#include "SceneRenderer.h"
+#include "MainWindow.h"
+#include "TextureManager.h"
+#include "stars.h"
 
 static const GLfloat	squareShape[4][2] =
 				{ {  1.0f,  1.0f }, { -1.0f,  1.0f },
@@ -55,8 +63,6 @@ const GLfloat		BackgroundRenderer::receiverColor[3] =
 const GLfloat		BackgroundRenderer::receiverColorInv[3] =
 				{ 0.55f, 0.3f, 0.55f };
 
-#define FIXME_BFLAG_CXX_INCLUDE
-#include "stars.cxx"
 const int		NumStars = countof(stars);
 
 BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
