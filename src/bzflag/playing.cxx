@@ -1872,6 +1872,8 @@ static void		handleServerMessage(boolean human, uint16_t code,
 	    } else {
 	      fullMsg += srcPlayer ? srcPlayer->getCallSign() : "(UNKNOWN)";
 	      fullMsg += "->";
+	      if (srcPlayer)
+		myTank->setNemesis(srcPlayer);
 	    }
 	    fullMsg += "] ";
 	    fullMsg += (const char*)msg;
