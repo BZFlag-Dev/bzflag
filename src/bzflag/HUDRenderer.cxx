@@ -186,7 +186,7 @@ HUDRenderer::HUDRenderer(const BzfDisplay* _display,
   alertFont = TextureFont::getTextureFont(TextureFont::HelveticaBold, True);
   majorFont = TextureFont::getTextureFont(TextureFont::TimesBold, True);
   minorFont = TextureFont::getTextureFont(TextureFont::FixedBold, True);
-  headingFont = TextureFont::getTextureFont(TextureFont::Fixed, True);
+  headingFont = TextureFont::getTextureFont(TextureFont::FixedBold, True);
 
   // make sure we're notified when MainWindow resizes
   window.getWindow()->addResizeCallback(resizeCallback, this);
