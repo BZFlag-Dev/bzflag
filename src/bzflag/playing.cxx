@@ -5061,7 +5061,7 @@ static bool negotiateFlags(ServerLink* serverLink)
   uint16_t code, len;
   char msg[MaxPacketLen];
   char *buf = msg;
-  std::map<std::string, FlagType*>::iterator i;
+  FlagTypeMap::iterator i;
 
   /* Send MsgNegotiateFlags to the server with
    * the abbreviations for all the flags we support.
