@@ -89,7 +89,7 @@ for my $line (@lines) {
   $totalPlayers += $playerSize;
 }
 if ($#ARGV == 0) {
-  print("$ARGV[0] not found in server list\n");
+  print("0\n0\nunknown uptime\n$ARGV[0] not found in server list\n");
 } else {
   print("$totalPlayers\n$totalServers\nunknown uptime\nBZFlag players/servers\n");
 }
