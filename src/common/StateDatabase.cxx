@@ -41,6 +41,7 @@ const std::string StateDatabase::BZDB_LASERADRATE 	= std::string("_laserAdRate")
 const std::string StateDatabase::BZDB_LASERADLIFE 	= std::string("_laserAdLife");
 const std::string StateDatabase::BZDB_LOCKONANGLE	= std::string("_lockOnAngle");
 const std::string StateDatabase::BZDB_LRADRATE   	= std::string("_lRAdRate");
+const std::string StateDatabase::BZDB_MAXLOD		= std::string("_maxLOD");
 const std::string StateDatabase::BZDB_MOMENTUMLINACC  	= std::string("_momentumLinAcc");
 const std::string StateDatabase::BZDB_MOMENTUMANGACC  	= std::string("_momentumAngAcc");
 const std::string StateDatabase::BZDB_MGUNADVEL  	= std::string("_mGunAdVel");

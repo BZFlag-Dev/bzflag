@@ -142,7 +142,7 @@ int			WallSceneNode::pickLevelOfDetail(
   // bump up LOD if view point is close to wall.
 
   // limit lod to maximum allowed
-  const int maxLOD = static_cast<int>(BZDB->eval("maxlod"));
+  const int maxLOD = static_cast<int>(BZDB->eval(StateDatabase::BZDB_MAXLOD));
   if (bestLOD > maxLOD) bestLOD = maxLOD;
 
   // return highest level required -- note that we don't care about
