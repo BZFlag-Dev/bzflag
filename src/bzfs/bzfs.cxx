@@ -1973,7 +1973,6 @@ void resetFlag(FlagInfo &flag)
   // NOTE -- must not be called until world is defined
   assert(world != NULL);
 
-//  float flagHeight = BZDB.eval(StateDatabase::BZDB_FLAGHEIGHT);
   float baseSize = BZDB.eval(StateDatabase::BZDB_BASESIZE);
 
   // reposition flag (middle of the map might be a bad idea)
