@@ -23,6 +23,7 @@
 
 // implementation-specific bzflag headers
 #include "Team.h"
+#include "URLManager.h"
 
 // implementation-specific bzfs-specific headers
 #include "BZWError.h"
@@ -49,10 +50,17 @@
 extern CmdLineOptions *clOptions;
 extern BasesList bases;
 
+static const std::string urlProtocol("http://");
+
 BZWReader::BZWReader(std::string filename) : location(filename), input(NULL)
 {
   errorHandler = new BZWError(location);
-  input = new std::ifstream(filename.c_str(), std::ios::in);
+  if (filename.compare(0, urlProtocol.size(), urlProtocol)) {
+    input = new std::ifstream(filename.c_str(), std::ios::in);
+  } else {
+    URLManager::instance().getURL(location, httpData);
+    input = new std::istringstream(httpData);
+  }
 
   if (input->peek() == EOF) {
     errorHandler->fatalError(std::string("could not find bzflag world file"), 0);

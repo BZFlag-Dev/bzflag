@@ -46,6 +46,8 @@ private:
 
   // no default constructor
   BZWReader();
+
+  std::string httpData;
 };
 
 #endif
