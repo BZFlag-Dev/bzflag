@@ -65,8 +65,8 @@ typedef struct {
 // Local Variables
 // ---------------
 
-static const int ReplayMagic = 0x425A6372; // "BZcr"
-static const int ReplayVersion = 0x0001;
+static const unsigned int ReplayMagic = 0x425A6372; // "BZcr"
+static const unsigned int ReplayVersion = 0x0001;
 static const int DefaultMaxBytes = (16 * 1024 * 1024); // 16 Mbytes
 static const unsigned int DefaultUpdateRate = 10 * 1000000; // seconds
 
@@ -99,8 +99,6 @@ static CRbuffer CaptureBuf = {0, 0, NULL, NULL};  // for capturing
 static FILE *ReplayFile = NULL;
 static FILE *CaptureFile = NULL;
 
-static PlayerInfo PlayerState[MaxPlayers];
-
 
 // Local Function Prototypes
 // -------------------------
@@ -117,12 +115,12 @@ static bool loadHeader (ReplayHeader *h, FILE *f);
 
 static CRtime getCRtime ();
 
+static CRpacket *newCRpacket (u16 fake, u16 code, int len, const void *data);
+static CRpacket *delCRpacket (CRbuffer *b); // delete from the tail
+static void addCRpacket (CRbuffer *b, CRpacket *p); // add to head
+static void freeCRbuffer (CRbuffer *buf); // clean it out
 static void initCRpacket (u16 fake, u16 code, int len, const void *data,
                           CRpacket *p);
-static CRpacket *newCRpacket (u16 fake, u16 code, int len, const void *data);
-static void addCRpacket (CRbuffer *b, CRpacket *p); // add to head
-static CRpacket *delCRpacket (CRbuffer *b); // delete from the tail
-static void freeCRbuffer (CRbuffer *buf); // clean it out
 
 static bool saveCRpacket (CRpacket *p, FILE *f);
 static CRpacket *loadCRpacket (FILE *f); // makes a new packet
@@ -182,20 +180,24 @@ bool Capture::kill ()
 }
 
 
-bool Capture::start ()
+bool Capture::start (int playerIndex)
 {
   if (ReplayMode) {
+    sendMessage(ServerPlayer, playerIndex, "Couldn't start capturing");
     return false;
   }
   Capturing = true;
   saveStates ();
+  sendMessage(ServerPlayer, playerIndex, "Capture started");
+  
   return true;
 }
 
 
-bool Capture::stop ()
+bool Capture::stop (int playerIndex)
 {
   if (Capturing == false) {
+    sendMessage(ServerPlayer, playerIndex, "Couldn't stop capturing");
     return false;
   }
   
@@ -203,21 +205,28 @@ bool Capture::stop ()
   if (CaptureMode == StraightToFile) {
     Capture::init();
   }
+  sendMessage(ServerPlayer, playerIndex, "Capture stopped");
   
   return true;
 }
 
 
-bool Capture::setSize (int Mbytes)
+bool Capture::setSize (int playerIndex, int Mbytes)
 {
+  char buffer[64];
   CaptureMaxBytes = Mbytes * (1024) * (1024);
+  sprintf (buffer, "Capture size set to %i", Mbytes);
+  sendMessage(ServerPlayer, playerIndex, buffer);    
   return true;
 }
 
 
-bool Capture::setRate (int seconds)
+bool Capture::setRate (int playerIndex, int seconds)
 {
+  char buffer[64];
   UpdateRate = seconds * 1000000;
+  sprintf (buffer, "Capture rate set to %i", seconds);
+  sendMessage(ServerPlayer, playerIndex, buffer);    
   return true;
 }
 
@@ -247,9 +256,10 @@ bool Capture::sendStats (int playerIndex)
 }
 
 
-bool Capture::saveFile (const char *filename)
+bool Capture::saveFile (int playerIndex, const char *filename)
 {
   ReplayHeader header;
+  char buffer[256];
   
   if (ReplayMode) {
     return false;
@@ -258,31 +268,44 @@ bool Capture::saveFile (const char *filename)
   Capture::init();
   Capturing = true;
   CaptureMode = StraightToFile;
+
+  sprintf ("Caturing to %s", filename);
+  sendMessage (ServerPlayer, playerIndex, buffer);
   
   CaptureFile = fopen (filename, "wb");
   if (CaptureFile == NULL) {
     Capture::init();
+    sprintf ("Could not open for writing: %s", filename);
+    sendMessage (ServerPlayer, playerIndex, buffer);
     return false;
   }
   
   if (!saveHeader (&header, CaptureFile)) {
     Capture::init();
+    sprintf ("Could not save header: %s", filename);
+    sendMessage (ServerPlayer, playerIndex, buffer);
     return false;
   }
   
   if (!saveStates ()) {
     Capture::init();
+    sprintf ("Could not save states: %s", filename);
+    sendMessage (ServerPlayer, playerIndex, buffer);
     return false;
   }
+
+  sprintf ("Capturing to file: %s", filename);
+  sendMessage (ServerPlayer, playerIndex, buffer);
   
   return true;
 }
 
 
-bool Capture::saveBuffer (const char *filename)
+bool Capture::saveBuffer (int playerIndex, const char *filename)
 {
   ReplayHeader header;
   CRpacket *p;
+  char buffer[256];
   
   if (ReplayMode || !Capturing || (CaptureMode != BufferedCapture)) {
     return false;
@@ -291,11 +314,15 @@ bool Capture::saveBuffer (const char *filename)
   CaptureFile = fopen (filename, "wb");
   if (CaptureFile == NULL) {
     Capture::init();
+    sprintf ("Could not open for writing: %s", filename);
+    sendMessage (ServerPlayer, playerIndex, buffer);
     return false;
   }
   
   if (!saveHeader (&header, CaptureFile)) {
     Capture::init();
+    sprintf ("Could not save header: %s", filename);
+    sendMessage (ServerPlayer, playerIndex, buffer);
     return false;
   }
   
@@ -309,6 +336,9 @@ bool Capture::saveBuffer (const char *filename)
   CaptureFileBytes = 0;
   CaptureFilePackets = 0;
   CaptureFilePrevLen = 0;
+  
+  sprintf ("Captured buffer saved to: %s", filename);
+  sendMessage (ServerPlayer, playerIndex, buffer);
   
   return true;
 }
@@ -331,11 +361,11 @@ routePacket (u16 code, int len, const void * data, bool fake)
     CRpacket *p = newCRpacket (fakeval, code, len, data);
     p->timestamp = getCRtime();
     addCRpacket (&CaptureBuf, p);
-    printf ("routePacket: buffered %s\n", print_msg_code (code));
+    DEBUG3 ("routePacket: buffered %s\n", print_msg_code (code));
 
     if (CaptureBuf.byteCount > CaptureMaxBytes) {
       CRpacket *p;
-      printf ("routePacket: deleting until update\n");
+      DEBUG3 ("routePacket: deleting until update\n");
       while (((p = delCRpacket (&CaptureBuf)) != NULL) &&
              !(p->fake && (p->code == MsgTeamUpdate))) {
         free (p->data);
@@ -348,7 +378,7 @@ routePacket (u16 code, int len, const void * data, bool fake)
     p.timestamp = getCRtime();
     initCRpacket (fakeval, code, len, data, &p);
     saveCRpacket (&p, CaptureFile);
-    printf ("routePacket: saved %s\n", print_msg_code (code));
+    DEBUG3 ("routePacket: saved %s\n", print_msg_code (code));
   }
   
   return true; 
@@ -391,6 +421,18 @@ const char * Capture::getFileName ()
   return FileName;
 }
 
+void Capture::sendHelp (int playerIndex)
+{
+  sendMessage(ServerPlayer, playerIndex, "usage:");
+  sendMessage(ServerPlayer, playerIndex, "  /capture start");
+  sendMessage(ServerPlayer, playerIndex, "  /capture stop");
+  sendMessage(ServerPlayer, playerIndex, "  /capture size <Mbytes>");
+  sendMessage(ServerPlayer, playerIndex, "  /capture rate <seconds>");
+  sendMessage(ServerPlayer, playerIndex, "  /capture stats");
+  sendMessage(ServerPlayer, playerIndex, "  /capture file <filename>");
+  sendMessage(ServerPlayer, playerIndex, "  /capture save <filename>");
+  return;
+}
                           
 /****************************************************************************/
 
@@ -428,10 +470,11 @@ bool Replay::kill()
 }
 
 
-bool Replay::loadFile(const char * filename)
+bool Replay::loadFile(int playerIndex, const char * filename)
 {
   ReplayHeader header;
   CRpacket *p;
+  char buffer[256];
   
   if (!ReplayMode) {
     return false;
@@ -441,11 +484,14 @@ bool Replay::loadFile(const char * filename)
   
   ReplayFile = fopen (filename, "rb");
   if (ReplayFile == NULL) {
+    sprintf ("Could not open: %s", filename);
+    sendMessage (ServerPlayer, playerIndex, buffer);
     return false;
-    perror ("Replay::loadFile fopen");
   }
   
   if (!loadHeader (&header, ReplayFile)) {
+    sprintf ("Could not open header: %s", filename);
+    sendMessage (ServerPlayer, playerIndex, buffer);
     return false;
   }
 
@@ -461,8 +507,13 @@ bool Replay::loadFile(const char * filename)
   }
 
   if (ReplayBuf.tail == NULL) {
+    sprintf ("No valid data: %s", filename);
+    sendMessage (ServerPlayer, playerIndex, buffer);
     return false;
   }
+
+  sprintf ("Loaded file: %s", filename);
+  sendMessage (ServerPlayer, playerIndex, buffer);
   
   return true;
 }
@@ -492,27 +543,38 @@ bool Replay::sendFileList(int playerIndex)
 }
 
 
-bool Replay::play()
+bool Replay::play(int playerIndex)
 {
   if (!ReplayMode || (ReplayFile == NULL)) {
+    sendMessage (ServerPlayer, playerIndex,
+                 "Server is not in replay mode, or no file loaded");
     return false;
   }
 
-  printf ("Replay::play()\n");
+  DEBUG3 ("Replay::play()\n");
   
   Replaying = true;
   ReplayOffset = getCRtime () - ReplayBuf.tail->timestamp;
+
+  sendMessage (ServerPlayer, playerIndex, "Starting replay");
   
   return true;
 }
 
 
-bool Replay::skip(int seconds) //FIXME
+bool Replay::skip(int playerIndex, int seconds) //FIXME
 {
-  if (!ReplayMode) {
+  if (!ReplayMode || (ReplayFile == NULL)) {
+    sendMessage (ServerPlayer, playerIndex,
+                 "Server is not in replay mode, or no file loaded");
     return false;
   }
   seconds = seconds;
+  
+  char buffer[256];
+  sprintf (buffer, "Skipping %i seconds", seconds);
+  sendMessage (ServerPlayer, playerIndex, buffer);
+  
   return true;
 }
 
@@ -529,7 +591,7 @@ bool Replay::sendPackets () {
 
     p = delCRpacket (&ReplayBuf);
 
-    printf ("sendPackets(): len = %4i, code = %s, data = %p\n",
+    DEBUG3 ("sendPackets(): len = %4i, code = %s, data = %p\n",
             p->len, print_msg_code (p->code), p->data);
     fflush (stdout);
 
@@ -578,6 +640,15 @@ bool Replay::playing ()
   return Replaying;
 }
                           
+void Replay::sendHelp (int playerIndex)
+{
+  sendMessage(ServerPlayer, playerIndex, "usage:");
+  sendMessage(ServerPlayer, playerIndex, "  /replay listfiles");
+  sendMessage(ServerPlayer, playerIndex, "  /replay load <filename>");
+  sendMessage(ServerPlayer, playerIndex, "  /replay play");
+  sendMessage(ServerPlayer, playerIndex, "  /replay skip <seconds>  (+/-)");
+  return;
+}
 
 /****************************************************************************/
 
@@ -587,20 +658,6 @@ bool Replay::playing ()
 // the packets are simply sent to a clean-state client,
 // the client's state will end up looking like the state
 // at the time which this function was called.
-
-/* from bzfs / addPlayer()
-
-  if (!player[playerIndex].isBot()) {
-    int i;
-    if (NetHandler::exists(playerIndex)) {
-      sendTeamUpdate(playerIndex);
-      sendFlagUpdate(-1, playerIndex);
-    }
-    for (i = 0; i < curMaxPlayers && NetHandler::exists(playerIndex); i++)
-      if (player[i].isPlaying() && i != playerIndex)
-        sendPlayerUpdate(i, playerIndex);
-  }
-*/  
 
 static bool
 saveTeamScores ()

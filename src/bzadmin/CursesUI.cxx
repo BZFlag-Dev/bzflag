@@ -67,6 +67,7 @@ CursesUI::CursesUI(BZAdminClient& c) :
   // register commands for tab completion
   comp.registerWord("/ban ");
   comp.registerWord("/banlist");
+  comp.registerWord("/capture");
   comp.registerWord("/countdown");
   comp.registerWord("/deregister");
   comp.registerWord("/flag ");
@@ -92,6 +93,7 @@ CursesUI::CursesUI(BZAdminClient& c) :
   comp.registerWord("/register ");
   comp.registerWord("/reload");
   comp.registerWord("/removegroup ");
+  comp.registerWord("/replay ");
   comp.registerWord("/report ");
   comp.registerWord("/reset");
   comp.registerWord("/set");

@@ -138,18 +138,15 @@ void directMessage(int playerIndex, uint16_t code, int len, const void *msg)
 
 void broadcastMessage(uint16_t code, int len, const void *msg)
 {
-  bool sent = false;
-  
   // send message to everyone
   for (int i = 0; i < curMaxPlayers; i++) {
     if (player[i].isPlaying()) {
       directMessage(i, code, len, msg);
-      sent = true;
     }
   }
   
   // capture the packet
-  if (sent && Capture::enabled()) {
+  if (Capture::enabled()) {
     Capture::addPacket (code, len, msg);
   }
   

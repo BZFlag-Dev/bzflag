@@ -1500,21 +1500,9 @@ void handleClientqueryCmd(int t, const char * /*message*/)
   return;
 }
 
-static void sendCaptureHelp (int t)
-{
-  sendMessage(ServerPlayer, t, "usage:");
-  sendMessage(ServerPlayer, t, "  /capture start");
-  sendMessage(ServerPlayer, t, "  /capture stop");
-  sendMessage(ServerPlayer, t, "  /capture size <Mbytes>");
-  sendMessage(ServerPlayer, t, "  /capture rate <seconds>");
-  sendMessage(ServerPlayer, t, "  /capture stats");
-  sendMessage(ServerPlayer, t, "  /capture file <filename>");
-  sendMessage(ServerPlayer, t, "  /capture save <filename>");
-  return;
-}
+
 void handleCaptureCmd(int t, const char * message)
 {
-  char buffer[64];
   const char *buf = message + 8;
   if (!accessInfo[t].hasPerm(PlayerAccessInfo::capture)) {
     sendMessage(ServerPlayer, t, "You do not have permission to run the capture command");
@@ -1523,46 +1511,32 @@ void handleCaptureCmd(int t, const char * message)
   while ((*buf != '\0') && isspace (*buf)) buf++; // eat whitespace
 
   if (strncmp (buf, "start", 5) == 0) {
-    if (Capture::start()) {
-      sendMessage(ServerPlayer, t, "capture started");
-    }
-    else {
-      sendMessage(ServerPlayer, t, "couldn't start capturing");
-    }
+    Capture::start(t);
   }
   else if (strncmp (buf, "stop", 4) == 0) {
-    if (Capture::stop()) {
-      sendMessage(ServerPlayer, t, "capture stopped");
-    }
-    else {
-      sendMessage(ServerPlayer, t, "couldn't stop capturing");
-    }
+    Capture::stop(t);
   }
   else if (strncmp (buf, "size", 4) == 0) {
     buf = buf + 4;
     while ((*buf != '\0') && isspace (*buf)) buf++; // eat whitespace
     
     if (*buf == '\0') {
-      sendCaptureHelp (t);
+      Capture::sendHelp (t);
       return;
     }
     int size = atoi (buf);
-    Capture::setSize (size);
-    sprintf (buffer, "capture size set to %i", size);
-    sendMessage(ServerPlayer, t, buffer);    
+    Capture::setSize (t, size);
   }
   else if (strncmp (buf, "rate", 4) == 0) {
     buf = buf + 4;
     while ((*buf != '\0') && isspace (*buf)) buf++; // eat whitespace
 
     if (*buf == '\0') {
-      sendCaptureHelp (t);
+      Capture::sendHelp (t);
       return;
     }
-    int size = atoi (buf);
-    Capture::setRate (size);
-    sprintf (buffer, "capture rate set to %i", size);
-    sendMessage(ServerPlayer, t, buffer);    
+    int seconds = atoi (buf);
+    Capture::setRate (t, seconds);
   }
   else if (strncmp (buf, "stats", 5) == 0) {
     Capture::sendStats(t);
@@ -1572,10 +1546,10 @@ void handleCaptureCmd(int t, const char * message)
     while ((*buf != '\0') && isspace (*buf)) buf++; // eat whitespace
   
     if (*buf == '\0') {
-      sendCaptureHelp (t);
+      Capture::sendHelp (t);
     }
     else {
-      Capture::saveBuffer (buf);
+      Capture::saveBuffer (t, buf);
     }
   }
   else if (strncmp (buf, "file", 4) == 0) {
@@ -1583,31 +1557,22 @@ void handleCaptureCmd(int t, const char * message)
     while ((*buf != '\0') && isspace (*buf)) buf++; // eat whitespace
   
     if (*buf == '\0') {
-      sendCaptureHelp (t);
+      Capture::sendHelp (t);
     }
     else {
-      Capture::saveFile (buf);
+      Capture::saveFile (t, buf);
     }
   }
   else {
-    sendCaptureHelp (t);
+    Capture::sendHelp (t);
   }
   
   return;
 }
 
-void sendReplayHelp (int t)
-{
-  sendMessage(ServerPlayer, t, "usage:");
-  sendMessage(ServerPlayer, t, "  /replay listfiles");
-  sendMessage(ServerPlayer, t, "  /replay load <filename>");
-  sendMessage(ServerPlayer, t, "  /replay play");
-  sendMessage(ServerPlayer, t, "  /replay skip <seconds>  (+/-)");
-  return;
-}
+
 void handleReplayCmd(int t, const char * message)
 {
-  char buffer[64];
   const char *buf = message + 7;
   if (!accessInfo[t].hasPerm(PlayerAccessInfo::replay)) {
     sendMessage(ServerPlayer, t, "You do not have permission to run the replay command");
@@ -1625,31 +1590,29 @@ void handleReplayCmd(int t, const char * message)
     while ((*buf != '\0') && isspace (*buf)) buf++; // eat whitespace
     
     if (*buf == '\0') {
-      sendReplayHelp (t);
+      Replay::sendHelp (t);
     }
     else {
-      Replay::loadFile (buf);
+      Replay::loadFile (t, buf);
     }
   }
   else if (strncmp (buf, "play", 4) == 0) {
-    Replay::play ();
+    Replay::play (t);
   }
   else if (strncmp (buf, "skip", 4) == 0) {
     buf = buf + 4;
     while ((*buf != '\0') && isspace (*buf)) buf++; // eat whitespace
     
     if (*buf == '\0') {
-      sendReplayHelp (t);
+      Replay::sendHelp (t);
     }
     else {
       int skip = atoi (buf);
-      Replay::skip (skip);
-      sprintf (buffer, "skipping %i seconds", skip);
-      sendMessage(ServerPlayer, t, buffer);
+      Replay::skip (t, skip);
     }
   }
   else {
-    sendReplayHelp (t);
+    Replay::sendHelp (t);
   }
   
   return;

@@ -27,12 +27,12 @@ namespace Capture {
   extern bool init ();
   extern bool kill ();
 
-  extern bool start ();
-  extern bool stop (); 
-  extern bool setSize (int Mbytes);  // set max size, in Mbytes
-  extern bool setRate (int seconds); // set state update rate
-  extern bool saveFile (const char *filename); // unbuffered save
-  extern bool saveBuffer (const char *filename);
+  extern bool start (int playerIndex);
+  extern bool stop (int playerIndex); 
+  extern bool setSize (int playerIndex, int Mbytes);  // set max size, in Mbytes
+  extern bool setRate (int playerIndex, int seconds); // set state update rate
+  extern bool saveFile (int playerIndex, const char *filename); // unbuffered save
+  extern bool saveBuffer (int playerIndex, const char *filename);
   extern bool sendStats (int playerIndex);
   
   extern bool enabled ();
@@ -42,6 +42,8 @@ namespace Capture {
 
   extern bool addPacket (uint16_t code, int len, const void * data,
                          bool fake = false); // fake used internally
+                         
+  extern void sendHelp (int playerIndex);
 };
 
 namespace Replay {
@@ -49,9 +51,9 @@ namespace Replay {
   extern bool kill ();
 
   extern bool sendFileList (int playerIndex);
-  extern bool loadFile (const char *filename);
-  extern bool play ();
-  extern bool skip (int seconds); // forward or backwards
+  extern bool loadFile (int playerIndex, const char *filename);
+  extern bool play (int playerIndex);
+  extern bool skip (int playerIndex, int seconds); // forward or backwards
   
   extern bool enabled ();
   extern bool playing ();
@@ -61,6 +63,8 @@ namespace Replay {
 
   extern float nextTime ();
   extern bool sendPackets ();
+
+  extern void sendHelp (int playerIndex);
 };
 
 // Some notes:
