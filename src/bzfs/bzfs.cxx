@@ -70,7 +70,7 @@ uint16_t maxRealPlayers = MaxPlayers;
 uint16_t maxPlayers = MaxPlayers;
 // highest active id
 uint16_t curMaxPlayers = 0;
-// max simulataneous per player
+// base definitions in map file for CTF
 bool hasBase[CtfTeams] = { false };
 
 static float maxWorldHeight = 0.0f;
