@@ -202,6 +202,9 @@ copy ..\..\src\bzfs\debug\*.exe ..\..\*.exe
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath="..\..\src\bzfs\CaptureReplay.cxx">
+			</File>
+			<File
 				RelativePath="..\..\src\bzfs\CmdLineOptions.cxx">
 				<FileConfiguration
 					Name="Release|Win32">
@@ -607,6 +610,9 @@ copy ..\..\src\bzfs\debug\*.exe ..\..\*.exe
 			</File>
 			<File
 				RelativePath="..\include\CallbackList.h">
+			</File>
+			<File
+				RelativePath="..\..\src\bzfs\CaptureReplay.h">
 			</File>
 			<File
 				RelativePath="..\..\src\bzfs\CmdLineOptions.h">
