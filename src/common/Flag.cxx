@@ -104,7 +104,8 @@ namespace Flags {
 
 void*			Flag::pack(void* buf) const
 {
-  buf = nboPackUShort(buf, uint16_t(id));
+  buf = nboPackUByte(buf, desc->flagAbbv[0]);
+  buf = nboPackUByte(buf, desc->flagAbbv[1]);
   buf = nboPackUShort(buf, uint16_t(status));
   buf = nboPackUShort(buf, uint16_t(type));
   buf = nboPackUByte(buf, owner);
@@ -120,7 +121,12 @@ void*			Flag::pack(void* buf) const
 void*			Flag::unpack(void* buf)
 {
   uint16_t data;
-  buf = nboUnpackUShort(buf, data); id = FlagId(data);
+  char abbv[3] = {0,0,0};
+
+  buf = nboUnpackUByte(buf, abbv[0]);
+  buf = nboUnpackUByte(buf, abbv[1]);
+  desc = Flag::getDescFromAbbreviation(abbv);
+
   buf = nboUnpackUShort(buf, data); status = FlagStatus(data);
   buf = nboUnpackUShort(buf, data); type = FlagType(data);
   buf = nboUnpackUByte(buf, owner);
@@ -133,27 +139,9 @@ void*			Flag::unpack(void* buf)
   return buf;
 }
 
-const char*		Flag::getName(FlagId id)
+FlagDesc* Flag::getDescFromAbbreviation(const char* abbreviation)
 {
-  return descriptions[id].flagName;
-}
 
-const char*		Flag::getAbbreviation(FlagId id)
-{
-  return descriptions[id].flagAbbv;
-}
-
-FlagId	Flag::getIDFromAbbreviation(const char* abbreviation)
-{
-  for (int q = 0; q < NumQualities; q++) {
-    for (std::set<FlagId>::iterator it = Flag::Desc::flagSets[q].begin();
-         it != Flag::Desc::flagSets[q].end(); ++it) {
-	   const char* abbrev = Flag::getAbbreviation(*it);
-           if (strcasecmp(abbreviation, abbrev) == 0)
-	      return *it;
-	 }
-  }
-  return NullFlag;
 }
 
 FlagType		Flag::getType(FlagId id)
