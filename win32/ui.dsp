@@ -130,6 +130,26 @@ SOURCE=..\src\ui\MessageManager.cxx
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
 # Begin Source File
 
+SOURCE=..\include\BoundingBox.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\BzfEvent.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\bzfgl.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\bzfio.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\CallbackList.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\include\CommandManager.h
 # End Source File
 # Begin Source File
@@ -142,7 +162,35 @@ SOURCE=..\include\CommandsStandard.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\include\common.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\ConfigFileManager.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\ConfigFileReader.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\ErrorHandler.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\FileManager.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\include\KeyManager.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\math3D.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\mathr.h
 # End Source File
 # Begin Source File
 
@@ -167,6 +215,126 @@ SOURCE=..\include\MessageBuffer.h
 # Begin Source File
 
 SOURCE=..\include\MessageManager.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\OpenGLGState.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\OpenGLTexFont.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\OpenGLTexture.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\SceneNode.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\SceneNodeAnimate.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\SceneNodeBaseTransform.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\SceneNodeBillboard.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\SceneNodeChoice.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\SceneNodeGeometry.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\SceneNodeGroup.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\SceneNodeGState.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\SceneNodeLight.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\SceneNodeLOD.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\SceneNodeMatrixTransform.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\SceneNodeMetadata.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\SceneNodeParameters.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\SceneNodeParticleSystem.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\SceneNodePrimitive.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\SceneNodes.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\SceneNodeSelector.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\SceneNodeSphereTransform.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\SceneNodeTransform.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\SceneReader.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\SceneVisitor.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\SceneVisitorBaseRender.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\SceneVisitorParams.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\SceneVisitorSimpleRender.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\StateDatabase.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\TimeKeeper.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\XMLTree.h
 # End Source File
 # End Group
 # End Target

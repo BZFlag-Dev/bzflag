@@ -122,6 +122,22 @@ SOURCE=..\include\BoxBuilding.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\include\common.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\Intersect.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\math3D.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\mathr.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\include\Obstacle.h
 # End Source File
 # Begin Source File

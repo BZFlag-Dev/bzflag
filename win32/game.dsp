@@ -106,11 +106,31 @@ SOURCE=..\src\game\Team.cxx
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
 # Begin Source File
 
+SOURCE=..\include\Address.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\bzfio.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\CallbackList.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\common.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\src\game\Flag.h
 # End Source File
 # Begin Source File
 
 SOURCE=..\src\game\global.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\Pack.h
 # End Source File
 # Begin Source File
 
@@ -122,7 +142,15 @@ SOURCE=..\src\game\Protocol.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\include\StateDatabase.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\src\game\Team.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\TimeKeeper.h
 # End Source File
 # End Group
 # End Target

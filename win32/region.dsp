@@ -126,6 +126,54 @@ SOURCE=..\src\region\RegionShape.cxx
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
 # Begin Source File
 
+SOURCE=..\include\Address.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\bzfio.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\CallbackList.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\CollisionDetector.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\CollisionDetectorGJK.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\common.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\ConfigFileReader.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\game\Flag.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\game\global.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\math3D.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\mathr.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\Pack.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\include\Region.h
 # End Source File
 # Begin Source File
@@ -159,6 +207,42 @@ SOURCE=..\src\bzfs\RegionReaderObstacle.h
 # Begin Source File
 
 SOURCE=..\include\RegionShape.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\Shape.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\ShapeBox.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\ShapePoint.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\ShapePyramid.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\StateDatabase.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\game\Team.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\TransformableShape.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\TransformedShape.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\XMLTree.h
 # End Source File
 # End Group
 # End Target

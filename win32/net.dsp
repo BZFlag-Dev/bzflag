@@ -110,6 +110,14 @@ SOURCE=..\include\Address.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\include\common.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\ErrorHandler.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\include\network.h
 # End Source File
 # Begin Source File

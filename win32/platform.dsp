@@ -102,6 +102,18 @@ SOURCE=..\src\platform\WinPlatformFactory.cxx
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
 # Begin Source File
 
+SOURCE=..\include\bzfio.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\common.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\FileManager.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\include\PlatformFactory.h
 # End Source File
 # Begin Source File

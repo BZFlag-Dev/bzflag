@@ -130,6 +130,10 @@ SOURCE=..\include\BzfEvent.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\include\bzfio.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\include\BzfVisual.h
 # End Source File
 # Begin Source File
@@ -138,7 +142,39 @@ SOURCE=..\include\BzfWindow.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\include\CallbackList.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\common.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\ErrorHandler.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\OpenGLGState.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\OpenGLTexture.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\PlatformFactory.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\include\PlatformMediaFactory.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\resource.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\StateDatabase.h
 # End Source File
 # Begin Source File
 

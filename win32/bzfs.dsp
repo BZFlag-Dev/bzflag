@@ -116,7 +116,123 @@ SOURCE=..\src\bzfs\WorldStandardTeam.cxx
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
 # Begin Source File
 
+SOURCE=..\include\Address.h
+# End Source File
+# Begin Source File
+
+SOURCE="C:\Program Files\Microsoft Visual Studio\VC98\Include\BASETSD.H"
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\bzfio.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\CallbackList.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\common.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\ConfigFileManager.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\ConfigFileReader.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\game\Flag.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\game\global.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\math3D.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\mathr.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\Pack.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\game\Ping.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\PlatformFactory.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\src\game\Protocol.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\bzfs\RegionManagerBase.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\bzfs\RegionManagerFlagSpawn.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\bzfs\RegionManagerObstacle.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\RegionReader.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\bzfs\RegionReaderBase.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\bzfs\RegionReaderFlagSpawn.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\bzfs\RegionReaderObstacle.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\Shape.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\ShapeBox.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\StateDatabase.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\game\Team.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\TimeBomb.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\TimeKeeper.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\TransformableShape.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\TransformedShape.h
 # End Source File
 # Begin Source File
 
@@ -137,6 +253,10 @@ SOURCE=..\src\bzfs\WorldStandardRandom.h
 # Begin Source File
 
 SOURCE=..\src\bzfs\WorldStandardTeam.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\XMLTree.h
 # End Source File
 # End Group
 # Begin Group "Resource Files"

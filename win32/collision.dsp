@@ -137,6 +137,10 @@ SOURCE=..\include\CollisionDetectorGJK.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\include\common.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\src\collision\ContactPoint.h
 # End Source File
 # Begin Source File
@@ -149,11 +153,47 @@ SOURCE=..\src\collision\ContactSolverBaraffNoFriction.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\include\ContactSurface.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\src\collision\ContactSurfaceIntersector.h
 # End Source File
 # Begin Source File
 
 SOURCE=..\src\collision\ContactSurfaceIntersectorPolygon.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\LinearEquationSolver.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\LinearEquationSolverGaussian.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\math3D.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\mathr.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\ODESolver.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\Shape.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\TransformableShape.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\TransformedShape.h
 # End Source File
 # End Group
 # End Target

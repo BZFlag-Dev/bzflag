@@ -206,6 +206,58 @@ SOURCE=..\src\scene\SceneVisitorSimpleRender.cxx
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
 # Begin Source File
 
+SOURCE=..\include\BoundingBox.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\bzfgl.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\bzfio.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\CallbackList.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\common.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\daylight.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\ErrorHandler.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\FileManager.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\math3D.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\mathr.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\OpenGLGState.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\OpenGLTexture.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\SceneManager.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\include\SceneNode.h
 # End Source File
 # Begin Source File
@@ -294,6 +346,10 @@ SOURCE=..\include\SceneVisitor.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\include\SceneVisitorBaseRender.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\include\SceneVisitorFind.h
 # End Source File
 # Begin Source File
@@ -311,6 +367,22 @@ SOURCE=..\include\SceneVisitorRender.h
 # Begin Source File
 
 SOURCE=..\include\SceneVisitorSimpleRender.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\StateDatabase.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\TimeKeeper.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\ViewFrustum.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\XMLTree.h
 # End Source File
 # End Group
 # End Target

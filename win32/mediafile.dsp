@@ -122,6 +122,18 @@ SOURCE=..\src\mediafile\AudioFile.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\include\bzfio.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\common.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\FileManager.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\src\mediafile\ImageFile.h
 # End Source File
 # Begin Source File
@@ -131,6 +143,10 @@ SOURCE=..\include\MediaFile.h
 # Begin Source File
 
 SOURCE=..\src\mediafile\OggAudioFile.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\Pack.h
 # End Source File
 # Begin Source File
 

@@ -106,7 +106,19 @@ SOURCE=..\include\BoundingBox.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\include\common.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\include\Intersect.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\math3D.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\mathr.h
 # End Source File
 # Begin Source File
 
