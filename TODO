@@ -5,15 +5,15 @@ THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
 
 * Rewrite the Networking section of bzfs.6s
 
-* Try to build bzadmin on Win32 using PDCurses (it works with the X11
-  version of PDCurses) at least include stdin/stdout in win32 builds
-
 * Apply the auto-team patch.  It is a rather nice and trivial modification
   to have, but it breaks team negotiation protocol.  So better now than
   waiting for next protocol-breaking release. (learner will do this on friday)
 
 
 THESE ARE LOWER PRIORITY
+
+* Try to build bzadmin on Win32 using PDCurses (it works with the X11
+  version of PDCurses). It currently works with stdin/stdout.
 
 * add ability to capture a screenshot to a gamma-corrected png from
   inside the game.
