@@ -1,6 +1,9 @@
 recent bugs
 ------------
 
+- -cr CTF worlds will not send properly to the client, it never gets a worldendcode
+   it seems to have something to do with the new map binary formats ( the bases specificly )
+
 - when burrowed, the ground gets chopped off by the near clip plane, leaving
   the bottom 1/3 of the screen or so with artifacts
 
