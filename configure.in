@@ -16,7 +16,7 @@ AC_DEFINE_UNQUOTED(BZ_MINOR_VERSION, 9, [Bzflag Minor Version Number])
 AC_DEFINE_UNQUOTED(BZ_REV, 0, [Bzflag Revision Number])
 AC_DEFINE(BZ_BUILD_SOURCE, "Undefined", [Bzflag Build Environment])
 AC_DEFINE(BZ_BUILD_OS, "Undefined", [Bzflag System Environment])
-AC_DEFINE(BZ_BUILD_DATE, 20039999, [Bzflag Build Date])
+AC_DEFINE_UNQUOTED(BZ_BUILD_DATE, `date +%Y%m%d`, [Bzflag Build Date])
 
 #Checks for programs.
 AC_PROG_MAKE_SET
