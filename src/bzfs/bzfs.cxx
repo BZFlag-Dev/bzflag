@@ -901,8 +901,8 @@ static void relayPlayerPacket(int index, uint16_t len, const void *rawbuf, uint1
   for (int i = 0; i < curMaxPlayers; i++) {
     PlayerInfo& pi = player[i];
     if (i != index && pi.isPlaying()) {
-      if ((code == MsgPlayerUpdate) && (pi.flag >= 0) && 
-          (flag[pi.flag].flag.type == Flags::Lag)) {
+      if ((code == MsgPlayerUpdate) && pi.haveFlag() && 
+          (flag[pi.getFlag()].flag.type == Flags::Lag)) {
         // delay sending to this player
         pi.delayq.addPacket (len+4, rawbuf, BZDB.eval (StateDatabase::BZDB_FAKELAG));
       } 
@@ -1576,9 +1576,7 @@ static void dumpScore()
     	         Team::getName(TeamColor(i));
   std::cout << "\n#players\n";
   for (i = 0; i < curMaxPlayers; i++)
-    if (player[i].isPlaying())
-      std::cout << player[i].wins << '-' << player[i].losses << ' ' <<
-      		   player[i].getCallSign() << std::endl;
+    player[i].dumpScore();
   std::cout << "#end\n";
 }
 #endif
@@ -2241,7 +2239,7 @@ void zapFlag(int flagIndex)
   if (playerIndex != -1) {
     flag[flagIndex].player = -1;
     flag[flagIndex].flag.status = FlagNoExist;
-    player[playerIndex].flag = -1;
+    player[playerIndex].resetFlag();
 
     void *buf, *bufStart = getDirectMessageBuffer();
     buf = nboPackUByte(bufStart, playerIndex);
@@ -2278,13 +2276,7 @@ static float rabbitRank (PlayerInfo& player) {
     return (float)bzfrand();
   
   // otherwise do score-based ranking
-  int sum = player.wins + player.losses;
-  if (sum == 0)
-    return 0.5;
-  float average = (float)player.wins/(float)sum;
-  // IIRC that is how wide is the gaussian
-  float penalty = (1.0f - 0.5f / sqrt((float)sum));
-  return average * penalty;
+  return player.scoreRanking();
 }
 
 static void anointNewRabbit(int killerId = NoPlayer)
@@ -2331,8 +2323,7 @@ static void anointNewRabbit(int killerId = NoPlayer)
 
   if (rabbitIndex != oldRabbit) {
     if (oldRabbit != NoPlayer) {
-      player[oldRabbit].setTeam(RogueTeam);
-      player[oldRabbit].wasRabbit = true;
+      player[oldRabbit].wasARabbit();
     }
     if (rabbitIndex != NoPlayer) {
       player[rabbitIndex].setTeam(RabbitTeam);
@@ -2416,7 +2407,7 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
       anointNewRabbit();
 
   if (!player[playerIndex].isTeam(NoTeam)) {
-    int flagid = player[playerIndex].flag;
+    int flagid = player[playerIndex].getFlag();
     if (flagid >= 0) {
       // do not simply zap team flag
       Flag &carriedflag = flag[flagid].flag;
@@ -2760,7 +2751,7 @@ static void playerAlive(int playerIndex)
   broadcastMessage(MsgAlive, (char*)buf-(char*)bufStart, bufStart);
 
   if (clOptions->gameStyle & int(RabbitChaseGameStyle)) {
-    player[playerIndex].wasRabbit = false;
+    player[playerIndex].wasNotARabbit();
     if (rabbitIndex == NoPlayer) {
       anointNewRabbit();
     }
@@ -2804,18 +2795,15 @@ static void playerKilled(int victimIndex, int killerIndex, int reason,
   // killing rabbit or killing anything when I am a dead ex-rabbit is allowed
   bool teamkill = false;
   if (killer) {
-    const bool rabbitinvolved = killer->wasRabbit
-      || victim->isTeam(RabbitTeam);
+    const bool rabbitinvolved = killer->isARabbitKill(*victim);
     const bool foe = areFoes(victim->getTeam(), killer->getTeam());
     teamkill = !foe && !rabbitinvolved;
   }
 
   //update tk-score
   if ((victimIndex != killerIndex) && teamkill) {
-     killer->tks++;
-     if (killer->tks >= 3 && (clOptions->teamKillerKickRatio > 0) && // arbitrary 3
-         (killer->wins == 0 ||
-          killer->tks * 100 / killer->wins > clOptions->teamKillerKickRatio)) {
+    bool isTk = killer->setAndTestTK(clOptions->teamKillerKickRatio);
+    if (isTk) {
        char message[MessageLen];
        strcpy(message, "You have been automatically kicked for team killing" );
        sendMessage(ServerPlayer, killerIndex, message, true);
@@ -2833,7 +2821,7 @@ static void playerKilled(int victimIndex, int killerIndex, int reason,
 
   // zap flag player was carrying.  clients should send a drop flag
   // message before sending a killed message, so this shouldn't happen.
-  int flagid = victim->flag;
+  int flagid = victim->getFlag();
   if (flagid >= 0) {
     // do not simply zap team flag
     Flag &carriedflag = flag[flagid].flag;
@@ -2847,39 +2835,33 @@ static void playerKilled(int victimIndex, int killerIndex, int reason,
 
   // change the player score
   bufStart = getDirectMessageBuffer();
-  victim->losses++;
+  victim->setOneMoreLoss();
   if (killer) {
     if (victimIndex != killerIndex) {
       if (teamkill) {
         if (clOptions->teamKillerDies)
           playerKilled(killerIndex, killerIndex, reason, -1);
         else
-          killer->losses++;
+          killer->setOneMoreLoss();
       } else
-        killer->wins++;
+        killer->setOneMoreWin();
     }
 
     buf = nboPackUByte(bufStart, 2);
-    buf = nboPackUByte(buf, killerIndex);
-    buf = nboPackUShort(buf, killer->wins);
-    buf = nboPackUShort(buf, killer->losses);
-    buf = nboPackUShort(buf, killer->tks);
+    buf = killer->packScore(buf, killerIndex);
   }
   else {
     buf = nboPackUByte(bufStart, 1);
   }
 
-  buf = nboPackUByte(buf, victimIndex);
-  buf = nboPackUShort(buf, victim->wins);
-  buf = nboPackUShort(buf, victim->losses);
-  buf = nboPackUShort(buf, victim->tks);
+  buf = victim->packScore(buf, victimIndex);
   broadcastMessage(MsgScore, (char*)buf-(char*)bufStart, bufStart);
 
   // see if the player reached the score limit
   if (clOptions->maxPlayerScore != 0
       && killerIndex != InvalidPlayer
       && killerIndex != ServerPlayer
-      && killer->wins - killer->losses >= clOptions->maxPlayerScore) {
+      && killer->scoreReached(clOptions->maxPlayerScore)) {
     void *buf, *bufStart = getDirectMessageBuffer();
     buf = nboPackUByte(bufStart, killerIndex);
     buf = nboPackUShort(buf, uint16_t(NoTeam));
@@ -2933,7 +2915,7 @@ static void grabFlag(int playerIndex, int flagIndex)
   // player wants to take possession of flag
   if (player[playerIndex].isObserver() ||
       !player[playerIndex].isAlive() ||
-      player[playerIndex].flag != -1 ||
+      player[playerIndex].haveFlag() ||
       flag[flagIndex].flag.status != FlagOnGround)
     return;
 
@@ -2958,7 +2940,7 @@ static void grabFlag(int playerIndex, int flagIndex)
   flag[flagIndex].flag.owner = playerIndex;
   flag[flagIndex].player = playerIndex;
   flag[flagIndex].numShots = 0;
-  player[playerIndex].flag = flagIndex;
+  player[playerIndex].setFlag(flagIndex);
 
   // send MsgGrabFlag
   void *buf, *bufStart = getDirectMessageBuffer();
@@ -2989,7 +2971,7 @@ static void dropFlag(int playerIndex, float pos[3])
   ObstacleLocation* topmost = 0;
   // player wants to drop flag.  we trust that the client won't tell
   // us to drop a sticky flag until the requirements are satisfied.
-  const int flagIndex = player[playerIndex].flag;
+  const int flagIndex = player[playerIndex].getFlag();
   if (flagIndex < 0)
     return;
   FlagInfo &drpFlag = flag[flagIndex];
@@ -3131,7 +3113,7 @@ static void dropFlag(int playerIndex, float pos[3])
   player[playerIndex].delayq.dequeuePackets();
 
   // player no longer has flag -- send MsgDropFlag
-  player[playerIndex].flag = -1;
+  player[playerIndex].resetFlag();
   void *buf, *bufStart = getDirectMessageBuffer();
   buf = nboPackUByte(bufStart, playerIndex);
   buf = nboPackUShort(buf, uint16_t(flagIndex));
@@ -3152,12 +3134,12 @@ static void captureFlag(int playerIndex, TeamColor teamCaptured)
 
   // player captured a flag.  can either be enemy flag in player's own
   // team base, or player's own flag in enemy base.
-  int flagIndex = int(player[playerIndex].flag);
+  int flagIndex = player[playerIndex].getFlag();
   if (flagIndex < 0 || (flag[flagIndex].flag.type->flagTeam == ::NoTeam))
     return;
 
   // player no longer has flag and put flag back at it's base
-  player[playerIndex].flag = -1;
+  player[playerIndex].resetFlag();
   resetFlag(flagIndex);
 
   // send MsgCaptureFlag
@@ -3211,15 +3193,17 @@ static void shotFired(int playerIndex, void *buf, int len)
   }
 
   // make sure the shooter flag is a valid index to prevent segfaulting later
-  if (shooter.flag < 0) {
+  if (!shooter.haveFlag()) {
     firingInfo.flagType = Flags::Null;
     repack = true;
   }
 
   // verify player flag
-  if ((firingInfo.flagType != Flags::Null) && (firingInfo.flagType != flag[shooter.flag].flag.type)) {
+  if ((firingInfo.flagType != Flags::Null)
+      && (firingInfo.flagType != flag[shooter.getFlag()].flag.type)) {
     DEBUG2("Player %s [%d] shot flag mismatch %s %s\n", shooter.getCallSign(),
-	   playerIndex, firingInfo.flagType->flagAbbv, flag[shooter.flag].flag.type->flagAbbv);
+	   playerIndex, firingInfo.flagType->flagAbbv,
+	   flag[shooter.getFlag()].flag.type->flagAbbv);
     firingInfo.flagType = Flags::Null;
     firingInfo.shot.vel[0] = BZDB.eval(StateDatabase::BZDB_SHOTSPEED) * cos(shooter.lastState.azimuth);
     firingInfo.shot.vel[1] = BZDB.eval(StateDatabase::BZDB_SHOTSPEED) * sin(shooter.lastState.azimuth);
@@ -3303,9 +3287,9 @@ static void shotFired(int playerIndex, void *buf, int len)
   // if shooter has a flag
 
   char message[MessageLen];
-  if (shooter.flag >= 0){
+  if (shooter.haveFlag()){
 
-    FlagInfo & fInfo = flag[shooter.flag];
+    FlagInfo & fInfo = flag[shooter.getFlag()];
     fInfo.numShots++; // increase the # shots fired
 
     int limit = clOptions->flagLimit[fInfo.flag.type];
@@ -3778,7 +3762,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 	buf = nboUnpackUByte(buf, to);
 
 	if (to == ServerPlayer) {
-	  zapFlag (player[from].flag);
+	  zapFlag (player[from].getFlag());
 	  return;
 	}
 
@@ -3788,11 +3772,11 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 	if (to >= curMaxPlayers)
 	  return;
 
-	int flagIndex = player[from].flag;
+	int flagIndex = player[from].getFlag();
 	if (flagIndex == -1)
 	  return;
 
-	zapFlag(player[to].flag);
+	zapFlag(player[to].getFlag());
 
 	void *bufStart = getDirectMessageBuffer();
 	void *buf = nboPackUByte(bufStart, from);
@@ -3800,8 +3784,8 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 	buf = nboPackUShort(buf, uint16_t(flagIndex));
 	flag[flagIndex].flag.owner = to;
 	flag[flagIndex].player = to;
-	player[to].flag = flagIndex;
-	player[from].flag = -1;
+	player[to].setFlag(flagIndex);
+	player[from].resetFlag();
 	buf = flag[flagIndex].flag.pack(buf);
 	broadcastMessage(MsgTransferFlag, (char*)buf - (char*)bufStart, bufStart);
 	player[from].lastFlagDropTime = TimeKeeper::getCurrent();
@@ -3890,7 +3874,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
       if (now - lastWorldParmChange > 10.0f) {
 	float gravity;
 	
-	if (flag[player[t].flag].flag.type == Flags::Wings)
+	if (flag[player[t].getFlag()].flag.type == Flags::Wings)
           gravity = BZDB.eval(StateDatabase::BZDB_WINGSGRAVITY);
 	else
 	  gravity = BZDB.eval(StateDatabase::BZDB_GRAVITY);
@@ -3898,7 +3882,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 	if (gravity < 0.0f) {
 	  float maxTankHeight;
 	  
-	  if (flag[player[t].flag].flag.type == Flags::Wings)
+	  if (flag[player[t].getFlag()].flag.type == Flags::Wings)
 	    maxTankHeight = maxWorldHeight + heightFudge * ((BZDB.eval(StateDatabase::BZDB_WINGSJUMPVELOCITY)*BZDB.eval(StateDatabase::BZDB_WINGSJUMPVELOCITY)*(1+BZDB.eval(StateDatabase::BZDB_WINGSJUMPCOUNT))) / (2.0f * -gravity));
           else
 	    maxTankHeight = maxWorldHeight + heightFudge * ((BZDB.eval(StateDatabase::BZDB_JUMPVELOCITY)*BZDB.eval(StateDatabase::BZDB_JUMPVELOCITY)) / (2.0f * -gravity));
@@ -3954,13 +3938,13 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 
 	    // if tank is not driving cannot be sure it didn't toss (V) in flight
 	    // if tank is not alive cannot be sure it didn't just toss (V)
-  	    if (flag[player[t].flag].flag.type == Flags::Velocity)
+  	    if (flag[player[t].getFlag()].flag.type == Flags::Velocity)
 	      maxPlanarSpeedSqr *= BZDB.eval(StateDatabase::BZDB_VELOCITYAD) * BZDB.eval(StateDatabase::BZDB_VELOCITYAD);
-	    else if (flag[player[t].flag].flag.type == Flags::Thief)
+	    else if (flag[player[t].getFlag()].flag.type == Flags::Thief)
 	      maxPlanarSpeedSqr *= BZDB.eval(StateDatabase::BZDB_THIEFVELAD) * BZDB.eval(StateDatabase::BZDB_THIEFVELAD);
-	    else if (flag[player[t].flag].flag.type == Flags::Agility)
+	    else if (flag[player[t].getFlag()].flag.type == Flags::Agility)
 	      maxPlanarSpeedSqr *= BZDB.eval(StateDatabase::BZDB_AGILITYADVEL) * BZDB.eval(StateDatabase::BZDB_AGILITYADVEL);
- 	    else if ((flag[player[t].flag].flag.type == Flags::Burrow) &&
+ 	    else if ((flag[player[t].getFlag()].flag.type == Flags::Burrow) &&
 	      (player[t].lastState.pos[2] == state.pos[2]) && 
 	      (player[t].lastState.velocity[2] == state.velocity[2]) &&
 	      (state.pos[2] <= BZDB.eval(StateDatabase::BZDB_BURROWDEPTH)))

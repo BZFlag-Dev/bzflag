@@ -148,6 +148,20 @@ public:
   bool        isObserver() const;
   TeamColor   getTeam();
   void        setTeam(TeamColor team);
+  void        wasARabbit();
+  void        wasNotARabbit();
+  bool        isARabbitKill(PlayerInfo &victim);
+  void        resetFlag();
+  bool        haveFlag() const;
+  int         getFlag() const;
+  void        setFlag(int flag);
+  void        dumpScore();
+  float       scoreRanking();
+  bool        setAndTestTK(float tkKickRatio);
+  void        setOneMoreLoss();
+  void        setOneMoreWin();
+  void       *packScore(void *buf, int index);
+  bool        scoreReached(int score);
 private:
     // player access
     PlayerAccessInfo accessInfo;
@@ -178,7 +192,6 @@ private:
     char email[EmailLen];
     // player's team
     TeamColor team;
-public:
     // true for dead rabbit until respawn
     bool wasRabbit;
     // flag index player has
@@ -186,6 +199,7 @@ public:
     // player's score
     int wins, losses, tks;
 
+public:
     // Last known position, vel, etc
     PlayerState lastState;
 

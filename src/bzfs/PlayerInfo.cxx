@@ -597,6 +597,75 @@ void PlayerInfo::setTeam(TeamColor _team) {
   team = _team;
 };
 
+void PlayerInfo::wasARabbit() {
+  team = RogueTeam;
+  wasRabbit = true;
+};
+
+void PlayerInfo::wasNotARabbit() {
+  wasRabbit = false;
+};
+
+bool PlayerInfo::isARabbitKill(PlayerInfo &victim) {
+  return wasRabbit || victim.team == RabbitTeam;
+};
+
+void PlayerInfo::resetFlag() {
+  flag = -1;
+};
+
+bool PlayerInfo::haveFlag() const {
+  return flag >= 0;
+}
+int PlayerInfo::getFlag() const {
+  return flag;
+};
+
+void PlayerInfo::setFlag(int _flag) {
+  flag = _flag;
+};
+
+void PlayerInfo::dumpScore() {
+  if (state > PlayerInLimbo)
+    std::cout << wins << '-' << losses << ' ' << callSign << std::endl;
+};
+
+float PlayerInfo::scoreRanking() {
+  int sum = wins + losses;
+  if (sum == 0)
+    return 0.5;
+  float average = (float)wins/(float)sum;
+  // IIRC that is how wide is the gaussian
+  float penalty = (1.0f - 0.5f / sqrt((float)sum));
+  return average * penalty;
+};
+
+bool PlayerInfo::setAndTestTK(float tkKickRatio) {
+  tks++;
+  return (tks >= 3) && (tkKickRatio > 0) && // arbitrary 3
+    ((wins == 0) || (tks * 100 / wins > tkKickRatio));
+};
+
+void PlayerInfo::setOneMoreLoss() {
+  losses++;
+};
+
+void PlayerInfo::setOneMoreWin() {
+  wins++;
+};
+
+void *PlayerInfo::packScore(void *buf, int index) {
+  buf = nboPackUByte(buf, index);
+  buf = nboPackUShort(buf, wins);
+  buf = nboPackUShort(buf, losses);
+  buf = nboPackUShort(buf, tks);
+  return buf;
+};
+
+bool PlayerInfo::scoreReached(int score) {
+  return wins - losses >= score;
+};
+
 // Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***

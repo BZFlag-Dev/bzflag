@@ -242,7 +242,7 @@ void handleFlagCmd(int t, const char *message)
 	// tell 'em to drop it.
 	flag[i].player = -1;
 	flag[i].flag.status = FlagNoExist;
-	player[playerIndex].flag = -1;
+	player[playerIndex].resetFlag();
 
 	void *buf, *bufStart = getDirectMessageBuffer();
 	buf = nboPackUByte(bufStart, playerIndex);
@@ -264,7 +264,7 @@ void handleFlagCmd(int t, const char *message)
 	if (playerIndex != -1) {
 	  flag[i].player = -1;
 	  flag[i].flag.status = FlagNoExist;
-	  player[playerIndex].flag = -1;
+	  player[playerIndex].resetFlag();
 
 	  void *buf, *bufStart = getDirectMessageBuffer();
 	  buf = nboPackUByte(bufStart, playerIndex);
