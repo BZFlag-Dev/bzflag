@@ -178,7 +178,10 @@ than %s:%d\n",
 }
 
 bool NetHandler::isUdpFdSet(fd_set *read_set) {
-  return bool(FD_ISSET(udpSocket, read_set));
+  if (FD_ISSET(udpSocket, read_set)) {
+    return true;
+  }
+  return false;
 }
 
 int NetHandler::udpSocket = -1;
@@ -247,7 +250,10 @@ NetHandler *NetHandler::getHandler(int _playerIndex) {
 }
 
 bool NetHandler::isFdSet(fd_set *set) {
-  return bool(FD_ISSET(fd, set));
+  if (FD_ISSET(fd, set)) {
+    return true;
+  }
+  return false;
 }
 
 int NetHandler::send(const void *buffer, size_t length) {
