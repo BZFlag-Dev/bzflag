@@ -817,9 +817,17 @@ bool			SilenceDefaultKey::keyRelease(const BzfKeyEvent& key)
 			  key.button == BzfKeyEvent::Right, false);
       const Player *recipient = myTank->getRecipient();
       if (recipient) {
-	// FIXME change prompt to show current silence state
-	std::string composePrompt = "[Un]Silence -->";
-	composePrompt += recipient->getCallSign();
+	const std::string name = recipient->getCallSign();
+	bool isInList = false;
+	for (unsigned int i = 0; i < silencePlayers.size(); i++) {
+	  if (silencePlayers[i] == name) {
+	    isInList = true;
+	    break;
+	  }
+	}
+	std::string composePrompt = "Silence -->";
+	if (isInList) composePrompt = "Un" + composePrompt;
+	composePrompt += name;
 
 	// Set the prompt and disable editing/composing
 	hud->setComposing(composePrompt, false);
