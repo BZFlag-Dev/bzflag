@@ -13,6 +13,7 @@
 #include "common.h"
 #include <fstream>
 #include "BZWReader.h"
+#include "BZWError.h"
 #include "CmdLineOptions.h"
 #include "WorldFileObject.h"
 #include "CustomBox.h"
@@ -23,23 +24,41 @@
 #include "CustomWeapon.h"
 #include "CustomWorld.h"
 #include "CustomZone.h"
+#include "Team.h"
 
 extern CmdLineOptions *clOptions;
 extern BasesList bases;
 
-std::istream &readToken(std::istream& input, char *buffer, int n)
+BZWReader::BZWReader(std::string filename) : location(filename), input(NULL)
+{
+  errorHandler = new BZWError(location);
+  input = new std::ifstream(filename.c_str(), std::ios::in);
+
+  if (input->peek() == EOF) {
+    errorHandler->fatalError(std::string("could not find bzflag world file"), 0);
+  }
+}
+
+BZWReader::~BZWReader()
+{
+  // clean up
+  delete errorHandler;
+  delete input;
+}
+
+void BZWReader::readToken(char *buffer, int n)
 {
   int c = -1;
 
   // skip whitespace
-  while (input.good() && (c = input.get()) != -1 && isspace(c) && c != '\n')
+  while (input->good() && (c = input->get()) != -1 && isspace(c) && c != '\n')
     ;
 
   // read up to whitespace or n - 1 characters into buffer
   int i = 0;
   if (c != -1 && c != '\n') {
     buffer[i++] = c;
-    while (input.good() && i < n - 1 && (c = input.get()) != -1 && !isspace(c))
+    while (input->good() && i < n - 1 && (c = input->get()) != -1 && !isspace(c))
       buffer[i++] = (char)c;
   }
 
@@ -48,27 +67,26 @@ std::istream &readToken(std::istream& input, char *buffer, int n)
 
   // put back last character we didn't use
   if (c != -1 && isspace(c))
-    input.putback(c);
-
-  return input;
+    input->putback(c);
 }
 
 
-bool readWorldStream(std::istream& input, std::string location, std::vector<WorldFileObject*>& wlist)
+bool BZWReader::readWorldStream(std::vector<WorldFileObject*>& wlist)
 {
   int line = 1;
   char buffer[1024];
   WorldFileObject *object    = NULL;
   WorldFileObject *newObject = NULL;
   WorldFileObject * const fakeObject = (WorldFileObject*)((char*)NULL + 1); // for options
+
   bool gotWorld = false;
 
-  while (!input.eof())
+  while (!input->eof())
   {
     // watch out for starting a new object when one is already in progress
     if (newObject) {
       if (object) {
-	std::cout << location << '(' << line << ") : discarding incomplete object\n";
+	errorHandler->warning(std::string("discarding incomplete object"), line);
 	if (object != fakeObject)
 	  delete object;
       }
@@ -77,7 +95,7 @@ bool readWorldStream(std::istream& input, std::string location, std::vector<Worl
     }
 
     // read first token but do not skip newlines
-    readToken(input, buffer, sizeof(buffer));
+    readToken(buffer, sizeof(buffer));
     if (strcmp(buffer, "") == 0) {
       // ignore blank line
     } else if (buffer[0] == '#') {
@@ -89,7 +107,7 @@ bool readWorldStream(std::istream& input, std::string location, std::vector<Worl
 	}
 	object = NULL;
       } else {
-	std::cout << location << '(' << line << ") : unexpected \"end\" token\n";
+	errorHandler->fatalError(std::string("unexpected \"end\" token"), line);
 	return false;
       }
     } else if (strcasecmp(buffer, "box") == 0) {
@@ -110,35 +128,37 @@ bool readWorldStream(std::istream& input, std::string location, std::vector<Worl
       if (!gotWorld) {
 	newObject = new CustomWorld();
 	gotWorld = true;
+      } else {
+	errorHandler->warning(std::string("multiple \"world\" sections found"), line);
       }
     } else if (strcasecmp(buffer, "options") == 0) {
       newObject = fakeObject;
     } else if (object) {
       if (object != fakeObject) {
-        if (!object->read(buffer, input)) {
+        if (!object->read(buffer, *input)) {
   	  // unknown token
-	  std::cout << location << '(' << line << ") : unknown object parameter \"" << buffer << "\" - skipping\n";
+	  errorHandler->warning(std::string("unknown object parameter \"") + std::string(buffer) + std::string("\" - skipping"), line);
 	  // delete object;
 	  // return false;
 	}
       }
     } else { // filling the current object
       // unknown token
-      std::cout << location << '(' << line << ") : invalid object type \"" << buffer << "\" - skipping\n";
+      errorHandler->warning(std::string("invalid object type \"") + std::string(buffer) + std::string("\" - skipping"), line);
       if (object != fakeObject)
         delete object;
      // return false;
     }
 
     // discard remainder of line
-    while (input.good() && input.peek() != '\n')
-      input.get(buffer, sizeof(buffer));
-    input.getline(buffer, sizeof(buffer));
+    while (input->good() && input->peek() != '\n')
+      input->get(buffer, sizeof(buffer));
+    input->getline(buffer, sizeof(buffer));
     ++line;
   }
 
   if (object) {
-    std::cout << location << '(' << line << ") : missing \"end\" token\n";
+    errorHandler->fatalError(std::string("missing \"end\" parameter"), line);
     if (object != fakeObject)
       delete object;
     return false;
@@ -147,26 +167,26 @@ bool readWorldStream(std::istream& input, std::string location, std::vector<Worl
   return true;
 }
 
-
-WorldInfo *defineWorldFromFile(std::string filename)
+WorldInfo* BZWReader::defineWorldFromFile()
 {
-  // open file
-  std::ifstream input(filename.c_str(), std::ios::in);
-
-  if (!input) {
-    std::cout << "could not find bzflag world file : " << filename << std::endl;
+  // make sure input is valid
+  if (input->peek() == EOF) {
+    errorHandler->fatalError(std::string("unexpected EOF"), 0);
     return NULL;
   }
 
   // create world object
   WorldInfo *world = new WorldInfo;
-  if (!world)
+  if (!world) {
+    errorHandler->fatalError(std::string("WorldInfo failed to initialize"), 0);
     return NULL;
+  }
 
   // read file
   std::vector<WorldFileObject*> list;
-  if (!readWorldStream(input, filename, list)) {
+  if (!readWorldStream(list)) {
     emptyWorldFileObjectList(list);
+    errorHandler->fatalError(std::string("world file failed to load."), 0);
     delete world;
     return NULL;
   }
@@ -187,7 +207,7 @@ WorldInfo *defineWorldFromFile(std::string filename)
   if (clOptions->gameStyle & TeamFlagGameStyle) {
     for (int i = RedTeam; i <= PurpleTeam; i++) {
       if ((clOptions->maxTeam[i] > 0) && bases.find(i) == bases.end()) {
-	std::cout << "base was not defined for team " << i << ", capture the flag game style removed.\n";
+	errorHandler->warning(std::string("base was not defined for ") + Team::getName((TeamColor)i) + std::string(", capture the flag game style removed."), 0);
 	clOptions->gameStyle &= (~TeamFlagGameStyle);
 	break;
       }

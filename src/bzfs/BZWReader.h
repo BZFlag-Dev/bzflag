@@ -13,15 +13,38 @@
 #ifndef __BZWREADER_H__
 #define __BZWREADER_H__
 
+// system headers
 #include <iostream>
 #include <vector>
+
+// implementation headers
+#include "BZWError.h"
 
 class WorldFileObject;
 class WorldInfo;
 
+class BZWReader {
+public:
+  BZWReader(std::string filename);
+  ~BZWReader();
 
-extern std::istream &readToken(std::istream& input, char *buffer, int n);
-extern bool readWorldStream(std::istream& input, std::string location, std::vector<WorldFileObject*>& wlist);
-extern WorldInfo *defineWorldFromFile(std::string filename);
+  // external interface
+  WorldInfo *defineWorldFromFile();
+
+private:
+  // functions for internal use
+  void readToken(char *buffer, int n);
+  bool readWorldStream(std::vector<WorldFileObject*>& wlist);
+
+  // stream to open
+  std::string location;
+  std::istream *input;
+
+  // data/dependent objects
+  BZWError *errorHandler;
+
+  // no default constructor
+  BZWReader();
+};
 
 #endif
