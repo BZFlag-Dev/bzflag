@@ -21,6 +21,9 @@
 
 #define BZDB (StateDatabase::getInstance())
 
+/** would somebody please document this durn thing ;)  at least how
+ * it should be used: how to add, modify, and retrieve data.
+ */
 class StateDatabase {
 public:
   typedef void (*Callback)(const std::string& name, void* userData);
@@ -38,84 +41,100 @@ public:
 
   ~StateDatabase();
 
-  // set a name/value pair.  if access is less than the permission
-  // level of the name then this has no effect.
+  /** set a name/value pair.  if access is less than the permission
+   *level of the name then this has no effect.
+   */
   void				set(const std::string& name,
 				    const std::string& value,
 				    Permission access = Client);
 
-  // unset a name if access is not less than the permission level
-  // of the name.
+  /** unset a name if access is not less than the permission level
+   * of the name.
+   */
   void				unset(const std::string& name,
 				      Permission access = Client);
 
-  // simulate a change to a value (i.e. invoke the callbacks on it)
+  /** simulate a change to a value (i.e. invoke the callbacks on it)
+   */
   void				touch(const std::string& name,
 				      Permission access = Client);
 
-  // mark a value as persistent (i.e. to be saved) or volatile.
-  // this state is stored independently of the existance of a value
-  // with the given name.  that is, adding or removing the name
-  // will not affect persistence of the name.  the default is
-  // volatile.
+  /** mark a value as persistent (i.e. to be saved) or volatile.
+   * this state is stored independently of the existance of a value
+   * with the given name.  that is, adding or removing the name
+   * will not affect persistence of the name.  the default is
+   * volatile.
+   */
   void				setPersistent(const std::string& name,
 					      bool = true);
 
-  // set the default value for a name.  if the default value is set
-  // then the value will not be written by write() if the current
-  // value is equal to the default value.
+  /** set the default value for a name.  if the default value is set
+   * then the value will not be written by write() if the current
+   * value is equal to the default value.
+   */
   void				setDefault(const std::string& name,
 					   const std::string& value);
 
-  // set the permission level of a name.  like persistence, this is
-  // stored independently of a value with the name.  the default
-  // permission is ReadWrite (i.e. full access).
+  /** set the permission level of a name.  like persistence, this is
+   * stored independently of a value with the name.  the default
+   * permission is ReadWrite (i.e. full access).
+   */
   void				setPermission(const std::string& name,
 					      Permission);
 
-  // add/remove a callback to/from a name.  all callbacks on a name are
-  // invoked when the value changes (either by being set or unset).
-  // each name can have any number of callbacks but any given callback
-  // function/userData pair on a name can only be registered once (i.e.
-  // multiple adds have the same effect as a single add).
+  /** add/remove a callback to/from a name.  all callbacks on a name are
+   * invoked when the value changes (either by being set or unset).
+   * each name can have any number of callbacks but any given callback
+   * function/userData pair on a name can only be registered once (i.e.
+   * multiple adds have the same effect as a single add).
+   */
   void				addCallback(const std::string& name,
 					    Callback, void* userData);
   void				removeCallback(const std::string& name,
 					       Callback, void* userData);
 
-  // test if a name is set or not
+  /** test if a name is set or not
+   */
   bool				isSet(const std::string& name) const;
 
-  // get the value associated with a name.  returns the empty string
-  // if the name isn't set.
+  /** get the value associated with a name.  returns the empty string
+   * if the name isn't set.
+   */
   std::string			get(const std::string& name) const;
 
-  // get the value as a floating point number. this will evaluate
-  // the string as an expression
+  /** get the value as a floating point number. this will evaluate
+   * the string as an expression
+   */
   float				eval(const std::string& name);
 
-  // return true if the value associated with a name indicates
-  // logical true, which is when the value is not empty and not
-  // "0" and not "false" and not "no".
+  /** return true if the value associated with a name indicates
+   * logical true, which is when the value is not empty and not
+   * "0" and not "false" and not "no".
+   */
   bool				isTrue(const std::string& name) const;
 
-  // test if a name is empty or not.  a name is empty if it's
-  // not set or it's set to the empty string.
+  /** test if a name is empty or not.  a name is empty if it's
+   * not set or it's set to the empty string.
+   */
   bool				isEmpty(const std::string& name) const;
 
-  // get the persistence, permission, and default for an entry
+  /** get the persistence, permission, and default for an entry
+   */
   bool				isPersistent(const std::string& name) const;
   std::string			getDefault(const std::string& name) const;
   Permission			getPermission(const std::string& name) const;
 
-  // invoke the callback for each entry
+  /** invoke the callback for each entry
+   */
   void				iterate(Callback, void* userData) const;
 
-  // invoke the callback for each entry that should be written (i.e.
-  // is set, persistent, and not the default).
+  /** invoke the callback for each entry that should be written (i.e.
+   * is set, persistent, and not the default).
+   */
   void				write(Callback, void* userData) const;
 
-  // get the singleton instance of the state database
+  /** get the singleton instance of the state database
+   */
   static StateDatabase* getInstance();
 
   static const std::string	BZDB_ANGULARAD;
