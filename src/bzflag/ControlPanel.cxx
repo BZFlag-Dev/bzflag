@@ -356,10 +356,9 @@ void			ControlPanel::render(SceneRenderer& renderer)
 	    messageAreaPixels[3] - (showTabs ? int(lineHeight + 4) : 0) + ay);
 
   i = messages[messageMode].size() - 1;
-  if (messagesOffset > 0) {
-    if (i - messagesOffset > 0)
-      i -= messagesOffset;
-    else
+  if (i >= 0 && messagesOffset > 0) {
+    i -= messagesOffset;
+    if (i < 0)
       i = 0;
   }
   for (j = 0; i >= 0 && j < maxLines; i--) {
