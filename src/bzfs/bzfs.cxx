@@ -161,7 +161,7 @@ struct PlayerAccessInfo
   std::bitset<lastPerm>		explicitDenys;
   std::vector<std::string>	groups;
   bool				verified;
-  float				loginTime;
+  TimeKeeper   			loginTime;
   int				loginAttempts;
 };
 
