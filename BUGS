@@ -1,6 +1,9 @@
 recent bugs
 ------------
 
+- list server includes counts for players running on non-public servers on
+  the same machine on different ports
+
 - bunny hunt issues.  observed the player selection consistently toggle
   between the best player (score-wise) and one of the worst players non-stop
   for several (10+) minutes without choosing many intermediate players that
