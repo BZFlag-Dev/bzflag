@@ -4899,7 +4899,7 @@ static void parseCommand(const char *message, int t)
       }
     }
   }
-  // /unban command allows operator to rmove ips from the banlist
+  // /unban command allows operator to remove ips from the banlist
   else if (player[t].Admin && strncmp(message+1, "unban", 5) == 0) {
     char reply[MessageLen];
     if (acl.unban(message + 7))
@@ -4928,7 +4928,7 @@ static void parseCommand(const char *message, int t)
   // /lagstats gives simple statistics about players' lags
   else if (strncmp(message+1,"lagstats",8) == 0) {
     for (int i = 0; i < curMaxPlayers; i++) {
-      if (player[i].state > PlayerInLimbo) {
+      if (player[i].state > PlayerInLimbo && !player[i].Observer) {
 	char reply[MessageLen];
 	sprintf(reply,"%-12s : %4dms (%d)%s",player[i].callSign,
 	    int(player[i].lagavg*1000),player[i].lagcount,
@@ -4954,7 +4954,7 @@ static void parseCommand(const char *message, int t)
   // /flaghistory gives history of what flags player has carried
   else if (strncmp(message+1, "flaghistory", 11 ) == 0) {
     for (int i = 0; i < curMaxPlayers; i++)
-      if (player[i].fd != NotConnected) {
+      if (player[i].state > PlayerInLimbo && !player[i].Observer) {
 	char reply[MessageLen];
 	char flag[MessageLen];
 	sprintf(reply,"%-12s : ",player[i].callSign );
