@@ -127,7 +127,8 @@ SceneRenderer::SceneRenderer(MainWindow& _window) :
   const char* extensions = (const char*)glGetString(GL_EXTENSIONS);
   (void)vendor; (void)renderer; (void)version; (void)extensions; // silence g++
 #ifdef GL_ABGR_EXT
-  if (strstr(extensions, "GL_EXT_abgr") != NULL && strcmp(vendor, "SGI") == 0) {
+  if (extensions != NULL && strstr(extensions, "GL_EXT_abgr") != NULL
+  && vendor != NULL && strcmp(vendor, "SGI") == 0) {
     // old hardware is faster with ABGR.  new hardware isn't.
     if (strncmp(renderer, "GR1", 3) == 0 ||
 	strncmp(renderer, "VGX", 3) == 0 ||
@@ -147,13 +148,13 @@ SceneRenderer::SceneRenderer(MainWindow& _window) :
 #if defined(GL_VERSION_1_1)
   canUseHiddenLine = true;
 #elif defined(GL_EXT_polygon_offset)
-  canUseHiddenLine = (strstr(extensions, "GL_EXT_polygon_offset") != NULL);
+  canUseHiddenLine = (extensions != NULL && strstr(extensions, "GL_EXT_polygon_offset") != NULL);
 #endif
 
   // check if we're running OpenGL 1.1.  if so we'll use the fog hack
   // to fade the screen;  otherwise fall back on a full screen blended
   // polygon.
-  if (strncmp(version, "1.1", 3) == 0)
+  if (version != NULL && strncmp(version, "1.1", 3) == 0)
     useFogHack = true;
 /* IMPACT at 1.0 used to allow fog hack but not after patch 1935
   if (strncmp(renderer, "IMPACT", 6) == 0)
