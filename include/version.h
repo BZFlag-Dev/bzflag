@@ -32,8 +32,7 @@
 #endif
 
 
-// Build Date will be defined at link time, can be different for each exe
-extern char buildDate[];
+// various version functions in buildDate.cxx
 extern const char* getProtocolVersion();
 extern const char* getServerVersion();
 extern const char* getAppVersion();
