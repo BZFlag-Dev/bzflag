@@ -626,6 +626,8 @@ COUNTDOWN               /countdown
 .br
 ENDGAME                 /endgame
 .br
+SETVAR			/set /reset
+.br
 SHUTDOWNSERVER          /shutdownserver
 .br
 SUPERKILL               /superkill
