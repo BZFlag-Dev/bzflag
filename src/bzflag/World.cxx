@@ -668,16 +668,20 @@ bool			World::writeWorld(std::string filename)
   // Write pyramids
 
   {
-    for (std::vector<PyramidBuilding>::iterator it = pyramids.begin(); it != pyramids.end(); ++it) {
+    for (std::vector<PyramidBuilding>::iterator it = pyramids.begin();
+	 it != pyramids.end(); ++it) {
       PyramidBuilding pyr = *it;
       out << "pyramid" << std::endl;
       const float *pos = pyr.getPosition();
-      float z = pos[2];
+      float height = pyr.getHeight();
       if (pyr.getZFlip())
-        z = -z;
-      out << "\tposition " << pos[0] << " " << pos[1] << " " << z << std::endl;
-      out << "\tsize " << pyr.getWidth() << " " << pyr.getBreadth() << " " << pyr.getHeight() << std::endl;
-      out << "\trotation " << ((pyr.getRotation() * 180.0) / M_PI) << std::endl;
+        height = -height;
+      out << "\tposition " << pos[0] << " " << pos[1] << " " << pos[2]
+	  << std::endl;
+      out << "\tsize " << pyr.getWidth() << " " << pyr.getBreadth() << " "
+	  << height << std::endl;
+      out << "\trotation " << ((pyr.getRotation() * 180.0) / M_PI)
+	  << std::endl;
       if (pyr.isDriveThrough()&&pyr.isShootThrough())
         out << "passable" << std::endl;
       else{
