@@ -367,7 +367,10 @@ bool PNGImageFile::filter()
 	//int	len = lineBufferSize;
 	unsigned char *pData = getLineBuffer();
 
-	switch (*pData) {
+	unsigned char filter = *pData;
+	*(pData++) = 0;
+
+	switch (filter) {
 		case FILTER_NONE:
 			return true;
 
@@ -382,7 +385,7 @@ bool PNGImageFile::filter()
 
 		case FILTER_UP:
 		{
-			unsigned char *pUp = getLineBuffer(false);
+			unsigned char *pUp = getLineBuffer(false)+1;
 			for (int i = 1; i < lineBufferSize; i++, pData++, pUp++)
 				*pData += *pUp;
 			return true;
@@ -391,7 +394,7 @@ bool PNGImageFile::filter()
 
 		case FILTER_AVERAGE:
 		{
-			unsigned char *pUp = getLineBuffer(false);
+			unsigned char *pUp = getLineBuffer(false)+1;
 			int channels = getNumChannels();
 			for (int i = 1; i < lineBufferSize; i++, pData++, pUp++) {
 				int last = *(pData-channels);
@@ -405,7 +408,7 @@ bool PNGImageFile::filter()
 
 		case FILTER_PAETH:
 		{
-			unsigned char *pUp = getLineBuffer(false);
+			unsigned char *pUp = getLineBuffer(false)+1;
 			int channels = getNumChannels();
 			for (int i = 1; i < lineBufferSize; i++, pData++, pUp++) {
 				int a = *(pData-channels);
