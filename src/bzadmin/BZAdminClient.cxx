@@ -24,7 +24,7 @@ BZAdminClient::BZAdminClient(std::string callsign, std::string host,
 			     int port, BZAdminUI* bzInterface)
   : myTeam(ObserverTeam), sLink(Address(host), port), valid(false),
     ui(bzInterface) {
-
+    
   if (sLink.getState() != ServerLink::Okay) {
     std::cerr<<"Could not connect to "<<host<<':'<<port<<'.'<<std::endl;
     return;
@@ -35,6 +35,12 @@ BZAdminClient::BZAdminClient(std::string callsign, std::string host,
     return;
   }
   valid = true;
+  
+  // set a default message mask
+  showMessageType(MsgAddPlayer);
+  showMessageType(MsgRemovePlayer);
+  showMessageType(MsgSuperKill);
+  showMessageType(MsgMessage);
 }
 
 
@@ -53,8 +59,15 @@ BZAdminClient::ServerCode BZAdminClient::getServerString(std::string& str) {
   /* read until we have a package that we want, or until there are no more
      packages for 100 ms */
   while ((e = sLink.read(code, len, inbuf, 100)) == 1) {
+    // check if we're interested in this message type
+    if (!messageMask[code])
+      continue;
+    
     void* vbuf = inbuf;
     PlayerId p;
+    std::map<PlayerId, std::string>::const_iterator i;
+    std::string victimName, killerName;
+    
     switch (code) {
 
     case MsgAddPlayer:
@@ -86,6 +99,30 @@ BZAdminClient::ServerCode BZAdminClient::getServerString(std::string& str) {
       players.erase(p);
       return GotMessage;
 
+    case MsgKilled: 
+      PlayerId victim, killer;
+      int16_t shotId, reason;
+      vbuf = nboUnpackUByte(vbuf, victim);
+      vbuf = nboUnpackUByte(vbuf, killer);
+      vbuf = nboUnpackShort(vbuf, reason);
+      vbuf = nboUnpackShort(vbuf, shotId);
+      
+      // find the player names and build a kill message string
+      i = players.find(victim);
+      victimName = (i != players.end() ? i->second : "<unknown>");
+      i = players.find(killer);
+      killerName = (i != players.end() ? i->second : "<unknown>");
+      str = "*** ";
+      str += victimName + ": ";
+      if (killer == victim) {
+	str += "blew myself up";
+      }
+      else {
+	str += "destroyed by ";
+	str += killerName;
+      }
+      return GotMessage;
+      
     case MsgSuperKill:
       return Superkilled;
 
@@ -240,6 +277,17 @@ void BZAdminClient::waitForServer() {
     } while (str != expected);
   }
 }
+
+
+void BZAdminClient::ignoreMessageType(uint16_t type) {
+  messageMask[type] = false;
+}
+
+
+void BZAdminClient::showMessageType(uint16_t type) {
+  messageMask[type] = true;
+}
+
 
 // Local Variables: ***
 // mode:C++ ***

@@ -57,7 +57,8 @@ int main(int argc, char** argv) {
 #endif
   // command line options
   std::string uiName("curses");
-
+  bool showKills(false);
+  
   // no curses, use stdboth as default instead
   const UIMap& interfaces = UIMap::instance();
   if (interfaces.find("curses") == interfaces.end())
@@ -76,6 +77,8 @@ int main(int argc, char** argv) {
   const std::string uiOption("ui");
   const std::string uiMsg = "choose a user interface";
   op.registerVariable(uiOption, uiName, uiUsage, uiMsg);
+  op.registerVariable("showkills", showKills, "[-showkills]", 
+		      "show a message when a player is killed");
   if (!op.parse(argc, argv))
     return 1;
 
@@ -106,6 +109,8 @@ int main(int argc, char** argv) {
   BZAdminClient client(name, host, port);
   if (!client.isValid())
     return 1;
+  if (showKills)
+    client.showMessageType(MsgKilled);
 
   // if we got commands as arguments, send them and exit
   if (op.getParameters().size() > 1) {

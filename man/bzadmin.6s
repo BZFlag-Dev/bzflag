@@ -5,6 +5,7 @@ bzadmin \- a text based client for BZFlag
 .sS
 .B bzadmin
 [\fB\-help\fR]
+[\fB\-showkills\fR]
 [\fB\-ui \fR{\fIcurses\fR | \fIstdboth\fR | \fIstdin\fR | \fIstdout\fR}]
 \fIcallsign@hostname\fR:[\fIport\fR] [\fIcommand\fR] [\fIcommand\fR] ...
 .SH DESCRIPTION
@@ -37,6 +38,10 @@ is a player).
 .TP 15
 .B -help
 Show a simple help text.
+.TP
+.B -showkills
+Show a message whenever a player is killed, like in the message box in 
+BZFlag. This is not done by default.
 .TP
 \fB\-ui \fR{\fIcurses\fR | \fIstdboth\fR | \fIstdin\fR | \fIstdout\fR}
 Select the user interface that you want. The curses interface is the default,
