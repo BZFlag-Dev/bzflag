@@ -13,7 +13,7 @@ BZFlag 1.10.4
 * -filterCallsigns filters email too now - Lars Luthman
 * allow multiple team flags per team thru -c 5 - Dave Brosius
 * -maxidle handles idle / paused players the same - Frank Thilo
-* Added optional building density to random ctf map - Sean Morrison
+* Added optional building density to generated maps - Sean Morrison, Frank Thilo
 * Add pause time to /idlestats - Sean Morrison
 * Notify players when reassigned to a different team on join - Sean Morrison
 * Allow multiple bases per team - Dave Brosius
