@@ -5374,7 +5374,7 @@ static void		playingLoop()
 	mainWindow->setQuadrant(MainWindow::UpperRight);
       } else if (viewType == SceneRenderer::Stacked) {
 	static float EyeDisplacement = 0.25f * BZDB.eval(StateDatabase::BZDB_TANKWIDTH);
-	static float FocalPlane = BoxBase;
+	static float FocalPlane = BZDB.eval(StateDatabase::BZDB_BOXBASE);
 	static bool init = false;
 	if (!init) {
 	  init = true;
@@ -5411,7 +5411,7 @@ static void		playingLoop()
 	mainWindow->setQuadrant(MainWindow::LowerHalf);
       } else if (viewType == SceneRenderer::Stereo) {
 	static float EyeDisplacement = 0.25f * BZDB.eval(StateDatabase::BZDB_TANKWIDTH);
-	static float FocalPlane = BoxBase;
+	static float FocalPlane = BZDB.eval(StateDatabase::BZDB_BOXBASE);
 	static bool init = false;
 	if (!init) {
 	  init = true;
@@ -5468,7 +5468,7 @@ static void		playingLoop()
 #endif
       } else if (viewType == SceneRenderer::Anaglyph) {
 	static float EyeDisplacement = 0.25f * BZDB.eval(StateDatabase::BZDB_TANKWIDTH);
-	static float FocalPlane = BoxBase;
+	static float FocalPlane = BZDB.eval(StateDatabase::BZDB_BOXBASE);
 	static bool init = false;
 	if (!init) {
 	  init = true;

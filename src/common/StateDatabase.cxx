@@ -75,7 +75,9 @@ StateDatabase* Singleton<StateDatabase>::_instance = (StateDatabase*)0;
 
 const std::string StateDatabase::BZDB_ANGLETOLERANCE    = std::string("_angleTolerance");
 const std::string StateDatabase::BZDB_ANGULARAD         = std::string("_angularAd");
+const std::string StateDatabase::BZDB_AVENUESIZE        = std::string("_avenueSize");
 const std::string StateDatabase::BZDB_BASESIZE          = std::string("_baseSize");
+const std::string StateDatabase::BZDB_BOXBASE		= std::string("_boxBase");
 const std::string StateDatabase::BZDB_BOXHEIGHT         = std::string("_boxHeight");
 const std::string StateDatabase::BZDB_BURROWDEPTH       = std::string("_burrowDepth");
 const std::string StateDatabase::BZDB_BURROWSPEEDAD     = std::string("_burrowSpeedAd");

@@ -23,7 +23,7 @@
 
 CustomBox::CustomBox()
 {
-  size[0] = size[1] = BoxBase;
+  size[0] = size[1] = BZDB.eval(StateDatabase::BZDB_BOXBASE);
   size[2] = BZDB.eval(StateDatabase::BZDB_BOXHEIGHT);
 }
 

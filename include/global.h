@@ -59,9 +59,6 @@ const float		Infinity =	MAXFLOAT;	// arbitrary
 
 #define DEFAULT_WORLD	800
 
-// box geometry
-const float		BoxBase =	30.0f;// meters
-
 // teleporter geometry (My God, it's full of stars...)
 const float		TeleUnit =	1.12f;// meters
 const float		TeleWidth =	1.0f * TeleUnit;// meters
