@@ -3628,22 +3628,25 @@ static void acceptClient()
     if (player[playerIndex].state == PlayerNoExist)
       break;
 
-  DEBUG1("Player [%d] accept() from %s:%d on %i\n", playerIndex,
-      inet_ntoa(clientAddr.sin_addr), ntohs(clientAddr.sin_port), fd);
-
-  // full? reject by returning bogus port
-  if (playerIndex == maxPlayers)
+  if (playerIndex < maxPlayers) {
+    DEBUG1("Player [%d] accept() from %s:%d on %i\n", playerIndex,
+        inet_ntoa(clientAddr.sin_addr), ntohs(clientAddr.sin_port), fd);
+  
+    if (playerIndex >= curMaxPlayers)
+      curMaxPlayers = playerIndex+1;
+  
+    // record what port we accepted on
+    // FIXME what should we do if playerIndex > MaxPlayers ?
+    player[playerIndex].time = TimeKeeper::getCurrent();
+    player[playerIndex].fd = fd;
+    player[playerIndex].state = PlayerAccept;
+    player[playerIndex].knowId = false;
+  }
+  else { // full? reject by returning bogus port
+    DEBUG1("all slots occupied, rejecting accept() from %s:%d on %i\n",
+           inet_ntoa(clientAddr.sin_addr), ntohs(clientAddr.sin_port), fd);
     serverAddr.sin_port = htons(0);
-
-  if (playerIndex >= curMaxPlayers)
-    curMaxPlayers = playerIndex+1;
-
-  // record what port we accepted on
-  // FIXME what should we do if playerIndex > MaxPlayers ?
-  player[playerIndex].time = TimeKeeper::getCurrent();
-  player[playerIndex].fd = fd;
-  player[playerIndex].state = PlayerAccept;
-  player[playerIndex].knowId = false;
+  }
 
   // send server version and which port to reconnect to
   char buffer[8 + sizeof(serverAddr.sin_port)];
@@ -3654,6 +3657,11 @@ static void acceptClient()
   //memcpy(buffer + 8 + sizeof(serverAddr.sin_port), &clientAddr.sin_addr, sizeof(clientAddr.sin_addr));
   //memcpy(buffer + 8 + sizeof(serverAddr.sin_port) + sizeof(clientAddr.sin_addr), &clientAddr.sin_port, sizeof(clientAddr.sin_port));
   send(fd, (const char*)buffer, sizeof(buffer), 0);
+
+  if (playerIndex == maxPlayers) { // full?
+    DEBUG2("acceptClient: close(%d)\n", fd);
+    close(fd);
+  }
 
   // don't wait for client to reconnect here in case the client
   // is badly behaved and would cause us to hang on accept().
