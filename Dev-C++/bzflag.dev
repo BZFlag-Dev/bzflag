@@ -7,9 +7,9 @@ Type=1
 Compiler=-DHAVE_SDL=1 -DBUILD_REGEX=1 -D__GNUWIN32__ -D_WINDOWS -DWIN32 -D_MBCS_@@_ -Wall -Werror_@@_
 CppCompiler=-DHAVE_SDL=1 -DBUILD_REGEX=1 -D__GNUWIN32__ -D_WINDOWS -DWIN32 -D_MBCS_@@_ -Wall -Werror_@@_
 Includes=..\include;..\win32;.
-Linker=-lstdc++ -lsdl -lws2_32 -ldsound -lwinmm -lglu32 -lopengl32 -lkernel32 -luser32 -lgdi32 -lwinspool -lcomdlg32 -ladvapi32 -lshell32 -lole32 -loleaut32 -luuid -lodbc32 -lodbccp32_@@_
+Linker=-lmingw32 -lstdc++ -lsdlmain -lsdl -lws2_32 -ldsound -lwinmm -lglu32 -lopengl32 -lkernel32 -luser32 -lgdi32 -lwinspool -lcomdlg32 -ladvapi32 -lshell32 -lole32 -loleaut32 -luuid -lodbc32 -lodbccp32_@@_
 Libs=
-UnitCount=311
+UnitCount=313
 Folders="Header Files","Header Files/bzip2","Header Files/common","Header Files/net","Header Files/regex","Resource Files","Source Files","Source Files/bzip2","Source Files/common","Source Files/models","Source Files/net","Source Files/regex"
 ObjFiles=
 PrivateResource=bzflag_private.rc
@@ -3040,7 +3040,7 @@ BuildCmd=
 [Unit312]
 FileName=..\src\bzflag\ShotStats.cxx
 CompileCpp=1
-Folder=Source Files
+Folder=Source Files/common
 Compile=1
 Link=1
 Priority=1000
@@ -3048,19 +3048,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit313]
-FileName=..\src\bzflag\ShotStats.h
-CompileCpp=1
-Folder=Header Files
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit314]
 FileName=..\src\bzflag\ShotStatsDefaultKey.cxx
 CompileCpp=1
-Folder=Source Files
+Folder=Source Files/common
 Compile=1
 Link=1
 Priority=1000
