@@ -1421,7 +1421,8 @@ void bzGenTextures(GLsizei count, GLuint *textures)
   if (OpenGLGState::getExecutingFreeFuncs()) {
     contextFreeError ("bzGenTextures() is having issues");
   }
-  return glGenTextures(count, textures);
+  glGenTextures(count, textures);
+  return;
 }
 
 #undef glDeleteTextures
