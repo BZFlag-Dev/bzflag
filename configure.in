@@ -33,16 +33,6 @@ AC_SUBST(AR_FLAGS)
 AC_CHECK_LIB(z, compress, BUILDZLIB=no, BUILDZLIB=yes)
 AM_CONDITIONAL(BUILDZLIB, test $BUILDZLIB = yes)
 
-#checking for libcurl library
-MY_CURL
-if test $my_cv_curl_vers != NONE; then
-  CURL_CFLAGS=`curl-config --cflags`
-  CURL_LIBS=`curl-config --libs`
-  AC_SUBST(CURL_CFLAGS)
-  AC_SUBST(CURL_LIBS)
-fi
-AC_ISC_POSIX
-
 # Just for kicks
 echo -n "checking for artificial intelligence for robots..." 1>&6
 echo " warning: not found" 1>&6
@@ -236,8 +226,6 @@ fi
 case $host_os in
      macos|darwin*)
 	LIBS="$LIBS -framework Carbon -framework OpenGL -framework AGL"
-# There's a bug in the mac curl-config. It's been reported to Apple.
-	CURL_LIBS="-L/usr/local/lib -lcurl -lssl -lcrypto"
 	;;
      irix)
 	if test x$host_cpu = xmips64; then

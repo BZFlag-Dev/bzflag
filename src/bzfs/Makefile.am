@@ -66,9 +66,6 @@ LDADD = \
 	../net/libNet.a		\
 	../game/libGame.a	\
 	../common/libCommon.a	\
-	$(REGEX)		\
-	$(CURL_LIBS)
-
-AM_CPPFLAGS = $(CURL_CFLAGS)
+	$(REGEX)
 
 bzfs_LDFLAGS = ../date/buildDate.o

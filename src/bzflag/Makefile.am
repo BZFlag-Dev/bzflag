@@ -166,12 +166,11 @@ LDADD =	\
 	$(ZLIB)				\
 	$(RESOURCE)			\
 	$(GLIBS)			\
-	$(CURL_LIBS)			\
 	$(SDL_LIBS)
 # This is required to hook in ogg/vorbis libraries
 #	$(ALIBS)
 
-AM_CPPFLAGS = $(X_CFLAGS) $(SDL_CFLAGS) $(CURL_CFLAGS)
+AM_CPPFLAGS = $(X_CFLAGS) $(SDL_CFLAGS)
 
 bzflag_LDFLAGS = ../date/buildDate.o
 
