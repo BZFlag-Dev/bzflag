@@ -46,14 +46,16 @@ public:
 
 	/**
 	 * creates a sub plan to be placed on the stack to accomplish
-	 * this plan's goals.
+	 * this plan's goals. This method only gets called if usesSubPlan
+	 * return true.
 	 */
 	virtual Plan *createSubPlan() = 0;
 
 	/**
 	 * execute the plan. The default implementation just attempts
 	 * to shoot at enemies. Overridden methods should call this base
-	 * implementation.
+	 * implementation. This method only gets called if usesSubPlan
+	 * return false.
 	 */
 	virtual void execute();
 
@@ -79,7 +81,6 @@ public:
 	virtual bool isValid();
 	virtual bool usesSubPlan();
 	virtual Plan *createSubPlan() ;
-	virtual void execute();
 };
 
 class GotoPointPlan : public Plan
@@ -118,7 +119,6 @@ public:
 	virtual bool isValid();
 	virtual bool usesSubPlan();
 	virtual Plan *createSubPlan();
-	virtual void execute();
 
 private:
 	int playerID;
@@ -132,7 +132,6 @@ public:
 	virtual bool isValid();
 	virtual bool usesSubPlan();
 	virtual Plan *createSubPlan();
-	virtual void execute();
 private:
 	int flagID;
 };
@@ -145,7 +144,6 @@ public:
 	virtual bool isValid();
 	virtual bool usesSubPlan();
 	virtual Plan *createSubPlan();
-	virtual void execute();
 };
 
 #endif

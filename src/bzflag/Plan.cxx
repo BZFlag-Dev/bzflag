@@ -199,11 +199,6 @@ Plan *TopLevelPlan::createSubPlan()
 	return NULL;
 }
 
-void TopLevelPlan::execute()
-{
-	//Noop
-}
-
 
 /**
  * GotoPointPlan
@@ -227,6 +222,9 @@ Plan *GotoPointPlan::createSubPlan()
 
 void GotoPointPlan::execute()
 {
+	//TODO: goto point, then
+
+	Plan::execute();
 }
 
 /**
@@ -259,6 +257,9 @@ Plan* WeavePlan::createSubPlan()
 
 void WeavePlan::execute()
 {
+	//TODO: weave, then
+
+	Plan::execute();
 }
 
 /**
@@ -309,9 +310,6 @@ Plan *HuntPlayerPlan::createSubPlan()
 	}
 }
 
-void HuntPlayerPlan::execute()
-{
-}
 
 /**
  * HuntTeamFlagPlan
@@ -329,16 +327,12 @@ bool HuntTeamFlagPlan::isValid()
 
 bool HuntTeamFlagPlan::usesSubPlan()
 {
-	return false;
+	return true;
 }
 
 Plan *HuntTeamFlagPlan::createSubPlan()
 {
 	return NULL;
-}
-
-void HuntTeamFlagPlan::execute()
-{
 }
 
 /**
@@ -363,9 +357,5 @@ bool CaptureFlagPlan::usesSubPlan()
 Plan *CaptureFlagPlan::createSubPlan()
 {
 	return NULL;
-}
-
-void CaptureFlagPlan::execute()
-{
 }
 
