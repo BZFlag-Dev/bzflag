@@ -8,7 +8,9 @@ recent bugs
   it turns back to normal. Also normal, when I switch off lighting.
 
 - Server handles MsgKilled correctly, but client displays it as 'killed by                       
-  unknown>'; killer id is -1=InvalidPlayer, why not ServerPlayer?  
+  unknown>'; killer id is -1=InvalidPlayer, why not ServerPlayer? 
+  Chestal, Can you show steps of how this happens? I get 
+  'Killed by World Weapon (Rogue)'
 
 - Spawn code sometimes spawns you mid-air
 
