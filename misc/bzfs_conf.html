@@ -297,11 +297,6 @@
 						d.writeln("-mp " + mainform.maximum_players.value + "<br/><br/>");
 					}
 
-					if (mainform.maximum_observers.value != 3) {
-						d.writeln("#Maximum number of additional observers allowed<br/>");
-						d.writeln("-mo " + mainform.maximum_observers.value + "<br/><br/>");
-					}
-
 					if (mainform.maximum_team_score.value > 0) {
 						d.writeln("#Maximum Team score limit on game<br/>");
 						d.writeln("-mts " + mainform.maximum_team_score.value + "<br/><br/>");
@@ -706,8 +701,6 @@
 						<tr>
 							<td>Maximum Players</td>
 							<td><input type="text" name="maximum_players" value="40" size="30" title="Maximum number of players who can join"/></td>
-							<td>Maximum Observers</td>
-							<td><input type="text" name="maximum_observers" value="3" size="30" title="Maximum number of players that can watch"/></td>
 						</tr>
 						<tr>
 							<td>Maximum Team Score</td>
