@@ -475,6 +475,8 @@ void			ServerMenu::dismiss()
 {
   // no more callbacks
   removePlayingCallback(&playingCB, this);
+  // save any new token we got
+  // FIXME myTank.token = serverList.token;
 }
 
 void			ServerMenu::resize(int width, int height)

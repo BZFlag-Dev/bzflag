@@ -66,7 +66,7 @@ BZAdminClient::BZAdminClient(std::string callsign, std::string host,
     std::cout << std::endl;
     return;
   }
-  sLink.sendEnter(TankPlayer, myTeam, callsign.c_str(), "");
+  sLink.sendEnter(TankPlayer, myTeam, callsign.c_str(), "bzadmin", "");
   if (sLink.getState() != ServerLink::Okay) {
     std::cerr << "Rejected." << std::endl;
     return;

@@ -86,6 +86,8 @@ void ServerList::readServerList(int index)
     listServer.buffer[listServer.bufferSize] = 0;
 
     char* base = listServer.buffer;
+    static char *tokenIdentifier = "TOKEN:";
+    // walks entire reply including HTTP headers
     while (*base) {
       // find next newline
       char* scan = base;
@@ -95,11 +97,12 @@ void ServerList::readServerList(int index)
       if (*scan != '\n') break;
       *scan++ = '\0';
 
-      // look for ^TOKEN: here and save
-      static char *tokenIdentifier = "TOKEN:";
+      // look for ^TOKEN: and save token if found
       if (strncmp(base, tokenIdentifier, strlen(tokenIdentifier)) == 0) {
-	printError("got token. TODO: save it and give it to the server");
-	printError(base);
+	printError("got token. TODO: give it to the server");
+        //printError(base);
+	token=(base + strlen(tokenIdentifier));
+	printError(token);
 	base=scan;
 	continue;
       }

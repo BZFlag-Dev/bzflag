@@ -94,6 +94,7 @@ bool PlayerInfo::unpackEnter(void *buf, uint16_t &rejectCode, char *rejectMsg)
   team = TeamColor(_team);
   buf = nboUnpackString(buf, callSign, CallSignLen);
   buf = nboUnpackString(buf, email, EmailLen);
+  buf = nboUnpackString(buf, token, TokenLen);
   cleanCallSign();
   cleanEMail();
 
@@ -212,6 +213,10 @@ bool PlayerInfo::isEMailReadable() {
   } while (*++sp);
   int emaillen = (int)strlen(email);
   return (emaillen <= 4) || (((float)emailAlnumCount / (float)emaillen) > 0.5);
+};
+
+const char *PlayerInfo::getToken() const {
+  return token;
 };
 
 void *PlayerInfo::packVirtualFlagCapture(void *buf) {

@@ -44,6 +44,7 @@ public:
   std::string callsign;
   std::string password;
   // the last token the listServer gave us
+  // this is currently an int(10):int(10) in the list server
   std::string token;
 private:
   void _shutDown();

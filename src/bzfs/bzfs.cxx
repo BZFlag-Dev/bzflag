@@ -3304,9 +3304,10 @@ possible attack from %s\n",
       char     rejectMsg[128];
       bool result = playerData->loadEnterData(buf, rejectCode, rejectMsg);
       std::string timeStamp = TimeKeeper::timestamp();
-      DEBUG1("Player %s [%d] has joined from %s at %s\n",
+      DEBUG1("Player %s [%d] has joined from %s at %s with token \"%s\"\n",
 	     playerData->player.getCallSign(),
-	     t, handler->getTargetIP(), timeStamp.c_str());
+	     t, handler->getTargetIP(), timeStamp.c_str(),
+	     playerData->player.getToken());
       if (result) {
 	addPlayer(t);
       } else {

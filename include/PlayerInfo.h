@@ -81,6 +81,7 @@ public:
   bool	unpackEnter(void *buf, uint16_t &rejectCode, char *rejectMsg);
   const char *getCallSign() const;
   const char *getEMail() const;
+  const char *getToken() const;
   void       *packVirtualFlagCapture(void *buf);
   bool	isTeam(TeamColor team) const;
   bool	isObserver() const;
@@ -130,6 +131,8 @@ private:
   PlayerType type;
   // player's pseudonym
   char callSign[CallSignLen];
+  // token from db server
+  char token[TokenLen];
   // player's email address
   char email[EmailLen];
   // player's team

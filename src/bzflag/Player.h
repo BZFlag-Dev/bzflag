@@ -52,6 +52,7 @@ public:
   void		updateTank(float dt, bool local);
   const char*	getCallSign() const;
   const char*	getEmailAddress() const;
+  const char*	getToken() const;
   PlayerType	getPlayerType() const;
   FlagType*	getFlag() const;
   long		getOrder() const;
@@ -181,18 +182,19 @@ private:
 
   char			callSign[CallSignLen];	// my pseudonym
   char			email[EmailLen];	// my email address
-  PlayerType		type;		   // Human/Computer
+  char			token[TokenLen];	// token I got from list server
+  PlayerType		type;			// Human/Computer
 
   // relatively stable data
   FlagType*		flagType;		// flag type I'm holding
   float			dimensions[3];		// current tank dimensions
   float			dimensionsScale[3];	// use to scale the dimensions
   float			dimensionsRate[3];	 // relative to scale
-  float			dimensionsTarget[3]; // relative to scale
+  float			dimensionsTarget[3];	// relative to scale
   bool			useDimensions;		// use the varying dimensions for gfx
   float			alpha;			// current tank translucency
   float			alphaRate;		// current tank translucency
-  float			alphaTarget;	// current tank translucency
+  float			alphaTarget;		// current tank translucency
   TimeKeeper		explodeTime;		// time I started exploding
   TimeKeeper		teleportTime;		// time I started teleporting
   short			fromTeleporter;		// teleporter I entered
@@ -219,16 +221,16 @@ private:
   int			inputStatus;		// tank status
   mutable float		inputPos[3];		// tank position
   float			inputSpeed;		// tank horizontal speed
-  mutable float	inputZSpeed;			// tank vertical speed
+  mutable float		inputZSpeed;		// tank vertical speed
   float			inputAzimuth;		// direction tank is pointing
   float			inputSpeedAzimuth;	// direction of speed
   float			inputAngVel;		// tank turn rate
-  float		 deltaTime;	      // average difference between
+  float			deltaTime;		// average difference between
 						// time source and
 						// time destination
-  float		 offset;		 // time offset on last
+  float			offset;			// time offset on last
 						// measurement
-  int		   deadReckoningState;     // 0 -> not received any sample
+  int			deadReckoningState;	// 0 -> not received any sample
 						// 1 -> 1 sample rx
 						// 2 -> 2 or more sample rx
   float			oldZSpeed;		// old tank vertical speed
@@ -264,6 +266,11 @@ inline const char*	Player::getCallSign() const
 inline const char*	Player::getEmailAddress() const
 {
   return email;
+}
+
+inline const char*	Player::getToken() const
+{
+  return token;
 }
 
 inline PlayerType	Player::getPlayerType() const

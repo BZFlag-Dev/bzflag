@@ -3576,7 +3576,7 @@ static void		addRobots()
     robots[j]->setTeam(AutomaticTeam);
     robotServer[j]->sendVersionString();
     robotServer[j]->sendEnter(ComputerPlayer, robots[j]->getTeam(),
-			      robots[j]->getCallSign(), robots[j]->getEmailAddress());
+			      robots[j]->getCallSign(), robots[j]->getEmailAddress(), "");
 
     // wait for response
     if (robotServer[j]->read(code, len, msg, -1) < 0 || code != MsgAccept) {
@@ -4104,7 +4104,9 @@ static void joinInternetGame2()
 
   // tell server we want to join
   serverLink->sendEnter(TankPlayer, myTank->getTeam(),
-			myTank->getCallSign(), myTank->getEmailAddress());
+			myTank->getCallSign(),
+			myTank->getEmailAddress(),
+			myTank->getToken());
 }
 
 static void		renderDialog()
