@@ -6990,9 +6990,6 @@ void			startPlaying(BzfDisplay* _display,
 	}
   }
 
-  // get tank textures
-  tankTexture = tm.getTexture( "tank" );
-
   // let other stuff do initialization
   sceneBuilder = new SceneDatabaseBuilder(sceneRenderer);
   World::init();
