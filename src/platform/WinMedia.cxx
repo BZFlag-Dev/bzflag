@@ -226,6 +226,9 @@ boolean			WinMedia::hasAudioThread() const
 
 DWORD WINAPI		WinMedia::audioThreadInit(void*)
 {
+  // boost the audio thread's priority
+  SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_ABOVE_NORMAL);
+
   // call user routine
   (*threadProc)(threadData);
   return 0;
