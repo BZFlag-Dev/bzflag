@@ -1206,8 +1206,12 @@ static float baseRotation[NumTeams];
 static float baseSize[NumTeams][3];
 static float safetyBasePos[NumTeams][3];
 
-// first player is playerid = 1
-static int rabbitIndex = 1;
+// FIXME - define a well-known constant for a null playerid in address.h?
+// might be handy in other players, too.
+// Client does not check for rabbit to be 255, but it still works
+// because 255 should be > curMaxPlayers and thus no matchign player will
+// be found.
+static int rabbitIndex = 255; 
 
 static void stopPlayerPacketRelay();
 static void removePlayer(int playerIndex, char *reason, bool notify=true);
@@ -1227,7 +1231,7 @@ int getPlayerIDByRegName(const std::string &regName)
 
 bool hasPerm(int playerIndex, AccessPerm right)
 {
-  return player[playerIndex].Admin || hasPerm(player[playerIndex].accessInfo,right);
+  return player[playerIndex].Admin || hasPerm(player[playerIndex].accessInfo, right);
 }
 
 //
@@ -2232,7 +2236,6 @@ static void pwrite(int playerIndex, const void *b, int l)
       case MsgPlayerUpdate:
       case MsgGMUpdate:
       case MsgLagPing:
-      case MsgNewRabbit:
 	puwrite(playerIndex,b,l);
 	return;
     }
@@ -4319,8 +4322,9 @@ static void addPlayer(int playerIndex)
   // send update of info for team just joined
   sendTeamUpdate(teamIndex);
 
-  // if we're the only player, set as rabbit
-  if ((clOptions.gameStyle & int(RabbitChaseGameStyle)) && firstPlayer) {
+  // if there is no rabbit yet we will become rabbit
+  if (rabbitIndex == 255 && (clOptions.gameStyle & int(RabbitChaseGameStyle)) &&
+       !player[playerIndex].Observer) {
     rabbitIndex = playerIndex;
   }
 
@@ -4552,25 +4556,23 @@ static void zapFlag(int flagIndex)
 static void annointNewRabbit()
 {
   float topRatio = -100000.0f;
-  rabbitIndex = 0;
   int i;
+  int oldRabbit = rabbitIndex;
 
   for (i = 0; i < maxPlayers; i++) {
-    if ((i != rabbitIndex) && (player[i].fd != NotConnected) &&
-        (player[i].state == PlayerAlive)) {
-      float ratio = (player[i].wins - player[i].losses) * (player[i].wins / 10.0f);
+    if (i != oldRabbit && player[i].state == PlayerAlive) {
+      float ratio = (player[i].wins - player[i].losses) * player[i].wins;
       if (ratio > topRatio) {
 	topRatio = ratio;
 	rabbitIndex = i;
       }
     }
   }
-  if (rabbitIndex == 0) {
-    // if nobody is alive
-    topRatio = -100000.0f;
+  if (rabbitIndex == oldRabbit) {
+    // nonody, or no other than old rabbit to choose from
     for (i = 0; i < maxPlayers; i++) {
-      if ((i != rabbitIndex) && (player[i].fd != NotConnected)) {
-	float ratio = (player[i].wins - player[i].losses) * (player[i].wins / 10.0f);
+      if (i != rabbitIndex && player[i].state > PlayerInLimbo && !player[i].Observer) {
+	float ratio = (player[i].wins - player[i].losses) * player[i].wins;
 	if (ratio > topRatio) {
 	  topRatio = ratio;
 	  rabbitIndex = i;
@@ -4835,7 +4837,7 @@ static void sendQueryPlayers(int playerIndex)
 
 static void playerAlive(int playerIndex, const float *pos, const float *fwd)
 {
-  // player is coming alive.  strictly speaking, this can be inferred
+  // player is coming alive.  strictly spearabbit, this can be inferred
   // from the multicast info, but it's nice to have a clear statement.
   // it also allows clients that don't snoop the multicast group to
   // find about it.
@@ -6399,7 +6401,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
       buf = state.unpack(buf);
       if (state.pos[2] > maxTankHeight) {
 	char message[MessageLen];
-	DEBUG1("kicking Player %s [%d]: jump too high\n", player[t].callSign, t);
+	DEBUG1("kicrabbit Player %s [%d]: jump too high\n", player[t].callSign, t);
 	strcpy(message, "Autokick: Out of world bounds, Jump too high, Update your client." );
 	sendMessage(t, t, player[t].team, message, true);
 	removePlayer(t, "too high");
@@ -6420,7 +6422,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
       if (!InBounds)
       {
 	char message[MessageLen];
-	DEBUG1("kicking Player %s [%d]: Out of map bounds\n", player[t].callSign, t);
+	DEBUG1("kicrabbit Player %s [%d]: Out of map bounds\n", player[t].callSign, t);
 	strcpy(message, "Autokick: Out of world bounds, XY pos out of bounds, Don't cheat." );
 	sendMessage(t, t, player[t].team, message, true);
 	removePlayer(t, "Out of map bounds");
@@ -6461,7 +6463,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 	  }
 	  else {
 	    char message[MessageLen];
-	    DEBUG1("kicking Player %s [%d]: tank too fast (tank: %f, allowed: %f)\n",
+	    DEBUG1("kicrabbit Player %s [%d]: tank too fast (tank: %f, allowed: %f)\n",
 	      player[t].callSign, t,
 	      sqrt(curPlanarSpeedSqr), sqrt(maxPlanarSpeedSqr));
 	    strcpy(message, "Autokick: Tank moving too fast, Update your client." );
@@ -6592,7 +6594,7 @@ static const char *extraUsageString =
 "\t-mps: set player score limit on each game\n"
 "\t-ms: maximum simultaneous shots per player\n"
 "\t-mts: set team score limit on each game\n"
-"\t-noudp: never use the new UDP networking\n"
+"\t-noudp: never use the new UDP networrabbit\n"
 "\t-p: use alternative port (default is 5155)\n"
 "\t-passwd: specify a <password> for operator commands\n"
 #ifdef PRINTSCORE
@@ -7698,7 +7700,7 @@ int main(int argc, char **argv)
     return 1;
   }
   if (clOptions.debug >= 2) {
-    // print networking info
+    // print networrabbit info
     fprintf(stderr, "listening on %s:%i\n",
 	serverAddress.getDotNotation().c_str(), clOptions.wksPort);
   }
@@ -7833,7 +7835,7 @@ int main(int argc, char **argv)
 	    (tm - player[i].lastupdate >
 	      (tm - player[i].lastmsg < clOptions.idlekickthresh ?
 	       3 * clOptions.idlekickthresh : clOptions.idlekickthresh))) {
-	  DEBUG1("kicking Player %s [%d]: idle %d\n", player[i].callSign, i,
+	  DEBUG1("kicrabbit Player %s [%d]: idle %d\n", player[i].callSign, i,
 		 int(tm - player[i].lastupdate));
 	  char message[MessageLen] = "You were kicked because of idling too long";
 	  sendMessage(i, i, player[i].team, message, true);

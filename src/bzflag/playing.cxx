@@ -418,7 +418,7 @@ static Player*		getPlayerByIndex(int index)
   return player[index];
 }
 
-static Player*		getPlayerByName( const char* name )
+static Player*		getPlayerByName(const char* name)
 {
   for (int i = 0; i < curMaxPlayers; i++)
     if (player[i] && strcmp( player[i]->getCallSign(), name ) == 0)
@@ -2804,7 +2804,7 @@ static void		handleServerMessage(bool human, uint16_t code,
       }
 
       if (World::getWorld()->allowRabbit())
-	victimPlayer->changeTeam( RogueTeam );
+	victimPlayer->changeTeam(RogueTeam);
 
       // handle my personal score against other players
       if ((killerPlayer == myTank || victimPlayer == myTank) &&
@@ -3054,6 +3054,28 @@ static void		handleServerMessage(bool human, uint16_t code,
       }
 
       checkScores = true;
+      break;
+    }
+
+    case MsgNewRabbit: {
+      PlayerId id;
+      msg = nboUnpackUByte(msg, id);
+      Player *rabbit = lookupPlayer(id);
+
+      for (int i = 0; i < curMaxPlayers; i++) {
+        if (i != id && player[i] && player[i]->getTeam() != RogueTeam) {
+	   player[i]->changeTeam(RogueTeam);
+	}
+      }
+
+      if (rabbit != NULL) {
+	rabbit->changeTeam(RabbitTeam);
+	if (rabbit == myTank) {
+	  hud->setAlert(0, "You are now the rabbit.", 10.0f, false);
+	} else {
+	  myTank->changeTeam(RogueTeam);
+	}
+      }
       break;
     }
 
@@ -3316,30 +3338,6 @@ static void		handleServerMessage(bool human, uint16_t code,
     case MsgLagPing:
       handlePlayerMessage(code, 0, msg);
       break;
-
-    case MsgNewRabbit: {
-      PlayerId id;
-      msg = nboUnpackUByte(msg, id);
-      Player *rabbit = lookupPlayer(id);
-
-      for (int i = 0; i < maxPlayers; i++) {
-	if (!player[i] || (player[i]->getTeam() == RogueTeam)) continue;
-
-	if (player[i] != rabbit) {
-	   player[i]->changeTeam(RogueTeam);
-	}
-      }
-
-      if (rabbit != NULL) {
-	rabbit->changeTeam(RabbitTeam);
-	if (rabbit == myTank) {
-	  hud->setAlert(0, "You are now the rabbit.", 10.0f, false);
-	} else {
-	  myTank->changeTeam(RogueTeam);
-	}
-      }
-      break;
-    }
   }
 
   if (checkScores) updateHighScores();
@@ -5475,6 +5473,10 @@ static void		playingLoop()
 	if (flagId >= FirstTeamFlag && flagId <= LastTeamFlag)
 	  serverLink->sendDropFlag(myTank->getPosition());
 
+        // FIXME - this is not quite working; when we pause, we'll request
+        // that a new tank is chosen rabbit. But after that rabbit dies,
+        // server might choose us as new rabbit,although we're still paused
+        // (server doesn't know pause status)
 	if (World::getWorld()->allowRabbit())
 	  serverLink->sendNewRabbit();
 
