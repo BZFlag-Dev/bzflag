@@ -80,8 +80,14 @@ HUDRenderer::HUDRenderer(const BzfDisplay* _display,
 				hunting(false),
 				huntPosition(0),
 				huntSelection(false),
-				showHunt(false)
+ 				showHunt(false),
+				dater(false),
+				lastTimeChange(time(NULL))
 {
+  if (BZDB.eval("timedate") == 0) //we just want the time
+    dater = false;
+  else if (BZDB.eval("timedate") == 1) //just the date
+    dater = true;
   int i;
 
   // initialize colors
@@ -680,7 +686,22 @@ void			HUDRenderer::renderStatus(void)
     struct tm userTime;
     time(&timeNow);
     userTime = *localtime(&timeNow);
-    sprintf(buffer, "%2d:%2.2d", userTime.tm_hour, userTime.tm_min);
+    if (time(NULL) - lastTimeChange >= 2 && BZDB.eval("timedate") == 2) { //show the date
+      dater = (dater) ? false : true;
+      lastTimeChange = time(NULL);
+      if (dater)
+        sprintf(buffer, "%2d/%2d/%2d", userTime.tm_mday, userTime.tm_mon + 1, 1900 + userTime.tm_year);
+      else
+        sprintf(buffer, "%2d:%2.2d", userTime.tm_hour, userTime.tm_min);
+    }
+    else {
+      if (BZDB.eval("timedate") != 2)
+        dater = (BZDB.eval("timedate") == 1) ? true : false;
+      if (dater)
+        sprintf(buffer, "%2d/%2d/%2d", userTime.tm_mday, userTime.tm_mon + 1, 1900 + userTime.tm_year);
+      else
+        sprintf(buffer, "%2d:%2.2d", userTime.tm_hour, userTime.tm_min);
+    }
     x = (float)window.getWidth() - 0.25f * h - fm.getStrLength(majorFontFace, majorFontSize, buffer);
     hudColor3fv(messageColor);
     fm.drawString(x, y, 0, majorFontFace, majorFontSize, buffer);

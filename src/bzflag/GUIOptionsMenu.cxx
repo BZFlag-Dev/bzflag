@@ -225,6 +225,17 @@ GUIOptionsMenu::GUIOptionsMenu()
   option->createSlider(9);
   option->update();
   list.push_back(option);
+  // Time/date display settings
+  option = new HUDuiList;
+  option->setFontFace(fontFace);
+  option->setLabel("Time / Date Display:");
+  option->setCallback(callback, (void*)"h");
+  options = &option->getList();
+  options->push_back(std::string("time"));
+  options->push_back(std::string("date"));
+  options->push_back(std::string("both"));
+  option->update();
+  list.push_back(option);
 
   initNavigation(list, 1, list.size()-1);
 }
@@ -300,6 +311,7 @@ void			GUIOptionsMenu::resize(int width, int height)
     ((HUDuiList*)list[i++])->setIndex(static_cast<int>(BZDB.eval("killerhighlight")));
     ((HUDuiList*)list[i++])->setIndex(static_cast<int>(BZDB.eval("pulseRate") * 5) - 1);
     ((HUDuiList*)list[i++])->setIndex(static_cast<int>(BZDB.eval("pulseDepth") * 10) - 1);
+    ((HUDuiList*)list[i++])->setIndex(static_cast<int>(BZDB.eval("timedate")));
   }
 }
 
@@ -317,6 +329,12 @@ void			GUIOptionsMenu::callback(HUDuiControl* w, void* data)
       {
 	BZDB.setInt("cpanelfontsize", list->getIndex());
 	getMainWindow()->getWindow()->callResizeCallbacks();
+	break;
+      }
+
+    case 'h':
+      {
+	BZDB.setInt("timedate", list->getIndex());
 	break;
       }
 

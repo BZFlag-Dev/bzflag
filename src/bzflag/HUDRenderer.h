@@ -240,6 +240,8 @@ private:
   int			huntPosition;
   bool		huntSelection;
   bool		showHunt;
+  bool    dater;
+  unsigned int lastTimeChange;
 };
 
 
