@@ -1,0 +1,37 @@
+bzflag (1.7d.20000324) unstable frozen; urgency=low
+
+  * CVS Build
+
+ -- Erik J. Bernhardson <journey@jps.net>  Fri, 24 Mar 2000 02:34:56 -0800
+
+bzflag (1.7d-1) unstable frozen; urgency=low
+
+  * License change to GNU GPL.
+  * fix menu file; bzflag is in /usr/games/. Closes: Bug#55149
+  * recompile to depend on libGL and libGLU. Closes: Bug#55232
+  * Release Manager: 55232 is RC, please let this through.
+
+ -- Anand Kumria <wildfire@progsoc.uts.edu.au>  Sat, 15 Jan 2000 19:56:34 +1100
+
+bzflag (1.7c-3) unstable; urgency=low
+
+  * modify the bzfs script to work in all cases. Closes: Bug#54516
+
+ -- Anand Kumria <wildfire@progsoc.uts.edu.au>  Tue, 11 Jan 2000 14:28:57 +1100
+
+bzflag (1.7c-2) unstable; urgency=low
+
+  * The bzfs.6 manpage was also in bzflag. Closes: Bug#54336
+
+ -- Anand Kumria <wildfire@progsoc.uts.edu.au>  Wed,  5 Jan 2000 15:40:52 +1100
+
+bzflag (1.7c-1) unstable; urgency=low
+
+  * Initial Release.
+  * Patches, as available on web site, applied
+
+ -- Anand Kumria <wildfire@progsoc.uts.edu.au>  Sun, 12 Dec 1999 14:07:25 +1100
+
+Local variables:
+mode: debian-changelog
+End:

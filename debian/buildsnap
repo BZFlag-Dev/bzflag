@@ -1,0 +1,7 @@
+#!/bin/sh
+
+version=`date +%Y%m%d`
+date=`date --rfc-822`
+sed -e "s/@VERSION@/$version/g" -e "s/@DATE@/$date/g" < debian/changelog.in > debian/changelog
+
+dpkg-buildpackage -us -uc -rfakeroot
