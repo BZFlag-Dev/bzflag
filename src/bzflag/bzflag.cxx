@@ -60,8 +60,8 @@ static std::string	anonymousName("anonymous");
 static bool		noAudio = false;
 struct tm		userTime;
 static StartupInfo	startupInfo;
-static ResourceDatabase	db;
 bool			echoToConsole = false;
+ResourceDatabase	db;
 
 static BzfDisplay*	display = NULL;
 

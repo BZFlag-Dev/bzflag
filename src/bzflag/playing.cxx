@@ -134,8 +134,6 @@ static std::vector<BillboardSceneNode*>	prototypeExplosions;
 static int		savedVolume = -1;
 static bool		grabMouseAlways = false;
 
-static Bundle		*bdl = NULL;
-
 static char		messageMessage[PlayerIdPLen + 2 + MessageLen];
 
 static std::vector<std::string>	messageHistory;
@@ -2630,7 +2628,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 	break;
       }
 
-      std::string text = bdl->getLocalString(std::string((char*)msg));
+      std::string text = BundleMgr::getCurrentBundle()->getLocalString(std::string((char*)msg));
 
       if (srcPlayer == myTank || dstPlayer == myTank || (!dstPlayer &&
 	  (int(team) == int(RogueTeam) ||
@@ -5531,8 +5529,6 @@ void			startPlaying(BzfDisplay* _display,
 					StartupInfo* _info)
 {
   int i;
-
-  bdl = BundleMgr::getCurrentBundle();
   // initalization
   display = _display;
   sceneRenderer = &renderer;

@@ -106,7 +106,6 @@ HUDuiControl::HUDuiControl() : showingFocus(true),
 				prev(this), next(this),
 				cb(NULL), userData(NULL)
 {
-  bdl = BundleMgr::getCurrentBundle();
   if (totalCount == 0) {
     // load arrow texture
     arrow = new OpenGLTexture;
@@ -145,7 +144,7 @@ float			HUDuiControl::getLabelWidth() const
 
 std::string		HUDuiControl::getLabel() const
 {
-  return label;
+  return BundleMgr::getCurrentBundle()->getLocalString(label);
 }
 
 const OpenGLTexFont&	HUDuiControl::getFont() const
@@ -193,8 +192,8 @@ void			HUDuiControl::setLabelWidth(float labelWidth)
 void			HUDuiControl::setLabel(const std::string& _label)
 {
 
-  label = bdl->getLocalString(_label);
-  if (font.isValid()) trueLabelWidth = font.getWidth(label);
+  label = _label;
+  if (font.isValid()) trueLabelWidth = font.getWidth(getLabel());
 }
 
 void			HUDuiControl::setFont(const OpenGLTexFont& _font)
@@ -312,10 +311,12 @@ void			HUDuiControl::renderFocus()
 
 void			HUDuiControl::renderLabel()
 {
-  if (label.length() > 0 && font.isValid()) {
-    const float dx = (desiredLabelWidth > trueLabelWidth) ?
-			desiredLabelWidth : trueLabelWidth;
-    font.draw(label, x - dx - 2.0f * fontHeight, y);
+  std::string theLabel = getLabel();
+  if (theLabel.length() > 0 && getFont().isValid()) {
+    trueLabelWidth = getFont().getWidth(theLabel);
+    const float dx = (desiredLabelWidth > trueLabelWidth)
+      ? desiredLabelWidth : trueLabelWidth;
+    font.draw(theLabel, x - dx - 2.0f * fontHeight, y);
   }
 }
 
@@ -360,8 +361,6 @@ std::vector<std::string>&		HUDuiList::getList()
 
 void			HUDuiList::update()
 {
-  for (std::vector<std::string>::iterator it = list.begin(); it != list.end(); ++it)
-    (*it) = bdl->getLocalString(*it);
   setIndex(index);
 }
 
@@ -424,9 +423,10 @@ bool			HUDuiList::doKeyRelease(const BzfKeyEvent&)
 
 void			HUDuiList::doRender()
 {
+  Bundle *bdl = BundleMgr::getCurrentBundle();
   if (index != -1 && getFont().isValid()) {
     glColor3fv(hasFocus() ? textColor : dimTextColor);
-    getFont().draw(list[index], getX(), getY());
+    getFont().draw(bdl->getLocalString(list[index]), getX(), getY());
   }
 }
 
@@ -578,23 +578,48 @@ void			HUDuiTypeIn::doRender()
 
 HUDuiLabel::HUDuiLabel() : HUDuiControl()
 {
+  params = NULL;
 }
 
 HUDuiLabel::~HUDuiLabel()
 {
+  if (params) {
+    while (params->size()) {
+      params->erase(params->begin());
+    }
+    delete params;
+    params = NULL;
+  }
 }
 
 std::string		HUDuiLabel::getString() const
 {
-  return string;
+  std::string theString;
+  Bundle *bdl = BundleMgr::getCurrentBundle();
+  if (params)
+    theString = bdl->formatMessage(string, params);
+  else
+    theString = bdl->getLocalString(string);
+
+  return theString;
 }
 
-void			HUDuiLabel::setString(const std::string& _string, const std::vector<std::string> *parms)
+void			HUDuiLabel::setString(const std::string& _string, const std::vector<std::string> *_params)
 {
-  if (parms)
-    string = bdl->formatMessage(_string, parms);
-  else
-    string = bdl->getLocalString(_string);
+  string = _string;
+  if (_params) {
+    if (params != NULL) {
+      while (params->size() > 0)
+        params->erase(params->begin());
+      delete params;
+    }
+    params = new std::vector<std::string>;
+    if (params) {
+      for (int i = 0; i < (int)_params->size(); i++) {
+        params->push_back((*_params)[i]);
+      }
+    }
+  }
   onSetFont();
 }
 
@@ -639,10 +664,9 @@ bool			HUDuiLabel::doKeyRelease(const BzfKeyEvent&)
 void			HUDuiLabel::doRender()
 {
   if (!getFont().isValid()) return;
-
   // render string
   glColor3fv(hasFocus() ? textColor : dimTextColor);
-  getFont().draw(string, getX(), getY());
+  getFont().draw(getString(), getX(), getY());
 }
 
 //

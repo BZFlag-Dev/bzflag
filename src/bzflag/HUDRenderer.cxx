@@ -174,8 +174,6 @@ HUDRenderer::HUDRenderer(const BzfDisplay* _display,
 {
   int i;
 
-  bdl = BundleMgr::getCurrentBundle();
-
   // initialize colors
   hudColor[0] = 1.0f;
   hudColor[1] = 0.625f;
@@ -475,7 +473,7 @@ void			HUDRenderer::setAlert(int index, const char* string,
     alertClock[index].setClock(0.0f);
   }
   else {
-    alertLabel[index] = bdl->getLocalString(string);
+    alertLabel[index] = BundleMgr::getCurrentBundle()->getLocalString(string);
     alertLabelWidth[index] = alertFont.getWidth(alertLabel[index]);
     alertColor[index] = warning ? warningColor : messageColor;
     alertClock[index].setClock(duration);
@@ -615,7 +613,7 @@ void			HUDRenderer::setMarkerColor(int index,
 void			HUDRenderer::setRestartKeyLabel(const std::string& label)
 {
   char buffer[250];
-  sprintf(buffer, bdl->getLocalString(restartLabelFormat).c_str(), label.c_str());
+  sprintf(buffer, BundleMgr::getCurrentBundle()->getLocalString(restartLabelFormat).c_str(), label.c_str());
   restartLabel = buffer;
   restartLabelWidth = bigFont.getWidth(restartLabel);
 }
@@ -639,7 +637,7 @@ std::string		HUDRenderer::makeHelpString(const char* help) const
   // and put them into a std::string separated by NUL's.
   const float maxWidth = (float)window.getWidth() * 0.85f;
   std::string msg;
-  std::string text = bdl->getLocalString(help);
+  std::string text = BundleMgr::getCurrentBundle()->getLocalString(help);
   const char* scan = text.c_str();
   while (*scan) {
     // FIXME should break at previous space, not after word that passes maxWidth
@@ -757,6 +755,8 @@ void			HUDRenderer::renderStatus(void)
   LocalPlayer* player = LocalPlayer::getMyTank();
   if (!player || !World::getWorld()) return;
 
+  Bundle *bdl = BundleMgr::getCurrentBundle();
+
   char buffer[60];
   const float h = majorFont.getSpacing();
   float x = 0.25f * h;
@@ -773,7 +773,7 @@ void			HUDRenderer::renderStatus(void)
 
   // print flag if player has one in upper right
   if (flag != NoFlag) {
-    sprintf(buffer, "%s", bdl->getLocalString(Flag::getName(flag)).c_str());
+    sprintf(buffer, "%s", BundleMgr::getCurrentBundle()->getLocalString(Flag::getName(flag)).c_str());
     x = (float)window.getWidth() - 0.25f * h - majorFont.getWidth(buffer);
     if (Flag::getType(flag) == FlagSticky)
       hudColor3fv(warningColor);
@@ -879,6 +879,8 @@ void			HUDRenderer::renderScoreboard(void)
 
   LocalPlayer* myTank = LocalPlayer::getMyTank();
   if (!myTank || !World::getWorld()) return;
+
+  Bundle *bdl = BundleMgr::getCurrentBundle();
 
   const float x1 = 0.01f * window.getWidth();
   const float x2 = x1 + scoreLabelWidth;

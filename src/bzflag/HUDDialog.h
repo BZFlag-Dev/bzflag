@@ -32,7 +32,7 @@ class HUDDialog {
     virtual void		show() { }
     virtual void		execute() = 0;
     virtual void		dismiss() { }
-    virtual void		resize(int width, int height) = 0;
+    virtual void		resize(int _width, int _height);
 
     HUDuiControl*		getFocus() const;
     void			setFocus(HUDuiControl*);
@@ -45,9 +45,15 @@ class HUDDialog {
     const std::vector<HUDuiControl*>&	getControls() const { return list; }
     std::vector<HUDuiControl*>&		getControls() { return list; }
 
+    int				getHeight() const { return height; }
+    int				getWidth() const { return width; }
+
+  protected:
+    int				height, width;
+
   private:
     std::vector<HUDuiControl*>	list;
-    HUDuiControl*	focus;
+    HUDuiControl*		focus;
 };
 
 class HUDDialogStack {

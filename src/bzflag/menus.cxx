@@ -52,6 +52,9 @@
 #include "TimeKeeper.h"
 #include "World.h"
 #include "Bundle.h"
+#include "resources.h"
+
+extern ResourceDatabase db;	// bzflag.cxx
 
 //
 // MenuDefaultKey
@@ -167,6 +170,8 @@ HUDuiControl*		QuitMenu::createLabel(const char* string,
 
 void			QuitMenu::resize(int width, int height)
 {
+  HUDDialog::resize(width, height);
+
   // use a big font
   float fontWidth = (float)height / 10.0f;
   float fontHeight = (float)height / 10.0f;
@@ -467,6 +472,8 @@ void			FormatMenu::setFormat(bool test)
 
 void			FormatMenu::resize(int width, int height)
 {
+  HUDDialog::resize(width, height);
+
   // use a big font for title, smaller font for the rest
   const float titleFontWidth = (float)height / 10.0f;
   const float titleFontHeight = (float)height / 10.0f;
@@ -717,6 +724,8 @@ void			KeyboardMapMenu::dismiss()
 
 void			KeyboardMapMenu::resize(int width, int height)
 {
+  HUDDialog::resize(width, height);
+
   int i;
   // use a big font for title, smaller font for the rest
   const float titleFontWidth = (float)height / 10.0f;
@@ -932,6 +941,46 @@ GUIOptionsMenu::GUIOptionsMenu()
   option->update();
   list.push_back(option);
 
+  // set locale
+  option = new HUDuiList;
+  option->setFont(MainMenu::getFont());
+  option->setLabel("Locale:");
+  option->setCallback(callback, (void*)"L");
+  options = &option->getList();
+  std::vector<std::string> locales;
+  if (BundleMgr::getLocaleList(&locales) == true) {
+	for (int i = 0; i < (int)locales.size(); i++) {
+	  options->push_back(locales[i]);
+	}
+	locales.erase(locales.begin(), locales.end());
+  }
+  else {
+	// Something failed when trying to compile a list
+	// of all the locales. Add them manually here instead.
+	options->push_back(std::string("default"));
+/*	options->push_back(std::string("da"));
+	options->push_back(std::string("de"));
+	options->push_back(std::string("en_US_l33t"));
+	options->push_back(std::string("en_US_redneck"));
+	options->push_back(std::string("es"));
+	options->push_back(std::string("fr"));
+	options->push_back(std::string("it"));
+	options->push_back(std::string("kg"));
+	options->push_back(std::string("nl"));
+	options->push_back(std::string("pt"));
+	options->push_back(std::string("sv"));
+*/
+  }
+  
+  for (int i = 0; i < (int)options->size(); i++) {
+    if ((*options)[i].compare(World::getLocale()) == 0) {
+      option->setIndex(i);
+      break;
+    }
+  }
+  option->update();
+  list.push_back(option);
+
   initNavigation(list, 1,list.size()-1);
 }
 
@@ -945,6 +994,8 @@ void			GUIOptionsMenu::execute()
 
 void			GUIOptionsMenu::resize(int width, int height)
 {
+  HUDDialog::resize(width, height);
+
   // use a big font for title, smaller font for the rest
   const float titleFontWidth = (float)height / 10.0f;
   const float titleFontHeight = (float)height / 10.0f;
@@ -1022,6 +1073,21 @@ void			GUIOptionsMenu::callback(HUDuiControl* w, void* data)
     case 'M':
     {
       sceneRenderer->setMaxMotionFactor(list->getIndex());
+      break;
+    }
+
+    case 'L':
+    {
+      std::vector<std::string>* options = &list->getList();
+      std::string locale = (*options)[list->getIndex()];
+
+      World::setLocale(locale);
+      db.addValue("locale", locale);
+      World::getBundleMgr()->getBundle(locale, true);
+
+      GUIOptionsMenu *menu = (GUIOptionsMenu *) HUDDialogStack::get()->top();
+      if (menu)
+        menu->resize(menu->getWidth(), menu->getHeight());
       break;
     }
   }
@@ -1305,6 +1371,8 @@ void			OptionsMenu::execute()
 
 void			OptionsMenu::resize(int width, int height)
 {
+  HUDDialog::resize(width, height);
+
   // use a big font for title, smaller font for the rest
   const float titleFontWidth = (float)height / 10.0f;
   const float titleFontHeight = (float)height / 10.0f;
@@ -1565,6 +1633,8 @@ float			HelpMenu::getLeftSide(int, int height)
 
 void			HelpMenu::resize(int width, int height)
 {
+  HUDDialog::resize(width, height);
+
   // use a big font for title, smaller font for the rest
   const float titleFontWidth = (float)height / 15.0f;
   const float titleFontHeight = (float)height / 15.0f;
@@ -2238,7 +2308,6 @@ class ServerMenu : public HUDDialog {
     struct sockaddr_in	pingInAddr;
     int			pingBcastSocket;
     struct sockaddr_in	pingBcastAddr;
-    int			width, height;
     HUDuiLabel*		status;
 
     HUDuiLabel*		pageLabel;
@@ -2680,11 +2749,10 @@ void			ServerMenu::dismiss()
   pingBcastSocket = -1;
 }
 
-void			ServerMenu::resize(int _width, int _height)
+void			ServerMenu::resize(int width, int height)
 {
   // remember size
-  width = _width;
-  height = _height;
+  HUDDialog::resize(width, height);
 
   // get number of servers
   std::vector<HUDuiControl*>& list = getControls();
@@ -3500,6 +3568,8 @@ void			ServerStartMenu::setStatus(const char* msg, const std::vector<std::string
 
 void			ServerStartMenu::resize(int width, int height)
 {
+  HUDDialog::resize(width, height);
+
   // use a big font for title, smaller font for the rest
   const float titleFontWidth = (float)height / 10.0f;
   const float titleFontHeight = (float)height / 10.0f;
@@ -3802,6 +3872,8 @@ void			JoinMenu::teamCallback(HUDuiControl*, void*)
 
 void			JoinMenu::resize(int width, int height)
 {
+  HUDDialog::resize(width, height);
+
   // use a big font for title, smaller font for the rest
   const float titleFontWidth = (float)height / 10.0f;
   const float titleFontHeight = (float)height / 10.0f;
@@ -3931,6 +4003,8 @@ void			MainMenu::execute()
 
 void			MainMenu::resize(int width, int height)
 {
+  HUDDialog::resize(width, height);
+
   // use a big font
   const float titleFontWidth = (float)height / 10.0f;
   const float titleFontHeight = (float)height / 10.0f;

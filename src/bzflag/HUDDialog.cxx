@@ -22,7 +22,7 @@
 
 HUDDialog::HUDDialog() : focus(NULL)
 {
-  // do nothing
+  height = width = 0;
 }
 
 HUDDialog::~HUDDialog()
@@ -38,6 +38,12 @@ void			HUDDialog::render()
   const int count = list.size();
   for (int i = 0; i < count; i++)
     list[i]->render();
+}
+
+void			HUDDialog::resize(int _width, int _height)
+{
+  width 	= _width;
+  height	= _height;
 }
 
 HUDuiControl*		HUDDialog::getFocus() const

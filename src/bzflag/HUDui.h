@@ -108,7 +108,6 @@ class HUDuiControl {
     void		renderLabel();
 
     void		doCallback();
-    Bundle		*bdl;
 
   private:
     bool		showingFocus;
@@ -179,7 +178,7 @@ class HUDuiLabel : public HUDuiControl {
 			~HUDuiLabel();
 
     std::string		getString() const;
-    void		setString(const std::string&, const std::vector<std::string> *parms = NULL);
+    void		setString(const std::string&, const std::vector<std::string> *_params = NULL);
 
   protected:
     void		onSetFont();
@@ -188,7 +187,8 @@ class HUDuiLabel : public HUDuiControl {
     void		doRender();
 
   private:
-    std::string		string;
+  std::string		string;
+  std::vector<std::string> *params;
 };
 
 class HUDuiTextureLabel : public HUDuiLabel {
