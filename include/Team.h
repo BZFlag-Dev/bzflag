@@ -30,10 +30,10 @@ struct Team {
     void*		pack(void*) const;
     void*		unpack(void*);
 
-    static const char*	getName(TeamColor); // const
-    static const float*	getTankColor(TeamColor); // const
-    static const float*	getRadarColor(TeamColor); // const
-    static const bool	isColorTeam(TeamColor); // const
+  static const char*	getName(TeamColor); // const
+  static const float*	getTankColor(TeamColor); // const
+  static const float*	getRadarColor(TeamColor); // const
+  static bool	isColorTeam(TeamColor); // const
 
     static void		setColors(TeamColor,
 				const float* tank,
@@ -57,4 +57,3 @@ struct Team {
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

@@ -92,7 +92,7 @@ const float*		Team::getRadarColor(TeamColor team) // const
   return radarColor[int(team)];
 }
 
-const bool		Team::isColorTeam(TeamColor team) // const
+bool		Team::isColorTeam(TeamColor team) // const
 {
   return team >= RedTeam  && team <= PurpleTeam;
 }
