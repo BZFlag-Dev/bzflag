@@ -13,14 +13,16 @@
 /* interface header */
 #include "PlayerInfo.h"
 
-// system headers
-#include <errno.h>
-
 /* system implementation headers */
+#include <errno.h>
 #include <assert.h>
 
-// implementation-specific bzflag headers
+/* implementation-specific common headers */
 #include "TextUtils.h"
+
+
+// static filter initialized on first-use
+WordFilter *PlayerInfo::serverSpoofingFilter = (WordFilter *)NULL;
 
 PlayerInfo::PlayerInfo(int _playerIndex) :
   playerIndex(_playerIndex), state(PlayerInLimbo), flag(-1),
@@ -139,15 +141,21 @@ bool PlayerInfo::unpackEnter(void *buf, uint16_t &rejectCode, char *rejectMsg)
   cleanCallSign();
   cleanEMail();
 
+  // spoof filter holds "SERVER" for robust name comparisons
+  if (serverSpoofingFilter == NULL) {
+    serverSpoofingFilter = new WordFilter();
+    serverSpoofingFilter->addToFilter(std::string("SERVER"), std::string(""));
+  }
+
   // don't allow empty callsign
   if (callSign[0] == '\0') {
     rejectCode   = RejectBadCallsign;
     strcpy(rejectMsg, "The callsign was rejected.  Try a different callsign.");
     return false;
   }
+
   // no spoofing the server name
-  if (strcasecmp(callSign, "SERVER") == 0 || strcasecmp(callSign, "[SERVER->]") == 0 ||
-		  strcasecmp(callSign, "[->SERVER]") == 0 || strcasecmp(callSign, "[SERVER]") == 0) {
+  if (serverSpoofingFilter->filter(callSign)) {
     rejectCode   = RejectRepeatCallsign;
     strcpy(rejectMsg, "The callsign specified is already in use.");
     return false;

@@ -23,13 +23,12 @@
 #include <sys/socket.h>
 #endif
 
-// bzflag library headers
+// common interface headers
 #include "TimeKeeper.h"
 #include "Team.h"
 #include "Protocol.h"
 #include "Flag.h"
-
-// bzfs-specific headers
+#include "WordFilter.h"
 
 
 // ??? - we need a compile-time flag for this (that is always on)?
@@ -167,6 +166,9 @@ private:
 
   // tracker id for position tracking
   unsigned short int tracker;
+
+  // just need one of these for 
+  static WordFilter *serverSpoofingFilter;
 };
 
 
@@ -179,4 +181,3 @@ private:
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-
