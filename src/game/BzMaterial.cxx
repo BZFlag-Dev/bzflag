@@ -216,6 +216,13 @@ BzMaterial::BzMaterial()
 }
 
 
+BzMaterial::~BzMaterial()
+{
+  delete[] textures;
+  delete[] shaders;
+}
+
+
 BzMaterial::BzMaterial(const BzMaterial& m)
 {
   textures = NULL;

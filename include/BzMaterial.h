@@ -28,6 +28,7 @@ class BzMaterial {
   public:
     BzMaterial();
     BzMaterial(const BzMaterial& material);
+    ~BzMaterial();
 
     bool operator==(const BzMaterial& material) const;
     BzMaterial& operator=(const BzMaterial& material);
