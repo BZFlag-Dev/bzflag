@@ -887,7 +887,7 @@ void TrackSceneNode::update()
   setCenter(te->pos);
 
   // update the radius squared (for culling)
-  float radius;
+  float radius = 0;
   if (type == TreadsTrack) {
     radius = (te->scale * TreadOutside);
   } else if (type == PuddleTrack) {
