@@ -156,22 +156,18 @@ SpawnPosition::~SpawnPosition()
 const bool SpawnPosition::isFacing(const float *enemyPos, const float enemyAzimuth, 
 				   const float deviation) const
 {
-  // determine angle from source to dest
-  // (X) using only x & y, resultant will be z rotation
-  float dx = testPos[0] - enemyPos[0];
-  float dy = testPos[1] - enemyPos[1];
-  float angActual;
-  if (dx == 0) {
-    // avoid divide by zero error
-    angActual = (float)tan(dy / (1 / 1e12f));
-  } else {
-    angActual = (float)tan(dy / dx);
-  }
-
-  // see if our heading angle is within the bounds set by deviation
-  // (X) only compare to z-rotation since that's all we're using
-  if (((angActual + deviation / 2) > enemyAzimuth) &&
-      ((angActual - deviation / 2) < enemyAzimuth)) {
+  // vector points from test to enemy
+  float dx = enemyPos[0] - testPos[0];
+  float dy = enemyPos[0] - testPos[1];
+  float angActual = atan2f (dy, dx);
+  float diff = fmodf(enemyAzimuth - angActual, M_PI * 2.0f);
+  
+  // now diff is between {-PI*2 and +PI*2}, and we're looking for values around
+  // -PI or +PI, because that's when the enemy is facing the source.
+  diff = fabsf (diff); // between {0 and +PI*2}
+  diff = fabsf (diff - M_PI);
+  
+  if (diff < (deviation / 2.0f)) {
     return true;
   } else {
     return false;
