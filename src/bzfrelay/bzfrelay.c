@@ -134,6 +134,7 @@ typedef struct AddressSet {
 
 static const char*	pname;			/* name of app */
 static int		done;			/* != 0 to quit */
+static int		debugLevel;		/* amount of logging */
 static int		fdMax;			/* highest file descriptor */
 static int		fdListen;		/* listen for connections */
 static int		fdReconnect;		/* listen for reconnections */
