@@ -813,6 +813,10 @@ void			LocalPlayer::setDesiredSpeed(float fracOfMaxSpeed)
     fracOfMaxSpeed *= BZDB.eval(StateDatabase::BZDB_THIEFVELAD);
   } else if ((flag == Flags::Burrow) && (getPosition()[2] < 0.0f)) {
     fracOfMaxSpeed *= BZDB.eval(StateDatabase::BZDB_BURROWSPEEDAD);
+  } else if ((flag == Flags::ForwardOnly) && (fracOfMaxSpeed < 0.0)) {
+    fracOfMaxSpeed = 0.0f;
+  } else if ((flag == Flags::ReverseOnly) && (fracOfMaxSpeed > 0.0)) {
+    fracOfMaxSpeed = 0.0f;
   }
 
   // set desired speed

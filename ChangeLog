@@ -5,6 +5,7 @@
 BZFlag 1.11
 -----------
 
+* Added ForwardOnly and ReverseOnly bad flags - Sean Morrison
 * bans based on hostmask (/hostban, ...) when adns is available - Nils McCarthy
 * No Jumping and Trigger Happy flags - Nils McCarthy
 * server option to disallow autopilot - Nils McCarthy

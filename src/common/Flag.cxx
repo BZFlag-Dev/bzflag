@@ -64,6 +64,8 @@ namespace Flags {
   FlagType *Obesity;
   FlagType *LeftTurnOnly;
   FlagType *RightTurnOnly;
+  FlagType *ForwardOnly;
+  FlagType *ReverseOnly;
   FlagType *Momentum;
   FlagType *Blindness;
   FlagType *Jamming;
@@ -139,9 +141,13 @@ namespace Flags {
     Obesity                 = new FlagType( "Obesity", "O", FlagSticky, NormalShot, FlagBad, NoTeam,
 						    "Obesity (-O):  Tank becomes very large.  Can't fit through teleporters.");
     LeftTurnOnly            = new FlagType( "Left Turn Only", "LT", FlagSticky, NormalShot, FlagBad, NoTeam,
-						    "left turn only (-LT):  Can't turn right.");
+						    "Left turn only (-LT):  Can't turn right.");
     RightTurnOnly           = new FlagType( "Right Turn Only", "RT", FlagSticky, NormalShot, FlagBad, NoTeam,
-						    "right turn only (-RT):  Can't turn left.");
+						    "Right turn only (-RT):  Can't turn left.");
+    ForwardOnly             = new FlagType( "Forward Only", "FO", FlagSticky, NormalShot, FlagBad, NoTeam,
+						    "Forward only (-FO):  Can't drive in reverse.");
+    ReverseOnly             = new FlagType( "ReverseOnly", "RO", FlagSticky, NormalShot, FlagBad, NoTeam,
+						    "Reverse only (-RO):  Can't drive forward.");
     Momentum                = new FlagType( "Momentum", "M", FlagSticky, NormalShot, FlagBad, NoTeam,
 						    "Momentum (-M):  Tank has inertia.  Acceleration is limited.");
     Blindness               = new FlagType( "Blindness", "B", FlagSticky, NormalShot, FlagBad, NoTeam,

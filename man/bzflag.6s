@@ -560,6 +560,12 @@ Prevents the tank from turning right.
 .B Right Turn Only (->)
 Prevents the tank from turning left.
 .TP
+.B Forward Only (<-)
+Prevents the tank from going backwards.
+.TP
+.B Reverse Only (->)
+Prevents the tank from going forward.
+.TP
 .B Momentum (M)
 Gives the tank a lot of inertia.
 .TP
