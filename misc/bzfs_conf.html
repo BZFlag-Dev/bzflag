@@ -1,6 +1,13 @@
 <html>
 	<head>
 		<title>BZFS Configuration Builder</title>
+		<style type="text/css">
+			a { font-size: 110%; text-decoration:none; display: block; color:#0000FF; background-color:#DAE2F6; }
+			a:link { display: block; color:#0000FF; background-color:#9FB5E0; }
+			a:visit { display: block; color:#0000FF; background-color:#7090D0; }
+			a:hover { display: block; color:#000000; background-color: #BED0EA; }
+			legend { font-size: 110%; line-height: 1.5; }			
+		</style>
 		<script language="JavaScript">
 			var flags = new Array(	"V", "A", "OO", "F", "MG", "GM", "L", "R", "SB",
 						"IB", "ST", "T", "N", "SH", "SR", "SW", "PZ", "G",
@@ -421,7 +428,7 @@
 		<hr/>
 		<form method="post" name="main" encType="multipart/form-data" onLoad="return ableControls()">
 			<div id="controls" style="visibility: visible;">
-				<table bgcolor="#7090D0" width="100%" align="center">
+				<table width="100%" align="center">
 					<tr>
 						<td align="center" width="16%"><a href='javascript:changeDiv("server")'>Server</a></td>
 						<td align="center" width="16%"><a href='javascript:changeDiv("administration")'>Administration</a></td>
