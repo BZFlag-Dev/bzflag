@@ -22,7 +22,7 @@ EXTRA_DIST = \
 	flag_won.wav	\
 	green_bolt.png	\
 	green_laser.png	\
-	green_superbolt.png	\
+	green_super_bolt.png	\
 	ground.png	\
 	helvbi.png	\
 	helvbr.png	\
