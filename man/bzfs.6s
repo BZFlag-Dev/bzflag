@@ -46,7 +46,7 @@ bzfs \- BZFlag game server
 [\fB\-synctime\fR]
 [\fB\-t\fR]
 [\fB\-time \fItime-limit\fR]
-[\fB\-tkkr\fIpercent\fR]
+[\fB\-tkkr \fIpercent\fR]
 [\fB\-tk\fR]
 [\fB\-ttl \fIttl\fR]
 [\fB\-version\fR]
@@ -246,7 +246,7 @@ Sets a time limit on the game to \fItime-limit\fR.  The game will be
 stopped \fItime-limit\fR seconds after the first player connects.
 .TP
 .B -tkkr
-Kicks players who's team killing to normal kill ratio is greater than this 
+Kicks players whose team killing to normal kill ratio is greater than this 
 precentage. A start up grace period is given to players.
 .TP
 .B -tk
@@ -334,6 +334,19 @@ Lists network delays by player. Example:
 MrApathyCream 335ms (5)
 Gerbol 210ms (8)
 captain_macgyver 155ms (12)
+.ft R
+
+.TP
+.B /idlestats
+Displays the idle time in seconds for each player. A player is idle when
+he is dead.
+
+.ft CW
+.nf
+.ne 3
+MrApathyCream: 0s
+Gerbol: 80s
+captain_macgyver: 13s
 .ft R
 
 .TP
