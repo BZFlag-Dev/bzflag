@@ -49,7 +49,7 @@ LinkManager::~LinkManager()
   clear();
   return;
 }
-  
+
 
 void LinkManager::clear()
 {
@@ -58,7 +58,7 @@ void LinkManager::clear()
   return;
 }
 
-  
+
 void LinkManager::makeLinkName(int number, std::string& name)
 {
   name = "/t";
@@ -127,14 +127,14 @@ void LinkManager::doLinking()
   for (i = 0; i < linkNumbers.size(); i++) {
     linkNumbers[i].dsts.clear();
   }
-  
+
   for (i = 0; i < linkNames.size(); i++) {
     LinkNameSet& link = linkNames[i];
     std::vector<int> srcNumbers;
     std::vector<int> dstNumbers;
     findTelesByName(link.src, srcNumbers);
     findTelesByName(link.dst, dstNumbers);
-  
+
     bool broken = false;
     if (srcNumbers.size() <= 0) {
       broken = true;
@@ -147,7 +147,7 @@ void LinkManager::doLinking()
     if (broken) {
       continue;
     }
-    
+
     for (unsigned s = 0; s < srcNumbers.size(); s++) {
       for (unsigned d = 0; d < dstNumbers.size(); d++) {
         std::vector<int>& dstsList = linkNumbers[srcNumbers[s]].dsts;
@@ -186,7 +186,7 @@ void LinkManager::doLinking()
       printf ("\n");
     }
   }
-  
+
   return;
 }
 
@@ -195,21 +195,21 @@ void LinkManager::findTelesByName(const std::string& name,
                                   std::vector<int>& list) const
 {
   list.clear();
-  
+
   std::string glob = name;
-  
+
   // no chars, no service
   if (glob.size() <= 0) {
     return;
   }
-  
+
   // a leading ':' might be used to indicate absolute linking if
   // links are ever included in group definintions. strip it here
   // for forwards compatibiliy.
   if (glob[0] == ':') {
     glob.erase(0, 1); // erase 1 char from position 0
   }
-  
+
   // setup for the faces types
   bool front = false;
   bool back = false;
@@ -240,7 +240,7 @@ void LinkManager::findTelesByName(const std::string& name,
   if (!front && !back) {
     return; // no possible matches
   }
-  
+
   // add all teleporters that have matching names
   const ObstacleList& teles = OBSTACLEMGR.getTeles();
   for (unsigned int i = 0; i < teles.size(); i++) {
@@ -254,16 +254,16 @@ void LinkManager::findTelesByName(const std::string& name,
       }
     }
   }
-  
+
   return;
-}                                         
+}
 
 
 int LinkManager::getTeleportTarget(int source) const
 {
   const ObstacleList& teles = OBSTACLEMGR.getTeles();
   assert(source < (int)(2 * teles.size()));
-  
+
   const std::vector<int>& dstsList = linkNumbers[source].dsts;
 
   if (dstsList.size() == 1) {
@@ -284,7 +284,7 @@ int LinkManager::getTeleportTarget(int source, unsigned int seed) const
 {
   const ObstacleList& teles = OBSTACLEMGR.getTeles();
   assert(source < (int)(2 * teles.size()));
-  
+
   const std::vector<int>& dstsList = linkNumbers[source].dsts;
 
   if (dstsList.size() == 1) {
@@ -301,7 +301,7 @@ int LinkManager::getTeleportTarget(int source, unsigned int seed) const
   }
 }
 
-  
+
 void* LinkManager::pack(void* buf) const
 {
   buf = nboPackUInt(buf, (uint32_t) linkNames.size());
@@ -309,7 +309,7 @@ void* LinkManager::pack(void* buf) const
     buf = nboPackStdString(buf, linkNames[i].src);
     buf = nboPackStdString(buf, linkNames[i].dst);
   }
-  return buf; 
+  return buf;
 }
 
 
@@ -348,14 +348,13 @@ int LinkManager::packSize() const
     fullSize += nboStdStringPackSize(linkNames[i].src);
     fullSize += nboStdStringPackSize(linkNames[i].dst);
   }
-  return fullSize; 
+  return fullSize;
 }
 
 
 /******************************************************************************/
 
-static int
-match_object_name (const char *string, const char *objname)
+static int match_object_name (const char *string, const char *objname)
 {
   if (string == NULL) {
     return 0;
@@ -367,7 +366,7 @@ match_object_name (const char *string, const char *objname)
   if ((string[0] == MATCH_MULTI) && (string[1] == '\0')) {
     return 1;
   }
-   
+
   while (*string != '\0') {
     if (*string == MATCH_MULTI) {
       string++;
@@ -379,7 +378,7 @@ match_object_name (const char *string, const char *objname)
           return 0;
         }
       }
-    }  
+    }
     else if (*objname == '\0') {
       return 0;
     }
@@ -390,19 +389,18 @@ match_object_name (const char *string, const char *objname)
     else {
       return 0;
     }
-  }  
-     
+  }
+
   if (*objname == '\0') {
     return 1;
   } else {
     return 0;
   }
-}  
-   
+}
+
 /******************************************************************************/
 
-static int
-match_multi (const char **string, const char **objname)
+static int match_multi (const char **string, const char **objname)
 {
   const char *str = *string;
   const char *obj = *objname;
@@ -414,7 +412,7 @@ match_multi (const char **string, const char **objname)
   if (*str == '\0') { // '*' was last, auto-match
     return +1;
   }
-   
+
   const char *strtop = str;
   const char *objtop = obj;
 
@@ -437,22 +435,22 @@ match_multi (const char **string, const char **objname)
           obj = objtop;
           str = strtop;
         }
-      }  
+      }
       else {
         obj++;
         objtop++;
         obj = objtop;
         str = strtop;
       }
-    }  
-  }    
-       
+    }
+  }
+
   *string = str;
   *objname = obj;
-  
+
   return +1; // full match
 }
- 
+
 /******************************************************************************/
 
 
