@@ -1582,7 +1582,7 @@ void			HUDRenderer::drawPlayerScore(const Player* player,
   // callsign
   playerInfo += player->getCallSign();
   // email in parenthesis
-  if (player->getEmailAddress()[0] != '\0') {
+  if (player->getEmailAddress()[0] != '\0' && !BZDB.isTrue("hideEmails")) {
     playerInfo += " (";
     playerInfo += player->getEmailAddress();
     playerInfo += ")";
