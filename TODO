@@ -7,10 +7,6 @@ THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
   breaking protocol.  In particular -- fix the high priority (10) ones
   for 1.10.4 patch release.
 
-* Add new textures to non windows build/install/release systems, tank.png,
-  mountan1.png, mountan2.png, and mountan3.png. remove flage.png and mountan.png
-
-
 THESE ARE LOWER PRIORITY
 
 - bzflag should use the system-supplied zlib if available. Check in
