@@ -11,28 +11,29 @@
  */
 
 /* SGIPlatformFactory:
- *	Factory for SGI Irix platform stuff.
+ *	Factory for Irix platform stuff.
  */
 
-#ifndef BZF_SGIPLATFORM_FACTORY_H
-#define	BZF_SGIPLATFORM_FACTORY_H
+#ifndef BZF_SGI_PLATFORM_FACTORY_H
+#define BZF_SGI_PLATFORM_FACTORY_H
 
-#include "PlatformFactory.h"
+#include "UnixPlatformFactory.h"
 
-class SGIPlatformFactory : public PlatformFactory {
-  public:
-			SGIPlatformFactory();
-			~SGIPlatformFactory();
+class SGIPlatformFactory : public UnixPlatformFactory {
+public:
+	SGIPlatformFactory();
+	~SGIPlatformFactory();
 
-    BzfDisplay*		createDisplay(const char* name, const char*);
-    BzfVisual*		createVisual(const BzfDisplay*);
-    BzfWindow*		createWindow(const BzfDisplay*, BzfVisual*);
+	double				getClock() const;
 
-  private:
-			SGIPlatformFactory(const SGIPlatformFactory&);
-    SGIPlatformFactory&	operator=(const SGIPlatformFactory&);
+private:
+	SGIPlatformFactory(const SGIPlatformFactory&);
+	SGIPlatformFactory& operator=(const SGIPlatformFactory&);
 
-    BzfMedia*		createMedia();
+private:
+	double				secondsPerTick;
+	unsigned int		clockZero;
+	volatile unsigned int* iotimer_addr;
 };
 
-#endif // BZF_SGIPLATFORM_FACTORY_H
+#endif // BZF_UNIX_PLATFORM_FACTORY_H

@@ -15,17 +15,12 @@ include $(DEPTH)/Make-common
 TARGETS  = $(LIBDIR)/libCommon.a
 
 CXXFILES =				\
-	AList.cxx			\
 	BzfString.cxx			\
+	ConfigIO.cxx			\
 	ErrorHandler.cxx		\
-	Flag.cxx			\
-	Team.cxx			\
+	FileManager.cxx			\
+	StateDatabase.cxx		\
 	TimeBomb.cxx			\
-	TimeKeeper.cxx			\
-	$(NULL)
-
-CFILES =				\
-	bzsignal.c			\
 	$(NULL)
 
 targets: $(TARGETS)

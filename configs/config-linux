@@ -56,21 +56,29 @@ ECHO	= echo
 #
 # compiler definitions
 #
-PCDEFS   = -D_BSD_SOURCE -D_POSIX_SOURCE -DHALF_RATE_AUDIO $(XEXT_DEF)
-PCXXDEFS = -D_BSD_SOURCE -D_POSIX_SOURCE -DHALF_RATE_AUDIO $(XEXT_DEF)
+PCDEFS   = -D_BSD_SOURCE -D_POSIX_SOURCE -D_ISOC99_SOURCE -DHALF_RATE_AUDIO $(XEXT_DEF)
+PCXXDEFS = -D_BSD_SOURCE -D_POSIX_SOURCE -D_ISOC99_SOURCE -DHALF_RATE_AUDIO $(XEXT_DEF)
 
 #
 # compiler options
 #
 PCOPTS   = -Wall -W -ansi $(ACOPTS)
-PCXXOPTS = -Wall -W -fno-exceptions -fno-rtti $(ACXXOPTS)
+PCXXOPTS = -Wall -W $(ACXXOPTS)
 COPT     = -DNDEBUG -O2
-CXXOPT   = -DNDEBUG -O2 -ffast-math -fomit-frame-pointer -fnonnull-objects \
-		-fexpensive-optimizations
+CXXOPT   = -DNDEBUG -O2 -ffast-math -fexpensive-optimizations
 CDEBUG   = -DDEBUG -g
 CXXDEBUG = -DDEBUG -g
 CWOFF    =
 CXXWOFF  =
+
+#
+# dependency generation stuff
+#
+MKDEP     = $(DEPTH)/tools/depconv
+MKDEPOPT  = -MD
+MKDEPPRE  =
+MKDEPPOST = $(MKDEP) -f $(MKDEPFILE) $*.d; $(RM) $*.d
+MKDEPFILE = Makedepend
 
 #
 # search paths
@@ -86,7 +94,7 @@ PLDOPTS  = -L/usr/X11R6/lib
 #
 # dirt
 #
-PDIRT    = *.[eou] a.out core ar.tmp.*
+PDIRT    = *.[deou] a.out core ar.tmp.*
 
 #
 # libraries
@@ -114,3 +122,5 @@ WINDOW_LIBS =				\
 	-lX11				\
 	$(NULL)
 
+# load dependencies
+sinclude $(MKDEPFILE)

@@ -10,11 +10,5 @@
 # WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 
 PCXXFILES =				\
-	LinuxPlatformFactory.cxx	\
-	XDisplay.cxx			\
-	XVisual.cxx			\
-	XWindow.cxx			\
-	LinuxDisplay.cxx		\
-	LinuxMedia.cxx			\
-	usbjoy.cxx			\
+	UnixPlatformFactory.cxx		\
 	$(NULL)

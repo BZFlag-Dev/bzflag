@@ -15,19 +15,22 @@ include $(DEPTH)/Make-common
 TARGETS = $(TARGETDIR)/bzflag
 
 CXXFILES =				\
-	MainWindow.cxx			\
-	ControlPanel.cxx		\
+	CommandsSearch.cxx		\
+					\
+	SceneManager.cxx		\
+	HUDManager.cxx			\
+					\
+	ViewItems.cxx			\
+	ViewItemHUD.cxx			\
+	ViewItemRadar.cxx		\
+	ViewItemPlayerScene.cxx		\
+	ViewItemScoreboard.cxx		\
+					\
 	World.cxx			\
 	SceneBuilder.cxx		\
-	SceneRenderer.cxx		\
-	BackgroundRenderer.cxx		\
-	RadarRenderer.cxx		\
-	HUDRenderer.cxx			\
-	HUDui.cxx			\
 	ShotPath.cxx			\
 	ShotStrategy.cxx		\
 	Region.cxx			\
-	RenderNode.cxx			\
 	Player.cxx			\
 	playing.cxx			\
 	LocalPlayer.cxx			\
@@ -36,24 +39,28 @@ CXXFILES =				\
 	DeadPlayer.cxx			\
 	ServerLink.cxx			\
 	PlayerLink.cxx			\
-	KeyMap.cxx			\
 	daylight.cxx			\
-	texture.cxx			\
-	resources.cxx			\
 	sound.cxx			\
 	bzflag.cxx			\
-	HUDDialog.cxx			\
-	menus.cxx			\
+	$(NULL)
+
+LCXXINCS =				\
+	-I$(DEPTH)/src/game		\
 	$(NULL)
 
 DEPLIBS =				\
-	$(LIBDIR)/libNet.a		\
-	$(LIBDIR)/libCommon.a		\
-	$(LIBDIR)/libObstacle.a		\
-	$(LIBDIR)/libPlatform.a		\
+	$(LIBDIR)/libGame.a		\
+	$(LIBDIR)/libMPlatform.a	\
+	$(LIBDIR)/libView.a		\
+	$(LIBDIR)/libUI.a		\
+	$(LIBDIR)/libScene.a		\
 	$(LIBDIR)/libGLKit.a		\
-	$(LIBDIR)/libSceneDB.a		\
+	$(LIBDIR)/libPlatform.a		\
+	$(LIBDIR)/libNet.a		\
+	$(LIBDIR)/libMediaFile.a	\
+	$(LIBDIR)/libObstacle.a		\
 	$(LIBDIR)/libGeometry.a		\
+	$(LIBDIR)/libCommon.a		\
 	$(NULL)
 
 LLDLIBS =				\
@@ -64,6 +71,8 @@ LLDLIBS =				\
 	$(GL_LIBS)			\
 	$(DISPLAY_LIBS)			\
 	$(WINDOW_LIBS)			\
+	-lpthread			\
+	-ldl				\
 	-lm				\
 	$(NULL)
 

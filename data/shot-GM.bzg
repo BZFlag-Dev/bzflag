@@ -1,0 +1,84 @@
+# bzflag
+# Copyright (c) 1993 - 2001 Tim Riker
+#
+# This package is free software;  you can redistribute it and/or
+# modify it under the terms of the license found in the file
+# named LICENSE that should have accompanied this file.
+#
+# THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
+# IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
+# WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+
+<animate type="cycle">
+  <src>time</src>
+  <start>0</start>
+  <end>16</end>
+  <scale>32.0</scale>
+  <step>1.0</step>
+  <geometry>
+    <texcoord>
+      0.00 0.00  0.00 0.25  0.25 0.00  0.25 0.25
+    </texcoord>
+    <texcoord>
+      0.25 0.00  0.25 0.25  0.50 0.00  0.50 0.25
+    </texcoord>
+    <texcoord>
+      0.50 0.00  0.50 0.25  0.75 0.00  0.75 0.25
+    </texcoord>
+    <texcoord>
+      0.75 0.00  0.75 0.25  1.00 0.00  1.00 0.25
+    </texcoord>
+
+    <texcoord>
+      0.00 0.25  0.00 0.50  0.25 0.25  0.25 0.50
+    </texcoord>
+    <texcoord>
+      0.25 0.25  0.25 0.50  0.50 0.25  0.50 0.50
+    </texcoord>
+    <texcoord>
+      0.50 0.25  0.50 0.50  0.75 0.25  0.75 0.50
+    </texcoord>
+    <texcoord>
+      0.75 0.25  0.75 0.50  1.00 0.25  1.00 0.50
+    </texcoord>
+
+    <texcoord>
+      0.00 0.50  0.00 0.75  0.25 0.50  0.25 0.75
+    </texcoord>
+    <texcoord>
+      0.25 0.50  0.25 0.75  0.50 0.50  0.50 0.75
+    </texcoord>
+    <texcoord>
+      0.50 0.50  0.50 0.75  0.75 0.50  0.75 0.75
+    </texcoord>
+    <texcoord>
+      0.75 0.50  0.75 0.75  1.00 0.50  1.00 0.75
+    </texcoord>
+
+    <texcoord>
+      0.00 0.75  0.00 1.00  0.25 0.75  0.25 1.00
+    </texcoord>
+    <texcoord>
+      0.25 0.75  0.25 1.00  0.50 0.75  0.50 1.00
+    </texcoord>
+    <texcoord>
+      0.50 0.75  0.50 1.00  0.75 0.75  0.75 1.00
+    </texcoord>
+    <texcoord>
+      0.75 0.75  0.75 1.00  1.00 0.75  1.00 1.00
+    </texcoord>
+
+    <texcoord ref=0/>
+    <vertex>
+      -1.0 0.0 -1.0
+      -1.0 0.0  1.0
+       1.0 0.0 -1.0
+       1.0 0.0  1.0
+    </vertex>
+    <primitive type=tstrip>
+      <index>
+        1 0 3 2
+      </index>
+    </primitive>
+  </geometry>
+</animate>

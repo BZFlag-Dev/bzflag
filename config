@@ -18,13 +18,13 @@
 # increase build number for every potentially released build.
 # must change this in MSDev project, too.
 #
-VERSION = 10705005
+VERSION = 10801001
 
 #
 # version id string and build number.  these should be consistent with
 # VERSION.
 #
-VERSIONID = 1.7e5
+VERSIONID = 1.8a1
 
 #
 # uncomment this to build in an expiration date (month/day/year)

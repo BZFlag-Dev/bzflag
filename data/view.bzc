@@ -1,0 +1,194 @@
+# the usual stuff shown overlayed on the out-the-window scene
+<view id="normalOverlay">
+	# FIXME -- show indication of being dead (like cracks in windscreen)
+
+	# heads up display
+	<font name="fixed" size=7p/>
+	<hud primary=yes/>
+
+	# status info (callsign, score, flag, status)
+	<font name="helveticaBold" size=24p/>
+	<align h=left v=top/>
+	<color value=team/>
+	<text x=4p y=-4p>${infoCallsign}: ${outputScore}</text>
+	<align h=right v=top/>
+	<color value=white/>
+	<text x=-4p y=-4p>${outputFlag}</text>
+	<align h=center v=top/>
+	<viewport x=0% y=-4p w=100% h=24p>
+		<font size=24p/>
+		<message buffer="alertStatus" timeout=10/>
+	</viewport>
+
+	# FIXME -- missing time left countdown
+
+	# frame rate (can be switched on/off)
+	<if name="displayFPS">
+		<font name="fixed" size=7p/>
+		<color value=white/>
+		<align h=right v=bottom/>
+		<text x=-4p y=4p shadow=yes>FPS: ${timeFPS} (${timeFrame}us)</text>
+	</if>
+
+	# scoreboard (can be switched on/off)
+	<if name="displayScore">
+		<font name="fixed" size=7p/>
+		<color value=white/>
+		<viewport x=5% y=-36p w=60% h=70%>
+			<score shadow=yes title="Score@34%Callsign"
+					format="%s (%w-%l) (%W-%L)@34%%c (%F)"></score>
+		</viewport>
+		<viewport x=72% y=-36p w=25% h=70%>
+			<score team=yes shadow=yes title=""
+					format="%n % 11c %s (%w-%l)"></score>
+		</viewport>
+	</if>
+
+	# FIXME -- missing restart instructions (probably should be an alert)
+
+	# radar (can be switched on/off though i don't know why you'd want it off)
+	<if name="displayRadar">
+		<viewport x=4% y=4% w=15% h=1x>
+			<radar>
+				<color value=black alpha=0.5/>
+				<poly>
+					<vertex x=0% y=0%/>
+					<vertex x=100% y=0%/>
+					<vertex x=100% y=100%/>
+					<vertex x=0% y=100%/>
+				</poly>
+			</radar>
+		</viewport>
+	</if>
+
+	# messages.  timeout is 5 seconds;  each line is shown that long.
+	<viewport x=4p y=-36p w=50% h=50%>
+		<align h=left v=top/>
+		<font name="fixed" size=7p/>
+		<color value=black shift="1.0 0.5 0.0"/>
+		<message buffer="messages" timeout=5 input=yes shadow=yes/>
+	</viewport>
+
+	# alerts
+	<font name="helveticaBold"/>
+	<align h=center v=top/>
+	<color value=white/>
+	<viewport x=25% y=-36p w=50% h=36p>
+		<font size=36p/>
+		<message buffer="alertGameOver" timeout=10/>
+	</viewport>
+	<viewport x=25% y=-72p w=50% h=24p>
+		<font name="helveticaBold" size=24p/>
+		<message buffer="alertInfo" timeout=3/>
+	</viewport>
+	<viewport x=25% y=-96p w=50% h=18p>
+		<font name="helveticaBold" size=18p/>
+		<message buffer="alertFlag" timeout=3/>
+	</viewport>
+
+	# flag help
+	<if name="displayFlagHelp">
+		<viewport x=25% y=20% w=50% h=72p>
+			<font name="helveticaBold" size=18p/>
+			<message buffer="flagHelp" timeout=60/>
+		</viewport>
+	</if>
+
+	# console
+	<if name="displayConsole">
+		<viewport x=0% y=40% w=100% h=60%>
+			<model filename="console.bzg"/>
+			<align h=left v=top/>
+			<font name="fixed" size=7p/>
+			<color value=black shift="1.0 0.5 0.0"/>
+			<message buffer="console" input="yes" shadow="yes" />
+		</viewport>
+	</if>
+
+	# menu
+	<menu>
+		# fade everything behind menu to black by 75%
+		<color value=black alpha=0.75/>
+		<poly>
+			<vertex x=0% y=0%/>
+			<vertex x=100% y=0%/>
+			<vertex x=100% y=100%/>
+			<vertex x=0% y=100%/>
+		</poly>
+	</menu>
+</view>
+
+# draws the out-the-window scene and overlays the usual suspects
+<view id="normal">
+	<viewport x=0% y=0% w=100% h=100%>
+		<scene x=0.0 y=0.0 z=0.0 fov=1.0 theta=0 phi=0/>
+		<ref id="normalOverlay"/>
+	</viewport>
+</view>
+
+# test -- draws scene with no overlays
+# tests for:
+#   performance (although no performance statistics are output)
+<view id="scene-only">
+	<viewport x=0% y=0% w=100% h=100%>
+		<scene x=0.0 y=0.0 z=0.0 fov=1.0 theta=0 phi=0/>
+	</viewport>
+</view>
+
+# test -- draws stereo pair of scene side by side (cross-eye)
+# tests for:
+#   scene parameters
+#   correct projection skewing for stereo
+#   HUD element stereo depth
+<view id="free-fuse-stereo">
+	<viewport x=0% y=0% w=50% h=100%>
+		<scene x=-0.7 y=0.0 z=30.0 fov=1.0 theta=0 phi=0/>
+		<ref id="normalOverlay"/>
+	</viewport>
+	<viewport x=50% y=0% w=50% h=100%>
+		<scene x=0.7 y=0.0 z=30.0 fov=1.0 theta=0 phi=0/>
+		<ref id="normalOverlay"/>
+	</viewport>
+</view>
+
+# test -- splits view into several vertical strips.
+# tests for:
+#   scene parameters
+#   correct positioning of viewports
+#   correct rendering of multiple scenes
+#   performance
+<view id="split-test">
+	<viewport x=0% y=0% w=10% h=100%>
+		<scene fov=0.1 theta="-45%"/>
+	</viewport>
+	<viewport x=10% y=0% w=10% h=100%>
+		<scene fov=0.1 theta="-35%"/>
+	</viewport>
+	<viewport x=20% y=0% w=10% h=100%>
+		<scene fov=0.1 theta="-25%"/>
+	</viewport>
+	<viewport x=30% y=0% w=10% h=100%>
+		<scene fov=0.1 theta="-15%"/>
+	</viewport>
+	<viewport x=40% y=0% w=10% h=100%>
+		<scene fov=0.1 theta="-5%"/>
+	</viewport>
+	<viewport x=50% y=0% w=10% h=100%>
+		<scene fov=0.1 theta="5%"/>
+	</viewport>
+	<viewport x=60% y=0% w=10% h=100%>
+		<scene fov=0.1 theta="15%"/>
+	</viewport>
+	<viewport x=70% y=0% w=10% h=100%>
+		<scene fov=0.1 theta="25%"/>
+	</viewport>
+	<viewport x=80% y=0% w=10% h=100%>
+		<scene fov=0.1 theta="35%"/>
+	</viewport>
+	<viewport x=90% y=0% w=10% h=100%>
+		<scene fov=0.1 theta="45%"/>
+	</viewport>
+	<viewport x=0% y=0% w=100% h=100%>
+		<ref id="normalOverlay"/>
+	</viewport>
+</view>

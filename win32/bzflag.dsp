@@ -43,7 +43,7 @@ RSC=rc.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /YX /FD /c
-# ADD CPP /nologo /MT /W3 /O2 /I "..\include" /D "_WINDOWS" /D "WIN32" /D "NDEBUG" /D "_MBCS" /D VERSION=10705005 /D "ROBOT" /FD /c
+# ADD CPP /nologo /W3 /vmg /GX /O2 /I "..\include" /I "..\src\game" /D "NDEBUG" /D "_WINDOWS" /D VERSION=1070500 /D "WIN32" /D "_MBCS" /D VERSION=10801001 /FD /c
 # SUBTRACT CPP /YX
 # ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "NDEBUG" /mktyplib203 /win32
@@ -54,24 +54,23 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /machine:I386
-# ADD LINK32 ws2_32.lib dsound.lib winmm.lib glu32.lib opengl32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /machine:I386
+# ADD LINK32 dsound.lib winmm.lib wsock32.lib glu32.lib opengl32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /machine:I386
 
 !ELSEIF  "$(CFG)" == "bzflag - Win32 Debug"
 
 # PROP BASE Use_MFC 0
 # PROP BASE Use_Debug_Libraries 1
-# PROP BASE Output_Dir "Debug"
-# PROP BASE Intermediate_Dir "Debug"
+# PROP BASE Output_Dir "bzflag___Win32_Debug"
+# PROP BASE Intermediate_Dir "bzflag___Win32_Debug"
 # PROP BASE Target_Dir ""
 # PROP Use_MFC 0
 # PROP Use_Debug_Libraries 1
-# PROP Output_Dir "..\bin\Debug"
+# PROP Output_Dir "..\bin"
 # PROP Intermediate_Dir "Debug"
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /YX /FD /GZ /c
-# ADD CPP /nologo /MDd /W3 /Gm /ZI /Od /I "..\include" /D "_WINDOWS" /D "WIN32" /D "_DEBUG" /D "_MBCS" /D VERSION=10705005 /D "ROBOT" /FD /GZ /c
-# SUBTRACT CPP /YX
+# ADD CPP /nologo /W3 /Gm /vmg /GX /ZI /Od /I "..\include" /I "..\src\game" /D "_WINDOWS" /D VERSION=1070500 /D "_DEBUG" /D "WIN32" /D "_MBCS" /D VERSION=10801001 /Fd"Debug/bzflag.pdb" /FD /GZ /c
 # ADD BASE MTL /nologo /D "_DEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "_DEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x409 /d "_DEBUG"
@@ -81,7 +80,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /debug /machine:I386 /pdbtype:sept
-# ADD LINK32 ws2_32.lib dsound.lib winmm.lib glu32.lib opengl32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /debug /machine:I386 /pdbtype:sept
+# ADD LINK32 dsound.lib winmm.lib wsock32.lib glu32.lib opengl32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /debug /machine:I386 /pdbtype:sept
 
 !ENDIF 
 
@@ -94,10 +93,6 @@ LINK32=link.exe
 # PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 # Begin Source File
 
-SOURCE=..\src\bzflag\BackgroundRenderer.cxx
-# End Source File
-# Begin Source File
-
 SOURCE=..\src\bzflag\bzflag.cxx
 # End Source File
 # Begin Source File
@@ -106,7 +101,7 @@ SOURCE=..\src\bzflag\bzflag.rc
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\bzflag\ControlPanel.cxx
+SOURCE=..\src\bzflag\CommandsSearch.cxx
 # End Source File
 # Begin Source File
 
@@ -118,31 +113,11 @@ SOURCE=..\src\bzflag\DeadPlayer.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\bzflag\HUDDialog.cxx
-# End Source File
-# Begin Source File
-
-SOURCE=..\src\bzflag\HUDRenderer.cxx
-# End Source File
-# Begin Source File
-
-SOURCE=..\src\bzflag\HUDui.cxx
-# End Source File
-# Begin Source File
-
-SOURCE=..\src\bzflag\KeyMap.cxx
+SOURCE=..\src\bzflag\HUDManager.cxx
 # End Source File
 # Begin Source File
 
 SOURCE=..\src\bzflag\LocalPlayer.cxx
-# End Source File
-# Begin Source File
-
-SOURCE=..\src\bzflag\MainWindow.cxx
-# End Source File
-# Begin Source File
-
-SOURCE=..\src\bzflag\menus.cxx
 # End Source File
 # Begin Source File
 
@@ -158,23 +133,11 @@ SOURCE=..\src\bzflag\playing.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\bzflag\RadarRenderer.cxx
-# End Source File
-# Begin Source File
-
 SOURCE=..\src\bzflag\Region.cxx
 # End Source File
 # Begin Source File
 
 SOURCE=..\src\bzflag\RemotePlayer.cxx
-# End Source File
-# Begin Source File
-
-SOURCE=..\src\bzflag\RenderNode.cxx
-# End Source File
-# Begin Source File
-
-SOURCE=..\src\bzflag\resources.cxx
 # End Source File
 # Begin Source File
 
@@ -186,7 +149,7 @@ SOURCE=..\src\bzflag\SceneBuilder.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\bzflag\SceneRenderer.cxx
+SOURCE=..\src\bzflag\SceneManager.cxx
 # End Source File
 # Begin Source File
 
@@ -206,12 +169,23 @@ SOURCE=..\src\bzflag\sound.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\bzflag\stars.cxx
-# PROP Exclude_From_Build 1
+SOURCE=..\src\bzflag\ViewItemHUD.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\bzflag\texture.cxx
+SOURCE=..\src\bzflag\ViewItemPlayerScene.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\bzflag\ViewItemRadar.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\bzflag\ViewItems.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\bzflag\ViewItemScoreboard.cxx
 # End Source File
 # Begin Source File
 
@@ -223,11 +197,7 @@ SOURCE=..\src\bzflag\World.cxx
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
 # Begin Source File
 
-SOURCE=..\src\bzflag\BackgroundRenderer.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\src\bzflag\ControlPanel.h
+SOURCE=..\src\bzflag\CommandsSearch.h
 # End Source File
 # Begin Source File
 
@@ -239,31 +209,11 @@ SOURCE=..\src\bzflag\DeadPlayer.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\bzflag\HUDDialog.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\src\bzflag\HUDRenderer.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\src\bzflag\HUDui.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\src\bzflag\KeyMap.h
+SOURCE=..\src\bzflag\HUDManager.h
 # End Source File
 # Begin Source File
 
 SOURCE=..\src\bzflag\LocalPlayer.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\src\bzflag\MainWindow.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\src\bzflag\menus.h
 # End Source File
 # Begin Source File
 
@@ -279,10 +229,6 @@ SOURCE=..\src\bzflag\playing.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\bzflag\RadarRenderer.h
-# End Source File
-# Begin Source File
-
 SOURCE=..\src\bzflag\Region.h
 # End Source File
 # Begin Source File
@@ -291,15 +237,15 @@ SOURCE=..\src\bzflag\RemotePlayer.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\bzflag\resources.h
-# End Source File
-# Begin Source File
-
 SOURCE=..\src\bzflag\RobotPlayer.h
 # End Source File
 # Begin Source File
 
 SOURCE=..\src\bzflag\SceneBuilder.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\bzflag\SceneManager.h
 # End Source File
 # Begin Source File
 
@@ -319,7 +265,23 @@ SOURCE=..\src\bzflag\sound.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\bzflag\texture.h
+SOURCE=..\src\bzflag\ViewItemHUD.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\bzflag\ViewItemPlayerScene.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\bzflag\ViewItemRadar.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\bzflag\ViewItems.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\bzflag\ViewItemScoreboard.h
 # End Source File
 # Begin Source File
 
@@ -329,6 +291,10 @@ SOURCE=..\src\bzflag\World.h
 # Begin Group "Resource Files"
 
 # PROP Default_Filter "ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe"
+# Begin Source File
+
+SOURCE=..\src\bzflag\bzflag.bmp
+# End Source File
 # Begin Source File
 
 SOURCE=..\src\bzflag\bzflag.ico

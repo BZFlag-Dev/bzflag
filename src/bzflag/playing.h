@@ -14,77 +14,28 @@
  * main game loop stuff
  */
 
-#ifndef	BZF_PLAYING_H
-#define	BZF_PLAYING_H
+#ifndef BZF_PLAYING_H
+#define BZF_PLAYING_H
 
 #include "common.h"
 #include "global.h"
-#include "AList.h"
-#include "BzfString.h"
-
-class SceneRenderer;
-class BzfKeyMap;
-
-struct StartupInfo {
-  public:
-			StartupInfo();
-
-  public:
-    boolean		hasConfiguration;
-    boolean		autoConnect;
-    char		serverName[80];
-    int			serverPort;
-    int			ttl;
-    boolean		useUDPconnection;
-    char		multicastInterface[65];
-    TeamColor		team;
-    char		callsign[CallSignLen];
-    char		email[EmailLen];
-    BzfString		listServerURL;
-    int			listServerPort;
-    boolean		joystick;
-    BzfString		joystickName;
-};
-
-typedef void		(*JoinGameCallback)(boolean success, void* data);
-typedef void		(*PlayingCallback)(void*);
-struct PlayingCallbackItem {
-  public:
-    PlayingCallback	cb;
-    void*		data;
-};
-BZF_DEFINE_ALIST(PlayingCallbackList, PlayingCallbackItem);
 
 class BzfDisplay;
-class MainWindow;
-class SceneRenderer;
-class ResourceDatabase;
+class BzfWindow;
 class PlayerId;
 class Player;
 
-BzfDisplay*		getDisplay();
-MainWindow*		getMainWindow();
-SceneRenderer*		getSceneRenderer();
-void			setSceneDatabase();
-StartupInfo*		getStartupInfo();
-BzfKeyMap&			getBzfKeyMap();
-void			notifyBzfKeyMapChanged();
-boolean			setVideoFormat(int, boolean test = False);
-Player*			lookupPlayer(const PlayerId& id);
-void			startPlaying(BzfDisplay* display,
-				SceneRenderer&,
-				ResourceDatabase&,
-				StartupInfo*);
+Player*					lookupPlayer(const PlayerId& id);
+void					startPlaying(BzfDisplay* display, BzfWindow*);
 
-boolean			addExplosion(const float* pos,
-				float size, float duration);
-void			addTankExplosion(const float* pos);
-void			addShotExplosion(const float* pos);
-void			addShotPuff(const float* pos);
+bool					addExplosion(const float* pos,
+							float size, float duration);
+void					addTankExplosion(const float* pos);
+void					addShotExplosion(const float* pos);
+void					addShotPuff(const float* pos);
 
-void			addPlayingCallback(PlayingCallback, void* data);
-void			removePlayingCallback(PlayingCallback, void* data);
-
-void			joinGame(JoinGameCallback, void* userData);
+typedef void			(*PlayingCallback)(void*);
+void					addPlayingCallback(PlayingCallback, void* data);
+void					removePlayingCallback(PlayingCallback, void* data);
 
 #endif // BZF_PLAYING_H

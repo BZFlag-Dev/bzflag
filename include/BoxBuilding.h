@@ -14,57 +14,41 @@
  *	Encapsulates a box in the game environment.
  */
 
-#ifndef	BZF_BOX_BUILDING_H
-#define	BZF_BOX_BUILDING_H
+#ifndef BZF_BOX_BUILDING_H
+#define BZF_BOX_BUILDING_H
 
-#include "AList.h"
 #include "Obstacle.h"
+#include <vector>
 
 class BoxBuilding : public Obstacle {
-  public:
-			BoxBuilding(const float* pos, float rotation,
-				float width, float breadth, float height);
-			~BoxBuilding();
+public:
+	BoxBuilding(const float* pos, float rotation,
+							float width, float breadth, float height);
+	~BoxBuilding();
 
-    BzfString		getType() const;
-    static BzfString	getClassName(); // const
+	BzfString			getType() const;
+	static BzfString	getClassName(); // const
 
-    float		intersect(const Ray&) const;
-    void		getNormal(const float* p, float* n) const;
-    boolean		isInside(const float* p, float radius) const;
-    boolean		isInside(const float* p, float angle,
-				float halfWidth, float halfBreadth) const;
-    boolean		isCrossing(const float* p, float angle,
-				float halfWidth, float halfBreadth,
-				float* plane) const;
-    boolean		getHitNormal(
-				const float* pos1, float azimuth1,
-				const float* pos2, float azimuth2,
-				float halfWidth, float halfBreadth,
-				float* normal) const;
+	float				intersect(const Ray&) const;
+	void				getNormal(const float* p, float* n) const;
+	bool				isInside(const float* p, float radius) const;
+	bool				isInside(const float* p, float angle,
+							float halfWidth, float halfBreadth) const;
+	bool				isCrossing(const float* p, float angle,
+							float halfWidth, float halfBreadth,
+							float* plane) const;
+	bool				getHitNormal(
+							const float* pos1, float azimuth1,
+							const float* pos2, float azimuth2,
+							float halfWidth, float halfBreadth,
+							float* normal) const;
 
-    ObstacleSceneNodeGenerator*	newSceneNodeGenerator() const;
+	void				getCorner(int index, float* pos) const;
 
-    void		getCorner(int index, float* pos) const;
-
-  private:
-    static BzfString	typeName;
+private:
+	static BzfString	typeName;
 };
 
-BZF_DEFINE_ALIST(BoxBuildings, BoxBuilding);
-
-class BoxSceneNodeGenerator : public ObstacleSceneNodeGenerator {
-  friend class BoxBuilding;
-  public:
-			~BoxSceneNodeGenerator();
-
-    WallSceneNode*	getNextNode(float, float, boolean);
-
-  protected:
-			BoxSceneNodeGenerator(const BoxBuilding*);
-
-  private:
-    const BoxBuilding*	box;
-};
+typedef std::vector<BoxBuilding> BoxBuildings;
 
 #endif // BZF_BOX_BUILDING_H

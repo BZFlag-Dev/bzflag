@@ -20,126 +20,92 @@
  *	that considers the tank as a rectangle
  */
 
-#ifndef	BZF_OBSTACLE_H
-#define	BZF_OBSTACLE_H
+#ifndef BZF_OBSTACLE_H
+#define BZF_OBSTACLE_H
 
 #include "common.h"
 #include "Ray.h"
 #include "BzfString.h"
 
-class ObstacleSceneNodeGenerator;
 class WallSceneNode;
 
 class Obstacle {
-  public:
-			Obstacle(const float* pos, float rotation,
-				float hwidth, float hbreadth, float height);
-    virtual		~Obstacle();
+public:
+	Obstacle(const float* pos, float rotation,
+							float hwidth, float hbreadth, float height);
+	virtual ~Obstacle();
 
-    virtual BzfString	getType() const = 0;
+	virtual BzfString	getType() const = 0;
 
-    const float*	getPosition() const;
-    float		getRotation() const;
-    float		getWidth() const;		// half width
-    float		getBreadth() const;		// half breadth
-    float		getHeight() const;		// full height
+	const float*		getPosition() const;
+	float				getRotation() const;
+	float				getWidth() const;				// half width
+	float				getBreadth() const;				// half breadth
+	float				getHeight() const;				// full height
 
-    virtual float	intersect(const Ray&) const = 0;
-    virtual void	getNormal(const float* p, float* n) const = 0;
-    virtual boolean	isInside(const float* p, float radius) const = 0;
-    virtual boolean	isInside(const float* p, float angle,
-				float halfWidth, float halfBreadth) const = 0;
-    virtual boolean	isCrossing(const float* p, float angle,
-				float halfWidth, float halfBreadth,
-				float* plane) const;
-    virtual boolean	getHitNormal(
-				const float* pos1, float azimuth1,
-				const float* pos2, float azimuth2,
-				float halfWidth, float halfBreadth,
-				float* normal) const = 0;
+	virtual float		intersect(const Ray&) const = 0;
+	virtual void		getNormal(const float* p, float* n) const = 0;
+	virtual bool		isInside(const float* p, float radius) const = 0;
+	virtual bool		isInside(const float* p, float angle,
+							float halfWidth, float halfBreadth) const = 0;
+	virtual bool		isCrossing(const float* p, float angle,
+							float halfWidth, float halfBreadth,
+							float* plane) const;
+	virtual bool		getHitNormal(
+							const float* pos1, float azimuth1,
+							const float* pos2, float azimuth2,
+							float halfWidth, float halfBreadth,
+							float* normal) const = 0;
 
-    virtual ObstacleSceneNodeGenerator*	newSceneNodeGenerator() const = 0;
+protected:
+	float				getHitNormal(
+							const float* pos1, float azimuth1,
+							const float* pos2, float azimuth2,
+							float halfWidth, float halfBreadth,
+							const float* oPos, float oAzimuth,
+							float oWidth, float oBreadth, float oHeight,
+							float* normal) const;
 
-  protected:
-    float		getHitNormal(
-				const float* pos1, float azimuth1,
-				const float* pos2, float azimuth2,
-				float halfWidth, float halfBreadth,
-				const float* oPos, float oAzimuth,
-				float oWidth, float oBreadth, float oHeight,
-				float* normal) const;
-
-  protected:
-    float		pos[3];
-    float		angle;
-    float		width;
-    float		breadth;
-    float		height;
-};
-
-class ObstacleSceneNodeGenerator {
-  public:
-    virtual		~ObstacleSceneNodeGenerator();
-
-    virtual WallSceneNode* getNextNode(float uRepeats, float vRepeats,
-							boolean lod) = 0;
-
-  protected:
-			ObstacleSceneNodeGenerator();
-    int			getNodeNumber() const;
-    int			incNodeNumber();
-
-  private:
-    // no duplication
-			ObstacleSceneNodeGenerator(const
-					ObstacleSceneNodeGenerator&);
-    ObstacleSceneNodeGenerator&	operator=(const ObstacleSceneNodeGenerator&);
-
-  private:
-    int			node;
+protected:
+	float				pos[3];
+	float				angle;
+	float				width;
+	float				breadth;
+	float				height;
 };
 
 //
 // Obstacle
 //
 
-inline const float*	Obstacle::getPosition() const
+inline
+const float*			Obstacle::getPosition() const
 {
-  return pos;
+	return pos;
 }
 
-inline float		Obstacle::getRotation() const
+inline
+float				Obstacle::getRotation() const
 {
-  return angle;
+	return angle;
 }
 
-inline float		Obstacle::getWidth() const
+inline
+float				Obstacle::getWidth() const
 {
-  return width;
+	return width;
 }
 
-inline float		Obstacle::getBreadth() const
+inline
+float				Obstacle::getBreadth() const
 {
-  return breadth;
+	return breadth;
 }
 
-inline float		Obstacle::getHeight() const
+inline
+float				Obstacle::getHeight() const
 {
-  return height;
-}
-
-//
-// ObstacleSceneNodeGenerator
-//
-
-inline int		ObstacleSceneNodeGenerator::getNodeNumber() const
-{
-  return node;
-}
-
-inline int		ObstacleSceneNodeGenerator::incNodeNumber()
-{
-  return ++node;
+	return height;
 }
 
 #endif // BZF_OBSTACLE_H

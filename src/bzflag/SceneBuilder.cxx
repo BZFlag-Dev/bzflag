@@ -10,358 +10,628 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include <stdio.h>
 #include "SceneBuilder.h"
-#include "SceneRenderer.h"
-#include "SceneDatabase.h"
-#include "ZSceneDatabase.h"
-#include "BSPSceneDatabase.h"
 #include "World.h"
-#include "WallSceneNode.h"
-#include "TankSceneNode.h"
-#include "playing.h"
-#include "texture.h"
-
-static const char*	wallFilename = "wall";
-static const char*	boxwallFilename = "boxwall";
-static const char*	boxtopFilename = "roof";
-static const char*	pyramidFilename = "pyrwall";
-static const char*	teleporterFilename = "caution";
-
-static OpenGLTexture	getImage(const BzfString& file,
-				float* aspectRatio = NULL,
-				OpenGLTexture::Filter f =
-					OpenGLTexture::LinearMipmapLinear)
-{
-  int width, height;
-  OpenGLTexture tex = getTexture(file, &width, &height, f);
-  if (aspectRatio) *aspectRatio = float(height) / float(width);
-  return tex;
-}
+#include "Matrix.h"
+#include "SceneNodes.h"
+#include "SceneReader.h"
+#include <sstream>
+typedef std::istringstream istringstream;
 
 //
 // SceneDatabaseBuilder
 //
 
-static const GLfloat	black[3] = { 0.0f, 0.0f, 0.0f };
-
-const GLfloat		SceneDatabaseBuilder::wallColors[4][4] = {
-				{ 0.5f, 0.5f, 0.5f, 1.0f },
-				{ 0.4f, 0.4f, 0.4f, 1.0f },
-				{ 0.5f, 0.5f, 0.5f, 1.0f },
-				{ 0.6f, 0.6f, 0.6f, 1.0f }
-			};
-const GLfloat		SceneDatabaseBuilder::wallModulateColors[4][4] = {
-				{ 0.5f, 0.5f, 0.5f, 1.0f },
-				{ 0.4f, 0.4f, 0.4f, 1.0f },
-				{ 0.5f, 0.5f, 0.5f, 1.0f },
-				{ 0.6f, 0.6f, 0.6f, 1.0f }
-			};
-const GLfloat		SceneDatabaseBuilder::wallLightedColors[1][4] = {
-				{ 0.5f, 0.5f, 0.5f, 1.0f }
-			};
-const GLfloat		SceneDatabaseBuilder::wallLightedModulateColors[1][4] = {
-				{ 0.5f, 0.5f, 0.5f, 1.0f }
-			};
-
-const GLfloat		SceneDatabaseBuilder::boxColors[6][4] = {
-				{ 0.75f, 0.25f, 0.25f, 1.0f },
-				{ 0.63f, 0.25f, 0.25f, 1.0f },
-				{ 0.75f, 0.25f, 0.25f, 1.0f },
-				{ 0.75f, 0.375f, 0.375f, 1.0f },
-				{ 0.875f, 0.5f, 0.5f, 1.0f },
-				{ 0.275f, 0.2f, 0.2f, 1.0f }
-			};
-const GLfloat		SceneDatabaseBuilder::boxModulateColors[6][4] = {
-				{ 0.75f, 0.75f, 0.75f, 1.0f },
-				{ 0.63f, 0.63f, 0.63f, 1.0f },
-				{ 0.75f, 0.75f, 0.75f, 1.0f },
-				{ 0.69f, 0.69f, 0.69f, 1.0f },
-				{ 0.875f, 0.875f, 0.875f, 1.0f },
-				{ 0.375f, 0.375f, 0.375f, 1.0f }
-			};
-const GLfloat		SceneDatabaseBuilder::boxLightedColors[6][4] = {
-				{ 0.75f, 0.25f, 0.25f, 1.0f },
-				{ 0.75f, 0.25f, 0.25f, 1.0f },
-				{ 0.75f, 0.25f, 0.25f, 1.0f },
-				{ 0.75f, 0.25f, 0.25f, 1.0f },
-				{ 0.875f, 0.5f, 0.5f, 1.0f },
-				{ 0.875f, 0.5f, 0.5f, 1.0f }
-			};
-const GLfloat		SceneDatabaseBuilder::boxLightedModulateColors[6][4] = {
-				{ 0.75f, 0.75f, 0.75f, 1.0f },
-				{ 0.75f, 0.75f, 0.75f, 1.0f },
-				{ 0.75f, 0.75f, 0.75f, 1.0f },
-				{ 0.75f, 0.75f, 0.75f, 1.0f },
-				{ 0.875f, 0.875f, 0.875f, 1.0f },
-				{ 0.875f, 0.875f, 0.875f, 1.0f }
-			};
-
-const GLfloat		SceneDatabaseBuilder::pyramidColors[5][4] = {
-				{ 0.25f, 0.25f, 0.63f, 1.0f },
-				{ 0.13f, 0.13f, 0.51f, 1.0f },
-				{ 0.25f, 0.25f, 0.63f, 1.0f },
-				{ 0.375f, 0.375f, 0.75f, 1.0f },
-				{ 0.175f, 0.175f, 0.35f, 1.0f }
-			};
-const GLfloat		SceneDatabaseBuilder::pyramidModulateColors[5][4] = {
-				{ 0.25f, 0.25f, 0.63f, 1.0f },
-				{ 0.13f, 0.13f, 0.51f, 1.0f },
-				{ 0.25f, 0.25f, 0.63f, 1.0f },
-				{ 0.375f, 0.375f, 0.75f, 1.0f },
-				{ 0.175f, 0.175f, 0.35f, 1.0f }
-			};
-const GLfloat		SceneDatabaseBuilder::pyramidLightedColors[5][4] = {
-				{ 0.25f, 0.25f, 0.63f, 1.0f },
-				{ 0.25f, 0.25f, 0.63f, 1.0f },
-				{ 0.25f, 0.25f, 0.63f, 1.0f },
-				{ 0.25f, 0.25f, 0.63f, 1.0f },
-				{ 0.25f, 0.25f, 0.63f, 1.0f }
-			};
-const GLfloat		SceneDatabaseBuilder::pyramidLightedModulateColors[5][4] = {
-				{ 0.25f, 0.25f, 0.63f, 1.0f },
-				{ 0.25f, 0.25f, 0.63f, 1.0f },
-				{ 0.25f, 0.25f, 0.63f, 1.0f },
-				{ 0.25f, 0.25f, 0.63f, 1.0f },
-				{ 0.25f, 0.25f, 0.63f, 1.0f }
-			};
-
-const GLfloat		SceneDatabaseBuilder::teleporterColors[3][4] = {
-				{ 1.0f, 0.875f, 0.0f, 1.0f },
-				{ 0.9f, 0.8f, 0.0f, 1.0f },
-				{ 0.0f, 0.0f, 0.0f, 0.5f }
-			};
-const GLfloat		SceneDatabaseBuilder::teleporterModulateColors[3][4] = {
-				{ 1.0f, 1.0f, 1.0f, 1.0f },
-				{ 0.9f, 0.9f, 0.9f, 1.0f },
-				{ 0.0f, 0.0f, 0.0f, 0.5f }
-			};
-const GLfloat		SceneDatabaseBuilder::teleporterLightedColors[3][4] = {
-				{ 1.0f, 0.875f, 0.0f, 1.0f },
-				{ 1.0f, 0.875f, 0.0f, 1.0f },
-				{ 0.0f, 0.0f, 0.0f, 0.5f }
-			};
-const GLfloat		SceneDatabaseBuilder::teleporterLightedModulateColors[3][4] = {
-				{ 1.0f, 1.0f, 1.0f, 1.0f },
-				{ 1.0f, 1.0f, 1.0f, 1.0f },
-				{ 0.0f, 0.0f, 0.0f, 0.5f }
-			};
-
-SceneDatabaseBuilder::SceneDatabaseBuilder(const SceneRenderer* _renderer) :
-				renderer(_renderer),
-				wallMaterial(black, black, 0.0f),
-				boxMaterial(black, black, 0.0f),
-				pyramidMaterial(black, black, 0.0f),
-				teleporterMaterial(black, black, 0.0f)
+SceneDatabaseBuilder::SceneDatabaseBuilder()
 {
-  // FIXME -- should get texture heights from resources
-
-  // make styles -- first the outer wall
-  wallTexWidth = wallTexHeight = 10.0f;
-  wallTexture = getImage(wallFilename, &wallTexWidth);
-  if (wallTexture.isValid()) wallTexWidth *= wallTexHeight;
-
-  // make box styles
-  boxTexWidth = boxTexHeight = 0.2f * BoxHeight;
-  boxTexture = getImage(boxwallFilename, &boxTexWidth);
-  if (boxTexture.isValid()) boxTexWidth *= boxTexHeight;
-  boxTopTexture = getImage(boxtopFilename);
-
-  // make pyramid styles
-  pyramidTexture = getImage(pyramidFilename);
-
-  // make teleporter styles
-  teleporterTexture = getImage(teleporterFilename);
-
-  // lower maximum tank lod if lowdetail is true
-  if (renderer->useQuality() == 0) TankSceneNode::setMaxLOD(2);
+	// do nothing
 }
 
 SceneDatabaseBuilder::~SceneDatabaseBuilder()
 {
-  // do nothing
+	// do nothing
 }
 
-SceneDatabase*		SceneDatabaseBuilder::make(const World* world)
+SceneNode*				SceneDatabaseBuilder::make(const World* world)
 {
-  // set LOD flags
-  wallLOD = renderer->useLighting() && renderer->useZBuffer();
-  baseLOD = renderer->useLighting() && renderer->useZBuffer();
-  boxLOD = renderer->useLighting() && renderer->useZBuffer();
-  pyramidLOD = renderer->useLighting() && renderer->useZBuffer();
-  teleporterLOD = renderer->useLighting() && renderer->useZBuffer();
+	BzfString buffer(makeBuffer(world));
+	istringstream stream(buffer.c_str());
 
-  // pick type of database
-  SceneDatabase* db;
-  if (renderer->useZBuffer())
-    db = new ZSceneDatabase;
-  else
-    db = new BSPSceneDatabase;
-  // FIXME -- when making BSP tree, try several shuffles for best tree
-
-  // add nodes to database
-  WallObstaclesCIterator wallScan(world->getWalls());
-  while (!wallScan.isDone()) {
-    addWall(db, wallScan.getItem());
-    wallScan.next();
-  }
-  BoxBuildingsCIterator boxScan(world->getBoxes());
-  while (!boxScan.isDone()) {
-    addBox(db, boxScan.getItem());
-    boxScan.next();
-  }
-  TeleportersCIterator teleporterScan(world->getTeleporters());
-  while (!teleporterScan.isDone()) {
-    addTeleporter(db, teleporterScan.getItem());
-    teleporterScan.next();
-  }
-  PyramidBuildingsCIterator pyramidScan(world->getPyramids());
-  while (!pyramidScan.isDone()) {
-    addPyramid(db, pyramidScan.getItem());
-    pyramidScan.next();
-  }
-  BaseBuildingsCIterator baseScan(world->getBases());
-  while (!baseScan.isDone()) {
-    addBase(db, baseScan.getItem());
-    baseScan.next();
-  }
-
-  return db;
+	SceneReader reader;
+	return reader.read(stream);
 }
 
-void			SceneDatabaseBuilder::addWall(SceneDatabase* db,
-						const WallObstacle& o)
+BzfString				SceneDatabaseBuilder::makeBuffer(const World* world)
 {
-  int part = 0;
-  WallSceneNode* node;
-  ObstacleSceneNodeGenerator* nodeGen = o.newSceneNodeGenerator();
-  while ((node = nodeGen->getNextNode(o.getBreadth() / wallTexWidth,
-				o.getHeight() / wallTexHeight, wallLOD))) {
-    node->setColor(wallColors[part]);
-    node->setModulateColor(wallModulateColors[part]);
-    node->setLightedColor(wallLightedColors[0]);
-    node->setLightedModulateColor(wallLightedModulateColors[0]);
-    node->setMaterial(wallMaterial);
-    node->setTexture(wallTexture);
+	BzfString primitives;
+	nVertex = 0;
 
-    db->addStaticNode(node);
-    part = (part + 1) % 5;
-  }
-  delete nodeGen;
+	// add nodes to database
+	const WallObstacles& walls = world->getWalls();
+	const BoxBuildings& boxes = world->getBoxes();
+	const Teleporters& teleporters = world->getTeleporters();
+	const PyramidBuildings& pyramids = world->getPyramids();
+	const BaseBuildings& bases = world->getBases();
+
+	// walls
+	primitives1 = "";
+	primitives2 = "";
+	primitives3 = "";
+	for (WallObstacles::const_iterator wallScan = walls.begin();
+								wallScan != walls.end();
+								++wallScan)
+		addWall(*wallScan);
+	primitives += "<gstate>\n"
+		      "<shading model=flat/>\n"
+		      "<texture filename=\"wall\"/>\n";
+	primitives += primitives1;
+	primitives += "</gstate>\n";
+
+	// boxes
+	primitives1 = "";
+	primitives2 = "";
+	primitives3 = "";
+	for (BoxBuildings::const_iterator boxScan = boxes.begin();
+								boxScan != boxes.end();
+								++boxScan)
+		addBox(*boxScan);
+	primitives += "<gstate>\n"
+		      "<shading model=\"flat\" />\n"
+		      "<texture filename=\"boxwall\" />\n";
+	primitives += primitives1;
+	primitives += "</gstate>\n";
+	primitives += "<gstate>\n"
+		      "<shading model=\"flat\" />\n"
+		      "<texture filename=\"roof\" />\n";
+	primitives += primitives2;
+	primitives += primitives3;
+	primitives += "</gstate>\n";
+
+	// teleporters
+	primitives1 = "";
+	primitives2 = "";
+	primitives3 = "";
+	for (Teleporters::const_iterator teleporterScan = teleporters.begin();
+								teleporterScan != teleporters.end();
+								++teleporterScan)
+		addTeleporter(*teleporterScan);
+	primitives += "<gstate>\n"
+		      "<shading model=\"flat\" />\n"
+		      "<texture filename=\"caution\" />\n";
+	primitives += primitives1;
+	primitives += "</gstate>\n";
+	primitives += "<gstate>\n"
+		      "<shading model=\"flat\" />\n"
+		      "<blending src=\"sa\" dst=\"1-sa\" />\n"
+		      "<depth write=\"off\" />\n";
+	primitives += primitives2;
+	primitives += "</gstate>\n";
+
+	// pyramids
+	primitives1 = "";
+	primitives2 = "";
+	primitives3 = "";
+	for (PyramidBuildings::const_iterator pyramidScan = pyramids.begin();
+								pyramidScan != pyramids.end();
+								++pyramidScan)
+		addPyramid(*pyramidScan);
+	primitives += "<gstate>\n"
+		      "<shading model=\"flat\" />\n"
+		      "<texture filename=\"pyrwall\" />\n";
+	primitives += primitives1;
+	primitives += primitives2;
+	primitives += "</gstate>\n";
+
+	// bases
+	primitives1 = "";
+	primitives2 = "";
+	primitives3 = "";
+	for (BaseBuildings::const_iterator baseScan = bases.begin();
+								baseScan != bases.end();
+								++baseScan) 
+		addBase(*baseScan);
+	primitives += "<gstate>\n"
+		      "<shading model=\"flat\" />\n"
+		      "<culling cull=\"off\" />\n";
+	primitives += primitives1;
+	primitives += "</gstate>\n";
+
+	BzfString buffer;
+	buffer += "<group>\n"
+		      "<geometry>\n"
+				"<color>"
+				  "1 1 1 1"
+				"</color>\n";
+	buffer +=     "<texcoord>\n";
+	buffer +=       texcoord;
+	buffer +=     "</texcoord>\n";
+	buffer +=     "<normal>\n";
+	buffer +=       normal;
+	buffer +=     "</normal>\n";
+	buffer +=     "<vertex>\n";
+	buffer +=       vertex;
+	buffer +=     "</vertex>\n";
+	buffer +=     primitives;
+	buffer +=   "</geometry>\n";
+	buffer += "</group>\n";
+
+	return buffer;
 }
 
-void			SceneDatabaseBuilder::addBox(SceneDatabase* db,
-						const BoxBuilding& o)
+void					SceneDatabaseBuilder::prepMatrix(
+								const Obstacle& o, float dz, Matrix& m)
 {
-  // this assumes boxes have six parts:  four sides, a roof, and a bottom.
-  int part = 0;
-  WallSceneNode* node;
-  ObstacleSceneNodeGenerator* nodeGen = o.newSceneNodeGenerator();
-
-  while ((node = ((part != 5) ? nodeGen->getNextNode(
-				o.getBreadth() / boxTexWidth,
-				o.getHeight() / boxTexHeight, boxLOD) :
-				nodeGen->getNextNode(
-				0.25f * o.getBreadth(),
-				0.25f * o.getHeight(), boxLOD)))) {
-    node->setColor(boxColors[part]);
-    node->setModulateColor(boxModulateColors[part]);
-    node->setLightedColor(boxLightedColors[part]);
-    node->setLightedModulateColor(boxLightedModulateColors[part]);
-    node->setMaterial(boxMaterial);
-    if (part < 4) node->setTexture(boxTexture);
-    else node->setTexture(boxTopTexture);
-
-    db->addStaticNode(node);
-    part = (part + 1) % 6;
-  }
-  delete nodeGen;
+	const float* pos = o.getPosition();
+	m.setTranslate(pos[0], pos[1], pos[2] + dz);
+	Matrix x;
+	x.setRotate(0.0f, 0.0f, 1.0f, o.getRotation() * 180.0f / M_PI);
+	m.mult(x);
 }
 
-void			SceneDatabaseBuilder::addPyramid(SceneDatabase* db,
-						const PyramidBuilding& o)
+void					SceneDatabaseBuilder::prepNormalMatrix(
+								const Matrix& x, Matrix& n)
 {
-  // this assumes pyramids have four parts:  four sides
-  int part = 0;
-  WallSceneNode* node;
-  ObstacleSceneNodeGenerator* nodeGen = o.newSceneNodeGenerator();
-
-  while ((node = nodeGen->getNextNode(3.0f,
-				3.0f * o.getHeight() / o.getBreadth(),
-				pyramidLOD))) {
-    node->setColor(pyramidColors[part]);
-    node->setModulateColor(pyramidModulateColors[part]);
-    node->setLightedColor(pyramidLightedColors[part]);
-    node->setLightedModulateColor(pyramidLightedModulateColors[part]);
-    node->setMaterial(pyramidMaterial);
-    node->setTexture(pyramidTexture);
-
-    db->addStaticNode(node);
-    part = (part + 1) % 5;
-  }
-  delete nodeGen;
+	n = x;
+	n.inverse();
+	n.transpose();
 }
 
-void			SceneDatabaseBuilder::addBase(SceneDatabase *db,
-    						const BaseBuilding &o)
+void					SceneDatabaseBuilder::addVertex(
+								const Matrix& m, const float* v)
 {
-  WallSceneNode *node;
-  ObstacleSceneNodeGenerator *nodeGen = o.newSceneNodeGenerator();
-
-  // this assumes bases have 6 parts - if they don't, it still works
-  int part = 0;
-  while ((node = ((part < 2) ? nodeGen->getNextNode(
-				o.getBreadth(), o.getHeight(),
-				baseLOD) : nodeGen->getNextNode(
-				o.getBreadth() / boxTexWidth,
-				o.getHeight() / boxTexHeight, boxLOD)))) {
-    if(part >= 2) {
-      node->setColor(boxColors[part - 2]);
-      node->setModulateColor(boxModulateColors[part - 2]);
-      node->setLightedColor(boxLightedColors[part - 2]);
-      node->setLightedModulateColor(boxLightedModulateColors[part - 2]);
-      node->setMaterial(boxMaterial);
-      node->setTexture(boxTexture);
-    }
-    part++;
-    db->addStaticNode(node);
-  }
-  delete nodeGen;
+	float v1[3];
+	m.transform3(v1, v);
+	vertex += BzfString::format("%f %f %f\n", v1[0], v1[1], v1[2]);
+	++nVertex;
 }
 
-void			SceneDatabaseBuilder::addTeleporter(SceneDatabase* db,
-						const Teleporter& o)
+void					SceneDatabaseBuilder::addVertex(
+								const Matrix& m, float x, float y, float z)
 {
-  // this assumes teleporters have fourteen parts:  12 border sides, 2 faces
-  int part = 0;
-  WallSceneNode* node;
-  ObstacleSceneNodeGenerator* nodeGen = o.newSceneNodeGenerator();
+	float v[3];
+	v[0] = x;
+	v[1] = y;
+	v[2] = z;
+	addVertex(m, v);
+}
 
-  while ((node = nodeGen->getNextNode(1.0, o.getHeight() / o.getBreadth(),
-							teleporterLOD))) {
-    if (part >= 0 && part <= 1) {
-      node->setColor(teleporterColors[0]);
-      node->setModulateColor(teleporterModulateColors[0]);
-      node->setLightedColor(teleporterLightedColors[0]);
-      node->setLightedModulateColor(teleporterLightedModulateColors[0]);
-      node->setMaterial(teleporterMaterial);
-      node->setTexture(teleporterTexture);
-    }
-    else if (part >= 2 && part <= 11) {
-      node->setColor(teleporterColors[1]);
-      node->setModulateColor(teleporterModulateColors[1]);
-      node->setLightedColor(teleporterLightedColors[1]);
-      node->setLightedModulateColor(teleporterLightedModulateColors[1]);
-      node->setMaterial(teleporterMaterial);
-      node->setTexture(teleporterTexture);
-    }
-    else {
-      node->setColor(teleporterColors[2]);
-      node->setLightedColor(teleporterLightedColors[2]);
-    }
+void					SceneDatabaseBuilder::addNormal(
+								const Matrix& m, const float* n)
+{
+	float n1[3];
+	m.transform3(n1, n);
+	normal += BzfString::format("%f %f %f\n", n1[0], n1[1], n1[2]);
+}
 
-    db->addStaticNode(node);
-    part = (part + 1) % 14;
-  }
-  delete nodeGen;
+void					SceneDatabaseBuilder::addWall(const WallObstacle& o)
+{
+	static const float s_normal[][3] = {
+								{ 1.0f, 0.0f, 0.0f },
+								{ 1.0f, 0.0f, 0.0f },
+								{ 1.0f, 0.0f, 0.0f },
+								{ 1.0f, 0.0f, 0.0f }
+						};
+	static const float s_vertex[][3] = {
+								{ 0.0f, -1.0f, 1.0f },
+								{ 0.0f, -1.0f, 0.0f },
+								{ 0.0f,  1.0f, 1.0f },
+								{ 0.0f,  1.0f, 0.0f }
+						};
+
+//  const float dx = o.getWidth();
+	const float dy = o.getBreadth();
+	const float dz = o.getHeight();
+
+	texcoord += BzfString::format("0 0  0 %f  %f 0  %f %f\n",
+								 0.1f * dz, 0.1f * dy, 0.1f * dy, 0.1f * dz);
+
+	Matrix m;
+	prepMatrix(o, 0.0f, m);
+	Matrix x;
+	x.setScale(1.0f, dy, dz);
+	m.mult(x);
+	prepNormalMatrix(m, x);
+
+	unsigned int i;
+	unsigned int n = nVertex;
+	for (i = 0; i < countof(s_vertex); ++i)
+		addVertex(m, s_vertex[i]);
+	for (i = 0; i < countof(s_normal); ++i)
+		addNormal(x, s_normal[i]);
+
+	primitives1 += BzfString::format("<primitive type=\"tstrip\"><index>"
+								"%d %d %d %d</index></primitive>\n",
+								n, n + 1, n + 2, n + 3);
+}
+
+void					SceneDatabaseBuilder::addBox(const BoxBuilding& o)
+{
+	static const float s_normal[][3] = {
+								{ -1.0f,  0.0f,  0.0f },
+								{ -1.0f,  0.0f,  0.0f },
+								{  0.0f, -1.0f,  0.0f },
+								{  0.0f, -1.0f,  0.0f },
+								{  1.0f,  0.0f,  0.0f },
+								{  1.0f,  0.0f,  0.0f },
+								{  0.0f,  1.0f,  0.0f },
+								{  0.0f,  1.0f,  0.0f },
+								{ -1.0f,  0.0f,  0.0f },
+								{ -1.0f,  0.0f,  0.0f },
+
+								{  0.0f,  0.0f,  1.0f },
+								{  0.0f,  0.0f,  1.0f },
+								{  0.0f,  0.0f,  1.0f },
+								{  0.0f,  0.0f,  1.0f },
+
+								{  0.0f,  0.0f, -1.0f },
+								{  0.0f,  0.0f, -1.0f },
+								{  0.0f,  0.0f, -1.0f },
+								{  0.0f,  0.0f, -1.0f }
+						};
+	static const float s_vertex[][3] = {
+								{ -1.0f, -1.0f,  1.0f },
+								{ -1.0f, -1.0f,  0.0f },
+								{  1.0f, -1.0f,  1.0f },
+								{  1.0f, -1.0f,  0.0f },
+								{ -1.0f,  1.0f,  1.0f },
+								{ -1.0f,  1.0f,  0.0f },
+								{  1.0f,  1.0f,  1.0f },
+								{  1.0f,  1.0f,  0.0f },
+								{ -1.0f, -1.0f,  1.0f },
+								{ -1.0f, -1.0f,  0.0f },
+
+								{ -1.0f, -1.0f,  1.0f },
+								{  1.0f, -1.0f,  1.0f },
+								{ -1.0f,  1.0f,  1.0f },
+								{  1.0f,  1.0f,  1.0f },
+
+								{ -1.0f, -1.0f,  0.0f },
+								{  1.0f, -1.0f,  0.0f },
+								{ -1.0f,  1.0f,  0.0f },
+								{  1.0f,  1.0f,  0.0f }
+						};
+
+	const float dx = o.getWidth();
+	const float dy = o.getBreadth();
+	const float dz = o.getHeight();
+	const float tm1 = 1.0f / (0.2f * BoxHeight);
+
+	texcoord += BzfString::format(
+				" %f %f %f %f"
+				" %f %f %f %f"
+				" %f %f %f %f"
+				" %f %f %f %f"
+				" %f %f %f %f"
+				" 0 0 %f 0 0 %f %f %f"
+				" 0 0 %f 0 0 %f %f %f",
+				0.0f, tm1 * dz, 0.0f, 0.0f,
+				tm1 * dx, tm1 * dz, tm1 * dx, 0.0f,
+				tm1 * (dx+dy), tm1 * dz, tm1 * (dx+dy), 0.0f,
+				tm1 * (2*dx+dy), tm1 * dz, tm1 * (2*dx+dy), 0.0f,
+				tm1 * 2*(dx+dy), tm1 * dz, tm1 * 2*(dx+dy), 0.0f,
+				0.5f * dx, 0.5f * dy, 0.5f * dx, 0.5f * dy,
+				0.5f * dx, 0.5f * dy, 0.5f * dx, 0.5f * dy);
+
+	Matrix m;
+	prepMatrix(o, 0.0f, m);
+	Matrix x;
+	x.setScale(dx, dy, dz);
+	m.mult(x);
+	prepNormalMatrix(m, x);
+
+	unsigned int i;
+	unsigned int n = nVertex;
+	for (i = 0; i < countof(s_vertex); ++i)
+		addVertex(m, s_vertex[i]);
+	for (i = 0; i < countof(s_normal); ++i)
+		addNormal(x, s_normal[i]);
+
+	primitives1 += BzfString::format("<primitive type=\"tstrip\"><index>"
+								"%d %d %d %d %d %d %d %d %d %d"
+								"</index></primitive>\n",
+								n + 0, n + 1, n + 2, n + 3, n + 6,
+								n + 7, n + 4, n + 5, n + 8, n + 9);
+	primitives2 += BzfString::format("<primitive type=\"tstrip\"><index>"
+								"%d %d %d %d"
+								"</index></primitive>\n",
+								n + 10, n + 11, n + 12, n + 13);
+	primitives3 += BzfString::format("<primitive type=\"tstrip\"><index>"
+								"%d %d %d %d"
+								"</index></primitive>\n",
+								n + 15, n + 14, n + 17, n + 16);
+}
+
+void					SceneDatabaseBuilder::addPyramid(const PyramidBuilding& o)
+{
+	static const float s_normal[][3] = {
+						        {  0.0f,  0.0f,  1.0f },
+						        {  0.0f, -1.0f,  1.0f },
+								{  0.0f, -1.0f,  1.0f },
+						        {  1.0f,  0.0f,  1.0f },
+								{  1.0f,  0.0f,  1.0f },
+						        {  0.0f,  1.0f,  1.0f },
+								{  0.0f,  1.0f,  1.0f },
+						        { -1.0f,  0.0f,  1.0f },
+								{ -1.0f,  0.0f,  1.0f },
+
+								{  0.0f,  0.0f, -1.0f },
+								{  0.0f,  0.0f, -1.0f },
+								{  0.0f,  0.0f, -1.0f },
+								{  0.0f,  0.0f, -1.0f }
+						};
+	static const float s_vertex[][3] = {
+								{  0.0f,  0.0f,  1.0f },
+								{ -1.0f, -1.0f,  0.0f },
+								{ -1.0f, -1.0f,  0.0f },
+								{  1.0f, -1.0f,  0.0f },
+								{  1.0f, -1.0f,  0.0f },
+								{ -1.0f,  1.0f,  0.0f },
+								{ -1.0f,  1.0f,  0.0f },
+								{  1.0f,  1.0f,  0.0f },
+								{  1.0f,  1.0f,  0.0f },
+
+								{ -1.0f, -1.0f,  0.0f },
+								{  1.0f, -1.0f,  0.0f },
+								{ -1.0f,  1.0f,  0.0f },
+								{  1.0f,  1.0f,  0.0f }
+						};
+
+	const float dx = o.getWidth();
+	const float dy = o.getBreadth();
+	const float dz = o.getHeight();
+
+	Matrix m;
+	prepMatrix(o, 0.0f, m);
+	Matrix x;
+	x.setScale(dx, dy, dz);
+	m.mult(x);
+	prepNormalMatrix(m, x);
+
+	texcoord += BzfString::format(
+				" 0 %f"
+				" %f 0 %f 0"
+				" %f 0 %f 0"
+				" %f 0 %f 0"
+				" %f 0 %f 0"
+				"  0 0 %f 0 0 %f %f %f",
+				0.25f * dz,
+				-0.25f * dx, 0.25f * dx, -0.25f * dx, 0.25f * dx,
+				-0.25f * dx, 0.25f * dx, -0.25f * dx, 0.25f * dx,
+				0.25f * dx, 0.25f * dz, 0.25f * dx, 0.25f * dz);
+
+	unsigned int i;
+	unsigned int n = nVertex;
+	for (i = 0; i < countof(s_vertex); ++i)
+		addVertex(m, s_vertex[i]);
+	for (i = 0; i < countof(s_normal); ++i)
+		addNormal(x, s_normal[i]);
+
+	primitives1 += BzfString::format("<geometry><color>0.25 0.25 0.63 1</color>"
+								"<primitive type=\"triangles\"><index>"
+								"%d %d %d %d %d %d %d %d %d %d %d %d"
+								"</index></primitive></geometry>\n",
+								n + 0, n + 1, n + 4, n + 0, n + 3, n + 8,
+								n + 0, n + 7, n + 6, n + 0, n + 5, n + 2);
+	primitives2 += BzfString::format("<geometry><color>0.25 0.25 0.63 1</color>"
+								"<primitive type=\"tstrip\"><index>"
+								"%d %d %d %d"
+								"</index></primitive></geometry>\n",
+								n + 9, n + 10, n + 12, n + 11);
+}
+
+void					SceneDatabaseBuilder::addBase(const BaseBuilding& o)
+{
+	static const float s_normal[][3] = {
+								{ 0.0f, 0.0f, 1.0f },
+								{ 0.0f, 0.0f, 1.0f },
+								{ 0.0f, 0.0f, 1.0f },
+								{ 0.0f, 0.0f, 1.0f }
+						};
+	static const float s_vertex[][3] = {
+								{ -1.0f, -1.0f,  0.0f },
+								{  1.0f, -1.0f,  0.0f },
+								{ -1.0f,  1.0f,  0.0f },
+								{  1.0f,  1.0f,  0.0f }
+						};
+
+	const float dx = o.getWidth();
+	const float dy = o.getBreadth();
+	const float dz = o.getHeight();
+	const float* c = Team::getTankColor(static_cast<TeamColor>(o.getTeam()));
+
+	// lift bases on the ground a little so they don't flimmer
+	Matrix m;
+	prepMatrix(o, dz == 0.0f ? 0.04f : 0.0f, m);
+	Matrix x;
+	x.setScale(dx, dy, dz);
+	m.mult(x);
+	prepNormalMatrix(m, x);
+
+	texcoord += " 0 0 0 0 0 0 0 0\n";
+
+	unsigned int i;
+	unsigned int n = nVertex;
+	for (i = 0; i < countof(s_vertex); ++i)
+		addVertex(m, s_vertex[i]);
+	for (i = 0; i < countof(s_normal); ++i)
+		addNormal(x, s_normal[i]);
+
+	primitives1 += BzfString::format("<geometry><color>%f %f %f 1</color>"
+								"<primitive type=\"tstrip\"><index>"
+								"%d %d %d %d"
+								"</index></primitive></geometry>\n",
+								c[0], c[1], c[2],
+								n + 1, n + 0, n + 3, n + 2);
+}
+
+void					SceneDatabaseBuilder::addTeleporter(const Teleporter& o)
+{
+	static const float s_normal[][3] = {
+								{  0.0f, -1.0f,  0.0f },
+								{  0.0f, -1.0f,  0.0f },
+								{ -1.0f,  0.0f,  0.0f },
+								{ -1.0f,  0.0f,  0.0f },
+								{  0.0f,  1.0f,  0.0f },
+								{  0.0f,  1.0f,  0.0f },
+								{  1.0f,  0.0f,  0.0f },
+								{  1.0f,  0.0f,  0.0f },
+								{  0.0f, -1.0f,  0.0f },
+								{  0.0f, -1.0f,  0.0f },
+								{ -1.0f,  0.0f,  0.0f },
+								{ -1.0f,  0.0f,  0.0f },
+								{ -1.0f,  0.0f,  0.0f },
+								{ -1.0f,  0.0f,  0.0f },
+								{  1.0f,  0.0f,  0.0f },
+								{  1.0f,  0.0f,  0.0f },
+								{  1.0f,  0.0f,  0.0f },
+								{  1.0f,  0.0f,  0.0f },
+								{  0.0f,  0.0f,  1.0f },
+								{  0.0f,  0.0f,  1.0f },
+								{  0.0f,  0.0f,  1.0f },
+								{  0.0f,  0.0f,  1.0f },
+								{  0.0f,  0.0f, -1.0f },
+								{  0.0f,  0.0f, -1.0f },
+								{  0.0f,  0.0f, -1.0f },
+								{  0.0f,  0.0f, -1.0f },
+								{  0.0f,  1.0f,  0.0f },
+								{  0.0f,  1.0f,  0.0f },
+								{  1.0f,  0.0f,  0.0f },
+								{  1.0f,  0.0f,  0.0f },
+								{  0.0f, -1.0f,  0.0f },
+								{  0.0f, -1.0f,  0.0f },
+								{ -1.0f,  0.0f,  0.0f },
+								{ -1.0f,  0.0f,  0.0f },
+								{  0.0f,  1.0f,  0.0f },
+								{  0.0f,  1.0f,  0.0f },
+
+								{  1.0f,  0.0f,  0.0f },
+								{  1.0f,  0.0f,  0.0f },
+								{  1.0f,  0.0f,  0.0f },
+								{  1.0f,  0.0f,  0.0f },
+
+								{ -1.0f,  0.0f,  0.0f },
+								{ -1.0f,  0.0f,  0.0f },
+								{ -1.0f,  0.0f,  0.0f },
+								{ -1.0f,  0.0f,  0.0f }
+						};
+
+	const float dx = o.getWidth();
+	const float dy = o.getBreadth();
+	const float dz = o.getHeight();
+	const float db = o.getBorder();
+
+	const float yo = dy + db;
+	const float yi = dy;
+
+	Matrix m;
+	prepMatrix(o, 0.0f, m);
+	Matrix x;
+	prepNormalMatrix(m, x);
+
+	texcoord += "0.0  0.0   0.0  9.5\n"
+		      "0.5  0.0   0.5  9.0\n"
+		      "1.0  0.0   1.0  9.0\n"
+		      "1.5  0.0   1.5  9.5\n"
+		      "2.0  0.0   2.0  9.5\n"
+		      "0.0  9.5   0.0  4.5\n"
+		      "0.5  9.0   0.5  5.0\n"
+		      "1.0  9.0   1.0  13.0\n"
+		      "1.5  9.5   1.5  14.5\n"
+		      "1.5  9.5   1.5  12.5\n"
+		      "2.0  9.5   2.0  12.5\n"
+		      "0.5  9.0   0.5  13.0\n"
+		      "1.0  9.0   1.0  13.0\n"
+		      "0.5  0.0   0.5  9.5\n"
+		      "1.0  0.0   1.0  9.0\n"
+		      "1.5  0.0   1.5  9.0\n"
+		      "2.0  0.0   2.0  9.5\n"
+		      "2.5  0.0   2.5  9.5\n"
+
+		      "0 0 0 0 0 0 0 0\n"
+		      "0 0 0 0 0 0 0 0\n";
+
+	unsigned int i;
+	unsigned int n = nVertex;
+
+	addVertex(m, -dx, -yo, 0.0f);
+	addVertex(m, -dx, -yo, dz + db);
+	addVertex(m, -dx, -yi, 0.0f);
+	addVertex(m, -dx, -yi, dz);
+	addVertex(m,  dx, -yi, 0.0f);
+	addVertex(m,  dx, -yi, dz);
+	addVertex(m,  dx, -yo, 0.0f);
+	addVertex(m,  dx, -yo, dz + db);
+	addVertex(m, -dx, -yo, 0.0f);
+	addVertex(m, -dx, -yo, dz + db);
+
+	addVertex(m, -dx, -yo, dz + db);
+	addVertex(m, -dx,  yo, dz + db);
+	addVertex(m, -dx, -yi, dz);
+	addVertex(m, -dx,  yi, dz);
+	addVertex(m,  dx, -yi, dz);
+	addVertex(m,  dx,  yi, dz);
+	addVertex(m,  dx, -yo, dz + db);
+	addVertex(m,  dx,  yo, dz + db);
+	addVertex(m,  dx, -yo, dz + db);
+	addVertex(m,  dx,  yo, dz + db);
+	addVertex(m, -dx, -yo, dz + db);
+	addVertex(m, -dx,  yo, dz + db);
+	addVertex(m, -dx, -yi, dz);
+	addVertex(m, -dx,  yi, dz);
+	addVertex(m,  dx, -yi, dz);    
+	addVertex(m,  dx,  yi, dz);
+
+	addVertex(m,  dx,  yo, 0.0f);
+	addVertex(m,  dx,  yo, dz + db);
+	addVertex(m,  dx,  yi, 0.0f);
+	addVertex(m,  dx,  yi, dz);
+	addVertex(m, -dx,  yi, 0.0f);
+	addVertex(m, -dx,  yi, dz);
+	addVertex(m, -dx,  yo, 0.0f);
+	addVertex(m, -dx,  yo, dz + db);
+	addVertex(m,  dx,  yo, 0.0f);
+	addVertex(m,  dx,  yo, dz + db);
+
+	addVertex(m,  dx, -yi, 0.0f);
+	addVertex(m,  dx,  yi, 0.0f);
+	addVertex(m,  dx, -yi, dz);
+	addVertex(m,  dx,  yi, dz);
+	addVertex(m, -dx, -yi, 0.0f);
+	addVertex(m, -dx,  yi, 0.0f);
+	addVertex(m, -dx, -yi, dz);
+	addVertex(m, -dx,  yi, dz);
+
+	for (i = 0; i < countof(s_normal); ++i)
+		addNormal(x, s_normal[i]);
+
+	primitives1 += BzfString::format("<primitive type=\"tstrip\"><index>"
+								"%d %d %d %d %d %d %d %d %d %d"
+								"</index></primitive>\n",
+								n + 0, n + 1, n + 2, n + 3, n + 4,
+								n + 5, n + 6, n + 7, n + 8, n + 9);
+	primitives1 += BzfString::format("<primitive type=\"tstrip\"><index>"
+								"%d %d %d %d %d %d %d %d %d %d"
+								"</index></primitive>\n",
+								n + 26, n + 27, n + 28, n + 29, n + 30,
+								n + 31, n + 32, n + 33, n + 34, n + 35);
+	primitives1 += BzfString::format("<primitive type=\"triangles\"><index>"
+								"%d %d %d %d %d %d "
+								"%d %d %d %d %d %d "
+								"%d %d %d %d %d %d "
+								"%d %d %d %d %d %d"
+								"</index></primitive>\n",
+								n + 10, n + 11, n + 12, n + 13, n + 12, n + 11,
+								n + 14, n + 15, n + 16, n + 17, n + 16, n + 15,
+								n + 18, n + 19, n + 20, n + 21, n + 20, n + 19,
+								n + 22, n + 23, n + 24, n + 25, n + 24, n + 23);
+	primitives2 += BzfString::format("<geometry><color>0 0 0 0.5</color>"
+								"<primitive type=\"tstrip\"><index>"
+								"%d %d %d %d"
+								"</index></primitive>"
+								"<primitive type=\"tstrip\"><index>"
+								"%d %d %d %d"
+								"</index></primitive>"
+								"</geometry>\n",
+								n + 36, n + 37, n + 38, n + 39,
+								n + 41, n + 40, n + 43, n + 42);
 }

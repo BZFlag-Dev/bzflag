@@ -11,51 +11,55 @@
  */
 
 #include "SGIPlatformFactory.h"
-#include "SGIDisplay.h"
-#include "XVisual.h"
-#include "XWindow.h"
-#include "SGIMedia.h"
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <sys/mman.h>
+#include <sys/syssgi.h>
+#include <unistd.h>
 
-PlatformFactory*	PlatformFactory::getInstance()
+PlatformFactory*		PlatformFactory::getInstance()
 {
-  if (!instance) instance = new SGIPlatformFactory;
-  return instance;
+	if (instance == NULL)
+		instance = new SGIPlatformFactory;
+	return instance;
 }
 
-SGIPlatformFactory::SGIPlatformFactory()
+SGIPlatformFactory::SGIPlatformFactory() :
+								secondsPerTick(0.0),
+								clockZero(0),
+								iotimer_addr(NULL);
 {
-  // do nothing
+	// prepare high resolution timer
+	unsigned int cycleval;
+	const ptrdiff_t addr = syssgi(SGI_QUERY_CYCLECNTR, &cycleval);
+	if (addr != -1) {
+		const int poffmask = getpagesize() - 1;
+		const __psunsigned_t phys_addr = (__psunsigned_t)addr;
+		const __psunsigned_t raddr = phys_addr & ~poffmask;
+		int fd = open("/dev/mmem", O_RDONLY);
+		iotimer_addr = (volatile unsigned int *)mmap(0, poffmask, PROT_READ,
+								MAP_PRIVATE, fd, (off_t)raddr);
+		iotimer_addr = (unsigned int *)((__psunsigned_t)iotimer_addr +
+												(phys_addr & poffmask));
+#ifdef SGI_CYCLECNTR_SIZE
+		if ((int)syssgi(SGI_CYCLECNTR_SIZE) > 32)
+			iotimer_addr++;
+#endif
+		secondsPerTick = 1.0e-12 * (double)cycleval;
+		clockZero      = *iotimer_addr;
+	}
 }
 
 SGIPlatformFactory::~SGIPlatformFactory()
 {
-  // do nothing
+	// do nothing
 }
 
-BzfDisplay*		SGIPlatformFactory::createDisplay(
-				const char* name, const char*)
+double					SGIPlatformFactory::getClock() const
 {
-  XDisplay* display = new XDisplay(name, new SGIDisplayMode);
-  if (!display || !display->isValid()) {
-    delete display;
-    return NULL;
-  }
-  return display;
-}
-
-BzfVisual*		SGIPlatformFactory::createVisual(
-				const BzfDisplay* display)
-{
-  return new XVisual((const XDisplay*)display);
-}
-
-BzfWindow*		SGIPlatformFactory::createWindow(
-				const BzfDisplay* display, BzfVisual* visual)
-{
-  return new XWindow((const XDisplay*)display, (XVisual*)visual);
-}
-
-BzfMedia*		SGIPlatformFactory::createMedia()
-{
-  return new SGIMedia;
+	if (iotimer_addr == NULL)
+		return UnixPlatformFactory::getClock();
+	else
+		return secondsPerTick * (double)(*iotimer_addr - clockZero)
 }

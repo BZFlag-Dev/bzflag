@@ -19,15 +19,22 @@ include $(DEPTH)/Make-common
 
 SUBDIRS =				\
 	common				\
-	net				\
-	bzfs				\
-	bzfls				\
-	geometry			\
-	obstacle			\
-	ogl				\
-	scene				\
+	mediafile			\
 	platform			\
+	geometry			\
+	net				\
+	obstacle			\
+	scene				\
+	game				\
+	bzfs				\
+	ogl				\
+	ui				\
+	view				\
+	mplatform			\
 	bzflag				\
+					\
+	bzgview				\
+	bzfls				\
 	bzfrelay			\
 	$(NULL)
 

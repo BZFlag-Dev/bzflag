@@ -15,7 +15,6 @@ include $(DEPTH)/Make-common
 TARGETS  = $(LIBDIR)/libObstacle.a
 
 CXXFILES =				\
-	Intersect.cxx			\
 	Obstacle.cxx			\
 	BoxBuilding.cxx			\
 	BaseBuilding.cxx		\

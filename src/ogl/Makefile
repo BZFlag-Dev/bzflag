@@ -16,11 +16,8 @@ TARGETS  = $(LIBDIR)/libGLKit.a
 
 CXXFILES =				\
 	OpenGLGState.cxx		\
-	OpenGLLight.cxx			\
-	OpenGLMaterial.cxx		\
 	OpenGLTexture.cxx		\
 	OpenGLTexFont.cxx		\
-	OpenGLDisplayList.cxx		\
 	$(NULL)
 
 targets: $(TARGETS)

@@ -37,11 +37,11 @@ RSC=rc.exe
 # PROP BASE Target_Dir ""
 # PROP Use_MFC 0
 # PROP Use_Debug_Libraries 0
-# PROP Output_Dir "..\lib\Release"
+# PROP Output_Dir "Release"
 # PROP Intermediate_Dir "Release"
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "_LIB" /YX /FD /c
-# ADD CPP /nologo /MT /W3 /O2 /I "..\include" /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "_LIB" /FD /c
+# ADD CPP /nologo /W3 /vmg /GX /O2 /I "..\include" /D "NDEBUG" /D "_LIB" /D "WIN32" /D "_MBCS" /D VERSION=10801001 /FD /c
 # SUBTRACT CPP /YX
 # ADD BASE RSC /l 0x409 /d "NDEBUG"
 # ADD RSC /l 0x409 /d "NDEBUG"
@@ -56,17 +56,16 @@ LIB32=link.exe -lib
 
 # PROP BASE Use_MFC 0
 # PROP BASE Use_Debug_Libraries 1
-# PROP BASE Output_Dir "Debug"
-# PROP BASE Intermediate_Dir "Debug"
+# PROP BASE Output_Dir "platform___Win32_Debug"
+# PROP BASE Intermediate_Dir "platform___Win32_Debug"
 # PROP BASE Target_Dir ""
 # PROP Use_MFC 0
 # PROP Use_Debug_Libraries 1
-# PROP Output_Dir "..\lib\Debug"
+# PROP Output_Dir "Debug"
 # PROP Intermediate_Dir "Debug"
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /YX /FD /GZ /c
-# ADD CPP /nologo /MDd /W3 /Gm /ZI /Od /I "..\include" /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /FD /GZ /c
-# SUBTRACT CPP /YX
+# ADD CPP /nologo /W3 /Gm /vmg /GX /ZI /Od /I "..\include" /D "_LIB" /D "_DEBUG" /D "WIN32" /D "_MBCS" /D VERSION=10801001 /Fd"Debug/platform.pdb" /FD /GZ /c
 # ADD BASE RSC /l 0x409 /d "_DEBUG"
 # ADD RSC /l 0x409 /d "_DEBUG"
 BSC32=bscmake.exe
@@ -87,47 +86,15 @@ LIB32=link.exe -lib
 # PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 # Begin Source File
 
-SOURCE=..\src\platform\BzfDisplay.cxx
-# End Source File
-# Begin Source File
-
-SOURCE=..\src\platform\BzfMedia.cxx
-# End Source File
-# Begin Source File
-
-SOURCE=..\src\platform\BzfVisual.cxx
-# End Source File
-# Begin Source File
-
-SOURCE=..\src\platform\BzfWindow.cxx
-# End Source File
-# Begin Source File
-
 SOURCE=..\src\platform\PlatformFactory.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\platform\wave.cxx
-# End Source File
-# Begin Source File
-
-SOURCE=..\src\platform\WinDisplay.cxx
-# End Source File
-# Begin Source File
-
-SOURCE=..\src\platform\WinMedia.cxx
+SOURCE=..\src\platform\TimeKeeper.cxx
 # End Source File
 # Begin Source File
 
 SOURCE=..\src\platform\WinPlatformFactory.cxx
-# End Source File
-# Begin Source File
-
-SOURCE=..\src\platform\WinVisual.cxx
-# End Source File
-# Begin Source File
-
-SOURCE=..\src\platform\WinWindow.cxx
 # End Source File
 # End Group
 # Begin Group "Header Files"
@@ -135,51 +102,15 @@ SOURCE=..\src\platform\WinWindow.cxx
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
 # Begin Source File
 
-SOURCE=..\include\BzfDisplay.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\include\BzfEvent.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\include\BzfMedia.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\include\BzfVisual.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\include\BzfWindow.h
-# End Source File
-# Begin Source File
-
 SOURCE=..\include\PlatformFactory.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\platform\wave.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\src\platform\WinDisplay.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\src\platform\WinMedia.h
+SOURCE=..\include\TimeKeeper.h
 # End Source File
 # Begin Source File
 
 SOURCE=..\src\platform\WinPlatformFactory.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\src\platform\WinVisual.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\src\platform\WinWindow.h
 # End Source File
 # End Group
 # End Target

@@ -17,6 +17,7 @@
  */
 
 #ifndef BZF_GL_H
+#define BZF_GL_H
 
 #if defined(_WIN32)
 // windows wants to include winsock but we can't allow that.  we

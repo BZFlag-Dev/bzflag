@@ -14,78 +14,83 @@
  * TimeKeeper:
  *	Standard way to keep track of time in game.
  *
- * Generally, only the difference between TimeKeeper's is useful.
- * operator-() computes the difference in seconds as a float and
- * correctly handles wraparound.
+ * Only the difference between TimeKeeper's is useful.
+ * operator-() computes the difference in seconds.
  * operator+=() allows a time in seconds to be added to a TimeKeeper.
  */
 
-#ifndef	BZF_TIME_KEEPER_H
-#define	BZF_TIME_KEEPER_H
+#ifndef BZF_TIME_KEEPER_H
+#define BZF_TIME_KEEPER_H
 
 #include "common.h"
 
 class TimeKeeper {
-  public:
-			TimeKeeper();
-			TimeKeeper(const TimeKeeper&);
-			~TimeKeeper();
-    TimeKeeper&		operator=(const TimeKeeper&);
+public:
+	TimeKeeper();
+	TimeKeeper(const TimeKeeper&);
+	~TimeKeeper();
+	TimeKeeper&			operator=(const TimeKeeper&);
 
-    float		operator-(const TimeKeeper&) const;
-    TimeKeeper&		operator+=(float);
-    boolean		operator<=(const TimeKeeper&) const;
+	float				operator-(const TimeKeeper&) const;
+	TimeKeeper&			operator+=(float);
+	bool				operator<=(const TimeKeeper&) const;
 
-    static const TimeKeeper&	getCurrent();
-    static const TimeKeeper&	getTick(); // const
-    static void			setTick();
+	static const TimeKeeper&	getCurrent();
+	static const TimeKeeper&	getTick(); // const
+	static void					setTick();
 
-  private:
-    double		seconds;
-    static TimeKeeper	currentTime;
-    static TimeKeeper	tickTime;
+private:
+	double				seconds;
+	static TimeKeeper	currentTime;
+	static TimeKeeper	tickTime;
 };
 
 //
 // TimeKeeper
 //
 
-inline TimeKeeper::TimeKeeper() : seconds(0.0)
+inline
+TimeKeeper::TimeKeeper() : seconds(0.0)
 {
-  // do nothing
+	// do nothing
 }
 
-inline TimeKeeper::TimeKeeper(const TimeKeeper& t) :
-				seconds(t.seconds)
+inline
+TimeKeeper::TimeKeeper(const TimeKeeper& t) : seconds(t.seconds)
 {
-  // do nothing
+	// do nothing
 }
 
-inline TimeKeeper::~TimeKeeper()
+inline
+TimeKeeper::~TimeKeeper()
 {
-  // do nothing
+	// do nothing
 }
 
-inline TimeKeeper&	TimeKeeper::operator=(const TimeKeeper& t)
+inline
+TimeKeeper&				TimeKeeper::operator=(const TimeKeeper& t)
 {
-  seconds = t.seconds;
-  return *this;
+	seconds = t.seconds;
+	return *this;
 }
 
-inline float		TimeKeeper::operator-(const TimeKeeper& t) const
+inline
+float					TimeKeeper::operator-(const TimeKeeper& t) const
 {
-  return (float)(seconds - t.seconds);
+	return (float)(seconds - t.seconds);
 }
 
-inline TimeKeeper&	TimeKeeper::operator+=(float dt)
+inline
+TimeKeeper&				TimeKeeper::operator+=(float dt)
 {
-  seconds += double(dt);
-  return *this;
+	seconds += double(dt);
+	return *this;
 }
 
-inline boolean		TimeKeeper::operator<=(const TimeKeeper& t) const
+inline
+bool					TimeKeeper::operator<=(const TimeKeeper& t) const
 {
-  return seconds <= t.seconds;
+	return seconds <= t.seconds;
 }
 
 #endif // BZF_TIME_KEEPER_H

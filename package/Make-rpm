@@ -30,7 +30,7 @@ targets: binprep rpmprep
 	rpmversion=`rpm --version | sed -e 's/[^0-9]*\([0-9]*\).*/\1/'`; \
 	if [ $$rpmversion -ge 3 ]; then \
 	  cd $(RPM); rpm -bb --target $(ARCH)-linux \
-			--rcfile $(RPMRC) $(RPMBASEDIR)/SPECS/$(SPECFILE); \
+			$(RPMBASEDIR)/SPECS/$(SPECFILE); \
 	else \
 	  cd $(RPM); rpm -bb --buildarch $(ARCH) \
 			--rcfile $(RPMRC) $(RPMBASEDIR)/SPECS/$(SPECFILE); \
@@ -72,7 +72,7 @@ rpmprep:
 	( if [ $$rpmversion -ge 3 ]; then \
 		echo "%define _topdir $(RPMBASEDIR)"; fi; \
 		cat $(RPM)/$(SPECFILE) ) | \
-		sed -e 's/%setup -q -c//' \
+		sed -e 's/%setup -q//' \
 		-e 's/%define version.*/%define version '$(VERSIONID)/ \
 		-e 's@%define bzdatadir.*@%define bzdatadir '$(INSTALL_DATA_DIR)@ > \
 						$(RPMDIR)/SPECS/$(SPECFILE)

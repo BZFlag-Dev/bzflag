@@ -10,10 +10,9 @@
 # WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 
 PCXXFILES =				\
+	UnixPlatformFactory.cxx		\
 	SGIPlatformFactory.cxx		\
-	XDisplay.cxx			\
-	XVisual.cxx			\
-	XWindow.cxx			\
-	SGIDisplay.cxx			\
-	SGIMedia.cxx			\
 	$(NULL)
+
+PCXXDEFS = -DNO_UNIX_GET_INSTANCE
+

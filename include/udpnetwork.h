@@ -14,8 +14,8 @@
  * UPDnetwork socket utility functions
  */
 
-#ifndef	BZF_UDPNET_H
-#define	BZF_UDPNET_H
+#ifndef BZF_UDPNET_H
+#define BZF_UDPNET_H
 
 #include "network.h"
 #include "common.h"
@@ -31,12 +31,11 @@
  *
  */
 
-int			openUDPNetwork(int port,
-					struct sockaddr_in* addr);
-int			closeUDPNetwork(int fd);
-int			sendUDPNetwork(int fd, const void* buffer,
-				int bufferLength, const struct sockaddr_in*);
-int			recvUDPNetwork(int fd, void* buffer,
-				int bufferLength, struct sockaddr_in*);
+int						openUDPNetwork(int port, struct sockaddr_in* addr);
+int						closeUDPNetwork(int fd);
+int						sendUDPNetwork(int fd, const void* buffer,
+							int bufferLength, const struct sockaddr_in*);
+int						recvUDPNetwork(int fd, void* buffer,
+							int bufferLength, struct sockaddr_in*);
 
 #endif // BZF_UDPNET_H

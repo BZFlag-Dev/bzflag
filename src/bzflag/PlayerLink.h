@@ -14,8 +14,8 @@
  * Encapsulates communication between local player and other players.
  */
 
-#ifndef	BZF_PLAYER_LINK_H
-#define	BZF_PLAYER_LINK_H
+#ifndef BZF_PLAYER_LINK_H
+#define BZF_PLAYER_LINK_H
 
 #include "common.h"
 #include "global.h"
@@ -28,51 +28,51 @@ class Player;
 class ServerLink;
 
 class PlayerLink {
-  public:
-    enum State {
-			Okay = 0,
-			SocketError = 1,
-			ServerUDPRelay = 2,
-			ServerRelay = 3
-    };
+public:
+	enum State {
+						Okay = 0,
+						SocketError = 1,
+						ServerUDPRelay = 2,
+						ServerRelay = 3
+	};
 
-			PlayerLink(const Address& multicastAddress,
-					int port = BroadcastPort,
-					int ttl = 8,
-					const char* net_interface = NULL);
-			~PlayerLink();
+	PlayerLink(const Address& multicastAddress,
+							int port = BroadcastPort,
+							int ttl = 8,
+							const char* net_interface = NULL);
+	~PlayerLink();
 
-    State		getState() const;
-    int			getInSocket() const;	// file descriptor actually
-    int			getOutSocket() const;	// file descriptor actually
+	State				getState() const;
+	int					getInSocket() const;		// file descriptor actually
+	int					getOutSocket() const;		// file descriptor actually
 
-    int			getTTL() const { return ttl; }
-    void		setTTL(int ttl);
+	int					getTTL() const { return ttl; }
+	void				setTTL(int ttl);
 
-    void		send(uint16_t code, uint16_t len, const void* msg);
-    // if millisecondsToBlock < 0 then block forever
-    int			read(uint16_t& code, uint16_t& len, void* msg,
-						int millisecondsToBlock = 0);
+	void				send(uint16_t code, uint16_t len, const void* msg);
+	// if millisecondsToBlock < 0 then block forever
+	int					read(uint16_t& code, uint16_t& len, void* msg,
+												int millisecondsToBlock = 0);
 
-    void		sendPlayerUpdate(const Player*);
+	void				sendPlayerUpdate(const Player*);
 
-    void		setUseRelay();
-    void		setRelay(ServerLink*);
+	void				setUseRelay();
+	void				setRelay(ServerLink*);
 
-    static PlayerLink*	getMulticast(); // const
-    static void		setMulticast(PlayerLink*);
-    void         	setPortForUPD(unsigned short port);
-    void		enableUDPConIfRelayed();
-  private:
-    State		state;
-    int			ttl;
-    int			fdIn;
-    int			fdOut;
-    struct sockaddr_in	inAddr;
-    struct sockaddr_in	outAddr;
-    boolean		useRelay;
-    ServerLink*		relay;
-    static PlayerLink*	multicast;
+	static PlayerLink*	getMulticast(); // const
+	static void			setMulticast(PlayerLink*);
+	void         		setPortForUPD(unsigned short port);
+	void				enableUDPConIfRelayed();
+private:
+	State				state;
+	int					ttl;
+	int					fdIn;
+	int					fdOut;
+	struct sockaddr_in	inAddr;
+	struct sockaddr_in	outAddr;
+	bool				useRelay;
+	ServerLink*			relay;
+	static PlayerLink*	multicast;
 };
 
 //
@@ -81,17 +81,17 @@ class PlayerLink {
 
 inline PlayerLink::State PlayerLink::getState() const
 {
-  return state;
+	return state;
 }
 
-inline int		PlayerLink::getInSocket() const
+inline int				PlayerLink::getInSocket() const
 {
-  return fdIn;
+	return fdIn;
 }
 
-inline int		PlayerLink::getOutSocket() const
+inline int				PlayerLink::getOutSocket() const
 {
-  return fdOut;
+	return fdOut;
 }
 
 #endif // BZF_PLAYER_LINK_H

@@ -18,6 +18,9 @@ Package=<4>
     Project_Dep_Name geometry
     End Project Dependency
     Begin Project Dependency
+    Project_Dep_Name mediafile
+    End Project Dependency
+    Begin Project Dependency
     Project_Dep_Name net
     End Project Dependency
     Begin Project Dependency
@@ -32,36 +35,18 @@ Package=<4>
     Begin Project Dependency
     Project_Dep_Name scene
     End Project Dependency
-}}}
-
-###############################################################################
-
-Project: "bzfls"=.\bzfls.dsp - Package Owner=<4>
-
-Package=<5>
-{{{
-}}}
-
-Package=<4>
-{{{
     Begin Project Dependency
-    Project_Dep_Name common
+    Project_Dep_Name mplatform
     End Project Dependency
     Begin Project Dependency
-    Project_Dep_Name net
+    Project_Dep_Name view
     End Project Dependency
-}}}
-
-###############################################################################
-
-Project: "bzfrelay"=.\bzfrelay.dsp - Package Owner=<4>
-
-Package=<5>
-{{{
-}}}
-
-Package=<4>
-{{{
+    Begin Project Dependency
+    Project_Dep_Name game
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name ui
+    End Project Dependency
 }}}
 
 ###############################################################################
@@ -80,6 +65,12 @@ Package=<4>
     Begin Project Dependency
     Project_Dep_Name net
     End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name platform
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name game
+    End Project Dependency
 }}}
 
 ###############################################################################
@@ -96,7 +87,43 @@ Package=<4>
 
 ###############################################################################
 
+Project: "game"=.\game.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
 Project: "geometry"=.\geometry.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "mediafile"=.\mediafile.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "mplatform"=.\mplatform.dsp - Package Owner=<4>
 
 Package=<5>
 {{{
@@ -157,6 +184,30 @@ Package=<4>
 ###############################################################################
 
 Project: "scene"=.\scene.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "ui"=.\ui.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "view"=.\view.dsp - Package Owner=<4>
 
 Package=<5>
 {{{

@@ -1,10 +1,10 @@
 
-				    bzflag 1.7e4
+				    bzflag 1.8a1
 
 			Copyright (c) 1993 - 2001 Tim Riker
 
 Maintainer
-=========
+==========
 
 Tim Riker
 http://rikers.org/
@@ -14,8 +14,7 @@ Author
 ======
 
 Chris Schoeneman
-475 Hawthorne Av
-Palo Alto, CA 94301
+http://groundhog.pair.com/
 crs23@bigfoot.com
 
 
@@ -23,8 +22,8 @@ Introduction
 ============
 
 This is the readme file for the BZFlag source tree.  It includes
-a manifest, simple build instructions, and other information for
-bzflag development.
+a manifest, simple build instructions, and some other notes.  For
+developer information see DEVINFO.
 
 
 BZFlag Home Page
@@ -64,13 +63,19 @@ in the new bzflag directory:
     bzfls/	  - bzfls app source code (list of servers server)
     bzfrelay/	  - bzfrelay source code (firewall relay for servers)
     bzfs/	  - bzfs app source code (game server)
+    bzgview/	  - bzgview app source code (3D model viewer)
     common/	  - general purpose classes
-    geometry/	  - geometry rendering classes
+    game/	  - game specific stuff used by both bzflag and bzfs
+    geometry/	  - geometric mathematics classes
+    mediafile/	  - classes to read image and sound files
+    mplatform/	  - platform dependent code for windowing and audio
     net/	  - networking classes and functions
     obstacle/	  - collision detection stuff
     ogl/	  - OpenGL utility classes
-    platform/	  - platform dependent code
+    platform/	  - platform dependent code not for windowing and audio
     scene/	  - high level rendering algorithms
+    ui/		  - user interface classes
+    view/	  - classes to layout regions and draw things in them
   win32/	- extra stuff for building on win32 platforms
 
 
@@ -95,7 +100,7 @@ appropriate to your system for more information:
   Platform			README file
   --------			-----------
   UNIX, Linux			README.UNIX
-  Solaris				README.SOLARIS
+  Solaris			README.SOLARIS
   Windows 95/98/NT		README.WIN32
 
 
@@ -118,6 +123,14 @@ find the files and die with `cannot continue without
 font fixedbr'.  Either run BZFlag as indicated above
 or use the `-directory <data-directory>' command line
 option to explicitly name the data directory.
+
+You can start a server using:
+
+  % ./bin/bzfs <options>
+
+Without options you get the default server.  See the man page
+or source code for more information, or use the -help option
+for a list of options.
 
 You can also build an installable package using:
 
@@ -167,7 +180,7 @@ Bug Reports
 ===========
 
 For bug reports please go to bug tracking system on
-http://sourceforge.net/projects/bzflag/ Alternatively, you can email
+http://sourceforge.net/projects/bzflag/.  Alternatively, you can email
 bug reports to Tim@Rikers.org but the web based method is the prefered
 way to submit bugs.
 
@@ -209,22 +222,8 @@ Special thanks go to:
   Don Greenberg
 
 
-Source Tree Organization
-========================
-
-Note that include/ does not have all the include files.  If
-a header is used entirely within a library (i.e. it doesn't
-directly provide functionality outside the library) then
-the header is found in the library's directory under src/.
-An include file goes in include/ only if it's required by
-another library or libraries or executables.  While this
-complicates locating a header file (it can be in one of
-two places instead of just one place), you can instantly
-tell if a header file is (can be) used by clients of the
-library.
-
-
 UDP added by Frank Siegert, frank@this.net, frank@bzflag.de
+==========================
 
 This Client and Server now implement UDP unicast relay networking. It
 should provide much better timing and stability compared to the old TCP

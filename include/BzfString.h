@@ -15,98 +15,90 @@
  *	Designed for efficient time behavior when editing.  Can
  *	waste some space.
  *
- * I'd have preferred to use the name `String' but, you guessed it,
- * X11 strikes again.  As if there weren't enough reasons to dislike
- * X11.  It's a honking great big steaming pile of name-space pollution.
- *
  * Description of selected members:
- *   isNull() const			True iff null (zero-length) string
- *   compact()				Make space efficient
+ *   isNull() const					true iff null (zero-length) string
+ *   compact()						Make space efficient
  *   operator+(const BzfString&) const	and ...
  *   operator+(const char*) const	Concatenate strings
  *   operator+=(const BzfString&)	and ...
  *   operator+=(const char*)		Append string
  *   operator<<(const BzfString&)	and ...
  *   operator<<(const char*)		Append string (op is evaluated left to
- *					right, so can append several strings)
- *   operator()(int)			Return substring (from `start to end
- *					of string)
- *   operator()(int, int)		Return substring
+ *									right, so can append several strings)
+ *   operator()(int)				Return substring (from `start to end
+ *									of string)
+ *   operator()(int, int)			Return substring
  */
 
 #ifndef BZF_STRING_H
-#define	BZF_STRING_H
+#define BZF_STRING_H
 
 #include "common.h"
-
-#if defined(sun) || defined(__MWERKS__)
-// solaris compiler doesn't like declaration of ostream
 #include "bzfio.h"
-#else
-class ostream;
-#endif
+#include <stdarg.h>
 
 class BzfString {
-  public:
-			BzfString();
-			BzfString(const BzfString&);
-			BzfString(const char*);
-			BzfString(const char*, int length);
-			~BzfString();
-    BzfString&		operator=(const BzfString&);
+public:
+	typedef unsigned int size_type;
 
-    boolean		isNull() const;
-    int			getLength() const;
-    const char*		getString() const;
-			operator const char*() const;
-    void		compact();
+	BzfString();
+	BzfString(const BzfString&);
+	BzfString(const char*);
+	BzfString(const char*, size_type length);
+	~BzfString();
+	BzfString&			operator=(const BzfString&);
 
-    BzfString		operator+(const BzfString&) const;
-    BzfString		operator+(const char*) const;
-    BzfString&		operator+=(const BzfString&);
-    BzfString&		operator+=(const char*);
-    BzfString&		operator<<(const BzfString&);
-    BzfString&		operator<<(const char*);
+	bool				empty() const;
+	size_type			size() const;
+	const char*			c_str() const;
+	void				compact();
 
-    BzfString		operator()(int start) const;
-    BzfString		operator()(int start, int length) const;
+	BzfString			operator+(const BzfString&) const;
+	BzfString			operator+(const char*) const;
+	BzfString&			operator+=(const BzfString&);
+	BzfString&			operator+=(const char*);
+	BzfString&			operator<<(const BzfString&);
+	BzfString&			operator<<(const char*);
 
-    boolean		operator==(const char*) const;
-    boolean		operator!=(const char*) const;
-    boolean		operator==(const BzfString&) const;
-    boolean		operator!=(const BzfString&) const;
-    boolean		operator<(const BzfString&) const;
-    boolean		operator<=(const BzfString&) const;
-    boolean		operator>(const BzfString&) const;
-    boolean		operator>=(const BzfString&) const;
+	BzfString			operator()(size_type start) const;
+	BzfString			operator()(size_type start, size_type length) const;
 
-    friend ostream&	operator<<(ostream&, const BzfString&);
+	bool				operator==(const char*) const;
+	bool				operator!=(const char*) const;
+	bool				operator==(const BzfString&) const;
+	bool				operator!=(const BzfString&) const;
+	bool				operator<(const BzfString&) const;
+	bool				operator<=(const BzfString&) const;
+	bool				operator>(const BzfString&) const;
+	bool				operator>=(const BzfString&) const;
 
-    void		append(const char*, int length);
-    void		truncate(int length);
+	friend ostream&		operator<<(ostream&, const BzfString&);
 
-  private:
-    void		makeUnique();
-    void		ref();
-    boolean		unref();
+	void				append(const char*, size_type length);
+	void				truncate(size_type length);
 
-  private:
-    class Rep {
-      public:
-			Rep(const char*, int length);
-			Rep(const Rep*);
-			~Rep();
+	static BzfString	format(const char* fmt, ...);
+	static BzfString	vformat(const char* fmt, va_list);
 
-      public:
-	int		refCount;		// reference count
-	int		length;			// length of string
-	int		size;			// size of string buffer
-	char*		string;
-    };
-    Rep*		rep;
+private:
+	void				makeUnique();
+	void				ref();
+	bool				unref();
+
+private:
+	class Rep {
+	public:
+						Rep(const char*, size_type length);
+						Rep(const Rep*);
+						~Rep();
+
+	public:
+		int				refCount;				// reference count
+		size_type		length;					// length of string
+		size_type		size;					// size of string buffer
+		char*			string;
+	};
+	Rep*				rep;
 };
-
-#include "AList.h"
-BZF_DEFINE_ALIST(BzfStringAList, BzfString);
 
 #endif // BZF_STRING_H

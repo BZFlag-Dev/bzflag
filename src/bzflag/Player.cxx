@@ -13,478 +13,457 @@
 #include <string.h>
 #include "Player.h"
 #include "World.h"
-#include "TankSceneNode.h"
-#include "SphereSceneNode.h"
-#include "SceneDatabase.h"
-#include "OpenGLMaterial.h"
+#include "SceneNodeGroup.h"
+#include "SceneNodeTransform.h"
+#include "SceneManager.h"
+#include "ShotPath.h"
 #include "playing.h"
 
 // for dead reckoning
-static const float	PositionTolerance = 0.01f;	// meters
-static const float	AngleTolerance = 0.01f;		// radians
-static const float	MaxUpdateTime = 1.0f;		// seconds
+static const float		PositionTolerance = 0.01f;		// meters
+static const float		AngleTolerance = 0.01f;				// radians
+static const float		MaxUpdateTime = 1.0f;				// seconds
 
 //
 // Player
 //
 
-OpenGLTexture*		Player::tankTexture = NULL;
-int			Player::totalCount = 0;
-
 Player::Player(const PlayerId& _id, TeamColor _team,
-		const char* name, const char* _email) :
-				notResponding(False),
-				id(_id),
-				team(_team),
-				flag(NoFlag),
-				fromTeleporter(0),
-				toTeleporter(0),
-				teleporterProximity(0.0f),
-				wins(0),
-				losses(0),
-				localWins(0),
-				localLosses(0),
-				status(DeadStatus)
+				const char* name, const char* _email) :
+								notResponding(false),
+								id(_id),
+								team(_team),
+								flag(NoFlag),
+								fromTeleporter(0),
+								toTeleporter(0),
+								teleporterProximity(0.0f),
+								wins(0),
+								losses(0),
+								localWins(0),
+								localLosses(0),
+								status(DeadStatus)
 {
-  // initialize position, etc.
-  static const float zero[3] = { 0.0f, 0.0f, 0.0f };
-  move(zero, 0.0f);
-  setVelocity(zero);
-  setAngularVelocity(0.0f);
-  setDeadReckoning();
+	// initialize position, etc.
+	static const float zero[3] = { 0.0f, 0.0f, 0.0f };
+	move(zero, 0.0f);
+	setVelocity(zero);
+	setAngularVelocity(0.0f);
+	setDeadReckoning();
 
-  // set call sign
-  ::strncpy(callSign, name, CallSignLen);
-  callSign[CallSignLen-1] = '\0';
+	// set call sign
+	::strncpy(callSign, name, CallSignLen);
+	callSign[CallSignLen-1] = '\0';
 
-  // set email address
-  ::strncpy(email, _email, EmailLen);
-  email[EmailLen-1] = '\0';
+	// set email address
+	::strncpy(email, _email, EmailLen);
+	email[EmailLen-1] = '\0';
 
-  // make scene nodes
-  tankNode = new TankSceneNode(pos, forward);
-  tankIDLNode = new TankIDLSceneNode(tankNode);
-  changeTeam(team);
-  pausedSphere = new SphereSceneNode(pos, 1.5f * TankRadius);
-  pausedSphere->setColor(0.0f, 0.0f, 0.0f, 0.5f);
+	// make nodes
+	transformSceneNode   = new SceneNodeTransform;
+	teamPlayerSceneNode  = NULL;
+	roguePlayerSceneNode = NULL;
 
-  totalCount++;
+	// make scene nodes
+	changeTeam(team);
 }
 
 Player::~Player()
 {
-  delete tankIDLNode;
-  delete tankNode;
-  delete pausedSphere;
-  if (--totalCount == 0) {
-    delete tankTexture;
-    tankTexture = NULL;
-  }
+	unrefNodes();
+	transformSceneNode->unref();
 }
 
-float			Player::getRadius() const
+void					Player::setId(const PlayerId& newID)
 {
-  if (flag == ObesityFlag) return TankRadius * ObeseFactor;
-  if (flag == TinyFlag) return TankRadius * TinyFactor;
-  return TankRadius;
+	// crs 1/1/02 -- not even sure why this is needed;  the id shouldn't
+	// change but there's some code in playing.cxx that wants to set it.
+	id = newID;
 }
 
-void			Player::getMuzzle(float* m) const
+float					Player::getRadius() const
 {
-  // okay okay, I should really compute the up vector instead of using [0,0,1]
-  float front = MuzzleFront;
-  if (flag == ObesityFlag) front *= ObeseFactor;
-  else if (flag == TinyFlag) front *= TinyFactor;
-  m[0] = pos[0] + front * forward[0];
-  m[1] = pos[1] + front * forward[1];
-  m[2] = pos[2] + front * forward[2] + MuzzleHeight;
+	if (flag == ObesityFlag)
+		return TankRadius * ObeseFactor;
+	if (flag == TinyFlag)
+		return TankRadius * TinyFactor;
+	return TankRadius;
 }
 
-void			Player::move(const float* _pos, float _azimuth)
+void					Player::getMuzzle(float* m) const
 {
-  // assumes _forward is normalized
-  pos[0] = _pos[0];
-  pos[1] = _pos[1];
-  pos[2] = _pos[2];
-  azimuth = _azimuth;
-
-  // limit angle
-  if (azimuth < 0.0f) azimuth = 2.0f * M_PI - fmodf(-azimuth, 2.0f * M_PI);
-  else if (azimuth >= 2.0f * M_PI) azimuth = fmodf(azimuth, 2.0f * M_PI);
-
-  // update forward vector (always in horizontal plane)
-  forward[0] = cosf(azimuth);
-  forward[1] = sinf(azimuth);
-  forward[2] = 0.0f;
-
-  // compute teleporter proximity
-  if (World::getWorld())
-    teleporterProximity = World::getWorld()->getProximity(pos, TankRadius);
+	// okay okay, I should really compute the up vector instead of using [0,0,1]
+	float front = MuzzleFront;
+	if (flag == ObesityFlag)
+		front *= ObeseFactor;
+	else if (flag == TinyFlag)
+		front *= TinyFactor;
+	m[0] = pos[0] + front * forward[0];
+	m[1] = pos[1] + front * forward[1];
+	m[2] = pos[2] + front * forward[2] + MuzzleHeight;
 }
 
-void			Player::setVelocity(const float* _velocity)
+void					Player::move(const float* _pos, float _azimuth)
 {
-  velocity[0] = _velocity[0];
-  velocity[1] = _velocity[1];
-  velocity[2] = _velocity[2];
+	// assumes _forward is normalized
+	pos[0] = _pos[0];
+	pos[1] = _pos[1];
+	pos[2] = _pos[2];
+	azimuth = _azimuth;
+
+	// limit angle
+	if (azimuth < 0.0f) azimuth = 2.0f * M_PI - fmodf(-azimuth, 2.0f * M_PI);
+	else if (azimuth >= 2.0f * M_PI) azimuth = fmodf(azimuth, 2.0f * M_PI);
+
+	// update forward vector (always in horizontal plane)
+	forward[0] = cosf(azimuth);
+	forward[1] = sinf(azimuth);
+	forward[2] = 0.0f;
+
+	// compute teleporter proximity
+	if (World::getWorld())
+		teleporterProximity = World::getWorld()->getProximity(pos, TankRadius);
 }
 
-void			Player::setAngularVelocity(float _angVel)
+void					Player::setVelocity(const float* _velocity)
 {
-  angVel = _angVel;
+	velocity[0] = _velocity[0];
+	velocity[1] = _velocity[1];
+	velocity[2] = _velocity[2];
 }
 
-void			Player::setTexture(const OpenGLTexture& _texture)
+void					Player::setAngularVelocity(float _angVel)
 {
-  if (!tankTexture)
-    tankTexture = new OpenGLTexture;
-  *tankTexture = _texture;
+	angVel = _angVel;
 }
 
-void			Player::changeTeam(TeamColor _team)
+void					Player::unrefNodes()
 {
-  static const GLfloat	tankSpecular[3] = { 0.1f, 0.1f, 0.1f };
-  static const GLfloat	tankEmissive[3] = { 0.0f, 0.0f, 0.0f };
-  static const float	rogueColor[3] = { 0.25f, 0.25f, 0.25f };
-
-  // set team
-  team = _team;
-
-  // change color of tank
-  const float* _color = (team == RogueTeam) ? rogueColor :
-						Team::getTankColor(team);
-  color[0] = _color[0];
-  color[1] = _color[1];
-  color[2] = _color[2];
-  color[3] = 1.0f;
-  tankNode->setColor(color);
-  tankNode->setMaterial(OpenGLMaterial(tankSpecular, tankEmissive, 20.0f));
-  tankNode->setTexture(*tankTexture);
+	transformSceneNode->clearChildren();
+	if (teamPlayerSceneNode != NULL) {
+		teamPlayerSceneNode->unref();
+		teamPlayerSceneNode = NULL;
+	}
+	if (roguePlayerSceneNode != NULL) {
+		roguePlayerSceneNode->unref();
+		roguePlayerSceneNode = NULL;
+	}
 }
 
-void			Player::setStatus(short _status)
+void					Player::changeTeam(TeamColor _team)
 {
-  status = _status;
+	static const char* teamSuffix = "yrgbp";
+
+	// set team
+	team = _team;
+
+	// get scene nodes
+	unrefNodes();
+	teamPlayerSceneNode = SCENEMGR->find(BzfString::format(
+								"player-%c", teamSuffix[team]));
+	roguePlayerSceneNode = SCENEMGR->find("player-y");
+	// FIXME -- error if not found
 }
 
-void			Player::setExplode(const TimeKeeper& t)
+void					Player::setStatus(short _status)
 {
-  if (!isAlive()) return;
-  explodeTime = t;
-  setStatus((getStatus() | short(Exploding) | short(Falling)) &
-			~(short(Alive) | short(Paused)));
+	status = _status;
 }
 
-void			Player::setTeleport(const TimeKeeper& t,
-						short from, short to)
+void					Player::setExplode(const TimeKeeper& t)
 {
-  if (!isAlive()) return;
-  teleportTime = t;
-  fromTeleporter = from;
-  toTeleporter = to;
-  setStatus(getStatus() | short(Teleporting));
+	if (!isAlive()) return;
+	explodeTime = t;
+	setStatus((getStatus() | short(Exploding) | short(Falling)) &
+						~(short(Alive) | short(Paused)));
 }
 
-void			Player::changeScore(short deltaWins, short deltaLosses)
+void					Player::setTeleport(const TimeKeeper& t,
+												short from, short to)
 {
-  wins += deltaWins;
-  losses += deltaLosses;
+	if (!isAlive()) return;
+	teleportTime = t;
+	fromTeleporter = from;
+	toTeleporter = to;
+	setStatus(getStatus() | short(Teleporting));
 }
 
-void			Player::changeLocalScore(short dWins, short dLosses)
+void					Player::changeScore(short deltaWins, short deltaLosses)
 {
-  localWins += dWins;
-  localLosses += dLosses;
+	wins += deltaWins;
+	losses += deltaLosses;
 }
 
-void			Player::setFlag(FlagId _flag)
+void					Player::changeLocalScore(short dWins, short dLosses)
 {
-  flag = _flag;
+	localWins += dWins;
+	localLosses += dLosses;
 }
 
-void			Player::endShot(int index,
-				boolean isHit, boolean showExplosion)
+void					Player::setFlag(FlagId _flag)
 {
-  float pos[3];
-  if (doEndShot(index, isHit, pos) && showExplosion)
-    addShotExplosion(pos);
+	flag = _flag;
 }
 
-void			Player::updateSparks(float /*dt*/)
+void					Player::endShot(int index,
+								bool isHit, bool showExplosion)
 {
-  if (flag != PhantomZoneFlag || !isFlagActive()) {
-    teleporterProximity = World::getWorld()->getProximity(pos, TankRadius);
-    if (teleporterProximity == 0.0f) {
-      color[3] = 1.0f;
-      tankNode->setColor(color);
-      return;
-    }
-  }
-
-  if (flag == PhantomZoneFlag && isFlagActive()) {
-    // almost totally transparent
-    color[3] = 0.25f;
-  }
-  else {
-    // transparency depends on proximity
-    color[3] = 1.0f - 0.75f * teleporterProximity;
-  }
-  tankNode->setColor(color);
+	float pos[3];
+	if (doEndShot(index, isHit, pos) && showExplosion)
+		addShotExplosion(pos);
 }
 
-void			Player::addPlayer(SceneDatabase* scene,
-						boolean colorblind,
-						boolean showIDL)
+void					Player::updateSparks(float /*dt*/)
 {
-  if (!isAlive() && !isExploding()) return;
-  tankNode->move(pos, forward);
-  tankNode->setColorblind(colorblind);
-  if (isAlive()) {
-    if (flag == ObesityFlag) tankNode->setObese();
-    else if (flag == TinyFlag) tankNode->setTiny();
-    else if (flag == NarrowFlag) tankNode->setNarrow();
-    else tankNode->setNormal();
-    tankNode->setExplodeFraction(0.0f);
-    scene->addDynamicNode(tankNode);
-
-    if (isCrossingWall()) {
-      // get which plane to compute IDL against
-      GLfloat plane[4];
-      const GLfloat a = atan2f(forward[1], forward[0]);
-      const Obstacle* obstacle = World::getWorld()->hitBuilding(pos, a,
-					0.5f * TankLength, 0.5f * TankWidth);
-      if (obstacle && obstacle->isCrossing(pos, a,
-				0.5f * TankLength, 0.5f * TankWidth, plane) ||
-		World::getWorld()->crossingTeleporter(pos, a,
-				0.5f * TankLength, 0.5f * TankWidth, plane)) {
-	// stick in interdimensional lights node
-	if (showIDL) {
-	  tankIDLNode->move(plane);
-	  scene->addDynamicNode(tankIDLNode);
+	// FIXME -- need animated alpha on tanks
+	if (flag != PhantomZoneFlag || !isFlagActive()) {
+		teleporterProximity = World::getWorld()->getProximity(pos, TankRadius);
+		if (teleporterProximity == 0.0f) {
+			// FIXME -- alpha = 1.0f;
+			return;
+		}
 	}
 
-	// add clipping plane to tank node
-	tankNode->setClipPlane(plane);
-      }
-    }
-    else {
-      tankNode->setClipPlane(NULL);
-    }
-  }
-  else if (isExploding()) {
-    float t = (TimeKeeper::getTick() - explodeTime) / ExplodeTime;
-    if (t > 1.0f) {
-// FIXME
-//      setStatus(DeadStatus);
-      t = 1.0f;
-    }
-    else if (t < 0.0f) {
-      // shouldn't happen but why take chances
-      t = 0.0f;
-    }
-    tankNode->setExplodeFraction(t);
-    scene->addDynamicNode(tankNode);
-  }
-  if (isAlive() && (isPaused() || isNotResponding())) {
-    pausedSphere->move(pos, 1.5f * TankRadius);
-    scene->addDynamicSphere(pausedSphere);
-  }
+	if (flag == PhantomZoneFlag && isFlagActive()) {
+		// almost totally transparent
+		// FIXME -- alpha = 0.25f;
+	}
+	else {
+		// transparency depends on proximity
+		// FIXME -- alpha = 1.0f - 0.75f * teleporterProximity;
+	}
 }
 
-void			Player::setHidden(boolean hidden)
+void					Player::addPlayerSceneNode(
+								SceneNodeGroup* group, bool colorblind)
 {
-  tankNode->setHidden(hidden);
+	// skip player that's dead
+	if (!isAlive() && !isExploding())
+		return;
+
+	// do explosion update
+	if (isExploding()) {
+		// FIXME -- should set explosion time parameter
+	}
+
+	// compute transformation
+	transformSceneNode->translate.clear();
+	transformSceneNode->rotate.clear();
+	transformSceneNode->scale.clear();
+	transformSceneNode->translate.push(pos[0], pos[1], pos[2]);
+	transformSceneNode->rotate.push(0.0f, 0.0f, 1.0f, azimuth * 180.0f / M_PI);
+	if (flag == ObesityFlag)
+		transformSceneNode->scale.push(ObeseFactor, ObeseFactor, 1.0f);
+	else if (flag == TinyFlag)
+		transformSceneNode->scale.push(TinyFactor, TinyFactor, 1.0f);
+	else if (flag == NarrowFlag)
+		transformSceneNode->scale.push(1.0f, 0.01f, 1.0f);
+
+	if (isCrossingWall()) {
+		// FIXME -- should set clipping plane
+	}
+
+	// choose player model
+	transformSceneNode->clearChildren();
+	if (colorblind)
+		transformSceneNode->pushChild(roguePlayerSceneNode);
+	else
+		transformSceneNode->pushChild(teamPlayerSceneNode);
+
+	// add player
+	group->pushChild(transformSceneNode);
+
+	// add black cap
+	if (isAlive() && (isPaused() || isNotResponding())) {
+//    pausedSphere->move(pos, 1.5f * TankRadius);
+//    group->pushChild(pauseSceneNode);
+	}
 }
 
-void			Player::setInvisible(boolean invisible)
+void					Player::addShotsSceneNodes(
+								SceneNodeGroup* group, bool colorblind)
 {
-  tankNode->setInvisible(invisible);
+	// add shots
+	const int count = World::getWorld()->getMaxShots();
+	for (int i = 0; i < count; i++) {
+		ShotPath* shot = getShot(i);
+		if (shot && !shot->isExpiring() && !shot->isExpired())
+			shot->addShot(group, colorblind);
+	}
 }
 
-void			Player::addShots(SceneDatabase* scene,
-					boolean colorblind) const
+void*					Player::pack(void* buf) const
 {
-  const int count = World::getWorld()->getMaxShots();
-  for (int i = 0; i < count; i++) {
-    ShotPath* shot = getShot(i);
-    if (shot && !shot->isExpiring() && !shot->isExpired())
-      shot->addShot(scene, colorblind);
-  }
+	((Player*)this)->setDeadReckoning();
+	buf = nboPackShort(buf, int16_t(status));
+	buf = nboPackVector(buf, pos);
+	buf = nboPackVector(buf, velocity);
+	buf = nboPackFloat(buf, azimuth);
+	buf = nboPackFloat(buf, angVel);
+	return buf;
 }
 
-void*			Player::pack(void* buf) const
+void*					Player::unpack(void* buf)
 {
-  ((Player*)this)->setDeadReckoning();
-  buf = nboPackShort(buf, int16_t(status));
-  buf = nboPackVector(buf, pos);
-  buf = nboPackVector(buf, velocity);
-  buf = nboPackFloat(buf, azimuth);
-  buf = nboPackFloat(buf, angVel);
-  return buf;
+	int16_t inStatus;
+	buf = nboUnpackShort(buf, inStatus);
+	buf = nboUnpackVector(buf, pos);
+	buf = nboUnpackVector(buf, velocity);
+	buf = nboUnpackFloat(buf, azimuth);
+	buf = nboUnpackFloat(buf, angVel);
+	status = short(inStatus);
+	setDeadReckoning();
+	return buf;
 }
 
-void*			Player::unpack(void* buf)
+void					Player::setDeadReckoning()
 {
-  int16_t inStatus;
-  buf = nboUnpackShort(buf, inStatus);
-  buf = nboUnpackVector(buf, pos);
-  buf = nboUnpackVector(buf, velocity);
-  buf = nboUnpackFloat(buf, azimuth);
-  buf = nboUnpackFloat(buf, angVel);
-  status = short(inStatus);
-  setDeadReckoning();
-  return buf;
+	// save stuff for dead reckoning
+	inputTime = TimeKeeper::getTick();
+	inputPrevTime = inputTime;
+	inputStatus = status;
+	inputPos[0] = pos[0];
+	inputPos[1] = pos[1];
+	inputPos[2] = pos[2];
+	inputSpeed = hypotf(velocity[0], velocity[1]);
+	if (cosf(azimuth) * velocity[0] + sinf(azimuth) * velocity[1] < 0.0f)
+		inputSpeed = -inputSpeed;
+	if (inputSpeed != 0.0f)
+		inputSpeedAzimuth = atan2f(velocity[1], velocity[0]);
+	else
+		inputSpeedAzimuth = 0.0f;
+	inputZSpeed = velocity[2];
+	inputAzimuth = azimuth;
+	inputAngVel = angVel;
 }
 
-void			Player::setDeadReckoning()
+bool					Player::getDeadReckoning(
+								float* predictedPos, float* predictedAzimuth,
+								float* predictedVel) const
 {
-  // save stuff for dead reckoning
-  inputTime = TimeKeeper::getTick();
-  inputPrevTime = inputTime;
-  inputStatus = status;
-  inputPos[0] = pos[0];
-  inputPos[1] = pos[1];
-  inputPos[2] = pos[2];
-  inputSpeed = hypotf(velocity[0], velocity[1]);
-  if (cosf(azimuth) * velocity[0] + sinf(azimuth) * velocity[1] < 0.0f)
-    inputSpeed = -inputSpeed;
-  if (inputSpeed != 0.0f)
-    inputSpeedAzimuth = atan2f(velocity[1], velocity[0]);
-  else
-    inputSpeedAzimuth = 0.0f;
-  inputZSpeed = velocity[2];
-  inputAzimuth = azimuth;
-  inputAngVel = angVel;
+	// see if predicted position and orientation (only) are close enough
+	const float dt2 = inputPrevTime - inputTime;
+	((Player*)this)->inputPrevTime = TimeKeeper::getTick();
+	const float dt = inputPrevTime - inputTime;
+
+	if (inputStatus & Paused) {
+		// don't move when paused
+		predictedPos[0] = inputPos[0];
+		predictedPos[1] = inputPos[1];
+		predictedPos[2] = inputPos[2];
+		predictedVel[0] = fabsf(inputSpeed) * cosf(inputSpeedAzimuth);
+		predictedVel[1] = fabsf(inputSpeed) * sinf(inputSpeedAzimuth);
+		predictedVel[2] = 0.0f;
+		*predictedAzimuth = inputAzimuth;
+	}
+	else if (inputStatus & Falling) {
+		// no control when falling
+		predictedVel[0] = fabsf(inputSpeed) * cosf(inputSpeedAzimuth);
+		predictedVel[1] = fabsf(inputSpeed) * sinf(inputSpeedAzimuth);
+
+		// follow a simple parabola
+		predictedPos[0] = inputPos[0] + dt * predictedVel[0];
+		predictedPos[1] = inputPos[1] + dt * predictedVel[1];
+
+		// only turn if alive
+		if (inputStatus & Alive)
+			*predictedAzimuth = inputAzimuth + dt * inputAngVel;
+		else
+			*predictedAzimuth = inputAzimuth;
+
+		// update z with Newtownian integration (like LocalPlayer)
+		((Player*)this)->inputZSpeed += Gravity * (dt - dt2);
+		((Player*)this)->inputPos[2] += inputZSpeed * (dt - dt2);
+	}
+	else {
+		// azimuth changes linearly
+		*predictedAzimuth = inputAzimuth + dt * inputAngVel;
+
+		// different algorithms for tanks moving in a straight line vs
+		// turning in a circle
+		if (inputAngVel == 0.0f) {
+			// straight ahead
+			predictedVel[0] = fabsf(inputSpeed) * cosf(inputSpeedAzimuth);
+			predictedVel[1] = fabsf(inputSpeed) * sinf(inputSpeedAzimuth);
+			predictedPos[0] = inputPos[0] + dt * predictedVel[0];
+			predictedPos[1] = inputPos[1] + dt * predictedVel[1];
+		}
+
+		else {
+			// need dt2 because velocity is based on previous time step
+			const float tmpAzimuth = inputAzimuth + dt2 * inputAngVel;
+			predictedVel[0] = inputSpeed * cosf(tmpAzimuth);
+			predictedVel[1] = inputSpeed * sinf(tmpAzimuth);
+
+			// find current position on circle:
+			// tank with constant angular and linear velocity moves in a circle
+			// with radius = (linear velocity/angular velocity).  circle turns
+			// to the left (counterclockwise) when the ratio is positive.
+			const float radius = inputSpeed / inputAngVel;
+			const float offAzimuth = inputAzimuth - 0.5f * M_PI;
+			const float angle = offAzimuth + dt * inputAngVel;
+			predictedPos[0] = inputPos[0] + radius * (cosf(angle) - cosf(offAzimuth));
+			predictedPos[1] = inputPos[1] + radius * (sinf(angle) - sinf(offAzimuth));
+		}
+
+		// inputZSpeed will be zero when not falling
+	}
+
+	predictedVel[2] = inputZSpeed;
+	predictedPos[2] = inputPos[2];
+
+	// return false if we haven't gotten an update in a while
+	return (dt < 3.5f * MaxUpdateTime);
 }
 
-boolean			Player::getDeadReckoning(
-				float* predictedPos, float* predictedAzimuth,
-				float* predictedVel) const
+bool					Player::isDeadReckoningWrong() const
 {
-  // see if predicted position and orientation (only) are close enough
-  const float dt2 = inputPrevTime - inputTime;
-  ((Player*)this)->inputPrevTime = TimeKeeper::getTick();
-  const float dt = inputPrevTime - inputTime;
-
-  if (inputStatus & Paused) {
-    // don't move when paused
-    predictedPos[0] = inputPos[0];
-    predictedPos[1] = inputPos[1];
-    predictedPos[2] = inputPos[2];
-    predictedVel[0] = fabsf(inputSpeed) * cosf(inputSpeedAzimuth);
-    predictedVel[1] = fabsf(inputSpeed) * sinf(inputSpeedAzimuth);
-    predictedVel[2] = 0.0f;
-    *predictedAzimuth = inputAzimuth;
-  }
-  else if (inputStatus & Falling) {
-    // no control when falling
-    predictedVel[0] = fabsf(inputSpeed) * cosf(inputSpeedAzimuth);
-    predictedVel[1] = fabsf(inputSpeed) * sinf(inputSpeedAzimuth);
-
-    // follow a simple parabola
-    predictedPos[0] = inputPos[0] + dt * predictedVel[0];
-    predictedPos[1] = inputPos[1] + dt * predictedVel[1];
-
-    // only turn if alive
-    if (inputStatus & Alive)
-      *predictedAzimuth = inputAzimuth + dt * inputAngVel;
-    else
-      *predictedAzimuth = inputAzimuth;
-
-    // update z with Newtownian integration (like LocalPlayer)
-    ((Player*)this)->inputZSpeed += Gravity * (dt - dt2);
-    ((Player*)this)->inputPos[2] += inputZSpeed * (dt - dt2);
-  }
-  else {
-    // azimuth changes linearly
-    *predictedAzimuth = inputAzimuth + dt * inputAngVel;
-
-    // different algorithms for tanks moving in a straight line vs
-    // turning in a circle
-    if (inputAngVel == 0.0f) {
-      // straight ahead
-      predictedVel[0] = fabsf(inputSpeed) * cosf(inputSpeedAzimuth);
-      predictedVel[1] = fabsf(inputSpeed) * sinf(inputSpeedAzimuth);
-      predictedPos[0] = inputPos[0] + dt * predictedVel[0];
-      predictedPos[1] = inputPos[1] + dt * predictedVel[1];
-    }
-
-    else {
-      // need dt2 because velocity is based on previous time step
-      const float tmpAzimuth = inputAzimuth + dt2 * inputAngVel;
-      predictedVel[0] = inputSpeed * cosf(tmpAzimuth);
-      predictedVel[1] = inputSpeed * sinf(tmpAzimuth);
-
-      // find current position on circle:
-      // tank with constant angular and linear velocity moves in a circle
-      // with radius = (linear velocity/angular velocity).  circle turns
-      // to the left (counterclockwise) when the ratio is positive.
-      const float radius = inputSpeed / inputAngVel;
-      const float offAzimuth = inputAzimuth - 0.5f * M_PI;
-      const float angle = offAzimuth + dt * inputAngVel;
-      predictedPos[0] = inputPos[0] + radius * (cosf(angle) - cosf(offAzimuth));
-      predictedPos[1] = inputPos[1] + radius * (sinf(angle) - sinf(offAzimuth));
-    }
-
-    // inputZSpeed will be zero when not falling
-  }
-
-  predictedVel[2] = inputZSpeed;
-  predictedPos[2] = inputPos[2];
-
-  // return false if we haven't gotten an update in a while
-  return (dt < 3.5f * MaxUpdateTime);
-}
-
-boolean			Player::isDeadReckoningWrong() const
-{
-  // always send a new packet when some kinds of status change
-  if ((status & (Alive | Paused | Falling)) !=
+	// always send a new packet when some kinds of status change
+	if ((status & (Alive | Paused | Falling)) !=
       (inputStatus & (Alive | Paused | Falling)))
-    return True;
+		return true;
 
-  // never send a packet when dead
-  if (!(status & Alive)) return False;
+	// never send a packet when dead
+	if (!(status & Alive)) return false;
 
-  // otherwise always send at least one packet per second
-  if (TimeKeeper::getTick() - inputTime >= MaxUpdateTime) return True;
+	// otherwise always send at least one packet per second
+	if (TimeKeeper::getTick() - inputTime >= MaxUpdateTime) return true;
 
-  // get predicted state
-  float predictedPos[3], predictedAzimuth, predictedVel[3];
-  getDeadReckoning(predictedPos, &predictedAzimuth, predictedVel);
+	// get predicted state
+	float predictedPos[3], predictedAzimuth, predictedVel[3];
+	getDeadReckoning(predictedPos, &predictedAzimuth, predictedVel);
 
-  // always send a new packet on reckoned touchdown
-  if (predictedPos[2] < 0.0f) return True;
+	// always send a new packet on reckoned touchdown
+	if (predictedPos[2] < 0.0f) return true;
 
-  // see if position and azimuth are close enough
-  if (fabsf(pos[0] - predictedPos[0]) > PositionTolerance) return True;
-  if (fabsf(pos[1] - predictedPos[1]) > PositionTolerance) return True;
-  if (fabsf(pos[2] - predictedPos[2]) > PositionTolerance) return True;
-  if (fabsf(azimuth - predictedAzimuth) > AngleTolerance) return True;
+	// see if position and azimuth are close enough
+	if (fabsf(pos[0] - predictedPos[0]) > PositionTolerance) return true;
+	if (fabsf(pos[1] - predictedPos[1]) > PositionTolerance) return true;
+	if (fabsf(pos[2] - predictedPos[2]) > PositionTolerance) return true;
+	if (fabsf(azimuth - predictedAzimuth) > AngleTolerance) return true;
 
-  // prediction is good enough
-  return False;
+	// prediction is good enough
+	return false;
 }
 
-void			Player::doDeadReckoning()
+void					Player::doDeadReckoning()
 {
-  // get predicted state
-  float predictedPos[3], predictedAzimuth, predictedVel[3];
-  notResponding = !getDeadReckoning(predictedPos, &predictedAzimuth,
-								predictedVel);
-  if (!isAlive()) notResponding = False;
+	// get predicted state
+	float predictedPos[3], predictedAzimuth, predictedVel[3];
+	notResponding = !getDeadReckoning(predictedPos, &predictedAzimuth,
+																predictedVel);
+	if (!isAlive()) notResponding = false;
 
-  // if hit ground then update input state (since we don't want to fall
-  // anymore)
-  if (predictedPos[2] < 0.0f) {
-    predictedPos[2] = 0.0f;
-    predictedVel[2] = 0.0f;
-    inputStatus &= ~Falling;
-    inputZSpeed = 0.0f;
-    inputSpeedAzimuth = inputAzimuth;
-  }
+	// if hit ground then update input state (since we don't want to fall
+	// anymore)
+	if (predictedPos[2] < 0.0f) {
+		predictedPos[2] = 0.0f;
+		predictedVel[2] = 0.0f;
+		inputStatus &= ~Falling;
+		inputZSpeed = 0.0f;
+		inputSpeedAzimuth = inputAzimuth;
+	}
 
-  move(predictedPos, predictedAzimuth);
-  setVelocity(predictedVel);
+	move(predictedPos, predictedAzimuth);
+	setVelocity(predictedVel);
 }
 

@@ -10,28 +10,28 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef	BZF_REMOTE_PLAYER_H
-#define	BZF_REMOTE_PLAYER_H
+#ifndef BZF_REMOTE_PLAYER_H
+#define BZF_REMOTE_PLAYER_H
 
 #include "Player.h"
 #include "ShotPath.h"
 
 class RemotePlayer : public Player {
-  public:
-			RemotePlayer(const PlayerId&, TeamColor team,
-					const char* name, const char* email);
-			~RemotePlayer();
+public:
+	RemotePlayer(const PlayerId&, TeamColor team,
+							const char* name, const char* email);
+	~RemotePlayer();
 
-    void		addShot(const FiringInfo&);
-    ShotPath*		getShot(int index) const;
-    void		updateShots(float dt);
+	void				addShot(const FiringInfo&);
+	ShotPath*			getShot(int index) const;
+	void				updateShots(float dt);
 
-  private:
-    boolean		doEndShot(int index, boolean isHit, float* pos);
+private:
+	bool				doEndShot(int index, bool isHit, float* pos);
 
-  private:
-    int			numShots;
-    RemoteShotPath**	shots;
+private:
+	int					numShots;
+	RemoteShotPath**	shots;
 };
 
 #endif // BZF_REMOTE_PLAYER_H

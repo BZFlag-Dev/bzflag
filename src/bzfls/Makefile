@@ -18,7 +18,13 @@ CXXFILES =				\
 	bzfls.cxx			\
 	$(NULL)
 
+LCXXINCS =				\
+	-I$(DEPTH)/src/game		\
+	$(NULL)
+
 DEPLIBS =				\
+	$(LIBDIR)/libGame.a		\
+	$(LIBDIR)/libPlatform.a		\
 	$(LIBDIR)/libNet.a		\
 	$(LIBDIR)/libCommon.a		\
 	$(NULL)

@@ -10,47 +10,48 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include "bzfio.h"
-#include <string.h>
 #include "BzfString.h"
+#include <string.h>
+#include <stdio.h>
+#include <iostream>
 
 //
 // BzfString::Rep
 //
 
-BzfString::Rep::Rep(const char* _string, int _length) :
-				refCount(1),
-				length(_length),
-				size(_length + 1)
+BzfString::Rep::Rep(const char* _string, size_type _length) :
+								refCount(1),
+								length(_length),
+								size(_length + 1)
 {
-  string = new char[size];
-  if (length > 0) {
-    if (_string)
-      ::memcpy(string, _string, length * sizeof(char));
-    else
-      ::memset(string, '\0', length * sizeof(char));
-  }
-  string[length] = '\0';
+	string = new char[size];
+	if (length > 0) {
+		if (_string)
+			::memcpy(string, _string, length * sizeof(char));
+		else
+			::memset(string, '\0', length * sizeof(char));
+	}
+	string[length] = '\0';
 }
 
 BzfString::Rep::Rep(const Rep* rep) :
-				refCount(1),
-				length(rep->length),
-				size(rep->size)
+								refCount(1),
+								length(rep->length),
+								size(rep->size)
 {
-  string = new char[size];
-  if (length > 1) {
-    if (rep->string)
-      ::memcpy(string, rep->string, length * sizeof(char));
-    else
-      ::memset(string, '\0', length * sizeof(char));
-  }
-  string[length] = '\0';
+	string = new char[size];
+	if (length >= 1) {
+		if (rep->string)
+			::memcpy(string, rep->string, length * sizeof(char));
+		else
+			::memset(string, '\0', length * sizeof(char));
+	}
+	string[length] = '\0';
 }
 
 BzfString::Rep::~Rep()
 {
-  delete[] string;
+	delete[] string;
 }
 
 //
@@ -59,215 +60,228 @@ BzfString::Rep::~Rep()
 
 BzfString::BzfString()
 {
-  rep = new Rep("", 0);
+	rep = new Rep("", 0);
 }
 
 BzfString::BzfString(const BzfString& string)
 {
-  rep = string.rep;
-  ref();
+	rep = string.rep;
+	ref();
 }
 
 BzfString::BzfString(const char* string)
 {
-  if (!string)
-    rep = new Rep("", 0);
-  else
-    rep = new Rep(string, ::strlen(string));
+	if (!string)
+		rep = new Rep("", 0);
+	else
+		rep = new Rep(string, ::strlen(string));
 }
 
-BzfString::BzfString(const char* string, int length)
+BzfString::BzfString(const char* string, size_type length)
 {
-  if (!string)
-    rep = new Rep("", 0);
-  else
-    rep = new Rep(string, length);
+	if (!string)
+		rep = new Rep("", 0);
+	else
+		rep = new Rep(string, length);
 }
 
 BzfString::~BzfString()
 {
-  if (unref()) delete rep;
+	if (unref()) delete rep;
 }
 
-BzfString&		BzfString::operator=(const BzfString& s)
+BzfString&				BzfString::operator=(const BzfString& s)
 {
-  if (rep != s.rep) {
-    if (unref()) delete rep;
-    rep = s.rep;
-    ref();
-  }
-  return *this;
+	if (rep != s.rep) {
+		if (unref()) delete rep;
+		rep = s.rep;
+		ref();
+	}
+	return *this;
 }
 
-int			BzfString::getLength() const
+BzfString::size_type	BzfString::size() const
 {
-  return rep->length;
+	return rep->length;
 }
 
-const char*		BzfString::getString() const
+const char*				BzfString::c_str() const
 {
-  return rep->string;
+	return rep->string;
 }
 
-BzfString::operator const char*() const
+bool					BzfString::empty() const
 {
-  return rep->string;
+	return rep->length == 0;
 }
 
-boolean			BzfString::isNull() const
+void					BzfString::compact()
 {
-  return rep->length == 0;
+	if (rep->length + 1 == rep->size) return;		// already compacted
+	Rep* newRep = new Rep(c_str(), size());
+	if (unref()) delete rep;
+	rep = newRep;
 }
 
-void			BzfString::compact()
+BzfString				BzfString::operator+(const BzfString& tail) const
 {
-  if (rep->length + 1 == rep->size) return;	// already compacted
-  Rep* newRep = new Rep(getString(), getLength());
-  if (unref()) delete rep;
-  rep = newRep;
+	BzfString s(*this);
+	return s += tail;
 }
 
-BzfString		BzfString::operator+(const BzfString& tail) const
+BzfString				BzfString::operator+(const char* tail) const
 {
-  BzfString s(*this);
-  return s += tail;
+	BzfString s(*this);
+	return s += tail;
 }
 
-BzfString		BzfString::operator+(const char* tail) const
+BzfString&				BzfString::operator+=(const BzfString& tail)
 {
-  BzfString s(*this);
-  return s += tail;
+	append(tail.c_str(), tail.size());
+	return *this;
 }
 
-BzfString&		BzfString::operator+=(const BzfString& tail)
+BzfString&				BzfString::operator+=(const char* tail)
 {
-  append(tail.getString(), tail.getLength());
-  return *this;
+	if (tail) append(tail, ::strlen(tail));
+	return *this;
 }
 
-BzfString&		BzfString::operator+=(const char* tail)
+BzfString&				BzfString::operator<<(const BzfString& tail)
 {
-  if (tail) append(tail, ::strlen(tail));
-  return *this;
+	return operator+=(tail);
 }
 
-BzfString&		BzfString::operator<<(const BzfString& tail)
+BzfString&				BzfString::operator<<(const char* tail)
 {
-  return operator+=(tail);
+	return operator+=(tail);
 }
 
-BzfString&		BzfString::operator<<(const char* tail)
+BzfString				BzfString::operator()(size_type start) const
 {
-  return operator+=(tail);
+	return operator()(start, rep->length - start);
 }
 
-BzfString		BzfString::operator()(int start) const
+BzfString				BzfString::operator()(
+								size_type start, size_type length) const
 {
-  return operator()(start, rep->length - start);
+	assert(start < rep->length);
+	assert(start + length <= rep->length);
+	return BzfString(rep->string + start, length);
 }
 
-BzfString		BzfString::operator()(int start, int length) const
+bool					BzfString::operator==(const char* s) const
 {
-#ifdef DEBUG
-  // NOTE: should throw an exception instead
-  assert(start >= 0 && start < rep->length);
-  assert(length >= 0 && start + length <= rep->length);
-#endif
-  return BzfString(rep->string + start, length);
+	if (rep->length != strlen(s))
+		return false;
+	return ::memcmp(rep->string, s, rep->length) == 0;
 }
 
-boolean			BzfString::operator==(const char* s) const
+bool					BzfString::operator!=(const char* s) const
 {
-  if (rep->length != (int)strlen(s)) return False;
-  return ::memcmp(rep->string, s, rep->length) == 0;
+	return !operator==(s);
 }
 
-boolean			BzfString::operator!=(const char* s) const
+bool					BzfString::operator==(const BzfString& s) const
 {
-  return !operator==(s);
+	if (rep == s.rep) return true;
+	if (rep->length != s.rep->length) return false;
+	return ::memcmp(rep->string, s.rep->string, rep->length) == 0;
 }
 
-boolean			BzfString::operator==(const BzfString& s) const
+bool					BzfString::operator!=(const BzfString& s) const
 {
-  if (rep == s.rep) return True;
-  if (rep->length != s.rep->length) return False;
-  return ::memcmp(rep->string, s.rep->string, rep->length) == 0;
+	return !operator==(s);
 }
 
-boolean			BzfString::operator!=(const BzfString& s) const
+bool					BzfString::operator<(const BzfString& s) const
 {
-  return !operator==(s);
+	if (rep == s.rep) return false;
+	return ::strcmp(rep->string, s.rep->string) < 0;
 }
 
-boolean			BzfString::operator<(const BzfString& s) const
+bool					BzfString::operator<=(const BzfString& s) const
 {
-  if (rep == s.rep) return False;
-  return ::strcmp(rep->string, s.rep->string) < 0;
+	if (rep == s.rep) return true;
+	return ::strcmp(rep->string, s.rep->string) <= 0;
 }
 
-boolean			BzfString::operator<=(const BzfString& s) const
+bool					BzfString::operator>(const BzfString& s) const
 {
-  if (rep == s.rep) return True;
-  return ::strcmp(rep->string, s.rep->string) <= 0;
+	return !operator<=(s);
 }
 
-boolean			BzfString::operator>(const BzfString& s) const
+bool					BzfString::operator>=(const BzfString& s) const
 {
-  return !operator<=(s);
+	return !operator<(s);
 }
 
-boolean			BzfString::operator>=(const BzfString& s) const
+void					BzfString::makeUnique()
 {
-  return !operator<(s);
+	if (rep->refCount != 1) {
+		unref();
+		rep = new Rep(rep);
+	}
 }
 
-void			BzfString::makeUnique()
+void					BzfString::append(const char* string, size_type length)
 {
-  if (rep->refCount != 1) {
-    unref();
-    rep = new Rep(rep);
-  }
+	makeUnique();
+	size_type newLength = rep->length + length;
+	if (newLength >= rep->size) {
+		do { rep->size <<= 1; } while (newLength >= rep->size);
+		char* newString = new char[rep->size];
+		::memcpy(newString, rep->string, rep->length);
+		delete[] rep->string;
+		rep->string = newString;
+	}
+	::memcpy(rep->string + rep->length, string, length);
+	rep->length = newLength;
+	rep->string[rep->length] = '\0';
 }
 
-void			BzfString::append(const char* string, int length)
+void					BzfString::truncate(size_type length)
 {
-  makeUnique();
-  int newLength = rep->length + length;
-  if (newLength >= rep->size) {
-    do { rep->size <<= 1; } while (newLength >= rep->size);
-    char* newString = new char[rep->size];
-    ::memcpy(newString, rep->string, rep->length);
-    delete[] rep->string;
-    rep->string = newString;
-  }
-  ::memcpy(rep->string + rep->length, string, length);
-  rep->length = newLength;
-  rep->string[rep->length] = '\0';
+	makeUnique();
+	if (length >= rep->length) return;
+	rep->length = length;
+	rep->string[rep->length] = '\0';
 }
 
-void			BzfString::truncate(int length)
+BzfString				BzfString::format(const char* fmt, ...)
 {
-  makeUnique();
-  if (length >= rep->length) return;
-  rep->length = length;
-  rep->string[rep->length] = '\0';
+	va_list args;
+	va_start(args, fmt);
+	BzfString result = vformat(fmt, args);
+	va_end(args);
+	return result;
 }
 
-void			BzfString::ref()
+BzfString				BzfString::vformat(const char* fmt, va_list args)
 {
-  ++rep->refCount;
+	// FIXME -- should prevent buffer overflow in all cases
+	// not all platforms support vsnprintf so we'll use vsprintf and a
+	// big temporary buffer and hope for the best.
+	char buffer[8192];
+	vsprintf(buffer, fmt, args);
+	return BzfString(buffer);
 }
 
-boolean			BzfString::unref()
+void					BzfString::ref()
 {
-  return (--rep->refCount == 0);
+	++rep->refCount;
+}
+
+bool					BzfString::unref()
+{
+	return (--rep->refCount == 0);
 }
 
 //
 // BzfString friend functions
 //
 
-ostream&		operator<<(ostream& stream, const BzfString& string)
+ostream&				operator<<(ostream& stream, const BzfString& string)
 {
-  return stream << string.rep->string;
+	return stream.write(string.rep->string, string.rep->length);
 }

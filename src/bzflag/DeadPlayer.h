@@ -18,20 +18,20 @@
  * it holds far more info than we really need but so what.
  */
 
-#ifndef	BZF_DEADPLAYER_H
-#define	BZF_DEADPLAYER_H
+#ifndef BZF_DEADPLAYER_H
+#define BZF_DEADPLAYER_H
 
 #include "Player.h"
 
 class DeadPlayer : public Player {
-  public:
-			DeadPlayer(const Player&);
-			~DeadPlayer();
+public:
+						DeadPlayer(const Player&);
+						~DeadPlayer();
 
-    ShotPath*		getShot(int) const { return NULL; }
+	ShotPath*			getShot(int) const { return NULL; }
 
-  private:
-    boolean		doEndShot(int, boolean, float*) { return False; }
+private:
+	bool				doEndShot(int, bool, float*) { return false; }
 };
 
 #endif // BZF_DEADPLAYER_H

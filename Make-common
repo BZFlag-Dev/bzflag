@@ -130,7 +130,7 @@ OBJECTS = $(CXXFILES:.cxx=.o) $(CFILES:.c=.o)
 # stuff to clean
 #
 DIRT  = $(_FORCE) $(PDIRT) $(GDIRT) $(LDIRT)
-GDIRT =
+GDIRT = $(MKDEPFILE)
 
 #
 #
@@ -159,10 +159,14 @@ $(COMMONPREF)clobber: clean $(_FORCE)
 .SUFFIXES: .c .cxx .o
 
 .c.o:
+	$(MKDEPPRE)
 	$(CCF) -c $<
+	$(MKDEPPOST)
 
 .cxx.o:
+	$(MKDEPPRE)
 	$(CXXF) -c $<
+	$(MKDEPPOST)
 
 #
 # default to optimized build

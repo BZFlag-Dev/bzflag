@@ -15,11 +15,11 @@
  */
 
 #ifndef BZF_ERROR_HANDLER_H
-#define	BZF_ERROR_HANDLER_H
+#define BZF_ERROR_HANDLER_H
 
-typedef void		(*ErrorCallback)(const char*);
+typedef void			(*ErrorCallback)(const char*);
 
-ErrorCallback		setErrorCallback(ErrorCallback);
-void			printError(const char* fmt, ...);
+ErrorCallback			setErrorCallback(ErrorCallback);
+void					printError(const char* fmt, ...);
 
 #endif // BZF_ERROR_HANDLER_H

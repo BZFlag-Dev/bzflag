@@ -16,11 +16,12 @@
  * unfortunately this can include far more than necessary
  */
 
-#ifndef	BZF_NETWORK_H
-#define	BZF_NETWORK_H
+#ifndef BZF_NETWORK_H
+#define BZF_NETWORK_H
 
 #include "common.h"
 #include "BzfString.h"
+#include <vector>
 
 #if !defined(_WIN32)
 
@@ -29,7 +30,7 @@
 #include <sys/ioctl.h>
 #include <sys/socket.h>
 #ifndef GUSI_20
-  #include <sys/param.h>
+#include <sys/param.h>
 #endif
 #include <net/if.h>
 #include <netinet/in.h>
@@ -45,47 +46,49 @@
 #include <bstring.h>
 #endif
 
+#define closesocket(__x) close(__x)
+
 // add our own def block
 #if defined (macintosh)
-  #ifdef GUSI_20
-    #define getsockname(a,b,c)       getsockname(a,b,(unsigned int *)c)
-    #define accept(a,b,c)            accept(a,b,(unsigned int *)c)
-    #define recvfrom(a,b,c,d,e,f)    recvfrom(a, (void*)b, (unsigned long)c, d, e, (unsigned int*)f)
+#ifdef GUSI_20
+	#define getsockname(a,b,c)       getsockname(a,b,(unsigned int *)c)
+	#define accept(a,b,c)            accept(a,b,(unsigned int *)c)
+	#define recvfrom(a,b,c,d,e,f)    recvfrom(a, (void*)b, (unsigned long)c, d, e, (unsigned int*)f)
 
-    #define MAXHOSTNAMELEN 255
+	#define MAXHOSTNAMELEN 255
 
-    #define O_NDELAY O_NONBLOCK
+	#define O_NDELAY O_NONBLOCK
 
-    #define hstrerror(x) "hstrerror is broken"
-  #endif
+	#define hstrerror(x) "hstrerror is broken"
+#endif
 #endif
 
 #if defined(__linux__) && !defined(_old_linux_)
-#define AddrLen		unsigned int
+#define AddrLen			unsigned int
 
 /* setsockopt incorrectly prototypes the 4th arg without const. */
-#define SSOType		void*
+#define SSOType			void*
 #endif
 
 #if defined(__FreeBSD__)
-#define AddrLen		socklen_t
+#define AddrLen			socklen_t
 #endif
 
 #if defined(sun)
 /* setsockopt prototypes the 4th arg as const char*. */
-#define SSOType		const char*
+#define SSOType			const char*
 
 /* connect prototypes the 2nd arg without const */
-#define CNCTType	struct sockaddr
+#define CNCTType		struct sockaddr
 #endif
 
 extern "C" {
 
-#define herror(_x)	bzfherror(_x)
+#define herror(_x)		bzfherror(_x)
 
-void			nerror(const char* msg);
-void			bzfherror(const char* msg);
-int			getErrno();
+void					nerror(const char* msg);
+void					bzfherror(const char* msg);
+int						getErrno();
 
 }
 
@@ -98,64 +101,65 @@ int			getErrno();
 // is broken.
 #pragma warning(disable: 4018)
 
-#define	MAXHOSTNAMELEN	64
+#define MAXHOSTNAMELEN	64
 
-#define	EWOULDBLOCK	WSAEWOULDBLOCK
-#define	ECONNRESET	WSAECONNRESET
-#define	EBADMSG		WSAECONNRESET	/* not defined by windows */
+#define EWOULDBLOCK		WSAEWOULDBLOCK
+#define ECONNRESET		WSAECONNRESET
+#define EBADMSG			WSAECONNRESET		/* not defined by windows */
 
 /* setsockopt prototypes the 4th arg as const char*. */
-#define SSOType		const char*
+#define SSOType			const char*
 
-#define	close(__x)	closesocket(__x)
-#define	ioctl(__fd, __req, __arg) \
-			ioctlsocket(__fd, __req, (u_long*)__arg)
-#define	gethostbyaddr(__addr, __len, __type) \
-			gethostbyaddr((const char*)__addr, __len, __type)
+#define ioctl(__fd, __req, __arg) \
+						ioctlsocket(__fd, __req, (u_long*)__arg)
+#define gethostbyaddr(__addr, __len, __type) \
+						gethostbyaddr((const char*)__addr, __len, __type)
 
 extern "C" {
 
-int			inet_aton(const char* cp, struct in_addr* pin);
-void			nerror(const char* msg);
-void			herror(const char* msg);
-int			getErrno();
+int						inet_aton(const char* cp, struct in_addr* pin);
+void					nerror(const char* msg);
+void					herror(const char* msg);
+int						getErrno();
 
 }
 
 #endif /* !defined(_WIN32) */
 
 #if !defined(AddrLen)
-#define AddrLen		int
+#define AddrLen			int
 #endif
 
 #if !defined(SSOType)
-#define SSOType		const void*
+#define SSOType			const void*
 #endif
 #if !defined(CNCTType)
-#define CNCTType	const struct sockaddr
+#define CNCTType		const struct sockaddr
 #endif
 
 #if !defined(INADDR_NONE)
-#define INADDR_NONE	((in_addr_t)0xffffffff)
+#define INADDR_NONE		((in_addr_t)0xffffffff)
 #endif
 
 class BzfNetwork {
-  public:
-    static int		setNonBlocking(int fd);
-    static boolean	dereferenceURLs(BzfStringAList& list,
-				int max, BzfStringAList& failedList);
-    static boolean	parseURL(const BzfString& url,
-				BzfString& protocol,
-				BzfString& hostname,
-				int& port,
-				BzfString& pathname);
+public:
+	typedef std::vector<BzfString> URLList;
+	static int		setNonBlocking(int fd);
+	static bool		dereferenceURLs(URLList& list,
+						unsigned int maxURLsNeeded,
+						URLList& failedList);
+	static bool		parseURL(const BzfString& url,
+						BzfString& protocol,
+						BzfString& hostname,
+						int& port,
+						BzfString& pathname);
 
-  private:
-    static BzfString	dereferenceHTTP(const BzfString& hostname, int port,
-				const BzfString& pathname);
-    static BzfString	dereferenceFile(const BzfString& pathname);
-    static void		insertLines(BzfStringAList& list,
-				int index, const BzfString& data);
+private:
+	static BzfString	dereferenceHTTP(const BzfString& hostname, int port,
+							const BzfString& pathname);
+	static BzfString	dereferenceFile(const BzfString& pathname);
+	static void			insertLines(URLList& list,
+							int index, const BzfString& data);
 };
 
 #endif // BZF_NETWORK_H

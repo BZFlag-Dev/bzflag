@@ -11,33 +11,39 @@
  */
 
 #include "ErrorHandler.h"
+#include "BzfString.h"
 #include <stdio.h>
-#include <stdarg.h>
-#include "bzfio.h"
 #if defined(_WIN32)
 #include <windows.h>
 #endif
 
-static ErrorCallback	errorCallback = NULL;
+static ErrorCallback		errorCallback = NULL;
 
-ErrorCallback		setErrorCallback(ErrorCallback cb)
+ErrorCallback			setErrorCallback(ErrorCallback cb)
 {
-  ErrorCallback oldErrorCallback = errorCallback;
-  errorCallback = cb;
-  return oldErrorCallback;
+	ErrorCallback oldErrorCallback = errorCallback;
+	errorCallback = cb;
+	return oldErrorCallback;
 }
 
-void			printError(const char* fmt, ...)
+void					printError(const char* fmt, ...)
 {
-  char buffer[1024];
-  va_list args;
-  va_start(args, fmt);
-  vsprintf(buffer, fmt, args);
-  va_end(args);
-  if (errorCallback) (*errorCallback)(buffer);
+	va_list args;
+	va_start(args, fmt);
+	BzfString buffer = BzfString::vformat(fmt, args);
+	va_end(args);
+
+	if (errorCallback) {
+		(*errorCallback)(buffer.c_str());
+	}
 #if defined(_WIN32)
-  else { OutputDebugString(buffer); OutputDebugString("\n"); }
+	else {
+		OutputDebugString(buffer.c_str());
+		OutputDebugString("\n");
+	}
 #else
-  else fprintf(stderr, "%s\n", buffer);
+	else {
+		fprintf(stderr, "%s\n", buffer.c_str());
+	}
 #endif
 }

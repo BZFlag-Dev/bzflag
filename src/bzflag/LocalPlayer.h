@@ -10,254 +10,246 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef	BZF_LOCAL_PLAYER_H
-#define	BZF_LOCAL_PLAYER_H
+#ifndef BZF_LOCAL_PLAYER_H
+#define BZF_LOCAL_PLAYER_H
 
 #include "Player.h"
 #include "ShotPath.h"
-#include "FlagSceneNode.h"
 #include "Ray.h"
 #include "BzfEvent.h"
 
 class Obstacle;
+class SceneNodeGroup;
+class SceneNodeTransform;
 
 // FIXME -- clean this up (needed for the robot tanks)
 class BaseLocalPlayer : public Player {
-  public:
-			BaseLocalPlayer(const PlayerId&,
-					const char* name, const char* email);
-			~BaseLocalPlayer();
+public:
+	BaseLocalPlayer(const PlayerId&,
+										const char* name, const char* email);
+	~BaseLocalPlayer();
 
-    void		update();
-    Ray			getLastMotion() const;
+	void				update();
+	Ray					getLastMotion() const;
 #ifdef __MWERKS__
-    const float	(*getLastMotionBBox() )[3] const;
+    const float			(*getLastMotionBBox() )[3] const;
 #else
-    const float		(*getLastMotionBBox() const)[3];
+    const float			(*getLastMotionBBox() const)[3];
 #endif
 
-    virtual void	explodeTank() = 0;
-    virtual boolean	checkHit(const Player* source,
-				const ShotPath*& hit, float& minTime) const = 0;
+    virtual void		explodeTank() = 0;
+    virtual bool		checkHit(const Player* source,
+								const ShotPath*& hit, float& minTime) const = 0;
 
-  protected:
-    int			getSalt();
-    virtual void	doUpdate(float dt) = 0;
-    virtual void	doUpdateMotion(float dt) = 0;
+protected:
+	int					getSalt();
+	virtual void		doUpdate(float dt) = 0;
+	virtual void		doUpdateMotion(float dt) = 0;
 
-  protected:
-    TimeKeeper		lastTime;
-    float		lastPosition[3];
-    float		bbox[2][3];		// bbox of last motion
+protected:
+	TimeKeeper			lastTime;
+	float				lastPosition[3];
+	float				bbox[2][3];				// bbox of last motion
 
-  private:
-    int			salt;
+private:
+	int					salt;
 };
 
 class LocalPlayer : public BaseLocalPlayer {
-  public:
-    enum FiringStatus {
-			Deceased,		// can't shoot cos I'm dead
-			Ready,			// ready to shoot
-			Loading,		// reloading
-			Sealed,			// I'm inside a building
-			Zoned			// I'm zoned
-    };
-    enum Location {
-			Dead,			// dead, explosion over
-			Exploding,		// dead and exploding
-			OnGround,		// playing on ground
-			InBuilding,		// playing in building
-			OnBuilding,		// playing on building
-			InAir			// playing in air
-    };
+public:
+	enum FiringStatus {
+		Deceased,				// can't shoot cos I'm dead
+		Ready,					// ready to shoot
+		Loading,				// reloading
+		Sealed,					// I'm inside a building
+		Zoned					// I'm zoned
+	};
+	enum Location {
+		Dead,					// dead, explosion over
+		Exploding,				// dead and exploding
+		OnGround,				// playing on ground
+		InBuilding,				// playing in building
+		OnBuilding,				// playing on building
+		InAir					// playing in air
+	};
 
-			LocalPlayer(const PlayerId&,
-					const char* name, const char* email);
-			~LocalPlayer();
+	LocalPlayer(const PlayerId&, const char* name, const char* email);
+	~LocalPlayer();
 
-    Location		getLocation() const;
-    FiringStatus	getFiringStatus() const;
-    float		getReloadTime() const;
-    float		getFlagShakingTime() const;
-    int			getFlagShakingWins() const;
-    const GLfloat*	getAntidoteLocation() const;
-    ShotPath*		getShot(int index) const;
-    int			getMagnify() const;
-    const Player*	getTarget() const;
-    const Obstacle*	getContainingBuilding() const;
+	Location			getLocation() const;
+	FiringStatus		getFiringStatus() const;
+	float				getReloadTime() const;
+	float				getFlagShakingTime() const;
+	int					getFlagShakingWins() const;
+	const float*		getAntidoteLocation() const;
+	ShotPath*			getShot(int index) const;
+	const Player*		getTarget() const;
+	const Obstacle*		getContainingBuilding() const;
 
-    void		setTeam(TeamColor);
-    void		setDesiredSpeed(float fracOfMaxSpeed);
-    void		setDesiredAngVel(float fracOfMaxAngVel);
-    void		setPause(boolean = True);
-    boolean		fireShot();
-    void		explodeTank();
-    void		jump();
-    void		setMagnify(int zoom);
-    void		setTarget(const Player*);
+	void				setTeam(TeamColor);
+	void				setDesiredSpeed(float fracOfMaxSpeed);
+	void				setDesiredAngVel(float fracOfMaxAngVel);
+	void				setPause(bool = true);
+	bool				fireShot();
+	void				explodeTank();
+	void				jump();
+	void				setTarget(const Player*);
 
-    void		setNemesis(const Player*);
-    const Player*	getNemesis() const;
+	void				setNemesis(const Player*);
+	const Player*		getNemesis() const;
 
-    void		restart(const float* pos, float azimuth);
-    boolean		checkHit(const Player* source, const ShotPath*& hit,
-							float& minTime) const;
+	void				restart(const float* pos, float azimuth);
+	bool				checkHit(const Player* source, const ShotPath*& hit,
+														float& minTime) const;
 
-    void		setFlag(FlagId);
-    void		changeScore(short deltaWins, short deltaLosses);
+	void				setFlag(FlagId);
+	void				changeScore(short deltaWins, short deltaLosses);
 
-    void		addAntidote(SceneDatabase*);
+	void				addAntidoteSceneNode(SceneNodeGroup*);
 
-    boolean		isKeyboardMoving() const;
-    void		setKeyboardMoving(bool status);
-    void 		setKeyboardSpeed(float speed);
-    void 		setKeyboardAngVel(float angVel);
-    float 		getKeyboardSpeed() const;
-    float 		getKeyboardAngVel() const;
-    void 		setKey(int button, boolean pressed);
-    boolean             getKeyPressed() const;
-    int 		getKeyButton() const;
-    void                resetKey();
-    void                setSlowKeyboard(boolean slow);
-    boolean             hasSlowKeyboard() const;
+	bool				isKeyboardMoving() const;
+	void				setKeyboardMoving(bool status);
+	void 				setKeyboardSpeed(float speed);
+	void 				setKeyboardAngVel(float angVel);
+	float 				getKeyboardSpeed() const;
+	float 				getKeyboardAngVel() const;
+	void 				setKey(int button, bool pressed);
+	bool             	getKeyPressed() const;
+	int 				getKeyButton() const;
+	void                resetKey();
+	void                setSlowKeyboard(bool slow);
+	bool            	hasSlowKeyboard() const;
 
-    static LocalPlayer*	getMyTank();
-    static void		setMyTank(LocalPlayer*);
+	static LocalPlayer*	getMyTank();
+	static void			setMyTank(LocalPlayer*);
 
-  protected:
-    boolean		doEndShot(int index, boolean isHit, float* pos);
-    void		doUpdate(float dt);
-    void		doUpdateMotion(float dt);
-    void		doMomentum(float dt, float& speed, float& angVel);
-    void		doForces(float dt, float* velocity, float& angVel);
-    const Obstacle*	getHitBuilding(const float* pos, float angle,
-				boolean phased, boolean& expel) const;
-    boolean		getHitNormal(const Obstacle* o,
-				const float* pos1, float azimuth1,
-				const float* pos2, float azimuth2,
-				float* normal) const;
+protected:
+	bool				doEndShot(int index, bool isHit, float* pos);
+	void				doUpdate(float dt);
+	void				doUpdateMotion(float dt);
+	void				doMomentum(float dt, float& speed, float& angVel);
+	void				doForces(float dt, float* velocity, float& angVel);
+	const Obstacle*		getHitBuilding(const float* pos, float angle,
+							bool phased, bool& expel) const;
+	bool				getHitNormal(const Obstacle* o,
+							const float* pos1, float azimuth1,
+							const float* pos2, float azimuth2,
+							float* normal) const;
 
-  private:
-    Location		location;
-    FiringStatus	firingStatus;
-    float		flagShakingTime;
-    int			flagShakingWins;
-    float		flagAntidotePos[3];
-    FlagSceneNode*	antidoteFlag;
-    float		desiredSpeed;
-    float		desiredAngVel;
-    float		lastSpeed;
-    const Obstacle*	insideBuilding;
-    GLfloat		crossingPlane[4];
-    LocalShotPath**	shots;
-    boolean		anyShotActive;
-    int			magnify;
-    const Player*	target;
-    const Player*	nemesis;
-    static LocalPlayer*	mainPlayer;
-    boolean		keyboardMoving;
-    float		keyboardSpeed;
-    float		keyboardAngVel;
-    int 		keyButton;
-    boolean             keyPressed;
-    boolean             slowKeyboard;
+private:
+	Location			location;
+	FiringStatus		firingStatus;
+	float				flagShakingTime;
+	int					flagShakingWins;
+	float				flagAntidotePos[3];
+	SceneNodeTransform*	antidoteFlag;
+	float				desiredSpeed;
+	float				desiredAngVel;
+	float				lastSpeed;
+	const Obstacle*		insideBuilding;
+	float				crossingPlane[4];
+	LocalShotPath**		shots;
+	bool				anyShotActive;
+	const Player*		target;
+	const Player*		nemesis;
+	static LocalPlayer*	mainPlayer;
+	bool				keyboardMoving;
+	float				keyboardSpeed;
+	float				keyboardAngVel;
+	int 				keyButton;
+	bool            	keyPressed;
+	bool            	slowKeyboard;
 };
 
 //
 // LocalPlayer
 //
 
-inline LocalPlayer::Location		LocalPlayer::getLocation() const
+inline LocalPlayer::Location	LocalPlayer::getLocation() const
 {
-  return location;
+	return location;
 }
 
 inline LocalPlayer::FiringStatus	LocalPlayer::getFiringStatus() const
 {
-  return firingStatus;
-}
-
-inline int		LocalPlayer::getMagnify() const
-{
-  return magnify;
+	return firingStatus;
 }
 
 inline const Player*	LocalPlayer::getTarget() const
 {
-  return target;
+	return target;
 }
 
 inline const Player*	LocalPlayer::getNemesis() const
 {
-  return nemesis;
+	return nemesis;
 }
 
 inline const Obstacle*	LocalPlayer::getContainingBuilding() const
 {
-  return insideBuilding;
+	return insideBuilding;
 }
 
-inline boolean LocalPlayer::isKeyboardMoving() const
+inline bool				LocalPlayer::isKeyboardMoving() const
 {
-  return keyboardMoving;
+	return keyboardMoving;
 }
 
-inline void LocalPlayer::setKeyboardMoving(bool status)
+inline void				LocalPlayer::setKeyboardMoving(bool status)
 {
-  keyboardMoving = status;
+	keyboardMoving = status;
 }
 
-inline void LocalPlayer::setKeyboardSpeed(float speed)
+inline void				LocalPlayer::setKeyboardSpeed(float speed)
 {
-  keyboardSpeed = speed;
+	keyboardSpeed = speed;
 }
 
-inline void LocalPlayer::setKeyboardAngVel(float angVel)
+inline void				LocalPlayer::setKeyboardAngVel(float angVel)
 {
-  keyboardAngVel = angVel;
+	keyboardAngVel = angVel;
 }
 
-inline float LocalPlayer::getKeyboardSpeed() const
+inline float			LocalPlayer::getKeyboardSpeed() const
 {
-  return keyboardSpeed;
+	return keyboardSpeed;
 }
 
-inline float LocalPlayer::getKeyboardAngVel() const
+inline float			LocalPlayer::getKeyboardAngVel() const
 {
-  return keyboardAngVel;
+	return keyboardAngVel;
 }
 
-inline void LocalPlayer::setKey(int button, boolean pressed)
+inline void				LocalPlayer::setKey(int button, bool pressed)
 {
-  keyButton = button;
-  keyPressed = pressed;
+	keyButton = button;
+	keyPressed = pressed;
 }
 
-inline void LocalPlayer::resetKey()
+inline void				LocalPlayer::resetKey()
 {
-  keyButton = BzfKeyEvent::NoButton;
-  keyPressed = False;
+	keyButton = BzfKeyEvent::NoButton;
+	keyPressed = false;
 }
 
-inline boolean LocalPlayer::getKeyPressed() const
+inline bool				LocalPlayer::getKeyPressed() const
 {
-  return keyPressed;
+	return keyPressed;
 }
 
-inline int LocalPlayer::getKeyButton() const
+inline int				LocalPlayer::getKeyButton() const
 {
-  return keyButton;
+	return keyButton;
 }
 
-inline void LocalPlayer::setSlowKeyboard(boolean slow)
+inline void				LocalPlayer::setSlowKeyboard(bool slow)
 {
-  slowKeyboard = slow;
+	slowKeyboard = slow;
 }
 
-inline boolean LocalPlayer::hasSlowKeyboard() const
+inline bool				LocalPlayer::hasSlowKeyboard() const
 {
-  return slowKeyboard;
+	return slowKeyboard;
 }
 
 #endif // BZF_LOCAL_PLAYER_H

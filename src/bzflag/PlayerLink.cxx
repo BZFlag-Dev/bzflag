@@ -27,11 +27,11 @@
 #if defined(NETWORK_STATS)
 #include "bzfio.h"
 #include "TimeKeeper.h"
-static TimeKeeper	startTime;
-static uint32_t		bytesSent;
-static uint32_t		bytesReceived;
-static uint32_t		packetsSent;
-static uint32_t		packetsReceived;
+static TimeKeeper		startTime;
+static uint32_t			bytesSent;
+static uint32_t			bytesReceived;
+static uint32_t			packetsSent;
+static uint32_t			packetsReceived;
 #endif
 
 // FIXME -- packet recording
@@ -41,162 +41,164 @@ extern FILE* packetStream;
 extern TimeKeeper packetStartTime;
 static const unsigned long playerPacket = 2;
 
-PlayerLink*		PlayerLink::multicast = NULL;
+PlayerLink*				PlayerLink::multicast = NULL;
 
 PlayerLink::PlayerLink(const Address& multicastAddress, int port,
-					int _ttl, const char* net_interface) :
-					ttl(_ttl),
-					useRelay(False),
-					relay(NULL)
+										int _ttl, const char* net_interface) :
+										ttl(_ttl),
+										useRelay(false),
+										relay(NULL)
 {
-  fdIn = openMulticast(multicastAddress, port, NULL,
-					ttl, net_interface, "r", &inAddr);
-  fdOut = openMulticast(multicastAddress, port, NULL,
-					ttl, net_interface, "w", &outAddr);
-  if (fdIn == -1 || fdOut == -1) {
-    closeMulticast(fdIn);
-    closeMulticast(fdOut);
-    state = SocketError;
-    fdIn = -1;
-    fdOut = -1;
-  }
-  else {
-    state = Okay;
+	fdIn = openMulticast(multicastAddress, port, NULL,
+										ttl, net_interface, "r", &inAddr);
+	fdOut = openMulticast(multicastAddress, port, NULL,
+										ttl, net_interface, "w", &outAddr);
+	if (fdIn == -1 || fdOut == -1) {
+		closeMulticast(fdIn);
+		closeMulticast(fdOut);
+		state = SocketError;
+		fdIn = -1;
+		fdOut = -1;
+	}
+	else {
+		state = Okay;
 #if defined(NETWORK_STATS)
-    bytesSent = 0;
-    bytesReceived = 0;
-    packetsSent = 0;
-    packetsReceived = 0;
-    startTime = TimeKeeper::getCurrent();
+		bytesSent = 0;
+		bytesReceived = 0;
+		packetsSent = 0;
+		packetsReceived = 0;
+		startTime = TimeKeeper::getCurrent();
 #endif
-  }
+	}
 }
 
 PlayerLink::~PlayerLink()
 {
-  if (state == Okay) {
-    closeMulticast(fdIn);
-    closeMulticast(fdOut);
-  }
+	if (state == Okay) {
+		closeMulticast(fdIn);
+		closeMulticast(fdOut);
+	}
 
 #if defined(NETWORK_STATS)
-  const float dt = TimeKeeper::getCurrent() - startTime;
-  cerr << "Player network statistics:" << endl;
-  cerr << "  elapsed time    : " << dt << endl;
-  cerr << "  bytes sent      : " << bytesSent << " (" <<
-		(float)bytesSent / dt << "/sec)" << endl;
-  cerr << "  packets sent    : " << packetsSent << " (" <<
-		(float)packetsSent / dt << "/sec)" << endl;
-  if (packetsSent != 0)
-    cerr << "  bytes/packet    : " <<
-		(float)bytesSent / (float)packetsSent << endl;
-  cerr << "  bytes received  : " << bytesReceived << " (" <<
-		(float)bytesReceived / dt << "/sec)" << endl;
-  cerr << "  packets received: " << packetsReceived << " (" <<
-		(float)packetsReceived / dt << "/sec)" << endl;
-  if (packetsReceived != 0)
-    cerr << "  bytes/packet    : " <<
-		(float)bytesReceived / (float)packetsReceived << endl;
+	const float dt = TimeKeeper::getCurrent() - startTime;
+	cerr << "Player network statistics:" << endl;
+	cerr << "  elapsed time    : " << dt << endl;
+	cerr << "  bytes sent      : " << bytesSent << " (" <<
+				(float)bytesSent / dt << "/sec)" << endl;
+	cerr << "  packets sent    : " << packetsSent << " (" <<
+				(float)packetsSent / dt << "/sec)" << endl;
+	if (packetsSent != 0)
+		cerr << "  bytes/packet    : " <<
+				(float)bytesSent / (float)packetsSent << endl;
+	cerr << "  bytes received  : " << bytesReceived << " (" <<
+				(float)bytesReceived / dt << "/sec)" << endl;
+	cerr << "  packets received: " << packetsReceived << " (" <<
+				(float)packetsReceived / dt << "/sec)" << endl;
+	if (packetsReceived != 0)
+		cerr << "  bytes/packet    : " <<
+				(float)bytesReceived / (float)packetsReceived << endl;
 #endif
 }
 
-void			PlayerLink::setUseRelay()
+void					PlayerLink::setUseRelay()
 {
-  useRelay = True;
+	useRelay = true;
 }
 
-void			PlayerLink::setRelay(ServerLink* _relay)
+void					PlayerLink::setRelay(ServerLink* _relay)
 {
-  // only use it if we've been instructed to do so
-  if (!useRelay) return;
+	// only use it if we've been instructed to do so
+	if (!useRelay) return;
 
-  // no going back once we set the relay
-  if (state == Okay) {
-    closeMulticast(fdIn);
-    closeMulticast(fdOut);
-    fdIn = -1;
-    fdOut = -1;
-  }
+	// no going back once we set the relay
+	if (state == Okay) {
+		closeMulticast(fdIn);
+		closeMulticast(fdOut);
+		fdIn = -1;
+		fdOut = -1;
+	}
 
-  // set the relay.  we're in error state if no relay or relay in error.
-  relay = _relay;
-  if (relay && relay->getState() == ServerLink::Okay)
-    state = ServerRelay;
-  else
-    state = SocketError;
+	// set the relay.  we're in error state if no relay or relay in error.
+	relay = _relay;
+	if (relay && relay->getState() == ServerLink::Okay)
+		state = ServerRelay;
+	else
+		state = SocketError;
 }
 
-void			PlayerLink::setTTL(int _ttl)
+void					PlayerLink::setTTL(int _ttl)
 {
-  ttl = _ttl;
-  if (state == Okay)
-    setMulticastTTL(fdOut, ttl);
+	ttl = _ttl;
+	if (state == Okay)
+		setMulticastTTL(fdOut, ttl);
 }
 
-void			PlayerLink::send(uint16_t code, uint16_t len,
-							const void* msg)
+void					PlayerLink::send(uint16_t code, uint16_t len,
+														const void* msg)
 {
-  if (state == Okay) {
-    char msgbuf[MaxPacketLen];
-    void* buf = msgbuf;
-    buf = nboPackUShort(buf, len);
-    buf = nboPackUShort(buf, code);
-    if (msg && len != 0) buf = nboPackString(buf, msg, len);
-    sendMulticast(fdOut, msgbuf, len + 4, &outAddr);
+	if (state == Okay) {
+		char msgbuf[MaxPacketLen];
+		void* buf = msgbuf;
+		buf = nboPackUShort(buf, len);
+		buf = nboPackUShort(buf, code);
+		if (msg && len != 0)
+			buf = nboPackString(buf, msg, len);
+		sendMulticast(fdOut, msgbuf, len + 4, &outAddr);
 #if defined(NETWORK_STATS)
-    bytesSent += len + 4;
-    packetsSent++;
+		bytesSent += len + 4;
+		packetsSent++;
 #endif
-  } else if (state == ServerRelay) {
-    relay->send(code, len, msg);
-  }
+	}
+	else if (state == ServerRelay) {
+		relay->send(code, len, msg);
+	}
 }
 
-int			PlayerLink::read(uint16_t& code, uint16_t& len,
-						void* msg, int blockTime)
+int						PlayerLink::read(uint16_t& code, uint16_t& len,
+												void* msg, int blockTime)
 {
-  code = MsgNull;
-  len = 0;
+	code = MsgNull;
+	len = 0;
 
-  if (state == Okay) {
-    // block for specified period.  default is no blocking (polling)
-    struct timeval timeout;
-    timeout.tv_sec = blockTime / 1000;
-    timeout.tv_usec = blockTime - 1000 * timeout.tv_sec;
+	if (state == Okay) {
+		// block for specified period.  default is no blocking (polling)
+		struct timeval timeout;
+		timeout.tv_sec = blockTime / 1000;
+		timeout.tv_usec = blockTime - 1000 * timeout.tv_sec;
 
-    // check for messages
-    fd_set read_set;
-    FD_ZERO(&read_set);
-    FD_SET(fdIn, &read_set);
-    int nfound = select(fdIn+1, (fd_set*)&read_set, NULL, NULL,
-			(struct timeval*)(blockTime < 0 ? NULL : &timeout));
-    if (nfound == 0) return 0;
-    if (nfound < 0) return -1;
+		// check for messages
+		fd_set read_set;
+		FD_ZERO(&read_set);
+		FD_SET(fdIn, &read_set);
+		int nfound = select(fdIn+1, (fd_set*)&read_set, NULL, NULL,
+						(struct timeval*)(blockTime < 0 ? NULL : &timeout));
+		if (nfound == 0) return 0;
+		if (nfound < 0) return -1;
 
-    // get packet header
-    char buffer[MaxPacketLen];
-    int msglen = recvMulticast(fdIn, buffer, MaxPacketLen, NULL);
-    if (msglen < 4) {
-      printError("incomplete read of player message header");
-      return -2;
-    }
+		// get packet header
+		char buffer[MaxPacketLen];
+		int msglen = recvMulticast(fdIn, buffer, MaxPacketLen, NULL);
+		if (msglen < 4) {
+			printError("incomplete read of player message header");
+			return -2;
+		}
 
-    // unpack header
-    void* buf = buffer;
-    buf = nboUnpackUShort(buf, len);
-    buf = nboUnpackUShort(buf, code);
+		// unpack header
+		void* buf = buffer;
+		buf = nboUnpackUShort(buf, len);
+		buf = nboUnpackUShort(buf, code);
 
-    // if it's a ping packet then just throw it out.  this can happen
-    // when a player broadcasts looking for a server.
-    if (code == PingCodeOldReply ||
-	code == PingCodeOldRequest ||
-	code == PingCodeReply ||
-	code == PingCodeRequest)
-      return 0;
+		// if it's a ping packet then just throw it out.  this can happen
+		// when a player broadcasts looking for a server.
+		if (code == PingCodeOldReply ||
+		code == PingCodeOldRequest ||
+		code == PingCodeReply ||
+		code == PingCodeRequest)
+			return 0;
 
 #if defined(NETWORK_STATS)
-    bytesReceived += msglen;
-    packetsReceived++;
+		bytesReceived += msglen;
+		packetsReceived++;
 #endif
 
     // copy message
@@ -214,42 +216,42 @@ int			PlayerLink::read(uint16_t& code, uint16_t& len,
       fwrite(buffer, msglen, 1, packetStream);
     }
     return 1;
-  } // not Multicasting
+	} // not Multicasting
 //  else if (state == ServerRelay)
 //    return relay->read(code, len, msg, blockTime);
 
-  return -1;
+	return -1;
 }
 
-void			PlayerLink::sendPlayerUpdate(const Player* player)
+void					PlayerLink::sendPlayerUpdate(const Player* player)
 {
-  if (state == SocketError) return;
-  char msg[PlayerUpdatePLen];
-  void* buf = msg;
-  buf = player->getId().pack(buf);
-  buf = player->pack(buf);
-  send(MsgPlayerUpdate, sizeof(msg), msg);
+	if (state == SocketError) return;
+	char msg[PlayerUpdatePLen];
+	void* buf = msg;
+	buf = player->getId().pack(buf);
+	buf = player->pack(buf);
+	send(MsgPlayerUpdate, sizeof(msg), msg);
 }
 
-PlayerLink*		PlayerLink::getMulticast() // const
+PlayerLink*				PlayerLink::getMulticast() // const
 {
-  return multicast;
+	return multicast;
 }
 
-void			PlayerLink::setMulticast(PlayerLink* _multicast)
+void					PlayerLink::setMulticast(PlayerLink* _multicast)
 {
-  multicast = _multicast;
+	multicast = _multicast;
 }
 
-void			PlayerLink::setPortForUPD(unsigned short port)
+void					PlayerLink::setPortForUPD(unsigned short port)
 {
-  if (state == ServerRelay)
+	if (state == ServerRelay)
      relay->setUDPRemotePort(port);
 }
 
-void			PlayerLink::enableUDPConIfRelayed()
+void					PlayerLink::enableUDPConIfRelayed()
 {
-  if (state == ServerRelay)
+	if (state == ServerRelay)
      relay->enableUDPCon();
 }
 

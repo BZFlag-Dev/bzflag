@@ -25,5 +25,20 @@ CONFIG	= solaris-gcc
 CC    = gcc
 CXX   = g++
 PCOPTS   =
-PCXXOPTS = -fno-exceptions -fno-rtti
+PCXXOPTS =
 
+#
+# dependency generation stuff
+#
+MKDEP     = $(DEPTH)/tools/depconv
+MKDEPOPT  = -MD
+MKDEPPRE  =
+MKDEPPOST = $(MKDEP) -f $(MKDEPFILE) $*.d; $(RM) $*.d
+MKDEPFILE = Makedepend
+
+#
+# dirt
+#
+PDIRT    = *.[deou] a.out core ar.tmp.*
+
+sinclude $(MKDEPFILE)

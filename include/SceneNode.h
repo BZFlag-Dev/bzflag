@@ -10,132 +10,236 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-/* SceneNode:
- *	Encapsulates information for rendering an object in the scene.
- *
- * GLfloat2
- * GLfloat3
- *	Arrays of two and three GLfloat's
- *
- * GLfloat2Array
- * GLfloat3Array
- *	Arrays of GLfloat2's and GLfloat3's
- *
- * Probably shouldn't use names like this (GLfloat...).  Oh well.
- */
+#ifndef BZF_SCENE_NODE_H
+#define BZF_SCENE_NODE_H
 
-#ifndef	BZF_SCENE_NODE_H
-#define	BZF_SCENE_NODE_H
-
-#include "bzfgl.h"
 #include "common.h"
-#include "OpenGLGState.h"
-#include "RenderNode.h"
+#include "BzfString.h"
+#include <assert.h>
+#include <vector>
 
-#if !defined(_WIN32)
-// bonehead win32 cruft.  just make it go away on other platforms.
-#define	__stdcall
-#endif
-
-#define	myColor3f(r, g, b)	SceneNode::glColor3f(r, g, b)
-#define	myColor4f(r, g, b, a)	SceneNode::glColor4f(r, g, b, a)
-#define	myColor3fv(rgb)		SceneNode::glColor3fv(rgb)
-#define	myColor4fv(rgba)	SceneNode::glColor4fv(rgba)
-#define	myStipple(alpha)	SceneNode::setStipple(alpha)
-
-class ViewFrustum;
-class SceneRenderer;
+class SceneVisitor;
 
 class SceneNode {
-  public:
-			SceneNode();
-    virtual		~SceneNode();
+public:
+	SceneNode() : refCount(1) { }
 
-    void		getRenderNodes(SceneRenderer&);
-    const GLfloat*	getSphere() const;
+	int					ref();
+	int					unref();
 
-    virtual const GLfloat* getPlane() const;
-    virtual GLfloat	getDistance(const GLfloat* eye) const;
-    virtual boolean	cull(const ViewFrustum&) const;
-    virtual void	addLight(SceneRenderer&);
-    virtual int		split(const float* plane,
-				SceneNode*& front, SceneNode*& back) const;
+	void				setID(const BzfString& _id) { id = _id; }
+	BzfString			getID() const { return id; }
 
-    static void		setColorOverride(boolean = True);
-    static void		glColor3f(GLfloat r, GLfloat g, GLfloat b)
-				{ (*color3f)(r, g, b); }
-    static void		glColor4f(GLfloat r, GLfloat g, GLfloat b, GLfloat a)
-				{ (*color4f)(r, g, b, a); }
-    static void		glColor3fv(const GLfloat* rgb)
-				{ (*color3fv)(rgb); }
-    static void		glColor4fv(const GLfloat* rgba)
-				{ (*color4fv)(rgba); }
-    static void		setStipple(GLfloat alpha)
-				{ (*stipple)(alpha); }
+	virtual bool		visit(SceneVisitor*) = 0;
 
-  protected:
-    void		setRadius(GLfloat radiusSquared);
-    void		setCenter(const GLfloat center[3]);
-    void		setCenter(GLfloat x, GLfloat y, GLfloat z);
-    void		setSphere(const GLfloat sphere[4]);
-    void		forceNotifyStyleChange();
-    virtual void	notifyStyleChange(const SceneRenderer&);
-    virtual void	addRenderNodes(SceneRenderer&);
-    virtual void	addShadowNodes(SceneRenderer&);
+protected:
+	virtual ~SceneNode() { }
 
-  private:
-			SceneNode(const SceneNode&);
-    SceneNode&		operator=(const SceneNode&);
-
-    static void __stdcall	noColor3f(GLfloat, GLfloat, GLfloat);
-    static void __stdcall	noColor4f(GLfloat, GLfloat, GLfloat, GLfloat);
-    static void __stdcall	noColor3fv(const GLfloat*);
-    static void __stdcall	noColor4fv(const GLfloat*);
-    static void			noStipple(GLfloat);
-
-  private:
-    int			styleMailbox;
-    GLfloat		sphere[4];
-    static void		(__stdcall *color3f)(GLfloat, GLfloat, GLfloat);
-    static void		(__stdcall *color4f)(GLfloat, GLfloat, GLfloat, GLfloat);
-    static void		(__stdcall *color3fv)(const GLfloat*);
-    static void		(__stdcall *color4fv)(const GLfloat*);
-    static void		(*stipple)(GLfloat);
+private:
+	int					refCount;
+	BzfString			id;
 };
 
-typedef GLfloat		GLfloat2[2];
-typedef GLfloat		GLfloat3[3];
+class SceneNodeField {
+public:
+	SceneNodeField(const char* _name) : name(_name) { }
+	~SceneNodeField() { }
 
-class GLfloat2Array {
-  public:
-			GLfloat2Array(int s) : size(s)
-				{ data = new GLfloat2[size]; }
-			GLfloat2Array(const GLfloat2Array&);
-			~GLfloat2Array() { delete[] data; }
-    GLfloat2Array&	operator=(const GLfloat2Array&);
-    GLfloat*		operator[](int i) { return data[i]; }
-    const GLfloat*	operator[](int i) const { return data[i]; }
-    int			getSize() const { return size; }
+	const char*			getName() const { return name; }
 
-  private:
-    int			size;
-    GLfloat2*		data;
+private:
+	const char*			name;
 };
 
-class GLfloat3Array {
-  public:
-			GLfloat3Array(int s) : size(s)
-				{ data = new GLfloat3[size]; }
-			GLfloat3Array(const GLfloat3Array&);
-			~GLfloat3Array() { delete[] data; }
-    GLfloat3Array&	operator=(const GLfloat3Array&);
-    GLfloat*		operator[](int i) { return data[i]; }
-    const GLfloat*	operator[](int i) const { return data[i]; }
-    int			getSize() const { return size; }
+template <class T>
+class SceneNodeScalarField : public SceneNodeField {
+public:
+	SceneNodeScalarField(const char* name) : SceneNodeField(name) { }
+	SceneNodeScalarField(const char* name, const T& _value) :
+							SceneNodeField(name), value(_value) { }
+	~SceneNodeScalarField() { }
 
-  private:
-    int			size;
-    GLfloat3*		data;
+	void				set(const T& _value)
+							{ value = _value; }
+
+	T					get() const
+							{ return value; }
+
+private:
+	T					value;
 };
 
-#endif // BZF_SCENE_NODE_H
+template <class T>
+class SceneNodeVectorField : public SceneNodeField {
+public:
+	typedef std::vector<T> Values;
+
+	SceneNodeVectorField(const char* name, unsigned int _minNum,
+							unsigned int _maxNum,
+							unsigned int _multNum,
+							const char* _interpolationParameter = "t") :
+							SceneNodeField(name),
+							dirty(false),
+							dirtyPtr(&dirty),
+							minNum(_minNum),
+							maxNum(_maxNum == 0 ? 0xffffffff : _maxNum),
+							multNum(_multNum),
+							interpolationParameter(_interpolationParameter)
+							{ }
+	~SceneNodeVectorField() { }
+
+	void				setInterpolationParameter(const BzfString& param)
+							{ interpolationParameter = param; }
+	void				setDirtyFlag(bool* flag)
+							{ *flag = *dirtyPtr; dirtyPtr = flag; }
+	void				set(const SceneNodeVectorField<T>& v)
+							{ set(v.values); }
+	void				set(const Values& v);
+	void				set(const T* v, unsigned int num);
+	void				set(unsigned int index, const T& value);
+	void				swap(SceneNodeVectorField<T>& v);
+	void				swap(Values& v);
+	void				reserve(unsigned int num)
+							{ values.reserve(num); }
+
+	// these do not verify the resulting element count
+	void				clear() { values.clear(); setDirty(); }
+	void				resize(unsigned int num)
+							{ values.resize(num); setDirty(); }
+	void				push(const T& value)
+							{ values.push_back(value);
+								  setDirty(); }
+	void				push(const T& v1, const T& v2)
+							{ values.push_back(v1); values.push_back(v2);
+							  setDirty(); }
+	void				push(const T& v1, const T& v2, const T& v3)
+							{ values.push_back(v1); values.push_back(v2);
+							  values.push_back(v3);
+							  setDirty(); }
+	void				push(const T& v1, const T& v2, const T& v3, const T& v4)
+							{ values.push_back(v1); values.push_back(v2);
+							  values.push_back(v3); values.push_back(v4);
+							  setDirty(); }
+
+	void				clearDirty()
+							{ *dirtyPtr = false; }
+
+	const T*			get() const
+							{ return &values[0]; }
+	T					get(int index) const
+							{ return values[index]; }
+	unsigned int		getNum() const
+							{ return values.size(); }
+	unsigned int		getMinNum() const
+							{ return minNum; }
+	unsigned int		getMaxNum() const
+							{ return maxNum; }
+	unsigned int		getMultNum() const
+							{ return multNum; }
+	const BzfString&	getInterpolationParameter() const
+							{ return interpolationParameter; }
+
+protected:
+	void				setDirty()
+							{ *dirtyPtr = true; }
+
+private:
+	bool				dirty;
+	bool*				dirtyPtr;
+	unsigned int		minNum;
+	unsigned int		maxNum;
+	unsigned int		multNum;
+	BzfString			interpolationParameter;
+	Values				values;
+};
+
+template <class T>
+void					SceneNodeVectorField<T>::set(const Values& v)
+{
+	assert(v.size() >= minNum && v.size() <= maxNum);
+	assert(v.size() % multNum == 0);
+
+	values = v;
+	setDirty();
+}
+
+template <class T>
+void					SceneNodeVectorField<T>::set(
+							const T* v, unsigned int num)
+{
+	assert(v != NULL || num == 0);
+	assert(num >= minNum && num <= maxNum);
+	assert(num % multNum == 0);
+
+	values.clear();
+	values.reserve(num);
+	for (; num > 0; --num)
+		values.push_back(*v++);
+	setDirty();
+}
+
+template <class T>
+void					SceneNodeVectorField<T>::set(
+							unsigned int index, const T& value)
+{
+	assert(index < values.size());
+
+	values[index] = value;
+	setDirty();
+}
+
+template <class T>
+void					SceneNodeVectorField<T>::swap(
+							SceneNodeVectorField<T>& v)
+{
+	assert(values.size() >= v.minNum && values.size() <= v.maxNum);
+	assert(values.size() % v.multNum == 0);
+
+	swap(v.values);
+	setDirty();
+}
+
+template <class T>
+void					SceneNodeVectorField<T>::swap(Values& v)
+{
+	assert(v.size() >= minNum && v.size() <= maxNum);
+	assert(v.size() % multNum == 0);
+
+	values.swap(v);
+	setDirty();
+}
+
+typedef SceneNodeScalarField<float> SceneNodeSFFloat;
+typedef SceneNodeScalarField<bool> SceneNodeSFBool;
+typedef SceneNodeScalarField<unsigned int> SceneNodeSFUInt;
+typedef SceneNodeScalarField<BzfString> SceneNodeSFString;
+typedef SceneNodeVectorField<float> SceneNodeVFFloat;
+typedef SceneNodeVectorField<unsigned int> SceneNodeVFUInt;
+typedef SceneNodeVectorField<BzfString> SceneNodeVFString;
+
+class SceneNodeSFEnum : public SceneNodeScalarField<unsigned int> {
+public:
+	SceneNodeSFEnum(const char* name, const char** _enums,
+							unsigned int _numEnums) :
+							SceneNodeScalarField<unsigned int>(name),
+							enums(_enums),
+							numEnums(_numEnums) { }
+	SceneNodeSFEnum(const char* name, const int& value,
+							const char** _enums,
+							unsigned int _numEnums) :
+							SceneNodeScalarField<unsigned int>(name, value),
+							enums(_enums),
+							numEnums(_numEnums) { }
+	~SceneNodeSFEnum() { }
+
+	unsigned int		getNumEnums() const
+							{ return numEnums; }
+	const char*			getEnum(unsigned int index) const
+							{ return enums[index]; }
+
+private:
+	const char**		enums;
+	unsigned int		numEnums;
+};
+
+#endif

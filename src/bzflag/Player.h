@@ -10,171 +10,169 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef	BZF_PLAYER_H
-#define	BZF_PLAYER_H
+#ifndef BZF_PLAYER_H
+#define BZF_PLAYER_H
 
 #include "common.h"
 #include "global.h"
 #include "TimeKeeper.h"
 #include "Address.h"
-#include "AList.h"
-#include "ShotPath.h"
-#include "OpenGLTexture.h"
 
 class ShotPath;
-class SceneDatabase;
-class TankSceneNode;
-class TankIDLSceneNode;
-class SphereSceneNode;
+class SceneNode;
+class SceneNodeGroup;
+class SceneNodeTransform;
 
-const int		PlayerUpdatePLen = PlayerIdPLen + 34;
+const int				PlayerUpdatePLen = PlayerIdPLen + 34;
 
 class Player {
-  public:
-    enum PStatus {				// bit masks
-			DeadStatus =	0x0000,	// not alive, not paused, etc.
-			Alive =		0x0001,	// player is alive
-			Paused = 	0x0002,	// player is paused
-			Exploding =	0x0004,	// currently blowing up
-			Teleporting =	0x0008,	// teleported recently
-			FlagActive =	0x0010,	// flag special powers active
-			CrossingWall =	0x0020,	// tank crossing building wall
-			Falling =	0x0040	// tank accel'd by gravity
-    };
+public:
+	enum PStatus {					// bit masks
+		DeadStatus =	0x0000,		// not alive, not paused, etc.
+		Alive =			0x0001,		// player is alive
+		Paused = 		0x0002,		// player is paused
+		Exploding =		0x0004,		// currently blowing up
+		Teleporting =	0x0008,		// teleported recently
+		FlagActive =	0x0010,		// flag special powers active
+		CrossingWall =	0x0020,		// tank crossing building wall
+		Falling =		0x0040		// tank accel'd by gravity
+	};
 
-			Player(const PlayerId&, TeamColor,
-				const char* callsign, const char* emailAddress);
-    virtual		~Player();
+	Player(const PlayerId&, TeamColor,
+							const char* callsign, const char* emailAddress);
+	virtual ~Player();
 
-    PlayerId		id;			// my credentials
-    const PlayerId&	getId() const;
-    TeamColor		getTeam() const;
-    const char*		getCallSign() const;
-    const char*		getEmailAddress() const;
-    FlagId		getFlag() const;
-    short		getStatus() const;
-    const float*	getPosition() const;
-    float		getAngle() const;
-    const float*	getForward() const;
-    const float*	getVelocity() const;
-    float		getAngularVelocity() const;
-    float		getRadius() const;
-    void		getMuzzle(float*) const;
-    short		getWins() const;
-    short		getLosses() const;
-    short		getScore() const;
-    short		getLocalWins() const;
-    short		getLocalLosses() const;
-    const TimeKeeper&	getExplodeTime() const;
-    const TimeKeeper&	getTeleportTime() const;
-    short		getFromTeleporter() const;
-    short		getToTeleporter() const;
-    float		getTeleporterProximity() const;
-    virtual ShotPath*	getShot(int index) const = 0;
+	const PlayerId&		getId() const;
+	TeamColor			getTeam() const;
+	const char*			getCallSign() const;
+	const char*			getEmailAddress() const;
+	FlagId				getFlag() const;
+	short				getStatus() const;
+	const float*		getPosition() const;
+	float				getAngle() const;
+	const float*		getForward() const;
+	const float*		getVelocity() const;
+	float				getAngularVelocity() const;
+	float				getRadius() const;
+	void				getMuzzle(float*) const;
+	short				getWins() const;
+	short				getLosses() const;
+	short				getScore() const;
+	short				getLocalWins() const;
+	short				getLocalLosses() const;
+	const TimeKeeper&	getExplodeTime() const;
+	const TimeKeeper&	getTeleportTime() const;
+	short				getFromTeleporter() const;
+	short				getToTeleporter() const;
+	float				getTeleporterProximity() const;
+	virtual ShotPath*	getShot(int index) const = 0;
 
-    void		addPlayer(SceneDatabase*, boolean colorblind,
-							boolean showIDL);
-    void		addShots(SceneDatabase*, boolean colorblind) const;
-    void		setHidden(boolean hidden = True);
-    void		setInvisible(boolean invisible = True);
+	void				setId(const PlayerId&);
 
-    static void		setTexture(const OpenGLTexture&);
+	void				addPlayerSceneNode(SceneNodeGroup*,
+							bool viewerIsColorblind);
+	void				addShotsSceneNodes(SceneNodeGroup*,
+							bool viewerIsColorblind);
 
-    boolean		isAlive() const;
-    boolean		isPaused() const;
-    boolean		isFlagActive() const;
-    boolean		isTeleporting() const;
-    boolean		isExploding() const;
-    boolean		isCrossingWall() const;
-    boolean		isNotResponding() const;
-    void		resetNotResponding();
+	bool				isAlive() const;
+	bool				isPaused() const;
+	bool				isFlagActive() const;
+	bool				isTeleporting() const;
+	bool				isExploding() const;
+	bool				isCrossingWall() const;
+	bool				isNotResponding() const;
+	void				resetNotResponding();
 
-    // returns true iff dead reckoning is too different from the
-    // current tank state.
-    boolean		isDeadReckoningWrong() const;
+	// returns true iff dead reckoning is too different from the
+	// current tank state.
+	bool				isDeadReckoningWrong() const;
 
-    // update state based on dead reckoning
-    void		doDeadReckoning();
+	// update state based on dead reckoning
+	void				doDeadReckoning();
 
-    // called to update state according to incoming packets
-    void		move(const float* pos, float azimuth);
-    void		setVelocity(const float* velocity);
-    void		setAngularVelocity(float);
-    void		changeTeam(TeamColor);
-    virtual void	setFlag(FlagId);
-    virtual void	changeScore(short deltaWins, short deltaLosses);
-    void		changeLocalScore(short deltaWins, short deltaLosses);
-    void		setStatus(short);
-    void		setExplode(const TimeKeeper&);
-    void		setTeleport(const TimeKeeper&, short from, short to);
-    void		updateSparks(float dt);
-    void		endShot(int index, boolean isHit = False,
-				boolean showExplosion = False);
+	// called to update state according to incoming packets
+	void				move(const float* pos, float azimuth);
+	void				setVelocity(const float* velocity);
+	void				setAngularVelocity(float);
+	void				changeTeam(TeamColor);
+	virtual void		setFlag(FlagId);
+	virtual void		changeScore(short deltaWins, short deltaLosses);
+	void				changeLocalScore(short deltaWins, short deltaLosses);
+	void				setStatus(short);
+	void				setExplode(const TimeKeeper&);
+	void				setTeleport(const TimeKeeper&, short from, short to);
+	void				updateSparks(float dt);
+	void				endShot(int index, bool isHit = false,
+							bool showExplosion = false);
 
-    void*		pack(void*) const;
-    void*		unpack(void*);
+	void*				pack(void*) const;
+	void*				unpack(void*);
 
-    void		setDeadReckoning();
+	void				setDeadReckoning();
 
-  private:
-    // return true if the shot had to be terminated or false if it
-    // was already terminated.  position must be set to the shot's
-    // position if you return true (it's okay to return false if
-    // there's no meaningful shot position).
-    virtual boolean	doEndShot(int index, boolean isHit, float* position) = 0;
-    boolean		getDeadReckoning(float* predictedPos,
-				float* predictedAzimuth,
-				float* predictedVel) const;
+private:
+	// return true if the shot had to be terminated or false if it
+	// was already terminated.  position must be set to the shot's
+	// position if you return true (it's okay to return false if
+	// there's no meaningful shot position).
+	virtual bool		doEndShot(int index, bool isHit, float* position) = 0;
+	bool				getDeadReckoning(float* predictedPos,
+							float* predictedAzimuth,
+							float* predictedVel) const;
 
-  private:
-    // data not communicated with other players
-    TankSceneNode*	tankNode;
-    TankIDLSceneNode*	tankIDLNode;
-    SphereSceneNode*	pausedSphere;
-    GLfloat		color[4];
-    boolean		notResponding;
-    static OpenGLTexture* tankTexture;
-    static int		totalCount;
+	void				unrefNodes();
 
-    // permanent data
-    TeamColor		team;			// my team
-    char		callSign[CallSignLen];	// my pseudonym
-    char		email[EmailLen];	// my email address
+private:
+	// scene nodes
+	SceneNode*			teamPlayerSceneNode;
+	SceneNode*			roguePlayerSceneNode;
+	SceneNodeTransform*	transformSceneNode;
+	// need a black sphere for paused or not responding
+	// need a clip plane if isCrossingWall().
 
-    // relatively stable data
-    FlagId		flag;			// flag I'm holding
-    TimeKeeper		explodeTime;		// time I started exploding
-    TimeKeeper		teleportTime;		// time I started teleporting
-    short		fromTeleporter;		// teleporter I entered
-    short		toTeleporter;		// teleporter I exited
-    float		teleporterProximity;	// how close to a teleporter
-    short		wins;			// number of kills
-    short		losses;			// number of deaths
+	// data not communicated with other players
+	bool				notResponding;
+	PlayerId			id;						// my credentials
 
-    // score of local player against this player
-    short		localWins;		// local player won this many
-    short		localLosses;		// local player lost this many
+	// permanent data
+	TeamColor			team;					// my team
+	char				callSign[CallSignLen];	// my pseudonym
+	char				email[EmailLen];		// my email address
 
-    // highly dynamic data
-    short		status;			// see PStatus enum
-    float		pos[3];			// position of tank
-    float		azimuth;		// orientation of tank
-    float		velocity[3];		// velocity of tank
-    float		angVel;			// angular velocity of tank
+	// relatively stable data
+	FlagId				flag;					// flag I'm holding
+	TimeKeeper			explodeTime;			// time I started exploding
+	TimeKeeper			teleportTime;			// time I started teleporting
+	short				fromTeleporter;			// teleporter I entered
+	short				toTeleporter;			// teleporter I exited
+	float				teleporterProximity;	// how close to a teleporter
+	short				wins;					// number of kills
+	short				losses;					// number of deaths
 
-    // computable highly dynamic data
-    float		forward[3];		// forward unit vector
+	// score of local player against this player
+	short				localWins;				// local player won this many
+	short				localLosses;			// local player lost this many
 
-    // dead reckoning stuff
-    TimeKeeper		inputTime;		// time of input
-    TimeKeeper		inputPrevTime;		// time of last dead reckoning
-    int			inputStatus;		// tank status
-    float		inputPos[3];		// tank position
-    float		inputSpeed;		// tank horizontal speed
-    float		inputZSpeed;		// tank vertical speed
-    float		inputAzimuth;		// direction tank is pointing
-    float		inputSpeedAzimuth;	// direction of speed
-    float		inputAngVel;		// tank turn rate
+	// highly dynamic data
+	short				status;					// see PStatus enum
+	float				pos[3];					// position of tank
+	float				azimuth;				// orientation of tank
+	float				velocity[3];			// velocity of tank
+	float				angVel;					// angular velocity of tank
+
+	// computable highly dynamic data
+	float				forward[3];				// forward unit vector
+
+	// dead reckoning stuff
+	TimeKeeper			inputTime;				// time of input
+	TimeKeeper			inputPrevTime;			// time of last dead reckoning
+	int					inputStatus;			// tank status
+	float				inputPos[3];			// tank position
+	float				inputSpeed;				// tank horizontal speed
+	float				inputZSpeed;			// tank vertical speed
+	float				inputAzimuth;			// direction tank is pointing
+	float				inputSpeedAzimuth;		// direction of speed
+	float				inputAngVel;			// tank turn rate
 };
 
 // shot data goes in LocalPlayer or RemotePlayer so shot type isn't lost.
@@ -185,147 +183,147 @@ class Player {
 
 inline const PlayerId&	Player::getId() const
 {
-  return id;
+	return id;
 }
 
-inline TeamColor	Player::getTeam() const
+inline TeamColor		Player::getTeam() const
 {
-  return team;
+	return team;
 }
 
-inline const char*	Player::getCallSign() const
+inline const char*		Player::getCallSign() const
 {
-  return callSign;
+	return callSign;
 }
 
-inline const char*	Player::getEmailAddress() const
+inline const char*		Player::getEmailAddress() const
 {
-  return email;
+	return email;
 }
 
-inline FlagId		Player::getFlag() const
+inline FlagId			Player::getFlag() const
 {
-  return flag;
+	return flag;
 }
 
-inline short		Player::getStatus() const
+inline short			Player::getStatus() const
 {
-  return status;
+	return status;
 }
 
-inline const float*	Player::getPosition() const
+inline const float*		Player::getPosition() const
 {
-  return pos;
+	return pos;
 }
 
-inline float		Player::getAngle() const
+inline float			Player::getAngle() const
 {
-  return azimuth;
+	return azimuth;
 }
 
-inline const float*	Player::getForward() const
+inline const float*		Player::getForward() const
 {
-  return forward;
+	return forward;
 }
 
-inline const float*	Player::getVelocity() const
+inline const float*		Player::getVelocity() const
 {
-  return velocity;
+	return velocity;
 }
 
-inline float		Player::getAngularVelocity() const
+inline float			Player::getAngularVelocity() const
 {
-  return angVel;
+	return angVel;
 }
 
-inline short		Player::getWins() const
+inline short			Player::getWins() const
 {
-  return wins;
+	return wins;
 }
 
-inline short		Player::getLosses() const
+inline short			Player::getLosses() const
 {
-  return losses;
+	return losses;
 }
 
-inline short		Player::getLocalWins() const
+inline short			Player::getLocalWins() const
 {
-  return localWins;
+	return localWins;
 }
 
-inline short		Player::getLocalLosses() const
+inline short			Player::getLocalLosses() const
 {
-  return localLosses;
+	return localLosses;
 }
 
-inline short		Player::getScore() const
+inline short			Player::getScore() const
 {
-  return wins - losses;
+	return wins - losses;
 }
 
 inline const TimeKeeper	&Player::getExplodeTime() const
 {
-  return explodeTime;
+	return explodeTime;
 }
 
 inline const TimeKeeper	&Player::getTeleportTime() const
 {
-  return teleportTime;
+	return teleportTime;
 }
 
-inline short		Player::getFromTeleporter() const
+inline short			Player::getFromTeleporter() const
 {
-  return fromTeleporter;
+	return fromTeleporter;
 }
 
-inline short		Player::getToTeleporter() const
+inline short			Player::getToTeleporter() const
 {
-  return toTeleporter;
+	return toTeleporter;
 }
 
-inline float		Player::getTeleporterProximity() const
+inline float			Player::getTeleporterProximity() const
 {
-  return teleporterProximity;
+	return teleporterProximity;
 }
 
-inline boolean		Player::isAlive() const
+inline bool				Player::isAlive() const
 {
-  return (status & short(Alive)) != 0;
+	return (status & short(Alive)) != 0;
 }
 
-inline boolean		Player::isPaused() const
+inline bool				Player::isPaused() const
 {
-  return (status & short(Paused)) != 0;
+	return (status & short(Paused)) != 0;
 }
 
-inline boolean		Player::isFlagActive() const
+inline bool				Player::isFlagActive() const
 {
-  return (status & short(FlagActive)) != 0;
+	return (status & short(FlagActive)) != 0;
 }
 
-inline boolean		Player::isTeleporting() const
+inline bool				Player::isTeleporting() const
 {
-  return (status & short(Teleporting)) != 0;
+	return (status & short(Teleporting)) != 0;
 }
 
-inline boolean		Player::isExploding() const
+inline bool				Player::isExploding() const
 {
-  return (status & short(Exploding)) != 0;
+	return (status & short(Exploding)) != 0;
 }
 
-inline boolean		Player::isCrossingWall() const
+inline bool				Player::isCrossingWall() const
 {
-  return (status & short(CrossingWall)) != 0;
+	return (status & short(CrossingWall)) != 0;
 }
 
-inline boolean		Player::isNotResponding() const
+inline bool				Player::isNotResponding() const
 {
-  return notResponding;
+	return notResponding;
 }
 
-inline void		Player::resetNotResponding()
+inline void				Player::resetNotResponding()
 {
-  notResponding = False;
+	notResponding = false;
 }
 
 #endif // BZF_PLAYER_H

@@ -14,59 +14,59 @@
  *
  */
 
-#ifndef	BZF_ROBOT_PLAYER_H
-#define	BZF_ROBOT_PLAYER_H
+#ifndef BZF_ROBOT_PLAYER_H
+#define BZF_ROBOT_PLAYER_H
 
 #include "LocalPlayer.h"
 #include "Region.h"
+#include <vector>
 
 class ServerLink;
 
-BZF_DEFINE_ALIST(RegionAzimuthList, float);
+typedef std::vector<float> RegionAzimuthList;
 
 class RobotPlayer : public BaseLocalPlayer {
-  public:
-			RobotPlayer(const PlayerId&,
-				const char* name, ServerLink*,
-				const char* _email);
-			~RobotPlayer();
+public:
+	RobotPlayer(const PlayerId&, const char* name, ServerLink*,
+								const char* _email);
+	~RobotPlayer();
 
-    float		getTargetPriority(const Player*) const;
-    const Player*	getTarget() const;
-    void		setTarget(const RegionList& regions, const Player*);
+	float				getTargetPriority(const Player*) const;
+	const Player*		getTarget() const;
+	void				setTarget(const RegionList& regions, const Player*);
 
-    ShotPath*		getShot(int index) const;
+	ShotPath*			getShot(int index) const;
 
-    void		setTeam(TeamColor);
-    void		restart();
-    boolean		checkHit(const Player* source, const ShotPath*& hit,
-							float& minTime) const;
-    void		explodeTank();
-    void		changeScore(short deltaWins, short deltaLosses);
+	void				setTeam(TeamColor);
+	void				restart();
+	bool				checkHit(const Player* source, const ShotPath*& hit,
+														float& minTime) const;
+	void				explodeTank();
+	void				changeScore(short deltaWins, short deltaLosses);
 
-  private:
-    boolean		doEndShot(int index, boolean isHit, float* pos);
-    void		doUpdate(float dt);
-    void		doUpdateMotion(float dt);
-    BzfRegion*		findRegion(const RegionList& list,
-					const float p[2]) const;
-    float		getRegionExitPoint(
-				const float p1[2], const float p2[2],
-				const float a[2], const float targetPoint[2],
-				float mid[2], float& priority);
-     void		findPath(RegionPriorityQueue& queue,
-				BzfRegion* region, BzfRegion* targetRegion,
-				const float targetPoint[2], int mailbox);
+private:
+	bool				doEndShot(int index, bool isHit, float* pos);
+	void				doUpdate(float dt);
+	void				doUpdateMotion(float dt);
+	BzfRegion*			findRegion(const RegionList& list,
+							const float p[2]) const;
+	float				getRegionExitPoint(
+							const float p1[2], const float p2[2],
+							const float a[2], const float targetPoint[2],
+							float mid[2], float& priority);
+	void				findPath(RegionPriorityQueue& queue,
+							BzfRegion* region, BzfRegion* targetRegion,
+							const float targetPoint[2], int mailbox);
 
-  private:
-    ServerLink*		server;
-    LocalShotPath**	shots;
-    const Player*	target;
-    RegionPointList	path;
-    RegionAzimuthList	pathAzimuth;
-    int			pathIndex;
-    boolean		scoreChanged;
-    float		timeSinceShot;
+private:
+	ServerLink*			server;
+	LocalShotPath**		shots;
+	const Player*		target;
+	RegionPointList		path;
+	RegionAzimuthList	pathAzimuth;
+	int					pathIndex;
+	bool				scoreChanged;
+	float				timeSinceShot;
 };
 
 #endif // BZF_ROBOT_PLAYER_H

@@ -14,31 +14,52 @@
  *	Factory for Windows platform stuff.
  */
 
-#ifndef BZF_WINPLATFORM_FACTORY_H
-#define	BZF_WINPLATFORM_FACTORY_H
+#ifndef BZF_WIN_PLATFORM_FACTORY_H
+#define BZF_WIN_PLATFORM_FACTORY_H
 
 #include "PlatformFactory.h"
+#include <windows.h>
 
-class WinWindow;
+typedef void (__cdecl *SIG_PF)(int);
 
 class WinPlatformFactory : public PlatformFactory {
-  public:
-			WinPlatformFactory();
-			~WinPlatformFactory();
+public:
+	WinPlatformFactory();
+	~WinPlatformFactory();
 
-    BzfDisplay*		createDisplay(const char* name,
-				const char* videoFormat);
-    BzfVisual*		createVisual(const BzfDisplay*);
-    BzfWindow*		createWindow(const BzfDisplay*, BzfVisual*);
+	istream*			createConfigInStream() const;
+	ostream*			createConfigOutStream() const;
+	void				createConsole();
+	void				writeConsole(const char*, bool error);
+	double				getTime() const;
+	double				getClock() const;
+	void				sleep(double timeInSeconds) const;
+	BzfString			getUserName() const;
+	void				setEnv(const BzfString&, const BzfString&);
+	void				unsetEnv(const BzfString&);
+	BzfString			getEnv(const BzfString&) const;
+	void				signalRaise(Signal);
 
-  private:
-			WinPlatformFactory(const WinPlatformFactory&);
-    WinPlatformFactory&	operator=(const WinPlatformFactory&);
+protected:
+	SigType				signalInstall(Signal);
+	SigType				signalInstallIgnore(Signal);
+	SigType				signalInstallDefault(Signal);
 
-    BzfMedia*		createMedia();
+private:
+	WinPlatformFactory(const WinPlatformFactory&);
+	WinPlatformFactory&	operator=(const WinPlatformFactory&);
 
-  private:
-    static WinWindow*	window;
+	BzfString			getConfigFileName() const;
+	SigType				doSignalInstall(Signal, SIG_PF);
+	static void			onSignal(int);
+	static int			toSigno(Signal);
+	static Signal		fromSigno(int);
+
+private:
+	unsigned int		clockZero;
+	LARGE_INTEGER		qpcZero;
+	double				qpcFrequency;
+	bool				hasConsole;
 };
 
-#endif // BZF_WINPLATFORM_FACTORY_H
+#endif // BZF_WIN_PLATFORM_FACTORY_H

@@ -1,0 +1,51 @@
+# bzflag
+# Copyright (c) 1993 - 2001 Tim Riker
+#
+# This package is free software;  you can redistribute it and/or
+# modify it under the terms of the license found in the file
+# named LICENSE that should have accompanied this file.
+#
+# THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
+# IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
+# WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+
+<group>
+  <geometry>
+    <color>
+      0 0.35 0 1
+    </color>
+    <texcoord>
+       0.500  0.500
+       0.000  0.500
+       0.250  0.067
+       0.750  0.067
+       1.000  0.500
+       0.750  0.933
+       0.250  0.933
+    </texcoord>
+    <normal>
+       0 0 1
+    </normal>
+    <vertex>
+       0.000  0.000 0
+      -1.000  0.000 0
+      -0.500 -0.866 0
+       0.500 -0.866 0
+       1.000  0.000 0
+       0.500  0.866 0
+      -0.500  0.866 0
+    </vertex>
+    <transform type=texture>
+      <scale>10 10 10</scale>
+      <rotate>0 0 1 0</rotate>
+      <gstate>
+        <texture filename="ground" repeat=on/>
+        <primitive type=tfan>
+          <index>
+            0 1 2 3 4 5 6 1
+          </index>
+        </primitive>
+      </gstate>
+    </transform>
+  </geometry>
+</group>

@@ -16,229 +16,229 @@
 #include "multicast.h"
 #include "ErrorHandler.h"
 
-int			openBroadcast(int port, const char* service,
-					struct sockaddr_in* addr)
+int						openBroadcast(int port, const char* service,
+										struct sockaddr_in* addr)
 {
 #if defined(_WIN32)
-  const BOOL optOn = TRUE;
+	const BOOL optOn = TRUE;
 #else
-  const int optOn = 1;
+	const int optOn = 1;
 #endif
-  int fd;
+	int fd;
 
-  /* check parameters */
-  if (!addr) {
-    printError("openBroadcast: Must supply a return address structure!");
-    return -1;
-  }
-  memset(addr, 0, sizeof(*addr));
+	/* check parameters */
+	if (!addr) {
+		printError("openBroadcast: Must supply a return address structure!");
+		return -1;
+	}
+	memset(addr, 0, sizeof(*addr));
 
-  /* lookup service and check port */
-  if (service) {
-    struct servent *sp = getservbyname(service, "udp");
-    if (!sp) {
-      if (port <= 0) {
-	printError("openBroadcast: No udp service %s", service);
-	return -1;
-      }
-    }
-    else {
-      port = sp->s_port;
-    }
-  }
-  if (port <= 0) {
-    printError("openBroadcast: Invalid port %s", port);
-    return -1;
-  }
+	/* lookup service and check port */
+	if (service) {
+		struct servent *sp = getservbyname(service, "udp");
+		if (!sp) {
+			if (port <= 0) {
+				printError("openBroadcast: No udp service %s", service);
+				return -1;
+			}
+		}
+		else {
+			port = sp->s_port;
+		}
+	}
+	if (port <= 0) {
+		printError("openBroadcast: Invalid port %s", port);
+		return -1;
+	}
 
-  /* open socket */
-  fd = socket(AF_INET, SOCK_DGRAM, 0);
-  if (fd < 0) {
-    nerror("openBroadcast: socket");
-    return -1;
-  }
+	/* open socket */
+	fd = socket(AF_INET, SOCK_DGRAM, 0);
+	if (fd < 0) {
+		nerror("openBroadcast: socket");
+		return -1;
+	}
 
-  /* set address info */
-  addr->sin_family = AF_INET;
-  addr->sin_addr.s_addr = htonl(INADDR_ANY);
-  addr->sin_port = htons(port);
+	/* set address info */
+	addr->sin_family = AF_INET;
+	addr->sin_addr.s_addr = htonl(INADDR_ANY);
+	addr->sin_port = htons(port);
 
 #if defined(SO_REUSEPORT)
-  /* set reuse port */
-  if (setsockopt(fd, SOL_SOCKET, SO_REUSEPORT,
-				(SSOType)&optOn, sizeof(optOn)) < 0) {
-    nerror("openBroadcast: setsockopt SO_REUSEPORT");
-    close(fd);
-    return -1;
-  }
+	/* set reuse port */
+	if (setsockopt(fd, SOL_SOCKET, SO_REUSEPORT,
+								(SSOType)&optOn, sizeof(optOn)) < 0) {
+		nerror("openBroadcast: setsockopt SO_REUSEPORT");
+		close(fd);
+		return -1;
+	}
 #elif defined(SO_REUSEADDR)
-  /* set reuse address */
-  if (setsockopt(fd, SOL_SOCKET, SO_REUSEADDR,
-				(SSOType)&optOn, sizeof(optOn)) < 0) {
-    nerror("openBroadcast: setsockopt SO_REUSEADDR");
-    close(fd);
-    return -1;
-  }
+	/* set reuse address */
+	if (setsockopt(fd, SOL_SOCKET, SO_REUSEADDR,
+								(SSOType)&optOn, sizeof(optOn)) < 0) {
+		nerror("openBroadcast: setsockopt SO_REUSEADDR");
+		closesocket(fd);
+		return -1;
+	}
 #endif
 
-  /* bind address */
-  if (bind(fd, (const struct sockaddr*)addr, sizeof(*addr)) < 0) {
-    nerror("openBroadcast: bind");
-    close(fd);
-    return -1;
-  }
+	/* bind address */
+	if (bind(fd, (const struct sockaddr*)addr, sizeof(*addr)) < 0) {
+		nerror("openBroadcast: bind");
+		closesocket(fd);
+		return -1;
+	}
 
-  /* make broadcast */
-  if (setsockopt(fd, SOL_SOCKET, SO_BROADCAST,
-				(SSOType)&optOn, sizeof(optOn)) < 0) {
-    nerror("openBroadcast: setsockopt SO_BROADCAST");
-    close(fd);
-    return -1;
-  }
+	/* make broadcast */
+	if (setsockopt(fd, SOL_SOCKET, SO_BROADCAST,
+								(SSOType)&optOn, sizeof(optOn)) < 0) {
+		nerror("openBroadcast: setsockopt SO_BROADCAST");
+		closesocket(fd);
+		return -1;
+	}
 
-  // address to send to is the broadcast address
-  addr->sin_addr.s_addr = INADDR_BROADCAST;
+	// address to send to is the broadcast address
+	addr->sin_addr.s_addr = INADDR_BROADCAST;
 
 #if defined(__linux__)
-  // linux doesn't seem to like INADDR_BROADCAST, but it's okay
-  // with the broadcast address on the local network.  get the
-  // broadcast address on the first interface that's not the
-  // loopback interface.  (check the first numInterfaces
-  // interfaces.)
-  const int numInterfaces = 5;
-  int i;
-  struct ifconf conf;
-  struct ifreq req[numInterfaces];
+	// linux doesn't seem to like INADDR_BROADCAST, but it's okay
+	// with the broadcast address on the local network.  get the
+	// broadcast address on the first interface that's not the
+	// loopback interface.  (check the first numInterfaces
+	// interfaces.)
+	const int numInterfaces = 5;
+	int i;
+	struct ifconf conf;
+	struct ifreq req[numInterfaces];
 
-  // get the list of interface names
-  conf.ifc_len = sizeof(req);
-  conf.ifc_ifcu.ifcu_req = req;
-  for (i = 0; i < numInterfaces; ++i)
-    req[i].ifr_ifrn.ifrn_name[0] = 0;
-  if (ioctl(fd, SIOCGIFCONF, &conf) < 0) {
-    nerror("openBroadcast: getting interface list");
-    close(fd);
-    return(-1);
-  }
+	// get the list of interface names
+	conf.ifc_len = sizeof(req);
+	conf.ifc_ifcu.ifcu_req = req;
+	for (i = 0; i < numInterfaces; ++i)
+		req[i].ifr_ifrn.ifrn_name[0] = 0;
+	if (ioctl(fd, SIOCGIFCONF, &conf) < 0) {
+		nerror("openBroadcast: getting interface list");
+		close(fd);
+		return(-1);
+	}
 
-  // get the broadcast address on each interface
-  for (i = 0; i < numInterfaces; ++i) {
-    // if no name then we're done
-    if (req[i].ifr_ifrn.ifrn_name[0] == 0)
-      break;
+	// get the broadcast address on each interface
+	for (i = 0; i < numInterfaces; ++i) {
+		// if no name then we're done
+		if (req[i].ifr_ifrn.ifrn_name[0] == 0)
+			break;
 
-    // if we can't get the address then skip this interface
-    if (ioctl(fd, SIOCGIFBRDADDR, req + i) < 0)
-      continue;
+		// if we can't get the address then skip this interface
+		if (ioctl(fd, SIOCGIFBRDADDR, req + i) < 0)
+			continue;
 
-    // if the address is the loopback broadcast address then skip it
-    const sockaddr_in* ifbaddr = (const sockaddr_in*)
-					&req[i].ifr_ifru.ifru_broadaddr;
-    if (ntohl(ifbaddr->sin_addr.s_addr) == 0x7ffffffflu)
-      continue;
+		// if the address is the loopback broadcast address then skip it
+		const sockaddr_in* ifbaddr = (const sockaddr_in*)
+										&req[i].ifr_ifru.ifru_broadaddr;
+		if (ntohl(ifbaddr->sin_addr.s_addr) == 0x7ffffffflu)
+			continue;
 
-    // got the broadcast address on the interface
-    addr->sin_addr.s_addr = ifbaddr->sin_addr.s_addr;
-    break;
-  }
+		// got the broadcast address on the interface
+		addr->sin_addr.s_addr = ifbaddr->sin_addr.s_addr;
+		break;
+	}
 
-  // failed if no broadcast addresses found
-  if (i == numInterfaces) {
-    nerror("openBroadcast: getting broadcast address");
-    close(fd);
-    return(-1);
-  }
+	// failed if no broadcast addresses found
+	if (i == numInterfaces) {
+		nerror("openBroadcast: getting broadcast address");
+		close(fd);
+		return(-1);
+	}
 #endif
 
-  /* turn on non-blocking io */
-  if (BzfNetwork::setNonBlocking(fd) < 0) {
-    nerror("openBroadcast: setNonBlocking");
-    close(fd);
-    return(-1);
-  }
+	/* turn on non-blocking io */
+	if (BzfNetwork::setNonBlocking(fd) < 0) {
+		nerror("openBroadcast: setNonBlocking");
+		closesocket(fd);
+		return(-1);
+	}
 
-  return fd;
+	return fd;
 }
 
-int			openMulticast(const Address& address, int port,
-					const char* service, int ttl,
-					const char* net_interface,
-					const char* mode,
-					struct sockaddr_in* addr)
+int						openMulticast(const Address& address, int port,
+										const char* service, int ttl,
+										const char* net_interface,
+										const char* mode,
+										struct sockaddr_in* addr)
 {
-  // Multicast is broken
-  return -1;
+	// Multicast is broken
+	return -1;
 
-  struct ip_mreq mreq;
-  struct in_addr ifaddr;
-  int fd;
+	struct ip_mreq mreq;
+	struct in_addr ifaddr;
+	int fd;
 #if defined(_WIN32)
-  const BOOL optOn = TRUE;
+	const BOOL optOn = TRUE;
 #else
-  const int optOn = 1;
+	const int optOn = 1;
 #endif
 
-  /* check parameters */
-  if (!addr) {
-    printError("openMulticast: Must supply a return address structure!");
-    return -1;
-  }
-  memset(addr, 0, sizeof(*addr));
+	/* check parameters */
+	if (!addr) {
+		printError("openMulticast: Must supply a return address structure!");
+		return -1;
+	}
+	memset(addr, 0, sizeof(*addr));
 
-  /* check mode */
-  if (!mode || (mode[0] != 'r' && mode[0] != 'w')) {
-    printError("openMulticast: Invalid mode");
-    return -1;
-  }
+	/* check mode */
+	if (!mode || (mode[0] != 'r' && mode[0] != 'w')) {
+		printError("openMulticast: Invalid mode");
+		return -1;
+	}
 
-  /* lookup service and check port */
-  if (service) {
-    struct servent *sp = getservbyname(service, "udp");
-    if (!sp) {
-      if (port <= 0) {
-	printError("openMulticast: No udp service %s", service);
-	return -1;
-      }
-    }
-    else {
-      port = sp->s_port;
-    }
-  }
-  if (port <= 0) {
-    printError("openMulticast: Invalid port %s", port);
-    return -1;
-  }
+	/* lookup service and check port */
+	if (service) {
+		struct servent *sp = getservbyname(service, "udp");
+		if (!sp) {
+			if (port <= 0) {
+				printError("openMulticast: No udp service %s", service);
+				return -1;
+			}
+		}
+		else {
+			port = sp->s_port;
+		}
+	}
+	if (port <= 0) {
+		printError("openMulticast: Invalid port %s", port);
+		return -1;
+	}
 
-  /* check group address */
-  mreq.imr_multiaddr = InAddr(address);
-  if (!IN_MULTICAST(ntohl(mreq.imr_multiaddr.s_addr))) {
-    printError("openMulticast: Invalid multicast address");
-    return -1;
-  }
+	/* check group address */
+	mreq.imr_multiaddr = InAddr(address);
+	if (!IN_MULTICAST(ntohl(mreq.imr_multiaddr.s_addr))) {
+		printError("openMulticast: Invalid multicast address");
+		return -1;
+	}
 
-  /* open socket */
-  fd = socket(AF_INET, SOCK_DGRAM, 0);
-  if (fd < 0) {
-    nerror("openMulticast: socket");
-    return -1;
-  }
+	/* open socket */
+	fd = socket(AF_INET, SOCK_DGRAM, 0);
+	if (fd < 0) {
+		nerror("openMulticast: socket");
+		return -1;
+	}
 
-  /* check interface */
-  if (net_interface && net_interface[0]) {
-    ifaddr.s_addr = inet_addr(net_interface);
-    if (ifaddr.s_addr == (unsigned long)-1) {
-      struct hostent* hp = gethostbyname(net_interface);
-      if (!hp) {
-	printError("openMulticast: Can't get address of %s", net_interface);
-	close(fd);
-	return -1;
-      }
-      memcpy(&ifaddr, hp->h_addr, hp->h_length);
-    }
-    mreq.imr_interface = ifaddr;
-  }
-  else {
-    mreq.imr_interface.s_addr = htonl(INADDR_ANY);
+	/* check interface */
+	if (net_interface && net_interface[0]) {
+		ifaddr.s_addr = inet_addr(net_interface);
+		if (ifaddr.s_addr == (unsigned long)-1) {
+			struct hostent* hp = gethostbyname(net_interface);
+			if (!hp) {
+				printError("openMulticast: Can't get address of %s", net_interface);
+				closesocket(fd);
+				return -1;
+			}
+			memcpy(&ifaddr, hp->h_addr, hp->h_length);
+		}
+		mreq.imr_interface = ifaddr;
+	}
+	else {
+		mreq.imr_interface.s_addr = htonl(INADDR_ANY);
 
 #if defined(__linux__)
     // linux doesn't seem to like INADDR_ANY as the interface.
@@ -264,160 +264,160 @@ int			openMulticast(const Address& address, int port,
     for (i = 0; i < numInterfaces; ++i) {
       // if no name then we're done
       if (req[i].ifr_ifrn.ifrn_name[0] == 0)
-	break;
+		break;
 
       // if we can't get the address then skip this interface
       if (ioctl(fd, SIOCGIFADDR, req + i) < 0)
-	continue;
+		continue;
 
       // if the address is the loopback address then skip it
       const sockaddr_in* ifaddr = (const sockaddr_in*)
-					&req[i].ifr_ifru.ifru_addr;
+										&req[i].ifr_ifru.ifru_addr;
       if (ntohl(ifaddr->sin_addr.s_addr) == INADDR_LOOPBACK)
-	continue;
+		continue;
 
       // got the address on the interface
       if (!net_interface || !net_interface[0])
-	mreq.imr_interface.s_addr = ifaddr->sin_addr.s_addr;
+		mreq.imr_interface.s_addr = ifaddr->sin_addr.s_addr;
       break;
     }
 #endif
-  }
+	}
 
-  /* set address info */
-  addr->sin_family = AF_INET;
-  addr->sin_addr.s_addr = mreq.imr_multiaddr.s_addr;
-  addr->sin_port = htons(port);
+	/* set address info */
+	addr->sin_family = AF_INET;
+	addr->sin_addr.s_addr = mreq.imr_multiaddr.s_addr;
+	addr->sin_port = htons(port);
 
-  /* set options on socket */
-  if (mode[0] == 'w') {
+	/* set options on socket */
+	if (mode[0] == 'w') {
 #if defined(_WIN32) || defined(__linux__) || defined(GUSI_20)
-    /* windows requires socket to be bound before using multicast sockopts */
-    /* linux requires that we bind to an interface's address to send */
-    struct sockaddr_in tmpAddr;
-    memset(&tmpAddr, 0, sizeof(tmpAddr));
-    tmpAddr.sin_family = AF_INET;
-    tmpAddr.sin_addr.s_addr = mreq.imr_interface.s_addr;
-    tmpAddr.sin_port = 0;
-    if (bind(fd, (const struct sockaddr*)&tmpAddr, sizeof(tmpAddr)) < 0) {
-      nerror("openMulticast: bind");
-      close(fd);
-      return -1;
-    }
+		/* windows requires socket to be bound before using multicast sockopts */
+		/* linux requires that we bind to an interface's address to send */
+		struct sockaddr_in tmpAddr;
+		memset(&tmpAddr, 0, sizeof(tmpAddr));
+		tmpAddr.sin_family = AF_INET;
+		tmpAddr.sin_addr.s_addr = mreq.imr_interface.s_addr;
+		tmpAddr.sin_port = 0;
+		if (bind(fd, (const struct sockaddr*)&tmpAddr, sizeof(tmpAddr)) < 0) {
+			nerror("openMulticast: bind");
+			closesocket(fd);
+			return -1;
+		}
 #endif
 
-    /* set ttl */
-    if (setMulticastTTL(fd, ttl) < 0) {
-      nerror("WARNING: openMulticast: setsockopt IP_MULTICAST_TTL");
-      close(fd);
-      return -1;
-    }
+		/* set ttl */
+		if (setMulticastTTL(fd, ttl) < 0) {
+			nerror("WARNING: openMulticast: setsockopt IP_MULTICAST_TTL");
+			closesocket(fd);
+			return -1;
+		}
 
-    if (net_interface && net_interface[0] &&
-		setsockopt(fd, IPPROTO_IP, IP_MULTICAST_IF,
-		(SSOType)&ifaddr, sizeof(ifaddr)) < 0) {
-      nerror("WARNING: openMulticast: Can't multicast on interface");
-      close(fd);
-      return -1;
-    }
-  }
+		if (net_interface && net_interface[0] &&
+					setsockopt(fd, IPPROTO_IP, IP_MULTICAST_IF,
+					(SSOType)&ifaddr, sizeof(ifaddr)) < 0) {
+			nerror("WARNING: openMulticast: Can't multicast on interface");
+			closesocket(fd);
+			return -1;
+		}
+	}
 
-  else {
+	else {
 #if defined(SO_REUSEPORT)
-    /* set reuse port */
-    if (setsockopt(fd, SOL_SOCKET, SO_REUSEPORT,
-				(SSOType)&optOn, sizeof(optOn)) < 0) {
-      nerror("WARNING: openMulticast: setsockopt SO_REUSEPORT");
-      close(fd);
-      return -1;
-    }
+		/* set reuse port */
+		if (setsockopt(fd, SOL_SOCKET, SO_REUSEPORT,
+									(SSOType)&optOn, sizeof(optOn)) < 0) {
+			nerror("WARNING: openMulticast: setsockopt SO_REUSEPORT");
+			close(fd);
+			return -1;
+		}
 #endif
 #if defined(SO_REUSEADDR)
-    /* set reuse address */
-    if (setsockopt(fd, SOL_SOCKET, SO_REUSEADDR,
-				(SSOType)&optOn, sizeof(optOn)) < 0) {
-      nerror("WARNING: openMulticast: setsockopt SO_REUSEADDR");
-      close(fd);
-      return -1;
-    }
+		/* set reuse address */
+		if (setsockopt(fd, SOL_SOCKET, SO_REUSEADDR,
+									(SSOType)&optOn, sizeof(optOn)) < 0) {
+			nerror("WARNING: openMulticast: setsockopt SO_REUSEADDR");
+			closesocket(fd);
+			return -1;
+		}
 #endif
 
-    /* bind address */
+		/* bind address */
 #if defined(_WIN32)
-    /* unlike linux, win32 requires that we bind to the ANY address */
-    addr->sin_addr.s_addr = htonl(INADDR_ANY);
+		/* unlike linux, win32 requires that we bind to the ANY address */
+		addr->sin_addr.s_addr = htonl(INADDR_ANY);
 #endif
-    if (bind(fd, (const struct sockaddr*)addr, sizeof(*addr)) < 0) {
-      nerror("openMulticast: bind");
-      close(fd);
-      return -1;
-    }
+    	if (bind(fd, (const struct sockaddr*)addr, sizeof(*addr)) < 0) {
+    	  nerror("openMulticast: bind");
+    	  closesocket(fd);
+    	  return -1;
+    	}
 
-    /* join multicast group */
-    if (setsockopt(fd, IPPROTO_IP, IP_ADD_MEMBERSHIP,
-				(SSOType)&mreq, sizeof(mreq)) < 0) {
-      nerror("WARNING: openMulticast: Can't join multicast group");
-      close(fd);
-      return -1;
-    }
-  }
+		/* join multicast group */
+		if (setsockopt(fd, IPPROTO_IP, IP_ADD_MEMBERSHIP,
+									(SSOType)&mreq, sizeof(mreq)) < 0) {
+			nerror("WARNING: openMulticast: Can't join multicast group");
+			closesocket(fd);
+			return -1;
+		}
+	}
 
-  /* turn on non-blocking io */
-  if (BzfNetwork::setNonBlocking(fd) < 0) {
-    nerror("openBroadcast: setNonBlocking");
-    close(fd);
-    return(-1);
-  }
+	/* turn on non-blocking io */
+	if (BzfNetwork::setNonBlocking(fd) < 0) {
+		nerror("openBroadcast: setNonBlocking");
+		closesocket(fd);
+		return(-1);
+	}
 
-  return fd;
+	return fd;
 }
 
-int			closeMulticast(int fd)
+int						closeMulticast(int fd)
 {
-  if (fd == -1) return 0;
-  return close(fd);
+	if (fd == -1) return 0;
+	return closesocket(fd);
 }
 
-int			setMulticastTTL(int fd, int ttl)
+int						setMulticastTTL(int fd, int ttl)
 {
 #if defined(_WIN32)
-  unsigned int opt = (unsigned int)ttl;
+	unsigned int opt = (unsigned int)ttl;
 #else /* defined(_WIN32) */
-  unsigned char opt = (unsigned char)ttl;
+	unsigned char opt = (unsigned char)ttl;
 #endif /* defined(_WIN32) */
-  return setsockopt(fd, IPPROTO_IP, IP_MULTICAST_TTL,
-				(SSOType)&opt, sizeof(opt));
+	return setsockopt(fd, IPPROTO_IP, IP_MULTICAST_TTL,
+								(SSOType)&opt, sizeof(opt));
 }
 
-int			sendMulticast(int fd, const void* buffer,
-					int bufferLength,
-					const struct sockaddr_in* addr)
+int						sendMulticast(int fd, const void* buffer,
+										int bufferLength,
+										const struct sockaddr_in* addr)
 {
-  return sendto(fd, (const char*)buffer, bufferLength, 0,
-				(const struct sockaddr*)addr, sizeof(*addr));
+	return sendto(fd, (const char*)buffer, bufferLength, 0,
+								(const struct sockaddr*)addr, sizeof(*addr));
 }
 
 #if !defined(AddrLen)
-#define AddrLen		int
+#define AddrLen			int
 #endif
 
-int			recvMulticast(int fd, void* buffer, int bufferLength,
-					 struct sockaddr_in* addr)
+int						recvMulticast(int fd, void* buffer, int bufferLength,
+										 struct sockaddr_in* addr)
 {
-  struct sockaddr_in from;
-  AddrLen fromLength = sizeof(from);
+	struct sockaddr_in from;
+	AddrLen fromLength = sizeof(from);
 
-  int byteCount = recvfrom(fd, (char*)buffer, bufferLength, 0,
-				(struct sockaddr*)&from, &fromLength);
-  if (byteCount < 0) {
-    if (getErrno() == EWOULDBLOCK) {
-      return 0;
-    }
-    else {
-      nerror("recvMulticast");
-      return -1;
-    }
-  }
-  if (addr) *addr = from;
-  return byteCount;
+	int byteCount = recvfrom(fd, (char*)buffer, bufferLength, 0,
+								(struct sockaddr*)&from, &fromLength);
+	if (byteCount < 0) {
+		if (getErrno() == EWOULDBLOCK) {
+			return 0;
+		}
+		else {
+			nerror("recvMulticast");
+			return -1;
+		}
+	}
+	if (addr) *addr = from;
+	return byteCount;
 }

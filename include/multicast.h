@@ -14,8 +14,8 @@
  * Multicast socket utility functions
  */
 
-#ifndef	BZF_MULTICAST_H
-#define	BZF_MULITCAST_H
+#ifndef BZF_MULTICAST_H
+#define BZF_MULITCAST_H
 
 #include "network.h"
 #include "common.h"
@@ -46,18 +46,18 @@
  * also work on broadcast sockets.
  */
 
-int			openBroadcast(int port, const char* service,
-					struct sockaddr_in* addr);
-int			openMulticast(const Address& address, int port,
-					const char* service, int ttl,
-					const char* net_interface,
-					const char* mode,
-					struct sockaddr_in* addr);
-int			closeMulticast(int fd);
-int			setMulticastTTL(int fd, int ttl);
-int			sendMulticast(int fd, const void* buffer,
-				int bufferLength, const struct sockaddr_in*);
-int			recvMulticast(int fd, void* buffer,
-				int bufferLength, struct sockaddr_in*);
+int						openBroadcast(int port, const char* service,
+							struct sockaddr_in* addr);
+int						openMulticast(const Address& address, int port,
+							const char* service, int ttl,
+							const char* net_interface,
+							const char* mode,
+							struct sockaddr_in* addr);
+int						closeMulticast(int fd);
+int						setMulticastTTL(int fd, int ttl);
+int						sendMulticast(int fd, const void* buffer,
+							int bufferLength, const struct sockaddr_in*);
+int						recvMulticast(int fd, void* buffer,
+							int bufferLength, struct sockaddr_in*);
 
 #endif // BZF_MULTICAST_H

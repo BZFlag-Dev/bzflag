@@ -13,17 +13,17 @@
 #include "DeadPlayer.h"
 
 DeadPlayer::DeadPlayer(const Player& livePlayer) :
-				Player(livePlayer.getId(),
-					livePlayer.getTeam(),
-					livePlayer.getCallSign(),
-					livePlayer.getEmailAddress())
+								Player(livePlayer.getId(),
+										livePlayer.getTeam(),
+										livePlayer.getCallSign(),
+										livePlayer.getEmailAddress())
 {
-  // get wins and losses
-  changeScore(livePlayer.getWins(), livePlayer.getLosses());
-  changeLocalScore(livePlayer.getLocalWins(), livePlayer.getLocalLosses());
+	// get wins and losses
+	changeScore(livePlayer.getWins(), livePlayer.getLosses());
+	changeLocalScore(livePlayer.getLocalWins(), livePlayer.getLocalLosses());
 }
 
 DeadPlayer::~DeadPlayer()
 {
-  // do nothing
+	// do nothing
 }

@@ -23,7 +23,10 @@
 #endif
 #define NULL 0
 
-#include <iostream.h>
+#include <iosfwd>
+
+typedef std::istream istream;
+typedef std::ostream ostream;
 
 #endif
 

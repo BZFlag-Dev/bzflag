@@ -14,50 +14,54 @@
  *	Encapsulates a semi-infinite ray.
  */
 
-#ifndef	BZF_RAY_H
-#define	BZF_RAY_H
+#ifndef BZF_RAY_H
+#define BZF_RAY_H
 
 #include "common.h"
 
 class Ray {
-  public:
-			Ray();
-			Ray(const float* o, const float* d);
-			Ray(const Ray&);
-			~Ray();
-    Ray&		operator=(const Ray&);
+public:
+	Ray();
+	Ray(const float* o, const float* d);
+	Ray(const Ray&);
+	~Ray();
+	Ray&				operator=(const Ray&);
 
-    const float*	getOrigin() const;
-    const float*	getDirection() const;
-    void		getPoint(float t, float p[3]) const;
+	const float*		getOrigin() const;
+	const float*		getDirection() const;
+	void				getPoint(float t, float p[3]) const;
 
-  private:
-    float		o[3];
-    float		d[3];
+private:
+	float				o[3];
+	float				d[3];
 };
 
 //
 // Ray
 //
 
-inline Ray::Ray()
+inline
+Ray::Ray()
 {
-  // do nothing
+	// do nothing
 }
 
-inline Ray::~Ray()
+inline
+Ray::~Ray()
 {
-  // do nothing
+	// do nothing
 }
 
-inline const float*	Ray::getOrigin() const
+inline
+const float*			Ray::getOrigin() const
 {
-  return o;
+	return o;
 }
 
-inline const float*	Ray::getDirection() const
+inline
+const float*			Ray::getDirection() const
 {
-  return d;
+	return d;
 }
 
 #endif // BZF_RAY_H

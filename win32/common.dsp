@@ -37,14 +37,14 @@ RSC=rc.exe
 # PROP BASE Target_Dir ""
 # PROP Use_MFC 0
 # PROP Use_Debug_Libraries 0
-# PROP Output_Dir "..\lib\Release"
+# PROP Output_Dir "Release"
 # PROP Intermediate_Dir "Release"
 # PROP Target_Dir ""
-# ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /YX /FD /c
-# ADD CPP /nologo /MT /Ze /W3 /O2 /I "..\include" /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "_LIB" /FD /c
+# ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "_LIB" /YX /FD /c
+# ADD CPP /nologo /W3 /vmg /GX /O2 /I "..\include" /D "NDEBUG" /D "_LIB" /D "WIN32" /D "_MBCS" /D VERSION=10801001 /FD /c
 # SUBTRACT CPP /YX
-# ADD BASE RSC /l 0x409
-# ADD RSC /l 0x409
+# ADD BASE RSC /l 0x409 /d "NDEBUG"
+# ADD RSC /l 0x409 /d "NDEBUG"
 BSC32=bscmake.exe
 # ADD BASE BSC32 /nologo
 # ADD BSC32 /nologo
@@ -61,13 +61,13 @@ LIB32=link.exe -lib
 # PROP BASE Target_Dir ""
 # PROP Use_MFC 0
 # PROP Use_Debug_Libraries 1
-# PROP Output_Dir "..\lib\Debug"
+# PROP Output_Dir "Debug"
 # PROP Intermediate_Dir "Debug"
 # PROP Target_Dir ""
-# ADD BASE CPP /nologo /W3 /GX /Z7 /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /YX /FD /c
-# ADD CPP /nologo /MDd /W3 /Gm /ZI /Od /I "..\include" /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /FD /GZ /c
-# ADD BASE RSC /l 0x409
-# ADD RSC /l 0x409
+# ADD BASE CPP /nologo /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /YX /FD /GZ /c
+# ADD CPP /nologo /W3 /Gm /vmg /GX /ZI /Od /I "..\include" /D "_LIB" /D "_DEBUG" /D "WIN32" /D "_MBCS" /D VERSION=10801001 /Fd"Debug/common.pdb" /FD /GZ /c
+# ADD BASE RSC /l 0x409 /d "_DEBUG"
+# ADD RSC /l 0x409 /d "_DEBUG"
 BSC32=bscmake.exe
 # ADD BASE BSC32 /nologo
 # ADD BSC32 /nologo
@@ -83,18 +83,14 @@ LIB32=link.exe -lib
 # Name "common - Win32 Debug"
 # Begin Group "Source Files"
 
-# PROP Default_Filter "c;cxx"
-# Begin Source File
-
-SOURCE=..\src\common\AList.cxx
-# End Source File
-# Begin Source File
-
-SOURCE=..\src\common\bzsignal.c
-# End Source File
+# PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 # Begin Source File
 
 SOURCE=..\src\common\BzfString.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\common\ConfigIO.cxx
 # End Source File
 # Begin Source File
 
@@ -102,27 +98,23 @@ SOURCE=..\src\common\ErrorHandler.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\common\Flag.cxx
+SOURCE=..\src\common\FileManager.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\common\Team.cxx
+SOURCE=..\src\common\StateDatabase.cxx
 # End Source File
 # Begin Source File
 
 SOURCE=..\src\common\TimeBomb.cxx
 # End Source File
-# Begin Source File
-
-SOURCE=..\src\common\TimeKeeper.cxx
-# End Source File
 # End Group
 # Begin Group "Header Files"
 
-# PROP Default_Filter "h"
+# PROP Default_Filter "h;hpp;hxx;hm;inl"
 # Begin Source File
 
-SOURCE=..\include\AList.h
+SOURCE=..\include\bzfgl.h
 # End Source File
 # Begin Source File
 
@@ -138,27 +130,23 @@ SOURCE=..\include\common.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\include\ConfigIO.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\include\ErrorHandler.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\Flag.h
+SOURCE=..\include\FileManager.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\global.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\include\Team.h
+SOURCE=..\include\StateDatabase.h
 # End Source File
 # Begin Source File
 
 SOURCE=..\include\TimeBomb.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\include\TimeKeeper.h
 # End Source File
 # End Group
 # End Target

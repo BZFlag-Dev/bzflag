@@ -17,11 +17,7 @@ TARGETS  = $(LIBDIR)/libPlatform.a
 
 CXXFILES =				\
 	PlatformFactory.cxx		\
-	BzfDisplay.cxx			\
-	BzfVisual.cxx			\
-	BzfWindow.cxx			\
-	BzfMedia.cxx			\
-	wave.cxx			\
+	TimeKeeper.cxx			\
 	$(PCXXFILES)			\
 	$(NULL)
 

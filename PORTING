@@ -16,8 +16,15 @@ new platform is named `foo'.
       prefix instead of Foo.  it may be possible to use existing files
       as is, or to reuse existing code (by copying).
       * FooPlatformFactory
+    * copy Make-new to Make-foo
+    * add the platform dependent files to PCXXFILES
+
+  * in src/mplatform/:
+    * implement the following files, as necessary, using an appropriate
+      prefix instead of Foo.  it may be possible to use existing files
+      as is, or to reuse existing code (by copying).
+      * FooPlatformMediaFactory
       * FooDisplay
-      * FooMedia
       * FooVisual
       * FooWindow
     * copy Make-new to Make-foo
@@ -47,10 +54,11 @@ that are not encapsulated:  OpenGL and BSD sockets.  The OpenGL
 API should not present a problem, unless you intend to port to
 some other graphics API for some reason, since it's identical
 on all platforms.  GL/gl.h provides a #define to identify the
-version of OpenGL.  All OpenGL code that's not version 1.0
+version of OpenGL.  All OpenGL code that's not version 1.1
 compatible should be #ifdef/#endif guarded and, if possible,
-also implemented with version 1.0 code for platforms that don't
-support the later versions.
+also implemented with version 1.1 code for platforms that don't
+support the later versions.  Version 1.1 is required;  OpenGL 1.0
+is no longer supported.
 
 The BSD socket API may cause some trouble if you're not porting
 to some flavor of UNIX.  Encapsulating network code is on the
@@ -61,7 +69,10 @@ directives.  These are to be avoided when possible as they make
 the code harder to read and can lead to platform differences
 when code is updated for some, but not all, platforms.
 
-Inherently non-portable code is under src/platform.  It
-encapsulates windowing and audio subsystems.  (It also includes
-code to read image and audio files, for historical reasons.)
+Inherently non-portable code is under src/mplatform for windowing
+and multimedia stuff and src/platform for other platform specific
+stuff.
 
+The macintosh code notwithstanding, platform dependent code goes
+under src, not under package.  package is for platform dependent
+packaging only.  The macintosh code will be moved.

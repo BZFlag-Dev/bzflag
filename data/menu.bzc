@@ -1,0 +1,502 @@
+<align ref=center pos=50%/>
+<menu id=main>
+  <size height=15%/>
+  <space height=0.25x/>
+  <static label="BZFlag" texture="title"/>
+
+  <size height=4%/>
+  <space height=1.25x/>   # move current position 0,+1.25 * height
+  <static label="Up/Down arrows to move, Enter to select, Esc to dismiss"/>
+
+  <align ref=detail pos=55%/>
+  <space height=2x/>
+  <size height=10%/>
+  <button label="Join Game" action="menu push join"/>
+  <button label="Options"   action="menu push options"/>
+  <button label="Help"      action="menu push help"/>
+  <button label="Credits"   action="menu push credits"/>
+  <button label="Quit"      action="menu push quit"/>
+</menu>
+
+<menu id=quit>
+  <size height=15%/>
+  <space height=3x/>
+  <static label="Really quit?"/>
+  <button action="quit" type=hidden/>
+
+  <size height=4%/>
+  <space/>
+  <static label="Enter to quit, Esc to resume"/>
+</menu>
+
+<menu id=join>
+  <size height=15%/>
+  <space height=0.25x/>
+  <static label="Join Game"/>
+
+  # position detail at center
+  <align ref=detail pos=50%/>
+
+  <size height=5%/>
+  <space/>
+  <button label="Find" action="menu push find"/>
+  <button label="Connect" action="set connect 1"/>
+
+  <space/>
+  # edit field with given label reflecting name in DB with maximum length
+  <edit label="Callsign:" name="infoCallsign" maxlen=32/>
+  # list field reflecting name in DB with given possibilities
+  <combo label="Team:" name="infoTeam">
+    <item label="Rogue" value="rogue"/>
+    <item label="Red" value="red"/>
+    <item label="Green" value="green"/>
+    <item label="Blue" value="blue"/>
+    <item label="Purple" value="purple"/>
+  </combo>
+
+  <space/>
+  <edit label="Server:" name="infoServer" maxlen=64/>
+  <edit label="Port:" name="infoPort" maxlen=5 type=int/>
+ 
+  <align ref=left pos=20%/>
+  <space/>
+  <static name="connectStatus"/>
+  <static name="connectError"/>
+</menu>
+
+<menu id=find open="search">
+  <size height=15%/>
+  <space height=0.25x/>
+  <static label="Servers"/>
+
+  <size height=4%/>
+  <space height=1.25x/>
+  <static label="Press Up/Down arrows to choose, Enter to select"/>
+  <space height=1x/>
+
+  <mark/>
+  <size height=4%/>
+  <align ref=right pos=15%/>
+  <static label="Players:"/>
+  <static label="Red:"/>
+  <static label="Green:"/>
+  <static label="Blue:"/>
+  <static label="Purple:"/>
+  <static label="Rogue:"/>
+
+  <jump/>
+  <align ref=left pos=16%/>
+  <static name="_serverNumTotal"/>
+  <static name="_serverNumRed"/>
+  <static name="_serverNumGreen"/>
+  <static name="_serverNumBlue"/>
+  <static name="_serverNumPurple"/>
+  <static name="_serverNumRogue"/>
+
+  <jump/>
+  <align ref=left pos=35%/>
+  <static name="_serverStyle"/>
+  <static name="_serverSuperFlags"/>
+  <static name="_serverJumping"/>
+  <static name="_serverRicochet"/>
+  <static name="_serverInertia"/>
+
+  <jump/>
+  <align ref=left pos=65%/>
+  <static name="_serverShakeAntidote"/>
+  <static name="_serverShakeTime"/>
+  <static name="_serverShakeWins"/>
+  <static name="_serverLimitTime"/>
+  <static name="_serverLimitTeamScore"/>
+  <static name="_serverLimitPlayerScore"/>
+
+  <mark/>
+  <align ref=right pos=49%/>
+  <static label="Servers found:"/>
+  <jump/>
+  <align ref=center pos=51%/>
+  <static name="_serverCount"/>
+
+  <align ref=left pos=5%/>
+  <size height=3%/>
+  <list lines=10 columns=1 width="80%" select="menu pop"
+      src="_serverList" focus="_serverName"
+      format="%:%" dst="infoServer,infoPort"/>
+</menu>
+
+<menu id=options>
+  <size height=15%/>
+  <space height=0.25x/>
+  <static label="Options"/>
+
+  <align ref=detail pos=50%/>
+  <size height=5%/>
+  <space height=0.5x/>
+  <combo label="Dithering:" name="renderDithering">
+    <item label="Off" value="0"/>
+    <item label="On" value="1"/>
+  </combo>
+  <combo label="Blending:" name="renderBlending">
+    <item label="Off" value="0"/>
+    <item label="On" value="1"/>
+  </combo>
+  <combo label="Smoothing:" name="renderSmoothing">
+    <item label="Off" value="0"/>
+    <item label="On" value="1"/>
+  </combo>
+  <combo label="Lighting:" name="renderLighting">
+    <item label="Off" value="0"/>
+    <item label="On" value="1"/>
+  </combo>
+  <combo label="Texturing:" name="renderTexturing">
+    <item label="Off" value="0"/>
+    <item label="Nearest" value="nearest"/>
+    <item label="Linear" value="linear"/>
+    <item label="Nearest Mipmap Nearest" value="nearestmipmapnearest"/>
+    <item label="Linear Mipmap Nearest" value="linearmipmapnearest"/>
+    <item label="Nearest Mipmap Linear" value="nearestmipmaplinear"/>
+    <item label="Linear Mipmap Linear" value="linearmipmaplinear"/>
+  </combo>
+  <combo label="Quality:" name="renderQuality">
+    <item label="Low" value="0"/>
+    <item label="Medium" value="1"/>
+    <item label="High" value="2"/>
+  </combo>
+  <combo label="Shadows:" name="renderShaowing">
+    <item label="Off" value="0"/>
+    <item label="On" value="1"/>
+  </combo>
+  <combo label="Depth Buffer:" name="renderZBuffer">
+    <item label="Off" value="0"/>
+    <item label="On" value="1"/>
+  </combo>
+  # include following only if value in DB matches (similarly for unless)
+  <if name=renderDebug value="1">
+    <combo label="Hidden Line:" name="renderHiddenLine">
+      <item label="Off" value="0"/>
+      <item label="On" value="1"/>
+    </combo>
+    <combo label="Wireframe:" name="renderWireframe">
+      <item label="Off" value="0"/>
+      <item label="On" value="1"/>
+    </combo>
+    <combo label="Depth Complexity:" name="renderDepthComplexity">
+      <item label="Off" value="0"/>
+      <item label="On" value="1"/>
+    </combo>
+  </if>
+  <button label="Change Video Format" action="menu push video"/>
+  <combo label="Brightness:" name="renderGamma" default="2.00">
+    # note that an if statement is allowed within a list
+    <if name=featuresGamma value="1">
+      # FIXME -- would like to support texture labels for pretty sliders
+      <item label="[O--------------]" value="0.500"/>
+      <item label="[-O-------------]" value="0.574"/>
+      <item label="[--O------------]" value="0.660"/>
+      <item label="[---O-----------]" value="0.758"/>
+      <item label="[----O----------]" value="0.871"/>
+      <item label="[-----O---------]" value="1.00"/>
+      <item label="[------O--------]" value="1.15"/>
+      <item label="[-------O-------]" value="1.32"/>
+      <item label="[--------O------]" value="1.52"/>
+      <item label="[---------O-----]" value="1.74"/>
+      <item label="[----------O----]" value="2.00"/>
+      <item label="[-----------O---]" value="2.30"/>
+      <item label="[------------O--]" value="2.64"/>
+      <item label="[-------------O-]" value="3.03"/>
+      <item label="[--------------O]" value="3.48"/>
+    </if>
+    <unless name=featuresGamma value="1">
+      # note: no value means do not change DB entry
+      <item label="Unavailable"/>
+    </unless>
+  </combo>
+  <combo label="Volume:" name="audioVolume" default="0">
+    <if name=featuresAudio value="1">
+      <item label="[O----------]" value="0"/>
+      <item label="[-O---------]" value="1"/>
+      <item label="[--O--------]" value="2"/>
+      <item label="[---O-------]" value="3"/>
+      <item label="[----O------]" value="4"/>
+      <item label="[-----O-----]" value="5"/>
+      <item label="[------O----]" value="6"/>
+      <item label="[-------O---]" value="7"/>
+      <item label="[--------O--]" value="8"/>
+      <item label="[---------O-]" value="9"/>
+      <item label="[----------O]" value="10"/>
+    </if>
+    <unless name=featuresAudio value="1">
+      <item label="Unavailable"/>
+    </unless>
+  </combo>
+  <button label="Change Keys" action="menu push keys"/>
+  <combo label="Enhanced Radar:" name="displayEnhancedRadar">
+    <item label="Off" value="0"/>
+    <item label="On" value="1"/>
+  </combo>
+</menu>
+
+<menu id=help>
+  <size height=15%/>
+  <space height=0.25x/>
+  <static label="Help"/>
+
+  <size height=4%/>
+  <space height=1.25x/>   # move current position 0,+1.25 * height
+  <static label="Up/Down arrows to move, Esc to dismiss"/>
+
+  <align ref=center pos=50%/>
+  <size height=4%/>
+  <space height=0.5x/>
+  <text width="80%" lines="15">
+    BZFlag is a multi-player networked tank battle game.  There are five teams:
+    red, green, blue, purple, and rogues (rogue tanks are black).  Destroying a
+    player on another team scores a win, while being destroyed or destroying a
+    teammate scores a loss.  Individual and aggregate team scores are tallied.
+    Rogues have no teammates (not even other rogues), so they cannot shoot
+    teammates and they don't have a team score.\n
+    \n
+    There are two styles of play, determined by the server configuration:
+    capture-the-flag and free-for-all.  In free-for-all the object is simply to get the
+    highest score by shooting opponents.  The object in capture-the-flag is to
+    capture enemy flags while preventing opponents from capturing yours.  In this
+    style, each team (but not rogues) has a team base and each team with at least
+    one player has a team flag which has the color of the team.  To capture a flag,
+    you must grab it and bring it back to your team base (you must be on the ground
+    in your base to register the capture).  Capturing a flag destroys all the players
+    on that team and gives your team score a bonus;  the players will restart on
+    their team base.  Taking your flag onto an enemy base counts as a capture against
+    your team but not for the enemy team.\n
+    \n
+    The world environment contains an outer wall and several buildings.
+    You cannot go outside the outer wall (you can't even jump over it).
+    You cannot normally drive or shoot through buildings.\n
+    \n
+    The server may be configured to include teleporters:  large transparent
+    black slabs.  Objects entering one side of a teleporter are instantly
+    moved to one side of another (or possibly the same) teleporter.  The
+    teleport is reversible;  reentering the same side of the destination
+    teleporter brings you back to where you started.  Teleport connections
+    are fixed at the start of the game and don't change during the game.
+    The connections are always the same in the capture-the-flag style.
+    Each side of a teleporter teleports independently of the other side.
+    It's possible for a teleporter to teleport to the opposite side of
+    itself.  Such a thru-teleporter acts almost as if it wasn't there.
+    A teleporter can also teleport to the same side of itself.  This is a
+    reverse teleporter.  Shooting at a reverse teleporter is likely to be
+    self destructive;  shooting a laser at one is invariably fatal.\n
+    \n
+    Flags come in two varieties:  team flags and super flags.  Team flags
+    are used only in the capture-the-flag style.  The server may also be
+    configured to supply super flags, which give your tank some advantage
+    or disadvantage.  You normally can't tell which until you pick one up,
+    but good flags generally outnumber bad flags two to one.\n
+    \n
+    Team flags are not allowed to be in Bad Places.  Bad Places are:  on
+    a building or on an enemy base.  Team flags dropped in a Bad Place are
+    moved to a safety position.  Captured flags are placed back on their
+    team base.  Super flags dropped above a building always disappear.\n
+    \n
+    A random good super flag will remain for up to 4 possessions.  After
+    that it'll disappear and will eventually be replaced by a new random
+    flag.  Bad random super flags disappear after the first possession.
+    Bad super flags can't normally be dropped.  The server can be set to
+    automatically drop the flag for you after some time, after you destroy
+    a certain number of enemies, and/or when you grab an antidote flag.
+    Antidote flags are yellow and only appear when you have a bad flag.\n
+    \n
+    Good Flags:\n
+    High Speed (V):   boosts top speed\n
+    Quick Turn (A):   boosts turn rate\n
+    Oscillation Overthruster (OO):   can drive through buildings\n
+    Rapid Fire (F):   faster shots more often\n
+    Machine Gun (MG):   very fast reload, very short range\n
+    Guided Missile (GM):   shots guide themselves (right mouse locks on)\n
+    Laser (L):   infinite shot speed and range, long reload time\n
+    Ricochet (R):   shots ricochet\n
+    Super Bullet (SB):   shoots through buildings\n
+    Stealth (ST):   tank invisible on enemy radar\n
+    Cloaking (CL):   tank invisible out the window\n
+    Invisible Bullet (IB):   shots invisible on radar\n
+    Tiny (T):   tank becomes smaller\n
+    Narrow (N):   tank becomes paper thin\n
+    Shield(SH):   getting hit just drops the flag\n
+    Steamroller (SR):   destroy tanks by touching them\n
+    Shock Wave (SW):   expanding spherical shell of destruction\n
+    Phantom Zone (PZ):   teleport to enter/leave zone\n
+    Genocide (G):   destroys player and all player's teammates\n
+    Jumping (JP):   allows tank to jump\n
+    Identify (ID):   shows type of nearest superflag\n
+    \n
+    Bad Flags:\n
+    Colorblindness (CB):   can't identify tanks\n
+    Obesity (O):   makes tank very large\n
+    Left Turn Only (\<-):   tank can't turn right\n
+    Right Turn Only (->):   tank can't turn left\n
+    Momentum (M):   tank has lots of momentum\n
+    Blindness (B):   can't see out the window\n
+    Jamming (JM):   can't see anything on radar\n
+    Wide Angle (WA):   fish eye view out the window\n
+    \n
+    The radar is on the left side of the control panel.  It shows an overhead
+    x-ray view of the game.  Buildings and the outer wall are shown in light
+    blue.  Team bases are outlined in the team color.  Teleporters are short
+    yellow lines.  Tanks are dots in the tank's team color, except rogues are
+    yellow.  The size of the tank's dot is a rough indication of the tank's
+    altitude:  higher tanks have larger dots.  Flags are small crosses.  Team
+    flags are in the team color, superflags are white, and the antidote flag
+    is yellow.  Shots are small dots (or lines or circles, for lasers and
+    shock waves, respectively).  Your tank is always dead center and forward
+    is always up on the radar.  The yellow V is your field of view.  North
+    is indicated by the letter N.\n
+    \n
+    The heads-up-display (HUD) has several displays.  The two boxes in the
+    center of the view are the motion control boxes;  within the small box
+    your tank won't move, outside the large box you don't move any faster than
+    at the edge of the large box.  Moving the mouse above or below the small
+    box moves forward or backward, respectively.  Similarly for left and right.
+    The distance away from the small box determines the speed.\n
+    \n
+    Above the larger box is a tape showing your current heading.  North is
+    0, east is 90, etc.  If jumping is allowed or you have the jumping flag,
+    an altitude tape appears to the right of the larger box.\n
+    \n
+    Small colored diamonds or arrows may appear on the heading tape.  An
+    arrow pointing left means that a particular flag is to your left, an
+    arrow pointing right means that the flag is to your right, and a diamond
+    indicates the heading to the flag by its position on the heading tape.
+    In capture-the-flag mode a marker always shows where your team flag is.
+    A yellow marker shows the way to the antidote flag.\n
+    \n
+    At the top of the display are, from left to right, your callsign and
+    score, your status, and the flag you have.  Your callsign is in the
+    color of your team.  Your status is one of:  ready, dead, sealed, zoned
+    or reloading (showing the time until reloaded).  It can also show the
+    time until a bad flag is dropped (if there's a time limit).\n
+    \n
+    Other informational messages may occasionally flash on the HUD.\n
+  </text>
+</menu>
+
+<menu id=credits>
+  <size height=15%/>
+  <space height=0.25x/>
+  <static label="Credits"/>
+
+  <size height=5%/>
+  <space height=0.5x/>
+
+  # this text field and the following one should have the same
+  # number of lines and speed so they scroll together.
+  <mark/>
+  <align ref=right pos=48%/>
+  <text width="40%" lines="15" speed="1.0">
+    Creator:\n
+    \n
+    Maintainer:\n
+    \n
+    Contributors:\n
+    \n
+    \n
+    \n
+    \n
+    \n
+    \n
+    \n
+    \n
+    \n
+    Tank Models:\n
+    \n
+    Special Thanks:\n
+    \n
+    \n
+    \n
+    \n
+    \n
+    \n
+    BZFlag Home Page:\n
+    \n
+    Copyright (c)\n
+  </text>
+
+  <jump/>
+  <align ref=left pos=52%/>
+  <text width="40%" lines="15" speed="1.0">
+    Chris Schoeneman\n
+    \n
+    Tim Riker\n
+    \n
+    David Hoeferlin\n
+    Tom Hubina\n
+    Dan Kartch\n
+    Jed Lengyel\n
+    Jeff Myers\n
+    Tim Olson\n
+    Brian Smits\n
+    Greg Spencer\n
+    Daryll Strauss\n
+    \n
+    Tamar Cohen\n
+    \n
+    Kevin Novins\n
+    Rick Pasetto\n
+    Adam Rosen\n
+    Erin Shaw\n
+    Ben Trumbore\n
+    Don Greenberg\n
+    \n
+    http://BZFlag.org/\n
+    \n
+    Tim Riker 1993 - 2001\n
+  </text>
+</menu>
+
+<menu id=video>
+  <size height=15%/>
+  <space height=0.25x/>
+  <static label="Video Formats"/>
+
+  <unless name="featuresResolutions" value="">
+    <size height=4%/>
+    <space height=1.25x/>
+    <static label="Press Enter to select"/>
+
+    <align ref=center pos=50%/>
+    <size height=3%/>
+    <space height=0.5x/>
+    <list lines=10 columns=3 width="80%"
+	src="featuresResolutions" dst="windowResolution"/>
+  </unless>
+  <if name="featuresResolutions" value="">
+    <size height=4%/>
+    <space height=2.25x/>
+
+    <align ref=center pos=50%/>
+    <size height=4%/>
+    <space height=0.5x/>
+    <static label="Format switching is unavailable"/>
+  </if>
+</menu>
+
+<menu id=keys>
+  <size height=15%/>
+  <space height=0.25x/>
+  <static label="Key Bindings"/>
+
+  <align ref=detail pos=50%/>
+  <size height=4%/>
+  <space height=0.5x/>
+  <key label="Fire shot:" down="fire" up="fire stop"/>
+  <key label="Drop flag:" down="drop"/>
+  <key label="Identify/Lock On:" down="identify"/>
+  <key label="Jump:" down="jump"/>
+  <key label="Radar short:" down="set displayRadarRange 0.25"/>
+  <key label="Radar Medium:" down="set displayRadarRange 0.50"/>
+  <key label="Radar Long:" down="set displayRadarRange 1.00"/>
+  <key label="Pause/Resume:" down="pause"/>
+  <key label="Binoculars:" down="toggle displayBinoculars"/>
+  <key label="Send to All:" down="send all"/>
+  <key label="Send to Teammates:" down="send team"/>
+  <key label="Send to Nemesis:" down="send nemesis"/>
+  <key label="Flag Help:" down="toggle displayFlagHelp"/>
+</menu>

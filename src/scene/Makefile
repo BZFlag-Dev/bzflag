@@ -12,16 +12,36 @@
 DEPTH = ../..
 include $(DEPTH)/Make-common
 
-TARGETS  = $(LIBDIR)/libSceneDB.a
+TARGETS  = $(LIBDIR)/libScene.a
 
 CXXFILES =				\
-	SceneDatabase.cxx		\
-	ZSceneDatabase.cxx		\
-	BSPSceneDatabase.cxx		\
+	SceneNode.cxx			\
+	SceneNodeAnimate.cxx		\
+	SceneNodeBillboard.cxx		\
+	SceneNodeBaseTransform.cxx	\
+	SceneNodeChoice.cxx		\
+	SceneNodeGState.cxx		\
+	SceneNodeGeometry.cxx		\
+	SceneNodeGroup.cxx		\
+	SceneNodeLight.cxx		\
+	SceneNodeLOD.cxx		\
+	SceneNodeMatrixTransform.cxx	\
+	SceneNodeMetadata.cxx		\
+	SceneNodeParameters.cxx		\
+	SceneNodePrimitive.cxx		\
+	SceneNodeSelector.cxx		\
+	SceneNodeSphereTransform.cxx	\
+	SceneNodeTransform.cxx		\
+	SceneVisitor.cxx		\
+	SceneVisitorParams.cxx		\
+	SceneVisitorFind.cxx		\
+	SceneVisitorFindAll.cxx		\
+	SceneVisitorRender.cxx		\
+	SceneVisitorSimpleRender.cxx	\
+	SceneReader.cxx 		\
 	$(NULL)
 
 targets: $(TARGETS)
 
 $(TARGETS): $(OBJECTS)
 	$(ARF) $@ $?
-

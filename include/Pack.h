@@ -19,25 +19,25 @@
  * may be lost.
  */
 
-#ifndef	BZF_PACK_H
-#define	BZF_PACK_H
+#ifndef BZF_PACK_H
+#define BZF_PACK_H
 
 #include "common.h"
 
-void*			nboPackShort(void*, int16_t);
-void*			nboPackInt(void*, int32_t);
-void*			nboPackUShort(void*, uint16_t);
-void*			nboPackUInt(void*, uint32_t);
-void*			nboPackFloat(void*, float);
-void*			nboPackVector(void*, const float*);
-void*			nboPackString(void*, const void*, int len);
+void*					nboPackShort(void*, int16_t);
+void*					nboPackInt(void*, int32_t);
+void*					nboPackUShort(void*, uint16_t);
+void*					nboPackUInt(void*, uint32_t);
+void*					nboPackFloat(void*, float);
+void*					nboPackVector(void*, const float*);
+void*					nboPackString(void*, const void*, int len);
 
-void*			nboUnpackShort(void*, int16_t&);
-void*			nboUnpackInt(void*, int32_t&);
-void*			nboUnpackUShort(void*, uint16_t&);
-void*			nboUnpackUInt(void*, uint32_t&);
-void*			nboUnpackFloat(void*, float&);
-void*			nboUnpackVector(void*, float*);
-void*			nboUnpackString(void*, void*, int len);
+void*					nboUnpackShort(void*, int16_t&);
+void*					nboUnpackInt(void*, int32_t&);
+void*					nboUnpackUShort(void*, uint16_t&);
+void*					nboUnpackUInt(void*, uint32_t&);
+void*					nboUnpackFloat(void*, float&);
+void*					nboUnpackVector(void*, float*);
+void*					nboUnpackString(void*, void*, int len);
 
 #endif // BZF_PACK_H
