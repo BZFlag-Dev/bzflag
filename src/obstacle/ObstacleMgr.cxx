@@ -747,6 +747,8 @@ void GroupDefinitionMgr::makeWorld()
   
   world.makeGroups(noXform, noMods);
   
+  tighten();
+  
   return;
 }
 

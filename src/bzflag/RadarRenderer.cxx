@@ -216,7 +216,7 @@ void			RadarRenderer::render(SceneRenderer& renderer,
     const double maxHeight = (double) COLLISIONMGR.getMaxWorldHeight();
     glOrtho(-xCenter * xUnit, (xSize - xCenter) * xUnit,
             -yCenter * yUnit, (ySize - yCenter) * yUnit,
-            -maxHeight, +maxHeight);
+            -maxHeight, (maxHeight + 10.0));
   } else {
     glOrtho(-xCenter * xUnit, (xSize - xCenter) * xUnit,
 	    -yCenter * yUnit, (ySize - yCenter) * yUnit, -1.0, +1.0);

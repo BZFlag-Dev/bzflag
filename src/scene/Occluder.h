@@ -48,13 +48,9 @@ class OccluderManager {
 
     int getOccluderCount () const;
     
-    void enable() { enabled = true; }
-    void disable() { enabled = false; }
-    
     void draw() const;
 
   private:
-    bool enabled;
     void setMaxOccluders(int size);
     void sort();
     int activeOccluders;

@@ -153,7 +153,7 @@ void Octree::addNodes (SceneNode** list, int listSize, int depth, int elements)
   getExtents (mins, maxs, list, listSize);
 
   // sorted from lowest to highest
-  qsort(list, listSize, sizeof(SceneNode*), compareZExtents);
+  qsort(CullList, CullListCount, sizeof(SceneNode*), compareZExtents);
 
   // making babies
   root = new OctreeNode(0, mins, maxs, list, listSize);
@@ -176,15 +176,14 @@ void Octree::addNodes (SceneNode** list, int listSize, int depth, int elements)
 
 
 int Octree::getFrustumList (SceneNode** list, int listSize,
-			    const Frustum* frustum, bool occlude) const
+			    const Frustum* frustum) const
 {
   if (!root) {
     return 0;
   }
 
   if (listSize > CullListSize) {
-    printf ("Octree::getFrustumList() Internal error! (%i vs %i)\n",
-	    listSize, CullListSize);
+    printf ("Octree::getFrustumList() internal error!\n");
     exit (1);
   }
 
@@ -193,21 +192,43 @@ int Octree::getFrustumList (SceneNode** list, int listSize,
   CullListCount = 0;
 
   // update the occluders before using them
-  if (occlude) {
-    OcclMgr.update(CullFrustum);
-  } else {
-    OcclMgr.disable();
-  }
+  OcclMgr.update(CullFrustum);
 
   // get the nodes
-  root->getFrustumList ();
+  root->getFrustumList();
 
   // pick new occluders
-  if (occlude) {
-    OcclMgr.select(CullList, CullListCount);
-  } else {
-    OcclMgr.enable(); // reenable
+  OcclMgr.select(CullList, CullListCount);
+
+  return CullListCount;
+}
+
+
+int Octree::getRadarList (SceneNode** list, int listSize,
+                          const Frustum* frustum) const
+{
+  // This is basically the same as Octree::getFrustumList(),
+  // except that it doesn't use the occluders. This duplication
+  // was done to try and speed-up this low level code.
+  
+  if (!root) {
+    return 0;
   }
+
+  if (listSize > CullListSize) {
+    printf ("Octree::getRadarList() internal error!\n");
+    exit (1);
+  }
+  
+  CullFrustum = frustum;
+  CullList = list;
+  CullListCount = 0;
+
+  // get the nodes
+  root->getRadarList();
+  
+  // FIXME: this is the proper way to do it, but it takes too much time
+  //qsort(CullList, CullListCount, sizeof(SceneNode*), compareZExtents);
 
   return CullListCount;
 }
@@ -220,6 +241,11 @@ int Octree::getShadowList (SceneNode** list, int listSize,
     return 0;
   }
 
+  if (listSize > CullListSize) {
+    printf ("Octree::getShadowList() internal error!\n");
+    exit (1);
+  }
+  
   // we project the frustum onto the ground plane, and then
   // use those lines to generate planes in the direction of
   // the sun's light. that is the potential shadow volume.
@@ -277,13 +303,6 @@ int Octree::getShadowList (SceneNode** list, int listSize,
     planeCount = 0;
   }
 
-  // FIXME - testing hack
-  if (listSize > CullListSize) {
-    printf ("Octree::getShadowList() Internal error! (%i vs %i)\n",
-	    listSize, CullListSize);
-    exit (1);
-  }
-
   CullList = list;
   CullListCount = 0;
   ShadowCount = planeCount;
@@ -293,7 +312,7 @@ int Octree::getShadowList (SceneNode** list, int listSize,
   // FIXME: use occluders later?  OcclMgr.update(CullFrustum);
 
   // get the nodes
-  root->getShadowList ();
+  root->getShadowList();
 
   return CullListCount;
 }
@@ -561,6 +580,41 @@ void OctreeNode::getFrustumList () const
   if (childCount > 0) {
     for (int i = 0; i < childCount; i++) {
       children[i]->getFrustumList ();
+    }
+  }
+  else {
+    for (int i = 0; i < listSize; i++) {
+      SceneNode* node = list[i];
+      if (node->octreeState == SceneNode::OctreeCulled) {
+	addCullListNode (node);
+	node->octreeState = SceneNode::OctreePartial;
+      }
+    }
+  }
+
+  return;
+}
+
+
+void OctreeNode::getRadarList () const
+{
+  IntersectLevel level = testAxisBoxInFrustum (mins, maxs, CullFrustum);
+
+  if (level == Outside) {
+    return;
+  }
+  
+  if (level == Contained) {
+    getFullyVisible ();
+    return;
+  }
+
+  // this cell is only partially contained within
+  // the frustum and is not being fully occluded
+
+  if (childCount > 0) {
+    for (int i = 0; i < childCount; i++) {
+      children[i]->getRadarList ();
     }
   }
   else {

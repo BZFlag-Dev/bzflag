@@ -29,7 +29,6 @@ const int OccluderManager::MaxOccluders = MAX_OCCLUDERS;
 
 OccluderManager::OccluderManager()
 {
-  enabled = true;
   activeOccluders = 0;
   allowedOccluders = 0;
   for (int i = 0; i < MaxOccluders; i++) {
@@ -84,10 +83,6 @@ IntersectLevel OccluderManager::occlude(const float* mins,
 					const float* maxs,
 					unsigned int score)
 {
-  if (!enabled) {
-    return Outside;
-  }
-  
   IntersectLevel level = Outside;
 
   for (int i = 0; i < activeOccluders; i++) {

@@ -228,7 +228,7 @@ void ZSceneDatabase::renderRadarNodes(const ViewFrustum& vf)
   // cull if we're supposed to
   if (octree) {
     const Frustum* f = (const Frustum *) &vf;
-    culledCount = octree->getFrustumList (culledList, staticCount, f, false);
+    culledCount = octree->getRadarList (culledList, staticCount, f);
   }
   
   // if the node has a plane, see that it isn't downwards
@@ -266,7 +266,7 @@ void ZSceneDatabase::addRenderNodes(SceneRenderer& renderer)
   // cull if we're supposed to
   if (octree) {
     const Frustum* f = (const Frustum *) &frustum;
-    culledCount = octree->getFrustumList (culledList, staticCount, f, true);
+    culledCount = octree->getFrustumList (culledList, staticCount, f);
   }
 
   const Frustum* frustumPtr = (const Frustum *) &frustum;
