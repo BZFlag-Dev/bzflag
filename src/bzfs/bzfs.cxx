@@ -4213,6 +4213,7 @@ static void addPlayer(int playerIndex)
   player[playerIndex].accessInfo.verified = false;
   player[playerIndex].accessInfo.loginTime = TimeKeeper::getCurrent();
   player[playerIndex].accessInfo.loginAttempts = 0;
+  player[playerIndex].accessInfo.groups.clear();
   player[playerIndex].accessInfo.groups.push_back("DEFAULT");
 
   player[playerIndex].lastRecvPacketNo = 0;
