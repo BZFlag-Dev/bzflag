@@ -22,3 +22,7 @@ the .a files in your "/lib/" directory of Dev-C++, and the headers in "/include/
 Also, make sure you put the dynamic library for SDL (i.e., "SDL.dll" on Windows)
 somewhere in your PATH environment variable (on Windows), such as "c:\WINDOWS\".
 On Linux, place it in a directory that it knows to look in.
+
+If you want to use the given project file to compile BZAdmin using
+PDCurses (http://pdcurses.sf.net), make sure your PDCurses lib file is
+named "libpdcurses.a" so it links correctly.
