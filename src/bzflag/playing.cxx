@@ -70,6 +70,7 @@ BZF_DEFINE_ALIST(ExplosionList, BillboardSceneNode*);
 
 #define MAX_MESSAGE_HISTORY (10)
 BZF_DEFINE_ALIST(MessageHistoryList, BzfString);
+BZF_DEFINE_ALIST(SilenceList, BzfString);
 
 static const float	FlagHelpDuration = 60.0f;
 
@@ -125,12 +126,15 @@ static boolean		grabMouseAlways = False;
 static char		messageMessage[PlayerIdPLen + 2 + MessageLen];
 
 static MessageHistoryList	messageHistory;
-static int					messageHistoryIndex = 0;
+static int		messageHistoryIndex = 0;
+static SilenceList	silencePlayers;
 
 static void		restartPlaying();
 static void		setTarget();
 static void		handleFlagDropped(Player* tank);
 static void		handlePlayerMessage(uint16_t, uint16_t, void*);
+static Player*		getPlayerByName( const char* name );
+static void		addMessage(const Player* player, const BzfString& msg, const GLfloat* color = NULL);
 extern void		dumpResources(BzfDisplay*, SceneRenderer&);
 
 enum BlowedUpReason {
@@ -382,25 +386,50 @@ boolean			ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
   if (sendIt) {
     BzfString message = hud->getComposeString();
     if (message.getLength() > 0) {
-	  int i, mhLen = messageHistory.getLength();
-	  for (i = 0; i < mhLen; i++) {
-		  if (messageHistory[i] == message) {
-			  messageHistory.rotate( i, 0 );
-			  break;
-		  }
+      const char* silence = message.getString();
+      if (strncmp(silence, "SILENCE", 7) == 0) {
+	Player *loudmouth = getPlayerByName(silence + 8);
+	if (loudmouth) {
+	  silencePlayers.append(silence + 8);
+	  BzfString message = "Silenced ";
+	  message += (silence + 8);
+	  addMessage(NULL, message);
+	}
+      }
+      else if (strncmp(silence, "UNSILENCE", 9) == 0) {
+	Player *loudmouth = getPlayerByName(silence + 10);
+	if (loudmouth) {
+	  for (int i = 0; i < silencePlayers.getLength(); i++) {
+	    if (strcmp(silencePlayers[i], silence + 10) == 0) {
+	      silencePlayers.remove(i);
+	      BzfString message = "Unsilenced ";
+	      message += (silence + 10);
+	      addMessage(NULL, message);
+	      break;
+	    }
 	  }
-	  if (i == mhLen) {
-		if (mhLen >= MAX_MESSAGE_HISTORY)
-			messageHistory.remove( mhLen - 1 );
-		messageHistory.prepend( message );
+	}
+      }
+      else {
+	int i, mhLen = messageHistory.getLength();
+	for (i = 0; i < mhLen; i++) {
+	  if (messageHistory[i] == message) {
+	    messageHistory.rotate( i, 0 );
+	    break;
 	  }
+	}
+	if (i == mhLen) {
+	  if (mhLen >= MAX_MESSAGE_HISTORY)
+	    messageHistory.remove( mhLen - 1 );
+	  messageHistory.prepend( message );
+	}
 
-      char messageBuffer[MessageLen];
-      memset(messageBuffer, 0, MessageLen);
-      strncpy(messageBuffer, message, MessageLen);
-      nboPackString(messageMessage + PlayerIdPLen + 2,
-					messageBuffer, MessageLen);
-      serverLink->send(MsgMessage, sizeof(messageMessage), messageMessage);
+	char messageBuffer[MessageLen];
+	memset(messageBuffer, 0, MessageLen);
+	strncpy(messageBuffer, message, MessageLen);
+	nboPackString(messageMessage + PlayerIdPLen + 2, messageBuffer, MessageLen);
+	serverLink->send(MsgMessage, sizeof(messageMessage), messageMessage);
+      }
     }
   }
 
@@ -1386,6 +1415,14 @@ static Player*		getPlayerByIndex(int index)
   return player[index];
 }
 
+static Player*		getPlayerByName( const char* name )
+{
+  for (int i = 0; i < maxPlayers; i++)
+    if (player[i] && strcmp( player[i]->getCallSign(), name ) == 0)
+      return player[i];
+  return NULL;
+}
+
 static BaseLocalPlayer*	getLocalPlayer(const PlayerId& id)
 {
   if (myTank->getId() == id) return myTank;
@@ -1411,7 +1448,7 @@ static ServerLink*	lookupServer(const Player* player)
 
 static void		addMessage(const Player* player,
 				const BzfString& msg,
-				const GLfloat* color = NULL)
+				const GLfloat* color)
 {
   BzfString fullMessage;
   if (player) {
@@ -1428,10 +1465,6 @@ static void		addMessage(const Player* player,
     fullMessage += ": ";
   }
   fullMessage += msg;
-#if 0
-  if (player && color == NULL)
-    color = Team::getRadarColor(player->getTeam());
-#endif
   controlPanel->addMessage(fullMessage, color);
 }
 
@@ -2172,6 +2205,16 @@ static void		handleServerMessage(boolean human, uint16_t code,
 #endif
       } else
 	srcName = srcPlayer->getCallSign();
+
+      bool ignore = false;
+      for (int i = 0; i < silencePlayers.getLength(); i++) {
+	if (strcmp(srcName, silencePlayers[i]) == 0) {
+	  ignore = true;
+	  break;
+	}
+      }
+      if (ignore)
+	break;
 
       if (dstPlayer == NULL) {
 #ifdef DEBUG
