@@ -27,6 +27,7 @@ BZFlag 1.7e1
 * pseudo variable height buildings in cf mode - TimR
 * don't drain and flush audio on solaris - frank
 * alpha Macintosh port - Darrell Walisser <dwaliss1@purdue.edu>
+* quick message support - Kris Verbeeck
 
 
 BZFlag 1.7e release 000

@@ -797,6 +797,39 @@ static void		doKeyPlaying(const BzfKeyEvent& key, boolean pressed)
       }
     }
   }
+  else if (key.ascii == 0 && 
+           key.button >= BzfKeyEvent::F1 &&
+           key.button <= BzfKeyEvent::F10 &&
+           (key.shift & (BzfKeyEvent::ControlKey + 
+                         BzfKeyEvent::AltKey)) != 0) {
+    // [Ctrl]-[Fx] is message to team
+    // [Alt]-[Fx] is message to all
+    if (pressed) {
+      char name[32];
+      int msgno = (key.button - BzfKeyEvent::F1) + 1;
+      void* buf = messageMessage;
+      buf = nboPackUInt(buf, 0);
+      buf = nboPackShort(buf, 0);
+      buf = nboPackShort(buf, 0);
+      if (key.shift == BzfKeyEvent::ControlKey) {
+        sprintf(name, "quickTeamMessage%d", msgno);
+        buf = nboPackUShort(buf, uint16_t(myTank->getTeam()));
+      } else {
+        sprintf(name, "quickMessage%d", msgno);
+        buf = nboPackUShort(buf, uint16_t(RogueTeam));
+      }
+      if (resources->hasValue(name)) {
+        char messageBuffer[MessageLen];
+        memset(messageBuffer, 0, MessageLen);
+        strncpy(messageBuffer, 
+                resources->getValue(name).getString(),
+                MessageLen);
+        nboPackString(messageMessage + PlayerIdPLen + 2,
+                      messageBuffer, MessageLen);
+        serverLink->send(MsgMessage, sizeof(messageMessage), messageMessage);
+      }
+    }
+  }
 }
 
 static void		doEvent(BzfDisplay* display)
