@@ -18,6 +18,8 @@ recent bugs
   and travels unabatted downward, making it look like an odd angle.
 
 - tanks only check their bottoms as regards hit detection against pyramids
+  Corollary, if you drop burrow while under pyr, you get stuck, not unlike
+  grabbing obese next to a building.
 
 - resetting key map doesn't seem to fully erase the current bindings before
   reapplying defaults
