@@ -91,6 +91,7 @@ extern void sendDrop(FlagInfo &flag);
 
 // externs that countdown requires
 extern bool countdownActive;
+extern bool countdownDelay;
 
 // externs that identify and password requires
 extern void sendIPUpdate(int targetPlayer = -1, int playerIndex = -1);
@@ -484,50 +485,27 @@ void handleCountdownCmd(GameKeeper::Player *playerData, const char *)
   } else if (!clOptions->timeManualStart) {
     sendMessage(ServerPlayer, t, "This server was not configured for manual clock countdowns");
     return;
+  } else if (countdownDelay == true) {
+    sendMessage(ServerPlayer, t, "There is a countdown already in progress");
+    return;
   }
 
-  int i, j;
   // /countdown starts timed game, if start is manual, everyone is allowed to
-  if (clOptions->timeLimit > 0.0f) {
-    gameStartTime = TimeKeeper::getCurrent();
-    clOptions->timeElapsed = 0.0f;
-    countdownActive = true;
+  char reply[MessageLen] = {0};
 
-    char msg[2];
-    void *buf = msg;
-    nboPackUShort(buf, (uint16_t)(int)clOptions->timeLimit);
-    broadcastMessage(MsgTimeUpdate, sizeof(msg), msg);
+  // if the timelimit is not set .. don't countdown
+  if (clOptions->timeLimit > 1.0f) {
+    countdownDelay = true;
   }
+
   // reset team scores
-  for (i = RedTeam; i <= PurpleTeam; i++) {
+  for (int i = RedTeam; i <= PurpleTeam; i++) {
     team[i].team.lost = team[i].team.won = 0;
   }
   sendTeamUpdate();
 
-  sendMessage(ServerPlayer, t, "Countdown started.");
-
-  // CTF game -> simulate flag captures to return ppl to base
-  if (clOptions->gameStyle & int(TeamFlagGameStyle)) {
-    GameKeeper::Player *otherData;
-    // get someone to can do virtual capture
-    for (j = 0; j < curMaxPlayers; j++) {
-      otherData = GameKeeper::Player::getPlayerByIndex(j);
-      if (otherData && otherData->player.isPlaying())
-	break;
-    }
-    if (j < curMaxPlayers) {
-      for (int i = 0; i < curMaxPlayers; i++) {
-	otherData = GameKeeper::Player::getPlayerByIndex(i);
-	if (otherData && otherData->player.hasPlayedEarly()) {
-	  void *buf, *bufStart = getDirectMessageBuffer();
-	  buf = nboPackUByte(bufStart, j);
-	  buf = otherData->player.packVirtualFlagCapture(buf);
-	  directMessage(i, MsgCaptureFlag, (char*)buf - (char*)bufStart, bufStart);
-	}
-      }
-    }
-  }
-  zapAllFlags();
+  sprintf(reply, "Countdown started.");
+  sendMessage(ServerPlayer, t, reply);
 
   return;
 }

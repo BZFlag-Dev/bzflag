@@ -99,6 +99,7 @@ char hexDigest[50];
 
 TimeKeeper gameStartTime;
 bool countdownActive = false;
+bool countdownDelay = false;
 
 static ListServerLink *listServerLink = NULL;
 static int listServerLinksCount = 0;
@@ -4315,6 +4316,7 @@ int main(int argc, char **argv)
    **/
   GameKeeper::Player::passTCPMutex();
   int i;
+  int readySetGo = 10; // match countdowns
   while (!done) {
 
     // see if the octree needs to be reloaded
@@ -4348,8 +4350,12 @@ int main(int argc, char **argv)
     TimeKeeper tm = TimeKeeper::getCurrent();
     // lets start by waiting 3 sec
     float waitTime = 3.0f;
-    if (countdownActive && clOptions->timeLimit > 0.0f) {
-	waitTime = 1.0f;
+
+    if (countdownDelay) {
+      // 3 seconds too slow for match countdowns
+      waitTime = 0.5f;
+    } else if (countdownActive && clOptions->timeLimit > 0.0f) {
+      waitTime = 1.0f;
     }
 
     // get time for next flag drop
@@ -4427,6 +4433,68 @@ int main(int argc, char **argv)
     tm = TimeKeeper::getCurrent();
     PlayerInfo::setCurrentTime(tm);
 
+    // players see a countdown
+    if (countdownDelay == true) { 
+      static  TimeKeeper timePrevious = TimeKeeper::getCurrent();
+      if (TimeKeeper::getCurrent() - timePrevious > 1.0f) {
+	timePrevious = TimeKeeper::getCurrent();
+	if (readySetGo == 10) {
+	  sendMessage(ServerPlayer, AllPlayers, "Start your engines!......");
+	  sendMessage(ServerPlayer, AllPlayers, "10...");
+	  --readySetGo;
+
+	} else if (readySetGo == 0) {
+	  sendMessage(ServerPlayer, AllPlayers, "The Match has started!...Good Luck Teams!");
+	  countdownDelay = false;
+	  readySetGo = 10;
+	  countdownActive = true;
+	  
+          // server's clock  
+	  gameStartTime = TimeKeeper::getCurrent();
+          clOptions->timeElapsed = 0.0f;
+    
+          // client's clock
+	  char msg[2];
+	  void *buf = msg;
+	  nboPackUShort(buf, (uint16_t)(int)clOptions->timeLimit);
+	  broadcastMessage(MsgTimeUpdate, sizeof(msg), msg);
+       
+	  // kill any players that are playing already
+	  GameKeeper::Player *player;
+	  if (clOptions->gameStyle & int(TeamFlagGameStyle)) {
+	    for (int i = 0; i < curMaxPlayers; i++) {
+	      void *buf, *bufStart = getDirectMessageBuffer();
+	      player = GameKeeper::Player::getPlayerByIndex(i);
+
+	      // the server gets to capture the flag -- send some bogus player id
+	      buf = nboPackUByte(bufStart, curMaxPlayers);
+	      buf = player->player.packVirtualFlagCapture(buf);
+	      directMessage(i, MsgCaptureFlag, (char*)buf - (char*)bufStart, bufStart);
+
+	      // kick 'em while they're down
+	      playerKilled(i, curMaxPlayers, 0, -1);
+
+	      // be sure to reset the player!
+	      player->player.setDead();
+	      player->player.setPlayedEarly(false);
+	    }
+	  }
+
+	  // reset all flags
+	  for (int i=0; i < numFlags; i++) {
+	    zapFlag(*FlagInfo::get(i));
+	  }
+
+	} else {
+	  char buffer[16];
+	  sprintf(buffer, "%i...", readySetGo);
+	  sendMessage(ServerPlayer, AllPlayers, buffer);
+	  --readySetGo;
+	}
+        
+      } 
+    }
+        
     // see if game time ran out
     if (!gameOver && countdownActive && clOptions->timeLimit > 0.0f) {
       float newTimeElapsed = tm - gameStartTime;

@@ -4,6 +4,7 @@
 BZFlag 1.12.0  (was 1.11.x)
 ---------------------------
 
+* Countdown command now shows players 10 sec countdown - Angelina Carlton
 * Added a flapping sound for the wings flag - Sean Morrison
 * Adding ability to load world from url (http, ftp, file) - Alfredo Tupone
 * Reduce network load by buffering UDP packet (no delay) - Alfredo Tupone
