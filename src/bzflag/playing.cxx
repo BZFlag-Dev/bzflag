@@ -1606,55 +1606,6 @@ static void		doKeyPlaying(const BzfKeyEvent& key, bool pressed)
   if (roaming) {
     bool roamingkey = true;
     switch (key.button) {
-      case BzfKeyEvent::Left:
-	if (pressed) {
-	  if (key.shift == BzfKeyEvent::ShiftKey)
-	    roamDPos[1] =  4.0f * TankSpeed;
-	  else
-	    roamDTheta = 90.0f * (roamZoom / 90.0f);
-	}
-	else
-	  roamDTheta = roamDPos[1] = 0.0f;
-	break;
-
-      case BzfKeyEvent::Right:
-	if (pressed) {
-	  if (key.shift == BzfKeyEvent::ShiftKey)
-	    roamDPos[1] = -4.0f * TankSpeed;
-	  else
-	    roamDTheta = -90.0f * (roamZoom / 90.0f);
-	}
-	else
-	  roamDTheta = roamDPos[1] = 0.0f;
-	break;
-
-      case BzfKeyEvent::Up:
-	if (pressed) {
-	  if (key.shift == BzfKeyEvent::ShiftKey)
-	    roamDPos[0] =  4.0f * TankSpeed;
-	  else if (key.shift == BzfKeyEvent::AltKey)
-	    roamDPos[2] =  4.0f * TankSpeed;
-	  else
-	    roamDPhi = -60.0f * (roamZoom / 90.0f);
-	}
-	else
-	  roamDPhi = roamDPos[0] = roamDPos[2] = 0.0f;
-	break;
-
-      case BzfKeyEvent::Down:
-	if (pressed)
-	{
-	  if (key.shift == BzfKeyEvent::ShiftKey)
-	    roamDPos[0] = -4.0f * TankSpeed;
-	  else if (key.shift == BzfKeyEvent::AltKey)
-	    roamDPos[2] = -4.0f * TankSpeed;
-	  else
-	    roamDPhi = 60.0f * (roamZoom / 90.0f);
-	}
-	else
-	  roamDPhi = roamDPos[0] = roamDPos[2] = 0.0f;
-	break;
-
       case BzfKeyEvent::F6:
 	if (pressed) {
 	  if (roamView == roamViewFree)
@@ -2218,6 +2169,62 @@ static std::string cmdTime(const std::string&, const CommandManager::ArgList& ar
   return std::string();
 }
 
+static std::string cmdRoam(const std::string&, const CommandManager::ArgList& args)
+{
+  if (args.size() == 0)
+    return "usage: roam {rotate|translate|zoom|cycle} <args>";
+  if (!roaming)
+    return std::string();
+  if (args[0] == "rotate") {
+    if (args.size() != 2)
+      return "usage: roam rotate {left|right|up|down|stop}";
+    if (args[1] == "left") {
+      roamDTheta = 90.0f * (roamZoom / 90.0f);
+    } else if (args[1] == "right") {
+      roamDTheta = -90.0f * (roamZoom / 90.0f);
+    } else if (args[1] == "up") {
+      roamDPhi = -60.0f * (roamZoom / 90.0f);
+    } else if (args[1] == "down") {
+      roamDPhi = 60.0f * (roamZoom / 90.0f);
+    } else if (args[1] == "stop") {
+      roamDTheta  = 0.0f;
+      roamDPhi    = 0.0f;
+      roamDPos[0] = 0.0f;
+      roamDPos[1] = 0.0f;
+      roamDPos[2] = 0.0f;
+    } else {
+      return "usage: roam rotate {left|right|up|down|stop}";
+    }
+  } else if (args[0] == "translate") {
+    if (args.size() != 2)
+      return "usage: roam translate {left|right|forward|backward|up|down|stop}";
+    if (args[1] == "left") {
+      roamDPos[1] = 4.0f * TankSpeed;
+    } else if (args[1] == "right") {
+      roamDPos[1] = -4.0f * TankSpeed;
+    } else if (args[1] == "forward") {
+      roamDPos[0] = 4.0f * TankSpeed;
+    } else if (args[1] == "backward") {
+      roamDPos[0] = -4.0f * TankSpeed;
+    } else if (args[1] == "up") {
+      roamDPos[2] = 4.0f * TankSpeed;
+    } else if (args[1] == "down") {
+      roamDPos[2] = -4.0f * TankSpeed;
+    } else if (args[1] == "stop") {
+      roamDTheta  = 0.0f;
+      roamDPhi    = 0.0f;
+      roamDPos[0] = 0.0f;
+      roamDPos[1] = 0.0f;
+      roamDPos[2] = 0.0f;
+    } else {
+      return "usage: roam translate {left|right|forward|backward|up|down|stop}";
+    }
+  } else {
+    return "usage: roam {rotate|translate|zoom|cycle} <args>";
+  }
+  return std::string();
+}
+
 struct CommandListItem {
   const char* name;
   CommandManager::CommandFunction func;
@@ -2235,7 +2242,8 @@ static const CommandListItem commandList[] = {
 #ifdef SNAPPING
   { "screenshot", &cmdScreenshot, "screenshot:  take a screenshot" },
 #endif
-  { "time",	&cmdTime,	"time {forward|backward}: adjust the current time" }
+  { "time",	&cmdTime,	"time {forward|backward}:  adjust the current time" },
+  { "roam",	&cmdRoam,	"roam {rotate|translate|zoom|cycle} <args>:  roam around" }
 };
 
 static void		doEvent(BzfDisplay* display)

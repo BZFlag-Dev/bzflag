@@ -130,7 +130,27 @@ static const char*	bindingList[] = {
   "bind - down \"time backward\"",
   "bind + down \"time forward\"",
   "bind H down \"toggle displayRadarFlags\"",
-  "bind J down \"toggle displayMainFlags\""
+  "bind J down \"toggle displayMainFlags\"",
+  "bind \"Left Arrow\" down \"roam rotate left\"",
+  "bind \"Left Arrow\" up \"roam rotate stop\"",
+  "bind \"Right Arrow\" down \"roam rotate right\"",
+  "bind \"Right Arrow\" up \"roam rotate stop\"",
+  "bind \"Up Arrow\" down \"roam rotate up\"",
+  "bind \"Up Arrow\" up \"roam rotate stop\"",
+  "bind \"Down Arrow\" down \"roam rotate down\"",
+  "bind \"Down Arrow\" up \"roam rotate stop\"",
+  "bind \"Shift+Left Arrow\" down \"roam translate left\"",
+  "bind \"Shift+Left Arrow\" up \"roam translate stop\"",
+  "bind \"Shift+Right Arrow\" down \"roam translate right\"",
+  "bind \"Shift+Right Arrow\" up \"roam translate stop\"",
+  "bind \"Shift+Up Arrow\" down \"roam translate forward\"",
+  "bind \"Shift+Up Arrow\" up \"roam translate stop\"",
+  "bind \"Shift+Down Arrow\" down \"roam translate backward\"",
+  "bind \"Shift+Down Arrow\" up \"roam translate stop\"",
+  "bind \"Alt+Up Arrow\" down \"roam translate up\"",
+  "bind \"Alt+Up Arrow\" up \"roam translate stop\"",
+  "bind \"Alt+Down Arrow\" down \"roam translate down\"",
+  "bind \"Alt+Down Arrow\" up \"roam translate stop\""
 };
 
 #ifdef ROBOT
