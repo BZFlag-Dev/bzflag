@@ -85,7 +85,7 @@ const int color_map [8] = {
 // OpenGLTexFont::Rep
 //
 
-OpenGLTexFont::Rep::Rep() : refCount(1),
+OpenGLTexFont::Rep::Rep() : refCount(1), texture(-1),
 				ascent(0.0f), descent(0.0f),
 				height(0.0f), spacing(0.0f),
 				data(NULL), width(0)
@@ -94,7 +94,7 @@ OpenGLTexFont::Rep::Rep() : refCount(1),
 }
 
 OpenGLTexFont::Rep::Rep(int dx, int dy, const unsigned char* pixels) :
-				refCount(1),
+				refCount(1), texture(-1),
 				ascent(0.0f), descent(0.0f),
 				height(0.0f), spacing(0.0f),
 				data(NULL), width(dx)
