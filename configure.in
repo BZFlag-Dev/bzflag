@@ -347,7 +347,11 @@ if test x$enable_debug = xyes; then
 	CXXFLAGS="$CXXFLAGS -g";;
      macos|darwin*)
 	CFLAGS="$CFLAGS -g";
-	CXXFLAGS="$CXXFLAGS -g";;
+	CXXFLAGS="$CXXFLAGS -g";
+	if test x$enable_profiling = xyes; then
+	  CPPFLAGS="$CPPFLAGS -pg";
+	  CXXFLAGS="$CXXFLAGS -pg";
+	fi;;
      windows**)
 	CPPFLAGS="$CPPFLAGS /MDd /Gm /ZI /Od /GZ /D \"_DEBUG\"";;
      irix)
@@ -373,7 +377,11 @@ else
 		CFLAGS="$CFLAGS -O3";
 		CXXFLAGS="$CXXFLAGS -O3";
 		CXXFLAGS="$CXXFLAGS -ffast-math -fomit-frame-pointer";
-		CXXFLAGS="$CXXFLAGS -fexpensive-optimizations -fno-exceptions";;
+		CXXFLAGS="$CXXFLAGS -fexpensive-optimizations -fno-exceptions";
+		if test x$enable_profiling = xyes; then
+			CPPFLAGS="$CPPFLAGS -pg";
+			CXXFLAGS="$CXXFLAGS -pg";
+		fi;;
 	 windows**)
 		CPPFLAGS="$CPPFLAGS /MT /O2 ";;
 	 irix)
