@@ -6,6 +6,9 @@ must fix for 1.10.4 patch release
 recent bugs
 ------------
 
+- the "default" keyword in the email line can get into the HUD, it shouldn't.
+  must have missed something.
+
 - list server includes counts for players running on non-public/mis-configured
   servers on the same machine on different ports.  if server runs on port 5156
   with publicaddr set to machine:5156 and then also runs another on 59999 with
