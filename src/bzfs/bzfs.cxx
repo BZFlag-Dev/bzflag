@@ -3468,7 +3468,7 @@ static void dumpScore()
   printf("\n#players\n");
   for (int i = 0; i < curMaxPlayers; i++)
     if (player[i].state > PlayerInLimbo)
-      printf("%d-%d %s", player[i].wins, player[i].losses, player[i].callSign);
+      printf("%d-%d %s\n", player[i].wins, player[i].losses, player[i].callSign);
   printf("#end\n");
 }
 #endif
