@@ -4054,14 +4054,17 @@ static void addPlayer(int playerIndex)
     const char* i = clOptions.servermsg;
     const char* j;
     while ((j = strstr(i, "\\n")) != NULL) {
-      strncpy(message, i, j - i);
-      message[j - i] = '\0';
+      unsigned int l = j - i < MessageLen - 1 ? j - i : MessageLen - 1;
+      strncpy(message, i, l);
+      message[l] = '\0';
       sendMessage(playerIndex, player[playerIndex].id, 
 		  player[playerIndex].team, message);
       i = j + 2;
     }
+    strncpy(message, i, MessageLen - 1);
+    message[strlen(i) < MessageLen - 1 ? strlen(i) : MessageLen - 1] = '\0';
     sendMessage(playerIndex, player[playerIndex].id, 
-		player[playerIndex].team, i);
+		player[playerIndex].team, message);
   }
   if (player[playerIndex].Observer)
     sendMessage(playerIndex, player[playerIndex].id, player[playerIndex].team,"You are in observer mode.");
@@ -7056,16 +7059,19 @@ int main(int argc, char **argv)
 	const char* c = clOptions.advertisemsg;
 	const char* j;
 	while ((j = strstr(c, "\\n")) != NULL) {
-	  strncpy(message, c, j - c);
-	  message[j - c] = '\0';
+	  int l = j - c < MessageLen - 1 ? j - c : MessageLen - 1;
+	  strncpy(message, c, l);
+	  message[l] = '\0';
 	  for (int i=0; i<curMaxPlayers; i++)
 	    if (player[i].state > PlayerInLimbo)
 	      sendMessage(i, player[i].id, player[i].team, message);
 	  c = j + 2;
 	}
+	strncpy(message, c, MessageLen - 1);
+	message[strlen(c) < MessageLen - 1 ? strlen(c) : MessageLen -1] = '\0';
 	for (int i=0; i<curMaxPlayers; i++)
 	  if (player[i].state > PlayerInLimbo)
-	    sendMessage(i, player[i].id, player[i].team, c);
+	    sendMessage(i, player[i].id, player[i].team, message);
 	
 	lastbroadcast = TimeKeeper::getCurrent();
       }
