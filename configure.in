@@ -32,8 +32,17 @@ echo " warning: not found" 1>&6
 
 #Checks for types
 #AM_CHECK_TYPES(socklen_t)
-AC_TRY_COMPILE([#include <unistd.h>
-		#include <sys/socket.h>], [socklen_t a;], [AC_DEFINE(HAVE_SOCKLEN_T, 1, [Is the datatype socklen_t defined?])])
+
+AC_TRY_COMPILE([#include <sys/types.h>
+                #include <sys/socket.h>],
+	       [socklen_t len = 42; return 0;],
+               ac_cv_type_socklen_t=yes,
+               ac_cv_type_socklen_t=no)
+if test $ac_cv_type_socklen_t != yes; then
+    AC_DEFINE(socklen_t, int, [if socklen_t is not defined, provide something useful])
+else
+    AC_DEFINE(HAVE_SOCKLEN_T, 1, [if socklen_t is defined, make note of it])
+fi
 
 AM_CONDITIONAL(LINUX, test x$host_os = xlinux-gnu)
 AM_CONDITIONAL(BEOS, test x$host_os = xbeos)
@@ -310,7 +319,6 @@ case $host_os in
 	fi;;
      macos|darwin*)
 	CPPFLAGS="$CPPFLAGS -I\$(top_srcdir)/include"
-	AC_DEFINE(_BSD_SOCKLEN_T_, int, [BSD Socket Length])
 	CPPFLAGS="$CPPFLAGS -Wall -Wstrict-prototypes";
 	CFLAGS="$CFLAGS -ansi -fno-exceptions -Wall -Wstrict-prototypes";
 	CXXFLAGS="$CXXFLAGS";;
