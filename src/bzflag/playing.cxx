@@ -145,7 +145,6 @@ static float		testVideoFormatTimer = 0.0f;
 static int		testVideoPrevFormat = -1;
 static std::vector<PlayingCallbackItem>	playingCallbacks;
 bool			gameOver = false;
-static OpenGLTexture*	tankTexture = NULL;
 static std::vector<BillboardSceneNode*>	explosions;
 static std::vector<BillboardSceneNode*>	prototypeExplosions;
 static int		savedVolume = -1;
