@@ -3203,32 +3203,39 @@ static bool invalidPlayerAction(PlayerInfo &p, int t, const char *action) {
 
 bool checkSpam(char* message, GameKeeper::Player* playerData, int t)
 {
-  std::string tempmsg = message, lmsg = playerData->player.getLastMsg();
-  const std::string::iterator sizer = tempmsg.end();
-  for (std::string::iterator c = tempmsg.begin(); c <= sizer; c++)
-    if (isspace(*c))
-      tempmsg.erase(c);
-  if (playerData->player.getLastMsg().size() > 0 &&
-      strncasecmp(tempmsg.c_str(), lmsg.c_str(),
-      lmsg.size() > tempmsg.size() ? tempmsg.size() : lmsg.size()) == 0 &&
-      TimeKeeper::getCurrent() - playerData->player.getLastMsgTime()
-      <= clOptions->msgTimer) {
-    playerData->player.incSpamWarns();
-    sendMessage(ServerPlayer, t, "***Server Warning: Please do not spam.");
-    if (playerData->player.getSpamWarns() > clOptions->spamWarnMax
-	|| clOptions->spamWarnMax == 0) {
-      sendMessage(ServerPlayer, t, "You were kicked because of spamming.");
-      DEBUG2("Kicking player %s [%d] for spamming too much [2 messages sent with "
-	     "less than %d second(s) in between; player was warned %d times]",
-	     playerData->player.getCallSign(), t,
-	     TimeKeeper::getCurrent()
-	     - playerData->player.getLastMsgTime(),
-	     playerData->player.getSpamWarns());
-      removePlayer(t, "spam");
-      return true;
+  PlayerInfo player = playerData->player;
+  std::string tempmsg = message;
+  std::string lmsg = player.getLastMsg();
+  float dt = TimeKeeper::getCurrent() - player.getLastMsgTime();
+
+  // if it's first message, or enough time since last message - can't be spam yet
+  if (lmsg.length() > 0 && dt > clOptions->msgTimer) {
+    // might be spam, start doing comparisons
+
+    // don't consider whitespace
+    for (std::string::iterator c = tempmsg.begin(); c <= tempmsg.end(); c++)
+      if (isspace(*c))
+	tempmsg.erase(c);
+
+    // does it match the last message? (disregarding whitespace and case)
+    if (TextUtils::compare_nocase(tempmsg, lmsg) == 0) {
+      player.incSpamWarns();
+      sendMessage(ServerPlayer, t, "***Server Warning: Please do not spam.");
+      // has this player already had his share of warnings?
+      if (player.getSpamWarns() > clOptions->spamWarnMax
+	  || clOptions->spamWarnMax == 0) {
+	sendMessage(ServerPlayer, t, "You were kicked because of spamming.");
+	DEBUG2("Kicking player %s [%d] for spamming too much [2 messages sent with "
+	      "%d second(s) in between; player was warned %d times]",
+	      player.getCallSign(), t, dt, player.getSpamWarns());
+	removePlayer(t, "spam");
+	return true;
+      }
     }
   }
-  playerData->player.setLastMsg(tempmsg);
+
+  // record this message for next time
+  player.setLastMsg(tempmsg);
   return false;
 }
 
