@@ -23,13 +23,13 @@ UIAdder CursesUI::uiAdder("curses", &CursesUI::creator);
 
 CursesUI::CursesUI(const std::map<PlayerId, std::string>& p, PlayerId m) :
   players(p), me(m), maxHistory(20), currentHistory(0) {
-
+    
   // initialize ncurses
   initscr();
   nonl();
   cbreak();
   noecho();
-
+  
   // create main output window
   mainWin = newwin(LINES - 5, 0, 0, 0);
   wsetscrreg(mainWin, 0, LINES - 2);
@@ -106,6 +106,14 @@ bool CursesUI::checkCommand(std::string& str) {
   int i;
   int c = wgetch(cmdWin);
   switch (c) {
+    
+    // if ncurses is configured with SIGWINCH support this will work
+#ifdef KEY_RESIZE
+  case KEY_RESIZE:
+    handleResize(LINES, COLS);
+    return false;
+#endif
+
   case ERR:
     return false;
 
@@ -223,6 +231,17 @@ PlayerId CursesUI::getTarget() const {
   if (targetIter->first == me)
     return AllPlayers;
   return targetIter->first;
+}
+
+
+void CursesUI::handleResize(int lines, int cols) {
+  mvwin(targetWin, lines - 2, 0);
+  mvwin(cmdWin, lines - 1, 0);
+  wresize(mainWin, lines - 2, cols);
+  resizeterm(lines, cols);
+  updateTargetWin();
+  updateCmdWin();
+  wrefresh(mainWin);
 }
 
 

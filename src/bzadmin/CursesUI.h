@@ -71,10 +71,19 @@ public:
   /** This function returns a pointer to a dynamically allocated
       CursesUI object. */
   static BZAdminUI* creator(const std::map<PlayerId, std::string>& players, PlayerId me);
-
+  
 protected:
+  
+  /** This function moves and resizes the windows when the terminal has been
+      resized. */
+  void handleResize(int lines, int cols);
 
+  /** This function redraws the target window (the line that says who you are
+      talking to). */
   void updateTargetWin();
+  
+  /** This function redraws the command window (the line where you type your
+      messages). */
   void updateCmdWin();
 
   WINDOW* mainWin;
@@ -88,7 +97,7 @@ protected:
   std::vector<std::string> history;
   unsigned int maxHistory;
   unsigned int currentHistory;
-
+  
   static UIAdder uiAdder;
 };
 
