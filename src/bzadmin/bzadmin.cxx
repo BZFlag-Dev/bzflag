@@ -79,12 +79,13 @@ int main(int argc, char** argv) {
   if (!op.parse(argc, argv)) {
     cerr<<op.getError()<<endl;
     op.printUsage(cout, argv[0]);
-    cout<<"<CALLSIGN>@<HOST>[:PORT]"<<endl;
+    cout<<"CALLSIGN@HOST[:PORT] [COMMAND] [COMMAND] ..."<<endl;
     return 1;
   }
   if (clOptions.showHelp) {
     cout<<"bzadmin "<<VERSION<<endl;
     op.printUsage(cout, argv[0]);
+    cout<<"CALLSIGN@HOST[:PORT] [COMMAND] [COMMAND] ..."<<endl;
     cout<<endl<<endl;
     op.printHelp(cout);
     return 0;
