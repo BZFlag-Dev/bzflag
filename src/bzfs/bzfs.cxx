@@ -358,6 +358,7 @@ static int broadcastRadio = InvalidPlayer;
 static int maxPlayerScore = 0;
 static int maxTeamScore = 0;
 static int debug = 0;
+static boolean hasBase[NumTeams] = { false };
 
 // True if only new clients allowed
 static boolean requireUDP;
@@ -561,8 +562,14 @@ CustomBase::CustomBase()
 }
 
 bool CustomBase::read(const char *cmd, istream& input) {
-  if (strcmp(cmd, "color") == 0)
+  if (strcmp(cmd, "color") == 0) {
     input >> color;
+    if ((color >= 0) && (color < NumTeams)) {
+	hasBase[color] = true;
+    }
+    else
+	return False;
+  }
   else {
     WorldFileObstacle::read(cmd, input);
     if(!flagsOnBuildings && (pos[2] != 0)) {
@@ -2468,6 +2475,17 @@ static WorldInfo *defineWorldFromFile(const char *filename)
     delete world;
     return NULL;
   }
+
+  if (gameStyle & TeamFlagGameStyle) {
+    for (int i = RedTeam; i < PurpleTeam; i++) {
+	    if ((maxTeam[i] > 0) && !hasBase[i]) {
+		    cerr << "base was not defined for team " << i << " capture the flag game style removed." << endl;
+		    gameStyle &= (~TeamFlagGameStyle);
+		    break;
+	    }
+    }
+  }
+
 
   // make walls
   world->addWall(0.0f, 0.5f * WorldSize, 0.0f, 1.5f * M_PI, 0.5f * WorldSize, WallHeight);
