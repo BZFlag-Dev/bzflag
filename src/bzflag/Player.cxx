@@ -436,9 +436,9 @@ bool			Player::getDeadReckoning(
 						 float* predictedVel) const
 {
   // see if predicted position and orientation (only) are close enough
-  const float dt2 = inputPrevTime - inputTime - offset;
+  const float dt2 = inputPrevTime - inputTime;
   inputPrevTime = TimeKeeper::getTick();
-  const float dt = inputPrevTime - inputTime - offset;
+  const float dt = inputPrevTime - inputTime;
 
   if (inputStatus & PlayerState::Paused) {
     // don't move when paused
@@ -621,6 +621,57 @@ void			Player::setDeadReckoning(float timestamp)
   inputZSpeed = state.velocity[2];
   inputAzimuth = state.azimuth;
   inputAngVel = state.angVel;
+
+  // Future the state based on offset
+  if (inputStatus & PlayerState::Paused) {
+    // don't move when paused
+  } else if (inputStatus & PlayerState::Falling) {
+    // no control when falling
+    float vx = fabsf(inputSpeed) * cosf(inputSpeedAzimuth);
+    float vy = fabsf(inputSpeed) * sinf(inputSpeedAzimuth);
+    // follow a simple parabola
+    inputPos[0] -= offset * vx;
+    inputPos[1] -= offset * vy;
+
+    // only turn if alive
+    if (inputStatus & PlayerState::Alive)
+       inputAzimuth -= offset * inputAngVel;
+
+    // update z 
+    float deltaSpeed      = BZDB.eval(StateDatabase::BZDB_GRAVITY) * offset;
+    inputZSpeed          -= deltaSpeed;
+    inputPos[2]          -= (deltaSpeed / 2.0f + inputZSpeed) * offset;
+  } else {
+    // different algorithms for tanks moving in a straight line vs
+    // turning in a circle
+    if (inputAngVel == 0.0f) {
+
+      // straight ahead
+      float vx = fabsf(inputSpeed) * cosf(inputSpeedAzimuth);
+      float vy = fabsf(inputSpeed) * sinf(inputSpeedAzimuth);
+      inputPos[0] -= offset * vx;
+      inputPos[1] -= offset * vy;
+
+    } else {
+
+      // find current position on circle:
+      // tank with constant angular and linear velocity moves in a circle
+      // with radius = (linear velocity/angular velocity).  circle turns
+      // to the left (counterclockwise) when the ratio is positive.
+      const float radius = inputSpeed / inputAngVel;
+
+      // Rotation center coordinate
+      inputPos[0]       += radius * sin(inputAzimuth);
+      inputPos[1]       -= radius * cos(inputAzimuth);
+
+      // azimuth changes linearly
+      inputAzimuth      -= offset * inputAngVel;
+
+      inputPos[0]       -= radius * sin(inputAzimuth);
+      inputPos[1]       += radius * cos(inputAzimuth);
+
+    }
+  }
 }
 
 void			Player::setDeadReckoning()
