@@ -3992,9 +3992,9 @@ void			startPlaying(BzfDisplay* _display,
   // should we grab the mouse?  yes if fullscreen.
   if (!resources->hasValue("window"))
     setGrabMouse(True);
-#if defined(__linux__)
+#if defined(__linux__) && !defined(DEBUG)
   // linux usually has a virtual root window so grab mouse always
-  setGrabMouse(True);
+  // setGrabMouse(True);
 #endif
 
   // show window and clear it immediately
@@ -4185,6 +4185,7 @@ void			startPlaying(BzfDisplay* _display,
 
   // print copyright  
   controlPanel->addMessage(copyright);
+  controlPanel->addMessage("Maintainer: Tim Riker <Tim@Rikers.org>");
 
   // print OpenGL renderer
   controlPanel->addMessage((const char*)glGetString(GL_RENDERER));
