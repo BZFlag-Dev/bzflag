@@ -213,6 +213,35 @@ bool VotingArbiter::voteNo(std::string player)
   return (_votingBooth->vote(player, 0));
 }
 
+unsigned long int VotingArbiter::getYesCount(void) const
+{
+  if (!this->knowsPoll()) {
+    return 0;
+  }
+  return _votingBooth->getVoteCount(1);
+}
+
+unsigned long int VotingArbiter::getNoCount(void) const
+{ 
+  if (!this->knowsPoll()) {
+    return 0;
+  }
+  return _votingBooth->getVoteCount(0);
+}
+
+unsigned long int VotingArbiter::getAbstentionCount(void) const
+{
+  // cannot abstain if there is no poll
+  if (!this->knowsPoll()) {
+    return 0;
+  }
+  int count = _suffraged.size() - this->getYesCount() - this->getNoCount();
+  if (count <= 0) {
+    return 0;
+  }
+  return count;
+}
+
 bool VotingArbiter::isPollSuccessful(void) const 
 {
   if (!this->knowsPoll()) {

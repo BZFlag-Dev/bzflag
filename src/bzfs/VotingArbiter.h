@@ -170,13 +170,26 @@ private:
    */
   bool voteNo(std::string player);
 
+  /** returns the number of yes votes received
+   */
+  unsigned long int getYesCount(void) const;
+
+  /** returns the number of no votes received
+   */
+  unsigned long int getNoCount(void) const;
+
+  /** returns the number of abstentions
+   */
+  unsigned long int getAbstentionCount(void) const;
+
   /** returns truthfully if the poll has reached a passable tally.
    * i.e. enough positive votes have been received that the vote is
    * successful.
    */
   bool isPollSuccessful(void) const;
 
-  /** returns how much time is remaining on a poll, if one is active
+  /** returns how much time (in seconds) is remaining on a poll, if one is
+   * active
    */
   unsigned long int timeRemaining(void) const;
 
