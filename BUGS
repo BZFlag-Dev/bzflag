@@ -11,10 +11,6 @@ critical bugs
   displayed wrong).  resetting key map doesn't seem to fully erase the current
   bindings before reapplying defaults (same bug as above?)
 
-- Sometimes when you pick up MG, the tank automatically, and constantly
-  starts firing all the shots over and over. Seen on Mac and Windows.  Happens
-  every time on the mac client.
-
 - bunny hunt issues.  observed the player selection consistently toggle
   between the best player (score-wise) and one of the worst players non-stop
   for several (10+) minutes without choosing many intermediate players that
