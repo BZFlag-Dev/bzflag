@@ -4142,15 +4142,18 @@ static void parseCommand(const char *message, int t)
     if (player[t].passwordAttempts >=5 ){	// see how many times they have tried, you only get 5
       sendMessage(ServerPlayer, t, "Too many attempts");
     }else{
-    player[t].passwordAttempts++;
-    if (clOptions->password && strncmp(message + 10, clOptions->password, strlen(clOptions->password)) == 0){
-      player[t].passwordAttempts = 0;
-      player[t].Admin = true;
-      sendMessage(ServerPlayer, t, "You are now an administrator!");
-    }else{
-      sendMessage(ServerPlayer, t, "Wrong Password!");
+      player[t].passwordAttempts++;
+      if (clOptions->password && strncmp(message + 10, clOptions->password, strlen(clOptions->password)) == 0){
+        player[t].passwordAttempts = 0;
+        player[t].Admin = true;
+        sendMessage(ServerPlayer, t, "You are now an administrator!");
+      }else{
+        sendMessage(ServerPlayer, t, "Wrong Password!");
+      }
     }
-  }
+  // set sets a world configuration variable that gets sent to all clients
+  } else if ((hasPerm(t, setVar) || hasPerm(t, setAll)) && strncmp( message + 1, "set", 3) == 0) {
+    CFGMGR->read(stringstream( message + 1));
   // /shutdownserver terminates the server
   } else if (hasPerm(t, shutdownServer) &&
 	    strncmp(message + 1, "shutdownserver", 8) == 0) {
