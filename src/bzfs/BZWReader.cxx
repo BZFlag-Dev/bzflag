@@ -54,7 +54,7 @@ std::istream &readToken(std::istream& input, char *buffer, int n)
 }
 
 
-bool readWorldStream(std::istream& input, const char *location, std::vector<WorldFileObject*>& wlist)
+bool readWorldStream(std::istream& input, std::string location, std::vector<WorldFileObject*>& wlist)
 {
   int line = 1;
   char buffer[1024];
@@ -148,10 +148,10 @@ bool readWorldStream(std::istream& input, const char *location, std::vector<Worl
 }
 
 
-WorldInfo *defineWorldFromFile(const char *filename)
+WorldInfo *defineWorldFromFile(std::string filename)
 {
   // open file
-  std::ifstream input(filename, std::ios::in);
+  std::ifstream input(filename.c_str(), std::ios::in);
 
   if (!input) {
     std::cout << "could not find bzflag world file : " << filename << std::endl;

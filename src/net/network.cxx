@@ -247,7 +247,7 @@ std::string		BzfNetwork::dereferenceHTTP(
   // 401 auth required challenge
 
   // lookup server address
-  Address address = Address::getHostAddress(hostname.c_str());
+  Address address = Address::getHostAddress(hostname);
   if (address.isAny())
     return std::string();
 

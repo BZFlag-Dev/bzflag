@@ -21,7 +21,7 @@ class WorldInfo;
 
 
 extern std::istream &readToken(std::istream& input, char *buffer, int n);
-extern bool readWorldStream(std::istream& input, const char *location, std::vector<WorldFileObject*>& wlist);
-extern WorldInfo *defineWorldFromFile(const char *filename);
+extern bool readWorldStream(std::istream& input, std::string location, std::vector<WorldFileObject*>& wlist);
+extern WorldInfo *defineWorldFromFile(std::string filename);
 
 #endif

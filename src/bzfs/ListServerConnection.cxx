@@ -43,7 +43,7 @@ ListServerLink::ListServerLink(std::string listServerURL, std::string publicized
     useDefault = true;
 
   // use default if bad address
-  Address address = Address::getHostAddress(hostname.c_str());
+  Address address = Address::getHostAddress(hostname);
   if (address.isAny())
     useDefault = true;
 
@@ -195,7 +195,7 @@ void ListServerLink::openLink()
       if (getErrno() != EINPROGRESS) {
 	nerror("connecting to list server");
 	// try to lookup dns name again in case it moved
-  	this->address = Address::getHostAddress(this->hostname.c_str());
+  	this->address = Address::getHostAddress(this->hostname);
 	closeLink();
       } else {
 	phase = CONNECTING;

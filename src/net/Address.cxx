@@ -48,7 +48,7 @@ Address::Address()
 
 Address::Address(const std::string& name)
 {
-  Address a = getHostAddress((const char*)(name.length() ? name.c_str() : NULL));
+  Address a = getHostAddress(name);
   addr.push_back(a.addr[0]);
 }
 
@@ -120,21 +120,21 @@ static void		onAlarm(int)
 }
 #endif
 
-Address			Address::getHostAddress(const char* hname)
+Address			Address::getHostAddress(const std::string hname)
 {
   Address a;
   InAddr tempAddr;
   int j;
 
   struct hostent* hent;
-  if (!hname) {				// local address
+  if (hname == "") {				// local address
     char hostname[MAXHOSTNAMELEN+1];
     if (gethostname(hostname, sizeof(hostname)) >= 0)
       hent = gethostbyname(hostname);
     else
       return a;
   }
-  else if (inet_aton(hname, &tempAddr) != 0) {
+  else if (inet_aton(hname.c_str(), &tempAddr) != 0) {
     a.addr.clear();
     a.addr.push_back(tempAddr);
     return a;
@@ -156,7 +156,7 @@ Address			Address::getHostAddress(const char* hname)
     }
 #endif
 
-    hent = gethostbyname(hname);
+    hent = gethostbyname(hname.c_str());
 
 #if !defined(_WIN32)
     if (oldAlarm != SIG_ERR) {

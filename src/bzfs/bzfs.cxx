@@ -1005,7 +1005,7 @@ static WorldInfo *defineTeamWorld()
 
     return world;
   } else {
-    return defineWorldFromFile(clOptions->worldFile.c_str());
+    return defineWorldFromFile(clOptions->worldFile);
   }
 }
 
@@ -1121,7 +1121,7 @@ static bool defineWorld()
   if (clOptions->gameStyle & TeamFlagGameStyle) {
     world = defineTeamWorld();
   } else if (clOptions->worldFile != "") {
-    world = defineWorldFromFile(clOptions->worldFile.c_str());
+    world = defineWorldFromFile(clOptions->worldFile);
   } else {
     world = defineRandomWorld();
   }
@@ -3698,7 +3698,7 @@ int main(int argc, char **argv)
   }
 
   if (clOptions->pingInterface != "") {
-    serverAddress = Address::getHostAddress(clOptions->pingInterface.c_str());
+    serverAddress = Address::getHostAddress(clOptions->pingInterface);
   }
 
 // TimR use 0.0.0.0 by default, multicast will need to have a -i specified for now.

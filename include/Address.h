@@ -49,7 +49,7 @@ class Address {
     void*		pack(void*) const;
     void*		unpack(void*);
 
-    static Address	getHostAddress(const char* hostname = NULL);
+    static Address	getHostAddress(const std::string hostname = std::string(""));
     static std::string	getHostByAddress(InAddr);
     static const std::string	getHostName(const std::string hostname = std::string(""));
 
