@@ -48,7 +48,7 @@ WinVisual::WinVisual(const WinDisplay* _display) :
   pfd.dwDamageMask	= 0;
 }
 
-WinVisual::WinVisual(const WinVisual& visual) :
+WinVisual::WinVisual(const WinVisual& visual) : BzfVisual(),
 				display(visual.display),
 				pfd(visual.pfd),
 				pixelFormat(visual.pixelFormat),
@@ -62,12 +62,21 @@ WinVisual::~WinVisual()
   display->unref();
 }
 
+#ifdef __MINGW32__
+void			WinVisual::setLevel(int level)
+{
+  if (level < 0) pfd.iLayerType = (BYTE)PFD_UNDERLAY_PLANE;
+  else if (level > 0) pfd.iLayerType = PFD_OVERLAY_PLANE;
+  else pfd.iLayerType = PFD_MAIN_PLANE;
+}
+#else
 void			WinVisual::setLevel(int level)
 {
   if (level < 0) pfd.iLayerType = PFD_UNDERLAY_PLANE;
   else if (level > 0) pfd.iLayerType = PFD_OVERLAY_PLANE;
   else pfd.iLayerType = PFD_MAIN_PLANE;
 }
+#endif
 
 void			WinVisual::setDoubleBuffer(bool on)
 {

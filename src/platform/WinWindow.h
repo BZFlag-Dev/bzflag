@@ -36,7 +36,7 @@ class WinWindow : public BzfWindow {
     void		setTitle(const char*);
     void		setPosition(int x, int y);
     void		setSize(int width, int height);
-    void		setMinSize(int width, int height);
+    void		setMinSize(int, int);
     void		setFullscreen();
 
     void		warpMouse(int x, int y);

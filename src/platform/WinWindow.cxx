@@ -146,7 +146,7 @@ void			WinWindow::setSize(int width, int height)
   MoveWindow(hwndChild, 0, 0, width, height, FALSE);
 }
 
-void			WinWindow::setMinSize(int width, int height)
+void			WinWindow::setMinSize(int, int)
 {
   // FIXME
 }
@@ -627,7 +627,7 @@ void			WinWindow::makeColormap(
     ::SetPaletteEntries(colormap, 0, n, logicalPalette->palPalEntry + 0);
 
   // free the cruft
-  delete[] (void*)logicalPalette;
+  delete [] logicalPalette;
 }
 
 // Local Variables: ***
