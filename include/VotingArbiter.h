@@ -70,19 +70,19 @@ private:
   /* names of players who are allowed to vote */
   std::deque<std::string> _suffraged;
 
- protected:
+protected:
 
   /** remove people in the pollers vector that are able to poll again
-    */
+   */
   void updatePollers(void);
 
   /** see if a person is in the list of people waiting for a repoll
-    * timeout.
-    */
+   * timeout.
+   */
   bool isPollerWaiting(std::string &name) const;
 
 
- public:
+public:
 
   /* default constructor */
   VotingArbiter(unsigned short int voteTime, unsigned short int vetoTime,
@@ -113,39 +113,39 @@ private:
   inline bool isPollExpired(void) const;
 
   /** return a string representing the action that is presently set
-    */
+   */
   inline std::string getPollAction(void) const;
 
   /** return a string representing the target (player or setting) being voted upon
-    */
+   */
   inline std::string getPollTarget(void) const;
 
   /** return a string representing the IP of the player being voted
-    * upon, this is mostly useful for placing a ban.
-    */
+   * upon, this is mostly useful for placing a ban.
+   */
   inline std::string getPollTargetIP(void) const;
 
   /** return a string representing the player who requested the poll
-    */
+   */
   inline std::string getPollRequestor(void) const;
 
 
   /** attempt to activate/open a poll
    */
-  bool poll(std::string &player, std::string &playerRequesting, std::string &action, std::string playerIP="");
+  bool poll(std::string &player, std::string &playerRequesting, std::string action, std::string playerIP="");
 
   /** convenience method to attempt to start a kick poll
-    */
+   */
   bool pollToKick(std::string &player, std::string &playerRequesting, std::string &playerIP);
   /** convenience method to attempt to start a ban poll
-    */
+   */
   bool pollToBan(std::string &player, std::string &playerRequesting, std::string &playerIP);
   /** convenience method to attempt to start a set poll
-    */
+   */
   bool pollToSet(std::string &setting, std::string &playerRequesting);
 
   /** convenience method to attempt to reset flags that, at the time, are unused
-    */
+   */
   bool pollToResetFlags(std::string &playerRequesting);
 
   /** halt/close the poll if it is open
@@ -154,11 +154,11 @@ private:
 
 
   /** set the number of available voters
-    */
+   */
   bool setAvailableVoters(unsigned short int count);
 
   /** grant a player the right to vote
-    */
+   */
   bool grantSuffrage(std::string &player);
 
   /** returns whether truthfully whether a certain player is permitted
@@ -357,10 +357,9 @@ class VotingArbiter;
 #endif
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

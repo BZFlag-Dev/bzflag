@@ -66,7 +66,7 @@ bool VotingArbiter::forgetPoll(void)
   return true;
 }
 
-bool VotingArbiter::poll(std::string &player, std::string &playerRequesting, std::string &action, std::string playerIP)
+bool VotingArbiter::poll(std::string &player, std::string &playerRequesting, std::string action, std::string playerIP)
 {
   poller_t p;
   std::string message;
@@ -111,22 +111,23 @@ bool VotingArbiter::poll(std::string &player, std::string &playerRequesting, std
 
 bool VotingArbiter::pollToKick(std::string &player, std::string &playerRequesting, std::string &playerIP)
 {
-	return (this->poll(player, playerRequesting, std::string("kick"), playerIP));
+  return (this->poll(player, playerRequesting, std::string("kick"), playerIP));
 }
 
 bool VotingArbiter::pollToBan(std::string &player, std::string &playerRequesting, std::string &playerIP)
 {
-	return (this->poll(player, playerRequesting, std::string("ban"), playerIP));
+  return (this->poll(player, playerRequesting, std::string("ban"), playerIP));
 }
 
 bool VotingArbiter::pollToSet(std::string &setting, std::string &playerRequesting)
 {
-	return (this->poll(setting, playerRequesting, std::string("set")));
+  return (this->poll(setting, playerRequesting, std::string("set")));
 }
 
 bool VotingArbiter::pollToResetFlags(std::string &playerRequesting)
 {
-	return (this->poll(std::string("flags"), playerRequesting, std::string("reset")));
+  std::string flags=std::string("flags");
+  return (this->poll(flags, playerRequesting, std::string("reset")));
 }
 
 bool VotingArbiter::closePoll(void)
@@ -324,10 +325,9 @@ bool VotingArbiter::retractVote(std::string &player)
 
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-
