@@ -89,36 +89,6 @@ class Obstacle {
     bool		ZFlip;
 };
 
-class ObstacleSceneNodeGenerator {
-  public:
-    virtual		~ObstacleSceneNodeGenerator();
-
-    virtual WallSceneNode* getNextNode(float uRepeats, float vRepeats,
-							bool lod) = 0;
-
-  protected:
-			ObstacleSceneNodeGenerator();
-    int			getNodeNumber() const;
-    int			incNodeNumber();
-
-  private:
-    // no duplication
-			ObstacleSceneNodeGenerator(const
-					ObstacleSceneNodeGenerator&);
-    ObstacleSceneNodeGenerator&	operator=(const ObstacleSceneNodeGenerator&);
-
-  private:
-    int			node;
-};
-
-class EmptySceneNodeGenerator : public ObstacleSceneNodeGenerator {
-  public:
-    virtual		~EmptySceneNodeGenerator();
-
-    virtual WallSceneNode* getNextNode(float uRepeats, float vRepeats,
-				       bool lod);
-};
-
 //
 // Obstacle
 //
@@ -151,20 +121,6 @@ inline float		Obstacle::getHeight() const
 inline void		Obstacle::get3DNormal(const float *p, float *n) const
 {
   getNormal(p, n);
-}
-
-//
-// ObstacleSceneNodeGenerator
-//
-
-inline int		ObstacleSceneNodeGenerator::getNodeNumber() const
-{
-  return node;
-}
-
-inline int		ObstacleSceneNodeGenerator::incNodeNumber()
-{
-  return ++node;
 }
 
 #endif // BZF_OBSTACLE_H

@@ -181,32 +181,6 @@ float			Obstacle::getHitNormal(
   return minTime;
 }
 
-//
-// ObstacleSceneNodeGenerator
-//
-
-ObstacleSceneNodeGenerator::ObstacleSceneNodeGenerator() :
-				node(0)
-{
-  // do nothing
-}
-
-ObstacleSceneNodeGenerator::~ObstacleSceneNodeGenerator()
-{
-  // do nothing
-}
-
-//
-// EmptySceneNodeGenerator
-//
-
-EmptySceneNodeGenerator::~EmptySceneNodeGenerator() {
-
-}
-
-WallSceneNode* EmptySceneNodeGenerator::getNextNode(float, float, bool) {
-  return NULL;
-}
 
 
 // Local Variables: ***

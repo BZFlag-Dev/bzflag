@@ -53,17 +53,6 @@ class BaseBuilding : public Obstacle {
     int team;
 };
 
-class BaseSceneNodeGenerator : public ObstacleSceneNodeGenerator {
-  friend class BaseBuilding;
-			~BaseSceneNodeGenerator();
-  public:
-    WallSceneNode*	getNextNode(float, float, bool);
-  protected:
-			BaseSceneNodeGenerator(const BaseBuilding *);
-  private:
-    const BaseBuilding *base;
-};
-
 #endif
 
 // Local Variables: ***

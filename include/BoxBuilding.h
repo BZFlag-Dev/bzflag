@@ -60,20 +60,6 @@ class BoxBuilding : public Obstacle {
    bool noNodes;
 };
 
-class BoxSceneNodeGenerator : public ObstacleSceneNodeGenerator {
-  friend class BoxBuilding;
-  public:
-			~BoxSceneNodeGenerator();
-
-    WallSceneNode*	getNextNode(float, float, bool);
-
-  protected:
-			BoxSceneNodeGenerator(const BoxBuilding*);
-
-  private:
-    const BoxBuilding*	box;
-};
-
 
 //
 // BoxBuilding

@@ -145,7 +145,19 @@ SOURCE=..\..\src\obstacle\BaseBuilding.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\obstacle\BaseSceneNodeGenerator.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\obstacle\BoxBuilding.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\obstacle\BoxSceneNodeGenerator.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\obstacle\EmptySceneNodeGenerator.cxx
 # End Source File
 # Begin Source File
 
@@ -157,11 +169,23 @@ SOURCE=..\..\src\obstacle\Obstacle.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\obstacle\ObstacleSceneNodeGenerator.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\obstacle\PyramidBuilding.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\obstacle\PyramidSceneNodeGenerator.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\obstacle\Teleporter.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\obstacle\TeleporterSceneNodeGenerator.cxx
 # End Source File
 # Begin Source File
 
@@ -177,7 +201,15 @@ SOURCE=..\..\include\BaseBuilding.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\include\BaseSceneNodeGenerator.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\include\BoxBuilding.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\obstacle\BoxSceneNodeGenerator.h
 # End Source File
 # Begin Source File
 
@@ -205,6 +237,10 @@ SOURCE=.\config.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\obstacle\EmptySceneNodeGenerator.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\include\global.h
 # End Source File
 # Begin Source File
@@ -217,11 +253,19 @@ SOURCE=..\..\include\Obstacle.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\include\ObstacleSceneNodeGenerator.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\include\OpenGLGState.h
 # End Source File
 # Begin Source File
 
 SOURCE=..\..\include\PyramidBuilding.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\obstacle\PyramidSceneNodeGenerator.h
 # End Source File
 # Begin Source File
 
@@ -253,6 +297,10 @@ SOURCE=..\..\include\Teleporter.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\obstacle\TeleporterSceneNodeGenerator.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\include\TriWallSceneNode.h
 # End Source File
 # Begin Source File
@@ -262,6 +310,10 @@ SOURCE=..\..\include\WallObstacle.h
 # Begin Source File
 
 SOURCE=..\..\include\WallSceneNode.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\obstacle\WallSceneNodeGenerator.h
 # End Source File
 # Begin Source File
 

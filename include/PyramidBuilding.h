@@ -59,20 +59,6 @@ class PyramidBuilding : public Obstacle {
     static std::string	typeName;
 };
 
-class PyramidSceneNodeGenerator : public ObstacleSceneNodeGenerator {
-  friend class PyramidBuilding;
-  public:
-			~PyramidSceneNodeGenerator();
-
-    WallSceneNode*	getNextNode(float, float, bool);
-
-  protected:
-			PyramidSceneNodeGenerator(const PyramidBuilding*);
-
-  private:
-    const PyramidBuilding*	pyramid;
-};
-
 #endif // BZF_PYRAMID_BUILDING_H
 
 // Local Variables: ***

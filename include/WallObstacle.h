@@ -49,20 +49,6 @@ class WallObstacle : public Obstacle {
     static std::string	typeName;
 };
 
-class WallSceneNodeGenerator : public ObstacleSceneNodeGenerator {
-  friend class WallObstacle;
-  public:
-			~WallSceneNodeGenerator();
-
-    WallSceneNode*	getNextNode(float, float, bool);
-
-  protected:
-			WallSceneNodeGenerator(const WallObstacle*);
-
-  private:
-    const WallObstacle*	wall;
-};
-
 #endif // BZF_WALL_OBSTACLE_H
 
 // Local Variables: ***

@@ -62,20 +62,6 @@ class Teleporter : public Obstacle {
     static std::string	typeName;
 };
 
-class TeleporterSceneNodeGenerator : public ObstacleSceneNodeGenerator {
-  friend class Teleporter;
-  public:
-			~TeleporterSceneNodeGenerator();
-
-    WallSceneNode*	getNextNode(float, float, bool);
-
-  protected:
-			TeleporterSceneNodeGenerator(const Teleporter*);
-
-  private:
-    const Teleporter*	teleporter;
-};
-
 //
 // Teleporter
 //

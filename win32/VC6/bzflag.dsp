@@ -714,6 +714,10 @@ SOURCE=..\..\include\Obstacle.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\include\ObstacleSceneNodeGenerator.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\include\OpenGLDisplayList.h
 # End Source File
 # Begin Source File

@@ -15,6 +15,7 @@
 #include "WallObstacle.h"
 #include "Intersect.h"
 #include "QuadWallSceneNode.h"
+#include "WallSceneNodeGenerator.h"
 
 std::string		WallObstacle::typeName("WallObstacle");
 
