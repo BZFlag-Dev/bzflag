@@ -4,6 +4,7 @@
 BZFlag 1.12.0  (was 1.11.x)
 ---------------------------
 
+* Configurable font size for control panel and scoreboard - Daniel Remenak
 * TextureManager reloads all textures on a mode change, for optimal quality - Jeff Myers
 * Autoteam changed to improve team-play - Alfredo Tupone
 * Fixed dropping flag while jumping from high places - Alfredo Tupone

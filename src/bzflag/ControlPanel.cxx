@@ -518,8 +518,25 @@ void			ControlPanel::resize()
     radarRenderer->setShape(radarAreaPixels[0], radarAreaPixels[1],
 			    radarAreaPixels[2], radarAreaPixels[3]);
 
-  const bool useBigFont = messageAreaPixels[2] / (BZDB.isTrue("bigfont") ? 60.0f : 80.0f) > 10.0f;
-  fontSize = useBigFont ? 11.0f : 7.0f;
+  switch (static_cast<int>(BZDB.eval("cpanelfontsize"))) {
+  case 0: { // auto
+    const bool useBigFont = (messageAreaPixels[2] / 100.0f) > 10.0f;
+    fontSize = useBigFont ? 12.0f : 8.0f;
+    break;
+    }
+  case 1: // tiny
+    fontSize = 6;
+    break;
+  case 2: // small
+    fontSize = 8;
+    break;
+  case 3: // medium
+    fontSize = 12;
+    break;
+  case 4: // big
+    fontSize = 16;
+    break;
+  }
   FontManager &fm = FontManager::instance();
   fontFace = fm.getFaceID(BZDB.get("consoleFont"));
 

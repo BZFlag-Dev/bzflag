@@ -25,6 +25,7 @@
 
 /* local implementation headers */
 #include "MainMenu.h"
+#include "MainWindow.h"
 #include "World.h"
 #include "SceneRenderer.h"
 #include "HUDDialogStack.h"
@@ -34,6 +35,7 @@
 
 /* FIXME - from playing.h */
 SceneRenderer* getSceneRenderer();
+MainWindow* getMainWindow();
 
 
 GUIOptionsMenu::GUIOptionsMenu()
@@ -61,11 +63,21 @@ GUIOptionsMenu::GUIOptionsMenu()
 
   option = new HUDuiList;
   option->setFontFace(fontFace);
-  option->setLabel("Controlpanel & Score FontSize:");
-  option->setCallback(callback, (void*)"w");
+  option->setLabel("Scoreboard Font Size:");
+  option->setCallback(callback, (void*)"S");
   options = &option->getList();
-  options->push_back(std::string("normal"));
-  options->push_back(std::string("bigger"));
+  options->push_back(std::string("Auto"));
+  option->createSlider(4);
+  option->update();
+  list.push_back(option);
+
+  option = new HUDuiList;
+  option->setFontFace(fontFace);
+  option->setLabel("ControlPanel Font Size:");
+  option->setCallback(callback, (void*)"C");
+  options = &option->getList();
+  options->push_back(std::string("Auto"));
+  option->createSlider(4);
   option->update();
   list.push_back(option);
 
@@ -244,7 +256,8 @@ void			GUIOptionsMenu::resize(int width, int height)
   if (renderer) {
     int i = 1;
     ((HUDuiList*)list[i++])->setIndex(BZDBCache::enhancedRadar ? 1 : 0);
-    ((HUDuiList*)list[i++])->setIndex(BZDB.isTrue("bigfont") ? 1 : 0);
+    ((HUDuiList*)list[i++])->setIndex(static_cast<int>(BZDB.eval("scorefontsize")));
+    ((HUDuiList*)list[i++])->setIndex(static_cast<int>(BZDB.eval("cpanelfontsize")));
     ((HUDuiList*)list[i++])->setIndex((int)(10.0f * renderer->getPanelOpacity() + 0.5));
     ((HUDuiList*)list[i++])->setIndex(BZDB.isTrue("coloredradarshots") ? 1 : 0);
     ((HUDuiList*)list[i++])->setIndex(static_cast<int>(BZDB.eval("linedradarshots")));
@@ -282,9 +295,19 @@ void			GUIOptionsMenu::callback(HUDuiControl* w, void* data)
       BZDB.set("enhancedradar", list->getIndex() ? "1" : "0");
       break;
 
-    case 'w':
-      BZDB.set("bigfont", list->getIndex() ? "1" : "0");
-      break;
+    case 'C': 
+      {
+	BZDB.setInt("cpanelfontsize", list->getIndex());
+	getMainWindow()->getWindow()->callResizeCallbacks();
+	break;
+      }
+
+    case 'S': 
+      {
+	BZDB.setInt("scorefontsize", list->getIndex());
+	getMainWindow()->getWindow()->callResizeCallbacks();
+	break;
+      }
 
     case 'y':
       {

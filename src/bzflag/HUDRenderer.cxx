@@ -163,19 +163,13 @@ void			HUDRenderer::resize(bool firstTime)
   headingMarkSpacing = (int)(5.0f * float(maxMotionSize) / headingOffset);
   altitudeMarkSpacing = floorf(5.0f * float(maxMotionSize) / altitudeOffset);
 
-  // pick appropriate font sizes
-	// with a min h of 600
-	int fontH = vh;
-	if ( 600 > fontH)
-		fontH = 600;
-
-  setBigFontSize(w, fontH);
-  setAlertFontSize(w, fontH);
-  setMajorFontSize(w, fontH);
-  setMinorFontSize(w, fontH);
-  setHeadingFontSize(w, fontH);
-  setComposeFontSize(w, fontH);
-  setLabelsFontSize(w, fontH);
+  setBigFontSize(w, vh);
+  setAlertFontSize(w, vh);
+  setMajorFontSize(w, vh);
+  setMinorFontSize(w, vh);
+  setHeadingFontSize(w, vh);
+  setComposeFontSize(w, vh);
+  setLabelsFontSize(w, vh);
 }
 
 int			HUDRenderer::getNoMotionSize() const
@@ -224,14 +218,29 @@ void			HUDRenderer::setMajorFontSize(int, int height)
 
 void			HUDRenderer::setMinorFontSize(int, int height)
 {
-  const float add = BZDB.isTrue("bigfont") ? 7.0f : 0.0f;
-  const float s = add + (float)height / 72.0f;
   FontManager &fm = FontManager::instance();
   minorFontFace = fm.getFaceID(BZDB.get("consoleFont"));
-  minorFontSize = floorf(s);
 
-	if (minorFontSize < 8)
-		minorFontSize = 8;
+  switch (static_cast<int>(BZDB.eval("scorefontsize"))) {
+  case 0: { // auto
+    const float s = (float)height / 72.0f;
+    minorFontSize = floorf(s);
+    break;
+  }
+  case 1: // tiny
+    minorFontSize = 6;
+    break;
+  case 2: // small
+    minorFontSize = 8;
+    break;
+  case 3: // medium
+    minorFontSize = 12;
+    break;
+  case 4: // big
+    minorFontSize = 16;
+    break;
+  }
+
   scoreLabelWidth = fm.getStrLength(minorFontFace, minorFontSize, scoreSpacingLabel);
   killsLabelWidth = fm.getStrLength(minorFontFace, minorFontSize, killLabel);
   teamScoreLabelWidth = fm.getStrLength(minorFontFace, minorFontSize, teamScoreSpacingLabel);
