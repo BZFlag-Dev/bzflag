@@ -1437,6 +1437,26 @@
 			settings = {
 			};
 		};
+		14043CA80586E0240064F048 = {
+			expectedFileType = sourcecode.cpp.cpp;
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = TextureManager.cxx;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		14043CA90586E0240064F048 = {
+			fileRef = 14043CA80586E0240064F048;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		14043CC80586E7720064F048 = {
+			fileRef = 14953627049CCA4100A80164;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		1404B12804B8798200A80164 = {
 			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
@@ -2129,20 +2149,6 @@
 			settings = {
 			};
 		};
-		145FFB83057D929B0012E1CB = {
-			expectedFileType = sourcecode.cpp.cpp;
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = TextureManager.cxx;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		145FFB84057D929B0012E1CB = {
-			fileRef = 145FFB83057D929B0012E1CB;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 		145FFB87057D92F30012E1CB = {
 			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
@@ -2808,6 +2814,7 @@
 		149184D0051575A100A80164 = {
 			buildActionMask = 2147483647;
 			files = (
+				14043CC80586E7720064F048,
 				149184D9051576CE00A80164,
 				149184DB051576CF00A80164,
 				149184DD051576D000A80164,
@@ -3567,6 +3574,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_VERSION = A;
 				INSTALL_PATH = "@executable_path/../Frameworks";
+				OPTIMIZATION_CFLAGS = "-O3";
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "-seg1addr 0x10000000";
 				OTHER_LIBTOOL_FLAGS = "";
@@ -4483,6 +4491,7 @@
 				14B9934C04E1CFB000A80164,
 				7BADDCC5051FCEE500FEBA07,
 				145FFC2B057DC4100012E1CB,
+				14043CA90586E0240064F048,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -4553,6 +4562,8 @@
 			buildSettings = {
 				COPY_PHASE_STRIP = YES;
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_MODEL_CPU = G3;
+				GCC_OPTIMIZATION_LEVEL = 3;
 				OPTIMIZATION_CFLAGS = "-O3 -ffast-math -fexpensive-optimizations";
 				ZERO_LINK = NO;
 			};
@@ -7077,6 +7088,7 @@
 				4E030C42048E70E70009E055,
 				4E030C43048E70E70009E055,
 				4E030C44048E70E70009E055,
+				14043CA80586E0240064F048,
 				4E030C4A048E70E70009E055,
 				4E030C4B048E70E70009E055,
 				14B9934804E1CFB000A80164,
@@ -8280,7 +8292,6 @@
 				4E030CB3048E70E70009E055,
 				4E030CB4048E70E80009E055,
 				4E030C37048E70E70009E055,
-				145FFB83057D929B0012E1CB,
 			);
 			isa = PBXGroup;
 			path = ogl;
@@ -9132,6 +9143,7 @@
 				FRAMEWORK_VERSION = A;
 				HEADER_SEARCH_PATHS = ../../../include;
 				INSTALL_PATH = "@executable_path/../Frameworks";
+				OPTIMIZATION_CFLAGS = "-O3";
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "-seg1addr 0x20000000";
 				OTHER_LIBTOOL_FLAGS = "";
@@ -9217,7 +9229,6 @@
 				4E030E39048ED84D0009E055,
 				4E030E3A048ED84E0009E055,
 				146B720204E7458D00A80164,
-				145FFB84057D929B0012E1CB,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
