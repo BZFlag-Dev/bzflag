@@ -136,7 +136,7 @@ private:
 
   /** convenience method to attempt to start a kick poll
     */
-  bool pollToKick(std::string &player, std::string &playerRequesting);
+  bool pollToKick(std::string &player, std::string &playerRequesting, std::string &playerIP);
   /** convenience method to attempt to start a ban poll
     */
   bool pollToBan(std::string &player, std::string &playerRequesting, std::string &playerIP);
