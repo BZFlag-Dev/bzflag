@@ -720,19 +720,22 @@ void parse(int argc, char **argv, CmdLineOptions &options)
 	fprintf(stderr, "Rabbit Chase incompatible with Capture the flag\n");
 	fprintf(stderr, "Rabbit Chase assumed\n");
       }
-      if (++i == argc) {
-	fprintf(stderr, "-rabbit expects one of {score|killer|random} as an argument.\n");
-	usage(argv[0]);
-      }
-      if (strcmp(argv[i], "score") == 0)
-	options.rabbitSelection = ScoreRabbitSelection;
-      else if (strcmp(argv[i], "killer") == 0)
-	options.rabbitSelection = KillerRabbitSelection;
-      else if (strcmp(argv[i], "random") == 0)
-	options.rabbitSelection = RandomRabbitSelection;
-      else {
-	fprintf(stderr, "Valid arguments for -rabbit are score, killer, or random.\n");
-	usage(argv[0]);
+      // default selection style
+      options.rabbitSelection = ScoreRabbitSelection; 
+
+      // if there are any arguments following, see if they are a
+      // rabbit selection styles.
+      if (i+1 != argc) {
+	if (strcmp(argv[i+1], "score") == 0) {
+	  options.rabbitSelection = ScoreRabbitSelection;
+	  i++;
+	} else if (strcmp(argv[i+1], "killer") == 0) {
+	  options.rabbitSelection = KillerRabbitSelection;
+	  i++;
+	} else if (strcmp(argv[i+1], "random") == 0) {
+	  options.rabbitSelection = RandomRabbitSelection;
+	  i++;
+	}
       }
     } else if (strcmp(argv[i], "-reportfile") == 0) {
       if (++i == argc) {
