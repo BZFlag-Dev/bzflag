@@ -18,6 +18,7 @@
 #define	BZF_SDLMEDIA_H
 #include "BzfMedia.h"
 #include "bzfSDL.h"
+#include <string>
 
 class SDLMedia : public BzfMedia {
   public:

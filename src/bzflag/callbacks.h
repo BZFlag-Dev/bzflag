@@ -9,7 +9,10 @@
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
+
 #include "StateDatabase.h"
+
+#include <string>
 
 void setFlagHelp(const std::string& name, void*);
 void setDepthBuffer(const std::string& name, void*);

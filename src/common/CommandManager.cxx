@@ -18,6 +18,7 @@
 #include <ctype.h>
 #include <stdio.h>
 #include <assert.h>
+#include <string>
 
 // class-specific headers
 #include "CommandManager.h"

@@ -16,6 +16,7 @@
 /* system implementation headers */
 #include <time.h>
 #include <math.h>
+#include <string>
 
 /* common implementation headers */
 #include "StateDatabase.h"

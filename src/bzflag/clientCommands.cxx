@@ -15,6 +15,7 @@
 
 /* system implementation headers */
 #include <fstream>
+#include <string>
 #include "../zlib/zconf.h"
 #include "../zlib/zlib.h"
 

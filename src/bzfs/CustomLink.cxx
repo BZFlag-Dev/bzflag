@@ -15,6 +15,7 @@
 
 /* system implementation headers */
 #include <string.h>
+#include <string>
 
 
 CustomLink::CustomLink()

@@ -10,18 +10,22 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+/* BZFlag common header */
+#include "common.h"
+
+/* interface header */
+#include "ControlPanel.h"
+
+/* system headers */
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "common.h"
+
+/* common implementation headers */
 #include "bzfgl.h"
 #include "global.h"
-#include "ControlPanel.h"
-#include "SceneRenderer.h"
-#include "MainWindow.h"
 #include "BzfWindow.h"
-#include "RadarRenderer.h"
 #include "ErrorHandler.h"
 #include "Team.h"
 #include "OpenGLGState.h"
@@ -29,6 +33,11 @@
 #include "BZDBCache.h"
 #include "AnsiCodes.h"
 #include "FontManager.h"
+
+/* local implementation headers */
+#include "SceneRenderer.h"
+#include "MainWindow.h"
+#include "RadarRenderer.h"
 
 void			printFatalError(const char* fmt, ...);
 

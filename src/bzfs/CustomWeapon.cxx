@@ -15,6 +15,7 @@
 
 /* system headers */
 #include <sstream>
+#include <string>
 
 /* local implementation headers */
 #include "WorldWeapons.h"

@@ -16,6 +16,7 @@
 /* system implementation headers */
 #include <stdio.h>
 #include <ctype.h>
+#include <string>
 
 /* common implementation headers */
 #include "CommandManager.h"

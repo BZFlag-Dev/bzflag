@@ -15,6 +15,10 @@
 /* interface header */
 #include "QuickKeysMenu.h"
 
+/* system headers */
+#include <string>
+#include <vector>
+
 /* common implementation headers */
 #include "TextUtils.h"
 #include "StateDatabase.h"

@@ -17,6 +17,7 @@
 #include <fstream>
 #include <time.h>
 #include <vector>
+#include <string>
 
 /* common implementation headers */
 #include "StateDatabase.h"

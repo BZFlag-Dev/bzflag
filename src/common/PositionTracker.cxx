@@ -15,6 +15,7 @@
 
 /* implementation system headers */
 #include <iostream>
+#include <string>
 
 /* implementation common headers */
 #include "MathUtils.h"

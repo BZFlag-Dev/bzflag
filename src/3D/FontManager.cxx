@@ -12,6 +12,7 @@
 
 #include <assert.h>
 #include <math.h>
+#include <string>
 
 #include "common.h"
 #include "bzfgl.h"

@@ -27,7 +27,6 @@
 #define _FD_SET(fd, set) FD_SET(fd, set)
 #endif
 
-#include <string>
 #include <stdio.h>
 #include <stdlib.h> //needed for bzfrand
 

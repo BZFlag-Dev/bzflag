@@ -13,6 +13,9 @@
 #ifndef __NETHANDLER_H__
 #define __NETHANDLER_H__
 
+/* system headers */
+#include <string>
+
 /* common interface headers */
 #include "PlayerInfo.h"
 #include "Address.h"

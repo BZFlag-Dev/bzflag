@@ -13,12 +13,11 @@
 #ifndef	__STARTUPINFO_H__
 #define	__STARTUPINFO_H__
 
+/* system headers */
+#include <string>
+
 /* common interface headers */
-
-/* local interface headers */
-
 #include "Team.h"
-
 
 class StartupInfo
 {

@@ -18,6 +18,7 @@
 #define	BZF_PYRAMID_BUILDING_H
 
 #include "common.h"
+#include <string>
 #include "Obstacle.h"
 
 class PyramidBuilding : public Obstacle {

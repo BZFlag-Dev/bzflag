@@ -15,6 +15,7 @@
 #ifndef __LISTSERVERCONNECTION_H__
 #define __LISTSERVERCONNECTION_H__
 
+#include <string>
 #include "Address.h"
 #include "Ping.h"
 #include "TimeKeeper.h"

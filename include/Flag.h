@@ -49,6 +49,7 @@
 /* system interface headers */
 #include <set>
 #include <map>
+#include <string>
 
 /* common interface headers */
 #include "global.h"

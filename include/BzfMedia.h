@@ -15,6 +15,8 @@
 
 #include "common.h"
 
+#include <string>
+
 static const std::string	DEFAULT_MEDIA_DIR = "data";
 
 /** BzfMedia is a helper class that will read in audio and image

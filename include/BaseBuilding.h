@@ -18,6 +18,7 @@
 #define BZF_BASE_BUILDING_H
 
 #include "common.h"
+#include <string>
 #include "Obstacle.h"
 
 class BaseBuilding : public Obstacle {

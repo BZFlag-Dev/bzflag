@@ -15,6 +15,7 @@
 
 // system headers
 #include <iostream>
+#include <string>
 #include <vector>
 
 // implementation headers

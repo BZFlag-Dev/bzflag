@@ -12,6 +12,9 @@
 
 #include "common.h"
 
+/* system headers */
+#include <string>
+
 /* interface header */
 #include "ServerItem.h"
 

@@ -11,6 +11,7 @@
  */
 
 #include "common.h"
+#include <string>
 #include "bzfgl.h"
 #include "OpenGLTexture.h"
 #include "OpenGLGState.h"

@@ -11,6 +11,7 @@
  */
 
 #include <string.h>
+#include <string>
 #include <sys/types.h>
 #if !defined(_WIN32)
 #include <unistd.h>

@@ -22,6 +22,9 @@
 
 #include "common.h"
 
+/* system headers */
+#include <string>
+
 /* common interface headers */
 #include "bzfgl.h"
 #include "OpenGLGState.h"

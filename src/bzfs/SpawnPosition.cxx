@@ -14,6 +14,8 @@
 
 #include "common.h"
 
+#include <string>
+
 #include "SpawnPosition.h"
 #include "FlagInfo.h"
 #include "TeamBases.h"

@@ -11,6 +11,9 @@
  */
 
 #include "common.h"
+
+#include <string>
+
 #include "LocalPlayer.h"
 #include "HUDRenderer.h"
 

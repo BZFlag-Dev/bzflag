@@ -13,6 +13,9 @@
 /* interface header */
 #include "LocalPlayer.h"
 
+/* system headers */
+#include <string>
+
 /* common implementation headers */
 #include "CommandManager.h"
 #include "WallObstacle.h"

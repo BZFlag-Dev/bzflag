@@ -14,6 +14,7 @@
 #include "NetHandler.h"
 
 // system headers
+#include <string>
 #include <errno.h>
 
 const int udpBufSize = 128000;

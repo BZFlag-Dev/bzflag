@@ -14,6 +14,7 @@
 #include "common.h"
 
 #include <iostream>
+#include <string>
 
 #include "ActionBinding.h"
 #include "CommandManager.h"

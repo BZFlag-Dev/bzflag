@@ -13,6 +13,10 @@
 /* interface header */
 #include "JoinMenu.h"
 
+/* system headers */
+#include <string>
+#include <vector>
+
 /* common implementation headers */
 #include "FontManager.h"
 

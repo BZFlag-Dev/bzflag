@@ -17,6 +17,7 @@
 #include <assert.h>
 #include <errno.h>
 #include <vector>
+#include <string>
 
 // implementation-specific bzflag headers
 #include "NetHandler.h"

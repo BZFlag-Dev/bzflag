@@ -18,6 +18,7 @@
 #define	BZF_WALL_OBSTACLE_H
 
 #include "common.h"
+#include <string>
 #include "Obstacle.h"
 
 class WallObstacle : public Obstacle {

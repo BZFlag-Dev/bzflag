@@ -10,12 +10,22 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+
+/* BZFlag common header */
 #include "common.h"
-#include "global.h"
+
+/* interface headers */
 #include "MainWindow.h"
 #include "BzfWindow.h"
+
+/* system headers */
+#include <string>
+
+/* common implementation headers */
+#include "global.h"
 #include "SceneRenderer.h"
 #include "bzfgl.h"
+#include "BzfJoystick.h"
 
 //
 // MainWindow

@@ -42,6 +42,7 @@
 #define	BZF_OPENGL_TEXTURE_H
 
 #include "common.h"
+#include <string>
 #include "bzfgl.h"
 
 class OpenGLTexture {

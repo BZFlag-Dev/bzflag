@@ -16,6 +16,7 @@
 #include "common.h"
 #include <iostream>
 #include <deque>
+#include <string>
 
 #include "VotingBooth.h"
 #include "TimeKeeper.h"

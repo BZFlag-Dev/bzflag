@@ -22,6 +22,7 @@
 #endif
 
 #include "common.h"
+#include <string>
 #include <vector>
 
 class BzfJoystick {

@@ -15,6 +15,7 @@
 
 #ifdef HAVE_SDL
 #include <stdlib.h>
+#include <string>
 #include "SDLMedia.h"
 #include "ErrorHandler.h"
 

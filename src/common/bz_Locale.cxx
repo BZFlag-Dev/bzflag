@@ -13,6 +13,7 @@
 #include "bz_Locale.h"
 
 // implementation-specific headers
+#include <string>
 #include "Language.h"
 #include "Country.h"
 

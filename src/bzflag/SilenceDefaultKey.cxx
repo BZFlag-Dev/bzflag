@@ -10,12 +10,13 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+#include <string>
+
 #include "SilenceDefaultKey.h"
 #include "KeyManager.h"
 #include "LocalPlayer.h"
 #include "HUDRenderer.h"
 #include "Roster.h"
-
 
 #include "playing.h" // THIS IS TEMPORARY..TO BE REMOVED..BABY STEPS
 

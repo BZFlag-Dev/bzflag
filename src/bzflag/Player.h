@@ -15,6 +15,9 @@
 
 #include "common.h"
 
+/* system headers */
+#include <string>
+
 /* common interface headers */
 #include "global.h"
 #include "TimeKeeper.h"

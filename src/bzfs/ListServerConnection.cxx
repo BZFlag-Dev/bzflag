@@ -15,10 +15,13 @@
 /* class header */
 #include "ListServerConnection.h"
 
-/* implementation headers */
+/* system implementation headers */
 #include <string.h>
+#include <string>
 #include <math.h>
 #include <errno.h>
+
+/* common implementation headers */
 #include "bzfio.h"
 #include "version.h"
 #include "TextUtils.h"

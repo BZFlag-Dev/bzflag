@@ -18,6 +18,9 @@
 #define	BZF_SERVER_LINK_H
 
 #include "common.h"
+
+#include <string>
+
 #include "global.h"
 #include "Address.h"
 #include "Protocol.h"

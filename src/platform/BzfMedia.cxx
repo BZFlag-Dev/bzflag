@@ -17,6 +17,7 @@
 #endif
 #include "MediaFile.h"
 #include <string.h>
+#include <string>
 
 BzfMedia::BzfMedia() : mediaDir(DEFAULT_MEDIA_DIR) { }
 BzfMedia::~BzfMedia() { }

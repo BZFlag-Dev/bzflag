@@ -16,6 +16,7 @@
 /* system implementation headers */
 #include <errno.h>
 #include <assert.h>
+#include <string>
 
 /* implementation-specific common headers */
 #include "TextUtils.h"

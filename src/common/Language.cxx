@@ -15,6 +15,7 @@
 
 /* implementation-specific headers */
 #include <fstream>
+#include <string>
 #include "FileManager.h"
 
 /* private */

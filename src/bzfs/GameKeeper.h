@@ -18,6 +18,7 @@
 
 // system headers
 #include <vector>
+#include <string>
 
 // common interface headers
 #include "DelayQueue.h"

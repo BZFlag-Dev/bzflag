@@ -15,6 +15,7 @@
 
 // system headers
 #include <stdio.h>
+#include <string>
 #include <vector>
 
 // local implemenation headers

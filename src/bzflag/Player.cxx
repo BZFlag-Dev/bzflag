@@ -11,6 +11,7 @@
  */
 
 #include <string.h>
+#include <string>
 #include "common.h"
 #include "playing.h"
 #include "Player.h"

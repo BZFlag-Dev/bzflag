@@ -18,6 +18,7 @@
 
 // implementation-specific system headers
 #include <fstream>
+#include <string>
 #include <vector>
 
 // implementation-specific bzflag headers

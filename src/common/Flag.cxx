@@ -10,14 +10,14 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+#include "common.h"
+
 /* interface header */
 #include "Flag.h"
 
 /* system implementation headers */
-#ifdef _WIN32
-#define strcasecmp _stricmp
-#endif
 #include <math.h>
+#include <string>
 
 /* common implementation headers */
 #include "Team.h"

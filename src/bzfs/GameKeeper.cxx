@@ -15,6 +15,7 @@
 
 /* system headers */
 #include <vector>
+#include <string>
 
 // players list FIXME should be resized based on maxPlayers
 extern PlayerState      lastState[PlayerSlot];

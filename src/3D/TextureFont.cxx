@@ -11,6 +11,7 @@
 */
 
 #include <assert.h>
+#include <string>
 
 #include "common.h"
 #include "bzfgl.h"

@@ -18,6 +18,7 @@
 #define	BZF_TELEPORTER_H
 
 #include "common.h"
+#include <string>
 #include "Obstacle.h"
 
 class Teleporter : public Obstacle {

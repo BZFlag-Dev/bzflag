@@ -14,6 +14,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include <string.h>
+#include <string>
 #include "common.h"
 #include "global.h"
 #include "TankSceneNode.h"

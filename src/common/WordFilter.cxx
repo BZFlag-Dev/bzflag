@@ -14,6 +14,7 @@
 #include "WordFilter.h"
 
 // implementation-specific headers
+#include <string>
 #ifdef DEBUG
 #  include "TimeKeeper.h"
 #endif
