@@ -108,6 +108,8 @@ class WordFilter
   static const unsigned short int MAX_FILTERS = 2048;  
 #endif
 
+  static const unsigned short int MAX_WORDS = 256;
+
   /** main collection of what to filter.  items are stored into
    * the array indexed by the first character of the filter word.
    * this means a sparse array, but it's a small price for 
@@ -163,13 +165,16 @@ class WordFilter
     return i;
   }
 
-  /* !!! filter isn't working right it's start and length -- not end */
-  int filterCharacters(char *input, int start, int length, bool filterSpaces=false) const
+  /** utility method performs an actual replacement of
+   * characters in an input character ray within a specified
+   * range.  
+   */
+  int filterCharacters(char *input, unsigned int start, size_t length, bool filterSpaces=false) const
   {
     if (input == NULL) {
       return -1;
     }
-    if ((length <= 0) || (start <= length)){
+    if (length <= 0){
       return -1;
     }
     if (strlen(input) < start) {
@@ -179,7 +184,7 @@ class WordFilter
     int randomCharPos, previousCharPos;
     int maxFilterChar = filterChars.size();
     int count=0;
-    for (int j=0; j < length; j++) {
+    for (unsigned int j=0; j < (unsigned int)length; j++) {
       char c = input[start + j];
       
       // don't repeat random chars

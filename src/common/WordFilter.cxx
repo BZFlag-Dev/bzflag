@@ -21,10 +21,6 @@ bool WordFilter::simpleFilter(char *input) const
   bool filtered = false;
   filter_t findWord;
   
-  int randomCharPos=0;
-  int previousCharPos=0;
-  int maxFilterChar=filterChars.length();
-  
   std::string line = input;
   int startPosition = line.find_first_of(alphabet);
 
@@ -67,7 +63,7 @@ bool WordFilter::aggressiveFilter(char *input) const
   
   /* implicit limit of only match up to 256 words per input */
   /* !!! make dynamic */
-  int matchPair[256 * 2];
+  int matchPair[MAX_WORDS * 2];
   int matchCount = 0;
   
   int regCode;
@@ -87,10 +83,17 @@ bool WordFilter::aggressiveFilter(char *input) const
 
   int endPosition;
   //  std::string word;
+  char wordIndices[MAX_WORDS];
+  unsigned int wordIndexLength=0;
   
   char characterIndex;
 
-  /* iterate over all the words start position in the input */
+  /* iterate over all the words start position in the input and keep track
+   * of the starting character of each word (we only need to check those)
+   * XXX could consider replacing with a single regexp call
+   */
+  int counter=0;
+  int characterFound;
   while (startPosition >= 0) {
     endPosition = firstNonprintable(line);
     if (endPosition < 0) {
@@ -101,32 +104,17 @@ bool WordFilter::aggressiveFilter(char *input) const
     // words are hashed by lowercase first letter
     characterIndex = tolower(line[startPosition]);
 
-    for (std::set<filter_t, expressionCompare>::iterator i = filters[characterIndex].begin(); \
-	 i != filters[characterIndex].end(); 
-	 ++i) {
-    
-      regCode = regexec(i->compiled, input + inputPosition, 1, match, NULL);
-      
-      if ( regCode == 0 ) {
-	//				std::cout << "Matched [" << i->word << "] with substring [" << input + match[0].rm_so << "] for " << match[0].rm_eo << " position; so was " << match[0].rm_so << std::endl;
-      
-	/* only consider matches from the beginning */
-	if (match[0].rm_so == 0) {
-	  matchPair[matchCount * 2] = match[0].rm_so + inputPosition; /* position */
-	  matchPair[(matchCount * 2) + 1] = match[0].rm_eo - match[0].rm_so; /* length */
-	  matchCount++;
-	  filtered = true;
-	}
-
-      } else if ( regCode == REG_NOMATCH ) {
-	
-	// do nothing
-	//			continue;
-      } else {
-	regerror(regCode, i->compiled, errorBuffer, 512);
-	std::cout << errorBuffer << std::endl;
+    characterFound=0;
+    for (int i=0; i < wordIndexLength; i++) {
+      if (wordIndices[i] == characterIndex) {
+	characterFound=1;
+	break;
       }
-    
+    }
+    if (!characterFound) {
+      counter++;
+      wordIndices[wordIndexLength] = characterIndex;
+      wordIndexLength++;
     }
 
     // trim off the front of the line including the last non-printable
@@ -140,8 +128,40 @@ bool WordFilter::aggressiveFilter(char *input) const
       startPosition = 0;
     }
   }
+  std::cout << "counted " << counter << " words" << std::endl;
+
+  counter = 0;
+  /* iterate over the filter words for each unique initial word character */
+  for (int j = 0; j < wordIndexLength; j++) {
+    for (std::set<filter_t, expressionCompare>::iterator i = filters[wordIndices[j]].begin(); \
+	 i != filters[wordIndices[j]].end(); 
+	 ++i) {
+    
+      regCode = regexec(i->compiled, input, 1, match, NULL);
+      counter++;
+      
+      if ( regCode == 0 ) {
+	/* only consider matches from the beginning */
+	if (match[0].rm_so == 0) {
+	  matchPair[matchCount * 2] = match[0].rm_so; /* position */
+	  matchPair[(matchCount * 2) + 1] = match[0].rm_eo - match[0].rm_so; /* length */
+	  matchCount++;
+	  filtered = true;
+	}
+      } else if ( regCode == REG_NOMATCH ) {
+	// do nothing
+	//			continue;
+      } else {
+	regerror(regCode, i->compiled, errorBuffer, 512);
+	std::cout << errorBuffer << std::endl;
+      }
+    
+    } /* iterate over words in a particular character bin */
+  } /* iterate over characters */
 
   
+  std::cout << "searched " << counter << " words" << std::endl;
+
   /* finally filter the input.  only filter actual alphanumerics. */
   for (int i=0; i < matchCount; i++) {
     //			std::cout << "i: " << i << "  " << matchPair[i*2] << " for " << matchPair[(i*2)+1] << std::endl;
