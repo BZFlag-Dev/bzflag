@@ -8,10 +8,11 @@ bzfs \- BZFlag game server
 [\fB\-admsg \fImessage\fR]
 [\fB\-b\fR]
 [\fB\-badwords \fIbadwordfile\fR]
-[\fB\-ban \fIaddress\fR[,...]]
+[\fB\-ban \fIip\fR{,ip}*]
 [\fB\-c\fR]
 [\fB\-conf \fIconfigfile\fR]
 [\fB\-cr\fR]
+[\fB\-d\fR]
 [\fB\+f \fR{\fIgood\fR|\fIflag-id\fR}[\fI{count}\fR]]
 [\fB\-f \fR{\fIbad\fR|\fIflag-id\fR}]
 [\fB\-fb\fR]
@@ -34,7 +35,8 @@ bzfs \- BZFlag game server
 [\fB\-p \fIport\fR]
 [\fB\-passdb \fIfile\fR]
 [\fB\-passwd \fIpassword\fR]
-[\fB\-pr \fIport\fR]
+[\fB\-pr \fIreconnect-port\fR]
+[\fB\-printscore\fR]
 [\fB\-public \fIdescription\fR]
 [\fB\-publicaddr \fIaddress\fR[\fI:port\fR]]
 [\fB\-publiclist \fIurl\fR]
@@ -87,8 +89,8 @@ When \fB-c\fR is supplied, this option randomly rotates the buildings.
 Specify a file that contains bad words that when used in messages get
 replaced with *'s.
 .TP
-.B -ban \fIaddress\fR[,...]
-Prohibits connections from the listed addresses. Trailing 255 bytes are
+.B -ban \fIip\fR{,ip}*
+Prohibits connections from the listed IP addresses. Trailing 255 bytes are
 treated as mask bytes.
 .TP
 .B -c
@@ -102,6 +104,9 @@ bzfs options, rather than setting them on the command line.
 .B -cr
 Enables the capture-the-flag style game with random map.  By default,
 the free-for-all style is used.
+.TP
+.B -d
+Increase debugging level. More -d are used, more debugging info are obtained.
 .TP
 \fB+f\fR {\fIgood\fR|\fIflag-id\fR}[\fI{count}\fR]
 Forces the existence of the given flag.  If specified multiple times
@@ -191,11 +196,14 @@ Load passwords from file
 Specify a server administrator password for use in remote administration
 such as /kick messages.
 .TP
-\fB-pr\fI port\fR
+\fB-pr\fI reconnect-port\fR
 Listen for reconnects on \fIport\fR. The current bzflag protocol is a little
 braindead in that it requires clients to reconnect to another port after
 having registered on the main port. Both this and the main port must be open
 for incoming TCP connections.
+.TP
+.B -printscore
+Write score to stdout whenever it changes
 .TP
 \fB-public\fI description\fR
 Advertise this server on the internet with the given \fIdescription\fR.
