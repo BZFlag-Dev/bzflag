@@ -482,8 +482,8 @@ void			SceneRenderer::setTimeOfDay(double julianDay)
   float latitude, longitude;
   if (!BZDB.isTrue(StateDatabase::BZDB_SYNCLOCATION)) {
     // use local (client) settings
-    latitude = BZDB.eval("longitude");
-    longitude = BZDB.eval("latitude");
+    latitude = BZDB.eval("latitude");
+    longitude = BZDB.eval("longitude");
   } else {
     // server settings
     latitude = BZDB.eval(StateDatabase::BZDB_LATITUDE);
