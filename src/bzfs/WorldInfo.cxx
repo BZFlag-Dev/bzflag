@@ -282,7 +282,7 @@ int WorldInfo::packDatabase()
   ObstacleLocation *pWall;
   for (i = 0, pWall = walls ; i < numWalls ; i++, pWall++) {
     databasePtr = nboPackUShort(databasePtr, WorldCodeWall);
-    databasePtr = nboPackUShort(databasePtr, 24);
+    databasePtr = nboPackUShort(databasePtr, WorldCodeWallSize);
     databasePtr = nboPackVector(databasePtr, pWall->pos);
     databasePtr = nboPackFloat(databasePtr, pWall->rotation);
     databasePtr = nboPackFloat(databasePtr, pWall->size[0]);
@@ -295,7 +295,7 @@ int WorldInfo::packDatabase()
   ObstacleLocation *pBox;
   for (i = 0, pBox = boxes ; i < numBoxes ; i++, pBox++) {
     databasePtr = nboPackUShort(databasePtr, WorldCodeBox);
-    databasePtr = nboPackUShort(databasePtr, 29);
+    databasePtr = nboPackUShort(databasePtr, WorldCodeBoxSize);
     databasePtr = nboPackVector(databasePtr, pBox->pos);
     databasePtr = nboPackFloat(databasePtr, pBox->rotation);
     databasePtr = nboPackVector(databasePtr, pBox->size);
@@ -311,7 +311,7 @@ int WorldInfo::packDatabase()
   ObstacleLocation *pPyramid;
   for (i = 0, pPyramid = pyramids ; i < numPyramids ; i++, pPyramid++) {
     databasePtr = nboPackUShort(databasePtr, WorldCodePyramid);
-    databasePtr = nboPackUShort(databasePtr, 21);
+    databasePtr = nboPackUShort(databasePtr, WorldCodePyramidSize);
     databasePtr = nboPackVector(databasePtr, pPyramid->pos);
     databasePtr = nboPackFloat(databasePtr, pPyramid->rotation);
     databasePtr = nboPackVector(databasePtr, pPyramid->size);
@@ -329,7 +329,7 @@ int WorldInfo::packDatabase()
   Teleporter *pTeleporter;
   for (i = 0, pTeleporter = teleporters ; i < numTeleporters ; i++, pTeleporter++) {
     databasePtr = nboPackUShort(databasePtr, WorldCodeTeleporter);
-    databasePtr = nboPackUShort(databasePtr, 37);
+    databasePtr = nboPackUShort(databasePtr, WorldCodeTeleporterSize);
     databasePtr = nboPackVector(databasePtr, pTeleporter->pos);
     databasePtr = nboPackFloat(databasePtr, pTeleporter->rotation);
     databasePtr = nboPackVector(databasePtr, pTeleporter->size);
@@ -342,11 +342,11 @@ int WorldInfo::packDatabase()
 	databasePtr = nboPackUByte(databasePtr, bitMask);
    // and each link
     databasePtr = nboPackUShort(databasePtr, WorldCodeLink);
-    databasePtr = nboPackUShort(databasePtr, 4);
+    databasePtr = nboPackUShort(databasePtr, WorldCodeLinkSize);
     databasePtr = nboPackUShort(databasePtr, uint16_t(i * 2));
     databasePtr = nboPackUShort(databasePtr, uint16_t(pTeleporter->to[0]));
     databasePtr = nboPackUShort(databasePtr, WorldCodeLink);
-    databasePtr = nboPackUShort(databasePtr, 2);
+    databasePtr = nboPackUShort(databasePtr, WorldCodeLinkSize);
     databasePtr = nboPackUShort(databasePtr, uint16_t(i * 2 + 1));
     databasePtr = nboPackUShort(databasePtr, uint16_t(pTeleporter->to[1]));
   }
