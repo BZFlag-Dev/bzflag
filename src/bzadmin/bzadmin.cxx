@@ -1,3 +1,15 @@
+/* bzflag
+ * Copyright (c) 1993 - 2003 Tim Riker
+ *
+ * This package is free software;  you can redistribute it and/or
+ * modify it under the terms of the license found in the file
+ * named COPYING that should have accompanied this file.
+ *
+ * THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
+ * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
+ * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ */
+
 #include <algorithm>
 #include <functional>
 #include <iostream>
@@ -120,6 +132,7 @@ int main(int argc, char** argv) {
       if (str == "/quit")
 	break;
       sendMessage(sLink, str, ui->getTarget());
+      // private messages to other players aren't sent back to us, print here
       if (players.count(ui->getTarget()))
 	ui->outputMessage(string("[->") + players[ui->getTarget()] + "]: " +
 			  str);
@@ -195,8 +208,7 @@ bool getServerString(ServerLink& sLink, string& str, BZAdminUI& ui) {
       std::string text = (char*)vbuf;
       
       // format the message
-      if (toAll || src == me || dst == me ||
-          dstTeam == myTeam) {
+      if (toAll || src == me || dst == me || dstTeam == myTeam) {
 	
 	// direct message to or from me
         if (dst == me || players.count(dst)) {
