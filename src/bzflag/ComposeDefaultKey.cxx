@@ -54,7 +54,8 @@ void listSetVars(const std::string& name, void*)
   char message[MessageLen];
 
   if (BZDB.getPermission(name) == StateDatabase::Locked) {
-    sprintf(message, "/set %s %f", name.c_str(), BZDB.eval(name));
+    sprintf(message, "/set %s <%f> %s ", name.c_str(),
+            BZDB.eval(name), BZDB.get(name).c_str());
     addMessage(LocalPlayer::getMyTank(), message, 2);
   }
 }
