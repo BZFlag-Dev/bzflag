@@ -73,11 +73,11 @@ void RobotPlayer::projectPosition(const Player *targ,const float t,float &x,floa
     sx = hisspeed * t * cos(rho);
     sy = hisspeed * t * sin(rho);
   }
-  x=hisx+sx;
-  y=hisy+sy;
-  z=hisz+hisvz*t;
+  x=(float)hisx+(float)sx;
+  y=(float)hisy+(float)sy;
+  z=(float)hisz+(float)hisvz*t;
   if (targ->getStatus() & PlayerState::Falling)
-    z += 0.5 * BZDB.eval(StateDatabase::BZDB_GRAVITY) * t * t;
+    z += 0.5f * BZDB.eval(StateDatabase::BZDB_GRAVITY) * t * t;
   if (z < 0) z = 0;
 }
 
@@ -106,7 +106,7 @@ void RobotPlayer::getProjectedPosition(const Player *targ, float *projpos) const
   float tx, ty, tz;
   for (int tries=0 ; errdistance > 0.05 && tries < 4 ; tries++)
   {
-    float t = distance / shotspeed;
+    float t = (float)distance / (float)shotspeed;
     projectPosition(targ, t + 0.05, tx, ty, tz); // add 50ms for lag
     double distance2 = hypotf(tx - myx, ty - myy);
     errdistance = fabs(distance2-distance) / (distance + ZERO_TOLERANCE);
