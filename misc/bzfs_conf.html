@@ -125,6 +125,11 @@
 						d.writeln("-tkkr " + mainform.team_killer_kick_ratio.value + "<br/><br/>");
 					}
 
+					if (mainform.speed_kick.value != 112.5) {
+						d.writeln("#Speed percent over normal speed to auto kick<br/>");
+						d.writeln("-speedtol " + mainform.speed_kick.value + "<br/><br/>");
+					}
+
 					if (mainform.bad_words.value.length > 0) {
 						d.writeln("#Bad Words filter file specification<br/>");
 						d.writeln("-badwords " + mainform.bad_words.value + "<br/><br/>");
@@ -141,6 +146,11 @@
 						d.writeln("-printscore<br/><br/>");
 					}
 
+					if (mainform.help_msgs.value.length > 0) {
+						d.writeln("#Help Messages file specification<br/>");
+						d.writeln("-helpmsg \"" + mainform.help_msgs.value + "\" about <br/><br/>");
+					}
+
 					if (mainform.time.value.length > 0) {
 						d.writeln("#Set time limit on each game [s]<br/>");
 						d.writeln("-time " + mainform.time.value + "<br/><br/>");
@@ -149,6 +159,16 @@
 					if (mainform.time_manual.checked) {
 						d.writeln("#Countdown for timed games has to be started with /countdown<br/>");
 						d.writeln("-timemanual<br/><br/>");
+					}
+
+					if (mainform.report_file.value.length > 0) {
+						d.write("#File to which to write user reports<br/>");
+						d.write("-reportfile \"" + mainform.report_file.value + "\"<br/><br/>");
+					}
+
+					if (mainform.report_pipe.value.length > 0) {
+						d.write("#Program to which to pipe user reports<br/>");
+						d.write("-reportpipe \"" + mainform.report_pipe.value + "\"<br/><br/>");
 					}
 
 					if (mainform.debug_level.value != 0) {
@@ -242,6 +262,11 @@
 					if (mainform.insert_antidote_flags.checked) {
 						d.writeln("#Insert antidote superflags<br/>");
 						d.writeln("-sa<br/><br/>");
+					}
+
+					if (mainform.teamflagzap_timeout.value != 30) {
+						d.writeln("#Time to keep team flag around after last member has left [s]<br/>");
+						d.writeln("-tftimeout " + mainform.teamflagzap_timeout.value + "<br/><br/>");
 					}
 	
 					if (mainform.allow_jumping.checked) {
@@ -397,6 +422,10 @@
 					<tr>
 						<td>Team Killer Kick Ratio</td>
 						<td><input type="text" name="team_killer_kick_ratio" value="0" size="30" title="Team killer to wins percentage (1-100) above which player is kicked"/></td>
+						<td> Excess Speed Kick Percent</td>
+						<td><input type="text" name="speed_kick" value="112.5" title="Percent over normal speed to auto kick"/></td>
+					</tr>
+					<tr>
 						<td>Bad Word File</td>
 						<td><input type="file" name="bad_words" title="Bad Words filter file specification"/></td>
 					</tr>
@@ -407,6 +436,8 @@
 					<tr>	
 						<td>Print Score</td>
 						<td><input type="checkbox" name="print_score" title="Write score to stdout whenever it changes"/></td>
+						<td>Help Message file</td>
+						<td><input type="file" name="help_msgs" title="Show file contents on command '/help about'"/></td>
 					</tr>
 					<tr>
 						<td>Time</td>
@@ -414,6 +445,11 @@
 						<td>Time Manual</td>
 						<td><input type="checkbox" name="time_manual" title="Whether or not Countdown for timed games has to be started with /countdown"/></td>
 					</tr>
+					<tr>
+						<td>Report File</td>
+						<td><input type="file" name="report_file" title="File in which to store user reports"/></td>
+						<td>Report Pipe</td>
+						<td><input type="file" name="report_pipe" title="Program to which to pipe user reports"/></td>
 					<tr>
 						<td>Debug Level</td>
 						<td>
@@ -507,6 +543,10 @@
 						<td>
 							<input type="checkbox" name="insert_antidote_flags" title="Whether or not antidote flags will be inserted"/>
 						</td>
+					</tr>
+					<tr>
+						<td>Team flag zap timeout</td>
+						<td><input type="text" name="teamflagzap_timeout" value="30" title="Time to keep team flag after all members have left [s]"/></td>
 					</tr>
 				</table>
 			</fieldset>
