@@ -397,7 +397,7 @@ if test x$enable_debug = xyes; then
      beos)
 	CFLAGS="$CFLAGS -g";
 	CPPFLAGS="$CPPFLAGS -Werror";
-	CXXFLAGS="$CXXFLAGS -g -Wno-deprecated";;
+	CXXFLAGS="$CXXFLAGS -g";;
     esac;
     AC_DEFINE(DEBUG, 1, [Debugging enabled])
 else
