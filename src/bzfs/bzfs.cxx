@@ -4506,7 +4506,8 @@ int main(int argc, char **argv)
   bzSignal(SIGTERM, SIG_PF(terminateServer));
 
   // don't die on broken pipe
-  bzSignal(SIGPIPE, SIG_IGN);
+  if (SIGPIPE != SIGINT) // we are claiming they are on win32
+		bzSignal(SIGPIPE, SIG_IGN);
 
   // initialize
 #if defined(_WIN32)
