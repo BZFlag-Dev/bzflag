@@ -2172,6 +2172,24 @@ static void rejectPlayer(int playerIndex, uint16_t code)
   return;
 }
 
+// Team Size is wrong at some time
+// as we are fixing, look also at unconnected player slot to rub it
+static void fixTeamCount() {
+  int playerIndex;
+  for (playerIndex = 0; playerIndex < maxPlayers; playerIndex++)
+    if (player[playerIndex].fd == NotConnected)
+      player[playerIndex].state = PlayerNoExist;
+  int teamNum;
+  for (teamNum = RogueTeam; teamNum < RabbitTeam; teamNum++)
+    team[teamNum].team.size = 0;
+  for (playerIndex = 0; playerIndex < maxPlayers; playerIndex++)
+    if (player[playerIndex].state > PlayerInLimbo) {
+      teamNum = player[playerIndex].team;
+      if (teamNum == RabbitTeam)
+	teamNum = RogueTeam;
+      team[teamNum].team.size++;
+    }
+}
 
 static void addPlayer(int playerIndex)
 {
@@ -2433,6 +2451,8 @@ static void addPlayer(int playerIndex)
   // reset that flag
   if (resetTeamFlag)
     resetFlag(teamIndex-1);
+
+  fixTeamCount();
 
   // tell the list server the new number of players
   sendMessageToListServer(ListServerLink::ADD);
@@ -2862,6 +2882,9 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
 #ifdef NETWORK_STATS
   dumpPlayerMessageStats(playerIndex);
 #endif
+
+  fixTeamCount();
+
   // tell the list server the new number of players
   sendMessageToListServer(ListServerLink::ADD);
 
