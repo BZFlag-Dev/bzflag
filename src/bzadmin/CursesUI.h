@@ -74,10 +74,13 @@ public:
   
 protected:
   
+  // This does not work with XCurses (yet)
+#ifndef XCURSES
   /** This function moves and resizes the windows when the terminal has been
       resized. */
   void handleResize(int lines, int cols);
-
+#endif
+  
   /** This function redraws the target window (the line that says who you are
       talking to). */
   void updateTargetWin();
