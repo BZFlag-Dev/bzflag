@@ -1747,22 +1747,14 @@ static void addFlag(int flagIndex)
   // flag in now entering game
   numFlagsInAir++;
 
+  if (FlagInfo::flagList[flagIndex].flag.type == Flags::Null)
+    // pick a random flag
+    FlagInfo::flagList[flagIndex].flag.type
+      = allowedFlags[(int)(allowedFlags.size() * (float)bzfrand())];
+
   FlagInfo::flagList[flagIndex].addFlag();
 
   sendFlagUpdate(flagIndex);
-}
-
-
-static void randomFlag(int flagIndex)
-{
-  if (flagIndex < 0) {
-    return;
-  }
-
-  // pick a random flag
-  FlagInfo::flagList[flagIndex].flag.type
-    = allowedFlags[(int)(allowedFlags.size() * (float)bzfrand())];
-  addFlag(flagIndex);
 }
 
 
@@ -1852,8 +1844,6 @@ void resetFlag(int flagIndex)
 	pFlagInfo->flag.status = FlagNoExist;
       else
 	pFlagInfo->flag.status = FlagOnGround;
-    } else if (pFlagInfo->flag.type == Flags::Null) {
-      randomFlag(flagIndex);
     } else {
       addFlag(flagIndex);
     }
@@ -4378,7 +4368,7 @@ int main(int argc, char **argv)
 	  if (FlagInfo::flagList[i].flag.type == Flags::Null)
 	    break;
 	if (i != numFlags)
-	  randomFlag(i);
+	  addFlag(i);
 	lastSuperFlagInsertion = tm;
       }
     }
