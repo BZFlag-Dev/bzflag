@@ -2782,7 +2782,7 @@ static void		checkEnvironment()
 
   // if not dead yet, see if i've dropped below the death level
   else if (myTank->getPosition()[2] <= BZDB.eval(StateDatabase::BZDB_DEADUNDER)) {
-    gotBlowedUp(myTank, SelfDestruct, /*FIXME - myTank->getId()*/ ServerPlayer);
+    gotBlowedUp(myTank, SelfDestruct, ServerPlayer);
   }
 
   // if not dead yet, see if i got run over by the steamroller
