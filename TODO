@@ -13,7 +13,12 @@ THESE ARE LOWER PRIORITY
   - add option for public-servers to not use global logins?
     (if no passdb, then they only use global logins ie: no /register)
 
-* add SPAWN permission which EVERYONE has by default
+* add SPAWN permission which EVERYONE has by default. this permission would
+  be required to enter the game.
+  * A league server could be setup that removes SPAWN from EVERYONE and grants
+    it to two central groups that represent the two leagues.
+  * removing SPAWN from EVERYONE and putting in on VERIFIED would replace
+    the current -requireidentify
 
 * bzbb login names are used for global authentication. If the user changes
   bzbb login names (which is possible), this can cause problems Another user
