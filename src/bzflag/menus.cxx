@@ -691,7 +691,7 @@ KeyboardMapMenu::KeyboardMapMenu() : defaultKey(this), editing(-1)
   controls.push_back(createLabel(NULL, "Slow Keyboard Motion:"));
   controls.push_back(createLabel(NULL, "Toggle Radar Flags:"));
   controls.push_back(createLabel(NULL, "Toggle Main Flags:"));
-  controls.push_back(createLabel(NULL, "Silience/UnSilence Key:"));
+  controls.push_back(createLabel(NULL, "Silence/UnSilence Key:"));
   controls.push_back(createLabel(NULL, "Server Command Key:"));
   controls.push_back(createLabel(NULL, "Hunt Key:"));
   controls.push_back(createLabel(NULL, "AutoPilot Key: "));
@@ -1981,7 +1981,7 @@ Help1Menu::Help1Menu() : HelpMenu("Controls")
   list.push_back(createLabel(NULL, "Slow Keyboard Motion:"));
   list.push_back(createLabel(NULL, "Toggle Radar Flags:"));
   list.push_back(createLabel(NULL, "Toggle Main Flags:"));
-  list.push_back(createLabel(NULL, "Silience/UnSilence:"));
+  list.push_back(createLabel(NULL, "Silence/UnSilence:"));
   list.push_back(createLabel(NULL, "Server Admin:"));
   list.push_back(createLabel(NULL, "Hunt:"));
   list.push_back(createLabel(NULL, "Auto Pilot:"));
