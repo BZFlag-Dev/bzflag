@@ -160,8 +160,10 @@ void WorldInfo::addLink(int from, int to)
 {
   // silently discard links to/from invalid teleporters
   // and teleporters that don't (yet) exist
-  if ((from >= 0) && (from <= numTeleporters * 2 + 1) &&
-      (to >= 0) && (to <= numTeleporters * 2 + 1)) {
+  if ((from < 0) || (from > numTeleporters * 2 + 1) ||
+      (to < 0) || (to > numTeleporters * 2 + 1)) {
+    DEBUG1("Warning: bad teleporter link dropped from=%d to=%d\n", from, to);
+  } else {
     teleporters[from / 2].to[from % 2] = to;
   }
 }
