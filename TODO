@@ -3,6 +3,10 @@ to do list for BZFlag
 
 THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
 
+* bzadmin needs to handle central registration. get a cookie from
+  db and present it to a server. Might add full LIST support while
+  we're at it.
+
 * need to verify that the anti permissions (e.g. antiban) really do
   prevent the action properly (e.g. you cannot get banned if you have
   antiban -- even from master ban list).
@@ -10,10 +14,19 @@ THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
 * sdl build does not set the application icon .. kinda important for
   the folks with icons
 
+* fix the menu font garbage above some letters on some fonts
+
+* fix the misalignment between the selected server and the one that
+  is joined when the Server List Cache is enabled.
+
+* integrate motd.php into mysql on db and make it use version= so next
+  version can have it's own MOTD
+
+
+THESE ARE LOWER PRIORITY
+
 * fix the corners and edges on the tabbed panels (corner pixels are
   missing)
-
-* fix the menu font garbage above some letters on some fonts
 
 * configure should test and enable the fudged acosf atanf asinf
 
@@ -23,21 +36,14 @@ THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
 
 * speed up the radar rendering
 
-* fix the misalignment between the selected server and the one that
-  is joined when the Server List Cache is enabled.
-
-* group handling for now-working central login
-
-
-THESE ARE LOWER PRIORITY
+* bzflag and bzadmin should support command line central passwords:
+  "User:Password@bzflag.example.com:1234"
 
 * incorporate the player's handicap value into the check calculations.
 
 * incorporate physic drivers into the check calculations.
 
 * kill as many "externs" in .cxx files as possible. evil and wrong.
-
-* make motd.php page take a version so that the next version can have it's own MOTD
 
 * the players have spoken, and hold-the-flag is wanted
 
@@ -52,7 +58,7 @@ THESE ARE LOWER PRIORITY
   unless there are no observer slots left (then kick).
 
 * ban both the player's name in addition to their IP case insensitively.
-  (at least on a poll ban)
+  (at least on a poll ban) (might not be relevant with central login)
 
 * keep track of the last messages sent by a player in the last N
   seconds and auto-silence them if they spam any specific message
@@ -64,13 +70,14 @@ THESE ARE LOWER PRIORITY
   /poll ban
 
 * reject ADDs on list server where players > maxplayers ditto for each team.
+  probably want to verify this data in the callback.
 
-* /identify reply should list groups you are in
+* /identify reply should list groups you are in, perhaps global identify too
 
 * Fix the Windows version of bzadmin so that EOF quits the program, like
   the UNIX version (see checkCommand() in StdBothUI.cxx).
 
-* provide the ability to publish a singer server to multiple list servers.
+* provide the ability to publish a single server to multiple list servers.
   (i.e. multiple -publiclist options)  this is useful for a variety of
   reasons, including testing out a new user-reg'd, karmafied list server,
   without needing to run multiple servers.
@@ -78,12 +85,9 @@ THESE ARE LOWER PRIORITY
 * when game is over, autoboot everyone after some time, so server cannot be
   blocked forever by one player just sitting there.
 
-* Use listserver to give global announce (e.g. New version released) to client
-  (& possibly server)
-
 * make tank scene node not use a list per size mode, just use the scale matrix.
 
-* server should track last reported player and shot positions
+* server should track last reported player and shot positions (done?)
 
 * Improve server picked spawn locations
   - server needs to track more game state to do this well.
@@ -94,19 +98,20 @@ THESE ARE LOWER PRIORITY
 
 * add other db server features
   - see http://bzflag.org/wiki/DbServers
-  - player/password registration
-  - open group registration. one nick is master for each group
   - karma see http://bzflag.org/wiki/KarmaSystem
 
 * rewrite mac os x display/window code to support app switching,
   resolution mode changes, screen captures, etc.
 
 * make it so keys can be bound to multiple actions, and provide a way
-   to do global scoping on key actions
+  to do global scoping on key actions
 
 * StateDatabase should probably have min max values for eval values
 
 * split -public <desc> into -public, -description <desc>, and -email <contact>
+
+* require an email contact name for public servers. Perhaps
+  unpublished by default
 
 * support gameinfo requests as one time udp packets and include all the
   same information that bzfls tracks.  We should allow server info, player and
@@ -143,9 +148,6 @@ THESE ARE LOWER PRIORITY
 * make the vertical rico solution more elegant - get rid of
   BoxBuilding::getNormal and fix existing code to do z -
   getNormalRect & the like.
-
-* require an email contact name for public servers. Perhaps
-  unpublished by default
 
 * Create a new MsgThrottle message sent from client to server
   to inform server to throttle MsgPlayerUpdates from other clients
@@ -220,7 +222,7 @@ THESE ARE LOWER PRIORITY
   more realistic skies: http://sourceforge.net/projects/stellarium/
   very cool, but very low priority.
 
-* consider allowing maps to spcify image based skyboxes.
+* consider allowing maps to specify image based skyboxes.
 
 
 
@@ -258,13 +260,13 @@ THESE NEED TO WAIT FOR THE NEXT PROTOCOL BREAKAGE
    figure out what to do with the shadows.
    figure out what to do with the IDL.
    figure out what to about LOD.
-   figure out where to atach the flag.
+   figure out where to attach the flag.
    figure out how to do the 3 lights on top.
    figure out how to do team colors if a team skin is not provided.
 
 * supply tank/map meshes and textures from the server if client does not have.
-    implement resouce cache on client and have server offer
-    new resources as needed. (md5 resouces to ensure they are the same??)
+   implement resouce cache on client and have server offer
+   new resources as needed. (md5 resouces to ensure they are the same??)
 
 * allow client to only choose meshs from the server list
 
@@ -291,9 +293,8 @@ THESE NEED TO WAIT FOR THE NEXT PROTOCOL BREAKAGE
 
 * see if 3dfx/other old hardware limits are still practical.
 
-* break rending system into seperate lib and allow difrent rednerers that are targeted
+* break rendering system into separate lib and allow different renderers that are targeted
   to hardware or software..
 
 See the Task Tracker on Sourceforge (http://sourceforge.net/pm/?group_id=3248)
 for more todo items and future planning endeavors.
-
