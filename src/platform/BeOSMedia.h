@@ -74,7 +74,7 @@ private:
 
   port_id			audioQueuePort;
   int				audioQueueMaxCmds;
- 
+
   void*				outputBuffer;
   thread_id			childThreadID;
 //  void			*audioThreadCookie;

@@ -939,8 +939,8 @@ void			BackgroundRenderer::doInitDisplayLists()
     GLfloat ytexmin, ytexmax;
     GLfloat xtexdist, ytexdist;
     float vec[2];
-      
-#define GROUND_DIVS	(4)	//FIXME -- seems to be enough 
+
+#define GROUND_DIVS 	(4)	//FIXME -- seems to be enough
 
     xmax = groundPlane[0][0];
     ymax = groundPlane[0][1];
@@ -949,36 +949,36 @@ void			BackgroundRenderer::doInitDisplayLists()
     xdist = (xmax - xmin) / (float)GROUND_DIVS;
     ydist = (ymax - ymin) / (float)GROUND_DIVS;
 
-    renderer.getGroundUV (groundPlane[0], vec);      
+    renderer.getGroundUV (groundPlane[0], vec);
     xtexmax = vec[0];
     ytexmax = vec[1];
-    renderer.getGroundUV (groundPlane[2], vec);      
+    renderer.getGroundUV (groundPlane[2], vec);
     xtexmin = vec[0];
     ytexmin = vec[1];
     xtexdist = (xtexmax - xtexmin) / (float)GROUND_DIVS;
     ytexdist = (ytexmax - ytexmin) / (float)GROUND_DIVS;
 
     simpleGroundList[2].begin();
-    
+
       for (i=0 ; i<GROUND_DIVS ; i++) {
         GLfloat yoff, ytexoff;
-        
+
         yoff = ymin + ydist * (GLfloat)i;
         ytexoff = ytexmin + ytexdist * (GLfloat)i;
-        
+
         glBegin(GL_TRIANGLE_STRIP);
 
         glTexCoord2f (xtexmin, ytexoff+ytexdist);
         glVertex2f (xmin, yoff+ydist);
         glTexCoord2f (xtexmin, ytexoff);
         glVertex2f (xmin, yoff);
-        
+
         for (j=0 ; j<GROUND_DIVS ; j++) {
           GLfloat xoff, xtexoff;
-          
+
           xoff = xmin + xdist * (GLfloat)(j+1);
           xtexoff = xtexmin + xtexdist * (GLfloat)(j+1);
-          
+
           glTexCoord2f (xtexoff, ytexoff+ytexdist);
           glVertex2f (xoff, yoff+ydist);
           glTexCoord2f (xtexoff, ytexoff);

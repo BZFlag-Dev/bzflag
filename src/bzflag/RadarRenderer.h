@@ -76,7 +76,7 @@ class RadarRenderer {
     bool		blend;
     bool		smooth;
     bool		jammed;
-    bool		showFlags;		 
+    bool		showFlags;
     double		decay;
     GLuint		list;
     GLfloat		teamColor[3];

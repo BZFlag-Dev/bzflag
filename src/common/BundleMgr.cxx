@@ -58,7 +58,7 @@ Bundle *BundleMgr::getBundle(const std::string &locale, bool setcur /*= true*/)
   if (locale.length() > 0)
     path += "_" + locale;
   path += ".po";
-  
+
 #ifdef __APPLE__
   // This is MacOS X. Use the CoreFoundation resource location API
   // to find the correct language resource if 'default' is specified.
@@ -82,13 +82,13 @@ Bundle *BundleMgr::getBundle(const std::string &locale, bool setcur /*= true*/)
     CFRelease(locales);
   }
 #endif
-  
+
   pB->load(path);
 
   bundles.insert(std::pair<std::string,Bundle*>(locale, pB));
 
   if (setcur) currentBundle = pB;
-  
+
   return pB;
 }
 
@@ -101,16 +101,16 @@ bool BundleMgr::getLocaleList(std::vector<std::string> *list) {
   if (list == NULL) return false;
   // There could have been stuff added to the list
   // prior to this call. Save the list count.
-  int	initSize = list->size();
-  
+  int 	initSize = list->size();
+
   do {
-	  
+
 #if (defined(_WIN32) || defined(WIN32))
     char fileName[255], *end = NULL;
 
     // Prepare the wildcarded file path to search for and copy it to fileName
     sprintf(fileName, "%s\\l10n\\bzflag_*.po", bundlePath.c_str());
-    
+
     HANDLE		hFoundFile	= NULL;
     WIN32_FIND_DATA	data;
 
@@ -132,14 +132,13 @@ bool BundleMgr::getLocaleList(std::vector<std::string> *list) {
 
     FindClose(hFoundFile);
     break;
-    
+
 #else
 
     // This should work for most of the currently supported
     // non Windows platforms i believe.
     DIR *localedir = opendir((bundlePath + "/l10n/").c_str());
     if (localedir == NULL) break;
-    
     struct dirent	*dirinfo = NULL;
     while ((dirinfo = readdir(localedir)) != NULL) {
 
@@ -156,7 +155,7 @@ bool BundleMgr::getLocaleList(std::vector<std::string> *list) {
     }
 
     closedir(localedir);
-	
+
 #endif
 
   } while (0);

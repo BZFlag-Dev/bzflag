@@ -238,7 +238,7 @@ void MD5::transform(const uint1 block[blocksize])
   state[1] += b;
   state[2] += c;
   state[3] += d;
-  
+
   // Zeroize sensitive information.
   memset(x, 0, sizeof x);
 }
@@ -272,12 +272,12 @@ void MD5::update(const unsigned char input[], size_type length)
     // transform chunks of blocksize (64 bytes)
     for (i = firstpart; i + blocksize <= length; i += blocksize)
       transform(&input[i]);
-    
+
     index = 0;
   }
   else
     i = 0;
-  
+
   // buffer remaining input
   memcpy(&buffer[index], &input[i], length-i);
 }
@@ -311,17 +311,17 @@ MD5& MD5::finalize()
     size_type index = count[0] / 8 % 64;
     size_type padLen = (index < 56) ? (56 - index) : (120 - index);
     update(padding, padLen);
-    
+
     // Append length (before padding)
     update(bits, 8);
-  
+
     // Store state in digest
     encode(digest, state, 16);
-    
+
     // Zeroize sensitive information.
     memset(buffer, 0, sizeof buffer);
     memset(count, 0, sizeof count);
-  
+
     finalized=true;
   }
 

@@ -372,7 +372,7 @@ bool			HUDuiList::doKeyPress(const BzfKeyEvent& key)
     HUDui::setFocus(getNext());
     return true;
   }
-  
+
   if (key.ascii == 0)
     switch (key.button) {
       case BzfKeyEvent::Up:
@@ -414,7 +414,7 @@ bool			HUDuiList::doKeyPress(const BzfKeyEvent& key)
       default:
 	return false;
     }
-  
+
   switch (key.ascii) {
     case 13:
     case 27:
@@ -443,7 +443,7 @@ void			HUDuiList::doRender()
 // HUDuiTypeIn
 //
 
-HUDuiTypeIn::HUDuiTypeIn() 
+HUDuiTypeIn::HUDuiTypeIn()
 : HUDuiControl(), maxLength(0), cursorPos(0)
 {
   allowEdit = true; //by default allow editing
@@ -489,7 +489,7 @@ bool			HUDuiTypeIn::doKeyPress(const BzfKeyEvent& key)
 {
   static const char backspace = '\b';	// ^H
   static const char whitespace = ' ';
-	
+
   if (!allowEdit) return false; //or return true ??
   char c = key.ascii;
   if (c == 0) switch (key.button) {
@@ -586,7 +586,7 @@ void			HUDuiTypeIn::doRender()
   else
     stop = start + getFont().getWidth(string.getString() + cursorPos, 1);
 */
-  if (HUDui::getFocus() == this && allowEdit) 
+  if (HUDui::getFocus() == this && allowEdit)
     getFont().draw("_", getX() + start, getY());
 }
 

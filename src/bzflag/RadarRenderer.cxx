@@ -195,7 +195,7 @@ void			RadarRenderer::render(SceneRenderer& renderer,
 
   if ((opacity < 1.0f) && (opacity > 0.0f)) {
     glScissor(ox + x - 2, oy + y - 2, w + 4, h + 4);
-  
+
     // draw nice blended background
     if (BZDB->isTrue("blend") && opacity < 1.0f)
       glEnable(GL_BLEND);
@@ -734,5 +734,5 @@ void			RadarRenderer::initContext(void* self)
 
 void RadarRenderer::toggleFlags()
 {
-  showFlags = !showFlags; 
+  showFlags = !showFlags;
 }

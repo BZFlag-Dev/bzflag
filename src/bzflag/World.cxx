@@ -548,8 +548,8 @@ void			World::addFlags(SceneDatabase* scene)
     // if not showing flags, only allow FlagOnTank through
     if (flags[i].status != FlagOnTank && !showFlags){
       continue;
-    }  
-	  
+    }
+
     if (flags[i].status == FlagNoExist) continue;
     // skip flag on a tank that isn't alive.  also skip Cloaking
     // flags on tanks.

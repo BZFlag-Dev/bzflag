@@ -506,7 +506,7 @@ bool			BzfNetwork::parseURL(const std::string& url,
 
       if(mungedurl[pos] == ' ')
 	return false;
-	
+
       if(pos != 0)
 	hostname = mungedurl.substr(0, pos);
 

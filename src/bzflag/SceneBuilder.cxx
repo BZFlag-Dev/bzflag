@@ -294,7 +294,7 @@ void			SceneDatabaseBuilder::addPyramid(SceneDatabase* db,
   int part = 0;
   WallSceneNode* node;
   ObstacleSceneNodeGenerator* nodeGen = o.newSceneNodeGenerator();
-  
+
   // Using boxTexHeight since it's (currently) the same and it's already available
   while ((node = nodeGen->getNextNode(-3.0f * boxTexHeight,
 				-3.0f * boxTexHeight,

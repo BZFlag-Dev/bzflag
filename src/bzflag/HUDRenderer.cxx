@@ -108,7 +108,7 @@ std::string		HUDRenderer::resumeLabel("Press Pause to resume");
 std::string		HUDRenderer::cancelDestructLabel("Press Destruct to cancel");
 std::string		HUDRenderer::gameOverLabel("GAME OVER");
 
-HUDRenderer::HUDRenderer(const BzfDisplay* _display, 
+HUDRenderer::HUDRenderer(const BzfDisplay* _display,
 				const SceneRenderer& renderer) :
 				display(_display),
 				window(renderer.getWindow()),
@@ -892,7 +892,7 @@ void			HUDRenderer::renderScoreboard(void)
   const int curMaxPlayers = World::getWorld()->getCurMaxPlayers();
   int* players = new int[curMaxPlayers];
   RemotePlayer* rp;
-  
+
   for (j = 0; j < curMaxPlayers; j++) {
     if ((rp = World::getWorld()->getPlayer(j))) {
       if (rp->getCallSign()[0] != '@')
@@ -901,9 +901,9 @@ void			HUDRenderer::renderScoreboard(void)
 	players[curMaxPlayers - (++obsCount)] = j;
     }
   }
-  
+
   qsort(players, plrCount, sizeof(int), tankScoreCompare);
-  
+
   // list player scores
   bool drewMyScore = false;
   for (i = 0; i < plrCount; i++) {
@@ -951,7 +951,7 @@ void			HUDRenderer::renderScoreboard(void)
     y -= (int)dy;
     drewMyScore = true;
   }
-  
+
   // list observers
   y -= (int)dy;
   for (i = curMaxPlayers - 1; i >= curMaxPlayers - obsCount; --i) {
@@ -963,7 +963,7 @@ void			HUDRenderer::renderScoreboard(void)
     // if I am an observer, list my name
     drawPlayerScore(myTank, x1, x2, x3, (float)y);
   }
-  
+
   delete[] players;
 
   // print teams sorted by score

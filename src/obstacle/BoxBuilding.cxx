@@ -59,7 +59,7 @@ void			BoxBuilding::getNormal(const float* p, float* n) const
 bool			BoxBuilding::isInside(const float* p,
 						float radius) const
 {
-  return (p[2] < (getPosition()[2] + getHeight())) 
+  return (p[2] < (getPosition()[2] + getHeight()))
   &&     ((p[2]+TankHeight) >= getPosition()[2])
   &&     testRectCircle(getPosition(), getRotation(), getWidth(), getBreadth(), p, radius);
 }

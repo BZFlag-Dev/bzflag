@@ -157,7 +157,7 @@ float			StateDatabase::eval(const std::string& name) const
   for (std::vector<std::string>::iterator i = variables.begin(); i != variables.end(); i++)
     if (*i == name)
       return NaN;
-	
+
   variables.push_back(name);
 
   Map::const_iterator index = items.find(name);

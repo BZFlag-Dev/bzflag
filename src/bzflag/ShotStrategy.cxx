@@ -632,7 +632,7 @@ void			SegmentedShotStrategy::makeSegments(ObstacleEffect e)
 	const Teleporter* teleporter = getFirstTeleporter(r, Epsilon, t, face);
 	t -= minTime;
 	minTime = 0.0f;
-	
+
 	// if hit outer wall with ricochet and hit is above top of wall
 	// then ignore hit.
 	if (!teleporter && building && e == Reflect &&

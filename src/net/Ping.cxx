@@ -359,7 +359,7 @@ void			 PingPacket::writeToFile (ofstream& out) const
   buf = nboPackUShort(buf, PingPacket::PacketSize - 4);
   buf = nboPackUShort(buf, PingCodeReply);
   buf = pack(buf, ServerVersion);
-  out.write(buffer,sizeof(buffer)); 
+  out.write(buffer,sizeof(buffer));
 }
 
 // de serialize packet from file
@@ -374,9 +374,9 @@ bool			 PingPacket::readFromFile(ifstream& in)
   // get packet
   in.read(buffer, sizeof(buffer));
   if ((size_t)in.gcount() < sizeof(buffer)){
-    return false; 
+    return false;
   }
-  
+
   // decode header
   void* buf = buffer;
   buf = nboUnpackUShort(buf, len);

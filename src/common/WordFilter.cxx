@@ -81,7 +81,7 @@ protected:
 
 	/* This filter will take a filter word and create a rather complex regular
 	 * expression that catches a variety of variations on a word.		Variations
-	 * include automatic internal expansion, optional punctuation and 
+	 * include automatic internal expansion, optional punctuation and
 	 * whitespace, suffix matching (including plurality), leet-speak conversion
 	 * and more.	See the header above for more details.	This filter should be
 	 * the default.
@@ -117,7 +117,7 @@ protected:
 				matchPair[matchCount * 2] = match[0].rm_so; /* position */
 				matchPair[(matchCount * 2) + 1] = match[0].rm_eo - match[0].rm_so; /* length */
 				matchCount++;
-				
+
 				filtered = true;
 			} else if ( regCode == REG_NOMATCH ) {
 
@@ -133,7 +133,7 @@ protected:
 		/* finally filter the input.  only filter actual alphanumerics. */
 		for (int i=0; i < matchCount; i++) {
 			//			std::cout << "i: " << i << "  " << matchPair[i*2] << " for " << matchPair[(i*2)+1] << std::endl;
-			
+
 			//			memset(input + matchPair[i*2], '*', matchPair[(i*2)+1]);
 
 			randomCharPos = 0;
@@ -154,7 +154,7 @@ protected:
 
 			}
 		}
-		
+
 
 		return filtered;
 	} // end aggressiveFilter
@@ -170,9 +170,9 @@ protected:
 			perror("calloc failed");
 			std::cerr << "Warning: unable to allocate memory for compiled regular expression";
 			return (regex_t *)NULL;
-			
+
 		}
-					
+
 		// ??? need to test performance of REG_NOSUB until we get a match
 		if ( regcomp(compiledReg, word.c_str(), REG_EXTENDED | REG_ICASE) != 0 ) {
 			std::cerr << "Warning: unable to compile regular expression for [" << word << "]" << std::endl;
@@ -184,7 +184,7 @@ protected:
 
 public:
 
-	WordFilter() 
+	WordFilter()
 	{
 		/* set up the alphabet for simple filtering */
 		alphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -272,19 +272,19 @@ public:
 
 
 	// loads a set of bad words from a specified file
-	void loadFromFile(const std::string &fileName) 
+	void loadFromFile(const std::string &fileName)
 	{
 		char buffer[2048];
 		std::ifstream badWordStream(fileName.c_str());
-		
+
 		if (!badWordStream) {
 			std::cerr << "Warning: '" << fileName << "' bad word filter file not found" << std::endl;
 			return;
-		}		
-		
+		}
+
 		while (badWordStream.good()) {
 			badWordStream.getline(buffer,2048);
-			
+
 			std::string badWord = buffer;
 
 			int position = badWord.find_first_not_of("\r\n\t ");
@@ -292,7 +292,7 @@ public:
 			// trim leading whitespace
 			if (position > 0) {
 				badWord = badWord.substr(position);
-			} 
+			}
 
 			position = badWord.find_first_of("#\r\n");
 
@@ -327,7 +327,7 @@ public:
 		if ((word.c_str() == NULL)) {
 			return false;
 		} // end check if word non null
-			
+
 		long int length = (long int)word.length();
 
 		if (0 >= length) {
@@ -338,8 +338,8 @@ public:
 
 		badWord_t newWord;
 		newWord.word = word;
-		
-		/* create the regular expression description */
+
+	 	/* create the regular expression description */
 		const char * cword = word.c_str();
 		char c[8], character;
 		c[0] = c[1] = c[2] = c[3] = c[4] = c[5] = c[6] = c[7] = 0;
@@ -354,7 +354,7 @@ public:
 		for (int i = 0; i < length; i++) {
 			// convert to lowercase for simplicity and speed
 			character = c[0] = tolower(cword[i]);
-			
+
 			/* character classes for l33t-speak */
 			if ( character == 'l' ) {
 				c[1] = 'i';
@@ -391,13 +391,13 @@ public:
 				c[1] = 's';
 			}
 			// need to handle 'f' special for f=>(f|ph)
-			
+
 			/* ignore whitespace and non-alphanumerics */
 			// ??? we might not want to ignore numbers (l33t in filter file)
 			if ( ( character < 97 ) || ( character > 122 ) ) {
 				continue;
 			}
-			
+
 			/* append multi-letter expansions */
 			if (character == 'f') {
 				/* ensure we don't capture garbage at the end */
@@ -425,9 +425,9 @@ public:
 				}
 
 			} // end test for multi-letter expansions
-			
+
 		} // end iteration over work letters
-			
+
 		//		std::cout << "[" <<	 newWord.expression << "]" << std::endl;
 
 		/* !!! add all the suffixes & prefixes */
@@ -442,7 +442,7 @@ public:
 		newWord.expression = "(b+z+|b+e+z+e+)?" + newWord.expression;
 
 		compiledReg = getCompiledExpression(newWord.expression);
-		
+
 		if (compiledReg == NULL) {
 				std::cerr << "Warning: unable to add regular expression [" << word << "]" << std::endl;
 				newWord.compiled = false;
@@ -454,16 +454,16 @@ public:
 
 		// finally add the sucker
 		badWords.insert(newWord);
-		
+
 		return true;
-		
+
 	} // end addWord
 
 
-	
+
 
 	// filters an input message either a complex regular expression-based
-	// pattern match (default) catching hundreds of variations per filter 
+	// pattern match (default) catching hundreds of variations per filter
 	// word or using a simple exact word match technique (original).
 	bool filter(char *input, bool simple=false) {
 		if (simple) {
@@ -487,7 +487,7 @@ public:
 
 
 #if UNIT_TEST
-int main (int argc, char *argv[]) 
+int main (int argc, char *argv[])
 {
 
 #if 0
@@ -504,7 +504,7 @@ int main (int argc, char *argv[])
 		return -1;
 	}
 
-	std::cout << "Loading file" << std::endl; 
+	std::cout << "Loading file" << std::endl;
 	WordFilter badwords;
 	badwords.loadFromFile(argv[1]);
 	badwords.addWord("test");

@@ -51,7 +51,7 @@ Obstacle::~Obstacle()
 
 bool			Obstacle::isDriveThrough() const
 {
-	return driveThrough;	
+	return driveThrough;
 }
 
 bool			Obstacle::isShootThrough() const

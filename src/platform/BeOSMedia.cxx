@@ -108,7 +108,7 @@ bool					BeOSMedia::openAudio()
     return false;
   }
 
-    
+
   format = media_raw_audio_format::wildcard;
 #ifdef USE_FLOAT
   format.format = media_raw_audio_format::B_AUDIO_FLOAT;
@@ -196,17 +196,17 @@ void					BeOSMedia::closeAudio()
   if (audioOutputSem > B_OK)
     delete_sem(audioOutputSem);
   audioHasQuit = true;
-	
+
   if (soundPlayer) {
     soundPlayer->Stop();
     delete soundPlayer;
   }
   soundPlayer = NULL;
-	
+
   if (outputBuffer)
     free(outputBuffer);
   outputBuffer = NULL;
-	
+
   audioOutputSem = -1;
   audioInputIndex = 0;
   audioOutputIndex = 0;
@@ -313,7 +313,7 @@ void					BeOSMedia::writeAudioFrames(
   numFrames *= 2;
   int size = numFrames * sizeof(short);
   uint8 *buf = (uint8 *)samples;
-	
+
 //printf("BeOSMedia::writeAudioFrames(, %d)\n", numFrames);
 //printf("inbuff= %02x %02x %02x %02x\n", buf[0], buf[1], buf[2], buf[3]);
 

@@ -33,7 +33,7 @@ class MyGLWindow : public BDirectGLWindow {
 public:
 	MyGLWindow(BeOSWindow		*beosWindow,
 					BRect		frame,
-					const char	*title, 
+					const char	*title,
 					window_type	type,
 					uint32		flags,
 					uint32		workspace = B_CURRENT_WORKSPACE);
@@ -75,7 +75,7 @@ void MyGLWindow::MessageReceived(BMessage *msg)
 //printf("MyGLWindow::MessageReceived()\n");
 //msg->PrintToStream();
 	switch (msg->what) {
-	
+
 	case B_MOUSE_MOVED:
 		msg->FindPoint("where", &p);
 		bzfEvent.type = BzfEvent::MouseMove;
@@ -163,7 +163,7 @@ void MyGLWindow::DeviceInfo(uint32 device_id, uint32 monitor, const char *name, 
 	if (device_id != BGL_DEVICE_SOFTWARE &&
 		ref->openglDevice == BGL_DEVICE_SOFTWARE) {
 		ref->openglDevice = device_id;
-		
+
 		printf("Using OpenGL device #%ld: %s\n", device_id, name);
 	}
 }
@@ -183,7 +183,7 @@ BeOSWindow::BeOSWindow(const BeOSDisplay* _display, const BeOSVisual* _visual) :
 								oglContextInitialized(false),
 								currentOglContext(-1)
 {
-	bWindow = new MyGLWindow(this, BRect(50, 50, 640+50, 480+50), "bzflag", B_TITLED_WINDOW, 
+	bWindow = new MyGLWindow(this, BRect(50, 50, 640+50, 480+50), "bzflag", B_TITLED_WINDOW,
 		B_OUTLINE_RESIZE | B_QUIT_ON_WINDOW_CLOSE | B_NOT_RESIZABLE | B_NOT_ZOOMABLE);
 	if (!bWindow)
 		return;
@@ -408,7 +408,7 @@ printf("BeOSWindow::makeContext()\n");
 //	bWindow->SaveDebuggingInfo("/boot/home/bzf_ogl_debug_log.txt");
 
 	bWindow->Unlock();
-	
+
 	oglContextInitialized = true;
 	makeCurrent();
 //	OpenGLGState::init();

@@ -126,7 +126,7 @@ TriWallSceneNode::TriWallSceneNode(const GLfloat base[3],
 
   // If negative then these values aren't a number of times to repeat
   // the texture along the surface but the width, or a desired scaled
-  // width, of the texture itself. Repeat the texture as many times 
+  // width, of the texture itself. Repeat the texture as many times
   // as necessary to fit the surface.
   if (uRepeats < 0.0f)
   {

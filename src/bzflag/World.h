@@ -160,7 +160,7 @@ class World {
     static World*	playingField;
     static const int	maxDeadPlayers;
     static BundleMgr	*bundleMgr;
-    static std::string	locale; 
+    static std::string	locale;
 };
 
 class WorldBuilder {

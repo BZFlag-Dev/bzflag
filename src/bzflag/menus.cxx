@@ -976,10 +976,10 @@ GUIOptionsMenu::GUIOptionsMenu()
   }
   else {
 	// Something failed when trying to compile a list
-	// of all the locales. 
+	// of all the locales.
 	options->push_back(std::string("default"));
   }
-  
+
   for (int i = 0; i < (int)options->size(); i++) {
     if ((*options)[i].compare(World::getLocale()) == 0) {
       option->setIndex(i);
@@ -1417,7 +1417,7 @@ OptionsMenu::OptionsMenu() : formatMenu(NULL), keyboardMapMenu(NULL),
   clearCache = label = new HUDuiLabel;
   label->setFont(MainMenu::getFont());
   label->setLabel("Clear Server List Cache");
-  list.push_back(label); 
+  list.push_back(label);
 
   keyMapping = label = new HUDuiLabel;
   label->setFont(MainMenu::getFont());
@@ -1649,7 +1649,7 @@ void			OptionsMenu::callback(HUDuiControl* w, void* data)
       ServerMenu::setMaxCacheAge(minutes);
       break;
     }
- 
+
 #if defined(DEBUG_RENDERING)
     case 'a':
       sceneRenderer->setHiddenLine(list->getIndex() != 0);
@@ -2731,7 +2731,7 @@ void			ServerMenu::loadCache()
   }
 }
 
-// clear the server list cache 
+// clear the server list cache
 void			ServerMenu::clearCache()
 {
   if (serverCache.size() > 0){
@@ -2985,7 +2985,7 @@ void			ServerMenu::pick()
     args.push_back(buf);
     ((HUDuiLabel*)list[17])->setString("Max team score: {1}", &args);
   }
-  else 
+  else
     ((HUDuiLabel*)list[17])->setString("");
 
 
@@ -3050,7 +3050,7 @@ void			ServerMenu::show()
       numItemsAdded ++;
     }
   }
-  
+
   std::vector<std::string> args;
   sprintf(buffer, "%d", numItemsAdded);
   args.push_back(buffer);

@@ -62,19 +62,19 @@ Flag::Desc	Flag::descriptions[] =
 		"Narrow (+N):  Tank is super thin.  Very hard to hit from front but is normal size from side.  Can get through small openings."),
 	Desc( "Shield", "SH", FlagUnstable, NormalShot, FlagGood,
 		"SHield (+SH):  Getting hit only drops flag.  Flag flies an extra-long time."),
-	Desc( "Steamroller", "SR", FlagUnstable, NormalShot, FlagGood, 
+	Desc( "Steamroller", "SR", FlagUnstable, NormalShot, FlagGood,
 		"SteamRoller (+SR):  Destroys tanks you touch but you have to get really close."),
-	Desc( "Shock Wave", "SW", FlagUnstable, SpecialShot, FlagGood, 
+	Desc( "Shock Wave", "SW", FlagUnstable, SpecialShot, FlagGood,
 		"Shock Wave (+SW):  Firing destroys all tanks nearby.  Don't kill teammates!  Can kill tanks on/in buildings."),
-	Desc( "Phantom Zone", "PZ", FlagUnstable, NormalShot, FlagGood, 
+	Desc( "Phantom Zone", "PZ", FlagUnstable, NormalShot, FlagGood,
 		"Phantom Zone (+PZ):  Teleporting toggles Zoned effect.  Zoned tank can drive through buildings.  Zoned tank can't shoot or be shot (except by superbullet and shock wave)."),
-	Desc( "Genocide", "G", FlagUnstable, NormalShot, FlagGood, 
+	Desc( "Genocide", "G", FlagUnstable, NormalShot, FlagGood,
 		"Genocide (+G):  Killing one tank kills that tank's whole team."),
-	Desc( "Jumping", "J", FlagUnstable, NormalShot, FlagGood, 
+	Desc( "Jumping", "J", FlagUnstable, NormalShot, FlagGood,
 		"JumPing (+JP):  Tank can jump.  Use Tab key.  Can't steer in the air."),
-	Desc( "Identify", "ID", FlagUnstable, NormalShot, FlagGood, 
+	Desc( "Identify", "ID", FlagUnstable, NormalShot, FlagGood,
 		"IDentify (+ID):  Identifies type of nearest flag."),
-	Desc( "Cloaking", "CL", FlagUnstable, NormalShot, FlagGood, 
+	Desc( "Cloaking", "CL", FlagUnstable, NormalShot, FlagGood,
 		"CLoaking (+CL):  Makes your tank invisible out-the-window.  Still visible on radar."),
 	Desc( "Useless", "US", FlagUnstable, NormalShot, FlagGood,
 		"USeless (+US):  You have found the useless flag. Use it wisely."),
@@ -140,7 +140,7 @@ const char*		Flag::getAbbreviation(FlagId id)
 FlagId	Flag::getIDFromAbbreviation(const char* abbreviation)
 {
   for (int q = 0; q < NumQualities; q++) {
-    for (std::set<FlagId>::iterator it = Flag::Desc::flagSets[q].begin(); 
+    for (std::set<FlagId>::iterator it = Flag::Desc::flagSets[q].begin();
          it != Flag::Desc::flagSets[q].end(); ++it) {
 	   const char* abbrev = Flag::getAbbreviation(*it);
            if (strcasecmp(abbreviation, abbrev) == 0)

@@ -51,8 +51,8 @@ void Bundle::load(const std::string &path)
     else if (type == tERROR) {
 
     }
-    
-    
+
+
     poStrm.getline(buffer,1024);
   }
 
@@ -81,7 +81,7 @@ Bundle::TLineType Bundle::parseLine(const std::string &line, std::string &data)
     data = line.substr(startPos+1, endPos-startPos-1);
     return tAPPEND;
   }
-  
+
   endPos = line.find_first_of("\t \r\n\"");
   if (endPos < 0)
     endPos = line.length();
@@ -253,7 +253,7 @@ void Bundle::ensureNormalText(std::string &msg)
 		return;
 	}
       break;
-	  
+
     }
   }
 }

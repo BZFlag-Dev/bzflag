@@ -58,7 +58,7 @@ void WorldInfo::addWall(float x, float y, float z, float r, float w, float h)
 {
   if ((z + h) > maxHeight)
     maxHeight = z+h;
-  
+
   if (numWalls >= sizeWalls) {
     sizeWalls = (sizeWalls == 0) ? 16 : 2 * sizeWalls;
     walls = (ObstacleLocation *)realloc(walls, sizeof(ObstacleLocation) * sizeWalls);
@@ -78,7 +78,7 @@ void WorldInfo::addBox(float x, float y, float z, float r, float w, float d, flo
 {
   if ((z + h) > maxHeight)
     maxHeight = z+h;
-  
+
   if (numBoxes >= sizeBoxes) {
     sizeBoxes = (sizeBoxes == 0) ? 16 : 2 * sizeBoxes;
     boxes = (ObstacleLocation *)realloc(boxes, sizeof(ObstacleLocation) * sizeBoxes);
@@ -99,7 +99,7 @@ void WorldInfo::addPyramid(float x, float y, float z, float r, float w, float d,
 {
   if ((z + h) > maxHeight)
     maxHeight = z+h;
-  
+
   if (numPyramids >= sizePyramids) {
     sizePyramids = (sizePyramids == 0) ? 16 : 2 * sizePyramids;
     pyramids = (ObstacleLocation *)realloc(pyramids, sizeof(ObstacleLocation) * sizePyramids);
@@ -121,7 +121,7 @@ void WorldInfo::addTeleporter(float x, float y, float z, float r, float w, float
 {
   if ((z + h) > maxHeight)
     maxHeight = z+h;
-  
+
   if (numTeleporters >= sizeTeleporters) {
     sizeTeleporters = (sizeTeleporters == 0) ? 16 : 2 * sizeTeleporters;
     teleporters = (Teleporter *)realloc(teleporters, sizeof(Teleporter) * sizeTeleporters);
@@ -188,7 +188,7 @@ bool WorldInfo::rectHitCirc(float dx, float dy, const float *p, float r) const
       return (rx + dx) * (rx + dx) + (ry - dy) * (ry - dy) < rr;
     else //  due west
       return rx + dx > -r;
-  
+
   else if (rx - dx > 0.0f) // east of rect
     if (ry + dy < 0.0f) //  se corner
       return (rx - dx) * (rx - dx) + (ry + dy) * (ry + dy) < rr;
@@ -196,13 +196,13 @@ bool WorldInfo::rectHitCirc(float dx, float dy, const float *p, float r) const
       return (rx - dx) * (rx - dx) + (ry - dy) * (ry - dy) < rr;
     else //  due east
       return rx - dx < r;
-  
+
   else if (ry + dy < 0.0f) // due south
     return ry + dy > -r;
-  
+
   else if (ry - dy > 0.0f) // due north
     return ry - dy < r;
-  
+
   // circle origin in rect
   return true;
 }
@@ -273,7 +273,7 @@ int WorldInfo::packDatabase()
     (2 + 2 * 2) * 2 * numTeleporters;
   database = new char[databaseSize];
   void *databasePtr = database;
-  
+
   // define i out here so we avoid the loop variable scope debates
   int i;
   // add walls
@@ -287,7 +287,7 @@ int WorldInfo::packDatabase()
     // databasePtr = nboPackFloat(databasePtr, pWall->size[1]);
     databasePtr = nboPackFloat(databasePtr, pWall->size[2]);
   }
-  
+
   // add boxes
   ObstacleLocation *pBox;
   for (i = 0, pBox = boxes ; i < numBoxes ; i++, pBox++) {
@@ -310,7 +310,7 @@ int WorldInfo::packDatabase()
     databasePtr = nboPackUByte(databasePtr, pPyramid->shootThrough);
     databasePtr = nboPackUByte(databasePtr, pPyramid->flipZ);
   }
-  
+
   // add teleporters
   Teleporter *pTeleporter;
   for (i = 0, pTeleporter = teleporters ; i < numTeleporters ; i++, pTeleporter++) {

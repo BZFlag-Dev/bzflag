@@ -39,7 +39,7 @@ const unsigned char PNGImageFile::FILTER_UP = 2;
 const unsigned char PNGImageFile::FILTER_AVERAGE = 3;
 const unsigned char PNGImageFile::FILTER_PAETH = 4;
 
-/* 
+/*
 PNGImageFile::PNGImageFile(std::istream* stream)
 
   validates that the file is in fact a png file and initializes the size information for it
@@ -121,7 +121,7 @@ PNGImageFile::PNGImageFile(std::istream* stream) : ImageFile(stream), palette(NU
 	init(channels, width, height);
 }
 
-/* 
+/*
 PNGImageFile::~PNGImageFile()
 
   cleans up memory buffers
@@ -137,7 +137,7 @@ PNGImageFile::~PNGImageFile()
 		delete lineBuffers[1];
 }
 
-/* 
+/*
 std::string	PNGImageFile::getExtension()
 
   returns the expected file extension of .png for files
@@ -148,7 +148,7 @@ std::string				PNGImageFile::getExtension()
 	return ".png";
 }
 
-/* 
+/*
 bool PNGImageFile::read(void* buffer)
 
   parses the file looking for PLTE or IDAT entries and converts to 8 bit data
@@ -159,7 +159,7 @@ bool					PNGImageFile::read(void* buffer)
 {
 	PNGChunk *c;
 	int	bufferPos = getWidth() * getNumChannels() * (getHeight() - 1);
-	
+
 	c = PNGChunk::readChunk(getStream());
 	while ((c->getType() != PNGChunk::IDAT) && (c->getType() != PNGChunk::IEND)) {
 		if (c->getType() == PNGChunk::PLTE)
@@ -233,7 +233,7 @@ bool					PNGImageFile::read(void* buffer)
 	return true;
 }
 
-/* 
+/*
 PNGPalette* PNGImageFile::readPalette(PNGChunk *c)
 
   Code to parse a PLTE chunk
@@ -255,7 +255,7 @@ PNGPalette* PNGImageFile::readPalette(PNGChunk *c)
 	return p;
 }
 
-/* 
+/*
 unsigned char *PNGImageFile::getLineBuffer(bool active)
 
   This is the buffer that holds one line of data. As filters may use the previous line
@@ -267,7 +267,7 @@ unsigned char *PNGImageFile::getLineBuffer(bool active)
 	return MAX_COMPONENTS + lineBuffers[active ? activeBufferIndex : (1 - activeBufferIndex)];
 }
 
-/* 
+/*
 void PNGImageFile::switchLineBuffers()
 
   Change buffers from the active to unactive. In this way you always have the last line available
@@ -279,7 +279,7 @@ void PNGImageFile::switchLineBuffers()
 	activeBufferIndex = 1 - activeBufferIndex;
 }
 
-/* 
+/*
 bool PNGImageFile::expand()
 
   Expand data to 8 bits. If the original data is indexed color, convert to rgb data.
@@ -359,7 +359,7 @@ bool PNGImageFile::expand()
 	return true;
 }
 
-/* 
+/*
 bool PNGImageFile::filter()
 
   Filter a line, based on the first byte found in line. Data must be in 8 bit format
@@ -436,7 +436,7 @@ bool PNGImageFile::filter()
 }
 
 
-/* 
+/*
 PNGRGB::PNGRGB()
 
   Default constructor for RGB value as found in a palette
@@ -449,7 +449,7 @@ PNGRGB::PNGRGB()
 	blue = 0;
 }
 
-/* 
+/*
 PNGRGB::PNGRGB()
 
   Initializing constructor for RGB value as found in a palette
@@ -464,8 +464,8 @@ PNGRGB::PNGRGB(unsigned char r, unsigned char g, unsigned char b)
 
 
 
-	
-/* 
+
+/*
 PNGPalette::PNGPalette(int nc)
 
   Constructor for a PNG palette
@@ -478,7 +478,7 @@ PNGPalette::PNGPalette(int nc)
 	colors = new PNGRGB[nc];
 }
 
-/* 
+/*
 PNGPalette::~PNGPalette()
 
   Destructor for a PNG palette
@@ -489,7 +489,7 @@ PNGPalette::~PNGPalette()
 	delete [] colors;
 }
 
-/* 
+/*
 void PNGPalette::add(PNGRGB& color)
 
   Add a rgb value to end of palette
@@ -500,7 +500,7 @@ void PNGPalette::add(PNGRGB& color)
 	colors[curColor++] = color;
 }
 
-/* 
+/*
 PNGRGB& PNGPalette::get(int index)
 
   Retrieve rgb value in palette at index 'index'. Returns black if invalid entry
@@ -525,7 +525,7 @@ int PNGChunk::PLTE = PNGTAG("PLTE");
 int PNGChunk::IDAT = PNGTAG("IDAT");
 int PNGChunk::IEND = PNGTAG("IEND");
 
-/* 
+/*
 PNGChunk *PNGChunk::readChunk(std::istream *stream)
 
   Static factory function for parsing and creating an arbitrary PNG chunk
@@ -547,7 +547,7 @@ PNGChunk *PNGChunk::readChunk(std::istream *stream)
 	return c;
 }
 
-/* 
+/*
 PNGChunk::PNGChunk()
 
   Default (private) constructor for a png chunk
@@ -558,7 +558,7 @@ PNGChunk::PNGChunk()
 {
 }
 
-/* 
+/*
 PNGChunk::~PNGChunk()
 
   Default destructor
@@ -570,7 +570,7 @@ PNGChunk::~PNGChunk()
 		delete[] data;
 }
 
-/* 
+/*
 int PNGChunk::getLength()
 
   returns data length
@@ -581,7 +581,7 @@ int PNGChunk::getLength()
 	return length;
 }
 
-/* 
+/*
 int PNGChunk::getType()
 
   returns chunk type
@@ -592,7 +592,7 @@ int PNGChunk::getType()
 	return type;
 }
 
-/* 
+/*
 unsigned char *PNGChunk::getData()
 
   returns chunk data
