@@ -759,7 +759,7 @@ int			main(int argc, char** argv)
     #ifdef __MWERKS__
 	ifstream resourceStream(getConfigFileName(), ios::in);
      #else
-    ifstream resourceStream(getConfigFileName(), ios::in | ios::nocreate);
+    ifstream resourceStream(getConfigFileName(), ios::in);
      #endif
     if (resourceStream) {
       startupInfo.hasConfiguration = True;
@@ -768,7 +768,7 @@ int			main(int argc, char** argv)
 
 #if !defined(_WIN32) & !defined(macintosh)
     else {
-      ifstream resourceStream2(getConfigFileName2(), ios::in | ios::nocreate);
+      ifstream resourceStream2(getConfigFileName2(), ios::in);
       if (resourceStream2) {
 	startupInfo.hasConfiguration = True;
 	resourceStream2 >> db;

@@ -19,13 +19,7 @@
 
 #include "common.h"
 #include "BzfString.h"
-
-#if defined(sun) || defined(macintosh)
-// solaris compiler doesn't like declaration of istream
 #include "bzfio.h"
-#else
-class istream;
-#endif
 
 class ResourceDatabase {
   public:
@@ -47,7 +41,7 @@ class ResourceDatabase {
 
     int			getNameIndex(const BzfString& name) const;
 
-  private:
+  public:
     BzfStringAList	names;
     BzfStringAList	values;
 };

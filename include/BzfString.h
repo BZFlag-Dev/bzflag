@@ -38,13 +38,7 @@
 #define	BZF_STRING_H
 
 #include "common.h"
-
-#if defined(sun) || defined(__MWERKS__)
-// solaris compiler doesn't like declaration of ostream
 #include "bzfio.h"
-#else
-class ostream;
-#endif
 
 class BzfString {
   public:
