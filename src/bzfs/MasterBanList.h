@@ -16,27 +16,15 @@
 // bzflag global header
 #include "global.h"
 
-// system headers
-#include <string>
-#ifdef HAVE_CURL
-#include <curl/curl.h>
-#endif
-
 class MasterBanList {
 public:
 	MasterBanList();
 	~MasterBanList();
 
-	const std::string& get ( const std::string URL );
+const std::string& get ( const std::string URL );
 protected:
 	std::string	data;
  private:
-#ifdef HAVE_CURL
-	void collectData(char* ptr, int len);
-	static size_t writeFunction(void *ptr, size_t size, size_t nmemb,
-				    void *stream);
-        CURL *easyHandle;
-#endif
 };
 #endif //__MASTER_BAN_LIST_H__
 

@@ -18,9 +18,11 @@
 #include "URLManager.h"
 #include <iostream>
 
+#include "bzfio.h"
+
 #ifdef _MSC_VER
 #pragma warning( 4: 4786)
-//#define _WINSOCK2API_
+#define _WINSOCK2API_
 #endif
 #ifdef HAVE_CURL
 #include <curl/curl.h>
@@ -70,7 +72,7 @@ bool URLManager::getURL ( const std::string URL, std::string &data )
 	if (!theData)
 		return false;
 
-	unsigned char	* newData = malloc(theLen + 1);
+	char	* newData = (char*)malloc(theLen + 1);
 	memcpy(newData,theData,theLen);
 
 	newData[theLen] = 0;
@@ -171,8 +173,6 @@ URLManager::~URLManager()
 #ifdef HAVE_CURL
 	if (easyHandle)
 		curl_easy_cleanup((CURL*)easyHandle);
-
-	curl_global_init();
 	curl_global_cleanup();
 #endif
 }

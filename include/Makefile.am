@@ -109,6 +109,7 @@ noinst_HEADERS =			\
 	WallSceneNode.h			\
 	WallSceneNodeGenerator.h	\
 	WordFilter.h			\
+	URLManager.h			\
 	ZSceneDatabase.h		\
 	bz_Locale.h			\
 	bzfSDL.h			\

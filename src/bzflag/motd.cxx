@@ -15,78 +15,22 @@
 #endif
 
 #include "motd.h"
+#include "URLManager.h"
 
 MessageOfTheDay::MessageOfTheDay()
 {
-#ifdef HAVE_CURL
-	easyHandle = curl_easy_init();
-	if (!easyHandle) {
-		std::cout << "Something wrong with CURL" << std::endl;
-		return;
-	}
-	CURLcode result;
-	result = curl_easy_setopt(easyHandle, CURLOPT_WRITEFUNCTION, writeFunction);
-	if (result)
-		std::cout << "Something wrong with CURL; Error: " << result << std::endl;
-	result = curl_easy_setopt(easyHandle, CURLOPT_WRITEDATA, this);
-	if (result)
-		std::cout << "Something wrong with CURL; Error: " << result << std::endl;
-#endif
 }
 
 MessageOfTheDay::~MessageOfTheDay()
 {
-#ifdef HAVE_CURL
-	curl_easy_cleanup(easyHandle);
-#endif
-}
 
-#ifdef HAVE_CURL
-void MessageOfTheDay::collectData(char* ptr, int len)
-{
-	std::string readData(ptr, 0, len);
-	data += readData;
 }
-
-size_t MessageOfTheDay::writeFunction(void *ptr, size_t size, size_t nmemb,
-																		void *stream)
-{
-	int len = size * nmemb;
-	((MessageOfTheDay *)stream)->collectData((char *)ptr, len);
-	return len;
-}
-#endif
 
 const std::string& MessageOfTheDay::get ( const std::string URL )
 {
 	data = "";
 	// get all up on the internet and go get the thing
-#ifdef HAVE_CURL
-	CURLcode result;
-	if (!easyHandle) {
-		data = "";
-		return data;
-	}
-	result = curl_easy_setopt(easyHandle, CURLOPT_URL, URL.c_str());
-	if (result) {
-		std::cout << "Something wrong with CURL; Error: " << result << std::endl;
-	}
-	result = curl_easy_perform(easyHandle);
-
-	if (result == (CURLcode)CURLOPT_ERRORBUFFER) {
-		std::cout << "Error: server reported: " << data << std::endl;
-		data = "";
-		return data;
-	}
-	if (result) {
-		std::cout << "Something wrong with CURL; Error: " << result << std::endl;
-		data = "";
-		return data;
-	}
-	result = curl_easy_setopt(easyHandle, CURLOPT_URL, NULL);
-	if (result) {
-		std::cout << "Something wrong with CURL; Error: " << result << std::endl;
-	}
-#endif
+	if  (!URLManager::instance().getURL(URL,data))
+		data = "Default MOTD";
 	return data;
 }

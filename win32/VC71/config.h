@@ -28,6 +28,11 @@
 /* Enabling Snapping */
 #define SNAPPING 1
 
+/* Enabling lubcurl */
+#ifndef HAVE_CURL
+#define HAVE_CURL 1
+#endif
+
 /* On windows, strcasecmp is really strcmp */
 #define HAVE_STRICMP 1
 

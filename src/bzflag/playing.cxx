@@ -93,6 +93,7 @@ static const char copyright[] = "Copyright (c) 1993 - 2004 Tim Riker";
 #include "AnsiCodes.h"
 #include "TextureManager.h"
 #include "ForceFeedback.h"
+#include "motd.h"
 
 // versioning that makes us recompile every time
 #include "version.h"
@@ -5451,6 +5452,10 @@ void			startPlaying(BzfDisplay* _display,
   tmpString = ColorStrings[PurpleColor];
   tmpString += (const char*)glGetString(GL_RENDERER);
   controlPanel->addMessage(tmpString);
+
+	// get the MOTD
+	MessageOfTheDay	motd;
+	controlPanel->addMessage("MOTD: "+motd.get("http://bzflag.org/motd.php"));
 
   //inform user of silencePlayers on startup
   for (unsigned int j = 0; j < silencePlayers.size(); j ++){

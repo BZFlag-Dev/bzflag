@@ -17,12 +17,6 @@
 // bzflag global header
 #include "global.h"
 
-// system headers
-#include <string>
-#ifdef HAVE_CURL
-#include <curl/curl.h>
-#endif
-
 class MessageOfTheDay {
 public:
 	MessageOfTheDay();
@@ -32,11 +26,5 @@ public:
 protected:
 	std::string	data;
 private:
-#ifdef HAVE_CURL
-	void collectData(char* ptr, int len);
-	static size_t writeFunction(void *ptr, size_t size, size_t nmemb,
-		void *stream);
-	CURL *easyHandle;
-#endif
 };
 #endif //__MOTD_H__

@@ -30,7 +30,8 @@ libCommon_a_SOURCES  =			\
 	bzfio.cxx			\
 	bzsignal.c			\
 	global.cxx			\
-	md5.cxx
+	md5.cxx			\
+	URLManager.cxx		
 
 if BUILD_REGEX
 libCommon_a_LIBADD = \
