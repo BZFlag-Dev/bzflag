@@ -38,7 +38,7 @@ const char* const		ServerVersion = "BZFS108a";
 const int				ServerPort = 5155;
 
 // URL for default list server
-const char* const		DefaultListServerURL = "http://BZFlag.SourceForge.net/list-server.txt";
+const char* const		DefaultListServerURL = "http://www.BZFlag.org/list-server.txt";
 
 // maximum size of any message (including header and length fields)
 const int				MaxPacketLen = 1024;
@@ -49,14 +49,11 @@ const uint16_t			MsgNull = 0x0000;
 // unreliable message codes
 const uint16_t			MsgPlayerUpdate = 0x7075;				// 'pu'
 const uint16_t			MsgGMUpdate = 0x676d;					// 'gm'
-const uint16_t			MsgAudio = 0x6175;						// 'au'
-const uint16_t			MsgVideo = 0x7669;						// 'vi'
 
 // server message codes
 const uint16_t			MsgAccept = 0x6163;						// 'ac'
 const uint16_t			MsgAlive = 0x616c;						// 'al'
 const uint16_t			MsgAddPlayer = 0x6170;					// 'ap'
-const uint16_t			MsgAcquireRadio = 0x6172;				// 'ar'
 const uint16_t			MsgCaptureFlag = 0x6366;				// 'cf'
 const uint16_t			MsgDropFlag = 0x6466;					// 'df'
 const uint16_t			MsgEnter = 0x656e;						// 'en'
@@ -66,11 +63,8 @@ const uint16_t			MsgGrabFlag = 0x6766;					// 'gf'
 const uint16_t			MsgGetWorld = 0x6777;					// 'gw'
 const uint16_t			MsgKilled = 0x6b6c;						// 'kl'
 const uint16_t			MsgMessage = 0x6d67;					// 'mg'
-const uint16_t			MsgQueryGame = 0x7167;					// 'qg'
-const uint16_t			MsgQueryPlayers = 0x7170;				// 'qp'
 const uint16_t			MsgReject = 0x726a;						// 'rj'
 const uint16_t			MsgRemovePlayer = 0x7270;				// 'rp'
-const uint16_t			MsgReleaseRadio = 0x7272;				// 'rr'
 const uint16_t			MsgShotBegin = 0x7362;					// 'sb'
 const uint16_t			MsgScore = 0x7363;						// 'sc'
 const uint16_t			MsgScoreOver = 0x736f;					// 'so'
@@ -82,9 +76,6 @@ const uint16_t			MsgTeamUpdate = 0x7475;					// 'tu'
 
 // request for additional UDP link
 const uint16_t			MsgUDPLinkEstablished = 0x6f67;			// 'og'
-
-// server control message
-const uint16_t			MsgServerControl = 0x6f69;				// 'oi'
 
 // world database codes
 const uint16_t			WorldCodeBase = 0x6261;					// 'ba'
@@ -101,9 +92,6 @@ const uint16_t			PingCodeOldReply = 0x0101;
 const uint16_t			PingCodeOldRequest = 0x0202;
 const uint16_t			PingCodeReply = 0x0303;
 const uint16_t			PingCodeRequest = 0x0404;
-
-// radio flags
-const uint16_t			RadioToAll = 0x0001;
 
 // rejection codes
 const uint16_t			RejectBadRequest = 0x0000;

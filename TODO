@@ -74,10 +74,6 @@ to do / idea list for bzflag
    making them visible within a certain range.  another
    possibility is damage before destruction.
 
-* radio chat:
-   allow players to communicate via low-quality audio.
-   already some support built into the server for this.
-
 * pre-game waiting room:
    provide a means for players to gather before and after
    a game.  basic text chat facilities.  allows players

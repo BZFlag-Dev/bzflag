@@ -208,8 +208,6 @@ struct FlagInfo {
 struct TeamInfo {
 	public:
 		Team team;
-		// player index with radio
-		int radio;
 };
 
 class WorldInfo {
@@ -320,7 +318,6 @@ static uint16_t shakeWins = 0;
 static uint16_t shakeTimeout = 0;
 static float linearAcceleration;
 static float angularAcceleration;
-static int broadcastRadio = InvalidPlayer;
 static int maxPlayerScore = 0;
 static int maxTeamScore = 0;
 static int debug = 0;
@@ -357,7 +354,6 @@ static char *password = NULL;
 
 static void removePlayer(int playerIndex);
 static void resetFlag(int flagIndex);
-static void releaseRadio(int playerIndex);
 
 //
 // types for reading world files
@@ -1400,9 +1396,8 @@ void OOBQueueUpdate(int t, uint32_t rseqno) {
 
 static int lookupPlayer(const PlayerId& id)
 {
-	for (int i = 0; i < maxPlayers; i++)
-		if (player[i].state > PlayerInLimbo && (i == id))
-			return i;
+	if (player[id].state > PlayerInLimbo)
+		return id;
 	return InvalidPlayer;
 }
 
@@ -2552,9 +2547,7 @@ static bool defineWorld()
 		team[i].team.activeSize = 0;
 		team[i].team.won = 0;
 		team[i].team.lost = 0;
-		team[i].radio = InvalidPlayer;
 	}
-	broadcastRadio = InvalidPlayer;
 	numFlagsInAir = 0;
 	for (i = 0; i < numFlags; i++)
 		resetFlag(i);
@@ -2792,9 +2785,6 @@ static void addPlayer(int playerIndex)
 	// add team's flag and reset it's score
 	bool resetTeamFlag = false;
 	int teamIndex = int(player[playerIndex].team);
-	if (++team[teamIndex].team.size == 1) {
-		team[teamIndex].radio = -1;
-	}
 	if ((player[playerIndex].type == TankPlayer ||
 			player[playerIndex].type == ComputerPlayer) &&
 			++team[teamIndex].team.activeSize == 1) {
@@ -3061,10 +3051,6 @@ static void removePlayer(int playerIndex)
 		if (player[playerIndex].flag != -1)
 			zapFlag(player[playerIndex].flag);
 
-		// if player had radio then release it
-		if (team[int(player[playerIndex].team)].radio == playerIndex)
-			releaseRadio(playerIndex);
-
 		// tell everyone player has left
 		void *buf, *bufStart = getDirectMessageBuffer();
 		buf = nboPackUByte(bufStart, playerIndex);
@@ -3139,59 +3125,6 @@ static void sendWorld(int playerIndex, int ptr)
 	directMessage(playerIndex, MsgGetWorld, (char*)buf-(char*)bufStart, bufStart);
 }
 
-static void sendQueryGame(int playerIndex)
-{
-	// much like a ping packet but leave out useless stuff (like
-	// the server address, which must already be known, and the
-	// server version, which was already sent).
-	void *buf, *bufStart = getDirectMessageBuffer();
-	buf = nboPackUShort(bufStart, pingReply.gameStyle);
-	buf = nboPackUShort(buf, pingReply.maxPlayers);
-	buf = nboPackUShort(buf, pingReply.maxShots);
-	buf = nboPackUShort(buf, team[0].team.activeSize);
-	buf = nboPackUShort(buf, team[1].team.activeSize);
-	buf = nboPackUShort(buf, team[2].team.activeSize);
-	buf = nboPackUShort(buf, team[3].team.activeSize);
-	buf = nboPackUShort(buf, team[4].team.activeSize);
-	buf = nboPackUShort(buf, pingReply.rogueMax);
-	buf = nboPackUShort(buf, pingReply.redMax);
-	buf = nboPackUShort(buf, pingReply.greenMax);
-	buf = nboPackUShort(buf, pingReply.blueMax);
-	buf = nboPackUShort(buf, pingReply.purpleMax);
-	buf = nboPackUShort(buf, pingReply.shakeWins);
-	// 1/10ths of second
-	buf = nboPackUShort(buf, pingReply.shakeTimeout);
-	buf = nboPackUShort(buf, pingReply.maxPlayerScore);
-	buf = nboPackUShort(buf, pingReply.maxTeamScore);
-	buf = nboPackUShort(buf, pingReply.maxTime);
-
-	// send it
-	directMessage(playerIndex, MsgQueryGame, (char*)buf-(char*)bufStart, bufStart);
-}
-
-static void sendQueryPlayers(int playerIndex)
-{
-	int i, numPlayers = 0;
-
-	// count the number of active players
-	for (i = 0; i < maxPlayers; i++)
-		if (player[i].state > PlayerInLimbo)
-			numPlayers++;
-
-	// first send number of teams and players being sent
-	void *buf, *bufStart = getDirectMessageBuffer();
-	buf = nboPackUShort(bufStart, NumTeams);
-	buf = nboPackUShort(buf, numPlayers);
-	directMessage(playerIndex, MsgQueryPlayers, (char*)buf-(char*)bufStart, bufStart);
-
-	// now send the teams and players
-	for (i = 0; i < NumTeams && player[playerIndex].fd != NotConnected; i++)
-		sendTeamUpdate(i, playerIndex);
-	for (i = 0; i < maxPlayers && player[playerIndex].fd != NotConnected; i++)
-		if (player[i].state > PlayerInLimbo)
-			sendPlayerUpdate(i, playerIndex);
-}
-
 static void playerAlive(int playerIndex, const float *pos, const float *fwd)
 {
 	// player is coming alive.
@@ -3224,8 +3157,6 @@ static void playerKilled(int victimIndex, int killerIndex,
 	// victim has been destroyed.  keep score.
 	if (killerIndex == InvalidPlayer ||
 		player[victimIndex].state != PlayerAlive) return;
-	if (team[int(player[victimIndex].team)].radio == victimIndex)
-		releaseRadio(victimIndex);
 	player[victimIndex].state = PlayerDead;
 
 	// send MsgKilled
@@ -3441,8 +3372,6 @@ static void captureFlag(int playerIndex, TeamColor teamCaptured)
 		if (player[i].fd != NotConnected &&
 		int(flag[flagIndex].flag.id) == int(player[i].team) &&
 		player[i].state == PlayerAlive) {
-			if (team[int(player[i].team)].radio == i)
-				releaseRadio(i);
 			player[i].state = PlayerDead;
 		}
 
@@ -3544,42 +3473,6 @@ static void sendTeleport(int playerIndex, uint16_t from, uint16_t to)
 	buf = nboPackUShort(buf, from);
 	buf = nboPackUShort(buf, to);
 	broadcastMessage(MsgTeleport, (char*)buf-(char*)bufStart, bufStart);
-}
-
-static void acquireRadio(int playerIndex, uint16_t flags)
-{
-	// player wants to grab the radio (only one person per team can have it)
-	// ignore request if player wants a radio already in use, or if a rogue
-	// player asks for a team broadcast radio, or if the player is dead
-	if (player[playerIndex].state != PlayerAlive ||
-			((flags & RadioToAll) && broadcastRadio != InvalidPlayer) ||
-			(!(flags & RadioToAll) && player[playerIndex].team == RogueTeam) ||
-			team[int(player[playerIndex].team)].radio != InvalidPlayer)
-		return;
-	if (flags & RadioToAll)
-		broadcastRadio = playerIndex;
-	team[int(player[playerIndex].team)].radio = playerIndex;
-
-	// send MsgAcquireRadio
-	void *buf, *bufStart = getDirectMessageBuffer();
-	buf = nboPackUByte(bufStart, playerIndex);
-	buf = nboPackUShort(buf, flags);
-	broadcastMessage(MsgAcquireRadio, (char*)buf-(char*)bufStart, bufStart);
-}
-
-static void releaseRadio(int playerIndex)
-{
-	// player is releasing the radio (allowing a teammate to grab it)
-	if (team[int(player[playerIndex].team)].radio != playerIndex)
-		return;
-	if (broadcastRadio == playerIndex)
-		broadcastRadio = InvalidPlayer;
-	team[int(player[playerIndex].team)].radio = InvalidPlayer;
-
-	// send MsgReleaseRadio
-	void *buf, *bufStart = getDirectMessageBuffer();
-	buf = nboPackUByte(bufStart, playerIndex);
-	broadcastMessage(MsgReleaseRadio, (char*)buf-(char*)bufStart, bufStart);
 }
 
 // parse player comands (messages with leading /)
@@ -3744,14 +3637,6 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 			break;
 		}
 
-		case MsgQueryGame:
-			sendQueryGame(t);
-			break;
-
-		case MsgQueryPlayers:
-			sendQueryPlayers(t);
-			break;
-
 		// player is coming alive
 		case MsgAlive: {
 			// data: position, forward-vector
@@ -3860,21 +3745,6 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 			break;
 		}
 
-		// player wants to grab radio
-		case MsgAcquireRadio: {
-			// data: audio/video flags
-			uint16_t flags;
-			buf = nboUnpackUShort(buf, flags);
-			acquireRadio(t, flags);
-			break;
-		}
-
-		// player is releasing radio
-		case MsgReleaseRadio:
-			// data: <none>
-			releaseRadio(t);
-			break;
-
 		// player is ready to receive data over UDP connection
 		case MsgUDPLinkEstablished: {
 			uint16_t queueUpdate;
@@ -3884,15 +3754,9 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 			break;
 		}
 
-		// player is sending a Server Control Message not implemented yet
-		case MsgServerControl:
-			break;
-
 		// just forward these. FIXME playerid should get overwritten someplace
 		case MsgPlayerUpdate:
 		case MsgGMUpdate:
-		case MsgAudio:
-		case MsgVideo:
 			relayPlayerPacket(t, len, rawbuf);
 			break;
 	}
