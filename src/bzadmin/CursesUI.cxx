@@ -244,8 +244,9 @@ bool CursesUI::checkCommand(std::string& str) {
     // kick target
   case KEY_F(5):
     if (targetIter != players.end() && targetIter->first != me) {
-      cmd = "/kick ";
+      cmd = "/kick \"";
       cmd += targetIter->second.name;
+      cmd += "\"";
       targetIter = players.find(me);
       updateCmdWin();
       updateTargetWin();
