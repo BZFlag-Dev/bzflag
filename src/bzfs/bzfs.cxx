@@ -1415,6 +1415,7 @@ static void patchMessage(PlayerId fromId, PlayerId toId, const void *msg)
     case MsgTeamUpdate:
     case MsgUDPLinkEstablished:
     case MsgUDPLinkRequest:
+    case MsgLagPing:
       // No changes required
       break;
       ;;
