@@ -1,9 +1,10 @@
 recent bugs
 ------------
 
-- robots sometimes drive straight through buildings (seen on xmission(hix))
+- robots sometimes drive straight through THE MIDDLE of buildings (seen on xmission(hix))
    the code to generate the cells of open space are susceptible
    to roundoff error, causing this effect.
+   They also shoot through the buildings
 
 - votingarbiter is confused by a player name with an embedded space
 
