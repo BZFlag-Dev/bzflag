@@ -9,8 +9,8 @@ CppCompiler=-DBUILD_REGEX=1 -D__GNUWIN32__ -D_CONSOLE -DWIN32 -D_MBCS_@@_ -Wall 
 Includes=..\include;..\win32;.
 Linker=-lstdc++ -lws2_32 -lwinmm -lkernel32 -luser32 -lgdi32 -lwinspool -lcomdlg32 -ladvapi32 -lshell32 -lole32 -loleaut32 -luuid_@@_
 Libs=
-UnitCount=166
-Folders="Header Files","Header Files/bzfs","Header Files/common","Header Files/game","Header Files/net","Header Files/regex","Resource Files","Source Files","Source Files/bzfs","Source Files/common","Source Files/date","Source Files/game","Source Files/Net","Source Files/regex"
+UnitCount=180
+Folders="Header Files","Header Files/bzfs","Header Files/common","Header Files/game","Header Files/net","Header Files/regex","Resource Files","Source Files","Source Files/bzfs","Source Files/bzip2","Source Files/common","Source Files/date","Source Files/game","Source Files/Net","Source Files/regex"
 ObjFiles=
 PrivateResource=
 ResourceIncludes=
@@ -1398,29 +1398,29 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit167]
-FileName=..\src\3D\TextureManager.cxx
-CompileCpp=1
-Folder=Source Files
+FileName=..\src\zlib\compress.c
+CompileCpp=0
+Folder=Source Files/bzip2
 Compile=1
 Link=1
 Priority=1000
 OverrideBuildCmd=0
-BuildCmd=
+BuildCmd=$(CC) -c compress.c -o ../src/bzfs/compress.o $(CFLAGS)
 
 [Unit168]
-FileName=..\src\mediafile\ImageFile.cxx
-CompileCpp=1
-Folder=Source Files
+FileName=..\src\zlib\deflate.c
+CompileCpp=0
+Folder=Source Files/bzip2
 Compile=1
 Link=1
 Priority=1000
 OverrideBuildCmd=0
-BuildCmd=
+BuildCmd=$(CC) -c deflate.c -o ../src/bzfs/deflate.o $(CFLAGS)
 
 [Unit169]
-FileName=..\src\mediafile\MediaFile.cxx
-CompileCpp=1
-Folder=Source Files
+FileName=..\src\zlib\adler32.c
+CompileCpp=0
+Folder=Source Files/bzip2
 Compile=1
 Link=1
 Priority=1000
@@ -1731,6 +1731,116 @@ BuildCmd=
 FileName=..\src\bzfs\CustomTetra.cxx
 CompileCpp=1
 Folder=Source Files/bzfs
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit170]
+FileName=..\src\zlib\crc32.c
+CompileCpp=0
+Folder=Source Files/bzip2
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit171]
+FileName=..\src\zlib\gzio.c
+CompileCpp=0
+Folder=Source Files/bzip2
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit172]
+FileName=..\src\zlib\infblock.c
+CompileCpp=0
+Folder=Source Files/bzip2
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit173]
+FileName=..\src\zlib\infcodes.c
+CompileCpp=0
+Folder=Source Files/bzip2
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit174]
+FileName=..\src\zlib\inffast.c
+CompileCpp=0
+Folder=Source Files/bzip2
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit175]
+FileName=..\src\zlib\inflate.c
+CompileCpp=0
+Folder=Source Files/bzip2
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit176]
+FileName=..\src\zlib\inftrees.c
+CompileCpp=0
+Folder=Source Files/bzip2
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit177]
+FileName=..\src\zlib\infutil.c
+CompileCpp=0
+Folder=Source Files/bzip2
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit178]
+FileName=..\src\zlib\trees.c
+CompileCpp=0
+Folder=Source Files/bzip2
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit179]
+FileName=..\src\zlib\uncompr.c
+CompileCpp=0
+Folder=Source Files/bzip2
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit180]
+FileName=..\src\zlib\zutil.c
+CompileCpp=0
+Folder=Source Files/bzip2
 Compile=1
 Link=1
 Priority=1000
