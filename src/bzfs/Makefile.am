@@ -24,7 +24,7 @@ bzfs_SOURCES = \
 	bzfs.h
 
 noinst_HEADERS = \
-	buildDate.cc
+	buildDate.cxx
 
 LDADD = ../net/libNet.a ../common/libCommon.a
 
