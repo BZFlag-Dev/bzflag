@@ -33,6 +33,14 @@
 
 // NOTE: terminate all strings with '/' or '\\'
 
+static std::string		setupString(std::string dir)
+{
+  std::string name = getConfigDirName();
+  name += dir;
+  name += DirectorySeparator;
+  return name;
+}
+
 std::string		getConfigDirName()
 {
 #if defined(_WIN32)
@@ -117,14 +125,6 @@ extern std::string		getScreenShotDirName()
 extern std::string		getWorldDirName()
 {
   return setupString("worlds");
-}
-
-extern std::string		setupString(std::string dir)
-{
-  std::string name = getConfigDirName();
-  name += dir;
-  name += DirectorySeparator;
-  return name;
 }
 
 // Local Variables: ***

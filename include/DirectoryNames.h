@@ -29,7 +29,6 @@ extern std::string		getRecordDirName();
 extern std::string		getScreenShotDirName();
 extern std::string		getWorldDirName();
 
-extern std::string		setupString(std::string);
 #endif  // __DIRECTORY_NAMES_H__
 
 
