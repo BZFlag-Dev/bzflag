@@ -244,21 +244,37 @@ bool WordFilter::aggressiveFilter(char *input) const
 	    }
 	  }
 
+	  int matchLength = endOffset - startOffset;
+
+	  // make sure that longer matches actually include at least 1 alphabetic
+	  if (matchLength > 3) {
+	    bool foundAlpha = false;
+	    for (std::string::const_iterator position = sInput.begin(); position != sInput.end(); position++) {
+	      if (isalpha(*position)) {
+		foundAlpha = true;
+		break;
+	      }
+	    }
+	    if (!foundAlpha) {
+	      continue;
+	    }
+	  }
+
 	  // add a few more slots if necessary (this should be rare/never)
 	  if (matchCount * 2 + 1 >= matchPair.size()) {
 	    matchPair.resize(matchCount * 2 + 201);
 	  }
 
 	  matchPair[matchCount * 2] = startOffset; /* position */
-	  matchPair[(matchCount * 2) + 1] = endOffset - startOffset; /* length */
+	  matchPair[(matchCount * 2) + 1] = matchLength; /* length */
 	  matchCount++;
 	  filtered = true;
 	  matched = true;
 	  // zappo! .. erase stuff that has been filtered to speed up future checks
 	  // fill with some non-whitespace alpha that is not the start/end of a suffix to prevent rematch
 	  std::string filler;
-	  filler.assign(endOffset - startOffset, 'W');
-	  sInput.replace(startOffset, endOffset - startOffset, filler);
+	  filler.assign(matchLength, 'W');
+	  sInput.replace(startOffset, matchLength, filler);
 
 	} else if ( regCode == REG_NOMATCH ) {
 	  // do nothing
