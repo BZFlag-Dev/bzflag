@@ -196,21 +196,21 @@ void			StateDatabase::set(const std::string& name,
   }
 }
 
-void			StateDatabase::set(const std::string& name,
+void		     StateDatabase::setInt(const std::string& name,
                                            const int& value,
                                            Permission access)
 {
   set(name,string_util::format("%d",value),access);
 }
 
-void			StateDatabase::set(const std::string& name,
+void		    StateDatabase::setBool(const std::string& name,
                                            const bool& value,
                                            Permission access)
 {
   set(name,value ? std::string("1") : std::string("0"),access);
 }
 
-void			StateDatabase::set(const std::string& name,
+void		   StateDatabase::setFloat(const std::string& name,
                                            const float& value,
                                            Permission access)
 {

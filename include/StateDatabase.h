@@ -64,15 +64,15 @@ public:
 				    const std::string& value,
 				    Permission access = Client);
 
-  void				set(const std::string& name,
+  void			     setInt(const std::string& name,
                                     const int& value,
                                     Permission access = Client);
 
-  void				set(const std::string& name,
+  void			    setBool(const std::string& name,
                                     const bool& value,
                                     Permission access = Client);
 
-  void				set(const std::string& name,
+  void			   setFloat(const std::string& name,
                                     const float& value,
                                     Permission access = Client);
   /** allow setting name/pointer pairs.  this allows simple object
