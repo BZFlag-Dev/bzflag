@@ -623,6 +623,21 @@ Quit the game with a goodbye message (similar to IRC's /quit)
 /quit Gotta go! bye everyone!
 .ft R
 
+.TP
+.B /me
+
+This command displays an "action" that is conveyed to another player.  It allows
+for a little more expressivity in the game.  For example: "/me is hunting wabbits"
+turns into a message like "TimRiker is hunting wabbits" that gets displayed
+differently to other players.
+
+.TP
+.B /msg "some player" some message
+
+This command allows a player to send a message to another player.  Similar to using
+the "," and "." message keys in the game and then selecting your recipient, this
+will send some message to particular player.  The quotes are optional.
+
 
 .SH SERVER ADMINISTRATIVE COMMANDS
 
@@ -702,7 +717,7 @@ Shows all flags with information. Example:
 1: p:2 r:1 g:1 1:SW s:1 p:209.1x143.2x10.0
 2: p:-1 r:1 g:3 1:L s:1 p:-29.1x301.2x0.0
 
-.br
+.BR
 .TP
 .B /kick {playerName}
 Kick a named player off the server. Example:
@@ -988,21 +1003,6 @@ If there is a poll active, this will cancel the poll.  By default, you must be
 an admin to veto a poll.
 
 .TP
-.B /me
-
-This command displays an "action" that is conveyed to another player.  It allows
-for a little more expressivity in the game.  For example: "/me is hunting wabbits"
-turns into a message like "TimRiker is hunting wabbits" that gets displayed
-differently to other players.
-
-.TP
-.B /msg "some player" some message
-
-This command allows a player to send a message to another player.  Similar to using
-the "," and "." message keys in the game and then selecting your recipient, this
-will send some message to particular player.  The quotes are optional.
-
-TP
 .B /masterbanreload
 
 Forces the server to flush any bans from the master server, and reload bans from the
