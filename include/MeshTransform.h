@@ -18,6 +18,20 @@
 #include <vector>
 #include <iostream>
 
+enum TransformType {
+  ShiftTransform = 0,
+  ScaleTransform = 1,
+  ShearTransform = 2,
+  SpinTransform  = 3,
+  IndexTransform = 4,
+  LastTransform
+};
+
+typedef struct {
+  TransformType type;
+  int index;
+  float data[4];
+} TransformData;
 
 class MeshTransform {
   public:
@@ -48,20 +62,6 @@ class MeshTransform {
     void printTransforms(std::ostream& out, const std::string& indent) const;
 
   private:
-    enum TransformType {
-      ShiftTransform = 0,
-      ScaleTransform = 1,
-      ShearTransform = 2,
-      SpinTransform  = 3,
-      IndexTransform = 4,
-      LastTransform
-    };
-
-    typedef struct {
-      TransformType type;
-      int index;
-      float data[4];
-    } TransformData;
 
     std::string name;
     std::vector<TransformData> transforms;
