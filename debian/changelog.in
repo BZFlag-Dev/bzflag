@@ -3,6 +3,12 @@ bzflag (@VERSION@) unstable; urgency=medium
   * CVS Build
  -- Tim Riker <Tim@Rikers.org>  @DATE@
 
+bzflag (bzflag-2.0.2.20050318) unstable; urgency=medium
+
+  * upstream release - many big fixes - see ChangeLog
+  * Closes:
+ -- Tim Riker <Tim@Rikers.org>  Fri, 18 Mar 2005 08:40:38 +0000
+
 bzflag (2.0.0.20040117) unstable; urgency=medium
 
   * upstream release

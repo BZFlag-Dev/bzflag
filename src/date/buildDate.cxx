@@ -38,12 +38,12 @@
 #endif
 
 #ifndef BZ_REV
-#define BZ_REV			1
+#define BZ_REV			2
 #endif
 
 // DEVEL | STABLE | MAINT
 #ifndef BZ_BUILD_TYPE
-#define BZ_BUILD_TYPE		"DEVEL"
+#define BZ_BUILD_TYPE		"STABLE"
 #endif
 
 const char *bzfcopyright = "Copyright (c) 1993 - 2005 Tim Riker";
