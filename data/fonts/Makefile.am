@@ -10,6 +10,7 @@ EXTRA_DIST = \
 	TogaSansBold_12.png	\
 	TogaSansBold_16.png	\
 	TogaSansBold_32.png	\
+	TogaSerifBold_12.png	\
 	TogaSerifBold_16.png	\
 	TogaSerifBold_32.png	\
 	VeraMonoBold_6.png	\
@@ -26,6 +27,7 @@ EXTRA_DIST = \
 	TogaSansBold_12.fmt	\
 	TogaSansBold_16.fmt	\
 	TogaSansBold_32.fmt	\
+	TogaSerifBold_12.fmt	\
 	TogaSerifBold_16.fmt	\
 	TogaSerifBold_32.fmt	\
 	VeraMonoBold_6.fmt	\

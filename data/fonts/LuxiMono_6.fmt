@@ -1,14 +1,14 @@
-NumChars: 94
+NumChars: 95
 TextureWidth: 512
 TextureHeight: 32
 TextZStep: 10
 
 Char: " "
 InitialDist: 0
-Width: 0
-Whitespace: 5
+Width: 1
+Whitespace: 4
 StartX: 0
-EndX: 0
+EndX: 1
 StartY: 0
 EndY: 10
 
@@ -176,10 +176,10 @@ EndY: 10
 
 Char: "3"
 InitialDist: 1
-Width: 3
-Whitespace: 1
+Width: 4
+Whitespace: 0
 StartX: 190
-EndX: 193
+EndX: 194
 StartY: 0
 EndY: 10
 
@@ -229,9 +229,9 @@ StartY: 0
 EndY: 10
 
 Char: "9"
-InitialDist: 0
+InitialDist: 1
 Width: 4
-Whitespace: 1
+Whitespace: 0
 StartX: 250
 EndX: 254
 StartY: 0
@@ -284,19 +284,19 @@ EndY: 10
 
 Char: "?"
 InitialDist: 1
-Width: 3
-Whitespace: 1
+Width: 4
+Whitespace: 0
 StartX: 310
-EndX: 313
+EndX: 314
 StartY: 0
 EndY: 10
 
 Char: "@"
 InitialDist: 0
-Width: 5
-Whitespace: 0
+Width: 4
+Whitespace: 1
 StartX: 320
-EndX: 325
+EndX: 324
 StartY: 0
 EndY: 10
 
@@ -311,19 +311,19 @@ EndY: 10
 
 Char: "B"
 InitialDist: 0
-Width: 4
-Whitespace: 1
+Width: 5
+Whitespace: 0
 StartX: 340
-EndX: 344
+EndX: 345
 StartY: 0
 EndY: 10
 
 Char: "C"
-InitialDist: 0
-Width: 4
+InitialDist: -1
+Width: 5
 Whitespace: 1
 StartX: 350
-EndX: 354
+EndX: 355
 StartY: 0
 EndY: 10
 
@@ -364,11 +364,11 @@ StartY: 0
 EndY: 10
 
 Char: "H"
-InitialDist: 0
-Width: 5
-Whitespace: 0
+InitialDist: 1
+Width: 3
+Whitespace: 1
 StartX: 400
-EndX: 405
+EndX: 403
 StartY: 0
 EndY: 10
 
@@ -410,19 +410,19 @@ EndY: 10
 
 Char: "M"
 InitialDist: 0
-Width: 5
-Whitespace: 0
+Width: 4
+Whitespace: 1
 StartX: 450
-EndX: 455
+EndX: 454
 StartY: 0
 EndY: 10
 
 Char: "N"
-InitialDist: 0
-Width: 5
-Whitespace: 0
+InitialDist: 1
+Width: 3
+Whitespace: 1
 StartX: 460
-EndX: 465
+EndX: 463
 StartY: 0
 EndY: 10
 
@@ -437,10 +437,10 @@ EndY: 10
 
 Char: "P"
 InitialDist: 0
-Width: 4
-Whitespace: 1
+Width: 5
+Whitespace: 0
 StartX: 480
-EndX: 484
+EndX: 485
 StartY: 0
 EndY: 10
 
@@ -481,11 +481,11 @@ StartY: 10
 EndY: 20
 
 Char: "U"
-InitialDist: 0
-Width: 5
-Whitespace: 0
+InitialDist: 1
+Width: 3
+Whitespace: 1
 StartX: 20
-EndX: 25
+EndX: 23
 StartY: 10
 EndY: 20
 
@@ -598,9 +598,9 @@ StartY: 10
 EndY: 20
 
 Char: "b"
-InitialDist: 0
+InitialDist: 1
 Width: 4
-Whitespace: 1
+Whitespace: 0
 StartX: 150
 EndX: 154
 StartY: 10
@@ -617,10 +617,10 @@ EndY: 20
 
 Char: "d"
 InitialDist: 0
-Width: 5
-Whitespace: 0
+Width: 4
+Whitespace: 1
 StartX: 170
-EndX: 175
+EndX: 174
 StartY: 10
 EndY: 20
 
@@ -652,11 +652,11 @@ StartY: 10
 EndY: 20
 
 Char: "h"
-InitialDist: 0
-Width: 5
-Whitespace: 0
+InitialDist: 1
+Width: 3
+Whitespace: 1
 StartX: 210
-EndX: 215
+EndX: 213
 StartY: 10
 EndY: 20
 
@@ -679,38 +679,38 @@ StartY: 10
 EndY: 20
 
 Char: "k"
-InitialDist: 0
-Width: 5
+InitialDist: 1
+Width: 4
 Whitespace: 0
 StartX: 240
-EndX: 245
+EndX: 244
 StartY: 10
 EndY: 20
 
 Char: "l"
-InitialDist: 1
-Width: 3
+InitialDist: 0
+Width: 4
 Whitespace: 1
 StartX: 250
-EndX: 253
+EndX: 254
 StartY: 10
 EndY: 20
 
 Char: "m"
 InitialDist: 0
-Width: 5
-Whitespace: 0
+Width: 4
+Whitespace: 1
 StartX: 260
-EndX: 265
+EndX: 264
 StartY: 10
 EndY: 20
 
 Char: "n"
-InitialDist: 0
-Width: 5
-Whitespace: 0
+InitialDist: 1
+Width: 3
+Whitespace: 1
 StartX: 270
-EndX: 275
+EndX: 273
 StartY: 10
 EndY: 20
 
@@ -724,9 +724,9 @@ StartY: 10
 EndY: 20
 
 Char: "p"
-InitialDist: 0
+InitialDist: 1
 Width: 4
-Whitespace: 1
+Whitespace: 0
 StartX: 290
 EndX: 294
 StartY: 10
@@ -734,10 +734,10 @@ EndY: 20
 
 Char: "q"
 InitialDist: 0
-Width: 5
-Whitespace: 0
+Width: 4
+Whitespace: 1
 StartX: 300
-EndX: 305
+EndX: 304
 StartY: 10
 EndY: 20
 
@@ -760,20 +760,20 @@ StartY: 10
 EndY: 20
 
 Char: "t"
-InitialDist: 0
-Width: 4
+InitialDist: 1
+Width: 3
 Whitespace: 1
 StartX: 330
-EndX: 334
+EndX: 333
 StartY: 10
 EndY: 20
 
 Char: "u"
-InitialDist: 0
-Width: 5
-Whitespace: 0
+InitialDist: 1
+Width: 3
+Whitespace: 1
 StartX: 340
-EndX: 345
+EndX: 343
 StartY: 10
 EndY: 20
 
@@ -846,6 +846,15 @@ Width: 3
 Whitespace: 1
 StartX: 420
 EndX: 423
+StartY: 10
+EndY: 20
+
+Char: "~"
+InitialDist: 0
+Width: 4
+Whitespace: 1
+StartX: 430
+EndX: 434
 StartY: 10
 EndY: 20
 

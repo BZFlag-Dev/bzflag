@@ -1,14 +1,14 @@
-NumChars: 94
+NumChars: 95
 TextureWidth: 512
 TextureHeight: 32
 TextZStep: 9
 
 Char: " "
 InitialDist: 0
-Width: 0
-Whitespace: 2
+Width: 1
+Whitespace: 1
 StartX: 0
-EndX: 0
+EndX: 1
 StartY: 0
 EndY: 9
 
@@ -23,10 +23,10 @@ EndY: 9
 
 Char: """
 InitialDist: 1
-Width: 2
-Whitespace: 1
+Width: 3
+Whitespace: 0
 StartX: 18
-EndX: 20
+EndX: 21
 StartY: 0
 EndY: 9
 
@@ -94,11 +94,11 @@ StartY: 0
 EndY: 9
 
 Char: "*"
-InitialDist: 0
-Width: 4
+InitialDist: 1
+Width: 3
 Whitespace: 0
 StartX: 90
-EndX: 94
+EndX: 93
 StartY: 0
 EndY: 9
 
@@ -141,7 +141,7 @@ EndY: 9
 Char: "/"
 InitialDist: 0
 Width: 3
-Whitespace: 0
+Whitespace: -1
 StartX: 135
 EndX: 138
 StartY: 0
@@ -158,10 +158,10 @@ EndY: 9
 
 Char: "1"
 InitialDist: 1
-Width: 4
-Whitespace: 0
+Width: 3
+Whitespace: 1
 StartX: 153
-EndX: 157
+EndX: 156
 StartY: 0
 EndY: 9
 
@@ -185,10 +185,10 @@ EndY: 9
 
 Char: "4"
 InitialDist: 1
-Width: 4
-Whitespace: 0
+Width: 5
+Whitespace: -1
 StartX: 180
-EndX: 184
+EndX: 185
 StartY: 0
 EndY: 9
 
@@ -500,37 +500,37 @@ EndY: 9
 
 Char: "W"
 InitialDist: 1
-Width: 7
-Whitespace: 0
+Width: 8
+Whitespace: -1
 StartX: 495
-EndX: 502
+EndX: 503
 StartY: 0
 EndY: 9
 
 Char: "X"
 InitialDist: 0
-Width: 6
-Whitespace: -1
+Width: 5
+Whitespace: 0
 StartX: 0
-EndX: 6
+EndX: 5
 StartY: 9
 EndY: 18
 
 Char: "Y"
 InitialDist: 0
-Width: 6
-Whitespace: -1
+Width: 5
+Whitespace: 0
 StartX: 9
-EndX: 15
+EndX: 14
 StartY: 9
 EndY: 18
 
 Char: "Z"
 InitialDist: 1
-Width: 4
-Whitespace: 0
+Width: 5
+Whitespace: -1
 StartX: 18
-EndX: 22
+EndX: 23
 StartY: 9
 EndY: 18
 
@@ -546,7 +546,7 @@ EndY: 18
 Char: "\"
 InitialDist: 0
 Width: 3
-Whitespace: 0
+Whitespace: -1
 StartX: 36
 EndX: 39
 StartY: 9
@@ -779,10 +779,10 @@ EndY: 18
 
 Char: "v"
 InitialDist: 0
-Width: 5
-Whitespace: -1
+Width: 4
+Whitespace: 0
 StartX: 270
-EndX: 275
+EndX: 274
 StartY: 9
 EndY: 18
 
@@ -797,10 +797,10 @@ EndY: 18
 
 Char: "x"
 InitialDist: 0
-Width: 5
-Whitespace: -1
+Width: 4
+Whitespace: 0
 StartX: 288
-EndX: 293
+EndX: 292
 StartY: 9
 EndY: 18
 
@@ -815,10 +815,10 @@ EndY: 18
 
 Char: "z"
 InitialDist: 1
-Width: 3
-Whitespace: 0
+Width: 4
+Whitespace: -1
 StartX: 306
-EndX: 309
+EndX: 310
 StartY: 9
 EndY: 18
 
@@ -834,7 +834,7 @@ EndY: 18
 Char: "|"
 InitialDist: 1
 Width: 1
-Whitespace: 1
+Whitespace: 0
 StartX: 324
 EndX: 325
 StartY: 9
@@ -846,6 +846,15 @@ Width: 4
 Whitespace: 0
 StartX: 333
 EndX: 337
+StartY: 9
+EndY: 18
+
+Char: "~"
+InitialDist: 1
+Width: 5
+Whitespace: 0
+StartX: 342
+EndX: 347
 StartY: 9
 EndY: 18
 
