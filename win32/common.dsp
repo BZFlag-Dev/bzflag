@@ -118,6 +118,10 @@ SOURCE=..\src\common\Flag.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\src\common\KeyManager.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\src\common\md5.cxx
 # End Source File
 # Begin Source File
@@ -207,6 +211,10 @@ SOURCE=..\include\Flag.h
 # Begin Source File
 
 SOURCE=..\include\global.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\KeyManager.h
 # End Source File
 # Begin Source File
 
