@@ -79,10 +79,9 @@ void Authentication::init(const char *address, int port, const char *password)
     com_err("bzfs:", retval, "getting credentials cache");
 
   // Getting principal identifier
-  char serverPort[8];
-  snprintf(serverPort, sizeof(serverPort), "%d", port);
-  if (cc && (retval = krb5_sname_to_principal(context, serverName, serverPort,
-					      KRB5_NT_SRV_HST, &client)))
+  char name[1024];
+  snprintf(name, sizeof(name), "%d/%s@BZFLAG.ORG", port, serverName);
+  if (cc && (retval = krb5_parse_name(context, name, &client)))
     com_err("bzfs:", retval, "getting principal name");
 
   // Initing credential cache
