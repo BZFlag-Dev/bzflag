@@ -83,7 +83,6 @@ void Teleporter::makeLinks()
   } else {
     ytxcd = 1.0f;
   }
-  printf ("w = %f, b = %f, h = %f, br = %f, ytxcd = %f\n", w, b, h, br, ytxcd);
   texcoords[0][0] = 0.0f;
   texcoords[0][1] = 0.0f;
   texcoords[1][0] = xtxcd;
