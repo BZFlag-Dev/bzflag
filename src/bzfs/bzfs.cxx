@@ -3738,53 +3738,52 @@ static void parseCommand(const char *message, int t)
   if (strncmp(message + 1, "password", 8) == 0) {
     handlePasswordCmd(t, message);
 
-  } else if ((hasPerm(t, PlayerAccessInfo::setVar) || hasPerm(t, PlayerAccessInfo::setAll)) && strncmp(message + 1, "set ", 4) == 0) {
+  } else if (strncmp(message + 1, "set ", 4) == 0) {
     handleSetCmd(t, message);
 
-  } else if ((hasPerm(t, PlayerAccessInfo::setVar) || hasPerm(t, PlayerAccessInfo::setAll)) && strncmp(message + 1, "reset", 5) == 0) {
+  } else if (strncmp(message + 1, "reset", 5) == 0) {
     handleResetCmd(t, message);
 
-  } else if (hasPerm(t, PlayerAccessInfo::shutdownServer) && strncmp(message + 1, "shutdownserver", 8) == 0) {
+  } else if (strncmp(message + 1, "shutdownserver", 8) == 0) {
     handleShutdownserverCmd(t, message);
 
-  } else if (hasPerm(t, PlayerAccessInfo::superKill) && strncmp(message + 1, "superkill", 8) == 0) {
+  } else if (strncmp(message + 1, "superkill", 8) == 0) {
     handleSuperkillCmd(t, message);
 
-  } else if (hasPerm(t, PlayerAccessInfo::endGame) && strncmp(message + 1, "gameover", 8) == 0) {
+  } else if (strncmp(message + 1, "gameover", 8) == 0) {
     handleGameoverCmd(t, message);
 
-  } else if ((hasPerm(t, PlayerAccessInfo::countdown) || clOptions->timeManualStart) &&
-	     strncmp(message + 1, "countdown", 9) == 0) {
+  } else if (strncmp(message + 1, "countdown", 9) == 0) {
     handleCountdownCmd(t, message);
 
-  } else if (hasPerm(t, PlayerAccessInfo::flagMod) && strncmp(message + 1, "flag ", 5) == 0) {
+  } else if (strncmp(message + 1, "flag ", 5) == 0) {
     handleFlagCmd(t,message);
 
-  } else if (hasPerm(t, PlayerAccessInfo::kick) && strncmp(message + 1, "kick", 4) == 0) {
+  } else if (strncmp(message + 1, "kick", 4) == 0) {
     handleKickCmd(t, message);
 
-  } else if (hasPerm(t, PlayerAccessInfo::banlist) && strncmp(message+1, "banlist", 7) == 0) {
+  } else if (strncmp(message+1, "banlist", 7) == 0) {
     handleBanlistCmd(t, message);
 
-  } else if (hasPerm(t, PlayerAccessInfo::ban) && strncmp(message+1, "ban", 3) == 0) {
+  } else if (strncmp(message+1, "ban", 3) == 0) {
     handleBanCmd(t, message);
 
-  } else if (hasPerm(t, PlayerAccessInfo::unban) && strncmp(message+1, "unban", 5) == 0) {
+  } else if (strncmp(message+1, "unban", 5) == 0) {
     handleUnbanCmd(t, message);
 
-  } else if (hasPerm(t, PlayerAccessInfo::lagwarn) && strncmp(message+1, "lagwarn",7) == 0) {
+  } else if (strncmp(message+1, "lagwarn",7) == 0) {
     handleLagwarnCmd(t, message);
 
-  } else if (hasPerm(t, PlayerAccessInfo::lagStats) && strncmp(message+1, "lagstats",8) == 0) {
+  } else if (strncmp(message+1, "lagstats",8) == 0) {
     handleLagstatsCmd(t, message);
 
-  } else if (hasPerm(t, PlayerAccessInfo::idleStats) && strncmp(message+1, "idlestats",9) == 0) {
+  } else if (strncmp(message+1, "idlestats",9) == 0) {
     handleIdlestatsCmd(t, message);
 
-  } else if (hasPerm(t, PlayerAccessInfo::flagHistory) && strncmp(message+1, "flaghistory", 11 ) == 0) {
+  } else if (strncmp(message+1, "flaghistory", 11 ) == 0) {
     handleFlaghistoryCmd(t, message);
 
-  } else if (hasPerm(t, PlayerAccessInfo::playerList) && strncmp(message+1, "playerlist", 10) == 0) {
+  } else if (strncmp(message+1, "playerlist", 10) == 0) {
     handlePlayerlistCmd(t, message);
 
   } else if (strncmp(message+1, "report", 6) == 0) {
@@ -3802,10 +3801,10 @@ static void parseCommand(const char *message, int t)
   } else if (strncmp(message + 1, "ghost", 5) == 0) {
     handleGhostCmd(t, message);
 
-  } else if (player[t].accessInfo.verified && strncmp(message + 1, "deregister", 10) == 0) {
+  } else if (strncmp(message + 1, "deregister", 10) == 0) {
     handleDeregisterCmd(t, message);
 
-  } else if (player[t].accessInfo.verified && strncmp(message + 1, "setpass", 7) == 0) {
+  } else if (strncmp(message + 1, "setpass", 7) == 0) {
     handleSetpassCmd(t, message);
 
   } else if (strncmp(message + 1, "grouplist", 9) == 0) {
@@ -3817,15 +3816,13 @@ static void parseCommand(const char *message, int t)
   } else if (strncmp(message + 1, "groupperms", 10) == 0) {
     handleGrouppermsCmd(t, message);
 
-  } else if ((hasPerm(t, PlayerAccessInfo::setPerms) || hasPerm(t, PlayerAccessInfo::setAll)) &&
-	     strncmp(message + 1, "setgroup", 8) == 0) {
+  } else if (strncmp(message + 1, "setgroup", 8) == 0) {
     handleSetgroupCmd(t, message);
 
-  } else if ((hasPerm(t, PlayerAccessInfo::setPerms) || hasPerm(t, PlayerAccessInfo::setAll)) &&
-	     strncmp(message + 1, "removegroup", 11) == 0) {
+  } else if (strncmp(message + 1, "removegroup", 11) == 0) {
     handleRemovegroupCmd(t, message);
 
-  } else if (hasPerm(t, PlayerAccessInfo::setAll) && strncmp(message + 1, "reload", 6) == 0) {
+  } else if (strncmp(message + 1, "reload", 6) == 0) {
     handleReloadCmd(t, message);
 
   } else if (strncmp(message+1, "poll",4) == 0) {
