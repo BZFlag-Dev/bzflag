@@ -829,8 +829,33 @@ static void		doKeyPlaying(const BzfKeyEvent& key, boolean pressed)
       case BzfKeyEvent::F8:
 	if (pressed) {
 	  roamView = roamingView((roamView + 1) % roamViewCount);
-	  if (!world->allowTeamFlags() && roamView==roamViewFlag)
-	    roamView = roamingView((roamView + 1) % roamViewCount);
+	  if (roamView == roamViewFlag) {
+	    const int maxFlags = world->getMaxFlags();
+	    bool found = false;
+	    for(int i = 0; i < maxFlags; i++) {
+	      const Flag& flag = world->getFlag(i);
+	      if(flag.id >= FirstTeamFlag && flag.id <= LastTeamFlag) {
+		roamTrackFlag = i;
+		found = true;
+		break;
+	      }
+	    }
+	    if(!found)
+	      roamView = roamViewFree;
+	  }
+	  else if(roamView == roamViewTrack || roamView == roamViewFollow ||
+	        roamView == roamViewFP) {
+	    bool found = false;
+	    for(int i = 0; i < maxPlayers; i++) {
+	      if(player[i] && player[i]->isAlive()) {
+		roamTrackTank = i;
+		found = true;
+		break;
+	      }
+	    }
+	    if(!found)
+	      roamView = roamViewFree;
+	  }
 	  setRoamingLabel();
 	}
 	break;
