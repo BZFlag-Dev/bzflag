@@ -330,6 +330,10 @@ SOURCE=..\..\include\PlayerState.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\include\regex.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\include\SceneDatabase.h
 # End Source File
 # Begin Source File
