@@ -207,7 +207,7 @@ float Teleporter::intersect(const Ray& r) const
 {
   // expand to include border
   return timeRayHitsBlock(r, getPosition(), getRotation(),
-			getWidth(), getBreadth(), getHeight());
+                          getWidth(), getBreadth(), getHeight());
 }
 
 

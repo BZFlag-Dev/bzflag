@@ -659,6 +659,10 @@ int MeshFace::packSize() const
 
 void MeshFace::print(std::ostream& out, const std::string& /*indent*/) const
 {
+  if (mesh == NULL) {
+    return;
+  }
+  
   int i;
   out << "  face" << std::endl;
 
@@ -710,7 +714,7 @@ void MeshFace::print(std::ostream& out, const std::string& /*indent*/) const
     out << std::endl;
   }
 
-  out << "    refmat ";
+  out << "    matref ";
   MATERIALMGR.printReference(out, bzMaterial);
   out  << std::endl;
 

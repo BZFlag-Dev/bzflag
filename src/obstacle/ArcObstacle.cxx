@@ -714,7 +714,7 @@ void ArcObstacle::print(std::ostream& out, const std::string& indent) const
   const char* sideNames[MaterialCount] =
     { "top", "bottom", "inside", "outside", "startside", "endside" };
   for (i = 0; i < MaterialCount; i++) {
-    out << "  " << sideNames[i] << " refmat ";
+    out << "  " << sideNames[i] << " matref ";
     MATERIALMGR.printReference(out, materials[i]);
     out << std::endl;
   }

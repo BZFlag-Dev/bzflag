@@ -32,6 +32,8 @@
 #include "MeshTransform.h"
 #include "FlagSceneNode.h"
 
+#include "ObstacleGroup.h"
+
 
 //
 // World
@@ -837,7 +839,7 @@ bool			World::writeWorld(std::string filename)
     if (waterLevel >= 0.0f) {
       out << "waterLevel" << std::endl;
       out << "  height " << waterLevel << std::endl;
-      out << "  refmat ";
+      out << "  matref ";
       MATERIALMGR.printReference(out, waterMaterial);
       out << std::endl;
       out << "end" << std::endl << std::endl;

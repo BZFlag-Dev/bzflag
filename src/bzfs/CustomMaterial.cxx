@@ -57,8 +57,8 @@ bool CustomMaterial::read(const char *cmd, std::istream& input)
 void CustomMaterial::write(WorldInfo * /*world*/) const
 {
   material.setName(name);
-  const BzMaterial* refmat = MATERIALMGR.addMaterial(&material);
-  int index = MATERIALMGR.getIndex(refmat);
+  const BzMaterial* matref = MATERIALMGR.addMaterial(&material);
+  int index = MATERIALMGR.getIndex(matref);
   if (index < 0) {
     std::cout << "CustomMaterial::write: material didn't register" << std::endl;
   }

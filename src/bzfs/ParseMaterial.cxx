@@ -29,7 +29,7 @@ bool parseMaterials(const char* cmd, std::istream& input,
   int i;
   error = false;
 
-  if (strcasecmp(cmd, "refmat") == 0) {
+  if (strcasecmp(cmd, "matref") == 0) {
     std::string name;
     if (!(input >> name)) {
       std::cout << "missing " << cmd << " parameters" << std::endl;
