@@ -1,15 +1,14 @@
 # Process this file with autoconf to produce a configure script.
 
-# version number: aabbccddd, aa=major, bb=minor, cc=revision, ddd=build.
-# increase build number for every potentially released build.
-# must change this in MSDev project, too.
-
 AC_INIT(src/bzflag/bzflag.cxx)
 AM_INIT_AUTOMAKE(bzflag, 1.7g1)
 AM_CONFIG_HEADER(include/config.h)
 
-VERSIONID=1.7g1
-AC_SUBST(VERSIONID)
+# version number: aabbccddd, aa=major, bb=minor, cc=revision, ddd=build.
+# increase build number for every potentially released build.
+# must change this in AM_INIT_AUTOMAKE and MSDev project too.
+VERSIONNUM=10707001
+AC_SUBST(VERSIONNUM)
 
 #Checks for programs.
 AC_PROG_MAKE_SET
@@ -134,7 +133,7 @@ esac
 INSTALL_DATA_DIR="\\\"\${datadir}/bzflag\\\""
 AC_SUBST(INSTALL_DATA_DIR)
 
-AC_DEFINE_UNQUOTED(BZVERSION, $VERSION, [Bzflag internal version])
+AC_DEFINE_UNQUOTED(BZVERSION, $VERSIONNUM, [Bzflag internal version])
 
 AC_ARG_ENABLE(timebomb, [  --enable-timebomb       build exp Date])
 if test x$enable_timebomb = xyes; then
