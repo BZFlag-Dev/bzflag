@@ -19,6 +19,7 @@
 #include <string>
 #include <vector>
 
+#include "TextUtils.h"
 
 /** This is an abstract base class for all different option parsers.
     The idea is that you register a Parser object for each command line option,
@@ -105,6 +106,24 @@ public:
   }
 protected:
   bool& var;
+};
+
+/** This is a specialization for @c std::vector<std::string> variables.
+    It splits the parameter at ',' characters and puts the tokens in the
+    vector. */
+template<>
+class VariableParser<std::vector<std::string> > : public Parser {
+public:
+  VariableParser(std::vector<std::string>& variable, 
+		 const std::string& usageText,
+		 const std::string& helpText)
+    : Parser(usageText, helpText), var(variable) { }
+  virtual int parse(char** argv) {
+    var = string_util::tokenize(argv[0], ",");
+    return 1;
+  }
+protected:
+  std::vector<std::string>& var;
 };
 
 
