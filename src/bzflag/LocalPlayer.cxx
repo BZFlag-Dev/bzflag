@@ -276,16 +276,21 @@ void			LocalPlayer::doUpdateMotion(float dt)
       // full control
       float speed = desiredSpeed;
 
-      /* the larger the oldAngVel contribution, the more slowly an
-       * angular velocity converges to the desired "max" velocity; the
-       * contribution of the desired and old velocity should add up to
-       * one for a linear convergence rate.
-       */
-      newAngVel = oldAngVel*0.8f + desiredAngVel*0.2f;
-
-      // instant stop
-      if ((oldAngVel * desiredAngVel < 0.0f) || (NEAR_ZERO(desiredAngVel, ZERO_TOLERANCE))) {
-	newAngVel = desiredAngVel;
+      if (keyboardMoving) {
+        /* the larger the oldAngVel contribution, the more slowly an
+         * angular velocity converges to the desired "max" velocity; the
+         * contribution of the desired and old velocity should add up to
+         * one for a linear convergence rate.
+         */
+        newAngVel = oldAngVel*0.8f + desiredAngVel*0.2f;
+  
+        // instant stop
+        if ((oldAngVel * desiredAngVel < 0.0f) || (NEAR_ZERO(desiredAngVel, ZERO_TOLERANCE))) {
+          newAngVel = desiredAngVel;
+        }
+      }
+      else { // mouse
+        newAngVel = desiredAngVel;
       }
 
       // limit acceleration
