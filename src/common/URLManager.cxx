@@ -15,9 +15,6 @@
 #define _WINSOCK2API_
 #endif
 
-// bzflag common header
-#include "common.h"
-
 // class interface header
 #include "URLManager.h"
 
