@@ -1,6 +1,7 @@
 INCLUDES = -I../bzflag
 
 MAINTAINERCLEANFILES = \
+	ServerLink.cxx \
 	Makefile.in
 
 if BZADMIN_INCLUDED
@@ -10,7 +11,7 @@ endif
 if HAVE_CURSES
 CURSES_SRC = CursesUI.h CursesUI.cxx
 else
-CURSES_SRC = 
+CURSES_SRC =
 
 EXTRA_bzadmin_SOURCES = \
 	CursesUI.h \
@@ -36,8 +37,9 @@ bzadmin_SOURCES = \
 	bzadmin.cxx
 
 # ugly hack
-all-local:
-	cd @top_srcdir@/src/bzadmin; rm ServerLink.cxx; $(LN_S) ../bzflag/ServerLink.cxx .
-
+#all-local: ServerLink.cxx
+#
+ServerLink.cxx: ../bzflag/ServerLink.cxx
+	cp -a ../bzflag/ServerLink.cxx .
 
 LDADD = ../net/libNet.a ../common/libCommon.a @CURSES_LIB@
