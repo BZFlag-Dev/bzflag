@@ -402,6 +402,9 @@ copy ..\..\src\bzfs\debug\*.exe ..\..\*.exe
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath="..\..\src\bzfs\DelayQueue.cxx">
+			</File>
+			<File
 				RelativePath="..\..\src\bzfs\EntryZones.cxx">
 				<FileConfiguration
 					Name="Release|Win32">
@@ -490,6 +493,9 @@ copy ..\..\src\bzfs\debug\*.exe ..\..\*.exe
 			<Filter
 				Name="world"
 				Filter="">
+				<File
+					RelativePath="..\..\src\bzfs\WorldFileLocation.cxx">
+				</File>
 				<File
 					RelativePath="..\..\src\bzfs\WorldFileObject.cxx">
 					<FileConfiguration
@@ -630,6 +636,9 @@ copy ..\..\src\bzfs\debug\*.exe ..\..\*.exe
 				RelativePath="..\..\src\bzfs\CustomZone.h">
 			</File>
 			<File
+				RelativePath="..\..\src\bzfs\DelayQueue.h">
+			</File>
+			<File
 				RelativePath="..\..\src\bzfs\EntryZones.h">
 			</File>
 			<File
@@ -697,6 +706,9 @@ copy ..\..\src\bzfs\debug\*.exe ..\..\*.exe
 			</File>
 			<File
 				RelativePath="..\include\WordFilter.h">
+			</File>
+			<File
+				RelativePath="..\..\src\bzfs\WorldFileLocation.h">
 			</File>
 			<File
 				RelativePath="..\..\src\bzfs\WorldFileObject.h">
