@@ -152,7 +152,7 @@ BZFlag 1.10.4  "not a smurf"
 * Allow user to define quickMessages via the menu system - Frank Thilo
 * Defaults vars are written to config but commented out - Dave Brosius
 * Added -show and -hide options to bzadmin for messages - Lars Luthman
-* Added support for more message types to bzadmin - lan56 @ SF, Lars Luthman
+* Added support for more message types to bzadmin - Ian Agar, Lars Luthman
 * Added menu w/ BZDB editor and playerlist to bzadmin curses UI - Lars Luthman
 * can freeze tod in client, if allowed, via -time hh:mm:ss - Tupone Alfredo
 * Allow variable number team flags per team with +f bzfs option - Dave Brosius
