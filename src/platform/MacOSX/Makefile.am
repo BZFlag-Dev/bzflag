@@ -1,5 +1,3 @@
-SUBDIRS = English.lproj
-
 libMac_a_SOURCES =			\
 	MacPlatformFactory.cxx		\
 	MacPlatformFactory.h		\
@@ -24,5 +22,4 @@ AM_CPPFLAGS = $(SDL_CFLAGS) -I$(top_srcdir)/src/platform
 
 EXTRA_DIST =				\
 	MacBZFlag.icns			\
-	main.m				\
 	mkplist.cxx
