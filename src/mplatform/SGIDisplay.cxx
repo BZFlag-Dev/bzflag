@@ -13,7 +13,7 @@
 #include "SGIDisplay.h"
 
 #if defined(USE_XSGIVC_EXT)
-
+#include <XWindow.h>
 #include <stdlib.h>
 
 typedef int				(*XErrorHandler_t)(Display*, XErrorEvent*);
