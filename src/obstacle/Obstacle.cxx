@@ -78,7 +78,7 @@ float			Obstacle::getHitNormal(
 
   // check time to intersect roof (on the way down;  don't care about way up)
   if (pos2[2] < pos1[2]) {
-    const float t = (pos1[2] - oHeight) / (pos1[2] - pos2[2]);
+    const float t = (pos1[2] - oHeight - oPos[2]) / (pos1[2] - pos2[2]);
     if (t >= 0.0f && t <= minTime) {
       minTime = t;
       bestSide = 4;

@@ -24,8 +24,15 @@ const int		MaxShots = 10;
 #define	FD_SETSIZE	(MaxPlayers + 10)
 #endif /* defined(__sgi) */
 
+// must be before network.h because that defines a close() macro which
+// messes up fstreams.  luckily, we don't need to call the close() method
+// on any fstream.#include "bzfio.h"
+#include "bzfio.h"
+#include <fstream.h>
+
 // must be before windows.h
 #include "network.h"
+#include <iomanip.h>
 
 #if defined(_WIN32)
 #include <windows.h>
@@ -33,8 +40,6 @@ const int		MaxShots = 10;
 #define sleep(_x)	Sleep(1000 * (_x))
 #endif /* defined(_WIN32) */
 
-#include "bzfio.h"
-#include <iomanip.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -173,6 +178,10 @@ class WorldInfo {
     int			numBoxes;
     int			numPyramids;
     int			numTeleporters;
+    int         sizeWalls;
+    int         sizeBoxes;
+    int         sizePyramids;
+    int         sizeTeleporters;
     Obstacle*		walls;
     Obstacle*		boxes;
     Obstacle*		pyramids;
@@ -260,11 +269,180 @@ static char*		worldDatabase = NULL;
 static int		worldDatabaseSize = 0;
 static float		basePos[NumTeams][3];
 static float		safetyBasePos[NumTeams][3];
+static const char*     worldFile = NULL;
 
 static void		stopPlayerPacketRelay();
 static void		removePlayer(int playerIndex);
 static void		resetFlag(int flagIndex);
 static void		releaseRadio(int playerIndex);
+
+//
+// types for reading world files
+//
+
+class WorldFileObject {
+  public:
+    WorldFileObject() { }
+    virtual ~WorldFileObject() { }
+
+    virtual bool       read(const char* cmd, istream&) = 0;
+    virtual void       write(WorldInfo*) const = 0;
+};
+
+class WorldFileObstacle : public WorldFileObject {
+  public:
+    WorldFileObstacle();
+    virtual bool       read(const char* cmd, istream&);
+
+  protected:
+    float              posX;
+    float              posY;
+    float              posZ;
+    float              rotation;
+    float              sizeX;
+    float              sizeY;
+    float              sizeZ;
+};
+
+WorldFileObstacle::WorldFileObstacle()
+{
+   posX = 0.0f;
+   posY = 0.0f;
+   posZ = 0.0f;
+   rotation = 0.0f;
+   sizeX = 1.0f;
+   sizeY = 1.0f;
+   sizeZ = 1.0f;
+}
+
+bool                   WorldFileObstacle::read(
+                               const char* cmd, istream& input)
+{
+  if (strcmp(cmd, "position") == 0)
+    input >> posX >> posY >> posZ;
+  else if (strcmp(cmd, "rotation") == 0)
+    input >> rotation;
+  else if (strcmp(cmd, "size") == 0)
+    input >> sizeX >> sizeY >> sizeZ;
+  else
+    return False;
+  return True;
+}
+
+class CustomBox : public WorldFileObstacle {
+  public:
+    CustomBox();
+    virtual void       write(WorldInfo*) const;
+};
+
+CustomBox::CustomBox()
+{
+   sizeX = BoxBase;
+   sizeY = BoxBase;
+   sizeZ = BoxHeight;
+}
+
+void                   CustomBox::write(WorldInfo* world) const
+{
+    world->addBox(posX, posY, posZ, rotation, sizeX, sizeY, sizeZ);
+}
+
+class CustomPyramid : public WorldFileObstacle {
+  public:
+    CustomPyramid();
+    virtual void       write(WorldInfo*) const;
+};
+
+CustomPyramid::CustomPyramid()
+{
+   sizeX = PyrBase;
+   sizeY = PyrBase;
+   sizeZ = PyrHeight;
+}
+
+void                   CustomPyramid::write(WorldInfo* world) const
+{
+    world->addPyramid(posX, posY, posZ, rotation, sizeX, sizeY, sizeZ);
+}
+
+class CustomGate : public WorldFileObstacle {
+  public:
+    CustomGate();
+    virtual bool       read(const char* cmd, istream&);
+    virtual void       write(WorldInfo*) const;
+
+  protected:
+    float              border;
+};
+
+CustomGate::CustomGate()
+{
+   sizeX = 0.5f * TeleWidth;
+   sizeY = TeleBreadth;
+   sizeZ = 2.0f * TeleHeight;
+   border = TeleWidth;
+}
+
+bool                   CustomGate::read(const char* cmd, istream& input)
+{
+  if (strcmp(cmd, "border") == 0)
+    input >> border;
+  else
+    return WorldFileObstacle::read(cmd, input);
+  return True;
+}
+
+void                   CustomGate::write(WorldInfo* world) const
+{
+    world->addTeleporter(posX, posY, posZ, rotation, sizeX, sizeY, sizeZ, border);
+}
+
+class CustomLink : public WorldFileObject {
+  public:
+    CustomLink();
+    virtual bool       read(const char* cmd, istream&);
+    virtual void       write(WorldInfo*) const;
+
+  protected:
+    int                        from;
+    int                        to;
+};
+
+CustomLink::CustomLink()
+{
+   from = 0;
+   to = 0;
+}
+
+bool                   CustomLink::read(const char* cmd, istream& input)
+{
+  if (strcmp(cmd, "from") == 0)
+    input >> from;
+  else if (strcmp(cmd, "to") == 0)
+    input >> to;
+  else
+    return False;
+  return True;
+}
+
+void                   CustomLink::write(WorldInfo* world) const
+{
+    world->addLink(from, to);
+}
+
+//
+// list of world file objects
+//
+
+BZF_DEFINE_ALIST(WorldFileObjectList, WorldFileObject*);
+
+static void            emptyWorldFileObjectList(WorldFileObjectList& list)
+{
+  const int n = list.getLength();
+  for (int i = 0; i < n; ++i)
+    delete list[i];
+  list.removeAll();
+}
 
 //
 // WorldInfo
@@ -275,6 +453,10 @@ WorldInfo::WorldInfo() :
 				numBoxes(0),
 				numPyramids(0),
 				numTeleporters(0),
+                sizeWalls(0),
+                sizeBoxes(0),
+                sizePyramids(0),
+                sizeTeleporters(0),
 				walls(NULL),
 				boxes(NULL),
 				pyramids(NULL),
@@ -295,7 +477,10 @@ WorldInfo::~WorldInfo()
 void			WorldInfo::addWall(float x, float y, float z,
 						float r, float w, float h)
 {
-  walls = (Obstacle *)realloc(walls, sizeof(Obstacle) * (numWalls + 1));
+  if (numWalls >= sizeWalls) {
+    sizeWalls = (sizeWalls == 0) ? 16 : 2 * sizeWalls;
+    walls = (Obstacle *)realloc(walls, sizeof(Obstacle) * sizeWalls);
+  }
   walls[numWalls].pos[0] = x;
   walls[numWalls].pos[1] = y;
   walls[numWalls].pos[2] = z;
@@ -309,7 +494,10 @@ void			WorldInfo::addWall(float x, float y, float z,
 void			WorldInfo::addBox(float x, float y, float z, float r,
 					float w, float d, float h)
 {
-  boxes = (Obstacle *)realloc(boxes, sizeof(Obstacle) * (numBoxes + 1));
+  if (numBoxes >= sizeBoxes) {
+    sizeBoxes = (sizeBoxes == 0) ? 16 : 2 * sizeBoxes;
+    boxes = (Obstacle *)realloc(boxes, sizeof(Obstacle) * sizeBoxes);
+  }
   boxes[numBoxes].pos[0] = x;
   boxes[numBoxes].pos[1] = y;
   boxes[numBoxes].pos[2] = z;
@@ -323,7 +511,10 @@ void			WorldInfo::addBox(float x, float y, float z, float r,
 void			WorldInfo::addPyramid(float x, float y, float z,
 					float r, float w, float d, float h)
 {
-  pyramids = (Obstacle *)realloc(pyramids, sizeof(Obstacle) * (numPyramids + 1));
+  if (numPyramids >= sizePyramids) {
+    sizePyramids = (sizePyramids == 0) ? 16 : 2 * sizePyramids;
+    pyramids = (Obstacle *)realloc(pyramids, sizeof(Obstacle) * sizePyramids);
+  }
   pyramids[numPyramids].pos[0] = x;
   pyramids[numPyramids].pos[1] = y;
   pyramids[numPyramids].pos[2] = z;
@@ -337,7 +528,10 @@ void			WorldInfo::addPyramid(float x, float y, float z,
 void			WorldInfo::addTeleporter(float x, float y, float z,
 				float r, float w, float d, float h, float b)
 {
-  teleporters = (Teleporter *)realloc(teleporters, sizeof(Teleporter) * (numTeleporters + 1));
+  if (numTeleporters >= sizeTeleporters) {
+    sizeTeleporters = (sizeTeleporters == 0) ? 16 : 2 * sizeTeleporters;
+    teleporters = (Teleporter *)realloc(teleporters, sizeof(Teleporter) * sizeTeleporters);
+  }
   teleporters[numTeleporters].pos[0] = x;
   teleporters[numTeleporters].pos[1] = y;
   teleporters[numTeleporters].pos[2] = z;
@@ -1226,6 +1420,162 @@ static void		relayPlayerPacket(int index,
       pwrite(i, rawbuf, len + 4);
 }
 
+static istream&                readToken(istream& input, char* buffer, int n)
+{
+  int c;
+
+  // skip whitespace
+  while (input.good() && (c = input.get()) != -1 && isspace(c) && c != '\n')
+    ;
+
+  // read up to whitespace or n - 1 characters into buffer
+  int i = 0;
+  if (c != -1 && c != '\n') {
+    buffer[i++] = c;
+    while (input.good() && i < n - 1 && (c = input.get()) != -1 && !isspace(c))
+      buffer[i++] = (char)c;
+  }
+
+  // terminate string
+  buffer[i] = 0;
+
+  // put back last character we didn't use
+  if (c != -1 && isspace(c))
+    input.putback(c);
+
+  return input;
+}
+
+static boolean         readWorldStream(istream& input,
+                               const char* location,
+                               WorldFileObjectList& list)
+{
+  int line = 1;
+  char buffer[1024];
+  WorldFileObject* object    = NULL;
+  WorldFileObject* newObject = NULL;
+  while (!input.eof())
+  {
+    // watch out for starting a new object when one is already in progress
+    if (newObject) {
+      if (object) {
+       cerr << location << "(" << line << ") : " <<
+                       "discarding incomplete object" << endl;
+       delete object;
+      }
+      object = newObject;
+      newObject = NULL;
+    }
+
+    // read first token but do not skip newlines
+    readToken(input, buffer, sizeof(buffer));
+    if (strcmp(buffer, "") == 0) {
+      // ignore blank line
+    }
+
+    else if (strcmp(buffer, "#") == 0) {
+      // ignore comment
+    }
+
+    else if (strcmp(buffer, "end") == 0) {
+      if (object) {
+       list.append(object);
+       object = NULL;
+      }
+      else {
+       cerr << location << "(" << line << ") : " <<
+                       "unexpected \"end\" token" << endl;
+       return False;
+      }
+    }
+
+    else if (strcmp(buffer, "box") == 0)
+      newObject = new CustomBox;
+
+    else if (strcmp(buffer, "pyramid") == 0)
+      newObject = new CustomPyramid();
+
+    else if (strcmp(buffer, "teleporter") == 0)
+      newObject = new CustomGate();
+
+    else if (strcmp(buffer, "link") == 0)
+      newObject = new CustomLink();
+
+    else if (object) {
+      if (!object->read(buffer, input)) {
+       // unknown token
+       cerr << location << "(" << line << ") : " <<
+                       "invalid object parameter \"" << buffer << "\"" << endl;
+       delete object;
+       return False;
+      }
+    }
+
+    // filling the current object
+    else {
+      // unknown token
+      cerr << location << "(" << line << ") : " <<
+                       "invalid object type \"" << buffer << "\"" << endl;
+      delete object;
+      return False;
+    }
+
+    // discard remainder of line
+    while (input.good() && input.peek() != '\n')
+       input.get(buffer, sizeof(buffer));
+    input.getline(buffer, sizeof(buffer));
+    ++line;
+  }
+
+  if (object) {
+    cerr << location << "(" << line << ") : " <<
+                       "missing \"end\" token" << endl;
+    delete object;
+    return False;
+  }
+
+  return True;
+}
+
+static WorldInfo*      defineWorldFromFile(const char* filename)
+{
+  // open file
+  ifstream input(filename, ios::in | ios::nocreate);
+  if (!input) {
+    cerr << "could not find bzflag world file : " << filename << endl;
+    return NULL;
+  }
+
+  // create world object
+  world = new WorldInfo;
+  if (!world)
+    return NULL;
+
+  // read file
+  WorldFileObjectList list;
+  if (!readWorldStream(input, filename, list)) {
+    emptyWorldFileObjectList(list);
+    delete world;
+    return NULL;
+  }
+
+  // make walls
+  world->addWall(0.0f, 0.5f * WorldSize, 0.0f, 1.5f * M_PI, 0.5f * WorldSize, WallHeight);
+  world->addWall(0.5f * WorldSize, 0.0f, 0.0f, M_PI, 0.5f * WorldSize, WallHeight);
+  world->addWall(0.0f, -0.5f * WorldSize, 0.0f, 0.5f * M_PI, 0.5f * WorldSize, WallHeight);
+  world->addWall(-0.5f * WorldSize, 0.0f, 0.0f, 0.0f, 0.5f * WorldSize, WallHeight);
+
+  // add objects
+  const int n = list.getLength();
+  for (int i = 0; i < n; ++i)
+    list[i]->write(world);
+
+  // clean up
+  emptyWorldFileObjectList(list);
+  return world;
+}
+
+ 
 static WorldInfo*	defineTeamWorld()
 {
   world = new WorldInfo();
@@ -1522,12 +1872,23 @@ static boolean		defineWorld()
   delete[] worldDatabase;
 
   // make world and add buildings
-  if (gameStyle & TeamFlagGameStyle)
-    world = defineTeamWorld();
-  else
-    world = defineRandomWorld();
-  if (!world) return False;
-
+   if (gameStyle & TeamFlagGameStyle)
+   {
+      world = defineTeamWorld();
+   }
+   else if (worldFile)
+   {
+      world = defineWorldFromFile(worldFile);
+   }
+   else
+   {
+      world = defineRandomWorld();
+   }
+   if (world == NULL)
+   {
+      return False;
+   }
+ 
   // package up world
   world->packDatabase();
   // now get world packaged for network transmission
@@ -2799,7 +3160,8 @@ static const char*	usageString =
 #ifdef TIMELIMIT
 "[-time <seconds>] "
 #endif
-"[-ttl <ttl>]";
+"[-ttl <ttl>]"
+"[-world <filename>]";
 
 static void		printVersion(ostream& out)
 {
@@ -2874,6 +3236,7 @@ static void		extraUsage(const char* pname)
   cout << "\t -time: set time limit on each game" << endl;
 #endif
   cout << "\t -ttl: time-to-live for pings (default=" << pingTTL << ")" << endl;
+  cout << "\t -world: world file to load" << endl;
   cout << "\nFlag codes:" << endl;
   for (int f = int(FirstSuperFlag); f <= int(LastSuperFlag); f++)
     cout << "\t " << setw(2) << Flag::getAbbreviation(FlagId(f)) <<
@@ -2996,7 +3359,14 @@ static void		parse(int argc, char** argv)
   // parse command line
   int playerCountArg = 0;
   for (i = 1; i < argc; i++) {
-    if (strcmp(argv[i], "+f") == 0) {
+      if (strcmp(argv[i], "-world") == 0) {
+         if (++i == argc) {
+                cerr << "argument expected for -world" << endl;
+                usage(argv[0]);
+         }
+         worldFile = argv[i];
+      }
+      else if (strcmp(argv[i], "+f") == 0) {
       // add required flag
       if (++i == argc) {
 	cerr << "argument expected for +f" << endl;
