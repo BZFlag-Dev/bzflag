@@ -10,6 +10,11 @@ is quite easy.
 3. The binary should be in each project's corresponding main source
    directory, such as src/bzflag/ for BZFlag client.
 
+The latest version of Dev-C++ has been used to create and maintain these project
+files, so older versions may not necessarily work. The version of MinGW32 that Dev-C++
+uses shouldn't matter as long as it is reasonably up to date (at this time, 3.2.x is
+a good minimum for best performance, let alone error less compilation).
+
 SDL is needed for the current building style, which is considerably smaller
 than DirectX SDK, and is available from:
 
