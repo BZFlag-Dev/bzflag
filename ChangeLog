@@ -2,6 +2,8 @@
 			     BZFlag release notes
 * added kill messages as an option to bzadmin - Lars Luthman
 * let genocided players spawn again - Lars Luthman
+* auto team is now handled solely in the server - Frank Thilo
+* increase averaging for jitter and loss values in lagstats - Frank Thilo
 * mrtg script updated - Tim Riker
 
 BZFlag 1.10.0 "Break the world" (was 1.9.x)
