@@ -256,14 +256,13 @@ if test x$enable_timebomb = xyes; then
 fi
 
 AC_ARG_WITH(SDL, [  --with-SDL              use Simple DirectMedia Layer])
-no_sdl=yes
 if test x$with_SDL = xyes; then
-  AM_PATH_SDL(, no_sdl=no)
+  AM_PATH_SDL(,, with_SDL=no)
 fi
-if test no_sdl != yes; then
+if test x$with_SDL = xyes; then
   AC_DEFINE(HAVE_SDL, 1, [Using SDL])
 fi
-AM_CONDITIONAL(HAVE_SDL, test no_sdl != yes)
+AM_CONDITIONAL(HAVE_SDL, test x$with_SDL = yes)
 
 AC_ARG_ENABLE(debug, [  --enable-debug          turn on debugging])
 AM_CONDITIONAL(DEBUG, test x$enable_debug = xyes)
