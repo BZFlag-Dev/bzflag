@@ -21,7 +21,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\include,..\..\win32"
+				AdditionalIncludeDirectories="..\..\include,..\..\win32,.\"
 				PreprocessorDefinitions="_WINDOWS;WIN32;_DEBUG"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -38,7 +38,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="ws2_32.lib dsound.lib winmm.lib glu32.lib opengl32.lib odbc32.lib odbccp32.lib"
-				OutputFile=".\..\..\src\bzflag\debug/bzflag.exe"
+				OutputFile="..\..\src\bzflag\debug/bzflag.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="TRUE"
 				GenerateDebugInformation="TRUE"
@@ -90,7 +90,7 @@ copy debug\*.pdb ..\..\*.pdb
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				InlineFunctionExpansion="1"
-				AdditionalIncludeDirectories="..\..\include,..\..\win32"
+				AdditionalIncludeDirectories="..\..\include,..\..\win32,.\"
 				PreprocessorDefinitions="_WINDOWS;WIN32;NDEBUG"
 				StringPooling="TRUE"
 				RuntimeLibrary="0"
@@ -107,7 +107,7 @@ copy debug\*.pdb ..\..\*.pdb
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="ws2_32.lib dsound.lib winmm.lib glu32.lib opengl32.lib odbc32.lib odbccp32.lib"
-				OutputFile="..\..\..\src\bzflag\bzflag.exe"
+				OutputFile="..\..\src\bzflag\bzflag.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
 				ProgramDatabaseFile="../src/bzflag/bzflag.pdb"

@@ -60,6 +60,9 @@
 		<File
 			RelativePath="..\..\man\bzfs.6s">
 		</File>
+		<File
+			RelativePath="..\..\include\global.h">
+		</File>
 	</Files>
 	<Globals>
 	</Globals>

@@ -19,11 +19,11 @@
  * VC++ helps us out here by treating typedef as #define
  * If we've got a socklen_t typedefed, define HAVE_SOCKLEN_T to
  * avoid #define'ing it in common.h */
-#ifndef _VC_NET
-	#if defined socklen_t
-		#define HAVE_SOCKELEN_T
-	#endif
+
+#ifndef socklen_t
+	#define socklen_t int
 #endif
+
 
 /* Time Bomb expiration */
 /* #undef TIME_BOMB */
@@ -42,10 +42,10 @@
 
 // define our OS
 #ifndef BZ_BUILD_OS
-#ifdef _DEBUG
-#define BZ_BUILD_OS			"W32VCD"
-#else
-#define BZ_BUILD_OS			"W32VC"
-#endif
-#endif
+	#ifdef _DEBUG
+		#define BZ_BUILD_OS			"W32VC6D"
+	#else
+		#define BZ_BUILD_OS			"W32VC6"
+	#endif //_DEBUG
+#endif //BZ_BUILD_OS
 

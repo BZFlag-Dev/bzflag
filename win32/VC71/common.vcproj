@@ -21,8 +21,8 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\include,..\..\win32"
-				PreprocessorDefinitions="WIN32;_DEBUG;_LIB"
+				AdditionalIncludeDirectories="..\..\include,..\..\win32,.\"
+				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;_VC_NET"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
 				PrecompiledHeaderFile=".\Debug/common.pch"
@@ -71,8 +71,8 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				InlineFunctionExpansion="1"
-				AdditionalIncludeDirectories="..\..\include,..\..\win32"
-				PreprocessorDefinitions="WIN32;NDEBUG;_LIB"
+				AdditionalIncludeDirectories="..\..\include,..\..\win32,.\"
+				PreprocessorDefinitions="WIN32;NDEBUG;_LIB;_VC_NET"
 				StringPooling="TRUE"
 				RuntimeLibrary="0"
 				EnableFunctionLevelLinking="TRUE"
@@ -521,91 +521,91 @@
 			Name="Header Files"
 			Filter="h">
 			<File
-				RelativePath="..\include\Address.h">
+				RelativePath="..\..\include\Address.h">
 			</File>
 			<File
-				RelativePath="..\include\Bundle.h">
+				RelativePath="..\..\include\Bundle.h">
 			</File>
 			<File
-				RelativePath="..\include\BundleMgr.h">
+				RelativePath="..\..\include\BundleMgr.h">
 			</File>
 			<File
-				RelativePath="..\include\BZDBCache.h">
+				RelativePath="..\..\include\BZDBCache.h">
 			</File>
 			<File
-				RelativePath="..\include\bzfio.h">
+				RelativePath="..\..\include\bzfio.h">
 			</File>
 			<File
-				RelativePath="..\include\bzsignal.h">
+				RelativePath="..\..\include\bzsignal.h">
 			</File>
 			<File
-				RelativePath="..\include\CallbackList.h">
+				RelativePath="..\..\include\CallbackList.h">
 			</File>
 			<File
-				RelativePath="..\include\CommandManager.h">
+				RelativePath="..\..\include\CommandManager.h">
 			</File>
 			<File
-				RelativePath="..\include\common.h">
+				RelativePath="..\..\include\common.h">
 			</File>
 			<File
-				RelativePath="config.h">
+				RelativePath=".\config.h">
 			</File>
 			<File
-				RelativePath="..\include\ConfigFileManager.h">
+				RelativePath="..\..\include\ConfigFileManager.h">
 			</File>
 			<File
-				RelativePath="..\include\ErrorHandler.h">
+				RelativePath="..\..\include\ErrorHandler.h">
 			</File>
 			<File
-				RelativePath="..\include\FileManager.h">
+				RelativePath="..\..\include\FileManager.h">
 			</File>
 			<File
-				RelativePath="..\include\Flag.h">
+				RelativePath="..\..\include\Flag.h">
 			</File>
 			<File
-				RelativePath="..\include\global.h">
+				RelativePath="..\..\include\global.h">
 			</File>
 			<File
-				RelativePath="..\include\KeyManager.h">
+				RelativePath="..\..\include\KeyManager.h">
 			</File>
 			<File
-				RelativePath="..\include\md5.h">
+				RelativePath="..\..\include\md5.h">
 			</File>
 			<File
-				RelativePath="..\include\Pack.h">
+				RelativePath="..\..\include\Pack.h">
 			</File>
 			<File
-				RelativePath="..\include\PlayerState.h">
+				RelativePath="..\..\include\PlayerState.h">
 			</File>
 			<File
-				RelativePath="..\include\SceneDatabase.h">
+				RelativePath="..\..\include\SceneDatabase.h">
 			</File>
 			<File
-				RelativePath="..\include\ShotUpdate.h">
+				RelativePath="..\..\include\ShotUpdate.h">
 			</File>
 			<File
-				RelativePath="..\include\StateDatabase.h">
+				RelativePath="..\..\include\StateDatabase.h">
 			</File>
 			<File
-				RelativePath="..\include\Team.h">
+				RelativePath="..\..\include\Team.h">
 			</File>
 			<File
-				RelativePath="..\include\TextUtils.h">
+				RelativePath="..\..\include\TextUtils.h">
 			</File>
 			<File
-				RelativePath="..\include\TimeBomb.h">
+				RelativePath="..\..\include\TimeBomb.h">
 			</File>
 			<File
-				RelativePath="..\include\TimeKeeper.h">
+				RelativePath="..\..\include\TimeKeeper.h">
 			</File>
 			<File
-				RelativePath="..\include\version.h">
+				RelativePath="..\..\include\version.h">
 			</File>
 			<File
-				RelativePath="..\include\VotingBooth.h">
+				RelativePath="..\..\include\VotingBooth.h">
 			</File>
 			<File
-				RelativePath="..\include\WordFilter.h">
+				RelativePath="..\..\include\WordFilter.h">
 			</File>
 		</Filter>
 	</Files>

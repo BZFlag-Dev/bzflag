@@ -24,7 +24,7 @@
 	#pragma warning(disable: 4355)
 #endif
 
-#include <config.h>
+#include "config.h"
 
 #include <string>
 #include <sstream>
@@ -53,10 +53,7 @@
 #define strcasecmp _stricmp
 #define strncasecmp _strnicmp
 #endif
-
-#ifndef HAVE_SOCKELEN_T
-#define socklen_t int
-#endif
+\
 
 #include <assert.h>
 #include <stddef.h>
