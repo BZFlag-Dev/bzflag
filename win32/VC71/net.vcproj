@@ -223,34 +223,34 @@
 			Name="Header Files"
 			Filter="h;hpp;hxx;hm;inl">
 			<File
-				RelativePath="..\include\Address.h">
+				RelativePath="..\..\include\Address.h">
 			</File>
 			<File
-				RelativePath="..\include\bzfio.h">
+				RelativePath="..\..\include\bzfio.h">
 			</File>
 			<File
-				RelativePath="..\include\common.h">
+				RelativePath="..\..\include\common.h">
 			</File>
 			<File
-				RelativePath="..\include\ErrorHandler.h">
+				RelativePath="..\..\include\ErrorHandler.h">
 			</File>
 			<File
-				RelativePath="..\include\global.h">
+				RelativePath="..\..\include\global.h">
 			</File>
 			<File
-				RelativePath="..\include\multicast.h">
+				RelativePath="..\..\include\multicast.h">
 			</File>
 			<File
-				RelativePath="..\include\network.h">
+				RelativePath="..\..\include\network.h">
 			</File>
 			<File
-				RelativePath="..\include\Pack.h">
+				RelativePath="..\..\include\Pack.h">
 			</File>
 			<File
-				RelativePath="..\include\Ping.h">
+				RelativePath="..\..\include\Ping.h">
 			</File>
 			<File
-				RelativePath="..\include\TimeKeeper.h">
+				RelativePath="..\..\include\TimeKeeper.h">
 			</File>
 		</Filter>
 	</Files>
