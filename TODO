@@ -7,6 +7,9 @@ THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
 
 THESE ARE LOWER PRIORITY
 
+* when game is over, autoboot everyone after some time, so server cannot be
+  blocked forever by one player just sitting there.
+
 * Use listserver to give global announce (e.g. New version released) to client
   & possibly server)
 
