@@ -1,5 +1,8 @@
 # BZFlag fink info file
 #
+# note: this is a fink info file, not a GNU info file
+# /me curses re-use of file extensions
+#
 # Copyright (c) 1993 - 2004 Tim Riker
 #
 # This package is free software;  you can redistribute it and/or
