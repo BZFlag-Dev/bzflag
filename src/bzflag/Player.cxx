@@ -41,6 +41,7 @@ Player::Player(const PlayerId& _id, TeamColor _team,
   autoPilot(false),
   hunted(false),
   id(_id),
+  lastVisualTeam(NoTeam),
   team(_team),
   type(_type),
   flagType(Flags::Null),
@@ -248,6 +249,11 @@ void			Player::updateSparks(float /*dt*/)
 
 void			Player::setVisualTeam (TeamColor visualTeam)
 {
+  // only do all this junk when the effective team color actually changes
+  if (visualTeam == lastVisualTeam)
+    return;
+  lastVisualTeam = visualTeam;
+
   static const GLfloat	tankSpecular[3] = { 0.1f, 0.1f, 0.1f };
   static GLfloat	tankEmissive[3] = { 0.0f, 0.0f, 0.0f };
   static float		tankShininess = 20.0f;

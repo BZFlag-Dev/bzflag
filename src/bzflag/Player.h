@@ -156,10 +156,10 @@ private:
   TankIDLSceneNode*	tankIDLNode;
   SphereSceneNode*	pausedSphere;
   GLfloat		color[4];
-  TeamColor		drawTeam;		// the team I actualy use to draw
   std::string		userTexture;
   static int            tankTexture;
   static int            tankOverideTexture;
+  TeamColor		lastVisualTeam;
 
   // permanent data
   TeamColor		team;			// my team
