@@ -89,7 +89,7 @@ public:
 // egcs doesn't support std::foo<> (i.e. std namespace on a template).
 // we need std::unary_function<> so we'll use unary_function and a
 // macro.
-#define std::unary_function unary_function
+//#define std::unary_function unary_function
 
 #endif
 
