@@ -99,7 +99,8 @@ Forces the existence of the given flag.  If specified multiple times
 for the same \fIflag-id\fR, then that many flags will appear.  The
 \fIgood\fR argument is equivalent to specifying \fB+f\fR once for
 each kind of good flag. The optional \fI{count}\fR parameter allows the 
-specification of multiple flags of the same type.
+specification of multiple flags of the same type. Note that the curly braces
+are required.
 .TP
 \fB-f\fR {\fIbad\fR|\fIflag-id\fR}
 Disallows random flags of the given type.  Required flags given by the
@@ -400,8 +401,7 @@ Kick all players off the server
 Ends the current game
 .TP
 .B /flag reset {unused}
-Removes and repositions flags including player's flags when unused not specified
-Removes all flags not carried by tanks when /unused specified
+Repositions flags. If unused is specified, flags carried by tanks are not effected.
 .TP
 .B /flag up
 Removes all flags from the game
