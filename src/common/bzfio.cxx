@@ -19,7 +19,7 @@ void formatDebug(const char* fmt, ...)
     char buffer[8192];
     va_list args;
     va_start(args, fmt);
-    vsprintf(buffer, fmt, args);
+    vsnprintf(buffer, 8192, fmt, args);
     va_end(args);
     std::cout << buffer;
   }
