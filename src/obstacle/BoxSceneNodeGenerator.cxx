@@ -84,3 +84,11 @@ WallSceneNode*		BoxSceneNodeGenerator::getNextNode(
   tEdge[2] = tCorner[2] - base[2];
   return new QuadWallSceneNode(base, sEdge, tEdge, uRepeats, vRepeats, lod);
 }
+
+// Local Variables: ***
+// mode:C++ ***
+// tab-width: 8 ***
+// c-basic-offset: 2 ***
+// indent-tabs-mode: t ***
+// End: ***
+// ex: shiftwidth=2 tabstop=8
