@@ -99,7 +99,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="ws2_32.lib winmm.lib odbc32.lib odbccp32.lib"
-				OutputFile=".\..\..\src\bzfs\debug/bzfs.exe"
+				OutputFile=".\..\..\src\bzfs\debug\bzfs.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="TRUE"
 				GenerateDebugInformation="TRUE"
@@ -112,8 +112,8 @@
 				HeaderFileName=""/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="copy ..\..\src\bzfs\debug\*.pdb ..\*.pdb
-copy ..\..\src\bzfs\debug\*.exe ..\*.exe
+				CommandLine="copy ..\..\src\bzfs\debug\*.pdb ..\..\*.pdb
+copy ..\..\src\bzfs\debug\*.exe ..\..\*.exe
 "/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
