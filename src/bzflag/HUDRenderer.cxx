@@ -243,16 +243,16 @@ void			HUDRenderer::resize(boolean firstTime)
 {
   // get important metrics
   const int w = firstTime ? MinX : window.getWidth();
-  const int h = firstTime ? MinY : window.getViewHeight();
+  const int vh = firstTime ? MinY : window.getViewHeight();
 
   // compute good targeting box sizes
   {
     const float xScale = (float)w / (float) MinX;
-    const float yScale = (float)h / (float) MinY;
+    const float yScale = (float)vh / (float) MinY;
     const float scale = (xScale < yScale) ? xScale : yScale;
     maxMotionSize = (int)((float)MaxMotionSize * scale);
     noMotionSize = (int)((float)NoMotionSize * scale / 2.0f);
-    headingOffset = 45.0f * (scale > 1.0f ? 1.0f : scale);
+    headingOffset = 22.0f * (scale > 1.0f ? 1.0f : scale);
   }
 
   // initialize readout spacings
@@ -272,12 +272,12 @@ void			HUDRenderer::resize(boolean firstTime)
   }
 
   // pick appropriate font sizes
-  setBigFontSize(w, h);
-  setAlertFontSize(w, h);
-  setMajorFontSize(w, h);
-  setMinorFontSize(w, h);
-  setHeadingFontSize(w, h);
-  setComposeFontSize(w, h);
+  setBigFontSize(w, vh);
+  setAlertFontSize(w, vh);
+  setMajorFontSize(w, vh);
+  setMinorFontSize(w, vh);
+  setHeadingFontSize(w, vh);
+  setComposeFontSize(w, vh);
 
   // set compose control positions and sizes
   {
