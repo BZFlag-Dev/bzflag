@@ -302,6 +302,7 @@ AC_ARG_WITH(SDL, [  --without-SDL              do not use Simple DirectMedia Lay
 if test x$with_SDL != xno; then
   with_SDL=yes
 fi
+AC_LANG_C
 if test x$with_SDL = xyes; then
   AM_PATH_SDL(1.2.5,, with_SDL=no)
   if test x$with_SDL = xno; then
@@ -309,6 +310,7 @@ if test x$with_SDL = xyes; then
 BZflag will build without SDL])
   fi
 fi
+AC_LANG_CPLUSPLUS
 LIBS=$savedLIBS
 if test x$with_SDL = xyes; then
   AC_DEFINE(HAVE_SDL, 1, [Using SDL])
