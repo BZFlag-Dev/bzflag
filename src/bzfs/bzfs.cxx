@@ -5131,7 +5131,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 		}
 	}
 
-	delete hasFlag;
+	delete[] hasFlag;
 	if (i <= LastFlag) {
 		directMessage(t, MsgSuperKill, 0, getDirectMessageBuffer());
 		break;
