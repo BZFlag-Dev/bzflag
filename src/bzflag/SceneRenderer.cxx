@@ -185,7 +185,6 @@ void SceneRenderer::setWindow(MainWindow* _window) {
   }
 
   // prepare context with stuff that'll never change
-  glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, GL_FALSE);
   glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_FALSE);
   glGetIntegerv(GL_MAX_LIGHTS, &maxLights);
   reservedLights = 1;			// only one light between sun and moon
@@ -306,6 +305,11 @@ void SceneRenderer::setQuality(int value)
     BZDB.set("moonSegments","24");
   else
     BZDB.set("moonSegments","12");
+  
+  if (useQualityValue > 0)
+    glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, GL_TRUE);
+  else  
+    glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, GL_FALSE);
 
   BZDB.set("useQuality", TextUtils::format("%d", value));
 }
