@@ -108,6 +108,14 @@ class LocalPlayer : public BaseLocalPlayer {
 
     void		addAntidote(SceneDatabase*);
 
+    void 		setKeyboardSpeed(float speed);
+    void 		setKeyboardAngVel(float angVel);
+    float 		getKeyboardSpeed() const;
+    float 		getKeyboardAngVel() const;
+    void 		setKey(int button, boolean pressed);
+    boolean             getKeyPressed() const;
+    int                 getKeyButton() const;
+
     static LocalPlayer*	getMyTank();
     static void		setMyTank(LocalPlayer*);
 
@@ -142,6 +150,10 @@ class LocalPlayer : public BaseLocalPlayer {
     const Player*	target;
     const Player*	nemesis;
     static LocalPlayer*	mainPlayer;
+    float		keyboardSpeed;
+    float		keyboardAngVel;
+    int			keyButton;
+    boolean             keyPressed;
 };
 
 //
@@ -176,6 +188,42 @@ inline const Player*	LocalPlayer::getNemesis() const
 inline const Obstacle*	LocalPlayer::getContainingBuilding() const
 {
   return insideBuilding;
+}
+
+inline void LocalPlayer::setKeyboardSpeed(float speed)
+{
+  keyboardSpeed = speed;
+}
+
+inline void LocalPlayer::setKeyboardAngVel(float angVel)
+{
+  keyboardAngVel = angVel;
+}
+
+inline float LocalPlayer::getKeyboardSpeed() const
+{
+  return keyboardSpeed;
+}
+
+inline float LocalPlayer::getKeyboardAngVel() const
+{
+  return keyboardAngVel;
+}
+
+inline void LocalPlayer::setKey(int button, boolean pressed)
+{
+  keyButton = button;
+  keyPressed = pressed;
+}
+
+inline boolean LocalPlayer::getKeyPressed() const
+{
+  return keyPressed;
+}
+
+inline int LocalPlayer::getKeyButton() const
+{
+  return keyButton;
 }
 
 #endif // BZF_LOCAL_PLAYER_H

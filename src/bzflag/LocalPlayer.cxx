@@ -16,6 +16,7 @@
 #include "ServerLink.h"
 #include "sound.h"
 #include "Flag.h"
+#include "BzfEvent.h"
 #include <stdlib.h>
 #include <math.h>
 
@@ -662,6 +663,9 @@ void			LocalPlayer::restart(const float* pos, float _azimuth)
   move(pos, _azimuth);
   setVelocity(zero);
   setAngularVelocity(0.0f);
+  setKeyboardSpeed(0.0f);
+  setKeyboardAngVel(0.0f);
+  keyButton = BzfKeyEvent::NoButton;
   doUpdateMotion(0.0f);
 
   // make me alive now

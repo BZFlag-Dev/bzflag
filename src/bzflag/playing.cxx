@@ -428,6 +428,22 @@ static boolean		doKeyCommon(const BzfKeyEvent& key, boolean pressed)
   else {
     // built-in unchangeable keys.  only perform if not masked.
     switch (key.ascii) {
+      case 'K':
+      case 'k':
+	if (keymap.isMapped(key.ascii) == BzfKeyMap::LastKey) {
+	  if (pressed) {
+            if (!startupInfo.keyboardMoving) 
+              controlPanel->addMessage("Keyboard movement");
+            else if (mainWindow->joystick())
+              controlPanel->addMessage("Joystick movement");
+            else
+              controlPanel->addMessage("Mouse movement");
+            startupInfo.keyboardMoving = !startupInfo.keyboardMoving;
+          }
+          return True;
+        }
+        break;
+
       case 'T':
       case 't':
 	// toggle frames-per-second display
@@ -545,6 +561,7 @@ static void		doKeyPlaying(const BzfKeyEvent& key, boolean pressed)
     // toggle motion freeze
     motionFreeze = !motionFreeze;
   }
+  //  else
 #endif
 #if defined(ROAMING)
   if (key.ascii == '~' && pressed) {
@@ -606,6 +623,7 @@ static void		doKeyPlaying(const BzfKeyEvent& key, boolean pressed)
 	break;
     }
   }
+  //  else
 #endif
 
   if (keymap.isMappedTo(BzfKeyMap::FireShot, key)) {
@@ -803,6 +821,16 @@ static void		doKeyPlaying(const BzfKeyEvent& key, boolean pressed)
       }
     }
   }
+  // Might be a direction key. Save it for later.
+  else if (myTank->isAlive() && startupInfo.keyboardMoving) 
+    myTank->setKey(key.button, pressed);
+}
+
+static float getKeyValue(bool pressed)
+{
+  if (pressed)
+    return 1;
+  return 0;
 }
 
 static void		doMotion()
@@ -811,12 +839,40 @@ static void		doMotion()
   if (motionFreeze) return;
 #endif
 
-  // get mouse position
-  int mx, my;
-  if (mainWindow->joystick()) {
-    mainWindow->getJoyPosition(mx, my);
+  float rotation, speed, rotationModifier = 1.0f;
 
-    static const BzfKeyEvent::Button button_map[] = { BzfKeyEvent::LeftMouse,
+  if (startupInfo.keyboardMoving) {
+    rotation = myTank->getKeyboardAngVel();
+    speed = myTank->getKeyboardSpeed();
+    switch (myTank->getKeyButton())
+    {
+    case BzfKeyEvent::Left:
+      rotation = getKeyValue(myTank->getKeyPressed());
+      break;
+    case BzfKeyEvent::Right:
+      rotation = - getKeyValue(myTank->getKeyPressed());
+      break;
+    case BzfKeyEvent::Up:
+      speed = getKeyValue(myTank->getKeyPressed());
+      break;
+    case BzfKeyEvent::Down:
+      speed = - getKeyValue(myTank->getKeyPressed()) / 2.0;
+      break;
+    }
+    if (myTank->getMagnify())
+      rotationModifier = 0.2;
+
+    myTank->setKeyboardAngVel(rotation);
+    myTank->setKeyboardSpeed(speed);
+    myTank->setKey(BzfKeyEvent::NoButton, false);
+  }
+  else {
+    // get mouse position
+    int mx, my;
+    if (mainWindow->joystick()) {
+      mainWindow->getJoyPosition(mx, my);
+
+      static const BzfKeyEvent::Button button_map[] = { BzfKeyEvent::LeftMouse,
                                 BzfKeyEvent::MiddleMouse,
                                 BzfKeyEvent::RightMouse,
                                 BzfKeyEvent::F1,
@@ -828,47 +884,48 @@ static void		doMotion()
                                 BzfKeyEvent::F7,
                                 BzfKeyEvent::F8,
                                 BzfKeyEvent::F9
-    };
+      };
  
-    static unsigned long old_buttons = 0;
-    unsigned long new_buttons = mainWindow->getJoyButtonSet();
-    if (old_buttons != new_buttons)
-      for (int j = 0; j<12; j++)
-        if ((old_buttons & (1<<j)) != (new_buttons & (1<<j))) {
-         BzfKeyEvent ev;
-         ev.button = button_map[j];
-          ev.ascii = 0;
-          ev.shift = 0;
-          doKeyPlaying(ev, new_buttons&(1<<j));
-       } 
-    old_buttons = new_buttons;
-  } else
-    mainWindow->getMousePosition(mx, my);
+      static unsigned long old_buttons = 0;
+      unsigned long new_buttons = mainWindow->getJoyButtonSet();
+      if (old_buttons != new_buttons)
+        for (int j = 0; j<12; j++)
+          if ((old_buttons & (1<<j)) != (new_buttons & (1<<j))) {
+            BzfKeyEvent ev;
+            ev.button = button_map[j];
+            ev.ascii = 0;
+            ev.shift = 0;
+            doKeyPlaying(ev, new_buttons&(1<<j));
+          } 
+      old_buttons = new_buttons;
+    } else
+      mainWindow->getMousePosition(mx, my);
 
-  // calculate desired rotation
-  const int noMotionSize = hud->getNoMotionSize();
-  const int maxMotionSize = hud->getMaxMotionSize();
-  float rotation = 0.0f;
-  if (mx < -noMotionSize) {
-    rotation = float(-mx - noMotionSize) / float(maxMotionSize);
-    if (rotation > 1.0f) rotation = 1.0f;
-  }
-  else if (mx > noMotionSize) {
-    rotation = -float(mx - noMotionSize) / float(maxMotionSize);
-    if (rotation < -1.0f) rotation = -1.0f;
-  }
-  myTank->setDesiredAngVel(rotation);
+    // calculate desired rotation
+    const int noMotionSize = hud->getNoMotionSize();
+    const int maxMotionSize = hud->getMaxMotionSize();
+    rotation = 0.0f;
+    if (mx < -noMotionSize) {
+      rotation = float(-mx - noMotionSize) / float(maxMotionSize);
+      if (rotation > 1.0f) rotation = 1.0f;
+    }
+    else if (mx > noMotionSize) {
+      rotation = -float(mx - noMotionSize) / float(maxMotionSize);
+      if (rotation < -1.0f) rotation = -1.0f;
+    }
 
-  // calculate desired speed
-  float speed = 0.0f;
-  if (my < -noMotionSize) {
-    speed = float(-my - noMotionSize) / float(maxMotionSize);
-    if (speed > 1.0f) speed = 1.0f;
+    // calculate desired speed
+    speed = 0.0f;
+    if (my < -noMotionSize) {
+      speed = float(-my - noMotionSize) / float(maxMotionSize);
+      if (speed > 1.0f) speed = 1.0f;
+    }
+    else if (my > noMotionSize) {
+      speed = -float(my - noMotionSize) / float(maxMotionSize);
+      if (speed < -0.5f) speed = -0.5f;
+    }
   }
-  else if (my > noMotionSize) {
-    speed = -float(my - noMotionSize) / float(maxMotionSize);
-    if (speed < -0.5f) speed = -0.5f;
-  }
+  myTank->setDesiredAngVel(rotation * rotationModifier);
   myTank->setDesiredSpeed(speed);
 }
 
