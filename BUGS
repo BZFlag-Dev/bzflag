@@ -15,6 +15,11 @@ must fix for 1.10.4 patch release
 recent bugs
 ------------
 
+- When a team flag is dropped above an opponent's base it just falls to the
+  ground below the base instead of going to the safe place (the middle). This
+  was seen on brlcad.org:14246, with multiple bases / team and only happened
+  for the "new" bases.
+
 - After a team capture, bots do not spawn on base. Was only player on server
   with -solo 3. Server sets restartOnBase just fine, so maybe bots spawn
   twice or something.
