@@ -51,6 +51,7 @@ class BzfWindow {
     virtual void	setSize(int width, int height) = 0;
     virtual void	setMinSize(int width, int height) = 0;
     virtual void	setFullscreen() = 0;
+    virtual void	create(void) {;};
 
     virtual void	warpMouse(int x, int y) = 0;
     virtual void	getMouse(int& x, int& y) const = 0;
