@@ -15,6 +15,7 @@
 #include "Roster.h"
 #include "TargetingUtils.h"
 #include "World.h"
+#include "WorldPlayer.h"
 #include "BZDBCache.h"
 #include "ServerLink.h"
 #include "playing.h"
@@ -68,6 +69,35 @@ ShotPath *findWorstBullet(float &minDistance)
     }
   }
 
+  WorldPlayer *wp = World::getWorld()->getWorldWeapons();
+  for (int w = 0; w < wp->getMaxShots(); w++) {
+    ShotPath* shot = player[t]->getShot(w);
+    if (!shot || shot->isExpired())
+      continue;
+
+    if (shot->getFlag() == Flags::InvisibleBullet)
+      continue; //Theoretically Roger could triangulate the sound
+
+    const float* shotPos = shot->getPosition();
+    if ((fabs(shotPos[2] - pos[2]) > BZDBCache::tankHeight) && (shot->getFlag() != Flags::GuidedMissile))
+      continue;
+
+    const float dist = TargetingUtils::getTargetDistance( pos, shotPos );
+    if (dist < minDistance) {
+      const float *shotVel = shot->getVelocity();
+      float shotAngle = atan2f(shotVel[1],shotVel[0]);
+      float shotUnitVec[2] = {cos(shotAngle), sin(shotAngle)};
+
+      float trueVec[2] = {(pos[0]-shotPos[0])/dist,(pos[1]-shotPos[1])/dist};
+      float dotProd = trueVec[0]*shotUnitVec[0]+trueVec[1]*shotUnitVec[1];
+
+      if (dotProd <= 0.1f) //pretty wide angle, evasive actions prolly aren't gonna work
+	continue;
+
+      minDistance = dist;
+      minPath = shot;
+    }
+  }
   return minPath;
 }
 
