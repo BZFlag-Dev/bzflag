@@ -549,7 +549,7 @@ bool CustomBase::read(const char *cmd, istream& input) {
 	else {
 		WorldFileObstacle::read(cmd, input);
 		if(!flagsOnBuildings && (pos[2] != 0)) {
-			cerr << "Dropping team base down to 0 because -fb not set\n";
+			std::cerr << "Dropping team base down to 0 because -fb not set" << std::endl;
 			pos[2] = 0;
 		}
 	}
@@ -1849,7 +1849,7 @@ static void sendMessageToListServerForReal(int index)
 		  team[4].team.activeSize);
 	}
 	if (debug >= 3) {
-      cerr << msg;
+      std::cerr << msg;
 	}
 	send(link.socket, msg, strlen(msg), 0);
 
@@ -2308,8 +2308,8 @@ static bool readWorldStream(istream& input, const char *location, WorldFileObjec
 		// watch out for starting a new object when one is already in progress
 		if (newObject) {
 			if (object) {
-       cerr << location << "(" << line << ") : " << "discarding incomplete object" << endl;
-       delete object;
+				std::cerr << location << "(" << line << ") : " << "discarding incomplete object" << std::endl;
+				delete object;
 			}
 			object = newObject;
 			newObject = NULL;
@@ -2327,12 +2327,12 @@ static bool readWorldStream(istream& input, const char *location, WorldFileObjec
 
 		else if (strcmp(buffer, "end") == 0) {
 			if (object) {
-       list.push_back(object);
-       object = NULL;
+				list.push_back(object);
+				object = NULL;
 			}
 			else {
-       cerr << location << "(" << line << ") : " << "unexpected \"end\" token" << endl;
-       return false;
+				std::cerr << location << "(" << line << ") : " << "unexpected \"end\" token" << std::endl;
+				return false;
 			}
 		}
 
@@ -2357,18 +2357,18 @@ static bool readWorldStream(istream& input, const char *location, WorldFileObjec
 
 		else if (object) {
 			if (!object->read(buffer, input)) {
-       // unknown token
-       cerr << location << "(" << line << ") : " <<
-				       "invalid object parameter \"" << buffer << "\"" << endl;
-       delete object;
-       return false;
+				// unknown token
+				std::cerr << location << "(" << line << ") : " <<
+				       "invalid object parameter \"" << buffer << "\"" << std::endl;
+				delete object;
+				return false;
 			}
 		}
 
 		// filling the current object
 		else {
 			// unknown token
-			cerr << location << "(" << line << ") : " << "invalid object type \"" << buffer << "\"" << endl;
+			std::cerr << location << "(" << line << ") : " << "invalid object type \"" << buffer << "\"" << std::endl;
 			delete object;
 			return false;
 		}
@@ -2381,7 +2381,7 @@ static bool readWorldStream(istream& input, const char *location, WorldFileObjec
 	}
 
 	if (object) {
-		cerr << location << "(" << line << ") : " << "missing \"end\" token" << endl;
+		std::cerr << location << "(" << line << ") : " << "missing \"end\" token" << std::endl;
 		delete object;
 		return false;
 	}
@@ -2392,9 +2392,9 @@ static bool readWorldStream(istream& input, const char *location, WorldFileObjec
 static WorldInfo *defineWorldFromFile(const char *filename)
 {
 	// open file
-	ifstream input(filename, ios::in | ios::nocreate);
+	std::ifstream input(filename, std::ios::in);
 	if (!input) {
-		cerr << "could not find bzflag world file : " << filename << endl;
+		std::cerr << "could not find bzflag world file : " << filename << std::endl;
 		return NULL;
 	}
 
@@ -2869,25 +2869,25 @@ static void dumpScore()
 		return;
 #ifdef TIMELIMIT
 	if (timeLimit > 0.0f)
-		cout << "#time" << endl << int(timeLimit - timeElapsed) << endl;
+		std::cout << "#time" << std::endl << int(timeLimit - timeElapsed) << std::endl;
 #endif
-	cout << "#teams" << endl;
+	std::cout << "#teams" << std::endl;
 	for (i = int(RedTeam); i < NumTeams; i++)
-		cout << team[i].team.won << " " <<
+		std::cout << team[i].team.won << " " <<
 		team[i].team.lost << " " <<
-		Team::getName(TeamColor(i)) << endl;
+		Team::getName(TeamColor(i)) << std::endl;
 
 	// sort players by team (do it in five easy pieces)
-	cout << "#players" << endl;
+	std::cout << "#players" << std::endl;
 	for (i = 0; i < NumTeams; i++)
 		for (int j = 0; j < maxPlayers; j++)
 			if (player[j].state > PlayerInLimbo && int(player[j].team) == i) {
-				cout << player[j].wins << " " <<
+				std::cout << player[j].wins << " " <<
 		    player[j].losses << " " <<
-		    player[j].callSign << endl;
+		    player[j].callSign << std::endl;
 			}
 
-	cout << "#end" << endl;
+	std::cout << "#end" << std::endl;
 }
 #endif
 
@@ -3178,7 +3178,6 @@ static void addPlayer(int playerIndex)
 
 	// send new player updates on each player, all existing flags, and all teams.
 	// watch out for connection being closed because of an error.
-	int i;
 	for (i = 0; i < NumTeams && player[playerIndex].fd != NotConnected; i++)
 		sendTeamUpdate(i, playerIndex);
 	for (i = 0; i < numFlags && player[playerIndex].fd != NotConnected; i++)
@@ -4376,81 +4375,81 @@ static const char *usageString =
 
 static void printVersion(ostream& out)
 {
-	out << copyright << endl;
+	out << copyright << std::endl;
 
 	out << "BZFlag server, version " <<
       (VERSION / 10000000) % 100 << "." <<
       (VERSION / 100000) % 100 <<
       (char)('a' - 1 + (VERSION / 1000) % 100) <<
       VERSION % 1000 <<
-      endl;
+      std::endl;
 
 	out << "  protocol " << ServerVersion[4] << ".";
 	if (ServerVersion[5] != '0')
 		out << ServerVersion[5];
-	out << ServerVersion[6] << (char)tolower(ServerVersion[7]) << endl;
+	out << ServerVersion[6] << (char)tolower(ServerVersion[7]) << std::endl;
 }
 
 static void usage(const char *pname)
 {
-	printVersion(cerr);
-	cerr << "usage: " << pname << " " << usageString << endl;
-	cerr << "\t -help: for more info" << endl;
+	printVersion(std::cerr);
+	std::cerr << "usage: " << pname << " " << usageString << std::endl;
+	std::cerr << "\t -help: for more info" << std::endl;
 	exit(1);
 }
 
 static void extraUsage(const char *pname)
 {
-	printVersion(cout);
-	cout << "usage: " << pname << " " << usageString << endl;
-	cout << "\t -a: maximum acceleration settings" << endl;
-	cout << "\t -b: randomly oriented buildings" << endl;
-	cout << "\t -c: capture-the-flag style game" << endl;
-//  cout << "\t -d: increase debugging level" << endl;
-	cout << "\t +f: always have flag <id> available" << endl;
-	cout << "\t -f: never randomly generate flag <id>" << endl;
-	cout << "\t -fb: allow flags on box buildings" << endl;
-	cout << "\t -g: serve one game and then exit" << endl;
-	cout << "\t -h: use random building heights" << endl;
-	cout << "\t -i: listen on <interface>" << endl;
-	cout << "\t -j: allow jumping" << endl;
-	cout << "\t -mp: maximum players total or per team" << endl;
-	cout << "\t -mps: set player score limit on each game" << endl;
-	cout << "\t -ms: maximum simultaneous shots per player" << endl;
-	cout << "\t -mts: set team score limit on each game" << endl;
-	cout << "\t -noudp: never use the new UDP networking" << endl;
-	cout << "\t -p: use alternative port (default is " <<
-										ServerPort << ")" << endl;
+	printVersion(std::cout);
+	std::cout << "usage: " << pname << " " << usageString << std::endl;
+	std::cout << "\t -a: maximum acceleration settings" << std::endl;
+	std::cout << "\t -b: randomly oriented buildings" << std::endl;
+	std::cout << "\t -c: capture-the-flag style game" << std::endl;
+//  std::cout << "\t -d: increase debugging level" << std::endl;
+	std::cout << "\t +f: always have flag <id> available" << std::endl;
+	std::cout << "\t -f: never randomly generate flag <id>" << std::endl;
+	std::cout << "\t -fb: allow flags on box buildings" << std::endl;
+	std::cout << "\t -g: serve one game and then exit" << std::endl;
+	std::cout << "\t -h: use random building heights" << std::endl;
+	std::cout << "\t -i: listen on <interface>" << std::endl;
+	std::cout << "\t -j: allow jumping" << std::endl;
+	std::cout << "\t -mp: maximum players total or per team" << std::endl;
+	std::cout << "\t -mps: set player score limit on each game" << std::endl;
+	std::cout << "\t -ms: maximum simultaneous shots per player" << std::endl;
+	std::cout << "\t -mts: set team score limit on each game" << std::endl;
+	std::cout << "\t -noudp: never use the new UDP networking" << std::endl;
+	std::cout << "\t -p: use alternative port (default is " <<
+										ServerPort << ")" << std::endl;
 #ifdef PRINTSCORE
-	cout << "\t -printscore: write score to stdout whenever it changes" << endl;
+	std::cout << "\t -printscore: write score to stdout whenever it changes" << std::endl;
 #endif
-	cout << "\t -public <server-description>" << endl;
-	cout << "\t -publicaddr <effective-server-hostname>[:<effective-server-port>]" << endl;
-	cout << "\t -publiclist <list-server-url>" << endl;
-	cout << "\t -q: don't listen for or respond to pings" << endl;
-	cout << "\t +r: all shots ricochet" << endl;
-	cout << "\t -r: allow rogue tanks" << endl;
-	cout << "\t -requireudp: require clients to use udp" << endl;
-	cout << "\t +s: always have <num> super flags (default=16)" << endl;
-	cout << "\t -s: allow up to <num> super flags (default=16)" << endl;
-	cout << "\t -sa: insert antidote superflags" << endl;
-	cout << "\t -srvmsg: specify a <msg> to print upon client login" << endl;
-	cout << "\t -st: shake bad flags in <time> seconds" << endl;
-	cout << "\t -sw: shake bad flags after <num> wins" << endl;
-	cout << "\t -synctime: synchronize time of day on all clients" << endl;
-	cout << "\t -t: allow teleporters" << endl;
+	std::cout << "\t -public <server-description>" << std::endl;
+	std::cout << "\t -publicaddr <effective-server-hostname>[:<effective-server-port>]" << std::endl;
+	std::cout << "\t -publiclist <list-server-url>" << std::endl;
+	std::cout << "\t -q: don't listen for or respond to pings" << std::endl;
+	std::cout << "\t +r: all shots ricochet" << std::endl;
+	std::cout << "\t -r: allow rogue tanks" << std::endl;
+	std::cout << "\t -requireudp: require clients to use udp" << std::endl;
+	std::cout << "\t +s: always have <num> super flags (default=16)" << std::endl;
+	std::cout << "\t -s: allow up to <num> super flags (default=16)" << std::endl;
+	std::cout << "\t -sa: insert antidote superflags" << std::endl;
+	std::cout << "\t -srvmsg: specify a <msg> to print upon client login" << std::endl;
+	std::cout << "\t -st: shake bad flags in <time> seconds" << std::endl;
+	std::cout << "\t -sw: shake bad flags after <num> wins" << std::endl;
+	std::cout << "\t -synctime: synchronize time of day on all clients" << std::endl;
+	std::cout << "\t -t: allow teleporters" << std::endl;
 #ifdef TIMELIMIT
-	cout << "\t -time: set time limit on each game" << endl;
+	std::cout << "\t -time: set time limit on each game" << std::endl;
 #endif
-	cout << "\t -ttl: time-to-live for pings (default=" << pingTTL << ")" << endl;
-	cout << "\t -world: world file to load" << endl;
-	cout << "\t -passwd: specify a <password> for operator commands" << endl;
-	cout << "\t -lagwarn: lag warning threshhold time [ms]" << endl;
-	cout << "\t -lagdrop: drop player after this many lag warnings" << endl;
-	cout << "\nFlag codes:" << endl;
+	std::cout << "\t -ttl: time-to-live for pings (default=" << pingTTL << ")" << std::endl;
+	std::cout << "\t -world: world file to load" << std::endl;
+	std::cout << "\t -passwd: specify a <password> for operator commands" << std::endl;
+	std::cout << "\t -lagwarn: lag warning threshhold time [ms]" << std::endl;
+	std::cout << "\t -lagdrop: drop player after this many lag warnings" << std::endl;
+	std::cout << "\nFlag codes:" << std::endl;
 	for (int f = int(FirstSuperFlag); f <= int(LastSuperFlag); f++)
-		cout << "\t " << setw(2) << Flag::getAbbreviation(FlagId(f)) <<
-		" " << setw(0) << Flag::getName(FlagId(f)) << endl;
+		std::cout << "\t " << std::setw(2) << Flag::getAbbreviation(FlagId(f)) <<
+		" " << std::setw(0) << Flag::getName(FlagId(f)) << std::endl;
 	exit(0);
 }
 
@@ -4480,7 +4479,7 @@ static bool parsePlayerCount(const char *argv)
 			if (*scan == ',')
 				commaCount++;
 		if (commaCount != 4) {
-			cerr << "improper player count list" << endl;
+			std::cerr << "improper player count list" << std::endl;
 			return false;
 		}
 
@@ -4528,7 +4527,7 @@ static bool parsePlayerCount(const char *argv)
 		char *tail;
 		long count = strtol(argv, &tail, 10);
 		if (argv == tail) {
-			cerr << "improper player count" << endl;
+			std::cerr << "improper player count" << std::endl;
 			return false;
 		}
 		if (count < 1)
@@ -4595,14 +4594,14 @@ static void parse(int argc, char **argv)
       } else
       if (strcmp(argv[i], "-srvmsg") == 0) {
 		 if (++i == argc) {
-		   cerr << "argument expected for -srvmsg" << endl;
+		   std::cerr << "argument expected for -srvmsg" << std::endl;
 		   usage(argv[0]);
 		 }
 		 servermsg = argv[i];
       } else
       if (strcmp(argv[i], "-world") == 0) {
 		 if (++i == argc) {
-		   cerr << "argument expected for -world" << endl;
+		   std::cerr << "argument expected for -world" << std::endl;
 		   usage(argv[0]);
 		 }
 		 worldFile = argv[i];
@@ -4610,7 +4609,7 @@ static void parse(int argc, char **argv)
       else if (strcmp(argv[i], "+f") == 0) {
       // add required flag
       if (++i == argc) {
-		cerr << "argument expected for +f" << endl;
+		std::cerr << "argument expected for +f" << std::endl;
 		usage(argv[0]);
       }
       if (strcmp(argv[i], "good") == 0) {
@@ -4638,7 +4637,7 @@ static void parse(int argc, char **argv)
       }
       else {
 		if ((f = lookupFlag(argv[i])) == int(NoFlag)) {
-		  cerr << "invalid flag `" << argv[i] << "'" << endl;
+		  std::cerr << "invalid flag `" << argv[i] << "'" << std::endl;
 		  usage(argv[0]);
 		}
 		flagCount[f]++;
@@ -4663,7 +4662,7 @@ static void parse(int argc, char **argv)
 		else if (strcmp(argv[i], "-a") == 0) {
 			// momentum settings
 			if (i + 2 >= argc) {
-				cerr << "two arguments expected for " << argv[i] << endl;
+				std::cerr << "two arguments expected for " << argv[i] << std::endl;
 				usage(argv[0]);
 			}
 			linearAcceleration = (float)atof(argv[++i]);
@@ -4688,7 +4687,7 @@ static void parse(int argc, char **argv)
 			char *scan;
 			for (scan = argv[i]+1; *scan == 'd'; scan++) count++;
 			if (*scan != '\0') {
-				cerr << "bad argument " << argv[i] << endl;
+				std::cerr << "bad argument " << argv[i] << std::endl;
 				usage(argv[0]);
 			}
 			debug += count;
@@ -4700,7 +4699,7 @@ static void parse(int argc, char **argv)
 		else if (strcmp(argv[i], "-f") == 0) {
 			// disallow given flag
 			if (++i == argc) {
-				cerr << "argument expected for -f" << endl;
+				std::cerr << "argument expected for -f" << std::endl;
 				usage(argv[0]);
 			}
 			if (strcmp(argv[i], "bad") == 0) {
@@ -4715,7 +4714,7 @@ static void parse(int argc, char **argv)
 			}
 			else {
 				if ((f = lookupFlag(argv[i])) == int(NoFlag)) {
-					cerr << "invalid flag `" << argv[i] << "'" << endl;
+					std::cerr << "invalid flag `" << argv[i] << "'" << std::endl;
 					usage(argv[0]);
 				}
 				flagDisallowed[f] = true;
@@ -4733,7 +4732,7 @@ static void parse(int argc, char **argv)
 		else if (strcmp(argv[i], "-i") == 0) {
 			// use a different interface
 			if (++i == argc) {
-				cerr << "argument expected for -i" << endl;
+				std::cerr << "argument expected for -i" << std::endl;
 				usage(argv[0]);
 			}
 			pingInterface = argv[i];
@@ -4745,7 +4744,7 @@ static void parse(int argc, char **argv)
 		else if (strcmp(argv[i], "-mp") == 0) {
 			// set maximum number of players
 			if (++i == argc) {
-				cerr << "argument expected for -mp" << endl;
+				std::cerr << "argument expected for -mp" << std::endl;
 				usage(argv[0]);
 			}
 			playerCountArg = i;
@@ -4753,16 +4752,16 @@ static void parse(int argc, char **argv)
 		else if (strcmp(argv[i], "-ms") == 0) {
 			// set maximum number of shots
 			if (++i == argc) {
-				cerr << "argument expected for -ms" << endl;
+				std::cerr << "argument expected for -ms" << std::endl;
 				usage(argv[0]);
 			}
 			int newMaxShots = atoi(argv[i]);
 			if (newMaxShots < 1) {
-				cerr << "using minimum number of shots of 1" << endl;
+				std::cerr << "using minimum number of shots of 1" << std::endl;
 				maxShots = 1;
 			}
 			else if (newMaxShots > MaxShots) {
-				cerr << "using maximum number of shots of " << MaxShots << endl;
+				std::cerr << "using maximum number of shots of " << MaxShots << std::endl;
 				maxShots = uint16_t(MaxShots);
 			}
 			else maxShots = uint16_t(newMaxShots);
@@ -4770,31 +4769,31 @@ static void parse(int argc, char **argv)
 		else if (strcmp(argv[i], "-mps") == 0) {
 			// set maximum player score
 			if (++i == argc) {
-				cerr << "argument expected for -mps" << endl;
+				std::cerr << "argument expected for -mps" << std::endl;
 				usage(argv[0]);
 			}
 			maxPlayerScore = atoi(argv[i]);
 			if (maxPlayerScore < 1) {
-				cerr << "disabling player score limit" << endl;
+				std::cerr << "disabling player score limit" << std::endl;
 				maxPlayerScore = 0;
 			}
 		}
 		else if (strcmp(argv[i], "-mts") == 0) {
 			// set maximum team score
 			if (++i == argc) {
-				cerr << "argument expected for -mts" << endl;
+				std::cerr << "argument expected for -mts" << std::endl;
 				usage(argv[0]);
 			}
 			maxTeamScore = atoi(argv[i]);
 			if (maxTeamScore < 1) {
-				cerr << "disabling team score limit" << endl;
+				std::cerr << "disabling team score limit" << std::endl;
 				maxTeamScore = 0;
 			}
 		}
 		else if (strcmp(argv[i], "-p") == 0) {
 			// use a different port
 			if (++i == argc) {
-				cerr << "argument expected for -p" << endl;
+				std::cerr << "argument expected for -p" << std::endl;
 				usage(argv[0]);
 			}
 			wksPort = atoi(argv[i]);
@@ -4806,7 +4805,7 @@ static void parse(int argc, char **argv)
 		else if (strcmp(argv[i], "-pr") == 0) {
 			// use a different port
 			if (++i == argc) {
-				cerr << "argument expected for -pr" << endl;
+				std::cerr << "argument expected for -pr" << std::endl;
 				usage(argv[0]);
 			}
 			reconnectPort = atoi(argv[i]);
@@ -4826,19 +4825,19 @@ static void parse(int argc, char **argv)
 #endif
 		else if (strcmp(argv[i], "-public") == 0) {
 			if (++i == argc) {
-				cerr << "argument expected for -public" << endl;
+				std::cerr << "argument expected for -public" << std::endl;
 				usage(argv[0]);
 			}
 			publicizeServer = true;
 			publicizedTitle = argv[i];
 			if (strlen(publicizedTitle) > 127) {
 				argv[i][127] = '\0';
-				cerr << "description too long... truncated" << endl;
+				std::cerr << "description too long... truncated" << std::endl;
 			}
 		}
 		else if (strcmp(argv[i], "-publicaddr") == 0) {
 			if (++i == argc) {
-				cerr << "argument expected for -publicaddr" << endl;
+				std::cerr << "argument expected for -publicaddr" << std::endl;
 				usage(argv[0]);
 			}
 			publicizedAddress = argv[i];
@@ -4846,7 +4845,7 @@ static void parse(int argc, char **argv)
 		}
 		else if (strcmp(argv[i], "-publiclist") == 0) {
 			if (++i == argc) {
-				cerr << "argument expected for -publiclist" << endl;
+				std::cerr << "argument expected for -publiclist" << std::endl;
 				usage(argv[0]);
 			}
 			listServerURL = argv[i];
@@ -4878,17 +4877,17 @@ static void parse(int argc, char **argv)
 		else if (strcmp(argv[i], "-st") == 0) {
 			// set shake timeout
 			if (++i == argc) {
-				cerr << "argument expected for -st" << endl;
+				std::cerr << "argument expected for -st" << std::endl;
 				usage(argv[0]);
 			}
 			float timeout = (float)atof(argv[i]);
 			if (timeout < 0.1f) {
 				shakeTimeout = 1;
-				cerr << "using minimum shake timeout of " << 0.1f * (float)shakeTimeout << endl;
+				std::cerr << "using minimum shake timeout of " << 0.1f * (float)shakeTimeout << std::endl;
 			}
 			else if (timeout > 300.0f) {
 				shakeTimeout = 3000;
-				cerr << "using maximum shake timeout of " << 0.1f * (float)shakeTimeout << endl;
+				std::cerr << "using maximum shake timeout of " << 0.1f * (float)shakeTimeout << std::endl;
 			}
 			else {
 				shakeTimeout = uint16_t(timeout * 10.0f + 0.5f);
@@ -4898,17 +4897,17 @@ static void parse(int argc, char **argv)
 		else if (strcmp(argv[i], "-sw") == 0) {
 			// set shake win count
 			if (++i == argc) {
-				cerr << "argument expected for -sw" << endl;
+				std::cerr << "argument expected for -sw" << std::endl;
 				usage(argv[0]);
 			}
 			int count = atoi(argv[i]);
 			if (count < 1) {
 				shakeWins = 1;
-				cerr << "using minimum shake win count of " << shakeWins << endl;
+				std::cerr << "using minimum shake win count of " << shakeWins << std::endl;
 			}
 			else if (count > 20) {
 				shakeWins = 20;
-				cerr << "using maximum ttl of " << shakeWins << endl;
+				std::cerr << "using maximum ttl of " << shakeWins << std::endl;
 			}
 			else {
 				shakeWins = uint16_t(count);
@@ -4927,13 +4926,13 @@ static void parse(int argc, char **argv)
 		else if (strcmp(argv[i], "-time") == 0) {
 			// allow teleporters
 			if (++i == argc) {
-				cerr << "argument expected for -time" << endl;
+				std::cerr << "argument expected for -time" << std::endl;
 				usage(argv[0]);
 			}
 			timeLimit = (float)atof(argv[i]);
 			if (timeLimit <= 0.0f) {
 				timeLimit = 300.0f;
-				cerr << "using time limit of " << (int)timeLimit << " seconds" << endl;
+				std::cerr << "using time limit of " << (int)timeLimit << " seconds" << std::endl;
 			}
 			timeElapsed = timeLimit;
 		}
@@ -4941,52 +4940,52 @@ static void parse(int argc, char **argv)
 		else if (strcmp(argv[i], "-ttl") == 0) {
 			// use a different ttl
 			if (++i == argc) {
-				cerr << "argument expected for -ttl" << endl;
+				std::cerr << "argument expected for -ttl" << std::endl;
 				usage(argv[0]);
 			}
 			pingTTL = atoi(argv[i]);
 			if (pingTTL < 0) {
 				pingTTL = 0;
-				cerr << "using minimum ttl of " << pingTTL << endl;
+				std::cerr << "using minimum ttl of " << pingTTL << std::endl;
 			}
 			else if (pingTTL > MaximumTTL) {
 				pingTTL = MaximumTTL;
-				cerr << "using maximum ttl of " << pingTTL << endl;
+				std::cerr << "using maximum ttl of " << pingTTL << std::endl;
 			}
 		}
 		else if (strcmp(argv[i], "-v") == 0 || strcmp(argv[i], "-version") == 0) {
-			printVersion(cout);
+			printVersion(std::cout);
 			exit(0);
 		}
 		else if (strcmp(argv[i], "-passwd") == 0 || strcmp(argv[i], "-password") == 0) {
 			if (++i == argc) {
-				cerr << "argument expected for " << argv[i] << endl;
+				std::cerr << "argument expected for " << argv[i] << std::endl;
 				usage(argv[0]);
 			}
 			password = argv[i];
 		}
 		else if (strcmp(argv[i], "-lagwarn") == 0) {
 			if (++i == argc) {
-				cerr << "argument expected for " << argv[i] << endl;
+				std::cerr << "argument expected for " << argv[i] << std::endl;
 				usage(argv[0]);
 			}
 			lagwarnthresh = atoi(argv[i])/1000.0f;
 		}
 		else if (strcmp(argv[i], "-lagdrop") == 0) {
 			if (++i == argc) {
-				cerr << "argument expected for " << argv[i] << endl;
+				std::cerr << "argument expected for " << argv[i] << std::endl;
 				usage(argv[0]);
 			}
 			maxlagwarn = atoi(argv[i]);
 		}
 		else {
-			cerr << "bad argument " << argv[i] << endl;
+			std::cerr << "bad argument " << argv[i] << std::endl;
 			usage(argv[0]);
 		}
 	}
 
 	if (flagsOnBuildings && !(gameStyle & JumpingGameStyle)) {
-		cerr << "flags on boxes requires jumping" << endl;
+		std::cerr << "flags on boxes requires jumping" << std::endl;
 		usage(argv[0]);
 	}
 
@@ -5140,26 +5139,26 @@ static void parse(int argc, char **argv)
 	// debugging
 	if (debug >= 1) {
 		// print style
-		cerr << "style: " << hex << gameStyle << dec << endl;
+		std::cerr << "style: " << std::ios::hex << gameStyle << std::ios::dec << std::endl;
 		if (gameStyle & int(TeamFlagGameStyle))
-			cerr << "  capture the flag" << endl;
+			std::cerr << "  capture the flag" << std::endl;
 		if (gameStyle & int(SuperFlagGameStyle))
-			cerr << "  super flags allowed" << endl;
+			std::cerr << "  super flags allowed" << std::endl;
 		if (gameStyle & int(RoguesGameStyle))
-			cerr << "  rogues allowed" << endl;
+			std::cerr << "  rogues allowed" << std::endl;
 		if (gameStyle & int(JumpingGameStyle))
-			cerr << "  jumping allowed" << endl;
+			std::cerr << "  jumping allowed" << std::endl;
 		if (gameStyle & int(InertiaGameStyle))
-			cerr << "  inertia: " << linearAcceleration << "," <<
-		  angularAcceleration << endl;
+			std::cerr << "  inertia: " << linearAcceleration << "," <<
+		  angularAcceleration << std::endl;
 		if (gameStyle & int(RicochetGameStyle))
-			cerr << "  all shots ricochet" << endl;
+			std::cerr << "  all shots ricochet" << std::endl;
 		if (gameStyle & int(ShakableGameStyle))
-			cerr << "  shakable bad flags: timeout=" <<
+			std::cerr << "  shakable bad flags: timeout=" <<
 		  0.1f * float(shakeTimeout) <<
-		  ", wins=" << shakeWins << endl;
+		  ", wins=" << shakeWins << std::endl;
 		if (gameStyle & int(AntidoteGameStyle))
-			cerr << "  antidote flags" << endl;
+			std::cerr << "  antidote flags" << std::endl;
 	}
 }
 
@@ -5169,19 +5168,19 @@ int main(int argc, char **argv)
 
 	// check time bomb
 	if (timeBombBoom()) {
-		cerr << "This release expired on " << timeBombString() << "." << endl;
-		cerr << "Please upgrade to the latest release." << endl;
+		std::cerr << "This release expired on " << timeBombString() << "." << std::endl;
+		std::cerr << "Please upgrade to the latest release." << std::endl;
 		exit(0);
 	}
 
 	// print expiration date
 	if (timeBombString()) {
 		char bombMessage[80];
-		cerr << "This release will expire on " << timeBombString() << "." << endl;
+		std::cerr << "This release will expire on " << timeBombString() << "." << std::endl;
 		sprintf(bombMessage, "Version %d.%d%c%d",
 		(VERSION / 10000000) % 100, (VERSION / 100000) % 100,
 		(char)('a' - 1 + (VERSION / 1000) % 100), VERSION % 1000);
-		cerr << bombMessage << endl;
+		std::cerr << bombMessage << std::endl;
 	}
 
 	// trap some signals.  let user kill server.
@@ -5267,8 +5266,8 @@ int main(int argc, char **argv)
 	}
 	if (debug >= 2) {
 		// print networking info
-		cerr << "listening on " <<
-		serverAddress.getDotNotation() << ":" << wksPort << endl;
+		std::cerr << "listening on " <<
+		serverAddress.getDotNotation() << ":" << wksPort << std::endl;
 	}
 
 	TimeKeeper lastSuperFlagInsertion = TimeKeeper::getCurrent();
