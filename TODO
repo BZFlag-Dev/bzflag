@@ -1,6 +1,10 @@
 to do list for bzflag
 ---------------------
 
+* REMOVE globalDBItems initialization in bzflag.cxx, and 
+  rely solely on setvar's from server. Currently, tank is
+  frozen if you do this.
+
 * create new 64x64, 48x48, 32x32, 16x16 official bzflag icons.
   Should feature the BZFlag tank. The large ones should include
   the BZFlag logo. All should feature transparency.
