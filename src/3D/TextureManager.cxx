@@ -81,20 +81,21 @@ int TextureManager::getTextureID( const char* name, bool reportFail )
     DEBUG2("Could not get texture ID; no provided name\n");
     return -1;
   }
-
-  OSFile osFilename(name);
-  const std::string texName = osFilename.getOSName();
   
   // see if we have the texture
-  TextureNameMap::iterator it = textureNames.find(texName);
+  TextureNameMap::iterator it = textureNames.find(name);
   if (it != textureNames.end()) {
     return it->second.id;
   } else { // we don't have it so try and load it
-    FileTextureInit	file;
-    file.filter = OpenGLTexture::LinearMipmapLinear;
-    file.name = texName;
-    ImageInfo info;
-    OpenGLTexture *image = loadTexture(file, reportFail);
+
+    OSFile osFilename(name); // convert to native format
+    const std::string filename = osFilename.getOSName();
+
+    FileTextureInit texInfo;
+    texInfo.name = filename;
+    texInfo.filter = OpenGLTexture::LinearMipmapLinear;
+    
+    OpenGLTexture *image = loadTexture(texInfo, reportFail);
     if (!image) {
       DEBUG2("Image not found or unloadable: %s\n", name);
       return -1;
@@ -107,10 +108,7 @@ int TextureManager::getTextureID( const char* name, bool reportFail )
 
 bool TextureManager::isLoaded(const std::string& name)
 {
-  OSFile osFilename(name);
-  const std::string texName = osFilename.getOSName();
-  
-  TextureNameMap::iterator it = textureNames.find(texName);
+  TextureNameMap::iterator it = textureNames.find(name);
   if (it == textureNames.end()) {
     return false;
   }
@@ -120,10 +118,7 @@ bool TextureManager::isLoaded(const std::string& name)
 
 bool TextureManager::removeTexture(const std::string& name)
 {
-  OSFile osFilename(name);
-  const std::string texName = osFilename.getOSName();
-  
-  TextureNameMap::iterator it = textureNames.find(texName);
+  TextureNameMap::iterator it = textureNames.find(name);
   if (it == textureNames.end()) {
     return false;
   }
@@ -135,7 +130,7 @@ bool TextureManager::removeTexture(const std::string& name)
 
   // clear the maps
   textureIDs.erase(info.id);
-  textureNames.erase(texName);
+  textureNames.erase(name);
   
   DEBUG2("TextureManager::removed: %s\n", name.c_str());
   
@@ -145,10 +140,7 @@ bool TextureManager::removeTexture(const std::string& name)
 
 bool TextureManager::reloadTextureImage(const std::string& name)
 {
-  OSFile osFilename(name);
-  const std::string texName = osFilename.getOSName();
-  
-  TextureNameMap::iterator it = textureNames.find(texName);
+  TextureNameMap::iterator it = textureNames.find(name);
   if (it == textureNames.end()) {
     return false;
   }
@@ -160,7 +152,7 @@ bool TextureManager::reloadTextureImage(const std::string& name)
   // make the new texture object
   FileTextureInit fileInit;
   fileInit.filter = OpenGLTexture::LinearMipmapLinear;
-  fileInit.name = texName;
+  fileInit.name = name;
   OpenGLTexture* newTex = loadTexture(fileInit, false);
   newTex->setFilter(filter);
   

@@ -297,11 +297,12 @@ void BackgroundRenderer::setupGroundMaterials()
   }
   else {
     // map specified material
+    ((BzMaterial*)bzmat)->setReference();
     for (int i = 0; i < 4; i++) {
       memcpy (groundColor[i], bzmat->getDiffuse(), sizeof(GLfloat[4]));
     }
     if (bzmat->getTextureCount() > 0) {
-      groundTextureID = tm.getTextureID(bzmat->getTexture(0).c_str(), false);
+      groundTextureID = tm.getTextureID(bzmat->getTextureLocal(0).c_str(), false);
       if (groundTextureID < 0) {
 	// use the default as a backup (default color too)
 	memcpy (groundColor, defaultGroundColor, sizeof(GLfloat[4][4]));

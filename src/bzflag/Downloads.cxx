@@ -77,7 +77,7 @@ void Downloads::doDownloads()
 
   BzMaterialManager::TextureSet set;
   BzMaterialManager::TextureSet::iterator set_it;
-  MATERIALMGR.makeTextureList(set);
+  MATERIALMGR.makeTextureList(set, false /* ignore referencing */); 
   
   bool authNotice = false;
 
@@ -147,7 +147,7 @@ bool Downloads::updateDownloads(bool& rebuild)
   
   BzMaterialManager::TextureSet set;
   BzMaterialManager::TextureSet::iterator set_it;
-  MATERIALMGR.makeTextureList(set);
+  MATERIALMGR.makeTextureList(set, true /* only referenced materials */);
   
   TextureManager& TEXMGR = TextureManager::instance();
 
@@ -173,6 +173,10 @@ bool Downloads::updateDownloads(bool& rebuild)
         getFileTime(texUrl, filetime);
         if (filetime <= oldrec.date) {
           // keep using the cached file
+          MATERIALMGR.setTextureLocal(texUrl, oldrec.name);
+          if (!TEXMGR.isLoaded(oldrec.name)) {
+            rebuild = true;
+          }
           continue;
         }
       }
@@ -205,7 +209,7 @@ void Downloads::removeTextures()
 {
   BzMaterialManager::TextureSet set;
   BzMaterialManager::TextureSet::iterator set_it;
-  MATERIALMGR.makeTextureList(set);
+  MATERIALMGR.makeTextureList(set, false /* ignore referencing */);
   
   TextureManager& TEXMGR = TextureManager::instance();
 

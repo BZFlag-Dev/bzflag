@@ -175,13 +175,15 @@ void BzMaterialManager::printReference(std::ostream& out,
 }
 
 
-void BzMaterialManager::makeTextureList(TextureSet& set) const
+void BzMaterialManager::makeTextureList(TextureSet& set, bool referenced) const
 {
   set.clear();
   for (unsigned int i = 0; i < materials.size(); i++) {
     const BzMaterial* mat = materials[i];
     for (int j = 0; j < mat->getTextureCount(); j++) {
-      set.insert(mat->getTexture(j));
+      if (mat->getReference() || !referenced) {
+        set.insert(mat->getTexture(j));
+      }
     }
   }
   return;
@@ -235,6 +237,8 @@ void BzMaterial::reset()
   delete[] shaders;
   shaders = NULL;
   shaderCount = 0;
+  
+  referenced = false;
 
   return;
 }
@@ -270,6 +274,8 @@ BzMaterial& BzMaterial::operator=(const BzMaterial& m)
 {
   int i;
 
+  referenced = false;
+  
   name = m.name;
 
   dynamicColor = m.dynamicColor;

@@ -160,11 +160,12 @@ void CacheMenu::execute()
     bool rebuild;
     if (Downloads::updateDownloads(rebuild)) {
       controlPanel->addMessage("Updated Downloads");
-      if (rebuild) {
-        setSceneDatabase();
-      }
     } else {
       controlPanel->addMessage("No updates required");
+    }
+    if (rebuild) {
+      setSceneDatabase();
+      controlPanel->addMessage("Rebuilt scene");
     }
   }
   else if (focus == clearDownloadCache) {

@@ -35,6 +35,9 @@ class BzMaterial {
     BzMaterial& operator=(const BzMaterial& material);
 
     void reset();
+    
+    void setReference();
+    bool getReference() const;
 
     //
     // Parameter setting
@@ -112,6 +115,8 @@ class BzMaterial {
     // data
   private:
     std::string name;
+    
+    bool referenced;
 
     int dynamicColor;
     float ambient[4];
@@ -160,6 +165,17 @@ inline const BzMaterial* BzMaterial::getDefault()
   return &defaultMaterial;
 }
 
+inline void BzMaterial::setReference()
+{
+  referenced = true;
+  return;
+}
+
+inline bool BzMaterial::getReference() const
+{
+  return referenced;
+}
+
 
 class BzMaterialManager {
   public:
@@ -173,7 +189,7 @@ class BzMaterialManager {
     int getIndex(const BzMaterial* material) const;
     
     typedef struct std::set<std::string> TextureSet;
-    void makeTextureList(TextureSet& set) const;
+    void makeTextureList(TextureSet& set, bool referenced) const;
     void setTextureLocal(const std::string& url, const std::string& local);
 
     void* pack(void*);

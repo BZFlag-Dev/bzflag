@@ -321,6 +321,9 @@ MeshPolySceneNode* MeshSceneNodeGenerator::getMeshPolySceneNode(const MeshFace* 
 void MeshSceneNodeGenerator::setupNodeMaterial(WallSceneNode* node,
 					       const BzMaterial* mat)
 {
+  // cheat a little
+  ((BzMaterial*)mat)->setReference();
+  
   TextureManager &tm = TextureManager::instance();
   OpenGLMaterial oglMaterial(mat->getSpecular(),
 			     mat->getEmission(),
