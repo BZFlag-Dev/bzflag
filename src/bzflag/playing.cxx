@@ -1733,8 +1733,7 @@ static void		doAutoPilot(float &rotation, float &speed)
 
 	// weave towards the player
 	const Player *target = myTank->getTarget();
-	if ((distance > 20.0f) || (myTank->getFlag() == Flags::Steamroller)
-	||  ((target && target->getFlag() == Flags::Burrow))) {
+	if (distance > 30.0f) {
 	  int period = int(TimeKeeper::getCurrent().getSeconds());
 	  float bias = ((period % 4) < 2) ? M_PI/9.0f : -M_PI/9.0f;
 	  rotation += bias;
@@ -1742,28 +1741,56 @@ static void		doAutoPilot(float &rotation, float &speed)
 	  if (rotation > 1.0f * M_PI) rotation -= 2.0f * M_PI;
 	  speed = M_PI/2.0f - fabs(rotation);
 	}
-	else
+	else if (target->getFlag() != Flags::Burrow) {
 	  speed = -0.5f;
+	  rotation *= M_PI / (2.0f * fabs(rotation));
+	}
       }
 
-      if ((myTank->getFlag() != Flags::Narrow) && (World::getWorld()->allowJumping() || (myTank->getFlag()) == Flags::Jumping)) {
-      //teach autopilot bad habits
+      if ((myTank->getFlag() != Flags::Narrow) && (myTank->getFlag() != Flags::Burrow)){
 	for (t = 0; t < curMaxPlayers; t++) {
 	  if (t == myTank->getId() || !player[t])
 	    continue;
 	  const int maxShots = player[t]->getMaxShots();
 	  for (int s = 0; s < maxShots; s++) {
 	    ShotPath* shot = player[t]->getShot(s);
-	    if (!shot)
+	    if (!shot || shot->isExpired())
 	      continue;
 	    const float* shotPos = shot->getPosition();
 	    if (fabs(shotPos[2] - pos[2]) > BZDBCache::tankHeight)
 	      continue;
 	    const float dist = hypot(shotPos[0] - pos[0], shotPos[1] - pos[1]);
-	    if (dist < BZDB->eval(StateDatabase::BZDB_TANKLENGTH) * 2.0f) {
-	      myTank->jump();
-	      s = maxShots;
-	      t = curMaxPlayers;
+	    if (dist < 100.0f) {
+	      const float *shotVel = shot->getVelocity();
+	      float shotAngle = atan2f(shotVel[1],shotVel[0]);
+	      float shotUnitVec[2] = {cos(shotAngle), sin(shotAngle)};
+	      float trueVec[2] = {pos[0]-shotPos[0],pos[1]-shotPos[1]};
+	      float dotProd = trueVec[0]*shotUnitVec[0]+trueVec[1]*shotUnitVec[1];
+
+	      if (dotProd <= 0.1f) //pretty wide angle, if it hits me, jumping wouldn't have helped
+	        continue;
+
+	      if (((World::getWorld()->allowJumping() || (myTank->getFlag()) == Flags::Jumping)) 
+	      && (dist < (BZDB->eval(StateDatabase::BZDB_TANKLENGTH) * 2.5f))) {
+	        myTank->jump();
+	        s = maxShots;
+	        t = curMaxPlayers;
+	      }
+	      else if (dotProd > 0.97f) {
+		speed = 1.0;
+		float rotation1 = (shotAngle + M_PI/2.0f) - myTank->getAngle();
+		if (rotation1 < -1.0f * M_PI) rotation1 += 2.0f * M_PI;
+		if (rotation1 > 1.0f * M_PI) rotation1 -= 2.0f * M_PI;
+
+		float rotation2 = (shotAngle - M_PI/2.0f) - myTank->getAngle();
+		if (rotation2 < -1.0f * M_PI) rotation2 += 2.0f * M_PI;
+		if (rotation2 > 1.0f * M_PI) rotation2 -= 2.0f * M_PI;
+
+		if (fabs(rotation1) < fabs(rotation2))
+		  rotation = (dist > 50.0f) ? rotation1 / 2.0f : rotation1;
+		else
+		  rotation = (dist > 50.0f) ? rotation2 / 2.0f : rotation2;
+	      }
 	    }
 	  }
 	}
