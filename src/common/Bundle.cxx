@@ -18,6 +18,7 @@
 #include <fstream>
 #include <stdio.h>
 #include "Bundle.h"
+#include "StateDatabase.h"
 
 Bundle::Bundle(const Bundle *pBundle)
 {
@@ -114,10 +115,10 @@ Bundle::TLineType Bundle::parseLine(const std::string &line, std::string &data) 
   }
   return type;
 }
-/*
+
 #include <set>
 static std::set<std::string> unmapped;
-*/
+
 std::string Bundle::getLocalString(const std::string &key) const
 {
   BundleStringMap::const_iterator it = mappings.find(key);
@@ -125,10 +126,13 @@ std::string Bundle::getLocalString(const std::string &key) const
     return it->second;
   else
   {
-/*
-    if (unmapped.find( key ) == unmapped.end( ))
-      unmapped.insert( key );
-*/
+    if (BZDB.getDebug()) {
+      if (unmapped.find( key ) == unmapped.end( )) {
+        unmapped.insert( key );
+	std::string debugStr = "Unmapped Locale String: " + key + "\n";
+	DEBUG1( debugStr.c_str( ));
+      }
+    }
 
     return key;
   }
