@@ -3213,6 +3213,9 @@ bool checkSpam(char* message, GameKeeper::Player* playerData, int t)
 
 static void handleCommand(int t, const void *rawbuf)
 {
+  if (!rawbuf)
+    return;
+
   GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(t);
   if (!playerData)
     return;
