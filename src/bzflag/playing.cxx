@@ -3228,32 +3228,29 @@ static void		handleServerMessage(bool human, uint16_t code,
     case MsgShotBegin: {
       FiringInfo firingInfo;
       msg = firingInfo.unpack(msg);
-      int i;
 
-      if (firingInfo.shot.player != ServerPlayer) {
-        for (i = 0; i < curMaxPlayers; i++) {
-	  if (player[i] && player[i]->getId() == firingInfo.shot.player) {
-	    player[i]->addShot(firingInfo);
-	  }
-	}
-	if (i == curMaxPlayers)
+      const int shooterid = firingInfo.shot.player;
+      if (shooterid != ServerPlayer) {
+        if (player[shooterid] && player[shooterid]->getId() == shooterid)
+          player[shooterid]->addShot(firingInfo);
+        else
 	  break;
       }
       else
 	World::getWorld()->getWorldWeapons()->addShot(firingInfo);
 
       if (human) {
-	    const float* pos = firingInfo.shot.pos;
-	    if (firingInfo.flag == Flags::ShockWave)
-	      playWorldSound(SFX_SHOCK, pos[0], pos[1], pos[2]);
-	    else if (firingInfo.flag == Flags::Laser)
-	      playWorldSound(SFX_LASER, pos[0], pos[1], pos[2]);
-	    else if (firingInfo.flag == Flags::GuidedMissile)
-	      playWorldSound(SFX_MISSILE, pos[0], pos[1], pos[2]);
-	    else if (firingInfo.flag == Flags::Thief)
-	      playWorldSound(SFX_THIEF, pos[0], pos[1], pos[2]);
-	    else
-	      playWorldSound(SFX_FIRE, pos[0], pos[1], pos[2]);
+        const float* pos = firingInfo.shot.pos;
+        if (firingInfo.flag == Flags::ShockWave)
+          playWorldSound(SFX_SHOCK, pos[0], pos[1], pos[2]);
+        else if (firingInfo.flag == Flags::Laser)
+          playWorldSound(SFX_LASER, pos[0], pos[1], pos[2]);
+        else if (firingInfo.flag == Flags::GuidedMissile)
+          playWorldSound(SFX_MISSILE, pos[0], pos[1], pos[2]);
+        else if (firingInfo.flag == Flags::Thief)
+          playWorldSound(SFX_THIEF, pos[0], pos[1], pos[2]);
+        else
+          playWorldSound(SFX_FIRE, pos[0], pos[1], pos[2]);
       }
       break;
     }
