@@ -205,7 +205,7 @@ AC_SUBST(GLIBS)
 
 if test $host_os = mingw32; then
   LIBS="-lwinmm -lws2_32 $LIBS"
-  GLIBS="-mwindows -lgdi32 -ldsound $LIBS"
+  GLIBS="-mwindows -lgdi32 -ldsound $GLIBS"
 fi
 
 # Remove ogg/vorbis dependencies until we actually need them.
