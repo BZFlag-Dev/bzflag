@@ -27,17 +27,9 @@ noinst_HEADERS =		\
 	Flag.h			\
 	FlagSceneNode.h		\
 	FlagWarpSceneNode.h	\
-	bzfgl.h			\
-	bzfio.h			\
-	bzsignal.h		\
-	common.h		\
-	global.h		\
 	Intersect.h		\
 	KeyManager.h		\
 	LaserSceneNode.h	\
-	md5.h			\
-	multicast.h		\
-	network.h		\
 	MediaFile.h		\
 	Obstacle.h		\
 	OpenGLDisplayList.h	\
@@ -46,19 +38,17 @@ noinst_HEADERS =		\
 	OpenGLMaterial.h	\
 	OpenGLTexFont.h		\
 	OpenGLTexture.h		\
+	PTSceneNode.h		\
 	Pack.h			\
 	Ping.h			\
 	PlatformFactory.h	\
 	PlayerState.h		\
 	PolyWallSceneNode.h	\
 	Protocol.h		\
-	PTSceneNode.h		\
 	PyramidBuilding.h	\
 	QuadWallSceneNode.h	\
-	regex.h			\
 	Ray.h			\
 	RenderNode.h		\
-	resource.h		\
 	SceneDatabase.h		\
 	SceneNode.h		\
 	SceneRenderer.h		\
@@ -71,21 +61,31 @@ noinst_HEADERS =		\
 	TankSceneNode.h		\
 	Team.h			\
 	Teleporter.h		\
-	texture.h		\
-	TextureManager.h	\
 	TextUtils.h		\
+	TextureManager.h	\
 	TimeBomb.h		\
 	TimeKeeper.h		\
 	TracerSceneNode.h	\
 	TriWallSceneNode.h	\
-	udpnetwork.h		\
-	version.h		\
 	ViewFrustum.h		\
 	VotingBooth.h		\
 	WallObstacle.h		\
 	WallSceneNode.h		\
 	WordFilter.h		\
-	ZSceneDatabase.h
+	ZSceneDatabase.h	\
+	bzfgl.h			\
+	bzfio.h			\
+	bzsignal.h		\
+	common.h		\
+	global.h		\
+	md5.h			\
+	multicast.h		\
+	network.h		\
+	regex.h			\
+	resource.h		\
+	texture.h		\
+	udpnetwork.h		\
+	version.h
 
 MAINTAINERCLEANFILES = \
 	config.h.in \
