@@ -99,6 +99,7 @@ class ControlPanel {
     int			maxLines;
     float		margin;
     float		lineHeight;
+    bool                unRead[MessageModeCount];
 };
 
 #endif // BZF_CONTROL_PANEL_H

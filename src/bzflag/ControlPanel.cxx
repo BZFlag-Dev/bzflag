@@ -175,6 +175,7 @@ ControlPanel::ControlPanel(MainWindow& _mainWindow, SceneRenderer& renderer) :
   messageAreaPixels[3] = 0;
   for (int i = 0; i < MessageModeCount; i++) {
     messages[i].clear();
+    unRead[i] = false;
   }
   teamColor[0] = teamColor[1] = teamColor[2] = (GLfloat)0.0f;
 
@@ -325,6 +326,8 @@ void			ControlPanel::render(SceneRenderer& renderer)
       // current mode is bright, others are not so bright
       if (messageMode == MessageModes(tab)) {
 	glColor3f(1.0f, 1.0f, 1.0f);
+      } else if (unRead[MessageModes(tab)]) {
+	glColor3f(0.5f, 0.0f, 0.0f);
       } else {
 	glColor3f(0.5f, 0.5f, 0.5f);
       }
@@ -363,10 +366,12 @@ void			ControlPanel::render(SceneRenderer& renderer)
 	    messageAreaPixels[2],
 	    messageAreaPixels[3] - (showTabs ? int(lineHeight + 4) : 0) + ay);
 
-  if (messageMode >= 0)
+  if (messageMode >= 0) {
     i = messages[messageMode].size() - 1;
-  else
+    unRead[messageMode] = false;
+  } else {
     i = -1;
+  }
   if (i >= 0 && messagesOffset > 0) {
     i -= messagesOffset;
     if (i < 0)
@@ -679,6 +684,7 @@ void			ControlPanel::addMessage(const std::string& line,
     messages[MessageAll].pop_front();
     messages[MessageAll].push_back(item);
   }
+  unRead[MessageAll] = true;
 
   // Add to other tab
   if (mode >= MessageChat && mode <= MessageMisc) {
@@ -690,6 +696,7 @@ void			ControlPanel::addMessage(const std::string& line,
       messages[mode].pop_front();
       messages[mode].push_back(item);
     }
+    unRead[mode] = true;
   }
 
   // this stuff has no effect on win32 (there's no console)
