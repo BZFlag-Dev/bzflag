@@ -380,7 +380,8 @@ std::string cmdScreenshot(const std::string&, const CommandManager::ArgList& arg
   f.open(filename.c_str(), std::ios::out | std::ios::binary);
   if (f.is_open()) {
     int w = mainWindow->getWidth(), h = mainWindow->getHeight();
-    unsigned char* b = new unsigned char[h * w * 3 + h];  //screen of pixels + column for filter type required by PNG
+    const unsigned long blength = h * w * 3 + h;    //size of b[] and br[]
+    unsigned char* b = new unsigned char[blength];  //screen of pixels + column for filter type required by PNG - filtered data
 
     //Prepare gamma table
     const bool gammaAdjust = BZDB.isSet("gamma");
@@ -396,7 +397,7 @@ std::string cmdScreenshot(const std::string&, const CommandManager::ArgList& arg
 
     /* Write a PNG stream.
        FIXME: Note that there are several issues with this code, altho it produces perfectly fine PNGs.
-       1. We do no filtering.  Sub filters would probably work great on BZFlag screenshots.
+       1. We do no filtering.  Sub filters increase screenshot size, other filters would require a lot of effort to implement.
        2. Gamma-correction is preapplied by BZFlag's gamma table.  This ignores the PNG gAMA chunk, but so do many viewers (including Mozilla)
        3. Timestamp (tIME) chunk is not added to the file, but would be a good idea.
     */
@@ -443,23 +444,20 @@ std::string cmdScreenshot(const std::string&, const CommandManager::ArgList& arg
       const unsigned long line = (h - (i + 1)) * (w * 3 + 1); //beginning of this line
       b[line] = 0;  //filter type byte at the beginning of each scanline (0 = no filter, 1 = sub filter)
       glReadPixels(0, i, w, 1, GL_RGB, GL_UNSIGNED_BYTE, b + line + 1); //capture line
-      // do image modification
-      unsigned char *ptr = b + line + w * 3;
-      for (int i = w * 3; i > 0; i--) {
-	// apply gamma correction if necessary
-        if (gammaAdjust)
+      // apply gamma correction if necessary
+      if (gammaAdjust) {
+        unsigned char *ptr = b + line + 1;
+	for (int i = 1; i < w * 3 + 1; i++) {
 	  *ptr = gammaTable[*ptr];
-	// apply sub filtering (er, or not - doesn't work right now)
-	/* if (i > 3)
-	  *ptr -= *(ptr - 3);
-	*/
-	ptr--;
+	  ptr++;
+	}
       }
     }
-    unsigned long zlength = h * w * 3 + h + 15;     //length of bz[], will be changed by zlib to the length of the compressed string contained therein
+
+    unsigned long zlength = blength + 15;	    //length of bz[], will be changed by zlib to the length of the compressed string contained therein
     unsigned char* bz = new unsigned char[zlength]; //just like b, but compressed; might get bigger, so give it room
-    //compress b into bz with some compression
-    compress2(bz, &zlength, b, h * w * 3 + h, 5);
+    // compress b into bz
+    compress2(bz, &zlength, b, blength, 5);
     temp = htonl(zlength);                          //(length) IDAT length after compression
     f.write((char*) &temp, 4);
     temp = htonl(PNGTAG("IDAT"));                   //(tag) IDAT
