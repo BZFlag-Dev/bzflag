@@ -324,12 +324,14 @@ bool			BzfMedia::doReadRLE(FILE* file,
   // read offset tables
   const int tableSize = dy * dz;
   int32_t* startTable  = new int32_t[tableSize];
-  int32_t* lengthTable = new int32_t[tableSize];
   if (fread(startTable, 4 * tableSize, 1, file) != 1) {
+    delete[] startTable;
     return false;
   }
+  int32_t* lengthTable = new int32_t[tableSize];
   if (fread(lengthTable, 4 * tableSize, 1, file) != 1) {
     delete[] startTable;
+    delete[] lengthTable;
     return false;
   }
 
