@@ -11,9 +11,11 @@ EXTRA_DIST = \
 	autogen.sh \
 	BUGS \
 	bzflag.lsm \
+	bzflag.spec \
 	DEVINFO \
 	PORTING \
 	README.IRIX \
+	README.Linux \
 	README.MINGW32 \
 	README.SOLARIS \
 	README.UNIX \
@@ -25,6 +27,7 @@ MAINTAINERCLEANFILES = \
 	config.guess \
 	config.sub \
 	configure \
+	bzflag.spec \
 	INSTALL \
 	install-sh \
 	missing \

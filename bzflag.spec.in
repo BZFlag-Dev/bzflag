@@ -10,14 +10,14 @@
 # IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
 # WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 
-%define name bzflag
-%define version 1.9a0
-%define release 1
+%define name	bzflag
+%define version	@VERSION@
+%define release	%{?CUSTOM_RELEASE} %{!?CUSTOM_RELEASE:%RELEASE}
 
+%define prefix	/usr
 %define bzbindir	/usr/bin
 %define bzdatadir	/usr/share/%{name}/
 %define bzmandir	/usr/man
-# %define bzdocdir	/usr/share/doc/%{name}-%{version}
 
 name:		%{name}
 version:	%{version}
@@ -27,7 +27,7 @@ copyright:	Copyright (c) 1993 - 2003 Tim Riker
 packager:	Tim Riker <Tim@Rikers.org>
 url:		http://BZFlag.org/
 summary:	multiplayer 3D tank battle game
-source:		http://download.SourceForge.net/bzflag/%{name}-%{version}.tgz
+source:		http://download.SourceForge.net/bzflag/%{name}-%{version}.tar.gz
 buildroot:	/var/tmp/%{name}-%{version}-%{release}
 
 # all we want here is to remove glide, but RPM does not provide a way. ;-(
@@ -48,11 +48,13 @@ styles are available.
 %build
 %ifarch i386 i486 i586 i686
 CFLAGS="$RPM_OPT_FLAGS" CXXFLAGS="$RPM_OPT_FLAGS"	\
-	./configure --prefix=/usr --enable-robots	\
+	./configure --prefix=%{prefix} --enable-robots	\
+	--enable-bzadmin				\
 	--host=i386-pc-linux-gnu
 %else
 CFLAGS="$RPM_OPT_FLAGS" CXXFLAGS="$RPM_OPT_FLAGS"	\
-	./configure --prefix=/usr --enable-robots
+	./configure --prefix=%{prefix} --enable-robots	\
+	--enable-bzadmin
 %endif
 
 make
@@ -66,11 +68,9 @@ make DESTDIR=$RPM_BUILD_ROOT install-strip
 # note -- bzflag must be setuid root to use 3Dfx drivers without /dev/3dfx
 %files
 %defattr(-,root,root)
-# %dir %{bzdocdir}
 %dir %{bzdatadir}
 %dir %{bzdatadir}/*
 %{bzdatadir}/*
 %{bzdatadir}/l10n/*
-# %doc %{bzdocdir}/*
 %doc %{bzmandir}/man6/*
 %attr(755,root,root) %{bzbindir}/*
