@@ -3935,9 +3935,6 @@ void		leaveGame()
   entered = false;
   joiningGame = false;
 
-  // delete scene database
-  sceneRenderer->setSceneDatabase(NULL);
-
   // no more radar
   controlPanel->setRadarRenderer(NULL);
   delete radar;
@@ -4033,6 +4030,11 @@ void		leaveGame()
   gameOver = false;
   serverError = false;
   serverDied = false;
+
+  // delete scene database (after the world has been destroyed)
+  sceneRenderer->setSceneDatabase(NULL);
+  
+  return;
 }
 
 

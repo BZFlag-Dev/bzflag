@@ -102,7 +102,7 @@ public:
   void		setRebuildTanks();
 
   void		setExposed();
-
+  
   void		getGroundUV(const float p[2], float uv[2]) const;
 
   bool		getBlank() const;
@@ -161,6 +161,8 @@ private:
 
   SceneRenderer(const SceneRenderer&);
   SceneRenderer&	operator=(const SceneRenderer&);
+
+  void		setupBackgroundMaterials();
 
   void		getLights();
   void		getRenderNodes();

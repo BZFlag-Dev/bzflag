@@ -76,9 +76,18 @@ World::~World()
   for (i = 0; i < NumTeams; i++) {
     bases[i].clear();
   }
+  
+  // clear the managers
   links.clear();
+  DYNCOLORMGR.clear();
+  TEXMATRIXMGR.clear();
+  MATERIALMGR.clear();
+  PHYDRVMGR.clear();
+  TRANSFORMMGR.clear();
   OBSTACLEMGR.clear();
   COLLISIONMGR.clear();
+
+  return;
 }
 
 
@@ -371,7 +380,8 @@ const Obstacle* World::hitBuilding(const float* oldPos, float oldAngle,
   if (i == olist->count) {
     return NULL; // no more obstacles, we are done
   }
-  
+
+  // do some prep work for mesh faces  
   int hitCount = 0;
   float vel[3];
   vel[0] = pos[0] - oldPos[0];

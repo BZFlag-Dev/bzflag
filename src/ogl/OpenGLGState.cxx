@@ -328,7 +328,7 @@ void			OpenGLGStateState::setTexture(
 void			OpenGLGStateState::setTextureMatrix(
 					const int _textureMatrix)
 {
-  sorted.hasTexture = _textureMatrix>=0;
+  sorted.hasTextureMatrix = _textureMatrix>=0;
   sorted.textureMatrix = _textureMatrix;
 }
 

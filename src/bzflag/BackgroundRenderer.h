@@ -35,6 +35,8 @@ class BackgroundRenderer {
   public:
 			BackgroundRenderer(const SceneRenderer&);
 			~BackgroundRenderer();
+			
+    void		setupGroundMaterials();
 
     void		renderSky(SceneRenderer&, bool fullWindow, bool mirror);
     void		renderGround(SceneRenderer&, bool fullWindow);
@@ -150,8 +152,10 @@ class BackgroundRenderer {
     static GLfloat		skyPyramid[5][3];
     static const GLfloat	cloudRepeats;
 
-    static const GLfloat	groundColor[4][3];
-    static const GLfloat	groundColorInv[4][3];
+    static GLfloat		groundColor[4][4];
+    static GLfloat		groundColorInv[4][4];
+    static const GLfloat	defaultGroundColor[4][4];
+    static const GLfloat	defaultGroundColorInv[4][4];
     static const GLfloat	receiverColor[3];
     static const GLfloat	receiverColorInv[3];
 };

@@ -352,6 +352,15 @@ void SceneRenderer::setRebuildTanks()
 }
 
 
+void SceneRenderer::setupBackgroundMaterials()
+{
+  if (background) {
+    background->setupGroundMaterials();
+  }
+  return;
+}
+
+
 void			SceneRenderer::setCollisionTree(bool on)
 {
   useCollisionTreeOn = on;
@@ -472,6 +481,11 @@ void SceneRenderer::setSceneDatabase(SceneDatabase* db)
   } else {
     inOrder = false;
   }
+  
+  // update the background materials
+  setupBackgroundMaterials();
+  
+  return;
 }
 
 
