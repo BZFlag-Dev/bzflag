@@ -843,7 +843,7 @@ void			TankSceneNode::LowTankRenderNode::freeParts()
 //
 
 GLuint			TankSceneNode::MedTankRenderNode::parts[lastStyle] =
-				{ _NO_LIST_ID, _NO_LIST_ID, _NO_LIST_ID, _NO_LIST_ID };
+				{ _NO_LIST_ID, _NO_LIST_ID, _NO_LIST_ID, _NO_LIST_ID, _NO_LIST_ID };
 
 TankSceneNode::MedTankRenderNode::MedTankRenderNode(
 				const TankSceneNode* sceneNode) :
