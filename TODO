@@ -14,7 +14,7 @@ THESE ARE LOWER PRIORITY
   the begeebers out of regular folk.
 
 * TimRiker vetos this: Add BZDB::_ShieldStrength, which allows a tank with SH
-  to be hit n times before being destroyed.
+  to be hit n times before being destroyed. Default is 1
 
 * unable to remap the respawn binding (it's not "specifically/individually"
   provided on the key binding menu) without manually editing the config file
