@@ -126,9 +126,6 @@ class World {
     void		freeFlags();
     void		freeInsideNodes();
 
-    static void		callback(const std::string& name, void* userData);
-    static bool		displayMainFlags; //BZDB cache
-
   private:
     short		gameStyle;
     float		linearAcceleration;

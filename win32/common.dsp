@@ -94,6 +94,10 @@ SOURCE=..\src\common\BundleMgr.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\src\common\BZDBCache.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\src\common\bzsignal.c
 # End Source File
 # Begin Source File
@@ -175,6 +179,10 @@ SOURCE=..\include\Bundle.h
 # Begin Source File
 
 SOURCE=..\include\BundleMgr.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\BZDBCache.h
 # End Source File
 # Begin Source File
 

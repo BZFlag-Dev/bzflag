@@ -5,18 +5,29 @@
 #include <string>
 #include "BZDBCache.h"
 
+bool  BZDBCache::displayMainFlags;
+
+
 float BZDBCache::maxLOD;
 float BZDBCache::tankHeight;
 
 void BZDBCache::init()
 {
-  BZDB->addCallback( StateDatabase::BZDB_TANKHEIGHT, callback, NULL );
+  BZDB->addCallback("displayMainFlags", clientCallback, NULL);
+  BZDB->addCallback(StateDatabase::BZDB_MAXLOD, serverCallback, NULL);
+  BZDB->addCallback(StateDatabase::BZDB_TANKHEIGHT, serverCallback, NULL);
 }
 
-void BZDBCache::callback(const std::string &name, void *)
+void BZDBCache::clientCallback(const std::string& name, void *)
+{
+  if (name == "displayMainFlags")
+    displayMainFlags = BZDB->isTrue("displayMainFlags");
+}
+
+void BZDBCache::serverCallback(const std::string& name, void *)
 {
   if (name == StateDatabase::BZDB_MAXLOD)
-	  maxLOD = BZDB->eval(StateDatabase::BZDB_MAXLOD);
+    maxLOD = BZDB->eval(StateDatabase::BZDB_MAXLOD);
   else if (name == StateDatabase::BZDB_TANKHEIGHT)
     tankHeight = BZDB->eval(StateDatabase::BZDB_TANKHEIGHT);
 }

@@ -10,14 +10,15 @@ class BZDBCache
 public:
 	static void init();
 
+	static bool  displayMainFlags;
 
 	static float maxLOD;
 	static float tankHeight;
 
 
 private:
-	static void callback(const std::string &name, void *);
-
+	static void clientCallback(const std::string &name, void *);
+	static void serverCallback(const std::string &name, void *);
 };
 
 #endif
