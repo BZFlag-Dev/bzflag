@@ -91,7 +91,10 @@ const char *AdnsHandler::getHostname() {
   if (status == Pending) {
     checkDNSResolution();
   }
-  return hostname;
+  if (status == Succeeded)
+    return hostname;
+
+  return NULL;
 }
 
 void AdnsHandler::startupResolver() {
