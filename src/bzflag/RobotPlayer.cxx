@@ -208,18 +208,7 @@ void			RobotPlayer::doUpdateMotion(float dt)
     velocity[2] = 0.0f;
   }
 
-  // stop if headed into a building
-  if (World::getWorld()->inBuilding(position, 3.0f * BZDB->eval(StateDatabase::BZDB_TANKRADIUS))) {
-    position[0] = oldPosition[0];
-    position[1] = oldPosition[1];
-    position[2] = oldPosition[2];
-    velocity[0] = 0.0f;
-    velocity[1] = 0.0f;
-    velocity[2] = 0.0f;
-  }
-  else {
-    move(position, azimuth);
-  }
+  move(position, azimuth);
   setVelocity(velocity);
   setAngularVelocity((getAngle() - oldAzimuth) / dt0);
 }
