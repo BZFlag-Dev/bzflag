@@ -7,9 +7,6 @@ recent bugs
 
 - in teleporter with (isValid() == false) can mess up the linking
 
-- when a shield flag is dropped due to its owner being shot, it is not
-  always zapped like it should be.
-
 - sometimes players will recieve the message "So-and-so destroyed by server"
   instead of "So-and-so killed by such-and-such".  Appears to depend on
   So-and-so's player slot.
