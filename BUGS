@@ -1,6 +1,9 @@
 must fix for 1.10.4 patch release
 ---------------------------------
 
+- Tanks with the N flag are not rendered as narrow, but their flags seem
+  to be.
+
 - quol reports that his 1.10.3 server is requiring identification, although
   require identify is not listed anywhere in his group file.  problem still
   happens if he moves the group file out of the way. larsl wonders if this
