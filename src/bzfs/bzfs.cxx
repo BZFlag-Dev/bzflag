@@ -4351,6 +4351,11 @@ static void addPlayer(int playerIndex)
   } while (*++sp);
   *tp = *sp;
 
+  // strip trailing blanks
+  while (*--tp==' ') {
+    *tp=0;
+  }
+
   // look if there is as name clash, we won't allow this
   int i;
   for (i = 0; i < maxPlayers; i++)
