@@ -240,7 +240,7 @@ static void printVersion()
 {
   std::cout << "BZFlag server " << getAppVersion() << " (protocol " << getProtocolVersion() <<
     ") http://BZFlag.org/\n";
-  //std::cout << std::string(bzfcopyright) << std::endl;
+  std::cout << bzfcopyright << std::endl;
   std::cout.flush();
 }
 
