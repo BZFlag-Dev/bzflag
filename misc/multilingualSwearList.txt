@@ -609,7 +609,7 @@ dickwad
 dickweed
 dicwad
 dik
-dike
+#dike  # matches "I'd like"
 dildo
 dlldo
 doggystyle
