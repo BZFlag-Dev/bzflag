@@ -2182,12 +2182,13 @@ static void addPlayer(int playerIndex)
   while (*sp==' ')
     sp++;
 
-  // strip any non-printable characters from callsign
+  // strip any non-printable characters and ', and " from callsign
   do {
-    if (isprint(*sp))
+    if (isprint(*sp) && (*sp != '\'') && (*sp != '"'))
       *tp++ = *sp;
   } while (*++sp);
   *tp = *sp;
+
 
   // strip trailing blanks
   while (*--tp==' ') {
