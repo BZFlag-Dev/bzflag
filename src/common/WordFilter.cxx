@@ -546,7 +546,6 @@ WordFilter::WordFilter()
   addSuffix("ist");
   // adjective
   addSuffix("ive");
-  addSuffix("en");
   addSuffix("ic");
   addSuffix("al");
   addSuffix("able");
