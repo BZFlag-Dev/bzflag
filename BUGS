@@ -24,7 +24,8 @@ recent bugs
 - bzfls.pl doesn't properly list multiple servers from the same ip (brlcad.org
   is a good example)
 
-- tanks get stuck on pyramids instead of sliding off
+- tanks get stuck on pyramids instead of sliding off (on box buildings too,
+  now)
 
 - tanks may be squished from too high away.  i.e. tank carrying steamroller
   can squish from high above as will a burrowed tank (on MAC's playground)
