@@ -175,7 +175,7 @@ namespace TextUtils {
    */
   inline bool isAlphanumeric(const char c)
   {
-    if ( isAlphabetic(c) || isNumeric(c) ) {
+    if (isAlphabetic(c) || isNumeric(c)) {
       return true;
     }
     return false;
@@ -189,7 +189,7 @@ namespace TextUtils {
    */
   inline bool isVisible(const char c)
   {
-    if ( isAlphanumeric(c) || isPunctuation(c) ) {
+    if (isAlphanumeric(c) || isPunctuation(c)) {
       return true;
     }
     return false;
@@ -202,7 +202,7 @@ namespace TextUtils {
    */
   inline bool isPrintable(const char c)
   {
-    if ( isVisible(c) || isWhitespace(c) ) {
+    if (isVisible(c) || isWhitespace(c)) {
       return false;
     }
     return true;
@@ -218,11 +218,11 @@ namespace TextUtils {
   inline int firstAlphanumeric(const std::string &input, unsigned short int max=4096)
   {
 
-    if(max > input.length())
+    if (max > input.length())
       max = (unsigned short)input.length();
 
-	for(unsigned short i = 0; i < max; i++)
-      if(isAlphanumeric(input[i]))
+    for (unsigned short i = 0; i < max; i++)
+      if (isAlphanumeric(input[i]))
         return i;
 
     return -1;
@@ -235,11 +235,11 @@ namespace TextUtils {
   inline int firstNonalphanumeric(const std::string &input, unsigned short int max=4096)
   {
 
-    if(max > input.length())
+    if (max > input.length())
       max = (unsigned short)input.length();
 
-    for(unsigned short i = 0; i < max; i++)
-      if(!isAlphanumeric(input[i]))
+    for (unsigned short i = 0; i < max; i++)
+      if (!isAlphanumeric(input[i]))
         return i;
 
     return -1;
@@ -252,11 +252,11 @@ namespace TextUtils {
   inline int firstPrintable(const std::string &input, unsigned short int max=4096)
   {
 
-    if(max > input.length())
+    if (max > input.length())
       max = (unsigned short)input.length();
    
-	for(unsigned short i = 0; i < max; i++)
-      if(isPrintable(input[i]))
+    for (unsigned short i = 0; i < max; i++)
+      if (isPrintable(input[i]))
         return i;
 
     return -1;
@@ -268,14 +268,14 @@ namespace TextUtils {
    */
   inline int firstNonprintable(const std::string &input, unsigned short int max=4096)
   {
-    if(max > input.length())
+    if (max > input.length())
       max = (unsigned short)input.length();
 
-	for(unsigned short i = 0; i < max; i++)
-      if(!isPrintable(input[i]))
+    for (unsigned short i = 0; i < max; i++)
+      if (!isPrintable(input[i]))
         return i;
 	  
-	return -1;
+    return -1;
   }
 
 
@@ -285,11 +285,11 @@ namespace TextUtils {
   inline int firstVisible(const std::string &input, unsigned short int max=4096)
   {
 
-    if(max > input.length())
+    if (max > input.length())
       max = (unsigned short)input.length();
 
-    for(unsigned short i = 0; i < max; i++)
-      if(isVisible(input[i]))
+    for (unsigned short i = 0; i < max; i++)
+      if (isVisible(input[i]))
         return i;
 
     return -1;
@@ -302,16 +302,15 @@ namespace TextUtils {
    */
   inline int firstNonvisible(const std::string &input, unsigned short int max=4096)
   {
-    if(max > input.length())
+    if (max > input.length())
       max = (unsigned short)input.length();
     
-	for(unsigned short i = 0; i < max; i++)
-      if(!isVisible(input[i]))
+    for (unsigned short i = 0; i < max; i++)
+      if (!isVisible(input[i]))
         return i;
 	
-	  return -1;  
-
-  }
+    return -1;  
+ }
 
 
   /** utility method that returns the position of the
@@ -319,15 +318,14 @@ namespace TextUtils {
    */
   inline int firstAlphabetic(const std::string &input, unsigned short int max=4096)
   {
-	  
-    if(max > input.length())
+    if (max > input.length())
       max = (unsigned short)input.length();
 	
-    for(unsigned short i = 0; i < max; i++)
-      if(isAlphabetic(input[i]))
+    for (unsigned short i = 0; i < max; i++)
+      if (isAlphabetic(input[i]))
         return i;
    
-	return -1;
+    return -1;
   }
 
 
@@ -336,11 +334,11 @@ namespace TextUtils {
    */
   inline int firstNonalphabetic(const std::string &input, unsigned short int max=4096)
   {
-    if(max > input.length())
+    if (max > input.length())
       max = (unsigned short)input.length();
 
-    for(unsigned short i = 0; i < max; i++)
-      if(!isAlphabetic(input[i]))
+    for (unsigned short i = 0; i < max; i++)
+      if (!isAlphabetic(input[i]))
         return i;
 
     return -1;
