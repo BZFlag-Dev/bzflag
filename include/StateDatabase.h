@@ -168,15 +168,15 @@ public:
     void			setVariable(std::string variable);
     void			setOper(Operator oper);
 
-    Type			getTokenType();
-    Contents			getTokenContents();
-    double			getNumber();
-    std::string			getVariable();
-    Operator			getOperator();
+    Type			getTokenType() const;
+    Contents			getTokenContents() const;
+    double			getNumber() const;
+    std::string			getVariable() const;
+    Operator			getOperator() const;
 
-    int				getPrecedence();
+    int				getPrecedence() const;
 
-	private:
+private:
     Type tokenType;
     Contents tokenContents;
   };
@@ -184,13 +184,13 @@ public:
   typedef std::vector<ExpressionToken> Expression;
 
 private:
-  Expression			infixToPrefix(Expression infix) const;
+  static Expression    		infixToPrefix(const Expression &infix);
   float				evaluate(Expression e) const;
 };
 
 std::istream& operator >> (std::istream& src, StateDatabase::Expression& dst);
 std::string& operator >> (std::string& src, StateDatabase::Expression& dst);
-std::ostream& operator << (std::ostream& dst, StateDatabase::Expression& src);
+std::ostream& operator << (std::ostream& dst, const StateDatabase::Expression& src);
 
 #endif // BZF_STATE_DATABASE_H
 // ex: shiftwidth=2 tabstop=8

@@ -329,35 +329,35 @@ void StateDatabase::ExpressionToken::setOper(Operator op)
   tokenContents.oper = op;
 }
 
-StateDatabase::ExpressionToken::Type StateDatabase::ExpressionToken::getTokenType()
+StateDatabase::ExpressionToken::Type StateDatabase::ExpressionToken::getTokenType() const
 {
   return tokenType;
 }
 
-StateDatabase::ExpressionToken::Contents StateDatabase::ExpressionToken::getTokenContents()
+StateDatabase::ExpressionToken::Contents StateDatabase::ExpressionToken::getTokenContents() const
 {
   return tokenContents;
 }
 
-double StateDatabase::ExpressionToken::getNumber()
+double StateDatabase::ExpressionToken::getNumber() const
 {
   // note that the necessary type check must be done first
   return tokenContents.number;
 }
 
-std::string	StateDatabase::ExpressionToken::getVariable()
+std::string	StateDatabase::ExpressionToken::getVariable() const
 {
   // note that the necessary type check must be done first
   return tokenContents.variable;
 }
 
-StateDatabase::ExpressionToken::Operator StateDatabase::ExpressionToken::getOperator()
+StateDatabase::ExpressionToken::Operator StateDatabase::ExpressionToken::getOperator() const
 {
   // note that the necessary type check must be done first
   return tokenContents.oper;
 }
 
-int StateDatabase::ExpressionToken::getPrecedence()
+int StateDatabase::ExpressionToken::getPrecedence() const
 {
   switch (tokenContents.oper) {
     case add:
@@ -489,7 +489,7 @@ std::string& operator >> (std::string& src, StateDatabase::ExpressionToken& dst)
   return src;
 }
 
-std::ostream& operator << (std::ostream& dst, StateDatabase::ExpressionToken& src)
+std::ostream& operator << (std::ostream& dst, const StateDatabase::ExpressionToken& src)
 {
   switch (src.getTokenType()) {
     case StateDatabase::ExpressionToken::number:
@@ -562,7 +562,7 @@ std::string& operator >> (std::string& src, StateDatabase::Expression& dst)
   return src;
 }
 
-std::ostream& operator << (std::ostream& dst, StateDatabase::Expression& src)
+std::ostream& operator << (std::ostream& dst, const StateDatabase::Expression& src)
 {
   if(src.size()) {
     for (unsigned int i = 0; i < src.size() - 1; i++) {
@@ -573,12 +573,12 @@ std::ostream& operator << (std::ostream& dst, StateDatabase::Expression& src)
   return dst;
 }
 
-StateDatabase::Expression StateDatabase::infixToPrefix(Expression infix) const
+StateDatabase::Expression StateDatabase::infixToPrefix(const Expression &infix)
 {
   Expression postfix, prefix;
   std::stack<ExpressionToken> operators;
 
-  for (Expression::iterator i = infix.begin(); i != infix.end(); i++) {
+  for (Expression::const_iterator i = infix.begin(); i != infix.end(); i++) {
     if (i->getTokenType() == ExpressionToken::variable || i->getTokenType() == ExpressionToken::number) {
       postfix.push_back(*i);
     } else if (i->getTokenType() == ExpressionToken::oper) {
