@@ -2689,10 +2689,10 @@ static void captureFlag(int playerIndex, TeamColor teamCaptured)
 		}
   	if ((flag[flagIndex].flag.type->flagTeam != playerData->player.getTeam() &&
 			 	 base != playerData->player.getTeam())) {
-       char message[MessageLen];
        DEBUG1("\"%s\" (%d) tried to capture %s flag without reaching its own base",
 							playerData->player.getCallSign(), playerIndex,
 							Team::getName(flag[flagIndex].flag.type->flagTeam));
+       //char message[MessageLen];
        //strcpy(message, "Autokick: Tried to capture opponent flag without landing on your base");
        //sendMessage(ServerPlayer, playerIndex, message);
        //removePlayer(playerIndex, "capturecheat"); //FIXME: kicks honest players at times
