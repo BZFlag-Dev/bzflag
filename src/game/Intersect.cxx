@@ -716,13 +716,13 @@ IntersectLevel          testAxisBoxInFrustum(const float* boxMins,
     }
     // check the inside length
     len = (p[0] * i[0]) + (p[1] * i[1]) + (p[2] * i[2]) + p[3];
-    if (len < 0.0f) {
+    if (len < +0.000001f) {
       return Outside;
     }
 
     // check the outside length
     len = (p[0] * o[0]) + (p[1] * o[1]) + (p[2] * o[2]) + p[3];
-    if (len < 0.0f) {
+    if (len < -0.000001f) {
       result = Partial; // partial at best
     }
   }
