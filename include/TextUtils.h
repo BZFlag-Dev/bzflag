@@ -110,8 +110,8 @@ std::string::const_iterator p2 = s2.begin();
 
 
 /** utility function returns truthfully whether
-* given character is a letter.
-*/
+ * given character is a letter.
+ */
 inline bool isAlphabetic(const char c)
 {
   if (( c > 64 && c < 91) ||
@@ -123,8 +123,8 @@ inline bool isAlphabetic(const char c)
 
 
 /** utility function returns truthfully whether
-* given character is a number.
-*/
+ * given character is a number.
+ */
 inline bool isNumeric(const char c)
 {
   if (( c > 47 && c < 58)) {
@@ -135,10 +135,10 @@ inline bool isNumeric(const char c)
 
 
 /** utility function returns truthfully whether
-* a given character is printable whitespace.
-* this includes newline, carriage returns, tabs
-* and spaces.
-*/
+ * a given character is printable whitespace.
+ * this includes newline, carriage returns, tabs
+ * and spaces.
+ */
 inline bool isWhitespace(const char c)
 {
   if ((( c >= 9 ) && ( c <= 13 )) ||
@@ -150,8 +150,8 @@ inline bool isWhitespace(const char c)
 
 
 /** utility function returns truthfully whether
-* a given character is punctuation.
-*/
+ * a given character is punctuation.
+ */
 inline bool isPunctuation(const char c)
 {
   if (( c > 32 && c < 48) ||
@@ -164,9 +164,9 @@ inline bool isPunctuation(const char c)
 
 
 /** utility function returns truthfully whether
-* given character is an alphanumeric.  this is
-* strictly letters and numbers.
-*/
+ * given character is an alphanumeric.  this is
+ * strictly letters and numbers.
+ */
 inline bool isAlphanumeric(const char c)
 {
   if ( isAlphabetic(c) || isNumeric(c) ) {
@@ -177,12 +177,11 @@ inline bool isAlphanumeric(const char c)
 
 
 /** utility function returns truthfully whether
-* given character is printable.  this includes
-* letters, numbers, punctuation, and whitespace
-*/
+ * given character is printable.  this includes
+ * letters, numbers, punctuation, and whitespace
+ */
 inline bool isPrintable(const char c)
 {
-  /* 9 is tab, 10 is newline, 32 is space */
   if ( isAlphanumeric(c) || isWhitespace(c) ) {
     return false;
   }
@@ -190,11 +189,26 @@ inline bool isPrintable(const char c)
 }
 
 
+/** utility function returns truthfully whether
+ * given character is printable.  this includes
+ * letters, numbers, and punctuation.
+ * (but NOT whitespace)
+ */
+inline bool isVisible(const char c)
+{
+  if ( isPrintable(c) && !isWhitespace(c) ) {
+    return true;
+  }
+  return false;
+}
+
+
+
 // S t r i n g  i t e r a t i o n
 
 /** utility method that returns the position of the
-* first printable character from a string
-*/
+ * first printable character from a string
+ */
 inline int firstAlphanumeric(const std::string &input, unsigned short int max=4096)
 {
   if (input.size() == 0) {
@@ -211,8 +225,8 @@ inline int firstAlphanumeric(const std::string &input, unsigned short int max=40
 
 
 /** utility method that returns the position of the
-* first printable character from a string
-*/
+ * first printable character from a string
+ */
 inline int firstNonalphanumeric(const std::string &input, unsigned short int max=4096)
 {
   if (input.size() == 0) {
@@ -229,8 +243,8 @@ inline int firstNonalphanumeric(const std::string &input, unsigned short int max
 
 
 /** utility method that returns the position of the
-* first printable character from a string
-*/
+ * first printable character from a string
+ */
 inline int firstPrintable(const std::string &input, unsigned short int max=4096)
 {
   if (input.size() == 0) {
@@ -247,8 +261,8 @@ inline int firstPrintable(const std::string &input, unsigned short int max=4096)
 
 
 /** utility method that returns the position of the
-* first non-printable character from a string
-*/
+ * first non-printable character from a string
+ */
 inline int firstNonprintable(const std::string &input, unsigned short int max=4096)
 {
   if (input.size() == 0) {
@@ -262,6 +276,43 @@ inline int firstNonprintable(const std::string &input, unsigned short int max=40
   }
   return i;
 }
+
+
+/** utility method that returns the position of the
+ * first visible character from a string
+ */
+inline int firstVisible(const std::string &input, unsigned short int max=4096)
+{
+  if (input.size() == 0) {
+    return -1;
+  }
+
+  int i = 0;
+  /* range of printable characters, with failsafe */
+  while (isVisible(input[i]) && (i < max)) {
+    i++;
+  }
+  return i;
+}
+
+/** utility method that returns the position of the
+ * first non visible character from a string (control
+ * codes or whitespace
+ */
+inline int firstNonvisible(const std::string &input, unsigned short int max=4096)
+{
+  if (input.size() == 0) {
+    return -1;
+  }
+
+  int i = 0;
+  /* range of printable characters, with failsafe */
+  while (!isVisible(input[i]) && (i < max)) {
+    i++;
+  }
+	 return i;
+}
+
 
 #endif // __TEXTUTILS_H__
 
