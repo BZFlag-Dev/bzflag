@@ -4,6 +4,7 @@
 BZFlag 1.12.0  (was 1.11.x)
 ---------------------------
 
+* Show status while trying to connect & download world - Daniel Remenak
 * Update old configs to avoid broken keybindings - Daniel Remenak
 * New per version config for all versions, with update copy and hook from old versions - Jeff Myers
 * Faster tank and shot collision detection using an octree - Dave Rodgers

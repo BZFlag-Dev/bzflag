@@ -36,6 +36,7 @@
 #define MAX_MESSAGE_HISTORY (20)
 
 typedef void		(*JoinGameCallback)(bool success, void* data);
+typedef void		(*ConnectStatusCallback)(std::string& str);
 typedef void		(*PlayingCallback)(void*);
 struct PlayingCallbackItem {
   public:

@@ -22,9 +22,6 @@ THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
 	Server needs to resend max when ever gravity changes.
 	This way only real cheaters hit the cheat test.
 
-* make client say "loading map" when it's loading large maps.
-
-
 THESE ARE LOWER PRIORITY
 
 * separate the map from the game configuration parameters in the
