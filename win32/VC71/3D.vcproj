@@ -211,6 +211,9 @@
 				RelativePath="..\..\include\FontManager.h">
 			</File>
 			<File
+				RelativePath="..\..\include\TextureFont.h">
+			</File>
+			<File
 				RelativePath="..\..\include\TextureManager.h">
 			</File>
 		</Filter>
