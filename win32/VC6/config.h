@@ -20,7 +20,7 @@
  * If we've got a socklen_t typedefed, define HAVE_SOCKLEN_T to
  * avoid #define'ing it in common.h */
 
-#ifndef socklen_t
+#ifndef IPV6_HDRINCL	// use this to see if we have the new TCP headers that include socket len or no
 	#define socklen_t int
 #endif
 
