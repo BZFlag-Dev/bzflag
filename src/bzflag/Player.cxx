@@ -539,17 +539,21 @@ void			Player::setCloaked(bool invisible)
 
 void			Player::setLanded(float velocity)
 {
-  const float gravity = BZDB.eval(StateDatabase::BZDB_GRAVITY);
-  const float effectTime = BZDB.eval(StateDatabase::BZDB_FLAGEFFECTTIME);
   float squishiness = BZDB.eval(StateDatabase::BZDB_SQUISHFACTOR);
+  if (squishiness <= 0.0f) {
+    return;
+  }
+  const float gravity = BZDB.eval(StateDatabase::BZDB_GRAVITY);
   if (velocity > 0.0f) {
     velocity = 0.0f;
   }
-  if (squishiness < 0.0f) {
-    squishiness = 0.0f;
+  // FIXME - setup a BZDB_SQUISHTIME variable?
+  float effectTime = BZDB.eval(StateDatabase::BZDB_FLAGEFFECTTIME);
+  if (effectTime > 60.0f) {
+    effectTime = 60.0f; // more then reasonbale
   }
+  dimensionsRate[2] = 1.0f / effectTime;
   dimensionsScale[2] = gravity / (gravity + (velocity * squishiness));
-  dimensionsRate[2] = (1.0f - dimensionsScale[2]) / effectTime;
   return;
 }
 
