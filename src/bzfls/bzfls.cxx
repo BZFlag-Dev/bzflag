@@ -775,6 +775,9 @@ static int addServer(const char* inNamePort, const char* version,
   // check format of version
   if (strncmp(version, "BZFS", 4) != 0)
     return 1;
+  // drop buggy fx versions from list
+  if (strncmp(version, "BZFS107x", 8) == 0)
+    return 1;
   char *nameport;
   const char* delimiter = strchr(inNamePort, ':');
   if (delimiter)
