@@ -11,7 +11,9 @@ recent bugs
   This is not the cause for the change video format / alt-tab bug, though.
 
 - taking a full-screen snapshot take too long to complete. That's happening
-  since we are saving in png.
+  since we are saving in png. Profiling reveals that about 30% of the time
+  is spent to get the pixel data and apply gamam correction, 70% is used
+  for compression.
 
 - changing video format during game messes up rendering on one of my
   Linux boxes (the one with hardware rendering). Most prominently, the
