@@ -60,8 +60,9 @@ TeamBases::TeamBases(TeamColor team, bool initDefault)
         teamBase.safetyZone[1] = teamBase.position[1] - 0.5f * BaseSize - pyrBase;
       break;
 
-    default:
-      break;
+      default:
+        // no valid team, should throw here if we could
+        break;
     }
 
     teamBase.position[2] = 0.0f;
