@@ -1,4 +1,4 @@
-SUBDIRS = l10n alternate
+SUBDIRS = l10n alternate fonts
 
 EXTRA_DIST = \
 	blue_basetop.png	\
@@ -77,22 +77,6 @@ EXTRA_DIST = \
 	thief.png	\
 	thief.wav	\
 	title.png	\
-	TogaSansBold-8.png	\
-	TogaSansBold-16.png	\
-	TogaSansBold-32.png	\
-	TogaSerifBold-16.png	\
-	TogaSerifBold-32.png	\
-	VeraMonoBold-8.png	\
-	VeraMonoBold-12.png	\
-	VeraMonoBold-16.png	\
-	TogaSansBold-8.fmt	\
-	TogaSansBold-16.fmt	\
-	TogaSansBold-32.fmt	\
-	TogaSerifBold-16.fmt	\
-	TogaSerifBold-32.fmt	\
-	VeraMonoBold-8.fmt	\
-	VeraMonoBold-12.fmt	\
-	VeraMonoBold-16.fmt	\
 	wall.png	\
 	zone_ground.png
 
