@@ -17,6 +17,7 @@
 #include "MeshFragSceneNode.h"
 
 // system headers
+#include <assert.h>
 #include <math.h>
 #include <string.h>
 

@@ -12,6 +12,9 @@
 
 #include "common.h"
 
+/* system headers */
+#include <assert.h>
+
 /* common implementation headers */
 #include "Protocol.h"
 #include "Flag.h"

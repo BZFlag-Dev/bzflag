@@ -18,7 +18,6 @@
 #include "WeatherRenderer.h"
 
 // system headers
-#include <assert.h>
 #include <string>
 #include <vector>
 

@@ -18,7 +18,6 @@
 #include <math.h>
 #include <string>
 #include <list>
-#include <assert.h>
 
 // Interface header
 #include "TrackMarks.h"

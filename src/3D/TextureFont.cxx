@@ -10,7 +10,6 @@
 * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 */
 
-#include <assert.h>
 #include <string>
 #include <string.h>
 

@@ -27,8 +27,6 @@
 #ifndef	BZF_SCENE_NODE_H
 #define	BZF_SCENE_NODE_H
 
-#include <assert.h>
-
 #include "common.h"
 #include "bzfgl.h"
 #include "bzfio.h"

@@ -16,6 +16,7 @@
 
 #include "common.h"
 #include "SceneNode.h"
+#include <assert.h>
 #include "BSPSceneDatabase.h"
 #include "ViewFrustum.h"
 #include "SphereSceneNode.h"

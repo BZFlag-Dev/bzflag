@@ -17,6 +17,7 @@
 #include "PolyWallSceneNode.h"
 
 // system headers
+#include <assert.h>
 #include <math.h>
 
 // FIXME (SceneRenderer.cxx is in src/bzflag)

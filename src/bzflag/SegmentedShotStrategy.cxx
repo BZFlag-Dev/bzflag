@@ -14,6 +14,7 @@
 #include "SegmentedShotStrategy.h"
 
 /* system implementation headers */
+#include <assert.h>
 #include <string>
 #include <vector>
 

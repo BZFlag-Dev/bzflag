@@ -17,6 +17,7 @@
 #include "MeshPolySceneNode.h"
 
 // system headers
+#include <assert.h>
 #include <math.h>
 
 // common implementation headers

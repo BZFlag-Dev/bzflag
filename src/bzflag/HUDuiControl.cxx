@@ -16,7 +16,6 @@
 // system headers
 #include <iostream>
 #include <math.h>
-#include <assert.h>
 #include <string>
 
 // common implementation headers

@@ -18,6 +18,7 @@
 #include <time.h>
 #include <vector>
 #include <string>
+#include <assert.h>
 
 /* common implementation headers */
 #include "BZDBCache.h"

@@ -17,7 +17,6 @@
 
 // system headers
 #include <iostream>
-#include <assert.h>
 
 // common implementation headers
 #include "common.h"

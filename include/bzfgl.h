@@ -26,6 +26,7 @@
 
 /* These will track glBegin/End pairs to make sure that they match */
 #ifdef DEBUG
+#include <assert.h>
 extern int __beginendCount;
 #define glBegin(_value) {\
   if (__beginendCount==0) { \
