@@ -114,6 +114,14 @@ void FontManager::rebuild(void)	// rebuild all the lists
 {
   FontFaceList::iterator faceItr = fontFaces.begin();
 
+  /* FIXME - this comment block is the "right" code, but
+   * on Windows at least, switching resolutions messes
+   * up the GL stuff for build.
+   * Instead, we just delete all the fonts and load them
+   * again, as fresh fonts seem to work OK.
+   * This is not good, and should be fixed, but the
+   * problem is probably related to the GL context and
+   * is much deeper, so we work around it for now.
   while (faceItr != fontFaces.end()) {
     FontSizeMap::iterator itr = faceItr->begin();
     while (itr != faceItr->end()) {
@@ -123,12 +131,42 @@ void FontManager::rebuild(void)	// rebuild all the lists
     }
     faceItr++;
   }
+   */
+
+  /* FIXME: this code block is bad.  Remove when above
+   * problem is fixed.
+   */
+  {
+    // destroy all the fonts
+    faceNames.clear();
+    FontFaceList::iterator faceItr = fontFaces.begin();
+    while (faceItr != fontFaces.end()) {
+      FontSizeMap::iterator itr = faceItr->begin();
+      while (itr != faceItr->end()) {
+	delete(itr->second);
+	itr++;
+      }
+      faceItr++;
+    }
+    fontFaces.clear();
+
+    // create all the fonts anew
+    loadAll(fontDirectory);
+  }
+
 }
 
 void FontManager::loadAll(std::string directory)
 {
   if (directory.size() == 0)
     return;
+
+  /* FIXME: this needs to go away when the problem detailed in
+   * FontManager::rebuild() is fixed.
+   */
+  {
+    fontDirectory = directory;
+  }
 
   OSFile file;
 
