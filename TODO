@@ -3,11 +3,10 @@ to do list for BZFlag
 
 THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
 
-	* none
+* fix bugs.  the following bugs need to be fixed prior to release:
 
-THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE BUT NOONE WILL STEP UP FOR THEM
-
-	* none
+    - voting system doesn't start a poll (doesn't parse player name properly)
+    
 
 THESE ARE LOWER PRIORITY
 
