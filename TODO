@@ -8,6 +8,10 @@ THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
 
 THESE ARE LOWER PRIORITY
 
+* it would be very helpful to have a 
+  /reset _tankSpeed 
+  command, where the variable would be reset to the default value
+
 * server should pick client enter position.
   - Server has no idea about players shots, this is a key to picking a safe
     entry location. This isn't a simple change. 
