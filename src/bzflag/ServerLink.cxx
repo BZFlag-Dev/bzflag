@@ -224,11 +224,11 @@ ServerLink::ServerLink(const Address& serverAddress, int port, int number) :
 */
   
 //  printf ("select\n");
-  printf("waiting...");
-  wait = 100000000;
-  while(wait > 0)
-    wait--;
-  printf("done\n");
+//  printf("waiting...");
+//  wait = 100000000;
+//  while(wait > 0)
+//    wait--;
+//  printf("done\n");
   
   if (err < 0) {
     close(fd);
