@@ -183,22 +183,32 @@ void TankSceneNode::addRenderNodes(SceneRenderer& renderer)
   // pick level of detail
   const GLfloat* sphere = getSphere();
   const ViewFrustum& view = renderer.getViewFrustum();
-  const float size = sphere[3] * view.getAreaFactor() /
-                     getDistance(view.getEye());
+  const float size = sphere[3] *
+                     (view.getAreaFactor() /getDistance(view.getEye()));
 
-  if (maxLevel == -1) {
-    tankRenderNode.setTankLOD(HighTankLOD);
-  }
-  else if (maxLevel > 2 && size > 55.0f) {
-    tankRenderNode.setTankLOD(HighTankLOD);
-  }
-  else if (maxLevel > 1 && size > 25.0f) {
-    tankRenderNode.setTankLOD(MedTankLOD);
+  // set the level of detail
+  TankLOD mode = LowTankLOD;
+  if (BZDBCache::zbuffer) {
+    if ((maxLevel == -1) || ((maxLevel > 2) && (size > 55.0f))) {
+      mode = HighTankLOD;
+    }
+    else if ((maxLevel > 1) && (size > 25.0f)) {
+      mode = MedTankLOD;
+    }
+    else {
+      mode = LowTankLOD;
+    }
   }
   else {
-    tankRenderNode.setTankLOD(LowTankLOD);
+    // do BSP users a favor  
+    if ((maxLevel > 0) && (size > 25.0f)) {
+      mode = MedTankLOD;
+    } else {
+      mode = LowTankLOD;
+    }
   }
-
+  tankRenderNode.setTankLOD(mode);
+      
   // set the tank's scaling size
   tankRenderNode.setTankSize(tankSize);
     
@@ -226,8 +236,8 @@ void TankSceneNode::addShadowNodes(SceneRenderer& renderer)
     return;
   }
 
-  // use HighTankLOD in experimental mode
-  if (TankSceneNode::maxLevel == -1) {
+  // use HighTankLOD shadows in experimental mode
+  if ((TankSceneNode::maxLevel == -1) && BZDBCache::zbuffer) {
     shadowRenderNode.setTankLOD (HighTankLOD);
   } else {
     shadowRenderNode.setTankLOD (LowTankLOD);
@@ -714,16 +724,18 @@ void TankSceneNode::TankRenderNode::render()
     renderPart(Body);
     renderPart(Turret);
     renderPart(Barrel);
-    if (BZDBCache::zbuffer && (drawLOD == HighTankLOD)) {
-      for (int i = 0; i < 4; i++) {
-        renderPart((TankPart)(LeftWheel0 + i));
-        renderPart((TankPart)(RightWheel0 + i));
+    renderPart(LeftCasing);
+    renderPart(RightCasing);
+    if (drawLOD == HighTankLOD) {
+      if (!isShadow || isExploding) {
+        for (int i = 0; i < 4; i++) {
+          renderPart((TankPart)(LeftWheel0 + i));
+          renderPart((TankPart)(RightWheel0 + i));
+        }
       }
       renderPart(LeftTread);
       renderPart(RightTread);
     }
-    renderPart(LeftCasing);
-    renderPart(RightCasing);
     if (isExploding) {
       glEnable(GL_CULL_FACE);
     }
@@ -751,16 +763,18 @@ void TankSceneNode::TankRenderNode::renderParts()
 {
   // draw parts in back to front order
   if (!above) {
-    if (BZDBCache::zbuffer && (drawLOD = HighTankLOD)) {
-      renderPart(LeftTread);
-      renderPart(RightTread);
-      for (int i = 0; i < 4; i++) {
-        renderPart((TankPart)(LeftWheel0 + i));
-        renderPart((TankPart)(RightWheel0 + i));
-      }
-    }
     renderPart(LeftCasing);
     renderPart(RightCasing);
+    if (drawLOD == HighTankLOD) {
+      if (!isShadow || isExploding) {
+        for (int i = 0; i < 4; i++) {
+          renderPart((TankPart)(LeftWheel0 + i));
+          renderPart((TankPart)(RightWheel0 + i));
+        }
+      }
+      renderPart(LeftTread);
+      renderPart(RightTread);
+    }
     renderPart(Body);
     if (towards) {
       renderPart(Turret);
@@ -781,16 +795,18 @@ void TankSceneNode::TankRenderNode::renderParts()
       renderPart(Turret);
     }
     renderPart(Body);
-    if (BZDBCache::zbuffer && (drawLOD = HighTankLOD)) {
-      renderPart(LeftTread);
-      renderPart(RightTread);
-      for (int i = 0; i < 4; i++) {
-        renderPart((TankPart)(LeftWheel0 + i));
-        renderPart((TankPart)(RightWheel0 + i));
-      }
-    }
     renderPart(LeftCasing);
     renderPart(RightCasing);
+    if (drawLOD == HighTankLOD) {
+      if (!isShadow || isExploding) {
+        for (int i = 0; i < 4; i++) {
+          renderPart((TankPart)(LeftWheel0 + i));
+          renderPart((TankPart)(RightWheel0 + i));
+        }
+      }
+      renderPart(LeftTread);
+      renderPart(RightTread);
+    }
   }
 }
 
@@ -812,8 +828,7 @@ void TankSceneNode::TankRenderNode::renderPart(TankPart part)
   
   // setup the animation texture matrix
   bool usingTexMat = false;
-  if (!isShadow && BZDBCache::zbuffer && (drawLOD = HighTankLOD) &&
-      (part >= BasicTankParts)) {
+  if (!isShadow && (drawLOD == HighTankLOD) && (part >= BasicTankParts)) {
     usingTexMat = setupTextureMatrix(part);
   }
  
