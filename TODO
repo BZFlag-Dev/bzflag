@@ -8,11 +8,9 @@ THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
     - voting system doesn't start a poll (doesn't parse player name properly)
 
     - players can get autokicked for jumping too high when the admin changes
-      the gravity or when the gravity is positive. Some possible fixes: relax
-      or remove the check (maybe optionally), make it take past gravity changes
-      into account when calculating the maximum allowed height (probably
-      tricky).
-	  --this could be fixed as of 9/27--
+      the gravity to something more negative after a player has jumped.
+      eg. gravity is at -1, player jumps, admin sets to -9.8
+          --most of the prior gravity bug was fixed as of 9/27--
 
     - players can get autokicked for speeding if a theif steals their flag
 	  --this could be fixed as of 9/26--
