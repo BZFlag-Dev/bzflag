@@ -174,6 +174,8 @@ static void		addMessage(const Player* player, const std::string& msg,
 				   bool highlight=false, const char* oldColor=NULL);
 extern void		dumpResources(BzfDisplay*, SceneRenderer&);
 static void		setRobotTarget(RobotPlayer* robot);
+static void   warnAboutMainFlags();
+static void   warnAboutRadarFlags();
 
 enum BlowedUpReason {
   GotKilledMsg,
@@ -383,6 +385,48 @@ static void		hangup(int sig)
 //
 // misc utility routines
 //
+
+
+void        warnAboutMainFlags()
+{
+  // warning message for hidden flags 
+	if (!BZDBCache::displayMainFlags){
+		std::string showFlagsMsg = ColorStrings[YellowColor];
+    showFlagsMsg += "Flags on field hidden, to show them ";
+		std::vector<std::string> keys = KEYMGR.getKeysFromCommand("toggleFlags main", true);
+
+		if (keys.size() != 0) {
+  			showFlagsMsg += "hit \"";
+        showFlagsMsg += ColorStrings[WhiteColor];
+				showFlagsMsg += tolower(keys[0][0]);
+        showFlagsMsg += ColorStrings[YellowColor];
+				showFlagsMsg += "\"";
+		} else {
+			showFlagsMsg += " bind a key to Toggle Flags on Field";
+		}
+		addMessage(NULL, showFlagsMsg);
+	}
+}
+
+void        warnAboutRadarFlags()
+{
+	if (!BZDB.isTrue("displayRadarFlags")){
+    std::string showFlagsMsg = ColorStrings[YellowColor];
+		showFlagsMsg += "Flags on radar hidden, to show them ";
+		std::vector<std::string> keys = KEYMGR.getKeysFromCommand("toggleFlags radar", true);
+
+		if (keys.size() != 0) {
+  			showFlagsMsg += "hit \"";
+        showFlagsMsg += ColorStrings[WhiteColor];
+				showFlagsMsg += tolower(keys[0][0]);
+        showFlagsMsg += ColorStrings[YellowColor];
+				showFlagsMsg += "\"";
+		} else {
+			showFlagsMsg += " bind a key to Toggle Flags on Radar";
+		}
+		addMessage(NULL, showFlagsMsg);
+	}
+}
 
 Player*			lookupPlayer(PlayerId id)
 {
@@ -1998,6 +2042,23 @@ static std::string cmdJump(const std::string&, const CommandManager::ArgList& ar
   return std::string();
 }
 
+static std::string cmdToggleFlags (const std::string&, const CommandManager::ArgList& args)
+{
+  if (args.size() != 1)
+    return "usage: main|radar";
+  if (args[0] == "main") {
+    CMDMGR.run("toggle displayMainFlags");
+    warnAboutMainFlags();
+  } else if (args[0] == "radar") {
+    CMDMGR.run("toggle displayRadarFlags");
+    warnAboutRadarFlags();
+  } else {
+     return "usage: main|radar";
+  }
+
+  return std::string();
+}
+
 static std::string cmdFire(const std::string&, const CommandManager::ArgList& args)
 {
   if (args.size() != 0)
@@ -2591,6 +2652,7 @@ struct CommandListItem {
 
 static const CommandListItem commandList[] = {
   { "fire",	&cmdFire,	"fire:  fire a shot" },
+  { "toggleFlags",	&cmdToggleFlags,	"toggleFlags {main|radar}:  turn off/on field or radar flags" },
   { "jump",	&cmdJump,	"jump:  make player jump" },
   { "drop",	&cmdDrop,	"drop:  drop the current flag" },
   { "identify",	&cmdIdentify,	"identify:  identify/lock-on-to player in view" },
@@ -5696,34 +5758,9 @@ static bool		joinGame(const StartupInfo* info,
   fireButton = false;
   firstLife = true;
 
-  // warning message for hidden flags 
-	if (!BZDBCache::displayMainFlags){
-		std::string showFlagsMsg = "Flags on field hidden, to show them ";
-		std::vector<std::string> keys = KEYMGR.getKeysFromCommand("toggle displayMainFlags", true);
+  warnAboutMainFlags();
+  warnAboutRadarFlags();
 
-		if (keys.size() != 0) {
-  			showFlagsMsg += "hit \"";
-				showFlagsMsg += tolower(keys[0][0]);
-				showFlagsMsg += "\"";
-		} else {
-			showFlagsMsg += " bind a key to Toggle Flags on Field";
-		}
-		addMessage(NULL, showFlagsMsg);
-	}
-	if (!BZDB.isTrue("displayRadarFlags")){
-		std::string showFlagsMsg = "Flags on radar hidden, to show them ";
-		std::vector<std::string> keys = KEYMGR.getKeysFromCommand("toggle displayRadarFlags", true);
-
-		if (keys.size() != 0) {
-  			showFlagsMsg += "hit \"";
-				showFlagsMsg += tolower(keys[0][0]);
-				showFlagsMsg += "\"";
-		} else {
-			showFlagsMsg += " bind a key to Toggle Flags on Radar";
-		}
-		addMessage(NULL, showFlagsMsg);
-	}
-  
   return true;
 }
 

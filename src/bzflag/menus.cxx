@@ -893,8 +893,8 @@ KeyboardMapMenu::KeyboardMapMenu() : defaultKey(this), editing(-1), quickKeysMen
   controls.push_back(createLabel(NULL, "Scroll Backward:"));
   controls.push_back(createLabel(NULL, "Scroll Forward:"));
   controls.push_back(createLabel(NULL, "Slow Keyboard Motion:"));
-  controls.push_back(createLabel(NULL, "Toggle Radar Flags:"));
-  controls.push_back(createLabel(NULL, "Toggle Main Flags:"));
+  controls.push_back(createLabel(NULL, "Toggle Flags on Radar:"));
+  controls.push_back(createLabel(NULL, "Toggle Flags on Field:"));
   controls.push_back(createLabel(NULL, "Silence/UnSilence Key:"));
   controls.push_back(createLabel(NULL, "Server Command Key:"));
   controls.push_back(createLabel(NULL, "Hunt Key:"));
@@ -926,8 +926,8 @@ KeyboardMapMenu::KeyboardMapMenu() : defaultKey(this), editing(-1), quickKeysMen
   initkeymap("scrollpanel up", 23);
   initkeymap("scrollpanel down", 24);
   initkeymap("toggle slowKeyboard", 25);
-  initkeymap("toggle displayRadarFlags", 26);
-  initkeymap("toggle displayMainFlags", 27);
+  initkeymap("toggleFlags radar", 26);
+  initkeymap("toggleFlags main", 27);
   initkeymap("silence", 28);
   initkeymap("servercommand", 29);
   initkeymap("hunt", 30);
