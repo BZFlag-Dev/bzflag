@@ -15,11 +15,11 @@
 #include "common.h"
 #include "texture.h"
 #include "ErrorHandler.h"
-#include "PlatformFactory.h"
 #include "BzfMedia.h"
 #include "BundleMgr.h"
 #include "Bundle.h"
 #include "World.h"
+#include "MediaFile.h"
 
 void			printFatalError(const char* fmt, ...);
 
@@ -30,7 +30,7 @@ unsigned char*		getTextureImage(const std::string& file,
   std::vector<std::string> args;
   args.push_back(file);
   printError("loading {1}", &args );
-  return PlatformFactory::getMedia()->readImage(file, width, height, depth);
+  return MediaFile::readImage( file, &width, &height);
 }
 
 unsigned char*		getTextImage(const std::string& file,
@@ -40,10 +40,7 @@ unsigned char*		getTextImage(const std::string& file,
   std::vector<std::string> args;
   args.push_back(file);
   printError("loading {1}", &args );
-  int depth;
-  unsigned char* image = PlatformFactory::getMedia()->
-			readImage(file, width, height, depth);
-  return image;
+  return MediaFile::readImage( file, &width, &height);
 }
 
 OpenGLTexture		getTexture(const std::string& file,
@@ -55,7 +52,7 @@ OpenGLTexture		getTexture(const std::string& file,
   if (file.length() == 0) return OpenGLTexture();
 
   int width, height, depth;
-  unsigned char* image = getTextureImage(file, width, height, depth);
+  unsigned char* image = getTextureImage(file, width, height,depth);
   if (!image) {
     std::vector<std::string> args;
     args.push_back(file);

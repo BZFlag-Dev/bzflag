@@ -13,6 +13,7 @@
 #include "BzfMedia.h"
 #include "TimeKeeper.h"
 #include "wave.h"
+#include "MediaFile.h"
 #include <string.h>
 
 BzfMedia::BzfMedia() : mediaDir("data") { }
@@ -173,82 +174,7 @@ std::string		BzfMedia::getSoundExtension() const
 unsigned char*		BzfMedia::doReadImage(const char* filename,
 				int& dx, int& dy, int& dz) const
 {
-  // open file
-  FILE* file = fopen(filename, "rb");
-  if (!file) return NULL;
-
-  // read header
-  unsigned char header[512];
-  const size_t numItems = fread(header, sizeof(header), 1, file);
-  if (numItems != 1 ||
-	getShort(header + 0) != 474 ||
-	(header[2] != 0 && header[2] != 1) ||
-	(header[3] < 1 || header[3] > 1) ||
-	(getUShort(header + 4) < 1 || getUShort(header + 4) > 3) ||
-	(getLong(header + 104) != 0)) {
-    fclose(file);
-    return NULL;
-  }
-
-  // get dimensions
-  uint16_t width, height, depth;
-  width  = getUShort(header + 6);
-  height = (getUShort(header + 4) < 2) ? 1 : getUShort(header + 8);
-  depth  = (getUShort(header + 4) < 3) ? 1 : getUShort(header + 10);
-  dx = (int)width;
-  dy = (int)height;
-  dz = (int)depth;
-
-  // make image buffer
-  unsigned char* image = new unsigned char[4 * dx * dy];
-
-  // read scan lines
-  bool okay;
-  if (header[2] == 0)
-    okay = doReadVerbatim(file, dx, dy, dz, image);
-  else
-    okay = doReadRLE(file, dx, dy, dz, image);
-
-  // done with file
-  fclose(file);
-
-  if (!okay) {
-    delete[] image;
-    image = NULL;
-  }
-
-  // handle different image depths
-  if (dz == 1) {
-    // r=g=b, a=max
-    int n = dx * dy;
-    unsigned char* scan = image;
-    for (; n > 0; --n) {
-      scan[2] = scan[1] = scan[0];
-      scan[3] = 0xff;
-      scan += 4;
-    }
-  }
-  else if (dz == 2) {
-    // r=g=b, move alpha channel
-    int n = dx * dy;
-    unsigned char* scan = image;
-    for (; n > 0; --n) {
-      scan[3] = scan[1];
-      scan[2] = scan[1] = scan[0];
-      scan += 4;
-    }
-  }
-  else if (dz == 3) {
-    // a=max
-    int n = dx * dy;
-    unsigned char* scan = image + 3;
-    for (; n > 0; --n) {
-      *scan = 0xff;
-      scan += 4;
-    }
-  }
-
-  return image;
+  return MediaFile::readImage( filename, &dx, &dy );
 }
 
 int16_t			BzfMedia::getShort(const void* ptr)
