@@ -18,124 +18,124 @@
 #include "KeyManager.h"
 
 ActionBinding::ActionBinding() {
-  wayToBindActions.insert(std::make_pair("quit", press));
-  wayToBindActions.insert(std::make_pair("fire", both));
-  wayToBindActions.insert(std::make_pair("drop", press));
-  wayToBindActions.insert(std::make_pair("identify", press));
-  wayToBindActions.insert(std::make_pair("jump", press));
-  wayToBindActions.insert(std::make_pair("send all", press));
-  wayToBindActions.insert(std::make_pair("send team", press));
-  wayToBindActions.insert(std::make_pair("send nemesis", press));
-  wayToBindActions.insert(std::make_pair("send recipient", press));
-  wayToBindActions.insert(std::make_pair("toggle displayScore", press));
-  wayToBindActions.insert(std::make_pair("toggle displayBinoculars", press));
-  wayToBindActions.insert(std::make_pair("pause", press));
+  wayToBindActions.insert(std::make_pair(std::string("quit"), press));
+  wayToBindActions.insert(std::make_pair(std::string("fire"), both));
+  wayToBindActions.insert(std::make_pair(std::string("drop"), press));
+  wayToBindActions.insert(std::make_pair(std::string("identify"), press));
+  wayToBindActions.insert(std::make_pair(std::string("jump"), press));
+  wayToBindActions.insert(std::make_pair(std::string("send all"), press));
+  wayToBindActions.insert(std::make_pair(std::string("send team"), press));
+  wayToBindActions.insert(std::make_pair(std::string("send nemesis"), press));
+  wayToBindActions.insert(std::make_pair(std::string("send recipient"), press));
+  wayToBindActions.insert(std::make_pair(std::string("toggle displayScore"), press));
+  wayToBindActions.insert(std::make_pair(std::string("toggle displayBinoculars"), press));
+  wayToBindActions.insert(std::make_pair(std::string("pause"), press));
 #ifdef SNAPPING
-  wayToBindActions.insert(std::make_pair("screenshot", press));
+  wayToBindActions.insert(std::make_pair(std::string("screenshot"), press));
 #endif
-  wayToBindActions.insert(std::make_pair("time backward", press));
-  wayToBindActions.insert(std::make_pair("time forward", press));
-  wayToBindActions.insert(std::make_pair("toggle displayRadarFlags", press));
-  wayToBindActions.insert(std::make_pair("toggle displayMainFlags", press));
-  wayToBindActions.insert(std::make_pair("silence", press));
-  wayToBindActions.insert(std::make_pair("toggle displayLabels", press));
-  wayToBindActions.insert(std::make_pair("destruct", press));
-  wayToBindActions.insert(std::make_pair("roam rotate stop", release));
-  wayToBindActions.insert(std::make_pair("roam rotate left", both));
-  wayToBindActions.insert(std::make_pair("roam rotate right", both));
-  wayToBindActions.insert(std::make_pair("roam rotate up", both));
-  wayToBindActions.insert(std::make_pair("roam rotate down", both));
-  wayToBindActions.insert(std::make_pair("roam translate left", both));
-  wayToBindActions.insert(std::make_pair("roam translate right", both));
-  wayToBindActions.insert(std::make_pair("roam translate forward", both));
-  wayToBindActions.insert(std::make_pair("roam translate backward", both));
-  wayToBindActions.insert(std::make_pair("roam translate up", both));
-  wayToBindActions.insert(std::make_pair("roam translate down", both));
-  wayToBindActions.insert(std::make_pair("roam cycle subject backward",
+  wayToBindActions.insert(std::make_pair(std::string("time backward"), press));
+  wayToBindActions.insert(std::make_pair(std::string("time forward"), press));
+  wayToBindActions.insert(std::make_pair(std::string("toggle displayRadarFlags"), press));
+  wayToBindActions.insert(std::make_pair(std::string("toggle displayMainFlags"), press));
+  wayToBindActions.insert(std::make_pair(std::string("silence"), press));
+  wayToBindActions.insert(std::make_pair(std::string("toggle displayLabels"), press));
+  wayToBindActions.insert(std::make_pair(std::string("destruct"), press));
+  wayToBindActions.insert(std::make_pair(std::string("roam rotate stop"), release));
+  wayToBindActions.insert(std::make_pair(std::string("roam rotate left"), both));
+  wayToBindActions.insert(std::make_pair(std::string("roam rotate right"), both));
+  wayToBindActions.insert(std::make_pair(std::string("roam rotate up"), both));
+  wayToBindActions.insert(std::make_pair(std::string("roam rotate down"), both));
+  wayToBindActions.insert(std::make_pair(std::string("roam translate left"), both));
+  wayToBindActions.insert(std::make_pair(std::string("roam translate right"), both));
+  wayToBindActions.insert(std::make_pair(std::string("roam translate forward"), both));
+  wayToBindActions.insert(std::make_pair(std::string("roam translate backward"), both));
+  wayToBindActions.insert(std::make_pair(std::string("roam translate up"), both));
+  wayToBindActions.insert(std::make_pair(std::string("roam translate down"), both));
+  wayToBindActions.insert(std::make_pair(std::string("roam cycle subject backward"),
 					 press));
-  wayToBindActions.insert(std::make_pair("roam cycle subject forward", press));
-  wayToBindActions.insert(std::make_pair("roam cycle type forward", press));
-  wayToBindActions.insert(std::make_pair("roam zoom in", both));
-  wayToBindActions.insert(std::make_pair("roam zoom out", both));
-  wayToBindActions.insert(std::make_pair("roam zoom normal", both));
-  wayToBindActions.insert(std::make_pair("servercommand", press));
-  wayToBindActions.insert(std::make_pair("toggle displayFlagHelp", press));
-  wayToBindActions.insert(std::make_pair("scrollpanel up", press));
-  wayToBindActions.insert(std::make_pair("scrollpanel down", press));
-  wayToBindActions.insert(std::make_pair("set displayRadarRange 0.25", press));
-  wayToBindActions.insert(std::make_pair("set displayRadarRange 0.5", press));
-  wayToBindActions.insert(std::make_pair("set displayRadarRange 1.0", press));
-  wayToBindActions.insert(std::make_pair("toggle slowKeyboard", press));
-  wayToBindActions.insert(std::make_pair("hunt", press));
-  wayToBindActions.insert(std::make_pair("restart", release));
-  wayToBindActions.insert(std::make_pair("autopilot", press));
+  wayToBindActions.insert(std::make_pair(std::string("roam cycle subject forward"), press));
+  wayToBindActions.insert(std::make_pair(std::string("roam cycle type forward"), press));
+  wayToBindActions.insert(std::make_pair(std::string("roam zoom in"), both));
+  wayToBindActions.insert(std::make_pair(std::string("roam zoom out"), both));
+  wayToBindActions.insert(std::make_pair(std::string("roam zoom normal"), both));
+  wayToBindActions.insert(std::make_pair(std::string("servercommand"), press));
+  wayToBindActions.insert(std::make_pair(std::string("toggle displayFlagHelp"), press));
+  wayToBindActions.insert(std::make_pair(std::string("scrollpanel up"), press));
+  wayToBindActions.insert(std::make_pair(std::string("scrollpanel down"), press));
+  wayToBindActions.insert(std::make_pair(std::string("set displayRadarRange 0.25"), press));
+  wayToBindActions.insert(std::make_pair(std::string("set displayRadarRange 0.5"), press));
+  wayToBindActions.insert(std::make_pair(std::string("set displayRadarRange 1.0"), press));
+  wayToBindActions.insert(std::make_pair(std::string("toggle slowKeyboard"), press));
+  wayToBindActions.insert(std::make_pair(std::string("hunt"), press));
+  wayToBindActions.insert(std::make_pair(std::string("restart"), release));
+  wayToBindActions.insert(std::make_pair(std::string("autopilot"), press));
 
-  defaultBinding.insert(std::make_pair("F12", "quit"));
-  defaultBinding.insert(std::make_pair("Left Mouse", "fire"));
-  defaultBinding.insert(std::make_pair("Enter", "fire"));
-  defaultBinding.insert(std::make_pair("Middle Mouse", "drop"));
-  defaultBinding.insert(std::make_pair("Space", "drop"));
-  defaultBinding.insert(std::make_pair("Right Mouse", "identify"));
-  defaultBinding.insert(std::make_pair("I", "identify"));
-  defaultBinding.insert(std::make_pair("Tab", "jump"));
-  defaultBinding.insert(std::make_pair("N", "send all"));
-  defaultBinding.insert(std::make_pair("M", "send team"));
-  defaultBinding.insert(std::make_pair(",", "send nemesis"));
-  defaultBinding.insert(std::make_pair(".", "send recipient"));
-  defaultBinding.insert(std::make_pair("S", "toggle displayScore"));
-  defaultBinding.insert(std::make_pair("B", "toggle displayBinoculars"));
-  defaultBinding.insert(std::make_pair("Pause", "pause"));
-  defaultBinding.insert(std::make_pair("P", "pause"));
+  defaultBinding.insert(std::make_pair(std::string("F12"), std::string("quit")));
+  defaultBinding.insert(std::make_pair(std::string("Left Mouse"), std::string("fire")));
+  defaultBinding.insert(std::make_pair(std::string("Enter"), std::string("fire")));
+  defaultBinding.insert(std::make_pair(std::string("Middle Mouse"), std::string("drop")));
+  defaultBinding.insert(std::make_pair(std::string("Space"), std::string("drop")));
+  defaultBinding.insert(std::make_pair(std::string("Right Mouse"), std::string("identify")));
+  defaultBinding.insert(std::make_pair(std::string("I"), std::string("identify")));
+  defaultBinding.insert(std::make_pair(std::string("Tab"), std::string("jump")));
+  defaultBinding.insert(std::make_pair(std::string("N"), std::string("send all")));
+  defaultBinding.insert(std::make_pair(std::string("M"), std::string("send team")));
+  defaultBinding.insert(std::make_pair(std::string(","), std::string("send nemesis")));
+  defaultBinding.insert(std::make_pair(std::string("."), std::string("send recipient")));
+  defaultBinding.insert(std::make_pair(std::string("S"), std::string("toggle displayScore")));
+  defaultBinding.insert(std::make_pair(std::string("B"), std::string("toggle displayBinoculars")));
+  defaultBinding.insert(std::make_pair(std::string("Pause"), std::string("pause")));
+  defaultBinding.insert(std::make_pair(std::string("P"), std::string("pause")));
 #ifdef SNAPPING
-  defaultBinding.insert(std::make_pair("F5", "screenshot"));
+  defaultBinding.insert(std::make_pair(std::string("F5"), std::string("screenshot")));
 #endif
-  defaultBinding.insert(std::make_pair("-", "time backward"));
-  defaultBinding.insert(std::make_pair("=", "time forward"));
-  defaultBinding.insert(std::make_pair("H", "toggle displayRadarFlags"));
-  defaultBinding.insert(std::make_pair("J", "toggle displayMainFlags"));
-  defaultBinding.insert(std::make_pair("K", "silence"));
-  defaultBinding.insert(std::make_pair("L", "toggle displayLabels"));
-  defaultBinding.insert(std::make_pair("Delete", "destruct"));
+  defaultBinding.insert(std::make_pair(std::string("-"), std::string("time backward")));
+  defaultBinding.insert(std::make_pair(std::string("="), std::string("time forward")));
+  defaultBinding.insert(std::make_pair(std::string("H"), std::string("toggle displayRadarFlags")));
+  defaultBinding.insert(std::make_pair(std::string("J"), std::string("toggle displayMainFlags")));
+  defaultBinding.insert(std::make_pair(std::string("K"), std::string("silence")));
+  defaultBinding.insert(std::make_pair(std::string("L"), std::string("toggle displayLabels")));
+  defaultBinding.insert(std::make_pair(std::string("Delete"), std::string("destruct")));
 
-  defaultBinding.insert(std::make_pair("Left Arrow", "roam rotate stop"));
-  defaultBinding.insert(std::make_pair("Right Arrow", "roam rotate stop"));
-  defaultBinding.insert(std::make_pair("Up Arrow", "roam rotate stop"));
-  defaultBinding.insert(std::make_pair("Down Arrow", "roam rotate stop"));
+  defaultBinding.insert(std::make_pair(std::string("Left Arrow"), std::string("roam rotate stop")));
+  defaultBinding.insert(std::make_pair(std::string("Right Arrow"), std::string("roam rotate stop")));
+  defaultBinding.insert(std::make_pair(std::string("Up Arrow"), std::string("roam rotate stop")));
+  defaultBinding.insert(std::make_pair(std::string("Down Arrow"), std::string("roam rotate stop")));
 
-  defaultBinding.insert(std::make_pair("Ctrl+Left Arrow", "roam rotate left"));
-  defaultBinding.insert(std::make_pair("Ctrl+Right Arrow",
-				       "roam rotate right"));
-  defaultBinding.insert(std::make_pair("Ctrl+Up Arrow", "roam rotate up"));
-  defaultBinding.insert(std::make_pair("Ctrl+Down Arrow", "roam rotate down"));
-  defaultBinding.insert(std::make_pair("Shift+Left Arrow",
-				       "roam translate left"));
-  defaultBinding.insert(std::make_pair("Shift+Right Arrow",
-				       "roam translate right"));
-  defaultBinding.insert(std::make_pair("Shift+Up Arrow",
-				       "roam translate forward"));
-  defaultBinding.insert(std::make_pair("Shift+Down Arrow",
-				       "roam translate backward"));
-  defaultBinding.insert(std::make_pair("Alt+Up Arrow", "roam translate up"));
-  defaultBinding.insert(std::make_pair("Alt+Down Arrow",
-				       "roam translate down"));
-  defaultBinding.insert(std::make_pair("F6", "roam cycle subject backward"));
-  defaultBinding.insert(std::make_pair("F7", "roam cycle subject forward"));
-  defaultBinding.insert(std::make_pair("F8", "roam cycle type forward"));
-  defaultBinding.insert(std::make_pair("F9", "roam zoom in"));
-  defaultBinding.insert(std::make_pair("F10", "roam zoom out"));
-  defaultBinding.insert(std::make_pair("F11", "roam zoom normal"));
-  defaultBinding.insert(std::make_pair("O", "servercommand"));
-  defaultBinding.insert(std::make_pair("F", "toggle displayFlagHelp"));
-  defaultBinding.insert(std::make_pair("Page Up", "scrollpanel up"));
-  defaultBinding.insert(std::make_pair("Page Down", "scrollpanel down"));
-  defaultBinding.insert(std::make_pair("1", "set displayRadarRange 0.25"));
-  defaultBinding.insert(std::make_pair("2", "set displayRadarRange 0.5"));
-  defaultBinding.insert(std::make_pair("3", "set displayRadarRange 1.0"));
-  defaultBinding.insert(std::make_pair("A", "toggle slowKeyboard"));
-  defaultBinding.insert(std::make_pair("U", "hunt"));
-  defaultBinding.insert(std::make_pair("Right Mouse", "restart"));
-  defaultBinding.insert(std::make_pair("I", "restart"));
-  defaultBinding.insert(std::make_pair("9", "autopilot"));
+  defaultBinding.insert(std::make_pair(std::string("Ctrl+Left Arrow"), std::string("roam rotate left")));
+  defaultBinding.insert(std::make_pair(std::string("Ctrl+Right Arrow"),
+				       std::string("roam rotate right")));
+  defaultBinding.insert(std::make_pair(std::string("Ctrl+Up Arrow"), std::string("roam rotate up")));
+  defaultBinding.insert(std::make_pair(std::string("Ctrl+Down Arrow"), std::string("roam rotate down")));
+  defaultBinding.insert(std::make_pair(std::string("Shift+Left Arrow"),
+				       std::string("roam translate left")));
+  defaultBinding.insert(std::make_pair(std::string("Shift+Right Arrow"),
+				       std::string("roam translate right")));
+  defaultBinding.insert(std::make_pair(std::string("Shift+Up Arrow"),
+				       std::string("roam translate forward")));
+  defaultBinding.insert(std::make_pair(std::string("Shift+Down Arrow"),
+				       std::string("roam translate backward")));
+  defaultBinding.insert(std::make_pair(std::string("Alt+Up Arrow"), std::string("roam translate up")));
+  defaultBinding.insert(std::make_pair(std::string("Alt+Down Arrow"),
+				       std::string("roam translate down")));
+  defaultBinding.insert(std::make_pair(std::string("F6"), std::string("roam cycle subject backward")));
+  defaultBinding.insert(std::make_pair(std::string("F7"), std::string("roam cycle subject forward")));
+  defaultBinding.insert(std::make_pair(std::string("F8"), std::string("roam cycle type forward")));
+  defaultBinding.insert(std::make_pair(std::string("F9"), std::string("roam zoom in")));
+  defaultBinding.insert(std::make_pair(std::string("F10"), std::string("roam zoom out")));
+  defaultBinding.insert(std::make_pair(std::string("F11"), std::string("roam zoom normal")));
+  defaultBinding.insert(std::make_pair(std::string("O"), std::string("servercommand")));
+  defaultBinding.insert(std::make_pair(std::string("F"), std::string("toggle displayFlagHelp")));
+  defaultBinding.insert(std::make_pair(std::string("Page Up"), std::string("scrollpanel up")));
+  defaultBinding.insert(std::make_pair(std::string("Page Down"), std::string("scrollpanel down")));
+  defaultBinding.insert(std::make_pair(std::string("1"), std::string("set displayRadarRange 0.25")));
+  defaultBinding.insert(std::make_pair(std::string("2"), std::string("set displayRadarRange 0.5")));
+  defaultBinding.insert(std::make_pair(std::string("3"), std::string("set displayRadarRange 1.0")));
+  defaultBinding.insert(std::make_pair(std::string("A"), std::string("toggle slowKeyboard")));
+  defaultBinding.insert(std::make_pair(std::string("U"), std::string("hunt")));
+  defaultBinding.insert(std::make_pair(std::string("Right Mouse"), std::string("restart")));
+  defaultBinding.insert(std::make_pair(std::string("I"), std::string("restart")));
+  defaultBinding.insert(std::make_pair(std::string("9"), std::string("autopilot")));
 }
 
 void ActionBinding::resetBindings() {
