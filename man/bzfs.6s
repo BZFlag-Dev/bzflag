@@ -960,8 +960,8 @@ option is a text based file that contains a list of world objects. This file can
 be created using programs found on sourceforge.net through cvs, or can be hand edited.
 
 The format of this text file consists of any number of objects listed in any order
-(except that teleporters must come before links, and textureMatrix's and dynamicColor's
-must come before they are used). The list of world types consists of:
+(except that physics, textureMatrix, dynamicColor, and material must come before they
+are referenced). The list of world types consists of:
 
 .B	world
 .br
@@ -973,15 +973,19 @@ must come before they are used). The list of world types consists of:
 .br
 .B	textureMatrix
 .br
+.B	material
+.br
 .B	physics
 .br
-.B	weapon
+.B	define
 .br
-.B	zone
-.br
-.B	link
+.B	group
 .br
 .B	mesh
+.br
+.B	meshbox
+.br
+.B	meshpyr
 .br
 .B	arc
 .br
@@ -995,81 +999,30 @@ must come before they are used). The list of world types consists of:
 .br
 .B	pyramid
 .br
+.B	link
+.br
 .B	teleporter
 .br
 .B	base
 .br
-.B	define
+.B	weapon
 .br
-.B	group
+.B	zone
 .br
 
 Each object is described by placing the type on one line, the word \fIend\fR on a following line,
-and a list of attributes for that object, one per line, inbetween. Attributes may be listed in
-any order. Attributes have default values, and if that is good enough, the attribute need not
-be listed. Words are always specified in lowercase. Line comments can be specified by placing a
-# sign at the start of the line. For documentation purposes, you can tag each object by adding
-a name attribute. There is no set limit to the number of times you may use any of the objects
+and a list of attributes for that object, one per line, in between. The exceptions to the rule
+are \fIdefine\fR and \fIface\fR, which are concluded with \fIenddef\fR and \fIendface\fR.
+Attributes may be listed in any order. Attributes have default values, and if that is good enough,
+the attribute need not be listed. Words are always specified in lowercase. Line comments can be
+specified by placing a # sign at the start of the line. For documentation purposes, you can tag each
+object by adding a name attribute. There is no set limit to the number of times you may use any of the objects
 except for the world, options, and waterLevel objects, they can only be specified once. The
 options object contains command line arguments that are used to configure the server's game mode,
 but can not contain server specific options such as -p, -passwd, and -conf.
 
 .br
 In the following examples, the values are the defaults.
-
-
-.B Material Properties
-
-Material properties may be set on several types of objects, including
-meshes, mesh faces, arcs, cones, spheres, and tetras. Here are the properties:
-.br
-
-\fBmaterial\fR
-.br
-\fB  name\fR example_material
-.br
-\fB  texture\fR filename     # set working texture (without PNG extension)
-.br
-\fB  addtexture\fR filename  # add texture (without PNG extension)
-.br
-\fB  notextures\fR           # specify that no textures are to be used
-.br
-\fB  notexcolor\fR           # the color is not applied to the texture
-.br
-\fB  notexalpha\fR           # don't use the texture's alpha channel
-.br
-  # if a texture is specified, but not found, the default texture
-.br
-  # will be used. if the default texture is also not available, then
-.br
-  # the color will be used (untextured)
-.br
-\fB  texmat\fR -1                 # texture matrix  (-1 for none)
-.br
-\fB  dyncol\fR -1                 # dynamic color  (-1 for none)
-.br
-\fB  ambient\fR  0.2 0.2 0.2 1.0  # ambient color
-.br
-\fB  diffuse\fR  0.8 0.8 0.8 1.0  # diffuse color (\fBmain color\fR)
-.br
-\fB  color\fR    0.8 0.8 0.8 1.0  # synonym for 'diffuse'
-.br
-\fB  specular\fR 0.0 0.0 0.0 1.0  # specular color
-.br
-\fB  emission\fR 0.0 0.0 0.0 1.0  # emission color
-.br
-\fB  shininess\fR 0.0             # shininess
-.br
-\fB  resetmat\fR                  # restore default values
-.br
-\fBend\fR                  # restore default values
-.br
-
-Materials may also be setup using a material reference within
-the object. An example would be:
-.br
-\fBmatref\fR example_material
-.br
 
 
 .B The World object
@@ -1112,6 +1065,71 @@ Sets how high the water is, in a matter of units.
 \fB  name\fR example_waterlevel
 .br
 \fB  height\fR -1.0 # anything below 0 turns it off
+.br
+\fBend\fR
+.br
+
+
+.B The Group Definition object
+.br
+Defines a group, which may include other group instances
+.br
+This does not place any objects into the world, a group instance
+must be used to generate world objects from a group definition.
+
+\fBdefine\fR <example_groupdef>
+.br
+  # You can add any object to a group definition,
+.br
+  # except for the following types:
+.br
+  #   textureMatrix
+.br
+  #   dynamicColor
+.br
+  #   material
+.br
+  #   physics
+.br
+  #   links
+.br
+  #   weapon
+.br
+  #   zone
+.br
+\fBenddef\fR
+.br
+
+
+.B The Group Instantiation object
+.br
+Instantiates a group, and possibly modifies subobjects
+
+\fBgroup\fR <example_groupdef>  # a valid group definition reference
+.br
+\fB  shift\fR 0 0 0          # (\fBrepeatable\fR)
+.br
+\fB  scale\fR 1 1 1          # (\fBrepeatable\fR)
+.br
+\fB  shear\fR 0 0 0          # (\fBrepeatable\fR)
+.br
+\fB  spin\fR angle nx ny nz  # (\fBrepeatable\fR)
+.br
+                       # angle degrees about vector n
+.br
+\fB  team\fR 0        # change all base colors within group
+.br
+\fB  tint\fR 1 1 1 1  # hierarchically tints objects within this group
+.br
+\fB  drivethrough\fR  # make all subobjects drivethrough
+.br
+\fB  shootthrough\fR  # make all subobjects shootthrough
+.br
+\fB  phydrv\fR example_phydrv     # reassign any valid physics drivers
+.br
+\fB  material\fR example_material # set material properties
+.br
+                            # (except for the color)
 .br
 \fBend\fR
 .br
@@ -1187,13 +1205,67 @@ Sets how high the water is, in a matter of units.
 .br
 
 
+.B Material Properties
+
+Material properties may be set on several types of objects, including
+meshes, mesh faces, arcs, cones, spheres, and tetras. Here are the properties:
+.br
+
+\fBmaterial\fR
+.br
+\fB  name\fR example_material
+.br
+\fB  texture\fR filename     # set working texture (without PNG extension)
+.br
+\fB  addtexture\fR filename  # add texture (without PNG extension)
+.br
+\fB  notextures\fR           # specify that no textures are to be used
+.br
+\fB  notexcolor\fR           # the color is not applied to the texture
+.br
+\fB  notexalpha\fR           # don't use the texture's alpha channel
+.br
+  # if a texture is specified, but not found, the default texture
+.br
+  # will be used. if the default texture is also not available, then
+.br
+  # the color will be used (untextured)
+.br
+\fB  texmat\fR -1                 # texture matrix  (-1 for none)
+.br
+\fB  dyncol\fR -1                 # dynamic color  (-1 for none)
+.br
+\fB  ambient\fR  0.2 0.2 0.2 1.0  # ambient color
+.br
+\fB  diffuse\fR  0.8 0.8 0.8 1.0  # diffuse color (\fBmain color\fR)
+.br
+\fB  color\fR    0.8 0.8 0.8 1.0  # synonym for 'diffuse'
+.br
+\fB  specular\fR 0.0 0.0 0.0 1.0  # specular color
+.br
+\fB  emission\fR 0.0 0.0 0.0 1.0  # emission color
+.br
+\fB  shininess\fR 0.0             # shininess
+.br
+\fB  resetmat\fR                  # restore default values
+.br
+\fBend\fR                  # restore default values
+.br
+
+Materials may also be setup using a material reference within
+the object. An example would be:
+.br
+\fBmatref\fR example_material
+.br
+
+
 .B The Physics Driver object
 
 \fBphysics\fR
 .br
 \fB  name\fR example_phydrv
 .br
-\fB  linear\fR 0.0 0.0 0.0   # x/y/z linear velocities
+\fB  linear\fR  0.0 0.0 0.0  # x/y/z linear velocities
 .br
 \fB  angular\fR 0.0 0.0 0.0  # rotation freq, x/y coordinates
 .br
@@ -1217,23 +1289,31 @@ Sets how high the water is, in a matter of units.
 .br
   # that follow the setting. Mesh faces will alter their own
 .br
-  # properties with affecting the state of the mesh properties.
+  # properties without affecting the state of the mesh properties.
 .br
   # The same pattern is used to apply physics drivers.
 .br
-\fB  inside\fR 5.5 4.5 1.2  # add an inside point  (\fBrepeatable\fR)
+\fB  inside\fR 5.5 4.5 1.2  # add an inside point       (\fBrepeatable\fR)
 .br
-\fB  outside\fR 0 0 1000    # add an outside point  (\fBrepeatable\fR)
+\fB  outside\fR 0 0 1000    # add an outside point      (\fBrepeatable\fR)
 .br
-\fB  vertex\fR 100 200 300  # add a vertex  (\fBrepeatable\fR)
+\fB  vertex\fR 100 200 300  # add a vertex              (\fBrepeatable\fR)
 .br
-\fB  normal\fR 1.0 0 0      # add a normal  (\fBrepeatable\fR)
+\fB  normal\fR 1.0 0 0      # add a normal              (\fBrepeatable\fR)
 .br
 \fB  texcoord\fR 0.1 0.75   # add a texture coordinate  (\fBrepeatable\fR)
 .br
+\fB  shift\fR 0 0 0          # (\fBrepeatable\fR)
+.br
+\fB  scale\fR 1 1 1          # (\fBrepeatable\fR)
+.br
+\fB  shear\fR 0 0 0          # (\fBrepeatable\fR)
+.br
+\fB  spin\fR angle nx ny nz  # (\fBrepeatable\fR)
+.br
 \fB  phydrv\fR example_phydrv  # assign a physics driver
 .br
-\fB  face\fR  # start a face  (\fBrepeatable\fR)
+\fB  face\fR  # start a face   (\fBrepeatable\fR)
 .br
     # faces must be convex polygons
 .br
@@ -1271,6 +1351,14 @@ Sets how high the water is, in a matter of units.
 .br
 \fB  rotation\fR 0.0
 .br
+\fB  shift\fR 0 0 0          # (\fBrepeatable\fR)
+.br
+\fB  scale\fR 1 1 1          # (\fBrepeatable\fR)
+.br
+\fB  shear\fR 0 0 0          # (\fBrepeatable\fR)
+.br
+\fB  spin\fR angle nx ny nz  # (\fBrepeatable\fR)
+.br
 \fB  phydrv\fR example_phydrv  # assign a physics driver
 .br
 \fBend\fR
@@ -1294,6 +1382,14 @@ Sets how high the water is, in a matter of units.
 \fB  size\fR 10 10 10
 .br
 \fB  rotation\fR 0.0
+.br
+\fB  shift\fR 0 0 0          # (\fBrepeatable\fR)
+.br
+\fB  scale\fR 1 1 1          # (\fBrepeatable\fR)
+.br
+\fB  shear\fR 0 0 0          # (\fBrepeatable\fR)
+.br
+\fB  spin\fR angle nx ny nz  # (\fBrepeatable\fR)
 .br
 \fB  phydrv\fR example_phydrv  # assign a physics driver
 .br
@@ -1319,6 +1415,14 @@ Sets how high the water is, in a matter of units.
 .br
 \fB  rotation\fR 0.0
 .br
+\fB  shift\fR 0 0 0          # (\fBrepeatable\fR)
+.br
+\fB  scale\fR 1 1 1          # (\fBrepeatable\fR)
+.br
+\fB  shear\fR 0 0 0          # (\fBrepeatable\fR)
+.br
+\fB  spin\fR angle nx ny nz  # (\fBrepeatable\fR)
+.br
 \fB  phydrv\fR example_phydrv  # assign a physics driver
 .br
 \fBend\fR
@@ -1341,11 +1445,13 @@ Sets how high the water is, in a matter of units.
 .br
 \fB  vertex\fR 0.0 5.0 10.0
 .br
-# defines the visible planes
+\fB  shift\fR 0 0 0          # (\fBrepeatable\fR)
 .br
-# planes are numbered according to their opposite vertex
+\fB  scale\fR 1 1 1          # (\fBrepeatable\fR)
 .br
-\fB  visible\fR 1 1 0 1
+\fB  shear\fR 0 0 0          # (\fBrepeatable\fR)
+.br
+\fB  spin\fR angle nx ny nz  # (\fBrepeatable\fR)
 .br
 \fB  phydrv\fR example_phydrv  # assign a physics driver
 .br
@@ -1393,7 +1499,7 @@ Adds a triangular shaped object.
 .br
 Adds an object that places a tank at another teleporter in a different area when ran through.
 
-\fBteleporter\fR
+\fBteleporter\fR [name]
 .br
 \fB  name\fR example_teleporter
 .br
