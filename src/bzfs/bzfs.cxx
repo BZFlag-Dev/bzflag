@@ -5038,7 +5038,7 @@ int main(int argc, char **argv)
 
       // check if we have any UDP packets pending
       if (FD_ISSET(udpSocket, &read_set)) {
-	int numpackets;
+	TimeKeeper receiveTime = TimeKeeper::getCurrent();
 	while (true) {
 	  struct sockaddr_in uaddr;
 	  unsigned char ubuf[MaxPacketLen];
@@ -5058,6 +5058,7 @@ int main(int argc, char **argv)
 	    continue;
 	  }
 
+	  int numpackets;
 	  int result = uread(&i, &numpackets, n, ubuf, uaddr);
 	  if (result <= 0)
 	    break;
@@ -5067,6 +5068,12 @@ int main(int argc, char **argv)
 
 	  // handle the command for UDP
 	  handleCommand(i, code, len, player[i].udpmsg);
+
+	  // don't spend more than 250ms receiving udp
+	  if (TimeKeeper::getCurrent() - receiveTime > 0.25f) {
+	    DEBUG2("Too much UDP traffic, will hope to catch up later\n");
+	    break;
+	  }
 	}
       }
 
