@@ -1,9 +1,9 @@
 SUFFIXES = .6s .6
 
 if HASPOD2MAN
-man_MANS = bzadmin.6 bzflag.6 bzfs.6 bzfquery.6
+man_MANS = bzadmin.6 bzflag.6 bzfs.6 bzw.5 bzfquery.6
 else
-man_MANS = bzadmin.6 bzflag.6 bzfs.6
+man_MANS = bzadmin.6 bzflag.6 bzfs.6 bzw.5
 endif
 
 bzfquery.6: $(top_srcdir)/misc/bzfquery.pl
@@ -19,9 +19,9 @@ BUILD_DATE=$(shell echo $(VERSION) | sed -e "s/.*\.\([0-9][0-9][0-9][0-9]\)\([0-
 	sed -e "s'BUILD_DATE'$(BUILD_DATE)'g"			| \
 	sed -e "s'BUILD_VERSION'$(BUILD_VERSION)'g" > $@
 
-EXTRA_DIST = bzadmin.6s bzflag.6s bzfs.6s
+EXTRA_DIST = bzadmin.6s bzflag.6s bzfs.6s bzw.5s
 
-DISTCLEANFILES = bzflag.6 bzfs.6 bzadmin.6 bzfquery.6
+DISTCLEANFILES = bzflag.6 bzfs.6 bzadmin.6 bzfquery.6 bzw.5 
 
 MAINTAINERCLEANFILES = \
 	Makefile.in

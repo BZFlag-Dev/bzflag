@@ -653,4 +653,4 @@ Stores options between game sessions.  Used when HOST is not defined.
 ~/.bzf/<version>/config.cfg.${HOST}
 Stores options between game sessions.  Used when HOST is defined.
 .SH SEE ALSO
-bzadmin(6), bzfs(6)
+bzadmin(6), bzfs(6), bzw(5)

@@ -104,4 +104,4 @@ Connect to the server at localhost and ban the IP 192.168.0.2.
 Connect to bzserver.xy and print all server messages that contain 'magicword'.
 .RE
 .SH SEE ALSO
-bzfs(6), bzflag(6)
+bzfs(6), bzflag(6), bzw(5)

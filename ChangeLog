@@ -4,6 +4,8 @@
 BZFlag 1.11.x (development)
 ---------------------------
 
+* Added a file syntax section to bzw.5 - Fred Cods
+* Added a bzw.5 manpage to document world file format - Sean Morrison
 * Added /quit command - Angelina Carlton
 * Display player addr on join to admins - Sean Morrison
 * Make -debug a public client option - Frank Thilo
