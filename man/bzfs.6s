@@ -746,10 +746,12 @@ Note: Bzfs must be compiled to use the ADNS asynchronous resolver library in ord
 .B /hostbanlist
 List all of the host patterns currently banned from this server.
 .TP
-.B /countdown
-Starts the countdown sequence for a timed game. Example:
+.B /countdown [seconds]
+Starts the countdown sequence for a timed game.  The countdown
+sequence length can optionally be specified in seconds.  Examples:
 
 /countdown
+/countdown 3
 
 .TP
 .B /lagwarn
