@@ -17,6 +17,7 @@
 <!ENTITY e-mail SYSTEM "E-Mail.xml">
 <!ENTITY irc SYSTEM "IRC.xml">
 <!ENTITY lag SYSTEM "Lag.xml">
+<!ENTITY playing SYSTEM "Playing.xml">
 
 ]>
 
@@ -161,6 +162,9 @@
 
 
   <!-- BEGIN complex frequently asked questions -->
+
+  <!-- how to get started playing -->
+  &playing;
 
   <!-- network connectivity issues during gameplay -->
   &lag;
