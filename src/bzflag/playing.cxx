@@ -1898,11 +1898,11 @@ static void		handleServerMessage(bool human, uint16_t code,
 	  message += "blew myself up";
 	  addMessage(victimPlayer, message);
 	}
-	else if (killer >= curMaxPlayers) {
+	else if (killer >= LastRealPlayer) {
 	  addMessage(victimPlayer, "destroyed by the server");
 	}
 	else if (!killerPlayer) {
-	  addMessage(victimPlayer, "destroyed by (UNKNOWN)");
+	  addMessage(victimPlayer, "destroyed by a (GHOST)");
 	}
 	else if (reason == WaterDeath) {
 	  message += "fell in the water";
