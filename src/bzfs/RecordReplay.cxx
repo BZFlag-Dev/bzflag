@@ -210,7 +210,6 @@ extern char hexDigest[50];
 extern int numFlags;
 extern int numFlagsInAir;
 extern FlagInfo *flag;
-extern PlayerInfo player[MaxPlayers + ReplayObservers];
 extern PlayerAccessInfo accessInfo[MaxPlayers + ReplayObservers];
 extern u16 curMaxPlayers;
 extern TeamInfo team[NumTeams];
@@ -639,7 +638,10 @@ static bool replayReset()
 
   // reset the local view of the players' state
   for (int i = MaxPlayers; i < curMaxPlayers; i++) {
-    player[i].setReplayState (ReplayNone);
+    GameKeeper::Player *gkPlayer = GameKeeper::Player::getPlayerByIndex(i);
+    if (gkPlayer != NULL) {
+      gkPlayer->player->setReplayState (ReplayNone);
+    }
   }
   
   return true;
@@ -1021,26 +1023,31 @@ bool Replay::sendPackets ()
     
       // send message to all replay observers
       for (i = MaxPlayers; i < curMaxPlayers; i++) {
-        PlayerInfo &pi = player[i];
+        GameKeeper::Player *gkPlayer = GameKeeper::Player::getPlayerByIndex(i);
+        if (gkPlayer == NULL) {
+          continue;
+        }
         
-        if (pi.isPlaying()) {
+        PlayerInfo *pi = gkPlayer->player;
+        
+        if (pi->isPlaying()) {
           // State machine for State Updates
           if (p->mode == UpdatePacket) {
-            if (pi.getReplayState() == ReplayNone) {
-              pi.setReplayState (ReplayReceiving);
+            if (pi->getReplayState() == ReplayNone) {
+              pi->setReplayState (ReplayReceiving);
             }
-            else if (pi.getReplayState() == ReplayReceiving) {
+            else if (pi->getReplayState() == ReplayReceiving) {
               // two state updates in a row
-              pi.setReplayState (ReplayStateful);
+              pi->setReplayState (ReplayStateful);
             }
           }
           else if (p->mode != StatePacket) {
-            if (pi.getReplayState() == ReplayReceiving) {
-              pi.setReplayState (ReplayStateful);
+            if (pi->getReplayState() == ReplayReceiving) {
+              pi->setReplayState (ReplayStateful);
             }
           }
 
-          PlayerReplayState state = pi.getReplayState();
+          PlayerReplayState state = pi->getReplayState();
           // send the packets
           if (((p->mode == StatePacket) && (state == ReplayReceiving)) ||
               ((p->mode == RealPacket) && (state == ReplayStateful))) {
@@ -1381,20 +1388,21 @@ savePlayersState ()
   adminPtr = adminBuf + sizeof (unsigned char);
 
   for (i = 0; i < curMaxPlayers; i++) {
-    GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(i);
-    if (!playerData)
+    GameKeeper::Player *gkPlayer = GameKeeper::Player::getPlayerByIndex(i);
+    if (gkPlayer == NULL) {
       continue;
-    if (player[i].isPlaying()) {
+    }
+    PlayerInfo *pi = gkPlayer->player;
+    if (pi->isPlaying()) {
       // Complete MsgAddPlayer      
-      PlayerInfo *pPlayer = &player[i];
       buf = nboPackUByte(bufStart, i);
-      buf = pPlayer->packUpdate(buf);
-      buf = playerData->score.pack(buf);
-      buf = pPlayer->packId(buf);
+      buf = pi->packUpdate(buf);
+      buf = gkPlayer->score.pack(buf);
+      buf = pi->packId(buf);
       routePacket (MsgAddPlayer, 
                    (char*)buf - (char*)bufStart, bufStart, StatePacket);
       // Part of MsgAdminInfo
-      adminPtr = playerData->packAdminInfo(adminPtr);
+      adminPtr = gkPlayer->packAdminInfo(adminPtr);
       
       count++;
     }
@@ -1411,7 +1419,12 @@ savePlayersState ()
   }
   
   for (i = 0; i < curMaxPlayers; i++) {
-    if (player[i].isAlive()) {
+    GameKeeper::Player *gkPlayer = GameKeeper::Player::getPlayerByIndex(i);
+    if (gkPlayer == NULL) {
+      continue;
+    }
+    PlayerInfo *pi = gkPlayer->player;
+    if (pi->isAlive()) {
       float pos[3] = {0.0f, 0.0f, 0.0f};
       // Complete MsgAlive
       buf = nboPackUByte(bufStart, i);
@@ -1492,7 +1505,11 @@ resetStates ()
     buf = team[i].team.pack(buf);
   }
   for (i = MaxPlayers; i < curMaxPlayers; i++) {
-    if (player[i].isPlaying()) {
+    GameKeeper::Player *gkPlayer = GameKeeper::Player::getPlayerByIndex(i);
+    if (gkPlayer == NULL) {
+      continue;
+    }
+    if (gkPlayer->player->isPlaying()) {
       directMessage(i, MsgTeamUpdate, (char*)buf-(char*)bufStart, bufStart);
     }
   }
@@ -1500,14 +1517,22 @@ resetStates ()
   // reset players and flags using MsgReplayReset
   buf = nboPackUByte(bufStart, MaxPlayers); // the last player to remove
   for (i = MaxPlayers; i < curMaxPlayers; i++) {
-    if (player[i].isPlaying()) {
+    GameKeeper::Player *gkPlayer = GameKeeper::Player::getPlayerByIndex(i);
+    if (gkPlayer == NULL) {
+      continue;
+    }
+    if (gkPlayer->player->isPlaying()) {
       directMessage(i, MsgReplayReset, (char*)buf-(char*)bufStart, bufStart);
     }
   }
 
   // reset the local view of the players' state
   for (i = MaxPlayers; i < curMaxPlayers; i++) {
-    player[i].setReplayState (ReplayNone);
+    GameKeeper::Player *gkPlayer = GameKeeper::Player::getPlayerByIndex(i);
+    if (gkPlayer == NULL) {
+      continue;
+    }
+    gkPlayer->player->setReplayState (ReplayNone);
   }
 
   return true;
@@ -1723,10 +1748,16 @@ saveHeader (int p, RRtime filetime, FILE *f)
     return false;
   }
 
+  GameKeeper::Player *gkPlayer = GameKeeper::Player::getPlayerByIndex(p);
+  if (gkPlayer == NULL) {
+    return false;
+  }
+  PlayerInfo *pi = gkPlayer->player;
+
   // setup the data  
   memset (&hdr, 0, sizeof (hdr));
-  strncpy (hdr.callSign, player[p].getCallSign(), sizeof (hdr.callSign));
-  strncpy (hdr.email, player[p].getEMail(), sizeof (hdr.email));
+  strncpy (hdr.callSign, pi->getCallSign(), sizeof (hdr.callSign));
+  strncpy (hdr.email, pi->getEMail(), sizeof (hdr.email));
   strncpy (hdr.serverVersion, getServerVersion(), sizeof (hdr.serverVersion));
   strncpy (hdr.appVersion, getAppVersion(), sizeof (hdr.appVersion));
   strncpy (hdr.realHash, hexDigest, sizeof (hdr.realHash));
