@@ -123,7 +123,7 @@ const uint16_t		RejectServerFull = 0x0005;
 const uint16_t		MsgUDPLinkRequest = 0x6f66;		// 'of'
 const uint16_t		MsgUDPLinkEstablished = 0x6f67;		// 'og'
 const uint16_t		MsgUDPLinkUpdate = 0x6f68;		// 'oh'
-const uint16_t		MsgClientVersion = 0x6f69;		// 'oj'
+const uint16_t		MsgClientVersion = 0x6f6a;		// 'oj'
 
 // server control message
 
