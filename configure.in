@@ -167,13 +167,7 @@ AC_TRY_LINK([
 [regcomp(0, 0, 0);
  regexec(0, 0, 0, 0, 0)],
 [AC_DEFINE(HAVE_REGEX_H, 1, [Define to 1 if you have regex stuff available])],
-[AC_MSG_WARN([regexp/regcomp seems not being available on your system])])
-
-AC_TRY_LINK([
-#include <adns.h>],
-[adns_init(0, (adns_initflags)0, 0)],
-[AC_DEFINE(HAVE_ADNS_H, 1, [Define to 1 if you have ADNS available])],
-[AC_MSG_WARN([adns seems to not be available on your system.  See http://www.chiark.greenend.org.uk/~ian/adns/ if you want to be able to use hostmask based bans.])])
+[AC_MSG_WARN([regexp/regcomp seems to not be available on your system])])
 
 ac_cv_search_glBegin=no
 ac_cv_search_gluScaleImage=no
@@ -282,6 +276,27 @@ AM_CONDITIONAL(DEBUG, test x$enable_debug = xyes)
 if test x$enable_debug = xyes; then
    AC_DEFINE(DEBUG_RENDERING, 1, [Debug Rendering])
    AC_ARG_ENABLE(profiling, [  --enable-profiling      turn on profiling])
+fi
+
+AC_ARG_ENABLE(adns,  [  --enable-adns           use asynchronous DNS resolver],
+[case "${enableval}" in
+  yes) use_adns=true ;;
+  no)  use_adns=false ;;
+  *) AC_MSG_ERROR(bad value ${enableval} for --enable-adns) ;;
+esac],[use_adns=true])
+if $use_adns ; then
+  AC_DEFINE(HAVE_ADNS)
+else
+  AC_DEFINE(HAVE_ADNS, [])
+fi
+
+if test x$use_adns = xtrue ; then
+AC_TRY_LINK([
+#include <adns.h>],
+[adns_init(0, (adns_initflags)0, 0)],
+[AC_DEFINE(HAVE_ADNS_H, 1, [Define to 1 if you have ADNS available])],
+[AC_MSG_WARN([adns seems to not be available on your system.
+See http://www.chiark.greenend.org.uk/~ian/adns/ if you want to be able to use hostmask based bans.])])
 fi
 
 AC_ARG_ENABLE(client, [  --disable-client        servers-only build])
