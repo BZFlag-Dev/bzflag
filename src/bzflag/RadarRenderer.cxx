@@ -136,13 +136,13 @@ void RadarRenderer::drawTank(float x, float y, float z)
   glEnd();
 
   // Does not change with height.
-  s = TankRadius * 1.5;
+  s = TankRadius * 1.5f;
   glRectf(x - s, y - s, x + s, y + s);
 }
 
 void RadarRenderer::drawFlag(float x, float y, float z)
 {
-  GLfloat s = TankRadius * 3.0 + (z + BoxHeight) * 2.0f / BoxHeight;
+  GLfloat s = TankRadius * 3.0f + (z + BoxHeight) * 2.0f / BoxHeight;
   glBegin(GL_LINES);
   glVertex2f(x - s, y);
   glVertex2f(x + s, y);
