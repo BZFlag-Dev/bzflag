@@ -332,8 +332,8 @@ cannot proceed.  A checklist of items to be completed follows:
   ChangeLog.  Other platform-specific README.* files should also be
   verfied that all version numbers are up-to-date.
 
-- Update package/win32/nsis/BZFlag.nsi (for windows) with appropriate
-  version numbers
+- Update package/win32/nsis/*.nsi (for windows) with appropriate
+  version numbers 
 
 - Perform a "make distcheck".  This will verify that a proper source
   distribution can be made.
