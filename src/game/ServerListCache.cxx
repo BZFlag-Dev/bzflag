@@ -95,9 +95,9 @@ void			ServerListCache::saveCache()
       }
 
       // write out the index of the map
-      memset(&buffer, 0, sizeof(buffer));
+      memset(buffer, 0, sizeof(buffer));
       lenCpy = int((iter->first).size() < MAX_STRING ? (iter->first).size() : MAX_STRING);
-      strncpy(&buffer[0], (iter->first.c_str()), lenCpy);
+      strncpy(buffer, (iter->first.c_str()), lenCpy);
       outFile->write(buffer, sizeof(buffer));
 
       ServerItem x = iter->second;
