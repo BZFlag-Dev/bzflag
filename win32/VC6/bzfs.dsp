@@ -339,7 +339,7 @@ SOURCE=..\..\src\bzfs\PackVars.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\include\Permissions.h
+SOURCE=..\..\src\bzfs\Permissions.h
 # End Source File
 # Begin Source File
 
