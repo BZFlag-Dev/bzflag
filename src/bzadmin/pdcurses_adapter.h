@@ -46,13 +46,23 @@ inline int move(int y, int x) {
   return wmove(stdscr, y, x);
 }
 
-
-// make it compatible with ncurses
-#define waddstr(W, C) pd_waddstr(W, C)
-inline int pd_waddstr(WINDOW* w, const char* str) {
-  char* newStr = new char[strlen(str) + 1];
-  strcpy(newStr, str);
-  return ::waddstr(w, newStr);
+#undef nonl
+inline int nonl() {
+  return OK;
 }
 
 
+// make it compatible with ncurses
+inline int pd_waddstr(WINDOW* w, const char* str) {
+  char* newStr = new char[strlen(str) + 1];
+  strcpy(newStr, str);
+  return waddstr(w, newStr);
+}
+#define waddstr(W, C) pd_waddstr(W, C)
+
+inline int pd_endwin() {
+  int i = endwin();
+  XCursesExit();
+  return i;
+}
+#define endwin pd_endwin
