@@ -724,6 +724,9 @@ static void		doAutoPilot(float &rotation, float &speed)
 	  player[t]->isAlive() && !player[t]->isPaused() &&
 	  !player[t]->isNotResponding() &&
 	  myTank->validTeamTarget(player[t])) {
+	if((player[t]->getFlag() == Flags::PhantomZone && player[t]->isFlagActive()))
+          continue;
+
 	float d = TargetingUtils::getTargetDistance( pos, player[t]->getPosition());
 	if (d < distance) {
 	  if ((player[t]->getFlag() != Flags::Stealth)
