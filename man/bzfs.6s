@@ -723,7 +723,7 @@ Shows all flags with information. Example:
 
 .BR 
 .TP 
-.B /kick "Player name" | playerName | #slot> <reason>
+.B /kick <"Player name" | playerName | #slot> <reason>
 Kick a named player off the server. Example:
 .ft CW
 .nf 
