@@ -166,10 +166,6 @@ scheis                  # de - shit
 schiese                 # de - shit
 scheise                 # de - shit
 scheissekopf            # de - shithead
-shies                   # de - shit
-sheis                   # de - shit
-shiese                  # de - shit
-sheise                  # de - shit
 
 
 # Greek
