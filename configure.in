@@ -216,8 +216,6 @@ fi
 INSTALL_DATA_DIR=`eval echo $datadir/bzflag`
 AC_SUBST(INSTALL_DATA_DIR)
 
-AC_DEFINE_UNQUOTED(BZVERSION, $VERSIONNUM, [Bzflag internal version])
-
 # do we want bzadmin?
 AC_ARG_ENABLE(bzadmin, [  --enable-bzadmin        build text client])
 AM_CONDITIONAL(BZADMIN_INCLUDED, test x$enable_bzadmin = xyes)
@@ -397,6 +395,7 @@ LIBDIR="\$(top_srcdir)/lib"
 AC_SUBST(LIBDIR)
 
 AC_OUTPUT(bzflag.spec
+	bzflag.lsm
 	Makefile
 	data/Makefile
 	data/l10n/Makefile
