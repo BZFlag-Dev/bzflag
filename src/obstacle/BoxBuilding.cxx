@@ -12,6 +12,7 @@
 
 #include <math.h>
 #include "common.h"
+#include "global.h"
 #include "BoxBuilding.h"
 #include "Intersect.h"
 #include "QuadWallSceneNode.h"
@@ -54,7 +55,7 @@ bool			BoxBuilding::isInside(const float* p,
 						float radius) const
 {
   return (p[2] < (getPosition()[2] + getHeight())) 
-  &&     (p[2] >= getPosition()[2])
+  &&     ((p[2]+TankHeight) >= getPosition()[2])
   &&     testRectCircle(getPosition(), getRotation(), getWidth(), getBreadth(), p, radius);
 }
 
@@ -62,7 +63,7 @@ bool			BoxBuilding::isInside(const float* p, float a,
 						float dx, float dy) const
 {
   return (p[2] < (getPosition()[2] + getHeight()))
-  &&     (p[2] >= getPosition()[2])
+  &&     ((p[2]+TankHeight) >= getPosition()[2])
   &&     testRectRect(getPosition(), getRotation(), getWidth(), getBreadth(), p, a, dx, dy);
 }
 

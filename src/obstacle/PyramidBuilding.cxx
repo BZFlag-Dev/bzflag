@@ -12,6 +12,7 @@
 
 #include <math.h>
 #include "common.h"
+#include "global.h"
 #include "PyramidBuilding.h"
 #include "Intersect.h"
 #include "TriWallSceneNode.h"
@@ -70,7 +71,7 @@ bool			PyramidBuilding::isInside(const float* p,
 {
   // really rough -- doesn't decrease size with height
   return (p[2] <= getHeight()) 
-  &&     (p[2] >= getPosition()[2])
+  &&     ((p[2]+TankHeight) >= getPosition()[2])
   &&     testRectCircle(getPosition(), getRotation(), getWidth(), getBreadth(), p, radius);
 }
 
@@ -79,7 +80,7 @@ bool			PyramidBuilding::isInside(const float* p, float a,
 {
   const float s = shrinkFactor(p[2]);
   return (s > 0.0) 
-  &&     (p[2] >= getPosition()[2])
+  &&     ((p[2]+TankHeight) >= getPosition()[2])
   &&     testRectRect(getPosition(), getRotation(), s * getWidth(), s * getBreadth(), p, a, dx, dy);
 }
 

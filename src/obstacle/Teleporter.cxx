@@ -12,6 +12,7 @@
 
 #include <math.h>
 #include "common.h"
+#include "global.h"
 #include "Teleporter.h"
 #include "Intersect.h"
 #include "QuadWallSceneNode.h"
@@ -65,7 +66,7 @@ void			Teleporter::getNormal(const float* p1, float* n) const
 bool			Teleporter::isInside(const float* p,
 						float radius) const
 {
-  return p[2] >= getPosition()[2] &&
+  return (p[2]+TankHeight) >= getPosition()[2] &&
 	p[2] <= getPosition()[2] + getHeight() &&
 	testRectCircle(getPosition(), getRotation(),
 			getWidth(), getBreadth(), p, radius);
@@ -75,7 +76,7 @@ bool			Teleporter::isInside(const float* p, float a,
 						float dx, float dy) const
 {
   if ((p[2] < getHeight() + getPosition()[2] - getBorder())
-	  && p[2] >= getPosition()[2]) {
+	  && (p[2]+TankHeight) >= getPosition()[2]) {
     // test individual border columns
     const float c = cosf(getRotation()), s = sinf(getRotation());
     const float d = getBreadth() - 0.5f * getBorder();
