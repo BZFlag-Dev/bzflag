@@ -1341,10 +1341,7 @@ static void acceptClient()
 
   // if game was over and this is the first player then game is on
   if (gameOver) {
-    int count = 0;
-    for (int i = 0; i < curMaxPlayers; i++)
-      if (player[i].isPlaying())
-	count++;
+    int count = GameKeeper::Player::count();
     if (count == 1) {
       gameOver = false;
 #ifdef TIMELIMIT
@@ -2121,14 +2118,8 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
     }
 
   if (wasPlaying) {
-    // anybody left?
-    int i;
-    for (i = 0; i < curMaxPlayers; i++)
-      if (player[i].isPlaying())
-	break;
-
     // if everybody left then reset world
-    if (i == curMaxPlayers) {
+    if (GameKeeper::Player::count() == 0) {
       if (clOptions->worldFile == "") {
 	bases.clear();
       }
@@ -2208,12 +2199,10 @@ static void sendQueryGame(int playerIndex)
 
 static void sendQueryPlayers(int playerIndex)
 {
-  int i, numPlayers = 0;
+  int i = 0;
 
   // count the number of active players
-  for (i = 0; i < curMaxPlayers; i++)
-    if (player[i].isPlaying())
-      numPlayers++;
+  int numPlayers = GameKeeper::Player::count();
 
   // first send number of teams and players being sent
   void *buf, *bufStart = getDirectMessageBuffer();
@@ -3076,9 +3065,9 @@ static void handleCommand(int t, const void *rawbuf)
   switch (code) {
     // player joining
     case MsgEnter: {
-      player[t].unpackEnter(buf);
+      playerData->player->unpackEnter(buf);
       DEBUG1("Player %s [%d] has joined from %s\n",
-	     player[t].getCallSign(), t, handler->getTargetIP());
+	     playerData->player->getCallSign(), t, handler->getTargetIP());
       addPlayer(t);
       break;
     }
@@ -3164,7 +3153,7 @@ static void handleCommand(int t, const void *rawbuf)
 #ifdef TIMELIMIT
       // player moved before countdown started
       if (clOptions->timeLimit>0.0f && !countdownActive)
-	player[t].setPlayedEarly();
+	playerData->player->setPlayedEarly();
 #endif
       playerAlive(t);
       break;
@@ -3172,13 +3161,13 @@ static void handleCommand(int t, const void *rawbuf)
 
     // player sent version string
     case MsgVersion: {
-      buf = player[t].setClientVersion(len, buf);
+      buf = playerData->player->setClientVersion(len, buf);
       break;
     }
 
     // player declaring self destroyed
     case MsgKilled: {
-      if (player[t].isObserver())
+      if (playerData->player->isObserver())
 	break;
       // data: id of killer, shot id of killer
       PlayerId killer;
@@ -3247,7 +3236,7 @@ static void handleCommand(int t, const void *rawbuf)
 
     // shot ended prematurely
     case MsgShotEnd: {
-      if (player[t].isObserver())
+      if (playerData->player->isObserver())
 	break;
       // data: shooter id, shot number, reason
       PlayerId sourcePlayer;
@@ -3282,27 +3271,32 @@ static void handleCommand(int t, const void *rawbuf)
       buf = nboUnpackUByte(buf, targetPlayer);
       buf = nboUnpackString(buf, message, sizeof(message));
       message[MessageLen - 1] = '\0';
-      player[t].hasSent(message);
+      playerData->player->hasSent(message);
       // check for spamming
       std::string tempmsg = message;
       for (int c = 0; c <= (int)tempmsg.size() - 1; c++)
 	if (isspace(tempmsg[c]))
       	  tempmsg.erase(tempmsg.begin() + c);
-      if (strcasecmp(tempmsg.c_str(), player[t].getLastMsg().c_str()) == 0 &&
-   	      TimeKeeper::getCurrent() - player[t].getLastMsgTime() <= clOptions->msgTimer) {
-	player[t].incSpamWarns();
+      if (strcasecmp(tempmsg.c_str(),
+		     playerData->player->getLastMsg().c_str()) == 0 &&
+	  TimeKeeper::getCurrent() - playerData->player->getLastMsgTime()
+	  <= clOptions->msgTimer) {
+	playerData->player->incSpamWarns();
 	sendMessage(ServerPlayer, t, "***Server Warning: Please do not spam.");
-	if (player[t].getSpamWarns() > clOptions->spamWarnMax || clOptions->spamWarnMax == 0) {
+	if (playerData->player->getSpamWarns() > clOptions->spamWarnMax
+	    || clOptions->spamWarnMax == 0) {
 	  sendMessage(ServerPlayer, t, "You were kicked because of spamming.");
 	  DEBUG2("Kicking player %s [%d] for spamming too much [2 messages sent with "
 		 "less than %d second(s) in between; player was warned %d times]", 
-		 player[t].getCallSign(), t, TimeKeeper::getCurrent() - player[t].getLastMsgTime(),
-		 player[t].getSpamWarns());
+		 playerData->player->getCallSign(), t,
+		 TimeKeeper::getCurrent()
+		 - playerData->player->getLastMsgTime(),
+		 playerData->player->getSpamWarns());
 	  removePlayer(t, "spam");
 	  break;
 	}
       }
-      player[t].setLastMsg(tempmsg);
+      playerData->player->setLastMsg(tempmsg);
       // check for command
       if (message[0] == '/') {
 	/* make commands case insensitive for user-friendlyness */
@@ -3439,15 +3433,15 @@ static void handleCommand(int t, const void *rawbuf)
 
       playerData->lagInfo->updateLag(timestamp,
 				     state.order - lastState[t].order > 1);
-      player[t].updateIdleTime();
+      playerData->player->updateIdleTime();
 
       TimeKeeper now = TimeKeeper::getCurrent();
       //Don't kick players up to 10 seconds after a world parm has changed,
       static const float heightFudge = 1.1f; /* 10% */
       if (now - lastWorldParmChange > 10.0f) {
 	float gravity;
-	
-	if ((player[t].getFlag() >= 0) && (flag[player[t].getFlag()].flag.type == Flags::Wings))
+	int pFlag = playerData->player->getFlag();
+	if ((pFlag >= 0) && (flag[pFlag].flag.type == Flags::Wings))
           gravity = BZDB.eval(StateDatabase::BZDB_WINGSGRAVITY);
 	else
 	  gravity = BZDB.eval(StateDatabase::BZDB_GRAVITY);
@@ -3455,13 +3449,20 @@ static void handleCommand(int t, const void *rawbuf)
 	if (gravity < 0.0f) {
 	  float maxTankHeight;
 	  
-	  if ((player[t].getFlag() >= 0) && (flag[player[t].getFlag()].flag.type == Flags::Wings))
-	    maxTankHeight = maxWorldHeight + heightFudge * ((BZDB.eval(StateDatabase::BZDB_WINGSJUMPVELOCITY)*BZDB.eval(StateDatabase::BZDB_WINGSJUMPVELOCITY)*(1+BZDB.eval(StateDatabase::BZDB_WINGSJUMPCOUNT))) / (2.0f * -gravity));
+	  if ((pFlag >= 0) && (flag[pFlag].flag.type == Flags::Wings))
+	    maxTankHeight = BZDB.eval(StateDatabase::BZDB_WINGSJUMPVELOCITY)
+	      * BZDB.eval(StateDatabase::BZDB_WINGSJUMPVELOCITY)
+	      * (1 + BZDB.eval(StateDatabase::BZDB_WINGSJUMPCOUNT));
           else
-	    maxTankHeight = maxWorldHeight + heightFudge * ((BZDB.eval(StateDatabase::BZDB_JUMPVELOCITY)*BZDB.eval(StateDatabase::BZDB_JUMPVELOCITY)) / (2.0f * -gravity));
+	    maxTankHeight = BZDB.eval(StateDatabase::BZDB_JUMPVELOCITY)
+	      * BZDB.eval(StateDatabase::BZDB_JUMPVELOCITY);
+	  maxTankHeight *= heightFudge / (2.0f * -gravity);
+	  maxTankHeight += maxWorldHeight;
 
 	  if (state.pos[2] > maxTankHeight) {
-	    DEBUG1("Kicking Player %s [%d] jumped too high [max: %f height: %f]\n", player[t].getCallSign(), t, maxTankHeight, state.pos[2]);
+	    DEBUG1("Kicking Player %s [%d] jumped too high [max: %f height: %f]\n",
+		   playerData->player->getCallSign(), t, maxTankHeight,
+		   state.pos[2]);
 	    sendMessage(ServerPlayer, t, "Autokick: Player location was too high.");
 	    removePlayer(t, "too high");
 	    break;
@@ -3490,7 +3491,9 @@ static void handleCommand(int t, const void *rawbuf)
 	// kick em cus they are most likely cheating or using a buggy client
 	if (!InBounds)
 	{
-	  DEBUG1("Kicking Player %s [%d] Out of map bounds at position (%.2f,%.2f,%.2f)\n", player[t].getCallSign(), t, state.pos[0], state.pos[1], state.pos[2]);
+	  DEBUG1("Kicking Player %s [%d] Out of map bounds at position (%.2f,%.2f,%.2f)\n",
+		 playerData->player->getCallSign(), t,
+		 state.pos[0], state.pos[1], state.pos[2]);
 	  sendMessage(ServerPlayer, t, "Autokick: Player location was outside the playing area.");
 	  removePlayer(t, "Out of map bounds");
 	}
@@ -3498,7 +3501,7 @@ static void handleCommand(int t, const void *rawbuf)
 	// Speed problems occur around flag drops, so don't check for
 	// a short period of time after player drops a flag. Currently
 	// 2 second, adjust as needed.
-	if (player[t].isFlagTransitSafe()) {
+	if (playerData->player->isFlagTransitSafe()) {
 	  // check for highspeed cheat; if inertia is enabled, skip test for now
 	  if (clOptions->linearAcceleration == 0.0f) {
 	    // Doesn't account for going fast backwards, or jumping/falling
@@ -3509,22 +3512,32 @@ static void handleCommand(int t, const void *rawbuf)
 
 	    bool logOnly = false;
 
-	    // if tank is not driving cannot be sure it didn't toss (V) in flight
-	    // if tank is not alive cannot be sure it didn't just toss (V)
-	    if (player[t].getFlag() >= 0) {
-  	      if (flag[player[t].getFlag()].flag.type == Flags::Velocity)
-	        maxPlanarSpeedSqr *= BZDB.eval(StateDatabase::BZDB_VELOCITYAD) * BZDB.eval(StateDatabase::BZDB_VELOCITYAD);
-	      else if (flag[player[t].getFlag()].flag.type == Flags::Thief)
-	        maxPlanarSpeedSqr *= BZDB.eval(StateDatabase::BZDB_THIEFVELAD) * BZDB.eval(StateDatabase::BZDB_THIEFVELAD);
-	      else if (flag[player[t].getFlag()].flag.type == Flags::Agility)
-	        maxPlanarSpeedSqr *= BZDB.eval(StateDatabase::BZDB_AGILITYADVEL) * BZDB.eval(StateDatabase::BZDB_AGILITYADVEL);
- 	      else if ((flag[player[t].getFlag()].flag.type == Flags::Burrow) &&
+	    // if tank is not driving cannot be sure it didn't toss
+	    // (V) in flight
+
+	    // if tank is not alive cannot be sure it didn't just toss
+	    // (V)
+	    if (pFlag >= 0) {
+  	      if (flag[pFlag].flag.type == Flags::Velocity)
+	        maxPlanarSpeedSqr *= BZDB.eval(StateDatabase::BZDB_VELOCITYAD)
+		  * BZDB.eval(StateDatabase::BZDB_VELOCITYAD);
+	      else if (flag[pFlag].flag.type == Flags::Thief)
+	        maxPlanarSpeedSqr *= BZDB.eval(StateDatabase::BZDB_THIEFVELAD)
+		  * BZDB.eval(StateDatabase::BZDB_THIEFVELAD);
+	      else if (flag[pFlag].flag.type == Flags::Agility)
+	        maxPlanarSpeedSqr
+		  *= BZDB.eval(StateDatabase::BZDB_AGILITYADVEL)
+		  * BZDB.eval(StateDatabase::BZDB_AGILITYADVEL);
+ 	      else if ((flag[pFlag].flag.type == Flags::Burrow) &&
 	        (lastState[t].pos[2] == state.pos[2]) && 
 	        (lastState[t].velocity[2] == state.velocity[2]) &&
 	        (state.pos[2] <= BZDB.eval(StateDatabase::BZDB_BURROWDEPTH)))
 	        // if we have burrow and are not actively burrowing
-	        // You may have burrow and still be above ground. Must check z in ground!!
- 	        maxPlanarSpeedSqr *= BZDB.eval(StateDatabase::BZDB_BURROWSPEEDAD) * BZDB.eval(StateDatabase::BZDB_BURROWSPEEDAD);
+	        // You may have burrow and still be above ground. Must
+	        // check z in ground!!
+ 	        maxPlanarSpeedSqr
+		  *= BZDB.eval(StateDatabase::BZDB_BURROWSPEEDAD)
+		  * BZDB.eval(StateDatabase::BZDB_BURROWSPEEDAD);
 	    }
 	    
 	    // If player is moving vertically, or not alive the speed checks
@@ -3544,11 +3557,11 @@ static void handleCommand(int t, const void *rawbuf)
 	    if (curPlanarSpeedSqr > maxPlanarSpeedSqr) {
 	      if (logOnly) {
 		DEBUG1("Logging Player %s [%d] tank too fast (tank: %f, allowed: %f){Dead or v[z] != 0}\n",
-		player[t].getCallSign(), t,
+		playerData->player->getCallSign(), t,
 		sqrt(curPlanarSpeedSqr), sqrt(maxPlanarSpeedSqr));
 	      } else {
 		DEBUG1("Kicking Player %s [%d] tank too fast (tank: %f, allowed: %f)\n",
-		       player[t].getCallSign(), t,
+		       playerData->player->getCallSign(), t,
 		       sqrt(curPlanarSpeedSqr), sqrt(maxPlanarSpeedSqr));
 		sendMessage(ServerPlayer, t, "Autokick: Player tank is moving too fast.");
 		removePlayer(t, "too fast");
@@ -3563,7 +3576,8 @@ static void handleCommand(int t, const void *rawbuf)
 
       // Player might already be dead and did not know it yet (e.g. teamkill)
       // do not propogate
-      if (!player[t].isAlive() && (state.status & short(PlayerState::Alive)))
+      if (!playerData->player->isAlive()
+	  && (state.status & short(PlayerState::Alive)))
         break;
     }
 
@@ -3573,7 +3587,7 @@ static void handleCommand(int t, const void *rawbuf)
     case MsgVideo:
       // observer shouldn't send bulk messages anymore, they used to when it was
       // a server-only hack; but the check does not hurt, either
-      if (player[t].isObserver())
+      if (playerData->player->isObserver())
 	break;
       relayPlayerPacket(t, len, rawbuf, code);
       break;
@@ -4403,14 +4417,8 @@ int main(int argc, char **argv)
 	// here then unless somebody stumbles onto this server then
 	// quits we'll never try publicizing ourself again.
 	if (listServerLinksCount == 0) {
-	  // count the number of players
-	  int i;
-	  for (i = 0; i < curMaxPlayers; i++)
-	    if (player[i].isPlaying())
-	      break;
-
 	  // if nobody playing then publicize
-	  if (i == curMaxPlayers)
+	  if (GameKeeper::Player::count() == 0)
 	    publicize();
 	}
 

@@ -44,6 +44,7 @@ public:
     ~Player();
 
     static Player *getPlayerByIndex(int _playerIndex);
+    static int     count();
     static void    updateLatency(float &waitTime);
     static void    dumpScore();
     static int     anointRabbit(int oldRabbit);

@@ -13,6 +13,7 @@
 /* interface header */
 #include "GameKeeper.h"
 
+// players list FIXME should be resized based on maxPlayers
 extern PlayerInfo       player[PlayerSlot];
 extern PlayerState      lastState[PlayerSlot];
 
@@ -56,6 +57,17 @@ GameKeeper::Player *GameKeeper::Player::getPlayerByIndex(int _playerIndex)
   if (_playerIndex < 0 || _playerIndex >= PlayerSlot)
     return NULL;
   return playerList[_playerIndex];
+}
+
+int GameKeeper::Player::count()
+{
+  Player *playerData;
+  int     count = 0;
+
+  for (int i = 0; i < PlayerSlot; i++) 
+    if ((playerData = playerList[i]) && playerData->player->isPlaying())
+      count++;
+  return count;
 }
 
 void GameKeeper::Player::updateLatency(float &waitTime)
