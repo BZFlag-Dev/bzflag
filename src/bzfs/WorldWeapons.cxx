@@ -40,11 +40,25 @@ WorldWeapons::~WorldWeapons()
   weapons.clear();
 }
 
-void WorldWeapons::fire()
+float WorldWeapons::nextTime ()
 {
+  TimeKeeper nextShot = TimeKeeper::getSunExplodeTime();
   for (std::vector<Weapon*>::iterator it = weapons.begin(); it != weapons.end(); ++it) {
     Weapon *w = *it;
-    if (w->nextTime <= TimeKeeper::getCurrent()) {
+    if (w->nextTime <= nextShot) {
+      nextShot = w->nextTime;
+    }
+  }
+  return (nextShot - TimeKeeper::getCurrent());
+}
+
+void WorldWeapons::fire()
+{
+  TimeKeeper nowTime = TimeKeeper::getCurrent();
+  
+  for (std::vector<Weapon*>::iterator it = weapons.begin(); it != weapons.end(); ++it) {
+    Weapon *w = *it;
+    if (w->nextTime <= nowTime) {
 
       void *buf, *bufStart = getDirectMessageBuffer();
 
@@ -63,15 +77,16 @@ void WorldWeapons::fire()
       firingInfo.shot.dt = 0;
       buf = firingInfo.pack(bufStart);
 
-
       broadcastMessage(MsgShotBegin, (char *)buf - (char *)bufStart, bufStart);
 
-
-      //Set up timer for next shot
-      w->nextTime += w->delay[w->nextDelay];
-      w->nextDelay++;
-      if (w->nextDelay == (int)w->delay.size())
-	w->nextDelay = 0;
+      //Set up timer for next shot, and eat any shots that have been missed
+      while (w->nextTime <= nowTime) {
+        w->nextTime += w->delay[w->nextDelay];
+        w->nextDelay++;
+        if (w->nextDelay == (int)w->delay.size()) {
+          w->nextDelay = 0;
+        }
+      }
     }
   }
 }

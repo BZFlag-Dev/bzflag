@@ -25,6 +25,7 @@ extern WorldWeapons  wWeapons;
 
 TimeKeeper CustomWeapon::sync = TimeKeeper::getCurrent();
 
+const float CustomWeapon::minWeaponDelay = 0.1f;
 
 CustomWeapon::CustomWeapon()
 {
@@ -50,7 +51,13 @@ bool CustomWeapon::read(const char *cmd, std::istream& input) {
     std::istringstream  parms(args);
 
     while (parms >> d) {
-      delay.push_back(d);
+      if (d < minWeaponDelay) {
+        std::cout << "skipping weapon delay of " << d << " seconds" << std::endl;
+        continue;
+      }
+      else {
+        delay.push_back(d);
+      }
     }
     input.putback('\n');
     if (delay.size() == 0)

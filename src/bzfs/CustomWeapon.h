@@ -31,8 +31,9 @@
 class CustomWeapon : public WorldFileLocation {
   public:
     CustomWeapon();
-  virtual bool read(const char *cmd, std::istream&);
+    virtual bool read(const char *cmd, std::istream&);
     virtual void write(WorldInfo*) const;
+    static const float minWeaponDelay;
 
   protected:
     float initdelay;

@@ -30,6 +30,7 @@ public:
   ~WorldWeapons();
   void fire();
   void add( const FlagType *type, const float *origin, float direction, float initdelay, const std::vector<float> &delay, TimeKeeper &sync);
+  float nextTime();
 
   /** returns how many world weapons exist */
   unsigned int count();

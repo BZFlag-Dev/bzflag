@@ -3856,17 +3856,20 @@ int main(int argc, char **argv)
       }
     }
     
+    // get time for the next world weapons shot
+    if (wWeapons.count() > 0) {
+      float nextTime = wWeapons.nextTime ();
+      if (nextTime < waitTime) {
+        waitTime = nextTime;
+      }
+    }
+
     // get time for the next replay packet (if active)
     if (Replay::enabled()) {
       float nextTime = Replay::nextTime ();
       if (nextTime < waitTime) {
         waitTime = nextTime;
       }
-    }
-
-    // if there are world weapons, update much more frequently
-    if (someoneIsConnected && wWeapons.count() > 0) {
-      waitTime *= 0.1f;  // a tenth of what we would have waited
     }
 
     // minmal waitTime
