@@ -16,6 +16,12 @@
 // implementation-specific bzflag headers
 #include "GameKeeper.h"
 
+/* time printing stuff
+ * FIXME - this should really find a better home
+ */
+int convertTime(float rawTime, int convertedTimes[]);
+std::string printTime(int timeValue[]);
+
 /* serverquery command hook function
  *
  * /serverquery

@@ -5055,6 +5055,12 @@ int main(int argc, char **argv)
     GameKeeper::Player::clean();
   }
 
+  // print uptime
+  int temp[4];
+  float rawTime = TimeKeeper::getCurrent() - TimeKeeper::getStartTime();
+  convertTime(rawTime, temp);
+  DEBUG1("Shutting down server: uptime %s\n", printTime(temp).c_str());
+
   GameKeeper::Player::freeTCPMutex();
   serverStop();
 
