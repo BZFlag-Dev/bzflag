@@ -229,7 +229,7 @@ void			SceneRenderer::setZBufferSplit(bool on)
 void			SceneRenderer::setQuality(int value)
 {
   if (value < 0) value = 0;
-  else if (value > 2) value = 2;
+  else if (value > 3) value = 3;
   useQualityValue = value;
   notifyStyleChange();
   if (useQualityValue >= 2) {

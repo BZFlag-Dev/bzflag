@@ -1743,13 +1743,13 @@ void			OptionsMenu::resize(int width, int height)
   // load current settings
   SceneRenderer* renderer = getSceneRenderer();
   if (renderer) {
-    HUDuiList* tex;
+ //   HUDuiList* tex;
     int i = 1;
     ((HUDuiList*)list[i++])->setIndex(BZDB.isTrue("dither"));
     ((HUDuiList*)list[i++])->setIndex(BZDB.isTrue("blend"));
     ((HUDuiList*)list[i++])->setIndex(BZDB.isTrue("smooth"));
     ((HUDuiList*)list[i++])->setIndex(BZDB.isTrue("lighting"));
-    tex = (HUDuiList*)list[i++];
+  //  tex = (HUDuiList*)list[i++];
     ((HUDuiList*)list[i++])->setIndex(renderer->useQuality());
     ((HUDuiList*)list[i++])->setIndex(BZDB.isTrue("shadows"));
     ((HUDuiList*)list[i++])->setIndex(BZDB.isTrue("zbuffer"));
@@ -1776,10 +1776,10 @@ void			OptionsMenu::resize(int width, int height)
     // mind the ++i !
     ((HUDuiList*)list[i++])->setIndex(info->useUDPconnection ? 1 : 0);
 
-    if (!BZDB.isTrue("texture"))
+  /*  if (!BZDB.isTrue("texture"))
       tex->setIndex(0);
     else
-      tex->setIndex(OpenGLTexture::getFilter());
+      tex->setIndex(OpenGLTexture::getFilter()); */
 
     // server cache age
     int index = 0;
