@@ -246,9 +246,14 @@ WallSceneNode*		BoxSceneNodeGenerator::getNextNode(
       box->getCorner(7, tCorner);
       break;
     case 6:							//This is the bottom polygon
-      box->getCorner(0, base);
-      box->getCorner(3, sCorner);
-      box->getCorner(1, tCorner);
+      //Don't generate the bottom polygon if on the ground (or lower)
+      if (box->getPosition()[2] > 0.0f) {
+        box->getCorner(0, base);
+        box->getCorner(3, sCorner);
+        box->getCorner(1, tCorner);
+      }
+      else
+	return NULL;
       break;
   }
 
