@@ -5702,10 +5702,6 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
     case MsgServerControl:
       break;
 
-    // player is sending client version, ignore for now
-    case MsgClientVersion:
-      break;
-
     case MsgLagPing: {
       uint16_t pingseqno;
       buf = nboUnpackUShort(buf, pingseqno);

@@ -1,9 +1,6 @@
 to do list for bzflag
 ---------------------
 
-* remove MsgClientVersion as it contains
-   the wrong version anyway
-
 * build a prototype(4) for bsd, solaris
 
 * fix up irix idb

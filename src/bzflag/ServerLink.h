@@ -89,7 +89,6 @@ class ServerLink {
     static void		setServer(ServerLink*);
     void		setUDPRemotePort(unsigned short port);
 
-    void		sendClientVersion();
   private:
     State		state;
     int			fd;

@@ -722,8 +722,6 @@ void			ServerLink::sendUDPlinkRequest()
 
   struct sockaddr_in serv_addr;
 
-  sendClientVersion();
-
   if ((urecvfd = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
 	return; // we cannot comply
   }
@@ -797,14 +795,5 @@ void			ServerLink::setUDPRemotePort(unsigned short portno)
   send(MsgUDPLinkEstablished, sizeof(msg), msg);
 
   ulinkup = true;
-}
-
-// Send Client Version Number
-void 			ServerLink::sendClientVersion()
-{
-  char msg[2];
-  void* buf = msg;
-  buf = nboPackUShort(buf, INTERNALVERSION);
-  send(MsgClientVersion, sizeof(msg), msg);
 }
 // ex: shiftwidth=2 tabstop=8
