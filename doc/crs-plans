@@ -1,3 +1,32 @@
+these are my thoughts on several areas of development.  they're not
+final and they're open to discussion.  i include them here only to
+share my ideas.
+
+configuration files
+===================
+v1.8 is/will be far more configurable than previous releases.  text
+files describing the configuration make this possible.  so far there
+are formats for describing 3D models for display, display layout
+(views), and the menus.  the user's configuration file is a 4th
+format but it's trivial.
+
+each format file uses XML (actually, it's only like XML right now
+but should become proper XML).  new formats should use XML too so
+we can reuse the parser and possibly merge formats later.  the
+client/server protocol will not use XML to keep messages small
+but it will include a means for transferring XML data.
+
+i encourage everyone to play around with models and views.  if
+you've got some cool stuff then share it.  at the very least we'll
+build up a library of models and views.  and some contributions
+could become the defaults.  i'm no graphic designer and i'd love
+to see more elegant and/or more dramatic visual elements, from
+display layouts to worlds.  anybody want to make an entire town
+with all unique buildings instead of cookie-cutter elements
+repeated over and over?  well, we'll need to revamp the world
+format first.
+
+
 world files
 ===========
 worlds must become more configurable.  there are several types of
@@ -24,6 +53,8 @@ things that go into a world:
         * possibly per-type
       * explosions
       * shots (per-type)
+  * sounds
+    * maps game events to sound files
   * server options
     * game style (CTF, etc.)
     * number of players per team
