@@ -19,7 +19,7 @@
 
 // opaque version number increments on protocol incompatibility
 #ifndef BZ_PROTO_VERSION
-#define BZ_PROTO_VERSION	"0019"
+#define BZ_PROTO_VERSION	"0020"
 #endif
 
 #ifndef BZ_MAJOR_VERSION
