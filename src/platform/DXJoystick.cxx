@@ -16,7 +16,7 @@
 /* interface header */
 #include "DXJoystick.h"
 
-// Don't try compile this if we don't have an up-to-date DX
+// Don't try compile this if we don't have an up-to-date, working DX
 #if defined(USE_DINPUT)
 
 /* system headers */
