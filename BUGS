@@ -1,6 +1,9 @@
 recent bugs
 ------------
 
+- OS X client gamma on a secondary display set as main display uses the wrong
+  gamma (very very dark); brightness is set incorrectly.
+
 - the high jump cheat check doesn't work very well with varying or positive
   gravity
 
