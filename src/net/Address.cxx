@@ -10,6 +10,13 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+// bzflag common header
+#include "common.h"
+
+// interface header
+#include "Address.h"
+
+// system headers
 #include <string.h>
 #include <string>
 #include <sys/types.h>
@@ -20,9 +27,12 @@
 #include <winsock2.h>
 #include <ws2tcpip.h>
 #endif
-#include "Address.h"
+
+// common implementation headers
 #include "bzsignal.h"
 #include "ErrorHandler.h"
+
+// local implementation headers
 #include "Pack.h"
 
 #if defined(sun)
