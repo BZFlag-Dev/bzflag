@@ -86,23 +86,29 @@ bool			ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
   }
   
   switch (key.ascii) {
-  case 3:	// ^C
-  case 27:	// escape
-    //    case 127:	// delete
-    sendIt = false;			// finished composing -- don't send
-    break;
-
-  case 4:	// ^D
-  case 13:	// return
-    sendIt = true;
-    break;
-
-  case 6:	// ^F
-    return true;
-    break;
-
-  default:
-    return false;
+    case 3:	// ^C
+    case 27: {	// escape
+      //    case 127:	// delete
+      sendIt = false;			// finished composing -- don't send
+      break;
+    }
+    case 4:	// ^D
+    case 13: {	// return
+      sendIt = true;
+      break;
+    }
+    case 6: {	// ^F
+      // auto completion
+      std::string line1 = hud->getComposeString();
+      int lastSpace = line1.find_last_of(" \t");
+      std::string line2 = line1.substr(0, lastSpace+1);
+      line2 += completer.complete(line1.substr(lastSpace+1));
+      hud->setComposeString(line2);
+      return true;
+    }
+    default: {
+      return false;
+    }
   }
 
   if (sendIt) {
@@ -226,9 +232,8 @@ bool			ComposeDefaultKey::keyRelease(const BzfKeyEvent& key)
       }
       return false;
     }
-    else if (((key.shift == 0) && (key.button == BzfKeyEvent::F2)) ||
-             (key.ascii == 6)) {
-      // auto completion  (F2 or ^F)
+    else if ((key.shift == 0) && (key.button == BzfKeyEvent::F2)) {
+      // auto completion  (F2)
       std::string line1 = hud->getComposeString();
       int lastSpace = line1.find_last_of(" \t");
       std::string line2 = line1.substr(0, lastSpace+1);
