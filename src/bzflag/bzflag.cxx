@@ -67,7 +67,6 @@
 #include "ServerStartMenu.h"
 #include "OpenGLTexFont.h"
 
-
 // invoke incessant rebuilding for build versioning
 #include "version.h"
 

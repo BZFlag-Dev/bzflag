@@ -50,6 +50,7 @@ class BzfDisplay;
 class MainWindow;
 class SceneRenderer;
 class Player;
+class ServerLink;
 
 BzfDisplay*		getDisplay();
 MainWindow*		getMainWindow();
@@ -76,6 +77,14 @@ void			joinGame(JoinGameCallback, void* userData);
 std::string		getCacheDirectoryName();
 std::vector<std::string>& getSilenceList();
 void			updateEvents();
+void			addMessage(const Player* player, const std::string& msg,
+				   bool highlight=false, const char* oldColor=NULL);
+
+
+extern HUDRenderer	*hud;
+extern char		messageMessage[PlayerIdPLen + MessageLen];
+extern ServerLink*	serverLink;
+
 
 #endif // BZF_PLAYING_H
 

@@ -88,6 +88,8 @@ static const char copyright[] = "Copyright (c) 1993 - 2004 Tim Riker";
 #include "TextureManager.h"
 #include "TargetingUtils.h"
 #include "MainMenu.h"
+#include "ComposeDefaultKey.h"
+#include "Roster.h"
 #include "../zlib/zconf.h"
 #include "../zlib/zlib.h"
 
@@ -102,7 +104,7 @@ static const char copyright[] = "Copyright (c) 1993 - 2004 Tim Riker";
 static const float	FlagHelpDuration = 60.0f;
 static StartupInfo	startupInfo;
 static MainMenu*	mainMenu;
-static ServerLink*	serverLink = NULL;
+ServerLink*		serverLink = NULL;
 static World*		world = NULL;
 LocalPlayer*		myTank = NULL;
 static BzfDisplay*	display = NULL;
@@ -115,8 +117,6 @@ static RadarRenderer*	radar = NULL;
 HUDRenderer*		hud = NULL;
 static SceneDatabaseBuilder* sceneBuilder = NULL;
 static Team*		teams = NULL;
-static int		curMaxPlayers = 0;
-static RemotePlayer**	player = NULL;
 static int		numFlags = 0;
 static JoinGameCallback	joinGameCallback = NULL;
 static void*		joinGameUserData = NULL;
@@ -147,11 +147,8 @@ static bool		grabMouseAlways = false;
 FlashClock		pulse;
 static bool             wasRabbit = false;
 
-static char		messageMessage[PlayerIdPLen + MessageLen];
+char		messageMessage[PlayerIdPLen + MessageLen];
 
-static std::deque<std::string> messageHistory;
-static unsigned int	messageHistoryIndex = 0;
-static std::vector<std::string>	silencePlayers;
 
 static void		setTarget();
 static void		setHuntTarget();
@@ -159,9 +156,6 @@ static void*		handleMsgSetVars(void *msg);
 static void		handleFlagDropped(Player* tank);
 static void		handlePlayerMessage(uint16_t, uint16_t, void*);
 static void		handleFlagTransferred(Player* fromTank, Player* toTank, int flagIndex);
-static Player*		getPlayerByName( const char* name );
-static void		addMessage(const Player* player, const std::string& msg,
-				   bool highlight=false, const char* oldColor=NULL);
 extern void		dumpResources(BzfDisplay*, SceneRenderer&);
 static void		setRobotTarget(RobotPlayer* robot);
 
@@ -189,8 +183,6 @@ static bool		gotBlowedUp(BaseLocalPlayer* tank,
 #ifdef ROBOT
 static void		handleMyTankKilled(int reason);
 static ServerLink*	robotServer[MAX_ROBOTS];
-static RobotPlayer*	robots[MAX_ROBOTS];
-static int		numRobots = 0;
 #endif
 
 extern struct tm	userTime;
@@ -370,92 +362,6 @@ static void		hangup(int sig)
   serverError = true;
 }
 
-//
-// misc utility routines
-//
-
-Player*			lookupPlayer(PlayerId id)
-{
-  // check my tank first
-  if (myTank->getId() == id)
-    return myTank;
-
-  if (id == ServerPlayer)
-    return World::getWorld()->getWorldWeapons();
-
-  if (id < curMaxPlayers && player[id] && player[id]->getId() == id)
-    return player[id];
-
-  // it's nobody we know about
-  return NULL;
-}
-
-static int		lookupPlayerIndex(PlayerId id)
-{
-  // check my tank first
-  if (myTank->getId() == id)
-    return -2;
-
-  if (id == ServerPlayer)
-    return ServerPlayer;
-
-  if (id < curMaxPlayers && player[id] && player[id]->getId() == id)
-    return id;
-
-  // it's nobody we know about
-  return -1;
-}
-
-static Player*		getPlayerByIndex(int index)
-{
-  if (index == -2)
-    return myTank;
-  if (index == ServerPlayer)
-    return World::getWorld()->getWorldWeapons();
-  if (index == -1 || index >= curMaxPlayers)
-    return NULL;
-  return player[index];
-}
-
-static Player*		getPlayerByName(const char* name)
-{
-  for (int i = 0; i < curMaxPlayers; i++)
-    if (player[i] && strcmp( player[i]->getCallSign(), name ) == 0)
-      return player[i];
-  WorldPlayer *worldWeapons = World::getWorld()->getWorldWeapons();
-  if (strcmp(worldWeapons->getCallSign(), name) == 0)
-    return worldWeapons;
-  return NULL;
-}
-
-static BaseLocalPlayer*	getLocalPlayer(PlayerId id)
-{
-  if (myTank->getId() == id) return myTank;
-#ifdef ROBOT
-  for (int i = 0; i < numRobots; i++)
-    if (robots[i]->getId() == id)
-      return robots[i];
-#endif
-  return NULL;
-}
-
-static TeamColor	PlayerIdToTeam(PlayerId id)
-{
-  if (id >= 244 && id<=250)
-    return TeamColor(250 - id);
-  else
-    return NoTeam;
-}
-
-static PlayerId		TeamToPlayerId(TeamColor team)
-{
-  if (team == NoTeam)
-    return NoPlayer;
-  else
-    return 250-team;
-}
-
-
 static ServerLink*	lookupServer(const Player* player)
 {
   PlayerId id = player->getId();
@@ -471,206 +377,6 @@ static ServerLink*	lookupServer(const Player* player)
 //
 // ui control default key handler classes
 //
-
-class ComposeDefaultKey : public HUDuiDefaultKey {
-public:
-  bool		keyPress(const BzfKeyEvent&);
-  bool		keyRelease(const BzfKeyEvent&);
-};
-
-void printout(const std::string& name, void*)
-{
-  std::cout << name << " = " << BZDB.get(name) << std::endl;
-}
-
-void listSetVars(const std::string& name, void*)
-{
-  char message[MessageLen];
-
-  if (BZDB.getPermission(name) == StateDatabase::Locked) {
-    sprintf(message, "/set %s %f", name.c_str(), BZDB.eval(name));
-    addMessage(myTank, message, false, NULL);
-  }
-}
-
-bool			ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
-{
-  bool sendIt;
-  if (KEYMGR.get(key, true) == "jump") {
-    // jump while typing
-    myTank->jump();
-  }
-
-  if (!myTank->isKeyboardMoving()) {
-    if ((key.button == BzfKeyEvent::Up) ||
-	(key.button == BzfKeyEvent::Down))
-      return true;
-  }
-
-  switch (key.ascii) {
-  case 3:	// ^C
-  case 27:	// escape
-    //    case 127:	// delete
-    sendIt = false;			// finished composing -- don't send
-    break;
-
-  case 4:	// ^D
-  case 13:	// return
-    sendIt = true;
-    break;
-
-  default:
-    return false;
-  }
-
-  if (sendIt) {
-    std::string message = hud->getComposeString();
-
-    if (message.length() > 0) {
-      const char* silence = message.c_str();
-      if (strncmp(silence, "SILENCE", 7) == 0) {
-	Player *loudmouth = getPlayerByName(silence + 8);
-	if (loudmouth) {
-	  silencePlayers.push_back(silence + 8);
-	  std::string message = "Silenced ";
-	  message += (silence + 8);
-	  addMessage(NULL, message);
-	}
-      } else if (strncmp(silence, "DUMP", 4) == 0) {
-	BZDB.iterate(printout, NULL);
-      } else if (strncmp(silence, "UNSILENCE", 9) == 0) {
-	Player *loudmouth = getPlayerByName(silence + 10);
-	if (loudmouth) {
-	  std::vector<std::string>::iterator it = silencePlayers.begin();
-	  for (; it != silencePlayers.end(); it++) {
-	    if (*it == silence + 10) {
-	      silencePlayers.erase(it);
-	      std::string message = "Unsilenced ";
-	      message += (silence + 10);
-	      addMessage(NULL, message);
-	      break;
-	    }
-	  }
-	}
-      } else if (strncmp(silence, "SAVEWORLD", 9) == 0) {
-	std::string path = silence + 10;
-	if (World::getWorld()->writeWorld(path)) {
-	  addMessage(NULL, "World Saved");
-	} else {
-	  addMessage(NULL, "Invalid file name specified");
-	}
-      } else if (message == "/set") {
-	BZDB.iterate(listSetVars, NULL);
-      } else {
-	int i, mhLen = messageHistory.size();
-	for (i = 0; i < mhLen; i++) {
-	  if (messageHistory[i] == message) {
-	    messageHistory.erase(messageHistory.begin() + i);
-	    messageHistory.push_front(message);
-	    break;
-	  }
-	}
-	if (i == mhLen) {
-	  if (mhLen >= MAX_MESSAGE_HISTORY) {
-	    messageHistory.pop_back();
-	  }
-	  messageHistory.push_front(message);
-	}
-
-	char messageBuffer[MessageLen];
-	memset(messageBuffer, 0, MessageLen);
-	strncpy(messageBuffer, message.c_str(), MessageLen);
-	nboPackString(messageMessage + PlayerIdPLen, messageBuffer, MessageLen);
-	serverLink->send(MsgMessage, sizeof(messageMessage), messageMessage);
-      }
-    }
-  }
-
-  messageHistoryIndex = 0;
-  hud->setComposing(std::string());
-  HUDui::setDefaultKey(NULL);
-  return true;
-}
-
-// try to select the next recipient in the specified direction
-// eventually avoiding robots
-static void selectNextRecipient (bool forward, bool robotIn)
-{
-  const Player *recipient = myTank->getRecipient();
-  int rindex;
-  if (!recipient) {
-    rindex = - 1;
-    forward = true;
-  } else {
-    const PlayerId id = recipient->getId();
-    rindex = lookupPlayerIndex(id);
-  }
-  int i = rindex;
-  while (true) {
-    if (forward) {
-      i++;
-      if (i == curMaxPlayers)
-	// if no old rec id we have just ended our search
-	if (recipient == NULL)
-	  break;
-	else
-	  // wrap around
-	  i = 0;
-    } else {
-      if (i == 0)
-	// wrap around
-	i = curMaxPlayers;
-      i--;
-    }
-    if (i == rindex)
-      break;
-    if (player[i] && (robotIn || player[i]->getPlayerType() == TankPlayer)) {
-      myTank->setRecipient(player[i]);
-      break;
-    }
-  }
-}
-
-bool			ComposeDefaultKey::keyRelease(const BzfKeyEvent& key)
-{
-  if (!myTank->isKeyboardMoving()) {
-    if (key.button == BzfKeyEvent::Up) {
-      if (messageHistoryIndex < messageHistory.size()) {
-	hud->setComposeString(messageHistory[messageHistoryIndex]);
-	messageHistoryIndex++;
-      }
-      else
-	hud->setComposeString(std::string());
-      return true;
-    }
-    else if (key.button == BzfKeyEvent::Down) {
-      if (messageHistoryIndex > 0){
-	messageHistoryIndex--;
-	hud->setComposeString(messageHistory[messageHistoryIndex]);
-      }
-      else
-	hud->setComposeString(std::string());
-      return true;
-    }
-    else if ((key.shift == BzfKeyEvent::ShiftKey || (hud->getComposeString().length() == 0)) &&
-	     (key.button == BzfKeyEvent::Left || key.button == BzfKeyEvent::Right)) {
-      // exclude robot from private message recipient.
-      // No point sending messages to robot (now)
-      selectNextRecipient(key.button != BzfKeyEvent::Left, false);
-      const Player *recipient = myTank->getRecipient();
-      if (recipient) {
-	void* buf = messageMessage;
-	buf = nboPackUByte(buf, recipient->getId());
-	std::string composePrompt = "Send to ";
-	composePrompt += recipient->getCallSign();
-	composePrompt += ": ";
-	hud->setComposing(composePrompt);
-      }
-      return false;
-    }
-  }
-  return keyPress(key);
-}
 
 //
 // Choose person to silence
@@ -2670,7 +2376,7 @@ static void		doEvent(BzfDisplay* display)
   }
 }
 
-static void		addMessage(const Player* player,
+void		addMessage(const Player* player,
 				   const std::string& msg, bool highlight,
 				   const char* oldColor)
 {
