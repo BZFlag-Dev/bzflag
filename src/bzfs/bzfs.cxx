@@ -2599,8 +2599,10 @@ static void dropFlag(int playerIndex, float pos[3])
 	  bases[teamBase].getSafetyZone(landingPos[0],
 					landingPos[1],
 					landingPos[2]);
-	  // default flag safety zones are on the ground
-	  if (landingPos[2] <= deadUnder) {
+	  topmosttype = world->cylinderInBuilding
+	    (&container, landingPos, BZDB.eval(StateDatabase::BZDB_TANKRADIUS),
+	     BZDB.eval(StateDatabase::BZDB_FLAGHEIGHT));
+	  if ((topmosttype != NOT_IN_BUILDING) || (landingPos[2] <= deadUnder)) {
 	    TeamBases &teamBases = bases[flagTeam];
 	    const TeamBase &base = teamBases.getRandomBase(flagIndex); 
 	    landingPos[0] = base.position[0];
