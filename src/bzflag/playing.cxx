@@ -1370,6 +1370,30 @@ static bool		doKeyCommon(const BzfKeyEvent& key, bool pressed)
 {
   const std::string cmd = KEYMGR->get(key, pressed);
 
+  if (key.ascii == 27) {
+    if (pressed) HUDDialogStack::get()->push(mainMenu);
+    return true;
+  } else if (hud->getHunt()) {
+    if (key.button == BzfKeyEvent::Down ||
+        KEYMGR->get(key, true) == "identify") {
+      if (pressed) {
+        hud->setHuntPosition(hud->getHuntPosition()+1);
+      }
+      return true;
+    } else if (key.button == BzfKeyEvent::Up ||
+    	       KEYMGR->get(key, true) == "drop") {
+      if (pressed) {
+        hud->setHuntPosition(hud->getHuntPosition()-1);
+      }
+      return true;
+    } else if (KEYMGR->get(key, true) == "fire") {
+      if (pressed) {
+        hud->setHuntSelection(true);
+        playLocalSound(SFX_HUNT_SELECT);
+      }
+      return true;
+    }
+  }
   if (!cmd.empty()) {
     std::string result = CMDMGR->run(cmd);
     if (!result.empty())
@@ -1433,31 +1457,6 @@ static bool		doKeyCommon(const BzfKeyEvent& key, bool pressed)
         
       default:
 	break;
-    }
-  }
-
-  if (key.ascii == 27) {
-    if (pressed) HUDDialogStack::get()->push(mainMenu);
-    return true;
-  } else if (hud->getHunt()) {
-    if (key.button == BzfKeyEvent::Down ||
-        KEYMGR->get(key, true) == "identify") {
-      if (pressed) {
-        hud->setHuntPosition(hud->getHuntPosition()+1);
-      }
-      return true;
-    } else if (key.button == BzfKeyEvent::Up ||
-    	       KEYMGR->get(key, true) == "drop") {
-      if (pressed) {
-        hud->setHuntPosition(hud->getHuntPosition()-1);
-      }
-      return true;
-    } else if (KEYMGR->get(key, true) == "fire") {
-      if (pressed) {
-        hud->setHuntSelection(true);
-        playLocalSound(SFX_HUNT_SELECT);
-      }
-      return true;
     }
   }
   return false;
