@@ -130,7 +130,8 @@ LocalPlayer::LocalPlayer(const PlayerId& id,
 				anyShotActive(False),
 				magnify(0),
 				target(NULL),
-				nemesis(NULL)
+				nemesis(NULL),
+				recipient(NULL)
 {
   // initialize shots array to no shots fired
   const int numShots = World::getWorld()->getMaxShots();
@@ -858,6 +859,10 @@ void			LocalPlayer::setNemesis(const Player* _nemesis)
 	nemesis = _nemesis;
 }
 
+void			LocalPlayer::setRecipient(const Player* _recipient)
+{
+	recipient = _recipient;
+}
 
 void			LocalPlayer::explodeTank()
 {

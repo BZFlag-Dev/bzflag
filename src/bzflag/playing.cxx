@@ -356,9 +356,11 @@ boolean			ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
   }
 
   if (!myTank->isKeyboardMoving()) {
-	  if ((key.button == BzfKeyEvent::Up) ||
-	      (key.button == BzfKeyEvent::Down))
-	  return True;
+    if ((key.button == BzfKeyEvent::Up) ||
+        (key.button == BzfKeyEvent::Down) ||
+        (key.button == BzfKeyEvent::Left) ||
+        (key.button == BzfKeyEvent::Right))
+      return True;
   }
 
   switch (key.ascii) {
@@ -411,26 +413,86 @@ boolean			ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
 boolean			ComposeDefaultKey::keyRelease(const BzfKeyEvent& key)
 {
   if (!myTank->isKeyboardMoving()) {
-	  if (key.button == BzfKeyEvent::Up) {
-		  if (messageHistoryIndex < messageHistory.getLength()) {
-			  hud->setComposeString(messageHistory[messageHistoryIndex]);
-			  messageHistoryIndex++;
-		  }
-		  else
-			  hud->setComposeString(BzfString());
-		  return True;
-	  }
-	  else if (key.button == BzfKeyEvent::Down) {
-		  if (messageHistoryIndex > 0){
-			  messageHistoryIndex--;
-			  hud->setComposeString(messageHistory[messageHistoryIndex]);
-		  }
-		  else
-			  hud->setComposeString(BzfString());
-		  return True;
-	  }
+    if (key.button == BzfKeyEvent::Up) {
+      if (messageHistoryIndex < messageHistory.getLength()) {
+        hud->setComposeString(messageHistory[messageHistoryIndex]);
+        messageHistoryIndex++;
+      }
+      else
+        hud->setComposeString(BzfString());
+      return True;
+    }
+    else if (key.button == BzfKeyEvent::Down) {
+      if (messageHistoryIndex > 0){
+        messageHistoryIndex--;
+        hud->setComposeString(messageHistory[messageHistoryIndex]);
+      }
+      else
+        hud->setComposeString(BzfString());
+      return True;
+    }
+    else if (key.button == BzfKeyEvent::Left || key.button==BzfKeyEvent::Right) {
+      const Player *recipient = myTank->getRecipient();
+      if(!recipient) {
+        for (int i = 0; i < maxPlayers; i++) {
+          if (player[i]) {
+            myTank->setRecipient(player[i]);
+            break;
+          }
+        }
+      }
+      else {
+        const PlayerId id = recipient->getId();
+        int rindex = 0;
+        for (int i = 0; i < maxPlayers; i++) {
+          if (player[i] && player[i]->getId() == id) rindex = i; }
+        if (key.button == BzfKeyEvent::Left) {
+          for (int i = rindex-1; i >= 0; i--) {
+            if (player[i]) {
+              myTank->setRecipient(player[i]);
+              break;
+            }
+          }
+          if (recipient == myTank->getRecipient()) {
+            for (int i = maxPlayers-1; i >=0; i--) {
+              if (player[i]) {
+                myTank->setRecipient(player[i]);
+                break;
+              }
+            }
+          }
+        }
+        else
+        {
+          for (int i = rindex+1; i < maxPlayers; i++) {
+            if (player[i]) {
+              myTank->setRecipient(player[i]);
+              break;
+            }
+          }
+          if (recipient == myTank->getRecipient()) {
+            for (int i = 0; i < maxPlayers; i++) {
+              if (player[i]) {
+                myTank->setRecipient(player[i]);
+                break;
+              }
+            }
+          }
+        }
+      }
+      recipient = myTank->getRecipient();
+      if (recipient) {
+        void* buf = messageMessage;
+        buf = recipient->getId().pack(buf);
+        buf = nboPackUShort( buf, uint16_t(RogueTeam));
+        BzfString composePrompt = "Send to ";
+        composePrompt += recipient->getCallSign();
+        composePrompt += ": ";
+        hud->setComposing(composePrompt);
+      }
+      return False;
+    }
   }
-
   return keyPress(key);
 }
 
@@ -851,7 +913,8 @@ static void		doKeyPlaying(const BzfKeyEvent& key, boolean pressed)
 
   else if (keymap.isMappedTo(BzfKeyMap::SendAll, key) ||
 	   keymap.isMappedTo(BzfKeyMap::SendTeam, key) ||
-	   keymap.isMappedTo(BzfKeyMap::SendNemesis, key)) {
+	   keymap.isMappedTo(BzfKeyMap::SendNemesis, key) ||
+	   keymap.isMappedTo(BzfKeyMap::SendRecipient, key)) {
     // start composing a message
     if (pressed) {
       BzfString composePrompt;
@@ -871,7 +934,7 @@ static void		doKeyPlaying(const BzfKeyEvent& key, boolean pressed)
 	buf = nboPackUShort(buf, uint16_t(myTank->getTeam()));
 	composePrompt = "Send to teammates: ";
       }
-      else {
+      else if (keymap.isMappedTo(BzfKeyMap::SendNemesis, key)) {
 	const Player *nemesis = myTank->getNemesis();
 	if (!nemesis) return;
 
@@ -882,11 +945,31 @@ static void		doKeyPlaying(const BzfKeyEvent& key, boolean pressed)
 	composePrompt += nemesis->getCallSign();
 	composePrompt += ": ";
       }
+      else {
+	const Player *recipient = myTank->getRecipient();
+        if (!recipient) {
+          for (int i = 0; i < maxPlayers; i++) {
+            if (player[i]) {
+              myTank->setRecipient(player[i]);
+              break;
+            }
+          }
+        }
+        recipient = myTank->getRecipient();
+        if (recipient) {
+          void* buf = messageMessage;
+          buf = recipient->getId().pack(buf);
+          buf = nboPackUShort( buf, uint16_t(RogueTeam));
+          composePrompt = "Send to ";
+          composePrompt += recipient->getCallSign();
+          composePrompt += ": ";
+        }
+      }
 
       // to send to a player use:
       //   buf = myTank->getId().pack(buf);
       //   buf = nboPackUShort(buf, uint16_t(RogueTeam));
-	  messageHistoryIndex = 0;
+      messageHistoryIndex = 0;
       hud->setComposing(composePrompt);
       HUDui::setDefaultKey(&composeKeyHandler);
     }
@@ -2120,7 +2203,7 @@ static void		handleServerMessage(boolean human, uint16_t code,
               fullMsg += srcName;
 	      fullMsg += "->";
 	      if (srcPlayer)
-		myTank->setNemesis(srcPlayer);
+		myTank->setRecipient(srcPlayer);
 	    }
 	    fullMsg += "] ";
 	    fullMsg += (const char*)msg;

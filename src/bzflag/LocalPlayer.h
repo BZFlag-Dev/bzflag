@@ -100,6 +100,9 @@ class LocalPlayer : public BaseLocalPlayer {
     void		setNemesis(const Player*);
     const Player*	getNemesis() const;
 
+    void		setRecipient(const Player*);
+    const Player*	getRecipient() const;
+
     void		restart(const float* pos, float azimuth);
     boolean		checkHit(const Player* source, const ShotPath*& hit,
 							float& minTime) const;
@@ -155,6 +158,7 @@ class LocalPlayer : public BaseLocalPlayer {
     int			magnify;
     const Player*	target;
     const Player*	nemesis;
+    const Player*	recipient;
     static LocalPlayer*	mainPlayer;
     boolean		keyboardMoving;
     float		keyboardSpeed;
@@ -191,6 +195,11 @@ inline const Player*	LocalPlayer::getTarget() const
 inline const Player*	LocalPlayer::getNemesis() const
 {
   return nemesis;
+}
+
+inline const Player*	LocalPlayer::getRecipient() const
+{
+  return recipient;
 }
 
 inline const Obstacle*	LocalPlayer::getContainingBuilding() const

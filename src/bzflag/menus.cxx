@@ -631,6 +631,7 @@ KeyboardMapMenu::KeyboardMapMenu() : defaultKey(this), editing(BzfKeyMap::LastKe
   controls.append(createLabel(NULL, "Send to All:"));
   controls.append(createLabel(NULL, "Send to Teammates:"));
   controls.append(createLabel(NULL, "Send to Nemesis:"));
+  controls.append(createLabel(NULL, "Send to Recipient:"));
   controls.append(createLabel(NULL, "Jump:"));
   controls.append(createLabel(NULL, "Binoculars:"));
   controls.append(createLabel(NULL, "Toggle Score:"));
@@ -666,7 +667,8 @@ KeyboardMapMenu::KeyboardMapMenu() : defaultKey(this), editing(BzfKeyMap::LastKe
   controls[18]->setNext(controls[19]);
   controls[19]->setNext(controls[20]);
   controls[20]->setNext(controls[21]);
-  controls[21]->setNext(controls[1]);
+  controls[21]->setNext(controls[22]);
+  controls[22]->setNext(controls[1]);
   controls[1]->setPrev(controls[21]);
   controls[2]->setPrev(controls[1]);
   controls[3]->setPrev(controls[2]);
@@ -688,6 +690,7 @@ KeyboardMapMenu::KeyboardMapMenu() : defaultKey(this), editing(BzfKeyMap::LastKe
   controls[19]->setPrev(controls[18]);
   controls[20]->setPrev(controls[19]);
   controls[21]->setPrev(controls[20]);
+  controls[22]->setPrev(controls[21]);
   // set initial focus
   setFocus(controls[1]);
 }
@@ -1462,6 +1465,7 @@ Help1Menu::Help1Menu() : HelpMenu("Controls")
   list.append(createLabel("send message to teammates"));
   list.append(createLabel("send message to everybody"));
   list.append(createLabel("send message to nemesis"));
+  list.append(createLabel("send message to recipient"));
   list.append(createLabel("toggle score sheet"));
   list.append(createLabel("set time of day backward"));
   list.append(createLabel("set time of day forward"));
@@ -1495,6 +1499,7 @@ void			Help1Menu::resize(int width, int height)
 				BzfKeyMap::SendTeam,
 				BzfKeyMap::SendAll,
 				BzfKeyMap::SendNemesis,
+				BzfKeyMap::SendRecipient,
 				BzfKeyMap::Score,
 				BzfKeyMap::TimeForward,
 				BzfKeyMap::TimeBackward,
