@@ -207,6 +207,12 @@ THESE ARE LOWER PRIORITY
 
 THESE NEED TO WAIT FOR THE NEXT PROTOCOL BREAKAGE
 
+* Add new messages to the protocol that sends information like players
+  IP addresses, full banlist information etc to admins when they become
+  admins, and whenever new players connect or the banlist changes. This
+  would be very useful for bzadmin, and for the administrative functions
+  in bzflag.
+
 * move -synctime data to different Msg packet, or create new one.
   MsgSetVar (ala 1.8) would be a good one
 
