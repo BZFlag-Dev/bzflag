@@ -1186,10 +1186,10 @@ int			main(int argc, char** argv)
   // if we're running on 3Dfx fullscreen add a fake cursor.
   // let the defaults file override this, though.
   if (!BZDB.isSet("fakecursor")) {
-    // check that the renderer is Mesa Glide
-    const char* renderer = (const char*)glGetString(GL_RENDERER);
-    if ((renderer != NULL) && (strncmp(renderer, "Mesa Glide", 10) == 0 ||
-	strncmp(renderer, "3Dfx", 4) == 0))
+    // check that the glrenderer is Mesa Glide
+    const char* glrenderer = (const char*)glGetString(GL_RENDERER);
+    if ((glrenderer != NULL) && (strncmp(glrenderer, "Mesa Glide", 10) == 0 ||
+	strncmp(glrenderer, "3Dfx", 4) == 0))
       BZDB.set("fakecursor", "1");
   }
 
@@ -1199,13 +1199,13 @@ int			main(int argc, char** argv)
       mainWindow.getWindow()->setGamma((float)atof(BZDB.get("gamma").c_str()));
   }
 
-  // make scene renderer
-  SceneRenderer renderer(mainWindow);
+  // set the scene renderer's window
+  RENDERER.setWindow(pmainWindow);
 
   // restore rendering configuration
   if (startupInfo.hasConfiguration) {
     if (BZDB.isSet("zbuffersplit"))
-      renderer.setZBufferSplit(BZDB.isTrue("zbuffersplit"));
+      RENDERER.setZBufferSplit(BZDB.isTrue("zbuffersplit"));
     if (BZDBCache::texture) {
 #ifdef _MSC_VER
             // Suppose Pat want to remind himself
@@ -1219,20 +1219,20 @@ int			main(int argc, char** argv)
       for (int i = 0; i < (int)(sizeof(configQualityValues) /
 				sizeof(configQualityValues[0])); i++)
 	if (value == configQualityValues[i]) {
-	  renderer.setQuality(i);
+	  RENDERER.setQuality(i);
 	  break;
 	}
     }
     BZDB.set("_texturereplace", (!BZDB.isTrue("lighting") &&
-	      renderer.useQuality() < 2) ? "1" : "0");
+	      RENDERER.useQuality() < 2) ? "1" : "0");
     BZDB.setPersistent("_texturereplace", false);
     if (BZDB.isSet("view")) {
-      renderer.setViewType(SceneRenderer::Normal);
+      RENDERER.setViewType(SceneRenderer::Normal);
       std::string value = BZDB.get("view");
       for (int i = 0; i < (int)(sizeof(configViewValues) /
 				sizeof(configViewValues[0])); i++)
 	if (value == configViewValues[i]) {
-	  renderer.setViewType((SceneRenderer::ViewType)i);
+	  RENDERER.setViewType((SceneRenderer::ViewType)i);
 	  break;
 	}
     }
@@ -1241,11 +1241,11 @@ int			main(int argc, char** argv)
       ServerStartMenu::setSettings(BZDB.get("startcode").c_str());
 
     if (BZDB.isSet("panelopacity"))
-      renderer.setPanelOpacity(BZDB.eval("panelopacity"));
+      RENDERER.setPanelOpacity(BZDB.eval("panelopacity"));
     if (BZDB.isSet("radarsize"))
-      renderer.setRadarSize(atoi(BZDB.get("radarsize").c_str()));
+      RENDERER.setRadarSize(atoi(BZDB.get("radarsize").c_str()));
     if (BZDB.isSet("mouseboxsize"))
-      renderer.setMaxMotionFactor(atoi(BZDB.get("mouseboxsize").c_str()));
+      RENDERER.setMaxMotionFactor(atoi(BZDB.get("mouseboxsize").c_str()));
   }
 
   // grab the mouse only if allowed
@@ -1257,12 +1257,12 @@ int			main(int argc, char** argv)
   }
 
   // set window quadrant
-  if (renderer.getViewType() == SceneRenderer::ThreeChannel)
+  if (RENDERER.getViewType() == SceneRenderer::ThreeChannel)
     mainWindow.setQuadrant(MainWindow::UpperRight);
-  else if (renderer.getViewType() == SceneRenderer::Stacked)
+  else if (RENDERER.getViewType() == SceneRenderer::Stacked)
     mainWindow.setQuadrant(MainWindow::LowerHalf);
 #ifndef USE_GL_STEREO
-  else if (renderer.getViewType() == SceneRenderer::Stereo)
+  else if (RENDERER.getViewType() == SceneRenderer::Stereo)
     mainWindow.setQuadrant(MainWindow::UpperRight);
 #endif
 
@@ -1299,10 +1299,10 @@ int			main(int argc, char** argv)
   }
 
   // start playing
-  startPlaying(display, renderer, &startupInfo);
+  startPlaying(display, RENDERER, &startupInfo);
 
   // save resources
-  dumpResources(display, renderer);
+  dumpResources(display, RENDERER);
   if (alternateConfig == "")
     CFGMGR.write(getConfigFileName());
   else

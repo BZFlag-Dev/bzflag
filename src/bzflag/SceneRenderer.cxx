@@ -80,10 +80,12 @@ FlareLight::~FlareLight()
 // SceneRenderer
 //
 
-SceneRenderer*		SceneRenderer::instance = NULL;
+/* initialize the singleton */
+template <>
+SceneRenderer* Singleton<SceneRenderer>::_instance = (SceneRenderer*)0;
 
-SceneRenderer::SceneRenderer(MainWindow& _window) :
-				window(_window),
+SceneRenderer::SceneRenderer() :
+				window(NULL),
 				blank(false),
 				invert(false),
 				sunBrightness(1.0f),
@@ -111,10 +113,13 @@ SceneRenderer::SceneRenderer(MainWindow& _window) :
 				lastFrame(true),
 				sameFrame(false)
 {
-  instance = this;
+}
+
+void SceneRenderer::setWindow(MainWindow* _window) {
+  window = _window;
 
   // get visual info
-  window.getWindow()->makeCurrent();
+  window->getWindow()->makeCurrent();
   GLint bits;
   if (!BZDB.isSet("zbuffer")) {
     glGetIntegerv(GL_DEPTH_BITS, &bits);
@@ -191,7 +196,6 @@ SceneRenderer::~SceneRenderer()
   // free databases
   delete scene;
 
-  instance = NULL;
 }
 
 bool			SceneRenderer::useABGR() const
@@ -323,11 +327,16 @@ bool			SceneRenderer::useHiddenLine() const
 void			SceneRenderer::setPanelOpacity(float opacity)
 {
   bool needtoresize = opacity == 1.0f || panelOpacity == 1.0f;
+
+  std::cout << "!!! setPanelOpacity " << opacity << " panel opacity " << panelOpacity << std::endl;
+
   panelOpacity = opacity;
   notifyStyleChange();
   if (needtoresize) {
-    window.setFullView(panelOpacity < 1.0f);
-    window.getWindow()->callResizeCallbacks();
+    if (window) {
+      window->setFullView(panelOpacity < 1.0f);
+      window->getWindow()->callResizeCallbacks();
+    }
   }
 }
 
@@ -340,7 +349,9 @@ void			SceneRenderer::setRadarSize(int size)
 {
   radarSize = size;
   notifyStyleChange();
-  window.getWindow()->callResizeCallbacks();
+  if (window) {
+    window->getWindow()->callResizeCallbacks();
+  }
 }
 
 int			SceneRenderer::getRadarSize() const
@@ -353,7 +364,9 @@ void			SceneRenderer::setMaxMotionFactor(int factor)
 {
   maxMotionFactor = factor;
   notifyStyleChange();
-  window.getWindow()->callResizeCallbacks();
+  if (window) {
+    window->getWindow()->callResizeCallbacks();
+  }
 }
 
 int			SceneRenderer::getMaxMotionFactor() const
@@ -508,6 +521,9 @@ void			SceneRenderer::render(
 
   lastFrame = _lastFrame;
   sameFrame = _sameFrame;
+  
+  // make sure there is something to render on
+  if (!window) return;
 
   // avoid OpenGL calls as long as possible -- there's a good
   // chance we're waiting on the vertical retrace.
@@ -611,8 +627,8 @@ void			SceneRenderer::render(
 
   // set scissor
 
-  glScissor(window.getOriginX(), window.getOriginY() + window.getHeight() - window.getViewHeight(),
-      window.getWidth(), window.getViewHeight());
+  glScissor(window->getOriginX(), window->getOriginY() + window->getHeight() - window->getViewHeight(),
+      window->getWidth(), window->getViewHeight());
 
   if (useDepthComplexityOn) {
     glEnable(GL_STENCIL_TEST);

@@ -30,7 +30,6 @@ class SceneRenderer;
 class ControlPanelMessage {
   public:
 			ControlPanelMessage(const std::string&);
-  public:
     std::string		string;
     int			rawLength;
 };
@@ -63,7 +62,14 @@ class ControlPanel {
     static void		resizeCallback(void*);
     static void		exposeCallback(void*);
 
-  private:
+    enum MessageModes {
+      MessageAll = 0,
+      MessageChat = 1,
+      MessageServer = 2,
+      MessageMisc = 3,
+      MessageModeCount
+    };
+
     MainWindow&		window;
     bool		resized;
     int			numBuffers;
@@ -77,13 +83,7 @@ class ControlPanel {
     float		du, dv;
     int			radarAreaPixels[4];
     int			messageAreaPixels[4];
-    std::vector<ControlPanelMessage>	messages[4];
-    enum MessageModes {
-      MessageAll = 0,
-      MessageChat = 1,
-      MessageServer = 2,
-      MessageMisc = 3
-    };
+    std::vector<ControlPanelMessage>	messages[MessageModeCount];
     int messageMode;
     GLfloat		teamColor[3];
     static int		messagesOffset;
@@ -94,10 +94,9 @@ class ControlPanel {
 #endif // BZF_CONTROL_PANEL_H
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

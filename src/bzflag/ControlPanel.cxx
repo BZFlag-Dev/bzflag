@@ -45,15 +45,20 @@ ControlPanelMessage::ControlPanelMessage(const std::string& _string)
 //
 // ControlPanel
 //
-const int		ControlPanel::maxScrollPages = 4;
+const int		ControlPanel::maxScrollPages = 10;
 int			ControlPanel::messagesOffset = 0;
 
 ControlPanel::ControlPanel(MainWindow& _mainWindow, SceneRenderer& renderer) :
 				window(_mainWindow),
 				resized(false),
 				numBuffers(2),
+				exposed(0),
+				changedMessage(0),
 				radarRenderer(NULL),
 				renderer(&renderer),
+				fontFace(0),
+				du(0),
+				dv(0),
 				messageMode(MessageAll)
 {
   setControlColor();
@@ -70,6 +75,10 @@ ControlPanel::ControlPanel(MainWindow& _mainWindow, SceneRenderer& renderer) :
   messageAreaPixels[1] = 0;
   messageAreaPixels[2] = 0;
   messageAreaPixels[3] = 0;
+  for (int i = 0; i < MessageModeCount; i++) {
+    messages[i].clear();
+  }
+  teamColor[0] = teamColor[1] = teamColor[2] = (GLfloat)0.0f;
   expose();
 
   maxLines = 30;
@@ -371,13 +380,13 @@ void			ControlPanel::resize()
   // get important metrics
   const float w = (float)window.getWidth();
   const float h = (float)window.getHeight();
-  const float opacity = SceneRenderer::getInstance()->getPanelOpacity();
+  const float opacity = RENDERER.getPanelOpacity();
   radarSize = float(window.getHeight() - window.getViewHeight());
   if (opacity == 1.0f) {
     radarSize = float(window.getHeight() - window.getViewHeight());
     radarSpace = 0.0f;
   } else {
-    radarSize = h * (14 + SceneRenderer::getInstance()->getRadarSize()) / 60.0f;
+    radarSize = h * (14 + RENDERER.getRadarSize()) / 60.0f;
     radarSpace = 3.0f * w / MinY;
   }
 
