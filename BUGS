@@ -1,6 +1,8 @@
 recent bugs
 ------------
 
+- new list server takes way too long (3-5 seconds) to respond.
+
 - robots spaz-enter after being destroyed
 
 - tanks may be squished from too high away.  i.e. tank carrying steamroller
