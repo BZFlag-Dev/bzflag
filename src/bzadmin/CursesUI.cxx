@@ -81,8 +81,8 @@ CursesUI::CursesUI(const map<PlayerId, string>& p, PlayerId m) :
   comp.registerWord("/poll ");
   comp.registerWord("ban");
   comp.registerWord("kick");
-  comp.registerWord("vote");
-  comp.registerWord("veto");
+  comp.registerWord("/vote");
+  comp.registerWord("/veto");
 }
 
 
