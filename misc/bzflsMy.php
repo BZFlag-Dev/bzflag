@@ -38,13 +38,13 @@ $result = mysql_query("SELECT * FROM servers");
 # If the servers table does not exist, create it.
 if (!$result) {
   mysql_query("CREATE TABLE servers " .
-              "(nameport varchar(60) NOT NULL, " .
-              " build varchar(20), " .
-              " version varchar(9) NOT NULL, " .
-              " gameinfo varchar(73) NOT NULL, " .
-              " ipaddr varchar(17) NOT NULL, " .
-              " title varchar(80), " .
-              " lastmod INT NOT NULL DEFAULT '0', ".
+	      "(nameport varchar(60) NOT NULL, " .
+	      " build varchar(20), " .
+	      " version varchar(9) NOT NULL, " .
+	      " gameinfo varchar(73) NOT NULL, " .
+	      " ipaddr varchar(17) NOT NULL, " .
+	      " title varchar(80), " .
+	      " lastmod INT NOT NULL DEFAULT '0', ".
 	      " PRIMARY KEY (nameport))")
     or die ("Could not create table: " . mysql_error());
 }
