@@ -138,11 +138,14 @@ float			Player::getRadius() const
 
 void			Player::getMuzzle(float* m) const
 {
-  // NOTE: like getRadius(), we only use dimensionsScale[0]
-  float front = BZDB.eval(StateDatabase::BZDB_MUZZLEFRONT);
-  float height = BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT);
-  m[0] = state.pos[0] + (front * forward[0] * dimensionsScale[0]);
-  m[1] = state.pos[1] + (front * forward[1] * dimensionsScale[0]);
+  // NOTE: like getRadius(), we only use dimensionsScale[0].
+  //       as well, we do not use BZDB_MUZZLEFRONT, but the
+  //       0.1f value listed in global.cxx is added on to the
+  //       scaled version of tankRadius.
+  const float front = (dimensionsScale[0] * BZDBCache::tankRadius) + 0.1f;
+  m[0] = state.pos[0] + (front * forward[0]);
+  m[1] = state.pos[1] + (front * forward[1]);
+  const float height = BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT);
   m[2] = state.pos[2] + (height * dimensionsScale[2]);
   return;
 }
