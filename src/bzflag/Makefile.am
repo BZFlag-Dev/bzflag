@@ -58,6 +58,8 @@ bzflag_SOURCES =			\
 	RemotePlayer.h			\
 	RobotPlayer.cxx			\
 	RobotPlayer.h			\
+	Roster.cxx				\
+	Roster.h				\
 	SaveWorldMenu.cxx		\
 	SaveWorldMenu.h			\
 	SceneBuilder.cxx		\
