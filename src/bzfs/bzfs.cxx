@@ -6677,12 +6677,8 @@ int main(int argc, char **argv)
   // canonicalized, otherwise use my IP in dot notation.
   // set publicized address if not set by arguments
   if (clOptions.publicizedAddress.length() == 0) {
-    // FIXME - std::string doesn't like to be initialised with a NULL pointer
-    // on some systems (e.g. libstdc++-3.2.2). I'm not sure what the 
-    // C++ standard says about this. There are a lot of strings initialised
-    // with NULL pointers in bzfs, but it seems to be OK when it is done 
-    // with a constructor call - probably because then NULL is defined as 0,
-    // and not as a pointer.
+    // FIXME - it is undefined to initialize std::string with a NULL pointer.
+    // similar code can be found at other places in bzfs as well
     const char* tmp = Address::getHostName();
     clOptions.publicizedAddress = (tmp == NULL ? "" : tmp);
     if (strchr(clOptions.publicizedAddress.c_str(), '.') == NULL)
