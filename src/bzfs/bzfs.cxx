@@ -4318,6 +4318,7 @@ static void addPlayer(int playerIndex)
   if (rabbitIndex == NoPlayer && (clOptions.gameStyle & int(RabbitChaseGameStyle)) &&
        !player[playerIndex].Observer) {
     rabbitIndex = playerIndex;
+    player[playerIndex].team = RabbitTeam;
   }
 
   // send rabbit information
@@ -4567,9 +4568,15 @@ static void annointNewRabbit()
       }
     }
   }
-  void *buf, *bufStart = getDirectMessageBuffer();
-  buf = nboPackUByte(bufStart, rabbitIndex);
-  broadcastMessage(MsgNewRabbit, (char*)buf-(char*)bufStart, bufStart);
+  if (rabbitIndex != oldRabbit) {
+    if (oldRabbit != NoPlayer)
+      player[oldRabbit].team = RogueTeam;
+    if (rabbitIndex != NoPlayer)
+      player[rabbitIndex].team = RabbitTeam;
+    void *buf, *bufStart = getDirectMessageBuffer();
+    buf = nboPackUByte(bufStart, rabbitIndex);
+    broadcastMessage(MsgNewRabbit, (char*)buf-(char*)bufStart, bufStart);
+  }
 }
 
 static void removePlayer(int playerIndex, char *reason, bool notify)
@@ -4900,9 +4907,8 @@ static void playerKilled(int victimIndex, int killerIndex, int reason,
     player[victimIndex].losses++;
     if (killerIndex != InvalidPlayer) {
       if (victimIndex != killerIndex) {
-        if (((player[victimIndex].team != RogueTeam) ||
-             (clOptions.gameStyle & int(RabbitChaseGameStyle) &&
-              killerIndex!=rabbitIndex && victimIndex!=rabbitIndex))
+        if ((player[victimIndex].team != RogueTeam ||
+             (clOptions.gameStyle & int(RabbitChaseGameStyle)))
 	    && (player[victimIndex].team == player[killerIndex].team)) {
 	  if (clOptions.teamKillerDies)
 	    playerKilled(killerIndex, killerIndex, reason, -1);
