@@ -21,7 +21,9 @@
 #include "ShotPath.h"
 #include "ShotStrategy.h"
 #include "LocalPlayer.h"
+#include "SegmentedShotStrategy.h"
 #include "GuidedMissleStrategy.h"
+#include "ShockWaveStrategy.h"
 
 
 //

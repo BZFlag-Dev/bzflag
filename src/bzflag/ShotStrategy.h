@@ -17,8 +17,8 @@
  *	the path taken by a shot.
  */
 
-#ifndef	BZF_SHOT_STRATEGY_H
-#define	BZF_SHOT_STRATEGY_H
+#ifndef __SHOTSTRATEGY_H__
+#define __SHOTSTRATEGY_H__
 
 #include "common.h"
 #include "ShotPath.h"
@@ -26,12 +26,6 @@
 #include "Teleporter.h"
 #include "Ray.h"
 
-class BaseLocalPlayer;
-class SceneDatabase;
-class BoltSceneNode;
-class PhotonTorpedoSceneNode;
-class SphereSceneNode;
-class LaserSceneNode;
 
 class ShotStrategy {
   public:
@@ -73,39 +67,13 @@ class ShotStrategy {
     ShotPath*		path;
 };
 
-
-// TEMP - until classes below are broken out
-#include "ShotPathSegment.h"
-#include "SegmentedShotStrategy.h"
-
-
-class ShockWaveStrategy : public ShotStrategy {
-  public:
-			ShockWaveStrategy(ShotPath*);
-			~ShockWaveStrategy();
-
-    void		update(float dt);
-    float		checkHit(const BaseLocalPlayer*, float[3]) const;
-    bool		isStoppedByHit() const;
-    void		addShot(SceneDatabase*, bool colorblind);
-    void		radarRender() const;
-
-  private:
-    SphereSceneNode*	shockNode;
-    float		radius;
-    float		radius2;
-};
-
-//
-// ShotStrategy
-//
-
 inline const ShotPath&	ShotStrategy::getPath() const
 {
   return *path;
 }
 
-#endif // BZF_SHOT_STRATEGY_H
+
+#endif /* __SHOTSTRATEGY_H__ */
 
 // Local Variables: ***
 // mode: C++ ***

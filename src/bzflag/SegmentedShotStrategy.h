@@ -22,6 +22,7 @@
 /* common interface headers */
 #include "SceneDatabase.h"
 #include "TimeKeeper.h"
+#include "LaserSceneNode.h"
 
 /* local interface headers */
 #include "LocalPlayer.h"

@@ -83,6 +83,8 @@ bzflag_SOURCES =			\
 	ServerMenu.h			\
 	ServerStartMenu.cxx		\
 	ServerStartMenu.h		\
+	ShockWaveStrategy.cxx		\
+	ShockWaveStrategy.h		\
 	ShotPath.cxx			\
 	ShotPath.h			\
 	ShotPathSegment.cxx		\
