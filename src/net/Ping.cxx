@@ -9,19 +9,17 @@
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
-// todo make this turn off for .net
-#if defined(_MSC_VER)
-  #pragma warning(disable: 4786)
-#endif
 
+/* interface header */
+#include "Ping.h"
 
+/* system implementation headers */
 #include <string.h>
 #include <math.h>
 #include <ctype.h>
-#include <fstream>
-#include "common.h"
+
+/* common implementation headers */
 #include "global.h"
-#include "Ping.h"
 #include "Protocol.h"
 #include "TimeKeeper.h"
 #include "bzfio.h"
