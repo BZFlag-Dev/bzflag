@@ -29,12 +29,11 @@ SDLDisplay::SDLDisplay()
     = SDL_ListModes(NULL, SDL_HWSURFACE | SDL_OPENGL | SDL_FULLSCREEN
 		    | SDL_HWPALETTE);
   
-
+  int defaultResolutionIndex = 0;
   ResInfo** resolutions;
   int numResolutions = 1;
   // No modes available or All resolutions available
   if ((modeList != (SDL_Rect **) 0) && (modeList != (SDL_Rect **) -1)) {
-    if (modeList[1])
       for (int i = 1; modeList[i]; i++)
 	if ((modeList[i - 1]->w != modeList[i]->w)
 	    || (modeList[i - 1]->h != modeList[i]->h))
@@ -56,15 +55,17 @@ SDLDisplay::SDLDisplay()
 	  continue;
       sprintf(name, "%dx%d    ", w, h);
       resolutions[j] = new ResInfo(name, w, h, 0);
+      if (w == 640 && h == 480)
+	defaultResolutionIndex = j;
       j++;
     }
   } else {
     // if no modes then make default
-    resolutions[0] = new ResInfo ("default", 1024, 768, 0);
+    resolutions[0] = new ResInfo ("default", 640, 480, 0);
   }
   
   // register modes
-  initResolutions(resolutions, numResolutions, 0);
+  initResolutions(resolutions, numResolutions, defaultResolutionIndex);
 
   fullScreen = false;
 
