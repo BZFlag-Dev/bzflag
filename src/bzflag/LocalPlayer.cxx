@@ -659,7 +659,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
     }
     else {
       bounceTime = TimeKeeper::getCurrent();
-      bounceTime += ((float) (bzfrand()*4.0f));
+      bounceTime += 0.2f;
     }
   }
 
