@@ -136,10 +136,6 @@ SOURCE=.\src\bzfinst\undo.h
 
 SOURCE=.\src\bzfinst\install.ico
 # End Source File
-# Begin Source File
-
-SOURCE=.\license.txt
-# End Source File
 # End Group
 # End Target
 # End Project

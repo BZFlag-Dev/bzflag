@@ -63,7 +63,7 @@ Section "BZFlag (required)"
 	SetOutPath $INSTDIR\doc
 	File ..\..\..\doc\*.*
 	File ..\ReadMe.win32.html
-	File ..\license.txt
+	File ..\..\..\COPYING
 
 	; Write the installation path into the registry
 	WriteRegStr HKLM SOFTWARE\BZFlag1_7g1 "Install_Dir" "$INSTDIR"
