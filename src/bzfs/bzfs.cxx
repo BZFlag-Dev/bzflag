@@ -2585,7 +2585,7 @@ void resetFlag(int flagIndex)
   &&  (teamIndex <= ::PurpleTeam)
   &&  (bases.find(teamIndex) != bases.end())) {
     TeamBases &teamBases = bases[teamIndex];
-    const TeamBases::TeamBase &base = teamBases.getRandomBase( flagIndex );
+    const TeamBase &base = teamBases.getRandomBase( flagIndex );
     pFlagInfo->flag.position[0] = base.position[0];
     pFlagInfo->flag.position[1] = base.position[1];
     pFlagInfo->flag.position[2] = base.position[2] + base.size[2];
@@ -2978,7 +2978,7 @@ static void getSpawnLocation(int playerId, float* spawnpos, float *azimuth)
       (team >= RedTeam) && (team <= PurpleTeam) && 
       (bases.find(team) != bases.end())) {
     TeamBases &teamBases = bases[team];
-    const TeamBases::TeamBase &base = teamBases.getRandomBase( (int) (bzfrand() * 100) );
+    const TeamBase &base = teamBases.getRandomBase( (int) (bzfrand() * 100) );
     base.getRandomPosition( spawnpos[0], spawnpos[1], spawnpos[2] );
     player[playerId].restartOnBase = false;
   }
@@ -3507,7 +3507,7 @@ static void dropFlag(int playerIndex, float pos[3])
     }
     else {// oh well, whatcha gonna do?
 	TeamBases &teamBases = bases[flagTeam];
-	const TeamBases::TeamBase &base = teamBases.getRandomBase(flagIndex); 
+	const TeamBase &base = teamBases.getRandomBase(flagIndex); 
 	drpFlag.flag.landingPosition[0] = base.position[0];
 	drpFlag.flag.landingPosition[1] = base.position[1];
 	drpFlag.flag.landingPosition[2] = base.position[2] + base.size[2];

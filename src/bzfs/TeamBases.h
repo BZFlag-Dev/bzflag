@@ -19,23 +19,26 @@
 
 class TeamBases;
 
+class TeamBase;
+
 typedef std::map<int, TeamBases> BasesList;
+
+class TeamBase
+{ // This class represents one base
+public:
+  TeamBase() {}
+  TeamBase(const float *pos, const float *siz, float rot, const float *safety);
+  void getRandomPosition( float &x, float &y, float &z ) const;
+  float position[3];
+  float size[3];
+  float rotation;
+  float safetyZone[3];
+};
 
 
 class TeamBases
 { // This class represents all the bases for one team
 public:
-  class TeamBase
-  { // This class represents one base
-  public:
-    TeamBase() {}
-    TeamBase(const float *pos, const float *siz, float rot, const float *safety);
-    void getRandomPosition( float &x, float &y, float &z ) const;
-    float position[3];
-    float size[3];
-    float rotation;
-    float safetyZone[3];
-  };
 
   TeamBases();
   TeamBases(TeamColor team, bool initDefault = false);

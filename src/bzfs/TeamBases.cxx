@@ -151,12 +151,12 @@ void TeamBases::getSafetyZone( float &x, float &y, float &z ) const
   z = base.safetyZone[2];
 }
 
-const TeamBases::TeamBase &TeamBases::getRandomBase( int id )
+const TeamBase &TeamBases::getRandomBase( int id )
 {
   return teamBases[id % teamBases.size()];
 }
 
-TeamBases::TeamBase::TeamBase(const float *pos, const float *siz, float rot, const float *safety)
+TeamBase::TeamBase(const float *pos, const float *siz, float rot, const float *safety)
 {
   memcpy(&position, pos, sizeof position);
   memcpy(&size, siz, sizeof size);
@@ -164,7 +164,7 @@ TeamBases::TeamBase::TeamBase(const float *pos, const float *siz, float rot, con
   rotation = rot;
 }
 
-void TeamBases::TeamBase::getRandomPosition( float &x, float &y, float &z ) const
+void TeamBase::getRandomPosition( float &x, float &y, float &z ) const
 {
   float deltaX = (size[0] - 2.0f * BZDBCache::tankRadius) * ((float)bzfrand() - 0.5f);
   float deltaY = (size[1] - 2.0f * BZDBCache::tankRadius) * ((float)bzfrand() - 0.5f);
