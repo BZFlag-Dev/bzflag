@@ -30,16 +30,18 @@ DisplayListManager::DisplayListManager()
 
 DisplayListManager::DisplayListManager(const DisplayListManager &dm)
 {
+  release();
   lists = dm.lists;
   lastID = dm.lastID;
-  rebuildLists();
+  aquire();
 }
 
 DisplayListManager& DisplayListManager::operator=(const DisplayListManager &dm)
 {
+  release()
   lists = dm.lists;
   lastID = dm.lastID;
-  rebuildLists();
+  aquire();
   return *this;
 }
 
