@@ -2387,10 +2387,6 @@ static void		checkEnvironment()
     // have I captured a flag?
     TeamColor base = world->whoseBase(myTank->getPosition());
     TeamColor team = myTank->getTeam();
-    if(base != NoTeam) {
-      if(((int(flagId) == int(team)) && (base != team)) ||
-	 ((int(flagId) != int(team)) && (base == team)));
-    }
     if ((base != NoTeam) &&
 	((int(flagId) == int(team) && base != team) ||
 	 (int(flagId) != int(team) && base == team)))
