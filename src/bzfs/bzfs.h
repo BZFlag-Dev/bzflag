@@ -62,6 +62,7 @@ static const char copyright[] = "Copyright (c) 1993 - 2003 Tim Riker";
 #include <fcntl.h>
 #endif
 
+// system headers
 #include <string>
 #include <string.h>
 #include <sys/types.h>
@@ -71,6 +72,8 @@ static const char copyright[] = "Copyright (c) 1993 - 2003 Tim Riker";
 #include <ctype.h>
 #include "bzsignal.h"
 #include <time.h>
+
+// common-interface headers
 #include "common.h"
 #include "global.h"
 #include "Protocol.h"
@@ -91,7 +94,9 @@ static const char copyright[] = "Copyright (c) 1993 - 2003 Tim Riker";
 #include "BZDBCache.h"
 #include "TextUtils.h"
 
-/* bzfs class specific headers */
+/* bzfs class-specific headers */
+#include "version.h"
+#include "commands.h"
 #include "TextChunkManager.h"
 #include "AccessControlList.h"
 #include "CmdLineOptions.h"
@@ -101,7 +106,6 @@ static const char copyright[] = "Copyright (c) 1993 - 2003 Tim Riker";
 #include "FlagInfo.h"
 #include "VotingArbiter.h"
 #include "PlayerInfo.h"
-#include "commands.h"
 #include "PackVars.h"
 
 // types for reading world files
@@ -114,8 +118,6 @@ static const char copyright[] = "Copyright (c) 1993 - 2003 Tim Riker";
 #include "CustomWeapon.h"
 #include "CustomWorld.h"
 
-// invoke incessant rebuilding for build versioning
-#include "version.h"
 
 #endif
 
