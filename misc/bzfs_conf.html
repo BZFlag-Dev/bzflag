@@ -462,10 +462,6 @@
 						<td> Excess Speed Kick Percent</td>
 						<td><input type="text" name="speed_kick" value="112.5" title="Percent over normal speed to auto kick"/></td>
 					</tr>
-					<tr>
-						<td>Bad Word File</td>
-						<td><input type="file" name="bad_words" title="Bad Words filter file specification"/></td>
-					</tr>
 					<tr span="2">
 						<td>Advertisement Message</td>
 						<td colspan="3"><input type="text" name="advertisement_message" size="100" title="Message that is broadcast every 15 minutes"/></td>
@@ -502,20 +498,24 @@
 						<td><input type="text" name="password" size="30" title="Administrator's password"/></td>
 					</tr>
 					<tr>
+						<td>Bad Word File</td>
+						<td><input type="file" name="bad_words" title="Bad Words filter file specification"/></td>
 						<td>Password Database</td>
 						<td><input type="file" name="passdb" title="File that stores user passwords"/></td>
-						<td>Group Privilege Database</td>
-						<td><input type="file" name="groupdb" title="File that stores group privileges"/></td>
 					</tr>
 					<tr>
-						<td>User Privilege Database</td>
-						<td><input type="file" name="userdb" title="File that stores user privileges"/></td>
 						<td>Filter Callsigns</td>
 						<td><input type="checkbox" name="filtercallsigns" title="Filter callsigns to disallow inappropriate user names"/></td>
+						<td>User Privilege Database</td>
+						<td><input type="file" name="userdb" title="File that stores user privileges"/></td>
 					</tr>
 					<tr>
 						<td>Filter Chat</td>
 						<td><input type="checkbox" name="filterchat" title="Filter chat messages"/></td>
+						<td>Group Privilege Database</td>
+						<td><input type="file" name="groupdb" title="File that stores group privileges"/></td>
+					</tr>
+					<tr>
 						<td>Filter Simple</td>
 						<td><input type="checkbox" name="filtersimple" title="Perform simple exact matches with the bad word list"/></td>
 					</tr>
