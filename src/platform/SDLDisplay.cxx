@@ -121,6 +121,27 @@ bool SDLDisplay::getEvent(BzfEvent& _event) const
     case SDL_BUTTON_RIGHT:
       _event.keyDown.button = BzfKeyEvent::RightMouse;
       break;
+    case SDL_BUTTON_WHEELUP:
+      _event.keyDown.button = BzfKeyEvent::WheelUp;
+      break;
+    case SDL_BUTTON_WHEELDOWN:
+      _event.keyDown.button = BzfKeyEvent::WheelDown;
+      break;
+    case 6:
+      _event.keyDown.button = BzfKeyEvent::MouseButton6;
+      break;
+    case 7:
+      _event.keyDown.button = BzfKeyEvent::MouseButton7;
+      break;
+    case 8:
+      _event.keyDown.button = BzfKeyEvent::MouseButton8;
+      break;
+    case 9:
+      _event.keyDown.button = BzfKeyEvent::MouseButton9;
+      break;
+    case 10:
+      _event.keyDown.button = BzfKeyEvent::MouseButton10;
+      break;
     default:
       return false;
     }
