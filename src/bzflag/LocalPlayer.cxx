@@ -236,7 +236,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
   float newAngVel = 0.0f;
 
   // if was teleporting and exceeded teleport time then not teleporting anymore
-  if (isTeleporting() && getTeleportTime() - lastTime >= TeleportTime)
+  if (isTeleporting() && getTeleportTime() - lastTime >= BZDB->eval(StateDatabase::BZDB_TELEPORTTIME))
     setStatus(getStatus() & ~short(PlayerState::Teleporting));
 
   // phased means we can pass through buildings

@@ -92,16 +92,12 @@ const float		TeleHeight =	9.0f * TeleUnit;// meters
 
 // tank performance info
 const float		TankAngVel =	M_PI / 4.0f;	// radians/sec
-const float		ShotSpeed =	100.0f;		// meters/sec
-const float		ShotRange =	350.0f;		// meters
-const float		ReloadTime =	ShotRange / ShotSpeed;	// seconds
 
 // city geometry
 const int		CitySize =	5;
 const float		AvenueSize =	2.0f * BoxBase;	// meters
 
 // other game info
-const float		TeleportTime =	1.0f;		// seconds
 const float		FlagAltitude =	11.0f;		// meters
 const float		FlagRadius =	2.5f;		// meters
 

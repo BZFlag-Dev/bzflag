@@ -4012,9 +4012,9 @@ static void shotFired(int playerIndex, void *buf, int len)
     return;
   }
 
-  float shotSpeed = ShotSpeed;
+  float shotSpeed = BZDB->eval(StateDatabase::BZDB_SHOTSPEED);
   float tankSpeed = BZDB->eval(StateDatabase::BZDB_TANKSPEED);
-  float lifetime = ReloadTime;
+  float lifetime = BZDB->eval(StateDatabase::BZDB_RELOADTIME);
   if (firingInfo.flag == Flags::ShockWave) {
       shotSpeed = 0.0f;
       tankSpeed = 0.0f;

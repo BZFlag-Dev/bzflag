@@ -1064,9 +1064,10 @@ GuidedMissileStrategy::GuidedMissileStrategy(ShotPath* _path) :
   segments.push_back(segment);
 
   // setup shot
-  f.shot.vel[0] = ShotSpeed * dir[0];
-  f.shot.vel[1] = ShotSpeed * dir[1];
-  f.shot.vel[2] = ShotSpeed * dir[2];
+  float shotSpeed = BZDB->eval(StateDatabase::BZDB_SHOTSPEED);
+  f.shot.vel[0] = shotSpeed * dir[0];
+  f.shot.vel[1] = shotSpeed * dir[1];
+  f.shot.vel[2] = shotSpeed * dir[2];
 
   // set next position to starting position
   nextPos[0] = f.shot.pos[0];
@@ -1080,7 +1081,7 @@ GuidedMissileStrategy::GuidedMissileStrategy(ShotPath* _path) :
   startPos[2] = f.shot.pos[2] - MuzzleFront * dir[2];
   Ray firstRay = Ray(startPos, dir);
   prevTime = currentTime;
-  prevTime += -MuzzleFront / ShotSpeed;
+  prevTime += -MuzzleFront / BZDB->eval(StateDatabase::BZDB_SHOTSPEED);
   checkBuildings(firstRay);
   prevTime = currentTime;
 
@@ -1189,7 +1190,8 @@ void			GuidedMissileStrategy::update(float dt)
   if ((++renderTimes % 3) == 0) addShotPuff(nextPos);
 
   // get next position
-  ray.getPoint(dt * ShotSpeed, nextPos);
+  float shotSpeed = BZDB->eval(StateDatabase::BZDB_SHOTSPEED);
+  ray.getPoint(dt * shotSpeed, nextPos);
 
   // see if we hit something
   TimeKeeper segmentEndTime(currentTime);
@@ -1200,7 +1202,7 @@ void			GuidedMissileStrategy::update(float dt)
       float t = ray.getOrigin()[2] / (ray.getOrigin()[2] - nextPos[2]);
       segmentEndTime = prevTime;
       segmentEndTime += t * (currentTime - prevTime);
-      ray.getPoint(t / ShotSpeed, nextPos);
+      ray.getPoint(t / shotSpeed, nextPos);
       addShotExplosion(nextPos);
     }
 
@@ -1220,16 +1222,17 @@ void			GuidedMissileStrategy::update(float dt)
   segments.pop_back();
 
   // update shot
-  newDirection[0] *= ShotSpeed;
-  newDirection[1] *= ShotSpeed;
-  newDirection[2] *= ShotSpeed;
+  newDirection[0] *= shotSpeed;
+  newDirection[1] *= shotSpeed;
+  newDirection[2] *= shotSpeed;
   setPosition(nextPos);
   setVelocity(newDirection);
 }
 
 float			GuidedMissileStrategy::checkBuildings(const Ray& ray)
 {
-  float t = (currentTime - prevTime) * ShotSpeed;
+  float shotSpeed = BZDB->eval(StateDatabase::BZDB_SHOTSPEED);
+  float t = (currentTime - prevTime) * shotSpeed;
   int face;
   const Obstacle* building = getFirstBuilding(ray, Epsilon, t);
   const Teleporter* teleporter = getFirstTeleporter(ray, Epsilon, t, face);
@@ -1244,16 +1247,16 @@ float			GuidedMissileStrategy::checkBuildings(const Ray& ray)
 			World::getWorld()->getTeleporter(target, outFace);
     teleporter->getPointWRT(*outTeleporter, face, outFace,
 			nextPos, NULL, azimuth, nextPos, NULL, &azimuth);
-    return t / ShotSpeed;
+    return t / shotSpeed;
   }
 
   else if (building) {
     // expire on next update
     setExpiring();
     float pos[3];
-    ray.getPoint(t / ShotSpeed, pos);
+    ray.getPoint(t / shotSpeed, pos);
     addShotExplosion(pos);
-    return t / ShotSpeed;
+    return t / shotSpeed;
   }
   return -1.0f;
 }
@@ -1297,9 +1300,10 @@ float			GuidedMissileStrategy::checkHit(const BaseLocalPlayer* tank,
     // construct ray with correct velocity
     float speed[3];
     const float* dir = ray.getDirection();
-    speed[0] = ShotSpeed * dir[0];
-    speed[1] = ShotSpeed * dir[1];
-    speed[2] = ShotSpeed * dir[2];
+    float shotSpeed = BZDB->eval(StateDatabase::BZDB_SHOTSPEED);
+    speed[0] = shotSpeed * dir[0];
+    speed[1] = shotSpeed * dir[1];
+    speed[2] = shotSpeed * dir[2];
     Ray speedRay(ray.getOrigin(), speed);
 
     // construct relative shot ray:  origin and velocity relative to

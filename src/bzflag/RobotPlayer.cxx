@@ -113,11 +113,12 @@ void			RobotPlayer::doUpdate(float dt)
 
   // fire shot if any available
   timeSinceShot += dt;
+  float reloadTime = BZDB->eval(StateDatabase::BZDB_RELOADTIME);
 #if !defined(SHOOTING_FIX)
-  timeSinceShot += ReloadTime / numShots;
+  timeSinceShot += reloadTime / numShots;
 #endif
-  if (isAlive() && timeSinceShot > ReloadTime / numShots) {
-    timeSinceShot -= ReloadTime / numShots;
+  if (isAlive() && timeSinceShot > reloadTime / numShots) {
+    timeSinceShot -= reloadTime / numShots;
     for (i = 0; i < numShots; i++)
       if (!shots[i]) {
 	FiringInfo firingInfo(*this, i + getSalt());

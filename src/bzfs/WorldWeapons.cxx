@@ -43,11 +43,12 @@ void WorldWeapons::fire()
 
       FiringInfo firingInfo;
       firingInfo.flag = (FlagDesc*)w->type;
-      firingInfo.lifetime = ReloadTime;
+      firingInfo.lifetime = BZDB->eval(StateDatabase::BZDB_RELOADTIME);
       firingInfo.shot.player = ServerPlayer;
       memmove(firingInfo.shot.pos, w->origin, 3 * sizeof(float));
-      firingInfo.shot.vel[0] = ShotSpeed*cos(w->direction);
-      firingInfo.shot.vel[1] = ShotSpeed*sin(w->direction);
+      float shotSpeed = BZDB->eval(StateDatabase::BZDB_SHOTSPEED);
+      firingInfo.shot.vel[0] = shotSpeed*cos(w->direction);
+      firingInfo.shot.vel[1] = shotSpeed*sin(w->direction);
       firingInfo.shot.vel[2] = 0.0f;
       firingInfo.shot.id = worldShotId++;
       if (worldShotId > 30) // Maximum of 30 world shots

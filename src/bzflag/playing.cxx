@@ -3582,11 +3582,12 @@ static float		minSafeRange(float angleCosOffBoresight)
   // place at MinRange
   static const float	SafeAngle = 0.5f;		// cos(angle)
 
+  const float shotSpeed = BZDB->eval(StateDatabase::BZDB_SHOTSPEED);
   // don't ever place within this range
-  static const float	MinRange = 2.0f * ShotSpeed;	// meters
+  const float	MinRange = 2.0f * shotSpeed;	// meters
 
   // anything beyond this range is okay at any angle
-  static const float	MaxRange = 4.0f * ShotSpeed;	// meters
+  const float	MaxRange = 4.0f * shotSpeed;	// meters
 
   // if more than SafeAngle off boresight then MinRange is okay
   if (angleCosOffBoresight < SafeAngle) return MinRange;
