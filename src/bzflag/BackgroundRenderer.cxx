@@ -1858,7 +1858,7 @@ void WeatherRenderer::update ( void )
 	}
 }
 
-void WeatherRenderer::draw ( const SceneRenderer& /*sr*/ )
+void WeatherRenderer::draw ( const SceneRenderer& sr )
 {
 	if (doLineRain)	// we are doing line rain
 	{
