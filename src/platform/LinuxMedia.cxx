@@ -40,6 +40,7 @@ static const int defaultAudioRate=22050;
 //
 
 LinuxMedia::LinuxMedia() : BzfMedia(), audioReady(false),
+				audioBufferSize(defaultAudioRate),
 				audioPortFd(-1),
 				queueIn(-1), queueOut(-1),
 				outputBuffer(NULL),
@@ -392,7 +393,7 @@ void			LinuxMedia::writeAudioFrames16Bit(
 				const float* samples, int numFrames)
 {
   int numSamples = 2 * numFrames;
-  int limit;
+  int limit = 0;
 
   while (numSamples > 0) {
     if (numSamples>audioBufferSize) limit=audioBufferSize;
