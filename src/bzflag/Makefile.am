@@ -166,8 +166,8 @@ LDADD =	\
 	$(REGEX)			\
 	$(ZLIB)				\
 	$(RESOURCE)			\
-	$(GLIBS)			\
-	$(SDL_LIBS)
+	$(SDL_LIBS)			\
+	$(GLIBS)
 # This is required to hook in ogg/vorbis libraries
 #	$(ALIBS)
 
