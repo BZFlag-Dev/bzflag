@@ -1,6 +1,9 @@
 recent bugs
 ------------
 
+- Server handles MsgKilled correctly, but client displays it as 'killed by                       
+  unknown>'; killer id is -1=InvalidPlayer, why not ServerPlayer?  
+
 - Spawn code sometimes spawns you mid-air
 
 - Robots don't do z collision checks other than to see if z < 0.
