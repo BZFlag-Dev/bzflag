@@ -1,6 +1,10 @@
 recent bugs
 ------------
 
+- Too many flags caused "drop, unresponsive with 16687 bytes queued"
+  (+f good{40} was the breaking point, linux, local bzfs server)
+  admittedly, an unreasonable number of flags
+
 - Bad BZDB: "/set _syncTime -" goes boom on the client side.
   (StateDatabase::ExpressionToken::operator=, StateDatabase.cxx:890)
 
