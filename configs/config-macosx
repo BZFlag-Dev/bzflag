@@ -36,8 +36,8 @@ RANLIB = /usr/bin/ranlib
 #
 # compiler definitions
 #
-PCDEFS   = -DBSD -D__FreeBSD__ -D_MACOSX_ -D_BSD_SOCKLEN_T_=int
-PCXXDEFS = -DBSD -D__FreeBSD__ -D_MACOSX_ -D_BSD_SOCKLEN_T_=int
+PCDEFS   = -D_MACOSX_ -D_BSD_SOCKLEN_T_=int
+PCXXDEFS = -D_MACOSX_ -D_BSD_SOCKLEN_T_=int
 
 #
 # compiler options
