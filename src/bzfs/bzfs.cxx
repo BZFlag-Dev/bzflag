@@ -1042,6 +1042,22 @@ void broadcastMessage(uint16_t code, int len, const void *msg)
       directMessage(i, code, len, msg);
 }
 
+//
+// global variable callback
+//
+static void onGlobalChanged(const std::string& msg, void*)
+{
+  std::string name  = msg;
+  std::string value = BZDB->get(msg);
+  void *bufStart = getDirectMessageBuffer();
+  void *buf = bufStart;
+  buf = nboPackUByte(buf, name.length());
+  buf = nboPackString(buf, name.c_str(), name.length());
+  buf = nboPackUByte(buf, value.length());
+  buf = nboPackString(buf, value.c_str(), value.length());
+  broadcastMessage( MsgSetVar, (char*)buf - (char*)bufStart, bufStart);
+}
+
 static void sendUDPupdate(int playerIndex)
 {
   void *buf, *bufStart = getDirectMessageBuffer();
@@ -6222,7 +6238,7 @@ int main(int argc, char **argv)
     }
     BZDB->setPersistent(globalDBItems[gi].name, globalDBItems[gi].persistent);
     BZDB->setPermission(globalDBItems[gi].name, globalDBItems[gi].permission);
-    // FIXME: callback for resending on change
+    BZDB->addCallback(std::string(globalDBItems[gi].name), onGlobalChanged, (void*) NULL);
   }
 
   // parse arguments

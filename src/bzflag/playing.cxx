@@ -3246,6 +3246,22 @@ static void		handleServerMessage(bool human, uint16_t code,
       break;
     }
 
+    case MsgSetVar: {
+	uint8_t nameLen, valueLen;
+	msg = nboUnpackUByte(msg, nameLen);
+	char* name = new char[nameLen + 1];
+	msg = nboUnpackString(msg, name, nameLen);
+	name[nameLen] = '\0';
+	msg = nboUnpackUByte(msg, valueLen);
+	char* value = new char[valueLen + 1];
+	msg = nboUnpackString(msg, value, valueLen);
+	value[valueLen] = '\0';
+	BZDB->set(name, value);
+	delete[] name;
+	delete[] value;
+	break;
+    }
+		
     case MsgTeleport: {
       PlayerId id;
       uint16_t from, to;

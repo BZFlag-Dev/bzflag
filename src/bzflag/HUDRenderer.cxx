@@ -1321,6 +1321,7 @@ void			HUDRenderer::renderPlaying(SceneRenderer& renderer)
   float y;
 
   // use one-to-one pixel projection
+
   glScissor(ox, oy + height - viewHeight, width, viewHeight);
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
@@ -1328,6 +1329,13 @@ void			HUDRenderer::renderPlaying(SceneRenderer& renderer)
   glMatrixMode(GL_MODELVIEW);
   glPushMatrix();
   glLoadIdentity();
+
+  LocalPlayer *myTank = LocalPlayer::getMyTank();
+  if (myTank && myTank->getPosition()[2] < 0.0f) {
+    glColor4f(0.02f, 0.01f, 0.01f, 1.0);
+    glRectf(0, 0, width, (myTank->getPosition()[2]/(BurrowDepth-0.1f)) * (viewHeight/2.0f));
+  }
+
 
   // draw cracks
   if (showCracks)
@@ -1357,7 +1365,6 @@ void			HUDRenderer::renderPlaying(SceneRenderer& renderer)
 
   }
 
-  LocalPlayer* myTank = LocalPlayer::getMyTank();
   if (myTank && globalClock.isOn()) {
     float y = 0.5f * (float)height + bigFont.getSpacing();
     if (myTank->isAutoPilot()) {
