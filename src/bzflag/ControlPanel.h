@@ -52,6 +52,7 @@ class ControlPanel {
     void		addMessage(const std::string&, const int mode = 3);
     void		setMessagesOffset(int offset, int whence);
     void		setMessagesMode(int _messageMode);
+    int 		getMessagesMode() {return messageMode;};
     void		setStatus(const char*);
     void		setRadarRenderer(RadarRenderer*);
 
