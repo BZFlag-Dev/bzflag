@@ -193,7 +193,7 @@ void CustomArc::write(WorldInfo *world) const
   }
 
   // more validity checking
-  if ((int) ((a + minSize) / (M_PI * 0.5f)) > divisions) {
+  if (divisions <= (int) ((a + minSize) / M_PI)) {
     return;
   }
 
