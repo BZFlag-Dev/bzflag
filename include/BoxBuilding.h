@@ -58,6 +58,7 @@ class BoxBuilding : public Obstacle {
 
  private:
     bool noNodes;
+	std::string	userTextures[2];
 };
 
 class BoxSceneNodeGenerator : public ObstacleSceneNodeGenerator {
