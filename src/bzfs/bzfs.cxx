@@ -4335,7 +4335,9 @@ static void playerKilled(int victimIndex, int killerIndex,
 #endif
   if (winningTeam != (int)NoTeam)
     checkTeamScore(killerIndex, winningTeam);
-  if ((player[victimIndex].team == player[killerIndex].team) && (victimIndex != killerIndex))
+  // kill team killers
+  if ((victimIndex != killerIndex) && (player[victimIndex].team != RogueTeam) &&
+      (player[victimIndex].team == player[killerIndex].team))
     playerKilled(killerIndex, killerIndex, -1);
 }
 
