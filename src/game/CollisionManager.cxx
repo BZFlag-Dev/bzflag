@@ -30,6 +30,7 @@
 #include "PyramidBuilding.h"
 #include "BaseBuilding.h"
 #include "Teleporter.h"
+#include "TimeKeeper.h"
 
 
 /* static variables */
@@ -379,6 +380,8 @@ void CollisionManager::load ()
 {
   int i;
 
+  TimeKeeper startTime = TimeKeeper::getCurrent();
+  
   // get the lists
   const ObstacleList& meshes = OBSTACLEMGR.getMeshes();
   const ObstacleList& boxes = OBSTACLEMGR.getBoxes();
@@ -494,6 +497,9 @@ void CollisionManager::load ()
   SplitList.named.teles.list = listPtr;
   SplitList.named.teles.count = (int)teles.size();
 
+  float elapsed = TimeKeeper::getCurrent() - startTime;
+  DEBUG2 ("Collision Octree processed in %.3f seconds.\n", elapsed);
+  
   return;
 }
 
