@@ -25,8 +25,6 @@
 #include <iostream>
 #include <math.h>
 
-#define DEBUG
-
 #ifdef DEBUG
 #include <TimeKeeper.h> // only for _debugLookups()
 
