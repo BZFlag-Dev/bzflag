@@ -503,9 +503,6 @@ copy ..\..\src\bzfs\debug\*.exe ..\..\*.exe
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\src\game\PlayerInfo.cxx">
-			</File>
-			<File
 				RelativePath="..\..\src\bzfs\RecordReplay.cxx">
 			</File>
 			<File
