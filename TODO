@@ -231,10 +231,6 @@ THESE NEED TO WAIT FOR THE NEXT PROTOCOL BREAKAGE
 
 * remove flipz from pyr net code and replace with neg height.
 
-* add a singe passable flag for objects that sets both shootthrough and drivethrough
-  leave the 2 inernal flags seperate for map makers who want to use them.
-  "magnetic" for "force fields" if they want.
-
 * ipv6 support
 
 * consider using ENet http://enet.cubik.org/ for
