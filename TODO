@@ -39,6 +39,12 @@ THESE ARE LOWER PRIORITY
   ObstacleMgr::makeWorld()  (including materials, physics drivers,
   texture matrices, transforms, and dynamic colors).
 
+* grouping for links (with  relative and absolute names)
+  grouping for weapons and entry zones (with transforms)
+  grouping for physics drivers (with transforms and copying)
+  grouping for texture matrices, dynamic color, xforms, and materials
+    (mostly for keeping a clean namespace)
+
 * Teach Roger not to drive into deadly physics drivers.
 
 * if libcurl is going to be the path forward:

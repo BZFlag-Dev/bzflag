@@ -16,6 +16,7 @@ libGame_a_SOURCES =			\
 	Intersect.cxx			\
 	LagInfo.cxx			\
 	LinkManager.cxx			\
+	MsgStrings.cxx			\
 	MeshTransform.cxx		\
 	NetHandler.cxx			\
 	PhysicsDriver.cxx		\

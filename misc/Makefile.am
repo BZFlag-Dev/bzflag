@@ -20,6 +20,7 @@ EXTRA_DIST =				\
 	multilingualSwearList.txt	\
 	pingtimes.sh			\
 	rebuild-bzflag			\
+	rrlog.cxx			\
 	serverstats.sh			\
 	simpleSwearList.txt		\
 	snap.sh				\
@@ -31,3 +32,12 @@ EXTRA_DIST =				\
 
 MAINTAINERCLEANFILES =	\
 	Makefile.in
+
+rrlog:  rrlog.cxx
+	$(CXX) $(CXXFLAGS)		\
+	  -o rrlog rrlog.cxx		\
+	  -I../include -I../src/bzfs	\
+	  ../src/date/libDate.a		\
+	  ../src/game/libGame.a		\
+	  ../src/net/libNet.a		\
+	  ../src/common/libCommon.a

@@ -128,14 +128,14 @@ void OpenGLTexture::initContext()
   // make texture map object/list
   glGenTextures(1, &list);
 
-  // just making sure when don't change these
-  // values accidentally in this function call
+  // making sure we don't change these values accidentally in this function
   const int tmpWidth = width;
   const int tmpHeight = height;
 
-  GLint scaledWidth = 1, scaledHeight = 1;
 
   // align to a 2^N value
+  GLint scaledWidth = 1;
+  GLint scaledHeight = 1;
   while (scaledWidth < tmpWidth) {
     scaledWidth <<= 1;
   }
@@ -143,17 +143,18 @@ void OpenGLTexture::initContext()
     scaledHeight <<= 1;
   }
   
-  // hard limit, some drivers have problems with sizes greater
-  // then this (espeically if you are using glTexSubImage2D)
-  const GLint bzMaxTexSize = 512;
-
   // get minimum valid size for texture (boost to 2^m x 2^n)
   GLint maxTextureSize;
   glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTextureSize);
+
+  // hard limit, some drivers have problems with sizes greater
+  // then this (espeically if you are using glTexSubImage2D)
+  const GLint bzMaxTexSize = 512;
   if (maxTextureSize > bzMaxTexSize) {
     maxTextureSize = bzMaxTexSize;
   }
   
+  // clamp to the maximum size
   if (scaledWidth > maxTextureSize) {
     scaledWidth = maxTextureSize;
   }
@@ -192,7 +193,7 @@ void OpenGLTexture::initContext()
 		    GL_RGBA, GL_UNSIGNED_BYTE, aligned);
   glBindTexture(GL_TEXTURE_2D, 0);
 
-  // free the real unaligned pointer
+  // free the unaligned pointer
   delete[] unaligned;
 
   // note if internal format uses alpha

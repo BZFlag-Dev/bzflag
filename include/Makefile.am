@@ -66,6 +66,7 @@ noinst_HEADERS =			\
 	MeshPolySceneNode.h		\
 	MeshSceneNodeGenerator.h	\
 	MeshTransform.h			\
+	MsgStrings.h			\
 	NetHandler.h			\
 	Obstacle.h			\
 	ObstacleList.h			\
