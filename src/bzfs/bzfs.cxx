@@ -834,7 +834,7 @@ static void sendMessageToListServerForReal(int index)
 
     // send ADD message (must send blank line)
     sprintf(msg, "GET %s?action=ADD&nameport=%s&version=%s&gameinfo=%s&title=%s HTTP/1.1\r\n"
-      "Host: %s\r\n\r\n",
+      "Host: %s\r\nCache-Control: no-cache\r\n\r\n",
       link.pathname.c_str(), clOptions->publicizedAddress.c_str(),
       getServerVersion(), gameInfo,
       url_encode(clOptions->publicizedTitle).c_str(),
@@ -843,7 +843,7 @@ static void sendMessageToListServerForReal(int index)
   else if (strcmp(link.nextMessage, "REMOVE") == 0) {
     // send REMOVE (must send blank line)
     sprintf(msg, "GET %s?action=REMOVE&nameport=%s HTTP/1.1\r\n"
-      "Host: %s\r\n\r\n",
+      "Host: %s\r\nCache-Control: no-cache\r\n\r\n",
       link.pathname.c_str(),
       clOptions->publicizedAddress.c_str(),
       link.hostname.c_str());
