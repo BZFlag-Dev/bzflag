@@ -2786,13 +2786,13 @@ static void captureFlag(int playerIndex, TeamColor teamCaptured)
 			       lastState[playerIndex].pos[2]);
     if ((teamIndex == playerData->player.getTeam() &&
 	 base == playerData->player.getTeam()))	{
-      DEBUG1("\"%s\" (%d) sent MsgCaptureFlag for taking its own flag onto its own base",
+      DEBUG1("Player %s [%d] sent MsgCaptureFlag for taking its own flag onto its own base\n",
 	     playerData->player.getCallSign(), playerIndex);
       return; //sanity check
     }
     if ((teamIndex != playerData->player.getTeam() &&
 	 base != playerData->player.getTeam())) {
-      DEBUG1("\"%s\" (%d) tried to capture %s flag without reaching its own base",
+      DEBUG1("Player %s [%d] tried to capture %s flag without reaching its own base\n",
 	     playerData->player.getCallSign(), playerIndex,
 	     Team::getName((TeamColor)teamIndex));
       //char message[MessageLen];
