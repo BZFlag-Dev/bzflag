@@ -45,10 +45,12 @@ SIG_PF bzSignal(int signo, SIG_PF func)
 #endif /* _WIN32 */
 }
 
-// Local variables: ***
-// mode:C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
-// End: ***
-// ex: shiftwidth=2 tabstop=8
+/*
+ * Local variables: ***
+ * mode:C ***
+ * tab-width: 8 ***
+ * c-basic-offset: 2 ***
+ * indent-tabs-mode: t ***
+ * End: ***
+ * ex: shiftwidth=2 tabstop=8
+ */
