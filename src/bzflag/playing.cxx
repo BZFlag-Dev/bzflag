@@ -4490,6 +4490,7 @@ void drawFrame(const float dt)
 
       // add antidote flag
       myTank->addAntidote(scene);
+
       // add flags
       world->addFlags(scene);
 
@@ -4519,9 +4520,9 @@ void drawFrame(const float dt)
 	  const bool inCockpit = following && showTreads;
 
 	  // add player tank if required
-          myTank->addToScene(scene, myTank->getTeam(),
-                             inCockpit, seerView,
-                             showPlayer, showPlayer /*showIDL*/);
+          player[i]->addToScene(scene, effectiveTeam,
+                                inCockpit, seerView,
+                                showPlayer, showPlayer /*showIDL*/);
 	}
       }
 

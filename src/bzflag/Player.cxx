@@ -531,10 +531,12 @@ void Player::updateTranslucency(float dt)
   if (isPhantomZoned()) {
     teleAlpha = 1.0f;
     color[3] = 0.25f; // barely visible, regardless of teleporter proximity
-  } else {
+  }
+  else {
     teleporterProximity =
       World::getWorld()->getProximity(state.pos, BZDBCache::tankRadius);
     teleAlpha = (1.0f - (0.75f * teleporterProximity));
+    
     if (alpha == 0.0f) {
       color[3] = 0.0f; // not trusting FP accuracy
     } else {
@@ -785,16 +787,14 @@ void Player::addToScene(SceneDatabase* scene, TeamColor effectiveTeam,
   }
 
   // adjust alpha for seerView
-  if (seerView && (color[3] != 1.0f)) {
+  if (seerView) {
     if (isPhantomZoned()) {
       color[3] = 0.25f;
-    } else if (teleAlpha != 1.0) {
-      color[3] = teleAlpha;
     } else {
-      color[3] = 1.0f;
+      color[3] = teleAlpha;
     }
   } 
-
+  
   // setup the color and material
   setVisualTeam(effectiveTeam);
   tankNode->setColor(color);
