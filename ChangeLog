@@ -4,6 +4,7 @@
 BZFlag 1.12.0  (was 1.11.x)
 ---------------------------
 
+* bzadmin can now send and receive team and admin messages - Lars Luthman
 * Added _deadUnder - Dave Rodgers
 * bzadmin's curses menu will now update automagically - Lars Luthman
 * Added message filter editor for bzadmin using menu or cmds - Lars Luthman 
