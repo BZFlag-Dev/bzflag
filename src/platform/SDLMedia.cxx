@@ -74,7 +74,8 @@ bool			SDLMedia::openAudio()
 
   // how big a fragment to use?  we want to hold at around 1/10th of
   // a second.
-  int fragmentSize = (int)(0.08f * (float)audioOutputRate);
+  // probably SDL is using multiple buffering, make it a 3rd
+  int fragmentSize = (int)(0.03f * (float)audioOutputRate);
   int n;
 
   n = 0;
