@@ -2507,6 +2507,11 @@ static void playerAlive(int playerIndex)
     removePlayer(playerIndex, "unidentified");
     return;
   }
+  
+  if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::spawn)) {
+	  sendMessage(ServerPlayer, playerIndex, "You do not have permission to spawn on this server.");
+	  removePlayer(playerIndex, "Not allowed to spawn");
+  }
 
   if (playerData->player.isBot()
       && BZDB.isTrue(StateDatabase::BZDB_DISABLEBOTS)) {
@@ -4078,6 +4083,7 @@ void initGroups()
     info.explicitAllows[PlayerAccessInfo::actionMessage] = true;
     info.explicitAllows[PlayerAccessInfo::privateMessage] = true;
     info.explicitAllows[PlayerAccessInfo::adminMessageSend] = true;
+    info.explicitAllows[PlayerAccessInfo::spawn] = true;
     groupAccess["EVERYONE"] = info;
   }
   itr = groupAccess.find("VERIFIED");
