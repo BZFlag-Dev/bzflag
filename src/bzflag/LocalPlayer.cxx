@@ -200,8 +200,8 @@ void			LocalPlayer::doUpdate(float dt)
 
   // drop bad flag if timeout has expired
   if (!isPaused() && dt > 0.0f && World::getWorld()->allowShakeTimeout() &&
-	getFlag() != NoFlag && Flag::getType(getFlag()) == FlagSticky &&
-	flagShakingTime > 0.0f) {
+      getFlag() != NoFlag && Flag::getType(getFlag()) == FlagSticky &&
+      flagShakingTime > 0.0f) {
     flagShakingTime -= dt;
     if (flagShakingTime <= 0.0f) {
       flagShakingTime = 0.0f;
@@ -271,17 +271,16 @@ void			LocalPlayer::doUpdateMotion(float dt)
 
       // compute velocity so far
       if (location == OnGround || location == OnBuilding ||
-		(location == InBuilding && oldPosition[2] == 0.0f)) {
+	  (location == InBuilding && oldPosition[2] == 0.0f)) {
 	newVelocity[0] = speed * cosf(oldAzimuth + 0.5f * dt * newAngVel);
 	newVelocity[1] = speed * sinf(oldAzimuth + 0.5f * dt * newAngVel);
-	if (oldPosition[2] == 0.0f)
-	  newVelocity[2] = 0.0f;
-	else
-	  newVelocity[2] += Gravity * (dt > 0.1f ? 0.1f : dt);
+	newVelocity[2] = 0.0f;
+	if (oldPosition[2] != 0.0f)
+	  newVelocity[2] += Gravity * dt;
       }
       else {
 	// can't control motion in air
-	newVelocity[2] += Gravity * (dt > 0.1f ? 0.1f : dt);
+	newVelocity[2] += Gravity * dt;
 	newAngVel = oldAngVel;
       }
 

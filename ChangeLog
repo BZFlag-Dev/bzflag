@@ -2,6 +2,7 @@
 			     BZFlag release notes
 
 * add new updates here without heading until a release
+* revert lag falling patch - Tim Riker, Dave Brosius
 * teamgrab.wav - Dave Brosius
 * improved texture mapping - unknown
 * possible win32 installer bug - Chris Walters
