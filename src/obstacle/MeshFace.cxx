@@ -505,7 +505,7 @@ bool MeshFace::inMovingBox(const float* oldPos, float /*oldAngle*/,
   } else {
     pos[2] = newPos[2];
   }
-  height = height + fabs(oldPos - newPos);
+  height = height + fabs(oldPos[2] - newPos[2]);
   
   return inBox(pos, newAngle, dx, dy, height);
 }
