@@ -67,8 +67,14 @@ msgstr ""
 msgid "Quit"
 msgstr ""
 
+#msgid "on"
+#msgstr ""
+
 msgid "Dithering:"
 msgstr ""
+
+#msgid "off"
+#msgstr ""
 
 msgid "Off"
 msgstr ""
@@ -135,6 +141,36 @@ msgstr ""
 
 msgid "Sound Volume:"
 msgstr ""
+
+#msgid "Off / Backup Mode"
+#msgstr ""
+
+#msgid "5 Minutes"
+#msgstr ""
+
+#msgid "15 Minutes"
+#msgstr ""
+
+#msgid "30 Minutes"
+#msgstr ""
+
+#msgid "1 Hour"
+#msgstr ""
+
+#msgid "5 Hours"
+#msgstr ""
+
+#msgid "15 Hours"
+#msgstr ""
+
+#msgid "1 day"
+#msgstr ""
+
+#msgid "15 days"
+#msgstr ""
+
+#msgid "30 days"
+#msgstr ""
 
 msgid "UDP network connection:"
 msgstr ""
@@ -391,6 +427,12 @@ msgstr ""
 #msgid "Hunt"
 #msgstr ""
 
+#msgid "autopilot enabled"
+#msgstr ""
+
+#msgid "autopilot disabled"
+#msgstr ""
+
 msgid "show/dismiss menu"
 msgstr ""
 
@@ -469,6 +511,9 @@ msgstr ""
 msgid "Capture-the-Flag"
 msgstr ""
 
+#msgid "Rabbit Chase"
+#msgstr ""
+
 msgid "Super Flags"
 msgstr ""
 
@@ -498,6 +543,9 @@ msgstr ""
 
 msgid "Zoned"
 msgstr ""
+
+#msgid "You are now the rabbit."
+#msgstr ""
 
 msgid "Servers found: {1}"
 msgstr ""
@@ -547,6 +595,12 @@ msgstr ""
 msgid "joystick '{1}' not supported..."
 msgstr ""
 
+#msgid "Using multicast relay"
+#msgstr ""
+
+#msgid "Server did send endpoint information, UDP connection up"
+#msgstr ""
+
 msgid "Ignoring Finder argument '{1}'"
 msgstr ""
 
@@ -558,6 +612,9 @@ msgstr ""
 
 msgid "Communication error joining game [Wrong Code {1}]."
 msgstr ""
+
+#msgid "Server sent UDP request, UDP up. Info: [{1}:{2}:{3}]"
+#msgstr ""
 
 msgid "Configuration file:  Error on line {1}: Stream failure"
 msgstr ""
@@ -719,7 +776,25 @@ msgstr ""
 #msgid "Velocity (V):  Tank moves faster.  Outrun bad guys."
 #msgstr ""
 
+#msgid "Useless"
+#msgstr ""
+
+#msgid "Thief"
+#msgstr ""
+
+#msgid "Masquerade"
+#msgstr ""
+
+#msgid "Seer"
+#msgstr ""
+
+#msgid "Burrow"
+#msgstr ""
+
 #msgid "Angular velocity (A): Tank turns faster.  Dodge quicker."
+#msgstr ""
+
+#msgid "Team flag:  If it's yours, prevent other teams from taking it.  If it's not take it to your base to capture it!"
 #msgstr ""
 
 #msgid "Oscillation Overthruster (OO):  Can drive through buildings.  Can't backup or shoot while inside."
@@ -1230,14 +1305,402 @@ msgstr ""
 msgid "altitude:  higher tanks have larger dots.  Flags are small crosses.  Team"
 msgstr ""
 
+#msgid "Toggle Radar Flags:"
+#msgstr ""
+
+#msgid "Toggle Main Flags:"
+#msgstr ""
+
+#msgid "Silience/UnSilence"
+#msgstr ""
+
+#msgid "Silience/UnSilence Key:"
+#msgstr ""
+
+#msgid "Server Command Key:"
+#msgstr ""
+
+#msgid "self destruct/cancel"
+#msgstr ""
+
+# Start serveru
+# Start server
+#msgid "yes"
+#msgstr ""
+
+#msgid "no"
+#msgstr ""
+
+#msgid "Style:"
+#msgstr ""
+
+#msgid "Free for All"
+#msgstr ""
+
+#msgid "Capture the Flag"
+#msgstr ""
+
+#msgid "Max Players:"
+#msgstr ""
+
+#msgid "Max Shots:"
+#msgstr ""
+
+#msgid "Teleporters:"
+#msgstr ""
+
+#msgid "Ricochet:"
+#msgstr ""
+
+#msgid "Jumping:"
+#msgstr ""
+
+#msgid "Superflags:"
+#msgstr ""
+
+#msgid "all flags"
+#msgstr ""
+
+#msgid "good flags only"
+#msgstr ""
+
+#msgid "Max Superflags:"
+#msgstr ""
+
+#msgid "Bad Flag Antidote:"
+#msgstr ""
+
+#msgid "Bad Flag Time Limit:"
+#msgstr ""
+
+#msgid "no limit"
+#msgstr ""
+
+#msgid "15 seconds"
+#msgstr ""
+
+#msgid "30 seconds"
+#msgstr ""
+
+#msgid "60 seconds"
+#msgstr ""
+
+#msgid "180 seconds"
+#msgstr ""
+
+#msgid "Bad Flag Win Limit:"
+#msgstr ""
+
+#msgid "drop after 1 win"
+#msgstr ""
+
+#msgid "drop after 2 wins"
+#msgstr ""
+
+#msgid "drop after 3 wins"
+#msgstr ""
+
+#msgid "Server Visibility:"
+#msgstr ""
+
+#msgid "local host only (ttl=0)"
+#msgstr ""
+
+#msgid "subnet only (ttl=1)"
+#msgstr ""
+
+#msgid "local area (ttl=8)"
+#msgstr ""
+
+#msgid "site (ttl=32)"
+#msgstr ""
+
+#msgid "organization (ttl=64)"
+#msgstr ""
+
+#msgid "continent (ttl=128)"
+#msgstr ""
+
+#msgid "world (ttl=255)"
+#msgstr ""
+
+#msgid "Game Over:"
+#msgstr ""
+
+#msgid "never"
+#msgstr ""
+
+#msgid "after 5 minutes"
+#msgstr ""
+
+#msgid "after 15 minutes"
+#msgstr ""
+
+#msgid "after 60 minutes"
+#msgstr ""
+
+#msgid "after 3 hours"
+#msgstr ""
+
+#msgid "when a player gets +3"
+#msgstr ""
+
+#msgid "when a player gets +10"
+#msgstr ""
+
+#msgid "when a player gets +25"
+#msgstr ""
+
+#msgid "when a team gets +3"
+#msgstr ""
+
+#msgid "when a team gets +10"
+#msgstr ""
+
+#msgid "when a team gets +25"
+#msgstr ""
+
+#msgid "when a team gets +100"
+#msgstr ""
+
+#msgid "Server Reset:"
+#msgstr ""
+
+#msgid "no, quit after game"
+#msgstr ""
+
+#msgid "yes, reset for more games"
+#msgstr ""
+
 msgid "flags are in the team color, superflags are white, and the antidote flag"
 msgstr ""
 
 msgid "is yellow.  Shots are small dots (or lines or circles, for lasers and"
 msgstr ""
 
+#msgid "cyan"
+#msgstr ""
+
+#msgid "grey"
+#msgstr ""
+
+#msgid "text"
+#msgstr ""
+
 msgid "shock waves, respectively).  Your tank is always dead center and forward"
 msgstr ""
+
+#msgid "None"
+#msgstr ""
+
+#msgid "Blinking"
+#msgstr ""
+
+#msgid "Underline"
+#msgstr ""
+
+# Identifikace vlajek
+# Flags identification
+#msgid "Closest Flag: High Speed"
+#msgstr ""
+
+#msgid "Closest Flag: Quick Turn"
+#msgstr ""
+
+#msgid "Closest Flag: Oscillation Overthurster"
+#msgstr ""
+
+#msgid "Closest Flag: Rapid Fire"
+#msgstr ""
+
+#msgid "Closest Flag: Machine Gun"
+#msgstr ""
+
+#msgid "Closest Flag: Guided Missile"
+#msgstr ""
+
+#msgid "Closest Flag: Laser"
+#msgstr ""
+
+#msgid "Closest Flag: Ricochet"
+#msgstr ""
+
+#msgid "Closest Flag: Super Bullet"
+#msgstr ""
+
+#msgid "Closest Flag: Stealth"
+#msgstr ""
+
+#msgid "Closest Flag: Cloaking"
+#msgstr ""
+
+#msgid "Closest Flag: Invisible Bullet"
+#msgstr ""
+
+#msgid "Closest Flag: Tiny"
+#msgstr ""
+
+#msgid "Closest Flag: Narrow"
+#msgstr ""
+
+#msgid "Closest Flag: Shield"
+#msgstr ""
+
+#msgid "Closest Flag: Steamroller"
+#msgstr ""
+
+#msgid "Closest Flag: Shock Wave"
+#msgstr ""
+
+#msgid "Closest Flag: Phantom Zone"
+#msgstr ""
+
+#msgid "Closest Flag: Genocide"
+#msgstr ""
+
+#msgid "Closest Flag: Jumping"
+#msgstr ""
+
+#msgid "Closest Flag: Identify"
+#msgstr ""
+
+#msgid "Closest Flag: Colorblindness"
+#msgstr ""
+
+#msgid "Closest Flag: Obesity"
+#msgstr ""
+
+#msgid "Closest Flag: Left Turn Only"
+#msgstr ""
+
+#msgid "Closest Flag: Right Turn Only"
+#msgstr ""
+
+#msgid "Closest Flag: Momentum"
+#msgstr ""
+
+#msgid "Closest Flag: Blindness"
+#msgstr ""
+
+#msgid "Closest Flag: Jamming"
+#msgstr ""
+
+#msgid "Closest Flag: Wide Angle"
+#msgstr ""
+
+# Ostatni
+# Other
+#msgid "Server started."
+#msgstr ""
+
+#msgid "Shot myself"
+#msgstr ""
+
+# !!! Hlaseni nize nelze prelozit :-(
+# !!! Messages below cannot be translated :-(
+
+# Informace o vlajce, kterou sebrali hraci
+# Informations about flags grabbed by opponents
+#msgid "grabbed High Speed flag"
+#msgstr ""
+
+#msgid "grabbed Quick Turn flag"
+#msgstr ""
+
+#msgid "grabbed Oscillation Overthurster flag"
+#msgstr ""
+
+#msgid "grabbed Rapid Fire flag"
+#msgstr ""
+
+#msgid "grabbed Machine Gun flag"
+#msgstr ""
+
+#msgid "grabbed Guided Missile flag"
+#msgstr ""
+
+#msgid "grabbed Laser flag"
+#msgstr ""
+
+#msgid "grabbed Ricochet flag"
+#msgstr ""
+
+#msgid "grabbed Super Bullet flag"
+#msgstr ""
+
+#msgid "grabbed Stealth flag"
+#msgstr ""
+
+#msgid "grabbed Cloaking flag"
+#msgstr ""
+
+#msgid "grabbed Invisible Bullet flag"
+#msgstr ""
+
+#msgid "grabbed Tiny flag"
+#msgstr ""
+
+#msgid "grabbed Narrow flag"
+#msgstr ""
+
+#msgid "grabbed Shield flag"
+#msgstr ""
+
+#msgid "grabbed Steamroller flag"
+#msgstr ""
+
+#msgid "grabbed Shock Wave flag"
+#msgstr ""
+
+#msgid "grabbed Phantom Zone flag"
+#msgstr ""
+
+#msgid "grabbed Genocide flag"
+#msgstr ""
+
+#msgid "grabbed Jumping flag"
+#msgstr ""
+
+#msgid "grabbed Identify flag"
+#msgstr ""
+
+#msgid "rabbed Colorblindness flag"
+#msgstr ""
+
+#msgid "grabbed Obesity flag"
+#msgstr ""
+
+#msgid "grabbed Left Turn Only flag"
+#msgstr ""
+
+#msgid "grabbed Right Turn Only flag"
+#msgstr ""
+
+#msgid "grabbed Momentum flag"
+#msgstr ""
+
+#msgid "grabbed Blindness flag"
+#msgstr ""
+
+#msgid "grabbed Jamming flag"
+#msgstr ""
+
+#msgid "grabbed Wide Angle flag"
+#msgstr ""
+
+# Ostatni hlasky, ktere nelze prelozit
+# Other messages that cannot be translated
+#msgid "Pausing in"
+#msgstr ""
+
+#msgid "Press Pause to resume"
+#msgstr ""
+
+#msgid "Got shot by "
+#msgstr ""
+
+#msgid "got skewred by "
+#msgstr ""
 
 msgid "is always up on the radar.  The yellow V is your field of view.  North"
 msgstr ""

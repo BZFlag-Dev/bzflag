@@ -7,6 +7,9 @@ msgstr "Hrat"
 msgid "Find Server"
 msgstr "Nalezt server"
 
+#msgid "translator"
+#msgstr ""
+
 msgid "Connect"
 msgstr "Pripojit se"
 
@@ -292,6 +295,9 @@ msgstr "Posuv zaznamu zprav vpred:"
 msgid "Slow Keyboard Motion:"
 msgstr "Pomaly posuv tanku:"
 
+#msgid "SelfDestruct/Cancel:"
+#msgstr ""
+
 msgid "loading {1}"
 msgstr "nacitam {1}"
 
@@ -388,6 +394,21 @@ msgstr "Modely Tanku:"
 msgid "Special Thanks:"
 msgstr "Specialni diky:"
 
+#msgid "Silence/UnSilence"
+#msgstr ""
+
+#msgid "Server Admin"
+#msgstr ""
+
+#msgid "Hunt"
+#msgstr ""
+
+#msgid "autopilot enabled"
+#msgstr ""
+
+#msgid "autopilot disabled"
+#msgstr ""
+
 msgid "Send:"
 msgstr "Zaslat:"
 
@@ -466,6 +487,9 @@ msgstr "%.1f"
 msgid "Ready"
 msgstr "Pripraven"
 
+#msgid "Rabbit Chase"
+#msgstr ""
+
 msgid "Reloaded in %.1f"
 msgstr "Nabiti za %.1f"
 
@@ -495,6 +519,9 @@ msgstr "{1} vitezstvi do zahozeni spatne vlajky"
 
 msgid "{1} Wins Drops Bad Flag"
 msgstr "{1} vitezstvi do zahozeni spatne vlajky"
+
+#msgid "You are now the rabbit."
+#msgstr ""
 
 msgid "Time limit: {1}"
 msgstr "Casovy limit: {1}"
@@ -544,6 +571,12 @@ msgstr "Konfiguracni soubor: Chyba na radku {1}: Radek je prilis dlouhy"
 msgid "Network: Created local UDP downlink port {1}"
 msgstr "Sit: Vytvoren lokalni UDP downlink port {1}"
 
+#msgid "Using multicast relay"
+#msgstr ""
+
+#msgid "Server did send endpoint information, UDP connection up"
+#msgstr ""
+
 msgid "More Info: [{1}:{2}:{3}]"
 msgstr "Vice informaci: [{1}:{2}:{3}]"
 
@@ -555,6 +588,9 @@ msgstr "Spojeni selhalo."
 
 msgid "Server forced a disconnect"
 msgstr "Server vynutil odpojeni"
+
+#msgid "Server sent UDP request, UDP up. Info: [{1}:{2}:{3}]"
+#msgstr ""
 
 msgid "Rogues not allowed.  Try another team."
 msgstr "Zli nejsou dovoleni. Zkus jiny tym."
@@ -570,6 +606,9 @@ msgstr "Hra je obsazena nebo ukoncena. Zkus to pozdeji."
 
 msgid "Error connecting to server."
 msgstr "Chyba spojeni se serverem"
+
+#msgid "msgid "
+#msgstr ""
 
 msgid "Error downloading world database"
 msgstr "Chyba pri stahovani svetove databaze"
@@ -708,11 +747,92 @@ msgstr "Rizena strela (+GM): Sestreli cil po draze. Zamer pravym tl. mysi. Lze z
 msgid "Laser (+L):  Shoots a laser.  Infinite speed and range but long reload time."
 msgstr "Laser (+L): Strili laser. Nekonecna rychlost a dosah, ale dlouhy cas nabijeni."
 
+#msgid "Velocity (V):  Tank moves faster.  Outrun bad guys."
+#msgstr ""
+
 msgid "Ricochet (+R):  Shots bounce off walls.  Don't shoot yourself!"
 msgstr "Odrazeni strel (+R): Strely se odrazeji od sten. Nesejmi sam sebe!"
 
+#msgid "Useless"
+#msgstr ""
+
+#msgid "Thief"
+#msgstr ""
+
+#msgid "Masquerade"
+#msgstr ""
+
+#msgid "Seer"
+#msgstr ""
+
+#msgid "Angular velocity (A): Tank turns faster.  Dodge quicker."
+#msgstr ""
+
+#msgid "Burrow"
+#msgstr ""
+
+#msgid "Oscillation Overthruster (OO):  Can drive through buildings.  Can't backup or shoot while inside."
+#msgstr ""
+
+#msgid "rapid Fire (F):  Shoots more often.  Shells go faster but not as far."
+#msgstr ""
+
+#msgid "Machine Gun (MG):  Very fast reload and very short range."
+#msgstr ""
+
+#msgid "Guided Missile (GM):  Shots track a target.  Lock on with right button.  Can lock on or retarget after firing."
+#msgstr ""
+
+#msgid "Laser (L):  Shoots a laser.  Infinite speed and range but long reload time."
+#msgstr ""
+
+#msgid "Ricochet (R):  Shots bounce off walls.  Don't shoot yourself!"
+#msgstr ""
+
+#msgid "SuperBullet (SB):  Shoots through buildings.  Can kill Phantom Zone."
+#msgstr ""
+
+#msgid "Invisible Bullet (IB):  Your shots don't appear on other radars.  Can still see them out window."
+#msgstr ""
+
+#msgid "STealth (ST):  Tank is invisible on radar.  Shots are still visible.  Sneak up behind enemies!"
+#msgstr ""
+
+#msgid "Tiny (T):  Tank is small and can get through small openings.  Very hard to hit."
+#msgstr ""
+
+#msgid "Narrow (N):  Tank is super thin.  Very hard to hit from front but is normal size from side.  Can get through small openings."
+#msgstr ""
+
+#msgid "SHield (SH):  Getting hit only drops flag.  Flag flys an extra-long time."
+#msgstr ""
+
+#msgid "SteamRoller (SR):  Destroys tanks you touch but you have to get really close."
+#msgstr ""
+
+#msgid "Shock Wave (SW):  Firing destroys all tanks nearby.  Don't kill teammates!  Can kill tanks on/in buildings."
+#msgstr ""
+
+#msgid "Phantom Zone (PZ):  Teleporting toggles Zoned effect.  Zoned tank can drive through buildings.  Zoned tank can't shoot or be shot (except by superbullet and shock wave)."
+#msgstr ""
+
+#msgid "Genocide (G):  Killing one tank kills that tank's whole team."
+#msgstr ""
+
+#msgid "JumPing (JP):  Tank can jump.  Use Tab key.  Can't steer in the air."
+#msgstr ""
+
+#msgid "IDentify (ID):  Identifies type of nearest flag."
+#msgstr ""
+
+#msgid "CLoaking (CL):  Makes your tank invisible out-the-window.  Still visible on radar."
+#msgstr ""
+
 msgid "SuperBullet (+SB):  Shoots through buildings.  Can kill Phantom Zone."
 msgstr "Super strela (+SB): Strely prochazeji stenami. Lze zabit Prizrak."
+
+#msgid "Team flag:  If it's yours, prevent other teams from taking it.  If it's not take it to your base to capture it!"
+#msgstr ""
 
 msgid "Invisible Bullet (+IB):  Your shots don't appear on other radars.  Can still see them out window."
 msgstr "Neviditelna strela (+IB): Tve strely nebudou videt na radarech ostatnich tanku. Stale je vsak lze videt pred sebou."
@@ -793,6 +913,9 @@ msgstr "Rogues nemaji tymy (dokonce ani ostatni rogues), takze nemohou znicit"
 msgid "teammates and they don't have a team score."
 msgstr "hrace v tymech a nemaji tymove skore."
 
+#msgid "Angular velocity (+A): Tank turns faster.  Dodge quicker."
+#msgstr ""
+
 msgid "There are two styles of play, determined by the server configuration:  capture-"
 msgstr "Existuji dva zpusoby hrani, zavisle na konfiguraci serveru: ziskani-vlajky"
 
@@ -816,6 +939,9 @@ msgstr "musis ji uchopit a prinest do tve zakladny (musis byt na zemi"
 
 msgid "in your base to register the capture).  Capturing a flag destroys all the players"
 msgstr "ve tve zakladne, aby bylo ziskani vlajky platne). Ziskani vlajky znici vsechny hrace"
+
+#msgid "Stealth (+ST):  Tank is invisible on radar.  Shots are still visible.  Sneak up behind enemies!"
+#msgstr ""
 
 msgid "on that team and gives your team score a bonus;  the players will restart on"
 msgstr "v tymu a da tvemu tymu bodovy bonus; hraci zacnou znova v"
@@ -1636,4 +1762,3 @@ msgstr "Sejmut "
 
 msgid "got skewred by "
 msgstr "prospikovan "
-

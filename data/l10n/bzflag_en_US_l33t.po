@@ -41,8 +41,14 @@ msgstr "H31P"
 msgid "Quit"
 msgstr "KwIT"
 
+#msgid "on"
+#msgstr ""
+
 msgid "Dithering:"
 msgstr "dItH3RIng:"
+
+#msgid "off"
+#msgstr ""
 
 msgid "Off"
 msgstr "0pHph"
@@ -109,6 +115,36 @@ msgstr "8RI9h+n355:"
 
 msgid "Sound Volume:"
 msgstr "5OUnD VOlUmE:"
+
+#msgid "Off / Backup Mode"
+#msgstr ""
+
+#msgid "5 Minutes"
+#msgstr ""
+
+#msgid "15 Minutes"
+#msgstr ""
+
+#msgid "30 Minutes"
+#msgstr ""
+
+#msgid "1 Hour"
+#msgstr ""
+
+#msgid "5 Hours"
+#msgstr ""
+
+#msgid "15 Hours"
+#msgstr ""
+
+#msgid "1 day"
+#msgstr ""
+
+#msgid "15 days"
+#msgstr ""
+
+#msgid "30 days"
+#msgstr ""
 
 msgid "UDP network connection:"
 msgstr "uDP nEtw0rK cOnNect1on:"
@@ -643,6 +679,12 @@ msgstr "rIcOCHEt"
 msgid "Super Bullet"
 msgstr "5UpER BuLl3T"
 
+#msgid "Your team's flag:  prevent other teams from capturing it!"
+#msgstr ""
+
+#msgid "Opponent's team flag:  take it to your base to capture it!"
+#msgstr ""
+
 msgid "Invisible Bullet"
 msgstr "InVi$I8L3 Bulle+"
 
@@ -703,6 +745,9 @@ msgstr "8LINDNE$5"
 msgid "Jamming"
 msgstr "jAMMin9"
 
+#msgid "Velocity (V):  Tank moves faster.  Outrun bad guys."
+#msgstr ""
+
 msgid "Wide Angle"
 msgstr "WIde @NglE"
 
@@ -718,8 +763,68 @@ msgstr "M@5Kw3r4dE"
 msgid "Seer"
 msgstr "533R"
 
+#msgid "Angular velocity (A): Tank turns faster.  Dodge quicker."
+#msgstr ""
+
 msgid "Burrow"
 msgstr "8URroW"
+
+#msgid "Oscillation Overthruster (OO):  Can drive through buildings.  Can't backup or shoot while inside."
+#msgstr ""
+
+#msgid "rapid Fire (F):  Shoots more often.  Shells go faster but not as far."
+#msgstr ""
+
+#msgid "Machine Gun (MG):  Very fast reload and very short range."
+#msgstr ""
+
+#msgid "Guided Missile (GM):  Shots track a target.  Lock on with right button.  Can lock on or retarget after firing."
+#msgstr ""
+
+#msgid "Laser (L):  Shoots a laser.  Infinite speed and range but long reload time."
+#msgstr ""
+
+#msgid "Ricochet (R):  Shots bounce off walls.  Don't shoot yourself!"
+#msgstr ""
+
+#msgid "SuperBullet (SB):  Shoots through buildings.  Can kill Phantom Zone."
+#msgstr ""
+
+#msgid "Invisible Bullet (IB):  Your shots don't appear on other radars.  Can still see them out window."
+#msgstr ""
+
+#msgid "STealth (ST):  Tank is invisible on radar.  Shots are still visible.  Sneak up behind enemies!"
+#msgstr ""
+
+#msgid "Tiny (T):  Tank is small and can get through small openings.  Very hard to hit."
+#msgstr ""
+
+#msgid "Narrow (N):  Tank is super thin.  Very hard to hit from front but is normal size from side.  Can get through small openings."
+#msgstr ""
+
+#msgid "SHield (SH):  Getting hit only drops flag.  Flag flys an extra-long time."
+#msgstr ""
+
+#msgid "SteamRoller (SR):  Destroys tanks you touch but you have to get really close."
+#msgstr ""
+
+#msgid "Shock Wave (SW):  Firing destroys all tanks nearby.  Don't kill teammates!  Can kill tanks on/in buildings."
+#msgstr ""
+
+#msgid "Phantom Zone (PZ):  Teleporting toggles Zoned effect.  Zoned tank can drive through buildings.  Zoned tank can't shoot or be shot (except by superbullet and shock wave)."
+#msgstr ""
+
+#msgid "Genocide (G):  Killing one tank kills that tank's whole team."
+#msgstr ""
+
+#msgid "JumPing (JP):  Tank can jump.  Use Tab key.  Can't steer in the air."
+#msgstr ""
+
+#msgid "IDentify (ID):  Identifies type of nearest flag."
+#msgstr ""
+
+#msgid "CLoaking (CL):  Makes your tank invisible out-the-window.  Still visible on radar."
+#msgstr ""
 
 # Flag help
 
@@ -782,6 +887,9 @@ msgstr "pH4nT0m ZONe (+PZ): t3LEpOR+1n9 +09gL3$ z0n3d EPhpH3cT. ZON3D T4nk C4N D
 
 msgid "Genocide (+G):  Killing one tank kills that tank's whole team."
 msgstr "G3NOC1DE (+G): K1Ll1Ng oNe +4nk KilL5 TH4+ T4NK'S Wh0L3 T34M. "
+
+#msgid "Stealth (+ST):  Tank is invisible on radar.  Shots are still visible.  Sneak up behind enemies!"
+#msgstr ""
 
 msgid "JumPing (+JP):  Tank can jump.  Use Tab key.  Can't steer in the air."
 msgstr "jUMPiN9 (+JP): T4Nk C@n JuMP. U53 +4B K3Y. C4N't S+E3R in +H3 4iR."
@@ -1198,14 +1306,402 @@ msgstr "c3NtEr OPH +Eh viEw @R3 +hE M0+IOn cONtR0l BOX3$; w1+hIN +H3 $M@ll B0x0r
 msgid "your tank won't move, outside the large box you don't move any faster than"
 msgstr "J00R +4Nk W0N'T mOve, oUTs1D3 +H3 l4R93 B0Xor J00 dOn't MoV3 AnY PH@5tER +H4n"
 
+#msgid "Toggle Radar Flags:"
+#msgstr ""
+
+#msgid "Toggle Main Flags:"
+#msgstr ""
+
+#msgid "Silience/UnSilence"
+#msgstr ""
+
+#msgid "Silience/UnSilence Key:"
+#msgstr ""
+
+#msgid "Server Command Key:"
+#msgstr ""
+
+#msgid "self destruct/cancel"
+#msgstr ""
+
+# Start serveru
+# Start server
+#msgid "yes"
+#msgstr ""
+
+#msgid "no"
+#msgstr ""
+
+#msgid "Style:"
+#msgstr ""
+
+#msgid "Free for All"
+#msgstr ""
+
+#msgid "Capture the Flag"
+#msgstr ""
+
+#msgid "Max Players:"
+#msgstr ""
+
+#msgid "Max Shots:"
+#msgstr ""
+
+#msgid "Teleporters:"
+#msgstr ""
+
+#msgid "Ricochet:"
+#msgstr ""
+
+#msgid "Jumping:"
+#msgstr ""
+
+#msgid "Superflags:"
+#msgstr ""
+
+#msgid "all flags"
+#msgstr ""
+
+#msgid "good flags only"
+#msgstr ""
+
+#msgid "Max Superflags:"
+#msgstr ""
+
+#msgid "Bad Flag Antidote:"
+#msgstr ""
+
+#msgid "Bad Flag Time Limit:"
+#msgstr ""
+
+#msgid "no limit"
+#msgstr ""
+
+#msgid "15 seconds"
+#msgstr ""
+
+#msgid "30 seconds"
+#msgstr ""
+
+#msgid "60 seconds"
+#msgstr ""
+
+#msgid "180 seconds"
+#msgstr ""
+
+#msgid "Bad Flag Win Limit:"
+#msgstr ""
+
+#msgid "drop after 1 win"
+#msgstr ""
+
+#msgid "drop after 2 wins"
+#msgstr ""
+
+#msgid "drop after 3 wins"
+#msgstr ""
+
+#msgid "Server Visibility:"
+#msgstr ""
+
+#msgid "local host only (ttl=0)"
+#msgstr ""
+
+#msgid "subnet only (ttl=1)"
+#msgstr ""
+
+#msgid "local area (ttl=8)"
+#msgstr ""
+
+#msgid "site (ttl=32)"
+#msgstr ""
+
+#msgid "organization (ttl=64)"
+#msgstr ""
+
+#msgid "continent (ttl=128)"
+#msgstr ""
+
+#msgid "world (ttl=255)"
+#msgstr ""
+
+#msgid "Game Over:"
+#msgstr ""
+
+#msgid "never"
+#msgstr ""
+
+#msgid "after 5 minutes"
+#msgstr ""
+
+#msgid "after 15 minutes"
+#msgstr ""
+
+#msgid "after 60 minutes"
+#msgstr ""
+
+#msgid "after 3 hours"
+#msgstr ""
+
+#msgid "when a player gets +3"
+#msgstr ""
+
+#msgid "when a player gets +10"
+#msgstr ""
+
+#msgid "when a player gets +25"
+#msgstr ""
+
+#msgid "when a team gets +3"
+#msgstr ""
+
+#msgid "when a team gets +10"
+#msgstr ""
+
+#msgid "when a team gets +25"
+#msgstr ""
+
+#msgid "when a team gets +100"
+#msgstr ""
+
+#msgid "Server Reset:"
+#msgstr ""
+
+#msgid "no, quit after game"
+#msgstr ""
+
+#msgid "yes, reset for more games"
+#msgstr ""
+
 msgid "at the edge of the large box.  Moving the mouse above or below the small"
 msgstr "AT +hE 3DGe OPH the L4R93 80x. M0v1NG THe m0US3 @80v3 0R b3L0w tEH 5mALL"
 
 msgid "box moves forward or backward, respectively.  Similarly for left and right."
 msgstr "b0xOR Mov35 FOrW4Rd Or b@CKW@RD, r35p3C+1V3LY. 5im1l4Rly ph0R leph+ @nd R1GHt."
 
+#msgid "cyan"
+#msgstr ""
+
+#msgid "grey"
+#msgstr ""
+
+#msgid "text"
+#msgstr ""
+
 msgid "The distance away from the small box determines the speed."
 msgstr "thE d15+@NC3 4w4y FRoM tH3 $m4LL BoXor DE+3rMine5 +h3 5PE3D."
+
+#msgid "None"
+#msgstr ""
+
+#msgid "Blinking"
+#msgstr ""
+
+#msgid "Underline"
+#msgstr ""
+
+# Identifikace vlajek
+# Flags identification
+#msgid "Closest Flag: High Speed"
+#msgstr ""
+
+#msgid "Closest Flag: Quick Turn"
+#msgstr ""
+
+#msgid "Closest Flag: Oscillation Overthurster"
+#msgstr ""
+
+#msgid "Closest Flag: Rapid Fire"
+#msgstr ""
+
+#msgid "Closest Flag: Machine Gun"
+#msgstr ""
+
+#msgid "Closest Flag: Guided Missile"
+#msgstr ""
+
+#msgid "Closest Flag: Laser"
+#msgstr ""
+
+#msgid "Closest Flag: Ricochet"
+#msgstr ""
+
+#msgid "Closest Flag: Super Bullet"
+#msgstr ""
+
+#msgid "Closest Flag: Stealth"
+#msgstr ""
+
+#msgid "Closest Flag: Cloaking"
+#msgstr ""
+
+#msgid "Closest Flag: Invisible Bullet"
+#msgstr ""
+
+#msgid "Closest Flag: Tiny"
+#msgstr ""
+
+#msgid "Closest Flag: Narrow"
+#msgstr ""
+
+#msgid "Closest Flag: Shield"
+#msgstr ""
+
+#msgid "Closest Flag: Steamroller"
+#msgstr ""
+
+#msgid "Closest Flag: Shock Wave"
+#msgstr ""
+
+#msgid "Closest Flag: Phantom Zone"
+#msgstr ""
+
+#msgid "Closest Flag: Genocide"
+#msgstr ""
+
+#msgid "Closest Flag: Jumping"
+#msgstr ""
+
+#msgid "Closest Flag: Identify"
+#msgstr ""
+
+#msgid "Closest Flag: Colorblindness"
+#msgstr ""
+
+#msgid "Closest Flag: Obesity"
+#msgstr ""
+
+#msgid "Closest Flag: Left Turn Only"
+#msgstr ""
+
+#msgid "Closest Flag: Right Turn Only"
+#msgstr ""
+
+#msgid "Closest Flag: Momentum"
+#msgstr ""
+
+#msgid "Closest Flag: Blindness"
+#msgstr ""
+
+#msgid "Closest Flag: Jamming"
+#msgstr ""
+
+#msgid "Closest Flag: Wide Angle"
+#msgstr ""
+
+# Ostatni
+# Other
+#msgid "Server started."
+#msgstr ""
+
+#msgid "Shot myself"
+#msgstr ""
+
+# !!! Hlaseni nize nelze prelozit :-(
+# !!! Messages below cannot be translated :-(
+
+# Informace o vlajce, kterou sebrali hraci
+# Informations about flags grabbed by opponents
+#msgid "grabbed High Speed flag"
+#msgstr ""
+
+#msgid "grabbed Quick Turn flag"
+#msgstr ""
+
+#msgid "grabbed Oscillation Overthurster flag"
+#msgstr ""
+
+#msgid "grabbed Rapid Fire flag"
+#msgstr ""
+
+#msgid "grabbed Machine Gun flag"
+#msgstr ""
+
+#msgid "grabbed Guided Missile flag"
+#msgstr ""
+
+#msgid "grabbed Laser flag"
+#msgstr ""
+
+#msgid "grabbed Ricochet flag"
+#msgstr ""
+
+#msgid "grabbed Super Bullet flag"
+#msgstr ""
+
+#msgid "grabbed Stealth flag"
+#msgstr ""
+
+#msgid "grabbed Cloaking flag"
+#msgstr ""
+
+#msgid "grabbed Invisible Bullet flag"
+#msgstr ""
+
+#msgid "grabbed Tiny flag"
+#msgstr ""
+
+#msgid "grabbed Narrow flag"
+#msgstr ""
+
+#msgid "grabbed Shield flag"
+#msgstr ""
+
+#msgid "grabbed Steamroller flag"
+#msgstr ""
+
+#msgid "grabbed Shock Wave flag"
+#msgstr ""
+
+#msgid "grabbed Phantom Zone flag"
+#msgstr ""
+
+#msgid "grabbed Genocide flag"
+#msgstr ""
+
+#msgid "grabbed Jumping flag"
+#msgstr ""
+
+#msgid "grabbed Identify flag"
+#msgstr ""
+
+#msgid "rabbed Colorblindness flag"
+#msgstr ""
+
+#msgid "grabbed Obesity flag"
+#msgstr ""
+
+#msgid "grabbed Left Turn Only flag"
+#msgstr ""
+
+#msgid "grabbed Right Turn Only flag"
+#msgstr ""
+
+#msgid "grabbed Momentum flag"
+#msgstr ""
+
+#msgid "grabbed Blindness flag"
+#msgstr ""
+
+#msgid "grabbed Jamming flag"
+#msgstr ""
+
+#msgid "grabbed Wide Angle flag"
+#msgstr ""
+
+# Ostatni hlasky, ktere nelze prelozit
+# Other messages that cannot be translated
+#msgid "Pausing in"
+#msgstr ""
+
+#msgid "Press Pause to resume"
+#msgstr ""
+
+#msgid "Got shot by "
+#msgstr ""
+
+#msgid "got skewred by "
+#msgstr ""
 
 # Help 8 Strings
 
