@@ -832,25 +832,25 @@ static void sendMessageToListServerForReal(int index)
     char gameInfo[PingPacketHexPackedSize + 1];
     pingReply.packHex(gameInfo);
 
-    // send ADD message
+    // send ADD message (must send blank line)
     sprintf(msg, "GET %s?action=ADD&nameport=%s&version=%s&gameinfo=%s&title=%s HTTP/1.1\r\n"
-      "Host: %s\r\n",
+      "Host: %s\r\n\r\n",
       link.pathname.c_str(), clOptions->publicizedAddress.c_str(),
       getServerVersion(), gameInfo,
       url_encode(clOptions->publicizedTitle).c_str(),
       link.hostname.c_str());
   }
   else if (strcmp(link.nextMessage, "REMOVE") == 0) {
-    // send REMOVE
+    // send REMOVE (must send blank line)
     sprintf(msg, "GET %s?action=REMOVE&nameport=%s HTTP/1.1\r\n"
-      "Host: %s\r\n",
+      "Host: %s\r\n\r\n",
       link.pathname.c_str(),
       clOptions->publicizedAddress.c_str(),
       link.hostname.c_str());
   }
   DEBUG3("%s\n",msg);
   send(link.socket, msg, strlen(msg), 0);
-
+  
   // hangup (we don't care about replies)
   closeListServer(index);
 }
