@@ -4,7 +4,16 @@
 BZFlag 2.0.1
 ------------
 
-* Added /mute, /unmute and a TALK perm - Angelina Carlton	
+* Added /mute, /unmute and a TALK perm - Angelina Carlton
+* Bzadmin does not require opengl headers - Alfredo Tupone
+* bzfs handle both -mp specification - Alfredo Tupone
+* bzfs correctly handles ban time - Alfredo Tupone, Julio Jimenez
+* bzfs no more put jittered players as Not Responding - Alfredo Tupone
+* bzfs stop shot from dead player - Alfredo Tupone
+* Roaming switching between player goes even on Dead Player - Alfredo Tupone
+* Fixed bzfs crash associated to "Error adding player" - Alfredo Tupone
+* bzflag count a single -1 score for a tk (like server does) - Alfredo Tupone
+* Fixes on hostban handling - Alfredo Tupone
 * Fixed force feedback on Windows - Scott Wichser
 * New Kick/Ban options using slot numbers (rendered in client) - Julio Jimenez
 * Added EndShot cheat detection - Julio Jimenez
