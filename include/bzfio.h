@@ -18,8 +18,6 @@
 #define BZF_MYIO
 
 void formatDebug(const char* fmt, ...);
-void initDebug();
-void termDebug();
 
 /* egcs headers on linux define NULL as (void*)0.  that's a no no in C++. */
 #if defined(NULL)
