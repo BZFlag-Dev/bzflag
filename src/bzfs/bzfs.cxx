@@ -3019,17 +3019,20 @@ static void parseCommand(const char *message, int t)
 }
 
 
+/** observers and paused players should not be sending updates.. punish the
+ * ones that are paused since they are probably cheating.
+ */
 static bool invalidPlayerAction(PlayerInfo &p, int t, const char *action) {
-  if (p.isNotPlaying()) {
-    if (!p.isPaused()) {
-      DEBUG1("Player %s tried to %s while not playing\n", p.getCallSign(), action);
-    } else {
+  if (p.isObserver() || p.isPaused()) {
+    if (p.isPaused()) {
       char buffer[MessageLen];
       DEBUG1("Player %s tried to %s while paused\n", p.getCallSign(), action);
       snprintf(buffer, MessageLen, "Autokick: Looks like you tried to %s while paused.", action);
       sendMessage(ServerPlayer, t, buffer, true);
       snprintf(buffer, MessageLen, "Invalid attempt to %s while paused", action);
       removePlayer(t, buffer);
+    } else {
+      DEBUG1("Player %s tried to %s while not playing\n", p.getCallSign(), action);
     }
     return true;
   }
