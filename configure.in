@@ -297,7 +297,7 @@ LIBS="-framework OpenGL $GLIBS $ac_func_search_save_LIBS"
 AC_TRY_LINK([#include <OpenGL/gl.h>],
             [glBegin(GL_POINTS)],
             [ac_cv_search_glBegin="-framework OpenGL"])
-for ac_lib in opengl32 GL2 GL; do
+for ac_lib in opengl32 GL GL2; do
   LIBS="-l$ac_lib $GLIBS $ac_func_search_save_LIBS"
   AC_TRY_LINK([#include <GL/gl.h>],
               [glBegin(GL_POINTS)],
@@ -314,7 +314,7 @@ if test "$ac_cv_search_glBegin" != no; then
   AC_TRY_LINK([#include <OpenGL/glu.h>],
               [gluScaleImage(GL_RED,0,0,GL_INT,0,0,0,GL_INT,0)],
               [ac_cv_search_gluScaleImage="-framework OpenGL"])
-  for ac_lib in glu32 GLU GL; do
+  for ac_lib in glu32 GL GLU; do
     LIBS="-l$ac_lib $GLIBS $ac_func_search_save_LIBS"
     AC_TRY_LINK([#include <GL/glu.h>],
                 [gluScaleImage(GL_RED,0,0,GL_INT,0,0,0,GL_INT,0)],
