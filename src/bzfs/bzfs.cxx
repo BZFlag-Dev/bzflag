@@ -186,7 +186,8 @@ struct CmdLineOptions
     teamKillerDies(true), printScore(false), publicizeServer(false), publicizedAddressGiven(false), debug(0)
   {
     int i;
-    for (std::map<std::string, FlagDesc*>::iterator it = FlagDesc::flagMap.begin(); it != FlagDesc::flagMap.end(); ++it) {
+    for (std::map<std::string, FlagDesc*>::iterator it = FlagDesc::flagMap.begin(); 
+	 it != FlagDesc::flagMap.end(); ++it) {
 	flagCount[it->second] = 0;
 	flagLimit[it->second] = -1;
 	flagDisallowed[it->second] = false;
@@ -4248,7 +4249,7 @@ static void shotFired(int playerIndex, void *buf, int len)
 
   // verify player flag
   if ((firingInfo.flag != Flags::Null) && (firingInfo.flag != flag[shooter.flag].flag.desc)) {
-    DEBUG2("Player %s [%d] shot flag mismatch %d %d\n", shooter.callSign,
+    DEBUG2("Player %s [%d] shot flag mismatch %s %s\n", shooter.callSign,
 	   playerIndex, firingInfo.flag->flagAbbv, flag[shooter.flag].flag.desc->flagAbbv);
     firingInfo.flag = Flags::Null;
     repack = true;
@@ -6410,8 +6411,11 @@ static void parse(int argc, char **argv, CmdLineOptions &options)
   // rogues don't get a flag
   if (options.gameStyle & TeamFlagGameStyle)
     numFlags += NumTeams - 1;
-  for (i = int(FirstFlag); i <= int(LastFlag); i++)
-    numFlags += options.flagCount[i];
+  for (std::map<std::string, FlagDesc*>::iterator it = FlagDesc::flagMap.begin(); 
+       it != FlagDesc::flagMap.end(); ++it) {
+    numFlags += options.flagCount[it->second];
+  }
+
   flag = new FlagInfo[numFlags];
 
   // prep flags
@@ -6453,10 +6457,12 @@ static void parse(int argc, char **argv, CmdLineOptions &options)
     f = 4;
   }
 
-  for (i = int(FirstFlag); i <= int(LastFlag); i++) {
-    if (options.flagCount[i] > 0) {
-	  for (int j = 0; j < options.flagCount[i]; j++) {
-		  if (setRequiredFlag(flag[f], (FlagId)i))
+
+  for (std::map<std::string, FlagDesc*>::iterator it = FlagDesc::flagMap.begin(); 
+       it != FlagDesc::flagMap.end(); ++it) {
+    if (options.flagCount[it->second] > 0) {
+	  for (int j = 0; j < options.flagCount[it->second]; j++) {
+		  if (setRequiredFlag(flag[f], it->second))
 			f++;
 	  }
 	  options.gameStyle |= int(SuperFlagGameStyle);
@@ -6999,7 +7005,6 @@ int main(int argc, char **argv)
 
   // free misc stuff
   delete[] flag;  flag = NULL;
-  delete[] allowedFlags;  allowedFlags = NULL;
   delete world;
   delete[] worldDatabase;
 #if defined(_WIN32)
