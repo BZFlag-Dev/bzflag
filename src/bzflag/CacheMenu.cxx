@@ -127,7 +127,7 @@ CacheMenu::CacheMenu()
   // Update Download Cache
   updateDownloadCache = label = new HUDuiLabel;
   label->setFontFace(fontFace);
-  label->setLabel("Update Download Cache");
+  label->setLabel("Update Downloads");
   list.push_back(label);
 
 
@@ -159,15 +159,9 @@ void CacheMenu::execute()
   else if (focus == updateDownloadCache) {
     bool rebuild;
     if (Downloads::updateDownloads(rebuild)) {
-      if (!rebuild) {
-        controlPanel->addMessage("Updated Download Cache");
-      } else {
+      controlPanel->addMessage("Updated Downloads");
+      if (rebuild) {
         setSceneDatabase();
-        if (debugLevel > 0) {
-          controlPanel->addMessage("Updated Download Cache  (Rebuilt Scene)");
-        } else {
-          controlPanel->addMessage("Updated Download Cache");
-        }
       }
     } else {
       controlPanel->addMessage("No updates required");

@@ -177,16 +177,18 @@ bool Downloads::updateDownloads(bool& rebuild)
         }
       }
 
+      // get 'notUsed' before sticking the file in the cache
       const std::string localname = CACHEMGR.getLocalName(texUrl);
+      const bool notUsed = (TEXMGR.getTextureID(localname.c_str(), false) < 0);
       
       // download the file and update the cache
       if (getAndCacheURL(texUrl)) {
-        // if the texture isn't being used, call for a rebuild
-        if (TEXMGR.getTextureID(localname.c_str(), false) < 0) {
-          rebuild = true;
-        }
         updated = true;
-        TEXMGR.reloadTextureImage(localname); // reload with the new image
+        if (notUsed) {
+          rebuild = true; 
+        } else {
+          TEXMGR.reloadTextureImage(localname); // reload with the new image
+        }
         MATERIALMGR.setTextureLocal(texUrl, localname); // if it wasn't cached
       }
     }
