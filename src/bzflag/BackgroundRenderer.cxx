@@ -109,6 +109,11 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
     resizeSky();
   }
 
+  // initialize the celestial vectors
+  static const float up[3] = { 0.0f, 0.0f, 1.0f };
+  memcpy(sunDirection, up, sizeof(float[3]));
+  memcpy(moonDirection, up, sizeof(float[3]));
+
   // make ground materials
   setupGroundMaterials();
 
@@ -1465,8 +1470,8 @@ void BackgroundRenderer::doInitDisplayLists()
   // arguments.
   //
 
-  static const float up[3] = { 0.0f, 0.0f, 1.0f };
-  makeCelestialLists(renderer, up, up);
+//  static const float up[3] = { 0.0f, 0.0f, 1.0f };
+  makeCelestialLists(renderer, sunDirection, moonDirection);
 }
 
 
