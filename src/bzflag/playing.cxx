@@ -1704,9 +1704,18 @@ static void		doAutoPilot(float &rotation, float &speed)
 	if (rotation > 1.0f * M_PI) rotation -= 2.0f * M_PI;
 	speed = M_PI/2.0f - fabs(rotation);
       }
-      else {
-	//figure out my rotation to my target
+      else { //figure out my rotation to my target
 	const float *tp = player[target]->getPosition();
+	float enemyPos[3];
+	//toss in some lag adjustment - 100 millis
+	memcpy(enemyPos,tp,sizeof(enemyPos));
+	const float *tv = player[target]->getVelocity();
+	enemyPos[0] += 0.1f * tv[0];
+	enemyPos[1] += 0.1f * tv[1];
+	enemyPos[2] += 0.1f * tv[2];
+	if (enemyPos[2] < 0.0f) //Roger doesn't worry about burrow
+	  enemyPos[2] = 0.0;
+
 	enemyAzimuth = atan2f(tp[1] - pos[1], tp[0] - pos[0]);
 	rotation = enemyAzimuth - myTank->getAngle();
 	if (rotation < -1.0f * M_PI) rotation += 2.0f * M_PI;
@@ -1738,8 +1747,8 @@ static void		doAutoPilot(float &rotation, float &speed)
 	  float enemyUnitVec[2] = { cos(enemyAzimuth), sin(enemyAzimuth) };
 	  float myUnitVec[2] = { cos(myAzimuth), sin(myAzimuth) };
 	  float dotProd = (myUnitVec[0]*enemyUnitVec[0] + myUnitVec[1]*enemyUnitVec[1]);
-	  if (dotProd < 0.95f) {
-	    //if target is more than 15 degrees away, turn as fast as you can
+	  if (dotProd < 0.866f) {
+	    //if target is more than 30 degrees away, turn as fast as you can
 	    rotation *= M_PI / (2.0f * fabs(rotation));
 	    speed = dotProd; //go forward inverse rel to how much you need to turn
 	  }
