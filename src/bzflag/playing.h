@@ -89,6 +89,7 @@ void handleFlagDropped(Player* tank);
 void setTarget();
 bool shouldGrabMouse();
 void setRoamingLabel();
+void drawFrame(const float dt);
 
 extern HUDRenderer	*hud;
 extern char		messageMessage[PlayerIdPLen + MessageLen];

@@ -25,6 +25,7 @@
 
 /* local implementation headers */
 #include "playing.h"
+#include "HUDDialogStack.h"
 
 
 // FIXME - someone write a better explanation
@@ -66,7 +67,7 @@ static void printAuthNotice();
 static bool getFileTime(const std::string& url, time_t& t);
 static bool getAndCacheURL(const std::string& url);
 static bool authorizedServer(const std::string& url);
-
+static void setHudMessage(const std::string& msg);
 
 void Downloads::doDownloads()
 {
@@ -242,6 +243,8 @@ static void printAuthNotice()
 
 static bool getFileTime(const std::string& url, time_t& t)
 {
+  setHudMessage("Download DNS check...");
+  
   URLManager& URLMGR = URLManager::instance();
   if (URLMGR.getURLHeader(url)) {
     URLMGR.getFileTime(t);
@@ -250,12 +253,16 @@ static bool getFileTime(const std::string& url, time_t& t)
     t = 0;
     return false;
   }
+
+  setHudMessage("");
 }
 
 
 static bool getAndCacheURL(const std::string& url)
 {
   bool result = false;
+  
+  setHudMessage("Download DNS check...");
   
   URLManager& URLMGR = URLManager::instance();
   URLMGR.setProgressFunc(curlProgressFunc, NULL);
@@ -287,6 +294,8 @@ static bool getAndCacheURL(const std::string& url)
 
   URLMGR.setProgressFunc(NULL, NULL);
 
+  setHudMessage("");
+
   return result;
 }
 
@@ -304,8 +313,10 @@ static bool authorizedServer(const std::string& url)
   if (BzfNetwork::parseURL(url, protocol, hostname, port, path) &&
       ((protocol == "http") || (protocol == "ftp")) &&
       (port >= 1) && (port <= 65535)) {
+    setHudMessage("Access DNS check...");
     Address address(hostname); // get the address  (BLOCKING)
     ip = address.getDotNotation();
+    setHudMessage("");
   }
 
   // make the list of strings to check  
@@ -328,6 +339,14 @@ static bool authorizedServer(const std::string& url)
   }
   
   return true;
+}
+
+
+static void setHudMessage(const std::string& msg)
+{
+  HUDDialogStack::get()->setFailedMessage(msg.c_str());
+  drawFrame(0.0f);
+  return;
 }
 
 

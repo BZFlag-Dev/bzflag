@@ -18,9 +18,7 @@
 #include <vector>
 
 /* common implementation headers */
-//#include "BundleMgr.h"
 #include "StateDatabase.h"
-//#include "TextUtils.h"
 #include "FontManager.h"
 #include "SceneRenderer.h"
 
@@ -131,7 +129,14 @@ CacheMenu::CacheMenu()
   list.push_back(label);
 
 
-  initNavigation(list, 1, list.size() - 1);
+  // Failed Message  (download status)
+  failedMessage = new HUDuiLabel;
+  failedMessage->setFontFace(fontFace);
+  failedMessage->setString("");
+  list.push_back(failedMessage);
+
+
+  initNavigation(list, 1, list.size() - 2);
 
   return;
 }
@@ -167,6 +172,7 @@ void CacheMenu::execute()
       setSceneDatabase();
       controlPanel->addMessage("Rebuilt scene");
     }
+    setFailedMessage("");
   }
   else if (focus == clearDownloadCache) {
     const std::string oldSize = BZDB.get("maxCacheMB");
@@ -189,9 +195,22 @@ void CacheMenu::execute()
 }
 
 
+void CacheMenu::setFailedMessage(const char* msg)
+{
+  failedMessage->setString(msg);
+
+  FontManager &fm = FontManager::instance();
+  const float width = fm.getStrLength(MainMenu::getFontFace(),
+	failedMessage->getFontSize(), failedMessage->getString());
+  failedMessage->setPosition(center - 0.5f * width, failedMessage->getY());
+}
+
+
 void CacheMenu::resize(int width, int height)
 {
   HUDDialog::resize(width, height);
+
+  center = 0.5f * (float)width;
 
   // use a big font for title, smaller font for the rest
   const float titleFontSize = (float)height / 15.0f;
@@ -219,7 +238,7 @@ void CacheMenu::resize(int width, int height)
   for (i = 1; i < count; i++) {
     list[i]->setFontSize(fontSize);
     list[i]->setPosition(x, y);
-    if ((i == 2) || (i == 4)) {
+    if ((i == 2) || (i == 4) || (i == 7)) {
       y -= 1.75f * h;
     } else {
       y -= 1.0f * h;
