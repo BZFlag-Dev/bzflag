@@ -3245,7 +3245,7 @@ static void dropFlag(int playerIndex, float pos[3])
 	drpFlag.flag.landingPosition[0] = basePos[flagTeam][0];
 	drpFlag.flag.landingPosition[1] = basePos[flagTeam][1];
 	drpFlag.flag.landingPosition[2] = basePos[flagTeam][2] +
-	  (baseSize[flagTeam][2] > 0 ? 1 : 0);
+	  baseSize[flagTeam][2];
     }
   }
   else

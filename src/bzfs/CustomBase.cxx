@@ -70,7 +70,8 @@ void CustomBase::write(WorldInfo* world) const {
   safetyBasePos[color][0] = 0;
   safetyBasePos[color][1] = 0;
   safetyBasePos[color][2] = 0;
-  world->addBase(pos[0], pos[1], pos[2], rotation, size[0], size[1], (pos[2] > 0.0) ? 1.0f : 0.0f,driveThrough,shootThrough);
+  world->addBase(pos[0], pos[1], pos[2], rotation, size[0], size[1], size[2],
+		 driveThrough, shootThrough);
 }
 
 // Local variables: ***
