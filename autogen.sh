@@ -11,6 +11,6 @@ if [ -z "$1" ] ; then
  echo " ./configure"
  echo " make"
 else
- ./configure
+ ./configure $*
  make
 fi
