@@ -4,6 +4,16 @@
 BZFlag 1.12.0  (was 1.11.x)
 ---------------------------
 
+* Fixed dropping flag while jumping from high places - Alfredo Tupone
+* Sorting Lag Stats by Lag Value - Alfredo Tupone
+* openGL context reloading bug fixed on SDL - Alfredo Tupone
+* Roaming switch between player is now consistent - Alfredo Tupone
+* Compensating jitter in Dead reckoning - Alfredo Tupone
+* Ping packet loss are like high lag for warn/kick - Alfredo Tupone
+* ColorBlindness now disable hunt flashing on radar - Alfredo Tupone
+* Building static with SDL is ok - Alfredo Tupone
+* SDL is the default way of building - Alfredo Tupone
+* Fixing stuck on flipped pyramids - Alfredo Tupone
 * Compressed map data going over the network and into caches - Dave Rodgers
 * Options to disable certain /poll's entirely on a server - Simon Richard Grint
 * Lighting menu option now has "None / Fast / Best" - Dave Rodgers
@@ -12,7 +22,7 @@ BZFlag 1.12.0  (was 1.11.x)
 * Faster zbuffer graphics using octree and dynamic occluders - Dave Rodgers
 * Faster startup times by making the SceneDatabase on the fly - Dave Rodgers
 * Faster collision detection using a precalculated  grid - Dave Rodgers
-* Auto-completion to complete the first few given letters of a callsign - Ian Agar
+* Auto-completion for the first few given letters of a callsign - Ian Agar
 * /clientquery can now be requested on single individuals - Ian Agar
 * Added support for irc-like /me actions and /msg messages - Sean Morrison
 * Seer flag now can see Invisible Bullets - Dave Rodgers
@@ -22,7 +32,7 @@ BZFlag 1.12.0  (was 1.11.x)
 * Added anti perm for pollkick, pollban, kick, ban, deregister - Sean Morrison
 * Added antipoll bzfs anti perm to protect against poll kick/bans - Andrew Heyn
 * Server Start Menu now allows selection between Rabbit Chase styles - Ian Agar
-* Tabbed Message Panel - Scott Wichser, Sean Morrison
+* Tabbed Message Panel - Scott Wichser, Sean Morrison, Alfredo Tupone
 * Fonts settable via BZDB - Daniel Remenak
 * New font management system and fonts - Daniel Remenak, Jeff Myers
 * Reduce client and server network utilization via tolerance tweaking
@@ -41,6 +51,7 @@ BZFlag 1.12.0  (was 1.11.x)
 * Consolidated polling system bzfs options (-poll) - Ian Agar, Sean Morrison
 * Improved server pause cheat detection and reporting - Ian Agar, Sean Morrison
 * Changed the way Roaming keys drives the Observer - Alfredo Tupone 
+* Fixing cross-correlation between driving keys - Alfredo Tupone
 * Added configuration of driving keys - Alfredo Tupone
 * Server is now valgrind-happy - Alfredo Tupone, Daniel Remenak, Sean Morrison
 * Limit quick rejoins - Dave Rodgers
