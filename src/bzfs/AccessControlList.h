@@ -13,24 +13,24 @@
 #ifndef __ACCESSCONTROLLIST_H__
 #define __ACCESSCONTROLLIST_H__
 
-#ifdef _MSC_VER
-#pragma warning( 4: 4786)
-#endif
+#include "common.h"
 
-
+/* system interface headers */
 #include <time.h>
 #include <fstream>
 #include <vector>
 #include <string>
 #include <algorithm>
 
+/* common interface headers */
 #include "global.h"
 #include "network.h"
-
 #include "Address.h"
 #include "TimeKeeper.h"
 
+/* FIXME - needs to come from a public header */
 extern void sendMessage(int playerIndex, PlayerId targetPlayer, const char *message, bool fullBuffer);
+
 
 struct BanInfo
 {
@@ -319,8 +319,7 @@ private:
   std::string banFile;
 };
 
-#else
-class AccessControlList;
+
 #endif /* __ACCESSCONTROLLIST_H__ */
 
 // Local Variables: ***
