@@ -17,6 +17,9 @@
 #ifndef BZF_COMMON_H
 #define	BZF_COMMON_H
 
+// this should always be the very FIRST header
+#include <config.h>
+
 #if (_MSC_VER)
 // turn off bogus `this used in base member initialization list'
 #  pragma warning(disable: 4786)
@@ -30,10 +33,6 @@
 #include <stdarg.h>
 #include <stdio.h>
 
-#ifdef _WIN32
-#  include "win32.h"
-#endif
-#include <config.h>
 #include "bzfio.h"
 
 extern int debugLevel;
@@ -98,23 +97,24 @@ extern int debugLevel;
 #if !defined(_WIN32) && !defined(__APPLE__)
 
 #ifndef BSD
-#ifndef __BEOS__
-#include <values.h>
-#else
-#include <limits.h>
+#  ifndef __BEOS__
+#    include <values.h>
+#  else
+#    include <limits.h>
 /* BeOS: FIXME */
+#    define MAXSHORT SHORT_MAX
+#    define MAXINT INT_MAX
+#    define MAXLONG LONG_MAX
+#  endif /* __BEOS__ */
+#endif /* BSD */
 
-#define MAXSHORT SHORT_MAX
-#define MAXINT INT_MAX
-#define MAXLONG LONG_MAX
-#endif
-#endif
 #include <sys/types.h>
 
 #if defined(__linux) || (defined(__sgi) && !defined(__INTTYPES_MAJOR))
 typedef u_int16_t	uint16_t;
 typedef u_int32_t	uint32_t;
 #endif
+
 #if defined(sun)
 typedef signed short	int16_t;
 typedef ushort_t	uint16_t;
@@ -130,37 +130,82 @@ typedef unsigned char	uint8_t;
 
 // missing constants
 
-  #ifndef MAXFLOAT
-    #define	MAXFLOAT	3.402823466e+38f
-  #endif
+#  ifndef MAXFLOAT
+#    define	MAXFLOAT	3.402823466e+38f
+#  endif
 
-  #ifndef M_PI
-    #define	M_PI		  3.14159265358979323846f
-  #endif
+#  ifndef M_PI
+#    define	M_PI		  3.14159265358979323846f
+#  endif
 
-  #ifndef M_SQRT1_2
-    #define	M_SQRT1_2	0.70710678118654752440f
-  #endif
+#  ifndef M_SQRT1_2
+#    define	M_SQRT1_2	0.70710678118654752440f
+#  endif
 
 // need some integer types
-  #include <inttypes.h>
+#  include <inttypes.h>
 
 // my own strcasecmp, missing in MSL
-  #ifdef __MWERKS__
-    #include "strcasecmp.h"
-  #endif
+#  ifdef __MWERKS__
+#    include "strcasecmp.h"
+#  endif
 
-  #ifndef setenv
-    #define setenv(a,b,c)
-  #endif
+#  ifndef setenv
+#    define setenv(a,b,c)
+#  endif
 
-  #ifndef putenv
-    #define putenv(a)
-  #endif
+#  ifndef putenv
+#    define putenv(a)
+#  endif
 #endif /* defined( macintosh ) || defined( __BEOS__ ) */
 
+/* definitions specific to Windows */
+#ifdef _WIN32
+
+// missing float math functions
+#  ifndef __MINGW32__
+#    define hypotf	(float)hypot
+#    define snprintf	_snprintf
+#  endif /* __MINGW32__ */
+
+// missing constants
+#  ifndef MAXFLOAT
+#    define	MAXFLOAT	3.402823466e+38f
+#  endif
+#  ifndef M_PI
+#    define	M_PI		3.14159265358979323846f
+#  endif
+#  ifndef M_SQRT1_2
+#    define	M_SQRT1_2	0.70710678118654752440f
+#  endif
+
+// missing types
+#  ifndef int16_t
+typedef signed short	int16_t;
+#  endif
+
+#  ifndef uint16_t
+typedef unsigned short	uint16_t;
+#  endif
+
+#  ifndef int32_t
+typedef signed int	int32_t;
+#  endif
+
+#  ifndef uint32_t
+typedef unsigned int	uint32_t;
+#  endif
+
+// there is no sigpipe in Windows
+#  ifndef SIGINT
+#    define SIGPIPE SIGINT
+#  endif
+
+#endif /* _WIN32 */
+
+
 #ifdef countof
-#undef countof
+#  undef countof
 #endif
 #define countof(__x)   (sizeof(__x) / sizeof(__x[0]))
 
