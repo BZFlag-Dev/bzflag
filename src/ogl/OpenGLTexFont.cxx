@@ -419,8 +419,6 @@ OpenGLTexFont::OpenGLTexFont(int dx, int dy, const unsigned char* pixels) :
 
 OpenGLTexFont::OpenGLTexFont(const OpenGLTexFont& f)
 {
-  const float color[3] = {1.0, 1.0, 1.0};
-
   rep = f.rep;
   rep->ref();
   bitmapRep = f.bitmapRep;
@@ -429,7 +427,7 @@ OpenGLTexFont::OpenGLTexFont(const OpenGLTexFont& f)
   height = f.height;
 
   for (unsigned int i=0; i < STORED_COLORS; i++) {
-    setColor(i, color);
+    setColor(i, f.storedColor[i]);
   }
 }
 
@@ -450,6 +448,9 @@ OpenGLTexFont&		OpenGLTexFont::operator=(const OpenGLTexFont& f)
     rep->ref();
     width = f.width;
     height = f.height;
+    for (unsigned int i=0; i < STORED_COLORS; i++) {
+      setColor(i, f.storedColor[i]);
+    }
   }
   return *this;
 }
