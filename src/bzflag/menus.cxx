@@ -612,7 +612,7 @@ class KeyboardMapMenu : public HUDDialog {
     std::map<std::string, keymap>	mappable;
     KeyboardMapMenuDefaultKey		defaultKey;
     HUDuiControl*			reset;
-    BzfKeyMap::Key			editing;
+    int 				editing;
 };
 
 KeyboardMapMenuDefaultKey::KeyboardMapMenuDefaultKey(KeyboardMapMenu* _menu) :
@@ -717,6 +717,8 @@ KeyboardMapMenu::KeyboardMapMenu() : defaultKey(this), editing(BzfKeyMap::LastKe
   initkeymap("silence", 27);
   initkeymap("servercommand", 28);
   initkeymap("hunt", 29);
+
+  editing = -1;
 }
 
 void			KeyboardMapMenu::initkeymap(const std::string& name, int index)
@@ -728,32 +730,11 @@ void			KeyboardMapMenu::initkeymap(const std::string& name, int index)
 
 bool			KeyboardMapMenu::isEditing() const
 {
-  return editing != BzfKeyMap::LastKey;
+  return editing != -1;
 }
 
-void			KeyboardMapMenu::setKey(const BzfKeyEvent& event)
+void			KeyboardMapMenu::setKey(const BzfKeyEvent&/* event*/)
 {
-  if (editing != BzfKeyMap::LastKey) {
-    // check for previous mapping
-    BzfKeyMap& map = getBzfKeyMap();
-    const BzfKeyMap::Key previous = map.isMapped(event);
-
-    // ignore setting to same value
-    if (previous != editing) {
-      // if there was a previous setting remove it
-      if (previous != BzfKeyMap::LastKey)
-	map.unset(previous, event);
-
-      // map new key
-      map.set(editing, event);
-    }
-
-    // not editing anymore
-    editing = BzfKeyMap::LastKey;
-
-    // make sure we update strings
-    update();
-  }
 }
 
 void			KeyboardMapMenu::execute()
@@ -761,32 +742,23 @@ void			KeyboardMapMenu::execute()
   const HUDuiControl* const focus = HUDui::getFocus();
   if (focus == reset) {
     getBzfKeyMap().resetAll();
-    update();
   }
   else {
     // start editing
     std::vector<HUDuiControl*>& list = getControls();
-    editing = BzfKeyMap::LastKey;
-    for (int i = 0; i < (int)BzfKeyMap::LastKey; i++)
-      if (list[i + 2] == focus) {
-	editing = (BzfKeyMap::Key)i;
-	break;
+    std::map<std::string, keymap>::iterator it;
+    for (it = mappable.begin(); it != mappable.end(); it++) {
+      if (list[it->second.index] == focus) {
+	editing = it->second.index;
       }
-
-    BzfKeyMap& map = getBzfKeyMap();
-    if (editing != BzfKeyMap::LastKey) {
-      BzfKeyEvent event;
-      event.ascii = 0;
-      event.button = 0;
-      map.set(editing, event);
-      update();
     }
   }
+  update();
 }
 
 void			KeyboardMapMenu::dismiss()
 {
-  editing = BzfKeyMap::LastKey;
+  editing = -1;
   notifyBzfKeyMapChanged();
 }
 
@@ -851,7 +823,7 @@ void			KeyboardMapMenu::update()
   for (it = mappable.begin(); it != mappable.end(); it++) {
     std::string value = "";
     if (it->second.key1.empty()) {
-      if (it->second.index == (int) editing)
+      if (isEditing() && (it->second.index == editing))
 	value = "???";
       else
 	value = "<not mapped>";
@@ -859,7 +831,7 @@ void			KeyboardMapMenu::update()
       value += it->second.key1;
       if (!it->second.key2.empty()) {
         value += " or " + it->second.key2;
-      } else if (it->second.index == (int) editing) {
+      } else if (isEditing() && (it->second.index == editing)) {
 	value += " or ???";
       }
     }
