@@ -1,3 +1,17 @@
+current bugs
+------------
+- Whenever a V flag is grabbed, a rabbit gets a capture the flag warning
+  sound. Probably because flag id=team id
+
+- messages to all go to player at slot 0. We should probably define some
+  special playerids which refer to no player, every player, team and server.
+  Was this way in 1.8 for Msgmesage I think
+
+- When a rabbit pauses, it seems that it stays a rabbit, although there is
+  code in the client to send a MsgNewRabbit and thus requesting to appoint
+  a new rabbit. Maybe rabbit shouldn't be able to pause anyway?
+
+
 to do list for bzflag
 ---------------------
 
