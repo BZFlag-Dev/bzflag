@@ -72,18 +72,18 @@ public:
    * tracking items may be categorized using a provided group name.  a
    * token is returned that must be used for subsequent updates.
    */
-  unsigned short track(const std::string id, std::string group = std::string());
-  unsigned short track(long int id, std::string group = std::string());
+  unsigned short track(const std::string id, std::string group = std::string(""));
+  unsigned short track(long int id, std::string group = std::string(""));
 
   /** update the position of a tracked item.  returns truthfully
    * whether the update could be performed (i.e. whether the id
    * existed).  the token and string id are both required for
    * validation.
    */
-  bool update(unsigned short int token, const std::string id, const double position[3], std::string group = std::string());
-  bool update(unsigned short int token, const std::string id, const float position[3], std::string group = std::string());
-  bool update(unsigned short int token, long int id, const double position[3], std::string group = std::string());
-  bool update(unsigned short int token, long int id, const float position[3], std::string group = std::string());
+  bool update(unsigned short int token, const std::string id, const double position[3], std::string group = std::string(""));
+  bool update(unsigned short int token, const std::string id, const float position[3], std::string group = std::string(""));
+  bool update(unsigned short int token, long int id, const double position[3], std::string group = std::string(""));
+  bool update(unsigned short int token, long int id, const float position[3], std::string group = std::string(""));
 
   /** add a waypoint to the tracker so that it can calculate shortest
    * paths better.  A negative distance will cause the real distance
@@ -97,22 +97,22 @@ public:
   /** stop tracking something if it was being tracked.  the token and
    * string id are both required for validation.
    */
-  bool forget(unsigned short int token, const std::string id, std::string group = std::string());
-  bool forget(unsigned short int token, long int id, std::string group = std::string());
+  bool forget(unsigned short int token, const std::string id, std::string group = std::string(""));
+  bool forget(unsigned short int token, long int id, std::string group = std::string(""));
 
   /** compute the simple distance between two tracked items given their tokens.
    */
-  double distanceBetween(unsigned short int fromToken, unsigned short int toToken, std::string fromGroup=std::string(), std::string toGroup=std::string()) const;
+  double distanceBetween(unsigned short int fromToken, unsigned short int toToken, std::string fromGroup=std::string(""), std::string toGroup=std::string("")) const;
 
   /** compute the shortest distance between two tracked items,
    * utilizing available waypoint shortcuts.
    */
-  double waypointDistance(unsigned short int fromToken, unsigned short int toToken, std::string fromGroup=std::string(), std::string toGroup=std::string()) const;
+  double waypointDistance(unsigned short int fromToken, unsigned short int toToken, std::string fromGroup=std::string(""), std::string toGroup=std::string("")) const;
 
   /** returns a count of how many objects are being tracked in a
    * particular group.
    */
-  unsigned short int trackedCount(std::string group = std::string()) const;
+  unsigned short int trackedCount(std::string group = std::string("")) const;
 
 };
 
