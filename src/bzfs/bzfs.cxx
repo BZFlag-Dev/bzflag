@@ -2135,6 +2135,7 @@ static boolean serverStart()
       close(udpSocket);
       return False;
     }
+    addr.sin_port = htons(wksPort);
     if (bind(udpSocket, (struct sockaddr *) &addr, sizeof(addr)) == -1) {
       nerror("couldn't bind udp listen port");
       close(wksSocket);
@@ -3019,11 +3020,13 @@ static void acceptClient()
     serverAddr.sin_port = htons(reconnectPort);
 
   // send server version and which port to reconnect to
-  char buffer[8 + sizeof(serverAddr.sin_port) + sizeof(clientAddr.sin_addr) + sizeof(clientAddr.sin_port)];
+  char buffer[8 + sizeof(serverAddr.sin_port)];
+  // char buffer[8 + sizeof(serverAddr.sin_port) + sizeof(clientAddr.sin_addr) + sizeof(clientAddr.sin_port)];
   memcpy(buffer, ServerVersion, 8);
   memcpy(buffer + 8, &serverAddr.sin_port, sizeof(serverAddr.sin_port));
-  memcpy(buffer + 8 + sizeof(serverAddr.sin_port), &clientAddr.sin_addr, sizeof(clientAddr.sin_addr));
-  memcpy(buffer + 8 + sizeof(serverAddr.sin_port) + sizeof(clientAddr.sin_addr), &clientAddr.sin_port, sizeof(clientAddr.sin_port));
+  // FIXME add new client server welcome packet here when client code is ready
+  //memcpy(buffer + 8 + sizeof(serverAddr.sin_port), &clientAddr.sin_addr, sizeof(clientAddr.sin_addr));
+  //memcpy(buffer + 8 + sizeof(serverAddr.sin_port) + sizeof(clientAddr.sin_addr), &clientAddr.sin_port, sizeof(clientAddr.sin_port));
   send(fd, (const char*)buffer, sizeof(buffer), 0);
 
   // don't wait for client to reconnect here in case the client
