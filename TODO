@@ -8,6 +8,8 @@ THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
 
 THESE ARE LOWER PRIORITY
 
+* Send world weapon 'tilt' info over the wire for saving maps
+
 * look closely at how local and global logins / groups interact:
   - add option for non-public servers to use global logins? (match servers)
   - add option for public-servers to not use global logins?
