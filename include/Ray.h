@@ -14,6 +14,7 @@
 #define	BZF_RAY_H
 
 #include "common.h"
+#include <string.h> // for memset()
 
 /** Encapsulates a semi-infinite ray. */
 
