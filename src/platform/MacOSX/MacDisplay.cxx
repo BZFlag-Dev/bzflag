@@ -57,7 +57,6 @@ bool MacDisplay::getEvent (BzfEvent &bzf_event) const {
   const ::Boolean		removeEventFromQueue = true;
 
   /* initialize the event for safety */
-  bzf_event.type = 0;
   bzf_event.keyDown.ascii = 0;
   bzf_event.keyDown.shift = 0;
 
