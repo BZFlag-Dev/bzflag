@@ -105,21 +105,6 @@ extern int debugLevel;
 #  define	tanf		(float)tan
 #endif
 
-#if 0
-extern "C" {
-  inline float acosf(float x) {
-    return (float) acos( (double) x);
-  }
-
-  inline float atanf(float x) {
-    return (float) atan( (double) x);
-  }
-
-  inline float asinf(float x) {
-    return (float) asin( (double) x);
-  }
-}
-#endif
 
 // random number stuff
 #define bzfrand()	((double)rand() / ((double)RAND_MAX + 1.0))
