@@ -12,6 +12,10 @@
 
 static const char copyright[] = "Copyright (c) 1993 - 2003 Tim Riker";
 
+#ifdef _WIN32
+#pragma warning( 4 : 4786 )
+#endif
+
 // system includes
 #include <deque>
 #include <stdio.h>
@@ -22,7 +26,6 @@ static const char copyright[] = "Copyright (c) 1993 - 2003 Tim Riker";
 #include <sys/types.h>
 #include <time.h>
 #ifdef _WIN32
-#pragma warning( 4 : 4786 )
 #define _WINSOCKAPI_
 #include <shlobj.h>
 #include <sys/types.h>
@@ -526,6 +529,12 @@ bool			ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
 
   if (sendIt) {
     std::string message = hud->getComposeString();
+    std::vector<std::string> v = string_util::tokenize(message," \t");
+    for (std::vector<std::string>::iterator it = v.begin(); it != v.end(); ++it) {
+	    std::string s = *it;
+	    cout << s << std::endl;
+    }
+
     if (message.length() > 0) {
       const char* silence = message.c_str();
       if (strncmp(silence, "SILENCE", 7) == 0) {
