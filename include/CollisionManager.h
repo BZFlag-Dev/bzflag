@@ -55,7 +55,7 @@ typedef struct {
 
 // well you know my name is Simon, and I like to do drawings
 typedef void (*DrawLinesFunc)
-  (int pointCount, const float (*points)[3], int color);
+  (int pointCount, float (*points)[3], int color);
 
 
 class CollisionManager {
