@@ -212,7 +212,7 @@ Server::Server(const char* inName,
 Server::~Server()
 {
   if (debug >= 1)
-    fprintf(stderr, "removed server: %s\n", address);
+    fprintf(stderr, "removed server: %s\n", name);
 
   free(title);
   free(gameInfo);
@@ -249,7 +249,7 @@ void Server::setStale()
   if (fresh) {
     unref();
     if (debug >= 1)
-      fprintf(stderr, "server %s is stale\n", address);
+      fprintf(stderr, "server %s is stale\n", name);
   }
   fresh = False;
 }
@@ -259,7 +259,7 @@ void Server::setFresh()
   if (!fresh) {
     ref();
     if (debug >= 1)
-      fprintf(stderr, "server %s is fresh\n", address);
+      fprintf(stderr, "server %s is fresh\n", name);
   }
   time = TimeKeeper::getCurrent();
   fresh = True;
@@ -671,6 +671,8 @@ static boolean scheduleServerTest(Server* server)
   addr.sin_family = AF_INET;
   addr.sin_port = htons(port);
   addr.sin_addr = Address::getHostAddress(server->getName());
+  if (addr.sin_addr.s_addr == 0)
+    return False;
   sprintf(server->address, "%s", inet_ntoa(addr.sin_addr)); // FIXME this will bomb on ipv6
   if (connect(fd, (CNCTType*)&addr, sizeof(addr)) < 0) {
 #if defined(_WIN32)
@@ -882,14 +884,13 @@ static boolean startReplyClient(int index)
     numAddsTotal++;
 
     // looks like a server requesting to add itself
-    // ADD <name> <version> <build> <gameinfo> <title>
+    // ADD <name> <build> <version> <gameinfo> <title>
     if (!parseRequest(request, args, 5)) {
       numAddsBad++;
       return False;
     }
 
-    client[index].buffer[0] = (char)addServer(args[0], args[2],
-						args[1], args[3], args[4]);
+    client[index].buffer[0] = (char)addServer(args[0], args[2], args[1], args[3], args[4]);
     client[index].offset = 0;
     client[index].length = 1;
     return True;
@@ -990,7 +991,7 @@ static boolean startReplyClient(int index)
     sprintf(client[index].buffer,
 				"HTTP/1.1 200 OK\r\n"
 				"Date: %s\r\n"
-				"Server: bzfls/%d.%d%c.%d\r\n"
+				"Server: bzfls/%d.%d%c%d\r\n"
 				"Last-Modified: %s\r\n"
 				"Connection: close\r\n"
 				"Content-Type: text/plain\r\n"
