@@ -25,6 +25,7 @@
 // Common interface headers
 #include "TimeKeeper.h"
 #include "StateDatabase.h"
+#include "BZDBCache.h"
 #include "bzfgl.h"
 #include "TextureManager.h"
 #include "SceneRenderer.h"
@@ -164,7 +165,9 @@ void TrackMarks::update()
 void TrackMarks::render()
 {
   TrackFadeTime = BZDB.eval(StateDatabase::BZDB_TRACKFADE);
-  if (TrackFadeTime <= 0.0f) {
+  
+  if ((TrackFadeTime <= 0.0f) || 
+      (RENDERER.useQuality() < 3) || !BZDBCache::zbuffer) {
     clear();
     return;
   }

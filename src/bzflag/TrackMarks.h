@@ -19,16 +19,15 @@ namespace TrackMarks {
   void init();
   void kill();
   void clear();
+  void render();
+  void update();
 
   enum TrackType {
     treads = 0,
     puddle = 1
   };
   
-  bool addMark(const float pos[3], float spread, float angle);
-
-  void render();
-  void update();
+  bool addMark(const float pos[3], float scale, float angle);
 }
 
 
