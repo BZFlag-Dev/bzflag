@@ -22,7 +22,7 @@ void formatDebug(const char* fmt, ...)
     va_start(args, fmt);
     vsnprintf(buffer, 8192, fmt, args);
     va_end(args);
-    #if defined(_WIN32)
+    #if defined(_MSC_VER)
 		W32_DEBUG_TRACE(buffer);
     #else
       std::cout << buffer;

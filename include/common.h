@@ -201,6 +201,12 @@ typedef unsigned int	uint32_t;
 #    define SIGPIPE SIGINT
 #  endif
 
+/* VC includes this in config.h, MinGW can't
+   The right fix is a win32.h file, like 1.11 */
+#  ifdef __MINGW32__
+#    include <windows.h>
+#  endif
+
 #endif /* _WIN32 */
 
 

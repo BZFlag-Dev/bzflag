@@ -40,7 +40,7 @@ void			printError(const std::string &fmt, const std::vector<std::string> *parms)
     msg = pBdl->getLocalString(fmt);
 
   if (errorCallback) (*errorCallback)(msg.c_str());
-#if defined(_WIN32)
+#if defined(_MSC_VER)
   else { OutputDebugString(msg.c_str()); OutputDebugString("\n"); }
 #else
   else std::cerr << msg << std::endl;
