@@ -150,10 +150,12 @@ bool URLManager::beginGet(const std::string)
   if (BZDB.isSet("httpTimeout"))
     timeout = BZDB.eval("httpTimeout");
 
+#if LIBCURL_VERSION_NUM >= 0x070a00
   result = curl_easy_setopt((CURL*)easyHandle, CURLOPT_NOSIGNAL, true);
   if (result) {
     DEBUG1("Something wrong with CURL; Error: %d\n", result);
   }
+#endif
 
   result = curl_easy_setopt((CURL*)easyHandle, CURLOPT_TIMEOUT, timeout);
   if (result) {
