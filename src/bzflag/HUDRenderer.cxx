@@ -317,9 +317,9 @@ void			HUDRenderer::setAlertFontSize(int, int height)
 {
   const float s = (float)height / 24.0f;
   if (s > 20.0f)
-    minorFont = TextureFont::getTextureFont(TextureFont::HelveticaBold, True);
+    alertFont = TextureFont::getTextureFont(TextureFont::HelveticaBold, True);
   else if (s > 10.0f)
-    minorFont = TextureFont::getTextureFont(TextureFont::FixedBold, True);
+    alertFont = TextureFont::getTextureFont(TextureFont::FixedBold, True);
   else
     alertFont = TextureFont::getTextureFont(TextureFont::Fixed, True);
   alertFont.setSize(s, s);
