@@ -3,13 +3,12 @@ recent bugs
 
 - Spawn code sometimes spawns you mid-air
 
-- Robots that spawn on rooftop in MrAC's playground sometimes conveniently
-  fall through to the bottom when their selected target is down below.
-
-- Robots don't take elevated bases into consideration.  The spawn
-  inside them and move around as if they were flat. 
+- Robots don't do z collision checks other than to see if z < 0.
+  So if a base.z > 0 hilarity ensues. 
+  A quick fix would make bots always spawn at 0
   http://bzflag.mebigfatguy.com/robobase.bzw
   start as bzfs -world c:\robobase.bzw -fb -j -c
+
 
 - doc/guide/NetworkProtocol.xml is not up to date
 
