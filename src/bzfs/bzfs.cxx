@@ -3231,7 +3231,7 @@ static void adjustTolerances()
 {
   // check for handicap adjustment
   if ((clOptions->gameStyle & HandicapGameStyle) != 0) {
-    speedTolerance *= HandicapSpeedAdj;
+    speedTolerance *= HandicapSpeedAdj * HandicapSpeedAdj;
   }
 
   // check for physics driver disabling
