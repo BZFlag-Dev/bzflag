@@ -207,7 +207,6 @@ class GuidedMissileStrategy : public ShotStrategy {
     float		azimuth;
     float		elevation;
     float		nextPos[3];
-    boolean		stopped;
     int			earlySegment;
     BoltSceneNode*	ptSceneNode;
 

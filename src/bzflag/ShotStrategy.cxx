@@ -850,6 +850,7 @@ static float		limitAngle(float a)
 
 GuidedMissileStrategy::GuidedMissileStrategy(ShotPath* _path) :
 				ShotStrategy(_path),
+				renderTimes(0),
 				needUpdate(True)
 {
   ptSceneNode = new BoltSceneNode(_path->getPosition());
