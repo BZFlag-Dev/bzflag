@@ -62,7 +62,7 @@ bool CustomTextureMatrix::read(const char *cmd, std::istream& input)
 }
 
 
-void CustomTextureMatrix::write(WorldInfo */*world*/) const
+void CustomTextureMatrix::write(WorldInfo * /*world*/) const
 {
   TEXMATRIXMGR.addMatrix (texmat);
   texmat = NULL;
