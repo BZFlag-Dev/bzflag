@@ -9,7 +9,8 @@ bzfs \- BZFlag game server
 [\fB\-autoTeam\fR]
 [\fB\-b\fR]
 [\fB\-badwords \fIbadwordfile\fR]
-[\fB\-ban \fIaddress\fR[,...]]
+[\fB\-ban \fIip\fR{,ip}*]
+[\fB\-banfile \fIfilename\fR]
 [\fB\-c\fR]
 [\fB\-conf \fIconfigfile\fR]
 [\fB\-cr\fR]
@@ -103,9 +104,15 @@ When \fB-c\fR is supplied, this option randomly rotates the buildings.
 Specify a file that contains bad words that will be used when either
 \fB-filterCallsigns\fR or \fB-filterChat\fR is enabled.
 .TP
-.B -ban \fIaddress\fR[,...]
-Prohibits connections from the listed addresses. Trailing 255 bytes are
+.B -ban \fIip\fR{,ip}*
+Prohibits connections from the listed IP addresses. Trailing 255 bytes are
 treated as mask bytes.
+.TP
+\fB\-banfile \fIfilename\fR
+Specifies the name of a file where bzfs will store the banlist. It will
+load the banlist from this file when it starts (if the file exists),
+and write the banlist back to the file when someone gets banned or unbanned.
+If this option isn't given the banlist will not be saved.
 .TP
 .B -c
 Enables the capture-the-flag style game.  By default, the free-for-all
