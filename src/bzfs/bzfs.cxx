@@ -3672,6 +3672,13 @@ static void shotFired(int playerIndex, void *buf, int len)
     return;
   }
 
+  // make sure the shooter flag is a valid index to prevent segfaulting later
+  if (shooter.flag < 0) {
+    DEBUG1("ERROR: BAD SHOOTER FLAG INDEX (%d)\n", shooter.flag);
+    firingInfo.flag = Flags::Null;
+    repack = true;
+  }
+
   // verify player flag
   if ((firingInfo.flag != Flags::Null) && (firingInfo.flag != flag[shooter.flag].flag.desc)) {
     DEBUG2("Player %s [%d] shot flag mismatch %s %s\n", shooter.callSign,
