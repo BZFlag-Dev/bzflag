@@ -1601,6 +1601,10 @@ void			HUDRenderer::drawPlayerScore(const Player* player,
     hudSColor3fv(white_color);
     minorFont.draw(flag, x3 + callSignWidth + emailWidth, y);
     hudSColor3fv(Team::getRadarColor(player->getTeam()));
+  } else if (BZDB.isTrue("colorful") && (flagd->endurance == FlagNormal)) {
+    hudSColor3fv(Team::getRadarColor(Team::getTeam(flagd->flagName)));
+    minorFont.draw(flag, x3 + callSignWidth + emailWidth, y);
+    hudSColor3fv(Team::getRadarColor(player->getTeam()));
   } else {
     minorFont.draw(flag, x3 + callSignWidth + emailWidth, y);
   }
