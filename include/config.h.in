@@ -27,3 +27,48 @@
 /* Version number of package */
 #undef VERSION
 
+/* Bzflag internal version */
+#undef BZVERSION
+
+/* Time Bomb expiration */
+#undef TIME_BOMB
+
+/* Debug Rendering */
+#undef DEBUG_RENDERING
+
+/* Enabling Robots */
+#define ROBOT
+
+/* Half rate Audio */
+#undef HALF_RATE_AUDIO
+
+/* XFree86 Video Mode Extension */
+#undef XF86VIDMODE_EXT
+
+/* XInput Joystick Handling */
+#undef XIJOYSTICK
+
+/* Half rate Audio */
+#undef HALF_RATE_AUDIO
+
+/* XFree86 Video Mode Extension */
+#undef XF86VIDMODE_EXT
+
+/* XInput Joystick Handling */
+#undef XIJOYSTICK
+
+/* Half rate Audio */
+#undef HALF_RATE_AUDIO
+
+/* Sun OpenGL No Macro Vertex */
+#undef SUN_OGL_NO_VERTEX_MACRO
+
+/* BSD Socket Length */
+#undef _BSD_SOCKLEN_T_
+
+/* Debugging enabled */
+#undef DEBUG
+
+/* Debugging disabled */
+#undef NDEBUG
+
