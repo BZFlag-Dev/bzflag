@@ -120,7 +120,7 @@ const float		(*BaseLocalPlayer::getLastMotionBBox() const)[3]
 //
 // local update utility functions
 //
-/*
+/* BEGIN MASSIVE_NASTY_COMMENT_BLOCK
 static float		minSafeRange(float angleCosOffBoresight)
 {
   // anything farther than this much from dead-center is okay to
@@ -296,6 +296,7 @@ void			BaseLocalPlayer::startingLocation
   } while (!located && ++locateCount <= MaxTries);
 }
 
+END MASSIVE_NASTY_COMMENT_BLOCK
  */
 //
 // LocalPlayer
