@@ -69,15 +69,15 @@ namespace TextUtils
   {
     const int sourcesize = s.size();
   
-    int count=0;
-    for (int i=0; i<sourcesize; i++)
+    int count = 0, i = 0, j = 0;
+    for (i = 0; i < sourcesize; i++)
       if (!isWhitespace(s[i]))
         count++;
 
     // create result string of correct size
-    std::string result(count,' ');
+    std::string result(count, ' ');
   
-    for (int i=0, j=0; i<sourcesize; i++)
+    for (i = 0, j = 0; i < sourcesize; i++)
       if (!isWhitespace(s[i]))
         result[j++] = s[i];
   
