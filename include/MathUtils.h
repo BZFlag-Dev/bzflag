@@ -1,0 +1,167 @@
+/* bzflag
+ * Copyright (c) 1993 - 2004 Tim Riker
+ *
+ * This package is free software;  you can redistribute it and/or
+ * modify it under the terms of the license found in the file
+ * named LICENSE that should have accompanied this file.
+ *
+ * THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
+ * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
+ * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ */
+
+/*
+ * The fast sqrt() implementation contained herein was taken from the
+ * public domained nVIDIA Fast Math Routines and adapted for BZFlag's
+ * needs as well as wrapping table construction inside a class.
+ */
+
+#ifndef __MATHUTILS_H__
+#define __MATHUTILS_H__
+
+/* system headers */
+#include <math.h>
+
+
+#define FP_BITS(fp) (*(unsigned long *)&(fp))
+#define FP_ABS_BITS(fp) (FP_BITS(fp)&0x7FFFFFFF)
+#define FP_SIGN_BIT(fp) (FP_BITS(fp)&0x80000000)
+#define FP_ONE_BITS 0x3F800000
+
+// r = 1/p
+#define FP_INV(r,p)                                                          \
+{                                                                            \
+    int _i = 2 * FP_ONE_BITS - *(int *)&(p);                                 \
+    r = *(float *)&_i;                                                       \
+    r = r * (2.0f - (p) * r);                                                \
+}
+
+/////////////////////////////////////////////////
+// The following comes from Vincent Van Eeckhout
+// Thanks for sending us the code!
+// It's the same thing in assembly but without this C-needed line:
+//    r = *(float *)&_i;
+
+float   __two = 2.0f;
+
+#define FP_INV2(r,p)                     \
+{                                        \
+    __asm { mov     eax,0x7F000000    }; \
+    __asm { sub     eax,dword ptr [p] }; \
+    __asm { mov     dword ptr [r],eax }; \
+    __asm { fld     dword ptr [p]     }; \
+    __asm { fmul    dword ptr [r]     }; \
+    __asm { fsubr   [__two]           }; \
+    __asm { fmul    dword ptr [r]     }; \
+    __asm { fstp    dword ptr [r]     }; \
+}
+
+#define FP_EXP(e,p)                                                          \
+{                                                                            \
+    int _i;                                                                  \
+    e = -1.44269504f * (float)0x00800000 * (p);                              \
+    _i = (int)e + 0x3F800000;                                                \
+    e = *(float *)&_i;                                                       \
+}
+
+#define FP_NORM_TO_BYTE(i,p)                                                 \
+{                                                                            \
+    float _n = (p) + 1.0f;                                                   \
+    i = *(int *)&_n;                                                         \
+    if (i >= 0x40000000)     i = 0xFF;                                       \
+    else if (i <=0x3F800000) i = 0;                                          \
+    else i = ((i) >> 15) & 0xFF;                                             \
+}
+
+inline unsigned long FP_NORM_TO_BYTE2(float p)                                                 
+{                                                                            
+  float fpTmp = p + 1.0f;                                                      
+  return ((*(unsigned *)&fpTmp) >> 15) & 0xFF;  
+}
+
+inline unsigned long FP_NORM_TO_BYTE3(float p)     
+{
+  float ftmp = p + 12582912.0f;                                                      
+  return ((*(unsigned long *)&ftmp) & 0xFF);
+}
+
+
+class math_util {
+
+private:
+  // table of precomputed square root values
+  static unsigned int fast_sqrt_table[0x10000];  
+  static bool built;
+
+  typedef union FastSqrtUnion
+  {
+    float f;
+    unsigned int i;
+  } FastSqrtUnion;
+
+protected: 
+ 
+  static void  build_sqrt_table()
+  {
+    unsigned int i;
+    FastSqrtUnion s;
+    
+    for (i = 0; i <= 0x7FFF; i++) {
+      // Build a float with the bit pattern i as mantissa
+      //  and an exponent of 0, stored as 127
+      s.i = (i << 8) | (0x7F << 23);
+      s.f = (float)sqrt(s.f);
+	
+      // Take the square root then strip the first 7 bits of
+      //  the mantissa into the table
+      fast_sqrt_table[i + 0x8000] = (s.i & 0x7FFFFF);
+	
+      // Repeat the process, this time with an exponent of 1, 
+      //  stored as 128
+      s.i = (i << 8) | (0x80 << 23);
+      s.f = (float)sqrt(s.f);
+	
+      fast_sqrt_table[i] = (s.i & 0x7FFFFF);
+    }
+  }
+
+public:
+
+  /** nvidias fast square root routine is a table-based solution that
+   * trades off memory utilization for performance.  it's not
+   * necessarily a cache friendly method, but gives impressive results
+   * for common use.
+   */
+  static inline float fastsqrt(float n)
+  {
+    // make sure the table is built
+    if (!built) {
+      build_sqrt_table();
+      built = true;
+    }
+    
+    // check for square root of 0
+    if (FP_BITS(n) == 0) {
+      return 0.0;
+    }
+    
+    FP_BITS(n) = fast_sqrt_table[(FP_BITS(n) >> 8) & 0xFFFF] | ((((FP_BITS(n) - 0x3F800000) >> 1) + 0x3F800000) & 0x7F800000);
+    
+    return n;
+  }
+  
+};
+
+unsigned int math_util::fast_sqrt_table[0x10000] = {0};
+bool math_util::built = false;
+
+#endif  /* __MATHUTILS_H__ */
+
+
+// Local Variables: ***
+// mode: C++ ***
+// tab-width: 8 ***
+// c-basic-offset: 2 ***
+// indent-tabs-mode: t ***
+// End: ***
+// ex: shiftwidth=2 tabstop=8

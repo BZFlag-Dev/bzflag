@@ -40,6 +40,7 @@ noinst_HEADERS =		\
 	KeyManager.h		\
 	Language.h		\
 	LaserSceneNode.h	\
+	MathUtils.h		\
 	MediaFile.h		\
 	NetHandler.h		\
 	Obstacle.h		\
