@@ -270,7 +270,16 @@ void	      DXJoystick::ffRumble(int count, float delay, float duration,
    * probably just feel like a constant pressure.
    */
   DICONSTANTFORCE constantForce;
-  constantForce.lMagnitude = (LONG)(DI_FFNOMINALMAX * ((strong_motor + weak_motor) / 2.0f));
+
+  /* This is about consistent with the relative strength of the motors
+   * in the Logitech Cordless Rumblepad, which seems to be what the Linux
+   * FF_RUMBLE API (which bzflag's is patterned after) was designed for.
+   */
+  float combined = strong_motor + weak_motor / 2.0f;
+  if (combined > 1.0f)
+    combined = 1.0f;
+
+  constantForce.lMagnitude = (LONG)(DI_FFNOMINALMAX * combined);
 
   /*
    * Build the actual effect
