@@ -30,6 +30,7 @@ bzfs_SOURCES = \
 	CustomGate.h \
 	CustomLink.cxx \
 	CustomLink.h \
+	CustomMaterial.h \
 	CustomMaterial.cxx \
 	CustomMesh.cxx \
 	CustomMesh.h \
