@@ -57,7 +57,7 @@ public:
       0 if no interesting packets have arrived, 1 if a message has been stored
       in @c str, negative numbers for errors.
   */
-  ServerCode getServerString(string& str, BZAdminUI* ui = NULL);
+  ServerCode getServerString(string& str);
   
   /** This function returns @c true if this object has a valid connection
       to a server, @c false if it doesn't. */

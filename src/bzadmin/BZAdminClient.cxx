@@ -41,8 +41,7 @@ PlayerId BZAdminClient::getMyId() {
 }
 
 
-BZAdminClient::ServerCode BZAdminClient::getServerString(string& str, 
-							 BZAdminUI* ui) {
+BZAdminClient::ServerCode BZAdminClient::getServerString(string& str) {
   uint16_t code, len;
   char inbuf[MaxPacketLen];
   int e;
@@ -136,7 +135,7 @@ void BZAdminClient::runLoop() {
   string str;
   ServerCode what(NoMessage);
   while (true) {
-    while ((what = getServerString(str, ui)) == GotMessage) {
+    while ((what = getServerString(str)) == GotMessage) {
       if (ui != NULL)
 	ui->outputMessage(str);
     }
