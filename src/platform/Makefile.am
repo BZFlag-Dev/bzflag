@@ -28,7 +28,7 @@ libPlatform_a_SOURCES =				\
 	XWindow.h
 else
 if SOLARIS
-libPlatform_a_SOURCES = 			\
+libPlatform_a_SOURCES =				\
 	PlatformFactory.cxx			\
 	BzfDisplay.cxx				\
 	BzfVisual.cxx				\
@@ -88,8 +88,8 @@ libPlatform_a_SOURCES =				\
 	BzfMedia.cxx				\
 	wave.cxx				\
 	wave.h					\
-	BeOSPlatformFactory.cxx 		\
-	BeOSPlatformFactory.h 			\
+	BeOSPlatformFactory.cxx			\
+	BeOSPlatformFactory.h			\
 	BeOSDisplay.cxx				\
 	BeOSDisplay.h				\
 	BeOSVisual.cxx				\
@@ -108,8 +108,8 @@ libPlatform_a_SOURCES =				\
 	BzfMedia.cxx				\
 	wave.cxx				\
 	wave.h					\
-	WinPlatformFactory.cxx 			\
-	WinPlatformFactory.h 			\
+	WinPlatformFactory.cxx			\
+	WinPlatformFactory.h			\
 	WinDisplay.cxx				\
 	WinDisplay.h				\
 	WinVisual.cxx				\
@@ -129,42 +129,32 @@ if CLIENT_INCLUDED
 noinst_LIBRARIES = libPlatform.a
 endif
 
-EXTRA_libPlatform_a_SOURCES = 		\
- 	XDisplay.cxx			\
- 	XDisplay.h			\
- 	XVisual.cxx			\
- 	XVisual.h			\
- 	XWindow.cxx			\
- 	XWindow.h			\
- 	LinuxPlatformFactory.cxx	\
- 	LinuxPlatformFactory.h		\
- 	LinuxDisplay.cxx		\
- 	LinuxDisplay.h			\
- 	LinuxMedia.cxx			\
- 	LinuxMedia.h			\
- 	usbjoy.cxx			\
- 	SolarisPlatformFactory.cxx	\
- 	SolarisPlatformFactory.h	\
- 	SolarisMedia.cxx		\
- 	SolarisMedia.h			\
- 	SGIPlatformFactory.cxx		\
- 	SGIPlatformFactory.h		\
- 	SGIDisplay.cxx			\
- 	SGIDisplay.h			\
- 	SGIMedia.cxx			\
- 	SGIMedia.h			\
- 	MacPlatformFactory.cxx 		\
- 	MacPlatformFactory.h 		\
- 	MacDisplay.cxx			\
- 	MacDisplay.h			\
- 	MacVisual.cxx			\
- 	MacVisual.h			\
- 	MacWindow.cxx			\
- 	MacWindow.h			\
- 	MacMedia.cxx			\
- 	MacMedia.h			\
-	BeOSPlatformFactory.cxx 	\
-	BeOSPlatformFactory.h 		\
+EXTRA_libPlatform_a_SOURCES =		\
+	XDisplay.cxx			\
+	XDisplay.h			\
+	XVisual.cxx			\
+	XVisual.h			\
+	XWindow.cxx			\
+	XWindow.h			\
+	LinuxPlatformFactory.cxx	\
+	LinuxPlatformFactory.h		\
+	LinuxDisplay.cxx		\
+	LinuxDisplay.h			\
+	LinuxMedia.cxx			\
+	LinuxMedia.h			\
+	usbjoy.cxx			\
+	SolarisPlatformFactory.cxx	\
+	SolarisPlatformFactory.h	\
+	SolarisMedia.cxx		\
+	SolarisMedia.h			\
+	SGIPlatformFactory.cxx		\
+	SGIPlatformFactory.h		\
+	SGIDisplay.cxx			\
+	SGIDisplay.h			\
+	SGIMedia.cxx			\
+	SGIMedia.h			\
+	BeOSPlatformFactory.cxx		\
+	BeOSPlatformFactory.h		\
 	BeOSDisplay.cxx			\
 	BeOSDisplay.h			\
 	BeOSVisual.cxx			\
@@ -173,18 +163,18 @@ EXTRA_libPlatform_a_SOURCES = 		\
 	BeOSWindow.h			\
 	BeOSMedia.cxx			\
 	BeOSMedia.h			\
- 	WinPlatformFactory.cxx 		\
- 	WinPlatformFactory.h 		\
- 	WinDisplay.cxx			\
- 	WinDisplay.h			\
- 	WinVisual.cxx			\
- 	WinVisual.h			\
- 	WinWindow.cxx			\
- 	WinWindow.h			\
- 	WinMedia.cxx			\
- 	WinMedia.h
+	WinPlatformFactory.cxx		\
+	WinPlatformFactory.h		\
+	WinDisplay.cxx			\
+	WinDisplay.h			\
+	WinVisual.cxx			\
+	WinVisual.h			\
+	WinWindow.cxx			\
+	WinWindow.h			\
+	WinMedia.cxx			\
+	WinMedia.h
 
-EXTRA_DIST = MacBZFlag.icns MacBZFlag-prefix.h NewMedia.cxx NewMedia.h
+EXTRA_DIST = NewMedia.cxx NewMedia.h
 
 MAINTAINERCLEANFILES = \
 	Makefile.in
