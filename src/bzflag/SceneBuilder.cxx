@@ -176,6 +176,7 @@ SceneDatabaseBuilder::SceneDatabaseBuilder(const SceneRenderer* _renderer) :
 				wallMaterial(black, black, 0.0f),
 				boxMaterial(black, black, 0.0f),
 				pyramidMaterial(black, black, 0.0f),
+				tetraMaterial(black, black, 0.0f),
 				teleporterMaterial(black, black, 0.0f)
 {
   // FIXME -- should get texture heights from resources
@@ -284,7 +285,7 @@ void			SceneDatabaseBuilder::addWall(SceneDatabase* db,
   if (wallTexture < 0)
     wallTexture = tm.getTextureID( "wall" );
   else
-    useColorTexture = wallTexture>=0;
+    useColorTexture = wallTexture >= 0;
 
   while ((node = nodeGen->getNextNode(o.getBreadth() / wallTexWidth,
 				o.getHeight() / wallTexHeight, wallLOD))) {
@@ -331,7 +332,7 @@ void			SceneDatabaseBuilder::addBox(SceneDatabase* db,
   useColorTexture[1] = boxTopTexture >= 0;
 
   float texutureFactor = BZDB.eval("boxWallTexRepeat");
-  if (BZDB.eval("useQuality")>=3)
+  if (BZDB.eval("useQuality") >= 3)
     texutureFactor = BZDB.eval("boxWallHighResTexRepeat");
 
   while ((node = ((part < 4) ? nodeGen->getNextNode(
@@ -384,7 +385,7 @@ void			SceneDatabaseBuilder::addPyramid(SceneDatabase* db,
 
   // Using boxTexHeight since it's (currently) the same and it's already available
   float textureFactor = BZDB.eval("pyrWallTexRepeat");
-  if (BZDB.eval("useQuality")>=3)
+  if (BZDB.eval("useQuality") >= 3)
     textureFactor = BZDB.eval("pyrWallHighResTexRepeat");
 
   while ((node = nodeGen->getNextNode(-textureFactor * boxTexHeight,
@@ -426,12 +427,12 @@ void			SceneDatabaseBuilder::addTetra(SceneDatabase* db,
 
   // Using boxTexHeight since it's (currently) the same and it's already available
   float textureFactor = BZDB.eval("tetraWallTexRepeat");
-  if (BZDB.eval("useQuality")>=3)
+  if (BZDB.eval("useQuality") >= 3)
     textureFactor = BZDB.eval("tetraWallHighResTexRepeat");
 
   while ((node = nodeGen->getNextNode(-textureFactor * boxTexHeight,
-				-textureFactor * boxTexHeight,
-				tetraLOD))) {
+				      -textureFactor * boxTexHeight,
+                                      tetraLOD))) {
     node->setColor(tetraColors[part]);
     node->setModulateColor(tetraModulateColors[part]);
     node->setLightedColor(tetraLightedColors[part]);
