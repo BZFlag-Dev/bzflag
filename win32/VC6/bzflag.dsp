@@ -7,21 +7,21 @@
 CFG=bzflag - Win32 SDL_Debug
 !MESSAGE This is not a valid makefile. To build this project using NMAKE,
 !MESSAGE use the Export Makefile command and run
-!MESSAGE
+!MESSAGE 
 !MESSAGE NMAKE /f "bzflag.mak".
-!MESSAGE
+!MESSAGE 
 !MESSAGE You can specify a configuration when running NMAKE
 !MESSAGE by defining the macro CFG on the command line. For example:
-!MESSAGE
+!MESSAGE 
 !MESSAGE NMAKE /f "bzflag.mak" CFG="bzflag - Win32 SDL_Debug"
-!MESSAGE
+!MESSAGE 
 !MESSAGE Possible choices for configuration are:
-!MESSAGE
+!MESSAGE 
 !MESSAGE "bzflag - Win32 Release" (based on "Win32 (x86) Application")
 !MESSAGE "bzflag - Win32 Debug" (based on "Win32 (x86) Application")
 !MESSAGE "bzflag - Win32 SDL_Release" (based on "Win32 (x86) Application")
 !MESSAGE "bzflag - Win32 SDL_Debug" (based on "Win32 (x86) Application")
-!MESSAGE
+!MESSAGE 
 
 # Begin Project
 # PROP AllowPerConfigDependencies 0
@@ -45,7 +45,7 @@ RSC=rc.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /YX /FD /c
-# ADD CPP /nologo /MD /W3 /GX /O2 /I "..\..\include" /I "..\..\win32" /I ".\\" /D "_WINDOWS" /D "WIN32" /D "NDEBUG" /D "_MBCS" /FD /c
+# ADD CPP /nologo /MD /W3 /GR /GX /O2 /I "..\..\include" /I "..\..\win32" /I ".\\" /D "_WINDOWS" /D "WIN32" /D "NDEBUG" /D "_MBCS" /FD /c
 # SUBTRACT CPP /YX
 # ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "NDEBUG" /mktyplib203 /win32
@@ -88,7 +88,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /debug /machine:I386 /pdbtype:sept
-# ADD LINK32  ws2_32.lib dsound.lib dinput.lib dxguid.lib winmm.lib glu32.lib opengl32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib libcurl.lib /nologo /subsystem:windows /debug /machine:I386 /nodefaultlib:"LIBCMT" /pdbtype:sept
+# ADD LINK32 ws2_32.lib dsound.lib dinput.lib dxguid.lib winmm.lib glu32.lib opengl32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib libcurl.lib /nologo /subsystem:windows /debug /machine:I386 /nodefaultlib:"LIBCMT" /pdbtype:sept
 # SUBTRACT LINK32 /pdb:none
 # Begin Special Build Tool
 SOURCE="$(InputPath)"
@@ -165,7 +165,7 @@ SOURCE="$(InputPath)"
 PostBuild_Cmds=copy ..\..\src\bzflag\SDL_debug\*.exe ..\..\*.exe	copy   ..\..\src\bzflag\SDL_debug\*.pdb ..\..\*.pdb
 # End Special Build Tool
 
-!ENDIF
+!ENDIF 
 
 # Begin Target
 
@@ -253,14 +253,6 @@ SOURCE=..\..\src\bzflag\SaveWorldMenu.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\src\bzflag\ServerItem.cxx
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\src\bzflag\ServerList.cxx
-# End Source File
-# Begin Source File
-
 SOURCE=..\..\src\bzflag\ServerMenu.cxx
 # End Source File
 # Begin Source File
@@ -287,10 +279,6 @@ SOURCE=..\..\src\bzflag\AutoPilot.cxx
 # Begin Source File
 
 SOURCE=..\..\src\bzflag\BackgroundRenderer.cxx
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\src\bzflag\WeatherRenderer.cxx
 # End Source File
 # Begin Source File
 
@@ -327,6 +315,10 @@ SOURCE=..\..\src\bzflag\ControlPanel.cxx
 # Begin Source File
 
 SOURCE=..\..\src\bzflag\daylight.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\bzflag\EntryZone.cxx
 # End Source File
 # Begin Source File
 
@@ -386,6 +378,10 @@ SOURCE=..\..\src\bzflag\motd.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\bzflag\Plan.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\bzflag\Player.cxx
 # End Source File
 # Begin Source File
@@ -442,10 +438,6 @@ SOURCE=..\..\src\bzflag\ServerLink.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\src\bzflag\ServerListCache.cxx
-# End Source File
-# Begin Source File
-
 SOURCE=..\..\src\bzflag\ShockWaveStrategy.cxx
 # End Source File
 # Begin Source File
@@ -483,6 +475,14 @@ SOURCE=..\..\src\bzflag\TargetingUtils.cxx
 # Begin Source File
 
 SOURCE=..\..\src\bzflag\TrackMarks.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\bzflag\Weapon.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\bzflag\WeatherRenderer.cxx
 # End Source File
 # Begin Source File
 
@@ -914,6 +914,10 @@ SOURCE=..\..\include\Ping.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\bzflag\Plan.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\include\PlatformFactory.h
 # End Source File
 # Begin Source File
@@ -966,11 +970,11 @@ SOURCE=..\..\include\resource.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\src\bzflag\RoofTops.h
+SOURCE=..\..\src\bzflag\RobotPlayer.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\src\bzflag\RobotPlayer.h
+SOURCE=..\..\src\bzflag\RoofTops.h
 # End Source File
 # Begin Source File
 
@@ -1003,10 +1007,6 @@ SOURCE=..\..\src\bzflag\ServerCommandKey.h
 # Begin Source File
 
 SOURCE=..\..\src\bzflag\ServerLink.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\src\bzflag\ServerListCache.h
 # End Source File
 # Begin Source File
 
@@ -1058,7 +1058,7 @@ SOURCE=..\..\src\bzflag\stars.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\src\bzflag\StartupInfo.h
+SOURCE=..\..\include\StartupInfo.h
 # End Source File
 # Begin Source File
 
@@ -1118,6 +1118,10 @@ SOURCE=..\..\src\bzflag\Weapon.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\bzflag\WeatherRenderer.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\include\win32.h
 # End Source File
 # Begin Source File
@@ -1127,10 +1131,6 @@ SOURCE=..\..\include\WordFilter.h
 # Begin Source File
 
 SOURCE=..\..\src\bzflag\World.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\src\bzflag\WeatherRenderer.h
 # End Source File
 # Begin Source File
 

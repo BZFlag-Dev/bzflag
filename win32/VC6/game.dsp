@@ -7,21 +7,21 @@
 CFG=game - Win32 SDL_Debug
 !MESSAGE This is not a valid makefile. To build this project using NMAKE,
 !MESSAGE use the Export Makefile command and run
-!MESSAGE
+!MESSAGE 
 !MESSAGE NMAKE /f "game.mak".
-!MESSAGE
+!MESSAGE 
 !MESSAGE You can specify a configuration when running NMAKE
 !MESSAGE by defining the macro CFG on the command line. For example:
-!MESSAGE
+!MESSAGE 
 !MESSAGE NMAKE /f "game.mak" CFG="game - Win32 SDL_Debug"
-!MESSAGE
+!MESSAGE 
 !MESSAGE Possible choices for configuration are:
-!MESSAGE
+!MESSAGE 
 !MESSAGE "game - Win32 Release" (based on "Win32 (x86) Static Library")
 !MESSAGE "game - Win32 Debug" (based on "Win32 (x86) Static Library")
 !MESSAGE "game - Win32 SDL_Release" (based on "Win32 (x86) Static Library")
 !MESSAGE "game - Win32 SDL_Debug" (based on "Win32 (x86) Static Library")
-!MESSAGE
+!MESSAGE 
 
 # Begin Project
 # PROP AllowPerConfigDependencies 0
@@ -125,7 +125,7 @@ LIB32=link.exe -lib
 # ADD BASE LIB32 /nologo
 # ADD LIB32 /nologo
 
-!ENDIF
+!ENDIF 
 
 # Begin Target
 
@@ -142,11 +142,11 @@ SOURCE=..\..\src\game\BzMaterial.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\src\game\CommandsStandard.cxx
+SOURCE=..\..\src\game\CollisionManager.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\src\game\CollisionManager.cxx
+SOURCE=..\..\src\game\CommandsStandard.cxx
 # End Source File
 # Begin Source File
 
@@ -198,6 +198,22 @@ SOURCE=..\..\src\game\Ray.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\game\ServerItem.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\game\ServerList.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\game\ServerListCache.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\game\StartupInfo.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\game\TextureMatrix.cxx
 # End Source File
 # Begin Source File
@@ -246,11 +262,11 @@ SOURCE=..\..\include\LinkManager.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\include\NetHandler.h
+SOURCE=..\..\include\MeshTransform.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\include\MeshTransform.h
+SOURCE=..\..\include\NetHandler.h
 # End Source File
 # Begin Source File
 
@@ -259,6 +275,18 @@ SOURCE=..\..\include\PhysicsDriver.h
 # Begin Source File
 
 SOURCE=..\..\include\PlayerInfo.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\ServerItem.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\ServerList.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\ServerListCache.h
 # End Source File
 # Begin Source File
 

@@ -97,10 +97,11 @@ const Obstacle* ShotStrategy::getFirstBuilding(const Ray& ray,
 					       float min, float& t)
 {
   const Obstacle* closestObstacle = NULL;
+  unsigned int i = 0;
 
   // check walls
   const ObstacleList& walls = OBSTACLEMGR.getWalls();
-  for (unsigned int i = 0; i < walls.size(); i++) {
+  for (i = 0; i < walls.size(); i++) {
     const WallObstacle* wall = (const WallObstacle*) walls[i];
     if (!wall->isShootThrough()) {
       const float wallt = wall->intersect(ray);
@@ -114,7 +115,7 @@ const Obstacle* ShotStrategy::getFirstBuilding(const Ray& ray,
   //check everything else
   const ObsList* olist = COLLISIONMGR.rayTest (&ray, t);
 
-  for (int i = 0; i < olist->count; i++) {
+  for (i = 0; (unsigned int)i < olist->count; i++) {
     const Obstacle* obs = olist->list[i];
     if (!obs->isShootThrough()) {
       const float timet = obs->intersect(ray);

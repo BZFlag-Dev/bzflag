@@ -29,6 +29,7 @@ typedef void		(*OpenGLContextFunction)(void* userData);
 
 class OpenGLGState {
   friend class OpenGLGStateBuilder;
+  friend class ContextInitializer;
   public:
 			OpenGLGState();
 			OpenGLGState(const OpenGLGState&);
@@ -97,8 +98,9 @@ class OpenGLGState {
     static void		freeStipple(void*);
     static void		initStipple(void*);
 
-    struct ContextInitializer {
+    class ContextInitializer {
       public:
+	friend class OpenGLGState;
 	ContextInitializer(OpenGLContextFunction freeFunc,
 			   OpenGLContextFunction initFunc,
 			   void* data);
@@ -125,6 +127,7 @@ class OpenGLGState {
   private:
     OpenGLGStateRep*	rep;
     static GLuint	stipples;
+  public:
     static bool executingFreeFuncs;
     static bool executingInitFuncs;
 };
