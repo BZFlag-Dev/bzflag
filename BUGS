@@ -1,6 +1,11 @@
 recent bugs
 ------------
 
+- When driving into a building, and pushing up and down the wall
+  sometimes your tank will get moved to (NAN, NAN, 0), and effectively
+  lock you up. This happens from LocalPlayer::doUpdateMotion
+  calling move(). 
+
 - thief gets kicked for speeding sometimes after stealing flag
 
 - sound still seems to be not working correctly sometimes, some sounds are
