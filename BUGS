@@ -6,6 +6,9 @@ must fix for 1.10.4 patch release
 recent bugs
 ------------
 
+- Change any documentation/help that says rabbit hunters are black (s/b orange)
+  If that change is going to stick.
+
 - the "default" keyword in the email line can get into the HUD, it shouldn't.
   must have missed something.
 
