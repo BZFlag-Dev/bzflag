@@ -1399,8 +1399,9 @@ void bzDeleteLists(GLuint base, GLsizei count)
   if (OpenGLGState::haveGLContext()) {
     glDeleteLists(base, count);
   } else {
-    DEBUG1 ("bzDeleteLists(), no context\n");
+    DEBUG4 ("bzDeleteLists(), no context\n");
   }
+  return;
 }
 
 
@@ -1422,8 +1423,9 @@ void bzDeleteTextures(GLsizei count, const GLuint *textures)
   if (OpenGLGState::haveGLContext()) {
     glDeleteTextures(count, textures);
   } else {
-    DEBUG1 ("bzDeleteTextures(), no context\n");
+    DEBUG4 ("bzDeleteTextures(), no context\n");
   }
+  return;
 }
 
 

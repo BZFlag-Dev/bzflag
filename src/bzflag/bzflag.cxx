@@ -1370,6 +1370,15 @@ int			main(int argc, char** argv)
   glEnable(GL_SCISSOR_TEST);
 //  glEnable(GL_CULL_FACE);
   glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
+  if (!OpenGLGState::haveGLContext()) {
+    // DIE
+    printFatalError("ERROR: Unable to initialize an OpenGL context");
+    if (display != NULL) {
+      delete display;
+      display=NULL;
+    }
+    exit(1);
+  }
   OpenGLGState::init();
 
   // sanity check - make sure OpenGL was actually initialized or

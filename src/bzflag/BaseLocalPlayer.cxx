@@ -100,39 +100,6 @@ const float (*BaseLocalPlayer::getLastMotionBBox() const)[3]
   return bbox;
 }
 
-#if 0
-// BEGIN MASSIVE_NASTY_COMMENT_BLOCK
-
-// This massive nasty comment block is for client-side spawning!
-//
-// local update utility functions
-//
-
-static float minSafeRange(float angleCosOffBoresight)
-{
-  // anything farther than this much from dead-center is okay to
-  // place at MinRange
-  static const float	SafeAngle = 0.5f;	// cos(angle)
-
-  const float shotSpeed = BZDB.eval(StateDatabase::BZDB_SHOTSPEED);
-  // don't ever place within this range
-  const float	MinRange = 2.0f * shotSpeed;	// meters
-
-  // anything beyond this range is okay at any angle
-  const float	MaxRange = 4.0f * shotSpeed;	// meters
-
-  // if more than SafeAngle off boresight then MinRange is okay
-  if (angleCosOffBoresight < SafeAngle) return MinRange;
-
-  // ramp up to MaxRange as target comes to dead center
-  const float f = (angleCosOffBoresight - SafeAngle) / (1.0f - SafeAngle);
-  return (float)(MinRange + f * (MaxRange - MinRange));
-}
-
-
-//END MASSIVE_NASTY_COMMENT_BLOCK
-#endif
-
 
 // Local Variables: ***
 // mode: C++ ***
