@@ -5,6 +5,7 @@
 BZFlag 1.11
 -----------
 
+* QuickTurn flag symbol changed from A to QT - Sean Morrison
 * Added MAC's handicap game style - Sean Morrison
 * Added ReverseControls bad flag - Sean Morrison
 * Added Wings good flag - Dave Brosius
@@ -19,7 +20,7 @@ BZFlag 1.11
 * "Leave Game" menu item to leave a game without quitting - Daniel Remenak
 * Allow user to force input device to that of their choosing - Daniel Remenak
 * Tanks can drive over bumps - Dave Brosius
-* Remove Building scene nodes that are laying on the ground (or lower) - Dave Brosius
+* Remove Building scene nodes laying on the ground (or lower) - Dave Brosius
 * Bots drive around corners faster - Frank Thilo
 * Rip out the ref counted texture system, as TM controls this now - Dave Brosius
 * Bots aim better, try to evade shots - Frank Thilo
