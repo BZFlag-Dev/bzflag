@@ -14,12 +14,6 @@ THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
 
 THESE ARE LOWER PRIORITY
 
-* bzfs should not pass IP in CHECKTOKENS for IPs:
-  * 127.0.0.0/8
-  * 10.0.0.0/8
-  * 172.16.0.0/12
-  * 192.168.0.0/16
-
 * fix the misalignment between the selected server and the one that
   is joined when the Server List Cache is enabled.
 

@@ -332,8 +332,11 @@ void ListServerLink::addMe(PingPacket pingInfo,
     std::string encodedCallsign = TextUtils::url_encode(playerData->player.getCallSign());
     if (strlen(playerData->player.getCallSign()) && strlen(playerData->player.getToken())) {
       msg += encodedCallsign;
-      msg += "@";
-      msg += handler->getTargetIP();
+      Address addr = handler->getIPAddress();
+      if (!addr.isPrivate()) {
+        msg += "@";
+        msg += handler->getTargetIP();
+      }
       msg += "=";
       msg += playerData->player.getToken();
       msg += "%0D%0A";
