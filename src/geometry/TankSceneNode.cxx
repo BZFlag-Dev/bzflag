@@ -992,6 +992,8 @@ void TankSceneNode::TankRenderNode::renderNarrowWithDepth()
     glEnable(GL_POLYGON_OFFSET_FILL);
   }
 
+  glDepthFunc(GL_LEQUAL);
+
   glPolygonOffset(-1.0f, -1.0f);
   if (left) {
     renderPart(LeftCasing);
@@ -1017,6 +1019,8 @@ void TankSceneNode::TankRenderNode::renderNarrowWithDepth()
   } else {
     renderPart(RightTread);
   }
+
+  glDepthFunc(GL_LESS);
   
   if (usingPolyOffset) {
     glPolygonOffset(factor, units);
