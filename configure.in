@@ -316,6 +316,13 @@ for ac_lib in opengl32 GL GL2; do
               [ac_cv_search_glBegin="-l$ac_lib"
                break])
 done
+if test "$ac_cv_search_glBegin" = no; then
+  LIBS="-lGL -lpthread $GLIBS $ac_func_search_save_LIBS"
+  AC_TRY_LINK([#include <GL/gl.h>],
+              [glBegin(GL_POINTS)],
+              [ac_cv_search_glBegin="-lGL -lpthread"
+               break])
+fi
 if test "$ac_cv_search_glBegin" != no; then
   GLIBS="$ac_cv_search_glBegin $GLIBS"
   if test "$ac_cv_search_glBegin" = -lGL2; then
