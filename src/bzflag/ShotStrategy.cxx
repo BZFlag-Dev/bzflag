@@ -526,9 +526,9 @@ void			SegmentedShotStrategy::radarRender() const
   const float d = 1.0f / hypotf(vel[0], hypotf(vel[1], vel[2]));
   const float *orig = getPath().getPosition();
   float dir[3];
-  dir[0] = vel[0] * d * 10.0f;
-  dir[1] = vel[1] * d * 10.0f;
-  dir[2] = vel[2] * d * 10.0f;
+  dir[0] = vel[0] * d * ShotTailLength;
+  dir[1] = vel[1] * d * ShotTailLength;
+  dir[2] = vel[2] * d * ShotTailLength;
   glBegin(GL_LINES);
   glVertex2fv(orig);
   glVertex2f(orig[0] + dir[0], orig[1] + dir[1]);
@@ -1264,14 +1264,14 @@ void			GuidedMissileStrategy::expire()
 
 void			GuidedMissileStrategy::radarRender() const
 {
-  // Display lines for shots
+  // Display lines with a dot for shots
   const float* vel = getPath().getVelocity();
   const float d = 1.0f / hypotf(vel[0], hypotf(vel[1], vel[2]));
   const float *orig = getPath().getPosition();
   float dir[3];
-  dir[0] = vel[0] * d * 10.0f;
-  dir[1] = vel[1] * d * 10.0f;
-  dir[2] = vel[2] * d * 10.0f;
+  dir[0] = vel[0] * d * ShotTailLength;
+  dir[1] = vel[1] * d * ShotTailLength;
+  dir[2] = vel[2] * d * ShotTailLength;
   glBegin(GL_LINES);
   glVertex2fv(orig);
   glVertex2f(orig[0] + dir[0], orig[1] + dir[1]);

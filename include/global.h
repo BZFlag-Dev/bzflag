@@ -63,7 +63,7 @@ const float		MuzzleFront =	TankRadius+0.1f;// meters
 // rough shot geometry
 const float		ShotRadius =	0.5f;		// meters
 const float		ShotLength =	0.5f;		// meters
-const float		ShotTailLength=	10.0f;		// meters
+const float		ShotTailLength=	4.0f;		// meters
 
 // outer wall geometry
 const float		WallPosition =	0.5f*WorldSize +// meters
