@@ -159,13 +159,13 @@ bool PlayerInfo::isCallSignReadable() {
     // reject ' and " and any nonprintable
     if ((*sp == '\'') || (*sp == '"') || ((unsigned)*sp > 0x7f)
 	|| !isprint(*sp)) {
-      errorString = "Non-printable characters are not allowed in callsigns.";
+      errorString = "Non-printable characters and quotes are not allowed in callsigns.";
       return false;
     }
     if (isspace(*sp)) {
       // only space is valid, not tab etc.
       if (*sp != ' ') {
-	errorString = "Invalid space characters in callsign.";
+	errorString = "Invalid whitespace in callsign.";
 	return false;
       }
       lastWasSpace = true;
