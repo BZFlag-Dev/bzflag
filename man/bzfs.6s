@@ -60,6 +60,8 @@ bzfs \- BZFlag game server
 [\fB\-sb\fR]
 [\fB\-set \fIname value\fR]
 [\fB\-sl \fIid num\fR]
+[\fB\-spamtime \fItime\fR]
+[\fB\-spamwarn \fIwarnLimit\fR]
 [\fB\-speedtol \fIfactor\fR]
 [\fB\-srvmsg \fImessage\fR]
 [\fB\-st \fItime\fR]
@@ -348,6 +350,12 @@ Set BZDB variable \fIname\fR to \fIvalue\fR
 \fB-sl \fIid num\fR
 Restrict flag \fIid\fR to \fInum\fR shots.
 .TP
+\fB\-spamtime \fItime\fR
+make <time> be the required time in seconds between messages sent that are alike.
+.TP
+\fB\-spamwarn \fIwarnLimit\fR
+warn a spammer that sends messages before -spamtime times out <warnLimit> many times.
+.TP
 \fB\-speedtol \fIfactor\fR
 Override the default speed auto kick factor. The factor should not be less then 1.0. The factor is a multiplier.
 .TP
@@ -538,6 +546,9 @@ Write a message to the server administrator. Example:
 
 .SH SERVER ADMINISTRATIVE COMMANDS
 
+.TP
+.B /viewreports
+View the server's report file.
 .TP
 .B /shutdownserver
 Stop serving BZFlag on this server
