@@ -104,8 +104,11 @@ void *FlagInfo::pack(void *buf)
   return buf;
 }
 
-void FlagInfo::dropFlag(float pos[3], float landingPos[3])
+void FlagInfo::dropFlag(float pos[3], float landingPos[3], bool vanish)
 {
+  player                  = -1;
+  flag.status             = vanish ? FlagGoing : FlagInAir;
+
   flag.landingPosition[0] = landingPos[0];
   flag.landingPosition[1] = landingPos[1];
   flag.landingPosition[2] = landingPos[2];

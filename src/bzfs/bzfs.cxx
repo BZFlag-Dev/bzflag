@@ -2472,7 +2472,6 @@ static void dropFlag(int playerIndex, float pos[3])
   bool isTeamFlag = (flagTeam != ::NoTeam);
 
   // okay, go ahead and drop it
-  drpFlag.player = -1;
   numFlagsInAir++;
 
   // limited flags that have been fired should be disposed of 
@@ -2516,18 +2515,19 @@ static void dropFlag(int playerIndex, float pos[3])
 
   // note: sticky/bad flags should always have grabs=1
 
+  bool vanish;
   if (isTeamFlag)
-    drpFlag.flag.status = FlagInAir;
+    vanish = false;
   else if (--drpFlag.grabs == 0)
-    drpFlag.flag.status = FlagGoing;
+    vanish = true;
   else if ((topmosttype == NOT_IN_BUILDING) && (deadUnder <= 0.0f))
-    drpFlag.flag.status = FlagInAir;
+    vanish = false;
   else if (clOptions->flagsOnBuildings && (obstacleTop > deadUnder)
 	   && (topmosttype == IN_BOX_NOTDRIVETHROUGH
 	       || topmosttype == IN_BASE))
-    drpFlag.flag.status = FlagInAir;
+    vanish = false;
   else
-    drpFlag.flag.status = FlagGoing;
+    vanish = true;
 
   float landingPos[3] = {pos[0], pos[1], obstacleTop};
   
@@ -2584,16 +2584,17 @@ static void dropFlag(int playerIndex, float pos[3])
 	}
       }
     }
-  }
-  drpFlag.dropFlag(pos, landingPos);
 
-  // if it is a team flag, check if there are any players left in that team -
-  // if not, start the flag timeout
-  if (isTeamFlag && team[drpFlag.flag.type->flagTeam].team.size == 0) {
-    team[flagIndex + 1].flagTimeout = TimeKeeper::getCurrent();
-    team[flagIndex + 1].flagTimeout += (float)clOptions->teamFlagTimeout;
+    // if it is a team flag, check if there are any players left in
+    // that team - if not, start the flag timeout
+    if (team[drpFlag.flag.type->flagTeam].team.size == 0) {
+      team[flagIndex + 1].flagTimeout = TimeKeeper::getCurrent();
+      team[flagIndex + 1].flagTimeout += (float)clOptions->teamFlagTimeout;
+    }
   }
-  
+
+  drpFlag.dropFlag(pos, landingPos, vanish);
+
   // removed any delayed packets (in case it was a "Lag Flag")
   playerData->delayq.dequeuePackets();
 

@@ -30,7 +30,7 @@ public:
   void setRequiredFlag(FlagType *desc);
   void addFlag();
   void *pack(void *buf);
-  void dropFlag(float pos[3], float landingPos[3]);
+  void dropFlag(float pos[3], float landingPos[3], bool vanish);
 
   static void setSize(int numFlags);
 
