@@ -1,5 +1,5 @@
 /* bzfls
- * Copyright (c) 1993 - 2000 Tim Riker
+ * Copyright (c) 1993 - 2001 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -10,7 +10,7 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-static const char	copyright[] = "Copyright (c) 1993 - 2000 Tim Riker";
+static const char	copyright[] = "Copyright (c) 1993 - 2001 Tim Riker";
 
 // must be before windows.h
 #include "network.h"

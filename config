@@ -1,5 +1,5 @@
 # bzflag
-# Copyright (c) 1993 - 2000 Tim Riker
+# Copyright (c) 1993 - 2001 Tim Riker
 #
 # This package is free software;  you can redistribute it and/or
 # modify it under the terms of the license found in the file
@@ -24,8 +24,7 @@ VERSION = 10705000
 # version id string and build number.  these should be consistent with
 # VERSION.
 #
-VERSIONID = 1.7e
-VERSIONBUILD = 000
+VERSIONID = 1.7e0
 
 #
 # uncomment one of these to change the release type.

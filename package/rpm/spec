@@ -1,5 +1,6 @@
-# bzflag
-# Copyright (c) 1993 - 2000 Tim Riker
+# BZFlag rpm spec file
+#
+# Copyright (c) 1993 - 2001 Tim Riker
 #
 # This package is free software;  you can redistribute it and/or
 # modify it under the terms of the license found in the file
@@ -8,35 +9,26 @@
 # THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
 # IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
 # WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-#
-# bzflag RPM spec file
-#   RPM is boneheaded in that it expects you to build and install
-#   a package as part of the packaging.  dumb!  we'll hard link the
-#   necessary files into an alternate root and have RPM look there.
-#   we can also get RPM to put files in an alternate location by
-#   using an external rpmrc file.
-#
 
 %define name bzflag
-%define version 1.7e.000
+%define version 1.7e0
 %define release 1
 
-%define bzbasedir	/usr/X11R6/lib/X11/bzflag
-%define bzbindir	%{bzbasedir}/bin
-%define bzdatadir	%{bzbasedir}/data
-%define bzmandir	/usr/man
-%define bzdocdir	/usr/doc/%{name}-%{version}
+%define bzbindir	/usr/X11R6/bin
+%define bzdatadir	/usr/share/%{name}/
+%define bzmandir	/usr/share/man
+%define bzdocdir	/usr/share/doc/%{name}-%{version}
 
 name:		%{name}
 version:	%{version}
 release:	%{release}
 group:		Recreation/Action
-copyright:	1993 - 2000 Tim Riker
+copyright:	Copyright (c) 1993 - 2001 Tim Riker
 packager:	Tim Riker <Tim@Rikers.org>
 url:		http://BZFlag.SourceForge.net/
 summary:	multiplayer 3D tank battle game
-source:		http://download.SourceForge.net/bzflag/%{name}-%{version}.src.tar.gz
-buildroot:	/var/tmp/%{name}-%{version}-%{release}-root
+source:		http://download.SourceForge.net/bzflag/%{name}-%{version}.tgz
+buildroot:	/var/tmp/%{name}-%{version}-%{release}
 
 # all we want here is to remove glide, but RPM does not provide a way. ;-(
 # [crs -- mesa 3.1 now uses libGL.so.1 and libGLU.so.1.  also, linking
@@ -46,21 +38,21 @@ buildroot:	/var/tmp/%{name}-%{version}-%{release}-root
 #requires: libXext.so.6 libc.so.6 libm.so.6 libstdc++.so.2.9
 
 %description
-bzflag is a networked multiplayer 3D tank battle game, combining
+BZFlag is a networked multiplayer 3D tank battle game, combining
 both fast action and strategy.  Free-for-all and capture-the-flag
 styles are available.
 
 %prep
-%setup -q -c
+%setup -q
 
 %build
 %ifarch ppc
-make linux-ppc-noopt
+make linux-ppc
 %else
 %ifarch i386 i486 i586 i686
-make linux-i386-noopt
+make linux-i386
 %else
-make linux-noopt
+make linux
 %endif
 %endif
 make ACXXOPTS="$RPM_OPT_FLAGS" ACOPTS="$RPM_OPT_FLAGS"		\
@@ -79,9 +71,8 @@ install -m644 LICENSE $RPM_BUILD_ROOT%{bzdocdir}
 install -m644 man/*.6 $RPM_BUILD_ROOT%{bzmandir}/man6
 gzip $RPM_BUILD_ROOT%{bzmandir}/man6/*.6
 install -m644 data/*.rgb data/*.wav $RPM_BUILD_ROOT%{bzdatadir}
+# note bzfls/bzfrelay/bzfs might want to live in /usr/bin/
 install bin/* $RPM_BUILD_ROOT%{bzbindir}
-ln -s %{bzbindir}/bzflag $RPM_BUILD_ROOT/usr/X11R6/bin/bzflag
-ln -s %{bzbindir}/bzfs $RPM_BUILD_ROOT/usr/X11R6/bin/bzfs
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -90,11 +81,8 @@ rm -rf $RPM_BUILD_ROOT
 %files
 %defattr(-,root,root)
 %dir %{bzdocdir}
-%dir %{bzbindir}
 %dir %{bzdatadir}
-%dir %{bzbasedir}
+%dir %{bzdatadir}/*
 %doc %{bzdocdir}/*
 %doc %{bzmandir}/man6/*
 %attr(755,root,root) /usr/X11R6/bin/*
-%attr(755,root,root) %{bzbindir}/*
-%attr(644,root,root) %{bzdatadir}/*

@@ -1,5 +1,5 @@
 # bzflag
-# Copyright (c) 1993 - 2000 Tim Riker
+# Copyright (c) 1993 - 2001 Tim Riker
 #
 # This package is free software;  you can redistribute it and/or
 # modify it under the terms of the license found in the file
@@ -22,7 +22,6 @@ targets: tardist
 dist: $(_FORCE)
 	@VERSION=$(VERSION); export VERSION; \
 	VERSIONID=$(VERSIONID); export VERSIONID; \
-	VERSIONBUILD=$(VERSIONBUILD); export VERSIONBUILD; \
 	if test "$(RELEASEDEF)" = "-DALPHA_RELEASE"; then \
 	  RELEASETYPE=Alpha; \
 	elif test "$(RELEASEDEF)" = "-DBETA_RELEASE"; then \

@@ -1,5 +1,5 @@
 # bzflag
-# Copyright (c) 1993 - 2000 Tim Riker
+# Copyright (c) 1993 - 2001 Tim Riker
 #
 # This package is free software;  you can redistribute it and/or
 # modify it under the terms of the license found in the file
@@ -19,7 +19,7 @@ RPMDIR     = $(RPM)/$(RPMBASEDIR)
 RPMRC      = rpmrc
 SPECFILE   = spec
 RPMROOT    = $(RPMDIR)/root
-TMPROOT    = /var/tmp/bzflag-$(VERSIONID)-$(VERSIONBUILD)-root
+TMPROOT    = /var/tmp/bzflag-$(VERSIONID)-root
 
 LDIRT    = $(RPM)/$(RPMRC)
 
@@ -73,7 +73,7 @@ rpmprep:
 		echo "%define _topdir $(RPMBASEDIR)"; fi; \
 		cat $(RPM)/$(SPECFILE) ) | \
 		sed -e 's/%setup -q -c//' \
-		-e 's/%define version.*/%define version '$(VERSIONID).$(VERSIONBUILD)/ \
+		-e 's/%define version.*/%define version '$(VERSIONID)/ \
 		-e 's@%define bzdatadir.*@%define bzdatadir '$(INSTALL_DATA_DIR)@ > \
 						$(RPMDIR)/SPECS/$(SPECFILE)
 	# make rpmrc file

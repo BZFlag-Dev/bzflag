@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2000 Tim Riker
+ * Copyright (c) 1993 - 2001 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -128,7 +128,7 @@ static int		fdReconnect;		/* listen for reconnections */
 static int		usingSyslog;		/* != 0 to use syslog */
 static Relay*		relays;			/* doubly-linked list of relays */
 
-static const char	copyright[] = "Copyright (c) 1993 - 2000 Tim Riker";
+static const char	copyright[] = "Copyright (c) 1993 - 2001 Tim Riker";
 
 /*
  * debugging, logging, help
