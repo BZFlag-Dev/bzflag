@@ -156,10 +156,17 @@ void			Player::setTexture(const OpenGLTexture& _texture)
 void			Player::changeTeam(TeamColor _team)
 {
   static const GLfloat	tankSpecular[3] = { 0.1f, 0.1f, 0.1f };
-  static const GLfloat	tankEmissive[3] = { 0.0f, 0.0f, 0.0f };
+  GLfloat		tankEmissive[3] = { 0.0f, 0.0f, 0.0f };
+  float			tankShininess = 20.0f;
 
   // set team
   team = _team;
+
+  if (team == RabbitTeam)
+  {
+    tankEmissive[0] = tankEmissive[1] = tankEmissive[2] = 1.0f;
+    tankShininess = 100.0f;
+  }
 
   // change color of tank
   const float* _color = Team::getTankColor(team);
@@ -168,7 +175,7 @@ void			Player::changeTeam(TeamColor _team)
   color[2] = _color[2];
   color[3] = 1.0f;
   tankNode->setColor(color);
-  tankNode->setMaterial(OpenGLMaterial(tankSpecular, tankEmissive, 20.0f));
+  tankNode->setMaterial(OpenGLMaterial(tankSpecular, tankEmissive, tankShininess));
   tankNode->setTexture(*tankTexture);
 }
 
