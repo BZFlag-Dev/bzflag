@@ -266,8 +266,18 @@ void			RadarRenderer::render(SceneRenderer& renderer,
 
       if (myTank->getFlag() == ColorblindnessFlag)
 	glColor3fv(Team::getRadarColor(RogueTeam));
-      else
-	glColor3fv(Team::getRadarColor(player->getTeam()));
+      else {
+	if (player->isPaused() || player->isNotResponding()) {
+	  const float dimfactor=0.4;
+	  const float *color = Team::getRadarColor(player->getTeam());
+	  float dimmedcolor[3];
+	  dimmedcolor[0] = color[0] * dimfactor;
+	  dimmedcolor[1] = color[1] * dimfactor;
+	  dimmedcolor[2] = color[2] * dimfactor;
+	  glColor3fv(dimmedcolor);
+	} else
+	  glColor3fv(Team::getRadarColor(player->getTeam()));
+      }
       drawTank(x, y, player->getPosition()[2], ps);
     }
 
