@@ -2727,14 +2727,13 @@ static WorldInfo *defineWorldFromFile(const char *filename)
 
   if (gameStyle & TeamFlagGameStyle) {
     for (int i = RedTeam; i <= PurpleTeam; i++) {
-	    if ((maxTeam[i] > 0) && !hasBase[i]) {
-		    cerr << "base was not defined for team " << i << " capture the flag game style removed." << endl;
-		    gameStyle &= (~TeamFlagGameStyle);
-		    break;
-	    }
+      if ((maxTeam[i] > 0) && !hasBase[i]) {
+        cerr << "base was not defined for team " << i << " capture the flag game style removed." << endl;
+        gameStyle &= (~TeamFlagGameStyle);
+        break;
+      }
     }
   }
-
 
   // make walls
   world->addWall(0.0f, 0.5f * WorldSize, 0.0f, 1.5f * M_PI, 0.5f * WorldSize, WallHeight);
@@ -2767,42 +2766,46 @@ static WorldInfo *defineTeamWorld()
     baseRotation[0] = 0.0f;
     baseSize[0][0] = 0.0f;
     baseSize[0][1] = 0.0f;
+    safetyBasePos[0][0] = basePos[0][0];
+    safetyBasePos[0][1] = basePos[0][1];
+    safetyBasePos[0][2] = basePos[0][2];
+
     basePos[1][0] = (-WorldSize + BaseSize) / 2.0f;
     basePos[1][1] = 0.0f;
     basePos[1][2] = 0.0f;
     baseRotation[1] = 0.0f;
     baseSize[1][0] = BaseSize / 2.0f;
     baseSize[1][1] = BaseSize / 2.0f;
+    safetyBasePos[1][0] = basePos[1][0] + 0.5f * BaseSize + PyrBase;
+    safetyBasePos[1][1] = basePos[1][1] + 0.5f * BaseSize + PyrBase;
+    safetyBasePos[1][2] = basePos[1][2];
+
     basePos[2][0] = (WorldSize - BaseSize) / 2.0f;
     basePos[2][1] = 0.0f;
     basePos[2][2] = 0.0f;
     baseRotation[2] = 0.0f;
     baseSize[2][0] = BaseSize / 2.0f;
     baseSize[2][1] = BaseSize / 2.0f;
+    safetyBasePos[2][0] = basePos[2][0] - 0.5f * BaseSize - PyrBase;
+    safetyBasePos[2][1] = basePos[2][1] - 0.5f * BaseSize - PyrBase;
+    safetyBasePos[2][2] = basePos[2][2];
+
     basePos[3][0] = 0.0f;
     basePos[3][1] = (-WorldSize + BaseSize) / 2.0f;
     basePos[3][2] = 0.0f;
     baseRotation[3] = 0.0f;
     baseSize[3][0] = BaseSize / 2.0f;
     baseSize[3][1] = BaseSize / 2.0f;
+    safetyBasePos[3][0] = basePos[3][0] - 0.5f * BaseSize - PyrBase;
+    safetyBasePos[3][1] = basePos[3][1] + 0.5f * BaseSize + PyrBase;
+    safetyBasePos[3][2] = basePos[3][2];
+
     basePos[4][0] = 0.0f;
     basePos[4][1] = (WorldSize - BaseSize) / 2.0f;
     basePos[4][2] = 0.0f;
     baseRotation[4] = 0.0f;
     baseSize[4][0] = BaseSize / 2.0f;
     baseSize[4][1] = BaseSize / 2.0f;
-    safetyBasePos[0][0] = basePos[0][0];
-    safetyBasePos[0][1] = basePos[0][1];
-    safetyBasePos[0][2] = basePos[0][2];
-    safetyBasePos[1][0] = basePos[1][0] + 0.5f * BaseSize + PyrBase;
-    safetyBasePos[1][1] = basePos[1][1] + 0.5f * BaseSize + PyrBase;
-    safetyBasePos[1][2] = basePos[1][2];
-    safetyBasePos[2][0] = basePos[2][0] - 0.5f * BaseSize - PyrBase;
-    safetyBasePos[2][1] = basePos[2][1] - 0.5f * BaseSize - PyrBase;
-    safetyBasePos[2][2] = basePos[2][2];
-    safetyBasePos[3][0] = basePos[3][0] - 0.5f * BaseSize - PyrBase;
-    safetyBasePos[3][1] = basePos[3][1] + 0.5f * BaseSize + PyrBase;
-    safetyBasePos[3][2] = basePos[3][2];
     safetyBasePos[4][0] = basePos[4][0] + 0.5f * BaseSize + PyrBase;
     safetyBasePos[4][1] = basePos[4][1] - 0.5f * BaseSize - PyrBase;
     safetyBasePos[4][2] = basePos[4][2];
@@ -3324,6 +3327,8 @@ static TeamColor whoseBase(float x, float y, float z)
   int highestteam = -1;
   //Skip Rogue
   for (int i = 1; i < NumTeams; i++) {
+    if (randomCTF && (maxTeam[i] == 0))
+      continue;
     float nx = x - basePos[i][0];
     float ny = y - basePos[i][1];
     if (nx == 0.0f) nx = 1.0f;
