@@ -27,7 +27,7 @@ MAINTAINERCLEANFILES = \
 	Makefile.in
 
 install-data-local: $(EXTRA_DIST)
-	$(mkinstalldirs) $(DESTDIR)$(datadir)/bzflag
+	$(mkinstalldirs) $(DESTDIR)$(datadir)/bzflag/fonts
 	@list='$(EXTRA_DIST)'; for p in $$list; do \
 	if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
 	  f="`echo $$p | sed -e 's|^.*/||'`"; \
