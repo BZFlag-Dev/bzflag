@@ -92,7 +92,6 @@ const std::string StateDatabase::BZDB_BOXHEIGHT		= std::string("_boxHeight");
 const std::string StateDatabase::BZDB_BURROWDEPTH       = std::string("_burrowDepth");
 const std::string StateDatabase::BZDB_BURROWSPEEDAD     = std::string("_burrowSpeedAd");
 const std::string StateDatabase::BZDB_BURROWANGULARAD   = std::string("_burrowAngularAd");
-const std::string StateDatabase::BZDB_CLOUDHEIGHT       = std::string("_cloudHeight");
 const std::string StateDatabase::BZDB_COLDETDEPTH       = std::string("_coldetDepth");
 const std::string StateDatabase::BZDB_COLDETELEMENTS    = std::string("_coldetElements");
 const std::string StateDatabase::BZDB_CULLDEPTH		= std::string("_cullDepth");

@@ -19,7 +19,6 @@
 /* system interface headers */
 #include <map>
 #include <string>
-#include <time.h>
 
 #include "PlayerInfo.h"
 #include "colors.h"
@@ -147,6 +146,7 @@ protected:
   /** Connects to the list server and gets a list of available servers
    */
   void outputServerList() const;
+
 
   PlayerIdMap players;
   TeamColor myTeam;
