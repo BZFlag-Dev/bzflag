@@ -242,6 +242,9 @@ copy debug\*.pdb ..\..\*.pdb
 				RelativePath="..\..\src\bzflag\FlashClock.cxx">
 			</File>
 			<File
+				RelativePath="..\..\src\bzflag\ForceFeedback.cxx">
+			</File>
+			<File
 				RelativePath="..\..\src\bzflag\MainWindow.cxx">
 				<FileConfiguration
 					Name="Debug|Win32">
@@ -972,6 +975,9 @@ copy debug\*.pdb ..\..\*.pdb
 			</File>
 			<File
 				RelativePath="..\..\src\bzflag\FlashClock.h">
+			</File>
+			<File
+				RelativePath="..\..\src\bzflag\ForceFeedback.h">
 			</File>
 			<File
 				RelativePath="..\..\src\bzflag\FormatMenu.h">
