@@ -17,6 +17,7 @@
 #include "SDLDisplay.h"
 #include "OpenGLGState.h"
 #include <iostream>
+#include <math.h>
 
 static int mx = 0;
 static int my = 0;
