@@ -128,9 +128,10 @@ if test "x$with_kerberos" = "xyes" ; then
 fi
 AC_LANG_RESTORE
 AC_CHECK_HEADERS( \
-	sys/param.h \
-	values.h \
 	linux/input.h \
+	sys/param.h \
+	unistd.h \
+	values.h \
 )
 
 #Checks for types
