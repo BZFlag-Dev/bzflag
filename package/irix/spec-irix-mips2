@@ -13,6 +13,7 @@ product bzflag
 	    incompat bzflag.sw.n32 0 maxint
 	    prereq (
 		bzflag.data.req 0 maxint
+		fw_gcc 0 maxint
 	    )
 	endsubsys
     endimage

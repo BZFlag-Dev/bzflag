@@ -20,6 +20,7 @@ product bzflag
 		dmedia_eoe.sw32.lib 0 maxint
 		eoe.sw32.gfx 0 maxint
 		x_eoe.sw32.eoe 0 maxint
+		fw_gcc.sw*.* 0 maxint
 	    )
 	endsubsys
     endimage
