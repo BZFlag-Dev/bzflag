@@ -23,7 +23,6 @@
 #include "Pack.h"
 
 int FlagType::flagCount = 0;
-//FlagSet FlagType::flagSets[NumQualities];
 std::set<FlagType*> *FlagType::flagSets = NULL;
 
 
