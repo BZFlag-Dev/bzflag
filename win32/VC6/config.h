@@ -101,4 +101,10 @@
   inline void W32_DEBUG_TRACE (const char* buffer) {std::cout << buffer;}
 #endif
 
+/* Define to 1 if you have the `WaitForSingleObject' function. */
+#define HAVE_WAITFORSINGLEOBJECT 1
+
+/* Define to 1 if you have the `Sleep' function. */
+#define HAVE_SLEEP 1
+
 #endif //_VC5_6_CONFIG
