@@ -119,6 +119,9 @@ OpenGLTexFont		TextureFont::getTextureFont(Font index, bool required)
       font[index] = new OpenGLTexFont(width, height, image);
       delete[] image;
       anyFontLoaded = true;
+      // set first couple of font colors to reflect team colors
+      for (int i=0; i<NumTeams; i++)
+        font[index]->setColor(i, Team::radarColor[i]);
     }
     else if (required) {
       // can't print message usual way because we're going down
