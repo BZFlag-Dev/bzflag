@@ -533,11 +533,11 @@ bool			ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
 	  std::vector<std::string>::iterator it = silencePlayers.begin();
 	  for (; it != silencePlayers.end(); it++) {
 	    if (*it == silence + 10) {
-	    silencePlayers.erase(it);
-	    std::string message = "Unsilenced ";
-	    message += (silence + 10);
-	    addMessage(NULL, message);
-	    break;
+	      silencePlayers.erase(it);
+	      std::string message = "Unsilenced ";
+	      message += (silence + 10);
+	      addMessage(NULL, message);
+	      break;
 	    }
 	  }
 	}
