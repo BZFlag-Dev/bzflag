@@ -23,7 +23,7 @@
 
 // system headers
 #ifdef _WIN32
-#include <winsock2.h>
+#include <winsock.h>
 #endif
 #ifdef HAVE_CURL
 #include <curl/curl.h>
