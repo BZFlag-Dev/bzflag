@@ -2650,20 +2650,22 @@ static void anointNewRabbit()
       if (ratio > topRatio) {
 	topRatio = ratio;
 	rabbitIndex = i;
+	DEBUG3("rabbitIndex is set to %d\n", rabbitIndex);
       }
     }
   }
   if (rabbitIndex == NoPlayer) {
-    // nobody, or no other than old rabbit to choose from
     for (i = 0; i < curMaxPlayers; i++) {
       if (player[i].state > PlayerInLimbo && !player[i].paused && !player[i].notResponding && player[i].team != ObserverTeam) {
 	float ratio = rabbitRank(player[i]);
 	if (ratio > topRatio) {
 	  topRatio = ratio;
 	  rabbitIndex = i;
+	  DEBUG3("rabbitIndex is set again to %d\n", rabbitIndex);
 	}
       }
     }
+    DEBUG3("nobody, or no other than old rabbit to choose from, rabbitIndex is %d\n", rabbitIndex);
   }
 
   if (rabbitIndex != oldRabbit) {
@@ -2671,11 +2673,12 @@ static void anointNewRabbit()
       player[oldRabbit].team = RogueTeam;
       player[oldRabbit].wasRabbit = true;
     }
-    if (rabbitIndex != NoPlayer)
+    if (rabbitIndex != NoPlayer) {
       player[rabbitIndex].team = RabbitTeam;
-    void *buf, *bufStart = getDirectMessageBuffer();
-    buf = nboPackUByte(bufStart, rabbitIndex);
-    broadcastMessage(MsgNewRabbit, (char*)buf-(char*)bufStart, bufStart);
+      void *buf, *bufStart = getDirectMessageBuffer();
+      buf = nboPackUByte(bufStart, rabbitIndex);
+      broadcastMessage(MsgNewRabbit, (char*)buf-(char*)bufStart, bufStart);
+    }
   }
 }
 
