@@ -21,6 +21,8 @@ THESE ARE LOWER PRIORITY
 
 * move version functions to buildDate.cxx
 
+* remove -port and add support for server.example.com:port
+
 * split -public <desc> into -public, -description <desc>, and -email <contact>
 
 * support gameinfo requests as one time udp packets and include all the
