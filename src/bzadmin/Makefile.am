@@ -40,7 +40,7 @@ bzadmin_SOURCES = \
 	pdcurses_adapter.h
 
 ServerLink.cxx: @top_srcdir@/src/bzflag/ServerLink.cxx
-	cp -a @top_srcdir@/src/bzflag/ServerLink.cxx .
+	cp -dR @top_srcdir@/src/bzflag/ServerLink.cxx .
 
 LDADD = \
 	../net/libNet.a			\
