@@ -1,6 +1,13 @@
 SUBDIRS = include nsis src
 
-EXTRA_DIST = $(wildcard *.dsp) install.dsw README.win32.html bzflag.spc
+EXTRA_DIST =	\
+	bzfinst.dsp	\
+	bzflag.spc	\
+	bzfuinst.dsp	\
+	install.dsw	\
+	makedb.dsp	\
+	README.win32.html	\
+	runmakedb.dsp
 
 MAINTAINERCLEANFILES = \
 	Makefile.in

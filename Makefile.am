@@ -5,8 +5,18 @@ package: FORCE
 
 FORCE:
 
-EXTRA_DIST = acconfig.h BUGS bzflag.lsm DEVINFO PORTING $(wildcard README.*) \
-	RELNOTES TODO
+EXTRA_DIST = \
+	autogen.sh \
+	BUGS \
+	bzflag.lsm \
+	DEVINFO \
+	PORTING \
+	README.IRIX \
+	README.MINGW32 \
+	README.SOLARIS \
+	README.UNIX \
+	README.WIN32 \
+	RELNOTES
 
 MAINTAINERCLEANFILES = \
 	aclocal.m4 \

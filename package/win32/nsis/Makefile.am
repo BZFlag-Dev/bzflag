@@ -1,4 +1,7 @@
-EXTRA_DIST = $(wildcard *.bmp) BZFlag.nsi
+EXTRA_DIST =	\
+	BZFlag.nsi	\
+	DisableCheck.bmp	\
+	EnableCheck.bmp
 
 MAINTAINERCLEANFILES = \
 	Makefile.in

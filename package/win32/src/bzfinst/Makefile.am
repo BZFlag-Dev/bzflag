@@ -1,4 +1,13 @@
-EXTRA_DIST = $(wildcard [a-z]*) $(wildcard Uncompressor.*)
+EXTRA_DIST =	\
+	install.cxx	\
+	install.ico	\
+	install.rc	\
+	main.cxx	\
+	resource.h	\
+	Uncompressor.cxx	\
+	Uncompressor.h	\
+	undo.cxx	\
+	undo.h
 
 MAINTAINERCLEANFILES = \
 	Makefile.in
