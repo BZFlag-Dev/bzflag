@@ -1,5 +1,17 @@
 #!/bin/sh
 
+# Welcome to the whitespace posting board.
+# 
+# "man unexpand"
+#
+# unexpand -t 8 -a file > file2  (then do some moving)
+#
+# That program takes the tab positions into account.
+# I don't know how standard it is, but I would suggest
+# having the script simply bail on that conversion if
+# it isn't present.
+
+
 # Note: this script will not alter any files that already
 # meet the BZFlag whitespace usage guidelines.
 # if your files are being messed up by this, then chances
