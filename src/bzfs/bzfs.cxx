@@ -4073,7 +4073,7 @@ int main(int argc, char **argv)
 	      // perform the action of the poll, if any
 	      std::string pollAction;
 	      if (action == "ban")
-		pollAction = "banned for 10 minutes.";
+		pollAction = "banned for 5 hours.";
 	      else if (action == "kick")
 		pollAction = "kicked.";
 	      else
@@ -4088,7 +4088,7 @@ int main(int argc, char **argv)
 	       * is a ban poll, ban the weenie
 	       */
 	      if (action == "ban") {
-		clOptions->acl.ban(realIP.c_str(), target.c_str(), 10);
+		clOptions->acl.ban(realIP.c_str(), target.c_str(), 300);
 	      }
 	      
 	      if ((action == "ban") || (action == "kick")) {
