@@ -597,7 +597,7 @@ void handleLagstatsCmd(GameKeeper::Player *playerData, const char *)
   for (int i = 0; i < curMaxPlayers; i++) {
     GameKeeper::Player *p = GameKeeper::Player::getPlayerByIndex(i);
     if (p != NULL) {
-      p->lagInfo->getLagStats(reply);
+      p->lagInfo.getLagStats(reply);
       if (strlen(reply)) {
 	if (p->accessInfo.isAccessVerified())
 	  strcat(reply, " (R)");

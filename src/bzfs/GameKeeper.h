@@ -69,7 +69,7 @@ public:
     // Net Handler
     NetHandler       *netHandler;
     // player lag info
-    LagInfo          *lagInfo;
+    LagInfo           lagInfo;
     // player access
     PlayerAccessInfo  accessInfo;
     // Last known position, vel, etc

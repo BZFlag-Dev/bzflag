@@ -3418,7 +3418,7 @@ static void handleCommand(int t, const void *rawbuf)
     case MsgLagPing: {
       bool warn;
       bool kick;
-      int lag = playerData->lagInfo->updatePingLag(buf, warn, kick);
+      int lag = playerData->lagInfo.updatePingLag(buf, warn, kick);
       if (warn) {
 	char message[MessageLen];
 	sprintf(message,"*** Server Warning: your lag is too high (%d ms) ***",
@@ -3452,7 +3452,7 @@ static void handleCommand(int t, const void *rawbuf)
       if (state.order <= lastState[t].order)
 	break;
 
-      playerData->lagInfo->updateLag(timestamp,
+      playerData->lagInfo.updateLag(timestamp,
 				     state.order - lastState[t].order > 1);
       playerData->player.updateIdleTime();
 
@@ -4417,7 +4417,7 @@ int main(int argc, char **argv)
       if (p != NULL) {
 	bool warn;
 	bool kick;
-        int nextPingSeqno = p->lagInfo->getNextPingSeqno(warn, kick);
+        int nextPingSeqno = p->lagInfo.getNextPingSeqno(warn, kick);
 	if (nextPingSeqno > 0) {
 	  void *buf, *bufStart = getDirectMessageBuffer();
 	  buf = nboPackUShort(bufStart, nextPingSeqno);

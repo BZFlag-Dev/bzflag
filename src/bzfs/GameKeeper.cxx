@@ -23,21 +23,19 @@ GameKeeper::Player *GameKeeper::Player::playerList[PlayerSlot] = {NULL};
 
 GameKeeper::Player::Player(int _playerIndex,
 			   const struct sockaddr_in &clientAddr, int fd):
-  player(_playerIndex),
+  player(_playerIndex), lagInfo(&player),
   lastState(&::lastState[_playerIndex]),
   playerIndex(_playerIndex)
 {
   playerList[playerIndex] = this;
 
   lastState->order = 0;
-  lagInfo          = new LagInfo(&player);
   netHandler       = new NetHandler(&player, clientAddr, playerIndex, fd);
 }
 
 GameKeeper::Player::~Player()
 {
   flagHistory.clear();
-  delete lagInfo;
   delete netHandler;
 
   playerList[playerIndex] = NULL;
@@ -70,7 +68,7 @@ void GameKeeper::Player::updateLatency(float &waitTime)
     if ((playerData = playerList[p])) {
 
       // get time for next lagping
-      playerData->lagInfo->updateLatency(waitTime);
+      playerData->lagInfo.updateLatency(waitTime);
 
       // get time for next delayed packet (Lag Flag)
       float nextTime = playerData->delayq.nextPacketTime();
