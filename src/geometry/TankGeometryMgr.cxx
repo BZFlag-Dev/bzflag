@@ -103,7 +103,7 @@ TankGeometryMgr::~TankGeometryMgr()
 
 void TankGeometryMgr::deleteLists()
 {
-  // delete the list that have been aquired
+  // delete the lists that have been aquired
   for (int shadow = 0; shadow < LastTankShadow; shadow++) {
     for (int lod = 0; lod < LastTankLOD; lod++) {
       for (int size = 0; size < LastTankSize; size++) {
@@ -124,6 +124,13 @@ void TankGeometryMgr::deleteLists()
 void TankGeometryMgr::setupScales(const std::string& /*name*/, void * /*data*/)
 {
   float scale;
+  
+  for (int i = 0; i < LastTankSize; i++) {
+    scaleFactors[i][0] = 1.0f;
+    scaleFactors[i][1] = 1.0f;
+    scaleFactors[i][2] = 1.0f;
+  }
+  return;
 
   scaleFactors[Normal][0] = BZDB.eval(StateDatabase::BZDB_TANKLENGTH);
   scale = (float)atof(BZDB.getDefault(StateDatabase::BZDB_TANKLENGTH).c_str());
