@@ -130,12 +130,7 @@ const char * EntryZones::getSafetyPrefix ()
 
 static int matchTeamColor(const char *teamText)
 {
-  for (int i = 0; i < CtfTeams; i++) {
-    if (strcmp (teamText, Team::getName((TeamColor)i)) == 0) {
-      return i;
-    }
-  }
-  return -1;
+  return int(Team::getTeam(teamText));
 }
 
 void EntryZones::makeSplitLists (int zone,

@@ -1025,15 +1025,7 @@ int			main(int argc, char** argv)
 
     if (BZDB.isSet("team")) {
       std::string value = BZDB.get("team");
-      for (int i = 0; i < NumTeams; i++) {
-	if (value == Team::getName((TeamColor)i)) {
-	  startupInfo.team = (TeamColor)i;
-	  break;
-	}
-      }
-      if (value == Team::getName(AutomaticTeam)) {
-	startupInfo.team = AutomaticTeam;
-      }
+      startupInfo.team = Team::getTeam(value);
     }
     if (BZDB.isSet("server")) {
       strncpy(startupInfo.serverName, BZDB.get("server").c_str(),
