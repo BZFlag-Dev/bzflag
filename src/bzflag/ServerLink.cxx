@@ -618,14 +618,15 @@ void			ServerLink::sendDropFlag(const float* position)
 
 void			ServerLink::sendKilled(const PlayerId& killer,
 					       int reason, int shotId,
-					       int phydrv)
+					       FlagType* flag, int phydrv)
 {
-  char msg[PlayerIdPLen + 2 + 2 + 4];
+  char msg[PlayerIdPLen + 2 + 2 + 2 + 4];
   void* buf = msg;
 
   buf = nboPackUByte(buf, killer);
   buf = nboPackUShort(buf, int16_t(reason));
   buf = nboPackShort(buf, int16_t(shotId));
+  buf = flag->pack(buf);
 
   int msgLen = PlayerIdPLen + (sizeof(int16_t) * 2);
 

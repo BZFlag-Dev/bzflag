@@ -312,12 +312,14 @@ BZAdminClient::ServerCode BZAdminClient::checkMessage() {
     case MsgKilled:
       if (messageMask[MsgKilled]) {
 	PlayerId victim, killer;
+	FlagType* flagType;
 	int16_t shotId, reason;
 	int phydrv;
 	vbuf = nboUnpackUByte(vbuf, victim);
 	vbuf = nboUnpackUByte(vbuf, killer);
 	vbuf = nboUnpackShort(vbuf, reason);
 	vbuf = nboUnpackShort(vbuf, shotId);
+	vbuf = FlagType::unpack(vbuf, flagType);
 	if (reason == PhysicsDriverDeath) {
 	  int32_t inPhyDrv;
 	  vbuf = nboUnpackInt(vbuf, inPhyDrv);

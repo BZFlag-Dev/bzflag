@@ -658,10 +658,12 @@ static MsgStringList handleMsgKilled (PacketInfo *pi)
   void *d = (void*)pi->data;
   u8 victim, killer;
   int16_t reason, shot;
+  FlagType* flagType;
   d = nboUnpackUByte(d, victim);
   d = nboUnpackUByte(d, killer);
   d = nboUnpackShort(d, reason);   
   d = nboUnpackShort(d, shot);
+  d = FlagType::unpack(d, flagType);
   listPush (list, 1, "victim: %s", strPlayer(victim).c_str());
   listPush (list, 1, "killer: %s", strPlayer(killer).c_str());
   listPush (list, 1, "reason: %s", strKillReason(reason).c_str());

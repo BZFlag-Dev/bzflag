@@ -37,6 +37,7 @@
 // MeshFragSceneNode::Geometry
 //
 
+// NOTE: this should be based on visual pixel area
 static int minLightDisabling = 100;
 
 MeshFragSceneNode::Geometry::Geometry(MeshFragSceneNode* node)

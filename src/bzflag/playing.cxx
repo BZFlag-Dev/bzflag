@@ -1836,12 +1836,14 @@ static void		handleServerMessage(bool human, uint16_t code,
 
     case MsgKilled: {
       PlayerId victim, killer;
+      FlagType* flagType;
       int16_t shotId, reason;
       int phydrv = -1;
       msg = nboUnpackUByte(msg, victim);
       msg = nboUnpackUByte(msg, killer);
       msg = nboUnpackShort(msg, reason);
       msg = nboUnpackShort(msg, shotId);
+      msg = FlagType::unpack(msg, flagType);
       if (reason == (int16_t)PhysicsDriverDeath) {
 	int32_t inPhyDrv;
 	msg = nboUnpackInt(msg, inPhyDrv);
@@ -1879,6 +1881,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 	explodePos[2] = pos[2] + victimPlayer->getMuzzleHeight();
 	addTankExplosion(explodePos);
       }
+      
       if (killerLocal) {
 	// local player did it
 	if (shotId >= 0) {
@@ -1966,16 +1969,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 	  }
 	  addMessage(victimPlayer, message);
 	}
-	else if ((shotId == -1) || (killerPlayer->getShot(int(shotId)) == NULL)) {
-	  message += "destroyed by ";
-	  if (killerPlayer->getTeam() == victimPlayer->getTeam() &&
-	      killerPlayer->getTeam() != RogueTeam)
-	    message += "teammate " + ColorStrings[killerPlayer->getTeam()];
-	  message += killerPlayer->getCallSign();
-	  addMessage(victimPlayer, message);
-	}
 	else {
-	  const ShotPath* shot = killerPlayer->getShot(int(shotId));
 	  std::string playerStr;
 	  if (killerPlayer->getTeam() == victimPlayer->getTeam() &&
 	      killerPlayer->getTeam() != RogueTeam)
@@ -1995,18 +1989,17 @@ static void		handleServerMessage(bool human, uint16_t code,
 	  playerStr += ColorStrings[WhiteColor];
 
 	  // Give more informative kill messages
-	  FlagType* shotFlag = shot->getFlag();
-	  if (shotFlag == Flags::Laser)
+	  if (flagType == Flags::Laser)
 	    message += "was fried by " + playerStr + "'s laser";
-	  else if (shotFlag == Flags::GuidedMissile)
+	  else if (flagType == Flags::GuidedMissile)
 	    message += "was destroyed by " + playerStr + "'s guided missile";
-	  else if (shotFlag == Flags::ShockWave)
+	  else if (flagType == Flags::ShockWave)
 	    message += "felt the effects of " + playerStr + "'s shockwave";
-	  else if (shotFlag == Flags::InvisibleBullet)
+	  else if (flagType == Flags::InvisibleBullet)
 	    message += "didn't see " + playerStr + "'s bullet";
-	  else if (shotFlag == Flags::MachineGun)
+	  else if (flagType == Flags::MachineGun)
 	    message += "was turned into swiss cheese by " + playerStr + "'s machine gun";
-	  else if (shotFlag == Flags::SuperBullet)
+	  else if (flagType == Flags::SuperBullet)
 	    message += "got skewered by " + playerStr + "'s super bullet";
 	  else
 	    message += "killed by " + playerStr;
@@ -2918,8 +2911,11 @@ static bool		gotBlowedUp(BaseLocalPlayer* tank,
     return false;
 
   int shotId = -1;
-  if (hit)
+  FlagType* flagType = Flags::Null;
+  if (hit) {
     shotId = hit->getShotId();
+    flagType = hit->getFlag();
+  }
 
   // you can't take it with you
   const FlagType* flag = tank->getFlag();
@@ -2981,7 +2977,7 @@ static bool		gotBlowedUp(BaseLocalPlayer* tank,
     if (reason == GotShot || reason == GotRunOver ||
 	reason == GenocideEffect || reason == SelfDestruct ||
 	reason == WaterDeath || reason == DeathTouch)
-      lookupServer(tank)->sendKilled(killer, reason, shotId, phydrv);
+      lookupServer(tank)->sendKilled(killer, reason, shotId, flagType, phydrv);
   }
 
   // print reason if it's my tank

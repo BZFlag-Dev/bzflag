@@ -31,6 +31,7 @@
 #include "Address.h"
 #include "Protocol.h"
 #include "ShotPath.h"
+#include "Flag.h"
 
 class ServerLink {
   public:
@@ -79,7 +80,8 @@ class ServerLink {
     void		sendKerberosTicket(const char      *principal,
 					   const krb5_data *ticket);
 #endif
-    void		sendKilled(const PlayerId&, int reason, int shotId, int phydrv);
+    void		sendKilled(const PlayerId&, int reason,
+                                   int shotId, FlagType* flag, int phydrv);
   // FIXME -- This is very ugly, but required to build bzadmin with gcc 2.9.5.
   //	  It should be changed to something cleaner.
 #ifndef BUILDING_BZADMIN
