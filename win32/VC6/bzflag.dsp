@@ -229,7 +229,79 @@ SOURCE=..\..\src\bzflag\WorldPlayer.cxx
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
 # Begin Source File
 
+SOURCE=..\..\include\Address.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\bzflag\BackgroundRenderer.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\BaseBuilding.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\BillboardSceneNode.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\BoltSceneNode.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\BoxBuilding.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\BSPSceneDatabase.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\Bundle.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\BundleMgr.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\BZDBCache.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\BzfDisplay.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\BzfEvent.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\bzfgl.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\bzfio.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\bzflag.ico
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\BzfMedia.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\BzfVisual.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\BzfWindow.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\CallbackList.h
 # End Source File
 # Begin Source File
 
@@ -237,7 +309,23 @@ SOURCE=..\..\src\bzflag\callbacks.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\include\CommandManager.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\CommandsStandard.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\include\CommandsStandard.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\common.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\ConfigFileManager.h
 # End Source File
 # Begin Source File
 
@@ -246,6 +334,38 @@ SOURCE=..\..\src\bzflag\ControlPanel.h
 # Begin Source File
 
 SOURCE=..\..\src\bzflag\daylight.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\EighthDBaseSceneNode.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\EighthDBoxSceneNode.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\EighthDimSceneNode.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\EighthDPyrSceneNode.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\ErrorHandler.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\FileManager.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\Flag.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\global.h
 # End Source File
 # Begin Source File
 
@@ -261,6 +381,18 @@ SOURCE=..\..\src\bzflag\HUDui.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\include\Intersect.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\KeyManager.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\LaserSceneNode.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\bzflag\LocalPlayer.h
 # End Source File
 # Begin Source File
@@ -269,7 +401,55 @@ SOURCE=..\..\src\bzflag\MainWindow.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\include\MediaFile.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\bzflag\menus.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\multicast.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\Obstacle.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\OpenGLDisplayList.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\OpenGLGState.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\OpenGLLight.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\OpenGLMaterial.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\OpenGLTexFont.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\OpenGLTexture.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\Pack.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\Ping.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\PlatformFactory.h
 # End Source File
 # Begin Source File
 
@@ -277,7 +457,15 @@ SOURCE=..\..\src\bzflag\Player.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\include\PlayerState.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\bzflag\playing.h
+# End Source File
+# Begin Source File
+
+SOURCE="C:\Program Files\Microsoft SDK\include\PropIdl.h"
 # End Source File
 # Begin Source File
 
@@ -285,7 +473,23 @@ SOURCE=..\include\Protocol.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\include\PyramidBuilding.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\QuadWallSceneNode.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\bzflag\RadarRenderer.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\Ray.h
+# End Source File
+# Begin Source File
+
+SOURCE="C:\Program Files\Microsoft SDK\include\Reason.h"
 # End Source File
 # Begin Source File
 
@@ -297,11 +501,31 @@ SOURCE=..\..\src\bzflag\RemotePlayer.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\include\RenderNode.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\resource.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\bzflag\RobotPlayer.h
 # End Source File
 # Begin Source File
 
 SOURCE=..\..\src\bzflag\SceneBuilder.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\SceneDatabase.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\SceneNode.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\SceneRenderer.h
 # End Source File
 # Begin Source File
 
@@ -321,7 +545,15 @@ SOURCE=..\..\src\bzflag\ShotPath.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\include\ShotSceneNode.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\bzflag\ShotStrategy.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\ShotUpdate.h
 # End Source File
 # Begin Source File
 
@@ -329,7 +561,31 @@ SOURCE=..\..\src\bzflag\sound.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\include\SphereSceneNode.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\StateDatabase.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\TankSceneNode.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\Team.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\Teleporter.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\bzflag\texture.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\TextUtils.h
 # End Source File
 # Begin Source File
 
@@ -337,7 +593,31 @@ SOURCE=..\include\TextUtils.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\include\TimeBomb.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\TimeKeeper.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\include\version.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\ViewFrustum.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\WallObstacle.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\WallSceneNode.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\WordFilter.h
 # End Source File
 # Begin Source File
 
@@ -346,6 +626,10 @@ SOURCE=..\..\src\bzflag\World.h
 # Begin Source File
 
 SOURCE=..\..\src\bzflag\WorldPlayer.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\ZSceneDatabase.h
 # End Source File
 # End Group
 # Begin Group "Resource Files"
@@ -356,5 +640,21 @@ SOURCE=..\..\src\bzflag\WorldPlayer.h
 SOURCE=.\bzflag.ico
 # End Source File
 # End Group
+# Begin Source File
+
+SOURCE=..\..\include\bzsignal.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\config.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\FlagSceneNode.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\FlagWarpSceneNode.h
+# End Source File
 # End Target
 # End Project
