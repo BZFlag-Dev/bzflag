@@ -5,6 +5,7 @@
 
 BZFlag 1.7g1
 -------------------------------------------------------
+* Optional config file interface for bzfs settings - Dave Brosius
 * inline editing of text fields (<- ->) Dave Brosius, Frank Thilo
 * extend admin command -> /flag reset unused - Dave Brosius
 
