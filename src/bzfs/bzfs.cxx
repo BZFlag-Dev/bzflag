@@ -325,7 +325,7 @@ public:
       if (pos > 0)
 	badWord = badWord.substr(pos);
       pos = badWord.find_first_of("\t \r\n");
-      if ((pos >= 0) & (pos < (int)badWord.length()))
+      if ((pos >= 0) && (pos < (int)badWord.length()))
 	badWord = badWord.substr(0, pos);
       if (badWord.length() > 0)
 	badWords.insert(badWord);
