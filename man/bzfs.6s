@@ -25,6 +25,7 @@ bzfs \- BZFlag game server
 [\fB\-g\fR]
 [\fB\-groupdb \fIfile\fR]
 [\fB\-h\fR]
+[\fB\-handicap\fR]
 [\fB\-help\fR]
 [\fB\-helpmsg \fIfile\fR \fIname\fR]
 [\fB\-i \fIinterface\fR]
@@ -179,6 +180,13 @@ Load groups from file
 .TP
 .B -h
 Buildings are given random heights.
+.TP
+.B -handicap
+Players are given a handicap advantage based on their ability in
+relation to the other players.  Handicapped players will reload,
+dodge/accelerate, and fire shots slightly faster than other
+players.  The handicap is determined by the player's score in
+relation to other players.
 .TP
 .B -help
 Shows a help page and lists all the valid flag id's.
