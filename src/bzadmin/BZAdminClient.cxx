@@ -40,9 +40,41 @@ BZAdminClient::BZAdminClient(std::string callsign, std::string host,
   }
   sLink.sendEnter(TankPlayer, myTeam, callsign.c_str(), "");
   if (sLink.getState() != ServerLink::Okay) {
-    std::cerr<<"Rejected."<<std::endl;
+    std::cerr << "Rejected." << std::endl;
     return;
   }
+
+  // wait for response
+  // FIXME - code duplicated from playing.cxx
+  uint16_t code, len;
+  char msg[MaxPacketLen];
+  if (sLink.read(code, len, msg, -1) < 0) {
+    std::cerr << "Communication error joining game [No immediate respose]." << std::endl;
+    return;
+  }
+  if (code == MsgSuperKill) {
+    std::cerr << "Server forced disconnection." << std::endl;
+    return;
+  }
+  if (code != MsgAccept && code != MsgReject) {
+    char buf[10];
+    std::vector<std::string> args;
+    sprintf(buf, "%04x", code);
+    args.push_back(buf);
+    std::cerr << "Communication error joining game [Wrong Code {1}]." << std::endl;
+    return;
+  }
+  if (code == MsgReject) {
+    void *buf;
+    char buffer[MessageLen];
+    uint16_t code;
+    buf = nboUnpackUShort (msg, code); // filler for now
+    buf = nboUnpackString (buf, buffer, MessageLen);
+    buffer[MessageLen - 1] = '\0';
+    std::cerr << buffer << std::endl;
+    return;
+  }
+  
   valid = true;
   
   // tell BZDB to shut up, we can't have debug data printed to stdout
