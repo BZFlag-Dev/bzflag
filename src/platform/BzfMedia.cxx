@@ -163,7 +163,7 @@ int			BzfMedia::findExtension(const std::string& pathname) const
 
 std::string		BzfMedia::getImageExtension() const
 {
-  return std::string("rgb");
+  return std::string("png");
 }
 
 std::string		BzfMedia::getSoundExtension() const
