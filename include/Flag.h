@@ -44,6 +44,7 @@
 #define	BZF_FLAG_H
 
 #include <set>
+#include <map>
 #include "common.h"
 #include "global.h"
 #include "Address.h"
@@ -75,7 +76,37 @@ enum ShotType {
 
 const int		FlagPLen = 6 + PlayerIdPLen + 48;
 
-typedef std::set<FlagId> FlagSet;
+
+class FlagDesc {
+  public:
+    FlagDesc( const char* name, const char* abbv, FlagType fType, 
+	      ShotType sType, FlagQuality quality, const char* help ) {
+      flagName = name;
+      flagAbbv = abbv;
+      flagType = fType;
+      flagShot = sType;
+      flagQuality = quality;
+      flagHelp = help;
+      
+      flagSets[flagQuality].insert(this);
+      flagMap[flagAbbv] = this;
+      flagCount++;
+    }
+
+    const char*         flagName;
+    const char*         flagAbbv;
+    FlagType            flagType;
+    const char*         flagHelp;
+    FlagQuality	        flagQuality;
+    ShotType            flagShot;
+
+    typedef std::set<FlagDesc*> FlagSet;
+    static std::map<std::string, FlagDesc*> flagMap;
+    static int	        flagCount;
+    static FlagSet      flagSets[NumQualities];
+};
+
+typedef FlagDesc::FlagSet  FlagSet;
 
 class Flag {
   public:
@@ -84,16 +115,10 @@ class Flag {
 
     static FlagSet&	getGoodFlags();
     static FlagSet&	getBadFlags();
-    static const char*	getName(FlagId);
-    static const char*	getAbbreviation(FlagId);
-    static FlagId	getIDFromAbbreviation(const char* abbreviation);
-    static FlagType	getType(FlagId);
-    static const char*	getHelp(FlagId);
-    static ShotType	getShotType(FlagId);
-    static const float*	getColor(FlagId);
+    static FlagDesc*	getDescFromAbbreviation(const char* abbreviation);
 
   public:
-    FlagId		id;
+    FlagDesc*		desc;
     FlagStatus		status;
     FlagType		type;
     PlayerId		owner;			// who has flag
@@ -103,33 +128,6 @@ class Flag {
     float		flightTime;		// flight time so far
     float		flightEnd;		// total duration of flight
     float		initialVelocity;	// initial launch velocity
-
-  private:
-    class Desc
-    {
-    public:
-	Desc( const char* name, const char *abbv, FlagType fType, ShotType sType, FlagQuality quality, const char *help ) {
-		flagName = name;
-		flagAbbv = abbv;
-		flagType = fType;
-		flagShot = sType;
-		flagQuality = quality;
-		flagHelp = help;
-
-		flagSets[flagQuality].insert((FlagId) flagCount++);
-	}
-	const char*	flagName;
-	const char*	flagAbbv;
-	FlagType	flagType;
-	const char*	flagHelp;
-	FlagQuality	flagQuality;
-	ShotType	flagShot;
-
-	static int	flagCount;
-	static FlagSet	flagSets[NumQualities];
-    };
-
-    static Desc descriptions[];
 };
 
 // Flags no longer use enumerated IDs. Over the wire, flags are all represented
@@ -140,7 +138,7 @@ class Flag {
 // instances are created.
 //
 namespace Flags {
-  extern Flag::Desc* 
+  extern FlagDesc* 
     Null,
     RedTeam, GreenTeam, BlueTeam, PurpleTeam, HighSpeed, QuickTurn,
     OscillationOverthruster, RapidFire, MachineGun, GuidedMissle, Laser,
