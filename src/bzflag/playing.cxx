@@ -1475,8 +1475,8 @@ static bool		doKeyCommon(const BzfKeyEvent& key, bool pressed)
         playLocalSound(SFX_HUNT);
         hud->setHunt(!hud->getHunt());
         hud->setHuntPosition(0);
-	if (!BZDB->isTrue("showscore"))
-	  BZDB->set("showscore", "1");
+	if (!BZDB->isTrue("displayScore"))
+	  BZDB->set("displayScore", "1");
       }
     }
     return true;

@@ -1342,7 +1342,7 @@ void			HUDRenderer::renderPlaying(SceneRenderer& renderer)
   renderAlerts();
 
   // show player scoreboard
-  if (BZDB->isTrue("showscore")) renderScoreboard();
+  if (BZDB->isTrue("displayScore")) renderScoreboard();
 
   // draw flag help
   if (flagHelpClock.isOn()) {
@@ -1461,7 +1461,7 @@ void			HUDRenderer::renderRoaming(SceneRenderer& renderer)
   renderAlerts();
 
   // show player scoreboard
-  if (BZDB->isTrue("showscore")) renderScoreboard();
+  if (BZDB->isTrue("displayScore")) renderScoreboard();
 
   // show tank labels
   if (renderer.getLabels()) renderTankLabels(renderer);

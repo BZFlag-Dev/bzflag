@@ -105,7 +105,8 @@ static DefaultDBItem	defaultDBItems[] = {
   { "serverCacheAge",		"0",			true,	StateDatabase::ReadWrite,	NULL },
   { "displayRadarFlags",	"1",			true,	StateDatabase::ReadWrite,	NULL },
   { "displayMainFlags",		"1",			true,	StateDatabase::ReadWrite,	NULL },
-  { "displayBinoculars",	"0",			false,	StateDatabase::ReadWrite,	NULL }
+  { "displayBinoculars",	"0",			false,	StateDatabase::ReadWrite,	NULL },
+  { "displayScore",		"1",			true,	StateDatabase::ReadWrite,	NULL }
 };
 
 // default key bindings
@@ -122,7 +123,7 @@ static const char*	bindingList[] = {
   "bind M down \"send team\"",
   "bind , down \"send nemesis\"",
   "bind . down \"send recipient\"",
-  "bind S down \"toggle showscore\"",
+  "bind S down \"toggle displayScore\"",
   "bind B down \"toggle displayBinoculars\"",
   "bind Pause down pause",
   "bind P down pause",
@@ -1222,7 +1223,7 @@ int			main(int argc, char** argv)
       ServerStartMenu::setSettings(BZDB->get("startcode").c_str());
     if (BZDB->isSet("showflaghelp"))
       renderer.setShowFlagHelp(BZDB->isTrue("showflaghelp"));
-    if (BZDB->isSet("showscore"))
+    if (BZDB->isSet("displayScore"))
       renderer.setLabels(BZDB->isTrue("showlabels"));
 
     if (BZDB->isSet("panelopacity"))
