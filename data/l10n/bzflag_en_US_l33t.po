@@ -690,77 +690,8 @@ msgstr "WIde @NglE"
 msgid "You have no flag."
 msgstr "J00 H@V3 n0 phl49."
 
-#msgid "Velocity (V):  Tank moves faster.  Outrun bad guys."
-#msgstr ""
-
-#msgid "Angular velocity (A): Tank turns faster.  Dodge quicker."
-#msgstr ""
-
-#msgid "Oscillation Overthruster (OO):  Can drive through buildings.  Can't backup or shoot while inside."
-#msgstr ""
-
-#msgid "rapid Fire (F):  Shoots more often.  Shells go faster but not as far."
-#msgstr ""
-
-#msgid "Machine Gun (MG):  Very fast reload and very short range."
-#msgstr ""
-
-#msgid "Guided Missile (GM):  Shots track a target.  Lock on with right button.  Can lock on or retarget after firing."
-#msgstr ""
-
-#msgid "Laser (L):  Shoots a laser.  Infinite speed and range but long reload time."
-#msgstr ""
-
-#msgid "Ricochet (R):  Shots bounce off walls.  Don't shoot yourself!"
-#msgstr ""
-
-#msgid "SuperBullet (SB):  Shoots through buildings.  Can kill Phantom Zone."
-#msgstr ""
-
-#msgid "Invisible Bullet (IB):  Your shots don't appear on other radars.  Can still see them out window."
-#msgstr ""
-
-#msgid "STealth (ST):  Tank is invisible on radar.  Shots are still visible.  Sneak up behind enemies!"
-#msgstr ""
-
-#msgid "Tiny (T):  Tank is small and can get through small openings.  Very hard to hit."
-#msgstr ""
-
-#msgid "Narrow (N):  Tank is super thin.  Very hard to hit from front but is normal size from side.  Can get through small openings."
-#msgstr ""
-
-#msgid "SHield (SH):  Getting hit only drops flag.  Flag flys an extra-long time."
-#msgstr ""
-
-#msgid "SteamRoller (SR):  Destroys tanks you touch but you have to get really close."
-#msgstr ""
-
-#msgid "Shock Wave (SW):  Firing destroys all tanks nearby.  Don't kill teammates!  Can kill tanks on/in buildings."
-#msgstr ""
-
-#msgid "Phantom Zone (PZ):  Teleporting toggles Zoned effect.  Zoned tank can drive through buildings.  Zoned tank can't shoot or be shot (except by superbullet and shock wave)."
-#msgstr ""
-
-#msgid "Genocide (G):  Killing one tank kills that tank's whole team."
-#msgstr ""
-
-#msgid "JumPing (JP):  Tank can jump.  Use Tab key.  Can't steer in the air."
-#msgstr ""
-
-#msgid "IDentify (ID):  Identifies type of nearest flag."
-#msgstr ""
-
-#msgid "CLoaking (CL):  Makes your tank invisible out-the-window.  Still visible on radar."
-#msgstr ""
-
-#msgid "Stealth (+ST):  Tank is invisible on radar.  Shots are still visible.  Sneak up behind enemies!"
-#msgstr ""
-
-msgid "Your team's flag:  prevent other teams from capturing it!"
-msgstr "j00r T34M'$ Fl4g: pr3V3nT 0ThER t3AM$ PHR0M c@p+uR1n9 It!"
-
-msgid "Opponent's team flag:  take it to your base to capture it!"
-msgstr "0PPON3nt'5 T3@M PHL49: +@KE i+ +0 j00R 8453 T0 C@PtURe i+! "
+msgid "Team flag:  If it's yours, prevent other teams from taking it.  If it's not take it to your base to capture it!"
+msgstr "t3Am FL@9: iF 1+'5 yOUR5, pREV3nT oThER t3@m$ PhrOM +4k1ng IT. iF IT'5 N0T T@K3 iT +0 j00R bA53 tO c4p+UR3 I+!"
 
 msgid "Velocity (+V):  Tank moves faster.  Outrun bad guys."
 msgstr "Veloc1Ty (+V): t@nk M0V3$ Ph@5TER. OUtruN 8aD GUy$."
