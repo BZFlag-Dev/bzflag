@@ -1429,6 +1429,8 @@ Help1Menu::Help1Menu() : HelpMenu("Controls")
   list.append(createLabel("set time of day forward"));
   list.append(createLabel("pause/resume"));
   list.append(createLabel("quit"));
+  list.append(createLabel("scroll message log backward"));
+  list.append(createLabel("scroll message log forward"));
   list.append(createLabel("show/dismiss menu", "Esc:"));
 }
 
