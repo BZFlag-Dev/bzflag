@@ -1491,9 +1491,6 @@ void sendPlayerMessage(GameKeeper::Player *playerData, PlayerId dstPlayer,
 
   // check for a server command
   if (!isAction && (message[0] == '/') && (message[1] != '/')) {
-    // make commands case insensitive for user-friendlyness
-    std::string lower = TextUtils::tolower(std::string(message));
-    message = lower.c_str();
     // record server commands    
     if (Record::enabled()) {
       void *buf, *bufStart = getDirectMessageBuffer();

@@ -499,8 +499,8 @@ static void handleFlagCmd(GameKeeper::Player *playerData, const char *message)
     sendMessage(ServerPlayer, t, "You do not have permission to run the flag command");
     return;
   }
-  if (strncmp(message + 6, "reset", 5) == 0) {
-    bool onlyUnused = strncmp(message + 11, " unused", 7) == 0;
+  if (strncasecmp(message + 6, "reset", 5) == 0) {
+    bool onlyUnused = strncasecmp(message + 11, " unused", 7) == 0;
     if (onlyUnused)
       for (int i = 0; i < numFlags; i++) {
 	FlagInfo &flag = *FlagInfo::get(i);
@@ -512,7 +512,7 @@ static void handleFlagCmd(GameKeeper::Player *playerData, const char *message)
       }
     else
       zapAllFlags();
-  } else if (strncmp(message + 6, "up", 2) == 0) {
+  } else if (strncasecmp(message + 6, "up", 2) == 0) {
     for (int i = 0; i < numFlags; i++) {
       FlagInfo &flag = *FlagInfo::get(i);
       if (flag.flag.type->flagTeam == ::NoTeam) {
@@ -524,7 +524,7 @@ static void handleFlagCmd(GameKeeper::Player *playerData, const char *message)
       }
     }
 
-  } else if (strncmp(message + 6, "show", 4) == 0) {
+  } else if (strncasecmp(message + 6, "show", 4) == 0) {
     for (int i = 0; i < numFlags; i++) {
       char message[MessageLen];
       FlagInfo::get(i)->getTextualInfo(message);
@@ -2013,13 +2013,13 @@ static void handleRecordCmd(GameKeeper::Player *playerData, const char * message
   }
   while ((*buf != '\0') && isspace (*buf)) buf++; // eat whitespace
 
-  if (strncmp (buf, "start", 5) == 0) {
+  if (strncasecmp (buf, "start", 5) == 0) {
     Record::start(t);
   }
-  else if (strncmp (buf, "stop", 4) == 0) {
+  else if (strncasecmp (buf, "stop", 4) == 0) {
     Record::stop(t);
   }
-  else if (strncmp (buf, "size", 4) == 0) {
+  else if (strncasecmp (buf, "size", 4) == 0) {
     buf = buf + 4;
     while ((*buf != '\0') && isspace (*buf)) buf++; // eat whitespace
 
@@ -2030,7 +2030,7 @@ static void handleRecordCmd(GameKeeper::Player *playerData, const char * message
     int size = atoi (buf);
     Record::setSize (t, size);
   }
-  else if (strncmp (buf, "rate", 4) == 0) {
+  else if (strncasecmp (buf, "rate", 4) == 0) {
     buf = buf + 4;
     while ((*buf != '\0') && isspace (*buf)) buf++; // eat whitespace
 
@@ -2041,13 +2041,13 @@ static void handleRecordCmd(GameKeeper::Player *playerData, const char * message
     int seconds = atoi (buf);
     Record::setRate (t, seconds);
   }
-  else if (strncmp (buf, "stats", 5) == 0) {
+  else if (strncasecmp (buf, "stats", 5) == 0) {
     Record::sendStats(t);
   }
-  else if (strncmp (buf, "list", 4) == 0) {
+  else if (strncasecmp (buf, "list", 4) == 0) {
     Replay::sendFileList (t); // stolen from '/replay'
   }
-  else if (strncmp (buf, "save", 4) == 0) {
+  else if (strncasecmp (buf, "save", 4) == 0) {
     buf = buf + 4;
     char filename[MessageLen];
 
@@ -2070,7 +2070,7 @@ static void handleRecordCmd(GameKeeper::Player *playerData, const char * message
       Record::saveBuffer (t, filename, atoi(buf));
     }
   }
-  else if (strncmp (buf, "file", 4) == 0) {
+  else if (strncasecmp (buf, "file", 4) == 0) {
     buf = buf + 4;
     while ((*buf != '\0') && isspace (*buf)) buf++; // eat whitespace
 
@@ -2108,10 +2108,10 @@ static void handleReplayCmd(GameKeeper::Player *playerData, const char * message
     buf++;
   }
 
-  if (strncmp (buf, "list", 4) == 0) {
+  if (strncasecmp (buf, "list", 4) == 0) {
     Replay::sendFileList (t);
   }
-  else if (strncmp (buf, "load", 4) == 0) {
+  else if (strncasecmp (buf, "load", 4) == 0) {
     buf = buf + 4;
     while ((*buf != '\0') && isspace (*buf)) buf++; // eat whitespace
 
@@ -2122,10 +2122,10 @@ static void handleReplayCmd(GameKeeper::Player *playerData, const char * message
       Replay::loadFile (t, buf);
     }
   }
-  else if (strncmp (buf, "play", 4) == 0) {
+  else if (strncasecmp (buf, "play", 4) == 0) {
     Replay::play (t);
   }
-  else if (strncmp (buf, "skip", 4) == 0) {
+  else if (strncasecmp (buf, "skip", 4) == 0) {
     buf = buf + 4;
     while ((*buf != '\0') && isspace (*buf)) buf++; // eat whitespace
 
@@ -2137,7 +2137,7 @@ static void handleReplayCmd(GameKeeper::Player *playerData, const char * message
       Replay::skip (t, skip);
     }
   }
-  else if (strncmp (buf, "pause", 5) == 0) {
+  else if (strncasecmp (buf, "pause", 5) == 0) {
     Replay::pause (t);
   }
   else {
@@ -2292,145 +2292,145 @@ void parseServerCommand(const char *message, int t)
   if (!playerData)
     return;
 
-  if (strncmp(message + 1, "msg", 3) == 0) {
+  if (strncasecmp(message + 1, "msg", 3) == 0) {
     handleMsgCmd(playerData, message);
 
-  } else if (strncmp(message + 1, "serverquery", 11) == 0) {
+  } else if (strncasecmp(message + 1, "serverquery", 11) == 0) {
     handleServerQueryCmd(playerData, message);
 
-  } else if (strncmp(message + 1, "part", 4) == 0) {
+  } else if (strncasecmp(message + 1, "part", 4) == 0) {
     handlePartCmd(playerData, message);
 
-  } else if (strncmp(message + 1, "quit", 4) == 0) {
+  } else if (strncasecmp(message + 1, "quit", 4) == 0) {
     handleQuitCmd(playerData, message);
 
-  } else if (strncmp(message + 1, "uptime", 6) == 0) {
+  } else if (strncasecmp(message + 1, "uptime", 6) == 0) {
     handleUptimeCmd(playerData, message);
 
-  } else if (strncmp(message + 1, "password", 8) == 0) {
+  } else if (strncasecmp(message + 1, "password", 8) == 0) {
     handlePasswordCmd(playerData, message);
 
-  } else if (strncmp(message + 1, "set ", 4) == 0) {
+  } else if (strncasecmp(message + 1, "set ", 4) == 0) {
     handleSetCmd(playerData, message);
 
-  } else if (strncmp(message + 1, "reset", 5) == 0) {
+  } else if (strncasecmp(message + 1, "reset", 5) == 0) {
     handleResetCmd(playerData, message);
 
-  } else if (strncmp(message + 1, "shutdownserver", 8) == 0) {
+  } else if (strncasecmp(message + 1, "shutdownserver", 8) == 0) {
     handleShutdownserverCmd(playerData, message);
 
-  } else if (strncmp(message + 1, "superkill", 8) == 0) {
+  } else if (strncasecmp(message + 1, "superkill", 8) == 0) {
     handleSuperkillCmd(playerData, message);
 
-  } else if (strncmp(message + 1, "gameover", 8) == 0) {
+  } else if (strncasecmp(message + 1, "gameover", 8) == 0) {
     handleGameoverCmd(playerData, message);
 
-  } else if (strncmp(message + 1, "countdown", 9) == 0) {
+  } else if (strncasecmp(message + 1, "countdown", 9) == 0) {
     handleCountdownCmd(playerData, message);
 
-  } else if (strncmp(message + 1, "flag ", 5) == 0) {
+  } else if (strncasecmp(message + 1, "flag ", 5) == 0) {
     handleFlagCmd(playerData,message);
 
-  } else if (strncmp(message + 1, "kick", 4) == 0) {
+  } else if (strncasecmp(message + 1, "kick", 4) == 0) {
     handleKickCmd(playerData, message);
 
-  } else if (strncmp(message+1, "banlist", 7) == 0) {
+  } else if (strncasecmp(message+1, "banlist", 7) == 0) {
     handleBanlistCmd(playerData, message);
 
-  } else if (strncmp(message+1, "hostbanlist", 11) == 0) {
+  } else if (strncasecmp(message+1, "hostbanlist", 11) == 0) {
     handleHostBanlistCmd(playerData, message);
 
-  } else if (strncmp(message+1, "ban", 3) == 0) {
+  } else if (strncasecmp(message+1, "ban", 3) == 0) {
     handleBanCmd(playerData, message);
 
-  } else if (strncmp(message+1, "hostban", 7) == 0) {
+  } else if (strncasecmp(message+1, "hostban", 7) == 0) {
     handleHostBanCmd(playerData, message);
 
-  } else if (strncmp(message+1, "unban", 5) == 0) {
+  } else if (strncasecmp(message+1, "unban", 5) == 0) {
     handleUnbanCmd(playerData, message);
 
-  } else if (strncmp(message+1, "hostunban", 9) == 0) {
+  } else if (strncasecmp(message+1, "hostunban", 9) == 0) {
     handleHostUnbanCmd(playerData, message);
 
-  } else if (strncmp(message+1, "lagwarn",7) == 0) {
+  } else if (strncasecmp(message+1, "lagwarn",7) == 0) {
     handleLagwarnCmd(playerData, message);
 
-  } else if (strncmp(message+1, "lagstats",8) == 0) {
+  } else if (strncasecmp(message+1, "lagstats",8) == 0) {
     handleLagstatsCmd(playerData, message);
 
-  } else if (strncmp(message+1, "idlestats",9) == 0) {
+  } else if (strncasecmp(message+1, "idlestats",9) == 0) {
     handleIdlestatsCmd(playerData, message);
 
-  } else if (strncmp(message+1, "flaghistory", 11 ) == 0) {
+  } else if (strncasecmp(message+1, "flaghistory", 11 ) == 0) {
     handleFlaghistoryCmd(playerData, message);
 
-  } else if (strncmp(message+1, "playerlist", 10) == 0) {
+  } else if (strncasecmp(message+1, "playerlist", 10) == 0) {
     handlePlayerlistCmd(playerData, message);
 
-  } else if (strncmp(message+1, "report", 6) == 0) {
+  } else if (strncasecmp(message+1, "report", 6) == 0) {
     handleReportCmd(playerData, message);
 
-  } else if (strncmp(message+1, "help", 4) == 0) {
+  } else if (strncasecmp(message+1, "help", 4) == 0) {
     handleHelpCmd(playerData, message);
 
-  } else if (strncmp(message + 1, "identify", 8) == 0) {
+  } else if (strncasecmp(message + 1, "identify", 8) == 0) {
     handleIdentifyCmd(playerData, message);
 
-  } else if (strncmp(message + 1, "register", 8) == 0) {
+  } else if (strncasecmp(message + 1, "register", 8) == 0) {
     handleRegisterCmd(playerData, message);
 
-  } else if (strncmp(message + 1, "ghost", 5) == 0) {
+  } else if (strncasecmp(message + 1, "ghost", 5) == 0) {
     handleGhostCmd(playerData, message);
 
-  } else if (strncmp(message + 1, "deregister", 10) == 0) {
+  } else if (strncasecmp(message + 1, "deregister", 10) == 0) {
     handleDeregisterCmd(playerData, message);
 
-  } else if (strncmp(message + 1, "setpass", 7) == 0) {
+  } else if (strncasecmp(message + 1, "setpass", 7) == 0) {
     handleSetpassCmd(playerData, message);
 
-  } else if (strncmp(message + 1, "grouplist", 9) == 0) {
+  } else if (strncasecmp(message + 1, "grouplist", 9) == 0) {
     handleGrouplistCmd(playerData, message);
 
-  } else if (strncmp(message + 1, "showgroup", 9) == 0) {
+  } else if (strncasecmp(message + 1, "showgroup", 9) == 0) {
     handleShowgroupCmd(playerData, message);
 
-  } else if (strncmp(message + 1, "groupperms", 10) == 0) {
+  } else if (strncasecmp(message + 1, "groupperms", 10) == 0) {
     handleGrouppermsCmd(playerData, message);
 
-  } else if (strncmp(message + 1, "setgroup", 8) == 0) {
+  } else if (strncasecmp(message + 1, "setgroup", 8) == 0) {
     handleSetgroupCmd(playerData, message);
 
-  } else if (strncmp(message + 1, "removegroup", 11) == 0) {
+  } else if (strncasecmp(message + 1, "removegroup", 11) == 0) {
     handleRemovegroupCmd(playerData, message);
 
-  } else if (strncmp(message + 1, "reload", 6) == 0) {
+  } else if (strncasecmp(message + 1, "reload", 6) == 0) {
     handleReloadCmd(playerData, message);
 
-  } else if (strncmp(message + 1, "poll", 4) == 0) {
+  } else if (strncasecmp(message + 1, "poll", 4) == 0) {
     handlePollCmd(playerData, message);
 
-  } else if (strncmp(message + 1, "vote", 4) == 0) {
+  } else if (strncasecmp(message + 1, "vote", 4) == 0) {
     handleVoteCmd(playerData, message);
 
-  } else if (strncmp(message + 1, "veto", 4) == 0) {
+  } else if (strncasecmp(message + 1, "veto", 4) == 0) {
     handleVetoCmd(playerData, message);
 
-  } else if (strncmp(message + 1, "viewreports", 11) == 0) {
+  } else if (strncasecmp(message + 1, "viewreports", 11) == 0) {
     handleViewReportsCmd(playerData, message);
 
-  } else if (strncmp(message + 1, "clientquery", 11) == 0) {
+  } else if (strncasecmp(message + 1, "clientquery", 11) == 0) {
     handleClientqueryCmd(playerData, message);
 
-  } else if (strncmp(message + 1, "date", 4) == 0 || strncmp(message + 1, "time", 4) == 0) {
+  } else if (strncasecmp(message + 1, "date", 4) == 0 || strncasecmp(message + 1, "time", 4) == 0) {
     handleDateCmd(playerData, message);
 
-  } else if (strncmp(message + 1, "record", 6) == 0) {
+  } else if (strncasecmp(message + 1, "record", 6) == 0) {
     handleRecordCmd(playerData, message);
 
-  } else if (strncmp(message + 1, "replay", 6) == 0) {
+  } else if (strncasecmp(message + 1, "replay", 6) == 0) {
     handleReplayCmd(playerData, message);
 
-  } else if (strncmp(message + 1, "masterban", 9) == 0) {
+  } else if (strncasecmp(message + 1, "masterban", 9) == 0) {
     handleMasterBanCmd(playerData, message);
 
   } else {
