@@ -210,6 +210,10 @@ SOURCE=..\..\src\common\OSFile.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\common\ParseColor.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\common\PlayerState.cxx
 # End Source File
 # Begin Source File
@@ -359,6 +363,10 @@ SOURCE=..\..\include\OSFile.h
 # Begin Source File
 
 SOURCE=..\..\include\Pack.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\ParseColor.h
 # End Source File
 # Begin Source File
 

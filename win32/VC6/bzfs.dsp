@@ -207,6 +207,10 @@ SOURCE=..\..\src\bzfs\EntryZones.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\bzfs\Filter.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\bzfs\FlagHistory.cxx
 # End Source File
 # Begin Source File
@@ -428,6 +432,10 @@ SOURCE=..\..\include\DelayQueue.h
 # Begin Source File
 
 SOURCE=..\..\src\bzfs\EntryZones.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\Filter.h
 # End Source File
 # Begin Source File
 
