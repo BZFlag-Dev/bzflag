@@ -211,7 +211,7 @@ const char *extraUsageString =
 "\t\tanother vote (default is 300)\n"
 "\tvotesRequired: minimum number of additional votes required to make a\n"
 "\t\tvote valid (default is 2)\n"
-"\tvoteTime: maximum amount of time player has to vote (default is 60)\n"
+"\tvoteTime: maximum amount of time player has to vote, in seconds (default is 60)\n"
 "\n";
 
 
