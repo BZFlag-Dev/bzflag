@@ -18,7 +18,7 @@
  * to the class implementation (such as version.h)
  */
 #include "CmdLineOptions.h"
-#include "CaptureReplay.h"
+#include "RecordReplay.h"
 
 // invoke persistent recompilation of this for build versioning
 #include "version.h"
