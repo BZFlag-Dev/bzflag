@@ -215,8 +215,8 @@ float			SegmentedShotStrategy::checkHit(const BaseLocalPlayer* tank,
     if (tank->getFlag() == Flags::Narrow) {
       // find closest approach to narrow box around tank.  width of box
       // is shell radius so you can actually hit narrow tank head on.
-      static float origin[3] = { 0.0f, 0.0f, -0.5 * tankHeight };
-      t = timeRayHitsBlock(relativeRay, origin, tank->getAngle(),
+      static float tankBase[3] = { 0.0f, 0.0f, -0.5 * tankHeight };
+      t = timeRayHitsBlock(relativeRay, tankBase, tank->getAngle(),
 			0.5f * BZDBCache::tankLength, shotRadius, tankHeight);
     }
     else {
