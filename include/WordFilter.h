@@ -248,7 +248,7 @@ inline int WordFilter::filterCharacters(char *input, unsigned int start, size_t 
   }
 
   int randomCharPos, previousCharPos = -1;
-  int maxFilterChar = filterChars.size();
+  int maxFilterChar = (int)filterChars.size();
   int count=0;
   for (unsigned int j=0; j < (unsigned int)length; j++) {
     char c = input[start + j];

@@ -186,16 +186,16 @@ void			ControlPanel::render(SceneRenderer& renderer)
     glColor3f(1.0f, 1.0f, 1.0f);
     fm.drawString(messageAreaPixels[0] + 30,
 		  messageAreaPixels[1] + messageAreaPixels[3] - 20 + ay,
-		  0, fontFace, fontSize, "All");
+		  0.0f, fontFace, (float)fontSize, "All");
     fm.drawString(messageAreaPixels[0] + 100,
 		  messageAreaPixels[1] + messageAreaPixels[3] - 20 + ay,
-		  0, fontFace, fontSize, "Chat");
+		  0.0f, fontFace, (float)fontSize, "Chat");
     fm.drawString(messageAreaPixels[0] + 170,
 		  messageAreaPixels[1] + messageAreaPixels[3] - 20 + ay,
-		  0, fontFace, fontSize, "Server");
+		  0.0f, fontFace, (float)fontSize, "Server");
     fm.drawString(messageAreaPixels[0] + 250,
 		  messageAreaPixels[1] + messageAreaPixels[3] - 20 + ay,
-		  0, fontFace, fontSize, "Misc");
+		  0.0f, fontFace, (float)fontSize, "Misc");
   }
 
   // draw messages
