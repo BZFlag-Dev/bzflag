@@ -152,7 +152,8 @@ ServerLink::ServerLink(const Address& serverAddress, int port, int number) :
   sprintf(cServerVersion,"Server version: '%8s'",version);
   printError(cServerVersion);
 
-  //  server_abilities |= CanDoUDP;
+  // FIXME is it ok to try UDP always?
+  server_abilities |= CanDoUDP;
   if (strncmp(version, ServerVersion, 7) != 0) {
     state = BadVersion;
     goto done;
