@@ -349,7 +349,7 @@ char*			PingPacket::unpackHex8(char* buf, uint8_t& v)
   uint16_t d = 0;
   d = (d << 4) | hex2bin(*buf++);
   d = (d << 4) | hex2bin(*buf++);
-  v = d;
+  v = (uint8_t)d;
   return buf;
 }
 
