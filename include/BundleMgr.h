@@ -28,3 +28,4 @@ private:
 };
 
 #endif
+// ex: shiftwidth=2 tabstop=8
