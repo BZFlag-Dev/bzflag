@@ -78,7 +78,7 @@ int main(int argc, char** argv) {
 
   // register and parse command line arguments
   OptionParser op(std::string("bzadmin ") + getAppVersion(),
-		  "CALLSIGN@HOST[:PORT] [COMMAND] [COMMAND] ...");
+		  "CALLSIGN[:password]@HOST[:PORT] [COMMAND] [COMMAND] ...");
   const std::string uiOption("ui");
   const std::string uiMsg = "choose a user interface";
   op.registerVariable(uiOption, uiName, uiUsage, uiMsg);
@@ -91,7 +91,7 @@ int main(int argc, char** argv) {
 
   // check that we have callsign and host in the right format and extract them
   int atPos;
-  std::string name = "", host = "";
+  std::string name = "", password = "", host = "";
   if (!(op.getParameters().size() > 0 &&
 	(atPos = op.getParameters()[0].find('@')) > 0)) {
     // input callsign and host interactively
@@ -101,6 +101,11 @@ int main(int argc, char** argv) {
     if (name.size() <= 1) {
       std::cerr << "You must specify a callsign.  Exiting." << std::endl;
       return 1;
+    }
+    std::cout << "Password (optional): ";
+    std::getline(std::cin, password);
+    if (password.size() <= 1) {
+      std::cerr << "Not using central login" << std::endl;
     }
     std::cout << "Server to connect to: ";
     std::getline(std::cin, host);
@@ -112,13 +117,18 @@ int main(int argc, char** argv) {
     name = op.getParameters()[0].substr(0, atPos);
     host = op.getParameters()[0].substr(atPos + 1);
   }
-
   int port = ServerPort;
   int cPos = host.find(':');
   if (cPos != -1) {
     port = atoi(host.substr(cPos + 1).c_str());
     host = host.substr(0, cPos);
   }
+  cPos = name.find(':');
+  if (cPos != -1) {
+    password = atoi(name.substr(cPos + 1).c_str());
+    name = name.substr(0, cPos);
+  }
+  std::cerr << "Connecting to " << name << ":" << password << "@" << host << ":" << port << std::endl;
 
   // check that the ui is valid
   uiIter = UIMap::instance().find(uiName);

@@ -429,10 +429,10 @@ void BZAdminClient::outputServerList() const {
   }
   // what is your final answer?
   serverList.checkEchos(&info);
-  
+
   std::vector<ServerItem> servers = serverList.getServers();
-  for (std::vector<ServerItem>::const_iterator server = servers.begin(); 
-       server != servers.end(); 
+  for (std::vector<ServerItem>::const_iterator server = servers.begin();
+       server != servers.end();
        server++) {
     ui->outputMessage(std::string("  ") + server->description, Yellow);
   }
