@@ -3858,8 +3858,7 @@ static void resetFlag(int flagIndex)
     if(basePos[teamIndex][2] > 0) {
       pFlagInfo->flag.position[2] += 1;
     }
-  }
-  else {
+  } else {
     // random position (not in a building)
     float r = TankRadius;
     if (pFlagInfo->flag.id == ObesityFlag)
@@ -4695,6 +4694,23 @@ static void parseCommand(const char *message, int t)
 		  removePlayer(i);
 		}
 	}
+  }
+  // /lagwarn - set maximum allowed lag
+  else if (player[t].Admin && strncmp(message+1,"lagwarn",7) == 0) {
+    if (message[8] == ' ')
+    {
+      const char *maxlag = message + 9;
+      lagwarnthresh = atoi(maxlag) / 1000.0;
+      char reply[MessageLen];
+      sprintf(reply,"lagwarn is now %d ms",int(lagwarnthresh * 1000 + 0.5));
+      sendMessage(t, player[t].id,player[t].team,reply);
+    }
+    else
+    {
+      char reply[MessageLen];
+      sprintf(reply,"lagwarn is set to %d ms",int(lagwarnthresh * 1000 +  0.5));
+      sendMessage(t, player[t].id,player[t].team,reply);
+    }
   }
   // /lagstats gives simple statistics about players' lags
   else if (strncmp(message+1,"lagstats",8) == 0) {
