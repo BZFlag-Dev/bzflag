@@ -128,7 +128,7 @@ const uint16_t		RejectRepeatCallsign = 0x0007;
 
 const uint16_t		MsgUDPLinkRequest = 0x6f66;		// 'of'
 const uint16_t		MsgUDPLinkEstablished = 0x6f67;		// 'og'
-const uint16_t		MsgUDPLinkUpdate = 0x6f68;		// 'oh'
+//const uint16_t		MsgUDPLinkUpdate = 0x6f68;		// 'oh'
 
 // server control message
 
