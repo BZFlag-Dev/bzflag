@@ -843,9 +843,9 @@ void			KeyboardMapMenu::resize(int width, int height)
   list[2]->setFontSize(fontWidth, fontHeight);
   const float h = list[2]->getFont().getHeight();
   const int count = list.size() - 2;
-  const int mid = count / 2;
+  const int mid = (count / 2);
 
-  for (i = 2; i <= mid; i++) {
+  for (i = 2; i <= mid+1; i++) {
     list[i]->setFontSize(fontWidth, fontHeight);
     list[i]->setPosition(x, y);
     y -= 1.0f * h;
@@ -853,7 +853,7 @@ void			KeyboardMapMenu::resize(int width, int height)
 
   x = 0.80f * (float)width;
   y = topY;
-  for (i = mid+1; i < count; i++) {
+  for (i = mid+2; i < count+2; i++) {
     list[i]->setFontSize(fontWidth, fontHeight);
     list[i]->setPosition(x, y);
     y -= 1.0f * h;
