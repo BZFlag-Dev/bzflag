@@ -142,11 +142,11 @@ void MeshSceneNodeGenerator::setupNodeMaterial(MeshPolySceneNode* node,
   }
   node->setTextureMatrix(mat->textureMatrix);
 
-  // deal with the blending setting
+  // deal with the blending setting for textures
   bool alpha = false;
-  const ImageInfo& imageInfo = tm.getInfo(faceTexture);
-  if (imageInfo.alpha && mat->useTextureAlpha) {
-    alpha = true;
+  if ((faceTexture >= 0) && mat->useTextureAlpha) {
+    const ImageInfo& imageInfo = tm.getInfo(faceTexture);
+    alpha = imageInfo.alpha;
   }
   node->setBlending(alpha);
 
