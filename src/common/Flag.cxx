@@ -147,7 +147,6 @@ namespace Flags {
     WideAngle               = new FlagDesc( "Wide Angle", "WA", FlagSticky, NormalShot, FlagBad, NoTeam,
 						    "Wide Angle (-WA):  Fish-eye lens distorts view.");
   }
-
 }
 
 void* FlagDesc::pack(void* buf) const
