@@ -27,6 +27,7 @@ if test "$build_vendor" = "sgi" ; then
 		   [#if defined(sgi) && !defined(__GNUC__) && defined(_COMPILER_VERSION)
 this line should cause a compile failure when building with the MIPSpro compiler;
 #endif
+int main() { return 0; }
     ], using_mipspro=no, using_mipspro=yes)
     AC_MSG_RESULT([$using_mipspro])
 fi
