@@ -686,10 +686,6 @@ void			dumpResources(BzfDisplay* display,
   BZDB->set("joystickname", startupInfo.joystickName);
   db.addValue("joystickname", startupInfo.joystickName);
 
-  int length = renderer.getRadarShotLength();
-  BZDB->set("linedradarshots", string_util::format("%d", length));
-  db.addValue("linedradarshots", string_util::format("%d", length));
-
   BZDB->set("panelopacity", string_util::format("%f", renderer.getPanelOpacity()));
   db.addValue("panelopacity", string_util::format("%f", renderer.getPanelOpacity()));
 
@@ -1166,8 +1162,6 @@ int			main(int argc, char** argv)
     if (db.hasValue("showscore"))
       renderer.setLabels(db.getValue("showlabels") == "yes");
 
-    if (db.hasValue("linedradarshots"))
-      renderer.setRadarShotLength(atoi(db.getValue("linedradarshots").c_str()));
     if (db.hasValue("panelopacity"))
       renderer.setPanelOpacity((float)atof(db.getValue("panelopacity").c_str()));
     if (db.hasValue("radarsize"))

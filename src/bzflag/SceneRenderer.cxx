@@ -78,7 +78,6 @@ SceneRenderer::SceneRenderer(MainWindow& _window) :
 				useDepthComplexityOn(false),
 				useWireframeOn(false),
 				useHiddenLineOn(false),
-				radarShotLength(0),
 				panelOpacity(0.3f),
 				radarSize(4),
 				maxMotionFactor(5),
@@ -372,17 +371,6 @@ void			SceneRenderer::setMaxMotionFactor(int factor)
 int			SceneRenderer::getMaxMotionFactor() const
 {
   return maxMotionFactor;
-}
-
-void			SceneRenderer::setRadarShotLength(int length)
-{
-    radarShotLength = length;
-    notifyStyleChange();
-}
-
-int			SceneRenderer::getRadarShotLength() const
-{
-    return radarShotLength;
 }
 
 void			SceneRenderer::setBigFont(bool _setBigFont)

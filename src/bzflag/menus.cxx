@@ -1071,7 +1071,7 @@ void			GUIOptionsMenu::resize(int width, int height)
     ((HUDuiList*)list[i++])->setIndex(renderer->useBigFont() ? 1 : 0);
     ((HUDuiList*)list[i++])->setIndex((int)(10.0f * renderer->getPanelOpacity()));
     ((HUDuiList*)list[i++])->setIndex(BZDB->isTrue("coloredradarshots") ? 1 : 0);
-    ((HUDuiList*)list[i++])->setIndex(renderer->getRadarShotLength());
+    ((HUDuiList*)list[i++])->setIndex(static_cast<int>(BZDB->eval("linedradarshots")));
     ((HUDuiList*)list[i++])->setIndex(renderer->getRadarSize());
     ((HUDuiList*)list[i++])->setIndex(renderer->getMaxMotionFactor());
     i++; // locale
@@ -1106,7 +1106,7 @@ void			GUIOptionsMenu::callback(HUDuiControl* w, void* data)
       break;
 
     case 'l':
-      sceneRenderer->setRadarShotLength(list->getIndex());
+      BZDB->set("linedradarshots", string_util::format("%d", list->getIndex()));
       break;
 
     case 'R':

@@ -28,6 +28,7 @@
 #include "PlayerLink.h"
 #include "Team.h"
 #include "SceneRenderer.h"
+#include "StateDatabase.h"
 
 static OpenGLTexture*	boltTexture[NumTeams];
 static OpenGLTexture*	tboltTexture[NumTeams];
@@ -572,7 +573,7 @@ void			SegmentedShotStrategy::addShot(
 void			SegmentedShotStrategy::radarRender() const
 {
   const float *orig = getPath().getPosition();
-  const int length = getSceneRenderer()->getRadarShotLength();
+  const int length = static_cast<int>(BZDB->eval("linedradarshots"));
 
   // Display lines
   if (length > 0) {
@@ -1317,7 +1318,7 @@ void			GuidedMissileStrategy::expire()
 void			GuidedMissileStrategy::radarRender() const
 {
   const float *orig = getPath().getPosition();
-  const int length = getSceneRenderer()->getRadarShotLength();
+  const int length = static_cast<int>(BZDB->eval("linedradarshots"));
 
   // Display lines
   if (length > 0) {

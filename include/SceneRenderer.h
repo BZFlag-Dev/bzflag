@@ -67,7 +67,6 @@ class SceneRenderer {
     bool		useDepthComplexity() const;
     bool		useWireframe() const;
     bool		useHiddenLine() const;
-    int			getRadarShotLength() const;
     float		getPanelOpacity() const;
     int			getRadarSize() const;
     int			getMaxMotionFactor() const;
@@ -85,7 +84,6 @@ class SceneRenderer {
     void		setDepthComplexity(bool on);
     void		setWireframe(bool on);
     void		setHiddenLine(bool on);
-    void		setRadarShotLength(int l);
     void		setPanelOpacity(float opacity);
     void		setRadarSize(int size);
     void		setMaxMotionFactor(int size);
@@ -177,7 +175,6 @@ class SceneRenderer {
     bool		useDepthComplexityOn;
     bool		useWireframeOn;
     bool		useHiddenLineOn;
-    int			radarShotLength;
     float		panelOpacity;
     int			radarSize;
     int			maxMotionFactor;
