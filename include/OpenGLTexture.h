@@ -65,7 +65,6 @@ class OpenGLTexture {
 					int internalFormat = 0);
 			~OpenGLTexture();
     bool		hasAlpha() const;
-    GLuint		getList() const;
 
     void		execute();
 

@@ -236,12 +236,6 @@ void OpenGLTexture::setFilter(Filter _filter)
 }
 
 
-GLuint OpenGLTexture::getList() const
-{
-  return (list);
-}
-
-
 void OpenGLTexture::execute()
 {
   bind();
