@@ -1588,37 +1588,63 @@ static void		doAutoPilot(float &rotation, float &speed)
       Ray tankRay(pos, dir);
       pos[2] -= BZDB->eval(StateDatabase::BZDB_MUZZLEHEIGHT);
 
-      TimeKeeper now = TimeKeeper::getCurrent();
-      if (now - lastShot >= (1.0f / World::getWorld()->getMaxShots())) {
-
+      if (myTank->getFlag() == Flags::ShockWave) {
+	bool hasSWTarget = false;
 	for (t = 0; t < curMaxPlayers; t++) {
 	  if (t != myTank->getId() && player[t] &&
+	    player[t]->isAlive() && !player[t]->isPaused() &&
+	    !player[t]->isNotResponding()) {
+	      
+	    const float *tp = player[t]->getPosition();
+	    float dist = hypotf(tp[0] - pos[0], tp[1] - pos[1]);
+	    if (dist <= BZDB->eval(StateDatabase::BZDB_SHOCKOUTRADIUS)) {
+	      if (!myTank->validTeamTarget(player[t])) {
+		hasSWTarget = false;
+		t = curMaxPlayers;
+	      }
+	      else
+		hasSWTarget = true;
+	    }
+	  }
+	}
+	if (hasSWTarget) {
+	  myTank->fireShot();
+	  lastShot = TimeKeeper::getCurrent();;
+	  shotFired = true;
+	}
+      }
+      else {
+        TimeKeeper now = TimeKeeper::getCurrent();
+        if (now - lastShot >= (1.0f / World::getWorld()->getMaxShots())) {
+
+	  for (t = 0; t < curMaxPlayers; t++) {
+	    if (t != myTank->getId() && player[t] &&
 	      player[t]->isAlive() && !player[t]->isPaused() &&
 	      !player[t]->isNotResponding() &&
 	      myTank->validTeamTarget(player[t])) {
 
-	    const float *tp = player[t]->getPosition();
-	    if ((myTank->getFlag() == Flags::GuidedMissile) || (fabs(pos[2] - tp[2]) < 2.0f * BZDB->eval(StateDatabase::BZDB_TANKHEIGHT))) {
+	      const float *tp = player[t]->getPosition();
+	      if ((myTank->getFlag() == Flags::GuidedMissile) || (fabs(pos[2] - tp[2]) < 2.0f * BZDB->eval(StateDatabase::BZDB_TANKHEIGHT))) {
 
-	      float targetAngle = atan2f(tp[1] - pos[1], tp[0] - pos[0]);
-	      float targetRotation = targetAngle - myTank->getAngle();
-	      if (targetRotation < -1.0f * M_PI) targetRotation += 2.0f * M_PI;
-	      if (targetRotation > 1.0f * M_PI) targetRotation -= 2.0f * M_PI;
+	        float targetAngle = atan2f(tp[1] - pos[1], tp[0] - pos[0]);
+	        float targetRotation = targetAngle - myTank->getAngle();
+	        if (targetRotation < -1.0f * M_PI) targetRotation += 2.0f * M_PI;
+	        if (targetRotation > 1.0f * M_PI) targetRotation -= 2.0f * M_PI;
 
-	    
-	      if ((fabs(targetRotation) < BZDB->eval(StateDatabase::BZDB_LOCKONANGLE))
-	      ||  ((distance < 50.0f) && (fabs(targetRotation) < BZDB->eval(StateDatabase::BZDB_TARGETINGANGLE)))) {
-		float d = hypotf(tp[0] - pos[0], tp[1] - pos[1]);
-		const Obstacle *building = NULL;
-		if (myTank->getFlag() != Flags::SuperBullet)
-		  building = ShotStrategy::getFirstBuilding(tankRay, -0.5f, d);
+	        if ((fabs(targetRotation) < BZDB->eval(StateDatabase::BZDB_LOCKONANGLE))
+	        ||  ((distance < 50.0f) && (fabs(targetRotation) < BZDB->eval(StateDatabase::BZDB_TARGETINGANGLE)))) {
+		  float d = hypotf(tp[0] - pos[0], tp[1] - pos[1]);
+		  const Obstacle *building = NULL;
+		  if (myTank->getFlag() != Flags::SuperBullet)
+		    building = ShotStrategy::getFirstBuilding(tankRay, -0.5f, d);
 
-		if (!building) {
-		  myTank->fireShot();
-		  lastShot = now;
-		  shotFired = true;
-		  t = curMaxPlayers;
-		}	
+		  if (!building) {
+		    myTank->fireShot();
+		    lastShot = now;
+		    shotFired = true;
+		    t = curMaxPlayers;
+		  }	
+		}
 	      }
 	    }
 	  }
