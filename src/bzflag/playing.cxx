@@ -378,6 +378,76 @@ static void		hangup(int sig)
 }
 
 //
+// misc utility routines
+//
+
+Player*			lookupPlayer(const PlayerId& id)
+{
+  // check my tank first
+  if (myTank->getId() == id)
+    return myTank;
+
+  if (id < curMaxPlayers && player[id] && player[id]->getId() == id)
+    return player[id];
+
+  // it's nobody we know about
+  return NULL;
+}
+
+static int		lookupPlayerIndex(const PlayerId& id)
+{
+  // check my tank first
+  if (myTank->getId() == id)
+    return -2;
+
+  if (id < curMaxPlayers && player[id] && player[id]->getId() == id)
+    return id;
+
+  // it's nobody we know about
+  return -1;
+}
+
+static Player*		getPlayerByIndex(int index)
+{
+  if (index == -2)
+    return myTank;
+  if (index == -1 || index >= curMaxPlayers)
+    return NULL;
+  return player[index];
+}
+
+static Player*		getPlayerByName( const char* name )
+{
+  for (int i = 0; i < curMaxPlayers; i++)
+    if (player[i] && strcmp( player[i]->getCallSign(), name ) == 0)
+      return player[i];
+  return NULL;
+}
+
+static BaseLocalPlayer*	getLocalPlayer(const PlayerId& id)
+{
+  if (myTank->getId() == id) return myTank;
+#ifdef ROBOT
+  for (int i = 0; i < numRobots; i++)
+    if (robots[i]->getId() == id)
+      return robots[i];
+#endif
+  return NULL;
+}
+
+static ServerLink*	lookupServer(const Player* player)
+{
+  const PlayerId& id = player->getId();
+  if (myTank->getId() == id) return serverLink;
+#ifdef ROBOT
+  for (int i = 0; i < numRobots; i++)
+    if (robots[i]->getId() == id)
+      return robotServer[i];
+#endif
+  return NULL;
+}
+
+//
 // ui control default key handler classes
 //
 
@@ -510,9 +580,7 @@ bool			ComposeDefaultKey::keyRelease(const BzfKeyEvent& key)
       }
       else {
 	const PlayerId id = recipient->getId();
-	int rindex = 0;
-	for (int i = 0; i < curMaxPlayers; i++) {
-	  if (player[i] && player[i]->getId() == id) rindex = i; }
+	int rindex = lookupPlayerIndex(id);
 	if (key.button == BzfKeyEvent::Left) {
 	  for (int i = rindex-1; i >= 0; i--) {
 	    if (player[i]) {
@@ -712,9 +780,7 @@ bool			SilenceDefaultKey::keyRelease(const BzfKeyEvent& key)
       }
       else {  
 	const PlayerId id = recipient->getId();
-	int rindex = 0;
-	for (int i = 0; i < curMaxPlayers; i++) { 
-	  if (player[i] && player[i]->getId() == id) rindex = i; }
+	int rindex = lookupPlayerIndex(id);
 	if (key.button == BzfKeyEvent::Up || 
 		key.button== BzfKeyEvent::Right) { 
 	  for (int i = rindex-1; i >= 0; i--) { 
@@ -1144,10 +1210,7 @@ bool			ServerCommandKey::keyRelease(const BzfKeyEvent& key)
       
       if (recipient) {  // handle selecting another player if <-- or --> hit
 	const PlayerId id = recipient->getId();
-	int rindex = 0;
-	for (int i = 0; i < curMaxPlayers; i++) { 
-	  if (player[i] && player[i]->getId() == id) rindex = i; 
-	}
+	int rindex = lookupPlayerIndex(id);
 
 	if (key.button== BzfKeyEvent::Left) {  
 	  for (int i = rindex-1; i >= 0; i--) { 
@@ -2235,80 +2298,6 @@ static void		doEvent(BzfDisplay* display)
   }
 }
 
-//
-// misc utility routines
-//
-
-Player*			lookupPlayer(const PlayerId& id)
-{
-  // check my tank first
-  if (myTank->getId() == id)
-    return myTank;
-
-  // check other players
-  for (int i = 0; i < curMaxPlayers; i++)
-    if (player[i] && player[i]->getId() == id)
-      return player[i];
-
-  // it's nobody we know about
-  return NULL;
-}
-
-static int		lookupPlayerIndex(const PlayerId& id)
-{
-  // check my tank first
-  if (myTank->getId() == id)
-    return -2;
-
-  // check other players
-  for (int i = 0; i < curMaxPlayers; i++)
-    if (player[i] && player[i]->getId() == id)
-      return i;
-
-  // it's nobody we know about
-  return -1;
-}
-
-static Player*		getPlayerByIndex(int index)
-{
-  if (index == -2)
-    return myTank;
-  if (index == -1)
-    return NULL;
-  return player[index];
-}
-
-static Player*		getPlayerByName( const char* name )
-{
-  for (int i = 0; i < curMaxPlayers; i++)
-    if (player[i] && strcmp( player[i]->getCallSign(), name ) == 0)
-      return player[i];
-  return NULL;
-}
-
-static BaseLocalPlayer*	getLocalPlayer(const PlayerId& id)
-{
-  if (myTank->getId() == id) return myTank;
-#ifdef ROBOT
-  for (int i = 0; i < numRobots; i++)
-    if (robots[i]->getId() == id)
-      return robots[i];
-#endif
-  return NULL;
-}
-
-static ServerLink*	lookupServer(const Player* player)
-{
-  const PlayerId& id = player->getId();
-  if (myTank->getId() == id) return serverLink;
-#ifdef ROBOT
-  for (int i = 0; i < numRobots; i++)
-    if (robots[i]->getId() == id)
-      return robotServer[i];
-#endif
-  return NULL;
-}
-
 static void		addMessage(const Player* player,
 				const std::string& msg, bool highlight,
 				const char* oldColor)
@@ -2758,12 +2747,10 @@ static void		handleServerMessage(bool human, uint16_t code,
       msg = nboUnpackUByte(msg, killer);
       msg = nboUnpackShort(msg, reason);
       msg = nboUnpackShort(msg, shotId);
-      int victimIndex = lookupPlayerIndex(victim);
-      int killerIndex = lookupPlayerIndex(killer);
       BaseLocalPlayer* victimLocal = getLocalPlayer(victim);
       BaseLocalPlayer* killerLocal = getLocalPlayer(killer);
-      Player* victimPlayer = getPlayerByIndex(victimIndex);
-      Player* killerPlayer = getPlayerByIndex(killerIndex);
+      Player* victimPlayer = lookupPlayer(victim);
+      Player* killerPlayer = lookupPlayer(killer);
 #ifdef ROBOT
       if (victimPlayer == myTank) {
 	// uh oh, i'm dead
@@ -2979,12 +2966,10 @@ static void		handleServerMessage(bool human, uint16_t code,
 	  playWorldSound(SFX_TEAMGRAB, pos[0], pos[1], pos[2], false);
 	}
       }
-      if (tank) {
-	std::string message("grabbed ");
-	message += Flag::getName(tank->getFlag());
-	message += " flag";
-	addMessage(tank, message);
-      }
+      std::string message("grabbed ");
+      message += Flag::getName(tank->getFlag());
+      message += " flag";
+      addMessage(tank, message);
       break;
     }
 
@@ -3099,10 +3084,10 @@ static void		handleServerMessage(bool human, uint16_t code,
 
       if (localPlayer)
 	localPlayer->endShot(int(shotId), false, reason == 0);
-      else for (int i = 0; i < curMaxPlayers; i++)
-	if (player[i] && player[i]->getId() == id) {
-	  player[i]->endShot(int(shotId), false, reason == 0);
-	  break;
+      else {
+        Player *pl = lookupPlayer(id);
+        if (pl)
+	  pl->endShot(int(shotId), false, reason == 0);
 	}
       break;
     }
@@ -3113,13 +3098,11 @@ static void		handleServerMessage(bool human, uint16_t code,
       msg = nboUnpackUByte(msg, id);
       msg = nboUnpackUShort(msg, wins);
       msg = nboUnpackUShort(msg, losses);
-      // only update score of remote players (local score is already known)
-      for (int i = 0; i < curMaxPlayers; i++)
-	if (player[i] && player[i]->getId() == id) {
-	  player[i]->changeScore(wins - player[i]->getWins(),
-				losses - player[i]->getLosses());
-	  break;
-	}
+
+      int i = lookupPlayerIndex(id);
+      if (i >= 0)
+	player[i]->changeScore(wins - player[i]->getWins(),
+                               losses - player[i]->getLosses());
       break;
     }
 
