@@ -28,7 +28,6 @@ bzfs_SOURCES = \
 	CustomWorld.h \
 	CustomZone.cxx \
 	CustomZone.h \
-	DelayQueue.cxx \
 	EntryZones.cxx \
 	EntryZones.h \
 	FlagHistory.cxx	\
@@ -44,7 +43,6 @@ bzfs_SOURCES = \
 	PackVars.h \
 	Permissions.h \
 	Permissions.cxx \
-	PlayerInfo.cxx \
 	RecordReplay.cxx \
 	RecordReplay.h \
 	RejoinList.cxx \

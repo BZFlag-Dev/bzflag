@@ -5,7 +5,9 @@ MAINTAINERCLEANFILES = \
 
 libGame_a_SOURCES = \
 	CommandsStandard.cxx		\
+	DelayQueue.cxx			\
 	NetHandler.cxx			\
+	PlayerInfo.cxx			\
 	VotingArbiter.cxx		\
 	DirectoryNames.cxx
 
