@@ -3941,8 +3941,6 @@ static void		checkEnvironment()
       for (int i = 0; i < numFlags; i++) {
 	if (world->getFlag(i).id == Flags::Null || world->getFlag(i).status != FlagOnGround)
 	  continue;
-	if (world->getFlag(i).id == NullFlag)
-	  continue;
 	const float* fpos = world->getFlag(i).position;
 	if ((fabs(tpos[2] - fpos[2]) < 0.1f) && ((tpos[0] - fpos[0]) * (tpos[0] - fpos[0]) +
 	    (tpos[1] - fpos[1]) * (tpos[1] - fpos[1]) < radius2)) {
@@ -3952,7 +3950,7 @@ static void		checkEnvironment()
       }
     }
   }
-  else if (flagId == IdentifyFlag) {
+  else if (flagId == Flags::Identify) {
     // identify closest flag
     const float* tpos = myTank->getPosition();
     std::string message("Closest Flag: ");
@@ -4007,10 +4005,10 @@ static void		checkEnvironment()
     const float myRadius = myTank->getRadius();
     for (i = 0; i < curMaxPlayers; i++)
       if (player[i] &&
-	  player[i]->getFlag() == SteamrollerFlag &&
+	  player[i]->getFlag() == Flags::Steamroller &&
 	  !player[i]->isPaused()) {
 	const float* pos = player[i]->getPosition();
-	if (!(flagId == PhantomZoneFlag && myTank->isFlagActive())) {
+	if (!(flagId == Flags::PhantomZone && myTank->isFlagActive())) {
 	  const float radius = myRadius + SRRadiusMult * player[i]->getRadius();
 	  if (hypot(hypot(myPos[0] - pos[0], myPos[1] - pos[1]), myPos[2] - pos[2]) < radius)
 	    gotBlowedUp(myTank, GotRunOver, player[i]->getId());
@@ -4050,8 +4048,8 @@ static void		setTarget()
 
     // see if it's inside lock-on angle (if we're trying to lock-on)
     if (a < 0.15f &&					// about 8.5 degrees
-	myTank->getFlag() == GuidedMissileFlag &&	// am i locking on?
-	player[i]->getFlag() != StealthFlag &&		// can't lock on stealth
+	myTank->getFlag() == Flags::GuidedMissile &&	// am i locking on?
+	player[i]->getFlag() != Flags::Stealth &&		// can't lock on stealth
 	!player[i]->isPaused() &&			// can't lock on paused
 	!player[i]->isNotResponding() &&		// can't lock on not responding
 	d < bestDistance) {				// is it better?
@@ -4060,7 +4058,7 @@ static void		setTarget()
       lockedOn = true;
     }
     else if (a < 0.3f &&				// about 17 degrees
-	((player[i]->getFlag() != StealthFlag) || (myTank->getFlag() == SeerFlag)) &&	// can't "see" stealth unless have seer
+	((player[i]->getFlag() != Flags::Stealth) || (myTank->getFlag() == Flags::Seer)) &&	// can't "see" stealth unless have seer
 	d < bestDistance && !lockedOn) {		// is it better?
       bestTarget = player[i];
       bestDistance = d;
@@ -4088,7 +4086,7 @@ static void		setTarget()
     msg = ColorStrings[DefaultColor] + msg;
     addMessage(NULL, msg);
   }
-  else if (myTank->getFlag() == ColorblindnessFlag) {
+  else if (myTank->getFlag() == Flags::Colorblindness) {
     std::string msg("Looking at a tank");
     hud->setAlert(1, msg.c_str(), 2.0f, 0);
     msg = ColorStrings[DefaultColor] + msg;
@@ -4144,8 +4142,8 @@ static void		setHuntTarget()
 
     // see if it's inside lock-on angle (if we're trying to lock-on)
     if (a < 0.15f &&					// about 8.5 degrees
-	myTank->getFlag() == GuidedMissileFlag &&	// am i locking on?
-	player[i]->getFlag() != StealthFlag &&		// can't lock on stealth
+	myTank->getFlag() == Flags::GuidedMissile &&	// am i locking on?
+	player[i]->getFlag() != Flags::Stealth &&		// can't lock on stealth
 	!player[i]->isPaused() &&			// can't lock on paused
 	!player[i]->isNotResponding() &&		// can't lock on not responding
 	d < bestDistance) {				// is it better?
@@ -4154,7 +4152,7 @@ static void		setHuntTarget()
       lockedOn = true;
     }
     else if (a < 0.3f &&				// about 17 degrees
-	((player[i]->getFlag() != StealthFlag) || (myTank->getFlag() == SeerFlag)) &&	// can't "see" stealth unless have seer
+	((player[i]->getFlag() != Flags::Stealth) || (myTank->getFlag() == Flags::Seer)) &&	// can't "see" stealth unless have seer
 	d < bestDistance && !lockedOn) {		// is it better?
       bestTarget = player[i];
       bestDistance = d;
@@ -4163,7 +4161,7 @@ static void		setHuntTarget()
   if (!bestTarget) return;
 
 
-  if (bestTarget->isHunted()  && myTank->getFlag() != BlindnessFlag) {
+  if (bestTarget->isHunted()  && myTank->getFlag() != Flags::Blindness) {
     if (myTank->getTarget() == NULL) { // Don't interfere with GM lock display
       std::string msg("SPOTTED: ");
       msg += bestTarget->getCallSign();
@@ -4384,7 +4382,7 @@ static void		checkEnvironment(RobotPlayer* tank)
     bool dead = false;
     const float* myPos = tank->getPosition();
     const float myRadius = tank->getRadius();
-    if (myTank->getFlag() == SteamrollerFlag && !myTank->isPaused()) {
+    if (myTank->getFlag() == Flags::Steamroller && !myTank->isPaused()) {
       const float* pos = myTank->getPosition();
       const float radius = myRadius + SRRadiusMult * myTank->getRadius();
       if (hypot(hypot(myPos[0] - pos[0], myPos[1] - pos[1]), myPos[2] - pos[2]) < radius) {
@@ -4394,7 +4392,7 @@ static void		checkEnvironment(RobotPlayer* tank)
     }
     for (i = 0; !dead && i < curMaxPlayers; i++)
       if (player[i] &&
-	  player[i]->getFlag() == SteamrollerFlag &&
+	  player[i]->getFlag() == Flags::Steamroller &&
 	  !player[i]->isPaused()) {
 	  const float* pos = player[i]->getPosition();
 	  const float radius = myRadius + SRRadiusMult * player[i]->getRadius();
@@ -5570,11 +5568,11 @@ static void		playingLoop()
 	myTankDir = myTank->getForward();
 
 	if (viewType == SceneRenderer::ThreeChannel) {
-	  if (myTank->getFlag() == WideAngleFlag) fov = 90.0f;
+	  if (myTank->getFlag() == Flags::WideAngle) fov = 90.0f;
 	  else fov = (myTank->getMagnify() == 1 ? 12.0f : 45.0f);
 	}
 	else {
-	  if (myTank->getFlag() == WideAngleFlag) fov = 120.0f;
+	  if (myTank->getFlag() == Flags::WideAngle) fov = 120.0f;
 	  else fov = (myTank->getMagnify() == 1 ? 15.0f : 60.0f);
 	}
       }
@@ -5676,7 +5674,7 @@ static void		playingLoop()
       if (scene && myTank) {
 	// add my tank
 	myTank->addPlayer(scene, 0, false);
-	if (myTank->getFlag() == CloakingFlag) {
+	if (myTank->getFlag() == Flags::Cloaking) {
 	  // and make it invisible
 	  myTank->setInvisible();
 	} else if (roaming)
@@ -5693,20 +5691,20 @@ static void		playingLoop()
 	world->addFlags(scene);
 
 	const GLfloat *override = NULL;
-	if (myTank->getFlag() == ColorblindnessFlag)
+	if (myTank->getFlag() == Flags::Colorblindness)
 	  override = colorblindColor;
 
 	// add other tanks and shells
-	const bool colorblind = (myTank->getFlag() == ColorblindnessFlag);
+	const bool colorblind = (myTank->getFlag() == Flags::Colorblindness);
 	for (i = 0; i < curMaxPlayers; i++)
 	  if (player[i]) {
 	    player[i]->updateSparks(dt);
 	    player[i]->addShots(scene, colorblind);
-	    if (!colorblind && (player[i]->getFlag() == MasqueradeFlag) && (myTank->getFlag() != SeerFlag)) {
+	    if (!colorblind && (player[i]->getFlag() == Flags::Masquerade) && (myTank->getFlag() != Flags::Seer)) {
 	       override = Team::getTankColor(myTank->getTeam());
 	    }
 	    player[i]->addPlayer(scene, override, true);
-	    if ((player[i]->getFlag() == CloakingFlag) && (myTank->getFlag() != SeerFlag))
+	    if ((player[i]->getFlag() == Flags::Cloaking) && (myTank->getFlag() != Flags::Seer))
 	      player[i]->setInvisible();
 	    else
 	      player[i]->setHidden(roaming && roamView == roamViewFP && roamTrackWinner == i);
@@ -5724,9 +5722,9 @@ static void		playingLoop()
 
       // turn blanking and inversion on/off as appropriate
       sceneRenderer->setBlank(myTank && (myTank->isPaused() ||
-	  myTank->getFlag() == BlindnessFlag));
+	  myTank->getFlag() == Flags::Blindness));
       sceneRenderer->setInvert(myTank &&
-	  myTank->getFlag() == PhantomZoneFlag &&
+	  myTank->getFlag() == Flags::PhantomZone &&
 	  myTank->isFlagActive());
 
       // turn on scene dimming when showing menu or when
@@ -6001,7 +5999,7 @@ static void		playingLoop()
       if (myTank->isAlive() && !myTank->isPaused()) {
 	doMotion();
 	if (hud->getHunting()) setHuntTarget(); //spot hunt target
-	if (fireButton && myTank->getFlag() == MachineGunFlag && !Observer)
+	if (fireButton && myTank->getFlag() == Flags::MachineGun && !Observer)
 	  myTank->fireShot();
       }
       else {
