@@ -116,7 +116,6 @@ static RadarRenderer*	radar = NULL;
 HUDRenderer*		hud = NULL;
 static SceneDatabaseBuilder* sceneBuilder = NULL;
 static Team*		teams = NULL;
-static int		maxPlayers = 0;		// not including me
 static int		curMaxPlayers = 0;
 static RemotePlayer**	player = NULL;
 static int		numFlags = 0;
@@ -5270,7 +5269,6 @@ static void		leaveGame()
   delete world;
   world = NULL;
   teams = NULL;
-  maxPlayers = 0;
   curMaxPlayers = 0;
   numFlags = 0;
   player = NULL;
@@ -5387,7 +5385,6 @@ static bool		joinGame(const StartupInfo* info,
   teams = world->getTeams();
 
   // prep players
-  maxPlayers = world->getMaxPlayers();
   curMaxPlayers = 0;
   player = world->getPlayers();
 
