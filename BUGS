@@ -76,12 +76,6 @@ recent bugs
 - Mac OS X client outputs an Info.plist file with the permissions set
   incorrectly if building an application bundle via XCode.
 
-- changing video format during game messes up rendering on one of my
-  Linux boxes (the one with hardware rendering). Most prominently, the
-  ground is no longer rendered, but I mgiht also get other side effects
-  as shiny pyramids. Might be related to similar problems reported by
-  Windows people when using ALT-TAB and/or the shiny rabbit bug below.
-
 - saveworld does not save world weapons
   MAC: Unfortunately world weapons aren't sent to the client, so
   there's no way for the client to write them. I suppose they could 
