@@ -1,15 +1,15 @@
 critical bugs
 -------------
 
-- bzc file writing seems to be goofy. Some options never are written into
-  the file, and some (binds) get written more than once. [I have two
-  bind lines for the same key]  there is  trouble remapping the
-  Identify/Respawn" key from "right mouse or i" to something else.  tried
-  remapping to "w" during gameplay and it fails for  windows and os x.  also
-  fails to respawn with right mouse if you try to change the setting during
-  game.  the values do not appear to be persistent properly either (quit and
-  return and it's displayed wrong).  resetting key map doesn't seem to fully
-  erase the current bindings before reapplying defaults (same bug as above?)
+- bzc file writing seems to be goofy. Some bindings are never written into
+  the file, and some get written more than once. [I have two bind lines for
+  the same key]  there is trouble remapping the Ident"ify/Respawn" key from
+  "right mouse or i" to something else.  tried remapping to "w" during
+  gameplay and it fails for  windows and os x.  also fails to respawn with
+  right mouse if you try to change the setting during  game.  the values do
+  not appear to be persistent properly either (quit and return and it's
+  displayed wrong).  resetting key map doesn't seem to fully erase the current
+  bindings before reapplying defaults (same bug as above?)
 
 - if client unsticks itself, the reverse impulse can be too fast resulting in
   a too fast autokick.  reverse impulse needs to take normal into consideration
