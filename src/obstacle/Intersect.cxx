@@ -366,8 +366,10 @@ static float		timeRayHitsPlane(const float pb[3],
 
 float			timeRayHitsPyramids(const Ray& r,
 					    const float* p1, float angle,
-					    float dx, float dy, float dz)
+					    float dx, float dy, float dz,
+					    bool flipZ)
 {
+  
   const float epsilon = 1.0e-5f;
   // get names for ray info
   int i;
@@ -388,16 +390,17 @@ float			timeRayHitsPyramids(const Ray& r,
   db[0] = c * d[0] - s * d[1];
   db[1] = c * d[1] + s * d[0];
   db[2] = d[2];
-
+  
   if (dx < 0)
     dx = - dx;
   if (dy < 0)
     dy = - dy;
-
   if (dz < 0) {
-    pb[2] = - pb[2];
+    dz = - dz;
+  }
+  if (flipZ) {
+    pb[2] = dz - pb[2];
     db[2] = - db[2];
-    dz    = - dz;
   }
 
   float residualTime = 0.0f;

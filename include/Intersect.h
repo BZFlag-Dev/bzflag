@@ -59,7 +59,8 @@ float			timeRayHitsBlock(const Ray& r, const float* boxPos,
 float			timeRayHitsPyramids(const Ray& r,
 					    const float* pyrPos,
 					    float pyrAngle,
-					    float dx, float dy, float dz);
+					    float dx, float dy, float dz,
+					    bool flipZ);
 
 // true iff rectangles intersect (in z = const plane)
 bool			testRectRect(const float* p1, float angle1,
