@@ -3760,7 +3760,7 @@ static void parseCommand(const char *message, int t)
   } else if (hasPerm(t, PlayerAccessInfo::flagMod) && strncmp(message + 1, "flag ", 5) == 0) {
     handleFlagCmd(t,message);
 
-  } else if (hasPerm(t, PlayerAccessInfo::kick) && strncmp(message + 1, "kick ", 5) == 0) {
+  } else if (hasPerm(t, PlayerAccessInfo::kick) && strncmp(message + 1, "kick", 4) == 0) {
     handleKickCmd(t, message);
 
   } else if (hasPerm(t, PlayerAccessInfo::banlist) && strncmp(message+1, "banlist", 7) == 0) {

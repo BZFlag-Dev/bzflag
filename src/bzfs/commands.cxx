@@ -267,20 +267,37 @@ void handleFlagCmd(int t, const char *message)
 void handleKickCmd(int t, const char *message)
 {
   int i;
-  const char *victimname = message + 6;
+	char reply [MessageLen];
+	std::vector<std::string> argv = string_util::tokenize( message, " \t", 3, true);
+	
+	if( argv.size() < 2 ){
+    strcpy(reply, "Syntax: /kick <PlayerName/\"Player Name\"> [reason]");
+    sendMessage(ServerPlayer, t, reply, true);
+    strcpy(reply, "        Please keep in mind that reason is displayed to the user.");
+    sendMessage(ServerPlayer, t, reply, true);
+		return;
+  }
+
+  const char *victimname = argv[1].c_str();
+
   for (i = 0; i < curMaxPlayers; i++) {
     if (player[i].fd != NotConnected && strcmp(player[i].callSign, victimname) == 0) {
       break;
     }
   }
+
   if (i < curMaxPlayers) {
     char kickmessage[MessageLen];
-    sprintf(kickmessage,"Your were kicked off the server by %s", player[t].callSign);
+    sprintf(kickmessage,"You were kicked off the server by %s", player[t].callSign);
     sendMessage(ServerPlayer, i, kickmessage, true);
+		if (argv.size() >= 2){
+			sprintf(kickmessage, " reason given : %s",argv[2].c_str());
+			sendMessage(ServerPlayer, i, kickmessage, true);
+		}
     removePlayer(i, "/kick");
   } else {
     char errormessage[MessageLen];
-    sprintf(errormessage, "player %s not found", victimname);
+    sprintf(errormessage, "player \"%s\" not found", victimname);
     sendMessage(ServerPlayer, t, errormessage, true);
   }
   return;
