@@ -3386,7 +3386,7 @@ static void handleCommand(int t, const void *rawbuf)
 	  void *buf, *bufStart = getDirectMessageBuffer();
 	  buf = nboPackUByte (bufStart, t);       // the src player
 	  buf = nboPackUByte (buf, targetPlayer); // the dst player
-	  buf = nboPackString (buf, message, MessageLen);
+	  buf = nboPackString (buf, message, strlen(message) + 1);
 	  Record::addPacket (MsgMessage, (char*)buf - (char*)bufStart, bufStart,
 	                     HiddenPacket);
 	}
