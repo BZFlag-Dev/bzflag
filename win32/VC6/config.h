@@ -21,7 +21,7 @@
  * avoid #define'ing it in common.h */
 
 #ifndef IPV6_HDRINCL	// use this to see if we have the new TCP headers that include socket len or no
-	#define socklen_t int
+//	#define socklen_t int //upgrade to the latest SDK
 #endif
 
 
