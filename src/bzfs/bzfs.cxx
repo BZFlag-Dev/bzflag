@@ -1365,9 +1365,9 @@ static void patchMessage(PlayerId fromId, PlayerId toId, const void *msg)
 	// server version
 	patchPlayerId(fromId, toId, msg, 4);
       ;;
-    case MsgEnter:
     case MsgAccept:
     case MsgClientVersion:
+    case MsgEnter:
     case MsgExit:
     case MsgGetWorld:
     case MsgNetworkRelay:
@@ -3047,7 +3047,7 @@ static void addClient(int acceptSocket)
   if (gameOver) {
     int count = 0;
     for (int i = 0; i < maxPlayers; i++)
-      if (player[i].state > PlayerInLimbo)
+      if (player[i].state >= PlayerInLimbo)
 	count++;
     if (count == 1) {
       gameOver = False;
