@@ -178,25 +178,25 @@ public:
 void box( std::ofstream &bzw, Point3D &position, Point3D &size, float rotation, char *comment = NULL )
 {
 	if (comment != NULL)
-		bzw << "#" << comment << endl;
-	bzw << "box" << endl;
-	bzw << "position " << position[0] << " " << position[1] << " " << position[2] << endl;
-	bzw << "size " << size[0] << " " << size[1] << " " << size[2] << endl;
-	bzw << "rotation " << rotation << endl;
-	bzw << "end" << endl;
-	bzw << endl;
+		bzw << "#" << comment << std::endl;
+	bzw << "box" << std::endl;
+	bzw << "position " << position[0] << " " << position[1] << " " << position[2] << std::endl;
+	bzw << "size " << size[0] << " " << size[1] << " " << size[2] << std::endl;
+	bzw << "rotation " << rotation << std::endl;
+	bzw << "end" << std::endl;
+	bzw << std::endl;
 }
 
 void pyramid( std::ofstream &bzw, Point3D &position, Point3D &size, float rotation, char *comment = NULL )
 {
 	if (comment != NULL)
-		bzw << "#" << comment << endl;
-	bzw << "pyramid" << endl;
-	bzw << "position " << position[0] << " " << position[1] << " " << position[2] << endl;
-	bzw << "size " << size[0] << " " << size[1] << " " << size[2] << endl;
-	bzw << "rotation " << rotation << endl;
-	bzw << "end" << endl;
-	bzw << endl;
+		bzw << "#" << comment << std::endl;
+	bzw << "pyramid" << std::endl;
+	bzw << "position " << position[0] << " " << position[1] << " " << position[2] << std::endl;
+	bzw << "size " << size[0] << " " << size[1] << " " << size[2] << std::endl;
+	bzw << "rotation " << rotation << std::endl;
+	bzw << "end" << std::endl;
+	bzw << std::endl;
 }
 
 void generateObjects( std::ofstream &bzw, std::vector<BZObject *> objects, Matrix3D &posMatrix, Matrix3D &sizeMatrix, float rotation, int count )
@@ -533,8 +533,8 @@ void parsebzwt( std::ifstream &bzwt, std::ofstream &bzw )
 	}
 	catch (exception &e)
 	{
-		cerr << "Parse error: line: " << lineNo << " " << e.what() << endl;
-		cerr << line << endl;
+	  std::cerr << "Parse error: line: " << lineNo << " " << e.what() << std::endl;
+	  std::cerr << line << std::endl;
 	}
 
 }
@@ -543,8 +543,8 @@ int main( int argc, char **argv )
 {
 	if (argc != 3)
 	{
-		cout << "error invalid arguments" << endl;
-		cout << "\tbzwTransform inputName outputName" << endl;
+	  std::cout << "error invalid arguments" << std::endl;
+	  std::cout << "\tbzwTransform inputName outputName" << std::endl;
 		return -1;
 	}
 
