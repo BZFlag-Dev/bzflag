@@ -877,10 +877,12 @@ int			main(int argc, char** argv)
   // parse arguments
   parse(argc, argv);
 
-  //Convert to unix paths so that escaping isn't an issue
-  std::string directory = BZDB.get("directory");
-  OSFileOSToStdDir((char *)directory.c_str()); //ok this is quasi-cheating
-  BZDB.set("directory", directory);
+  if (BZDB.isSet("directory")) {
+    //Convert to unix paths so that escaping isn't an issue
+    std::string directory = BZDB.get("directory");
+    OSFileOSToStdDir((char *)directory.c_str()); //ok this is quasi-cheating
+    BZDB.set("directory", directory);
+  }
 
   if (debugLevel >= 4)
     BZDB.setDebug(true);
