@@ -1093,6 +1093,7 @@ static void		doEvent(BzfDisplay* display)
     break;
 
   case BzfEvent::Resize:
+    mainWindow->getWindow()->setSize(event.resize.width, event.resize.height);
     mainWindow->getWindow()->callResizeCallbacks();
     break;
 

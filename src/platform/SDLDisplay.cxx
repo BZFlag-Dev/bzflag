@@ -203,6 +203,12 @@ bool SDLDisplay::getEvent(BzfEvent& _event) const
     _event.type = BzfEvent::Quit;
     break;
 
+  case SDL_VIDEORESIZE:
+    _event.type          = BzfEvent::Resize;
+    _event.resize.width  = event.resize.w;
+    _event.resize.height = event.resize.h;
+    break;
+
   default:
     return false;
   }
@@ -320,9 +326,10 @@ void SDLDisplay::createWindow() {
   SDL_Surface *surface;
   if (fullScreen)
     surface = SDL_SetVideoMode(getWidth(), getHeight(), 0,
-			       SDL_OPENGL  | SDL_FULLSCREEN);
+			       SDL_OPENGL | SDL_FULLSCREEN);
   else
-    surface = SDL_SetVideoMode(base_width, base_height, 0, SDL_OPENGL);
+    surface = SDL_SetVideoMode(base_width, base_height, 0,
+			       SDL_OPENGL | SDL_RESIZABLE);
   if (!surface)
     printf("Could not set Video Mode: %s.\n", SDL_GetError());
 };

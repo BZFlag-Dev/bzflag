@@ -204,6 +204,7 @@ void			MainWindow::resize()
 {
   window->getSize(trueWidth, trueHeight);
   window->makeCurrent();
+  window->create();
   setQuadrant(quadrant);
 }
 
