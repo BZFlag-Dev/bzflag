@@ -640,11 +640,13 @@ float StateDatabase::evaluate(Expression e) const
 			evaluationStack.push(tok);
 			break;
 		case ExpressionToken::oper:
-			if (evaluationStack.size() == 0)
-				; // syntax error
+			if (evaluationStack.size() == 0) {
+				// syntax error
+			}
 			lvalue = evaluationStack.top(); evaluationStack.pop();
-			if (evaluationStack.size() == 0)
+			if (evaluationStack.size() == 0) {
 				unary = true; // syntax error or unary operator
+			}
 			if (!unary) {
 				rvalue = evaluationStack.top(); evaluationStack.pop();
 			}
