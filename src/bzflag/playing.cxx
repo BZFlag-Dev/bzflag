@@ -1598,7 +1598,7 @@ static void		doAutoPilot(float &rotation, float &speed)
 	        myTank->validTeamTarget(player[t])) {
 
 	      const float *tp = player[t]->getPosition();
-	      if (fabs(pos[2] - tp[2]) < 2.0f * BZDB->eval(StateDatabase::BZDB_TANKHEIGHT)) {
+	      if ((myTank->getFlag() == Flags::GuidedMissile) || (fabs(pos[2] - tp[2]) < 2.0f * BZDB->eval(StateDatabase::BZDB_TANKHEIGHT))) {
 
 	        float targetAngle = atan2f(tp[1] - pos[1], tp[0] - pos[0]);
 	        float targetRotation = targetAngle - myTank->getAngle();
