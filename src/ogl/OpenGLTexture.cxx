@@ -80,11 +80,7 @@ OpenGLTexture::OpenGLTexture(int _width, int _height,
     image = new GLubyte[4 * width * height];
     ::memcpy(image, pixels, 4 * width * height);
 
-#ifdef _MSC_VER
-  // Suppose Pat want to remind himself
-  { int somebody_remove_this_once_tm_does_this; }
-#endif
-  setFilter(std::string("linearmipmaplinear"));
+  setFilter(configFilterValues[static_cast<int>(_maxFilter)]);
   initContext();
   // watch for context recreation
   OpenGLGState::registerContextInitializer(static_initContext, (void*)this);

@@ -68,7 +68,7 @@
 #include "ServerStartMenu.h"
 #include "FontManager.h"
 #include "OSFile.h"
-
+#include "TextureManager.h"
 // invoke incessant rebuilding for build versioning
 #include "version.h"
 
@@ -1196,12 +1196,7 @@ int			main(int argc, char** argv)
     if (BZDB.isSet("zbuffersplit"))
       RENDERER.setZBufferSplit(BZDB.isTrue("zbuffersplit"));
     if (BZDBCache::texture) {
-#ifdef _MSC_VER
-            // Suppose Pat want to remind himself
-	    { int somebody_get_tm_to_set_texture; }
-#endif
-
-//      OpenGLTexture::setFilter(BZDB.get("texture"));
+			TextureManager::instance().setMaxFilter(BZDB.get("texture"));
     }
     if (BZDB.isSet("quality")) {
       std::string value = BZDB.get("quality");

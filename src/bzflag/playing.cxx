@@ -4979,11 +4979,7 @@ static void		timeConfigurations()
   BZDB.set("dither", "1");
   BZDB.set("shadows", "0");
   BZDB.set("enhancedradar", "0");
-#ifdef _MSC_VER
-  // Suppose Pat want to remind himself
-  { int somebody_get_tm_to_set_texture; }
-#endif
-//  OpenGLTexture::setFilter(OpenGLTexture::Off);
+	TextureManager::instance().setMaxFilter(Off);
   timeConfiguration(true);
 
   // time lowest quality with and without blending.  some systems
@@ -5031,22 +5027,14 @@ static void		timeConfigurations()
 
   // try texturing.  if it's too slow then fall back to
   // lowest quality and return.
-#ifdef _MSC_VER
-  // Suppose Pat want to remind himself
-{ int somebody_get_tm_to_set_texture; }
-#endif
-//  OpenGLTexture::setFilter(OpenGLTexture::Nearest);
-  BZDB.set("texture", OpenGLTexture::getFilterName());
+	TextureManager::instance().setMaxFilter(Nearest);
+  BZDB.set("texture", TextureManager::instance().getMaxFilterName());
   sceneRenderer->setQuality(1);
   printError("  lowest quality with texture");
   if (timeConfiguration(false) > MaxFrameTime ||
       timeConfiguration(true) > MaxFrameTime) {
     BZDB.set("texture", "0");
-#ifdef _MSC_VER
-    // Suppose Pat want to remind himself
-    { int somebody_get_tm_to_set_texture; }
-#endif
-//    OpenGLTexture::setFilter(OpenGLTexture::Off);
+		TextureManager::instance().setMaxFilter(Off);
     sceneRenderer->setQuality(0);
     return;
   }
@@ -5056,12 +5044,8 @@ static void		timeConfigurations()
   BZDB.set("blend", "1");
   BZDB.set("smooth", "1");
   BZDB.set("lighting", "1");
-#ifdef _MSC_VER
-  // Suppose Pat want to remind himself
-{ int somebody_get_tm_to_set_texture; }
-#endif
-//  OpenGLTexture::setFilter(OpenGLTexture::LinearMipmapLinear);
-  BZDB.set("texture", OpenGLTexture::getFilterName());
+	TextureManager::instance().setMaxFilter(LinearMipmapLinear);
+  BZDB.set("texture", TextureManager::instance().getMaxFilterName());
   sceneRenderer->setQuality(2);
   BZDB.set("dither", "1");
   BZDB.set("shadows", "1");
@@ -5086,22 +5070,14 @@ static void		timeConfigurations()
 
   // lower quality texturing
   printError("  nearest texturing");
-#ifdef _MSC_VER
-            // Suppose Pat want to remind himself
-{ int somebody_get_tm_to_set_texture; }
-#endif
-//  OpenGLTexture::setFilter(OpenGLTexture::Nearest);
+	TextureManager::instance().setMaxFilter(Nearest);
   if (timeConfiguration(true) < MaxFrameTime) return;
   if (timeConfiguration(false) < MaxFrameTime) return;
 
   // no texturing
   printError("  no texturing");
   BZDB.set("texture", "0");
-#ifdef _MSC_VER
-            // Suppose Pat want to remind himself
-{ int somebody_get_tm_to_set_texture; }
-#endif
-//  OpenGLTexture::setFilter(OpenGLTexture::Off);
+	TextureManager::instance().setMaxFilter(Off);
   if (timeConfiguration(true) < MaxFrameTime) return;
   if (timeConfiguration(false) < MaxFrameTime) return;
 
@@ -5254,11 +5230,7 @@ void			startPlaying(BzfDisplay* _display,
     BZDB.set("dither", "0");
     BZDB.set("shadows", "0");
     BZDB.set("enhancedradar", "0");
-#ifdef _MSC_VER
-    // Suppose Pat want to remind himself
-    { int somebody_get_tm_to_set_texture; }
-#endif
-    // OpenGLTexture::setFilter(OpenGLTexture::Off);
+		TextureManager::instance().setMaxFilter(Off);
   }
 
   // should we grab the mouse?  yes if fullscreen.

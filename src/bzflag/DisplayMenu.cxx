@@ -12,6 +12,7 @@
 
 /* interface header */
 #include "DisplayMenu.h"
+#include "TextureManager.h"
 
 /* system implementation headers */
 #include <string>
@@ -347,15 +348,9 @@ void			DisplayMenu::callback(HUDuiControl* w, void* data) {
     break;
   }
   case '5':
-#ifdef _MSC_VER
-    // Suppose Pat want to remind himself
-    { int somebody_get_tm_to_set_texture; }
-#endif
-    /*
-      OpenGLTexture::setFilter((OpenGLTexture::Filter)list->getIndex());
-      BZDB.set("texture", OpenGLTexture::getFilterName());
+			TextureManager::instance().setMaxFilter((eTextureFilter)list->getIndex());
+      BZDB.set("texture", TextureManager::instance().getMaxFilterName());
       sceneRenderer->notifyStyleChange();
-    */
     break;
   case '6':
     sceneRenderer->setQuality(list->getIndex());

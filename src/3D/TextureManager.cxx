@@ -35,14 +35,24 @@ TextureManager* Singleton<TextureManager>::_instance = (TextureManager*)0;
 
 static int noiseProc(ProcTextureInit &init);
 
-
 ProcTextureInit procLoader[1];
 
 TextureManager::TextureManager()
 {
+	configFilterValues[Off] = "no";
+	configFilterValues[Nearest] = "nearest";
+	configFilterValues[Linear] = "linear";
+	configFilterValues[NearestMipmapNearest] = "linearmipmapnearest";
+	configFilterValues[LinearMipmapNearest] = "linearmipmapnearest";
+	configFilterValues[NearestMipmapLinear] = "nearestmipmaplinear";
+	configFilterValues[LinearMipmapLinear] = "linearmipmaplinear";
+
+	// init the default filter methods
+	currentMaxFilter = Max;
+
   // fill out the standard proc textures
   procLoader[0].name = "noise";
-  procLoader[0].filter = OpenGLTexture::Nearest;
+  procLoader[0].filter = Nearest;
   procLoader[0].proc = noiseProc;
 
   lastImageID = -1;
@@ -50,6 +60,7 @@ TextureManager::TextureManager()
 
   int i, numTextures;
   numTextures = countof(procLoader);
+
   for (i = 0; i < numTextures; i++) {
     procLoader[i].manager = this;
     procLoader[i].proc(procLoader[i]);
@@ -83,7 +94,7 @@ int TextureManager::getTextureID( const char* name, bool reportFail )
     return it->second.id;
   } else { // we don't have it so try and load it
     FileTextureInit	file;
-    file.filter = OpenGLTexture::LinearMipmapLinear;
+    file.filter = LinearMipmapLinear;
     file.name = texName;
     ImageInfo info;
     OpenGLTexture *image = loadTexture(file, reportFail);
@@ -129,6 +140,44 @@ bool TextureManager::bind ( const char* name )
   return true;
 }
 
+std::string		TextureManager::getMaxFilterName ( void )
+{
+	return configFilterValues[static_cast<int>(currentMaxFilter)];
+}
+
+void TextureManager::setMaxFilter ( std::string filter )
+{
+	eTextureFilter realFilter = Max;
+
+	for ( int i = 0; i < (int)Max; i++)
+	{
+		if (filter == configFilterValues[i])
+			realFilter = (eTextureFilter)i;
+	}
+	setMaxFilter(realFilter);
+}
+
+void TextureManager::setMaxFilter ( eTextureFilter filter )
+{
+	currentMaxFilter = filter;
+	// flush all the textures so they ger rebuilt on next use
+
+	TextureNameMap::iterator	itr = textureNames.begin();
+
+	while (itr != textureNames.end())
+	{
+		FileTextureInit	fileInit;
+		fileInit.filter = currentMaxFilter;
+		fileInit.name = itr->second.name;
+
+		OpenGLTexture	*newTexture = loadTexture(fileInit,false);
+
+		delete(itr->second.texture);
+		itr->second.texture = newTexture;
+		itr++;
+	}
+}
+
 float TextureManager::GetAspectRatio ( int id )
 {
   TextureIDMap::iterator it = textureIDs.find(id);
@@ -137,7 +186,6 @@ float TextureManager::GetAspectRatio ( int id )
 
   return (float)it->second->y/(float)it->second->x;
 }
-
 
 const ImageInfo& TextureManager::getInfo ( int id )
 {
@@ -161,7 +209,6 @@ const ImageInfo& TextureManager::getInfo ( const char* name )
 
   return it->second;
 }
-
 
 int TextureManager::addTexture( const char* name, OpenGLTexture *texture )
 {
@@ -221,18 +268,30 @@ OpenGLTexture* TextureManager::loadTexture(FileTextureInit &init, bool reportFai
     }
     return NULL;
   }
+	OpenGLTexture::Filter RealFilter;
 
-  OpenGLTexture *texture = new OpenGLTexture(width, height, image, init.filter, true);
+	if (init.filter > currentMaxFilter)
+		RealFilter = (OpenGLTexture::Filter)currentMaxFilter;
+	else
+		RealFilter = (OpenGLTexture::Filter)init.filter ;
+
+  OpenGLTexture *texture = new OpenGLTexture(width, height, image, RealFilter, true);
   delete[] image;
 
   return texture;
 }
 
-int TextureManager::newTexture(const char* name, int x, int y, unsigned char* data, OpenGLTexture::Filter filter, bool repeat, int format)
+int TextureManager::newTexture(const char* name, int x, int y, unsigned char* data, eTextureFilter filter, bool repeat, int format)
 {
-  return addTexture(name, new OpenGLTexture(x, y, data, filter, repeat, format));
-}
+	OpenGLTexture::Filter RealFilter;
 
+	if (filter > currentMaxFilter)
+		RealFilter = (OpenGLTexture::Filter)currentMaxFilter;
+	else
+		RealFilter = (OpenGLTexture::Filter)filter ;
+
+  return addTexture(name, new OpenGLTexture(x, y, data, RealFilter, repeat, format));
+}
 
 /* --- Procs --- */
 
