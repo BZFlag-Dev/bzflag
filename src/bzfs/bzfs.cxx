@@ -5377,16 +5377,43 @@ int main(int argc, char **argv)
     // manage voting poll for collective kicks/bans
     if ((clOptions->voteTime > 0) && (votingarbiter != NULL)) {
       if (votingarbiter->knowsPoll()) {
-	char message[256];
+	char message[MessageLen];
 
 	std::string person = votingarbiter->getPollPlayer();
 	std::string action = votingarbiter->getPollAction();
 
+	static unsigned short int voteTime = 0;
+	static bool initialAnnounce = true;
+	
+	/* once a poll begins, announce its commencement */
+	if (initialAnnounce) {
+	  voteTime = votingarbiter->getVoteTime();
+
+	  sprintf(message, "A poll to %s %s has begun.  Players have up to %d seconds to vote.", action.c_str(), person.c_str(), voteTime);
+	  sendMessage(ServerPlayer, AllPlayers, message, true);
+	  initialAnnounce = false;
+	}
+
+	static TimeKeeper lastAnnounce = TimeKeeper::getNullTime();
+
+	/* make a heartbeat announcement every 15 seconds */
+	if (((voteTime - (int)(TimeKeeper::getCurrent() - votingarbiter->getStartTime()) - 1) % 15 == 0) &&
+	    ((int)(TimeKeeper::getCurrent() - lastAnnounce) != 0) &&
+	    (votingarbiter->timeRemaining() > 0)) {
+	  sprintf(message, "%d seconds remain in the poll to %s %s.", votingarbiter->timeRemaining(), action.c_str(), person.c_str());
+	  sendMessage(ServerPlayer, AllPlayers, message, true);
+	  lastAnnounce = TimeKeeper::getCurrent();
+	}
+
 	if (votingarbiter->isPollClosed()) {
+
+	  sprintf(message, "Poll Results: %ld in favor, %ld oppose, %ld abstain", votingarbiter->getYesCount(), votingarbiter->getNoCount(), votingarbiter->getAbstentionCount());
+	  sendMessage(ServerPlayer, AllPlayers, message, true);
+
 	  if (votingarbiter->isPollSuccessful()) {
 	    if (!announcedClosure) {
 	      // a poll that exists and is closed has ended successfully
-	      sprintf(message, "The poll is now closed.  %s is scheduled to be %s.", person.c_str(), action == "ban" ? "banned for 10 minutes" : "kicked");
+	      sprintf(message, "The poll is now closed and was successful.  %s is scheduled to be %s.", person.c_str(), action == "ban" ? "temporarily banned" : "kicked");
 	      sendMessage(ServerPlayer, AllPlayers, message, true);
 	      announcedClosure = true;
 	    }
@@ -5429,7 +5456,7 @@ int main(int argc, char **argv)
 	      }
 	      if (foundPlayer) {
 		// notify the player
-		sprintf(message, "You have been %s due to sufficient votes to have you removed", action == "ban" ? "banned" : "kicked");
+		sprintf(message, "You have been %s due to sufficient votes to have you removed", action == "ban" ? "temporarily banned" : "kicked");
 		sendMessage(ServerPlayer, v, message, true);
 		sprintf(message, "/poll %s", action.c_str());
 		removePlayer(v, message);
@@ -5439,7 +5466,8 @@ int main(int argc, char **argv)
 	    // get ready for the next poll
 	    votingarbiter->forgetPoll();
 	    announcedClosure = false;
-
+	    // make an announcement when the next poll becomes active
+	    initialAnnounce = true;
 	  }
 
 	} else {
@@ -5450,10 +5478,13 @@ int main(int argc, char **argv)
 
 	    // close the poll since we have enough votes (next loop will kick off notification)
 	    votingarbiter->closePoll();
+	    // make an announcement when the next poll becomes active
+	    initialAnnounce = true;
 	  } // the poll is over
 	} // is the poll closed
       } // knows of a poll
     } // voting is allowed and an arbiter exists
+
 
     // periodic advertising broadcast
     static const std::vector<std::string>* adLines = clOptions->textChunker.getTextChunk("admsg");
