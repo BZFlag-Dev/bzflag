@@ -241,6 +241,9 @@ bool			WinDisplay::getEvent(BzfEvent& event) const
   switch (msg.message) {
     case WM_CLOSE:
     case WM_QUIT:
+    case WM_SYSCOMMAND:
+      if (msg.wParam != SC_CLOSE)
+          break;
       event.type = BzfEvent::Quit;
       break;
 
