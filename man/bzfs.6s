@@ -683,4 +683,4 @@ With an argument, it deregisters another user's callsign. Without, it
 removes your own registration.
 
 .SH SEE ALSO
-bzflag(6), bzfls(6), bzfrelay(6), mrouted(1)
+bzflag(6), bzfls(6), bzfrelay(6)
