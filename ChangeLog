@@ -15,6 +15,10 @@ BZFlag 1.10.4
 * Tanks will search for colored team textures and use them if found. - Jeff Myers
 * Ground will search for colored std and zone textures and use them if found. - Jeff Myers
 * Non rabbit tanks will try to use "hunter" texture if found. - Jeff Myers
+* Non rabbit tanks will be forced to use orange color if not using an overide texture - Jeff Myers
+* Menu uses it's own image for the arrow, menu_arrow.png. - Jeff Myers
+* Rename team based datafiles to have the team in the name. - Jeff Myers
+
 
 BZFlag 1.10.2
 -------------
