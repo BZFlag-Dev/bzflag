@@ -22,6 +22,14 @@
 #define BZ_PROTO_VERSION	"0021"
 #endif
 
+// version numbers - also update:
+//  ChangeLog
+//  README
+//  package/win32/nsis/*.nsi
+//  package/win32/*.nsi
+//  src/platform/MacOSX/BZFlag-Info.plist
+//  tools/TextTool-W32/TextTool.rc
+//  win32/VC6/installer.dsp
 #ifndef BZ_MAJOR_VERSION
 #define BZ_MAJOR_VERSION	1
 #endif
