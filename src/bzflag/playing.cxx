@@ -4184,7 +4184,8 @@ static void		playingLoop()
 	  roamViewAngle = roamTheta;
 	}
 	float virtPos[]={eyePoint[0], eyePoint[1], 0};
-	myTank->move(virtPos, roamViewAngle * M_PI / 180.0f);
+	if (myTank)
+	  myTank->move(virtPos, roamViewAngle * M_PI / 180.0f);
 #endif
 	fov = roamZoom * M_PI / 180.0f;
       }
