@@ -10,7 +10,7 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-/**
+/** @file
  * Flags add some spice to the game.  There are two kinds of flags:
  * team flags and super flags.  Super flags come in two types: good
  * and bad.
@@ -55,26 +55,43 @@
 #include "Address.h"
 
 
+/** This enum says where a flag is. */
 enum FlagStatus {
+  /// the flag is not present in the world
   FlagNoExist = 0,
+  /// the flag is sitting on the ground and can be picked up
   FlagOnGround,
+  /// the flag is being carried by a tank
   FlagOnTank,
+  /// the flag is falling through the air
   FlagInAir,
+  /// the flag is entering the world
   FlagComing,
+  /// the flag is leaving the world
   FlagGoing
 };
+
+/** This enum tells us if the flag type is droppable, and what happens to it
+    when it's droppped. */
 enum FlagEndurance {
-  FlagNormal = 0,		// permanent flag
-  FlagUnstable = 1,	// disappears after use
-  FlagSticky = 2		// can't be dropped normally
+  /// permanent flag
+  FlagNormal = 0,
+  /// disappears after use
+  FlagUnstable = 1,
+  /// can't be dropped normally
+  FlagSticky = 2
 };
 
+/** This enum tells the "quality" of the flag type, i.e. whether it's good 
+    or bad */
 enum FlagQuality {
   FlagGood = 0,
   FlagBad = 1,
   NumQualities
 };
 
+/** This enum says if the flag type gives the carrier a special shooting
+    ability. */
 enum ShotType {
   NormalShot = 0,
   SpecialShot = 1
@@ -85,6 +102,7 @@ const int		FlagPLen = 6 + PlayerIdPLen + 48;
 class FlagType;
 typedef std::map<std::string, FlagType*> FlagTypeMap;
 
+/** This class represents a flagtype, like "GM" or "CL". */
 class FlagType {
 public:
   FlagType( const char* name, const char* abbv, FlagEndurance _endurance,
@@ -143,13 +161,35 @@ public:
 
 typedef FlagType::FlagSet  FlagSet;
 
+/** This class represents an actual flag. It has functions for serialization
+    and deserialization as well as static functions that returns sets of
+    all good or bad flags, and maps flag abbreviations to FlagType objects. */
 class Flag {
 public:
+  /** This function serializes this object into a @c void* buffer for network
+      transfer. */
   void* pack(void*) const;
+  /** This function uses the given serialization to set the member variables
+      of this object. */
   void* unpack(void*);
 
+  /** This function returns a set of all good flagtypes that are available in
+      the game. 
+      @see FlagType
+      @see FlagQuality 
+  */
   static FlagSet& getGoodFlags();
+  
+  /** This function returns a set of all bad flagtypes that are available in
+      the game. 
+      @see FlagType
+      @see FlagQuality
+  */
   static FlagSet& getBadFlags();
+  
+  /** This function returns a pointer to the FlagType object that is associated
+      with the given abbreviation. If there is no such FlagType object, NULL
+      is returned. */
   static FlagType* getDescFromAbbreviation(const char* abbreviation);
 
   FlagType* type;
@@ -164,13 +204,13 @@ public:
   float initialVelocity;	// initial launch velocity
 };
 
-// Flags no longer use enumerated IDs. Over the wire, flags are all represented
-// by their abbreviation, null-padded to two bytes. Internally, flags are now
-// represented by pointers to singleton Flag::Desc classes.
-//
-// For more information about these flags, see Flag.cxx where these Flag::Desc
-// instances are created.
-//
+/** Flags no longer use enumerated IDs. Over the wire, flags are all 
+    represented by their abbreviation, null-padded to two bytes. Internally, 
+    flags are now represented by pointers to singleton FlagType classes.
+    
+    For more information about these flags, see Flag.cxx where these FlagType
+    instances are created.
+*/
 namespace Flags {
   extern FlagType
   *Null,
@@ -183,7 +223,9 @@ namespace Flags {
     *Colorblindness, *Obesity, *LeftTurnOnly, *RightTurnOnly, *Momentum, 
     *Blindness, *Jamming, *WideAngle, *NoJumping, *TriggerHappy,
     *ReverseOnly, *ForwardOnly, *Bouncy, *Lag;
-
+  
+  /** This function initializes all the FlagType objects in the Flags 
+      namespace. */
   void init();
 }
 
