@@ -632,6 +632,10 @@ void*			WorldBuilder::unpack(void* buf)
       case WorldCodeBox: {
 	float data[7];
 	unsigned char tempflags;
+
+	if (length != WorldCodeBoxSize)
+	  return NULL;
+
 	memset(data, 0, sizeof(float) * 7);
 	buf = nboUnpackFloat(buf, data[0]);
 	buf = nboUnpackFloat(buf, data[1]);
@@ -649,6 +653,10 @@ void*			WorldBuilder::unpack(void* buf)
       case WorldCodePyramid: {
 	float data[7];
 	unsigned char tempflags;
+
+	if (length != WorldCodePyramidSize)
+	  return NULL;
+
 	buf = nboUnpackFloat(buf, data[0]);
 	buf = nboUnpackFloat(buf, data[1]);
 	buf = nboUnpackFloat(buf, data[2]);
@@ -669,6 +677,10 @@ void*			WorldBuilder::unpack(void* buf)
       case WorldCodeTeleporter: {
 	float data[8];
 	unsigned char tempflags;
+
+	if (length != WorldCodeTeleporterSize)
+	  return NULL;
+
 	buf = nboUnpackFloat(buf, data[0]);
 	buf = nboUnpackFloat(buf, data[1]);
 	buf = nboUnpackFloat(buf, data[2]);
@@ -685,6 +697,10 @@ void*			WorldBuilder::unpack(void* buf)
       }
       case WorldCodeLink: {
 	uint16_t data[2];
+
+	if (length != WorldCodeLinkSize)
+	  return NULL;
+
 	buf = nboUnpackUShort(buf, data[0]);
 	buf = nboUnpackUShort(buf, data[1]);
 	setTeleporterTarget(int(data[0]), int(data[1]));
@@ -692,6 +708,10 @@ void*			WorldBuilder::unpack(void* buf)
       }
       case WorldCodeWall: {
 	float data[6];
+
+	if (length != WorldCodeWallSize)
+	  return NULL;
+
 	buf = nboUnpackFloat(buf, data[0]);
 	buf = nboUnpackFloat(buf, data[1]);
 	buf = nboUnpackFloat(buf, data[2]);
@@ -705,6 +725,10 @@ void*			WorldBuilder::unpack(void* buf)
       case WorldCodeBase: {
 	uint16_t team;
 	float data[9];
+
+	if (length != WorldCodeBaseSize)
+	  return NULL;
+
 	buf = nboUnpackUShort(buf, team);
 	buf = nboUnpackFloat(buf, data[0]);
 	buf = nboUnpackFloat(buf, data[1]);
