@@ -3622,7 +3622,9 @@ static void shotFired(int playerIndex, void *buf, int len)
     DEBUG2("Player %s [%d] shot flag mismatch %s %s\n", shooter.callSign,
 	   playerIndex, firingInfo.flagType->flagAbbv, flag[shooter.flag].flag.type->flagAbbv);
     firingInfo.flagType = Flags::Null;
-    repack = true;
+    firingInfo.shot.vel[0] = BZDB.eval(StateDatabase::BZDB_SHOTSPEED) * cos(shooter.lastState.azimuth);
+    firingInfo.shot.vel[1] = BZDB.eval(StateDatabase::BZDB_SHOTSPEED) * sin(shooter.lastState.azimuth);
+    firingInfo.shot.vel[2] = 0.0f;
   }
 
   // verify shot number
