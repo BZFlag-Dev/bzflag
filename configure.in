@@ -132,6 +132,7 @@ AC_CHECK_HEADERS( \
 #AC_CHECK_TYPES(socklen_t)
 AC_CONST
 
+AC_MSG_CHECKING([for socklen_t type])
 AC_TRY_COMPILE([#include <sys/types.h>
 		#include <sys/socket.h>],
 	       [socklen_t len = 42; return 0;],
@@ -142,8 +143,10 @@ if test $ac_cv_type_socklen_t != yes; then
 else
     AC_DEFINE(HAVE_SOCKLEN_T, 1, [if socklen_t is defined, make note of it])
 fi
+AC_MSG_RESULT([$ac_cv_type_socklen_t])
 
 # Check for working FF_RUMBLE support in linux/input.h
+AC_MSG_CHECKING([for linux rumble joystick support])
 AC_TRY_COMPILE([#include <linux/input.h>],
 	       [struct ff_effect x; x.u.rumble.weak_magnitude = 42; return 0;],
                ac_ff_effect_rumble=yes,
@@ -151,6 +154,7 @@ AC_TRY_COMPILE([#include <linux/input.h>],
 if test x$ac_ff_effect_rumble = xyes; then
     AC_DEFINE(HAVE_FF_EFFECT_RUMBLE, 1, [we appear to have working support for rumble force feedback effects])
 fi
+AC_MSG_RESULT([$ac_ff_effect_rumble])
 
 case $host_os in
      linux*|freebsd*) linux=true;;
@@ -215,6 +219,8 @@ case $host_os in
     LIBS="-lbe";;
 esac;
 
+# Check for the math lib
+AC_CHECK_LIB(m, sqrtf)
 
 # Check for functions
 AC_CHECK_FUNCS(\
@@ -236,12 +242,9 @@ AC_CHECK_FUNCS(\
 	tanf \
 )
 
-
 # for BeOS - old network stack don't have those libs ( move it in the case switch ?)
 AC_CHECK_LIB(socket, socket)
 AC_CHECK_LIB(bind, gethostent)
-
-AC_CHECK_LIB(m, sqrtf)
 
 # check to see if we have adns available to do hostname lookups in server
 AC_CHECK_LIB(adns, adns_init)
