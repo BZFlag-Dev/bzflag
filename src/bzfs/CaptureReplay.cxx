@@ -145,7 +145,7 @@ extern int numFlags;
 extern int numFlagsInAir;
 extern FlagInfo *flag;
 extern PlayerInfo player[MaxPlayers + ReplayObservers];
-extern uint16_t curMaxPlayers;
+extern u16 curMaxPlayers;
 extern TeamInfo team[NumTeams];
 extern bool getReplayMD5 (std::string& hash);
 extern char *getDirectMessageBuffer(void);
@@ -873,24 +873,24 @@ saveFlagStates () // look at sendFlagUpdate() in bzfs.cxx ... very similar
   
   buf = nboPackUShort(bufStart,0); //placeholder
   int cnt = 0;
-  int length = sizeof(uint16_t);
+  int length = sizeof(u16);
   
   for (flagIndex = 0; flagIndex < numFlags; flagIndex++) {
 
     if (flag[flagIndex].flag.status != FlagNoExist) {
-      if ((length + sizeof(uint16_t) + FlagPLen) > MaxPacketLen - 2*sizeof(uint16_t)) {
+      if ((length + sizeof(u16) + FlagPLen) > MaxPacketLen - 2*sizeof(u16)) {
         // packet length overflow
         nboPackUShort(bufStart, cnt);
         routePacket (MsgFlagUpdate, (char*)buf - (char*)bufStart, bufStart, true);
 
         cnt = 0;
-        length = sizeof(uint16_t);
+        length = sizeof(u16);
         buf = nboPackUShort(bufStart,0); //placeholder
       }
 
       buf = nboPackUShort(buf, flagIndex);
       buf = flag[flagIndex].flag.pack(buf);
-      length += sizeof(uint16_t)+FlagPLen;
+      length += sizeof(u16)+FlagPLen;
       cnt++;
     }
   }
@@ -1029,7 +1029,7 @@ loadCRpacket (FILE *f)
   buf = nboUnpackUInt (buf, timeLsb);
   p->timestamp = ((CRtime)timeMsb << 32) + (CRtime)timeLsb;
 
-  if (p->len > (MaxPacketLen - ((int)sizeof(uint16_t) * 2))) {
+  if (p->len > (MaxPacketLen - ((int)sizeof(u16) * 2))) {
     fprintf (stderr, "loadCRpacket: ERROR, packtlen = %i\n", p->len);
     free (p);
     Replay::init();
@@ -1066,7 +1066,7 @@ saveHeader (ReplayHeader *h, FILE *f)
 
   buf = nboPackUInt (buffer, ReplayMagic);
   buf = nboPackUInt (buf, ReplayVersion);
-  buf = nboPackUInt (buf, 0); // place holder for seconds
+  buf = nboPackUInt (buf, 0);       // place holder for seconds
   buf = nboPackString (buf, hexDigest, hashlen);
   buf = (char*)buf + (sizeof (h->worldhash) - hashlen);
   
@@ -1132,12 +1132,21 @@ openWriteFile (int playerIndex, const char *filename)
 static bool
 makeDirExist (int playerIndex)
 {
+#ifndef S_ISDIR // for _WIN32
+# define S_ISDIR(m) ((m) & _S_IFDIR)
+#endif
+
 #ifndef _WIN32
+# define MKDIR(name,mode) mkdir((name),(mode))
+#else
+# define MKDIR(name,mode) mkdir(name)
+#endif
+
   struct stat statbuf;
 
   if (stat (ReplayDir, &statbuf) < 0) {
     // try to make the directory
-    if (mkdir (ReplayDir, 0755) < 0) {
+    if (MKDIR (ReplayDir, 0755) < 0) {
       sendMessage (ServerPlayer, playerIndex, 
                    "Could not create default directory");
       return false;
@@ -1154,16 +1163,6 @@ makeDirExist (int playerIndex)
   }
 
   return true;  
-
-#else
-  sendMessage (ServerPlayer, playerIndex,
-               "Directory ops not implemented on Windows yet");
-  char buffer[MessageLen];
-  snprintf (buffer, MessageLen,
-            "Please create: .\%s if doesn't exist", ReplayDir);
-  sendMessage (ServerPlayer, playerIndex, buffer, true);
-  return true;
-#endif
 }
 
 
@@ -1285,6 +1284,7 @@ getCRtime ()
 #else //_WIN32
   now = (CRtime)timeGetTime() * (CRtime)1000;
 #endif //_WIN32
+  
   return now;
 }
 
