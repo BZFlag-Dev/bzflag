@@ -31,7 +31,6 @@ process_line();
 char *
 get_token(char *inp, char *buf)
 {
-  char *obuf = buf;
   int quoted = 0;
   /* skip whitespace */
   while (*inp && isspace(*inp))
@@ -498,7 +497,7 @@ process_line()
       need_undl = 0;
     }
     printf("\n</ul><H2>");
-    while (cp = get_token(cp, token))
+    while ((cp = get_token(cp, token)))
     {
       got_token = 1;
       clean(token);
