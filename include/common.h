@@ -71,11 +71,9 @@ inline void W32_DEBUG_TRACE (const char*) {return;}
 #define	atan2f		(float)atan2
 #define	cosf		(float)cos
 #define	expf		(float)exp
-#if !defined(__APPLE__)
 #define	fabsf		(float)fabs
 #define	floorf		(float)floor
 #define	fmodf		(float)fmod
-#endif
 #define	hypotf		(float)hypot
 #define	logf		(float)log
 #define	powf		(float)pow
