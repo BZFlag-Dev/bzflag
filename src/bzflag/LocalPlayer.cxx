@@ -921,7 +921,7 @@ float			LocalPlayer::getReloadTime() const
   }
 
   // apply any handicap advantage to reload
-  minTime = minTime * (1.0f + handicap);
+  minTime *= (1.0f - (handicap * (1.0f - HandicapReloadAdj)));
 
   if (minTime < 0.0f) minTime = 0.0f;
   return minTime;
@@ -1045,7 +1045,7 @@ void			LocalPlayer::setDesiredSpeed(float fracOfMaxSpeed)
   }
 
   // apply handicap advantage to tank speed
-  fracOfMaxSpeed *= (1.0f - handicap);
+  fracOfMaxSpeed *= (1.0f + (handicap * (HandicapSpeedAdj - 1.0f)));
 
   // set desired speed
   desiredSpeed = BZDBCache::tankSpeed * fracOfMaxSpeed;
@@ -1534,17 +1534,17 @@ float LocalPlayer::updateHandicap()
     }
 
     // a standard deviation of 20 points will provide a handicap
-    handicap = float(wins - losses) / 20.0f;
+    handicap = float(losses - wins) / 20.0f;
 
     /* limit how much of a handicap is afforded, and only provide
      * handicap advantages instead of disadvantages.
      */
-    if (handicap > 0.0f) {
+    if (handicap > 1.0f) {
+      // advantage
+      handicap = 1.0f;
+    } else if (handicap < 0.0f) {
       // disadvantage
       handicap = 0.0f;
-    } else if (handicap < -0.5f) {
-      // advantage
-      handicap = -0.5f;
     }
 
     return handicap;
