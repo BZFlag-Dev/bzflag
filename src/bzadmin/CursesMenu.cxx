@@ -282,16 +282,16 @@ void CursesMenu::showMenu() {
   
   // this magic should scroll the menu so that the selected menu item
   // always is visible
-  int start = selection - LINES / 4;
-  start = (start + LINES / 2  - 2> (signed)items.size() ? 
-	   items.size() - LINES / 2 + 2  : start);
+  int start = selection - LINES / 4 + 2;
+  start = (start + LINES / 2  - 3> (signed)items.size() ? 
+	   items.size() - LINES / 2 + 3  : start);
   start = (start < 0 ? 0 : start);
-  int end = start + LINES / 2 - 2;
+  int end = start + LINES / 2 - 3;
   end = ((unsigned)end > items.size() ? items.size() : end);
   
   // show the menu items
   for (int i = start; i < end; ++i)
-    items[i]->showItem(window, 2 + (i - start), 10, COLS - 20, 
+    items[i]->showItem(window, 1 + (i - start), 10, COLS - 20, 
 		       i == selection);
   
   // draw a line at the bottom of the menu window
