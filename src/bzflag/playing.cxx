@@ -1612,6 +1612,7 @@ static void		doAutoPilot(float &rotation, float &speed)
 	float d = TargetingUtils::getTargetDistance( pos, player[t]->getPosition());
 	if (d < distance) {
 	  if ((player[t]->getFlag() != Flags::Stealth)
+	  ||  (myTank->getFlag() == Flags::Seer)
           ||  ((!TargetingUtils::isLocationObscured( pos, player[t]->getPosition())) &&  
 	      (TargetingUtils::getTargetAngleDifference(pos, myAzimuth, player[t]->getPosition()) <= 30.0f)))
 	  target = t;
