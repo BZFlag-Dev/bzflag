@@ -83,26 +83,26 @@ elsif ( $action eq "ADD" ) {
 #        and $version ne "BZFS1906"
   );
 
-  # Test to see whether nameport is valid by attempting to establish a
-  # connection to it
-  my ($servname, $servport) = split /:/, $nameport;
-  $servport = 5154 unless defined $servport;
-  my $servip32 = inet_aton ($servname);
-  exit unless defined $servip32;
-  my $servip = inet_ntoa ($servip32);
-  my $sin = sockaddr_in ($servport, inet_aton ($servname));
-  socket(SH, AF_INET, SOCK_STREAM, getprotobyname('tcp')) or die $!;
-  if (!connect(SH, $sin)) {
-    print "failed to connect\n";
-    die $!;
-  }
-  close SH;
-
   my $curtime = time;
 
-  # Server does not already exist in DB so insert into DB
+  # Server does not already exist in DB so try connect and insert into DB
   if ( not defined $servdb->selectrow_array
           ("SELECT id FROM servers WHERE nameport = '$nameport'") ) {
+    # Test to see whether nameport is valid by attempting to establish a
+    # connection to it
+    my ($servname, $servport) = split /:/, $nameport;
+    $servport = 5154 unless defined $servport;
+    my $servip32 = inet_aton ($servname);
+    exit unless defined $servip32;
+    my $servip = inet_ntoa ($servip32);
+    my $sin = sockaddr_in ($servport, inet_aton ($servname));
+    socket(SH, AF_INET, SOCK_STREAM, getprotobyname('tcp')) or die $!;
+    if (!connect(SH, $sin)) {
+      print "failed to connect\n";
+      die $!;
+    }
+    close SH;
+
     $servdb->do(
       "INSERT INTO servers VALUES (
           NULL,
@@ -122,7 +122,7 @@ elsif ( $action eq "ADD" ) {
   else {
     # don't change nameport or servip
     # FIXME should not have to retest connect if existing entry
-    $servdb->do(
+    print $servdb->do(
       "UPDATE servers SET " .
 	  "build = '$build', " .
 	  "version = '$version', " .
