@@ -333,8 +333,9 @@ cannot proceed.  A checklist of items to be completed follows:
 - Update package/win32/nsis/*.nsi (for windows) with appropriate
   version numbers 
 
-- Perform a "make distcheck".  This will verify that a proper source
-  distribution can be made.
+- Perform a "make distcheck" on multiple (preferably all) platforms.
+  This will verify that a proper source distribution can be made.
+  Also verify that all non-autotools builds build properly.
 
 - Tag the release.  Tag format should be consistent with the other
   tags using the format of vMAJOR_MINOR_RELEASE 
