@@ -107,6 +107,9 @@
 				RelativePath="..\..\src\game\DirectoryNames.cxx">
 			</File>
 			<File
+				RelativePath="..\..\src\bzfs\LagInfo.cxx">
+			</File>
+			<File
 				RelativePath="..\..\src\game\LagInfo.cxx">
 			</File>
 			<File
@@ -125,6 +128,9 @@
 			</File>
 			<File
 				RelativePath="..\..\include\DirectoryNames.h">
+			</File>
+			<File
+				RelativePath="..\..\src\bzfs\LagInfo.h">
 			</File>
 			<File
 				RelativePath="..\..\include\LagInfo.h">

@@ -454,9 +454,6 @@ copy ..\..\src\bzfs\debug\*.exe ..\..\*.exe
 				RelativePath="..\..\src\bzfs\GameKeeper.cxx">
 			</File>
 			<File
-				RelativePath="..\..\src\bzfs\LagInfo.cxx">
-			</File>
-			<File
 				RelativePath="..\..\src\bzfs\ListServerConnection.cxx">
 			</File>
 			<File
@@ -685,9 +682,6 @@ copy ..\..\src\bzfs\debug\*.exe ..\..\*.exe
 			</File>
 			<File
 				RelativePath="..\include\global.h">
-			</File>
-			<File
-				RelativePath="..\..\src\bzfs\LagInfo.h">
 			</File>
 			<File
 				RelativePath="..\..\src\bzfs\ListServerConnection.h">
