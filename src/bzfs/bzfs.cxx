@@ -4746,7 +4746,7 @@ int main(int argc, char **argv)
     // get time for next lagping
     for (int p=0;p<curMaxPlayers;p++)
     {
-      if (player[p].state == PlayerAlive &&
+      if (player[p].state >= PlayerDead &&
 	  player[p].nextping - tm < waitTime)
 	waitTime = player[p].nextping - tm;
     }
@@ -5030,7 +5030,7 @@ int main(int argc, char **argv)
     // send lag pings
     for (int j=0;j<curMaxPlayers;j++)
     {
-      if (player[j].state == PlayerAlive && player[j].nextping-tm < 0)
+      if (player[j].state >= PlayerDead && player[j].nextping-tm < 0)
       {
 	player[j].pingseqno = (player[j].pingseqno + 1) % 10000;
 	if (player[j].pingpending) // ping lost
