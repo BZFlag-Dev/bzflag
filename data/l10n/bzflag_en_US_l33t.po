@@ -428,14 +428,23 @@ msgstr "z0Ned"
 msgid "Servers found: {1}"
 msgstr "5eRv3R5 PhOund: {1}"
 
-msgid "{1} Shot{2}"
-msgstr "{1} $H0T{2}"
+msgid "{1} Shot"
+msgstr "{1} $H0T"
 
-msgid "{1} sec{2} To Drop Bad Flag"
-msgstr "{1} 5eC{2} t0 DR0p 84D PHl4g"
+msgid "{1} Shot"
+msgstr "{1} $H0T$"
 
-msgid "{1} Win{2} Drops Bad Flag"
-msgstr "{1} Win{2} DROP$ 84D pHL@G"
+msgid "{1} sec To Drop Bad Flag"
+msgstr "{1} 5eC t0 DR0p 84D PHl4g"
+
+msgid "{1} secs To Drop Bad Flag"
+msgstr "{1} 5eC$ t0 DR0p 84D PHl4g"
+
+msgid "{1} Win Drops Bad Flag"
+msgstr "{1} Win DROP$ 84D pHL@G"
+
+msgid "{1} Wins Drops Bad Flag"
+msgstr "{1} Win5 DROP$ 84D pHL@G"
 
 msgid "Time limit: {1}"
 msgstr "t1ME L1m1+: {1}"

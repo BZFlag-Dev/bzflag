@@ -451,13 +451,22 @@ msgstr ""
 msgid "Servers found: {1}"
 msgstr ""
 
-msgid "{1} Shot{2}"
+msgid "{1} Shot"
 msgstr ""
 
-msgid "{1} sec{2} To Drop Bad Flag"
+msgid "{1} Shots"
 msgstr ""
 
-msgid "{1} Win{2} Drops Bad Flag"
+msgid "{1} sec To Drop Bad Flag"
+msgstr ""
+
+msgid "{1} secs To Drop Bad Flag"
+msgstr ""
+
+msgid "{1} Win Drops Bad Flag"
+msgstr ""
+
+msgid "{1} Wins Drops Bad Flag"
 msgstr ""
 
 msgid "Time limit: {1}"

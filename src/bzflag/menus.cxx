@@ -2398,9 +2398,11 @@ void			ServerMenu::pick()
   std::vector<std::string> args;
   sprintf(buf, "%d", ping.maxShots);
   args.push_back(buf);
-  args.push_back(ping.maxShots == 1 ? "" : "s");
 
-  ((HUDuiLabel*)list[7])->setString("{1} Shot{2}", &args );
+  if (ping.maxShots == 1)
+    ((HUDuiLabel*)list[7])->setString("{1} Shot", &args );
+  else
+    ((HUDuiLabel*)list[7])->setString("{1} Shots", &args );
 
   if (ping.gameStyle & TeamFlagGameStyle)
     ((HUDuiLabel*)list[8])->setString("Capture-the-Flag");
@@ -2421,8 +2423,10 @@ void			ServerMenu::pick()
     std::vector<std::string> args;
     sprintf(buf, "%.1f", 0.1f * float(ping.shakeTimeout));
     args.push_back(buf);
-    args.push_back(ping.shakeWins == 1 ? "" : "s");
-    ((HUDuiLabel*)list[11])->setString("{1} sec{2} To Drop Bad Flag", &args);
+    if (ping.shakeWins == 1)
+      ((HUDuiLabel*)list[11])->setString("{1} sec To Drop Bad Flag", &args);
+    else
+      ((HUDuiLabel*)list[11])->setString("{1} secs To Drop Bad Flag", &args);
   }
   else
     ((HUDuiLabel*)list[11])->setString("");
@@ -2432,7 +2436,10 @@ void			ServerMenu::pick()
     sprintf(buf, "%d", ping.shakeWins);
     args.push_back(buf);
     args.push_back(ping.shakeWins == 1 ? "" : "s");
-    ((HUDuiLabel*)list[11])->setString("{1} Win{2} Drops Bad Flag", &args);
+    if (ping.shakeWins == 1)
+      ((HUDuiLabel*)list[11])->setString("{1} Win Drops Bad Flag", &args);
+    else
+      ((HUDuiLabel*)list[11])->setString("{1} Wins Drops Bad Flag", &args);
   }
   else
     ((HUDuiLabel*)list[12])->setString("");
