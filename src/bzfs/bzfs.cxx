@@ -2647,6 +2647,8 @@ void playerKilled(int victimIndex, int killerIndex, int reason,
       char message[MessageLen];
       strcpy(message, "You have been automatically kicked for team killing" );
       sendMessage(ServerPlayer, killerIndex, message);
+      snprintf(message, MessageLen, "Player %s removed: team killing", killerData->player.getCallSign());
+      sendMessage(ServerPlayer, AdminPlayers, message);
       removePlayer(killerIndex, "teamkilling");
     }
   }
