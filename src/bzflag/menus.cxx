@@ -4458,7 +4458,6 @@ void			JoinMenu::loadInfo()
 
 void			JoinMenu::execute()
 {
-  std::vector<HUDuiControl*>& list = getControls();
   HUDuiControl* focus = HUDui::getFocus();
   if (focus == startServer) {
     if (!serverStartMenu) serverStartMenu = new ServerStartMenu;
