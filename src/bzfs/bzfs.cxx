@@ -6868,7 +6868,7 @@ static void parse(int argc, char **argv, CmdLineOptions &options)
       if (strcmp(argv[i], "good") == 0) {
 	FlagSet goodFlags = Flag::getGoodFlags();
 	for (FlagSet::iterator it = goodFlags.begin(); it != goodFlags.end(); it++)
-	  options.flagCount[*it]++;
+	  options.flagCount[*it] += rptCnt;
       }
       else {
 	if ((f = lookupFlag(argv[i])) == int(NoFlag)) {
