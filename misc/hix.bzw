@@ -1,9 +1,7 @@
 # HiX experimental world
 # by Tim Riker <Tim@Rikers.org>
 #
-# This is intended to be a team play world
-# but I need to add server support for ctf
-# and -world to be used together.
+# This is a team play world
 
 # Typical Teleporter
 #
