@@ -690,7 +690,7 @@ void			ControlPanel::addMessage(const std::string& line,
   }
 
   // Add to other tab
-  if (mode >= MessageChat && mode <= MessageMisc) {
+  if (mode >= MessageChat && mode < MessageModeCount) {
     if ((int)messages[mode].size() < maxLines * maxScrollPages) {
       // not full yet so just append it
       messages[mode].push_back(item);
@@ -699,7 +699,9 @@ void			ControlPanel::addMessage(const std::string& line,
       messages[mode].pop_front();
       messages[mode].push_back(item);
     }
-    unRead[mode] = true;
+    if (messageMode != MessageAll) {
+      unRead[mode] = true;
+    }
   }
 
   // this stuff has no effect on win32 (there's no console)
