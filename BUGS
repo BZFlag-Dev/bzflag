@@ -51,9 +51,6 @@ recent bugs
   -view three/stacked? Not that I can test it because these views simply
   coredump on me.
 
-- bzflag should use the system-supplied zlib if available. Check in
-  configure?
-
 - Mac OS X client outputs an Info.plist file with the permissions set
   incorrectly if building an application bundle via XCode.
 

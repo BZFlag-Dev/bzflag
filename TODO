@@ -9,6 +9,9 @@ THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
 
 THESE ARE LOWER PRIORITY
 
+- bzflag should use the system-supplied zlib if available. Check in
+  configure and use system if it's good.
+
 * provide the ability to publish a singer server to multiple list servers.
   (i.e. multiple -publiclist options)  this is useful for a variety of
   reasons, including testing out a new user-reg'd, karmafied list server,
