@@ -4269,7 +4269,8 @@ static void		checkEnvironment()
     for (i = 0; i < curMaxPlayers; i++)
       if (player[i] && !player[i]->isPaused() &&
 	  (player[i]->getFlag() == Flags::Steamroller ||
-	   (myPos[2] < 0.0f && player[i]->isAlive()))) {
+	   (myPos[2] < 0.0f && player[i]->isAlive() && 
+	    player[i]->getFlag() != Flags::PhantomZone))) {
 	const float* pos = player[i]->getPosition();
 	if (pos[2] < 0.0f) continue;
 	if (!(flagd == Flags::PhantomZone && myTank->isFlagActive())) {
@@ -4664,7 +4665,9 @@ static void		checkEnvironment(RobotPlayer* tank)
     bool dead = false;
     const float* myPos = tank->getPosition();
     const float myRadius = tank->getRadius();
-    if (((myTank->getFlag() == Flags::Steamroller) || ((tank->getFlag() == Flags::Burrow) && myTank->isAlive())) && !myTank->isPaused()) {
+    if (((myTank->getFlag() == Flags::Steamroller) || 
+	 ((tank->getFlag() == Flags::Burrow) && myTank->isAlive() &&
+	  myTank->getFlag() != Flags::PhantomZone)) && !myTank->isPaused()) {
       const float* pos = myTank->getPosition();
       if (pos[2] >= 0.0f) {
 	const float radius = myRadius + BZDB.eval(StateDatabase::BZDB_SRRADIUSMULT) * myTank->getRadius();
@@ -4676,7 +4679,9 @@ static void		checkEnvironment(RobotPlayer* tank)
     }
     for (i = 0; !dead && i < curMaxPlayers; i++)
       if (player[i] && !player[i]->isPaused() &&
-	  ((player[i]->getFlag() == Flags::Steamroller) || ((tank->getFlag() == Flags::Burrow) && player[i]->isAlive()))) {
+	  ((player[i]->getFlag() == Flags::Steamroller) || 
+	   ((tank->getFlag() == Flags::Burrow) && player[i]->isAlive()) &&
+	   player[i]->getFlag() != Flags::PhantomZone)) {
 	const float* pos = player[i]->getPosition();
 	if (pos[2] < 0.0f) continue;
 	const float radius = myRadius + BZDB.eval(StateDatabase::BZDB_SRRADIUSMULT) * player[i]->getRadius();
