@@ -2421,7 +2421,7 @@ void addDeadUnder (SceneDatabase *db, float dt)
   GLfloat sEdge[3] = {0.0f, size, 0.0f};
   GLfloat tEdge[3] = {size, 0.0f, 0.0f};
 
-  texShift = fmodf (texShift + (dt / 20.0f), 1.0f);
+  texShift = fmodf (texShift + (dt / 30.0f), 1.0f);
   QuadWallSceneNode* node = new QuadWallSceneNode (base, tEdge, sEdge, 
                                                    texShift, 0.0f, 2.0, 2.0, false);
 
