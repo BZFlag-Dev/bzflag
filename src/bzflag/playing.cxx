@@ -112,6 +112,7 @@ static RemotePlayer**	player = NULL;
 static int		numFlags = 0;
 static JoinGameCallback	joinGameCallback = NULL;
 static void*		joinGameUserData = NULL;
+static bool		admin = false; // am I an admin?
 static bool		serverError = false;
 static bool		serverDied = false;
 static bool		fireButton = false;
@@ -757,6 +758,513 @@ bool			SilenceDefaultKey::keyRelease(const BzfKeyEvent& key)
   return keyPress(key);
 }
 
+class ServerCommandKey : public HUDuiDefaultKey {
+  public:
+    ServerCommandKey();
+    bool		keyPress(const BzfKeyEvent&);
+    bool		keyRelease(const BzfKeyEvent&);
+    void		init();
+    void		adminInit();
+    void		nonAdminInit();
+  private:
+    std::string		makePattern(const InAddr& address);
+    void		updatePrompt();
+
+  private:
+      enum Mode {
+      Kick,
+      BanIp,
+      Ban1,
+      Ban2,
+      Ban3,
+      Unban,
+      Showgroup,
+      Setgroup,
+      Removegroup,
+      Ghost,
+      Banlist,
+      Playerlist,
+      FlagReset,
+      FlagUnusedReset,
+      FlagUp,
+      FlagShow,
+      FlagHistory,
+      IdleStats,
+      LagStats,
+      Report,
+      LagWarn,
+      GameOver,
+      CountDown,
+      SuperKill,
+      Shutdown,
+      Register, 
+      Identify,
+      Setpass,
+      Grouplist,
+      Groupperms,
+      Password, // leave this as the last item 
+    };
+
+    Mode mode;
+    int startIndex;
+    const int numModes;
+    const int numNonAdminModes;
+    static const Mode nonAdminModes[7];
+  
+
+};
+
+const ServerCommandKey::Mode ServerCommandKey::nonAdminModes [7]= {LagStats, IdleStats, FlagHistory, Report, Password, Register,Identify};
+
+// note the important numModes and numNonAdminModes values inited here
+ServerCommandKey::ServerCommandKey(): mode(Kick), startIndex(-1), numModes(30), numNonAdminModes(7)
+{ 
+  if (!admin) mode = nonAdminModes[0];
+}
+
+void			ServerCommandKey::nonAdminInit()
+{
+  mode = nonAdminModes[0];
+  updatePrompt();
+}
+void			ServerCommandKey::adminInit()
+{
+  mode = Kick;
+  updatePrompt();
+}
+
+void			ServerCommandKey::init()
+{
+  updatePrompt();
+}
+
+void			ServerCommandKey::updatePrompt()
+{
+  std::string composePrompt, banPattern; 
+  // decide what should be on the composing prompt
+  const Player * recipient = myTank->getRecipient();
+  if (mode >= Kick && mode <= Ghost){ // more complicated modes here
+    if (recipient) {
+ 
+      switch (mode){
+      case Kick:
+	composePrompt = "Kick -> ";
+	composePrompt += recipient->getCallSign();
+	hud->setComposing(composePrompt, false);
+	break;
+      case BanIp: case Ban1: case Ban2: case Ban3:
+	// Set the prompt and enable editing/composing --> allows to enter ban time
+	banPattern = makePattern(recipient->id.serverHost);
+	composePrompt = "Ban " + banPattern + " -> " + recipient->getCallSign() + " :";
+	hud->setComposing(composePrompt, true);
+	break;
+      
+      case Setgroup: composePrompt = "Set players group "; 
+	composePrompt = composePrompt +  " -> " + recipient->getCallSign() + " :";
+	hud->setComposing(composePrompt, true); 
+	break;
+      case Removegroup: composePrompt = "Remove player from group ";
+	composePrompt = composePrompt +  " -> " + recipient->getCallSign() + " :";
+	hud->setComposing(composePrompt, true); 
+	break;
+      case Ghost: composePrompt = "Ghost player [enter your pass] ";
+	composePrompt = composePrompt +  " -> " + recipient->getCallSign() + " :";
+	hud->setComposing(composePrompt, true); 
+	break;
+      case Showgroup: composePrompt = "Show player's groups ";
+	composePrompt = composePrompt +  " -> " + recipient->getCallSign();
+	hud->setComposing(composePrompt, false); 
+	break;
+
+      default : /* shouldn't happen */ break;
+
+      }
+    
+
+    } else { // no recipient -- we are in editing mode -- kick or ban
+    
+      switch (mode){
+      case Kick:
+	hud->setComposing("Kick :", true); 
+	break;
+      case BanIp: case Ban1: case Ban2: case Ban3:
+	hud->setComposing("Ban :", true); 
+	break;
+      case Setgroup: composePrompt = "Set player's group :";  	
+	hud->setComposing(composePrompt, true); 
+	break;
+      case Removegroup: composePrompt = "Remove player from group :"; 
+	hud->setComposing(composePrompt, true); 
+	break;
+      case Ghost: composePrompt = "Ghost :"; 
+	hud->setComposing(composePrompt, true); 
+	break;
+      case Showgroup: composePrompt = "Show players group :"; 
+	hud->setComposing(composePrompt, true); 
+      break;
+
+      default: /* shouldn't happen */ break;
+      }	
+
+    }
+
+  } else { // not kick or ban stuff -- should be less complicated
+    switch (mode){
+    
+    case Unban: hud->setComposing("Unban :", true); break;
+    case Banlist: hud->setComposing("Show ban list", false); break;
+    case Playerlist: hud->setComposing("Show player list", false); break;
+    case FlagReset: hud->setComposing("Reset Flags", false); break;
+    case FlagUnusedReset: hud->setComposing("Reset Unused Flags", false); break;
+    case FlagUp: hud->setComposing("Remove Flags", false); break;
+    case GameOver: hud->setComposing("End Game", false); break;
+    case CountDown: hud->setComposing("Restart Countdown:", true); break;
+    case FlagShow: hud->setComposing("Show Flag Info", false); break;
+    case Shutdown: hud->setComposing("Shut Down Server", false); break;
+    case SuperKill: hud->setComposing("Disconnect all Players", false); break;
+    case LagWarn: hud->setComposing("Lag Warning threshold:", true); break;
+    case IdleStats: hud->setComposing("Idle Stats", false); break;
+    case LagStats: hud->setComposing("Lag / Ping Stats", false); break;
+    case FlagHistory: hud->setComposing("Flag History", false); break;
+    case Password: hud->setComposing("Admin Password:", true); break;
+    case Report: hud->setComposing("Send Report to Server:", true); break;
+    case Register: hud->setComposing("Register your nick [enter pass]:", true); break;
+    case Identify: hud->setComposing("Login [enter pass]:", true); break;
+    case Setpass: hud->setComposing("Set your password [enter pass]:", true); break;
+    case Grouplist :  hud->setComposing("List Groups", false); break;
+    case Groupperms :  hud->setComposing("List Permissions", false); break;
+
+
+
+    default: /* shouldn't happen */ break;
+    }
+
+
+  }
+
+} 
+
+// return the right ban pattern 123.32.12.* for example depending on the
+// mode of the class. Returns an empty string on errors.
+std::string		ServerCommandKey::makePattern(const InAddr& address)
+{
+  const char *  c = inet_ntoa(address);
+  if (c == NULL) return "";
+  std::string dots  = c; 
+  std::vector<std::string> dotChunks = string_util::tokenize(dots,".");
+  if (dotChunks.size() != 4) return "";
+
+  switch (mode){
+  case BanIp:
+    return dots;
+  case Ban1: 
+    return dotChunks[0] +"."+ dotChunks[1] + "." + dotChunks[2] + ".*";
+  case Ban2:  
+    return dotChunks[0] +"."+ dotChunks[1] + ".*.*";
+  case Ban3: 
+    return dotChunks[0] +".*.*.*";
+    break;
+
+  default:
+    return "";
+    break;
+  }
+
+
+}
+
+bool			ServerCommandKey::keyPress(const BzfKeyEvent& key)
+{
+  bool sendIt;
+  if (keymap.isMappedTo(BzfKeyMap::Jump, key)) {
+    // jump while typing
+    myTank->jump();
+  }
+
+  if (!myTank->isKeyboardMoving()) {
+    if ((key.button == BzfKeyEvent::Up) ||
+	(key.button == BzfKeyEvent::Down) ||
+	(key.button == BzfKeyEvent::Left) ||
+	(key.button == BzfKeyEvent::Right))
+
+      return true;
+  }
+
+  switch (key.ascii) {
+    case 3:	// ^C
+    case 27:	// escape
+//    case 127:	// delete
+      sendIt = false;			// finished composing -- don't send
+      break;
+
+    case 4:	// ^D
+    case 13:	// return
+      sendIt = true;
+      break;
+
+    default:
+
+      return false;
+  }
+
+  if (sendIt) {
+    std::string message = hud->getComposeString();
+    std::string banPattern,sendMsg,displayMsg,name;
+
+    const Player * troll = myTank->getRecipient();
+    if (mode >= Kick && mode <=Ghost){ // handle more complicated modes
+      if (troll) { // cases where we select recipient with keys
+    
+	name = troll->getCallSign();
+	
+	switch (mode){
+	
+	case Kick:
+	  sendMsg="/kick " + name;
+	  break;
+	case BanIp: case Ban1: case Ban2: case Ban3:
+
+	  banPattern = makePattern(troll->id.serverHost);
+	  sendMsg="/ban " + banPattern;
+	  
+	  if (message != ""){ // add ban length if something is there
+	    sendMsg = sendMsg + " " + message;
+	  }
+	  break;
+
+	case Setgroup: 
+	  sendMsg = "/setgroup"; 
+	  sendMsg = sendMsg + " \"" +name+ "\"" +" " + message; 
+	  break;
+	case Removegroup: 
+	  sendMsg = "/removegroup"; 
+	  sendMsg = sendMsg + " \"" +name+ "\"" +" " + message; 
+	  break;
+	case Ghost: 
+	  sendMsg = "/ghost"; 
+	  sendMsg = sendMsg + " \"" +name+ "\"" +" " + message;
+	  break;
+	case Showgroup: 
+	  sendMsg = "/showgroup"; 
+	  sendMsg = sendMsg + " \"" +name+ "\"";
+	  break;
+
+	default: /* shouldn't happen */ break;
+
+	}  
+
+      } else { // no recipient -- editing mode
+	
+	switch (mode){
+	  case Kick:  sendMsg="/kick"; break;
+	  case BanIp: sendMsg="/ban"; break;
+	  case Setgroup: sendMsg = "/setgroup"; break;
+	  case Removegroup: sendMsg = "/removegroup"; break;
+	  case Ghost: sendMsg = "/ghost"; break;
+	  case Showgroup: sendMsg = "/showgroup"; break;
+
+	  default: /* shouldn't happen */ break;
+	}
+	if (message != "") sendMsg = sendMsg + " " + message;
+	
+      }
+    } else { // handle less complicated messages
+      switch (mode){
+	case Unban: sendMsg="/unban " + message; break;
+	case Banlist: sendMsg="/banlist";  break;
+	case Playerlist: sendMsg="/playerlist";  break;
+	case FlagReset:  sendMsg="/flag reset"; break;
+	case FlagUnusedReset: sendMsg="/flag reset unused"; break;
+	case FlagUp: sendMsg="/flag up"; break;
+	case GameOver: sendMsg="/gameover"; break;
+	case CountDown: sendMsg="/countdown "+ message; break;
+	case FlagShow: sendMsg="/flag show"; break;
+	case Shutdown: sendMsg="/shutdownserver"; break;
+	case SuperKill: sendMsg="/superkill"; break;
+	case LagWarn: sendMsg="/lagwarn "+ message; break;
+	case IdleStats: sendMsg="/idlestats"; break;
+	case LagStats: sendMsg="/lagstats"; break;
+	case FlagHistory: sendMsg="/flaghistory"; break;
+	case Password: sendMsg = "/password "+ message; break;
+	case Report: sendMsg = "/report "+ message; break;
+	case Register: sendMsg = "/register "+ message; break;
+	case Identify: sendMsg = "/identify "+ message; break;
+	case Setpass: sendMsg = "/setpass "+ message; break;
+	case Grouplist: sendMsg = "/grouplist"; break;
+	case Groupperms: sendMsg = "/groupperms"; break;
+	
+	default: /* shouldn't happen */ break;
+      }
+
+    }
+    
+    // send the message on its way if it isn't empty
+    if (sendMsg != ""){
+      displayMsg = "-> \"" + sendMsg + "\"";
+      if (sendMsg.find("/password",0) == std::string::npos)
+	addMessage(NULL, displayMsg);
+
+      void* buf = messageMessage;
+      buf = nboPackUInt(buf, 0);
+      buf = nboPackShort(buf, 0);
+      buf = nboPackShort(buf, 0);
+      buf = nboPackUShort(buf, uint16_t(RogueTeam));
+    
+      char messageBuffer[MessageLen];
+      memset(messageBuffer, 0, MessageLen);
+      strncpy(messageBuffer, sendMsg.c_str(), MessageLen);
+      nboPackString(messageMessage + PlayerIdPLen + 2, messageBuffer, MessageLen);
+      serverLink->send(MsgMessage, sizeof(messageMessage), messageMessage);
+    }
+  } 	
+
+  hud->setComposing(std::string());
+  //myTank->setRecipient(NULL);
+  HUDui::setDefaultKey(NULL);
+  return true;
+} 
+
+bool			ServerCommandKey::keyRelease(const BzfKeyEvent& key)
+{
+  if (!myTank->isKeyboardMoving()) { 
+
+    if (key.button == BzfKeyEvent::Up || key.button==BzfKeyEvent::Down 
+		||key.button==BzfKeyEvent::Left||key.button==BzfKeyEvent::Right) { 
+      const Player *recipient = myTank->getRecipient();
+      
+      if (recipient) {  // handle selecting another player if <-- or --> hit
+	const PlayerId id = recipient->getId();
+	int rindex = 0;
+	for (int i = 0; i < curMaxPlayers; i++) { 
+	  if (player[i] && player[i]->getId() == id) rindex = i; 
+	}
+
+	if (key.button== BzfKeyEvent::Left) {  
+	  for (int i = rindex-1; i >= 0; i--) { 
+	    if (i == startIndex && startIndex != -1){
+	      myTank->setRecipient(NULL);
+	      startIndex = -1;
+	      break;
+	    }
+	    if (player[i]) { 
+	      myTank->setRecipient(player[i]);
+	      break;
+	    } 
+	  } 
+	  if (recipient == myTank->getRecipient()) { 
+	    for (int i = curMaxPlayers-1; i >=0; i--) {
+	      if (i == startIndex && startIndex != -1){
+		myTank->setRecipient(NULL);
+		startIndex = -1;
+		break;
+	      }
+	      if (player[i]) { 
+		myTank->setRecipient(player[i]);
+		break;
+	      } 
+	    } 
+	  }  
+	} else if (key.button == BzfKeyEvent::Right) {
+	  for (int i = rindex+1; i < curMaxPlayers; i++) {
+	    if (i == startIndex && startIndex != -1){
+	      myTank->setRecipient(NULL);
+	      startIndex = -1;
+	      break;
+	    }
+	    if (player[i]) {
+	      myTank->setRecipient(player[i]);
+	      break;
+	    }
+	  }
+	  if (recipient == myTank->getRecipient()) {
+	    for (int i = 0; i < curMaxPlayers; i++) {
+	      if (i == startIndex && startIndex != -1){
+	      myTank->setRecipient(NULL);
+	      startIndex = -1;
+	      break;
+	      }
+	      if (player[i]) {
+		myTank->setRecipient(player[i]);
+		break;
+	      }
+	    }
+	  }
+	}
+
+      } else { // there is no recipient so choose one if <-- or --> hit
+	if (!recipient && (key.button == BzfKeyEvent::Left ||key.button == BzfKeyEvent::Right) ) { 
+	  for (int i = 0; i < curMaxPlayers; i++) { 
+	    if (player[i]) { 
+	      startIndex = i; // we pretend a null player is at this pos
+	      myTank->setRecipient(player[i]);
+	      break; 
+	    } 
+	  } 
+	}
+      }
+
+
+      recipient = myTank->getRecipient();
+
+      // choose which mode we are in
+      int maxModes;
+      if (admin){
+	maxModes = numModes;
+      } else {
+	maxModes = numNonAdminModes;
+      }
+    
+      if (key.button == BzfKeyEvent::Down){
+	int newMode = mode;
+	if (!admin){
+	  bool foundIt = false;
+	  for (int i = 0; i < numNonAdminModes; i ++){
+	    if (mode == nonAdminModes[i]) {
+	      newMode = i;
+	      foundIt = true;
+	    }
+	  }
+	  if (!foundIt) newMode = 0;
+	}
+
+	newMode ++;
+	if (newMode >= maxModes) newMode =0;
+	mode = (admin? ((Mode)newMode): nonAdminModes[newMode]);
+	// if no recipient skip Ban1,2,3 -- applies to admin mode
+	if (!recipient && (mode >= Ban1 && mode <= Ban3))
+	  mode = Unban;
+
+      } else if (key.button == BzfKeyEvent::Up){
+	int newMode = (int) mode;
+
+	bool foundIt = false;
+	if (!admin){
+	  for (int i = 0; i < numNonAdminModes; i ++){
+	    if (mode == nonAdminModes[i]) {
+	      newMode = i;
+	      foundIt = true;
+	    }
+	  }
+	  if (!foundIt) newMode = 0;
+	}	
+
+	newMode--;
+	if (newMode < 0) newMode = maxModes -1;
+	mode = (admin? ((Mode) newMode): nonAdminModes[newMode]);
+	// if no recipient skip Ban1,2,3 -- applies to admin mode
+	if (!recipient && (mode >= Ban1 && mode <= Ban3))
+	  mode = BanIp;
+      } 
+      
+      //update composing prompt
+      updatePrompt();
+      return false;
+    }
+  }
+  return keyPress(key);
+}
+
+
 
 //
 // user input handling
@@ -974,6 +1482,7 @@ static void		doKeyPlaying(const BzfKeyEvent& key, bool pressed)
 {
   static ComposeDefaultKey composeKeyHandler;
   static SilenceDefaultKey silenceKeyHandler;
+  static ServerCommandKey serverCommandKeyHandler;
 
   if (HUDui::getFocus())
     if ((pressed && HUDui::keyPress(key)) ||
@@ -1300,6 +1809,18 @@ static void		doKeyPlaying(const BzfKeyEvent& key, bool pressed)
       messageHistoryIndex = 0;
       hud->setComposing("[Un]Silence  :");
       HUDui::setDefaultKey(&silenceKeyHandler);
+    }
+  }
+  else if (keymap.isMappedTo(BzfKeyMap::ServerCommand, key)) {
+    if (pressed) {
+      static bool prevAdmin = admin;
+      if (prevAdmin == false && admin == true) serverCommandKeyHandler.adminInit();
+      if (prevAdmin == true && admin == false) serverCommandKeyHandler.nonAdminInit();
+      prevAdmin = admin;
+
+      messageHistoryIndex = 0;
+      serverCommandKeyHandler.init();
+      HUDui::setDefaultKey(&serverCommandKeyHandler);      
     }
   }
 
@@ -2687,6 +3208,8 @@ static void		handleServerMessage(bool human, uint16_t code,
 	  // talking to myself? that's strange
 	  if (dstPlayer==myTank && srcPlayer==myTank) {
 	    fullMsg=text;
+	    if (fullMsg == "You are now an administrator!" || fullMsg == "Password Accepted, welcome back.")
+	      admin = true;
 	  }
 	  else {
 	    if (killerHighlight == 0)
@@ -4339,6 +4862,7 @@ static bool		joinGame(const StartupInfo* info,
   // assume everything's okay for now
   serverDied = false;
   serverError = false;
+  admin = false;
 
   serverLink = _serverLink;
   playerLink = _playerLink;

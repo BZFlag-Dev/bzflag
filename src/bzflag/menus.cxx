@@ -664,6 +664,7 @@ KeyboardMapMenu::KeyboardMapMenu() : defaultKey(this), editing(BzfKeyMap::LastKe
   controls.push_back(createLabel(NULL, "Toggle Radar Flags:"));
   controls.push_back(createLabel(NULL, "Toggle Main Flags:"));
   controls.push_back(createLabel(NULL, "Silience/UnSilence Key:"));
+  controls.push_back(createLabel(NULL, "Server Command Key:"));
 
   initNavigation(controls, 1, controls.size()-1);
 }

@@ -50,6 +50,7 @@ class BzfKeyMap {
 			ToggleRadarFlags,
 			ToggleMainFlags,
 			ChooseSilence,
+			ServerCommand,
 			LastKey
     };
 

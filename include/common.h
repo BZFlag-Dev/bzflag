@@ -18,6 +18,8 @@
 #define	BZF_COMMON_H
 
 #include <string>
+#include <sstream>
+#include <vector>
 #include <stdarg.h>
 #include <stdio.h>
 
@@ -29,6 +31,7 @@
 #if defined(_WIN32)
 // turn off bogus `this used in base member initialization list'
 #pragma warning(disable: 4355)
+#pragma warning( 4 : 4786 )
 #endif /* defined(_WIN32) */
 
 #include <assert.h>
@@ -156,6 +159,32 @@ class string_util {
       std::string result = vformat(fmt, args);
       va_end(args);
       return result;
+    }
+    // get a vector of strings from a string, using all of chars of the delims
+    // string as separators 
+    static std::vector<std::string> string_util::tokenize(std::string in, std::string delims){  
+      std::vector<std::string> out;
+      std::ostringstream outputString;
+      std::istringstream inStream (in);
+
+      std::string candidate;
+      std::string testme;
+
+      int character;
+      while ( (character = inStream.get()) != EOF){
+	testme = (char) character;
+	if (testme.find_first_of(delims) != std::string::npos){
+	  candidate = outputString.str();
+	  outputString.str(""); // clear it
+	  if (candidate != "")  out.push_back(candidate);
+	} else {
+	  outputString << (char)character;
+	}
+      }
+
+      candidate = outputString.str();
+      if (candidate != "")  out.push_back(candidate);
+      return out;
     }
 };
 

@@ -39,7 +39,8 @@ const BzfKeyEvent	BzfKeyMap::defaults1[] = {
 				{ 'a', 0, 0 },
 				{ 'h',0,0},
 				{ 'j',0,0},
-				{ 'k',0,0}
+				{ 'k',0,0},
+				{ 'o',0,0}
 			};
 const BzfKeyEvent	BzfKeyMap::defaults2[] = {
 				{ '\r', 0, 0 },
@@ -60,6 +61,7 @@ const BzfKeyEvent	BzfKeyMap::defaults2[] = {
 				{ '+', 0, 0 },
 				{ '_', 0, 0 },
 				{ 'p', 0, 0 },
+				{ 0, 0, 0 },
 				{ 0, 0, 0 },
 				{ 0, 0, 0 },
 				{ 0, 0, 0 },
@@ -95,7 +97,8 @@ const char*		BzfKeyMap::keyName[] = {
 				"slowKeyboardMotion",
 				"hideRadarFlagsKey",
 				"hideMainFlagsKey",
-				"chooseSilenceKey"
+				"chooseSilenceKey",
+				"serverCommandKey"
 			};
 
 const char*		BzfKeyMap::eventNames[] = {
@@ -172,6 +175,7 @@ void			BzfKeyMap::resetAll()
   reset(ToggleRadarFlags);
   reset(ToggleMainFlags);
   reset(ChooseSilence);
+  reset(ServerCommand);
 }
 
 void			BzfKeyMap::reset(Key key)
