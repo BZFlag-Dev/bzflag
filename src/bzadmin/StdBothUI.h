@@ -14,6 +14,7 @@
 #define STDBOTHUI_H
 
 #include "BZAdminUI.h"
+#include "UIMap.h"
 
 using namespace std;
 
@@ -29,6 +30,13 @@ public:
   virtual void outputMessage(const string& msg);
   virtual bool checkCommand(string& str);
 
+  /** This function returns a pointer to a dynamically allocated 
+      StdBothUI object. */
+  static BZAdminUI* creator(const map<PlayerId, string>& players, PlayerId me);
+
+ protected:
+
+  static UIAdder uiAdder;
 };
 
 #endif

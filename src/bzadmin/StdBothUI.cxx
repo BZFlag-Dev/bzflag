@@ -16,6 +16,10 @@
 #include "StdBothUI.h"
 
 
+// add this UI to the map
+UIAdder StdBothUI::uiAdder("stdboth", &StdBothUI::creator);
+
+
 void StdBothUI::outputMessage(const string& msg) {
   std::cout<<msg<<endl;
 }
@@ -40,4 +44,9 @@ bool StdBothUI::checkCommand(string& str) {
     pos++;
   }
   return false;
+}
+
+
+BZAdminUI* StdBothUI::creator(const map<PlayerId, string>&, PlayerId) {
+  return new StdBothUI();
 }

@@ -23,6 +23,7 @@
 #include "AutoCompleter.h"
 #include "BZAdminUI.h"
 #include "global.h"
+#include "UIMap.h"
 
 #define CMDLENGTH (MessageLen - 3)
 
@@ -31,11 +32,13 @@ using namespace std;
 
 /** This class is an interface for bzadmin that uses ncurses. */
 class CursesUI : public BZAdminUI {
-public:
+protected:
 
   /** The parameters to this constructor are a map of all players and the
       local player's PlayerId. */
   CursesUI(const map<PlayerId, string>& p, PlayerId m);
+
+public:
 
   ~CursesUI();
 
@@ -55,6 +58,10 @@ public:
   /** Get the current target (the player that messages should be sent to,
       or 0 for public messages). */
   virtual PlayerId getTarget() const;
+  
+  /** This function returns a pointer to a dynamically allocated 
+      CursesUI object. */
+  static BZAdminUI* creator(const map<PlayerId, string>& players, PlayerId me);
 
 protected:
 
@@ -72,6 +79,8 @@ protected:
   vector<string> history;
   unsigned int maxHistory;
   unsigned int currentHistory;
+  
+  static UIAdder uiAdder;
 };
 
 #endif

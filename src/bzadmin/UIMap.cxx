@@ -10,20 +10,30 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include <iostream>
-
-#include "StdOutUI.h"
+#include "UIMap.h"
 
 
-// add this UI to the map
-UIAdder StdOutUI::uiAdder("stdout", &StdOutUI::creator);
+UIMap::UIMap() {
 
-
-void StdOutUI::outputMessage(const string& msg) {
-  cout<<msg<<endl;
 }
 
 
-BZAdminUI* StdOutUI::creator(const map<PlayerId, string>&, PlayerId) {
-  return new StdOutUI();
+void UIMap::addUI(const string& name, UICreator creator) {
+  interfaces[name] = creator;
+}
+
+
+const UIMap::map_t& UIMap::getMap() const {
+  return interfaces;
+}
+
+
+UIMap& UIMap::getInstance() {
+  static UIMap uiMap;
+  return uiMap;
+}
+
+
+UIAdder::UIAdder(const string& name, UIMap::UICreator creator) {
+  UIMap::getInstance().addUI(name, creator);
 }

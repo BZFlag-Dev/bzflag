@@ -15,6 +15,10 @@
 using namespace std;
 
 
+// add this UI to the map
+UIAdder CursesUI::uiAdder("curses", &CursesUI::creator);
+
+
 CursesUI::CursesUI(const map<PlayerId, string>& p, PlayerId m) :
   players(p), me(m), maxHistory(20), currentHistory(0) {
 
@@ -217,4 +221,10 @@ void CursesUI::updateCmdWin() {
   waddstr(cmdWin, cmd.c_str());
   wmove(cmdWin, 1, 1 + cmd.size());
   wrefresh(cmdWin);
+}
+
+
+BZAdminUI* CursesUI::creator(const map<PlayerId, string>& players, 
+			     PlayerId me) {
+  return new CursesUI(players, me);
 }

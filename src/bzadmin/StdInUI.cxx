@@ -17,6 +17,10 @@
 using namespace std;
 
 
+// add this UI to the map
+UIAdder StdInUI::uiAdder("stdin", &StdInUI::creator);
+
+
 bool StdInUI::checkCommand(string& str) {
   if (cin.eof()) {
     str = "/quit";
@@ -26,4 +30,9 @@ bool StdInUI::checkCommand(string& str) {
   if (str == "")
     return false;
   return true;
+}
+
+
+BZAdminUI* StdInUI::creator(const map<PlayerId, string>&, PlayerId) {
+  return new StdInUI();
 }

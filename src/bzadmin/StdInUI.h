@@ -18,6 +18,7 @@
 #include "Address.h"
 #include "BZAdminUI.h"
 #include "global.h"
+#include "UIMap.h"
 
 using namespace std;
 
@@ -28,6 +29,13 @@ public:
 
   bool checkCommand(string& str);
 
+  /** This function returns a pointer to a dynamically allocated 
+      StdInUI object. */
+  static BZAdminUI* creator(const map<PlayerId, string>& players, PlayerId me);
+
+protected:
+
+  static UIAdder uiAdder;
 };
 
 #endif

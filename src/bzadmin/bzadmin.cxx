@@ -23,13 +23,15 @@
 #if (defined(HAVE_CURSES_H) || defined (HAVE_NCURSES_H))
 #include "CursesUI.h"
 #endif
+#include "OptionParser.h"
 #include "ServerLink.h"
 #include "StdBothUI.h"
 #include "StdInUI.h"
 #include "StdOutUI.h"
-#include "OptionParser.h"
+#include "UIMap.h"
 
 using namespace std;
+
 
 // function prototypes
 /** Checks for new packets from the server, ignores them or stores a
@@ -49,13 +51,9 @@ string formatMessage(const string& msg, PlayerId src,
 map<PlayerId, string> players;
 TeamColor myTeam;
 struct CLOptions {
-  CLOptions()
-    : team("green"), stdboth(false), stdin(false), stdout(false), 
-      showHelp(false) { }
+  CLOptions() : team("green"), ui("curses"), showHelp(false) { }
   string team;
-  bool stdboth;
-  bool stdin;
-  bool stdout;
+  string ui;
   bool showHelp;
 } clOptions;
 
@@ -63,17 +61,25 @@ struct CLOptions {
 // Here we go.
 int main(int argc, char** argv) {
 
-  // parse command line arguments
+  // no curses, use stdboth instead
+  const UIMap::map_t& interfaces(UIMap::getInstance().getMap());
+  if (interfaces.find("curses") == interfaces.end())
+    clOptions.ui = "stdboth";
+  
+  // build a usage string with all interfaces
+  UIMap::map_t::const_iterator uiIter;
+  string uiUsage;
+  for (uiIter = interfaces.begin(); uiIter != interfaces.end(); ++uiIter)
+    uiUsage += uiIter->first + '|';
+  uiUsage = string("[-ui ") + uiUsage.substr(0, uiUsage.size() - 1) + ']';
+  
+  // register and parse command line arguments
   OptionParser op;
   op.registerVariable("team", clOptions.team, 
 		      "[-team red|green|blue|purple|rogue]",
 		      "choose a team for your observer");
-  op.registerVariable("stdboth", clOptions.stdboth, "[-stdboth]",
-		      "use both stdin and stdout (no curses)");
-  op.registerVariable("stdin", clOptions.stdin, "[-stdin]",
-		      "read input from stdin, ignore server output");
-  op.registerVariable("stdout", clOptions.stdout, "[-stdout]",
-		      "print server output to stdout, ignore user input");
+  op.registerVariable("ui", clOptions.ui, uiUsage,
+		      "choose a user interface");
   op.registerVariable("help", clOptions.showHelp, "[-help]",
 		      "print this help message");
   if (!op.parse(argc, argv)) {
@@ -85,8 +91,7 @@ int main(int argc, char** argv) {
   if (clOptions.showHelp) {
     cout<<"bzadmin "<<VERSION<<endl;
     op.printUsage(cout, argv[0]);
-    cout<<"CALLSIGN@HOST[:PORT] [COMMAND] [COMMAND] ..."<<endl;
-    cout<<endl<<endl;
+    cout<<"CALLSIGN@HOST[:PORT] [COMMAND] [COMMAND] ..."<<endl<<endl;
     op.printHelp(cout);
     return 0;
   }
@@ -104,7 +109,14 @@ int main(int argc, char** argv) {
     cerr<<'"'<<clOptions.team<<"\" is not a valid team."<<endl;
     return 1;
   }
-
+  
+  // check that the ui is valid
+  uiIter = UIMap::getInstance().getMap().find(clOptions.ui);
+  if (uiIter == UIMap::getInstance().getMap().end()) {
+    cerr<<"There is no interface called \""<<clOptions.ui<<"\"."<<endl;
+    return 1;
+  }
+  
   // check that we have callsign and host in the right format and extract them
   if (op.getParameters().size() == 0) {
     cerr<<"You have to specify callsign@host."<<endl;
@@ -147,20 +159,7 @@ int main(int argc, char** argv) {
   }
 
   // choose UI
-  BZAdminUI* ui;
-  if (clOptions.stdboth)
-    ui = new StdBothUI;
-  else if (clOptions.stdin)
-    ui = new StdInUI;
-  else if (clOptions.stdout)
-    ui = new StdOutUI;
-  else {
-#if (defined(HAVE_CURSES_H) || defined(HAVE_NCURSES_H))
-    ui = new CursesUI(players, sLink.getId());
-#else
-    ui = new StdBothUI;
-#endif
-  }
+  BZAdminUI*  ui = uiIter->second(players, sLink.getId());
 
   // main loop
   string str;

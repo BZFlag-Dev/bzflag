@@ -26,6 +26,8 @@ bzadmin_SOURCES = \
 	StdInUI.cxx \
 	StdOutUI.h \
 	StdOutUI.cxx \
+	UIMap.h \
+	UIMap.cxx \
 	bzadmin.cxx
 
 endif
