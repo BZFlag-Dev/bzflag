@@ -211,6 +211,7 @@ void			Player::setExplode(const TimeKeeper& t)
   setStatus((getStatus() | short(PlayerState::Exploding) | short(PlayerState::Falling)) &
 	    ~(short(PlayerState::Alive) | short(PlayerState::Paused)));
   tankNode->rebuildExplosion();
+  updateFlagEffect(Flags::Null);
 }
 
 void			Player::setTeleport(const TimeKeeper& t,
@@ -338,7 +339,12 @@ void			Player::setFlag(FlagType* _flag)
 {
   // set the type
   flagType = _flag;
+  updateFlagEffect(flagType);
+  return;
+}
   
+void			Player::updateFlagEffect(FlagType* effectFlag)
+{
   float FlagEffectTime = BZDB.eval(StateDatabase::BZDB_FLAGEFFECTTIME);
   if (FlagEffectTime <= 0.0f) {
     FlagEffectTime = 0.001f; // safety
@@ -348,22 +354,22 @@ void			Player::setFlag(FlagType* _flag)
   dimensionsTarget[0] = 1.0f;
   dimensionsTarget[1] = 1.0f;
   dimensionsTarget[2] = 1.0f;
-  if (flagType == Flags::Obesity) {
+  if (effectFlag == Flags::Obesity) {
     const float factor = BZDB.eval(StateDatabase::BZDB_OBESEFACTOR);
     dimensionsTarget[0] = factor;
     dimensionsTarget[1] = factor;
   }
-  else if (flagType == Flags::Tiny) {
+  else if (effectFlag == Flags::Tiny) {
     const float factor = BZDB.eval(StateDatabase::BZDB_TINYFACTOR);
     dimensionsTarget[0] = factor;
     dimensionsTarget[1] = factor;
   }
-  else if (flagType == Flags::Thief) {
+  else if (effectFlag == Flags::Thief) {
     const float factor = BZDB.eval(StateDatabase::BZDB_THIEFTINYFACTOR);
     dimensionsTarget[0] = factor;
     dimensionsTarget[1] = factor;
   }
-  else if (flagType == Flags::Narrow) {
+  else if (effectFlag == Flags::Narrow) {
     dimensionsTarget[1] = 0.001f;
   }
   
@@ -376,7 +382,7 @@ void			Player::setFlag(FlagType* _flag)
   }
 
   // set the alpha target
-  if (flagType == Flags::Cloaking) {
+  if (effectFlag == Flags::Cloaking) {
     alphaTarget = 0.0f;
   } else {
     alphaTarget = 1.0f;

@@ -150,6 +150,7 @@ private:
 				 float* predictedVel) const;
   void setVisualTeam (TeamColor team );
   void setupTreads(float dt);
+  void updateFlagEffect(FlagType* flag);
 private:
   // data not communicated with other players
   bool			notResponding;
