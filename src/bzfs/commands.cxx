@@ -657,7 +657,7 @@ void handleBanCmd(GameKeeper::Player *playerData, const char *message)
 {
   int t = playerData->getIndex();
   if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::ban) &&
-      !playerData->accessInfo.hasPerm(PlayerAccessInfo::longBan)) {
+      !playerData->accessInfo.hasPerm(PlayerAccessInfo::shortBan)) {
     sendMessage(ServerPlayer, t, "You do not have permission to run the ban command");
     return;
   }
@@ -678,8 +678,8 @@ void handleBanCmd(GameKeeper::Player *playerData, const char *message)
       int specifiedDuration = string_util::parseDuration(argv[2]);
       if ((durationInt > 0) && 
           ((specifiedDuration > durationInt) || (specifiedDuration <= 0)) &&
-          !playerData->accessInfo.hasPerm(PlayerAccessInfo::longBan)) {
-        sendMessage (ServerPlayer, t, "You do not have LONGBAN privileges,"\
+          !playerData->accessInfo.hasPerm(PlayerAccessInfo::ban)) {
+        sendMessage (ServerPlayer, t, "You only have SHORTBAN privileges,"\
                                       " using default ban time");
       } else {
         durationInt = specifiedDuration;

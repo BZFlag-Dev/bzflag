@@ -318,7 +318,6 @@ PlayerAccessInfo::AccessPerm permFromName(const std::string &name)
   if (name == "LAGSTATS") return PlayerAccessInfo::lagStats;
   if (name == "LAGWARN") return PlayerAccessInfo::lagwarn;
   if (name == "LISTPERMS") return PlayerAccessInfo::listPerms;
-  if (name == "LONGBAN") return PlayerAccessInfo::longBan;
   if (name == "PLAYERLIST") return PlayerAccessInfo::playerList;
   if (name == "POLL") return PlayerAccessInfo::poll;
   if (name == "PRIVATEMESSAGE") return PlayerAccessInfo::privateMessage;
@@ -328,6 +327,7 @@ PlayerAccessInfo::AccessPerm permFromName(const std::string &name)
   if (name == "SETPASSWORD") return PlayerAccessInfo::setPassword;
   if (name == "SETPERMS") return PlayerAccessInfo::setPerms;
   if (name == "SETVAR") return PlayerAccessInfo::setVar;
+  if (name == "SHORTBAN") return PlayerAccessInfo::shortBan;
   if (name == "SHOWOTHERS") return PlayerAccessInfo::showOthers;
   if (name == "SHUTDOWNSERVER") return PlayerAccessInfo::shutdownServer;
   if (name == "SUPERKILL") return PlayerAccessInfo::superKill;

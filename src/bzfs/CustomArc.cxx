@@ -203,7 +203,6 @@ void CustomArc::write(WorldInfo *world) const
     isCircle = true;
   }
 
-  // FIXME - check angle vs. divisions
   // setup the radii
   float inrad = sz[0] * (1.0f - ratio);
   float outrad = sz[0];
