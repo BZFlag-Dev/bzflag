@@ -10,6 +10,7 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+#include <stack>
 #include "TimeKeeper.h"
 #include "Roster.h"
 #include "TargetingUtils.h"
@@ -24,6 +25,43 @@ typedef std::map<FlagType*, std::pair<int,int> > FlagSuccessMap;
 static FlagSuccessMap flagSuccess;
 static int			  totalSum = 0;
 static int			  totalCnt = 0;
+
+/**
+ * Roger will follow a plan. These plans are stored on a plan stack
+ * allowing for short medium and long range plans to cooperate to 
+ * produce a better playing bot.
+ */
+class Plan
+{
+public:
+	Plan( float planDuration );
+	/**
+	 * checks to make sure this plan is still valid. The default
+	 * implementation just checks for an expiration time, to keep
+	 * roger from bullheadedly trying something that just aint
+	 * gonna work. You can override this method for specific plans
+	 */
+	virtual bool isValid();
+
+	/**
+	 * determines if this plan is a longer range plan that can
+	 * only be accomplished with smaller steps. Hunting a player
+	 * might consist of avoiding a building, or weaving, for instance.
+	 * if this method returns true, than this plan is just a coordinator
+	 * of sub plans.
+     */
+	virtual bool usesSubPlan() = 0;
+
+	/**
+	 * creates a sub plan to be placed on the stack to accomplish
+	 * this plan's goals.
+	 */
+	virtual Plan *createSubPlan() = 0;
+private:
+	TimeKeeper planExpiration;
+};
+
+static std::stack<std::vector<Plan *> > planStack;
 
 void teachAutoPilot(FlagType *type, int adjust)
 {
@@ -717,3 +755,62 @@ void	doAutoPilot(float &rotation, float &speed)
 
     fireAtTank();
 }
+
+Plan::Plan(float planDuration)
+{
+	planExpiration = TimeKeeper::getCurrent();
+	planExpiration += planDuration;
+}
+
+
+bool Plan::isValid()
+{
+	TimeKeeper now = TimeKeeper();
+	float delta = now - planExpiration;
+	return (delta < 0.0f);
+}
+
+class HuntPlayerPlan : public Plan
+{
+public:
+	HuntPlayerPlan()
+		:Plan(MAXFLOAT)
+	{
+		//Pick a player ID to hunt
+		playerID = 0;
+	}
+
+	virtual bool isValid()
+	{
+		if (!Plan::isValid())
+			return false;
+
+		Player *pPlayer = lookupPlayer(playerID);
+		if (pPlayer == NULL)
+			return false;
+
+		if (!pPlayer->isAlive())
+			return false;
+
+		LocalPlayer *myTank = LocalPlayer::getMyTank();
+		if (pPlayer->getTeam() == myTank->getTeam())
+			return false;
+
+		return true;
+	}
+
+	virtual bool usesSubPlan()
+	{
+		return true;
+	}
+
+	virtual Plan *createSubPlan()
+	{
+		return NULL;
+	}
+
+private:
+	int playerID;
+};
+
+
