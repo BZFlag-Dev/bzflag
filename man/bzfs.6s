@@ -439,13 +439,13 @@ UDP connection is not working.
 .TP
 .br
 .B /lagstats
-Lists network delays and jitter by player. Example:
+Lists network delays, jitter and number of lost resp. out of order packets by player. Example:
 .ft CW
 .nf
 .ne 3
-MrApathyCream 335ms (5) +- 10ms
-Gerbol 210ms (8) +- 3ms
-captain_macgyver 155ms (12) +- 0ms
+MrApathyCream 335 +- 10ms
+Gerbol 210 +- 3ms
+captain_macgyver 155 +- 0ms  12% lost/ooo
 .ft R
 
 .TP
