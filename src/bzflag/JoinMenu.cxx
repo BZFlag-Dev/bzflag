@@ -221,7 +221,6 @@ void JoinMenu::execute()
 
     // get token if we need to (have a password but no token)
     if ((info->token[0] == '\0') && (info->password[0] != '\0')) {
-      BzfMedia* media = PlatformFactory::getMedia();
       ServerList* serverList = new ServerList;
       serverList->startServerPings(info);
       // wait no more than 10 seconds for a token
