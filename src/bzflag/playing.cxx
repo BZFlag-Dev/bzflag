@@ -1804,7 +1804,7 @@ static void		handleServerMessage(bool human, uint16_t code,
       nboUnpackUByte(msg, autopilot);
       Player* tank = lookupPlayer(id);
       if (!tank) break;
-      tank->setAutoPilot(autopilot);
+      tank->setAutoPilot(autopilot != 0);
       addMessage(tank, autopilot ? "Roger taking controls" : "Roger releasing controls");
       break;
     }

@@ -66,7 +66,7 @@ bool readKeyInt(OSFile &file, std::string expectedLeft, int &retval, bool newfil
   if (newfile)
     line = 0;
 
-  const int expsize = expectedLeft.size();
+  const int expsize = int(expectedLeft.size());
   std::string tmpBuf;
 
   // allow for blank lines with native or foreign linebreaks, comment lines
@@ -89,7 +89,7 @@ bool readKeyInt(OSFile &file, std::string expectedLeft, int &retval, bool newfil
 bool readLetter(OSFile &file, char expected)
 {
   const std::string expectedLeft = "Char:";
-  const int expsize = expectedLeft.size();
+  const int expsize = int(expectedLeft.size());
   std::string tmpBuf;
 
   // allow for blank lines with native or foreign linebreaks, comment lines
