@@ -105,9 +105,9 @@ bool URLManager::getURLHeader(const std::string& URL)
     return false;
   }
 
-  CURLcode result;  
+  CURLcode result;
   errorCode = CURLE_OK;
-  
+
   float timeout = 15;
   if (BZDB.isSet("httpTimeout")) {
     timeout = BZDB.eval("httpTimeout");
@@ -180,14 +180,14 @@ void URLManager::freeURLData(void *data)
 URLManager::URLManager()
 {
   CURLcode result;
-  
+
   easyHandle = NULL;
   theData = NULL;
   theLen = 0;
   errorCode = CURLE_OK;
 
   DEBUG1("LIBCURL: %s\n", curl_version());
-  
+
 #if LIBCURL_VERSION_NUM >= 0x070a00
   if ((result = curl_global_init(CURL_GLOBAL_NOTHING)))
     DEBUG1("Unexpected error from libcurl; Error: %d\n", result);
@@ -199,7 +199,7 @@ URLManager::URLManager()
     return;
   }
   CURL* curl = easyHandle;
-  
+
   result = curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, writeFunction);
   if (result != CURLE_OK)
     DEBUG1("CURLOPT_WRITEFUNCTION error: %d\n", result);
@@ -249,7 +249,7 @@ void URLManager::clearInternal()
   theData = NULL;
   theLen = 0;
   errorCode = CURLE_OK;
-  
+
   return;
 }
 
@@ -261,9 +261,9 @@ bool URLManager::beginGet(const std::string URL)
     return false;
   }
 
-  CURLcode result;  
+  CURLcode result;
   errorCode = CURLE_OK;
-  
+
   float timeout = 15;
   if (BZDB.isSet("httpTimeout"))
     timeout = BZDB.eval("httpTimeout");
@@ -346,7 +346,7 @@ const char* URLManager::getErrorString() const
   if (easyHandle == NULL) {
     return "libcurl initialization error";
   }
-  
+
   // LIBCURL didn't get curl_easy_strerror() until version 7.12.0.
   // BZFlag isn't currently limiting the libcurl version, so here's
   // a local function to do the same. It should be compatible with
@@ -354,7 +354,7 @@ const char* URLManager::getErrorString() const
 
 #define STRING_CASE(x)  \
   case CURLE_##x: return #x
-  
+
   switch (errorCode) {
     case CURLE_OK: {
       return "Nah problems mon";
@@ -430,7 +430,7 @@ const char* URLManager::getErrorString() const
     STRING_CASE(LDAP_INVALID_URL);
     STRING_CASE(FILESIZE_EXCEEDED);
     STRING_CASE(FTP_SSL_FAILED);
-#endif    
+#endif
     default: {
       static char buffer[256];
       sprintf(buffer, "unknown LIBCURL error, code = %i\n", errorCode);
@@ -467,7 +467,7 @@ bool URLManager::getFileTime(time_t&)
 const char* URLManager::getErrorString() const
 {
   return "this client does not have libcurl support";
-}    
+}
 void URLManager::freeURLData(void*)
 {
   return;
