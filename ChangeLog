@@ -330,7 +330,7 @@ BZFlag 1.10.0  "Break the world" (2003-12-09 was 1.9.x)
 * Pass reason in MsgKilled, add support for SR noise - Dave Brosius
 * Remove unnessary MsgScore from player to server - Dave Brosius
 * Remove old lag pings - Dave Brosius
-* BeOS port - Francois Revol
+* BeOS port - Franois Revol
 * Collision detection fixes - David Trowbridge, Jeff Myers
 * PlayerId -> ubyte - David Trowbridge, Frank Thilo
 * Get rid of reconnect port - David Trowbridge
@@ -427,7 +427,7 @@ BZFlag 1.7e6  Armoured Smashing Fist (2002-06-19 was 1.7e5)
 * fix /ban and add /unban - Frank Thilo
 * allow both -mp # and -mp #,#,#,#,# - Frank Thilo
 * CTF flag returning to base fixes - Frank Thilo
-* sort teams by score, sort in self - janne hassinen, Tim Riker
+* sort teams by score, sort in self - Janne Hassinen, Tim Riker
 * observer hack, should be a team - Frank Thilo
 * /countdown, /lagwarn - Frank Thilo
 * PatchId fixes - Frank Thilo, Tim Riker
@@ -468,7 +468,7 @@ BZFlag 1.7e6  Armoured Smashing Fist (2002-06-19 was 1.7e5)
 BZFlag 1.7e4 (2001-11-27 was 1.7e3)
 -----------------------------------
 
-* ::memset() instead of bzero() - Bjï¿½rn Augustsson
+* ::memset() instead of bzero() - Bjšrn Augustsson
 * win32 audio thread fix for win2k - crs
 * send to nemesis - Dave Brosius, Frank Thilo
 * USB joystick support - Nick Sayer
@@ -495,7 +495,7 @@ BZFlag 1.7e4 (2001-11-27 was 1.7e3)
 * patch playerIds to prepare for one tcp port - Tim Riker
 * missile sound effect - Dave Brosius
 * udp first then multicast, IRIX fix? (use -i <> for multicast) - Tim Riker
-* enhanced radar - Jeremiah
+* enhanced radar - Jeremiah Moss
 * don't relay read in player read - Frank Thilo, Tim Riker
 * -fb flags on box buildings - Tim Riker, Colin Bayer
 * networking code fixes - Tim Riker, Frank Thilo, etc.
@@ -508,8 +508,8 @@ BZFlag 1.7e4 (2001-11-27 was 1.7e3)
 BZFlag 1.7e2 (2001-04-17)
 -------------------------
 
-* bzfs performance fix, wait loop removal - chestal/timr
-* limbo flag bugfix - chestal
+* bzfs performance fix, wait loop removal - Frank Thilo, Tim Riker
+* limbo flag bugfix - Frank Thilo
 * *bsd cleanups from new ports maintainer - Nick Sayer
 * scrollback cleanups - crs
 * minimum size now 256x192 - Tim Riker
@@ -526,10 +526,10 @@ BZFlag 1.7e1 (2001-03-10)
 * radar tank dots are larger - frank
 * robots have playerxx names and player's email - Tim Riker
 * colorize console messages - Tim Riker
-* robots score when killing 'owner' - chestal <thilo@unix-ag.org>
-* flags under high buildings - Jeremiah
-* "world" section in world from file - Jeremiah
-* dim paused/nr tanks on radar - chestal
+* robots score when killing 'owner' - Frank Thilo
+* flags under high buildings - Jeremiah Moss
+* "world" section in world from file - Jeremiah Moss
+* dim paused/nr tanks on radar - Frank Thilo
 * fix bzfls for servers on non-5155 - Tim Riker
 * pgup/pgdn support in help menu - Kris Verbeeck
 * stop using signal() as suggested by Frank Thilo - Tim Riker
@@ -540,7 +540,7 @@ BZFlag 1.7e1 (2001-03-10)
 * rogue tank placement on enter - chestal
 * pseudo variable height buildings in cf mode - Tim Riker
 * don't drain and flush audio on solaris - frank
-* alpha Macintosh port - Darrell Walisser <dwaliss1@purdue.edu>
+* alpha Macintosh port - Darrell Walisser
 * quick message support - Kris Verbeeck
 * /kick and /lagstats server messages, -passwd - Frank Thilo
 
@@ -552,18 +552,18 @@ BZFlag 1.7e release 000 (2001-01-26)
 * build now 3 digits so alpha sorts work (until we hit 1.10? ;-)
 * copyright and naming changes
 * save flaghelp and score state
-* FreeBSD patch by Eric Anholt
+* FreeBSD patch - Eric Anholt
 * world creation reordering to support world from file
-* compilation with VC++6 Jeremiah Moss <jeremiah_moss@cobraa1.com>
-* world from a file by Daniel Lï¿½onard <fork@videotron.ca>
-* travel underneath floating buildings by Jeremiah
-* radar update to not hide teleporters under buildings by Jeremiah
-* teleporter player positioning by Jeremiah
-* bottoms on floating buildings by Jeremiah
-* Windows highest refresh rate on program switch by Jeremiah
+* compilation with VC++6 - Jeremiah Moss
+* world from a file - Daniel LŽonard
+* travel underneath floating buildings - Jeremiah Moss
+* radar update to not hide teleporters under buildings - Jeremiah Moss
+* teleporter player positioning - Jeremiah Moss
+* bottoms on floating buildings - Jeremiah Moss
+* Windows highest refresh rate on program switch - Jeremiah Moss
 * dns lookups on list server for faster server lists
 * non-blocking I/O for bzfs and name lookups by crs
-* phantom player fix by Frank Siegert <frank@this.net>
+* phantom player fix - Frank Siegert
 
 
 BZFlag 1.7d release 9 (2000-02-01)
@@ -571,7 +571,7 @@ BZFlag 1.7d release 9 (2000-02-01)
 
 * fixed bug in parsing arguments in bzfls
 * fixed reference counting bug in bzfls
-* improved win32 config file location (Daniel Leonard)
+* improved win32 config file location - Daniel LŽonard
 
 
 BZFlag 1.7d release 8
@@ -611,7 +611,7 @@ BZFlag 1.7d release 6
 
 * now allows user to configure a non-optimized build (e.g. make linux-noopt)
 * added tarball make target to gather source tree into a tarball
-* modified spec file for RPM packaging (Tim Riker)
+* modified spec file for RPM packaging - Tim Riker
 * more sound fixes
     now always writes sound even when silent (which simplifies things)
     now handles failure of SNDCTL_DSP_SETFRAGMENT
@@ -704,8 +704,8 @@ BZFlag 1.7d release 1
 BZFlag 1.7c release 2 patch 3
 -----------------------------
 
-* fixed byte-order problem in bzfrelay (Tim Riker)
-* unix portability fix:  replaced cuserid() with getuid() (Erik Andersen)
+* fixed byte-order problem in bzfrelay - Tim Riker
+* unix portability fix:  replaced cuserid() with getuid() - Erik Andersen
 * now links mesa as GL and GLU to support non-mesa
 * fixed bug in linux multicast support
 
@@ -713,17 +713,17 @@ BZFlag 1.7c release 2 patch 3
 BZFlag 1.7c release 2 patch 2
 -----------------------------
 
-* final solaris sound support (Andrew White)
+* final solaris sound support - Andrew White
 
 
 BZFlag 1.7c release 2 patch 1
 -----------------------------
 
 * added solaris to configuration list
-* preliminary sound support on Solaris (Andrew White)
-* fixed 32 bit dependency;  now works on 64 bit (alpha) linux (Phillip Ezolt)
+* preliminary sound support on Solaris - Andrew White
+* fixed 32 bit dependency;  now works on 64 bit (alpha) linux - Phillip Ezolt
 * added missing entries in irix packaging (some data files)
-* added stacked stereo patch (Stea Greene)
+* added stacked stereo patch - Stea Greene
 
 
 BZFlag 1.7c release 2
@@ -731,7 +731,7 @@ BZFlag 1.7c release 2
 
 first official open source release.
 
-* misc. changes for solaris (Bjorn Augustsson)
+* misc. changes for solaris - Bjšrn Augustsson
 * changed u_int* to uint*
 * replaced [ds]rand48() with [s]rand()
 * changed variable name `sun' with 'theSun'
@@ -740,10 +740,10 @@ first official open source release.
 * glColor*() are macros;  changed code that took address of function
 * no hstrerror
 * solaris defines SIG_PF
-* added unofficial solaris config (Bjorn Augustsson)
+* added unofficial solaris config - Bjšrn Augustsson
 * porting is not complete
 * not included in platform list
-* made generic linux config (Phillip Ezolt)
+* made generic linux config - Phillip Ezolt
 * ifdef'd DEADLINE code for irix
 * static/dynamic libaudio fix for irix
 * friend class workaround for irix 7.2.1 compilers
