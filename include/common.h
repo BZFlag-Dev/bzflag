@@ -191,8 +191,7 @@ typedef unsigned char	uint8_t;
 #endif
 #define countof(__x)   (sizeof(__x) / sizeof(__x[0]))
 
-#if defined(_WIN32) && !defined(_DEVCPP)
-#include <xutility>
+#if defined(_WIN32) && defined(_MSC_VER)
 #define std_max(a,b) max(a,b)
 #else
 #define std_max(a,b) std::max(a,b)
