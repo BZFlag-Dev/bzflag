@@ -74,12 +74,12 @@ public:
   static std::string replace_all(const std::string& in, const std::string& replaceMe, const std::string& withMe)
   {
     std::string result;
-    unsigned int beginPos = 0;
-    unsigned int endPos = 0;
+    long int beginPos = 0;
+    long int endPos = 0;
     std::ostringstream tempStream;
 
 
-    endPos = (unsigned int)in.find(replaceMe);
+    endPos = (long int)in.find(replaceMe);
     if (endPos == std::string::npos) return in; // can't find anything to replace
     if (replaceMe == "") return in; // can't replace nothing with something -- can do reverse
 
@@ -88,7 +88,7 @@ public:
       tempStream << in.substr(beginPos,endPos-beginPos); 
       tempStream << withMe;
       beginPos = endPos + replaceMe.size();
-      endPos = (unsigned int)in.find(replaceMe,beginPos);
+      endPos = (long int)in.find(replaceMe,beginPos);
     } 
     tempStream << in.substr(beginPos);
     return tempStream.str();
@@ -110,15 +110,15 @@ public:
    */
   static std::vector<std::string> tokenize(const std::string& in, const std::string delims, const int maxTokens = 0, const bool useQuotes = false){
     std::vector<std::string> tokens;
-    int numTokens = 0;
+    long int numTokens = 0;
     bool inQuote = false;
     bool enoughTokens;
 
-    unsigned int pos = 0; 
+    long int pos = 0; 
     int currentChar;
     std::ostringstream currentToken;
 	
-    pos = (unsigned int)in.find_first_not_of(delims);
+    pos = (long int)in.find_first_not_of(delims);
     currentChar = (pos == std::string::npos)? -1: in[pos];
     enoughTokens = (maxTokens && (numTokens >= (maxTokens-1)));
 
@@ -196,7 +196,7 @@ public:
       if (enoughTokens){
 	break;
       } else{
-	pos = (unsigned int)in.find_first_not_of(delims,pos);
+	pos = (long int)in.find_first_not_of(delims,pos);
       }
 
     } // end of getting all tokens -- either EOL or max tokens reached
