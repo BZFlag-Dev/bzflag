@@ -51,9 +51,7 @@ void			nerror(const char* msg)
     args.push_back(msg);
     args.push_back(strerror(errno));
     printError("{1}: {2}", &args);
-  }
-  else
-  {
+  } else {
     args.push_back(strerror(errno));
     printError("{1}", &args);
   }
@@ -66,8 +64,7 @@ void			bzfherror(const char* msg)
     args.push_back(msg);
     args.push_back(hstrerror(h_errno));
     printError("{1}: {2}", &args);
-  }
-  else {
+  } else {
     args.push_back(hstrerror(h_errno));
     printError("{1}", &args);
   }
@@ -187,8 +184,7 @@ void			nerror(const char* msg)
     sprintf(buf, "%d", err);
     args.push_back(buf);
     printError("{1}: {2} ({3})", &args);
-  }
-  else {
+  } else {
     char buf[50];
     std::vector<std::string> args;
     args.push_back(errmsg);
@@ -234,11 +230,6 @@ int			BzfNetwork::setBlocking(int fd)
 //     reads from file.  contents must be a url of any valid form.
 //     note: pathname can include a drive specifier on windows.
 //     note: pathname must be absolute.
-//
-//   bzflist://<hostname>[:<port>]
-//     named host must be a bzflag list server listening on port
-//     (if not supplied, port is ServerPort + 1).  hostname can
-//     be a hostname or IP address.
 //
 // note that partially formed urls are not allowed.  for example, the
 // http:// cannot be elided.
@@ -326,8 +317,7 @@ std::string		BzfNetwork::dereferenceHTTP(
     int bodypos = data.find("\r\n\r\n");
     if(bodypos != -1) {
       body = data.substr(bodypos + 4);
-    }
-    else {
+    } else {
       bodypos = data.find("\n\n");
       if(bodypos != -1)
 	body = data.substr(bodypos + 2);
@@ -459,11 +449,6 @@ bool			BzfNetwork::dereferenceURLs(
 	    list.erase(it);
 	}
 
-	else if (protocol == "bzflist") {
-	    // leave it alone
-	    i++;
-	}
-
 	else {
 	    // invalid protocol or url
 	    failedList.push_back(list[i]);
@@ -509,7 +494,7 @@ bool			BzfNetwork::parseURL(const std::string& url,
 
 
   // store hostname and optional port for some protocols
-  if (protocol == "http" || protocol == "bzflist") {
+  if (protocol == "http") {
     if (mungedurl[0] == '/' && mungedurl[1] == '/') {
       mungedurl = mungedurl.substr(2);
       int pos = 0;
