@@ -1717,10 +1717,12 @@ void			OptionsMenu::callback(HUDuiControl* w, void* data)
   switch (((const char*)data)[0]) {
     case '1':
       BZDB->set("dither", list->getIndex() ? "1" : "0");
+      sceneRenderer->notifyStyleChange();
       break;
 
     case '2':
       BZDB->set("blend", list->getIndex() ? "1" : "0");
+      sceneRenderer->notifyStyleChange();
       break;
 
     case '3':
@@ -1734,11 +1736,13 @@ void			OptionsMenu::callback(HUDuiControl* w, void* data)
       BZDB->set("_texturereplace", (!BZDB->isTrue("lighting") &&
 		sceneRenderer->useQuality() < 2) ? "1" : "0");
       BZDB->setPersistent("_texturereplace", false);
+      sceneRenderer->notifyStyleChange();
       break;
 
     case '5':
       OpenGLTexture::setFilter((OpenGLTexture::Filter)list->getIndex());
       BZDB->set("texture", OpenGLTexture::getFilterName());
+      sceneRenderer->notifyStyleChange();
       break;
 
     case '6':
@@ -1747,6 +1751,7 @@ void			OptionsMenu::callback(HUDuiControl* w, void* data)
       BZDB->set("_texturereplace", (!BZDB->isTrue("lighting") &&
 		sceneRenderer->useQuality() < 2) ? "1" : "0");
       BZDB->setPersistent("_texturereplace", false);
+      sceneRenderer->notifyStyleChange();
       break;
 
     case '7':
@@ -1758,6 +1763,7 @@ void			OptionsMenu::callback(HUDuiControl* w, void* data)
       BZDB->set("zbuffer", list->getIndex() ? "1" : "0");
       // FIXME - test for whether the z buffer will work
       setSceneDatabase();
+      sceneRenderer->notifyStyleChange();
       break;
 
     case 's':
