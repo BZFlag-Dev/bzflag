@@ -9,8 +9,7 @@ EXTRA_DIST = \
 	man2html.c	\
 	mrtg-bzflag.pl	\
 	tar	\
-	touchcopyright	\
-	touchdsp
+	touchcopyright
 
 MAINTAINERCLEANFILES = \
 	Makefile.in
