@@ -12,7 +12,9 @@
 
 #if defined(WIN32)
 #pragma warning(4:4503)
+#include <windows.h>
 #endif
+
 
 #include "StateDatabase.h"
 #include "ErrorHandler.h"
@@ -241,9 +243,39 @@ void *		StateDatabase::getPointer(const std::string& name) const
     return (void *)strtoul(index->second.value.c_str(), NULL, 0);
 }
 
+void	debugEvals(const std::string &name)
+{
+  /* This bit of nastyness help debug BDZB->eval accesses sorted from worst to best*/
+  static std::map<std::string,int> cnts;
+  static long last = GetTickCount();
+
+  std::map<std::string,int>::iterator it = cnts.find(name);
+  if (it == cnts.end())
+    cnts[name] = 1;
+  else
+    it->second++;
+
+  long now = GetTickCount();
+  if (now - last > 20 * 1000) {
+    std::map<int,std::string> order;
+    for (it = cnts.begin(); it != cnts.end(); it++) {
+      order[-it->second] = it->first;
+      it->second = 0;
+    }
+
+    for (std::map<int,std::string>::iterator it2 = order.begin(); it2 != order.end(); ++it2) {
+      char data[100];
+      sprintf(data, "%s = %d", it2->second.c_str(), -it2->first);
+      std::cout << data << std::endl;
+    }
+    last = now;
+  }
+}
 
 float			StateDatabase::eval(const std::string& name)
 {
+  /* debugEvals(name); */
+
   EvalMap::const_iterator cit = evalCache.find(name);
   if (cit != evalCache.end())
     return cit->second;
