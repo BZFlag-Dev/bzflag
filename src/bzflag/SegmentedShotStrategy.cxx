@@ -264,7 +264,7 @@ void			SegmentedShotStrategy::addShot(
     boltSceneNode->setColor(c[0], c[1], c[2]);
     TextureManager &tm = TextureManager::instance();
     std::string imageName = Team::getImagePrefix(team);
-    imageName += "bolt";
+    imageName += "boltTexture";
     int texture = tm.getTextureID(imageName.c_str());
     if (texture >= 0)
       boltSceneNode->setTexture(texture);
@@ -702,7 +702,7 @@ LaserStrategy::LaserStrategy(ShotPath* path) :
 
   TextureManager &tm = TextureManager::instance();
   std::string imageName = Team::getImagePrefix(tmpTeam);
-  imageName += "bolt";
+  imageName += "laserTexture";
   int texture = tm.getTextureID(imageName.c_str());
 
   for (int i = 0; i < numSegments; i++) {
