@@ -20,6 +20,8 @@
 
 #include "common.h"
 
+
+
 class SceneRenderer;
 class World;
 class ShotPath;
@@ -67,8 +69,13 @@ class RadarRenderer {
     boolean		jammed;
     double		decay;
     GLuint		list;
-    unsigned char*	noise;
-    GLenum		noiseFormat;
+    unsigned char *noise;
+		
+
+///mgumz
+		GLuint	  noise_tex;
+		
+		GLenum		noiseFormat;
 };
 
 //
