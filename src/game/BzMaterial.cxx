@@ -497,9 +497,9 @@ void BzMaterial::print(std::ostream& out, const std::string& /*indent*/) const
       out << "    texmat ";
       const TextureMatrix* texmat = TEXMATRIXMGR.getMatrix(texinfo->matrix);
       if ((texmat != NULL) && (texmat->getName().size() > 0)) {
-	out << texmat->getName();
+        out << texmat->getName();
       } else {
-	out << texinfo->matrix;
+        out << texinfo->matrix;
       }
       out << std::endl;
     }

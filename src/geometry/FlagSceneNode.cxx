@@ -32,7 +32,7 @@
 #include "SceneRenderer.h"
 
 
-static const int	flagLists = 8;		// GL list count
+static const int	waveLists = 8;		// GL list count
 static int		flagChunks = 8;		// draw flag as 8 quads
 static bool		geoPole = false;	// draw the pole as quads
 
@@ -125,7 +125,7 @@ void WaveGeometry::freeFlag()
   glDeleteLists(glList, 1);
 }
 
-WaveGeometry allWaves[flagLists];
+WaveGeometry allWaves[waveLists];
 
 FlagSceneNode::FlagSceneNode(const GLfloat pos[3]) :
 				billboard(true),
@@ -147,14 +147,14 @@ FlagSceneNode::~FlagSceneNode()
 
 void			FlagSceneNode::waveFlag(float dt)
 {
-  for (int i = 0; i < flagLists; i++) {
+  for (int i = 0; i < waveLists; i++) {
     allWaves[i].waveFlag(dt);
   }
 }
 
 void			FlagSceneNode::freeFlag()
 {
-  for (int i = 0; i < flagLists; i++) {
+  for (int i = 0; i < waveLists; i++) {
     allWaves[i].freeFlag();
   }
 }
@@ -221,10 +221,10 @@ void			FlagSceneNode::notifyStyleChange()
   else builder.setCulling(GL_NONE);
   gstate = builder.getState();
 
-  flagChunks = (int)BZDB.eval("flagChunks");
+  flagChunks = BZDBCache::flagChunks;
   if (flagChunks >= maxChunks)
     flagChunks = maxChunks - 1;
-  geoPole = (int)BZDB.eval("useQuality") > 2.0f;
+  geoPole = RENDERER.useQuality() > 2;
 }
 
 void			FlagSceneNode::addRenderNodes(
@@ -247,9 +247,9 @@ FlagSceneNode::FlagRenderNode::FlagRenderNode(
 				const FlagSceneNode* _sceneNode) :
 				sceneNode(_sceneNode)
 {
-  waveReference = (int)((double)flagLists * bzfrand());
-  if (waveReference >= flagLists)
-    waveReference = flagLists - 1;
+  waveReference = (int)((double)waveLists * bzfrand());
+  if (waveReference >= waveLists)
+    waveReference = waveLists - 1;
   allWaves[waveReference].refer();
 }
 

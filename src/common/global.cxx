@@ -79,6 +79,7 @@ const struct GlobalDBItem globalDBItems[] = {
   { "_pyrBase",			"4.0*_tankHeight",		false, StateDatabase::Locked},
   { "_pyrHeight",		"5.0*_tankHeight",		false, StateDatabase::Locked},
   { "_rainBaseColor",		"none",				false, StateDatabase::Locked},
+  { "_radarLimit",		"_worldSize",			false, StateDatabase::Locked},
   { "_rainRoofs",		"1",				false, StateDatabase::Locked},
   { "_rainDensity",		"none",				false, StateDatabase::Locked},
   { "_rainEndZ",		"none",				false, StateDatabase::Locked},

@@ -63,6 +63,9 @@ Obstacle* Teleporter::copyWithTransform(const MeshTransform& xform) const
   Teleporter* copy =
     new Teleporter(newPos, newAngle, newSize[0], newSize[1], newSize[2],
 		   border, horizontal, driveThrough, shootThrough);
+		   
+  copy->setName(name);
+  
   return copy;
 }
 

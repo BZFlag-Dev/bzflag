@@ -31,8 +31,12 @@ bool  BZDBCache::leadingShotLine;
 int   BZDBCache::radarStyle;
 int   BZDBCache::linedRadarShots;
 int   BZDBCache::sizedRadarShots;
+int   BZDBCache::flagChunks;
+float BZDBCache::pulseRate;
+float BZDBCache::pulseDepth;
 
 float BZDBCache::worldSize;
+float BZDBCache::radarLimit;
 float BZDBCache::gravity;
 float BZDBCache::tankWidth;
 float BZDBCache::tankLength;
@@ -58,9 +62,13 @@ void BZDBCache::init()
   BZDB.addCallback("colorful", clientCallback, NULL);
   BZDB.addCallback("animatedTreads", clientCallback, NULL);
   BZDB.addCallback("leadingShotLine", clientCallback, NULL);
+  BZDB.addCallback("flagChunks", clientCallback, NULL);
+  BZDB.addCallback("pulseRate", clientCallback, NULL);
+  BZDB.addCallback("pulseDepth", clientCallback, NULL);
 
   BZDB.addCallback(StateDatabase::BZDB_MAXLOD, serverCallback, NULL);
   BZDB.addCallback(StateDatabase::BZDB_WORLDSIZE, serverCallback, NULL);
+  BZDB.addCallback(StateDatabase::BZDB_RADARLIMIT, serverCallback, NULL);
   BZDB.addCallback(StateDatabase::BZDB_GRAVITY, serverCallback, NULL);
   BZDB.addCallback(StateDatabase::BZDB_TANKWIDTH, serverCallback, NULL);
   BZDB.addCallback(StateDatabase::BZDB_TANKLENGTH, serverCallback, NULL);
@@ -72,6 +80,7 @@ void BZDBCache::init()
 
   maxLOD = BZDB.eval(StateDatabase::BZDB_MAXLOD);
   worldSize = BZDB.eval(StateDatabase::BZDB_WORLDSIZE);
+  radarLimit = BZDB.eval(StateDatabase::BZDB_RADARLIMIT);
   gravity = BZDB.eval(StateDatabase::BZDB_GRAVITY);
   tankWidth = BZDB.eval(StateDatabase::BZDB_TANKWIDTH);
   tankLength = BZDB.eval(StateDatabase::BZDB_TANKLENGTH);
@@ -111,6 +120,12 @@ void BZDBCache::clientCallback(const std::string& name, void *)
     animatedTreads = BZDB.isTrue("animatedTreads");
   else if (name == "leadingShotLine")
     leadingShotLine = BZDB.isTrue("leadingShotLine");
+  else if (name == "flagChunks")
+    flagChunks = BZDB.evalInt("flagChunks");
+  else if (name == "pulseRate")
+    pulseRate = BZDB.eval("pulseRate");
+  else if (name == "pulseDepth")
+    pulseDepth = BZDB.eval("pulseDepth");
 }
 
 void BZDBCache::serverCallback(const std::string& name, void *)
@@ -120,6 +135,9 @@ void BZDBCache::serverCallback(const std::string& name, void *)
   }
   if (name == StateDatabase::BZDB_WORLDSIZE) {
     worldSize = BZDB.eval(StateDatabase::BZDB_WORLDSIZE);
+  }
+  if (name == StateDatabase::BZDB_RADARLIMIT) {
+    radarLimit = BZDB.eval(StateDatabase::BZDB_RADARLIMIT);
   }
   if (name == StateDatabase::BZDB_GRAVITY) {
     gravity = BZDB.eval(StateDatabase::BZDB_GRAVITY);

@@ -417,6 +417,55 @@ static bool isContainer(int type)
 }
 
 
+void GroupDefinition::makeTeleName(Obstacle* obs, unsigned int pos) const
+{
+  Teleporter* tele = (Teleporter*) obs;
+  std::string fullname = depthName;
+  if (tele->getName().size() > 0) {
+    fullname += tele->getName();
+  } else {
+    // make the default name
+    fullname += "/t";
+    char buffer[8];
+    sprintf (buffer, "%i", pos);
+    fullname += buffer;
+  }
+  tele->setName(fullname);
+  return;  
+}
+
+
+void GroupDefinition::appendGroupName(const GroupInstance* group) const
+{
+  std::string newName;
+  if (group->getName().size() > 0) {
+    newName = group->getName();
+  }
+  else {
+    // make the default name
+    int count = 0;
+    for (unsigned int i = 0; i < groups.size(); i++) {
+      const GroupInstance* g = groups[i];
+      if (g == group) {
+        break;
+      }
+      if (g->getGroupDef() == group->getGroupDef()) {
+        count++;
+      }
+    }
+    newName = "/";
+    newName += group->getGroupDef();
+    newName += "/";
+    char buffer[8];
+    sprintf (buffer, "%i", count);
+    newName += buffer;
+  }
+  depthName += newName;
+  depthName += ":";
+  return;
+}
+
+
 static MeshObstacle* makeContainedMesh(int type, const Obstacle* obs)
 {
   MeshObstacle* mesh = NULL;
@@ -464,6 +513,14 @@ void GroupDefinition::makeGroups(const MeshTransform& xform,
       } else {
         obs = list[i]->copyWithTransform(xform);
       }
+
+      // the tele names are setup with default names if
+      // they are not named (even for those in the world
+      // groupd def). also, invalid teles are named
+      if (type == teleType) {
+        makeTeleName(obs, i);
+      }
+
       if (obs->isValid()) {
         if (!isWorld) {
           // add it to the world
@@ -487,12 +544,22 @@ void GroupDefinition::makeGroups(const MeshTransform& xform,
     const GroupDefinition* groupDef =
       OBSTACLEMGR.findGroupDef(group->getGroupDef());
     if (groupDef != NULL) {
+      // make the new depth name
+      std::string tmpDepthName = depthName;
+      appendGroupName(group);
+
+      // setup the transform and modifier
       ObstacleModifier newObsMod(obsMod, *group);
       MeshTransform tmpXform = xform;
       tmpXform.prepend(group->getTransform());
-      // recurse
+  
+      // recurse and make plentiful
       groupDef->makeGroups(tmpXform, newObsMod);
-    } else {
+
+      // revert to the old depth name
+      depthName = tmpDepthName;
+    }
+    else {
       DEBUG1("warning: group definition \"%s\" is missing\n",
              group->getGroupDef().c_str());
     }
@@ -516,7 +583,7 @@ void GroupDefinition::replaceBasesWithBoxes()
 		      base->isDriveThrough(), base->isShootThrough(),
 		      false);
     delete base;
-    list.erase(i);
+    list.remove(i);
     i--;
     addObstacle(box);
   }
@@ -547,6 +614,38 @@ void GroupDefinition::tighten()
 {
   for (int type = 0; type < ObstacleTypeCount; type++) {
     lists[type].tighten();
+  }
+  return;
+}
+
+
+void GroupDefinition::sort(int (*compare)(const void* a, const void* b))
+{
+  if (this != OBSTACLEMGR.getWorld()) {
+    return; // only sort the world groupdef
+  }
+  for (int type = 0; type < ObstacleTypeCount; type++) {
+    lists[type].sort(compare);
+  }
+  return;
+}
+
+
+void GroupDefinition::deleteInvalidObstacles()
+{
+  if (this != OBSTACLEMGR.getWorld()) {
+    return; // only delete invalid obstacles in the world groupdef
+  }
+  for (int type = 0; type < ObstacleTypeCount; type++) {
+    ObstacleList& list = lists[teleType];
+    for (unsigned int i = 0; i < list.size(); i++) {
+      Obstacle* obs = list[i];
+      if (!obs->isValid()) {
+        DEBUG1("Deleted invalid %s obstacle\n", obs->getType());
+        delete obs;
+        list.remove(i);
+      }
+    }
   }
   return;
 }
@@ -769,6 +868,21 @@ void GroupDefinitionMgr::tighten()
 }
 
 
+static int compareHeights(const void* a, const void* b)
+{
+  const Obstacle* obsA = *((const Obstacle**)a);
+  const Obstacle* obsB = *((const Obstacle**)b);
+  const Extents& eA = obsA->getExtents();
+  const Extents& eB = obsB->getExtents();
+
+  if (eA.maxs[2] > eB.maxs[2]) {
+    return -1;
+  } else {
+    return +1;
+  }  
+}
+
+
 void GroupDefinitionMgr::makeWorld()
 {
   GroupDefinition::clearDepthName();
@@ -778,6 +892,13 @@ void GroupDefinitionMgr::makeWorld()
   
   world.makeGroups(noXform, noMods);
   
+  world.deleteInvalidObstacles();
+
+  // sort from top to bottom for enhanced radar  
+  for (int type = 0; type < GroupDefinition::ObstacleTypeCount; type++) {
+    world.sort(compareHeights);
+  }
+    
   tighten();
   
   return;
@@ -808,7 +929,7 @@ void GroupDefinitionMgr::addGroupDef(GroupDefinition* groupdef)
 }
 
 
-GroupDefinition* GroupDefinitionMgr::findGroupDef(const std::string& name)
+GroupDefinition* GroupDefinitionMgr::findGroupDef(const std::string& name) const
 {
   if (name.size() <= 0) {
     return NULL;

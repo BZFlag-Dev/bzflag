@@ -157,7 +157,7 @@ ControlPanel::ControlPanel(MainWindow& _mainWindow, SceneRenderer& renderer) :
   // make sure we're notified when MainWindow resizes or is exposed
   window.getWindow()->addResizeCallback(resizeCallback, this);
   window.getWindow()->addExposeCallback(exposeCallback, this);
-  BZDB.addCallback(StateDatabase::BZDB_NORADAR, bzdbCallback, this);
+  BZDB.addCallback(StateDatabase::BZDB_RADARLIMIT, bzdbCallback, this);
 
   // other initialization
   radarAreaPixels[0] = 0;
@@ -194,7 +194,7 @@ ControlPanel::~ControlPanel()
   // don't notify me anymore (cos you can't wake the dead!)
   window.getWindow()->removeResizeCallback(resizeCallback, this);
   window.getWindow()->removeExposeCallback(exposeCallback, this);
-  BZDB.removeCallback(StateDatabase::BZDB_NORADAR, bzdbCallback, this);
+  BZDB.removeCallback(StateDatabase::BZDB_RADARLIMIT, bzdbCallback, this);
 
   extern bool echoToConsole;
   extern bool echoAnsi;
@@ -494,7 +494,7 @@ void			ControlPanel::render(SceneRenderer& renderer)
   } glEnd();
 
   // border for radar
-  if (!BZDB.isTrue(StateDatabase::BZDB_NORADAR)) {
+  if (BZDBCache::radarLimit > 0.0f) {
     glScissor(x + radarAreaPixels[0] - 1,
 	      y + radarAreaPixels[1] - 1,
 	      radarAreaPixels[2] + 2,
@@ -554,7 +554,7 @@ void			ControlPanel::resize()
   messageAreaPixels[1] = radarAreaPixels[1];		    // Y coord
   messageAreaPixels[2] = (int)(w - radarSize - radarSpace) - 2; // Width
   messageAreaPixels[3] = radarAreaPixels[3];		    // Height
-  if (BZDB.isTrue(StateDatabase::BZDB_NORADAR)) {
+  if (BZDBCache::radarLimit <= 0.0f) {
     messageAreaPixels[0] = (int)radarSpace + 1;
     messageAreaPixels[2] = (int)(w - (radarSpace * 2.0f)) - 2;
   }

@@ -321,14 +321,16 @@ void TextureFont::drawString(float scale, GLfloat color[3], const char *str,
   int lastCharacter = 0;
   for (int i = 0; i < len; i++) {
     lastCharacter = charToUse;
-    if ((str[i] < 32) || (str[i] < 9))
-      charToUse = 32;
-    else if (str[i] > numberOfCharacters + 32)
-      charToUse = 32;
-    else
+    const char space = ' '; // decimal 32
+    if (str[i] < space) {
+      charToUse = space;
+    } else if (str[i] > (numberOfCharacters + space)) {
+      charToUse = space;
+    } else {
       charToUse = str[i];
+    }
 
-    charToUse -= 32;
+    charToUse -= space;
 
     if (charToUse == 0) {
       if (i == 0) {

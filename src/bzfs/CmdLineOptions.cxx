@@ -763,7 +763,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
     } else if (strcmp(argv[i],"-noMasterBanlist") == 0){
       options.suppressMasterBanList = true;
     } else if (strcmp(argv[i],"-noradar") == 0){
-      BZDB.setBool(StateDatabase::BZDB_NORADAR, true);
+      BZDB.set(StateDatabase::BZDB_RADARLIMIT, "-1.0");
     } else if (strcmp(argv[i],"-masterBanURL") == 0){
       /* if this is the first master ban url, override the default
        * list.  otherwise just keep adding urls.

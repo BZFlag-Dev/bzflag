@@ -36,10 +36,12 @@ WorldBuilder::WorldBuilder()
   owned = true;
 }
 
+
 WorldBuilder::~WorldBuilder()
 {
   if (owned) delete world;
 }
+
 
 void* WorldBuilder::unpack(void* buf)
 {
@@ -102,7 +104,12 @@ void* WorldBuilder::unpack(void* buf)
   buf = TRANSFORMMGR.unpack(buf);
 
   // unpack the obstacles
+  OBSTACLEMGR.clear();
   buf = OBSTACLEMGR.unpack(buf);
+
+  // unpack the teleporter links
+  world->links.clear();
+  buf = world->links.unpack(buf);
 
   // unpack water level
   buf = nboUnpackFloat(buf, world->waterLevel);
@@ -113,7 +120,7 @@ void* WorldBuilder::unpack(void* buf)
   }
 
   uint32_t i, count;
-
+  
   // unpack the weapons
   buf = nboUnpackUInt(buf, count);
   for (i = 0; i < count; i++) {
@@ -128,15 +135,6 @@ void* WorldBuilder::unpack(void* buf)
     EntryZone zone;
     buf = zone.unpack(buf);
     world->entryZones.push_back(zone);
-  }
-
-  // unpack the teleporter links
-  buf = nboUnpackUInt(buf, count);
-  for (i = 0; i < count; i++) {
-    uint16_t data[2];
-    buf = nboUnpackUShort(buf, data[0]);
-    buf = nboUnpackUShort(buf, data[1]);
-    setTeleporterTarget(int(data[0]), int(data[1]));
   }
 
   // check if the unpacking was successful
@@ -168,6 +166,9 @@ void* WorldBuilder::unpack(void* buf)
 
   // build the world obstacles
   OBSTACLEMGR.makeWorld();
+  
+  // link the teleporters
+  world->links.doLinking();
 
   // make the team bases
   if (world->gameStyle & TeamFlagGameStyle) {
@@ -190,6 +191,7 @@ void* WorldBuilder::unpack(void* buf)
 
   return buf;
 }
+
 
 void* WorldBuilder::unpackGameSettings(void* buf)
 {

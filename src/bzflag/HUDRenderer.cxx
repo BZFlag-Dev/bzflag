@@ -1096,7 +1096,7 @@ void			HUDRenderer::renderBox(SceneRenderer&)
   FontManager &fm = FontManager::instance();
 
   OpenGLGState::resetState();
-  const bool smooth = BZDB.isTrue("smooth");
+  const bool smooth = BZDBCache::smooth;
 
   // draw targeting box
   hudColor3fv(hudColor);

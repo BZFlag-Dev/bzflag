@@ -17,20 +17,21 @@
 // interface header
 #include "BackgroundRenderer.h"
 
-// system impl headers
+// system headers
 #include <stdio.h>
 #include <math.h>
 #include <string>
 
-// common impl headers
+// common headers
 #include "bzfgl.h"
 #include "OpenGLGState.h"
 #include "OpenGLMaterial.h"
 #include "TextureManager.h"
 #include "StateDatabase.h"
 #include "BZDBCache.h"
+#include "BzMaterial.h"
 
-// local impl headers
+// local headers
 #include "daylight.h"
 #include "stars.h"
 #include "MainWindow.h"
@@ -355,7 +356,7 @@ void BackgroundRenderer::setCelestial(const SceneRenderer& renderer,
   }
   
   makeCelestialLists(renderer, sunDir, moonDir);
-  
+
   return;
 }
 
@@ -407,9 +408,9 @@ void BackgroundRenderer::makeCelestialLists(const SceneRenderer& renderer,
   glEndList();
 
   // compute display list for moon
-  float coverage = moonDir[0] * sunDir[0] +
-				moonDir[1] * sunDir[1] +
-				moonDir[2] * sunDir[2];
+  float coverage = (moonDir[0] * sunDir[0]) +
+		   (moonDir[1] * sunDir[1]) +
+		   (moonDir[2] * sunDir[2]);
   // hack coverage to lean towards full
   coverage = (coverage < 0.0f) ? -sqrtf(-coverage) : coverage * coverage;
   float worldSize = BZDBCache::worldSize;
@@ -621,13 +622,12 @@ void BackgroundRenderer::renderGroundEffects(SceneRenderer& renderer,
 }
 
 
-void BackgroundRenderer::renderEnvironment(SceneRenderer& renderer)
+void BackgroundRenderer::renderEnvironment(SceneRenderer& renderer, bool update)
 {
-  if (renderer.useQuality() < 3)
-    return;
-
   if (!blank) {
-    weather.update();
+    if (update) {
+      weather.update();
+    }
     weather.draw(renderer);
   }
 }
@@ -783,7 +783,7 @@ void BackgroundRenderer::drawGround()
     groundGState[styleIndex].setState();
   }
 
-  if (BZDB.evalInt("useQuality") >= 3) {
+  if (RENDERER.useQuality() >= 3) {
     drawGroundCentered();
   } else {
     glCallList(simpleGroundList[styleIndex]);
@@ -1105,7 +1105,7 @@ void BackgroundRenderer::doInitDisplayLists()
   // with a normal (60 degree) perspective.
   const float worldSize = BZDBCache::worldSize;
   const float sunRadius = (float)(2.0 * worldSize * atanf((float)(60.0*M_PI/180.0)) / 60.0);
-  sunList =  glGenLists(1);
+  sunList = glGenLists(1);
   glNewList(sunList, GL_COMPILE);
   {
     glBegin(GL_TRIANGLE_FAN);
@@ -1122,7 +1122,7 @@ void BackgroundRenderer::doInitDisplayLists()
   glEndList();
 
   // make stars list
-  starList =  glGenLists(1);
+  starList = glGenLists(1);
   glNewList(starList, GL_COMPILE);
   {
     glBegin(GL_POINTS);
@@ -1155,7 +1155,7 @@ void BackgroundRenderer::doInitDisplayLists()
   }
 
   if (isRiva128) {
-    simpleGroundList[2] =  glGenLists(1);
+    simpleGroundList[2] = glGenLists(1);
     glNewList(simpleGroundList[2], GL_COMPILE);
     {
       glBegin(GL_TRIANGLE_STRIP);
@@ -1220,7 +1220,7 @@ void BackgroundRenderer::doInitDisplayLists()
     xtexdist = (xtexmax - xtexmin) / (float)GROUND_DIVS;
     ytexdist = (ytexmax - ytexmin) / (float)GROUND_DIVS;
 
-    simpleGroundList[2] =  glGenLists(1);
+    simpleGroundList[2] = glGenLists(1);
     glNewList(simpleGroundList[2], GL_COMPILE);
     {
       for (i = 0; i < GROUND_DIVS; i++) {
@@ -1253,7 +1253,7 @@ void BackgroundRenderer::doInitDisplayLists()
     glEndList();
   }
 
-  simpleGroundList[0] =  glGenLists(1);
+  simpleGroundList[0] = glGenLists(1);
   glNewList(simpleGroundList[0], GL_COMPILE);
   {
     glBegin(GL_TRIANGLE_STRIP);
@@ -1387,7 +1387,7 @@ void BackgroundRenderer::doInitDisplayLists()
 	    float frac = (float)i / (float)numFacesPerTexture;
 	    if (numMountainTextures != 1)
 	      frac = (frac * (float)(mountainsMinWidth - 2) + 1.0f) /
-						(float)mountainsMinWidth;
+			     (float)mountainsMinWidth;
 	    glNormal3f((float)(-M_SQRT1_2 * cosf(angle)),
 			 (float)(-M_SQRT1_2 * sinf(angle)),
 			  (float)M_SQRT1_2);

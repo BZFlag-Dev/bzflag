@@ -46,7 +46,6 @@ int			World::flagTexture(-1);
 
 World::World() :
   gameStyle(PlainGameStyle),
-  waterLevel(-1.0f),
   linearAcceleration(0.0f),
   angularAcceleration(0.0f),
   maxPlayers(0),
@@ -59,6 +58,7 @@ World::World() :
   flagWarpNodes(NULL)
 {
   worldWeapons = new WorldPlayer();
+  waterLevel = -1.0f;
   waterMaterial = NULL;
   linkMaterial = NULL;
 }
@@ -76,6 +76,7 @@ World::~World()
   for (i = 0; i < NumTeams; i++) {
     bases[i].clear();
   }
+  links.clear();
   OBSTACLEMGR.clear();
   COLLISIONMGR.clear();
 }
@@ -117,33 +118,36 @@ void			World::setWorld(World* _playingField)
   playingField = _playingField;
 }
 
-int			World::getTeleportTarget(int source) const
+
+int World::getTeleportTarget(int source) const
 {
-  const ObstacleList& teleporters = OBSTACLEMGR.getTeles();
-  assert(source >= 0 && source < (int)(2 * teleporters.size()));
-  int target = teleportTargets[source];
-  if ((target != randomTeleporter) && // random tag
-      (target >= (int)(2 * teleporters.size()))) {
-    // the other side of the teleporter
-    target = ((source / 2) * 2) + (1 - (source % 2));
-  }
-  return target;
+  return links.getTeleportTarget(source);
 }
 
-int			World::getTeleporter(const Teleporter* teleporter,
-							int face) const
+
+int World::getTeleportTarget(int source, unsigned int seed) const
+{
+  return links.getTeleportTarget(source, seed);
+}  
+
+
+int World::getTeleporter(const Teleporter* teleporter, int face) const
 {
   // search for teleporter
   const ObstacleList& teleporters = OBSTACLEMGR.getTeles();
   const int count = teleporters.size();
-  for (int i = 0; i < count; i++)
+  for (int i = 0; i < count; i++) {
     if (teleporter == (const Teleporter*)teleporters[i]) {
-      return 2 * i + face;
+      return ((2 * i) + face);
     }
-  return -1;
+  }
+  printf ("World::getTeleporter() error\n");
+  fflush(stdout);
+  exit(1);
 }
 
-const Teleporter*	World::getTeleporter(int source, int& face) const
+
+const Teleporter* World::getTeleporter(int source, int& face) const
 {
   const ObstacleList& teleporters = OBSTACLEMGR.getTeles();
   assert(source >= 0 && source < (int)(2 * teleporters.size()));
@@ -234,8 +238,75 @@ const Obstacle*		World::hitBuilding(const float* pos, float angle,
   return NULL;
 }
 
+/*
+static int compareHeights(const Extents& eA, const Extents& eB)
+{
+  if (fabsf(eA.maxs[2] - eB.maxs[2]) < 1.0e-3) {
+    if (eA.mins[2] > eB.mins[2]) {
+      return -1;
+    } else {
+      return +1;
+    }
+  }
+  else if (eA.maxs[2] > eB.maxs[2]) {
+    return -1;
+  }
+  else {
+    return +1;
+  }
+}
 
-static int sortHitNormal(const void* a, const void* b)
+static int compareObstacles(const void* a, const void* b)
+{
+  // - normal object come first (from lowest to highest)
+  // - then come the mesh face (highest to lowest)
+  // - and finally, the mesh objects (checkpoints really)
+  const Obstacle* obsA = *((const Obstacle**)a);
+  const Obstacle* obsB = *((const Obstacle**)b);
+  bool isFaceA = (obsA->getType() == MeshFace::getClassName());
+  bool isFaceB = (obsB->getType() == MeshFace::getClassName());
+  bool isMeshA = (obsA->getType() == MeshObstacle::getClassName());
+  bool isMeshB = (obsB->getType() == MeshObstacle::getClassName());
+  const Extents& eA = obsA->getExtents();
+  const Extents& eB = obsB->getExtents();
+  
+  if (isMeshA) {
+    if (!isMeshB) {
+      return +1;
+    } else {
+      return compareHeights(eA, eB);
+    }
+  }
+  
+  if (isMeshB) {
+    if (!isMeshA) {
+      return -1;
+    } else {
+      return compareHeights(eA, eB);
+    }
+  }
+  
+  if (isFaceA) {
+    if (!isFaceB) {
+      return +1;
+    } else {
+      return compareHeights(eA, eB);
+    }
+  }
+    
+  if (isFaceB) {
+    if (!isFaceA) {
+      return -1;
+    } else {
+      return compareHeights(eA, eB);
+    }
+  }
+    
+  return compareHeights(eB, eA); // reversed
+}
+*/
+
+static int compareHitNormal (const void* a, const void* b)
 {
   const MeshFace* faceA = *((const MeshFace**) a);
   const MeshFace* faceB = *((const MeshFace**) b);
@@ -265,10 +336,10 @@ static int sortHitNormal(const void* a, const void* b)
   }
 }
 
-const Obstacle*		World::hitBuilding(const float* oldPos, float oldAngle,
-					   const float* pos, float angle,
-					   float dx, float dy, float dz,
-					   bool directional) const
+const Obstacle* World::hitBuilding(const float* oldPos, float oldAngle,
+				   const float* pos, float angle,
+				   float dx, float dy, float dz,
+				   bool directional) const
 {
   // check walls
   const ObstacleList& walls = OBSTACLEMGR.getWalls();
@@ -290,6 +361,9 @@ const Obstacle*		World::hitBuilding(const float* oldPos, float oldAngle,
   const ObsList* olist =
     COLLISIONMGR.movingBoxTest (oldPos, oldAngle, pos, angle, dx, dy, dz);
 
+  // sort the list by type
+//  qsort (olist->list, hitCount, sizeof(Obstacle*), compareObstacles);
+  
   // make a list of the actual hits, or return
   // immediately if a non-mesh obstacle intersects
   int hitCount = 0;
@@ -322,19 +396,12 @@ const Obstacle*		World::hitBuilding(const float* oldPos, float oldAngle,
     }
   }
 
-  // sort the list by type and dot product
-  qsort (olist->list, hitCount, sizeof(Obstacle*), sortHitNormal);
+  // sort the list by dot product
+  qsort (olist->list, hitCount, sizeof(Obstacle*), compareHitNormal);
 
   if (hitCount > 0) {
     const MeshFace* face = (const MeshFace*) olist->list[0];
     if (face->isUpPlane() || (face->scratchPad < 0.0f) || !directional) {
-//      printf ("pos: <%10.10f> [%10.10f, %10.10f]  ", /*, %10.10f <%10.10f>   ", oldPos[2], pos[2],*/
-//	      face->getPosition()[2], face->getPlane()[2], face->getPlane()[3]);
-      if (face->isUpPlane()) {
-//	printf ("UpPlane\n");
-      } else {
-//	printf ("Not UpPlane\n");
-      }
       return face;
     }
   }
@@ -827,35 +894,26 @@ bool			World::writeWorld(std::string filename)
 
   // Write links
   {
-    int from = 0;
-    for (std::vector<int>::iterator it = teleportTargets.begin(); it != teleportTargets.end(); ++it, ++from) {
-      int to = *it;
-      out << "link" << std::endl;
-      out << "\tfrom " << from << std::endl;
-      if (to == randomTeleporter) {
-	out << "\tto random" << std::endl;
-      }
-      else {
-	out << "\tto " << to << std::endl;
-      }
-      out << "end" << std::endl << std::endl;
-    }
+    links.print(out, "");
   }
 
   // Write weapons
   {
-    for (std::vector<Weapon>::iterator it = weapons.begin(); it != weapons.end(); ++it) {
+    for (std::vector<Weapon>::iterator it = weapons.begin();
+         it != weapons.end(); ++it) {
       Weapon weapon = *it;
       out << "weapon" << std::endl;
       if (weapon.type != Flags::Null) {
 	out << "\ttype " << weapon.type->flagAbbv << std::endl;
       }
-      out << "\tposition " << weapon.pos[0] << " " << weapon.pos[1] << " " << weapon.pos[2] << std::endl;
+      out << "\tposition " << weapon.pos[0] << " " << weapon.pos[1] << " "
+                           << weapon.pos[2] << std::endl;
       out << "\trotation " << ((weapon.dir * 180.0) / M_PI) << std::endl;
       out << "\tinitdelay " << weapon.initDelay << std::endl;
       if (weapon.delay.size() > 0) {
 	out << "\tdelay";
-	for (std::vector<float>::iterator dit = weapon.delay.begin(); dit != weapon.delay.end(); ++dit) {
+	for (std::vector<float>::iterator dit = weapon.delay.begin();
+	     dit != weapon.delay.end(); ++dit) {
 	  out << " " << (float)*dit;
 	}
 	out << std::endl;
@@ -866,11 +924,14 @@ bool			World::writeWorld(std::string filename)
 
   // Write entry zones
   {
-    for (std::vector<EntryZone>::iterator it = entryZones.begin(); it != entryZones.end(); ++it) {
+    for (std::vector<EntryZone>::iterator it = entryZones.begin();
+         it != entryZones.end(); ++it) {
       EntryZone zone = *it;
       out << "zone" << std::endl;
-      out << "\tposition " << zone.pos[0] << " " << zone.pos[1] << " " << zone.pos[2] << std::endl;
-      out << "\tsize " << zone.size[0] << " " << zone.size[1] << " " << zone.size[2] << std::endl;
+      out << "\tposition " << zone.pos[0] << " " << zone.pos[1] << " "
+                           << zone.pos[2] << std::endl;
+      out << "\tsize " << zone.size[0] << " " << zone.size[1] << " "
+                       << zone.size[2] << std::endl;
       out << "\trotation " << ((zone.rot * 180.0) / M_PI) << std::endl;
       if (zone.flags.size() > 0) {
 	out << "\tflag";

@@ -54,7 +54,7 @@ MeshPolySceneNode::Geometry::~Geometry()
 void MeshPolySceneNode::Geometry::render()
 {
   sceneNode->setColor();
-
+  
   if (normals.getSize() != 0) {
     if (style >= 2) {
       drawVTN();

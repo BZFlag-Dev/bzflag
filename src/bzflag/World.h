@@ -36,6 +36,7 @@
 #include "Obstacle.h"
 #include "BundleMgr.h"
 #include "BzMaterial.h"
+#include "LinkManager.h"
 
 /* local interface headers */
 #include "RemotePlayer.h"
@@ -91,6 +92,7 @@ class World {
     const Teleporter*	getTeleporter(int source, int& face) const;
     int			getTeleporter(const Teleporter*, int face) const;
     int			getTeleportTarget(int source) const;
+    int			getTeleportTarget(int source, unsigned int seed) const;
 
     TeamColor		whoseBase(const float* pos) const;
     const Obstacle*	inBuilding(const float* pos, float radius,
@@ -150,12 +152,7 @@ class World {
 
 
   private:
-    typedef struct { float p[7]; } BaseParms;
-    typedef std::vector<BaseParms> TeamBases;
     short		gameStyle;
-    float		waterLevel;
-    const BzMaterial*	waterMaterial;
-    const BzMaterial*	linkMaterial;
     float		linearAcceleration;
     float		angularAcceleration;
     int			maxPlayers;
@@ -164,16 +161,27 @@ class World {
     int			maxFlags;
     float		shakeTimeout;
     int			shakeWins;
+    float		waterLevel;
+    const BzMaterial*	waterMaterial;
+    const BzMaterial*	linkMaterial;
+
+    typedef struct { float p[7]; } BaseParms;
+    typedef std::vector<BaseParms> TeamBases;
     TeamBases		bases[NumTeams];
+    Team		team[NumTeams];
+
     std::vector<int>	teleportTargets;
     std::vector<Weapon>	weapons;
     std::vector<EntryZone> entryZones;
-    Team		team[NumTeams];
+
     RemotePlayer**	players;
     WorldPlayer*	worldWeapons;
     Flag*		flags;
     FlagSceneNode**	flagNodes;
     FlagWarpSceneNode**	flagWarpNodes;
+
+    LinkManager		links;    
+
     static World*	playingField;
     static BundleMgr	*bundleMgr;
     static std::string	locale;

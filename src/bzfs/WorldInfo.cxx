@@ -61,6 +61,7 @@ WorldInfo::WorldInfo() :
 WorldInfo::~WorldInfo()
 {
   delete[] database;
+  links.clear();
   OBSTACLEMGR.clear();
 }
 
@@ -72,75 +73,17 @@ void WorldInfo::addWall(float x, float y, float z, float r, float w, float h)
   OBSTACLEMGR.addWorldObstacle(wall);
 }
 
-void WorldInfo::addLink(int from, int to)
+
+void WorldInfo::addLink(int src, int dst)
 {
-  // discard links to/from teleporters that don't exist
-  // note that -1 "to" means the client picks one at random
-  const ObstacleList& teles = OBSTACLEMGR.getTeles();
-  if ((unsigned(from) >= (teles.size() * 2)) ||
-     ((unsigned(to) >= (teles.size() * 2)) && (to != -1))) {
-    DEBUG1("Warning: bad teleporter link dropped from=%d to=%d\n", from, to);
-  } else {
-    setTeleporterTarget (from, to);
-  }
+  links.addLink(src, dst);
+  return;
 }
 
-
-int WorldInfo::findTeleFaceByName(const std::string& name)
+void WorldInfo::addLink(const std::string& src, const std::string& dst)
 {
-  if ((name == "random") || (name == "-1")) {
-    return -1;
-  }
-  
-  if ((name[0] >= '0') && (name[0] <= '9')) {
-    // old-style numeric value
-    return atoi(name.c_str());
-  }
-
-  if ((name.size() < 3) || (name[name.size() - 2] != ':')) {
-    return -2;
-  }
-
-  char lastChar = tolower(name[name.size() - 1]);
-  int face;
-  if (lastChar == 'f') {
-    face = 0;
-  } else if (lastChar == 'b') {
-    face = 1;
-  } else {
-    return -2;
-  }
-    
-  std::string shortName = name;
-  shortName.resize(shortName.size() - 2);
-  const ObstacleList& teles = OBSTACLEMGR.getTeles();
-  for (unsigned int i = 0; i < teles.size(); i++) {
-    const Teleporter* tele = (const Teleporter*) teles[i];
-    if (shortName == tele->getName()) {
-      return ((int)(i * 2) + face);
-    }
-  }
-
-  return -2;
-}
-
-void WorldInfo::addLink(const std::string& from, const std::string& to)
-{
-  int fromFace, toFace;
-  fromFace = findTeleFaceByName(from);
-  toFace = findTeleFaceByName(to);
-  // discard links to/from teleporters that don't exist
-  // note that -1 "to" means the client picks one at random
-  const ObstacleList& teles = OBSTACLEMGR.getTeles();
-  if ((unsigned(fromFace) >= (teles.size() * 2)) ||
-     ((unsigned(toFace) >= (teles.size() * 2)) && (toFace != -1))) {
-    DEBUG1("Warning: bad teleporter link dropped:  "
-           "from = \"%s\", to = \"%s\"\n", from.c_str(), to.c_str());
-  } else {
-    setTeleporterTarget (fromFace, toFace);
-    DEBUG4("linking %i to %i  (%i,%i  to  %i,%i)\n", fromFace, toFace,
-           (fromFace / 2), (fromFace % 2), (toFace / 2), (toFace % 2));
-  }
+  links.addLink(src, dst);
+  return;
 }
 
 
@@ -188,12 +131,6 @@ void WorldInfo::addTeleporter(float x, float y, float z, float r,
   const float pos[3] = {x, y, z};
   Teleporter* tele = new Teleporter(pos, r, w, d, h, b, horizontal, drive, shoot);
   OBSTACLEMGR.addWorldObstacle(tele);
-
-  // default to passthru linkage
-  const ObstacleList& teles = OBSTACLEMGR.getTeles();
-  int index = teles.size() - 1;
-  setTeleporterTarget ((index * 2) + 1, (index * 2));
-  setTeleporterTarget ((index * 2), (index * 2) + 1);
 }
 
 void WorldInfo::addBase(float x, float y, float z, float r,
@@ -204,7 +141,6 @@ void WorldInfo::addBase(float x, float y, float z, float r,
   const float size[3] = {w, d, h};
   BaseBuilding* base = new BaseBuilding(pos, r, size, color);
   OBSTACLEMGR.addWorldObstacle(base);
-  //bases.push_back (base);
 }
 
 
@@ -241,16 +177,6 @@ float WorldInfo::getWaterLevel() const
 float WorldInfo::getMaxWorldHeight() const
 {
   return maxHeight;
-}
-
-void WorldInfo::setTeleporterTarget(int src, int tgt)
-{
-  if ((int)teleportTargets.size() < (src + 1)) {
-    teleportTargets.resize(((src / 2) + 1) * 2);
-  }
-
-  // record target in source entry
-  teleportTargets[src] = tgt;
 }
 
 WorldWeapons& WorldInfo::getWorldWeapons()
@@ -490,6 +416,8 @@ void WorldInfo::finishWorld()
   entryZones.calculateQualifierLists();
 
   loadCollisionManager();
+  
+  links.doLinking();
 
   maxHeight = COLLISIONMGR.getWorldExtents().maxs[2];
   const float wallHeight = BZDB.eval(StateDatabase::BZDB_WALLHEIGHT);
@@ -499,16 +427,13 @@ void WorldInfo::finishWorld()
   if (maxHeight < 0.0f) {
     maxHeight = 0.0f;
   }
-
+  
   return;
 }
 
 
 int WorldInfo::packDatabase()
 {
-  unsigned int i;
-  const ObstacleList& teles = OBSTACLEMGR.getTeles();
-
   // make default water material. we wait to make the default material
   // to avoid messing up any user indexing. this has to be done before
   // the texture matrices and materials are packed.
@@ -520,9 +445,8 @@ int WorldInfo::packDatabase()
   databaseSize =
     DYNCOLORMGR.packSize() + TEXMATRIXMGR.packSize() +
     MATERIALMGR.packSize() + PHYDRVMGR.packSize() +
-    TRANSFORMMGR.packSize() + OBSTACLEMGR.packSize() +
-    worldWeapons.packSize() + entryZones.packSize() +
-    (sizeof(uint32_t) + (WorldCodeLinkSize * 2 * teles.size()));
+    TRANSFORMMGR.packSize() + OBSTACLEMGR.packSize() + links.packSize() +
+    worldWeapons.packSize() + entryZones.packSize();
   // add water level size
   databaseSize += sizeof(float);
   if (waterLevel >= 0.0f) {
@@ -553,6 +477,9 @@ int WorldInfo::packDatabase()
   // pack obstacles
   databasePtr = OBSTACLEMGR.pack(databasePtr);
 
+  // pack teleporter links
+  databasePtr = links.pack(databasePtr);
+  
   // pack water level
   databasePtr = nboPackFloat(databasePtr, waterLevel);
   if (waterLevel >= 0.0f) {
@@ -565,18 +492,6 @@ int WorldInfo::packDatabase()
 
   // pack entry zones
   databasePtr = entryZones.pack(databasePtr);
-
-  // pack teleporter links
-  uint32_t linkCount = 2 * teles.size();
-  databasePtr = nboPackUInt(databasePtr, linkCount);
-  for (i = 0; i < teles.size(); i++) {
-    // pack even link
-    databasePtr = nboPackUShort(databasePtr, uint16_t(i * 2));
-    databasePtr = nboPackUShort(databasePtr, uint16_t(teleportTargets[i * 2]));
-    // pack odd link
-    databasePtr = nboPackUShort(databasePtr, uint16_t(i * 2 + 1));
-    databasePtr = nboPackUShort(databasePtr, uint16_t(teleportTargets[i * 2 + 1]));
-  }
 
 
   // compress the map database

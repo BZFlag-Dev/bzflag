@@ -154,8 +154,8 @@ void RadarRenderer::drawFlagOnTank(float x, float y, float)
 void			RadarRenderer::render(SceneRenderer& renderer,
 							bool blank)
 {
-  if (!BZDB.isTrue("displayConsoleAndRadar") ||
-      BZDB.isTrue(StateDatabase::BZDB_NORADAR)) {
+  const float radarLimit = BZDBCache::radarLimit;
+  if (!BZDB.isTrue("displayConsoleAndRadar") || (radarLimit <= 0.0f)) {
     return;
   }
 
@@ -191,18 +191,20 @@ void			RadarRenderer::render(SceneRenderer& renderer,
   if (blank)
     return;
 
-  // prepare transforms
-  float worldSize = BZDBCache::worldSize;
-  float range = BZDB.eval("displayRadarRange") * worldSize;
+  // setup the radar range
+  float range = BZDB.eval("displayRadarRange") * radarLimit;
+  float maxRange = radarLimit;
   // when burrowed, limit radar range
   if (myTank && (myTank->getFlag() == Flags::Burrow) &&
       (myTank->getPosition()[2] < 0.0f)) {
-#ifdef _MSC_VER
-    range = min(range, worldSize / 4.0f);
-#else
-    range = std::min(range, worldSize / 4.0f);
-#endif
+    maxRange = radarLimit / 4.0f;
   }
+  if (maxRange < range) {
+    range = maxRange;
+    BZDB.set("displayRadarRange", "1.0");
+  }
+  
+  // prepare transforms
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
   const int xSize = renderer.getWindow().getWidth();
@@ -747,6 +749,9 @@ void RadarRenderer::renderBoxPyrMesh(bool smoothingOn)
   glEnd();
 
   // draw mesh obstacles
+  if (smoothingOn) {
+    glEnable(GL_POLYGON_SMOOTH);
+  }
   const ObstacleList& meshes = OBSTACLEMGR.getMeshes();
   count = meshes.size();
   for (i = 0; i < count; i++) {
@@ -776,6 +781,9 @@ void RadarRenderer::renderBoxPyrMesh(bool smoothingOn)
       }
       glEnd();
     }
+  }
+  if (smoothingOn) {
+    glDisable(GL_POLYGON_SMOOTH);
   }
 
   // now draw antialiased outlines around the polygons

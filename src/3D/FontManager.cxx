@@ -20,6 +20,7 @@
 #include "bzfio.h"
 #include "AnsiCodes.h"
 #include "StateDatabase.h"
+#include "BZDBCache.h"
 #include "OpenGLGState.h"
 #include "TimeKeeper.h"
 
@@ -510,9 +511,9 @@ void	    FontManager::getPulseColor(const GLfloat *color, GLfloat *pulseColor) c
   float pulseTime = TimeKeeper::getCurrent().getSeconds();
 
   // depth is how dark it should get (1.0 is to black)
-  float pulseDepth = BZDB.eval("pulseDepth");
+  float pulseDepth = BZDBCache::pulseDepth;
   // rate is how fast it should pulsate (smaller is faster)
-  float pulseRate = BZDB.eval("pulseRate");
+  float pulseRate = BZDBCache::pulseRate;
 
   float pulseFactor = fmodf(pulseTime, pulseRate) - pulseRate /2.0f;
   pulseFactor = fabsf(pulseFactor) / (pulseRate/2.0f);

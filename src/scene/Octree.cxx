@@ -408,7 +408,7 @@ OctreeNode::OctreeNode(unsigned char _depth, const Extents& exts,
   // return if this is a leaf node
   if (((int)depth >= maxDepth) || (listSize <= minElements)) {
     resizeCell();
-    DEBUG4 ("LEAF NODE: depth = %d, items = %i\n", depth, count);
+    //DEBUG4 ("LEAF NODE: depth = %d, items = %i\n", depth, count);
     return;
   }
 
@@ -429,7 +429,7 @@ OctreeNode::OctreeNode(unsigned char _depth, const Extents& exts,
     list = NULL;
   }
 
-  DEBUG4 ("BRANCH NODE: depth = %d, children = %i\n", depth, childCount);
+  //DEBUG4 ("BRANCH NODE: depth = %d, children = %i\n", depth, childCount);
 
   return;
 }

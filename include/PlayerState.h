@@ -15,6 +15,7 @@
 
 #include "common.h"
 
+
 class PlayerState
 {
   public:
@@ -29,8 +30,17 @@ class PlayerState
       Falling =		(1 << 6),	// tank accel'd by gravity
       OnDriver =	(1 << 7),	// tank is on a physics driver
       UserInputs =	(1 << 8),	// user speed and angvel are sent
-      JumpJets =	(1 << 9)	// tank has jump jets on
+      JumpJets =	(1 << 9),	// tank has jump jets on
+      PlaySound =	(1 << 10)	// play one or more sounds
     };
+    
+    enum PStatusSounds {
+      NoSounds = 	0,
+      JumpSound =	(1 << 0),
+      WingsSound = 	(1 << 1),
+      BounceSound =	(1 << 2)
+    };
+    
 
     PlayerState();
     void*	pack(void*, uint16_t& code);
@@ -50,9 +60,8 @@ class PlayerState
     float	jumpJetsScale;	// angular velocity of tank
 
     // used to avoid awkward remote bouncy sounds
-    uint8_t	jumpCounter;	// for keeping track of jumps
+    uint8_t	sounds;		// for playing sounds
 };
-
 
 
 #endif

@@ -35,8 +35,22 @@ class TankIDLSceneNode;
 class SphereSceneNode;
 class Obstacle;
 
-const int PlayerUpdatePLenMax = PlayerIdPLen + 42 +
-				(3 * sizeof(int16_t)) + sizeof(int32_t);
+// 54 bytes
+const int PlayerUpdatePLenMax =
+  sizeof(float)		+ // timestamp
+  PlayerIdPLen		+ // player id
+  sizeof(int32_t)	+ // order
+  sizeof(int16_t)	+ // status
+  sizeof(float) * 3	+ // position			(or int16_t * 3)
+  sizeof(float) * 3	+ // velocity			(or int16_t * 3)
+  sizeof(float)		+ // angle			(or int16_t)
+  sizeof(float)		+ // angular velocity		(or int16_t)
+  sizeof(int16_t)	+ // jump jets			(conditional)
+  sizeof(int32_t)	+ // physics driver		(conditional)
+  sizeof(int16_t)	+ // user speed			(conditional)
+  sizeof(int16_t)	+ // user angular velocity	(conditional)
+  sizeof(uint8_t);	  // sounds			(conditional)
+  
 
 class Player {
 public:
@@ -143,6 +157,10 @@ public:
   void		setUserTexture ( const char *tex ) { if(tex) userTexture = tex;}
 
   void setZpos (float z);
+
+protected:
+  void          clearRemoteSounds();
+  void          addRemoteSound(int sound);
 
 protected:
   // shot statistics

@@ -741,6 +741,24 @@ void Player::fireJumpJets()
 }
 
 
+void Player::clearRemoteSounds()
+{
+  state.sounds = PlayerState::NoSounds;
+  state.status &= ~PlayerState::PlaySound;
+  return;
+}
+
+
+void Player::addRemoteSound(int sound)
+{
+  state.sounds |= sound;
+  if (state.sounds != PlayerState::NoSounds) {
+    state.status |= PlayerState::PlaySound;
+  }
+  return;
+}
+    
+
 void Player::addToScene(SceneDatabase* scene, TeamColor effectiveTeam,
 			bool inCockpit, bool showIDL)
 {
@@ -1076,6 +1094,11 @@ bool Player::isDeadReckoningWrong() const
     return false;
   }
 
+  //  send a packet if we've made some noise
+  if (state.sounds != PlayerState::NoSounds) {
+    return true;
+  }
+
   //  send a packet if we've crossed a physics driver boundary
   if (state.phydrv != inputPhyDrv) {
     return true;
@@ -1197,27 +1220,18 @@ void Player::doDeadReckoning()
       }
     }
 
-    // FIXME - this still needs work
-    //	 also calculate a more accurate landing speed?
-
-    // check for a jump
-    if ((state.velocity[2] > oldZSpeed) && (state.velocity[2] > 0.0f) &&
-	(state.pos[2] > 0.0f)) {
-  //    if (((oldStatus & PlayerState::Falling) == 0) &&
-  //	((inputStatus & PlayerState::Falling) != 0) &&
-  //	(predictedVel[2] > 0.0f)) {
-      // setup the sound
-      if (BZDB.isTrue("remoteSounds")) {
-	if (state.jumpJetsScale > 0.0f) {
-	  if (getFlag() == Flags::Wings) {
-	    playWorldSound(SFX_FLAP, state.pos, remoteImportant);
-	  } else {
-	    playWorldSound(SFX_JUMP, state.pos, remoteImportant);
-	  }
-	} else {
-	  playWorldSound(SFX_BOUNCE, state.pos, remoteImportant);
-	}
+    // play jumping type sounds, and then clear them
+    if (state.sounds != PlayerState::NoSounds) {
+      if ((state.sounds & PlayerState::JumpSound) != 0) {
+        playWorldSound(SFX_JUMP, state.pos, remoteImportant);
       }
+      if ((state.sounds & PlayerState::WingsSound) != 0) {
+        playWorldSound(SFX_FLAP, state.pos, remoteImportant);
+      }
+      if ((state.sounds & PlayerState::BounceSound) != 0) {
+        playWorldSound(SFX_BOUNCE, state.pos, remoteImportant);
+      }
+      state.sounds = PlayerState::NoSounds;
     }
   }
 
@@ -1280,9 +1294,6 @@ void Player::setDeadReckoning(float timestamp)
 
   // adjust for the time offset
   if (deadReckoningState >= DRStateStable) {
-
-    // FIXME - untested
-
     // get predicted offset state
     float predictedPos[3];
     float predictedVel[3];
@@ -1311,7 +1322,7 @@ void Player::setDeadReckoning()
   memcpy(inputPos, state.pos, sizeof(float[3]));
   memcpy(inputVel, state.velocity, sizeof(float[3]));
   inputPhyDrv = state.phydrv;
-
+  
   //
   // pre-calculate some stuff for dead reckoning
   //

@@ -102,15 +102,6 @@ class GroupDefinition {
     GroupDefinition(const std::string& name);
     ~GroupDefinition();
 
-    void addObstacle(Obstacle* obstacle);
-    void addGroupInstance(GroupInstance* group);
-
-    void clear(); // delete the list and the obstacles
-    void tighten(); // reduce memory usage
-    void makeGroups(const MeshTransform& xform,
-		    const ObstacleModifier& obsMod) const;
-    void replaceBasesWithBoxes();
-
     enum ObstacleTypes {
       wallType = 0,
       boxType,
@@ -124,6 +115,20 @@ class GroupDefinition {
       tetraType,
       ObstacleTypeCount
     };
+
+    void addObstacle(Obstacle* obstacle);
+    void addGroupInstance(GroupInstance* group);
+
+    void clear(); // delete the list and the obstacles
+    void tighten(); // reduce memory usage
+
+    void sort(int (*compare)(const void* a, const void* b));
+    
+    void makeGroups(const MeshTransform& xform,
+		    const ObstacleModifier& obsMod) const;
+
+    void replaceBasesWithBoxes();
+    void deleteInvalidObstacles();
 
     const std::string& getName() const;
     const ObstacleList& getList(int type) const;
@@ -141,6 +146,8 @@ class GroupDefinition {
 
   private:
     Obstacle* newObstacle(int type);
+    void makeTeleName(Obstacle* obs, unsigned int pos) const;
+    void appendGroupName(const GroupInstance* group) const;
 
   private:
     std::string name;
@@ -185,7 +192,8 @@ class GroupDefinitionMgr {
 
     void addWorldObstacle(Obstacle* obstacle);
     void addGroupDef(GroupDefinition* groupdef);
-    GroupDefinition* findGroupDef(const std::string& name);
+
+    GroupDefinition* findGroupDef(const std::string& name) const;
 
     const GroupDefinition* getWorld() const;
 

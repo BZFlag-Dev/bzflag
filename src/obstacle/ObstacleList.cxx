@@ -17,6 +17,7 @@
 
 // system headers
 #include <string.h>
+#include <stdlib.h>
 
 
 static const unsigned int minListSize = 1;
@@ -72,6 +73,13 @@ void ObstacleList::tighten()
   memcpy (tmpList, list, listCount * sizeof(Obstacle*));
   delete[] list;
   list = tmpList;
+  return;
+}
+
+
+void ObstacleList::sort(int (*compare)(const void* a, const void* b))
+{
+  qsort(list, listCount, sizeof(Obstacle*), compare);
   return;
 }
 

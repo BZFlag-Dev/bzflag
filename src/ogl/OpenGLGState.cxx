@@ -1375,7 +1375,9 @@ GLuint bzGenLists(GLsizei count)
   if (OpenGLGState::getExecutingFreeFuncs()) {
     contextFreeError ("bzGenLists() is having issues");
   }
-  return glGenLists(count);
+  GLuint base = glGenLists(count);
+  //DEBUG4("genList = %i (%i)\n", (int)base, (int)count);
+  return base;
 }
 
 

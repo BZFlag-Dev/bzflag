@@ -47,7 +47,7 @@ class OpenGLLight {
     void		setAttenuation(const GLfloat* clq);
     void		setAttenuation(int index, GLfloat value);
 
-    void		setImportance(const ViewFrustum& frustum);
+    void		calculateImportance(const ViewFrustum& frustum);
     GLfloat		getImportance() const;
 
     void		setOnlyReal(bool value);

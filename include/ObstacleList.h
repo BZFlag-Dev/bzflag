@@ -26,7 +26,8 @@ class ObstacleList {
     void clear();
     void tighten();
     void push_back(Obstacle* obs);
-    void erase(unsigned int index);
+    void remove(unsigned int index);
+    void sort(int (*compare)(const void* a, const void* b));
 
     unsigned int size() const;
     Obstacle* operator[](int index) const;
@@ -45,7 +46,7 @@ inline Obstacle* ObstacleList::operator[](int index) const
 {
   return list[index];
 }
-inline void ObstacleList::erase(unsigned int index)
+inline void ObstacleList::remove(unsigned int index)
 {
   if ((index < listCount) && (listCount > 0)) {
     listCount--;

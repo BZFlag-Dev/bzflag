@@ -102,8 +102,6 @@ class Teleporter : public Obstacle {
     float texcoords[4][2]; // shared texture coordinates
 };
 
-const int randomTeleporter = (unsigned short)(-1);
-
 //
 // Teleporter
 //

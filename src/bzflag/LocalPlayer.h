@@ -134,7 +134,7 @@ protected:
 
 private:
   void		doSlideMotion(float dt, float slideTime,
-			  float newAngVel, float* newVelocity);
+                              float newAngVel, float* newVelocity);
   float		getNewAngVel(float old, float desired);
   void		collectInsideBuildings();
 

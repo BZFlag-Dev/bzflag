@@ -286,28 +286,28 @@ void SceneRenderer::setQuality(int value)
     glHint(GL_POINT_SMOOTH_HINT, GL_FASTEST);
   }
 
-  if (useQualityValue == 3)
+  if (useQualityValue >= 3)
     TankSceneNode::setMaxLOD(-1);
   else if (useQualityValue >= 1)
     TankSceneNode::setMaxLOD(3);
   else
     TankSceneNode::setMaxLOD(2);
 
-  if (useQualityValue == 3)
+  if (useQualityValue >= 3)
     BZDB.set("flagChunks","32");
   else if (useQualityValue >= 2)
     BZDB.set("flagChunks","12");
   else
     BZDB.set("flagChunks","8");
 
-  if (useQualityValue == 3)
+  if (useQualityValue >= 3)
     BZDB.set("moonSegments","64");
   else if (useQualityValue >= 2)
     BZDB.set("moonSegments","24");
   else
     BZDB.set("moonSegments","12");
 
-  BZDB.set("useQuality",TextUtils::format("%d", value));
+  BZDB.set("useQuality", TextUtils::format("%d", value));
 }
 
 
@@ -484,11 +484,11 @@ void SceneRenderer::setBackground(BackgroundRenderer* br)
 void SceneRenderer::getGroundUV(const float p[2], float uv[2]) const
 {
   float repeat = 0.01f;
-    if (BZDB.isSet( "groundTexRepeat" ))
-      repeat = BZDB.eval( "groundTexRepeat" );
+    if (BZDB.isSet("groundTexRepeat"))
+      repeat = BZDB.eval("groundTexRepeat");
 
-    if (BZDB.eval("useQuality")>=3)
-      repeat = BZDB.eval( "groundHighResTexRepeat" );
+    if (useQualityValue >= 3)
+      repeat = BZDB.eval("groundHighResTexRepeat");
 
   uv[0] = repeat * p[0];
   uv[1] = repeat * p[1];
@@ -959,10 +959,10 @@ void SceneRenderer::renderScene(bool /*_lastFrame*/, bool /*_sameFrame*/,
 
 void SceneRenderer::doRender()
 {
-  const bool notMirror = (!mirror || !clearZbuffer);
+  const bool mirrorPass = (mirror && clearZbuffer);
 
   // render the ground tank tracks
-  if (notMirror) {
+  if (!mirrorPass) {
     TrackMarks::renderGroundTracks();
   }
 
@@ -972,7 +972,8 @@ void SceneRenderer::doRender()
 
   // render the environmental conditions
   if (background) {
-    background->renderEnvironment(*this);
+    // do not update for the second mirror pass
+    background->renderEnvironment(*this, !mirror || clearZbuffer);
   }
 
   // draw all the stuff in the ordered list.  turn
@@ -982,7 +983,7 @@ void SceneRenderer::doRender()
   glDepthMask(GL_TRUE);
 
   // render the ground tank tracks
-  if (notMirror) {
+  if (!mirrorPass) {
     TrackMarks::renderObstacleTracks();
   }
 
@@ -1125,7 +1126,7 @@ void SceneRenderer::getLights()
       // calculate the light importances
       int i;
       for (i = 0; i < lightsCount; i++) {
-	lights[i]->setImportance(frustum);
+	lights[i]->calculateImportance(frustum);
       }
 
       // sort by cull state, grounded state, and importance

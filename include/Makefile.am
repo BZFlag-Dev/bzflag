@@ -56,6 +56,7 @@ noinst_HEADERS =			\
 	LagInfo.h			\
 	Language.h			\
 	LaserSceneNode.h		\
+	LinkManager.h			\
 	ListServer.h			\
 	MathUtils.h			\
 	MediaFile.h			\

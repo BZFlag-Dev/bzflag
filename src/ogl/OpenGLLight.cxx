@@ -193,7 +193,7 @@ void OpenGLLight::setOnlyGround(bool value)
 }
 
 
-void OpenGLLight::setImportance(const ViewFrustum& frustum)
+void OpenGLLight::calculateImportance(const ViewFrustum& frustum)
 {
   // for away lights count the most
   // (shouldn't happen for dynamic lights?)

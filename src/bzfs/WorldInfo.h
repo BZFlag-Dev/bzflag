@@ -23,6 +23,7 @@
 #include "EntryZones.h"
 #include "WorldWeapons.h"
 #include "TeamBases.h"
+#include "LinkManager.h"
 
 /* common implementation headers */
 
@@ -104,12 +105,10 @@ public:
 
 private:
 
-  void setTeleporterTarget(int src, int tgt);
   bool rectHitCirc(float dx, float dy, const float *p, float r) const;
   void loadCollisionManager();
   InBuildingType classifyHit (const Obstacle* obstacle) const;
   void makeWaterMaterial();
-  int findTeleFaceByName(const std::string& name);
 
 public:
 
@@ -164,11 +163,11 @@ private:
   float gravity;
   float maxHeight;
   float waterLevel;
-  const BzMaterial* waterMatRef;
+  const BzMaterial*	waterMatRef;
 
-  EntryZones		entryZones;
-  WorldWeapons		worldWeapons;
-  std::vector<int>	teleportTargets;
+  LinkManager	links;  
+  EntryZones	entryZones;
+  WorldWeapons	worldWeapons;
 
   char *database;
   int databaseSize;

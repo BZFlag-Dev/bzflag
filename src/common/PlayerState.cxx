@@ -44,7 +44,7 @@ PlayerState::PlayerState()
   userSpeed = 0.0f;
   userAngVel = 0.0f;
   jumpJetsScale = 0.0f;
-  jumpCounter = 0;
+  sounds = NoSounds;
   return;
 }
 
@@ -137,8 +137,8 @@ void*	PlayerState::pack(void* buf, uint16_t& code)
     buf = nboPackShort(buf, angvel);
   }
 
-  if ((status & Falling) != 0) {
-    buf = nboPackUByte(buf, jumpCounter);
+  if ((status & PlaySound) != 0) {
+    buf = nboPackUByte(buf, sounds);
   }
 
   return buf;
@@ -207,10 +207,10 @@ void*	PlayerState::unpack(void* buf, uint16_t code)
     userAngVel = 0.0f;
   }
 
-  if ((inStatus & Falling) != 0) {
-    buf = nboUnpackUByte(buf, jumpCounter);
+  if ((inStatus & PlaySound) != 0) {
+    buf = nboUnpackUByte(buf, sounds);
   } else {
-    jumpCounter = 0;
+    sounds = NoSounds;
   }
 
   return buf;

@@ -107,7 +107,7 @@ void			LocalPlayer::doUpdate(float dt)
   const int numShots = World::getWorld()->getMaxShots();
   static TimeKeeper pauseTime = TimeKeeper::getNullTime();
   static bool wasPaused = false;
-
+  
   // if paused then boost the reload times by dt (so that, effectively,
   // reloading isn't performed)
   int i;
@@ -261,6 +261,8 @@ void			LocalPlayer::doUpdateMotion(float dt)
   newVelocity[1] = oldVelocity[1];
   newVelocity[2] = oldVelocity[2];
   float newAngVel = 0.0f;
+
+  clearRemoteSounds();
 
   // if was teleporting and exceeded teleport time then not teleporting anymore
   if (isTeleporting() &&
@@ -696,9 +698,6 @@ void			LocalPlayer::doUpdateMotion(float dt)
       // teleport
       const int source = World::getWorld()->getTeleporter(teleporter, face);
       int target = World::getWorld()->getTeleportTarget(source);
-      if (target == randomTeleporter) {
-	target = rand() % (2 * OBSTACLEMGR.getTeles().size());
-      }
 
       int outFace;
       const Teleporter* outPort =
@@ -761,6 +760,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
     const PhysicsDriver* phydrv = PHYDRVMGR.getDriver(getPhysicsDriver());
     if ((phydrv != NULL) && (phydrv->getLinearVel()[2] > 0.0f)) {
       playLocalSound(SFX_BOUNCE);
+      addRemoteSound(PlayerState::BounceSound);
     }
     else if (justLanded && !entryDrop) {
       playLocalSound(SFX_LAND);
@@ -810,7 +810,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
   }
 
   // calculate the list of inside buildings
-  insideBuildings.clear(); // clear the list
+  insideBuildings.clear();
   if (location == InBuilding) {
     collectInsideBuildings();
   }
@@ -1371,8 +1371,10 @@ void			LocalPlayer::doJump()
   if (gettingSound) {
     if (flag == Flags::Wings) {
       playLocalSound(SFX_FLAP);
+      addRemoteSound(PlayerState::WingsSound);
     } else {
       playLocalSound(SFX_JUMP);
+      addRemoteSound(PlayerState::JumpSound);
     }
   }
 

@@ -31,14 +31,18 @@ public:
 	static bool  lighting;
 	static bool  smooth;
 	static bool  colorful;
+	static int   flagChunks;
 	static bool  animatedTreads;
 	static int   radarStyle;
 	static bool  leadingShotLine;
 	static int   linedRadarShots;
 	static int   sizedRadarShots;
+	static float pulseRate;
+	static float pulseDepth;
 
 	static float maxLOD;
 	static float worldSize;
+	static float radarLimit;
 	static float gravity;
 	static float tankWidth;
 	static float tankLength;

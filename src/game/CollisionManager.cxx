@@ -97,12 +97,18 @@ static void squeezeChildren (ColDetNode** children)
   return;
 }
 
-static int compareZlevels (const void* a, const void* b)
+
+static int compareHeights (const Extents& eA, const Extents& eB)
 {
-  const Obstacle* obsA = *((const Obstacle**)a);
-  const Obstacle* obsB = *((const Obstacle**)b);
-  const Extents& eA = obsA->getExtents();
-  const Extents& eB = obsB->getExtents();
+  if (eA.maxs[2] > eB.maxs[2]) {
+    return -1;
+  } else {
+    return +1;
+  }
+}
+
+static int compareFaceHeights (const Extents& eA, const Extents& eB)
+{
   if (fabsf(eA.maxs[2] - eB.maxs[2]) < 1.0e-3) {
     if (eA.mins[2] > eB.mins[2]) {
       return -1;
@@ -116,6 +122,55 @@ static int compareZlevels (const void* a, const void* b)
   else {
     return +1;
   }
+}
+
+static int compareObstacles (const void* a, const void* b)
+{
+  // - normal object come first (from lowest to highest)
+  // - then come the mesh face (highest to lowest)
+  // - and finally, the mesh objects (checkpoints really)
+  const Obstacle* obsA = *((const Obstacle**)a);
+  const Obstacle* obsB = *((const Obstacle**)b);
+  bool isFaceA = (obsA->getType() == MeshFace::getClassName());
+  bool isFaceB = (obsB->getType() == MeshFace::getClassName());
+  bool isMeshA = (obsA->getType() == MeshObstacle::getClassName());
+  bool isMeshB = (obsB->getType() == MeshObstacle::getClassName());
+  const Extents& eA = obsA->getExtents();
+  const Extents& eB = obsB->getExtents();
+  
+  if (isMeshA) {
+    if (!isMeshB) {
+      return +1;
+    } else {
+      return compareHeights(eA, eB);
+    }
+  }
+  
+  if (isMeshB) {
+    if (!isMeshA) {
+      return -1;
+    } else {
+      return compareHeights(eA, eB);
+    }
+  }
+  
+  if (isFaceA) {
+    if (!isFaceB) {
+      return +1;
+    } else {
+      return compareFaceHeights(eA, eB);
+    }
+  }
+    
+  if (isFaceB) {
+    if (!isFaceA) {
+      return -1;
+    } else {
+      return compareFaceHeights(eA, eB);
+    }
+  }
+    
+  return compareHeights(eB, eA); // reversed
 }
 
 
@@ -316,7 +371,7 @@ const ColDetNodeList* CollisionManager::rayTestNodes (const Ray* ray,
 
 void CollisionManager::load ()
 {
-  unsigned int i;
+  int i;
 
   // get the lists
   const ObstacleList& meshes = OBSTACLEMGR.getMeshes();
@@ -335,7 +390,8 @@ void CollisionManager::load ()
 
   // determine the total number of obstacles
   int fullCount = 0;
-  for (i = 0; i < meshes.size(); i++) {
+  const int meshCount = (int)meshes.size();
+  for (i = 0; i < meshCount; i++) {
     MeshObstacle* mesh = (MeshObstacle*) meshes[i];
     fullCount += mesh->getFaceCount() + 1; // one for the mesh itself
   }
@@ -347,35 +403,48 @@ void CollisionManager::load ()
   FullList.list = new Obstacle*[fullCount];
   FullList.count = 0;
 
+  //
   // add everything to the full list
-  for (i = 0; i < meshes.size(); i++) {
-    MeshObstacle* mesh = (MeshObstacle*) meshes[i];
-    for (int f = 0; f < mesh->getFaceCount(); f++) {
-      addToFullList((Obstacle*) mesh->getFace(f));
-    }
-  }
-  for (i = 0; i < boxes.size(); i++) {
+  //
+  // they should have been sorted from top to bottom by the
+  // ObstacleMgr, but we'll want the non-mesh obstacles sorted
+  // from bottom to top, so insert them in reverse order to
+  // speed of the sorting.
+  //
+  
+  const int boxCount = (int)boxes.size();
+  for (i = (boxCount - 1); i >= 0; i--) {
     addToFullList(boxes[i]);
   }
-  for (i = 0; i < pyrs.size(); i++) {
+  const int pyrCount = (int)pyrs.size();
+  for (i = (pyrCount - 1); i >= 0; i--) {
     addToFullList(pyrs[i]);
   }
-  for (i = 0; i < bases.size(); i++) {
+  const int baseCount = (int)bases.size();
+  for (i = (baseCount - 1); i >= 0; i--) {
     addToFullList(bases[i]);
   }
-  for (i = 0; i < teles.size(); i++) {
+  const int teleCount = (int)teles.size();
+  for (i = (teleCount - 1); i >= 0; i--) {
     Teleporter* tele = (Teleporter*) teles[i];
     addToFullList((Obstacle*) tele);
     addToFullList((Obstacle*) tele->getBackLink());
     addToFullList((Obstacle*) tele->getFrontLink());
   }
-  // FIXME - sort by Z height and size
-  qsort(FullList.list, FullList.count, sizeof(Obstacle*), compareZlevels);
-
-  // add the mesh obstacles after the sorting
-  for (i = 0; i < meshes.size(); i++) {
+  // add the mesh types last
+  for (i = (meshCount - 1); i >= 0; i--) {
+    MeshObstacle* mesh = (MeshObstacle*) meshes[i];
+    const int meshFaceCount = mesh->getFaceCount();
+    for (int f = 0; f < meshFaceCount; f++) {
+      addToFullList((Obstacle*) mesh->getFace(f));
+    }
+  }
+  for (i = (meshCount - 1); i >= 0; i--) {
     addToFullList(meshes[i]);
   }
+
+  // do the type/height sort
+  qsort(FullList.list, FullList.count, sizeof(Obstacle*), compareObstacles);
 
 
   // generate the octree
@@ -389,11 +458,11 @@ void CollisionManager::load ()
   root->tallyStats();
 
   DEBUG2 ("ColDet Octree obstacles = %i\n", FullList.count);
-  for (int i = 0; i < 3; i++) {
+  for (i = 0; i < 3; i++) {
     DEBUG2 ("  grid extent[%i] = %f, %f\n", i, gridExtents.mins[i],
                                                gridExtents.maxs[i]);
   }
-  for (int i = 0; i < 3; i++) {
+  for (i = 0; i < 3; i++) {
     DEBUG2 ("  world extent[%i] = %f, %f\n", i,
             worldExtents.mins[i], worldExtents.maxs[i+3]);
   }
@@ -556,7 +625,7 @@ ColDetNode::ColDetNode(unsigned char _depth,
   // return if this is a leaf node
   if (((int)depth >= maxDepth) || (fullList.count <= minElements)) {
     resizeCell();
-    DEBUG4 ("COLDET LEAF NODE: depth = %d, items = %i\n", depth, count);
+    //DEBUG4 ("COLDET LEAF NODE: depth = %d, items = %i\n", depth, count);
     return;
   }
 
@@ -575,7 +644,7 @@ ColDetNode::ColDetNode(unsigned char _depth,
   free (fullList.list);
   fullList.list = NULL;
 
-  DEBUG4 ("COLDET BRANCH NODE: depth = %d, children = %i\n", depth, childCount);
+  //DEBUG4 ("COLDET BRANCH NODE: depth = %d, children = %i\n", depth, childCount);
 
   return;
 }

@@ -371,15 +371,6 @@ WorldInfo* BZWReader::defineWorldFromFile()
 			 base->getRotation(), safety);
   }
 
-  // make defaults links
-  const ObstacleList& teles = OBSTACLEMGR.getTeles();
-  for (i = 0; i < teles.size(); i++) {
-    const int side1 = i * 2;
-    const int side2 = (i * 2) + 1;
-    world->addLink(side1, side2);
-    world->addLink(side2, side1);
-  }
-
   // add objects
   const int n = list.size();
   for (int i = 0; i < n; ++i) {
