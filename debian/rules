@@ -61,8 +61,6 @@ bzflag: build
 	cp -pr data/[^C]* debian/$@/usr/share/bzflag/
 	cp -p man/bzflag.6 debian/$@/usr/share/man/man6/
 	cp -p bin/bzflag debian/$@/usr/games/
-	chgrp games debian/$@/usr/games/bzflag
-	chmod g+s debian/$@/usr/games/bzflag
 #	dh_installdebconf -p$@
 	dh_installdocs -p$@
 	dh_installmenu -p$@
