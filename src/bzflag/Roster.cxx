@@ -11,6 +11,7 @@
  */
 
 /* interface header */
+#include "common.h"
 #include "Roster.h"
 
 /* local implementation headers */

@@ -11,6 +11,7 @@
  */
 
 /* interface header */
+#include "common.h"
 #include "BaseLocalPlayer.h"
 
 /* common implementation headers */
