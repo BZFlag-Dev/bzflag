@@ -4,6 +4,9 @@ recent bugs
 - spin inversion bug, fix in MeshTransform.cxx (around line 300)
   during the next protocol breakage
 
+- do all Riva128 systems require "noMeshClusers"? Is there a 
+  workout to make vertex array work on those cards?
+
 - team flags will not sit on buildings if the -fb option is used
   (bzfs.cxx / line 2708) should the team flags always be allowed
   to land on any valid surface? (no -fb check, no -j check, etc)
