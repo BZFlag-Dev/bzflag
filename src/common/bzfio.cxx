@@ -16,9 +16,7 @@
 #include <io.h>
 #include <iostream>
 #include <fstream>
-
-static HANDLE consoleStdIn;
-static HANDLE consoleStdOut;
+#include <atlbase.h> 
 #endif
 
 #include "bzfio.h"
@@ -32,27 +30,20 @@ void formatDebug(const char* fmt, ...)
     va_start(args, fmt);
     vsnprintf(buffer, 8192, fmt, args);
     va_end(args);
-    std::cout << buffer;
+    #if defined(_WIN32)
+      #if defined(_DEBUG)
+        ATLTRACE2(buffer);
+      #endif
+    #else
+      std::cout << buffer;
+    #endif
   }
 }
 
 void initDebug()
 {
-#if defined(_WIN32) && defined(_DEBUG)
-  int conHandle;
-  AllocConsole();
-  consoleStdOut = GetStdHandle( STD_OUTPUT_HANDLE );
-  conHandle = _open_osfhandle((long)consoleStdOut, _O_TEXT);
-  FILE *fp = _fdopen( conHandle, "w" );
-  *stdout = *fp;
-  setvbuf( stdout, NULL, _IONBF, 0 );
-  std::ios::sync_with_stdio();
-#endif
 }
 
 void termDebug()
 {
-#if defined(_WIN32) && defined(_DEBUG)
-  FreeConsole();
-#endif
 }
