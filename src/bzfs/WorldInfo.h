@@ -36,7 +36,6 @@
 #include "ArcObstacle.h"
 #include "ConeObstacle.h"
 #include "SphereObstacle.h"
-#include "CollisionManager.h"
 
 class WorldFileLocation;
 class CustomZone;
@@ -169,8 +168,6 @@ private:
   EntryZones	       entryZones;
   WorldWeapons         worldWeapons;
   std::vector<int> teleportTargets;
-
-  CollisionManager collisionManager;
 
   char *database;
   int databaseSize;

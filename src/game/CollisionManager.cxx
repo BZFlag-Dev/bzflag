@@ -27,6 +27,8 @@
 
 /* static variables */
 
+CollisionManager COLLISIONMGR; // the big dog
+
 static const float testFudge = 0.1f;
 
 static int maxDepth = 0;

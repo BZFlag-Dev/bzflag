@@ -113,12 +113,7 @@ const Obstacle* ShotStrategy::getFirstBuilding(const Ray& ray,
   }
 
   //check everything else
-  const CollisionManager* colMgr = World::getCollisionManager();
-  if (colMgr == NULL) {
-    return closestObstacle;
-  }
-
-  const ObsList* olist = colMgr->rayTest (&ray, t);
+  const ObsList* olist = COLLISIONMGR.rayTest (&ray, t);
 
   for (int i = 0; i < olist->count; i++) {
     const Obstacle* obs = olist->list[i];

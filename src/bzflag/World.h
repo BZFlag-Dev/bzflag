@@ -42,7 +42,6 @@
 #include "WorldPlayer.h"
 #include "Weapon.h"
 #include "EntryZone.h"
-#include "CollisionManager.h"
 
 class FlagSceneNode;
 
@@ -126,8 +125,6 @@ class World {
     static World*	getWorld();
     static void		setWorld(World*);
 
-    static const CollisionManager* getCollisionManager();
-
     static BundleMgr*	getBundleMgr();
     static void		setBundleMgr(BundleMgr *bundleMgr);
 
@@ -186,7 +183,6 @@ class World {
     std::vector<Weapon>		        weapons;
     std::vector<EntryZone>		entryZones;
     std::vector<int>			teleportTargets;
-    CollisionManager                    collisionManager;
     Team		team[NumTeams];
     RemotePlayer**	players;
     WorldPlayer*	worldWeapons;
@@ -414,16 +410,6 @@ inline const std::vector<Teleporter*>& World::getTeleporters() const
 inline World*		World::getWorld()
 {
   return playingField;
-}
-
-inline const CollisionManager* World::getCollisionManager()
-{
-  if (playingField != NULL) {
-    return &playingField->collisionManager;
-  }
-  else {
-    return NULL;
-  }
 }
 
 inline BundleMgr*	World::getBundleMgr()

@@ -23,6 +23,7 @@
 #include "BZDBCache.h"
 #include "TextureManager.h"
 #include "FileManager.h"
+#include "CollisionManager.h"
 #include "DynamicColor.h"
 #include "TextureMatrix.h"
 #include "BzMaterial.h"
@@ -123,15 +124,15 @@ void			World::done()
 
 void                    World::loadCollisionManager()
 {
-  collisionManager.load(meshes, boxes, basesR, pyramids, teleporters);
+  COLLISIONMGR.load(meshes, boxes, basesR, pyramids, teleporters);
   return;
 }
 
 void                    World::checkCollisionManager()
 {
-  if (collisionManager.needReload()) {
+  if (COLLISIONMGR.needReload()) {
     // reload the collision grid
-    collisionManager.load(meshes, boxes, basesR, pyramids, teleporters);
+    COLLISIONMGR.load(meshes, boxes, basesR, pyramids, teleporters);
   }
   return;
 }
@@ -225,7 +226,7 @@ const Obstacle*		World::inBuilding(const float* pos,
                                           float radius, float height) const
 {
   // check everything but walls
-  const ObsList* olist = collisionManager.cylinderTest (pos, radius, height);
+  const ObsList* olist = COLLISIONMGR.cylinderTest (pos, radius, height);
   for (int i = 0; i < olist->count; i++) {
     const Obstacle* obs = olist->list[i];
     if (obs->inCylinder(pos, radius, height)) {
@@ -250,7 +251,7 @@ const Obstacle*		World::hitBuilding(const float* pos, float angle,
   }
 
   // check everything else
-  const ObsList* olist = collisionManager.boxTest (pos, angle, dx, dy, dz);
+  const ObsList* olist = COLLISIONMGR.boxTest (pos, angle, dx, dy, dz);
 
   for (int i = 0; i < olist->count; i++) {
     const Obstacle* obs = olist->list[i];
@@ -319,7 +320,7 @@ const Obstacle*		World::hitBuilding(const float* oldPos, float oldAngle,
 
   // get the list of potential hits from the collision manager
   const ObsList* olist =
-    collisionManager.movingBoxTest (oldPos, oldAngle, pos, angle, dx, dy, dz);
+    COLLISIONMGR.movingBoxTest (oldPos, oldAngle, pos, angle, dx, dy, dz);
     
   // make a list of the actual hits, or return
   // immediately if a non-mesh obstacle intersects
@@ -1059,7 +1060,7 @@ void			World::drawCollisionGrid()
   glDisable (GL_TEXTURE_2D);
   
   glColor4fv (color);
-  collisionManager.draw (drawLines);
+  COLLISIONMGR.draw (drawLines);
   
   if (usingTextures) {
     glEnable (GL_TEXTURE_2D);

@@ -18,6 +18,7 @@
 #include "Pack.h"
 #include "Protocol.h"
 #include "Intersect.h"
+#include "CollisionManager.h"
 #include "DynamicColor.h"
 #include "TextureMatrix.h"
 #include "BzMaterial.h"
@@ -274,15 +275,15 @@ WorldWeapons& WorldInfo::getWorldWeapons()
 
 void                    WorldInfo::loadCollisionManager()
 {
-  collisionManager.load(meshes, boxes, bases, pyramids, teleporters);
+  COLLISIONMGR.load(meshes, boxes, bases, pyramids, teleporters);
   return;
 }
 
 void                    WorldInfo::checkCollisionManager()
 {
-  if (collisionManager.needReload()) {
+  if (COLLISIONMGR.needReload()) {
     // reload the collision grid
-    collisionManager.load(meshes, boxes, bases, pyramids, teleporters);
+    COLLISIONMGR.load(meshes, boxes, bases, pyramids, teleporters);
   }
   return;
 }
@@ -421,7 +422,7 @@ InBuildingType WorldInfo::cylinderInBuilding(const Obstacle **location,
   *location = NULL;
 
   // check everything but walls
-  const ObsList* olist = collisionManager.cylinderTest (pos, radius, height);
+  const ObsList* olist = COLLISIONMGR.cylinderTest (pos, radius, height);
   for (int i = 0; i < olist->count; i++) {
     const Obstacle* obs = olist->list[i];
     if (obs->inCylinder(pos, radius, height)) {
@@ -453,7 +454,7 @@ InBuildingType WorldInfo::boxInBuilding(const Obstacle **location,
 
   // check everything but walls
   const ObsList* olist =
-    collisionManager.boxTest (pos, angle, width, breadth, height);
+    COLLISIONMGR.boxTest (pos, angle, width, breadth, height);
   for (int i = 0; i < olist->count; i++) {
     const Obstacle* obs = olist->list[i];
     if (obs->inBox(pos, angle, width, breadth, height)) {

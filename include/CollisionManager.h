@@ -113,6 +113,8 @@ class CollisionManager {
     float WorldSize;
 };
 
+extern CollisionManager COLLISIONMGR;
+
 
 class ColDetNode {
   public:

@@ -218,9 +218,8 @@ void			LocalPlayer::doUpdateMotion(float dt)
       // can't control explosion motion
       newVelocity[2] += BZDBCache::gravity * dt;
       newAngVel = 0.0f;	// or oldAngVel to spin while exploding
-    } else if ((location == OnGround)
-      ||       (location == OnBuilding)
-      ||       (location == InBuilding && oldPosition[2] == groundLimit)) {
+    } else if ((location == OnGround) || (location == OnBuilding) ||
+               (location == InBuilding && oldPosition[2] == groundLimit)) {
       // full control
       float speed = desiredSpeed;
 
@@ -422,7 +421,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
     newPos[0] = tmpPos[0] + timeStep * newVelocity[0];
     newPos[1] = tmpPos[1] + timeStep * newVelocity[1];
     newPos[2] = tmpPos[2] + timeStep * newVelocity[2];
-    if (newPos[2]<groundLimit && newVelocity[2]<0) {
+    if ((newPos[2] < groundLimit) && (newVelocity[2] < 0)) {
       // Hit lower limit, stop falling
       newPos[2] = groundLimit;
       if (location == Exploding) {
@@ -443,22 +442,23 @@ void			LocalPlayer::doUpdateMotion(float dt)
     if ((oldLocation != InAir)
     &&  (obstacle->getType() != WallObstacle::getClassName())
     &&  (obstacle->getType() != PyramidBuilding::getClassName())
-    &&  (obstacleTop != tmpPos[2]) && 
-        (obstacleTop < (tmpPos[2] + BZDB.eval(StateDatabase::BZDB_MAXBUMPHEIGHT)))) {
+    &&  (obstacleTop != tmpPos[2])
+    &&  (obstacleTop < (tmpPos[2] + BZDB.eval(StateDatabase::BZDB_MAXBUMPHEIGHT)))) {
       newPos[0] = oldPosition[0];
       newPos[1] = oldPosition[1];
       newPos[2] = obstacleTop;
+
+      // drive over bumps
       const Obstacle* bumpObstacle = getHitBuilding(newPos, tmpAzimuth,
                                                     newPos, newAzimuth,
                                                     phased, expelled);
       if (bumpObstacle == NULL) {
         move(newPos, getAngle());
-        newPos[0] += newVelocity[0]*dt*0.5f;
-        newPos[1] += newVelocity[1]*dt*0.5f;
+        newPos[0] += newVelocity[0] * (dt * 0.5f);
+        newPos[1] += newVelocity[1] * (dt * 0.5f);
         break;
       }
     }
-
 
     // record position when hitting
     float hitPos[3], hitAzimuth;
@@ -477,7 +477,9 @@ void			LocalPlayer::doUpdateMotion(float dt)
       newPos[0] = tmpPos[0] + t * newVelocity[0];
       newPos[1] = tmpPos[1] + t * newVelocity[1];
       newPos[2] = tmpPos[2] + t * newVelocity[2];
-      if (newPos[2]<groundLimit && newVelocity[2]<0) newPos[2] = groundLimit;
+      if ((newPos[2] < groundLimit) && (newVelocity[2] < 0)) {
+        newPos[2] = groundLimit;
+      }
 
       // see if we hit anything
       bool searchExpelled;
@@ -526,7 +528,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
     }
 
     // check for being on a building
-    if (newPos[2] > 0.0 && normal[2] > 0.001f) {
+    if ((newPos[2] > 0.0) && (normal[2] > 0.001f)) {
       if (location != Dead && location != Exploding && expelled) {
 	location = OnBuilding;
         lastObstacle = obstacle;
