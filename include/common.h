@@ -66,8 +66,14 @@
 #define	tanf		(float)tan
 #endif
 
+#ifdef _WIN32
+#ifndef socklen_t
+typedef int socklen_t;
+#endif
+#else
 #ifndef HAVE_SOCKLEN_T
 #define socklen_t int
+#endif
 #endif
 
 // random number stuff
