@@ -5459,7 +5459,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
         char message[MessageLen];
         DEBUG1("kicking Player %s [%d]: tank too fast (tank: %f,allowed> %f)\n",
                player[t].callSign, t,
-               sqrt(curPlanarSpeedSqr), sqrt(maxPlanaSpeedSqr));
+               sqrt(curPlanarSpeedSqr), sqrt(maxPlanarSpeedSqr));
 	strcpy( message, "Autokick: Tank moving too fast, Update your client." );
         sendMessage(t, player[t].id, player[t].team, message);
 	directMessage(t, MsgSuperKill, 0, getDirectMessageBuffer());
