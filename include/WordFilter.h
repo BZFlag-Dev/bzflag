@@ -179,116 +179,28 @@ class WordFilter
   /** utility method that returns the position of the
    * first printable character from a string
    */
-  inline int firstAlphanumeric(const std::string &input) const
-  {
-    if (input.size() == 0) {
-      return -1;
-    }
-
-    int i = 0;
-    /* range of printable characters, with failsafe */
-    while (!isAlphanumeric(input[i])) {
-      i++;
-    }
-    return i;
-  }
-
+  inline int firstAlphanumeric(const std::string &input) const;
 
   /** utility method that returns the position of the
    * first printable character from a string
    */
-  inline int firstNonalphanumeric(const std::string &input) const
-  {
-    if (input.size() == 0) {
-      return -1;
-    }
-
-    int i = 0;
-    /* range of printable characters, with failsafe */
-    while (isAlphanumeric(input[i])) {
-      i++;
-    }
-    return i;
-  }
-
+  inline int firstNonalphanumeric(const std::string &input) const;
 
   /** utility method that returns the position of the
    * first printable character from a string
    */
-  inline int firstPrintable(const std::string &input) const
-  {
-    if (input.size() == 0) {
-      return -1;
-    }
-
-    int i = 0;
-    /* range of printable characters, with failsafe */
-    while (!isPrintable(input[i]) && (i < MAX_FILTERS)) {
-      i++;
-    }
-    return i;
-  }
+  inline int firstPrintable(const std::string &input) const;
 
   /** utility method that returns the position of the
    * first non-printable character from a string
    */
-  int firstNonprintable(const std::string &input) const
-  {
-    if (input.size() == 0) {
-      return -1;
-    }
-
-    int i = 0;
-    /* range of non-printable characters, with failsafe */
-    while (isPrintable(input[i]) && (i < MAX_FILTERS)) {
-      i++;
-    }
-    return i;
-  }
+  int firstNonprintable(const std::string &input) const;
 
   /** utility method performs an actual replacement of
    * characters in an input character ray within a specified
    * range.
    */
-  int filterCharacters(char *input, unsigned int start, size_t length, bool filterSpaces=false) const
-  {
-    if (input == NULL) {
-      return -1;
-    }
-    if (length <= 0){
-      return -1;
-    }
-    if (strlen(input) < start) {
-      return 0;
-    }
-
-    int randomCharPos, previousCharPos = -1;
-    int maxFilterChar = filterChars.size();
-    int count=0;
-    for (unsigned int j=0; j < (unsigned int)length; j++) {
-      char c = input[start + j];
-
-      // don't repeat random chars
-      do {
-	randomCharPos = (int)((float)maxFilterChar * (float)bzfrand());
-      } while (randomCharPos == previousCharPos);
-      previousCharPos = randomCharPos;
-
-      /* when filterspaces is true, we filter everything.
-       * otherise the ascii character code ranges for a-z, A-Z, and 0-9
-       * are filtered.
-       */
-      if (filterSpaces) {
-	input[start + j] = filterChars[randomCharPos];
-	count++;
-      } else if (isAlphanumeric(c)) {
-	input[start + j] = filterChars[randomCharPos];
-	count++;
-      } /* else it is non-letters so we can ignore */
-
-    }
-    return count;
-  }
+  int filterCharacters(char *input, unsigned int start, size_t length, bool filterSpaces) const;
 
  protected:
 
@@ -329,6 +241,7 @@ class WordFilter
  public:
 
   WordFilter(void);
+  WordFilter(const WordFilter& filter);
   ~WordFilter(void);
 
   /** loads a set of bad words from a specified file */
@@ -355,6 +268,123 @@ class WordFilter
   /** retuns a count of how many words are in the filter */
   unsigned long int wordCount(void) const;
 };
+
+
+
+/** utility method that returns the position of the
+* first printable character from a string
+*/
+inline int WordFilter::firstAlphanumeric(const std::string &input) const
+{
+  if (input.size() == 0) {
+    return -1;
+  }
+
+  int i = 0;
+  /* range of printable characters, with failsafe */
+  while (!isAlphanumeric(input[i])) {
+    i++;
+  }
+  return i;
+}
+
+
+/** utility method that returns the position of the
+* first printable character from a string
+*/
+inline int WordFilter::firstNonalphanumeric(const std::string &input) const
+{
+  if (input.size() == 0) {
+    return -1;
+  }
+
+  int i = 0;
+  /* range of printable characters, with failsafe */
+  while (isAlphanumeric(input[i])) {
+    i++;
+  }
+  return i;
+}
+
+
+/** utility method that returns the position of the
+* first printable character from a string
+*/
+inline int WordFilter::firstPrintable(const std::string &input) const
+{
+  if (input.size() == 0) {
+    return -1;
+  }
+
+  int i = 0;
+  /* range of printable characters, with failsafe */
+  while (!isPrintable(input[i]) && (i < MAX_FILTERS)) {
+    i++;
+  }
+  return i;
+}
+
+/** utility method that returns the position of the
+* first non-printable character from a string
+*/
+int WordFilter::firstNonprintable(const std::string &input) const
+{
+  if (input.size() == 0) {
+    return -1;
+  }
+
+  int i = 0;
+  /* range of non-printable characters, with failsafe */
+  while (isPrintable(input[i]) && (i < MAX_FILTERS)) {
+    i++;
+  }
+  return i;
+}
+
+/** utility method performs an actual replacement of
+* characters in an input character ray within a specified
+* range.
+*/
+int WordFilter::filterCharacters(char *input, unsigned int start, size_t length, bool filterSpaces=false) const
+{
+  if (input == NULL) {
+    return -1;
+  }
+  if (length <= 0){
+    return -1;
+  }
+  if (strlen(input) < start) {
+    return 0;
+  }
+
+  int randomCharPos, previousCharPos = -1;
+  int maxFilterChar = filterChars.size();
+  int count=0;
+  for (unsigned int j=0; j < (unsigned int)length; j++) {
+    char c = input[start + j];
+
+    // don't repeat random chars
+    do {
+      randomCharPos = (int)((float)maxFilterChar * (float)bzfrand());
+    } while (randomCharPos == previousCharPos);
+    previousCharPos = randomCharPos;
+
+    /* when filterspaces is true, we filter everything.
+      * otherise the ascii character code ranges for a-z, A-Z, and 0-9
+      * are filtered.
+      */
+    if (filterSpaces) {
+      input[start + j] = filterChars[randomCharPos];
+      count++;
+    } else if (isAlphanumeric(c)) {
+      input[start + j] = filterChars[randomCharPos];
+      count++;
+    } /* else it is non-letters so we can ignore */
+
+  }
+    return count;
+}
+
 
 
 #else

@@ -97,6 +97,7 @@ class VotingBooth
  public:
 
   VotingBooth(std::string question = "", bool requireUnique = true);
+  VotingBooth(const VotingBooth& booth);
   ~VotingBooth(void);
 
   /** add an response to vote upon
