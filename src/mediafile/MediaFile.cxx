@@ -17,9 +17,9 @@
 
 #ifdef WIN32
 
-void ConvertPath(std::string &path)
+void ConvertPath(const std::string &path)
 {
-  std::replace(dir.begin(), dir.end(), '/', '\\');
+	std::replace(const_cast<std::string &>(path).begin(), const_cast<std::string &>(path).end(), '/', '\\');
 }
 
 #endif
