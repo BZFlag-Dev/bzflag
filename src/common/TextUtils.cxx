@@ -23,12 +23,13 @@
 namespace TextUtils
 {
   std::string vformat(const char* fmt, va_list args) {
-    // FIXME -- should prevent buffer overflow in all cases
-    // not all platforms support vsnprintf so we'll use vsprintf and a
-    // big temporary buffer and hope for the best.
-    char buffer[8192];
-    vsnprintf(buffer, 8192, fmt, args);
-    return std::string(buffer);
+    char *buffer;
+    int bs = vsnprintf(buffer, 0, fmt, args);
+    buffer = new char[bs];
+    vsnprintf(buffer, bs, fmt, args);
+    std::string ret = std::string(buffer);
+    delete [] buffer;
+    return ret;
   }
 
 
