@@ -49,10 +49,6 @@ void PlayerAccessInfo::setName(const char* callSign) {
   makeupper(regName);
 }
 
-bool PlayerAccessInfo::isAccessVerified() const {
-  return verified;
-}
-
 bool PlayerAccessInfo::gotAccessFailure() {
   bool accessFailure = loginAttempts >= 5;
   if (accessFailure)
@@ -127,7 +123,7 @@ bool PlayerAccessInfo::isAllowedToEnter() {
   return verified || !isRegistered() || !isIdentifyRequired();
 };
 
-bool PlayerAccessInfo::isVerified() {
+bool PlayerAccessInfo::isVerified() const{
   return verified;
 };
 

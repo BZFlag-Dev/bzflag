@@ -92,7 +92,6 @@ public:
 
   std::string getName();
 
-  bool	isAccessVerified() const;
   bool	gotAccessFailure();
   void	setLoginFail();
   bool	passwordAttemptsMax();
@@ -114,7 +113,7 @@ public:
   bool	isRegistered() const;
   bool	isIdentifyRequired();
   bool	isAllowedToEnter();
-  bool	isVerified();
+  bool	isVerified() const;
   uint8_t     getPlayerProperties();
   void	storeInfo(const char* pwd);
   bool	exists();

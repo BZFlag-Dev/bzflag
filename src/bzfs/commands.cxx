@@ -1009,7 +1009,7 @@ static void handleIdentifyCmd(GameKeeper::Player *playerData, const char *messag
     return;
   }
   // player is trying to send an ID
-  if (playerData->accessInfo.isAccessVerified()) {
+  if (playerData->accessInfo.isVerified()) {
     sendMessage(ServerPlayer, t, "You have already identified");
   } else if (playerData->accessInfo.gotAccessFailure()) {
     sendMessage(ServerPlayer, t, "You have attempted to identify too many times");
@@ -1047,7 +1047,7 @@ static void handleRegisterCmd(GameKeeper::Player *playerData, const char *messag
     sendMessage(ServerPlayer, t, "/register command disabled");
     return;
   }
-  if (playerData->accessInfo.isAccessVerified()) {
+  if (playerData->accessInfo.isVerified()) {
     sendMessage(ServerPlayer, t, "You have already registered and"
 		" identified this callsign");
   } else {
@@ -1119,7 +1119,7 @@ static void handleDeregisterCmd(GameKeeper::Player *playerData, const char *mess
     sendMessage(ServerPlayer, t, "/deregister command disabled");
     return;
   }
-  if (!playerData->accessInfo.isAccessVerified()) {
+  if (!playerData->accessInfo.isVerified()) {
     sendMessage(ServerPlayer, t, "You must be registered and verified to run the deregister command");
     return;
   }
@@ -1176,7 +1176,7 @@ static void handleSetpassCmd(GameKeeper::Player *playerData, const char *message
     sendMessage(ServerPlayer, t, "/setpass command disabled");
     return;
   }
-  if (!playerData->accessInfo.isAccessVerified()) {
+  if (!playerData->accessInfo.isVerified()) {
     sendMessage(ServerPlayer, t, "You must be registered and verified to run the setpass command");
     return;
   }
@@ -1217,7 +1217,7 @@ static void handleShowgroupCmd(GameKeeper::Player *playerData, const char *messa
   std::string settie;
 
   if (strlen(message) == 10) {	 // show own groups
-    if (playerData->accessInfo.isAccessVerified()) {
+    if (playerData->accessInfo.isVerified()) {
       settie = playerData->accessInfo.getName();
     } else {
       sendMessage(ServerPlayer, t, "You are not identified");
