@@ -6305,7 +6305,7 @@ int main(int argc, char **argv)
 	buf = nboPackUShort(bufStart, (uint16_t)(int)timeLeft);
 	broadcastMessage(MsgTimeUpdate, (char*)buf-(char*)bufStart, bufStart);
 	timeElapsed = newTimeElapsed;
-	if (oneGameOnly) {
+	if (oneGameOnly && timeLeft == 0.0f) {
 	  done = True;
 	  exitCode = 0;
 	}
