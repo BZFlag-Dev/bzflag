@@ -316,12 +316,8 @@ void*			Player::pack(void* buf) const
 {
   ((Player*)this)->setDeadReckoning();
   buf = nboPackShort(buf, int16_t(status));
-  buf = nboPackFloat(buf, pos[0]);
-  buf = nboPackFloat(buf, pos[1]);
-  buf = nboPackFloat(buf, pos[2]);
-  buf = nboPackFloat(buf, velocity[0]);
-  buf = nboPackFloat(buf, velocity[1]);
-  buf = nboPackFloat(buf, velocity[2]);
+  buf = nboPackVector(buf, pos);
+  buf = nboPackVector(buf, velocity);
   buf = nboPackFloat(buf, azimuth);
   buf = nboPackFloat(buf, angVel);
   return buf;
@@ -331,12 +327,8 @@ void*			Player::unpack(void* buf)
 {
   int16_t inStatus;
   buf = nboUnpackShort(buf, inStatus);
-  buf = nboUnpackFloat(buf, pos[0]);
-  buf = nboUnpackFloat(buf, pos[1]);
-  buf = nboUnpackFloat(buf, pos[2]);
-  buf = nboUnpackFloat(buf, velocity[0]);
-  buf = nboUnpackFloat(buf, velocity[1]);
-  buf = nboUnpackFloat(buf, velocity[2]);
+  buf = nboUnpackVector(buf, pos);
+  buf = nboUnpackVector(buf, velocity);
   buf = nboUnpackFloat(buf, azimuth);
   buf = nboUnpackFloat(buf, angVel);
   status = short(inStatus);

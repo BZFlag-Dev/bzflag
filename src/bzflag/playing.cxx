@@ -1466,12 +1466,8 @@ static void		handleServerMessage(boolean human, uint16_t code,
       PlayerId id;
       float pos[3], forward[3];
       msg = id.unpack(msg);
-      msg = nboUnpackFloat(msg, pos[0]);
-      msg = nboUnpackFloat(msg, pos[1]);
-      msg = nboUnpackFloat(msg, pos[2]);
-      msg = nboUnpackFloat(msg, forward[0]);
-      msg = nboUnpackFloat(msg, forward[1]);
-      msg = nboUnpackFloat(msg, forward[2]);
+      msg = nboUnpackVector(msg, pos);
+      msg = nboUnpackVector(msg, forward);
       int playerIndex = lookupPlayerIndex(id);
       if (playerIndex >= 0) {
 	static const float zero[3] = { 0.0f, 0.0f, 0.0f };

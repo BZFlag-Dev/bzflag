@@ -25,12 +25,8 @@ void*			ShotUpdate::pack(void* buf) const
 {
   buf = player.pack(buf);
   buf = nboPackUShort(buf, id);
-  buf = nboPackFloat(buf, pos[0]);
-  buf = nboPackFloat(buf, pos[1]);
-  buf = nboPackFloat(buf, pos[2]);
-  buf = nboPackFloat(buf, vel[0]);
-  buf = nboPackFloat(buf, vel[1]);
-  buf = nboPackFloat(buf, vel[2]);
+  buf = nboPackVector(buf, pos);
+  buf = nboPackVector(buf, vel);
   buf = nboPackFloat(buf, dt);
   return buf;
 }
@@ -39,12 +35,8 @@ void*			ShotUpdate::unpack(void* buf)
 {
   buf = player.unpack(buf);
   buf = nboUnpackUShort(buf, id);
-  buf = nboUnpackFloat(buf, pos[0]);
-  buf = nboUnpackFloat(buf, pos[1]);
-  buf = nboUnpackFloat(buf, pos[2]);
-  buf = nboUnpackFloat(buf, vel[0]);
-  buf = nboUnpackFloat(buf, vel[1]);
-  buf = nboUnpackFloat(buf, vel[2]);
+  buf = nboUnpackVector(buf, pos);
+  buf = nboUnpackVector(buf, vel);
   buf = nboUnpackFloat(buf, dt);
   return buf;
 }

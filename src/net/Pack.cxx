@@ -53,6 +53,20 @@ void*			nboPackFloat(void* b, float v)
   return ADV(b, float);
 }
 
+void*			nboPackVector(void* b, const float *v)
+{
+  // hope that float is a 4 byte IEEE 754 standard encoding
+  uint32_t  data[3];
+  uint32_t *pV = (uint32_t *)v;
+  uint32_t *pB = (uint32_t *)data;
+
+  *(pB++) = htonl(*(pV++));
+  *(pB++) = htonl(*(pV++));
+  *pB = htonl(*pV);
+  ::memcpy( b, data, 3*sizeof(float));
+  return (void*) (((char*)b)+3*sizeof(float));
+}
+
 void*			nboPackString(void* b, const void* m, int len)
 {
   if (!m || len == 0) return b;
@@ -97,9 +111,23 @@ void*			nboUnpackFloat(void* b, float& v)
   // hope that float is a 4 byte IEEE 754 standard encoding
   uint32_t x;
   ::memcpy(&x, b, sizeof(uint32_t));
-  const uint32_t y = (uint32_t)htonl(x);
+  const uint32_t y = (uint32_t)ntohl(x);
   v = *((float*)&y);
   return ADV(b, float);
+}
+
+void*			nboUnpackVector(void* b, float *v)
+{
+  // hope that float is a 4 byte IEEE 754 standard encoding
+  uint32_t data[3];
+  ::memcpy( data, b, 3*sizeof(float));
+  uint32_t *pV = (uint32_t *)v;
+  uint32_t *pB = (uint32_t *)data;
+
+  *(pV++) = (uint32_t)ntohl(*(pB++));
+  *(pV++) = (uint32_t)ntohl(*(pB++));
+  *pV = (uint32_t)ntohl(*pB);
+  return (void *) (((char*)b) + 3*sizeof(float));
 }
 
 void*			nboUnpackString(void* b, void* m, int len)

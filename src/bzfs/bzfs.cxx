@@ -861,9 +861,7 @@ int WorldInfo::packDatabase()
   ObstacleLocation *pWall;
   for (i = 0, pWall = walls ; i < numWalls ; i++, pWall++ ) {
     databasePtr = nboPackUShort(databasePtr, WorldCodeWall);
-    databasePtr = nboPackFloat(databasePtr, pWall->pos[0]);
-    databasePtr = nboPackFloat(databasePtr, pWall->pos[1]);
-    databasePtr = nboPackFloat(databasePtr, pWall->pos[2]);
+    databasePtr = nboPackVector(databasePtr, pWall->pos);
     databasePtr = nboPackFloat(databasePtr, pWall->rotation);
     databasePtr = nboPackFloat(databasePtr, pWall->size[0]);
     // walls have no depth
@@ -875,39 +873,27 @@ int WorldInfo::packDatabase()
   ObstacleLocation *pBox;
   for (i = 0, pBox = boxes ; i < numBoxes ; i++, pBox++ ) {
     databasePtr = nboPackUShort(databasePtr, WorldCodeBox);
-    databasePtr = nboPackFloat(databasePtr, pBox->pos[0]);
-    databasePtr = nboPackFloat(databasePtr, pBox->pos[1]);
-    databasePtr = nboPackFloat(databasePtr, pBox->pos[2]);
+    databasePtr = nboPackVector(databasePtr, pBox->pos);
     databasePtr = nboPackFloat(databasePtr, pBox->rotation);
-    databasePtr = nboPackFloat(databasePtr, pBox->size[0]);
-    databasePtr = nboPackFloat(databasePtr, pBox->size[1]);
-    databasePtr = nboPackFloat(databasePtr, pBox->size[2]);
+    databasePtr = nboPackVector(databasePtr, pBox->size);
   }
 
   // add pyramids
   ObstacleLocation *pPyramid;
   for (i = 0, pPyramid = pyramids ; i < numPyramids ; i++, pPyramid++ ) {
     databasePtr = nboPackUShort(databasePtr, WorldCodePyramid);
-    databasePtr = nboPackFloat(databasePtr, pPyramid->pos[0]);
-    databasePtr = nboPackFloat(databasePtr, pPyramid->pos[1]);
-    databasePtr = nboPackFloat(databasePtr, pPyramid->pos[2]);
+    databasePtr = nboPackVector(databasePtr, pPyramid->pos);
     databasePtr = nboPackFloat(databasePtr, pPyramid->rotation);
-    databasePtr = nboPackFloat(databasePtr, pPyramid->size[0]);
-    databasePtr = nboPackFloat(databasePtr, pPyramid->size[1]);
-    databasePtr = nboPackFloat(databasePtr, pPyramid->size[2]);
+    databasePtr = nboPackVector(databasePtr, pPyramid->size);
   }
 
   // add teleporters
   Teleporter *pTeleporter;
   for (i = 0, pTeleporter = teleporters ; i < numTeleporters ; i++, pTeleporter++ ) {
     databasePtr = nboPackUShort(databasePtr, WorldCodeTeleporter);
-    databasePtr = nboPackFloat(databasePtr, pTeleporter->pos[0]);
-    databasePtr = nboPackFloat(databasePtr, pTeleporter->pos[1]);
-    databasePtr = nboPackFloat(databasePtr, pTeleporter->pos[2]);
+    databasePtr = nboPackVector(databasePtr, pTeleporter->pos);
     databasePtr = nboPackFloat(databasePtr, pTeleporter->rotation);
-    databasePtr = nboPackFloat(databasePtr, pTeleporter->size[0]);
-    databasePtr = nboPackFloat(databasePtr, pTeleporter->size[1]);
-    databasePtr = nboPackFloat(databasePtr, pTeleporter->size[2]);
+    databasePtr = nboPackVector(databasePtr, pTeleporter->size);
     databasePtr = nboPackFloat(databasePtr, pTeleporter->border);
     // and each link
     databasePtr = nboPackUShort(databasePtr, WorldCodeLink);
@@ -2871,15 +2857,11 @@ static boolean defineWorld()
     for (int i = 1; i < NumTeams; i++) {
       buf = nboPackUShort(buf, WorldCodeBase);
       buf = nboPackUShort(buf, uint16_t(i));
-      buf = nboPackFloat(buf, basePos[i][0]);
-      buf = nboPackFloat(buf, basePos[i][1]);
-      buf = nboPackFloat(buf, basePos[i][2]);
+      buf = nboPackVector(buf, basePos[i]);
       buf = nboPackFloat(buf, baseRotation[i]);
       buf = nboPackFloat(buf, baseSize[i][0]);
       buf = nboPackFloat(buf, baseSize[i][1]);
-      buf = nboPackFloat(buf, safetyBasePos[i][0]);
-      buf = nboPackFloat(buf, safetyBasePos[i][1]);
-      buf = nboPackFloat(buf, safetyBasePos[i][2]);
+      buf = nboPackVector(buf, safetyBasePos[i]);
     }
   }
   buf = nboPackString(buf, world->getDatabase(), world->getDatabaseSize());
@@ -3659,12 +3641,8 @@ static void playerAlive(int playerIndex, const float *pos, const float *fwd)
   char msg[PlayerIdPLen + 24];
   void *buf = msg;
   buf = player[playerIndex].id.pack(buf);
-  buf = nboPackFloat(buf, pos[0]);
-  buf = nboPackFloat(buf, pos[1]);
-  buf = nboPackFloat(buf, pos[2]);
-  buf = nboPackFloat(buf, fwd[0]);
-  buf = nboPackFloat(buf, fwd[1]);
-  buf = nboPackFloat(buf, fwd[2]);
+  buf = nboPackVector(buf,pos);
+  buf = nboPackVector(buf,fwd);
   broadcastMessage(MsgAlive, sizeof(msg), msg);
 }
 
@@ -4262,12 +4240,8 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
     case MsgAlive: {
       // data: position, forward-vector
       float pos[3], fwd[3];
-      buf = nboUnpackFloat(buf, pos[0]);
-      buf = nboUnpackFloat(buf, pos[1]);
-      buf = nboUnpackFloat(buf, pos[2]);
-      buf = nboUnpackFloat(buf, fwd[0]);
-      buf = nboUnpackFloat(buf, fwd[1]);
-      buf = nboUnpackFloat(buf, fwd[2]);
+      buf = nboUnpackVector(buf, pos);
+      buf = nboUnpackVector(buf, fwd);
       playerAlive(t, pos, fwd);
       break;
     }
@@ -4296,9 +4270,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
     case MsgDropFlag: {
       // data: position of drop
       float pos[3];
-      buf = nboUnpackFloat(buf, pos[0]);
-      buf = nboUnpackFloat(buf, pos[1]);
-      buf = nboUnpackFloat(buf, pos[2]);
+      buf = nboUnpackVector(buf, pos);
       dropFlag(t, pos);
       break;
     }

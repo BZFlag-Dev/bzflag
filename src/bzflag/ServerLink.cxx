@@ -701,9 +701,7 @@ void			ServerLink::sendDropFlag(const float* position)
 {
   char msg[12];
   void* buf = msg;
-  buf = nboPackFloat(buf, position[0]);
-  buf = nboPackFloat(buf, position[1]);
-  buf = nboPackFloat(buf, position[2]);
+  buf = nboPackVector(buf, position);
   send(MsgDropFlag, sizeof(msg), msg);
 }
 
@@ -741,12 +739,8 @@ void			ServerLink::sendAlive(const float* pos,
 {
   char msg[24];
   void* buf = msg;
-  buf = nboPackFloat(buf, pos[0]);
-  buf = nboPackFloat(buf, pos[1]);
-  buf = nboPackFloat(buf, pos[2]);
-  buf = nboPackFloat(buf, forward[0]);
-  buf = nboPackFloat(buf, forward[1]);
-  buf = nboPackFloat(buf, forward[2]);
+  buf = nboPackVector(buf, pos);
+  buf = nboPackVector(buf, forward);
   send(MsgAlive, sizeof(msg), msg);
 }
 
