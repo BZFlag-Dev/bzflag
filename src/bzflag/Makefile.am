@@ -106,8 +106,6 @@ LDADD =	\
 endif
 
 
-EXTRA_DIST = bzflag.bmp
-
 AM_CPPFLAGS = $(X_CFLAGS)
 
 bzflag.res: bzflag.rc bzflag.ico
