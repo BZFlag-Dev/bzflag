@@ -30,21 +30,7 @@ static const int defaultAudioRate=22050;
 SDLMedia::SDLMedia() : BzfMedia()
 {
   cmdFill       = 0;
-  sndMutex      = SDL_CreateMutex();
-  cmdMutex      = SDL_CreateMutex();
-  fillCond      = SDL_CreateCond();
-  wakeCond      = SDL_CreateCond();
-  filledBuffer  = false;
   audioReady    = false;
-  waitingData   = false;
-  waitingWake   = false;
-}
-
-SDLMedia::~SDLMedia()
-{
-  SDL_DestroyCond(fillCond);
-  SDL_DestroyCond(wakeCond);
-  SDL_DestroyMutex(sndMutex);
 }
 
 double			SDLMedia::stopwatch(bool start)
@@ -112,9 +98,6 @@ bool			SDLMedia::openAudio()
   // make an output buffer
   outputBuffer  = new short[audioBufferSize];
 
-  // Stop sending silence and start calling audio callback
-  SDL_PauseAudio(0);
-
   // ready to go
   audioReady = true;
 
@@ -126,23 +109,6 @@ void			SDLMedia::closeAudio()
   // Stop Audio to avoid callback
   SDL_PauseAudio(1);
 
-  // Trying to cleanly wake up and exit the eventually running callback
-  if (SDL_mutexP(sndMutex) == -1) {
-    fprintf(stderr, "Couldn't lock mutex\n");
-    exit(-1);
-  }
-  filledBuffer  = true;
-  if (waitingData)
-    // Signal data are there - fake data but who cares
-    if (SDL_CondSignal(fillCond) == -1) {
-      fprintf(stderr, "Couldn't Cond Signal\n");
-      exit(-1);
-    };
-  if (SDL_mutexV(sndMutex) == -1) {
-    fprintf(stderr, "Couldn't unlock mutex\n");
-    exit(-1);
-  }
-  
   SDL_CloseAudio();
   delete [] outputBuffer;
   outputBuffer  = 0;
@@ -150,31 +116,20 @@ void			SDLMedia::closeAudio()
   audioReady    = false;
 }
 
-bool			SDLMedia::startAudioThread(
-				void (*proc)(void*), void* data)
+void			SDLMedia::startAudioCallback(bool (*proc)(void))
 {
-  ThreadId = SDL_CreateThread( (int (*) (void *))proc, data);
-  return ThreadId != NULL;
-}
+  userCallback = proc;
 
-void			SDLMedia::stopAudioThread()
-{
-  SDL_WaitThread(ThreadId, NULL);
-}
-
-bool			SDLMedia::hasAudioThread() const
-{
-  return true;
+  // Stop sending silence and start calling audio callback
+  SDL_PauseAudio(0);
 }
 
 void			SDLMedia::writeSoundCommand(const void* cmd, int len)
 {
   if (!audioReady) return;
 
-   if (SDL_mutexP(cmdMutex) == -1) {
-     fprintf(stderr, "Couldn't lock mutex\n");
-     exit(-1);
-   }
+  SDL_LockAudio();
+
    // Discard command if full
    if ((cmdFill + len) < 2048) {
      memcpy(&cmdQueue[cmdFill], cmd, len);
@@ -182,30 +137,20 @@ void			SDLMedia::writeSoundCommand(const void* cmd, int len)
      // using here an SDL_CondSignal(wakeCond)
      cmdFill += len;
    }
-   if (SDL_mutexV(cmdMutex) == -1) {
-     fprintf(stderr, "Couldn't unlock mutex\n");
-     exit(-1);
-   }
+
+  SDL_UnlockAudio();
 }
 
 bool			SDLMedia::readSoundCommand(void* cmd, int len)
 {
   bool result = false;
 
-  if (SDL_mutexP(cmdMutex) == -1) {
-    fprintf(stderr, "Couldn't lock mutex\n");
-    exit(-1);
-  }
   if (cmdFill >= len) {
     memcpy(cmd, cmdQueue, len);
     // repack list of command waiting to be processed
     memmove(cmdQueue, &cmdQueue[len], cmdFill - len);
     cmdFill -= len;
     result = true;
-  }
-  if (SDL_mutexV(cmdMutex) == -1) {
-    fprintf(stderr, "Couldn't unlock mutex\n");
-    exit(-1);
   }
   return result;
 }
@@ -225,39 +170,10 @@ int			SDLMedia::getAudioBufferChunkSize() const
   return audioBufferSize>>1;
 }
 
-bool			SDLMedia::isAudioTooEmpty() const
-{
-  return !filledBuffer;
-}
-
 void SDLMedia::fillAudio (Uint8 * stream, int len)
 {
+  userCallback();
   Uint8* soundBuffer        = stream;
-
-  if (SDL_mutexP(sndMutex) == -1) {
-    fprintf(stderr, "Couldn't lock mutex\n");
-    exit(-1);
-  }
-
-  while (!filledBuffer) {
-    // Hurry up. We need data soon
-    waitingData = true;
-    if (waitingWake)
-      // Signal we are waiting for data and
-      if (SDL_CondSignal(wakeCond) == -1) {
-	fprintf(stderr, "Couldn't Cond Signal\n");
-	exit(-1);
-      };
-    
-    // wait for someone to fill data
-    while (SDL_CondWait(fillCond, sndMutex) == -1) ;
-  }
-  waitingData = false;
-
-  if (SDL_mutexV(sndMutex) == -1) {
-    fprintf(stderr, "Couldn't unlock mutex\n");
-    exit(-1);
-  }
 
   int transferSize = (audioBufferSize - sampleToSend) * 2;
   if (transferSize > len)
@@ -271,9 +187,6 @@ void SDLMedia::fillAudio (Uint8 * stream, int len)
   soundBuffer     += transferSize;
   len             -= transferSize;
 
-  if (sampleToSend == audioBufferSize) {
-    filledBuffer = false;
-  }
 }
 
 void SDLMedia::fillAudioWrapper (void * userdata, Uint8 * stream, int len)
@@ -287,11 +200,6 @@ void			SDLMedia::writeAudioFrames(
 {
   int numSamples = 2 * numFrames;
   int limit;
-
-  if (filledBuffer) {
-    fprintf(stderr, "Called but buffer is already filled\n");
-    return;
-  }
 
   while (numSamples > 0) {
     if (numSamples>audioBufferSize)
@@ -314,56 +222,10 @@ void			SDLMedia::writeAudioFrames(
 	outputBuffer[j] = 0;
     }
 
-    if (SDL_mutexP(sndMutex) == -1) {
-      fprintf(stderr, "Couldn't lock mutex\n");
-      exit(-1);
-    }
-
-    filledBuffer = true;
     sampleToSend = 0;
-    if (waitingData) 
-      if (SDL_CondSignal(fillCond) == -1) {
-	fprintf(stderr, "Couldn't Cond Signal\n");
-	exit(-1);
-      };
 
-    if (SDL_mutexV(sndMutex) == -1) {
-      fprintf(stderr, "Couldn't unlock mutex\n");
-      exit(-1);
-    }
     samples    += audioBufferSize;
     numSamples -= audioBufferSize;
-  }
-}
-
-void			SDLMedia::audioSleep(bool, double endTime)
-{
-  if (SDL_mutexP(sndMutex) == -1) {
-    fprintf(stderr, "Couldn't lock mutex\n");
-    exit(-1);
-  }
-
-  if ((cmdFill <= 0) && filledBuffer) {
-    waitingWake = true;
-    if (endTime < 0.0) {
-      if (SDL_CondWait(wakeCond, sndMutex) == -1) {
-	fprintf(stderr, "Couldn't CondWait on wakeCond\n");
-	exit(-1);
-      };
-    } else {
-      if (SDL_CondWaitTimeout(wakeCond,
-			      sndMutex,
-			      (int) (1.0e3 * endTime)) == -1) {
-	fprintf(stderr, "Couldn't CondWaitTimeout on wakeCond\n");
-	exit(-1);
-      };
-    }
-    waitingWake = false;
-  }
-  
-  if (SDL_mutexV(sndMutex) == -1) {
-    fprintf(stderr, "Couldn't unlock mutex\n");
-    exit(-1);
   }
 }
 

@@ -22,23 +22,27 @@
 class SDLMedia : public BzfMedia {
   public:
 			SDLMedia();
-			~SDLMedia();
+			~SDLMedia() {};
 
     double		stopwatch(bool);
     void		sleep(float);
     bool		openAudio();
     void		closeAudio();
-    bool		startAudioThread(void (*)(void*), void*);
-    void		stopAudioThread();
-    bool		hasAudioThread() const;
+    bool		startAudioThread(void (*)(void*), void*)
+                          {return false;};
+    void		stopAudioThread() {};
+    bool		hasAudioThread() const {return true;};
+    void                startAudioCallback(bool (*proc)(void));
+    bool	        hasAudioCallback() const {return true;};
+
     void		writeSoundCommand(const void*, int);
     bool		readSoundCommand(void*, int);
     int			getAudioOutputRate() const;
     int			getAudioBufferSize() const;
     int			getAudioBufferChunkSize() const;
-    bool		isAudioTooEmpty() const;
+    bool		isAudioTooEmpty() const {return true;};
     void		writeAudioFrames(const float* samples, int numFrames);
-    void		audioSleep(bool checkLowWater, double maxTime);
+    void		audioSleep(bool, double) {};
     void                setDriver(std::string driverName);
     void                setDevice(std::string deviceName);
     float*	        doReadSound(const char* filename,
@@ -55,24 +59,14 @@ class SDLMedia : public BzfMedia {
     int			audioBufferSize;
 
     short*		outputBuffer;
-    bool                filledBuffer;  // buffer filled
     int                 sampleToSend;  // next sample to send on outputBuffer
 
     Uint32		stopwatchTime;
 
-    SDL_Thread*         ThreadId;
-
     char                cmdQueue[2048]; // space to save temporary command
     int                 cmdFill;        // from 0 to cmdFill
 
-    SDL_mutex *         sndMutex;
-    SDL_mutex *         cmdMutex;
-
-    SDL_cond *          wakeCond;
-    SDL_cond *          fillCond;
-
-    bool                waitingWake;
-    bool                waitingData; // Waiting for data
+    bool                (*userCallback)(void);
 };
 
 #endif // BZF_SDLMEDIA_H
