@@ -104,6 +104,7 @@ static uint8_t rabbitIndex = NoPlayer;
 
 static WorldWeapons  wWeapons;
 
+static TimeKeeper lastWorldParmChange;
 
 void removePlayer(int playerIndex, const char *reason, bool notify=true);
 static void resetFlag(int flagIndex);
@@ -4488,86 +4489,89 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
       }
       player[t].lasttimestamp = timestamp;
       player[t].lastupdate = now;
-      float gravity = BZDB->eval(StateDatabase::BZDB_GRAVITY);
-      if (gravity < 0.0f) {
-        float maxTankHeight = maxWorldHeight + 1.08f * ((BZDB->eval(StateDatabase::BZDB_JUMPVELOCITY)*BZDB->eval(StateDatabase::BZDB_JUMPVELOCITY)) / (2.0f * -gravity));
 
-        if (state.pos[2] > maxTankHeight) {
-	  char message[MessageLen];
-	  DEBUG1("kicking Player %s [%d] jump too high\n", player[t].callSign, t);
-	  strcpy(message, "Autokick: Out of world bounds, Jump too high, Update your client." );
-	  sendMessage(ServerPlayer, t, message, true);
-	  removePlayer(t, "too high");
-	  break;
-	}
-      }
+      //Don't kick players up to 5 seconds after a world parm has changed, 5-> BZBB var?
+      if (now - lastWorldParmChange > 5.0f) { 
+        float gravity = BZDB->eval(StateDatabase::BZDB_GRAVITY);
+        if (gravity < 0.0f) {
+          float maxTankHeight = maxWorldHeight + 1.08f * ((BZDB->eval(StateDatabase::BZDB_JUMPVELOCITY)*BZDB->eval(StateDatabase::BZDB_JUMPVELOCITY)) / (2.0f * -gravity));
 
-      // make sure the player is still in the map
-      // test all the map bounds + some fudge factor, just in case
-      float	fudge = 5.0f;
-      bool InBounds = true;
-      float worldSize = BZDB->eval(StateDatabase::BZDB_WORLDSIZE);
-      if ( (state.pos[1] >= worldSize*0.5f + fudge) || (state.pos[1] <= -worldSize*0.5f - fudge))
-	InBounds = false;
-      else if ( (state.pos[0] >= worldSize*0.5f + fudge) || (state.pos[0] <= -worldSize*0.5f - fudge))
-	InBounds = false;
-
-      if (state.pos[2]<BZDB->eval(StateDatabase::BZDB_BURROWDEPTH))
-	InBounds = false;
-
-
-      // kick em cus they are cheating
-      if (!InBounds)
-      {
-	char message[MessageLen];
-	DEBUG1("kicking Player %s [%d] Out of map bounds\n", player[t].callSign, t);
-	strcpy(message, "Autokick: Out of world bounds, XY pos out of bounds, Don't cheat." );
-	sendMessage(ServerPlayer, t, message, true);
-	removePlayer(t, "Out of map bounds");
-      }
-
-      // Speed problems occur around flag drops, so don't check for a short period of time
-      // after player drops a flag. Currently 1/4 second, adjust as needed. Maybe BZDB?
-
-      if (TimeKeeper::getCurrent() - player[t].lastFlagDropTime >= 0.25f) {
-        // check for highspeed cheat; if inertia is enabled, skip test for now
-        if (clOptions->linearAcceleration == 0.0f) {
-	  // Doesn't account for going fast backwards, or jumping/falling
-	  float curPlanarSpeedSqr = state.velocity[0]*state.velocity[0] +
-				    state.velocity[1]*state.velocity[1];
-
-	  float maxPlanarSpeedSqr = BZDB->eval(StateDatabase::BZDB_TANKSPEED)*BZDB->eval(StateDatabase::BZDB_TANKSPEED);
-
-	  bool logOnly = false;
-
-	  // if tank is not driving cannot be sure it didn't toss (V) in flight
-	  // if tank is not alive cannot be sure it didn't just toss (V)
-  	  if (flag[player[t].flag].flag.desc == Flags::Velocity)
-	    maxPlanarSpeedSqr *= BZDB->eval(StateDatabase::BZDB_VELOCITYAD)*BZDB->eval(StateDatabase::BZDB_VELOCITYAD);
-	  else if (flag[player[t].flag].flag.desc == Flags::Thief)
-	    maxPlanarSpeedSqr *= BZDB->eval(StateDatabase::BZDB_THIEFVELAD) * BZDB->eval(StateDatabase::BZDB_THIEFVELAD);
-	  else {
-	    // If player is moving vertically, or not alive the speed checks seem to be problematic
-	    // If this happens, just log it for now, but don't actually kick
-	    if ((player[t].lastState.pos[2] != state.pos[2])
-	    ||  (player[t].lastState.velocity[2] != state.velocity[2])
-	    ||  ((state.status & PlayerState::Alive) == 0)) {
-	      logOnly = true;
-	    }
+          if (state.pos[2] > maxTankHeight) {
+	    char message[MessageLen];
+	    DEBUG1("kicking Player %s [%d] jump too high\n", player[t].callSign, t);
+	    strcpy(message, "Autokick: Out of world bounds, Jump too high, Update your client." );
+	    sendMessage(ServerPlayer, t, message, true);
+	    removePlayer(t, "too high");
+	    break;
 	  }
+	}
 
-	  // allow a 5% tolerance level for speed
-	  float realtol=1.0f;
-	  if(speedTolerance>1.0f)
-	  realtol = speedTolerance;
-	  maxPlanarSpeedSqr *= realtol;
-	  if (curPlanarSpeedSqr > maxPlanarSpeedSqr) {
-	    if (logOnly) {
+        // make sure the player is still in the map
+        // test all the map bounds + some fudge factor, just in case
+        float	fudge = 5.0f;
+        bool InBounds = true;
+        float worldSize = BZDB->eval(StateDatabase::BZDB_WORLDSIZE);
+        if ( (state.pos[1] >= worldSize*0.5f + fudge) || (state.pos[1] <= -worldSize*0.5f - fudge))
+	  InBounds = false;
+        else if ( (state.pos[0] >= worldSize*0.5f + fudge) || (state.pos[0] <= -worldSize*0.5f - fudge))
+       	  InBounds = false;
+
+        if (state.pos[2]<BZDB->eval(StateDatabase::BZDB_BURROWDEPTH))
+	  InBounds = false;
+
+
+        // kick em cus they are cheating
+        if (!InBounds)
+	{
+	  char message[MessageLen];
+	  DEBUG1("kicking Player %s [%d] Out of map bounds\n", player[t].callSign, t);
+	  strcpy(message, "Autokick: Out of world bounds, XY pos out of bounds, Don't cheat." );
+	  sendMessage(ServerPlayer, t, message, true);
+	  removePlayer(t, "Out of map bounds");
+	}
+
+        // Speed problems occur around flag drops, so don't check for a short period of time
+        // after player drops a flag. Currently 1/4 second, adjust as needed. Maybe BZDB?
+
+        if (TimeKeeper::getCurrent() - player[t].lastFlagDropTime >= 0.25f) {
+          // check for highspeed cheat; if inertia is enabled, skip test for now
+          if (clOptions->linearAcceleration == 0.0f) {
+	    // Doesn't account for going fast backwards, or jumping/falling
+	    float curPlanarSpeedSqr = state.velocity[0]*state.velocity[0] +
+				      state.velocity[1]*state.velocity[1];
+
+	    float maxPlanarSpeedSqr = BZDB->eval(StateDatabase::BZDB_TANKSPEED)*BZDB->eval(StateDatabase::BZDB_TANKSPEED);
+
+	    bool logOnly = false;
+
+	    // if tank is not driving cannot be sure it didn't toss (V) in flight
+	    // if tank is not alive cannot be sure it didn't just toss (V)
+  	    if (flag[player[t].flag].flag.desc == Flags::Velocity)
+	      maxPlanarSpeedSqr *= BZDB->eval(StateDatabase::BZDB_VELOCITYAD)*BZDB->eval(StateDatabase::BZDB_VELOCITYAD);
+	    else if (flag[player[t].flag].flag.desc == Flags::Thief)
+	      maxPlanarSpeedSqr *= BZDB->eval(StateDatabase::BZDB_THIEFVELAD) * BZDB->eval(StateDatabase::BZDB_THIEFVELAD);
+	    else {
+	      // If player is moving vertically, or not alive the speed checks seem to be problematic
+	      // If this happens, just log it for now, but don't actually kick
+	      if ((player[t].lastState.pos[2] != state.pos[2])
+	      ||  (player[t].lastState.velocity[2] != state.velocity[2])
+	      ||  ((state.status & PlayerState::Alive) == 0)) {
+   	        logOnly = true;
+	      }
+	    }
+
+	    // allow a 5% tolerance level for speed
+	    float realtol=1.0f;
+	    if(speedTolerance>1.0f)
+	    realtol = speedTolerance;
+	    maxPlanarSpeedSqr *= realtol;
+	    if (curPlanarSpeedSqr > maxPlanarSpeedSqr) {
+	      if (logOnly) {
 	           DEBUG1("Logging Player %s [%d] tank too fast (tank: %f, allowed: %f){Dead or v[z] != 0}\n",
 		   player[t].callSign, t,
 		   sqrt(curPlanarSpeedSqr), sqrt(maxPlanarSpeedSqr));
-	    }
-	    else {
+	      }
+	      else {
 	           char message[MessageLen];
 	           DEBUG1("kicking Player %s [%d] tank too fast (tank: %f, allowed: %f)\n",
 	           player[t].callSign, t,
@@ -4575,8 +4579,9 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 	           strcpy(message, "Autokick: Tank moving too fast, Update your client." );
 	           sendMessage(ServerPlayer, t, message, true);
 	           removePlayer(t, "too fast");
+	      }
+	      break;
 	    }
-	    break;
 	  }
 	}
       }
@@ -4619,6 +4624,7 @@ static std::string cmdSet(const std::string&, const CommandManager::ArgList& arg
 	StateDatabase::Permission permission=BZDB->getPermission(args[0]);
 	if ((permission == StateDatabase::ReadWrite) || (permission == StateDatabase::Locked)) {
 	  BZDB->set(args[0], args[1], StateDatabase::Server);
+	  lastWorldParmChange = TimeKeeper::getCurrent();
 	  return args[0] + " set";
 	}
 	return "variable " + args[0] + " is not writeable";
@@ -4643,6 +4649,7 @@ static std::string cmdReset(const std::string&, const CommandManager::ArgList& a
       StateDatabase::Permission permission=BZDB->getPermission(args[0]);
       if ((permission == StateDatabase::ReadWrite) || (permission == StateDatabase::Locked)) {
 	BZDB->set(args[0], BZDB->getDefault(args[0]), StateDatabase::Server);
+	lastWorldParmChange = TimeKeeper::getCurrent();
 	return args[0] + " reset";
       }
       return "variable " + args[0] + " is not writeable";

@@ -3,12 +3,6 @@ recent bugs
 
 - After dropping thief flag, a player still looks tiny in main view.
 
-- get kicked for speeding when _tankSpeed changes to a lower value
-
-- players can get autokicked for jumping too high when the admin changes
-  the gravity to something more negative after a player has jumped.
-  e.g. gravity is at -1, player jumps, admin sets to -9.8
-
 - bzfs should re-resolve the list server IP if it can't reach it for an update
 
 - OS X client gamma on a secondary display set as main display uses the wrong
