@@ -143,6 +143,10 @@ SOURCE=..\include\BzfString.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\include\CallbackList.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\include\common.h
 # End Source File
 # Begin Source File
@@ -152,6 +156,10 @@ SOURCE=..\include\Flag.h
 # Begin Source File
 
 SOURCE=..\include\global.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\md5.h
 # End Source File
 # Begin Source File
 
@@ -171,11 +179,19 @@ SOURCE=..\include\Ping.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\include\PlayerState.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\include\Protocol.h
 # End Source File
 # Begin Source File
 
 SOURCE=..\include\ShotUpdate.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\StateDatabase.h
 # End Source File
 # Begin Source File
 
@@ -192,6 +208,10 @@ SOURCE=..\include\TimeBomb.h
 # Begin Source File
 
 SOURCE=..\include\TimeKeeper.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\WordFilter.h
 # End Source File
 # Begin Source File
 
