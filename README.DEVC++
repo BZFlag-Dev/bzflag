@@ -10,7 +10,7 @@ is quite easy.
 3. The binary should be in each project's corresponding main source
    directory, such as src/bzflag/ for BZFlag client.
 
-Latest CVS project files are maintained using Dev-C++ 4.9.9.0
+Latest CVS project files are maintained using Dev-C++ 4.9.9.1
 
 The latest version of Dev-C++ has been used to create and maintain these project
 files, so older versions may not necessarily work (but they may, but it is best just
