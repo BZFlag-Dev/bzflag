@@ -55,6 +55,7 @@ const GLfloat		BackgroundRenderer::receiverColor[3] =
 const GLfloat		BackgroundRenderer::receiverColorInv[3] =
 				{ 0.55f, 0.3f, 0.55f };
 
+#define FIXME_BFLAG_CXX_INCLUDE
 #include "stars.cxx"
 const int		NumStars = countof(stars);
 

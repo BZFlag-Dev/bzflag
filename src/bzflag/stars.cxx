@@ -10,10 +10,9 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#if defined(__APPLE__)
-#include <OpenGL/gl.h>
+#ifndef FIXME_BFLAG_CXX_INCLUDE
+#error "Do not compile this file directly"
 #endif
-#include "common.h"
 
 static const GLfloat	stars[][6] = {
 			{ 1.00f, 1.00f, 1.00f, -0.18746032f, 0.93921369f, -0.28763914f },
@@ -425,4 +424,3 @@ static const GLfloat	stars[][6] = {
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-
