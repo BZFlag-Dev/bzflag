@@ -4186,7 +4186,7 @@ static void removePlayer(int playerIndex)
 
   // status message
   DEBUG1("Player %s [%d] on %d is removed\n",
-      player[playerIndex].callSign, player[playerIndex].fd, playerIndex);
+      player[playerIndex].callSign, playerIndex, player[playerIndex].fd);
 
   // shutdown TCP socket
   shutdown(player[playerIndex].fd, 2);
