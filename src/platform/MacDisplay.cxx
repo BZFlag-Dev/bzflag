@@ -12,7 +12,7 @@ CGLContextObj  MacDisplay::context;
 
 MacDisplay::MacDisplay() {
   pending = true;
-  
+
   this->setPassthroughSize(CGDisplayPixelsWide(kCGDirectMainDisplay),
       CGDisplayPixelsHigh(kCGDirectMainDisplay));
 }
@@ -52,9 +52,9 @@ boolean MacDisplay::getEvent (BzfEvent &bzf_event) const {
         bzf_event.type = BzfEvent::KeyDown;
         bzf_event.keyDown.ascii = 0;
         bzf_event.keyDown.shift = 0;
-            
+
         // Emulate a 3-button mouse with modifier keys
-                                
+
         if (eventRec.modifiers      & controlKey)
           bzf_event.keyDown.button = BzfKeyEvent::RightMouse;
         else if (eventRec.modifiers & optionKey)
@@ -77,7 +77,7 @@ boolean MacDisplay::getEvent (BzfEvent &bzf_event) const {
           bzf_event.keyUp.button = BzfKeyEvent::LeftMouse;
         break;
 
-      case keyDown
+	  case keyDown:
         bzf_event.type = BzfEvent::KeyDown;
         getKey (bzf_event.keyDown, eventRec);
         break;
@@ -216,7 +216,7 @@ char *GetMacOSXDataPath(void)
   CFURLRef myBundleURL = CFBundleCopyBundleURL(myAppsBundle);
   if (myBundleURL == NULL)
     return NULL;
-        
+
   pathURL = CFURLCreateCopyDeletingLastPathComponent(kCFAllocatorDefault, myBundleURL);
   CFstring = CFURLCopyStrictPath(pathURL, &bah);
   string = CFStringGetCStringPtr(CFstring, CFStringGetSystemEncoding());

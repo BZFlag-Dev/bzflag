@@ -73,9 +73,9 @@ public:
 		{
 			for (int x = 0; x < 4; x++)
 			{
-				matrix[x][y] =	src[0][y]*inMatrix.matrix[x][0] + 
-						src[1][y]*inMatrix.matrix[x][1] + 
-						src[2][y]*inMatrix.matrix[x][2] + 
+				matrix[x][y] =	src[0][y]*inMatrix.matrix[x][0] +
+						src[1][y]*inMatrix.matrix[x][1] +
+						src[2][y]*inMatrix.matrix[x][2] +
 						src[3][y]*inMatrix.matrix[x][3];
 			}
 		}
@@ -84,7 +84,7 @@ public:
 
 	void preMultiply( Matrix3D &inMatrix )
 	{
-		// this = matrix * this 
+		// this = matrix * this
 
 		float src[4][4];
 		memcpy( src, matrix, sizeof(float)*4*4 );
@@ -93,9 +93,9 @@ public:
 		{
 			for (int x = 0; x < 4; x++)
 			{
-				matrix[x][y] =	inMatrix.matrix[0][y]*src[x][0] + 
-						inMatrix.matrix[1][y]*src[x][1] + 
-						inMatrix.matrix[2][y]*src[x][2] + 
+				matrix[x][y] =	inMatrix.matrix[0][y]*src[x][0] +
+						inMatrix.matrix[1][y]*src[x][1] +
+						inMatrix.matrix[2][y]*src[x][2] +
 						inMatrix.matrix[3][y]*src[x][3];
 			}
 		}
@@ -241,7 +241,7 @@ void parsebzwt( ifstream &bzwt, ofstream &bzw )
 	Matrix3D posMatrix, sizeMatrix, tempMatrix;
 	float rotation;
 	int   count;
-	
+
 	try
 	{
 		while (!bzwt.eof())
@@ -377,7 +377,7 @@ void parsebzwt( ifstream &bzwt, ofstream &bzw )
 						count = atoi( token.c_str( ));
 						state = IN_TRANSFORM;
 					break;
-						
+
 
 					case IN_POSITION0:
 						position[0] = atof(token.c_str());

@@ -121,7 +121,7 @@ struct PacketQueue {
 #ifdef NETWORK_STATS
 struct MessageCount {
 	public:
-		uint32_t count; 
+		uint32_t count;
 		uint16_t code;
 		uint16_t maxSize;
 };
@@ -2747,7 +2747,7 @@ static WorldInfo *defineTeamWorld()
 	  basePos[3][1] + 0.5f * BaseSize - PyrBase, 0.0f, 0.0f,
 	  PyrBase, PyrBase, PyrHeight);
     }
- 
+
     if (!randomCTF || (maxTeam[4] > 0)) {
       // around purple base
       world->addPyramid(
@@ -2767,7 +2767,7 @@ static WorldInfo *defineTeamWorld()
 	  basePos[4][1] - 0.5f * BaseSize + PyrBase, 0.0f, 0.0f,
 	  PyrBase, PyrBase, PyrHeight);
     }
- 
+
     // create symmetric map of random buildings for random CTF mode
     if (randomCTF) {
       int i;
@@ -2800,7 +2800,7 @@ static WorldInfo *defineTeamWorld()
 	    }
           }
       }
-    
+
       // make pyramids
       h = PyrHeight;
       const int numPyrs = int((0.5 + 0.6 * bzfrand()) * CitySize * CitySize * 2);
@@ -2943,7 +2943,7 @@ static WorldInfo *defineTeamWorld()
 	  PyrBase, PyrBase, PyrHeight);
       world->addPyramid( (BoxBase + 0.5f * AvenueSize), 0.0f, 0.0f, 0.0f,
 	  PyrBase, PyrBase, PyrHeight);
-  
+
       // halfway out from city center
       world->addPyramid(0.0f, -(3.0f * BoxBase + 1.5f * AvenueSize), 0.0f, 0.0f,
 	  PyrBase, PyrBase, PyrHeight);
@@ -2983,7 +2983,7 @@ static WorldInfo *defineTeamWorld()
             randomBoxes ? (0.5f * M_PI * ((float)bzfrand() - 0.5f)) : 0.0f,
             BoxBase, BoxBase, h);
       }
-  
+
       // add teleporters
       if (useTeleporters) {
         const float xoff = BoxBase + 0.5f * AvenueSize;
@@ -3004,7 +3004,7 @@ static WorldInfo *defineTeamWorld()
         0.5f * TeleWidth, TeleBreadth, 2.0f * TeleHeight, TeleWidth);
         world->addTeleporter( 3.5f * TeleBreadth,  3.5f * TeleBreadth, 0.0f, 0.25f * M_PI,
         0.5f * TeleWidth, TeleBreadth, 2.0f * TeleHeight, TeleWidth);
-  
+
         world->addLink(0, 14);
         world->addLink(1, 7);
         world->addLink(2, 12);

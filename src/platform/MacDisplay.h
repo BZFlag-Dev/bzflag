@@ -44,7 +44,7 @@ class MacDisplay : public BzfDisplay {
 
     //AGLContext getContext () const { return context; }
     void setContext(CGLContextObj ctx) const { context = ctx;  }
-            
+
   private:
 
     boolean doSetResolution(int) { return false; }
@@ -62,7 +62,7 @@ class MacDisplay : public BzfDisplay {
 
     static CGLContextObj  context;
     static CGrafPtr    window;
-      
+
     RgnHandle   cursor_region;
 
     //GDHandle    screen_device;

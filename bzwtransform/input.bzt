@@ -13,7 +13,7 @@ transform
 		size 4 4 12
 		rotation 0
 	end
-	
+
 	matrix
 		position
 			rotate 10
@@ -34,7 +34,7 @@ transform
 		size 40 10 10
 		rotation 0
 	end
-	
+
 	matrix
 		size
 			scale 1.0 1.0 1.0
@@ -52,7 +52,7 @@ transform
 		size 8 8 5
 		rotation 0
 	end
-	
+
 	matrix
 		position
 			translate 25 25 5

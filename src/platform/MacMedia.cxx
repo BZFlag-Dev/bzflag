@@ -99,14 +99,14 @@ void MacMedia::writeAudio(void) {
 
   callBack.cmd = callBackCmd;
   callBack.param1 = 0;          // which buffer to fill, 0 buffer, 1, 0, ...
-    
+
 
   channel->callBack = gCarbonSndCallBackUPP;
 
   iErr = SndDoCommand (channel, &playCmd, true);
   if (noErr != iErr)
     return;
-       
+
   queued_chunks++;
 
   iErr = SndDoCommand(channel, &callBack, true);

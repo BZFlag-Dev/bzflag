@@ -1231,7 +1231,7 @@ void			HUDRenderer::drawPlayerScore(const Player* player,
   const PlayerId& id = player->getId();
   sprintf(email, " %s:%d-%1x(%s)", inet_ntoa(id.serverHost),
       ntohs(id.port), ntohs(id.number), player->getEmailAddress());
-#endif  
+#endif
   sprintf(score, "%d (%d-%d)", player->getScore(),
       player->getWins(), player->getLosses());
   if (LocalPlayer::getMyTank() != player)

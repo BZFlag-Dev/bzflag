@@ -45,7 +45,7 @@ class MacMedia : public BzfMedia {
     void audioSleep(boolean, double);
 
     void  writeAudio(void);
-    
+
     //unsigned char* doReadImage(const char*, int&, int&, int&) const;
 
     //BzfString makePath(const BzfString &, const BzfString &) const;
