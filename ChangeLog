@@ -4,6 +4,7 @@
 BZFlag 1.12.0  (was 1.11.x)
 ---------------------------
 
+* Allow server to control latitude and longitude (-synclocation) - Daniel Remenak
 * Added tank spawn expansion effect - Dave Rodgers
 * Added tank squishiness - Dave Rodgers, Dave Brosius
 * Added animated effects for T, N, TH, O, and CL flags - Dave Rodgers
