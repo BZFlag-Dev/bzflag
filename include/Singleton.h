@@ -65,7 +65,11 @@ public:
     if ( _instance == 0 ) {
       _instance = new T;
       // destroy the singleton when the application terminates
+#ifdef _WIN32
+      atexit(Singleton::destroy);
+#else
       std::atexit(Singleton::destroy);
+#endif
     }
     return *Singleton::_instance;
   }
