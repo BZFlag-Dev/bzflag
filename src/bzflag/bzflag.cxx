@@ -104,7 +104,7 @@ static DefaultDBItem	defaultDBItems[] = {
   { "volume",			"10",			true,	StateDatabase::ReadWrite,	NULL },
   { "latitude",			"37.5",			true,	StateDatabase::ReadWrite,	NULL },
   { "longitude",		"122",			true,	StateDatabase::ReadWrite,	NULL },
-  { "enhancedRadar",		"1",			true,	StateDatabase::ReadWrite,	NULL },
+  { "enhancedradar",		"1",			true,	StateDatabase::ReadWrite,	NULL },
   { "coloredradarshots",	"1",			true,	StateDatabase::ReadWrite,	NULL },
   { "linedradarshots",		"0",			true,	StateDatabase::ReadWrite,	NULL },
   { "sizedradarshots",		"0",			true,	StateDatabase::ReadWrite,	NULL },
