@@ -37,6 +37,7 @@ ActionBinding::ActionBinding() {
   wayToBindActions.insert(std::make_pair(std::string("toggle displayScore"), press));
   wayToBindActions.insert(std::make_pair(std::string("toggle displayBinoculars"), press));
   wayToBindActions.insert(std::make_pair(std::string("pause"), press));
+  wayToBindActions.insert(std::make_pair(std::string("fullscreen"), press));
   wayToBindActions.insert(std::make_pair(std::string("iconify"), press));
 #ifdef SNAPPING
   wayToBindActions.insert(std::make_pair(std::string("screenshot"), press));
@@ -96,6 +97,8 @@ ActionBinding::ActionBinding() {
   defaultBinding.insert(std::make_pair(std::string("B"), std::string("toggle displayBinoculars")));
   defaultBinding.insert(std::make_pair(std::string("Pause"), std::string("pause")));
   defaultBinding.insert(std::make_pair(std::string("P"), std::string("pause")));
+  defaultBinding.insert(std::make_pair(std::string("F1"),
+				       std::string("fullscreen")));
   defaultBinding.insert(std::make_pair(std::string("F4"), std::string("iconify")));
 #ifdef SNAPPING
   defaultBinding.insert(std::make_pair(std::string("F5"), std::string("screenshot")));

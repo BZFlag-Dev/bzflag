@@ -100,6 +100,7 @@ KeyboardMapMenu::KeyboardMapMenu() : defaultKey(this), editing(-1), quickKeysMen
   controls.push_back(createLabel(NULL, "AutoPilot Key: "));
   controls.push_back(createLabel(NULL, "Restart:"));
   controls.push_back(createLabel(NULL, "Iconify:"));
+  controls.push_back(createLabel(NULL, "Fullscreen:"));
   controls.push_back(quickKeys = createLabel(NULL, "Define Quick Keys"));
 
   initNavigation(controls, 2, controls.size()-1);
@@ -135,6 +136,7 @@ KeyboardMapMenu::KeyboardMapMenu() : defaultKey(this), editing(-1), quickKeysMen
   initkeymap("autopilot", 31);
   initkeymap("restart", 32);
   initkeymap("iconify", 33);
+  initkeymap("fullscreen", 34);
 }
 
 void KeyboardMapMenu::initkeymap(const std::string& name, int index)
