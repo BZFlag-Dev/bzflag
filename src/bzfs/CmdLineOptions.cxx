@@ -808,6 +808,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       memset(argv[i], ' ', options.password.size());
     } else if (strcmp(argv[i], "-pidfile") == 0) {
       unsigned int pid = 0;
+	  checkArgc(1, i, argc, argv[i]);
       FILE *fp = fopen(argv[i], "wt");
 #ifndef _WIN32
       pid = getpid();
