@@ -68,6 +68,7 @@ namespace Flags {
   FlagType *Blindness;
   FlagType *Jamming;
   FlagType *WideAngle;
+  FlagType *NoJumping;
 
   void init()
   {
@@ -148,6 +149,8 @@ namespace Flags {
 						    "JaMming (-JM):  Radar doesn't work.  Can still see.");
     WideAngle               = new FlagType( "Wide Angle", "WA", FlagSticky, NormalShot, FlagBad, NoTeam,
 						    "Wide Angle (-WA):  Fish-eye lens distorts view.");
+    NoJumping               = new FlagType( "No Jumping", "NJ", FlagSticky, NormalShot, FlagBad, NoTeam,
+						    "No Jumping (-NJ):  Tank can't jump.");
   }
 }
 

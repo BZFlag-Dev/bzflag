@@ -31,6 +31,7 @@
 <!ENTITY Masquerade SYSTEM "Flags/Masquerade.xml">
 <!ENTITY Momentum SYSTEM "Flags/Momentum.xml">
 <!ENTITY Narrow SYSTEM "Flags/Narrow.xml">
+<!ENTITY NoJumping SYSTEM "Flags/NoJumping.xml">
 <!ENTITY Obesity SYSTEM "Flags/Obesity.xml">
 <!ENTITY OscillationOverthruster SYSTEM "Flags/OscillationOverthruster.xml">
 <!ENTITY PhantomZone SYSTEM "Flags/PhantomZone.xml">
@@ -90,6 +91,7 @@
   &Masquerade;
   &Momentum;
   &Narrow;
+  &NoJumping;
   &Obesity;
   &OscillationOverthruster;
   &PhantomZone;

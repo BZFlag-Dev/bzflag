@@ -954,10 +954,12 @@ static void		doAutoPilot(float &rotation, float &speed)
 
 #ifdef _MSC_VER
 	      if (((World::getWorld()->allowJumping() || (myTank->getFlag()) == Flags::Jumping))
-		  && (dist < (max(dotProd,0.5f) * BZDB.eval(StateDatabase::BZDB_TANKLENGTH) * 2.5f))) {
+		  && (dist < (max(dotProd,0.5f) * BZDB.eval(StateDatabase::BZDB_TANKLENGTH) * 2.5f))
+		  && (myTank->getFlag() != Flags::NoJumping)) {
 #else
 	      if (((World::getWorld()->allowJumping() || (myTank->getFlag()) == Flags::Jumping))
-		  && (dist < (std::max(dotProd,0.5f) * BZDB.eval(StateDatabase::BZDB_TANKLENGTH) * 2.5f))) {
+		  && (dist < (std::max(dotProd,0.5f) * BZDB.eval(StateDatabase::BZDB_TANKLENGTH) * 2.5f))
+		  && (myTank->getFlag() != Flags::NoJumping)) {
 #endif
 		myTank->jump();
 		s = maxShots;

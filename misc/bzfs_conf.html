@@ -21,7 +21,7 @@
 			var flags = new Array(	"V", "A", "OO", "F", "MG", "GM", "L", "R", "SB",
 						"IB", "ST", "T", "N", "SH", "SR", "SW", "PZ", "G",
 						"JP", "ID", "CL", "US", "MQ", "SE", "TH", "BU",
-                                                "CB", "LT", "GT", "M", "B", "JM", "WA" );
+                                                "CB", "LT", "GT", "M", "B", "JM", "WA", "NJ" );
 
 			function ableControls()
 			{
@@ -933,7 +933,6 @@
 								<td align="right">(BU)</td><td><input type="text" name="bu_mand_flag" value="0" size="3" title="Burrow"/></td>
 							</tr>
 							<tr>
-							<tr>
 								<td align="right">(CB)</td><td><input type="text" name="cb_mand_flag" value="0" size="3" title="Colorblind"/></td>
 								<td align="right">(&lt;-)</td><td><input type="text" name="lt_mand_flag" value="0" size="3" title="Left turn only"/></td>
 								<td align="right">(-&gt;)</td><td><input type="text" name="gt_mand_flag" value="0" size="3" title="Right turn only"/></td>
@@ -943,6 +942,7 @@
 							</tr>
 							<tr>
 								<td align="right">(WA)</td><td><input type="text" name="wa_mand_flag" value="0" size="3" title="Wide Angle"/></td>
+								<td align="right">(NJ)</td><td><input type="text" name="nj_mand_flag" value="0" size="3" title="No Jumping"/></td>
 							</tr>
 						</table>
 					</fieldset>
@@ -1002,6 +1002,7 @@
 							<tr>
 								<td align="right">(JM)</td><td><input type="checkbox" name="jm_forbid_flag" title="Jamming"/></td>
 								<td align="right">(WA)</td><td><input type="checkbox" name="wa_forbid_flag" title="Wide Angle"/></td>
+								<td align="right">(NJ)</td><td><input type="checkbox" name="nj_forbid_flag" title="No Jumping"/></td>
 							</tr>
 						</table>
 					</fieldset>
@@ -1057,6 +1058,7 @@
 							<tr>
 								<td align="right">(JM)</td><td><input type="text" size="5" name="jm_limit_flag" title="Jamming"/></td>
 								<td align="right">(WA)</td><td><input type="text" size="5" name="wa_limit_flag" title="Wide Angle"/></td>
+								<td align="right">(NJ)</td><td><input type="text" size="5" name="nj_limit_flag" title="No Jumping"/></td>
 							</tr>
 						</table>
 					</fieldset>
