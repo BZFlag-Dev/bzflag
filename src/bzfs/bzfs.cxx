@@ -56,6 +56,8 @@ const int udpBufSize = 128000;
 #include <fcntl.h>
 #endif
 #include <set>
+#include <vector>
+#include <algorithm>
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
@@ -114,7 +116,7 @@ static float flagHeight = FlagAltitude;
 // it should include a cidr mask with each address
 // it's still useful as is
 
-typedef struct BanInfo
+struct BanInfo
 {
     BanInfo( in_addr &banAddr, int period = 0 ) {
 	memcpy( &addr, &banAddr, sizeof( in_addr ));
@@ -125,17 +127,25 @@ typedef struct BanInfo
 	    banEnd += period * 60.0f;
 	}
     }
+    // BanInfos with same IP are identical
+    bool operator==(const BanInfo &rhs) const {
+      return addr.s_addr == rhs.addr.s_addr;
+    }
 
     in_addr	addr;
     TimeKeeper	banEnd;
-} BanInfo;
+};
 
 class AccessControlList
 {
 public:
   void ban(in_addr &ipAddr, int period = 0) {
-
-    banList.push_back(BanInfo(ipAddr, period));
+    BanInfo toban(ipAddr, period);
+    banList_t::iterator oldit = find(banList.begin(), banList.end(), toban);
+    if (oldit != banList.end()) // IP already in list? -> replace
+      *oldit = toban;
+    else
+      banList.push_back(toban);
   }
 
   bool ban(std::string &ipList, int period = 0) {
@@ -167,18 +177,12 @@ public:
   }
 
   bool unban(in_addr &ipAddr) {
-    int numBans = banList.size();
-    bool found = false;
-    std::vector<BanInfo>::iterator it = banList.begin();
-    while (it != banList.end()) {
-      if (it->addr.s_addr == ipAddr.s_addr) {
-	banList.erase(it);
-	numBans--;
-	found = true;
-      }
-      it++;
+    banList_t::iterator it = remove(banList.begin(), banList.end(), BanInfo(ipAddr));
+    if (it != banList.end()) {
+      banList.erase(it, banList.end());
+      return true;
     }
-    return found;
+    return false;
   }
 
   bool unban(std::string &ipList) {
@@ -206,20 +210,10 @@ public:
   }
 
   bool validate(in_addr &ipAddr) {
-    int numBans = banList.size();
-	TimeKeeper now = TimeKeeper::getCurrent();
+    expire();
 
-    for (int i = 0; i < numBans; i++) {
-      in_addr mask = banList[i].addr;
-      TimeKeeper banEnd = banList[i].banEnd;
-	  if (banEnd <= now) {
-	        std::vector<BanInfo>::iterator it = banList.begin();
-	        for (int j = 0; i != j; j++) it++;
-		banList.erase(it);
-		i--;
-		numBans--;
-		continue;
-	  }
+    for (banList_t::iterator it = banList.begin(); it != banList.end(); ++it) {
+      in_addr mask = it->addr;
 
       if ((ntohl(mask.s_addr) & 0x00ffffff) == 0x00ffffff)
 	mask.s_addr = htonl((ntohl(mask.s_addr) & 0xff000000) | (ntohl(ipAddr.s_addr) & 0x00ffffff));
@@ -236,50 +230,44 @@ public:
 
   void sendBans(int playerIndex, PlayerId id, TeamColor teamColor)
   {
-    char banlistmessage[MessageLen];
+    expire();
 
+    char banlistmessage[MessageLen];
     sendMessage(playerIndex, id, teamColor, "IP Ban List");
     sendMessage(playerIndex, id, teamColor, "-----------");
-    TimeKeeper now = TimeKeeper::getCurrent();
-    int numBans = banList.size();
-    for (int i = 0; i < numBans; i++) {
-	char *pMsg = banlistmessage;
-	if (banList[i].banEnd <= now) {
-	  std::vector<BanInfo>::iterator it = banList.begin();
-	  for (int j = 0; i != j; j++) it++;
-	  banList.erase(it);
-	  i--;
-	  numBans--;
-	  continue;
-	}
-	in_addr mask = banList[i].addr;
+    for (banList_t::iterator it = banList.begin(); it != banList.end(); ++it) {
+      char *pMsg = banlistmessage;
+      in_addr mask = it->addr;
 
-	sprintf( pMsg, "%d.", ((unsigned char)(ntohl(mask.s_addr) >> 24)));
-	pMsg+=strlen(pMsg);
+      sprintf( pMsg, "%d.", ((unsigned char)(ntohl(mask.s_addr) >> 24)));
+      pMsg+=strlen(pMsg);
 
-	if ((ntohl(mask.s_addr) & 0x00ffffff) == 0x00ffffff)
-	    strcat( pMsg, "*.*.*" );
-	else {
-	    sprintf( pMsg, "%d.", ((unsigned char)(ntohl(mask.s_addr) >> 16)));
-	    pMsg+=strlen(pMsg);
-	    if ((ntohl(mask.s_addr) & 0x0000ffff) == 0x0000ffff)
-		strcat( pMsg, "*.*" );
-	    else {
-		sprintf( pMsg, "%d.", ((unsigned char)(ntohl(mask.s_addr) >> 8)));
-		pMsg+=strlen(pMsg);
-		if ((ntohl(mask.s_addr) & 0x000000ff) == 0x000000ff)
-		    strcat( pMsg, "*" );
-		else
-		    sprintf( pMsg, "%d", ((unsigned char)ntohl(mask.s_addr)));
-	    }
-	}
+      if ((ntohl(mask.s_addr) & 0x00ffffff) == 0x00ffffff)
+          strcat( pMsg, "*.*.*" );
+      else {
+          sprintf( pMsg, "%d.", ((unsigned char)(ntohl(mask.s_addr) >> 16)));
+          pMsg+=strlen(pMsg);
+          if ((ntohl(mask.s_addr) & 0x0000ffff) == 0x0000ffff)
+              strcat( pMsg, "*.*" );
+          else {
+              sprintf( pMsg, "%d.", ((unsigned char)(ntohl(mask.s_addr) >> 8)));
+              pMsg+=strlen(pMsg);
+              if ((ntohl(mask.s_addr) & 0x000000ff) == 0x000000ff)
+                  strcat( pMsg, "*" );
+              else
+                  sprintf( pMsg, "%d", ((unsigned char)ntohl(mask.s_addr)));
+          }
+      }
+      // print duration when < 1 year
+      double duration = it->banEnd - TimeKeeper::getCurrent();
+      if (duration < 365.0f * 24 * 3600)
+        sprintf(pMsg + strlen(pMsg)," (%.1f minutes)", duration / 60);
 
-	sendMessage(playerIndex, id, teamColor, banlistmessage);
+      sendMessage(playerIndex, id, teamColor, banlistmessage);
     }
   }
 
 private:
-
   bool convert(char *ip, in_addr &mask) {
     unsigned char b[4];
     char *pPeriod;
@@ -308,7 +296,19 @@ private:
     return true;
   }
 
-  std::vector<BanInfo>  banList;
+  void expire() {
+    TimeKeeper now = TimeKeeper::getCurrent();
+    for (banList_t::iterator it = banList.begin(); it != banList.end();) {
+      if (it->banEnd <= now) {
+        it = banList.erase(it);
+      }
+      else
+        ++it;
+    }
+  }
+
+  typedef std::vector<BanInfo> banList_t;
+  banList_t banList;
 };
 
 class BadWordList
@@ -5100,7 +5100,6 @@ static void parseCommand(const char *message, int t)
 	break;
     if (i < curMaxPlayers) {
       char kickmessage[MessageLen];
-      player[i].toBeKicked = false;
       sprintf(kickmessage,"Your were kicked off the server by %s", player[t].callSign);
       sendMessage(i, player[i].id, player[i].team, kickmessage);
       removePlayer(i);
@@ -5129,8 +5128,7 @@ static void parseCommand(const char *message, int t)
     sendMessage(t, player[t].id, player[t].team, reply);
     char kickmessage[MessageLen];
     for (int i = 0; i < curMaxPlayers; i++) {
-      if ((player[i].fd != NotConnected) && (!clOptions.acl.validate( player[i].taddr.sin_addr))) {
-	player[i].toBeKicked = false;
+      if ((player[i].fd != NotConnected) && (!clOptions.acl.validate(player[i].taddr.sin_addr))) {
 	sprintf(kickmessage,"Your were banned from this server by %s", player[t].callSign);
 	sendMessage(i, player[i].id, player[i].team, kickmessage);
 	removePlayer(i);
