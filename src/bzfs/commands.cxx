@@ -1274,11 +1274,11 @@ void handleVetoCmd(int t, const char * /*message*/)
     return;
   }
 
-  /* poof */
-  arbiter->forgetPoll();
-
   sprintf(reply,"%s, you have cancelled the poll to %s %s", player[t].callSign, arbiter->getPollAction().c_str(), arbiter->getPollPlayer().c_str());
   sendMessage(ServerPlayer, t, reply, true);
+
+  /* poof */
+  arbiter->forgetPoll();
 
   sprintf(reply,"The poll was cancelled by %s", player[t].callSign);
   sendMessage(ServerPlayer, AllPlayers, reply, true);
