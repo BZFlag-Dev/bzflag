@@ -68,6 +68,15 @@ Obstacle* Teleporter::copyWithTransform(const MeshTransform& xform) const
 
 void Teleporter::finalize()
 {
+  origSize[0] = size[0];
+  origSize[1] = size[1];
+  origSize[2] = size[2];
+
+  if (!horizontal) {
+    size[1] = origSize[1] + (border * 2.0f);
+    size[2] = origSize[2] + border;
+  }
+
   // the same as the default Obstacle::getExtents(), except
   // that we use the larger of the border half-width and size[0].
   float sizeX = border * 0.5f;
@@ -83,15 +92,6 @@ void Teleporter::finalize()
   extents.mins[2] = pos[2];
   extents.maxs[2] = pos[2] + size[2];
   
-  origSize[0] = size[0];
-  origSize[1] = size[1];
-  origSize[2] = size[2];
-
-  if (!horizontal) {
-    size[1] = origSize[1] + (border * 2.0f);
-    size[2] = origSize[2] + border;
-  }
-
   makeLinks();
 
   return;
