@@ -685,9 +685,9 @@ WordFilter::WordFilter()
   fix.word = "bz";
   fix.compiled = getCompiledExpression(expressionFromString(fix.word));
   prefixes.insert(fix);
-  fix.word = "bez";
-  fix.compiled = getCompiledExpression(expressionFromString(fix.word));
-  prefixes.insert(fix);
+//  fix.word = "bez";
+//  fix.compiled = getCompiledExpression(expressionFromString(fix.word));
+//  prefixes.insert(fix);
   fix.word = "beze";
   fix.compiled = getCompiledExpression(expressionFromString(fix.word));
   prefixes.insert(fix);
