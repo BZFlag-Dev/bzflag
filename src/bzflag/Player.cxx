@@ -266,11 +266,11 @@ void			Player::setVisualTeam (TeamColor visualTeam)
   TextureManager &tm = TextureManager::instance();
   std::string texName;
   if (hunter)
-    texName = "hunter_";
+    texName = BZDB.get("hunterTeamPrefix");
   else
     texName = Team::getImagePrefix(visualTeam);
 
-  texName += "tank";
+  texName += BZDB.get("tankTexture");
 
   // now after we did all that, see if they have a user texture
   tankTexture = NULL;

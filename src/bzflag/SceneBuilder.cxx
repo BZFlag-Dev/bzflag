@@ -273,22 +273,18 @@ void			SceneDatabaseBuilder::addBox(SceneDatabase* db,
   if (o.userTextures[0].size())
     boxTexture = tm.getTexture(o.userTextures[0].c_str(),false);
   if (!boxTexture || !boxTexture->isValid())
-    boxTexture = tm.getTexture("std_boxwall",false);
-  if (!boxTexture || !boxTexture->isValid())
-     boxTexture = tm.getTexture( "boxwall" );
-  else
-    useColorTexture[0] = BZDB.isTrue("texture");
+    boxTexture = tm.getTexture(BZDB.get("boxWallTexture").c_str(),true);
+   
+  useColorTexture[0] = BZDB.isTrue("texture") && boxTexture && boxTexture->isValid();
 
   OpenGLTexture *boxTopTexture = NULL;
 
   if (o.userTextures[1].size())
     boxTopTexture = tm.getTexture(o.userTextures[1].c_str(),false);
   if (!boxTopTexture || !boxTopTexture->isValid())
-    boxTopTexture = tm.getTexture("std_roof",false);
-  if (!boxTopTexture || !boxTopTexture->isValid())
-    boxTopTexture = tm.getTexture( "roof" );
-  else
-    useColorTexture[1] = BZDB.isTrue("texture");
+    boxTopTexture = tm.getTexture(BZDB.get("boxTopTexture").c_str(),true);
+
+  useColorTexture[1] = BZDB.isTrue("texture") && boxTopTexture && boxTopTexture->isValid();
 
   while ((node = ((part != 5) ? nodeGen->getNextNode(
 				-1.5f*boxTexWidth,
@@ -334,11 +330,9 @@ void			SceneDatabaseBuilder::addPyramid(SceneDatabase* db,
   if (o.userTextures[0].size())
     pyramidTexture = tm.getTexture(o.userTextures[0].c_str(),false);
   if (!pyramidTexture || !pyramidTexture->isValid())
-    pyramidTexture = tm.getTexture("std_pyrwall",false);
-  if (!pyramidTexture || !pyramidTexture->isValid())
-    pyramidTexture = tm.getTexture( "pyrwall" );
-  else
-    useColorTexture = BZDB.isTrue("texture");
+    pyramidTexture = tm.getTexture(BZDB.get("pryWallTexture").c_str(),false);
+
+  useColorTexture = BZDB.isTrue("texture") && pyramidTexture && pyramidTexture->isValid();
 
   // Using boxTexHeight since it's (currently) the same and it's already available
   while ((node = nodeGen->getNextNode(-3.0f * boxTexHeight,
@@ -375,13 +369,13 @@ void			SceneDatabaseBuilder::addBase(SceneDatabase *db,
   if (!boxTexture || !boxTexture->isValid())
   {
     std::string teamBase = Team::getImagePrefix((TeamColor)o.getTeam());
-    teamBase+="basewall";
+    teamBase+=BZDB.get("baseWallTexture");
     boxTexture = tm.getTexture(teamBase.c_str(),false);
   }
   if (!boxTexture || !boxTexture->isValid())
-    boxTexture = tm.getTexture( "boxwall" );
-  else
-    useColorTexture[0] = BZDB.isTrue("texture");
+    boxTexture = tm.getTexture( BZDB.get("boxWallTexture").c_str() );
+
+  useColorTexture[0] = BZDB.isTrue("texture") && boxTexture && boxTexture->isValid();
 
   OpenGLTexture *baseTopTexture = NULL;
 
@@ -389,13 +383,13 @@ void			SceneDatabaseBuilder::addBase(SceneDatabase *db,
     baseTopTexture = tm.getTexture(o.userTextures[1].c_str(),false);
   if (!baseTopTexture || !baseTopTexture->isValid()){
     std::string teamBase = Team::getImagePrefix((TeamColor)o.getTeam());
-    teamBase+="basetop";
+    teamBase+=BZDB.get("baseTopTexture").c_str();
     baseTopTexture = tm.getTexture(teamBase.c_str(),false);
   }
   if (!baseTopTexture || !baseTopTexture->isValid())
     baseTopTexture = NULL;
   else
-    useColorTexture[1] = BZDB.isTrue("texture");
+    useColorTexture[1] = BZDB.isTrue("texture") && baseTopTexture && baseTopTexture->isValid();
 
   // this assumes bases have 6 parts - if they don't, it still works
   int part = 0;
@@ -449,11 +443,9 @@ void			SceneDatabaseBuilder::addTeleporter(SceneDatabase* db,
   if (o.userTextures[0].size())
     teleporterTexture = tm.getTexture(o.userTextures[0].c_str(),false);
   if (!teleporterTexture || !teleporterTexture->isValid())
-    teleporterTexture = tm.getTexture("std_caution",false);
-  if (!teleporterTexture || !teleporterTexture->isValid())
-    teleporterTexture = tm.getTexture( "caution" );
-  else
-    useColorTexture = BZDB.isTrue("texture");
+    teleporterTexture = tm.getTexture(BZDB.get("cautionTexture").c_str(),true);
+   
+  useColorTexture = BZDB.isTrue("texture") && teleporterTexture && teleporterTexture->isValid();
 
   while ((node = nodeGen->getNextNode(1.0, o.getHeight() / o.getBreadth(),
 							teleporterLOD))) {

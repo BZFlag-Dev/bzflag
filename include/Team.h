@@ -20,6 +20,7 @@
 
 #include "common.h"
 #include "global.h"
+#include <string>
 
 const int		TeamPLen = 10;
 
@@ -30,7 +31,7 @@ struct Team {
     void*		pack(void*) const;
     void*		unpack(void*);
 
-	static const char*  getImagePrefix(TeamColor); // const
+    static const std::string  getImagePrefix(TeamColor); // const
     static const char*	getName(TeamColor); // const
     static const float*	getTankColor(TeamColor); // const
     static const float*	getRadarColor(TeamColor); // const

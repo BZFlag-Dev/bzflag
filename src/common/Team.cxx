@@ -60,15 +60,15 @@ void*			Team::unpack(void* buf)
   return buf;
 }
 
-const char*  Team::getImagePrefix(TeamColor team)
+const std::string  Team::getImagePrefix(TeamColor team)
 {
   switch (team) {
-  case RedTeam: return "red_";
-  case GreenTeam: return "green_";
-  case BlueTeam: return "blue_";
-  case PurpleTeam: return "purple_";
-  case RabbitTeam: return "rabbit_";
-  default: return "rogue_";
+  case RedTeam: return BZDB.get("redTeamPrefix");
+  case GreenTeam: return BZDB.get("greenTeamPrefix");
+  case BlueTeam: return BZDB.get("blueTeamPrefix");
+  case PurpleTeam: return BZDB.get("purpleTeamPrefix");
+  case RabbitTeam: return BZDB.get("rabbitTeamPrefix");
+  default: return BZDB.get("rogueTeamPrefix");
   }
 }
 

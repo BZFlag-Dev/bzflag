@@ -4301,7 +4301,10 @@ static bool		gotBlowedUp(BaseLocalPlayer* tank,
 	else {
 	  blowedUpNotice += lookupPlayer(killer)->getCallSign();
 	  blowedUpNotice += " (";
-	  blowedUpNotice += Team::getName(lookupPlayer(killer)->getTeam());
+          if (World::getWorld()->allowRabbit() && lookupPlayer(killer)->getTeam() != RabbitTeam)
+            blowedUpNotice+= "Hunter";
+          else
+	    blowedUpNotice += Team::getName(lookupPlayer(killer)->getTeam());
 	  blowedUpNotice += ")";
 	}
       }
@@ -4500,7 +4503,10 @@ static void		setTarget()
     std::string msg("Locked on ");
     msg += bestTarget->getCallSign();
     msg += " (";
-    msg += Team::getName(bestTarget->getTeam());
+    if (World::getWorld()->allowRabbit() && bestTarget->getTeam() != RabbitTeam)
+      msg+= "Hunter";
+    else
+      msg += Team::getName(bestTarget->getTeam());
     if (bestTarget->getFlag() != Flags::Null) {
       msg += ") with ";
       msg += bestTarget->getFlag()->flagName;
@@ -4522,7 +4528,10 @@ static void		setTarget()
     std::string msg("Looking at ");
     msg += bestTarget->getCallSign();
     msg += " (";
-    msg += Team::getName(bestTarget->getTeam());
+    if (World::getWorld()->allowRabbit() && bestTarget->getTeam() != RabbitTeam)
+      msg+= "Hunter";
+    else
+      msg += Team::getName(bestTarget->getTeam());
     if (bestTarget->getFlag() != Flags::Null) {
       msg += ") with ";
       msg += bestTarget->getFlag()->flagName;
