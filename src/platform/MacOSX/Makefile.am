@@ -16,7 +16,7 @@ if CLIENT_INCLUDED
 noinst_LIBRARIES = libMac.a
 endif
 
-MAINTAINERCLEANFILES = Makefile.am
+MAINTAINERCLEANFILES = Makefile.in
 
 EXTRA_DIST = 				\
 	BZFlag_Prefix.h			\
