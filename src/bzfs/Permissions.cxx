@@ -15,7 +15,6 @@
 #endif
 
 #include <string>
-#include <istream>
 #include <fstream>
 #include <stdlib.h>
 #include "Permissions.h"
