@@ -37,7 +37,7 @@ SceneNode*				SceneDatabaseBuilder::make(const World* world)
 	std::string buffer(makeBuffer(world));
 	std::istringstream stream(buffer.c_str());
 
-#ifdef DEBUG
+#ifdef DEBUG_DUMPWORLD
 	fprintf(stderr, "<world-file>: %s", buffer.c_str());
 #endif
 
