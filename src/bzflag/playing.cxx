@@ -2247,7 +2247,6 @@ static void		handleServerMessage(bool human, uint16_t code,
     if (dstPlayer){
 			dstName = dstPlayer->getCallSign();
 		} else if (toAdmin){
-			addMessage(NULL, "Got Here");
 			dstName = "Admin";
 		} else {
       dstName = "(UNKNOWN)";

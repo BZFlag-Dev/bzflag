@@ -968,7 +968,7 @@ int			main(int argc, char** argv)
       std::cout << "Loaded " << count << " words" << std::endl;
 
       // stash the filter into the database for retrieval later
-      BZDB.setPointer("filter", (void *)filter, StateDatabase::ReadOnly);
+      BZDB.setPointer("filter", (void *)filter, StateDatabase::ReadWrite);
       BZDB.setPersistent("filter", false);
     } else {
       std::cerr << "WARNING: A proper file name was not given for the -badwords argument" << std::endl;

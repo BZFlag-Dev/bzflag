@@ -3906,7 +3906,6 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 				parseCommand(message, t);
       }
 			else if (targetPlayer == AdminPlayers){
-				//printf ("Admin message %s \n",message);
 				sendMessage (t, AdminPlayers, message, true);
 				
 			}
