@@ -734,7 +734,8 @@ void handleBanCmd(GameKeeper::Player *playerData, const char *message)
 void handleHostBanCmd(GameKeeper::Player *playerData, const char *message)
 {
   int t = playerData->getIndex();
-  if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::ban)) {
+  if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::ban) &&
+      !playerData->accessInfo.hasPerm(PlayerAccessInfo::shortBan)) {
     sendMessage(ServerPlayer, t, "You do not have permission to run the ban command");
     return;
   }
@@ -747,15 +748,27 @@ void handleHostBanCmd(GameKeeper::Player *playerData, const char *message)
     sendMessage(ServerPlayer, t, "        Please keep in mind that reason is displayed to the user.");
   }
   else {
-    int durationInt = 0;
     std::string hostpat = argv[1];
     std::string reason;
+    int durationInt = clOptions->banTime;
 
-    if( argv.size() >= 3 )
-      durationInt = string_util::parseDuration(argv[2]);
+    // set the ban time
+    if (argv.size() >= 3) {
+      int specifiedDuration = string_util::parseDuration(argv[2]);
+      if ((durationInt > 0) && 
+          ((specifiedDuration > durationInt) || (specifiedDuration <= 0)) &&
+          !playerData->accessInfo.hasPerm(PlayerAccessInfo::ban)) {
+        sendMessage (ServerPlayer, t, "You only have SHORTBAN privileges,"\
+                                      " using default ban time");
+      } else {
+        durationInt = specifiedDuration;
+      }
+    }
 
-    if( argv.size() == 4 )
+    // set the ban reason
+    if( argv.size() == 4 ) {
       reason = argv[3];
+    }
 
     clOptions->acl.hostBan(hostpat, playerData->player.getCallSign(),
 			   durationInt,
