@@ -15,7 +15,6 @@ THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
 
     - players can get autokicked for speeding if a theif steals their flag
 
-    - server can segfault with -badwords enabled
 
 THESE ARE LOWER PRIORITY
 
