@@ -11,12 +11,12 @@ Depends: ${shlibs:Depends}
 Suggests: bzflag-server
 Description: a 3D first person tank battle game
  BZFlag  is  a 3D multi-player tank battle game that allows
- users to play against each other in a  networked  environ­
+ users to play against each other in a  networked  environ-
  ment.  There are five teams:  red, green, blue, purple and
  rogue (rogue tanks are black).   Destroying  a  player  on
  another  team  scores  a  win,  while  being  destroyed or
- destroying a teammate scores a loss.  Rogues have no team­
- mates  (not even other rogues), so they cannot shoot team­
+ destroying a teammate scores a loss.  Rogues have no team-
+ mates  (not even other rogues), so they cannot shoot team-
  mates and they do not have a team score.
  .
  There are two main styles of play:   capture-the-flag  and
@@ -35,8 +35,8 @@ Architecture: any
 Depends: ${shlibs:Depends}
 Description: bzfs - bzflag game server and proxy
  bzfs  is  the server for BZFlag, and it must be running to
- play.  It can be run on any system on the network (includ­
- ing a player's system or one without graphics).  Terminat­
+ play.  It can be run on any system on the network (includ-
+ ing a player's system or one without graphics).  Terminat-
  ing the server terminates the game in progress.
  .
  bzrelay  is  a firewall tunnel for bzfs. It uses TCP and 
