@@ -58,7 +58,6 @@ static AccessList DownloadAccessList("DownloadAccess.txt", DownloadContent);
 
 
 /******************************************************************************/
-#undef HAVE_CURL
 #ifdef HAVE_CURL
 /******************************************************************************/
 
