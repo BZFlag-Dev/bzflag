@@ -369,6 +369,9 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath="..\..\src\common\OSFile.cxx">
+			</File>
+			<File
 				RelativePath="..\..\src\common\PlayerState.cxx">
 				<FileConfiguration
 					Name="Debug|Win32">
@@ -594,6 +597,9 @@
 			</File>
 			<File
 				RelativePath="..\..\include\md5.h">
+			</File>
+			<File
+				RelativePath="..\..\include\OSFile.h">
 			</File>
 			<File
 				RelativePath="..\..\include\Pack.h">

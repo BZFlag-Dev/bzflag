@@ -111,6 +111,12 @@
 				RelativePath="..\..\src\3d\DrawablesManager.cxx">
 			</File>
 			<File
+				RelativePath="..\..\src\3d\FontManager.cxx">
+			</File>
+			<File
+				RelativePath="..\..\src\3d\TextureFont.cxx">
+			</File>
+			<File
 				RelativePath="..\..\src\3d\TextureManager.cxx">
 			</File>
 		</Filter>
@@ -126,6 +132,9 @@
 			</File>
 			<File
 				RelativePath="..\..\include\DrawablesManager.h">
+			</File>
+			<File
+				RelativePath="..\..\include\FontManager.h">
 			</File>
 			<File
 				RelativePath="..\..\include\TextureManager.h">
