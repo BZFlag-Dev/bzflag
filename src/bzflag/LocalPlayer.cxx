@@ -552,7 +552,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
   // try to see if we are stuck on a building
   obstacle = getHitBuilding(newPos, newAzimuth, newPos, newAzimuth, phased,
 			    expelled);
-  if (obstacle) {
+  if (obstacle && expelled) {
     // we are using a maximum value on time for frame to avoid lagging problem
     float deltaTime = dt > 0.1f ? 0.1f : dt;
     float normalStuck[3];
