@@ -20,6 +20,10 @@
 // this should always be the very FIRST header
 #include "config.h"
 
+#ifdef __MINGW32__
+#include <windows.h>
+#endif
+
 #ifdef _WIN32
 #include "win32.h"
 #endif
@@ -37,6 +41,10 @@ extern int debugLevel;
 #define DEBUG2 if (debugLevel >= 2) formatDebug
 #define DEBUG3 if (debugLevel >= 3) formatDebug
 #define DEBUG4 if (debugLevel >= 4) formatDebug
+
+#ifdef __MINGW32__
+inline void W32_DEBUG_TRACE (const char*) {return;}
+#endif
 
 /* near zero by some epsilon convenience define since relying on
 * the floating point unit for proper equivalence is not safe
