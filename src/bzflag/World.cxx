@@ -90,7 +90,7 @@ World::~World()
   delete worldWeapons;
 }
 
-void			World::callback(const std::string &name, void *userData)
+void			World::callback(const std::string &name, void *)
 {
   if (name == "displayMainFlags")
     displayMainFlags = BZDB->isTrue("displayMainFlags");
