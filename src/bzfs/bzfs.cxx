@@ -2029,6 +2029,8 @@ static WorldInfo *defineTeamWorld()
     if (!world)
       return NULL;
 
+    float worldfactor = WorldSize/(float)DEFAULT_WORLD;
+
     // set team base and team flag safety positions
     basePos[0][0] = 0.0f;
     basePos[0][1] = 0.0f;
@@ -2040,14 +2042,14 @@ static WorldInfo *defineTeamWorld()
     safetyBasePos[0][1] = basePos[0][1];
     safetyBasePos[0][2] = basePos[0][2];
 
-    basePos[1][0] = (-WorldSize + BaseSize) / 2.0f;
+    basePos[1][0] = (-WorldSize + BaseSize*worldfactor) / 2.0f;
     basePos[1][1] = 0.0f;
     basePos[1][2] = 0.0f;
     baseRotation[1] = 0.0f;
-    baseSize[1][0] = BaseSize / 2.0f;
-    baseSize[1][1] = BaseSize / 2.0f;
-    safetyBasePos[1][0] = basePos[1][0] + 0.5f * BaseSize + PyrBase;
-    safetyBasePos[1][1] = basePos[1][1] + 0.5f * BaseSize + PyrBase;
+    baseSize[1][0] = BaseSize*worldfactor / 2.0f;
+    baseSize[1][1] = BaseSize*worldfactor / 2.0f;
+    safetyBasePos[1][0] = basePos[1][0] + 0.5f * BaseSize*worldfactor + PyrBase;
+    safetyBasePos[1][1] = basePos[1][1] + 0.5f * BaseSize *worldfactor+ PyrBase;
     safetyBasePos[1][2] = basePos[1][2];
 
     basePos[2][0] = (WorldSize - BaseSize) / 2.0f;
@@ -2061,23 +2063,23 @@ static WorldInfo *defineTeamWorld()
     safetyBasePos[2][2] = basePos[2][2];
 
     basePos[3][0] = 0.0f;
-    basePos[3][1] = (-WorldSize + BaseSize) / 2.0f;
+    basePos[3][1] = (-WorldSize + BaseSize*worldfactor) / 2.0f;
     basePos[3][2] = 0.0f;
     baseRotation[3] = 0.0f;
-    baseSize[3][0] = BaseSize / 2.0f;
-    baseSize[3][1] = BaseSize / 2.0f;
-    safetyBasePos[3][0] = basePos[3][0] - 0.5f * BaseSize - PyrBase;
-    safetyBasePos[3][1] = basePos[3][1] + 0.5f * BaseSize + PyrBase;
+    baseSize[3][0] = BaseSize*worldfactor / 2.0f;
+    baseSize[3][1] = BaseSize*worldfactor / 2.0f;
+    safetyBasePos[3][0] = basePos[3][0] - 0.5f * BaseSize*worldfactor - PyrBase;
+    safetyBasePos[3][1] = basePos[3][1] + 0.5f * BaseSize*worldfactor + PyrBase;
     safetyBasePos[3][2] = basePos[3][2];
 
     basePos[4][0] = 0.0f;
-    basePos[4][1] = (WorldSize - BaseSize) / 2.0f;
+    basePos[4][1] = (WorldSize - BaseSize*worldfactor) / 2.0f;
     basePos[4][2] = 0.0f;
     baseRotation[4] = 0.0f;
-    baseSize[4][0] = BaseSize / 2.0f;
-    baseSize[4][1] = BaseSize / 2.0f;
-    safetyBasePos[4][0] = basePos[4][0] + 0.5f * BaseSize + PyrBase;
-    safetyBasePos[4][1] = basePos[4][1] - 0.5f * BaseSize - PyrBase;
+    baseSize[4][0] = BaseSize*worldfactor / 2.0f;
+    baseSize[4][1] = BaseSize*worldfactor / 2.0f;
+    safetyBasePos[4][0] = basePos[4][0] + 0.5f * BaseSize*worldfactor + PyrBase*worldfactor;
+    safetyBasePos[4][1] = basePos[4][1] - 0.5f * BaseSize*worldfactor - PyrBase*worldfactor;
     safetyBasePos[4][2] = basePos[4][2];
 
     // make walls
@@ -2090,81 +2092,81 @@ static WorldInfo *defineTeamWorld()
     if (!clOptions->randomCTF || (clOptions->maxTeam[1] > 0)) {
       // around red base
       world->addPyramid(
-	  basePos[1][0] + 0.5f * BaseSize - PyrBase,
-	  basePos[1][1] - 0.5f * BaseSize - PyrBase, 0.0f, 0.0f,
-	  PyrBase, PyrBase, PyrHeight);
+	  basePos[1][0] + 0.5f * BaseSize*worldfactor - PyrBase*worldfactor,
+	  basePos[1][1] - 0.5f * BaseSize*worldfactor - PyrBase*worldfactor, 0.0f, 0.0f,
+	  PyrBase*worldfactor, PyrBase*worldfactor, PyrHeight);
       world->addPyramid(
-	  basePos[1][0] + 0.5f * BaseSize + PyrBase,
-	  basePos[1][1] - 0.5f * BaseSize + PyrBase, 0.0f, 0.0f,
-	  PyrBase, PyrBase, PyrHeight);
+	  basePos[1][0] + 0.5f * BaseSize*worldfactor + PyrBase*worldfactor,
+	  basePos[1][1] - 0.5f * BaseSize*worldfactor + PyrBase*worldfactor, 0.0f, 0.0f,
+	  PyrBase*worldfactor, PyrBase*worldfactor, PyrHeight);
       world->addPyramid(
-	  basePos[1][0] + 0.5f * BaseSize + PyrBase,
-	  basePos[1][1] + 0.5f * BaseSize - PyrBase, 0.0f, 0.0f,
-	  PyrBase, PyrBase, PyrHeight);
+	  basePos[1][0] + 0.5f * BaseSize*worldfactor + PyrBase*worldfactor,
+	  basePos[1][1] + 0.5f * BaseSize*worldfactor - PyrBase*worldfactor, 0.0f, 0.0f,
+	  PyrBase*worldfactor, PyrBase*worldfactor, PyrHeight);
       world->addPyramid(
-	  basePos[1][0] + 0.5f * BaseSize - PyrBase,
-	  basePos[1][1] + 0.5f * BaseSize + PyrBase, 0.0f, 0.0f,
-	  PyrBase, PyrBase, PyrHeight);
+	  basePos[1][0] + 0.5f * BaseSize*worldfactor - PyrBase*worldfactor,
+	  basePos[1][1] + 0.5f * BaseSize*worldfactor + PyrBase*worldfactor, 0.0f, 0.0f,
+	  PyrBase*worldfactor, PyrBase*worldfactor, PyrHeight);
     }
 
     if (!clOptions->randomCTF || (clOptions->maxTeam[2] > 0)) {
       // around green base
       world->addPyramid(
-	  basePos[2][0] - 0.5f * BaseSize + PyrBase,
-	  basePos[2][1] - 0.5f * BaseSize - PyrBase, 0.0f, 0.0f,
-	  PyrBase, PyrBase, PyrHeight);
+	  basePos[2][0] - 0.5f * BaseSize*worldfactor + PyrBase*worldfactor,
+	  basePos[2][1] - 0.5f * BaseSize*worldfactor - PyrBase*worldfactor, 0.0f, 0.0f,
+	  PyrBase*worldfactor, PyrBase*worldfactor, PyrHeight);
       world->addPyramid(
-	  basePos[2][0] - 0.5f * BaseSize - PyrBase,
-	  basePos[2][1] - 0.5f * BaseSize + PyrBase, 0.0f, 0.0f,
-	  PyrBase, PyrBase, PyrHeight);
+	  basePos[2][0] - 0.5f * BaseSize*worldfactor - PyrBase*worldfactor,
+	  basePos[2][1] - 0.5f * BaseSize*worldfactor + PyrBase*worldfactor, 0.0f, 0.0f,
+	  PyrBase*worldfactor, PyrBase*worldfactor, PyrHeight);
       world->addPyramid(
-	  basePos[2][0] - 0.5f * BaseSize - PyrBase,
-	  basePos[2][1] + 0.5f * BaseSize - PyrBase, 0.0f, 0.0f,
-	  PyrBase, PyrBase, PyrHeight);
+	  basePos[2][0] - 0.5f * BaseSize*worldfactor - PyrBase*worldfactor,
+	  basePos[2][1] + 0.5f * BaseSize*worldfactor - PyrBase*worldfactor, 0.0f, 0.0f,
+	  PyrBase*worldfactor, PyrBase*worldfactor, PyrHeight);
       world->addPyramid(
-	  basePos[2][0] - 0.5f * BaseSize + PyrBase,
-	  basePos[2][1] + 0.5f * BaseSize + PyrBase, 0.0f, 0.0f,
-	  PyrBase, PyrBase, PyrHeight);
+	  basePos[2][0] - 0.5f * BaseSize*worldfactor + PyrBase*worldfactor,
+	  basePos[2][1] + 0.5f * BaseSize*worldfactor + PyrBase*worldfactor, 0.0f, 0.0f,
+	  PyrBase*worldfactor, PyrBase*worldfactor, PyrHeight);
     }
 
     if (!clOptions->randomCTF || (clOptions->maxTeam[3] > 0)) {
       // around blue base
       world->addPyramid(
-	  basePos[3][0] - 0.5f * BaseSize - PyrBase,
-	  basePos[3][1] + 0.5f * BaseSize - PyrBase, 0.0f, 0.0f,
-	  PyrBase, PyrBase, PyrHeight);
+	  basePos[3][0] - 0.5f * BaseSize*worldfactor - PyrBase*worldfactor,
+	  basePos[3][1] + 0.5f * BaseSize*worldfactor - PyrBase*worldfactor, 0.0f, 0.0f,
+	  PyrBase*worldfactor, PyrBase*worldfactor, PyrHeight);
       world->addPyramid(
-	  basePos[3][0] - 0.5f * BaseSize + PyrBase,
-	  basePos[3][1] + 0.5f * BaseSize + PyrBase, 0.0f, 0.0f,
-	  PyrBase, PyrBase, PyrHeight);
+	  basePos[3][0] - 0.5f * BaseSize*worldfactor + PyrBase*worldfactor,
+	  basePos[3][1] + 0.5f * BaseSize*worldfactor + PyrBase*worldfactor, 0.0f, 0.0f,
+	  PyrBase*worldfactor, PyrBase*worldfactor, PyrHeight);
       world->addPyramid(
-	  basePos[3][0] + 0.5f * BaseSize - PyrBase,
-	  basePos[3][1] + 0.5f * BaseSize + PyrBase, 0.0f, 0.0f,
-	  PyrBase, PyrBase, PyrHeight);
+	  basePos[3][0] + 0.5f * BaseSize*worldfactor - PyrBase*worldfactor,
+	  basePos[3][1] + 0.5f * BaseSize*worldfactor + PyrBase*worldfactor, 0.0f, 0.0f,
+	  PyrBase*worldfactor, PyrBase*worldfactor, PyrHeight);
       world->addPyramid(
-	  basePos[3][0] + 0.5f * BaseSize + PyrBase,
-	  basePos[3][1] + 0.5f * BaseSize - PyrBase, 0.0f, 0.0f,
-	  PyrBase, PyrBase, PyrHeight);
+	  basePos[3][0] + 0.5f * BaseSize*worldfactor + PyrBase*worldfactor,
+	  basePos[3][1] + 0.5f * BaseSize*worldfactor - PyrBase*worldfactor, 0.0f, 0.0f,
+	  PyrBase*worldfactor, PyrBase*worldfactor, PyrHeight);
     }
 
     if (!clOptions->randomCTF || (clOptions->maxTeam[4] > 0)) {
       // around purple base
       world->addPyramid(
-	  basePos[4][0] - 0.5f * BaseSize - PyrBase,
-	  basePos[4][1] - 0.5f * BaseSize + PyrBase, 0.0f, 0.0f,
-	  PyrBase, PyrBase, PyrHeight);
+	  basePos[4][0] - 0.5f * BaseSize*worldfactor - PyrBase*worldfactor,
+	  basePos[4][1] - 0.5f * BaseSize*worldfactor + PyrBase*worldfactor, 0.0f, 0.0f,
+	  PyrBase*worldfactor, PyrBase*worldfactor, PyrHeight);
       world->addPyramid(
-	  basePos[4][0] - 0.5f * BaseSize + PyrBase,
-	  basePos[4][1] - 0.5f * BaseSize - PyrBase, 0.0f, 0.0f,
-	  PyrBase, PyrBase, PyrHeight);
+	  basePos[4][0] - 0.5f * BaseSize*worldfactor + PyrBase*worldfactor,
+	  basePos[4][1] - 0.5f * BaseSize*worldfactor - PyrBase*worldfactor, 0.0f, 0.0f,
+	  PyrBase*worldfactor, PyrBase*worldfactor, PyrHeight);
       world->addPyramid(
-	  basePos[4][0] + 0.5f * BaseSize - PyrBase,
-	  basePos[4][1] - 0.5f * BaseSize - PyrBase, 0.0f, 0.0f,
-	  PyrBase, PyrBase, PyrHeight);
+	  basePos[4][0] + 0.5f * BaseSize*worldfactor - PyrBase*worldfactor,
+	  basePos[4][1] - 0.5f * BaseSize*worldfactor - PyrBase*worldfactor, 0.0f, 0.0f,
+	  PyrBase*worldfactor, PyrBase*worldfactor, PyrHeight);
       world->addPyramid(
-	  basePos[4][0] + 0.5f * BaseSize + PyrBase,
-	  basePos[4][1] - 0.5f * BaseSize + PyrBase, 0.0f, 0.0f,
-	  PyrBase, PyrBase, PyrHeight);
+	  basePos[4][0] + 0.5f * BaseSize*worldfactor + PyrBase*worldfactor,
+	  basePos[4][1] - 0.5f * BaseSize*worldfactor + PyrBase*worldfactor, 0.0f, 0.0f,
+	  PyrBase*worldfactor, PyrBase*worldfactor, PyrHeight);
     }
 
     // create symmetric map of random buildings for random CTF mode
@@ -2186,35 +2188,35 @@ static WorldInfo *defineTeamWorld()
 	// don't place near center and bases
 	if ((redGreen &&
 	     (hypotf(fabs(x-basePos[1][0]),fabs(y-basePos[1][1])) <=
-	      BoxBase*4 ||
+	      BoxBase*4*worldfactor ||
 	      hypotf(fabs(-x-basePos[1][0]),fabs(-y-basePos[1][1])) <=
-	      BoxBase*4)) ||
+	      BoxBase*4*worldfactor)) ||
 	    (bluePurple &&
 	     (hypotf(fabs(y-basePos[3][0]),fabs(-x-basePos[3][1])) <=
-	      BoxBase*4 ||
+	      BoxBase*4*worldfactor ||
 	      hypotf(fabs(-y-basePos[3][0]),fabs(x-basePos[3][1])) <=
 	      BoxBase*4)) ||
 	    (redGreen && bluePurple &&
 	     (hypotf(fabs(x-basePos[3][0]),fabs(y-basePos[3][1])) <=
-	      BoxBase*4 ||
+	      BoxBase*4*worldfactor ||
 	      hypotf(fabs(-x-basePos[3][0]),fabs(-y-basePos[3][1])) <=
-	      BoxBase*4 ||
+	      BoxBase*4*worldfactor ||
 	      hypotf(fabs(y-basePos[1][0]),fabs(-x-basePos[1][1])) <=
-	      BoxBase*4 ||
+	      BoxBase*4*worldfactor ||
 	      hypotf(fabs(-y-basePos[1][0]),fabs(x-basePos[1][1])) <=
-	      BoxBase*4)) ||
+	      BoxBase*4*worldfactor)) ||
 	    (hypotf(fabs(x),fabs(y)) <= WorldSize/12))
 	  continue;
 
 	float angle=2.0f * M_PI * (float)bzfrand();
 	if (redGreen) {
-	  world->addBox(x,y,0.0f, angle, BoxBase, BoxBase, h);
-	  world->addBox(-x,-y,0.0f, angle, BoxBase, BoxBase, h);
+	  world->addBox(x,y,0.0f, angle, BoxBase*worldfactor, BoxBase*worldfactor, h);
+	  world->addBox(-x,-y,0.0f, angle, BoxBase*worldfactor, BoxBase*worldfactor, h);
 	  i+=2;
 	}
 	if (bluePurple) {
-	  world->addBox(y,-x,0.0f, angle, BoxBase, BoxBase, h);
-	  world->addBox(-y,x,0.0f, angle, BoxBase, BoxBase, h);
+	  world->addBox(y,-x,0.0f, angle, BoxBase*worldfactor, BoxBase*worldfactor, h);
+	  world->addBox(-y,x,0.0f, angle, BoxBase*worldfactor, BoxBase*worldfactor, h);
 	  i+=2;
 	}
       }
@@ -2230,35 +2232,35 @@ static WorldInfo *defineTeamWorld()
 	// don't place near center or bases
 	if ((redGreen &&
 	     (hypotf(fabs(x-basePos[1][0]),fabs(y-basePos[1][1])) <=
-	      PyrBase*6 ||
+	      PyrBase*6*worldfactor ||
 	      hypotf(fabs(-x-basePos[1][0]),fabs(-y-basePos[1][1])) <=
-	      PyrBase*6)) ||
+	      PyrBase*6*worldfactor)) ||
 	    (bluePurple &&
 	     (hypotf(fabs(y-basePos[3][0]),fabs(-x-basePos[3][1])) <=
-	      PyrBase*6 ||
+	      PyrBase*6*worldfactor ||
 	      hypotf(fabs(-y-basePos[3][0]),fabs(x-basePos[3][1])) <=
-	      PyrBase*6)) ||
+	      PyrBase*6*worldfactor)) ||
 	    (redGreen && bluePurple &&
 	     (hypotf(fabs(x-basePos[3][0]),fabs(y-basePos[3][1])) <=
-	      PyrBase*6 ||
+	      PyrBase*6*worldfactor ||
 	      hypotf(fabs(-x-basePos[3][0]),fabs(-y-basePos[3][1])) <=
-	      PyrBase*6 ||
+	      PyrBase*6*worldfactor ||
 	      hypotf(fabs(y-basePos[1][0]),fabs(-x-basePos[1][1])) <=
-	      PyrBase*6 ||
+	      PyrBase*6*worldfactor ||
 	      hypotf(fabs(-y-basePos[1][0]),fabs(x-basePos[1][1])) <=
-	      PyrBase*6)) ||
+	      PyrBase*6*worldfactor)) ||
 	    (hypotf(fabs(x),fabs(y)) <= WorldSize/12))
 	  continue;
 
 	float angle=2.0f * M_PI * (float)bzfrand();
 	if (redGreen) {
-	  world->addPyramid(x,y, 0.0f, angle,PyrBase, PyrBase, h);
-	  world->addPyramid(-x,-y, 0.0f, angle,PyrBase, PyrBase, h);
+	  world->addPyramid(x,y, 0.0f, angle,PyrBase*worldfactor, PyrBase*worldfactor, h);
+	  world->addPyramid(-x,-y, 0.0f, angle,PyrBase*worldfactor, PyrBase*worldfactor, h);
 	  i+=2;
 	}
 	if (bluePurple) {
-	  world->addPyramid(y,-x,0.0f, angle, PyrBase, PyrBase, h);
-	  world->addPyramid(-y,x,0.0f, angle, PyrBase, PyrBase, h);
+	  world->addPyramid(y,-x,0.0f, angle, PyrBase*worldfactor, PyrBase*worldfactor, h);
+	  world->addPyramid(-y,x,0.0f, angle, PyrBase*worldfactor, PyrBase*worldfactor, h);
 	  i+=2;
 	}
       }
@@ -2350,42 +2352,42 @@ static WorldInfo *defineTeamWorld()
     {
       // pyramids in center
       world->addPyramid(
-	  -(BoxBase + 0.25f * AvenueSize),
-	  -(BoxBase + 0.25f * AvenueSize), 0.0f, 0.0f,
-	  PyrBase, PyrBase, PyrHeight);
+	  -(BoxBase*worldfactor + 0.25f * AvenueSize),
+	  -(BoxBase*worldfactor + 0.25f * AvenueSize), 0.0f, 0.0f,
+	  PyrBase*worldfactor, PyrBase*worldfactor, PyrHeight);
       world->addPyramid(
-	  (BoxBase + 0.25f * AvenueSize),
-	  -(BoxBase + 0.25f * AvenueSize), 0.0f, 0.0f,
-	  PyrBase, PyrBase, PyrHeight);
+	  (BoxBase*worldfactor + 0.25f * AvenueSize),
+	  -(BoxBase*worldfactor + 0.25f * AvenueSize), 0.0f, 0.0f,
+	  PyrBase*worldfactor, PyrBase*worldfactor, PyrHeight);
       world->addPyramid(
-	  -(BoxBase + 0.25f * AvenueSize),
-	  (BoxBase + 0.25f * AvenueSize), 0.0f, 0.0f,
-	  PyrBase, PyrBase, PyrHeight);
+	  -(BoxBase*worldfactor + 0.25f * AvenueSize),
+	  (BoxBase*worldfactor + 0.25f * AvenueSize), 0.0f, 0.0f,
+	  PyrBase*worldfactor, PyrBase*worldfactor, PyrHeight);
       world->addPyramid(
-	  (BoxBase + 0.25f * AvenueSize),
-	  (BoxBase + 0.25f * AvenueSize), 0.0f, 0.0f,
+	  (BoxBase*worldfactor + 0.25f * AvenueSize),
+	  (BoxBase*worldfactor + 0.25f * AvenueSize), 0.0f, 0.0f,
+	  PyrBase*worldfactor, PyrBase*worldfactor, PyrHeight);
+      world->addPyramid(0.0f, -(BoxBase *worldfactor+ 0.5f * AvenueSize), 0.0f, 0.0f,
 	  PyrBase, PyrBase, PyrHeight);
-      world->addPyramid(0.0f, -(BoxBase + 0.5f * AvenueSize), 0.0f, 0.0f,
-	  PyrBase, PyrBase, PyrHeight);
-      world->addPyramid(0.0f,  (BoxBase + 0.5f * AvenueSize), 0.0f, 0.0f,
-	  PyrBase, PyrBase, PyrHeight);
-      world->addPyramid(-(BoxBase + 0.5f * AvenueSize), 0.0f, 0.0f, 0.0f,
-	  PyrBase, PyrBase, PyrHeight);
-      world->addPyramid( (BoxBase + 0.5f * AvenueSize), 0.0f, 0.0f, 0.0f,
-	  PyrBase, PyrBase, PyrHeight);
+      world->addPyramid(0.0f,  (BoxBase*worldfactor + 0.5f * AvenueSize), 0.0f, 0.0f,
+	  PyrBase*worldfactor, PyrBase*worldfactor, PyrHeight);
+      world->addPyramid(-(BoxBase*worldfactor + 0.5f * AvenueSize), 0.0f, 0.0f, 0.0f,
+	  PyrBase*worldfactor, PyrBase*worldfactor, PyrHeight);
+      world->addPyramid( (BoxBase*worldfactor + 0.5f * AvenueSize), 0.0f, 0.0f, 0.0f,
+	  PyrBase*worldfactor, PyrBase*worldfactor, PyrHeight);
 
       // halfway out from city center
-      world->addPyramid(0.0f, -(3.0f * BoxBase + 1.5f * AvenueSize), 0.0f, 0.0f,
-	  PyrBase, PyrBase, PyrHeight);
-      world->addPyramid(0.0f,  (3.0f * BoxBase + 1.5f * AvenueSize), 0.0f, 0.0f,
-	  PyrBase, PyrBase, PyrHeight);
-      world->addPyramid(-(3.0f * BoxBase + 1.5f * AvenueSize), 0.0f, 0.0f, 0.0f,
-	  PyrBase, PyrBase, PyrHeight);
-      world->addPyramid( (3.0f * BoxBase + 1.5f * AvenueSize), 0.0f, 0.0f, 0.0f,
-	  PyrBase, PyrBase, PyrHeight);
+      world->addPyramid(0.0f, -(3.0f * BoxBase*worldfactor + 1.5f * AvenueSize), 0.0f, 0.0f,
+	  PyrBase*worldfactor, PyrBase*worldfactor, PyrHeight);
+      world->addPyramid(0.0f,  (3.0f * BoxBase*worldfactor + 1.5f * AvenueSize), 0.0f, 0.0f,
+	  PyrBase*worldfactor, PyrBase*worldfactor, PyrHeight);
+      world->addPyramid(-(3.0f * BoxBase*worldfactor + 1.5f * AvenueSize), 0.0f, 0.0f, 0.0f,
+	  PyrBase*worldfactor, PyrBase*worldfactor, PyrHeight);
+      world->addPyramid( (3.0f * BoxBase*worldfactor + 1.5f * AvenueSize), 0.0f, 0.0f, 0.0f,
+	  PyrBase*worldfactor, PyrBase*worldfactor, PyrHeight);
       // add boxes, four at once with same height so no team has an advantage
-      const float xmin = -0.5f * ((2.0f * BoxBase + AvenueSize) * (CitySize - 1));
-      const float ymin = -0.5f * ((2.0f * BoxBase + AvenueSize) * (CitySize - 1));
+      const float xmin = -0.5f * ((2.0f * BoxBase*worldfactor + AvenueSize) * (CitySize - 1));
+      const float ymin = -0.5f * ((2.0f * BoxBase*worldfactor + AvenueSize) * (CitySize - 1));
       for (int j = 0; j <= CitySize/2; j++)
 	for (int i = 0; i < CitySize/2; i++)
       if (i != CitySize/2 || j != CitySize/2) {
@@ -2393,30 +2395,30 @@ static WorldInfo *defineTeamWorld()
 	if (clOptions->randomHeights)
 	  h *= 2.0f * (float)bzfrand() + 0.5f;
 	world->addBox(
-	    xmin + float(i) * (2.0f * BoxBase + AvenueSize),
-	    ymin + float(j) * (2.0f * BoxBase + AvenueSize), 0.0f,
+	    xmin + float(i) * (2.0f * BoxBase*worldfactor + AvenueSize),
+	    ymin + float(j) * (2.0f * BoxBase*worldfactor + AvenueSize), 0.0f,
 	    clOptions->randomBoxes ? (0.5f * M_PI * ((float)bzfrand() - 0.5f)) : 0.0f,
-	    BoxBase, BoxBase, h);
+	    BoxBase*worldfactor, BoxBase*worldfactor, h);
 	world->addBox(
 	    -1.0f * (xmin + float(i) * (2.0f * BoxBase + AvenueSize)),
 	    -1.0f * (ymin + float(j) * (2.0f * BoxBase + AvenueSize)), 0.0f,
 	    clOptions->randomBoxes ? (0.5f * M_PI * ((float)bzfrand() - 0.5f)) : 0.0f,
 	    BoxBase, BoxBase, h);
 	world->addBox(
-	    -1.0f * (ymin + float(j) * (2.0f * BoxBase + AvenueSize)),
-	    xmin + float(i) * (2.0f * BoxBase + AvenueSize), 0.0f,
+	    -1.0f * (ymin + float(j) * (2.0f * BoxBase*worldfactor + AvenueSize)),
+	    xmin + float(i) * (2.0f * BoxBase*worldfactor + AvenueSize), 0.0f,
 	    clOptions->randomBoxes ? (0.5f * M_PI * ((float)bzfrand() - 0.5f)) : 0.0f,
-	    BoxBase, BoxBase, h);
+	    BoxBase*worldfactor, BoxBase*worldfactor, h);
 	world->addBox(
-	    ymin + float(j) * (2.0f * BoxBase + AvenueSize),
-	    -1.0f * (xmin + float(i) * (2.0f * BoxBase + AvenueSize)), 0.0f,
+	    ymin + float(j) * (2.0f * BoxBase*worldfactor + AvenueSize),
+	    -1.0f * (xmin + float(i) * (2.0f * BoxBase*worldfactor + AvenueSize)), 0.0f,
 	    clOptions->randomBoxes ? (0.5f * M_PI * ((float)bzfrand() - 0.5f)) : 0.0f,
-	    BoxBase, BoxBase, h);
+	    BoxBase*worldfactor, BoxBase*worldfactor, h);
       }
       // add teleporters
       if (clOptions->useTeleporters) {
-	const float xoff = BoxBase + 0.5f * AvenueSize;
-	const float yoff = BoxBase + 0.5f * AvenueSize;
+	const float xoff = BoxBase*worldfactor + 0.5f * AvenueSize;
+	const float yoff = BoxBase*worldfactor + 0.5f * AvenueSize;
 	world->addTeleporter( xmin - xoff,  ymin - yoff, 0.0f, 1.25f * M_PI,
 	                     0.5f * TeleWidth, TeleBreadth, 2.0f * TeleHeight, TeleWidth);
 	world->addTeleporter( xmin - xoff, -ymin + yoff, 0.0f, 0.75f * M_PI,
@@ -2472,6 +2474,7 @@ static WorldInfo *defineRandomWorld()
   world->addWall(0.0f, -0.5f * WorldSize, 0.0f, 0.5f * M_PI, 0.5f * WorldSize, WallHeight);
   world->addWall(-0.5f * WorldSize, 0.0f, 0.0f, 0.0f, 0.5f * WorldSize, WallHeight);
 
+  float worldfactor = WorldSize/(float)DEFAULT_WORLD;
   // make boxes
   int i;
   float h = BoxHeight;
@@ -2482,7 +2485,7 @@ static WorldInfo *defineRandomWorld()
       world->addBox(WorldSize * ((float)bzfrand() - 0.5f),
 	  WorldSize * ((float)bzfrand() - 0.5f),
 	  0.0f, 2.0f * M_PI * (float)bzfrand(),
-	  BoxBase, BoxBase, h);
+	  BoxBase*worldfactor, BoxBase*worldfactor, h);
   }
 
   // make pyramids
@@ -2494,7 +2497,7 @@ static WorldInfo *defineRandomWorld()
       world->addPyramid(WorldSize * ((float)bzfrand() - 0.5f),
 	  WorldSize * ((float)bzfrand() - 0.5f),
 	  0.0f, 2.0f * M_PI * (float)bzfrand(),
-	  PyrBase, PyrBase, h);
+	  PyrBase*worldfactor, PyrBase*worldfactor, h);
   }
 
   if (clOptions->useTeleporters) {
@@ -2911,7 +2914,8 @@ static void addPlayer(int playerIndex)
   }
   if (i < curMaxPlayers)
   {
-    return rejectPlayer(playerIndex, RejectRepeatCallsign);
+    rejectPlayer(playerIndex, RejectRepeatCallsign);
+    return;
   }
 
   // make sure the name is not obscene/filtered
@@ -2926,7 +2930,8 @@ static void addPlayer(int playerIndex)
       filtered = clOptions->filter.filter(cs, false);
     }
     if (filtered) { 
-      return rejectPlayer(playerIndex, RejectBadCallsign);
+      rejectPlayer(playerIndex, RejectBadCallsign);
+      return ;
     }
   }
 
@@ -2949,22 +2954,28 @@ static void addPlayer(int playerIndex)
   // or if the team is full.
    if (player[playerIndex].type != TankPlayer &&
        player[playerIndex].type != ComputerPlayer) {
-     return rejectPlayer(playerIndex, RejectBadType);
+     rejectPlayer(playerIndex, RejectBadType);
+	 return;
    } else if (t == NoTeam) {
-     return rejectPlayer(playerIndex, RejectBadTeam);
+     rejectPlayer(playerIndex, RejectBadTeam);
+	 return;
    } else if (t == RogueTeam && !(clOptions->gameStyle & RoguesGameStyle)) {
-     return rejectPlayer(playerIndex, RejectNoRogues);
+     rejectPlayer(playerIndex, RejectNoRogues);
+     return;
    } else if (t != ObserverTeam && numplayers >= softmaxPlayers ||
 	      (t == ObserverTeam) && numobservers >= clOptions->maxObservers) {
-     return rejectPlayer(playerIndex, RejectServerFull);
+     rejectPlayer(playerIndex, RejectServerFull);
+     return;
    } else if (team[int(t)].team.activeSize >= clOptions->maxTeam[int(t)]) {
      for (int i = RogueTeam; i < NumTeams; i++) {
        if (team[i].team.activeSize < clOptions->maxTeam[i]) {
-	 return rejectPlayer(playerIndex, RejectTeamFull);
+	 rejectPlayer(playerIndex, RejectTeamFull);
+	 return ;
        }
      }
      // if team is full then check if server is full
-     return rejectPlayer(playerIndex, RejectServerFull);
+	 rejectPlayer(playerIndex, RejectServerFull);
+     return;
    }
 
 
@@ -6110,7 +6121,7 @@ static void parse(int argc, char **argv, CmdLineOptions &options)
 	usage(argv[0]);
       }
       WorldSize = (float) atof(argv[i]);
-      fprintf(stderr, "using world size of \"%f\"\n", speedTolerance);
+      fprintf(stderr, "using world size of \"%f\"\n", WorldSize);
     }
     else if (strcmp(argv[i], "-speedtol") == 0) {
       if (++i == argc) {
