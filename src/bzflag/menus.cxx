@@ -1844,7 +1844,7 @@ void			OptionsMenu::callback(HUDuiControl* w, void* data)
 
       int filter = 0;
       if (list->getIndex()>=BZDB.eval("qualityForTexture"))
-	filter = 6;
+	filter = (int)BZDB.eval("textureFilterMode");
 
       OpenGLTexture::setFilter((OpenGLTexture::Filter)filter);
       BZDB.set("texture", OpenGLTexture::getFilterName());
