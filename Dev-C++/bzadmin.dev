@@ -27,7 +27,7 @@ CustomMakefile=
 IncludeVersionInfo=0
 SupportXPThemes=0
 CompilerSet=0
-CompilerSettings=0000010001010000000000
+CompilerSettings=0000000001010000000000
 
 [Unit1]
 FileName=..\src\bzadmin\UIMap.cxx
