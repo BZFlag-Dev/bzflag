@@ -18,6 +18,17 @@
 #include "WorldFileObject.h"
 
 
+bool WorldFileObject::read(const char *cmd, istream& input)
+{
+  std::string name;
+  if (strcasecmp(cmd, "name") == 0) {
+    //This is currently unused, but can be used for documentation purposes
+    input >> name;
+    return true;
+  }
+  return false;
+}
+
 /** delete all of the world file objects from a vector list
  */
 void emptyWorldFileObjectList(std::vector<WorldFileObject*>& wlist)

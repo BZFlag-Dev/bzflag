@@ -35,7 +35,7 @@ bool CustomLink::read(const char *cmd, istream& input)
   else if (strcmp(cmd, "to") == 0)
     input >> to;
   else
-    return false;
+    return WorldFileObject::read(cmd, input);
   return true;
 }
 

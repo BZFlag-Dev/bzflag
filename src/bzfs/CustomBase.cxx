@@ -34,6 +34,7 @@ CustomBase::CustomBase()
   pos[0] = pos[1] = pos[2] = 0.0f;
   rotation = 0.0f;
   size[0] = size[1] = BaseSize;
+  color = 0;
 }
 
 

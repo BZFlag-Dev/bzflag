@@ -24,7 +24,7 @@
 class CustomLink : public WorldFileObject {
   public:
     CustomLink();
-    virtual bool read(const char *cmd, istream&);
+    virtual bool read(const char *cmd, istream& input);
     virtual void write(WorldInfo*) const;
 
   protected:

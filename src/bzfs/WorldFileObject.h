@@ -25,7 +25,7 @@ public:
   WorldFileObject() { }
   virtual ~WorldFileObject() { }
 
-  virtual bool read(const char *cmd, istream&) = 0;
+  virtual bool read(const char *cmd, istream&);
   virtual void write(WorldInfo*) const = 0;
 };
 

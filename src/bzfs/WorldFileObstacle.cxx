@@ -49,7 +49,7 @@ bool WorldFileObstacle::read(const char *cmd, istream& input)
   else if (strcasecmp(cmd, "flipz") == 0)
     flipZ = true;
   else
-    return false;
+    return WorldFileObject::read(cmd, input);
   return true;
 }
 

@@ -41,7 +41,7 @@ bool CustomWorld::read(const char *cmd, istream& input)
   else if (strcmp(cmd, "flagHeight") == 0)
     input >> fHeight;
   else
-    return false;
+    return WorldFileObject::read(cmd, input);
   return true;
 }
 
