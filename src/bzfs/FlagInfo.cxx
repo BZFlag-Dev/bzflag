@@ -244,6 +244,13 @@ void FlagInfo::setNoFlagInAir()
   numFlagsInAir = 0;
 }
 
+void FlagInfo::getTextualInfo(char *message)
+{
+  sprintf(message, "%d p:%d r:%d g:%d i:%s s:%d p:%3.1fx%3.1fx%3.1f",
+	  flagIndex, player, required, grabs, flag.type->flagAbbv, flag.status,
+	  flag.position[0], flag.position[1], flag.position[2]);
+}
+
 // Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***

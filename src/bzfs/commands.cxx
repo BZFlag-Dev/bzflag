@@ -543,27 +543,20 @@ void handleFlagCmd(GameKeeper::Player *playerData, const char *message)
       zapAllFlags();
   } else if (strncmp(message + 6, "up", 2) == 0) {
     for (int i = 0; i < numFlags; i++) {
-      if (FlagInfo::flagList[i].flag.type->flagTeam != ::NoTeam) {
-	FlagInfo &flag = FlagInfo::flagList[i];
+      FlagInfo &flag = FlagInfo::flagList[i];
+      if (flag.flag.type->flagTeam != ::NoTeam) {
 	sendDrop(flag);
 	flag.flag.status = FlagGoing;
 	if (!flag.required)
 	  flag.flag.type = Flags::Null;
-	sendFlagUpdate(FlagInfo::flagList[i]);
+	sendFlagUpdate(flag);
       }
     }
 
   } else if (strncmp(message + 6, "show", 4) == 0) {
     for (int i = 0; i < numFlags; i++) {
       char message[MessageLen];
-      sprintf(message, "%d p:%d r:%d g:%d i:%s s:%d p:%3.1fx%3.1fx%3.1f", i,
-	      FlagInfo::flagList[i].player, FlagInfo::flagList[i].required,
-	      FlagInfo::flagList[i].grabs,
-	      FlagInfo::flagList[i].flag.type->flagAbbv,
-	      FlagInfo::flagList[i].flag.status,
-	      FlagInfo::flagList[i].flag.position[0],
-	      FlagInfo::flagList[i].flag.position[1],
-	      FlagInfo::flagList[i].flag.position[2]);
+      FlagInfo::flagList[i].getTextualInfo(message);
       sendMessage(ServerPlayer, t, message);
     }
   } else {
