@@ -166,7 +166,7 @@ AC_TRY_LINK([
 #include <regex.h>],
 [regcomp(0, 0, 0);
  regexec(0, 0, 0, 0, 0)],
-[AC_DEFINE(HAVE_REGEX_H, 1, [Define to 1 if you have regex stuff available])],
+[AC_DEFINE(HAVE_REGEX_H, 1, [Define if you have regex headers available])],
 [AC_MSG_WARN([regexp/regcomp seems to not be available on your system])])
 
 ac_cv_search_glBegin=no
@@ -285,16 +285,14 @@ AC_ARG_ENABLE(adns,  [  --enable-adns           use asynchronous DNS resolver],
   *) AC_MSG_ERROR(bad value ${enableval} for --enable-adns) ;;
 esac],[use_adns=false])
 if $use_adns ; then
-  AC_DEFINE(HAVE_ADNS)
-else
-  AC_DEFINE(HAVE_ADNS, [])
+  AC_DEFINE([HAVE_ADNS], 1, [Define if ADNS is available])
 fi
 
 if test x$use_adns = xtrue ; then
 AC_TRY_LINK([
 #include <adns.h>],
 [adns_init(0, (adns_initflags)0, 0)],
-[AC_DEFINE(HAVE_ADNS_H, 1, [Define to 1 if you have ADNS available])],
+[AC_DEFINE(HAVE_ADNS_H, 1, [Define if you have ADNS header available])],
 [AC_MSG_WARN([adns seems to not be available on your system.
 See http://www.chiark.greenend.org.uk/~ian/adns/ if you want to be able to use hostmask based bans.])])
 fi
