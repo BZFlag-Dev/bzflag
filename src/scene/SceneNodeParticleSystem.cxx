@@ -15,6 +15,7 @@
 #include "SceneVisitorParams.h"
 #include "Matrix.h"
 #include <math.h>
+#include <iostream>
 
 //
 // Particle
@@ -59,7 +60,7 @@ void Particle::create(SceneNodeParticleSystem *parent_, float /*timeCounter*/)
 	temp = (bzfrand() * ((float) (parent->spreadMax - parent->spreadMin))) + parent->spreadMin;
 	location[2] += temp / parent->spreadFactor;
 
-	cout << "creating particle:\n\tfield angle: " << parent->fieldAngle << endl;
+	std::cout << "creating particle:\n\tfield angle: " << parent->fieldAngle << std::endl;
 	randomPitch = bzfrand() * M_PI * 2.0;
 	randomYaw = (M_PI / 180.0) * bzfrand() * parent->fieldAngle;
 
@@ -347,7 +348,7 @@ void SceneNodeParticleSystem::getBoundingBox(BoundingBox* box)
 		boundingBoxDirty = false;
 
 		// find first particle with some vertices
-		deque<Particle>::iterator index;
+		std::deque<Particle>::iterator index;
 
 		if(particles.size() == 0) {
 			boundingBox.set(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);

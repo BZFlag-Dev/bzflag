@@ -138,6 +138,10 @@ SOURCE=..\src\scene\SceneNodeParameters.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\src\scene\SceneNodeParticleSystem.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\src\scene\SceneNodePrimitive.cxx
 # End Source File
 # Begin Source File
@@ -239,6 +243,10 @@ SOURCE=..\include\SceneNodeMetadata.h
 # Begin Source File
 
 SOURCE=..\include\SceneNodeParameters.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\SceneNodeParticleSystem.h
 # End Source File
 # Begin Source File
 
