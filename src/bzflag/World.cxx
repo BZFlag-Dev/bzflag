@@ -20,7 +20,6 @@
 #include <string>
 
 /* common implementation headers */
-#include "StateDatabase.h"
 #include "BZDBCache.h"
 #include "TextureManager.h"
 #include "FileManager.h"
