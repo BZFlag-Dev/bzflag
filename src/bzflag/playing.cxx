@@ -1720,7 +1720,7 @@ static void		doMotion()
  
         TimeKeeper now = TimeKeeper::getCurrent();
 	if (now - lastShot >= 0.5f) {
-	  if (fabs(rotation) < BZDB->eval(StateDatabase::BZDB_TARGETINGANGLE)) {
+	  if (fabs(rotation) < BZDB->eval(StateDatabase::BZDB_LOCKONANGLE)) {
 	    float dir[3] = {cosf(azimuth), sinf(azimuth), 0.0f};
 	    Ray tankRay(pos, dir);
 	    distance += BZDB->eval(StateDatabase::BZDB_TANKLENGTH);
