@@ -23,7 +23,7 @@ AC_PROG_LN_S
 AC_PROG_RANLIB
 AC_CHECK_PROG(HASPOD2MAN, pod2man, yes, no)
 if test $HASPOD2MAN = no; then
-  AC_MSG_WARN([some man pages will not being generated])
+  AC_MSG_WARN([some man pages will not be generated])
 fi
 AM_CONDITIONAL(HASPOD2MAN, test $HASPOD2MAN = yes)
 AC_SUBST(AR)
