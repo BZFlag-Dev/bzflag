@@ -14,8 +14,8 @@ bzfs_SOURCES = \
 	Permissions.h \
 	TextChunkManager.cxx \
 	TextChunkManager.h \
-	VotingPoll.cxx \
-	VotingPoll.h \
+	VotingArbiter.cxx \
+	VotingArbiter.h \
 	WorldInfo.cxx \
 	WorldInfo.h \
 	WorldWeapons.cxx \
