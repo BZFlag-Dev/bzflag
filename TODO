@@ -261,7 +261,7 @@ THESE NEED TO WAIT FOR THE NEXT PROTOCOL BREAKAGE
 * see if 3dfx/other old hardware limits are still practical.
 
 * break rending system into seperate lib and allow difrent rednerers that are targeted
-  to hardware or software.
+  to hardware or software..
 
 See the Task Tracker on Sourceforge (http://sourceforge.net/pm/?group_id=3248)
 for more todo items and future planning endeavors.
