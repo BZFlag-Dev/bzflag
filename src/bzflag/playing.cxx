@@ -3073,14 +3073,15 @@ static void		handleServerMessage(bool human, uint16_t code,
 	if (rabbit == myTank) {
 	  if (myTank->isPaused())
 	    serverLink->sendNewRabbit();
-	  else
-	    hud->setAlert(0, "You are now the rabbit.", 10.0f, false);
+          else {
+            hud->setAlert(0, "You are now the rabbit.", 10.0f, false);
+            playLocalSound(SFX_HUNT_SELECT);
+          }
 	  hud->setHunting(false);
 	} else {
 	  myTank->changeTeam(RogueTeam);
 	  rabbit->setHunted(true);
 	  hud->setHunting(true);
-
 	}
 
 	addMessage(rabbit, "is now the rabbit", true);
