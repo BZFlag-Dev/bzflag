@@ -211,6 +211,7 @@ void			Player::setExplode(const TimeKeeper& t)
   setStatus((getStatus() | short(PlayerState::Exploding) | short(PlayerState::Falling)) &
 	    ~(short(PlayerState::Alive) | short(PlayerState::Paused)));
   tankNode->rebuildExplosion();
+  // setup the flag effect to revert to normal
   updateFlagEffect(Flags::Null);
 }
 
@@ -295,7 +296,7 @@ void			Player::updateTank(float dt)
   tankNode->setColor(color);
   
   setupTreads(dt);
-
+  
   return;
 }
 
@@ -310,9 +311,9 @@ void			Player::setupTreads(float dt)
   }
 
   float angularFactor = inputAngVel;
-  const float tankWidth = BZDB.eval(StateDatabase::BZDB_TANKWIDTH);
-  // not using dimensions[1], because it may be set to 0 by a Narrow flag
-  angularFactor *= dimensionsScale[0] * (0.5f * tankWidth);
+  const float halfWidth = 0.5f * BZDB.eval(StateDatabase::BZDB_TANKWIDTH);
+  // not using dimensions[1], because it may be set to 0.001 by a Narrow flag
+  angularFactor *= dimensionsScale[0] * halfWidth;
 
   const float leftOff = dt * (speedFactor - angularFactor);
   const float rightOff = dt * (speedFactor + angularFactor);
@@ -349,7 +350,7 @@ void			Player::updateFlagEffect(FlagType* effectFlag)
   if (FlagEffectTime <= 0.0f) {
     FlagEffectTime = 0.001f; // safety
   }
-  
+
   // set the dimension targets
   dimensionsTarget[0] = 1.0f;
   dimensionsTarget[1] = 1.0f;
@@ -372,7 +373,7 @@ void			Player::updateFlagEffect(FlagType* effectFlag)
   else if (effectFlag == Flags::Narrow) {
     dimensionsTarget[1] = 0.001f;
   }
-  
+
   // set the dimension rates
   for (int i = 0; i < 3; i++) {
     if (dimensionsTarget[i] != dimensionsScale[i]) {
@@ -392,7 +393,7 @@ void			Player::updateFlagEffect(FlagType* effectFlag)
   if (alphaTarget != alpha) {
     alphaRate = (alphaTarget - alpha) / FlagEffectTime;
   }
-  
+
   return;
 }
 
@@ -479,39 +480,39 @@ void			Player::addToScene(SceneDatabase* scene,
   tankNode->move(state.pos, forward);
   setVisualTeam(effectiveTeam);
 
-  if (isAlive()) {
+  // only use dimensions if we aren't at steady state.
+  // this is done because it's more expensive to use
+  // GL_NORMALIZE then to use precalculated normals.
+  if (!useDimensions) {
+    tankNode->ignoreDimensions();
     if (flagType == Flags::Obesity) tankNode->setObese();
     else if (flagType == Flags::Tiny) tankNode->setTiny();
     else if (flagType == Flags::Narrow) tankNode->setNarrow();
     else if (flagType == Flags::Thief) tankNode->setThief();
     else tankNode->setNormal();
-    // only use dimensions if we aren't at steady state.
-    // this is done because it's more expensive to use
-    // GL_NORMALIZE then to use precalculated normals.
-    if (useDimensions) {
-      tankNode->setDimensions(dimensionsScale);
-    } else {
-      tankNode->ignoreDimensions();
-    }
-    
+  } 
+  else {
+    tankNode->setDimensions(dimensionsScale);
+  }
+  
+  if (isAlive()) {
     tankNode->setExplodeFraction(0.0f);
     scene->addDynamicNode(tankNode);
 
     if (isCrossingWall()) {
       // get which plane to compute IDL against
       GLfloat plane[4];
-      float tankLength = BZDB.eval(StateDatabase::BZDB_TANKLENGTH);
-      float tankWidth = BZDB.eval(StateDatabase::BZDB_TANKWIDTH);
       const GLfloat a = atan2f(forward[1], forward[0]);
-      const Obstacle* obstacle = World::getWorld()->hitBuilding(state.pos, a,
-								0.5f * tankLength, 0.5f * tankWidth,
-								BZDBCache::tankHeight);
+      const Obstacle* obstacle = 
+        World::getWorld()->hitBuilding(state.pos, a, 
+                                       dimensions[0], dimensions[1],
+                                       dimensions[2]);
       if (obstacle && obstacle->isCrossing(state.pos, a,
-					   0.5f * tankLength, 0.5f * tankWidth,
-					   BZDBCache::tankHeight, plane) ||
+                                           dimensions[0], dimensions[1],
+					   dimensions[2], plane) ||
 	  World::getWorld()->crossingTeleporter(state.pos, a,
-						0.5f * tankLength, 0.5f * tankWidth,
-						BZDBCache::tankHeight, plane)) {
+                                                dimensions[0], dimensions[1],
+						dimensions[2], plane)) {
 	// stick in interdimensional lights node
 	if (showIDL) {
 	  tankIDLNode->move(plane);
@@ -531,7 +532,8 @@ void			Player::addToScene(SceneDatabase* scene,
       tankNode->setClipPlane(NULL);
     }
   } else if (isExploding() && state.pos[2] > ZERO_TOLERANCE) {
-    float t = (TimeKeeper::getTick() - explodeTime) / BZDB.eval(StateDatabase::BZDB_EXPLODETIME);
+    float t = (TimeKeeper::getTick() - explodeTime) / 
+              BZDB.eval(StateDatabase::BZDB_EXPLODETIME);
     if (t > 1.0f) {
       // FIXME
       //      setStatus(DeadStatus);
@@ -545,7 +547,8 @@ void			Player::addToScene(SceneDatabase* scene,
   }
   
   if (isAlive() && (isPaused() || isNotResponding())) {
-    pausedSphere->move(state.pos, 1.5f * BZDBCache::tankRadius);
+    pausedSphere->move(state.pos, 
+                       1.5f * BZDBCache::tankRadius * dimensionsScale[0]);
     scene->addDynamicSphere(pausedSphere);
   }
 }
