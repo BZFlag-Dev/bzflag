@@ -1,6 +1,5 @@
 recent bugs
 ------------
-- Machine gun fires non-stop when you pick it up
 
 - new list server takes way too long (3-5 seconds) to respond.
   Taking some measurement from receiving request to sending result:
