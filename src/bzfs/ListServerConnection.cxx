@@ -340,7 +340,7 @@ void ListServerLink::addMe(PingPacket pingInfo,
   std::vector<std::string>::iterator itr = clOptions->remoteGroups.begin();
   for ( ; itr != clOptions->remoteGroups.end(); itr++) {
     if (*itr != "ADMIN") {
-      msg += itr->c_str();
+      msg += *itr;
       msg += "%0D%0A";
     }
   }
