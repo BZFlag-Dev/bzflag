@@ -753,8 +753,10 @@ static void handleBanCmd(GameKeeper::Player *playerData, const char *message)
 	    sprintf(kickmessage,"Reason given: %s", reason.c_str());
 	    sendMessage(ServerPlayer, i, kickmessage);
 	  }
-	  sprintf(kickmessage, "%s banned by %s, reason: %s", otherPlayer->player.getCallSign(), playerData->player.getCallSign(),reason.c_str());
-	  sendMessage(ServerPlayer, AdminPlayers, kickmessage);
+	  if (otherPlayer) {
+	    sprintf(kickmessage, "%s banned by %s, reason: %s", otherPlayer->player.getCallSign(), playerData->player.getCallSign(),reason.c_str());
+	    sendMessage(ServerPlayer, AdminPlayers, kickmessage);
+	  }
 	  removePlayer(i, "/ban");
 	}
       }
