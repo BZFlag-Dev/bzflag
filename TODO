@@ -115,8 +115,6 @@ THESE ARE LOWER PRIORITY
 
 * fix up irix idb
 
-* build a tar as output that supports "rpm -tb <tar>"
-
 * break the net compatibility to allow some fixes
    including:
 
