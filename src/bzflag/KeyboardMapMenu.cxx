@@ -16,6 +16,7 @@
 /* system implementation headers */
 #include <vector>
 #include <string>
+#include <ctype.h>
 
 /* common implementation headers */
 #include "KeyManager.h"
