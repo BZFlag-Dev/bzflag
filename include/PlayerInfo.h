@@ -53,9 +53,9 @@ enum PlayerReplayState {
 
 
 struct TeamInfo {
-  public:
-    Team team;
-    TimeKeeper flagTimeout;
+public:
+  Team team;
+  TimeKeeper flagTimeout;
 };
 
 
@@ -124,53 +124,54 @@ private:
 
   int         playerIndex;
 
-    bool restartOnBase;
+  bool restartOnBase;
 
-    // current state of player
-    ClientState state;
-    // type of player
-    PlayerType type;
-    // player's pseudonym
-    char callSign[CallSignLen];
-    // player's email address
-    char email[EmailLen];
-    // player's team
-    TeamColor team;
-    // true for dead rabbit until respawn
-    bool wasRabbit;
-    // flag index player has
-    int flag;
+  // current state of player
+  ClientState state;
+  // type of player
+  PlayerType type;
+  // player's pseudonym
+  char callSign[CallSignLen];
+  // player's email address
+  char email[EmailLen];
+  // player's team
+  TeamColor team;
+  // true for dead rabbit until respawn
+  bool wasRabbit;
+  // flag index player has
+  int flag;
 
-    TimeKeeper lastFlagDropTime;
+  TimeKeeper lastFlagDropTime;
 
-    std::string clientVersion;
+  std::string clientVersion;
 
-    // spam prevention
-    std::string lastMsgSent;
-    int spamWarns;
-    TimeKeeper lastMsgTime;
+  // spam prevention
+  std::string lastMsgSent;
+  int spamWarns;
+  TimeKeeper lastMsgTime;
 
-    bool paused;
-    TimeKeeper pausedSince;
+  bool paused;
+  TimeKeeper pausedSince;
 
-    bool notResponding;
+  bool notResponding;
     
-    // Has the player been sent any replay 'faked' state
-    PlayerReplayState replayState;
+  // Has the player been sent any replay 'faked' state
+  PlayerReplayState replayState;
 
-    // idle kick
-    TimeKeeper lastmsg;
-    TimeKeeper lastupdate;
+  // idle kick
+  TimeKeeper lastmsg;
+  TimeKeeper lastupdate;
 
-    // player played before countdown started
-    bool playedEarly;
+  // player played before countdown started
+  bool playedEarly;
+  
 };
 
 
 #endif
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***
