@@ -311,6 +311,12 @@ void			BackgroundRenderer::notifyStyleChange(
   gridGState = gstate.getState();
 }
 
+void                BackgroundRenderer::resize() {
+  resizeSky();
+  doInitDisplayLists();
+}
+
+
 void			BackgroundRenderer::setCelestial(
 				const SceneRenderer& renderer,
 				const float sunDir[3], const float moonDir[3])

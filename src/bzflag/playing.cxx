@@ -5417,8 +5417,6 @@ static bool		joinGame(const StartupInfo* info,
     leaveGame();
     return false;
   }
-  BackgroundRenderer::resizeSky();
-  sceneRenderer->getBackground()->doInitDisplayLists();
   
   ServerLink::setServer(serverLink);
   World::setWorld(world);
@@ -5487,13 +5485,18 @@ static bool		joinGame(const StartupInfo* info,
   restartOnBase = world->allowTeamFlags() && myTank->getTeam() != RogueTeam &&
 		  myTank->getTeam() != ObserverTeam;
 
-  // if server constrains time then adjust it
-  if (!world->allowTimeOfDayAdjust()) {
+  // resize background and adjust time (this is needed even if we 
+  // don't sync with the server)
+  sceneRenderer->getBackground()->resize();
+  if (world->allowTimeOfDayAdjust()) {
+    updateDaylight(epochOffset, *sceneRenderer);
+  }
+  else {
     epochOffset = double(world->getEpochOffset());
     updateDaylight(epochOffset, *sceneRenderer);
     lastEpochOffset = epochOffset;
   }
-
+  
   // restore the sound
   if (savedVolume != -1) {
     setSoundVolume(savedVolume);

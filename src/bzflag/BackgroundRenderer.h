@@ -35,7 +35,7 @@ class BackgroundRenderer {
     void		renderSkyAndGround(SceneRenderer&, bool fullWindow);
     void		render(SceneRenderer&);
     
-    static void         resizeSky();
+    void                resize();
 
     bool		getBlank() const;
     bool		getInvert() const;
@@ -48,8 +48,6 @@ class BackgroundRenderer {
 					const float moonDirection[3]);
     void		addCloudDrift(GLfloat uDrift, GLfloat vDrift);
 
-    void		doInitDisplayLists();
-    
   protected:
     void		drawSky(SceneRenderer&);
     void		drawGround(void);
@@ -65,6 +63,8 @@ class BackgroundRenderer {
 			BackgroundRenderer(const BackgroundRenderer&);
     BackgroundRenderer&	operator=(const BackgroundRenderer&);
 
+    void                resizeSky();
+    void		doInitDisplayLists();
     static void		initDisplayLists(void*);
 
   private:
