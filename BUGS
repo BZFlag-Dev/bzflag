@@ -10,12 +10,6 @@ recent bugs
 - Mac OS X client sometimes (50/50) seems to now start to a black
   screen (only the console tab tabs render).  must be recent..
 
-- pressing SHIFT+F[1-4] results in Console text collapsing into a
-  single line.
-
-- CTF team capture results in dead players respawning mid-map instead
-  of on the base.
-
 - Font texture filtering is inconsistent, might be driver problems, a bug
   in bz code, or just wrong expectations. The following screenhots show the
   problem:
