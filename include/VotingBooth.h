@@ -48,7 +48,8 @@ class VotingBooth
    */
   std::string _question;
 
-  /** array of potential poll responses
+  /** array of potential poll responses (a response is a poll
+   * option/choice -- not a vote itself)
    */
   std::string _response[MAX_VOTE_RESPONSES];
 
@@ -58,7 +59,7 @@ class VotingBooth
 
   /** counts of the vote responses 
    */
-  unsigned long int _votes[MAX_VOTE_RESPONSES];
+  unsigned long int _vote[MAX_VOTE_RESPONSES];
 
   /** lists of who has voted
    */
@@ -67,6 +68,9 @@ class VotingBooth
   /** how many voters have been manually added
    */
   unsigned short int _voterCount;
+
+  /* require unique voters */
+  bool _requireUnique;
 
  protected:
 
@@ -92,7 +96,7 @@ class VotingBooth
   
  public:
   
-  VotingBooth(std::string question = "");
+  VotingBooth(std::string question = "", bool requireUnique = true);
   ~VotingBooth(void);
 
   /** add an response to vote upon
@@ -105,7 +109,7 @@ class VotingBooth
   const std::string getStringFromResponseID(vote_t id) const;
 
   /** a given user id/name responds and votes to a particular poll
-   * response.
+   * response.  
    */
   bool vote(const std::string name, vote_t id);
 
@@ -119,6 +123,10 @@ class VotingBooth
    */
   unsigned long int getVoteCount(const std::string response) const;
 
+  /** return total number of votes received
+   */
+  unsigned long int VotingBooth::getTotalVotes(void) const;
+
   /** returns the number of voters
    */
   inline unsigned long int getVoterCount(void) {
@@ -131,6 +139,7 @@ class VotingBooth
     return _responseCount;
   }
 
+
 };
 
 
@@ -138,8 +147,8 @@ VotingBooth *getYesNoVotingBooth(std::string question = "")
 {
   VotingBooth *poll = new VotingBooth(question);
 
-  poll->addResponse("yes");
   poll->addResponse("no");
+  poll->addResponse("yes");
 
   return poll;
 }

@@ -25,10 +25,11 @@
 
 /* public: */
 
-VotingBooth::VotingBooth(std::string question) 
+VotingBooth::VotingBooth(std::string question, bool requireUnique) 
   : _question(question),
     _responseCount(0),
-    _voterCount(0)
+    _voterCount(0),
+    _requireUnique(requireUnique)
 {
   return;
 }
@@ -83,13 +84,36 @@ const std::string VotingBooth::getStringFromResponseID(vote_t id) const
   return "";
 }
 
-bool VotingBooth::vote(std::string name, vote_t id)
+bool VotingBooth::vote(std::string voter, vote_t id)
 {
-  return false;
+  /* if we are requiring unique, make sure the name does not exist */
+  if (_requireUnique) {
+    for (int i = 0; i < _voterCount; i++) {
+      if (VotingBooth::compare_nocase(_voter[i], voter, voter.size()) == 0) {
+	/* repeat voters are not allowed to vote */
+	return false;
+      }
+    }
+  }
+
+  /* make sure the vote id is valid */
+  std::string response = this->getStringFromResponseID(id);
+  if (response.size() == 0) {
+    return false;
+  }
+
+  /* add the voter to the list of voters */
+  _voter[_voterCount] = voter;
+  _voterCount++;
+
+  /* finally increment the dang vote */
+  _vote[id]++;
+
+  return true;
 }
 
 unsigned long int VotingBooth::getVoteCount(vote_t id) const {
-  return _votes[id];
+  return _vote[id];
 }
 
 unsigned long int VotingBooth::getVoteCount(const std::string response) const {
@@ -105,6 +129,13 @@ unsigned long int VotingBooth::getVoteCount(const std::string response) const {
   return 0;
 }
 
+unsigned long int VotingBooth::getTotalVotes(void) const {
+  unsigned long int total=0;
+  for (vote_t id = 0; id < _responseCount; id++) {
+    total += this->getVoteCount(id);
+  }
+  return total;
+}
 
 
 #if UNIT_TEST
@@ -131,8 +162,11 @@ int main (int argc, char *argv[])
   
   std::string *response;
   for (int i=0; i < 9; i++) {
-    std::cout << "response " << i << " is " << poll->getStringFromResponseID(i) << std::endl;    
+    std::cout << "response #" << i << " is " << poll->getStringFromResponseID(i) << std::endl;    
+    std::cout << "  vote count is " << poll->getVoteCount(i) << std::endl;    
   }
+
+  std::cout << "total votes is " << poll->getTotalVotes() << std::endl;
 
   return 0;
 }
