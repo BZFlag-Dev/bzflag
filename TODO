@@ -25,7 +25,8 @@ THESE ARE LOWER PRIORITY
 
 * rework the BZDB->eval() cacheing to support expression
   dependencies - if a variable changes, all the expressions
-  that use that variable should be updated as well
+  that use that variable should be updated as well, or at
+  the least, flush the entire cache when a callback happens
 
 * make the vertical rico solution more elegant - get rid of
   BoxBuilding::getNormal and fix existing code to do z -
