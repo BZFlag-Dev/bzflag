@@ -512,11 +512,7 @@ int PlayerInfo::updatePingLag(void *buf, float threshold, float max,
       laglastwarn = lagcount;
       lagwarncount++;
       warn = true;
-      if (lagwarncount++ > max) {
-	kick = true;
-      } else {
-	kick = true;
-      }
+      kick = (lagwarncount++ > max);
     } else {
       warn = false;
       kick = false;
