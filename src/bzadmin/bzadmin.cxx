@@ -69,7 +69,6 @@ int main(int argc, char** argv) {
   // register and parse command line arguments
   OptionParser op(std::string("bzadmin ") + getAppVersion(),
 		  "CALLSIGN@HOST[:PORT] [COMMAND] [COMMAND] ...");
-
   const std::string uiOption("ui");
   const std::string uiMsg = "choose a user interface";
   op.registerVariable(uiOption, uiName, uiUsage, uiMsg);
@@ -77,18 +76,14 @@ int main(int argc, char** argv) {
     return 1;
 
   // check that we have callsign and host in the right format and extract them
-  if (op.getParameters().size() == 0) {
+  int atPos;
+  if (!(op.getParameters().size() > 0 &&
+	(atPos = op.getParameters()[0].find('@')) > 0)) {
     std::cerr<<"You have to specify callsign@host."<<std::endl;
     return 1;
   }
-  const std::string& namehost = op.getParameters()[0];
-  int atPos = namehost.find('@');
-  if (atPos == -1) {
-    std::cerr<<"You have to specify callsign@host."<<std::endl;
-    return 1;
-  }
-  std::string name = namehost.substr(0, atPos);
-  std::string host = namehost.substr(atPos + 1);
+  std::string name = op.getParameters()[0].substr(0, atPos);
+  std::string host = op.getParameters()[0].substr(atPos + 1);
   int port = ServerPort;
   int cPos = host.find(':');
   if (cPos != -1) {
