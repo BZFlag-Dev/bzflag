@@ -4,6 +4,7 @@
 BZFlag 1.12.0  (was 1.11.x)
 ---------------------------
 
+* Auto-completion to complete the first few given letters of a callsign - Ian Agar
 * /clientquery can now be requested on single individuals - Ian Agar
 * Added support for irc-like /me actions and /msg messages - Sean Morrison
 * Seer flag now can see Invisible Bullets - Dave Rodgers
