@@ -32,7 +32,11 @@ The files in question are dsound.h, d3dtypes.h and ddraw.h.
 Note that we cannot redistribute these files separate of the entire SDK.
 
 If you get bzflag files from CVS be sure to check them out with UNIX linebreaks,
-or MSYS will choke.  You should run this command
+or MSYS will choke.  In WinCVS, this can be done with the "Check out text files
+with the Unix LF (0xA)" option in Global Preferences; in TortoiseCVS, use the
+"Unix line endings" option in Advanced Preferences.
+
+Once you have the files checked out correctly, you should run this command
 
 sh autogen.sh
 
