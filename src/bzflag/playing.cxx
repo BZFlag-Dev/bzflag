@@ -3821,7 +3821,7 @@ static bool		gotBlowedUp(BaseLocalPlayer* tank,
     return false;
 
   // you can't take it with you
-  const FlagId flag = tank->getFlag();
+  const FlagDesc* flag = tank->getFlag();
   if (flag != Flags::Null) {
     // tell other players I've dropped my flag
     lookupServer(tank)->sendDropFlag(tank->getPosition());
@@ -3918,18 +3918,17 @@ static void		checkEnvironment()
   // skip this if i'm dead or paused
   if (!myTank->isAlive() || myTank->isPaused()) return;
 
-  FlagId flagId = myTank->getFlag();
-  if (flagId != Flags::Null && int(flagId) >= int(FirstTeamFlag) &&
-      int(flagId) <= int(LastTeamFlag)) {
+  FlagDesc* flagd = myTank->getFlag();
+  if (flagd->flagTeam != NoTeam) {
     // have I captured a flag?
     TeamColor base = world->whoseBase(myTank->getPosition());
     TeamColor team = myTank->getTeam();
     if ((base != NoTeam) &&
-	((int(flagId) == int(team) && base != team) ||
-	(int(flagId) != int(team) && base == team)))
+	(flagd->flagTeam == team && base != team) ||
+	(flagd->flagTeam != team && base == team))
       serverLink->sendCaptureFlag(base);
   }
-  else if (flagId == Flags::Null && (myTank->getLocation() == LocalPlayer::OnGround ||
+  else if (flagd == Flags::Null && (myTank->getLocation() == LocalPlayer::OnGround ||
       myTank->getLocation() == LocalPlayer::OnBuilding)) {
     // Don't grab too fast
     static TimeKeeper lastGrabSent;
@@ -3939,7 +3938,7 @@ static void		checkEnvironment()
       const float radius = myTank->getRadius();
       const float radius2 = (radius + FlagRadius) * (radius + FlagRadius);
       for (int i = 0; i < numFlags; i++) {
-	if (world->getFlag(i).id == Flags::Null || world->getFlag(i).status != FlagOnGround)
+	if (world->getFlag(i).desc == Flags::Null || world->getFlag(i).status != FlagOnGround)
 	  continue;
 	const float* fpos = world->getFlag(i).position;
 	if ((fabs(tpos[2] - fpos[2]) < 0.1f) && ((tpos[0] - fpos[0]) * (tpos[0] - fpos[0]) +
@@ -3950,14 +3949,14 @@ static void		checkEnvironment()
       }
     }
   }
-  else if (flagId == Flags::Identify) {
+  else if (flagd == Flags::Identify) {
     // identify closest flag
     const float* tpos = myTank->getPosition();
     std::string message("Closest Flag: ");
     float minDist = IdentityRange * IdentityRange;
     int closestFlag = -1;
     for (int i = 0; i < numFlags; i++) {
-      if (world->getFlag(i).id == Flags::Null ||
+      if (world->getFlag(i).desc == Flags::Null ||
 	  world->getFlag(i).status != FlagOnGround) continue;
       const float* fpos = world->getFlag(i).position;
       const float dist = (tpos[0] - fpos[0]) * (tpos[0] - fpos[0]) +
@@ -3970,9 +3969,9 @@ static void		checkEnvironment()
     }
     if (closestFlag != -1) {
       // Set HUD alert about what the flag is
-      message += Flag::getName(world->getFlag(closestFlag).id);
+      message += world->getFlag(closestFlag).desc->flagName;
       hud->setAlert(2, message.c_str(), 0.5f,
-		Flag::getType(world->getFlag(closestFlag).id) == FlagSticky);
+		    world->getFlag(closestFlag).desc->flagType == FlagSticky);
     }
   }
 
@@ -4008,7 +4007,7 @@ static void		checkEnvironment()
 	  player[i]->getFlag() == Flags::Steamroller &&
 	  !player[i]->isPaused()) {
 	const float* pos = player[i]->getPosition();
-	if (!(flagId == Flags::PhantomZone && myTank->isFlagActive())) {
+	if (!(flagd == Flags::PhantomZone && myTank->isFlagActive())) {
 	  const float radius = myRadius + SRRadiusMult * player[i]->getRadius();
 	  if (hypot(hypot(myPos[0] - pos[0], myPos[1] - pos[1]), myPos[2] - pos[2]) < radius)
 	    gotBlowedUp(myTank, GotRunOver, player[i]->getId());
@@ -4077,7 +4076,7 @@ static void		setTarget()
     msg += Team::getName(bestTarget->getTeam());
     if (bestTarget->getFlag() != Flags::Null) {
       msg += ") with ";
-      msg += Flag::getName(bestTarget->getFlag());
+      msg += bestTarget->getFlag()->flagName;
     }
     else {
       msg += ")";
@@ -4099,7 +4098,7 @@ static void		setTarget()
     msg += Team::getName(bestTarget->getTeam());
     if (bestTarget->getFlag() != Flags::Null) {
       msg += ") with ";
-      msg += Flag::getName(bestTarget->getFlag());
+      msg += bestTarget->getFlag()->flagName;
     }
     else {
       msg += ")";
@@ -4169,7 +4168,7 @@ static void		setHuntTarget()
       msg += Team::getName(bestTarget->getTeam());
       if (bestTarget->getFlag() != Flags::Null) {
         msg += ") with ";
-        msg += Flag::getName(bestTarget->getFlag());
+        msg += bestTarget->getFlag()->flagName;
       } else {
         msg += ")";
       }
@@ -4660,18 +4659,24 @@ static void markOld(std::string &fileName)
 
 static int negotiateFlags(ServerLink* serverLink)
 {
+  serverLink = serverLink;
+
+  /* FIXME */
+  /*
   uint16_t code, len;
   char msg[MaxPacketLen];
   char *buf = msg;
-  buf = (char *) nboPackUShort(buf, LastFlag - FirstFlag + 1);
-  for (int i = FirstFlag; i <= LastFlag; i++) {
-	const char *abbv = Flag::getAbbreviation((FlagId)i);
-	buf = (char *) nboPackString( buf, abbv, 2);
+  std::map<std::string, FlagDesc*>::iterator i;
+
+  for (i = FlagDesc::flagMap.begin(); i < FlagDesc::flagMap.end(); i++) {
+    buf = (*i)->pack(buf);
   }
   serverLink->send( MsgNegotiateFlags, buf - msg, msg );
 
   if (serverLink->read(code, len, msg, 5000) <= 0) return MsgNull;
   return code;
+  */
+  return MsgSuperKill;
 }
 
 //
@@ -4857,7 +4862,7 @@ static bool		enterServer(ServerLink* serverLink, World* world,
 	    if (flag.status == FlagOnTank)
 	      for (int j = 0; j < curMaxPlayers; j++)
 		if (player[j] && player[j]->getId() == flag.owner) {
-		  player[j]->setFlag(flag.id);
+		  player[j]->setFlag(flag.desc);
 		  break;
 		}
 	  }
@@ -5478,8 +5483,8 @@ static void		playingLoop()
       pauseCountdown -= dt;
       if (pauseCountdown <= 0.0f) {
 	// okay, now we pause.  first drop any team flag we may have.
-	const FlagId flagId = myTank->getFlag();
-	if (flagId >= FirstTeamFlag && flagId <= LastTeamFlag)
+	const FlagDesc* flagd = myTank->getFlag();
+	if (flagd->flagTeam != NoTeam)
 	  serverLink->sendDropFlag(myTank->getPosition());
 
 	if (World::getWorld()->allowRabbit() && (myTank->getTeam() == RabbitTeam))
@@ -6023,7 +6028,7 @@ static void		playingLoop()
 	// marker for my team flag
 	for (i = 0; i < numFlags; i++) {
 	  Flag& flag = world->getFlag(i);
-	  if (int(flag.id) == int(myTank->getTeam())) {
+	  if (flag.desc->flagTeam == myTank->getTeam()) {
 	    const float* flagPos = flag.position;
 	    hud->setMarkerHeading(0, atan2f(flagPos[1] - myPos[1],
 					flagPos[0] - myPos[0]));
