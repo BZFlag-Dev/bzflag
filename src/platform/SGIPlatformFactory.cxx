@@ -28,7 +28,7 @@ PlatformFactory*		PlatformFactory::getInstance()
 SGIPlatformFactory::SGIPlatformFactory() :
 								secondsPerTick(0.0),
 								clockZero(0),
-								iotimer_addr(NULL);
+								iotimer_addr(NULL)
 {
 	// prepare high resolution timer
 	unsigned int cycleval;
@@ -61,6 +61,6 @@ double					SGIPlatformFactory::getClock() const
 	if (iotimer_addr == NULL)
 		return UnixPlatformFactory::getClock();
 	else
-		return secondsPerTick * (double)(*iotimer_addr - clockZero)
+		return secondsPerTick * (double)(*iotimer_addr - clockZero);
 }
 // ex: shiftwidth=4 tabstop=4
