@@ -15,7 +15,7 @@ recent bugs
 - Shift+Tab seems to be bound to jump without being bound to jump
 
 - menu does not display modified values after quitting and returning, although
-  the bindings appear to remain in effect.  
+  the bindings appear to remain in effect.
 
 - issuing a /set command in bzadmin with no arguments does not provide a list
   of settable variables.
