@@ -26,6 +26,7 @@
 #include "bzfgl.h"
 #include "bzfio.h"
 #include "MediaFile.h"
+#include "OpenGLGState.h"
 
 BitmapFont::BitmapFont()
 {
@@ -106,6 +107,14 @@ void BitmapFont::build(void)
   }
   delete[] image;
   loaded = true;
+
+  // create GState
+  OpenGLGStateBuilder builder(gstate);
+  builder.enableTexture(false);
+  builder.setBlending();
+  builder.setAlphaFunc();
+  builder.enableTextureReplace(false);
+  gstate = builder.getState();
 }
 
 
@@ -140,6 +149,8 @@ void BitmapFont::drawString(float scale, GLfloat color[3], const char *str,
     glColor3fv(color);
 
   glRasterPos3f(0, 0, 0);
+
+  gstate.setState();
 
   int charToUse = 0;
   for (int i = 0; i < len; i++) {

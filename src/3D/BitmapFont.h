@@ -19,6 +19,7 @@
 
 #include "bzfgl.h"
 #include "ImageFont.h"
+#include "OpenGLGState.h"
 
 class BitmapFont : public ImageFont {
 public:
@@ -34,6 +35,7 @@ public:
   virtual void free();
 
 private:
+  OpenGLGState gstate;
   unsigned char *bitmaps[MAX_TEXTURE_FONT_CHARS];
   bool	loaded;
 };

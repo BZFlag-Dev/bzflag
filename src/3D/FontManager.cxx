@@ -280,9 +280,6 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
   // negatives are invalid, we use them to signal "no change"
   GLfloat color[3] = {-1.0f, -1.0f, -1.0f};
 
-  OpenGLGState::resetState(); // FIXME for bitmap renderer, full reset needed?
-
-
   /*
    * ANSI code interpretation is somewhat limited, we only accept values
    * which have been defined in AnsiCodes.h
