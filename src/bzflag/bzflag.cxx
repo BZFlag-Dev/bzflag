@@ -1237,8 +1237,8 @@ int			main(int argc, char** argv)
   char buffer [bufferLength];
   bool keepGoing = true;
 
-  for (int i = 0; keepGoing && (i < maxListSize); i++) {
-    sprintf(buffer,"silencedPerson%d",i); // could do %-10d
+  for (int s = 0; keepGoing && (s < maxListSize); s++) {
+    sprintf(buffer,"silencedPerson%d",s); // could do %-10d
 
     if (BZDB->isSet(buffer)) {
       list.push_back(BZDB->get(buffer));
