@@ -5300,9 +5300,10 @@ static void dropFlag(int playerIndex, float pos[3])
 	pFlagInfo->flag.landingPosition[2] = 0.0f;
     }
     else {// oh well, whatcha gonna do?
-	pFlagInfo->flag.landingPosition[0] = basePos[flagId][0];
-	pFlagInfo->flag.landingPosition[1] = basePos[flagId][1];
-	pFlagInfo->flag.landingPosition[2] = basePos[flagId][2];
+        pFlagInfo->flag.landingPosition[0] = basePos[flagId][0];
+        pFlagInfo->flag.landingPosition[1] = basePos[flagId][1];
+        pFlagInfo->flag.landingPosition[2] = basePos[flagId][2] + 
+	  (baseSize[flagId][2] > 0 ? 1 : 0);
     }
   }
   else
