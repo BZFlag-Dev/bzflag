@@ -1812,6 +1812,7 @@ static void addPlayer(int playerIndex)
 
   TeamColor t = autoTeamSelect(playerData->player.getTeam());
   playerData->player.setTeam(t);
+  playerData->player.endShotCredit = 0;	// reset shotEndCredit
 
   // count current number of players and players+observers
   int numplayers = 0;
