@@ -35,10 +35,7 @@ THESE ARE LOWER PRIORITY
   blocked forever by one player just sitting there.
 
 * Use listserver to give global announce (e.g. New version released) to client
-  & possibly server)
-
-* Smaller ideas: Make PZ have PZ shots, only useahle on PZ tanks, but scare
-  the begeebers out of regular folk.
+  (& possibly server)
 
 * make tank scene node not use a list per size mode, just use the scale matrix.
 
@@ -241,8 +238,6 @@ THESE NEED TO WAIT FOR THE NEXT PROTOCOL BREAKAGE
 * allow client to only choose meshs from the server list
 
 * find some way to limit tank skins to team colors.
-
-* Add a platform that uses SDL.
 
 * implement one way cross server teleporters
 
