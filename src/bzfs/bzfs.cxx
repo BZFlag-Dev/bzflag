@@ -760,13 +760,13 @@ void sendIPUpdate(int targetPlayer = -1, int playerIndex = -1) {
     }
   }
   else {
-    int numPlayers = 0;
-    for (int i = 0; i <= int(ObserverTeam); i++)
+    int i, numPlayers = 0;
+    for (i = 0; i <= int(ObserverTeam); i++)
       numPlayers += team[i].team.size;
     int ipsPerPackage = (MaxPacketLen - 3) / (PlayerIdPLen + 7);
     int c = 0;
     buf = nboPackUByte(bufStart, 0); // will be overwritten later
-    for (int i = 0; i < curMaxPlayers; ++i) {
+    for (i = 0; i < curMaxPlayers; ++i) {
       if (player[i].state > PlayerInLimbo) {
 	buf = nboPackUByte(buf, (player[i].peer.getIPVersion() == 4 ? 8 : 20));
 	buf = nboPackUByte(buf, i);
