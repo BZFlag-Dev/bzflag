@@ -84,13 +84,13 @@ protected:
   /** returns the number of voters that have participated
    */
   inline unsigned long int getVoterCount(void) const {
-    return _vote.size();
+    return (unsigned long int)_vote.size();
   }
 
   /** returns the number of responses available
    */
   inline unsigned long int getResponseCount(void) const {
-    return _choice.size();
+    return (unsigned long int)_choice.size();
   }
 
   /** returns a string identifier for this poll

@@ -232,7 +232,7 @@ unsigned long int VotingArbiter::getAbstentionCount(void) const
   if (!this->knowsPoll()) {
     return 0;
   }
-  int count = _suffraged.size() - this->getYesCount() - this->getNoCount();
+  int count = (int)_suffraged.size() - this->getYesCount() - this->getNoCount();
   if (count <= 0) {
     return 0;
   }

@@ -67,7 +67,7 @@ static std::string		cmdPrint(const std::string&,
 {
   // merge all arguments into one string
   std::string arg;
-  const unsigned int n = args.size();
+  const unsigned int n = (int)args.size();
   if (n > 0)
     arg = args[0];
   for (unsigned int i = 1; i < n; ++i) {
