@@ -2453,7 +2453,8 @@ static void		checkEnvironment()
 	  world->getFlag(i).status != FlagOnGround) continue;
       const float* fpos = world->getFlag(i).position;
       const float dist = (tpos[0] - fpos[0]) * (tpos[0] - fpos[0]) +
-			 (tpos[1] - fpos[1]) * (tpos[1] - fpos[1]);
+			 (tpos[1] - fpos[1]) * (tpos[1] - fpos[1]) +
+			 (tpos[2] - fpos[2]) * (tpos[2] - fpos[2]);
       if (dist < minDist) {
 	minDist = dist;
 	closestFlag = i;
