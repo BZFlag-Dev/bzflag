@@ -13,6 +13,7 @@
 #ifndef __PERMISSIONS_H__
 #define __PERMISSIONS_H__
 
+/* system interface headers */
 // work around an ugly STL bug in BeOS
 // FIXME someone test whether it is still needed
 #ifdef __BEOS__
@@ -24,8 +25,11 @@
 #endif
 #include <vector>
 #include <map>
+#include <algorithm>
 
+/* common interface headers */
 #include "TimeKeeper.h"
+
 
 class PlayerAccessInfo
 {
@@ -35,36 +39,42 @@ public:
   // player access info
   enum AccessPerm
     {
-      idleStats = 0,
-      lagStats,
-      flagMod,
-      flagHistory,
-      lagwarn,
-      kick,
+      adminMessages = 0,
+      antiban,
+      antideregister,
+      antikick,
+      antipoll,
+      antipollban,
+      antipollkick,
       ban,
       banlist,
-      unban,
       countdown,
       endGame,
-      shutdownServer,
-      superKill,
-      playerList,
+      flagHistory,
+      flagMod,
+      idleStats,
       info,
+      kick,
+      lagStats,
+      lagwarn,
       listPerms,
-      showOthers,
+      playerList,
+      poll,
+      record,
       removePerms,
+      replay,
+      requireIdentify,
+      setAll,
       setPassword,
       setPerms,
-      setAll,
       setVar,
-      poll,
-      vote,
+      showOthers,
+      shutdownServer,
+      superKill,
+      unban,
       veto,
-      requireIdentify,
       viewReports,
-      adminMessages,
-      record,
-      replay,
+      vote,
       lastPerm	// just so we know how many rights there
 		// are this dosn't do anything really, just
 		// make sure it's the last real right
@@ -81,6 +91,7 @@ public:
   bool        isPasswordMatching(const char* pwd);
   void        setPasswd(const std::string& pwd);
   void        setAdmin();
+  bool        isAdmin() const;
 
   void        setPermissionRights();
   void        reloadInfo();
@@ -130,8 +141,7 @@ extern std::string		userDatabaseFile;
 
 inline void makeupper(std::string& str)
 {
-  for (unsigned int i = 0; i < str.length(); i++)
-    str[i] = toupper(str[i]);
+  std::transform(str.begin(), str.end(), str.begin(), (int(*)(int))toupper);
 }
 
 bool userExists(const std::string &nick);
@@ -144,11 +154,11 @@ bool writePassFile(const std::string &filename);
 
 #endif
 
+
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-
