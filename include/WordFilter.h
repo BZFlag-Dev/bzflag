@@ -21,6 +21,7 @@
 
 #include <sys/types.h>
 #include <regex.h>
+#include <stdint.h>
 
 #include "common.h"
 
@@ -97,16 +98,14 @@ class WordFilter
   /** word expressions to be filtered including compiled regexp versions */
   struct expressionCompare {
     bool operator () (const filter_t& word1, const filter_t& word2) const {
-      
-      
       return strncasecmp(word1.word.c_str(), word2.word.c_str(), 1024) < 0;
     }
   };
 
-#if defined (UNIT8_MAX)
-  const unsigned short int MAX_FILTERS = UINT8_MAX;
+#if defined (UINT8_MAX)
+  static const unsigned short int MAX_FILTERS = UINT8_MAX;
 #else
-  const unsigned short int MAX_FILTERS = sizeof(unsigned char);  
+  static const unsigned short int MAX_FILTERS = 2048;  
 #endif
 
   /** main collection of what to filter.  items are stored into
@@ -114,28 +113,31 @@ class WordFilter
    * this means a sparse array, but it's a small price for 
    * minimal hashing and rather fast lookups.
    */
+  // XXX consider making a numeric hash to avoid array overflows
   std::set<filter_t, expressionCompare> filters[MAX_FILTERS];
 
 
   /** used by the agressive filter */
-  filter_t *suffixes;
+  std::set<filter_t, expressionCompare> suffixes;
 
   /** used by the agressive filter */
-  filter_t *prefixes;
+  std::set<filter_t, expressionCompare> prefixes;
   
   /** utility method that returns the position of the 
    * first printable character from a string
    */
   int firstPrintable(const std::string &input) const
   {
-    if (input == NULL) {
+    if (input.size() == 0) {
       return -1;
     }
 
     int i = 0;
     /* range of printable characters, with failsafe */
-    while (((input[i] < 33) || (input[i] == 127) || (input[i] == 255)) \
-	   && (i < 32768)) {
+    while (((input[i] < 33) || \
+	    (input[i] == 127) || \
+	    ((unsigned char)input[i] == 255)) \
+	   && (i < MAX_FILTERS)) {
       i++;
     }
     return i;
@@ -146,14 +148,16 @@ class WordFilter
    */
   int firstNonprintable(const std::string &input) const
   {
-    if (input == NULL) {
+    if (input.size() == 0) {
       return -1;
     }
 
     int i = 0;
     /* range of non-printable characters, with failsafe */
-    while (((input[i] > 32) && (input[i] < 255) && (input[i] != 127)) \
-	   && (i < 32768)) {
+    while (((input[i] > 32) && \
+	    ((unsigned char)input[i] < 255) && \
+	    (input[i] != 127))		       \
+	   && (i < MAX_FILTERS)) {
       i++;
     }
     return i;
@@ -161,7 +165,7 @@ class WordFilter
 
   int filterCharacters(std::string &input, int start, int end, bool filterSpaces=false) const
   {
-    if (input == NULL) {
+    if (input.size() == 0) {
       return -1;
     }
     int length = end - start;
@@ -169,6 +173,8 @@ class WordFilter
       return -1;
     }
 
+    int randomCharPos, previousCharPos;
+    int maxFilterChar = filterChars.size();
     int count=0;
     for (int j=0; j < length; j++) {
       char c = input[start + j];
@@ -184,7 +190,7 @@ class WordFilter
        * are filtered.
        */
       if (filterSpaces) {
-	input[start + j] = filterchars[randomCharPos];
+	input[start + j] = filterChars[randomCharPos];
 	count++;
       } else  if (  ( c > 96 && c < 123 ) || 
 		    ( c > 64  && c < 91 ) || 
@@ -241,8 +247,11 @@ class WordFilter
   /** loads a set of bad words from a specified file */
   void loadFromFile(const std::string &fileName);
 
-  /** adds an individual word to the filter list */
-  bool addWord(const std::string &word);
+  /** adds a new filter to the existing filter list, and 
+   * optionally recursively adds all combinations of
+   * available suffixes and prefixes.
+   */
+  bool addToFilter(const std::string &word, const std::string &expression=NULL, bool append=false);
   
   /** given an input string, filter the input
    * using either the simple or agressive filter
@@ -251,6 +260,8 @@ class WordFilter
 
   /** dump a list of words in the filter to stdout */
   void outputWords(void) const;
+  /** retuns a count of how many words are in the filter */
+  unsigned long int wordCount(void) const;
 };
 
 
