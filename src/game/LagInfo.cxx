@@ -20,10 +20,9 @@ LagInfo::LagInfo(PlayerInfo *_info)
   : info(_info), lagavg(0), jitteravg(0), lostavg(0), lagalpha(1),
     jitteralpha(1), lostalpha(1), lagcount(0), laglastwarn(0), lagwarncount(0),
     pingpending(false), pingseqno(0), pingssent(0), lasttimestamp(0.0f) {
-  TimeKeeper now = TimeKeeper::getCurrent();
-  nextping       = now;
+  nextping       = info->now;
   nextping      += 10.0;
-  lastupdate     = now;
+  lastupdate     = info->now;
 }
 
 int LagInfo::getLag()
@@ -39,7 +38,7 @@ void LagInfo::getLagStats(char* msg) {
   // don't wait for ping to come back
   int lag          = int(lagavg * 1000);
   if (pingpending) {
-    float timepassed = TimeKeeper::getCurrent() - lastping;
+    float timepassed = info->now - lastping;
     int lastLag      = int((lagavg * (1 - lagalpha) + lagalpha * timepassed)
 			   * 1000);
     if (lastLag > lag)
@@ -58,7 +57,7 @@ int LagInfo::updatePingLag(void *buf, bool &warn, bool &kick) {
   int lag = 0;
   nboUnpackUShort(buf, _pingseqno);
   if (pingseqno == _pingseqno) {
-    float timepassed = TimeKeeper::getCurrent() - lastping;
+    float timepassed = info->now - lastping;
     // time is smoothed exponentially using a dynamic smoothing factor
     lagavg   = lagavg * (1 - lagalpha) + lagalpha * timepassed;
     lagalpha = lagalpha / (0.9f + lagalpha);
@@ -91,11 +90,10 @@ void LagInfo::updateLag(float timestamp, bool ooo) {
     lostavg   = lostavg * (1 - lostalpha) + lostalpha;
     lostalpha = lostalpha / (0.99f + lostalpha);
   }
-  TimeKeeper now = TimeKeeper::getCurrent();
-
   // don't calc jitter if more than 2 seconds between packets
   if (lasttimestamp > 0.0f && timestamp - lasttimestamp < 2.0f) {
-    const float jitter = fabs(now - lastupdate - (timestamp - lasttimestamp));
+    const float jitter = fabs(info->now - lastupdate
+			      - (timestamp - lasttimestamp));
     // time is smoothed exponentially using a dynamic smoothing factor
     jitteravg   = jitteravg * (1 - jitteralpha) + jitteralpha * fabs(jitter);
     jitteralpha = jitteralpha / (0.99f + jitteralpha);
@@ -103,7 +101,7 @@ void LagInfo::updateLag(float timestamp, bool ooo) {
     lostalpha   = lostalpha / (0.99f + lostalpha);
   }
   lasttimestamp = timestamp;
-  lastupdate    = now;
+  lastupdate    = info->now;
 }
 
 int LagInfo::getNextPingSeqno(bool &warn, bool &kick) {
@@ -114,8 +112,7 @@ int LagInfo::getNextPingSeqno(bool &warn, bool &kick) {
   if (!info->isPlaying() || !info->isHuman())
     return -1;
 
-  TimeKeeper tm = TimeKeeper::getCurrent();
-  if (nextping - tm >= 0)
+  if (nextping - info->now >= 0)
     // no time for pinging
     return -1;
 
@@ -134,8 +131,8 @@ int LagInfo::getNextPingSeqno(bool &warn, bool &kick) {
   }
 
   pingpending = true;
-  lastping    = tm;
-  nextping    = tm;
+  lastping    = info->now;
+  nextping    = info->now;
   nextping   += 10.0f;
   pingssent++;
   return pingseqno;
@@ -145,10 +142,9 @@ int LagInfo::getNextPingSeqno(bool &warn, bool &kick) {
 void LagInfo::updateLatency(float &waitTime) {
   if (!info->isPlaying() || !info->isHuman())
     return;
-  TimeKeeper tm = TimeKeeper::getCurrent();
-  if (nextping - tm < waitTime) {
-    waitTime   = nextping - tm;
-  };
+  float delta = nextping - info->now;
+  if (delta < waitTime)
+    waitTime  = delta;
 }
 
 void LagInfo::setThreshold(float _threshold, float _max) {

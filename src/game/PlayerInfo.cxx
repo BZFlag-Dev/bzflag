@@ -22,10 +22,11 @@
 #include "TextUtils.h"
 
 WordFilter PlayerInfo::serverSpoofingFilter;
+TimeKeeper PlayerInfo::now = TimeKeeper::getCurrent();
 
 PlayerInfo::PlayerInfo(int _playerIndex) :
   playerIndex(_playerIndex), state(PlayerInLimbo), flag(-1),
-  spamWarns(0), lastMsgTime(TimeKeeper::getCurrent()), paused(false),
+  spamWarns(0), lastMsgTime(now), paused(false),
   pausedSince(TimeKeeper::getNullTime()), tracker(0)
 {
   notResponding = false;
@@ -51,14 +52,14 @@ void PlayerInfo::incSpamWarns() {
 
 void PlayerInfo::setLastMsg(std::string msg) {
   lastMsgSent = msg;
-  lastMsgTime = TimeKeeper::getCurrent();
+  lastMsgTime = now;
 }
 
 void PlayerInfo::resetPlayer(bool ctf) {
   wasRabbit = false;
 
-  lastupdate = TimeKeeper::getCurrent();
-  lastmsg    = TimeKeeper::getCurrent();
+  lastupdate = now;
+  lastmsg    = now;
 
   replayState = ReplayNone;
 
@@ -294,7 +295,7 @@ bool PlayerInfo::isARabbitKill(PlayerInfo &victim) {
 
 void PlayerInfo::resetFlag() {
   flag = -1;
-  lastFlagDropTime = TimeKeeper::getCurrent();
+  lastFlagDropTime = now;
 };
 
 bool PlayerInfo::haveFlag() const {
@@ -309,7 +310,7 @@ void PlayerInfo::setFlag(int _flag) {
 };
 
 bool PlayerInfo::isFlagTransitSafe() {
-  return TimeKeeper::getCurrent() - lastFlagDropTime >= 2.0f;
+  return now - lastFlagDropTime >= 2.0f;
 };
 
 const char *PlayerInfo::getClientVersion() {
@@ -327,7 +328,6 @@ void *PlayerInfo::setClientVersion(size_t length, void *buf) {
 }
 
 std::string PlayerInfo::getIdleStat() {
-  TimeKeeper now = TimeKeeper::getCurrent();
   std::string reply;
   if ((state > PlayerInLimbo) && (team != ObserverTeam)) {
     reply = string_util::format("%-16s : %4ds", callSign,
@@ -347,7 +347,7 @@ bool PlayerInfo::canBeRabbit(bool relaxing) {
 
 void PlayerInfo::setPaused(bool _paused) {
   paused = _paused;
-  pausedSince = TimeKeeper::getCurrent();
+  pausedSince = now;
 };
 
 bool PlayerInfo::isTooMuchIdling(TimeKeeper tm, float kickThresh) {
@@ -372,8 +372,7 @@ bool PlayerInfo::hasStartedToNotRespond() {
   bool startingToNotRespond = false;
   if (state > PlayerInLimbo) {
     bool oldnr = notResponding;
-    notResponding = (TimeKeeper::getCurrent() - lastupdate)
-      > notRespondingTime;
+    notResponding = (now - lastupdate) > notRespondingTime;
     if (!oldnr && notResponding)
       startingToNotRespond = true;
   }
@@ -381,7 +380,7 @@ bool PlayerInfo::hasStartedToNotRespond() {
 }
 
 void PlayerInfo::hasSent(char message[]) {
-  lastmsg = TimeKeeper::getCurrent();
+  lastmsg = now;
   DEBUG1("Player %s [%d]: %s\n", callSign, playerIndex, message);
 };
 
@@ -396,7 +395,7 @@ void PlayerInfo::setPlayedEarly() {
 };
 
 void PlayerInfo::updateIdleTime() {
-  lastupdate = TimeKeeper::getCurrent();
+  lastupdate = now;
 };
 
 void        PlayerInfo::setReplayState(PlayerReplayState state) {
@@ -420,6 +419,10 @@ unsigned short int PlayerInfo::trackerID()
   return tracker;
 }
 
+void PlayerInfo::setCurrentTime(TimeKeeper tm)
+{
+  now = tm;
+}
 
 // Local Variables: ***
 // mode:C++ ***

@@ -4063,6 +4063,10 @@ int main(int argc, char **argv)
     //if (nfound)
     //	DEBUG1("nfound,read,write %i,%08lx,%08lx\n", nfound, read_set, write_set);
 
+    // Synchronize PlayerInfo
+    tm = TimeKeeper::getCurrent();
+    PlayerInfo::setCurrentTime(tm);
+
 #ifdef TIMELIMIT
     // see if game time ran out
     if (!gameOver && countdownActive && clOptions->timeLimit > 0.0f) {

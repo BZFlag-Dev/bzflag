@@ -197,7 +197,7 @@ NetHandler::NetHandler(PlayerInfo* _info, const struct sockaddr_in &clientAddr,
   peer = Address(uaddr);
 
   // update player state
-  time = TimeKeeper::getCurrent();
+  time = info->now;
 #ifdef NETWORK_STATS
 
   // initialize the inbound/outbound counters to zero
@@ -521,12 +521,11 @@ void NetHandler::countMessage(uint16_t code, int len, int direction) {
     }
   }
   
-  TimeKeeper now = TimeKeeper::getCurrent();
-  if (now - perSecondTime[direction] < 1.0f) {
+  if (info->now - perSecondTime[direction] < 1.0f) {
     perSecondCurrentMsg[direction]++;
     perSecondCurrentBytes[direction] += len;
   } else {
-    perSecondTime[direction] = now;
+    perSecondTime[direction] = info->now;
     if (perSecondMaxMsg[direction] < perSecondCurrentMsg[direction])
       perSecondMaxMsg[direction] = perSecondCurrentMsg[direction];
     if (perSecondMaxBytes[direction] < perSecondCurrentBytes[direction])
@@ -540,7 +539,7 @@ void NetHandler::dumpMessageStats() {
   int total;
   int direction;
 
-  DEBUG1("Player connect time: %f\n", TimeKeeper::getCurrent() - time);
+  DEBUG1("Player connect time: %f\n", info->now - time);
 
   for (direction = 0; direction <= 1; direction++) {
     total = 0;
