@@ -121,6 +121,7 @@ die $! unless $code == 0x7170;
 # get the teams
 # TimRiker: MsgTeamUpdate has numTotalTeams but this is how many we will get
 die $! unless sysread(S, $buffer, 5) == 5;
+
 ($len,$code,$numTeams) = unpack("n n C", $buffer);
 die $! unless $code == 0x7475;
 @teamName = ("Rogue", "Red", "Green", "Blue", "Purple", "Observer", "Rabbit");
