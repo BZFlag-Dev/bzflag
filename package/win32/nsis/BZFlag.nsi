@@ -6,8 +6,8 @@
 ; It will install notepad.exe into a directory that the user selects,
 ;
 
-!define VER_MAJOR 19
-!define VER_MINOR a0
+!define VER_MAJOR 17
+!define VER_MINOR g3
 
 ; Main Installer Options
 Name "BZFlag"
