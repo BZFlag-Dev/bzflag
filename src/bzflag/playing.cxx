@@ -4805,7 +4805,6 @@ static bool		enterServer(ServerLink* serverLink, World* world,
 	      tmpbuf = nboUnpackUByte(tmpbuf, id);
 	      myTank->setId(id);
 	      //fprintf(stderr, "%p\n", myTank);
-	      serverLink->send(MsgIdAck, 0, NULL);
 	    }
 	  }
 	  // scan through flags and, for flags on
