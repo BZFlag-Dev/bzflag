@@ -1,6 +1,12 @@
 recent bugs
 ------------
 
+- depth ordering/culling is incorrect on mac's playground (small field, 4
+  team ctf with large bases and elevated positions for 3 of the bases).  a 
+  flag will be on the ground in front of a base wall, yet it is rendered
+  incorrectly as if the wall were in front. (may be related to older depth
+  render bug, may be os x specific)
+
 - os x client audio is very choppy when the user has a video card installed
 
 - if a tank carries the burrow flag and is on the edge of the world, they may
