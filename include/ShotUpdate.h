@@ -28,7 +28,7 @@
 #include "Address.h"
 #include "Flag.h"
 
-const int		ShotUpdatePLen = PlayerIdPLen + 30;
+const int		ShotUpdatePLen = PlayerIdPLen + 32;
 const int		FiringInfoPLen = ShotUpdatePLen + 6;
 
 class BaseLocalPlayer;
