@@ -1350,9 +1350,20 @@ static void respondToPing(Address addr)
 
 void sendMessage(int playerIndex, PlayerId targetPlayer, const char *message)
 {
-  // player is sending a message to a particular player, a team, or all.
-  // send MsgMessage
-  int msglen = strlen (message) + 1; // include the terminator
+  long int msglen = strlen(message) + 1; // include null terminator
+  const char *msg = message;
+
+  /* filter all outbound messages */
+  if (clOptions->filterChat) {
+    char message2[MessageLen] = {0};
+    strncpy(message2, message, MessageLen);
+    if (clOptions->filterSimple) {
+      clOptions->filter.filter(message2, true);
+    } else {
+      clOptions->filter.filter(message2, false);
+    }
+    msg = message2;
+  }
 
   if (msglen > MessageLen) {
     msglen = MessageLen;
@@ -1363,7 +1374,8 @@ void sendMessage(int playerIndex, PlayerId targetPlayer, const char *message)
   void *buf, *bufStart = getDirectMessageBuffer();
   buf = nboPackUByte(bufStart, playerIndex);
   buf = nboPackUByte(buf, targetPlayer);
-  buf = nboPackString(buf, message, msglen);
+  buf = nboPackString(buf, msg, msglen);
+
   ((char*)bufStart)[MessageLen - 1] = '\0'; // always terminate
   
   int len = 2 + msglen;
@@ -3315,13 +3327,6 @@ static void handleCommand(int t, const void *rawbuf)
       else if (realPlayer(targetPlayer)) {
 	sendMessage(ServerPlayer, t, "The player you tried to talk to does not exist!");
       } else {
-	if (clOptions->filterChat) {
-	  if (clOptions->filterSimple) {
-	    clOptions->filter.filter(message, true);
-	  } else {
-	    clOptions->filter.filter(message, false);
-	  }
-	}
 	sendMessage(t, targetPlayer, message);
       }
       break;
