@@ -24,14 +24,16 @@
 
 /* protected */
 
-bool VotingPoll::enforce(void) {
+bool VotingPoll::enforce(void) 
+{
   return false;
 }
 
 
 /* public: */
 
-bool VotingPoll::open(void) {
+bool VotingPoll::open(void) 
+{
   if (this->isOpen()) {
     return true;
   }
@@ -39,7 +41,8 @@ bool VotingPoll::open(void) {
   return false;
 }
 
-bool VotingPoll::close(void) {
+bool VotingPoll::close(void) 
+{
   if (this->isClosed()) {
     return true;
   }
@@ -48,7 +51,8 @@ bool VotingPoll::close(void) {
   return true;
 }
 
-bool VotingPoll::setAvailableVoters(unsigned short int count) {
+bool VotingPoll::setAvailableVoters(unsigned short int count) 
+{
   if (this->isOpen()) {
     _maxVotes = count;
     return true;
@@ -56,11 +60,13 @@ bool VotingPoll::setAvailableVoters(unsigned short int count) {
   return false;
 }
 
-bool VotingPoll::allowSuffrage() const{
+bool VotingPoll::allowSuffrage() const
+{
   return (this->isOpen());
 }
 
-bool VotingPoll::voteYes() {
+bool VotingPoll::voteYes() 
+{
   if (this->isClosed()) {
     return false;
   }
@@ -68,7 +74,8 @@ bool VotingPoll::voteYes() {
   return false;
 }
 
-bool VotingPoll::voteNo() {
+bool VotingPoll::voteNo() 
+{
   if (this->isClosed()) {
     return false;
   }
@@ -76,7 +83,8 @@ bool VotingPoll::voteNo() {
   return false;
 }
 
-bool VotingPoll::isSuccessful(void) const {
+bool VotingPoll::isSuccessful(void) const 
+{
   return false;
 }
 
