@@ -4787,9 +4787,9 @@ int main(int argc, char **argv)
     if (clOptions->idlekickthresh > 0) {
       for (int i=0;i<curMaxPlayers;i++) {
         if (player[i].team != ObserverTeam) {
-          int idletime = tm - player[i].lastupdate;
+          int idletime = (int)(tm - player[i].lastupdate);
           if (player[i].paused && tm - player[i].pausedSince > idletime)
-            idletime = tm - player[i].pausedSince;
+            idletime = (int)(tm - player[i].pausedSince);
           if (idletime >
 	      (tm - player[i].lastmsg < clOptions->idlekickthresh ?
 	       3 * clOptions->idlekickthresh : clOptions->idlekickthresh)) {
