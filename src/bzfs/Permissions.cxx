@@ -79,15 +79,15 @@ void PlayerAccessInfo::reloadInfo() {
     PlayerAccessInfo accessInfo = getUserInfo(regName);
     explicitAllows = accessInfo.explicitAllows;
     explicitDenys  = accessInfo.explicitDenys;
-    groups	 = accessInfo.groups;
-    loginTime      = accessInfo.loginTime;
+    groups	   = accessInfo.groups;
+    loginTime	   = accessInfo.loginTime;
     loginAttempts  = accessInfo.loginAttempts;
   }
 }
 
 void PlayerAccessInfo::setAdmin() {
   passwordAttempts = 0;
-  Admin	    = true;
+  Admin = true;
 }
 
 bool PlayerAccessInfo::isAdmin() const {
