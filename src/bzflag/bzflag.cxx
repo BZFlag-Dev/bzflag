@@ -363,7 +363,6 @@ static void		usage()
 	" [-echo]"
 	" [-echoClean]"
 	" [-geometry <geometry-spec>]"
-	" [-interface <interface>]"
 	" [-joystick {1|0}]"
 	" [-joystickname <name>]"
 	" [-latitude <latitude>] [-longitude <longitude>]"
@@ -376,7 +375,6 @@ static void		usage()
 	" [-solo <num-robots>]"
 #endif
 	" [-team {red|green|blue|purple|rogue}]"
-	" [-ttl <time-to-live>]"
 	" [-version]"
 	" [-view {normal|stereo|stacked|three|anaglyph}]"
 	" [-window]"
@@ -436,16 +434,6 @@ static void		parse(int argc, char** argv)
 	usage();
       }
       BZDB->set("geometry", argv[i]);
-    } else if (strcmp(argv[i], "-i") == 0 ||
-		strcmp(argv[i], "-interface") == 0) {
-      if (++i == argc) {
-	printFatalError("Missing argument for %s.", argv[i-1]);
-	usage();
-      }
-      if (strlen(argv[i]) >= sizeof(startupInfo.multicastInterface))
-	printFatalError("Interface name too long.");
-      else
-	strcpy(startupInfo.multicastInterface, argv[i]);
     } else if (strcmp(argv[i], "-latitude") == 0) {
       if (++i == argc) {
 	printFatalError("Missing argument for %s.", argv[i-1]);
@@ -533,19 +521,6 @@ static void		parse(int argc, char** argv)
       else {
 	printFatalError("Invalid argument for %s.", argv[i-1]);
 	usage();
-      }
-    } else if (strcmp(argv[i], "-ttl") == 0) {
-      if (++i == argc) {
-	printFatalError("Missing argument for %s.", argv[i-1]);
-	usage();
-      }
-      startupInfo.ttl = atoi(argv[i]);
-      if (startupInfo.ttl < 0) {
-	startupInfo.ttl = 0;
-	printFatalError("Using minimum ttl of %d.", startupInfo.ttl);
-      } else if (startupInfo.ttl > MaximumTTL) {
-	startupInfo.ttl = MaximumTTL;
-	printFatalError("Using maximum ttl of %d.", startupInfo.ttl);
       }
     } else if (strcmp(argv[i], "-joystick") == 0) {
       if (++i == argc) {
@@ -711,8 +686,6 @@ void			dumpResources(BzfDisplay* display,
   } else {
     BZDB->unset("port");
   }
-  if (strlen(startupInfo.multicastInterface) != 0)
-    BZDB->set("interface", startupInfo.multicastInterface);
   BZDB->set("list", startupInfo.listServerURL);
   if (isSoundOpen()) {
     BZDB->set("volume", string_util::format("%d", getSoundVolume()));
@@ -899,11 +872,6 @@ int			main(int argc, char** argv)
     }
     if (BZDB->isSet("port")) {
       startupInfo.serverPort = atoi(BZDB->get("port").c_str());
-    }
-    if (BZDB->isSet("interface")) {
-      strncpy(startupInfo.multicastInterface, BZDB->get("interface").c_str(),
-				sizeof(startupInfo.multicastInterface) - 1);
-      startupInfo.multicastInterface[sizeof(startupInfo.multicastInterface) - 1] = '\0';
     }
 
     // check for reassigned team colors

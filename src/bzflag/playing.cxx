@@ -201,13 +201,11 @@ static double		userTimeEpochOffset;
 StartupInfo::StartupInfo() : hasConfiguration(false),
 				autoConnect(false),
 				serverPort(ServerPort),
-				ttl(DefaultTTL),
 				team(RogueTeam),
 				listServerURL(DefaultListServerURL),
 				listServerPort(ServerPort + 1)
 {
   strcpy(serverName, "");
-  strcpy(multicastInterface, "");
   strcpy(callsign, "");
   strcpy(email, "");
   joystickName = "joystick";

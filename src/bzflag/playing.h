@@ -46,9 +46,7 @@ struct StartupInfo {
     bool		autoConnect;
     char		serverName[80];
     int			serverPort;
-    int			ttl;
     bool		useUDPconnection;
-    char		multicastInterface[65];
     TeamColor		team;
     char		callsign[CallSignLen];
     char		email[EmailLen];

@@ -175,7 +175,6 @@ class ServerMenu : public HUDDialog {
   private:
     ServerMenuDefaultKey	defaultKey;
     std::vector<ServerItem>	servers;
-    int				pingInSocket;
     struct sockaddr_in		pingInAddr;
     int				pingBcastSocket;
     struct sockaddr_in		pingBcastAddr;

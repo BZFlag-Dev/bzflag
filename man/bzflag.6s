@@ -12,7 +12,6 @@ BZFlag \- a tank battle game
 [\fB\-echo\fR]
 [\fB\-echoClean\fR]
 [\fB\-geometry \fIwidth\fR\fBx\fR\fIheight\fR[{\fB+\fR|\fB-\fR}x{\fB+\fR|\fB-\fR}y]]
-[\fB\-interface \fIinterface\fR]
 [\fB\-latitude \fIlatitude\fR]
 [\fB\-list \fIurl\fR]
 [\fB\-locale \fIlocale\fR]
@@ -23,7 +22,6 @@ BZFlag \- a tank battle game
 [\fB\-port \fIport\fR]
 [\fB\-solo \fInumber-of-robots\fR]
 [\fB\-team \fR{\fIred\fR | \fIgreen\fR | \fIblue\fR | \fIpurple\fR | \fIrogue\fR}]
-[\fB\-ttl \fIttl\fR]
 [\fB\-version\fR]
 [\fB\-view \fR{\fInormal\fR | \fIstereo\fR | \fIthree\fR}]
 [\fB\-window\fR]
@@ -101,23 +99,15 @@ can be used with or without the \fB-window\fR option. It may be necessary
 to use this on some systems when bzflag cannot correctly determine the
 display size.
 .TP
-\fB-interface\fI interface\fR
-Send all multicast packets through \fIinterface\fR, which should be
-the IP address of one the host's multicast capable interfaces.
-Communication between players is normally via multicast as this is
-much more efficient than unicasting to all other players and more
-flexible and efficient than broadcasting to all hosts.  The first
-multicast capable interface is used by default.
-.TP
 \fB-latitude\fI latitude\fR
-Uses \fIlatitude\fR when computing celesital object positions.
+Uses \fIlatitude\fR when computing celestial object positions.
 .TP
 \fB-list\fI url\fR
 Look for \fBbzfls\fR servers using \fIurl\fR.  A built-in url is
 used by default (the same url is the default for \fBbzfs\fR).
 See \fBbzfls\fR for a description of the format of \fIurl\fR.
 If \fIurl\fR is \fIdefault\fR then the url is reset to the built-in
-url (the url is remembered across invokations of \fBbzflag\fR).
+url (the url is remembered across invocations of \fBbzflag\fR).
 \fBBzfls\fR servers keep a list of \fBbzfs\fR servers accessible
 from the internet and are queried when using the Find Server menu.
 .TP
@@ -125,7 +115,7 @@ from the internet and are queried when using the Find Server menu.
 Set the locale used to display messages, menus, hud alerts, etc.
 .TP
 \fB-longitude \fIlongitude\fR
-Uses \fIlongitude\fR when computing celesital object positions.
+Uses \fIlongitude\fR when computing celestial object positions.
 .TP
 .B -multisample
 Uses a multisample buffer for rendering.  If multisampling isn't
@@ -150,10 +140,6 @@ extremely stupid players.  Robots are added to teams at random.
 \fB-team\fI team-name\fR
 Chooses the player's team.
 .TP
-\fB-ttl\fI time-to-live\fR
-Sets the maximum time-to-live of the inter-player multicast packets.
-Any site more than this many hops away will not be reachable.
-.TP
 .B -version
 Prints the version number of the executable.
 .TP
@@ -165,7 +151,7 @@ single view in stereo.  You're system must support stereo-in-a-window
 buffers and stereo goggles.  \fIThree\fR will render the front view
 to the upper right quadrant of the display, a left view to the lower
 left quadrant, and a right view to the lower right quadrant.  This
-is intended for systems capable of driving multiple moniters from
+is intended for systems capable of driving multiple monitors from
 various areas of the display surface, yielding a wrap around view.
 .TP
 .B -window
@@ -434,7 +420,7 @@ to capture a flag.
 The server can be configured to supply a fixed or random set of
 super-flags.  These flags are white and come in many flavors.
 However, you cannot tell what a super-flag is until it's picked
-up.  There are two broad catagories of super-flags:  good and bad.
+up.  There are two broad categories of super-flags:  good and bad.
 Good super-flags may be dropped and will remain for up to 4 possessions.
 Bad super-flags are sticky \-- in general, they cannot be dropped.  The
 server may provide a yellow antidote flag.  Driving over it will release
@@ -533,7 +519,7 @@ Displays the identity of the closest flag in the vicinity.
 .TP
 .B Masquerade (MQ)
 You tank looks like a teammate when viewed out of the window.
-Bullets, radar and targetting reveal your true identity.
+Bullets, radar and targeting reveal your true identity.
 .TP
 .B Burrow {BU}
 You tank burrows into the ground up to your muzzle, making you 
@@ -593,7 +579,7 @@ full server.
 .PP
 When in observer mode, you can freely roam the world. Using the
 arrow keys you can rotate the camera in every direction. Holding shift and
-usign the arrow keys moves the camera left, right, forward or back. Pressing
+using the arrow keys moves the camera left, right, forward or back. Pressing
 the up or down arrow while holding the the
 .IR ALT
 key will change the camera's altitude. The

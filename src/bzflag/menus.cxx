@@ -2762,7 +2762,6 @@ const int		ServerMenu::NumReadouts = 23;
 const int		ServerMenu::NumItems = 10;
 
 ServerMenu::ServerMenu() : defaultKey(this),
-				pingInSocket(-1),
 				pingBcastSocket(-1),
 				selectedIndex(0),
 				numListServers(0),
@@ -3136,26 +3135,6 @@ void			ServerMenu::show()
 
   // open output multicast socket
   Address multicastAddress(BroadcastAddress);
-  struct sockaddr_in pingOutAddr;
-  const int pingOutSocket = openMulticast(multicastAddress,
-				ServerPort, NULL,
-				info->ttl, info->multicastInterface,
-				"w", &pingOutAddr);
-  pingInSocket = openMulticast(multicastAddress, ServerPort, NULL,
-				info->ttl, info->multicastInterface,
-				"r", &pingInAddr);
-
-  // send ping and close output socket
-  if (pingInSocket != -1 && pingOutSocket != -1) {
-    PingPacket::sendRequest(pingOutSocket, &pingOutAddr, info->ttl);
-    closeMulticast(pingOutSocket);
-  }
-  else {
-    // clean up
-    closeMulticast(pingInSocket);
-    closeMulticast(pingOutSocket);
-    pingInSocket = -1;
-  }
 
   // also try broadcast
   pingBcastSocket = openBroadcast(BroadcastPort, NULL, &pingBcastAddr);
@@ -3195,9 +3174,7 @@ void			ServerMenu::dismiss()
   numListServers = 0;
 
   // close input multicast socket
-  closeMulticast(pingInSocket);
   closeMulticast(pingBcastSocket);
-  pingInSocket = -1;
   pingBcastSocket = -1;
 }
 
@@ -3405,10 +3382,8 @@ void			ServerMenu::checkEchos()
     fd_set read_set, write_set;
     FD_ZERO(&read_set);
     FD_ZERO(&write_set);
-    if (pingInSocket != -1) FD_SET(pingInSocket, &read_set);
     if (pingBcastSocket != -1) FD_SET(pingBcastSocket, &read_set);
-    int fdMax = (pingInSocket > pingBcastSocket) ?
-				pingInSocket : pingBcastSocket;
+    int fdMax = pingBcastSocket;
 
     // check for list server connection or data
     for (i = 0; i < numListServers; i++) {
@@ -3431,13 +3406,6 @@ void			ServerMenu::checkEchos()
     ServerItem serverInfo;
 	sockaddr_in addr;
 
-    if (pingInSocket != -1 && FD_ISSET(pingInSocket, &read_set)) {
-		if (serverInfo.ping.read(pingInSocket, &addr)) {
-			serverInfo.ping.serverId.serverHost = addr.sin_addr;
-			serverInfo.cached = false;
-			addToListWithLookup(serverInfo);
-		}
-	}
 	if (pingBcastSocket != -1 && FD_ISSET(pingBcastSocket, &read_set)) {
 		if (serverInfo.ping.read(pingBcastSocket, &addr)) {
 			serverInfo.ping.serverId.serverHost = addr.sin_addr;
