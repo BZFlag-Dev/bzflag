@@ -1244,13 +1244,17 @@ void			HUDRenderer::drawPlayerScore(const Player* player,
 {
   char score[40], kills[40];
 #ifndef DEBUG
-  char email[EmailLen + 6];
-  sprintf(email, " (%s)%s", player->getEmailAddress(),Flag::getAbbreviation(player->getFlag()));
+  char email[EmailLen + 14];
+  sprintf(email, " (%s)%s", player->getEmailAddress(), 
+  (!Flag::getType(player->getFlag()) && player->getFlag()) ? 
+  Flag::getName(player->getFlag()) : Flag::getAbbreviation(player->getFlag()));
 #else
-  char email[EmailLen + 27];
+  char email[EmailLen + 35];
   const PlayerId& id = player->getId();
   sprintf(email, " %s:%04x-%1x(%s)%s", inet_ntoa(id.serverHost),
       ntohs(id.port), ntohs(id.number), player->getEmailAddress(),
+      (!Flag::getType(player->getFlag()) && player->getFlag()) ? 
+      Flag::getName(player->getFlag()) : 
       Flag::getAbbreviation(player->getFlag()));
 #endif  
   sprintf(score, "%d (%d-%d)", player->getScore(),
