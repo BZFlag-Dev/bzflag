@@ -248,8 +248,9 @@ void ListServerLink::addMe(PingPacket pingInfo,
   pingInfo.packHex(gameInfo);
 
   // TODO loop through and send any player tokens that need approval
-  // confirm=callsign0%3D1%3A123123123%0D%0Acallsign1%3D1%3A123123123%0D%0A
-  // TODO loop through groups we are interested and request those too
+  // &checktokens=CallSign0%3D01234567%0D%0ACallSign1%3D90abcdef%0D%0A
+  // TODO loop through groups we are interested and request those
+  // *groups=GROUP0%0D%0AGROUP1%0D%0A
   // TODO we probably should convert to a POST instead. List server now allows either
   // send ADD message (must send blank line)
   msg = TextUtils::format("GET %s?action=ADD&nameport=%s&version=%s&gameinfo=%s&build=%s&title=%s HTTP/1.1\r\n"
