@@ -357,7 +357,7 @@ void PlayerInfo::fdSet(fd_set *read_set, fd_set *write_set, int &maxFile) {
   }
 };
 
-bool PlayerInfo::fdIsSet(fd_set *set) {
+int PlayerInfo::fdIsSet(fd_set *set) {
   return FD_ISSET(fd, set);
 }
 

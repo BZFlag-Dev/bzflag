@@ -114,7 +114,7 @@ public:
   void        debugRemove(const char *reason, int index);
   void        debugAdd(int index);
   void        fdSet(fd_set *read_set, fd_set *write_set, int &maxFile);
-  bool        fdIsSet(fd_set *set);
+  int         fdIsSet(fd_set *set);
   void        debugPwdTries(); 
   void        getPlayerList(char *list, int index); 
   const char *getTargetIP();
