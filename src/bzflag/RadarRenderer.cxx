@@ -376,16 +376,20 @@ void			RadarRenderer::render(SceneRenderer& renderer,
       }
       // If this tank is hunted flash it on the radar
       if (player->isHunted()) {
-        if (flashTank.isOn()) {
-          if (!toggleTank) continue;
-          else drawTank(x, y, z);
-        } else {
-          toggleTank = !toggleTank;
-          flashTank.setClock(0.2f);
-        }
-      } else {
-        drawTank(x, y, z);
+	if (flashTank.isOn()) {
+	  if (!toggleTank) {
+	    float flashcolor[3];
+	    flashcolor[0] = 0.0;
+	    flashcolor[1] = 0.8;
+	    flashcolor[2] = 0.9;
+	    glColor3fv(flashcolor);
+	  }
+	} else {
+	  toggleTank = !toggleTank;
+	  flashTank.setClock(0.2f);
+	}
       }
+      drawTank(x, y, z);
     }
 
     // draw other tanks' shells
