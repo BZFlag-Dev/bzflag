@@ -233,7 +233,11 @@ void			ControlPanel::setControlColor(const GLfloat *color)
 void			ControlPanel::render(SceneRenderer& renderer)
 {
   if (!BZDB.isTrue("displayConsole")) {
-    return;
+    // always draw the console if its fully opaque
+    const float opacity = RENDERER.getPanelOpacity();
+    if (opacity != 1.0f) {
+      return;
+    }
   }
 
   if (!resized) resize();
