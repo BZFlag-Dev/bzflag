@@ -146,7 +146,7 @@ SpawnPosition::SpawnPosition(int playerId, bool onGroundOnly, bool notNearEdges)
 	foundspot = false;
       }
     }
-    if (!(building == NULL))
+    if (building != NULL)
       delete building;
   }
 }
