@@ -184,7 +184,7 @@ StateDatabase::Item::Item() : value(),
 //
 
 
-StateDatabase::StateDatabase() : debug(true)
+StateDatabase::StateDatabase() : debug(false)
 {
   // do nothing
 }
