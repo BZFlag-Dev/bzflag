@@ -22,8 +22,9 @@
 #include "ObstacleMgr.h"
 
 
-CustomGate::CustomGate()
+CustomGate::CustomGate(const char* _telename)
 {
+  telename = _telename;
   size[0] = 0.5f * BZDB.eval(StateDatabase::BZDB_TELEWIDTH);
   size[1] = BZDB.eval(StateDatabase::BZDB_TELEBREADTH);
   size[2] = 2.0f * BZDB.eval(StateDatabase::BZDB_TELEHEIGHT);
@@ -51,9 +52,7 @@ void CustomGate::writeToGroupDef(GroupDefinition *groupdef) const
 		   fabsf(size[0]), fabsf(size[1]), fabsf(size[2]),
 		   border, horizontal, driveThrough, shootThrough);
 
-#ifdef USE_TELE_NAMES
-  tele->setName(name);
-#endif
+  tele->setName(telename);
   
   groupdef->addObstacle(tele);
 }

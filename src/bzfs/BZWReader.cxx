@@ -125,8 +125,6 @@ static bool parseNormalObject(const char* token, WorldFileObject** object)
     tmpObj = new CustomPyramid();
   } else if (strcasecmp(token, "base") == 0) {
     tmpObj = new CustomBase;
-  } else if (strcasecmp(token, "teleporter") == 0) {
-    tmpObj = new CustomGate();
   } else if (strcasecmp(token, "link") == 0) {
     tmpObj = new CustomLink();
   } else if (strcasecmp(token, "mesh") == 0) {
@@ -263,6 +261,10 @@ bool BZWReader::readWorldStream(std::vector<WorldFileObject*>& wlist)
 	  std::string("missing group definition reference"), line);
       }
       newObject = new CustomGroup(buffer);
+
+    } else if (strcasecmp(buffer, "teleporter") == 0) {
+      readToken(buffer, sizeof(buffer));
+      newObject = new CustomGate(buffer);
 
     } else if (strcasecmp(buffer, "options") == 0) {
       newObject = fakeObject;

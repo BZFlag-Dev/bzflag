@@ -19,6 +19,7 @@
 #include "WorldFileObstacle.h"
 
 /* system interface headers */
+#include <string>
 #include <iostream>
 
 /* local interface headers */
@@ -27,13 +28,14 @@
 
 class CustomGate : public WorldFileObstacle {
   public:
-    CustomGate();
+    CustomGate(const char* telename);
     virtual bool read(const char *cmd, std::istream&);
     virtual void writeToGroupDef(GroupDefinition*) const;
 
   protected:
+    std::string telename;
     float border;
-	bool horizontal;
+    bool horizontal;
 };
 
 #endif  /* __CUSTOMGATE_H__ */
