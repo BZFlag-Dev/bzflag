@@ -485,7 +485,7 @@ void handleCountdownCmd(GameKeeper::Player *playerData, const char *)
     sendMessage(ServerPlayer, t, "This server was not configured for manual clock countdowns");
     return;
   }
-#ifdef TIMELIMIT
+
   int i, j;
   // /countdown starts timed game, if start is manual, everyone is allowed to
   char reply[MessageLen] = {0};
@@ -530,8 +530,6 @@ void handleCountdownCmd(GameKeeper::Player *playerData, const char *)
     }
   }
   zapAllFlags();
-
-#endif // end TIMELIMIT
 
   return;
 }

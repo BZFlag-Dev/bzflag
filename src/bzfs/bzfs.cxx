@@ -95,10 +95,9 @@ static float maxWorldHeight = 0.0f;
 
 char hexDigest[50];
 
-#ifdef TIMELIMIT
 TimeKeeper gameStartTime;
 bool countdownActive = false;
-#endif
+
 static ListServerLink *listServerLink = NULL;
 static int listServerLinksCount = 0;
 
@@ -1240,16 +1239,16 @@ static TeamColor whoseBase(float x, float y, float z)
 #ifdef PRINTSCORE
 static void dumpScore()
 {
-  if (!clOptions->printScore)
+  if (!clOptions->printScore) {
     return;
-#ifdef TIMELIMIT
-  if (clOptions->timeLimit > 0.0f)
+  }
+  if (clOptions->timeLimit > 0.0f) {
     std::cout << "#time " << clOptions->timeLimit - clOptions->timeElapsed << std::endl;
-#endif
+  }
   std::cout << "#teams";
-  for (int i = int(RedTeam); i < NumTeams; i++)
-    std::cout << ' ' << team[i].team.won << '-' << team[i].team.lost << ' ' <<
- 	         Team::getName(TeamColor(i));
+  for (int i = int(RedTeam); i < NumTeams; i++) {
+    std::cout << ' ' << team[i].team.won << '-' << team[i].team.lost << ' ' << Team::getName(TeamColor(i));
+  }
   GameKeeper::Player::dumpScore();
   std::cout << "#end\n";
 }
@@ -1330,13 +1329,11 @@ static void acceptClient()
     int count = GameKeeper::Player::count();
     if (count == 1) {
       gameOver = false;
-#ifdef TIMELIMIT
       gameStartTime = TimeKeeper::getCurrent();
       if (clOptions->timeLimit > 0.0f && !clOptions->timeManualStart) {
 	clOptions->timeElapsed = 0.0f;
 	countdownActive = true;
       }
-#endif
     }
   }
 }
@@ -1742,7 +1739,6 @@ static void addPlayer(int playerIndex)
   if (!NetHandler::exists(playerIndex))
     return;
 
-#ifdef TIMELIMIT
   // send time update to new player if we're counting down
   if (countdownActive && clOptions->timeLimit > 0.0f
       && !playerData->player.isBot()) {
@@ -1759,7 +1755,6 @@ static void addPlayer(int playerIndex)
     if (result == -1)
       return;
   }
-#endif
 
   // if first player on team add team's flag
   if (team[teamIndex].team.size == 1
@@ -3207,11 +3202,10 @@ static void handleCommand(int t, const void *rawbuf)
 
     // player is coming alive
     case MsgAlive: {
-#ifdef TIMELIMIT
       // player moved before countdown started
-      if (clOptions->timeLimit>0.0f && !countdownActive)
+      if (clOptions->timeLimit>0.0f && !countdownActive) {
 	playerData->player.setPlayedEarly();
-#endif
+      }
       playerAlive(t);
       break;
     }
@@ -4031,11 +4025,7 @@ int main(int argc, char **argv)
   pingReply.observerMax = (uint8_t)clOptions->maxTeam[5];
   pingReply.shakeWins = clOptions->shakeWins;
   pingReply.shakeTimeout = clOptions->shakeTimeout;
-#ifdef TIMELIMIT
   pingReply.maxTime = (uint16_t)clOptions->timeLimit;
-#else
-  pingReply.maxTime = 0;
-#endif
   pingReply.maxPlayerScore = clOptions->maxPlayerScore;
   pingReply.maxTeamScore = clOptions->maxTeamScore;
 
@@ -4143,13 +4133,13 @@ int main(int argc, char **argv)
     TimeKeeper tm = TimeKeeper::getCurrent();
     // lets start by waiting 3 sec
     float waitTime = 3.0f;
-#ifdef TIMELIMIT
-    if (countdownActive && clOptions->timeLimit > 0.0f)
+    if (countdownActive && clOptions->timeLimit > 0.0f) {
 	waitTime = 1.0f;
-#endif
+    }
     float dropTime = FlagInfo::getNextDrop(tm);
-    if (dropTime < waitTime)
+    if (dropTime < waitTime) {
       waitTime = dropTime;
+    }
 
     // get time for next Player internal action
     GameKeeper::Player::updateLatency(waitTime);
@@ -4190,7 +4180,6 @@ int main(int argc, char **argv)
     tm = TimeKeeper::getCurrent();
     PlayerInfo::setCurrentTime(tm);
 
-#ifdef TIMELIMIT
     // see if game time ran out
     if (!gameOver && countdownActive && clOptions->timeLimit > 0.0f) {
       float newTimeElapsed = tm - gameStartTime;
@@ -4211,7 +4200,6 @@ int main(int argc, char **argv)
 	}
       }
     }
-#endif
 
     // send replay packets
     if (Replay::playing()) {

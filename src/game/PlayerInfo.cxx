@@ -63,9 +63,7 @@ void PlayerInfo::resetPlayer(bool ctf) {
 
   replayState = ReplayNone;
 
-#ifdef TIMELIMIT
   playedEarly = false;
-#endif
 
   restartOnBase = ctf;
 }

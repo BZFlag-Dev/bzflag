@@ -1194,6 +1194,9 @@ int			main(int argc, char** argv)
   if (BZDB.isSet("directory")) {
     PlatformFactory::getMedia()->setMediaDirectory(BZDB.get("directory"));
   } else {
+
+    // !!! fix this fucking stupid check.. GetMacOSXDataPath() is NULL without app bundle.
+
 #if defined(__APPLE__)
     extern char *GetMacOSXDataPath(void);
     PlatformFactory::getMedia()->setMediaDirectory(GetMacOSXDataPath());

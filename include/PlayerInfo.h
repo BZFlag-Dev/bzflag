@@ -31,9 +31,6 @@
 #include "WordFilter.h"
 
 
-// ??? - we need a compile-time flag for this (that is always on)?
-#define TIMELIMIT
-
 enum ClientState {
   PlayerNoExist,
   PlayerInLimbo,

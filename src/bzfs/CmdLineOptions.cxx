@@ -110,10 +110,8 @@ const char *usageString =
 "[-synctime] "
 "[-t] "
 "[-tftimeout <seconds>] "
-#ifdef TIMELIMIT
 "[-time <seconds>] "
 "[-timemanual] "
-#endif
 "[-tk] "
 "[-tkkr <percent>] "
 "[-userdb <user permissions file>] "
@@ -194,10 +192,8 @@ const char *extraUsageString =
 "\t-synctime: synchronize time of day on all clients\n"
 "\t-t: allow teleporters\n"
 "\t-tftimeout: set timeout for team flag zapping (default=30)\n"
-#ifdef TIMELIMIT
 "\t-time: set time limit on each game\n"
 "\t-timemanual: countdown for timed games is started with /countdown\n"
-#endif
 "\t-tk: player does not die when killing a teammate\n"
 "\t-tkkr: team-kills-to-wins percentage (1-100) for kicking tk-ing players\n"
 "\t-userdb: file to read for user access permissions\n"
@@ -979,7 +975,6 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       if (options.teamFlagTimeout < 0)
 	options.teamFlagTimeout = 0;
       std::cerr << "using team flag timeout of " << options.teamFlagTimeout << " seconds" << std::endl;
-#ifdef TIMELIMIT
     } else if (strcmp(argv[i], "-time") == 0) {
       checkArgc(1, i, argc, argv[i]);
       options.timeLimit = (float)atof(argv[i]);
@@ -990,7 +985,6 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       options.timeElapsed = options.timeLimit;
     } else if (strcmp(argv[i], "-timemanual") == 0) {
       options.timeManualStart = true;
-#endif
     } else if (strcmp(argv[i], "-tk") == 0) {
       // team killer does not die
       options.teamKillerDies = false;

@@ -40,9 +40,6 @@
 /* Enable score dumping for BZFS */
 #define PRINTSCORE 1
 
-/* Enable time limits for BZFS servers */
-#define TIMELIMIT 1
-
 /* On windows, strcasecmp is really stricmp */
 #ifdef _WIN32
 #define HAVE_STRICMP 1
