@@ -667,6 +667,7 @@ static const char*		bindingList[] = {
 	"bind \"Alt+Down Arrow\" up \"roam translate stop\"",
 	"bind \"F9\" up \"roam zoom stop\"",
 	"bind \"F10\" up \"roam zoom stop\"",
+	"bind \"F5\" down \"screenshot\"",
 //	"bind \"A\" down \"set motionSlow\"",
 //		"bind \"A\" up   \"unset motionSlow\"",
 };

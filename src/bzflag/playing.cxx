@@ -18,6 +18,7 @@ static const char copyright[] = "Copyright (c) 1993 - 2002 Tim Riker";
 #include <ctype.h>
 #include <sys/types.h>
 #include <time.h>
+#include <fstream.h>
 #include "playing.h"
 #include "BzfDisplay.h"
 #include "BzfEvent.h"
@@ -687,6 +688,36 @@ static std::string	cmdAutoPilot(const std::string&,
 	return std::string();
 }
 
+static std::string	cmdScreenshot(const std::string&,
+								const CommandManager::ArgList& args)
+{
+	static int snap = 0;
+
+	if (args.size() != 0)
+		return "usage: screenshot";
+
+	char filename[80];
+	snprintf(filename, 80, "bzfi%04d.raw", snap++);
+	fstream f;
+	f.open(filename, ios::out);
+	if (f) {
+		int w, h;
+		mainWindow->getSize(w, h);
+		// use something like netpbm and the following command to get usable images
+		// rawtoppm -rgb 640 480 bzfi0000.raw | pnmflip -tb | pnmtojpeg --quality=100 > test.jpg
+		unsigned char* b = new unsigned char[w * h * 3];
+		glReadPixels(0, 0, w, h, GL_RGB, GL_UNSIGNED_BYTE, b);
+		f.write(b, w * h * 3);
+		delete [] b;
+		f.close();
+		char notify[128];
+		snprintf(notify, 128, "%s: %dx%d", filename, w, h);
+		MSGMGR->insert("console", notify);
+	}
+
+	return std::string();
+}
+
 static std::string	cmdRoam(const std::string&,
 				const CommandManager::ArgList& args)
 {
@@ -932,12 +963,13 @@ public:
 static const CommandListItem commandList[] = {
 	{ "fire",		&cmdFire,		"fire [stop]:  start/stop firing" },
 	{ "drop",		&cmdDrop,		"drop:  drop current flag" },
-	{ "identify",		&cmdIdentify,		"identify:  identify/lock-on-to player in view" },
+	{ "identify",	&cmdIdentify,	"identify:  identify/lock-on-to player in view" },
 	{ "jump",		&cmdJump,		"jump:  make player jump" },
 	{ "send",		&cmdSend,		"send {all|team|nemesis}:  start composing a message" },
 	{ "pause",		&cmdPause,		"pause:  pause/resume" },
-	{ "autopilot",		&cmdAutoPilot,		"autopilot:  set/unset autopilot bot code" },
-	{ "roam",		&cmdRoam,		"roam {rotate|translate|zoom|cycle} <args>: roam around" }
+	{ "autopilot",	&cmdAutoPilot,	"autopilot:  set/unset autopilot bot code" },
+	{ "roam",		&cmdRoam,		"roam {rotate|translate|zoom|cycle} <args>: roam around" },
+	{ "screenshot",	&cmdScreenshot,	"screenshot: save a screenshot in .raw format" }
 };
 // ---- commands ----
 
