@@ -30,8 +30,18 @@ void LagInfo::getLagStats(char* msg) {
   msg[0] = 0;
   if (!info->isPlaying() || !info->isHuman())
     return;
+
+  // don't wait for ping to come back
+  int lag          = int(lagavg * 1000);
+  if (pingpending) {
+    float timepassed = TimeKeeper::getCurrent() - lastping;
+    int lastLag      = int((lagavg * (1 - lagalpha) + lagalpha * timepassed)
+			   * 1000);
+    if (lastLag > lag)
+      lag = lastLag;
+  }
   sprintf(msg,"%-16s : %3d +- %2dms", info->getCallSign(),
-	  int(lagavg * 1000),
+	  lag,
 	  int(jitteravg * 1000));
   if (lostavg >= 0.01f)
     sprintf(msg + strlen(msg), " %d%% lost/ooo", int(lostavg * 100));
