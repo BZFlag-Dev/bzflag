@@ -17,7 +17,7 @@
 // ones with the typedef.
 #ifdef WIN32
 using std::unary_function;
-#elif
+#else
 typedef std::unary_function unary_function;
 #endif
 #endif
