@@ -6,6 +6,20 @@ BZFlag 1.7e release 000
 
 * Tim Riker <Tim@Rikers.org> now maintainer
 * build now 3 digits so alpha sorts work (until we hit 1.10? ;-)
+* copyright and naming changes
+* save flaghelp and score state
+* FreeBSD patch by Eric Anholt
+* world creation reordering to support world from file
+* compilation with VC++6 Jeremiah Moss <moss-taylor@yahoo.com>
+* world from a file by Jeremiah
+* travel underneath floating buildings by Jeremiah
+* radar update to not hide ojects under buildings by Jeremiah
+* teleporter player positioning by Jeremiah
+* bottoms on floating buildings by Jeremiah
+* Windows highest refresh rate on program switch by Jeremiah
+* dns lookups on list server for faster server lists
+* non-blocking I/O for bzfs and name lookups by crs
+* phantom player fix by Frank Siegert <frank@this.net>
 
 BZFlag 1.7d release 9
 ---------------------

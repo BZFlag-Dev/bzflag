@@ -2244,7 +2244,8 @@ static void		addPlayer(int playerIndex)
 	sendFlagUpdate(i, playerIndex);
     for (i = 0; i < maxPlayers && player[playerIndex].fd != NotConnected; i++)
       if (player[i].fd != NotConnected &&
-	  player[i].state != PlayerInLimbo)
+	  player[i].state != PlayerInLimbo &&
+	  i != playerIndex)
 	sendPlayerUpdate(i, playerIndex);
   }
 
