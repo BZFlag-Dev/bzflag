@@ -58,6 +58,23 @@ void			BaseBuilding::getNormal(const float *p, float *n) const
   getNormalRect(p, getPosition(), getRotation(), getWidth(), getBreadth(), n);
 }
 
+void			BaseBuilding::get3DNormal(const float* p, float* n) const
+{
+  // This bit of cruft causes bullets to bounce of buildings in the z direction
+  if (fabs(p[2] - getPosition()[2]) < Epsilon) {
+    n[0] = 0.0f;
+    n[1] = 0.0f;
+    n[2] = -1.0f;
+  }
+  else if (fabs(p[2] - (getPosition()[2] + getHeight())) < Epsilon) {
+    n[0] = 0.0f;
+    n[1] = 0.0f;
+    n[2] = 1.0f;
+  } // end cruftiness
+  else
+    getNormal(p, n);
+}
+
 bool			BaseBuilding::isInside(const float *p, float radius) const
 {
   return (p[2] < (getPosition()[2] + getHeight()))

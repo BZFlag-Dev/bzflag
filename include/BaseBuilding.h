@@ -29,6 +29,7 @@ class BaseBuilding : public Obstacle {
     std::string		getClassName(); // const
     float		intersect(const Ray &) const;
     void		getNormal(const float *p, float *n) const;
+    void		get3DNormal(const float* p, float* n) const;
     bool		isInside(const float *p, float radius) const;
     bool		isInside(const float *p, float angle,
 				float halfWidth, float halfBreadth) const;
