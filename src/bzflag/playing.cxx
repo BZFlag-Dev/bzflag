@@ -2901,10 +2901,10 @@ static void		handleServerMessage(bool human, uint16_t code,
       }
 
       // blow up if killer has genocide flag and i'm on same team as victim
-      // (and we're not rogues)
+      // (and we're not rogues, unless in rabbit mode)
       if (human && killerPlayer && victimPlayer && victimPlayer != myTank &&
 		victimPlayer->getTeam() == myTank->getTeam() &&
-		myTank->getTeam() != RogueTeam && shotId >= 0) {
+		((myTank->getTeam() != RogueTeam) || World::getWorld()->allowRabbit()) && shotId >= 0) {
 	// now see if shot was fired with a GenocideFlag
 	const ShotPath* shot = killerPlayer->getShot(int(shotId));
 	if (shot && shot->getFlag() == GenocideFlag) {
