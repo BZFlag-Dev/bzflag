@@ -2,7 +2,7 @@
 /* this config is just for visual C++ since it donsn't use automake*/
 
 /* see if our headers have the socketlen thing some do some don't*/
-#if !defined socklen_t
+#if defined socklen_t
 #define HAVE_SOCKELEN_T
 #endif
 
