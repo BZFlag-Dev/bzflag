@@ -83,11 +83,9 @@ extern void sendIPUpdate(int targetPlayer = -1, int playerIndex = -1);
 
 void handlePasswordCmd(int t, const char *message)
 {
-  if (player[t].passwordAttempts >= 5) {  // see how many times they have tried, you only get 5
+  if (player[t].passwordAttemptsMax()) {
     sendMessage(ServerPlayer, t, "Too many attempts");
-    player[t].debugPwdTries();
   } else {
-    player[t].passwordAttempts++;
     if (clOptions->password && strncmp(message + 10, clOptions->password, strlen(clOptions->password)) == 0){
       player[t].setAdmin();
       sendIPUpdate(t, -1);
@@ -207,12 +205,11 @@ void handleCountdownCmd(int t, const char *)
     }
     if (j < curMaxPlayers) {
       for (int i = 0; i < curMaxPlayers; i++) {
-	if (player[i].playedEarly) {
+	if (player[i].hasPlayedEarly()) {
 	  void *buf, *bufStart = getDirectMessageBuffer();
 	  buf = nboPackUByte(bufStart, j);
 	  buf = player[i].packVirtualFlagCapture(buf);
 	  directMessage(i, MsgCaptureFlag, (char*)buf - (char*)bufStart, bufStart);
-	  player[i].playedEarly = false;
 	}
       }
     }

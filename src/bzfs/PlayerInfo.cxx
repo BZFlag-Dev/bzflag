@@ -560,11 +560,6 @@ int PlayerInfo::fdIsSet(fd_set *set) {
   return FD_ISSET(fd, set);
 }
 
-void PlayerInfo::debugPwdTries() {
-  DEBUG1("%s (%s) has attempted too many /password tries\n",
-	 callSign, peer.getDotNotation().c_str());
-};
-
 void PlayerInfo::getPlayerList(char *list, int index) {
   sprintf(list, "[%d]%-16s: %s%s%s%s%s%s", index, callSign,
 	  peer.getDotNotation().c_str(),
@@ -892,8 +887,20 @@ in_addr PlayerInfo::getIPAddress() {
   return taddr.sin_addr;
 };
 
-int PlayerInfo::pwrite(int playerIndex, const void *b, int l, uint16_t code,
-		       int udpSocket) {
+int PlayerInfo::pwrite(int playerIndex, const void *b, int l, int udpSocket) {
+
+  if (fd == -1 || l == 0) {
+    return 0;
+  }
+  
+  void *buf = (void *)b;
+  uint16_t len, code;
+  buf = nboUnpackUShort(buf, len);
+  buf = nboUnpackUShort(buf, code);
+#ifdef NETWORK_STATS
+  countMessage(code, len, 1);
+#endif
+
   // Check if UDP Link is used instead of TCP, if so jump into udpSend
   if (udpout) {
     // only send bulk messages by UDP
@@ -1137,6 +1144,62 @@ void PlayerInfo::addFlagToHistory(FlagType* type) {
     flagHistory.erase(flagHistory.begin());
   flagHistory.push_back(type);
 };
+
+bool PlayerInfo::hasPlayedEarly() {
+  bool returnValue = playedEarly;
+  playedEarly      = false;
+  return returnValue;
+};
+
+void PlayerInfo::setPlayedEarly() {
+  playedEarly = true;
+};
+
+bool PlayerInfo::passwordAttemptsMax() {
+  bool maxAttempts = passwordAttempts >= 5;
+  // see how many times they have tried, you only get 5
+  if (maxAttempts) {
+    DEBUG1("%s (%s) has attempted too many /password tries\n",
+	   callSign, peer.getDotNotation().c_str());
+  } else {
+    passwordAttempts++;
+  }
+  return maxAttempts;
+};
+
+#ifdef NETWORK_STATS
+void PlayerInfo::countMessage(uint16_t code, int len, int direction) {
+  // add length of type and length
+  len += 4;
+
+  msgBytes[direction] += len;
+
+  int i;
+  struct MessageCount *msg1;
+  msg1 = msg[direction];
+  for (i = 0; i < MessageTypes && msg1[i].code != 0; i++)
+    if (msg1[i].code == code)
+      break;
+  msg1[i].code = code;
+  if (msg1[i].maxSize < len)
+    msg1[i].maxSize = len;
+  msg1[i].count++;
+
+  TimeKeeper now = TimeKeeper::getCurrent();
+  if (now - perSecondTime[direction] < 1.0f) {
+    perSecondCurrentMsg[direction]++;
+    perSecondCurrentBytes[direction] += len;
+  } else {
+    perSecondTime[direction] = now;
+    if (perSecondMaxMsg[direction] < perSecondCurrentMsg[direction])
+      perSecondMaxMsg[direction] = perSecondCurrentMsg[direction];
+    if (perSecondMaxBytes[direction] < perSecondCurrentBytes[direction])
+      perSecondMaxBytes[direction] = perSecondCurrentBytes[direction];
+    perSecondCurrentMsg[direction] = 0;
+    perSecondCurrentBytes[direction] = 0;
+  }
+};
+#endif
 
 // Local Variables: ***
 // mode:C++ ***

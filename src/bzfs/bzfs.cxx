@@ -120,63 +120,9 @@ bool hasPerm(int playerIndex, PlayerAccessInfo::AccessPerm right)
   return player[playerIndex].hasPermission(right);
 }
 
-#ifdef NETWORK_STATS
-int countMessage(int playerIndex, uint16_t code, int len, int direction)
-{
-  int i;
-  struct MessageCount *msg;
-
-  // add length of type and length
-  len += 4;
-  player[playerIndex].msgBytes[direction] += len;
-  msg = player[playerIndex].msg[direction];
-  TimeKeeper now = TimeKeeper::getCurrent();
-  for (i = 0; i < MessageTypes && msg[i].code != 0; i++)
-    if (msg[i].code == code)
-      break;
-  msg[i].code = code;
-  if (msg[i].maxSize < len)
-    msg[i].maxSize = len;
-  msg[i].count++;
-  if (now - player[playerIndex].perSecondTime[direction] < 1.0f) {
-    player[playerIndex].perSecondCurrentMsg[direction]++;
-    player[playerIndex].perSecondCurrentBytes[direction] += len;
-  }
-  else {
-    player[playerIndex].perSecondTime[direction] = now;
-    if (player[playerIndex].perSecondMaxMsg[direction] <
-	player[playerIndex].perSecondCurrentMsg[direction])
-      player[playerIndex].perSecondMaxMsg[direction] =
-	  player[playerIndex].perSecondCurrentMsg[direction];
-    if (player[playerIndex].perSecondMaxBytes[direction] <
-	player[playerIndex].perSecondCurrentBytes[direction])
-      player[playerIndex].perSecondMaxBytes[direction] =
-	  player[playerIndex].perSecondCurrentBytes[direction];
-    player[playerIndex].perSecondCurrentMsg[direction] = 0;
-    player[playerIndex].perSecondCurrentBytes[direction] = 0;
-  }
-  return (msg[i].count);
-}
-#endif
-
-
 static void pwrite(int playerIndex, const void *b, int l)
 {
-  PlayerInfo& p = player[playerIndex];
-
-  if (!p.isConnected() || l == 0) {
-    return;
-  }
-  
-  void *buf = (void *)b;
-  uint16_t len, code;
-  buf = nboUnpackUShort(buf, len);
-  buf = nboUnpackUShort(buf, code);
-#ifdef NETWORK_STATS
-  countMessage(playerIndex, code, len, 1);
-#endif
-
-  int result = p.pwrite(playerIndex, b, l, code, udpSocket);
+  int result = player[playerIndex].pwrite(playerIndex, b, l, udpSocket);
   if (result == -1)
     removePlayer(playerIndex, "ECONNRESET/EPIPE", false);
 }
@@ -3267,7 +3213,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len,
 {
   void *buf = (void*)((char*)rawbuf + 4);
 #ifdef NETWORK_STATS
-  countMessage(t, code, len, 0);
+  player[t].countMessage(code, len, 0);
 #endif
   switch (code) {
     // player joining
@@ -3359,7 +3305,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len,
 #ifdef TIMELIMIT
       // player moved before countdown started
       if (clOptions->timeLimit>0.0f && !countdownActive)
-	player[t].playedEarly = true;
+	player[t].setPlayedEarly();
 #endif
       playerAlive(t);
       break;

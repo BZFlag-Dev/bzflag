@@ -116,8 +116,7 @@ public:
   bool        isConnected();
   int         pflush(int playerIndex, fd_set *set);
   RxStatus    receive(size_t length);
-  int         pwrite(int playerIndex, const void *b, int l, uint16_t code,
-		     int udpSocket);
+  int         pwrite(int playerIndex, const void *b, int l, int udpSocket);
   bool        setUdpIn(struct sockaddr_in &_uaddr, int player);
   void        setUdpOut(int player);
   void        createUdpCon(int remote_port);
@@ -132,7 +131,6 @@ public:
   void        debugAdd(int index);
   void        fdSet(fd_set *read_set, fd_set *write_set, int &maxFile);
   int         fdIsSet(fd_set *set);
-  void        debugPwdTries(); 
   void        getPlayerList(char *list, int index); 
   const char *getTargetIP();
   int         sizeOfIP();
@@ -206,6 +204,12 @@ public:
   void        addFlagToHistory();
   void        handleFlagHistory(char message[]);
   void        addFlagToHistory(FlagType* type);
+  bool        hasPlayedEarly();
+  void        setPlayedEarly();
+  bool        passwordAttemptsMax();
+#ifdef NETWORK_STATS
+  void        countMessage(uint16_t code, int len, int direction);
+#endif
 private:
   void        udpSend(int udpSocket, const void *b, size_t l);
   int         send(const void *buffer, size_t length);
@@ -303,7 +307,6 @@ private:
 
     std::vector<FlagType*> flagHistory;
 
-public:
     // player played before countdown started
     bool playedEarly;
 
