@@ -64,6 +64,7 @@
 #include "ActionBinding.h"
 #include "ServerStartMenu.h"
 #include "OpenGLTexFont.h"
+#include <curl/curl.h>
 
 // invoke incessant rebuilding for build versioning
 #include "version.h"
@@ -755,6 +756,12 @@ int			main(int argc, char** argv)
     exit(0);
   }
 
+  // Init libcurl
+  CURLcode curlResult = curl_global_init(CURL_GLOBAL_SSL);
+  if (curlResult) {
+    printFatalError("Curl reports %d on init\n", curlResult);
+  }
+
   // initialize global objects and classes
   bzfsrand(time(0));
 
@@ -1304,6 +1311,8 @@ int			main(int argc, char** argv)
   delete display;
   delete platformFactory;
   delete bm;
+ 
+  curl_global_cleanup();
 
 #ifdef _WIN32
   // clean up
