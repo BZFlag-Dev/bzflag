@@ -244,7 +244,7 @@ std::string cmdPause(const std::string&, const CommandManager::ArgList& args)
   if (args.size() != 0)
     return "usage: pause";
 
-  if (!pausedByUnmap && myTank->isAlive() && !myTank->isAutoPilot()) {
+  if (!pausedByUnmap && myTank && myTank->isAlive() && !myTank->isAutoPilot()) {
     if (myTank->isPaused()) {
       // already paused, so unpause
       myTank->setPause(false);
