@@ -59,6 +59,7 @@ class XDisplay : public BzfDisplay {
 			XDisplay(const XDisplay&);
     XDisplay&		operator=(const XDisplay&);
 
+    bool		setupEvent(BzfEvent&, const XEvent&) const;
     bool		getKey(const XEvent&, BzfKeyEvent&) const;
 
     bool		doSetResolution(int);
