@@ -9,93 +9,9 @@
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
-static const char copyright[] = "Copyright (c) 1993 - 2003 Tim Riker";
+#include "bzfs.h"
 
-// to enforce a game time limit
-#define TIMELIMIT
-// to dump score info to stdout
-#define PRINTSCORE to include code to dump score info to stdout
-
-// Like verbose debug messages?
-#define DEBUG1 if (clOptions->debug >= 1) printf
-#define DEBUG2 if (clOptions->debug >= 2) printf
-#define DEBUG3 if (clOptions->debug >= 3) printf
-#define DEBUG4 if (clOptions->debug >= 4) printf
-
-#define SERVERLOGINMSG true
-
-const int MaxPlayers = 200;
-const int MaxShots = 10;
 const int udpBufSize = 128000;
-#if defined(__sgi)
-#define FD_SETSIZE (MaxPlayers + 10)
-#endif /* defined(__sgi) */
-
-#ifdef _WIN32
-#pragma warning( 4 : 4786 )
-#endif
-
-// must be before network.h because that defines a close() macro which
-// messes up fstreams.	luckily, we don't need to call the close() method
-// on any fstream.
-#include <fstream>
-
-// must be before windows.h
-#include "network.h"
-#include <iomanip>
-
-#if defined(_WIN32)
-  #pragma warning(disable: 4786)
-#endif
-
-
-#if defined(_WIN32)
-#include <windows.h>
-#define popen _popen
-#define pclose _pclose
-#define sleep(_x) Sleep(1000 * (_x))
-#endif /* defined(_WIN32) */
-
-#include <stdio.h>
-#if !defined(_WIN32)
-#include <fcntl.h>
-#endif
-
-#include <string>
-#include <string.h>
-#include <sys/types.h>
-#include <errno.h>
-#include <stdlib.h>
-#include <math.h>
-#include <ctype.h>
-#include "bzsignal.h"
-#include <time.h>
-#include "common.h"
-#include "global.h"
-#include "Protocol.h"
-#include "Address.h"
-#include "Pack.h"
-#include "PlayerState.h"
-#include "TimeKeeper.h"
-#include "Flag.h"
-#include "Team.h"
-#include "Ping.h"
-#include "multicast.h"
-#include "TimeBomb.h"
-#include "md5.h"
-#include "ShotUpdate.h"
-#include "WordFilter.h"
-#include "ConfigFileManager.h"
-#include "CommandManager.h"
-
-/* bzfs class specific headers */
-#include "TextChunkManager.h"
-#include "AccessControlList.h"
-#include "WorldInfo.h"
-#include "Permissions.h"
-#include "WorldWeapons.h"
-
-
 float	WorldSize = DEFAULT_WORLD;
 bool    gotWorld = false;
 
@@ -115,107 +31,10 @@ static const float FlagHalfLife = 45.0f;
 static int NotConnected = -1;
 static int InvalidPlayer = -1;
 
-static float speedTolerance = 1.125f;
+float speedTolerance = 1.125f;
 
 #define MAX_FLAG_HISTORY (10)
 
-
-struct CmdLineOptions
-{
-  CmdLineOptions()
-  : wksPort(ServerPort), gameStyle(PlainGameStyle), servermsg(NULL),
-    advertisemsg(NULL), worldFile(NULL), pingInterface(NULL), publicizedTitle(NULL),
-    listServerURL(DefaultListServerURL), password(NULL), maxShots(1), maxTeamScore(0), maxPlayerScore(0),
-    maxObservers(3), numExtraFlags(0), teamKillerKickRatio(0), numAllowedFlags(0), shakeWins(0), shakeTimeout(0), teamFlagTimeout(30),
-    pingTTL(DefaultTTL), maxlagwarn(10000), lagwarnthresh(-1.0), idlekickthresh(-1.0), timeLimit(0.0f),
-    timeElapsed(0.0f), linearAcceleration(0.0f), angularAcceleration(0.0f), useGivenPort(false),
-    useFallbackPort(false), requireUDP(false), randomBoxes(false), randomCTF(false),
-    flagsOnBuildings(false), oneGameOnly(false), timeManualStart(false), randomHeights(false), useTeleporters(false),
-    teamKillerDies(true), printScore(false), publicizeServer(false), publicizedAddressGiven(false), debug(0)
-  {
-    int i;
-    for (std::map<std::string, FlagDesc*>::iterator it = FlagDesc::getFlagMap().begin();
-	 it != FlagDesc::getFlagMap().end(); ++it) {
-	flagCount[it->second] = 0;
-	flagLimit[it->second] = -1;
-	flagDisallowed[it->second] = false;
-    }
-
-    for (i = 0; i < NumTeams; i++)
-      maxTeam[i] = MaxPlayers;
-  }
-
-  int			wksPort;
-  int			gameStyle;
-
-  const char		*servermsg;
-  const char		*advertisemsg;
-  const char		*worldFile;
-  const char		*pingInterface;
-  const char		*publicizedTitle;
-  const char		*listServerURL;
-  char			*password;
-
-
-  std::string		publicizedAddress;
-
-  uint16_t		maxShots;
-  int			maxTeamScore;
-  int			maxPlayerScore;
-  int			maxObservers;
-  int			numExtraFlags;
-  int			teamKillerKickRatio; // if players tk*100/wins > teamKillerKickRatio -> kicked
-  int			numAllowedFlags;
-  uint16_t		shakeWins;
-  uint16_t		shakeTimeout;
-  int			teamFlagTimeout;
-  int			pingTTL;
-  int			maxlagwarn;
-
-  float			lagwarnthresh;
-  float			idlekickthresh;
-  float			timeLimit;
-  float			timeElapsed;
-  float			linearAcceleration;
-  float			angularAcceleration;
-
-  bool			useGivenPort;
-  bool			useFallbackPort;
-  bool			requireUDP; // true if only new clients allowed
-  bool			randomBoxes;
-  bool			randomCTF;
-  bool			flagsOnBuildings;
-  bool			oneGameOnly;
-  bool			timeManualStart;
-  bool			randomHeights;
-  bool			useTeleporters;
-  bool			teamKillerDies;
-  bool			printScore;
-  bool			publicizeServer;
-  bool			publicizedAddressGiven;
-
-  int			debug;
-
-  uint16_t		maxTeam[NumTeams];
-  std::map<FlagDesc*,int> flagCount;
-  std::map<FlagDesc*,int> flagLimit; // # shots allowed / flag
-  std::map<FlagDesc*,bool> flagDisallowed;
-
-  AccessControlList	acl;
-  TextChunkManager	textChunker;
-
-  /* inappropriate language filter */
-  std::string		filterFilename;
-  bool			filterCallsigns;
-  bool			filterChat;
-  bool			filterSimple;
-  WordFilter		filter;
-
-  std::string		reportFile;
-  std::string		reportPipe;
-
-  std::string		bzdbVars;
-};
 
 enum ClientState {
   PlayerNoExist, // does not exist
@@ -335,21 +154,6 @@ struct PlayerInfo {
 #define SEND 1
 #define RECEIVE 0
 
-struct FlagInfo {
-  public:
-    // flag info
-    Flag flag;
-    // player index who has flag
-    int player;
-    // how many grabs before removed
-    int grabs;
-    // true if flag must be in game
-    bool required;
-    // time flag will land
-    TimeKeeper dropDone;
-    // number of shots on this flag
-    int numShots;
-};
 
 struct TeamInfo {
   public:
@@ -440,28 +244,26 @@ static struct sockaddr_in pingOutAddr;
 static int pingBcastSocket;
 static struct sockaddr_in pingBcastAddr;
 // relay player packets
-static bool handlePings = true;
+bool handlePings = true;
 static PingPacket pingReply;
 // highest fd used
 static int maxFileDescriptor;
 // players list FIXME should be resized based on maxPlayers
 static PlayerInfo player[MaxPlayers];
 // players + observers
-static uint16_t softmaxPlayers = MaxPlayers;
+uint16_t softmaxPlayers = MaxPlayers;
 // team info
 static TeamInfo team[NumTeams];
-// flags list
-static FlagInfo *flag = NULL;
 // num flags in flag list
-static int numFlags;
+int numFlags;
 static int numFlagsInAir;
 // types of extra flags allowed
-static std::vector<FlagDesc*> allowedFlags;
+std::vector<FlagDesc*> allowedFlags;
 static bool done = false;
 // true if hit time/score limit
 static bool gameOver = true;
 static int exitCode = 0;
-static uint16_t maxPlayers = MaxPlayers;
+uint16_t maxPlayers = MaxPlayers;
 static uint16_t curMaxPlayers = 0;
 // max simulataneous per player
 static bool hasBase[CtfTeams] = { false };
@@ -4178,9 +3980,11 @@ static void sendTeleport(int playerIndex, uint16_t from, uint16_t to)
 // parse player comands (messages with leading /)
 static void parseCommand(const char *message, int t)
 {
-  int i;
+  int i=0;
+  char reply[MessageLen];
+
   // /password command allows player to become operator
-  if (strncmp(message + 1,"password ",9) == 0){
+  if (strncmp(message + 1, "password", 9) == 0) {
     if (player[t].passwordAttempts >=5 ){	// see how many times they have tried, you only get 5
       sendMessage(ServerPlayer, t, "Too many attempts");
     }else{
@@ -4193,6 +3997,7 @@ static void parseCommand(const char *message, int t)
         sendMessage(ServerPlayer, t, "Wrong Password!");
       }
     }
+      
   // set sets a world configuration variable that gets sent to all clients
   } else if ((hasPerm(t, setVar) || hasPerm(t, setAll)) && strncmp( message + 1, "set", 3) == 0) {
     sendMessage( ServerPlayer, t, CMDMGR->run(message+1).c_str());
@@ -4236,7 +4041,7 @@ static void parseCommand(const char *message, int t)
     }
     sendTeamUpdate();
 
-    char reply[MessageLen] = "Countdown started.";
+    sprintf(reply, "Countdown started.");
     sendMessage(ServerPlayer, t, reply, true);
 
     // CTF game -> simulate flag captures to return ppl to base
@@ -4345,7 +4150,6 @@ static void parseCommand(const char *message, int t)
   }
   // /ban command allows operator to ban players based on ip
   else if (hasPerm(t, ban) && strncmp(message+1, "ban", 3) == 0) {
-    char reply[MessageLen];
     char *ips = (char *) (message + 5);
     char *time = strchr(ips, ' ');
     int period = 0;
@@ -4367,7 +4171,6 @@ static void parseCommand(const char *message, int t)
   }
   // /unban command allows operator to remove ips from the banlist
   else if (hasPerm(t, unban) && strncmp(message+1, "unban", 5) == 0) {
-    char reply[MessageLen];
     if (clOptions->acl.unban(message + 7))
       strcpy(reply, "removed IP pattern");
     else
@@ -4379,13 +4182,11 @@ static void parseCommand(const char *message, int t)
     if (message[8] == ' ') {
       const char *maxlag = message + 9;
       clOptions->lagwarnthresh = (float) (atoi(maxlag) / 1000.0);
-      char reply[MessageLen];
       sprintf(reply,"lagwarn is now %d ms",int(clOptions->lagwarnthresh * 1000 + 0.5));
       sendMessage(ServerPlayer, t, reply, true);
     }
     else
     {
-      char reply[MessageLen];
       sprintf(reply,"lagwarn is set to %d ms",int(clOptions->lagwarnthresh * 1000 +  0.5));
       sendMessage(ServerPlayer, t, reply, true);
     }
@@ -4394,7 +4195,6 @@ static void parseCommand(const char *message, int t)
   else if (hasPerm(t, lagStats) && strncmp(message+1, "lagstats",8) == 0) {
     for (int i = 0; i < curMaxPlayers; i++) {
       if (player[i].state > PlayerInLimbo && player[i].team != ObserverTeam) {
-	char reply[MessageLen];
 	sprintf(reply,"%-16s : %4dms (%d) %s", player[i].callSign,
 	    int(player[i].lagavg*1000), player[i].lagcount,
             player[i].accessInfo.verified ? "(R)" : "");
@@ -4409,7 +4209,6 @@ static void parseCommand(const char *message, int t)
     TimeKeeper now=TimeKeeper::getCurrent();
     for (int i = 0; i < curMaxPlayers; i++) {
       if (player[i].state > PlayerInLimbo && player[i].team != ObserverTeam) {
-	char reply[MessageLen];
 	sprintf(reply,"%-16s : %4ds",player[i].callSign,
 		int(now-player[i].lastupdate));
 	sendMessage(ServerPlayer, t, reply, true);
@@ -4420,7 +4219,6 @@ static void parseCommand(const char *message, int t)
   else if (hasPerm(t, flagHistory) && strncmp(message+1, "flaghistory", 11 ) == 0) {
     for (int i = 0; i < curMaxPlayers; i++)
       if (player[i].state > PlayerInLimbo && player[i].team != ObserverTeam) {
-	char reply[MessageLen];
 	char flag[MessageLen];
 	sprintf(reply,"%-16s : ",player[i].callSign );
 	std::vector<FlagDesc*>::iterator fhIt = player[i].flagHistory.begin();
@@ -4441,7 +4239,6 @@ static void parseCommand(const char *message, int t)
   else if (hasPerm(t, playerList) && strncmp(message+1, "playerlist", 10) == 0) {
     for (int i = 0; i < curMaxPlayers; i++) {
       if (player[i].state > PlayerInLimbo) {
-	char reply[MessageLen];
 	sprintf(reply,"[%d]%-16s: %s%s",i,player[i].callSign,
 	    player[i].peer.getDotNotation().c_str(),
 	    player[i].ulinkup ? " udp" : "");
@@ -4451,7 +4248,6 @@ static void parseCommand(const char *message, int t)
   }
   // /report sends a message to the admin and/or stores it in a file
   else if (strncmp(message+1, "report", 6) == 0) {
-    char reply[MessageLen];
     if (strlen(message+1) < 8) {
       sprintf(reply, "Nothing reported");
     }
@@ -4503,7 +4299,6 @@ static void parseCommand(const char *message, int t)
 	}
       }
       if (!foundChunk){
-	char reply[MessageLen];
 	sprintf(reply, "help command %s not found", message + 6);
 	sendMessage(ServerPlayer, t, reply, true);
       }
@@ -4757,8 +4552,7 @@ static void parseCommand(const char *message, int t)
     if (p1) p2 = strchr(p1 + 1, '\"');
     if (!p2) {
       sendMessage(ServerPlayer, t, "not enough parameters, usage /removegroup \"CALLSIGN\" GROUP");
-    } else
-    {
+    } else {
       string settie(p1+1, p2-p1-1);
       string group=p2+2;
 
@@ -4807,6 +4601,13 @@ static void parseCommand(const char *message, int t)
       info.explicitAllows[flagHistory] = true;
       groupAccess["DEFAULT"] = info;
     }
+    itr = groupAccess.find("REGISTERED");
+    if (itr == groupAccess.end()) {
+      PlayerAccessInfo info;
+      info.explicitAllows[vote] = true;
+      info.explicitAllows[poll] = true;
+      groupAccess["REGISTERED"] = info;
+    }
     itr = groupAccess.find("ADMIN");
     if (itr == groupAccess.end()) {
       PlayerAccessInfo info;
@@ -4825,8 +4626,391 @@ static void parseCommand(const char *message, int t)
       }
     }
     sendMessage(ServerPlayer, t, "Databases reloaded");
+
+
+  } else if (strncmp(message+1, "poll",4) == 0) {
+
+    /* !!! all of the commands need to be pulled out of this file and put
+     * into individual routines. they could be set up a command registry
+     * class and hook functions
+     */
+
+    if (hasPerm(t, poll)) {
+      size_t messageLength = strlen(message);
+
+      sprintf(reply,"DEBUG: poll command section entered");
+      sendMessage(ServerPlayer, t, reply, true);
+      
+      /* make sure that there is not an existing poll */
+      if (BZDB->isEmpty("poll")) {
+	char command[5];
+	size_t commandLength;
+
+	/* find the start of the command */
+	size_t nextChar = 0;
+	while ((nextChar < messageLength - 5) && (!isAlphanumeric(*(message+5+nextChar)))) {
+	  nextChar++;
+	}
+
+	/* prevent reading too much */
+	if (messageLength < 9) {
+	  command[0]=command[1]=command[2]=command[3]=command[4]='\0';
+	} else {
+	  command[0]=tolower(*(message+5+nextChar));
+	  command[1]=tolower(*(message+5+nextChar+1));
+	  command[2]=tolower(*(message+5+nextChar+2));
+	  if (command[2] == 'n') {
+	    command[3]='\0';
+	  } else {
+	    command[3]=tolower(*(message+5+nextChar+3));
+	  }
+	  command[4]='\0';
+	}
+	commandLength=(int)strlen(command);
+
+	sprintf(reply,"DEBUG: command is [%s] with strlen %d", command, (int)commandLength);
+	sendMessage(ServerPlayer, t, reply, true);
+	
+	/* find the start of any arguments */
+	size_t argStart = 0;
+	while ((argStart < (messageLength - 5 - nextChar - commandLength)) && 
+	       (*(message+5+nextChar+commandLength+argStart) != '\0') &&
+	       (!isAlphanumeric(*(message+5+nextChar+commandLength+argStart)))) {
+	  argStart++;
+	}
+	size_t argStartOffset=5+nextChar+commandLength+argStart;
+
+	sprintf(reply,"DEBUG: callsign is [%s] with nextChar %d and callsign at %d", message+argStartOffset, (int)nextChar, (int)argStartOffset);
+	sendMessage(ServerPlayer, t, reply, true);
+	
+	/* see if the action is kick/ban/vote/veto and is valid */
+	char voteplayer[256];
+	memset(voteplayer, 0, 256);
+	
+	if ((strncmp(command, "ban", 3) == 0) ||
+	    (strncmp(command, "kick", 4) == 0)) {
+	  	  
+	  sprintf(reply,"DEBUG: poll %s command section entered", command);
+	  sendMessage(ServerPlayer, t, reply, true);
+	  
+	  if (!isPrintable(*(message+argStartOffset))) {
+	    /* if there was no callsign, or bad data was fed -- barf */
+	      sprintf(reply,"%s, you need to provide a playername", player[t].callSign);
+	      sendMessage(ServerPlayer, t, reply, true);
+	      sprintf(reply,"Usage: /poll %s [playername]", command);
+	      sendMessage(ServerPlayer, t, reply, true);
+	    
+	  } else if (*(message+argStartOffset) == '"') {
+	    /* if the callsign is quoted -- strip off the quote */
+	    size_t secondQuoteOffset=0;
+	    while ((message[messageLength-1-secondQuoteOffset] != '"') && 
+		   (secondQuoteOffset<messageLength-8)) {
+	      secondQuoteOffset++;
+	    }
+	    if ((messageLength-secondQuoteOffset >= argStartOffset) ||
+		(secondQuoteOffset - argStartOffset > 0)) {
+	      sprintf(reply,"%s, unterminated or misused quotes? -- don't use quotes", player[t].callSign);
+	      sendMessage(ServerPlayer, t, reply, true);
+	      sprintf(reply,"Usage: /poll %s [playername]", command);
+	      sendMessage(ServerPlayer, t, reply, true);
+	    } else {
+	      strncpy(voteplayer, message+argStartOffset+1, 
+		      messageLength-1-argStartOffset-secondQuoteOffset);
+	    }
+	  } else {
+	    /* unquoted -- so just copy username if one was given*/
+	    strncpy(voteplayer, message+argStartOffset, messageLength-argStartOffset);
+	  }
+	  
+	  /* trim off any trailing whitespace */
+	  for (int i = messageLength-argStartOffset-1; i >= 0; i--) {
+	    if (isAlphanumeric(voteplayer[i])) {
+	      break;
+	    } else {
+	      voteplayer[i]='\0';
+	    }
+	  }
+	  
+	  sprintf(reply,"DEBUG: %s callsign is [%s]", command, voteplayer);
+	  sendMessage(ServerPlayer, t, reply, true);
+
+	  /* see if the player is a valid user name */
+	  if (strlen(voteplayer) == 0) {
+	    /* no name given */
+	    sprintf(reply,"%s, no player was specified for the %s vote", player[t].callSign, command);
+	    sendMessage(ServerPlayer, t, reply, true);
+	    sprintf(reply,"Usage: /poll %s [playername]", command);
+	    sendMessage(ServerPlayer, t, reply, true);
+
+	  } else {
+
+	    /* make sure the requested player is actually here */
+	    bool foundPlayer=false;
+	    for (int i = 0; i < curMaxPlayers; i++) {
+	      sprintf(reply,"DEBUG: comparing %s == %s", voteplayer, player[i].callSign);
+	      sendMessage(ServerPlayer, t, reply, true);
+
+	      if (strncmp(player[i].callSign, voteplayer, 256)==0) {
+		foundPlayer=true;
+		break;
+	      }
+	    }
+	    if (!foundPlayer) {
+	      /* wrong name? */
+	      sprintf(reply, "The player specified for a %s vote is not here", command);
+	      sendMessage(ServerPlayer, t, reply, true);
+	      sprintf(reply,"Usage: /poll %s [playername]", command);
+	      sendMessage(ServerPlayer, t, reply, true);
+
+	    } else {
+	      /* player found */
+	      sprintf(reply, "%s %s", command, voteplayer);
+	      VotingBooth *booth = YesNoVotingBooth(reply);
+
+              /* actually set the poll -- it's important that this occur before
+               * players are notified.
+               */
+              BZDB->setPointer("poll", (void *)booth);
+
+              /* notify players of the poll */
+              if (strncmp(command, "ban", 3) == 0) {
+                sprintf(reply,"A poll to temporarily ban %s has been requested by %s", voteplayer, player[t].callSign);
+              } else {
+                sprintf(reply,"A poll to %s %s has been requested by %s", command, voteplayer, player[t].callSign);
+              }
+                  
+              sendMessage(ServerPlayer, AllPlayers, reply, true);
+
+	    } /* end check if vote player is present */
+	  } /* end check if a player name was given */
+
+	  
+	} else if (strncmp(command, "vote", 4) == 0) {
+	  
+	  sprintf(reply,"DEBUG: poll vote command section entered");
+	  sendMessage(ServerPlayer, t, reply, true);
+	  
+	  if (hasPerm(t, vote)) {
+	    /* !!! needs to be handled by the /vote command  */
+	    sprintf(reply,"%s, your vote has been recorded -- unimplemented", player[t].callSign);
+	    sendMessage(ServerPlayer, t, reply, true);
+	    
+	  } else {
+	    
+	    sprintf(reply,"%s, you do not presently have permission to vote (must /identify first)", player[t].callSign);
+	    sendMessage(ServerPlayer, t, reply, true);
+	    
+	  }
+	  
+	} else if (strncmp(command, "veto", 4) == 0) {
+
+	  sprintf(reply,"DEBUG: poll veto command section entered");
+	  sendMessage(ServerPlayer, t, reply, true);
+	  
+	  if (hasPerm(t, veto)) {
+	    /* !!! needs to be handled by the /veto command  */
+	    sprintf(reply,"%s, you have aborted the poll -- unimplemented", player[t].callSign);
+	    sendMessage(ServerPlayer, t, reply, true);
+	    
+	  } else {
+	    
+	    sprintf(reply,"%s, you do not have permission to veto the poll", player[t].callSign);
+	    sendMessage(ServerPlayer, t, reply, true);
+	    
+	  }
+	  
+	} else {
+	  
+	  sprintf(reply,"Invalid option to the poll command");
+	  sendMessage(ServerPlayer, t, reply, true);
+	  sprintf(reply,"Usage: /poll ban|kick [playername]");
+	  sendMessage(ServerPlayer, t, reply, true);
+	  memset(command, 0, 5);
+	  
+	} /* end handling of poll subcommands */
+	
+      } else {
+	VotingBooth *booth = (VotingBooth *)BZDB->getPointer("poll");
+	const std::string pollname = booth->getPollName();
+
+        sprintf(reply,"A poll to %s is presently in progress", pollname.c_str());
+        sendMessage(ServerPlayer, t, reply, true);
+	sprintf(reply,"Unable to start a new poll until the current one is over");
+	sendMessage(ServerPlayer, t, reply, true);
+        
+      }
+      
+    } else {
+      /* permission denied for /poll */
+      sprintf(reply,"%s, you are presently not authorized to run /poll", player[t].callSign);
+      sendMessage(ServerPlayer, t, reply, true);
+    }
+
+
+  } else if (strncmp(message+1, "vote",4) == 0) {
+    if (hasPerm(t, vote)) {
+      size_t messageLength = (int)strlen(message);
+      sprintf(reply,"DEBUG: vote command section entered");
+      sendMessage(ServerPlayer, t, reply, true);
+      
+      /* make sure that there is a poll active to vote on */
+      if (! BZDB->isEmpty("poll") ) {
+	
+	/* find the start of the vote answer */
+	size_t nextChar = 0;
+	while ((nextChar < messageLength - 5) && (!isAlphanumeric(*(message+5+nextChar)))) {
+	  nextChar++;
+	}
+	
+	char answer[8];
+	memset(answer, 0, 8);
+	
+	for (unsigned int i=0; (i < messageLength - 5 - nextChar) && (i < 31); i++) {
+	  answer[i] = tolower(*(message + 5 + nextChar + i));
+	}
+	for (int i=strlen(answer)-1; i >= 0; i--) {
+	  if (!isAlphanumeric(answer[i])) {
+	    answer[i] = '\0';
+	  }
+	}
+	
+	sprintf(reply,"DEBUG: vote of %s was provided", answer);
+	sendMessage(ServerPlayer, t, reply, true);
+	
+	int vote=-1;
+	if (strncmp(answer, "y", 1) == 0) {
+	  vote=1;
+	} else if (strncmp(answer, "n", 1) == 0) {
+	  vote=0;
+	} else if (strncmp(answer, "1", 1) == 0) {
+	  vote=1;
+	} else if (strncmp(answer, "0", 1) == 0) {
+	  vote=0;
+	} else if (strncmp(answer, "yes", 3) == 0) {
+	  /* english */
+	  vote=1;
+	} else if (strncmp(answer, "no", 3) == 0) {
+	  /* english */
+	  vote=0;
+	} else if (strncmp(answer, "yea", 3) == 0) {
+	  /* old english */
+	  vote=1;
+	} else if (strncmp(answer, "nay", 3) == 0) {
+	  /* old english */
+	  vote=0;
+	} else if (strncmp(answer, "si", 2) == 0) {
+	  /* spanish/italian (no is no) */
+	  vote=1;
+	} else if (strncmp(answer, "ja", 2) == 0) {
+	  /* german */
+	  vote=1;
+	} else if (strncmp(answer, "nein", 4) == 0) {
+	  /* german */
+	  vote=0;
+	} else if (strncmp(answer, "oui", 3) == 0) {
+	  /* french */
+	  vote=1;
+	} else if (strncmp(answer, "non", 3) == 0) {
+	  /* french */
+	  vote=0;
+	} else if (strncmp(answer, "sim", 3) == 0) {
+	  /* portuguese */
+	  vote=1;
+	} else if (strncmp(answer, "nao", 3) == 0) {
+	  /* portuguese */
+	  vote=0;
+	}
+	
+	if (vote==-1) {
+	  if (strlen(answer) == 0) {
+	    sprintf(reply,"%s, you did not provide a vote answer", player[t].callSign);
+	    sendMessage(ServerPlayer, t, reply, true);
+	    sprintf(reply,"Usage: /vote yes|no|1|0|yea|nay|si|ja|nein|oui|non|sim|nao");
+	    sendMessage(ServerPlayer, t, reply, true);
+	  } else {
+	    sprintf(reply,"%s, you did not vote in favor or in opposition", player[t].callSign);
+	    sendMessage(ServerPlayer, t, reply, true);
+	    sprintf(reply,"Usage: /vote yes|no|1|0|yea|nay|si|ja|nein|oui|non|sim|nao");
+	    sendMessage(ServerPlayer, t, reply, true);
+	  }
+	  
+	} else {
+	  VotingBooth *booth = (VotingBooth *)BZDB->getPointer("poll");
+	  bool cast = booth->vote(player[t].callSign, (vote_t)vote);
+	  
+	  if (cast) {
+	    if (vote) {
+	      /* player voted yes */
+	      sprintf(reply,"%s, your vote in favor of the poll has been recorded", player[t].callSign);
+	      sendMessage(ServerPlayer, t, reply, true);
+	      
+	    } else {
+	      /* player voted no */
+	      sprintf(reply,"%s, your vote in opposition of the poll has been recorded", player[t].callSign);
+	      sendMessage(ServerPlayer, t, reply, true);
+	      
+	    }
+	  } else {
+	    /* player was unable to cast their vote; probably already voted */
+	    sprintf(reply,"%s, you have already voted on the poll to %s", player[t].callSign, booth->getPollName().c_str());
+	    sendMessage(ServerPlayer, t, reply, true);
+	  }
+
+#if 0
+	  for (int i = 0; i < curMaxPlayers; i++) {
+	    if (player[i].state > PlayerInLimbo && player[i].team != ObserverTeam) {
+	      sprintf(reply,"DEBUG: player %s %s voted ", player[i].callSign,	
+		      player[i].accessInfo.verified ? "(registered)" : "(not registered)");
+	      sendMessage(ServerPlayer, t, reply, true);
+	    }
+	}
+#endif
+	  
+	}
+
+      } else {
+	sprintf(reply,"%s, there is presently no poll to vote on", player[t].callSign);
+	sendMessage(ServerPlayer, t, reply, true);
+      }
+
+    } else {
+      /* permission denied for /vote */
+      sprintf(reply,"%s, you are presently not authorized to run /vote", player[t].callSign);
+      sendMessage(ServerPlayer, t, reply, true);
+    }
+
+  } else if (strncmp(message+1, "veto",4) == 0) {
+
+    if (hasPerm(t, veto)) {
+      sprintf(reply,"DEBUG: veto command section entered");
+      sendMessage(ServerPlayer, t, reply, true);
+      
+      /* make sure that there is a poll active to abort */
+      if (! BZDB->isEmpty("poll") ) {
+	VotingBooth *booth = (VotingBooth *)BZDB->getPointer("poll");
+	char pollName[256];
+	sprintf(pollName, "%s", booth->getPollName().c_str());
+	delete booth;
+	BZDB->unset("poll");
+	
+	sprintf(reply,"%s, you have cancelled the poll to %s", player[t].callSign, pollName);
+	sendMessage(ServerPlayer, t, reply, true);
+
+        sprintf(reply,"The poll was cancelled by %s", player[i].callSign);
+        sendMessage(ServerPlayer, AllPlayers, reply, true);
+
+      } else {
+	sprintf(reply,"%s, there is presently no poll active to veto", player[t].callSign);
+	sendMessage(ServerPlayer, t, reply, true);
+      }
+    } else {
+      /* permission denied for /veto */
+      sprintf(reply,"%s, you are presently not authorized to run /veto", player[t].callSign);
+      sendMessage(ServerPlayer, t, reply, true);
+    }      
+
   } else {
-    sendMessage(ServerPlayer, t, "unknown command");
+    sendMessage(ServerPlayer, t, "Unknown command [%s]", message+1);
   }
 }
 
@@ -5030,6 +5214,12 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
       DEBUG1("Player %s [%d]: %s\n",player[t].callSign, t, message);
       // check for command
       if (message[0] == '/') {
+	/* make commands case insensitive for user-friendlyness */
+	unsigned int pos=1;
+	while ((pos < strlen(message)) && (isAlphanumeric(message[pos]))) {
+	  message[pos] = tolower((int)message[pos]);
+	  pos++;
+	}
 	parseCommand(message, t);
       }
       else {
@@ -5256,255 +5446,6 @@ static void terminateServer(int /*sig*/)
   done = true;
 }
 
-static const char *usageString =
-"[-a <vel> <rot>] "
-"[-admsg <text>] "
-"[-b] "
-"[-badwords <filename>] "
-"[-ban ip{,ip}*] "
-"[-c] "
-"[-conf <filename>] "
-"[-cr] "
-"[-d] "
-"[+f {good|<id>}] "
-"[-f {bad|<id>}] "
-"[-fb] "
-"[-filterCallsigns] "
-"[-filterChat] "
-"[-filterSimple] "
-"[-g] "
-"[-h] "
-"[-helpmsg <file> <name>]"
-"[-i interface] "
-"[-j] "
-"[-lagdrop <num>] "
-"[-lagwarn <time/ms>] "
-"[-maxidle <time/s>] "
-"[-mo <count> ]"
-"[-mp {<count>|[<count>],[<count>],[<count>],[<count>],[<count>]}] "
-"[-mps <score>] "
-"[-ms <shots>] "
-"[-mts <score>] "
-"[-p <port>] "
-"[-passwd <password>] "
-#ifdef PRINTSCORE
-"[-printscore] "
-#endif
-"[-public <server-description>] "
-"[-publicaddr <server-hostname>[:<server-port>]] "
-"[-publiclist <list-server-url>] "
-"[-q] "
-"[+r] "
-"[-r] "
-"[-rabbit] "
-"[-reportfile <filename>] "
-"[-reportpipe <filename>] "
-"[-requireudp] "
-"[{+s|-s} [<num>]] "
-"[-sa] "
-"[-sl <id> <num>]"
-"[-srvmsg <text>] "
-"[-st <time>] "
-"[-sw <num>] "
-"[-synctime] "
-"[-t] "
-"[-tftimeout <seconds>] "
-#ifdef TIMELIMIT
-"[-time <seconds>] "
-"[-timemanual] "
-#endif
-"[-tk] "
-"[-tkkr <percent>] "
-"[-ttl <ttl>] "
-"[-vars <filename>]"
-"[-version] "
-"[-world <filename>]"
-"[-speedtol <tolerance>]"
-"[-passdb <password file>]"
-"[-groupdb <group file>]"
-"[-userdb <user permissions file>]"
-"[-worldsize < world size>]";
-
-static const char *extraUsageString =
-"\t-a: maximum acceleration settings\n"
-"\t-admsg: specify a <msg> which will be broadcast every 15 minutes\n"
-"\t-b: randomly oriented buildings\n"
-"\t-badwords: bad-world file\n"
-"\t-ban ip{,ip}*: ban players based on ip address\n"
-"\t-c: capture-the-flag style game\n"
-"\t-cr: capture-the-flag style game with random world\n"
-"\t-conf: configuration file\n"
-"\t-d: increase debugging level\n"
-"\t+f: always have flag <id> available\n"
-"\t-f: never randomly generate flag <id>\n"
-"\t-fb: allow flags on box buildings\n"
-"\t-filterCallsigns: filter callsigns to disallow inappropriate user names\n"
-"\t-filterChat: filter chat messages\n"
-"\t-filterSimple: perform simple exact matches with the bad word list\n"
-"\t-g: serve one game and then exit\n"
-"\t-h: use random building heights\n"
-"\t-helpmsg: show the lines in <file> on command /help <name>\n"
-"\t-i: listen on <interface>\n"
-"\t-j: allow jumping\n"
-"\t-lagdrop: drop player after this many lag warnings\n"
-"\t-lagwarn: lag warning threshhold time [ms]\n"
-"\t-maxidle: idle kick threshhold [s]\n"
-"\t-mo: maximum number of additional observers allowed\n"
-"\t-mp: maximum players total or per team\n"
-"\t-mps: set player score limit on each game\n"
-"\t-ms: maximum simultaneous shots per player\n"
-"\t-mts: set team score limit on each game\n"
-"\t-p: use alternative port (default is 5155)\n"
-"\t-passwd: specify a <password> for operator commands\n"
-#ifdef PRINTSCORE
-"\t-printscore: write score to stdout whenever it changes\n"
-#endif
-"\t-public <server-description>\n"
-"\t-publicaddr <effective-server-hostname>[:<effective-server-port>]\n"
-"\t-publiclist <list-server-url>\n"
-"\t-q: don't listen for or respond to pings\n"
-"\t+r: all shots ricochet\n"
-"\t-r: allow rogue tanks\n"
-"\t-rabbit: rabbit chase style\n"
-"\t-reportfile <filename>: the file to store reports in\n"
-"\t-reportpipe <filename>: the program to pipe reports through\n"
-"\t-requireudp: require clients to use udp\n"
-"\t+s: always have <num> super flags (default=16)\n"
-"\t-s: allow up to <num> super flags (default=16)\n"
-"\t-sa: insert antidote superflags\n"
-"\t-sl: limit flag <id> to <num> shots\n"
-"\t-srvmsg: specify a <msg> to print upon client login\n"
-"\t-st: shake bad flags in <time> seconds\n"
-"\t-sw: shake bad flags after <num> wins\n"
-"\t-synctime: synchronize time of day on all clients\n"
-"\t-t: allow teleporters\n"
-"\t-tftimeout: set timeout for team flag zapping (default=30)\n"
-#ifdef TIMELIMIT
-"\t-time: set time limit on each game\n"
-"\t-timemanual: countdown for timed games has to be started with /countdown\n"
-#endif
-"\t-tk: player does not die when killing a teammate\n"
-"\t-tkkr: team killer to wins percentage (1-100) above which player is kicked\n"
-"\t-ttl: time-to-live for pings (default=8)\n"
-"\t-vars: file to read for worlds configuration variables\n"
-"\t-version: print version and exit\n"
-"\t-world: world file to load\n"
-"\t-speedtol: multiplyers over normal speed to auto kick at. defaults to 1.25, should not be less then 1.0\n"
-"\t-passdb: file to read for user passwords\n"
-"\t-groupdb: file to read for group permissions\n"
-"\t-userdb: file to read for user access permissions\n"
-"\t-worldsize: numeric value for the size of the world ( def 400 )\n";
-
-static void printVersion()
-{
-  printf("BZFlag server %s (protocol %d.%d%c) http://BZFlag.org/\n",
-      VERSION,
-      (BZVERSION / 10000000) % 100, (BZVERSION / 100000) % 100,
-      (char)('a' - 1 + (BZVERSION / 1000) % 100));
-  printf("%s\n", copyright);
-}
-
-static void usage(const char *pname)
-{
-  printVersion();
-  fprintf(stderr, "\nUsage: %s %s\n", pname, usageString);
-  exit(1);
-}
-
-static void extraUsage(const char *pname)
-{
-  printVersion();
-  printf("\nUsage: %s %s\n", pname, usageString);
-  printf("\n%s\nFlag codes:\n", extraUsageString);
-  for (std::map<std::string, FlagDesc*>::iterator it = FlagDesc::getFlagMap().begin(); it != FlagDesc::getFlagMap().end(); ++it)
-    printf("\t%2.2s %s\n", (*it->second).flagAbbv, (*it->second).flagName);
-  exit(0);
-}
-
-
-static bool parsePlayerCount(const char *argv, CmdLineOptions &options)
-{
-  // either a single number or 5 optional numbers separated by 4
-  // (mandatory) commas.
-  const char *scan = argv;
-  while (*scan && *scan != ',') scan++;
-  if (*scan == ',') {
-    // okay, it's the comma separated list.  count commas
-    int commaCount = 1;
-    while (*++scan)
-      if (*scan == ',')
-	commaCount++;
-    if (commaCount != 4) {
-      printf("improper player count list\n");
-      return false;
-    }
-
-    // reset the counts
-    int i;
-    // no limits by default
-    for (i = 0; i < CtfTeams; i++)
-      options.maxTeam[i] = MaxPlayers;
-
-    // now get the new counts
-
-    // number of counts given
-    int countCount = 0;
-    scan = argv;
-    for (i = 0; i < CtfTeams; i++) {
-      char *tail;
-      long count = strtol(scan, &tail, 10);
-      if (tail != scan) {
-	// got a number
-	countCount++;
-	if (count < 0)
-	  options.maxTeam[i] = 0;
-	else
-	  if (count > MaxPlayers)
-	    options.maxTeam[i] = MaxPlayers;
-	else
-	  options.maxTeam[i] = uint16_t(count);
-      }
-      while (*tail && *tail != ',') tail++;
-      scan = tail + 1;
-    }
-
-
-    // if all counts explicitly listed then add 'em up and set maxPlayers
-    if (countCount == CtfTeams) {
-    // if num rogues allowed team > 0, then set Rogues game style
-      if (options.maxTeam[RogueTeam] > 0)
-	clOptions->gameStyle |= int(RoguesGameStyle);
-      softmaxPlayers = 0;
-      for (i = 0; i < CtfTeams; i++)
-	softmaxPlayers += options.maxTeam[i];
-    }
-  }
-  else {
-    char *tail;
-    long count = strtol(argv, &tail, 10);
-    if (argv == tail) {
-      printf("improper player count\n");
-      return false;
-    }
-    if (count < 1)
-      softmaxPlayers = 1;
-    else
-      if (count > MaxPlayers)
-	softmaxPlayers = MaxPlayers;
-    else softmaxPlayers = uint16_t(count);
-  }
-  maxPlayers = softmaxPlayers + clOptions->maxObservers;
-  if (maxPlayers > MaxPlayers)
-    maxPlayers = MaxPlayers;
-  return true;
-}
-
-static bool setRequiredFlag(FlagInfo& flag, FlagDesc *desc)
-{
-  flag.required = true;
-  flag.flag.desc = desc;
-  return true;
-}
 
 static std::string cmdSet(const std::string&, const CommandManager::ArgList& args)
 {
@@ -5522,853 +5463,11 @@ static std::string cmdSet(const std::string&, const CommandManager::ArgList& arg
   }
 }
 
-static char **parseConfFile( const char *file, int &ac)
-{
-  std::vector<std::string> tokens;
-  ac = 0;
 
-  ifstream confStrm(file);
-  if (confStrm.is_open()) {
-     char buffer[1024];
-     confStrm.getline(buffer,1024);
-
-     if (!confStrm.good()) {
-       fprintf(stderr, "configuration file not found\n");
-       usage("bzfs");
-     }
-
-     while (confStrm.good()) {
-       std::string line = buffer;
-       int startPos = line.find_first_not_of("\t \r\n");
-       while ((startPos >= 0) && (line.at(startPos) != '#')) {
-	 int endPos;
-	 if (line.at(startPos) == '"') {
-	   startPos++;
-	   endPos = line.find_first_of('"', startPos);
-	 }
-	 else
-	   endPos = line.find_first_of("\t \r\n", startPos+1);
-	 if (endPos < 0)
-	    endPos = line.length();
-	 tokens.push_back(line.substr(startPos,endPos-startPos));
-	 startPos = line.find_first_not_of("\t \r\n", endPos+1);
-       }
-       confStrm.getline(buffer,1024);
-     }
-  }
-
-  const char **av = new const char*[tokens.size()+1];
-  av[0] = strdup("bzfs");
-  ac = 1;
-  for (std::vector<std::string>::iterator it = tokens.begin(); it != tokens.end(); ++it)
-    av[ac++] = strdup((*it).c_str());
-  return (char **)av;
-}
-
-
-static void parse(int argc, char **argv, CmdLineOptions &options)
-{
-  CmdLineOptions confOptions;
-  delete[] flag;  flag = NULL;
-
-  // prepare flag counts
-  int f, i;
-  bool allFlagsOut = false;
-
-
-  // parse command line
-  int playerCountArg = 0,playerCountArg2 = 0;
-  for (i = 1; i < argc; i++) {
-      if (strcmp(argv[i], "-requireudp") == 0) {
-	DEBUG3("Setup: Server requires (UDP) clients!\n");
-	options.requireUDP = true;
-      } else
-      if (strcmp(argv[i], "-srvmsg") == 0) {
-	 if (++i == argc) {
-	   fprintf(stderr, "argument expected for -srvmsg\n");
-	   usage(argv[0]);
-	 }
-	 options.servermsg = argv[i];
-      } else
-      if (strcmp(argv[i], "-admsg") == 0) {
-	 if (++i == argc) {
-	   fprintf(stderr, "argument expected for -admsg\n");
-	   usage(argv[0]);
-	 }
-	 options.advertisemsg = argv[i];
-      } else
-      if (strcmp(argv[i], "-world") == 0) {
-	 if (++i == argc) {
-	   fprintf(stderr, "argument expected for -world\n");
-	   usage(argv[0]);
-	 }
-	 options.worldFile = argv[i];
-	 if (options.useTeleporters)
-	   fprintf(stderr, "-t is meaningless when using a custom world, ignoring\n");
-
-      }
-      else if (strcmp(argv[i], "+f") == 0) {
-      // add required flag
-      if (++i == argc) {
-	fprintf(stderr, "argument expected for +f\n");
-	usage(argv[0]);
-      }
-
-      char *repeatStr = strchr(argv[i], '{');
-      int rptCnt = 1;
-      if (repeatStr != NULL) {
-	*(repeatStr++) = 0;
-	rptCnt = atoi(repeatStr);
-	if (rptCnt <= 0)
-	  rptCnt = 1;
-      }
-
-      if (strcmp(argv[i], "good") == 0) {
-	FlagSet goodFlags = Flag::getGoodFlags();
-	for (FlagSet::iterator it = goodFlags.begin(); it != goodFlags.end(); it++)
-	  options.flagCount[*it] += rptCnt;
-      }
-      else {
-	FlagDesc *fDesc = Flag::getDescFromAbbreviation(argv[i]);
-	if (fDesc == Flags::Null) {
-	  fprintf(stderr, "invalid flag \"%s\"\n", argv[i]);
-	  usage(argv[0]);
-	}
-	options.flagCount[fDesc] += rptCnt;
-      }
-    }
-    else if (strcmp(argv[i], "-sl") == 0) {
-      // add required flag
-      if (i +2 >= argc) {
-	fprintf(stderr, "2 arguments expected for -sl\n");
-	usage(argv[0]);
-      }
-      else{
-	i++;
-	FlagDesc *fDesc = Flag::getDescFromAbbreviation(argv[i]);
-	if (fDesc == Flags::Null) {
-	  fprintf(stderr, "invalid flag \"%s\"\n", argv[i]);
-	  usage(argv[0]);
-	}
-	else{
-	  i++;
-	  int x = 10;
-	  if (isdigit(argv[i][0])){
-	    x = atoi(argv[i]);
-	    if (x < 1){
-	      fprintf(stderr, "can only limit to 1 or more shots\n");
-	      usage(argv[0]);
-	    }
-	  } else {
-	    fprintf(stderr, "invalid shot limit \"%s\"\n", argv[i]);
-	    usage(argv[0]);
-	  }
-	  options.flagLimit[fDesc] = x;
-
-	}
-      }
-    }
-    else if (strcmp(argv[i], "+r") == 0) {
-      // all shots ricochet style
-      options.gameStyle |= int(RicochetGameStyle);
-    }
-    else if (strcmp(argv[i], "+s") == 0) {
-      // set required number of random flags
-      if (i+1 < argc && isdigit(argv[i+1][0])) {
-	++i;
-	if ((options.numExtraFlags = atoi(argv[i])) == 0)
-	  options.numExtraFlags = 16;
-      }
-      else {
-	options.numExtraFlags = 16;
-      }
-      allFlagsOut = true;
-    }
-    else if (strcmp(argv[i], "-a") == 0) {
-      // momentum settings
-      if (i + 2 >= argc) {
-	fprintf(stderr, "two arguments expected for \"%s\"\n", argv[i]);
-	usage(argv[0]);
-      }
-      options.linearAcceleration = (float)atof(argv[++i]);
-      options.angularAcceleration = (float)atof(argv[++i]);
-      if (options.linearAcceleration < 0.0f)
-	options.linearAcceleration = 0.0f;
-      if (options.angularAcceleration < 0.0f)
-	options.angularAcceleration = 0.0f;
-      options.gameStyle |= int(InertiaGameStyle);
-    }
-    else if (strcmp(argv[i], "-badwords") == 0) {
-      if (++i == argc) {
-	fprintf(stderr, "argument expected for -badwords\n");
-	usage(argv[0]);
-      }
-      else {
-	options.filterFilename = argv[i];
-      }
-    }
-    else if (strcmp(argv[i], "-filterSimple") == 0) {
-      options.filterSimple = true;
-    }
-    else if (strcmp(argv[i], "-filterChat") == 0) {
-      options.filterChat = true;
-    }
-    else if (strcmp(argv[i], "-filterCallsigns") == 0) {
-      options.filterCallsigns = true;
-    }
-    else if (strcmp(argv[i], "-ban") == 0) {
-      if (++i == argc) {
-	fprintf(stderr, "argument expected for -ban\n");
-	usage(argv[0]);
-      }
-      else
-	options.acl.ban(argv[i]);
-    }
-    else if (strcmp(argv[i], "-b") == 0) {
-      // random rotation to boxes in capture-the-flag game
-      options.randomBoxes = true;
-    }
-    else if (strcmp(argv[i], "-conf") == 0) {
-      if (++i == argc) {
-		fprintf(stderr, "filename expected for -conf\n");
-		usage(argv[0]);
-      }
-      else {
-	int ac;
-	char **av;
-	av = parseConfFile(argv[i], ac);
-	// Theoretically we could merge the options specified in the conf file after parsing
-	// the cmd line options. But for now just override them on the spot
-	//	parse(ac, av, confOptions);
-	parse(ac, av, options);
-
-	options.numAllowedFlags = 0;
-
-	// These strings need to stick around for -world, -servermsg, etc
-	//for (int i = 0; i < ac; i++)
-	//  delete[] av[i];
-	delete[] av;
-      }
-    }
-    else if (strcmp(argv[i], "-cr") == 0) {
-      // CTF with random world
-      options.randomCTF = true;
-      // capture the flag style
-      options.gameStyle |= int(TeamFlagGameStyle);
-      if (options.gameStyle & int(RabbitChaseGameStyle)) {
-	options.gameStyle &= ~int(RabbitChaseGameStyle);
-	fprintf(stderr, "Capture the flag incompatible with Rabbit Chase\n");
-	fprintf(stderr, "Capture the flag assumed\n");
-      }
-    }
-    else if (strcmp(argv[i], "-c") == 0) {
-      // capture the flag style
-      options.gameStyle |= int(TeamFlagGameStyle);
-      if (options.gameStyle & int(RabbitChaseGameStyle)) {
-	options.gameStyle &= ~int(RabbitChaseGameStyle);
-	fprintf(stderr, "Capture the flag incompatible with Rabbit Chase\n");
-	fprintf(stderr, "Capture the flag assumed\n");
-      }
-    }
-    else if (strncmp(argv[i], "-d", 2) == 0) {
-      // increase debug level
-      int count = 0;
-      char *scan;
-      for (scan = argv[i]+1; *scan == 'd'; scan++) count++;
-      if (*scan != '\0') {
-	fprintf(stderr, "bad argument \"%s\"\n", argv[i]);
-	usage(argv[0]);
-      }
-      options.debug += count;
-    }
-    else if (strcmp(argv[i], "-fb") == 0) {
-      // flags on buildings
-      options.flagsOnBuildings = true;
-    }
-    else if (strcmp(argv[i], "-f") == 0) {
-      // disallow given flag
-      if (++i == argc) {
-	fprintf(stderr, "argument expected for -f\n");
-	usage(argv[0]);
-      }
-      if (strcmp(argv[i], "bad") == 0) {
-	FlagSet badFlags = Flag::getBadFlags();
-	for (FlagSet::iterator it = badFlags.begin(); it != badFlags.end(); it++)
-	  options.flagDisallowed[*it] = true;
-      }
-      else {
-	FlagDesc* fDesc = Flag::getDescFromAbbreviation(argv[i]);
-	if (fDesc == Flags::Null) {
-	  fprintf(stderr, "invalid flag \"%s\"\n", argv[i]);
-	  usage(argv[0]);
-	}
-	options.flagDisallowed[fDesc] = true;
-      }
-    }
-    else if (strcmp(argv[i], "-helpmsg") == 0) {
-      if (i+2 >= argc) {
-	fprintf(stderr, "2 arguments expected for -helpmsg\n");
-	usage(argv[0]);
-      }
-      else {
-	i++;
-	if (!options.textChunker.parseFile(argv[i], argv[i+1])){
-	  fprintf(stderr,"couldn't read file %s\n",argv[i]);
-	  usage(argv[0]);
-	}
-	i++;
-      }
-    }
-    else if (strcmp(argv[i], "-g") == 0) {
-      options.oneGameOnly = true;
-    }
-    else if (strcmp(argv[i], "-h") == 0) {
-      options.randomHeights = true;
-    }
-    else if (strcmp(argv[i], "-help") == 0) {
-      extraUsage(argv[0]);
-    }
-    else if (strcmp(argv[i], "-i") == 0) {
-      // use a different interface
-      if (++i == argc) {
-	fprintf(stderr, "argument expected for -i\n");
-	usage(argv[0]);
-      }
-      options.pingInterface = argv[i];
-    }
-    else if (strcmp(argv[i], "-j") == 0) {
-      // allow jumping
-      options.gameStyle |= int(JumpingGameStyle);
-    }
-    else if (strcmp(argv[i], "-mo") == 0) {
-      // set maximum number of observers
-      if (++i == argc) {
-	fprintf(stderr, "argument expected for -mo\n");
-	usage(argv[0]);
-      }
-      options.maxObservers = atoi(argv[i]);
-      if (options.maxObservers < 0) {
-	printf("allowing 0 observers\n");
-	options.maxObservers=0;
-      }
-    }
-    else if (strcmp(argv[i], "-mp") == 0) {
-      // set maximum number of players
-      if (++i == argc) {
-	fprintf(stderr, "argument expected for -mp\n");
-	usage(argv[0]);
-      }
-      if (playerCountArg == 0)
-	playerCountArg = i;
-      else
-	playerCountArg2 = i;
-    }
-    else if (strcmp(argv[i], "-ms") == 0) {
-      // set maximum number of shots
-      if (++i == argc) {
-	fprintf(stderr, "argument expected for -ms\n");
-	usage(argv[0]);
-      }
-      int newMaxShots = atoi(argv[i]);
-      if (newMaxShots < 1) {
-	fprintf(stderr, "using minimum number of shots of 1\n");
-	options.maxShots = 1;
-      }
-      else if (newMaxShots > MaxShots) {
-	fprintf(stderr, "using maximum number of shots of %d\n", MaxShots);
-	options.maxShots = uint16_t(MaxShots);
-      }
-      else options.maxShots = uint16_t(newMaxShots);
-    }
-    else if (strcmp(argv[i], "-mps") == 0) {
-      // set maximum player score
-      if (++i == argc) {
-	fprintf(stderr, "argument expected for -mps\n");
-	usage(argv[0]);
-      }
-      options.maxPlayerScore = atoi(argv[i]);
-      if (options.maxPlayerScore < 1) {
-	fprintf(stderr, "disabling player score limit\n");
-	options.maxPlayerScore = 0;
-      }
-    }
-    else if (strcmp(argv[i], "-mts") == 0) {
-      // set maximum team score
-      if (++i == argc) {
-	fprintf(stderr, "argument expected for -mts\n");
-	usage(argv[0]);
-      }
-      options.maxTeamScore = atoi(argv[i]);
-      if (options.maxTeamScore < 1) {
-	fprintf(stderr, "disabling team score limit\n");
-	options.maxTeamScore = 0;
-      }
-    }
-    else if (strcmp(argv[i], "-p") == 0) {
-      // use a different port
-      if (++i == argc) {
-	fprintf(stderr, "argument expected for -p\n");
-	usage(argv[0]);
-      }
-      options.wksPort = atoi(argv[i]);
-      if (options.wksPort < 1 || options.wksPort > 65535)
-	options.wksPort = ServerPort;
-      else
-	options.useGivenPort = true;
-    }
-    else if (strcmp(argv[i], "-pf") == 0) {
-      // try wksPort first and if we can't open that port then
-      // let system assign a port for us.
-      options.useFallbackPort = true;
-    }
-#ifdef PRINTSCORE
-    else if (strcmp(argv[i], "-printscore") == 0) {
-      // dump score whenever it changes
-      options.printScore = true;
-    }
-#endif
-    else if (strcmp(argv[i], "-public") == 0) {
-      if (++i == argc) {
-	fprintf(stderr, "argument expected for -public\n");
-	usage(argv[0]);
-      }
-      options.publicizeServer = true;
-      options.publicizedTitle = argv[i];
-      if (strlen(options.publicizedTitle) > 127) {
-	argv[i][127] = '\0';
-	fprintf(stderr, "description too long... truncated\n");
-      }
-    }
-    else if (strcmp(argv[i], "-publicaddr") == 0) {
-      if (++i == argc) {
-	fprintf(stderr, "argument expected for -publicaddr\n");
-	usage(argv[0]);
-      }
-      options.publicizedAddress = argv[i];
-      options.publicizedAddressGiven = true;
-    }
-    else if (strcmp(argv[i], "-publiclist") == 0) {
-      if (++i == argc) {
-	fprintf(stderr, "argument expected for -publiclist\n");
-	usage(argv[0]);
-      }
-      options.listServerURL = argv[i];
-    }
-    else if (strcmp(argv[i], "-q") == 0) {
-      // don't handle pings
-      handlePings = false;
-    }
-    else if (strcmp(argv[i], "-r") == 0) {
-      // allow rogues
-      options.gameStyle |= int(RoguesGameStyle);
-    }
-    else if (strcmp(argv[i], "-rabbit") == 0) {
-      // rabbit chase style
-      options.gameStyle |= int(RabbitChaseGameStyle)|int(RoguesGameStyle);
-      if (options.gameStyle & int(TeamFlagGameStyle)) {
-	options.gameStyle &= ~int(TeamFlagGameStyle);
-	fprintf(stderr, "Rabbit Chase incompatible with Capture the flag\n");
-	fprintf(stderr, "Rabbit Chase assumed\n");
-      }
-
-    }
-    else if (strcmp(argv[i], "-reportfile") == 0) {
-      if (++i == argc) {
-	fprintf(stderr, "argument expected for -reportfile\n");
-	usage(argv[0]);
-      }
-      options.reportFile = argv[i];
-    }
-    else if (strcmp(argv[i], "-reportpipe") == 0) {
-      if (++i == argc) {
-	fprintf(stderr, "argument expected for -reportpipe\n");
-	usage(argv[0]);
-      }
-      options.reportPipe = argv[i];
-    }
-    else if (strcmp(argv[i], "-s") == 0) {
-      // allow up to given number of random flags
-      if (i+1 < argc && isdigit(argv[i+1][0])) {
-	++i;
-	if ((options.numExtraFlags = atoi(argv[i])) == 0)
-	  options.numExtraFlags = 16;
-      }
-      else {
-	options.numExtraFlags = 16;
-      }
-      allFlagsOut = false;
-    }
-    else if (strcmp(argv[i], "-sa") == 0) {
-      // insert antidote flags
-      options.gameStyle |= int(AntidoteGameStyle);
-    }
-    else if (strcmp(argv[i], "-st") == 0) {
-      // set shake timeout
-      if (++i == argc) {
-	fprintf(stderr, "argument expected for -st\n");
-	usage(argv[0]);
-      }
-      float timeout = (float)atof(argv[i]);
-      if (timeout < 0.1f) {
-	options.shakeTimeout = 1;
-	fprintf(stderr, "using minimum shake timeout of %f\n", 0.1f * (float)options.shakeTimeout);
-      }
-      else if (timeout > 300.0f) {
-	options.shakeTimeout = 3000;
-	fprintf(stderr, "using maximum shake timeout of %f\n", 0.1f * (float)options.shakeTimeout);
-      }
-      else {
-	options.shakeTimeout = uint16_t(timeout * 10.0f + 0.5f);
-      }
-      options.gameStyle |= int(ShakableGameStyle);
-    }
-    else if (strcmp(argv[i], "-sw") == 0) {
-      // set shake win count
-      if (++i == argc) {
-	fprintf(stderr, "argument expected for -sw\n");
-	usage(argv[0]);
-      }
-      int count = atoi(argv[i]);
-      if (count < 1) {
-	options.shakeWins = 1;
-	fprintf(stderr, "using minimum shake win count of %d\n", options.shakeWins);
-      }
-      else if (count > 20) {
-	options.shakeWins = 20;
-	fprintf(stderr, "using maximum ttl of %d\n", options.shakeWins);
-      }
-      else {
-	options.shakeWins = uint16_t(count);
-      }
-      options.gameStyle |= int(ShakableGameStyle);
-    }
-    else if (strcmp(argv[i], "-synctime") == 0) {
-      // client clocks should be synchronized to server clock
-      options.gameStyle |= int(TimeSyncGameStyle);
-    }
-    else if (strcmp(argv[i], "-t") == 0) {
-      // allow teleporters
-      options.useTeleporters = true;
-      if (options.worldFile != NULL)
-	fprintf(stderr, "-t is meaningless when using a custom world, ignoring\n");
-    }
-    else if (strcmp(argv[i], "-tftimeout") == 0) {
-      // use team flag timeout
-      if (++i == argc) {
-	fprintf(stderr, "argument expected for -tftimeout\n");
-	usage(argv[0]);
-      }
-      options.teamFlagTimeout = atoi(argv[i]);
-      if (options.teamFlagTimeout < 0)
-	options.teamFlagTimeout = 0;
-      fprintf(stderr, "using team flag timeout of %i seconds\n",
-	      options.teamFlagTimeout);
-    }
-#ifdef TIMELIMIT
-    else if (strcmp(argv[i], "-time") == 0) {
-      if (++i == argc) {
-	fprintf(stderr, "argument expected for -time\n");
-	usage(argv[0]);
-      }
-      options.timeLimit = (float)atof(argv[i]);
-      if (options.timeLimit <= 0.0f) {
-	options.timeLimit = 300.0f;
-      }
-      fprintf(stderr, "using time limit of %i seconds\n", (int)options.timeLimit);
-      options.timeElapsed = options.timeLimit;
-    }
-    else if (strcmp(argv[i], "-timemanual") == 0) {
-      options.timeManualStart = true;
-    }
-#endif
-    else if (strcmp(argv[i], "-tk") == 0) {
-      // team killer does not die
-      options.teamKillerDies = false;
-    }
-    else if (strcmp(argv[i], "-tkkr") == 0) {
-      if (++i == argc) {
-	fprintf(stderr, "argument expected for -tkkr");
-	usage(argv[0]);
-      }
-      options.teamKillerKickRatio = atoi(argv[i]);
-      if (options.teamKillerKickRatio < 0) {
-	 options.teamKillerKickRatio = 0;
-	 fprintf(stderr, "disabling team killer kick ratio");
-      }
-    }
-    else if (strcmp(argv[i], "-ttl") == 0) {
-      // use a different ttl
-      if (++i == argc) {
-	fprintf(stderr, "argument expected for -ttl\n");
-	usage(argv[0]);
-      }
-      options.pingTTL = atoi(argv[i]);
-      if (options.pingTTL < 0) {
-	options.pingTTL = 0;
-	fprintf(stderr, "using minimum ttl of %i\n", options.pingTTL);
-      }
-      else if (options.pingTTL > MaximumTTL) {
-	options.pingTTL = MaximumTTL;
-	fprintf(stderr, "using maximum ttl of %i\n", options.pingTTL);
-      }
-    }
-    else if (strcmp(argv[i], "-v") == 0 || strcmp(argv[i], "-version") == 0) {
-      printVersion();
-      exit(0);
-    }
-    else if (strcmp(argv[i], "-vars") == 0) {
-      if (++i == argc) {
-	fprintf(stderr, "argument expected for \"%s\"\n", argv[i]);
-	usage(argv[0]);
-      }
-      options.bzdbVars = argv[i];
-    }
-    else if (strcmp(argv[i], "-passwd") == 0 || strcmp(argv[i], "-password") == 0) {
-      if (++i == argc) {
-	fprintf(stderr, "argument expected for \"%s\"\n", argv[i]);
-	usage(argv[0]);
-      }
-      // at least put password someplace that ps won't see
-      options.password = (char *)malloc(strlen(argv[i]) + 1);
-      strcpy(options.password, argv[i]);
-      memset(argv[i], ' ', strlen(options.password));
-    }
-    else if (strcmp(argv[i], "-lagwarn") == 0) {
-      if (++i == argc) {
-	fprintf(stderr, "argument expected for \"%s\"\n", argv[i]);
-	usage(argv[0]);
-      }
-      options.lagwarnthresh = atoi(argv[i])/1000.0f;
-    }
-    else if (strcmp(argv[i], "-lagdrop") == 0) {
-      if (++i == argc) {
-	fprintf(stderr, "argument expected for \"%s\"\n", argv[i]);
-	usage(argv[0]);
-      }
-      options.maxlagwarn = atoi(argv[i]);
-    }
-    else if (strcmp(argv[i], "-maxidle") == 0) {
-      if (++i == argc) {
-	fprintf(stderr, "argument expected for \"%s\"\n", argv[i]);
-	usage(argv[0]);
-      }
-      options.idlekickthresh = (float) atoi(argv[i]);
-    }
-	else if (strcmp(argv[i], "-worldsize") == 0) {
-      if (++i == argc) {
-	fprintf(stderr, "argument expected for \"%s\"\n", argv[i]);
-	usage(argv[0]);
-      }
-      WorldSize = (float) atof(argv[i]);
-      fprintf(stderr, "using world size of \"%f\"\n", WorldSize);
-    }
-    else if (strcmp(argv[i], "-speedtol") == 0) {
-      if (++i == argc) {
-	fprintf(stderr, "argument expected for \"%s\"\n", argv[i]);
-	usage(argv[0]);
-      }
-      speedTolerance = (float) atof(argv[i]);
-      fprintf(stderr, "using speed autokick tolerance of \"%f\"\n", speedTolerance);
-    } else if (strcmp(argv[i], "-passdb") == 0) {
-      if (++i == argc) {
-	fprintf(stderr, "argument expected for \"%s\"\n", argv[i]);
-	usage(argv[0]);
-      }
-      passFile = argv[i];
-      fprintf(stderr, "using password file  \"%s\"\n", argv[i]);
-    } else if (strcmp(argv[i], "-groupdb") == 0) {
-      if (++i == argc) {
-	fprintf(stderr, "argument expected for \"%s\"\n", argv[i]);
-	usage(argv[0]);
-      }
-      groupsFile = argv[i];
-      fprintf(stderr, "using group file  \"%s\"\n", argv[i]);
-    } else if (strcmp(argv[i], "-userdb") == 0) {
-      if (++i == argc) {
-	fprintf(stderr, "argument expected for \"%s\"\n", argv[i]);
-	usage(argv[0]);
-      }
-      userDatabaseFile = argv[i];
-      fprintf(stderr, "using userDB file  \"%s\"\n", argv[i]);
-    } else {
-      fprintf(stderr, "bad argument \"%s\"\n", argv[i]);
-      usage(argv[0]);
-    }
-  }
-
-  if (options.flagsOnBuildings && !(options.gameStyle & JumpingGameStyle)) {
-    fprintf(stderr, "flags on boxes requires jumping\n");
-    usage(argv[0]);
-  }
-
-  // get player counts.  done after other arguments because we need
-  // to ignore counts for rogues if rogues aren't allowed.
-  if (playerCountArg > 0 && (!parsePlayerCount(argv[playerCountArg], options) ||
-      playerCountArg2 > 0 && !parsePlayerCount(argv[playerCountArg2], options)))
-    usage(argv[0]);
-
-  // first disallow flags inconsistent with game style
-  if (options.gameStyle & InertiaGameStyle) {
-    options.flagCount[Flags::Momentum] = 0;
-    options.flagDisallowed[Flags::Momentum] = true;
-  }
-  if (options.gameStyle & JumpingGameStyle) {
-    options.flagCount[Flags::Jumping] = 0;
-    options.flagDisallowed[Flags::Jumping] = true;
-  }
-  if (options.gameStyle & RicochetGameStyle) {
-    options.flagCount[Flags::Ricochet] = 0;
-    options.flagDisallowed[Flags::Ricochet] = true;
-  }
-  if (!options.useTeleporters && !options.worldFile) {
-    options.flagCount[Flags::PhantomZone] = 0;
-    options.flagDisallowed[Flags::PhantomZone] = true;
-  }
-  bool hasTeam = false;
-  for (int p = RedTeam; p <= PurpleTeam; p++) {
-    if (options.maxTeam[p] > 1) {
-	hasTeam = true;
-	break;
-    }
-  }
-  if (!hasTeam) {
-    options.flagCount[Flags::Genocide] = 0;
-    options.flagDisallowed[Flags::Genocide] = true;
-    options.flagCount[Flags::Colorblindness] = 0;
-    options.flagDisallowed[Flags::Colorblindness] = true;
-    options.flagCount[Flags::Masquerade] = 0;
-    options.flagDisallowed[Flags::Masquerade] = true;
-  }
-
-  if (options.gameStyle & int(RabbitChaseGameStyle)) {
-      for (int i = 0; i < NumTeams; i++)
-	      options.maxTeam[i] = 0;
-      options.maxTeam[RogueTeam] = maxPlayers;
-  }
-
-  options.maxTeam[ObserverTeam] = options.maxObservers;
-
-  // make table of allowed extra flags
-  if (options.numExtraFlags > 0) {
-    // now count how many aren't disallowed
-    for (std::map<std::string,FlagDesc*>::iterator it = FlagDesc::getFlagMap().begin(); it != FlagDesc::getFlagMap().end(); ++it)
-      if (!options.flagDisallowed[it->second])
-	options.numAllowedFlags++;
-
-    // if none allowed then no extra flags either
-    if (options.numAllowedFlags == 0) {
-      options.numExtraFlags = 0;
-    }
-
-    // otherwise make table of allowed flags
-    else {
-      allowedFlags.clear();
-      for (std::map<std::string,FlagDesc*>::iterator it = FlagDesc::getFlagMap().begin(); it != FlagDesc::getFlagMap().end(); ++it) {
-	FlagDesc *fDesc = it->second;
-	if ((fDesc == Flags::Null) || (fDesc->flagTeam != ::NoTeam))
-	  continue;
-	if (!options.flagDisallowed[it->second])
-	  allowedFlags.push_back(it->second);
-      }
-    }
-  }
-
-  // allocate space for flags
-  numFlags = options.numExtraFlags;
-  // rogues don't get a flag
-  if (options.gameStyle & TeamFlagGameStyle)
-    numFlags += NumTeams - 1;
-  for (std::map<std::string, FlagDesc*>::iterator it = FlagDesc::getFlagMap().begin(); 
-       it != FlagDesc::getFlagMap().end(); ++it) {
-    numFlags += options.flagCount[it->second];
-  }
-
-  flag = new FlagInfo[numFlags];
-
-  // prep flags
-  for (i = 0; i < numFlags; i++) {
-    flag[i].flag.desc = Flags::Null;
-    flag[i].flag.status = FlagNoExist;
-    flag[i].flag.type = FlagNormal;
-    flag[i].flag.owner = 0;
-    flag[i].flag.position[0] = 0.0f;
-    flag[i].flag.position[1] = 0.0f;
-    flag[i].flag.position[2] = 0.0f;
-    flag[i].flag.launchPosition[0] = 0.0f;
-    flag[i].flag.launchPosition[1] = 0.0f;
-    flag[i].flag.launchPosition[2] = 0.0f;
-    flag[i].flag.landingPosition[0] = 0.0f;
-    flag[i].flag.landingPosition[1] = 0.0f;
-    flag[i].flag.landingPosition[2] = 0.0f;
-    flag[i].flag.flightTime = 0.0f;
-    flag[i].flag.flightEnd = 0.0f;
-    flag[i].flag.initialVelocity = 0.0f;
-    flag[i].player = -1;
-    flag[i].grabs = 0;
-    flag[i].required = false;
-  }
-  f = 0;
-  if (options.gameStyle & TeamFlagGameStyle) {
-    flag[0].required = true;
-    flag[0].flag.desc = Flags::RedTeam;
-    flag[0].flag.type = FlagNormal;
-    flag[1].required = true;
-    flag[1].flag.desc = Flags::RedTeam;
-    flag[1].flag.type = FlagNormal;
-    flag[2].required = true;
-    flag[2].flag.desc = Flags::BlueTeam;
-    flag[2].flag.type = FlagNormal;
-    flag[3].required = true;
-    flag[3].flag.desc = Flags::PurpleTeam;
-    flag[3].flag.type = FlagNormal;
-    f = 4;
-  }
-
-
-  for (std::map<std::string, FlagDesc*>::iterator it2 = FlagDesc::getFlagMap().begin(); it2 != FlagDesc::getFlagMap().end(); ++it2) {
-    FlagDesc *fDesc = it2->second;
-
-    if ((fDesc != Flags::Null) && (fDesc->flagTeam == NoTeam)) {
-      if (options.flagCount[it2->second] > 0) {
-	  for (int j = 0; j < options.flagCount[it2->second]; j++) {
-		  if (setRequiredFlag(flag[f], it2->second))
-			f++;
-	  }
-	  options.gameStyle |= int(SuperFlagGameStyle);
-      }
-    }
-  }
-  for (; f < numFlags; f++) {
-    flag[f].required = allFlagsOut;
-    options.gameStyle |= int(SuperFlagGameStyle);
-  }
-
-  // debugging
-  if (options.debug >= 1) {
-    // print style
-    fprintf(stderr, "style: %x\n", options.gameStyle);
-    if (options.gameStyle & int(TeamFlagGameStyle))
-      fprintf(stderr, "  capture the flag\n");
-    if (options.gameStyle & int(RabbitChaseGameStyle))
-      fprintf(stderr, "  rabbit chase\n");
-    if (options.gameStyle & int(SuperFlagGameStyle))
-      fprintf(stderr, "  super flags allowed\n");
-    if (options.gameStyle & int(RoguesGameStyle))
-      fprintf(stderr, "  rogues allowed\n");
-    if (options.gameStyle & int(JumpingGameStyle))
-      fprintf(stderr, "  jumping allowed\n");
-    if (options.gameStyle & int(InertiaGameStyle))
-      fprintf(stderr, "  inertia: %f, %f\n", options.linearAcceleration, options.angularAcceleration);
-    if (options.gameStyle & int(RicochetGameStyle))
-      fprintf(stderr, "  all shots ricochet\n");
-    if (options.gameStyle & int(ShakableGameStyle))
-      fprintf(stderr, "  shakable bad flags: timeout=%f, wins=%i\n",
-	  0.1f * float(options.shakeTimeout), options.shakeWins);
-    if (options.gameStyle & int(AntidoteGameStyle))
-      fprintf(stderr, "  antidote flags\n");
-  }
-}
-
+/** main parses command line options and then enters an event and activity
+ * dependant main loop.  once inside the main loop, the server is up and
+ * running and should be ready to process connections and activity.
+ */
 int main(int argc, char **argv)
 {
   setvbuf(stdout, (char *)NULL, _IOLBF, 0);
@@ -6447,6 +5546,7 @@ int main(int argc, char **argv)
     CFGMGR->read(clOptions->bzdbVars);
   }
 
+  
   /* load the bad word filter if it was set */
   if (clOptions->filterFilename.length() != 0) {
     if (clOptions->filterChat || clOptions->filterCallsigns) {
@@ -6463,6 +5563,7 @@ int main(int argc, char **argv)
     }
   }
 
+  
   if (clOptions->pingInterface)
     serverAddress = Address::getHostAddress(clOptions->pingInterface);
 // TimR use 0.0.0.0 by default, multicast will need to have a -i specified for now.
@@ -6536,7 +5637,14 @@ int main(int argc, char **argv)
     info.explicitAllows[idleStats] = true;
     info.explicitAllows[lagStats] = true;
     info.explicitAllows[flagHistory] = true;
-   groupAccess["DEFAULT"] = info;
+    groupAccess["DEFAULT"] = info;
+  }
+  itr = groupAccess.find("REGISTERED");
+  if (itr == groupAccess.end()) {
+    PlayerAccessInfo info;
+    info.explicitAllows[vote] = true;
+    info.explicitAllows[poll] = true;
+    groupAccess["REGISTERED"] = info;
   }
   itr = groupAccess.find("ADMIN");
   if (itr == groupAccess.end()) {
@@ -6550,6 +5658,8 @@ int main(int argc, char **argv)
   if (userDatabaseFile.size())
     readPermsFile(userDatabaseFile);
 
+
+  /* MAIN SERVER RUN LOOP */
   int i;
   while (!done) {
     // prepare select set
@@ -6658,6 +5768,24 @@ int main(int argc, char **argv)
       }
     }
 
+    // manage voting poll for collective kicks/bans
+//    if (clOptions->voteWindow > 0) {
+    if (0) {
+      static int counter = 0;
+      static TimeKeeper lastTick = TimeKeeper::getCurrent();
+      // every few seconds, check for an update
+      if (TimeKeeper::getCurrent() - lastTick > 5) {
+	char message[256];
+	memset(message, 0, 256);
+	sprintf(message, "DEBUG: Checking voting polls (%d ticks; %f ticks/s)", counter, (float)counter / (float)5.0);
+	sendMessage(ServerPlayer, AllPlayers, message, true);
+	counter=0;
+	// 	votingPoll->update();
+	lastTick = TimeKeeper::getCurrent();
+      }
+      counter++;
+    }
+    
     // periodic advertising broadcast
     static const std::vector<std::string>* adLines = clOptions->textChunker.getTextChunk("admsg");
     if (clOptions->advertisemsg || adLines != NULL) {
@@ -6690,6 +5818,7 @@ int main(int argc, char **argv)
       }
     }
 
+    // see if there is a poll
 
     // if any flags were in the air, see if they've landed
     if (numFlagsInAir > 0) {
