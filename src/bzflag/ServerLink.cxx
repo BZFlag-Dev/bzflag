@@ -336,7 +336,7 @@ int			ServerLink::read(uint16_t& code, uint16_t& len,
       void* buf = ubuf;
       buf = nboUnpackUShort(buf, len);
       buf = nboUnpackUShort(buf, code);
-      UDEBUG("<** UDP Packet Code %x Len %x / %x\n",code, sub_length, len);
+      UDEBUG("<** UDP Packet Code %x Len %x\n",code, len);
       memcpy((char *)msg,(char *)buf, len);
       return 1;
     }
