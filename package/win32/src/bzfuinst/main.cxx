@@ -3,7 +3,7 @@
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
- * named LICENSE that should have accompanied this file.
+ * named COPYING that should have accompanied this file.
  *
  * THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
@@ -40,7 +40,7 @@ RMVALUE, "HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\bzflag"
 RMVALUE, "HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\bzflag", "DisplayName",
 RMKEY,   "HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall", "bzflag",
 RMFILE,  "%i\\doc\\README.HTM", "",
-RMFILE,  "%i\\doc\\LICENSE", "",
+RMFILE,  "%i\\doc\\COPYING", "",
 RMDIR,   "%i\\doc", "",
 RMFILE,  "%i\\data\\bbolt.rgb", "",
 RMFILE,  "%i\\data\\blaser.rgb", "",

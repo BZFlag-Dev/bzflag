@@ -2,7 +2,7 @@ f 755 demos demos usr/freeware/bin/bzflag ./src/bzflag/bzflag EOE exitop("tag 0x
 f 755 demos demos usr/freeware/bin/bzfls ./src/bzfls/bzfls EOE
 f 755 demos demos usr/freeware/bin/bzfrelay ./src/bzfrelay/bzfrelay EOE
 f 755 demos demos usr/freeware/bin/bzfs ./src/bzfs/bzfs EOE exitop("tag 0x00fc8002 /usr/freeware/bin/bzfs; iconbookedit -add 'Category:File Name:/usr/local/bin/bzfs' -syspage Demos")
-f 444 demos demos usr/freeware/share/bzflag/LICENSE ./LICENSE REQDATA
+f 444 demos demos usr/freeware/share/bzflag/COPYING ./COPYING REQDATA
 f 444 demos demos usr/freeware/share/bzflag/bbolt.rgb ./data/bbolt.rgb TEXTURES
 f 444 demos demos usr/freeware/share/bzflag/blaser.rgb ./data/blaser.rgb TEXTURES
 f 444 demos demos usr/freeware/share/bzflag/boom.wav ./data/boom.wav SOUNDS

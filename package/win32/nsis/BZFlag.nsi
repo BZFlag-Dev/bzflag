@@ -25,7 +25,7 @@ InstallDir $PROGRAMFILES\BZFlag${VER_MAJOR}${VER_MINOR}
 
 ; Show the lisense
 LicenseText "Please read our following license before installing:"
-LicenseData ..\..\..\LICENSE
+LicenseData ..\..\..\COPYING
 
 ; Registry key to check for directory (so if you install again, it will 
 ; overwrite the old one automatically)

@@ -54,7 +54,7 @@
 -file ../../data/teleport.wav teleport.wav
 -popdir
 -pushdir doc
--file ../../LICENSE LICENSE
+-file ../../COPYING COPYING
 -file README.win32.html README.HTM
 -readme README.HTM
 -popdir

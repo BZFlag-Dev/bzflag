@@ -312,7 +312,7 @@ BZFlag 1.7d release 5
 BZFlag 1.7d release 4
 ---------------------
 
-* changed LICENSE to the GNU GPL version 2
+* changed COPYING to the GNU GPL version 2
 * server can now register itself with multiple list servers
 * client can now check multiple list servers at once
 * bzfls can now dump server list to a file (using USR1)
