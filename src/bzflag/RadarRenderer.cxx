@@ -136,9 +136,8 @@ void RadarRenderer::drawTank(const float pos[3], const Player* player)
     if (useTankModels) {
       drawFancyTank(player);
     } else {
-      const float halfWidth = 0.5f * BZDBCache::tankWidth;
-      const float halfLength = 0.5f * BZDBCache::tankLength;
-      glRectf(-halfLength, -halfWidth, +halfLength, +halfWidth);
+      const float* dims = player->getDimensions();
+      glRectf(-dims[0], -dims[1], +dims[0], +dims[1]);
     }
     glPopMatrix();
 
