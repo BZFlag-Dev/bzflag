@@ -420,6 +420,8 @@ you've been killed;  this is generally unproductive.  It also might be easy to
 cheat by never sending MsgKilled, making you almost immortal.  Don't do this.
 Note that the server ignores the victim id and inserts the sending player id.
 
+If a player's team flag is captured, flag id is set to the team flag.
+
 Sent by the server when a player is killed by itself or another player. The
 victim id is the player that was destroyed and the killer id is the player
 credited with the kill.  Shot id identifies which of the killer's shots hit the
