@@ -1,4 +1,5 @@
 EXTRA_DIST = \
+	Agility.xml \
 	Blindness.xml \
 	BlueTeam.xml \
 	Burrow.xml \
