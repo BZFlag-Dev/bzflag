@@ -22,7 +22,7 @@
 #include <stdio.h>
 
 // Might we be BSDish? sys/param.h has BSD defined if so
-#if (defined(__unix__) || defined(unix)) && !defined(USG)
+#if (defined(__unix__) || defined(unix) || defined(_MACOSX_)) && !defined(USG)
 #include <sys/param.h>
 #endif
 
@@ -33,12 +33,6 @@
 
 #include <assert.h>
 #include <stddef.h>
-
-#if defined(_MACOSX_)
-	#include <CoreServices/CoreServices.h>
-        #undef TCP_NODELAY
-        #undef TCP_MAXSEG
-#endif
 
 // some platforms don't have float versions of the math library
 #if defined(_old_linux_) || defined(_MACOSX_) || defined(sun)
@@ -71,7 +65,7 @@
 #endif
 #include <sys/types.h>
 
-#if defined(__linux) || defined(_MACOSX_) || (defined(__sgi) && !defined(__INTTYPES_MAJOR))
+#if defined(__linux) || (defined(__sgi) && !defined(__INTTYPES_MAJOR))
 typedef u_int16_t	uint16_t;
 typedef u_int32_t	uint32_t;
 #endif
