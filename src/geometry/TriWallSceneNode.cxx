@@ -223,8 +223,8 @@ bool			TriWallSceneNode::cull(const ViewFrustum& frustum) const
 {
   // cull if eye is behind (or on) plane
   const GLfloat* eye = frustum.getEye();
-  const GLfloat* plane = getPlane();
-  if (eye[0]*plane[0] + eye[1]*plane[1] + eye[2]*plane[2] + plane[3] <= 0.0f) {
+  if (((eye[0] * plane[0]) + (eye[1] * plane[1]) + (eye[2] * plane[2]) +
+       plane[3]) <= 0.0f) {
     return true;
   }
 
@@ -244,11 +244,11 @@ bool			TriWallSceneNode::cull(const ViewFrustum& frustum) const
 }
 
 
-int			TriWallSceneNode::split(const float* plane,
+int			TriWallSceneNode::split(const float* _plane,
 				SceneNode*& front, SceneNode*& back) const
 {
-  return WallSceneNode::splitWall(plane,
-				nodes[0]->vertex, nodes[0]->uv, front, back);
+  return WallSceneNode::splitWall(_plane, nodes[0]->vertex, nodes[0]->uv,
+                                  front, back);
 }
 
 

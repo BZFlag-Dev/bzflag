@@ -178,10 +178,10 @@ PolyWallSceneNode::~PolyWallSceneNode()
   delete shadowNode;
 }
 
-int			PolyWallSceneNode::split(const float* plane,
+int			PolyWallSceneNode::split(const float* _plane,
 				SceneNode*& front, SceneNode*& back) const
 {
-  return WallSceneNode::splitWall(plane, node->vertex, node->uv, front, back);
+  return WallSceneNode::splitWall(_plane, node->vertex, node->uv, front, back);
 }
 
 void			PolyWallSceneNode::addRenderNodes(

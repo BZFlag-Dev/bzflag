@@ -121,7 +121,7 @@ void MeshPolySceneNode::Geometry::drawVTN() const
 // MeshPolySceneNode
 //
 
-MeshPolySceneNode::MeshPolySceneNode(const float plane[4],
+MeshPolySceneNode::MeshPolySceneNode(const float _plane[4],
                                      const GLfloat3Array& vertices,
 				     const GLfloat3Array& normals,
                                      const GLfloat2Array& texcoords)
@@ -131,7 +131,7 @@ MeshPolySceneNode::MeshPolySceneNode(const float plane[4],
   assert(texcoords.getSize() == count);
   assert((normals.getSize() == 0) || (normals.getSize() == count));
 
-  setPlane(plane);
+  setPlane(_plane);
 
   // choose axis to ignore (the one with the largest normal component)
   int ignoreAxis;
@@ -234,8 +234,8 @@ bool MeshPolySceneNode::cull(const ViewFrustum& frustum) const
 {
   // cull if eye is behind (or on) plane
   const GLfloat* eye = frustum.getEye();
-  const GLfloat* plane = getPlane();
-  if (eye[0]*plane[0] + eye[1]*plane[1] + eye[2]*plane[2] + plane[3] <= 0.0f) {
+  if (((eye[0] * plane[0]) + (eye[1] * plane[1]) + (eye[2] * plane[2]) +
+       plane[3]) <= 0.0f) {
     return true;
   }
 

@@ -59,8 +59,9 @@ void			WallSceneNode::setNumLODs(int num, float* areas)
 void			WallSceneNode::setPlane(const GLfloat _plane[4])
 {
   // get normalization factor
-  const float n = 1.0f / sqrtf(_plane[0] * _plane[0] +
-				_plane[1] * _plane[1] + _plane[2] * _plane[2]);
+  const float n = 1.0f / sqrtf((_plane[0] * _plane[0]) +
+				               (_plane[1] * _plane[1]) +
+				               (_plane[2] * _plane[2]));
 
   // store normalized plane equation
   plane[0] = n * _plane[0];
@@ -73,8 +74,10 @@ bool			WallSceneNode::cull(const ViewFrustum& frustum) const
 {
   // cull if eye is behind (or on) plane
   const GLfloat* eye = frustum.getEye();
-  if (eye[0]*plane[0] + eye[1]*plane[1] + eye[2]*plane[2] + plane[3] <= 0.0f)
+  if (((eye[0] * plane[0]) + (eye[1] * plane[1]) + (eye[2] * plane[2]) +
+       plane[3]) <= 0.0f) {
     return true;
+  }
 
   // if the Visibility culler tells us that we're
   // fully visible, then skip the rest of these tests
