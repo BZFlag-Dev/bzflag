@@ -56,6 +56,7 @@ bzfs \- BZFlag game server
 [\fB\-p \fIport\fR]
 [\fB\-passdb \fIfile\fR]
 [\fB\-passwd \fIpassword\fR]
+[\fB\-pidfile \fIfilename\fR]
 [\fB\-printscore\fR]
 [\fB\-public \fIdescription\fR]
 [\fB\-publicaddr \fIaddress\fR[\fI:port\fR]]
@@ -286,6 +287,10 @@ Load passwords from file
 \fB-passwd \fIpassword\fR
 Specify a server administrator password for use in remote administration
 such as /kick messages.
+.TP
+\fB-pidfile \fIfilename\fR
+Specify a file where the server will write its process ID so it may be used for
+remote administration.
 .TP
 .B -printscore
 Write score to stdout whenever it changes

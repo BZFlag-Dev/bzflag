@@ -29,6 +29,14 @@
  * away */
 #include <vector>
 
+// for -pidfile option
+#ifdef _WIN32
+#include <process.h>
+#else
+#include <sys/types.h>
+#include <unistd.h>
+#endif
+
 // implementation-specific bzfs-specific headers
 #include "RecordReplay.h"
 #include "bzfs.h"
@@ -90,6 +98,7 @@ const char *usageString =
 "[-p <port>] "
 "[-passdb <password file>] "
 "[-passwd <password>] "
+"[-pidfile <filename>] "
 "[-poll <variable>=<value>]"
 #ifdef PRINTSCORE
 "[-printscore] "
@@ -178,6 +187,7 @@ const char *extraUsageString =
 "\t-p: use alternative port (default is 5154)\n"
 "\t-passdb: file to read for user passwords\n"
 "\t-passwd: specify a <password> for operator commands\n"
+"\t-pidfile: write the process id into <filename> on startup\n"
 "\t-poll: configure several aspects of the in-game polling system\n"
 #ifdef PRINTSCORE
 "\t-printscore: write score to stdout whenever it changes\n"
@@ -796,7 +806,19 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       // at least put password someplace that ps won't see
       options.password = argv[i];
       memset(argv[i], ' ', options.password.size());
-    } else if (strcmp(argv[i], "-pf") == 0) {
+    } else if (strcmp(argv[i], "-pidfile") == 0) {
+      unsigned int pid = 0;
+      FILE *fp = fopen(argv[i], "wt");
+#ifndef _WIN32
+      pid = getpid();
+#else
+      pid = _getpid();
+#endif
+      if (fp) {
+	fprintf(fp, "%d", pid);
+	fclose(fp);
+      }
+    }  else if (strcmp(argv[i], "-pf") == 0) {
       // try wksPort first and if we can't open that port then
       // let system assign a port for us.
       options.useFallbackPort = true;
