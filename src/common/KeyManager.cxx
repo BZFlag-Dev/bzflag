@@ -182,7 +182,6 @@ void			KeyManager::unbindCommand(const char* command)
 		{
 			unbind(index->first, true);
 			index = releaseEventToCommand.erase(index);
-
 		}
 		else
 			index++;
