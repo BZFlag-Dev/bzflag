@@ -4201,6 +4201,7 @@ JoinMenu::JoinMenu() : oldErrorCallback(NULL),
   teams.push_back(std::string(Team::getName(GreenTeam)));
   teams.push_back(std::string(Team::getName(BlueTeam)));
   teams.push_back(std::string(Team::getName(PurpleTeam)));
+  teams.push_back(std::string(Team::getName(ObserverTeam)));
   team->update();
   team->setIndex((int)info->team);
   list.push_back(team);

@@ -302,7 +302,6 @@ struct PlayerInfo {
     bool toBeKicked;
 
     bool Admin;
-    bool Observer;
 
     // lag measurement
     float lagavg,lagalpha;
@@ -2805,8 +2804,6 @@ static void addPlayer(int playerIndex)
     player[playerIndex].team = NoTeam;
   }
 
-  // use '@' as first letter of callsign to become observer
-  player[playerIndex].Observer = player[playerIndex].callSign[0] == '@';
   TeamColor t = player[playerIndex].team;
 
   int numplayers=0;
@@ -2818,54 +2815,45 @@ static void addPlayer(int playerIndex)
   int numobservers = 0;
   for (i=0;i<curMaxPlayers;i++) {
     if (i != playerIndex && player[i].state > PlayerInLimbo &&
-	player[i].Observer)
+	player[i].team == ObserverTeam)
       numobservers++;
   }
 
   // reject player if asks for bogus team or rogue and rogues aren't allowed
   // or if the team is full.
-  if ((t == NoTeam && (player[playerIndex].type == TankPlayer ||
-      player[playerIndex].type == ComputerPlayer)) ||
-      (t == RogueTeam && !(clOptions->gameStyle & RoguesGameStyle)) ||
-      (!player[playerIndex].Observer &&
-       (team[int(t)].team.activeSize >= clOptions->maxTeam[int(t)] ||
-	numplayers >= softmaxPlayers)) ||
-      (player[playerIndex].Observer && numobservers >= clOptions->maxObservers)) {
-    uint16_t code = RejectBadRequest;
-    if (player[playerIndex].type != TankPlayer &&
-	player[playerIndex].type != ComputerPlayer)
-      code = RejectBadType;
-    else if (t == NoTeam)
-      code = RejectBadTeam;
-    else if (t == RogueTeam && !(clOptions->gameStyle & RoguesGameStyle))
-      code = RejectNoRogues;
-    else if (!player[playerIndex].Observer && numplayers >= softmaxPlayers ||
-	     player[playerIndex].Observer && numobservers >= clOptions->maxObservers)
-      code = RejectServerFull;
-    else if (team[int(t)].team.activeSize >= clOptions->maxTeam[int(t)]) {
-      // if team is full then check if server is full
-      code = RejectServerFull;
-      for (int i = RogueTeam; i < NumTeams; i++)
-	if (team[i].team.activeSize < clOptions->maxTeam[i]) {
-	  code = RejectTeamFull;
-	  break;
-	}
-    }
 
-    void *buf, *bufStart = getDirectMessageBuffer();
-    buf = nboPackUShort(bufStart, code);
-    directMessage(playerIndex, MsgReject, (char*)buf-(char*)bufStart, bufStart);
-    return;
-  }
+   uint16_t code = RejectBadRequest;
+   if (player[playerIndex].type != TankPlayer &&
+       player[playerIndex].type != ComputerPlayer)
+       code = RejectBadType;
+   else if (t == NoTeam)
+       code = RejectBadTeam;
+   else if (t == RogueTeam && !(clOptions->gameStyle & RoguesGameStyle))
+       code = RejectNoRogues;
+   else if (t != ObserverTeam && numplayers >= softmaxPlayers ||
+           (t == ObserverTeam) && numobservers >= clOptions->maxObservers)
+       code = RejectServerFull;
+   else if (team[int(t)].team.activeSize >= clOptions->maxTeam[int(t)]) {
+   // if team is full then check if server is full
+       code = RejectServerFull;
+       for (int i = RogueTeam; i < NumTeams; i++)
+       if (team[i].team.activeSize < clOptions->maxTeam[i]) {
+           code = RejectTeamFull;
+           break;
+       }
+   }
+
+   if (code != RejectBadRequest) {
+     void *buf, *bufStart = getDirectMessageBuffer();
+     buf = nboPackUShort(bufStart, code);
+     directMessage(playerIndex, MsgReject, (char*)buf-(char*)bufStart, bufStart);
+     return;
+   }
+
 
   player[playerIndex].toBeKicked = false;
   player[playerIndex].Admin = false;
   player[playerIndex].passwordAttempts = 0;
-
-  if (player[playerIndex].Observer)
-    player[playerIndex].regName = &player[playerIndex].callSign[1];
-  else
-    player[playerIndex].regName = player[playerIndex].callSign;
 
   makeupper(player[playerIndex].regName);
 
@@ -2922,7 +2910,7 @@ static void addPlayer(int playerIndex)
   // add team's flag and reset it's score
   bool resetTeamFlag = false;
   int teamIndex = int(player[playerIndex].team);
-  if ((!player[playerIndex].Observer && player[playerIndex].type == TankPlayer ||
+  if ((player[playerIndex].team != ObserverTeam && player[playerIndex].type == TankPlayer ||
 	player[playerIndex].type == ComputerPlayer) &&
 	++team[teamIndex].team.activeSize == 1) {
     team[teamIndex].team.won = 0;
@@ -2969,7 +2957,7 @@ static void addPlayer(int playerIndex)
 
   // if there is no rabbit yet we will become rabbit
   if (rabbitIndex == NoPlayer && (clOptions->gameStyle & int(RabbitChaseGameStyle)) &&
-       !player[playerIndex].Observer) {
+       player[playerIndex].team != ObserverTeam) {
     rabbitIndex = playerIndex;
     player[playerIndex].team = RabbitTeam;
   }
@@ -3041,7 +3029,7 @@ static void addPlayer(int playerIndex)
     }
   }
 
-  if (player[playerIndex].Observer)
+  if (player[playerIndex].team == ObserverTeam)
     sendMessage(ServerPlayer, playerIndex, "You are in observer mode.");
 #endif
 
@@ -3200,7 +3188,7 @@ static void anointNewRabbit()
   rabbitIndex = NoPlayer;
 
   for (i = 0; i < curMaxPlayers; i++) {
-    if (i != oldRabbit && player[i].state == PlayerAlive) {
+    if (i != oldRabbit && player[i].state == PlayerAlive && player[i].team != ObserverTeam) {
       float ratio = (player[i].wins - player[i].losses) * player[i].wins;
       if (ratio > topRatio) {
 	topRatio = ratio;
@@ -3211,7 +3199,7 @@ static void anointNewRabbit()
   if (rabbitIndex == NoPlayer) {
     // nobody, or no other than old rabbit to choose from
     for (i = 0; i < curMaxPlayers; i++) {
-      if (player[i].state > PlayerInLimbo && !player[i].Observer) {
+      if (player[i].state > PlayerInLimbo && player[i].team != ObserverTeam) {
 	float ratio = (player[i].wins - player[i].losses) * player[i].wins;
 	if (ratio > topRatio) {
 	  topRatio = ratio;
@@ -3341,7 +3329,7 @@ static void removePlayer(int playerIndex, char *reason, bool notify)
     // decrease team size
     int teamNum = int(player[playerIndex].team);
     --team[teamNum].team.size;
-    if (!player[playerIndex].Observer && player[playerIndex].type == TankPlayer ||
+    if (player[playerIndex].team != ObserverTeam && player[playerIndex].type == TankPlayer ||
 	player[playerIndex].type == ComputerPlayer)
       --team[teamNum].team.activeSize;
 
@@ -3481,7 +3469,7 @@ static void playerAlive(int playerIndex, const float *pos, const float *fwd)
   player[playerIndex].state = PlayerAlive;
   player[playerIndex].flag = -1;
 
-  if (player[playerIndex].Observer)
+  if (player[playerIndex].team == ObserverTeam)
     return;
 
   // send MsgAlive
@@ -3629,7 +3617,7 @@ static void playerKilled(int victimIndex, int killerIndex, int reason,
 static void grabFlag(int playerIndex, int flagIndex)
 {
   // player wants to take possession of flag
-  if (player[playerIndex].Observer ||
+  if (player[playerIndex].team == ObserverTeam ||
       player[playerIndex].state != PlayerAlive ||
       player[playerIndex].flag != -1 ||
       flag[flagIndex].flag.status != FlagOnGround)
@@ -3857,7 +3845,7 @@ static void shotFired(int playerIndex, void *buf, int len)
 {
   bool repack = false;
   const PlayerInfo &shooter = player[playerIndex];
-  if (shooter.Observer)
+  if (shooter.team == ObserverTeam)
     return;
   FiringInfo firingInfo;
   firingInfo.unpack(buf);
@@ -4239,7 +4227,7 @@ static void parseCommand(const char *message, int t)
   // /lagstats gives simple statistics about players' lags
   else if (hasPerm(t, lagStats) && strncmp(message+1, "lagstats",8) == 0) {
     for (int i = 0; i < curMaxPlayers; i++) {
-      if (player[i].state > PlayerInLimbo && !player[i].Observer) {
+      if (player[i].state > PlayerInLimbo && player[i].team != ObserverTeam) {
 	char reply[MessageLen];
 	sprintf(reply,"%-16s : %4dms (%d) %s", player[i].callSign,
 	    int(player[i].lagavg*1000), player[i].lagcount,
@@ -4254,7 +4242,7 @@ static void parseCommand(const char *message, int t)
   else if (hasPerm(t, idleStats) && strncmp(message+1, "idlestats",9) == 0) {
     TimeKeeper now=TimeKeeper::getCurrent();
     for (int i = 0; i < curMaxPlayers; i++) {
-      if (player[i].state > PlayerInLimbo && !player[i].Observer) {
+      if (player[i].state > PlayerInLimbo && player[i].team != ObserverTeam) {
 	char reply[MessageLen];
 	sprintf(reply,"%-16s : %4ds",player[i].callSign,
 		int(now-player[i].lastupdate));
@@ -4265,7 +4253,7 @@ static void parseCommand(const char *message, int t)
   // /flaghistory gives history of what flags player has carried
   else if (hasPerm(t, flagHistory) && strncmp(message+1, "flaghistory", 11 ) == 0) {
     for (int i = 0; i < curMaxPlayers; i++)
-      if (player[i].state > PlayerInLimbo && !player[i].Observer) {
+      if (player[i].state > PlayerInLimbo && player[i].team != ObserverTeam) {
 	char reply[MessageLen];
 	char flag[MessageLen];
 	sprintf(reply,"%-16s : ",player[i].callSign );
@@ -4823,7 +4811,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 
     // player declaring self destroyed
     case MsgKilled: {
-      if (player[t].Observer)
+      if (player[t].team == ObserverTeam)
 	break;
       // data: id of killer, shot id of killer
       PlayerId killer;
@@ -4869,7 +4857,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 
     // shot ended prematurely
     case MsgShotEnd: {
-      if (player[t].Observer)
+      if (player[t].team == ObserverTeam)
 	break;
       // data: shooter id, shot number, reason
       PlayerId sourcePlayer;
@@ -4884,7 +4872,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 
     // player teleported
     case MsgTeleport: {
-      if (player[t].Observer)
+      if (player[t].team == ObserverTeam)
 	break;
       uint16_t from, to;
       buf = nboUnpackUShort(buf, from);
@@ -5083,7 +5071,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
     case MsgGMUpdate:
     case MsgAudio:
     case MsgVideo:
-      if (player[t].Observer)
+      if (player[t].team == ObserverTeam)
 	break;
       if (player[t].multicastRelay)
 	relayPlayerPacket(t, len, rawbuf);
@@ -5288,7 +5276,7 @@ static bool parsePlayerCount(const char *argv, CmdLineOptions &options)
     // reset the counts
     int i;
     // no limits by default
-    for (i = 0; i < NumTeams; i++)
+    for (i = 0; i < CtfTeams; i++)
       options.maxTeam[i] = MaxPlayers;
 
     // now get the new counts
@@ -5296,7 +5284,7 @@ static bool parsePlayerCount(const char *argv, CmdLineOptions &options)
     // number of counts given
     int countCount = 0;
     scan = argv;
-    for (i = 0; i < NumTeams; i++) {
+    for (i = 0; i < CtfTeams; i++) {
       char *tail;
       long count = strtol(scan, &tail, 10);
       if (tail != scan) {
@@ -5316,12 +5304,12 @@ static bool parsePlayerCount(const char *argv, CmdLineOptions &options)
 
 
     // if all counts explicitly listed then add 'em up and set maxPlayers
-    if (countCount == NumTeams) {
+    if (countCount == CtfTeams) {
     // if num rogues allowed team > 0, then set Rogues game style
       if (options.maxTeam[RogueTeam] > 0)
 	clOptions->gameStyle |= int(RoguesGameStyle);
       softmaxPlayers = 0;
-      for (i = 0; i < NumTeams; i++)
+      for (i = 0; i < CtfTeams; i++)
 	softmaxPlayers += options.maxTeam[i];
     }
   }
@@ -6062,6 +6050,8 @@ static void parse(int argc, char **argv, CmdLineOptions &options)
       options.maxTeam[RogueTeam] = maxPlayers;
   }
 
+  options.maxTeam[ObserverTeam] = options.maxObservers;
+
   // make table of allowed extra flags
   if (options.numExtraFlags > 0) {
     // now count how many aren't disallowed
@@ -6447,7 +6437,7 @@ int main(int argc, char **argv)
     // kick idle players
     if (clOptions->idlekickthresh > 0) {
       for (int i=0;i<curMaxPlayers;i++) {
-	if (!player[i].Observer && player[i].state == PlayerDead &&
+	if (player[i].team != ObserverTeam && player[i].state == PlayerDead &&
 	    (tm - player[i].lastupdate >
 	      (tm - player[i].lastmsg < clOptions->idlekickthresh ?
 	       3 * clOptions->idlekickthresh : clOptions->idlekickthresh))) {

@@ -142,7 +142,6 @@ static float		testVideoFormatTimer = 0.0f;
 static int		testVideoPrevFormat = -1;
 static std::vector<PlayingCallbackItem>	playingCallbacks;
 bool			gameOver = false;
-static bool		Observer = false;
 static OpenGLTexture*	tankTexture = NULL;
 static std::vector<BillboardSceneNode*>	explosions;
 static std::vector<BillboardSceneNode*>	prototypeExplosions;
@@ -1811,7 +1810,7 @@ static std::string cmdFire(const std::string&, const CommandManager::ArgList& ar
 {
   if (args.size() != 0)
     return "usage: fire";
-  if (myTank != NULL && myTank->isAlive() && !Observer)
+  if (myTank != NULL && myTank->isAlive() && myTank->getTeam() != ObserverTeam)
     myTank->fireShot();
   return std::string();
 }
@@ -1851,7 +1850,7 @@ static std::string cmdRestart(const std::string&, const CommandManager::ArgList&
   if (args.size() != 0)
     return "usage: restart";
   if (myTank != NULL)
-    if (!gameOver && !Observer && !myTank->isAlive() && !myTank->isExploding())
+    if (!gameOver && (myTank->getTeam() != ObserverTeam) && !myTank->isAlive() && !myTank->isExploding())
       restartPlaying();
   return std::string();
 }
@@ -3693,7 +3692,7 @@ static void		restartPlaying()
 
   // restart the tank
   myTank->restart(bestStartPoint, startAzimuth);
-  if (!Observer)
+  if (myTank->getTeam() != ObserverTeam)
     serverLink->sendAlive(myTank->getPosition(), myTank->getForward());
   restartOnBase = false;
   firstLife = false;
@@ -3900,7 +3899,7 @@ static bool		gotBlowedUp(BaseLocalPlayer* tank,
 					PlayerId killer,
 					int shotId)
 {
-  if (Observer || !tank->isAlive())
+  if (tank->getTeam() == ObserverTeam || !tank->isAlive())
     return false;
 
   // you can't take it with you
@@ -3996,7 +3995,7 @@ static bool		gotBlowedUp(BaseLocalPlayer* tank,
 
 static void		checkEnvironment()
 {
-  if (!myTank || Observer) return;
+  if (!myTank || myTank->getTeam() == ObserverTeam) return;
 
   // skip this if i'm dead or paused
   if (!myTank->isAlive() || myTank->isPaused()) return;
@@ -4929,16 +4928,14 @@ static bool		enterServer(ServerLink* serverLink, World* world,
 
   time_t timeout=time(0) + 10;  // give us 10 sec
 
-  if (world->allowRabbit())
+  if (world->allowRabbit() && myTank->getTeam() != ObserverTeam)
     myTank->setTeam(RogueTeam);
 
   // tell server we want to join
   serverLink->sendEnter(TankPlayer, myTank->getTeam(),
 		myTank->getCallSign(), myTank->getEmailAddress());
 
-  // @ as first lettter of callsign is observer
-  Observer = myTank->getCallSign()[0] == '@';
-  roaming = Observer;
+  roaming = (myTank->getTeam() == ObserverTeam);
 
 
   controlPanel->setControlColor(Team::getRadarColor(myTank->getTeam()));
@@ -5376,7 +5373,7 @@ static bool		joinGame(const StartupInfo* info,
 
   // decide how start for first time
   restartOnBase = world->allowTeamFlags() && myTank->getTeam() != RogueTeam &&
-		  !Observer;
+		  myTank->getTeam() != ObserverTeam;
 
   // if server constrains time then adjust it
   if (!world->allowTimeOfDayAdjust()) {
@@ -6141,7 +6138,7 @@ static void		playingLoop()
       if (myTank->isAlive() && !myTank->isPaused()) {
 	doMotion();
 	if (hud->getHunting()) setHuntTarget(); //spot hunt target
-	if (fireButton && myTank->getFlag() == Flags::MachineGun && !Observer)
+	if (fireButton && myTank->getFlag() == Flags::MachineGun && myTank->getTeam() != ObserverTeam)
 	  myTank->fireShot();
       }
       else {
@@ -6189,7 +6186,7 @@ static void		playingLoop()
 #endif
 
     // send my data
-    if (playerLink && myTank->isDeadReckoningWrong() && !Observer) {
+    if (playerLink && myTank->isDeadReckoningWrong() && myTank->getTeam() != ObserverTeam) {
       playerLink->setRelay(serverLink);
       playerLink->sendPlayerUpdate(myTank);
     }

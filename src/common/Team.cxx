@@ -20,7 +20,8 @@ float			Team::tankColor[NumTeams][3] = {
 				{ 0.0f, 1.0f, 0.0f },
 				{ 0.2f, 0.2f, 1.0f },
 				{ 1.0f, 0.0f, 1.0f },
-				{ 1.0f, 1.0f, 1.0f }
+				{ 1.0f, 1.0f, 1.0f },
+				{ 0.0f, 0.0f, 0.0f }
 			};
 float			Team::radarColor[NumTeams][3] = {
 				{ 1.0f, 1.0f, 0.0f },	// rogue
@@ -28,7 +29,8 @@ float			Team::radarColor[NumTeams][3] = {
 				{ 0.2f, 0.9f, 0.2f },	// green
 				{ 0.08f, 0.25, 1.0f },	// blue
 				{ 1.0f, 0.4f, 1.0f },	// purple
-				{ 1.0f, 1.0f, 1.0f }	// white
+				{ 1.0f, 1.0f, 1.0f },	// white
+				{ 0.0f, 0.0f, 0.0f }    // observer
 			};
 // taken from old console team messge colors
 //static const GLfloat    teamMsgColor[][3] = {
@@ -78,6 +80,7 @@ const char*		Team::getName(TeamColor team) // const
     case GreenTeam: return "Green Team";
     case BlueTeam: return "Blue Team";
     case PurpleTeam: return "Purple Team";
+    case ObserverTeam: return "Observer";
     case RabbitTeam: return "Rabbit";
     default: return "Invalid team";
   }

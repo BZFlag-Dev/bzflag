@@ -33,7 +33,7 @@ enum PlayerType {
 };
 
 // team info
-const int		NumTeams = 6;
+const int		NumTeams = 7;
 const int		CtfTeams = 5;
 enum TeamColor {
 			NoTeam = -1,
@@ -42,7 +42,8 @@ enum TeamColor {
 			GreenTeam = 2,
 			BlueTeam = 3,
 			PurpleTeam = 4,
-			RabbitTeam = 5
+			ObserverTeam = 5,
+			RabbitTeam = 6
 };
 
 #ifdef ROBOT
