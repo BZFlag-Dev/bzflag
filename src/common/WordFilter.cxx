@@ -73,14 +73,15 @@ bool WordFilter::aggressiveFilter(char *input) const
   
   int regCode;
   
-  int startPosition = firstPrintable(input);
+  int startPosition = firstAlphanumeric(input);
   if (startPosition < 0) {
     return false;
   }
   std::string line = input + startPosition;
-  std::bitset<MAX_WORDS * 4> boundaryArray = 0;
+  std::bitset<MAX_WORDS * 4> startBoundaryArray = 0;
+  std::bitset<MAX_WORDS * 4> endBoundaryArray = 0;
 
-  boundaryArray.set(startPosition);
+  startBoundaryArray.set(startPosition);
   int inputPosition = startPosition;
   startPosition = 0;
 
@@ -101,12 +102,12 @@ bool WordFilter::aggressiveFilter(char *input) const
   int counter=0;
   int characterFound;
   while (startPosition >= 0) {
-    endPosition = firstNonprintable(line);
+    endPosition = firstNonalphanumeric(line);
     if (endPosition < 0) {
       endPosition = line.length();
     }
     // record the position of where words start and end
-    boundaryArray.set(endPosition+inputPosition-1);
+    endBoundaryArray.set(endPosition+inputPosition-1);
 
     // words are hashed by lowercase first letter
     characterIndex = tolower(line[startPosition]);
@@ -128,14 +129,14 @@ bool WordFilter::aggressiveFilter(char *input) const
     line.erase(0, endPosition + 1);
     inputPosition += endPosition + 1;
 
-    startPosition = firstPrintable(line); // should be zero most of the time
+    startPosition = firstAlphanumeric(line); // should be zero most of the time
     if (startPosition == 0) {
       //record the position of where words start and end
-      boundaryArray.set(inputPosition);
+      startBoundaryArray.set(inputPosition);
 
     } else if (startPosition > 0) {
       //record the position of where words start and end
-      boundaryArray.set(startPosition+inputPosition);
+      startBoundaryArray.set(startPosition+inputPosition);
 
       line.erase(0,startPosition);
       inputPosition += startPosition;
@@ -150,38 +151,49 @@ bool WordFilter::aggressiveFilter(char *input) const
 
   counter = 0;
   /* iterate over the filter words for each unique initial word character */
+  int startMatchPos;
   for (unsigned int j = 0; j < wordIndexLength; j++) {
     for (std::set<filter_t, expressionCompare>::iterator i = filters[wordIndices[j]].begin(); \
 	 i != filters[wordIndices[j]].end(); 
 	 ++i) {
     
-      regCode = regexec(i->compiled, input, 1, match, 0);
-      counter++;
+      startMatchPos = 0;
+      while (startMatchPos >=0) {
+	regCode = regexec(i->compiled, input + startMatchPos, 1, match, 0);
+	counter++;
       
-      if ( regCode == 0 ) {
-	/* !!! need to handle multiple matches */
-	/* make sure we only match on word boundaries */
-	if (!boundaryArray.test(match[0].rm_so)) {
-	  //	  std::cout << "matched non-word start boundary at " << match[0].rm_so << std::endl;
-	  continue;
-	}
-	if (!boundaryArray.test(match[0].rm_eo-1)) {
-	  //	  std::cout << "matched non-word end boundary at " << match[0].rm_eo << std::endl;
-	  continue;
+	if ( regCode == 0 ) {
+
+	  /* make sure we only match on word boundaries */
+	  if (!startBoundaryArray.test(match[0].rm_so + startMatchPos)) {
+	    //	  std::cout << "matched non-word start boundary at " << match[0].rm_so + startMatchPos << std::endl;
+	    startMatchPos += match[0].rm_eo;
+	    continue;
+	  }
+	  if (!endBoundaryArray.test(match[0].rm_eo-1 + startMatchPos)) {
+	    //	  std::cout << "matched non-word end boundary at " << match[0].rm_eo + startMatchPos << std::endl;
+	    startMatchPos += match[0].rm_eo;
+	    continue;
+	  }
+
+	  matchPair[matchCount * 2] = match[0].rm_so + startMatchPos; /* position */
+	  matchPair[(matchCount * 2) + 1] = (match[0].rm_eo - match[0].rm_so) + startMatchPos; /* length */
+	  matchCount++;
+	  filtered = true;
+	  
+	  startMatchPos += match[0].rm_eo;
+
+	} else if ( regCode == REG_NOMATCH ) {
+	  // do nothing
+	  //			continue;
+	  startMatchPos = -1;
+	} else {
+	  regerror(regCode, i->compiled, errorBuffer, 512);
+	  std::cout << errorBuffer << std::endl;
+	  startMatchPos = -1;
 	}
 
-	matchPair[matchCount * 2] = match[0].rm_so; /* position */
-	matchPair[(matchCount * 2) + 1] = match[0].rm_eo - match[0].rm_so; /* length */
-	matchCount++;
-	filtered = true;
-      } else if ( regCode == REG_NOMATCH ) {
-	// do nothing
-	//			continue;
-      } else {
-	regerror(regCode, i->compiled, errorBuffer, 512);
-	std::cout << errorBuffer << std::endl;
-      }
-    
+      } /* end iteration over multiple matches */
     } /* iterate over words in a particular character bin */
   } /* iterate over characters */
 
@@ -195,8 +207,8 @@ bool WordFilter::aggressiveFilter(char *input) const
     //			std::cout << "i: " << i << "  " << matchPair[i*2] << " for " << matchPair[(i*2)+1] << std::endl;
     
     if (filterCharacters(input, matchPair[i*2], matchPair[(i*2)+1]) <= 0) {
-      // XXX throw exception
-      std::cerr << "Unable to filter characters" << std::endl;
+      // XXX with multiple matching, we will be unable to filter overlapping matches
+      //      std::cerr << "Unable to filter characters" << std::endl;
     }
   }
   
@@ -790,17 +802,17 @@ int main (int argc, char *argv[])
   filter.addToFilter("fuking", true);
 
   std::cout << "Loading file" << std::endl;
-  //  filter.loadFromFile(argv[1], true);
+  filter.loadFromFile(argv[1], true);
   std::cout << "Number of words in filter: " << filter.wordCount() << std::endl;
   filter.addToFilter("test", true);
   std::cout << "Number of words in filter: " << filter.wordCount() << std::endl;
 
   //  filter.outputWords();
-  filter.outputFilter();
+  //  filter.outputFilter();
 
   char message2[1024] = "f  u  c  k  !  fuuukking 'test' ; you're NOT a beezeecun+y!!  Phuck you b1tch! ";
-  char message3[1024] = "f  u  c  k  !  fuuukking test ; you're NOT a beezeecun+y!!  Phuck you b1tch! ";
-  char message4[1024] = "f  u  c  k  !  fuuukking test ; you're NOT a beezeecun+y!!  Phuck you b1tch! ";
+  char message3[1024] = "fuck  fuck fuck Phuck you!";
+  char message4[1024] = "fuckmonkey fuck monkey fuck pirate fuck clown";
   char message5[1024] = "f  u  c  k  !  fuuukking test ; you're NOT a beezeecun+y!!  Phuck you b1tch! ";
   char message6[1024] = "f  u  c  k  !  fuuukking test ; you're NOT a beezeecun+y!!  Phuck you b1tch! ";
   std::cout << "PRE  AGGRESSIVE " << message2 << std::endl;
@@ -808,17 +820,19 @@ int main (int argc, char *argv[])
   filter.filter(message2);
   std::cout << "POST AGGRESSIVE " << message2 << std::endl;
 
-  exit(0);
-
+  std::cout << "PRE  AGGRESSIVE " << message3 << std::endl;
   filter.filter(message3);
   std::cout << "POST AGGRESSIVE " << message3 << std::endl;
 
+  std::cout << "PRE  AGGRESSIVE " << message4 << std::endl;
   filter.filter(message4);
   std::cout << "POST AGGRESSIVE " << message4 << std::endl;
   
+  std::cout << "PRE  AGGRESSIVE " << message5 << std::endl;
   filter.filter(message5);
   std::cout << "POST AGGRESSIVE " << message5 << std::endl;
 
+  std::cout << "PRE  AGGRESSIVE " << message6 << std::endl;
   filter.filter(message6);
   std::cout << "POST AGGRESSIVE " << message6 << std::endl;
 
