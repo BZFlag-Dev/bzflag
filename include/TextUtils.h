@@ -53,7 +53,8 @@ class string_util {
       return result;
     }
     // get a vector of strings from a string, using all of chars of the delims
-    // string as separators
+    // string as separators. If maxTokens > 0, then the last 'token' may contain delimiters
+    // as it just returns the rest of the line
     static std::vector<std::string> string_util::tokenize(std::string& in, std::string delims, int maxTokens = 0){
       std::vector<std::string> out;
       int numTokens = 0;
