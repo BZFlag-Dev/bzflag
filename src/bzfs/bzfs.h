@@ -112,11 +112,6 @@ static const char copyright[] = "Copyright (c) 1993 - 2003 Tim Riker";
 #include "CustomWorld.h"
 
 
-#if defined(__sgi)
-#define FD_SETSIZE (MaxPlayers + 10)
-#endif /* defined(__sgi) */
-
-
 #endif
 
 // Local Variables: ***
