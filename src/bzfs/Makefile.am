@@ -36,6 +36,8 @@ bzfs_SOURCES = \
 	PackVars.h \
 	Permissions.cxx \
 	PlayerInfo.cxx \
+	SpawnPosition.cxx \
+	SpawnPosition.h \
 	TeamBases.cxx \
 	TeamBases.h \
 	TextChunkManager.cxx \

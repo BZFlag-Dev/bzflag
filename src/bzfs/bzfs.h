@@ -94,6 +94,7 @@ static const char copyright[] = "Copyright (c) 1993 - 2004 Tim Riker";
 #include "TeamBases.h"
 #include "ListServerConnection.h"
 #include "BZWReader.h"
+#include "SpawnPosition.h"
 
 #endif
 

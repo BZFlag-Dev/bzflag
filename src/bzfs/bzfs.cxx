@@ -71,7 +71,8 @@ bool countdownActive = false;
 static ListServerLink *listServerLink = NULL;
 static int listServerLinksCount = 0;
 
-static WorldInfo *world = NULL;
+// FIXME: should be static, but needed by SpawnPosition
+WorldInfo *world = NULL;
 static char *worldDatabase = NULL;
 static uint32_t worldDatabaseSize = 0;
 
@@ -90,14 +91,10 @@ static TimeKeeper lastWorldParmChange;
 
 void sendMessage(int playerIndex, PlayerId targetPlayer, const char *message, bool fullBuffer=false);
 
-
-static void getSpawnLocation( int playerId, float* pos, float *azimuth);
-
 void removePlayer(int playerIndex, const char *reason, bool notify=true);
 void resetFlag(int flagIndex);
 static void dropFlag(int playerIndex, float pos[3]);
 static void dropAssignedFlag(int playerIndex);
-
 
 // util functions
 int getPlayerIDByRegName(const std::string &regName)
@@ -109,6 +106,10 @@ int getPlayerIDByRegName(const std::string &regName)
   return -1;
 }
 
+int getCurMaxPlayers()
+{
+  return curMaxPlayers;
+}
 
 bool hasPerm(int playerIndex, PlayerAccessInfo::AccessPerm right)
 {
@@ -2100,151 +2101,11 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
   }
 }
 
-// are the two teams foes withthe current game style?
-static bool areFoes(TeamColor team1, TeamColor team2)
+// are the two teams foes with the current game style?
+bool areFoes(TeamColor team1, TeamColor team2)
 {
   return team1!=team2 ||
          (team1==RogueTeam && !(clOptions->gameStyle & int(RabbitChaseGameStyle)));
-}
-
-static float enemyProximityCheck(TeamColor team, float *pos, float &enemyAngle)
-{
-  float worstDist = 1e12f; // huge number
-
-  for (int i = 0; i < curMaxPlayers; i++) {
-    if (player[i].isAlive() && areFoes(player[i].getTeam(), team)) {
-      float *enemyPos = lastState[i].pos;
-      if (fabs(enemyPos[2] - pos[2]) < 1.0f) {
-        float x = enemyPos[0] - pos[0];
-        float y = enemyPos[1] - pos[1];
-        float distSq = x * x + y * y;
-        if (distSq < worstDist) {
-          worstDist = distSq;
-	  enemyAngle = lastState[i].azimuth;
-	}
-      }
-    }
-  }
-
-  return sqrtf(worstDist);
-}
-
-static void getSpawnLocation(int playerId, float* spawnpos, float *azimuth)
-{
-  const float tankRadius = BZDB.eval(StateDatabase::BZDB_TANKRADIUS);
-  const TeamColor team = player[playerId].getTeam();
-  *azimuth = (float)bzfrand() * 2.0f * M_PI;
-
-  if (player[playerId].shouldRestartAtBase() &&
-      (team >= RedTeam) && (team <= PurpleTeam) && 
-      (bases.find(team) != bases.end())) {
-    TeamBases &teamBases = bases[team];
-    const TeamBase &base = teamBases.getRandomBase( (int) (bzfrand() * 100) );
-    base.getRandomPosition( spawnpos[0], spawnpos[1], spawnpos[2] );
-    player[playerId].setRestartOnBase(false);
-  }
-  else {
-    bool onGroundOnly = !clOptions->respawnOnBuildings
-      || player[playerId].isBot();
-    const float size = BZDB.eval(StateDatabase::BZDB_WORLDSIZE);
-    ObstacleLocation *building;
-
-    // keep track of how much time we spend searching for a location
-    TimeKeeper start = TimeKeeper::getCurrent();
-
-    int inAirAttempts = 50;
-    int tries = 0;
-    float minProximity = size / 3.0f;
-    float bestDist = -1.0f;
-    float pos[3];
-    bool foundspot = false;
-    while (!foundspot) {
-      if (!world->getZonePoint(std::string(Team::getName(team)), pos)) {
-        if (clOptions->gameStyle & TeamFlagGameStyle) {
-          // don't spawn close to map edges in CTF mode
-          pos[0] = ((float)bzfrand() - 0.5f) * size * 0.6f;
-          pos[1] = ((float)bzfrand() - 0.5f) * size * 0.6f;
-	}
-        else {
-          pos[0] = ((float)bzfrand() - 0.5f) * (size - 2.0f * tankRadius);
-          pos[1] = ((float)bzfrand() - 0.5f) * (size - 2.0f * tankRadius);
-	}
-        pos[2] = onGroundOnly ? 0.0f : ((float)bzfrand() * maxWorldHeight);
-      }
-      tries++;
-
-      int type = world->inBuilding(&building, pos[0], pos[1], pos[2],
-                                   tankRadius, BZDBCache::tankHeight);
-
-      if (onGroundOnly) {
-        if (type == NOT_IN_BUILDING)
-          foundspot = true;
-      }
-      else {
-        if ((type == NOT_IN_BUILDING) && (pos[2] > 0.0f)) {
-          pos[2] = 0.0f;
-          //Find any intersection regardless of z
-          type = world->inBuilding(&building, pos[0], pos[1], pos[2],
-                                   tankRadius, maxWorldHeight);
-        }
-
-        // in a building? try climbing on roof until on top
-        int lastType = type;
-	int retriesRemaining = 100; // don't climb forever
-        while (type != NOT_IN_BUILDING) {
-          pos[2] = building->pos[2] + building->size[2] + 0.0001f;
-          tries++;
-          lastType = type;
-          type = world->inBuilding(&building, pos[0], pos[1], pos[2],
-                                   tankRadius, BZDBCache::tankHeight);
-	  if (--retriesRemaining <= 0) {
-	    DEBUG1("Warning: getSpawnLocation had to climb too many buildings\n");
-	    break;
-	  }
-        }
-        // ok, when not on top of pyramid or teleporter
-        if (lastType != IN_PYRAMID  &&  lastType != IN_TELEPORTER) {
-          foundspot = true;
-        }
-        // only try up in the sky so many times
-        if (--inAirAttempts <= 0) {
-          onGroundOnly = true;
-        }
-      }
-
-      // check every now and then if we have already used up 10ms of time
-      if (tries >= 50) {
-        tries=0;
-        if (TimeKeeper::getCurrent() - start > 0.01f) {
-          if (bestDist < 0.0f) { // haven't found a single spot
-            //Just drop the sucka in, and pray
-            spawnpos[0] = pos[0];
-            spawnpos[1] = pos[1];
-            spawnpos[2] = maxWorldHeight;
-	    DEBUG1("Warning: getSpawnLocation ran out of time, just dropping the sucker in\n");
-          }
-          break;
-        }
-      }
-
-      // check if spot is safe enough
-      if (foundspot) {
-	float enemyAngle;
-        float dist = enemyProximityCheck(team, pos, enemyAngle);
-        if (dist > bestDist) { // best so far
-          bestDist = dist;
-          spawnpos[0] = pos[0];
-          spawnpos[1] = pos[1];
-          spawnpos[2] = pos[2];
-	  *azimuth = fmod((enemyAngle + M_PI), 2.0f * M_PI);
-        }
-        if (bestDist < minProximity) { // not good enough, keep looking
-          foundspot = false;
-          minProximity *= 0.99f; // relax requirements a little
-        }
-      }
-    }
-  }
 }
 
 static void sendWorld(int playerIndex, uint32_t ptr)
@@ -2344,17 +2205,19 @@ static void playerAlive(int playerIndex)
   dropAssignedFlag(playerIndex);
 
   // send MsgAlive
-  float pos[3], fwd;
-  getSpawnLocation(playerIndex, pos, &fwd);
+  SpawnPosition* spawnPosition = new SpawnPosition(playerIndex, 
+      (!clOptions->respawnOnBuildings) || (player[playerIndex].isBot()),
+       clOptions->gameStyle & TeamFlagGameStyle);
   // update last position immediately
-  lastState[playerIndex].pos[0] = pos[0];
-  lastState[playerIndex].pos[1] = pos[1];
-  lastState[playerIndex].pos[2] = pos[2];
+  lastState[playerIndex].pos[0] = spawnPosition->pos[0];
+  lastState[playerIndex].pos[1] = spawnPosition->pos[1];
+  lastState[playerIndex].pos[2] = spawnPosition->pos[2];
   void *buf, *bufStart = getDirectMessageBuffer();
   buf = nboPackUByte(bufStart, playerIndex);
-  buf = nboPackVector(buf,pos);
-  buf = nboPackFloat(buf,fwd);
-  broadcastMessage(MsgAlive, (char*)buf-(char*)bufStart, bufStart);
+  buf = nboPackVector(buf, spawnPosition->pos);
+  buf = nboPackFloat(buf, spawnPosition->azimuth);
+  broadcastMessage(MsgAlive, (char*)buf - (char*)bufStart, bufStart);
+  delete spawnPosition;
 
   if (clOptions->gameStyle & int(RabbitChaseGameStyle)) {
     player[playerIndex].wasNotARabbit();

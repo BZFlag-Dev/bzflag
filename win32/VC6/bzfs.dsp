@@ -85,7 +85,7 @@ LINK32=link.exe
 # SUBTRACT LINK32 /pdb:none
 # Begin Special Build Tool
 SOURCE="$(InputPath)"
-PostBuild_Cmds=copy ..\..\src\bzfs\debug\*.pdb ..\*.pdb	copy  ..\..\src\bzfs\debug\*.exe ..\*.exe
+PostBuild_Cmds=copy ..\..\src\bzfs\debug\*.pdb ..\..\*.pdb	copy  ..\..\src\bzfs\debug\*.exe ..\..\*.exe
 # End Special Build Tool
 
 !ENDIF 
@@ -172,6 +172,10 @@ SOURCE=..\..\src\bzfs\Permissions.cxx
 # Begin Source File
 
 SOURCE=..\..\src\bzfs\PlayerInfo.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\bzfs\SpawnPosition.cxx
 # End Source File
 # Begin Source File
 
@@ -356,6 +360,10 @@ SOURCE=..\..\include\ShotUpdate.h
 # Begin Source File
 
 SOURCE=..\..\include\Singleton.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\bzfs\SpawnPosition.h
 # End Source File
 # Begin Source File
 
