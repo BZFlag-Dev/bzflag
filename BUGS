@@ -81,22 +81,6 @@ recent bugs
   there's no way for the client to write them. I suppose they could 
   be packed in the database, for only the purpose of 'saveworld'.
 
-- Something is wrong with the shininess I think. When I play on rabbit
-  server with only one other player which is rabbit. When I set the time of
-  day close to sunrise, as soon as the rabbit becomes visible in 3D view,
-  all buildings will turn to shiny-white. As soon as rabbit is killed,
-  it turns back to normal. Also normal, when I switch off lighting.
-  Would someone PLEASE buy chestal a graphics card? his doesn't handle
-  the emissive property.
-  (Chestal) This happens with both of my cards, where the one isn't really used
-  because it's all software rendering, where the other uses hardware.
-  I can reproduce this by joining my test server ducati 59155 with -solo 1.
-  As soon as the rabbit bot is in view, other things get white, too.
-  This is either a bug in bzflag or in the gl stack which does not reset
-  the shininess or whatever properly. With more than 1 tank it's usually ok,
-  so I guess after drawing the rabbit tank it draws a rogue tank and resets
-  the material data.
-
 - Spawn code sometimes spawns you mid-air
 
 - doc/guide/NetworkProtocol.xml is not up to date
