@@ -544,6 +544,12 @@ void			ServerLink::sendNewRabbit()
   send(MsgNewRabbit, 0, NULL);
 }
 
+void			ServerLink::sendPaused(bool paused)
+{
+  uint8_t p = paused;
+  send(MsgPause, 1, &p);
+}
+
 void			ServerLink::sendUDPlinkRequest()
 {
   char msg[2];

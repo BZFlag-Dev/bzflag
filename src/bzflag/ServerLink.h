@@ -68,6 +68,7 @@ class ServerLink {
     void		sendTeleport(int from, int to);
     void		sendTransferFlag(const PlayerId&, const PlayerId&);
     void		sendNewRabbit();
+    void		sendPaused(bool paused);
     void                sendUDPlinkRequest();
     void		enableUDPCon();
 

@@ -739,9 +739,11 @@ void			LocalPlayer::setPause(bool pause)
   if (isAlive()) {
     if (pause && !isPaused()) {
       setStatus(getStatus() | short(PlayerState::Paused));
+      ServerLink::getServer()->sendPaused(true);
     }
     else if (!pause && isPaused()) {
       setStatus(getStatus() & ~short(PlayerState::Paused));
+      ServerLink::getServer()->sendPaused(false);
     }
   }
 }

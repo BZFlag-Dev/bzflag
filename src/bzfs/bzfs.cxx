@@ -299,6 +299,7 @@ struct PlayerInfo {
     unsigned short lastRecvPacketNo;
     unsigned short lastSendPacketNo;
 
+    bool paused;
     bool toBeKicked;
 
     bool Admin;
@@ -445,7 +446,7 @@ static float safetyBasePos[CtfTeams][3];
 // Client does not check for rabbit to be 255, but it still works
 // because 255 should be > curMaxPlayers and thus no matchign player will
 // be found.
-static int rabbitIndex = NoPlayer;
+static uint8_t rabbitIndex = NoPlayer;
 
 static void stopPlayerPacketRelay();
 static void removePlayer(int playerIndex, char *reason, bool notify=true);
@@ -3188,7 +3189,7 @@ static void anointNewRabbit()
   rabbitIndex = NoPlayer;
 
   for (i = 0; i < curMaxPlayers; i++) {
-    if (i != oldRabbit && player[i].state == PlayerAlive && player[i].team != ObserverTeam) {
+    if (i != oldRabbit && !player[i].paused && player[i].state == PlayerAlive && player[i].team != ObserverTeam) {
       float ratio = (player[i].wins - player[i].losses) * player[i].wins;
       if (ratio > topRatio) {
 	topRatio = ratio;
@@ -3199,7 +3200,7 @@ static void anointNewRabbit()
   if (rabbitIndex == NoPlayer) {
     // nobody, or no other than old rabbit to choose from
     for (i = 0; i < curMaxPlayers; i++) {
-      if (player[i].state > PlayerInLimbo && player[i].team != ObserverTeam) {
+      if (player[i].state > PlayerInLimbo && !player[i].paused && player[i].team != ObserverTeam) {
 	float ratio = (player[i].wins - player[i].losses) * player[i].wins;
 	if (ratio > topRatio) {
 	  topRatio = ratio;
@@ -3208,6 +3209,7 @@ static void anointNewRabbit()
       }
     }
   }
+
   if (rabbitIndex != oldRabbit) {
     if (oldRabbit != NoPlayer)
       player[oldRabbit].team = RogueTeam;
@@ -3217,6 +3219,24 @@ static void anointNewRabbit()
     buf = nboPackUByte(bufStart, rabbitIndex);
     broadcastMessage(MsgNewRabbit, (char*)buf-(char*)bufStart, bufStart);
   }
+}
+
+static void pausePlayer(int playerIndex, bool paused)
+{
+  player[playerIndex].paused = paused;
+  if (clOptions->gameStyle & int(RabbitChaseGameStyle)) {
+    if (paused && (rabbitIndex == playerIndex)) {
+      anointNewRabbit();
+    }
+    else if (!paused && (rabbitIndex == NoPlayer)) {
+      anointNewRabbit();
+    }
+  }
+
+  void *buf, *bufStart = getDirectMessageBuffer();
+  buf = nboPackUByte(bufStart, playerIndex);
+  buf = nboPackUByte(buf, paused);
+  broadcastMessage(MsgPause, (char*)buf-(char*)bufStart, bufStart);
 }
 
 static void removePlayer(int playerIndex, char *reason, bool notify)
@@ -3478,6 +3498,12 @@ static void playerAlive(int playerIndex, const float *pos, const float *fwd)
   buf = nboPackVector(buf,pos);
   buf = nboPackVector(buf,fwd);
   broadcastMessage(MsgAlive, (char*)buf-(char*)bufStart, bufStart);
+
+  if (clOptions->gameStyle & int(RabbitChaseGameStyle)) {
+    if (rabbitIndex == NoPlayer) {
+      anointNewRabbit();
+    }
+  }
 }
 
 static void checkTeamScore(int playerIndex, int teamIndex)
@@ -4956,6 +4982,13 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
     case MsgNewRabbit: {
       if (t == rabbitIndex)
         anointNewRabbit();
+      break;
+    }
+
+    case MsgPause: {
+      uint8_t pause;
+      nboUnpackUByte(buf, pause);
+      pausePlayer(t, pause != 0);
       break;
     }
 
