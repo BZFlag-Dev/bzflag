@@ -715,14 +715,14 @@ static void		doKeyPlaying(const BzfKeyEvent& key, boolean pressed)
   else if (keymap.isMappedTo(BzfKeyMap::ScrollBackward, key)) {
     // scroll message list backward
     if (pressed) {
-      controlPanel->setMessagesOffset(1,1);
+      controlPanel->setMessagesOffset(2,1);
     }
   }
 
   else if (keymap.isMappedTo(BzfKeyMap::ScrollForward, key)) {
     // scroll message list forward
     if (pressed) {
-      controlPanel->setMessagesOffset(-1,1);
+      controlPanel->setMessagesOffset(-2,1);
     }
   }
 
