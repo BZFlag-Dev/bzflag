@@ -188,7 +188,7 @@ bool					PNGImageFile::read(void* buffer)
     stream.avail_in = c->getLength();
 
     err = inflate(&stream, Z_SYNC_FLUSH);
-    while ((err == Z_OK) && (stream.avail_out == 0)) {
+    while (((err == Z_OK) || err == Z_STREAM_END)  && (stream.avail_out == 0)) {
 
       expand();
 
@@ -218,15 +218,6 @@ bool					PNGImageFile::read(void* buffer)
   }
 
   inflateEnd(&stream);
-
-  expand();
-
-  if (!filter()) {
-    delete c;
-    return false;
-  }
-
-  memcpy(((unsigned char *)buffer)+bufferPos, line+1, realBufferSize-1);
 
   delete c;
   return true;
