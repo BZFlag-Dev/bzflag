@@ -1910,8 +1910,8 @@ void handleClientqueryCmd(GameKeeper::Player *playerData, const char * message)
   int t = playerData->getIndex();
   DEBUG2("Clientquery requested by %s [%d]\n",
 	 playerData->player.getCallSign(), t);
-  if (strlen(message + 11) > 0) {
-    std::string name = message + 12;
+  if (message[12] != '\0') {
+    std::string name = message + 13; // assumes there is a space
     while (isspace(name[0]))
       name.erase(name.begin());
     GameKeeper::Player *target;
