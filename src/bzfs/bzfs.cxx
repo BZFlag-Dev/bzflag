@@ -947,7 +947,7 @@ void *assembleSendPacket(PlayerId playerId, int *len)
 
 	if (noinqueue > 128) {
 		// we have more than 128 not aknowledged packets
-		printf("%d Packets outstanding\n",noinqueue);
+		DEBUG1("%d Packets outstanding\n",noinqueue);
 	}
 
 	// this is actually the number of single
@@ -1029,7 +1029,7 @@ void disassemblePacket(PlayerId playerId, void *msg, int *nopackets)
 		if (length == 0xffff)
 			break;
 		else if (ilength > 1024) {
-			fprintf(stderr,"* RECEIVE PACKET BUFFER OVERFLOW ATTEMPT: %d sent %d Bytes\n",
+			DEBUG1("* RECEIVE PACKET BUFFER OVERFLOW ATTEMPT: %d sent %d Bytes\n",
 					playerId, ilength);
 			break;
 		}
@@ -1072,7 +1072,7 @@ static int puwrite(PlayerId playerId, const void *b, int l)
 
 	if (!tobesend || (l == 0)) {
 		removePlayer(playerId);
-		fprintf(stderr, "Send Queue Overrun for player %d (%s)\n", playerId, p.callSign);
+		DEBUG1("Send Queue Overrun for player %d (%s)\n", playerId, p.callSign);
 		if (tobesend)
 			free((unsigned char *)tobesend);
 		return -1;
@@ -1089,7 +1089,7 @@ static int puwrite(PlayerId playerId, const void *b, int l)
 		n = sendto(udpSocket, (const char *)tobesend, l, 0, (struct sockaddr*)&p.uaddr, sizeof(p.uaddr));
 #ifdef TESTLINK
 	} else
-		printf("Drop Packet due to Test\n");
+		DEBUG1("Drop Packet due to Test\n");
 #endif
 	if (tobesend)
 		free((unsigned char *)tobesend);
@@ -1112,8 +1112,8 @@ static int puwrite(PlayerId playerId, const void *b, int l)
 
 		// dump other errors and continue
 		nerror("error on UDP write");
-		fprintf(stderr, "player is %d (%s)\n", playerId, p.callSign);
-		fprintf(stderr, "%d bytes\n", n);
+		DEBUG1("player is %d (%s)\n", playerId, p.callSign);
+		DEBUG1("%d bytes\n", n);
 
 		// we may actually run into not enough buffer space here
 		// but as the link is unreliable anyway we never treat it as
@@ -1149,7 +1149,7 @@ static int prealwrite(PlayerId playerId, const void *b, int l)
 
 		// dump other errors and remove the player
 		nerror("error on write");
-		fprintf(stderr, "player is %d (%s)\n", playerId, p.callSign);
+		DEBUG1("player is %d (%s)\n", playerId, p.callSign);
 		DEBUG4("REMOVE: WRITE ERROR\n");
 		removePlayer(playerId);
 		return -1;
@@ -1222,7 +1222,7 @@ static void pwrite(PlayerId playerId, const void *b, int l)
 			// are the network is down or too unreliable to that player.
 			// FIXME -- is 20kB to big?  to small?
 			if (newCapacity >= 20 * 1024) {
-				fprintf(stderr, "dropping unresponsive player %d (%s) with %d bytes queued\n",
+				DEBUG1("dropping unresponsive player %d (%s) with %d bytes queued\n",
 						playerId, p.callSign, p.outmsgSize + l);
 				DEBUG4("REMOVE: CAPACITY\n");
 				removePlayer(playerId);
@@ -1503,7 +1503,7 @@ static int uread(int *playerId, int *nopackets)
 static int pread(PlayerId playerId, int l)
 {
 	PlayerInfo& p = player[playerId];
-	//fprintf(stderr,"pread,playerId,l %i %i\n",playerId,l);
+	//DEBUG1("pread,playerId,l %i %i\n",playerId,l);
 	if (p.fd == NotConnected || l == 0)
 		return 0;
 
@@ -1531,7 +1531,7 @@ static int pread(PlayerId playerId, int l)
 
 		// dump other errors and remove the player
 		nerror("error on read");
-		fprintf(stderr, "player is %d (%s)\n", playerId, p.callSign);
+		DEBUG1("player is %d (%s)\n", playerId, p.callSign);
 		DEBUG4("REMOVE: READ ERROR\n");
 		removePlayer(playerId);
 		return -1;
@@ -1762,7 +1762,7 @@ static void publicize()
 		BzfNetwork::dereferenceURLs(urls, MaxListServers, failedURLs);
 
 		for (unsigned int j = 0; j < failedURLs.size(); ++j)
-			fprintf(stderr, "failed: %s\n", failedURLs[j].c_str());
+			DEBUG1("failed: %s\n", failedURLs[j].c_str());
 
 		// check url list for validity
 		for (unsigned int i = 0; i < urls.size(); ++i) {
@@ -4566,12 +4566,12 @@ int main(int argc, char **argv)
 		static const int major = 2, minor = 2;
 		WSADATA wsaData;
 		if (WSAStartup(MAKEWORD(major, minor), &wsaData)) {
-			fprintf(stderr, "Failed to initialize winsock.  Terminating.\n");
+			DEBUG1("Failed to initialize winsock.  Terminating.\n");
 			return 1;
 		}
 		if (LOBYTE(wsaData.wVersion) != major ||
 				HIBYTE(wsaData.wVersion) != minor) {
-			fprintf(stderr, "Version mismatch in winsock;"
+			DEBUG1("Version mismatch in winsock;"
 					"  got %d.%d.  Terminating.\n",
 					(int)LOBYTE(wsaData.wVersion),
 					(int)HIBYTE(wsaData.wVersion));
@@ -4649,7 +4649,7 @@ int main(int argc, char **argv)
 		FD_ZERO(&write_set);
 		for (i = 0; i < maxPlayers; i++) {
 			if (player[i].fd != NotConnected) {
-				//fprintf(stderr,"fdset fd,read %i %lx\n",player[i].fd,read_set);
+				//DEBUG1("fdset fd,read %i %lx\n",player[i].fd,read_set);
 				FD_SET(player[i].fd, &read_set);
 
 				if (player[i].outmsgSize > 0)
@@ -4697,7 +4697,7 @@ int main(int argc, char **argv)
 		timeout.tv_usec = long(1.0e+6f * (waitTime - floorf(waitTime)));
 		nfound = select(maxFileDescriptor+1, (fd_set*)&read_set, (fd_set*)&write_set, 0, &timeout);
 		//if (nfound)
-		//  fprintf(stderr, "nfound,read,write %i,%08lx,%08lx\n", nfound, read_set, write_set);
+		//  DEBUG1("nfound,read,write %i,%08lx,%08lx\n", nfound, read_set, write_set);
 
 		tm = TimeKeeper::getCurrent();
 
@@ -4783,7 +4783,7 @@ int main(int argc, char **argv)
 
 		// check messages
 		if (nfound > 0) {
-			//fprintf(stderr, "chkmsg nfound,read,write %i,%08lx,%08lx\n", nfound, read_set, write_set);
+			//DEBUG1("chkmsg nfound,read,write %i,%08lx,%08lx\n", nfound, read_set, write_set);
 			// first check initial contacts
 			if (FD_ISSET(wksSocket, &read_set))
 				acceptClient();
