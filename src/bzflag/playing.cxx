@@ -1097,7 +1097,7 @@ static void		doKeyPlaying(const BzfKeyEvent& key, boolean pressed)
 	  hud->setAlert(1, "Pause cancelled", 1.5f, True);
 	}
 	else {
-	  pauseCountdown = 3.0f;
+	  pauseCountdown = 5.0f;
 	  char msgBuf[40];
 	  sprintf(msgBuf, "Pausing in %d", (int)(pauseCountdown + 0.99f));
 	  hud->setAlert(1, msgBuf, 1.0f, False);
@@ -1114,7 +1114,7 @@ static void		doKeyPlaying(const BzfKeyEvent& key, boolean pressed)
 	  hud->setAlert(1, "Self Destruct cancelled", 1.5f, True);
 	}
 	else {
-	  destructCountdown = 3.0f;
+	  destructCountdown = 5.0f;
 	  char msgBuf[40];
 	  sprintf(msgBuf, "Self Destructing in %d", (int)(destructCountdown + 0.99f));
 	  hud->setAlert(1, msgBuf, 1.0f, False);
@@ -1346,7 +1346,7 @@ static void		doEvent(BzfDisplay* display)
       if (!pausedByUnmap && pauseCountdown == 0.0f &&
 	  myTank && myTank->isAlive() && !myTank->isPaused()) {
 	// get ready to pause (no cheating through instantaneous pausing)
-	pauseCountdown = 3.0f;
+	pauseCountdown = 5.0f;
 
 	// set this even though we haven't really paused yet
 	pausedByUnmap = True;
