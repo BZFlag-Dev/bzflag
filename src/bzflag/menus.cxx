@@ -2833,10 +2833,15 @@ bool			ServerItem::operator<(const ServerItem &right)
 int			ServerItem::getPlayerCount() const
 {
   // if null ping we return a 0 player count
-  if (&ping != 0)
-    return ping.rogueCount + ping.redCount + ping.greenCount +
-	ping.blueCount + ping.purpleCount + ping.observerCount;
-  else return 0;
+  int curPlayer = 0;
+  if (&ping != 0) {
+    int maxPlayer = ping.maxPlayers;
+    curPlayer = ping.rogueCount + ping.redCount + ping.greenCount +
+      ping.blueCount + ping.purpleCount + ping.observerCount;
+    if (curPlayer > maxPlayer)
+      curPlayer = maxPlayer;
+  }
+  return curPlayer;
 }
 
 
