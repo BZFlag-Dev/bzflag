@@ -2645,7 +2645,7 @@ static void anointNewRabbit()
   rabbitIndex = NoPlayer;
 
   for (i = 0; i < curMaxPlayers; i++) {
-    if (i != oldRabbit && !player[i].paused && !player[i].notResponding && ((player[i].state & PlayerAlive) == 0) && player[i].team != ObserverTeam) {
+    if (i != oldRabbit && !player[i].paused && !player[i].notResponding && ((player[i].state & PlayerAlive) != 0) && player[i].team != ObserverTeam) {
       float ratio = rabbitRank(player[i]);
       if (ratio > topRatio) {
 	topRatio = ratio;
