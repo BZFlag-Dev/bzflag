@@ -53,8 +53,7 @@ bool CustomWeapon::read(const char *cmd, std::istream& input) {
     std::getline(input, args);
     std::istringstream  parms(args);
 
-    while (parms.good()) {
-      parms >> d;
+    while (parms >> d) {
       delay.push_back(d);
     }
     input.putback('\n');
