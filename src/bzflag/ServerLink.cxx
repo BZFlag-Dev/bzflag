@@ -14,6 +14,7 @@
 #include <sys/types.h>
 #include <ctype.h>
 #include <time.h>
+#include <iostream>
 #include "ServerLink.h"
 #include "Pack.h"
 #include "LocalPlayer.h"
@@ -233,22 +234,22 @@ if (packetStream) {
 
 #if defined(NETWORK_STATS)
 	const float dt = TimeKeeper::getCurrent() - startTime;
-	cerr << "Server network statistics:" << endl;
-	cerr << "  elapsed time    : " << dt << endl;
-	cerr << "  bytes sent      : " << bytesSent << " (" <<
-				(float)bytesSent / dt << "/sec)" << endl;
-	cerr << "  packets sent    : " << packetsSent << " (" <<
-				(float)packetsSent / dt << "/sec)" << endl;
+	std::cerr << "Server network statistics:" << std::endl;
+	std::cerr << "  elapsed time    : " << dt << std::endl;
+	std::cerr << "  bytes sent      : " << bytesSent << " (" <<
+				(float)bytesSent / dt << "/sec)" << std::endl;
+	std::cerr << "  packets sent    : " << packetsSent << " (" <<
+				(float)packetsSent / dt << "/sec)" << std::endl;
 	if (packetsSent != 0)
-		cerr << "  bytes/packet    : " <<
-				(float)bytesSent / (float)packetsSent << endl;
-	cerr << "  bytes received  : " << bytesReceived << " (" <<
-				(float)bytesReceived / dt << "/sec)" << endl;
-	cerr << "  packets received: " << packetsReceived << " (" <<
-				(float)packetsReceived / dt << "/sec)" << endl;
+		std::cerr << "  bytes/packet    : " <<
+				(float)bytesSent / (float)packetsSent << std::endl;
+	std::cerr << "  bytes received  : " << bytesReceived << " (" <<
+				(float)bytesReceived / dt << "/sec)" << std::endl;
+	std::cerr << "  packets received: " << packetsReceived << " (" <<
+				(float)packetsReceived / dt << "/sec)" << std::endl;
 	if (packetsReceived != 0)
-		cerr << "  bytes/packet    : " <<
-				(float)bytesReceived / (float)packetsReceived << endl;
+		std::cerr << "  bytes/packet    : " <<
+				(float)bytesReceived / (float)packetsReceived << std::endl;
 #endif
 }
 
