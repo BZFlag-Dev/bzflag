@@ -5,46 +5,23 @@ README for Win32 platforms
 Command line development tools on Win32 are in the stone age.
 NMAKE is bad but COMMAND.COM is infinitely worse.  So, for
 now, bzflag uses Microsoft Visual C++ project files.
-Unfortunately, as you might expect, a visual development
-environment doesn't integrate well with the command line
-and doesn't give you much in the way of custom build rules
-(it gives you NMAKE, and if NMAKE was good enough i wouldn't
-use VC++ projects).
 
 So, to build bzflag on Win32, get Visual C++ or something
 that can read Visual C++ projects and workspaces.  Then:
 
+Configure your executables in the Tools/Options/Directory menu.
+Click the Executables tab, and add the directory where the nsis
+installer builder is found.
+
+Then each time you want to build an installer
+
   * open win32\bzflag.dsw
-  * select `bzflag Release' as the active configuration
-  * build
-  * select `bzfs Release' as the active configuration
-  * build
-  * select `bzfls Release' as the active configuration
+  * select `Installer Release' as the active configuration
   * build
 
-To build the installer:
+The installer is dist/bzflag1.10.0.exe
 
-  * open package\win32\install.dsw
-  * select bzfinst Release as the active configuration
-  * Rebuild all
+(or whatever the version number is)
 
---- or ------------------------------------------------------------
-  * open package\win32\install.dsw
-  * select `bzfuinst Release' as the active configuration
-  * build
-  * select `makedb Release' as the active configuration
-  * build
-  * in a command shell:
-    * cd package\win32
-    * mkdir lib
-    * bin\makedb.exe -i bzflag.spc -o lib\database.obj -b 1048576
 
-    makedb compresses the files and doesn't do it very
-    efficiently, so expect it to take a while.  larger block
-    sizes take longer but compress better.
-
-  * in VC++, select `bzfinst Release' as the active configuration
-  * build
-
-The installer is dist/bzfinst.exe.
 
