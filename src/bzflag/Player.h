@@ -127,6 +127,8 @@ public:
   void		setDeadReckoning(float timestamp);
 
   void		setUserTexture ( const char *tex ) { if(tex) userTexture = tex;}
+  
+  void setZpos (float z);
 
 protected:
   // shot statistics
@@ -415,6 +417,10 @@ inline void*		Player::pack(void* buf, uint16_t& code)
   return state.pack(buf, code);
 }
 
+inline void Player::setZpos (float z)
+{
+  state.pos[2] = z;
+}
 
 #endif /* __PLAYER_H__ */
 

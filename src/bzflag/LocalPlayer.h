@@ -116,7 +116,6 @@ public:
 			     const float* pos2, float azimuth2,
 			     float* normal) const;
 
-
 protected:
   bool		doEndShot(int index, bool isHit, float* pos);
   void		doUpdate(float dt);

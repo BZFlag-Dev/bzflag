@@ -109,6 +109,16 @@ IntersectLevel          testAxisBoxOcclusion(const float* boxMins,
 					     const float (*planes)[4],
 					     int planeCount);
 
+// return true if the ray will intersect with the
+// axis aligned bounding box defined by the mins
+// and maxs. it will also fill in enterTime and
+// leaveTime if there is an intersection.
+bool                   textRayInAxisBox(const Ray& ray,
+                                        const float* boxMins,
+                                        const float* boxMaxs,
+                                        float& enterTime, float& leaveTime);
+					 
+
 
 #endif // BZF_INTERSECT_H
 

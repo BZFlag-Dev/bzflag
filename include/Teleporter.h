@@ -30,6 +30,7 @@ class Teleporter : public Obstacle {
 
     const char*		getType() const;
     static const char*	getClassName(); // const
+    void                getExtents(float* mins, float* maxs) const;
 
     float		getBorder() const;
 

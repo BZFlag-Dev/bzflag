@@ -4583,6 +4583,11 @@ static void		playingLoop()
 	media->stopwatch(true);
       }
 
+      // so observers can have enhanced radar
+      if (roaming && myTank) {
+        myTank->setZpos(roamPos[2]);
+      }
+      
       // draw frame
       const bool blankRadar = myTank && myTank->isPaused();
       if (viewType == SceneRenderer::ThreeChannel) {

@@ -41,6 +41,23 @@ const char*		Teleporter::getClassName() // const
   return typeName;
 }
 
+void                    Teleporter::getExtents(float* mins, float* maxs) const
+{
+  // the same as the default Obstacle::getExtents(), except that we
+  // use the border width instead of size[0] (which for teleporters
+  // is half the distance between the teleporter planes).
+  float sizeX = border * 0.5f;
+  float xspan = (fabsf(cos(angle)) * sizeX) + (fabsf(sin(angle)) * size[1]);
+  float yspan = (fabsf(cos(angle)) * size[1]) + (fabsf(sin(angle)) * sizeX);
+  mins[0] = pos[0] - xspan;
+  maxs[0] = pos[0] + xspan;
+  mins[1] = pos[1] - yspan;
+  maxs[1] = pos[1] + yspan;
+  mins[2] = pos[2];
+  maxs[2] = pos[2] + size[2];
+  return;
+}
+
 float			Teleporter::intersect(const Ray& r) const
 {
   // expand to include border

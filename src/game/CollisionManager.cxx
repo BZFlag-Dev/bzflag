@@ -394,13 +394,13 @@ ColDetNode::ColDetNode(unsigned char _depth,
   for (i = 0; i < _list->count; i++) {
     Obstacle* obs = _list->list[i];
     float pos[3];
-    pos[0] = 0.5f * (maxs[0] + mins[0]);
-    pos[1] = 0.5f * (maxs[1] + mins[1]);
-    pos[2] = mins[2];
+    pos[0] = 0.5f * (testMaxs[0] + testMins[0]);
+    pos[1] = 0.5f * (testMaxs[1] + testMins[1]);
+    pos[2] = testMins[2];
     float size[3];
-    size[0] = 0.5f * (maxs[0] - mins[0]);
-    size[1] = 0.5f * (maxs[1] - mins[1]);
-    size[2] = (maxs[2] - mins[2]);
+    size[0] = 0.5f * (testMaxs[0] - testMins[0]);
+    size[1] = 0.5f * (testMaxs[1] - testMins[1]);
+    size[2] = (testMaxs[2] - testMins[2]);
     if (obs->inBox (pos, 0.0f, size[0], size[1], size[2])) {
       fullList.list[fullList.count] = obs;
       fullList.count++;
@@ -605,7 +605,7 @@ void ColDetNode::rayTest (const Ray* ray) const
   size[1] = 0.5f * (maxs[1] - mins[1]);
   size[2] = (maxs[2] - mins[2]);
   
-  if (timeRayHitsBlock(*ray, pos, 0.0f, size[0], size[1], size[2]) < 0.0f) {
+  if (timeRayHitsBlock(*ray, pos, 0.0f, size[0], size[1], size[2]) < -0.5f) {
     return;
   }
 

@@ -54,12 +54,18 @@ TetraBuilding::TetraBuilding(const float (*_vertices)[3], const bool *_visible,
     visible[2] = _visible[1];
   }
 
-  // FIXME - what to do here if one of the planes fails?
   // make outward facing normals to the planes
-  makePlane (vertices[1], vertices[2], vertices[3], planes[0]);
-  makePlane (vertices[0], vertices[3], vertices[2], planes[1]);
-  makePlane (vertices[0], vertices[1], vertices[3], planes[2]);
-  makePlane (vertices[0], vertices[2], vertices[1], planes[3]);
+  if (!makePlane (vertices[1], vertices[2], vertices[3], planes[0]) ||
+      !makePlane (vertices[0], vertices[3], vertices[2], planes[1]) ||
+      !makePlane (vertices[0], vertices[1], vertices[3], planes[2]) ||
+      !makePlane (vertices[0], vertices[2], vertices[1], planes[3])) {
+    // trigger isValid() to return false;
+    for (v = 0; v < 4; v++) {
+      for (a = 0; a < 3; a++) {
+        vertices[v][a] = 0.0f;
+      }
+    }
+  }
   
   // setup the extents
   mins[0] = mins[1] = mins[2] = +Infinity;
