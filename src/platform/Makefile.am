@@ -1,5 +1,3 @@
-SUBDIRS = MacBZFlag.pbproj
-
 if LINUX
 libPlatform_a_SOURCES =				\
 	PlatformFactory.cxx			\
