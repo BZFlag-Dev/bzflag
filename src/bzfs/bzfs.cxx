@@ -1030,56 +1030,41 @@ static bool readWorldStream(std::istream& input, const char *location, std::vect
     readToken(input, buffer, sizeof(buffer));
     if (strcmp(buffer, "") == 0) {
       // ignore blank line
-    }
-
-    else if (buffer[0] == '#') {
+    } else if (buffer[0] == '#') {
       // ignore comment
-    }
-
-    else if (strcasecmp(buffer, "end") == 0) {
+    } else if (strcasecmp(buffer, "end") == 0) {
       if (object) {
 	wlist.push_back(object);
 	object = NULL;
-      }
-      else {
+      } else {
 	std::cout << location << '(' << line << ") : unexpected \"end\" token\n";
 	return false;
       }
-    }
-
-    else if (strcasecmp(buffer, "box") == 0)
+    } else if (strcasecmp(buffer, "box") == 0) {
       newObject = new CustomBox;
-
-    else if (strcasecmp(buffer, "pyramid") == 0)
+    } else if (strcasecmp(buffer, "pyramid") == 0) {
       newObject = new CustomPyramid();
-
-    else if (strcasecmp(buffer, "teleporter") == 0)
+    } else if (strcasecmp(buffer, "teleporter") == 0) {
       newObject = new CustomGate();
-
-    else if (strcasecmp(buffer, "link") == 0)
+    } else if (strcasecmp(buffer, "link") == 0) {
       newObject = new CustomLink();
-
-    else if (strcasecmp(buffer, "base") == 0)
+    } else if (strcasecmp(buffer, "base") == 0) {
       newObject = new CustomBase;
-
-    else if (strcasecmp(buffer, "weapon") == 0)
+    } else if (strcasecmp(buffer, "weapon") == 0) {
       newObject = new CustomWeapon;
-
-    else if (strcasecmp(buffer, "world") == 0){
-		if (!gotWorld){
-			newObject = new CustomWorld();
-			gotWorld = true;
-		}
-	}
-    else if (object) {
+    } else if (strcasecmp(buffer, "world") == 0) {
+      if (!gotWorld) {
+	newObject = new CustomWorld();
+	gotWorld = true;
+      }
+    } else if (object) {
       if (!object->read(buffer, input)) {
 	// unknown token
 	std::cout << location << '(' << line << ") : unknown object parameter \"" << buffer << "\" - skipping\n";
-	//delete object;
-	//return false;
+	// delete object;
+	// return false;
       }
-    }
-    else {// filling the current object
+    } else { // filling the current object
       // unknown token
       std::cout << location << '(' << line << ") : invalid object type \"" << buffer << "\" - skipping\n";
       delete object;
@@ -1692,10 +1677,10 @@ static bool defineWorld()
 {
   // clean up old database
   if (world)
-  delete world;
+    delete world;
 
-  if(worldDatabase)
-  delete[] worldDatabase;
+  if (worldDatabase)
+    delete[] worldDatabase;
 
   // make world and add buildings
   if (clOptions->gameStyle & TeamFlagGameStyle) {
@@ -1725,9 +1710,9 @@ static bool defineWorld()
 
   worldDatabase = new char[worldDatabaseSize];
   // this should NOT happen but it does sometimes
-  if(!worldDatabase)
+  if (!worldDatabase)
     return false;
-  memset( worldDatabase, 0, worldDatabaseSize );
+  memset(worldDatabase, 0, worldDatabaseSize);
 
   void *buf = worldDatabase;
   buf = nboPackUShort(buf, WorldCodeHeaderSize);
@@ -1753,10 +1738,10 @@ static bool defineWorld()
   buf = nboPackUShort(buf, WorldCodeEnd);
 
   MD5 md5;
-  md5.update( (unsigned char *)worldDatabase, worldDatabaseSize );
+  md5.update((unsigned char *)worldDatabase, worldDatabaseSize);
   md5.finalize();
   if (clOptions->worldFile == NULL)
-    strcpy(hexDigest,"t");
+    strcpy(hexDigest, "t");
   else
     strcpy(hexDigest, "p");
   std::string digest = md5.hexdigest();
@@ -4237,8 +4222,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 		DEBUG1("Logging Player %s [%d] tank too fast (tank: %f, allowed: %f){Dead or v[z] != 0}\n",
 		player[t].callSign, t,
 		sqrt(curPlanarSpeedSqr), sqrt(maxPlanarSpeedSqr));
-	      }
-	      else {
+	      } else {
 		DEBUG1("Kicking Player %s [%d] tank too fast (tank: %f, allowed: %f)\n",
 		       player[t].callSign, t,
 		       sqrt(curPlanarSpeedSqr), sqrt(maxPlanarSpeedSqr));
@@ -4295,22 +4279,22 @@ static std::string cmdSet(const std::string&, const CommandManager::ArgList& arg
   switch (args.size()) {
     case 2:
       if (BZDB.isSet(args[0])) {
-	StateDatabase::Permission permission=BZDB.getPermission(args[0]);
+	StateDatabase::Permission permission = BZDB.getPermission(args[0]);
 	if ((permission == StateDatabase::ReadWrite) || (permission == StateDatabase::Locked)) {
 	  BZDB.set(args[0], args[1], StateDatabase::Server);
 	  lastWorldParmChange = TimeKeeper::getCurrent();
 	  return args[0] + " set";
 	}
 	return "variable " + args[0] + " is not writeable";
-      }
-      else
+      } else {
 	return "variable " + args[0] + " does not exist";
+      }
     case 1:
       if (BZDB.isSet(args[0])) {
 	return args[0] + " is " + BZDB.get(args[0]);
-      }
-      else
+      } else {
 	return "variable " + args[0] + " does not exist";
+      }
     default:
       return "usage: set <name> [<value>]";
   }
@@ -4318,7 +4302,7 @@ static std::string cmdSet(const std::string&, const CommandManager::ArgList& arg
 
 static void resetAllCallback(const std::string &name, void*)
 {
-  StateDatabase::Permission permission=BZDB.getPermission(name);
+  StateDatabase::Permission permission = BZDB.getPermission(name);
   if ((permission == StateDatabase::ReadWrite) || (permission == StateDatabase::Locked)) {
     BZDB.set(name, BZDB.getDefault(name), StateDatabase::Server);
   }
@@ -4330,21 +4314,20 @@ static std::string cmdReset(const std::string&, const CommandManager::ArgList& a
     if (args[0] == "*") {
       BZDB.iterate(resetAllCallback,NULL);
       return "all variables reset";
-    }
-    else if (BZDB.isSet(args[0])) {
-      StateDatabase::Permission permission=BZDB.getPermission(args[0]);
+    } else if (BZDB.isSet(args[0])) {
+      StateDatabase::Permission permission = BZDB.getPermission(args[0]);
       if ((permission == StateDatabase::ReadWrite) || (permission == StateDatabase::Locked)) {
 	BZDB.set(args[0], BZDB.getDefault(args[0]), StateDatabase::Server);
 	lastWorldParmChange = TimeKeeper::getCurrent();
 	return args[0] + " reset";
       }
       return "variable " + args[0] + " is not writeable";
-    }
-    else
+    } else {
       return "variable " + args[0] + " does not exist";
-  }
-  else
+    }
+  } else {
     return "usage: reset <name>";
+  }
 }
 
 
@@ -4647,8 +4630,7 @@ int main(int argc, char **argv)
 
     // get time for next lagping
     bool someoneIsConnected = false;
-    for (int p=0;p<curMaxPlayers;p++)
-    {
+    for (int p = 0; p < curMaxPlayers; p++) {
       if (player[p].state >= PlayerDead &&
 	  player[p].type == TankPlayer &&
 	  player[p].nextping - tm < waitTime) {
@@ -4690,7 +4672,7 @@ int main(int argc, char **argv)
       if (timeLeft == 0.0f || newTimeElapsed - clOptions->timeElapsed >= 30.0f) {
 	void *buf, *bufStart = getDirectMessageBuffer();
 	buf = nboPackUShort(bufStart, (uint16_t)(int)timeLeft);
-	broadcastMessage(MsgTimeUpdate, (char*)buf-(char*)bufStart, bufStart);
+	broadcastMessage(MsgTimeUpdate, (char*)buf - (char*)bufStart, bufStart);
 	clOptions->timeElapsed = newTimeElapsed;
 	if (clOptions->oneGameOnly && timeLeft == 0.0f) {
 	  done = true;
@@ -4702,7 +4684,7 @@ int main(int argc, char **argv)
 
     // kick idle players
     if (clOptions->idlekickthresh > 0) {
-      for (int i=0;i<curMaxPlayers;i++) {
+      for (int i = 0; i < curMaxPlayers; i++) {
         if (player[i].state > PlayerInLimbo && player[i].team != ObserverTeam) {
           int idletime = (int)(tm - player[i].lastupdate);
 	  int pausetime = 0;
@@ -4712,8 +4694,8 @@ int main(int argc, char **argv)
           if (idletime >
 	      (tm - player[i].lastmsg < clOptions->idlekickthresh ?
 	       3 * clOptions->idlekickthresh : clOptions->idlekickthresh)) {
-            DEBUG1("kicking Player %s [%d] idle %d\n", player[i].callSign, i, idletime);
-            char message[MessageLen] = "You were kicked because of idling too long";
+            DEBUG1("Kicking player %s [%d] idle %d\n", player[i].callSign, i, idletime);
+            char message[MessageLen] = "You were kicked because you were idle too long";
             sendMessage(ServerPlayer, i,  message, true);
             removePlayer(i, "idling");
           }
@@ -4839,7 +4821,7 @@ int main(int argc, char **argv)
 		bool foundPlayer=false;
 		int v;
 		for (v = 0; v < curMaxPlayers; v++) {
-		  if (strncmp(player[v].callSign, target.c_str(), 256)==0) {
+		  if (strncmp(player[v].callSign, target.c_str(), 256) == 0) {
 		    foundPlayer=true;
 		    break;
 		  }
@@ -4902,7 +4884,7 @@ int main(int argc, char **argv)
 	  sendMessage(ServerPlayer, AllPlayers, message, true);
 	}
 	// multi line from file advert
-	if (adLines != NULL){
+	if (adLines != NULL) {
 	  for (int j = 0; j < (int)adLines->size(); j ++) {
 	    sendMessage(ServerPlayer, AllPlayers, (*adLines)[j].c_str());
 	  }
@@ -4939,10 +4921,10 @@ int main(int argc, char **argv)
           int flagid = lookupFirstTeamFlag(i);
 	  if (flagid >= 0) {
 	    for (int n = 0; n < clOptions->numTeamFlags[i]; n++) {
-              if (flag[flagid+n].flag.status != FlagNoExist &&
-	          flag[flagid+n].player == -1) {
+              if (flag[flagid + n].flag.status != FlagNoExist &&
+	          flag[flagid + n].player == -1) {
 	        DEBUG1("Flag timeout for team %d\n", i);
-                zapFlag(flagid+n);
+                zapFlag(flagid + n);
 	      }
 	    }
 	  }
@@ -4965,11 +4947,9 @@ int main(int argc, char **argv)
     }
 
     // send lag pings
-    for (int j=0;j<curMaxPlayers;j++)
-    {
+    for (int j=0;j<curMaxPlayers;j++) {
       if (player[j].state >= PlayerDead && player[j].type == TankPlayer
-	  && player[j].nextping-tm < 0)
-      {
+	  && player[j].nextping-tm < 0) {
 	player[j].pingseqno = (player[j].pingseqno + 1) % 10000;
 	if (player[j].pingpending) // ping lost
           updateLagLost(j);
@@ -5148,7 +5128,7 @@ int main(int argc, char **argv)
       }
     }
 
-    //Fire world weapons
+    // Fire world weapons
     wWeapons.fire();
 
   }

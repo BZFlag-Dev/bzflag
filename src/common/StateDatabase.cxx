@@ -626,7 +626,7 @@ std::istream&operator >> (std::istream& src, StateDatabase::ExpressionToken& dst
 	dst.setOper(StateDatabase::ExpressionToken::rparen);
 	break;
     }
-  } else if((temp >= 'a' && temp <= 'z') || (temp >= 'A' && temp <= 'Z') || temp == '_') {
+  } else if ((temp >= 'a' && temp <= 'z') || (temp >= 'A' && temp <= 'Z') || temp == '_') {
     // variable (perhaps prefix with $?)
     tempname += temp;
     temp = src.peek();
@@ -773,7 +773,7 @@ std::string& operator >> (std::string& src, StateDatabase::Expression& dst)
 
 std::ostream& operator << (std::ostream& dst, const StateDatabase::Expression& src)
 {
-  if(src.size()) {
+  if (src.size()) {
     for (unsigned int i = 0; i < src.size() - 1; i++) {
       dst << src[i] << ' ';
     }

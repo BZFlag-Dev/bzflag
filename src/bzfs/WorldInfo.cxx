@@ -199,8 +199,8 @@ InBuildingType WorldInfo::inBuilding(ObstacleLocation **location,
     ObstacleLocation &base = *it;
     if ((base.pos[2] < (z + height))
 	&& ((base.pos[2] + base.size[2]) > z)
-	&&	(inRect(base.pos, base.rotation, base.size, x, y, r))) {
-      if(location != NULL)
+	&& (inRect(base.pos, base.rotation, base.size, x, y, r))) {
+      if (location != NULL)
 	*location = &base;
       return IN_BASE;
     }
@@ -209,7 +209,7 @@ InBuildingType WorldInfo::inBuilding(ObstacleLocation **location,
     ObstacleLocation &box = *it;
     if ((box.pos[2] < (z + height))
 	&& ((box.pos[2] + box.size[2]) > z)
-	&&	(inRect(box.pos, box.rotation, box.size, x, y, r))) {
+	&& (inRect(box.pos, box.rotation, box.size, x, y, r))) {
       if (location != NULL)
 	*location = &box;
       return IN_BOX;
@@ -219,7 +219,7 @@ InBuildingType WorldInfo::inBuilding(ObstacleLocation **location,
     ObstacleLocation &pyr = *pyrit;
     if ((pyr.pos[2] < (z + height))
 	&& ((pyr.pos[2] + pyr.size[2]) > z)
-	&&	(inRect(pyr.pos, pyr.rotation, pyr.size,x,y,r))) {
+	&& (inRect(pyr.pos, pyr.rotation, pyr.size,x,y,r))) {
       if (location != NULL)
 	*location = &pyr;
       return IN_PYRAMID;
@@ -229,7 +229,7 @@ InBuildingType WorldInfo::inBuilding(ObstacleLocation **location,
     Teleporter &tele = *telit;
     if ((tele.pos[2] < (z + height))
 	&& ((tele.pos[2] + tele.size[2]) > z)
-	&&	(inRect(tele.pos, tele.rotation, tele.size, x, y, r))) {
+	&& (inRect(tele.pos, tele.rotation, tele.size, x, y, r))) {
       static ObstacleLocation __teleporter;
       __teleporter = tele;
       if (location != NULL)

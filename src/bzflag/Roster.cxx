@@ -97,7 +97,7 @@ BaseLocalPlayer* getLocalPlayer(PlayerId id)
 
 TeamColor PlayerIdToTeam(PlayerId id)
 {
-  if (id >= 244 && id<=250)
+  if (id >= 244 && id <= 250)
     return TeamColor(250 - id);
   else
     return NoTeam;
@@ -108,7 +108,7 @@ PlayerId TeamToPlayerId(TeamColor team)
   if (team == NoTeam)
     return NoPlayer;
   else
-    return 250-team;
+    return 250 - team;
 }
 
 
