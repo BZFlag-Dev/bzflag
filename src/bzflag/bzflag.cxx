@@ -386,10 +386,10 @@ static void		usage()
 static void		parse(int argc, char** argv)
 {
   for (int i = 1; i < argc; i++) {
-    if (strncmp(argv[i], "-a", 2) == 0 ||
-		strncmp(argv[i], "-anonymous", 10) == 0) {
+    if (strcmp(argv[i], "-a") == 0 ||
+		strcmp(argv[i], "-anonymous") == 0) {
       anonymous = true;
-    } else if (strncmp(argv[i], "-c", 2) == 0 || strncmp(argv[i], "-callsign", 9) == 0) {
+    } else if (strcmp(argv[i], "-c") == 0 || strcmp(argv[i], "-callsign") == 0) {
       if (++i == argc) {
 	printFatalError("Missing argument for %s.", argv[i-1]);
 	usage();
@@ -398,8 +398,8 @@ static void		parse(int argc, char** argv)
 	printFatalError("Callsign truncated.");
       strncpy(startupInfo.callsign, argv[i], sizeof(startupInfo.callsign) - 1);
       startupInfo.callsign[sizeof(startupInfo.callsign) - 1] = '\0';
-    } else if (strncmp(argv[i], "-d", 2) == 0 ||
-		strncmp(argv[i], "-directory", 10) == 0) {
+    } else if (strcmp(argv[i], "-d") == 0 ||
+		strcmp(argv[i], "-directory") == 0) {
       if (++i == argc) {
 	printFatalError("Missing argument for %s.", argv[i-1]);
 	usage();
@@ -408,23 +408,23 @@ static void		parse(int argc, char** argv)
 	BZDB->unset("directory");
       else
 	BZDB->set("directory", argv[i]);
-    } else if (strncmp(argv[i], "-e", 2) == 0 || strncmp(argv[i], "-echo", 5) == 0) {
+    } else if (strcmp(argv[i], "-e") == 0 || strcmp(argv[i], "-echo") == 0) {
       echoToConsole = true;
-    } else if (strncmp(argv[i], "-ec", 3) == 0 || strncmp(argv[i], "-echoClean", 10) == 0) {
+    } else if (strcmp(argv[i], "-ec") == 0 || strcmp(argv[i], "-echoClean") == 0) {
       echoToConsole = true;
       echoClean = true;
-    } else if (strncmp(argv[i], "-h", 2) == 0 ||
-	     strncmp(argv[i], "-help", 5) == 0 ||
-	     strncmp(argv[i], "--help", 6) == 0) {
+    } else if (strcmp(argv[i], "-h") == 0 ||
+	     strcmp(argv[i], "-help") == 0 ||
+	     strcmp(argv[i], "--help") == 0) {
       usage();
-    } else if (strncmp(argv[i], "-g", 2) == 0 || strncmp(argv[i], "-geometry", 9) == 0) {
+    } else if (strcmp(argv[i], "-g") == 0 || strcmp(argv[i], "-geometry") == 0) {
       if (++i == argc) {
 	printFatalError("Missing argument for %s.", argv[i-1]);
 	usage();
       }
       int w, h, x, y, count;
       char xs = '+', ys = '+';
-      if (strncmp(argv[i], "default", 7) != 0 &&
+      if (strcmp(argv[i], "default") != 0 &&
 	  (((count = sscanf(argv[i], "%dx%d%c%d%c%d",
 		&w, &h, &xs, &x, &ys, &y)) != 6 && count != 2) ||
 	  (xs != '-' && xs != '+') || (ys != '-' && ys != '+'))) {
@@ -434,8 +434,8 @@ static void		parse(int argc, char** argv)
 	usage();
       }
       BZDB->set("geometry", argv[i]);
-    } else if (strncmp(argv[i], "-i", 2) == 0 ||
-		strncmp(argv[i], "-interface", 10) == 0) {
+    } else if (strcmp(argv[i], "-i") == 0 ||
+		strcmp(argv[i], "-interface") == 0) {
       if (++i == argc) {
 	printFatalError("Missing argument for %s.", argv[i-1]);
 	usage();
@@ -444,7 +444,7 @@ static void		parse(int argc, char** argv)
 	printFatalError("Interface name too long.");
       else
 	strcpy(startupInfo.multicastInterface, argv[i]);
-    } else if (strncmp(argv[i], "-latitude", 9) == 0) {
+    } else if (strcmp(argv[i], "-latitude") == 0) {
       if (++i == argc) {
 	printFatalError("Missing argument for %s.", argv[i-1]);
 	usage();
@@ -455,7 +455,7 @@ static void		parse(int argc, char** argv)
 	usage();
       }
       BZDB->set("latitude", argv[i]);
-    } else if (strncmp(argv[i], "-longitude", 10) == 0) {
+    } else if (strcmp(argv[i], "-longitude") == 0) {
       if (++i == argc) {
 	printFatalError("Missing argument for %s.", argv[i-1]);
 	usage();
@@ -466,32 +466,32 @@ static void		parse(int argc, char** argv)
 	usage();
       }
       BZDB->set("longitude", argv[i]);
-    } else if (strncmp(argv[i], "-list", 5) == 0) {
+    } else if (strcmp(argv[i], "-list") == 0) {
       if (++i == argc) {
 	printFatalError("Missing argument for %s.", argv[i-1]);
 	usage();
       }
-      if (strncmp(argv[i], "default", 7) == 0) {
+      if (strcmp(argv[i], "default") == 0) {
 	BZDB->unset("list");
       } else {
 	startupInfo.listServerURL = argv[i];
 	BZDB->set("list", argv[i]);
       }
-    } else if (strncmp(argv[i], "-locale", 7) == 0) {
+    } else if (strcmp(argv[i], "-locale") == 0) {
       if (++i == argc) {
 	printFatalError("Missing argument for %s.", argv[i-1]);
 	usage();
       }
       BZDB->set("locale", argv[i]);
-    } else if (strncmp(argv[i], "-nolist", 7) == 0) {
+    } else if (strcmp(argv[i], "-nolist") == 0) {
       startupInfo.listServerURL = "";
       BZDB->set("list", "");
-    } else if (strncmp(argv[i], "-m", 2) == 0 ||
-		strncmp(argv[i], "-mute", 5) == 0) {
+    } else if (strcmp(argv[i], "-m") == 0 ||
+		strcmp(argv[i], "-mute") == 0) {
       noAudio = true;
-    } else if (strncmp(argv[i], "-multisample", 12) == 0) {
+    } else if (strcmp(argv[i], "-multisample") == 0) {
       BZDB->set("_multisample", "1");
-    } else if (strncmp(argv[i], "-port", 5) == 0) {
+    } else if (strcmp(argv[i], "-port") == 0) {
       if (++i == argc) {
 	printFatalError("Missing argument for %s.", argv[i-1]);
 	usage();
@@ -502,7 +502,7 @@ static void		parse(int argc, char** argv)
 	printFatalError("Bad port, using default %d.", startupInfo.serverPort);
       }
 #ifdef ROBOT
-    } else if (strncmp(argv[i], "-solo", 5) == 0) {
+    } else if (strcmp(argv[i], "-solo") == 0) {
       if (++i == argc) {
 	printFatalError("Missing argument for %s.", argv[i-1]);
 	usage();
@@ -513,26 +513,26 @@ static void		parse(int argc, char** argv)
 	usage();
       }
 #endif
-    } else if (strncmp(argv[i], "-team", 5) == 0) {
+    } else if (strcmp(argv[i], "-team") == 0) {
       if (++i == argc) {
 	printFatalError("Missing argument for %s.", argv[i-1]);
 	usage();
       }
-      if (strncmp(argv[i], "r", 1) == 0 || strncmp(argv[i], "red", 3) == 0)
+      if (strcmp(argv[i], "r") == 0 || strcmp(argv[i], "red") == 0)
 	startupInfo.team = RedTeam;
-      else if (strncmp(argv[i], "g", 1) == 0 || strncmp(argv[i], "green", 5) == 0)
+      else if (strcmp(argv[i], "g") == 0 || strcmp(argv[i], "green") == 0)
 	startupInfo.team = GreenTeam;
-      else if (strncmp(argv[i], "b", 1) == 0 || strncmp(argv[i], "blue", 4) == 0)
+      else if (strcmp(argv[i], "b") == 0 || strcmp(argv[i], "blue") == 0)
 	startupInfo.team = BlueTeam;
-      else if (strncmp(argv[i], "p", 1) == 0 || strncmp(argv[i], "purple", 6) == 0)
+      else if (strcmp(argv[i], "p") == 0 || strcmp(argv[i], "purple") == 0)
 	startupInfo.team = PurpleTeam;
-      else if (strncmp(argv[i], "z", 1) == 0 || strncmp(argv[i], "rogue", 5) == 0)
+      else if (strcmp(argv[i], "z") == 0 || strcmp(argv[i], "rogue") == 0)
 	startupInfo.team = RogueTeam;
       else {
 	printFatalError("Invalid argument for %s.", argv[i-1]);
 	usage();
       }
-    } else if (strncmp(argv[i], "-ttl", 4) == 0) {
+    } else if (strcmp(argv[i], "-ttl") == 0) {
       if (++i == argc) {
 	printFatalError("Missing argument for %s.", argv[i-1]);
 	usage();
@@ -545,46 +545,46 @@ static void		parse(int argc, char** argv)
 	startupInfo.ttl = MaximumTTL;
 	printFatalError("Using maximum ttl of %d.", startupInfo.ttl);
       }
-    } else if (strncmp(argv[i], "-joystick", 9) == 0) {
+    } else if (strcmp(argv[i], "-joystick") == 0) {
       if (++i == argc) {
 	printFatalError("Missing argument for %s.", argv[i-1]);
 	usage();
       }
-      if (strncmp(argv[i], "0", 1) != 0 && strncmp(argv[i], "1", 1) != 0) {
+      if (strcmp(argv[i], "0") != 0 && strcmp(argv[i], "1") != 0) {
 	printFatalError("Invalid argument for %s.", argv[i-1]);
 	usage();
       }
       BZDB->set("joystick", argv[i]);
-    } else if (strncmp(argv[i], "-joystickname", 13) == 0) {
+    } else if (strcmp(argv[i], "-joystickname") == 0) {
       if (++i == argc) {
 	printFatalError("Missing argument for %s.", argv[i-1]);
 	usage();
       }
       BZDB->set("joystickname", argv[i]);
-    } else if (strncmp(argv[i], "-v", 2) == 0 ||
-	     strncmp(argv[i], "-version", 8) == 0 ||
-	     strncmp(argv[i], "--version", 9) == 0) {
+    } else if (strcmp(argv[i], "-v") == 0 ||
+	     strcmp(argv[i], "-version") == 0 ||
+	     strcmp(argv[i], "--version") == 0) {
       printFatalError("BZFlag client, version %s\n"
 		"  protocol %s",
 		getAppVersion(),
 		getProtocolVersion());
       exit(0);
-    } else if (strncmp(argv[i], "-window", 7) == 0) {
+    } else if (strcmp(argv[i], "-window") == 0) {
       BZDB->set("_window", "1");
-    } else if (strncmp(argv[i], "-3dfx", 5) == 0 || strncmp(argv[i], "-3Dfx", 5) == 0) {
+    } else if (strcmp(argv[i], "-3dfx") == 0 || strcmp(argv[i], "-3Dfx") == 0) {
 #if !defined(__linux__)
       putenv("MESA_GLX_FX=fullscreen");
 #else
       setenv("MESA_GLX_FX", "fullscreen", 1);
 #endif
-    } else if (strncmp(argv[i], "-no3dfx", 7) == 0 || strncmp(argv[i], "-no3Dfx", 7) == 0) {
+    } else if (strcmp(argv[i], "-no3dfx") == 0 || strcmp(argv[i], "-no3Dfx") == 0) {
 #if !defined(__linux__)
       putenv("MESA_GLX_FX=");
 #else
       unsetenv("MESA_GLX_FX");
 #endif
 #ifdef DEBUG
-    } else if (strncmp(argv[i], "-date", 5) == 0) {
+    } else if (strcmp(argv[i], "-date") == 0) {
       if (++i == argc) {
 	printFatalError("Missing argument for %s.", argv[i-1]);
 	usage();
@@ -602,7 +602,7 @@ static void		parse(int argc, char** argv)
       userTime.tm_mday = day;
       userTime.tm_mon = month - 1;
       userTime.tm_year = year;
-    } else if (strncmp(argv[i], "-time", 5) == 0) {
+    } else if (strcmp(argv[i], "-time") == 0) {
       if (++i == argc) {
 	printFatalError("Missing argument for %s.", argv[i-1]);
 	usage();
@@ -619,13 +619,13 @@ static void		parse(int argc, char** argv)
       userTime.tm_min = minutes;
       userTime.tm_hour = hours;
 #endif
-    } else if (strncmp(argv[i], "-view", 5) == 0) {
+    } else if (strcmp(argv[i], "-view") == 0) {
       if (++i == argc) {
 	printFatalError("Missing argument for %s.", argv[i-1]);
 	usage();
       }
       BZDB->set("view", argv[i]);
-    } else if (strncmp(argv[i], "-zoom", 5) == 0) {
+    } else if (strcmp(argv[i], "-zoom") == 0) {
       if (++i == argc) {
 	printFatalError("Missing argument for %s.", argv[i-1]);
 	usage();
@@ -636,37 +636,37 @@ static void		parse(int argc, char** argv)
 	usage();
       }
       BZDB->set("displayZoom", argv[i]);
-    } else if (strncmp(argv[i], "-zbuffer", 8) == 0) {
+    } else if (strcmp(argv[i], "-zbuffer") == 0) {
       if (++i == argc) {
 	printFatalError("Missing argument for %s.", argv[i-1]);
 	usage();
       }
-      if (strncmp(argv[i], "on", 2) == 0) {
+      if (strcmp(argv[i], "on") == 0) {
 	BZDB->set("zbuffer", "1");
-      } else if (strncmp(argv[i], "off", 3) == 0) {
+      } else if (strcmp(argv[i], "off") == 0) {
 	BZDB->set("zbuffer", "disable");
       } else {
 	printFatalError("Invalid argument for %s.", argv[i-1]);
 	usage();
       }
-    } else if (strncmp(argv[i], "-eyesep", 7) == 0) {
+    } else if (strcmp(argv[i], "-eyesep") == 0) {
       if (++i == argc) {
 	printFatalError("Missing argument for %s.", argv[i-1]);
 	usage();
       }
       BZDB->set("eyesep", argv[i]);
-    } else if (strncmp(argv[i], "-focal", 6) == 0) {
+    } else if (strcmp(argv[i], "-focal") == 0) {
       if (++i == argc) {
 	printFatalError("Missing argument for %s.", argv[i-1]);
 	usage();
       }
       BZDB->set("focal", argv[i]);
-    } else if (strncmp(argv[i], "-psn", 4) == 0) {
+    } else if (strcmp(argv[i], "-psn") == 0) {
 	std::vector<std::string> args;
 	args.push_back(argv[i]);
 	printError("Ignoring Finder argument \"{1}\"", &args);
 	// ignore process serial number argument for MacOS X
-    } else if (strncmp(argv[i], "-badwords", 9) == 0) {
+    } else if (strcmp(argv[i], "-badwords") == 0) {
       if (++i == argc) {
 	printFatalError("Missing bad word filter filename argument for %s.", argv[i-1]);
 	usage();
@@ -677,6 +677,9 @@ static void		parse(int argc, char** argv)
 	printFatalError("Server name too long.  Ignoring.");
       }
       else {
+	/* if there was actually something that looks akin to a command,
+	 * do not assume it is a server name
+	 */
 	if (strncmp(argv[i], "-", 1) == 0) {
 	  memset(startupInfo.serverName, 0, sizeof(char) * 80);
 	} else {
