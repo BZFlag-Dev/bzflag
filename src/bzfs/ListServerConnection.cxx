@@ -176,7 +176,7 @@ void ListServerLink::read()
       // TODO don't do this if we don't want central logins
       if (strncmp(base, tokGoodIdentifier, strlen(tokGoodIdentifier)) == 0) {
 	char *callsign, *group;
-	callsign = (char *)(base + strlen(tokGoodIdentifier));
+	callsign = base + strlen(tokGoodIdentifier);
 	DEBUG3("Got: %s\n", base);
 	group = callsign;
 	while (*group && (*group != ':')) group++;
@@ -202,7 +202,11 @@ void ListServerLink::read()
 	}
       } else if (strncmp(base, tokBadIdentifier, strlen(tokBadIdentifier)) == 0) {
 	char *callsign;
-	callsign = (char *)(base + strlen(tokBadIdentifier));
+	callsign = base + strlen(tokBadIdentifier);
+	// find end of callsign (string is "callsign=token")
+	char *p = callsign;
+	while (*p && (*p != '=')) p++;
+	*p = 0;
 	int playerIndex = getTarget(callsign);
 	DEBUG3("Got: [%d] %s\n", playerIndex, base);
 	if (playerIndex < curMaxPlayers) {
