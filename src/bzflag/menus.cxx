@@ -3324,7 +3324,7 @@ void			ServerStartMenu::execute()
     // get path to server from path to client
     extern const char* argv0;			// from bzflag.cxx
 	// add 256 for flags room
-    char serverCmd[PATH_MAX+256];
+    char serverCmd[512];
     strcpy(serverCmd, argv0);
 #ifdef _MACOSX_
 	/* this should be in a header file somewhere */
