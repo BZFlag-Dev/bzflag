@@ -47,6 +47,8 @@ extern int __beginendCount;
 }
 #endif
 
+#define _GL_INVALID_ID 0xFFFFFFFF
+
 
 #endif /* __BZFGL_H__ */
 

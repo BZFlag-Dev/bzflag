@@ -20,7 +20,7 @@
 class DisplayListBuilder
 {
 public:
-  virtual bool build ( void ){return;|
+  virtual bool build ( void ){return false;}
 };
 
 typedef struct
@@ -38,6 +38,7 @@ public:
   void freeList ( int list );
   bool callList ( int list );
 
+  void clearLists ( void );
   void rebuildLists ( void );
 protected:
   friend class Singleton<DisplayListManager>;

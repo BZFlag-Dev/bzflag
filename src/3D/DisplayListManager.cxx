@@ -30,42 +30,87 @@ DisplayListManager::DisplayListManager()
 
 DisplayListManager::DisplayListManager(const DisplayListManager &dm)
 {
-  lists = dm.lists();
+  lists = dm.lists;
   lastID = dm.lastID;
   rebuildLists();
 }
 
 DisplayListManager& DisplayListManager::operator=(const DisplayListManager &dm)
 {
-  lists = dm.lists();
+  lists = dm.lists;
   lastID = dm.lastID;
   rebuildLists();
-  return &this;
+  return *this;
 }
 
-~DisplayListManager::DisplayListManager()
+DisplayListManager::~DisplayListManager()
 {
   lists.clear();
 }
 
 int DisplayListManager::newList ( DisplayListBuilder *builder )
 {
-    displayListItem newItem ;
-    return -1
+  if (!builder)
+    return -1;
+
+  displayListItem newItem;
+  newItem.builder = builder;
+  newItem.list = glGenLists(1);
+  int id = ++lastID;
+  lists[id] = newItem;
+  glNewList(newItem.list,GL_COMPILE);
+    builder->build();
+  glEndList();
+  return id;
 }
 
 void DisplayListManager::freeList ( int list )
 {
+  displayListMap::iterator  it = lists.find(list);
+  if (it == lists.end())
+    return;
+
+  glDeleteLists(it->second.list,1);
+  lists.erase(it);
 }
 
 bool DisplayListManager::callList ( int list )
 {
+  displayListMap::iterator  it = lists.find(list);
+  if (it == lists.end())
+    return false;
+
+  if (it->second.list != _GL_INVALID_ID)
+    glCallList(it->second.list);
+  else
+    return false;
   return true;
+}
+
+void DisplayListManager::clearLists ( void )
+{
+  displayListMap::iterator  it = lists.begin();
+
+  while (it != lists.end())
+  {
+    glDeleteLists(it->second.list,1);
+    it->second.list = _GL_INVALID_ID;
+    it++;
+  }
 }
 
 void DisplayListManager::rebuildLists ( void )
 {
+  displayListMap::iterator  it = lists.begin();
 
+  while (it != lists.end())
+  {
+    it->second.list = glGenLists(1);
+    glNewList(it->second.list,GL_COMPILE);
+     it->second.builder->build();
+    glEndList();
+    it++;
+  }
 }
 
 // Local Variables: ***
