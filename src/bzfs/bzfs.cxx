@@ -2470,6 +2470,8 @@ static void sendQueryPlayers(int playerIndex)
   GameKeeper::Player *otherData;
   for (int i = 0; i < curMaxPlayers
 	 && GameKeeper::Player::getPlayerByIndex(playerIndex); i++) {
+    if (i == playerIndex)
+      continue;
     otherData = GameKeeper::Player::getPlayerByIndex(i);
     if (otherData)
       sendPlayerUpdate(otherData, playerIndex);
