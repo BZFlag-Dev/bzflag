@@ -6409,6 +6409,8 @@ static void parse(int argc, char **argv, CmdLineOptions &options)
   if (!hasTeam) {
     options.flagCount[int(GenocideFlag)] = 0;
     options.flagDisallowed[int(GenocideFlag)] = true;
+    options.flagCount[int(ColorblindnessFlag)] = 0;
+    options.flagDisallowed[int(ColorblindnessFlag)] = true;
   }
 
   // make table of allowed extra flags
