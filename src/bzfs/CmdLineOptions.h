@@ -47,6 +47,7 @@ enum RabbitSelection {
 };
 
 typedef std::map<FlagType*, int> FlagNumberMap;
+typedef std::map<FlagType*,bool> FlagOptionMap;
 
 /** CmdLineOptions is a container for any of the bzfs options that may
  * be provided via the command line.
@@ -136,7 +137,7 @@ struct CmdLineOptions
   uint16_t		maxTeam[NumTeams];
   FlagNumberMap		flagCount;
   FlagNumberMap		flagLimit; // # shots allowed / flag
-  std::map<FlagType*,bool> flagDisallowed;
+  FlagOptionMap		flagDisallowed;
 
   AccessControlList	acl;
   TextChunkManager	textChunker;

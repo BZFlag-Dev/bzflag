@@ -3944,7 +3944,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 	void *bufStart;
 	FlagTypeMap::iterator it;
 	std::set<FlagType*>::iterator m_it;
-	std::map<FlagType*,bool> hasFlag;
+	FlagOptionMap hasFlag;
 	std::set<FlagType*> missingFlags;
 	int i;
 	unsigned short numClientFlags = len/2;

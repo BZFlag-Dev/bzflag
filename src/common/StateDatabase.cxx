@@ -30,13 +30,14 @@
 
 void	_debugLookups(const std::string &name)
 {
+  typedef std::map<std::string,int> EvalCntMap;
   static const float interval = 20.0f;
 
   /* This bit of nastyness help debug BDZB->eval accesses sorted from worst to best*/
-  static std::map<std::string,int> cnts;
+  static EvalCntMap cnts;
   static TimeKeeper last = TimeKeeper::getCurrent();
 
-  std::map<std::string,int>::iterator it = cnts.find(name);
+  EvalCntMap::iterator it = cnts.find(name);
   if (it == cnts.end())
     cnts[name] = 1;
   else
