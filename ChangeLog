@@ -4,6 +4,7 @@
 BZFlag 1.12.0  (was 1.11.x)
 ---------------------------
 
+* Fixed collision detection impalement problem - Dave Rodgers
 * Added anti perm for pollkick, pollban, kick, ban, deregister - Sean Morrison
 * Added antipoll bzfs anti perm to protect against poll kick/bans - Andrew Heyn
 * Server Start Menu now allows selection between Rabbit Chase styles - Ian Agar

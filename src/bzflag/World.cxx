@@ -206,10 +206,9 @@ const Obstacle*		World::hitBuilding(const float* pos, float angle,
   std::vector<WallObstacle>::const_iterator wallScan = walls.begin();
   while (wallScan != walls.end()) {
     const WallObstacle& wall = *wallScan;
-	if (!wall.isDriveThrough()){
-    if (wall.isInside(pos, angle, dx, dy))
-      return &wall;
-	}
+    if (!wall.isDriveThrough() && wall.isInside(pos, angle, dx, dy)) {
+        return &wall;
+    }
     wallScan++;
   }
 
@@ -239,10 +238,9 @@ const Obstacle*		World::hitBuilding(const float* oldPos, float oldAngle,
   std::vector<WallObstacle>::const_iterator wallScan = walls.begin();
   while (wallScan != walls.end()) {
     const WallObstacle& wall = *wallScan;
-	if (!wall.isDriveThrough()){
-    if (wall.isInside(pos, angle, dx, dy))
+    if (!wall.isDriveThrough() && wall.isInside(pos, angle, dx, dy)) {
       return &wall;
-	}
+    }
     wallScan++;
   }
 

@@ -78,9 +78,8 @@ CellList CollisionGrid::getCells (const float *pos, float radius) const
   // make the list
   CellList list;
   
-  int x, y;
-  for (x=minX; x<=maxX; x++) {
-    for (y=minY; y<=maxY; y++) {
+  for (int x = minX; x <= maxX; x++) {
+    for (int y = minY; y <= maxY; y++) {
       if (Cells[x][y].count > 0) {
         list.push_back(&Cells[x][y]);
       }
@@ -110,7 +109,7 @@ CellList CollisionGrid::getCells (const float* oldPos, float oldAngle,
   oldPos = oldPos;
   oldAngle = oldAngle;
   
-  float radius = sqrt (dx*dx + dy*dy);
+  float radius = sqrtf (dx*dx + dy*dy);
   return getCells (pos, radius);
 }                                  
 
@@ -127,20 +126,20 @@ void CollisionGrid::load (std::vector<BoxBuilding>     &boxes,
 
   WorldSize = BZDB.eval (StateDatabase::BZDB_WORLDSIZE);
   Sx = WorldSize / float (GridSizeX);
-  Sy = WorldSize / float (GridSizeX);
+  Sy = WorldSize / float (GridSizeY);
   Hx = Sx / 2.0f;  // half the cell size
   Hy = Sy / 2.0f;  // half the cell size
   Offx = -(WorldSize / 2.0f) + Hx;
   Offy = -(WorldSize / 2.0f) + Hy;
   
-  // setup the cell positions, and fake the count for getCells()
+  // setup the cell positions
   int x, y;
   for (x=0 ; x < GridSizeX; x++) {
     for (y=0 ; y < GridSizeY; y++) {
       Cells[x][y].pos[0] = Offx + (Sx * (float)x);
       Cells[x][y].pos[1] = Offy + (Sy * (float)y);
       Cells[x][y].pos[2] = 0.0f;
-      Cells[x][y].count = 1;
+      Cells[x][y].count = 1;    // fake the count for getCells()
     }
   }
   
@@ -150,13 +149,13 @@ void CollisionGrid::load (std::vector<BoxBuilding>     &boxes,
   for (std::vector<BoxBuilding>::const_iterator it_box = boxes.begin();
        it_box != boxes.end(); it_box++) {
     const BoxBuilding* box = (const BoxBuilding *) &(*it_box);
-    float dx = box->getWidth() * box->getWidth();
-    float dy = box->getBreadth() * box->getBreadth();
-    float radius = sqrtf (dx + dy);
+    float dx = box->getWidth();
+    float dy = box->getBreadth();
+    float radius = sqrtf (dx*dx + dy*dy);
     CellList list = getCells (box->getPosition(), radius);
     for (cit = list.begin(); cit != list.end(); cit++) {
-      if (box->isInside((*cit)->pos, 0.0f, Hx, Hy)) {
-        CollisionCell* cell = (CollisionCell*) (*cit);
+      CollisionCell* cell = (CollisionCell*) (*cit);
+      if (box->isInside(cell->pos, 0.0f, Hx, Hy)) {
         cell->objs.push_back( &(*it_box) );
       }
     }
@@ -166,13 +165,13 @@ void CollisionGrid::load (std::vector<BoxBuilding>     &boxes,
   for (std::vector<PyramidBuilding>::const_iterator it_pyr = pyrs.begin();
        it_pyr != pyrs.end(); it_pyr++) {
     const PyramidBuilding* pyr = (const PyramidBuilding *) &(*it_pyr);
-    float dx = pyr->getWidth() * pyr->getWidth();
-    float dy = pyr->getBreadth() * pyr->getBreadth();
-    float radius = sqrtf (dx + dy);
+    float dx = pyr->getWidth();
+    float dy = pyr->getBreadth();
+    float radius = sqrtf (dx*dx + dy*dy);
     CellList list = getCells (pyr->getPosition(), radius);
     for (cit = list.begin(); cit != list.end(); cit++) {
-      if (pyr->isInside((*cit)->pos, 0.0f, Hx, Hy)) {
-        CollisionCell* cell = (CollisionCell*) (*cit);
+      CollisionCell* cell = (CollisionCell*) (*cit);
+      if (pyr->isInside(cell->pos, 0.0f, Hx, Hy)) {
         cell->objs.push_back( &(*it_pyr) );
       }
     }
@@ -182,13 +181,13 @@ void CollisionGrid::load (std::vector<BoxBuilding>     &boxes,
   for (std::vector<Teleporter>::const_iterator it_tele = teles.begin();
        it_tele != teles.end(); it_tele++) {
     const Teleporter* tele = (const Teleporter *) &(*it_tele);
-    float dx = tele->getWidth() * tele->getWidth();
-    float dy = tele->getBreadth() * tele->getBreadth();
-    float radius = sqrtf (dx + dy);
+    float dx = tele->getWidth();
+    float dy = tele->getBreadth();
+    float radius = sqrtf (dx*dx + dy*dy);
     CellList list = getCells (tele->getPosition(), radius);
     for (cit = list.begin(); cit != list.end(); cit++) {
-      if (tele->isInside((*cit)->pos, 0.0f, Hx, Hy)) {
-        CollisionCell* cell = (CollisionCell*) (*cit);
+      CollisionCell* cell = (CollisionCell*) (*cit);
+      if (tele->isInside(cell->pos, 0.0f, Hx, Hy)) {
         cell->objs.push_back( &(*it_tele) );
       }
     }
@@ -198,13 +197,13 @@ void CollisionGrid::load (std::vector<BoxBuilding>     &boxes,
   for (std::vector<BaseBuilding>::const_iterator it_base = bases.begin();
        it_base != bases.end(); it_base++) {
     const BaseBuilding* base = (const BaseBuilding *) &(*it_base);
-    float dx = base->getWidth() * base->getWidth();
-    float dy = base->getBreadth() * base->getBreadth();
-    float radius = sqrtf (dx + dy);
+    float dx = base->getWidth();
+    float dy = base->getBreadth();
+    float radius = sqrtf (dx*dx + dy*dy);
     CellList list = getCells (base->getPosition(), radius);
     for (cit = list.begin(); cit != list.end(); cit++) {
-      if (base->isInside((*cit)->pos, 0.0f, Hx, Hy)) {
-        CollisionCell* cell = (CollisionCell*) (*cit);
+      CollisionCell* cell = (CollisionCell*) (*cit);
+      if (base->isInside(cell->pos, 0.0f, Hx, Hy)) {
         cell->objs.push_back( &(*it_base) );
       }
     }
@@ -213,11 +212,9 @@ void CollisionGrid::load (std::vector<BoxBuilding>     &boxes,
   for (x=0; x<GridSizeX; x++) {
     for (y=0; y<GridSizeY; y++) {
       Cells[x][y].count = Cells[x][y].objs.size();
-      // FIXME - temporary debugging
-      DEBUG3 ("Cell(%i) [%.3f,%.3f,%.3f] count=%i, objs=%i\n",
-              GridSizeY*x + y,
-              Cells[x][y].pos[0], Cells[x][y].pos[1], Cells[x][y].pos[2],
-              Cells[x][y].count, Cells[x][y].objs.size());
+      DEBUG4 ("Cell(%4i)  objs = %2i  [%.3f, %.3f, %.3f]\n",
+              GridSizeY*x + y, Cells[x][y].count,
+              Cells[x][y].pos[0], Cells[x][y].pos[1], Cells[x][y].pos[2]);
     }
   }
 

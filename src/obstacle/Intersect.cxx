@@ -544,6 +544,14 @@ static bool		testOrigRectRect(const float* p, float angle,
   float corner1[4][2];
   int	i, region[4][2];
 
+  // return true if the second rectangle is within the first
+  // hint:  cos(+a) = cos(-a)  and  -sin(a) = sin(-a)
+  float sx = (c * p[0]) + (s * p[1]);
+  float sy = (c * p[1]) - (s * p[0]);
+  if ((fabsf(sx) < dx1) && (fabsf(sy) < dy1)) {
+    return true;
+  }
+  
   // get corners of first rect and classify according to position with
   // respect to second rect, return true iff any lies inside second.
   for (i = 0; i < 4; i++) {
