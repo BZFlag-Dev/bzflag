@@ -693,7 +693,7 @@ void					ServerLink::sendGrabFlag(int flagIndex)
 
 void					ServerLink::sendDropFlag(FlagDropReason reason, const float* position)
 {
-	char msg[12];
+	char msg[13];
 	void* buf = msg;
 	buf = nboPackUByte(buf, reason);
 	buf = nboPackVector(buf, position);
