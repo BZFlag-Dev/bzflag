@@ -463,7 +463,7 @@ std::vector<std::pair<std::string, std::string> > AccessControlList::listMasterB
   for (banList_t::const_iterator bItr = banList.begin(); bItr != banList.end(); bItr++) {
     if (bItr->fromMaster) {
       explain = string_util::format("%s (banned by %s)", bItr->reason.c_str(), bItr->bannedBy.c_str());
-      const std::pair<std::string, std::string> baninfo = std::make_pair(inet_ntoa(bItr->addr), explain);
+      const std::pair<std::string, std::string> baninfo = std::make_pair(std::string(inet_ntoa(bItr->addr)), explain);
       bans.push_back(baninfo);
     }
   }
