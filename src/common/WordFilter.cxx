@@ -762,7 +762,7 @@ WordFilter::~WordFilter(void)
 
 
 // adds an individual word to the filter list
-bool WordFilter::addToFilter(const std::string &word, const std::string &expression, bool append)
+bool WordFilter::addToFilter(const std::string &word, const std::string &expression)
 {
   long int length = (long int)word.length();
   if (0 >= length) {
@@ -773,56 +773,8 @@ bool WordFilter::addToFilter(const std::string &word, const std::string &express
   if (expression.size() == 0) {
     /* make sure to create an expression if it wasn't given */
     std::string expression = expressionFromString(word);
-    return addToFilter(word, expression, append);
+    return addToFilter(word, expression);
 
-  } else if (append) {
-#if 0
-    /* add words with all suffixes appended */
-    std::set<filter_t, expressionCompare>::iterator i;
-    std::string fullSuffix = "((";
-    for (i = suffixes.begin();
-	 i != suffixes.end();) {
-
-      // !!! perhaps this should be a regular expression itself
-      fullSuffix.append(i->word);
-      if (++i != suffixes.end()) {
-	fullSuffix.append(")|(");
-      }
-    }
-    fullSuffix.append("))*");
-    //    std::cout << "prefixes: " << fullSuffix << std::endl;
-    return addToFilter(word, expression +  fullSuffix, false);
-#endif
-
-#if 0
-    /* add words with all prefixes prepended */
-    std::string fullPrefix = "((";
-    for (i = prefixes.begin();
-	 i != prefixes.end();) {
-      fullPrefix.append(i->word);
-      if (++i != prefixes.end()) {
-	fullPrefix.append(")|(");
-      }
-    }
-    fullPrefix.append("))*");
-    return addToFilter(word, fullPrefix + expression + fullSuffix, false);
-// #else
-    for (i = prefixes.begin();
-	 i != prefixes.end(); ++i) {
-      addToFilter(i->word + word, i->expression + expression, false);
-
-      /* add words with prefix and suffix appended */
-      for (std::set<filter_t, expressionCompare>::iterator j = suffixes.begin();
-	   j != suffixes.end(); ++j) {
-	addToFilter(i->word + word + j->word,
-		    i->expression + expression + j->expression,
-		    false);
-      }
-    }
-#endif  /* prefixes */
-
-    /* don't forget to add the unadulterated word */
-    return addToFilter(word, expression, false);
   } else {
     /* base case */
     filter_t newFilter;
@@ -841,19 +793,6 @@ bool WordFilter::addToFilter(const std::string &word, const std::string &express
     return true;
   }
 } // end addToFilter
-bool WordFilter::addToFilter(const std::string &word, const std::string &expression)
-{
-  return addToFilter(word, expression, false);
-}
-bool WordFilter::addToFilter(const std::string &word, bool append)
-{
-  return addToFilter(word, "", append);
-}
-bool WordFilter::addToFilter(const std::string &word)
-{
-  return addToFilter(word, "", false);
-}
-
 
 
 /** loads a set of bad words from a specified file */
@@ -909,7 +848,7 @@ unsigned int WordFilter::loadFromFile(const std::string &fileName, bool verbose)
       std::cout << ".";
     }
 
-    bool added = addToFilter(filterWord, "", true);
+    bool added = addToFilter(filterWord, "");
     if ((!added) && (verbose)) {
 	std::cout << std::endl << "Word is already added: " << filterWord << std::endl;
     }
@@ -983,92 +922,6 @@ unsigned long int WordFilter::wordCount(void) const
   return count;
 }
 
-
-#if UNIT_TEST
-int main (int argc, char *argv[])
-{
-  if (argc < 2) {
-    std::cerr << "missing filename" << std::endl;
-    return -1;
-  }
-
-  WordFilter filter;
-  //  filter.addToFilter("fuck", true);
-  filter.addToFilter("test", false);
-#if 0
-  filter.addToFilter("a");
-  filter.addToFilter("b");
-  filter.addToFilter("c");
-  filter.addToFilter("d");
-  filter.addToFilter("e");
-  filter.addToFilter("f");
-  filter.addToFilter("g");
-  filter.addToFilter("h");
-  filter.addToFilter("i");
-  filter.addToFilter("j");
-  filter.addToFilter("k");
-  filter.addToFilter("l");
-  filter.addToFilter("m");
-  filter.addToFilter("n");
-  filter.addToFilter("o");
-  filter.addToFilter("p");
-  filter.addToFilter("q");
-  filter.addToFilter("r");
-  filter.addToFilter("s");
-  filter.addToFilter("t");
-  filter.addToFilter("u");
-  filter.addToFilter("v");
-  filter.addToFilter("w");
-  filter.addToFilter("x");
-  filter.addToFilter("y");
-  filter.addToFilter("z");
-#endif
-
-  char message[1024] = " This test is a fucKing simple test; you're NOT a beezee b i t c h!! ";
-  std::cout << "PRE  SIMPLE " << message << std::endl;
-  filter.filter(message, true);
-  std::cout << "POST SIMPLE " << message << std::endl;
-
-  filter.addToFilter("fuking", true);
-
-  std::cout << "Loading file" << std::endl;
-  filter.loadFromFile(argv[1], true);
-  std::cout << "Number of words in filter: " << filter.wordCount() << std::endl;
-  filter.addToFilter("test", true);
-  std::cout << "Number of words in filter: " << filter.wordCount() << std::endl;
-
-  //  filter.outputWords();
-  //  filter.outputFilter();
-
-  char message2[1024] = "f  u  c  k  !  fuuukking 'test' ; you're NOT a beezeecun+y!!  Phuck you b1tch! ";
-  char message3[1024] = "fuck  fuck fuck Phuck you!";
-  char message4[1024] = "fuckmonkey fuck monkey fuck pirate fuck clown";
-  char message5[1024] = "f  u  c  k  !  fuuukking test ; you're NOT a beezeecun+y!!  Phuck you b1tch! ";
-  char message6[1024] = "f  u  c  k  !  fuuukking test ; you're NOT a beezeecun+y!!  Phuck you b1tch! ";
-  std::cout << "PRE  AGGRESSIVE " << message2 << std::endl;
-
-  filter.filter(message2);
-  std::cout << "POST AGGRESSIVE " << message2 << std::endl;
-
-  std::cout << "PRE  AGGRESSIVE " << message3 << std::endl;
-  filter.filter(message3);
-  std::cout << "POST AGGRESSIVE " << message3 << std::endl;
-
-  std::cout << "PRE  AGGRESSIVE " << message4 << std::endl;
-  filter.filter(message4);
-  std::cout << "POST AGGRESSIVE " << message4 << std::endl;
-
-  std::cout << "PRE  AGGRESSIVE " << message5 << std::endl;
-  filter.filter(message5);
-  std::cout << "POST AGGRESSIVE " << message5 << std::endl;
-
-  std::cout << "PRE  AGGRESSIVE " << message6 << std::endl;
-  filter.filter(message6);
-  std::cout << "POST AGGRESSIVE " << message6 << std::endl;
-
-  return 0;
-}
-#endif
 
 // Local Variables: ***
 // mode:C++ ***

@@ -202,14 +202,8 @@ class WordFilter
   /** loads a set of bad words from a specified file */
   unsigned int loadFromFile(const std::string &fileName, bool verbose=false);
 
-  /** adds a new filter to the existing filter list, and
-   * optionally recursively adds all combinations of
-   * available suffixes and prefixes.
-   */
-  bool addToFilter(const std::string &word);
-  bool addToFilter(const std::string &word, bool append);
-  bool addToFilter(const std::string &word, const std::string &expression);
-  bool addToFilter(const std::string &word, const std::string &expression, bool append);
+  /** adds a new filter to the existing filter list */
+  bool addToFilter(const std::string &word, const std::string &expression="");
 
   /** given an input string, filter the input
    * using either the simple or agressive filter
