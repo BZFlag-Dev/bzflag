@@ -46,18 +46,13 @@ if ( not $dbexist ) {
       gameinfo,
       ipaddr,
       title,
-      rogues,
-      reds,
-      greens,
-      blues,
-      purples,
       lastmod
     )"
   );
 }
 # If the table already exists, then remove all inactive servers from the table
 else {
-  my $timeout = 300;    # timeout in seconds
+  my $timeout = 1800;    # timeout in seconds
   my $staletime = time - $timeout;
   $servdb->do("DELETE FROM servers WHERE lastmod < $staletime");
 }
@@ -117,7 +112,6 @@ elsif ( $action eq "ADD" ) {
           '$gameinfo',
           '$servip',
           '$title',
-          0, 0, 0, 0, 0,
           $curtime
        )"
     );
@@ -126,11 +120,15 @@ elsif ( $action eq "ADD" ) {
   # ASSUMPTION: only the 'lastmod' column of table needs updating since all
   # else should remain the same as before
   else {
-    # FIXME need to update everything here!!!
+    # don't change nameport or servip
+    # FIXME should not have to retest connect if existing entry
     $servdb->do(
-      "UPDATE servers SET
-          lastmod = $curtime
-          WHERE nameport = '$nameport'"
+      "UPDATE servers SET " .
+	  "build = '$build', " .
+	  "version = '$version', " .
+	  "gameinfo = '$gameinfo', " .
+	  "lastmod = $curtime " .
+	  "WHERE nameport = '$nameport'"
     );
   }
   print "ADD complete\n";
