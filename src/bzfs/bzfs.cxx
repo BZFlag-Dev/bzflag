@@ -78,7 +78,7 @@ static const int MaxListServers = 5;
 static const float FlagHalfLife = 45.0f;
 // do NOT change
 static int NotConnected = -1;
-static int InvalidPlayer = -1;
+static PlayerId InvalidPlayer = 0xff;
 
 //The minimum height above ground an object must be in order
 //to have a flag appear beneath it
@@ -352,7 +352,7 @@ static float lagwarnthresh = -1.0;
 static int maxlagwarn = 10000;
 static char *password = NULL;
 
-static void removePlayer(int playerIndex);
+static void removePlayer(PlayerId playerId);
 static void resetFlag(int flagIndex);
 
 //
@@ -820,9 +820,9 @@ int WorldInfo::getDatabaseSize() const
 // rest of server (no more classes, just functions)
 //
 
-void *getPacketFromClient(int playerIndex, uint16_t *length, uint16_t *rseqno)
+void *getPacketFromClient(PlayerId playerId, uint16_t *length, uint16_t *rseqno)
 {
-	struct PacketQueue *moving = player[playerIndex].dqueue;
+	struct PacketQueue *moving = player[playerId].dqueue;
 	struct PacketQueue *remindme = NULL;
 	while (moving != NULL) {
 		if (moving->next == NULL) {
@@ -833,7 +833,7 @@ void *getPacketFromClient(int playerIndex, uint16_t *length, uint16_t *rseqno)
 			if (remindme)
 				remindme->next = NULL;
 			else
-				player[playerIndex].dqueue = NULL;
+				player[playerId].dqueue = NULL;
 			free(moving);
 			return remember;
 		}
@@ -844,34 +844,34 @@ void *getPacketFromClient(int playerIndex, uint16_t *length, uint16_t *rseqno)
 	return NULL;
 }
 
-void printQueueDepth(int playerIndex)
+void printQueueDepth(PlayerId playerId)
 {
 	int d,u;
 	struct PacketQueue *moving;
-	moving = player[playerIndex].dqueue;
+	moving = player[playerId].dqueue;
 	d = 0;
 	while (moving) {
 		d++;
 		moving = moving->next;
 	}
 	u = 0;
-	moving = player[playerIndex].uqueue;
+	moving = player[playerId].uqueue;
 	while (moving) {
 		u++;
 		moving = moving->next;
 	}
-	DEBUG4("Player %d RECV QUEUE %d   SEND QUEUE %d\n", playerIndex, d,u);
+	DEBUG4("Player %d RECV QUEUE %d   SEND QUEUE %d\n", playerId, d,u);
 }
 
-bool enqueuePacket(int playerIndex, int op, int rseqno, void *msg, int n)
+bool enqueuePacket(PlayerId playerId, int op, int rseqno, void *msg, int n)
 {
 	struct PacketQueue *oldpacket;
 	struct PacketQueue *newpacket;
 
 	if (op == SEND)
-		oldpacket = player[playerIndex].uqueue;
+		oldpacket = player[playerId].uqueue;
 	else {
-		oldpacket = player[playerIndex].dqueue;
+		oldpacket = player[playerId].dqueue;
 	}
 
 	if (oldpacket) {
@@ -888,22 +888,22 @@ bool enqueuePacket(int playerIndex, int op, int rseqno, void *msg, int n)
 	newpacket->next = NULL;
 
 	if (op == SEND)
-		player[playerIndex].uqueue = newpacket;
+		player[playerId].uqueue = newpacket;
 	else
-		player[playerIndex].dqueue = newpacket;
+		player[playerId].dqueue = newpacket;
 
 	return true;
 }
 
 
-void disqueuePacket(int playerIndex, int op, int /* rseqno */)
+void disqueuePacket(PlayerId playerId, int op, int /* rseqno */)
 {
 	struct PacketQueue *oldpacket;
 
 	if (op == SEND)
-		oldpacket = player[playerIndex].uqueue;
+		oldpacket = player[playerId].uqueue;
 	else {
-		oldpacket = player[playerIndex].dqueue;
+		oldpacket = player[playerId].dqueue;
 	}
 
 	if (oldpacket) {
@@ -913,15 +913,15 @@ void disqueuePacket(int playerIndex, int op, int /* rseqno */)
 	}
 
 	if (op == SEND)
-		player[playerIndex].uqueue = NULL;
+		player[playerId].uqueue = NULL;
 	else
-		player[playerIndex].dqueue = NULL;
+		player[playerId].dqueue = NULL;
 }
 
 
-void *assembleSendPacket(int playerIndex, int *len)
+void *assembleSendPacket(PlayerId playerId, int *len)
 {
-	struct PacketQueue *moving = player[playerIndex].uqueue;
+	struct PacketQueue *moving = player[playerId].uqueue;
 	unsigned char *assemblybuffer;
 	int n = MaxPacketLen, packets = 0, startseq = (-1), endseq = 0, noinqueue;
 	unsigned char *buf;
@@ -930,7 +930,7 @@ void *assembleSendPacket(int playerIndex, int *len)
 	buf = assemblybuffer;
 
 	buf = (unsigned char *)nboPackUShort(buf, 0xfeed);
-	buf = (unsigned char *)nboPackUShort(buf, player[playerIndex].lastRecvPacketNo);
+	buf = (unsigned char *)nboPackUShort(buf, player[playerId].lastRecvPacketNo);
 	n -= 4;
 
 	// lets find how deep the send queue is
@@ -958,7 +958,7 @@ void *assembleSendPacket(int playerIndex, int *len)
 	// b. an ISDN link will be flooded with 4 > player
 	noinqueue -= 1;
 
-	moving = player[playerIndex].uqueue;
+	moving = player[playerId].uqueue;
 
 	packets = 0;
 	startseq = -1;
@@ -999,7 +999,7 @@ void *assembleSendPacket(int playerIndex, int *len)
 	return assemblybuffer;
 }
 
-void disassemblePacket(int playerIndex, void *msg, int *nopackets)
+void disassemblePacket(PlayerId playerId, void *msg, int *nopackets)
 {
 	unsigned short marker;
 	unsigned short usdata;
@@ -1016,7 +1016,7 @@ void disassemblePacket(int playerIndex, void *msg, int *nopackets)
 	}
 	buf = (unsigned char *)nboUnpackUShort(buf, usdata);
 
-	disqueuePacket(playerIndex, SEND, usdata);
+	disqueuePacket(playerId, SEND, usdata);
 
 	while (true) {
 		unsigned short seqno;
@@ -1029,55 +1029,55 @@ void disassemblePacket(int playerIndex, void *msg, int *nopackets)
 			break;
 		else if (ilength > 1024) {
 			fprintf(stderr,"* RECEIVE PACKET BUFFER OVERFLOW ATTEMPT: %d sent %d Bytes\n",
-					playerIndex, ilength);
+					playerId, ilength);
 			break;
 		}
 		buf = (unsigned char *)nboUnpackUShort(buf, seqno);
 		DEBUG4("SEQ RECV %d Enqueing now...\n",seqno);
-		enqueuePacket(playerIndex, RECEIVE, seqno, buf, length);
+		enqueuePacket(playerId, RECEIVE, seqno, buf, length);
 		buf+= length;
 		npackets++;
 	}
 	DEBUG4("%d: Got %d packets\n", (int)time(0), npackets);
-	// printQueueDepth(playerIndex);
+	// printQueueDepth(playerId);
 	*nopackets = npackets;
 }
 
 
-const void *assembleUDPPacket(int playerIndex, const void *b, int *l)
+const void *assembleUDPPacket(PlayerId playerId, const void *b, int *l)
 {
 	int length = *l;
 
-	DEBUG4("ENQUEUE %d [%d]\n",length, player[playerIndex].lastSendPacketNo);
-	enqueuePacket(playerIndex, SEND, player[playerIndex].lastSendPacketNo, (void *)b, length);
+	DEBUG4("ENQUEUE %d [%d]\n",length, player[playerId].lastSendPacketNo);
+	enqueuePacket(playerId, SEND, player[playerId].lastSendPacketNo, (void *)b, length);
 
-	player[playerIndex].lastSendPacketNo++;
+	player[playerId].lastSendPacketNo++;
 
 	DEBUG4("ASSEMBLE\n");
-	return assembleSendPacket(playerIndex, l);
+	return assembleSendPacket(playerId, l);
 }
 
 // write an UDP packet down the link to the client, we don't know if it comes through
 // so this code is using a queuing mechanism.
 
-static int puwrite(int playerIndex, const void *b, int l)
+static int puwrite(PlayerId playerId, const void *b, int l)
 {
-	PlayerInfo& p = player[playerIndex];
+	PlayerInfo& p = player[playerId];
 	const void *tobesend = b;
 
 	//DEBUG4("INTO PUWRITE\n");
 
-	tobesend = assembleUDPPacket(playerIndex,b,&l);
+	tobesend = assembleUDPPacket(playerId,b,&l);
 
 	if (!tobesend || (l == 0)) {
-		removePlayer(playerIndex);
-		fprintf(stderr, "Send Queue Overrun for player %d (%s)\n", playerIndex, p.callSign);
+		removePlayer(playerId);
+		fprintf(stderr, "Send Queue Overrun for player %d (%s)\n", playerId, p.callSign);
 		if (tobesend)
 			free((unsigned char *)tobesend);
 		return -1;
 	}
 
-	DEBUG4("PUWRITE - ASSEMBLED UDP LEN %d for Player %d\n",l,playerIndex);
+	DEBUG4("PUWRITE - ASSEMBLED UDP LEN %d for Player %d\n",l,playerId);
 	// write as much data from buffer as we can in one send()
 
 	int n;
@@ -1105,13 +1105,13 @@ static int puwrite(int playerIndex, const void *b, int l)
 		// if socket is closed then give up
 		if (err == ECONNRESET || err == EPIPE) {
 			DEBUG4("REMOVE: ECONNRESET/EPIPE\n");
-			removePlayer(playerIndex);
+			removePlayer(playerId);
 			return -1;
 		}
 
 		// dump other errors and continue
 		nerror("error on UDP write");
-		fprintf(stderr, "player is %d (%s)\n", playerIndex, p.callSign);
+		fprintf(stderr, "player is %d (%s)\n", playerId, p.callSign);
 		fprintf(stderr, "%d bytes\n", n);
 
 		// we may actually run into not enough buffer space here
@@ -1122,9 +1122,9 @@ static int puwrite(int playerIndex, const void *b, int l)
 	return n;
 }
 
-static int prealwrite(int playerIndex, const void *b, int l)
+static int prealwrite(PlayerId playerId, const void *b, int l)
 {
-	PlayerInfo& p = player[playerIndex];
+	PlayerInfo& p = player[playerId];
 	assert(p.fd != NotConnected && l > 0);
 
 	// write as much data from buffer as we can in one send()
@@ -1142,15 +1142,15 @@ static int prealwrite(int playerIndex, const void *b, int l)
 		// if socket is closed then give up
 		if (err == ECONNRESET || err == EPIPE) {
 			DEBUG4("REMOVE: Reset socket (4)\n");
-			removePlayer(playerIndex);
+			removePlayer(playerId);
 			return -1;
 		}
 
 		// dump other errors and remove the player
 		nerror("error on write");
-		fprintf(stderr, "player is %d (%s)\n", playerIndex, p.callSign);
+		fprintf(stderr, "player is %d (%s)\n", playerId, p.callSign);
 		DEBUG4("REMOVE: WRITE ERROR\n");
-		removePlayer(playerIndex);
+		removePlayer(playerId);
 		return -1;
 	}
 
@@ -1158,22 +1158,22 @@ static int prealwrite(int playerIndex, const void *b, int l)
 }
 
 // try to write stuff from the output buffer
-static void pflush(int playerIndex)
+static void pflush(PlayerId playerId)
 {
-	PlayerInfo& p = player[playerIndex];
+	PlayerInfo& p = player[playerId];
 	if (p.fd == NotConnected || p.outmsgSize == 0)
 		return;
 
-	const int n = prealwrite(playerIndex, p.outmsg + p.outmsgOffset, p.outmsgSize);
+	const int n = prealwrite(playerId, p.outmsg + p.outmsgOffset, p.outmsgSize);
 	if (n > 0) {
 		p.outmsgOffset += n;
 		p.outmsgSize   -= n;
 	}
 }
 
-static void pwrite(int playerIndex, const void *b, int l)
+static void pwrite(PlayerId playerId, const void *b, int l)
 {
-	PlayerInfo& p = player[playerIndex];
+	PlayerInfo& p = player[playerId];
 	if (p.fd == NotConnected || l == 0)
 		return;
 
@@ -1190,18 +1190,18 @@ static void pwrite(int playerIndex, const void *b, int l)
 		case MsgShotEnd:
 		case MsgPlayerUpdate:
 		case MsgShotUpdate:
-			puwrite(playerIndex,b,l);
+			puwrite(playerId,b,l);
 			return;
 		}
 	}
 
 	// try flushing buffered data
-	pflush(playerIndex);
+	pflush(playerId);
 
 	//DEBUG4("TCP write\n");
 	// if the buffer is empty try writing the data immediately
 	if (p.fd != NotConnected && p.outmsgSize == 0) {
-		const int n = prealwrite(playerIndex, b, l);
+		const int n = prealwrite(playerId, b, l);
 		if (n > 0) {
 			b  = (const void*)(((const char*)b) + n);
 			l -= n;
@@ -1222,9 +1222,9 @@ static void pwrite(int playerIndex, const void *b, int l)
 			// FIXME -- is 20kB to big?  to small?
 			if (newCapacity >= 20 * 1024) {
 				fprintf(stderr, "dropping unresponsive player %d (%s) with %d bytes queued\n",
-						playerIndex, p.callSign, p.outmsgSize + l);
+						playerId, p.callSign, p.outmsgSize + l);
 				DEBUG4("REMOVE: CAPACITY\n");
-				removePlayer(playerIndex);
+				removePlayer(playerId);
 				return;
 			}
 
@@ -1262,36 +1262,36 @@ static char *getDirectMessageBuffer()
 }
 
 #ifdef NETWORK_STATS
-void initPlayerMessageStats(int playerIndex)
+void initPlayerMessageStats(PlayerId playerId)
 {
 	int i;
 	struct MessageCount *msg;
 	int direction;
 
 	for (direction = 0; direction <= 1; direction++) {
-		msg = player[playerIndex].msg[direction];
+		msg = player[playerId].msg[direction];
 		for (i = 0; i < MessageTypes && msg[i].code != 0; i++) {
 			msg[i].count = 0;
 			msg[i].code = 0;
 		}
-		player[playerIndex].msgBytes[direction] = 0;
-		player[playerIndex].perSecondTime[direction] = player[playerIndex].time;
-		player[playerIndex].perSecondCurrentMsg[direction] = 0;
-		player[playerIndex].perSecondMaxMsg[direction] = 0;
-		player[playerIndex].perSecondCurrentBytes[direction] = 0;
-		player[playerIndex].perSecondMaxBytes[direction] = 0;
+		player[playerId].msgBytes[direction] = 0;
+		player[playerId].perSecondTime[direction] = player[playerId].time;
+		player[playerId].perSecondCurrentMsg[direction] = 0;
+		player[playerId].perSecondMaxMsg[direction] = 0;
+		player[playerId].perSecondCurrentBytes[direction] = 0;
+		player[playerId].perSecondMaxBytes[direction] = 0;
 	}
 }
 
-int countMessage(int playerIndex, uint16_t code, int len, int direction)
+int countMessage(PlayerId playerId, uint16_t code, int len, int direction)
 {
 	int i;
 	struct MessageCount *msg;
 
 	// add length of type and length
 	len += 4;
-	player[playerIndex].msgBytes[direction] += len;
-	msg = player[playerIndex].msg[direction];
+	player[playerId].msgBytes[direction] += len;
+	msg = player[playerId].msg[direction];
 	TimeKeeper now = TimeKeeper::getCurrent();
 	for (i = 0; i < MessageTypes && msg[i].code != 0; i++)
 		if (msg[i].code == code)
@@ -1300,27 +1300,27 @@ int countMessage(int playerIndex, uint16_t code, int len, int direction)
 	if (msg[i].maxSize < len)
 		msg[i].maxSize = len;
 	msg[i].count++;
-	if (now - player[playerIndex].perSecondTime[direction] < 1.0f) {
-		player[playerIndex].perSecondCurrentMsg[direction]++;
-		player[playerIndex].perSecondCurrentBytes[direction] += len;
+	if (now - player[playerId].perSecondTime[direction] < 1.0f) {
+		player[playerId].perSecondCurrentMsg[direction]++;
+		player[playerId].perSecondCurrentBytes[direction] += len;
 	}
 	else {
-		player[playerIndex].perSecondTime[direction] = now;
-		if (player[playerIndex].perSecondMaxMsg[direction] <
-				player[playerIndex].perSecondCurrentMsg[direction])
-			player[playerIndex].perSecondMaxMsg[direction] =
-					player[playerIndex].perSecondCurrentMsg[direction];
-		if (player[playerIndex].perSecondMaxBytes[direction] <
-				player[playerIndex].perSecondCurrentBytes[direction])
-			player[playerIndex].perSecondMaxBytes[direction] =
-					player[playerIndex].perSecondCurrentBytes[direction];
-		player[playerIndex].perSecondCurrentMsg[direction] = 0;
-		player[playerIndex].perSecondCurrentBytes[direction] = 0;
+		player[playerId].perSecondTime[direction] = now;
+		if (player[playerId].perSecondMaxMsg[direction] <
+				player[playerId].perSecondCurrentMsg[direction])
+			player[playerId].perSecondMaxMsg[direction] =
+					player[playerId].perSecondCurrentMsg[direction];
+		if (player[playerId].perSecondMaxBytes[direction] <
+				player[playerId].perSecondCurrentBytes[direction])
+			player[playerId].perSecondMaxBytes[direction] =
+					player[playerId].perSecondCurrentBytes[direction];
+		player[playerId].perSecondCurrentMsg[direction] = 0;
+		player[playerId].perSecondCurrentBytes[direction] = 0;
 	}
 	return (msg[i].count);
 }
 
-void dumpPlayerMessageStats(int playerIndex)
+void dumpPlayerMessageStats(PlayerId playerId)
 {
 	int i;
 	struct MessageCount *msg;
@@ -1328,29 +1328,29 @@ void dumpPlayerMessageStats(int playerIndex)
 	int direction;
 
 	DEBUG1("Player connect time: %f\n",
-			TimeKeeper::getCurrent() - player[playerIndex].time);
+			TimeKeeper::getCurrent() - player[playerId].time);
 	for (direction = 0; direction <= 1; direction++) {
 		total = 0;
 		DEBUG1("Player messages %s:", direction ? "out" : "in");
-		msg = player[playerIndex].msg[direction];
+		msg = player[playerId].msg[direction];
 		for (i = 0; i < MessageTypes && msg[i].code != 0; i++) {
 			DEBUG1(" %c%c:%u(%u)", msg[i].code >> 8, msg[i].code & 0xff,
 					msg[i].count, msg[i].maxSize);
 			total += msg[i].count;
 		}
-		DEBUG1(" total:%u(%u) ", total, player[playerIndex].msgBytes[direction]);
+		DEBUG1(" total:%u(%u) ", total, player[playerId].msgBytes[direction]);
 		DEBUG1("max msgs/bytes per second: %u/%u\n",
-				player[playerIndex].perSecondMaxMsg[direction],
-				player[playerIndex].perSecondMaxBytes[direction]);
+				player[playerId].perSecondMaxMsg[direction],
+				player[playerId].perSecondMaxBytes[direction]);
 
 	}
 	fflush(stdout);
 }
 #endif
 
-static void directMessage(int playerIndex, uint16_t code, int len, const void *msg)
+static void directMessage(PlayerId playerId, uint16_t code, int len, const void *msg)
 {
-	if (player[playerIndex].fd == NotConnected)
+	if (player[playerId].fd == NotConnected)
 		return;
 
 	// send message to one player
@@ -1358,9 +1358,9 @@ static void directMessage(int playerIndex, uint16_t code, int len, const void *m
 	void *buf = bufStart;
 	buf = nboPackUShort(buf, uint16_t(len));
 	buf = nboPackUShort(buf, code);
-	pwrite(playerIndex, bufStart, len + 4);
+	pwrite(playerId, bufStart, len + 4);
 #ifdef NETWORK_STATS
-	countMessage(playerIndex, code, len, 1);
+	countMessage(playerId, code, len, 1);
 #endif
 }
 
@@ -1394,13 +1394,6 @@ void OOBQueueUpdate(int t, uint32_t rseqno) {
 		disqueuePacket(t, SEND, rseqno);
 }
 
-static int lookupPlayer(const PlayerId& id)
-{
-	if (player[id].state > PlayerInLimbo)
-		return id;
-	return InvalidPlayer;
-}
-
 static void setNoDelay(int fd)
 {
 	// turn off TCP delay (collection).  we want packets sent immediately.
@@ -1416,7 +1409,7 @@ static void setNoDelay(int fd)
 }
 
 // uread - interface to the UDP Receive routines
-static int uread(int *playerIndex, int *nopackets)
+static int uread(int *playerId, int *nopackets)
 {
 	int n = 0;
 	struct sockaddr_in uaddr;
@@ -1466,12 +1459,12 @@ static int uread(int *playerIndex, int *nopackets)
 					}
 				}
 				DEBUG3("\n");
-				*playerIndex = 0;
+				*playerId = 0;
 				return 0;
 			}
 		}
 
-		*playerIndex = pi;
+		*playerId = pi;
 		pPlayerInfo = &player[pi];
 		DEBUG4("uread() player %d %s:%d len %d from %s:%d on %i\n",
 		pi, inet_ntoa(pPlayerInfo->uaddr.sin_addr),
@@ -1485,7 +1478,7 @@ static int uread(int *playerIndex, int *nopackets)
 
 			// old code is obsolete
 			// if (*nopackets > 6 )
-			//   pucdwrite(playerIndex);
+			//   pucdwrite(playerId);
 		}
 		// have something in the receive buffer? so get it
 		// due to the organization sequence and reliability is always granted
@@ -1506,10 +1499,10 @@ static int uread(int *playerIndex, int *nopackets)
 	return 0;
 }
 
-static int pread(int playerIndex, int l)
+static int pread(PlayerId playerId, int l)
 {
-	PlayerInfo& p = player[playerIndex];
-	//fprintf(stderr,"pread,playerIndex,l %i %i\n",playerIndex,l);
+	PlayerInfo& p = player[playerId];
+	//fprintf(stderr,"pread,playerId,l %i %i\n",playerId,l);
 	if (p.fd == NotConnected || l == 0)
 		return 0;
 
@@ -1530,21 +1523,21 @@ static int pread(int playerIndex, int l)
 
 		// if socket is closed then give up
 		if (err == ECONNRESET || err == EPIPE) {
-			DEBUG1("REMOVE: Socket reset %d (%s)\n", playerIndex, p.callSign);
-			removePlayer(playerIndex);
+			DEBUG1("REMOVE: Socket reset %d (%s)\n", playerId, p.callSign);
+			removePlayer(playerId);
 			return -1;
 		}
 
 		// dump other errors and remove the player
 		nerror("error on read");
-		fprintf(stderr, "player is %d (%s)\n", playerIndex, p.callSign);
+		fprintf(stderr, "player is %d (%s)\n", playerId, p.callSign);
 		DEBUG4("REMOVE: READ ERROR\n");
-		removePlayer(playerIndex);
+		removePlayer(playerId);
 		return -1;
 	} else {
 		// disconnected
-		DEBUG1("REMOVE: Disconnected %d (%s)\n", playerIndex, p.callSign);
-		removePlayer(playerIndex);
+		DEBUG1("REMOVE: Disconnected %d (%s)\n", playerId, p.callSign);
+		removePlayer(playerId);
 		return -1;
 	}
 
@@ -1573,21 +1566,21 @@ static void sendTeamUpdate(int teamIndex, int index = -1)
 		directMessage(index, MsgTeamUpdate, (char*)buf - (char*)bufStart, bufStart);
 }
 
-static void sendPlayerUpdate(int playerIndex, int index)
+static void sendPlayerUpdate(PlayerId playerId, int index)
 {
 	void *buf, *bufStart = getDirectMessageBuffer();
-	PlayerInfo *pPlayer = &player[playerIndex];
-	buf = nboPackUByte(bufStart, playerIndex);
+	PlayerInfo *pPlayer = &player[playerId];
+	buf = nboPackUByte(bufStart, playerId);
 	buf = nboPackUShort(buf, uint16_t(pPlayer->type));
 	buf = nboPackUShort(buf, uint16_t(pPlayer->team));
 	buf = nboPackUShort(buf, uint16_t(pPlayer->wins));
 	buf = nboPackUShort(buf, uint16_t(pPlayer->losses));
 	buf = nboPackString(buf, pPlayer->callSign, CallSignLen);
 	buf = nboPackString(buf, pPlayer->email, EmailLen);
-	if (playerIndex == index) {
-		// send all players info about player[playerIndex]
+	if (playerId == index) {
+		// send all players info about player[playerId]
 		for (int i = 0; i < maxPlayers; i++)
-			if (player[i].state > PlayerInLimbo && i != playerIndex)
+			if (player[i].state > PlayerInLimbo && i != playerId)
 				directMessage(i, MsgAddPlayer, (char*)buf - (char*)bufStart, bufStart);
 	}
 	directMessage(index, MsgAddPlayer, (char*)buf - (char*)bufStart, bufStart);
@@ -2642,33 +2635,33 @@ static void acceptClient()
 	// send 0xff if list is full
 	buffer[8] = (char)0xff;
 
-	PlayerId playerIndex;
+	PlayerId playerId;
 	// find open slot in players list
-	for (playerIndex = 0; playerIndex < maxPlayers; playerIndex++)
-		if (player[playerIndex].state == PlayerNoExist)
+	for (playerId = 0; playerId < maxPlayers; playerId++)
+		if (player[playerId].state == PlayerNoExist)
 			break;
-	if (playerIndex == maxPlayers) {
+	if (playerId == maxPlayers) {
 		send(fd, (const char*)buffer, sizeof(buffer), 0);
 		return;
 	}
 
-	buffer[8] = (uint8_t)playerIndex;
+	buffer[8] = (uint8_t)playerId;
 	send(fd, (const char*)buffer, sizeof(buffer), 0);
 
 	// FIXME add new client server welcome packet here when client code is ready
 
 	// update player state
-	player[playerIndex].time = TimeKeeper::getCurrent();
-	player[playerIndex].fd = fd;
-	player[playerIndex].state = PlayerInLimbo;
-	player[playerIndex].tcplen = 0;
-	player[playerIndex].udplen = 0;
-	assert(player[playerIndex].outmsg == NULL);
-	player[playerIndex].outmsgSize = 0;
-	player[playerIndex].outmsgOffset = 0;
-	player[playerIndex].outmsgCapacity = 0;
+	player[playerId].time = TimeKeeper::getCurrent();
+	player[playerId].fd = fd;
+	player[playerId].state = PlayerInLimbo;
+	player[playerId].tcplen = 0;
+	player[playerId].udplen = 0;
+	assert(player[playerId].outmsg == NULL);
+	player[playerId].outmsgSize = 0;
+	player[playerId].outmsgOffset = 0;
+	player[playerId].outmsgCapacity = 0;
 #ifdef NETWORK_STATS
-	initPlayerMessageStats(playerIndex);
+	initPlayerMessageStats(playerId);
 #endif
 
 	// if game was over and this is the first player then game is on
@@ -2687,19 +2680,19 @@ static void acceptClient()
 	}
 }
 
-static void sendMessage(int playerIndex, const PlayerId& targetPlayer, TeamColor targetTeam, const char *message)
+static void sendMessage(PlayerId playerId, const PlayerId& targetPlayer, TeamColor targetTeam, const char *message)
 {
 	// player is sending a message to a particular player, a team, or all.
 	// send MsgMessage
 	void *buf, *bufStart = getDirectMessageBuffer();
-	buf = nboPackUByte(bufStart, playerIndex);
+	buf = nboPackUByte(bufStart, playerId);
 	buf = nboPackUByte(buf, targetPlayer);
 	buf = nboPackUShort(buf, uint16_t(targetTeam));
 	buf = nboPackString(buf, message, MessageLen);
 	broadcastMessage(MsgMessage, (char*)buf-(char*)bufStart, bufStart);
 }
 
-static void addPlayer(int playerIndex)
+static void addPlayer(PlayerId playerId)
 {
 	// reject player if asks for bogus team or rogue and rogues aren't allowed
 	// or if the team is full.
@@ -2708,25 +2701,25 @@ static void addPlayer(int playerIndex)
 	int i;
 	for (i = 0; i < maxPlayers; i++)
 	{
-		if (i == playerIndex)
+		if (i == playerId)
 			continue;
-		if (strcasecmp(player[i].callSign,player[playerIndex].callSign) == 0)
+		if (strcasecmp(player[i].callSign,player[playerId].callSign) == 0)
 			break;
 	}
 	if (i < maxPlayers)
 	{
 		// this is a hack; would better add a new reject type
-		player[playerIndex].team = NoTeam;
+		player[playerId].team = NoTeam;
 	}
 
-	TeamColor t = player[playerIndex].team;
-	if ((t == NoTeam && (player[playerIndex].type == TankPlayer ||
-			player[playerIndex].type == ComputerPlayer)) ||
+	TeamColor t = player[playerId].team;
+	if ((t == NoTeam && (player[playerId].type == TankPlayer ||
+			player[playerId].type == ComputerPlayer)) ||
 			(t == RogueTeam && !(gameStyle & RoguesGameStyle)) ||
 			(team[int(t)].team.activeSize >= maxTeam[int(t)])) {
 		uint16_t code = RejectBadRequest;
-		if (player[playerIndex].type != TankPlayer &&
-				player[playerIndex].type != ComputerPlayer)
+		if (player[playerId].type != TankPlayer &&
+				player[playerId].type != ComputerPlayer)
 			code = RejectBadType;
 		else if (t == NoTeam)
 			code = RejectBadTeam;
@@ -2744,49 +2737,49 @@ static void addPlayer(int playerIndex)
 
 		void *buf, *bufStart = getDirectMessageBuffer();
 		buf = nboPackUShort(bufStart, code);
-		directMessage(playerIndex, MsgReject, (char*)buf-(char*)bufStart, bufStart);
+		directMessage(playerId, MsgReject, (char*)buf-(char*)bufStart, bufStart);
 		return;
 	}
 
-	player[playerIndex].ulinkup = false;
-	player[playerIndex].toBeKicked = false;
-	player[playerIndex].Admin = false;
+	player[playerId].ulinkup = false;
+	player[playerId].toBeKicked = false;
+	player[playerId].Admin = false;
 
-	player[playerIndex].lastRecvPacketNo = 0;
-	player[playerIndex].lastSendPacketNo = 0;
+	player[playerId].lastRecvPacketNo = 0;
+	player[playerId].lastSendPacketNo = 0;
 
-	player[playerIndex].uqueue = NULL;
-	player[playerIndex].dqueue = NULL;
+	player[playerId].uqueue = NULL;
+	player[playerId].dqueue = NULL;
 
-	player[playerIndex].lagkillerpending = false;
-	player[playerIndex].lagavg = 0;
-	player[playerIndex].lagcount = 0;
-	player[playerIndex].laglastwarn = 0;
-	player[playerIndex].lagwarncount = 0;
-	player[playerIndex].lagalpha = 1;
+	player[playerId].lagkillerpending = false;
+	player[playerId].lagavg = 0;
+	player[playerId].lagcount = 0;
+	player[playerId].laglastwarn = 0;
+	player[playerId].lagwarncount = 0;
+	player[playerId].lagalpha = 1;
 
 
 	// accept player
 	void *buf, *bufStart = getDirectMessageBuffer();
-	buf = nboPackUByte(bufStart, playerIndex);
-	directMessage(playerIndex, MsgAccept, (char*)buf-(char*)bufStart, bufStart);
+	buf = nboPackUByte(bufStart, playerId);
+	directMessage(playerId, MsgAccept, (char*)buf-(char*)bufStart, bufStart);
 
 	// abort if we hung up on the client
-	if (player[playerIndex].fd == NotConnected)
+	if (player[playerId].fd == NotConnected)
 		return;
 
 	// player is signing on (has already connected via addClient).
-	player[playerIndex].state = PlayerDead;
-	player[playerIndex].flag = -1;
-	player[playerIndex].wins = 0;
-	player[playerIndex].losses = 0;
+	player[playerId].state = PlayerDead;
+	player[playerId].flag = -1;
+	player[playerId].wins = 0;
+	player[playerId].losses = 0;
 
 	// update team state and if first active player on team,
 	// add team's flag and reset it's score
 	bool resetTeamFlag = false;
-	int teamIndex = int(player[playerIndex].team);
-	if ((player[playerIndex].type == TankPlayer ||
-			player[playerIndex].type == ComputerPlayer) &&
+	int teamIndex = int(player[playerId].team);
+	if ((player[playerId].type == TankPlayer ||
+			player[playerId].type == ComputerPlayer) &&
 			++team[teamIndex].team.activeSize == 1) {
 		team[teamIndex].team.won = 0;
 		team[teamIndex].team.lost = 0;
@@ -2798,22 +2791,22 @@ static void addPlayer(int playerIndex)
 
 	// send new player updates on each player, all existing flags, and all teams.
 	// watch out for connection being closed because of an error.
-	for (i = 0; i < NumTeams && player[playerIndex].fd != NotConnected; i++)
-		sendTeamUpdate(i, playerIndex);
-	for (i = 0; i < numFlags && player[playerIndex].fd != NotConnected; i++)
+	for (i = 0; i < NumTeams && player[playerId].fd != NotConnected; i++)
+		sendTeamUpdate(i, playerId);
+	for (i = 0; i < numFlags && player[playerId].fd != NotConnected; i++)
 		if (flag[i].flag.status != FlagNoExist)
-			sendFlagUpdate(i, playerIndex);
-	for (i = 0; i < maxPlayers && player[playerIndex].fd != NotConnected; i++)
-		if (player[i].state > PlayerInLimbo && i != playerIndex)
-			sendPlayerUpdate(i, playerIndex);
+			sendFlagUpdate(i, playerId);
+	for (i = 0; i < maxPlayers && player[playerId].fd != NotConnected; i++)
+		if (player[i].state > PlayerInLimbo && i != playerId)
+			sendPlayerUpdate(i, playerId);
 
 	// if new player connection was closed (because of an error) then stop here
-	if (player[playerIndex].fd == NotConnected)
+	if (player[playerId].fd == NotConnected)
 		return;
 
 	// send MsgAddPlayer to everybody -- this concludes MsgEnter response
 	// to joining player
-	sendPlayerUpdate(playerIndex, playerIndex);
+	sendPlayerUpdate(playerId, playerId);
 
 	// send update of info for team just joined
 	sendTeamUpdate(teamIndex);
@@ -2828,11 +2821,11 @@ static void addPlayer(int playerIndex)
 
 		void *buf, *bufStart = getDirectMessageBuffer();
 		buf = nboPackUShort(bufStart, (uint16_t)(int)timeLeft);
-		directMessage(playerIndex, MsgTimeUpdate, (char*)buf-(char*)bufStart, bufStart);
+		directMessage(playerId, MsgTimeUpdate, (char*)buf-(char*)bufStart, bufStart);
 	}
 
 	// again check if player was disconnected
-	if (player[playerIndex].fd == NotConnected)
+	if (player[playerId].fd == NotConnected)
 		return;
 
 	// reset that flag
@@ -2851,11 +2844,11 @@ static void addPlayer(int playerIndex)
 	sprintf(message,"BZFlag server %d.%d%c%d, http://BZFlag.org/",
 			(VERSION / 10000000) % 100, (VERSION / 100000) % 100,
 			(char)('a' - 1 + (VERSION / 1000) % 100), VERSION % 1000);
-	sendMessage(playerIndex, playerIndex, player[playerIndex].team, message);
+	sendMessage(playerId, playerId, player[playerId].team, message);
 
 	if (servermsg && (strlen(servermsg) > 0)) {
 		sprintf(message,"%s",servermsg);
-		sendMessage(playerIndex, playerIndex, player[playerIndex].team, message);
+		sendMessage(playerId, playerId, player[playerId].team, message);
 	}
 #endif
 }
@@ -2964,15 +2957,15 @@ static void zapFlag(int flagIndex)
 	}
 
 	// see if someone had grabbed flag.  tell 'em to drop it.
-	const int playerIndex = flag[flagIndex].player;
-	if (playerIndex != -1) {
+	const PlayerId playerId = flag[flagIndex].player;
+	if (playerId != InvalidPlayer) {
 		flag[flagIndex].player = -1;
 		flag[flagIndex].flag.status = FlagNoExist;
-		player[playerIndex].flag = -1;
+		player[playerId].flag = -1;
 
 		void *buf, *bufStart = getDirectMessageBuffer();
 		buf = nboPackUByte(bufStart, DropReasonForced);
-		buf = nboPackUByte(buf, playerIndex);
+		buf = nboPackUByte(buf, playerId);
 		buf = nboPackUShort(buf, uint16_t(flagIndex));
 		buf = flag[flagIndex].flag.pack(buf);
 		broadcastMessage(MsgDropFlag, (char*)buf-(char*)bufStart, bufStart);
@@ -2988,7 +2981,7 @@ static void zapFlag(int flagIndex)
 	resetFlag(flagIndex);
 }
 
-static void removePlayer(int playerIndex)
+static void removePlayer(PlayerId playerId)
 {
 	// player is signing off or sent a bad packet.  since the
 	// bad packet can come before MsgEnter, we must be careful
@@ -2996,77 +2989,77 @@ static void removePlayer(int playerIndex)
 	// first shutdown connection
 
 	// check if we are called again for a dropped player!
-	if (player[playerIndex].fd == NotConnected)
+	if (player[playerId].fd == NotConnected)
 		return;
 
 	// status message
-	DEBUG1("Player %s [%d] is removed\n",player[playerIndex].callSign,playerIndex);
+	DEBUG1("Player %s [%d] is removed\n",player[playerId].callSign,playerId);
 
 	// shutdown TCP socket
-	shutdown(player[playerIndex].fd, 2);
-	closesocket(player[playerIndex].fd);
-	player[playerIndex].fd = NotConnected;
+	shutdown(player[playerId].fd, 2);
+	closesocket(player[playerId].fd);
+	player[playerId].fd = NotConnected;
 
 	// free up the UDP packet buffers
-	if (player[playerIndex].uqueue)
-		disqueuePacket(playerIndex, SEND, 65536);
-	if (player[playerIndex].dqueue)
-		disqueuePacket(playerIndex, RECEIVE, 65536);
+	if (player[playerId].uqueue)
+		disqueuePacket(playerId, SEND, 65536);
+	if (player[playerId].dqueue)
+		disqueuePacket(playerId, RECEIVE, 65536);
 
-	player[playerIndex].uqueue = NULL;
-	player[playerIndex].dqueue = NULL;
-	player[playerIndex].lastRecvPacketNo = 0;
-	player[playerIndex].lastSendPacketNo = 0;
+	player[playerId].uqueue = NULL;
+	player[playerId].dqueue = NULL;
+	player[playerId].lastRecvPacketNo = 0;
+	player[playerId].lastSendPacketNo = 0;
 
 	// shutdown the UDP socket
-	memset(&player[playerIndex].uaddr,0,sizeof(player[playerIndex].uaddr));
+	memset(&player[playerId].uaddr,0,sizeof(player[playerId].uaddr));
 
 	// no UDP connection anymore
-	player[playerIndex].ulinkup = false;
-	player[playerIndex].toBeKicked = false;
-	player[playerIndex].udplen = 0;
+	player[playerId].ulinkup = false;
+	player[playerId].toBeKicked = false;
+	player[playerId].udplen = 0;
 
-	player[playerIndex].tcplen = 0;
+	player[playerId].tcplen = 0;
 
-	player[playerIndex].callSign[0] = 0;
+	player[playerId].callSign[0] = 0;
 
-	if (player[playerIndex].outmsg != NULL) {
-		delete[] player[playerIndex].outmsg;
-		player[playerIndex].outmsg = NULL;
+	if (player[playerId].outmsg != NULL) {
+		delete[] player[playerId].outmsg;
+		player[playerId].outmsg = NULL;
 	}
 
 	// player is outta here.  if player never joined a team then
 	// don't count as a player.
-	if (player[playerIndex].state == PlayerInLimbo) {
-		player[playerIndex].state = PlayerNoExist;
+	if (player[playerId].state == PlayerInLimbo) {
+		player[playerId].state = PlayerNoExist;
 		return;
 	}
 
-	player[playerIndex].state = PlayerNoExist;
+	player[playerId].state = PlayerNoExist;
 
-	if (player[playerIndex].team != NoTeam) {
+	if (player[playerId].team != NoTeam) {
 		// if player had flag then flag just disappears.  it'd be nice
 		// to have it fly as if dropped, but we've no idea what the
 		// player's position is.
-		if (player[playerIndex].flag != -1)
-			zapFlag(player[playerIndex].flag);
+		if (player[playerId].flag != -1)
+			zapFlag(player[playerId].flag);
 
 		// tell everyone player has left
 		void *buf, *bufStart = getDirectMessageBuffer();
-		buf = nboPackUByte(bufStart, playerIndex);
+		buf = nboPackUByte(bufStart, playerId);
 		broadcastMessage(MsgRemovePlayer, (char*)buf-(char*)bufStart, bufStart);
 
 		// decrease team size
-		int teamNum = int(player[playerIndex].team);
+		int teamNum = int(player[playerId].team);
 		--team[teamNum].team.size;
-		if (player[playerIndex].type == TankPlayer ||
-				player[playerIndex].type == ComputerPlayer)
+		if (player[playerId].type == TankPlayer ||
+				player[playerId].type == ComputerPlayer)
 			--team[teamNum].team.activeSize;
 
 		// if last active player on team then remove team's flag
 		if (teamNum != int(RogueTeam) &&
-				(player[playerIndex].type == TankPlayer ||
-				player[playerIndex].type == ComputerPlayer) &&
+				(player[playerId].type == TankPlayer ||
+				player[playerId].type == ComputerPlayer) &&
 				team[teamNum].team.activeSize == 0 &&
 				(gameStyle & int(TeamFlagGameStyle)))
 			zapFlag(teamNum - 1);
@@ -3076,7 +3069,7 @@ static void removePlayer(int playerIndex)
 	}
 
 #ifdef NETWORK_STATS
-	dumpPlayerMessageStats(playerIndex);
+	dumpPlayerMessageStats(playerId);
 #endif
 	// tell the list server the new number of players
 	sendMessageToListServer("SETNUM");
@@ -3106,7 +3099,7 @@ static void removePlayer(int playerIndex)
 	}
 }
 
-static void sendWorld(int playerIndex, int ptr)
+static void sendWorld(PlayerId playerId, int ptr)
 {
 	// send another small chunk of the world database
 	assert(world != NULL && worldDatabase != NULL);
@@ -3122,29 +3115,29 @@ static void sendWorld(int playerIndex, int ptr)
 	}
 	buf = nboPackUShort(bufStart, uint16_t(left));
 	buf = nboPackString(buf, (char*)worldDatabase + ptr, size);
-	directMessage(playerIndex, MsgGetWorld, (char*)buf-(char*)bufStart, bufStart);
+	directMessage(playerId, MsgGetWorld, (char*)buf-(char*)bufStart, bufStart);
 }
 
-static void playerAlive(int playerIndex, const float *pos, const float *fwd)
+static void playerAlive(PlayerId playerId, const float *pos, const float *fwd)
 {
 	// player is coming alive.
-	player[playerIndex].state = PlayerAlive;
-	player[playerIndex].flag = -1;
+	player[playerId].state = PlayerAlive;
+	player[playerId].flag = -1;
 
 	// send MsgAlive
 	void *buf, *bufStart = getDirectMessageBuffer();
-	buf = nboPackUByte(bufStart, playerIndex);
+	buf = nboPackUByte(bufStart, playerId);
 	buf = nboPackVector(buf,pos);
 	buf = nboPackVector(buf,fwd);
 	broadcastMessage(MsgAlive, (char*)buf-(char*)bufStart, bufStart);
 }
 
-static void checkTeamScore(int playerIndex, int teamIndex)
+static void checkTeamScore(PlayerId playerId, int teamIndex)
 {
 	if (maxTeamScore == 0 || teamIndex == (int)RogueTeam) return;
 	if (team[teamIndex].team.won - team[teamIndex].team.lost >= maxTeamScore) {
 		void *buf, *bufStart = getDirectMessageBuffer();
-		buf = nboPackUByte(bufStart, playerIndex);
+		buf = nboPackUByte(bufStart, playerId);
 		buf = nboPackUShort(buf, uint16_t(teamIndex));
 		broadcastMessage(MsgScoreOver, (char*)buf-(char*)bufStart, bufStart);
 		gameOver = true;
@@ -3209,28 +3202,28 @@ static void playerKilled(int victimIndex, int killerIndex,
 		checkTeamScore(killerIndex, winningTeam);
 }
 
-static void grabFlag(int playerIndex, int flagIndex)
+static void grabFlag(PlayerId playerId, int flagIndex)
 {
 	// player wants to take possession of flag
-	if (player[playerIndex].state != PlayerAlive ||
-			player[playerIndex].flag != -1 ||
+	if (player[playerId].state != PlayerAlive ||
+			player[playerId].flag != -1 ||
 			flag[flagIndex].flag.status != FlagOnGround)
 		return;
 	// okay, player can have it
 	flag[flagIndex].flag.status = FlagOnTank;
-	flag[flagIndex].flag.owner = playerIndex;
-	flag[flagIndex].player = playerIndex;
-	player[playerIndex].flag = flagIndex;
+	flag[flagIndex].flag.owner = playerId;
+	flag[flagIndex].player = playerId;
+	player[playerId].flag = flagIndex;
 
 	// send MsgGrabFlag
 	void *buf, *bufStart = getDirectMessageBuffer();
-	buf = nboPackUByte(bufStart, playerIndex);
+	buf = nboPackUByte(bufStart, playerId);
 	buf = nboPackUShort(buf, uint16_t(flagIndex));
 	buf = flag[flagIndex].flag.pack(buf);
 	broadcastMessage(MsgGrabFlag, (char*)buf-(char*)bufStart, bufStart);
 }
 
-static void dropFlag(int playerIndex, FlagDropReason reason, float pos[3])
+static void dropFlag(PlayerId playerId, FlagDropReason reason, float pos[3])
 {
 	assert(world != NULL);
 	const WorldInfo::ObstacleLocation* container;
@@ -3239,7 +3232,7 @@ static void dropFlag(int playerIndex, FlagDropReason reason, float pos[3])
 
 	// player wants to drop flag.  we trust that the client won't tell
 	// us to drop a sticky flag until the requirements are satisfied.
-	const int flagIndex = player[playerIndex].flag;
+	const int flagIndex = player[playerId].flag;
 	FlagInfo *pFlagInfo = &flag[flagIndex];
 	if (flagIndex == -1 || pFlagInfo->flag.status != FlagOnTank)
 		return;
@@ -3334,10 +3327,10 @@ static void dropFlag(int playerIndex, FlagDropReason reason, float pos[3])
 	pFlagInfo->flag.initialVelocity = -Gravity * upTime;
 
 	// player no longer has flag -- send MsgDropFlag
-	player[playerIndex].flag = -1;
+	player[playerId].flag = -1;
 	void *buf, *bufStart = getDirectMessageBuffer();
 	buf = nboPackUByte(bufStart, reason);
-	buf = nboPackUByte(buf, playerIndex);
+	buf = nboPackUByte(buf, playerId);
 	buf = nboPackUShort(buf, uint16_t(flagIndex));
 	buf = flag[flagIndex].flag.pack(buf);
 	broadcastMessage(MsgDropFlag, (char*)buf-(char*)bufStart, bufStart);
@@ -3346,23 +3339,23 @@ static void dropFlag(int playerIndex, FlagDropReason reason, float pos[3])
 	sendFlagUpdate(flagIndex);
 }
 
-static void captureFlag(int playerIndex, TeamColor teamCaptured)
+static void captureFlag(PlayerId playerId, TeamColor teamCaptured)
 {
 	// player captured a flag.  can either be enemy flag in player's own
 	// team base, or player's own flag in enemy base.
-	int flagIndex = int(player[playerIndex].flag);
+	int flagIndex = int(player[playerId].flag);
 	if (flagIndex < 0 ||
 			int(flag[flagIndex].flag.id) < int(FirstTeamFlag) ||
 			int(flag[flagIndex].flag.id) > int(LastTeamFlag))
 		return;
 
 	// player no longer has flag and put flag back at it's base
-	player[playerIndex].flag = -1;
+	player[playerId].flag = -1;
 	resetFlag(flagIndex);
 
 	// send MsgCaptureFlag
 	void *buf, *bufStart = getDirectMessageBuffer();
-	buf = nboPackUByte(bufStart, playerIndex);
+	buf = nboPackUByte(bufStart, playerId);
 	buf = nboPackUShort(buf, uint16_t(flagIndex));
 	buf = nboPackUShort(buf, uint16_t(teamCaptured));
 	broadcastMessage(MsgCaptureFlag, (char*)buf-(char*)bufStart, bufStart);
@@ -3377,9 +3370,9 @@ static void captureFlag(int playerIndex, TeamColor teamCaptured)
 
 	// update score (rogues can't capture flags)
 	int winningTeam = (int)NoTeam;
-	if (int(flag[flagIndex].flag.id) != int(player[playerIndex].team)) {
+	if (int(flag[flagIndex].flag.id) != int(player[playerId].team)) {
 		// player captured enemy flag
-		winningTeam = int(player[playerIndex].team);
+		winningTeam = int(player[playerId].team);
 		team[winningTeam].team.won++;
 		sendTeamUpdate(winningTeam);
 	}
@@ -3389,10 +3382,10 @@ static void captureFlag(int playerIndex, TeamColor teamCaptured)
 	dumpScore();
 #endif
 	if (winningTeam != (int)NoTeam)
-		checkTeamScore(playerIndex, winningTeam);
+		checkTeamScore(playerId, winningTeam);
 }
 
-static void shotFired(int /*playerIndex*/, const void *buf, int len)
+static void shotFired(int /*playerId*/, const void *buf, int len)
 {
 	// player has fired shot -- send MsgShotBegin
 	broadcastMessage(MsgShotBegin, len, buf);
@@ -3408,12 +3401,12 @@ static void shotEnded(const PlayerId& id, int16_t shotIndex, uint16_t reason)
 	broadcastMessage(MsgShotEnd, (char*)buf-(char*)bufStart, bufStart);
 }
 
-static void scoreChanged(int playerIndex, uint16_t wins, uint16_t losses)
+static void scoreChanged(PlayerId playerId, uint16_t wins, uint16_t losses)
 {
 	// lag measurement
 	// got reference time?
-	if (player[playerIndex].lagkillerpending) {
-		PlayerInfo &killer = player[playerIndex];
+	if (player[playerId].lagkillerpending) {
+		PlayerInfo &killer = player[playerId];
 		TimeKeeper now = TimeKeeper::getCurrent(),&then = killer.lagkillertime;
 		float timepassed = now-then;
 		killer.lagkillerpending = false;
@@ -3429,47 +3422,47 @@ static void scoreChanged(int playerIndex, uint16_t wins, uint16_t losses)
 				char message[MessageLen];
 				sprintf(message,"*** Server Warning: your lag is too high (%d ms) ***",
 						int(killer.lagavg * 1000));
-				sendMessage(playerIndex, playerIndex,
-						player[playerIndex].team,message);
+				sendMessage(playerId, playerId,
+						player[playerId].team,message);
 				killer.laglastwarn = killer.lagcount;
 				killer.lagwarncount++;;
 				if (killer.lagwarncount++ > maxlagwarn) {
 					// drop the player
 					sprintf(message,"You have been kicked due to excessive lag (you have been warned %d times).",
 						maxlagwarn);
-					sendMessage(playerIndex, playerIndex, killer.team, message);
-					removePlayer(playerIndex);
+					sendMessage(playerId, playerId, killer.team, message);
+					removePlayer(playerId);
 				}
 			}
 		}
 	}
 
 	void *buf, *bufStart = getDirectMessageBuffer();
-	buf = nboPackUByte(bufStart, playerIndex);
+	buf = nboPackUByte(bufStart, playerId);
 	buf = nboPackUShort(buf, wins);
 	buf = nboPackUShort(buf, losses);
 	broadcastMessage(MsgScore, (char*)buf-(char*)bufStart, bufStart);
-	player[playerIndex].wins = wins;
-	player[playerIndex].losses = losses;
+	player[playerId].wins = wins;
+	player[playerId].losses = losses;
 #ifdef PRINTSCORE
 	dumpScore();
 #endif
 
 	// see if the player reached the score limit
 	if (maxPlayerScore != 0 &&
-			player[playerIndex].wins - player[playerIndex].losses >= maxPlayerScore) {
+			player[playerId].wins - player[playerId].losses >= maxPlayerScore) {
 		void *buf, *bufStart = getDirectMessageBuffer();
-		buf = nboPackUByte(bufStart, playerIndex);
+		buf = nboPackUByte(bufStart, playerId);
 		buf = nboPackUShort(buf, uint16_t(NoTeam));
 		broadcastMessage(MsgScoreOver, (char*)buf-(char*)bufStart, bufStart);
 		gameOver = true;
 	}
 }
 
-static void sendTeleport(int playerIndex, uint16_t from, uint16_t to)
+static void sendTeleport(PlayerId playerId, uint16_t from, uint16_t to)
 {
 	void *buf, *bufStart = getDirectMessageBuffer();
-	buf = nboPackUByte(bufStart, playerIndex);
+	buf = nboPackUByte(bufStart, playerId);
 	buf = nboPackUShort(buf, from);
 	buf = nboPackUShort(buf, to);
 	broadcastMessage(MsgTeleport, (char*)buf-(char*)bufStart, bufStart);
@@ -3506,15 +3499,15 @@ static void parseCommand(const char *message, int t)
 		if (strncmp(message + 6, "reset", 5) == 0) {
 			for (int i = 0; i < numFlags; i++) {
 				// see if someone had grabbed flag.  tell 'em to drop it.
-				const int playerIndex = flag[i].player;
-				if (playerIndex != -1) {
-					flag[i].player = -1;
+				const PlayerId playerId = flag[i].player;
+				if (playerId != InvalidPlayer) {
+					flag[i].player = InvalidPlayer;
 					flag[i].flag.status = FlagNoExist;
-					player[playerIndex].flag = -1;
+					player[playerId].flag = -1;
 
 					void *buf, *bufStart = getDirectMessageBuffer();
 					buf = nboPackUByte(bufStart, DropReasonForced);
-					buf = nboPackUByte(buf, playerIndex);
+					buf = nboPackUByte(buf, playerId);
 					buf = nboPackUShort(buf, uint16_t(i));
 					buf = flag[i].flag.pack(buf);
 					broadcastMessage(MsgDropFlag, (char*)buf-(char*)bufStart, bufStart);
@@ -3526,15 +3519,15 @@ static void parseCommand(const char *message, int t)
 				if (int(flag[i].flag.id) < int(FirstTeamFlag) ||
 						int(flag[i].flag.id) > int(LastTeamFlag)) {
 					// see if someone had grabbed flag.  tell 'em to drop it.
-					const int playerIndex = flag[i].player;
-					if (playerIndex != -1) {
+					const PlayerId playerId = flag[i].player;
+					if (playerId != InvalidPlayer) {
 						flag[i].player = -1;
 						flag[i].flag.status = FlagNoExist;
-						player[playerIndex].flag = -1;
+						player[playerId].flag = -1;
 
 						void *buf, *bufStart = getDirectMessageBuffer();
 						buf = nboPackUByte(bufStart, DropReasonForced);
-						buf = nboPackUByte(buf, playerIndex);
+						buf = nboPackUByte(buf, playerId);
 						buf = nboPackUShort(buf, uint16_t(i));
 						buf = flag[i].flag.pack(buf);
 						broadcastMessage(MsgDropFlag, (char*)buf-(char*)bufStart, bufStart);
@@ -3654,7 +3647,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 			int16_t shot;
 			buf = nboUnpackUByte(buf, killer);
 			buf = nboUnpackShort(buf, shot);
-			playerKilled(t, lookupPlayer(killer), shot);
+			playerKilled(t, killer, shot);
 			break;
 		}
 
