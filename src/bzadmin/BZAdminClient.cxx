@@ -180,7 +180,7 @@ BZAdminClient::getServerString(std::string& str, ColorCode& colorCode) {
       str = returnString;
       return Superkilled;
 
-    case MsgScore:
+    case MsgScore: {
       uint8_t numScores;
       vbuf = nboUnpackUByte(vbuf, numScores);
       for (uint8_t i = 0; i < numScores; i++) {
@@ -196,6 +196,7 @@ BZAdminClient::getServerString(std::string& str, ColorCode& colorCode) {
 	}
       }
       return NoMessage;
+    }
 
     case MsgMessage:
 
