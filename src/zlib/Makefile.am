@@ -1,4 +1,6 @@
+if BUILDZLIB
 noinst_LIBRARIES = libz.a
+endif
 
 MAINTAINERCLEANFILES = \
 	Makefile.in
