@@ -28,9 +28,9 @@ const ServerCommandKey::Mode ServerCommandKey::nonAdminModes [7] = {LagStats, Id
 /* FIXME - note the important numModes and numNonAdminModes values inited here
  * when new commands are added, the indices need to be adjusted here.
  */
-ServerCommandKey::ServerCommandKey(): mode(Kick), startIndex(-1), numModes(34), numNonAdminModes(7)
+ServerCommandKey::ServerCommandKey(): mode(LagStats), startIndex(-1), numModes(34), numNonAdminModes(7)
 {
-  if (!admin) mode = nonAdminModes[0];
+  return;
 }
 
 void			ServerCommandKey::nonAdminInit()
