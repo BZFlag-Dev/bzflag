@@ -58,7 +58,7 @@ StdBothUI::StdBothUI() : atEOF(false) {
 #endif
 }
 
-void StdBothUI::outputMessage(const std::string& msg) {
+void StdBothUI::outputMessage(const std::string& msg, ColorCode) {
   std::cout<<msg<<std::endl;
 }
 

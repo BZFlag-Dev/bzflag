@@ -16,6 +16,7 @@
 #include <string>
 
 #include "Address.h"
+#include "colors.h"
 #include "global.h"
 
 
@@ -27,12 +28,12 @@
     UIAdder. */
 class BZAdminUI {
 public:
-
+  
   /** Need a virtual destructor so subclasses get to do their cleanups. */
   virtual ~BZAdminUI() { }
 
   /** This function prints a message in the main window. */
-  virtual void outputMessage(const std::string&) { }
+  virtual void outputMessage(const std::string&, ColorCode) { }
   /** See if the user has entered a command, if it has, store it in str and
       return true. */
   virtual bool checkCommand(std::string&) { return false; }

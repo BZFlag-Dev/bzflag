@@ -16,6 +16,7 @@
 #include <iostream>
 #include <map>
 #include <string>
+#include <utility>
 
 #include "config.h"
 
@@ -53,7 +54,7 @@ public:
   ~CursesUI();
 
   /** This function prints a message in the main window. */
-  virtual void outputMessage(const std::string& msg);
+  virtual void outputMessage(const std::string& msg, ColorCode color);
 
   /** See if the user has entered a command, if it has, store it in str and
       return true. */
@@ -135,7 +136,7 @@ protected:
   std::vector<std::string> history;
   unsigned int maxHistory;
   unsigned int currentHistory;
-  std::vector<std::string> msgBuffer;
+  std::vector<std::pair<std::string, ColorCode> > msgBuffer;
   unsigned int maxBufferSize;
   unsigned int scrollOffset;
   

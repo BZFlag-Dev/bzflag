@@ -43,6 +43,15 @@ BZAdminClient::BZAdminClient(std::string callsign, std::string host,
   showMessageType(MsgSuperKill);
   showMessageType(MsgMessage);
   showMessageType(MsgSetVar);
+  
+  // initialise the colormap
+  colorMap[NoTeam] = Yellow;
+  colorMap[RogueTeam] = Yellow;
+  colorMap[RedTeam] = Red;
+  colorMap[GreenTeam] = Green;
+  colorMap[BlueTeam] = Blue;
+  colorMap[PurpleTeam] = Purple;
+  colorMap[ObserverTeam] = LightBlue;
 }
 
 
@@ -51,13 +60,15 @@ PlayerId BZAdminClient::getMyId() {
 }
 
 
-BZAdminClient::ServerCode BZAdminClient::getServerString(std::string& str) {
+BZAdminClient::ServerCode 
+BZAdminClient::getServerString(std::string& str, ColorCode& colorCode) {
   uint16_t code, len;
   char inbuf[MaxPacketLen];
   int e;
   std::string dstName, srcName;
   std::string returnString = "";
   int i;
+  colorCode = Default;
 
   /* read until we have a package that we want, or until there are no more
      packages for 100 ms */
@@ -114,6 +125,7 @@ BZAdminClient::ServerCode BZAdminClient::getServerString(std::string& str) {
       vbuf = nboUnpackString(vbuf, email, EmailLen);
       players[p].name.resize(0);
       players[p].name.append(callsign);
+      players[p].team = TeamColor(team);
       if (ui != NULL)
 	ui->addedPlayer(p);
       returnString = returnString + "*** '" + callsign + "' joined the game.";
@@ -188,11 +200,14 @@ BZAdminClient::ServerCode BZAdminClient::getServerString(std::string& str) {
 	if (returnString == "CLIENTQUERY") {
 	  sendMessage(std::string("bzadmin ") + getAppVersion(), src);
 	  if (ui != NULL)
-	    ui->outputMessage("    [Sent versioninfo per request]");
+	    ui->outputMessage("    [Sent versioninfo per request]", Default);
 	}
 	else {
 	  returnString = formatMessage((char*)vbuf, src, dst, dstTeam, me);
 	  str = returnString;
+	  PlayerIdMap::const_iterator iter = players.find(src);
+	  colorCode = (iter == players.end() ? 
+		       colorMap[NoTeam] : colorMap[iter->second.team]);
 	  return GotMessage;
 	}
       }
@@ -209,6 +224,13 @@ BZAdminClient::ServerCode BZAdminClient::getServerString(std::string& str) {
 }
 
 
+BZAdminClient::ServerCode 
+BZAdminClient::getServerString(std::string& str) {
+  ColorCode cc;
+  return getServerString(str, cc);
+}
+
+
 PlayerIdMap& BZAdminClient::getPlayers() {
   return players;
 }
@@ -221,11 +243,12 @@ bool BZAdminClient::isValid() const {
 
 void BZAdminClient::runLoop() {
   std::string str;
+  ColorCode color;
   ServerCode what(NoMessage);
   while (true) {
-    while ((what = getServerString(str)) == GotMessage) {
+    while ((what = getServerString(str, color)) == GotMessage) {
       if (ui != NULL)
-	ui->outputMessage(str);
+	ui->outputMessage(str, color);
     }
     if (what == Superkilled || what == CommError)
       break;
@@ -240,11 +263,11 @@ void BZAdminClient::runLoop() {
   switch (what) {
   case Superkilled:
     if (ui != NULL)
-      ui->outputMessage("--- ERROR: Server forced disconnect");
+      ui->outputMessage("--- ERROR: Server forced disconnect", Red);
     break;
   case CommError:
     if (ui != NULL)
-      ui->outputMessage("--- ERROR: Connection to server lost");
+      ui->outputMessage("--- ERROR: Connection to server lost", Red);
     break;
   default:
     waitForServer();
@@ -350,7 +373,7 @@ void BZAdminClient::listSetVars(const std::string& name, void* thisObject) {
   char message[MessageLen];
   if (BZDB.getPermission(name) == StateDatabase::Locked) {
     sprintf(message, "/set %s %f", name.c_str(), BZDB.eval(name));
-    ((BZAdminClient*)thisObject)->ui->outputMessage(message);
+    ((BZAdminClient*)thisObject)->ui->outputMessage(message, Default);
   }
 }
 

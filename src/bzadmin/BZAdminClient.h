@@ -17,6 +17,7 @@
 #include <string>
 
 #include "BZAdminUI.h"
+#include "colors.h"
 #include "PlayerInfo.h"
 #include "ServerLink.h"
 #include "UIMap.h"
@@ -52,6 +53,14 @@ public:
   /** Returns a reference to a @c PlayerIdMap containing the players
       in the game. */
   PlayerIdMap& getPlayers();
+
+  /** Checks for new packets from the server, ignores them or stores a
+      text message in @c str. Tells @c ui about new or removed players. Returns
+      0 if no interesting packets have arrived, 1 if a message has been stored
+      in @c str, negative numbers for errors. A color suggestion will be stored
+      in @c colorCode.
+  */
+  ServerCode getServerString(std::string& str, ColorCode& colorCode);
 
   /** Checks for new packets from the server, ignores them or stores a
       text message in @c str. Tells @c ui about new or removed players. Returns
@@ -112,6 +121,7 @@ protected:
   ServerLink sLink;
   bool valid;
   std::map<uint16_t, bool> messageMask;
+  std::map<TeamColor, ColorCode> colorMap;
   BZAdminUI* ui;
 };
 

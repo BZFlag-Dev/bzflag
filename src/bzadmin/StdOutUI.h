@@ -25,7 +25,7 @@
 class StdOutUI : public BZAdminUI {
 public:
 
-  void outputMessage(const std::string& msg);
+  void outputMessage(const std::string& msg, ColorCode color);
 
   /** This function returns a pointer to a dynamically allocated
       StdOutUI object. */

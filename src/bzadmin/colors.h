@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2004 Tim Riker
+ * Copyright (c) 1993 - 2003 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -10,24 +10,18 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef PLAYERINFO_H
-#define PLAYERINFO_H
+#ifndef COLORS_H
+#define COLORS_H
 
-#include <map>
-
-#include "Address.h"
-
-
-/** This struct stores information about a player that is relevant to 
-    bzadmin. */
-struct PlayerInfo {
-  std::string name;
-  std::string ip;
-  TeamColor team;
+enum ColorCode {
+  Default = 0,
+  White,
+  Red,
+  Green,
+  Blue,
+  Purple,
+  Yellow,
+  LightBlue
 };
-
-
-typedef std::map<PlayerId, PlayerInfo> PlayerIdMap;
-
 
 #endif

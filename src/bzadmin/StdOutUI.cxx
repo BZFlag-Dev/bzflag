@@ -23,7 +23,7 @@
 UIAdder StdOutUI::uiAdder("stdout", &StdOutUI::creator);
 
 
-void StdOutUI::outputMessage(const std::string& msg) {
+void StdOutUI::outputMessage(const std::string& msg, ColorCode) {
   std::cout<<msg<<std::endl;
 }
 

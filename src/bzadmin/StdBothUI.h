@@ -25,7 +25,7 @@
 class StdBothUI : public BZAdminUI {
 public:
   StdBothUI();
-  virtual void outputMessage(const std::string& msg);
+  virtual void outputMessage(const std::string& msg, ColorCode color);
   virtual bool checkCommand(std::string& str);
 
   /** This function returns a pointer to a dynamically allocated

@@ -27,6 +27,16 @@ CursesUI::CursesUI(const PlayerIdMap& p, PlayerId m) :
 
   // initialize ncurses
   initscr();
+  start_color();
+  use_default_colors();
+  init_pair(Default, -1, -1);
+  init_pair(White, COLOR_WHITE, -1);
+  init_pair(Red, COLOR_RED, -1);
+  init_pair(Green, COLOR_GREEN, -1);
+  init_pair(Blue, COLOR_BLUE, -1);
+  init_pair(Purple, COLOR_MAGENTA, -1);
+  init_pair(Yellow, COLOR_YELLOW, -1);
+  init_pair(LightBlue, COLOR_CYAN, -1);
   nonl();
   cbreak();
   noecho();
@@ -98,15 +108,21 @@ CursesUI::~CursesUI() {
 }
 
 
-void CursesUI::outputMessage(const std::string& msg) {
+void CursesUI::outputMessage(const std::string& msg, ColorCode color) {
+  
+  std::cerr<<(color == Green ? "Green" : "Other")<<std::endl;
+  
   // add message to the message buffer, remove the oldest message if it's full
   if (msgBuffer.size() == maxBufferSize)
     msgBuffer.erase(msgBuffer.begin());
-  msgBuffer.push_back(msg);
+  std::pair<std::string, ColorCode> p(msg, color);
+  msgBuffer.push_back(p);
 
   // if we have scrolled away from the bottom, don't show the new message
   if (scrollOffset == 0) {
+    wattron(mainWin, COLOR_PAIR(color));
     waddstr(mainWin, (msg + "\n").c_str());
+    wattroff(mainWin, COLOR_PAIR(color));
     wrefresh(mainWin);
   }
 }
@@ -245,8 +261,8 @@ bool CursesUI::checkCommand(std::string& str) {
       else {
 	std::string msg = "--- Can't ban ";
 	msg += targetIter->second.name + ", you don't have the IP address";
-	outputMessage(msg);
-	outputMessage("--- Trying to fetch IP addresses...");
+	outputMessage(msg, Red);
+	outputMessage("--- Trying to fetch IP addresses...", Red);
 	str = "/playerlist";
 	return true;
       }
@@ -315,7 +331,7 @@ void CursesUI::updateMainWinFromBuffer(unsigned int numberOfMessages) {
   unsigned int end = start + numberOfMessages;
   end = (end >= msgBuffer.size() ? msgBuffer.size() : end);
   for (unsigned int i = start ; i < end; ++i)
-    waddstr(mainWin, (msgBuffer[i] + "\n").c_str());
+    waddstr(mainWin, (msgBuffer[i].first + "\n").c_str());
   wrefresh(mainWin);
 }
 
