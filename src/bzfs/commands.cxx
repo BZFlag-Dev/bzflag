@@ -1050,6 +1050,10 @@ void handleHelpCmd(GameKeeper::Player *playerData, const char *message)
 void handleIdentifyCmd(GameKeeper::Player *playerData, const char *message)
 {
   int t = playerData->getIndex();
+  if (!passFile.size()){
+    sendMessage(ServerPlayer, t, "/identify command disabled");
+    return;
+  }
   // player is trying to send an ID
   if (playerData->accessInfo.isAccessVerified()) {
     sendMessage(ServerPlayer, t, "You have already identified");
@@ -1085,6 +1089,10 @@ void handleIdentifyCmd(GameKeeper::Player *playerData, const char *message)
 void handleRegisterCmd(GameKeeper::Player *playerData, const char *message)
 {
   int t = playerData->getIndex();
+  if (!passFile.size()){
+    sendMessage(ServerPlayer, t, "/register command disabled");
+    return;
+  }
   if (playerData->accessInfo.isAccessVerified()) {
     sendMessage(ServerPlayer, t, "You have already registered and"
 		" identified this callsign");
@@ -1109,6 +1117,10 @@ void handleRegisterCmd(GameKeeper::Player *playerData, const char *message)
 void handleGhostCmd(GameKeeper::Player *playerData, const char *message)
 {
   int t = playerData->getIndex();
+  if (!passFile.size()){
+    sendMessage(ServerPlayer, t, "/ghost command disabled");
+    return;
+  }
   char *p1 = (char*)strchr(message + 1, '\"');
   char *p2 = 0;
   if (p1) p2 = strchr(p1 + 1, '\"');
@@ -1149,6 +1161,10 @@ void handleGhostCmd(GameKeeper::Player *playerData, const char *message)
 void handleDeregisterCmd(GameKeeper::Player *playerData, const char *message)
 {
   int t = playerData->getIndex();
+  if (!passFile.size()){
+    sendMessage(ServerPlayer, t, "/deregister command disabled");
+    return;
+  }
   if (!playerData->accessInfo.isAccessVerified()) {
     sendMessage(ServerPlayer, t, "You must be registered and verified to run the deregister command");
     return;
@@ -1208,6 +1224,10 @@ void handleDeregisterCmd(GameKeeper::Player *playerData, const char *message)
 void handleSetpassCmd(GameKeeper::Player *playerData, const char *message)
 {
   int t = playerData->getIndex();
+  if (!passFile.size()){
+    sendMessage(ServerPlayer, t, "/setpass command disabled");
+    return;
+  }
   if (!playerData->accessInfo.isAccessVerified()) {
     sendMessage(ServerPlayer, t, "You must be registered and verified to run the setpass command");
     return;
