@@ -98,7 +98,7 @@ OpenGLTexture* TextureManager::loadTexture( FileTextureInit &init )
 #ifdef WIN32
 	nameToTry += '\\';
 #else
-	nameToTry += '\\';
+	nameToTry += '/';
 #endif
 	nameToTry += init.name;
   }
