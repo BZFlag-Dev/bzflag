@@ -473,7 +473,7 @@ static char **parseWorldOptions (const char *file, int &ac)
     while (confStrm.good()) {
       std::string line = buffer;
       int startPos = line.find_first_not_of("\t \r\n");
-      if (strncmp ("options", line.c_str() + startPos, 7) == 0) {
+      if (strncasecmp ("options", line.c_str() + startPos, 7) == 0) {
 	confStrm.getline(buffer,1024);
 	break;
       }
@@ -483,7 +483,7 @@ static char **parseWorldOptions (const char *file, int &ac)
     while (confStrm.good()) {
       std::string line = buffer;
       int startPos = line.find_first_not_of("\t \r\n");
-      if (strncmp ("end", line.c_str() + startPos, 3) == 0) {
+      if (strncasecmp ("end", line.c_str() + startPos, 3) == 0) {
 	break;
       }
 
