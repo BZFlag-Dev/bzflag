@@ -26,15 +26,10 @@
 #include <iostream>
 
 // common headers
+#include "bzglob.h"
 #include "Pack.h"
 #include "Teleporter.h"
 #include "ObstacleMgr.h"
-
-// simple globbing routines
-static int match_object_name (const char *string, const char *objname);
-static int match_multi (const char **string, const char **objname);
-static const char MATCH_MULTI  = '*'; // matches any number of characters
-static const char MATCH_SINGLE = '?'; // matches a single character
 
 
 LinkManager::LinkManager()
@@ -224,13 +219,13 @@ void LinkManager::findTelesByName(const std::string& name,
 
     std::string front = teleName;
     front += ":f";
-    if (match_object_name(glob.c_str(), front.c_str())) {
+    if (glob_match (glob, front)) {
       list.push_back((int)(i * 2) + 0);
     }
 
     std::string back = teleName;
     back += ":b";
-    if (match_object_name(glob.c_str(), back.c_str())) {
+    if (glob_match (glob, back)) {
       list.push_back((int)(i * 2) + 1);
     }
   }
@@ -330,105 +325,6 @@ int LinkManager::packSize() const
   return fullSize;
 }
 
-
-/******************************************************************************/
-
-static int match_object_name (const char *string, const char *objname)
-{
-  if (string == NULL) {
-    return 0;
-  }
-  if (objname == NULL) {
-    return 0;
-  }
-
-  if ((string[0] == MATCH_MULTI) && (string[1] == '\0')) {
-    return 1;
-  }
-
-  while (*string != '\0') {
-    if (*string == MATCH_MULTI) {
-      string++;
-      switch (match_multi (&string, &objname)) {
-	case +1: {
-	  return 1;
-	}
-	case -1: {
-	  return 0;
-	}
-      }
-    }
-    else if (*objname == '\0') {
-      return 0;
-    }
-    else if ((*string == MATCH_SINGLE) || (*string == *objname)) {
-      string++;
-      objname++;
-    }
-    else {
-      return 0;
-    }
-  }
-
-  if (*objname == '\0') {
-    return 1;
-  } else {
-    return 0;
-  }
-}
-
-/******************************************************************************/
-
-static int match_multi (const char **string, const char **objname)
-{
-  const char *str = *string;
-  const char *obj = *objname;
-
-  while ((*str != '\0') && (*str == MATCH_MULTI)) {
-    str++; // get rid of multiple '*'s
-  }
-
-  if (*str == '\0') { // '*' was last, auto-match
-    return +1;
-  }
-
-  const char *strtop = str;
-  const char *objtop = obj;
-
-  while (*str != '\0') {
-    if (*str == MATCH_MULTI) {
-      *string = str;
-      *objname = obj;
-      return 0; // matched this segment
-    }
-    else if (*obj == '\0') {
-      return -1; // can't match
-    }
-    else {
-      if ((*str == MATCH_SINGLE) || (*str == *obj)) {
-	str++;
-	obj++;
-	if ((*str == '\0') && (*obj != '\0')) { // advanced check
-	  obj++;
-	  objtop++;
-	  obj = objtop;
-	  str = strtop;
-	}
-      }
-      else {
-	obj++;
-	objtop++;
-	obj = objtop;
-	str = strtop;
-      }
-    }
-  }
-
-  *string = str;
-  *objname = obj;
-
-  return +1; // full match
-}
 
 /******************************************************************************/
 

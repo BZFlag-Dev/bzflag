@@ -195,7 +195,6 @@ endif
 
 LDADD =	\
 	../3D/lib3D.a			\
-	../common/libCommon.a		\
 	../game/libGame.a		\
 	../net/libNet.a			\
 	../obstacle/libObstacle.a	\
@@ -205,6 +204,7 @@ LDADD =	\
 	../scene/libSceneDB.a		\
 	../geometry/libGeometry.a	\
 	../mediafile/libMediaFile.a	\
+	../common/libCommon.a		\
 	$(REGEX)			\
 	$(ZLIB)				\
 	$(KRB5_LIBS)			\

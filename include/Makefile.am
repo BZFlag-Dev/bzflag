@@ -131,6 +131,7 @@ noinst_HEADERS =			\
 	bzfSDL.h			\
 	bzfgl.h				\
 	bzfio.h				\
+	bzglob.h			\
 	bzsignal.h			\
 	common.h			\
 	global.h			\

@@ -31,6 +31,7 @@ libCommon_a_SOURCES  =			\
 	WordFilter.cxx			\
 	bz_Locale.cxx			\
 	bzfio.cxx			\
+	bzglob.cxx			\
 	bzsignal.c			\
 	global.cxx			\
 	md5.cxx				\
