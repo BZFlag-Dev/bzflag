@@ -84,10 +84,10 @@ const char *usageString =
 "[-q] "
 "[+r] "
 "[-rabbit [score|killer|random]] "
+"[-replay] "
 "[-reportfile <filename>] "
 "[-reportpipe <filename>] "
 "[-requireudp] "
-"[-replay] "
 "[+s <flag-count>] "
 "[-s <flag-count>] "
 "[-sa] "
@@ -163,6 +163,7 @@ const char *extraUsageString =
 "\t-q: don't listen for or respond to pings\n"
 "\t+r: all shots ricochet\n"
 "\t-rabbit [score|killer|random]: rabbit chase style\n"
+"\t-replay: setup the server to replay a previously saved game\n"
 "\t-reportfile <filename>: the file to store reports in\n"
 "\t-reportpipe <filename>: the program to pipe reports through\n"
 "\t-requireudp: require clients to use udp\n"
@@ -715,6 +716,8 @@ void parse(int argc, char **argv, CmdLineOptions &options)
 	  i++;
 	}
       }
+    } else if (strcmp(argv[i], "-replay") == 0) {
+      Replay::init ();
     } else if (strcmp(argv[i], "-reportfile") == 0) {
 	checkArgc("", i, argc, argv[i]);
       options.reportFile = argv[i];
@@ -724,8 +727,6 @@ void parse(int argc, char **argv, CmdLineOptions &options)
     } else if (strcmp(argv[i], "-requireudp") == 0) {
       std::cerr << "require UDP clients!\n";
       options.requireUDP = true;
-    } else if (strcmp(argv[i], "-replay") == 0) {
-      Replay::init ();
     } else if (strcmp(argv[i], "+s") == 0) {
       // set required number of random flags
       if (i+1 < argc && isdigit(argv[i+1][0])) {
