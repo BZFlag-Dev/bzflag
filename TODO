@@ -3,12 +3,6 @@ to do list for BZFlag
 
 THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
 
-* Need to use different, clearly disjoint numbering system on bzfs.  perhaps just
-  start from 0001 when 1.10 is released.  otherwise it gets unnecessarily bumped to
-  match the client version.  it's a separate communication protocol version.
-
-* Test
-
 * Name the version Psyche
 
 * Ship it.
@@ -16,6 +10,10 @@ THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
 * Notify all those listed in the end of the README
 
 THESE ARE LOWER PRIORITY
+
+* Need to use different, clearly disjoint numbering system on bzfs.  perhaps just
+  start from 0001 when 1.10 is released.  otherwise it gets unnecessarily bumped to
+  match the client version.  it's a separate communication protocol version.
 
 * server should track last reported player and shot positions
 
