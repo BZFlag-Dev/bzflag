@@ -2162,8 +2162,12 @@ void handleReloadMasterBanCmd(GameKeeper::Player *playerData, const char * /*mes
 
 	if (clOptions->publicizeServer && !clOptions->suppressMasterBanList){
 		MasterBanList	banList;
-		clOptions->acl.merge(banList.get(DefaultMasterBanURL));
-		sendMessage(ServerPlayer, t, "master ban list reloaded");
+		std::string URL  = "http://bzflag.sourceforge.net/master_ban.txt";
+		if(clOptions->masterBanListURL.size())
+			URL = clOptions->masterBanListURL;
+
+		clOptions->acl.merge(banList.get(URL));
+		DEBUG1("Reloaded master ban list from %s\n",URL.c_str());
 	}
 }
 

@@ -71,12 +71,13 @@ const char *usageString =
 "[-j] "
 "[-lagdrop <num>] "
 "[-lagwarn <time/ms>] "
+"[-masterBanURL <URL>]"
 "[-maxidle <time/s>] "
 "[-mp {<count>|[<count>][,<count>][,<count>][,<count>][,<count>][,<count>]}] "
 "[-mps <score>] "
 "[-ms <shots>] "
 "[-mts <score>] "
-"[-no_master_banlist]"
+"[-noMasterBanlist]"
 "[-p <port>] "
 "[-passdb <password file>] "
 "[-passwd <password>] "
@@ -153,12 +154,13 @@ const char *extraUsageString =
 "\t-j: allow jumping\n"
 "\t-lagdrop: drop player after this many lag warnings\n"
 "\t-lagwarn: lag warning threshhold time [ms]\n"
+"\t-masterBanURL: URL to atempt to get the master ban list from <URL>\n"
 "\t-maxidle: idle kick threshhold [s]\n"
 "\t-mp: maximum players total or per team\n"
 "\t-mps: set player score limit on each game\n"
 "\t-ms: maximum simultaneous shots per player\n"
 "\t-mts: set team score limit on each game\n"
-"\t-no_master_banlist: has public servers ignore the master ban list\n"
+"\t-noMasterBanlist: has public servers ignore the master ban list\n"
 "\t-p: use alternative port (default is 5154)\n"
 "\t-passdb: file to read for user passwords\n"
 "\t-passwd: specify a <password> for operator commands\n"
@@ -734,8 +736,11 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
 	std::cerr << "disabling team score limit" << std::endl;
 	options.maxTeamScore = 0;
       }
-		} else if (strcmp(argv[i],"-no_master_banlist") == 0){
+		} else if (strcmp(argv[i],"-noMasterBanlist") == 0){
 			options.suppressMasterBanList = true;
+		} else if (strcmp(argv[i],"-masterBanURL") == 0){
+			checkArgc(1, i, argc, argv[i]);
+			options.masterBanListURL = argv[i];
 		} else if (strcmp(argv[i], "-p") == 0) {
       // use a different port
       checkFromWorldFile(argv[i], fromWorldFile);

@@ -4058,8 +4058,12 @@ int main(int argc, char **argv)
 	// get the master ban list
 	if (clOptions->publicizeServer && !clOptions->suppressMasterBanList){
 		MasterBanList	banList;
-		clOptions->acl.merge(banList.get("http://bzflag.sourceforge.net/master_ban.txt"));
-		DEBUG1("Loaded master ban list from %s\n","http://bzflag.sourceforge.net/master_ban.txt");
+		std::string URL  = "http://bzflag.sourceforge.net/master_ban.txt";
+		if(clOptions->masterBanListURL.size())
+			URL = clOptions->masterBanListURL;
+
+		clOptions->acl.merge(banList.get(URL));
+		DEBUG1("Loaded master ban list from %s\n",URL.c_str());
 	}
 
   Score::setTeamKillRatio(clOptions->teamKillerKickRatio);

@@ -33,11 +33,13 @@ bzfs \- BZFlag game server
 [\fB\-j\fR]
 [\fB\-lagdrop \fIwarn-count\fR]
 [\fB\-lagwarn \fR\fItime/ms\fR]
+[\fB\-masterBanURL \fR\URL/s\fR]
 [\fB\-maxidle \fR\fItime/s\fR]
 [\fB\-mp \fR{\fIcount\fR|[\fIrogue-count\fR]\fB,\fR[\fIred-count\fR]\fB,\fR[\fIgreen-count\fR]\fB,\fR[\fIblue-count\fR]\fB,\fR[\fIpurple-count\fR],\fR[\fIobserver-count\fR]}]
 [\fB\-mps \fR{\fImax-score\fR}]
 [\fB\-ms \fIshots\fR]
 [\fB\-mts \fR{\fImax-score\fR}]
+[\fB\-noMasterBanList\fR]
 [\fB\-p \fIport\fR]
 [\fB\-passdb \fIfile\fR]
 [\fB\-passwd \fIpassword\fR]
@@ -224,6 +226,9 @@ Kicks players after \fIwarn-count\fR lag warnings.
 \fB-lagwarn\fI time/ms\fR
 Send warnings to players that lag more than \fItime\fR.
 .TP
+\fB-masterBanURL\fI URL/s\fR
+Specify an alternate URL for the master ban file to be pulled from.
+.TP
 \fB-maxidle\fI time/s\fR
 Kick players that did not play longer than time seconds. Pausing players are
 not kicked. If a player uttered a word recently, he will be kicked after
@@ -247,6 +252,9 @@ This is 1 by default.
 \fB\-mts\fI max-score\fR
 Sets a maximum score for teams.  The first team to reach this score is
 declared the winner and the game is over.
+.TP
+.B -noMasterBanList
+Forces the server to not atempt to load the master ban list from the internet.
 .TP
 \fB-p\fI port\fR
 Listen for game connections on \fIport\fR instead of the default port.
@@ -918,6 +926,18 @@ differently to other players.
 This command allows a player to send a message to another player.  Similar to using
 the "," and "." message keys in the game and then selecting your recipient, this
 will send some message to particular player.  The quotes are optional.
+
+TP
+.B /reloadmasterban
+
+Forces the server to flush any bans from the master server, and reload bans from the
+the internet. Local bans are unaffected. This command requires the UNBAN permision.
+
+TP
+.B /flushmasterban
+
+Forces the server to flush any bans from the master server, efectly removing them.
+Local bans are unaffected. This command requires the UNBAN permision.
 
 .SH WORLDS
 
