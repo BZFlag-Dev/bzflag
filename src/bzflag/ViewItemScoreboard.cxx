@@ -83,13 +83,7 @@ BzfString				ViewItemScoreboardPlayerFormatter::format(
 			return BzfString::format(part.format.c_str(), player->getEmailAddress());
 
 		case ViewItemScoreboard::Part::ID:
-			return BzfString::format(part.format.c_str(),
-//								inet_ntoa(player->getId().serverHost),
-//								ntohs(player->getId().port),
-//								ntohs(player->getId().number));
-								"x.x.x.x",
-								0,
-								0);
+			return BzfString::format(part.format.c_str(), player->getId());
 
 		case ViewItemScoreboard::Part::Flag:
 			if (player->getFlag() == NoFlag)
@@ -556,19 +550,12 @@ void					ViewItemScoreboard::makeParts(
 				case Part::LocalWins:
 				case Part::LocalLosses:
 				case Part::Number:
+				case Part::ID:
 					if (width > 0)
 						part.format += BzfString::format("%%%s%dd",
 								alignRight ? " " : "", width);
 					else
 						part.format += "%d";
-					break;
-
-				case Part::ID:
-					if (width > 8)
-						part.format += BzfString::format("%%%s%ds:%%04x-%%02x",
-								alignRight ? " " : "", width - 8);
-					else
-						part.format += "%s:%04x-%02x";
 					break;
 			}
 
