@@ -602,7 +602,7 @@ int starordinary;		/* is a leading * an ordinary character? */
 		i = (c&~BACKSL) - '0';
 		assert(i < NPAREN);
 		if (p->pend[i] != 0) {
-			assert(i <= p->g->nsub);
+			assert(i <= (int)p->g->nsub);
 			EMIT(OBACK_, i);
 			assert(p->pbegin[i] != 0);
 			assert(OP(p->strip[p->pbegin[i]]) == OLPAREN);
@@ -1158,7 +1158,7 @@ register cset *cs;
 	register cset *top = &p->g->sets[p->g->ncsets];
 	register size_t css = (size_t)p->g->csetsize;
 
-	for (i = 0; i < css; i++)
+	for (i = 0; i < (int)css; i++)
 		CHsub(cs, i);
 	if (cs == top-1)	/* recover only the easy case */
 		p->g->ncsets--;
@@ -1189,10 +1189,10 @@ register cset *cs;
 	for (cs2 = &p->g->sets[0]; cs2 < top; cs2++)
 		if (cs2->hash == h && cs2 != cs) {
 			/* maybe */
-			for (i = 0; i < css; i++)
+			for (i = 0; i < (int)css; i++)
 				if (!!CHIN(cs2, i) != !!CHIN(cs, i))
 					break;		/* no */
-			if (i == css)
+			if (i == (int)css)
 				break;			/* yes */
 		}
 
@@ -1216,7 +1216,7 @@ register cset *cs;
 	register int i;
 	register size_t css = (size_t)p->g->csetsize;
 
-	for (i = 0; i < css; i++)
+	for (i = 0; i < (int)css; i++)
 		if (CHIN(cs, i))
 			return((char)i);
 	assert(never);
@@ -1236,7 +1236,7 @@ register cset *cs;
 	register size_t css = (size_t)p->g->csetsize;
 	register int n = 0;
 
-	for (i = 0; i < css; i++)
+	for (i = 0; i < (int)css; i++)
 		if (CHIN(cs, i))
 			n++;
 	return(n);
@@ -1344,6 +1344,7 @@ mcinvert(p, cs)
 register struct parse *p;
 register cset *cs;
 {
+  if (p == p)
 	assert(cs->multis == NULL);	/* xxx */
 }
 
@@ -1359,6 +1360,7 @@ mccase(p, cs)
 register struct parse *p;
 register cset *cs;
 {
+  if (p == p)
 	assert(cs->multis == NULL);	/* xxx */
 }
 
