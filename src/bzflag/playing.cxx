@@ -1982,23 +1982,6 @@ static void		doKeyPlaying(const BzfKeyEvent& key, bool pressed)
       }
     }
   }
-  else if (keymap.isMappedTo(BzfKeyMap::Destruct, key)) {
-    // pause/resume
-    if (pressed) {
-      if (myTank->isAlive()) {
-	if (destructCountdown > 0.0f) {
-	  destructCountdown = 0.0f;
-	  hud->setAlert(1, "Self Destruct cancelled", 1.5f, true);
-	}
-	else {
-	  destructCountdown = 5.0f;
-	  char msgBuf[40];
-	  sprintf(msgBuf, "Self Destructing in %d", (int)(destructCountdown + 0.99f));
-	  hud->setAlert(1, msgBuf, 1.0f, false);
-	}
-      }
-    }
-  }
   else if (key.ascii == 0 &&
 	   key.button >= BzfKeyEvent::F1 &&
 	   key.button <= BzfKeyEvent::F10 &&
@@ -2217,6 +2200,24 @@ static std::string cmdIdentify(const std::string&, const CommandManager::ArgList
   return std::string();
 }
 
+static std::string cmdDestruct(const std::string&, const CommandManager::ArgList& args)
+{
+  if (args.size() != 0)
+    return "usage: destruct";
+  if (myTank != NULL) {
+    if (destructCountdown > 0.0f) {
+      destructCountdown = 0.0f;
+       hud->setAlert(1, "Self Destruct cancelled", 1.5f, true);
+    } else {
+      destructCountdown = 5.0f;
+      char msgBuf[40];
+      sprintf(msgBuf, "Self Destructing in %d", (int)(destructCountdown + 0.99f));
+      hud->setAlert(1, msgBuf, 1.0f, false);
+    }
+  }
+  return std::string();
+}
+
 struct CommandListItem {
   const char* name;
   CommandManager::CommandFunction func;
@@ -2227,7 +2228,8 @@ static const CommandListItem commandList[] = {
   { "fire",	&cmdFire,	"fire:  fire a shot" },
   { "jump",	&cmdJump,	"jump:  make player jump" },
   { "drop",	&cmdDrop,	"drop:  drop the current flag" },
-  { "identify",	&cmdIdentify,	"identify:  identify/lock-on-to player in view" }
+  { "identify",	&cmdIdentify,	"identify:  identify/lock-on-to player in view" },
+  { "destruct", &cmdDestruct,	"destruct:  self destruct" }
 };
 
 static void		doEvent(BzfDisplay* display)
