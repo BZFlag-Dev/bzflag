@@ -362,7 +362,7 @@ struct PlayerInfo {
     TimeKeeper nextping,lastping;
     int pingseqno,pingslost,pingssent;
 
-    std::vector<int> flagHistory;
+    std::vector<FlagDesc*> flagHistory;
 #ifdef TIMELIMIT
     // player played before countdown started
     bool playedEarly;
@@ -3702,7 +3702,7 @@ static void removePlayer(int playerIndex, char *reason, bool notify)
     if (flagid >= 0) {
       // do not simply zap team flag
       Flag &carriedflag = flag[flagid].flag;
-      if (carriedflag.id >= FirstTeamFlag && carriedflag.id <= LastTeamFlag) {
+      if (carriedflag.desc->flagTeam != ::NoTeam) {
 	dropFlag(playerIndex, player[playerIndex].lastState.pos);
       }
       else {
@@ -3918,7 +3918,7 @@ static void playerKilled(int victimIndex, int killerIndex, int reason,
   if (flagid >= 0) {
     // do not simply zap team flag
     Flag &carriedflag=flag[flagid].flag;
-    if (carriedflag.id >= FirstTeamFlag && carriedflag.id <= LastTeamFlag) {
+    if (carriedflag.desc->flagTeam != ::NoTeam) {
       dropFlag(victimIndex, carriedflag.position);
     }
     else {
@@ -4040,10 +4040,10 @@ static void grabFlag(int playerIndex, int flagIndex)
   buf = flag[flagIndex].flag.pack(buf);
   broadcastMessage(MsgGrabFlag, (char*)buf-(char*)bufStart, bufStart);
 
-  std::vector<int> *pFH = &player[playerIndex].flagHistory;
+  std::vector<FlagDesc*> *pFH = &player[playerIndex].flagHistory;
   if (pFH->size() >= MAX_FLAG_HISTORY)
 	  pFH->erase(pFH->begin());
-  pFH->push_back( flag[flagIndex].flag.id );
+  pFH->push_back( flag[flagIndex].flag.desc );
 }
 
 static void dropFlag(int playerIndex, float pos[3])
@@ -4096,20 +4096,21 @@ static void dropFlag(int playerIndex, float pos[3])
   TeamColor teamBase = whoseBase(pos[0], pos[1],
 				 (topmosttype == NOT_IN_BUILDING ? pos[2] :
 				  topmost->pos[2] + topmost->size[2] + 0.01f));
-  FlagId flagId = pFlagInfo->flag.id;
-  bool isTeamFlag = (flagId >= FirstTeamFlag) && (flagId <= LastTeamFlag);
+
+  int flagTeam = pFlagInfo->flag.desc->flagTeam;
+  bool isTeamFlag = flagTeam != ::NoTeam;
 
   if (pFlagInfo->flag.status == FlagGoing) {
     pFlagInfo->flag.landingPosition[0] = pos[0];
     pFlagInfo->flag.landingPosition[1] = pos[1];
     pFlagInfo->flag.landingPosition[2] = pos[2];
   }
-  else if (isTeamFlag && ((FlagId)teamBase == flagId) && (topmosttype == IN_BASE)) {
+  else if (isTeamFlag && (teamBase == flagTeam) && (topmosttype == IN_BASE)) {
     pFlagInfo->flag.landingPosition[0] = pos[0];
     pFlagInfo->flag.landingPosition[1] = pos[1];
     pFlagInfo->flag.landingPosition[2] = topmost->pos[2] + topmost->size[2];
   }
-  else if (isTeamFlag && (teamBase != NoTeam) && ((FlagId)teamBase != flagId)) {
+  else if (isTeamFlag && (teamBase != NoTeam) && (teamBase != flagTeam)) {
     pFlagInfo->flag.landingPosition[0] = safetyBasePos[int(teamBase)][0];
     pFlagInfo->flag.landingPosition[1] = safetyBasePos[int(teamBase)][1];
     pFlagInfo->flag.landingPosition[2] = safetyBasePos[int(teamBase)][2];
@@ -4135,9 +4136,9 @@ static void dropFlag(int playerIndex, float pos[3])
 	pFlagInfo->flag.landingPosition[2] = 0.0f;
     }
     else {// oh well, whatcha gonna do?
-	pFlagInfo->flag.landingPosition[0] = basePos[flagId][0];
-	pFlagInfo->flag.landingPosition[1] = basePos[flagId][1];
-	pFlagInfo->flag.landingPosition[2] = basePos[flagId][2];
+	pFlagInfo->flag.landingPosition[0] = basePos[flagTeam][0];
+	pFlagInfo->flag.landingPosition[1] = basePos[flagTeam][1];
+	pFlagInfo->flag.landingPosition[2] = basePos[flagTeam][2];
     }
   }
   else
@@ -4159,7 +4160,7 @@ static void dropFlag(int playerIndex, float pos[3])
 
   // compute flight info -- flight time depends depends on start and end
   // altitudes and desired height above start altitude.
-  const float thrownAltitude = (pFlagInfo->flag.id == ShieldFlag) ?
+  const float thrownAltitude = (pFlagInfo->flag.desc == Flags::Shield) ?
       ShieldFlight * FlagAltitude : FlagAltitude;
   const float maxAltitude = pos[2] + thrownAltitude;
   const float upTime = sqrtf(-2.0f * thrownAltitude / Gravity);
@@ -4190,9 +4191,7 @@ static void captureFlag(int playerIndex, TeamColor teamCaptured)
   // player captured a flag.  can either be enemy flag in player's own
   // team base, or player's own flag in enemy base.
   int flagIndex = int(player[playerIndex].flag);
-  if (flagIndex < 0 ||
-      int(flag[flagIndex].flag.id) < int(FirstTeamFlag) ||
-      int(flag[flagIndex].flag.id) > int(LastTeamFlag))
+  if (flagIndex < 0 || (flag[flagIndex].flag.desc->flagTeam != ::NoTeam))
     return;
 
   // player no longer has flag and put flag back at it's base
@@ -4209,21 +4208,21 @@ static void captureFlag(int playerIndex, TeamColor teamCaptured)
   // everyone on losing team is dead
   for (int i = 0; i < curMaxPlayers; i++)
     if (player[i].fd != NotConnected &&
-	int(flag[flagIndex].flag.id) == int(player[i].team) &&
+	flag[flagIndex].flag.desc->flagTeam == int(player[i].team) && 
 	player[i].state == PlayerAlive) {
       player[i].state = PlayerDead;
     }
 
   // update score (rogues can't capture flags)
   int winningTeam = (int)NoTeam;
-  if (int(flag[flagIndex].flag.id) != int(player[playerIndex].team)) {
+  if (int(flag[flagIndex].flag.desc->flagTeam) != int(player[playerIndex].team)) {
     // player captured enemy flag
     winningTeam = int(player[playerIndex].team);
     team[winningTeam].team.won++;
     sendTeamUpdate(winningTeam);
   }
-  team[int(flag[flagIndex].flag.id)].team.lost++;
-  sendTeamUpdate(int(flag[flagIndex].flag.id));
+  team[int(flag[flagIndex].flag.desc->flagTeam)].team.lost++;
+  sendTeamUpdate(int(flag[flagIndex].flag.desc->flagTeam));
 #ifdef PRINTSCORE
   dumpScore();
 #endif
@@ -4248,7 +4247,7 @@ static void shotFired(int playerIndex, void *buf, int len)
   }
 
   // verify player flag
-  if ((firingInfo.flag != NullFlag) && (firingInfo.flag != flag[shooter.flag].flag.id)) {
+  if ((firingInfo.flag.desc != Flags::Null) && (firingInfo.flag.desc != flag[shooter.flag].flag.desc)) {
     DEBUG2("Player %s [%d] shot flag mismatch %d %d\n", shooter.callSign,
 	   playerIndex, firingInfo.flag, flag[shooter.flag].flag.id);
     firingInfo.flag = NullFlag;
