@@ -676,10 +676,8 @@ void			dumpResources(BzfDisplay* display,
   BZDB->set("radarsize", string_util::format("%d", renderer.getRadarSize()));
 
   BZDB->set("mouseboxsize", string_util::format("%f", renderer.getMaxMotionFactor()));
-  db.addValue("mouseboxsize", string_util::format("%f", renderer.getMaxMotionFactor()));
 
   BZDB->set("underline", OpenGLTexFont::getUnderlineColor());
-  db.addValue("underline", OpenGLTexFont::getUnderlineColor());
 
   // don't save these configurations
   BZDB->setPersistent("_window", false);
@@ -1131,10 +1129,10 @@ int			main(int argc, char** argv)
       renderer.setPanelOpacity(BZDB->eval("panelopacity"));
     if (BZDB->isSet("radarsize"))
       renderer.setRadarSize(atoi(BZDB->get("radarsize").c_str()));
-    if (db.hasValue("mouseboxsize"))
-      renderer.setMaxMotionFactor(atoi(db.getValue("mouseboxsize").c_str()));
-    if (db.hasValue("underline"))
-      OpenGLTexFont::setUnderlineColor(atoi(db.getValue("underline").c_str()));
+    if (BZDB->isSet("mouseboxsize"))
+      renderer.setMaxMotionFactor(atoi(BZDB->get("mouseboxsize").c_str()));
+    if (BZDB->isSet("underline"))
+      OpenGLTexFont::setUnderlineColor(atoi(BZDB->get("underline").c_str()));
   }
 
   // grab the mouse only if allowed
