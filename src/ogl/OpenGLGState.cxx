@@ -206,6 +206,7 @@ void					OpenGLGStateRep::initState()
 	glClearStencil(0);
 	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 	glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
+	glFrontFace(GL_CCW);
 	glDisable(GL_LIGHTING);
 	glDisable(GL_COLOR_MATERIAL);
 	glEnable(GL_NORMALIZE);

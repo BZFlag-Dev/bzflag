@@ -28,33 +28,23 @@ public:
 	const float*		getDirection() const;
 	const float*		getUp() const;
 	const float*		getRight() const;
-	const float*		getSide(int index) const;
-	const float*		getFarCorner(int index) const;
+	float				getFOVx() const;
+	float				getFOVy() const;
 	float				getNear() const;
 	float				getFar() const;
 	const float*		getViewMatrix() const;
-	float				getFOVx() const;
-	float				getFOVy() const;
 	const float*		getProjectionMatrix() const;
-	float				getEyeDepth(const float*) const;
-	float				getAreaFactor() const;
 
 	void				setView(const float* eye, const float* target);
-	void				setProjection(float fov,
-							float m_near, float m_far,
-							int width, int height);
+	void				setProjection(float fovx, float aspectRatio,
+							float m_near, float m_far);
 	void				setOffset(float eyeOffset, float focalPlane);
 
 	static const float*	getTransform();
 
 private:
-	void				makePlane(const float* v1, const float* v2, int);
-
-private:
 	float				eye[3];
-	float				right[3], up[3];
-	float				plane[5][4];		      // pointing in
-	float				farCorner[4][3];
+	float				forward[3], right[3], up[3];
 	float				m_near, m_far;
 	float				fovx, fovy;
 	float				viewMatrix[16];
@@ -74,19 +64,7 @@ const float*			ViewFrustum::getEye() const
 inline
 const float*			ViewFrustum::getDirection() const
 {
-	return plane[0];
-}
-
-inline
-const float*			ViewFrustum::getSide(int index) const
-{
-	return plane[index];
-}
-
-inline
-const float*			ViewFrustum::getFarCorner(int index) const
-{
-	return farCorner[index];
+	return forward;
 }
 
 inline
@@ -102,18 +80,6 @@ const float*			ViewFrustum::getRight() const
 }
 
 inline
-float					ViewFrustum::getNear() const
-{
-	return m_near;
-}
-
-inline
-float					ViewFrustum::getFar() const
-{
-	return m_far;
-}
-
-inline
 float					ViewFrustum::getFOVx() const
 {
 	return fovx;
@@ -123,6 +89,18 @@ inline
 float					ViewFrustum::getFOVy() const
 {
 	return fovy;
+}
+
+inline
+float					ViewFrustum::getNear() const
+{
+	return m_near;
+}
+
+inline
+float					ViewFrustum::getFar() const
+{
+	return m_far;
 }
 
 inline

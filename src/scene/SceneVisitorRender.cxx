@@ -231,6 +231,9 @@ void					SceneVisitorRender::draw()
 	// should we use lighting?
 	const bool lighting = BZDB->isTrue(nameLighting);
 
+	// what's front facing?
+	bool frontCCW = true;
+
 	// draw
 	const unsigned int n = jobs.size();
 	for (unsigned int i = 0; i < n; ++i) {
@@ -286,6 +289,13 @@ void					SceneVisitorRender::draw()
 			glLoadMatrixf(matrixList[xformProjection].get());
 			matrixModeChanged = true;
 			++getInstr()->nTransforms;
+
+			// should compute the sign of the adjoint but we're
+			// expecting a very specific kind of matrix so we
+			// can take a shortcut.
+			const float* m = matrixList[xformProjection].get();
+			frontCCW = ((m[0] < 0.0f) == (m[5] < 0.0f));
+			glFrontFace(frontCCW ? GL_CCW : GL_CW);
 		}
 		if (matrixModeChanged)
 			glMatrixMode(GL_MODELVIEW);
@@ -379,6 +389,8 @@ void					SceneVisitorRender::draw()
 		for (unsigned int j = 0; j < enabledLights; ++j)
 			glDisable(GL_LIGHT0 + j);
 	}
+	if (!frontCCW)
+		glFrontFace(GL_CCW);
 	glMatrixMode(GL_PROJECTION);
 	glPopMatrix();
 	glMatrixMode(GL_TEXTURE);
@@ -702,8 +714,17 @@ void					SceneVisitorRender::computeFrustum()
 	static const float s_xv[3]  = {  1.0f,  0.0f,  0.0f };
 	static const float s_yv[3]  = {  0.0f,  1.0f,  0.0f };
 
-	// compute inverse of projection matrix
+	// compute inverse of projection matrix.  note if the matrix is
+	// inside-out from the expected and invert it.
+	// FIXME -- this isn't a general purpose solution
 	Matrix matrix(projectionXFormStack.back());
+	float* p = matrix.get();
+	const bool xFlip = (p[0] < 0.0f);
+	const bool yFlip = (p[5] < 0.0f);
+	if (xFlip)
+		p[0] = -p[0];
+	if (yFlip)
+		p[5] = -p[5];
 	matrix.inverse();
 
 	// transform points from clip coordinates to eye coordinates
@@ -729,7 +750,6 @@ void					SceneVisitorRender::computeFrustum()
 	rtf[1] *= rtf[3];
 	rtf[2] *= rtf[3];
 
-	// compute vectors
 	float lbv[3], rtv[3];
 	lbv[0] = lbf[0] - lbn[0];
 	lbv[1] = lbf[1] - lbn[1];

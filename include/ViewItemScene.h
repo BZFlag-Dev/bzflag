@@ -26,7 +26,7 @@ public:
 	void				setOffset(float x, float y, float z);
 	void				setTurn(float fixed, float scaled);
 	void				setTilt(float fixed, float scaled);
-	void				setFOVScale(float fovScale);
+	void				setFOVScale(float fovxScale, float fovyScale);
 
 protected:
 	virtual ~ViewItemScene();
@@ -48,7 +48,7 @@ private:
 	float				xOffset, yOffset, zDepth;
 	float				zRotateFixed, zRotateScaled;
 	float				yRotateFixed, yRotateScaled;
-	float				fovScale;
+	float				fovxScale, fovyScale;
 
 	SceneNodeMatrixTransform*	sceneProj;
 	SceneNodeMatrixTransform*	sceneXForm;

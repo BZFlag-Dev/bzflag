@@ -148,9 +148,25 @@ bool					SceneVisitorSimpleRender::visit(SceneNodeBaseTransform* n)
 	glLoadMatrixf(stack->back().get());
 	glMatrixMode(GL_MODELVIEW);
 
+	// choose front faces
+	bool frontCCW = true;
+	if (mode == GL_PROJECTION) {
+		// should compute the sign of the adjoint but we're
+		// expecting a very specific kind of matrix so we
+		// can take a shortcut.
+		const float* p = stack->back().get();
+		frontCCW = ((p[0] < 0.0f) == (p[5] < 0.0f));
+		if (!frontCCW)
+			glFrontFace(GL_CW);
+	}
+
 	// descend
 	++getInstr()->nTransforms;
 	const bool result = descend(n);
+
+	// restore front faces
+	if (!frontCCW)
+		glFrontFace(GL_CCW);
 
 	// pop stack
 	stack->pop_back();

@@ -27,19 +27,13 @@ ViewFrustum::ViewFrustum()
 	::memcpy(viewMatrix, identity, sizeof(viewMatrix));
 	::memcpy(projectionMatrix, identity, sizeof(projectionMatrix));
 
-	setProjection(45.0f, 1.0f, 100.0f, 1, 1);
+	setProjection(45.0f, 1.0f, 1.0f, 100.0f);
 	setView(defaultEye, defaultTarget);
 }
 
 ViewFrustum::~ViewFrustum()
 {
 	// do nothing
-}
-
-float					ViewFrustum::getEyeDepth(const float* p) const
-{
-	return viewMatrix[2] * p[0] + viewMatrix[6] * p[1] +
-		viewMatrix[10] * p[2] + viewMatrix[14];
 }
 
 void					ViewFrustum::setView(const float* _eye,
@@ -51,20 +45,18 @@ void					ViewFrustum::setView(const float* _eye,
 	eye[2] = _eye[2];
 
 	// compute forward vector and normalize
-	plane[0][0] = target[0] - eye[0];
-	plane[0][1] = target[1] - eye[1];
-	plane[0][2] = target[2] - eye[2];
-	float d = 1.0f / sqrtf(plane[0][0] * plane[0][0] +
-						   plane[0][1] * plane[0][1] +
-						   plane[0][2] * plane[0][2]);
-	plane[0][0] *= d;
-	plane[0][1] *= d;
-	plane[0][2] *= d;
+	forward[0] = target[0] - eye[0];
+	forward[1] = target[1] - eye[1];
+	forward[2] = target[2] - eye[2];
+	float d = 1.0f / hypotf(forward[0], hypotf(forward[1], forward[2]));
+	forward[0] *= d;
+	forward[1] *= d;
+	forward[2] *= d;
 
 	// compute left vector (by crossing forward with
 	// world-up [0 0 1]T and normalizing)
-	right[0] =  plane[0][1];
-	right[1] = -plane[0][0];
+	right[0] =  forward[1];
+	right[1] = -forward[0];
 	d = 1.0f / hypotf(right[0], right[1]);
 	right[0] *= d;
 	right[1] *= d;
@@ -72,9 +64,9 @@ void					ViewFrustum::setView(const float* _eye,
 
 	// compute local up vector (by crossing right and forward,
 	// normalization unnecessary)
-	up[0] =  right[1] * plane[0][2];
-	up[1] = -right[0] * plane[0][2];
-	up[2] =  right[0] * plane[0][1] - right[1] * plane[0][0];
+	up[0] =  right[1] * forward[2];
+	up[1] = -right[0] * forward[2];
+	up[2] =  right[0] * forward[1] - right[1] * forward[0];
 
 	// build view matrix, including a transformation bringing
 	// world up [0 0 1 0]T to eye up [0 1 0 0]T, world north
@@ -87,9 +79,9 @@ void					ViewFrustum::setView(const float* _eye,
 	viewMatrix[5] = up[1];
 	viewMatrix[9] = up[2];
 
-	viewMatrix[2] =  -plane[0][0];
-	viewMatrix[6] =  -plane[0][1];
-	viewMatrix[10] = -plane[0][2];
+	viewMatrix[2] =  -forward[0];
+	viewMatrix[6] =  -forward[1];
+	viewMatrix[10] = -forward[2];
 
 	viewMatrix[12] = -(viewMatrix[0] * eye[0] +
 						viewMatrix[4] * eye[1] +
@@ -100,54 +92,21 @@ void					ViewFrustum::setView(const float* _eye,
 	viewMatrix[14] = -(viewMatrix[2] * eye[0] +
 						viewMatrix[6] * eye[1] +
 						viewMatrix[10] * eye[2]);
-
-	// compute vectors of frustum edges
-	const float xs = 1.0f / projectionMatrix[0];
-	const float ys = 1.0f / projectionMatrix[5];
-	float edge[4][3];
-	edge[0][0] = plane[0][0] - xs * right[0] - ys * up[0];
-	edge[0][1] = plane[0][1] - xs * right[1] - ys * up[1];
-	edge[0][2] = plane[0][2] - xs * right[2] - ys * up[2];
-	edge[1][0] = plane[0][0] + xs * right[0] - ys * up[0];
-	edge[1][1] = plane[0][1] + xs * right[1] - ys * up[1];
-	edge[1][2] = plane[0][2] + xs * right[2] - ys * up[2];
-	edge[2][0] = plane[0][0] + xs * right[0] + ys * up[0];
-	edge[2][1] = plane[0][1] + xs * right[1] + ys * up[1];
-	edge[2][2] = plane[0][2] + xs * right[2] + ys * up[2];
-	edge[3][0] = plane[0][0] - xs * right[0] + ys * up[0];
-	edge[3][1] = plane[0][1] - xs * right[1] + ys * up[1];
-	edge[3][2] = plane[0][2] - xs * right[2] + ys * up[2];
-
-	// make frustum planes
-	plane[0][3] = -(eye[0] * plane[0][0] +
-						eye[1] * plane[0][1] +
-						eye[2] * plane[0][2] + m_near);
-	makePlane(edge[0], edge[3], 1);
-	makePlane(edge[2], edge[1], 2);
-	makePlane(edge[1], edge[0], 3);
-	makePlane(edge[3], edge[2], 4);
-
-	// make far corners
-	for (int i = 0; i < 4; i++) {
-		farCorner[i][0] = eye[0] + m_far * edge[i][0];
-		farCorner[i][1] = eye[1] + m_far * edge[i][1];
-		farCorner[i][2] = eye[2] + m_far * edge[i][2];
-	}
 }
 
-void					ViewFrustum::setProjection(float fov,
-								float _m_near, float _m_far,
-								int width, int height)
+void					ViewFrustum::setProjection(
+								float fov, float aspectRatio,
+								float _m_near, float _m_far)
 {
 	// do easy stuff
 	m_near = _m_near;
-	m_far = _m_far;
-	fovx = fov;
+	m_far  = _m_far;
+	fovx   = fov;
 
 	// compute projectionMatrix
-	const float s = 1.0f / tanf(fov * M_PI / 360.0f);
+	const float s = 1.0f / tanf(fovx * M_PI / 360.0f);
 	projectionMatrix[0] = s;
-	projectionMatrix[5] = s * float(width) / float(height);
+	projectionMatrix[5] = s * aspectRatio;
 	projectionMatrix[8] = 0.0f;
 	projectionMatrix[9] = 0.0f;
 	projectionMatrix[10] = -(m_far + m_near) / (m_far - m_near);
@@ -157,7 +116,7 @@ void					ViewFrustum::setProjection(float fov,
 	projectionMatrix[15] = 0.0f;
 
 	// get field of view in y direction
-	fovy = atanf(1.0f / projectionMatrix[5]) * 180.0f / M_PI;
+	fovy = atanf(1.0f / projectionMatrix[5]) * 360.0f / M_PI;
 }
 
 void					ViewFrustum::setOffset(
@@ -172,28 +131,12 @@ void					ViewFrustum::setOffset(
 	projectionMatrix[8]  = projectionMatrix[12] / focalPlane;
 }
 
-void					ViewFrustum::makePlane(const float* v1,
-												const float* v2, int index)
-{
-	// get normal by crossing v1 and v2 and normalizing
-	float n[3];
-	n[0] = v1[1] * v2[2] - v1[2] * v2[1];
-	n[1] = v1[2] * v2[0] - v1[0] * v2[2];
-	n[2] = v1[0] * v2[1] - v1[1] * v2[0];
-	float d = 1.0f / sqrtf(n[0] * n[0] + n[1] * n[1] + n[2] * n[2]);
-	plane[index][0] = d * n[0];
-	plane[index][1] = d * n[1];
-	plane[index][2] = d * n[2];
-	plane[index][3] = -(eye[0] * plane[index][0] + eye[1] * plane[index][1] +
-												eye[2] * plane[index][2]);
-}
-
 const float*				ViewFrustum::getTransform()
 {
 	// this matrix undoes the coordinate transform that setView() does.
 	//
-	// note that, as formatter, the matrix is transposed wrt to how
-	// the matrix is used.
+	// note that, as formatted, the matrix is transposed wrt to how
+	// the matrix is used (due to the OpenGL matrix layout).
 	static const float matrix[] = {
 		1.0f, 0.0f, 0.0f, 0.0f,
 		0.0f, 0.0f, 1.0f, 0.0f,

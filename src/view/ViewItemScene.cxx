@@ -24,7 +24,7 @@
 ViewItemScene::ViewItemScene() : xOffset(0.0f), yOffset(0.0f), zDepth(0.0f),
 								zRotateFixed(0.0f), zRotateScaled(0.0f),
 								yRotateFixed(0.0f), yRotateScaled(0.0f),
-								fovScale(1.0f)
+								fovxScale(1.0f), fovyScale(1.0f)
 {
 	// create nodes
 	sceneProj  = new SceneNodeMatrixTransform;	// player projection
@@ -62,9 +62,11 @@ void					ViewItemScene::setTilt(float fixed, float scaled)
 	yRotateScaled = scaled;
 }
 
-void					ViewItemScene::setFOVScale(float _fovScale)
+void					ViewItemScene::setFOVScale(
+							float _fovxScale, float _fovyScale)
 {
-	fovScale = _fovScale;
+	fovxScale = _fovxScale;
+	fovyScale = _fovyScale;
 }
 
 SceneVisitorRender&		ViewItemScene::getRenderer()
@@ -85,18 +87,19 @@ bool					ViewItemScene::onPreRender(
 	getView(view);
 
 	// get fov
-	float fov = view.getFOVx();
+	float fovx = view.getFOVx();
+	float fovy = view.getFOVy();
 
 	// compute angle sines and cosines
-	const float zAngle = -(zRotateFixed + fov * zRotateScaled) * M_PI / 180.0f;
-	const float yAngle = -(yRotateFixed + fov * yRotateScaled) * M_PI / 180.0f;
+	const float zAngle = -(zRotateFixed + fovx * zRotateScaled) * M_PI / 180.0f;
+	const float yAngle = -(yRotateFixed + fovy * yRotateScaled) * M_PI / 180.0f;
 	const float zc     = cosf(zAngle);
 	const float zs     = sinf(zAngle);
 	const float yc     = cosf(yAngle);
 	const float ys     = sinf(yAngle);
 
 	// adjust field of view
-	fov *= fovScale;
+	fovx *= fovxScale;
 
 	// adjust focus point based on our parameters
 	const float* eye = view.getEye();
@@ -112,8 +115,7 @@ bool					ViewItemScene::onPreRender(
 	focus[2] = eye[2] - ys *      dir[0]               + yc *      dir[2];
 
 	// adjust frustum
-	view.setProjection(fov, view.getNear(), view.getFar(),
-								static_cast<int>(w), static_cast<int>(h));
+	view.setProjection(fovx, fovyScale * w / h, view.getNear(), view.getFar());
 	if (zDepth > 0.0f)
 		view.setOffset(xOffset, zDepth);
 	view.setView(eye, focus);
@@ -162,7 +164,7 @@ View*					ViewItemSceneReader::open(
 	float x = 0.0f, y = 0.0f, z = 0.0f;
 	float yFixed = 0.0f, yScaled = 0.0f;
 	float zFixed = 0.0f, zScaled = 0.0f;
-	float fov = 1.0f;
+	float fovx = 1.0f, fovy = 1.0f;
 
 	ConfigReader::Values::const_iterator index;
 	index = values.find("x");
@@ -176,7 +178,10 @@ View*					ViewItemSceneReader::open(
 		z = atof(index->second.c_str());
 	index = values.find("fov");
 	if (index != values.end())
-		fov = atof(index->second.c_str());
+		fovx = atof(index->second.c_str());
+	index = values.find("fovy");
+	if (index != values.end())
+		fovy = atof(index->second.c_str());
 	index = values.find("theta");
 	if (index != values.end()) {
 		float value;
@@ -213,7 +218,7 @@ View*					ViewItemSceneReader::open(
 		item->setOffset(x, y, z);
 	item->setTurn(zFixed, zScaled);
 	item->setTilt(yFixed, yScaled);
-	item->setFOVScale(fov);
+	item->setFOVScale(fovx, fovy);
 
 	return item;
 }
