@@ -63,9 +63,15 @@ fi
 AC_STDC_HEADERS
 AC_LANG_SAVE
 AC_LANG_CPLUSPLUS
-AC_CHECK_HEADERS([cstdlib cstdio cstring])
+AC_CHECK_HEADERS( \
+	cstdlib \
+	cstdio \
+	cstring \
+)
 AC_LANG_RESTORE
-
+AC_CHECK_HEADERS( \
+	sys/param.h \
+)
 
 #Checks for types
 #AM_CHECK_TYPES(socklen_t)
