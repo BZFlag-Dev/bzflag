@@ -200,7 +200,7 @@ fi
 
 case $host_os in
      macos|darwin*)
-	LDFLAGS="$LDFLAGS -framework Carbon -framework OpenGL -framework AGL"
+	LIBS="$LIBS -framework Carbon -framework OpenGL -framework AGL"
 	;;
      irix)
 	if test x$host_cpu = xmips64; then
