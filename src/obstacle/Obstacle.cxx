@@ -11,9 +11,19 @@
  */
 
 #include <math.h>
+#include <string.h>
 #include "common.h"
 #include "Obstacle.h"
 #include "Intersect.h"
+
+Obstacle::Obstacle()
+{
+  memset(pos, 0, sizeof(float) * 3);
+  angle = 0;
+  width = 0;
+  breadth = 0;
+  height = 0;
+}
 
 Obstacle::Obstacle(const float* _pos, float _angle,
 				float _width, float _breadth, float _height) :

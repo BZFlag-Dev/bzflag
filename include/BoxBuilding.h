@@ -22,6 +22,7 @@
 
 class BoxBuilding : public Obstacle {
   public:
+  			BoxBuilding();
 			BoxBuilding(const float* pos, float rotation,
 				float width, float breadth, float height);
 			~BoxBuilding();

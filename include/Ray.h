@@ -42,7 +42,7 @@ class Ray {
 
 inline Ray::Ray()
 {
-  // do nothing
+  memset(o, 0, sizeof(float) * 3);
 }
 
 inline Ray::~Ray()

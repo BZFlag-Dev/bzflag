@@ -43,7 +43,7 @@ BSPSceneDatabase::BSPSceneDatabase() :
 				root(NULL),
 				depth(0)
 {
-  // do nothing
+  memset(eye, 0, sizeof(GLfloat) * 3);
 }
 
 BSPSceneDatabase::~BSPSceneDatabase()

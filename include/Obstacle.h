@@ -32,6 +32,7 @@ class WallSceneNode;
 
 class Obstacle {
   public:
+  			Obstacle();
 			Obstacle(const float* pos, float rotation,
 				float hwidth, float hbreadth, float height);
     virtual		~Obstacle();

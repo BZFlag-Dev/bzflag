@@ -652,6 +652,7 @@ void*			WorldBuilder::unpack(void* buf)
     switch (code) {
       case WorldCodeBox: {
 	float data[7];
+	memset(data, 0, sizeof(float) * 7);
 	buf = nboUnpackFloat(buf, data[0]);
 	buf = nboUnpackFloat(buf, data[1]);
 	buf = nboUnpackFloat(buf, data[2]);
