@@ -91,7 +91,24 @@ void TextureManager::addTexture( const char* name, OpenGLTexture *texture )
 OpenGLTexture* TextureManager::loadTexture( FileTextureInit &init )
 {
   int width, height;
-  unsigned char* image =  MediaFile::readImage( init.name.c_str(), &width, &height);
+  std::string nameToTry = "";
+
+  if (BZDB.isSet( "altImageDir" )){
+	   nameToTry = BZDB.get( "altImageDir" );
+#ifdef WIN32
+	nameToTry += '\\';
+#else
+	nameToTry += '\\';
+#endif
+	nameToTry += init.name;
+  }
+  else
+	 nameToTry = init.name;
+  unsigned char* image =NULL;
+  if (nameToTry.size() && nameToTry.c_str())
+	 image = MediaFile::readImage( nameToTry.c_str(), &width, &height);
+  if (!image)
+	  image =  MediaFile::readImage( init.name.c_str(), &width, &height);
   if (!image) {
     std::vector<std::string> args;
     args.push_back(init.name);
