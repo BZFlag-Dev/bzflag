@@ -99,7 +99,7 @@ struct DefaultDBItem {
 };
 static DefaultDBItem	defaultDBItems[] = {
   { "udpnet",			"1",			true,	StateDatabase::ReadWrite,	NULL },
-  { "timedate",			"2",			true,	StateDatabase::ReadWrite,	NULL },
+  { "timedate",			"0",			true,	StateDatabase::ReadWrite,	NULL },
   { "email",			"default",		true,	StateDatabase::ReadWrite,	NULL },
   { "team",			"Rogue",		true,	StateDatabase::ReadWrite,	NULL },
   { "list",			DefaultListServerURL,	true,	StateDatabase::ReadWrite,	NULL },
