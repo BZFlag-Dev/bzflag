@@ -5440,7 +5440,7 @@ static const char *usageString =
 "[-b] "
 "[-ban ip{,ip}*] "
 "[-c] "
-"[-conf] "
+"[-conf <filename>] "
 "[-cr] "
 "[-d] "
 "[+f {good|<id>}] "
@@ -5855,6 +5855,8 @@ static void parse(int argc, char **argv, CmdLineOptions &options)
 		// the cmd line options. But for now just overright them on the spot
 	        //	parse(ac, av, confOptions);
 		parse(ac, av, options);
+
+		options.numAllowedFlags = 0;
 
 		//for (int i = 0; i < ac; i++) // These strings need to stick around for -world, -servermsg, etc
 		//  delete[] av[i];
