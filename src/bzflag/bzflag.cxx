@@ -1369,6 +1369,58 @@ int			main(int argc, char** argv)
   glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
   OpenGLGState::init();
 
+  // sanity check - make sure OpenGL was actually initialized or
+  // there's no sense in continuing.
+  const char* const glRenderer = (const char*)glGetString(GL_RENDERER);
+  if (!glRenderer) {
+    // bad code, no donut for you
+
+    GLenum error = GL_NO_ERROR;
+    while ((error = glGetError()) != GL_NO_ERROR) {
+      switch (error) {
+	case GL_INVALID_ENUM:
+	  std::cerr << "ERROR: GL_INVALID_ENUM" << std::endl;
+	  break;
+	case GL_INVALID_VALUE:
+	  std::cerr << "ERROR: GL_INVALID_VALUE" << std::endl;
+	  break;
+	case GL_INVALID_OPERATION:
+	  std::cerr << "ERROR: GL_INVALID_OPERATION" << std::endl;
+	  break;
+	case GL_STACK_OVERFLOW:
+	  std::cerr << "ERROR: GL_STACK_OVERFLOW" << std::endl;
+	  break;
+	case GL_STACK_UNDERFLOW:
+	  std::cerr << "ERROR: GL_STACK_UNDERFLOW" << std::endl;
+	  break;
+	case GL_OUT_OF_MEMORY:
+	  std::cerr << "ERROR: GL_OUT_OF_MEMORY" << std::endl;
+	  break;
+	case GL_TABLE_TOO_LARGE:
+	  std::cerr << "ERROR: GL_TABLE_TOO_LARGE" << std::endl;
+	  break;
+	case GL_NO_ERROR:
+	  // should not reach
+	  std::cerr << "ERROR: GL_NO_ERROR" << std::endl;
+	  break;
+	default:
+	  // should not reach
+	  std::cerr << "ERROR: UNKNOWN CODE: " << error << std::endl;
+      }
+    }
+
+    // DIE
+    printFatalError("ERROR: Unable to initialize an OpenGL context");
+    if (display != NULL) {
+      delete display;
+      display=NULL;
+    }
+    exit(1);
+    
+  } else {
+    DEBUG3("Using the following GL_RENDERER: %s", glRenderer);
+  }
+
   // add the zbuffer callback here, after the OpenGL context is initialized
   BZDB.addCallback("zbuffer", setDepthBuffer, NULL);
 
@@ -1376,9 +1428,8 @@ int			main(int argc, char** argv)
   // let the defaults file override this, though.
   if (!BZDB.isSet("fakecursor")) {
     // check that the glrenderer is Mesa Glide
-    const char* glrenderer = (const char*)glGetString(GL_RENDERER);
-    if ((glrenderer != NULL) && (strncmp(glrenderer, "Mesa Glide", 10) == 0 ||
-	strncmp(glrenderer, "3Dfx", 4) == 0))
+    if ((glRenderer != NULL) && (strncmp(glRenderer, "Mesa Glide", 10) == 0 ||
+	strncmp(glRenderer, "3Dfx", 4) == 0))
       BZDB.set("fakecursor", "1");
   }
 
