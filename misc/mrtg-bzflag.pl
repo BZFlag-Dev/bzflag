@@ -13,7 +13,35 @@
 
 use strict;
 
-my $no_BZFlag;
+# example mrtg.conf entries
+
+#Target[bzflag]: `/home/bzflag/bzflag-1.7/misc/mrtg-bzflag.pl`
+#Options[bzflag]: gauge,nopercent,noinfo,noborder,noarrow,transparent,growright
+#Title[bzflag]: BZFlag Players / Servers
+#MaxBytes[bzflag]: 100
+#YLegend[bzflag]: count
+#ShortLegend[bzflag]: &nbsp;
+#LegendI[bzflag]: Players
+#LegendO[bzflag]: Servers
+#Legend1[bzflag]: Current Players according to list server
+#Legend2[bzflag]: Current Servers according to list server
+#Legend3[bzflag]: Maximal 5 Minute Players
+#Legend4[bzflag]: Maximal 5 Minute Servers
+#PageTop[bzflag]: <h1>BZFlag Players / Servers</h1>
+
+#Target[xmission]: `/home/bzflag/bzflag-1.7/misc/mrtg-bzflag.pl xmission.bzflag.org:5155`
+#Options[xmission]: gauge,noinfo,noborder,noarrow,transparent,growright
+#Title[xmission]: Players on xmission.bzflag.org:5155
+#MaxBytes[xmission]: 12
+#YLegend[xmission]: players 
+#ShortLegend[xmission]: &nbsp;
+#LegendI[xmission]: Players:
+#LegendO[xmission]: MaxPlayers:
+#Legend1[xmission]: Current players according to list server
+#Legend2[xmission]: Current player limit according to list server
+#Legend3[xmission]: Maximal 5 Minute players
+#Legend4[xmission]: Maximal 5 Minute player limit
+#PageTop[xmission]: <h1>xmission.bzflag.org:5155</h1>
 
 use Socket;
 use LWP::UserAgent;
@@ -22,7 +50,7 @@ use File::stat;
 my $cacheFile = '/tmp/mrtg-bzflag.tmp';
 my @lines;
 
-if (time() - stat($cacheFile)->mtime < 10) {
+if (-d $cacheFile && time() - stat($cacheFile)->mtime < 10) {
   open(CACHEFILE, "<$cacheFile");
   chomp(@lines = <CACHEFILE>);
   close(CACHEFILE);
