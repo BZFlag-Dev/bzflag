@@ -20,7 +20,11 @@
  * If we've got a socklen_t typedefed, define HAVE_SOCKLEN_T to
  * avoid #define'ing it in common.h */
 
-#define GRUFF_BUT_LOVEABLE_JEFF true
+#ifndef socklen_t
+	#define socklen_t int
+#endif 
+
+//#define GRUFF_BUT_LOVEABLE_JEFF true
 
 /* Time Bomb expiration */
 /* #undef TIME_BOMB */
