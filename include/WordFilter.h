@@ -81,29 +81,84 @@ class WordFilter
   /** used by the simple filter */
   std::string alphabet;
   
-  /** used by the agressive filter */
-  std::set<std::string> suffixes;
-  std::set<std::string> prefixes;
-  
+  /** set of characters used to replace filtered content */
   std::string filterChars;
-  
-  /** structure containing the filter words and optional compiled version */
-  typedef struct badWord {
+
+  /** structure for a single filter word, the expanded
+   * corresponding expression, and a compiled regular
+   * expression
+   */
+  typedef struct filter {
     std::string word;
     std::string expression;
-    bool compiled;
-    regex_t *compiledWord;
-  } badWord_t;
+    regex_t compiled;
+  } filter_t;
   
   /** word expressions to be filtered including compiled regexp versions */
   struct expressionCompare {
-    bool operator () (const badWord_t& word1, const badWord_t& word2) const {
+    bool operator () (const filter_t& word1, const filter_t& word2) const {
       
       
       return strncasecmp(word1.word.c_str(), word2.word.c_str(), 1024) < 0;
     }
   };
-  std::set<badWord_t, expressionCompare> badWords;
+
+#if defined (UNIT8_MAX)
+  const unsigned short int MAX_FILTERS = UINT8_MAX;
+#else
+  const unsigned short int MAX_FILTERS = sizeof(unsigned char);  
+#endif
+
+  /** main collection of what to filter.  items are stored into
+   * the array indexed by the first character of the filter word.
+   * this means a sparse array, but it's a small price for 
+   * minimal hashing and rather fast lookups.
+   */
+  std::set<filter_t, expressionCompare> filters[MAX_FILTERS];
+
+
+  /** used by the agressive filter */
+  filter_t *suffixes;
+
+  /** used by the agressive filter */
+  filter_t *prefixes;
+  
+  /** utility method that returns the position of the 
+   * first printable character from a string
+   */
+  int firstPrintable(const std::string *input) const
+  {
+    if (input == NULL) {
+      return -1;
+    }
+
+    int i = 0;
+    /* range of printable characters, with failsafe */
+    while (((input[i] < 33) || (input[i] == 127) || (input[i] == 255)) \
+	   && (i < 32768)) {
+      i++;
+    }
+    return i;
+  }
+  
+  /** utility method that returns the position of the
+   * first non-printable character from a string
+   */
+  int firstNonprintable(const std::string *input) const
+  {
+    if (input == NULL) {
+      return -1;
+    }
+
+    int i = 0;
+    /* range of non-printable characters, with failsafe */
+    while (((input[i] > 32) && (input[i] < 255) && (input[i] != 127)) \
+	   && (i < 32768)) {
+      i++;
+    }
+    return i;
+  }
+
   
  protected:
 
@@ -115,7 +170,7 @@ class WordFilter
    * will get filtered to "****", "testy", and 
    * "****;" respectively.
    */
-  bool simpleFilter(char *input);
+  bool simpleFilter(char *input) const;
   
   
   /** This filter will take a filter word and
@@ -128,12 +183,18 @@ class WordFilter
    * See the header above for more details.  This
    * filter should be the default.
    */
-  bool aggressiveFilter(char *input);
+  bool aggressiveFilter(char *input) const;
   
   /** provides a pointer to a fresh compiled
    * expression for some given expression
    */
-  regex_t *getCompiledExpression(const std::string &word);
+  regex_t *getCompiledExpression(const std::string &expression) const;
+
+  /** expands a word into an uncompiled regular
+   *  expression.
+   */
+  std::string *expressionFromString(const std::string &word) const;
+
   
  public:
   
@@ -149,10 +210,10 @@ class WordFilter
   /** given an input string, filter the input
    * using either the simple or agressive filter
    */
-  bool filter(char *input, bool simple=false);
+  bool filter(char *input, const bool simple=false) const;
 
   /** dump a list of words in the filter to stdout */
-  void outputWords(void);
+  void outputWords(void) const;
 };
 
 
