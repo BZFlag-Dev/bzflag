@@ -1965,14 +1965,23 @@ static void		handleServerMessage(boolean human, uint16_t code,
 	else {
 	  // grabbed flag
 	  playLocalSound(Flag::getType(myTank->getFlag()) != FlagSticky ?
-						SFX_GRAB_FLAG : SFX_GRAB_BAD);
+	      SFX_GRAB_FLAG : SFX_GRAB_BAD);
 	  updateFlag(myTank->getFlag());
 	}
       }
       else if (tank && tank->getTeam() != myTank->getTeam() &&
-		int(world->getFlag(flagIndex).id) == int(myTank->getTeam())) {
+	  int(world->getFlag(flagIndex).id) == int(myTank->getTeam())) {
 	hud->setAlert(1, "Flag Alert!!!", 3.0f, True);
 	playLocalSound(SFX_ALERT);
+      }
+      else {
+	FlagId fID = world->getFlag(flagIndex).id;
+	if (((fID >= RedFlag) && (fID <= PurpleFlag)) 
+	    && (fID != tank->getTeam()) 
+	    && ((tank && (tank->getTeam() == myTank->getTeam())))) {
+	  const float* pos = tank->getPosition();
+	  playWorldSound(SFX_TEAMGRAB, pos[0], pos[1], pos[2], false);
+	}
       }
       if (tank) {
 	BzfString message("grabbed ");

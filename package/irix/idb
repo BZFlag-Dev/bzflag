@@ -48,6 +48,7 @@ f 444 demos demos usr/local/lib/bzflag/ricochet.wav ./data/ricochet.wav SOUNDS
 f 444 demos demos usr/local/lib/bzflag/rlaser.rgb ./data/rlaser.rgb TEXTURES
 f 444 demos demos usr/local/lib/bzflag/roof.rgb ./data/roof.rgb TEXTURES
 f 444 demos demos usr/local/lib/bzflag/shock.wav ./data/shock.wav SOUNDS
+f 444 demos demos usr/local/lib/bzflag/teamgrab.wav ./data/teamgrab.wav SOUNDS
 f 444 demos demos usr/local/lib/bzflag/teleport.wav ./data/teleport.wav SOUNDS
 f 444 demos demos usr/local/lib/bzflag/timesbi.rgb ./data/timesbi.rgb REQDATA
 f 444 demos demos usr/local/lib/bzflag/timesbr.rgb ./data/timesbr.rgb REQDATA

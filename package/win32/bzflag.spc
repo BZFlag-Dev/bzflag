@@ -44,6 +44,7 @@
 -file ../../data/pop.wav pop.wav
 -file ../../data/ricochet.wav ricochet.wav
 -file ../../data/shock.wav shock.wav
+-file ../../data/teamgrab.wav teamgrab.wav
 -file ../../data/teleport.wav teleport.wav
 -file ../../data/phantom.wav phantom.wav
 -file ../../data/missile.wav missile.wav

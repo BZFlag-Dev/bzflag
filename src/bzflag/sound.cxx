@@ -94,7 +94,8 @@ static const char*	soundFiles[] = {
 				"killteam",
 				"phantom",
 				"missile",
-				"lock"
+				"lock",
+				"teamgrab"
 			};
 #define	SFX_COUNT	((int)(sizeof(soundFiles) / sizeof(soundFiles[0])))
 
