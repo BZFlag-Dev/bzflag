@@ -195,8 +195,8 @@ struct FlagInfo {
 	public:
 		// flag info
 		Flag flag;
-		// player index who has flag
-		int player;
+		// player who has flag
+		PlayerId playerId;
 		// how many grabs before removed
 		int grabs;
 		// true if flag must be in game
@@ -310,7 +310,7 @@ static bool flagsOnBuildings;
 // true if -g on cmd line
 static bool oneGameOnly;
 static int gameStyle;
-static uint16_t maxPlayers = MaxPlayers;
+static PlayerId maxPlayers = MaxPlayers;
 // max simulataneous per player
 static uint16_t maxShots;
 static uint16_t maxTeam[NumTeams];
@@ -1367,7 +1367,7 @@ static void directMessage(PlayerId playerId, uint16_t code, int len, const void 
 static void broadcastMessage(uint16_t code, int len, const void *msg)
 {
 	// send message to everyone
-	for (int i = 0; i < maxPlayers; i++)
+	for (PlayerId i = 0; i < maxPlayers; i++)
 		if (player[i].state > PlayerInLimbo)
 			directMessage(i, code, len, msg);
 }
@@ -1579,7 +1579,7 @@ static void sendPlayerUpdate(PlayerId playerId, int index)
 	buf = nboPackString(buf, pPlayer->email, EmailLen);
 	if (playerId == index) {
 		// send all players info about player[playerId]
-		for (int i = 0; i < maxPlayers; i++)
+		for (PlayerId i = 0; i < maxPlayers; i++)
 			if (player[i].state > PlayerInLimbo && i != playerId)
 				directMessage(i, MsgAddPlayer, (char*)buf - (char*)bufStart, bufStart);
 	}
@@ -1911,7 +1911,7 @@ static bool serverStart()
 	BzfNetwork::setNonBlocking(udpSocket);
 	maxFileDescriptor = udpSocket;
 
-	for (int i = 0; i < MaxPlayers; i++) {	// no connections
+	for (PlayerId i = 0; i < MaxPlayers; i++) {	// no connections
 		player[i].fd = NotConnected;
 		player[i].state = PlayerNoExist;
 		player[i].outmsg = NULL;
@@ -1993,7 +1993,7 @@ static void serverStop()
 static void relayPlayerPacket(int index, uint16_t len, const void *rawbuf)
 {
 	// relay packet to all players
-	for (int i = 0; i < maxPlayers; i++)
+	for (PlayerId i = 0; i < maxPlayers; i++)
 		if ((i != index) && (player[i].state > PlayerInLimbo))
 			pwrite(i, rawbuf, len + 4);
 }
@@ -2597,7 +2597,7 @@ static void dumpScore()
 	// sort players by team (do it in five easy pieces)
 	std::cout << "#players" << std::endl;
 	for (i = 0; i < NumTeams; i++)
-		for (int j = 0; j < maxPlayers; j++)
+		for (PlayerId j = 0; j < maxPlayers; j++)
 			if (player[j].state > PlayerInLimbo && int(player[j].team) == i) {
 				std::cout << player[j].wins << " " <<
 						player[j].losses << " " <<
@@ -2667,7 +2667,7 @@ static void acceptClient()
 	// if game was over and this is the first player then game is on
 	if (gameOver) {
 		int count = 0;
-		for (int i = 0; i < maxPlayers; i++)
+		for (PlayerId i = 0; i < maxPlayers; i++)
 			if (player[i].state >= PlayerInLimbo)
 				count++;
 		if (count == 1) {
@@ -2899,7 +2899,7 @@ static void resetFlag(int flagIndex)
 
 	FlagInfo *pFlagInfo = &flag[flagIndex];
 	// reset a flag's info
-	pFlagInfo->player = -1;
+	pFlagInfo->playerId = InvalidPlayer;
 	pFlagInfo->flag.status = FlagNoExist;
 
 	// if it's a random flag, reset flag id
@@ -2957,9 +2957,9 @@ static void zapFlag(int flagIndex)
 	}
 
 	// see if someone had grabbed flag.  tell 'em to drop it.
-	const PlayerId playerId = flag[flagIndex].player;
+	const PlayerId playerId = flag[flagIndex].playerId;
 	if (playerId != InvalidPlayer) {
-		flag[flagIndex].player = -1;
+		flag[flagIndex].playerId = InvalidPlayer;
 		flag[flagIndex].flag.status = FlagNoExist;
 		player[playerId].flag = -1;
 
@@ -3212,7 +3212,7 @@ static void grabFlag(PlayerId playerId, int flagIndex)
 	// okay, player can have it
 	flag[flagIndex].flag.status = FlagOnTank;
 	flag[flagIndex].flag.owner = playerId;
-	flag[flagIndex].player = playerId;
+	flag[flagIndex].playerId = playerId;
 	player[playerId].flag = flagIndex;
 
 	// send MsgGrabFlag
@@ -3238,7 +3238,7 @@ static void dropFlag(PlayerId playerId, FlagDropReason reason, float pos[3])
 		return;
 
 	// okay, go ahead and drop it
-	pFlagInfo->player = -1;
+	pFlagInfo->playerId = InvalidPlayer;
 	if (pFlagInfo->flag.type == FlagNormal || --flag[flagIndex].grabs > 0)
 		pFlagInfo->flag.status = FlagInAir;
 	else
@@ -3361,7 +3361,7 @@ static void captureFlag(PlayerId playerId, TeamColor teamCaptured)
 	broadcastMessage(MsgCaptureFlag, (char*)buf-(char*)bufStart, bufStart);
 
 	// everyone on losing team is dead
-	for (int i = 0; i < maxPlayers; i++)
+	for (PlayerId i = 0; i < maxPlayers; i++)
 		if (player[i].fd != NotConnected &&
 		int(flag[flagIndex].flag.id) == int(player[i].team) &&
 		player[i].state == PlayerAlive) {
@@ -3484,7 +3484,7 @@ static void parseCommand(const char *message, int t)
 		done = true;
 	// /superkill closes all player connections
 	} else if (player[t].Admin && strncmp(message + 1, "superkill", 8) == 0) {
-		for (int i = 0; i < MaxPlayers; i++)
+		for (PlayerId i = 0; i < MaxPlayers; i++)
 			directMessage(i, MsgSuperKill, 0, getDirectMessageBuffer());
 		gameOver = true;
 	// /gameover command allows operator to end the game
@@ -3499,9 +3499,9 @@ static void parseCommand(const char *message, int t)
 		if (strncmp(message + 6, "reset", 5) == 0) {
 			for (int i = 0; i < numFlags; i++) {
 				// see if someone had grabbed flag.  tell 'em to drop it.
-				const PlayerId playerId = flag[i].player;
+				const PlayerId playerId = flag[i].playerId;
 				if (playerId != InvalidPlayer) {
-					flag[i].player = InvalidPlayer;
+					flag[i].playerId = InvalidPlayer;
 					flag[i].flag.status = FlagNoExist;
 					player[playerId].flag = -1;
 
@@ -3519,9 +3519,9 @@ static void parseCommand(const char *message, int t)
 				if (int(flag[i].flag.id) < int(FirstTeamFlag) ||
 						int(flag[i].flag.id) > int(LastTeamFlag)) {
 					// see if someone had grabbed flag.  tell 'em to drop it.
-					const PlayerId playerId = flag[i].player;
+					const PlayerId playerId = flag[i].playerId;
 					if (playerId != InvalidPlayer) {
-						flag[i].player = -1;
+						flag[i].playerId = InvalidPlayer;
 						flag[i].flag.status = FlagNoExist;
 						player[playerId].flag = -1;
 
@@ -3541,8 +3541,9 @@ static void parseCommand(const char *message, int t)
 		} else if (strncmp(message + 6, "show", 4) == 0) {
 			for (int i = 0; i < numFlags; i++) {
 				char message[MessageLen]; // FIXME
-				sprintf(message, "%d p:%d r:%d g:%d i:%s s:%d p:%3.1fx%3.1fx%3.1f", i, flag[i].player,
-						flag[i].required, flag[i].grabs, Flag::getAbbreviation(flag[i].flag.id),
+				sprintf(message, "%d p:%d r:%d g:%d i:%s s:%d p:%3.1fx%3.1fx%3.1f",
+						i, flag[i].playerId, flag[i].required, flag[i].grabs,
+						Flag::getAbbreviation(flag[i].flag.id),
 						flag[i].flag.status,
 						flag[i].flag.position[0],
 						flag[i].flag.position[1],
@@ -3571,7 +3572,7 @@ static void parseCommand(const char *message, int t)
 	}
 	// /lagstats gives simple statistics about players' lags
 	else if (strncmp(message+1,"lagstats",8) == 0) {
-		for (int i = 0; i < maxPlayers; i++)
+		for (PlayerId i = 0; i < maxPlayers; i++)
 			if (player[i].fd != NotConnected) {
 				char reply[MessageLen];
 				sprintf(reply,"%-12s(%d) : %4dms (%d)", player[i].callSign,
@@ -4432,7 +4433,7 @@ static void parse(int argc, char **argv)
 		flag[i].flag.flightTime = 0.0f;
 		flag[i].flag.flightEnd = 0.0f;
 		flag[i].flag.initialVelocity = 0.0f;
-		flag[i].player = -1;
+		flag[i].playerId = InvalidPlayer;
 		flag[i].grabs = 0;
 		flag[i].required = false;
 	}
