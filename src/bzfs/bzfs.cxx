@@ -139,6 +139,12 @@ int getCurMaxPlayers()
   return curMaxPlayers;
 }
 
+static bool realPlayer(const PlayerId& id)
+{
+  GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(id);
+  return playerData && playerData->player->isPlaying();
+}
+
 static void pwrite(int playerIndex, const void *b, int l)
 {
   if (!NetHandler::exists(playerIndex))
@@ -175,7 +181,7 @@ void broadcastMessage(uint16_t code, int len, const void *msg)
 {
   // send message to everyone
   for (int i = 0; i < curMaxPlayers; i++) {
-    if (player[i].isPlaying()) {
+    if (realPlayer(i)) {
       directMessage(i, code, len, msg);
     }
   }
@@ -215,11 +221,6 @@ static void sendUDPupdate(int playerIndex)
   directMessage(playerIndex, MsgUDPLinkEstablished, 0, getDirectMessageBuffer());
   // request/test outbound UDP with a UDP back to where we got client's packet
   directMessage(playerIndex, MsgUDPLinkRequest, 0, getDirectMessageBuffer());
-}
-
-static bool realPlayer(const PlayerId& id)
-{
-  return id<=curMaxPlayers && player[id].isPlaying();
 }
 
 static int lookupPlayer(const PlayerId& id)
@@ -356,16 +357,8 @@ static void sendPlayerUpdate(int playerIndex, int index)
   
   if (playerIndex == index) {
     // send all players info about player[playerIndex]
-    for (int i = 0; i < curMaxPlayers; i++) {
-      if (player[i].isPlaying()) {
-	directMessage(i, MsgAddPlayer, (char*)buf - (char*)bufStart, bufStart);
-      }
-    }
-    if (Record::enabled()) {
-      Record::addPacket (MsgAddPlayer, (char*)buf - (char*)bufStart, bufStart);
-    }
-  }
-  else {
+    broadcastMessage(MsgAddPlayer, (char*)buf - (char*)bufStart, bufStart);
+  } else {
     directMessage(index, MsgAddPlayer, (char*)buf - (char*)bufStart, bufStart);
   }
 }
@@ -1664,7 +1657,7 @@ static void addPlayer(int playerIndex)
     sendTeamUpdate(playerIndex);
     sendFlagUpdate(-1, playerIndex);
     for (i = 0; i < curMaxPlayers && NetHandler::exists(playerIndex); i++)
-      if (player[i].isPlaying() && i != playerIndex)
+      if (realPlayer(i) && i != playerIndex)
 	sendPlayerUpdate(i, playerIndex);
   }
 
@@ -2216,7 +2209,7 @@ static void sendQueryPlayers(int playerIndex)
   if (NetHandler::exists(playerIndex))
     sendTeamUpdate(playerIndex);
   for (i = 0; i < curMaxPlayers && NetHandler::exists(playerIndex); i++)
-    if (player[i].isPlaying())
+    if (realPlayer(i))
       sendPlayerUpdate(i, playerIndex);
 }
 
@@ -3322,8 +3315,7 @@ static void handleCommand(int t, const void *rawbuf)
 	sendMessage (t, AdminPlayers, message);			
       }
       // check if the target player is invalid
-      else if (targetPlayer < LastRealPlayer && 
-               !player[targetPlayer].isPlaying()) {
+      else if (realPlayer(targetPlayer)) {
 	sendMessage(ServerPlayer, t, "The player you tried to talk to does not exist!");
       } else {
 	if (clOptions->filterChat) {
