@@ -397,7 +397,7 @@ void TankSceneNode::setJumpJets(float scale)
       jumpJetsGroundLights[i].setPosition(jetPos);
 
       // setup the random lengths
-      const float randomFactor = (1.0f - (0.5f * (0.5f - bzfrand())));
+      const float randomFactor = (1.0f - (0.5f * (0.5f - (float)bzfrand())));
       jumpJetsLengths[i] = jumpJetsScale * randomFactor;
     }
   }
