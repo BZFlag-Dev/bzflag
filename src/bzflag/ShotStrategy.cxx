@@ -1233,14 +1233,14 @@ void					GuidedMissileStrategy::sendUpdate(
 	void *buf = (void*)packet;
 	buf = firingInfo.shot.pack(buf);
 	buf = nboPackUByte(buf, lastTarget);
-	ServerLink::getServer()->send(MsgGMUpdate, sizeof(packet), packet);
+	ServerLink::getServer()->send(MsgShotUpdate, sizeof(packet), packet);
 }
 
 void					GuidedMissileStrategy::readUpdate(
 								uint16_t code, void* msg)
 {
 	// ignore non-guided missile messages (we shouldn't get them)
-	if (code != MsgGMUpdate) return;
+	if (code != MsgShotUpdate) return;
 
 	// position and velocity have been replaced by the remote system's
 	// concept of the position and velocity.  this may cause a discontinuity

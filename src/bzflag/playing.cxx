@@ -1591,7 +1591,7 @@ static void				handleServerMessage(bool human, uint16_t code,
 
 		// inter-player relayed message
 		case MsgPlayerUpdate:
-		case MsgGMUpdate:
+		case MsgShotUpdate:
 			handlePlayerMessage(code, 0, msg);
 			break;
 	}
@@ -1632,7 +1632,7 @@ static void				handlePlayerMessage(uint16_t code, uint16_t,
 			break;
 		}
 
-		case MsgGMUpdate: {
+		case MsgShotUpdate: {
 			ShotUpdate shot;
 			msg = shot.unpack(msg);
 			Player* tank = lookupPlayer(shot.player);

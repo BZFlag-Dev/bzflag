@@ -266,7 +266,7 @@ void					ServerLink::send(uint16_t code, uint16_t len,
 		case MsgShotBegin:
 		case MsgShotEnd:
 		case MsgPlayerUpdate:
-		case MsgGMUpdate:
+		case MsgShotUpdate:
 		case MsgUDPLinkEstablished:
 			needForSpeed = true;
 			break;

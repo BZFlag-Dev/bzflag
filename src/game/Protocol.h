@@ -46,11 +46,7 @@ const int				MaxPacketLen = 1024;
 // null message code -- should never be sent
 const uint16_t			MsgNull = 0x0000;
 
-// unreliable message codes
-const uint16_t			MsgPlayerUpdate = 0x7075;				// 'pu'
-const uint16_t			MsgGMUpdate = 0x676d;					// 'gm'
-
-// server message codes
+// reliable messages
 const uint16_t			MsgAccept = 0x6163;						// 'ac'
 const uint16_t			MsgAlive = 0x616c;						// 'al'
 const uint16_t			MsgAddPlayer = 0x6170;					// 'ap'
@@ -65,17 +61,20 @@ const uint16_t			MsgKilled = 0x6b6c;						// 'kl'
 const uint16_t			MsgMessage = 0x6d67;					// 'mg'
 const uint16_t			MsgReject = 0x726a;						// 'rj'
 const uint16_t			MsgRemovePlayer = 0x7270;				// 'rp'
-const uint16_t			MsgShotBegin = 0x7362;					// 'sb'
 const uint16_t			MsgScore = 0x7363;						// 'sc'
 const uint16_t			MsgScoreOver = 0x736f;					// 'so'
-const uint16_t			MsgShotEnd = 0x7365;					// 'se'
 const uint16_t			MsgSuperKill = 0x736b;					// 'sk'
 const uint16_t			MsgTimeUpdate = 0x746f;					// 'to'
 const uint16_t			MsgTeleport = 0x7470;					// 'tp'
 const uint16_t			MsgTeamUpdate = 0x7475;					// 'tu'
 
-// request for additional UDP link
+// unreliable messages
 const uint16_t			MsgUDPLinkEstablished = 0x6f67;			// 'og'
+const uint16_t			MsgPlayerUpdate = 0x7075;				// 'pu'
+const uint16_t			MsgShotBegin = 0x7362;					// 'sb'
+const uint16_t			MsgShotEnd = 0x7365;					// 'se'
+const uint16_t			MsgShotUpdate = 0x676d;					// 'gm'
+
 
 // world database codes
 const uint16_t			WorldCodeBase = 0x6261;					// 'ba'

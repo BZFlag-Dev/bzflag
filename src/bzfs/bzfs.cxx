@@ -1189,7 +1189,7 @@ static void pwrite(int playerIndex, const void *b, int l)
 		case MsgShotBegin:
 		case MsgShotEnd:
 		case MsgPlayerUpdate:
-		case MsgGMUpdate:
+		case MsgShotUpdate:
 			puwrite(playerIndex,b,l);
 			return;
 		}
@@ -3756,7 +3756,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 
 		// just forward these. FIXME playerid should get overwritten someplace
 		case MsgPlayerUpdate:
-		case MsgGMUpdate:
+		case MsgShotUpdate:
 			relayPlayerPacket(t, len, rawbuf);
 			break;
 	}
