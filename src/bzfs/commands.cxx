@@ -256,7 +256,7 @@ void handleFlagCmd(int t, const char *message)
 
   } else if (strncmp(message + 6, "up", 2) == 0) {
     for (int i = 0; i < numFlags; i++) {
-      if (flag[i].flag.type->flagTeam != ::NoTeam) {
+      if (flag[i].flag.type->flagTeam == ::NoTeam) {
 	// see if someone had grabbed flag.  tell 'em to drop it.
 	const int playerIndex = flag[i].player;
 	if (playerIndex != -1) {
