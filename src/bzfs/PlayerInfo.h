@@ -140,6 +140,9 @@ public:
   const char *getCallSign() const;
   void        cleanCallSign();
   bool        isCallSignReadable();
+  const char *getEMail() const;
+  void        cleanEMail();
+  bool        isEMailReadable();
 private:
     // player access
     PlayerAccessInfo accessInfo;
@@ -166,9 +169,9 @@ private:
     PlayerType type;
     // player's pseudonym
     char callSign[CallSignLen];
-public:
     // player's email address
     char email[EmailLen];
+public:
     // player's team
     TeamColor team;
     // true for dead rabbit until respawn

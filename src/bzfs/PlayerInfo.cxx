@@ -536,6 +536,45 @@ bool PlayerInfo::isCallSignReadable() {
   return (callsignlen <= 4) || ((float)alnumCount / (float)callsignlen > 0.5f);
 };
 
+const char *PlayerInfo::getEMail() const {
+  return email;
+};
+
+void PlayerInfo::cleanEMail() {
+  // strip leading whitespace from email
+  char *sp = email;
+  char *tp = sp;
+  while (isspace(*sp))
+    sp++;
+
+  // strip any non-printable characters and ' and " from email
+  do {
+    if (isprint(*sp) && (*sp != '\'') && (*sp != '"')) {
+      *tp++ = *sp;
+    }
+  } while (*++sp);
+  *tp = *sp;
+
+  // strip trailing whitespace from email
+  while (isspace(*--tp)) {
+    *tp=0;
+  }
+};
+
+bool PlayerInfo::isEMailReadable() {
+  // email/"team" readability filter, make sure there are more
+  // alphanum than non
+  int emailAlnumCount = 0;
+  char *sp = email;
+  do {
+    if (isalnum(*sp)) {
+      emailAlnumCount++;
+    }
+  } while (*++sp);
+  int emaillen = strlen(email);
+  return (emaillen <= 4) || (((float)emailAlnumCount / (float)emaillen) > 0.5);
+};
+
 // Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***

@@ -1825,31 +1825,13 @@ static void addPlayer(int playerIndex)
     rejectPlayer(playerIndex, RejectBadCallsign);
   }
 
-
-  // strip leading whitespace from email
-  char *sp = player[playerIndex].email;
-  char *tp = sp;
-  while (isspace(*sp))
-    sp++;
-
-  // strip any non-printable characters and ' and " from email
-  do {
-    if (isprint(*sp) && (*sp != '\'') && (*sp != '"')) {
-      *tp++ = *sp;
-    }
-  } while (*++sp);
-  *tp = *sp;
-
-  // strip trailing whitespace from email
-  while (isspace(*--tp)) {
-    *tp=0;
-  }
+  player[playerIndex].cleanEMail();
 
   // make sure the email is not obscene/filtered
   if (clOptions->filterCallsigns) {
-    DEBUG2("checking email: %s\n",player[playerIndex].email);
+    DEBUG2("checking email: %s\n",player[playerIndex].getEMail());
     char em[EmailLen];
-    memcpy(em, player[playerIndex].email, sizeof(char) * EmailLen);
+    memcpy(em, player[playerIndex].getEMail(), sizeof(char) * EmailLen);
     bool filtered = clOptions->filter.filter(em, clOptions->filterSimple);
     if (filtered) {
       rejectPlayer(playerIndex, RejectBadEmail);
@@ -1857,20 +1839,10 @@ static void addPlayer(int playerIndex)
     }
   }
 
-  // email/"team" readability filter, make sure there are more alphanum than non
-  int emailAlnumCount = 0;
-  sp = player[playerIndex].email;
-  do {
-    if (isalnum(*sp)) {
-      emailAlnumCount++;
-    }
-  } while (*++sp);
-  int emaillen = strlen(player[playerIndex].email);
-  if ((emaillen > 4) && 
-      ((((float)emaillen - (float)emailAlnumCount) / (float)emaillen) > 0.5f)) {
+  if (!player[playerIndex].isEMailReadable()) {
     DEBUG2("rejecting unreadable player email: %s (%s)\n", 
 	   player[playerIndex].getCallSign(),
-	   player[playerIndex].email);
+	   player[playerIndex].getEMail());
     rejectPlayer(playerIndex, RejectBadEmail);
   }
 
