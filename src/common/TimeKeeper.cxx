@@ -220,7 +220,7 @@ void TimeKeeper::sleep(float seconds)
 #endif
 #ifdef HAVE_SLEEP
   // equivalent to _sleep() on win32 (not sleep(3))
-  Sleep(seconds * 1000);
+  Sleep((DWORD)(seconds * 1000));
   return;
 #endif
 #ifdef HAVE_SNOOZE
