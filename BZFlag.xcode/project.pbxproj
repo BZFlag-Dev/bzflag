@@ -10,6 +10,7 @@
 				1492F5CB079788480008E0BD,
 				1492F48E07962F620008E0BD,
 				1492F51E079633E10008E0BD,
+				14CF6D6B0798A1510071D7DA,
 			);
 			isa = PBXGroup;
 			refType = 4;
@@ -90,7 +91,7 @@
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO;
 				GCC_WARN_UNKNOWN_PRAGMAS = NO;
-				INFOPLIST_FILE = "BZFlag-Info.plist";
+				INFOPLIST_FILE = "src/platform/MacOSX/BZFlag-Info.plist";
 				INSTALL_PATH = "$(USER_APPS_DIR)";
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "-framework Carbon";
@@ -166,7 +167,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "./autogen.sh 2>&1\n./configure --disable-regex 2>&1\nmake -j2\n";
+			shellScript = "# ./autogen.sh 2>&1\n# ./configure --disable-regex 2>&1\nmake -j2\n";
 		};
 		1492F4DA079630A30008E0BD = {
 			buildActionMask = 2147483647;
@@ -181,8 +182,8 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		1492F4E6079631460008E0BD = {
+			explicitFileType = "compiled.mach-o.executable";
 			isa = PBXFileReference;
-			lastKnownFileType = "compiled.mach-o.executable";
 			name = bzadmin;
 			path = src/bzadmin/bzadmin;
 			refType = 4;
@@ -319,6 +320,15 @@
 			isa = PBXBuildFile;
 			settings = {
 			};
+		};
+		14CF6D6B0798A1510071D7DA = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text.plist.xml;
+			name = "BZFlag-Info.plist";
+			path = "src/platform/MacOSX/BZFlag-Info.plist";
+			refType = 4;
+			sourceTree = "<group>";
 		};
 	};
 	rootObject = 147C9C3F0794FB1800910F8C;
