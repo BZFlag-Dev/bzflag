@@ -399,10 +399,10 @@ WorldInfo *defineWorldFromFile(const char *filename)
 	}
 
 	// make walls
-	world->addWall(0.0f, 0.5f * BZDB->eval("_worldSize"), 0.0f, 1.5f * M_PI, 0.5f * BZDB->eval("_worldSize"), WallHeight);
-	world->addWall(0.5f * BZDB->eval("_worldSize"), 0.0f, 0.0f, M_PI, 0.5f * BZDB->eval("_worldSize"), WallHeight);
-	world->addWall(0.0f, -0.5f * BZDB->eval("_worldSize"), 0.0f, 0.5f * M_PI, 0.5f * BZDB->eval("_worldSize"), WallHeight);
-	world->addWall(-0.5f * BZDB->eval("_worldSize"), 0.0f, 0.0f, 0.0f, 0.5f * BZDB->eval("_worldSize"), WallHeight);
+	world->addWall(0.0f, 0.5f * BZDB->eval(StateDatabase::BZDB_WORLDSIZE), 0.0f, 1.5f * M_PI, 0.5f * BZDB->eval(StateDatabase::BZDB_WORLDSIZE), WallHeight);
+	world->addWall(0.5f * BZDB->eval(StateDatabase::BZDB_WORLDSIZE), 0.0f, 0.0f, M_PI, 0.5f * BZDB->eval(StateDatabase::BZDB_WORLDSIZE), WallHeight);
+	world->addWall(0.0f, -0.5f * BZDB->eval(StateDatabase::BZDB_WORLDSIZE), 0.0f, 0.5f * M_PI, 0.5f * BZDB->eval(StateDatabase::BZDB_WORLDSIZE), WallHeight);
+	world->addWall(-0.5f * BZDB->eval(StateDatabase::BZDB_WORLDSIZE), 0.0f, 0.0f, 0.0f, 0.5f * BZDB->eval(StateDatabase::BZDB_WORLDSIZE), WallHeight);
 
 	// add objects
 	const int n = (int)list.size();

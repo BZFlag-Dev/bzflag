@@ -74,7 +74,7 @@ void					ViewItemRadar::onPostRender(
 	double range;
 	if (sscanf(BZDB->get("displayRadarRange").c_str(), "%lf", &range) != 1)
 		range = 0.5;
-	range *= BZDB->eval("_worldSize");
+	range *= BZDB->eval(StateDatabase::BZDB_WORLDSIZE);
 
 	// get size of pixel in model space (assumes radar is square)
 	GLfloat ps = 2.0f * range / GLfloat(w);
@@ -325,7 +325,7 @@ void					ViewItemRadar::makeNoiseTexture()
 void					ViewItemRadar::drawTank(float x, float y, float z, float minsize)
 {
 	// Changes with height.
-	GLfloat s = BZDB->eval("_tankRadius") * 3.0 + (z + BoxHeight) * 2.0f / BoxHeight;
+	GLfloat s = BZDB->eval(StateDatabase::BZDB_TANKRADIUS) * 3.0 + (z + BoxHeight) * 2.0f / BoxHeight;
 
 	if (BZDB->isTrue("displayRadarTanksOnGround") || z > 0.0f) {
 		glBegin(GL_LINE_LOOP);
@@ -338,9 +338,9 @@ void					ViewItemRadar::drawTank(float x, float y, float z, float minsize)
 
 	// Does not change with height.
 #ifdef WIN32
-	s = std::_cpp_max((float)BZDB->eval("_tankRadius"), minsize);
+	s = std::_cpp_max((float)BZDB->eval(StateDatabase::BZDB_TANKRADIUS), minsize);
 #else
-	s = std::max(float(BZDB->eval("_tankRadius")), minsize);
+	s = std::max(float(BZDB->eval(StateDatabase::BZDB_TANKRADIUS)), minsize);
 #endif
 	glRectf(x - s, y - s, x + s, y + s);
 }
@@ -349,7 +349,7 @@ void					ViewItemRadar::drawFlag(float x, float y, float z, float minsize)
 {
 	// draw edges both ways for systems that don't filter line ends
 	// correctly.  this degrades the smoothing, unfortunately.
-	GLfloat s = BZDB->eval("_tankRadius") / 2.0 + (z + BoxHeight) * 2.0f / BoxHeight;
+	GLfloat s = BZDB->eval(StateDatabase::BZDB_TANKRADIUS) / 2.0 + (z + BoxHeight) * 2.0f / BoxHeight;
 	if (s < minsize)
 		s = minsize;
 

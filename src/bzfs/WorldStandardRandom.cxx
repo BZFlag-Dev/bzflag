@@ -24,10 +24,10 @@ WorldInfo *defineRandomWorld()
 		return NULL;
 
 	// make walls
-	world->addWall(0.0f, 0.5f * BZDB->eval("_worldSize"), 0.0f, 1.5f * M_PI, 0.5f * BZDB->eval("_worldSize"), WallHeight);
-	world->addWall(0.5f * BZDB->eval("_worldSize"), 0.0f, 0.0f, M_PI, 0.5f * BZDB->eval("_worldSize"), WallHeight);
-	world->addWall(0.0f, -0.5f * BZDB->eval("_worldSize"), 0.0f, 0.5f * M_PI, 0.5f * BZDB->eval("_worldSize"), WallHeight);
-	world->addWall(-0.5f * BZDB->eval("_worldSize"), 0.0f, 0.0f, 0.0f, 0.5f * BZDB->eval("_worldSize"), WallHeight);
+	world->addWall(0.0f, 0.5f * BZDB->eval(StateDatabase::BZDB_WORLDSIZE), 0.0f, 1.5f * M_PI, 0.5f * BZDB->eval(StateDatabase::BZDB_WORLDSIZE), WallHeight);
+	world->addWall(0.5f * BZDB->eval(StateDatabase::BZDB_WORLDSIZE), 0.0f, 0.0f, M_PI, 0.5f * BZDB->eval(StateDatabase::BZDB_WORLDSIZE), WallHeight);
+	world->addWall(0.0f, -0.5f * BZDB->eval(StateDatabase::BZDB_WORLDSIZE), 0.0f, 0.5f * M_PI, 0.5f * BZDB->eval(StateDatabase::BZDB_WORLDSIZE), WallHeight);
+	world->addWall(-0.5f * BZDB->eval(StateDatabase::BZDB_WORLDSIZE), 0.0f, 0.0f, 0.0f, 0.5f * BZDB->eval(StateDatabase::BZDB_WORLDSIZE), WallHeight);
 
 	// make boxes
 	int i;
@@ -35,8 +35,8 @@ WorldInfo *defineRandomWorld()
 	for (i = 0; i < CitySize * CitySize; i++) {
 		if (randomHeights)
 			h = BoxHeight * ( 2.0f * (float)bzfrand() + 0.5f );
-		world->addBox(BZDB->eval("_worldSize") * ((float)bzfrand() - 0.5f),
-				BZDB->eval("_worldSize") * ((float)bzfrand() - 0.5f),
+		world->addBox(BZDB->eval(StateDatabase::BZDB_WORLDSIZE) * ((float)bzfrand() - 0.5f),
+				BZDB->eval(StateDatabase::BZDB_WORLDSIZE) * ((float)bzfrand() - 0.5f),
 				0.0f, 2.0f * M_PI * (float)bzfrand(),
 				BoxBase, BoxBase, h);
 	}
@@ -46,8 +46,8 @@ WorldInfo *defineRandomWorld()
 	for (i = 0; i < CitySize * CitySize; i++) {
 		if (randomHeights)
 			h = PyrHeight * ( 2.0f * (float)bzfrand() + 0.5f);
-		world->addPyramid(BZDB->eval("_worldSize") * ((float)bzfrand() - 0.5f),
-				BZDB->eval("_worldSize") * ((float)bzfrand() - 0.5f),
+		world->addPyramid(BZDB->eval(StateDatabase::BZDB_WORLDSIZE) * ((float)bzfrand() - 0.5f),
+				BZDB->eval(StateDatabase::BZDB_WORLDSIZE) * ((float)bzfrand() - 0.5f),
 				0.0f, 2.0f * M_PI * (float)bzfrand(),
 				PyrBase, PyrBase, h);
 	}
@@ -56,8 +56,8 @@ WorldInfo *defineRandomWorld()
 		// make teleporters
 		int (*linked)[2] = (int(*)[2])new int[2 * numTeleporters];
 		for (i = 0; i < numTeleporters;) {
-			const float x = (BZDB->eval("_worldSize") - 4.0f * TeleBreadth) * ((float)bzfrand() - 0.5f);
-			const float y = (BZDB->eval("_worldSize") - 4.0f * TeleBreadth) * ((float)bzfrand() - 0.5f);
+			const float x = (BZDB->eval(StateDatabase::BZDB_WORLDSIZE) - 4.0f * TeleBreadth) * ((float)bzfrand() - 0.5f);
+			const float y = (BZDB->eval(StateDatabase::BZDB_WORLDSIZE) - 4.0f * TeleBreadth) * ((float)bzfrand() - 0.5f);
 			const float rotation = 2.0f * M_PI * (float)bzfrand();
 
 			// if too close to building then try again

@@ -154,7 +154,7 @@ static void				onConsole(const std::string& name, void*)
 static void				onGammaChanged(const std::string& name, void*)
 {
 	if (window != NULL && BZDB->isTrue("featuresGamma") && !BZDB->isEmpty(name)) {
-		float gamma = BZDB->eval(name);
+		float gamma = BZDB->eval(std::string(name));
 		window->setGamma(gamma);
 		for(int i = 0; i < 256; i++) {
 			float lum = ((float) i) / 256.0;

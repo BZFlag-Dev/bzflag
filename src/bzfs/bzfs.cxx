@@ -1914,9 +1914,9 @@ static Real getSafeFlagRadius(FlagId id)
 {
 	// compute safety radius.  flag should not be within this distance
 	// of any building.
-	Real r = BZDB->eval("_tankRadius");
+	Real r = BZDB->eval(StateDatabase::BZDB_TANKRADIUS);
 	if (id == ObesityFlag)
-		r *= R_(2.0) * BZDB->eval("_obeseFactor");
+		r *= R_(2.0) * BZDB->eval(StateDatabase::BZDB_OBESEFACTOR);
 	return r;
 }
 
@@ -1990,10 +1990,10 @@ static bool addFlag(int flagIndex)
 	numFlagsInAir++;
 
 	// compute drop time
-	const float flightTime = 2.0f * sqrtf(-2.0f * BZDB->eval("_flagAltitude") / BZDB->eval("_gravity"));
+	const float flightTime = 2.0f * sqrtf(-2.0f * BZDB->eval(std::string("_flagAltitude")) / BZDB->eval(StateDatabase::BZDB_GRAVITY));
 	flag[flagIndex].flag.flightTime = 0.0f;
 	flag[flagIndex].flag.flightEnd = flightTime;
-	flag[flagIndex].flag.initialVelocity = -0.5f * BZDB->eval("_gravity") * flightTime;
+	flag[flagIndex].flag.initialVelocity = -0.5f * BZDB->eval(StateDatabase::BZDB_GRAVITY) * flightTime;
 	flag[flagIndex].dropDone = TimeKeeper::getCurrent();
 	flag[flagIndex].dropDone += flightTime;
 
@@ -2371,7 +2371,7 @@ static void dropFlag(PlayerId playerId, FlagDropReason reason, float pos[3])
 	numFlagsInAir++;
 
 	// flags are dropped from the top of the tank
-	pos[2] += BZDB->eval("_tankHeight");
+	pos[2] += BZDB->eval(StateDatabase::BZDB_TANKHEIGHT);
 
 	// get landing position
 	Vec3 landingPos = pos;
@@ -2452,16 +2452,16 @@ static void dropFlag(PlayerId playerId, FlagDropReason reason, float pos[3])
 	pFlagInfo->flag.position[2] = pFlagInfo->flag.landingPosition[2];
 	pFlagInfo->flag.launchPosition[0] = pos[0];
 	pFlagInfo->flag.launchPosition[1] = pos[1];
-	pFlagInfo->flag.launchPosition[2] = pos[2] + BZDB->eval("_tankHeight");
+	pFlagInfo->flag.launchPosition[2] = pos[2] + BZDB->eval(StateDatabase::BZDB_TANKHEIGHT);
 
 	// compute flight info -- flight time depends depends on start and end
 	// altitudes and desired height above start altitude.
 	const float thrownAltitude = (pFlagInfo->flag.id == ShieldFlag) ?
-								BZDB->eval("_shieldFlight") * BZDB->eval("_flagAltitude") : BZDB->eval("_flagAltitude");
+								BZDB->eval(std::string("_shieldFlight")) * BZDB->eval(std::string("_flagAltitude")) : BZDB->eval(std::string("_flagAltitude"));
 	const float maxAltitude = pos[2] + thrownAltitude;
-	const float upTime = sqrtf(-2.0f * thrownAltitude / BZDB->eval("_gravity"));
+	const float upTime = sqrtf(-2.0f * thrownAltitude / BZDB->eval(StateDatabase::BZDB_GRAVITY));
 	const float downTime = sqrtf(-2.0f * (maxAltitude -
-								pFlagInfo->flag.landingPosition[2]) / BZDB->eval("_gravity"));
+								pFlagInfo->flag.landingPosition[2]) / BZDB->eval(StateDatabase::BZDB_GRAVITY));
 	const float flightTime = upTime + downTime;
 
 	// set flight info
@@ -2469,7 +2469,7 @@ static void dropFlag(PlayerId playerId, FlagDropReason reason, float pos[3])
 	pFlagInfo->dropDone += flightTime;
 	pFlagInfo->flag.flightTime = 0.0f;
 	pFlagInfo->flag.flightEnd = flightTime;
-	pFlagInfo->flag.initialVelocity = -BZDB->eval("_gravity") * upTime;
+	pFlagInfo->flag.initialVelocity = -BZDB->eval(StateDatabase::BZDB_GRAVITY) * upTime;
 
 	// player no longer has flag -- send MsgDropFlag
 	player[playerId].flag = -1;

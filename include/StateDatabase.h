@@ -89,7 +89,7 @@ public:
 
 	// get the value as a floating point number. this will evaluate
 	// the string as an expression
-	float				eval(std::string name) const;
+	float				eval(std::string& name) const;
 
 	// return true if the value associated with a name indicates
 	// logical true, which is when the value is not empty and not
@@ -114,6 +114,52 @@ public:
 
 	// get the singleton instance of the state database
 	static StateDatabase* getInstance();
+
+	static std::string BZDB_GRAVITY;
+	static std::string BZDB_TANKWIDTH;
+	static std::string BZDB_TANKLENGTH;
+	static std::string BZDB_TANKHEIGHT;
+	static std::string BZDB_TANKRADIUS;
+	static std::string BZDB_TANKSPEED;
+	static std::string BZDB_TANKANGVEL;
+	static std::string BZDB_JUMPVELOCITY;
+	static std::string BZDB_SHOTSPEED;
+	static std::string BZDB_RELOADTIME;
+	static std::string BZDB_FLAGRADIUS;
+	static std::string BZDB_IDENTIFYRANGE;
+	static std::string BZDB_WORLDSIZE;
+	static std::string BZDB_MUZZLEHEIGHT;
+	static std::string BZDB_MUZZLEFRONT;
+	static std::string BZDB_TELEPORTTIME;
+	static std::string BZDB_EXPLODETIME;
+	static std::string BZDB_BURROWDEPTH;
+	static std::string BZDB_BURROWSPEEDAD;
+	static std::string BZDB_BURROWANGULARAD;
+	static std::string BZDB_OBESEFACTOR;
+	static std::string BZDB_TINYFACTOR;
+	static std::string BZDB_THIEFTINYFACTOR;
+	static std::string BZDB_MOMENTUMLINACC;
+	static std::string BZDB_MOMENTUMANGACC;
+	static std::string BZDB_VELOCITYAD;
+	static std::string BZDB_ANGULARAD;
+	static std::string BZDB_THIEFVELAD;
+	static std::string BZDB_SRRADIUSMULT;
+	static std::string BZDB_RFIREADLIFE;
+	static std::string BZDB_RFIREADRATE;
+	static std::string BZDB_RFIREADVEL;
+	static std::string BZDB_GMISSILEANG;
+	static std::string BZDB_SHOCKINRADIUS;
+	static std::string BZDB_SHOCKOUTRADIUS;
+	static std::string BZDB_SHOCKADLIFE;
+	static std::string BZDB_MGUNADLIFE;
+	static std::string BZDB_MGUNADVEL;
+	static std::string BZDB_MGUNADRATE;
+	static std::string BZDB_LASERADLIFE;
+	static std::string BZDB_LASERADVEL;
+	static std::string BZDB_LASERADRATE;
+	static std::string BZDB_THIEFADLIFE;
+	static std::string BZDB_THIEFADSHOTVEL;
+	static std::string BZDB_THIEFADRATE;
 
 private:
 	StateDatabase();

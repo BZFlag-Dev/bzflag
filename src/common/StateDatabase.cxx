@@ -21,6 +21,53 @@
 #include <stack>
 #include <stdexcept>
 
+std::string StateDatabase::BZDB_GRAVITY = std::string("_gravity");
+std::string StateDatabase::BZDB_TANKWIDTH = std::string("_tankWidth");
+std::string StateDatabase::BZDB_TANKLENGTH = std::string("_tankLength");
+std::string StateDatabase::BZDB_TANKHEIGHT = std::string("_tankHeight");
+std::string StateDatabase::BZDB_TANKRADIUS = std::string("_tankRadius");
+std::string StateDatabase::BZDB_TANKSPEED = std::string("_tankSpeed");
+std::string StateDatabase::BZDB_TANKANGVEL = std::string("_tankAngVel");
+std::string StateDatabase::BZDB_JUMPVELOCITY = std::string("_jumpVelocity");
+std::string StateDatabase::BZDB_SHOTSPEED = std::string("_shotSpeed");
+std::string StateDatabase::BZDB_RELOADTIME = std::string("_reloadTime");
+std::string StateDatabase::BZDB_FLAGRADIUS = std::string("_flagRadius");
+std::string StateDatabase::BZDB_IDENTIFYRANGE = std::string("_identifyRange");
+std::string StateDatabase::BZDB_WORLDSIZE = std::string("_worldSize");
+std::string StateDatabase::BZDB_MUZZLEHEIGHT = std::string("_muzzleHeight");
+std::string StateDatabase::BZDB_MUZZLEFRONT = std::string("_muzzleFront");
+std::string StateDatabase::BZDB_TELEPORTTIME = std::string("_teleportTime");
+std::string StateDatabase::BZDB_EXPLODETIME = std::string("_explodeTime");
+std::string StateDatabase::BZDB_BURROWDEPTH = std::string("_burrowDepth");
+std::string StateDatabase::BZDB_BURROWSPEEDAD = std::string("_burrowSpeedAd");
+std::string StateDatabase::BZDB_BURROWANGULARAD = std::string("_burrowAngularAd");
+std::string StateDatabase::BZDB_OBESEFACTOR = std::string("_obeseFactor");
+std::string StateDatabase::BZDB_TINYFACTOR = std::string("_tinyFactor");
+std::string StateDatabase::BZDB_THIEFTINYFACTOR = std::string("_thiefTinyFactor");
+std::string StateDatabase::BZDB_MOMENTUMLINACC = std::string("_momentumLinAcc");
+std::string StateDatabase::BZDB_MOMENTUMANGACC = std::string("_momentumAngAcc");
+std::string StateDatabase::BZDB_VELOCITYAD = std::string("_velocityAd");
+std::string StateDatabase::BZDB_ANGULARAD = std::string("_angularAd");
+std::string StateDatabase::BZDB_THIEFVELAD = std::string("_thiefVelAd");
+std::string StateDatabase::BZDB_SRRADIUSMULT = std::string("_srRadiusMult");
+std::string StateDatabase::BZDB_RFIREADLIFE = std::string("_rFireAdLife");
+std::string StateDatabase::BZDB_RFIREADRATE = std::string("_rFireAdRate");
+std::string StateDatabase::BZDB_RFIREADVEL = std::string("_rFireAdVel");
+std::string StateDatabase::BZDB_GMISSILEANG = std::string("_gMissileAng");
+std::string StateDatabase::BZDB_SHOCKINRADIUS = std::string("_shockInRadius");
+std::string StateDatabase::BZDB_SHOCKOUTRADIUS = std::string("_shockOutRadius");
+std::string StateDatabase::BZDB_SHOCKADLIFE = std::string("_shockAdLife");
+std::string StateDatabase::BZDB_MGUNADLIFE = std::string("_mGunAdLife");
+std::string StateDatabase::BZDB_MGUNADVEL = std::string("_mGunAdVel");
+std::string StateDatabase::BZDB_MGUNADRATE = std::string("_mGunAdRate");
+std::string StateDatabase::BZDB_LASERADLIFE = std::string("_laserAdLife");
+std::string StateDatabase::BZDB_LASERADVEL = std::string("_laserAdVel");
+std::string StateDatabase::BZDB_LASERADRATE = std::string("_laserAdRate");
+std::string StateDatabase::BZDB_THIEFADLIFE = std::string("_thiefAdLife");
+std::string StateDatabase::BZDB_THIEFADSHOTVEL = std::string("_thiefAdShotVel");
+std::string StateDatabase::BZDB_THIEFADRATE = std::string("_thiefAdRate");
+
+
 //
 // StateDatabase::Item
 //
@@ -146,7 +193,7 @@ std::string				StateDatabase::get(const std::string& name) const
 		return index->second.value;
 }
 
-float					StateDatabase::eval(std::string name) const
+float					StateDatabase::eval(std::string& name) const
 {
 	static std::vector<std::string> variables;
 

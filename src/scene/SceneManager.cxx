@@ -338,12 +338,12 @@ void					SceneManager::updateSkyStuff()
 	timeChanged = false;
 
 	// get the latitude and longitude
-	float latitude = BZDB->eval(s_infoLatitude);
+	float latitude = BZDB->eval(std::string(s_infoLatitude));
 	if (latitude < -90.0f)
 		latitude = -90.0f;
 	else if (latitude > 90.0f)
 		latitude = 90.0f;
-	float longitude = fmodf(BZDB->eval(s_infoLongitude), 360.0f);
+	float longitude = fmodf(BZDB->eval(std::string(s_infoLongitude)), 360.0f);
 
 	// get position of sun and moon at 0,0 lat/long
 	float sunDir[3], moonDir[3];
