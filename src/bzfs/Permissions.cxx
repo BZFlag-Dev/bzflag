@@ -200,8 +200,7 @@ bool PlayerAccessInfo::hasPerm(PlayerAccessInfo::AccessPerm right) {
   if (explicitAllows.test(right))
     return true;
 
-  for (groups_t::iterator itr=groups.begin(), end=groups.end();
-       itr!=end; ++itr) {
+  for (std::vector<std::string>::iterator itr=groups.begin(); itr!=groups.end(); ++itr) {
     PlayerAccessMap::iterator group = groupAccess.find(*itr);
     if (group != groupAccess.end() && group->second.explicitAllows.test(right))
       return true;
@@ -457,7 +456,7 @@ bool PlayerAccessInfo::writePermsFile(const std::string &filename)
   if (!out)
     return false;
   PlayerAccessMap::iterator itr = userDatabase.begin();
-  groups_t::iterator group;
+  std::vector<std::string>::iterator group;
   while (itr != userDatabase.end()) {
     out << itr->first << std::endl;
     group = itr->second.groups.begin();
