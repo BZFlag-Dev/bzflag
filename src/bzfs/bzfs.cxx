@@ -6371,12 +6371,12 @@ int main(int argc, char **argv)
     BZDB->setPermission(globalDBItems[gi].name, globalDBItems[gi].permission);
     BZDB->addCallback(std::string(globalDBItems[gi].name), onGlobalChanged, (void*) NULL);
   }
+  CMDMGR->add("set", cmdSet, "set [<name> <value>]");
 
   // parse arguments
   parse(argc, argv, *clOptions);
 
   if (clOptions->bzdbVars.length() > 0) {
-    CMDMGR->add("set", cmdSet, "set [<name> <value>]");
     CFGMGR->read(clOptions->bzdbVars);
   }
 
