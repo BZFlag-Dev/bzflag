@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2003 Tim Riker
+ * Copyright (c) 1993 - 2004 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -13,7 +13,7 @@
 #ifndef __BZFS_H__
 #define __BZFS_H__
 
-static const char copyright[] = "Copyright (c) 1993 - 2003 Tim Riker";
+static const char copyright[] = "Copyright (c) 1993 - 2004 Tim Riker";
 
 #ifdef _MSC_VER
 #pragma warning( 4 : 4786 )
