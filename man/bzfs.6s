@@ -47,6 +47,7 @@ bzfs \- BZFlag game server
 [\fB\-sw \fIcount\fR]
 [\fB\-synctime\fR]
 [\fB\-t\fR]
+[\fB\-tftimeout \fItime-limit\fR]
 [\fB\-time \fItime-limit\fR]
 [\fB\-timemanual\fR]
 [\fB\-tk\fR]
@@ -253,6 +254,13 @@ the clients.
 .TP
 .B -t
 Adds teleporters to the game.
+.TP
+\fB\-tftimeout\fI time-limit\fR
+If the last player in a team leaves while someone else is carrying the team
+flag, the team flag will not reset until it is captured, or until the player
+drops it and it is left alone for some time. This option specifies the number
+of seconds that the flag should be left alone before it is reset. The 
+default value is 30.
 .TP
 \fB\-time\fI time-limit\fR
 Sets a time limit on the game to \fItime-limit\fR.  The game will be
