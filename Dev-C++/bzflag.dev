@@ -9,7 +9,7 @@ CppCompiler=-D_DEVCPP=1 -D__GNUWIN32__ -D_WINDOWS -DWIN32 -D_MBCS_@@_ -Wall -Wer
 Includes=..\Dev-C++;..\include;..\Dev-C++
 Linker=-lmingw32 -lstdc++ -lsdl -lws2_32 -ldsound -lwinmm -lglu32 -lopengl32 -lkernel32 -luser32 -lgdi32 -lwinspool -lcomdlg32 -ladvapi32 -lshell32 -lole32 -loleaut32 -luuid -lodbc32 -lodbccp32_@@_
 Libs=
-UnitCount=336
+UnitCount=337
 Folders="Header Files","Header Files/bzflag","Header Files/common","Header Files/net","Header Files/regex","Header Files/zlib","Resource Files","Source Files","Source Files/bzflag","Source Files/common","Source Files/models","Source Files/net","Source Files/regex","Source Files/zlib"
 ObjFiles=
 PrivateResource=bzflag_private.rc
@@ -3421,6 +3421,16 @@ BuildCmd=
 FileName=..\src\game\PhysicsDriver.cxx
 CompileCpp=1
 Folder=Source Files/common
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit337]
+FileName=..\src\bzflag\TrackMarks.cxx
+CompileCpp=1
+Folder=Source Files/bzflag
 Compile=1
 Link=1
 Priority=1000
