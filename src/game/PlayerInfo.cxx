@@ -189,6 +189,8 @@ void PlayerInfo::cleanCallSign() {
   // strip any non-printable characters and ' and " from callsign
   do {
     if (isprint(*sp) && (*sp != '\'') && (*sp != '"')) {
+      if (isspace(*sp) && *sp != ' ' && *sp != '\t') //a moded client sent a weird whitespace
+        *sp = ' ';
       *tp++ = *sp;
     }
   } while (*++sp);
