@@ -368,14 +368,14 @@ bool Record::sendStats (int playerIndex)
       saveTime = (float)diff / 1000000.0f;
     }
     snprintf (buffer, MessageLen,
-              "  buffered: %i bytes / %i packets / %.3f seconds",
+              "  buffered: %i bytes / %i packets / %.1f seconds",
               RecordBuf.byteCount, RecordBuf.packetCount, saveTime);
   }
   else {
     RRtime diff = getRRtime() - RecordStartTime;
     saveTime = (float)diff / 1000000.0f;
     snprintf (buffer, MessageLen,
-              "  saved: %i bytes / %i packets / %.3f seconds",
+              "  saved: %i bytes / %i packets / %.1f seconds",
               RecordFileBytes, RecordFilePackets, saveTime);   
   }
   sendMessage (ServerPlayer, playerIndex, buffer, true);
@@ -777,7 +777,7 @@ bool Replay::loadFile(int playerIndex, const char *filename)
   sendMessage (ServerPlayer, playerIndex, buffer, true);
   snprintf (buffer, MessageLen, "  server:    %s", header.appVersion);
   sendMessage (ServerPlayer, playerIndex, buffer, true);
-  snprintf (buffer, MessageLen, "  seconds:   %.3f",
+  snprintf (buffer, MessageLen, "  seconds:   %.1f",
             (float)header.filetime/1000000.0f);
   sendMessage (ServerPlayer, playerIndex, buffer, true);
   
@@ -842,7 +842,7 @@ bool Replay::sendFileList(int playerIndex)
     if (file != NULL) {
       RRtime filetime;
       if (loadFileTime (&filetime, file)) {
-        snprintf (buffer, MessageLen, "file:  %-24s  [%.3f secs]",
+        snprintf (buffer, MessageLen, "file:  %-20s  [%9.1f seconds]",
                   de->d_name, (float)filetime/1000000.0f);
         sendMessage (ServerPlayer, playerIndex, buffer, true);
         count++;
@@ -970,7 +970,7 @@ bool Replay::skip(int playerIndex, int seconds)
   // print the amount of time skipped
   RRtime diff = ReplayPos->timestamp - nowtime;
   char buffer[MessageLen];
-  snprintf (buffer, MessageLen, "Skipping %.3f seconds (asked %i)",
+  snprintf (buffer, MessageLen, "Skipping %.1f seconds (asked %i)",
            (float)diff/1000000.0f, seconds);
   sendMessage (ServerPlayer, playerIndex, buffer, true);
   
@@ -1082,7 +1082,7 @@ bool Replay::sendPackets ()
     RRtime diff = (ReplayPos->timestamp - ReplayPos->prev->timestamp);
     if (diff > (10 * 1000000)) {
       char buffer[MessageLen];
-      sprintf (buffer, "No activity for the next %.3f seconds", 
+      sprintf (buffer, "No activity for the next %.1f seconds", 
                (float)diff / 1000000.0f);
       sendMessage (ServerPlayer, AllPlayers, buffer);
     }
