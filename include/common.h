@@ -65,7 +65,7 @@ inline void W32_DEBUG_TRACE (const char*) {return;}
 #endif
 
 // some platforms don't have float versions of the math library
-#if defined(_old_linux_) || defined(__APPLE__) || defined(sun)
+#if defined(_old_linux_) || defined(sun)
 #define	asinf		(float)asin
 #define	atanf		(float)atan
 #define	atan2f		(float)atan2
