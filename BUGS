@@ -1,6 +1,14 @@
 recent bugs
 ------------
 
+- if a modified client sends an invalid id back to the server, the invalid id
+  gets propagated to all clients, crashing everyone during unpack() with a
+  variety of nasty results.  simple to reproduce, modify the
+	ShotPath.cxx:FiringInfo() shot.id = uint16_t(id); line to be some high 
+  number and then shoot yourself.  (fhffhqvb reported this)  1) Server should
+  check that id's are valid to not propagate garbage and 2) Clients should
+  not have actually crashed in unpack() regardless..  
+
 - On a FFA game, where no purple was allowed a Team size of 65535 was displayed for Purple. 
 
 - Thief delays shooting on theft by firing shots in the ether, this causes display
