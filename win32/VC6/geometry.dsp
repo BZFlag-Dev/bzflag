@@ -85,76 +85,68 @@ LIB32=link.exe -lib
 # Begin Group "Source Files"
 
 # PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
-# Begin Group "hitank"
+# Begin Group "tank"
 
 # PROP Default_Filter ""
 # Begin Source File
 
-SOURCE=..\..\src\geometry\models\hitank\barrel.cxx
+SOURCE=..\..\src\geometry\models\tank\high_barrel.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\src\geometry\models\hitank\body.cxx
+SOURCE=..\..\src\geometry\models\tank\high_body.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\src\geometry\models\hitank\ltread.cxx
+SOURCE=..\..\src\geometry\models\tank\high_ltread.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\src\geometry\models\hitank\rtread.cxx
+SOURCE=..\..\src\geometry\models\tank\high_rtread.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\src\geometry\models\hitank\turret.cxx
-# End Source File
-# End Group
-# Begin Group "medtank"
-
-# PROP Default_Filter ""
-# Begin Source File
-
-SOURCE=..\..\src\geometry\models\medtank\barrel.cxx
+SOURCE=..\..\src\geometry\models\tank\high_turret.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\src\geometry\models\medtank\body.cxx
+SOURCE=..\..\src\geometry\models\tank\low_barrel.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\src\geometry\models\medtank\ltread.cxx
+SOURCE=..\..\src\geometry\models\tank\low_body.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\src\geometry\models\medtank\rtread.cxx
+SOURCE=..\..\src\geometry\models\tank\low_ltread.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\src\geometry\models\medtank\turret.cxx
-# End Source File
-# End Group
-# Begin Group "lowtank"
-
-# PROP Default_Filter ""
-# Begin Source File
-
-SOURCE=..\..\src\geometry\models\lowtank\barrel.cxx
+SOURCE=..\..\src\geometry\models\tank\low_rtread.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\src\geometry\models\lowtank\body.cxx
+SOURCE=..\..\src\geometry\models\tank\low_turret.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\src\geometry\models\lowtank\ltread.cxx
+SOURCE=..\..\src\geometry\models\tank\medium_barrel.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\src\geometry\models\lowtank\rtread.cxx
+SOURCE=..\..\src\geometry\models\tank\medium_body.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\src\geometry\models\lowtank\turret.cxx
+SOURCE=..\..\src\geometry\models\tank\medium_ltread.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\geometry\models\tank\medium_rtread.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\geometry\models\tank\medium_turret.cxx
 # End Source File
 # End Group
 # Begin Source File

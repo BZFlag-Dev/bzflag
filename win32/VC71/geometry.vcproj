@@ -539,180 +539,52 @@
 				</FileConfiguration>
 			</File>
 			<Filter
-				Name="hitank"
+				Name="Tank"
 				Filter="">
 				<File
-					RelativePath="..\..\src\geometry\models\hitank\barrel.cxx">
+					RelativePath="..\..\src\geometry\models\tank\high_barrel.cxx">
 				</File>
 				<File
-					RelativePath="..\..\src\geometry\models\hitank\body.cxx">
+					RelativePath="..\..\src\geometry\models\tank\high_body.cxx">
 				</File>
 				<File
-					RelativePath="..\..\src\geometry\models\hitank\ltread.cxx">
+					RelativePath="..\..\src\geometry\models\tank\high_ltread.cxx">
 				</File>
 				<File
-					RelativePath="..\..\src\geometry\models\hitank\rtread.cxx">
+					RelativePath="..\..\src\geometry\models\tank\high_rtread.cxx">
 				</File>
 				<File
-					RelativePath="..\..\src\geometry\models\hitank\turret.cxx">
-				</File>
-			</Filter>
-			<Filter
-				Name="medtank"
-				Filter="">
-				<File
-					RelativePath="..\..\src\geometry\models\medtank\barrel.cxx">
-					<FileConfiguration
-						Name="Release|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="$(IntDir)/$(InputName)1.obj"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="$(IntDir)/$(InputName)1.obj"/>
-					</FileConfiguration>
+					RelativePath="..\..\src\geometry\models\tank\high_turret.cxx">
 				</File>
 				<File
-					RelativePath="..\..\src\geometry\models\medtank\body.cxx">
-					<FileConfiguration
-						Name="Release|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="$(IntDir)/$(InputName)1.obj"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="$(IntDir)/$(InputName)1.obj"/>
-					</FileConfiguration>
+					RelativePath="..\..\src\geometry\models\tank\low_barrel.cxx">
 				</File>
 				<File
-					RelativePath="..\..\src\geometry\models\medtank\ltread.cxx">
-					<FileConfiguration
-						Name="Release|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="$(IntDir)/$(InputName)1.obj"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="$(IntDir)/$(InputName)1.obj"/>
-					</FileConfiguration>
+					RelativePath="..\..\src\geometry\models\tank\low_body.cxx">
 				</File>
 				<File
-					RelativePath="..\..\src\geometry\models\medtank\rtread.cxx">
-					<FileConfiguration
-						Name="Release|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="$(IntDir)/$(InputName)1.obj"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="$(IntDir)/$(InputName)1.obj"/>
-					</FileConfiguration>
+					RelativePath="..\..\src\geometry\models\tank\low_ltread.cxx">
 				</File>
 				<File
-					RelativePath="..\..\src\geometry\models\medtank\turret.cxx">
-					<FileConfiguration
-						Name="Release|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="$(IntDir)/$(InputName)1.obj"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="$(IntDir)/$(InputName)1.obj"/>
-					</FileConfiguration>
-				</File>
-			</Filter>
-			<Filter
-				Name="lowtank"
-				Filter="">
-				<File
-					RelativePath="..\..\src\geometry\models\lowtank\barrel.cxx">
-					<FileConfiguration
-						Name="Release|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="$(IntDir)/$(InputName)2.obj"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="$(IntDir)/$(InputName)2.obj"/>
-					</FileConfiguration>
+					RelativePath="..\..\src\geometry\models\tank\low_rtread.cxx">
 				</File>
 				<File
-					RelativePath="..\..\src\geometry\models\lowtank\body.cxx">
-					<FileConfiguration
-						Name="Release|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="$(IntDir)/$(InputName)2.obj"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="$(IntDir)/$(InputName)2.obj"/>
-					</FileConfiguration>
+					RelativePath="..\..\src\geometry\models\tank\low_turret.cxx">
 				</File>
 				<File
-					RelativePath="..\..\src\geometry\models\lowtank\ltread.cxx">
-					<FileConfiguration
-						Name="Release|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="$(IntDir)/$(InputName)2.obj"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="$(IntDir)/$(InputName)2.obj"/>
-					</FileConfiguration>
+					RelativePath="..\..\src\geometry\models\tank\medium_barrel.cxx">
 				</File>
 				<File
-					RelativePath="..\..\src\geometry\models\lowtank\rtread.cxx">
-					<FileConfiguration
-						Name="Release|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="$(IntDir)/$(InputName)2.obj"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="$(IntDir)/$(InputName)2.obj"/>
-					</FileConfiguration>
+					RelativePath="..\..\src\geometry\models\tank\medium_body.cxx">
 				</File>
 				<File
-					RelativePath="..\..\src\geometry\models\lowtank\turret.cxx">
-					<FileConfiguration
-						Name="Release|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="$(IntDir)/$(InputName)2.obj"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="$(IntDir)/$(InputName)2.obj"/>
-					</FileConfiguration>
+					RelativePath="..\..\src\geometry\models\tank\medium_ltread.cxx">
+				</File>
+				<File
+					RelativePath="..\..\src\geometry\models\tank\medium_rtread.cxx">
+				</File>
+				<File
+					RelativePath="..\..\src\geometry\models\tank\medium_turret.cxx">
 				</File>
 			</Filter>
 		</Filter>
