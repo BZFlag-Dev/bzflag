@@ -13,8 +13,9 @@
 #include "common.h"
 #include "Octree.h"
 #include "Intersect.h"
+#include "Occluder.h"
 
-static const int fullListBreak = 3;
+static const int fullListBreak = 3; // FIXME
 
 static int maxDepth = 0;
 static int minElements = 16;
@@ -23,12 +24,14 @@ static int leafNodes = 0;
 static int totalNodes = 0;
 static int totalElements = 0;
 
-// FIXME ? shared static variables
-// won't work for multiple instances of Octree
+// FIXME - make them class static members once the memory is flattened
 static int CullListSize = 0;
 static int CullListCount = 0;
 static SceneNode** CullList = NULL;
 static const Frustum* CullFrustum = NULL;
+
+static OccluderManager OcclMgr;
+
 
 #if (USE_REAL_INLINE)
 inline static void addCullListNode (SceneNode* node)
@@ -74,7 +77,6 @@ Octree::Octree()
   CullFrustum = NULL;
   CullListSize = 0;
   CullListCount = 0;
-  
   return;
 }
 
@@ -94,6 +96,7 @@ void Octree::clear ()
   CullFrustum = NULL;
   CullListSize = 0;
   CullListCount = 0;
+  OcclMgr.clear();
   return;
 }
 
@@ -113,26 +116,23 @@ void Octree::addNodes (SceneNode** list, int listSize, int depth, int elements)
   int i;
   float mins[3]; // minimum extents
   float maxs[3]; // maximum extents
-  float width;
 
-  getExtents (mins, maxs, width, list, listSize);
+  getExtents (mins, maxs, list, listSize);
+
+  leafNodes = 0;
+  totalNodes = 0;
+  totalElements = 0;
   
-  float center[3];
-  for (i = 0; i < 3; i++) {
-    center[i] = mins[i] + (0.5f * (maxs[i] - mins[i]));
-  }
-  // for bzflag, the top octants probably won't get used much
-  center[2] = mins[2] + (0.5f * width) - 1.0f;
+  // making babies
+  root = new OctreeNode(0, mins, maxs, list, listSize);
   
-  DEBUG2 ("Octree width = %f\n", width);
+  DEBUG2 ("Octree scene nodes = %i\n", listSize);
   for (i = 0; i < 3; i++) {
     DEBUG2 ("  extent[%i] = %f, %f\n", i, mins[i], maxs[i]);
   }
-  DEBUG2 ("  center = %f, %f, %f\n", center[0], center[1], center[2]);
-  DEBUG2 ("Octree scene nodes = %i\n", listSize);
-
-  // making babies
-  root = new OctreeNode(center, width, 0, list, listSize);
+  DEBUG2 ("Octree leaf nodes  = %i\n", leafNodes);
+  DEBUG2 ("Octree total nodes = %i\n", totalNodes);
+  DEBUG2 ("Octree total elements = %i\n", totalElements);
   
   return;
 }
@@ -155,16 +155,21 @@ int Octree::getFrustumList (SceneNode** list, int listSize,
   CullFrustum = frustum;
   CullList = list;
   CullListCount = 0;
+
+  // update the occluders before using them
+  OcclMgr.update(CullFrustum);
   
   // get the nodes
   DEBUG4 ("Octree::getFrustumList: root count = %i\n", root->getCount());
   root->getFrustumList ();
 
+  OcclMgr.select(CullList, CullListCount);
+  
   return CullListCount;
 }
 
 
-void Octree::getExtents (float* mins, float* maxs, float& width,
+void Octree::getExtents (float* mins, float* maxs,
                          SceneNode** list, int listSize)
 {
   int i;
@@ -189,25 +194,46 @@ void Octree::getExtents (float* mins, float* maxs, float& width,
     }
   }
 
-  width = -MAXFLOAT;
+  // find the longest axis
+  float width = -MAXFLOAT;
   for (i = 0; i < 3; i++) {
     float axisWidth = maxs[i] - mins[i];
     if (axisWidth > width) {
       width = axisWidth;
     }
   }
-    
+
+  // make it a cube, with Z on its minimum
+  for (i = 0; i < 2; i++) {
+    const float axisWidth = maxs[i] - mins[i];
+    if (axisWidth < width) {
+      const float adjust = 0.5f * (width - axisWidth);
+      mins[i] = mins[i] - adjust;
+      maxs[i] = maxs[i] + adjust;
+    }
+  }
+  maxs[2] = mins[2] + width;
+
   return;
 }
 
 
-void Octree::draw (DrawLineFunc drawLines)
+void Octree::draw () const
 {
   if (!root) {
     return;
   }
 
-  root->draw (drawLines);
+  glDisable (GL_TEXTURE_2D);
+  
+  // CullFrustum needs to still be valid here
+  // It should still exist in SceneRender.cxx
+  // when this function is called.
+  root->draw ();
+  OcclMgr.update(CullFrustum);
+  OcclMgr.draw();  
+
+  glEnable (GL_TEXTURE_2D);
   
   return;
 }
@@ -218,54 +244,142 @@ void Octree::draw (DrawLineFunc drawLines)
 // The Nodes
 //
 
-OctreeNode::OctreeNode(const float* center, float width,
-                       unsigned char _depth,
+OctreeNode::OctreeNode(unsigned char _depth,
+                       const float* _mins, const float *_maxs,
                        SceneNode** _list, int _listSize)
 {
   int i;
 
-  if (_depth == 0) {  
-    leafNodes = 0;
-    totalNodes = 0;
-  }
-  
   depth = _depth;
-  count = 0;
   
   for (i = 0; i < 8; i++) {
     children[i] = NULL;
   }
   childCount = 0;
   
-  const float hw = width * 0.5f;
-  for (i = 0; i < 3; i++) {
-    mins[i] = center[i] - hw;
-    maxs[i] = center[i] + hw;
-  }
-
   // copy the incoming list  
   const int listBytes = _listSize * sizeof (SceneNode*);
   list = (SceneNode**) malloc (listBytes);
   memcpy (list, _list, listBytes);
 
+  // copy the extents, and make a slighty puffed up version
+  float testMins[3];
+  float testMaxs[3];
+  for (i = 0; i < 3; i++) {
+    mins[i] = _mins[i];
+    maxs[i] = _maxs[i];
+    testMins[i] = mins[i] - 0.1f;
+    testMaxs[i] = maxs[i] + 0.1f;
+  }
+
   // find all of the intersecting nodes  
   listSize = 0;
   for (i = 0; i < _listSize; i++) {
     SceneNode* node = _list[i];
-    if (node->inAxisBox (mins, maxs)) {
+    if (node->inAxisBox (testMins, testMaxs)) {
       list[listSize] = node;
       listSize++;
     }
   }
+  
+  // count will remain as the total numbers of
+  // scene nodes that intersect with this cell
   count = listSize;
   
   // resize the list to save space
   list = (SceneNode**) realloc (list, count * sizeof (SceneNode*));
 
+  // return if this is a leaf node
+  if (((int)depth >= maxDepth) || (listSize <= minElements)) {
+    DEBUG4 ("LEAF NODE: depth = %d, items = %i\n", depth, count);
+    leafNodes++;
+    totalNodes++;
+    totalElements += listSize;
+    resizeCell();
+    return;
+  }
+
+  // sow the seeds
+  depth++;
+  makeChildren();
+  
+  // non NULLs first
+  squeezeChildren (children);
+  
+  // resize this branch cell
+  resizeCell();
+
+  // leave some lists for FullyVisible grabs
+  if (((depth + 1) % fullListBreak) != 0) {
+    listSize = 0;
+    free (list);
+    list = NULL;
+  }
+  else {
+    totalElements += listSize;
+  }
+  
+  // tally ho
+  totalNodes++;
+
+  DEBUG4 ("BRANCH NODE: depth = %d, children = %i\n", depth, childCount);
+  
+  return;
+}
+
+
+void OctreeNode::makeChildren ()
+{
+  int side[3];    // the axis sides  (0 or 1)
+  float cmins[3];
+  float cmaxs[3];
+  float center[3];
+
+  // setup the center point
+  for (int i = 0; i < 3; i++) {
+    center[i] = 0.5f * (maxs[i] + mins[i]);
+  }
+  
+  const float* extentSet[3] = { mins, center, maxs };
+
+  for (side[0] = 0; side[0] < 2; side[0]++) {
+    for (side[1] = 0; side[1] < 2; side[1]++) {
+      for (side[2] = 0; side[2] < 2; side[2]++) {
+
+        // calculate the child's extents
+        for (int a = 0; a < 3; a++) {
+          cmins[a] = extentSet[side[a]+0][a];
+          cmaxs[a] = extentSet[side[a]+1][a];
+        }
+        
+        int kid = side[0] + (2 * side[1]) + (4 * side[2]);
+        
+        children[kid] = new OctreeNode (depth, cmins, cmaxs, list, count);
+
+        if (children[kid]->getCount() == 0) {
+          delete children[kid];
+          children[kid] = NULL;
+        }
+        else {
+          childCount++;
+        }
+      }
+    }
+  }
+
+  return;
+}
+
+
+void OctreeNode::resizeCell()
+{
+  int i;
+
   // resize the cell
   float absMins[3] = { +MAXFLOAT, +MAXFLOAT, +MAXFLOAT};
   float absMaxs[3] = { -MAXFLOAT, -MAXFLOAT, -MAXFLOAT};
   float tmpMins[3], tmpMaxs[3];
+
   for (i = 0; i < count; i++) {
     SceneNode* node = list[i];
     node->getExtents (tmpMins, tmpMaxs);
@@ -283,71 +397,6 @@ OctreeNode::OctreeNode(const float* center, float width,
       maxs[i] = absMaxs[i];
   }
 
-  if (((int)depth >= maxDepth) || (listSize <= minElements)) {
-    DEBUG4 ("FINAL NODE: depth = %d, items = %i\n", depth, count);
-    leafNodes++;
-    totalNodes++;
-    totalElements += listSize;
-    return;
-  }
-
-  // making babies  
-  for (int x = 0; x < 2; x++) {
-    for (int y = 0; y < 2; y++) {
-      for (int z = 0; z < 2; z++) {
-        float newCenter[3];
-        const float qw = width * 0.25f;
-        int kid = x + (2 * y) + (4 * z);
-        newCenter[0] = center[0] + ((float)(1 - (x * 2)) * qw) ;
-        newCenter[1] = center[1] + ((float)(1 - (y * 2)) * qw) ;
-        newCenter[2] = center[2] + ((float)(1 - (z * 2)) * qw) ;
-
-        children[kid] = new OctreeNode (newCenter, hw, depth + 1, list, count);
-
-        if (children[kid]->getCount() == 0) {
-          delete children[kid];
-          children[kid] = NULL;
-        }
-        else {
-          childCount++;
-        }
-      }
-    }
-  }
-  
-  // clip the top of the box
-  // FIXME - clip all axes & dirs?
-  for (i = 0; i < 4; i++) {
-    if (children[i] != NULL) {
-      break;
-    }
-  }
-  if (i == 4) {
-    maxs[2] = 0.5f * (mins[2] + maxs[2]);
-  }
-    
-  // non NULLs first
-  squeezeChildren (children);
-
-  // leave some lists for FullyVisible grabs
-  if (((depth + 1) % fullListBreak) != 0) {
-    listSize = 0;
-    free (list);
-    list = NULL;
-  }
-  else {
-    totalElements += listSize;
-  }
-  
-  DEBUG4 ("BRANCH NODE: depth = %d, children = %i\n", depth, childCount);
-  totalNodes++;
-
-  if (_depth == 0) {  
-    DEBUG2 ("Octree leaf nodes  = %i\n", leafNodes);
-    DEBUG2 ("Octree total nodes = %i\n", totalNodes);
-    DEBUG2 ("Octree total elements = %i\n", totalElements);
-  }
-  
   return;
 }
 
@@ -369,12 +418,18 @@ void OctreeNode::getFrustumList () const
   if (level == Outside) {
     return;
   }
-  else if (level == Contained) {
+
+  if (OcclMgr.occlude (mins, maxs, count)) {
+    return;
+  }
+  
+  if (level == Contained) {
     getFullyVisible ();
     return;
   }
   
-  // this cell is only partially contained within the frustum
+  // this cell is only partially contained within
+  // the frustum and is not being fully occluded
     
   if (childCount > 0) {
     for (int i = 0; i < childCount; i++) {
@@ -394,9 +449,29 @@ void OctreeNode::getFrustumList () const
   return;
 }
 
+
 void OctreeNode::getFullyVisible () const
 {
+  if ((childCount > 0) && (((depth + 1) % fullListBreak) != 0)) {
+    for (int i = 0; i < childCount; i++) {
+      children[i]->getFullyVisible ();
+    }
+  }
+  else {
+    for (int i = 0; i < listSize; i++) {
+      SceneNode* node = list[i];
+      SceneNode::CullState& state = node->octreeState;
+      if (state == SceneNode::OctreeCulled) {
+        addCullListNode (node);
+      }
+      state = SceneNode::OctreeVisible;
+    }
+  }
+  return;
+}
 /*
+  // FIXME - faster then the recursive version?
+
   static struct NodeStack {
     OctreeNode* node;
     int child;
@@ -408,8 +483,6 @@ void OctreeNode::getFullyVisible () const
   level = 0;
   nodeStack[0].child = 0;
   working = (OctreeNode*) this;
-
-  // FIXME - faster then the recursive version?
 
   while (level >= 0) {
     childNum = nodeStack[level].child;
@@ -434,57 +507,53 @@ void OctreeNode::getFullyVisible () const
     }
   }
 */  
-  if ((childCount > 0) && (((depth + 1) % fullListBreak) != 0)) {
-    for (int i = 0; i < childCount; i++) {
-      children[i]->getFullyVisible ();
-    }
-  }
-  else {
-    for (int i = 0; i < listSize; i++) {
-      SceneNode* node = list[i];
-      SceneNode::CullState& state = node->octreeState;
-      if (state == SceneNode::OctreeCulled) {
-        addCullListNode (node);
-      }
-      state = SceneNode::OctreeVisible;
-    }
-  }
+
+void OctreeNode::getExtents(float* _mins, float* _maxs) const
+{
+  memcpy (_mins, mins, 3 * sizeof(float));
+  memcpy (_maxs, maxs, 3 * sizeof(float));
   return;
 }
 
-/*
-void OctreeNode::getFullyVisible () const
+void OctreeNode::draw ()
 {
-  if (childCount > 0) {
-    for (int i = 0; i < childCount; i++) {
-      children[i]->getFullyVisible ();
-    }
-  }
-  else {
-    for (int i = 0; i < listSize; i++) {
-      SceneNode* node = list[i];
-      if (node->octreeState == SceneNode::OctreeCulled) {
-        addCullListNode (node);
-      }
-      node->octreeState = SceneNode::OctreeVisible;
-    }
-  }
-  return;
-}
-*/
-
-void OctreeNode::draw (DrawLineFunc drawLines)
-{
+  GLfloat red[4] = {1.0f, 0.0f, 0.0f, 0.75f};    // red
+  GLfloat blue[4] = {0.0f, 0.0f, 1.0f, 0.75f};   // blue
+  GLfloat green[4] = {0.0f, 1.0f, 0.0f, 0.75f};  // green
+  GLfloat yellow[4] = {1.0f, 1.0f, 0.0f, 0.75f}; // yellow
+  GLfloat purple[4] = {1.0f, 0.0f, 1.0f, 0.75f}; // purple
+  GLfloat *color = purple;
   int x, y, z, c;
   float points[5][3];
-  bool partial = false;
+  IntersectLevel frustumCull = Contained;
+  bool occludeCull = false;
 
   if (CullFrustum != NULL) {
-    IntersectLevel level = testAxisBoxInFrustum (mins, maxs, CullFrustum);
-    if (level == Partial) {
-      partial = true;
-    }
+    frustumCull = testAxisBoxInFrustum (mins, maxs, CullFrustum);
+    occludeCull = OcclMgr.occludePeek (mins, maxs);
   }
+  
+  // choose the color
+  switch (frustumCull) {
+    case Outside:
+      color = purple;
+      break;
+    case Partial:
+      if (!occludeCull) {
+        color = blue;
+      } else {
+        color = green;
+      }
+      break;
+    case Contained:
+      if (!occludeCull) {
+        color = red;
+      } else {
+        color = yellow;
+      }
+      break;
+  }
+  glColor4fv (color);
   
   const float* extents[2] = { mins, maxs };
   
@@ -498,7 +567,11 @@ void OctreeNode::draw (DrawLineFunc drawLines)
       points[c][2] = extents[z][2];
     }
     memcpy (points[4], points[0], sizeof (points[4]));
-    drawLines (5, points, partial);
+    glBegin (GL_LINE_STRIP);
+    for (int i = 0; i < 5; i++) {
+      glVertex3fv (points[i]);
+    }
+    glEnd ();
   }
 
   // draw the corner edges
@@ -510,12 +583,15 @@ void OctreeNode::draw (DrawLineFunc drawLines)
       points[z][1] = extents[y][1];
       points[z][2] = extents[z][2];
     }
-    drawLines (2, points, partial);
+    glBegin (GL_LINE_STRIP);
+    glVertex3fv (points[0]);
+    glVertex3fv (points[1]);
+    glEnd ();
   }
 
   // draw the kids
   for (c = 0; c < childCount; c++) {
-    children[c]->draw (drawLines);
+    children[c]->draw ();
   }
 
   return;

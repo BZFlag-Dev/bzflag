@@ -681,12 +681,13 @@ bool			testTriPlaneInAxisBox(const float** points,
 
 
 // return level of axis box intersection with Frumstum
-// possible values are Outside, Partial, and Contained
+// possible values are Outside, Partial, and Contained.
+// the frustum plane normals point inwards
 IntersectLevel          testAxisBoxInFrustum(const float* boxMins,
 					     const float* boxMaxs,
 					     const Frustum* frustum)
 {
-  // FIXME - use a sphere test first? 
+  // FIXME - use a sphere vs. cone test first? 
 
   static int s, t;
   static float i[3]; // inside point  (assuming partial)
@@ -716,14 +717,68 @@ IntersectLevel          testAxisBoxInFrustum(const float* boxMins,
     }
     // check the inside length
     len = (p[0] * i[0]) + (p[1] * i[1]) + (p[2] * i[2]) + p[3];
-    if (len < +0.000001f) {
-      return Outside;
+    if (len < -1.0f) {
+      return Outside; // box is fully outside the frustum
     }
 
     // check the outside length
     len = (p[0] * o[0]) + (p[1] * o[1]) + (p[2] * o[2]) + p[3];
-    if (len < -0.000001f) {
-      result = Partial; // partial at best
+    if (len < -1.0f) {
+      result = Partial; // partial containment at best
+    }
+  }
+
+  return result;
+}
+
+
+// return true if the axis aligned bounding box
+// is contained within all of the planes.
+// the occluder plane normals point inwards
+IntersectLevel          testAxisBoxOcclusion(const float* boxMins,
+                                             const float* boxMaxs,
+                                             const float (*planes)[4],  
+                                             int planeCount)
+{
+  static int s, t;
+  static float i[3]; // inside point  (assuming partial)
+  static float o[3]; // outside point (assuming partial)
+  static float len;
+  static const float* p; // the plane
+  IntersectLevel result = Contained;
+
+  for (s = 0; s < planeCount; s++) {
+  
+    p = planes[s];
+
+    // setup the inside/outside corners
+    // this can be determined easily based
+    // on the normal vector for the plane
+    for (t = 0; t < 3; t++) {
+      if (p[t] > 0.0f) {
+        i[t] = boxMaxs[t];
+        o[t] = boxMins[t];
+      } else {
+        i[t] = boxMins[t];
+        o[t] = boxMaxs[t];
+      }
+    }
+
+    // check the inside length
+    len = (p[0] * i[0]) + (p[1] * i[1]) + (p[2] * i[2]) + p[3];
+    if (len < +0.1f) {
+      return Outside; // box is fully outside the occluder
+    }
+
+    // FIXME - if we don't do occlusion by SceneNode,
+    //         then ditch the partial test. This will
+    //         save an extra dot product, and reduce
+    //         the likely number of loops
+
+    // check the outside length
+    len = (p[0] * o[0]) + (p[1] * o[1]) + (p[2] * o[2]) + p[3];
+    if (len < +0.1f) {
+      result =  Partial; // partial containment at best
     }
   }
 

@@ -27,6 +27,7 @@ public:
 	static bool  blend;
 	static bool  texture;
 	static bool  shadows;
+	static bool  zbuffer;
 
 	static float maxLOD;
 	static float tankHeight;

@@ -218,6 +218,30 @@ bool			SceneNode::cull(const ViewFrustum& view) const
   return false;
 }
 
+bool SceneNode::inAxisBox (const float* mins, const float* maxs) const
+{
+  const GLfloat* sphere = getSphere();
+  const float radius = sqrtf (sphere[3]);
+  for (int i = 0; i < 3; i++) {
+    if (((float)sphere[i] + radius) < mins[i]) 
+      return false;
+    if (((float)sphere[i] - radius) > maxs[i]) 
+      return false;
+  }
+  return true;
+}
+
+int SceneNode::getVertexCount () const
+{
+  return 0;
+}
+
+const GLfloat* SceneNode::getVertex (int) const
+{
+  return NULL;
+}
+
+
 //
 // GLfloat2Array
 //
@@ -239,6 +263,7 @@ GLfloat2Array&		GLfloat2Array::operator=(const GLfloat2Array& a)
   }
   return *this;
 }
+
 
 //
 // GLfloat3Array
@@ -262,19 +287,7 @@ GLfloat3Array&		GLfloat3Array::operator=(const GLfloat3Array& a)
   return *this;
 }
 
-bool SceneNode::inAxisBox (const float* mins, const float* maxs) const
-{
-  const GLfloat* sphere = getSphere();
-  const float radius = sqrtf (sphere[3]);
-  for (int i = 0; i < 3; i++) {
-    if (((float)sphere[i] + radius) < mins[i]) 
-      return false;
-    if (((float)sphere[i] - radius) > maxs[i]) 
-      return false;
-  }
-  return true;
-}
-
+        
 // Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***

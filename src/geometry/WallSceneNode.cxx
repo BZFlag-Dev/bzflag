@@ -480,8 +480,8 @@ void			WallSceneNode::splitEdge(const GLfloat* p1,
 void			WallSceneNode::getExtents (float* mins, float* maxs) const
 {
   for (int i = 0; i < 3; i++) {
-    mins[i] = -1234.0f;
-    maxs[i] = +1234.0f;
+    mins[i] = -1234.0f; // crazy numbers, it'd make this function pure
+    maxs[i] = +1234.0f; // virtual, except i'd have to fill in PolyWall, etc..
   }
   return;
 }

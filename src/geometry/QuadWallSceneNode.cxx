@@ -281,6 +281,24 @@ void			QuadWallSceneNode::init(const GLfloat base[3],
 				uRepeats, vRepeats);
   }
 
+  // record extents info
+  int i, j;
+  for (i = 0; i < 3; i++) {
+    mins[i] = +MAXFLOAT;
+    maxs[i] = -MAXFLOAT;
+  }
+  for (i = 0; i < 4; i++) {
+    const float* point = getVertex(i);
+    for (j = 0; j < 3; j++) {
+      if (point[j] < mins[j]) {
+        mins[j] = point[j];
+      }
+      if (point[j] > maxs[j]) {
+        maxs[j] = point[j];
+      }
+    }
+  }
+
   // record LOD info
   setNumLODs(numLevels, areas);
 }
@@ -327,26 +345,10 @@ void			QuadWallSceneNode::addShadowNodes(
   renderer.addShadowNode(shadowNode);
 }
 
-void                    QuadWallSceneNode::getExtents(float* mins, float* maxs) const
+void                    QuadWallSceneNode::getExtents(float* _mins, float* _maxs) const
 {
-  int i, j;
-  
-  for (i = 0; i < 3; i++) {
-    mins[i] = +MAXFLOAT;
-    maxs[i] = -MAXFLOAT;
-  }
-  
-  for (i = 0; i < 4; i++) {
-    const float* point = nodes[0]->getVertex(i);
-    for (j = 0; j < 3; j++) {
-      if (point[j] < mins[j]) {
-        mins[j] = point[j];
-      }
-      if (point[j] > maxs[j]) {
-        maxs[j] = point[j];
-      }
-    }
-  }
+  memcpy (_mins, mins, 3 * sizeof(float));
+  memcpy (_maxs, maxs, 3 * sizeof(float));
   return;
 }
 
@@ -362,6 +364,17 @@ bool                    QuadWallSceneNode::inAxisBox(const float* mins,
   }
   return true;
 }
+
+int                     QuadWallSceneNode::getVertexCount () const
+{
+  return 4;
+}
+
+const GLfloat*          QuadWallSceneNode::getVertex (int vertex) const
+{
+  return nodes[0]->getVertex(vertex);
+}
+
 
 // Local Variables: ***
 // mode:C++ ***

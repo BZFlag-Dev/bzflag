@@ -4,6 +4,9 @@
 BZFlag 1.12.0  (was 1.11.x)
 ---------------------------
 
+* Faster zbuffer graphics using octree and dynamic occluders - Dave Rodgers
+* Faster startup times by making the SceneDatabase on the fly - Dave Rodgers
+* Faster collision detection using a precalculated  grid - Dave Rodgers
 * Auto-completion to complete the first few given letters of a callsign - Ian Agar
 * /clientquery can now be requested on single individuals - Ian Agar
 * Added support for irc-like /me actions and /msg messages - Sean Morrison
@@ -23,7 +26,7 @@ BZFlag 1.12.0  (was 1.11.x)
 * Improved client map saves using map 'options' - Dave Rodgers
 * Autopilot is now capable of playing CTF - Ian Agar
 * bzadmin can now send and receive team and admin messages - Lars Luthman
-* Added _deadUnder - Dave Rodgers
+* Added _deadUnder (water-like feature for maps) - Dave Rodgers
 * bzadmin's curses menu will now update automagically - Lars Luthman
 * Added message filter editor for bzadmin using menu or cmds - Lars Luthman 
 * Added team flag safety zones - Dave Rodgers

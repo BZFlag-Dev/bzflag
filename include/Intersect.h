@@ -88,10 +88,19 @@ bool			testTriPlaneInAxisBox(const float** points,
                                               const float* boxMaxs);
 
 // return level of axis box intersection with Frumstum
-// possible values are Outside, Partial, and Contained
+// possible values are Outside, Partial, and Contained.
+// the frustum plane normals point inwards
 IntersectLevel          testAxisBoxInFrustum(const float* boxMins,
-					     const float* boxMax,
+					     const float* boxMaxs,
 					     const Frustum* frustum);
+
+// return true if the axis aligned bounding box
+// is contained within all of the planes.
+// the occluder plane normals point inwards
+IntersectLevel          testAxisBoxOcclusion(const float* boxMins,
+					     const float* boxMaxs,
+					     const float (*planes)[4],
+					     int planeCount);
 
 
 #endif // BZF_INTERSECT_H

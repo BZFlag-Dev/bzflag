@@ -46,6 +46,8 @@ class QuadWallSceneNode : public WallSceneNode {
     void                getExtents(float* mins, float* maxs) const;
     bool                inAxisBox (const float* mins,
                                    const float* maxs) const;
+    int                 getVertexCount () const;
+    const               GLfloat* getVertex (int vertex) const;
     
   private:
     void		init(const GLfloat base[3],

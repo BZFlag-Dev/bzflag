@@ -1,1 +1,21 @@
 This directory contains space partitioning.
+
+Notes on the Octree  (trepan)
+-----------------------------
+1. It will be converted to use a flat memory space (less cache thrash)
+2. The occluders will be also be used for scene node culling
+3. The occluder selection algorithm will be improved. The easier (and
+   possibly best way), to do this is to use the GL_ARB_occlusion_query
+   or GL_NV_occlusion_query extensions. If those aren't avaible, plane
+   area, distance from the eye, and angle towards the eye can all be useful.
+4. The occluders will be more useful if they are merged into larger convex
+   polygons before using them. Otherwise, the seems between adjacent
+   occluders cause culling leaks.
+5. The testTriPlaneInAxisBox() function is junk. It'll be fixed using a
+   separation axis type test (pretty quick).
+6. Some of the scene node culling might be better done with axis aligned
+   bounding boxes.
+7. All static scene nodes will be tested for culling before being send out
+   of the ZSceneDatabase.
+8. Sort the scene nodes by area before inserting into the octree
+9. Frustum culling could be done using a proximal decent, 1-3-3-1 cube

@@ -1,0 +1,86 @@
+
+#include "SceneNode.h"
+#include "Frustum.h"
+#include "Intersect.h"
+
+class Occluder {
+  public:
+    Occluder(SceneNode *node);
+    ~Occluder();
+    bool makePlanes(const Frustum* frustum);
+    bool doCullAxisBox(const float* mins, const float* maxs);
+    bool doCullSceneNode(SceneNode* node);
+    void addScore(unsigned int score);
+    void divScore();
+    int getScore() const;
+    int getVertexCount() const;
+    SceneNode* getSceneNode() const;
+    void draw() const;
+    void print(const char* string) const; // for debugging
+
+  private:
+    SceneNode* sceneNode;
+    unsigned int cullScore;
+    int planeCount;  // 4 or 5 planes
+    int vertexCount; // 3 or 4 vertices
+    float planes[5][4];
+    float vertices[4][3];
+    static const bool DrawEdges = true;
+    static const bool DrawNormals = false;
+    static const bool DrawVertices = true;
+};
+
+class OccluderManager {
+
+  public:
+    OccluderManager();
+    ~OccluderManager();
+    void clear();
+    void update(const Frustum* frustum);
+    bool occlude(const float* mins, const float* maxs,
+                 unsigned int score);
+    bool occludePeek(const float* mins, const float* maxs);
+                     
+    void select(SceneNode** list, int listCount);
+    void draw() const;
+
+  private:
+    void setMaxOccluders(int size);
+    void sort();
+    int activeOccluders;
+    int allowedOccluders;
+    static const int MaxOccluders = 64;
+    Occluder* occluders[MaxOccluders];
+};
+
+inline void Occluder::addScore(unsigned int score)
+{
+  unsigned int tmp = cullScore + score;
+  if (tmp > cullScore) {
+    cullScore = tmp;
+  }
+  return;
+}
+
+inline void Occluder::divScore()
+{
+  cullScore = cullScore >> 1;
+  return;
+}
+
+inline int Occluder::getScore() const
+{
+  return cullScore;
+}
+
+inline SceneNode* Occluder::getSceneNode()const
+{
+  return sceneNode;
+}
+
+inline int Occluder::getVertexCount() const
+{
+  return vertexCount;
+}
+
+

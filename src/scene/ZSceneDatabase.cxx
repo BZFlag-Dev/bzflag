@@ -21,6 +21,7 @@
 #include "SphereSceneNode.h"
 #include "Octree.h"
 #include "StateDatabase.h"
+#include "TimeKeeper.h"
 
 ZSceneDatabase::ZSceneDatabase() :
 				staticCount(0),
@@ -134,7 +135,14 @@ void			ZSceneIterator::makeCuller()
 {
   delete octree;
   octree = new Octree;
+  
+  TimeKeeper startTime = TimeKeeper::getCurrent();
+  
   octree->addNodes (db->staticList, db->staticCount, cullDepth, cullElements);
+
+  float elapsed = TimeKeeper::getCurrent() - startTime;
+  DEBUG2 ("Octree processed in %.3f seconds.\n", elapsed);
+  
   if (culledList != db->staticList) {
     delete culledList;
   }
@@ -198,31 +206,11 @@ SceneNode*		ZSceneIterator::getNext()
 }
 
 
-// the callback function from the Culler
-static void drawLines (int vertices, const float points[][3], bool partial)
-{
-  GLfloat defaultColor[4] = {1.0f, 0.0f, 0.0f, 0.75f};
-  GLfloat partialColor[4] = {0.0f, 0.0f, 1.0f, 0.75f};
-  
-  if (partial) {
-    glColor4fv (partialColor);
-  } else {
-    glColor4fv (defaultColor);
-  }
-  glBegin (GL_LINE_STRIP);
-  for (int i = 0; i < vertices; i++) {
-    glVertex3fv (points[i]);
-  }
-  glEnd ();
-}
 
 void        		ZSceneIterator::drawCuller()
 {
   if (octree) {
-    // setup to draw lines
-    glDisable (GL_TEXTURE_2D);
-    octree->draw (drawLines);
-    glEnable (GL_TEXTURE_2D);
+    octree->draw ();
   }
   return;
 }

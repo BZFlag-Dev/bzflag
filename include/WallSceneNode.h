@@ -79,6 +79,10 @@ class WallSceneNode : public SceneNode {
 				const GLfloat3Array& vertices,
 				const GLfloat2Array& uvs,
 				SceneNode*& front, SceneNode*& back); // const
+				
+  protected:
+    GLfloat             mins[3]; // extents of the axis aligned bounding box
+    GLfloat             maxs[3]; 
 
   private:
     static void		splitEdge(const GLfloat* p1, const GLfloat* p2,
