@@ -359,7 +359,7 @@ std::string WordFilter::l33tspeakSetFromCharacter(const char c) const
       set = "e3";
       break;
     case 'g':
-      set = "g9";
+      set = "g96";
       break;
     case 'i':
       set = "il|!\\/";
@@ -375,7 +375,13 @@ std::string WordFilter::l33tspeakSetFromCharacter(const char c) const
       set = "s$z5";
       break;
     case 't':
-      set = "t+";
+      set = "t+7";
+      break;
+    case 'v':
+      set = "v\\/";
+      break;
+    case 'w':
+      set = "w\\/";
       break;
     case 'z':
       set = "zs";
@@ -679,21 +685,25 @@ WordFilter::WordFilter()
   /* XXX adding prefixes _significantly_ increases the expression count
    * and is rather expensive (slow, XN+N extra checks for N words)
    */
-  fix.word = "bz";
+  fix.word = "bz"; // bz-specific prefix
   fix.compiled = getCompiledExpression(expressionFromString(fix.word));
   prefixes.insert(fix);
-  fix.word = "beze";
+  fix.word = "beze"; // bz-specific prefix
   fix.compiled = getCompiledExpression(expressionFromString(fix.word));
   prefixes.insert(fix);
-  fix.word = "u";
+  fix.word = "u"; // l33t prefix
   fix.compiled = getCompiledExpression(expressionFromString(fix.word));
   prefixes.insert(fix);
   fix.word = "you";
   fix.compiled = getCompiledExpression(expressionFromString(fix.word));
   prefixes.insert(fix);
-  fix.word = "ura";
+  fix.word = "ura"; // l33t prefix
   fix.compiled = getCompiledExpression(expressionFromString(fix.word));
   prefixes.insert(fix);
+  fix.word = "k"; // common l33t prefix
+  fix.compiled = getCompiledExpression(expressionFromString(fix.word));
+  prefixes.insert(fix);
+
 
 #endif
 
