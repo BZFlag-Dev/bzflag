@@ -2455,7 +2455,8 @@ static void addFlag(int flagIndex)
   flag[flagIndex].dropDone += flightTime;
 
   // how times will it stick around
-  if (flag[flagIndex].flag.endurance == FlagSticky)
+  if ((flag[flagIndex].flag.endurance == FlagSticky)
+  ||  (flag[flagIndex].flag.type == Flags::Thief))
     flag[flagIndex].grabs = 1;
   else
     flag[flagIndex].grabs = int(floor(4.0f * (float)bzfrand())) + 1;
