@@ -60,13 +60,14 @@ void			WallObstacle::getNormal(const float*, float* n) const
   n[2] = plane[2];
 }
 
-bool			WallObstacle::isInside(const float* p, float r) const
+bool			WallObstacle::inCylinder(const float* p, float r, float /* height */) const
 {
   return p[0] * plane[0] + p[1] * plane[1] + p[2] * plane[2] + plane[3] < r;
 }
 
-bool			WallObstacle::isInside(const float* p, float angle,
-				float halfWidth, float halfBreadth) const
+bool			WallObstacle::inBox(const float* p, float angle,
+				            float halfWidth, float halfBreadth,
+				            float /* height */) const
 {
   const float xWidth = cosf(angle);
   const float yWidth = sinf(angle);
@@ -78,29 +79,26 @@ bool			WallObstacle::isInside(const float* p, float angle,
   // check to see if any corner is inside negative half-space
   corner[0] = p[0] - xWidth * halfWidth - xBreadth * halfBreadth;
   corner[1] = p[1] - yWidth * halfWidth - yBreadth * halfBreadth;
-  if (isInside(corner, 0.0)) return true;
+  if (inCylinder(corner, 0.0f, 0.0f)) return true;
   corner[0] = p[0] + xWidth * halfWidth - xBreadth * halfBreadth;
   corner[1] = p[1] + yWidth * halfWidth - yBreadth * halfBreadth;
-  if (isInside(corner, 0.0)) return true;
+  if (inCylinder(corner, 0.0f, 0.0f)) return true;
   corner[0] = p[0] - xWidth * halfWidth + xBreadth * halfBreadth;
   corner[1] = p[1] - yWidth * halfWidth + yBreadth * halfBreadth;
-  if (isInside(corner, 0.0)) return true;
+  if (inCylinder(corner, 0.0f, 0.0f)) return true;
   corner[0] = p[0] + xWidth * halfWidth + xBreadth * halfBreadth;
   corner[1] = p[1] + yWidth * halfWidth + yBreadth * halfBreadth;
-  if (isInside(corner, 0.0f)) return true;
+  if (inCylinder(corner, 0.0f, 0.0f)) return true;
 
   return false;
 }
 
-bool			WallObstacle::isInside(const float* oldP, float oldAngle,
+bool			WallObstacle::inMovingBox(const float* /* oldP */, float /* oldAngle */,
                                        const float* p, float angle,
-                                       float halfWidth, float halfBreadth) const
+                                       float halfWidth, float halfBreadth, float height) const
 
 {
-  oldP = oldP; // remove warnings
-  oldAngle = oldAngle;
-  
-  return isInside (p, angle, halfWidth, halfBreadth);
+  return inBox (p, angle, halfWidth, halfBreadth, height);
 }
 
 bool			WallObstacle::getHitNormal(

@@ -15,7 +15,6 @@
 #include "BaseBuilding.h"
 #include "global.h"
 #include "Intersect.h"
-#include "BZDBCache.h"
 
 std::string		BaseBuilding::typeName("BaseBuilding");
 
@@ -69,24 +68,24 @@ void			BaseBuilding::get3DNormal(const float* p, float* n) const
     getNormal(p, n);
 }
 
-bool			BaseBuilding::isInside(const float *p, float radius) const
+bool			BaseBuilding::inCylinder(const float *p, float radius, float height) const
 {
   return (p[2] < (getPosition()[2] + getHeight()))
-  &&     ((p[2]+BZDBCache::tankHeight) > getPosition()[2])
+  &&     ((p[2]+height) > getPosition()[2])
   &&     testRectCircle(getPosition(), getRotation(), getWidth(), getBreadth(), p, radius);
 }
 
-bool			BaseBuilding::isInside(const float *p, float angle,
-			float dx, float dy) const
+bool			BaseBuilding::inBox(const float *p, float angle,
+			float dx, float dy, float height) const
 {
   return (p[2] < (getPosition()[2] + getHeight()))
-  &&     ((p[2]+BZDBCache::tankHeight) >= getPosition()[2])
+  &&     ((p[2]+height) >= getPosition()[2])
   &&     testRectRect(getPosition(), getRotation(), getWidth(), getBreadth(), p, angle, dx, dy);
 }
 
-bool			BaseBuilding::isInside(const float* oldP, float,
+bool			BaseBuilding::inMovingBox(const float* oldP, float,
 					       const float *p, float angle,
-			float dx, float dy) const
+			float dx, float dy, float height) const
 {
   float topBaseHeight = getPosition()[2] + getHeight();
   float higherZ;
@@ -104,18 +103,18 @@ bool			BaseBuilding::isInside(const float* oldP, float,
   }
   if (lowerZ >= topBaseHeight)
     return false;
-  if ((higherZ + BZDBCache::tankHeight) < getPosition()[2])
+  if ((higherZ + height) < getPosition()[2])
     return false;
   return testRectRect(getPosition(), getRotation(), getWidth(), getBreadth(),
 		      p, angle, dx, dy);
 }
 
 bool			BaseBuilding::isCrossing(const float *p, float angle,
-			float dx, float dy,
+			float dx, float dy, float height,
 			float *plane) const
 {
   // if not inside or contained, then not crossing
-  if (!isInside(p, angle, dx, dy) ||
+  if (!inBox(p, angle, dx, dy, height) ||
       testRectInRect(getPosition(), getRotation(),
 	getWidth(), getBreadth(), p, angle, dx, dy))
     return false;

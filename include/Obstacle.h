@@ -92,19 +92,19 @@ class Obstacle {
   
   /** This function checks if a tank, approximated as a cylinder with base
       centre in point @c p and radius @c radius, intersects this obstacle. */
-  virtual bool isInside(const float* p, float radius) const = 0;
+  virtual bool inCylinder(const float* p, float radius, float height) const = 0;
   
   /** This function checks if a tank, approximated as a box rotated around its
       Z axis, intersects this obstacle. */
-  virtual bool isInside(const float* p, float angle,
-			 float halfWidth, float halfBreadth) const = 0;
+  virtual bool inBox(const float* p, float angle,
+                     float halfWidth, float halfBreadth, float height) const = 0;
   
   /** This function checks if a tank, approximated as a box rotated around its
       Z axis, intersects this obstacle. It also factors in the difference 
       between the old Z location and the new Z location */
-  virtual bool isInside(const float* oldP, float oldAngle,
-                        const float* p, float angle,
-			            float halfWidth, float halfBreadth) const = 0;
+  virtual bool inMovingBox(const float* oldP, float oldAngle,
+                           const float *newP, float newAngle,
+                           float halfWidth, float halfBreadth, float height) const = 0;
 			            
   /** This function checks if a horizontal rectangle crosses the surface of
       this obstacle.
@@ -116,8 +116,8 @@ class Obstacle {
                          intersected by the rectangle will be stored here
   */
   virtual bool isCrossing(const float* p, float angle,
-			   float halfWidth, float halfBreadth,
-			   float* plane) const;
+			  float halfWidth, float halfBreadth, float height,
+			  float* plane) const;
   
   /** This function checks if a box moving from @c pos1 to @c pos2 will hit
       this obstacle, and if it does what the surface normal at the hitpoint is.

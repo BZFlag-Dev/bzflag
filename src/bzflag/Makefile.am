@@ -15,8 +15,6 @@ bzflag_SOURCES =			\
 	BackgroundRenderer.h		\
 	BaseLocalPlayer.cxx		\
 	BaseLocalPlayer.h		\
-	CollisionGrid.cxx		\
-	CollisionGrid.h			\
 	ComposeDefaultKey.cxx		\
 	ComposeDefaultKey.h		\
 	ControlPanel.cxx		\

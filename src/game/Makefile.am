@@ -4,6 +4,7 @@ MAINTAINERCLEANFILES = \
 	Makefile.in
 
 libGame_a_SOURCES = 			\
+	CollisionManager.cxx		\
 	CommandsStandard.cxx		\
 	DelayQueue.cxx			\
 	DirectoryNames.cxx		\

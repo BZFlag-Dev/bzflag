@@ -15,7 +15,6 @@
 #include "global.h"
 #include "PyramidBuilding.h"
 #include "Intersect.h"
-#include "BZDBCache.h"
 
 std::string		PyramidBuilding::typeName("PyramidBuilding");
 
@@ -148,20 +147,20 @@ void			PyramidBuilding::get3DNormal(const float* p,
     n[2] *= -1;
 }
 
-bool			PyramidBuilding::isInside(const float* p,
-						float radius) const
+bool			PyramidBuilding::inCylinder(const float* p,
+						float radius, float height) const
 {
   // really rough -- doesn't decrease size with height
   return (p[2] <= getHeight())
-  &&     ((p[2]+BZDBCache::tankHeight) >= getPosition()[2])
+  &&     ((p[2]+height) >= getPosition()[2])
   &&     testRectCircle(getPosition(), getRotation(), getWidth(), getBreadth(), p, radius);
 }
 
-bool			PyramidBuilding::isInside(const float* p, float a,
-						float dx, float dy) const
+bool			PyramidBuilding::inBox(const float* p, float a,
+						float dx, float dy, float height) const
 {
   // Tank is below pyramid ?
-  if (p[2] + BZDBCache::tankHeight < getPosition()[2])
+  if (p[2] + height < getPosition()[2])
     return false;
   // Tank is above pyramid ?
   if (p[2] >= getPosition()[2] + getHeight())
@@ -169,28 +168,25 @@ bool			PyramidBuilding::isInside(const float* p, float a,
   // Could be inside. Then check collision with the rectangle at object height
   // This is a rectangle reduced by shrinking but pass the height that we are
   // not so sure where collision can be
-  const float s = shrinkFactor(p[2], BZDBCache::tankHeight);
+  const float s = shrinkFactor(p[2], height);
   return testRectRect(getPosition(), getRotation(),
 		      s * getWidth(), s * getBreadth(), p, a, dx, dy);
 }
 
-bool			PyramidBuilding::isInside(const float* oldP, float oldAngle,
-                                          const float* p, float angle,
-                                          float halfWidth, float halfBreadth) const
+bool			PyramidBuilding::inMovingBox(const float*, float,
+                                             const float* p, float angle,
+                                             float dx, float dy, float dz) const
 {
-  oldP = oldP; // remove warnings
-  oldAngle = oldAngle;
-  
-  return isInside (p, angle, halfWidth, halfBreadth);
+  return inBox (p, angle, dx, dy, dz);
 }                                          
 
 bool			PyramidBuilding::isCrossing(const float* p, float a,
-					float dx, float dy, float* plane) const
+					float dx, float dy, float height, float* plane) const
 {
   // if not inside or contained then not crossing
-  if (!isInside(p, a, dx, dy) ||
-	testRectInRect(getPosition(), getRotation(),
-			getWidth(), getBreadth(), p, a, dx, dy))
+  if (!inBox(p, a, dx, dy, height) ||
+      testRectInRect(getPosition(), getRotation(),
+                     getWidth(), getBreadth(), p, a, dx, dy))
     return false;
   if (!plane) return true;
 

@@ -78,18 +78,18 @@ void			World::done()
   flagTexture = 0;
 }
 
-void                    World::loadCollisionGrid()
+void                    World::loadCollisionManager()
 {
-  collisionGrid.load(boxes, pyramids, teleporters, basesR);
+  collisionManager.load(boxes, pyramids, teleporters, basesR);
   return;
 }
 
-void                    World::checkCollisionGrid()
+void                    World::checkCollisionManager()
 {
   float worldSize = BZDB.eval(StateDatabase::BZDB_WORLDSIZE);
-  if (worldSize != collisionGrid.getWorldSize()) {
+  if (worldSize != collisionManager.getWorldSize()) {
     // reload the collision grid
-    collisionGrid.load(boxes, pyramids, teleporters, basesR);
+    collisionManager.load(boxes, pyramids, teleporters, basesR);
   }
   return;
 }
@@ -182,11 +182,11 @@ TeamColor		World::whoseBase(const float* pos) const
 const Obstacle*		World::inBuilding(const float* pos, float radius) const
 {
   // check everything but walls
-  ObstacleList olist = collisionGrid.getObstacles (pos, radius);
+  ObstacleList olist = collisionManager.getObstacles (pos, radius);
   for (ObstacleList::const_iterator oit = olist.begin();
        oit != olist.end(); oit++) {
     const Obstacle* obs = *oit;
-    if (obs->isInside(pos, radius)) {
+    if (obs->inCylinder(pos, radius, BZDBCache::tankHeight)) {
       return obs;
     }
   }
@@ -201,18 +201,20 @@ const Obstacle*		World::hitBuilding(const float* pos, float angle,
   std::vector<WallObstacle>::const_iterator wallScan = walls.begin();
   while (wallScan != walls.end()) {
     const WallObstacle& wall = *wallScan;
-    if (!wall.isDriveThrough() && wall.isInside(pos, angle, dx, dy)) {
+    if (!wall.isDriveThrough()
+        && wall.inBox(pos, angle, dx, dy, BZDBCache::tankHeight)) {
         return &wall;
     }
     wallScan++;
   }
 
   // check everything else
-  ObstacleList olist = collisionGrid.getObstacles (pos, angle, dx, dy);
+  ObstacleList olist = collisionManager.getObstacles (pos, angle, dx, dy);
   for (ObstacleList::const_iterator oit = olist.begin();
        oit != olist.end(); oit++) {
     const Obstacle* obs = *oit;
-    if (!obs->isDriveThrough() && obs->isInside(pos, angle, dx, dy)) {
+    if (!obs->isDriveThrough()
+        && obs->inBox(pos, angle, dx, dy, BZDBCache::tankHeight)) {
       return obs;
     }
   }
@@ -228,7 +230,8 @@ const Obstacle*		World::hitBuilding(const float* oldPos, float oldAngle,
   std::vector<WallObstacle>::const_iterator wallScan = walls.begin();
   while (wallScan != walls.end()) {
     const WallObstacle& wall = *wallScan;
-    if (!wall.isDriveThrough() && wall.isInside(pos, angle, dx, dy)) {
+    if (!wall.isDriveThrough()
+        && wall.inBox(pos, angle, dx, dy, BZDBCache::tankHeight)) {
       return &wall;
     }
     wallScan++;
@@ -236,12 +239,12 @@ const Obstacle*		World::hitBuilding(const float* oldPos, float oldAngle,
 
   // check everything else
   ObstacleList olist = 
-    collisionGrid.getObstacles (oldPos, oldAngle, pos, angle, dx, dy);
+    collisionManager.getObstacles (oldPos, oldAngle, pos, angle, dx, dy);
   for (ObstacleList::const_iterator oit = olist.begin();
        oit != olist.end(); oit++) {
     const Obstacle* obs = *oit;
-    if (!obs->isDriveThrough() &&
-        obs->isInside(oldPos, oldAngle, pos, angle, dx, dy)) {
+    if (!obs->isDriveThrough()
+        && obs->inMovingBox(oldPos, oldAngle, pos, angle, dx, dy, BZDBCache::tankHeight)) {
       return obs;
     }
   }
@@ -256,7 +259,7 @@ bool			World::crossingTeleporter(const float* pos,
   std::vector<Teleporter>::const_iterator teleporterScan = teleporters.begin();
   while (teleporterScan != teleporters.end()) {
     const Teleporter& teleporter = *teleporterScan;
-    if (teleporter.isCrossing(pos, angle, dx, dy, plane))
+    if (teleporter.isCrossing(pos, angle, dx, dy, BZDBCache::tankHeight, plane))
       return true;
     teleporterScan++;
   }

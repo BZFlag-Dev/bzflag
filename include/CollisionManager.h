@@ -34,12 +34,12 @@ const int GridSizeY = 32;
 typedef std::vector<const Obstacle *> ObstacleList;
 
 
-class CollisionGrid {
+class CollisionManager {
 
   public:
 
-    CollisionGrid();
-    ~CollisionGrid();
+    CollisionManager();
+    ~CollisionManager();
     
     void load (std::vector<BoxBuilding>     &boxes,
                std::vector<PyramidBuilding> &pyrs,

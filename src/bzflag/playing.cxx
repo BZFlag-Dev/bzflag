@@ -4083,7 +4083,7 @@ static void		playingLoop()
     
     // see if the world collision grid needs to be updated
     if (world) {
-      world->checkCollisionGrid();
+      world->checkCollisionManager();
     }
 
     mainWindow->getWindow()->yieldCurrent();

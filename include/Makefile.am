@@ -22,6 +22,7 @@ noinst_HEADERS =			\
 	BzfVisual.h			\
 	BzfWindow.h			\
 	CallbackList.h			\
+	CollisionManager.h		\
 	CommandManager.h		\
 	CommandsStandard.h		\
 	ConfigFileManager.h		\

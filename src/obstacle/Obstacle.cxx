@@ -69,7 +69,7 @@ bool			Obstacle::getZFlip ( void ) const
 
 
 bool			Obstacle::isCrossing(const float*, float,
-						float, float, float*) const
+						float, float, float, float*) const
 {
   // never crossing by default
   return false;

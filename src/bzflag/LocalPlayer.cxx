@@ -524,7 +524,9 @@ void			LocalPlayer::doUpdateMotion(float dt)
   // see if we're crossing a wall
   if (location == InBuilding && getFlag() == Flags::OscillationOverthruster) {
     if (insideBuilding->isCrossing(newPos, newAzimuth,
-				   0.5f * BZDB.eval(StateDatabase::BZDB_TANKLENGTH), 0.5f * BZDB.eval(StateDatabase::BZDB_TANKWIDTH), NULL))
+				   0.5f * BZDB.eval(StateDatabase::BZDB_TANKLENGTH),
+                                   0.5f * BZDB.eval(StateDatabase::BZDB_TANKWIDTH),
+                                   BZDBCache::tankHeight, NULL))
       setStatus(getStatus() | int(PlayerState::CrossingWall));
     else
       setStatus(getStatus() & ~int(PlayerState::CrossingWall));

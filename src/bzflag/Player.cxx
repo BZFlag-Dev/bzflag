@@ -335,7 +335,8 @@ void			Player::addToScene(SceneDatabase* scene,
       const Obstacle* obstacle = World::getWorld()->hitBuilding(state.pos, a,
 								0.5f * tankLength, 0.5f * tankWidth);
       if (obstacle && obstacle->isCrossing(state.pos, a,
-					   0.5f * tankLength, 0.5f * tankWidth, plane) ||
+					   0.5f * tankLength, 0.5f * tankWidth, 
+					   BZDBCache::tankHeight, plane) ||
 	  World::getWorld()->crossingTeleporter(state.pos, a,
 						0.5f * tankLength, 0.5f * tankWidth, plane)) {
 	// stick in interdimensional lights node

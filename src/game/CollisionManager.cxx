@@ -11,7 +11,7 @@
  */
 
 /* interface header */
-#include "CollisionGrid.h"
+#include "CollisionManager.h"
 
 /* system implementation headers */
 #include <vector>
@@ -25,16 +25,16 @@
 
 
 
-CollisionGrid::CollisionGrid ()
+CollisionManager::CollisionManager ()
 {
 }
 
-CollisionGrid::~CollisionGrid ()
+CollisionManager::~CollisionManager ()
 {
   clear();
 }
 
-void CollisionGrid::clear ()
+void CollisionManager::clear ()
 {
   WorldSize = 0.0f;
   int x, y;
@@ -47,13 +47,13 @@ void CollisionGrid::clear ()
   return;
 }
 
-float CollisionGrid::getWorldSize () const
+float CollisionManager::getWorldSize () const
 {
   return WorldSize;
 }
 
-CollisionGrid::CellList
-CollisionGrid::getCells (const float *pos, float radius) const
+CollisionManager::CellList
+CollisionManager::getCells (const float *pos, float radius) const
 {
   // We're going to play this one fast and loose.
   // Just see which cells the maximal box intersects,
@@ -93,7 +93,7 @@ CollisionGrid::getCells (const float *pos, float radius) const
   return clist;
 }
 
-ObstacleList CollisionGrid::getObstacles (const float *pos, float radius) const
+ObstacleList CollisionManager::getObstacles (const float *pos, float radius) const
 {
   ObstacleList olist;
 
@@ -112,8 +112,8 @@ ObstacleList CollisionGrid::getObstacles (const float *pos, float radius) const
   return olist;  
 }
 
-ObstacleList CollisionGrid::getObstacles (const float* pos, float angle,
-                                          float dx, float dy) const
+ObstacleList CollisionManager::getObstacles (const float* pos, float angle,
+                                             float dx, float dy) const
 {
   angle = angle;  // remove warnings
 
@@ -121,9 +121,9 @@ ObstacleList CollisionGrid::getObstacles (const float* pos, float angle,
   return getObstacles (pos, radius);
 }
 
-ObstacleList CollisionGrid::getObstacles (const float* oldPos, float oldAngle,
-                                          const float* pos, float angle,
-                                          float dx, float dy) const
+ObstacleList CollisionManager::getObstacles (const float* oldPos, float oldAngle,
+                                             const float* pos, float angle,
+                                             float dx, float dy) const
 {
   // FIXME - sort of a bogus call, this particular
   // style of collision detection is only used to 
@@ -137,16 +137,18 @@ ObstacleList CollisionGrid::getObstacles (const float* oldPos, float oldAngle,
   return getObstacles (pos, radius);
 }                                  
 
-void CollisionGrid::load (std::vector<BoxBuilding>     &boxes,
-                          std::vector<PyramidBuilding> &pyrs,
-                          std::vector<Teleporter>      &teles,
-                          std::vector<BaseBuilding>    &bases)
+void CollisionManager::load (std::vector<BoxBuilding>     &boxes,
+                             std::vector<PyramidBuilding> &pyrs,
+                             std::vector<Teleporter>      &teles,
+                             std::vector<BaseBuilding>    &bases)
 {
   clear(); // clean out the cell lists
 
   // fake the tank dimensions to do cell detection
   std::string realTankHeight = BZDB.get (StateDatabase::BZDB_TANKHEIGHT);
   BZDB.setFloat (StateDatabase::BZDB_TANKHEIGHT, 1.0e30f); //very tall
+  
+  const float Heaven = 1.0e30f;
 
   WorldSize = BZDB.eval (StateDatabase::BZDB_WORLDSIZE);
   Sx = WorldSize / float (GridSizeX);
@@ -179,7 +181,7 @@ void CollisionGrid::load (std::vector<BoxBuilding>     &boxes,
     CellList list = getCells (box->getPosition(), radius);
     for (cit = list.begin(); cit != list.end(); cit++) {
       GridCell* cell = (GridCell*) (*cit);
-      if (box->isInside(cell->pos, 0.0f, Hx, Hy)) {
+      if (box->inBox(cell->pos, 0.0f, Hx, Hy, Heaven)) {
         cell->objs.push_back( &(*it_box) );
       }
     }
@@ -195,7 +197,7 @@ void CollisionGrid::load (std::vector<BoxBuilding>     &boxes,
     CellList list = getCells (pyr->getPosition(), radius);
     for (cit = list.begin(); cit != list.end(); cit++) {
       GridCell* cell = (GridCell*) (*cit);
-      if (pyr->isInside(cell->pos, 0.0f, Hx, Hy)) {
+      if (pyr->inBox(cell->pos, 0.0f, Hx, Hy, Heaven)) {
         cell->objs.push_back( &(*it_pyr) );
       }
     }
@@ -211,7 +213,7 @@ void CollisionGrid::load (std::vector<BoxBuilding>     &boxes,
     CellList list = getCells (tele->getPosition(), radius);
     for (cit = list.begin(); cit != list.end(); cit++) {
       GridCell* cell = (GridCell*) (*cit);
-      if (tele->isInside(cell->pos, 0.0f, Hx, Hy)) {
+      if (tele->inBox(cell->pos, 0.0f, Hx, Hy, Heaven)) {
         cell->objs.push_back( &(*it_tele) );
       }
     }
@@ -227,7 +229,7 @@ void CollisionGrid::load (std::vector<BoxBuilding>     &boxes,
     CellList list = getCells (base->getPosition(), radius);
     for (cit = list.begin(); cit != list.end(); cit++) {
       GridCell* cell = (GridCell*) (*cit);
-      if (base->isInside(cell->pos, 0.0f, Hx, Hy)) {
+      if (base->inBox(cell->pos, 0.0f, Hx, Hy, Heaven)) {
         cell->objs.push_back( &(*it_base) );
       }
     }

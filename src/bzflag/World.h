@@ -37,7 +37,7 @@
 #include "WorldPlayer.h"
 #include "Weapon.h"
 #include "EntryZone.h"
-#include "CollisionGrid.h"
+#include "CollisionManager.h"
 
 
 /**
@@ -124,8 +124,8 @@ class World {
     static void		done();
     static void		setFlagTexture(FlagSceneNode*);
 
-    void                loadCollisionGrid();
-    void                checkCollisionGrid();
+    void                loadCollisionManager();
+    void                checkCollisionManager();
 
     bool		writeWorld(std::string filename);
 
@@ -161,7 +161,7 @@ class World {
     std::vector<Weapon>		        weapons;
     std::vector<EntryZone>		entryZones;
     std::vector<int>			teleportTargets;
-    CollisionGrid                       collisionGrid;
+    CollisionManager                    collisionManager;
     Team		team[NumTeams];
     RemotePlayer**	players;
     WorldPlayer*	worldWeapons;

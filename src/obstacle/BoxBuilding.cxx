@@ -16,7 +16,6 @@
 #include "BoxBuilding.h"
 #include "Intersect.h"
 #include "QuadWallSceneNode.h"
-#include "BZDBCache.h"
 
 std::string		BoxBuilding::typeName("BoxBuilding");
 
@@ -75,25 +74,24 @@ void			BoxBuilding::get3DNormal(const float* p, float* n) const
     getNormal(p, n);
 }
 
-bool			BoxBuilding::isInside(const float* p,
-						float radius) const
+bool			BoxBuilding::inCylinder(const float* p, float radius, float height) const
 {
   return (p[2] < (getPosition()[2] + getHeight()))
-  && ((p[2]+BZDBCache::tankHeight) >= getPosition()[2])
+  && ((p[2]+height) >= getPosition()[2])
   &&     testRectCircle(getPosition(), getRotation(), getWidth(), getBreadth(), p, radius);
 }
 
-bool			BoxBuilding::isInside(const float* p, float a,
-						float dx, float dy) const
+bool			BoxBuilding::inBox(const float* p, float a,
+						float dx, float dy, float height) const
 {
   return (p[2] < (getPosition()[2] + getHeight()))
-  &&     ((p[2]+BZDBCache::tankHeight) >= getPosition()[2])
+  &&     ((p[2]+height) >= getPosition()[2])
   &&     testRectRect(getPosition(), getRotation(), getWidth(), getBreadth(), p, a, dx, dy);
 }
 
-bool			BoxBuilding::isInside(const float* oldP, float,
+bool			BoxBuilding::inMovingBox(const float* oldP, float,
 					      const float* p, float a,
-					      float dx, float dy) const
+					      float dx, float dy, float height) const
 {
   float higherZ;
   float lowerZ;
@@ -106,17 +104,17 @@ bool			BoxBuilding::isInside(const float* oldP, float,
   }
   if (lowerZ >= (getPosition()[2] + getHeight()))
     return false;
-  if ((higherZ + BZDBCache::tankHeight) < getPosition()[2])
+  if ((higherZ + height) < getPosition()[2])
     return false;
   return testRectRect(getPosition(), getRotation(), getWidth(), getBreadth(),
 		      p, a, dx, dy);
 }
 
 bool			BoxBuilding::isCrossing(const float* p, float a,
-					float dx, float dy, float* plane) const
+					float dx, float dy, float height, float* plane) const
 {
   // if not inside or contained then not crossing
-  if (!isInside(p, a, dx, dy) ||
+  if (!inBox(p, a, dx, dy, height) ||
 	testRectInRect(getPosition(), getRotation(),
 			getWidth(), getBreadth(), p, a, dx, dy))
     return false;

@@ -31,12 +31,14 @@ class WallObstacle : public Obstacle {
 
     float		intersect(const Ray&) const;
     void		getNormal(const float* p, float* n) const;
-    bool		isInside(const float* p, float radius) const;
-    bool		isInside(const float* p, float angle,
-				float halfWidth, float halfBreadth) const;
-    bool		isInside(const float* oldP, float oldAngle,
-                         const float* p, float angle,
-				         float halfWidth, float halfBreadth) const;
+
+    bool                inCylinder(const float* p, float radius, float height) const;
+    bool                inBox(const float* p, float angle,
+                              float halfWidth, float halfBreadth, float height) const;
+    bool                inMovingBox(const float* oldP, float oldAngle,
+                                    const float *newP, float newAngle,
+                                    float halfWidth, float halfBreadth, float height) const;
+                                   
     bool		getHitNormal(
 				const float* pos1, float azimuth1,
 				const float* pos2, float azimuth2,

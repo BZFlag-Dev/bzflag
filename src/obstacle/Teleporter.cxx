@@ -15,7 +15,6 @@
 #include "global.h"
 #include "Teleporter.h"
 #include "Intersect.h"
-#include "BZDBCache.h"
 
 std::string		Teleporter::typeName("Teleporter");
 
@@ -63,20 +62,19 @@ void			Teleporter::getNormal(const float* p1, float* n) const
   getNormalRect(p1, cc, getRotation(), b, b, n);
 }
 
-bool			Teleporter::isInside(const float* p,
-						float radius) const
+bool			Teleporter::inCylinder(const float* p, float radius, float height) const
 {
-  return (p[2]+BZDBCache::tankHeight) >= getPosition()[2] &&
+  return (p[2]+height) >= getPosition()[2] &&
 	p[2] <= getPosition()[2] + getHeight() &&
 	testRectCircle(getPosition(), getRotation(),
 			getWidth(), getBreadth(), p, radius);
 }
 
-bool			Teleporter::isInside(const float* p, float a,
-						float dx, float dy) const
+bool			Teleporter::inBox(const float* p, float a,
+					  float dx, float dy, float dz) const
 {
   if ((p[2] < getHeight() + getPosition()[2] - getBorder())
-	  && (p[2]+BZDBCache::tankHeight) >= getPosition()[2]) {
+	  && (p[2]+dz) >= getPosition()[2]) {
     // test individual border columns
     const float c = cosf(getRotation()), s = sinf(getRotation());
     const float d = getBreadth() - 0.5f * getBorder();
@@ -100,18 +98,15 @@ bool			Teleporter::isInside(const float* p, float a,
   return false;
 }
 
-bool			Teleporter::isInside(const float *oldP, float oldAngle,
-                                     const float* p, float a,
-						             float dx, float dy) const
+bool			Teleporter::inMovingBox(const float* /* oldP */, float /*oldAngle */,
+                                                const float* p, float a,
+						float dx, float dy, float dz) const
 {
-  oldP = oldP; // remove warnings
-  oldAngle = oldAngle;
-  
-  return isInside (p, a, dx, dy);
+  return inBox (p, a, dx, dy, dz);
 }
 
 bool			Teleporter::isCrossing(const float* p, float a,
-					float dx, float dy, float* plane) const
+					float dx, float dy, float /* dz */, float* plane) const
 {
   // if not inside or contained then not crossing
   const float* p2 = getPosition();
