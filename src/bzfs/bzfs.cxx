@@ -3256,7 +3256,7 @@ bool checkSpam(char* message, GameKeeper::Player* playerData, int t)
 {
   PlayerInfo player = playerData->player;
   std::string newMsg = message;
-  std::string oldMsg = player.getLastMsg();
+  const std::string &oldMsg = player.getLastMsg();
   float dt = TimeKeeper::getCurrent() - player.getLastMsgTime();
 
   // if it's first message, or enough time since last message - can't be spam yet

@@ -60,7 +60,7 @@ public:
   PlayerInfo(int _playerIndex);
 
   void	      setLastMsg(std::string msg);
-  std::string getLastMsg();
+  const std::string& getLastMsg();
   TimeKeeper  getLastMsgTime();
   void	      incSpamWarns();
   int	      getSpamWarns();
@@ -197,7 +197,7 @@ inline int PlayerInfo::getFlag() const
   return flag;
 }
 
-inline std::string PlayerInfo::getLastMsg() {
+inline const std::string& PlayerInfo::getLastMsg() {
   return lastMsgSent;
 }
 
