@@ -3936,13 +3936,347 @@ static void sendTeleport(int playerIndex, uint16_t from, uint16_t to)
   broadcastMessage(MsgTeleport, (char*)buf-(char*)bufStart, bufStart);
 }
 
+static void handlePollCmd(int t, const char *message)
+{
+  char reply[MessageLen];
+
+  static VotingArbiter *arbiter = (VotingArbiter *)BZDB->getPointer("poll");
+    /* make sure player has permission to request a poll */
+  if (!hasPerm(t, PlayerAccessInfo::poll)) {
+      sprintf(reply,"%s, you are presently not authorized to run /poll", player[t].callSign);
+      sendMessage(ServerPlayer, t, reply, true);
+      return;
+  }
+
+    /* make sure that there is a poll arbiter */
+  if (BZDB->isEmpty("poll")) {
+      sprintf(reply, "ERROR: the poll arbiter has disappeared (this should never happen)");
+      sendMessage(ServerPlayer, t, reply, true);
+      return;
+  }
+
+    /* make sure that there is not a poll active already */
+  if (arbiter->knowsPoll()) {
+      sprintf(reply,"A poll to %s %s is presently in progress", arbiter->getPollAction().c_str(), arbiter->getPollPlayer().c_str());
+      sendMessage(ServerPlayer, t, reply, true);
+      sprintf(reply,"Unable to start a new poll until the current one is over");
+      sendMessage(ServerPlayer, t, reply, true);
+      return;
+  }
+
+    // get available voter count
+  unsigned short int available = 0;
+  for (int i=0; i < curMaxPlayers; i++) {
+      // anyone on the server (even observers) are eligible to vote
+      if (player[i].fd != NotConnected) {
+	available++;
+      }
+  }
+
+    // make sure there are enough players to even make a poll (don't count the pollee)
+  if (available - 1 < clOptions->votesRequired) {
+      sprintf(reply,"Unable to initiate a new poll.  There are not enough players.");
+      sendMessage(ServerPlayer, t, reply, true);
+      sprintf(reply,"There needs to be at least %d other %s and only %d %s available.",
+	      clOptions->votesRequired,
+	      clOptions->votesRequired - 1 == 1 ? "player" : "players",
+	      available - 1,
+	      available - 1 == 1 ? "is" : "are");
+      sendMessage(ServerPlayer, t, reply, true);
+      return;
+  }
+
+  std::string pollCmd = &message[5];
+  std::string cmd;
+  std::string nick;
+
+  unsigned int endPos;
+  unsigned int startPos = pollCmd.find_first_not_of(" \t");
+  if (startPos != std::string::npos) {
+      endPos = pollCmd.find_first_of(" \t", startPos);
+      if (endPos == std::string::npos)
+	endPos = pollCmd.length();
+
+      cmd = pollCmd.substr(startPos,endPos-startPos);
+      pollCmd = pollCmd.substr(endPos);
+  }
+  else {
+      sprintf(reply,"Invalid poll syntax: /poll (kick|ban|vote|veto) playername");
+      sendMessage(ServerPlayer, t, reply, true);
+      return;
+  }
+
+  if ((cmd == "ban") || (cmd == "kick")) {
+
+      startPos = pollCmd.find_first_not_of(" \t");
+      if (startPos != std::string::npos) {
+	std::string votePlayer = pollCmd.substr(startPos);
+	if (votePlayer.length() == 0) {
+	  sprintf(reply,"%s, no player was specified for the %s vote", player[t].callSign, cmd.c_str());
+	  sendMessage(ServerPlayer, t, reply, true);
+	  sprintf(reply,"Usage: /poll %s [playername]", cmd.c_str());
+	  sendMessage(ServerPlayer, t, reply, true);
+	  return;
+	}
+
+        /* make sure the requested player is actually here */
+        bool foundPlayer=false;
+        std::string playerIP = "";
+        for (int v = 0; v < curMaxPlayers; v++) {
+	  if (votePlayer == player[v].callSign) {
+	    playerIP = player[v].peer.getDotNotation().c_str();
+	    foundPlayer=true;
+	    break;
+	  }
+	}
+
+        if (!foundPlayer) {
+	  /* wrong name? */
+	  sprintf(reply, "The player specified for a %s vote is not here", cmd.c_str());
+	  sendMessage(ServerPlayer, t, reply, true);
+	  sprintf(reply,"Usage: /poll %s [playername]", cmd.c_str());
+	  sendMessage(ServerPlayer, t, reply, true);
+	  return;
+	}
+
+        /* create and announce the new poll */
+        if (cmd == "ban") {
+	  if (arbiter->pollToBan(votePlayer.c_str(), player[t].callSign, playerIP) == false) {
+	    sprintf(reply,"You are not able to request a ban poll right now, %s", player[t].callSign);
+	    sendMessage(ServerPlayer, t, reply, true);
+	  } else {
+	    sprintf(reply,"A poll to temporarily ban %s has been requested by %s", votePlayer.c_str(), player[t].callSign);
+	    sendMessage(ServerPlayer, AllPlayers, reply, true);
+	  }
+	} else {
+	  if (arbiter->pollToKick(votePlayer.c_str(), player[t].callSign) == false) {
+	    sprintf(reply,"You are not able to request a kick poll right now, %s", player[t].callSign);
+	    sendMessage(ServerPlayer, t, reply, true);
+	  } else {
+	    sprintf(reply,"A poll to %s %s has been requested by %s", cmd.c_str(), votePlayer.c_str(), player[t].callSign);
+	    sendMessage(ServerPlayer, AllPlayers, reply, true);
+	  }
+	}
+
+        // set the number of available voters
+        arbiter->setAvailableVoters(available);
+
+        // keep track of who is allowed to vote
+        for (i=0; i < curMaxPlayers; i++) {
+	  // anyone on the server (even observers) are eligible to vote
+	  if (player[i].fd != NotConnected) {
+	    arbiter->grantSuffrage(player[i].callSign);
+	  }
+	}
+
+        // automatically place a vote for the player requesting the poll
+        arbiter->voteYes(player[t].callSign);
+      }
+      else {
+        sprintf(reply,"Invalid poll syntax: /poll %s playername", cmd.c_str());
+        sendMessage(ServerPlayer, t, reply, true);
+	return;
+      }
+    } else if (cmd == "vote") {
+
+      if (!hasPerm(t, PlayerAccessInfo::vote)) {
+	sprintf(reply,"%s, you do not presently have permission to vote (must /identify first)", player[t].callSign);
+	sendMessage(ServerPlayer, t, reply, true);
+	return;
+      }
+
+      /* !!! needs to be handled by the /vote command  */
+      sprintf(reply,"%s, your vote has been recorded -- unimplemented", player[t].callSign);
+      sendMessage(ServerPlayer, t, reply, true);
+
+
+    } else if (cmd == "veto") {
+
+      if (!hasPerm(t, PlayerAccessInfo::veto)) {
+	sprintf(reply,"%s, you do not have permission to veto the poll", player[t].callSign);
+	sendMessage(ServerPlayer, t, reply, true);
+      }
+
+      /* !!! needs to be handled by the /veto command  */
+      sprintf(reply,"%s, you have aborted the poll -- unimplemented", player[t].callSign);
+      sendMessage(ServerPlayer, t, reply, true);
+
+
+    } else {
+
+      sprintf(reply,"Invalid option to the poll command");
+      sendMessage(ServerPlayer, t, reply, true);
+      sprintf(reply,"Usage: /poll ban|kick [playername]");
+      sendMessage(ServerPlayer, t, reply, true);
+    } /* end handling of poll subcommands */
+}
+
+static void handleVoteCmd(int t, const char *message)
+{
+  char reply[MessageLen];
+
+  if (!hasPerm(t, PlayerAccessInfo::vote)) {
+      /* permission denied for /vote */
+      sprintf(reply,"%s, you are presently not authorized to run /vote", player[t].callSign);
+      sendMessage(ServerPlayer, t, reply, true);
+      return;
+  }
+
+    /* make sure that there is a poll arbiter */
+  if (BZDB->isEmpty("poll")) {
+      sprintf(reply, "ERROR: the poll arbiter has disappeared (this should never happen)");
+      sendMessage(ServerPlayer, t, reply, true);
+      return;
+  }
+
+  VotingArbiter *arbiter = (VotingArbiter *)BZDB->getPointer("poll");
+
+  /* make sure that there is a poll to vote upon */
+  if (!arbiter->knowsPoll()) {
+      sprintf(reply,"A poll is not presently in progress.  There is nothing to vote on");
+      sendMessage(ServerPlayer, t, reply, true);
+      return;
+  }
+
+  /* find the start of the vote answer */
+  size_t messageLength = (int)strlen(message);
+  size_t nextChar = 0;
+  while ((nextChar < messageLength - 5) && (!isAlphanumeric(*(message+5+nextChar)))) {
+      nextChar++;
+  }
+
+  char answer[8];
+  memset(answer, 0, 8);
+
+  for (unsigned int i=0; (i < messageLength - 5 - nextChar) && (i < 31); i++) {
+      answer[i] = tolower(*(message + 5 + nextChar + i));
+  }
+  for (int a=strlen(answer)-1; a >= 0; a--) {
+      if (!isAlphanumeric(answer[a])) {
+	answer[a] = '\0';
+      }
+  }
+
+  /* XXX answer arrays should be static const but it'll do for now */
+  static const unsigned int yesCount = 8;
+  char yesAnswers[8][5];
+  memset(yesAnswers, 0, 8 * 5 * sizeof(char));
+  sprintf(yesAnswers[0], "y");
+  sprintf(yesAnswers[1], "1");
+  sprintf(yesAnswers[2], "yes");
+  sprintf(yesAnswers[3], "yea");
+  sprintf(yesAnswers[4], "si");
+  sprintf(yesAnswers[5], "ja");
+  sprintf(yesAnswers[6], "oui");
+  sprintf(yesAnswers[7], "sim");
+
+  static const unsigned int noCount = 7;
+  char noAnswers[7][5];
+  memset(noAnswers, 0, 7 * 5 * sizeof(char));
+  sprintf(noAnswers[0], "n");
+  sprintf(noAnswers[1], "0");
+  sprintf(noAnswers[2], "no");
+  sprintf(noAnswers[3], "nay");
+  sprintf(noAnswers[4], "nein");
+  sprintf(noAnswers[5], "non");
+  sprintf(noAnswers[6], "nao");
+
+  // see if the vote response is a valid yes or no answer
+  int vote=-1;
+  for (unsigned int v = 0; v < (noCount > yesCount ? noCount : yesCount); v++) {
+      if (v < yesCount) {
+	if (strncmp(answer, yesAnswers[v], 4) == 0) {
+	  vote = 1;
+	  break;
+	}
+      }
+      if (v < noCount) {
+	if (strncmp(answer, noAnswers[v], 4) == 0) {
+	  vote = 0;
+	  break;
+	}
+      }
+  }
+
+  // cast the vote or complain
+  bool cast = false;
+  if (vote == 0) {
+      if ((cast = arbiter->voteNo(player[t].callSign)) == true) {
+	/* player voted no */
+	sprintf(reply,"%s, your vote in opposition of the %s has been recorded", player[t].callSign, arbiter->getPollAction().c_str());
+	sendMessage(ServerPlayer, t, reply, true);
+      }
+  } else if (vote == 1) {
+      if ((cast = arbiter->voteYes(player[t].callSign)) == true) {
+	/* player voted yes */
+	sprintf(reply,"%s, your vote in favor of the %s has been recorded", player[t].callSign, arbiter->getPollAction().c_str());
+	sendMessage(ServerPlayer, t, reply, true);
+      }
+  } else {
+      if (strlen(answer) == 0) {
+	sprintf(reply,"%s, you did not provide a vote answer", player[t].callSign);
+	sendMessage(ServerPlayer, t, reply, true);
+	sprintf(reply,"Usage: /vote yes|no|y|n|1|0|yea|nay|si|ja|nein|oui|non|sim|nao");
+	sendMessage(ServerPlayer, t, reply, true);
+      } else {
+	sprintf(reply,"%s, you did not vote in favor or in opposition", player[t].callSign);
+	sendMessage(ServerPlayer, t, reply, true);
+	sprintf(reply,"Usage: /vote yes|no|y|n|1|0|yea|nay|si|ja|nein|oui|non|sim|nao");
+	sendMessage(ServerPlayer, t, reply, true);
+      }
+      return;
+  }
+
+  if (!cast) {
+      /* player was unable to cast their vote; probably already voted */
+      sprintf(reply,"%s, you have already voted on the poll to %s %s", player[t].callSign, arbiter->getPollAction().c_str(), arbiter->getPollPlayer().c_str());
+      sendMessage(ServerPlayer, t, reply, true);
+      return;
+  }
+}
+
+static void handleVetoCmd(int t, const char *message)
+{
+    char reply[MessageLen];
+    if (!hasPerm(t, PlayerAccessInfo::veto)) {
+      /* permission denied for /veto */
+      sprintf(reply,"%s, you are presently not authorized to run /veto", player[t].callSign);
+      sendMessage(ServerPlayer, t, reply, true);
+      return;
+    }
+
+    /* make sure that there is a poll arbiter */
+    if (BZDB->isEmpty("poll")) {
+      sprintf(reply, "ERROR: the poll arbiter has disappeared (this should never happen)");
+      sendMessage(ServerPlayer, t, reply, true);
+      return;
+    }
+
+    VotingArbiter *arbiter = (VotingArbiter *)BZDB->getPointer("poll");
+
+    /* make sure there is an unexpired poll */
+    if (!arbiter->knowsPoll()) {
+      sprintf(reply, "%s, there is presently no active poll to veto", player[t].callSign);
+      sendMessage(ServerPlayer, t, reply, true);
+      return;
+    }
+
+    /* poof */
+    arbiter->forgetPoll();
+
+    sprintf(reply,"%s, you have cancelled the poll to %s %s", player[t].callSign, arbiter->getPollAction().c_str(), arbiter->getPollPlayer().c_str());
+    sendMessage(ServerPlayer, t, reply, true);
+
+    sprintf(reply,"The poll was cancelled by %s", player[t].callSign);
+    sendMessage(ServerPlayer, AllPlayers, reply, true);
+
+}
+
 // parse player comands (messages with leading /)
 static void parseCommand(const char *message, int t)
 {
   int i=0;
   char reply[MessageLen];
-
-  static VotingArbiter *arbiter = (VotingArbiter *)BZDB->getPointer("poll");
 
   // /password command allows player to become operator
   if (strncmp(message + 1, "password", 8) == 0) {
@@ -4609,457 +4943,11 @@ static void parseCommand(const char *message, int t)
 
 
   } else if (strncmp(message+1, "poll",4) == 0) {
-
-    /* !!! all of the commands need to be pulled out of this file and put
-     * into individual routines. they could be set up a command registry
-     * class and hook functions
-     */
-
-#if 0
-    sprintf(reply,"DEBUG: poll command section entered");
-    sendMessage(ServerPlayer, t, reply, true);
-#endif
-
-    /* make sure player has permission to request a poll */
-    if (!hasPerm(t, PlayerAccessInfo::poll)) {
-      sprintf(reply,"%s, you are presently not authorized to run /poll", player[t].callSign);
-      sendMessage(ServerPlayer, t, reply, true);
-      return;
-    }
-
-    /* make sure that there is a poll arbiter */
-    if (BZDB->isEmpty("poll")) {
-      sprintf(reply, "ERROR: the poll arbiter has disappeared (this should never happen)");
-      sendMessage(ServerPlayer, t, reply, true);
-      return;
-    }
-
-    /* make sure that there is not a poll active already */
-    if (arbiter->knowsPoll()) {
-      sprintf(reply,"A poll to %s %s is presently in progress", arbiter->getPollAction().c_str(), arbiter->getPollPlayer().c_str());
-      sendMessage(ServerPlayer, t, reply, true);
-      sprintf(reply,"Unable to start a new poll until the current one is over");
-      sendMessage(ServerPlayer, t, reply, true);
-      return;
-    }
-
-    // get available voter count
-    unsigned short int available = 0;
-    for (int i=0; i < curMaxPlayers; i++) {
-      // anyone on the server (even observers) are eligible to vote
-      if (player[i].fd != NotConnected) {
-	available++;
-      }
-    }
-
-    // make sure there are enough players to even make a poll (don't count the pollee)
-    if (available - 1 < clOptions->votesRequired) {
-      sprintf(reply,"Unable to initiate a new poll.  There are not enough players.");
-      sendMessage(ServerPlayer, t, reply, true);
-      sprintf(reply,"There needs to be at least %d other %s and only %d %s available.",
-	      clOptions->votesRequired,
-	      clOptions->votesRequired - 1 == 1 ? "player" : "players",
-	      available - 1,
-	      available - 1 == 1 ? "is" : "are");
-      sendMessage(ServerPlayer, t, reply, true);
-      return;
-    }
-
-    size_t messageLength = strlen(message);
-    char command[5];
-    size_t commandLength;
-
-    /* find the start of the command */
-    size_t nextChar = 0;
-    while ((nextChar < messageLength - 5) && (!isAlphanumeric(*(message+5+nextChar)))) {
-      nextChar++;
-    }
-
-    /* prevent reading too much */
-    if (messageLength < 9) {
-      command[0]=command[1]=command[2]=command[3]=command[4]='\0';
-    } else {
-      command[0]=tolower(*(message+5+nextChar));
-      command[1]=tolower(*(message+5+nextChar+1));
-      command[2]=tolower(*(message+5+nextChar+2));
-      if (command[2] == 'n') {
-	command[3]='\0';
-      } else {
-	command[3]=tolower(*(message+5+nextChar+3));
-      }
-      command[4]='\0';
-    }
-    commandLength=(int)strlen(command);
-
-#if 0
-    sprintf(reply,"DEBUG: command is [%s] with strlen %d", command, (int)commandLength);
-    sendMessage(ServerPlayer, t, reply, true);
-#endif
-
-    /* find the start of any arguments */
-    size_t argStart = 0;
-    while ((argStart < (messageLength - 5 - nextChar - commandLength)) &&
-	   (*(message+5+nextChar+commandLength+argStart) != '\0') &&
-	   ((!isPrintable(*(message+5+nextChar+commandLength+argStart))) ||
-	    (isWhitespace(*(message+5+nextChar+commandLength+argStart))))) {
-      argStart++;
-    }
-    size_t argStartOffset=5+nextChar+commandLength+argStart;
-
-#if 1
-    sprintf(reply,"DEBUG: callsign is [%s] with nextChar %d and callsign at %d", message+argStartOffset, (int)nextChar, (int)argStartOffset);
-    sendMessage(ServerPlayer, t, reply, true);
-#endif
-
-    /* see if the action is kick/ban/vote/veto and is valid */
-    char voteplayer[256];
-    memset(voteplayer, 0, 256);
-
-    if ((strncmp(command, "ban", 3) == 0) ||
-	(strncmp(command, "kick", 4) == 0)) {
-
-#if 0
-      sprintf(reply,"DEBUG: poll %s command section entered", command);
-      sendMessage(ServerPlayer, t, reply, true);
-#endif
-
-      if (!isPrintable(*(message+argStartOffset))) {
-	/* if there was no callsign, or bad data was fed -- barf */
-	sprintf(reply,"%s, you need to provide a playername", player[t].callSign);
-	sendMessage(ServerPlayer, t, reply, true);
-	sprintf(reply,"Usage: /poll %s [playername]", command);
-	sendMessage(ServerPlayer, t, reply, true);
-	return;
-      } else if (*(message+argStartOffset) == '"') {
-	/* if the callsign is quoted -- strip off the quote */
-	size_t secondQuoteOffset=0;
-	while ((message[messageLength-1-secondQuoteOffset] != '"') &&
-	(secondQuoteOffset<messageLength-8)) {
-	  secondQuoteOffset++;
-	}
-	if ((messageLength-secondQuoteOffset >= argStartOffset) ||
-            (secondQuoteOffset - argStartOffset > 0)) {
-	  sprintf(reply,"%s, unterminated or misused quotes? -- don't use quotes", player[t].callSign);
-	  sendMessage(ServerPlayer, t, reply, true);
-	  sprintf(reply,"Usage: /poll %s [playername]", command);
-	  sendMessage(ServerPlayer, t, reply, true);
-	} else {
-	  strncpy(voteplayer, message+argStartOffset+1,
-	          messageLength-1-argStartOffset-secondQuoteOffset);
-	}
-      } else {
-	/* unquoted -- so just copy username if one was given*/
-	strncpy(voteplayer, message+argStartOffset, messageLength-argStartOffset);
-      }
-
-	  int i = 0;
-      /* trim off any trailing whitespace */
-      for (i = messageLength-argStartOffset-1; i >= 0; i--) {
-	if (isAlphanumeric(voteplayer[i])) {
-	  break;
-	} else {
-	  voteplayer[i]='\0';
-	}
-      }
-
-#if 1
-      sprintf(reply,"DEBUG: %s callsign is [%s]", command, voteplayer);
-      sendMessage(ServerPlayer, t, reply, true);
-#endif
-
-      /* see if the player is a valid user name */
-      if (strlen(voteplayer) == 0) {
-	/* no name given */
-	sprintf(reply,"%s, no player was specified for the %s vote", player[t].callSign, command);
-	sendMessage(ServerPlayer, t, reply, true);
-	sprintf(reply,"Usage: /poll %s [playername]", command);
-	sendMessage(ServerPlayer, t, reply, true);
-	return;
-      }
-
-      /* make sure the requested player is actually here */
-      bool foundPlayer=false;
-      std::string playerIP = "";
-      for (int v = 0; v < curMaxPlayers; v++) {
-#if 1
-	sprintf(reply,"DEBUG: comparing %s == %s", voteplayer, player[v].callSign);
-	sendMessage(ServerPlayer, t, reply, true);
-#endif
-
-	if (strncmp(player[v].callSign, voteplayer, 256)==0) {
-	  playerIP = player[v].peer.getDotNotation().c_str();
-	  foundPlayer=true;
-	  break;
-	}
-      }
-
-      if (!foundPlayer) {
-	/* wrong name? */
-	sprintf(reply, "The player specified for a %s vote is not here", command);
-	sendMessage(ServerPlayer, t, reply, true);
-	sprintf(reply,"Usage: /poll %s [playername]", command);
-	sendMessage(ServerPlayer, t, reply, true);
-	return;
-      }
-
-      /* create and announce the new poll */
-      if (strncmp(command, "ban", 3) == 0) {
-	if (arbiter->pollToBan(voteplayer, player[t].callSign, playerIP) == false) {
-	  sprintf(reply,"You are not able to request a ban poll right now, %s", player[t].callSign);
-	  sendMessage(ServerPlayer, t, reply, true);
-	} else {
-	  sprintf(reply,"A poll to temporarily ban %s has been requested by %s", voteplayer, player[t].callSign);
-	  sendMessage(ServerPlayer, AllPlayers, reply, true);
-	}
-      } else {
-	if (arbiter->pollToKick(voteplayer, player[t].callSign) == false) {
-	  sprintf(reply,"You are not able to request a kick poll right now, %s", player[t].callSign);
-	  sendMessage(ServerPlayer, t, reply, true);
-	} else {
-	  sprintf(reply,"A poll to %s %s has been requested by %s", command, voteplayer, player[t].callSign);
-	  sendMessage(ServerPlayer, AllPlayers, reply, true);
-	}
-      }
-
-      // set the number of available voters
-      arbiter->setAvailableVoters(available);
-
-
-      // keep track of who is allowed to vote
-      for (i=0; i < curMaxPlayers; i++) {
-	// anyone on the server (even observers) are eligible to vote
-	if (player[i].fd != NotConnected) {
-	  arbiter->grantSuffrage(player[i].callSign);
-	}
-      }
-
-      // automatically place a vote for the player requesting the poll
-      arbiter->voteYes(player[t].callSign);
-
-
-    } else if (strncmp(command, "vote", 4) == 0) {
-
-#if 0
-      sprintf(reply,"DEBUG: poll vote command section entered");
-      sendMessage(ServerPlayer, t, reply, true);
-#endif
-
-      if (!hasPerm(t, PlayerAccessInfo::vote)) {
-	sprintf(reply,"%s, you do not presently have permission to vote (must /identify first)", player[t].callSign);
-	sendMessage(ServerPlayer, t, reply, true);
-	return;
-      }
-
-      /* !!! needs to be handled by the /vote command  */
-      sprintf(reply,"%s, your vote has been recorded -- unimplemented", player[t].callSign);
-      sendMessage(ServerPlayer, t, reply, true);
-
-
-    } else if (strncmp(command, "veto", 4) == 0) {
-
-#if 0
-      sprintf(reply,"DEBUG: poll veto command section entered");
-      sendMessage(ServerPlayer, t, reply, true);
-#endif
-
-      if (!hasPerm(t, PlayerAccessInfo::veto)) {
-	sprintf(reply,"%s, you do not have permission to veto the poll", player[t].callSign);
-	sendMessage(ServerPlayer, t, reply, true);
-      }
-
-      /* !!! needs to be handled by the /veto command  */
-      sprintf(reply,"%s, you have aborted the poll -- unimplemented", player[t].callSign);
-      sendMessage(ServerPlayer, t, reply, true);
-
-
-    } else {
-
-      sprintf(reply,"Invalid option to the poll command");
-      sendMessage(ServerPlayer, t, reply, true);
-      sprintf(reply,"Usage: /poll ban|kick [playername]");
-      sendMessage(ServerPlayer, t, reply, true);
-      memset(command, 0, 5);
-
-    } /* end handling of poll subcommands */
-
-
-  } else if (strncmp(message+1, "vote",4) == 0) {
-
-#if 0
-    sprintf(reply,"DEBUG: vote command section entered");
-    sendMessage(ServerPlayer, t, reply, true);
-#endif
-
-    if (!hasPerm(t, PlayerAccessInfo::vote)) {
-      /* permission denied for /vote */
-      sprintf(reply,"%s, you are presently not authorized to run /vote", player[t].callSign);
-      sendMessage(ServerPlayer, t, reply, true);
-      return;
-    }
-
-    /* make sure that there is a poll arbiter */
-    if (BZDB->isEmpty("poll")) {
-      sprintf(reply, "ERROR: the poll arbiter has disappeared (this should never happen)");
-      sendMessage(ServerPlayer, t, reply, true);
-      return;
-    }
-
-    VotingArbiter *arbiter = (VotingArbiter *)BZDB->getPointer("poll");
-
-    /* make sure that there is a poll to vote upon */
-    if (!arbiter->knowsPoll()) {
-      sprintf(reply,"A poll is not presently in progress.  There is nothing to vote on");
-      sendMessage(ServerPlayer, t, reply, true);
-      return;
-    }
-
-    /* find the start of the vote answer */
-    size_t messageLength = (int)strlen(message);
-    size_t nextChar = 0;
-    while ((nextChar < messageLength - 5) && (!isAlphanumeric(*(message+5+nextChar)))) {
-      nextChar++;
-    }
-
-    char answer[8];
-    memset(answer, 0, 8);
-
-    for (unsigned int i=0; (i < messageLength - 5 - nextChar) && (i < 31); i++) {
-      answer[i] = tolower(*(message + 5 + nextChar + i));
-    }
-    for (int a=strlen(answer)-1; a >= 0; a--) {
-      if (!isAlphanumeric(answer[a])) {
-	answer[a] = '\0';
-      }
-    }
-
-    /* XXX answer arrays should be static const but it'll do for now */
-    static const unsigned int yesCount = 8;
-    char yesAnswers[8][5];
-    memset(yesAnswers, 0, 8 * 5 * sizeof(char));
-    sprintf(yesAnswers[0], "y");
-    sprintf(yesAnswers[1], "1");
-    sprintf(yesAnswers[2], "yes");
-    sprintf(yesAnswers[3], "yea");
-    sprintf(yesAnswers[4], "si");
-    sprintf(yesAnswers[5], "ja");
-    sprintf(yesAnswers[6], "oui");
-    sprintf(yesAnswers[7], "sim");
-
-    static const unsigned int noCount = 7;
-    char noAnswers[7][5];
-    memset(noAnswers, 0, 7 * 5 * sizeof(char));
-    sprintf(noAnswers[0], "n");
-    sprintf(noAnswers[1], "0");
-    sprintf(noAnswers[2], "no");
-    sprintf(noAnswers[3], "nay");
-    sprintf(noAnswers[4], "nein");
-    sprintf(noAnswers[5], "non");
-    sprintf(noAnswers[6], "nao");
-
-#if 0
-    sprintf(reply,"DEBUG: vote of %s was provided", answer);
-    sendMessage(ServerPlayer, t, reply, true);
-#endif
-
-    // see if the vote response is a valid yes or no answer
-    int vote=-1;
-    for (unsigned int v = 0; v < (noCount > yesCount ? noCount : yesCount); v++) {
-      if (v < yesCount) {
-	if (strncmp(answer, yesAnswers[v], 4) == 0) {
-	  vote = 1;
-	  break;
-	}
-      }
-      if (v < noCount) {
-	if (strncmp(answer, noAnswers[v], 4) == 0) {
-	  vote = 0;
-	  break;
-	}
-      }
-    }
-
-#if 0
-    sprintf(reply,"DEBUG: vote was determined to be %s", vote ? "in favor" : "against");
-    sendMessage(ServerPlayer, t, reply, true);
-#endif
-
-    // cast the vote or complain
-    bool cast = false;
-    if (vote == 0) {
-      if ((cast = arbiter->voteNo(player[t].callSign)) == true) {
-	/* player voted no */
-	sprintf(reply,"%s, your vote in opposition of the %s has been recorded", player[t].callSign, arbiter->getPollAction().c_str());
-	sendMessage(ServerPlayer, t, reply, true);
-      }
-    } else if (vote == 1) {
-      if ((cast = arbiter->voteYes(player[t].callSign)) == true) {
-	/* player voted yes */
-	sprintf(reply,"%s, your vote in favor of the %s has been recorded", player[t].callSign, arbiter->getPollAction().c_str());
-	sendMessage(ServerPlayer, t, reply, true);
-      }
-    } else {
-      if (strlen(answer) == 0) {
-	sprintf(reply,"%s, you did not provide a vote answer", player[t].callSign);
-	sendMessage(ServerPlayer, t, reply, true);
-	sprintf(reply,"Usage: /vote yes|no|y|n|1|0|yea|nay|si|ja|nein|oui|non|sim|nao");
-	sendMessage(ServerPlayer, t, reply, true);
-      } else {
-	sprintf(reply,"%s, you did not vote in favor or in opposition", player[t].callSign);
-	sendMessage(ServerPlayer, t, reply, true);
-	sprintf(reply,"Usage: /vote yes|no|y|n|1|0|yea|nay|si|ja|nein|oui|non|sim|nao");
-	sendMessage(ServerPlayer, t, reply, true);
-      }
-      return;
-    }
-
-    if (!cast) {
-      /* player was unable to cast their vote; probably already voted */
-      sprintf(reply,"%s, you have already voted on the poll to %s %s", player[t].callSign, arbiter->getPollAction().c_str(), arbiter->getPollPlayer().c_str());
-      sendMessage(ServerPlayer, t, reply, true);
-      return;
-    }
-
-
-  } else if (strncmp(message+1, "veto",4) == 0) {
-
-#if 0
-    sprintf(reply,"DEBUG: veto command section entered");
-    sendMessage(ServerPlayer, t, reply, true);
-#endif
-
-    if (!hasPerm(t, PlayerAccessInfo::veto)) {
-      /* permission denied for /veto */
-      sprintf(reply,"%s, you are presently not authorized to run /veto", player[t].callSign);
-      sendMessage(ServerPlayer, t, reply, true);
-      return;
-    }
-
-    /* make sure that there is a poll arbiter */
-    if (BZDB->isEmpty("poll")) {
-      sprintf(reply, "ERROR: the poll arbiter has disappeared (this should never happen)");
-      sendMessage(ServerPlayer, t, reply, true);
-      return;
-    }
-
-    VotingArbiter *arbiter = (VotingArbiter *)BZDB->getPointer("poll");
-
-    /* make sure there is an unexpired poll */
-    if (!arbiter->knowsPoll()) {
-      sprintf(reply, "%s, there is presently no active poll to veto", player[t].callSign);
-      sendMessage(ServerPlayer, t, reply, true);
-      return;
-    }
-
-    /* poof */
-    arbiter->forgetPoll();
-
-    sprintf(reply,"%s, you have cancelled the poll to %s %s", player[t].callSign, arbiter->getPollAction().c_str(), arbiter->getPollPlayer().c_str());
-    sendMessage(ServerPlayer, t, reply, true);
-
-    sprintf(reply,"The poll was cancelled by %s", player[i].callSign);
-    sendMessage(ServerPlayer, AllPlayers, reply, true);
-
-
+    handlePollCmd(t, message);
+  } else if (strncmp(message+1, "vote", 4) == 0) {
+    handleVoteCmd(t, message);
+  } else if (strncmp(message+1, "veto", 4) == 0) {
+    handleVetoCmd(t, message);
   } else {
     sprintf(reply, "Unknown command [%s]", message+1);
     sendMessage(ServerPlayer, t, reply, true);
