@@ -3831,6 +3831,9 @@ static void		handleServerMessage(bool human, uint16_t code,
 	    fullMsg += "->";
 	    if (srcPlayer)
 	      myTank->setRecipient(srcPlayer);
+	    
+	    // play a sound on a private message not from self
+	    playLocalSound( SFX_MESSAGE_PRIVATE );
 	  }
 	  fullMsg += "]";
 	  fullMsg += ColorStrings[ResetColor];
@@ -3849,6 +3852,11 @@ static void		handleServerMessage(bool human, uint16_t code,
 #else
 	  fullMsg += "[Team] ";
 #endif
+
+	  // play a sound if I didn't send the message
+	  if (srcPlayer != myTank) {
+	    playLocalSound( SFX_MESSAGE_TEAM );
+	  }
 	}
 	fullMsg += srcName;
 	fullMsg += colorStr;
