@@ -57,6 +57,7 @@ BZAdminClient::ServerCode BZAdminClient::getServerString(std::string& str) {
   int e;
   std::string dstName, srcName;
   str = "";
+  int i;
 
   /* read until we have a package that we want, or until there are no more
      packages for 100 ms */
@@ -81,7 +82,7 @@ BZAdminClient::ServerCode BZAdminClient::getServerString(std::string& str) {
       char value[MaxPacketLen];
       
       vbuf = nboUnpackUShort(vbuf, numVars);
-      for (int i = 0; i < numVars; i++) {
+      for (i = 0; i < numVars; i++) {
 	vbuf = nboUnpackUByte(vbuf, nameLen);
 	vbuf = nboUnpackString(vbuf, name, nameLen);
 	name[nameLen] = '\0';
