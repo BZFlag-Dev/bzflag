@@ -3937,7 +3937,6 @@ void			ServerStartMenu::execute()
       args[arg++] = "-b";
     }
     else if (((HUDuiList*)list[1])->getIndex() == 1){
-      args[arg++] = "-r";
       args[arg++] = "-h";
     }
     else {
