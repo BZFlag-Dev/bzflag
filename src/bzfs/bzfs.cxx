@@ -155,11 +155,15 @@ struct PlayerInfo {
     // if player can't multicast
     boolean multicastRelay;
 
-    // input buffer
+    // input buffers
     // bytes read in current msg
-    int len;
-    // current msg
-    char msg[MaxPacketLen];
+    int tcplen;
+    // current TCP msg
+    char tcpmsg[MaxPacketLen];
+    // bytes read in current msg
+    int udplen;
+    // current UDP msg
+    char udpmsg[MaxPacketLen];
 
     // output buffer
     int outmsgOffset;
@@ -1632,13 +1636,13 @@ static int uread(int *playerIndex, int *nopackets)
     if (pmsg != NULL) {
       int clen = len;
       if (clen < 1024) {
-	memcpy(player[*playerIndex].msg,pmsg,clen);
-	player[*playerIndex].len = clen;
+	memcpy(player[*playerIndex].udpmsg,pmsg,clen);
+	player[*playerIndex].udplen = clen;
       }
       // be sure to free the packet again
       free(pmsg);
       UDEBUG("GOT UDP READ %d Bytes [%d]\n",len, lseqno);
-      return player[*playerIndex].len;
+      return player[*playerIndex].udplen;
     }
   }
   return 0;
@@ -1652,11 +1656,11 @@ static int pread(int playerIndex, int l)
     return 0;
 
   // read more data into player's message buffer
-  const int e = recv(p.fd, p.msg + p.len, l, 0);
+  const int e = recv(p.fd, p.tcpmsg + p.tcplen, l, 0);
 
   // accumulate bytes read
   if (e > 0) {
-    p.len += e;
+    p.tcplen += e;
   }
 
   // handle errors
@@ -2990,7 +2994,8 @@ static void addClient(int playerIndex)
     maxFileDescriptor = player[playerIndex].fd;
   player[playerIndex].peer = Address(player[playerIndex].taddr);
   player[playerIndex].multicastRelay = False;
-  player[playerIndex].len = 0;
+  player[playerIndex].tcplen = 0;
+  player[playerIndex].udplen = 0;
   assert(player[playerIndex].outmsg == NULL);
   player[playerIndex].outmsgSize = 0;
   player[playerIndex].outmsgOffset = 0;
@@ -3428,9 +3433,10 @@ static void removePlayer(int playerIndex)
   // no UDP connection anymore
   player[playerIndex].ulinkup = false;
   player[playerIndex].toBeKicked = false;
+  player[playerIndex].udplen = 0;
 
   player[playerIndex].fd = NotConnected;
-  player[playerIndex].len = 0;
+  player[playerIndex].tcplen = 0;
 
   player[playerIndex].callSign[0] = 0;
 
@@ -5429,15 +5435,15 @@ int main(int argc, char **argv)
         while (uread(&i, &numpackets) > 0) {
 	  // read head
 	  uint16_t len, code;
-	  void *buf = player[i].msg;
+	  void *buf = player[i].udpmsg;
 	  buf = nboUnpackUShort(buf, len);
 	  buf = nboUnpackUShort(buf, code);
 
 	  // clear out message
-	  player[i].len = 0;
+	  player[i].udplen = 0;
 
 	  // handle the command for UDP
-	  handleCommand(i, code, len, player[i].msg);
+	  handleCommand(i, code, len, player[i].udpmsg);
         }
       }
 
@@ -5450,29 +5456,29 @@ int main(int argc, char **argv)
 
 	if (player[i].fd != NotConnected && FD_ISSET(player[i].fd, &read_set)) {
 	  // read header if we don't have it yet
-	  if (player[i].len < 4) {
-	    pread(i, 4 - player[i].len);
+	  if (player[i].tcplen < 4) {
+	    pread(i, 4 - player[i].tcplen);
 
 	    // if header not ready yet then skip the read of the body
-	    if (player[i].len < 4)
+	    if (player[i].tcplen < 4)
 	      continue;
 	  }
 
 	  // read body if we don't have it yet
 	  uint16_t len, code;
-	  void *buf = player[i].msg;
+	  void *buf = player[i].tcpmsg;
 	  buf = nboUnpackUShort(buf, len);
 	  buf = nboUnpackUShort(buf, code);
-	  if (player[i].len < 4 + (int)len) {
-	    pread(i, 4 + (int)len - player[i].len);
+	  if (player[i].tcplen < 4 + (int)len) {
+	    pread(i, 4 + (int)len - player[i].tcplen);
 
 	    // if body not ready yet then skip the command handling
-	    if (player[i].len < 4 + (int)len)
+	    if (player[i].tcplen < 4 + (int)len)
 	      continue;
 	  }
 
 	  // clear out message
-	  player[i].len = 0;
+	  player[i].tcplen = 0;
 
 	  // simple ruleset, if player sends a MsgShotBegin over TCP
 	  // and player is not using multicast
@@ -5484,7 +5490,7 @@ int main(int argc, char **argv)
 	  }
 
 	  // handle the command
-	  handleCommand(i, code, len, player[i].msg);
+	  handleCommand(i, code, len, player[i].tcpmsg);
 	}
       }
     }
