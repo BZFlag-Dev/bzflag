@@ -116,10 +116,6 @@ SOURCE=..\src\bzflag\bzflag.rc
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\bzflag\CommandManager.cxx
-# End Source File
-# Begin Source File
-
 SOURCE=..\src\bzflag\CommandsStandard.cxx
 # End Source File
 # Begin Source File
@@ -242,10 +238,6 @@ SOURCE=..\src\bzflag\World.cxx
 # Begin Source File
 
 SOURCE=..\src\bzflag\BackgroundRenderer.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\include\CommandManager.h
 # End Source File
 # Begin Source File
 

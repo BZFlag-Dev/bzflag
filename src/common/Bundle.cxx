@@ -103,15 +103,24 @@ Bundle::TLineType Bundle::parseLine(const std::string &line, std::string &data)
   }
   return type;
 }
-
-
+/*
+#include <set>
+static std::set<std::string> unmapped;
+*/
 std::string Bundle::getLocalString(const std::string &key)
 {
   BundleStringMap::iterator it = mappings.find(key);
   if (it != mappings.end())
     return it->second;
   else
+  {
+/*
+    if (unmapped.find( key ) == unmapped.end( ))
+      unmapped.insert( key );
+*/
+
     return key;
+  }
 }
 
 void Bundle::ensureNormalText(std::string &msg)

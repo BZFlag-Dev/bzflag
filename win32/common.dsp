@@ -98,6 +98,10 @@ SOURCE=..\src\common\bzsignal.c
 # End Source File
 # Begin Source File
 
+SOURCE=..\src\common\CommandManager.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\src\common\ConfigFileManager.cxx
 # End Source File
 # Begin Source File
