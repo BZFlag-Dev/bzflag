@@ -188,6 +188,11 @@ void FlagInfo::grab(int playerIndex)
   numShots    = 0;
 }
 
+int FlagInfo::teamIndex()
+{
+  return flag.type->flagTeam;
+}
+
 // Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***

@@ -1752,7 +1752,7 @@ void resetFlag(int flagIndex)
   // reposition flag
   float flagPos[3] = {0.0f, 0.0f, 0.0f};
 
-  int teamIndex = pFlagInfo->flag.type->flagTeam;
+  int teamIndex = pFlagInfo->teamIndex();
   if ((teamIndex >= ::RedTeam) &&  (teamIndex <= ::PurpleTeam)
       && (bases.find(teamIndex) != bases.end())) {
     TeamBases &teamBases = bases[teamIndex];
@@ -1815,8 +1815,8 @@ void resetFlag(int flagIndex)
 
   // required flags mustn't just disappear
   if (pFlagInfo->required) {
-    if (pFlagInfo->flag.type->flagTeam != ::NoTeam) {
-      if (team[pFlagInfo->flag.type->flagTeam].team.size == 0)
+    if (teamIndex != ::NoTeam) {
+      if (team[teamIndex].team.size == 0)
 	pFlagInfo->flag.status = FlagNoExist;
       else
 	pFlagInfo->flag.status = FlagOnGround;
@@ -2588,27 +2588,27 @@ static void captureFlag(int playerIndex, TeamColor teamCaptured)
   // player captured a flag.  can either be enemy flag in player's own
   // team base, or player's own flag in enemy base.
   int flagIndex = playerData->player.getFlag();
-  if (flagIndex < 0
-      || (FlagInfo::flagList[flagIndex].flag.type->flagTeam == ::NoTeam))
+  if (flagIndex < 0)
+    return;
+  int teamIndex = FlagInfo::flagList[flagIndex].teamIndex();
+  if (teamIndex == ::NoTeam)
     return;
 
   { //cheat checking
     TeamColor base = whoseBase(lastState[playerIndex].pos[0],
 			       lastState[playerIndex].pos[1],
 			       lastState[playerIndex].pos[2]);
-    if ((FlagInfo::flagList[flagIndex].flag.type->flagTeam
-	 == playerData->player.getTeam() &&
+    if ((teamIndex == playerData->player.getTeam() &&
 	 base == playerData->player.getTeam()))	{
       DEBUG1("\"%s\" (%d) sent MsgCaptureFlag for taking its own flag onto its own base",
 	     playerData->player.getCallSign(), playerIndex);
       return; //sanity check
     }
-    if ((FlagInfo::flagList[flagIndex].flag.type->flagTeam
-	 != playerData->player.getTeam() &&
+    if ((teamIndex != playerData->player.getTeam() &&
 	 base != playerData->player.getTeam())) {
       DEBUG1("\"%s\" (%d) tried to capture %s flag without reaching its own base",
 	     playerData->player.getCallSign(), playerIndex,
-	     Team::getName(FlagInfo::flagList[flagIndex].flag.type->flagTeam));
+	     Team::getName((TeamColor)teamIndex));
       //char message[MessageLen];
       //strcpy(message, "Autokick: Tried to capture opponent flag without landing on your base");
       //sendMessage(ServerPlayer, playerIndex, message);
@@ -2632,8 +2632,7 @@ static void captureFlag(int playerIndex, TeamColor teamCaptured)
   // everyone on losing team is dead
   for (int i = 0; i < curMaxPlayers; i++)
     if ((otherData = GameKeeper::Player::getPlayerByIndex(i))
-	&& FlagInfo::flagList[flagIndex].flag.type->flagTeam
-	== int(otherData->player.getTeam()) &&
+	&& teamIndex == int(otherData->player.getTeam()) &&
 	otherData->player.isAlive()) {
       otherData->player.setDead();
       otherData->player.setRestartOnBase(true);
@@ -2641,15 +2640,13 @@ static void captureFlag(int playerIndex, TeamColor teamCaptured)
 
   // update score (rogues can't capture flags)
   int winningTeam = (int)NoTeam;
-  if (int(FlagInfo::flagList[flagIndex].flag.type->flagTeam)
-      != int(playerData->player.getTeam())) {
+  if (teamIndex != int(playerData->player.getTeam())) {
     // player captured enemy flag
     winningTeam = int(playerData->player.getTeam());
     team[winningTeam].team.won++;
   }
-  team[int(FlagInfo::flagList[flagIndex].flag.type->flagTeam)].team.lost++;
-  sendTeamUpdate(-1, winningTeam,
-		 int(FlagInfo::flagList[flagIndex].flag.type->flagTeam));
+  team[teamIndex].team.lost++;
+  sendTeamUpdate(-1, winningTeam, teamIndex);
 #ifdef PRINTSCORE
   dumpScore();
 #endif
