@@ -378,9 +378,7 @@ boolean			ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
 
   if (!myTank->isKeyboardMoving()) {
     if ((key.button == BzfKeyEvent::Up) ||
-	(key.button == BzfKeyEvent::Down) ||
-	(key.button == BzfKeyEvent::Left) ||
-	(key.button == BzfKeyEvent::Right))
+	(key.button == BzfKeyEvent::Down))
       return True;
   }
 

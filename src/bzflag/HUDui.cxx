@@ -428,7 +428,8 @@ void			HUDuiList::doRender()
 // HUDuiTypeIn
 //
 
-HUDuiTypeIn::HUDuiTypeIn() : HUDuiControl(), maxLength(0), stringWidth(0.0f)
+HUDuiTypeIn::HUDuiTypeIn() 
+: HUDuiControl(), maxLength(0), cursorPos(0)
 {
 }
 
@@ -450,21 +451,16 @@ void			HUDuiTypeIn::setMaxLength(int _maxLength)
 {
   maxLength = _maxLength;
   string.truncate(maxLength);
+  if (cursorPos > maxLength)
+    cursorPos = maxLength;
   onSetFont();
 }
 
 void			HUDuiTypeIn::setString(const BzfString& _string)
 {
   string = _string;
+  cursorPos = string.getLength();
   onSetFont();
-}
-
-void			HUDuiTypeIn::onSetFont()
-{
-  // recompute string width
-  HUDuiControl::onSetFont();
-  if (getFont().isValid())
-    stringWidth = (float)getFont().getWidth(string);
 }
 
 boolean			HUDuiTypeIn::doKeyPress(const BzfKeyEvent& key)
@@ -480,6 +476,16 @@ boolean			HUDuiTypeIn::doKeyPress(const BzfKeyEvent& key)
 
     case BzfKeyEvent::Down:
       HUDui::setFocus(getNext());
+      return True;
+
+    case BzfKeyEvent::Left:
+      if (cursorPos > 0)
+	cursorPos--;
+      return True;
+
+    case BzfKeyEvent::Right:
+      if (cursorPos < string.getLength())
+	cursorPos++;
       return True;
 
     case BzfKeyEvent::Delete:
@@ -498,14 +504,18 @@ boolean			HUDuiTypeIn::doKeyPress(const BzfKeyEvent& key)
     return False;
 
   if (c == backspace) {
-    if (string.getLength() == 0) goto noRoom;
-    string.truncate(string.getLength() - 1);
+    if (cursorPos == 0) goto noRoom;
+
+    cursorPos--;
+    string = string(0, cursorPos) + string(cursorPos + 1, string.getLength() - cursorPos + 1);
     onSetFont();
   }
   else {
     if (isspace(c)) c = whitespace;
     if (string.getLength() == maxLength) goto noRoom;
-    string.append(&c, 1);
+
+    string = string(0, cursorPos) + c + string( cursorPos, string.getLength() - cursorPos);
+    cursorPos++;
     onSetFont();
   }
   return True;
@@ -532,9 +542,15 @@ void			HUDuiTypeIn::doRender()
   glColor3fv(hasFocus() ? textColor : dimTextColor);
   getFont().draw(string, getX(), getY());
 
-  // render cursor
+  float start = getFont().getWidth(string.getString(), cursorPos);
+/*  float stop;
+  if (cursorPos >= string.getLength())
+    stop = start + getFont().getWidth("m", 1);
+  else
+    stop = start + getFont().getWidth(string.getString() + cursorPos, 1);
+*/
   if (HUDui::getFocus() == this)
-    getFont().draw("_", getX() + stringWidth, getY());
+    getFont().draw("_", getX() + start, getY());
 }
 
 //

@@ -57,6 +57,7 @@ class BzfString {
 
     BzfString		operator+(const BzfString&) const;
     BzfString		operator+(const char*) const;
+    BzfString		operator+(const char) const;
     BzfString&		operator+=(const BzfString&);
     BzfString&		operator+=(const char*);
     BzfString&		operator<<(const BzfString&);

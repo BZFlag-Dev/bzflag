@@ -155,7 +155,6 @@ class HUDuiTypeIn : public HUDuiControl {
     void		setString(const BzfString&);
 
   protected:
-    void		onSetFont();
     boolean		doKeyPress(const BzfKeyEvent&);
     boolean		doKeyRelease(const BzfKeyEvent&);
     void		doRender();
@@ -163,7 +162,7 @@ class HUDuiTypeIn : public HUDuiControl {
   private:
     int			maxLength;
     BzfString		string;
-    float		stringWidth;
+    int			cursorPos;
 };
 
 class HUDuiLabel : public HUDuiControl {

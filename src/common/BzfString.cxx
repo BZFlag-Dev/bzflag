@@ -39,7 +39,7 @@ BzfString::Rep::Rep(const Rep* rep) :
 				size(rep->size)
 {
   string = new char[size];
-  if (length > 1) {
+  if (length > 0) {
     if (rep->string)
       ::memcpy(string, rep->string, length * sizeof(char));
     else
@@ -139,6 +139,17 @@ BzfString		BzfString::operator+(const char* tail) const
   return s += tail;
 }
 
+BzfString		BzfString::operator+(const char tail) const
+{
+  char buffer[2];
+  buffer[0] = tail;
+  buffer[1] = 0;
+
+  BzfString s(*this);
+  s += buffer;
+  return s;
+}
+
 BzfString&		BzfString::operator+=(const BzfString& tail)
 {
   append(tail.getString(), tail.getLength());
@@ -173,6 +184,8 @@ BzfString		BzfString::operator()(int start, int length) const
   assert(start >= 0 && start < rep->length);
   assert(length >= 0 && start + length <= rep->length);
 #endif
+  if ((start+length) > rep->length)
+    length = rep->length - start;
   return BzfString(rep->string + start, length);
 }
 
@@ -231,6 +244,9 @@ void			BzfString::makeUnique()
 
 void			BzfString::append(const char* string, int length)
 {
+  if (length == 0)
+    return;
+
   makeUnique();
   int newLength = rep->length + length;
   if (newLength >= rep->size) {
