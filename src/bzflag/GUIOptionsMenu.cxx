@@ -166,16 +166,6 @@ GUIOptionsMenu::GUIOptionsMenu()
   option->update();
   list.push_back(option);
 
-  // GUI coloring
-  option = new HUDuiList;
-  option->setFontFace(fontFace);
-  option->setLabel("Control panel coloring:");
-  option->setCallback(callback, (void*)"c");
-  options = &option->getList();
-  options->push_back(std::string("off"));
-  options->push_back(std::string("on"));
-  option->update();
-  list.push_back(option);
   // Tabs
   option = new HUDuiList;
   option->setFontFace(fontFace);
@@ -185,6 +175,16 @@ GUIOptionsMenu::GUIOptionsMenu()
   options->push_back(std::string("off"));
   options->push_back(std::string("left"));
   options->push_back(std::string("right"));
+  option->update();
+  list.push_back(option);
+  // GUI coloring
+  option = new HUDuiList;
+  option->setFontFace(fontFace);
+  option->setLabel("Control panel coloring:");
+  option->setCallback(callback, (void*)"c");
+  options = &option->getList();
+  options->push_back(std::string("off"));
+  options->push_back(std::string("on"));
   option->update();
   list.push_back(option);
   // Underline color
