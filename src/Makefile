@@ -18,6 +18,7 @@ COMMONPREF = src
 include $(DEPTH)/Make-common
 
 SUBDIRS =				\
+	bzfrelay			\
 	common				\
 	net				\
 	bzfs				\
@@ -28,7 +29,6 @@ SUBDIRS =				\
 	scene				\
 	platform			\
 	bzflag				\
-	bzfrelay			\
 	$(NULL)
 
 targets:
