@@ -102,8 +102,8 @@ public:
   static std::string	getInputMethodName(InputMethod whatInput);
   bool		queryInputChange();
   void		setKey(int button, bool pressed);
-  int	   getRotation();
-  int	   getSpeed();
+  int		getRotation();
+  int		getSpeed();
   bool		isSpawning();
   void		setSpawning( bool spawn );
 

@@ -374,6 +374,23 @@ static void sendPlayerUpdate(GameKeeper::Player *playerData, int index)
   }
 }
 
+void sendPlayerInfo(void) {
+  void *buf, *bufStart = getDirectMessageBuffer();
+  int i, numPlayers = 0;
+  for (i = 0; i <= int(ObserverTeam); i++)
+    numPlayers += team[i].team.size;
+  buf = nboPackUByte(bufStart, numPlayers);
+  for (i = 0; i < curMaxPlayers; ++i) {
+    GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(i);
+    if (!playerData)
+      continue;
+    if (playerData->player.isPlaying()) {
+      buf = playerData->packPlayerInfo(buf);
+    }
+  }
+  broadcastMessage(MsgPlayerInfo, (char*)buf - (char*)bufStart, bufStart);
+}
+
 void sendIPUpdate(int targetPlayer = -1, int playerIndex = -1) {
   // targetPlayer = -1: send to all players with the PLAYERLIST permission
   // playerIndex = -1: send info about all players

@@ -75,7 +75,6 @@ extern bool roamButton;
 #include "World.h"
 extern World* world;
 void setRoamingLabel(bool force);
-extern bool admin;
 extern void warnAboutMainFlags();
 extern void warnAboutRadarFlags();
 extern void warnAboutConsoleAndRadar();
@@ -764,10 +763,10 @@ std::string cmdServerCommand(const std::string&, const CommandManager::ArgList& 
   static ServerCommandKey serverCommandKeyHandler;
   if (args.size() != 0)
     return "usage: servercommand";
-  static bool prevAdmin = admin;
-  if (prevAdmin == false && admin == true) serverCommandKeyHandler.adminInit();
-  if (prevAdmin == true && admin == false) serverCommandKeyHandler.nonAdminInit();
-  prevAdmin = admin;
+  static bool prevAdmin = myTank->isAdmin();
+  if (!prevAdmin && myTank->isAdmin()) serverCommandKeyHandler.adminInit();
+  if (prevAdmin && !myTank->isAdmin()) serverCommandKeyHandler.nonAdminInit();
+  prevAdmin = myTank->isAdmin();
 
   messageHistoryIndex = 0;
   serverCommandKeyHandler.init();

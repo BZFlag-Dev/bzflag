@@ -150,8 +150,14 @@ void *GameKeeper::Player::packAdminInfo(void *buf)
 {
   buf = nboPackUByte(buf, netHandler->sizeOfIP());
   buf = nboPackUByte(buf, playerIndex);
-  buf = nboPackUByte(buf, accessInfo.getPlayerProperties());
   buf = netHandler->packAdminInfo(buf);
+  return buf;
+}
+
+void *GameKeeper::Player::packPlayerInfo(void *buf)
+{
+  buf = nboPackUByte(buf, playerIndex);
+  buf = nboPackUByte(buf, accessInfo.getPlayerProperties());
   return buf;
 }
 

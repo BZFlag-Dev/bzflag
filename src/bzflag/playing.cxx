@@ -128,7 +128,6 @@ static SceneDatabaseBuilder* sceneBuilder = NULL;
 static Team*		teams = NULL;
 int			numFlags = 0;
 static bool		joinRequested = false;
-bool			admin = false; // am I an admin?
 static bool		serverError = false;
 static bool		serverDied = false;
 bool			fireButton = false;
@@ -1570,79 +1569,79 @@ static void		handleServerMessage(bool human, uint16_t code,
       break;
     }
 
-  case MsgNegotiateFlags: {
-    if (len > 0) {
-      dumpMissingFlag((char *)msg, len);
+    case MsgNegotiateFlags: {
+      if (len > 0) {
+	dumpMissingFlag((char *)msg, len);
+	break;
+      }
+      serverLink->send(MsgWantSettings, 0, NULL);
       break;
     }
-    serverLink->send(MsgWantSettings, 0, NULL);
-    break;
-  }
 
-  case MsgGameSettings: {
-    if (worldBuilder)
-      delete worldBuilder;
-    worldBuilder = new WorldBuilder;
-    worldBuilder->unpackGameSettings(msg);
-    serverLink->send(MsgWantWHash, 0, NULL);
-    HUDDialogStack::get()->setFailedMessage("Requesting World Hash...");
-    break;
-  }
+    case MsgGameSettings: {
+      if (worldBuilder)
+	delete worldBuilder;
+      worldBuilder = new WorldBuilder;
+      worldBuilder->unpackGameSettings(msg);
+      serverLink->send(MsgWantWHash, 0, NULL);
+      HUDDialogStack::get()->setFailedMessage("Requesting World Hash...");
+      break;
+    }
 
-  case MsgCacheURL: {
-    char *cacheURL = new char[len];
-    nboUnpackString(msg, cacheURL, len);
-    worldUrl = cacheURL;
-    delete [] cacheURL;
-    break;
-  }
+    case MsgCacheURL: {
+      char *cacheURL = new char[len];
+      nboUnpackString(msg, cacheURL, len);
+      worldUrl = cacheURL;
+      delete [] cacheURL;
+      break;
+    }
 
-  case MsgWantWHash: {
-    char *hexDigest = new char[len];
-    nboUnpackString(msg, hexDigest, len);
-    md5Digest = &hexDigest[1];
-    if (isCached(hexDigest) || isUrlCached()) {
+    case MsgWantWHash: {
+      char *hexDigest = new char[len];
+      nboUnpackString(msg, hexDigest, len);
+      md5Digest = &hexDigest[1];
+      if (isCached(hexDigest) || isUrlCached()) {
+	delete [] hexDigest;
+	loadCachedWorld();
+	break;
+      }
+      isCacheTemp = hexDigest[0] == 't';
       delete [] hexDigest;
-      loadCachedWorld();
+      HUDDialogStack::get()->setFailedMessage("Downloading World...");
+      {
+	char msg[MaxPacketLen];
+	// ask for world
+	nboPackUInt(msg, 0);
+	serverLink->send(MsgGetWorld, sizeof(uint32_t), msg);
+	worldPtr = 0;
+	if (cacheOut)
+	  delete cacheOut;
+	cacheOut = FILEMGR.createDataOutStream(worldCachePath, true, true);
+      }
       break;
     }
-    isCacheTemp = hexDigest[0] == 't';
-    delete [] hexDigest;
-    HUDDialogStack::get()->setFailedMessage("Downloading World...");
-    {
-      char msg[MaxPacketLen];
-      // ask for world
-      nboPackUInt(msg, 0);
-      serverLink->send(MsgGetWorld, sizeof(uint32_t), msg);
-      worldPtr = 0;
+
+    case MsgGetWorld: {
+      // create world
+      uint32_t bytesLeft;
+      void *buf = nboUnpackUInt(msg, bytesLeft);
+      bool last = processWorldChunk(buf, len - 4, bytesLeft);
+      if (!last) {
+	char msg[MaxPacketLen];
+	// ask for next chunk
+	worldPtr += len - 4;
+	nboPackUInt(msg, worldPtr);
+	serverLink->send(MsgGetWorld, sizeof(uint32_t), msg);
+	break;
+      }
       if (cacheOut)
 	delete cacheOut;
-      cacheOut = FILEMGR.createDataOutStream(worldCachePath, true, true);
-    }
-    break;
-  }
-
-  case MsgGetWorld: {
-    // create world
-    uint32_t bytesLeft;
-    void *buf = nboUnpackUInt(msg, bytesLeft);
-    bool last = processWorldChunk(buf, len - 4, bytesLeft);
-    if (!last) {
-      char msg[MaxPacketLen];
-      // ask for next chunk
-      worldPtr += len - 4;
-      nboPackUInt(msg, worldPtr);
-      serverLink->send(MsgGetWorld, sizeof(uint32_t), msg);
+      cacheOut = NULL;
+      loadCachedWorld();
+      if (isCacheTemp)
+	markOld(worldCachePath);
       break;
     }
-    if (cacheOut)
-      delete cacheOut;
-    cacheOut = NULL;
-    loadCachedWorld();
-    if (isCacheTemp)
-      markOld(worldCachePath);
-    break;
-  }
 
     case MsgTimeUpdate: {
       uint16_t timeLeft;
@@ -1808,9 +1807,9 @@ static void		handleServerMessage(bool human, uint16_t code,
       msg = nboUnpackShort(msg, reason);
       msg = nboUnpackShort(msg, shotId);
       if (reason == (int16_t)PhysicsDriverDeath) {
-        int32_t inPhyDrv;
+	int32_t inPhyDrv;
 	msg = nboUnpackInt(msg, inPhyDrv);
-        phydrv = int(inPhyDrv);
+	phydrv = int(inPhyDrv);
       }
       BaseLocalPlayer* victimLocal = getLocalPlayer(victim);
       BaseLocalPlayer* killerLocal = getLocalPlayer(killer);
@@ -2400,9 +2399,9 @@ static void		handleServerMessage(bool human, uint16_t code,
 
 	// direct message to or from me
 	if (dstPlayer) {
-	  if (fromServer && (origText == "You are now an administrator!"
-			     || origText == "Password Accepted, welcome back."))
-	    admin = true;
+	  //if (fromServer && (origText == "You are now an administrator!"
+	//		     || origText == "Password Accepted, welcome back."))
+	    //admin = true;
 	  // talking to myself? that's strange
 	  if (dstPlayer == myTank && srcPlayer == myTank) {
 	    fullMsg = text;
@@ -2509,6 +2508,26 @@ static void		handleServerMessage(bool human, uint16_t code,
 	flag.owner = (PlayerId) -1;
 	flag.status = FlagNoExist;
 	world->initFlag (i);
+      }
+      break;
+    }
+
+    case MsgPlayerInfo: {
+      uint8_t numPlayers;
+      int i;
+      msg = nboUnpackUByte(msg, numPlayers);
+      for (i = 0; i < numPlayers; ++i) {
+        PlayerId id;
+        msg = nboUnpackUByte(msg, id);
+        Player *p = lookupPlayer(id);
+        uint8_t info;
+	// parse player info bitfield
+	msg = nboUnpackUByte(msg, info);
+	if (!p)
+	  continue;
+	p->setAdmin((info & IsAdmin) != 0);
+	p->setRegistered((info & IsRegistered) != 0);
+	p->setVerified((info & IsVerified) != 0);
       }
       break;
     }
@@ -4064,7 +4083,6 @@ static void joinInternetGame()
   // assume everything's okay for now
   serverDied = false;
   serverError = false;
-  admin = false;
 
   if (!serverLink) {
     HUDDialogStack::get()->setFailedMessage("Memory error");

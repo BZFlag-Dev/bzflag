@@ -31,7 +31,7 @@ struct PlayerInfo {
   int losses;
   int tks;
   bool isRegistered;
-  bool isIdentified;
+  bool isVerified;
   bool isAdmin;
 };
 

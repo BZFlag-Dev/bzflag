@@ -2284,6 +2284,7 @@ static const char *msgString(u16 code)
       STRING_CASE (MsgNewRabbit);
       STRING_CASE (MsgNegotiateFlags);
       STRING_CASE (MsgPause);
+      STRING_CASE (MsgPlayerInfo);
       STRING_CASE (MsgPlayerUpdate);
       STRING_CASE (MsgPlayerUpdateSmall);
       STRING_CASE (MsgQueryGame);

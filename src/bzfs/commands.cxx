@@ -94,7 +94,8 @@ extern bool countdownActive;
 extern int countdownDelay;
 
 // externs that identify and password requires
-extern void sendIPUpdate(int targetPlayer = -1, int playerIndex = -1);
+extern void sendIPUpdate(int targetPlayer, int playerIndex);
+extern void sendPlayerInfo(void);
 
 
 int getTarget(const char *victimname) {
@@ -287,7 +288,7 @@ void handlePasswordCmd(GameKeeper::Player *playerData, const char *message)
   } else {
     if ((clOptions->password != "") && strncmp(message + 10, clOptions->password.c_str(), clOptions->password.size()) == 0 && clOptions->password.length() == strlen(message + 10)) {
       playerData->accessInfo.setAdmin();
-      sendIPUpdate(t, -1);
+      sendPlayerInfo();
       sendMessage(ServerPlayer, t, "You are now an administrator!");
     } else {
       sendMessage(ServerPlayer, t, "Wrong Password!");
@@ -1032,6 +1033,7 @@ void handleIdentifyCmd(GameKeeper::Player *playerData, const char *message)
 
 	// if they have the PLAYERLIST permission, send the IP list
 	sendIPUpdate(t, -1);
+	sendPlayerInfo();
       } else {
 	playerData->accessInfo.setLoginFail();
 	sendMessage(ServerPlayer, t, "Identify Failed, please make sure"

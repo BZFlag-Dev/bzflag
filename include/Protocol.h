@@ -50,10 +50,10 @@ const int		MaximumTTL = 255;
 // maximum size of any message (including header and length fields)
 const int		MaxPacketLen = 1024;
 
-// player attributes for the MsgAdminInfo message
+// player attributes for the MsgPlayerInfo message
 enum PlayerAttribute {
   IsRegistered = 1 << 0,
-  IsIdentified = 1 << 1,
+  IsVerified   = 1 << 1,
   IsAdmin      = 1 << 2
 };
 
@@ -82,6 +82,7 @@ const uint16_t		MsgMessage = 0x6d67;			// 'mg'
 const uint16_t		MsgNewRabbit = 0x6e52;			// 'nR'
 const uint16_t		MsgNegotiateFlags = 0x6e66;		// 'nf'
 const uint16_t		MsgPause = 0x7061;			// 'pa'
+const uint16_t		MsgPlayerInfo = 0x7062;			// 'pb'
 const uint16_t		MsgPlayerUpdate = 0x7075;		// 'pu'
 const uint16_t		MsgPlayerUpdateSmall = 0x7073;		// 'ps'
 const uint16_t		MsgQueryGame = 0x7167;			// 'qg'
@@ -248,10 +249,11 @@ server to player messages:
 			<== id, type, team, name, email
   MsgRemovePlayer	player has exited the server
 			<== id
-  MsgAdminInfo		update of players' IP addresses and some other
-			properties, only sent to players with the PLAYERLIST
-			permission.
+  MsgAdminInfo		update of players' IP addresses
+			only sent to players with the PLAYERLIST permission.
 			<-- count, [chunklen, id, bitfield, address]*
+  MsgPlayerInfo		update of players status
+			<-- count, [id, bitfield]*
   MsgFlagUpdate		update of flag info
 			<== count, [flag, flag-info]*
   MsgTeamUpdate		update of team info

@@ -34,6 +34,7 @@ extern PingPacket getTeamCounts();
 extern uint16_t curMaxPlayers;
 extern int getTarget(const char *victimname);
 extern void sendMessage(int playerIndex, PlayerId targetPlayer, const char *message);
+extern void sendPlayerInfo(void);
 
 ListServerLink::ListServerLink(std::string listServerURL, std::string publicizedAddress, std::string publicizedTitle)
 {
@@ -190,6 +191,7 @@ void ListServerLink::read()
 	    group = nextgroup;
 	  }
 	  sendMessage(ServerPlayer, playerIndex, "Global login approved!");
+	  sendPlayerInfo();
 	  playerData->player.clearToken();
 	}
       } else if (strncmp(base, tokBadIdentifier, strlen(tokBadIdentifier)) == 0) {

@@ -108,6 +108,7 @@ BZAdminClient::BZAdminClient(BZAdminUI* bzInterface)
   colorMap[ObserverTeam] = Cyan;
 
   // initialise the msg type map
+  // FIXME MsgPlayerInfo
   msgTypeMap["bzdb"] = MsgSetVar;
   msgTypeMap["chat"] = MsgMessage;
   msgTypeMap["admin"] = MsgAdminInfo;
@@ -247,6 +248,20 @@ BZAdminClient::ServerCode BZAdminClient::checkMessage() {
       players.erase(p);
       break;
 
+    case MsgPlayerInfo:
+      uint8_t numPlayers;
+      vbuf = nboUnpackUByte(vbuf, numPlayers);
+      for (i = 0; i < numPlayers; ++i) {
+	vbuf = nboUnpackUByte(vbuf, p);
+        uint8_t info;
+	// parse player info bitfield
+	vbuf = nboUnpackUByte(vbuf, info);
+	players[p].isAdmin = ((info & IsAdmin) != 0);
+	players[p].isRegistered = ((info & IsRegistered) != 0);
+	players[p].isVerified = ((info & IsVerified) != 0);
+      }
+      break;
+
     case MsgAdminInfo:
       uint8_t numIPs;
       uint8_t tmp;
@@ -254,11 +269,6 @@ BZAdminClient::ServerCode BZAdminClient::checkMessage() {
       for (i = 0; i < numIPs; ++i) {
 	vbuf = nboUnpackUByte(vbuf, tmp);
 	vbuf = nboUnpackUByte(vbuf, p);
-	// parse player info bitfield
-	vbuf = nboUnpackUByte(vbuf, tmp);
-	players[p].isAdmin = ((tmp & IsAdmin) != 0);
-	players[p].isRegistered = ((tmp & IsRegistered) != 0);
-	players[p].isIdentified = ((tmp & IsIdentified) != 0);
 	vbuf = a.unpack(vbuf);
 	players[p].ip = a.getDotNotation();
       }

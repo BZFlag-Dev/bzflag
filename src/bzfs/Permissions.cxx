@@ -149,7 +149,7 @@ uint8_t PlayerAccessInfo::getPlayerProperties() {
   if (isRegistered())
     result |= IsRegistered;
   if (verified)
-    result |= IsIdentified;
+    result |= IsVerified;
   if (Admin)
     result |= IsAdmin;
   return result;

@@ -367,7 +367,7 @@ bool			ServerCommandKey::keyRelease(const BzfKeyEvent& key)
 
       // choose which mode we are in
       int maxModes;
-      if (admin) {
+      if (myTank->isAdmin()) {
 	maxModes = numModes;
       } else {
 	maxModes = numNonAdminModes;
@@ -375,7 +375,7 @@ bool			ServerCommandKey::keyRelease(const BzfKeyEvent& key)
 
       if (key.button == BzfKeyEvent::Down) {
 	int newMode = mode;
-	if (!admin) {
+	if (!myTank->isAdmin()) {
 	  bool foundIt = false;
 	  for (int i = 0; i < numNonAdminModes; i++) {
 	    if (mode == nonAdminModes[i]) {
@@ -388,7 +388,7 @@ bool			ServerCommandKey::keyRelease(const BzfKeyEvent& key)
 
 	newMode++;
 	if (newMode >= maxModes) newMode = 0;
-	mode = (admin ? ((Mode)newMode) : nonAdminModes[newMode]);
+	mode = (myTank->isAdmin() ? ((Mode)newMode) : nonAdminModes[newMode]);
 	// if no recipient skip Ban1,2,3 -- applies to admin mode
 	if (!recipient && (mode >= Ban1 && mode <= Ban3))
 	  mode = Unban;
@@ -397,7 +397,7 @@ bool			ServerCommandKey::keyRelease(const BzfKeyEvent& key)
 	int newMode = (int) mode;
 
 	bool foundIt = false;
-	if (!admin) {
+	if (!myTank->isAdmin()) {
 	  for (int i = 0; i < numNonAdminModes; i++) {
 	    if (mode == nonAdminModes[i]) {
 	      newMode = i;
@@ -409,7 +409,7 @@ bool			ServerCommandKey::keyRelease(const BzfKeyEvent& key)
 
 	newMode--;
 	if (newMode < 0) newMode = maxModes -1;
-	mode = (admin ? ((Mode) newMode) : nonAdminModes[newMode]);
+	mode = (myTank->isAdmin() ? ((Mode) newMode) : nonAdminModes[newMode]);
 	// if no recipient skip Ban1,2,3 -- applies to admin mode
 	if (!recipient && (mode >= Ban1 && mode <= Ban3))
 	  mode = BanIp;

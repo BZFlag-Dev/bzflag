@@ -90,7 +90,6 @@ void setRoamingLabel(bool force);
 extern HUDRenderer	*hud;
 extern char		messageMessage[PlayerIdPLen + MessageLen];
 extern ServerLink*	serverLink;
-extern bool		admin; // am I an admin?
 extern int		numFlags;
 extern StartupInfo	startupInfo;
 

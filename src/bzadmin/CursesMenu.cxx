@@ -288,10 +288,10 @@ void PlayerCMItem::showItem(WINDOW* menuWin, int line, int col, int width,
     std::string attrstr = "(";
     if (iter->second.isRegistered)
       attrstr += "Reg/";
-    if (iter->second.isIdentified)
-      attrstr += "Ident/";
+    if (iter->second.isVerified)
+      attrstr += "Ver/";
     if (iter->second.isAdmin)
-      attrstr += "Admin/";
+      attrstr += "Adm/";
     if (attrstr == "(")
       attrstr += "Anon)";
     else

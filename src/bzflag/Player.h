@@ -50,7 +50,7 @@ const int PlayerUpdatePLenMax =
   sizeof(int16_t)	+ // user speed			(conditional)
   sizeof(int16_t)	+ // user angular velocity	(conditional)
   sizeof(uint8_t);	  // sounds			(conditional)
-  
+
 
 class Player {
 public:
@@ -120,6 +120,12 @@ public:
   void		setHunted(bool _hunted);
   bool		isAutoPilot() const;
   void		setAutoPilot(bool = true);
+  bool		isAdmin() const;
+  void		setAdmin(bool = true);
+  bool		isRegistered() const;
+  void		setRegistered(bool = true);
+  bool		isVerified() const;
+  void		setVerified(bool = true);
 
   bool		validTeamTarget(const Player *possibleTarget) const;
 
@@ -189,7 +195,12 @@ private:
   bool			notResponding;
   bool			autoPilot;
   bool			hunted;
-  PlayerId		id;			// my credentials
+
+  // credentials
+  PlayerId		id;
+  bool			admin;
+  bool			registered;
+  bool			verified;
 
   // data use for drawing
   TankSceneNode*	tankNode;
@@ -197,10 +208,10 @@ private:
   SphereSceneNode*	pausedSphere;
   GLfloat		color[4];
   std::string		userTexture;
-  static int	    tankTexture;
-  static int	    tankOverideTexture;
+  static int		tankTexture;
+  static int		tankOverideTexture;
   TeamColor		lastVisualTeam;
-  TimeKeeper	lastTrackDraw;
+  TimeKeeper		lastTrackDraw;
 
   // permanent data
   TeamColor		team;			// my team
@@ -492,6 +503,36 @@ inline bool		Player::isAutoPilot() const
 inline void		Player::setAutoPilot(bool _autoPilot)
 {
   autoPilot = _autoPilot;
+}
+
+inline bool		Player::isAdmin() const
+{
+  return admin;
+}
+
+inline void		Player::setAdmin(bool _admin)
+{
+  admin = _admin;
+}
+
+inline bool		Player::isRegistered() const
+{
+  return registered;
+}
+
+inline void		Player::setRegistered(bool _registered)
+{
+  registered = _registered;
+}
+
+inline bool		Player::isVerified() const
+{
+  return verified;
+}
+
+inline void		Player::setVerified(bool _verified)
+{
+  verified = _verified;
 }
 
 inline void*		Player::pack(void* buf, uint16_t& code)
