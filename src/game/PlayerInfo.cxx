@@ -32,6 +32,7 @@ PlayerInfo::PlayerInfo(int _playerIndex) :
   memset(email, 0, EmailLen);
   memset(callSign, 0, CallSignLen);
   memset(token, 0, TokenLen);
+  memset(clientVersion, 0, VersionLen);
 }
 
 void PlayerInfo::resetPlayer(bool ctf) {
@@ -98,6 +99,9 @@ bool PlayerInfo::unpackEnter(void *buf, uint16_t &rejectCode, char *rejectMsg)
   buf = nboUnpackString(buf, token, TokenLen);
   buf = nboUnpackString(buf, clientVersion, VersionLen);
   cleanEMail();
+
+  DEBUG2("Player %s [%d] sent version string: %s\n",
+	 callSign, playerIndex, clientVersion);
 
   // spoof filter holds "SERVER" for robust name comparisons
   if (serverSpoofingFilter.wordCount() == 0) {
