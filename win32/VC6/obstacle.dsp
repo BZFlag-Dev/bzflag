@@ -161,10 +161,6 @@ SOURCE=..\..\src\obstacle\EmptySceneNodeGenerator.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\src\obstacle\Intersect.cxx
-# End Source File
-# Begin Source File
-
 SOURCE=..\..\src\obstacle\Obstacle.cxx
 # End Source File
 # Begin Source File

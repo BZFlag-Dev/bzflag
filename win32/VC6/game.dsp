@@ -154,6 +154,14 @@ SOURCE=..\..\src\game\DirectoryNames.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\game\Frustrum.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\game\Intersect.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\game\LagInfo.cxx
 # End Source File
 # Begin Source File
@@ -187,6 +195,14 @@ SOURCE=..\..\include\DelayQueue.h
 # Begin Source File
 
 SOURCE=..\..\include\DirectoryNames.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\Frustrum.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\Intersect.h
 # End Source File
 # Begin Source File
 
