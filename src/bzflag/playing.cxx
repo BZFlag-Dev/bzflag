@@ -5934,8 +5934,7 @@ static void		playingLoop()
 #endif
 	// back to center channel
 	mainWindow->setQuadrant(MainWindow::UpperRight);
-      }
-      else if (viewType == SceneRenderer::Stacked) {
+      } else if (viewType == SceneRenderer::Stacked) {
        static float EyeDisplacement = 0.25f * TankWidth;
        static float FocalPlane = BoxBase;
        static bool init = false;
@@ -5972,8 +5971,7 @@ static void		playingLoop()
 
        // back to left channel
        mainWindow->setQuadrant(MainWindow::LowerHalf);
-      }
-      else if (viewType == SceneRenderer::Stereo) {
+      } else if (viewType == SceneRenderer::Stereo) {
 	static float EyeDisplacement = 0.25f * TankWidth;
 	static float FocalPlane = BoxBase;
 	static bool init = false;
@@ -6030,8 +6028,40 @@ static void		playingLoop()
 	// back to left channel
 	mainWindow->setQuadrant(MainWindow::UpperRight);
 #endif
-      }
-      else {
+      } else if (viewType == SceneRenderer::Anaglyph) {
+	static float EyeDisplacement = 0.25f * TankWidth;
+	static float FocalPlane = BoxBase;
+	static bool init = false;
+	if (!init) {
+	  init = true;
+	  if (BZDB->isSet("eyesep"))
+	    EyeDisplacement = BZDB->eval("eyesep");
+	  if (BZDB->isSet("focal"))
+	    FocalPlane = BZDB->eval("focal");
+	}
+
+	// setup view for left eye
+	glColorMask(GL_TRUE, GL_FALSE, GL_FALSE, GL_TRUE);
+	sceneRenderer->getViewFrustum().setOffset(EyeDisplacement, FocalPlane);
+
+	// draw left eye's view
+	sceneRenderer->render(false);
+	hud->render(*sceneRenderer);
+	renderDialog();
+	controlPanel->render(*sceneRenderer);
+	if (radar) radar->render(*sceneRenderer, blankRadar);
+
+	// set up view for right eye
+	glColorMask(GL_FALSE, GL_TRUE, GL_TRUE, GL_FALSE);
+	sceneRenderer->getViewFrustum().setOffset(-EyeDisplacement, FocalPlane);
+
+	// draw right eye's view
+	sceneRenderer->render(true, true);
+	hud->render(*sceneRenderer);
+	renderDialog();
+	controlPanel->render(*sceneRenderer);
+	if (radar) radar->render(*sceneRenderer, blankRadar);
+      } else {
 	if (zoomFactor != 1) {
 	  // draw small out-the-window view
 	  mainWindow->setQuadrant(MainWindow::ZoomRegion);

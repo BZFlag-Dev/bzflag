@@ -51,7 +51,8 @@ class SceneRenderer {
 			Normal,		// one view
 			Stereo,		// binocular stereo
 			Stacked,	// top-bottom stereo view
-			ThreeChannel	// one wide view
+			ThreeChannel,	// one wide view
+			Anaglyph	// red-blue stereo
     };
 
 			SceneRenderer(MainWindow&);
