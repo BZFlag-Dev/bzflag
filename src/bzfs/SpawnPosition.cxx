@@ -32,7 +32,6 @@ extern int getCurMaxPlayers();
 extern bool areFoes(TeamColor team1, TeamColor team2);
 extern BasesList bases;
 extern WorldInfo *world;
-extern PlayerState lastState[];
 
 SpawnPosition::SpawnPosition(int playerId, bool onGroundOnly, bool notNearEdges) :
 		curMaxPlayers(getCurMaxPlayers())
@@ -164,9 +163,9 @@ const bool SpawnPosition::isImminentlyDangerous() const
     playerData = GameKeeper::Player::getPlayerByIndex(i);
     if (!playerData)
       continue;
-    if (playerData->player.isAlive()) {
-      float *enemyPos = lastState[i].pos;
-      float enemyAngle = lastState[i].azimuth;
+    if (playerData->player.isAlive()) { 
+      float *enemyPos = playerData->lastState->pos;
+      float enemyAngle = playerData->lastState->azimuth;
       if (playerData->player.getFlag() >= 0) {
 	// check for dangerous flags
 	const FlagInfo *finfo = FlagInfo::get(playerData->player.getFlag());
@@ -208,14 +207,14 @@ const float SpawnPosition::enemyProximityCheck(float &enemyAngle) const
       continue;
     if (playerData->player.isAlive()
 	&& areFoes(playerData->player.getTeam(), team)) {
-      float *enemyPos = lastState[i].pos;
+      float *enemyPos = playerData->lastState->pos;
       if (fabs(enemyPos[2] - testPos[2]) < 1.0f) {
 	float x = enemyPos[0] - testPos[0];
 	float y = enemyPos[1] - testPos[1];
 	float distSq = x * x + y * y;
 	if (distSq < worstDist) {
 	  worstDist  = distSq;
-	  enemyAngle = lastState[i].azimuth;
+	  enemyAngle = playerData->lastState->azimuth;
 	  noEnemy    = false;
 	}
       }
