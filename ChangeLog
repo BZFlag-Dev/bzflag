@@ -4,9 +4,11 @@
 BZFlag 1.12.0  (was 1.11.x)
 ---------------------------
 
+* Added 'options' section to world maps - Dave Rodgers
+* Added the '-set <name> <value>' option - Dave Rodgers
 * Throw away bad or early links in world files - Tim Riker
-* Record/Replay feature - Dave Rodgers
-* Random teleporter destinations - Dave Rodgers
+* Added Record/Replay feature - Dave Rodgers
+* Added Random teleporter destinations - Dave Rodgers
 * Added Lag bad flag - Dave Rodgers
 * Poll to reset flags and Poll-cheating prevention - Ian Agar
 * Flag and Tank Entry Zones - Dave Brosius

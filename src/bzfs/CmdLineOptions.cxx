@@ -202,6 +202,34 @@ const char *extraUsageString =
 
 /* private */
 
+static void printVersion()
+{
+  std::cout << "BZFlag server " << getAppVersion() << " (protocol " << getProtocolVersion() <<
+  	       ") http://BZFlag.org/\n";
+  std::cout << copyright << std::endl;
+  std::cout.flush();
+}
+
+static void usage(const char *pname)
+{
+  printVersion();
+  std::cerr << "\nUsage: " << pname << ' ' << usageString << std::endl;
+  exit(1);
+}
+
+static void extraUsage(const char *pname)
+{
+  char buffer[64];
+  printVersion();
+  std::cout << "\nUsage: " << pname << ' ' << usageString << std::endl;
+  std::cout << std::endl << extraUsageString << std::endl << "Flag codes:\n";
+  for (FlagTypeMap::iterator it = FlagType::getFlagMap().begin(); it != FlagType::getFlagMap().end(); ++it) {
+    sprintf(buffer, "\t%2.2s %s\n", (*it->second).flagAbbv, (*it->second).flagName);
+    std::cout << buffer;
+  }
+  exit(0);
+}
+
 static void checkArgc(int count, int& i, int argc, const char* option, const char *type = NULL)
 {
   if ((i+count) == argc) { 
@@ -216,6 +244,14 @@ static void checkArgc(int count, int& i, int argc, const char* option, const cha
   }
   
   i++; // just skip the option argument string
+}
+
+static void checkFromWorldFile (const char *option, bool fromWorldFile)
+{
+  if (fromWorldFile) {
+    std::cerr << "option \"" << option << "\" cannot be set within a world file" << '\n';
+    usage("bzfs");
+  }
 }
 
 static bool parsePlayerCount(const char *argv, CmdLineOptions &options)
@@ -328,39 +364,7 @@ static bool parsePlayerCount(const char *argv, CmdLineOptions &options)
   return true;
 }
 
-
-/* protected */
-
-/* public: */
-
-void printVersion()
-{
-  std::cout << "BZFlag server " << getAppVersion() << " (protocol " << getProtocolVersion() <<
-  	       ") http://BZFlag.org/\n";
-  std::cout << copyright << std::endl;
-}
-
-void usage(const char *pname)
-{
-  printVersion();
-  std::cerr << "\nUsage: " << pname << ' ' << usageString << std::endl;
-  exit(1);
-}
-
-void extraUsage(const char *pname)
-{
-  char buffer[64];
-  printVersion();
-  std::cout << "\nUsage: " << pname << ' ' << usageString << std::endl;
-  std::cout << std::endl << extraUsageString << std::endl << "Flag codes:\n";
-  for (FlagTypeMap::iterator it = FlagType::getFlagMap().begin(); it != FlagType::getFlagMap().end(); ++it) {
-    sprintf(buffer, "\t%2.2s %s\n", (*it->second).flagAbbv, (*it->second).flagName);
-    std::cout << buffer;
-  }
-  exit(0);
-}
-
-char **parseConfFile( const char *file, int &ac)
+static char **parseConfFile( const char *file, int &ac)
 {
   std::vector<std::string> tokens;
   ac = 0;
@@ -403,8 +407,70 @@ char **parseConfFile( const char *file, int &ac)
   return (char **)av;
 }
 
+static char **parseWorldOptions (const char *file, int &ac)
+{
+  std::vector<std::string> tokens;
+  ac = 0;
 
-void parse(int argc, char **argv, CmdLineOptions &options)
+  std::ifstream confStrm(file);
+  if (confStrm.is_open()) {
+     char buffer[1024];
+     confStrm.getline(buffer,1024);
+
+     if (!confStrm.good()) {
+       std::cerr << "world file not found\n";
+       usage("bzfs");
+     }
+     
+     while (confStrm.good()) {
+       std::string line = buffer;
+       int startPos = line.find_first_not_of("\t \r\n");
+       if (strncmp ("options", line.c_str() + startPos, 7) == 0) {
+         confStrm.getline(buffer,1024);
+         break;
+       }
+       confStrm.getline(buffer,1024);
+     }
+
+     while (confStrm.good()) {
+       std::string line = buffer;
+       int startPos = line.find_first_not_of("\t \r\n");
+       if (strncmp ("end", line.c_str() + startPos, 3) == 0) {
+         break;
+       }
+       
+       while ((startPos >= 0) && (line.at(startPos) != '#')) {
+	 int endPos;
+	 if (line.at(startPos) == '"') {
+	   startPos++;
+	   endPos = line.find_first_of('"', startPos);
+	 }
+	 else
+	   endPos = line.find_first_of("\t \r\n", startPos+1);
+	 if (endPos < 0)
+	    endPos = line.length();
+	 tokens.push_back(line.substr(startPos,endPos-startPos));
+	 startPos = line.find_first_not_of("\t \r\n", endPos+1);
+       }
+       confStrm.getline(buffer,1024);
+     }
+  }
+
+  const char **av = new const char*[tokens.size()+1];
+  av[0] = strdup("bzfs");
+  ac = 1;
+  for (std::vector<std::string>::iterator it = tokens.begin(); it != tokens.end(); ++it)
+    av[ac++] = strdup((*it).c_str());
+    
+  return (char **)av;
+}
+
+
+/* protected */
+
+/* public: */
+
+void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
 {
   CmdLineOptions confOptions;
   delete[] flag;  flag = NULL;
@@ -429,8 +495,8 @@ void parse(int argc, char **argv, CmdLineOptions &options)
 	options.angularAcceleration = 0.0f;
       options.gameStyle |= int(InertiaGameStyle);
     } else if (strcmp(argv[i], "-admsg") == 0) {
-	   checkArgc(1, i, argc, argv[i]);
-       options.advertisemsg = argv[i];
+      checkArgc(1, i, argc, argv[i]);
+      options.advertisemsg = argv[i];
     } else if (strcmp(argv[i], "-autoTeam") == 0) {
       options.autoTeam = true;
     } else if (strcmp(argv[i], "-b") == 0) {
@@ -463,6 +529,7 @@ void parse(int argc, char **argv, CmdLineOptions &options)
 	teamFlagsAdded = true;
       }
     } else if (strcmp(argv[i], "-conf") == 0) {
+      checkFromWorldFile(argv[i], fromWorldFile);
 	checkArgc(1, i, argc, argv[i]);
 	int ac;
 	char **av;
@@ -473,9 +540,8 @@ void parse(int argc, char **argv, CmdLineOptions &options)
 
 	options.numAllowedFlags = 0;
 
-	// These strings need to stick around for -world, -servermsg, etc
-	//for (int i = 0; i < ac; i++)
-	//  delete[] av[i];
+	for (int i = 0; i < ac; i++)
+	  delete[] av[i];
 	delete[] av;
     } else if (strcmp(argv[i], "-cr") == 0) {
       // CTF with random world
@@ -653,18 +719,21 @@ void parse(int argc, char **argv, CmdLineOptions &options)
       }
     } else if (strcmp(argv[i], "-p") == 0) {
       // use a different port
-	checkArgc(1, i, argc, argv[i]);
+      checkFromWorldFile(argv[i], fromWorldFile);
+      checkArgc(1, i, argc, argv[i]);
       options.wksPort = atoi(argv[i]);
       if (options.wksPort < 1 || options.wksPort > 65535)
 	options.wksPort = ServerPort;
       else
 	options.useGivenPort = true;
     } else if (strcmp(argv[i], "-passdb") == 0) {
-	checkArgc(1, i, argc, argv[i]);
+      checkFromWorldFile(argv[i], fromWorldFile);
+      checkArgc(1, i, argc, argv[i]);
       passFile = argv[i];
       std::cerr << "using password file \"" << argv[i] << "\"\n";
     } else if (strcmp(argv[i], "-passwd") == 0 || strcmp(argv[i], "-password") == 0) {
-	checkArgc(1, i, argc, argv[i]);
+      checkFromWorldFile(argv[i], fromWorldFile);
+      checkArgc(1, i, argc, argv[i]);
       // at least put password someplace that ps won't see
       options.password = (char *)malloc(strlen(argv[i]) + 1);
       options.password = argv[i];
@@ -679,7 +748,8 @@ void parse(int argc, char **argv, CmdLineOptions &options)
       options.printScore = true;
 #endif
     } else if (strcmp(argv[i], "-public") == 0) {
-	checkArgc(1, i, argc, argv[i]);
+      checkFromWorldFile(argv[i], fromWorldFile);
+      checkArgc(1, i, argc, argv[i]);
       options.publicizeServer = true;
       options.publicizedTitle = argv[i];
       if (options.publicizedTitle.length() > 127) {
@@ -687,14 +757,17 @@ void parse(int argc, char **argv, CmdLineOptions &options)
 	std::cerr << "description too long... truncated\n";
       }
     } else if (strcmp(argv[i], "-publicaddr") == 0) {
-	checkArgc(1, i, argc, argv[i]);
+      checkFromWorldFile(argv[i], fromWorldFile);
+      checkArgc(1, i, argc, argv[i]);
       options.publicizedAddress = argv[i];
       options.publicizeServer = true;
     } else if (strcmp(argv[i], "-publiclist") == 0) {
-	checkArgc(1, i, argc, argv[i]);
+      checkFromWorldFile(argv[i], fromWorldFile);
+      checkArgc(1, i, argc, argv[i]);
       options.listServerURL = argv[i];
     } else if (strcmp(argv[i], "-q") == 0) {
       // don't handle pings
+      checkFromWorldFile(argv[i], fromWorldFile);
       handlePings = false;
     } else if (strcmp(argv[i], "+r") == 0) {
       // all shots ricochet style
@@ -899,10 +972,18 @@ void parse(int argc, char **argv, CmdLineOptions &options)
 	checkArgc(1, i, argc, argv[i]);
       options.voteTime = (unsigned short int)atoi(argv[i]);
     } else if (strcmp(argv[i], "-world") == 0) {
-	checkArgc(1, i, argc, argv[i]);
-       options.worldFile = argv[i];
-       if (options.useTeleporters)
-	 std::cerr << "-t is meaningless when using a custom world, ignoring\n";
+      checkFromWorldFile(argv[i], fromWorldFile);
+      checkArgc(1, i, argc, argv[i]);
+      options.worldFile = argv[i];
+      int ac;
+      char **av;
+      av = parseWorldOptions(argv[i], ac);
+      parse(ac, av, options, true); // true - from a world file
+
+      options.numAllowedFlags = 0; // FIXME - Huh, does a reset?
+
+      if (options.useTeleporters)
+        std::cerr << "-t is meaningless when using a custom world, ignoring\n";
     } else if (strcmp(argv[i], "-worldsize") == 0) {
 	checkArgc(1, i, argc, argv[i]);
       BZDB.set(StateDatabase::BZDB_WORLDSIZE, string_util::format("%d",atoi(argv[i])*2));

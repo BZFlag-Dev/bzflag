@@ -172,12 +172,7 @@ struct CmdLineOptions
 };
 
 
-void printVersion();
-void usage(const char *pname);
-void extraUsage(const char *pname);
-
-char **parseConfFile( const char *file, int &ac);
-void parse(int argc, char **argv, CmdLineOptions &options);
+void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile = false);
 
 
 #else

@@ -60,6 +60,7 @@ bool readWorldStream(std::istream& input, const char *location, std::vector<Worl
   char buffer[1024];
   WorldFileObject *object    = NULL;
   WorldFileObject *newObject = NULL;
+  WorldFileObject * const fakeObject = (WorldFileObject*)((char*)NULL + 1); // for options
   bool gotWorld = false;
 
   while (!input.eof())
@@ -68,7 +69,8 @@ bool readWorldStream(std::istream& input, const char *location, std::vector<Worl
     if (newObject) {
       if (object) {
 	std::cout << location << '(' << line << ") : discarding incomplete object\n";
-	delete object;
+	if (object != fakeObject)
+	  delete object;
       }
       object = newObject;
       newObject = NULL;
@@ -82,7 +84,9 @@ bool readWorldStream(std::istream& input, const char *location, std::vector<Worl
       // ignore comment
     } else if (strcasecmp(buffer, "end") == 0) {
       if (object) {
-	wlist.push_back(object);
+        if (object != fakeObject) {
+	  wlist.push_back(object);
+	}
 	object = NULL;
       } else {
 	std::cout << location << '(' << line << ") : unexpected \"end\" token\n";
@@ -107,17 +111,22 @@ bool readWorldStream(std::istream& input, const char *location, std::vector<Worl
 	newObject = new CustomWorld();
 	gotWorld = true;
       }
+    } else if (strcasecmp(buffer, "options") == 0) {
+      newObject = fakeObject;
     } else if (object) {
-      if (!object->read(buffer, input)) {
-	// unknown token
-	std::cout << location << '(' << line << ") : unknown object parameter \"" << buffer << "\" - skipping\n";
-	// delete object;
-	// return false;
+      if (object != fakeObject) {
+        if (!object->read(buffer, input)) {
+  	  // unknown token
+	  std::cout << location << '(' << line << ") : unknown object parameter \"" << buffer << "\" - skipping\n";
+	  // delete object;
+	  // return false;
+	}
       }
     } else { // filling the current object
       // unknown token
       std::cout << location << '(' << line << ") : invalid object type \"" << buffer << "\" - skipping\n";
-      delete object;
+      if (object != fakeObject)
+        delete object;
      // return false;
     }
 
@@ -130,7 +139,8 @@ bool readWorldStream(std::istream& input, const char *location, std::vector<Worl
 
   if (object) {
     std::cout << location << '(' << line << ") : missing \"end\" token\n";
-    delete object;
+    if (object != fakeObject)
+      delete object;
     return false;
   }
 
