@@ -5,10 +5,10 @@
 BZFlag 1.10.5
 -------------
 
-* Bots drive around corners faster - Frank Thilo
-* Bots aim better, try to evade shots - Frank Thilo
 * bans based on hostmask (/hostban, ...) when adns is available - Nils McCarthy
 * server option to disallow autopilot - Nils McCarthy
+* Bots drive around corners faster - Frank Thilo
+* Bots aim better, try to evade shots - Frank Thilo
 
 BZFlag 1.10.4 "not a smurf"
 ---------------------------
