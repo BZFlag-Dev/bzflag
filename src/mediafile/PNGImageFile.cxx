@@ -71,6 +71,8 @@ PNGImageFile::PNGImageFile(std::istream* stream) : ImageFile(stream), palette(NU
   data = (unsigned char *)nboUnpackUByte(data, filterMethod);
   data = (unsigned char *)nboUnpackUByte(data, interlaceMethod);
 
+  delete c;
+
   int channels;
   switch (colorDepth) {
     case 0:
