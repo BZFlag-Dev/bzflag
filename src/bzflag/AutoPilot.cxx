@@ -192,8 +192,8 @@ bool	stuckOnWall(float &rotation, float &speed)
     lastStuckTime = TimeKeeper::getCurrent();
     if (bzfrand() > 0.8f) {
       // Every once in a while, do something nuts
-      speed = bzfrand() * 1.5f - 0.5f;
-      rotation = bzfrand() * 2.0f - 1.0f;
+      speed = (float)(bzfrand() * 1.5f - 0.5f);
+      rotation = (float)(bzfrand() * 2.0f - 1.0f);
     }
     else {
       float leftDistance = TargetingUtils::getOpenDistance( pos, myAzimuth + (M_PI/4.0f));
