@@ -166,12 +166,14 @@ void			KeyManager::unbind(const BzfKeyEvent& key,
 void			KeyManager::unbindCommand(const char* command)
 {
   EventToCommandMap::iterator index;
+  EventToCommandMap::iterator deleteme;
 
   index = pressEventToCommand.begin();
   while (index != pressEventToCommand.end()) {
     if (index->second == command) {
-      unbind(index->first, true);
-      index = pressEventToCommand.erase(index);
+      deleteme = index;
+      index++;
+      unbind(deleteme->first, true);
     } else {
       index++;
     }
@@ -180,8 +182,9 @@ void			KeyManager::unbindCommand(const char* command)
   index = releaseEventToCommand.begin();
   while (index != releaseEventToCommand.end()) {
     if (index->second == command) {
-      unbind(index->first, true);
-      index = releaseEventToCommand.erase(index);
+      deleteme = index;
+      index++;
+      unbind(deleteme->first, true);
     } else {
       index++;
     }
