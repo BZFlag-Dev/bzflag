@@ -270,7 +270,7 @@ void JoinMenu::joinErrorCallback(const char* msg)
   self->setFailedMessage(msg);
 
   // also forward to old callback if it's not this callback
-  if (self->oldErrorCallback && self->oldErrorCallback != self->joinErrorCallback) {
+  if (self->oldErrorCallback && self->oldErrorCallback != &JoinMenu::joinErrorCallback) {
     (*self->oldErrorCallback)(msg);
   }
 }
