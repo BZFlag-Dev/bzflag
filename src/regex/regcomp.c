@@ -85,47 +85,47 @@ extern "C" {
 #endif
 
 /* === regcomp.c === */
-static void p_ere __P((struct parse *p, int stop));
-static void p_ere_exp __P((struct parse *p));
-static void p_str __P((struct parse *p));
-static void p_bre __P((struct parse *p, int end1, int end2));
-static int p_simp_re __P((struct parse *p, int starordinary));
-static int p_count __P((struct parse *p));
-static void p_bracket __P((struct parse *p));
-static void p_b_term __P((struct parse *p, cset *cs));
-static void p_b_cclass __P((struct parse *p, cset *cs));
-static void p_b_eclass __P((struct parse *p, cset *cs));
-static char p_b_symbol __P((struct parse *p));
-static char p_b_coll_elem __P((struct parse *p, int endc));
-static char othercase __P((int ch));
-static void bothcases __P((struct parse *p, int ch));
-static void ordinary __P((struct parse *p, int ch));
-static void nonnewline __P((struct parse *p));
-static void repeat __P((struct parse *p, sopno start, int from, int to));
-static int seterr __P((struct parse *p, int e));
-static cset *allocset __P((struct parse *p));
-static void freeset __P((struct parse *p, cset *cs));
-static int freezeset __P((struct parse *p, cset *cs));
-static int firstch __P((struct parse *p, cset *cs));
-static int nch __P((struct parse *p, cset *cs));
-static void mcadd __P((struct parse *p, cset *cs, char *cp));
-static void mcinvert __P((struct parse *p, cset *cs));
-static void mccase __P((struct parse *p, cset *cs));
-static int isinsets __P((struct re_guts *g, int c));
-static int samesets __P((struct re_guts *g, int c1, int c2));
-static void categorize __P((struct parse *p, struct re_guts *g));
-static sopno dupl __P((struct parse *p, sopno start, sopno finish));
-static void doemit __P((struct parse *p, sop op, size_t opnd));
-static void doinsert __P((struct parse *p, sop op, size_t opnd, sopno pos));
-static void dofwd __P((struct parse *p, sopno pos, sop value));
-static void enlarge __P((struct parse *p, sopno size));
-static void stripsnug __P((struct parse *p, struct re_guts *g));
-static void findmust __P((struct parse *p, struct re_guts *g));
-static sopno pluscount __P((struct parse *p, struct re_guts *g));
+static void p_ere (struct parse *p, int stop);
+static void p_ere_exp (struct parse *p);
+static void p_str (struct parse *p);
+static void p_bre (struct parse *p, int end1, int end2);
+static int p_simp_re (struct parse *p, int starordinary);
+static int p_count (struct parse *p);
+static void p_bracket (struct parse *p);
+static void p_b_term (struct parse *p, cset *cs);
+static void p_b_cclass (struct parse *p, cset *cs);
+static void p_b_eclass (struct parse *p, cset *cs);
+static char p_b_symbol (struct parse *p);
+static char p_b_coll_elem (struct parse *p, int endc);
+static char othercase (int ch);
+static void bothcases (struct parse *p, int ch);
+static void ordinary (struct parse *p, int ch);
+static void nonnewline (struct parse *p);
+static void repeat (struct parse *p, sopno start, int from, int to);
+static int seterr (struct parse *p, int e);
+static cset *allocset (struct parse *p);
+static void freeset (struct parse *p, cset *cs);
+static int freezeset (struct parse *p, cset *cs);
+static int firstch (struct parse *p, cset *cs);
+static int nch (struct parse *p, cset *cs);
+static void mcadd (struct parse *p, cset *cs, char *cp);
+static void mcinvert (struct parse *p, cset *cs);
+static void mccase (struct parse *p, cset *cs);
+static int isinsets (struct re_guts *g, int c);
+static int samesets (struct re_guts *g, int c1, int c2);
+static void categorize (struct parse *p, struct re_guts *g);
+static sopno dupl (struct parse *p, sopno start, sopno finish);
+static void doemit (struct parse *p, sop op, size_t opnd);
+static void doinsert (struct parse *p, sop op, size_t opnd, sopno pos);
+static void dofwd (struct parse *p, sopno pos, sop value);
+static void enlarge (struct parse *p, sopno size);
+static void stripsnug (struct parse *p, struct re_guts *g);
+static void findmust (struct parse *p, struct re_guts *g);
+static sopno pluscount (struct parse *p, struct re_guts *g);
 #if 0  /* mcsub/mcin UNUSED */
-static void mcsub __P((cset *cs, char *cp));
-static int mcin __P((cset *cs, char *cp));
-static char *mcfind __P((cset *cs, char *cp));
+static void mcsub (cset *cs, char *cp);
+static int mcin (cset *cs, char *cp);
+static char *mcfind (cset *cs, char *cp);
 #endif
 
 #ifdef __cplusplus
@@ -152,9 +152,9 @@ static char nuls[10];		/* place to point scanner in event of error */
 #define	NEXTn(n)	(p->next += (n))
 #define	GETNEXT()	(*p->next++)
 #define	SETERROR(e)	seterr(p, (e))
-#define	REQUIRE(co, e)	((co) || SETERROR(e))
+#define	REQUIRE(co, e)	{if (!(co)) SETERROR(e);}
 #define	MUSTSEE(c, e)	(REQUIRE(MORE() && PEEK() == (c), e))
-#define	MUSTEAT(c, e)	(REQUIRE(MORE() && GETNEXT() == (c), e))
+#define	MUSTEAT(c, e)	REQUIRE(MORE() && GETNEXT() == (c), e)
 #define	MUSTNOTSEE(c, e)	(REQUIRE(!MORE() || PEEK() != (c), e))
 #define	EMIT(op, sopnd)	doemit(p, (sop)(op), (size_t)(sopnd))
 #define	INSERT(op, pos)	doinsert(p, (sop)(op), HERE()-(pos)+1, pos)
@@ -216,7 +216,7 @@ int cflags;
 							(NC-1)*sizeof(cat_t));
 	if (g == NULL)
 		return(REG_ESPACE);
-	p->ssize = len/(size_t)2*(size_t)3 + (size_t)1;	/* ugh */
+	p->ssize = (sopno)(len/(size_t)2*(size_t)3 + (size_t)1);	/* ugh */
 	p->strip = (sop *)malloc(p->ssize * sizeof(sop));
 	p->slen = 0;
 	if (p->strip == NULL) {
@@ -352,7 +352,7 @@ register struct parse *p;
 	case '(':
 		REQUIRE(MORE(), REG_EPAREN);
 		p->g->nsub++;
-		subno = p->g->nsub;
+		subno = (sopno)p->g->nsub;
 		if (subno < NPAREN)
 			p->pbegin[subno] = HERE();
 		EMIT(OLPAREN, subno);
@@ -572,7 +572,7 @@ int starordinary;		/* is a leading * an ordinary character? */
 		break;
 	case BACKSL|'(':
 		p->g->nsub++;
-		subno = p->g->nsub;
+		subno = (sopno)p->g->nsub;
 		if (subno < NPAREN)
 			p->pbegin[subno] = HERE();
 		EMIT(OLPAREN, subno);
@@ -902,7 +902,7 @@ int endc;			/* name ended by endc,']' */
 		SETERROR(REG_EBRACK);
 		return(0);
 	}
-	len = p->next - sp;
+	len = (sopno)(p->next - sp);
 	for (cp = cnames; cp->name != NULL; cp++)
 		if (strncmp(cp->name, sp, len) == 0 && cp->name[len] == '\0')
 			return(cp->code);	/* known name */

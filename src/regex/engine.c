@@ -92,12 +92,12 @@ extern "C" {
 #endif
 
 /* === engine.c === */
-static int matcher __P((struct re_guts *g, char *string, size_t nmatch, regmatch_t pmatch[], int eflags));
-static char *dissect __P((struct match *m, char *start, char *stop, sopno startst, sopno stopst));
-static char *backref __P((struct match *m, char *start, char *stop, sopno startst, sopno stopst, sopno lev));
-static char *fast __P((struct match *m, char *start, char *stop, sopno startst, sopno stopst));
-static char *slow __P((struct match *m, char *start, char *stop, sopno startst, sopno stopst));
-static states step __P((struct re_guts *g, sopno start, sopno stop, states bef, int ch, states aft));
+static int matcher (struct re_guts *g, char *string, size_t nmatch, regmatch_t pmatch[], int eflags);
+static char *dissect (struct match *m, char *start, char *stop, sopno startst, sopno stopst);
+static char *backref (struct match *m, char *start, char *stop, sopno startst, sopno stopst, sopno lev);
+static char *fast (struct match *m, char *start, char *stop, sopno startst, sopno stopst);
+static char *slow (struct match *m, char *start, char *stop, sopno startst, sopno stopst);
+static states step (struct re_guts *g, sopno start, sopno stop, states bef, int ch, states aft);
 #define	BOL	(OUT+1)
 #define	EOL	(BOL+1)
 #define	BOLEOL	(BOL+2)
@@ -276,8 +276,8 @@ int eflags;
 
 	/* fill in the details if requested */
 	if (nmatch > 0) {
-		pmatch[0].rm_so = m->coldp - m->offp;
-		pmatch[0].rm_eo = endp - m->offp;
+		pmatch[0].rm_so = (regoff_t)(m->coldp - m->offp);
+		pmatch[0].rm_eo = (regoff_t)(endp - m->offp);
 	}
 	if (nmatch > 1) {
 		assert(m->pmatch != NULL);
@@ -469,12 +469,12 @@ sopno stopst;
 		case OLPAREN:
 			i = OPND(m->g->strip[ss]);
 			assert(0 < i && i <= (int)m->g->nsub);
-			m->pmatch[i].rm_so = sp - m->offp;
+			m->pmatch[i].rm_so = (regoff_t)(sp - m->offp);
 			break;
 		case ORPAREN:
 			i = OPND(m->g->strip[ss]);
 			assert(0 < i && i <= (int)m->g->nsub);
-			m->pmatch[i].rm_eo = sp - m->offp;
+			m->pmatch[i].rm_eo = (regoff_t)(sp - m->offp);
 			break;
 		default:		/* uh oh */
 			assert(nope);
@@ -657,7 +657,7 @@ sopno lev;			/* PLUS nesting level */
 		i = OPND(s);
 		assert(0 < i && i <= (int)m->g->nsub);
 		offsave = m->pmatch[i].rm_so;
-		m->pmatch[i].rm_so = sp - m->offp;
+		m->pmatch[i].rm_so = (regoff_t)(sp - m->offp);
 		dp = backref(m, sp, stop, ss+1, stopst, lev);
 		if (dp != NULL)
 			return(dp);
@@ -667,7 +667,7 @@ sopno lev;			/* PLUS nesting level */
 		i = OPND(s);
 		assert(0 < i && i <= (int)m->g->nsub);
 		offsave = m->pmatch[i].rm_eo;
-		m->pmatch[i].rm_eo = sp - m->offp;
+		m->pmatch[i].rm_eo = (regoff_t)(sp - m->offp);
 		dp = backref(m, sp, stop, ss+1, stopst, lev);
 		if (dp != NULL)
 			return(dp);
