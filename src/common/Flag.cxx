@@ -26,8 +26,8 @@
 
 
 int FlagType::flagCount = 0;
-int FlagType::packSize = 2;
 FlagSet *FlagType::flagSets = NULL;
+const int FlagType::packSize = FlagPackSize;
 
 static const char NullString[2] = { '\0', '\0' };
 

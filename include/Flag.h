@@ -104,6 +104,8 @@ class FlagType;
 typedef std::map<std::string, FlagType*> FlagTypeMap;
 typedef std::set<FlagType*> FlagSet;
 
+#define FlagPackSize 2
+
 /** This class represents a flagtype, like "GM" or "CL". */
 class FlagType {
 public:
@@ -165,7 +167,7 @@ public:
 
   static int flagCount;
   static FlagSet *flagSets;
-  static int packSize;
+  static const int packSize;
 };
 
 

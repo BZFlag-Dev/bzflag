@@ -1041,9 +1041,6 @@ copy ..\..\src\bzfs\debug\*.exe ..\..\*.exe
 				RelativePath="..\..\src\bzfs\Filter.h">
 			</File>
 			<File
-				RelativePath="..\include\Flag.h">
-			</File>
-			<File
 				RelativePath="..\..\src\bzfs\FlagHistory.h">
 			</File>
 			<File

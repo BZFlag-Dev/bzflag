@@ -621,7 +621,7 @@ void			ServerLink::sendKilled(const PlayerId& killer,
 					       const FlagType* flagType,
 					       int phydrv)
 {
-  char msg[PlayerIdPLen + 2 + 2 + FlagType::packSize + 4];
+  char msg[PlayerIdPLen + 2 + 2 + FlagPackSize + 4];
   void* buf = msg;
   
   buf = nboPackUByte(buf, killer);
