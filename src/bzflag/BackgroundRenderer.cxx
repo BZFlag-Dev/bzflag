@@ -120,11 +120,11 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
     gstate.setMaterial(defaultMaterial);
     invGroundGState[1] = gstate.getState();
     gstate.reset();
-    gstate.setTexture(groundTextureID < 0);
+    gstate.setTexture(groundTextureID);
     invGroundGState[2] = gstate.getState();
     gstate.reset();
     gstate.setMaterial(defaultMaterial);
-    gstate.setTexture(groundTextureID < 0);
+    gstate.setTexture(groundTextureID);
     invGroundGState[3] = gstate.getState();
   }
 
