@@ -66,6 +66,7 @@ static std::list<TrackEntry> TreadsList;
 static std::list<TrackEntry> PuddleList;
 static float TrackFadeTime = 5.0f;
 static float UserFadeScale = 1.0f;
+static AirCullStyle AirCull = FullAirCull;
 
 // FIXME - get these from AnimatedTreads
 static const float TreadOutside = 1.4f;
@@ -132,6 +133,12 @@ void TrackMarks::setUserFade(float value)
   UserFadeScale = value;
   BZDB.setFloat("userTrackFade", value);
 
+  if (UserFadeScale < 1.0f) { // FIXME
+    AirCull = NoAirCull;
+  } else {
+    AirCull = FullAirCull;
+  }
+
   return;
 }
 
@@ -139,6 +146,19 @@ void TrackMarks::setUserFade(float value)
 float TrackMarks::getUserFade()
 {
   return BZDB.eval("userTrackFade");
+}
+
+
+void TrackMarks::setAirCulling(AirCullStyle style)
+{
+  AirCull = style;
+  return;
+}
+
+
+AirCullStyle TrackMarks::getAirCulling()
+{
+  return AirCull;
 }
 
 
@@ -188,40 +208,42 @@ bool TrackMarks::addMark(const float pos[3], float scale, float angle,
   }
   else {
     // Treads track marks
-    if (UserFadeScale < 1.0f) {
+    if ((AirCull & InitAirCull) == 0) {
       // do not cull the air marks
       te.sides = BothTreads;
       TreadsList.push_back(te);
     } 
-    else if (pos[2] == 0.0f) {
-      // no culling required
-      te.sides = BothTreads;
-      TreadsList.push_back(te);
-    }
     else {
-      // this user wants it all, cull the air marks
-      te.sides = 0;
-      float markPos[3];
-      markPos[2] = pos[2] - TextureHeightOffset;
-      const float dx = -sinf(angle) * TreadMiddle;
-      const float dy = +cosf(angle) * TreadMiddle;
-      // left tread
-      markPos[0] = pos[0] + dx;
-      markPos[1] = pos[1] + dy;
-      if (onBuilding(markPos)) {
-        te.sides |= LeftTread;
-      }
-      // right tread
-      markPos[0] = pos[0] - dx;
-      markPos[1] = pos[1] - dy;
-      if (onBuilding(markPos)) {
-        te.sides |= RightTread;
-      }
-      // add if required
-      if (te.sides != 0) {
+      // cull based on track mark support
+      if (pos[2] == 0.0f) {
+        // no culling required
+        te.sides = BothTreads;
         TreadsList.push_back(te);
-      } else {
-        return false;
+      }
+      else {
+        te.sides = 0;
+        float markPos[3];
+        markPos[2] = pos[2] - TextureHeightOffset;
+        const float dx = -sinf(angle) * TreadMiddle;
+        const float dy = +cosf(angle) * TreadMiddle;
+        // left tread
+        markPos[0] = pos[0] + dx;
+        markPos[1] = pos[1] + dy;
+        if (onBuilding(markPos)) {
+          te.sides |= LeftTread;
+        }
+        // right tread
+        markPos[0] = pos[0] - dx;
+        markPos[1] = pos[1] - dy;
+        if (onBuilding(markPos)) {
+          te.sides |= RightTread;
+        }
+        // add if required
+        if (te.sides != 0) {
+          TreadsList.push_back(te);
+        } else {
+          return false;
+        }
       }
     }
   }
@@ -252,12 +274,16 @@ static bool onBuilding(const float pos[3])
 
 static void updateList(std::list<TrackEntry>& list, float dt)
 {
+  const TimeKeeper cullTime = TimeKeeper::getSunGenesisTime();
+  
   std::list<TrackEntry>::iterator it;
   for (it = list.begin(); it != list.end(); it++) {
     TrackEntry& te = *it;
+
     // update for the Physics Driver
     const PhysicsDriver* phydrv = PHYDRVMGR.getDriver(te.phydrv);
     if (phydrv != NULL) {
+    
       const float* v = phydrv->getVelocity();
       te.pos[0] += (v[0] * dt);
       te.pos[1] += (v[1] * dt);
@@ -273,6 +299,39 @@ static void updateList(std::list<TrackEntry>& list, float dt)
         te.pos[0] = ap[0] + ((cos_val * dx) - (sin_val * dy));
         te.pos[1] = ap[1] + ((cos_val * dy) + (sin_val * dx));
         te.angle += da * (180.0f / M_PI);
+      }
+
+      if ((AirCull & PhyDrvAirCull) != 0) {
+        // no need to cull ground marks
+        if (te.pos[2] == 0.0f) {
+          continue;
+        }
+        // cull the track marks if they aren't supported
+        float markPos[3];
+        markPos[2] = te.pos[2] - TextureHeightOffset;
+        const float radians = te.angle * (M_PI / 180.0f);
+        const float dx = -sinf(radians) * TreadMiddle;
+        const float dy = +cosf(radians) * TreadMiddle;
+        // left tread
+        if ((te.sides & LeftTread) != 0) {
+          markPos[0] = te.pos[0] + dx;
+          markPos[1] = te.pos[1] + dy;
+          if (!onBuilding(markPos)) {
+            te.sides &= ~LeftTread;
+          }
+        }
+        // right tread
+        if ((te.sides & RightTread) != 0) {
+          markPos[0] = te.pos[0] - dx;
+          markPos[1] = te.pos[1] - dy;
+          if (!onBuilding(markPos)) {
+            te.sides &= ~RightTread;
+          }
+        }
+        // cull this node
+        if (te.sides == 0) {
+          te.startTime = cullTime;
+        }
       }
     }
   }
