@@ -18,7 +18,6 @@
 #include <sys/types.h>
 #include <dirent.h>
 #endif
-#include <vector>
 #include <string>
 
 // local implementation headers
