@@ -91,10 +91,8 @@ bool			PingPacket::read(int fd, struct sockaddr_in* addr)
   // unpack body of reply
   buf = unpack(buf, serverVersion);
 
-  // compare version against my version.  ignore last character of
-  // version number.  that's only used to indicate compatible
-  // client-side changes.
-  return (strncmp(serverVersion, getServerVersion(), 7) == 0);
+  // compare protocol version against my protocol version.
+  return (strcmp(serverVersion, getServerVersion()) == 0);
 }
 
 bool			PingPacket::waitForReply(int fd,
@@ -398,10 +396,8 @@ bool			 PingPacket::readFromFile(std::istream& in)
   // unpack body of reply
   buf = unpack(buf, serverVersion);
 
-  // compare version against my version.  ignore last character of
-  // version number.  that's only used to indicate compatible
-  // client-side changes.
-  return (strncmp(serverVersion, getServerVersion(), 7) == 0);
+  // compare protocol version against my protocol version.
+  return (strcmp(serverVersion, getServerVersion()) == 0);
 }
 
 // Local Variables: ***

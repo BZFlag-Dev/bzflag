@@ -24,9 +24,8 @@
  * is broken, the version should be set to match the release version that
  * broke it
  */
-// TODO make this sucker an int when we change BZFS stuff
 #ifndef BZ_PROTO_VERSION
-#define BZ_PROTO_VERSION	"0000"
+#define BZ_PROTO_VERSION	"1.11.10"
 #endif
 
 #ifndef BZ_MAJOR_VERSION
@@ -114,7 +113,7 @@ inline const char*		getProtocolVersion()
 
 inline const char*		getServerVersion()
 {
-  static std::string serverVersion = std::string("BZFS") + getProtocolVersion();
+  static std::string serverVersion = std::string("BZFS-") + getProtocolVersion();
   return serverVersion.c_str();
 }
 
