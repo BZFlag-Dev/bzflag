@@ -608,11 +608,11 @@ AC_OUTPUT(bzflag.info
 	debian/Makefile
 	doc/Makefile
 	doc/faq/Makefile
+	doc/guide/Makefile
 	doc/guide/Commands/Makefile
 	doc/guide/Flags/Makefile
 	doc/guide/Geometry/Makefile
 	doc/guide/Installation/Makefile
-	doc/guide/Makefile
 	doc/guide/Tactics/Makefile
 	doc/howto/Makefile
 	doc/man/Makefile
