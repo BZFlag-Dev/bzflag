@@ -13,22 +13,24 @@
 /* interface header */
 #include "TimeKeeper.h"
 
-/* implementation system headers */
+/* system implementation headers */
 #include <time.h>
+#include <string>
+#ifdef HAVE_UNISTD_H
+#  include <unistd.h>
+#endif
 #if !defined(_WIN32)
-#include <sys/time.h>
-#include <sys/types.h>
+#  include <sys/time.h>
+#  include <sys/types.h>
 static struct timeval	lastTime = { 0, 0 };
 #else /* !defined(_WIN32) */
-#include <mmsystem.h>
-#include "common.h"
+#  include <mmsystem.h>
 static unsigned int	lastTime = 0;
 static LARGE_INTEGER	qpcLastTime;
 static double		qpcFrequency = 0.0;
 #endif /* !defined(_WIN32) */
-#include <string>
 
-/* implementation common headers */
+/* common implementation headers */
 #include "TextUtils.h"
 
 
