@@ -6,7 +6,13 @@ THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
 * fix bugs.  the following bugs need to be fixed prior to release:
 
     - voting system doesn't start a poll (doesn't parse player name properly)
-    
+
+    - players can get autokicked for jumping too high when the admin changes
+      the gravity or when the gravity is positive. Some possible fixes: relax 
+      or remove the check (maybe optionally), make it take past gravity changes
+      into account when calculating the maximum allowed height (probably 
+      tricky).
+
 
 THESE ARE LOWER PRIORITY
 
