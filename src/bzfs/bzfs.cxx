@@ -3260,7 +3260,7 @@ static void removePlayer(int playerIndex, const char *reason, bool notify)
   player[playerIndex].state = PlayerNoExist;
 
   // if there is an active poll, cancel any vote this player may have made
-  VotingArbiter *arbiter = (VotingArbiter *)BZDB->getPointer("poll");
+  static VotingArbiter *arbiter = (VotingArbiter *)BZDB->getPointer("poll");
   if ((arbiter != NULL) && (arbiter->knowsPoll())) {
     arbiter->retractVote(player[playerIndex].callSign);
   }
@@ -3998,6 +3998,8 @@ static void parseCommand(const char *message, int t)
   int i=0;
   char reply[MessageLen];
 
+  static VotingArbiter *arbiter = (VotingArbiter *)BZDB->getPointer("poll");
+
   // /password command allows player to become operator
   if (strncmp(message + 1, "password", 8) == 0) {
     if (player[t].passwordAttempts >=5 ){	// see how many times they have tried, you only get 5
@@ -4668,8 +4670,6 @@ static void parseCommand(const char *message, int t)
       sendMessage(ServerPlayer, t, reply, true);
       return;
     }
-
-    VotingArbiter *arbiter = (VotingArbiter *)BZDB->getPointer("poll");
     
     /* make sure that there is not a poll active already */
     if (arbiter->knowsPoll()) {
