@@ -1,21 +1,23 @@
 #!/bin/sh
+#
 #  s n a p . s h 
-#   Generates a snapshot and patch of a sourceforge cvs project
 #
-#  Usage: ./snap.sh cvsmodule [checkoutdir] [snapshotdir] [checkout]
+# Generates a snapshot and patch of a sourceforge cvs project
 #
-#  Example crontab entry to build a snapshot at 4:01am every day:
-#  1 4 * * * ~bzflag/snap.sh bzflag ~bzflag/bzflag/cvs \
-#            ~bzflag/bzflag/htdocs/cvs >& ~bzflag/bzflag/htdocs/cvs/snap.log
+# Usage: ./snap.sh cvsmodule [checkoutdir] [snapshotdir] [checkout]
 #
-#  You might need to expand the ~'s depending on your setup.  If you are not
-#  sourceforge, you probably want to edit the configuration variables listed
-#  below.  Namely, you can configure what to checkout, where to checkout, how
-#  to checkout, and where to post the snapshots.
+# Example crontab entry to build a snapshot at 4:01am every day:
+# 1 4 * * * ~bzflag/snap.sh bzflag ~bzflag/bzflag/cvs \
+#           ~bzflag/bzflag/htdocs/cvs >& ~bzflag/bzflag/htdocs/cvs/snap.log
 #
-#  Version 1.0.3 + doxygen mods
-#  Copyright 2004, Sean Morrison aka brlcad aka learner
-#  this script is in the public domain
+# You might need to expand the ~'s depending on your setup.  If you are not
+# sourceforge, you probably want to edit the configuration variables listed
+# below.  Namely, you can configure what to checkout, where to checkout, how
+# to checkout, and where to post the snapshots.
+#
+# Version 1.0.3 + doxygen mods
+# Initially written by Sean Morrison aka brlcad aka learner in 2004
+# this script is in the public domain
 ###
 
 usage ( ) {

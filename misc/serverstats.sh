@@ -7,8 +7,8 @@
 # identification signature.
 #
 # Version 1.0.0
-# Copyright 2004, Sean Morrison aka brlcad aka learner
-#  this script is in the public domain
+# Initially written by Sean Morrison aka brlcad aka learner in 2004
+# this script is in the public domain
 ###
 
 echo "BZFlag Server Statistics"
