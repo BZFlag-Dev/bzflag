@@ -749,6 +749,7 @@ AC_OUTPUT(bzflag.info
 	src/regex/Makefile
 	src/scene/Makefile
 	src/zlib/Makefile
+	tools/Makefile
 	win32/Makefile
 	win32/VC6/Makefile
 	win32/VC71/Makefile)
