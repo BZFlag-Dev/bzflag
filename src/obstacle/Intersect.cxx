@@ -368,7 +368,7 @@ float			timeRayHitsPyramids(const Ray& r,
 					    const float* p1, float angle,
 					    float dx, float dy, float dz)
 {
-  const float epsilon = 1.0e-5;
+  const float epsilon = 1.0e-5f;
   // get names for ray info
   int i;
   const float* p2 = r.getOrigin();
