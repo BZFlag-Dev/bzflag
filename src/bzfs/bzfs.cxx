@@ -4127,6 +4127,12 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 	}
 	parseCommand(message, t);
       }
+      // check if the target player is invalid
+      else if (targetPlayer < LastRealPlayer && 
+               player[targetPlayer].state <= PlayerInLimbo) {
+	sendMessage(ServerPlayer, t, "The player you tried to talk to does "
+		    "not exist!");
+      }
       else {
 	if (clOptions->filterChat) {
 	  if (clOptions->filterSimple) {
