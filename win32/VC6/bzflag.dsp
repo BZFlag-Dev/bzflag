@@ -262,6 +262,10 @@ SOURCE=..\..\src\bzflag\BackgroundRenderer.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\bzflag\BaseLocalPlayer.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\bzflag\bzflag.cxx
 # End Source File
 # Begin Source File
@@ -499,6 +503,10 @@ SOURCE=..\..\src\bzflag\BackgroundRenderer.h
 # Begin Source File
 
 SOURCE=..\..\include\BaseBuilding.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\BaseLocalPlayer.h
 # End Source File
 # Begin Source File
 
