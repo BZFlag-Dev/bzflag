@@ -89,6 +89,58 @@ void			PyramidBuilding::getNormal(const float* p,
 	  n[2] *= -1;
 }
 
+void			PyramidBuilding::get3DNormal(const float* p,
+						     float* n) const
+{
+  const float epsilon = 1.0e-5;
+
+  // get normal in z = const plane
+  const float s = shrinkFactor(p[2]);
+  getNormalRect(p, getPosition(), getRotation(),
+		s * getWidth(), s * getBreadth(), n);
+
+  // make sure we are not way above or way below it
+  // above is good so we can drive on it when it's fliped
+  float top =  getPosition()[2]+getHeight();
+  float bottom = getPosition()[2];
+
+  if (s == 0) {
+    if (getZFlip()) {
+      if (p[2] >= top) {
+	n[0] = n[1] = 0;
+	n[2] = 1;
+	return;
+      }
+    } else {
+      if (p[2] <= bottom) {
+	n[0] = n[1] = 0;
+	n[2] = -1;
+	return;
+      }
+    }
+  }
+
+  if (s >= 1.0f - epsilon) {
+    n[0] = n[1] = 0;
+    if (getZFlip()) {
+      n[2] = 1;
+    } else {
+      n[2] = -1;
+    }
+    return;
+  }
+
+  // now angle it due to slope of wall
+  // FIXME -- this assumes the pyramid has a square base!
+  const float h = 1.0f / hypotf(getHeight(), getWidth());
+  n[0] *= h * getHeight();
+  n[1] *= h * getHeight();
+  n[2]  = h * getWidth();
+
+  if (this->getZFlip())
+    n[2] *= -1;
+}
+
 bool			PyramidBuilding::isInside(const float* p,
 						float radius) const
 {
