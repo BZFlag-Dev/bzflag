@@ -133,15 +133,15 @@ bool PlayerInfo::isCallSignReadable() {
   // keep a count of alpha-numerics
 
   int callsignlen = (int)strlen(callSign);
-  // reject less than 5 characters
+  // reject less than 3 characters
   if (callsignlen < 3) {
-    errorString = "Your callsign is too short.";
+    errorString = "Callsigns must be at least 3 characters.";
     return false;
   }
 
   // reject trailing space
   if (isspace(callSign[strlen(callSign) - 1])) {
-    errorString = "Trailing space are not allowed on nick";
+    errorString = "Trailing spaces are not allowed in callsigns.";
     return false;
   }
 
@@ -152,20 +152,20 @@ bool PlayerInfo::isCallSignReadable() {
   do {
     // reject sequential spaces
     if (lastWasSpace && isspace(*sp)) {
-      errorString = "Sequential space are not allowed on nick";
+      errorString = "Leading or consecutive spaces are not allowed in callsigns.";
       return false;
     }
 
     // reject ' and " and any nonprintable
     if ((*sp == '\'') || (*sp == '"') || ((unsigned)*sp > 0x7f)
 	|| !isprint(*sp)) {
-      errorString = "Non printable chars on nick";
+      errorString = "Non-printable characters are not allowed in callsigns.";
       return false;
     }
     if (isspace(*sp)) {
       // only space is valid, not tab etc.
       if (*sp != ' ') {
-	errorString = "Not valid space on nick";
+	errorString = "Invalid space characters in callsign.";
 	return false;
       }
       lastWasSpace = true;
