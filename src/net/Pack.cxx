@@ -30,12 +30,6 @@ void*					nboPackInt(void* b, int32_t v)
 	return ADV(b, int32_t);
 }
 
-void*					nboPackUByte(void* b, uint8_t v)
-{
-	::memcpy(b, &v, sizeof(uint8_t));
-	return ADV(b, uint8_t);
-}
-
 void*					nboPackUShort(void* b, uint16_t v)
 {
 	const uint16_t x = (uint16_t)htons(v);
@@ -94,12 +88,6 @@ void*					nboUnpackInt(void* b, int32_t& v)
 	::memcpy(&x, b, sizeof(int32_t));
 	v = (int32_t)ntohl(x);
 	return ADV(b, uint32_t);
-}
-
-void*					nboUnpackUByte(void* b, uint8_t& v)
-{
-	::memcpy(&v, b, sizeof(uint8_t));
-	return ADV(b, uint8_t);
 }
 
 void*					nboUnpackUShort(void* b, uint16_t& v)
