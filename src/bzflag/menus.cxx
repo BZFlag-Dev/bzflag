@@ -699,9 +699,9 @@ KeyboardMapMenu::KeyboardMapMenu() : defaultKey(this), editing(-1)
   initkeymap("fire", 3);
   initkeymap("drop", 4);
   initkeymap("identify", 5);
-  initkeymap("set displayRadarRange 1.0", 6);
+  initkeymap("set displayRadarRange 0.25", 6);
   initkeymap("set displayRadarRange 0.5", 7);
-  initkeymap("set displayRadarRange 0.25", 8);
+  initkeymap("set displayRadarRange 1.0", 8);
   initkeymap("send all", 9);
   initkeymap("send team", 10);
   initkeymap("send nemesis", 11);
@@ -2113,9 +2113,9 @@ Help1Menu::Help1Menu() : HelpMenu("Controls")
   initKeymap("fire", 3);
   initKeymap("drop", 4);
   initKeymap("identify", 5);
-  initKeymap("set displayRadarRange 1.0", 6);
+  initKeymap("set displayRadarRange 0.25", 6);
   initKeymap("set displayRadarRange 0.5", 7);
-  initKeymap("set displayRadarRange 0.25", 8);
+  initKeymap("set displayRadarRange 1.0", 8);
   initKeymap("send all", 9);
   initKeymap("send team", 10);
   initKeymap("send nemesis", 11);
