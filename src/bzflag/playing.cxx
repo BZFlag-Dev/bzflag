@@ -1657,7 +1657,7 @@ static void		doMotion()
     //FIXME bot motion
     static TimeKeeper lastShot;
     PlayerId t;
-    PlayerId target = maxPlayers;
+    PlayerId target = curMaxPlayers;
 
     const bool phased = myTank->getFlag() == Flags::OscillationOverthruster ||
                         myTank->getFlag() == Flags::PhantomZone;
@@ -1677,7 +1677,7 @@ static void		doMotion()
     else {
       const float *mp = myTank->getPosition();
       float distance = Infinity;
-      for (t = 0; t < maxPlayers; t++) {
+      for (t = 0; t < curMaxPlayers; t++) {
 	if (t != myTank->getId() && player[t] &&
 	    player[t]->isAlive() && !player[t]->isPaused() &&
 	    !player[t]->isNotResponding() &&
@@ -1690,7 +1690,7 @@ static void		doMotion()
 	  }
 	}
       }
-      if (target == maxPlayers) {
+      if (target == curMaxPlayers) {
         // wander around aimlessly
         // FIXME should go flag hunting ;-)
         int period = int(TimeKeeper::getCurrent().getSeconds());
@@ -1739,7 +1739,7 @@ static void		doMotion()
       if (World::getWorld()->allowJumping() || (myTank->getFlag() == Flags::Jumping)) {
         //teach autopilot bad habits
         const float *apPos = myTank->getPosition();
-        for (t = 0; t < maxPlayers; t++) {
+        for (t = 0; t < curMaxPlayers; t++) {
 	  if (t == myTank->getId() || !player[t] || !player[t]->isAlive() ||
 	      player[t]->isPaused())
 	    continue;
@@ -1755,7 +1755,7 @@ static void		doMotion()
 	    if (dist < BZDB->eval(StateDatabase::BZDB_TANKLENGTH) * 2.0f) {
 	      myTank->jump();
 	      s = maxShots;
-	      t = maxPlayers;
+	      t = curMaxPlayers;
 	    }
 	  }
         }
@@ -4344,7 +4344,7 @@ static void		setHuntTarget()
   bool lockedOn = false;
 
   // figure out which tank is centered in my sights
-  for (int i = 0; i < maxPlayers; i++) {
+  for (int i = 0; i < curMaxPlayers; i++) {
     if (!player[i] || !player[i]->isAlive()) continue;
 
     // compute position in my local coordinate system
@@ -4362,7 +4362,7 @@ static void		setHuntTarget()
     // see if it's inside lock-on angle (if we're trying to lock-on)
     if (a < BZDB->eval(StateDatabase::BZDB_LOCKONANGLE) &&					// about 8.5 degrees
 	myTank->getFlag() == Flags::GuidedMissile &&	// am i locking on?
-	player[i]->getFlag() != Flags::Stealth &&		// can't lock on stealth
+	player[i]->getFlag() != Flags::Stealth &&	// can't lock on stealth
 	!player[i]->isPaused() &&			// can't lock on paused
 	!player[i]->isNotResponding() &&		// can't lock on not responding
 	d < bestDistance) {				// is it better?
@@ -4380,7 +4380,7 @@ static void		setHuntTarget()
   if (!bestTarget) return;
 
 
-  if (bestTarget->isHunted()  && myTank->getFlag() != Flags::Blindness) {
+  if (bestTarget->isHunted() && myTank->getFlag() != Flags::Blindness) {
     if (myTank->getTarget() == NULL) { // Don't interfere with GM lock display
       std::string msg("SPOTTED: ");
       msg += bestTarget->getCallSign();
