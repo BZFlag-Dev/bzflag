@@ -237,9 +237,17 @@ void handlePollCmd(int t, const char *message)
 	arbiter->grantSuffrage(player[j].callSign);
       }
     }
-    
+
     // automatically place a vote for the player requesting the poll
-    arbiter->voteYes(player[t].callSign);
+    DEBUG2("Attempting to automatically place a vote for [%s]\n", player[t].callSign);
+
+    bool voted = arbiter->voteYes(player[t].callSign);
+    if (!voted) {
+      sprintf(reply, "Unable to automatically place your vote for some unknown reason");
+      sendMessage(ServerPlayer, t, reply, true);
+
+      DEBUG2("Unable to  to automatically place a vote for [%s]\n", player[t].callSign);
+    }
 
   } else if (cmd == "vote") {
     
