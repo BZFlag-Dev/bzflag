@@ -950,7 +950,8 @@ static void				doEvent(BzfDisplay* display)
 
 bool					isRemotePlayer(PlayerId id)
 {
-	return (id != NoPlayer) && (id != myTank->getId());
+	return (id != NoPlayer) && (id < maxPlayers) &&
+		(player[id] != NULL) && (id != myTank->getId());
 }
 
 Player*					lookupPlayer(PlayerId id)
@@ -1460,22 +1461,21 @@ static void				handleServerMessage(bool human, uint16_t code,
 		case MsgShotBegin: {
 			FiringInfo firingInfo;
 			msg = firingInfo.unpack(msg);
-			for (int i = 0; i < maxPlayers; i++)
-				if (player[i] && player[i]->getId() == firingInfo.shot.player) {
-					const float* pos = firingInfo.shot.pos;
-					player[i]->addShot(firingInfo);
-					if (human) {
-						if (firingInfo.flag == ShockWaveFlag)
-							playWorldSound(SFX_SHOCK, pos[0], pos[1], pos[2]);
-						else if (firingInfo.flag == LaserFlag)
-							playWorldSound(SFX_LASER, pos[0], pos[1], pos[2]);
-						else if (firingInfo.flag == GuidedMissileFlag)
-							playWorldSound(SFX_MISSILE, pos[0], pos[1], pos[2]);
-						else
-							playWorldSound(SFX_FIRE, pos[0], pos[1], pos[2]);
-					}
-					break;
+            int id = firingInfo.shot.player;
+			if (isRemotePlayer(id)) {
+				const float* pos = firingInfo.shot.pos;
+				player[id]->addShot(firingInfo);
+				if (human) {
+					if (firingInfo.flag == ShockWaveFlag)
+						playWorldSound(SFX_SHOCK, pos[0], pos[1], pos[2]);
+					else if (firingInfo.flag == LaserFlag)
+						playWorldSound(SFX_LASER, pos[0], pos[1], pos[2]);
+					else if (firingInfo.flag == GuidedMissileFlag)
+						playWorldSound(SFX_MISSILE, pos[0], pos[1], pos[2]);
+					else
+						playWorldSound(SFX_FIRE, pos[0], pos[1], pos[2]);
 				}
+			}
 			break;
 		}
 
@@ -1486,15 +1486,10 @@ static void				handleServerMessage(bool human, uint16_t code,
 			msg = nboUnpackUByte(msg, id);
 			msg = nboUnpackShort(msg, shotId);
 			msg = nboUnpackUShort(msg, reason);
-			BaseLocalPlayer* localPlayer = getLocalPlayer(id);
 
-			if (localPlayer)
-				localPlayer->endShot(int(shotId), false, reason == 0);
-			else for (int i = 0; i < maxPlayers; i++)
-				if (player[i] && player[i]->getId() == id) {
-					player[i]->endShot(int(shotId), false, reason == 0);
-					break;
-				}
+			Player *shooter = lookupPlayer(id);
+			if (shooter)
+				shooter->endShot(int(shotId), false, reason == 0);
 			break;
 		}
 
@@ -1505,12 +1500,9 @@ static void				handleServerMessage(bool human, uint16_t code,
 			msg = nboUnpackUShort(msg, wins);
 			msg = nboUnpackUShort(msg, losses);
 			// only update score of remote players (local score is already known)
-			for (int i = 0; i < maxPlayers; i++)
-				if (player[i] && player[i]->getId() == id) {
-					player[i]->changeScore(wins - player[i]->getWins(),
-										losses - player[i]->getLosses());
-					break;
-				}
+			if (isRemotePlayer(id))
+		  	 	player[id]->changeScore(wins - player[id]->getWins(),
+			   							losses - player[id]->getLosses());
 			break;
 		}
 
@@ -2429,11 +2421,8 @@ static bool				enterServer(ServerLink* serverLink, World* world,
 					for (int i = 0; i < maxFlags; i++) {
 						const Flag& flag = world->getFlag(i);
 						if (flag.status == FlagOnTank)
-							for (int j = 0; j < maxPlayers; j++)
-								if (player[j] && player[j]->getId() == flag.owner) {
-									player[j]->setFlag(flag.id);
-									break;
-								}
+							if (isRemotePlayer(flag.owner))
+								player[flag.owner]->setFlag(flag.id);
 					}
 					return true;
 				}
