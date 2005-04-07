@@ -237,27 +237,27 @@
 
 					if (mainform.votepercent.value != 50.1) {
 						d.writeln("#Percentage of players required to affirm a poll<br/>");
-						d.writeln("-votePercentage " + mainform.votepercent.value + "<br/><br/>");
+						d.writeln("-poll votePercentage=" + mainform.votepercent.value + "<br/><br/>");
 					}
 
 					if (mainform.votesrequired.value != 3) {
 						d.writeln("#Minimum count of votes required to make a vote valid<br/>");
-						d.writeln("-votesRequired " + mainform.votesrequired.value + "<br/><br/>");
+						d.writeln("-poll votesRequired=" + mainform.votesrequired.value + "<br/><br/>");
 					}
 
 					if (mainform.votetime.value != 60) {
 						d.writeln("#maximum amount of time a player has to vote on a poll in seconds<br/>");
-						d.writeln("-voteTime " + mainform.votetime.value + "<br/><br/>");
+						d.writeln("-poll voteTime=" + mainform.votetime.value + "<br/><br/>");
 					}
 
 					if (mainform.vetotime.value != 20) {
 						d.writeln("#Maximum seconds an authorized user has to cancel a poll<br/>");
-						d.writeln("-vetoTime " + mainform.vetotime.value + "<br/><br/>");
+						d.writeln("-poll vetoTime=" + mainform.vetotime.value + "<br/><br/>");
 					}
 
 					if (mainform.voterepeattime.value != 300) {
 						d.writeln("#Minimum seconds required before a player may request another vote<br/>");
-						d.writeln("-voteRepeatTime " + mainform.voterepeattime.value + "<br/><br/>");
+						d.writeln("-poll voteRepeatTime=" + mainform.voterepeattime.value + "<br/><br/>");
 					}
 
 					if (mainform.game_style.value == "ctf") {
