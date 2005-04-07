@@ -24,6 +24,7 @@
 
 /* common implementation headers */
 #include "bzfgl.h"
+#include "bzglob.h"
 #include "global.h"
 #include "BzfWindow.h"
 #include "ErrorHandler.h"
@@ -404,6 +405,12 @@ void			ControlPanel::render(SceneRenderer& renderer)
   }
   
   const bool useHighlight = (highlightPattern.size() > 0);
+  bool useGlobbing = false;
+  if (useHighlight &&
+      ((strstr(highlightPattern.c_str(), "*") != NULL) ||
+       (strstr(highlightPattern.c_str(), "?") != NULL))) {
+    useGlobbing = true;
+  }
   
   for (j = 0; i >= 0 && j < maxLines; i--) {
     // draw each line of text
@@ -417,8 +424,14 @@ void			ControlPanel::render(SceneRenderer& renderer)
     if (useHighlight) {
       for (int l = 0; l < numStrings; l++)  {
         const std::string &msg = messages[messageMode][i].lines[l];
-        if (strstr(msg.c_str(), highlightPattern.c_str()) != NULL) {
-          highlight = true;
+        if (useGlobbing) {
+          if (glob_match(highlightPattern, stripAnsiCodes(msg))) {
+            highlight = true;
+          }
+        } else {
+          if (strstr(msg.c_str(), highlightPattern.c_str()) != NULL) {
+            highlight = true;
+          }
         }
       }
     }
