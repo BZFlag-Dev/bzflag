@@ -402,6 +402,9 @@ void			ControlPanel::render(SceneRenderer& renderer)
     if (i < 0)
       i = 0;
   }
+  
+  const bool useHighlight = (highlightPattern.size() > 0);
+  
   for (j = 0; i >= 0 && j < maxLines; i--) {
     // draw each line of text
     int numLines = messages[messageMode][i].numlines;
@@ -411,8 +414,7 @@ void			ControlPanel::render(SceneRenderer& renderer)
     
     // see if this need to be highlighted
     bool highlight = false;
-    
-    if (highlightPattern.size() > 0) {
+    if (useHighlight) {
       for (int l = 0; l < numStrings; l++)  {
         const std::string &msg = messages[messageMode][i].lines[l];
         if (strstr(msg.c_str(), highlightPattern.c_str()) != NULL) {
