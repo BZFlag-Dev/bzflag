@@ -226,6 +226,8 @@ bool			ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
 	    BZDB.set(tokens[0], tokens[1]);
 	    std::string msg = "/localset " + tokens[0] + " " + tokens[1];
 	    addMessage(NULL, msg);
+	  } else {
+	    addMessage(NULL, "This is a server-defined variable.  Use /set instead of /localset.");
 	  }
 	} else {
 	  addMessage(NULL, "usage: /localset <variable> <value>");
