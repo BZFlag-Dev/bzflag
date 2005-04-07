@@ -523,7 +523,8 @@ case $host_os in
 	#if test x$no_sdl = xyes; then
 	#AC_DEFINE(XIJOYSTICK, 1, [XInput Joystick Handling])
 	#fi
-	CPPFLAGS="$CPPFLAGS -Wall -W"
+	#CPPFLAGS="$CPPFLAGS -Wall -W -Wfloat-equal -Wundef -Wshadow -Wpointer-arith -Wcast-qual -Wwrite-strings -Wconversion -Wredundant-decls"
+	CPPFLAGS="$CPPFLAGS -Wall -W -Wshadow"
 	case $host_vendor in
 	     pc)  CPPFLAGS="$CPPFLAGS -mcpu=$host_cpu";;
 	     ppc) CPPFLAGS="$CPPFLAGS -mcpu=$host_cpu";;
