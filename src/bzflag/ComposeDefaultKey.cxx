@@ -33,7 +33,6 @@
 #include "World.h"
 #include "HUDRenderer.h"
 #include "Roster.h"
-#include "ControlPanel.h"
 
 
 /* FIXME -- pulled from player.h */
@@ -44,7 +43,6 @@ extern char messageMessage[PlayerIdPLen + MessageLen];
 extern HUDRenderer *hud;
 extern ServerLink*	serverLink;
 extern DefaultCompleter completer;
-extern ControlPanel* controlPanel;
 void selectNextRecipient (bool forward, bool robotIn);
 
 static bool foundVarDiff = false;
@@ -206,7 +204,7 @@ bool			ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
       } else if (strncasecmp(cmd, "/highlight", 10) == 0) {
         const char* c = cmd + 10;
         while ((*c != '\0') && isspace(*c)) c++; // skip leading white
-        controlPanel->setHighlightPattern(std::string(c));
+        BZDB.set("highlightPattern", std::string(c));
       } else if (message == "/set") {
 	bool diff = false;
 	BZDB.iterate(listSetVars, &diff);

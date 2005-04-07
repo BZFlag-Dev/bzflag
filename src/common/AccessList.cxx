@@ -200,6 +200,7 @@ bool AccessList::authorized(const std::vector<std::string>& strings) const
 	  }
 	}
       }
+      regfree(&re);
     }
   }
 

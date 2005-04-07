@@ -24,7 +24,7 @@
 
 /* common implementation headers */
 #include "bzfgl.h"
-#include "bzglob.h"
+#include "regex.h"
 #include "global.h"
 #include "BzfWindow.h"
 #include "ErrorHandler.h"
@@ -404,12 +404,13 @@ void			ControlPanel::render(SceneRenderer& renderer)
       i = 0;
   }
   
-  const bool useHighlight = (highlightPattern.size() > 0);
-  bool useGlobbing = false;
-  if (useHighlight &&
-      ((strstr(highlightPattern.c_str(), "*") != NULL) ||
-       (strstr(highlightPattern.c_str(), "?") != NULL))) {
-    useGlobbing = true;
+  const std::string highlightPattern = BZDB.get("highlightPattern");
+  bool useHighlight = (highlightPattern.size() > 0);
+  regex_t re;          
+  if (useHighlight) {
+    if (regcomp(&re, highlightPattern.c_str(), REG_EXTENDED | REG_ICASE) != 0) {
+      useHighlight = false; // bad regex
+    }
   }
   
   for (j = 0; i >= 0 && j < maxLines; i--) {
@@ -419,19 +420,14 @@ void			ControlPanel::render(SceneRenderer& renderer)
     int msgy = numLines - 1;
     int msgx = 0;
     
-    // see if this need to be highlighted
+    // see if this message need to be highlighted (check each line)
     bool highlight = false;
     if (useHighlight) {
       for (int l = 0; l < numStrings; l++)  {
         const std::string &msg = messages[messageMode][i].lines[l];
-        if (useGlobbing) {
-          if (glob_match(highlightPattern, stripAnsiCodes(msg))) {
-            highlight = true;
-          }
-        } else {
-          if (strstr(msg.c_str(), highlightPattern.c_str()) != NULL) {
-            highlight = true;
-          }
+        std::string raw = stripAnsiCodes(msg);
+        if (regexec(&re, raw.c_str(), 0, NULL, 0) == 0) {
+          highlight = true;
         }
       }
     }
@@ -479,6 +475,12 @@ void			ControlPanel::render(SceneRenderer& renderer)
     j += numLines;
     fy += int(lineHeight * numLines);
   }
+  
+  // free the regex memory
+  if (useHighlight) {
+    regfree(&re);
+  }
+  
   glScissor(x + messageAreaPixels[0] - 2,
 	    y + messageAreaPixels[1] - 2,
 	    messageAreaPixels[2] + 3,
@@ -792,12 +794,6 @@ void			ControlPanel::setRadarRenderer(RadarRenderer* rr)
   radarRenderer = rr;
 }
 
-
-void			ControlPanel::setHighlightPattern(const std::string& pattern)
-{
-  highlightPattern = pattern;
-}
-    
 
 // Local Variables: ***
 // mode: C++ ***
