@@ -227,6 +227,8 @@ bool			ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
 	    std::string msg = "/localset " + tokens[0] + " " + tokens[1];
 	    addMessage(NULL, msg);
 	  }
+	} else {
+	  addMessage(NULL, "usage: /localset <variable> <value>");
 	}
 #endif
       } else if (strncmp(message.c_str(), "/quit", 5) == 0 ) {
@@ -240,27 +242,29 @@ bool			ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
 	CommandsStandard::quit(); // kill client
 
       } else if (serverLink) {
-	int i, mhLen = messageHistory.size();
-	for (i = 0; i < mhLen; i++) {
-	  if (messageHistory[i] == message) {
-	    messageHistory.erase(messageHistory.begin() + i);
-	    messageHistory.push_front(message);
-	    break;
-	  }
-	}
-	if (i == mhLen) {
-	  if (mhLen >= MAX_MESSAGE_HISTORY) {
-	    messageHistory.pop_back();
-	  }
-	  messageHistory.push_front(message);
-	}
-
 	char messageBuffer[MessageLen];
 	memset(messageBuffer, 0, MessageLen);
 	strncpy(messageBuffer, message.c_str(), MessageLen);
 	nboPackString(messageMessage + PlayerIdPLen, messageBuffer, MessageLen);
 	serverLink->send(MsgMessage, sizeof(messageMessage), messageMessage);
       }
+
+      // record message in history
+      int i, mhLen = messageHistory.size();
+      for (i = 0; i < mhLen; i++) {
+	if (messageHistory[i] == message) {
+	  messageHistory.erase(messageHistory.begin() + i);
+	  messageHistory.push_front(message);
+	  break;
+	}
+      }
+      if (i == mhLen) {
+	if (mhLen >= MAX_MESSAGE_HISTORY) {
+	  messageHistory.pop_back();
+	}
+	messageHistory.push_front(message);
+      }
+
     }
   }
 
