@@ -1362,6 +1362,40 @@ static Player*		addPlayer(PlayerId id, void* msg, int showMessage)
   return player[i];
 }
 
+
+static void printIpInfo (const Player* player, const Address& addr,
+                         const std::string note)
+{
+  if (player == NULL) {
+    return;
+  }
+  int color = player->getTeam();
+  if ((color < 0) || (color > 4)) {
+    color = 5;
+  }
+  const std::string addrStr = addr.getDotNotation();
+  std::string message = ColorStrings[CyanColor]; // default color
+  message += "IPINFO: ";
+  if (BZDBCache::colorful) message += ColorStrings[color];
+  message += player->getCallSign();
+  if (BZDBCache::colorful) message += ColorStrings[CyanColor];
+  message += "\t from: ";
+  if (BZDBCache::colorful) message += ColorStrings[color];
+  message += addrStr;
+
+  message += ColorStrings[WhiteColor];
+  for (int i = 0; i < (17 - (int)addrStr.size()); i++) {
+    message += " ";
+  }
+  message += note;
+
+  // print into the Server Menu
+  controlPanel->addMessage(message, 2);
+  
+  return;
+}
+
+
 static bool removePlayer (PlayerId id)
 {
   int playerIndex = lookupPlayerIndex(id);
@@ -1369,13 +1403,28 @@ static bool removePlayer (PlayerId id)
   if (playerIndex < 0) {
     return false;
   }
+  
+  Player* p = player[playerIndex];
 
-  addMessage(player[playerIndex], "signing off");
-  if (myTank->getRecipient() == player[playerIndex])
+  Address addr;
+  std::string msg = "signing off";
+  if (!p->getIpAddress(addr)) {
+    addMessage(p, "signing off");
+  } else {
+    std::string msg = "signing off from ";
+    msg += addr.getDotNotation();
+    addMessage(p, msg);
+    if (BZDB.evalInt("showips") > 1) {
+      printIpInfo (p, addr, "(leave)");
+    }
+  }
+
+  if (myTank->getRecipient() == p)
     myTank->setRecipient(0);
-  if (myTank->getNemesis() == player[playerIndex])
+  if (myTank->getNemesis() == p)
     myTank->setNemesis(0);
-  completer.unregisterWord(player[playerIndex]->getCallSign());
+    
+  completer.unregisterWord(p->getCallSign());
 
   delete player[playerIndex];
   player[playerIndex] = NULL;
@@ -1393,6 +1442,7 @@ static bool removePlayer (PlayerId id)
 
   return true;
 }
+
 
 static bool isCached(char *hexDigest)
 {
@@ -1606,6 +1656,7 @@ static bool processWorldChunk(void *buf, uint16_t len, int bytesLeft)
 		   (100 * doneSize / totalSize), bytesLeft / 1024).c_str());
   return bytesLeft == 0;
 }
+
 
 static void		handleServerMessage(bool human, uint16_t code,
 					    uint16_t len, void* msg)
@@ -2661,7 +2712,7 @@ static void		handleServerMessage(bool human, uint16_t code,
       }
 
       // print fancy version to be easily found
-      if ((numIPs != 1) || BZDB.isTrue("showips")) {
+      if ((numIPs != 1) || (BZDB.evalInt("showips") > 0)) {
 	uint8_t playerId;
 	uint8_t addrlen;
 	Address addr;
@@ -2673,24 +2724,8 @@ static void		handleServerMessage(bool human, uint16_t code,
 
 	  int playerIndex = lookupPlayerIndex(playerId);
 	  Player* player = getPlayerByIndex(playerIndex);
-
-	  if (player != NULL) {
-	    int color = player->getTeam();
-	    if ((color < 0) || (color > 4)) {
-	      color = 5;
-	    }
-	    std::string message = ColorStrings[CyanColor]; // default color
-	    message += "IPINFO: ";
-	    if (BZDBCache::colorful) message += ColorStrings[color];
-	    message += player->getCallSign();
-	    if (BZDBCache::colorful) message += ColorStrings[CyanColor];
-	    message += "\t from: ";
-	    if (BZDBCache::colorful) message += ColorStrings[color];
-	    message += addr.getDotNotation();
-
-	    // also print into the Server Menu
-	    controlPanel->addMessage(message, 2);
-	  }
+          printIpInfo(player, addr, "(join)");
+          player->setIpAddress(addr); // save for the signoff message
 	} // end for loop
       }
       break;

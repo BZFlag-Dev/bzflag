@@ -14,6 +14,8 @@
 #pragma warning( 4: 4786)
 #endif
 
+#include "common.h"
+
 #include <algorithm>
 
 #include "AutoCompleter.h"
@@ -77,12 +79,16 @@ void DefaultCompleter::setDefaults() {
   registerWord("/ghost ");
   registerWord("/groupperms");
   registerWord("/help");
+  registerWord("/highlight ");
   registerWord("/identify ");
   registerWord("/idlestats");
   registerWord("/kick ");
   registerWord("/kill ");
   registerWord("/lagstats");
   registerWord("/lagwarn ");
+#ifdef DEBUG
+  registerWord("/localset ");
+#endif
   registerWord("/mute ");
   registerWord("/password ");
   registerWord("/playerlist");

@@ -122,6 +122,7 @@ Player::Player(const PlayerId& _id, TeamColor _team,
   alphaTarget = 1.0f;
   teleAlpha = 1.0f;
 
+  haveIpAddr = false; // no IP address yet
   lastTrackDraw = TimeKeeper::getCurrent();
 
   return;
@@ -1367,6 +1368,23 @@ void Player::renderRadar() const
     ((TankSceneNode*)tankNode)->renderRadar();
   }
   return;
+}
+
+
+bool Player::getIpAddress(Address& addr)
+{
+  if (!haveIpAddr) {
+    return false;
+  }
+  addr = ipAddr;
+  return true;
+}
+
+
+void Player::setIpAddress(const Address& addr)
+{
+  ipAddr = addr;
+  haveIpAddr = true;
 }
 
 

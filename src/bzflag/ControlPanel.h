@@ -56,6 +56,8 @@ class ControlPanel {
     void		setStatus(const char*);
     void		setRadarRenderer(RadarRenderer*);
 
+    void		setHighlightPattern(const std::string& pattern);
+    
   private:
     // no copying!
 			ControlPanel(const ControlPanel&);
@@ -100,6 +102,7 @@ class ControlPanel {
     float		margin;
     float		lineHeight;
     bool		unRead[MessageModeCount];
+    std::string		highlightPattern;
 };
 
 #endif // BZF_CONTROL_PANEL_H

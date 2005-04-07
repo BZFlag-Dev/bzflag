@@ -104,6 +104,9 @@ public:
 			   bool inCockpit, bool seerView,
 			   bool showTreads, bool showIDL);
 
+  bool		getIpAddress(Address&);
+  void		setIpAddress(const Address& addr);
+  
   virtual void	addShots(SceneDatabase*, bool colorblind) const;
   void		setLandingSpeed(float velocity);
   void		spawnEffect();
@@ -197,6 +200,7 @@ private:
   void updateJumpJets(float dt);
   void updateTrackMarks();
   bool hitObstacleResizing();
+
 private:
   // data not communicated with other players
   bool			notResponding;
@@ -208,6 +212,8 @@ private:
   bool			registered;
   bool			verified;
   bool			playerList;
+  Address		ipAddr;
+  bool			haveIpAddr;
 
   // data use for drawing
   TankSceneNode*	tankNode;

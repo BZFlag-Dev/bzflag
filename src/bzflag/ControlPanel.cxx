@@ -408,6 +408,18 @@ void			ControlPanel::render(SceneRenderer& renderer)
     int numStrings = messages[messageMode][i].lines.size();
     int msgy = numLines - 1;
     int msgx = 0;
+    
+    // see if this need to be highlighted
+    bool highlight = false;
+    
+    if (highlightPattern.size() > 0) {
+      for (int l = 0; l < numStrings; l++)  {
+        const std::string &msg = messages[messageMode][i].lines[l];
+        if (strstr(msg.c_str(), highlightPattern.c_str()) != NULL) {
+          highlight = true;
+        }
+      }
+    }
 
     // default to drawing text in white
     GLfloat whiteColor[3] = {1.0f, 1.0f, 1.0f};
@@ -431,10 +443,20 @@ void			ControlPanel::render(SceneRenderer& renderer)
       }
 
       assert(msgy >= 0);
-
+      
       // only draw message if inside message area
-      if (j + msgy < maxLines)
-	fm.drawString(fx + msgx, fy + msgy * lineHeight, 0, fontFace, fontSize, msg);
+      if (j + msgy < maxLines) {
+        if (!highlight) {
+	  fm.drawString(fx + msgx, fy + msgy * lineHeight, 0, fontFace, fontSize, msg);
+        } else {
+          // highlight this line
+          std::string newMsg = ANSI_STR_PULSATING;
+          newMsg += ANSI_STR_UNDERLINE;
+          newMsg += ANSI_STR_FG_CYAN;
+          newMsg += stripAnsiCodes(msg);
+	  fm.drawString(fx + msgx, fy + msgy * lineHeight, 0, fontFace, fontSize, newMsg);
+        }
+      }
 
       // next line
       msgy--;
@@ -749,10 +771,18 @@ void			ControlPanel::addMessage(const std::string& line,
     invalidate();
 }
 
+
 void			ControlPanel::setRadarRenderer(RadarRenderer* rr)
 {
   radarRenderer = rr;
 }
+
+
+void			ControlPanel::setHighlightPattern(const std::string& pattern)
+{
+  highlightPattern = pattern;
+}
+    
 
 // Local Variables: ***
 // mode: C++ ***
