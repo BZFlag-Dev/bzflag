@@ -194,6 +194,7 @@ private:
   float		gameOverLabelWidth;
   float		huntArrowWidth;
   float		huntedArrowWidth;
+  float		tkWarnRatio;
   std::string	restartLabel;
   std::string	roamingLabel;
 

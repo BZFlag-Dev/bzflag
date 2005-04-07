@@ -126,6 +126,7 @@ static DefaultDBItem	defaultDBItems[] = {
   { "cpanelfontsize",		"0",			true,	StateDatabase::ReadWrite,	NULL },
   { "scorefontsize",		"0",			true,	StateDatabase::ReadWrite,	NULL },
   { "colorful",			"1",			true,	StateDatabase::ReadWrite,	NULL },
+  { "tkwarnratio",		"0.0",			true,   StateDatabase::ReadWrite,	NULL },
   { "showtabs",			"2",			true,   StateDatabase::ReadWrite,	NULL },
   { "underlineColor",		"cyan",			true,	StateDatabase::ReadWrite,	NULL },
   { "zbuffer",			"1",			true,	StateDatabase::ReadWrite,	NULL },

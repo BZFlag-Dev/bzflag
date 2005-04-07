@@ -877,6 +877,9 @@ void			HUDRenderer::renderScoreboard(void)
   // make room for the status marker
   const float xs = x3 - fm.getStrLength(minorFontFace, minorFontSize, "+|");
 
+  // grab the tk warning ratio
+  tkWarnRatio = BZDB.eval("tkwarnratio");
+
   // print non-observing players sorted by score, print observers last
   int plrCount = 0;
   int obsCount = 0;
@@ -1549,16 +1552,33 @@ void			HUDRenderer::renderRoaming(SceneRenderer& renderer)
 void			HUDRenderer::drawPlayerScore(const Player* player,
 			    float x1, float x2, float x3, float xs, float y)
 {
+  // dim the font if we're dim
+  const std::string dimString = dim ? ColorStrings[DimColor] : "";
+
   // score
   char score[40], kills[40];
+
+  bool highlightTKratio = false;
+  if (tkWarnRatio > 0.0) {
+    if (((player->getWins() > 0) && (player->getTeamKills() > 1))
+        || ((player->getWins() == 0) && (player->getTeamKills() >= 3))) {
+      if (((float)player->getTeamKills() / (float)player->getWins()) > tkWarnRatio) {
+	highlightTKratio = true;
+      }
+    }
+  }
+
   if (World::getWorld()->allowRabbit())
-    sprintf(score, "%2d%% %d(%d-%d)[%d]",
+    sprintf(score, "%s%2d%% %d(%d-%d)%s[%d]", dimString.c_str(),
 	    player->getRabbitScore(),
-	    player->getScore(),
-	    player->getWins(), player->getLosses(), player->getTeamKills());
+	    player->getScore(), player->getWins(), player->getLosses(),
+	    highlightTKratio ? ColorStrings[CyanColor].c_str() : "",
+	    player->getTeamKills());
   else
-    sprintf(score, "%d (%d-%d)[%d]", player->getScore(),
-	    player->getWins(), player->getLosses(), player->getTeamKills());
+    sprintf(score, "%s%d (%d-%d)%s[%d]", dimString.c_str(),
+	    player->getScore(), player->getWins(), player->getLosses(),
+	    highlightTKratio ? ColorStrings[CyanColor].c_str() : "",
+	    player->getTeamKills());
   if (LocalPlayer::getMyTank() != player)
     sprintf(kills, "%d/%d", player->getLocalWins(), player->getLocalLosses());
   else
@@ -1570,9 +1590,6 @@ void			HUDRenderer::drawPlayerScore(const Player* player,
   if (teamIndex < RogueTeam) {
     teamIndex = RogueTeam;
   }
-
-  // dim the font if we're dim
-  const std::string dimString = dim ? ColorStrings[DimColor] : "";
 
   // authentication status
   std::string statusInfo = dimString;
@@ -1649,6 +1666,7 @@ void			HUDRenderer::drawPlayerScore(const Player* player,
   if (player->getTeam() != ObserverTeam) {
     hudColor3fv(Team::getRadarColor(teamIndex));
     fm.drawString(x1, y, 0, minorFontFace, minorFontSize, score);
+    hudColor3fv(Team::getRadarColor(teamIndex));
     fm.drawString(x2, y, 0, minorFontFace, minorFontSize, kills);
   }
   fm.drawString(x3, y, 0, minorFontFace, minorFontSize, playerInfo);
