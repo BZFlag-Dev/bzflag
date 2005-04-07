@@ -1051,16 +1051,11 @@ If there is a poll active, this will cancel the poll.  By default, you must be
 an admin to veto a poll.
 
 .TP 
-.B /masterbanreload
+.B /masterban flush|reload
 
-Forces the server to flush any bans from the master server, and reload bans from the
-the internet. Local bans are unaffected. This command requires the UNBAN permision.
-
-.TP 
-.B /masterbanflush
-
-Forces the server to flush any bans from the master server, efectly removing them.
-Local bans are unaffected. This command requires the UNBAN permision.
+Forces the server to flush any bans from the master server. If reload is specified
+instead of flush, also reloads bans from the the internet. Local bans are unaffected.
+This command requires the UNBAN permision.
 
 .TP
 .B /mute 
