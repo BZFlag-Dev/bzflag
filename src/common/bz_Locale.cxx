@@ -24,10 +24,10 @@
 
 /* public: */
 
-Locale::Locale(std::string language, std::string country)
+Locale::Locale(std::string _language_, std::string _country_)
 {
-  setLanguage(language);
-  setCountry(country);
+  setLanguage(_language_);
+  setCountry(_country_);
   return;
 }
 
@@ -36,14 +36,14 @@ Locale::~Locale(void)
   return;
 }
 
-void Locale::setLanguage(std::string language)
+void Locale::setLanguage(std::string _language_)
 {
-  _language = Language::number(language);
+  _language = Language::number(_language_);
 }
 
-void Locale::setCountry(std::string country)
+void Locale::setCountry(std::string _country_)
 {
-  _country = Country::number(country);
+  _country = Country::number(_country_);
 }
 
 std::string Locale::language() const
