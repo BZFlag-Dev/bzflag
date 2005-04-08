@@ -1563,11 +1563,10 @@ void			HUDRenderer::drawPlayerScore(const Player* player,
 
   bool highlightTKratio = false;
   if (tkWarnRatio > 0.0) {
-    if (((player->getWins() > 0) && (player->getTeamKills() > 1))
-        || ((player->getWins() == 0) && (player->getTeamKills() >= 3))) {
-      if (((float)player->getTeamKills() / (float)player->getWins()) > tkWarnRatio) {
-	highlightTKratio = true;
-      }
+    if (((player->getWins() > 0) && 
+         (((float)player->getTeamKills() / (float)player->getWins()) > tkWarnRatio)) ||
+        ((player->getWins() == 0) && (player->getTeamKills() >= 3))) {
+      highlightTKratio = true;
     }
   }
 
