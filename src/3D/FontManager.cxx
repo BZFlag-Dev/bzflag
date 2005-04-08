@@ -280,6 +280,12 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
   // negatives are invalid, we use them to signal "no change"
   GLfloat color[3] = {-1.0f, -1.0f, -1.0f};
 
+  // underline color changes for bright == false
+  GLfloat dimUnderlineColor[3] = 
+    { underlineColor[0] * dimFactor,
+      underlineColor[1] * dimFactor,
+      underlineColor[2] * dimFactor };
+
   /*
    * ANSI code interpretation is somewhat limited, we only accept values
    * which have been defined in AnsiCodes.h
@@ -315,10 +321,13 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
       pFont->drawString(scale, color, &tmpText[startSend], len);
       if (underline) {
 	OpenGLGState::resetState();  // FIXME - full reset required?
-	if (underlineColor[0] >= 0)
+	if (bright && underlineColor[0] >= 0) {
 	  glColor3fv(underlineColor);
-	else if (color[0] >= 0)
+	} else if (underlineColor[0] >= 0) {
+	  glColor3fv(dimUnderlineColor);
+	} else if (color[0] >= 0) {
 	  glColor3fv(color);
+	}
 	// still have a translated matrix, these coordinates are
 	// with respect to the string just drawn
 	glBegin(GL_LINES);

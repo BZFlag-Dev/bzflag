@@ -641,8 +641,14 @@ void			HUDRenderer::renderAlerts(void)
   for (int i = 0; i < MaxAlerts; i++) {
     if (alertClock[i].isOn()) {
       hudColor3fv(alertColor[i]);
+      std::string newAlertLabel = (dim ? ColorStrings[DimColor] : "") + alertLabel[i];
+      // FIXME: this assumes that there's not more than one reset in the string.
+      if (dim) {
+	newAlertLabel.insert(newAlertLabel.find(ColorStrings[ResetColor], 0) 
+			     + ColorStrings[ResetColor].size(), ColorStrings[DimColor]);
+      }
       fm.drawString(centerx - 0.5f * alertLabelWidth[i], y, 0,
-		    alertFontFace, alertFontSize, alertLabel[i]);
+		    alertFontFace, alertFontSize, newAlertLabel);
       y -= fm.getStrHeight(alertFontFace, alertFontSize, " ");
     }
   }
@@ -657,7 +663,7 @@ void			HUDRenderer::renderStatus(void)
 
   FontManager &fm = FontManager::instance();
 
-  char buffer[60];
+  char buffer[80];
   const float h = fm.getStrHeight(majorFontFace, majorFontSize, " ");
   float x = 0.25f * h;
   float y = (float)window.getViewHeight() - h;
@@ -771,6 +777,7 @@ void			HUDRenderer::renderStatus(void)
 
   if (roaming) {
     statusColor = messageColor;
+    if (dim) strcat(buffer, ColorStrings[DimColor].c_str());
     strcat(buffer, roamingLabel.c_str());
   }
 
