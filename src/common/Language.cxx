@@ -22,10 +22,10 @@
 
 /* protected */
 
-Language::Language(int number, std::string iso2, std::string iso3, std::string english, std::string french)
-  : _number(number),
-    _iso2(iso2),
-    _iso3(iso3),
+Language::Language(int numberCode, std::string iso2Code, std::string iso3Code, std::string english, std::string french)
+  : _number(numberCode),
+    _iso2(iso2Code),
+    _iso3(iso3Code),
     _english(english),
     _french(french)
 {

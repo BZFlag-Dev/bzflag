@@ -31,7 +31,7 @@ class Language
 
  protected:
 
-  Language(int number, std::string iso2, std::string iso3="", std::string english="", std::string french="");
+  Language(int numberCode, std::string iso2Code, std::string iso3Code="", std::string english="", std::string french="");
   ~Language();
 
   static bool addLanguage(Language& language);
