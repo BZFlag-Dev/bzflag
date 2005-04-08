@@ -1717,7 +1717,7 @@ void			HUDRenderer::renderShots()
   const int indicatorWidth = width / 50;
   const int indicatorHeight = height / 80;
   const int indicatorSpace = indicatorHeight / 10 + 1;
-  const int indicatorLeft = centerx + maxMotionSize + indicatorWidth / 2;
+  const int indicatorLeft = centerx + maxMotionSize + indicatorWidth + 16;
   const int indicatorTop = centery - (int)(0.5f * (indicatorHeight + indicatorSpace) * myTank->getMaxShots());
 
   // draw reload indicators
