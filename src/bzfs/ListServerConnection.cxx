@@ -44,34 +44,36 @@ const int ListServerLink::NotConnected = -1;
 ListServerLink::ListServerLink(std::string listServerURL, std::string publicizedAddress, std::string publicizedTitle)
 {
   // parse url
-  std::string protocol, hostname, pathname;
-  int port = 80;
+  std::string protocol, _hostname, _pathname;
+  int _port = 80;
   bool useDefault = false;
 
   // use default if it can't be parsed
-  if (!BzfNetwork::parseURL(listServerURL, protocol, hostname, port, pathname))
+  if (!BzfNetwork::parseURL(listServerURL, protocol, _hostname, _port,
+			    _pathname))
     useDefault = true;
 
   // use default if wrong protocol or invalid port
-  if ((protocol != "http") || (port < 1) || (port > 65535))
+  if ((protocol != "http") || (_port < 1) || (_port > 65535))
     useDefault = true;
 
   // use default if bad address
-  Address address = Address::getHostAddress(hostname);
-  if (address.isAny())
+  Address _address = Address::getHostAddress(_hostname);
+  if (_address.isAny())
     useDefault = true;
 
   // parse default list server URL if we need to; assume default works
   if (useDefault) {
-    BzfNetwork::parseURL(DefaultListServerURL, protocol, hostname, port, pathname);
+    BzfNetwork::parseURL(DefaultListServerURL, protocol, _hostname, _port,
+			 _pathname);
     DEBUG1("Provided list server URL (%s) is invalid.  Using default of %s.\n", listServerURL.c_str(), DefaultListServerURL);
   }
 
   // add to list
-  this->address	   = address;
-  this->port	   = port;
-  this->pathname   = pathname;
-  this->hostname   = hostname;
+  address          = _address;
+  port             = _port;
+  pathname         = _pathname;
+  hostname         = _hostname;
   this->linkSocket = NotConnected;
 
   if (clOptions->pingInterface != "")

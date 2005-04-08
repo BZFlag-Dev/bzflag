@@ -47,8 +47,8 @@ CustomMesh::~CustomMesh()
 
   std::vector<CustomMeshFace*>::iterator face_it;
   for (face_it = faces.begin(); face_it != faces.end(); face_it++) {
-    CustomMeshFace* face = *face_it;
-    delete face;
+    CustomMeshFace* _face = *face_it;
+    delete _face;
   }
 
   return;
@@ -171,8 +171,8 @@ void CustomMesh::writeToGroupDef(GroupDefinition *groupdef) const
 
   std::vector<CustomMeshFace*>::const_iterator face_it;
   for (face_it = faces.begin(); face_it != faces.end(); face_it++) {
-    const CustomMeshFace* face = *face_it;
-    face->write(mesh);
+    const CustomMeshFace* _face = *face_it;
+    _face->write(mesh);
   }
 
   mesh->finalize();

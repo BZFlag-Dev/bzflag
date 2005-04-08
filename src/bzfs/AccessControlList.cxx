@@ -229,7 +229,7 @@ void AccessControlList::sendBans(PlayerId id)
 
     // add reason, if any
     if (it->reason.size()) {
-      char *pMsg = banlistmessage;
+      pMsg = banlistmessage;
       sprintf(pMsg, "   reason: %s", it->reason.c_str() );
       sendMessage(ServerPlayer, id, banlistmessage);
     }
@@ -261,7 +261,7 @@ void AccessControlList::sendHostBans(PlayerId id)
 
     // add reason, if any
     if (it->reason.size()) {
-      char *pMsg = banlistmessage;
+      pMsg = banlistmessage;
       sprintf(pMsg, "   reason: %s", it->reason.c_str());
       sendMessage(ServerPlayer, id, banlistmessage);
     }

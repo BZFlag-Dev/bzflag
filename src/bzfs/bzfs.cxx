@@ -1572,13 +1572,13 @@ void sendMessage(int playerIndex, PlayerId dstPlayer, const char *message)
   }
   // FIXME this teamcolor <-> player id conversion is in several files now
   else if (dstPlayer >= 244 && dstPlayer <= 250) {
-    TeamColor team = TeamColor(250 - dstPlayer);
+    TeamColor _team = TeamColor(250 - dstPlayer);
     // send message to all team members only
     GameKeeper::Player *playerData;
     for (int i = 0; i < curMaxPlayers; i++)
       if ((playerData = GameKeeper::Player::getPlayerByIndex(i))
 	  && playerData->player.isPlaying()
-	  && playerData->player.isTeam(team))
+	  && playerData->player.isTeam(_team))
 	directMessage(i, MsgMessage, len, bufStart);
   } else if (dstPlayer == AdminPlayers){
     // admin messages
@@ -1937,7 +1937,7 @@ static void addPlayer(int playerIndex)
 
   // send rabbit information
   if (clOptions->gameStyle & int(RabbitChaseGameStyle)) {
-    void *buf, *bufStart = getDirectMessageBuffer();
+    bufStart = getDirectMessageBuffer();
     buf = nboPackUByte(bufStart, rabbitIndex);
     directMessage(playerIndex, MsgNewRabbit, (char*)buf-(char*)bufStart, bufStart);
   }
@@ -1955,7 +1955,7 @@ static void addPlayer(int playerIndex)
       timeLeft = 0.0f;
     }
 
-    void *buf, *bufStart = getDirectMessageBuffer();
+    bufStart = getDirectMessageBuffer();
     buf = nboPackInt(bufStart, (int32_t)timeLeft);
     result = directMessage(*playerData, MsgTimeUpdate,
 			   (char*)buf-(char*)bufStart, bufStart);
@@ -2672,7 +2672,7 @@ void playerKilled(int victimIndex, int killerIndex, int reason,
 	&& killerIndex != InvalidPlayer
 	&& killerIndex != ServerPlayer
 	&& killerData->score.reached()) {
-      void *buf, *bufStart = getDirectMessageBuffer();
+      bufStart = getDirectMessageBuffer();
       buf = nboPackUByte(bufStart, killerIndex);
       buf = nboPackUShort(buf, uint16_t(NoTeam));
       broadcastMessage(MsgScoreOver, (char*)buf-(char*)bufStart, bufStart);
@@ -2821,7 +2821,7 @@ static void dropFlag(GameKeeper::Player &playerData, float pos[3])
     if (!world->getSafetyPoint(teamName, pos, landing)) {
       // try the center
       landing[0] = landing[1] = landing[2] = 0.0f;
-      bool safelyDropped =
+      safelyDropped =
 	DropGeometry::dropTeamFlag(landing, minZ, maxZ, flagTeam);
       if (!safelyDropped) {
 	// ok, we give up, send it home
@@ -3375,14 +3375,14 @@ possible attack from %s\n",
     }
 
     case MsgWantWHash: {
-      void *buf, *bufStart = getDirectMessageBuffer();
+      void *obuf, *obufStart = getDirectMessageBuffer();
       if (clOptions->cacheURL.size() > 0) {
-	buf = nboPackString(bufStart, clOptions->cacheURL.c_str(),
+	obuf = nboPackString(obufStart, clOptions->cacheURL.c_str(),
 			    clOptions->cacheURL.size() + 1);
-	directMessage(t, MsgCacheURL, (char*)buf-(char*)bufStart, bufStart);
+	directMessage(t, MsgCacheURL, (char*)obuf-(char*)obufStart, obufStart);
       }
-      buf = nboPackString(bufStart, hexDigest, strlen(hexDigest)+1);
-      directMessage(t, MsgWantWHash, (char*)buf-(char*)bufStart, bufStart);
+      obuf = nboPackString(obufStart, hexDigest, strlen(hexDigest)+1);
+      directMessage(t, MsgWantWHash, (char*)obuf-(char*)obufStart, obufStart);
       break;
     }
 
@@ -3462,13 +3462,13 @@ possible attack from %s\n",
     // player has captured a flag
     case MsgCaptureFlag: {
       // data: team whose territory flag was brought to
-      uint16_t team;
+      uint16_t _team;
 
       if (invalidPlayerAction(playerData->player, t, "capture a flag"))
 	break;
 
-      buf = nboUnpackUShort(buf, team);
-      captureFlag(t, TeamColor(team));
+      buf = nboUnpackUShort(buf, _team);
+      captureFlag(t, TeamColor(_team));
       break;
     }
 
@@ -3588,17 +3588,18 @@ possible attack from %s\n",
       if (oFlagIndex >= 0)
 	zapFlag (*FlagInfo::get(oFlagIndex));
 
-      void *bufStart = getDirectMessageBuffer();
-      void *buf = nboPackUByte(bufStart, from);
-      buf = nboPackUByte(buf, to);
+      void *obufStart = getDirectMessageBuffer();
+      void *obuf = nboPackUByte(obufStart, from);
+      obuf = nboPackUByte(obuf, to);
       FlagInfo &flag = *FlagInfo::get(flagIndex);
       flag.flag.owner = to;
       flag.player = to;
       toData->player.resetFlag();
       toData->player.setFlag(flagIndex);
       fromData->player.resetFlag();
-      buf = flag.pack(buf);
-      broadcastMessage(MsgTransferFlag, (char*)buf - (char*)bufStart, bufStart);
+      obuf = flag.pack(obuf);
+      broadcastMessage(MsgTransferFlag, (char*)obuf - (char*)obufStart,
+		       obufStart);
       break;
     }
 
@@ -4601,30 +4602,34 @@ int main(int argc, char **argv)
 	  // kill any players that are playing already
 	  GameKeeper::Player *player;
 	  if (clOptions->gameStyle & int(TeamFlagGameStyle)) {
-	    for (int i = 0; i < curMaxPlayers; i++) {
+	    for (int j = 0; j < curMaxPlayers; j++) {
 	      void *buf, *bufStart = getDirectMessageBuffer();
-	      player = GameKeeper::Player::getPlayerByIndex(i);
+	      player = GameKeeper::Player::getPlayerByIndex(j);
 	      if (!player || player->player.isObserver()) continue;
 
-	      // the server gets to capture the flag -- send some bogus player id
-	      // curMaxPlayers should never exceed 255, so this should be a safe cast
+	      // the server gets to capture the flag -- send some
+	      // bogus player id
+
+	      // curMaxPlayers should never exceed 255, so this should
+	      // be a safe cast
 	      buf = nboPackUByte(bufStart, (uint8_t)curMaxPlayers);
 	      buf = player->player.packVirtualFlagCapture(buf);
-	      directMessage(i, MsgCaptureFlag, (char*)buf - (char*)bufStart, bufStart);
+	      directMessage(j, MsgCaptureFlag, (char*)buf - (char*)bufStart,
+			    bufStart);
 
 	      // kick 'em while they're down
-	      playerKilled(i, curMaxPlayers, 0, -1, Flags::Null, -1);
+	      playerKilled(j, curMaxPlayers, 0, -1, Flags::Null, -1);
 
 	      // be sure to reset the player!
 	      player->player.setDead();
-	      zapFlagByPlayer(i);
+	      zapFlagByPlayer(j);
 	      player->player.setPlayedEarly(false);
 	    }
 	  }
 
 	  // reset all flags
-	  for (int i=0; i < numFlags; i++) {
-	    zapFlag(*FlagInfo::get(i));
+	  for (int j = 0; j < numFlags; j++) {
+	    zapFlag(*FlagInfo::get(j));
 	  }
 
 	} else {

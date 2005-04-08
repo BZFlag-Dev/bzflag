@@ -593,8 +593,8 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       // the cmd line options. But for now just override them on the spot
       parse(ac, av, options);
 
-      for (int i = 0; i < ac; i++)
-	free(av[i]);
+      for (int j = 0; j < ac; j++)
+	free(av[j]);
       delete[] av;
 
       options.numAllowedFlags = 0;
@@ -1092,8 +1092,8 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       char **av = parseWorldOptions(argv[i], ac);
       parse(ac, av, options, true); // true - from a world file
 
-      for (int i = 0; i < ac; i++)
-	free(av[i]);
+      for (int j = 0; j < ac; j++)
+	free(av[j]);
       delete[] av;
 
       options.numAllowedFlags = 0; // FIXME - Huh, does a reset?
@@ -1160,10 +1160,12 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
   }
 
   if (options.gameStyle & int(RabbitChaseGameStyle)) {
-    for (int i = RedTeam; i <= PurpleTeam; i++) {
-      if (options.maxTeam[i] > 0 && options.maxTeam[RogueTeam] != maxRealPlayers)
-	std::cout << "only rogues are allowed in Rabbit Style; zeroing out " << Team::getName((TeamColor) i) << std::endl;
-      options.maxTeam[i] = 0;
+    for (int j = RedTeam; j <= PurpleTeam; j++) {
+      if (options.maxTeam[j] > 0
+	  && options.maxTeam[RogueTeam] != maxRealPlayers)
+	std::cout << "only rogues are allowed in Rabbit Style; zeroing out "
+		  << Team::getName((TeamColor) j) << std::endl;
+      options.maxTeam[j] = 0;
     }
   }
 

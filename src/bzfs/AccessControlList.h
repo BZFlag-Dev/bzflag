@@ -28,10 +28,11 @@ struct BanInfo
   /** This constructor creates a new BanInfo with the address @c banAddr,
       the ban performer @c bannedBy, and the expiration time @c period
       minutes from now. */
-  BanInfo( in_addr &banAddr, const char *bannedBy = NULL, int period = 0, bool isFromMaster = false ) {
+  BanInfo(in_addr &banAddr, const char *_bannedBy = NULL, int period = 0,
+	  bool isFromMaster = false ) {
     memcpy( &addr, &banAddr, sizeof( in_addr ));
-    if (bannedBy)
-      this->bannedBy = bannedBy;
+    if (_bannedBy)
+      bannedBy = _bannedBy;
     if (period == 0) {
       banEnd = TimeKeeper::getSunExplodeTime();
     } else {
@@ -66,10 +67,11 @@ struct HostBanInfo
   /** This constructor creates a new HostBanInfo with the host pattern
       @c hostpat, the ban performer @c bannedBy, and the expiration time
       @c period minutes from now. */
-  HostBanInfo(std::string hostpat, const char *bannedBy = NULL, int period = 0, bool isFromMaster = false ) {
-    this->hostpat = hostpat;
-    if (bannedBy)
-      this->bannedBy = bannedBy;
+  HostBanInfo(std::string _hostpat, const char *_bannedBy = NULL,
+	      int period = 0, bool isFromMaster = false ) {
+    hostpat = _hostpat;
+    if (_bannedBy)
+      bannedBy = _bannedBy;
     if (period == 0) {
       banEnd = TimeKeeper::getSunExplodeTime();
     } else {

@@ -577,7 +577,6 @@ static bool routePacket(u16 code, int len, const void * data, u16 mode)
 	    (int)p->mode, p->len, msgString(p->code), p->data);
 
     if (RecordBuf.byteCount > RecordMaxBytes) {
-      RRpacket *p;
       DEBUG4 ("routePacket: deleting until State Update\n");
       while (((p = delTailPacket(&RecordBuf)) != NULL) &&
 	     (p->mode != UpdatePacket)) {

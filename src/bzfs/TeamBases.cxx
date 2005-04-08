@@ -70,9 +70,10 @@ TeamBases::TeamBases(TeamColor team, bool initDefault)
     teamBase.size[2] = 0.0f;
 }
 
-void TeamBases::addBase( const float *position, const float *size, float rotation )
+void TeamBases::addBase(const float *position, const float *_size,
+			float rotation )
 {
-  TeamBase base(position, size, rotation);
+  TeamBase base(position, _size, rotation);
   teamBases.push_back(base);
 }
 
@@ -98,7 +99,7 @@ float TeamBases::findBaseZ( float x, float y, float z ) const
 {
   for (TeamBaseList::const_iterator it = teamBases.begin(); it != teamBases.end(); ++it) {
     const float *pos  = it->position;
-    const float *size = it->size;
+    const float *_size = it->size;
     float rotation = it->rotation;
     float nx = x - pos[0];
     float ny = y - pos[1];
@@ -108,8 +109,8 @@ float TeamBases::findBaseZ( float x, float y, float z ) const
     float ry = (float)(sinf(atanf(ny/nx)-rotation) * sqrt((ny * ny) + (nx * nx)));
 
 
-    if (fabsf(rx) < size[0] &&
-	fabsf(ry) < size[1] &&
+    if (fabsf(rx) < _size[0] &&
+	fabsf(ry) < _size[1] &&
 	pos[2] <= z)
       return pos[2];
   }

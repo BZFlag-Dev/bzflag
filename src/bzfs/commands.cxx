@@ -781,9 +781,9 @@ static void handleFlagCmd(GameKeeper::Player *playerData, const char *message)
 
   } else if (strncasecmp(message + 6, "show", 4) == 0) {
     for (int i = 0; i < numFlags; i++) {
-      char message[MessageLen];
-      FlagInfo::get(i)->getTextualInfo(message);
-      sendMessage(ServerPlayer, t, message);
+      char showMessage[MessageLen];
+      FlagInfo::get(i)->getTextualInfo(showMessage);
+      sendMessage(ServerPlayer, t, showMessage);
     }
   } else {
     sendMessage(ServerPlayer, t, "reset|show|up");
@@ -1193,10 +1193,11 @@ static void handleFlaghistoryCmd(GameKeeper::Player *playerData, const char *)
 
   char reply[MessageLen];
   for (int i = 0; i < curMaxPlayers; i++) {
-    GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(i);
-    if (playerData != NULL && playerData->player.isPlaying() && !playerData->player.isObserver()) {
-      snprintf(reply, MessageLen, "%-16s : ", playerData->player.getCallSign());
-      playerData->flagHistory.get(reply+strlen(reply));
+    GameKeeper::Player *otherData = GameKeeper::Player::getPlayerByIndex(i);
+    if (otherData != NULL && otherData->player.isPlaying()
+	&& !otherData->player.isObserver()) {
+      snprintf(reply, MessageLen, "%-16s : ", otherData->player.getCallSign());
+      otherData->flagHistory.get(reply+strlen(reply));
       sendMessage(ServerPlayer, t, reply);
     }
   }
@@ -2025,8 +2026,8 @@ static void handlePollCmd(GameKeeper::Player *playerData, const char *message)
   for (int i = 0; i < curMaxPlayers; i++) {
     // any registered/known users on the server (including observers)
     // are eligible to vote
-    GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(i);
-    if (playerData && playerData->accessInfo.exists()) {
+    GameKeeper::Player *otherData = GameKeeper::Player::getPlayerByIndex(i);
+    if (otherData && otherData->accessInfo.exists()) {
       available++;
     }
   }
@@ -2250,9 +2251,9 @@ static void handlePollCmd(GameKeeper::Player *playerData, const char *message)
     for (int j = 0; j < curMaxPlayers; j++) {
       // any registered/known users on the server (including
       // observers) are eligible to vote
-      GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(j);
-      if (playerData && playerData->accessInfo.exists()) {
-	arbiter->grantSuffrage(playerData->player.getCallSign());
+      GameKeeper::Player *otherData = GameKeeper::Player::getPlayerByIndex(j);
+      if (otherData && otherData->accessInfo.exists()) {
+	arbiter->grantSuffrage(otherData->player.getCallSign());
       }
     }
 

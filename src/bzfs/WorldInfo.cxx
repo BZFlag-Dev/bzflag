@@ -136,10 +136,10 @@ void WorldInfo::addTeleporter(float x, float y, float z, float r,
 }
 
 void WorldInfo::addBase(const float pos[3], float r,
-			const float size[3], int color,
+			const float _size[3], int color,
 			bool /* drive */, bool /* shoot */)
 {
-  BaseBuilding* base = new BaseBuilding(pos, r, size, color);
+  BaseBuilding* base = new BaseBuilding(pos, r, _size, color);
   OBSTACLEMGR.addWorldObstacle(base);
 }
 
@@ -229,7 +229,7 @@ bool WorldInfo::rectHitCirc(float dx, float dy, const float *p, float r) const
   return true;
 }
 
-bool WorldInfo::inRect(const float *p1, float angle, const float *size,
+bool WorldInfo::inRect(const float *p1, float angle, const float *_size,
 		       float x, float y, float r) const
 {
   // translate origin
@@ -244,7 +244,7 @@ bool WorldInfo::inRect(const float *p1, float angle, const float *size,
   pb[1] = c * pa[1] + s * pa[0];
 
   // do test
-  return rectHitCirc(size[0], size[1], pb, r);
+  return rectHitCirc(_size[0], _size[1], pb, r);
 }
 
 
