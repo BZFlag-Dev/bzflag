@@ -126,7 +126,7 @@ BasesList bases;
 // FIXME - define a well-known constant for a null playerid in address.h?
 // might be handy in other players, too.
 // Client does not check for rabbit to be 255, but it still works
-// because 255 should be > curMaxPlayers and thus no matchign player will
+// because 255 should be > curMaxPlayers and thus no matching player will
 // be found.
 // FIXME: should be static, but needed by RecordReplay
 uint8_t rabbitIndex = NoPlayer;
