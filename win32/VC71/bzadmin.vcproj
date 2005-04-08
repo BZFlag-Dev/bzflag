@@ -32,6 +32,7 @@
 				ObjectFile=".\..\..\src\bzadmin\Debug/"
 				ProgramDataBaseFileName=".\..\..\src\bzadmin\Debug/"
 				WarningLevel="3"
+				WarnAsError="TRUE"
 				SuppressStartupBanner="TRUE"
 				DebugInformationFormat="4"
 				CompileAs="0"/>

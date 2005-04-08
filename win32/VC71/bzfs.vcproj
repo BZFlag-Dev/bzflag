@@ -92,6 +92,7 @@
 				ObjectFile=".\..\..\src\bzfs\debug/"
 				ProgramDataBaseFileName=".\..\..\src\bzfs\debug/"
 				WarningLevel="3"
+				WarnAsError="TRUE"
 				SuppressStartupBanner="TRUE"
 				DebugInformationFormat="4"
 				CompileAs="0"/>
