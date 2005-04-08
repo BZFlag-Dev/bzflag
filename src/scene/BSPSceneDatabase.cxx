@@ -153,17 +153,17 @@ void BSPSceneDatabase::release(Node* node)
 }
 
 
-bool BSPSceneDatabase::insertStatic(int level, Node* root,
+bool BSPSceneDatabase::insertStatic(int level, Node* _root,
 				    SceneNode* node, bool dontFree)
 {
   bool wouldFree = false;
 
   // dynamic nodes should only be inserted after all static nodes
-  assert(root->dynamic == 0);
+  assert(_root->dynamic == 0);
 
   // split against root's plane
   SceneNode* front = NULL, *back = NULL;
-  switch (node->split(root->node->getPlane(), front, back)) {
+  switch (node->split(_root->node->getPlane(), front, back)) {
     case 0:
       // copy style to new nodes
       // FIXME -- only WallSceneNodes are static but should make type safe
@@ -191,52 +191,52 @@ bool BSPSceneDatabase::insertStatic(int level, Node* root,
 
   // add nodes
   if (front) {
-    if (root->front) {
-      wouldFree = insertStatic(level + 1, root->front, front, dontFreeNext);
+    if (_root->front) {
+      wouldFree = insertStatic(level + 1, _root->front, front, dontFreeNext);
     } else {
-      root->front = new Node(false, front);
+      _root->front = new Node(false, front);
       setDepth(level + 1);
     }
-    root->count++;
+    _root->count++;
   }
   if (back) {
-    if (root->back) {
-      wouldFree = insertStatic(level + 1, root->back, back, dontFreeNext);
+    if (_root->back) {
+      wouldFree = insertStatic(level + 1, _root->back, back, dontFreeNext);
     } else {
-      root->back = new Node(false, back);
+      _root->back = new Node(false, back);
       setDepth(level + 1);
     }
-    root->count++;
+    _root->count++;
   }
 
   return wouldFree;
 }
 
 
-void BSPSceneDatabase::insertDynamic(int level, Node* root,
-								SceneNode* node)
+void BSPSceneDatabase::insertDynamic(int level, Node* _root,
+				     SceneNode* node)
 {
   GLfloat d;
-  if (!root->dynamic && root->node->getPlane()) {
-    const GLfloat* plane = root->node->getPlane();
+  if (!_root->dynamic && _root->node->getPlane()) {
+    const GLfloat* plane = _root->node->getPlane();
     const GLfloat* pos = node->getSphere();
     d = pos[0] * plane[0] + pos[1] * plane[1] + pos[2] * plane[2] + plane[3];
   } else {
-    d = root->node->getDistance(eye) - node->getDistance(eye);
+    d = _root->node->getDistance(eye) - node->getDistance(eye);
   }
 
   if (d >= 0.0) {
-    if (root->front) {
-      insertDynamic(level + 1, root->front, node);
+    if (_root->front) {
+      insertDynamic(level + 1, _root->front, node);
     } else {
-      root->front = new Node(true, node);
+      _root->front = new Node(true, node);
       setDepth(level + 1);
     }
   } else {
-    if (root->back) {
-      insertDynamic(level + 1, root->back, node);
+    if (_root->back) {
+      insertDynamic(level + 1, _root->back, node);
     } else {
-      root->back = new Node(true, node);
+      _root->back = new Node(true, node);
       setDepth(level + 1);
     }
   }

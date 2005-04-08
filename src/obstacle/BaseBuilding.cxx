@@ -26,8 +26,8 @@ BaseBuilding::BaseBuilding()
 }
 
 BaseBuilding::BaseBuilding(const float *p, float rotation,
-	const float *size, int _team) :
-		Obstacle(p, rotation, size[0], size[1], size[2]),
+	const float *_size, int _team) :
+		Obstacle(p, rotation, _size[0], _size[1], _size[2]),
 		team(_team)
 {
   finalize();
@@ -106,16 +106,17 @@ bool			BaseBuilding::inCylinder(const float *p, float radius, float height) cons
   &&     testRectCircle(getPosition(), getRotation(), getWidth(), getBreadth(), p, radius);
 }
 
-bool			BaseBuilding::inBox(const float *p, float angle,
+bool			BaseBuilding::inBox(const float *p, float _angle,
 			float dx, float dy, float height) const
 {
   return (p[2] < (getPosition()[2] + getHeight()))
   &&     ((p[2]+height) >= getPosition()[2])
-  &&     testRectRect(getPosition(), getRotation(), getWidth(), getBreadth(), p, angle, dx, dy);
+  &&     testRectRect(getPosition(), getRotation(), getWidth(), getBreadth(),
+		      p, _angle, dx, dy);
 }
 
 bool			BaseBuilding::inMovingBox(const float* oldP, float,
-					       const float *p, float angle,
+						  const float *p, float _angle,
 			float dx, float dy, float height) const
 {
   float topBaseHeight = getPosition()[2] + getHeight();
@@ -137,17 +138,17 @@ bool			BaseBuilding::inMovingBox(const float* oldP, float,
   if ((higherZ + height) < getPosition()[2])
     return false;
   return testRectRect(getPosition(), getRotation(), getWidth(), getBreadth(),
-		      p, angle, dx, dy);
+		      p, _angle, dx, dy);
 }
 
-bool			BaseBuilding::isCrossing(const float *p, float angle,
+bool			BaseBuilding::isCrossing(const float *p, float _angle,
 			float dx, float dy, float height,
 			float *plane) const
 {
   // if not inside or contained, then not crossing
-  if (!inBox(p, angle, dx, dy, height) ||
+  if (!inBox(p, _angle, dx, dy, height) ||
       testRectInRect(getPosition(), getRotation(),
-	getWidth(), getBreadth(), p, angle, dx, dy))
+	getWidth(), getBreadth(), p, _angle, dx, dy))
     return false;
   if(!plane) return true;
 
@@ -188,7 +189,7 @@ bool			BaseBuilding::getHitNormal(const float *pos1, float azimuth1,
 			getHeight(), normal) >= 0.0f;
 }
 
-void			BaseBuilding::getCorner(int index, float *pos) const
+void			BaseBuilding::getCorner(int index, float *_pos) const
 {
   const float *base = getPosition();
   const float c = cosf(getRotation());
@@ -197,24 +198,24 @@ void			BaseBuilding::getCorner(int index, float *pos) const
   const float b = getBreadth();
   switch(index & 3) {
     case 0:
-      pos[0] = base[0] + c * w - s * b;
-      pos[1] = base[1] + s * w + c * b;
+      _pos[0] = base[0] + c * w - s * b;
+      _pos[1] = base[1] + s * w + c * b;
       break;
     case 1:
-      pos[0] = base[0] - c * w - s * b;
-      pos[1] = base[1] - s * w + c * b;
+      _pos[0] = base[0] - c * w - s * b;
+      _pos[1] = base[1] - s * w + c * b;
       break;
     case 2:
-      pos[0] = base[0] - c * w + s * b;
-      pos[1] = base[1] - s * w - c * b;
+      _pos[0] = base[0] - c * w + s * b;
+      _pos[1] = base[1] - s * w - c * b;
       break;
     case 3:
-      pos[0] = base[0] + c * w + s * b;
-      pos[1] = base[1] + s * w - c * b;
+      _pos[0] = base[0] + c * w + s * b;
+      _pos[1] = base[1] + s * w - c * b;
       break;
   }
-  pos[2] = base[2];
-  if(index >= 4) pos[2] += getHeight();
+  _pos[2] = base[2];
+  if(index >= 4) _pos[2] += getHeight();
 }
 
 int	BaseBuilding::getTeam() const {
@@ -280,9 +281,9 @@ int BaseBuilding::packSize() const
 void BaseBuilding::print(std::ostream& out, const std::string& indent) const
 {
   out << indent << "base" << std::endl;
-  const float *pos = getPosition();
-  out << indent << "  position " << pos[0] << " " << pos[1] << " "
-				 << pos[2] << std::endl;
+  const float *myPos = getPosition();
+  out << indent << "  position " << myPos[0] << " " << myPos[1] << " "
+				 << myPos[2] << std::endl;
   out << indent << "  size " << getWidth() << " " << getBreadth()
 			     << " " << getHeight() << std::endl;
   out << indent << "  rotation " << ((getRotation() * 180.0) / M_PI)

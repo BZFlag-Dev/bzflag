@@ -319,10 +319,10 @@ MeshObstacle* SphereObstacle::makeMesh()
 	// setup 'a'
 	if (i > 0) {
 	  if (lastStrip) {
-	    int k = (i - 1);
+	    k = (i - 1);
 	    a = 1 + (((k*k)+k)*2);
 	  } else {
-	    int k = (i - 1);
+	    k = (i - 1);
 	    a = 1 + (((k*k)+k)*2) + (q*(k+1)) + j;
 	  }
 	} else {
@@ -340,7 +340,7 @@ MeshObstacle* SphereObstacle::makeMesh()
 	}
 
 	// setup 'd' for the down-pointing triangle
-	int k = (i + 1);
+	k = (i + 1);
 	d = 1 + (((k*k)+k)*2) + (q*(k+1)) + (j + 1);
 
 
@@ -408,11 +408,11 @@ MeshObstacle* SphereObstacle::makeMesh()
 
   // add the bottom disc
   if (hemisphere) {
-    const int k = (divisions - 1);
+    k = (divisions - 1);
     const int offset = 1 + (((k*k)+k)*2);
     for (i = 0; i < (divisions * 4); i++) {
-      const int v = (divisions * 4) - i - 1;
-      vlist.push_back(v + offset);
+      const int vv = (divisions * 4) - i - 1;
+      vlist.push_back(vv + offset);
       tlist.push_back(i + bottomTexOffset);
     }
     addFace(mesh, vlist, nlist, tlist, materials[Bottom], phydrv);

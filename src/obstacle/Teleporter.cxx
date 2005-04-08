@@ -589,9 +589,9 @@ void Teleporter::print(std::ostream& out, const std::string& indent) const
     out << " " << name;
   }
   out << std::endl;
-  const float *pos = getPosition();
-  out << indent << "  position " << pos[0] << " " << pos[1] << " "
-				 << pos[2] << std::endl;
+  const float *_pos = getPosition();
+  out << indent << "  position " << _pos[0] << " " << _pos[1] << " "
+				 << _pos[2] << std::endl;
   out << indent << "  size " << origSize[0] << " " << origSize[1] << " "
 			     << origSize[2] << std::endl;
   out << indent << "  rotation " << ((getRotation() * 180.0) / M_PI)

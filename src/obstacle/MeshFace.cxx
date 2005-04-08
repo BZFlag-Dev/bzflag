@@ -172,7 +172,7 @@ void MeshFace::finalize()
     const int next = (v + 1) % vertexCount;
     vec3sub(edge, vertices[next], vertices[v]);
     vec3cross(edgePlanes[v], edge, plane);
-    const float scale = 1.0f / sqrtf(vec3dot(edgePlanes[v], edgePlanes[v]));
+    scale = 1.0f / sqrtf(vec3dot(edgePlanes[v], edgePlanes[v]));
     edgePlanes[v][0] = edgePlanes[v][0] * scale;
     edgePlanes[v][1] = edgePlanes[v][1] * scale;
     edgePlanes[v][2] = edgePlanes[v][2] * scale;
@@ -415,7 +415,7 @@ bool MeshFace::inCylinder(const float* p,float radius, float height) const
 }
 
 
-bool MeshFace::inBox(const float* p, float angle,
+bool MeshFace::inBox(const float* p, float _angle,
 		     float dx, float dy, float height) const
 {
   int i;
@@ -432,8 +432,8 @@ bool MeshFace::inBox(const float* p, float angle,
 
   float pln[4]; // translated plane
   fvec3* v = new fvec3[vertexCount]; // translated vertices
-  const float cos_val = cosf(-angle);
-  const float sin_val = sinf(-angle);
+  const float cos_val = cosf(-_angle);
+  const float sin_val = sinf(-_angle);
   for (i = 0; i < vertexCount; i++) {
     float h[2];
     h[0] = vertices[i][0] - p[0];
@@ -509,17 +509,17 @@ bool MeshFace::inMovingBox(const float* oldPos, float /*oldAngle*/,
 			   float dx, float dy, float height) const
 {
   // expand the box with respect to Z axis motion
-  float pos[3];
-  pos[0] = newPos[0];
-  pos[1] = newPos[1];
+  float _pos[3];
+  _pos[0] = newPos[0];
+  _pos[1] = newPos[1];
   if (oldPos[2] < newPos[2]) {
-    pos[2] = oldPos[2];
+    _pos[2] = oldPos[2];
   } else {
-    pos[2] = newPos[2];
+    _pos[2] = newPos[2];
   }
   height = height + fabsf(oldPos[2] - newPos[2]);
 
-  return inBox(pos, newAngle, dx, dy, height);
+  return inBox(_pos, newAngle, dx, dy, height);
 }
 
 

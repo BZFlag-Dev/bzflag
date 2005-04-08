@@ -207,11 +207,11 @@ bool			PyramidBuilding::inBox(const float* p, float a,
 		      s * getWidth(), s * getBreadth(), p, a, dx, dy);
 }
 
-bool			PyramidBuilding::inMovingBox(const float*, float,
-					     const float* p, float angle,
-					     float dx, float dy, float dz) const
+bool PyramidBuilding::inMovingBox(const float*, float,
+				  const float* p, float _angle,
+				  float dx, float dy, float dz) const
 {
-  return inBox (p, angle, dx, dy, dz);
+  return inBox (p, _angle, dx, dy, dz);
 }
 
 bool			PyramidBuilding::isCrossing(const float* p, float a,
@@ -312,7 +312,7 @@ bool			PyramidBuilding::getHitNormal(
 }
 
 void			PyramidBuilding::getCorner(int index,
-						float* pos) const
+						   float* _pos) const
 {
   const float* base = getPosition();
   const float c = cosf(getRotation());
@@ -322,44 +322,44 @@ void			PyramidBuilding::getCorner(int index,
   const float top  = getHeight() + base[2];
   switch (index) {
     case 0:
-      pos[0] = base[0] + c * w - s * h;
-      pos[1] = base[1] + s * w + c * h;
+      _pos[0] = base[0] + c * w - s * h;
+      _pos[1] = base[1] + s * w + c * h;
       if (getZFlip())
-	pos[2] = top;
+	_pos[2] = top;
       else
-	pos[2] = base[2];
+	_pos[2] = base[2];
       break;
     case 1:
-      pos[0] = base[0] - c * w - s * h;
-      pos[1] = base[1] - s * w + c * h;
+      _pos[0] = base[0] - c * w - s * h;
+      _pos[1] = base[1] - s * w + c * h;
       if (getZFlip())
-	pos[2] = top;
+	_pos[2] = top;
       else
-	pos[2] = base[2];
+	_pos[2] = base[2];
       break;
     case 2:
-      pos[0] = base[0] - c * w + s * h;
-      pos[1] = base[1] - s * w - c * h;
+      _pos[0] = base[0] - c * w + s * h;
+      _pos[1] = base[1] - s * w - c * h;
       if (getZFlip())
-	pos[2] = top;
+	_pos[2] = top;
       else
-	pos[2] = base[2];
+	_pos[2] = base[2];
       break;
     case 3:
-      pos[0] = base[0] + c * w + s * h;
-      pos[1] = base[1] + s * w - c * h;
+      _pos[0] = base[0] + c * w + s * h;
+      _pos[1] = base[1] + s * w - c * h;
       if (getZFlip())
-	pos[2] = top;
+	_pos[2] = top;
       else
-	pos[2] = base[2];
+	_pos[2] = base[2];
       break;
     case 4:
-      pos[0] = base[0];
-      pos[1] = base[1];
+      _pos[0] = base[0];
+      _pos[1] = base[1];
       if (getZFlip())
-	pos[2] = base[2];
+	_pos[2] = base[2];
       else
-	pos[2] = top;
+	_pos[2] = top;
       break;
   }
 }
@@ -378,8 +378,8 @@ float			PyramidBuilding::shrinkFactor(float z,
   }
 
  // Remove heights bias
-  const float *pos = getPosition();
-  z -= pos[2];
+  const float *_pos = getPosition();
+  z -= _pos[2];
   if (oHeight <= ZERO_TOLERANCE) {
     shrink = 1.0f;
   } else {
@@ -464,9 +464,9 @@ int PyramidBuilding::packSize() const
 void PyramidBuilding::print(std::ostream& out, const std::string& indent) const
 {
   out << indent << "pyramid" << std::endl;
-  const float *pos = getPosition();
-  out << indent << "  position " << pos[0] << " " << pos[1] << " "
-				 << pos[2] << std::endl;
+  const float *_pos = getPosition();
+  out << indent << "  position " << _pos[0] << " " << _pos[1] << " "
+				 << _pos[2] << std::endl;
   float height = getHeight();
   if (getZFlip()) {
     height = -height;

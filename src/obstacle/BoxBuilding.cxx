@@ -184,7 +184,7 @@ bool			BoxBuilding::getHitNormal(
 			getHeight(), normal) >= 0.0f;
 }
 
-void			BoxBuilding::getCorner(int index, float* pos) const
+void			BoxBuilding::getCorner(int index, float* _pos) const
 {
   const float* base = getPosition();
   const float c = cosf(getRotation());
@@ -193,24 +193,25 @@ void			BoxBuilding::getCorner(int index, float* pos) const
   const float h = getBreadth();
   switch (index & 3) {
     case 0:
-      pos[0] = base[0] + c * w - s * h;
-      pos[1] = base[1] + s * w + c * h;
+      _pos[0] = base[0] + c * w - s * h;
+      _pos[1] = base[1] + s * w + c * h;
       break;
     case 1:
-      pos[0] = base[0] - c * w - s * h;
-      pos[1] = base[1] - s * w + c * h;
+      _pos[0] = base[0] - c * w - s * h;
+      _pos[1] = base[1] - s * w + c * h;
       break;
     case 2:
-      pos[0] = base[0] - c * w + s * h;
-      pos[1] = base[1] - s * w - c * h;
+      _pos[0] = base[0] - c * w + s * h;
+      _pos[1] = base[1] - s * w - c * h;
       break;
     case 3:
-      pos[0] = base[0] + c * w + s * h;
-      pos[1] = base[1] + s * w - c * h;
+      _pos[0] = base[0] + c * w + s * h;
+      _pos[1] = base[1] + s * w - c * h;
       break;
   }
-  pos[2] = base[2];
-  if (index >= 4) pos[2] += getHeight();
+  _pos[2] = base[2];
+  if (index >= 4)
+    _pos[2] += getHeight();
 }
 
 bool			BoxBuilding::isFlatTop() const
@@ -265,9 +266,9 @@ int BoxBuilding::packSize() const
 void BoxBuilding::print(std::ostream& out, const std::string& indent) const
 {
   out << indent << "box" << std::endl;
-  const float *pos = getPosition();
-  out << indent << "  position " << pos[0] << " " << pos[1] << " "
-				 << pos[2] << std::endl;
+  const float *myPos = getPosition();
+  out << indent << "  position " << myPos[0] << " " << myPos[1] << " "
+				 << myPos[2] << std::endl;
   out << indent << "  size " << getWidth() << " " << getBreadth()
 			     << " " << getHeight() << std::endl;
   out << indent << "  rotation " << ((getRotation() * 180.0) / M_PI)
