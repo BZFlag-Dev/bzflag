@@ -71,10 +71,10 @@ void RobotPlayer::projectPosition(const Player *targ,const float t,float &x,floa
   else
   {
     double hisspeed = hypotf(hisvx, hisvy);
-    double alpha = omega * t;
+    double alfa = omega * t;
     double r = hisspeed / fabs(omega);
-    double dx = r * sin(alpha);
-    double dy2 = r * (1 - cos(alpha));
+    double dx = r * sin(alfa);
+    double dy2 = r * (1 - cos(alfa));
     double beta = atan2(dy2, dx) * (targ->getAngularVelocity() > 0 ? 1 : -1);
     double gamma = atan2(hisvy, hisvx);
     double rho = gamma+beta;

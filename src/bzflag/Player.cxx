@@ -983,10 +983,10 @@ void Player::addShots(SceneDatabase* scene, bool colorblind) const
 void* Player::unpack(void* buf, uint16_t code)
 {
   float timestamp;
-  PlayerId id;
+  PlayerId ident;
 
   buf = nboUnpackFloat(buf, timestamp);
-  buf = nboUnpackUByte(buf, id);
+  buf = nboUnpackUByte(buf, ident);
   buf = state.unpack(buf, code);
 
   setDeadReckoning(timestamp);

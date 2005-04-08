@@ -33,14 +33,14 @@
 AudioMenu::AudioMenu()
 {
   // add controls
-  std::vector<HUDuiControl*>& list = getControls();
+  std::vector<HUDuiControl*>& listHUD = getControls();
   std::string currentDriver = BZDB.get("audioDriver");
   std::string currentDevice = BZDB.get("audioDevice");
 
   HUDuiLabel* label = new HUDuiLabel;
   label->setFontFace(MainMenu::getFontFace());
   label->setString("Audio Settings");
-  list.push_back(label);
+  listHUD.push_back(label);
 
   HUDuiList* option = new HUDuiList;
 
@@ -60,7 +60,7 @@ AudioMenu::AudioMenu()
     options->push_back(std::string("Unavailable"));
   }
   option->update();
-  list.push_back(option);
+  listHUD.push_back(option);
 
 /* Right now only SDL_Media has a setDriver function.
    Disable driver selection for others as it gets saved in config
@@ -74,7 +74,7 @@ AudioMenu::AudioMenu()
   driver->setLabel("Driver:");
   driver->setMaxLength(10);
   driver->setString(currentDriver);
-  list.push_back(driver);
+  listHUD.push_back(driver);
 #else
   driver = NULL;
 #endif // HAVE_SDL
@@ -86,7 +86,7 @@ AudioMenu::AudioMenu()
   device->setLabel("Device:");
   device->setMaxLength(10);
   device->setString(currentDevice);
-  list.push_back(device);
+  listHUD.push_back(device);
 #else
   device = NULL;
 #endif // HAVE_SDL
@@ -100,9 +100,9 @@ AudioMenu::AudioMenu()
   options->push_back(std::string("Off"));
   options->push_back(std::string("On"));
   option->update();
-  list.push_back(option);
+  listHUD.push_back(option);
 
-  initNavigation(list, 1, list.size() - 1);
+  initNavigation(listHUD, 1, listHUD.size() - 1);
 }
 
 AudioMenu::~AudioMenu()
@@ -111,54 +111,54 @@ AudioMenu::~AudioMenu()
 
 void			AudioMenu::execute()
 {
-  HUDuiControl* focus = HUDui::getFocus();
-  if (focus == driver) {
+  HUDuiControl* _focus = HUDui::getFocus();
+  if (_focus == driver) {
     BZDB.set("audioDriver", driver->getString().c_str());
-  } else if (focus == device) {
+  } else if (_focus == device) {
     BZDB.set("audioDevice", device->getString().c_str());
   }
 }
 
-void			AudioMenu::resize(int width, int height)
+void			AudioMenu::resize(int _width, int _height)
 {
-  HUDDialog::resize(width, height);
+  HUDDialog::resize(_width, _height);
   int i;
 
   // use a big font for title, smaller font for the rest
-  const float titleFontSize = (float)height / 15.0f;
-  const float fontSize = (float)height / 45.0f;
+  const float titleFontSize = (float)_height / 15.0f;
+  const float fontSize = (float)_height / 45.0f;
   FontManager &fm = FontManager::instance();
   int fontFace = MainMenu::getFontFace();
 
   // reposition title
-  std::vector<HUDuiControl*>& list = getControls();
-  HUDuiLabel* title = (HUDuiLabel*)list[0];
+  std::vector<HUDuiControl*>& listHUD = getControls();
+  HUDuiLabel* title = (HUDuiLabel*)listHUD[0];
   title->setFontSize(titleFontSize);
   const float titleWidth = fm.getStrLength(fontFace, titleFontSize, title->getString());
   const float titleHeight = fm.getStrHeight(fontFace, titleFontSize, " ");
-  float x = 0.5f * ((float)width - titleWidth);
-  float y = (float)height - titleHeight;
+  float x = 0.5f * ((float)_width - titleWidth);
+  float y = (float)_height - titleHeight;
   title->setPosition(x, y);
 
   // reposition options
-  x = 0.5f * ((float)width);
+  x = 0.5f * ((float)_width);
   y -= 0.6f * titleHeight;
   const float h = fm.getStrHeight(fontFace, fontSize, " ");
-  const int count = list.size();
+  const int count = listHUD.size();
   for (i = 1; i < count; i++) {
-    list[i]->setFontSize(fontSize);
-    list[i]->setPosition(x, y);
+    listHUD[i]->setFontSize(fontSize);
+    listHUD[i]->setPosition(x, y);
     y -= 1.0f * h;
   }
 
   i = 1;
   // sound
-  ((HUDuiList*)list[i++])->setIndex(getSoundVolume());
+  ((HUDuiList*)listHUD[i++])->setIndex(getSoundVolume());
 #ifdef HAVE_SDL
   i++; // driver
   i++; // device
 #endif // HAVE_SDL
-  ((HUDuiList*)list[i++])->setIndex(BZDB.isTrue("remoteSounds") ? 1 : 0);
+  ((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("remoteSounds") ? 1 : 0);
 }
 
 void			AudioMenu::callback(HUDuiControl* w, void* data) {

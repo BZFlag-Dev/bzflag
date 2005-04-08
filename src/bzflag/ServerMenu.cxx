@@ -181,10 +181,10 @@ void ServerMenu::setSelected(int index)
   // if page changed then load items for this page
   if (oldPage != newPage) {
     // fill items
-    std::vector<HUDuiControl*>& list = getControls();
+    std::vector<HUDuiControl*>& listHUD = getControls();
     const int base = newPage * NumItems;
     for (int i = 0; i < NumItems; ++i) {
-      HUDuiLabel* label = (HUDuiLabel*)list[i + NumReadouts];
+      HUDuiLabel* label = (HUDuiLabel*)listHUD[i + NumReadouts];
       if (base + i < (int)serverList.size()) {
 	label->setString(serverList.getServers()[base + i].description);
 	if (serverList.getServers()[base + i].cached ){
@@ -232,7 +232,7 @@ void ServerMenu::pick()
 
   // update server readouts
   char buf[60];
-  std::vector<HUDuiControl*>& list = getControls();
+  std::vector<HUDuiControl*>& listHUD = getControls();
 
   const uint8_t maxes [] = { ping.maxPlayers, ping.rogueMax, ping.redMax, ping.greenMax,
       ping.blueMax, ping.purpleMax, ping.observerMax };
@@ -241,12 +241,12 @@ void ServerMenu::pick()
   if (item.cached && item.getPlayerCount() == 0) {
     for (int i = 1; i <=7; i ++){
       sprintf(buf, "?/%d", maxes[i-1]);
-      ((HUDuiLabel*)list[i])->setLabel(buf);
+      ((HUDuiLabel*)listHUD[i])->setLabel(buf);
     }
   } else {  // not an old item, set players #s to info we have
     sprintf(buf, "%d/%d", ping.rogueCount + ping.redCount + ping.greenCount +
 	ping.blueCount + ping.purpleCount + ping.observerCount, ping.maxPlayers);
-    ((HUDuiLabel*)list[1])->setLabel(buf);
+    ((HUDuiLabel*)listHUD[1])->setLabel(buf);
 
     if (ping.rogueMax == 0)
       buf[0]=0;
@@ -254,7 +254,7 @@ void ServerMenu::pick()
       sprintf(buf, "%d", ping.rogueCount);
     else
       sprintf(buf, "%d/%d", ping.rogueCount, ping.rogueMax);
-    ((HUDuiLabel*)list[2])->setLabel(buf);
+    ((HUDuiLabel*)listHUD[2])->setLabel(buf);
 
     if (ping.redMax == 0)
       buf[0]=0;
@@ -262,7 +262,7 @@ void ServerMenu::pick()
       sprintf(buf, "%d", ping.redCount);
     else
       sprintf(buf, "%d/%d", ping.redCount, ping.redMax);
-    ((HUDuiLabel*)list[3])->setLabel(buf);
+    ((HUDuiLabel*)listHUD[3])->setLabel(buf);
 
     if (ping.greenMax == 0)
       buf[0]=0;
@@ -270,7 +270,7 @@ void ServerMenu::pick()
       sprintf(buf, "%d", ping.greenCount);
     else
       sprintf(buf, "%d/%d", ping.greenCount, ping.greenMax);
-    ((HUDuiLabel*)list[4])->setLabel(buf);
+    ((HUDuiLabel*)listHUD[4])->setLabel(buf);
 
     if (ping.blueMax == 0)
       buf[0]=0;
@@ -278,7 +278,7 @@ void ServerMenu::pick()
       sprintf(buf, "%d", ping.blueCount);
     else
       sprintf(buf, "%d/%d", ping.blueCount, ping.blueMax);
-    ((HUDuiLabel*)list[5])->setLabel(buf);
+    ((HUDuiLabel*)listHUD[5])->setLabel(buf);
 
     if (ping.purpleMax == 0)
       buf[0]=0;
@@ -286,7 +286,7 @@ void ServerMenu::pick()
       sprintf(buf, "%d", ping.purpleCount);
     else
       sprintf(buf, "%d/%d", ping.purpleCount, ping.purpleMax);
-    ((HUDuiLabel*)list[6])->setLabel(buf);
+    ((HUDuiLabel*)listHUD[6])->setLabel(buf);
 
     if (ping.observerMax == 0)
       buf[0]=0;
@@ -294,7 +294,7 @@ void ServerMenu::pick()
       sprintf(buf, "%d", ping.observerCount);
     else
       sprintf(buf, "%d/%d", ping.observerCount, ping.observerMax);
-    ((HUDuiLabel*)list[7])->setLabel(buf);
+    ((HUDuiLabel*)listHUD[7])->setLabel(buf);
   }
 
   std::vector<std::string> args;
@@ -302,135 +302,139 @@ void ServerMenu::pick()
   args.push_back(buf);
 
   if (ping.maxShots == 1)
-    ((HUDuiLabel*)list[8])->setString("{1} Shot", &args );
+    ((HUDuiLabel*)listHUD[8])->setString("{1} Shot", &args );
   else
-    ((HUDuiLabel*)list[8])->setString("{1} Shots", &args );
+    ((HUDuiLabel*)listHUD[8])->setString("{1} Shots", &args );
 
   if (ping.gameStyle & TeamFlagGameStyle)
-    ((HUDuiLabel*)list[9])->setString("Capture-the-Flag");
+    ((HUDuiLabel*)listHUD[9])->setString("Capture-the-Flag");
   else if (ping.gameStyle & RabbitChaseGameStyle)
-    ((HUDuiLabel*)list[9])->setString("Rabbit Chase");
+    ((HUDuiLabel*)listHUD[9])->setString("Rabbit Chase");
   else
-    ((HUDuiLabel*)list[9])->setString("Free-style");
+    ((HUDuiLabel*)listHUD[9])->setString("Free-style");
 
   if (ping.gameStyle & SuperFlagGameStyle)
-    ((HUDuiLabel*)list[10])->setString("Super Flags");
+    ((HUDuiLabel*)listHUD[10])->setString("Super Flags");
   else
-    ((HUDuiLabel*)list[10])->setString("");
+    ((HUDuiLabel*)listHUD[10])->setString("");
 
   if (ping.gameStyle & AntidoteGameStyle)
-    ((HUDuiLabel*)list[11])->setString("Antidote Flags");
+    ((HUDuiLabel*)listHUD[11])->setString("Antidote Flags");
   else
-    ((HUDuiLabel*)list[11])->setString("");
+    ((HUDuiLabel*)listHUD[11])->setString("");
 
   if ((ping.gameStyle & ShakableGameStyle) && ping.shakeTimeout != 0) {
-    std::vector<std::string> args;
+    std::vector<std::string> dropArgs;
     sprintf(buf, "%.1f", 0.1f * float(ping.shakeTimeout));
-    args.push_back(buf);
+    dropArgs.push_back(buf);
     if (ping.shakeWins == 1)
-      ((HUDuiLabel*)list[12])->setString("{1} sec To Drop Bad Flag", &args);
+      ((HUDuiLabel*)listHUD[12])->setString("{1} sec To Drop Bad Flag",
+					    &dropArgs);
     else
-      ((HUDuiLabel*)list[12])->setString("{1} secs To Drop Bad Flag", &args);
+      ((HUDuiLabel*)listHUD[12])->setString("{1} secs To Drop Bad Flag",
+					    &dropArgs);
   }
   else
-    ((HUDuiLabel*)list[13])->setString("");
+    ((HUDuiLabel*)listHUD[13])->setString("");
 
   if ((ping.gameStyle & ShakableGameStyle) && ping.shakeWins != 0) {
-    std::vector<std::string> args;
+    std::vector<std::string> dropArgs;
     sprintf(buf, "%d", ping.shakeWins);
-    args.push_back(buf);
-    args.push_back(ping.shakeWins == 1 ? "" : "s");
+    dropArgs.push_back(buf);
+    dropArgs.push_back(ping.shakeWins == 1 ? "" : "s");
     if (ping.shakeWins == 1)
-      ((HUDuiLabel*)list[12])->setString("{1} Win Drops Bad Flag", &args);
+      ((HUDuiLabel*)listHUD[12])->setString("{1} Win Drops Bad Flag",
+					    &dropArgs);
     else
-      ((HUDuiLabel*)list[12])->setString("{1} Wins Drops Bad Flag", &args);
+      ((HUDuiLabel*)listHUD[12])->setString("{1} Wins Drops Bad Flag",
+					    &dropArgs);
   }
   else
-    ((HUDuiLabel*)list[13])->setString("");
+    ((HUDuiLabel*)listHUD[13])->setString("");
 
   if (ping.gameStyle & JumpingGameStyle)
-    ((HUDuiLabel*)list[14])->setString("Jumping");
+    ((HUDuiLabel*)listHUD[14])->setString("Jumping");
   else
-    ((HUDuiLabel*)list[14])->setString("");
+    ((HUDuiLabel*)listHUD[14])->setString("");
 
   if (ping.gameStyle & RicochetGameStyle)
-    ((HUDuiLabel*)list[15])->setString("Ricochet");
+    ((HUDuiLabel*)listHUD[15])->setString("Ricochet");
   else
-    ((HUDuiLabel*)list[15])->setString("");
+    ((HUDuiLabel*)listHUD[15])->setString("");
 
   if (ping.gameStyle & HandicapGameStyle)
-    ((HUDuiLabel*)list[16])->setString("Handicap");
+    ((HUDuiLabel*)listHUD[16])->setString("Handicap");
   else
-    ((HUDuiLabel*)list[16])->setString("");
+    ((HUDuiLabel*)listHUD[16])->setString("");
 
   if (ping.maxTime != 0) {
-    std::vector<std::string> args;
+    std::vector<std::string> pingArgs;
     if (ping.maxTime >= 3600)
       sprintf(buf, "%d:%02d:%02d", ping.maxTime / 3600, (ping.maxTime / 60) % 60, ping.maxTime % 60);
     else if (ping.maxTime >= 60)
       sprintf(buf, "%d:%02d", ping.maxTime / 60, ping.maxTime % 60);
     else
       sprintf(buf, "0:%02d", ping.maxTime);
-    args.push_back(buf);
-    ((HUDuiLabel*)list[17])->setString("Time limit: {1}", &args);
+    pingArgs.push_back(buf);
+    ((HUDuiLabel*)listHUD[17])->setString("Time limit: {1}", &pingArgs);
+  } else {
+    ((HUDuiLabel*)listHUD[17])->setString("");
   }
-  else
-    ((HUDuiLabel*)list[17])->setString("");
 
   if (ping.maxTeamScore != 0) {
-    std::vector<std::string> args;
+    std::vector<std::string> scoreArgs;
     sprintf(buf, "%d", ping.maxTeamScore);
-    args.push_back(buf);
-    ((HUDuiLabel*)list[18])->setString("Max team score: {1}", &args);
+    scoreArgs.push_back(buf);
+    ((HUDuiLabel*)listHUD[18])->setString("Max team score: {1}", &scoreArgs);
   }
   else
-    ((HUDuiLabel*)list[18])->setString("");
+    ((HUDuiLabel*)listHUD[18])->setString("");
 
 
   if (ping.maxPlayerScore != 0) {
-    std::vector<std::string> args;
+    std::vector<std::string> scoreArgs;
     sprintf(buf, "%d", ping.maxPlayerScore);
-    args.push_back(buf);
-    ((HUDuiLabel*)list[19])->setString("Max player score: {1}", &args);
+    scoreArgs.push_back(buf);
+    ((HUDuiLabel*)listHUD[19])->setString("Max player score: {1}", &scoreArgs);
+  } else {
+    ((HUDuiLabel*)listHUD[19])->setString("");
   }
-  else
-    ((HUDuiLabel*)list[19])->setString("");
 
   if (item.cached){
-    ((HUDuiLabel*)list[20])->setString("Cached");
-    ((HUDuiLabel*)list[21])->setString(item.getAgeString());
+    ((HUDuiLabel*)listHUD[20])->setString("Cached");
+    ((HUDuiLabel*)listHUD[21])->setString(item.getAgeString());
   }
   else {
-    ((HUDuiLabel*)list[20])->setString("");
-    ((HUDuiLabel*)list[21])->setString("");
+    ((HUDuiLabel*)listHUD[20])->setString("");
+    ((HUDuiLabel*)listHUD[21])->setString("");
   }
 }
 
 void			ServerMenu::show()
 {
   // clear server readouts
-  std::vector<HUDuiControl*>& list = getControls();
-  ((HUDuiLabel*)list[1])->setLabel("");
-  ((HUDuiLabel*)list[2])->setLabel("");
-  ((HUDuiLabel*)list[3])->setLabel("");
-  ((HUDuiLabel*)list[4])->setLabel("");
-  ((HUDuiLabel*)list[5])->setLabel("");
-  ((HUDuiLabel*)list[6])->setLabel("");
-  ((HUDuiLabel*)list[7])->setLabel("");
-  ((HUDuiLabel*)list[8])->setString("");
-  ((HUDuiLabel*)list[9])->setString("");
-  ((HUDuiLabel*)list[10])->setString("");
-  ((HUDuiLabel*)list[11])->setString("");
-  ((HUDuiLabel*)list[12])->setString("");
-  ((HUDuiLabel*)list[13])->setString("");
-  ((HUDuiLabel*)list[14])->setString("");
-  ((HUDuiLabel*)list[15])->setString("");
-  ((HUDuiLabel*)list[16])->setString("");
-  ((HUDuiLabel*)list[17])->setString("");
-  ((HUDuiLabel*)list[18])->setString("");
-  ((HUDuiLabel*)list[19])->setString("");
-  ((HUDuiLabel*)list[20])->setString("");
-  ((HUDuiLabel*)list[21])->setString("");
+  std::vector<HUDuiControl*>& listHUD = getControls();
+  ((HUDuiLabel*)listHUD[1])->setLabel("");
+  ((HUDuiLabel*)listHUD[2])->setLabel("");
+  ((HUDuiLabel*)listHUD[3])->setLabel("");
+  ((HUDuiLabel*)listHUD[4])->setLabel("");
+  ((HUDuiLabel*)listHUD[5])->setLabel("");
+  ((HUDuiLabel*)listHUD[6])->setLabel("");
+  ((HUDuiLabel*)listHUD[7])->setLabel("");
+  ((HUDuiLabel*)listHUD[8])->setString("");
+  ((HUDuiLabel*)listHUD[9])->setString("");
+  ((HUDuiLabel*)listHUD[10])->setString("");
+  ((HUDuiLabel*)listHUD[11])->setString("");
+  ((HUDuiLabel*)listHUD[12])->setString("");
+  ((HUDuiLabel*)listHUD[13])->setString("");
+  ((HUDuiLabel*)listHUD[14])->setString("");
+  ((HUDuiLabel*)listHUD[15])->setString("");
+  ((HUDuiLabel*)listHUD[16])->setString("");
+  ((HUDuiLabel*)listHUD[17])->setString("");
+  ((HUDuiLabel*)listHUD[18])->setString("");
+  ((HUDuiLabel*)listHUD[19])->setString("");
+  ((HUDuiLabel*)listHUD[20])->setString("");
+  ((HUDuiLabel*)listHUD[21])->setString("");
 
   // add cache items w/o re-caching them
   serversFound = 0;
@@ -473,66 +477,66 @@ void			ServerMenu::dismiss()
   // FIXME myTank.token = serverList.token;
 }
 
-void			ServerMenu::resize(int width, int height)
+void			ServerMenu::resize(int _width, int _height)
 {
   // remember size
-  HUDDialog::resize(width, height);
+  HUDDialog::resize(_width, _height);
 
   // get number of serverList.getServers()
-  std::vector<HUDuiControl*>& list = getControls();
+  std::vector<HUDuiControl*>& listHUD = getControls();
 
   // use a big font for title, smaller font for the rest
-  const float titleFontSize = (float)height / 15.0f;
+  const float titleFontSize = (float)_height / 15.0f;
   FontManager &fm = FontManager::instance();
 
   // reposition title
   float x, y;
   {
-    HUDuiLabel* title = (HUDuiLabel*)list[0];
+    HUDuiLabel* title = (HUDuiLabel*)listHUD[0];
     title->setFontSize(titleFontSize);
     const float titleWidth = fm.getStrLength(title->getFontFace(), titleFontSize, title->getString());
     const float titleHeight = fm.getStrHeight(title->getFontFace(), titleFontSize, " ");
-    x = 0.5f * ((float)width - titleWidth);
-    y = (float)height - titleHeight;
+    x = 0.5f * ((float)_width - titleWidth);
+    y = (float)_height - titleHeight;
     title->setPosition(x, y);
   }
 
   // reposition server readouts
   int i;
   const float y0 = y;
-  float fontSize = (float)height / 54.0f;
+  float fontSize = (float)_height / 54.0f;
   float fontHeight = fm.getStrHeight(MainMenu::getFontFace(), fontSize, " ");
   for (i = 1; i < NumReadouts - 2; i++) {
     if (i % 7 == 1) {
-      x = (0.125f + 0.25f * (float)((i - 1) / 7)) * (float)width;
+      x = (0.125f + 0.25f * (float)((i - 1) / 7)) * (float)_width;
       y = y0;
     }
 
-    HUDuiLabel* label = (HUDuiLabel*)list[i];
+    HUDuiLabel* label = (HUDuiLabel*)listHUD[i];
     label->setFontSize(fontSize);
     y -= 1.0f * fontHeight;
     label->setPosition(x, y);
   }
 
-  y = ((HUDuiLabel*)list[7])->getY(); //reset bottom to last team label
+  y = ((HUDuiLabel*)listHUD[7])->getY(); //reset bottom to last team label
 
   // reposition search status readout
   {
-    fontSize = (float)height / 36.0f;
-    float fontHeight = fm.getStrHeight(MainMenu::getFontFace(), fontSize, " ");
+    fontSize = (float)_height / 36.0f;
+    float fontHt = fm.getStrHeight(MainMenu::getFontFace(), fontSize, " ");
     status->setFontSize(fontSize);
     const float statusWidth = fm.getStrLength(status->getFontFace(), fontSize, status->getString());
-    x = 0.5f * ((float)width - statusWidth);
-    y -= 0.8f * fontHeight;
+    x = 0.5f * ((float)_width - statusWidth);
+    y -= 0.8f * fontHt;
     status->setPosition(x, y);
   }
 
   // position page readout and server item list
-  fontSize = (float)height / 54.0f;
+  fontSize = (float)_height / 54.0f;
   fontHeight = fm.getStrHeight(MainMenu::getFontFace(), fontSize, " ");
-  x = 0.125f * (float)width;
+  x = 0.125f * (float)_width;
   for (i = -1; i < NumItems; ++i) {
-    HUDuiLabel* label = (HUDuiLabel*)list[i + NumReadouts];
+    HUDuiLabel* label = (HUDuiLabel*)listHUD[i + NumReadouts];
     label->setFontSize(fontSize);
     y -= 1.0f * fontHeight;
     label->setPosition(x, y);

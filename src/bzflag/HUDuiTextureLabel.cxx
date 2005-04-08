@@ -55,25 +55,25 @@ void			HUDuiTextureLabel::doRender()
   if (OpenGLTexture::getMaxFilter() == OpenGLTexture::Off || !gstate.isTextured() || texture < 0) {
     HUDuiLabel::doRender();
   } else { // why use a font? it's an image, use the image size, let every pixel be seen!!! :)
-    const float height = getFontSize(); //texture.getHeight();//
+    const float _height = getFontSize(); //texture.getHeight();//
     TextureManager &tm = TextureManager::instance();
 
-    const float width = height * (1.0f / tm.GetAspectRatio(texture)); //font.getWidth(getString());
+    const float _width = _height * (1.0f / tm.GetAspectRatio(texture));
     //const float descent = font.getDescent();
     const float descent = 0;
-    const float x = getX();
-    const float y = getY();
+    const float xx = getX();
+    const float yy = getY();
     gstate.setState();
     glColor3fv(textColor);
     glBegin(GL_QUADS);
       glTexCoord2f(0.0f, 0.0f);
-      glVertex2f(x, y - descent);
+      glVertex2f(xx, yy - descent);
       glTexCoord2f(1.0f, 0.0f);
-      glVertex2f(x + width, y - descent);
+      glVertex2f(xx + _width, yy - descent);
       glTexCoord2f(1.0f, 1.0f);
-      glVertex2f(x + width, y - descent + height);
+      glVertex2f(xx + _width, yy - descent + _height);
       glTexCoord2f(0.0f, 1.0f);
-      glVertex2f(x, y - descent + height);
+      glVertex2f(xx, yy - descent + _height);
     glEnd();
   }
 }

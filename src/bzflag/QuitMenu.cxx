@@ -46,33 +46,33 @@ bool QuitMenuDefaultKey::keyRelease(const BzfKeyEvent& key)
 QuitMenu::QuitMenu()
 {
   // add controls
-  std::vector<HUDuiControl*>& list = getControls();
+  std::vector<HUDuiControl*>& listHUD = getControls();
   HUDuiLabel* label;
 
   label = new HUDuiLabel;
   label->setFontFace(MainMenu::getFontFace());
   label->setString("Enter to quit, Esc to resume");
-  list.push_back(label);
+  listHUD.push_back(label);
 
   label = new HUDuiLabel;
   label->setFontFace(MainMenu::getFontFace());
   label->setString("Really quit?");
-  list.push_back(label);
+  listHUD.push_back(label);
 
-  initNavigation(list, 1, 1);
+  initNavigation(listHUD, 1, 1);
 }
 
 QuitMenu::~QuitMenu()
 {
 }
 
-void QuitMenu::resize(int width, int height)
+void QuitMenu::resize(int _width, int _height)
 {
-  HUDDialog::resize(width, height);
+  HUDDialog::resize(_width, _height);
 
   // use a big font
-  float fontSize = (float)height / 15.0f;
-  float smallFontSize = (float)height / 54.0f;
+  float fontSize = (float)_height / 15.0f;
+  float smallFontSize = (float)_height / 54.0f;
   float x, y;
   FontManager &fm = FontManager::instance();
   const int fontFace = MainMenu::getFontFace();
@@ -82,22 +82,22 @@ void QuitMenu::resize(int width, int height)
   const float smallFontHeight = fm.getStrHeight(fontFace, smallFontSize, " ");
 
   // get stuff
-  std::vector<HUDuiControl*>& list = getControls();
-  HUDuiLabel* label = (HUDuiLabel*)list[0];
+  std::vector<HUDuiControl*>& listHUD = getControls();
+  HUDuiLabel* label = (HUDuiLabel*)listHUD[0];
 
   // help message
   label->setFontSize(smallFontSize);
   const float stringWidth = fm.getStrLength(fontFace, smallFontSize, label->getString());
-  x = 0.5f * ((float)width - stringWidth);
-  y = (float)height - fontHeight - 1.5f * smallFontHeight;
+  x = 0.5f * ((float)_width - stringWidth);
+  y = (float)_height - fontHeight - 1.5f * smallFontHeight;
   label->setPosition(x, y);
 
   // quit message
-  label = (HUDuiLabel*)list[1];
+  label = (HUDuiLabel*)listHUD[1];
   label->setFontSize(fontSize);
   const float labelWidth = fm.getStrLength(fontFace, fontSize, label->getString());
-  x = 0.5f * ((float)width - labelWidth);
-  y = (float)height - 3.5f * fontHeight;
+  x = 0.5f * ((float)_width - labelWidth);
+  y = (float)_height - 3.5f * fontHeight;
   label->setPosition(x, y);
 }
 

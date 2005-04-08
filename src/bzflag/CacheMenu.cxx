@@ -46,13 +46,13 @@ CacheMenu::CacheMenu()
   int fontFace = MainMenu::getFontFace();
 
   // add controls
-  std::vector<HUDuiControl*>& list = getControls();
+  std::vector<HUDuiControl*>& listHUD = getControls();
 
   // the menu label
   HUDuiLabel* label = new HUDuiLabel;
   label->setFontFace(fontFace);
   label->setString("Cache Settings");
-  list.push_back(label);
+  listHUD.push_back(label);
 
   // the menu options
   HUDuiList* option;
@@ -76,13 +76,13 @@ CacheMenu::CacheMenu()
   options->push_back(std::string("15 days"));
   options->push_back(std::string("30 days"));
   option->update();
-  list.push_back(option);
+  listHUD.push_back(option);
 
   // Server List Cache Clear
   clearServerListCache = label = new HUDuiLabel;
   label->setFontFace(fontFace);
   label->setLabel("Clear Server List Cache");
-  list.push_back(label);
+  listHUD.push_back(label);
 
 
   // Cache Size (MegaBytes)
@@ -91,13 +91,13 @@ CacheMenu::CacheMenu()
   cacheSize->setLabel("Cache Size (MB):");
   cacheSize->setMaxLength(4);
   cacheSize->setString(BZDB.get("maxCacheMB"));
-  list.push_back(cacheSize);
+  listHUD.push_back(cacheSize);
 
   // Clear Download Cache
   clearDownloadCache = label = new HUDuiLabel;
   label->setFontFace(fontFace);
   label->setLabel("Clear Download Cache");
-  list.push_back(label);
+  listHUD.push_back(label);
 
 
   // Automatic Downloads
@@ -109,7 +109,7 @@ CacheMenu::CacheMenu()
   options->push_back(std::string("Off"));
   options->push_back(std::string("On"));
   option->update();
-  list.push_back(option);
+  listHUD.push_back(option);
 
   // Connection Updates
   option = new HUDuiList;
@@ -120,23 +120,23 @@ CacheMenu::CacheMenu()
   options->push_back(std::string("Off"));
   options->push_back(std::string("On"));
   option->update();
-  list.push_back(option);
+  listHUD.push_back(option);
 
   // Update Download Cache
   updateDownloadCache = label = new HUDuiLabel;
   label->setFontFace(fontFace);
   label->setLabel("Update Downloads");
-  list.push_back(label);
+  listHUD.push_back(label);
 
 
   // Failed Message  (download status)
   failedMessage = new HUDuiLabel;
   failedMessage->setFontFace(fontFace);
   failedMessage->setString("");
-  list.push_back(failedMessage);
+  listHUD.push_back(failedMessage);
 
 
-  initNavigation(list, 1, list.size() - 2);
+  initNavigation(listHUD, 1, listHUD.size() - 2);
 
   return;
 }
@@ -150,18 +150,17 @@ CacheMenu::~CacheMenu()
 
 void CacheMenu::execute()
 {
-  HUDuiControl* focus = HUDui::getFocus();
+  HUDuiControl* _focus = HUDui::getFocus();
 
-  if (focus == cacheSize) {
+  if (_focus == cacheSize) {
     BZDB.set("maxCacheMB", cacheSize->getString().c_str());
     int maxCacheMB = BZDB.evalInt("maxCacheMB");
     if (maxCacheMB < 0) {
       BZDB.set("maxCacheMB", "0");
-      HUDuiTypeIn* inputField = (HUDuiTypeIn*) focus;
+      HUDuiTypeIn* inputField = (HUDuiTypeIn*) _focus;
       inputField->setString("0");
     }
-  }
-  else if (focus == updateDownloadCache) {
+  } else if (_focus == updateDownloadCache) {
     bool rebuild;
     if (Downloads::updateDownloads(rebuild)) {
       controlPanel->addMessage("Updated Downloads");
@@ -173,8 +172,7 @@ void CacheMenu::execute()
       controlPanel->addMessage("Rebuilt scene");
     }
     setFailedMessage("");
-  }
-  else if (focus == clearDownloadCache) {
+  } else if (_focus == clearDownloadCache) {
     const std::string oldSize = BZDB.get("maxCacheMB");
     BZDB.set("maxCacheMB", "0");
     CACHEMGR.loadIndex();
@@ -182,16 +180,13 @@ void CacheMenu::execute()
     CACHEMGR.saveIndex();
     BZDB.set("maxCacheMB", oldSize);
     controlPanel->addMessage("Download Cache Cleared");
-  }
-  else if (focus == clearServerListCache) {
+  } else if (_focus == clearServerListCache) {
     if ((ServerListCache::get())->clearCache()){
       controlPanel->addMessage("Server List Cache Cleared");
     } else {
       // already cleared -- do nothing
     }
   }
-
-  return;
 }
 
 
@@ -200,44 +195,44 @@ void CacheMenu::setFailedMessage(const char* msg)
   failedMessage->setString(msg);
 
   FontManager &fm = FontManager::instance();
-  const float width = fm.getStrLength(MainMenu::getFontFace(),
+  const float _width = fm.getStrLength(MainMenu::getFontFace(),
 	failedMessage->getFontSize(), failedMessage->getString());
-  failedMessage->setPosition(center - 0.5f * width, failedMessage->getY());
+  failedMessage->setPosition(center - 0.5f * _width, failedMessage->getY());
 }
 
 
-void CacheMenu::resize(int width, int height)
+void CacheMenu::resize(int _width, int _height)
 {
-  HUDDialog::resize(width, height);
+  HUDDialog::resize(_width, _height);
 
-  center = 0.5f * (float)width;
+  center = 0.5f * (float)_width;
 
   // use a big font for title, smaller font for the rest
-  const float titleFontSize = (float)height / 15.0f;
-  const float fontSize = (float)height / 45.0f;
+  const float titleFontSize = (float)_height / 15.0f;
+  const float fontSize = (float)_height / 45.0f;
   FontManager &fm = FontManager::instance();
 
   // reposition title
-  std::vector<HUDuiControl*>& list = getControls();
-  HUDuiLabel* title = (HUDuiLabel*)list[0];
+  std::vector<HUDuiControl*>& listHUD = getControls();
+  HUDuiLabel* title = (HUDuiLabel*)listHUD[0];
   title->setFontSize(titleFontSize);
   const float titleWidth =
     fm.getStrLength(MainMenu::getFontFace(), titleFontSize, title->getString());
   const float titleHeight =
     fm.getStrHeight(MainMenu::getFontFace(), titleFontSize, " ");
-  float x = 0.5f * ((float)width - titleWidth);
-  float y = (float)height - titleHeight;
+  float x = 0.5f * ((float)_width - titleWidth);
+  float y = (float)_height - titleHeight;
   title->setPosition(x, y);
 
   // reposition options
-  x = 0.5f * (float)width;
+  x = 0.5f * (float)_width;
   y -= 0.6f * titleHeight;
   const float h = fm.getStrHeight(MainMenu::getFontFace(), fontSize, " ");
-  const int count = list.size();
+  const int count = listHUD.size();
   int i;
   for (i = 1; i < count; i++) {
-    list[i]->setFontSize(fontSize);
-    list[i]->setPosition(x, y);
+    listHUD[i]->setFontSize(fontSize);
+    listHUD[i]->setPosition(x, y);
     if ((i == 2) || (i == 4) || (i == 7)) {
       y -= 1.75f * h;
     } else {
@@ -263,14 +258,14 @@ void CacheMenu::resize(int width, int height)
     case 60*24*30: index = 9; break;
     default: index = 4;
   }
-  ((HUDuiList*)list[i++])->setIndex(index);
+  ((HUDuiList*)listHUD[i++])->setIndex(index);
   i++; // clear cache label
 
   i++; // cache size
   i++; // clear downloads cache
 
-  ((HUDuiList*)list[i++])->setIndex(BZDB.isTrue("doDownloads") ? 1 : 0);
-  ((HUDuiList*)list[i++])->setIndex(BZDB.isTrue("updateDownloads") ? 1 : 0);
+  ((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("doDownloads") ? 1 : 0);
+  ((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("updateDownloads") ? 1 : 0);
   i++; // update downloads now
 
   return;

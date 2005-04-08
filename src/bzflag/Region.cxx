@@ -224,7 +224,7 @@ BzfRegion* BzfRegion::orphanSplitRegion(const float e1[2], const float e2[2])
 
   // corner is t the left of cutting edge -- new region between edge 1 and 0
   if (!fistCornerRight) {
-    int i = edge[0];
+    i = edge[0];
     edge[0] = edge[1];
     edge[1] = i;
     float tsplitTemp = tsplit[0];

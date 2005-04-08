@@ -41,7 +41,7 @@ MainWindow* getMainWindow();
 GUIOptionsMenu::GUIOptionsMenu()
 {
   // add controls
-  std::vector<HUDuiControl*>& list = getControls();
+  std::vector<HUDuiControl*>& listHUD = getControls();
 
   // cache font face ID
   int fontFace = MainMenu::getFontFace();
@@ -49,7 +49,7 @@ GUIOptionsMenu::GUIOptionsMenu()
   HUDuiLabel* label = new HUDuiLabel;
   label->setFontFace(fontFace);
   label->setString("GUI Settings");
-  list.push_back(label);
+  listHUD.push_back(label);
 
   HUDuiList* option = new HUDuiList;
   option->setFontFace(fontFace);
@@ -60,7 +60,7 @@ GUIOptionsMenu::GUIOptionsMenu()
   options->push_back(std::string("Fast"));
   options->push_back(std::string("Enhanced"));
   option->update();
-  list.push_back(option);
+  listHUD.push_back(option);
 
   option = new HUDuiList;
   option->setFontFace(fontFace);
@@ -70,7 +70,7 @@ GUIOptionsMenu::GUIOptionsMenu()
   options->push_back(std::string("Auto"));
   option->createSlider(4);
   option->update();
-  list.push_back(option);
+  listHUD.push_back(option);
 
   option = new HUDuiList;
   option->setFontFace(fontFace);
@@ -80,7 +80,7 @@ GUIOptionsMenu::GUIOptionsMenu()
   options->push_back(std::string("Auto"));
   option->createSlider(4);
   option->update();
-  list.push_back(option);
+  listHUD.push_back(option);
 
   // set Radar Translucency
   option = new HUDuiList;
@@ -89,7 +89,7 @@ GUIOptionsMenu::GUIOptionsMenu()
   option->setCallback(callback, (void*)"y");
   option->createSlider(11);
   option->update();
-  list.push_back(option);
+  listHUD.push_back(option);
 
   // toggle coloring of shots on radar
   option = new HUDuiList;
@@ -100,7 +100,7 @@ GUIOptionsMenu::GUIOptionsMenu()
   options->push_back(std::string("Off"));
   options->push_back(std::string("On"));
   option->update();
-  list.push_back(option);
+  listHUD.push_back(option);
 
   // set radar shot length
   option = new HUDuiList;
@@ -109,7 +109,7 @@ GUIOptionsMenu::GUIOptionsMenu()
   option->setCallback(callback, (void*)"l");
   option->createSlider(11);
   option->update();
-  list.push_back(option);
+  listHUD.push_back(option);
 
   // set radar shot size
   option = new HUDuiList;
@@ -118,7 +118,7 @@ GUIOptionsMenu::GUIOptionsMenu()
   option->setCallback(callback, (void*)"s");
   option->createSlider(11);
   option->update();
-  list.push_back(option);
+  listHUD.push_back(option);
 
   // radar shot leading line
   option = new HUDuiList;
@@ -129,7 +129,7 @@ GUIOptionsMenu::GUIOptionsMenu()
   options->push_back(std::string("Lagging"));
   options->push_back(std::string("Leading"));
   option->update();
-  list.push_back(option);
+  listHUD.push_back(option);
 
   // set radar size
   option = new HUDuiList;
@@ -138,7 +138,7 @@ GUIOptionsMenu::GUIOptionsMenu()
   option->setCallback(callback, (void*)"R");
   option->createSlider(11);
   option->update();
-  list.push_back(option);
+  listHUD.push_back(option);
 
   // set maxmotion size
   option = new HUDuiList;
@@ -147,7 +147,7 @@ GUIOptionsMenu::GUIOptionsMenu()
   option->setCallback(callback, (void*)"M");
   option->createSlider(11);
   option->update();
-  list.push_back(option);
+  listHUD.push_back(option);
 
   // set locale
   option = new HUDuiList;
@@ -176,7 +176,7 @@ GUIOptionsMenu::GUIOptionsMenu()
     }
   }
   option->update();
-  list.push_back(option);
+  listHUD.push_back(option);
 
   // Tabs
   option = new HUDuiList;
@@ -188,7 +188,7 @@ GUIOptionsMenu::GUIOptionsMenu()
   options->push_back(std::string("Left"));
   options->push_back(std::string("Right"));
   option->update();
-  list.push_back(option);
+  listHUD.push_back(option);
   // GUI coloring
   option = new HUDuiList;
   option->setFontFace(fontFace);
@@ -198,7 +198,7 @@ GUIOptionsMenu::GUIOptionsMenu()
   options->push_back(std::string("Off"));
   options->push_back(std::string("On"));
   option->update();
-  list.push_back(option);
+  listHUD.push_back(option);
   // Underline color
   option = new HUDuiList;
   option->setFontFace(fontFace);
@@ -209,7 +209,7 @@ GUIOptionsMenu::GUIOptionsMenu()
   options->push_back(std::string("Grey"));
   options->push_back(std::string("Text"));
   option->update();
-  list.push_back(option);
+  listHUD.push_back(option);
   // Killer Highlight
   option = new HUDuiList;
   option->setFontFace(fontFace);
@@ -220,7 +220,7 @@ GUIOptionsMenu::GUIOptionsMenu()
   options->push_back(std::string("Pulsating"));
   options->push_back(std::string("Underline"));
   option->update();
-  list.push_back(option);
+  listHUD.push_back(option);
   // Pulsate Rate
   option = new HUDuiList;
   option->setFontFace(fontFace);
@@ -228,7 +228,7 @@ GUIOptionsMenu::GUIOptionsMenu()
   option->setCallback(callback, (void*)"r");
   option->createSlider(9);
   option->update();
-  list.push_back(option);
+  listHUD.push_back(option);
   // Pulsate Depth
   option = new HUDuiList;
   option->setFontFace(fontFace);
@@ -236,7 +236,7 @@ GUIOptionsMenu::GUIOptionsMenu()
   option->setCallback(callback, (void*)"d");
   option->createSlider(9);
   option->update();
-  list.push_back(option);
+  listHUD.push_back(option);
   // Time/date display settings
   option = new HUDuiList;
   option->setFontFace(fontFace);
@@ -247,7 +247,7 @@ GUIOptionsMenu::GUIOptionsMenu()
   options->push_back(std::string("date"));
   options->push_back(std::string("both"));
   option->update();
-  list.push_back(option);
+  listHUD.push_back(option);
   // HUD Reload timer
   option = new HUDuiList;
   option->setFontFace(fontFace);
@@ -257,9 +257,9 @@ GUIOptionsMenu::GUIOptionsMenu()
   options->push_back(std::string("Off"));
   options->push_back(std::string("On"));
   option->update();
-  list.push_back(option);
+  listHUD.push_back(option);
 
-  initNavigation(list, 1, list.size()-1);
+  initNavigation(listHUD, 1, listHUD.size()-1);
 }
 
 GUIOptionsMenu::~GUIOptionsMenu()
@@ -270,33 +270,33 @@ void			GUIOptionsMenu::execute()
 {
 }
 
-void			GUIOptionsMenu::resize(int width, int height)
+void			GUIOptionsMenu::resize(int _width, int _height)
 {
-  HUDDialog::resize(width, height);
+  HUDDialog::resize(_width, _height);
 
   // use a big font for title, smaller font for the rest
-  const float titleFontSize = (float)height / 15.0f;
-  const float fontSize = (float)height / 50.0f;
+  const float titleFontSize = (float)_height / 15.0f;
+  const float fontSize = (float)_height / 50.0f;
   FontManager &fm = FontManager::instance();
 
   // reposition title
-  std::vector<HUDuiControl*>& list = getControls();
-  HUDuiLabel* title = (HUDuiLabel*)list[0];
+  std::vector<HUDuiControl*>& listHUD = getControls();
+  HUDuiLabel* title = (HUDuiLabel*)listHUD[0];
   title->setFontSize(titleFontSize);
   const float titleWidth = fm.getStrLength(MainMenu::getFontFace(), titleFontSize, title->getString());
   const float titleHeight = fm.getStrHeight(MainMenu::getFontFace(), titleFontSize, " ");
-  float x = 0.5f * ((float)width - titleWidth);
-  float y = (float)height - titleHeight;
+  float x = 0.5f * ((float)_width - titleWidth);
+  float y = (float)_height - titleHeight;
   title->setPosition(x, y);
 
   // reposition options
-  x = 0.54f * (float)width;
+  x = 0.54f * (float)_width;
   y -= 0.6f * titleHeight;
   const float h = fm.getStrHeight(MainMenu::getFontFace(), fontSize, " ");
-  const int count = list.size();
+  const int count = listHUD.size();
   for (int i = 1; i < count; i++) {
-    list[i]->setFontSize(fontSize);
-    list[i]->setPosition(x, y);
+    listHUD[i]->setFontSize(fontSize);
+    listHUD[i]->setPosition(x, y);
     y -= 1.0f * h;
   }
 
@@ -304,38 +304,50 @@ void			GUIOptionsMenu::resize(int width, int height)
   SceneRenderer* renderer = getSceneRenderer();
   if (renderer) {
     int i = 1;
-    ((HUDuiList*)list[i++])->setIndex(BZDBCache::radarStyle);
-    ((HUDuiList*)list[i++])->setIndex(static_cast<int>(BZDB.eval("scorefontsize")));
-    ((HUDuiList*)list[i++])->setIndex(static_cast<int>(BZDB.eval("cpanelfontsize")));
-    ((HUDuiList*)list[i++])->setIndex((int)(10.0f * renderer->getPanelOpacity() + 0.5));
-    ((HUDuiList*)list[i++])->setIndex(BZDB.isTrue("coloredradarshots") ? 1 : 0);
-    ((HUDuiList*)list[i++])->setIndex(static_cast<int>(BZDB.eval("linedradarshots")));
-    ((HUDuiList*)list[i++])->setIndex(static_cast<int>(BZDB.eval("sizedradarshots")));
-    ((HUDuiList*)list[i++])->setIndex(BZDBCache::leadingShotLine ? 1 : 0);
-    ((HUDuiList*)list[i++])->setIndex(renderer->getRadarSize());
-    ((HUDuiList*)list[i++])->setIndex(renderer->getMaxMotionFactor());
+    ((HUDuiList*)listHUD[i++])->setIndex(BZDBCache::radarStyle);
+    ((HUDuiList*)listHUD[i++])->setIndex(static_cast<int>(BZDB.eval
+							  ("scorefontsize")));
+    ((HUDuiList*)listHUD[i++])->setIndex(static_cast<int>(BZDB.eval
+							  ("cpanelfontsize")));
+    ((HUDuiList*)listHUD[i++])->setIndex((int)(10.0f * renderer
+					       ->getPanelOpacity() + 0.5));
+    ((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("coloredradarshots") ? 1
+					 : 0);
+    ((HUDuiList*)listHUD[i++])->setIndex(static_cast<int>
+					 (BZDB.eval("linedradarshots")));
+    ((HUDuiList*)listHUD[i++])->setIndex(static_cast<int>
+					 (BZDB.eval("sizedradarshots")));
+    ((HUDuiList*)listHUD[i++])->setIndex(BZDBCache::leadingShotLine ? 1 : 0);
+    ((HUDuiList*)listHUD[i++])->setIndex(renderer->getRadarSize());
+    ((HUDuiList*)listHUD[i++])->setIndex(renderer->getMaxMotionFactor());
     i++; // locale
-    ((HUDuiList*)list[i++])->setIndex(static_cast<int>(BZDB.eval("showtabs")));
-    ((HUDuiList*)list[i++])->setIndex(BZDB.isTrue("colorful") ? 1 : 0);
+    ((HUDuiList*)listHUD[i++])->setIndex(static_cast<int>(BZDB.eval
+							  ("showtabs")));
+    ((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("colorful") ? 1 : 0);
 
     // underline color - does this HAVE to be so complicated?
-    std::vector<std::string>* options = &((HUDuiList*)list[i++])->getList();
+    std::vector<std::string>* options = &((HUDuiList*)listHUD[i++])->getList();
     std::string uColor = BZDB.get("underlineColor");
     std::vector<std::string>::iterator itr;
     int j = 0;
     for (itr = options->begin(); itr != options->end(); itr++) {
       if (uColor == (*itr)) {
-	((HUDuiList*)list[i])->setIndex(j);
+	((HUDuiList*)listHUD[i])->setIndex(j);
 	break;
       }
       j++;
     }
 
-    ((HUDuiList*)list[i++])->setIndex(static_cast<int>(BZDB.eval("killerhighlight")));
-    ((HUDuiList*)list[i++])->setIndex(static_cast<int>(BZDB.eval("pulseRate") * 5) - 1);
-    ((HUDuiList*)list[i++])->setIndex(static_cast<int>(BZDB.eval("pulseDepth") * 10) - 1);
-    ((HUDuiList*)list[i++])->setIndex(static_cast<int>(BZDB.eval("timedate")));
-    ((HUDuiList*)list[i++])->setIndex(BZDB.isTrue("displayReloadTimer") ? 1 : 0);
+    ((HUDuiList*)listHUD[i++])->setIndex(static_cast<int>
+					 (BZDB.eval("killerhighlight")));
+    ((HUDuiList*)listHUD[i++])->setIndex(static_cast<int>
+					 (BZDB.eval("pulseRate") * 5) - 1);
+    ((HUDuiList*)listHUD[i++])->setIndex(static_cast<int>
+					 (BZDB.eval("pulseDepth") * 10) - 1);
+    ((HUDuiList*)listHUD[i++])->setIndex(static_cast<int>(BZDB.eval
+							  ("timedate")));
+    ((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("displayReloadTimer") ? 1
+					 : 0);
   }
 }
 

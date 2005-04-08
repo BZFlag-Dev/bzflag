@@ -352,22 +352,22 @@ bool chasePlayer(float &rotation, float &speed)
   LocalPlayer *myTank = LocalPlayer::getMyTank();
   const float *pos = myTank->getPosition();
 
-  RemotePlayer *player = findBestTarget();
-  if (player == NULL)
+  RemotePlayer *rPlayer = findBestTarget();
+  if (rPlayer == NULL)
     return false;
 
-  myTank->setTarget(player);
+  myTank->setTarget(rPlayer);
 
-  const float *targetPos = player->getPosition();
+  const float *targetPos = rPlayer->getPosition();
   float distance = TargetingUtils::getTargetDistance(pos, targetPos);
   if (distance > 250.0f)
     return false;
 
-  const float *tp = player->getPosition();
+  const float *tp = rPlayer->getPosition();
   float enemyPos[3];
   //toss in some lag adjustment/future prediction - 300 millis
   memcpy(enemyPos,tp,sizeof(enemyPos));
-  const float *tv = player->getVelocity();
+  const float *tv = rPlayer->getVelocity();
   enemyPos[0] += 0.3f * tv[0];
   enemyPos[1] += 0.3f * tv[1];
   enemyPos[2] += 0.3f * tv[2];

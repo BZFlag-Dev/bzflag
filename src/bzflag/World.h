@@ -287,9 +287,9 @@ inline int		World::getCurMaxPlayers() const
   return curMaxPlayers;
 }
 
-inline void		World::setCurMaxPlayers(int curMaxPlayers)
+inline void		World::setCurMaxPlayers(int _curMaxPlayers)
 {
-  this->curMaxPlayers = curMaxPlayers;
+  curMaxPlayers = _curMaxPlayers;
 }
 
 inline int		World::getMaxShots() const
@@ -352,9 +352,9 @@ inline Flag&		World::getFlag(int index) const
   return flags[index];
 }
 
-inline const float*	World::getBase(int team, int base) const
+inline const float*	World::getBase(int _team, int base) const
 {
-  const TeamBases &b = bases[team];
+  const TeamBases &b = bases[_team];
   if ((base < 0) || (base >= (int)b.size()))
     return NULL;
 
@@ -371,9 +371,9 @@ inline BundleMgr*	World::getBundleMgr()
   return World::bundleMgr;
 }
 
-inline void		World::setBundleMgr(BundleMgr *bundleMgr)
+inline void		World::setBundleMgr(BundleMgr *_bundleMgr)
 {
-  World::bundleMgr = bundleMgr;
+  bundleMgr = _bundleMgr;
 }
 
 inline std::string	World::getLocale()
@@ -381,9 +381,9 @@ inline std::string	World::getLocale()
   return locale;
 }
 
-inline void		World::setLocale(const std::string& locale)
+inline void		World::setLocale(const std::string& _locale)
 {
-  World::locale = locale;
+  locale = _locale;
 }
 
 

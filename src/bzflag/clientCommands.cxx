@@ -578,7 +578,7 @@ std::string cmdScreenshot(const std::string&, const CommandManager::ArgList& arg
       // apply gamma correction if necessary
       if (gammaAdjust) {
 	unsigned char *ptr = b + line + 1;
-	for (int i = 1; i < w * 3 + 1; i++) {
+	for (int j = 1; j < w * 3 + 1; j++) {
 	  *ptr = gammaTable[*ptr];
 	  ptr++;
 	}

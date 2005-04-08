@@ -795,7 +795,7 @@ static void		parseConfigName(int argc, char** argv)
 // (so user won't have to wait through performance testing again).
 //
 
-void			dumpResources(BzfDisplay* display,
+void			dumpResources(BzfDisplay *currentDisplay,
 				SceneRenderer& renderer)
 {
   // collect new configuration
@@ -833,9 +833,10 @@ void			dumpResources(BzfDisplay* display,
   }
 
   BZDB.set("quality", configQualityValues[renderer.useQuality()]);
-  if (!BZDB.isSet("_window") && display->getResolution() != -1 &&
-      display->getResolution(display->getResolution())) {
-    BZDB.set("resolution", display->getResolution(display->getResolution())->name);
+  if (!BZDB.isSet("_window") && currentDisplay->getResolution() != -1 &&
+      currentDisplay->getResolution(currentDisplay->getResolution())) {
+    BZDB.set("resolution", currentDisplay->getResolution
+	     (currentDisplay->getResolution())->name);
   }
   BZDB.set("startcode", ServerStartMenu::getSettings());
 
@@ -1481,9 +1482,9 @@ int			main(int argc, char** argv)
     if (BZDB.isSet("quality")) {
       std::string value = BZDB.get("quality");
       const int qualityLevels = countof(configQualityValues);
-      for (int i = 0; i < qualityLevels; i++) {
-	if (value == configQualityValues[i]) {
-	  RENDERER.setQuality(i);
+      for (int j = 0; j < qualityLevels; j++) {
+	if (value == configQualityValues[j]) {
+	  RENDERER.setQuality(j);
 	  break;
 	}
       }
@@ -1499,7 +1500,7 @@ int			main(int argc, char** argv)
     if (BZDB.isSet("view")) {
       RENDERER.setViewType(SceneRenderer::Normal);
       std::string value = BZDB.get("view");
-      for (int i = 0; i < (int)(sizeof(configViewValues) /
+      for (i = 0; i < (int)(sizeof(configViewValues) /
 				sizeof(configViewValues[0])); i++)
 	if (value == configViewValues[i]) {
 	  RENDERER.setViewType((SceneRenderer::ViewType)i);

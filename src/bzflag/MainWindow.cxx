@@ -74,9 +74,9 @@ void			MainWindow::setPosition(int x, int y)
   window->setPosition(x, y);
 }
 
-void			MainWindow::setSize(int width, int height)
+void			MainWindow::setSize(int _width, int _height)
 {
-  window->setSize(width, height);
+  window->setSize(_width, _height);
   resize();
 }
 

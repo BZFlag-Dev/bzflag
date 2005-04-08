@@ -1403,10 +1403,11 @@ void			HUDRenderer::renderPlaying(SceneRenderer& renderer)
   }
 
   if (myTank && globalClock.isOn()) {
-    float y = 0.5f * (float)height + fm.getStrHeight(bigFontFace, bigFontSize, "0");
+    float yy = 0.5f * (float)height
+      + fm.getStrHeight(bigFontFace, bigFontSize, "0");
     if (myTank->isAutoPilot()) {
       hudColor3fv(messageColor);
-      fm.drawString(0.5f * ((float)width - autoPilotWidth), y, 0, bigFontFace,
+      fm.drawString(0.5f * ((float)width - autoPilotWidth), yy, 0, bigFontFace,
 		    bigFontSize, autoPilotLabel);
     }
   }

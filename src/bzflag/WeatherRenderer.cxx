@@ -579,9 +579,9 @@ void WeatherRenderer::rebuildContext(void)
 }
 
 
-void WeatherRenderer::buildDropList(bool draw)
+void WeatherRenderer::buildDropList(bool _draw)
 {
-  if (!draw) {
+  if (!_draw) {
     if (dropList != INVALID_GL_LIST_ID) {
       glDeleteLists(dropList, 1);
       dropList = INVALID_GL_LIST_ID;
@@ -654,16 +654,16 @@ void WeatherRenderer::buildDropList(bool draw)
     glPopMatrix();
   }
 
-  if (!draw) {
+  if (!_draw) {
     glEndList();
   }
 }
 
 
-void WeatherRenderer::buildPuddleList(bool draw)
+void WeatherRenderer::buildPuddleList(bool _draw)
 {
   float scale = 1;
-  if (!draw) {
+  if (!_draw) {
     if (puddleList != INVALID_GL_LIST_ID) {
       glDeleteLists(puddleList, 1);
       puddleList = INVALID_GL_LIST_ID;
@@ -686,7 +686,7 @@ void WeatherRenderer::buildPuddleList(bool draw)
   glVertex3f(-scale, scale, 0);
   glEnd();
 
-  if (!draw) {
+  if (!_draw) {
     glEndList();
   }
 }

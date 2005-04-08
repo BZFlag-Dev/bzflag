@@ -41,30 +41,30 @@ JoinMenu::JoinMenu() : serverStartMenu(NULL), serverMenu(NULL)
   int fontFace = MainMenu::getFontFace();
 
   // add controls
-  std::vector<HUDuiControl*>& list = getControls();
+  std::vector<HUDuiControl*>& listHUD = getControls();
   StartupInfo* info = getStartupInfo();
 
   HUDuiLabel* label = new HUDuiLabel;
   label->setFontFace(fontFace);
   label->setString("Join Game");
-  list.push_back(label);
+  listHUD.push_back(label);
 
   findServer = new HUDuiLabel;
   findServer->setFontFace(fontFace);
   findServer->setString("Find Server");
-  list.push_back(findServer);
+  listHUD.push_back(findServer);
 
   connectLabel = new HUDuiLabel;
   connectLabel->setFontFace(fontFace);
   connectLabel->setString("Connect");
-  list.push_back(connectLabel);
+  listHUD.push_back(connectLabel);
 
   callsign = new HUDuiTypeIn;
   callsign->setFontFace(fontFace);
   callsign->setLabel("Callsign:");
   callsign->setMaxLength(CallSignLen - 1);
   callsign->setString(info->callsign);
-  list.push_back(callsign);
+  listHUD.push_back(callsign);
 
   password = new HUDuiTypeIn;
   password->setObfuscation(true);
@@ -72,7 +72,7 @@ JoinMenu::JoinMenu() : serverStartMenu(NULL), serverMenu(NULL)
   password->setLabel("Password:");
   password->setMaxLength(CallSignLen - 1);
   password->setString(info->password);
-  list.push_back(password);
+  listHUD.push_back(password);
 
   team = new HUDuiList;
   team->setFontFace(fontFace);
@@ -89,14 +89,14 @@ JoinMenu::JoinMenu() : serverStartMenu(NULL), serverMenu(NULL)
   teams.push_back(std::string(Team::getName(ObserverTeam)));
   team->update();
   setTeam(info->team);
-  list.push_back(team);
+  listHUD.push_back(team);
 
   server = new HUDuiTypeIn;
   server->setFontFace(fontFace);
   server->setLabel("Server:");
   server->setMaxLength(64);
   server->setString(info->serverName);
-  list.push_back(server);
+  listHUD.push_back(server);
 
   char buffer[10];
   sprintf(buffer, "%d", info->serverPort);
@@ -105,31 +105,31 @@ JoinMenu::JoinMenu() : serverStartMenu(NULL), serverMenu(NULL)
   port->setLabel("Port:");
   port->setMaxLength(5);
   port->setString(buffer);
-  list.push_back(port);
+  listHUD.push_back(port);
 
   email = new HUDuiTypeIn;
   email->setFontFace(fontFace);
   email->setLabel("Email:");
   email->setMaxLength(EmailLen - 1);
   email->setString(info->email);
-  list.push_back(email);
+  listHUD.push_back(email);
 
   startServer = new HUDuiLabel;
   startServer->setFontFace(fontFace);
   startServer->setString("Start Server");
-  list.push_back(startServer);
+  listHUD.push_back(startServer);
 
   status = new HUDuiLabel;
   status->setFontFace(fontFace);
   status->setString("");
-  list.push_back(status);
+  listHUD.push_back(status);
 
   failedMessage = new HUDuiLabel;
   failedMessage->setFontFace(fontFace);
   failedMessage->setString("");
-  list.push_back(failedMessage);
+  listHUD.push_back(failedMessage);
 
-  initNavigation(list, 1, list.size() - 3);
+  initNavigation(listHUD, 1, listHUD.size() - 3);
 }
 
 JoinMenu::~JoinMenu()
@@ -184,18 +184,18 @@ void JoinMenu::loadInfo()
 
 void JoinMenu::execute()
 {
-  HUDuiControl* focus = HUDui::getFocus();
-  if (focus == startServer) {
+  HUDuiControl* _focus = HUDui::getFocus();
+  if (_focus == startServer) {
 
     if (!serverStartMenu) serverStartMenu = new ServerStartMenu;
     HUDDialogStack::get()->push(serverStartMenu);
 
-  } else if (focus == findServer) {
+  } else if (_focus == findServer) {
 
     if (!serverMenu) serverMenu = new ServerMenu;
     HUDDialogStack::get()->push(serverMenu);
 
-  } else if (focus == connectLabel) {
+  } else if (_focus == connectLabel) {
 
     // load startup info
     loadInfo();
@@ -247,9 +247,9 @@ void JoinMenu::setFailedMessage(const char* msg)
   failedMessage->setString(msg);
 
   FontManager &fm = FontManager::instance();
-  const float width = fm.getStrLength(MainMenu::getFontFace(),
+  const float _width = fm.getStrLength(MainMenu::getFontFace(),
 	failedMessage->getFontSize(), failedMessage->getString());
-  failedMessage->setPosition(center - 0.5f * width, failedMessage->getY());
+  failedMessage->setPosition(center - 0.5f * _width, failedMessage->getY());
 }
 
 TeamColor JoinMenu::getTeam() const
@@ -266,9 +266,9 @@ void JoinMenu::setStatus(const char* msg, const std::vector<std::string> *)
 {
   status->setString(msg);
   FontManager &fm = FontManager::instance();
-  const float width = fm.getStrLength(status->getFontFace(),
+  const float _width = fm.getStrLength(status->getFontFace(),
 		status->getFontSize(), status->getString());
-  status->setPosition(center - 0.5f * width, status->getY());
+  status->setPosition(center - 0.5f * _width, status->getY());
 }
 
 void JoinMenu::teamCallback(HUDuiControl*, void*)
@@ -276,36 +276,36 @@ void JoinMenu::teamCallback(HUDuiControl*, void*)
   // do nothing (for now)
 }
 
-void JoinMenu::resize(int width, int height)
+void JoinMenu::resize(int _width, int _height)
 {
-  HUDDialog::resize(width, height);
+  HUDDialog::resize(_width, _height);
 
   // use a big font for title, smaller font for the rest
-  const float titleFontSize = (float)height / 15.0f;
-  const float fontSize = (float)height / 36.0f;
-  center = 0.5f * (float)width;
+  const float titleFontSize = (float)_height / 15.0f;
+  const float fontSize = (float)_height / 36.0f;
+  center = 0.5f * (float)_width;
 
   FontManager &fm = FontManager::instance();
 
   // reposition title
-  std::vector<HUDuiControl*>& list = getControls();
-  HUDuiLabel* title = (HUDuiLabel*)list[0];
+  std::vector<HUDuiControl*>& listHUD = getControls();
+  HUDuiLabel* title = (HUDuiLabel*)listHUD[0];
   title->setFontSize(titleFontSize);
   const float titleWidth = fm.getStrLength(MainMenu::getFontFace(), titleFontSize, title->getString());
   const float titleHeight = fm.getStrHeight(MainMenu::getFontFace(), titleFontSize, "");
-  float x = 0.5f * ((float)width - titleWidth);
-  float y = (float)height - titleHeight;
+  float x = 0.5f * ((float)_width - titleWidth);
+  float y = (float)_height - titleHeight;
   title->setPosition(x, y);
 
   // reposition options
-  x = 0.5f * ((float)width - 0.5f * titleWidth);
+  x = 0.5f * ((float)_width - 0.5f * titleWidth);
   y -= 0.6f * titleHeight;
-  list[1]->setFontSize(fontSize);
+  listHUD[1]->setFontSize(fontSize);
   const float h = fm.getStrHeight(MainMenu::getFontFace(), fontSize, "");
-  const int count = list.size();
+  const int count = listHUD.size();
   for (int i = 1; i < count; i++) {
-    list[i]->setFontSize(fontSize);
-    list[i]->setPosition(x, y);
+    listHUD[i]->setFontSize(fontSize);
+    listHUD[i]->setPosition(x, y);
     y -= 1.0f * h;
     if (i <= 2 || i == 8) y -= 0.5f * h;
   }

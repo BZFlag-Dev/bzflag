@@ -576,7 +576,7 @@ void BackgroundRenderer::renderSky(SceneRenderer& renderer, bool fullWindow,
     glClear(GL_COLOR_BUFFER_BIT);
 
     // draw ground -- first get the color (assume it's all green)
-    GLfloat groundColor = 0.1f + 0.15f * renderer.getSunColor()[1];
+    GLfloat _groundColor = 0.1f + 0.15f * renderer.getSunColor()[1];
     if (fullWindow && viewType == SceneRenderer::ThreeChannel)
       glScissor(x, y, width, height >> 1);
     else if (fullWindow && viewType == SceneRenderer::Stacked)
@@ -587,8 +587,10 @@ void BackgroundRenderer::renderSky(SceneRenderer& renderer, bool fullWindow,
 #endif
     else
       glScissor(x, y + height - viewHeight, width, (viewHeight + 1) >> 1);
-    if (invert) glClearColor(groundColor, 0.0f, groundColor, 0.0f);
-    else glClearColor(0.0f, groundColor, 0.0f, 0.0f);
+    if (invert)
+      glClearColor(_groundColor, 0.0f, _groundColor, 0.0f);
+    else
+      glClearColor(0.0f, _groundColor, 0.0f, 0.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
     // back to normal
@@ -622,7 +624,7 @@ void BackgroundRenderer::renderGround(SceneRenderer& renderer,
     glClear(GL_COLOR_BUFFER_BIT);
 
     // draw ground -- first get the color (assume it's all green)
-    GLfloat groundColor = 0.1f + 0.15f * renderer.getSunColor()[1];
+    GLfloat _groundColor = 0.1f + 0.15f * renderer.getSunColor()[1];
     if (fullWindow && viewType == SceneRenderer::ThreeChannel)
       glScissor(x, y, width, height >> 1);
     else if (fullWindow && viewType == SceneRenderer::Stacked)
@@ -633,8 +635,10 @@ void BackgroundRenderer::renderGround(SceneRenderer& renderer,
 #endif
     else
       glScissor(x, y + height - viewHeight, width, (viewHeight + 1) >> 1);
-    if (invert) glClearColor(groundColor, 0.0f, groundColor, 0.0f);
-    else glClearColor(0.0f, groundColor, 0.0f, 0.0f);
+    if (invert)
+      glClearColor(_groundColor, 0.0f, _groundColor, 0.0f);
+    else
+      glClearColor(0.0f, _groundColor, 0.0f, 0.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
     // back to normal
@@ -1053,28 +1057,28 @@ void BackgroundRenderer::drawGroundReceivers(SceneRenderer& renderer)
       const GLfloat outerSize = receiverRingSize * GLfloat((i + 1) * (i + 1));
 
       // compute inner and outer lit colors
-      float d = innerSize + pos[2];
-      float I = B / (atten[0] + d * (atten[1] + d * atten[2]));
-      I *= pos[2] / hypotf(innerSize, pos[2]);
+      float dis = innerSize + pos[2];
+      float Int = B / (atten[0] + dis * (atten[1] + dis * atten[2]));
+      Int *= pos[2] / hypotf(innerSize, pos[2]);
       float innerColor[3];
-      innerColor[0] = I * color[0];
-      innerColor[1] = I * color[1];
-      innerColor[2] = I * color[2];
+      innerColor[0] = Int * color[0];
+      innerColor[1] = Int * color[1];
+      innerColor[2] = Int * color[2];
       if (innerColor[0] > 1.0f) innerColor[0] = 1.0f;
       if (innerColor[1] > 1.0f) innerColor[1] = 1.0f;
       if (innerColor[2] > 1.0f) innerColor[2] = 1.0f;
 
       if (i + 1 == receiverRings) {
-	I = 0.0f;
+	Int = 0.0f;
       } else {
-	d = outerSize + pos[2];
-	I = B / (atten[0] + d * (atten[1] + d * atten[2]));
-	I *= pos[2] / hypotf(outerSize, pos[2]);
+	dis = outerSize + pos[2];
+	Int = B / (atten[0] + dis * (atten[1] + dis * atten[2]));
+	Int *= pos[2] / hypotf(outerSize, pos[2]);
       }
       float outerColor[3];
-      outerColor[0] = I * color[0];
-      outerColor[1] = I * color[1];
-      outerColor[2] = I * color[2];
+      outerColor[0] = Int * color[0];
+      outerColor[1] = Int * color[1];
+      outerColor[2] = Int * color[2];
       if (outerColor[0] > 1.0f) outerColor[0] = 1.0f;
       if (outerColor[1] > 1.0f) outerColor[1] = 1.0f;
       if (outerColor[2] > 1.0f) outerColor[2] = 1.0f;
@@ -1254,7 +1258,6 @@ void BackgroundRenderer::doInitDisplayLists()
     }
     glEndList();
   } else {
-    int i, j;
     GLfloat xmin, xmax;
     GLfloat ymin, ymax;
     GLfloat xdist, ydist;

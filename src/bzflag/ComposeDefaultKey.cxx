@@ -165,9 +165,9 @@ bool			ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
 	Player *loudmouth = getPlayerByName(cmd + 8);
 	if (loudmouth) {
 	  silencePlayers.push_back(cmd + 8);
-	  std::string message = "Silenced ";
-	  message += (cmd + 8);
-	  addMessage(NULL, message);
+	  std::string silenceMessage = "Silenced ";
+	  silenceMessage += (cmd + 8);
+	  addMessage(NULL, silenceMessage);
 	}
       } else if (strncmp(cmd, "DUMP", 4) == 0) {
 	BZDB.iterate(printout, NULL);
@@ -178,9 +178,9 @@ bool			ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
 	  for (; it != silencePlayers.end(); it++) {
 	    if (*it == cmd + 10) {
 	      silencePlayers.erase(it);
-	      std::string message = "Unsilenced ";
-	      message += (cmd + 10);
-	      addMessage(NULL, message);
+	      std::string unsilenceMessage = "Unsilenced ";
+	      unsilenceMessage += (cmd + 10);
+	      addMessage(NULL, unsilenceMessage);
 	      break;
 	    }
 	  }

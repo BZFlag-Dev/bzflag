@@ -114,69 +114,69 @@ void QuickKeysMenu::dismiss()
   }
 }
 
-void QuickKeysMenu::resize(int width, int height)
+void QuickKeysMenu::resize(int _width, int _height)
 {
-  HUDDialog::resize(width, height);
+  HUDDialog::resize(_width, _height);
 
   int i;
   // use a big font for title, smaller font for the rest
-  const float titleFontSize = (float)height / 15.0f;
-  const float bigFontSize = (float)height / 42.0f;
-  const float fontSize = (float)height / 48.0f;
+  const float titleFontSize = (float)_height / 15.0f;
+  const float bigFontSize = (float)_height / 42.0f;
+  const float fontSize = (float)_height / 48.0f;
   FontManager &fm = FontManager::instance();
   const int fontFace = MainMenu::getFontFace();
 
   // reposition title
-  std::vector<HUDuiControl*>& list = getControls();
-  HUDuiLabel* title = (HUDuiLabel*)list[0];
+  std::vector<HUDuiControl*>& listHUD = getControls();
+  HUDuiLabel* title = (HUDuiLabel*)listHUD[0];
   title->setFontSize(titleFontSize);
   const float titleWidth = fm.getStrLength(fontFace, titleFontSize, title->getString());
   const float titleHeight = fm.getStrHeight(fontFace, titleFontSize, " ");
-  float x = 0.5f * ((float)width - titleWidth);
-  float y = (float)height - titleHeight;
+  float x = 0.5f * ((float)_width - titleWidth);
+  float y = (float)_height - titleHeight;
   title->setPosition(x, y);
 
   // reposition help
-  HUDuiLabel*help = (HUDuiLabel*)list[1];
+  HUDuiLabel*help = (HUDuiLabel*)listHUD[1];
   help->setFontSize(bigFontSize);
   const float helpWidth = fm.getStrLength(fontFace, bigFontSize, help->getString());
   const float bigHeight = fm.getStrHeight(fontFace, bigFontSize, " ");
-  x = 0.5f * ((float)width - helpWidth);
+  x = 0.5f * ((float)_width - helpWidth);
   y -= 1.1f * bigHeight;
   help->setPosition(x, y);
 
   // reposition column titles
-  HUDuiLabel *all = (HUDuiLabel*)list[2];
+  HUDuiLabel *all = (HUDuiLabel*)listHUD[2];
   all->setFontSize(bigFontSize);
-  x = 0.1f * width;
+  x = 0.1f * _width;
   y -= 1.5f * bigHeight;
   all->setPosition(x, y);
-  HUDuiLabel *team = (HUDuiLabel*)list[3];
+  HUDuiLabel *team = (HUDuiLabel*)listHUD[3];
   team->setFontSize(bigFontSize);
-  x = 0.6f * width;
+  x = 0.6f * _width;
   team->setPosition(x, y);
 
 
   // reposition options in two columns
-  x = 0.10f * (float)width;
+  x = 0.10f * (float)_width;
   const float topY = y - (0.6f * titleHeight);
   y = topY;
-  list[4]->setFontSize(fontSize);
+  listHUD[4]->setFontSize(fontSize);
   const float h = fm.getStrHeight(fontFace, fontSize, " ");
-  const int count = list.size() - firstKeyControl;
+  const int count = listHUD.size() - firstKeyControl;
   const int mid = (count / 2) + firstKeyControl;
 
   for (i = firstKeyControl; i < mid; i++) {
-    list[i]->setFontSize(fontSize);
-    list[i]->setPosition(x, y);
+    listHUD[i]->setFontSize(fontSize);
+    listHUD[i]->setPosition(x, y);
     y -= 1.0f * h;
   }
 
-  x = 0.60f * (float)width;
+  x = 0.60f * (float)_width;
   y = topY;
   for (;i < count + firstKeyControl; i++) {
-    list[i]->setFontSize(fontSize);
-    list[i]->setPosition(x, y);
+    listHUD[i]->setFontSize(fontSize);
+    listHUD[i]->setPosition(x, y);
     y -= 1.0f * h;
   }
 }

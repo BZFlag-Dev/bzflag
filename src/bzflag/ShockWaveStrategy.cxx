@@ -24,18 +24,18 @@
 Player* lookupPlayer(PlayerId id);
 
 
-ShockWaveStrategy::ShockWaveStrategy(ShotPath* path) :
-  ShotStrategy(path),
+ShockWaveStrategy::ShockWaveStrategy(ShotPath *_path) :
+  ShotStrategy(_path),
   radius(BZDB.eval(StateDatabase::BZDB_SHOCKINRADIUS)),
   radius2(radius * radius)
 {
   // setup shot
-  FiringInfo& f = getFiringInfo(path);
+  FiringInfo& f = getFiringInfo(_path);
   f.lifetime *= BZDB.eval(StateDatabase::BZDB_SHOCKADLIFE);
 
   // make scene node
-  shockNode = new SphereSceneNode(path->getPosition(), radius);
-  Player* p = lookupPlayer(path->getPlayer());
+  shockNode = new SphereSceneNode(_path->getPosition(), radius);
+  Player* p = lookupPlayer(_path->getPlayer());
   TeamColor team = p ? p->getTeam() : RogueTeam;
   const float* c = Team::getRadarColor(team);
   shockNode->setColor(c[0], c[1], c[2], 0.75f);

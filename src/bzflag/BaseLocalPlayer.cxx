@@ -18,9 +18,9 @@
 #include "BZDBCache.h"
 
 
-BaseLocalPlayer::BaseLocalPlayer(const PlayerId& id,
-				 const char* name, const char* email) :
-  Player(id, RogueTeam, name, email, TankPlayer),
+BaseLocalPlayer::BaseLocalPlayer(const PlayerId& _id,
+				 const char* name, const char* _email) :
+  Player(_id, RogueTeam, name, _email, TankPlayer),
   lastTime(TimeKeeper::getTick()),
   salt(0)
 {

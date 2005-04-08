@@ -51,13 +51,13 @@ ShotPath*		WorldPlayer::getShot(int index) const
 }
 
 bool			WorldPlayer::doEndShot(
-				int id, bool isHit, float* pos)
+				int ident, bool isHit, float* pos)
 {
-  const int index = id & 255;
-  const int salt = (id >> 8) & 127;
+  const int index = ident & 255;
+  const int salt = (ident >> 8) & 127;
 
   // special id used in some messages (and really shouldn't be sent here)
-  if (id == -1)
+  if (ident == -1)
     return false;
 
   // ignore bogus shots (those with a bad index or for shots that don't exist)

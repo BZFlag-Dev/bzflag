@@ -112,13 +112,13 @@ void			SegmentedShotStrategy::update(float dt)
     setExpiring();
 
     if (numSegments > 0) {
-	    ShotPathSegment& segment = segments[numSegments - 1];
-	    const float* dir = segment.ray.getDirection();
-	    const float speed = hypotf(dir[0], hypotf(dir[1], dir[2]));
-	    float pos[3];
-	    segment.ray.getPoint(segment.end - segment.start - 1.0f / speed, pos);
-	    /* NOTE -- comment out to not explode when shot expires */
-	    addShotExplosion(pos);
+      ShotPathSegment &segm = segments[numSegments - 1];
+      const float     *dir  = segm.ray.getDirection();
+      const float speed = hypotf(dir[0], hypotf(dir[1], dir[2]));
+      float pos[3];
+      segm.ray.getPoint(segm.end - segm.start - 1.0f / speed, pos);
+      /* NOTE -- comment out to not explode when shot expires */
+      addShotExplosion(pos);
     }
   }
 
@@ -257,8 +257,8 @@ float			SegmentedShotStrategy::checkHit(const BaseLocalPlayer* tank,
 void			SegmentedShotStrategy::addShot(
 				SceneDatabase* scene, bool colorblind)
 {
-  const ShotPath& path = getPath();
-  boltSceneNode->move(path.getPosition(), path.getVelocity());
+  const ShotPath& shotPath = getPath();
+  boltSceneNode->move(shotPath.getPosition(), shotPath.getVelocity());
   if (boltSceneNode->getColorblind() != colorblind) {
     boltSceneNode->setColorblind(colorblind);
     TeamColor tmpTeam = colorblind ? RogueTeam : team;
@@ -331,11 +331,12 @@ void			SegmentedShotStrategy::makeSegments(ObstacleEffect e)
 {
   // compute segments of shot until total length of segments exceeds the
   // lifetime of the shot.
-  const ShotPath& path = getPath();
-  const float* v = path.getVelocity();
-  TimeKeeper startTime = path.getStartTime();
-  float timeLeft = path.getLifetime();
-  float minTime = BZDB.eval(StateDatabase::BZDB_MUZZLEFRONT) / hypotf(v[0], hypotf(v[1], v[2]));
+  const ShotPath &shotPath  = getPath();
+  const float    *v         = shotPath.getVelocity();
+  TimeKeeper      startTime = shotPath.getStartTime();
+  float timeLeft            = shotPath.getLifetime();
+  float           minTime   = BZDB.eval(StateDatabase::BZDB_MUZZLEFRONT)
+    / hypotf(v[0], hypotf(v[1], v[2]));
 
   // if all shots ricochet and obstacle effect is stop, then make it ricochet
   if (e == Stop && World::getWorld()->allShotsRicochet()) {
@@ -347,9 +348,9 @@ void			SegmentedShotStrategy::makeSegments(ObstacleEffect e)
   d[0] = v[0];
   d[1] = v[1];
   d[2] = v[2];		// use v[2] to have jumping affect shot velocity
-  o[0] = path.getPosition()[0];
-  o[1] = path.getPosition()[1];
-  o[2] = path.getPosition()[2];
+  o[0] = shotPath.getPosition()[0];
+  o[1] = shotPath.getPosition()[1];
+  o[2] = shotPath.getPosition()[2];
 
   segments.clear();
   ShotPathSegment::Reason reason = ShotPathSegment::Initial;
@@ -386,8 +387,8 @@ void			SegmentedShotStrategy::makeSegments(ObstacleEffect e)
     } else {
       endTime += t;
     }
-    ShotPathSegment segment(startTime, endTime, rs, reason);
-    segments.push_back(segment);
+    ShotPathSegment segm(startTime, endTime, rs, reason);
+    segments.push_back(segm);
     startTime = endTime;
 
     // used up this much time in segment
@@ -401,7 +402,7 @@ void			SegmentedShotStrategy::makeSegments(ObstacleEffect e)
     reason = ShotPathSegment::Through;
     if (teleporter) {
       // entered teleporter -- teleport it
-      unsigned int seed = path.getShotId() + i;
+      unsigned int seed = shotPath.getShotId() + i;
       int source = World::getWorld()->getTeleporter(teleporter, face);
       int target = World::getWorld()->getTeleportTarget(source, seed);
 
@@ -471,24 +472,23 @@ void			SegmentedShotStrategy::makeSegments(ObstacleEffect e)
   // make bounding box for entire path
   const int numSegments = segments.size();
   if (numSegments > 0) {
-    const ShotPathSegment& firstSegment = segments[0];
-    bbox[0][0] = firstSegment.bbox[0][0];
-    bbox[0][1] = firstSegment.bbox[0][1];
-    bbox[0][2] = firstSegment.bbox[0][2];
-    bbox[1][0] = firstSegment.bbox[1][0];
-    bbox[1][1] = firstSegment.bbox[1][1];
-    bbox[1][2] = firstSegment.bbox[1][2];
-    for (int i = 1; i < numSegments; i++) {
-      const ShotPathSegment& segment = segments[i];
-      if (bbox[0][0] > segment.bbox[0][0]) bbox[0][0] = segment.bbox[0][0];
-      if (bbox[1][0] < segment.bbox[1][0]) bbox[1][0] = segment.bbox[1][0];
-      if (bbox[0][1] > segment.bbox[0][1]) bbox[0][1] = segment.bbox[0][1];
-      if (bbox[1][1] < segment.bbox[1][1]) bbox[1][1] = segment.bbox[1][1];
-      if (bbox[0][2] > segment.bbox[0][2]) bbox[0][2] = segment.bbox[0][2];
-      if (bbox[1][2] < segment.bbox[1][2]) bbox[1][2] = segment.bbox[1][2];
+    const ShotPathSegment& firstSeg = segments[0];
+    bbox[0][0] = firstSeg.bbox[0][0];
+    bbox[0][1] = firstSeg.bbox[0][1];
+    bbox[0][2] = firstSeg.bbox[0][2];
+    bbox[1][0] = firstSeg.bbox[1][0];
+    bbox[1][1] = firstSeg.bbox[1][1];
+    bbox[1][2] = firstSeg.bbox[1][2];
+    for (i = 1; i < numSegments; i++) {
+      const ShotPathSegment& segm = segments[i];
+      if (bbox[0][0] > segm.bbox[0][0]) bbox[0][0] = segm.bbox[0][0];
+      if (bbox[1][0] < segm.bbox[1][0]) bbox[1][0] = segm.bbox[1][0];
+      if (bbox[0][1] > segm.bbox[0][1]) bbox[0][1] = segm.bbox[0][1];
+      if (bbox[1][1] < segm.bbox[1][1]) bbox[1][1] = segm.bbox[1][1];
+      if (bbox[0][2] > segm.bbox[0][2]) bbox[0][2] = segm.bbox[0][2];
+      if (bbox[1][2] < segm.bbox[1][2]) bbox[1][2] = segm.bbox[1][2];
     }
-  }
-  else {
+  } else {
     bbox[0][0] = bbox[1][0] = 0.0f;
     bbox[0][1] = bbox[1][1] = 0.0f;
     bbox[0][2] = bbox[1][2] = 0.0f;
@@ -504,8 +504,8 @@ const std::vector<ShotPathSegment>&	SegmentedShotStrategy::getSegments() const
 // NormalShotStrategy
 //
 
-NormalShotStrategy::NormalShotStrategy(ShotPath* path) :
-				SegmentedShotStrategy(path, false)
+NormalShotStrategy::NormalShotStrategy(ShotPath* _path) :
+  SegmentedShotStrategy(_path, false)
 {
   // make segments
   makeSegments(Stop);
@@ -520,17 +520,18 @@ NormalShotStrategy::~NormalShotStrategy()
 // RapidFireStrategy
 //
 
-RapidFireStrategy::RapidFireStrategy(ShotPath* path) :
-				SegmentedShotStrategy(path, false)
+RapidFireStrategy::RapidFireStrategy(ShotPath* _path) :
+  SegmentedShotStrategy(_path, false)
 {
   // speed up shell and decrease lifetime
-  FiringInfo& f = getFiringInfo(path);
+  FiringInfo& f = getFiringInfo(_path);
   f.lifetime *= BZDB.eval(StateDatabase::BZDB_RFIREADLIFE);
   float fireAdVel = BZDB.eval(StateDatabase::BZDB_RFIREADVEL);
   f.shot.vel[0] *= fireAdVel;
   f.shot.vel[1] *= fireAdVel;
   f.shot.vel[2] *= fireAdVel;
-  setReloadTime(path->getReloadTime() / BZDB.eval(StateDatabase::BZDB_RFIREADRATE));
+  setReloadTime(_path->getReloadTime()
+		/ BZDB.eval(StateDatabase::BZDB_RFIREADRATE));
 
   // make segments
   makeSegments(Stop);
@@ -545,18 +546,18 @@ RapidFireStrategy::~RapidFireStrategy()
 // ThiefStrategy
 //
 
-ThiefStrategy::ThiefStrategy(ShotPath* path) :
-				SegmentedShotStrategy(path, false),
-				cumTime(0.0f)
+ThiefStrategy::ThiefStrategy(ShotPath *_path) :
+  SegmentedShotStrategy(_path, false),cumTime(0.0f)
 {
   // speed up shell and decrease lifetime
-  FiringInfo& f = getFiringInfo(path);
+  FiringInfo& f = getFiringInfo(_path);
   f.lifetime *= BZDB.eval(StateDatabase::BZDB_THIEFADLIFE);
   float thiefAdVel = BZDB.eval(StateDatabase::BZDB_THIEFADSHOTVEL);
   f.shot.vel[0] *= thiefAdVel;
   f.shot.vel[1] *= thiefAdVel;
   f.shot.vel[2] *= thiefAdVel;
-  setReloadTime(path->getReloadTime() / BZDB.eval(StateDatabase::BZDB_THIEFADRATE));
+  setReloadTime(_path->getReloadTime()
+		/ BZDB.eval(StateDatabase::BZDB_THIEFADRATE));
 
   // make segments
   makeSegments(Stop);
@@ -571,9 +572,9 @@ ThiefStrategy::ThiefStrategy(ShotPath* path) :
   int texture = tm.getTextureID("thief");
 
   for (int i = 0; i < numSegments; i++) {
-    const ShotPathSegment& segment = getSegments()[i];
-    const float t = segment.end - segment.start;
-    const Ray& ray = segment.ray;
+    const ShotPathSegment& segm = getSegments()[i];
+    const float t = segm.end - segm.start;
+    const Ray& ray = segm.ray;
     const float* rawdir = ray.getDirection();
     float dir[3];
     dir[0] = t * rawdir[0];
@@ -611,14 +612,14 @@ void			ThiefStrategy::addShot(SceneDatabase* scene, bool)
 void			ThiefStrategy::radarRender() const
 {
   // draw all segments
-  const std::vector<ShotPathSegment>& segments = getSegments();
-  const int numSegments = segments.size();
+  const std::vector<ShotPathSegment>& segmts = getSegments();
+  const int numSegments = segmts.size();
   glBegin(GL_LINES);
     for (int i = 0; i < numSegments; i++) {
-      const ShotPathSegment& segment = segments[i];
-      const float* origin = segment.ray.getOrigin();
-      const float* direction = segment.ray.getDirection();
-      const float dt = segment.end - segment.start;
+      const ShotPathSegment& segm = segmts[i];
+      const float* origin = segm.ray.getOrigin();
+      const float* direction = segm.ray.getDirection();
+      const float dt = segm.end - segm.start;
       glVertex2fv(origin);
       glVertex2f(origin[0] + dt * direction[0], origin[1] + dt * direction[1]);
     }
@@ -635,17 +636,18 @@ bool			ThiefStrategy::isStoppedByHit() const
 // MachineGunStrategy
 //
 
-MachineGunStrategy::MachineGunStrategy(ShotPath* path) :
-				SegmentedShotStrategy(path, false)
+MachineGunStrategy::MachineGunStrategy(ShotPath* _path) :
+  SegmentedShotStrategy(_path, false)
 {
   // speed up shell and decrease lifetime
-  FiringInfo& f = getFiringInfo(path);
+  FiringInfo& f = getFiringInfo(_path);
   f.lifetime *= BZDB.eval(StateDatabase::BZDB_MGUNADLIFE);
   float mgunAdVel = BZDB.eval(StateDatabase::BZDB_MGUNADVEL);
   f.shot.vel[0] *= mgunAdVel;
   f.shot.vel[1] *= mgunAdVel;
   f.shot.vel[2] *= mgunAdVel;
-  setReloadTime(path->getReloadTime() / BZDB.eval(StateDatabase::BZDB_MGUNADRATE));
+  setReloadTime(_path->getReloadTime()
+		/ BZDB.eval(StateDatabase::BZDB_MGUNADRATE));
 
   // make segments
   makeSegments(Stop);
@@ -660,8 +662,8 @@ MachineGunStrategy::~MachineGunStrategy()
 // RicochetStrategy
 //
 
-RicochetStrategy::RicochetStrategy(ShotPath* path) :
-				SegmentedShotStrategy(path, false)
+RicochetStrategy::RicochetStrategy(ShotPath* _path) :
+  SegmentedShotStrategy(_path, false)
 {
   // make segments that bounce
   makeSegments(Reflect);
@@ -676,8 +678,8 @@ RicochetStrategy::~RicochetStrategy()
 // SuperBulletStrategy
 //
 
-SuperBulletStrategy::SuperBulletStrategy(ShotPath* path) :
-				SegmentedShotStrategy(path, true)
+SuperBulletStrategy::SuperBulletStrategy(ShotPath* _path) :
+  SegmentedShotStrategy(_path, true)
 {
   // make segments that go through buildings
   makeSegments(Through);
@@ -689,8 +691,8 @@ SuperBulletStrategy::~SuperBulletStrategy()
 }
 
 
-PhantomBulletStrategy::PhantomBulletStrategy(ShotPath* path) :
-				SegmentedShotStrategy(path, false,true)
+PhantomBulletStrategy::PhantomBulletStrategy(ShotPath* _path) :
+  SegmentedShotStrategy(_path, false,true)
 {
   // make segments that go through buildings
   makeSegments(Through);
@@ -705,18 +707,18 @@ PhantomBulletStrategy::~PhantomBulletStrategy()
 // LaserStrategy
 //
 
-LaserStrategy::LaserStrategy(ShotPath* path) :
-				SegmentedShotStrategy(path, false),
-				cumTime(0.0f)
+LaserStrategy::LaserStrategy(ShotPath* _path) :
+  SegmentedShotStrategy(_path, false), cumTime(0.0f)
 {
   // speed up shell and decrease lifetime
-  FiringInfo& f = getFiringInfo(path);
+  FiringInfo& f = getFiringInfo(_path);
   f.lifetime *= BZDB.eval(StateDatabase::BZDB_LASERADLIFE);
   float laserAdVel = BZDB.eval(StateDatabase::BZDB_LASERADVEL);
   f.shot.vel[0] *= laserAdVel;
   f.shot.vel[1] *= laserAdVel;
   f.shot.vel[2] *= laserAdVel;
-  setReloadTime(path->getReloadTime() / BZDB.eval(StateDatabase::BZDB_LASERADRATE));
+  setReloadTime(_path->getReloadTime()
+		/ BZDB.eval(StateDatabase::BZDB_LASERADRATE));
 
   // make segments
   makeSegments(Stop);
@@ -735,9 +737,9 @@ LaserStrategy::LaserStrategy(ShotPath* path) :
   int texture = tm.getTextureID(imageName.c_str());
 
   for (int i = 0; i < numSegments; i++) {
-    const ShotPathSegment& segment = getSegments()[i];
-    const float t = segment.end - segment.start;
-    const Ray& ray = segment.ray;
+    const ShotPathSegment& segm = getSegments()[i];
+    const float t = segm.end - segm.start;
+    const Ray& ray = segm.ray;
     const float* rawdir = ray.getDirection();
     float dir[3];
     dir[0] = t * rawdir[0];
@@ -775,14 +777,14 @@ void			LaserStrategy::addShot(SceneDatabase* scene, bool)
 void			LaserStrategy::radarRender() const
 {
   // draw all segments
-  const std::vector<ShotPathSegment>& segments = getSegments();
-  const int numSegments = segments.size();
+  const std::vector<ShotPathSegment>& segmts = getSegments();
+  const int numSegments = segmts.size();
   glBegin(GL_LINES);
     for (int i = 0; i < numSegments; i++) {
-      const ShotPathSegment& segment = segments[i];
-      const float* origin = segment.ray.getOrigin();
-      const float* direction = segment.ray.getDirection();
-      const float dt = segment.end - segment.start;
+      const ShotPathSegment& segm = segmts[i];
+      const float* origin = segm.ray.getOrigin();
+      const float* direction = segm.ray.getDirection();
+      const float dt = segm.end - segm.start;
       glVertex2fv(origin);
       glVertex2f(origin[0] + dt * direction[0], origin[1] + dt * direction[1]);
     }

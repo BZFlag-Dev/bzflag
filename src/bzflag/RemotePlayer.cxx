@@ -17,10 +17,10 @@
 #include "World.h"
 
 
-RemotePlayer::RemotePlayer(const PlayerId& id, TeamColor team,
-					const char* name, const char* email,
-			   const PlayerType type) :
-				Player(id, team, name, email, type)
+RemotePlayer::RemotePlayer(const PlayerId& _id, TeamColor _team,
+			   const char* _name, const char* _email,
+			   const PlayerType _type) :
+  Player(_id, _team, _name, _email, _type)
 {
   numShots = World::getWorld()->getMaxShots();
   shots = new RemoteShotPath*[numShots];
@@ -76,13 +76,13 @@ ShotPath*		RemotePlayer::getShot(int index) const
 }
 
 bool			RemotePlayer::doEndShot(
-				int id, bool isHit, float* pos)
+				int ident, bool isHit, float* pos)
 {
-  const int index = id & 255;
-  const int salt = (id >> 8) & 127;
+  const int index = ident & 255;
+  const int salt = (ident >> 8) & 127;
 
   // special id used in some messages (and really shouldn't be sent here)
-  if (id == -1)
+  if (ident == -1)
     return false;
 
   // ignore bogus shots (those with a bad index or for shots that don't exist)

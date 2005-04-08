@@ -53,33 +53,34 @@ void			HUDDialog::setFocus(HUDuiControl* _focus)
   focus = _focus;
 }
 
-void			HUDDialog::initNavigation(std::vector<HUDuiControl*> &list, int start, int end)
+void HUDDialog::initNavigation(std::vector<HUDuiControl*> &listHUD,
+			       int start, int end)
 {
   int i;
-  const int count = list.size();
+  const int count = listHUD.size();
 
   for (i = 0; i < start; i++) {
-    list[i]->setNext(list[i]);
-    list[i]->setPrev(list[i]);
+    listHUD[i]->setNext(listHUD[i]);
+    listHUD[i]->setPrev(listHUD[i]);
   }
 
   if (start < end) {
-    list[start]->setNext(list[start+1]);
-    list[start]->setPrev(list[end]);
+    listHUD[start]->setNext(listHUD[start+1]);
+    listHUD[start]->setPrev(listHUD[end]);
     for (i = start+1; i < end; i++) {
-	list[i]->setNext(list[i+1]);
-	list[i]->setPrev(list[i-1]);
+	listHUD[i]->setNext(listHUD[i+1]);
+	listHUD[i]->setPrev(listHUD[i-1]);
     }
-    list[end]->setNext(list[start]);
-    list[end]->setPrev(list[end-1]);
+    listHUD[end]->setNext(listHUD[start]);
+    listHUD[end]->setPrev(listHUD[end-1]);
   }
 
   for (i = end+1; i < count; i++) {
-    list[i]->setNext(list[i]);
-    list[i]->setPrev(list[i]);
+    listHUD[i]->setNext(listHUD[i]);
+    listHUD[i]->setPrev(listHUD[i]);
   }
 
-  setFocus(list[start]);
+  setFocus(listHUD[start]);
 }
 
 

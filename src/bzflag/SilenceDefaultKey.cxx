@@ -102,40 +102,40 @@ bool			SilenceDefaultKey::keyPress(const BzfKeyEvent& key)
 	if (!isInList) {
 	  // exists and not in silence list
 	  silencePlayers.push_back(name);
-	  std::string message = "Silenced ";
-	  message += (name);
-	  addMessage(NULL, message);
+	  std::string silenceMessage = "Silenced ";
+	  silenceMessage += (name);
+	  addMessage(NULL, silenceMessage);
 	} else {
 	  // exists and in list --> remove from list
 	  silencePlayers.erase(silencePlayers.begin() + inListPos);
-	  std::string message = "Unsilenced ";
-	  message += (name);
-	  addMessage(NULL, message);
+	  std::string silenceMessage = "Unsilenced ";
+	  silenceMessage += (name);
+	  addMessage(NULL, silenceMessage);
 	}
       } else {
 	// person does not exist, but may be in silence list
 	if (isInList) {
 	  // does not exist but is in list --> remove
 	  silencePlayers.erase(silencePlayers.begin() + inListPos);
-	  std::string message = "Unsilenced ";
-	  message += (name);
+	  std::string silenceMessage = "Unsilenced ";
+	  silenceMessage += (name);
 	  if (strcmp (name, "*") == 0) {
 	    // to make msg fancier
-	    message = "Unblocked Msgs";
+	    silenceMessage = "Unblocked Msgs";
 	  }
-	  addMessage(NULL, message);
+	  addMessage(NULL, silenceMessage);
 	} else {
 	  // does not exist and not in list -- duh
 	  if (name != NULL) {
 	    if (strcmp (name,"*") == 0) {
 	      // check for * case
 	      silencePlayers.push_back(name);
-	      std::string message = "Silenced All Msgs";
-	      addMessage(NULL, message);
+	      std::string silenceMessage = "Silenced All Msgs";
+	      addMessage(NULL, silenceMessage);
 	    } else {
-	      std::string message = name;
-	      message += (" Does not exist");
-	      addMessage(NULL, message);
+	      std::string silenceMessage = name;
+	      silenceMessage += (" Does not exist");
+	      addMessage(NULL, silenceMessage);
 	    }
 	  }
 	}

@@ -45,7 +45,7 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
 {
   // add controls
   std::vector<std::string>* options;
-  std::vector<HUDuiControl*>& list  = getControls();
+  std::vector<HUDuiControl*>& listHUD  = getControls();
   HUDuiList* option;
 
   // cache font face id
@@ -54,7 +54,7 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
   HUDuiLabel* label = new HUDuiLabel;
   label->setFontFace(fontFace);
   label->setString("Display Settings");
-  list.push_back(label);
+  listHUD.push_back(label);
 
   option = new HUDuiList;
   option->setFontFace(fontFace);
@@ -64,7 +64,7 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
   options->push_back(std::string("Off"));
   options->push_back(std::string("On"));
   option->update();
-  list.push_back(option);
+  listHUD.push_back(option);
 
   option = new HUDuiList;
   option->setFontFace(fontFace);
@@ -74,7 +74,7 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
   options->push_back(std::string("Off"));
   options->push_back(std::string("On"));
   option->update();
-  list.push_back(option);
+  listHUD.push_back(option);
 
   option = new HUDuiList;
   option->setFontFace(fontFace);
@@ -84,7 +84,7 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
   options->push_back(std::string("Off"));
   options->push_back(std::string("On"));
   option->update();
-  list.push_back(option);
+  listHUD.push_back(option);
 
   option = new HUDuiList;
   option->setFontFace(fontFace);
@@ -95,7 +95,7 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
   options->push_back(std::string("Fast"));
   options->push_back(std::string("Best"));
   option->update();
-  list.push_back(option);
+  listHUD.push_back(option);
 
   option = new HUDuiList;
   option->setFontFace(fontFace);
@@ -110,7 +110,7 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
   options->push_back(std::string("Nearest Mipmap Linear"));
   options->push_back(std::string("Linear Mipmap Linear"));
   option->update();
-  list.push_back(option);
+  listHUD.push_back(option);
 
   option = new HUDuiList;
   option->setFontFace(fontFace);
@@ -122,7 +122,7 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
   options->push_back(std::string("High"));
   options->push_back(std::string("Experimental"));
   option->update();
-  list.push_back(option);
+  listHUD.push_back(option);
 
   option = new HUDuiList;
   option->setFontFace(fontFace);
@@ -132,7 +132,7 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
   options->push_back(std::string("Off"));
   options->push_back(std::string("On"));
   option->update();
-  list.push_back(option);
+  listHUD.push_back(option);
 
   option = new HUDuiList;
   option->setFontFace(fontFace);
@@ -148,7 +148,7 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
     options->push_back(std::string("On"));
   }
   option->update();
-  list.push_back(option);
+  listHUD.push_back(option);
 
 #if !defined(DEBUG_RENDERING)
   if (debugLevel > 0) {
@@ -161,7 +161,7 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
     options->push_back(std::string("Off"));
     options->push_back(std::string("On"));
     option->update();
-    list.push_back(option);
+    listHUD.push_back(option);
 
     option = new HUDuiList;
     option->setFontFace(fontFace);
@@ -171,7 +171,7 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
     options->push_back(std::string("Off"));
     options->push_back(std::string("On"));
     option->update();
-    list.push_back(option);
+    listHUD.push_back(option);
 
     option = new HUDuiList;
     option->setFontFace(fontFace);
@@ -181,7 +181,7 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
     options->push_back(std::string("Off"));
     options->push_back(std::string("On"));
     option->update();
-    list.push_back(option);
+    listHUD.push_back(option);
 
     option = new HUDuiList;
     option->setFontFace(fontFace);
@@ -191,7 +191,7 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
     options->push_back(std::string("Off"));
     options->push_back(std::string("On"));
     option->update();
-    list.push_back(option);
+    listHUD.push_back(option);
 
     option = new HUDuiList;
     option->setFontFace(fontFace);
@@ -201,7 +201,7 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
     options->push_back(std::string("Off"));
     options->push_back(std::string("On"));
     option->update();
-    list.push_back(option);
+    listHUD.push_back(option);
 #if !defined(DEBUG_RENDERING)
   }
 #endif
@@ -218,7 +218,7 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
     options->push_back(std::string("Unavailable"));
   }
   option->update();
-  list.push_back(option);
+  listHUD.push_back(option);
 
   BzfDisplay* display = getDisplay();
   int numFormats = display->getNumResolutions();
@@ -228,10 +228,10 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
     videoFormat = label = new HUDuiLabel;
     label->setFontFace(fontFace);
     label->setLabel("Change Video Format");
-    list.push_back(label);
+    listHUD.push_back(label);
   }
 
-  initNavigation(list, 1,list.size()-1);
+  initNavigation(listHUD, 1,listHUD.size()-1);
 }
 
 DisplayMenu::~DisplayMenu()
@@ -241,43 +241,43 @@ DisplayMenu::~DisplayMenu()
 
 void			DisplayMenu::execute()
 {
-  HUDuiControl* focus = HUDui::getFocus();
-  if (focus == videoFormat) {
+  HUDuiControl* _focus = HUDui::getFocus();
+  if (_focus == videoFormat) {
     if (!formatMenu)
       formatMenu = new FormatMenu;
     HUDDialogStack::get()->push(formatMenu);
   }
 }
 
-void			DisplayMenu::resize(int width, int height)
+void			DisplayMenu::resize(int _width, int _height)
 {
-  HUDDialog::resize(width, height);
+  HUDDialog::resize(_width, _height);
   int i;
 
   // use a big font for title, smaller font for the rest
-  const float titleFontSize = (float)height / 15.0f;
-  const float fontSize = (float)height / 45.0f;
+  const float titleFontSize = (float)_height / 15.0f;
+  const float fontSize = (float)_height / 45.0f;
   FontManager &fm = FontManager::instance();
   int fontFace = MainMenu::getFontFace();
 
   // reposition title
-  std::vector<HUDuiControl*>& list = getControls();
-  HUDuiLabel* title = (HUDuiLabel*)list[0];
+  std::vector<HUDuiControl*>& listHUD = getControls();
+  HUDuiLabel* title = (HUDuiLabel*)listHUD[0];
   title->setFontSize(titleFontSize);
   const float titleWidth = fm.getStrLength(fontFace, titleFontSize, title->getString());
   const float titleHeight = fm.getStrHeight(fontFace, titleFontSize, " ");
-  float x = 0.5f * ((float)width - titleWidth);
-  float y = (float)height - titleHeight;
+  float x = 0.5f * ((float)_width - titleWidth);
+  float y = (float)_height - titleHeight;
   title->setPosition(x, y);
 
   // reposition options
-  x = 0.5f * ((float)width);
+  x = 0.5f * ((float)_width);
   y -= 0.6f * titleHeight;
   const float h = fm.getStrHeight(fontFace, fontSize, " ");
-  const int count = list.size();
+  const int count = listHUD.size();
   for (i = 1; i < count; i++) {
-    list[i]->setFontSize(fontSize);
-    list[i]->setPosition(x, y);
+    listHUD[i]->setFontSize(fontSize);
+    listHUD[i]->setPosition(x, y);
     y -= 1.0f * h;
   }
 
@@ -286,30 +286,32 @@ void			DisplayMenu::resize(int width, int height)
   SceneRenderer* renderer = getSceneRenderer();
   if (renderer) {
     TextureManager& tm = TextureManager::instance();
-    ((HUDuiList*)list[i++])->setIndex(BZDB.isTrue("dither"));
-    ((HUDuiList*)list[i++])->setIndex(BZDB.isTrue("blend"));
-    ((HUDuiList*)list[i++])->setIndex(BZDB.isTrue("smooth"));
+    ((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("dither"));
+    ((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("blend"));
+    ((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("smooth"));
     if (BZDBCache::lighting) {
       if (BZDB.isTrue("tesselation")) {
-	((HUDuiList*)list[i++])->setIndex(2);
+	((HUDuiList*)listHUD[i++])->setIndex(2);
       } else {
-	((HUDuiList*)list[i++])->setIndex(1);
+	((HUDuiList*)listHUD[i++])->setIndex(1);
       }
     } else {
-      ((HUDuiList*)list[i++])->setIndex(0);
+      ((HUDuiList*)listHUD[i++])->setIndex(0);
     }
-    ((HUDuiList*)list[i++])->setIndex(tm.getMaxFilter());
-    ((HUDuiList*)list[i++])->setIndex(renderer->useQuality());
-    ((HUDuiList*)list[i++])->setIndex(BZDB.isTrue("shadows"));
-    ((HUDuiList*)list[i++])->setIndex(BZDBCache::zbuffer);
+    ((HUDuiList*)listHUD[i++])->setIndex(tm.getMaxFilter());
+    ((HUDuiList*)listHUD[i++])->setIndex(renderer->useQuality());
+    ((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("shadows"));
+    ((HUDuiList*)listHUD[i++])->setIndex(BZDBCache::zbuffer);
 #if !defined(DEBUG_RENDERING)
     if (debugLevel > 0) {
 #endif
-      ((HUDuiList*)list[i++])->setIndex(renderer->useHiddenLine() ? 1 : 0);
-      ((HUDuiList*)list[i++])->setIndex(renderer->useWireframe() ? 1 : 0);
-      ((HUDuiList*)list[i++])->setIndex(renderer->useDepthComplexity() ? 1 : 0);
-      ((HUDuiList*)list[i++])->setIndex(BZDBCache::showCullingGrid ? 1 : 0);
-      ((HUDuiList*)list[i++])->setIndex(BZDBCache::showCollisionGrid ? 1 : 0);
+      ((HUDuiList*)listHUD[i++])->setIndex(renderer->useHiddenLine() ? 1 : 0);
+      ((HUDuiList*)listHUD[i++])->setIndex(renderer->useWireframe() ? 1 : 0);
+      ((HUDuiList*)listHUD[i++])->setIndex(renderer->useDepthComplexity() ? 1
+					   : 0);
+      ((HUDuiList*)listHUD[i++])->setIndex(BZDBCache::showCullingGrid ? 1 : 0);
+      ((HUDuiList*)listHUD[i++])->setIndex(BZDBCache::showCollisionGrid ? 1
+					   : 0);
 #if !defined(DEBUG_RENDERING)
     }
 #endif
@@ -318,7 +320,7 @@ void			DisplayMenu::resize(int width, int height)
   // brightness
   BzfWindow* window = getMainWindow()->getWindow();
   if (window->hasGammaControl())
-    ((HUDuiList*)list[i])->setIndex(gammaToIndex(window->getGamma()));
+    ((HUDuiList*)listHUD[i])->setIndex(gammaToIndex(window->getGamma()));
   i++;
 
 }

@@ -142,7 +142,7 @@ void ControlPanelMessage::breakLines(float maxLength, int fontFace, float fontSi
 //
 int			ControlPanel::messagesOffset = 0;
 
-ControlPanel::ControlPanel(MainWindow& _mainWindow, SceneRenderer& renderer) :
+ControlPanel::ControlPanel(MainWindow& _mainWindow, SceneRenderer& _renderer) :
 				tabsOnRight(true),
 				tabs(NULL),
 				totalTabWidth(0),
@@ -151,7 +151,7 @@ ControlPanel::ControlPanel(MainWindow& _mainWindow, SceneRenderer& renderer) :
 				numBuffers(2),
 				changedMessage(0),
 				radarRenderer(NULL),
-				renderer(&renderer),
+				renderer(&_renderer),
 				fontFace(0),
 				du(0),
 				dv(0),
@@ -231,7 +231,7 @@ void			ControlPanel::setControlColor(const GLfloat *color)
     memset(teamColor, 0, 3 * sizeof(float));
 }
 
-void			ControlPanel::render(SceneRenderer& renderer)
+void			ControlPanel::render(SceneRenderer& _renderer)
 {
   if (!BZDB.isTrue("displayConsole")) {
     // always draw the console if its fully opaque
@@ -244,7 +244,7 @@ void			ControlPanel::render(SceneRenderer& renderer)
   if (!resized) resize();
 
   // optimization for software rendering folks
-  if (!changedMessage && renderer.getPanelOpacity() == 1.0f) {
+  if (!changedMessage && _renderer.getPanelOpacity() == 1.0f) {
     return;
   }
 
@@ -271,7 +271,8 @@ void			ControlPanel::render(SceneRenderer& renderer)
   }
   float fx = messageAreaPixels[0] + margin;
   float fy = messageAreaPixels[1] + margin + 1.0f;
-  int   ay = (renderer.getPanelOpacity() == 1.0f || !showTabs) ? 0 : int(lineHeight + 4);
+  int   ay = (_renderer.getPanelOpacity() == 1.0f || !showTabs) ? 0
+    : int(lineHeight + 4);
 
   glScissor(x + messageAreaPixels[0] - 1,
       y + messageAreaPixels[1],
@@ -279,13 +280,13 @@ void			ControlPanel::render(SceneRenderer& renderer)
       messageAreaPixels[3] + ay);
   OpenGLGState::resetState();
 
-  if (renderer.getPanelOpacity() > 0.0f) {
+  if (_renderer.getPanelOpacity() > 0.0f) {
     // nice blended messages background
-    if (BZDBCache::blend && renderer.getPanelOpacity() < 1.0f)
+    if (BZDBCache::blend && _renderer.getPanelOpacity() < 1.0f)
       glEnable(GL_BLEND);
 
     // clear the background
-    glColor4f(0.0f, 0.0f, 0.0f, renderer.getPanelOpacity());
+    glColor4f(0.0f, 0.0f, 0.0f, _renderer.getPanelOpacity());
     glRecti(messageAreaPixels[0] - 1, // clear an extra pixel column to simplify fuzzy float stuff later
 	    messageAreaPixels[1],
 	    messageAreaPixels[0] + messageAreaPixels[2],
@@ -298,9 +299,9 @@ void			ControlPanel::render(SceneRenderer& renderer)
 
 	// current mode is given a dark background to match the control panel
 	if (messageMode == MessageModes(tab)) {
-	  glColor4f(0.0f, 0.0f, 0.0f, renderer.getPanelOpacity());
+	  glColor4f(0.0f, 0.0f, 0.0f, _renderer.getPanelOpacity());
 	} else {
-	  glColor4f(0.10f, 0.10f, 0.10f, renderer.getPanelOpacity());
+	  glColor4f(0.10f, 0.10f, 0.10f, _renderer.getPanelOpacity());
 	}
 
 	if (tabsOnRight) {
@@ -320,7 +321,7 @@ void			ControlPanel::render(SceneRenderer& renderer)
       } // end iteration over tabs
     }
 
-    if (BZDBCache::blend && renderer.getPanelOpacity() < 1.0f)
+    if (BZDBCache::blend && _renderer.getPanelOpacity() < 1.0f)
       glDisable(GL_BLEND);
   }
 
@@ -738,14 +739,14 @@ void			ControlPanel::addMessage(const std::string& line,
   ControlPanelMessage item(line);
   item.breakLines(messageAreaPixels[2] - 2 * margin, fontFace, fontSize);
 
-  int maxScrollPages = BZDB.evalInt("scrollPages");
-  if (maxScrollPages <= 0) {
-    maxScrollPages = atoi(BZDB.getDefault("scrollPages").c_str());
-    BZDB.setInt("scrollPages", maxScrollPages);
+  int _maxScrollPages = BZDB.evalInt("scrollPages");
+  if (_maxScrollPages <= 0) {
+    _maxScrollPages = atoi(BZDB.getDefault("scrollPages").c_str());
+    BZDB.setInt("scrollPages", _maxScrollPages);
   }
 
   // Add to "All" tab
-  if ((int)messages[MessageAll].size() < maxLines * maxScrollPages) {
+  if ((int)messages[MessageAll].size() < maxLines * _maxScrollPages) {
     // not full yet so just append it
     messages[MessageAll].push_back(item);
   } else {
@@ -756,7 +757,7 @@ void			ControlPanel::addMessage(const std::string& line,
 
   // Add to other tab
   if (mode >= MessageChat && mode < MessageModeCount) {
-    if ((int)messages[mode].size() < maxLines * maxScrollPages) {
+    if ((int)messages[mode].size() < maxLines * _maxScrollPages) {
       // not full yet so just append it
       messages[mode].push_back(item);
     } else {

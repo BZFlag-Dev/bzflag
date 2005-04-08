@@ -46,44 +46,44 @@ OptionsMenu::OptionsMenu() : guiOptionsMenu(NULL), effectsMenu(NULL),
   int fontFace = MainMenu::getFontFace();
 
   // add controls
-  std::vector<HUDuiControl*>& list = getControls();
+  std::vector<HUDuiControl*>& listHUD = getControls();
   HUDuiList* option;
   std::vector<std::string>* options;
 
   HUDuiLabel* label = new HUDuiLabel;
   label->setFontFace(fontFace);
   label->setString("Options");
-  list.push_back(label);
+  listHUD.push_back(label);
 
   inputSetting = label = new HUDuiLabel;
   label->setFontFace(fontFace);
   label->setLabel("Input Settings");
-  list.push_back(label);
+  listHUD.push_back(label);
 
   audioSetting = label = new HUDuiLabel;
   label->setFontFace(fontFace);
   label->setLabel("Audio Settings");
-  list.push_back(label);
+  listHUD.push_back(label);
 
   displaySetting = label = new HUDuiLabel;
   label->setFontFace(fontFace);
   label->setLabel("Display Settings");
-  list.push_back(label);
+  listHUD.push_back(label);
 
   guiOptions = label = new HUDuiLabel;
   label->setFontFace(fontFace);
   label->setLabel("GUI Settings");
-  list.push_back(label);
+  listHUD.push_back(label);
 
   effectsOptions = label = new HUDuiLabel;
   label->setFontFace(fontFace);
   label->setLabel("Effects Settings");
-  list.push_back(label);
+  listHUD.push_back(label);
 
   cacheOptions = label = new HUDuiLabel;
   label->setFontFace(fontFace);
   label->setLabel("Cache Settings");
-  list.push_back(label);
+  listHUD.push_back(label);
 
   option = new HUDuiList;
   option->setFontFace(fontFace);
@@ -94,7 +94,7 @@ OptionsMenu::OptionsMenu() : guiOptionsMenu(NULL), effectsMenu(NULL),
   options->push_back(std::string("Username only"));
   options->push_back(std::string("Username and password"));
   option->update();
-  list.push_back(option);
+  listHUD.push_back(option);
 
   option = new HUDuiList;
   option->setFontFace(fontFace);
@@ -104,14 +104,14 @@ OptionsMenu::OptionsMenu() : guiOptionsMenu(NULL), effectsMenu(NULL),
   options->push_back(std::string("Off"));
   options->push_back(std::string("On"));
   option->update();
-  list.push_back(option);
+  listHUD.push_back(option);
 
   saveWorld = label = new HUDuiLabel;
   label->setFontFace(fontFace);
   label->setLabel("Save World");
-  list.push_back(label);
+  listHUD.push_back(label);
 
-  initNavigation(list, 1,list.size()-1);
+  initNavigation(listHUD, 1,listHUD.size()-1);
 }
 
 OptionsMenu::~OptionsMenu()
@@ -127,58 +127,58 @@ OptionsMenu::~OptionsMenu()
 
 void OptionsMenu::execute()
 {
-  HUDuiControl* focus = HUDui::getFocus();
-  if (focus == guiOptions) {
+  HUDuiControl* _focus = HUDui::getFocus();
+  if (_focus == guiOptions) {
     if (!guiOptionsMenu) guiOptionsMenu = new GUIOptionsMenu;
     HUDDialogStack::get()->push(guiOptionsMenu);
-  } else if (focus == effectsOptions) {
+  } else if (_focus == effectsOptions) {
     if (!effectsMenu) effectsMenu = new EffectsMenu;
     HUDDialogStack::get()->push(effectsMenu);
-  } else if (focus == cacheOptions) {
+  } else if (_focus == cacheOptions) {
     if (!cacheMenu) cacheMenu = new CacheMenu;
     HUDDialogStack::get()->push(cacheMenu);
-  } else if (focus == saveWorld) {
+  } else if (_focus == saveWorld) {
     if (!saveWorldMenu) saveWorldMenu = new SaveWorldMenu;
     HUDDialogStack::get()->push(saveWorldMenu);
-  } else if (focus == inputSetting) {
+  } else if (_focus == inputSetting) {
     if (!inputMenu) inputMenu = new InputMenu;
     HUDDialogStack::get()->push(inputMenu);
-  } else if (focus == audioSetting) {
+  } else if (_focus == audioSetting) {
     if (!audioMenu) audioMenu = new AudioMenu;
     HUDDialogStack::get()->push(audioMenu);
-  } else if (focus == displaySetting) {
+  } else if (_focus == displaySetting) {
     if (!displayMenu) displayMenu = new DisplayMenu;
     HUDDialogStack::get()->push(displayMenu);
   }
 }
 
-void OptionsMenu::resize(int width, int height)
+void OptionsMenu::resize(int _width, int _height)
 {
   int i;
-  HUDDialog::resize(width, height);
+  HUDDialog::resize(_width, _height);
 
   // use a big font for title, smaller font for the rest
-  const float titleFontSize = (float)height / 15.0f;
-  const float fontSize = (float)height / 45.0f;
+  const float titleFontSize = (float)_height / 15.0f;
+  const float fontSize = (float)_height / 45.0f;
   FontManager &fm = FontManager::instance();
 
   // reposition title
-  std::vector<HUDuiControl*>& list = getControls();
-  HUDuiLabel* title = (HUDuiLabel*)list[0];
+  std::vector<HUDuiControl*>& listHUD = getControls();
+  HUDuiLabel* title = (HUDuiLabel*)listHUD[0];
   title->setFontSize(titleFontSize);
   const float titleWidth = fm.getStrLength(MainMenu::getFontFace(), titleFontSize, title->getString());
   const float titleHeight = fm.getStrHeight(MainMenu::getFontFace(), titleFontSize, " ");
-  float x = 0.5f * ((float)width - titleWidth);
-  float y = (float)height - titleHeight;
+  float x = 0.5f * ((float)_width - titleWidth);
+  float y = (float)_height - titleHeight;
   title->setPosition(x, y);
 
   // reposition options in two columns
-  x = 0.5f * (float)width;
+  x = 0.5f * (float)_width;
   y -= 0.6f * titleHeight;
-  const int count = list.size();
+  const int count = listHUD.size();
   const float h = fm.getStrHeight(MainMenu::getFontFace(), fontSize, " ");
   for (i = 1; i < count; i++) {
-    HUDuiControl *ctl = list[i];
+    HUDuiControl *ctl = listHUD[i];
     ctl->setFontSize(fontSize);
     ctl->setPosition(x, y);
     if ((i == 6) || (i == 8)) {
@@ -189,29 +189,27 @@ void OptionsMenu::resize(int width, int height)
   }
 
   // load current settings
-  {
-    int i = 7;
+  i = 7;
 
-    ((HUDuiList*)list[i++])->setIndex((int)BZDB.eval("saveIdentity"));
+    ((HUDuiList*)listHUD[i++])->setIndex((int)BZDB.eval("saveIdentity"));
 
     // mind the ++i !
     const StartupInfo* info = getStartupInfo();
-    ((HUDuiList*)list[i++])->setIndex(info->useUDPconnection ? 1 : 0);
-  }
+    ((HUDuiList*)listHUD[i++])->setIndex(info->useUDPconnection ? 1 : 0);
 }
 
 void OptionsMenu::callback(HUDuiControl* w, void* data)
 {
-  HUDuiList* list = (HUDuiList*)w;
+  HUDuiList* listHUD = (HUDuiList*)w;
 
   switch (((const char*)data)[0]) {
     case 'U': {
       StartupInfo* info = getStartupInfo();
-      info->useUDPconnection = (list->getIndex() != 0);
+      info->useUDPconnection = (listHUD->getIndex() != 0);
       break;
     }
     case 'i': { // save identity
-	BZDB.setInt("saveIdentity", list->getIndex());
+	BZDB.setInt("saveIdentity", listHUD->getIndex());
 	break;
     }
   }

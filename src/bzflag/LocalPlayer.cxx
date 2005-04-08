@@ -35,9 +35,9 @@
 
 LocalPlayer*		LocalPlayer::mainPlayer = NULL;
 
-LocalPlayer::LocalPlayer(const PlayerId& id,
-			 const char* name, const char* email) :
-  BaseLocalPlayer(id, name, email),
+LocalPlayer::LocalPlayer(const PlayerId& _id,
+			 const char* name, const char* _email) :
+  BaseLocalPlayer(_id, name, _email),
   gettingSound(true),
   server(ServerLink::getServer()),
   location(Dead),
@@ -451,11 +451,11 @@ void			LocalPlayer::doUpdateMotion(float dt)
       stuckFrameCount = 0;
       // we are using a maximum value on time for frame to avoid lagging problem
       setDesiredSpeed(0.25f);
-      float deltaTime = dt > 0.1f ? 0.1f : dt;
+      float delta = dt > 0.1f ? 0.1f : dt;
       float normalStuck[3];
       obstacle->getNormal(newPos, normalStuck);
       // use all the given speed to exit
-      float movementMax = desiredSpeed * deltaTime;
+      float movementMax = desiredSpeed * delta;
 
       newVelocity[0] = movementMax * normalStuck[0];
       newVelocity[1] = movementMax * normalStuck[1];
@@ -470,7 +470,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
       newPos[1] += newVelocity[1];
       newPos[2] += newVelocity[2];
       // compute time for all other kind of movements
-      timeStep -= deltaTime;
+      timeStep -= delta;
     }
   }
 
@@ -690,11 +690,11 @@ void			LocalPlayer::doUpdateMotion(float dt)
     } else {
       // teleport
       const int source = World::getWorld()->getTeleporter(teleporter, face);
-      int target = World::getWorld()->getTeleportTarget(source);
+      int targetTele = World::getWorld()->getTeleportTarget(source);
 
       int outFace;
       const Teleporter* outPort =
-	World::getWorld()->getTeleporter(target, outFace);
+	World::getWorld()->getTeleporter(targetTele, outFace);
       teleporter->getPointWRT(*outPort, face, outFace,
 			      newPos, newVelocity, newAzimuth,
 			      newPos, newVelocity, &newAzimuth);
@@ -710,8 +710,8 @@ void			LocalPlayer::doUpdateMotion(float dt)
 	newAzimuth = oldAzimuth;
       } else {
 	// save teleport info
-	setTeleport(lastTime, source, target);
-	server->sendTeleport(source, target);
+	setTeleport(lastTime, source, targetTele);
+	server->sendTeleport(source, targetTele);
 	if (gettingSound) {
 	  playLocalSound(SFX_TELEPORT);
 	}
@@ -723,11 +723,11 @@ void			LocalPlayer::doUpdateMotion(float dt)
   setPhysicsDriver(-1);
   if ((lastObstacle != NULL) &&
       (lastObstacle->getType() == MeshFace::getClassName())) {
-    const MeshFace* face = (const MeshFace*) lastObstacle;
-    int driverId = face->getPhysicsDriver();
-    const PhysicsDriver* phydrv = PHYDRVMGR.getDriver(driverId);
-    if (phydrv != NULL) {
-      setPhysicsDriver(driverId);
+    const MeshFace* meshFace = (const MeshFace*) lastObstacle;
+    int driverIdent = meshFace->getPhysicsDriver();
+    const PhysicsDriver* phydriver = PHYDRVMGR.getDriver(driverIdent);
+    if (phydriver != NULL) {
+      setPhysicsDriver(driverIdent);
     }
   }
 
@@ -750,16 +750,14 @@ void			LocalPlayer::doUpdateMotion(float dt)
     setLandingSpeed(oldVelocity[2]);
   }
   if (gettingSound) {
-    const PhysicsDriver* phydrv = PHYDRVMGR.getDriver(getPhysicsDriver());
-    if ((phydrv != NULL) && (phydrv->getLinearVel()[2] > 0.0f)) {
+    const PhysicsDriver* phydriver = PHYDRVMGR.getDriver(getPhysicsDriver());
+    if ((phydriver != NULL) && (phydriver->getLinearVel()[2] > 0.0f)) {
       playLocalSound(SFX_BOUNCE);
       addRemoteSound(PlayerState::BounceSound);
-    }
-    else if (justLanded && !entryDrop) {
+    } else if (justLanded && !entryDrop) {
       playLocalSound(SFX_LAND);
-    }
-    else if ((location == OnGround) &&
-	     (oldPosition[2] == 0.0f) && (newPos[2] < 0.f)) {
+    } else if ((location == OnGround) &&
+	       (oldPosition[2] == 0.0f) && (newPos[2] < 0.f)) {
       playLocalSound(SFX_BURROW);
     }
   }
@@ -1069,9 +1067,9 @@ void			LocalPlayer::restart(const float* pos, float _azimuth)
   setStatus(getStatus() | short(PlayerState::Alive));
 }
 
-void			LocalPlayer::setTeam(TeamColor team)
+void			LocalPlayer::setTeam(TeamColor _team)
 {
-  changeTeam(team);
+  changeTeam(_team);
 }
 
 void			LocalPlayer::setDesiredSpeed(float fracOfMaxSpeed)
@@ -1285,13 +1283,13 @@ void LocalPlayer::forceReload(float time)
 }
 
 
-bool			LocalPlayer::doEndShot(int id, bool isHit, float* pos)
+bool LocalPlayer::doEndShot(int ident, bool isHit, float* pos)
 {
-  const int index = id & 255;
-  const int salt = (id >> 8) & 127;
+  const int index = ident & 255;
+  const int slt   = (ident >> 8) & 127;
 
   // special id used in some messages (and really shouldn't be sent here)
-  if (id == -1)
+  if (ident == -1)
     return false;
 
   // ignore bogus shots (those with a bad index or for shots that don't exist)
@@ -1306,7 +1304,7 @@ bool			LocalPlayer::doEndShot(int id, bool isHit, float* pos)
   // it's possible for an old MsgShotEnd to arrive after we've started a
   // new shot.  that's where the salt comes in.  it changes for each shot
   // so we can identify an old shot from a new one.
-  if (salt != ((shots[index]->getShotId() >> 8) & 127))
+  if (slt != ((shots[index]->getShotId() >> 8) & 127))
     return false;
 
   // keep shot statistics
@@ -1418,7 +1416,7 @@ void			LocalPlayer::explodeTank()
 {
   if (location == Dead || location == Exploding) return;
   float gravity      = BZDBCache::gravity;
-  float explodeTime  = BZDB.eval(StateDatabase::BZDB_EXPLODETIME);
+  float explodeTim   = BZDB.eval(StateDatabase::BZDB_EXPLODETIME);
   // Limiting max height increment to this value (the old default value)
   const float zMax  = 49.0f;
   setExplode(TimeKeeper::getTick());
@@ -1432,7 +1430,7 @@ void			LocalPlayer::explodeTank()
     //   to have a simmetric path (ending at same height as starting)
     //   to reach the acme of parabola, under the max height established
     // take the less
-    newVelocity[2] = - 0.5f * gravity * explodeTime;
+    newVelocity[2] = - 0.5f * gravity * explodeTim;
     maxSpeed       = sqrtf(- 2.0f * zMax * gravity);
     if (newVelocity[2] > maxSpeed)
       newVelocity[2] = maxSpeed;
@@ -1610,8 +1608,8 @@ void			LocalPlayer::changeScore(short deltaWins,
 // calculate overall relative score to other players
 int			 LocalPlayer::getHandicapScoreBase() const
 {
-  int wins = 0;
-  int losses = 0;
+  int winners = 0;
+  int loosers = 0;
   const int maxplayers = World::getWorld()->getMaxPlayers();
 
   // compute overall wins and losses in relation to other players
@@ -1620,10 +1618,10 @@ int			 LocalPlayer::getHandicapScoreBase() const
     if ((player == NULL) || (player->getId() == LocalPlayer::getMyTank()->getId())) {
       continue;
     }
-    wins += player->getLocalWins();
-    losses += player->getLocalLosses();
+    winners += player->getLocalWins();
+    loosers += player->getLocalLosses();
   }
-  return losses - wins;
+  return loosers - winners;
 }
 
 float			LocalPlayer::updateHandicap()
