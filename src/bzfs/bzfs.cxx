@@ -1623,14 +1623,34 @@ static void fixTeamCount() {
   }
 }
 
+
+// helper struct and predicates used in autoTeamSelect()
 struct TeamSize {
   TeamColor color;
   int       current;
   int       max;
-  const bool operator<(const TeamSize x) const { return x.current < current; }
+  bool operator < (const TeamSize x) const { return x.current < current; }
 };
 
-static TeamColor teamSelect(TeamColor t, std::vector<TeamSize> teams)
+bool teamFull(const TeamSize &x)  { return x.current == x.max; }
+bool teamEmpty(const TeamSize &x) { return x.current == 0; }
+
+struct teamHasSize
+{
+  int sz;
+  teamHasSize(int sz_) : sz(sz_) {}
+  bool operator()(const TeamSize &x) const { return x.current == sz; }
+};
+
+struct teamHasntSize
+{
+  int sz;
+  teamHasntSize(int sz_) : sz(sz_) {}
+  bool operator()(const TeamSize &x) const { return x.current != sz; }
+};
+
+
+static TeamColor teamSelect(TeamColor t, const std::vector<TeamSize> &teams)
 {
   if (teams.size() == 0)
     return RogueTeam;
@@ -1666,7 +1686,7 @@ static TeamColor autoTeamSelect(TeamColor t)
       && team[RogueTeam].team.size < clOptions->maxTeam[RogueTeam])
     return RogueTeam;
 
-  // If no auto-team, server or client, go back with client choise
+  // If no auto-team, server or client, go back with client choice
   if (!clOptions->autoTeam && t != AutomaticTeam)
     return t;
 
@@ -1682,82 +1702,41 @@ static TeamColor autoTeamSelect(TeamColor t)
   }
 
   // Give rogue if that is the only team
-  if (teams.size() == 0)
+  if (teams.empty())
     return RogueTeam;
 
   // Sort it by current team number
   std::sort(teams.begin(), teams.end());
 
   // all teams are empty, select just one of them
-  if (teams[0].current == 0) {
+  if (teams[0].current == 0)
     return teamSelect(t, teams);
-  }
-
-  std::vector<TeamSize>::iterator it;
 
   int maxTeamSize = teams[0].current;
 
-  // remove teams full
-  it = teams.begin();
-  while (it < teams.end())
-    if (it->current == it->max) {
-      teams.erase(it);
-      it = teams.begin();
+  teams.erase(std::remove_if(teams.begin(), teams.end(), teamFull), teams.end());
+  // no non-full teams? then there must be a free rogue spot
+  if (teams.empty())
+    return RogueTeam;
+
+  std::vector<TeamSize>::iterator it;
+  bool unBalanced = (teams.back().current < maxTeamSize);
+
+  if (unBalanced) {
+    // if you come with a 1-1-x-x try to add a player to these 1 to have team
+    if ((maxTeamSize == 1) && (teams.size() >= 2) && (teams[1].current == 1)) {
+      // remove empty teams
+      teams.erase(std::remove_if(teams.begin(), teams.end(), teamEmpty), teams.end());
     } else {
-      it++;
-    }
-
-  // Looking for unbalanced team
-  bool unBalanced = false;
-  for (it = teams.begin(); it < teams.end(); it++)
-    if (it->current < maxTeamSize) {
-      unBalanced = true;
-      break;
-    }
-
-  // if you come with a 1-1-x-x try to add a player to these 1 to have team
-  // if there are still 2 teams with 1 player select all 1 tank team
-  // to choose from
-  if ((maxTeamSize == 1) && (teams.size() >= 2) && (teams[1].current == 1)) {
-    it = teams.begin();
-    while (it < teams.end())
-      if (it->current) {
-	it++;
-      } else {
-	teams.erase(it);
-	it = teams.begin();
+      // remove biggest teams
+      teams.erase(std::remove_if(teams.begin(), teams.end(), teamHasSize(maxTeamSize)), teams.end());
+      // Search for the lowest existing team and remove uppers. If there
+      // are non empty teams don't start a new team but try to balance the lower
+      if (teams[0].current > 0) {
+	teams.erase(std::remove_if(teams.begin(), teams.end(), teamEmpty), teams.end());
+	const int lowerTeam = teams.back().current;
+	teams.erase(std::remove_if(teams.begin(), teams.end(), teamHasntSize(lowerTeam)), teams.end());
       }
-  } else if (unBalanced) {
-    // remove bigger teams
-    it = teams.begin();
-    while (it < teams.end())
-      if (it->current == maxTeamSize) {
-	teams.erase(it);
-	it = teams.begin();
-      } else {
-	it++;
-      }
-    // Search for the lowest existing team and remove uppers. If there
-    // are non empty non full 2nd team don't start a new team but
-    // try to balance the lower
-    if (teams[0].current) {
-      it = teams.begin();
-      while (it < teams.end())
-	if (it->current) {
-	  it++;
-	} else {
-	  teams.erase(it);
-	  it = teams.begin();
-	}
-      int lowerTeam = teams[teams.size() - 1].current;
-      it = teams.begin();
-      while (it < teams.end())
-	if (it->current == lowerTeam) {
-	  it++;
-	} else {
-	  teams.erase(it);
-	  it = teams.begin();
-	}
     }
   }
   return teamSelect(t, teams);
