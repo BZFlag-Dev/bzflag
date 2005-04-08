@@ -279,11 +279,10 @@ static bool getAndCacheURL(const std::string& url)
     CACHEMGR.addFile(rec, urlData);
     free(urlData);
     result = true;
-  }
-  else {
-    std::string msg = ColorStrings[RedColor] + "failure: ";
-    msg += URLMGR.getErrorString();
-    addMessage(NULL, msg);
+  } else {
+    std::string message = ColorStrings[RedColor] + "failure: ";
+    message += URLMGR.getErrorString();
+    addMessage(NULL, message);
     result = false;
   }
 

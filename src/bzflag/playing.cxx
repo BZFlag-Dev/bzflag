@@ -245,8 +245,8 @@ std::vector<std::string>& getSilenceList()
 // eventually avoiding robots
 void selectNextRecipient (bool forward, bool robotIn)
 {
-  LocalPlayer *myTank = LocalPlayer::getMyTank();
-  const Player *recipient = myTank->getRecipient();
+  LocalPlayer *my = LocalPlayer::getMyTank();
+  const Player *recipient = my->getRecipient();
   int rindex;
   if (!recipient) {
     rindex = - 1;
@@ -275,7 +275,7 @@ void selectNextRecipient (bool forward, bool robotIn)
     if (i == rindex)
       break;
     if (player[i] && (robotIn || player[i]->getPlayerType() == TankPlayer)) {
-      myTank->setRecipient(player[i]);
+      my->setRecipient(player[i]);
       break;
     }
   }
@@ -527,9 +527,9 @@ static void		hangup(int sig)
   serverError = true;
 }
 
-static ServerLink*	lookupServer(const Player* player)
+static ServerLink*	lookupServer(const Player *_player)
 {
-  PlayerId id = player->getId();
+  PlayerId id = _player->getId();
   if (myTank->getId() == id) return serverLink;
 #ifdef ROBOT
   for (int i = 0; i < numRobots; i++)
@@ -982,10 +982,10 @@ static void		doMotion()
 }
 
 
-static void		doEvent(BzfDisplay* display)
+static void		doEvent(BzfDisplay *disply)
 {
   BzfEvent event;
-  if (!display->getEvent(event)) return;
+  if (!disply->getEvent(event)) return;
 
   switch (event.type) {
     case BzfEvent::Quit:
@@ -1020,7 +1020,7 @@ static void		doEvent(BzfDisplay* display)
       // restore the resolution we want if full screen
       if (mainWindow->getFullscreen()) {
 	if (preUnmapFormat != -1) {
-	  display->setResolution(preUnmapFormat);
+	  disply->setResolution(preUnmapFormat);
 	  mainWindow->warpMouse();
 	}
       }
@@ -1055,9 +1055,9 @@ static void		doEvent(BzfDisplay* display)
       // ungrab the mouse if we're running full screen
       if (mainWindow->getFullscreen()) {
 	preUnmapFormat = -1;
-	if (display->getNumResolutions() > 1) {
-	  preUnmapFormat = display->getResolution();
-	  display->setDefaultResolution();
+	if (disply->getNumResolutions() > 1) {
+	  preUnmapFormat = disply->getResolution();
+	  disply->setDefaultResolution();
 	}
       }
 
@@ -1090,30 +1090,30 @@ static void		doEvent(BzfDisplay* display)
   }
 }
 
-void		addMessage(const Player* player, const std::string& msg,
+void		addMessage(const Player *_player, const std::string& msg,
 			   int mode, bool highlight, const char* oldColor)
 {
   std::string fullMessage;
 
   if (BZDB.isTrue("colorful")) {
-    if (player) {
+    if (_player) {
       if (highlight) {
 	if (BZDB.get("killerhighlight") == "1")
 	  fullMessage += ColorStrings[PulsatingColor];
 	else if (BZDB.get("killerhighlight") == "2")
 	  fullMessage += ColorStrings[UnderlineColor];
       }
-      int color = player->getTeam();
+      int color = _player->getTeam();
       if (color < 0 || color > 4) color = 5;
 
       fullMessage += ColorStrings[color];
-      fullMessage += player->getCallSign();
+      fullMessage += _player->getCallSign();
 
       if (highlight)
 	fullMessage += ColorStrings[ResetColor];
 #ifdef BWSUPPORT
       fullMessage += " (";
-      fullMessage += Team::getName(player->getTeam());
+      fullMessage += Team::getName(_player->getTeam());
       fullMessage += ")";
 #endif
       fullMessage += ColorStrings[DefaultColor] + ": ";
@@ -1123,12 +1123,12 @@ void		addMessage(const Player* player, const std::string& msg,
     if (oldColor != NULL)
       fullMessage = oldColor;
 
-    if (player) {
-      fullMessage += player->getCallSign();
+    if (_player) {
+      fullMessage += _player->getCallSign();
 
 #ifdef BWSUPPORT
       fullMessage += " (";
-      fullMessage += Team::getName(player->getTeam());
+      fullMessage += Team::getName(_player->getTeam());
       fullMessage += ")";
 #endif
       fullMessage += ": ";
@@ -1327,9 +1327,10 @@ static Player*		addPlayer(PlayerId id, void* msg, int showMessage)
 
 #ifdef ROBOT
   if (PlayerType(type) == ComputerPlayer)
-    for (int i = 0; i < numRobots; i++)
-      if (robots[i] && !strncmp(robots[i]->getCallSign(), callsign, CallSignLen)) {
-	robots[i]->setTeam(TeamColor(team));
+    for (int j = 0; j < numRobots; j++)
+      if (robots[j] && !strncmp(robots[j]->getCallSign(), callsign,
+				CallSignLen)) {
+	robots[j]->setTeam(TeamColor(team));
 	break;
       }
 #endif
@@ -1363,13 +1364,13 @@ static Player*		addPlayer(PlayerId id, void* msg, int showMessage)
 }
 
 
-static void printIpInfo (const Player* player, const Address& addr,
+static void printIpInfo (const Player *_player, const Address& addr,
                          const std::string note)
 {
-  if (player == NULL) {
+  if (_player == NULL) {
     return;
   }
-  int color = player->getTeam();
+  int color = _player->getTeam();
   if ((color < 0) || (color > 4)) {
     color = 5;
   }
@@ -1377,7 +1378,7 @@ static void printIpInfo (const Player* player, const Address& addr,
   std::string message = ColorStrings[CyanColor]; // default color
   message += "IPINFO: ";
   if (BZDBCache::colorful) message += ColorStrings[color];
-  message += player->getCallSign();
+  message += _player->getCallSign();
   if (BZDBCache::colorful) message += ColorStrings[CyanColor];
   message += "\t from: ";
   if (BZDBCache::colorful) message += ColorStrings[color];
@@ -1411,7 +1412,7 @@ static bool removePlayer (PlayerId id)
   if (!p->getIpAddress(addr)) {
     addMessage(p, "signing off");
   } else {
-    std::string msg = "signing off from ";
+    msg += " from ";
     msg += addr.getDotNotation();
     addMessage(p, msg);
     if (BZDB.evalInt("showips") > 1) {
@@ -1537,11 +1538,11 @@ static bool isUrlCached()
   }
   if (gotFromURL) {
     cleanWorldCache();
-    std::ostream* cacheOut = FILEMGR.createDataOutStream(worldCachePath, true,
-							 true);
-    if (cacheOut != NULL) {
-      cacheOut->write(worldDatabase, readSize);
-      delete cacheOut;
+    std::ostream* cache = FILEMGR.createDataOutStream(worldCachePath, true,
+						      true);
+    if (cache != NULL) {
+      cache->write(worldDatabase, readSize);
+      delete cache;
     } else {
       gotFromURL = false;
       HUDDialogStack::get()->setFailedMessage("Problem writing cache");
@@ -1561,21 +1562,21 @@ static void loadCachedWorld()
   std::streampos size = cachedWorld->tellg();
   unsigned long charSize = std::streamoff(size);
   cachedWorld->seekg(0);
-  char *worldDatabase = new char[charSize];
-  cachedWorld->read(worldDatabase, charSize);
+  char *localWorldDatabase = new char[charSize];
+  cachedWorld->read(localWorldDatabase, charSize);
   delete cachedWorld;
 
   HUDDialogStack::get()->setFailedMessage("Verifying world integrity...");
   drawFrame(0.0f);
   MD5 md5;
-  md5.update((unsigned char *)worldDatabase, charSize);
+  md5.update((unsigned char *)localWorldDatabase, charSize);
   md5.finalize();
   std::string digest = md5.hexdigest();
   if (digest != md5Digest) {
     if (worldBuilder)
       delete worldBuilder;
     worldBuilder = NULL;
-    delete[] worldDatabase;
+    delete[] localWorldDatabase;
     HUDDialogStack::get()->setFailedMessage
       ("Error on md5. Removing offending file.");
     remove(worldCachePath.c_str());
@@ -1586,17 +1587,17 @@ static void loadCachedWorld()
   // make world
   HUDDialogStack::get()->setFailedMessage("Preparing world...");
   drawFrame(0.0f);
-  if (!worldBuilder->unpack(worldDatabase)) {
+  if (!worldBuilder->unpack(localWorldDatabase)) {
     // world didn't make for some reason
     if (worldBuilder)
       delete worldBuilder;
     worldBuilder = NULL;
-    delete[] worldDatabase;
+    delete[] localWorldDatabase;
     HUDDialogStack::get()->setFailedMessage("Error unpacking world database.");
     joiningGame = false;
     return;
   }
-  delete[] worldDatabase;
+  delete[] localWorldDatabase;
 
   // return world
   world = worldBuilder->getWorld();
@@ -1622,10 +1623,10 @@ static void loadCachedWorld()
 static void dumpMissingFlag(char *buf, uint16_t len)
 {
   int i;
-  int numFlags = len/2;
+  int nFlags = len/2;
   std::string flags;
 
-  for (i = 0; i < numFlags; i++) {
+  for (i = 0; i < nFlags; i++) {
     /* We can't use FlagType::unpack() here, since it counts on the
      * flags existing in our flag database.
      */
@@ -1739,10 +1740,10 @@ static void		handleServerMessage(bool human, uint16_t code,
       delete [] hexDigest;
       HUDDialogStack::get()->setFailedMessage("Downloading World...");
       {
-	char msg[MaxPacketLen];
+	char message[MaxPacketLen];
 	// ask for world
-	nboPackUInt(msg, 0);
-	serverLink->send(MsgGetWorld, sizeof(uint32_t), msg);
+	nboPackUInt(message, 0);
+	serverLink->send(MsgGetWorld, sizeof(uint32_t), message);
 	worldPtr = 0;
 	if (cacheOut)
 	  delete cacheOut;
@@ -1757,11 +1758,11 @@ static void		handleServerMessage(bool human, uint16_t code,
       void *buf = nboUnpackUInt(msg, bytesLeft);
       bool last = processWorldChunk(buf, len - 4, bytesLeft);
       if (!last) {
-	char msg[MaxPacketLen];
+	char message[MaxPacketLen];
 	// ask for next chunk
 	worldPtr += len - 4;
-	nboPackUInt(msg, worldPtr);
-	serverLink->send(MsgGetWorld, sizeof(uint32_t), msg);
+	nboPackUInt(message, worldPtr);
+	serverLink->send(MsgGetWorld, sizeof(uint32_t), message);
 	break;
       }
       if (cacheOut)
@@ -1797,23 +1798,22 @@ static void		handleServerMessage(bool human, uint16_t code,
       uint16_t team;
       msg = nboUnpackUByte(msg, id);
       msg = nboUnpackUShort(msg, team);
-      Player* player = lookupPlayer(id);
+      Player* _player = lookupPlayer(id);
 
       // make a message
       std::string msg2;
       if (team == (uint16_t)NoTeam) {
 	// a player won
 	if (player) {
-	  msg2 = player->getCallSign();
+	  msg2 = _player->getCallSign();
 	  msg2 += " (";
-	  msg2 += Team::getName(player->getTeam());
+	  msg2 += Team::getName(_player->getTeam());
 	  msg2 += ")";
 	}
 	else {
 	  msg2 = "[unknown player]";
 	}
-      }
-      else {
+      } else {
 	// a team won
 	msg2 = Team::getName(TeamColor(team));
       }
@@ -2500,11 +2500,12 @@ static void		handleServerMessage(bool human, uint16_t code,
 	    "@" // catch-all for all callsign/server/ports
 	  };
 
-	  for (size_t i = 0; i < countof(passwdKeys); i++) {
-	    if (BZDB.isSet(passwdKeys[i])) {
-	      std::string passwdResponse = "/identify " + BZDB.get(passwdKeys[i]);
+	  for (size_t j = 0; j < countof(passwdKeys); j++) {
+	    if (BZDB.isSet(passwdKeys[j])) {
+	      std::string passwdResponse = "/identify "
+		+ BZDB.get(passwdKeys[j]);
 	      addMessage(0, ("Autoidentifying with password stored for "
-			     + passwdKeys[i]).c_str(), 2, false);
+			     + passwdKeys[j]).c_str(), 2, false);
 	      void *buf = messageMessage;
 	      buf = nboPackUByte(buf, ServerPlayer);
 	      nboPackString(buf, (void*) passwdResponse.c_str(), MessageLen);
@@ -2723,9 +2724,9 @@ static void		handleServerMessage(bool human, uint16_t code,
 	  msg = addr.unpack(msg);
 
 	  int playerIndex = lookupPlayerIndex(playerId);
-	  Player* player = getPlayerByIndex(playerIndex);
-          printIpInfo(player, addr, "(join)");
-          player->setIpAddress(addr); // save for the signoff message
+	  Player *_player = getPlayerByIndex(playerIndex);
+          printIpInfo(_player, addr, "(join)");
+          _player->setIpAddress(addr); // save for the signoff message
 	} // end for loop
       }
       break;
@@ -2922,26 +2923,26 @@ bool			addExplosion(const float* _pos,
   int boom = (int) (bzfrand() * 8.0) + 3;
   while (boom--) {
     // pick a random prototype explosion
-    const int index = (int)(bzfrand() * (float)prototypeExplosions.size());
+    const int idx = (int)(bzfrand() * (float)prototypeExplosions.size());
 
     // make a copy and initialize it
-    BillboardSceneNode* newExplosion = prototypeExplosions[index]->copy();
-    GLfloat pos[3];
-    pos[0] = _pos[0]+(float)(bzfrand()*12.0 - 6.0);
-    pos[1] = _pos[1]+(float)(bzfrand()*12.0 - 6.0);
-    pos[2] = _pos[2]+(float)(bzfrand()*10.0);
-    newExplosion->move(pos);
-    newExplosion->setSize(size);
-    newExplosion->setDuration(duration);
-    newExplosion->setAngle((float)(2.0 * M_PI * bzfrand()));
-    newExplosion->setLightScaling(size / BZDBCache::tankLength);
-    newExplosion->setLightFadeStartTime(0.7f * duration);
+    BillboardSceneNode* newExpl = prototypeExplosions[idx]->copy();
+    GLfloat explPos[3];
+    explPos[0] = _pos[0]+(float)(bzfrand()*12.0 - 6.0);
+    explPos[1] = _pos[1]+(float)(bzfrand()*12.0 - 6.0);
+    explPos[2] = _pos[2]+(float)(bzfrand()*10.0);
+    newExpl->move(explPos);
+    newExpl->setSize(size);
+    newExpl->setDuration(duration);
+    newExpl->setAngle((float)(2.0 * M_PI * bzfrand()));
+    newExpl->setLightScaling(size / BZDBCache::tankLength);
+    newExpl->setLightFadeStartTime(0.7f * duration);
     if (grounded) {
-      newExplosion->setGroundLight(true);
+      newExpl->setGroundLight(true);
     }
 
     // add copy to list of current explosions
-    explosions.push_back(newExplosion);
+    explosions.push_back(newExpl);
   }
 
   return true;
@@ -4775,14 +4776,14 @@ void drawFrame(const float dt)
 	    }
 	  }
 
-	  const bool inCockpit = roaming && !devDriving &&
+	  const bool inCockpt  = roaming && !devDriving &&
 				 (roamView == roamViewFP) &&
 				 (roamTrackWinner == i);
-	  const bool showPlayer = !inCockpit || showTreads;
+	  const bool showPlayer = !inCockpt || showTreads;
 
 	  // add player tank if required
 	  player[i]->addToScene(scene, effectiveTeam,
-				inCockpit, seerView,
+				inCockpt, seerView,
 				showPlayer, showPlayer /*showIDL*/);
 	}
       }
@@ -4796,8 +4797,8 @@ void drawFrame(const float dt)
 	const Obstacle* obs = list[n];
 	const int nodeCount = obs->getInsideSceneNodeCount();
 	SceneNode** nodeList = obs->getInsideSceneNodeList();
-	for (int n = 0; n < nodeCount; n++) {
-	  scene->addDynamicNode(nodeList[n]);
+	for (int o = 0; o < nodeCount; o++) {
+	  scene->addDynamicNode(nodeList[o]);
 	}
       }
     }
@@ -5535,9 +5536,9 @@ static void		playingLoop()
     }
 
     // update servers shots
-    const World *world = World::getWorld();
-    if (world) {
-      world->getWorldWeapons()->updateShots(dt);
+    const World *_world = World::getWorld();
+    if (_world) {
+      _world->getWorldWeapons()->updateShots(dt);
     }
 
     // update track marks  (before any tanks are moved)
