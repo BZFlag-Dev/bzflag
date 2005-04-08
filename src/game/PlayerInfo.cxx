@@ -355,8 +355,8 @@ void PlayerInfo::updateIdleTime() {
   lastupdate = now;
 };
 
-void	PlayerInfo::setReplayState(PlayerReplayState state) {
-  replayState = state;
+void	PlayerInfo::setReplayState(PlayerReplayState _state) {
+  replayState = _state;
 }
 
 PlayerReplayState PlayerInfo::getReplayState()

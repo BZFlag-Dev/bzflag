@@ -200,7 +200,7 @@ void MsgStrings::reset ()
   }
 
   // set default DB entries
-  for (unsigned int i = 0; i < numGlobalDBItems; ++i) {
+  for (i = 0; i < numGlobalDBItems; ++i) {
     assert(globalDBItems[i].name != NULL);
     if (globalDBItems[i].value != NULL) {
       BZDB.set(globalDBItems[i].name, globalDBItems[i].value);

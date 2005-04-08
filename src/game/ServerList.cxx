@@ -113,15 +113,15 @@ void ServerList::readServerList(int index, StartupInfo *info)
 	continue;
       }
       // parse server info
-      char *scan2, *name, *version, *info, *address, *title;
+      char *scan2, *name, *version, *infoServer, *address, *title;
       name = base;
       version = name;
       while (*version && !isspace(*version))  version++;
       while (*version &&  isspace(*version)) *version++ = 0;
-      info = version;
-      while (*info && !isspace(*info))  info++;
-      while (*info &&  isspace(*info)) *info++ = 0;
-      address = info;
+      infoServer = version;
+      while (*infoServer && !isspace(*infoServer))  infoServer++;
+      while (*infoServer &&  isspace(*infoServer)) *infoServer++ = 0;
+      address = infoServer;
       while (*address && !isspace(*address))  address++;
       while (*address &&  isspace(*address)) *address++ = 0;
       title = address;
@@ -138,11 +138,11 @@ void ServerList::readServerList(int index, StartupInfo *info)
 
       // check info
       if (strcmp(version, getServerVersion()) == 0 &&
-	  (int)strlen(info) == PingPacketHexPackedSize &&
+	  (int)strlen(infoServer) == PingPacketHexPackedSize &&
 	  port >= 1 && port <= 65535) {
 	// store info
 	ServerItem serverInfo;
-	serverInfo.ping.unpackHex(info);
+	serverInfo.ping.unpackHex(infoServer);
 	int dot[4] = {127,0,0,1};
 	if (sscanf(address, "%d.%d.%d.%d", dot+0, dot+1, dot+2, dot+3) == 4) {
 	  if (dot[0] >= 0 && dot[0] <= 255 &&
