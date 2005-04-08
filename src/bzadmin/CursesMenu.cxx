@@ -150,15 +150,15 @@ void FilterCMItem::showItem(WINDOW* menuWin, int line, int col, int width,
 			    bool selected) {
   /* print the name of the message type to the left of the center and the
      status to the right, use reverse video if it is selected */
-  std::string text = "Show message type '";
-  text += messageType;
-  text += "':";
+  std::string txt = "Show message type '";
+  txt += messageType;
+  txt += "':";
   wmove(menuWin, line, col);
   if (selected)
     wattron(menuWin, A_REVERSE);
-  for (unsigned int i = 0; i < width / 2 - text.size() - 1; ++i)
+  for (unsigned int i = 0; i < width / 2 - txt.size() - 1; ++i)
     waddstr(menuWin, " ");
-  waddstr(menuWin, text.c_str());
+  waddstr(menuWin, txt.c_str());
   wmove(menuWin, line, col + width / 2 + 1);
   std::string value = (client.getFilterStatus(numMsgType) ? "yes" : "no");
   waddstr(menuWin, value.c_str());

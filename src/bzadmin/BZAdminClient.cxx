@@ -284,14 +284,14 @@ BZAdminClient::ServerCode BZAdminClient::checkMessage() {
     case MsgScoreOver:
       if (messageMask[MsgScoreOver]) {
 	PlayerId id;
-	uint16_t team;
+	uint16_t _team;
 	vbuf = nboUnpackUByte(vbuf, id);
-	vbuf = nboUnpackUShort(vbuf, team);
+	vbuf = nboUnpackUShort(vbuf, _team);
 	it = players.find(id);
 	victimName = (it != players.end() ? it->second.name : "<unknown>");
-	if (team != (uint16_t)NoTeam) {
+	if (_team != (uint16_t)NoTeam) {
 	  Team temp;
-	  victimName = temp.getName((TeamColor)team);
+	  victimName = temp.getName((TeamColor)_team);
 	}
 	lastMessage.first = std::string("*** \'") + victimName + "\' won the game.";
       }
@@ -351,15 +351,15 @@ BZAdminClient::ServerCode BZAdminClient::checkMessage() {
       uint8_t numScores;
       vbuf = nboUnpackUByte(vbuf, numScores);
       for (i = 0; i < numScores; i++) {
-	uint16_t wins, losses, tks;
+	uint16_t winners, loosers, teamkillers;
 	vbuf = nboUnpackUByte(vbuf, p);
-	vbuf = nboUnpackUShort(vbuf, wins);
-	vbuf = nboUnpackUShort(vbuf, losses);
-	vbuf = nboUnpackUShort(vbuf, tks);
+	vbuf = nboUnpackUShort(vbuf, winners);
+	vbuf = nboUnpackUShort(vbuf, loosers);
+	vbuf = nboUnpackUShort(vbuf, teamkillers);
 	if ((iter = players.find(p)) != players.end()) {
-	  iter->second.wins = wins;
-	  iter->second.losses = losses;
-	  iter->second.tks = tks;
+	  iter->second.wins   = winners;
+	  iter->second.losses = loosers;
+	  iter->second.tks    = teamkillers;
 	}
       }
       if (messageMask[MsgScore]) {
@@ -384,10 +384,10 @@ BZAdminClient::ServerCode BZAdminClient::checkMessage() {
 			   TeamColor(250 - dst) : NoTeam);
       if (messageMask[MsgMessage]) {
 	lastMessage.first = formatMessage((char*)vbuf, src, dst,dstTeam, me);
-	PlayerIdMap::const_iterator iter = players.find(src);
-	lastMessage.second = (iter == players.end() ?
+	PlayerIdMap::const_iterator iterator = players.find(src);
+	lastMessage.second = (iterator == players.end() ?
 			      colorMap[NoTeam] :
-			      colorMap[iter->second.team]);
+			      colorMap[iterator->second.team]);
       }
       break;
     }

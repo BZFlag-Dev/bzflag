@@ -167,12 +167,12 @@ int main(int argc, char** argv) {
     // FIXME: should "know" when we are logged in (or fail) and only wait that long.
     if (startupInfo.token[0] != 0)
       TimeKeeper::sleep(5.0f);
-    for (unsigned int i = 1; i < op.getParameters().size(); ++i) {
-      if (op.getParameters()[i] == "/quit") {
+    for (unsigned int j = 1; j < op.getParameters().size(); ++j) {
+      if (op.getParameters()[j] == "/quit") {
 	client.waitForServer();
 	return 0;
       }
-      client.sendMessage(op.getParameters()[i], AllPlayers);
+      client.sendMessage(op.getParameters()[j], AllPlayers);
     }
   }
 

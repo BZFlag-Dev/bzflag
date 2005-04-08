@@ -180,12 +180,12 @@ bool CursesUI::checkCommand(std::string& str) {
   case KEY_LEFT:
     if (targetIter == additionalTargets.begin()) {
       targetIter = players.begin();
-      for (unsigned int i = 0; i < players.size() - 1; i++)
+      for (unsigned int j = 0; j < players.size() - 1; j++)
 	++targetIter;
     }
     else if (targetIter == players.begin()) {
       targetIter = additionalTargets.begin();
-      for (unsigned int i = 0; i < additionalTargets.size() - 1; i++)
+      for (unsigned int j = 0; j < additionalTargets.size() - 1; j++)
 	++targetIter;
     }
     else
