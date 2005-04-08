@@ -125,25 +125,27 @@ TriWallSceneNode::TriWallSceneNode(const GLfloat base[3],
 				bool makeLODs)
 {
   // record plane info
-  GLfloat plane[4], sphere[4];
-  plane[0] = uEdge[1] * vEdge[2] - uEdge[2] * vEdge[1];
-  plane[1] = uEdge[2] * vEdge[0] - uEdge[0] * vEdge[2];
-  plane[2] = uEdge[0] * vEdge[1] - uEdge[1] * vEdge[0];
-  plane[3] = -(plane[0] * base[0] + plane[1] * base[1] + plane[2] * base[2]);
-  setPlane(plane);
+  GLfloat myPlane[4], mySphere[4];
+  myPlane[0] = uEdge[1] * vEdge[2] - uEdge[2] * vEdge[1];
+  myPlane[1] = uEdge[2] * vEdge[0] - uEdge[0] * vEdge[2];
+  myPlane[2] = uEdge[0] * vEdge[1] - uEdge[1] * vEdge[0];
+  myPlane[3] = -(myPlane[0] * base[0] + myPlane[1] * base[1]
+		 + myPlane[2] * base[2]);
+  setPlane(myPlane);
 
   // record bounding sphere info -- ought to calculate center and
   // and radius of circumscribing sphere but it's late and i'm tired.
   // i'll just calculate something easy.  it hardly matters as it's
   // hard to tightly bound a triangle with a sphere.
-  sphere[0] = 0.5f * (uEdge[0] + vEdge[0]);
-  sphere[1] = 0.5f * (uEdge[1] + vEdge[1]);
-  sphere[2] = 0.5f * (uEdge[2] + vEdge[2]);
-  sphere[3] = sphere[0]*sphere[0] + sphere[1]*sphere[1] + sphere[2]*sphere[2];
-  sphere[0] += base[0];
-  sphere[1] += base[1];
-  sphere[2] += base[2];
-  setSphere(sphere);
+  mySphere[0] = 0.5f * (uEdge[0] + vEdge[0]);
+  mySphere[1] = 0.5f * (uEdge[1] + vEdge[1]);
+  mySphere[2] = 0.5f * (uEdge[2] + vEdge[2]);
+  mySphere[3] = mySphere[0]*mySphere[0] + mySphere[1]*mySphere[1]
+    + mySphere[2]*mySphere[2];
+  mySphere[0] += base[0];
+  mySphere[1] += base[1];
+  mySphere[2] += base[2];
+  setSphere(mySphere);
 
   // get length of sides
   const float uLength = sqrtf(uEdge[0] * uEdge[0] +

@@ -103,12 +103,12 @@ bool			WallSceneNode::cull(const ViewFrustum& frustum) const
   // if more than radius outside then cull
   int i;
   float d[5], d2[5];
-  const GLfloat* sphere = getSphere();
+  const GLfloat* mySphere = getSphere();
   for (i = 0; i < 5; i++) {
     const GLfloat* norm = frustum.getSide(i);
-    d[i] = sphere[0] * norm[0] + sphere[1] * norm[1] +
-		sphere[2] * norm[2] + norm[3];
-    if (d[i] < 0.0f && (d2[i] = d[i]*d[i]) > sphere[3])
+    d[i] = mySphere[0] * norm[0] + mySphere[1] * norm[1] +
+		mySphere[2] * norm[2] + norm[3];
+    if (d[i] < 0.0f && (d2[i] = d[i]*d[i]) > mySphere[3])
       return true;
   }
 
@@ -126,7 +126,7 @@ bool			WallSceneNode::cull(const ViewFrustum& frustum) const
     if (d[i] >= 0.0f) continue;
     const GLfloat* norm = frustum.getSide(i);
     const GLfloat c = norm[0]*plane[0] + norm[1]*plane[1] + norm[2]*plane[2];
-    if (d2[i] > sphere[3] * (1.0f - c*c)) return true;
+    if (d2[i] > mySphere[3] * (1.0f - c*c)) return true;
   }
 
   // probably visible
@@ -142,7 +142,7 @@ int			WallSceneNode::pickLevelOfDetail(
 
   int bestLOD = 0;
 
-  const GLfloat* sphere = getSphere();
+  const GLfloat* mySphere = getSphere();
   const int numLights = renderer.getNumLights();
   for (int i = 0; i < numLights; i++) {
     const GLfloat* pos = renderer.getLight(i).getPosition();
@@ -155,12 +155,12 @@ int			WallSceneNode::pickLevelOfDetail(
     if (pd < 0.0f) continue;
 
     // get squared distance from center of wall
-    GLfloat ld = (pos[0] - sphere[0]) * (pos[0] - sphere[0]) +
-		(pos[1] - sphere[1]) * (pos[1] - sphere[1]) +
-		(pos[2] - sphere[2]) * (pos[2] - sphere[2]);
+    GLfloat ld = (pos[0] - mySphere[0]) * (pos[0] - mySphere[0]) +
+		(pos[1] - mySphere[1]) * (pos[1] - mySphere[1]) +
+		(pos[2] - mySphere[2]) * (pos[2] - mySphere[2]);
 
     // pick representative distance
-    GLfloat d = (ld > 1.5f * sphere[3]) ? ld : pd * pd;
+    GLfloat d = (ld > 1.5f * mySphere[3]) ? ld : pd * pd;
 
     // choose lod based on distance and element areas;
     int j;

@@ -101,9 +101,10 @@ SceneNode**		SphereSceneNode::getParts(int& numParts)
 
   // choose number of parts to cut off bottom at around ground level
   int i;
-  const GLfloat* sphere = getSphere();
+  const GLfloat* mySphere = getSphere();
   for (i = 0; i < SphereLowRes; i++)
-    if (radius * SphereRenderNode::lgeom[SphereLowRes*i][2] + sphere[2]< 0.01f)
+    if (radius * SphereRenderNode::lgeom[SphereLowRes*i][2]
+	+ mySphere[2] < 0.01f)
       break;
   numParts = SphereLowRes * i;
 
@@ -132,9 +133,9 @@ void			SphereSceneNode::notifyStyleChange()
 void			SphereSceneNode::addRenderNodes(
 				SceneRenderer& renderer)
 {
-  const GLfloat* sphere = getSphere();
+  const GLfloat* mySphere = getSphere();
   const ViewFrustum& view = renderer.getViewFrustum();
-  const float size = sphere[3] * view.getAreaFactor() /
+  const float size = mySphere[3] * view.getAreaFactor() /
 					getDistance(view.getEye());
   const int lod = (size < 100.0f) ? 0 : 1;
 
@@ -142,7 +143,7 @@ void			SphereSceneNode::addRenderNodes(
 
   if (BZDBCache::blend) {
     const GLfloat* eye = view.getEye();
-    const float azimuth = atan2f(sphere[1] - eye[1], eye[0] - sphere[0]);
+    const float azimuth = atan2f(mySphere[1] - eye[1], eye[0] - mySphere[0]);
     const int numSlices = (lod == 1) ? NumSlices : SphereLowRes;
     renderNode.setBaseIndex(int(float(numSlices) *
 				(1.0f + 0.5f * azimuth / M_PI)) % numSlices);

@@ -217,9 +217,9 @@ void TankSceneNode::addRenderNodes(SceneRenderer& renderer)
   }
 
   // pick level of detail
-  const GLfloat* sphere = getSphere();
+  const GLfloat* mySphere = getSphere();
   const ViewFrustum& view = renderer.getViewFrustum();
-  const float size = sphere[3] *
+  const float size = mySphere[3] *
 		     (view.getAreaFactor() /getDistance(view.getEye()));
 
   // set the level of detail
@@ -249,8 +249,8 @@ void TankSceneNode::addRenderNodes(SceneRenderer& renderer)
   // if drawing in sorted order then decide which order
   if (sort || transparent || narrow) {
     const GLfloat* eye = view.getEye();
-    GLfloat dx = eye[0] - sphere[0];
-    GLfloat dy = eye[1] - sphere[1];
+    GLfloat dx = eye[0] - mySphere[0];
+    GLfloat dy = eye[1] - mySphere[1];
     const float radians = (float)(azimuth * M_PI / 180.0);
     const float cos_val = cosf(radians);
     const float sin_val = sinf(radians);
@@ -261,7 +261,7 @@ void TankSceneNode::addRenderNodes(SceneRenderer& renderer)
     const float leftDot = (-sin_val * dx) + (cos_val * dy);
     const bool left = (leftDot > 0.0f);
 
-    const bool above = eye[2] > sphere[2];
+    const bool above = eye[2] > mySphere[2];
 
     tankRenderNode.sortOrder(above, towards, left);
   }
@@ -376,9 +376,9 @@ void TankSceneNode::setJumpJets(float scale)
       const float radians = (float)(azimuth * (M_PI / 180.0));
       const float cos_val = cosf(radians);
       const float sin_val = sinf(radians);
-      const float* scale = TankGeometryMgr::getScaleFactor(tankSize);
+      const float* scaleFactor = TankGeometryMgr::getScaleFactor(tankSize);
       const float* jm = jumpJetsModel[i];
-      const float v[2] = {jm[0] * scale[0], jm[1] * scale[1]};
+      const float v[2] = {jm[0] * scaleFactor[0], jm[1] * scaleFactor[1]};
       float* jetPos = jumpJetsPositions[i];
       jetPos[0] = pos[0] + ((cos_val * v[0]) - (sin_val * v[1]));
       jetPos[1] = pos[1] + ((cos_val * v[1]) + (sin_val * v[0]));
@@ -394,19 +394,17 @@ void TankSceneNode::setJumpJets(float scale)
 }
 
 
-void TankSceneNode::setClipPlane(const GLfloat* plane)
+void TankSceneNode::setClipPlane(const GLfloat* _plane)
 {
-  if (!plane) {
+  if (!_plane) {
     clip = false;
-  }
-  else {
+  } else {
     clip = true;
-    clipPlane[0] = GLdouble(plane[0]);
-    clipPlane[1] = GLdouble(plane[1]);
-    clipPlane[2] = GLdouble(plane[2]);
-    clipPlane[3] = GLdouble(plane[3]);
+    clipPlane[0] = GLdouble(_plane[0]);
+    clipPlane[1] = GLdouble(_plane[1]);
+    clipPlane[2] = GLdouble(_plane[2]);
+    clipPlane[3] = GLdouble(_plane[3]);
   }
-  return;
 }
 
 
@@ -461,18 +459,18 @@ void TankSceneNode::rebuildExplosion()
 void TankSceneNode::renderRadar()
 {
   const float angleCopy = azimuth;
-  const float* sphere = getSphere();
+  const float* mySphere = getSphere();
   float posCopy[3];
-  memcpy(posCopy, sphere, sizeof(float[3]));
+  memcpy(posCopy, mySphere, sizeof(float[3]));
 
   // allow negative values for burrowed clipping
   float tankPos[3];
   tankPos[0] = 0.0f;
   tankPos[1] = 0.0f;
-  if (sphere[2] >= 0.0f) {
+  if (mySphere[2] >= 0.0f) {
     tankPos[2] = 0.0f;
   } else {
-    tankPos[2] = sphere[2];
+    tankPos[2] = mySphere[2];
   }
 
   setCenter(tankPos);

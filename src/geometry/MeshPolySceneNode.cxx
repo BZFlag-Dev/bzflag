@@ -201,26 +201,26 @@ MeshPolySceneNode::MeshPolySceneNode(const float _plane[4],
   setNumLODs(1, area);
 
   // compute bounding sphere, put center at average of vertices
-  GLfloat sphere[4];
-  sphere[0] = sphere[1] = sphere[2] = sphere[3] = 0.0f;
+  GLfloat mySphere[4];
+  mySphere[0] = mySphere[1] = mySphere[2] = mySphere[3] = 0.0f;
   for (i = 0; i < count; i++) {
-    sphere[0] += vertices[i][0];
-    sphere[1] += vertices[i][1];
-    sphere[2] += vertices[i][2];
+    mySphere[0] += vertices[i][0];
+    mySphere[1] += vertices[i][1];
+    mySphere[2] += vertices[i][2];
   }
-  sphere[0] /= (float)count;
-  sphere[1] /= (float)count;
-  sphere[2] /= (float)count;
+  mySphere[0] /= (float)count;
+  mySphere[1] /= (float)count;
+  mySphere[2] /= (float)count;
   for (i = 0; i < count; i++) {
-    const float dx = sphere[0] - vertices[i][0];
-    const float dy = sphere[1] - vertices[i][1];
-    const float dz = sphere[2] - vertices[i][2];
+    const float dx = mySphere[0] - vertices[i][0];
+    const float dy = mySphere[1] - vertices[i][1];
+    const float dz = mySphere[2] - vertices[i][2];
     GLfloat r = ((dx * dx) + (dy * dy) + (dz * dz));
-    if (r > sphere[3]) {
-      sphere[3] = r;
+    if (r > mySphere[3]) {
+      mySphere[3] = r;
     }
   }
-  setSphere(sphere);
+  setSphere(mySphere);
 
   // record extents info
   for (i = 0; i < count; i++) {

@@ -87,7 +87,7 @@ PolyWallSceneNode::PolyWallSceneNode(const GLfloat3Array& vertex,
   assert(uv.getSize() == count);
 
   // figure out plane (find non-colinear edges and get cross product)
-  GLfloat uEdge[3], vEdge[3], plane[4];
+  GLfloat uEdge[3], vEdge[3], myPlane[4];
   GLfloat uLen, vLen, nLen;
   uEdge[0] = vertex[0][0] - vertex[count - 1][0];
   uEdge[1] = vertex[0][1] - vertex[count - 1][1];
@@ -99,19 +99,20 @@ PolyWallSceneNode::PolyWallSceneNode(const GLfloat3Array& vertex,
     vEdge[1] = vertex[i][1] - vertex[i - 1][1];
     vEdge[2] = vertex[i][2] - vertex[i - 1][2];
     vLen = vEdge[0] * vEdge[0] + vEdge[1] * vEdge[1] + vEdge[2] * vEdge[2];
-    plane[0] = uEdge[1] * vEdge[2] - uEdge[2] * vEdge[1];
-    plane[1] = uEdge[2] * vEdge[0] - uEdge[0] * vEdge[2];
-    plane[2] = uEdge[0] * vEdge[1] - uEdge[1] * vEdge[0];
-    nLen = plane[0] * plane[0] + plane[1] * plane[1] + plane[2] * plane[2];
+    myPlane[0] = uEdge[1] * vEdge[2] - uEdge[2] * vEdge[1];
+    myPlane[1] = uEdge[2] * vEdge[0] - uEdge[0] * vEdge[2];
+    myPlane[2] = uEdge[0] * vEdge[1] - uEdge[1] * vEdge[0];
+    nLen = myPlane[0] * myPlane[0] + myPlane[1] * myPlane[1]
+      + myPlane[2] * myPlane[2];
     if (nLen > 1.0e-5f * uLen * vLen) break;
     uEdge[0] = vEdge[0];
     uEdge[1] = vEdge[1];
     uEdge[2] = vEdge[2];
     uLen = vLen;
   }
-  plane[3] = -(plane[0] * vertex[0][0] + plane[1] * vertex[0][1] +
-						plane[2] * vertex[0][2]);
-  setPlane(plane);
+  myPlane[3] = -(myPlane[0] * vertex[0][0] + myPlane[1] * vertex[0][1] +
+		 myPlane[2] * vertex[0][2]);
+  setPlane(myPlane);
 
   // choose axis to ignore (the one with the largest normal component)
   int ignoreAxis;
@@ -165,23 +166,23 @@ PolyWallSceneNode::PolyWallSceneNode(const GLfloat3Array& vertex,
   setNumLODs(1, area);
 
   // compute bounding sphere, put center at average of vertices
-  GLfloat sphere[4];
-  sphere[0] = sphere[1] = sphere[2] = sphere[3] = 0.0f;
+  GLfloat mySphere[4];
+  mySphere[0] = mySphere[1] = mySphere[2] = mySphere[3] = 0.0f;
   for (i = 0; i < count; i++) {
-    sphere[0] += vertex[i][0];
-    sphere[1] += vertex[i][1];
-    sphere[2] += vertex[i][2];
+    mySphere[0] += vertex[i][0];
+    mySphere[1] += vertex[i][1];
+    mySphere[2] += vertex[i][2];
   }
-  sphere[0] /= (float)count;
-  sphere[1] /= (float)count;
-  sphere[2] /= (float)count;
+  mySphere[0] /= (float)count;
+  mySphere[1] /= (float)count;
+  mySphere[2] /= (float)count;
   for (i = 0; i < count; i++) {
-    GLfloat r = (sphere[0] - vertex[i][0]) * (sphere[0] - vertex[i][0]) +
-		(sphere[1] - vertex[i][1]) * (sphere[1] - vertex[i][1]) +
-		(sphere[2] - vertex[i][2]) * (sphere[2] - vertex[i][2]);
-    if (r > sphere[3]) sphere[3] = r;
+    GLfloat r = (mySphere[0] - vertex[i][0]) * (mySphere[0] - vertex[i][0]) +
+		(mySphere[1] - vertex[i][1]) * (mySphere[1] - vertex[i][1]) +
+		(mySphere[2] - vertex[i][2]) * (mySphere[2] - vertex[i][2]);
+    if (r > mySphere[3]) mySphere[3] = r;
   }
-  setSphere(sphere);
+  setSphere(mySphere);
 }
 
 PolyWallSceneNode::~PolyWallSceneNode()

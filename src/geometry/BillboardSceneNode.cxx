@@ -198,9 +198,9 @@ void			BillboardSceneNode::setLightScaling(GLfloat s)
   prepLight();
 }
 
-void			BillboardSceneNode::setLightFadeStartTime(float t)
+void			BillboardSceneNode::setLightFadeStartTime(float _t)
 {
-  lightCutoffTime = t;
+  lightCutoffTime = _t;
   prepLight();
 }
 

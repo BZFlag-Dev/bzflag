@@ -70,10 +70,10 @@ GLfloat			FlagWarpSceneNode::getDistance(const GLfloat* eye) const
   // shift position of warp down a little because a flag and it's warp
   // are at the same position but we want the warp to appear below the
   // flag.
-  const GLfloat* sphere = getSphere();
-  return (eye[0] - sphere[0]) * (eye[0] - sphere[0]) +
-	 (eye[1] - sphere[1]) * (eye[1] - sphere[1]) +
-	 (eye[2] - sphere[2] + 0.2f) * (eye[2] - sphere[2] + 0.2f);
+  const GLfloat* mySphere = getSphere();
+  return (eye[0] - mySphere[0]) * (eye[0] - mySphere[0]) +
+	 (eye[1] - mySphere[1]) * (eye[1] - mySphere[1]) +
+	 (eye[2] - mySphere[2] + 0.2f) * (eye[2] - mySphere[2] + 0.2f);
 }
 
 void			FlagWarpSceneNode::notifyStyleChange()
