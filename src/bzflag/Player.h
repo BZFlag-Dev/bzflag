@@ -84,6 +84,7 @@ public:
   short		getWins() const;
   short		getLosses() const;
   short		getTeamKills() const;
+  float		getTKRatio() const;
   short		getScore() const;
   const float*	getDimensions() const;
   short		getRabbitScore() const;

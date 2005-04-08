@@ -150,6 +150,15 @@ static float rabbitRank (int wins, int losses) {
   return average * penalty;
 }
 
+float Player::getTKRatio() const
+{
+  if (wins == 0) {
+    // well, we have to return *something* if they have no wins
+    return (float)tks/1.0f;
+  } else {
+    return (float)tks/(float)wins;
+  }
+}
 
 short Player::getRabbitScore() const
 {
