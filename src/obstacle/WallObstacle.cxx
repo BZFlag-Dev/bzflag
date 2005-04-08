@@ -80,12 +80,12 @@ bool			WallObstacle::inCylinder(const float* p, float r, float /* height */) con
   return p[0] * plane[0] + p[1] * plane[1] + p[2] * plane[2] + plane[3] < r;
 }
 
-bool			WallObstacle::inBox(const float* p, float angle,
+bool			WallObstacle::inBox(const float* p, float _angle,
 					    float halfWidth, float halfBreadth,
 					    float /* height */) const
 {
-  const float xWidth = cosf(angle);
-  const float yWidth = sinf(angle);
+  const float xWidth = cosf(_angle);
+  const float yWidth = sinf(_angle);
   const float xBreadth = -yWidth;
   const float yBreadth = xWidth;
   float corner[3];
@@ -109,11 +109,11 @@ bool			WallObstacle::inBox(const float* p, float angle,
 }
 
 bool			WallObstacle::inMovingBox(const float* /* oldP */, float /* oldAngle */,
-				       const float* p, float angle,
+				       const float* p, float _angle,
 				       float halfWidth, float halfBreadth, float height) const
 
 {
-  return inBox (p, angle, halfWidth, halfBreadth, height);
+  return inBox (p, _angle, halfWidth, halfBreadth, height);
 }
 
 bool			WallObstacle::getHitNormal(

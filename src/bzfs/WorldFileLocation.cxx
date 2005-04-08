@@ -90,14 +90,14 @@ bool WorldFileLocation::read(const char *cmd, std::istream& input)
     transform.addSpin(angle, normal);
   }
   else if (strcasecmp ("xform", cmd) == 0) {
-    std::string name;
-    if (!(input >> name)) {
+    std::string _name;
+    if (!(input >> _name)) {
       std::cout << "parameters errors " << std::endl;
       return false;
     }
-    int xform = TRANSFORMMGR.findTransform(name);
+    int xform = TRANSFORMMGR.findTransform(_name);
     if (xform == -1) {
-      std::cout << "couldn't find Transform: " << name << std::endl;
+      std::cout << "couldn't find Transform: " << _name << std::endl;
     } else {
       transform.addReference(xform);
     }

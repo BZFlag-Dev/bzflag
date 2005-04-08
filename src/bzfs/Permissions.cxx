@@ -63,10 +63,10 @@ void PlayerAccessInfo::setLoginFail() {
 void PlayerAccessInfo::setPermissionRights() {
   verified = true;
   // get their real info
-  PlayerAccessInfo &info = getUserInfo(regName);
-  explicitAllows = info.explicitAllows;
-  explicitDenys = info.explicitDenys;
-  groups = info.groups;
+  PlayerAccessInfo &_info = getUserInfo(regName);
+  explicitAllows = _info.explicitAllows;
+  explicitDenys = _info.explicitDenys;
+  groups = _info.groups;
   DEBUG1("Identify %s\n", regName.c_str());
 }
 
@@ -128,13 +128,13 @@ bool PlayerAccessInfo::isVerified() const{
 };
 
 void PlayerAccessInfo::storeInfo(const char* pwd) {
-  PlayerAccessInfo info;
-  info.addGroup("VERIFIED");
+  PlayerAccessInfo _info;
+  _info.addGroup("VERIFIED");
 
   if (pwd == NULL) {
     // automatically give global users permission to use local accounts
     // since they either already have it, or there's no existing local account.
-    info.addGroup("LOCAL.GLOBAL");
+    _info.addGroup("LOCAL.GLOBAL");
     setUserPassword(regName.c_str(), "");
     DEBUG1("Global Temp Register %s\n", regName.c_str());
   } else {
@@ -142,7 +142,7 @@ void PlayerAccessInfo::storeInfo(const char* pwd) {
     setUserPassword(regName.c_str(), pass.c_str());
     DEBUG1("Register %s %s\n", regName.c_str(), pwd);
   }
-  userDatabase[regName] = info;
+  userDatabase[regName] = _info;
   updateDatabases();
 }
 

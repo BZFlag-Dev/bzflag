@@ -219,12 +219,12 @@ bool OSFile::close()
   return (!isOpen());
 }
 
-int OSFile::read(void* data, int size, int count)
+int OSFile::read(void* data, int _size, int count)
 {
   if (!isOpen())
     return 0;
 
-  return (int)fread(data, size, count, info->fp);
+  return (int)fread(data, _size, count, info->fp);
 }
 
 unsigned char OSFile::readChar()
@@ -273,12 +273,12 @@ const char* OSFile::scanStr()
   return temp;
 }
 
-int OSFile::write(const void* data, int size)
+int OSFile::write(const void* data, int _size)
 {
   if (!isOpen())
     return 0;
 
-  return (int)fwrite(data,size,1, info->fp);
+  return (int)fwrite(data, _size, 1, info->fp);
 }
 
 void OSFile::flush()

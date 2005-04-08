@@ -315,11 +315,11 @@ void OpenGLTexture::bind()
 }
 
 
-int OpenGLTexture::getBestFormat(int width, int height, const GLvoid* pixels)
+int OpenGLTexture::getBestFormat(int _width, int _height, const GLvoid* pixels)
 {
   // see if all pixels are achromatic
   const GLubyte* scan = (const GLubyte*)pixels;
-  const int size = width * height;
+  const int size = _width * _height;
   int i;
   for (i = 0; i < size; scan += 4, i++)
     if (scan[0] != scan[1] || scan[0] != scan[2])

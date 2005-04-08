@@ -177,18 +177,18 @@ bool WordFilter::aggressiveFilter(char *input) const
 
 	    /* we are in the middle of a word.. see if we can match a prefix before this */
 	    bool foundit =  false;
-	    for (ExpCompareSet::const_iterator j = prefixes.begin();
-		 j != prefixes.end(); ++j) {
-	      if (regexec(j->compiled, sInput.c_str(), 1, match, 0) == 0) {
+	    for (ExpCompareSet::const_iterator k = prefixes.begin();
+		 k != prefixes.end(); ++k) {
+	      if (regexec(k->compiled, sInput.c_str(), 1, match, 0) == 0) {
 
-//std::cout << "checking prefix: " << j->word << std::endl;
+//std::cout << "checking prefix: " << k->word << std::endl;
 
 		if ( (match[0].rm_so > 1) && (isalpha(sInput[match[0].rm_so - 1])) ) {
 		  /* we matched, but we are still in the middle of a word */
 		  continue;
 		}
 
-//std::cout << "matched a prefix! " << j->word << std::endl;
+//std::cout << "matched a prefix! " << k->word << std::endl;
 		if (match[0].rm_eo == startOffset) {
 		  /* perfect prefix match */
 		  startOffset = match[0].rm_so;
@@ -212,11 +212,11 @@ bool WordFilter::aggressiveFilter(char *input) const
 
 	    /* we are at the start of a word, but not at the end, try to get to the end */
 	    bool foundit = false;
-	    for (ExpCompareSet::const_iterator j = suffixes.begin();
-		 j != suffixes.end(); ++j) {
-//std::cout << "checking " << j->word << " against [" << input + endOffset << "]" << std::endl;
+	    for (ExpCompareSet::const_iterator k = suffixes.begin();
+		 k != suffixes.end(); ++k) {
+//std::cout << "checking " << k->word << " against [" << input + endOffset << "]" << std::endl;
 
-	      if (regexec(j->compiled, sInput.c_str() + endOffset, 1, match, 0) == 0) {
+	      if (regexec(k->compiled, sInput.c_str() + endOffset, 1, match, 0) == 0) {
 
 //std::cout << "is " << match[0].rm_eo << " less than " << inputLength - endOffset << std::endl;
 //std::cout << "is alpha =?= " << input[endOffset + match[0].rm_eo + 1] << std::endl;
@@ -228,7 +228,7 @@ bool WordFilter::aggressiveFilter(char *input) const
 		  continue;
 		}
 
-//std::cout << "matched a suffix! " << j->word << std::endl;
+//std::cout << "matched a suffix! " << k->word << std::endl;
 		if (match[0].rm_so == 0) {
 		  /* push the end forward a little since we matched */
 		  endOffset += match[0].rm_eo;
@@ -623,14 +623,14 @@ WordFilter::WordFilter()
 }
 
 /** default copy constructor */
-WordFilter::WordFilter(const WordFilter& filter)
-  : alphabet(filter.alphabet),
-    filterChars(filter.filterChars),
-    suffixes(filter.suffixes),
-    prefixes(filter.prefixes)
+WordFilter::WordFilter(const WordFilter& _filter)
+  : alphabet(_filter.alphabet),
+    filterChars(_filter.filterChars),
+    suffixes(_filter.suffixes),
+    prefixes(_filter.prefixes)
 {
   for (int i=0; i < MAX_FILTER_SETS; i++) {
-    filters[i] = filter.filters[i];
+    filters[i] = _filter.filters[i];
   }
 }
 
