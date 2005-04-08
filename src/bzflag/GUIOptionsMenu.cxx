@@ -248,6 +248,16 @@ GUIOptionsMenu::GUIOptionsMenu()
   options->push_back(std::string("both"));
   option->update();
   list.push_back(option);
+  // HUD Reload timer
+  option = new HUDuiList;
+  option->setFontFace(fontFace);
+  option->setLabel("Reload timer on HUD:");
+  option->setCallback(callback, (void*)"T");
+  options = &option->getList();
+  options->push_back(std::string("Off"));
+  options->push_back(std::string("On"));
+  option->update();
+  list.push_back(option);
 
   initNavigation(list, 1, list.size()-1);
 }
@@ -266,7 +276,7 @@ void			GUIOptionsMenu::resize(int width, int height)
 
   // use a big font for title, smaller font for the rest
   const float titleFontSize = (float)height / 15.0f;
-  const float fontSize = (float)height / 45.0f;
+  const float fontSize = (float)height / 50.0f;
   FontManager &fm = FontManager::instance();
 
   // reposition title
@@ -280,7 +290,7 @@ void			GUIOptionsMenu::resize(int width, int height)
   title->setPosition(x, y);
 
   // reposition options
-  x = 0.5f * ((float)width + 0.5f * titleWidth);
+  x = 0.54f * (float)width;
   y -= 0.6f * titleHeight;
   const float h = fm.getStrHeight(MainMenu::getFontFace(), fontSize, " ");
   const int count = list.size();
@@ -325,6 +335,7 @@ void			GUIOptionsMenu::resize(int width, int height)
     ((HUDuiList*)list[i++])->setIndex(static_cast<int>(BZDB.eval("pulseRate") * 5) - 1);
     ((HUDuiList*)list[i++])->setIndex(static_cast<int>(BZDB.eval("pulseDepth") * 10) - 1);
     ((HUDuiList*)list[i++])->setIndex(static_cast<int>(BZDB.eval("timedate")));
+    ((HUDuiList*)list[i++])->setIndex(BZDB.isTrue("displayReloadTimer") ? 1 : 0);
   }
 }
 
@@ -444,6 +455,13 @@ void			GUIOptionsMenu::callback(HUDuiControl* w, void* data)
 	BZDB.set("pulseDepth", TextUtils::format("%f", (float)(list->getIndex() + 1) / 10.0f));
 	break;
       }
+
+    case 'T':
+      {
+	BZDB.set("displayReloadTimer", list->getIndex() ? "1" : "0");
+	break;
+      }
+
   }
 }
 

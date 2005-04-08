@@ -4,6 +4,7 @@
 BZFlag 2.0.3
 ------------
 
+* Shot reload timer on the HUD - Daniel Remenak
 * Added timestamp to bzfs DEBUG output, and new CL option (-ts) - Mark Thomas
 * Players without TALK can send to the Admin group - Sean Morrison
 * Fixed bzfs crash because poll kick/ban - Julio Jimenez

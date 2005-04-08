@@ -120,6 +120,7 @@ protected:
   void		renderNotPlaying(SceneRenderer&);
   void		renderRoaming(SceneRenderer&);
   void		renderTimes(void);
+  void		renderShots(void);
   void		drawPlayerScore(const Player*,
 				float x1, float x2, float x3, float xs, float y);
   void		drawTeamScore(int team, float x, float y);

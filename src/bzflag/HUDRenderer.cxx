@@ -1356,12 +1356,15 @@ void			HUDRenderer::renderPlaying(SceneRenderer& renderer)
   glPushMatrix();
   glLoadIdentity();
 
+  // draw shot reload status
+  if (BZDB.isTrue("displayReloadTimer"))
+    renderShots();
+
   LocalPlayer *myTank = LocalPlayer::getMyTank();
   if (myTank && myTank->getPosition()[2] < 0.0f) {
     glColor4f(0.02f, 0.01f, 0.01f, 1.0);
     glRectf(0, 0, (float)width, (myTank->getPosition()[2]/(BZDB.eval(StateDatabase::BZDB_BURROWDEPTH)-0.1f)) * ((float)viewHeight/2.0f));
   }
-
 
   // draw cracks
   if (showCracks)
@@ -1696,6 +1699,48 @@ void			HUDRenderer::drawTeamScore(int teamIndex, float x1, float y)
   FontManager &fm = FontManager::instance();
   hudColor3fv(Team::getRadarColor((TeamColor)teamIndex));
   fm.drawString(x1, y, 0, minorFontFace, minorFontSize, score);
+}
+
+void			HUDRenderer::renderShots()
+{
+  // get my tank
+  const LocalPlayer* myTank = LocalPlayer::getMyTank();
+  if (!myTank) return;
+
+  // get view metrics
+  const int width = window.getWidth();
+  const int height = window.getHeight();
+  const int viewHeight = window.getViewHeight();
+  const int centerx = width >> 1;
+  const int centery = viewHeight >> 1;
+
+  const int indicatorWidth = width / 50;
+  const int indicatorHeight = height / 80;
+  const int indicatorSpace = indicatorHeight / 10 + 1;
+  const int indicatorLeft = centerx + maxMotionSize + indicatorWidth / 2;
+  const int indicatorTop = centery - (int)(0.5f * (indicatorHeight + indicatorSpace) * myTank->getMaxShots());
+
+  // draw reload indicators
+  for (int i = 0; i < myTank->getMaxShots(); ++i) {
+    const ShotPath* shot = myTank->getShot(i);
+    float reloadProportion = 1.0f;
+    if (shot) {
+      const TimeKeeper currentTime = shot->getCurrentTime();
+      const TimeKeeper startTime = shot->getStartTime();
+      const float reloadTime = shot->getReloadTime();
+      reloadProportion = 1 - ((reloadTime - (currentTime - startTime)) / reloadTime);
+      if (reloadProportion > 1.0f) reloadProportion = 1.0f;
+    }
+    const int myWidth = int(indicatorWidth * reloadProportion);
+    const int myTop = indicatorTop + i * (indicatorHeight + indicatorSpace);
+    // red if not yet reloaded, white otherwise
+    if (reloadProportion < 1.0f)
+      hudColor3f(1.0f, 0.0f, 0.0f);
+    else
+      hudColor3f(1.0f, 1.0f, 1.0f);
+    // draw that sucker
+    glRecti(indicatorLeft, myTop, indicatorLeft + myWidth, myTop + indicatorHeight);
+  }
 }
 
 // Local Variables: ***
