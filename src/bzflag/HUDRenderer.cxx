@@ -16,6 +16,7 @@
 /* system implementation headers */
 #include <time.h>
 #include <math.h>
+#include <stdlib.h>
 #include <string>
 
 /* common implementation headers */
@@ -1707,6 +1708,18 @@ void			HUDRenderer::drawTeamScore(int teamIndex, float x1, float y)
   fm.drawString(x1, y, 0, minorFontFace, minorFontSize, score);
 }
 
+
+static int compare_float (const void* a, const void* b)
+{
+  const float fa = *((const float*)a);
+  const float fb = *((const float*)b);
+  if (fa > fb) {
+    return 1;
+  } else {
+    return -1;
+  }
+}
+
 void			HUDRenderer::renderShots()
 {
   // get my tank
@@ -1722,31 +1735,51 @@ void			HUDRenderer::renderShots()
 
   const int indicatorWidth = width / 50;
   const int indicatorHeight = height / 80;
-  const int indicatorSpace = indicatorHeight / 10 + 1;
+  const int indicatorSpace = indicatorHeight / 10 + 2;
   const int indicatorLeft = centerx + maxMotionSize + indicatorWidth + 16;
   const int indicatorTop = centery - (int)(0.5f * (indicatorHeight + indicatorSpace) * myTank->getMaxShots());
+  
+  const int maxShots = myTank->getMaxShots();
 
-  // draw reload indicators
-  for (int i = 0; i < myTank->getMaxShots(); ++i) {
+  float* factors = new float[maxShots];
+
+  // tally the reload values
+  for (int i = 0; i < maxShots; ++i) {
     const ShotPath* shot = myTank->getShot(i);
-    float reloadProportion = 1.0f;
+    factors[i] = 1.0f;
     if (shot) {
       const TimeKeeper currentTime = shot->getCurrentTime();
       const TimeKeeper startTime = shot->getStartTime();
       const float reloadTime = shot->getReloadTime();
-      reloadProportion = 1 - ((reloadTime - (currentTime - startTime)) / reloadTime);
-      if (reloadProportion > 1.0f) reloadProportion = 1.0f;
+      factors[i] = 1 - ((reloadTime - (currentTime - startTime)) / reloadTime);
+      if (factors[i] > 1.0f) factors[i] = 1.0f;
     }
-    const int myWidth = int(indicatorWidth * reloadProportion);
-    const int myTop = indicatorTop + i * (indicatorHeight + indicatorSpace);
-    // red if not yet reloaded, white otherwise
-    if (reloadProportion < 1.0f)
-      hudColor3f(1.0f, 0.0f, 0.0f);
-    else
-      hudColor3f(1.0f, 1.0f, 1.0f);
-    // draw that sucker
-    glRecti(indicatorLeft, myTop, indicatorLeft + myWidth, myTop + indicatorHeight);
   }
+  
+  // sort the reload values
+  qsort(factors, maxShots, sizeof(float), compare_float);
+
+  glEnable(GL_BLEND);
+  
+  // draw the reload values
+  for (int i = 0; i < maxShots; ++i) {
+    const int myWidth = int(indicatorWidth * factors[i]);
+    const int myTop = indicatorTop + i * (indicatorHeight + indicatorSpace);
+    if (factors[i] < 1.0f) {
+      hudColor4f(1.0f, 0.0f, 0.0f, 0.5f); // red
+      glRecti(indicatorLeft, myTop, indicatorLeft + myWidth, myTop + indicatorHeight);
+      hudColor4f(0.0f, 1.0f, 0.0f, 0.5f); // green
+      glRecti(indicatorLeft + myWidth + 1, myTop, indicatorLeft + indicatorWidth,
+              myTop + indicatorHeight);
+    } else {
+      hudColor4f(1.0f, 1.0f, 1.0f, 0.5f); // white
+      glRecti(indicatorLeft, myTop, indicatorLeft + myWidth, myTop + indicatorHeight);
+    }
+  }
+  
+  glDisable(GL_BLEND);
+  
+  delete factors;
 }
 
 // Local Variables: ***
