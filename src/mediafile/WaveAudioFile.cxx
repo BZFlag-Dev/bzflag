@@ -25,9 +25,9 @@
 #define	IBM_FORMAT_ALAW		(0x0102)
 #define	IBM_FORMAT_ADPCM	(0x0103)
 
-WaveAudioFile::WaveAudioFile(std::istream* stream) : AudioFile(stream)
+WaveAudioFile::WaveAudioFile(std::istream* input) : AudioFile(input)
 {
-  if (stream == NULL)
+  if (input == NULL)
     return;
 
   char tag[4];
@@ -63,14 +63,14 @@ WaveAudioFile::WaveAudioFile(std::istream* stream) : AudioFile(stream)
     // can't read number of channels or unsupported number of channels
     return;
   }
-  const int numChannels = static_cast<int>(data16);
+  const int _numChannels = static_cast<int>(data16);
 
   // frames per second
   uint32_t data32 = read32LE();
   if (!isOkay()) {
     return;
   }
-  int framesPerSecond = static_cast<int>(data32);
+  int _framesPerSecond = static_cast<int>(data32);
 
   // bytes per second
   read32LE();
@@ -83,7 +83,7 @@ WaveAudioFile::WaveAudioFile(std::istream* stream) : AudioFile(stream)
   if (!isOkay() || (data16 != 8 && data16 != 16 && data16 != 32)) {
     return;
   }
-  const int sampWidth = static_cast<int>(data16 / 8);
+  const int _sampWidth = static_cast<int>(data16 / 8);
 
   // go find the data
   skip(length - 16);
@@ -93,10 +93,10 @@ WaveAudioFile::WaveAudioFile(std::istream* stream) : AudioFile(stream)
   }
 
   // compute number of frames
-  int numFrames = (length / (sampWidth * numChannels));
+  int _numFrames = (length / (_sampWidth * _numChannels));
 
   // save info
-  init(framesPerSecond, numChannels, numFrames, sampWidth);
+  init(_framesPerSecond, _numChannels, _numFrames, _sampWidth);
 }
 
 WaveAudioFile::~WaveAudioFile()
@@ -109,11 +109,11 @@ std::string	WaveAudioFile::getExtension()
   return ".wav";
 }
 
-bool		WaveAudioFile::read(void* buffer, int numFrames)
+bool		WaveAudioFile::read(void* buffer, int _numFrames)
 {
   // read data
   const int width = getSampleWidth();
-  const int numSamples = numFrames * getNumChannels();
+  const int numSamples = _numFrames * getNumChannels();
   readRaw(buffer, width * numSamples);
   if (!isOkay()) {
     // failed to read data

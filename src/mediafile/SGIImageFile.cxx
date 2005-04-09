@@ -18,7 +18,7 @@
 // SGIImageFile
 //
 
-SGIImageFile::SGIImageFile(std::istream* stream) : ImageFile(stream)
+SGIImageFile::SGIImageFile(std::istream* input) : ImageFile(input)
 {
   unsigned char header[512];
   readRaw(header, sizeof(header));
@@ -43,12 +43,12 @@ SGIImageFile::SGIImageFile(std::istream* stream) : ImageFile(stream)
   }
 
   // get dimensions
-  uint16_t width, height, depth;
-  width = swap16BE(reinterpret_cast<uint16_t*>(header + 6));
+  uint16_t myWidth, myHeight, depth;
+  myWidth = swap16BE(reinterpret_cast<uint16_t*>(header + 6));
   if (dimensions < 2)
-    height = 1;
+    myHeight = 1;
   else
-    height = swap16BE(reinterpret_cast<uint16_t*>(header + 8));
+    myHeight = swap16BE(reinterpret_cast<uint16_t*>(header + 8));
   if (dimensions < 3)
     depth = 1;
   else
@@ -58,8 +58,8 @@ SGIImageFile::SGIImageFile(std::istream* stream) : ImageFile(stream)
 
   // save info
   isVerbatim = (header[2] == 0);
-  init(static_cast<int>(depth), static_cast<int>(width),
-       static_cast<int>(height));
+  init(static_cast<int>(depth), static_cast<int>(myWidth),
+       static_cast<int>(myHeight));
 }
 
 SGIImageFile::~SGIImageFile()

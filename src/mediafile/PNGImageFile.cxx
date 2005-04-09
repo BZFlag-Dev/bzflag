@@ -44,27 +44,27 @@ PNGImageFile::PNGImageFile(std::istream* stream)
   validates that the file is in fact a png file and initializes the size information for it
 */
 
-PNGImageFile::PNGImageFile(std::istream* stream) : ImageFile(stream), palette(NULL)
+PNGImageFile::PNGImageFile(std::istream* input) : ImageFile(input), palette(NULL)
 {
   lineBuffers[0] = NULL;
   lineBuffers[1] = NULL;
 
   char buffer[8];
-  stream->read(buffer, 8);
+  input->read(buffer, 8);
   if (strncmp((char*)PNGHEADER, buffer, 8) != 0) {
     return;
   }
 
-  PNGChunk *c = PNGChunk::readChunk(stream);
+  PNGChunk *c = PNGChunk::readChunk(input);
   if (c->getType() != PNGChunk::IHDR) {
     delete c;
     return;
   }
 
   unsigned char* data = c->getData();
-  int32_t width, height;
-  data = (unsigned char *)nboUnpackInt(data, width);
-  data = (unsigned char *)nboUnpackInt(data, height);
+  int32_t myWidth, myHeight;
+  data = (unsigned char *)nboUnpackInt(data, myWidth);
+  data = (unsigned char *)nboUnpackInt(data, myHeight);
 
   data = (unsigned char *)nboUnpackUByte(data, bitDepth);
   data = (unsigned char *)nboUnpackUByte(data, colorDepth);
@@ -77,27 +77,27 @@ PNGImageFile::PNGImageFile(std::istream* stream) : ImageFile(stream), palette(NU
   int channels;
   switch (colorDepth) {
     case 0:
-      lineBufferSize = (((width * bitDepth + ((bitDepth < 8) ? (bitDepth+1) : 0)))/8)+1;
+      lineBufferSize = (((myWidth * bitDepth + ((bitDepth < 8) ? (bitDepth+1) : 0)))/8)+1;
       channels = 1;
     break;
 
     case 2:
-      lineBufferSize = (((3 * width * bitDepth + ((bitDepth < 8) ? (bitDepth-1) : 0)))/8)+1;
+      lineBufferSize = (((3 * myWidth * bitDepth + ((bitDepth < 8) ? (bitDepth-1) : 0)))/8)+1;
       channels = 3;
     break;
 
     case 3:
-      lineBufferSize = (((width * bitDepth + ((bitDepth < 8) ? (bitDepth-1) : 0)))/8)+1;
+      lineBufferSize = (((myWidth * bitDepth + ((bitDepth < 8) ? (bitDepth-1) : 0)))/8)+1;
       channels = 3;
     break;
 
     case 4:
-      lineBufferSize = (((2 * width * bitDepth + ((bitDepth < 8) ? (bitDepth-1) : 0)))/8)+1;
+      lineBufferSize = (((2 * myWidth * bitDepth + ((bitDepth < 8) ? (bitDepth-1) : 0)))/8)+1;
       channels = 2;
     break;
 
     case 6:
-      lineBufferSize = (((4 * width * bitDepth + ((bitDepth < 8) ? (bitDepth-1) : 0)))/8)+1;
+      lineBufferSize = (((4 * myWidth * bitDepth + ((bitDepth < 8) ? (bitDepth-1) : 0)))/8)+1;
       channels = 4;
     break;
 
@@ -105,7 +105,7 @@ PNGImageFile::PNGImageFile(std::istream* stream) : ImageFile(stream), palette(NU
       return;
   }
 
-  realBufferSize = channels * width + 1;
+  realBufferSize = channels * myWidth + 1;
   int allocSize = ((realBufferSize > lineBufferSize) ? realBufferSize : lineBufferSize) + MAX_COMPONENTS;
   lineBuffers[0] = new unsigned char[allocSize];
   lineBuffers[1] = new unsigned char[allocSize];
@@ -119,9 +119,9 @@ PNGImageFile::PNGImageFile(std::istream* stream) : ImageFile(stream), palette(NU
     return;
 
 
-  init(channels, width, height);
+  init(channels, myWidth, myHeight);
 
-  DEBUG4("Read PNG: Width %d, Height %d, Bit depth %d, Color type %d, Filter Method %d, Interlace Method %d, Channels %d.\n", width, height, bitDepth, colorDepth, filterMethod, interlaceMethod, channels);
+  DEBUG4("Read PNG: Width %d, Height %d, Bit depth %d, Color type %d, Filter Method %d, Interlace Method %d, Channels %d.\n", myWidth, myHeight, bitDepth, colorDepth, filterMethod, interlaceMethod, channels);
 }
 
 /*
@@ -174,24 +174,24 @@ bool					PNGImageFile::read(void* buffer)
   unsigned char *line = getLineBuffer();
 
   int err;
-  z_stream stream;
-  stream.next_out = line;
-  stream.avail_out = lineBufferSize;
-  stream.zalloc = (alloc_func)NULL;
-  stream.zfree = (free_func)NULL;
+  z_stream zStream;
+  zStream.next_out = line;
+  zStream.avail_out = lineBufferSize;
+  zStream.zalloc = (alloc_func)NULL;
+  zStream.zfree = (free_func)NULL;
 
-  err = inflateInit(&stream);
+  err = inflateInit(&zStream);
   if (err != Z_OK) {
     delete c;
     return false;
   }
 
   while (c->getType() == PNGChunk::IDAT) {
-    stream.next_in = c->getData();
-    stream.avail_in = c->getLength();
+    zStream.next_in = c->getData();
+    zStream.avail_in = c->getLength();
 
-    err = inflate(&stream, Z_SYNC_FLUSH);
-    while (((err == Z_OK) || err == Z_STREAM_END)  && (stream.avail_out == 0)) {
+    err = inflate(&zStream, Z_SYNC_FLUSH);
+    while (((err == Z_OK) || err == Z_STREAM_END)  && (zStream.avail_out == 0)) {
 
       expand();
 
@@ -206,9 +206,9 @@ bool					PNGImageFile::read(void* buffer)
       switchLineBuffers();
       line = getLineBuffer();
 
-      stream.next_out = line;
-      stream.avail_out = lineBufferSize;
-      err = inflate(&stream, Z_SYNC_FLUSH);
+      zStream.next_out = line;
+      zStream.avail_out = lineBufferSize;
+      err = inflate(&zStream, Z_SYNC_FLUSH);
     }
 
     if ((err != Z_STREAM_END) && (err != Z_OK)) {
@@ -220,7 +220,7 @@ bool					PNGImageFile::read(void* buffer)
     c = PNGChunk::readChunk(getStream());
   }
 
-  inflateEnd(&stream);
+  inflateEnd(&zStream);
 
   delete c;
   return true;
@@ -286,12 +286,12 @@ bool PNGImageFile::expand()
 
   unsigned char *pData = getLineBuffer();
 
-  int width = getWidth();
+  int myWidth = getWidth();
   int channels = getNumChannels();
   switch (bitDepth)  {
     case 1:
     {
-      for (int i = width-1; i >= 0; i--) {
+      for (int i = myWidth-1; i >= 0; i--) {
 	int byteOffset = i/8 + 1;
 	int bit = 7 - i%8;
 	if (colorDepth != 3) {
@@ -308,7 +308,7 @@ bool PNGImageFile::expand()
 
     case 2:
     {
-      for (int i = width-1; i >= 0; i--) {
+      for (int i = myWidth-1; i >= 0; i--) {
 	int byteOffset = i/4 + 1;
 	int bitShift = 6-2*(i%4);
 	if (colorDepth != 3) {
@@ -325,7 +325,7 @@ bool PNGImageFile::expand()
 
     case 4:
     {
-      for (int i = width-1; i >= 0; i--) {
+      for (int i = myWidth-1; i >= 0; i--) {
 	int byteOffset = i/2+1;
 	int bitShift = 4-4*(i%2);
 	if (colorDepth != 3) {
@@ -344,7 +344,7 @@ bool PNGImageFile::expand()
     {
       if (colorDepth == 3) {
 	// colormapped
-	for (int i = width-1; i >= 0; i--) {
+	for (int i = myWidth-1; i >= 0; i--) {
 	  PNGRGB &rgb = palette->get(*(pData+i));
 	  *(pData + i*3 + 1) = rgb.red;
 	  *(pData + i*3 + 2) = rgb.green;
@@ -359,7 +359,7 @@ bool PNGImageFile::expand()
 
     case 16:
     {
-      for (int i = 0; i < width*channels; i++) {
+      for (int i = 0; i < myWidth*channels; i++) {
 	*(pData+i+1) = (*(pData + 2*i + 1));
       }
     }
@@ -383,10 +383,10 @@ bool PNGImageFile::filter()
   //int	len = lineBufferSize;
   unsigned char *pData = getLineBuffer();
 
-  unsigned char filter = *pData;
+  unsigned char filterType = *pData;
   *(pData++) = 0;
 
-  switch (filter) {
+  switch (filterType) {
     case FILTER_NONE:
       return true;
 
@@ -545,18 +545,18 @@ PNGChunk *PNGChunk::readChunk(std::istream *stream)
   Static factory function for parsing and creating an arbitrary PNG chunk
 */
 
-PNGChunk *PNGChunk::readChunk(std::istream *stream)
+PNGChunk *PNGChunk::readChunk(std::istream *input)
 {
   PNGChunk *c = new PNGChunk();
-  stream->read((char *) &c->length, 4);
+  input->read((char *) &c->length, 4);
   c->length = ntohl(c->length);
-  stream->read((char *) &c->type, 4);
+  input->read((char *) &c->type, 4);
   c->type = ntohl(c->type);
   if (c->length > 0) {
     c->data = new unsigned char[c->length];
-    stream->read((char*) c->data, c->length);
+    input->read((char*) c->data, c->length);
   }
-  stream->read((char *) &c->crc, 4);
+  input->read((char *) &c->crc, 4);
   c->crc = ntohl(c->crc);
   return c;
 }

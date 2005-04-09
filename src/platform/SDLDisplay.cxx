@@ -38,16 +38,16 @@ SDLDisplay::SDLDisplay() : fullScreen(false), base_width(640),
     printf("Could not Get available video modes: %s.\n", SDL_GetError());
 
   int defaultResolutionIndex = 0;
-  ResInfo** resolutions;
-  int numResolutions = 1;
+  ResInfo** _resolutions;
+  int _numResolutions = 1;
   // No modes available or All resolutions available
   if ((modeList != (SDL_Rect **) 0) && (modeList != (SDL_Rect **) -1)) {
       for (int i = 1; modeList[i]; i++)
 	if ((modeList[i - 1]->w != modeList[i]->w)
 	    || (modeList[i - 1]->h != modeList[i]->h))
-	  numResolutions++;
+	  _numResolutions++;
   };
-  resolutions = new ResInfo*[numResolutions];
+  _resolutions = new ResInfo*[_numResolutions];
 
   if ((modeList != (SDL_Rect **) 0) && (modeList != (SDL_Rect **) -1)) {
     char name[80];
@@ -69,7 +69,7 @@ SDLDisplay::SDLDisplay() : fullScreen(false), base_width(640),
 	if ((modeList[i - 1]->w == w) && (modeList[i - 1]->h == h))
 	  continue;
       sprintf(name, "%dx%d    ", w, h);
-      resolutions[j] = new ResInfo(name, w, h, 0);
+      _resolutions[j] = new ResInfo(name, w, h, 0);
 #ifdef WIN32
       // use a safe default resolution because there are so many screwy drivers out there
       if ((w == defaultWidth) && (h == defaultHeight))
@@ -79,14 +79,14 @@ SDLDisplay::SDLDisplay() : fullScreen(false), base_width(640),
     }
   } else {
     // if no modes then make default
-    resolutions[0] = new ResInfo ("default", 640, 480, 0);
+    _resolutions[0] = new ResInfo ("default", 640, 480, 0);
   }
 
   // limit us to the main display
   putenv("SDL_SINGLEDISPLAY=1");
 
   // register modes
-  initResolutions(resolutions, numResolutions, defaultResolutionIndex);
+  initResolutions(_resolutions, _numResolutions, defaultResolutionIndex);
 
   SDL_EnableUNICODE(1);
 
@@ -607,13 +607,13 @@ void SDLWindow::iconify(void) {
   SDL_WM_IconifyWindow();
 };
 
-void SDLWindow::warpMouse(int x, int y) {
-  SDL_WarpMouse(x, y);
+void SDLWindow::warpMouse(int _x, int _y) {
+  SDL_WarpMouse(_x, _y);
 };
 
-void SDLWindow::getMouse(int& x, int& y) const {
-  x = mx;
-  y = my;
+void SDLWindow::getMouse(int& _x, int& _y) const {
+  _x = mx;
+  _y = my;
 };
 
 void SDLWindow::setSize(int width, int height) {
