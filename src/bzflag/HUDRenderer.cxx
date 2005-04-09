@@ -1759,16 +1759,15 @@ void			HUDRenderer::renderShots()
   // sort the reload values
   qsort(factors, maxShots, sizeof(float), compare_float);
 
-  glEnable(GL_BLEND);
-  
   // draw the reload values
+  glEnable(GL_BLEND);
   for (int i = 0; i < maxShots; ++i) {
     const int myWidth = int(indicatorWidth * factors[i]);
     const int myTop = indicatorTop + i * (indicatorHeight + indicatorSpace);
     if (factors[i] < 1.0f) {
-      hudColor4f(1.0f, 0.0f, 0.0f, 0.5f); // red
-      glRecti(indicatorLeft, myTop, indicatorLeft + myWidth, myTop + indicatorHeight);
       hudColor4f(0.0f, 1.0f, 0.0f, 0.5f); // green
+      glRecti(indicatorLeft, myTop, indicatorLeft + myWidth, myTop + indicatorHeight);
+      hudColor4f(1.0f, 0.0f, 0.0f, 0.5f); // red
       glRecti(indicatorLeft + myWidth + 1, myTop, indicatorLeft + indicatorWidth,
               myTop + indicatorHeight);
     } else {
@@ -1776,7 +1775,6 @@ void			HUDRenderer::renderShots()
       glRecti(indicatorLeft, myTop, indicatorLeft + myWidth, myTop + indicatorHeight);
     }
   }
-  
   glDisable(GL_BLEND);
   
   delete factors;
