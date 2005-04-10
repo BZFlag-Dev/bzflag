@@ -23,7 +23,7 @@
 // globals/
 
 static const char VersionString[] =
-  "ModelTool v1.3  (WaveFront OBJ to BZFlag BZW converter)";
+  "ModelTool v1.4  (WaveFront OBJ to BZFlag BZW converter)";
 
 static std::string texdir = "";
 static std::string groupName = "";
