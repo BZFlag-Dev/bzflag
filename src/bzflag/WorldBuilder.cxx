@@ -233,6 +233,7 @@ void WorldBuilder::preGetWorld()
   if (world->players) {
     delete[] world->players;
   }
+  // FIXME
   // world->maxPlayers do not work as bzfs uses more player slot than
   // real players. Any tcp connection is assigned a slot.
   // So I put now 216. We should fix it though.
