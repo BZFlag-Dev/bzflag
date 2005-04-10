@@ -32,6 +32,7 @@ static bool useAmbient = true;
 static bool useDiffuse = true;
 static bool useSpecular = true;
 static bool useShininess = true;
+static bool useEmission = true;
 static bool useNormals = true;
 static bool useTexcoords = true;
 static bool flipYZ = false;
@@ -131,14 +132,20 @@ public:
 	float		ambient[4];
 	float		diffuse[4];
 	float		specular[4];
+	float		emission[4];
 	float		shine;
 
 	void clear ( void )
 	{
 		texture = "";
-		ambient[0] = ambient[1] = ambient[2] = ambient[3] = 1.0f;
-		diffuse[0] = diffuse[1] = diffuse[2] = diffuse[3] = 1.0f;
-		specular[0] = specular[1] = specular[2] = specular[3] = 1.0f;
+		ambient[0] = ambient[1] = ambient[2] = 0.2f;
+		ambient[3] = 1.0f;
+		diffuse[0] = diffuse[1] = diffuse[2] = 1.0f;
+		diffuse[3] = 1.0f;
+		specular[0] = specular[1] = specular[2] = 0.0f;
+		specular[3] = 1.0f;
+		emission[0] = emission[1] = emission[2] = 0.0f;
+		emission[3] = 1.0f;
 		shine = 0.0f;
 	}
 };
@@ -347,6 +354,15 @@ static void readMTL ( CModel &model, std::string file )
 						  shine = 1.0f;
 						}
 						model.materials[matName].shine = (shine * maxShineExponent * shineFactor);
+					}
+				}
+				if (TextUtils::tolower(tag) == "ke")
+				{
+					if (lineParts.size() > 3)
+					{
+						model.materials[matName].emission[0] = (float)atof(lineParts[1].c_str());
+						model.materials[matName].emission[1] = (float)atof(lineParts[2].c_str());
+						model.materials[matName].emission[2] = (float)atof(lineParts[3].c_str());
 					}
 				}
 				if (TextUtils::tolower(tag) == "map_kd")
@@ -601,6 +617,8 @@ static void writeBZW  ( CModel &model, std::string file )
 				fprintf (fp,"  specular %f %f %f %f\n", material.specular[0], material.specular[1], material.specular[2], material.specular[3]);
 			if (useShininess)
 				fprintf (fp,"  shininess %f\n", material.shine);
+			if (useEmission)
+				fprintf (fp,"  emission %f %f %f %f\n", material.emission[0], material.emission[1], material.emission[2], material.emission[3]);
 
 			fprintf (fp,"end\n\n");
 
@@ -718,7 +736,8 @@ static int  dumpUsage ( char *exeName, const char* reason )
 	printf("       -d         : disable diffuse coloring\n");
 	printf("       -s         : disable specular coloring\n");
 	printf("       -sh        : disable shininess\n");
-	printf("       -sf <val>  : shine multiplier\n\n");
+	printf("       -sf <val>  : shine multiplier\n");
+	printf("       -e         : disable emission coloring\n\n");
 	return 1;
 }
 
@@ -810,6 +829,9 @@ int main(int argc, char* argv[])
 			} else {
 			  printf ("missing -sf argument\n");
 			}
+		}
+		else if (command == "-e") {
+			useEmission = false;
 		}
 	}
 	// make a model
