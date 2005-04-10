@@ -1606,8 +1606,8 @@ static void rejectPlayer(int playerIndex, uint16_t code, const char *reason)
   return;
 }
 
+// FIXME this is a workaround for a bug, still needed?
 // Team Size is wrong at some time
-// as we are fixing, look also at unconnected player slot to rub it
 static void fixTeamCount() {
   int playerIndex, teamNum;
   for (teamNum = RogueTeam; teamNum < RabbitTeam; teamNum++)
