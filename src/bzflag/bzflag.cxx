@@ -140,7 +140,7 @@ static DefaultDBItem	defaultDBItems[] = {
   { "displayZoom",		"1",			true,	StateDatabase::ReadWrite,	NULL },
   { "displayFlagHelp",		"1",			true,	StateDatabase::ReadWrite,	setFlagHelp },
   { "displayConsole",		"1",			false,	StateDatabase::ReadWrite,	NULL },
-  { "displayReloadTimer",	"1",			false,	StateDatabase::ReadWrite,	NULL },
+  { "displayReloadTimer",	"1",			true,	StateDatabase::ReadWrite,	NULL },
   { "displayRadar",		"1",			false,	StateDatabase::ReadWrite,	NULL },
   { "displayRadarRange",	"0.5",			false,	StateDatabase::ReadWrite,	NULL },
   { "displayFOV",		"60.0",			false,  StateDatabase::ReadWrite,	NULL },
