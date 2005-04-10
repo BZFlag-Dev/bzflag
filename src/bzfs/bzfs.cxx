@@ -1612,7 +1612,7 @@ static void fixTeamCount() {
   int playerIndex, teamNum;
   for (teamNum = RogueTeam; teamNum < RabbitTeam; teamNum++)
     team[teamNum].team.size = 0;
-  for (playerIndex = 0; playerIndex < maxPlayers; playerIndex++) {
+  for (playerIndex = 0; playerIndex < curMaxPlayers; playerIndex++) {
     GameKeeper::Player *p = GameKeeper::Player::getPlayerByIndex(playerIndex);
     if (p && p->player.isPlaying()) {
       teamNum = p->player.getTeam();
