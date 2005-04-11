@@ -23,7 +23,7 @@
 // globals/
 
 static const char VersionString[] =
-  "ModelTool v1.4  (WaveFront OBJ to BZFlag BZW converter)";
+  "ModelTool v1.5  (WaveFront OBJ to BZFlag BZW converter)";
 
 static std::string texdir = "";
 static std::string groupName = "";
@@ -331,6 +331,14 @@ static void readMTL ( CModel &model, std::string file )
 						model.materials[matName].diffuse[0] = (float)atof(lineParts[1].c_str());
 						model.materials[matName].diffuse[1] = (float)atof(lineParts[2].c_str());
 						model.materials[matName].diffuse[2] = (float)atof(lineParts[3].c_str());
+					}
+				}
+				if (TextUtils::tolower(tag) == "d")
+				{
+					if (lineParts.size() > 1)
+					{
+						model.materials[matName].ambient[3] = (float)atof(lineParts[1].c_str());
+						model.materials[matName].diffuse[3] = (float)atof(lineParts[1].c_str());
 					}
 				}
 				if (TextUtils::tolower(tag) == "ks")
