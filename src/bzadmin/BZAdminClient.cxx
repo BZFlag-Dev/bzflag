@@ -91,6 +91,7 @@ BZAdminClient::BZAdminClient(BZAdminUI* bzInterface)
 
   // set a default message mask
   showMessageType(MsgAddPlayer);
+  showMessageType(MsgAdminInfo);
   showMessageType(MsgKilled);
   showMessageType(MsgMessage);
   showMessageType(MsgNewRabbit);
@@ -231,7 +232,8 @@ BZAdminClient::ServerCode BZAdminClient::checkMessage() {
       players[p].isAdmin = false;
       if (ui != NULL)
 	ui->addedPlayer(p);
-      if (messageMask[MsgAddPlayer]) {
+	  // If you are an admin, then MsgAdminInfo will output the message
+      if (messageMask[MsgAddPlayer] && !players[getMyId()].isAdmin) {
 	Team temp;
 	std::string joinMsg = std::string("*** \'") + callsign + "\' joined the game as " +
 		temp.getName(players[p].team) + ".";
@@ -268,19 +270,33 @@ BZAdminClient::ServerCode BZAdminClient::checkMessage() {
       uint8_t numIPs;
       uint8_t tmp;
       vbuf = nboUnpackUByte(vbuf, numIPs);
-      for (i = 0; i < numIPs; ++i) {
-	vbuf = nboUnpackUByte(vbuf, tmp);
-	vbuf = nboUnpackUByte(vbuf, p);
-	vbuf = a.unpack(vbuf);
-	players[p].ip = a.getDotNotation();
+      if(numIPs > 1){      	
+        for (i = 0; i < numIPs; ++i) {
+          vbuf = nboUnpackUByte(vbuf, tmp);
+          vbuf = nboUnpackUByte(vbuf, p);
+          vbuf = a.unpack(vbuf);
+          players[p].ip = a.getDotNotation();
+          if (messageMask[MsgAdminInfo]){
+            ui->outputMessage("*** IPINFO: " + players[p].name + " from "  +
+              players[p].ip, Default);
+          }
+        }
       }
-      if (messageMask[MsgAdminInfo]) {
-	lastMessage.first = std::string("*** IP update received, ") +
-	  TextUtils::format("%d", numIPs) + " IP" + (numIPs == 1 ? "" : "s") +
-	  " updated.";
+      //Alternative to the MsgAddPlayer message
+      else if(numIPs == 1){
+        vbuf = nboUnpackUByte(vbuf, tmp);
+        vbuf = nboUnpackUByte(vbuf, p);
+        vbuf = a.unpack(vbuf);
+        players[p].ip = a.getDotNotation();
+        Team temp;
+        if (messageMask[MsgAdminInfo]){
+          std::string joinMsg = std::string("*** \'") + callsign + "\' joined the game as " +
+            temp.getName(players[p].team) + " from " + players[p].ip + ".";
+          lastMessage.first = joinMsg;
+        }
       }
       break;
-
+      
     case MsgScoreOver:
       if (messageMask[MsgScoreOver]) {
 	PlayerId id;
