@@ -137,6 +137,7 @@ noinst_HEADERS =			\
 	bzglob.h			\
 	bzsignal.h			\
 	common.h			\
+	cURLManager.h			\
 	global.h			\
 	md5.h				\
 	multicast.h			\
