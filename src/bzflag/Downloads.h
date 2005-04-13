@@ -15,6 +15,7 @@
 
 namespace Downloads {
   void doDownloads();
+  void finalizeDownloads();
   bool updateDownloads(bool& rebuild);
   void removeTextures(); // free the downloaded GL textures
 }

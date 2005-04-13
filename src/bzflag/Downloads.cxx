@@ -15,6 +15,7 @@
 
 /* system headers */
 #include <map>
+#include <vector>
 
 /* common implementation headers */
 #include "network.h"
@@ -25,6 +26,7 @@
 #include "URLManager.h"
 #include "AnsiCodes.h"
 #include "TextureManager.h"
+#include "cURLManager.h"
 
 /* local implementation headers */
 #include "playing.h"
@@ -74,6 +76,110 @@ static bool authorizedServer(const std::string& hostname);
 static bool checkAuthorizations(BzMaterialManager::TextureSet& set);
 
 
+class CachedTexture : cURLManager {
+public:
+  CachedTexture(const std::string &texUrl);
+
+  void         requestFileTime();
+  void         downloadTexture();
+  virtual void finalization(char *data, unsigned int length, bool good);
+
+  bool         hasTerminated() {return !running;};
+
+  static void setParams(bool check, long timeout);
+private:
+  std::string               url;
+  CacheManager::CacheRecord oldrec;
+  static bool               checkForCache;
+  static long               httpTimeout;
+  bool                      timeRequest;
+  bool                      running;
+};
+bool CachedTexture::checkForCache   = false;
+long CachedTexture::httpTimeout     = 0;
+
+CachedTexture::CachedTexture(const std::string &texUrl) : cURLManager()
+{
+  setURL(texUrl);
+  url         = texUrl;
+  timeRequest = false;
+  running     = false;
+
+  // use the cache?
+  if (CACHEMGR.findURL(texUrl, oldrec)) {
+    if (checkForCache)
+      requestFileTime();
+    else
+      // use the cached file
+      MATERIALMGR.setTextureLocal(texUrl, oldrec.name);
+  } else {
+    downloadTexture();
+  }
+}
+
+void CachedTexture::setParams(bool check, long timeout)
+{
+  checkForCache   = check;
+  httpTimeout     = timeout;
+}
+
+void CachedTexture::requestFileTime()
+{
+  running     = true;
+  timeRequest = true;
+  if (httpTimeout > 0.0)
+    setTimeout(httpTimeout);
+  setNoBody(true);
+  addHandle();
+}
+
+void CachedTexture::downloadTexture()
+{
+  running         = true;
+  timeRequest     = false;
+  std::string msg = ColorStrings[GreyColor];
+  msg            += "downloading: " + url;
+  addMessage(NULL, msg);
+
+  setNoBody(false);
+  if (httpTimeout > 0.0)
+    setTimeout(httpTimeout);
+  addHandle();
+}
+
+void CachedTexture::finalization(char *data, unsigned int length, bool good)
+{
+  time_t filetime;
+
+  if (good) {
+    getFileTime(filetime);
+    if (timeRequest) {
+      if (filetime <= oldrec.date) {
+	// use the cached file
+	MATERIALMGR.setTextureLocal(url, oldrec.name);
+	running = false;
+      } else {
+	downloadTexture();
+      }
+    } else {
+      // CACHEMGR generates name, usedDate, and key
+      CacheManager::CacheRecord rec;
+      rec.url  = url;
+      rec.size = length;
+      rec.date = filetime;
+      CACHEMGR.addFile(rec, data);
+      const std::string localname = CACHEMGR.getLocalName(url);
+      MATERIALMGR.setTextureLocal(url, localname);
+      running = false;
+    }
+  } else {
+    MATERIALMGR.setTextureLocal(url, "");
+    running = false;
+  }
+}
+
+std::vector<CachedTexture*> cachedTexVector;
+
 void Downloads::doDownloads()
 {
   CACHEMGR.loadIndex();
@@ -88,55 +194,56 @@ void Downloads::doDownloads()
   const bool doDownloads =	BZDB.isTrue("doDownloads");
   const bool updateDownloads =  BZDB.isTrue("updateDownloads");
 
+  float timeout = 15;
+  if (BZDB.isSet("httpTimeout")) {
+    timeout = BZDB.eval("httpTimeout");
+  }
+  CachedTexture::setParams(updateDownloads, (long)timeout);
+
   // check hosts' access permissions
   bool authNotice = checkAuthorizations(set);
 
-  for (set_it = set.begin(); set_it != set.end(); set_it++) {
-    const std::string& texUrl = set_it->c_str();
-    if (CACHEMGR.isCacheFileType(texUrl)) {
-
-      // use the cache?
-      CacheManager::CacheRecord oldrec;
-      if (CACHEMGR.findURL(texUrl, oldrec)) {
-	time_t filetime = 0;
-	if (doDownloads && updateDownloads) {
-	  getFileTime(texUrl, filetime);
-	}
-	if (filetime <= oldrec.date) {
-	  // use the cached file
-	  MATERIALMGR.setTextureLocal(texUrl, oldrec.name);
-	  continue;
-	}
-      }
-
-      // bail here if we can't download
-      if (!doDownloads) {
-	MATERIALMGR.setTextureLocal(texUrl, "");
-	std::string msg = ColorStrings[GreyColor];
-	msg += "not downloading: " + texUrl;
-	addMessage(NULL, msg);
-	continue;
-      }
-
-      // download and cache the URL
-      if (getAndCacheURL(texUrl)) {
-	const std::string localname = CACHEMGR.getLocalName(texUrl);
-	MATERIALMGR.setTextureLocal(texUrl, localname);
-      } else {
-	MATERIALMGR.setTextureLocal(texUrl, "");
+  if (doDownloads)
+    for (set_it = set.begin(); set_it != set.end(); set_it++) {
+      const std::string& texUrl = set_it->c_str();
+      if (CACHEMGR.isCacheFileType(texUrl)) {
+	cachedTexVector.push_back(new CachedTexture(texUrl));
       }
     }
-  }
+  else
+    for (set_it = set.begin(); set_it != set.end(); set_it++) {
+      const std::string& texUrl = set_it->c_str();
+      if (CACHEMGR.isCacheFileType(texUrl)) {
+
+	// use the cache?
+	CacheManager::CacheRecord oldrec;
+	if (CACHEMGR.findURL(texUrl, oldrec)) {
+	  // use the cached file
+	  MATERIALMGR.setTextureLocal(texUrl, oldrec.name);
+	} else {
+	  // bail here if we can't download
+	  MATERIALMGR.setTextureLocal(texUrl, "");
+	  std::string msg = ColorStrings[GreyColor];
+	  msg += "not downloading: " + texUrl;
+	  addMessage(NULL, msg);
+	}
+      }
+    }
 
   if (authNotice) {
     printAuthNotice();
   }
-
-  CACHEMGR.saveIndex();
-
-  return;
 }
 
+void Downloads::finalizeDownloads()
+{
+  int  texNo = cachedTexVector.size();
+  for (int i = 0; i < texNo; i++)
+    delete cachedTexVector[i];
+  cachedTexVector.clear();
+
+  CACHEMGR.saveIndex();
+}
 
 bool Downloads::updateDownloads(bool& rebuild)
 {
@@ -279,7 +386,8 @@ static bool getAndCacheURL(const std::string& url)
     CACHEMGR.addFile(rec, urlData);
     free(urlData);
     result = true;
-  } else {
+  }
+  else {
     std::string message = ColorStrings[RedColor] + "failure: ";
     message += URLMGR.getErrorString();
     addMessage(NULL, message);

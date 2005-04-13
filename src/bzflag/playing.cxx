@@ -102,6 +102,7 @@
 #include "FlagSceneNode.h"
 #include "ObstacleMgr.h"
 #include "AresHandler.h"
+#include "cURLManager.h"
 
 // versioning that makes us recompile every time
 #include "version.h"
@@ -184,6 +185,8 @@ static const float NearPlaneNormal = 1.0f;
 static const float NearPlaneClose = 0.25f; // for drawing in the cockpit
 static float NearPlane = NearPlaneNormal;
 static const float FarPlaneScale = 1.5f; // gets multiplied by BZDB_WORLDSIZE
+
+static bool textureDownloading = false;
 
 enum BlowedUpReason {
   GotKilledMsg,
@@ -1606,18 +1609,8 @@ static void loadCachedWorld()
   worldBuilder = NULL;
 
   HUDDialogStack::get()->setFailedMessage("Downloading files...");
-  drawFrame(0.0f);
   Downloads::doDownloads();
-
-  HUDDialogStack::get()->setFailedMessage("Entering game...");
-  drawFrame(0.0f);
-  joinInternetGame2();
-
-  // it worked!  pop all the menus.
-  HUDDialogStack* stack = HUDDialogStack::get();
-  while (stack->isActive())
-    stack->pop();
-  joiningGame = false;
+  textureDownloading = true;
 }
 
 static void dumpMissingFlag(char *buf, uint16_t len)
@@ -4428,6 +4421,8 @@ static void joinInternetGame2()
 {
   justJoined = true;
 
+  HUDDialogStack::get()->setFailedMessage("Entering game...");
+
   ServerLink::setServer(serverLink);
   World::setWorld(world);
 
@@ -4470,6 +4465,12 @@ static void joinInternetGame2()
 			myTank->getCallSign(),
 			myTank->getEmailAddress(),
 			startupInfo.token);
+
+  // it worked!  pop all the menus.
+  HUDDialogStack* stack = HUDDialogStack::get();
+  while (stack->isActive())
+    stack->pop();
+  joiningGame = false;
 }
 
 
@@ -5631,6 +5632,18 @@ static void		playingLoop()
 #endif
 
     FlagSceneNode::freeFlag();
+
+    int activeTransfers = cURLManager::perform();
+
+    // check if we are waiting for initial texture downloading
+    if (textureDownloading) {
+      if (activeTransfers == 0) {
+	// downloading is terminated. go!
+	Downloads::finalizeDownloads();
+	joinInternetGame2();
+	textureDownloading = false;
+      }
+    }
   }
 
   // restore the sound.  if we don't do this then we'll save the
