@@ -41,10 +41,10 @@ public:
   ~TimeKeeper();
   TimeKeeper&		operator=(const TimeKeeper&);
 
-  float		operator-(const TimeKeeper&) const;
-  bool		operator<=(const TimeKeeper&) const;
-	TimeKeeper&		operator+=(float);
-  TimeKeeper&		operator+=(const TimeKeeper&) ;
+  float		        operator-(const TimeKeeper&) const;
+  bool                  operator<=(const TimeKeeper&) const;
+  TimeKeeper&		operator+=(float);
+  TimeKeeper&		operator+=(const TimeKeeper&);
 
 	// make a TimeKeeper with seconds = NULL act like unset
 	// Fixme: must this be defined here? didn't work for me outside the class
