@@ -1719,7 +1719,6 @@ static TeamColor autoTeamSelect(TeamColor t)
   if (teams.empty())
     return RogueTeam;
 
-  std::vector<TeamSize>::iterator it;
   bool unBalanced = (teams.back().current < maxTeamSize);
 
   if (unBalanced) {
