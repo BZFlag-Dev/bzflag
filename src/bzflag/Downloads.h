@@ -14,10 +14,12 @@
 #define DOWNLOADS_H
 
 namespace Downloads {
-  void doDownloads();
+  void startDownloads(bool doDownloads,
+		      bool updateDownloads,
+		      bool referencing);
   void finalizeDownloads();
-  bool updateDownloads(bool& rebuild);
   void removeTextures(); // free the downloaded GL textures
+  bool requested();
 }
 
 #endif

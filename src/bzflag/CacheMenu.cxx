@@ -161,17 +161,8 @@ void CacheMenu::execute()
       inputField->setString("0");
     }
   } else if (_focus == updateDownloadCache) {
-    bool rebuild;
-    if (Downloads::updateDownloads(rebuild)) {
-      controlPanel->addMessage("Updated Downloads");
-    } else {
-      controlPanel->addMessage("No updates required");
-    }
-    if (rebuild) {
-      setSceneDatabase();
-      controlPanel->addMessage("Rebuilt scene");
-    }
-    setFailedMessage("");
+    controlPanel->addMessage("Updating Downloads");
+    Downloads::startDownloads(true, true, true);
   } else if (_focus == clearDownloadCache) {
     const std::string oldSize = BZDB.get("maxCacheMB");
     BZDB.set("maxCacheMB", "0");

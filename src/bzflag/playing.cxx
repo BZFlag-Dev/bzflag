@@ -186,8 +186,6 @@ static const float NearPlaneClose = 0.25f; // for drawing in the cockpit
 static float NearPlane = NearPlaneNormal;
 static const float FarPlaneScale = 1.5f; // gets multiplied by BZDB_WORLDSIZE
 
-static bool textureDownloading = false;
-
 enum BlowedUpReason {
   GotKilledMsg,
   GotShot,
@@ -1609,8 +1607,12 @@ static void loadCachedWorld()
   worldBuilder = NULL;
 
   HUDDialogStack::get()->setFailedMessage("Downloading files...");
-  Downloads::doDownloads();
-  textureDownloading = true;
+
+  const bool doDownloads =	BZDB.isTrue("doDownloads");
+  const bool updateDownloads =  BZDB.isTrue("updateDownloads");
+  Downloads::startDownloads(doDownloads, updateDownloads, false);
+
+  joinInternetGame2();
 }
 
 static void dumpMissingFlag(char *buf, uint16_t len)
@@ -5636,13 +5638,10 @@ static void		playingLoop()
     int activeTransfers = cURLManager::perform();
 
     // check if we are waiting for initial texture downloading
-    if (textureDownloading) {
-      if (activeTransfers == 0) {
-	// downloading is terminated. go!
-	Downloads::finalizeDownloads();
-	joinInternetGame2();
-	textureDownloading = false;
-      }
+    if ((activeTransfers == 0) && Downloads::requested()) {
+      // downloading is terminated. go!
+      Downloads::finalizeDownloads();
+      setSceneDatabase();
     }
   }
 
