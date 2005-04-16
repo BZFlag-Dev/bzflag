@@ -136,7 +136,7 @@ static void handleMuteCmd(GameKeeper::Player *playerData, const char *message)
   }
   
   
-  std::vector<std::string> argv = TextUtils::tokenize(message, " \t", 2, true);
+  std::vector<std::string> argv = TextUtils::tokenize(message, " \t", 3, true);
 
   if (argv.size() < 2) {
     sendMessage(ServerPlayer, t, "Syntax: /mute <#slot | PlayerName | \"Player Name\">");
@@ -175,7 +175,7 @@ static void handleUnmuteCmd(GameKeeper::Player *playerData, const char *message)
   }
   
   
-  std::vector<std::string> argv = TextUtils::tokenize(message, " \t", 2, true);
+  std::vector<std::string> argv = TextUtils::tokenize(message, " \t", 3, true);
 
   if (argv.size() < 2) {
     sendMessage(ServerPlayer, t, "Syntax: /unmute <#slot | PlayerName | \"Player Name\">");
