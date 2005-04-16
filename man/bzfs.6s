@@ -1062,7 +1062,7 @@ This command requires the UNBAN permision.
 
 Allows a server admin to remove the ability for a player to communicate with
 other players. Once muted the player may only talk to admins on the server.
-usage: /mute <playername>
+usage: /mute <#slot> | <playername>
 This command removes the TALK permission that is enabled by default for all 
 players. (disabling TALK by default would let you run a "silent" server)
 
@@ -1071,7 +1071,7 @@ players. (disabling TALK by default would let you run a "silent" server)
 
 Allows a server admin to restore the TALK permission to a previously muted
 player. 
-usage: /unmute <playername>
+usage: /unmute <#slot> | <playername>
 
 .SH "Worlds"
 BZFlag worlds come in two varieties, randomly generated ones, and
