@@ -1534,7 +1534,7 @@ void sendFilteredMessage(int sendingPlayer, PlayerId recipientPlayer, const char
 	return;
     }
 
-    sendMessage(ServerPlayer, sendingPlayer, "We're sorry, your not allowed to talk!");
+    sendMessage(ServerPlayer, sendingPlayer, "We're sorry, you are not allowed to talk!");
     return; //bail out
   }
 
