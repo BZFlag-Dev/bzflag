@@ -61,6 +61,7 @@ cURLManager::~cURLManager()
   if (added)
     removeHandle();
   curl_easy_cleanup(easyHandle);
+  free(theData);
 }
 
 void cURLManager::setup()
@@ -149,15 +150,14 @@ void cURLManager::removeHandle()
 
 void cURLManager::collectData(char* ptr, int &len)
 {
-  unsigned char	*newData = (unsigned char*)malloc(theLen + len);
-  if (theData)
-    memcpy(newData, theData, theLen);
-
-  memcpy(&(newData[theLen]), ptr, len);
-  theLen += len;
-
-  free(theData);
-  theData = newData;
+  unsigned char *newData = (unsigned char *)realloc(theData, theLen + len);
+  if (!newData) {
+    DEBUG1("memory exhausted\n");
+  } else {
+    memcpy(newData + theLen, ptr, len);
+    theLen += len;
+    theData = newData;
+  }
 }
 
 int cURLManager::perform()
