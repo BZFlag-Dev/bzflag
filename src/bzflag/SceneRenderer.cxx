@@ -278,7 +278,9 @@ void SceneRenderer::setQuality(int value)
   if (useQualityValue >= 2) {
     glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
     glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
-    glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST);
+    // GL_NICEST for polygon smoothing seems to make some drivers
+    // cause massive slowdowns and "spikes" when drawing the radar
+    glHint(GL_POLYGON_SMOOTH_HINT, GL_FASTEST);
   } else {
     glHint(GL_LINE_SMOOTH_HINT, GL_FASTEST);
     glHint(GL_POINT_SMOOTH_HINT, GL_FASTEST);
