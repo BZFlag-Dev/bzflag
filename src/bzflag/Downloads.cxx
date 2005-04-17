@@ -23,7 +23,6 @@
 #include "AccessList.h"
 #include "CacheManager.h"
 #include "BzMaterial.h"
-#include "URLManager.h"
 #include "AnsiCodes.h"
 #include "TextureManager.h"
 #include "cURLManager.h"
@@ -202,6 +201,15 @@ void Downloads::startDownloads(bool doDownloads, bool updateDownloads,
 
   // check hosts' access permissions
   bool authNotice = checkAuthorizations(set);
+
+  if (!referencing) {
+    // Clear old cached texture
+    // This is the first time is called after joining
+    int  texNo = cachedTexVector.size();
+    for (int i = 0; i < texNo; i++)
+      delete cachedTexVector[i];
+    cachedTexVector.clear();
+  }
 
   if (doDownloads)
     for (set_it = set.begin(); set_it != set.end(); set_it++) {
