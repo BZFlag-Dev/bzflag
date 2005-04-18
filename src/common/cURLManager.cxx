@@ -208,6 +208,8 @@ void cURLManager::infoComplete(CURLcode result)
   finalization((char *)theData, theLen, result == CURLE_OK);
   free(theData);
   removeHandle();
+  theData = NULL;
+  theLen  = 0;
 }
 
 bool cURLManager::getFileTime(time_t &t)
