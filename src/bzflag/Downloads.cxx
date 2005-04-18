@@ -19,7 +19,6 @@
 
 /* common implementation headers */
 #include "network.h"
-#include "Address.h"
 #include "AccessList.h"
 #include "CacheManager.h"
 #include "BzMaterial.h"
@@ -68,7 +67,6 @@ static bool       textureDownloading = false;
 
 // Function Prototypes
 static void printAuthNotice();
-static void setHudMessage(const std::string& msg);
 static bool authorizedServer(const std::string& hostname);
 static bool checkAuthorizations(BzMaterialManager::TextureSet& set);
 
@@ -300,18 +298,13 @@ static void printAuthNotice()
 
 static bool authorizedServer(const std::string& hostname)
 {
-  setHudMessage("Access DNS check...");
-  Address address(hostname); // get the address  (BLOCKING)
-  std::string ip = address.getDotNotation();
-  setHudMessage("");
+  // Don't do here a DNS lookup, it can block the client
+  // DNS is temporary removed until someone code it unblocking
 
   // make the list of strings to check
   std::vector<std::string> nameAndIp;
   if (hostname.size() > 0) {
     nameAndIp.push_back(hostname);
-  }
-  if (ip.size() > 0) {
-    nameAndIp.push_back(ip);
   }
 
   return DownloadAccessList.authorized(nameAndIp);
@@ -383,14 +376,6 @@ static bool checkAuthorizations(BzMaterialManager::TextureSet& set)
   }
 
   return hostFailed;  
-}
-
-
-static void setHudMessage(const std::string& msg)
-{
-  HUDDialogStack::get()->setFailedMessage(msg.c_str());
-  drawFrame(0.0f);
-  return;
 }
 
 
