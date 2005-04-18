@@ -18,7 +18,8 @@
 
 bool                    cURLManager::inited      = false;
 CURLM                  *cURLManager::multiHandle = NULL;
-std::list<cURLManager*> cURLManager::cURLList;
+std::map<CURL*,
+	 cURLManager*>  cURLManager::cURLMap;
 
 cURLManager::cURLManager()
 {
@@ -128,7 +129,7 @@ void cURLManager::addHandle()
   CURLMcode result = curl_multi_add_handle(multiHandle, easyHandle);
   if (result != CURLM_OK)
     DEBUG1("Unexpected error from libcurl; Error: %d\n", result);
-  cURLList.push_back(this);
+  cURLMap[easyHandle] = this;
   added = true;
 }
 
@@ -136,12 +137,7 @@ void cURLManager::removeHandle()
 {
   if (!added)
     return;
-  for (std::list<cURLManager*>::iterator i = cURLList.begin();
-       i != cURLList.end(); i++)
-    if (*i == this) {
-      cURLList.erase(i);
-      break;
-    }
+  cURLMap.erase(easyHandle);
   CURLMcode result = curl_multi_remove_handle(multiHandle, easyHandle);
   if (result != CURLM_OK)
     DEBUG1("Unexpected error from libcurl; Error: %d\n", result);
@@ -187,12 +183,7 @@ int cURLManager::perform()
 
     easy        = pendingMsg->easy_handle;
 
-    for (std::list<cURLManager*>::iterator i = cURLList.begin();
-	 i != cURLList.end(); i++)
-      if ((*i)->easyHandle == easy) {
-	(*i)->infoComplete(pendingMsg->data.result);
-	break;
-      }
+    cURLMap[easy]->infoComplete(pendingMsg->data.result);
 
     if (msgs_in_queue <= 0)
       break;

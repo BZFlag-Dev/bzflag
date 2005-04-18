@@ -19,7 +19,7 @@
 // system headers
 #include <curl/curl.h>
 #include <string>
-#include <list>
+#include <map>
 
 class cURLManager {
 public:
@@ -56,7 +56,7 @@ private:
   static size_t writeFunction(void *ptr, size_t size, size_t nmemb,
 			      void *stream);
 
-  static std::list<cURLManager*> cURLList;
+  static std::map<CURL*, cURLManager*> cURLMap;
 };
 
 #endif // CURL_MANAGER_H
