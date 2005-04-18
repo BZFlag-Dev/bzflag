@@ -289,7 +289,7 @@ static void handleQuitCmd(GameKeeper::Player *playerData, const char *message)
 static void handleMsgCmd(GameKeeper::Player *playerData, const char *message)
 {
   int from = playerData->getIndex();
-  int to;
+  int to= -1;
 
   std::string message2;
   size_t callsignStart=0, callsignEnd=0, messageStart=0;
@@ -368,14 +368,25 @@ static void handleMsgCmd(GameKeeper::Player *playerData, const char *message)
   }
 
   recipient = arguments.substr(callsignStart, callsignEnd - callsignStart + 1);
-  to = GameKeeper::Player::getPlayerIDByName(recipient);
+  
+	if (!recipient.compare(0,1,">")) {
+		// /msg >admin sends on admin channel, /msg >team on team channel
+		recipient.erase(0,1);
+		if ( TextUtils::toupper(recipient) == "ADMIN") 
+			to = AdminPlayers;				
+		else if (TextUtils::toupper(recipient) == "TEAM") 
+			to = 250 - (int)playerData->player.getTeam();
+	}
+	else {
+		to = GameKeeper::Player::getPlayerIDByName(recipient);
 
-  // valid callsign
-  if ((to < 0) || (to >= curMaxPlayers)) {
-    message2 = TextUtils::format("\"%s\" is not here.  No such callsign.", recipient.c_str());
-    sendMessage(ServerPlayer, from, message2.c_str());
-    return;
-  }
+  	// valid callsign
+  	if ((to < 0) || (to >= curMaxPlayers)) {
+   	 message2 = TextUtils::format("\"%s\" is not here.  No such callsign.", recipient.c_str());
+  	  sendMessage(ServerPlayer, from, message2.c_str());
+   	 return;
+  	}
+	}
 
   // make sure there is something to send
   if ((messageStart >= arguments.size() - 1) || (messageStart == 0)) {
