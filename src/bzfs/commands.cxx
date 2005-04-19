@@ -369,7 +369,7 @@ static void handleMsgCmd(GameKeeper::Player *playerData, const char *message)
 
   recipient = arguments.substr(callsignStart, callsignEnd - callsignStart + 1);
   
-	if (!recipient.compare(0,1,">")) {
+	if (recipient[0] == '>') {
 		// /msg >admin sends on admin channel, /msg >team on team channel
 		recipient.erase(0,1);
 		if ( TextUtils::toupper(recipient) == "ADMIN") 
