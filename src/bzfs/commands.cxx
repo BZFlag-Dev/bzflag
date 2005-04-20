@@ -432,14 +432,14 @@ static void handleSetCmd(GameKeeper::Player *playerData, const char *message)
   if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::setVar)
       && !playerData->accessInfo.hasPerm(PlayerAccessInfo::setAll)) {
     sendMessage(ServerPlayer, t, "You do not have permission to run the set command");
-	DEBUG4("set failed by %s, setvar=%d, setall=%d\n",playerData->player.getCallSign(),setvar,setall );
+	DEBUG3("set failed by %s, setvar=%d, setall=%d\n",playerData->player.getCallSign(),setvar,setall );
    return;
   }
   if (Replay::enabled()) {
     sendMessage(ServerPlayer, t, "You can't /set variables in replay mode");
     return;
   }
-  DEBUG4("set executed by %s, setvar=%d, setall=%d\n",playerData->player.getCallSign(),setvar,setall );
+  DEBUG3("set executed by %s, setvar=%d, setall=%d\n",playerData->player.getCallSign(),setvar,setall );
   sendMessage(ServerPlayer, t, CMDMGR.run(message+1).c_str());
   snprintf(message2, MessageLen, "Variable Modification Notice by %s of %s",
 	   playerData->player.getCallSign(), message+1);
