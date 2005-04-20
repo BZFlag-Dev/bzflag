@@ -17,76 +17,85 @@
 // interface header
 #include "motd.h"
 
+// system headers
 #include <vector>
-#include <string>
 
-#include "URLManager.h"
+// common implementation headers
 #include "TextUtils.h"
+#include "AnsiCodes.h"
+#include "version.h"
 
-MessageOfTheDay::MessageOfTheDay()
+// local implementation headers
+#include "ControlPanel.h"
+
+extern ControlPanel* controlPanel;
+
+typedef struct {
+  std::string title;
+  std::string date;
+  std::string text;
+  std::string version;
+} MOTD_message;
+
+void MessageOfTheDay::finalization(char *_data, unsigned int length, bool good)
 {
-}
+  unsigned int i;
+  unsigned int j;
 
-MessageOfTheDay::~MessageOfTheDay()
-{
-}
+  std::vector<MOTD_message> messages;
 
-void MessageOfTheDay::getURL(const std::string URL)
-{
-  messages.clear();
-
-  // get all up on the internet and go get the thing
-  if (!URLManager::instance().getURL(URL,data)) {
-    data = "Default MOTD";
-  } else {
-    // trim trailing whitespace
-    int l = data.size() - 1;
-    while (TextUtils::isWhitespace(data[l])) {
-      data.erase(l, 1);
-      l--;
-    }
+  if (good) {
+    std::string data(_data, length);
 
     // parse into messages
     std::vector<std::string> lines = TextUtils::tokenize(data, "\n");
-    if (((float)lines.size() / 4) != (floorf((float)lines.size() / 4))) {
+    if (lines.size() % 4) {
       data = "MOTD contains unexpected data";
     } else {
-      for (unsigned int i = 0; i < lines.size(); ++i) {
+      for (i = 0; i < lines.size(); ++i) {
 	MOTD_message msg;
-	msg.title = lines[i++];
-	msg.date = lines[i++];
-	msg.text = lines[i++];
+	msg.title   = lines[i++];
+	msg.date    = lines[i++];
+	msg.text    = lines[i++];
 	msg.version = lines[i].substr(lines[i].find(':') + 2);
 	messages.push_back(msg);
       }
     }
-  }
-
-  if (messages.size() == 0) {
+    if (messages.size() == 0) {
+      MOTD_message msg;
+      msg.text = data;
+      messages.push_back(msg);
+    }
+  } else {
     MOTD_message msg;
-    msg.text = data;
+    msg.text = "Default MOTD";
     messages.push_back(msg);
   }
+
+  std::vector<std::string> versions;
+  versions.push_back("0.0");
+  versions.push_back(getMajorMinorVersion());
+  versions.push_back(getMajorMinorRevVersion());
+
+  std::vector<std::string> msgs;
+  for (i = 0; i < messages.size(); ++i)
+    for (j = 0; j < versions.size(); ++j)
+      if (messages[i].version == versions[j])
+	msgs.push_back(messages[i].text);
+
+  controlPanel->addMessage(ColorStrings[UnderlineColor]
+			   + ColorStrings[WhiteColor]
+			   + "Message of the day: ");
+  for (j = 0; j < msgs.size(); ++j)
+    controlPanel->addMessage(ColorStrings[WhiteColor] + "* " + msgs[j]);
 }
 
-std::vector<std::string> MessageOfTheDay::getPrintable(const std::vector<std::string>& matchVersions)
+void MessageOfTheDay::getURL(const std::string URL)
 {
-  std::vector<std::string> retval;
-  unsigned int i, j;
-  for (i = 0; i < messages.size(); ++i) {
-    if (matchVersions.size() == 0) {
-      retval.push_back(messages[i].text);
-    } else {
-      for (j = 0; j < matchVersions.size(); ++j) {
-	if (messages[i].version == matchVersions[j]) {
-	  retval.push_back(messages[i].text);
-	}
-      }
-    }
-  }
-  return retval;
+  // get all up on the internet and go get the thing
+  setURL(URL);
+  addHandle();
 }
-
 
 // Local Variables: ***
 // mode: C++ ***
