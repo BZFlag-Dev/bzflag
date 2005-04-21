@@ -1603,6 +1603,9 @@ static void rejectPlayer(int playerIndex, uint16_t code, const char *reason)
   buf = nboPackUShort(bufStart, code);
   buf = nboPackString(buf, reason, strlen(reason) + 1);
   directMessage(playerIndex, MsgReject, sizeof (uint16_t) + MessageLen, bufStart);
+  // Fixing security hole, because a client can ignore the reject message
+  // then he can avoid a ban, hostban...
+  removePlayer(playerIndex, "/rejected");
   return;
 }
 
