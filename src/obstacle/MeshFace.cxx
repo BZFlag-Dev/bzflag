@@ -103,7 +103,7 @@ void MeshFace::finalize()
 
   if (maxCrossSqr < +1.0e-20f) {
 
-    DEBUG1("invalid mesh face");
+    DEBUG1("invalid mesh face (%f)", maxCrossSqr);
     if ((debugLevel >= 3) && (mesh != NULL)) {
       printf(":");
       for (i = 0; i < vertexCount; i++) {
@@ -135,7 +135,7 @@ void MeshFace::finalize()
     const float d = vec3dot(c, plane);
     if (d <= 0.0f) {
 
-      DEBUG1("non-convex mesh face");
+      DEBUG1("non-convex mesh face (%f)", d);
       if ((debugLevel >= 3) && (mesh != NULL)) {
         printf(":");
         for (i = 0; i < vertexCount; i++) {
