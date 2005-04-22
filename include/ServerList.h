@@ -19,9 +19,6 @@
 #include <vector>
 
 /* common interface headers */
-#include "BzfEvent.h"
-#include "Protocol.h"
-#include "version.h"
 #include "ListServer.h"
 #include "StartupInfo.h"
 
@@ -40,20 +37,20 @@ public:
   ServerList();
   virtual ~ServerList();
 
-  void readServerList(int index, StartupInfo *info);
-  void addToList(ServerItem&, bool doCache=false);
-  void addToListWithLookup(ServerItem&);
   void checkEchos(StartupInfo *info);
-  void addCacheToList();
   void startServerPings(const StartupInfo *info);
   bool searchActive() const;
   bool serverFound() const;
   const std::vector<ServerItem>& getServers();
   std::vector<ServerItem>::size_type size();
   int updateFromCache();
-  void clear();
 
 private:
+  void readServerList(int index, StartupInfo *info);
+  void addToList(ServerItem&, bool doCache=false);
+  void addToListWithLookup(ServerItem&);
+  void addCacheToList();
+  void clear();
   void _shutDown();
 
 private:
@@ -63,7 +60,6 @@ private:
   std::vector<ServerItem> servers;
   ListServer listServers[MaxListServers];
   ServerListCache* serverCache;
-  struct sockaddr_in pingInAddr;
   int pingBcastSocket;
   struct sockaddr_in pingBcastAddr;
 
