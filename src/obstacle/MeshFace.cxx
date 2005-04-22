@@ -150,6 +150,25 @@ void MeshFace::finalize()
     }
   }
 
+  // see if the vertices are coplanar
+  for (v = 0; v < vertexCount; v++) {
+    const float cross = vec3dot(vertices[v], plane);
+    if (fabsf(cross + plane[3]) > 1.0e-3) {
+      DEBUG1("non-planar mesh face (%f)", cross + plane[3]);
+      if ((debugLevel >= 3) && (mesh != NULL)) {
+        printf(":");
+        for (i = 0; i < vertexCount; i++) {
+          printf(" %i", (fvec3*)vertices[i] - mesh->getVertices());
+        }
+	print(std::cerr, "");
+      }
+      DEBUG1("\n");
+
+      vertexCount = 0;
+      return;
+    }
+  }
+
   // setup extents
   for (v = 0; v < vertexCount; v++) {
     extents.expandToPoint(vertices[v]);
