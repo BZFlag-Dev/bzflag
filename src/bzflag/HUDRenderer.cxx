@@ -1364,15 +1364,15 @@ void			HUDRenderer::renderPlaying(SceneRenderer& renderer)
   glPushMatrix();
   glLoadIdentity();
 
-  // draw shot reload status
-  if (BZDB.isTrue("displayReloadTimer"))
-    renderShots();
-
   LocalPlayer *myTank = LocalPlayer::getMyTank();
   if (myTank && myTank->getPosition()[2] < 0.0f) {
     glColor4f(0.02f, 0.01f, 0.01f, 1.0);
     glRectf(0, 0, (float)width, (myTank->getPosition()[2]/(BZDB.eval(StateDatabase::BZDB_BURROWDEPTH)-0.1f)) * ((float)viewHeight/2.0f));
   }
+
+  // draw shot reload status
+  if (BZDB.isTrue("displayReloadTimer"))
+    renderShots();
 
   // draw cracks
   if (showCracks)
