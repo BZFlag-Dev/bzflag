@@ -1355,7 +1355,6 @@ void			HUDRenderer::renderPlaying(SceneRenderer& renderer)
   FontManager &fm = FontManager::instance();
 
   // use one-to-one pixel projection
-
   glScissor(ox, oy + height - viewHeight, width, viewHeight);
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
@@ -1364,6 +1363,7 @@ void			HUDRenderer::renderPlaying(SceneRenderer& renderer)
   glPushMatrix();
   glLoadIdentity();
 
+  // cover the lower portion of the screen when burrowed
   LocalPlayer *myTank = LocalPlayer::getMyTank();
   if (myTank && myTank->getPosition()[2] < 0.0f) {
     glColor4f(0.02f, 0.01f, 0.01f, 1.0);
