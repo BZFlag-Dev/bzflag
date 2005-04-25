@@ -256,6 +256,7 @@ void Downloads::finalizeDownloads()
   cachedTexVector.clear();
 
   CACHEMGR.saveIndex();
+  setSceneDatabase();
 }
 
 bool Downloads::requested()
