@@ -30,6 +30,7 @@
 #include "Team.h"
 #include "ServerList.h"
 #include "ErrorHandler.h"
+#include "cURLManager.h"
 
 StartupInfo startupInfo;
 
@@ -456,6 +457,7 @@ void BZAdminClient::outputServerList() const {
       }
     }
     serverList.checkEchos(&startupInfo);
+    cURLManager::perform();
     TimeKeeper::sleep(1.0f);
   }
   // what is your final answer?

@@ -19,6 +19,7 @@
 #include "ServerList.h"
 #include "StartupInfo.h"
 #include "TimeKeeper.h"
+#include "cURLManager.h"
 
 /* local implementation headers */
 #include "HUDDialogStack.h"
@@ -224,6 +225,7 @@ void JoinMenu::execute()
       // wait no more than 10 seconds for a token
       for (int i = 0; i < 40; i++) {
 	serverList->checkEchos(getStartupInfo());
+	cURLManager::perform();
 	if (info->token[0] != '\0') break;
 	TimeKeeper::sleep(0.25f);
       }

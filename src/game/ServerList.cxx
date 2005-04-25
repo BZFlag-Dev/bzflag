@@ -36,7 +36,6 @@
 
 
 ServerList::ServerList() :
-	numListServers(0),
 	phase(-1),
 	serverCache(ServerListCache::get()),
 	pingBcastSocket(-1)
@@ -47,7 +46,7 @@ ServerList::~ServerList() {
   _shutDown();
 }
 
-void ServerList::startServerPings(const StartupInfo *info) {
+void ServerList::startServerPings(StartupInfo *info) {
 
   // schedule lookup of server list url.  dereference URL chain every
   // time instead of only first time just in case one of the pointers
@@ -64,51 +63,48 @@ void ServerList::startServerPings(const StartupInfo *info) {
 
 }
 
-void ServerList::readServerList(int index, StartupInfo *info)
+void ServerList::readServerList()
 {
-  ListServer& listServer = listServers[index];
-
-  // read more data into server list buffer
-  int n = recv(listServer.socket, listServer.buffer + listServer.bufferSize,
-				sizeof(listServer.buffer) -
-				listServer.bufferSize - 1, 0);
-  if (n > 0) {
-    listServer.bufferSize += n;
-    listServer.buffer[listServer.bufferSize] = 0;
-
-    char* base = listServer.buffer;
+  {
+    char *base = (char *)theData;
+    char *endS = base + theLen;
     static char *tokenIdentifier = "TOKEN: ";
     static char *noTokenIdentifier = "NOTOK: ";
     static char *errorIdentifier = "ERROR: ";
     // walks entire reply including HTTP headers
-    while (*base) {
+    while (base < endS) {
       // find next newline
       char* scan = base;
-      while (*scan && *scan != '\n') scan++;
+      while (scan < endS && *scan != '\n')
+	scan++;
 
       // if no newline then no more complete replies
-      if (*scan != '\n') break;
+      if (scan >= endS)
+	break;
       *scan++ = '\0';
 
-      // look for TOKEN: and save token if found
-      // also look for NOTOK: and record "badtoken" into the token string and print an error
+      // look for TOKEN: and save token if found also look for NOTOK:
+      // and record "badtoken" into the token string and print an
+      // error
       if (strncmp(base, tokenIdentifier, strlen(tokenIdentifier)) == 0) {
-	strncpy(info->token, (char *)(base + strlen(tokenIdentifier)), TokenLen);
+	strncpy(startupInfo->token, (char *)(base + strlen(tokenIdentifier)),
+		TokenLen);
 #ifdef DEBUG
 	printError("got token:");
-	printError(info->token);
+	printError(startupInfo->token);
 #endif
 	base = scan;
 	continue;
-      } else if (strncmp(base, noTokenIdentifier, strlen(noTokenIdentifier)) == 0) {
+      } else if (!strncmp(base, noTokenIdentifier,
+			  strlen(noTokenIdentifier))) {
 	printError("ERROR: did not get token:");
 	printError(base);
-	strcpy(info->token, "badtoken\0");
+	strcpy(startupInfo->token, "badtoken\0");
 	base = scan;
 	continue;
-      } else if (strncmp(base, errorIdentifier, strlen(errorIdentifier)) == 0) {
+      } else if (!strncmp(base, errorIdentifier, strlen(errorIdentifier))) {
 	printError(base);
-	strcpy(info->token, "badtoken\0");
+	strcpy(startupInfo->token, "badtoken\0");
 	base = scan;
 	continue;
       }
@@ -184,19 +180,8 @@ void ServerList::readServerList(int index, StartupInfo *info)
     }
 
     // remove parsed replies
-    listServer.bufferSize -= int(base - listServer.buffer);
-    memmove(listServer.buffer, base, listServer.bufferSize);
-
-  } else if (n == 0) {
-    // server hungup
-    close(listServer.socket);
-    listServer.socket = -1;
-    listServer.phase = 4;
-
-  } else if (n < 0) {
-    close(listServer.socket);
-    listServer.socket = -1;
-    listServer.phase = -1;
+    theLen -= int(base - (char *)theData);
+    memmove(theData, base, theLen);
   }
 }
 
@@ -209,7 +194,8 @@ void ServerList::addToList(ServerItem& info, bool doCache)
   // (updating info in place may "unsort" the list)
   for (i = 0; i < (int)servers.size(); i++) {
     ServerItem& server = servers[i];
-    if (server.ping.serverId.serverHost.s_addr == info.ping.serverId.serverHost.s_addr
+    if (server.ping.serverId.serverHost.s_addr
+	== info.ping.serverId.serverHost.s_addr
 	&& server.ping.serverId.port == info.ping.serverId.port) {
       servers.erase(servers.begin() + i); // erase this item
     }
@@ -274,114 +260,31 @@ void ServerList::addToList(ServerItem& info, bool doCache)
 
 void			ServerList::checkEchos(StartupInfo *info)
 {
+  startupInfo = info;
+
   // *** NOTE *** searching spinner update was here
 
   // lookup server list in phase 0
   if (phase == 0) {
-    int i;
+    
+    std::string url = info->listServerURL;
 
-    std::vector<std::string> urls;
-    urls.push_back(info->listServerURL);
+    url += "?action=LIST&version=";
+    url += getServerVersion();
+    url += "&callsign=";
+    url += TextUtils::url_encode(info->callsign);
+    url += "&password=";
+    url += TextUtils::url_encode(info->password);
 
-    // check urls for validity
-    numListServers = 0;
-    for (i = 0; i < (int)urls.size(); ++i) {
-      // parse url
-      std::string protocol, hostname, path;
-      int port = 80;
-      Address address;
-      if (!BzfNetwork::parseURL(urls[i], protocol, hostname, port, path) ||
-	protocol != "http" || port < 1 || port > 65535 ||
-	(address = Address::getHostAddress(hostname)).isAny()) {
-	std::vector<std::string> args;
-	args.push_back(urls[i]);
-	printError("Can't open list server: {1}", &args);
-	if (!addedCacheToList) {
-	  addedCacheToList = true;
-	  addCacheToList();
-	}
-	continue;
-      }
-
-      // add to list
-      listServers[numListServers].address = address;
-      listServers[numListServers].hostname = hostname;
-      listServers[numListServers].pathname = path;
-      listServers[numListServers].port = port;
-      listServers[numListServers].socket = -1;
-      listServers[numListServers].phase = 2;
-      listServers[numListServers].failures = 0;
-      numListServers++;
-    }
+    setURL(url);
+    addHandle();
 
     // do phase 1 only if we found a valid list server url
-    if (numListServers > 0)
-      phase = 1;
-    else
-      phase = -1;
-  }
-
-  // connect to list servers in phase 1
-  else if (phase == 1) {
-    phase = -1;
-    for (int i = 0; i < numListServers; i++) {
-      ListServer& listServer = listServers[i];
-
-      // create socket.  give up on failure.
-      listServer.socket = int(socket(AF_INET, SOCK_STREAM, 0));
-      if (listServer.socket < 0) {
-	printError("Can't create list server socket");
-	listServer.socket = -1;
-	if (!addedCacheToList) {
-	  addedCacheToList = true;
-	  addCacheToList();
-	}
-	continue;
-      }
-
-      // set to non-blocking.  we don't want to wait for the connection.
-      if (BzfNetwork::setNonBlocking(listServer.socket) < 0) {
-	printError("Error with list server socket");
-	close(listServer.socket);
-	listServer.socket = -1;
-	if (!addedCacheToList){
-	  addedCacheToList = true;
-	  addCacheToList();
-	}
-	continue;
-      }
-
-      // start connection
-      struct sockaddr_in addr;
-      addr.sin_family = AF_INET;
-      addr.sin_port = htons(listServer.port);
-      addr.sin_addr = listServer.address;
-      if (connect(listServer.socket, (CNCTType*)&addr, sizeof(addr)) < 0) {
-#if defined(_WIN32)
-#  undef EINPROGRESS
-#  define EINPROGRESS EWOULDBLOCK
-#endif
-	if (getErrno() != EINPROGRESS) {
-	  printError("Can't connect list server socket");
-	  close(listServer.socket);
-	  listServer.socket = -1;
-	  if (!addedCacheToList){
-	    addedCacheToList = true;
-	    addCacheToList();
-	  }
-	  continue;
-	}
-      }
-
-      // at least this socket is okay so proceed to phase 2
-      phase = 2;
-    }
+    phase = 1;
   }
 
   // get echo messages
   while (1) {
-    int i;
-
     // *** NOTE *** searching spinner update was here
 
     struct timeval timeout;
@@ -394,40 +297,10 @@ void			ServerList::checkEchos(StartupInfo *info)
     if (pingBcastSocket != -1) _FD_SET(pingBcastSocket, &read_set);
     int fdMax = pingBcastSocket;
 
-    // check for list server connection or data
-    for (i = 0; i < numListServers; i++) {
-      ListServer& listServer = listServers[i];
-      if (listServer.socket != -1) {
-	if (listServer.phase == 2) {
-	  _FD_SET(listServer.socket, &write_set);
-	} else if (listServer.phase == 3) {
-	  _FD_SET(listServer.socket, &read_set);
-	}
-	if (listServer.socket > fdMax) {
-	  fdMax = listServer.socket;
-	}
-      }
-    }
-
     const int nfound = select(fdMax+1, (fd_set*)&read_set,
 					(fd_set*)&write_set, 0, &timeout);
-    if (nfound <= 0) {
-      int minPhase = 4;
-      for (i = 0; i < numListServers; i++) {
-	ListServer& listServer = listServers[i];
-	if ((listServer.socket != -1) &&
-	    (listServer.phase >= 3) &&
-	    (listServer.failures++ > 3)) {
-	  if (minPhase > listServer.phase) {
-	    minPhase = listServer.phase;
-	  }
-	}
-      }
-      if (minPhase == 3) {
-	phase = 4;
-      }
+    if (nfound <= 0)
       break;
-    }
 
     // check broadcast sockets
     ServerItem serverInfo;
@@ -440,56 +313,6 @@ void			ServerList::checkEchos(StartupInfo *info)
 	addToListWithLookup(serverInfo);
       }
     }
-
-    // check list servers
-    for (i = 0; i < numListServers; i++) {
-      ListServer& listServer = listServers[i];
-      if (listServer.socket != -1) {
-	// read more data from server
-	if (FD_ISSET(listServer.socket, &read_set)) {
-	  readServerList(i, info);
-	}
-
-	// send list request
-	else if (FD_ISSET(listServer.socket, &write_set)) {
-#if !defined(_WIN32)
-	  // ignore SIGPIPE for this send
-	  SIG_PF oldPipeHandler = bzSignal(SIGPIPE, SIG_IGN);
-#endif
-	  bool errorSending;
-	  {
-	    char url[1024];
-	    std::string encodedCallsign = TextUtils::url_encode(info->callsign);
-	    std::string encodedPassword = TextUtils::url_encode(info->password);
-	    snprintf(url, sizeof(url),
-		     "GET %s?action=LIST&version=%s&callsign=%s&password=%s HTTP/1.1\r\nHost: %s\r\nCache-control: no-cache\r\n\r\n",
-		     listServer.pathname.c_str(), getServerVersion(),
-		     encodedCallsign.c_str(), encodedPassword.c_str(),
-		     listServer.hostname.c_str());
-	    //DEBUG0("url: %s\n",url);
-	    errorSending = send(listServer.socket, url, int(strlen(url)), 0)
-	      != (int) strlen(url);
-	  }
-	  if (errorSending) {
-	    // probably unable to connect to server
-	    close(listServer.socket);
-	    listServer.socket = -1;
-	    if (!addedCacheToList){
-	      addedCacheToList = true;
-	      addCacheToList();
-	     }
-	  } else {
-	    listServer.phase = 3;
-	    listServer.bufferSize = 0;
-	  }
-#if !defined(_WIN32)
-	  bzSignal(SIGPIPE, oldPipeHandler);
-#endif
-	} else {
-	  // it aint read or write..
-	}
-      } // end check if socket errored
-    } // end loop over list servers
   } // end loop waiting for input/output on any list server
 }
 
@@ -513,9 +336,32 @@ void			ServerList::addToListWithLookup(ServerItem& info)
 // add the entire cache to the server list
 void			ServerList::addCacheToList()
 {
+  if (addedCacheToList)
+    return;
+  addedCacheToList = true;
   for (SRV_STR_MAP::iterator iter = serverCache->begin();
        iter != serverCache->end(); iter++){
     addToList(iter->second);
+  }
+}
+
+void ServerList::collectData(char *ptr, int len)
+{
+  phase = 2;
+
+  cURLManager::collectData(ptr, len);
+
+  readServerList();
+}
+
+void ServerList::finalization(char *, unsigned int, bool good)
+{
+  if (!good) {
+    printError("Can't talk with list server");
+    addCacheToList();
+    phase = -1;
+  } else {
+    phase = 4;
   }
 }
 
@@ -541,7 +387,8 @@ int ServerList::updateFromCache() {
        iter != serverCache->end(); iter++) {
     // if maxCacheAge is 0 we add nothing
     // if the item is young enough we add it
-    if (serverCache->getMaxCacheAge() != 0 && iter->second.getAgeMinutes() < serverCache->getMaxCacheAge()) {
+    if (serverCache->getMaxCacheAge() != 0
+	&& iter->second.getAgeMinutes() < serverCache->getMaxCacheAge()) {
       ServerItem aCopy = iter->second;
       addToList(aCopy);
       numItemsAdded ++;
@@ -560,14 +407,6 @@ bool ServerList::serverFound() const {
 }
 
 void ServerList::_shutDown() {
-  // close server list sockets
-  for (int i = 0; i < numListServers; i++)
-    if (listServers[i].socket != -1) {
-      close(listServers[i].socket);
-      listServers[i].socket = -1;
-    }
-  numListServers = 0;
-
   // close broadcast socket
   closeBroadcast(pingBcastSocket);
   pingBcastSocket = -1;
