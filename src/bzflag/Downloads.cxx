@@ -124,7 +124,8 @@ void CachedTexture::requestFileTime()
   timeRequest = true;
   if (httpTimeout > 0.0)
     setTimeout(httpTimeout);
-  setNoBody(true);
+  setNoBody();
+  setRequestFileTime(true);
   addHandle();
 }
 
@@ -136,7 +137,8 @@ void CachedTexture::downloadTexture()
   msg            += "downloading: " + url;
   addMessage(NULL, msg);
 
-  setNoBody(false);
+  setGetMode();
+  setRequestFileTime(true);
   if (httpTimeout > 0.0)
     setTimeout(httpTimeout);
   addHandle();

@@ -30,8 +30,11 @@ public:
   void removeHandle();
 
   void setTimeout(long timeout);
-  void setNoBody(bool nobody);
+  void setNoBody();
+  void setGetMode();
+  void setRequestFileTime(bool request);
   void setURL(std::string url);
+
   bool getFileTime(time_t &t);
 
   virtual void collectData(char *ptr, int len);

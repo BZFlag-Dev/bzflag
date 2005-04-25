@@ -99,14 +99,27 @@ void cURLManager::setTimeout(long timeout)
   }
 }
 
-void cURLManager::setNoBody(bool nobody)
+void cURLManager::setNoBody()
 {
   CURLcode result;
+  long     nobody = 1;
 
   result = curl_easy_setopt(easyHandle, CURLOPT_NOBODY, nobody);
   if (result != CURLE_OK) {
     errorCode = result;
     DEBUG1("CURLOPT_NOBODY error: %d\n", result);
+  }
+}
+
+void cURLManager::setGetMode()
+{
+  CURLcode result;
+  long     get = 1;
+
+  result = curl_easy_setopt(easyHandle, CURLOPT_HTTPGET, get);
+  if (result != CURLE_OK) {
+    errorCode = result;
+    DEBUG1("CURLOPT_GET error: %d\n", result);
   }
 }
 
@@ -121,6 +134,17 @@ void cURLManager::setURL(std::string url)
   if (result != CURLE_OK) {
     errorCode = result;
     DEBUG1("CURLOPT_URL error: %d\n", result);
+  }
+}
+
+void cURLManager::setRequestFileTime(bool request)
+{
+  CURLcode result;
+  long     requestFileTime = request ? 1 : 0;
+  result = curl_easy_setopt(easyHandle, CURLOPT_FILETIME, requestFileTime);
+  if (result != CURLE_OK) {
+    errorCode = result;
+    DEBUG1("CURLOPT_FILETIME error: %d\n", result);
   }
 }
 
