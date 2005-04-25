@@ -144,7 +144,11 @@ void cURLManager::removeHandle()
   added = false;
 }
 
-void cURLManager::collectData(char* ptr, int &len)
+void cURLManager::finalization(char *, unsigned int, bool)
+{
+}
+
+void cURLManager::collectData(char* ptr, int len)
 {
   unsigned char *newData = (unsigned char *)realloc(theData, theLen + len);
   if (!newData) {

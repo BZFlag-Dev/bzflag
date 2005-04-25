@@ -34,11 +34,14 @@ public:
   void setURL(std::string url);
   bool getFileTime(time_t &t);
 
-  void collectData(char *ptr, int &len);
-  virtual void finalization(char *data, unsigned int length, bool good) = 0;
+  virtual void collectData(char *ptr, int len);
+  virtual void finalization(char *data, unsigned int length, bool good);
 
   static int perform();
 
+protected:
+  void         *theData;
+  unsigned int  theLen;
 private:
 
   void          infoComplete(CURLcode result);
@@ -47,8 +50,6 @@ private:
   int           errorCode;
   CURL         *easyHandle;
   static CURLM *multiHandle;
-  void         *theData;
-  unsigned int  theLen;
   bool          added;
 
   static void   setup();
