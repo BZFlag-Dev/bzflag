@@ -53,7 +53,7 @@ cURLManager::cURLManager()
 
   result = curl_easy_setopt(easyHandle, CURLOPT_WRITEDATA, this);
   if (result != CURLE_OK)
-    DEBUG1("CURLOPT_FILE error: %d\n", result);
+    DEBUG1("CURLOPT_WRITEDATA error: %d\n", result);
 
 }
 
@@ -72,7 +72,7 @@ void cURLManager::setup()
   DEBUG1("LIBCURL: %s\n", curl_version());
 #if LIBCURL_VERSION_NUM >= 0x070a00
   if ((result = curl_global_init(CURL_GLOBAL_NOTHING)))
-    DEBUG1("Unexpected error from libcurl; Error: %d\n", result);
+    DEBUG1("cURL Global init Error: %d\n", result);
 #endif
   multiHandle = curl_multi_init();
   if (!multiHandle)
@@ -170,7 +170,7 @@ void cURLManager::addHandle()
 {
   CURLMcode result = curl_multi_add_handle(multiHandle, easyHandle);
   if (result != CURLM_OK)
-    DEBUG1("Unexpected error from libcurl; Error: %d\n", result);
+    DEBUG1("Error while adding easy handle from libcurl; Error: %d\n", result);
   cURLMap[easyHandle] = this;
   added = true;
 }
@@ -182,7 +182,7 @@ void cURLManager::removeHandle()
   cURLMap.erase(easyHandle);
   CURLMcode result = curl_multi_remove_handle(multiHandle, easyHandle);
   if (result != CURLM_OK)
-    DEBUG1("Unexpected error from libcurl; Error: %d\n", result);
+    DEBUG1("Error while removing easy handle from libcurl; Error: %d\n", result);
   added = false;
 }
 
@@ -215,7 +215,7 @@ int cURLManager::perform()
       break;
   }
   if (result != CURLM_OK)
-    DEBUG1("Unexpected error from libcurl; Error: %d\n", result);
+    DEBUG1("Error while doing multi_perform from libcurl; Error: %d\n", result);
 
   int      msgs_in_queue;
   CURLMsg *pendingMsg;
@@ -241,7 +241,7 @@ int cURLManager::perform()
 void cURLManager::infoComplete(CURLcode result)
 {
   if (result != CURLE_OK)
-    DEBUG1("Unexpected error from libcurl; Error: %d\n", result);
+    DEBUG1("File transfer terminated with error from libcurl; Error: %d\n", result);
   finalization((char *)theData, theLen, result == CURLE_OK);
   free(theData);
   removeHandle();
