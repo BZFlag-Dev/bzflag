@@ -137,6 +137,24 @@ void cURLManager::setURL(std::string url)
   }
 }
 
+void cURLManager::setProgressFunction(curl_progress_callback func, void* data)
+{
+  CURLcode result;
+  if (func != NULL) {
+    result = curl_easy_setopt(easyHandle, CURLOPT_PROGRESSFUNCTION, func);
+    if (result == CURLE_OK)
+      result = curl_easy_setopt(easyHandle, CURLOPT_PROGRESSDATA, data);
+    if (result == CURLE_OK)
+      result = curl_easy_setopt(easyHandle, CURLOPT_NOPROGRESS, 0);
+  } else {
+   result = curl_easy_setopt(easyHandle, CURLOPT_NOPROGRESS, 1);
+  }
+  if (result != CURLE_OK) {
+    errorCode = result;
+    DEBUG1("CURLOPT_SET_PROGRESS error: %d\n", result);
+  }
+}
+
 void cURLManager::setRequestFileTime(bool request)
 {
   CURLcode result;

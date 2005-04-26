@@ -34,6 +34,7 @@ public:
   void setGetMode();
   void setRequestFileTime(bool request);
   void setURL(std::string url);
+  void setProgressFunction(curl_progress_callback func, void* data);
 
   bool getFileTime(time_t &t);
 
