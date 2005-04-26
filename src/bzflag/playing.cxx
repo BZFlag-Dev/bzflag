@@ -95,7 +95,6 @@
 #include "ForceFeedback.h"
 #include "TankGeometryMgr.h"
 #include "motd.h"
-#include "URLManager.h"
 #include "TrackMarks.h"
 #include "md5.h"
 #include "PhysicsDriver.h"
@@ -1506,52 +1505,8 @@ int curlProgressFunc(void* /*clientp*/,
   char buffer[128];
   sprintf (buffer, "%2.1f%% (%i/%i)", percentage, (int)dlnow, (int)dltotal);
   HUDDialogStack::get()->setFailedMessage(buffer);
-  drawFrame(0.0f);
 
   return 0;
-}
-
-
-static bool isUrlCached()
-{
-  bool	 gotFromURL = false;
-  unsigned int readSize;
-
-  if (worldUrl.size()) {
-    HUDDialogStack::get()->setFailedMessage
-      (("Loading world from " + worldUrl).c_str());
-    drawFrame(0.0f);
-    URLManager& urlMgr = URLManager::instance();
-    urlMgr.setProgressFunc(curlProgressFunc, (char*)worldUrl.c_str());
-    gotFromURL = urlMgr.getURL(worldUrl, (void **) &worldDatabase, readSize);
-    urlMgr.setProgressFunc(NULL, NULL);
-  }
-  if (gotFromURL) {
-    MD5 md5;
-    md5.update((unsigned char *)worldDatabase, readSize);
-    md5.finalize();
-    std::string digest = md5.hexdigest();
-    if (digest != md5Digest) {
-      gotFromURL = false;
-      HUDDialogStack::get()->setFailedMessage("Download from URL failed");
-      drawFrame(0.0f);
-    }
-  }
-  if (gotFromURL) {
-    cleanWorldCache();
-    std::ostream* cache = FILEMGR.createDataOutStream(worldCachePath, true,
-						      true);
-    if (cache != NULL) {
-      cache->write(worldDatabase, readSize);
-      delete cache;
-    } else {
-      gotFromURL = false;
-      HUDDialogStack::get()->setFailedMessage("Problem writing cache");
-      drawFrame(0.0f);
-    }
-    URLManager::instance().freeURLData((void *)worldDatabase);
-  }
-  return gotFromURL;
 }
 
 static void loadCachedWorld()
@@ -1614,6 +1569,73 @@ static void loadCachedWorld()
 
   joinInternetGame2();
 }
+
+class WorldDownLoader : cURLManager {
+public:
+  void         start(char * hexDigest);
+private:
+  void         askToBZFS();
+  virtual void finalization(char *data, unsigned int length, bool good);
+};
+
+void WorldDownLoader::start(char * hexDigest)
+{
+  if (isCached(hexDigest)) {
+    loadCachedWorld();
+  } else if (worldUrl.size()) {
+    HUDDialogStack::get()->setFailedMessage
+      (("Loading world from " + worldUrl).c_str());
+    setProgressFunction(curlProgressFunc, (char*)worldUrl.c_str());
+    setURL(worldUrl);
+  } else {
+    askToBZFS();
+  }
+}
+
+void WorldDownLoader::finalization(char *data, unsigned int length, bool good)
+{
+  if (good) {
+    worldDatabase = data;
+    theData       = NULL;
+    MD5 md5;
+    md5.update((unsigned char *)worldDatabase, length);
+    md5.finalize();
+    std::string digest = md5.hexdigest();
+    if (digest != md5Digest) {
+      HUDDialogStack::get()->setFailedMessage("Download from URL failed");
+      askToBZFS();
+    } else {
+      cleanWorldCache();
+      std::ostream* cache = FILEMGR.createDataOutStream(worldCachePath, true,
+							true);
+      if (cache != NULL) {
+	cache->write(worldDatabase, length);
+	delete cache;
+	loadCachedWorld();
+      } else {
+	HUDDialogStack::get()->setFailedMessage("Problem writing cache");
+	askToBZFS();
+      }
+    }
+  } else {
+    askToBZFS();
+  }
+}
+
+void WorldDownLoader::askToBZFS()
+{
+  HUDDialogStack::get()->setFailedMessage("Downloading World...");
+  char message[MaxPacketLen];
+  // ask for world
+  nboPackUInt(message, 0);
+  serverLink->send(MsgGetWorld, sizeof(uint32_t), message);
+  worldPtr = 0;
+  if (cacheOut)
+    delete cacheOut;
+  cacheOut = FILEMGR.createDataOutStream(worldCachePath, true, true);
+}
+
+static WorldDownLoader worldDownLoader;
 
 static void dumpMissingFlag(char *buf, uint16_t len)
 {
@@ -1725,25 +1747,11 @@ static void		handleServerMessage(bool human, uint16_t code,
     case MsgWantWHash: {
       char *hexDigest = new char[len];
       nboUnpackString(msg, hexDigest, len);
-      md5Digest = &hexDigest[1];
-      if (isCached(hexDigest) || isUrlCached()) {
-	delete [] hexDigest;
-	loadCachedWorld();
-	break;
-      }
       isCacheTemp = hexDigest[0] == 't';
+      md5Digest = &hexDigest[1];
+
+      worldDownLoader.start(hexDigest);
       delete [] hexDigest;
-      HUDDialogStack::get()->setFailedMessage("Downloading World...");
-      {
-	char message[MaxPacketLen];
-	// ask for world
-	nboPackUInt(message, 0);
-	serverLink->send(MsgGetWorld, sizeof(uint32_t), message);
-	worldPtr = 0;
-	if (cacheOut)
-	  delete cacheOut;
-	cacheOut = FILEMGR.createDataOutStream(worldCachePath, true, true);
-      }
       break;
     }
 
