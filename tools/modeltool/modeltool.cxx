@@ -23,7 +23,7 @@
 // globals/
 
 static const char VersionString[] =
-  "ModelTool v1.5  (WaveFront OBJ to BZFlag BZW converter)";
+  "ModelTool v1.6  (WaveFront OBJ to BZFlag BZW converter)";
 
 static std::string texdir = "";
 static std::string groupName = "";
@@ -439,6 +439,10 @@ static void readOBJ ( CModel &model, std::string file )
 	tvVertList		temp_verts;
 	tvVertList		temp_normals;
 	tvTexCoordList	temp_texCoords;
+	
+	int vCount = 0;
+	int nCount = 0;
+	int tCount = 0;
 
 
 	std::string currentMaterial = "";
@@ -472,6 +476,7 @@ static void readOBJ ( CModel &model, std::string file )
 						vert.z = (float)atof(lineParts[3].c_str());
 					}
 					temp_verts.push_back(vert);
+					vCount++;
 				}
 				else if (TextUtils::tolower(lineParts[0]) == "vt" && lineParts.size()>2)
 				{
@@ -479,6 +484,7 @@ static void readOBJ ( CModel &model, std::string file )
 					uv.u = (float)atof(lineParts[1].c_str());
 					uv.v = (float)atof(lineParts[2].c_str());
 					temp_texCoords.push_back(uv);
+					tCount++;
 				}
 				else if (TextUtils::tolower(lineParts[0]) == "vn" && lineParts.size()>3)
 				{
@@ -495,6 +501,7 @@ static void readOBJ ( CModel &model, std::string file )
 						vert.z = (float)atof(lineParts[3].c_str());
 					}
 					temp_normals.push_back(vert);
+					nCount++;
 				}
 				else if (TextUtils::tolower(lineParts[0]) == "g" && lineParts.size()>1)
 				{
@@ -525,13 +532,13 @@ static void readOBJ ( CModel &model, std::string file )
 					{
 						std::string section = lineParts[i];
 
-	    // TextUtils::tokenize() does not make 3
-	    // strings from "1//2", so do it the hard way
-	    const std::string::size_type npos = std::string::npos;
-						std::string::size_type pos1, pos2 = npos;
-	    pos1 = section.find_first_of('/');
-	    if (pos1 != npos) {
-	      pos2 = section.find_first_of('/', pos1 + 1);
+						// TextUtils::tokenize() does not make 3
+						// strings from "1//2", so do it the hard way
+						const std::string::size_type npos = std::string::npos;
+									std::string::size_type pos1, pos2 = npos;
+						pos1 = section.find_first_of('/');
+						if (pos1 != npos) {
+							pos2 = section.find_first_of('/', pos1 + 1);
 						}
 
 						std::string vertPart, uvPart, normPart;
@@ -548,17 +555,29 @@ static void readOBJ ( CModel &model, std::string file )
 						}
 
 						if (vertPart.size() > 0) {
-							face.verts.push_back(atoi(vertPart.c_str())-1);
+						  int index = atoi(vertPart.c_str());
+						  if (index < 0) {
+						    index = (vCount + 1) + index;
+							}
+							face.verts.push_back(index - 1);
 						}
 						if (uvPart.size() > 0) {
-							face.texCoords.push_back(atoi(uvPart.c_str())-1);
+						  int index = atoi(uvPart.c_str());
+						  if (index < 0) {
+						    index = (tCount + 1) + index;
+							}
+							face.texCoords.push_back(index - 1);
 						}
 						if (normPart.size() > 0) {
-							face.normals.push_back(atoi(normPart.c_str())-1);
+						  int index = atoi(normPart.c_str());
+						  if (index < 0) {
+						    index = (nCount + 1) + index;
+							}
+							face.normals.push_back(index - 1);
 						}
 					}
 
-	  bool valid = true;
+					bool valid = true;
 					const int vSize = (int)face.verts.size();
 					const int nSize = (int)face.normals.size();
 					const int tSize = (int)face.texCoords.size();
