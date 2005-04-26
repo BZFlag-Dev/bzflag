@@ -869,6 +869,9 @@
 				RelativePath="..\..\include\Country.h">
 			</File>
 			<File
+				RelativePath="..\..\include\cURLManager.h">
+			</File>
+			<File
 				RelativePath="..\..\include\ErrorHandler.h">
 			</File>
 			<File
