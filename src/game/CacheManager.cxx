@@ -215,6 +215,12 @@ bool CacheManager::saveIndex()
   if (file == NULL) {
     return false;
   }
+  
+  const time_t nowTime = time(NULL);
+  fprintf(file, "#\n");
+  fprintf(file, "# BZFlag Cache Index - %s", ctime(&nowTime));
+  fprintf(file, "# <filesize>  <filetime>  <lastused>  <md5check>\n");
+  fprintf(file, "#\n\n");
 
   for (unsigned int i = 0; i < records.size(); i++) {
     const CacheRecord& rec = records[i];
