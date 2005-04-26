@@ -13,6 +13,8 @@
 #ifndef CURL_MANAGER_H
 #define CURL_MANAGER_H
 
+ #define _WINSOCK2API_
+
 // bzflag common header
 #include "common.h"
 
