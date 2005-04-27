@@ -286,6 +286,9 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
       underlineColor[1] * dimFactor,
       underlineColor[2] * dimFactor };
 
+  // FIXME - this should not be necessary, but the bitmap font renderer needs it
+  OpenGLGState::resetState(); 
+
   /*
    * ANSI code interpretation is somewhat limited, we only accept values
    * which have been defined in AnsiCodes.h
