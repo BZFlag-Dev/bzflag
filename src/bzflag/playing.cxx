@@ -157,7 +157,7 @@ FlashClock		pulse;
 static bool		wasRabbit = false;
 static bool		justJoined = false;
 
-MessageOfTheDay		motd;
+MessageOfTheDay		*motd = NULL;
 DefaultCompleter	completer;
 
 char			messageMessage[PlayerIdPLen + MessageLen];
@@ -6179,7 +6179,8 @@ void			startPlaying(BzfDisplay* _display,
 
   // get current MOTD
   if (!BZDB.isTrue("disableMOTD")) {
-    motd.getURL(BZDB.get("motdServer"));
+    motd = new MessageOfTheDay;
+    motd->getURL(BZDB.get("motdServer"));
   }
 
   // inform user of silencePlayers on startup
@@ -6207,6 +6208,7 @@ void			startPlaying(BzfDisplay* _display,
   playingLoop();
 
   // clean up
+  delete motd;
   for (unsigned int ext = 0; ext < prototypeExplosions.size(); ext++)
     delete prototypeExplosions[ext];
   prototypeExplosions.clear();
