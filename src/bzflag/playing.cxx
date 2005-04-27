@@ -1635,7 +1635,7 @@ void WorldDownLoader::askToBZFS()
   cacheOut = FILEMGR.createDataOutStream(worldCachePath, true, true);
 }
 
-static WorldDownLoader worldDownLoader;
+static WorldDownLoader *worldDownLoader;
 
 static void dumpMissingFlag(char *buf, uint16_t len)
 {
@@ -1750,7 +1750,7 @@ static void		handleServerMessage(bool human, uint16_t code,
       isCacheTemp = hexDigest[0] == 't';
       md5Digest = &hexDigest[1];
 
-      worldDownLoader.start(hexDigest);
+      worldDownLoader->start(hexDigest);
       delete [] hexDigest;
       break;
     }
@@ -5376,6 +5376,7 @@ static void		playingLoop()
   TimeKeeper::setTick();
   updateDaylight(epochOffset, *sceneRenderer);
 
+  worldDownLoader = new WorldDownLoader;
 
   // main loop
   while (!CommandsStandard::isQuit()) {
@@ -5653,6 +5654,7 @@ static void		playingLoop()
     }
   }
 
+  delete worldDownLoader;
   // restore the sound.  if we don't do this then we'll save the
   // wrong volume when we dump out the configuration file if the
   // app exits when the game is paused.
