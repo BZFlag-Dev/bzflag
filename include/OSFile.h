@@ -11,11 +11,13 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-
-
 #ifndef _OSFILE_H_
 #define _OSFILE_H_
 
+/* common header */
+#include "common.h"
+
+/* system headers */
 #ifdef _WIN32
   #ifdef _MSC_VER
     #pragma warning(disable : 4786)  // Disable warning message
