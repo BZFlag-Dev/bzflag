@@ -144,7 +144,6 @@ noinst_HEADERS =			\
 	network.h			\
 	regex.h				\
 	resource.h			\
-	udpnetwork.h			\
 	vectors.h			\
 	version.h			\
 	win32.h

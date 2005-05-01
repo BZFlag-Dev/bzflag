@@ -19,7 +19,6 @@ libNet_a_SOURCES =			\
 	Pack.cxx			\
 	Ping.cxx			\
 	multicast.cxx			\
-	udpnetwork.cxx			\
 	network.cxx
 
 EXTRA_DIST = \
