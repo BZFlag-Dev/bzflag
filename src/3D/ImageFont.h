@@ -13,11 +13,13 @@
 #ifndef _IMAGE_FONT_H_
 #define _IMAGE_FONT_H_
 
-#ifdef _MSC_VER
-  #pragma warning(disable : 4786)  // Disable warning message
-#endif
+/* common header */
+#include "common.h"
 
+/* system headers */
 #include <string>
+
+/* interface headers */
 #include "bzfgl.h"
 #include "OSFile.h"
 
