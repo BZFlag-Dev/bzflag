@@ -25,11 +25,11 @@
 #endif
 
 #ifdef _WIN32
-#include "win32.h"
-#define _FD_SET(fd, set) FD_SET((unsigned int)fd, set)
-#else
-#define _FD_SET(fd, set) FD_SET(fd, set)
+#  include "win32.h"
 #endif
+
+// FIXME - is this really still needed?
+//#define BZ_FD_SET(fd, set) FD_SET((unsigned int)fd, set)
 
 #include <stdio.h>
 #include <stdlib.h> //needed for bzfrand
