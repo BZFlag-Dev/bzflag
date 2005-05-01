@@ -18,8 +18,6 @@
 
 #ifdef _WIN32
 #  include <stdlib.h>
-#  include <winsock2.h>
-#  include <ws2tcpip.h>
 #  include <wincon.h>
 #else
 #  include <sys/types.h>
