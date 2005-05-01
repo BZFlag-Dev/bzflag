@@ -55,12 +55,14 @@ cURLManager::cURLManager()
   if (result != CURLE_OK)
     DEBUG1("CURLOPT_WRITEDATA error: %d\n", result);
 
+  cURLMap[easyHandle] = this;
 }
 
 cURLManager::~cURLManager()
 {
   if (added)
     removeHandle();
+  cURLMap.erase(easyHandle);
   curl_easy_cleanup(easyHandle);
   free(theData);
 }
@@ -171,7 +173,6 @@ void cURLManager::addHandle()
   CURLMcode result = curl_multi_add_handle(multiHandle, easyHandle);
   if (result != CURLM_OK)
     DEBUG1("Error while adding easy handle from libcurl; Error: %d\n", result);
-  cURLMap[easyHandle] = this;
   added = true;
 }
 
@@ -179,7 +180,6 @@ void cURLManager::removeHandle()
 {
   if (!added)
     return;
-  cURLMap.erase(easyHandle);
   CURLMcode result = curl_multi_remove_handle(multiHandle, easyHandle);
   if (result != CURLM_OK)
     DEBUG1("Error while removing easy handle from libcurl; Error: %d\n", result);
