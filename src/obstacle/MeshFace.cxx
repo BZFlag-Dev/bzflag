@@ -107,7 +107,7 @@ void MeshFace::finalize()
     if ((debugLevel >= 3) && (mesh != NULL)) {
       printf(":");
       for (i = 0; i < vertexCount; i++) {
-        printf(" %f", (double)((fvec3*)vertices[i] - mesh->getVertices()));
+        printf(" %i", (int)((fvec3*)vertices[i] - mesh->getVertices()));
       }
       print(std::cerr, "");
     }
@@ -139,7 +139,7 @@ void MeshFace::finalize()
       if ((debugLevel >= 3) && (mesh != NULL)) {
         printf(":");
         for (i = 0; i < vertexCount; i++) {
-          printf(" %f", (double)((fvec3*)vertices[i] - mesh->getVertices()));
+          printf(" %i", (int)((fvec3*)vertices[i] - mesh->getVertices()));
         }
 	print(std::cerr, "");
       }
@@ -158,7 +158,7 @@ void MeshFace::finalize()
       if ((debugLevel >= 3) && (mesh != NULL)) {
         printf(":");
         for (i = 0; i < vertexCount; i++) {
-          printf(" %f", (double)((fvec3*)vertices[i] - mesh->getVertices()));
+          printf(" %i", (int)((fvec3*)vertices[i] - mesh->getVertices()));
         }
 	print(std::cerr, "");
       }
