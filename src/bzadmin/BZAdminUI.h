@@ -13,14 +13,17 @@
 #ifndef BZADMINUI_H
 #define BZADMINUI_H
 
+#include "common.h"
+
+/* system interface headers */
 #include <string>
 
+/* common interface headers */
 #include "Address.h"
-//#include "BZAdminClient.h"
 #include "colors.h"
 #include "global.h"
 
-
+//#include "BZAdminClient.h"
 class BZAdminClient;
 
 /** This class is an abstract base class for all bzadmin interfaces.

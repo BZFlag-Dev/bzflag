@@ -4474,7 +4474,7 @@ int main(int argc, char **argv)
     FD_ZERO(&write_set);
     NetHandler::setFd(&read_set, &write_set, maxFileDescriptor);
     // always listen for connections
-    _FD_SET(wksSocket, &read_set);
+    FD_SET((unsigned int)wksSocket, &read_set);
     if (wksSocket > maxFileDescriptor) {
       maxFileDescriptor = wksSocket;
     }
@@ -4483,9 +4483,9 @@ int main(int argc, char **argv)
     if (listServerLinksCount) {
       if (listServerLink->isConnected()) {
 	if (listServerLink->phase == ListServerLink::CONNECTING)
-	  _FD_SET(listServerLink->linkSocket, &write_set);
+	  FD_SET((unsigned int)listServerLink->linkSocket, &write_set);
 	else
-	  _FD_SET(listServerLink->linkSocket, &read_set);
+	  FD_SET((unsigned int)listServerLink->linkSocket, &read_set);
 	if (listServerLink->linkSocket > maxFileDescriptor)
 	  maxFileDescriptor = listServerLink->linkSocket;
       }

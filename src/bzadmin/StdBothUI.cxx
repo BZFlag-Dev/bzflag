@@ -10,21 +10,23 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifdef _MSC_VER
-#pragma warning( 4: 4786)
-#endif
+/* interface header */
+#include "StdBothUI.h"
+
+/* system implementation headers */
 #include <iostream>
+
 #ifdef _WIN32
-#include <stdlib.h>
-#include <winsock2.h>
-#include <ws2tcpip.h>
-#include <wincon.h>
+#  include <stdlib.h>
+#  include <winsock2.h>
+#  include <ws2tcpip.h>
+#  include <wincon.h>
 #else
-#include <sys/types.h>
-#include <sys/select.h>
+#  include <sys/types.h>
+#  include <sys/select.h>
 #endif
 
-#include "StdBothUI.h"
+/* implementation headers */
 #include "global.h"
 
 #ifdef _WIN32
@@ -97,7 +99,7 @@ bool StdBothUI::checkCommand(std::string& str) {
   fd_set rfds;
   timeval tv;
   FD_ZERO(&rfds);
-  FD_SET(0, &rfds);
+  FD_SET((unsigned int)0, &rfds);
   tv.tv_sec = 0;
   tv.tv_usec = 0;
   if (select(1, &rfds, NULL, NULL, &tv) > 0) {

@@ -122,10 +122,11 @@ ListServerLink::~ListServerLink()
     fd_set read_set;
     FD_ZERO(&write_set);
     FD_ZERO(&read_set);
-    if (phase == ListServerLink::CONNECTING)
-      _FD_SET(linkSocket, &write_set);
-    else
-      _FD_SET(linkSocket, &read_set);
+    if (phase == ListServerLink::CONNECTING) {
+      FD_SET((unsigned int)linkSocket, &write_set);
+    } else {
+      FD_SET((unsigned int)linkSocket, &read_set);
+    }
     fdMax = linkSocket;
 
     // wait for socket to connect or timeout

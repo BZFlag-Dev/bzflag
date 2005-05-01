@@ -294,7 +294,9 @@ void			ServerList::checkEchos(StartupInfo *info)
     fd_set read_set, write_set;
     FD_ZERO(&read_set);
     FD_ZERO(&write_set);
-    if (pingBcastSocket != -1) _FD_SET(pingBcastSocket, &read_set);
+    if (pingBcastSocket != -1) {
+      FD_SET((unsigned int)pingBcastSocket, &read_set);
+    }
     int fdMax = pingBcastSocket;
 
     const int nfound = select(fdMax+1, (fd_set*)&read_set,

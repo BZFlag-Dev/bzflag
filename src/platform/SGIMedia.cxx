@@ -316,10 +316,10 @@ void			SGIMedia::audioSleep(
   fd_set audioSelectSet;
   fd_set commandSelectSet;
   FD_ZERO(&commandSelectSet);
-  FD_SET(queueOut, &commandSelectSet);
+  FD_SET((unsigned int)queueOut, &commandSelectSet);
   if (checkLowWater) {
     FD_ZERO(&audioSelectSet);
-    FD_SET(audioPortFd, &audioSelectSet);
+    FD_SET((unsigned int)audioPortFd, &audioSelectSet);
   }
 
   // prepare timeout

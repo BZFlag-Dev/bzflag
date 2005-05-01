@@ -13,6 +13,7 @@
 #ifndef STDBOTHUI_H
 #define STDBOTHUI_H
 
+/* interface headers */
 #include "BZAdminUI.h"
 #include "UIMap.h"
 

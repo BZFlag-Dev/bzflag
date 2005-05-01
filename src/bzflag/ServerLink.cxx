@@ -150,7 +150,7 @@ ServerLink::ServerLink(const Address& serverAddress, int port, int) :
       return;
     }
     FD_ZERO(&write_set);
-    FD_SET(query, &write_set);
+    FD_SET((unsigned int)query, &write_set);
     timeout.tv_sec = long(5);
     timeout.tv_usec = 0;
     nfound = select(fdMax + 1, NULL, (fd_set*)&write_set, NULL, &timeout);
@@ -196,7 +196,7 @@ ServerLink::ServerLink(const Address& serverAddress, int port, int) :
   // get server version and verify
 #if !defined(_WIN32)
   FD_ZERO(&read_set);
-  FD_SET(query, &read_set);
+  FD_SET((unsigned int)query, &read_set);
   timeout.tv_sec = long(5);
   timeout.tv_usec = 0;
   nfound = select(fdMax + 1, (fd_set*)&read_set, NULL, NULL, &timeout);
@@ -238,7 +238,7 @@ ServerLink::ServerLink(const Address& serverAddress, int port, int) :
   // read local player's id
 #if !defined(_WIN32)
   FD_ZERO(&read_set);
-  FD_SET(query, &read_set);
+  FD_SET((unsigned int)query, &read_set);
   timeout.tv_sec = long(5);
   timeout.tv_usec = 0;
   nfound = select(fdMax + 1, (fd_set*)&read_set, NULL, NULL, &timeout);
@@ -456,7 +456,7 @@ int			ServerLink::read(uint16_t& code, uint16_t& len,
   // only check server
   fd_set read_set;
   FD_ZERO(&read_set);
-  _FD_SET(fd, &read_set);
+  FD_SET((unsigned int)fd, &read_set);
   int nfound = select(fd+1, (fd_set*)&read_set, NULL, NULL,
 			(struct timeval*)(blockTime >= 0 ? &timeout : NULL));
   if (nfound == 0) return 0;
@@ -479,7 +479,7 @@ int			ServerLink::read(uint16_t& code, uint16_t& len,
   while (rlen >= 1 && tlen < 4) {
     printError("ServerLink::read() loop");
     FD_ZERO(&read_set);
-    _FD_SET(fd, &read_set);
+    FD_SET((unsigned int)fd, &read_set);
     nfound = select(fd+1, (fd_set*)&read_set, NULL, NULL, NULL);
     if (nfound == 0) continue;
     if (nfound < 0) return -1;
@@ -513,7 +513,7 @@ int			ServerLink::read(uint16_t& code, uint16_t& len,
   tlen = rlen;
   while (rlen >= 1 && tlen < int(len)) {
     FD_ZERO(&read_set);
-    _FD_SET(fd, &read_set);
+    FD_SET((unsigned int)fd, &read_set);
     nfound = select(fd+1, (fd_set*)&read_set, 0, 0, NULL);
     if (nfound == 0) continue;
     if (nfound < 0) return -1;

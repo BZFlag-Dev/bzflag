@@ -66,21 +66,27 @@ void NetHandler::setFd(fd_set *read_set, fd_set *write_set, int &maxFile) {
     NetHandler *player = netPlayer[i];
     if (player && !player->closed) {
 #if !defined(USE_THREADS) || !defined(HAVE_SDL)
-      _FD_SET(player->fd, read_set);
+      FD_SET((unsigned int)player->fd, read_set);
 #endif
-      if (player->outmsgSize > 0)
-	_FD_SET(player->fd, write_set);
-      if (player->fd > maxFile)
+      if (player->outmsgSize > 0) {
+	FD_SET((unsigned int)player->fd, write_set);
+      }
+      if (player->fd > maxFile) {
 	maxFile = player->fd;
+      }
     }
   }
-  _FD_SET(udpSocket, read_set);
-  if (udpSocket > maxFile)
+
+  FD_SET((unsigned int)udpSocket, read_set);
+  if (udpSocket > maxFile) {
     maxFile = udpSocket;
+  }
+
   for (int i = 0; i < maxHandlers; i++) {
     NetHandler *player = netPlayer[i];
-    if (player)
+    if (player) {
       player->ares.setFd(read_set, write_set, maxFile);
+    }
   }
 }
 
@@ -417,7 +423,7 @@ RxStatus NetHandler::tcpReceive() {
 #if defined(USE_THREADS) && defined(HAVE_SDL)
   fd_set read_set;
   FD_ZERO(&read_set);
-  _FD_SET(fd, &read_set);
+  FD_SET((unsigned int)fd, &read_set);
   select(fd + 1, (fd_set*)&read_set, 0, 0, 0);
 #endif
 

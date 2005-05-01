@@ -287,7 +287,7 @@ void			SolarisMedia::audioSleep(
       // break if buffer has drained enough
       if (isAudioTooEmpty()) break;
       FD_ZERO(&commandSelectSet);
-      FD_SET(queueOut, &commandSelectSet);
+      FD_SET((unsigned int)queueOut, &commandSelectSet);
       tv.tv_sec=0;
       tv.tv_usec=50000;
       if (select(maxFd, &commandSelectSet, 0, 0, &tv)) break;
@@ -295,7 +295,7 @@ void			SolarisMedia::audioSleep(
     } while (endTime<0.0 || (TimeKeeper::getCurrent()-start)<endTime);
   } else {
     FD_ZERO(&commandSelectSet);
-    FD_SET(queueOut, &commandSelectSet);
+    FD_SET((unsigned int)queueOut, &commandSelectSet);
     tv.tv_sec=int(endTime);
     tv.tv_usec=int(1.0e6*(endTime-floor(endTime)));
 
