@@ -13,12 +13,12 @@
 #ifndef _BITMAP_FONT_H_
 #define _BITMAP_FONT_H_
 
-#ifdef _MSC_VER
-  #pragma warning(disable : 4786)  // Disable warning message
-#endif
+/* common header */
+#include "common.h"
 
-#include "bzfgl.h"
+/* interface headers */
 #include "ImageFont.h"
+#include "bzfgl.h"
 #include "OpenGLGState.h"
 
 class BitmapFont : public ImageFont {

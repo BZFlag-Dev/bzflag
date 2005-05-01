@@ -10,9 +10,6 @@
 * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 */
 
-// BZFlag common header
-#include "common.h"
-
 // Interface header
 #include "ImageFont.h"
 
