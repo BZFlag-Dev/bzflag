@@ -173,7 +173,7 @@ void cURLManager::setRequestFileTime(bool request)
 void cURLManager::addHandle()
 {
   CURLMcode result = curl_multi_add_handle(multiHandle, easyHandle);
-  if (result != CURLM_OK)
+  if (result > CURLM_OK)
     DEBUG1("Error while adding easy handle from libcurl; Error: %d\n", result);
   added = true;
 }
@@ -184,7 +184,8 @@ void cURLManager::removeHandle()
     return;
   CURLMcode result = curl_multi_remove_handle(multiHandle, easyHandle);
   if (result != CURLM_OK)
-    DEBUG1("Error while removing easy handle from libcurl; Error: %d\n", result);
+    DEBUG1("Error while removing easy handle from libcurl; Error: %d\n",
+	   result);
   added = false;
 }
 
@@ -217,7 +218,8 @@ int cURLManager::perform()
       break;
   }
   if (result != CURLM_OK)
-    DEBUG1("Error while doing multi_perform from libcurl; Error: %d\n", result);
+    DEBUG1("Error while doing multi_perform from libcurl; Error: %d\n",
+	   result);
 
   int      msgs_in_queue;
   CURLMsg *pendingMsg;
@@ -244,7 +246,8 @@ int cURLManager::perform()
 void cURLManager::infoComplete(CURLcode result)
 {
   if (result != CURLE_OK)
-    DEBUG1("File transfer terminated with error from libcurl; Error: %d\n", result);
+    DEBUG1("File transfer terminated with error from libcurl; Error: %d\n",
+	   result);
   finalization((char *)theData, theLen, result == CURLE_OK);
   free(theData);
   removeHandle();
