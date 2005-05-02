@@ -125,14 +125,16 @@ void cURLManager::setGetMode()
   }
 }
 
-void cURLManager::setURL(std::string url)
+void cURLManager::setURL(const std::string url)
 {
   CURLcode result;
 
-  if (url == "")
+  if (url == "") {
     result = curl_easy_setopt(easyHandle, CURLOPT_URL, NULL);
-  else
-    result = curl_easy_setopt(easyHandle, CURLOPT_URL, url.c_str());
+  } else {
+    usedUrl = url;
+    result = curl_easy_setopt(easyHandle, CURLOPT_URL, usedUrl.c_str());
+  }
   if (result != CURLE_OK) {
     errorCode = result;
     DEBUG1("CURLOPT_URL error: %d\n", result);
@@ -229,7 +231,8 @@ int cURLManager::perform()
 
     easy        = pendingMsg->easy_handle;
 
-    cURLMap[easy]->infoComplete(pendingMsg->data.result);
+    if (cURLMap.count(easy))
+      cURLMap[easy]->infoComplete(pendingMsg->data.result);
 
     if (msgs_in_queue <= 0)
       break;

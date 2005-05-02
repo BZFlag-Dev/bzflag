@@ -46,7 +46,7 @@ public:
   void setNoBody();
   void setGetMode();
   void setRequestFileTime(bool request);
-  void setURL(std::string url);
+  void setURL(const std::string url);
   void setProgressFunction(curl_progress_callback func, void* data);
 
   bool getFileTime(time_t &t);
@@ -68,6 +68,7 @@ private:
   CURL         *easyHandle;
   static CURLM *multiHandle;
   bool          added;
+  std::string   usedUrl;
 
   static void   setup();
 
