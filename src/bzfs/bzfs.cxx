@@ -4167,7 +4167,6 @@ int main(int argc, char **argv)
 
   Record::init();
 
-
   // check time bomb
   if (timeBombBoom()) {
     std::cerr << "This release expired on " << timeBombString() << ".\n";
@@ -4180,13 +4179,6 @@ int main(int argc, char **argv)
     std::cerr << "This release will expire on " << timeBombString() << ".\n";
     std::cerr << "Version " << getAppVersion() << std::endl;
   }
-
-  // trap some signals
-  // let user kill server
-  if (bzSignal(SIGINT, SIG_IGN) != SIG_IGN)
-    bzSignal(SIGINT, SIG_PF(terminateServer));
-  // ditto
-  bzSignal(SIGTERM, SIG_PF(terminateServer));
 
   // initialize
 #if defined(_WIN32)
@@ -4252,9 +4244,10 @@ int main(int argc, char **argv)
     }
   }
 
-  // Loading lag thresholds
+  // loading lag thresholds
   LagInfo::setThreshold(clOptions->lagwarnthresh,(float)clOptions->maxlagwarn);
-  // Loading extra flag number
+
+  // loading extra flag number
   FlagInfo::setExtra(clOptions->numExtraFlags);
 
   // enable replay server mode
@@ -4357,7 +4350,7 @@ int main(int argc, char **argv)
 
   // get the master ban list
   if (clOptions->publicizeServer && !clOptions->suppressMasterBanList){
-    MasterBanList	banList;
+    MasterBanList banList;
     for (std::vector<std::string>::const_iterator i = clOptions->masterBanListURL.begin(); i != clOptions->masterBanListURL.end(); i++) {
       clOptions->acl.merge(banList.get(i->c_str()));
       DEBUG1("Loaded master ban list from %s\n", i->c_str());
@@ -4419,14 +4412,6 @@ int main(int argc, char **argv)
     world->getWorldWeapons().clear();
   }
 
-  if (!serverStart()) {
-#if defined(_WIN32)
-    WSACleanup();
-#endif /* defined(_WIN32) */
-    std::cerr << "ERROR: Unable to start the server, perhaps one is already running?" << std::endl;
-    return 2;
-  }
-
   TimeKeeper nextSuperFlagInsertion = TimeKeeper::getCurrent();
   const float flagExp = -logf(0.5f) / FlagHalfLife;
 
@@ -4447,6 +4432,21 @@ int main(int argc, char **argv)
 
   if (clOptions->startRecording) {
     Record::start (ServerPlayer);
+  }
+
+  // trap some signals
+  if (bzSignal(SIGINT, SIG_IGN) != SIG_IGN) {
+    bzSignal(SIGINT, SIG_PF(terminateServer));
+  }
+  bzSignal(SIGTERM, SIG_PF(terminateServer));
+
+  // start the server
+  if (!serverStart()) {
+#if defined(_WIN32)
+    WSACleanup();
+#endif /* defined(_WIN32) */
+    std::cerr << "ERROR: Unable to start the server, perhaps one is already running?" << std::endl;
+    return 2;
   }
 
 
@@ -4551,7 +4551,6 @@ int main(int argc, char **argv)
       waitTime = 0.0f;
     }
 
-
     /**************
      *  SELECT()  *
      **************/
@@ -4649,42 +4648,43 @@ int main(int argc, char **argv)
       float newTimeElapsed = tm - gameStartTime;
       float timeLeft = clOptions->timeLimit - newTimeElapsed;
       if (timeLeft <= 0.0f) {
-				timeLeft = 0.0f;
-				gameOver = true;
-				countdownActive = false;
-				countdownPauseStart = TimeKeeper::getNullTime();
-				clOptions->countdownPaused = false;
+        timeLeft = 0.0f;
+        gameOver = true;
+        countdownActive = false;
+        countdownPauseStart = TimeKeeper::getNullTime ();
+        clOptions->countdownPaused = false;
       }
-			
-			if (countdownActive && clOptions->countdownPaused && !countdownPauseStart) {
-				// we have a new pause
-				countdownPauseStart = tm;
-				void *buf, *bufStart = getDirectMessageBuffer();
-				buf = nboPackInt(bufStart, -1 );
-				broadcastMessage(MsgTimeUpdate, (char*)buf - (char*)bufStart, bufStart);
-			}
-			
-			if (countdownActive && !clOptions->countdownPaused && countdownPauseStart) {
-				// resumed
-				gameStartTime += (tm - countdownPauseStart);
-				countdownPauseStart = TimeKeeper::getNullTime();
-				newTimeElapsed = tm - gameStartTime;
-				timeLeft = clOptions->timeLimit - newTimeElapsed;
-				void *buf, *bufStart = getDirectMessageBuffer();
-				buf = nboPackInt(bufStart, (int32_t)timeLeft);
-				broadcastMessage(MsgTimeUpdate, (char*)buf - (char*)bufStart, bufStart);
-			}
-				
-      if ((timeLeft == 0.0f || newTimeElapsed - clOptions->timeElapsed >= 30.0f) && !clOptions->countdownPaused) {
-				// send update every 30 seconds
-				void *buf, *bufStart = getDirectMessageBuffer();
-				buf = nboPackInt(bufStart, (int32_t)timeLeft);
-				broadcastMessage(MsgTimeUpdate, (char*)buf - (char*)bufStart, bufStart);
-				clOptions->timeElapsed = newTimeElapsed;
-				if (clOptions->oneGameOnly && timeLeft == 0.0f) {
-	  			done = true;
-	  			exitCode = 0;
-				}
+
+      if (countdownActive && clOptions->countdownPaused && !countdownPauseStart) {
+        // we have a new pause
+        countdownPauseStart = tm;
+        void *buf, *bufStart = getDirectMessageBuffer ();
+        buf = nboPackInt (bufStart, -1);
+        broadcastMessage (MsgTimeUpdate, (char *) buf - (char *) bufStart, bufStart);
+      }
+
+      if (countdownActive && !clOptions->countdownPaused && countdownPauseStart) {
+        // resumed
+        gameStartTime += (tm - countdownPauseStart);
+        countdownPauseStart = TimeKeeper::getNullTime ();
+        newTimeElapsed = tm - gameStartTime;
+        timeLeft = clOptions->timeLimit - newTimeElapsed;
+        void *buf, *bufStart = getDirectMessageBuffer ();
+        buf = nboPackInt (bufStart, (int32_t) timeLeft);
+        broadcastMessage (MsgTimeUpdate, (char *) buf - (char *) bufStart, bufStart);
+      }
+
+      if ((timeLeft == 0.0f || newTimeElapsed - clOptions->timeElapsed >= 30.0f)
+          && !clOptions->countdownPaused) {
+        // send update every 30 seconds
+        void *buf, *bufStart = getDirectMessageBuffer ();
+        buf = nboPackInt (bufStart, (int32_t) timeLeft);
+        broadcastMessage (MsgTimeUpdate, (char *) buf - (char *) bufStart, bufStart);
+        clOptions->timeElapsed = newTimeElapsed;
+        if (clOptions->oneGameOnly && timeLeft == 0.0f) {
+          done = true;
+          exitCode = 0;
+        }
       }
     }
 
