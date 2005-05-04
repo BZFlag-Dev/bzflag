@@ -145,6 +145,7 @@ void removePlayer(int playerIndex, const char *reason, bool notify=true);
 void resetFlag(FlagInfo &flag);
 static void dropFlag(GameKeeper::Player &playerData, float pos[3]);
 static void dropAssignedFlag(int playerIndex);
+static std::string evaluateString(const std::string);
 
 int getCurMaxPlayers()
 {
@@ -1744,6 +1745,72 @@ static TeamColor autoTeamSelect(TeamColor t)
   return teamSelect(t, teams);
 }
 
+static std::string evaluateString(const std::string raw)
+{
+  std::string eval;
+  const int rawLen = (int)raw.size();
+  for (int i = 0; i < rawLen; i++) {
+    char current = raw[i];
+    if (current != '\\') {
+      eval += current;
+    } else {
+      char next = raw[i+1];
+      switch (next) {
+        case '\\' : {
+          eval += '\\';
+          i++;
+          break;
+        }
+        case 'n' : {
+          eval += "\\n";
+          i++;
+          break;
+        }
+        case '{' : {
+          unsigned int start = (i + 2);
+          unsigned int end = raw.find_first_of('}', start);
+          if (end == std::string::npos) {
+            i = rawLen; // unterminated, ignore the rest of the string
+          } else {
+            const std::string var = raw.substr(start, end - start);
+            i += (end - start) + 2;
+            if (BZDB.isSet(var)) {
+              eval += BZDB.get(var);
+            } else {
+              eval += "*BADBZDB*";
+            }
+          }
+          break;
+        }
+        case '(' : {
+          unsigned int start = (i + 2);
+          unsigned int end = raw.find_first_of(')', start);
+          if (end == std::string::npos) {
+            i = rawLen; // unterminated, ignore the rest of the string
+          } else {
+            const std::string var = raw.substr(start, end - start);
+            i += (end - start) + 2;
+            if (var == "uptime") {
+              char buffer[16];
+              const float uptime = TimeKeeper::getCurrent() - TimeKeeper::getStartTime();
+              snprintf(buffer, 16, "%i", (int)uptime);
+              eval += buffer;
+            }
+            else {
+              eval += "*BADVAR*";
+            }
+          }
+          break;
+        }
+        default: {
+          break;
+        }
+      }
+    }
+  }
+  return eval;
+}
+
 static void addPlayer(int playerIndex)
 {
   GameKeeper::Player *playerData
@@ -1993,9 +2060,10 @@ static void addPlayer(int playerIndex)
   sendMessage(ServerPlayer, playerIndex, message);
 
   if (clOptions->servermsg != "") {
+    const std::string srvmsg = evaluateString(clOptions->servermsg);
 
     // split the servermsg into several lines if it contains '\n'
-    const char* i = clOptions->servermsg.c_str();
+    const char* i = srvmsg.c_str();
     const char* j;
     while ((j = strstr(i, "\\n")) != NULL) {
       unsigned int l = j - i < MessageLen - 1 ? j - i : MessageLen - 1;
@@ -2013,7 +2081,8 @@ static void addPlayer(int playerIndex)
   static const std::vector<std::string>* lines = clOptions->textChunker.getTextChunk("srvmsg");
   if (lines != NULL){
     for (int i = 0; i < (int)lines->size(); i ++){
-      sendMessage(ServerPlayer, playerIndex, (*lines)[i].c_str());
+      const std::string srvmsg = evaluateString((*lines)[i]);
+      sendMessage(ServerPlayer, playerIndex, srvmsg.c_str());
     }
   }
 
@@ -4897,8 +4966,9 @@ int main(int argc, char **argv)
 	// every 15 minutes
 	char message[MessageLen];
 	if (clOptions->advertisemsg != "") {
+	  const std::string admsg = evaluateString(clOptions->advertisemsg);
 	  // split the admsg into several lines if it contains '\n'
-	  const char* c = clOptions->advertisemsg.c_str();
+	  const char* c = admsg.c_str();
 	  const char* j;
 	  while ((j = strstr(c, "\\n")) != NULL) {
 	    int l = j - c < MessageLen - 1 ? j - c : MessageLen - 1;
@@ -4914,7 +4984,8 @@ int main(int argc, char **argv)
 	// multi line from file advert
 	if (adLines != NULL) {
 	  for (int j = 0; j < (int)adLines->size(); j++) {
-	    sendMessage(ServerPlayer, AllPlayers, (*adLines)[j].c_str());
+	    const std::string admsg = evaluateString((*adLines)[j]);
+	    sendMessage(ServerPlayer, AllPlayers, admsg.c_str());
 	  }
 	}
 	lastbroadcast = tm;
