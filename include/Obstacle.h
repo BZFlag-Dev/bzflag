@@ -187,6 +187,10 @@ class Obstacle {
       @c false if they can't. */
   bool isShootThrough() const;
 
+  /** This function returns @c true if tanks and bullets can pass through
+      this object, @c false if either can not */
+  bool isPassable() const;
+
   /** This function sets the "zFlip" flag of this obstacle, i.e. if it's
       upside down. */
   void setZFlip(void);
@@ -277,39 +281,54 @@ inline const Extents& Obstacle::getExtents() const
   return extents;
 }
 
-inline const float*	Obstacle::getPosition() const
+inline const float* Obstacle::getPosition() const
 {
   return pos;
 }
 
-inline const float*	Obstacle::getSize() const
+inline const float* Obstacle::getSize() const
 {
   return size;
 }
 
-inline float		Obstacle::getRotation() const
+inline float Obstacle::getRotation() const
 {
   return angle;
 }
 
-inline float		Obstacle::getWidth() const
+inline float Obstacle::getWidth() const
 {
   return size[0];
 }
 
-inline float		Obstacle::getBreadth() const
+inline float Obstacle::getBreadth() const
 {
   return size[1];
 }
 
-inline float		Obstacle::getHeight() const
+inline float Obstacle::getHeight() const
 {
   return size[2];
 }
 
-inline void		Obstacle::get3DNormal(const float *p, float *n) const
+inline void Obstacle::get3DNormal(const float *p, float *n) const
 {
   getNormal(p, n);
+}
+
+inline bool Obstacle::isDriveThrough() const
+{
+  return driveThrough;
+}
+
+inline bool Obstacle::isShootThrough() const
+{
+  return shootThrough;
+}
+
+inline bool Obstacle::isPassable() const
+{
+  return (driveThrough && shootThrough);
 }
 
 inline void Obstacle::setSource(char _source)

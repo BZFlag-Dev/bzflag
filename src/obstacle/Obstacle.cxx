@@ -87,29 +87,19 @@ void			Obstacle::setExtents()
   return;
 }
 
-bool			Obstacle::isDriveThrough() const
-{
-	return driveThrough;
-}
-
-bool			Obstacle::isShootThrough() const
-{
-	return shootThrough;
-}
-
 bool			Obstacle::isFlatTop ( void ) const
 {
-	return false;
+  return false;
 }
 
 void			Obstacle::setZFlip ( void )
 {
-	ZFlip = true;
+  ZFlip = true;
 }
 
 bool			Obstacle::getZFlip ( void ) const
 {
-	return ZFlip;
+  return ZFlip;
 }
 
 

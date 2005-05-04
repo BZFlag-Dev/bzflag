@@ -388,6 +388,11 @@ void CollisionManager::load ()
   const ObstacleList& pyrs = OBSTACLEMGR.getPyrs();
   const ObstacleList& bases = OBSTACLEMGR.getBases();
   const ObstacleList& teles = OBSTACLEMGR.getTeles();
+  const int boxCount = (int)boxes.size();
+  const int pyrCount = (int)pyrs.size();
+  const int baseCount = (int)bases.size();
+  const int teleCount = (int)teles.size();
+  const int meshCount = (int)meshes.size();
 
   // clean out the cell lists
   clear();
@@ -399,13 +404,28 @@ void CollisionManager::load ()
 
   // determine the total number of obstacles
   int fullCount = 0;
-  const int meshCount = (int)meshes.size();
+  for (i = 0; i < boxCount; i++) {
+    if (!boxes[i]->isPassable()) fullCount++;
+  }
+  for (i = 0; i < pyrCount; i++) {
+    if (!pyrs[i]->isPassable()) fullCount++;
+  }
+  for (i = 0; i < baseCount; i++) {
+    if (!bases[i]->isPassable()) fullCount++;
+  }
+  for (i = 0; i < teleCount; i++) {
+    if (!teles[i]->isPassable()) fullCount++;
+  }
   for (i = 0; i < meshCount; i++) {
     MeshObstacle* mesh = (MeshObstacle*) meshes[i];
-    fullCount += mesh->getFaceCount() + 1; // one for the mesh itself
+    if (!mesh->isPassable()) {
+      for (int f = 0; f < mesh->getFaceCount(); f++) {
+        MeshFace* face = (MeshFace*) mesh->getFace(f);
+        if (!face->isPassable()) fullCount++;
+      }
+      fullCount++; // one for the mesh itself
+    }
   }
-  fullCount += (int)(boxes.size() + bases.size() +
-		     pyrs.size() + (teles.size() * 3)); // 2 MeshFace links
 
   // get the memory for the full list and the scratch pad
   FullPad.list = new Obstacle*[fullCount];
@@ -421,35 +441,31 @@ void CollisionManager::load ()
   // speed of the sorting.
   //
 
-  const int boxCount = (int)boxes.size();
   for (i = (boxCount - 1); i >= 0; i--) {
-    addToFullList(boxes[i]);
+    if (!boxes[i]->isPassable()) addToFullList(boxes[i]);
   }
-  const int pyrCount = (int)pyrs.size();
   for (i = (pyrCount - 1); i >= 0; i--) {
-    addToFullList(pyrs[i]);
+    if (!pyrs[i]->isPassable()) addToFullList(pyrs[i]);
   }
-  const int baseCount = (int)bases.size();
   for (i = (baseCount - 1); i >= 0; i--) {
-    addToFullList(bases[i]);
+    if (!bases[i]->isPassable()) addToFullList(bases[i]);
   }
-  const int teleCount = (int)teles.size();
   for (i = (teleCount - 1); i >= 0; i--) {
-    Teleporter* tele = (Teleporter*) teles[i];
-    addToFullList((Obstacle*) tele);
-    addToFullList((Obstacle*) tele->getBackLink());
-    addToFullList((Obstacle*) tele->getFrontLink());
+    if (!teles[i]->isPassable()) addToFullList(teles[i]);
   }
-  // add the mesh types last
+  // add the mesh types last (faces then meshes)
   for (i = (meshCount - 1); i >= 0; i--) {
     MeshObstacle* mesh = (MeshObstacle*) meshes[i];
-    const int meshFaceCount = mesh->getFaceCount();
-    for (int f = 0; f < meshFaceCount; f++) {
-      addToFullList((Obstacle*) mesh->getFace(f));
+    if (!mesh->isPassable()) {
+      const int meshFaceCount = mesh->getFaceCount();
+      for (int f = 0; f < meshFaceCount; f++) {
+        MeshFace* face = (MeshFace*) mesh->getFace(f);
+        if (!face->isPassable()) addToFullList((Obstacle*) face);
+      }
     }
   }
   for (i = (meshCount - 1); i >= 0; i--) {
-    addToFullList(meshes[i]);
+    if (!meshes[i]->isPassable()) addToFullList(meshes[i]);
   }
 
   // do the type/height sort
@@ -482,7 +498,7 @@ void CollisionManager::load ()
   RayList.list = new ColDetNode*[leafNodes];
   RayList.count = 0;
 
-  // setup the split list
+  // setup the split list  (currently unused/untested)
   Obstacle** listPtr = FullList.list;
   SplitList.named.boxes.list = listPtr;
   SplitList.named.boxes.count = (int)boxes.size();
