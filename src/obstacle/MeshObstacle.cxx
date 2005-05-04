@@ -643,11 +643,15 @@ void MeshObstacle::print(std::ostream& out, const std::string& indent) const
   if (smoothBounce) {
     out << indent << "  smoothBounce" << std::endl;
   }
-  if (driveThrough) {
-    out << indent << "  driveThrough" << std::endl;
-  }
-  if (shootThrough) {
-    out << indent << "  shootThrough" << std::endl;
+  if (driveThrough && shootThrough) {
+      out << indent << "  passable" << std::endl;
+  } else {
+    if (driveThrough) {
+      out << indent << "  driveThrough" << std::endl;
+    }
+    if (shootThrough) {
+      out << indent << "  shootThrough" << std::endl;
+    }
   }
 
   int i, j;

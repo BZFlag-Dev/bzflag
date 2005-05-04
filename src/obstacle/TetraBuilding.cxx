@@ -480,7 +480,7 @@ void TetraBuilding::print(std::ostream& out, const std::string& indent) const
   }
 
   // write the regular stuff
-  if (isDriveThrough() && isShootThrough()) {
+  if (isPassable()) {
     out << indent << "\tpassable" << std::endl;
   } else {
     if (isDriveThrough()) {
