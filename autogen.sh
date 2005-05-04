@@ -6,7 +6,6 @@ aclocal \
 && autoconf \
 || exit 1
 
-(cd src/c-ares/; autoconf)
 if [ -z "$1" ] ; then
  echo BZFlag sources are now prepared. To build here, run:
  echo " ./configure"

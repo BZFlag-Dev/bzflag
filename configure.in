@@ -272,9 +272,6 @@ AC_CHECK_LIB(m, sqrtf)
 AC_CHECK_LIB(socket, socket)
 AC_CHECK_LIB(bind, gethostent)
 
-#configure c-ares subdir
-AC_CONFIG_SUBDIRS(src/c-ares)
-
 # check for various IEEE and c99 standard math functions in libm
 AC_CHECK_LIB([m], [acosf], [AC_DEFINE([HAVE_ACOSF],[1],[libm includes acosf])])
 AC_CHECK_LIB([m], [asinf], [AC_DEFINE([HAVE_ASINF],[1],[libm includes asinf])])
@@ -537,9 +534,12 @@ case $host_os in
 	#fi
 	CPPFLAGS="$CPPFLAGS -Wall -W -mcpu=$host_cpu";;
      mingw32*)
+	WINPORT=windows_port.o
+	AC_SUBST(WINPORT)
 	AC_DEFINE(HALF_RATE_AUDIO, 1, [Half rate Audio])
 	CPPFLAGS="$CPPFLAGS -Wall -W -mcpu=$host_cpu";;
      solaris*)
+	AC_DEFINE(ETC_INET, [], [hosts is in /etc/inet/])
 	AC_DEFINE(SUN_OGL_NO_VERTEX_MACROS, [], [Sun OpenGL No Macro Vertex])
 	if $sun_wspro; then
 	   CPPFLAGS="$CPPFLAGS -KPIC"
@@ -706,6 +706,7 @@ AC_OUTPUT(bzflag.info
 	src/bzadmin/Makefile
 	src/bzflag/Makefile
 	src/bzfs/Makefile
+	src/c-ares/Makefile
 	src/common/Makefile
 	src/date/Makefile
 	src/3D/Makefile
