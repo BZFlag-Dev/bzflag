@@ -755,11 +755,16 @@ void MeshFace::print(std::ostream& out, const std::string& indent) const
   if (smoothBounce && !mesh->useSmoothBounce()) {
     out << indent << "    smoothBounce" << std::endl;
   }
-  if (driveThrough && !mesh->isDriveThrough()) {
-    out << indent << "    driveThrough" << std::endl;
-  }
-  if (shootThrough && !mesh->isShootThrough()) {
-    out << indent << "    shootThrough" << std::endl;
+  if ((driveThrough && shootThrough) &&
+      !(mesh->isDriveThrough() && mesh->isShootThrough())) {
+    out << indent << "    passable" << std::endl;
+  } else {    
+    if (driveThrough && !mesh->isDriveThrough()) {
+      out << indent << "    driveThrough" << std::endl;
+    }
+    if (shootThrough && !mesh->isShootThrough()) {
+      out << indent << "    shootThrough" << std::endl;
+    }
   }
 
   out << indent << "  endface" << std::endl;
