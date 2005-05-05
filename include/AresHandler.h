@@ -50,6 +50,7 @@ class AresHandler {
   in_addr      hostAddress;
   ares_channel aresChannel;
   ResolutionStatus status;
+  bool         aresFailed;
 };
 
 #endif

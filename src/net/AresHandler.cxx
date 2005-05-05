@@ -24,14 +24,17 @@ AresHandler::AresHandler(int _index)
 {
   memset(&hostAddress, 0, sizeof(hostAddress));
   /* start up our resolver */
-  if (ares_init(&aresChannel) != ARES_SUCCESS) {
-    perror("ARES init failed");
-    exit(1);
+  aresFailed = (ares_init(&aresChannel) != ARES_SUCCESS);
+  if (aresFailed) {
+    status = Failed;
+    DEBUG2("Ares Failed initializing\n");
   }
 }
 
 AresHandler::~AresHandler()
 {
+  if (aresFailed)
+    return;
   ares_destroy(aresChannel);
   if (hostname) {
     free(hostname);
@@ -41,6 +44,8 @@ AresHandler::~AresHandler()
 
 void AresHandler::queryHostname(struct sockaddr *clientAddr)
 {
+  if (aresFailed)
+    return;
   status = HbAPending;
   // launch the asynchronous query to look up this hostname
   ares_gethostbyaddr(aresChannel, &((sockaddr_in *)clientAddr)->sin_addr,
@@ -50,6 +55,8 @@ void AresHandler::queryHostname(struct sockaddr *clientAddr)
 
 void AresHandler::queryHost(char *hostName)
 {
+  if (aresFailed)
+    return;
   ares_cancel(aresChannel);
 
   if (inet_aton(hostName, &hostAddress) != 0) {
@@ -116,6 +123,8 @@ AresHandler::ResolutionStatus AresHandler::getHostAddress(struct in_addr
 
 void AresHandler::setFd(fd_set *read_set, fd_set *write_set, int &maxFile)
 {
+  if (aresFailed)
+    return;
   int aresMaxFile = ares_fds(aresChannel, read_set, write_set) - 1;
   if (aresMaxFile > maxFile)
     maxFile = aresMaxFile;
@@ -123,6 +132,8 @@ void AresHandler::setFd(fd_set *read_set, fd_set *write_set, int &maxFile)
 
 void AresHandler::process(fd_set *read_set, fd_set *write_set)
 {
+  if (aresFailed)
+    return;
   ares_process(aresChannel, read_set, write_set);
 }
 
