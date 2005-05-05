@@ -1,0 +1,59 @@
+noinst_LIBRARIES = libcares.a
+
+MAINTAINERCLEANFILES = \
+	Makefile.in
+
+AM_CPPFLAGS = -I$(top_srcdir)/include
+
+libcares_a_SOURCES =		\
+	ares_cancel.c		\
+	ares__close_sockets.c	\
+	ares_destroy.c		\
+	ares_dns.h		\
+	ares_expand_name.c	\
+	ares_expand_string.c	\
+	ares_fds.c		\
+	ares_free_hostent.c	\
+	ares_free_string.c	\
+	ares_gethostbyaddr.c	\
+	ares_gethostbyname.c	\
+	ares__get_hostent.c	\
+	ares_init.c		\
+	ares_mkquery.c		\
+	ares_parse_a_reply.c	\
+	ares_parse_ptr_reply.c	\
+	ares_private.h		\
+	ares_process.c		\
+	ares_query.c		\
+	ares__read_line.c	\
+	ares_search.c		\
+	ares_send.c		\
+	ares_strerror.c		\
+	ares_timeout.c		\
+	ares_version.c		\
+	ares_version.h
+
+EXTRA_libcares_a_SOURCES = winport.c
+
+libcares_a_LIBADD = @WINPORT@
+
+EXTRA_DIST = \
+	ares.h			\
+	CHANGES			\
+	FILES			\
+	NEWS			\
+	README			\
+	README.cares		\
+	vc/adig/adig.dep	\
+        vc/adig/adig.dsp	\
+        vc/adig/adig.mak	\
+        vc/adig/adig.plg	\
+        vc/ahost/ahost.dep	\
+        vc/ahost/ahost.dsp	\
+        vc/ahost/ahost.mak	\
+        vc/ahost/ahost.plg	\
+        vc/areslib/areslib.dep	\
+        vc/areslib/areslib.dsp	\
+        vc/areslib/areslib.mak	\
+        vc/areslib/areslib.plg	\
+        vc/vc.dsw
