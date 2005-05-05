@@ -187,6 +187,12 @@ else
 ZLIB = -lz
 endif
 
+if BUILDCARES
+CARESLIB = ../c-ares/libcares.a
+else
+CARESLIB = -lcares
+endif
+
 if MACOS
 NACLIB =	\
 	../platform/MacOSX/libMac.a
@@ -209,7 +215,7 @@ LDADD =	\
 	../geometry/libGeometry.a	\
 	../mediafile/libMediaFile.a	\
 	../common/libCommon.a		\
-	../c-ares/libcares.a		\
+	$(CARESLIB)			\
 	$(REGEX)			\
 	$(ZLIB)				\
 	$(KRB5_LIBS)			\

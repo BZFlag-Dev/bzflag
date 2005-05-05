@@ -1,4 +1,6 @@
+if BUILDCARES
 noinst_LIBRARIES = libcares.a
+endif
 
 MAINTAINERCLEANFILES = \
 	Makefile.in

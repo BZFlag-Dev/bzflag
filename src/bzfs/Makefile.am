@@ -117,10 +117,16 @@ else
 ZLIB = -lz
 endif
 
+if BUILDCARES
+CARESLIB = ../c-ares/libcares.a
+else
+CARESLIB = -lcares
+endif
+
 LDADD = \
 	../obstacle/libObstacle.a	\
 	../game/libGame.a	\
 	../net/libNet.a		\
 	../common/libCommon.a	\
-	../c-ares/libcares.a	\
+	$(CARESLIB)	\
 	$(REGEX) $(ZLIB) $(CURL_LIBS) $(KRB5_LIBS) ../date/libDate.a

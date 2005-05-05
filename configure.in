@@ -86,6 +86,15 @@ AC_SUBST(AR_FLAGS)
 AC_CHECK_LIB(z, compress, BUILDZLIB=no, BUILDZLIB=yes)
 AM_CONDITIONAL(BUILDZLIB, test $BUILDZLIB = yes)
 
+AC_CHECK_LIB(cares, ares_init, BUILDCARES=no, BUILDCARES=yes)
+AM_CONDITIONAL(BUILDCARES, test $BUILDCARES = yes)
+if test "x$BUILDCARES" = "xyes" ; then
+      AC_MSG_WARN([using an internal c-ares lib.])
+      AC_MSG_WARN([Consider installing an updated library at system level])
+      AC_MSG_WARN([link is http://daniel.haxx.se/projects/c-ares/])
+fi
+
+
 AC_ARG_ENABLE(curl,  [  --enable-curl           use libcurl],
 [case "${enableval}" in
   yes) enable_curl=yes ;;
