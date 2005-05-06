@@ -264,6 +264,41 @@ bool cURLManager::getFileTime(time_t &t)
   return true;
 }
 
+void cURLManager::setTimeCondition(timeCondition condition, time_t &t)
+{
+  CURLcode result;
+
+  switch (condition) {
+  case None:
+    result = curl_easy_setopt(easyHandle,
+			      CURLOPT_TIMECONDITION,
+			      CURL_TIMECOND_NONE);
+    if (result != CURLE_OK) {
+      errorCode = result;
+      DEBUG1("CURLOPT_TIMECONDITION error: %d\n", result);
+    }
+    break;
+  case ModifiedSince:
+    result = curl_easy_setopt(easyHandle,
+			      CURLOPT_TIMECONDITION,
+			      CURL_TIMECOND_IFMODSINCE);
+    if (result != CURLE_OK) {
+      errorCode = result;
+      DEBUG1("CURLOPT_TIMECONDITION error: %d\n", result);
+    }
+    result = curl_easy_setopt(easyHandle,
+			      CURLOPT_TIMEVALUE,
+			      (long)t);
+    if (result != CURLE_OK) {
+      errorCode = result;
+      DEBUG1("CURLOPT_TIMEVALUE error: %d\n", result);
+    }
+    break;
+  default:
+    break;
+  }
+}
+
 // Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***

@@ -39,6 +39,11 @@ public:
   cURLManager();
   virtual ~cURLManager();
 
+  enum timeCondition {
+    None,
+    ModifiedSince
+  };
+
   void addHandle();
   void removeHandle();
 
@@ -48,6 +53,7 @@ public:
   void setRequestFileTime(bool request);
   void setURL(const std::string url);
   void setProgressFunction(curl_progress_callback func, void* data);
+  void setTimeCondition(timeCondition condition, time_t &t);
 
   bool getFileTime(time_t &t);
 

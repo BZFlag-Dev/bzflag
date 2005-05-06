@@ -75,22 +75,16 @@ class CachedTexture : cURLManager {
 public:
   CachedTexture(const std::string &texUrl);
 
-  void         requestFileTime();
-  void         downloadTexture();
   virtual void finalization(char *data, unsigned int length, bool good);
-
-  bool         hasTerminated() {return !running;};
 
   static void  setParams(bool check, long timeout);
   static int   activeTransfer();
 private:
   std::string               url;
-  CacheManager::CacheRecord oldrec;
   static bool               checkForCache;
   static long               httpTimeout;
   static int                textureCounter;
   bool                      timeRequest;
-  bool                      running;
 };
 bool CachedTexture::checkForCache   = false;
 long CachedTexture::httpTimeout     = 0;
@@ -98,20 +92,31 @@ int  CachedTexture::textureCounter;
 
 CachedTexture::CachedTexture(const std::string &texUrl) : cURLManager()
 {
+  CacheManager::CacheRecord oldrec;
+
   setURL(texUrl);
   url         = texUrl;
-  timeRequest = false;
-  running     = false;
 
   // use the cache?
-  if (CACHEMGR.findURL(texUrl, oldrec)) {
-    if (checkForCache)
-      requestFileTime();
-    else
-      // use the cached file
-      MATERIALMGR.setTextureLocal(texUrl, oldrec.name);
+  bool cached = CACHEMGR.findURL(texUrl, oldrec);
+  if (cached && !checkForCache) {
+    // use the cached file
+    MATERIALMGR.setTextureLocal(texUrl, oldrec.name);
   } else {
-    downloadTexture();
+    textureCounter++;
+    if (httpTimeout > 0.0)
+      setTimeout(httpTimeout);
+    setRequestFileTime(true);
+    timeRequest = cached;
+    std::string msg = ColorStrings[GreyColor];
+    msg            += "downloading: " + url;
+    addMessage(NULL, msg);
+    if (cached) {
+      // use the cached file -- just in case
+      MATERIALMGR.setTextureLocal(url, oldrec.name);
+      setTimeCondition(ModifiedSince, oldrec.date);
+    }
+    addHandle();
   }
 }
 
@@ -122,50 +127,14 @@ void CachedTexture::setParams(bool check, long timeout)
   textureCounter  = 0;
 }
 
-void CachedTexture::requestFileTime()
-{
-  textureCounter++;
-  running     = true;
-  timeRequest = true;
-  if (httpTimeout > 0.0)
-    setTimeout(httpTimeout);
-  setNoBody();
-  setRequestFileTime(true);
-  addHandle();
-}
-
-void CachedTexture::downloadTexture()
-{
-  textureCounter++;
-  running         = true;
-  timeRequest     = false;
-  std::string msg = ColorStrings[GreyColor];
-  msg            += "downloading: " + url;
-  addMessage(NULL, msg);
-
-  setGetMode();
-  setRequestFileTime(true);
-  if (httpTimeout > 0.0)
-    setTimeout(httpTimeout);
-  addHandle();
-}
-
 void CachedTexture::finalization(char *data, unsigned int length, bool good)
 {
   time_t filetime;
 
   textureCounter--;
   if (good) {
-    getFileTime(filetime);
-    if (timeRequest) {
-      if (filetime <= oldrec.date) {
-	// use the cached file
-	MATERIALMGR.setTextureLocal(url, oldrec.name);
-	running = false;
-      } else {
-	downloadTexture();
-      }
-    } else {
+    if (length) {
+      getFileTime(filetime);
       // CACHEMGR generates name, usedDate, and key
       CacheManager::CacheRecord rec;
       rec.url  = url;
@@ -178,11 +147,9 @@ void CachedTexture::finalization(char *data, unsigned int length, bool good)
 	TEXMGR.reloadTextureImage(localname); // reload with the new image
       }
       MATERIALMGR.setTextureLocal(url, localname);
-      running = false;
     }
   } else {
     MATERIALMGR.setTextureLocal(url, "");
-    running = false;
   }
 }
 
