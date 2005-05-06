@@ -22,9 +22,17 @@
 AresHandler::AresHandler(int _index)
   : index(_index), hostname(NULL), status(None)
 {
+  // clear the host address
   memset(&hostAddress, 0, sizeof(hostAddress));
+
+  /* ask for local "hosts" lookups too */
+  static const char* lookups = "bf";
+  struct ares_options opts;
+  opts.lookups = (char*)lookups; // we cheat, libares uses strdup
+
   /* start up our resolver */
-  aresFailed = (ares_init(&aresChannel) != ARES_SUCCESS);
+  int code = ares_init_options (&aresChannel, &opts, ARES_OPT_LOOKUPS);
+  aresFailed = (code != ARES_SUCCESS);
   if (aresFailed) {
     status = Failed;
     DEBUG2("Ares Failed initializing\n");
