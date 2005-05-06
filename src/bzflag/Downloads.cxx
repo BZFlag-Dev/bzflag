@@ -82,16 +82,19 @@ public:
   bool         hasTerminated() {return !running;};
 
   static void  setParams(bool check, long timeout);
+  static int   activeTransfer();
 private:
   std::string               url;
   CacheManager::CacheRecord oldrec;
   static bool               checkForCache;
   static long               httpTimeout;
+  static int                textureCounter;
   bool                      timeRequest;
   bool                      running;
 };
 bool CachedTexture::checkForCache   = false;
 long CachedTexture::httpTimeout     = 0;
+int  CachedTexture::textureCounter;
 
 CachedTexture::CachedTexture(const std::string &texUrl) : cURLManager()
 {
@@ -116,10 +119,12 @@ void CachedTexture::setParams(bool check, long timeout)
 {
   checkForCache   = check;
   httpTimeout     = timeout;
+  textureCounter  = 0;
 }
 
 void CachedTexture::requestFileTime()
 {
+  textureCounter++;
   running     = true;
   timeRequest = true;
   if (httpTimeout > 0.0)
@@ -131,6 +136,7 @@ void CachedTexture::requestFileTime()
 
 void CachedTexture::downloadTexture()
 {
+  textureCounter++;
   running         = true;
   timeRequest     = false;
   std::string msg = ColorStrings[GreyColor];
@@ -148,6 +154,7 @@ void CachedTexture::finalization(char *data, unsigned int length, bool good)
 {
   time_t filetime;
 
+  textureCounter--;
   if (good) {
     getFileTime(filetime);
     if (timeRequest) {
@@ -177,6 +184,11 @@ void CachedTexture::finalization(char *data, unsigned int length, bool good)
     MATERIALMGR.setTextureLocal(url, "");
     running = false;
   }
+}
+
+int CachedTexture::activeTransfer()
+{
+  return textureCounter;
 }
 
 std::vector<CachedTexture*> cachedTexVector;
@@ -256,12 +268,11 @@ void Downloads::finalizeDownloads()
   cachedTexVector.clear();
 
   CACHEMGR.saveIndex();
-  setSceneDatabase();
 }
 
-bool Downloads::requested()
+bool Downloads::requestFinalized()
 {
-  return textureDownloading;
+  return textureDownloading && (CachedTexture::activeTransfer() == 0);
 }
 
 void Downloads::removeTextures()

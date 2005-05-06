@@ -19,7 +19,7 @@ namespace Downloads {
 		      bool referencing);
   void finalizeDownloads();
   void removeTextures(); // free the downloaded GL textures
-  bool requested();
+  bool requestFinalized();
 }
 
 #endif

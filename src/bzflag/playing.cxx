@@ -230,6 +230,7 @@ static uint32_t		worldPtr = 0;
 static char		*worldDatabase = NULL;
 static bool		isCacheTemp;
 static std::ostream	*cacheOut = NULL;
+static bool             downloadingInitialTexture = false;
 
 static AresHandler      ares(0);
 
@@ -1566,8 +1567,7 @@ static void loadCachedWorld()
   const bool doDownloads =	BZDB.isTrue("doDownloads");
   const bool updateDownloads =  BZDB.isTrue("updateDownloads");
   Downloads::startDownloads(doDownloads, updateDownloads, false);
-
-  joinInternetGame2();
+  downloadingInitialTexture  = true;
 }
 
 class WorldDownLoader : cURLManager {
@@ -5644,13 +5644,18 @@ static void		playingLoop()
 
     FlagSceneNode::freeFlag();
 
-    int activeTransfers = cURLManager::perform();
+    cURLManager::perform();
 
     // check if we are waiting for initial texture downloading
-    if ((activeTransfers == 0) && Downloads::requested()) {
+    if (Downloads::requestFinalized()) {
       // downloading is terminated. go!
       Downloads::finalizeDownloads();
-      setSceneDatabase();
+      if (downloadingInitialTexture) {
+	joinInternetGame2();
+	downloadingInitialTexture = false;
+      } else {
+	setSceneDatabase();
+      }
     }
   }
 
