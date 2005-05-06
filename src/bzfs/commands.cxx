@@ -1118,6 +1118,10 @@ static void handlePlayerlistCmd(GameKeeper::Player *playerData, const char *)
 static void handleReportCmd(GameKeeper::Player *playerData, const char *message)
 {
   int t = playerData->getIndex();
+  if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::talk)) {
+	  sendMessage(ServerPlayer, t, "You do not have permission to run the report command");
+	  return;
+  }
 
   if (strlen(message + 1) < 8) {
     sendMessage(ServerPlayer, t, "Nothing reported");
