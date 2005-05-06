@@ -9,7 +9,7 @@ CppCompiler=-D_DEVCPP=1 -D__GNUWIN32__ -D_WINDOWS -DWIN32 -D_MBCS_@@_ -Wall -W_@
 Includes=..\Dev-C++;..\include;..\Dev-C++
 Linker=-lmingw32 -lstdc++ -lsdl -lws2_32 -ldsound -lwinmm -lglu32 -lopengl32 -lkernel32 -luser32 -lgdi32 -lwinspool -lcomdlg32 -ladvapi32 -lshell32 -lole32 -loleaut32 -luuid -lodbc32 -lodbccp32 -lcurl_@@_
 Libs=
-UnitCount=461
+UnitCount=462
 Folders="Header Files","Header Files/3d","Header Files/bzflag","Header Files/bzflag/menus","Header Files/common","Header Files/game","Header Files/geometry","Header Files/mediafile","Header Files/net","Header Files/obstacle","Header Files/ogl","Header Files/platform","Header Files/regex","Header Files/scene","Header Files/zlib","Resource Files","Source Files","Source Files/3d","Source Files/bzflag","Source Files/bzflag/menus","Source Files/c-ares","Source Files/common","Source Files/game","Source Files/geometry","Source Files/mediafile","Source Files/models","Source Files/net","Source Files/obstacle","Source Files/ogl","Source Files/platform","Source Files/regex","Source Files/scene","Source Files/zlib"
 ObjFiles=
 PrivateResource=bzflag_private.rc
@@ -4437,27 +4437,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit440]
-FileName=..\src\c-ares\ares_process.c
-CompileCpp=0
-Folder=Source Files/c-ares
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
 [Unit441]
-FileName=..\src\c-ares\ares_query.c
-CompileCpp=0
-Folder=Source Files/c-ares
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit442]
 FileName=..\src\c-ares\ares_search.c
 CompileCpp=0
 Folder=Source Files/c-ares
@@ -4467,7 +4447,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit443]
+[Unit442]
 FileName=..\src\c-ares\ares_send.c
 CompileCpp=0
 Folder=Source Files/c-ares
@@ -4477,7 +4457,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit444]
+[Unit443]
 FileName=..\src\c-ares\ares_strerror.c
 CompileCpp=0
 Folder=Source Files/c-ares
@@ -4487,7 +4467,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit445]
+[Unit444]
 FileName=..\src\c-ares\ares_timeout.c
 CompileCpp=0
 Folder=Source Files/c-ares
@@ -4497,7 +4477,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit446]
+[Unit445]
 FileName=..\src\c-ares\ares_version.c
 CompileCpp=0
 Folder=Source Files/c-ares
@@ -4507,7 +4487,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit447]
+[Unit446]
 FileName=..\src\c-ares\windows_port.c
 CompileCpp=0
 Folder=Source Files/c-ares
@@ -4517,7 +4497,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit449]
+[Unit447]
 FileName=..\src\c-ares\ares__close_sockets.c
 CompileCpp=0
 Folder=Source Files/c-ares
@@ -4527,17 +4507,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit450]
-FileName=..\src\c-ares\ares__get_hostent.c
-CompileCpp=0
-Folder=Source Files/c-ares
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit451]
+[Unit449]
 FileName=..\src\c-ares\ares__read_line.c
 CompileCpp=0
 Folder=Source Files/c-ares
@@ -4547,7 +4517,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit452]
+[Unit450]
 FileName=..\src\c-ares\ares_cancel.c
 CompileCpp=0
 Folder=Source Files/c-ares
@@ -4557,7 +4527,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit453]
+[Unit451]
 FileName=..\src\c-ares\ares_destroy.c
 CompileCpp=0
 Folder=Source Files/c-ares
@@ -4567,7 +4537,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit454]
+[Unit452]
 FileName=..\src\c-ares\ares_expand_name.c
 CompileCpp=0
 Folder=Source Files/c-ares
@@ -4577,7 +4547,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit455]
+[Unit453]
 FileName=..\src\c-ares\ares_expand_string.c
 CompileCpp=0
 Folder=Source Files/c-ares
@@ -4587,7 +4557,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit456]
+[Unit454]
 FileName=..\src\c-ares\ares_fds.c
 CompileCpp=0
 Folder=Source Files/c-ares
@@ -4597,7 +4567,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit457]
+[Unit455]
 FileName=..\src\c-ares\ares_free_hostent.c
 CompileCpp=0
 Folder=Source Files/c-ares
@@ -4607,7 +4577,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit458]
+[Unit456]
 FileName=..\src\c-ares\ares_free_string.c
 CompileCpp=0
 Folder=Source Files/c-ares
@@ -4617,7 +4587,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit459]
+[Unit457]
 FileName=..\src\c-ares\ares_gethostbyaddr.c
 CompileCpp=0
 Folder=Source Files/c-ares
@@ -4627,7 +4597,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit460]
+[Unit458]
 FileName=..\src\c-ares\ares_gethostbyname.c
 CompileCpp=0
 Folder=Source Files/c-ares
@@ -4637,8 +4607,28 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
+[Unit459]
+FileName=..\src\net\AresHandler.cxx
+CompileCpp=1
+Folder=Source Files/bzflag
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit460]
+FileName=..\src\common\cURLManager.cxx
+CompileCpp=1
+Folder=Source Files/bzflag
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
 [Unit448]
-FileName=..\src\c-ares\ahost.c
+FileName=..\src\c-ares\ares__get_hostent.c
 CompileCpp=0
 Folder=Source Files/c-ares
 Compile=1
@@ -4648,9 +4638,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit462]
-FileName=..\src\net\AresHandler.cxx
+FileName=..\src\c-ares\ares_process.c
 CompileCpp=1
-Folder=Source Files/bzflag
+Folder=Source Files/c-ares
 Compile=1
 Link=1
 Priority=1000
@@ -4658,9 +4648,19 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit461]
-FileName=..\src\net\AresHandler.cxx
+FileName=..\src\game\MsgStrings.cxx
 CompileCpp=1
-Folder=Source Files/bzflag
+Folder=Source Files/game
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit440]
+FileName=..\src\c-ares\ares_query.c
+CompileCpp=0
+Folder=Source Files/c-ares
 Compile=1
 Link=1
 Priority=1000
