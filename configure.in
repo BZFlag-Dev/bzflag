@@ -95,14 +95,6 @@ if test "x$BUILDCARES" = "xyes" ; then
 fi
 
 
-AC_ARG_ENABLE(curl,  [  --enable-curl           use libcurl],
-[case "${enableval}" in
-  yes) enable_curl=yes ;;
-  no)  enable_curl=no ;;
-  *) AC_MSG_ERROR(bad value ${enableval} for --enable-curl) ;;
-esac],[enable_curl=yes])
-
-if test "x$enable_curl" = "xyes" ; then
   #checking for libcurl library
   MY_CURL
   if test $my_cv_curl_vers != NONE; then
@@ -119,13 +111,11 @@ if test "x$enable_curl" = "xyes" ; then
     fi
     AC_DEFINE(HAVE_CURL, 1, [Define if using libcurl])
   else
-    CURL_CFLAGS=""
-    CURL_LIBS=""
-    enable_curl=no
+    AC_MSG_ERROR([libcurl is required. You must install it. \
+See http://curl.haxx.se/])
   fi
   AC_SUBST(CURL_CFLAGS)
   AC_SUBST(CURL_LIBS)
-fi
 
 
 # Testing if kerberos 5 is in the system
@@ -761,11 +751,6 @@ if test x$with_SDL = xno; then
        AC_MSG_RESULT([     no SDL!])
 else
        AC_MSG_RESULT([     SDL])
-fi
-if test "x$enable_curl" = "xno"; then
-       AC_MSG_RESULT([     libcurl disabled - MOTD, global bans, etc. disabled])
-else
-       AC_MSG_RESULT([     libcurl enabled])
 fi
 if test "x$enable_bzadmin" = "xno"; then
        AC_MSG_RESULT([     no bzadmin client binary!])

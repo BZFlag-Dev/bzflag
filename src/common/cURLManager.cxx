@@ -38,13 +38,11 @@ cURLManager::cURLManager()
     DEBUG1("Something wrong with CURL\n");
     return;
   }
-#if LIBCURL_VERSION_NUM >= 0x070a00
   result = curl_easy_setopt(easyHandle, CURLOPT_NOSIGNAL, true);
   if (result != CURLE_OK) {
     errorCode = result;
     DEBUG1("CURLOPT_NOSIGNAL error: %d\n", result);
   }
-#endif
 
   result = curl_easy_setopt(easyHandle, CURLOPT_WRITEFUNCTION,
 			    cURLManager::writeFunction);
@@ -72,10 +70,8 @@ void cURLManager::setup()
   CURLcode result;
 
   DEBUG1("LIBCURL: %s\n", curl_version());
-#if LIBCURL_VERSION_NUM >= 0x070a00
   if ((result = curl_global_init(CURL_GLOBAL_NOTHING)))
     DEBUG1("cURL Global init Error: %d\n", result);
-#endif
   multiHandle = curl_multi_init();
   if (!multiHandle)
     DEBUG1("Unexpected error creating multi handle from libcurl \n");
