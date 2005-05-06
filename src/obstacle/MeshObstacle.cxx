@@ -682,7 +682,7 @@ void MeshObstacle::print(std::ostream& out, const std::string& indent) const
   }
   for (i = 0; i < texcoordCount; i++) {
     out << indent << "  texcoord";
-    for (j = 0; j < 3; j++) {
+    for (j = 0; j < 2; j++) {
       outputFloat(out, texcoords[i][j]);
     }
     out << std::endl;
