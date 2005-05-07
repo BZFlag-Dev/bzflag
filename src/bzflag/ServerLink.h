@@ -54,7 +54,7 @@ class ServerLink {
     };
 
 			ServerLink(const Address& serverAddress,
-					int port = ServerPort, int number = 0);
+					int port = ServerPort);
 			~ServerLink();
 
     State		getState() const;

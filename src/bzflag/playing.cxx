@@ -4318,8 +4318,7 @@ static void joinInternetGame(const struct in_addr *inAddress)
   extern int numRobotTanks;
   int i, j;
   for (i = 0, j = 0; i < numRobotTanks; i++) {
-    robotServer[j] = new ServerLink(serverAddress, startupInfo.serverPort,
-				    j + 1);
+    robotServer[j] = new ServerLink(serverAddress, startupInfo.serverPort);
     if (!robotServer[j] || robotServer[j]->getState() != ServerLink::Okay) {
       delete robotServer[j];
       continue;

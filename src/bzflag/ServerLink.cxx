@@ -92,7 +92,7 @@ static const unsigned long endPacket = 0;
 
 ServerLink*		ServerLink::server = NULL;
 
-ServerLink::ServerLink(const Address& serverAddress, int port, int) :
+ServerLink::ServerLink(const Address& serverAddress, int port) :
 				state(SocketError),	// assume failure
 				fd(-1),			// assume failure
 				udpLength(0)
