@@ -80,15 +80,20 @@ public:
   static void  setParams(bool check, long timeout);
   static int   activeTransfer();
 private:
+
+  virtual void collectData(char* ptr, int len);
+
   std::string               url;
   static bool               checkForCache;
   static long               httpTimeout;
   static int                textureCounter;
+  static int                byteTransferred;
   bool                      timeRequest;
 };
 bool CachedTexture::checkForCache   = false;
 long CachedTexture::httpTimeout     = 0;
 int  CachedTexture::textureCounter;
+int  CachedTexture::byteTransferred;
 
 CachedTexture::CachedTexture(const std::string &texUrl) : cURLManager()
 {
@@ -125,6 +130,7 @@ void CachedTexture::setParams(bool check, long timeout)
   checkForCache   = check;
   httpTimeout     = timeout;
   textureCounter  = 0;
+  byteTransferred = 0;
 }
 
 void CachedTexture::finalization(char *data, unsigned int length, bool good)
@@ -156,6 +162,17 @@ void CachedTexture::finalization(char *data, unsigned int length, bool good)
 int CachedTexture::activeTransfer()
 {
   return textureCounter;
+}
+
+void CachedTexture::collectData(char* ptr, int len)
+{
+  char buffer[128];
+
+  cURLManager::collectData(ptr, len);
+  byteTransferred += len;
+
+  sprintf (buffer, "texture Downloading : %i byte", byteTransferred);
+  HUDDialogStack::get()->setFailedMessage(buffer);
 }
 
 std::vector<CachedTexture*> cachedTexVector;
