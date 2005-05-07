@@ -129,18 +129,6 @@ uint8_t			Address::getIPVersion() const {
   return 4;
 }
 
-#if !defined(_WIN32)
-static jmp_buf alarmEnv;
-static void		onAlarm(int)
-{
-  // jump back to setjmp.  this handles the race condition where we
-  // set the alarm but gethostbyname() wouldn't have been called
-  // until after the alarm goes off (resulting in an indeterminate
-  // wait).
-  longjmp(alarmEnv, 1);
-}
-#endif
-
 Address			Address::getHostAddress(const std::string hname)
 {
   Address a;
@@ -154,37 +142,12 @@ Address			Address::getHostAddress(const std::string hname)
       hent = gethostbyname(hostname);
     else
       return a;
-  }
-  else if (inet_aton(hname.c_str(), &tempAddr) != 0) {
+  } else if (inet_aton(hname.c_str(), &tempAddr) != 0) {
     a.addr.clear();
     a.addr.push_back(tempAddr);
     return a;
-  }
-  else {				// non-local address
-#if !defined(_WIN32)
-    // set alarm to avoid waiting too long
-    SIG_PF oldAlarm = bzSignal(SIGALRM, SIG_PF(onAlarm));
-    if (oldAlarm != SIG_ERR) {
-      if (setjmp(alarmEnv) != 0) {
-	// alarm went off
-	hent = NULL;
-	printError("Looking up host name: timeout");
-	return a;
-      }
-
-      // wait up to this many seconds
-      alarm(8);
-    }
-#endif
-
+  } else {				// non-local address
     hent = gethostbyname(hname.c_str());
-
-#if !defined(_WIN32)
-    if (oldAlarm != SIG_ERR) {
-      alarm(0);
-      bzSignal(SIGALRM, oldAlarm);
-    }
-#endif
   }
 
   if (!hent) {
@@ -202,29 +165,8 @@ Address			Address::getHostAddress(const std::string hname)
 
 std::string		Address::getHostByAddress(InAddr addr)
 {
-#if !defined(_WIN32)
-  // set alarm to avoid waiting too long
-  SIG_PF oldAlarm = bzSignal(SIGALRM, SIG_PF(onAlarm));
-  if (oldAlarm != SIG_ERR) {
-    if (setjmp(alarmEnv) != 0) {
-      // alarm went off
-      return std::string(inet_ntoa(addr));
-    }
-
-    // wait up to this many seconds
-    alarm(8);
-  }
-#endif
-
   int addrLen = sizeof(addr);
   struct hostent* hent = gethostbyaddr((char*)&addr, addrLen, AF_INET);
-
-#if !defined(_WIN32)
-  if (oldAlarm != SIG_ERR) {
-    alarm(0);
-    bzSignal(SIGALRM, oldAlarm);
-  }
-#endif
 
   if (!hent) {
     // can't lookup name -- return in standard dot notation

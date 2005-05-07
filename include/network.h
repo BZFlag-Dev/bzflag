@@ -135,20 +135,11 @@ class BzfNetwork {
 public:
   static int		setNonBlocking(int fd);
   static int		setBlocking(int fd);
-  static bool	dereferenceURLs(std::vector<std::string>& list,
-				unsigned int max, std::vector<std::string>& failedList);
   static bool	parseURL(const std::string& url,
 			 std::string& protocol,
 			 std::string& hostname,
 			 int& port,
 			 std::string& pathname);
-
-private:
-  static std::string	dereferenceHTTP(const std::string& hostname, int port,
-					const std::string& pathname);
-  static std::string	dereferenceFile(const std::string& pathname);
-  static void		insertLines(std::vector<std::string>& list,
-				    int index, const std::string& data);
 };
 
 #endif // BZF_NETWORK_H
