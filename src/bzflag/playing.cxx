@@ -1587,6 +1587,7 @@ void WorldDownLoader::start(char * hexDigest)
       (("Loading world from " + worldUrl).c_str());
     setProgressFunction(curlProgressFunc, (char*)worldUrl.c_str());
     setURL(worldUrl);
+    addHandle();
   } else {
     askToBZFS();
   }
