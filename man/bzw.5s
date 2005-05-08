@@ -120,6 +120,8 @@ world types consists of:
 .br 
 .B light
 .br 
+.B camera
+.br 
 .B weapon
 .br 
 .B zone
@@ -735,6 +737,27 @@ documentation for a full description of the lighting parameters.
 # The following parameters are BZFLag speicific
 .br
 \fB  onlyreal\fR                   # do not draw a "ground" light
+.br
+\fBend\fR
+.br
+
+
+.B The Camera object
+.br 
+Places a camera into the world. Observer players can rotate through
+all of the defined cameras to view the game from specific positions.
+
+\fBcamera\fR
+.br
+\fB  name\fR example_camera  
+.br
+# The camera names are displayed to the user
+.br
+\fB  position\fR -400.0 -400.0 400.0  # viewing position
+.br
+\fB  direction\fR 1.0 1.0 -1.0        # viewing direction
+.br
+\fB  fov\fR 45.0     # field of vision (angle in degrees)
 .br
 \fBend\fR
 .br
@@ -1359,6 +1382,22 @@ light :=
 	| "specular"  rgbaColor
 .br 
 	| "onlyreal"
+.br
+	| object
+.br 
+.TP 
+.B (CustomCamera.cxx/CustomCamera::read)
+.br 
+.TP 
+camera :=
+.br 
+	  ( "pos" | "position" )   <3dpoint>
+.br 
+	| ( "dir" | "direction" )  <3dpoint>
+.br 
+	| "fov"                    <float>
+.br 
+	| object
 .br 
 .TP 
 .B (CustomWeapon.cxx/CustomWeapon::read)
