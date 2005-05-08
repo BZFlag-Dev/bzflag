@@ -1,7 +1,7 @@
 [Project]
 FileName=bzadmin.dev
 Name=bzadmin
-UnitCount=44
+UnitCount=45
 Type=1
 Ver=1
 ObjFiles=
@@ -488,7 +488,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit45]
-FileName=..\src\game\DirectoryNames.cxx
+FileName=..\src\common\cURLManager.cxx
 CompileCpp=1
 Folder=Source Files/Common
 Compile=1

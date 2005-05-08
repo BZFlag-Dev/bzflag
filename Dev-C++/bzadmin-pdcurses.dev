@@ -1,7 +1,7 @@
 [Project]
 FileName=bzadmin-pdcurses.dev
 Name=bzadmin-pdcurses
-UnitCount=43
+UnitCount=44
 Type=1
 Ver=1
 ObjFiles=
@@ -12,7 +12,7 @@ ResourceIncludes=
 MakeIncludes=
 Compiler=-D_DEVCPP=1 -Wall -W_@@_
 CppCompiler=-D_DEVCPP=1 -Wall -W_@@_
-Linker=-lstdc++ -lwsock32 -lwinmm -lcurses -lcurl_@@_
+Linker=-lstdc++ -lcurses -lwsock32 -lwinmm_@@_
 IsCpp=1
 Icon=
 ExeOutput=..\src\bzadmin
@@ -27,7 +27,7 @@ CustomMakefile=
 IncludeVersionInfo=0
 SupportXPThemes=0
 CompilerSet=0
-CompilerSettings=000000000100000000100
+CompilerSettings=000000000000000000100
 
 [Unit1]
 FileName=..\src\bzadmin\UIMap.cxx
@@ -478,7 +478,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit44]
-FileName=..\src\common\FileManager.cxx
+FileName=..\src\common\cURLManager.cxx
 CompileCpp=1
 Folder=Source Files/Common
 Compile=1
