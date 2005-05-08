@@ -432,17 +432,21 @@ static void handleSetCmd(GameKeeper::Player *playerData, const char *message)
   if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::setVar)
       && !playerData->accessInfo.hasPerm(PlayerAccessInfo::setAll)) {
     sendMessage(ServerPlayer, t, "You do not have permission to run the set command");
-	DEBUG3("set failed by %s, setvar=%d, setall=%d\n",playerData->player.getCallSign(),setvar,setall );
+	DEBUG3("set failed by %s, setvar=%d, setall=%d\n",playerData->player.getCallSign(),setvar,setall);
    return;
   }
   if (Replay::enabled()) {
     sendMessage(ServerPlayer, t, "You can't /set variables in replay mode");
     return;
   }
-  DEBUG3("set executed by %s, setvar=%d, setall=%d\n",playerData->player.getCallSign(),setvar,setall );
-  sendMessage(ServerPlayer, t, CMDMGR.run(message+1).c_str());
+  DEBUG3("set executed by %s, setvar=%d, setall=%d\n",playerData->player.getCallSign(),setvar,setall);
+  std::string command = (message + 1);
+  // we aren't case sensitive but CMDMGR is
+  for (int i = 0; i < 3 /*"set"*/; ++i)
+    command[i] = tolower(command[i]);
+  sendMessage(ServerPlayer, t, CMDMGR.run(command).c_str());
   snprintf(message2, MessageLen, "Variable Modification Notice by %s of %s",
-	   playerData->player.getCallSign(), message+1);
+	   playerData->player.getCallSign(), command.c_str());
   sendMessage(ServerPlayer, AllPlayers, message2);
   return;
 }
@@ -460,7 +464,11 @@ static void handleResetCmd(GameKeeper::Player *playerData, const char *message)
     sendMessage(ServerPlayer, t, "You can't /reset variables in replay mode");
     return;
   }
-  sendMessage(ServerPlayer, t, CMDMGR.run(message+1).c_str());
+  std::string command = (message + 1);
+  // we aren't case sensitive but CMDMGR is
+  for (int i = 0; i < 5 /*"reset"*/; ++i)
+    command[i] = tolower(command[i]);
+  sendMessage(ServerPlayer, t, CMDMGR.run(command).c_str());
   return;
 }
 
@@ -574,15 +582,15 @@ static void handleCountdownCmd(GameKeeper::Player *playerData, const char *messa
 	}
       }
     } else {
-	    countdownDelay = 10;
+      countdownDelay = 10;
     }
     
     // cancel here if a game is already running
     if (countdownActive) {
-    sendMessage(ServerPlayer, t, "A game is already in progress");
-    countdownDelay = -1;
-    return;
-  }
+      sendMessage(ServerPlayer, t, "A game is already in progress");
+      countdownDelay = -1;
+      return;
+    }
 
     // limit/sanity check
     const int max_delay = 120;
