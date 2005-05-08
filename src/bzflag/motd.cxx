@@ -68,7 +68,8 @@ void MessageOfTheDay::finalization(char *_data, unsigned int length, bool good)
     }
   } else {
     MOTD_message msg;
-    msg.text = "Default MOTD";
+    msg.text    = "<not available>";
+    msg.version = "0.0";
     messages.push_back(msg);
   }
 
