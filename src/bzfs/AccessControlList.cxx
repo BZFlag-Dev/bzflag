@@ -270,6 +270,9 @@ void AccessControlList::sendHostBans(PlayerId id)
 
 bool AccessControlList::load() {
 
+  if (banFile.size() == 0)
+    return true;
+
   // try to open the ban file
   std::ifstream is(banFile.c_str());
   if (!is.good())
