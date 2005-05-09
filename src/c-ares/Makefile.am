@@ -38,6 +38,7 @@ libcares_a_SOURCES =		\
 EXTRA_libcares_a_SOURCES = winport.c
 
 libcares_a_LIBADD = @WINPORT@
+libcares_a_DEPENDENCIES = @WINPORT@
 
 EXTRA_DIST = \
 	ares.h			\
