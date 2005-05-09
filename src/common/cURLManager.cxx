@@ -20,6 +20,7 @@ bool                    cURLManager::inited      = false;
 CURLM                  *cURLManager::multiHandle = NULL;
 std::map<CURL*,
 	 cURLManager*>  cURLManager::cURLMap;
+char                    cURLManager::errorBuffer[CURL_ERROR_SIZE];
 
 cURLManager::cURLManager()
 {
@@ -38,20 +39,27 @@ cURLManager::cURLManager()
     DEBUG1("Something wrong with CURL\n");
     return;
   }
+
+  result = curl_easy_setopt(easyHandle, CURLOPT_ERRORBUFFER, errorBuffer);
+  if (result != CURLE_OK) {
+    errorCode = result;
+    DEBUG1("CURLOPT_ERRORBUFFER error: %d\n", result);
+  }
+
   result = curl_easy_setopt(easyHandle, CURLOPT_NOSIGNAL, true);
   if (result != CURLE_OK) {
     errorCode = result;
-    DEBUG1("CURLOPT_NOSIGNAL error: %d\n", result);
+    DEBUG1("CURLOPT_NOSIGNAL error %d : %s\n", result, errorBuffer);
   }
 
   result = curl_easy_setopt(easyHandle, CURLOPT_WRITEFUNCTION,
 			    cURLManager::writeFunction);
   if (result != CURLE_OK)
-    DEBUG1("CURLOPT_WRITEFUNCTION error: %d\n", result);
+    DEBUG1("CURLOPT_WRITEFUNCTION error %d : %s\n", result, errorBuffer);
 
   result = curl_easy_setopt(easyHandle, CURLOPT_WRITEDATA, this);
   if (result != CURLE_OK)
-    DEBUG1("CURLOPT_WRITEDATA error: %d\n", result);
+    DEBUG1("CURLOPT_WRITEDATA error %d : %s\n", result, errorBuffer);
 
   cURLMap[easyHandle] = this;
 }
@@ -93,7 +101,7 @@ void cURLManager::setTimeout(long timeout)
   result = curl_easy_setopt(easyHandle, CURLOPT_TIMEOUT, timeout);
   if (result != CURLE_OK) {
     errorCode = result;
-    DEBUG1("CURLOPT_TIMEOUT error: %d\n", result);
+    DEBUG1("CURLOPT_TIMEOUT error %d : %s\n", result, errorBuffer);
   }
 }
 
@@ -105,7 +113,7 @@ void cURLManager::setNoBody()
   result = curl_easy_setopt(easyHandle, CURLOPT_NOBODY, nobody);
   if (result != CURLE_OK) {
     errorCode = result;
-    DEBUG1("CURLOPT_NOBODY error: %d\n", result);
+    DEBUG1("CURLOPT_NOBODY error %d : %s\n", result, errorBuffer);
   }
 }
 
@@ -117,7 +125,7 @@ void cURLManager::setGetMode()
   result = curl_easy_setopt(easyHandle, CURLOPT_HTTPGET, get);
   if (result != CURLE_OK) {
     errorCode = result;
-    DEBUG1("CURLOPT_GET error: %d\n", result);
+    DEBUG1("CURLOPT_GET error %d : %s\n", result, errorBuffer);
   }
 }
 
@@ -130,10 +138,11 @@ void cURLManager::setURL(const std::string url)
   } else {
     usedUrl = url;
     result = curl_easy_setopt(easyHandle, CURLOPT_URL, usedUrl.c_str());
+    DEBUG2("CURLOPT_URL is : %s\n", usedUrl.c_str());
   }
   if (result != CURLE_OK) {
     errorCode = result;
-    DEBUG1("CURLOPT_URL error: %d\n", result);
+    DEBUG1("CURLOPT_URL error %d : %s\n", result, errorBuffer);
   }
 }
 
@@ -151,7 +160,7 @@ void cURLManager::setProgressFunction(curl_progress_callback func, void* data)
   }
   if (result != CURLE_OK) {
     errorCode = result;
-    DEBUG1("CURLOPT_SET_PROGRESS error: %d\n", result);
+    DEBUG1("CURLOPT_SET_PROGRESS error %d : %s\n", result, errorBuffer);
   }
 }
 
@@ -162,7 +171,7 @@ void cURLManager::setRequestFileTime(bool request)
   result = curl_easy_setopt(easyHandle, CURLOPT_FILETIME, requestFileTime);
   if (result != CURLE_OK) {
     errorCode = result;
-    DEBUG1("CURLOPT_FILETIME error: %d\n", result);
+    DEBUG1("CURLOPT_FILETIME error %d : %s\n", result, errorBuffer);
   }
 }
 
@@ -170,7 +179,8 @@ void cURLManager::addHandle()
 {
   CURLMcode result = curl_multi_add_handle(multiHandle, easyHandle);
   if (result > CURLM_OK)
-    DEBUG1("Error while adding easy handle from libcurl; Error: %d\n", result);
+    DEBUG1("Error while adding easy handle from libcurl %d : %s\n",
+	   result, errorBuffer);
   added = true;
 }
 
@@ -180,8 +190,8 @@ void cURLManager::removeHandle()
     return;
   CURLMcode result = curl_multi_remove_handle(multiHandle, easyHandle);
   if (result != CURLM_OK)
-    DEBUG1("Error while removing easy handle from libcurl; Error: %d\n",
-	   result);
+    DEBUG1("Error while removing easy handle from libcurl %d : %s\n",
+	   result, errorBuffer);
   added = false;
 }
 
@@ -214,8 +224,8 @@ int cURLManager::perform()
       break;
   }
   if (result != CURLM_OK)
-    DEBUG1("Error while doing multi_perform from libcurl; Error: %d\n",
-	   result);
+    DEBUG1("Error while doing multi_perform from libcurl %d : %s\n",
+	   result, errorBuffer);
 
   int      msgs_in_queue;
   CURLMsg *pendingMsg;
@@ -242,8 +252,8 @@ int cURLManager::perform()
 void cURLManager::infoComplete(CURLcode result)
 {
   if (result != CURLE_OK)
-    DEBUG1("File transfer terminated with error from libcurl; Error: %d\n",
-	   result);
+    DEBUG1("File transfer terminated with error from libcurl %d : %s\n",
+	   result, errorBuffer);
   finalization((char *)theData, theLen, result == CURLE_OK);
   free(theData);
   removeHandle();
@@ -257,7 +267,7 @@ bool cURLManager::getFileTime(time_t &t)
   CURLcode result;
   result = curl_easy_getinfo(easyHandle, CURLINFO_FILETIME, &filetime);
   if (result) {
-    DEBUG1("CURLINFO_FILETIME error: %d\n", result);
+    DEBUG1("CURLINFO_FILETIME error %d : %s\n", result, errorBuffer);
     return false;
   }
   t = (time_t)filetime;
@@ -275,7 +285,7 @@ void cURLManager::setTimeCondition(timeCondition condition, time_t &t)
 			      CURL_TIMECOND_NONE);
     if (result != CURLE_OK) {
       errorCode = result;
-      DEBUG1("CURLOPT_TIMECONDITION error: %d\n", result);
+      DEBUG1("CURLOPT_TIMECONDITION error %d : %s\n", result, errorBuffer);
     }
     break;
   case ModifiedSince:
@@ -284,14 +294,14 @@ void cURLManager::setTimeCondition(timeCondition condition, time_t &t)
 			      CURL_TIMECOND_IFMODSINCE);
     if (result != CURLE_OK) {
       errorCode = result;
-      DEBUG1("CURLOPT_TIMECONDITION error: %d\n", result);
+      DEBUG1("CURLOPT_TIMECONDITION error %d : %s\n", result, errorBuffer);
     }
     result = curl_easy_setopt(easyHandle,
 			      CURLOPT_TIMEVALUE,
 			      (long)t);
     if (result != CURLE_OK) {
       errorCode = result;
-      DEBUG1("CURLOPT_TIMEVALUE error: %d\n", result);
+      DEBUG1("CURLOPT_TIMEVALUE error %d : %s\n", result, errorBuffer);
     }
     break;
   default:

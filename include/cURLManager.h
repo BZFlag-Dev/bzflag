@@ -73,6 +73,7 @@ private:
   int           errorCode;
   CURL         *easyHandle;
   static CURLM *multiHandle;
+  static char   errorBuffer[CURL_ERROR_SIZE];
   bool          added;
   std::string   usedUrl;
 
