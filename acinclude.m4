@@ -256,7 +256,7 @@ AC_DEFUN([MY_CURL],[
  dnl check is the plain-text version of the required version
  check="7.10.0"
  dnl check_hex must be UPPERCASE if any hex letters are present
- check_hex="070a00"
+ check_hex="070A00"
 
  AC_MSG_CHECKING([for curl >= $check])
 
