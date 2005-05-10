@@ -40,6 +40,13 @@ cURLManager::cURLManager()
     return;
   }
 
+  if (debugLevel == 2) {
+    result = curl_easy_setopt(easyHandle, CURLOPT_VERBOSE, (long)1);
+    if (result != CURLE_OK) {
+      DEBUG1("CURLOPT_VERBOSE error: %d\n", result);
+    }
+  }
+
   result = curl_easy_setopt(easyHandle, CURLOPT_ERRORBUFFER, errorBuffer);
   if (result != CURLE_OK) {
     errorCode = result;
