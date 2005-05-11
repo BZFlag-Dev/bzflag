@@ -4,7 +4,7 @@
 BZFlag 2.0.3
 ------------
 
-* FlipZ on cones/meshpyrs behaves as documented (like pyramids) - Daniel Remenak
+* FlipZ on meshpyrs behaves as expected (like pyramids) - Daniel Remenak
 * Fixed /set and /reset command case bug - Daniel Remenak
 * Fixed crash on /ban without -banfile - Daniel Remenak
 * Shot reload timer on the HUD - Daniel Remenak
