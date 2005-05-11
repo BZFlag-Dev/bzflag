@@ -645,7 +645,7 @@ void			HUDRenderer::renderAlerts(void)
       std::string newAlertLabel = (dim ? ColorStrings[DimColor] : "") + alertLabel[i];
       // FIXME: this assumes that there's not more than one reset in the string.
       if (dim) {
-	newAlertLabel.insert(newAlertLabel.find(ColorStrings[ResetColor], 0) 
+	newAlertLabel.insert(newAlertLabel.find(ColorStrings[ResetColor], 0) - 1
 			     + ColorStrings[ResetColor].size(), ColorStrings[DimColor]);
       }
       fm.drawString(centerx - 0.5f * alertLabelWidth[i], y, 0,
