@@ -155,7 +155,7 @@ void CustomCone::writeToGroupDef(GroupDefinition *groupdef) const
     MeshTransform xform;
     if (flipz || (size[2] < 0.0f)) {
       const float flipScale[3] = {1.0f, 1.0f, -1.0f};
-      const float flipShift[3] = {0.0f, 0.0f, -size[2]};
+      const float flipShift[3] = {0.0f, 0.0f, +size[2]};
       xform.addScale(flipScale);
       xform.addShift(flipShift);
     }
