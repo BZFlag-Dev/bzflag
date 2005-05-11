@@ -67,7 +67,6 @@
 #include "bzfSDL.h"
 #include "bzfgl.h"
 #include "bzfio.h"
-#include "MeshFragSceneNode.h" // for VBOs
 
 /* local headers */
 #include "ActionBinding.h"
@@ -1545,8 +1544,6 @@ int			main(int argc, char** argv)
     BZDB.set("showCollisionGrid", "0");
   }
 #endif
-
-  MeshFragSceneNode::setupVBOext();
 
   // set server list URL
   if (BZDB.isSet("list"))
