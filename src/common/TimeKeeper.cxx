@@ -70,6 +70,7 @@ const TimeKeeper&	TimeKeeper::getCurrent(void)
     unsigned int now = (unsigned int)timeGetTime();
     unsigned int diff;
     if (now <= lastTime) {
+      // eh, how'd we go back in time?
       diff = 0;
     } else {
       diff = now - lastTime;
@@ -78,6 +79,14 @@ const TimeKeeper&	TimeKeeper::getCurrent(void)
     lastTime = now;
   }
   else {
+    static bool sane = true;
+
+    // should only get into here once on app start
+    if (!sane) {
+      DEBUG1("Sanity check failure in TimeKeeper::getCurrent()\n");
+    }
+    sane = false;
+
     LARGE_INTEGER freq;
     if (QueryPerformanceFrequency(&freq)) {
       qpcFrequency = 1.0 / (double)freq.QuadPart;
@@ -85,6 +94,10 @@ const TimeKeeper&	TimeKeeper::getCurrent(void)
     }
     else {
       DEBUG1("QueryPerformanceFrequency failed with error %s\n", IntToString(GetLastError).c_str());
+      
+      // make sure we're at our best timer resolution possible
+      timeBeginPeriod(1);
+
       lastTime = (unsigned int)timeGetTime();
     }
   }
