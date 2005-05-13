@@ -73,8 +73,6 @@ const TimeKeeper&	TimeKeeper::getCurrent(void)
       diff = 0;
     } else {
       diff = now - lastTime;
-      if (diff > 10000)
-	diff = 10000;
     }
     currentTime += 1.0e-3f * (float)diff;
     lastTime = now;
@@ -86,6 +84,7 @@ const TimeKeeper&	TimeKeeper::getCurrent(void)
       QueryPerformanceCounter(&qpcLastTime);
     }
     else {
+      DEBUG1("QueryPerformanceFrequency failed with error %s\n", IntToString(GetLastError).c_str());
       lastTime = (unsigned int)timeGetTime();
     }
   }
