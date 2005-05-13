@@ -140,6 +140,8 @@ void cURLManager::setURL(const std::string url)
 {
   CURLcode result;
 
+  DEBUG4("Tried to fetch URL: %s\n", url.c_str());
+
   if (url == "") {
     result = curl_easy_setopt(easyHandle, CURLOPT_URL, NULL);
   } else {

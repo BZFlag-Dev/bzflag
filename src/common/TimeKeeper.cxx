@@ -35,6 +35,7 @@ static double		qpcFrequency = 0.0;
 
 /* common implementation headers */
 #include "TextUtils.h"
+#include "bzfio.h"
 
 
 TimeKeeper TimeKeeper::currentTime;
@@ -93,7 +94,7 @@ const TimeKeeper&	TimeKeeper::getCurrent(void)
       QueryPerformanceCounter(&qpcLastTime);
     }
     else {
-      DEBUG1("QueryPerformanceFrequency failed with error %s\n", IntToString(GetLastError).c_str());
+      DEBUG1("QueryPerformanceFrequency failed with error %d\n", GetLastError());
       
       // make sure we're at our best timer resolution possible
       timeBeginPeriod(1);
