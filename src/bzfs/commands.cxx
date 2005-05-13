@@ -605,12 +605,12 @@ static void handleCountdownCmd(GameKeeper::Player *playerData, const char *messa
     sendMessage(ServerPlayer, AllPlayers, TextUtils::format("Team scores reset, countdown started by %s.",playerData->player.getCallSign()).c_str());
 
     // let everyone know what's going on
-    int timeArray[4];
+    long int timeArray[4];
     std::string matchBegins;
     if (countdownDelay == 0) {
       matchBegins = "Match begins now!";
     } else {
-      TimeKeeper::convertTime((float)countdownDelay, timeArray);
+      TimeKeeper::convertTime(countdownDelay, timeArray);
       std::string countdowntime = TimeKeeper::printTime(timeArray);
       matchBegins = TextUtils::format("Match begins in about %s", countdowntime.c_str());
     }

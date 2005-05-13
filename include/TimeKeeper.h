@@ -41,23 +41,23 @@ public:
   ~TimeKeeper();
   TimeKeeper&		operator=(const TimeKeeper&);
 
-  float		        operator-(const TimeKeeper&) const;
+  double	        operator-(const TimeKeeper&) const;
   bool                  operator<=(const TimeKeeper&) const;
-  TimeKeeper&		operator+=(float);
+  TimeKeeper&		operator+=(double);
   TimeKeeper&		operator+=(const TimeKeeper&);
 
 	// make a TimeKeeper with seconds = NULL act like unset
 	// Fixme: must this be defined here? didn't work for me outside the class
 	inline operator void*()
 	{
-		if (seconds > 0.0f)
+		if (seconds > 0.0)
 			return this;
 		else
 			return NULL;
 	}
 	
   /** returns how many seconds have elapsed since epoch, Jan 1, 1970 */
-  float	       getSeconds(void) const;
+  double       getSeconds(void) const;
 
   /** returns a timekeeper representing the current time */
   static const TimeKeeper&	getCurrent(void);
@@ -80,16 +80,16 @@ public:
   /** returns a string of the local time */
   static const char		*timestamp(void);
 
-  /** converts a float time difference into an array of integers
+  /** converts a time difference into an array of integers
       representing days, hours, minutes, seconds */
-  static const void		convertTime(float raw, int convertedTimes[]);
+  static const void		convertTime(double raw, long int convertedTimes[]);
   /** prints an integer-array time difference in human-readable form */
-  static const std::string	printTime(int timeValue[]);
+  static const std::string	printTime(long int timeValue[]);
   /** prints an float time difference in human-readable form */
-  static const std::string	printTime(float diff);
+  static const std::string	printTime(double diff);
 
   /** sleep for a given number of floating point seconds */
-  static void			sleep(float secs); //const
+  static void			sleep(double secs); //const
 
 private:
   double		seconds;
@@ -127,19 +127,19 @@ inline TimeKeeper&	TimeKeeper::operator=(const TimeKeeper& t)
   return *this;
 }
 
-inline float		TimeKeeper::operator-(const TimeKeeper& t) const
+inline double		TimeKeeper::operator-(const TimeKeeper& t) const
 {
-  return (float)(seconds - t.seconds);
+  return seconds - t.seconds;
 }
 
-inline TimeKeeper&	TimeKeeper::operator+=(float dt)
+inline TimeKeeper&	TimeKeeper::operator+=(double dt)
 {
-  seconds += double(dt);
+  seconds += dt;
   return *this;
 }
 inline TimeKeeper&	TimeKeeper::operator+=(const TimeKeeper& t)
 {
-  seconds += double(t.seconds);
+  seconds += t.seconds;
   return *this;
 }
 
@@ -148,9 +148,9 @@ inline bool		TimeKeeper::operator<=(const TimeKeeper& t) const
   return seconds <= t.seconds;
 }
 
-inline float		TimeKeeper::getSeconds(void) const
+inline double		TimeKeeper::getSeconds(void) const
 {
-  return (float)seconds;
+  return seconds;
 }
 
 

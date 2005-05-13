@@ -28,7 +28,7 @@
 static struct timeval	lastTime = { 0, 0 };
 #else /* !defined(_WIN32) */
 #  include <mmsystem.h>
-static unsigned int	lastTime = 0;
+static unsigned long int	lastTime = 0;
 static LARGE_INTEGER	qpcLastTime;
 static double		qpcFrequency = 0.0;
 #endif /* !defined(_WIN32) */
@@ -52,8 +52,8 @@ const TimeKeeper&	TimeKeeper::getCurrent(void)
   if (lastTime.tv_sec != 0) {
     struct timeval now;
     gettimeofday(&now, NULL);
-    currentTime += float(now.tv_sec - lastTime.tv_sec) +
-		1.0e-6f * float(now.tv_usec - lastTime.tv_usec);
+    currentTime += double(now.tv_sec - lastTime.tv_sec) +
+		1.0e-6 * double(now.tv_usec - lastTime.tv_usec);
     lastTime = now;
   }
   else {
@@ -63,20 +63,19 @@ const TimeKeeper&	TimeKeeper::getCurrent(void)
   if (qpcFrequency != 0.0) {
     LARGE_INTEGER now;
     QueryPerformanceCounter(&now);
-    currentTime += (float)(qpcFrequency *
-			(double)(now.QuadPart - qpcLastTime.QuadPart));
+    currentTime += qpcFrequency * (double)(now.QuadPart - qpcLastTime.QuadPart);
     qpcLastTime = now;
   }
   else if (lastTime != 0) {
-    unsigned int now = (unsigned int)timeGetTime();
-    unsigned int diff;
+    unsigned long int now = (unsigned long int)timeGetTime();
+    unsigned long int diff;
     if (now <= lastTime) {
       // eh, how'd we go back in time?
       diff = 0;
     } else {
       diff = now - lastTime;
     }
-    currentTime += 1.0e-3f * (float)diff;
+    currentTime += 1.0e-3 * (double)diff;
     lastTime = now;
   }
   else {
@@ -99,7 +98,7 @@ const TimeKeeper&	TimeKeeper::getCurrent(void)
       // make sure we're at our best timer resolution possible
       timeBeginPeriod(1);
 
-      lastTime = (unsigned int)timeGetTime();
+      lastTime = (unsigned long int)timeGetTime();
     }
   }
 #endif /* !defined(_WIN32) */
@@ -157,12 +156,12 @@ const char *TimeKeeper::timestamp(void) // const
 
 // function for converting a float time (e.g. difference of two TimeKeepers)
 // into an array of ints
-const void TimeKeeper::convertTime(float raw, int convertedTimes[])
+const void TimeKeeper::convertTime(double raw, long int convertedTimes[])
 {
-  int day, hour, min, sec, remainder;
+  long int day, hour, min, sec, remainder;
   static const int secondsInDay = 86400;
 
-  sec = (int)raw;
+  sec = (long int)raw;
   day = sec / secondsInDay;
   remainder = sec - (day * secondsInDay);
   hour = remainder / 3600;
@@ -181,34 +180,34 @@ const void TimeKeeper::convertTime(float raw, int convertedTimes[])
 
 // function for printing an array of ints representing a time
 // as a human-readable string
-const std::string TimeKeeper::printTime(int timeValue[])
+const std::string TimeKeeper::printTime(long int timeValue[])
 {
   std::string valueNames;
   char temp[20];
 
   if (timeValue[0] > 0) {
-    snprintf(temp, 20, "%i day%s", timeValue[0], timeValue[0] == 1 ? "" : "s");
+    snprintf(temp, 20, "%ld day%s", timeValue[0], timeValue[0] == 1 ? "" : "s");
     valueNames.append(temp);
   }
   if (timeValue[1] > 0) {
     if (timeValue[0] > 0) {
       valueNames.append(", ");
     }
-    snprintf(temp, 20, "%i hour%s", timeValue[1], timeValue[1] == 1 ? "" : "s");
+    snprintf(temp, 20, "%ld hour%s", timeValue[1], timeValue[1] == 1 ? "" : "s");
     valueNames.append(temp);
   }
   if (timeValue[2] > 0) {
     if ((timeValue[1] > 0) || (timeValue[0] > 0)) {
       valueNames.append(", ");
     }
-    snprintf(temp, 20, "%i min%s", timeValue[2], timeValue[2] == 1 ? "" : "s");
+    snprintf(temp, 20, "%ld min%s", timeValue[2], timeValue[2] == 1 ? "" : "s");
     valueNames.append(temp);
   }
   if (timeValue[3] > 0) {
     if ((timeValue[2] > 0) || (timeValue[1] > 0) || (timeValue[0] > 0)) {
       valueNames.append(", ");
     }
-    snprintf(temp, 20, "%i sec%s", timeValue[3], timeValue[3] == 1 ? "" : "s");
+    snprintf(temp, 20, "%ld sec%s", timeValue[3], timeValue[3] == 1 ? "" : "s");
     valueNames.append(temp);
   }
 
@@ -216,17 +215,17 @@ const std::string TimeKeeper::printTime(int timeValue[])
 }
 
 // function for printing a float time difference as a human-readable string
-const std::string TimeKeeper::printTime(float diff)
+const std::string TimeKeeper::printTime(double diff)
 {
-  int temp[4];
+  long int temp[4];
   convertTime(diff, temp);
   return printTime(temp);
 }
 
 
-void TimeKeeper::sleep(float seconds)
+void TimeKeeper::sleep(double seconds)
 {
-  if (seconds <= 0.0f) {
+  if (seconds <= 0.0) {
     return;
   }
 
@@ -236,7 +235,7 @@ void TimeKeeper::sleep(float seconds)
 #endif
 #if defined(HAVE_SLEEP) && !defined(__APPLE__)
   // equivalent to _sleep() on win32 (not sleep(3))
-  Sleep((DWORD)(seconds * 1000));
+  Sleep((DWORD)(seconds * 1000.0));
   return;
 #endif
 #ifdef HAVE_SNOOZE
@@ -252,7 +251,7 @@ void TimeKeeper::sleep(float seconds)
 #endif
 #ifdef HAVE_WAITFORSINGLEOBJECT
   HANDLE dummyEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
-  WaitForSingleObject(dummyEvent, (DWORD)(1000.0f * seconds));
+  WaitForSingleObject(dummyEvent, (DWORD)(1000.0 * seconds));
   CloseHandle(dummyEvent);
   return;
 #endif
