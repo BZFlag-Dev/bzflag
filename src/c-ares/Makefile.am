@@ -33,7 +33,8 @@ libcares_a_SOURCES =		\
 	ares_strerror.c		\
 	ares_timeout.c		\
 	ares_version.c		\
-	ares_version.h
+	ares_version.h		\
+	setup.h
 
 EXTRA_libcares_a_SOURCES = winport.c
 
@@ -50,13 +51,10 @@ EXTRA_DIST = \
 	vc/adig/adig.dep	\
         vc/adig/adig.dsp	\
         vc/adig/adig.mak	\
-        vc/adig/adig.plg	\
         vc/ahost/ahost.dep	\
         vc/ahost/ahost.dsp	\
         vc/ahost/ahost.mak	\
-        vc/ahost/ahost.plg	\
         vc/areslib/areslib.dep	\
         vc/areslib/areslib.dsp	\
         vc/areslib/areslib.mak	\
-        vc/areslib/areslib.plg	\
         vc/vc.dsw

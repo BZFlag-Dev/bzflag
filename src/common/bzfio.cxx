@@ -36,6 +36,9 @@ static bool doMicros = false;
 
 void setDebugTimestamp (bool enable, bool micros) 
 { 
+#ifdef _WIN32
+  micros = false;
+#endif
   doTimestamp = enable;
   doMicros = micros;
 }
@@ -43,23 +46,22 @@ void setDebugTimestamp (bool enable, bool micros)
 static char *timestamp (char *buf, bool micros)
 {
   struct tm *tm;
-#if !defined(_WIN32)
   if (micros) {
+#if !defined(_WIN32)
     struct timeval tv;
     gettimeofday (&tv, NULL);
     tm = localtime((const time_t *)&tv.tv_sec);
-    sprintf (buf, "%04d-%02d-%02d %02d:%02d:%02d.%06ld: ", tm->tm_year+1900, tm->tm_mon+1,
+    sprintf (buf, "%04d-%02d-%02d %02d:%02d:%02d.%06ld: ", tm->tm_year+1900,
+	     tm->tm_mon+1,
              tm->tm_mday, tm->tm_hour, tm->tm_min, tm->tm_sec, tv.tv_usec );
-  } else {
 #endif
+  } else {
     time_t tt;
     time (&tt);
     tm = localtime (&tt);
     sprintf (buf, "%04d-%02d-%02d %02d:%02d:%02d: ", tm->tm_year+1900, tm->tm_mon+1,
              tm->tm_mday, tm->tm_hour, tm->tm_min, tm->tm_sec );
-#if !defined(_WIN32)
   }
-#endif
   return buf;
 }
 

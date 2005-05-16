@@ -13,13 +13,15 @@
  * without express or implied warranty.
  */
 
+#include "setup.h"
 #include <sys/types.h>
 
-#ifdef WIN32
+#if defined(WIN32) && !defined(WATT32)
 #include "nameser.h"
 #else
 #include <netinet/in.h>
 #include <arpa/nameser.h>
+#include <arpa/nameser_compat.h>
 #endif
 
 #include <string.h>

@@ -18,38 +18,53 @@
 #include <stdio.h>
 #include <sys/types.h>
 
-#ifdef WIN32
-
-#else
+#if !defined(WIN32) || defined(WATT32)
 #include <netinet/in.h>
 /* We define closesocket() here so that we can use this function all over
    the source code for closing sockets. */
 #define closesocket(x) close(x)
 #endif
 
-#define	DEFAULT_TIMEOUT		5
-#define DEFAULT_TRIES		4
-#ifndef INADDR_NONE
-#define	INADDR_NONE 0xffffffff
+#ifdef WATT32
+#include <tcp.h>
+#include <sys/ioctl.h>
+#undef  closesocket
+#define closesocket(s)    close_s(s)
+#define writev(s,v,c)     writev_s(s,v,c)
 #endif
 
-#ifdef WIN32
+#define DEFAULT_TIMEOUT         5
+#define DEFAULT_TRIES           4
+#ifndef INADDR_NONE
+#define INADDR_NONE 0xffffffff
+#endif
+
+#if defined(WIN32) && !defined(WATT32)
 
 #define IsNT ((int)GetVersion()>0)
 #define WIN_NS_9X      "System\\CurrentControlSet\\Services\\VxD\\MSTCP"
 #define WIN_NS_NT_KEY  "System\\CurrentControlSet\\Services\\Tcpip\\Parameters"
 #define NAMESERVER     "NameServer"
 #define DHCPNAMESERVER "DhcpNameServer"
-#define PATH_HOSTS_NT  "\\drivers\\etc\\hosts"
-#define PATH_HOSTS_9X  "\\hosts"
-          
+#define DATABASEPATH   "DatabasePath"
+#define WIN_PATH_HOSTS  "\\hosts"
+
+#elif defined(WATT32)
+
+#define PATH_RESOLV_CONF "/dev/ENV/etc/resolv.conf"
+
+#elif defined(NETWARE)
+
+#define PATH_RESOLV_CONF "sys:/etc/resolv.cfg"
+#define PATH_HOSTS              "sys:/etc/hosts"
+
 #else
 
-#define PATH_RESOLV_CONF	"/etc/resolv.conf"
+#define PATH_RESOLV_CONF        "/etc/resolv.conf"
 #ifdef ETC_INET
-#define PATH_HOSTS		"/etc/inet/hosts"
+#define PATH_HOSTS              "/etc/inet/hosts"
 #else
-#define PATH_HOSTS		"/etc/hosts"
+#define PATH_HOSTS              "/etc/hosts"
 #endif
 
 #endif
@@ -65,8 +80,8 @@ struct send_request {
 
 struct server_state {
   struct in_addr addr;
-  int udp_socket;
-  int tcp_socket;
+  ares_socket_t udp_socket;
+  ares_socket_t tcp_socket;
 
   /* Mini-buffer for reading the length word */
   unsigned char tcp_lenbuf[2];

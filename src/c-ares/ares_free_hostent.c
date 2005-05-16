@@ -13,11 +13,10 @@
  * without express or implied warranty.
  */
 
+#include "setup.h"
 #include <stdlib.h>
 
-#ifdef WIN32
-
-#else
+#if !defined(WIN32) || defined(WATT32)
 #include <netdb.h>
 #endif
 

@@ -13,11 +13,13 @@
  * without express or implied warranty.
  */
 
+#include "setup.h"
+
 #include <stdlib.h>
-#ifdef WIN32
-#else
+#ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif
+
 #include "ares.h"
 #include "ares_private.h"
 
@@ -42,14 +44,14 @@ void ares__close_sockets(struct server_state *server)
   server->tcp_lenbuf_pos = 0;
 
   /* Close the TCP and UDP sockets. */
-  if (server->tcp_socket != -1)
+  if (server->tcp_socket != ARES_SOCKET_BAD)
     {
       closesocket(server->tcp_socket);
-      server->tcp_socket = -1;
+      server->tcp_socket = ARES_SOCKET_BAD;
     }
-  if (server->udp_socket != -1)
+  if (server->udp_socket != ARES_SOCKET_BAD)
     {
       closesocket(server->udp_socket);
-      server->udp_socket = -1;
+      server->udp_socket = ARES_SOCKET_BAD;
     }
 }

@@ -13,9 +13,10 @@
  * without express or implied warranty.
  */
 
+#include "setup.h"
 #include <sys/types.h>
 
-#ifdef WIN32
+#if defined(WIN32) && !defined(WATT32)
 #include "nameser.h"
 #else
 #include <sys/socket.h>
@@ -30,8 +31,13 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+
 #include "ares.h"
 #include "ares_private.h"
+
+#ifdef WATT32
+#undef WIN32
+#endif
 
 struct host_query {
   /* Arguments passed to ares_gethostbyname() */
@@ -45,19 +51,19 @@ struct host_query {
 
 static void next_lookup(struct host_query *hquery);
 static void host_callback(void *arg, int status, unsigned char *abuf,
-			  int alen);
+                          int alen);
 static void end_hquery(struct host_query *hquery, int status,
-		       struct hostent *host);
+                       struct hostent *host);
 static int fake_hostent(const char *name, ares_host_callback callback,
-			void *arg);
+                        void *arg);
 static int file_lookup(const char *name, struct hostent **host);
 static void sort_addresses(struct hostent *host, struct apattern *sortlist,
-			   int nsort);
+                           int nsort);
 static int get_address_index(struct in_addr *addr, struct apattern *sortlist,
-			     int nsort);
+                             int nsort);
 
 void ares_gethostbyname(ares_channel channel, const char *name, int family,
-			ares_host_callback callback, void *arg)
+                        ares_host_callback callback, void *arg)
 {
   struct host_query *hquery;
 
@@ -101,26 +107,26 @@ static void next_lookup(struct host_query *hquery)
   struct hostent *host;
 
   for (p = hquery->remaining_lookups; *p; p++)
-    { 
+    {
       switch (*p)
-	{
-	case 'b':
-	  /* DNS lookup */
-	  hquery->remaining_lookups = p + 1;
-	  ares_search(hquery->channel, hquery->name, C_IN, T_A, host_callback,
-		      hquery);
-	  return;
+        {
+        case 'b':
+          /* DNS lookup */
+          hquery->remaining_lookups = p + 1;
+          ares_search(hquery->channel, hquery->name, C_IN, T_A, host_callback,
+                      hquery);
+          return;
 
-	case 'f':
-	  /* Host file lookup */
-	  status = file_lookup(hquery->name, &host);
-	  if (status != ARES_ENOTFOUND)
-	    {
-	      end_hquery(hquery, status, host);
-	      return;
-	    }
-	  break;
-	}
+        case 'f':
+          /* Host file lookup */
+          status = file_lookup(hquery->name, &host);
+          if (status != ARES_ENOTFOUND)
+            {
+              end_hquery(hquery, status, host);
+              return;
+            }
+          break;
+        }
     }
   end_hquery(hquery, ARES_ENOTFOUND, NULL);
 }
@@ -135,7 +141,7 @@ static void host_callback(void *arg, int status, unsigned char *abuf, int alen)
     {
       status = ares_parse_a_reply(abuf, alen, &host);
       if (host && channel->nsort)
-	sort_addresses(host, channel->sortlist, channel->nsort);
+        sort_addresses(host, channel->sortlist, channel->nsort);
       end_hquery(hquery, status, host);
     }
   else if (status == ARES_EDESTRUCTION)
@@ -145,7 +151,7 @@ static void host_callback(void *arg, int status, unsigned char *abuf, int alen)
 }
 
 static void end_hquery(struct host_query *hquery, int status,
-		       struct hostent *host)
+                       struct hostent *host)
 {
   hquery->callback(hquery->arg, status, host);
   if (host)
@@ -158,7 +164,7 @@ static void end_hquery(struct host_query *hquery, int status,
  * query immediately, and return true.  Otherwise return false.
  */
 static int fake_hostent(const char *name, ares_host_callback callback,
-			void *arg)
+                        void *arg)
 {
   struct in_addr addr;
   struct hostent hostent;
@@ -170,7 +176,7 @@ static int fake_hostent(const char *name, ares_host_callback callback,
   for (p = name; *p; p++)
     {
       if (!isdigit((unsigned char)*p) && *p != '.')
-	return 0;
+        return 0;
     }
 
   /* It also only looks like an IP address if it's non-zero-length and
@@ -215,16 +221,32 @@ static int file_lookup(const char *name, struct hostent **host)
   int status;
 
 #ifdef WIN32
-
   char PATH_HOSTS[MAX_PATH];
   if (IsNT) {
-    GetSystemDirectory(PATH_HOSTS, MAX_PATH);
-    strcat(PATH_HOSTS, PATH_HOSTS_NT);
-  } else {
-    GetWindowsDirectory(PATH_HOSTS, MAX_PATH);
-    strcat(PATH_HOSTS, PATH_HOSTS_9X);
-  }
+        char tmp[MAX_PATH];
+        HKEY hkeyHosts;
 
+        if (RegOpenKeyEx(HKEY_LOCAL_MACHINE, WIN_NS_NT_KEY, 0, KEY_READ, &hkeyHosts)
+                == ERROR_SUCCESS)
+        {
+                DWORD dwLength = MAX_PATH;
+                RegQueryValueEx(hkeyHosts, DATABASEPATH, NULL, NULL, tmp,
+                        &dwLength);
+                ExpandEnvironmentStrings(tmp, PATH_HOSTS, MAX_PATH);
+                RegCloseKey(hkeyHosts);
+        }
+  }
+  else
+    GetWindowsDirectory(PATH_HOSTS, MAX_PATH);
+
+  strcat(PATH_HOSTS, WIN_PATH_HOSTS);
+
+#elif defined(WATT32)
+  extern const char *_w32_GetHostsFile (void);
+  const char *PATH_HOSTS = _w32_GetHostsFile();
+
+  if (!PATH_HOSTS)
+    return ARES_ENOTFOUND;
 #endif
 
   fp = fopen(PATH_HOSTS, "r");
@@ -234,14 +256,14 @@ static int file_lookup(const char *name, struct hostent **host)
   while ((status = ares__get_hostent(fp, host)) == ARES_SUCCESS)
     {
       if (strcasecmp((*host)->h_name, name) == 0)
-	break;
+        break;
       for (alias = (*host)->h_aliases; *alias; alias++)
-	{
-	  if (strcasecmp(*alias, name) == 0)
-	    break;
-	}
+        {
+          if (strcasecmp(*alias, name) == 0)
+            break;
+        }
       if (*alias)
-	break;
+        break;
       ares_free_hostent(*host);
     }
   fclose(fp);
@@ -253,7 +275,7 @@ static int file_lookup(const char *name, struct hostent **host)
 }
 
 static void sort_addresses(struct hostent *host, struct apattern *sortlist,
-			   int nsort)
+                           int nsort)
 {
   struct in_addr a1, a2;
   int i1, i2, ind1, ind2;
@@ -268,13 +290,13 @@ static void sort_addresses(struct hostent *host, struct apattern *sortlist,
       memcpy(&a1, host->h_addr_list[i1], sizeof(struct in_addr));
       ind1 = get_address_index(&a1, sortlist, nsort);
       for (i2 = i1 - 1; i2 >= 0; i2--)
-	{
-	  memcpy(&a2, host->h_addr_list[i2], sizeof(struct in_addr));
-	  ind2 = get_address_index(&a2, sortlist, nsort);
-	  if (ind2 <= ind1)
-	    break;
-	  memcpy(host->h_addr_list[i2 + 1], &a2, sizeof(struct in_addr));
-	}
+        {
+          memcpy(&a2, host->h_addr_list[i2], sizeof(struct in_addr));
+          ind2 = get_address_index(&a2, sortlist, nsort);
+          if (ind2 <= ind1)
+            break;
+          memcpy(host->h_addr_list[i2 + 1], &a2, sizeof(struct in_addr));
+        }
       memcpy(host->h_addr_list[i2 + 1], &a1, sizeof(struct in_addr));
     }
 }
@@ -283,14 +305,14 @@ static void sort_addresses(struct hostent *host, struct apattern *sortlist,
  * if none of them match.
  */
 static int get_address_index(struct in_addr *addr, struct apattern *sortlist,
-			     int nsort)
+                             int nsort)
 {
   int i;
 
   for (i = 0; i < nsort; i++)
     {
       if ((addr->s_addr & sortlist[i].mask.s_addr) == sortlist[i].addr.s_addr)
-	break;
+        break;
     }
   return i;
 }

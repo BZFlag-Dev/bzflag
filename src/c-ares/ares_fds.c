@@ -13,11 +13,10 @@
  * without express or implied warranty.
  */
 
+#include "setup.h"
 #include <sys/types.h>
 
-#ifdef WIN32
-
-#else
+#ifdef HAVE_SYS_TIME_H
 #include <sys/time.h>
 #endif
 
@@ -37,20 +36,20 @@ int ares_fds(ares_channel channel, fd_set *read_fds, fd_set *write_fds)
   for (i = 0; i < channel->nservers; i++)
     {
       server = &channel->servers[i];
-      if (server->udp_socket != -1)
-	{
-	  FD_SET((unsigned int)server->udp_socket, read_fds);
-	  if (server->udp_socket >= nfds)
-	    nfds = server->udp_socket + 1;
-	}
-      if (server->tcp_socket != -1)
-	{
-	  FD_SET((unsigned int)server->tcp_socket, read_fds);
-	  if (server->qhead)
-	    FD_SET((unsigned int)server->tcp_socket, write_fds);
-	  if (server->tcp_socket >= nfds)
-	    nfds = server->tcp_socket + 1;
-	}
+      if (server->udp_socket != ARES_SOCKET_BAD)
+        {
+          FD_SET(server->udp_socket, read_fds);
+          if ((int)server->udp_socket >= nfds)
+            nfds = server->udp_socket + 1;
+        }
+      if (server->tcp_socket != ARES_SOCKET_BAD)
+        {
+          FD_SET(server->tcp_socket, read_fds);
+          if (server->qhead)
+            FD_SET(server->tcp_socket, write_fds);
+          if ((int)server->tcp_socket >= nfds)
+            nfds = server->tcp_socket + 1;
+        }
     }
   return nfds;
 }

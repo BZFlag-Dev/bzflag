@@ -13,9 +13,10 @@
  * without express or implied warranty.
  */
 
+#include "setup.h"
 #include <sys/types.h>
 
-#ifdef WIN32
+#if defined(WIN32) && !defined(WATT32)
 #include "nameser.h"
 #else
 #include <netinet/in.h>
@@ -31,7 +32,7 @@
 #include "ares_private.h"
 
 void ares_send(ares_channel channel, const unsigned char *qbuf, int qlen,
-	       ares_callback callback, void *arg)
+               ares_callback callback, void *arg)
 {
   struct query *query;
   int i;

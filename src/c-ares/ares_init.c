@@ -13,19 +13,28 @@
  * without express or implied warranty.
  */
 
+#include "setup.h"
 #include <sys/types.h>
 
-#ifdef WIN32
+#if defined(WIN32) && !defined(WATT32)
 #include "nameser.h"
+#include <iphlpapi.h>
+#include <malloc.h>
+
 #else
 #include <sys/param.h>
+#ifdef HAVE_SYS_TIME_H
 #include <sys/time.h>
+#endif
+
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <netdb.h>
 #include <arpa/nameser.h>
 #include <arpa/nameser_compat.h>
+#ifdef HAVE_UNISTD_H
 #include <unistd.h>
+#endif
 #endif
 
 #include <stdio.h>
@@ -37,23 +46,36 @@
 #include "ares.h"
 #include "ares_private.h"
 
+#ifdef WATT32
+#undef WIN32  /* Redefined in MingW/MSVC headers */
+#endif
+
 static int init_by_options(ares_channel channel, struct ares_options *options,
-			   int optmask);
+                           int optmask);
 static int init_by_environment(ares_channel channel);
 static int init_by_resolv_conf(ares_channel channel);
 static int init_by_defaults(ares_channel channel);
+#if !defined(WIN32) && !defined(riscos) && !defined(WATT32)
 static int config_domain(ares_channel channel, char *str);
-static int config_lookup(ares_channel channel, const char *str);
+static int config_lookup(ares_channel channel, const char *str,
+                         const char *bindch, const char *filech);
+#endif
 static int config_nameserver(struct server_state **servers, int *nservers,
-			     char *str);
+                             char *str);
+#if !defined(WIN32) && !defined(riscos) && !defined(WATT32)
 static int config_sortlist(struct apattern **sortlist, int *nsort,
-			   const char *str);
+                           const char *str);
+#endif
 static int set_search(ares_channel channel, const char *str);
 static int set_options(ares_channel channel, const char *str);
+#if !defined(WIN32) && !defined(riscos) && !defined(WATT32)
 static char *try_config(char *s, const char *opt);
+#endif
 static const char *try_option(const char *p, const char *q, const char *opt);
+#if !defined(WIN32) && !defined(riscos) && !defined(WATT32)
 static int ip_addr(const char *s, int len, struct in_addr *addr);
 static void natural_mask(struct apattern *pat);
+#endif
 
 int ares_init(ares_channel *channelptr)
 {
@@ -61,7 +83,7 @@ int ares_init(ares_channel *channelptr)
 }
 
 int ares_init_options(ares_channel *channelptr, struct ares_options *options,
-		      int optmask)
+                      int optmask)
 {
   ares_channel channel;
   int i, status;
@@ -86,6 +108,8 @@ int ares_init_options(ares_channel *channelptr, struct ares_options *options,
   channel->nsort = -1;
   channel->lookups = NULL;
   channel->queries = NULL;
+  channel->domains = NULL;
+  channel->sortlist = NULL;
 
   /* Initialize configuration by each of the four sources, from highest
    * precedence to lowest.
@@ -101,16 +125,17 @@ int ares_init_options(ares_channel *channelptr, struct ares_options *options,
     {
       /* Something failed; clean up memory we may have allocated. */
       if (channel->nservers != -1)
-	free(channel->servers);
-      if (channel->ndomains != -1)
-	{
-	  for (i = 0; i < channel->ndomains; i++)
-	    free(channel->domains[i]);
-	  free(channel->domains);
-	}
-      if (channel->nsort != -1)
-	free(channel->sortlist);
-      free(channel->lookups);
+        free(channel->servers);
+      if (channel->domains)
+        {
+          for (i = 0; i < channel->ndomains; i++)
+            free(channel->domains[i]);
+          free(channel->domains);
+        }
+      if (channel->sortlist)
+        free(channel->sortlist);
+      if(channel->lookups)
+        free(channel->lookups);
       free(channel);
       return status;
     }
@@ -123,8 +148,8 @@ int ares_init_options(ares_channel *channelptr, struct ares_options *options,
   for (i = 0; i < channel->nservers; i++)
     {
       server = &channel->servers[i];
-      server->udp_socket = -1;
-      server->tcp_socket = -1;
+      server->udp_socket = ARES_SOCKET_BAD;
+      server->tcp_socket = ARES_SOCKET_BAD;
       server->tcp_lenbuf_pos = 0;
       server->tcp_buffer = NULL;
       server->qhead = NULL;
@@ -147,7 +172,7 @@ int ares_init_options(ares_channel *channelptr, struct ares_options *options,
 }
 
 static int init_by_options(ares_channel channel, struct ares_options *options,
-			   int optmask)
+                           int optmask)
 {
   int i;
 
@@ -169,11 +194,11 @@ static int init_by_options(ares_channel channel, struct ares_options *options,
   if ((optmask & ARES_OPT_SERVERS) && channel->nservers == -1)
     {
       channel->servers =
-	malloc(options->nservers * sizeof(struct server_state));
+        malloc(options->nservers * sizeof(struct server_state));
       if (!channel->servers && options->nservers != 0)
-	return ARES_ENOMEM;
+        return ARES_ENOMEM;
       for (i = 0; i < options->nservers; i++)
-	channel->servers[i].addr = options->servers[i];
+        channel->servers[i].addr = options->servers[i];
       channel->nservers = options->nservers;
     }
 
@@ -184,14 +209,14 @@ static int init_by_options(ares_channel channel, struct ares_options *options,
     {
       channel->domains = malloc(options->ndomains * sizeof(char *));
       if (!channel->domains && options->ndomains != 0)
-	return ARES_ENOMEM;
+        return ARES_ENOMEM;
       for (i = 0; i < options->ndomains; i++)
-	{
-	  channel->ndomains = i;
-	  channel->domains[i] = strdup(options->domains[i]);
-	  if (!channel->domains[i])
-	    return ARES_ENOMEM;
-	}
+        {
+          channel->ndomains = i;
+          channel->domains[i] = strdup(options->domains[i]);
+          if (!channel->domains[i])
+            return ARES_ENOMEM;
+        }
       channel->ndomains = options->ndomains;
     }
 
@@ -200,7 +225,7 @@ static int init_by_options(ares_channel channel, struct ares_options *options,
     {
       channel->lookups = strdup(options->lookups);
       if (!channel->lookups)
-	return ARES_ENOMEM;
+        return ARES_ENOMEM;
     }
 
   return ARES_SUCCESS;
@@ -216,7 +241,7 @@ static int init_by_environment(ares_channel channel)
     {
       status = set_search(channel, localdomain);
       if (status != ARES_SUCCESS)
-	return status;
+        return status;
     }
 
   res_options = getenv("RES_OPTIONS");
@@ -224,29 +249,29 @@ static int init_by_environment(ares_channel channel)
     {
       status = set_options(channel, res_options);
       if (status != ARES_SUCCESS)
-	return status;
+        return status;
     }
 
   return ARES_SUCCESS;
 }
-#ifdef WIN32
-static int get_res_size_nt(HKEY hKey, char *subkey, int *size)
-{
-  return RegQueryValueEx(hKey, subkey, 0, NULL, NULL, size);
-}
 
-/* Warning: returns a dynamically allocated buffer, the user MUST
+#ifdef WIN32
+/*
+ * Warning: returns a dynamically allocated buffer, the user MUST
  * use free() if the function returns 1
  */
-static int get_res_nt(HKEY hKey, char *subkey, char **obuf)
+static int get_res_nt(HKEY hKey, const char *subkey, char **obuf)
 {
   /* Test for the size we need */
-  int size = 0;
+  DWORD size = 0;
   int result;
+
   result = RegQueryValueEx(hKey, subkey, 0, NULL, NULL, &size);
   if ((result != ERROR_SUCCESS && result != ERROR_MORE_DATA) || !size)
     return 0;
   *obuf = malloc(size+1);
+  if (!*obuf)
+    return 0;
 
   if (RegQueryValueEx(hKey, subkey, 0, NULL, *obuf, &size) != ERROR_SUCCESS)
   {
@@ -261,28 +286,98 @@ static int get_res_nt(HKEY hKey, char *subkey, char **obuf)
   return 1;
 }
 
-static int get_res_interfaces_nt(HKEY hKey, char *subkey, char **obuf)
+static int get_res_interfaces_nt(HKEY hKey, const char *subkey, char **obuf)
 {
   char enumbuf[39]; /* GUIDs are 38 chars + 1 for NULL */
-  int enum_size = 39;
+  DWORD enum_size = 39;
   int idx = 0;
   HKEY hVal;
+
   while (RegEnumKeyEx(hKey, idx++, enumbuf, &enum_size, 0,
                       NULL, NULL, NULL) != ERROR_NO_MORE_ITEMS)
   {
+    int rc;
+
     enum_size = 39;
     if (RegOpenKeyEx(hKey, enumbuf, 0, KEY_QUERY_VALUE, &hVal) !=
         ERROR_SUCCESS)
       continue;
-    if (!get_res_nt(hVal, subkey, obuf))
+    rc = get_res_nt(hVal, subkey, obuf);
       RegCloseKey(hVal);
-    else
-    {
-      RegCloseKey(hVal);
+    if (rc)
       return 1;
     }
-  }
   return 0;
+}
+
+static int get_iphlpapi_dns_info (char *ret_buf, size_t ret_size)
+{
+  FIXED_INFO    *fi   = alloca (sizeof(*fi));
+  DWORD          size = sizeof (*fi);
+  DWORD (WINAPI *GetNetworkParams) (FIXED_INFO*, DWORD*);  /* available only on Win-98/2000+ */
+  HMODULE        handle;
+  IP_ADDR_STRING *ipAddr;
+  int            i, count = 0;
+  int            debug  = 0;
+  size_t         ip_size = sizeof("255.255.255.255,")-1;
+  size_t         left = ret_size;
+  char          *ret = ret_buf;
+
+  if (!fi)
+     return (0);
+
+  handle = LoadLibrary ("iphlpapi.dll");
+  if (!handle)
+     return (0);
+
+  (void*)GetNetworkParams = GetProcAddress (handle, "GetNetworkParams");
+  if (!GetNetworkParams)
+     goto quit;
+
+  if ((*GetNetworkParams) (fi, &size) != ERROR_BUFFER_OVERFLOW)
+     goto quit;
+
+  fi = alloca (size);
+  if (!fi || (*GetNetworkParams) (fi, &size) != ERROR_SUCCESS)
+     goto quit;
+
+  if (debug)
+  {
+    printf ("Host Name: %s\n", fi->HostName);
+    printf ("Domain Name: %s\n", fi->DomainName);
+    printf ("DNS Servers:\n"
+            "    %s (primary)\n", fi->DnsServerList.IpAddress.String);
+  }
+  if (inet_addr(fi->DnsServerList.IpAddress.String) != INADDR_NONE &&
+      left > ip_size)
+  {
+    ret += sprintf (ret, "%s,", fi->DnsServerList.IpAddress.String);
+    left -= ret - ret_buf;
+    count++;
+  }
+
+  for (i = 0, ipAddr = fi->DnsServerList.Next; ipAddr && left > ip_size;
+       ipAddr = ipAddr->Next, i++)
+  {
+    if (inet_addr(ipAddr->IpAddress.String) != INADDR_NONE)
+    {
+       ret += sprintf (ret, "%s,", ipAddr->IpAddress.String);
+       left -= ret - ret_buf;
+       count++;
+    }
+    if (debug)
+       printf ("    %s (secondary %d)\n", ipAddr->IpAddress.String, i+1);
+  }
+
+quit:
+  if (handle)
+     FreeLibrary (handle);
+
+  if (debug && left <= ip_size)
+     printf ("Too many nameservers. Truncating to %d addressess", count);
+  if (ret > ret_buf)
+     ret[-1] = '\0';
+  return (count);
 }
 #endif
 
@@ -296,19 +391,24 @@ static int init_by_resolv_conf(ares_channel channel)
 #ifdef WIN32
 
     /*
+  NameServer info via IPHLPAPI (IP helper API):
+    GetNetworkParams() should be the trusted source for this.
+    Available in Win-98/2000 and later. If that fail, fall-back to
+    registry information.
+
   NameServer Registry:
 
    On Windows 9X, the DNS server can be found in:
 HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\VxD\MSTCP\NameServer
 
-	On Windows NT/2000/XP/2003:
+        On Windows NT/2000/XP/2003:
 HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters\NameServer
-	or
+        or
 HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters\DhcpNameServer
-	or
+        or
 HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters\{AdapterID}\
 NameServer
-	or
+        or
 HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters\{AdapterID}\
 DhcpNameServer
    */
@@ -318,11 +418,19 @@ DhcpNameServer
   DWORD data_type;
   DWORD bytes;
   DWORD result;
-  DWORD keysize = MAX_PATH;
+  char  buf[256];
 
-  status = ARES_EFILE;
+  if (channel->nservers > -1)  /* don't override ARES_OPT_SERVER */
+     return ARES_SUCCESS;
 
-  if (IsNT) 
+  if (get_iphlpapi_dns_info(buf,sizeof(buf)) > 0)
+  {
+    status = config_nameserver(&servers, &nservers, buf);
+    if (status == ARES_SUCCESS)
+      goto okay;
+  }
+
+  if (IsNT)
   {
     if (RegOpenKeyEx(
           HKEY_LOCAL_MACHINE, WIN_NS_NT_KEY, 0,
@@ -366,7 +474,7 @@ DhcpNameServer
       if ((result = RegQueryValueEx(
              mykey, NAMESERVER, NULL, &data_type,
              NULL, &bytes
-             ) 
+             )
             ) == ERROR_SUCCESS ||
           result == ERROR_MORE_DATA)
       {
@@ -382,19 +490,12 @@ DhcpNameServer
           free(line);
         }
       }
-    } 
+    }
     RegCloseKey(mykey);
   }
-  
-  if (status != ARES_EFILE)
-  {
-    /*
-      if (!channel->lookups) {
-      status = config_lookup(channel, "file bind");
-      }
-    */
+
+  if (status == ARES_SUCCESS)
     status = ARES_EOF;
-  }
 
 #elif defined(riscos)
 
@@ -402,7 +503,7 @@ DhcpNameServer
      system variable Inet$Resolvers, space separated. */
 
   line = getenv("Inet$Resolvers");
-  status = ARES_EFILE;
+  status = ARES_EOF;
   if (line) {
     char *resolvers = strdup(line), *pos, *space;
 
@@ -422,26 +523,44 @@ DhcpNameServer
 
     if (status == ARES_SUCCESS)
       status = ARES_EOF;
-    
+
     free(resolvers);
   }
+
+#elif defined(WATT32)
+  int i;
+
+  sock_init();
+  for (i = 0; def_nameservers[i]; i++)
+      ;
+  if (i == 0)
+    return ARES_SUCCESS; /* use localhost DNS server */
+
+  nservers = i;
+  servers = calloc(sizeof(*servers), i);
+  if (!servers)
+     return ARES_ENOMEM;
+
+  for (i = 0; def_nameservers[i]; i++)
+      servers[i].addr.s_addr = htonl(def_nameservers[i]);
+  status = ARES_EOF;
 
 #else
   {
     char *p;
     FILE *fp;
     int linesize;
-   
+
     fp = fopen(PATH_RESOLV_CONF, "r");
     if (!fp)
       return (errno == ENOENT) ? ARES_SUCCESS : ARES_EFILE;
     while ((status = ares__read_line(fp, &line, &linesize)) == ARES_SUCCESS)
     {
-      if ((p = try_config(line, "domain")) && channel->ndomains == -1)
+      if ((p = try_config(line, "domain")))
         status = config_domain(channel, p);
       else if ((p = try_config(line, "lookup")) && !channel->lookups)
-        status = config_lookup(channel, p);
-      else if ((p = try_config(line, "search")) && channel->ndomains == -1)
+        status = config_lookup(channel, p, "bind", "file");
+      else if ((p = try_config(line, "search")))
         status = set_search(channel, p);
       else if ((p = try_config(line, "nameserver")) && channel->nservers == -1)
         status = config_nameserver(&servers, &nservers, p);
@@ -454,8 +573,49 @@ DhcpNameServer
       if (status != ARES_SUCCESS)
         break;
     }
-    free(line);
     fclose(fp);
+
+    if (!channel->lookups) {
+      /* Many systems (Solaris, Linux, BSD's) use nsswitch.conf */
+      fp = fopen("/etc/nsswitch.conf", "r");
+      if (fp) {
+        while ((status = ares__read_line(fp, &line, &linesize)) == ARES_SUCCESS)
+        {
+          if ((p = try_config(line, "hosts:")) && !channel->lookups)
+            status = config_lookup(channel, p, "dns", "files");
+        }
+        fclose(fp);
+      }
+    }
+
+    if (!channel->lookups) {
+      /* Linux / GNU libc 2.x and possibly others have host.conf */
+      fp = fopen("/etc/host.conf", "r");
+      if (fp) {
+        while ((status = ares__read_line(fp, &line, &linesize)) == ARES_SUCCESS)
+        {
+          if ((p = try_config(line, "order")) && !channel->lookups)
+            status = config_lookup(channel, p, "bind", "hosts");
+        }
+        fclose(fp);
+      }
+    }
+
+    if (!channel->lookups) {
+      /* Tru64 uses /etc/svc.conf */
+      fp = fopen("/etc/svc.conf", "r");
+      if (fp) {
+        while ((status = ares__read_line(fp, &line, &linesize)) == ARES_SUCCESS)
+        {
+          if ((p = try_config(line, "hosts=")) && !channel->lookups)
+            status = config_lookup(channel, p, "bind", "local");
+        }
+        fclose(fp);
+      }
+    }
+
+    if(line)
+      free(line);
   }
 
 #endif
@@ -463,12 +623,17 @@ DhcpNameServer
   /* Handle errors. */
   if (status != ARES_EOF)
     {
-      if (servers != NULL) free(servers);
-      if (sortlist != NULL) free(sortlist);
+      if (servers != NULL)
+        free(servers);
+      if (sortlist != NULL)
+        free(sortlist);
       return status;
     }
 
   /* If we got any name server entries, fill them in. */
+#ifdef WIN32
+okay:
+#endif
   if (servers)
     {
       channel->servers = servers;
@@ -507,7 +672,7 @@ static int init_by_defaults(ares_channel channel)
       /* If nobody specified servers, try a local named. */
       channel->servers = malloc(sizeof(struct server_state));
       if (!channel->servers)
-	return ARES_ENOMEM;
+        return ARES_ENOMEM;
       channel->servers[0].addr.s_addr = htonl(INADDR_LOOPBACK);
       channel->nservers = 1;
     }
@@ -518,22 +683,22 @@ static int init_by_defaults(ares_channel channel)
        * or set it to empty if the hostname isn't helpful.
        */
       if (gethostname(hostname, sizeof(hostname)) == -1
-	  || !strchr(hostname, '.'))
-	{
-	  channel->domains = malloc(0);
-	  channel->ndomains = 0;
-	}
+          || !strchr(hostname, '.'))
+        {
+          channel->domains = malloc(0);
+          channel->ndomains = 0;
+        }
       else
-	{
-	  channel->domains = malloc(sizeof(char *));
-	  if (!channel->domains)
-	    return ARES_ENOMEM;
-	  channel->ndomains = 0;
-	  channel->domains[0] = strdup(strchr(hostname, '.') + 1);
-	  if (!channel->domains[0])
-	    return ARES_ENOMEM;
-	  channel->ndomains = 1;
-	}
+        {
+          channel->domains = malloc(sizeof(char *));
+          if (!channel->domains)
+            return ARES_ENOMEM;
+          channel->ndomains = 0;
+          channel->domains[0] = strdup(strchr(hostname, '.') + 1);
+          if (!channel->domains[0])
+            return ARES_ENOMEM;
+          channel->ndomains = 1;
+        }
     }
 
   if (channel->nsort == -1)
@@ -544,14 +709,15 @@ static int init_by_defaults(ares_channel channel)
 
   if (!channel->lookups)
     {
-      channel->lookups = strdup("bf");
+      channel->lookups = strdup("fb");
       if (!channel->lookups)
-	return ARES_ENOMEM;
+        return ARES_ENOMEM;
     }
 
   return ARES_SUCCESS;
 }
 
+#if !defined(WIN32) && !defined(riscos) && !defined(WATT32)
 static int config_domain(ares_channel channel, char *str)
 {
   char *q;
@@ -564,7 +730,8 @@ static int config_domain(ares_channel channel, char *str)
   return set_search(channel, str);
 }
 
-static int config_lookup(ares_channel channel, const char *str)
+static int config_lookup(ares_channel channel, const char *str,
+                         const char *bindch, const char *filech)
 {
   char lookups[3], *l;
   const char *p;
@@ -577,20 +744,23 @@ static int config_lookup(ares_channel channel, const char *str)
   p = str;
   while (*p)
     {
-      if ((*p == 'b' || *p == 'f') && l < lookups + 2)
-	*l++ = *p;
-      while (*p && !isspace((unsigned char)*p))
-	p++;
-      while (isspace((unsigned char)*p))
-	p++;
+      if ((*p == *bindch || *p == *filech) && l < lookups + 2) {
+        if (*p == *bindch) *l++ = 'b';
+        else *l++ = 'f';
+      }
+      while (*p && !isspace((unsigned char)*p) && (*p != ','))
+        p++;
+      while (*p && (isspace((unsigned char)*p) || (*p == ',')))
+        p++;
     }
   *l = 0;
   channel->lookups = strdup(lookups);
   return (channel->lookups) ? ARES_SUCCESS : ARES_ENOMEM;
 }
 
+#endif
 static int config_nameserver(struct server_state **servers, int *nservers,
-			     char *str)
+                             char *str)
 {
   struct in_addr addr;
   struct server_state *newserv;
@@ -650,8 +820,9 @@ static int config_nameserver(struct server_state **servers, int *nservers,
   return ARES_SUCCESS;
 }
 
+#if !defined(WIN32) && !defined(riscos) && !defined(WATT32)
 static int config_sortlist(struct apattern **sortlist, int *nsort,
-			   const char *str)
+                           const char *str)
 {
   struct apattern pat, *newsort;
   const char *q;
@@ -661,46 +832,55 @@ static int config_sortlist(struct apattern **sortlist, int *nsort,
     {
       q = str;
       while (*q && *q != '/' && *q != ';' && !isspace((unsigned char)*q))
-	q++;
+        q++;
       if (ip_addr(str, (int)(q - str), &pat.addr) == 0)
-	{
-	  /* We have a pattern address; now determine the mask. */
-	  if (*q == '/')
-	    {
-	      str = q + 1;
-	      while (*q && *q != ';' && !isspace((unsigned char)*q))
-		q++;
-	      if (ip_addr(str, (int)(q - str), &pat.mask) != 0)
-		natural_mask(&pat);
-	    }
-	  else
-	    natural_mask(&pat);
+        {
+          /* We have a pattern address; now determine the mask. */
+          if (*q == '/')
+            {
+              str = q + 1;
+              while (*q && *q != ';' && !isspace((unsigned char)*q))
+                q++;
+              if (ip_addr(str, (int)(q - str), &pat.mask) != 0)
+                natural_mask(&pat);
+            }
+          else
+            natural_mask(&pat);
 
-	  /* Add this pattern to our list. */
-	  newsort = realloc(*sortlist, (*nsort + 1) * sizeof(struct apattern));
-	  if (!newsort)
-	    return ARES_ENOMEM;
-	  newsort[*nsort] = pat;
-	  *sortlist = newsort;
-	  (*nsort)++;
-	}
+          /* Add this pattern to our list. */
+          newsort = realloc(*sortlist, (*nsort + 1) * sizeof(struct apattern));
+          if (!newsort)
+            return ARES_ENOMEM;
+          newsort[*nsort] = pat;
+          *sortlist = newsort;
+          (*nsort)++;
+        }
       else
-	{
-	  while (*q && *q != ';' && !isspace((unsigned char)*q))
-	    q++;
-	}
+        {
+          while (*q && *q != ';' && !isspace((unsigned char)*q))
+            q++;
+        }
       str = q;
       while (isspace((unsigned char)*str))
-	str++;
+        str++;
     }
 
   return ARES_SUCCESS;
 }
+#endif
 
 static int set_search(ares_channel channel, const char *str)
 {
   int n;
   const char *p, *q;
+
+  if(channel->ndomains != -1) {
+    /* if we already have some domains present, free them first */
+    for(n=0; n < channel->ndomains; n++)
+      free(channel->domains[n]);
+    free(channel->domains);
+    channel->ndomains = -1;
+  }
 
   /* Count the domains given. */
   n = 0;
@@ -708,9 +888,9 @@ static int set_search(ares_channel channel, const char *str)
   while (*p)
     {
       while (*p && !isspace((unsigned char)*p))
-	p++;
+        p++;
       while (isspace((unsigned char)*p))
-	p++;
+        p++;
       n++;
     }
 
@@ -726,15 +906,15 @@ static int set_search(ares_channel channel, const char *str)
       channel->ndomains = n;
       q = p;
       while (*q && !isspace((unsigned char)*q))
-	q++;
+        q++;
       channel->domains[n] = malloc(q - p + 1);
       if (!channel->domains[n])
-	return ARES_ENOMEM;
+        return ARES_ENOMEM;
       memcpy(channel->domains[n], p, q - p);
       channel->domains[n][q - p] = 0;
       p = q;
       while (isspace((unsigned char)*p))
-	p++;
+        p++;
       n++;
     }
   channel->ndomains = n;
@@ -751,24 +931,25 @@ static int set_options(ares_channel channel, const char *str)
     {
       q = p;
       while (*q && !isspace((unsigned char)*q))
-	q++;
+        q++;
       val = try_option(p, q, "ndots:");
       if (val && channel->ndots == -1)
-	channel->ndots = atoi(val);
+        channel->ndots = atoi(val);
       val = try_option(p, q, "retrans:");
       if (val && channel->timeout == -1)
-	channel->timeout = atoi(val);
+        channel->timeout = atoi(val);
       val = try_option(p, q, "retry:");
       if (val && channel->tries == -1)
-	channel->tries = atoi(val);
+        channel->tries = atoi(val);
       p = q;
       while (isspace((unsigned char)*p))
-	p++;
+        p++;
     }
 
   return ARES_SUCCESS;
 }
 
+#if !defined(WIN32) && !defined(riscos) && !defined(WATT32)
 static char *try_config(char *s, const char *opt)
 {
   size_t len;
@@ -781,6 +962,7 @@ static char *try_config(char *s, const char *opt)
     s++;
   return s;
 }
+#endif
 
 static const char *try_option(const char *p, const char *q, const char *opt)
 {
@@ -788,6 +970,7 @@ static const char *try_option(const char *p, const char *q, const char *opt)
   return ((size_t)(q - p) > len && !strncmp(p, opt, len)) ? &p[len] : NULL;
 }
 
+#if !defined(WIN32) && !defined(riscos) && !defined(WATT32)
 static int ip_addr(const char *s, int len, struct in_addr *addr)
 {
   char ipbuf[16];
@@ -823,3 +1006,4 @@ static void natural_mask(struct apattern *pat)
   else
     pat->mask.s_addr = htonl(IN_CLASSC_NET);
 }
+#endif
