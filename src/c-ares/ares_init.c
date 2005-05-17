@@ -384,7 +384,7 @@ quit:
 static int init_by_resolv_conf(ares_channel channel)
 {
   char *line = NULL;
-  int status, nservers = 0, nsort = 0;
+  int status = 0, nservers = 0, nsort = 0;
   struct server_state *servers = NULL;
   struct apattern *sortlist = NULL;
 
