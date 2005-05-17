@@ -220,7 +220,7 @@ inline void PlayerInfo::setLastMsg(std::string msg) {
 
 inline bool PlayerInfo::isAlive() const {
   return state == PlayerAlive;
-};
+}
 
 inline bool PlayerInfo::isPaused() const {
   return paused;
