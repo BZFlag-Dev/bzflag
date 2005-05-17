@@ -359,7 +359,7 @@ namespace TextUtils {
   /** lookup for an un-escaped separator
    */
   int unescape_lookup(const std::string &text, char escaper, char sep);
-};
+}
 
 
 #endif // __TEXTUTILS_H__
