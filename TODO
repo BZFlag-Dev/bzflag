@@ -3,6 +3,9 @@ to do list for BZFlag
 
 THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
 
+* add a command line option to let random worlds do an oncap weapon
+  for CTF bases.
+
 * ether fix the ares builds for windows, or wrap up ares in a class
   so that windows can just us it's own DNS stuff to do lookups. Or
   set up a ares lib project that works in all VCs ( 6 is busted )
