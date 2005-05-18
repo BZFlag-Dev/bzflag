@@ -38,8 +38,8 @@ CustomWeapon::CustomWeapon()
   delay.push_back(10.0f);
   type = Flags::Null;
 
-	eventTrigerd = false;
-	teamCapTriger = false;
+	eventTriggerd = false;
+	teamCapTrigger = false;
 	capTeam = -1;
 }
 
@@ -83,20 +83,20 @@ bool CustomWeapon::read(const char *cmd, std::istream& input) {
     // convert to radians
     tilt = (float)(tilt * (M_PI / 180.0));
   }
-  else if (strcmp(cmd, "triger") == 0) 
+  else if (strcmp(cmd, "trigger") == 0) 
   {
-	  std::string trigerType;
-	  input >> trigerType;
+	  std::string triggerType;
+	  input >> triggerType;
 
-	  eventTrigerd = true;
+	  eventTriggerd = true;
 
-	  TextUtils::tolower(trigerType);
-	  if ( trigerType == "flagcap")
-		  teamCapTriger = true;
+	  TextUtils::tolower(triggerType);
+	  if ( triggerType == "flagcap")
+		  teamCapTrigger = true;
 	  else
 	  {
-		  eventTrigerd = false;
-		  std::cout << "weapon triger type:" << trigerType << " unknown" << std::endl;
+		  eventTriggerd = false;
+		  std::cout << "weapon trigger type:" << triggerType << " unknown" << std::endl;
 	  }
   }
   else if (strcmp(cmd, "capteam") == 0) 
@@ -114,9 +114,9 @@ bool CustomWeapon::read(const char *cmd, std::istream& input) {
 
 void CustomWeapon::writeToWorld(WorldInfo* world) const
 {
-	if (!eventTrigerd)
+	if (!eventTriggerd)
 		world->addWeapon(type, pos, rotation, tilt, initdelay, delay, sync);
-	else if ( teamCapTriger )
+	else if ( teamCapTrigger )
 		worldEventManager.addCapEvent(capTeam,new WorldWeaponGlobalEventHandaler(type, pos, rotation, tilt));
 }
 

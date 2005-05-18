@@ -44,8 +44,8 @@ class CustomWeapon : public WorldFileLocation {
     float tilt;
     static TimeKeeper sync;
 
-		bool eventTrigerd;
-		bool teamCapTriger;
+		bool eventTriggerd;
+		bool teamCapTrigger;
 		int	 capTeam;
 };
 

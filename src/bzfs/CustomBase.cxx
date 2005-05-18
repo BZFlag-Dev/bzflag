@@ -26,7 +26,7 @@ CustomBase::CustomBase()
   size[0] = size[1] = BZDB.eval(StateDatabase::BZDB_BASESIZE);
   color = 0;
 
-	trigerWorldWep = false;
+	triggerWorldWep = false;
 	worldWepType = "SW";
 }
 
@@ -39,7 +39,7 @@ bool CustomBase::read(const char *cmd, std::istream& input) {
   }
 	else if (strcmp(cmd, "oncap") == 0)
 	{
-		trigerWorldWep= true;
+		triggerWorldWep= true;
 		input >> worldWepType;
 	}
 	else
@@ -57,7 +57,7 @@ void CustomBase::writeToGroupDef(GroupDefinition *groupdef) const
   BaseBuilding* base = new BaseBuilding(pos, rotation, absSize, color);
   groupdef->addObstacle(base);
 
-	if (trigerWorldWep)
+	if (triggerWorldWep)
 		worldEventManager.addCapEvent(color,new WorldWeaponGlobalEventHandaler(Flag::getDescFromAbbreviation(worldWepType.c_str()), pos, rotation, 0));
 }
 
