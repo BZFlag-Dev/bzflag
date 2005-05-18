@@ -26,6 +26,7 @@
 /* local interface headers */
 #include "WorldFileLocation.h"
 #include "WorldInfo.h"
+#include "WorldEventManager.h"
 
 
 class CustomWeapon : public WorldFileLocation {
@@ -44,9 +45,8 @@ class CustomWeapon : public WorldFileLocation {
     float tilt;
     static TimeKeeper sync;
 
-		bool eventTriggerd;
-		bool teamCapTrigger;
-		int	 capTeam;
+	teEventType		triggerType;
+	int				eventTeam;
 };
 
 #endif  /* __CUSTOMWEAPON_H__ */

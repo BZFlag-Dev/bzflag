@@ -45,7 +45,6 @@ PlayerDieEventData::PlayerDieEventData()
 	teamID = -1;
 	killerID = -1;
 	killerTeamID = -1;
-	flagKilledWith;
 
 	pos[0] = pos[1] = pos[2] = 0.0f;
 	rot = 0.0f;

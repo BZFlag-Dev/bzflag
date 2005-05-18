@@ -2615,6 +2615,8 @@ static void playerAlive(int playerIndex)
   lastState[playerIndex].pos[0] = spawnPosition->getX();
   lastState[playerIndex].pos[1] = spawnPosition->getY();
   lastState[playerIndex].pos[2] = spawnPosition->getZ();
+  lastState[playerIndex].azimuth = spawnPosition->getAzimuth();
+
   void *buf, *bufStart = getDirectMessageBuffer();
   buf = nboPackUByte(bufStart, playerIndex);
   buf = nboPackVector(buf, lastState[playerIndex].pos);
@@ -2624,6 +2626,17 @@ static void playerAlive(int playerIndex)
 
   // player is alive.
   playerData->player.setAlive();
+
+  // call any events for a playerspawn
+  PlayerSpawnEventData	spawnEvent;
+  spawnEvent.playerID = playerIndex;
+  spawnEvent.teamID = playerData->player.getTeam();
+
+  memcpy(spawnEvent.pos,lastState[playerIndex].pos,sizeof(float)*3);
+  spawnEvent.rot = lastState[playerIndex].azimuth;
+
+  worldEventManager.callEvents(ePlayerSpawnEvent,spawnEvent.teamID,&spawnEvent);
+  worldEventManager.callEvents(ePlayerSpawnEvent,-1,&spawnEvent);
 
   if (clOptions->gameStyle & int(RabbitChaseGameStyle)) {
     playerData->player.wasNotARabbit();
@@ -2673,6 +2686,19 @@ void playerKilled(int victimIndex, int killerIndex, int reason,
   if (!victim->isAlive()) return;
 
   victim->setDead();
+
+  // call any events for a playerdeath
+  PlayerDieEventData	dieEvent;
+  dieEvent.playerID = victimIndex;
+  dieEvent.teamID = victim->getTeam();
+  dieEvent.killerID = killerIndex;
+  dieEvent.killerTeamID = killer->getTeam();
+  dieEvent.flagKilledWith = flagType->label();
+  memcpy(dieEvent.pos,lastState[victimIndex].pos,sizeof(float)*3);
+  dieEvent.rot = lastState[victimIndex].azimuth;
+
+  worldEventManager.callEvents(ePlayerDieEvent,dieEvent.teamID,&dieEvent);
+  worldEventManager.callEvents(ePlayerDieEvent,-1,&dieEvent);
 
   // killing rabbit or killing anything when I am a dead ex-rabbit is allowed
   bool teamkill = false;

@@ -165,7 +165,6 @@ void * WorldWeapons::pack(void *buf) const
   return buf;
 }
 
-
 int WorldWeapons::packSize(void) const
 {
   int fullSize = 0;

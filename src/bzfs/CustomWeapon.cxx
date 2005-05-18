@@ -22,7 +22,6 @@
 /* local implementation headers */
 #include "WorldWeapons.h"
 #include "TextUtils.h"
-#include "WorldEventManager.h"
 
 TimeKeeper CustomWeapon::sync = TimeKeeper::getCurrent();
 
@@ -37,12 +36,10 @@ CustomWeapon::CustomWeapon()
   initdelay = 10.0f;
   delay.push_back(10.0f);
   type = Flags::Null;
-
-	eventTriggerd = false;
-	teamCapTrigger = false;
-	capTeam = -1;
+  
+  triggerType = eNullEvent;
+  eventTeam = -1;
 }
-
 
 bool CustomWeapon::read(const char *cmd, std::istream& input) {
   if (strcmp(cmd, "initdelay") == 0) {
@@ -88,36 +85,37 @@ bool CustomWeapon::read(const char *cmd, std::istream& input) {
 	  std::string triggerType;
 	  input >> triggerType;
 
-	  eventTriggerd = true;
+	  triggerType = eNullEvent;
 
 	  TextUtils::tolower(triggerType);
-	  if ( triggerType == "flagcap")
-		  teamCapTrigger = true;
+	  if ( triggerType == "oncap")
+		  triggerType = eCaptureEvent;
+	  else if ( triggerType == "onspawn")
+		  triggerType = ePlayerSpawnEvent;
+	  else if ( triggerType == "ondie")
+		  triggerType = ePlayerDieEvent;
 	  else
 	  {
-		  eventTriggerd = false;
 		  std::cout << "weapon trigger type:" << triggerType << " unknown" << std::endl;
 	  }
   }
-  else if (strcmp(cmd, "capteam") == 0) 
+  else if (strcmp(cmd, "eventteam") == 0) 
   {
-	  input >> capTeam;
+	  input >> eventTeam;
   }
   else if (!WorldFileLocation::read(cmd, input)) {
     return false;
   }
 
-
   return true;
 }
 
-
 void CustomWeapon::writeToWorld(WorldInfo* world) const
 {
-	if (!eventTriggerd)
+	if (triggerType == eNullEvent)
 		world->addWeapon(type, pos, rotation, tilt, initdelay, delay, sync);
-	else if ( teamCapTrigger )
-		worldEventManager.addEvent(eCaptureEvent,capTeam,new WorldWeaponGlobalEventHandaler(type, pos, rotation, tilt));
+	else
+		worldEventManager.addEvent(triggerType,eventTeam,new WorldWeaponGlobalEventHandaler(type, pos, rotation, tilt));
 }
 
 
