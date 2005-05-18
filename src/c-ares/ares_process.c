@@ -482,6 +482,7 @@ static int open_tcp_socket(ares_channel channel, struct server_state *server)
 #ifdef WIN32
   ioctlsocket(s, FIONBIO, &winflags);
 #else
+  {
   int flags = fcntl(s, F_GETFL, 0);
 
   if (flags == -1)
@@ -495,6 +496,7 @@ static int open_tcp_socket(ares_channel channel, struct server_state *server)
       closesocket(s);
       return -1;
     }
+  }
 #endif
 
   /* Connect to the server. */
