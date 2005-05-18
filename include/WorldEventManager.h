@@ -27,7 +27,11 @@
 typedef enum
 {
 	eNullEvent = 0,
-	eCaptureEvent
+	eCaptureEvent,
+	ePlayerDieEvent,
+	ePlayerSpawnEvent,
+	eZoneEntry,
+	eZoneExit
 }teEventType;
 
 class BaseEventData
@@ -48,6 +52,57 @@ public:
 	int teamCAped;
 	int	teamCaping;
 	int playerCaping;
+
+	float pos[3];
+	float rot;
+	double time;
+};
+
+class PlayerDieEventData : public BaseEventData
+{
+public:
+	PlayerDieEventData();
+	virtual ~PlayerDieEventData();
+
+	int playerID;
+	int teamID;
+	int killerID;
+	int killerTeamID;
+	std::string flagKilledWith;
+
+	float pos[3];
+	float rot;
+	double time;
+};
+
+class PlayerSpawnEventData : public BaseEventData
+{
+public:
+	PlayerSpawnEventData();
+	virtual ~PlayerSpawnEventData();
+
+	int playerID;
+	int teamID;
+
+	float pos[3];
+	float rot;
+	double time;
+};
+
+class ZoneEntryExitEventData : public BaseEventData
+{
+public:
+	ZoneEntryExitEventData();
+	virtual ~ZoneEntryExitEventData();
+
+	int playerID;
+	int teamID;
+
+	int zoneID;
+
+	float pos[3];
+	float rot;
+	double time;
 };
 
 class BaseEventHandaler
@@ -58,6 +113,8 @@ public:
 };
 
 typedef std::vector<BaseEventHandaler*> tvEventList;
+typedef std::map<teEventType, tvEventList> tmEventTypeList;
+typedef std::map<int, tmEventTypeList> tmEventMap;
 
 class WorldEventManager
 {
@@ -65,14 +122,15 @@ public:
 	WorldEventManager();
 	~WorldEventManager();
 
-	void addCapEvent ( int team, BaseEventHandaler* theEvetnt );
-	void removeCapEvent ( int team, BaseEventHandaler* theEvetnt );
-	tvEventList getCapEventList ( int team );
-	void callAllCapEvents ( int team, BaseEventData	*eventData );
+	void addEvent ( teEventType eventType, int team, BaseEventHandaler* theEvetnt );
+	void removeEvent ( teEventType eventType, int team, BaseEventHandaler* theEvetnt );
+	tvEventList getEventList ( teEventType eventType, int team );
+	void callEvents ( teEventType eventType, int team, BaseEventData	*eventData );
 
 protected:
-	typedef std::map<int, tvEventList> tmTeamCapEventMap;
-	tmTeamCapEventMap	teamCapEventMap;
+	tmEventMap eventtMap;
+
+	tmEventTypeList* getTeamEventList ( int team );
 };
 
 extern WorldEventManager	worldEventManager;

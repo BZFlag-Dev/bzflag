@@ -117,7 +117,7 @@ void CustomWeapon::writeToWorld(WorldInfo* world) const
 	if (!eventTriggerd)
 		world->addWeapon(type, pos, rotation, tilt, initdelay, delay, sync);
 	else if ( teamCapTrigger )
-		worldEventManager.addCapEvent(capTeam,new WorldWeaponGlobalEventHandaler(type, pos, rotation, tilt));
+		worldEventManager.addEvent(eCaptureEvent,capTeam,new WorldWeaponGlobalEventHandaler(type, pos, rotation, tilt));
 }
 
 

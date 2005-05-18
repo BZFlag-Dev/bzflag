@@ -2994,9 +2994,12 @@ static void captureFlag(int playerIndex, TeamColor teamCaptured)
 	eventData.teamCAped = teamIndex;
 	eventData.teamCaping = teamCaptured;
 	eventData.playerCaping = playerIndex;
+	memcpy(eventData.pos,lastState[playerIndex].pos,sizeof(float)*3);
+	eventData.rot = lastState[playerIndex].azimuth;
+	eventData.time = TimeKeeper::getCurrent().getSeconds();
 
-	worldEventManager.callAllCapEvents(teamIndex,&eventData);
-	worldEventManager.callAllCapEvents(-1,&eventData);
+	worldEventManager.callEvents(eCaptureEvent,teamIndex,&eventData);
+	worldEventManager.callEvents(eCaptureEvent,-1,&eventData);
 
   // everyone on losing team is dead
   for (int i = 0; i < curMaxPlayers; i++) {

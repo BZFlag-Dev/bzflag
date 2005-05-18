@@ -64,7 +64,7 @@ float WorldWeapons::nextTime ()
       nextShot = w->nextTime;
     }
   }
-  return (nextShot - TimeKeeper::getCurrent());
+  return (float)(nextShot - TimeKeeper::getCurrent());
 }
 
 int fireWorldWep ( FlagType* type, float lifetime, PlayerId player, float *pos, float tilt, float direction, int shotID, float dt )
@@ -207,8 +207,8 @@ WorldWeaponGlobalEventHandaler::~WorldWeaponGlobalEventHandaler()
 
 void WorldWeaponGlobalEventHandaler::process (BaseEventData */*eventData*/)
 {
-		fireWorldWep( type,BZDB.eval(StateDatabase::BZDB_RELOADTIME),
-		ServerPlayer,origin,tilt,direction,0,0);
+	fireWorldWep( type,BZDB.eval(StateDatabase::BZDB_RELOADTIME),
+	ServerPlayer,origin,tilt,direction,0,0);
 }
 
 

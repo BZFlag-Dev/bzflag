@@ -18,11 +18,13 @@
 
 #include "WorldEventManager.h"
 
+//-------------------BaseEventData--------------------
 BaseEventData::BaseEventData()
 {
 	eventType = eNullEvent;
 }
 
+//-------------------CTFCaptureEventData--------------------
 CTFCaptureEventData::CTFCaptureEventData()
 {
 	eventType = eCaptureEvent;
@@ -35,84 +37,157 @@ CTFCaptureEventData::~CTFCaptureEventData()
 {
 }
 
+//-------------------PlayerDieEventData--------------------
+PlayerDieEventData::PlayerDieEventData()
+{
+	eventType = ePlayerDieEvent;
+	playerID = -1;
+	teamID = -1;
+	killerID = -1;
+	killerTeamID = -1;
+	flagKilledWith;
 
+	pos[0] = pos[1] = pos[2] = 0.0f;
+	rot = 0.0f;
+	time = 0.0;
+}
+
+PlayerDieEventData::~PlayerDieEventData()
+{
+}
+
+//-------------------PlayerSpawnEventData--------------------
+PlayerSpawnEventData::PlayerSpawnEventData()
+{
+	eventType = ePlayerSpawnEvent;
+	playerID = -1;
+	teamID = -1;
+
+	pos[0] = pos[1] = pos[2] = 0.0f;
+	rot = 0.0f;
+	time = 0.0;
+}
+
+PlayerSpawnEventData::~PlayerSpawnEventData()
+{
+}
+
+//-------------------ZoneEntryExitEventData--------------------
+ZoneEntryExitEventData::ZoneEntryExitEventData()
+{
+	eventType = eZoneEntry;
+	playerID = -1;
+	teamID = -1;
+	zoneID = -1;
+
+	pos[0] = pos[1] = pos[2] = 0.0f;
+	rot = 0.0f;
+	time = 0.0;
+}
+
+ZoneEntryExitEventData::~ZoneEntryExitEventData()
+{
+}
+
+
+//-------------------WorldEventManager--------------------
 WorldEventManager::WorldEventManager()
 {
 }
 
 WorldEventManager::~WorldEventManager()
 {
-	tmTeamCapEventMap::iterator teamItr = teamCapEventMap.begin();
-	while ( teamItr != teamCapEventMap.end() )
+	tmEventMap::iterator teamItr = eventtMap.begin();
+	while ( teamItr != eventtMap.end() )
 	{
-		tvEventList::iterator itr = teamItr->second.begin();
-		while (itr == teamItr->second.end())
+		tmEventTypeList::iterator eventItr = teamItr->second.begin();
+		while (eventItr == teamItr->second.end())
 		{
-			delete (*itr);
-			itr++;
+			tvEventList::iterator itr = eventItr->second.begin();
+			while ( itr != eventItr->second.end() )
+				delete (*itr++);
+			eventItr++;
 		}
 		teamItr++;
 	}
 }
 
-void WorldEventManager::addCapEvent ( int team, BaseEventHandaler* theEvetnt )
+void WorldEventManager::addEvent ( teEventType eventType, int team, BaseEventHandaler* theEvetnt )
 {
 	if (!theEvetnt)
 		return;
 
-	if (teamCapEventMap.find(team) == teamCapEventMap.end())
+	tmEventTypeList*	teamEvents = getTeamEventList(team);
+
+	if (teamEvents->find(eventType) == teamEvents->end())
 	{
 		tvEventList newList;
-		teamCapEventMap[team] = newList;
+		(*teamEvents)[eventType] = newList;
 	}
 
-	teamCapEventMap.find(team)->second.push_back(theEvetnt);
+	teamEvents->find(eventType)->second.push_back(theEvetnt);
 }
 
-void WorldEventManager::removeCapEvent ( int team, BaseEventHandaler* theEvetnt )
+void WorldEventManager::removeEvent ( teEventType eventType, int team, BaseEventHandaler* theEvetnt )
 {
 	if (!theEvetnt)
 		return;
 
-	if (teamCapEventMap.find(team) == teamCapEventMap.end())
+	tmEventTypeList*	teamEvents = getTeamEventList(team);
+
+	if (teamEvents->find(eventType) == teamEvents->end())
 		return;
 
-	tmTeamCapEventMap::iterator teamItr = teamCapEventMap.begin();
-	if ( teamItr != teamCapEventMap.end() )
+	tmEventTypeList::iterator eventTypeItr = teamEvents->begin();
+	if ( eventTypeItr != teamEvents->end() )
 	{
-		tvEventList::iterator itr = teamItr->second.begin();
-		while (itr == teamItr->second.end())
+		tvEventList::iterator itr = eventTypeItr->second.begin();
+		while (itr == eventTypeItr->second.end())
 		{
 			if (*itr == theEvetnt)
-				itr = teamItr->second.erase(itr);
+				itr = eventTypeItr->second.erase(itr);
 			else
 				itr++;
 		}
 	}
 }
 
-tvEventList WorldEventManager::getCapEventList(int /*team*/)
+tvEventList WorldEventManager::getEventList ( teEventType eventType, int team )
+
 {
 	tvEventList	eventList;
 
-	tmTeamCapEventMap::iterator teamItr = teamCapEventMap.begin();
-	if ( teamItr == teamCapEventMap.end() )
+	tmEventTypeList*	teamEvents = getTeamEventList(team);
+
+	tmEventTypeList::iterator teamItr = teamEvents->find(eventType);
+	if ( teamItr == teamEvents->end() )
 		return eventList;
 
 	eventList = teamItr->second;
 	return eventList;
 }
 
-void WorldEventManager::callAllCapEvents ( int team, BaseEventData	*eventData )
+void WorldEventManager::callEvents ( teEventType eventType, int team, BaseEventData	*eventData )
 {
 	if (!eventData)
 		return;
 
-	tvEventList	eventList = getCapEventList(team);
+	tvEventList	eventList = getEventList(eventType,team);
 
-	for (int i = 0; i < (int)eventList.size(); i++)
+	for ( unsigned int i = 0; i < eventList.size(); i++)
 		eventList[i]->process(eventData);
 }
+
+tmEventTypeList* WorldEventManager::getTeamEventList ( int team )
+{
+	if (eventtMap.find(team) == eventtMap.end())
+	{
+		tmEventTypeList newList;
+		eventtMap[team] = newList;
+	}
+	return &(eventtMap.find(team)->second);
+}
+
 
 // Local Variables: ***
 // mode:C++ ***
