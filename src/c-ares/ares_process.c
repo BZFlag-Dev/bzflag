@@ -132,7 +132,7 @@ static void write_tcp_data(ares_channel channel, fd_set *write_fds, time_t now)
               sendreq = server->qhead;
               if ((size_t)wcount >= sendreq->len)
                 {
-                  wcount -= sendreq->len;
+                  wcount -= (int)sendreq->len;
                   server->qhead = sendreq->next;
                   if (server->qhead == NULL)
                     server->qtail = NULL;
@@ -151,7 +151,7 @@ static void write_tcp_data(ares_channel channel, fd_set *write_fds, time_t now)
           /* Can't allocate iovecs; just send the first request. */
           sendreq = server->qhead;
 
-          scount = send(server->tcp_socket, sendreq->data, sendreq->len, 0);
+          scount = (ssize_t)send(server->tcp_socket, sendreq->data, (int)sendreq->len, 0);
 
           if (scount < 0)
             {
@@ -468,6 +468,7 @@ static int open_tcp_socket(ares_channel channel, struct server_state *server)
 {
   ares_socket_t s;
   struct sockaddr_in sockin;
+  unsigned int i = 1;
 
   /* Acquire a socket. */
   s = socket(AF_INET, SOCK_STREAM, 0);
@@ -476,9 +477,8 @@ static int open_tcp_socket(ares_channel channel, struct server_state *server)
 
   /* Set the socket non-blocking. */
 
-#if defined(WIN32) || defined(WATT32)
-  u_long winflags = 1;
-  ioctlsocket(s, FIONBIO, &winflags);
+#ifdef _WIN32
+  ioctlsocket(s, FIONBIO, &i);
 #else
   int flags = fcntl(s, F_GETFL, 0);
 

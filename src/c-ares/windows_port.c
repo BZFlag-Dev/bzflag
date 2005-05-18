@@ -35,7 +35,7 @@ ares_strncasecmp(const char *a, const char *b, int n)
 int
 ares_strcasecmp(const char *a, const char *b)
 {
-    return strncasecmp(a, b, strlen(a)+1);
+    return strncasecmp(a, b, (int)strlen(a)+1);
 }
 #endif
 
@@ -95,6 +95,6 @@ ares_writev (ares_socket_t s, const struct iovec *vector, size_t count)
     memcpy (bp, vector[i].iov_base, vector[i].iov_len);
     bp += vector[i].iov_len;
   }
-  return send (s, (const void*)buffer, bytes, 0);
+  return send (s, (const void*)buffer, (int)bytes, 0);
 }
 #endif /* WIN32 builds only */
