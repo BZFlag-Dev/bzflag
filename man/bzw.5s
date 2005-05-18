@@ -688,6 +688,7 @@ Adds a route to teleport a tank between two teleporters.
 .B The Base object
 .br 
 Creates a team base where the corresponding team's flag is stored.
+The oncap option will fire a world weapon of the specified type when the team flag for this based is captured.
 
 \fBbase\fR
 .br 
@@ -700,6 +701,8 @@ Creates a team base where the corresponding team's flag is stored.
 \fB  rotation\fR 0.0
 .br 
 \fB  color\fR 0
+.br 
+\fB  oncap\fR V
 .br 
 \fBend\fR
 .br 
