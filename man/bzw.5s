@@ -118,10 +118,6 @@ world types consists of:
 .br 
 .B base
 .br 
-.B light
-.br 
-.B camera
-.br 
 .B weapon
 .br 
 .B zone
@@ -707,60 +703,6 @@ Creates a team base where the corresponding team's flag is stored.
 .br 
 \fBend\fR
 .br 
-
-
-.B The Light object
-.br 
-Places an OpenGL light into the world. Reference the "glLight" function's
-documentation for a full description of the lighting parameters.
-
-\fBlight\fR
-.br
-\fB  name\fR example_light
-.br
-\fB  position\fR 0.0 0.0 0.0 1.0   # x/y/z/w  coordinates
-.br
-\fB  direction\fR 0.0 0.0 -1.0     # x/y/z    direction vector
-.br
-\fB  attenuation\fR 1.0 0.0 0.001  # constant / linear / quadratic
-.br
-\fB  cutoff\fR 180.0               # the cutoff angle
-.br
-\fB  exponent\fR 0.0               # angular exponential factor
-.br
-\fB  ambient\fR 0.0 0.0 0.0 0.0    # ambient color
-.br
-\fB  diffuse\fR 1.0 1.0 1.0 1.0    # diffuse color
-.br
-\fB  specular\fR 1.0 1.0 1.0 1.0   # specular color
-.br
-# The following parameters are BZFLag speicific
-.br
-\fB  onlyreal\fR                   # do not draw a "ground" light
-.br
-\fBend\fR
-.br
-
-
-.B The Camera object
-.br 
-Places a camera into the world. Observer players can rotate through
-all of the defined cameras to view the game from specific positions.
-
-\fBcamera\fR
-.br
-\fB  name\fR example_camera  
-.br
-# The camera names are displayed to the user
-.br
-\fB  position\fR -400.0 -400.0 400.0  # viewing position
-.br
-\fB  direction\fR 1.0 1.0 -1.0        # viewing direction
-.br
-\fB  fov\fR 45.0     # field of vision (angle in degrees)
-.br
-\fBend\fR
-.br
 
 
 .B The Weapon object
@@ -1354,48 +1296,6 @@ waterLevel :=
 	  "height" <float>
 .br 
 	| material
-.br 
-	| object
-.br 
-.TP 
-.B (CustomLight.cxx/CustomLight::read)
-.br 
-.TP 
-light :=
-.br 
-	  ( "pos" | "position" )       <3dpoint> <float>
-.br 
-	| ( "dir" | "direction" )      <3dpoint>
-.br 
-	| ( "atten" | "attenuation" )  <float> <float> <float>
-.br 
-	| "cutoff"    <float>
-.br 
-	| "exponent"  <float>
-.br 
-	| "color"     rgbaColor
-.br 
-	| "ambient"   rgbaColor
-.br 
-	| "diffuse"   rgbaColor
-.br 
-	| "specular"  rgbaColor
-.br 
-	| "onlyreal"
-.br
-	| object
-.br 
-.TP 
-.B (CustomCamera.cxx/CustomCamera::read)
-.br 
-.TP 
-camera :=
-.br 
-	  ( "pos" | "position" )   <3dpoint>
-.br 
-	| ( "dir" | "direction" )  <3dpoint>
-.br 
-	| "fov"                    <float>
 .br 
 	| object
 .br 
