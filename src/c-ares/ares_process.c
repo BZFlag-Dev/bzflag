@@ -468,7 +468,9 @@ static int open_tcp_socket(ares_channel channel, struct server_state *server)
 {
   ares_socket_t s;
   struct sockaddr_in sockin;
-  unsigned int i = 1;
+#if defined(WIN32)
+  u_long winflags = 1;
+#endif
 
   /* Acquire a socket. */
   s = socket(AF_INET, SOCK_STREAM, 0);
@@ -477,8 +479,8 @@ static int open_tcp_socket(ares_channel channel, struct server_state *server)
 
   /* Set the socket non-blocking. */
 
-#ifdef _WIN32
-  ioctlsocket(s, FIONBIO, &i);
+#ifdef WIN32
+  ioctlsocket(s, FIONBIO, &winflags);
 #else
   int flags = fcntl(s, F_GETFL, 0);
 
