@@ -74,7 +74,7 @@ PlayerSpawnEventData::~PlayerSpawnEventData()
 //-------------------ZoneEntryExitEventData--------------------
 ZoneEntryExitEventData::ZoneEntryExitEventData()
 {
-	eventType = eZoneEntry;
+	eventType = eZoneEntryEvent;
 	playerID = -1;
 	teamID = -1;
 	zoneID = -1;
@@ -88,6 +88,19 @@ ZoneEntryExitEventData::~ZoneEntryExitEventData()
 {
 }
 
+//-------------------PlayerJoinPartEventData--------------------
+PlayerJoinPartEventData::PlayerJoinPartEventData()
+{
+	eventType = ePlayerJoinEvent;
+
+	playerID = -1;
+	teamID = -1;
+	time = 0.0;
+}
+
+PlayerJoinPartEventData::~PlayerJoinPartEventData()
+{
+}
 
 //-------------------WorldEventManager--------------------
 WorldEventManager::WorldEventManager()
@@ -104,7 +117,10 @@ WorldEventManager::~WorldEventManager()
 		{
 			tvEventList::iterator itr = eventItr->second.begin();
 			while ( itr != eventItr->second.end() )
-				delete (*itr++);
+			{
+				if ((*itr)->autoDelete())
+					delete (*itr++);
+			}
 			eventItr++;
 		}
 		teamItr++;

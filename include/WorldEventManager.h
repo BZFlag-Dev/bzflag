@@ -30,8 +30,10 @@ typedef enum
 	eCaptureEvent,
 	ePlayerDieEvent,
 	ePlayerSpawnEvent,
-	eZoneEntry,
-	eZoneExit
+	eZoneEntryEvent,
+	eZoneExitEvent,
+	ePlayerJoinEvent,
+	ePlayerPartEvent
 }teEventType;
 
 class BaseEventData
@@ -105,11 +107,26 @@ public:
 	double time;
 };
 
+class PlayerJoinPartEventData : public BaseEventData
+{
+public:
+	PlayerJoinPartEventData();
+	virtual ~PlayerJoinPartEventData();
+
+	int playerID;
+	int teamID;
+
+	std::string callsign;
+	std::string reason;
+	double time;
+};
+
 class BaseEventHandaler
 {
 public:
 	virtual ~BaseEventHandaler(){};
 	virtual void process ( BaseEventData *eventData ) = 0;
+	virtual bool autoDelete ( void ) { return true;}
 };
 
 typedef std::vector<BaseEventHandaler*> tvEventList;

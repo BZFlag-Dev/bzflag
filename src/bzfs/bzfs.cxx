@@ -2108,6 +2108,17 @@ static void addPlayer(int playerIndex)
   dropAssignedFlag(playerIndex);
 
   sendPlayerInfo();
+
+  // call any on join events
+  PlayerJoinPartEventData	joinEventData;
+  joinEventData.eventType = ePlayerJoinEvent;
+  joinEventData.playerID = playerIndex;
+  joinEventData.teamID = playerData->player.getTeam();
+  joinEventData.callsign = playerData->player.getCallSign();
+  joinEventData.time = TimeKeeper::getCurrent().getSeconds();
+
+  worldEventManager.callEvents(ePlayerJoinEvent,joinEventData.teamID,&joinEventData);
+  worldEventManager.callEvents(ePlayerJoinEvent,-1,&joinEventData);
 }
 
 
@@ -2313,10 +2324,23 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
   // not to undo operations that haven't been done.
   // first shutdown connection
 
-  GameKeeper::Player *playerData
-    = GameKeeper::Player::getPlayerByIndex(playerIndex);
-  if (!playerData)
-    return;
+	GameKeeper::Player *playerData
+		= GameKeeper::Player::getPlayerByIndex(playerIndex);
+	if (!playerData)
+		return;
+
+	// call any on part events
+	PlayerJoinPartEventData partEventData;
+	partEventData.eventType = ePlayerPartEvent;
+	partEventData.playerID = playerIndex;
+	partEventData.teamID = playerData->player.getTeam();
+	partEventData.callsign = playerData->player.getCallSign();
+	partEventData.time = TimeKeeper::getCurrent().getSeconds();
+	if (reason)
+		partEventData.reason = reason;
+
+	worldEventManager.callEvents(ePlayerPartEvent,partEventData.teamID,&partEventData);
+	worldEventManager.callEvents(ePlayerPartEvent,-1,&partEventData);
 
   if (notify) {
     // send a super kill to be polite
