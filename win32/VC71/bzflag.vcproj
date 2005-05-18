@@ -31,7 +31,7 @@
 				ObjectFile=".\..\..\src\bzflag\debug/"
 				ProgramDataBaseFileName=".\..\..\src\bzflag\debug/"
 				WarningLevel="3"
-				WarnAsError="TRUE"
+				WarnAsError="FALSE"
 				SuppressStartupBanner="TRUE"
 				DebugInformationFormat="4"
 				CompileAs="0"/>

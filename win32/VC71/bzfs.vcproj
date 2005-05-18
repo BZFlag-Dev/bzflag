@@ -92,7 +92,7 @@
 				ObjectFile=".\..\..\src\bzfs\debug/"
 				ProgramDataBaseFileName=".\..\..\src\bzfs\debug/"
 				WarningLevel="3"
-				WarnAsError="TRUE"
+				WarnAsError="FALSE"
 				SuppressStartupBanner="TRUE"
 				DebugInformationFormat="4"
 				CompileAs="0"/>
@@ -333,41 +333,6 @@ copy ..\..\src\bzfs\debug\*.exe ..\..\*.exe
 			</File>
 			<File
 				RelativePath="..\..\src\bzfs\commands.cxx">
-				<FileConfiguration
-					Name="Release|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="2"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="0"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-						BasicRuntimeChecks="3"/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="KRB5 Debug|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="0"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-						BasicRuntimeChecks="3"/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\src\bzfs\CustomGroup.cxx">
-			</File>
-			<File
-				RelativePath="..\..\src\bzfs\CustomMeshTransform.cxx">
-			</File>
-			<File
-				RelativePath="..\..\src\bzfs\CustomZone.cxx">
 				<FileConfiguration
 					Name="Release|Win32">
 					<Tool
@@ -679,6 +644,9 @@ copy ..\..\src\bzfs\debug\*.exe ..\..\*.exe
 					</FileConfiguration>
 				</File>
 				<File
+					RelativePath="..\..\src\bzfs\CustomGroup.cxx">
+				</File>
+				<File
 					RelativePath="..\..\src\bzfs\CustomLink.cxx">
 					<FileConfiguration
 						Name="Release|Win32">
@@ -715,6 +683,9 @@ copy ..\..\src\bzfs\debug\*.exe ..\..\*.exe
 				</File>
 				<File
 					RelativePath="..\..\src\bzfs\CustomMeshFace.cxx">
+				</File>
+				<File
+					RelativePath="..\..\src\bzfs\CustomMeshTransform.cxx">
 				</File>
 				<File
 					RelativePath="..\..\src\bzfs\CustomPhysicsDriver.cxx">
@@ -817,6 +788,38 @@ copy ..\..\src\bzfs\debug\*.exe ..\..\*.exe
 							PreprocessorDefinitions=""
 							BasicRuntimeChecks="3"/>
 					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\src\bzfs\CustomZone.cxx">
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="2"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions=""/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="0"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions=""
+							BasicRuntimeChecks="3"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="KRB5 Debug|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="0"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions=""
+							BasicRuntimeChecks="3"/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\src\bzfs\WorldEventManager.cxx">
 				</File>
 				<File
 					RelativePath="..\..\src\bzfs\WorldFileLocation.cxx">
@@ -1076,6 +1079,9 @@ copy ..\..\src\bzfs\debug\*.exe ..\..\*.exe
 			</File>
 			<File
 				RelativePath="..\..\src\bzfs\TextChunkManager.h">
+			</File>
+			<File
+				RelativePath="..\..\include\WorldEventManager.h">
 			</File>
 			<File
 				RelativePath="..\..\src\bzfs\WorldFileLocation.h">
