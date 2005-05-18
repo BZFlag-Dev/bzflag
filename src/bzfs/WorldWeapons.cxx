@@ -205,8 +205,11 @@ WorldWeaponGlobalEventHandaler::~WorldWeaponGlobalEventHandaler()
 {
 }
 
-void WorldWeaponGlobalEventHandaler::process (BaseEventData */*eventData*/)
+void WorldWeaponGlobalEventHandaler::process (BaseEventData *eventData)
 {
+	if (eventData->eventType != eCaptureEvent)
+		return;
+
 	fireWorldWep( type,BZDB.eval(StateDatabase::BZDB_RELOADTIME),
 	ServerPlayer,origin,tilt,direction,0,0);
 }
