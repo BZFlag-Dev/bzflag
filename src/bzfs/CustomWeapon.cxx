@@ -83,29 +83,30 @@ bool CustomWeapon::read(const char *cmd, std::istream& input) {
     // convert to radians
     tilt = (float)(tilt * (M_PI / 180.0));
   }
+  else if (strcmp(cmd, "triger") == 0) 
+  {
+	  std::string trigerType;
+	  input >> trigerType;
+
+	  eventTrigerd = true;
+
+	  TextUtils::tolower(trigerType);
+	  if ( trigerType == "flagcap")
+		  teamCapTriger = true;
+	  else
+	  {
+		  eventTrigerd = false;
+		  std::cout << "weapon triger type:" << trigerType << " unknown" << std::endl;
+	  }
+  }
+  else if (strcmp(cmd, "capteam") == 0) 
+  {
+	  input >> capTeam;
+  }
   else if (!WorldFileLocation::read(cmd, input)) {
     return false;
   }
-	else if (strcmp(cmd, "triger") == 0) 
-	{
-		std::string trigerType;
-		input >> trigerType;
 
-		eventTrigerd = true;
-
-		TextUtils::tolower(trigerType);
-		if ( trigerType == "flagcap")
-			teamCapTriger = true;
-		else
-		{
-			eventTrigerd = false;
-			std::cout << "weapon triger type:" << trigerType << " unknown" << std::endl;
-		}
-	}
-	else if (strcmp(cmd, "capteam") == 0) 
-	{
-		input >> capTeam;
-	}
 
   return true;
 }
