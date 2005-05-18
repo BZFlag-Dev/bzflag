@@ -91,7 +91,7 @@ void WorldEventManager::removeCapEvent ( int team, BaseEventHandaler* theEvetnt 
 	}
 }
 
-tvEventList WorldEventManager::getCapEventList ( int team )
+tvEventList WorldEventManager::getCapEventList(int /*team*/)
 {
 	tvEventList	eventList;
 
@@ -110,7 +110,7 @@ void WorldEventManager::callAllCapEvents ( int team, BaseEventData	*eventData )
 
 	tvEventList	eventList = getCapEventList(team);
 
-	for ( int i = 0; i < eventList.size(); i++)
+	for (int i = 0; i < (int)eventList.size(); i++)
 		eventList[i]->process(eventData);
 }
 

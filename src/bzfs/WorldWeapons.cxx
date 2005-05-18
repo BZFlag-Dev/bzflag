@@ -205,7 +205,7 @@ WorldWeaponGlobalEventHandaler::~WorldWeaponGlobalEventHandaler()
 {
 }
 
-void WorldWeaponGlobalEventHandaler::process ( BaseEventData *eventData )
+void WorldWeaponGlobalEventHandaler::process (BaseEventData */*eventData*/)
 {
 		fireWorldWep( type,BZDB.eval(StateDatabase::BZDB_RELOADTIME),
 		ServerPlayer,origin,tilt,direction,0,0);
