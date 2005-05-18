@@ -58,7 +58,7 @@ void DynamicColorManager::clear()
 
 void DynamicColorManager::update()
 {
-  float t = TimeKeeper::getCurrent() - TimeKeeper::getStartTime();
+  float t = (float)(TimeKeeper::getCurrent() - TimeKeeper::getStartTime());
   std::vector<DynamicColor*>::iterator it;
   for (it = colors.begin(); it != colors.end(); it++) {
     DynamicColor* color = *it;

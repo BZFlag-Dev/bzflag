@@ -317,7 +317,7 @@ unsigned short int VotingArbiter::timeRemaining(void) const
     return 0;
   }
 
-  float remaining = _voteTime - (TimeKeeper::getCurrent() - _startTime);
+  float remaining = _voteTime - (float)(TimeKeeper::getCurrent() - _startTime);
   if (remaining < 0.0f) {
     return 0;
   }

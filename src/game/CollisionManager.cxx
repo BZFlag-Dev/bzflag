@@ -512,7 +512,7 @@ void CollisionManager::load ()
   SplitList.named.teles.list = listPtr;
   SplitList.named.teles.count = (int)teles.size();
 
-  float elapsed = TimeKeeper::getCurrent() - startTime;
+  float elapsed = (float)(TimeKeeper::getCurrent() - startTime);
   DEBUG2 ("Collision Octree processed in %.3f seconds.\n", elapsed);
 
   return;

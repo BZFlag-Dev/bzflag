@@ -529,7 +529,7 @@ ImageFont*    FontManager::getClosestRealSize(int faceID, float desiredSize, flo
 
 void	    FontManager::getPulseColor(const GLfloat *color, GLfloat *pulseColor) const
 {
-  float pulseTime = TimeKeeper::getCurrent().getSeconds();
+  float pulseTime = (float)TimeKeeper::getCurrent().getSeconds();
 
   // depth is how dark it should get (1.0 is to black)
   float pulseDepth = BZDBCache::pulseDepth;

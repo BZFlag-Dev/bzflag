@@ -43,7 +43,7 @@ void LagInfo::getLagStats(char* msg) const
   // don't wait for ping to come back
   int lag = int(lagavg * 1000);
   if (pingpending) {
-    float timepassed = info->now - lastping;
+    float timepassed = (float)(info->now - lastping);
     int lastLag = int((lagavg * (1 - lagalpha) + lagalpha * timepassed) * 1000);
     if (lastLag > lag)
       lag = lastLag;
@@ -100,7 +100,7 @@ void LagInfo::updateLag(float timestamp, bool ooo) {
   }
   // don't calc jitter if more than 2 seconds between packets
   if (lasttimestamp > 0.0f && timestamp - lasttimestamp < 2.0f) {
-    const float jitter = fabs(info->now - lastupdate
+    const float jitter = fabs((float)(info->now - lastupdate)
 			      - (timestamp - lasttimestamp));
     // time is smoothed exponentially using a dynamic smoothing factor
     jitteravg   = jitteravg * (1 - jitteralpha) + jitteralpha * fabs(jitter);
@@ -143,7 +143,7 @@ int LagInfo::getNextPingSeqno(bool &warn, bool &kick) {
 void LagInfo::updateLatency(float &waitTime) {
   if (!info->isPlaying() || !info->isHuman())
     return;
-  float delta = nextping - info->now;
+  float delta = (float)(nextping - info->now);
   if (delta < waitTime)
     waitTime  = delta;
 }

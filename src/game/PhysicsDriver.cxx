@@ -60,7 +60,7 @@ void PhysicsDriverManager::clear()
 
 void PhysicsDriverManager::update()
 {
-  float t = TimeKeeper::getCurrent() - TimeKeeper::getStartTime();
+  float t = (float)(TimeKeeper::getCurrent() - TimeKeeper::getStartTime());
   std::vector<PhysicsDriver*>::iterator it;
   for (it = drivers.begin(); it != drivers.end(); it++) {
     PhysicsDriver* driver = *it;

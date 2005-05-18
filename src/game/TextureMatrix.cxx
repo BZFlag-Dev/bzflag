@@ -55,7 +55,7 @@ void TextureMatrixManager::clear()
 
 void TextureMatrixManager::update()
 {
-  float t = TimeKeeper::getCurrent() - TimeKeeper::getStartTime();
+  float t = (float)(TimeKeeper::getCurrent() - TimeKeeper::getStartTime());
   std::vector<TextureMatrix*>::iterator it;
   for (it = matrices.begin(); it != matrices.end(); it++) {
     TextureMatrix* texmat = *it;
