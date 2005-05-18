@@ -1,0 +1,130 @@
+This README describe a way to build from a linux PC executable for M$
+
+My favourite distribution is gentoo, so I'm going to go step by step on this.
+
+We need to emerge the 4 packet that build the cross platform factory:
+ - xmingw-binutils
+ - xmingw-gcc
+ - xmingw-w32api
+ - xmingw-runtime
+
+xmingw-binutils should be at least the version 2.15.90.0.2
+
+This operation should be made by superuser.
+
+# emerge xmingw-runtime
+
+It seems the g++ is enabled only if you re-emerge xmingw-gcc. So, as bzflag is
+written in c++:
+
+# emerge xmingw-gcc
+
+Next operation are available to a non super-user too, so a normal user is the
+preferred way.
+
+Add to your path the cross compilation factory directory:
+
+$ export PATH=/opt/xmingw/bin:$PATH
+
+------ libcurl
+Get a development version of libcurl for Windows, possibly a non SSL version,
+and unpack it on a known location (i.e. ~/curl).
+
+Copy the include curl subtree in the system include directory:
+
+cp -r ~/curl/include/curl /opt/xmingw/i386-mingw32msvc/include/
+
+cp ~/curl/libcurldll.a /opt/xmingw/i386-mingw32msvc/lib/
+
+copy a curl-config into /opt/xmingw/bin/curl-config
+
+and apply the patch:
+
+@@ -5,7 +5,7 @@
+ #
+ # $Id$
+ #
+-prefix=/opt/xmingw/i386-mingw32msvc
++prefix=/usr
+ exec_prefix=${prefix}
+ includedir=${prefix}/include
+
+@@ -120,14 +120,14 @@
+
+     --cflags)
+                if test "X${prefix}/include" = "X/usr/include"; then
+-          echo "-DBUILDING_LIBCURL"
++          echo ""
+         else
+-          echo "-DBUILDING_LIBCURL -I${prefix}/include"
++          echo "-I${prefix}/include"
+         fi
+                ;;
+
+     --libs)
+-               echo -L${exec_prefix}/lib -lcurldll
++               echo -L${exec_prefix}/lib -lcurl    -lidn -lssl -lcrypto -ldl  -lssl -lcrypto -ldl   -lz -lcares
+                ;;
+
+     *)
+
+
+------ libSDL
+Get a development version of libSDL for Windows and unpack it on a known
+location (i.e. ~).
+
+System will create a directiory called SDL-x.x.x (e.g. SDL-1.2.8). Go there and
+copy some of the SDL files in the system include:
+
+cp -r ~/SDL-1.2.8/include/SDL /opt/xmingw/i386-mingw32msvc/include/
+cp ~/SDL-1.2.8/bin/i386-mingw32msvc-sdl-config /opt/xmingw/bin/sdl-config
+cp ~/SDL-1.2.8/lib/libSDLmain.a /opt/xmingw/i386-mingw32msvc/lib/
+cp ~/SDL-1.2.8/lib/libSDL.a /opt/xmingw/i386-mingw32msvc/lib/
+
+For version 1.2.8 you need to change one line of the include file SDL_audio.h
+in /opt/xming32/i386-mingw32msvc/include/SDL:
+
+from 
+
+void (SDLCALL *filters[10])(struct SDL_AudioCVT *cvt, Uint16 format);
+
+to
+
+void (*filters[10])(struct SDL_AudioCVT *cvt, Uint16 format);
+
+
+sdl-config should be changed to match the directory where we moved it:
+
+--- sdl-config  2005-05-18 07:05:00.000000000 +0200
++++ sdl-config.new      2005-05-18 07:23:09.000000000 +0200
+@@ -1,6 +1,6 @@
+ #!/bin/sh
+
+-prefix=/usr/local/cross-tools/i386-mingw32msvc
++prefix=/opt/xmingw/i386-mingw32msvc
+ exec_prefix=${prefix}
+ exec_prefix_set=no
+
+
+
+------ bzflag
+Now, time to get a copy of bzflag, from CVS or from source tarball.
+
+When you have your source tree exploded, go to the root of this tree and:
+
+$ sh autogen.sh
+
+Now create a build directory where you'll generate:
+
+$ mkdir ../distmw
+$ cd ../distmw
+
+
+and configure the build directory to use the cross-factory:
+
+$ CC=i386-mingw32msvc-gcc CXX=i386-mingw32msvc-g++ \
+     RANLIB=i386-mingw32msvc-ranlib ../bzflag/configure \
+     --host=i386-mingw32msvc --build=i686-pc-linux-gnu \
+     --without-x --disable-nasm -with-gnu-ld
+
+$ make
