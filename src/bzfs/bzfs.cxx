@@ -50,6 +50,7 @@
 #include "FlagInfo.h"
 #include "MasterBanList.h"
 #include "Filter.h"
+#include "WorldEventManager.h"
 
 // common implementation headers
 #include "Obstacle.h"
@@ -122,6 +123,9 @@ char worldSettings[4 + WorldSettingsSize];
 Filter   filter;
 
 BasesList bases;
+
+// global keeper of world Events
+WorldEventManager	worldEventManager;
 
 // FIXME - define a well-known constant for a null playerid in address.h?
 // might be handy in other players, too.
@@ -1792,7 +1796,7 @@ static std::string evaluateString(const std::string raw)
             i += (end - start) + 2;
             if (var == "uptime") {
               char buffer[16];
-              const float uptime = TimeKeeper::getCurrent() - TimeKeeper::getStartTime();
+              const float uptime = (float)(TimeKeeper::getCurrent() - TimeKeeper::getStartTime());
               snprintf(buffer, 16, "%i", (int)uptime);
               eval += buffer;
             }
@@ -2018,7 +2022,7 @@ static void addPlayer(int playerIndex)
   // send time update to new player if we're counting down
   if (countdownActive && clOptions->timeLimit > 0.0f
       && !playerData->player.isBot()) {
-    float timeLeft = clOptions->timeLimit - (TimeKeeper::getCurrent() - gameStartTime);
+    float timeLeft = clOptions->timeLimit - (float)(TimeKeeper::getCurrent() - gameStartTime);
     if (timeLeft < 0.0f) {
       // oops
       timeLeft = 0.0f;
@@ -2985,6 +2989,15 @@ static void captureFlag(int playerIndex, TeamColor teamCaptured)
   buf = nboPackUShort(buf, uint16_t(teamCaptured));
   broadcastMessage(MsgCaptureFlag, (char*)buf-(char*)bufStart, bufStart);
 
+	// find any events for capturing the flags on the caped team or events for ANY team
+	CTFCaptureEventData	eventData;
+	eventData.teamCAped = teamIndex;
+	eventData.teamCaping = teamCaptured;
+	eventData.playerCaping = playerIndex;
+
+	worldEventManager.callAllCapEvents(teamIndex,&eventData);
+	worldEventManager.callAllCapEvents(-1,&eventData);
+
   // everyone on losing team is dead
   for (int i = 0; i < curMaxPlayers; i++) {
     GameKeeper::Player *p = GameKeeper::Player::getPlayerByIndex(i);
@@ -3281,7 +3294,7 @@ bool checkSpam(char* message, GameKeeper::Player* playerData, int t)
 {
   PlayerInfo &player = playerData->player;
   const std::string &oldMsg = player.getLastMsg();
-  float dt = TimeKeeper::getCurrent() - player.getLastMsgTime();
+  float dt = (float)(TimeKeeper::getCurrent() - player.getLastMsgTime());
 
   // don't consider whitespace
   std::string newMsg = TextUtils::no_whitespace(message);
@@ -4714,7 +4727,7 @@ int main(int argc, char **argv)
 
     // see if game time ran out or if we are paused
     if (!gameOver && countdownActive && clOptions->timeLimit > 0.0f) {
-      float newTimeElapsed = tm - gameStartTime;
+      float newTimeElapsed = (float)(tm - gameStartTime);
       float timeLeft = clOptions->timeLimit - newTimeElapsed;
       if (timeLeft <= 0.0f) {
         timeLeft = 0.0f;
@@ -4736,7 +4749,7 @@ int main(int argc, char **argv)
         // resumed
         gameStartTime += (tm - countdownPauseStart);
         countdownPauseStart = TimeKeeper::getNullTime ();
-        newTimeElapsed = tm - gameStartTime;
+        newTimeElapsed = (float)(tm - gameStartTime);
         timeLeft = clOptions->timeLimit - newTimeElapsed;
         void *buf, *bufStart = getDirectMessageBuffer ();
         buf = nboPackInt (bufStart, (int32_t) timeLeft);

@@ -43,6 +43,10 @@ class CustomWeapon : public WorldFileLocation {
     FlagType *type;
     float tilt;
     static TimeKeeper sync;
+
+		bool eventTrigerd;
+		bool teamCapTriger;
+		int	 capTeam;
 };
 
 #endif  /* __CUSTOMWEAPON_H__ */

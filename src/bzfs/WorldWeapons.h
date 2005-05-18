@@ -27,6 +27,8 @@
 #include "Flag.h"
 #include "TimeKeeper.h"
 
+#include "WorldEventManager.h"
+
 /** WorldWeapons is a container class that holds weapons
  */
 class WorldWeapons
@@ -64,6 +66,22 @@ private:
   WorldWeapons( const WorldWeapons &w);
   WorldWeapons& operator=(const WorldWeapons &w) const;
 };
+
+class WorldWeaponGlobalEventHandaler : public BaseEventHandaler
+{
+public:
+	WorldWeaponGlobalEventHandaler(FlagType *type, const float *origin,float direction, float tilt);
+	virtual ~WorldWeaponGlobalEventHandaler();
+
+	virtual void process ( BaseEventData *eventData );
+
+protected:
+	FlagType	*type;
+	float		origin[3];
+	float		direction;
+	float		tilt;
+};
+
 
 #endif
 

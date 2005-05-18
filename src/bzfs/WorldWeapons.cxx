@@ -67,6 +67,30 @@ float WorldWeapons::nextTime ()
   return (nextShot - TimeKeeper::getCurrent());
 }
 
+int fireWorldWep ( FlagType* type, float lifetime, PlayerId player, float *pos, float tilt, float direction, int shotID, float dt )
+{
+	void *buf, *bufStart = getDirectMessageBuffer();
+
+	FiringInfo firingInfo;
+	firingInfo.flagType = type;
+	firingInfo.lifetime = lifetime;
+	firingInfo.shot.player = player;
+	memmove(firingInfo.shot.pos, pos, 3 * sizeof(float));
+	float shotSpeed = BZDB.eval(StateDatabase::BZDB_SHOTSPEED);
+	const float tiltFactor = cosf(tilt);
+	firingInfo.shot.vel[0] = shotSpeed * tiltFactor * cosf(direction);
+	firingInfo.shot.vel[1] = shotSpeed * tiltFactor * sinf(direction);
+	firingInfo.shot.vel[2] = shotSpeed * sinf(tilt);
+	firingInfo.shot.id = shotID;
+	firingInfo.shot.dt = dt;
+
+	buf = firingInfo.pack(bufStart);
+
+	if (BZDB.isTrue(StateDatabase::BZDB_WEAPONS)) {
+		broadcastMessage(MsgShotBegin, (char *)buf - (char *)bufStart, bufStart);
+	}
+	return shotID;
+}
 
 void WorldWeapons::fire()
 {
@@ -77,28 +101,12 @@ void WorldWeapons::fire()
     Weapon *w = *it;
     if (w->nextTime <= nowTime) {
 
-      void *buf, *bufStart = getDirectMessageBuffer();
 
-      FiringInfo firingInfo;
-      firingInfo.flagType = (FlagType*)w->type;
-      firingInfo.lifetime = BZDB.eval(StateDatabase::BZDB_RELOADTIME);
-      firingInfo.shot.player = ServerPlayer;
-      memmove(firingInfo.shot.pos, w->origin, 3 * sizeof(float));
-      float shotSpeed = BZDB.eval(StateDatabase::BZDB_SHOTSPEED);
-      const float tiltFactor = cosf(w->tilt);
-      firingInfo.shot.vel[0] = shotSpeed * tiltFactor * cosf(w->direction);
-      firingInfo.shot.vel[1] = shotSpeed * tiltFactor * sinf(w->direction);
-      firingInfo.shot.vel[2] = shotSpeed * sinf(w->tilt);
-      firingInfo.shot.id = worldShotId++;
-      if (worldShotId > 30) { // Maximum of 30 world shots
-	    worldShotId = 0;
-      }
-      firingInfo.shot.dt = 0;
-      buf = firingInfo.pack(bufStart);
-
-      if (BZDB.isTrue(StateDatabase::BZDB_WEAPONS)) {
-	broadcastMessage(MsgShotBegin, (char *)buf - (char *)bufStart, bufStart);
-      }
+			fireWorldWep( (FlagType*)w->type,BZDB.eval(StateDatabase::BZDB_RELOADTIME),
+																	ServerPlayer,w->origin,w->tilt,w->direction,
+																	worldShotId++,0);
+      if (worldShotId > 30) // Maximum of 30 world shots
+				worldShotId = 0;
 
       //Set up timer for next shot, and eat any shots that have been missed
       while (w->nextTime <= nowTime) {
@@ -177,6 +185,30 @@ int WorldWeapons::packSize(void) const
   }
 
   return fullSize;
+}
+
+//----------WorldWeaponGlobalEventHandaler---------------------
+// where we do the world weapon handaling for event based shots since they are not realy done by the "world"
+WorldWeaponGlobalEventHandaler::WorldWeaponGlobalEventHandaler(FlagType *_type, const float *_origin, float _direction, float _tilt)
+{
+	type = _type;
+	if ( _origin)
+		memcpy(origin,_origin,sizeof(float)*3);
+	else
+		origin[0] = origin[1] = origin[2] = 0.0f;
+
+	direction = _direction;
+	tilt = _tilt;
+}
+
+WorldWeaponGlobalEventHandaler::~WorldWeaponGlobalEventHandaler()
+{
+}
+
+void WorldWeaponGlobalEventHandaler::process ( BaseEventData *eventData )
+{
+		fireWorldWep( type,BZDB.eval(StateDatabase::BZDB_RELOADTIME),
+		ServerPlayer,origin,tilt,direction,0,0);
 }
 
 
