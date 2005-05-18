@@ -82,21 +82,21 @@ bool CustomWeapon::read(const char *cmd, std::istream& input) {
   }
   else if (strcmp(cmd, "trigger") == 0) 
   {
-	  std::string triggerType;
-	  input >> triggerType;
+	  std::string triggerName;
+	  input >> triggerName;
 
 	  triggerType = eNullEvent;
 
-	  TextUtils::tolower(triggerType);
-	  if ( triggerType == "oncap")
+	  TextUtils::tolower(triggerName);
+	  if ( triggerName == "oncap")
 		  triggerType = eCaptureEvent;
-	  else if ( triggerType == "onspawn")
+	  else if ( triggerName == "onspawn")
 		  triggerType = ePlayerSpawnEvent;
-	  else if ( triggerType == "ondie")
+	  else if ( triggerName == "ondie")
 		  triggerType = ePlayerDieEvent;
 	  else
 	  {
-		  std::cout << "weapon trigger type:" << triggerType << " unknown" << std::endl;
+		  std::cout << "weapon trigger type:" << triggerName << " unknown" << std::endl;
 	  }
   }
   else if (strcmp(cmd, "eventteam") == 0) 
