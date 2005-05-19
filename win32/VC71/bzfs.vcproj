@@ -303,6 +303,9 @@ copy ..\..\src\bzfs\debug\*.exe ..\..\*.exe
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath="..\..\src\bzfs\bzfsEvents.cxx">
+			</File>
+			<File
 				RelativePath="..\..\src\bzfs\CmdLineOptions.cxx">
 				<FileConfiguration
 					Name="Release|Win32">
@@ -953,6 +956,9 @@ copy ..\..\src\bzfs\debug\*.exe ..\..\*.exe
 			</File>
 			<File
 				RelativePath="..\..\src\bzfs\bzfs.h">
+			</File>
+			<File
+				RelativePath="..\..\src\bzfs\bzfsEvents.h">
 			</File>
 			<File
 				RelativePath="..\..\src\bzfs\BZWError.h">

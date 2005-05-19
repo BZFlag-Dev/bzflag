@@ -90,6 +90,7 @@ bzfs \- BZFlag game server
 [\fB\-timemanual\fR]
 [\fB\-tk\fR]
 [\fB\-tkkr \fIpercent\fR]
+[\fB\-trackplayhistory\fR]
 [\fB\-ts \fI[micros]\fR]
 [\fB\-userdb \fIfile\fR]
 [\fB\-vars \fIfile\fR]
@@ -459,6 +460,10 @@ stay alive.
 \fB\-tkkr \fIpercent\fR
 Kicks players whose team killing to normal kill ratio is greater than
 \fIpercent\fR [1\-100]. A start up grace period is given to players.
+.TP 
+.B \-trackplayhistory
+Has the server track players with good runs of kills and anounces them.
+Also anounces those players that stop the runs of good players.
 .TP 
 \fB\-ts \fR[\fImicros\fR]
 Include timestamp information in DEBUG output - useful for logging.

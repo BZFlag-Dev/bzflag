@@ -58,6 +58,9 @@
 #include "BaseBuilding.h"
 #include "AnsiCodes.h"
 
+#include "bzfsEvents.h"
+
+PlayHistoryTracker	historyTracker;
 
 // every ListServerReAddTime server add ourself to the list
 // server again.  this is in case the list server has reset
@@ -4377,6 +4380,15 @@ int main(int argc, char **argv)
     } else {
       DEBUG1("WARNING: unable to load the variable file\n");
     }
+  }
+
+  // see if we are doing playHistoryTracking
+  if ( clOptions->trackPlayHistory)
+  {
+	  worldEventManager.addEvent(ePlayerJoinEvent,-1,&historyTracker);
+	  worldEventManager.addEvent(ePlayerPartEvent,-1,&historyTracker);
+	  worldEventManager.addEvent(ePlayerSpawnEvent,-1,&historyTracker);
+	  worldEventManager.addEvent(ePlayerDieEvent,-1,&historyTracker);
   }
 
   // loading lag thresholds

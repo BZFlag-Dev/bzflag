@@ -135,6 +135,7 @@ const char *usageString =
 "[-timemanual] "
 "[-tk] "
 "[-tkkr <percent>] "
+"[-trackplayhistory] "
 "[-ts [micros]] "
 "[-userdb <user permissions file>] "
 "[-vars <filename>] "
@@ -225,6 +226,7 @@ const char *extraUsageString =
 "\t-timemanual: countdown for timed games is started with /countdown\n"
 "\t-tk: player does not die when killing a teammate\n"
 "\t-tkkr: team-kills-to-wins percentage (1-100) for kicking tk-ing players\n"
+"\t-trackplayhistory: have the server check for players who do well and anounce them\n"
 "\t-ts [micros]: timestamp all console output, [micros] to include microseconds\n"
 "\t-userdb: file to read for user access permissions\n"
 "\t-vars: file to read for worlds configuration variables\n"
@@ -1064,7 +1066,9 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
 	options.teamKillerKickRatio = 0;
 	std::cerr << "disabling team killer kick ratio";
       }
-    } else if (strcmp(argv[i], "-ts") == 0) {
+	} else if (strcmp(argv[i], "-trackplayhistory") == 0) {
+		options.trackPlayHistory = true;
+	} else if (strcmp(argv[i], "-ts") == 0) {
       // timestamp output
       options.timestampLog = true;
       // if there is an argument following, see if it is 'micros'
