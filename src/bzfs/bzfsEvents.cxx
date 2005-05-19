@@ -91,12 +91,14 @@ void PlayHistoryTracker::process ( BaseEventData *eventData )
 
 					std::string message;
 					
-					if ( record.spreeTotal > 5 )
+					if ( record.spreeTotal == 5 )
 						message = record.callsign + std::string(" is on a Rampage!");
-					if ( record.spreeTotal > 10 )
+					if ( record.spreeTotal == 10 )
 						message = record.callsign + std::string(" is on a Killing Spree!");
-					if ( record.spreeTotal > 20 )
+					if ( record.spreeTotal == 20 )
 						message = record.callsign + std::string(" is Unstoppable!!");
+					if ( record.spreeTotal > 20 && record.spreeTotal%5 == 0 )
+						message = record.callsign + std::string("'s continues rage");
 					
 					if (message.size())
 						sendMessage(ServerPlayer, AllPlayers, message.c_str());
