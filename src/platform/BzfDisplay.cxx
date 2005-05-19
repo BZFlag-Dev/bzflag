@@ -160,7 +160,7 @@ void			BzfDisplay::initResolutions(ResInfo** _resolutions,
 
 void BzfDisplay::setFullScreenFormat(int index) {
   modeIndex = index;
-};
+}
 
 // Local Variables: ***
 // mode:C++ ***

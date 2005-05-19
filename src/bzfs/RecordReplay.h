@@ -45,7 +45,7 @@ namespace Record {
 			 uint16_t mode = RealPacket);
 
   extern void sendHelp (int playerIndex);
-};
+}
 
 namespace Replay {
   extern bool init (); // must be done before any players join
@@ -65,7 +65,7 @@ namespace Replay {
   extern bool sendPackets ();
 
   extern void sendHelp (int playerIndex);
-};
+}
 
 // Some notes:
 //

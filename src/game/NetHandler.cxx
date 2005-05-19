@@ -490,11 +490,11 @@ RxStatus NetHandler::receive(size_t length) {
     returnValue = ReadDiscon;
   }
   return returnValue;
-};
+}
 
 void *NetHandler::getTcpBuffer() {
   return tcpmsg;
-};
+}
 
 void NetHandler::flushUDP()
 {
@@ -638,7 +638,7 @@ void NetHandler::getPlayerList(char *list) {
 	  getHostname() ? ")" : "",
 	  udpin ? " udp" : "",
 	  udpout ? "+" : "");
-};
+}
 
 const char *NetHandler::getTargetIP() {
   return peer.getDotNotation().c_str();

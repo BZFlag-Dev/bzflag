@@ -225,7 +225,7 @@ void ActionBinding::associate(std::string key,
   bindingTable.insert(BindingTable::value_type(key, action));
   if (keyBind)
     bind(action, key);
-};
+}
 
 void ActionBinding::deassociate(std::string action) {
   BindingTable::iterator index, next;
@@ -239,7 +239,7 @@ void ActionBinding::deassociate(std::string action) {
       bindingTable.erase(index);
     }
   }
-};
+}
 
 void ActionBinding::bind(std::string action, std::string key) {
   PressStatusBind statusBind = wayToBindActions[action];

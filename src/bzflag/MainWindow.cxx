@@ -293,7 +293,7 @@ void		    MainWindow::setJoyYAxis(const std::string axis)
 
 void			MainWindow::initJoystick(std::string &joystickName) {
   joystick->initJoystick(joystickName.c_str());
-};
+}
 
 // Local Variables: ***
 // mode:C++ ***

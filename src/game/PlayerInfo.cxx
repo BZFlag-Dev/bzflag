@@ -50,31 +50,31 @@ void PlayerInfo::resetPlayer(bool ctf) {
 
 void PlayerInfo::setRestartOnBase(bool on) {
   restartOnBase = on;
-};
+}
 
 bool PlayerInfo::shouldRestartAtBase() {
   return restartOnBase;
-};
+}
 
 void PlayerInfo::signingOn() {
   state = PlayerDead;
-};
+}
 
 void PlayerInfo::setAlive() {
   state = PlayerAlive;
   paused = false;
   flag = -1;
-};
+}
 
 void PlayerInfo::setDead() {
   state = PlayerDead;
-};
+}
 
 void *PlayerInfo::packUpdate(void *buf) {
   buf = nboPackUShort(buf, uint16_t(type));
   buf = nboPackUShort(buf, uint16_t(team));
   return buf;
-};
+}
 
 void *PlayerInfo::packId(void *buf) {
   buf = nboPackString(buf, callSign, CallSignLen);
@@ -124,11 +124,11 @@ bool PlayerInfo::unpackEnter(void *buf, uint16_t &rejectCode, char *rejectMsg)
     return false;
   }
   return true;
-};
+}
 
 const char *PlayerInfo::getCallSign() const {
   return callSign;
-};
+}
 
 bool PlayerInfo::isCallSignReadable() {
   // callsign readability filter, make sure there are more alphanum than non
@@ -182,11 +182,11 @@ bool PlayerInfo::isCallSignReadable() {
   if (!readable)
     errorString = "Callsign rejected. Please use mostly letters and numbers.";
   return readable;
-};
+}
 
 const char *PlayerInfo::getEMail() const {
   return email;
-};
+}
 
 void PlayerInfo::cleanEMail() {
   // strip leading whitespace from email
@@ -207,7 +207,7 @@ void PlayerInfo::cleanEMail() {
   while (isspace(*--tp)) {
     *tp=0;
   }
-};
+}
 
 bool PlayerInfo::isEMailReadable() {
   // email/"team" readability filter, make sure there are more
@@ -221,63 +221,63 @@ bool PlayerInfo::isEMailReadable() {
   } while (*++sp);
   int emaillen = (int)strlen(email);
   return (emaillen <= 4) || (((float)emailAlnumCount / (float)emaillen) > 0.5);
-};
+}
 
 const char *PlayerInfo::getToken() const {
   return token;
-};
+}
 
 void PlayerInfo::clearToken() {
   token[0] = '\0';
-};
+}
 
 void *PlayerInfo::packVirtualFlagCapture(void *buf) {
   buf = nboPackUShort(buf, uint16_t(int(team) - 1));
   buf = nboPackUShort(buf, uint16_t(1 + (int(team) % 4)));
   return buf;
-};
+}
 
 bool PlayerInfo::isTeam(TeamColor _team) const {
   return team == _team;
-};
+}
 
 bool PlayerInfo::isObserver() const {
   return team == ObserverTeam;
-};
+}
 
 TeamColor PlayerInfo::getTeam() {
   return team;
-};
+}
 
 void PlayerInfo::setTeam(TeamColor _team) {
   team = _team;
-};
+}
 
 void PlayerInfo::wasARabbit() {
   team = RogueTeam;
   wasRabbit = true;
-};
+}
 
 void PlayerInfo::wasNotARabbit() {
   wasRabbit = false;
-};
+}
 
 void PlayerInfo::resetFlag() {
   flag = -1;
   lastFlagDropTime = now;
-};
+}
 
 void PlayerInfo::setFlag(int _flag) {
   flag = _flag;
-};
+}
 
 bool PlayerInfo::isFlagTransitSafe() {
   return now - lastFlagDropTime >= 2.0f;
-};
+}
 
 const char *PlayerInfo::getClientVersion() {
   return clientVersion;
-};
+}
 
 std::string PlayerInfo::getIdleStat() {
   std::string reply;
@@ -289,22 +289,22 @@ std::string PlayerInfo::getIdleStat() {
     }
   }
   return reply;
-};
+}
 
 bool PlayerInfo::canBeRabbit(bool relaxing) {
   if (paused || notResponding || (team == ObserverTeam))
     return false;
   return relaxing ? (state > PlayerInLimbo) : (state == PlayerAlive);
-};
+}
 
 void PlayerInfo::setPaused(bool _paused) {
   paused = _paused;
   pausedSince = now;
-};
+}
 
 void PlayerInfo::setAutoPilot(bool _autopilot) {
   autopilot = _autopilot;
-};
+}
 
 bool PlayerInfo::isTooMuchIdling(float kickThresh) {
   bool idling = false;
@@ -322,7 +322,7 @@ bool PlayerInfo::isTooMuchIdling(float kickThresh) {
     }
   }
   return idling;
-};
+}
 
 bool PlayerInfo::hasStartedToNotRespond() {
   float notRespondingTime = BZDB.eval(StateDatabase::BZDB_NOTRESPONDINGTIME);
@@ -339,21 +339,21 @@ bool PlayerInfo::hasStartedToNotRespond() {
 void PlayerInfo::hasSent(char message[]) {
   lastmsg = now;
   DEBUG1("Player %s [%d]: %s\n", callSign, playerIndex, message);
-};
+}
 
 bool PlayerInfo::hasPlayedEarly() {
   bool returnValue = playedEarly;
   playedEarly      = false;
   return returnValue;
-};
+}
 
 void PlayerInfo::setPlayedEarly(bool early) {
   playedEarly = early;
-};
+}
 
 void PlayerInfo::updateIdleTime() {
   lastupdate = now;
-};
+}
 
 void	PlayerInfo::setReplayState(PlayerReplayState _state) {
   replayState = _state;

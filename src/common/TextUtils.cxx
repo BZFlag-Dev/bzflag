@@ -288,7 +288,7 @@ namespace TextUtils
     }
     return position;
   }
-};
+}
 
 // Local Variables: ***
 // mode: C++ ***

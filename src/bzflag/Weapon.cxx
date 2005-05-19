@@ -47,7 +47,7 @@ void* Weapon::unpack(void* buf)
   }
 
   return buf;
-};
+}
 
 
 // Local Variables: ***

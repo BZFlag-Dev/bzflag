@@ -190,7 +190,7 @@ void SDLMedia::fillAudioWrapper (void * userdata, Uint8 * stream, int len)
 {
   SDLMedia * me = (SDLMedia *) userdata;
   me->fillAudio(stream, len);
-};
+}
 
 void			SDLMedia::writeAudioFrames(
 				const float* samples, int numFrames)
@@ -233,7 +233,7 @@ void	SDLMedia::setDriver(std::string driverName) {
   strncpy(envAssign, envVar.c_str(), 255);
   envAssign[255]     = '\0';
   putenv(envAssign);
-};
+}
 
 // Setting Audio Device
 void	SDLMedia::setDevice(std::string deviceName) {
@@ -242,7 +242,7 @@ void	SDLMedia::setDevice(std::string deviceName) {
   strncpy(envAssign, envVar.c_str(), 255);
   envAssign[255]     = '\0';
   putenv(envAssign);
-};
+}
 
 float*	    SDLMedia::doReadSound(const std::string &filename, int &numFrames,
 				  int &rate) const

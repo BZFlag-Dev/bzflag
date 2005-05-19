@@ -399,7 +399,7 @@ bool			BzfMedia::doReadRLE(FILE* file,
 float*			BzfMedia::doReadSound(const std::string&, int&, int&) const
 {
   return NULL;
-};
+}
 #else
 float*			BzfMedia::doReadSound(const std::string& filename,
 				int& numFrames, int& rate) const
@@ -472,11 +472,11 @@ float*			BzfMedia::doReadSound(const std::string& filename,
 
 // Setting Audio Driver
 void	BzfMedia::setDriver(std::string) {
-};
+}
 
 // Setting Audio Device
 void	BzfMedia::setDevice(std::string) {
-};
+}
 
 void BzfMedia::audioDriver(std::string& driverName)
 {

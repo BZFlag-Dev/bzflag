@@ -848,7 +848,7 @@ void TrackRenderNode::render()
     drawSmoke(*te);
   }
   return;
-};
+}
 
 
 //

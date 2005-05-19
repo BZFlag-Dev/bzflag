@@ -100,13 +100,13 @@ SDLDisplay::SDLDisplay() : fullScreen(false), base_width(640),
 SDLDisplay::~SDLDisplay()
 {
   SDL_QuitSubSystem(SDL_INIT_VIDEO);
-};
+}
 
 
 bool SDLDisplay::isEventPending() const
 {
   return (SDL_PollEvent(NULL) == 1);
-};
+}
 
 
 bool SDLDisplay::getEvent(BzfEvent& _event) const
@@ -116,7 +116,7 @@ bool SDLDisplay::getEvent(BzfEvent& _event) const
     return false;
 
   return setupEvent(_event, event);
-};
+}
 
 
 bool SDLDisplay::peekEvent(BzfEvent& _event) const
@@ -295,7 +295,7 @@ bool SDLDisplay::setupEvent(BzfEvent& _event, const SDL_Event& event) const
     return false;
   }
   return true;
-};
+}
 
 
 void SDLDisplay::getModState(bool &shift, bool &ctrl, bool &alt)
@@ -528,7 +528,7 @@ bool SDLDisplay::createWindow() {
     OpenGLGState::initContext();
     return true;
   }
-};
+}
 
 void SDLDisplay::setFullscreen(bool on) {
   fullScreen = on;
@@ -556,7 +556,7 @@ void SDLDisplay::getWindowSize(int& width, int& height) {
     width  = base_width;
     height = base_height;
   }
-};
+}
 
 void SDLDisplay::enableGrabMouse(bool on) {
   canGrabMouse = on;
@@ -568,7 +568,7 @@ void SDLDisplay::enableGrabMouse(bool on) {
 
 void SDLVisual::setDoubleBuffer(bool on) {
   SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, on ? 1 : 0);
-};
+}
 
 void SDLVisual::setRGBA(int minRed, int minGreen,
 			int minBlue, int minAlpha) {
@@ -576,53 +576,53 @@ void SDLVisual::setRGBA(int minRed, int minGreen,
   SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, minGreen);
   SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE,  minBlue);
   SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, minAlpha);
-};
+}
 
 void SDLVisual::setDepth(int minDepth) {
   SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, minDepth);
-};
+}
 
 void SDLVisual::setStencil(int minDepth) {
   SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, minDepth);
-};
+}
 
 void SDLVisual::setStereo(bool on) {
   SDL_GL_SetAttribute(SDL_GL_STEREO, on ? 1 : 0);
-};
+}
 
 SDLWindow::SDLWindow(const SDLDisplay* _display, SDLVisual*)
   : BzfWindow(_display), x(-1), y(-1), hasGamma(true)
 {
-};
+}
 
 void SDLWindow::setTitle(const char * title) {
   SDL_WM_SetCaption(title, title);
-};
+}
 
 void SDLWindow::setFullscreen(bool on) {
   ((SDLDisplay *)getDisplay())->setFullscreen(on);
-};
+}
 
 void SDLWindow::iconify(void) {
   SDL_WM_IconifyWindow();
-};
+}
 
 void SDLWindow::warpMouse(int _x, int _y) {
   SDL_WarpMouse(_x, _y);
-};
+}
 
 void SDLWindow::getMouse(int& _x, int& _y) const {
   _x = mx;
   _y = my;
-};
+}
 
 void SDLWindow::setSize(int width, int height) {
   ((SDLDisplay *)getDisplay())->setWindowSize(width, height);
-};
+}
 
 void SDLWindow::getSize(int& width, int& height) const {
   ((SDLDisplay *)getDisplay())->getWindowSize(width, height);
-};
+}
 
 void SDLWindow::setGamma(float gamma) {
   int result = SDL_SetGamma(gamma, gamma, gamma);
@@ -630,7 +630,7 @@ void SDLWindow::setGamma(float gamma) {
     printf("Could not set Gamma: %s.\n", SDL_GetError());
     hasGamma = false;
   }
-};
+}
 
 // Code taken from SDL (not available through the headers)
 static float CalculateGammaFromRamp(Uint16 ramp[256]) {
@@ -670,26 +670,26 @@ float SDLWindow::getGamma() const {
     gamma = (red + green + blue) / 3.0;
   }
   return gamma;
-};
+}
 
 bool SDLWindow::hasGammaControl() const {
   return hasGamma;
-};
+}
 
 void SDLWindow::swapBuffers() {
   SDL_GL_SwapBuffers();
-};
+}
 
 bool SDLWindow::create(void) {
   if (!((SDLDisplay *)getDisplay())->createWindow()) {
     return false;
   }
   return true;
-};
+}
 
 void SDLWindow::enableGrabMouse(bool on) {
   ((SDLDisplay *)getDisplay())->enableGrabMouse(on);
-};
+}
 
 #endif
 

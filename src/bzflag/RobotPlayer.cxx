@@ -387,7 +387,7 @@ void		    RobotPlayer::setObstacleList(std::vector<BzfRegion*>*
 						     _obstacleList)
 {
   obstacleList = _obstacleList;
-};
+}
 
 const Player*		RobotPlayer::getTarget() const
 {

@@ -21,7 +21,7 @@ namespace RoofTops {
 
   // returns 0.0f if there are no buildings
   float getTopHeight(float x, float y, float maxHeight);
-};
+}
 
 
 #endif // BZF_ROOF_TOPS_H

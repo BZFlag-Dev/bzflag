@@ -28,7 +28,7 @@ EntryZone::EntryZone()
   teams.clear();
   safety.clear();
   return;
-};
+}
 
 
 void* EntryZone::unpack(void* buf)
@@ -60,7 +60,7 @@ void* EntryZone::unpack(void* buf)
   }
 
   return buf;
-};
+}
 
 
 // Local Variables: ***
