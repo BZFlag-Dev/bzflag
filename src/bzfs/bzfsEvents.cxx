@@ -58,7 +58,7 @@ void PlayHistoryTracker::process ( BaseEventData *eventData )
 				PlayerDieEventData	*deathRecord = (PlayerDieEventData*)eventData;
 				
 				GameKeeper::Player *killerData = GameKeeper::Player::getPlayerByIndex(deathRecord->killerID);
-				GameKeeper::Player *victimData = GameKeeper::Player::getPlayerByIndex(deathRecord->playerID);
+				//GameKeeper::Player *victimData = GameKeeper::Player::getPlayerByIndex(deathRecord->playerID);
 
 				// clear out the dude who got shot, since he won't be having any SPREEs
 				if (playerList.find(deathRecord->playerID) != playerList.end())
@@ -66,11 +66,11 @@ void PlayHistoryTracker::process ( BaseEventData *eventData )
 					trPlayerHistoryRecord	&record = playerList.find(deathRecord->playerID)->second;
 					std::string message;
 					if ( record.spreeTotal >= 5 && record.spreeTotal < 10 )
-						message = record.callsign + "'s rampage was stoped by " + killerData->player.getCallSign();
+						message = record.callsign + std::string("'s rampage was stoped by ") + std::string(killerData->player.getCallSign());
 					if ( record.spreeTotal >= 10 && record.spreeTotal < 20 )
-						message = record.callsign + "'s killing spree was halted by " + killerData->player.getCallSign();
+						message = record.callsign + std::string("'s killing spree was halted by ") + std::string(killerData->player.getCallSign());
 					if ( record.spreeTotal >= 20 )
-						message = "The unstopable reign of " + record.callsign + " was ended by " + killerData->player.getCallSign();
+						message = std::string("The unstopable reign of ") + record.callsign + std::string(" was ended by ") + std::string(killerData->player.getCallSign());
 
 					if (message.size())
 						sendMessage(ServerPlayer, AllPlayers, message.c_str());
@@ -92,11 +92,11 @@ void PlayHistoryTracker::process ( BaseEventData *eventData )
 					std::string message;
 					
 					if ( record.spreeTotal > 5 )
-						message = record.callsign + " is on a Rampage!";
+						message = record.callsign + std::string(" is on a Rampage!");
 					if ( record.spreeTotal > 10 )
-						message = record.callsign + " is on a Killing Spree!";
+						message = record.callsign + std::string(" is on a Killing Spree!");
 					if ( record.spreeTotal > 20 )
-						message = record.callsign + " is Unstoppable!!";
+						message = record.callsign + std::string(" is Unstoppable!!");
 					
 					if (message.size())
 						sendMessage(ServerPlayer, AllPlayers, message.c_str());
