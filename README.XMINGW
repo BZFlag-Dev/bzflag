@@ -84,7 +84,7 @@ cp ~/SDL-1.2.8/lib/libSDL.a /opt/xmingw/i386-mingw32msvc/lib/
 For version 1.2.8 you need to change one line of the include file SDL_audio.h
 in /opt/xming32/i386-mingw32msvc/include/SDL:
 
-from 
+from
 
 void (SDLCALL *filters[10])(struct SDL_AudioCVT *cvt, Uint16 format);
 
