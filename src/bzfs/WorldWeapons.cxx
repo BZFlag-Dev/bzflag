@@ -187,9 +187,9 @@ int WorldWeapons::packSize(void) const
   return fullSize;
 }
 
-//----------WorldWeaponGlobalEventHandaler---------------------
-// where we do the world weapon handaling for event based shots since they are not realy done by the "world"
-WorldWeaponGlobalEventHandaler::WorldWeaponGlobalEventHandaler(FlagType *_type, const float *_origin, float _direction, float _tilt)
+//----------WorldWeaponGlobalEventHandler---------------------
+// where we do the world weapon handling for event based shots since they are not realy done by the "world"
+WorldWeaponGlobalEventHandler::WorldWeaponGlobalEventHandler(FlagType *_type, const float *_origin, float _direction, float _tilt)
 {
 	type = _type;
 	if ( _origin)
@@ -201,11 +201,11 @@ WorldWeaponGlobalEventHandaler::WorldWeaponGlobalEventHandaler(FlagType *_type, 
 	tilt = _tilt;
 }
 
-WorldWeaponGlobalEventHandaler::~WorldWeaponGlobalEventHandaler()
+WorldWeaponGlobalEventHandler::~WorldWeaponGlobalEventHandler()
 {
 }
 
-void WorldWeaponGlobalEventHandaler::process (BaseEventData *eventData)
+void WorldWeaponGlobalEventHandler::process (BaseEventData *eventData)
 {
 	if (eventData->eventType != eCaptureEvent)
 		return;

@@ -58,7 +58,7 @@ void CustomBase::writeToGroupDef(GroupDefinition *groupdef) const
   groupdef->addObstacle(base);
 
 	if (triggerWorldWep)
-		worldEventManager.addEvent(eCaptureEvent,color,new WorldWeaponGlobalEventHandaler(Flag::getDescFromAbbreviation(worldWepType.c_str()), pos, rotation, 0));
+		worldEventManager.addEvent(eCaptureEvent,color,new WorldWeaponGlobalEventHandler(Flag::getDescFromAbbreviation(worldWepType.c_str()), pos, rotation, 0));
 }
 
 // Local variables: ***

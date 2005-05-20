@@ -2778,10 +2778,10 @@ void parseServerCommand(const char *message, int t)
   }
 }
 
-void registerCustomSlashCommand(std::string command, CustomSlashCommandHandaler* handaler)
+void registerCustomSlashCommand(std::string command, CustomSlashCommandHandler* handler)
 {
-  if (handaler)
-    customCommands[TextUtils::tolower(command)] = handaler;
+  if (handler)
+    customCommands[TextUtils::tolower(command)] = handler;
 }
 
 void removeCustomSlashCommand(std::string command)

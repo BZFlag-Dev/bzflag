@@ -36,12 +36,12 @@ BZF_API int bz_APIVersion ( void )
 	return BZ_API_VERSION;
 }
 
-BZF_API bool bz_registerEvent ( bz_teEventType eventType, int team, bz_EventHandaler* eventHandaler )
+BZF_API bool bz_registerEvent ( bz_teEventType eventType, int team, bz_EventHandler* eventHandler )
 {
-	if (!eventHandaler)
+	if (!eventHandler)
 		return false;
 	
-	worldEventManager.addEvent((teEventType)eventType,team,(BaseEventHandaler*)eventHandaler);
+	worldEventManager.addEvent((teEventType)eventType,team,(BaseEventHandler*)eventHandler);
 	return true;
 }
 
@@ -191,12 +191,12 @@ BZF_API bool bz_IPBanUser ( int playerIndex, const char* ip, int time, const cha
 	return true;
 }
 
-BZF_API bool bz_registerCustomSlashCommand ( const char* command, bz_CustomSlashCommandHandaler *handaler )
+BZF_API bool bz_registerCustomSlashCommand ( const char* command, bz_CustomSlashCommandHandler *handler )
 {
-	if (!command || !handaler)
+	if (!command || !handler)
 		return false;
 
-	registerCustomSlashCommand(std::string(command),(CustomSlashCommandHandaler*)handaler);
+	registerCustomSlashCommand(std::string(command),(CustomSlashCommandHandler*)handler);
 	return true;
 }
 

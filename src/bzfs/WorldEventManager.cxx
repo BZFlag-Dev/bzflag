@@ -174,7 +174,7 @@ WorldEventManager::~WorldEventManager()
 	}
 }
 
-void WorldEventManager::addEvent ( teEventType eventType, int team, BaseEventHandaler* theEvetnt )
+void WorldEventManager::addEvent ( teEventType eventType, int team, BaseEventHandler* theEvetnt )
 {
 	if (!theEvetnt)
 		return;
@@ -190,7 +190,7 @@ void WorldEventManager::addEvent ( teEventType eventType, int team, BaseEventHan
 	teamEvents->find(eventType)->second.push_back(theEvetnt);
 }
 
-void WorldEventManager::removeEvent ( teEventType eventType, int team, BaseEventHandaler* theEvetnt )
+void WorldEventManager::removeEvent ( teEventType eventType, int team, BaseEventHandler* theEvetnt )
 {
 	if (!theEvetnt)
 		return;
