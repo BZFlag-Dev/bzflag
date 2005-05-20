@@ -12,6 +12,8 @@
 
 #include "WorldEventManager.h"
 
+#include "bzfio.h"
+#include "common.h"
 #ifdef _WIN32
 
 #include <windows.h>
@@ -29,9 +31,14 @@ void loadPlugin ( std::string plugin, std::string config )
 		if (lpProc)
 		{
 			int ret =lpProc(config.c_str()); 
+			DEBUG1("Plugin:%s loaded",plugin.c_str());
 			vLibHandles.push_back(hLib);
 		}
+		else
+			DEBUG1("Plugin:%s found but does not contain bz_Load method",plugin.c_str());
 	}
+	else
+		DEBUG1("Plugin:%s not found",plugin.c_str());
 }
 
 void unloadPlugins ( void )
@@ -41,11 +48,13 @@ void unloadPlugins ( void )
 	{
 		lpProc = (int (__cdecl *)(void))GetProcAddress(vLibHandles[i], "bz_Unload");
 		if (lpProc)
-		{
 			int ret =lpProc(); 
-		}
+		else
+			DEBUG1("Plugin does not contain bz_UnLoad method");
+
 		FreeLibrary(vLibHandles[i]);
 	}
+
 	vLibHandles.clear();
 }
 
@@ -63,11 +72,15 @@ void loadPlugin ( std::string plugin, std::string config )
 		lpProc = dlsym(hLib,"bz_Load");
 		if (lpProc)
 		{
-			int ret =(*lpProc)(config.c_str()); 
+			int ret =(*lpProc)(config.c_str());
+			DEBUG1("Plugin:%s loaded",plugin.c_str());
 			vLibHandles.push_back(hLib);
 		}
+		else
+			DEBUG1("Plugin:%s found but does not contain bz_Load method",plugin.c_str());
 	}
-
+	else
+		DEBUG1("Plugin:%s not found",plugin.c_str());
 }
 
 void unloadPlugins ( void )
@@ -77,9 +90,10 @@ void unloadPlugins ( void )
 	{
 		lpProc = dlsym(vLibHandles[i], "bz_Unload");
 		if (lpProc)
-		{
 			int ret =(*lpProc)(); 
-		}
+		else
+			DEBUG1("Plugin does not contain bz_UnLoad method");
+
 		dlClose(vLibHandles[i]);
 	}
 	vLibHandles.clear();

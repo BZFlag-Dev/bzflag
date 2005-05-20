@@ -16,6 +16,8 @@ DeathHandaler	deathHandaler;
 
 int bz_Load ( const char* commandLine )
 {
+	bz_debugMessage(3,"shockwaveDeath plugin called");
+
 	bz_registerEvent(bz_ePlayerDieEvent,BZ_ALL_USERS,&deathHandaler);
 	return 0;
 }
@@ -32,5 +34,5 @@ void DeathHandaler::process ( bz_EventData *eventData )
 
 	bz_PlayerDieEventData	*dieData = (bz_PlayerDieEventData*)eventData;
 
-	bz_fireWorldWep("SW",bz_getBZDBDouble("_reloadTime"),BZ_SERVER,dieData->pos,0,0,0,0);
+	bz_fireWorldWep("SW",(float)bz_getBZDBDouble("_reloadTime"),BZ_SERVER,dieData->pos,0,0,0,0.0f);
 }
