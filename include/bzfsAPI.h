@@ -24,8 +24,10 @@
 	#else
 		#define BZF_API __declspec( dllimport )
 	#endif
+	#define BZF_PLUGIN_CALL	
 #else
 	#define BZF_API extern "C"
+	#define BZF_PLUGIN_CALL extern "C"
 #endif
 
 // versioning

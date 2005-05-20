@@ -1,7 +1,7 @@
 
 # The flags needed to compile all
 # 
-CXXFLAGS = -fPIC -frtti -I../../src/bzfs -O
+CXXFLAGS = -fPIC -frtti -I../../include -O
 
 # we need to link in the dll handling library
 

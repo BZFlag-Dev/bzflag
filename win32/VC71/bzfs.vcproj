@@ -1116,7 +1116,7 @@ copy ..\..\src\bzfs\debug\*.exe ..\..\*.exe
 				RelativePath="..\..\src\bzfs\bzfsAPI.cxx">
 			</File>
 			<File
-				RelativePath="..\..\src\bzfs\bzfsAPI.h">
+				RelativePath="..\..\include\bzfsAPI.h">
 			</File>
 			<File
 				RelativePath="..\..\src\bzfs\bzfsPlugins.cxx">

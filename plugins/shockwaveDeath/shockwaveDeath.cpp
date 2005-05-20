@@ -14,7 +14,7 @@ public:
 
 DeathHandaler	deathHandaler;
 
-BZF_API int bz_Load ( const char* commandLine )
+BZF_PLUGIN_CALL int bz_Load ( const char* commandLine )
 {
 	bz_debugMessage(3,"shockwaveDeath plugin called");
 
@@ -22,7 +22,7 @@ BZF_API int bz_Load ( const char* commandLine )
 	return 0;
 }
 
-BZF_API int bz_Unload ( void )
+BZF_PLUGIN_CALL int bz_Unload ( void )
 {
 	return 0;
 }
