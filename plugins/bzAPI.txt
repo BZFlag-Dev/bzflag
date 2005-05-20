@@ -1,0 +1,85 @@
+//*****************************************************************************
+//***                             bzAPI.txt                                 ***
+//***                    Plug-in development for BZFlag                     ***
+//*****************************************************************************
+
+
+* This document:
+
+This document is a description of the bzflag plug-in system and it's associated
+API. It will atempt to explain how to make a plug-in, what you can do in a
+plug-in and what the basic API features are.
+
+* What is a plug-in
+
+A plug-in is a compiled code module that is loadable at runtime by the BZFlag
+game server (bzfs) that can change the way that the server runs. Since plug-ins
+are compiled Plug-ins need to be built on the platform they are to be run with.
+This means that a plug-in built for windows will not work on linux, and vice/
+versa. Plug-ins are writen in C++ as Dynamic Librarys, ether as a DLL on windows
+or a .so file on linux/OS X.
+
+* What can a plug-in do.
+
+Plugins can install event handalers for a number of events in bzfs. Events are
+actions that happen in the game, such as the capture of a team flag, or the death
+of a player. Plug-ins can then call API functions that can change the gamestate
+in response to the event, such as sending a text message, activating a world
+weapon, or kicking a player. All plug-in actions are event driven. A plugin is
+allways called first by the server in responce to an action.
+
+* What do I need to make a plug-in, and what do I need to know.
+
+To make a plug-in you will need to know at least C and should be familar with
+the C++ language. Many of the API calls and structures will use C++, but they 
+can be called in a C "style" if you wish. Since plug-ins are compiled code you
+will need a compiler for your OS and the knowledge of how to use it. The sample
+plugin has makefiles and Windows VC projects that you can use as a basis. You
+will also need the bzflag source code so that your code can have access to the
+functions that bzfs provides ( bzfsAPI.h ).
+
+
+
+//****************** plug-in entry points  ************************************
+
+There are 2 primary entry points into the plug-in. These are the 2 core
+functions that the plugin must implement. These are defined as such;
+
+int bz_Load ( const char* command );
+int bz_Unload ( void );
+
+bz_Load is called when the plug-in is first initalised. This is when the plug-in
+should register any event handalers that it wishes to use and initalise any one
+time startup data.
+
+bz_Unload is called when a plug-in is no longer need and will be shut down. This
+is most commonly called when bzfs is quiting. A plug-in should do any clean up
+in this callback.
+
+
+These will be the only 2 functions called by bzfs for non event actions.
+
+
+//****************** registering event handalers  *****************************
+
+A plugin is basicly useless if it can't react to events in game. To allow this
+a plugin needs to tell bzfs that it would like to listen for events. To do that
+the plugin will need to call the following function;
+
+bool bz_registerEvent ( bz_teEventType eventType, int team,
+                        bz_EventHandaler* eventHandaler );
+
+where eventType is one of the following enumerations;
+
+	bz_eCaptureEvent        // flag is captured in a CTF game
+	bz_ePlayerDieEvent      // a player gets killed
+	bz_ePlayerSpawnEvent    // a player joins as a tank
+	bz_eZoneEntryEvent      // a player enters a zone ( not implemented )
+	bz_eZoneExitEvent       // a player exits a zone ( not implemented )
+	bz_ePlayerJoinEvent     // a user joins the server ( player or observer )
+	bz_ePlayerPartEvent     // a user leaves the server ( player or observer )
+	bz_eChatMessageEvent    // a chat message is sent 
+    bz_eUnknownSlashCommand // a "/" command was issued but not handled
+
+
+*** write more here *************
