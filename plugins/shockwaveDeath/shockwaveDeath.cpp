@@ -32,5 +32,5 @@ void DeathHandaler::process ( bz_EventData *eventData )
 
 	bz_PlayerDieEventData	*dieData = (bz_PlayerDieEventData*)eventData;
 
-	bz_fireWorldWep("SW",10,BZ_SERVER,dieData->pos,0,0,0,0);
+	bz_fireWorldWep("SW",bz_getBZDBDouble("_reloadTime"),BZ_SERVER,dieData->pos,0,0,0,0);
 }
