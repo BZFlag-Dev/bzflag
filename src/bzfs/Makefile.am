@@ -5,11 +5,17 @@ MAINTAINERCLEANFILES = \
 
 AM_CPPFLAGS = -I$(top_srcdir)/include $(CURL_CFLAGS)
 
+AM_LDFLAGS = -rdynamic
+
 bzfs_SOURCES = \
 	AccessControlList.cxx \
 	AccessControlList.h \
 	Authentication.cxx	\
 	Authentication.h	\
+	bzfsAPI.h	\
+	bzfsAPI.cxx	\
+	bzfsPlugins.h	\
+	bzfsPlugins.cxx	\
 	bzfsEvents.h	\
 	bzfsEvents.cxx	\
 	BZWError.cxx \
