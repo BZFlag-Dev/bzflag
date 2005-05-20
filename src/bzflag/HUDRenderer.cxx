@@ -1777,7 +1777,7 @@ void			HUDRenderer::renderShots()
   }
   glDisable(GL_BLEND);
   
-  delete factors;
+  delete[] factors;
 }
 
 // Local Variables: ***
