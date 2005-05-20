@@ -44,18 +44,45 @@ void unloadPlugins ( void )
 		{
 			int ret =lpProc(); 
 		}
+		FreeLibrary(vLibHandles[i]);
 	}
 	vLibHandles.clear();
 }
 
 #else
-// the other OSs need some DLL type loving!!!!
+
+std::vector<void*>	vLibHandles;
+
 void loadPlugin ( std::string plugin, std::string config )
 {
+	int (*lpProc)(const char*);
+
+	void*	hLib = dlopen(plugin.c_str(),RTLD_LAZY);
+	if (hLib)
+	{
+		lpProc = dlsym(hLib,"bz_Load");
+		if (lpProc)
+		{
+			int ret =(*lpProc)(config.c_str()); 
+			vLibHandles.push_back(hLib);
+		}
+	}
+
 }
 
 void unloadPlugins ( void )
 {
+	int (*lpProc)(void);
+	for (unsigned int i = 0; i < vLibHandles.size();i++)
+	{
+		lpProc = dlsym(vLibHandles[i], "bz_Unload");
+		if (lpProc)
+		{
+			int ret =(*lpProc)(); 
+		}
+		dlClose(vLibHandles[i]);
+	}
+	vLibHandles.clear();
 }
 #endif 
 
