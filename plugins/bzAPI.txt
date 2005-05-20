@@ -21,12 +21,12 @@ or a .so file on linux/OS X.
 
 * What can a plug-in do.
 
-Plugins can install event handalers for a number of events in bzfs. Events are
+Plugins can install event handlers for a number of events in bzfs. Events are
 actions that happen in the game, such as the capture of a team flag, or the death
 of a player. Plug-ins can then call API functions that can change the gamestate
 in response to the event, such as sending a text message, activating a world
 weapon, or kicking a player. All plug-in actions are event driven. A plugin is
-allways called first by the server in responce to an action.
+allways called first by the server in response to an action.
 
 * What do I need to make a plug-in, and what do I need to know.
 
@@ -48,11 +48,11 @@ functions that the plugin must implement. These are defined as such;
 BZF_PLUGIN_CALL int bz_Load ( const char* command );
 BZF_PLUGIN_CALL int bz_Unload ( void );
 
-bz_Load is called when the plug-in is first initalised. This is when the plug-in
-should register any event handalers that it wishes to use and initalise any one
-time startup data.
+bz_Load is called when the plug-in is first initialized. This is when the plug-in
+should register any event handlers that it wishes to use and initialize any "one
+time" startup data.
 
-bz_Unload is called when a plug-in is no longer need and will be shut down. This
+bz_Unload is called when a plug-in is no longer needed and will be shut down. This
 is most commonly called when bzfs is quiting. A plug-in should do any clean up
 in this callback.
 
@@ -65,7 +65,7 @@ These will be the only 2 functions called by bzfs for non event actions.
 
 //****************** registering event handalers  *****************************
 
-A plugin is basicly useless if it can't react to events in game. To allow this
+A plugin is basically useless if it can't react to events in game. To allow this
 a plugin needs to tell bzfs that it would like to listen for events. To do that
 the plugin will need to call the following function;
 
@@ -88,22 +88,22 @@ where eventType is one of the following enumerations;
 team is an integer that defines a team filter for the event. The value of; BZ_ALL_USERS indicates
 that the event will be called every time it happens, regardless of team.
 
-eventHandaler is a pointer to a event handaler class. Plug-ins should derive there own versions
-of the event handaler class from bz_EventHandaler and pass this pointer in to the function.
+eventHandaler is a pointer to a event handler class. Plug-ins should derive their own versions
+of the event handler class from bz_EventHandaler and pass this pointer into the function.
 When the event happens the process function of the class will be called so that the plugin can
 perform any actions it desires.
 
-Event Handalers;
+Event Handlers;
 
-The event handaler is a pure virtual class. It does not perform any logic or actions, but simply
+The event handler is a pure virtual class. It does not perform any logic or actions, but simply
 provides a framework for a plugin to use. You need to derive your own version of an event
-handaler before you can use it, providing your own code in the "process" method.
+handler before you can use it, providing your own code in the "process" method.
 
 virtual void process ( bz_EventData *eventData );
 
 When the process method is called, the eventData will be a pointer to a data class. There 
-are a number of difrent data classes all derived from bz_EventData. The eventType member
-of the base class will tell you what type the data is. This allows for the same handaler to be used
+are a number of different data classes all derived from bz_EventData. The eventType member
+of the base class will tell you what type the data is. This allows for the same handler to be used
 for more then one type of event.
 
 The event data for event types are as follows, along with there associated data items.
@@ -112,7 +112,7 @@ Some events may share event data types
 bz_eCaptureEvent
 bz_CTFCaptureEventData
 {
-	int 	teamCaped;		// the team that had there flag capured
+	int 	teamCaped;		// the team that had there flag captured
 	int		teamCaping;		// the team that did the capturing
 	int		playerCaping;	// the player ID who did the capture
 	float 	pos[3];			// the last known position of the player
@@ -277,7 +277,7 @@ class that the plugin overides using the function.
 BZF_API bool bz_registerCustomSlashCommand ( const char* command, bz_CustomSlashCommandHandaler *handaler );
 
 
-the handaler pointer is to a class that has been derived from bz_CustomSlashCommandHandaler
+the handler pointer is to a class that has been derived from bz_CustomSlashCommandHandaler
 
 class bz_CustomSlashCommandHandaler
 {
@@ -286,7 +286,7 @@ public:
 	virtual bool handle ( int playerID, std::string command, std::string message ) = 0;
 };
 
-When a player issues the command, the handaler will have it's handle method called.
+When a player issues the command, the handler will have it's handle method called.
 And it can then do what ever it needs.
 
 when a command is no longer needed it can be removed with.
