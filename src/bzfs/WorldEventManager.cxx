@@ -120,6 +120,7 @@ WorldEventManager::~WorldEventManager()
 			{
 				if ((*itr) && (*itr)->autoDelete())
 					delete (*itr++);
+				*itr = NULL;
 			}
 			eventItr++;
 		}
