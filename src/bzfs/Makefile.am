@@ -3,9 +3,9 @@ bin_PROGRAMS = bzfs
 MAINTAINERCLEANFILES = \
 	Makefile.in
 
-AM_CPPFLAGS = -I$(top_srcdir)/include $(CURL_CFLAGS)
+AM_CPPFLAGS = -I$(top_srcdir)/include $(CURL_CFLAGS) -DINSIDE_BZ
 
-AM_LDFLAGS = -rdynamic
+bzfs_LDFLAGS = -rdynamic
 
 bzfs_SOURCES = \
 	AccessControlList.cxx \
