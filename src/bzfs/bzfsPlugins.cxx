@@ -60,6 +60,7 @@ void unloadPlugins ( void )
 
 #else
 
+#include <dlfcn.h>
 std::vector<void*>	vLibHandles;
 
 void loadPlugin ( std::string plugin, std::string config )
