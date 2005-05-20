@@ -2790,7 +2790,7 @@ void removeCustomSlashCommand ( std::string command )
 {
 	tmCustomSlashCommandMap::iterator itr = customCommands.find(TextUtils::tolower(command));
 	if (itr != customCommands.end())
-		itr = customCommands.erase(itr);
+		customCommands.erase(itr);
 }
 
 
