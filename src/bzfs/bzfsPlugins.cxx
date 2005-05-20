@@ -10,8 +10,8 @@
 * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 */
 
-#include "WorldEventManager.h"
-
+#include <string>
+#include <vector>
 #include "bzfio.h"
 #include "common.h"
 #ifdef _WIN32
