@@ -31,14 +31,14 @@ void loadPlugin ( std::string plugin, std::string config )
 		if (lpProc)
 		{
 			int ret =lpProc(config.c_str()); 
-			DEBUG1("Plugin:%s loaded",plugin.c_str());
+			DEBUG1("Plugin:%s loaded\n",plugin.c_str());
 			vLibHandles.push_back(hLib);
 		}
 		else
-			DEBUG1("Plugin:%s found but does not contain bz_Load method",plugin.c_str());
+			DEBUG1("Plugin:%s found but does not contain bz_Load method\n",plugin.c_str());
 	}
 	else
-		DEBUG1("Plugin:%s not found",plugin.c_str());
+		DEBUG1("Plugin:%s not found\n",plugin.c_str());
 }
 
 void unloadPlugins ( void )
@@ -50,7 +50,7 @@ void unloadPlugins ( void )
 		if (lpProc)
 			int ret =lpProc(); 
 		else
-			DEBUG1("Plugin does not contain bz_UnLoad method");
+			DEBUG1("Plugin does not contain bz_UnLoad method\n");
 
 		FreeLibrary(vLibHandles[i]);
 	}
@@ -70,18 +70,18 @@ void loadPlugin ( std::string plugin, std::string config )
 	void*	hLib = dlopen(plugin.c_str(),RTLD_LAZY);
 	if (hLib)
 	{
-		l*(void**) &lpProc = dlsym(hLib,"bz_Load");
+		*(void**) &lpProc = dlsym(hLib,"bz_Load");
 		if (lpProc)
 		{
 			(*lpProc)(config.c_str());
-			DEBUG1("Plugin:%s loaded",plugin.c_str());
+			DEBUG1("Plugin:%s loaded\n",plugin.c_str());
 			vLibHandles.push_back(hLib);
 		}
 		else
-			DEBUG1("Plugin:%s found but does not contain bz_Load method",plugin.c_str());
+			DEBUG1("Plugin:%s found but does not contain bz_Load method, error %s\n",plugin.c_str(),dlerror());
 	}
 	else
-		DEBUG1("Plugin:%s not found",plugin.c_str());
+		DEBUG1("Plugin:%s not found, error %s\n",plugin.c_str(), dlerror());
 }
 
 void unloadPlugins ( void )
@@ -93,7 +93,7 @@ void unloadPlugins ( void )
 		if (lpProc)
 			(*lpProc)(); 
 		else
-			DEBUG1("Plugin does not contain bz_UnLoad method");
+			DEBUG1("Plugin does not contain bz_UnLoad method, error %s\n",dlerror());
 
 		dlclose(vLibHandles[i]);
 	}
