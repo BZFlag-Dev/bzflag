@@ -92,6 +92,7 @@ class PlanStack
 {
 public:
 	PlanStack();
+	~PlanStack();
 	void execute(float &rotation, float &speed);
 private:
 	std::stack<Plan *> plans;

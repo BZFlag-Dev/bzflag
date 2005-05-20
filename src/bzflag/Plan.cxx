@@ -302,6 +302,15 @@ PlanStack::PlanStack()
 	plans.push(pPlan);
 }
 
+PlanStack::~PlanStack()
+{
+	while (plans.size() > 0) {
+		Plan* pPlan = plans.top();
+		delete pPlan;
+		plans.pop();
+	}
+}
+
 void PlanStack::execute(float &rotation, float &speed)
 {
 	if (Plan::avoidBullet(rotation, speed))
