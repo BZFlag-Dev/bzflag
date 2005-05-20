@@ -398,7 +398,7 @@ void WeatherRenderer::set(void)
 	  raindrops.push_back (drop);
 	}
       }
-      lastRainTime = TimeKeeper::getCurrent().getSeconds();
+      lastRainTime = float(TimeKeeper::getCurrent().getSeconds());
     }
     // recompute the drops based on the posible new size
     buildDropList();
@@ -425,8 +425,8 @@ void WeatherRenderer::set(void)
 void WeatherRenderer::update(void)
 {
   // update the time
-  float frameTime = TimeKeeper::getCurrent().getSeconds() - lastRainTime;
-  lastRainTime = TimeKeeper::getCurrent().getSeconds();
+  float frameTime = float(TimeKeeper::getCurrent().getSeconds() - lastRainTime);
+  lastRainTime = float(TimeKeeper::getCurrent().getSeconds());
 
   std::vector<rain> dropsToAdd;
 

@@ -52,7 +52,7 @@ void BaseLocalPlayer::update()
   lastPosition[2] = oldPosition[2];
 
   // update by time step
-  float dt = TimeKeeper::getTick() - lastTime;
+  float dt = float(TimeKeeper::getTick() - lastTime);
   lastTime = TimeKeeper::getTick();
   if (dt < 0.001f) dt = 0.001f;
   doUpdateMotion(dt);

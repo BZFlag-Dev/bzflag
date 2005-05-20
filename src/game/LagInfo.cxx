@@ -60,7 +60,7 @@ int LagInfo::updatePingLag(void *buf, bool &warn, bool &kick) {
   int lag = 0;
   nboUnpackUShort(buf, _pingseqno);
   if (pingseqno == _pingseqno) {
-    float timepassed = info->now - lastping;
+    float timepassed = float(info->now - lastping);
     // time is smoothed exponentially using a dynamic smoothing factor
     lagavg   = lagavg * (1 - lagalpha) + lagalpha * timepassed;
     lagalpha = lagalpha / (0.9f + lagalpha);

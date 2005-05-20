@@ -116,7 +116,7 @@ void			SegmentedShotStrategy::update(float dt)
       const float     *dir  = segm.ray.getDirection();
       const float speed = hypotf(dir[0], hypotf(dir[1], dir[2]));
       float pos[3];
-      segm.ray.getPoint(segm.end - segm.start - 1.0f / speed, pos);
+      segm.ray.getPoint(float(segm.end - segm.start - 1.0 / speed), pos);
       /* NOTE -- comment out to not explode when shot expires */
       addShotExplosion(pos);
     }
@@ -125,7 +125,7 @@ void			SegmentedShotStrategy::update(float dt)
   // otherwise update position and velocity
   else {
     float p[3];
-    segments[segment].ray.getPoint(currentTime - segments[segment].start, p);
+    segments[segment].ray.getPoint(float(currentTime - segments[segment].start), p);
     setPosition(p);
     setVelocity(segments[segment].ray.getDirection());
   }
@@ -188,7 +188,7 @@ float			SegmentedShotStrategy::checkHit(const BaseLocalPlayer* tank,
   float shotRadius = BZDB.eval(StateDatabase::BZDB_SHOTRADIUS);
 
   // check each segment in interval (prevTime,currentTime]
-  const float dt = currentTime - prevTime;
+  const float dt = float(currentTime - prevTime);
   const int numSegments = segments.size();
   for (int i = lastSegment; i <= segment && i < numSegments; i++) {
     // can never hit your own first laser segment
@@ -208,7 +208,7 @@ float			SegmentedShotStrategy::checkHit(const BaseLocalPlayer* tank,
 
     // construct relative shot ray:  origin and velocity relative to
     // my tank as a function of time (t=0 is start of the interval).
-    Ray relativeRay(rayMinusRay(s.ray, prevTime - s.start, tankLastMotion, 0.0f));
+    Ray relativeRay(rayMinusRay(s.ray, float(prevTime - s.start), tankLastMotion, 0.0f));
 
     // get hit time
     float t;
@@ -573,7 +573,7 @@ ThiefStrategy::ThiefStrategy(ShotPath *_path) :
 
   for (int i = 0; i < numSegments; i++) {
     const ShotPathSegment& segm = getSegments()[i];
-    const float t = segm.end - segm.start;
+    const float t = float(segm.end - segm.start);
     const Ray& ray = segm.ray;
     const float* rawdir = ray.getDirection();
     float dir[3];
@@ -619,7 +619,7 @@ void			ThiefStrategy::radarRender() const
       const ShotPathSegment& segm = segmts[i];
       const float* origin = segm.ray.getOrigin();
       const float* direction = segm.ray.getDirection();
-      const float dt = segm.end - segm.start;
+      const float dt = float(segm.end - segm.start);
       glVertex2fv(origin);
       glVertex2f(origin[0] + dt * direction[0], origin[1] + dt * direction[1]);
     }
@@ -738,7 +738,7 @@ LaserStrategy::LaserStrategy(ShotPath* _path) :
 
   for (int i = 0; i < numSegments; i++) {
     const ShotPathSegment& segm = getSegments()[i];
-    const float t = segm.end - segm.start;
+    const float t = float(segm.end - segm.start);
     const Ray& ray = segm.ray;
     const float* rawdir = ray.getDirection();
     float dir[3];
@@ -784,7 +784,7 @@ void			LaserStrategy::radarRender() const
       const ShotPathSegment& segm = segmts[i];
       const float* origin = segm.ray.getOrigin();
       const float* direction = segm.ray.getDirection();
-      const float dt = segm.end - segm.start;
+      const float dt = float(segm.end - segm.start);
       glVertex2fv(origin);
       glVertex2f(origin[0] + dt * direction[0], origin[1] + dt * direction[1]);
     }

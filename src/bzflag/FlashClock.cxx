@@ -48,7 +48,7 @@ void FlashClock::setClock(float _duration, float onTime, float offTime)
 bool FlashClock::isOn()
 {
   if (duration == 0.0f) return false;
-  const float dt = TimeKeeper::getTick() - startTime;
+  const float dt = float(TimeKeeper::getTick() - startTime);
   if (duration > 0.0f && dt >= duration) {
     duration = 0.0f;
     return false;

@@ -40,7 +40,7 @@ int ares_fds(ares_channel channel, fd_set *read_fds, fd_set *write_fds)
         {
           FD_SET(server->udp_socket, read_fds);
           if ((int)server->udp_socket >= nfds)
-            nfds = server->udp_socket + 1;
+            nfds = (int)(server->udp_socket + 1);
         }
       if (server->tcp_socket != ARES_SOCKET_BAD)
         {
@@ -48,7 +48,7 @@ int ares_fds(ares_channel channel, fd_set *read_fds, fd_set *write_fds)
           if (server->qhead)
             FD_SET(server->tcp_socket, write_fds);
           if ((int)server->tcp_socket >= nfds)
-            nfds = server->tcp_socket + 1;
+            nfds = (int)(server->tcp_socket + 1);
         }
     }
   return nfds;

@@ -36,7 +36,7 @@ Plan::~Plan()
 bool Plan::isValid()
 {
 	TimeKeeper now = TimeKeeper();
-	float delta = now - planExpiration;
+	float delta = float(now - planExpiration);
 	return (delta < 0.0f);
 }
 

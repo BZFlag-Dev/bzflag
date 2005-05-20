@@ -29,7 +29,7 @@ ShotPathSegment::ShotPathSegment(const TimeKeeper& _start,
 {
   // compute bounding box
   ray.getPoint(0.0f, bbox[0]);
-  ray.getPoint(end - start, bbox[1]);
+  ray.getPoint(float(end - start), bbox[1]);
   if (bbox[0][0] > bbox[1][0]) {
     const float tmp = bbox[0][0];
     bbox[0][0] = bbox[1][0];

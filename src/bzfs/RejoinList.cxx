@@ -89,7 +89,7 @@ float RejoinList::waitTime (int playerIndex)
   while (it != queue.end()) {
     RejoinNode *rn = *it;
     if (strcasecmp (rn->callsign, callsign) == 0) {
-      value = rn->joinTime - thenTime;
+      value = float(rn->joinTime - thenTime);
     }
     it++;
   }

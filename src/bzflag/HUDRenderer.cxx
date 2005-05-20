@@ -1751,7 +1751,7 @@ void			HUDRenderer::renderShots()
       const TimeKeeper currentTime = shot->getCurrentTime();
       const TimeKeeper startTime = shot->getStartTime();
       const float reloadTime = shot->getReloadTime();
-      factors[i] = 1 - ((reloadTime - (currentTime - startTime)) / reloadTime);
+      factors[i] = float(1 - ((reloadTime - (currentTime - startTime)) / reloadTime));
       if (factors[i] > 1.0f) factors[i] = 1.0f;
     }
   }

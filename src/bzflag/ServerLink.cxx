@@ -309,7 +309,7 @@ if (packetStream) {
 }
 
 #if defined(NETWORK_STATS)
-  const float dt = TimeKeeper::getCurrent() - startTime;
+  const float dt = float(TimeKeeper::getCurrent() - startTime);
   DEBUG1("Server network statistics:\n");
   DEBUG1("  elapsed time    : %f\n", dt);
   DEBUG1("  bytes sent      : %d (%f/sec)\n", bytesSent, (float)bytesSent / dt);
@@ -646,7 +646,7 @@ void			ServerLink::sendPlayerUpdate(Player* player)
   char msg[PlayerUpdatePLenMax];
   // Send the time frozen at each start of scene iteration, as all
   // dead reckoning use that
-  const float timeStamp = TimeKeeper::getTick() - TimeKeeper::getNullTime();
+  const float timeStamp = float(TimeKeeper::getTick() - TimeKeeper::getNullTime());
   void* buf = msg;
   uint16_t code;
   buf = nboPackFloat(buf, timeStamp);

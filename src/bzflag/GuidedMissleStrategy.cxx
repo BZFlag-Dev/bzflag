@@ -251,7 +251,7 @@ void GuidedMissileStrategy::update(float dt)
 float GuidedMissileStrategy::checkBuildings(const Ray& ray)
 {
   float shotSpeed = BZDB.eval(StateDatabase::BZDB_SHOTSPEED);
-  float t = (currentTime - prevTime) * shotSpeed;
+  float t = float((currentTime - prevTime) * shotSpeed);
   int face;
   const Obstacle* building = getFirstBuilding(ray, Epsilon, t);
   const Teleporter* teleporter = getFirstTeleporter(ray, Epsilon, t, face);

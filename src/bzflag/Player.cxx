@@ -397,7 +397,7 @@ void Player::updateTrackMarks()
   const float minSpeed = 0.1f; // relative speed slop
 
   if (isAlive() && !isFalling() && !isPhantomZoned()) {
-    const float lifeTime = TimeKeeper::getCurrent() - lastTrackDraw;
+    const float lifeTime = float(TimeKeeper::getCurrent() - lastTrackDraw);
     if (lifeTime > TrackMarks::updateTime) {
       bool drawMark = true;
       float markPos[3];
@@ -881,8 +881,8 @@ void Player::addToScene(SceneDatabase* scene, TeamColor effectiveTeam,
     } // isCrossingWall()
   }   // isAlive()
   else if (isExploding() && (state.pos[2] > ZERO_TOLERANCE)) {
-    float t = (TimeKeeper::getTick() - explodeTime) /
-	      BZDB.eval(StateDatabase::BZDB_EXPLODETIME);
+    float t = float((TimeKeeper::getTick() - explodeTime) /
+	      BZDB.eval(StateDatabase::BZDB_EXPLODETIME));
     if (t > 1.0f) {
       // FIXME - setStatus(DeadStatus);
       t = 1.0f;
@@ -1141,7 +1141,7 @@ bool Player::isDeadReckoningWrong() const
   float predictedPos[3];
   float predictedVel[3];
   float predictedAzimuth;
-  float dt = TimeKeeper::getTick() - inputTime;
+  float dt = float(TimeKeeper::getTick() - inputTime);
   getDeadReckoning(predictedPos, &predictedAzimuth, predictedVel, dt);
 
   // always send a new packet on reckoned touchdown
@@ -1204,7 +1204,7 @@ void Player::doDeadReckoning()
   float predictedPos[3];
   float predictedVel[3];
   float predictedAzimuth;
-  float dt = TimeKeeper::getTick() - inputTime;
+  float dt = float(TimeKeeper::getTick() - inputTime);
   getDeadReckoning(predictedPos, &predictedAzimuth, predictedVel, dt);
 
   // setup notResponding
@@ -1284,8 +1284,8 @@ const float maxToleratedJitter = 1.0f;
 void Player::setDeadReckoning(float timestamp)
 {
   // offset should be the time packet has been delayed above average
-  offset = timestamp - (TimeKeeper::getTick() - TimeKeeper::getNullTime())
-    - deltaTime;
+  offset = float(timestamp - (TimeKeeper::getTick() - TimeKeeper::getNullTime())
+    - deltaTime);
 
   // at first stage, Delta time is computed as the average of the last
   // differences in time (local & remote) the values is then updated

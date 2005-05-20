@@ -403,7 +403,7 @@ void			setSceneDatabase()
   // make the scene, and record the processing time
   TimeKeeper startTime = TimeKeeper::getCurrent();
   scene = sceneBuilder->make(world);
-  float elapsed = TimeKeeper::getCurrent() - startTime;
+  float elapsed = float(TimeKeeper::getCurrent() - startTime);
 
   // print debugging info
   if (BZDBCache::zbuffer) {
@@ -5387,7 +5387,7 @@ static void		playingLoop()
     // get delta time
     TimeKeeper prevTime = TimeKeeper::getTick();
     TimeKeeper::setTick();
-    const float dt = TimeKeeper::getTick() - prevTime;
+    const float dt = float(TimeKeeper::getTick() - prevTime);
 
     mainWindow->getWindow()->yieldCurrent();
 
@@ -5697,7 +5697,7 @@ static float		timeConfiguration(bool useZBuffer)
   // turn off depth buffer
   if (useZBuffer) glDisable(GL_DEPTH_TEST);
 
-  return endTime - startTime;
+  return float(endTime - startTime);
 }
 
 static void		timeConfigurations()

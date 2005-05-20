@@ -211,7 +211,7 @@ static void handleUptimeCmd(GameKeeper::Player *playerData, const char *)
   int t = playerData->getIndex();
   char reply[MessageLen] = {0};
 
-  rawTime = TimeKeeper::getCurrent() - TimeKeeper::getStartTime();
+  rawTime = float(TimeKeeper::getCurrent() - TimeKeeper::getStartTime());
   snprintf(reply, MessageLen, "%s.", TimeKeeper::printTime(rawTime).c_str());
   sendMessage(ServerPlayer, t, reply);
 }

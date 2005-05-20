@@ -242,7 +242,7 @@ float FlagInfo::getNextDrop(TimeKeeper &tm)
 	  flag.flag.status != FlagOnTank &&
 	  flag.flag.status != FlagOnGround &&
 	  flag.dropDone - tm < waitTime)
-	waitTime = flag.dropDone - tm;
+	waitTime = float(flag.dropDone - tm);
     }
   }
   return waitTime;

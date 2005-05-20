@@ -111,7 +111,7 @@ ListServerLink::~ListServerLink()
   TimeKeeper start = TimeKeeper::getCurrent();
   do {
     // compute timeout
-    float waitTime = 3.0f - (TimeKeeper::getCurrent() - start);
+    float waitTime = float(3.0 - (TimeKeeper::getCurrent() - start));
     if (waitTime <= 0.0f)
       break;
     if (!isConnected()) //queueMessage should have connected us

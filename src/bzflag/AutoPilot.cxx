@@ -252,7 +252,7 @@ bool	stuckOnWall(float &rotation, float &speed)
   static TimeKeeper lastStuckTime;
   static float stuckRot = 0.0f, stuckSpeed = 0.0f;
 
-  float stuckPeriod = TimeKeeper::getTick() - lastStuckTime;
+  float stuckPeriod = float(TimeKeeper::getTick() - lastStuckTime);
   if (stuckPeriod < 0.5f) {
     rotation = stuckRot;
     speed = stuckSpeed;

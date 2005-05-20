@@ -289,7 +289,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
     } else if (location == Exploding) {
       // see if explosing time has expired
       if (lastTime - getExplodeTime() >= BZDB.eval(StateDatabase::BZDB_EXPLODETIME)) {
-	dt -= (lastTime - getExplodeTime()) - BZDB.eval(StateDatabase::BZDB_EXPLODETIME);
+	dt -= float((lastTime - getExplodeTime()) - BZDB.eval(StateDatabase::BZDB_EXPLODETIME));
 	if (dt < 0.0f) {
 	  dt = 0.0f;
 	}
@@ -973,7 +973,7 @@ void LocalPlayer::collectInsideBuildings()
 
 float			LocalPlayer::getReloadTime() const
 {
-  float time = jamTime - TimeKeeper::getCurrent();
+  float time = float(jamTime - TimeKeeper::getCurrent());
   if (time > 0.0f)
     return time;
 
@@ -985,11 +985,11 @@ float			LocalPlayer::getReloadTime() const
       return 0.0f;
 
   // look for the shot fired least recently
-  float minTime = shots[0]->getReloadTime() -
-    (shots[0]->getCurrentTime() - shots[0]->getStartTime());
+  float minTime = float(shots[0]->getReloadTime() -
+    (shots[0]->getCurrentTime() - shots[0]->getStartTime()));
   for (i = 1; i < numShots; i++) {
-    const float t = shots[i]->getReloadTime() -
-      (shots[i]->getCurrentTime() - shots[i]->getStartTime());
+    const float t = float(shots[i]->getReloadTime() -
+      (shots[i]->getCurrentTime() - shots[i]->getStartTime()));
     if (t < minTime) minTime = t;
   }
 
@@ -1239,7 +1239,7 @@ bool			LocalPlayer::fireShot()
   shots[i] = new LocalShotPath(firingInfo);
 
   // Insert timestamp, useful for dead reckoning jitter fixing
-  const float timeStamp = TimeKeeper::getCurrent() - TimeKeeper::getNullTime();
+  const float timeStamp = float(TimeKeeper::getCurrent() - TimeKeeper::getNullTime());
   firingInfo.timeSent = timeStamp;
 
   server->sendBeginShot(firingInfo);

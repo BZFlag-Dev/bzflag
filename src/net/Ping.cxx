@@ -105,7 +105,7 @@ bool			PingPacket::waitForReply(int fd,
   TimeKeeper currentTime = startTime;
   do {
     // prepare timeout
-    const float timeLeft = blockTime - (currentTime - startTime);
+    const float timeLeft = float(blockTime - (currentTime - startTime));
     struct timeval timeout;
     timeout.tv_sec = long(floorf(timeLeft));
     timeout.tv_usec = long(1.0e+6f * (timeLeft - floorf(timeLeft)));
