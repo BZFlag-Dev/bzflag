@@ -16,7 +16,6 @@
 #include "common.h"
 #include "bzfs.h"
 #include "WorldWeapons.h"
-#include "bzfsEvents.h"
 #include "WorldEventManager.h"
 #include "GameKeeper.h"
 #include "FlagInfo.h"
