@@ -36,7 +36,7 @@ BZF_API int bz_APIVersion ( void )
 	return BZ_API_VERSION;
 }
 
-bz_String::bz_String()
+/*bz_String::bz_String()
 {
 	data = (void*) new std::string;
 }
@@ -94,7 +94,7 @@ void bz_StringList::clear ( void )
 {
 	((std::vector<std::string>*)data)->clear();
 }
-
+*/
 
 BZF_API bool bz_registerEvent ( bz_teEventType eventType, int team, bz_EventHandaler* eventHandaler )
 {
@@ -105,51 +105,35 @@ BZF_API bool bz_registerEvent ( bz_teEventType eventType, int team, bz_EventHand
 	return true;
 }
 
-bz_PlayerRecord::bz_PlayerRecord()
+BZF_API bool bz_updatePlayerData ( bz_PlayerRecord *playerRecord )
 {
-	playerID = -1;
-	team = -1;
+	if (!playerRecord)
+		return false;
 
-	pos[0] = pos[1] = pos[2] = 0;
-	rot = 0;
-
-	spawned = false;
-	verified = false;
-	globalUser = false;
-	admin = false;
-}
-
-bz_PlayerRecord::~bz_PlayerRecord()
-{
-
-}
-
-void bz_PlayerRecord::update ( void )
-{
-	GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerID);
+	GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerRecord->playerID);
 	if (!player)
-		return;
+		return false;
 
-	memcpy(pos,player->lastState->pos,sizeof(float)*3);
+	memcpy(playerRecord->pos,player->lastState->pos,sizeof(float)*3);
 
-	rot = player->lastState->azimuth;
+	playerRecord->rot = player->lastState->azimuth;
 
 	int flagid = player->player.getFlag();
 	FlagInfo *flagInfo = FlagInfo::get(flagid);
 
-	currentFlag.set(flagInfo->flag.type->label().c_str());
+	playerRecord->currentFlag = flagInfo->flag.type->label();
 
 	std::vector<FlagType*>	flagHistoryList = player->flagHistory.get();
 
-	flagHistory.clear();
+	playerRecord->flagHistory.clear();
 	for ( unsigned int i = 0; i < flagHistoryList.size(); i ++)
-		flagHistory.push(flagHistoryList[i]->label().c_str());
+		playerRecord->flagHistory.push_back(flagHistoryList[i]->label());
 
-	groups.clear();
-	for ( unsigned int i = 0; i < player->accessInfo.groups.size(); i ++)
-		groups.push(player->accessInfo.groups[i].c_str());
+	playerRecord->groups.clear();
+	playerRecord->groups = player->accessInfo.groups;
 
-	admin = player->accessInfo.isVerified();
+	playerRecord->admin = player->accessInfo.isVerified();
+	return true;
 }
 
 BZF_API bool bz_getPlayerByIndex ( int index, bz_PlayerRecord *playerRecord )
@@ -167,7 +151,7 @@ BZF_API bool bz_getPlayerByIndex ( int index, bz_PlayerRecord *playerRecord )
 	playerRecord->verified = player->accessInfo.isVerified();
 	playerRecord->globalUser = player->authentication.isGlobal();
 
-	playerRecord->ipAddress.set(player->netHandler->getTargetIP());
+	playerRecord->ipAddress = player->netHandler->getTargetIP();
 	playerRecord->update();
 	return true;
 }

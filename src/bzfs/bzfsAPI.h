@@ -25,7 +25,7 @@
 		#define BZF_API __declspec( dllimport )
 	#endif
 #else
-	#define BZF_API
+	#define BZF_API extern "C"
 #endif
 
 // versioning
@@ -62,7 +62,7 @@ typedef enum
 #define std_bzStr(v) std::sring(v.c_str())
 
 // because you can't export templates to a new module ( DLL )
-class BZF_API bz_String
+/*class bz_String
 {
 public:
 	bz_String();
@@ -73,9 +73,9 @@ public:
 	void set ( const char* c);
 protected:
 	void	*data;
-};
+}; 
 
-class BZF_API bz_StringList
+class bz_StringList
 {
 public:
 	bz_StringList();
@@ -87,7 +87,7 @@ public:
 	void clear ( void );
 protected:
 	void	*data;
-};
+};*/
 
 // event data types
 class bz_EventData
@@ -245,35 +245,53 @@ public:
 
 BZF_API bool bz_registerEvent ( bz_teEventType eventType, int team, bz_EventHandaler* eventHandaler );
 
-// user info API
-class BZF_API bz_PlayerRecord
+// player info
+
+class bz_PlayerRecord;
+
+BZF_API bool bz_getPlayerByIndex ( int index, bz_PlayerRecord *playerRecord );
+BZF_API bool bz_updatePlayerData ( bz_PlayerRecord *playerRecord );
+
+class bz_PlayerRecord
 {
 public:
-	bz_PlayerRecord();
-	~bz_PlayerRecord();
+	bz_PlayerRecord()
+	{
+		playerID = -1;
+		team = -1;
 
-	void update ( void );	// call to update with current data
+		pos[0] = pos[1] = pos[2] = 0;
+		rot = 0;
+
+		spawned = false;
+		verified = false;
+		globalUser = false;
+		admin = false;
+	}
+
+	~bz_PlayerRecord(){};
+
+	void update ( void ){bz_updatePlayerData(this);}	// call to update with current data
 
 	int playerID;
-	bz_String callsign;
+	std::string callsign;
 	int team;
 
 	float pos[3];
 	float rot;
 
-	bz_String ipAddress;
+	std::string ipAddress;
 
-	bz_String currentFlag;
-	bz_StringList flagHistory;
+	std::string currentFlag;
+	std::vector<std::string> flagHistory;
 
 	bool spawned;
 	bool verified;
 	bool globalUser;
 	bool admin;
-	bz_StringList groups;
+	std::vector<std::string> groups;
 };
 
-BZF_API bool bz_getPlayerByIndex ( int index, bz_PlayerRecord *playerRecord );
 
 // message API
 BZF_API bool bz_sendTextMessage (int from, int to, const char* message);
