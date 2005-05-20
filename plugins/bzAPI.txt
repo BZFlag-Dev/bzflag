@@ -93,6 +93,15 @@ of the event handler class from bz_EventHandler and pass this pointer into the f
 When the event happens the process function of the class will be called so that the plugin can
 perform any actions it desires.
 
+When the plug-ins unload function is called. The plug-in must remove any events it has loaded
+by calling
+
+bool bz_removeEvent ( bz_teEventType eventType, int team,
+                        bz_EventHandler* eventHandler );
+
+Failure to do so may cause crashes if the plug-in is manualy unloaded at run time.
+
+
 Event Handlers;
 
 The event handler is a pure virtual class. It does not perform any logic or actions, but simply

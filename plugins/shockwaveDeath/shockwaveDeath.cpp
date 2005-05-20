@@ -30,6 +30,7 @@ BZF_PLUGIN_CALL int bz_Load ( const char* commandLine )
 
 BZF_PLUGIN_CALL int bz_Unload ( void )
 {
+	bz_removeEvent(bz_ePlayerDieEvent,BZ_ALL_USERS,&deathHandler);
 	bz_debugMessage(4,"shockwaveDeath plugin unloaded");
 	return 0;
 }
