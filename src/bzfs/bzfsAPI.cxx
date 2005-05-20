@@ -13,6 +13,7 @@
 // implementation wrapers for all the bza_ API functions
 #include "bzfsAPI.h"
 
+#include "common.h"
 #include "bzfs.h"
 #include "WorldWeapons.h"
 #include "bzfsEvents.h"
@@ -20,9 +21,18 @@
 #include "GameKeeper.h"
 #include "FlagInfo.h"
 
+#define BZ_API_VERSION	1
 
 extern void sendMessage(int playerIndex, PlayerId dstPlayer, const char *message);
+extern void removePlayer(int playerIndex, const char *reason, bool notify);
+extern CmdLineOptions *clOptions;
 
+
+// versioning
+BZF_API int bz_APIVersion ( void )
+{
+	return BZ_API_VERSION;
+}
 
 bz_String::bz_String()
 {
@@ -104,6 +114,7 @@ bz_PlayerRecord::bz_PlayerRecord()
 	spawned = false;
 	verified = false;
 	globalUser = false;
+	admin = false;
 }
 
 bz_PlayerRecord::~bz_PlayerRecord()
@@ -135,6 +146,8 @@ void bz_PlayerRecord::update ( void )
 	groups.clear();
 	for ( unsigned int i = 0; i < player->accessInfo.groups.size(); i ++)
 		groups.push(player->accessInfo.groups[i].c_str());
+
+	admin = player->accessInfo.isVerified();
 }
 
 BZF_API bool bz_getPlayerByIndex ( int index, bz_PlayerRecord *playerRecord )
@@ -152,6 +165,7 @@ BZF_API bool bz_getPlayerByIndex ( int index, bz_PlayerRecord *playerRecord )
 	playerRecord->verified = player->accessInfo.isVerified();
 	playerRecord->globalUser = player->authentication.isGlobal();
 
+	playerRecord->ipAddress.set(player->netHandler->getTargetIP());
 	playerRecord->update();
 	return true;
 }
@@ -212,6 +226,45 @@ BZF_API double bz_getBZDBDouble ( const char* variable )
 
 	return BZDB.eval(std::string(variable));
 }
+
+// loging
+BZF_API void bz_debugMessage ( int _debugLevel, const char* message )
+{
+	if (!message)
+		return;
+
+	if (debugLevel >= _debugLevel)
+		formatDebug("%s\n",message);
+}
+
+// admin
+BZF_API bool bz_kickUser ( int playerIndex, const char* reason, bool notify )
+{
+	GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerIndex);
+	if (!player || !reason)
+		return false;
+
+	removePlayer(playerIndex,reason,notify);
+	return true;
+}
+
+BZF_API bool bz_IPBanUser ( int playerIndex, const char* ip, int time, const char* reason )
+{
+	GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerIndex);
+	if (!player || !reason || !ip)
+		return false;
+
+	// reload the banlist in case anyone else has added
+	clOptions->acl.load();
+
+	if (clOptions->acl.ban(ip, player->player.getCallSign(), time,reason))
+		clOptions->acl.save();
+	else
+		return false;
+
+	return true;
+}
+
 
 
 // Local Variables: ***

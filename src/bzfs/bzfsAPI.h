@@ -28,6 +28,11 @@
 	#define BZF_API
 #endif
 
+// versioning
+BZF_API int bz_APIVersion ( void );
+
+// event stuff
+
 typedef enum
 {
 	bz_eNullEvent = 0,
@@ -213,12 +218,15 @@ public:
 	float pos[3];
 	float rot;
 
+	bz_String ipAddress;
+
 	bz_String currentFlag;
 	bz_StringList flagHistory;
 
 	bool spawned;
 	bool verified;
 	bool globalUser;
+	bool admin;
 	bz_StringList groups;
 };
 
@@ -226,6 +234,8 @@ BZF_API bool bz_getPlayerByIndex ( int index, bz_PlayerRecord *playerRecord );
 
 // message API
 BZF_API bool bz_sendTextMessage (int from, int to, const char* message);
+
+// world weapons
 BZF_API bool bz_fireWorldWep ( std::string flagType, float lifetime, int fromPlayer, float *pos, float tilt, float direction, int shotID , float dt );
 
 // time API
@@ -233,6 +243,13 @@ BZF_API double bz_getCurrentTime ( void );
 
 // info
 BZF_API double bz_getBZDBDouble ( const char* variable );
+
+// loging
+BZF_API void bz_debugMessage ( int debugLevel, const char* message );
+
+// admin
+BZF_API bool bz_kickUser ( int playerIndex, const char* reason, bool notify );
+BZF_API bool bz_IPBanUser ( int playerIndex, const char* ip, int time, const char* reason );
 
 
 #endif //_BZFS_API_H_
