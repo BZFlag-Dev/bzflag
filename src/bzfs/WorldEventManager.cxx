@@ -128,6 +128,24 @@ UnknownSlashCommandEventData::~UnknownSlashCommandEventData()
 {
 }
 
+//-------------------GetPlayerSpawnPosEventData--------------------
+GetPlayerSpawnPosEventData::GetPlayerSpawnPosEventData()
+{
+	eventType = eGetPlayerSpawnPosEvent;
+	playeID = -1;
+	teamID = -1;
+
+	handled = false;
+
+	pos[0] = pos[1] = pos[2] = 0.0f;
+	rot = 0.0f;
+	time = 0.0;
+}
+
+GetPlayerSpawnPosEventData::~GetPlayerSpawnPosEventData()
+{
+}
+
 //-------------------WorldEventManager--------------------
 WorldEventManager::WorldEventManager()
 {

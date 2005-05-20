@@ -44,7 +44,8 @@ typedef enum
 	bz_ePlayerJoinEvent,
 	bz_ePlayerPartEvent,
 	bz_eChatMessageEvent,
-	bz_eUnknownSlashCommand	// will not take a team
+	bz_eUnknownSlashCommand,	// will not take a team
+	bz_eGetPlayerSpawnPosEvent
 }bz_teEventType;
 
 #define BZ_ALL_USERS	-1
@@ -58,36 +59,6 @@ typedef enum
 #define BZ_OBSERVERs	7
 
 #define BZ_SERVER		-2
-
-#define std_bzStr(v) std::sring(v.c_str())
-
-// because you can't export templates to a new module ( DLL )
-/*class bz_String
-{
-public:
-	bz_String();
-	bz_String(const char* c);
-	~bz_String();
-
-	const char* c_str();
-	void set ( const char* c);
-protected:
-	void	*data;
-}; 
-
-class bz_StringList
-{
-public:
-	bz_StringList();
-	~bz_StringList();
-
-	unsigned int size ( void );
-	const char* get ( int i );
-	void push ( const char* c );
-	void clear ( void );
-protected:
-	void	*data;
-};*/
 
 // event data types
 class bz_EventData
@@ -234,6 +205,34 @@ public:
 	double time;
 };
 
+class  bz_GetPlayerSpawnPosEventData : public bz_EventData
+{
+public:
+	bz_GetPlayerSpawnPosEventData()
+	{
+		eventType = bz_eGetPlayerSpawnPosEvent;
+		playeID = -1;
+		teamID = -1;
+
+		handled = false;
+
+		pos[0] = pos[1] = pos[2] = 0.0f;
+		rot = 0.0f;
+		time = 0.0;
+	}
+
+	virtual ~bz_GetPlayerSpawnPosEventData(){};
+
+	int playeID;
+	int teamID;
+
+	bool handled;
+
+	float pos[3];
+	float rot;
+	double time;
+};
+
 // event handaler callback
 class bz_EventHandaler
 {
@@ -323,6 +322,9 @@ public:
 
 BZF_API bool bz_registerCustomSlashCommand ( const char* command, bz_CustomSlashCommandHandaler *handaler );
 BZF_API bool bz_removeCustomSlashCommand ( const char* command );
+
+// spawning
+BZF_API bool bz_getStandardSpawn ( int playeID, float pos[3], float *rot );
 
 
 #endif //_BZFS_API_H_

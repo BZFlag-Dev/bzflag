@@ -22,6 +22,7 @@
 #include "FlagInfo.h"
 
 #include "commands.h"
+#include "SpawnPosition.h"
 
 #define BZ_API_VERSION	1
 
@@ -35,66 +36,6 @@ BZF_API int bz_APIVersion ( void )
 {
 	return BZ_API_VERSION;
 }
-
-/*bz_String::bz_String()
-{
-	data = (void*) new std::string;
-}
-
-bz_String::bz_String(const char* c)
-{
-	data = (void*) new std::string(c);
-}
-
-bz_String::~bz_String()
-{
-	delete((std::string*)data);
-}
-
-const char* bz_String::c_str ( void )
-{
-	return ((std::string*)data)->c_str();
-}
-
-void bz_String::set ( const char* c)
-{
-	*((std::string*)data) = c;
-}
-
-bz_StringList::bz_StringList()
-{
-	data = (void*)new std::vector<std::string>;
-}
-
-bz_StringList::~bz_StringList()
-{
-	delete((std::vector<std::string>*)data);
-}
-
-unsigned int bz_StringList::size ( void )
-{
-	return ((std::vector<std::string>*)data)->size();
-}
-
-const char* bz_StringList::get ( int i )
-{
-	if ( i< 0 || i >= (int)size())
-		return NULL;
-
-	return (*((std::vector<std::string>*)data))[i].c_str();
-}
-
-void bz_StringList::push ( const char* c )
-{
-	std::string str = c;
-	((std::vector<std::string>*)data)->push_back(str);
-}
-
-void bz_StringList::clear ( void )
-{
-	((std::vector<std::string>*)data)->clear();
-}
-*/
 
 BZF_API bool bz_registerEvent ( bz_teEventType eventType, int team, bz_EventHandaler* eventHandaler )
 {
@@ -269,6 +210,25 @@ BZF_API bool bz_removeCustomSlashCommand ( const char* command )
 	return true;
 }
 
+BZF_API bool bz_getStandardSpawn ( int playeID, float pos[3], float *rot )
+{
+	GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playeID);
+	if (!player)
+		return false;
+
+	// get the spawn position
+	SpawnPosition* spawnPosition = new SpawnPosition(playeID,
+		(!clOptions->respawnOnBuildings) || (player->player.isBot()),
+		clOptions->gameStyle & TeamFlagGameStyle);
+
+	pos[0] = spawnPosition->getX();
+	pos[1] = spawnPosition->getY();
+	pos[2] = spawnPosition->getZ();
+	if (rot)
+		*rot = spawnPosition->getAzimuth();
+
+	return true;
+}
 
 
 // Local Variables: ***

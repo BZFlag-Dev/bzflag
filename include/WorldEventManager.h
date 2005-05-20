@@ -35,7 +35,8 @@ typedef enum
 	ePlayerJoinEvent,
 	ePlayerPartEvent,
 	eChatMessageEvent,
-	eUnknownSlashCommand	// will not take a team
+	eUnknownSlashCommand,	// will not take a team
+	eGetPlayerSpawnPosEvent
 }teEventType;
 
 class BaseEventData
@@ -146,6 +147,22 @@ public:
 
 	bool handled;
 	std::string message;
+	double time;
+};
+
+class GetPlayerSpawnPosEventData : public BaseEventData
+{
+public:
+	GetPlayerSpawnPosEventData();
+	virtual ~GetPlayerSpawnPosEventData();
+
+	int playeID;
+	int teamID;
+
+	bool handled;
+
+	float pos[3];
+	float rot;
 	double time;
 };
 

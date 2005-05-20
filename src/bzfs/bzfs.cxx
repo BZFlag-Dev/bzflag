@@ -2639,20 +2639,33 @@ static void playerAlive(int playerIndex)
   // player is coming alive.
   dropAssignedFlag(playerIndex);
 
-  // send MsgAlive
+  // get the spawn position
   SpawnPosition* spawnPosition = new SpawnPosition(playerIndex,
       (!clOptions->respawnOnBuildings) || (playerData->player.isBot()),
        clOptions->gameStyle & TeamFlagGameStyle);
-  // update last position immediately
-  lastState[playerIndex].pos[0] = spawnPosition->getX();
-  lastState[playerIndex].pos[1] = spawnPosition->getY();
-  lastState[playerIndex].pos[2] = spawnPosition->getZ();
-  lastState[playerIndex].azimuth = spawnPosition->getAzimuth();
 
+  // see if there is anyone to handle the spawn event, and if they want to change it.
+
+  GetPlayerSpawnPosEventData	spawnData;
+  spawnData.playeID = playerIndex;
+  spawnData.teamID = playerData->player.getTeam();
+  spawnData.pos[0] = spawnPosition->getX();
+  spawnData.pos[1] = spawnPosition->getY();
+  spawnData.pos[2] = spawnPosition->getZ();
+  spawnData.rot = spawnPosition->getAzimuth();
+
+  worldEventManager.callEvents(eGetPlayerSpawnPosEvent,-1,&spawnData);
+  worldEventManager.callEvents(eGetPlayerSpawnPosEvent,spawnData.teamID,&spawnData);
+
+  // update last position immediately
+  memcpy(lastState[playerIndex].pos,spawnData.pos,sizeof(float)*3);
+  lastState[playerIndex].azimuth = spawnData.rot;
+
+  // send MsgAlive
   void *buf, *bufStart = getDirectMessageBuffer();
   buf = nboPackUByte(bufStart, playerIndex);
   buf = nboPackVector(buf, lastState[playerIndex].pos);
-  buf = nboPackFloat(buf, spawnPosition->getAzimuth());
+  buf = nboPackFloat(buf, spawnData.rot);
   broadcastMessage(MsgAlive, (char*)buf - (char*)bufStart, bufStart);
   delete spawnPosition;
 
@@ -5246,6 +5259,10 @@ int main(int argc, char **argv)
     // Clean pending players
     GameKeeper::Player::clean();
   }
+
+#ifdef _USE_BZ_API
+	unloadPlugins();
+#endif
 
   // print uptime
   DEBUG1("Shutting down server: uptime %s\n",
