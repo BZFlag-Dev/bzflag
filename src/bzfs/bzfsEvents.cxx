@@ -46,10 +46,7 @@ void PlayHistoryTracker::process ( BaseEventData *eventData )
 {
 	switch (eventData->eventType)
 	{
-		case eNullEvent:
-		case eZoneEntryEvent:
-		case eCaptureEvent:
-		case eZoneExitEvent:
+		default:
 			// really WTF!!!!
 			break;
 
