@@ -118,7 +118,7 @@ WorldEventManager::~WorldEventManager()
 			tvEventList::iterator itr = eventItr->second.begin();
 			while ( itr != eventItr->second.end() )
 			{
-				if ((*itr)->autoDelete())
+				if ((*itr) && (*itr)->autoDelete())
 					delete (*itr++);
 			}
 			eventItr++;
