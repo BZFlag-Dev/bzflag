@@ -16,8 +16,13 @@
 #include "bzfsAPI.h"
 #include "PlayerState.h"
 
+void initPlugins ( void );
+
 void loadPlugin ( std::string plugin, std::string config );
+void unloadPlugin ( std::string plugin );
 void unloadPlugins ( void );
+
+std::vector<std::string> getPluginList ( void );
 
 #endif //_BZFS_PLUGINS_H_
 
