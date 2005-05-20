@@ -7,13 +7,12 @@ CXXFLAGS = -fPIC -frtti -I../../src/bzfs -O
 
 LDLIBS = -ldl
 
-
 all : shockwavedeath.so
 
 # link the shared libraries with the -shared flag.
 
 shockwavedeath.so : shockwaveDeath.o
-	$(CXX) $(CXXFLAGS) -shared  $^ -o $@	
+	$(CXX) $(CXXFLAGS) -shared -rdynamic  $^ -o $@	
 
 clean :
 	-rm *.so 
