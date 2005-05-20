@@ -45,6 +45,15 @@ BZF_API bool bz_registerEvent ( bz_teEventType eventType, int team, bz_EventHand
 	return true;
 }
 
+BZF_API bool bz_removeEvent ( bz_teEventType eventType, int team, bz_EventHandler* eventHandler )
+{
+	if (!eventHandler)
+		return false;
+
+	worldEventManager.removeEvent((teEventType)eventType,team,(BaseEventHandler*)eventHandler);
+	return true;
+}
+
 BZF_API bool bz_updatePlayerData ( bz_PlayerRecord *playerRecord )
 {
 	if (!playerRecord)
