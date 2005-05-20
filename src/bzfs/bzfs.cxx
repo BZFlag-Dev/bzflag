@@ -3692,7 +3692,32 @@ possible attack from %s\n",
       if (checkSpam(message, playerData, t))
 	break;
 
-      sendPlayerMessage (playerData, dstPlayer, message);
+			GameKeeper::Player *toData = GameKeeper::Player::getPlayerByIndex(dstPlayer);
+			int toTeam = -1;
+			if (toData)
+				toTeam = toData->player.getTeam();
+
+			ChatEventData chatData;
+			chatData.from = t;
+			chatData.to = dstPlayer;
+			chatData.message = message;
+			chatData.time = TimeKeeper::getCurrent().getSeconds();
+
+			// send any events that want to watch the chat
+			// everyone
+			worldEventManager.callEvents(eChatMessageEvent,-1,&chatData);
+
+			// the from team
+			if (playerData->player.getTeam() >0)
+				worldEventManager.callEvents(eChatMessageEvent,playerData->player.getTeam(),&chatData);
+
+			// the to team
+			if (toTeam >0)
+				worldEventManager.callEvents(eChatMessageEvent,toTeam,&chatData);
+
+			// send the actual Message after all the callbacks have done there magic to it.
+			if (chatData.message.size())
+				sendPlayerMessage (playerData, dstPlayer, chatData.message.c_str());
       break;
     }
 

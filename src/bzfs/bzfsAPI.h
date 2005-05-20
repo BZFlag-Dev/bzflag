@@ -42,7 +42,8 @@ typedef enum
 	bz_eZoneEntryEvent,
 	bz_eZoneExitEvent,
 	bz_ePlayerJoinEvent,
-	bz_ePlayerPartEvent
+	bz_ePlayerPartEvent,
+	bz_eChatMessageEvent
 }bz_teEventType;
 
 #define BZ_ALL_USERS	-1
@@ -167,6 +168,27 @@ public:
 
 	float pos[3];
 	float rot;
+	double time;
+};
+
+class bz_ChatEventData : public bz_EventData
+{
+public:
+	bz_ChatEventData()
+	{
+		eventType = bz_eChatMessageEvent;
+
+		from = -1;
+		to = -1;
+		time = 0.0;
+	}
+
+	virtual ~bz_ChatEventData(){};
+
+	int from;
+	int to;
+
+	std::string message;
 	double time;
 };
 

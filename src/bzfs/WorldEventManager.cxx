@@ -102,6 +102,20 @@ PlayerJoinPartEventData::~PlayerJoinPartEventData()
 {
 }
 
+//-------------------ChatEventData--------------------
+
+ChatEventData::ChatEventData()
+{
+	eventType = eChatMessageEvent;
+	from = -1;
+	to = -1;
+	time = 0.0;
+}
+
+ChatEventData::~ChatEventData()
+{
+}
+
 //-------------------WorldEventManager--------------------
 WorldEventManager::WorldEventManager()
 {
@@ -205,6 +219,12 @@ tmEventTypeList* WorldEventManager::getTeamEventList ( int team )
 	}
 	return &(eventtMap.find(team)->second);
 }
+
+int WorldEventManager::getEventCount ( teEventType eventType, int team )
+{
+	return (int)getEventList(eventType,team).size();
+}
+
 
 
 // Local Variables: ***

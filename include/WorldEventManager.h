@@ -33,7 +33,8 @@ typedef enum
 	eZoneEntryEvent,
 	eZoneExitEvent,
 	ePlayerJoinEvent,
-	ePlayerPartEvent
+	ePlayerPartEvent,
+	eChatMessageEvent
 }teEventType;
 
 class BaseEventData
@@ -121,6 +122,19 @@ public:
 	double time;
 };
 
+class ChatEventData : public BaseEventData
+{
+public:
+	ChatEventData();
+	virtual ~ChatEventData();
+
+	int from;
+	int to;
+
+	std::string message;
+	double time;
+};
+
 class BaseEventHandaler
 {
 public:
@@ -144,6 +158,7 @@ public:
 	tvEventList getEventList ( teEventType eventType, int team );
 	void callEvents ( teEventType eventType, int team, BaseEventData	*eventData );
 
+	int getEventCount ( teEventType eventType, int team );
 protected:
 	tmEventMap eventtMap;
 
