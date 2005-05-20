@@ -54,7 +54,7 @@ public:
 	CTFCaptureEventData();
 	virtual ~CTFCaptureEventData();
 
-	int teamCAped;
+	int teamCaped;
 	int	teamCaping;
 	int playerCaping;
 

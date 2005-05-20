@@ -3059,7 +3059,7 @@ static void captureFlag(int playerIndex, TeamColor teamCaptured)
 
 	// find any events for capturing the flags on the caped team or events for ANY team
 	CTFCaptureEventData	eventData;
-	eventData.teamCAped = teamIndex;
+	eventData.teamCaped = teamIndex;
 	eventData.teamCaping = teamCaptured;
 	eventData.playerCaping = playerIndex;
 	memcpy(eventData.pos,lastState[playerIndex].pos,sizeof(float)*3);

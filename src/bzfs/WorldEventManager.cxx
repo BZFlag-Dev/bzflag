@@ -28,7 +28,7 @@ BaseEventData::BaseEventData()
 CTFCaptureEventData::CTFCaptureEventData()
 {
 	eventType = eCaptureEvent;
-	teamCAped = -1;
+	teamCaped = -1;
 	teamCaping = -1;
 	playerCaping = -1;
 }
