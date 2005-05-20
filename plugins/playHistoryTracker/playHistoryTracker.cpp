@@ -6,9 +6,9 @@
 #include <string>
 #include <map>
 
-// event handaler callback
+// event handler callback
 
-class PlayHistoryTracker : public bz_EventHandaler
+class PlayHistoryTracker : public bz_EventHandler
 {
 public:
 	PlayHistoryTracker();
