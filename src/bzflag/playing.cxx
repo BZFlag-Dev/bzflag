@@ -5417,7 +5417,7 @@ static void		playingLoop()
 
     if (waitingDNS) {
       fd_set readers, writers;
-      int nfds;
+      int nfds = -1;
       struct timeval timeout;
       timeout.tv_sec  = 0;
       timeout.tv_usec = 0;
