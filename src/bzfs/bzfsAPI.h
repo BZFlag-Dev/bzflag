@@ -43,7 +43,8 @@ typedef enum
 	bz_eZoneExitEvent,
 	bz_ePlayerJoinEvent,
 	bz_ePlayerPartEvent,
-	bz_eChatMessageEvent
+	bz_eChatMessageEvent,
+	bz_eUnknownSlashCommand	// will not take a team
 }bz_teEventType;
 
 #define BZ_ALL_USERS	-1
@@ -210,6 +211,26 @@ public:
 
 	std::string callsign;
 	std::string reason;
+	double time;
+};
+
+class bz_UnknownSlashCommandEventData : public bz_EventData
+{
+public:
+	bz_UnknownSlashCommandEventData()
+	{
+		eventType = bz_eUnknownSlashCommand;
+		from = -1;
+		handled = false;
+		time = 0;
+	}
+
+	virtual ~bz_UnknownSlashCommandEventData(){};
+
+	int from;
+
+	bool handled;
+	std::string message;
 	double time;
 };
 
