@@ -40,6 +40,7 @@ PlatformFactory::~PlatformFactory()
     media->closeAudio();
   SDL_Quit();
 #endif
+  delete media;
 }
 
 BzfJoystick*		PlatformFactory::createJoystick()
