@@ -95,6 +95,10 @@
 /* Define to 1 if you have the <SDL/SDL.h> header file. */
 #define HAVE_SDL_SDL_H 1
 
+/* Define if you wish to build exporting the bzflag API for plugins */
+#define _USE_BZ_API 1
+
+
 #ifndef DEBUG_TRACE
 #define DEBUG_TRACE
 inline void W32_DEBUG_TRACE (const char* buffer ) {printf("%s",buffer);}

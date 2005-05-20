@@ -198,6 +198,22 @@ BZF_API bool bz_fireWorldWep ( std::string flagType, float lifetime, int fromPla
 	return fireWorldWep(flag,lifetime,player,pos,tilt,direction,shotID,dt) == shotID;
 }
 
+// time API
+BZF_API double bz_getCurrentTime ( void )
+{
+	return TimeKeeper::getCurrent().getSeconds();
+}
+
+// info
+BZF_API double bz_getBZDBDouble ( const char* variable )
+{
+	if (!variable)
+		return 0.0;
+
+	return BZDB.eval(std::string(variable));
+}
+
+
 // Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***

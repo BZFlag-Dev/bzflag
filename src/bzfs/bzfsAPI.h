@@ -228,6 +228,13 @@ BZF_API bool bz_getPlayerByIndex ( int index, bz_PlayerRecord *playerRecord );
 BZF_API bool bz_sendTextMessage (int from, int to, const char* message);
 BZF_API bool bz_fireWorldWep ( std::string flagType, float lifetime, int fromPlayer, float *pos, float tilt, float direction, int shotID , float dt );
 
+// time API
+BZF_API double bz_getCurrentTime ( void );
+
+// info
+BZF_API double bz_getBZDBDouble ( const char* variable );
+
+
 #endif //_BZFS_API_H_
 
 // Local Variables: ***

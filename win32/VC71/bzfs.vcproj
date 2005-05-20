@@ -23,7 +23,7 @@
 				Optimization="2"
 				InlineFunctionExpansion="1"
 				AdditionalIncludeDirectories="..\..\include,..\..\win32,.\"
-				PreprocessorDefinitions="_CONSOLE;WIN32;NDEBUG"
+				PreprocessorDefinitions="_CONSOLE;WIN32;NDEBUG;INSIDE_BZ"
 				StringPooling="TRUE"
 				RuntimeLibrary="0"
 				EnableFunctionLevelLinking="TRUE"
@@ -84,7 +84,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="..\..\include,..\..\win32,.\"
-				PreprocessorDefinitions="_CONSOLE;WIN32;_DEBUG"
+				PreprocessorDefinitions="_CONSOLE;WIN32;_DEBUG;INSIDE_BZ"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
 				PrecompiledHeaderFile=".\..\..\src\bzfs\debug/bzfs.pch"
@@ -1108,6 +1108,22 @@ copy ..\..\src\bzfs\debug\*.exe ..\..\*.exe
 		<Filter
 			Name="Resource Files"
 			Filter="ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe">
+		</Filter>
+		<Filter
+			Name="API"
+			Filter="">
+			<File
+				RelativePath="..\..\src\bzfs\bzfsAPI.cxx">
+			</File>
+			<File
+				RelativePath="..\..\src\bzfs\bzfsAPI.h">
+			</File>
+			<File
+				RelativePath="..\..\src\bzfs\bzfsPlugins.cxx">
+			</File>
+			<File
+				RelativePath="..\..\src\bzfs\bzfsPlugins.h">
+			</File>
 		</Filter>
 	</Files>
 	<Globals>
