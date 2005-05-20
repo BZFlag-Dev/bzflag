@@ -119,8 +119,10 @@ WorldEventManager::~WorldEventManager()
 			while ( itr != eventItr->second.end() )
 			{
 				if ((*itr) && (*itr)->autoDelete())
-					delete (*itr++);
+					delete (*itr);
 				*itr = NULL;
+
+				itr++;
 			}
 			eventItr++;
 		}
