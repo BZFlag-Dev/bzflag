@@ -63,14 +63,14 @@ macro will tell your compiler to export these functions so bzfs can call them.
 These will be the only 2 functions called by bzfs for non event actions.
 
 
-//****************** registering event handalers  *****************************
+//****************** registering event handlers  *****************************
 
 A plugin is basically useless if it can't react to events in game. To allow this
 a plugin needs to tell bzfs that it would like to listen for events. To do that
 the plugin will need to call the following function;
 
 bool bz_registerEvent ( bz_teEventType eventType, int team,
-                        bz_EventHandaler* eventHandaler );
+                        bz_EventHandler* eventHandler );
 
 where eventType is one of the following enumerations;
 
@@ -88,8 +88,8 @@ where eventType is one of the following enumerations;
 team is an integer that defines a team filter for the event. The value of; BZ_ALL_USERS indicates
 that the event will be called every time it happens, regardless of team.
 
-eventHandaler is a pointer to a event handler class. Plug-ins should derive their own versions
-of the event handler class from bz_EventHandaler and pass this pointer into the function.
+eventHandler is a pointer to a event handler class. Plug-ins should derive their own versions
+of the event handler class from bz_EventHandler and pass this pointer into the function.
 When the event happens the process function of the class will be called so that the plugin can
 perform any actions it desires.
 
@@ -267,22 +267,22 @@ Returns a normal spawn position for the specified user.
 
 
 //****************** custom slash commands *****************************
-A plug-in can register a special handaler for a custom / command. This allows
+A plug-in can register a special handler for a custom / command. This allows
 a plug-in to handle commands easyer then hooking into the UnknownSlashCommand
 Event.
 
-Similar to other events, custom slash commands provide a pointer to a handaler
+Similar to other events, custom slash commands provide a pointer to a handler
 class that the plugin overides using the function.
 
-BZF_API bool bz_registerCustomSlashCommand ( const char* command, bz_CustomSlashCommandHandaler *handaler );
+BZF_API bool bz_registerCustomSlashCommand ( const char* command, bz_CustomSlashCommandHandler *handler );
 
 
-the handler pointer is to a class that has been derived from bz_CustomSlashCommandHandaler
+the handler pointer is to a class that has been derived from bz_CustomSlashCommandHandler
 
-class bz_CustomSlashCommandHandaler
+class bz_CustomSlashCommandHandler
 {
 public:
-	virtual ~bz_CustomSlashCommandHandaler(){};
+	virtual ~bz_CustomSlashCommandHandler(){};
 	virtual bool handle ( int playerID, std::string command, std::string message ) = 0;
 };
 
