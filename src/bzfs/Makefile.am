@@ -12,12 +12,9 @@ bzfs_SOURCES = \
 	AccessControlList.h \
 	Authentication.cxx	\
 	Authentication.h	\
-	bzfsAPI.h	\
 	bzfsAPI.cxx	\
 	bzfsPlugins.h	\
 	bzfsPlugins.cxx	\
-	bzfsEvents.h	\
-	bzfsEvents.cxx	\
 	BZWError.cxx \
 	BZWError.h \
 	BZWReader.cxx \

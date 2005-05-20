@@ -71,7 +71,7 @@ struct CmdLineOptions
     filterFilename(""), filterCallsigns(false), filterChat(false), filterSimple(false),
     banTime(300), voteTime(60), vetoTime(2), votesRequired(2),
     votePercentage(50.1f), voteRepeatTime(300),
-    autoTeam(false), citySize(5), cacheURL(""), cacheOut(""),trackPlayHistory(false)
+    autoTeam(false), citySize(5), cacheURL(""), cacheOut("")
   {
     int i;
     for (FlagTypeMap::iterator it = FlagType::getFlagMap().begin();
@@ -188,9 +188,6 @@ struct CmdLineOptions
 
   std::string	   cacheURL;
   std::string	   cacheOut;
-
-  // spree tracking
-  bool				trackPlayHistory;
 
   // plugins
   typedef struct 

@@ -58,14 +58,10 @@
 #include "BaseBuilding.h"
 #include "AnsiCodes.h"
 
-#include "bzfsEvents.h"
-
 // only include this if we are going to use plugins and export the API
 #ifdef _USE_BZ_API
 #include "bzfsPlugins.h"
 #endif
-
-PlayHistoryTracker	historyTracker;
 
 // every ListServerReAddTime server add ourself to the list
 // server again.  this is in case the list server has reset
@@ -4431,15 +4427,6 @@ int main(int argc, char **argv)
   for ( unsigned int plugin = 0;plugin < clOptions->pluginList.size();plugin++)
 	  loadPlugin(clOptions->pluginList[plugin].plugin,clOptions->pluginList[plugin].command);
 #endif
-
-  // see if we are doing playHistoryTracking
-  if ( clOptions->trackPlayHistory)
-  {
-	  worldEventManager.addEvent(ePlayerJoinEvent,-1,&historyTracker);
-	  worldEventManager.addEvent(ePlayerPartEvent,-1,&historyTracker);
-	  worldEventManager.addEvent(ePlayerSpawnEvent,-1,&historyTracker);
-	  worldEventManager.addEvent(ePlayerDieEvent,-1,&historyTracker);
-  }
 
   // loading lag thresholds
   LagInfo::setThreshold(clOptions->lagwarnthresh,(float)clOptions->maxlagwarn);
