@@ -87,6 +87,7 @@ const char *usageString =
 "[-j] "
 "[-lagdrop <num>] "
 "[-lagwarn <time/ms>] "
+"[-loadplugin <pluginname,commandline>] "
 "[-masterBanURL <URL>]"
 "[-maxidle <time/s>] "
 "[-mp {<count>|[<count>][,<count>][,<count>][,<count>][,<count>][,<count>]}] "
@@ -177,6 +178,7 @@ const char *extraUsageString =
 "\t-j: allow jumping\n"
 "\t-lagdrop: drop player after this many lag warnings\n"
 "\t-lagwarn: lag warning threshhold time [ms]\n"
+"\t-loadplugin: load the specified plugin with the specified commandline string\n"
 "\t-masterBanURL: URL to atempt to get the master ban list from <URL>\n"
 "\t-maxidle: idle kick threshhold [s]\n"
 "\t-mp: maximum players total or per team\n"
@@ -733,7 +735,17 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
     } else if (strcmp(argv[i], "-lagwarn") == 0) {
       checkArgc(1, i, argc, argv[i]);
       options.lagwarnthresh = atoi(argv[i])/1000.0f;
-    } else if (strcmp(argv[i], "-maxidle") == 0) {
+	} else if (strcmp(argv[i], "-loadplugin") == 0) {
+		checkArgc(1, i, argc, argv[i]);
+		std::vector<std::string> a = TextUtils::tokenize(argv[i],std::string(","));
+		CmdLineOptions::pluginDef	pDef;
+		if ( a.size() >= 1)
+			pDef.plugin = a[0];
+		if ( a.size() >= 2)
+			pDef.command = a[1];
+		if (pDef.plugin.size())
+			options.pluginList.push_back(pDef);
+	} else if (strcmp(argv[i], "-maxidle") == 0) {
       checkArgc(1, i, argc, argv[i]);
       options.idlekickthresh = (float) atoi(argv[i]);
     } else if (strcmp(argv[i], "-mp") == 0) {

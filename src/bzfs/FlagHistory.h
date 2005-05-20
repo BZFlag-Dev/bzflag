@@ -27,6 +27,7 @@ class FlagHistory {
   void clear();
   void get(char message[]);
   void add(FlagType* type);
+  std::vector<FlagType*> get(void) { return flagHistory;}
  private:
   std::vector<FlagType*> flagHistory;
 };

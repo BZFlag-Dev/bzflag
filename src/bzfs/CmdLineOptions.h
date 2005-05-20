@@ -191,6 +191,15 @@ struct CmdLineOptions
 
   // spree tracking
   bool				trackPlayHistory;
+
+  // plugins
+  typedef struct 
+  {
+	  std::string plugin;
+	  std::string command;
+  }pluginDef;
+
+  std::vector<pluginDef>	pluginList;
 };
 
 

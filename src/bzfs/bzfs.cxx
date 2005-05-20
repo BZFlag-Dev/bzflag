@@ -60,6 +60,11 @@
 
 #include "bzfsEvents.h"
 
+// only include this if we are going to use plugins and export the API
+#ifdef _USE_BZ_API
+#include "bzfsPlugins.h"
+#endif
+
 PlayHistoryTracker	historyTracker;
 
 // every ListServerReAddTime server add ourself to the list
@@ -2719,7 +2724,8 @@ void playerKilled(int victimIndex, int killerIndex, int reason,
   dieEvent.playerID = victimIndex;
   dieEvent.teamID = victim->getTeam();
   dieEvent.killerID = killerIndex;
-  dieEvent.killerTeamID = killer->getTeam();
+  if (killer)
+	dieEvent.killerTeamID = killer->getTeam();
   dieEvent.flagKilledWith = flagType->label();
   memcpy(dieEvent.pos,lastState[victimIndex].pos,sizeof(float)*3);
   dieEvent.rot = lastState[victimIndex].azimuth;
@@ -4381,6 +4387,12 @@ int main(int argc, char **argv)
       DEBUG1("WARNING: unable to load the variable file\n");
     }
   }
+
+  // see if we are going to load any plugins
+#ifdef _USE_BZ_API
+  for ( unsigned int plugin = 0;plugin < clOptions->pluginList.size();plugin++)
+	  loadPlugin(clOptions->pluginList[plugin].plugin,clOptions->pluginList[plugin].command);
+#endif
 
   // see if we are doing playHistoryTracking
   if ( clOptions->trackPlayHistory)

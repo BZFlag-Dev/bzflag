@@ -205,6 +205,7 @@ void ListServerLink::read()
 		//DEBUG3("Got: [%d] \"%s\" \"%s\"\n", playerIndex, callsign, group);
 		group = nextgroup;
 	      }
+		  playerData->authentication.global(true);
 	      sendMessage(ServerPlayer, playerIndex, "Global login approved!");
 	      sendIPUpdate(playerIndex, -1);
 	      sendPlayerInfo();

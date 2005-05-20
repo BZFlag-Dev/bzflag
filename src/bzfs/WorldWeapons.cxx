@@ -31,6 +31,32 @@ char *getDirectMessageBuffer();
 void broadcastMessage(uint16_t code, int len, const void *msg);
 
 
+int fireWorldWep ( FlagType* type, float lifetime, PlayerId player, float *pos, float tilt, float direction, int shotID, float dt )
+{
+	void *buf, *bufStart = getDirectMessageBuffer();
+
+	FiringInfo firingInfo;
+	firingInfo.flagType = type;
+	firingInfo.lifetime = lifetime;
+	firingInfo.shot.player = player;
+	memmove(firingInfo.shot.pos, pos, 3 * sizeof(float));
+	float shotSpeed = BZDB.eval(StateDatabase::BZDB_SHOTSPEED);
+	const float tiltFactor = cosf(tilt);
+	firingInfo.shot.vel[0] = shotSpeed * tiltFactor * cosf(direction);
+	firingInfo.shot.vel[1] = shotSpeed * tiltFactor * sinf(direction);
+	firingInfo.shot.vel[2] = shotSpeed * sinf(tilt);
+	firingInfo.shot.id = shotID;
+	firingInfo.shot.dt = dt;
+
+	buf = firingInfo.pack(bufStart);
+
+	if (BZDB.isTrue(StateDatabase::BZDB_WEAPONS)) {
+		broadcastMessage(MsgShotBegin, (char *)buf - (char *)bufStart, bufStart);
+	}
+	return shotID;
+}
+
+
 WorldWeapons::WorldWeapons()
 : worldShotId(0)
 {
@@ -65,31 +91,6 @@ float WorldWeapons::nextTime ()
     }
   }
   return (float)(nextShot - TimeKeeper::getCurrent());
-}
-
-int fireWorldWep ( FlagType* type, float lifetime, PlayerId player, float *pos, float tilt, float direction, int shotID, float dt )
-{
-	void *buf, *bufStart = getDirectMessageBuffer();
-
-	FiringInfo firingInfo;
-	firingInfo.flagType = type;
-	firingInfo.lifetime = lifetime;
-	firingInfo.shot.player = player;
-	memmove(firingInfo.shot.pos, pos, 3 * sizeof(float));
-	float shotSpeed = BZDB.eval(StateDatabase::BZDB_SHOTSPEED);
-	const float tiltFactor = cosf(tilt);
-	firingInfo.shot.vel[0] = shotSpeed * tiltFactor * cosf(direction);
-	firingInfo.shot.vel[1] = shotSpeed * tiltFactor * sinf(direction);
-	firingInfo.shot.vel[2] = shotSpeed * sinf(tilt);
-	firingInfo.shot.id = shotID;
-	firingInfo.shot.dt = dt;
-
-	buf = firingInfo.pack(bufStart);
-
-	if (BZDB.isTrue(StateDatabase::BZDB_WEAPONS)) {
-		broadcastMessage(MsgShotBegin, (char *)buf - (char *)bufStart, bufStart);
-	}
-	return shotID;
 }
 
 void WorldWeapons::fire()

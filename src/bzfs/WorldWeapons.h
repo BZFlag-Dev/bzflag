@@ -82,6 +82,7 @@ protected:
 	float		tilt;
 };
 
+int fireWorldWep ( FlagType* type, float lifetime, PlayerId player, float *pos, float tilt, float direction, int shotID, float dt );
 
 #endif
 
