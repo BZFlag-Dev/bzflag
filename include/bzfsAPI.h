@@ -235,16 +235,16 @@ public:
 	double time;
 };
 
-// event handaler callback
-class bz_EventHandaler
+// event handler callback
+class bz_EventHandler
 {
 public:
-	virtual ~bz_EventHandaler(){};
+	virtual ~bz_EventHandler(){};
 	virtual void process ( bz_EventData *eventData ) = 0;
 	virtual bool autoDelete ( void ) { return false; }	// only set this to true if you are internal to the bzfs module ( on windows )
 };
 
-BZF_API bool bz_registerEvent ( bz_teEventType eventType, int team, bz_EventHandaler* eventHandaler );
+BZF_API bool bz_registerEvent ( bz_teEventType eventType, int team, bz_EventHandler* eventHandler );
 
 // player info
 
@@ -315,14 +315,14 @@ BZF_API bool bz_IPBanUser ( int playerIndex, const char* ip, int time, const cha
 
 // custom commands
 
-class bz_CustomSlashCommandHandaler
+class bz_CustomSlashCommandHandler
 {
 public:
-	virtual ~bz_CustomSlashCommandHandaler(){};
+	virtual ~bz_CustomSlashCommandHandler(){};
 	virtual bool handle ( int playerID, std::string command, std::string message ) = 0;
 };
 
-BZF_API bool bz_registerCustomSlashCommand ( const char* command, bz_CustomSlashCommandHandaler *handaler );
+BZF_API bool bz_registerCustomSlashCommand ( const char* command, bz_CustomSlashCommandHandler *handler );
 BZF_API bool bz_removeCustomSlashCommand ( const char* command );
 
 // spawning

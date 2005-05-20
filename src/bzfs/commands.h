@@ -23,16 +23,16 @@
 // parser for the server commands
 void parseServerCommand(const char *message, int dstPlayerId);
 
-class CustomSlashCommandHandaler
+class CustomSlashCommandHandler
 {
 public:
-	virtual ~CustomSlashCommandHandaler(){};
+	virtual ~CustomSlashCommandHandler(){};
 	virtual bool handle ( int playerID, std::string command, std::string message ) = 0;
 };
 
-typedef std::map<std::string, CustomSlashCommandHandaler*>	tmCustomSlashCommandMap;
+typedef std::map<std::string, CustomSlashCommandHandler*>	tmCustomSlashCommandMap;
 
-void registerCustomSlashCommand ( std::string command, CustomSlashCommandHandaler* handaler );
+void registerCustomSlashCommand ( std::string command, CustomSlashCommandHandler* handler );
 void removeCustomSlashCommand ( std::string command );
 
 #endif

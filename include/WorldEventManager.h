@@ -166,15 +166,15 @@ public:
 	double time;
 };
 
-class BaseEventHandaler
+class BaseEventHandler
 {
 public:
-	virtual ~BaseEventHandaler(){};
+	virtual ~BaseEventHandler(){};
 	virtual void process ( BaseEventData *eventData ) = 0;
 	virtual bool autoDelete ( void ) { return true;}
 };
 
-typedef std::vector<BaseEventHandaler*> tvEventList;
+typedef std::vector<BaseEventHandler*> tvEventList;
 typedef std::map<teEventType, tvEventList> tmEventTypeList;
 typedef std::map<int, tmEventTypeList> tmEventMap;
 
@@ -184,8 +184,8 @@ public:
 	WorldEventManager();
 	~WorldEventManager();
 
-	void addEvent ( teEventType eventType, int team, BaseEventHandaler* theEvetnt );
-	void removeEvent ( teEventType eventType, int team, BaseEventHandaler* theEvetnt );
+	void addEvent ( teEventType eventType, int team, BaseEventHandler* theEvetnt );
+	void removeEvent ( teEventType eventType, int team, BaseEventHandler* theEvetnt );
 	tvEventList getEventList ( teEventType eventType, int team );
 	void callEvents ( teEventType eventType, int team, BaseEventData	*eventData );
 
