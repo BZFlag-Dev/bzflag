@@ -36,3 +36,4 @@ void DeathHandaler::process ( bz_EventData *eventData )
 
 	bz_fireWorldWep("SW",(float)bz_getBZDBDouble("_reloadTime"),BZ_SERVER,dieData->pos,0,0,0,0.0f);
 }
+

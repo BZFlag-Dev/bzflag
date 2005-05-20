@@ -1,6 +1,6 @@
 
 # The flags needed to compile all
-CXXFLAGS = -fPIC -frtti -O
+CXXFLAGS = -fPIC -frtti -I../../src/bzfs -O
 
 # we need to link in the dll handling library
 
@@ -11,19 +11,9 @@ all : shockwavedeath.so
 
 # link the shared libraries with the -shared flag.
 
-shockwavedeath.so : shockwaveDeath.o
+shockwavedeath.so : shockwaveDeath.cpp
 	$(CPP) $(CXXFLAGS) -shared  $^ -o $@	
 
 clean :
-	-rm *.o 
+	-rm *.so 
 	
-realclean : clean
-	-rm shockwavedeath *.so 
-	
-
-
-
-
-
-
-		
