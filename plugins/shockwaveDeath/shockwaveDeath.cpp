@@ -14,7 +14,7 @@ public:
 
 DeathHandaler	deathHandaler;
 
-int bz_Load ( const char* commandLine )
+extern "C" int bz_Load ( const char* commandLine )
 {
 	bz_debugMessage(3,"shockwaveDeath plugin called");
 
@@ -22,7 +22,7 @@ int bz_Load ( const char* commandLine )
 	return 0;
 }
 
-int bz_Unload ( void )
+extern "C" int bz_Unload ( void )
 {
 	return 0;
 }
