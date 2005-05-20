@@ -70,10 +70,10 @@ void loadPlugin ( std::string plugin, std::string config )
 	void*	hLib = dlopen(plugin.c_str(),RTLD_LAZY);
 	if (hLib)
 	{
-		lpProc = dlsym(hLib,"bz_Load");
+		lpProc = (int (*lpProc)(const char*))dlsym(hLib,"bz_Load");
 		if (lpProc)
 		{
-			int ret =(*lpProc)(config.c_str());
+			lpProc(config.c_str());
 			DEBUG1("Plugin:%s loaded",plugin.c_str());
 			vLibHandles.push_back(hLib);
 		}
@@ -89,9 +89,9 @@ void unloadPlugins ( void )
 	int (*lpProc)(void);
 	for (unsigned int i = 0; i < vLibHandles.size();i++)
 	{
-		lpProc = dlsym(vLibHandles[i], "bz_Unload");
+		lpProc = (int (*lpProc)(void))dlsym(vLibHandles[i], "bz_Unload");
 		if (lpProc)
-			int ret =(*lpProc)(); 
+			lpProc(); 
 		else
 			DEBUG1("Plugin does not contain bz_UnLoad method");
 
