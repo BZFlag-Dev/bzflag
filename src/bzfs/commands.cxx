@@ -17,6 +17,8 @@
 // interface header
 #include "commands.h"
 
+#include "WorldEventManager.h"
+
 // system implementation headers
 #include <vector>
 #include <string>
@@ -59,7 +61,6 @@
 #define pclose _pclose
 #endif
 
-
 // FIXME -- need to pull communication out of bzfs.cxx...
 
 // extern to initialize permission groups
@@ -100,6 +101,8 @@ extern TimeKeeper countdownPauseStart;
 // externs that identify and password requires
 extern void sendIPUpdate(int targetPlayer, int playerIndex);
 extern void sendPlayerInfo(void);
+
+tmCustomSlashCommandMap	customCommands;
 
 class NoDigit {
 public:
@@ -2749,10 +2752,45 @@ void parseServerCommand(const char *message, int t)
     handleMasterBanCmd(playerData, message);
 
   } else {
+
+		// lets see if it is a custom command
+		std::vector<std::string> params = TextUtils::tokenize(std::string(message+1),std::string(" "));
+		
+		tmCustomSlashCommandMap::iterator itr = customCommands.find(TextUtils::tolower(params[0]));
+
+		if (itr != customCommands.end())	// see if we have a registerd custom command and call it
+		{
+			if (itr->second->handle(t,params[0],params.size()>1 ? params[1] : message))	//if it handles it, then we are good
+				return;
+		}
+
+		// lets see if anyone wants to handle the unhandled event
+		UnknownSlashCommandEventData	commandData;
+		commandData.from = t;
+		commandData.message = message;
+		commandData.time = TimeKeeper::getCurrent().getSeconds();
+
+		worldEventManager.callEvents(eUnknownSlashCommand,-1,&commandData);
+		if (commandData.handled)	// did anyone do it?
+			return;
+
     char reply[MessageLen];
     snprintf(reply, MessageLen, "Unknown command [%s]", message + 1);
     sendMessage(ServerPlayer, t, reply);
   }
+}
+
+void registerCustomSlashCommand ( std::string command, CustomSlashCommandHandaler* handaler )
+{
+	if (handaler)
+		customCommands[TextUtils::tolower(command)] = handaler;	
+}
+
+void removeCustomSlashCommand ( std::string command )
+{
+	tmCustomSlashCommandMap::iterator itr = customCommands.find(TextUtils::tolower(command));
+	if (itr != customCommands.end())
+		itr = customCommands.erase(itr);
 }
 
 

@@ -103,7 +103,6 @@ PlayerJoinPartEventData::~PlayerJoinPartEventData()
 }
 
 //-------------------ChatEventData--------------------
-
 ChatEventData::ChatEventData()
 {
 	eventType = eChatMessageEvent;
@@ -113,6 +112,19 @@ ChatEventData::ChatEventData()
 }
 
 ChatEventData::~ChatEventData()
+{
+}
+
+//-------------------UnknownSlashCommandEventData--------------------
+UnknownSlashCommandEventData::UnknownSlashCommandEventData()
+{
+	eventType = eUnknownSlashCommand;
+	from = -1;
+	handled = false;
+	time = 0.0;
+}
+
+UnknownSlashCommandEventData::~UnknownSlashCommandEventData()
 {
 }
 

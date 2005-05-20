@@ -273,6 +273,18 @@ BZF_API void bz_debugMessage ( int debugLevel, const char* message );
 BZF_API bool bz_kickUser ( int playerIndex, const char* reason, bool notify );
 BZF_API bool bz_IPBanUser ( int playerIndex, const char* ip, int time, const char* reason );
 
+// custom commands
+
+class bz_CustomSlashCommandHandaler
+{
+public:
+	virtual ~bz_CustomSlashCommandHandaler(){};
+	virtual bool handle ( int playerID, std::string command, std::string message ) = 0;
+};
+
+BZF_API bool bz_registerCustomSlashCommand ( const char* command, bz_CustomSlashCommandHandaler *handaler );
+BZF_API bool bz_removeCustomSlashCommand ( const char* command );
+
 
 #endif //_BZFS_API_H_
 

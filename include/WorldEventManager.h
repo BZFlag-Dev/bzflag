@@ -34,7 +34,8 @@ typedef enum
 	eZoneExitEvent,
 	ePlayerJoinEvent,
 	ePlayerPartEvent,
-	eChatMessageEvent
+	eChatMessageEvent,
+	eUnknownSlashCommand	// will not take a team
 }teEventType;
 
 class BaseEventData
@@ -131,6 +132,19 @@ public:
 	int from;
 	int to;
 
+	std::string message;
+	double time;
+};
+
+class UnknownSlashCommandEventData : public BaseEventData
+{
+public:
+	UnknownSlashCommandEventData();
+	virtual ~UnknownSlashCommandEventData();
+
+	int from;
+
+	bool handled;
 	std::string message;
 	double time;
 };

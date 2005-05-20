@@ -21,6 +21,8 @@
 #include "GameKeeper.h"
 #include "FlagInfo.h"
 
+#include "commands.h"
+
 #define BZ_API_VERSION	1
 
 extern void sendMessage(int playerIndex, PlayerId dstPlayer, const char *message);
@@ -262,6 +264,24 @@ BZF_API bool bz_IPBanUser ( int playerIndex, const char* ip, int time, const cha
 	else
 		return false;
 
+	return true;
+}
+
+BZF_API bool bz_registerCustomSlashCommand ( const char* command, bz_CustomSlashCommandHandaler *handaler )
+{
+	if (!command || !handaler)
+		return false;
+
+	registerCustomSlashCommand(std::string(command),(CustomSlashCommandHandaler*)handaler);
+	return true;
+}
+
+BZF_API bool bz_removeCustomSlashCommand ( const char* command )
+{
+	if (!command)
+		return false;
+
+	removeCustomSlashCommand(std::string(command));
 	return true;
 }
 
