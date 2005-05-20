@@ -5,8 +5,8 @@
 #include <string>
 
 
-// event handaler callback
-class DeathHandaler : public bz_EventHandler
+// event handler callback
+class DeathHandler : public bz_EventHandler
 {
 public:
 	virtual void process ( bz_EventData *eventData );
@@ -14,17 +14,17 @@ public:
 	bool	usePlayerForShot;
 };
 
-DeathHandaler	deathHandaler;
+DeathHandler	deathHandler;
 
 BZF_PLUGIN_CALL int bz_Load ( const char* commandLine )
 {
 	bz_debugMessage(4,"shockwaveDeath plugin loaded");
 
-	bz_registerEvent(bz_ePlayerDieEvent,BZ_ALL_USERS,&deathHandaler);
+	bz_registerEvent(bz_ePlayerDieEvent,BZ_ALL_USERS,&deathHandler);
 
 	std::string param = commandLine;
 
-	deathHandaler.usePlayerForShot = (param == "usevictim");
+	deathHandler.usePlayerForShot = (param == "usevictim");
 	return 0;
 }
 
@@ -34,7 +34,7 @@ BZF_PLUGIN_CALL int bz_Unload ( void )
 	return 0;
 }
 
-void DeathHandaler::process ( bz_EventData *eventData )
+void DeathHandler::process ( bz_EventData *eventData )
 {
 	if (eventData->eventType != bz_ePlayerDieEvent)
 		return;
