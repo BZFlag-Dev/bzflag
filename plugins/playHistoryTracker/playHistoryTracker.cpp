@@ -6,6 +6,8 @@
 #include <string>
 #include <map>
 
+BZ_GET_PLUGIN_VERSION
+
 // event handler callback
 
 class PlayHistoryTracker : public bz_EventHandler

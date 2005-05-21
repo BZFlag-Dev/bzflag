@@ -4,6 +4,7 @@
 #include "bzfsAPI.h"
 #include <string>
 
+BZ_GET_PLUGIN_VERSION
 
 // event handler callback
 class DeathHandler : public bz_EventHandler

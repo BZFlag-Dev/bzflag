@@ -1235,11 +1235,23 @@ static bool defineWorld()
 	}
       }
     }
-  } else if (clOptions->gameStyle & TeamFlagGameStyle) {
-    world = defineTeamWorld();
-  } else {
-    world = defineRandomWorld();
-  }
+  } 
+	else
+	{
+		// check and see if anyone wants to define the world from an event
+		GenerateWorldEventData	worldData;
+		worldData.ctf  = clOptions->gameStyle & TeamFlagGameStyle;
+		worldData.time = TimeKeeper::getCurrent().getSeconds();
+
+		worldEventManager.callEvents(eGenerateWorldEvent,-1,&worldData);
+		if (!worldData.handled)
+		{
+			if (clOptions->gameStyle & TeamFlagGameStyle)
+				world = defineTeamWorld();
+			else
+				world = defineRandomWorld();
+		}
+	}
 
   if (world == NULL) {
     return false;

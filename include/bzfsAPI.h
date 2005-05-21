@@ -30,6 +30,10 @@
 	#define BZF_PLUGIN_CALL extern "C"
 #endif
 
+#define BZ_API_VERSION	2
+
+#define BZ_GET_PLUGIN_VERSION BZF_PLUGIN_CALL int bz_GetVersion ( void ) { return BZ_API_VERSION;}
+
 // versioning
 BZF_API int bz_APIVersion ( void );
 
@@ -50,7 +54,8 @@ typedef enum
 	bz_eGetPlayerSpawnPosEvent,
 	bz_eGetAutoTeamEvent,				// will not take a team
 	bz_eAllowPlayer,						// will not take a team
-	bz_eTickEvent								// will not take a team
+	bz_eTickEvent,							// will not take a team
+	bz_eGenerateWorldEvent			// will not take a team
 }bz_teEventType;
 
 #define BZ_ALL_USERS	-1
@@ -274,6 +279,24 @@ public:
 	double time;
 };
 
+class bz_GenerateWorldEventData : public bz_EventData
+{
+public:
+	bz_GenerateWorldEventData()
+	{
+		eventType = bz_eGenerateWorldEvent;
+		handled = false;
+		ctf = false;
+		time = 0.0;
+	}
+	virtual ~bz_GenerateWorldEventData(){};
+
+	bool handled;
+	bool ctf;
+
+	double time;
+};
+
 // event handler callback
 class bz_EventHandler
 {
@@ -383,7 +406,6 @@ BZF_API bool bz_killPlayer ( int playeID, bool spawnOnBase );
 
 // flags
 BZF_API bool bz_removePlayerFlagr ( int playeID );
-
 
 #endif //_BZFS_API_H_
 

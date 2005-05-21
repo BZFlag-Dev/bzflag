@@ -39,7 +39,8 @@ typedef enum
 	eGetPlayerSpawnPosEvent,
 	eGetAutoTeamEvent,		// will not take a team
 	eAllowPlayer,					// will not take a team
-	eTickEvent						// will not take a team
+	eTickEvent,						// will not take a team
+	eGenerateWorldEvent	// will not take a team
 }teEventType;
 
 class BaseEventData
@@ -211,6 +212,23 @@ public:
 	double time;
 };
 
+class GenerateWorldEventData : public BaseEventData
+{
+public:
+	GenerateWorldEventData()
+	{
+		eventType = eGenerateWorldEvent;
+		handled = false;
+		ctf = false;
+		time = 0.0;
+	}
+	virtual ~GenerateWorldEventData(){};
+
+	bool handled;
+	bool ctf;
+
+	double time;
+};
 
 class BaseEventHandler
 {

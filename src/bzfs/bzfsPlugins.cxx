@@ -38,6 +38,15 @@ void unload1Plugin ( int iPluginID );
 #ifdef _WIN32
 #include <windows.h>
 
+int getPluginVersion ( HINSTANCE hLib )
+{
+	int (*lpProc)(void);
+	lpProc = (int (__cdecl *)(void))GetProcAddress(hLib, "bz_GetVersion");
+	if (lpProc)
+		return lpProc(); 
+	return 0;
+}
+
 void loadPlugin ( std::string plugin, std::string config )
 {
 	int (*lpProc)(const char*);
@@ -45,19 +54,30 @@ void loadPlugin ( std::string plugin, std::string config )
 	HINSTANCE	hLib = LoadLibrary(plugin.c_str());
 	if (hLib)
 	{
-		lpProc = (int (__cdecl *)(const char*))GetProcAddress(hLib, "bz_Load");
-		if (lpProc)
+		if (getPluginVersion(hLib) < BZ_API_VERSION)
 		{
-			int ret =lpProc(config.c_str()); 
-			DEBUG1("Plugin:%s loaded\n",plugin.c_str());
-
-			trPluginRecord pluginRecord;
-			pluginRecord.handle = hLib;
-			pluginRecord.plugin = plugin;
-			vPluginList.push_back(pluginRecord);
+			DEBUG1("Plugin:%s found but expects an older API version (%d), upgrade it\n",plugin.c_str(),getPluginVersion(hLib));
+			FreeLibrary(hLib);
 		}
 		else
-			DEBUG1("Plugin:%s found but does not contain bz_Load method\n",plugin.c_str());
+		{
+			lpProc = (int (__cdecl *)(const char*))GetProcAddress(hLib, "bz_Load");
+			if (lpProc)
+			{
+				int ret =lpProc(config.c_str()); 
+				DEBUG1("Plugin:%s loaded\n",plugin.c_str());
+
+				trPluginRecord pluginRecord;
+				pluginRecord.handle = hLib;
+				pluginRecord.plugin = plugin;
+				vPluginList.push_back(pluginRecord);
+			}
+			else
+			{
+				DEBUG1("Plugin:%s found but does not contain bz_Load method\n",plugin.c_str());
+				FreeLibrary(hLib);
+			}
+		}
 	}
 	else
 		DEBUG1("Plugin:%s not found\n",plugin.c_str());
@@ -83,6 +103,15 @@ void unload1Plugin ( int iPluginID )
 #include <dlfcn.h>
 std::vector<void*>	vLibHandles;
 
+int getPluginVersion ( void* hLib )
+{
+	int (*lpProc)(void);
+	*(void**) &lpProc = dlsym(hLib,"bz_GetVersion");
+	if (lpProc)
+		return (*lpProc)(); 
+	return 0;
+}
+
 void loadPlugin ( std::string plugin, std::string config )
 {
 	int (*lpProc)(const char*);
@@ -90,18 +119,29 @@ void loadPlugin ( std::string plugin, std::string config )
 	void*	hLib = dlopen(plugin.c_str(),RTLD_LAZY);
 	if (hLib)
 	{
-		*(void**) &lpProc = dlsym(hLib,"bz_Load");
-		if (lpProc)
+		if (getPluginVersion(hLib) < BZ_API_VERSION)
 		{
-			(*lpProc)(config.c_str());
-			DEBUG1("Plugin:%s loaded\n",plugin.c_str());
-			trPluginRecord pluginRecord;
-			pluginRecord.handle = hLib;
-			pluginRecord.plugin = plugin;
-			vPluginList.push_back(pluginRecord);
+			DEBUG1("Plugin:%s found but expects an older API version (%d), upgrade it\n",plugin.c_str(),getPluginVersion(hLib));
+			dlclose(hLib);
 		}
 		else
-			DEBUG1("Plugin:%s found but does not contain bz_Load method, error %s\n",plugin.c_str(),dlerror());
+		{
+			*(void**) &lpProc = dlsym(hLib,"bz_Load");
+			if (lpProc)
+			{
+				(*lpProc)(config.c_str());
+				DEBUG1("Plugin:%s loaded\n",plugin.c_str());
+				trPluginRecord pluginRecord;
+				pluginRecord.handle = hLib;
+				pluginRecord.plugin = plugin;
+				vPluginList.push_back(pluginRecord);
+			}
+			else
+			{
+				DEBUG1("Plugin:%s found but does not contain bz_Load method, error %s\n",plugin.c_str(),dlerror());
+				dlclose(hLib);
+			}
+		}
 	}
 	else
 		DEBUG1("Plugin:%s not found, error %s\n",plugin.c_str(), dlerror());

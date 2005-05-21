@@ -23,8 +23,6 @@
 #include "commands.h"
 #include "SpawnPosition.h"
 
-#define BZ_API_VERSION	2
-
 extern void sendMessage(int playerIndex, PlayerId dstPlayer, const char *message);
 extern void removePlayer(int playerIndex, const char *reason, bool notify);
 extern void zapFlagByPlayer(int playerIndex);
