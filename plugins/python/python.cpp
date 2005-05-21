@@ -1,4 +1,4 @@
-in/* bzflag
+/* bzflag
  * Copyright (c) 1993 - 2005 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
@@ -22,23 +22,15 @@ BZF_PLUGIN_CALL
 int
 bz_Load (const char *commandLine)
 {
-  Py_SetProgramName ("blender");
-  Py_Initialize ();
+	Py_SetProgramName ("BZFlag");
+	Py_Initialize ();
 
-  module_bzflag = new Python::BZFlag ();
+	module_bzflag = new Python::BZFlag ();
 }
 
 BZF_PLUGIN_CALL
 int
 bz_Unload (void)
 {
-  Py_Finalize ();
+	Py_Finalize ();
 }
-
-// Local Variables: ***
-// mode:C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
-// End: ***
-// ex: shiftwidth=2 tabstop=8
