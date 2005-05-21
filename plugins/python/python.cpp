@@ -26,17 +26,18 @@ BZF_PLUGIN_CALL
 int
 bz_Load (const char *commandLine)
 {
-	Py_Initialize ();
-	Py_SetProgramName ("BZFlag");
+	if (Python::BZFlag::References == 0) {
+		Py_Initialize ();
+		Py_SetProgramName ("BZFlag");
+	}
 
-	module_bzflag = new Python::BZFlag ();
+	module_bzflag = Python::BZFlag::GetInstance ();
 
 	char *buffer = ReadFile (commandLine);
 	code_buffer = buffer;
 
 	PyCodeObject *code = (PyCodeObject *) Py_CompileString (buffer, commandLine, Py_file_input);
 	if (PyErr_Occurred ()) {
-		fprintf (stderr, "error compiling!\n");
 		PyErr_Print ();
 		return 1;
 	}
@@ -52,9 +53,12 @@ BZF_PLUGIN_CALL
 int
 bz_Unload (void)
 {
-	PyDict_Clear (global_dict);
-	Py_DECREF (global_dict);
-	Py_Finalize ();
+	Python::BZFlag::DeRef ();
+	if (Python::BZFlag::References == 0) {
+		PyDict_Clear (global_dict);
+		Py_DECREF (global_dict);
+		Py_Finalize ();
+	}
 
 	delete [] code_buffer;
 }

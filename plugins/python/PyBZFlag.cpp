@@ -29,6 +29,24 @@ static struct PyMethodDef methods[] =
 	{NULL,              (PyCFunction) NULL,            0,                            NULL},
 };
 
+BZFlag *BZFlag::instance = NULL;
+int BZFlag::References = 0;
+
+BZFlag *
+BZFlag::GetInstance ()
+{
+	if (instance == NULL)
+		instance = new BZFlag ();
+	References++;
+	return instance;
+}
+
+void
+BZFlag::DeRef ()
+{
+	References--;
+}
+
 BZFlag::BZFlag ()
 {
 	module = Py_InitModule3 ("BZFlag", methods, NULL);

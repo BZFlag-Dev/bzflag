@@ -22,8 +22,13 @@ namespace Python
 class BZFlag
 {
 public:
+	static BZFlag *GetInstance ();
+	static int References;
+	static void DeRef ();
+protected:
 	BZFlag ();
 private:
+	static BZFlag *instance;
 	Event *event_sub;
 	PyObject *module;
 };
