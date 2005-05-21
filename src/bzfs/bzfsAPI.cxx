@@ -27,8 +27,9 @@
 
 extern void sendMessage(int playerIndex, PlayerId dstPlayer, const char *message);
 extern void removePlayer(int playerIndex, const char *reason, bool notify);
+extern void zapFlagByPlayer(int playerIndex);
 extern CmdLineOptions *clOptions;
-
+extern uint16_t curMaxPlayers;
 
 // versioning
 BZF_API int bz_APIVersion ( void )
@@ -83,6 +84,21 @@ BZF_API bool bz_updatePlayerData ( bz_PlayerRecord *playerRecord )
 
 	playerRecord->admin = player->accessInfo.isVerified();
 	return true;
+}
+
+BZF_API bool bz_getPlayerIndexList ( std::vector<int> *playerList )
+{
+	playerList->clear();
+
+	for (int i = 0; i < curMaxPlayers; i++)
+	{
+		GameKeeper::Player *p = GameKeeper::Player::getPlayerByIndex(i);
+		if ((p == NULL))
+			continue;
+
+		playerList->push_back(i);
+	}
+	return playerList->size() > 0;
 }
 
 BZF_API bool bz_getPlayerByIndex ( int index, bz_PlayerRecord *playerRecord )
@@ -237,6 +253,23 @@ BZF_API bool bz_getStandardSpawn ( int playeID, float pos[3], float *rot )
 
 	return true;
 }
+
+BZF_API bool bz_killPlayer ( int playeID, bool spawnOnBase )
+{
+	GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playeID);
+	if (!player)
+		return false;
+
+	if (!player->player.isAlive())
+		return false;
+
+	player->player.setDead();
+	player->player.setRestartOnBase(spawnOnBase);
+	zapFlagByPlayer(playeID);
+
+	return true;
+}
+
 
 
 // Local Variables: ***

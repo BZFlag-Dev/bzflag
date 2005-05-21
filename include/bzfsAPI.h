@@ -251,6 +251,7 @@ BZF_API bool bz_removeEvent ( bz_teEventType eventType, int team, bz_EventHandle
 
 class bz_PlayerRecord;
 
+BZF_API bool bz_getPlayerIndexList ( std::vector<int> *playerList );
 BZF_API bool bz_getPlayerByIndex ( int index, bz_PlayerRecord *playerRecord );
 BZF_API bool bz_updatePlayerData ( bz_PlayerRecord *playerRecord );
 
@@ -328,6 +329,9 @@ BZF_API bool bz_removeCustomSlashCommand ( const char* command );
 
 // spawning
 BZF_API bool bz_getStandardSpawn ( int playeID, float pos[3], float *rot );
+
+// dying
+BZF_API bool bz_killPlayer ( int playeID, bool spawnOnBase );
 
 
 #endif //_BZFS_API_H_

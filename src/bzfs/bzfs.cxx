@@ -2300,7 +2300,7 @@ static void autopilotPlayer(int playerIndex, bool autopilot)
   broadcastMessage(MsgAutoPilot, (char*)buf-(char*)bufStart, bufStart);
 }
 
-static void zapFlagByPlayer(int playerIndex)
+void zapFlagByPlayer(int playerIndex)
 {
   GameKeeper::Player *playerData
     = GameKeeper::Player::getPlayerByIndex(playerIndex);
