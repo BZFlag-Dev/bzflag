@@ -21,21 +21,28 @@ TickHandler::process (bz_EventData *eventData)
 {
 	PyObject *listeners = parent->GetListeners (bz_eTickEvent);
 
+	bz_TickEventData *ted = (bz_TickEventData*) eventData;
 	if (listeners == NULL || !PyList_Check (listeners)) {
 		// FIXME - throw error
 		fprintf (stderr, "tick listeners is not a list!\n");
 		return;
 	}
+
+	PyObject *arglist = Py_BuildValue("(d)", ted->time);
+
+	// Call out to all of our listeners
 	int size = PyList_Size (listeners);
 	for (int i = 0; i < size; i++) {
 		PyObject *handler = PyList_GetItem (listeners, i);
 		if (!PyCallable_Check (handler)) {
 			// FIXME - throw error
 			fprintf (stderr, "tick listener is not callable\n");
+			Py_DECREF (arglist);
 			return;
 		}
-		PyEval_CallObject (handler, NULL);
+		PyEval_CallObject (handler, arglist);
 	}
+	Py_DECREF (arglist);
 }
 
 static PyObject *SendTextMessage (PyObject *self, PyObject *args, PyObject *keywords);
