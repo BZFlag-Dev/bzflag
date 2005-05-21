@@ -25,6 +25,6 @@ private:
 	PyObject *module;
 };
 
-}
+};
 
 #endif

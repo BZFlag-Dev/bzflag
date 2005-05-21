@@ -16,13 +16,22 @@
 namespace Python
 {
 
+static PyObject *SendTextMessage (PyObject *self, PyObject *args);
+
 static struct PyMethodDef methods[] =
 {
+	{"SendTextMessage", SendTextMessage, METH_VARARGS, NULL},
 };
 
 BZFlag::BZFlag ()
 {
 	module = Py_InitModule3 ("BZFlag", methods, NULL);
-}
 
 }
+
+static PyObject *
+SendTextMessage (PyObject *self, PyObject *args)
+{
+}
+
+};

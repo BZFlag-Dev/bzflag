@@ -12,6 +12,9 @@
 
 #include "bzfsAPI.h"
 #include <Python.h>
+#include "PyBZFlag.h"
+
+Python::BZFlag *module_bzflag;
 
 BZF_PLUGIN_CALL
 int
@@ -19,6 +22,8 @@ bz_Load (const char *commandLine)
 {
   Py_SetProgramName ("blender");
   Py_Initialize ();
+
+  module_bzflag = new Python::BZFlag ();
 }
 
 BZF_PLUGIN_CALL
