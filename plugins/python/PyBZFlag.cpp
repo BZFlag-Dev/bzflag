@@ -114,12 +114,14 @@ static PyObject *
 FireWorldWeapon (PyObject *self, PyObject *args)
 {
 	printf ("FireWorldWeapon ()\n");
+	return Py_None;
 }
 
 static PyObject *
 GetCurrentTime (PyObject *self, PyObject *args)
 {
 	printf ("GetCurrentTime ()\n");
+	return Py_None;
 }
 
 };

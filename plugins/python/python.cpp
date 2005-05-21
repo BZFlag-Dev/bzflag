@@ -67,6 +67,8 @@ bz_Unload (void)
 	}
 
 	delete [] code_buffer;
+
+	return 0;
 }
 
 static char *
