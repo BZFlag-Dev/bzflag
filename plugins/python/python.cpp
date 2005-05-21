@@ -17,12 +17,15 @@ BZF_PLUGIN_CALL
 int
 bz_Load (const char *commandLine)
 {
+  Py_SetProgramName ("blender");
+  Py_Initialize ();
 }
 
 BZF_PLUGIN_CALL
 int
 bz_Unload (void)
 {
+  Py_Finalize ();
 }
 
 // Local Variables: ***

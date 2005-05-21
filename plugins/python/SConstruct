@@ -15,5 +15,7 @@ files = [
 env = Environment ()
 env.Append (CPPPATH = python_include)
 env.Append (CPPPATH = '../../include')
+env.Append (LIBPATH = python_libpath)
+env.Append (LIBS = python_lib)
 env['SHLIBPREFIX'] = ''
 env.SharedLibrary (target = 'python.so', source = files)
