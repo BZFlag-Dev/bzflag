@@ -1,0 +1,20 @@
+the C++ API has two functions for accessing player data:
+bz_getPlayerIndexList() and bz_getPlayerByIndex()
+
+this should probably be hidden in the python bindings. i'm sure there's a way
+to implement a dictionary where any accesses result in calls back to those
+functions. this way, one could index into that dictionary to get the player
+object, or iterate over it to just see all players along with their IDs
+
+similarly, we should probably expose a dictionary for the slash commands - just
+do something like:
+	def callback (player, message):
+	    # do something
+	    pass
+	BZFlag.Commands['blarg'] = callback
+
+BZDB can probably also be exposed as a dictionary
+
+not quite sure yet how to handle events
+might want to use another dictionary!
+	BZFlag.Events[BZFlag.Event.Tick].append (callback)
