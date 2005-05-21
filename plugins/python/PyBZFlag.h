@@ -20,19 +20,34 @@
 namespace Python
 {
 
+class BZFlag;
+
+class TickHandler : public bz_EventHandler
+{
+public:
+	virtual void process (bz_EventData *eventData);
+	BZFlag *parent;
+};
+
 class BZFlag
 {
 public:
 	static BZFlag *GetInstance ();
 	static int References;
 	static void DeRef ();
+
+	PyObject *GetListeners (int event);
+
 protected:
 	BZFlag ();
 private:
 	static BZFlag *instance;
 	Event *event_sub;
 	Team  *team_sub;
+	PyObject *event_listeners;
 	PyObject *module;
+
+	TickHandler tick_handler;
 };
 
 };

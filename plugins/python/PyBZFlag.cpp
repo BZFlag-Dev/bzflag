@@ -16,6 +16,19 @@
 namespace Python
 {
 
+void
+TickHandler::process (bz_EventData *eventData)
+{
+	fprintf (stderr, "tick!\n");
+	PyObject *listeners = parent->GetListeners (bz_eTickEvent);
+	if (!PyList_Check (listeners)) {
+		// FIXME - throw error
+		fprintf (stderr, "tick listeners is not a list!\n");
+		return;
+	}
+	fprintf (stderr, "there are %d tick listeners\n", PyList_Size (listeners));
+}
+
 static PyObject *SendTextMessage (PyObject *self, PyObject *args, PyObject *keywords);
 static PyObject *FireWorldWeapon (PyObject *self, PyObject *args);
 static PyObject *GetCurrentTime  (PyObject *self, PyObject *args);
@@ -59,6 +72,22 @@ BZFlag::BZFlag ()
 
 	PyModule_AddObject (module, "Event", event_sub->GetSubModule ());
 	PyModule_AddObject (module, "Team",   team_sub->GetSubModule ());
+
+	tick_handler.parent = this;
+	bz_registerEvent (bz_eTickEvent, 0, &tick_handler);
+
+	event_listeners = PyDict_New ();
+	PyModule_AddObject (module, "Events", event_listeners);
+}
+
+PyObject *
+BZFlag::GetListeners (int event)
+{
+	PyObject *o = PyInt_FromLong (event);
+	PyObject *ret = PyDict_GetItem (event_listeners, o);
+	Py_DECREF (o);
+
+	return ret;
 }
 
 static PyObject *
