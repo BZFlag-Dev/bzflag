@@ -10,8 +10,8 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include "bzfsAPI.h"
 #include <Python.h>
+#include "bzfsAPI.h"
 #include "PyBZFlag.h"
 
 static char *ReadFile (const char *filename);
@@ -26,6 +26,12 @@ BZF_PLUGIN_CALL
 int
 bz_Load (const char *commandLine)
 {
+	// I would use assert here, but "Assertion `3 == 2' failed" is really not a useful error at all
+	if (BZ_API_VERSION != 2) {
+		fprintf (stderr, "Python plugin currently wraps the version 2 API, but BZFS is exporting version %d. Please complain loudly\n", BZ_API_VERSION);
+		abort ();
+	}
+
 	if (Python::BZFlag::References == 0) {
 		Py_Initialize ();
 		Py_SetProgramName ("BZFlag");
