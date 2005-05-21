@@ -74,7 +74,7 @@ BZFlag::BZFlag ()
 	PyModule_AddObject (module, "Team",   team_sub->GetSubModule ());
 
 	tick_handler.parent = this;
-	bz_registerEvent (bz_eTickEvent, 0, &tick_handler);
+	bz_registerEvent (bz_eTickEvent, -1, &tick_handler);
 
 	event_listeners = PyDict_New ();
 	PyModule_AddObject (module, "Events", event_listeners);
