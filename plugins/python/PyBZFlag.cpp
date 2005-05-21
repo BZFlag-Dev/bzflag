@@ -21,7 +21,8 @@ TickHandler::process (bz_EventData *eventData)
 {
 	fprintf (stderr, "tick!\n");
 	PyObject *listeners = parent->GetListeners (bz_eTickEvent);
-	if (!PyList_Check (listeners)) {
+
+	if (listeners == NULL || !PyList_Check (listeners)) {
 		// FIXME - throw error
 		fprintf (stderr, "tick listeners is not a list!\n");
 		return;
