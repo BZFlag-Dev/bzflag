@@ -26,7 +26,7 @@
 
 #include "BzMaterial.h"
 
-TimeKeeper sync = TimeKeeper::getCurrent();
+TimeKeeper synct = TimeKeeper::getCurrent();
 
 extern void sendMessage(int playerIndex, PlayerId dstPlayer, const char *message);
 extern void removePlayer(int playerIndex, const char *reason, bool notify);
@@ -423,7 +423,7 @@ BZF_API bool bz_addWorldWeapon( std::string flagType, float *pos, float rot, flo
 
 	FlagType *flag = flagMap.find(flagType)->second;
 
-	world->addWeapon(flag, pos, rot, tilt, initDelay, delays, sync);
+	world->addWeapon(flag, pos, rot, tilt, initDelay, delays, synct);
 	return true;
 }
 
