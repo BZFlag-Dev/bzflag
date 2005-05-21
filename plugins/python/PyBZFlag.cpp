@@ -27,7 +27,6 @@ TickHandler::process (bz_EventData *eventData)
 		return;
 	}
 	int size = PyList_Size (listeners);
-	fprintf (stderr, "there are %d tick listeners\n", size);
 	for (int i = 0; i < size; i++) {
 		PyObject *handler = PyList_GetItem (listeners, i);
 		if (!PyCallable_Check (handler)) {
