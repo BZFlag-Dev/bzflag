@@ -527,7 +527,12 @@ case $host_os in
 	#CPPFLAGS="$CPPFLAGS -Wall -W -Wfloat-equal -Wundef -Wshadow -Wpointer-arith -Wcast-qual -Wwrite-strings -Wconversion -Wredundant-decls"
 	CPPFLAGS="$CPPFLAGS -Wall -W -Wshadow"
 	case $host_vendor in
-	     pc)  CPPFLAGS="$CPPFLAGS -mcpu=$host_cpu";;
+	     pc)  
+	       if [[ `gcc -dumpversion` > "3.3" ]] ; then
+	         CPPFLAGS="$CPPFLAGS -mtune=$host_cpu";
+	       else
+	         CPPFLAGS="$CPPFLAGS -mcpu=$host_cpu";
+	       fi;;
 	     ppc) CPPFLAGS="$CPPFLAGS -mcpu=$host_cpu";;
 	esac;;
      cygwin)
@@ -541,7 +546,12 @@ case $host_os in
 	WINPORT=windows_port.o
 	AC_SUBST(WINPORT)
 	AC_DEFINE(HALF_RATE_AUDIO, 1, [Half rate Audio])
-	CPPFLAGS="$CPPFLAGS -Wall -W -mcpu=$host_cpu";;
+	CPPFLAGS="$CPPFLAGS -Wall -W"
+        if [[ `$CC -dumpversion` > "3.3" ]] ; then
+	  CPPFLAGS="$CPPFLAGS -mtune=$host_cpu";
+	else
+	  CPPFLAGS="$CPPFLAGS -mcpu=$host_cpu";
+	fi;;
      solaris*)
 	AC_DEFINE(ETC_INET, [], [hosts is in /etc/inet/])
 	AC_DEFINE(SUN_OGL_NO_VERTEX_MACROS, [], [Sun OpenGL No Macro Vertex])
