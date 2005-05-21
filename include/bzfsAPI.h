@@ -63,7 +63,7 @@ typedef enum
 #define BZ_GREEN_TEAM	2
 #define BZ_BLUE_TEAM	3
 #define BZ_PURPLE_TEAM	4
-#define BZ_ROUGE_TEAM	0
+#define BZ_ROGUE_TEAM	0
 #define BZ_RABBIT_TEAM	5
 #define BZ_HUNTER_TEAM	6
 #define BZ_OBSERVERs	7
