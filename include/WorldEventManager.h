@@ -38,7 +38,8 @@ typedef enum
 	eUnknownSlashCommand,	// will not take a team
 	eGetPlayerSpawnPosEvent,
 	eGetAutoTeamEvent,		// will not take a team
-	eAllowPlayer
+	eAllowPlayer,					// will not take a team
+	eTickEvent						// will not take a team
 }teEventType;
 
 class BaseEventData
@@ -196,6 +197,20 @@ public:
 
 	double time;
 };
+
+class TickEventData : public BaseEventData
+{
+public:
+	TickEventData()
+	{
+		eventType = eTickEvent;
+		time = 0.0;
+	}
+	virtual ~TickEventData(){};
+
+	double time;
+};
+
 
 class BaseEventHandler
 {

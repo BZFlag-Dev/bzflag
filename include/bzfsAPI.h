@@ -46,10 +46,11 @@ typedef enum
 	bz_ePlayerJoinEvent,
 	bz_ePlayerPartEvent,
 	bz_eChatMessageEvent,
-	bz_eUnknownSlashCommand,	// will not take a team
+	bz_eUnknownSlashCommand,		// will not take a team
 	bz_eGetPlayerSpawnPosEvent,
-	bz_eGetAutoTeamEvent,		// will not take a team
-	bz_eAllowPlayer				// will not take a team
+	bz_eGetAutoTeamEvent,				// will not take a team
+	bz_eAllowPlayer,						// will not take a team
+	bz_eTickEvent								// will not take a team
 }bz_teEventType;
 
 #define BZ_ALL_USERS	-1
@@ -256,6 +257,19 @@ public:
 
 	std::string reason;
 	bool allow;
+
+	double time;
+};
+
+class bz_TickEventData : public bz_EventData
+{
+public:
+	bz_TickEventData()
+	{
+		eventType = bz_eTickEvent;
+		time = 0.0;
+	}
+	virtual ~bz_TickEventData(){};
 
 	double time;
 };

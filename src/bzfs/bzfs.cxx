@@ -5267,6 +5267,11 @@ int main(int argc, char **argv)
     // Fire world weapons
     world->getWorldWeapons().fire();
 
+		// fire off a tick event
+		TickEventData	tickData;
+		tickData.time = TimeKeeper::getCurrent().getSeconds();
+		worldEventManager.callEvents(eTickEvent,-1,&tickData);
+
     // Clean pending players
     GameKeeper::Player::clean();
   }
