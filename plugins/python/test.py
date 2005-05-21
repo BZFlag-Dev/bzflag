@@ -19,7 +19,9 @@
 
 import BZFlag
 import BZFlag.Event
+import BZFlag.Team
 
 BZFlag.SendTextMessage (0, 0, 'hello')
 
 print BZFlag.Event.__dict__
+print BZFlag.Team.__dict__

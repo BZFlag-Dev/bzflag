@@ -55,8 +55,10 @@ BZFlag::BZFlag ()
 	Py_INCREF (Py_True);
 
 	event_sub = new Event ();
+	team_sub  = new Team ();
 
 	PyModule_AddObject (module, "Event", event_sub->GetSubModule ());
+	PyModule_AddObject (module, "Team",   team_sub->GetSubModule ());
 }
 
 static PyObject *

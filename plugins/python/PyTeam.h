@@ -10,28 +10,20 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include "PyEvent.h"
-#include "PyTeam.h"
 #include <Python.h>
 
-#ifndef __PYTHON_BZFLAG_H__
-#define __PYTHON_BZFLAG_H__
+#ifndef __PYTHON_TEAM_H__
+#define __PYTHON_TEAM_H__
 
 namespace Python
 {
 
-class BZFlag
+class Team
 {
 public:
-	static BZFlag *GetInstance ();
-	static int References;
-	static void DeRef ();
-protected:
-	BZFlag ();
+	Team ();
+	PyObject *GetSubModule ();
 private:
-	static BZFlag *instance;
-	Event *event_sub;
-	Team  *team_sub;
 	PyObject *module;
 };
 
