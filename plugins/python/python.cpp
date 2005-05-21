@@ -69,8 +69,10 @@ ReadFile (const char *filename)
 	unsigned int len = ftell (f);
 	fseek (f, pos, SEEK_SET);
 
-	char *buffer = new char[len];
+	char *buffer = new char[len + 1];
 	fread (buffer, 1, len, f);
+
+	buffer[len] = '\0';
 
 	fclose (f);
 	return buffer;

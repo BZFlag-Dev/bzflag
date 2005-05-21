@@ -23,11 +23,10 @@ static PyObject *GetCurrentTime  (PyObject *self, PyObject *args);
 static struct PyMethodDef methods[] =
 {
 	// FIXME - docstrings
-	/*
 	{"SendTextMessage", SendTextMessage, METH_VARARGS, NULL},
 	{"FireWorldWeapon", FireWorldWeapon, METH_VARARGS, NULL},
 	{"GetCurrentTime",  GetCurrentTime,  METH_NOARGS,  NULL},
-	*/
+	{NULL,              NULL,            0,            NULL},
 };
 
 BZFlag::BZFlag ()
