@@ -1,4 +1,4 @@
-// schokwaveDeath.cpp : Defines the entry point for the DLL application.
+// shockwaveDeath.cpp : Defines the entry point for the DLL application.
 //
 
 #include "bzfsAPI.h"
