@@ -25,3 +25,8 @@ BZFlag.SendTextMessage (0, 0, 'hello')
 
 print BZFlag.Event.__dict__
 print BZFlag.Team.__dict__
+
+def tick():
+    print 'tick'
+
+BZFlag.Events[BZFlag.Event.Tick].append (tick)

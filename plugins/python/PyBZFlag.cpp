@@ -19,7 +19,6 @@ namespace Python
 void
 TickHandler::process (bz_EventData *eventData)
 {
-	fprintf (stderr, "tick!\n");
 	PyObject *listeners = parent->GetListeners (bz_eTickEvent);
 
 	if (listeners == NULL || !PyList_Check (listeners)) {
@@ -27,7 +26,17 @@ TickHandler::process (bz_EventData *eventData)
 		fprintf (stderr, "tick listeners is not a list!\n");
 		return;
 	}
-	fprintf (stderr, "there are %d tick listeners\n", PyList_Size (listeners));
+	int size = PyList_Size (listeners);
+	fprintf (stderr, "there are %d tick listeners\n", size);
+	for (int i = 0; i < size; i++) {
+		PyObject *handler = PyList_GetItem (listeners, i);
+		if (!PyCallable_Check (handler)) {
+			// FIXME - throw error
+			fprintf (stderr, "tick listener is not callable\n");
+			return;
+		}
+		PyEval_CallObject (handler, NULL);
+	}
 }
 
 static PyObject *SendTextMessage (PyObject *self, PyObject *args, PyObject *keywords);
@@ -61,6 +70,12 @@ BZFlag::DeRef ()
 	References--;
 }
 
+void
+CreateHandlerList (PyObject *dict, int event)
+{
+	PyDict_SetItem (dict, PyInt_FromLong (event), PyList_New (0));
+}
+
 BZFlag::BZFlag ()
 {
 	module = Py_InitModule3 ("BZFlag", methods, NULL);
@@ -68,16 +83,23 @@ BZFlag::BZFlag ()
 	Py_INCREF (Py_False);
 	Py_INCREF (Py_True);
 
+	// Create and add submodules
 	event_sub = new Event ();
 	team_sub  = new Team ();
 
 	PyModule_AddObject (module, "Event", event_sub->GetSubModule ());
 	PyModule_AddObject (module, "Team",   team_sub->GetSubModule ());
 
+	// Register event handlers
 	tick_handler.parent = this;
-	bz_registerEvent (bz_eTickEvent, -1, &tick_handler);
+	bz_registerGeneralEvent (bz_eTickEvent, &tick_handler);
 
+	// Create the dictionary for all the event handlers. Key is the int
+	// event ID, value is a list of callables for our callbacks. Marshalling
+	// is handled by the individual event handler classes
 	event_listeners = PyDict_New ();
+	CreateHandlerList (event_listeners, bz_eTickEvent);
+
 	PyModule_AddObject (module, "Events", event_listeners);
 }
 
