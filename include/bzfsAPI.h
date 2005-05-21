@@ -307,7 +307,7 @@ public:
 };
 
 BZF_API bool bz_registerEvent ( bz_teEventType eventType, int team, bz_EventHandler* eventHandler );
-BZF_API bool bz_registerEvent ( bz_teEventType eventType, bz_EventHandler* eventHandler );
+BZF_API bool bz_registerGeneralEvent ( bz_teEventType eventType, bz_EventHandler* eventHandler );	// does "everyone" automaticly
 
 BZF_API bool bz_removeEvent ( bz_teEventType eventType, int team, bz_EventHandler* eventHandler );
 
