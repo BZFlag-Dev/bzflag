@@ -125,7 +125,7 @@ uint32_t worldDatabaseSize = 0;
 char worldSettings[4 + WorldSettingsSize];
 float pluginWorldSize = -1;
 float pluginWorldHeight = -1;
-
+float	pluginMaxWait = 1000.0;
 Filter   filter;
 
 BasesList bases;
@@ -4792,6 +4792,10 @@ int main(int argc, char **argv)
     if (NetHandler::anyUDPPending()) {
       waitTime = 0.0f;
     }
+
+		// see if we are within the plug requested max wait time
+		if ( waitTime > pluginMaxWait)
+			waitTime = pluginMaxWait;
 
     /**************
      *  SELECT()  *

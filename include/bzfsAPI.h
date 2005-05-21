@@ -373,6 +373,8 @@ BZF_API bool bz_fireWorldWep ( std::string flagType, float lifetime, int fromPla
 
 // time API
 BZF_API double bz_getCurrentTime ( void );
+BZF_API float bz_getMaxWaitTime ( void );
+BZF_API void bz_setMaxWaitTime ( float time );
 
 // info
 BZF_API double bz_getBZDBDouble ( const char* variable );

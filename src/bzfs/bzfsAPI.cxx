@@ -37,7 +37,7 @@ extern uint16_t curMaxPlayers;
 extern WorldInfo *world;
 extern float pluginWorldSize;
 extern float pluginWorldHeight;
-
+extern float pluginMaxWait;
 
 // utility
 void setBZMatFromAPIMat (BzMaterial &bzmat, bz_MaterialInfo* material )
@@ -213,6 +213,18 @@ BZF_API double bz_getCurrentTime ( void )
 {
 	return TimeKeeper::getCurrent().getSeconds();
 }
+
+BZF_API float bz_getMaxWaitTime ( void )
+{
+	return pluginMaxWait;
+}
+
+BZF_API void bz_setMaxWaitTime ( float time )
+{
+	if ( pluginMaxWait > time)
+		pluginMaxWait = time;
+}
+
 
 // info
 BZF_API double bz_getBZDBDouble ( const char* variable )
