@@ -27,6 +27,8 @@
 # define HAVE_SDL 1
 #endif
 
+#define _USE_BZ_API 1
+
 /* Building regex */
 #define BUILD_REGEX 1
 
