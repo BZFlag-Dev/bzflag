@@ -10,21 +10,20 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include "PyEvent.h"
 #include <Python.h>
 
-#ifndef __PYTHON_BZFLAG_H__
-#define __PYTHON_BZFLAG_H__
+#ifndef __PYTHON_EVENT_H__
+#define __PYTHON_EVENT_H__
 
 namespace Python
 {
 
-class BZFlag
+class Event
 {
 public:
-	BZFlag ();
+	Event ();
+	PyObject *GetSubModule ();
 private:
-	Event *event_sub;
 	PyObject *module;
 };
 

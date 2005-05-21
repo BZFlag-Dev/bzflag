@@ -11,7 +11,6 @@
  */
 
 #include "bzfsAPI.h"
-#include <Python.h>
 #include "PyBZFlag.h"
 
 namespace Python
@@ -36,6 +35,10 @@ BZFlag::BZFlag ()
 	Py_INCREF (Py_None);
 	Py_INCREF (Py_False);
 	Py_INCREF (Py_True);
+
+	event_sub = new Event ();
+
+	PyModule_AddObject (module, "Event", event_sub->GetSubModule ());
 }
 
 static PyObject *

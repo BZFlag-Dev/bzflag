@@ -10,6 +10,7 @@ python_linkflags = Split (sysconfig.get_config_var('LINKFORSHARED'))
 
 files = [
 	'PyBZFlag.cpp',
+	'PyEvent.cpp',
 	'python.cpp',
 	]
 

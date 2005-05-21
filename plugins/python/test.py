@@ -18,6 +18,8 @@
 #
 
 import BZFlag
+import BZFlag.Event
 
-print 'test'
 BZFlag.SendTextMessage (0, 0, 'hello')
+
+print BZFlag.Event.__dict__
