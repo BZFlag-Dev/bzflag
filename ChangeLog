@@ -278,7 +278,7 @@ BZFlag 1.10.4  "not a smurf" (2004-01-24)
 * Base wall and top textures - Jeff Myers
 * Hunter name used for kill, lock, and info messages - Jeff Myers
 * Increase resolution of textures to look better - Jeff Myers
-* Add experimental quality setting for enhanced effects- Jeff Myers
+* Add experimental quality setting for enhanced effects - Jeff Myers
 * Tunf off tank LOD, and ground grid for experimental quality - Jeff Myers
 * Add sides to the body of the hightank model - Jeff Myers
 * Improve flag texture for high and experimental quality levels - Jeff Myers
