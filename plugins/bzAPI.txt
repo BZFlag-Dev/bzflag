@@ -243,6 +243,8 @@ BZF_API bool bz_updatePlayerData ( bz_PlayerRecord *playerRecord );
 Updates a playerRecord to it's current data. This is the same as calling
 update on the bz_PlayerRecord class.
 
+BZF_API bool bz_getPlayerIndexList ( std::vector<int> *playerList )
+fills out the supplied list with a list of the IDs of all known users
 
 BZF_API bool bz_sendTextMessage (int from, int to, const char* message);
 Sends a text message to the specifid user. BZ_SERVER should be used for
@@ -274,6 +276,9 @@ Adds an entry to the main banlist with the specified data.
 BZF_API bool bz_getStandardSpawn ( int playeID, float pos[3], float *rot );
 Returns a normal spawn position for the specified user.
 
+BZF_API bool bz_killPlayer ( int playeID, bool spawnOnBase );
+Kills the specified player. If spawnOnBase is true, then the user will
+respawn back at his CTF base.
 
 //****************** custom slash commands *****************************
 A plug-in can register a special handler for a custom / command. This allows
