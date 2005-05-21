@@ -82,6 +82,12 @@ BZF_API bool bz_registerEvent ( bz_teEventType eventType, int team, bz_EventHand
 	return true;
 }
 
+BZF_API bool bz_registerEvent ( bz_teEventType eventType, bz_EventHandler* eventHandler )
+{
+	return bz_registerEvent(eventType,-1,eventHandler);
+}
+
+
 BZF_API bool bz_removeEvent ( bz_teEventType eventType, int team, bz_EventHandler* eventHandler )
 {
 	if (!eventHandler)
