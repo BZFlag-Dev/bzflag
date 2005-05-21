@@ -17,10 +17,15 @@ namespace Python
 {
 
 static PyObject *SendTextMessage (PyObject *self, PyObject *args);
+static PyObject *FireWorldWeapon (PyObject *self, PyObject *args);
+static PyObject *GetCurrentTime  (PyObject *self, PyObject *args);
 
 static struct PyMethodDef methods[] =
 {
+	// FIXME - docstrings
 	{"SendTextMessage", SendTextMessage, METH_VARARGS, NULL},
+	{"FireWorldWeapon", FireWorldWeapon, METH_VARARGS, NULL},
+	{"GetCurrentTime",  GetCurrentTime,  METH_NOARGS,  NULL},
 };
 
 BZFlag::BZFlag ()
@@ -32,6 +37,19 @@ BZFlag::BZFlag ()
 static PyObject *
 SendTextMessage (PyObject *self, PyObject *args)
 {
+	printf ("SendTextMessage ()\n");
+}
+
+static PyObject *
+FireWorldWeapon (PyObject *self, PyObject *args)
+{
+	printf ("FireWorldWeapon ()\n");
+}
+
+static PyObject *
+GetCurrentTime (PyObject *self, PyObject *args)
+{
+	printf ("GetCurrentTime ()\n");
 }
 
 };
