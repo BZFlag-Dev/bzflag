@@ -9,7 +9,8 @@ python_include = [sysconfig.get_python_inc ()]
 python_linkflags = Split (sysconfig.get_config_var('LINKFORSHARED'))
 
 files = [
-	'python.cpp'
+	'PyBZFlag.cpp',
+	'python.cpp',
 	]
 
 env = Environment ()
