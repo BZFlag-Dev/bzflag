@@ -1,0 +1,4 @@
+*.os
+*.swp
+.sconsign
+python.so
