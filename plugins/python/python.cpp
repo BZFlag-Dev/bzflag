@@ -11,6 +11,7 @@
  */
 
 #include "bzfsAPI.h"
+#include <Python.h>
 
 BZF_PLUGIN_CALL
 int
