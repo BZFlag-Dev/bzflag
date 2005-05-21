@@ -1897,8 +1897,23 @@ static void addPlayer(int playerIndex)
 		   "The callsign was rejected.  Not allowed starting in #");
     return;
   }
-  
 
+  // see if any watchers don't want this guy
+
+  AllowPlayerEventData allowData;
+  allowData.callsign = playerData->player.getCallSign();
+  allowData.ipAddress = playerData->netHandler->getTargetIP();
+  allowData.playerID = playerIndex;
+  allowData.time = TimeKeeper::getCurrent().getSeconds();
+
+  worldEventManager.callEvents(eAllowPlayer,-1,&allowData);
+  if (!allowData.allow)
+  {
+	  rejectPlayer(playerIndex, RejectBadRequest,allowData.reason.c_str());
+	  return;
+  }
+
+  // pick a team
   TeamColor t = autoTeamSelect(playerData->player.getTeam());
 
   GetAutoTeamEventData autoTeamData;

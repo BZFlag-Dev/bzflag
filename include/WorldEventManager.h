@@ -37,7 +37,8 @@ typedef enum
 	eChatMessageEvent,
 	eUnknownSlashCommand,	// will not take a team
 	eGetPlayerSpawnPosEvent,
-	eGetAutoTeamEvent		// will not take a team
+	eGetAutoTeamEvent,		// will not take a team
+	eAllowPlayer
 }teEventType;
 
 class BaseEventData
@@ -178,6 +179,22 @@ public:
 	int teamID;
 
 	bool handled;
+};
+
+class AllowPlayerEventData : public BaseEventData
+{
+public:
+	AllowPlayerEventData();
+	virtual ~AllowPlayerEventData();
+
+	int playerID;
+	std::string callsign;
+	std::string ipAddress;
+
+	std::string reason;
+	bool allow;
+
+	double time;
 };
 
 class BaseEventHandler

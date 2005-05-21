@@ -159,6 +159,18 @@ GetAutoTeamEventData::~GetAutoTeamEventData()
 {
 }
 
+//-------------------AllowPlayerEventData--------------------
+AllowPlayerEventData::AllowPlayerEventData()
+{
+	eventType = eAllowPlayer;
+	playerID = -1;
+	allow = true;
+	time = 0.0;
+}
+
+AllowPlayerEventData::~AllowPlayerEventData()
+{
+}
 
 //-------------------WorldEventManager--------------------
 WorldEventManager::WorldEventManager()

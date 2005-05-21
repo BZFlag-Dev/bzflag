@@ -47,7 +47,9 @@ typedef enum
 	bz_ePlayerPartEvent,
 	bz_eChatMessageEvent,
 	bz_eUnknownSlashCommand,	// will not take a team
-	bz_eGetPlayerSpawnPosEvent
+	bz_eGetPlayerSpawnPosEvent,
+	bz_eGetAutoTeamEvent,		// will not take a team
+	bz_eAllowPlayer				// will not take a team
 }bz_teEventType;
 
 #define BZ_ALL_USERS	-1
@@ -232,6 +234,29 @@ public:
 
 	float pos[3];
 	float rot;
+	double time;
+};
+
+class bz_AllowPlayerEventData : public bz_EventData
+{
+public:
+	bz_AllowPlayerEventData()
+	{
+		eventType = bz_eAllowPlayer;
+		playerID = -1;
+		allow = true;
+		time = 0.0;
+	}
+	
+	virtual ~bz_AllowPlayerEventData(){};
+
+	int playerID;
+	std::string callsign;
+	std::string ipAddress;
+
+	std::string reason;
+	bool allow;
+
 	double time;
 };
 
