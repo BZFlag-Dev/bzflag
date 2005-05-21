@@ -10,35 +10,51 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+#include "bzfsAPI.h"
 #include <Python.h>
 #include "PyBZFlag.h"
 
 namespace Python
 {
 
-static PyObject *SendTextMessage (PyObject *self, PyObject *args);
+static PyObject *SendTextMessage (PyObject *self, PyObject *args, PyObject *keywords);
 static PyObject *FireWorldWeapon (PyObject *self, PyObject *args);
 static PyObject *GetCurrentTime  (PyObject *self, PyObject *args);
 
 static struct PyMethodDef methods[] =
 {
 	// FIXME - docstrings
-	{"SendTextMessage", SendTextMessage, METH_VARARGS, NULL},
-	{"FireWorldWeapon", FireWorldWeapon, METH_VARARGS, NULL},
-	{"GetCurrentTime",  GetCurrentTime,  METH_NOARGS,  NULL},
-	{NULL,              NULL,            0,            NULL},
+	{"SendTextMessage", (PyCFunction) SendTextMessage, METH_VARARGS | METH_KEYWORDS, NULL},
+	{"FireWorldWeapon", (PyCFunction) FireWorldWeapon, METH_VARARGS,                 NULL},
+	{"GetCurrentTime",  (PyCFunction) GetCurrentTime,  METH_NOARGS,                  NULL},
+	{NULL,              (PyCFunction) NULL,            0,                            NULL},
 };
 
 BZFlag::BZFlag ()
 {
 	module = Py_InitModule3 ("BZFlag", methods, NULL);
-
+	Py_INCREF (Py_None);
+	Py_INCREF (Py_False);
+	Py_INCREF (Py_True);
 }
 
 static PyObject *
-SendTextMessage (PyObject *self, PyObject *args)
+SendTextMessage (PyObject *self, PyObject *args, PyObject *keywords)
 {
-	printf ("SendTextMessage ()\n");
+	int to, from;
+	char *message;
+
+	static char *kwlist[] = {"to", "from", "message", NULL};
+
+	if (!PyArg_ParseTupleAndKeywords (args, keywords, "iis", kwlist, &to, &from, &message)) {
+		fprintf (stderr, "couldn't parse args\n");
+		// FIXME - throw error
+		return NULL;
+	}
+
+	printf ("SendTextMessage (%d, %d, %s)\n", to, from, message);
+	bool result = bz_sendTextMessage (to, from, message);
+	return Py_None;
 }
 
 static PyObject *
