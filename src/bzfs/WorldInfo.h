@@ -103,7 +103,11 @@ public:
   void finishWorld();
   int packDatabase();
 
+	bool isFinisihed() { return finished;}
+
 private:
+
+	bool finished;
 
   bool rectHitCirc(float dx, float dy, const float *p, float r) const;
   void loadCollisionManager();

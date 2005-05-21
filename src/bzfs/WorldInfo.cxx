@@ -57,6 +57,7 @@ WorldInfo::WorldInfo() :
   gravity = -9.81f;
   waterLevel = -1.0f;
   waterMatRef = NULL;
+	finished = false;
 }
 
 WorldInfo::~WorldInfo()
@@ -64,6 +65,7 @@ WorldInfo::~WorldInfo()
   delete[] database;
   links.clear();
   OBSTACLEMGR.clear();
+	finished = false;
 }
 
 
@@ -414,6 +416,7 @@ void WorldInfo::finishWorld()
     maxHeight = 0.0f;
   }
 
+	finished = true;
   return;
 }
 

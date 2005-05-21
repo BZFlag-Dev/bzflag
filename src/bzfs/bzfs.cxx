@@ -123,6 +123,8 @@ WorldInfo *world = NULL;
 char *worldDatabase = NULL;
 uint32_t worldDatabaseSize = 0;
 char worldSettings[4 + WorldSettingsSize];
+float pluginWorldSize = -1;
+float pluginWorldHeight = -1;
 
 Filter   filter;
 
@@ -1243,13 +1245,33 @@ static bool defineWorld()
 		worldData.ctf  = clOptions->gameStyle & TeamFlagGameStyle;
 		worldData.time = TimeKeeper::getCurrent().getSeconds();
 
+		world = new WorldInfo;
 		worldEventManager.callEvents(eGenerateWorldEvent,-1,&worldData);
 		if (!worldData.handled)
 		{
+			delete(world);
 			if (clOptions->gameStyle & TeamFlagGameStyle)
 				world = defineTeamWorld();
 			else
 				world = defineRandomWorld();
+		}
+		else
+		{
+			float worldSize = BZDBCache::worldSize;
+			if (pluginWorldSize > 0 )
+				worldSize = pluginWorldSize;
+
+			float wallHeight = BZDB.eval(StateDatabase::BZDB_WALLHEIGHT);
+			if (pluginWorldHeight > 0 )
+				wallHeight = pluginWorldHeight;
+
+			world->addWall(0.0f, 0.5f * worldSize, 0.0f, (float)(1.5 * M_PI), 0.5f * worldSize, wallHeight);
+			world->addWall(0.5f * worldSize, 0.0f, 0.0f, (float)M_PI, 0.5f * worldSize, wallHeight);
+			world->addWall(0.0f, -0.5f * worldSize, 0.0f, (float)(0.5 * M_PI), 0.5f * worldSize, wallHeight);
+			world->addWall(-0.5f * worldSize, 0.0f, 0.0f, 0.0f, 0.5f * worldSize, wallHeight);
+
+			OBSTACLEMGR.makeWorld();
+			world->finishWorld();
 		}
 	}
 

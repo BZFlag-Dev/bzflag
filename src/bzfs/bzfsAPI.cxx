@@ -22,12 +22,50 @@
 
 #include "commands.h"
 #include "SpawnPosition.h"
+#include "WorldInfo.h"
+
+#include "BzMaterial.h"
+
+TimeKeeper sync = TimeKeeper::getCurrent();
 
 extern void sendMessage(int playerIndex, PlayerId dstPlayer, const char *message);
 extern void removePlayer(int playerIndex, const char *reason, bool notify);
 extern void zapFlagByPlayer(int playerIndex);
+
 extern CmdLineOptions *clOptions;
 extern uint16_t curMaxPlayers;
+extern WorldInfo *world;
+extern float pluginWorldSize;
+extern float pluginWorldHeight;
+
+
+// utility
+void setBZMatFromAPIMat (BzMaterial &bzmat, bz_MaterialInfo* material )
+{
+	if (!material)
+		return;
+
+	bzmat.setName(material->name);
+	bzmat.setAmbient(material->ambient);
+	bzmat.setDiffuse(material->diffuse);
+	bzmat.setSpecular(material->specular);
+	bzmat.setEmission(material->emisive);
+	bzmat.setShininess(material->shine);
+
+	bzmat.setNoCulling(!material->culling);
+	bzmat.setNoSorting(!material->sorting);
+	bzmat.setAlphaThreshold(material->alphaThresh);
+
+	for( unsigned int i = 0; i < material->textures.size();i++ )
+	{
+		bzmat.addTexture(material->textures[i].texture);
+		bzmat.setCombineMode(material->textures[i].combineMode);
+		bzmat.setUseTextureAlpha(material->textures[i].useAlpha);
+		bzmat.setUseColorOnTexture(material->textures[i].useColorOnTexture);
+		bzmat.setUseSphereMap(material->textures[i].useSphereMap);
+	}
+}
+
 
 // versioning
 BZF_API int bz_APIVersion ( void )
@@ -293,7 +331,7 @@ BZF_API bool bz_killPlayer ( int playeID, bool spawnOnBase )
 	return true;
 }
 
-BZF_API bool bz_removePlayerFlagr ( int playeID )
+BZF_API bool bz_removePlayerFlag ( int playeID )
 {
 	GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playeID);
 	if (!player)
@@ -303,6 +341,92 @@ BZF_API bool bz_removePlayerFlagr ( int playeID )
 		return false;
 
 	zapFlagByPlayer(playeID);
+
+	return true;
+}
+
+BZF_API bool bz_addWorldBox ( float *pos, float rot, float* scale, bz_WorldObjectOptions options )
+{
+	if (!world || world->isFinisihed() || !pos || !scale)
+		return false;
+
+	world->addBox(pos[0],pos[1],pos[2],rot,scale[0],scale[1],scale[2],options.driveThru,options.shootThru);
+	return true;
+}
+
+BZF_API bool bz_addWorldPyramid ( float *pos, float rot, float* scale, bool fliped, bz_WorldObjectOptions options )
+{
+	if (!world || world->isFinisihed() || !pos || !scale)
+		return false;
+
+	world->addPyramid(pos[0],pos[1],pos[2],rot,scale[0],scale[1],scale[2],options.driveThru,options.shootThru,fliped);
+	return true;
+}
+
+BZF_API bool bz_addWorldBase( float *pos, float rot, float* scale, int team, bz_WorldObjectOptions options )
+{
+	if (!world || world->isFinisihed() || !pos || !scale)
+		return false;
+
+	world->addBase(pos,rot,scale,team,options.driveThru,options.shootThru);
+	return true;
+}
+
+BZF_API bool bz_addWorldTeleporter ( float *pos, float rot, float* scale, float border, bz_WorldObjectOptions options )
+{
+	if (!world || world->isFinisihed() || !pos || !scale)
+		return false;
+
+	world->addTeleporter(pos[0],pos[1],pos[2],rot,scale[0],scale[1],scale[2],border,false,options.driveThru,options.shootThru);
+	return true;
+}
+
+BZF_API bool bz_addWorldLink( int from, int to )
+{
+	if (!world || world->isFinisihed() )
+		return false;
+
+	world->addLink(from,to);
+	return true;
+}
+
+BZF_API bool bz_addWorldWaterLevel( float level, bz_MaterialInfo *material )
+{
+	if (!world || world->isFinisihed() )
+		return false;
+
+	if (!material)
+	{
+		world->addWaterLevel(level,NULL);
+		return true;
+	}
+
+	BzMaterial	bzmat;
+	setBZMatFromAPIMat(bzmat,material);
+	world->addWaterLevel(level,MATERIALMGR.addMaterial(&bzmat));
+	return true;
+}
+
+BZF_API bool bz_addWorldWeapon( std::string flagType, float *pos, float rot, float tilt, float initDelay, std::vector<float> delays )
+{
+	if (!world || world->isFinisihed() )
+		return false;
+
+	FlagTypeMap &flagMap = FlagType::getFlagMap();
+	if (flagMap.find(flagType) == flagMap.end())
+		return false;
+
+	FlagType *flag = flagMap.find(flagType)->second;
+
+	world->addWeapon(flag, pos, rot, tilt, initDelay, delays, sync);
+	return true;
+}
+
+
+BZF_API bool bz_setWorldSize( float size, float wallHeight )
+{
+	pluginWorldHeight = wallHeight;
+	pluginWorldSize = size;
 
 	return true;
 }

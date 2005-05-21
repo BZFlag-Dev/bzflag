@@ -363,7 +363,6 @@ public:
 	int losses;
 };
 
-
 // message API
 BZF_API bool bz_sendTextMessage (int from, int to, const char* message);
 
@@ -405,7 +404,49 @@ BZF_API bool bz_getStandardSpawn ( int playeID, float pos[3], float *rot );
 BZF_API bool bz_killPlayer ( int playeID, bool spawnOnBase );
 
 // flags
-BZF_API bool bz_removePlayerFlagr ( int playeID );
+BZF_API bool bz_removePlayerFlag ( int playeID );
+
+// world
+typedef struct 
+{
+	bool	driveThru;
+	bool	shootThru;
+}bz_WorldObjectOptions;
+
+typedef struct bz_MaterialInfo
+{
+	std::string name;
+
+	typedef struct 
+	{
+		std::string		texture;
+		bool		useAlpha;
+		bool		useColorOnTexture;
+		bool		useSphereMap;
+		int			combineMode;
+	}bz_MaterialTexture;
+
+	std::vector<bz_MaterialInfo::bz_MaterialTexture> textures;
+
+	float		ambient[4];
+	float		diffuse[4];
+	float		specular[4];
+	float		emisive[4];
+	float		shine;
+
+	float		alphaThresh;
+	bool		culling;
+	bool		sorting;
+}bz_MaterialInfo;
+
+BZF_API bool bz_addWorldBox ( float *pos, float rot, float* scale, bz_WorldObjectOptions options );
+BZF_API bool bz_addWorldPyramid ( float *pos, float rot, float* scale, bool fliped, bz_WorldObjectOptions options );
+BZF_API bool bz_addWorldBase( float *pos, float rot, float* scale, int team, bz_WorldObjectOptions options );
+BZF_API bool bz_addWorldTeleporter ( float *pos, float rot, float* scale, float border, bz_WorldObjectOptions options );
+BZF_API bool bz_addWorldWaterLevel( float level, bz_MaterialInfo *material );
+BZF_API bool bz_addWorldWeapon( std::string flagType, float *pos, float rot, float tilt, float initDelay, std::vector<float> delays );
+
+BZF_API bool bz_setWorldSize( float size, float wallHeight = -1.0 );
 
 #endif //_BZFS_API_H_
 
