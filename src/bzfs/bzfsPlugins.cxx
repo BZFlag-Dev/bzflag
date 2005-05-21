@@ -64,7 +64,7 @@ void loadPlugin ( std::string plugin, std::string config )
 			lpProc = (int (__cdecl *)(const char*))GetProcAddress(hLib, "bz_Load");
 			if (lpProc)
 			{
-				int ret =lpProc(config.c_str()); 
+				lpProc(config.c_str()); 
 				DEBUG1("Plugin:%s loaded\n",plugin.c_str());
 
 				trPluginRecord pluginRecord;
@@ -91,7 +91,7 @@ void unload1Plugin ( int iPluginID )
 
 	lpProc = (int (__cdecl *)(void))GetProcAddress(plugin.handle, "bz_Unload");
 	if (lpProc)
-		int ret =lpProc(); 
+		lpProc(); 
 	else
 		DEBUG1("Plugin does not contain bz_UnLoad method\n");
 
