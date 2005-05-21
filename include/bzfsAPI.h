@@ -270,6 +270,9 @@ public:
 		verified = false;
 		globalUser = false;
 		admin = false;
+
+		wins = 0;
+		losses = 0;
 	}
 
 	~bz_PlayerRecord(){};
@@ -293,6 +296,9 @@ public:
 	bool globalUser;
 	bool admin;
 	std::vector<std::string> groups;
+
+	int wins;
+	int losses;
 };
 
 
@@ -307,6 +313,9 @@ BZF_API double bz_getCurrentTime ( void );
 
 // info
 BZF_API double bz_getBZDBDouble ( const char* variable );
+BZF_API std::string bz_getBZDString( const char* variable );
+BZF_API bool bz_getBZDBool( const char* variable );
+BZF_API int bz_getBZDInt( const char* variable );
 
 // loging
 BZF_API void bz_debugMessage ( int debugLevel, const char* message );

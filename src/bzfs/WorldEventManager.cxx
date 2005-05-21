@@ -146,6 +146,20 @@ GetPlayerSpawnPosEventData::~GetPlayerSpawnPosEventData()
 {
 }
 
+//-------------------GetAutoTeamEventData--------------------
+GetAutoTeamEventData::GetAutoTeamEventData()
+{
+	eventType = eGetAutoTeamEvent;
+	playeID = -1;
+	teamID = -1;
+	handled = false;
+}
+
+GetAutoTeamEventData::~GetAutoTeamEventData()
+{
+}
+
+
 //-------------------WorldEventManager--------------------
 WorldEventManager::WorldEventManager()
 {

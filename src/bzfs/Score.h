@@ -30,6 +30,8 @@ class Score {
   void  kill();
   void *pack(void *buf);
   bool  reached();
+  int	getWins(){return wins;}
+  int	getLosses(){return losses;}
 
   static void setTeamKillRatio(int _tkKickRatio);
   static void setWinLimit(int _score);

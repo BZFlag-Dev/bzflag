@@ -1900,7 +1900,15 @@ static void addPlayer(int playerIndex)
   
 
   TeamColor t = autoTeamSelect(playerData->player.getTeam());
-  playerData->player.setTeam(t);
+
+  GetAutoTeamEventData autoTeamData;
+  autoTeamData.playeID = playerIndex;
+  autoTeamData.teamID = t;
+  autoTeamData.callsign = playerData->player.getCallSign();
+
+  worldEventManager.callEvents(eGetAutoTeamEvent,-1,&autoTeamData);
+
+  playerData->player.setTeam((TeamColor)autoTeamData.teamID);
   playerData->player.endShotCredit = 0;	// reset shotEndCredit
 
   // count current number of players and players+observers

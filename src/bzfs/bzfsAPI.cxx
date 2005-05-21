@@ -23,7 +23,7 @@
 #include "commands.h"
 #include "SpawnPosition.h"
 
-#define BZ_API_VERSION	1
+#define BZ_API_VERSION	2
 
 extern void sendMessage(int playerIndex, PlayerId dstPlayer, const char *message);
 extern void removePlayer(int playerIndex, const char *reason, bool notify);
@@ -83,6 +83,10 @@ BZF_API bool bz_updatePlayerData ( bz_PlayerRecord *playerRecord )
 	playerRecord->groups = player->accessInfo.groups;
 
 	playerRecord->admin = player->accessInfo.isVerified();
+
+	playerRecord->wins = player->score.getWins();
+	playerRecord->losses = player->score.getLosses();
+
 	return true;
 }
 
@@ -176,6 +180,27 @@ BZF_API double bz_getBZDBDouble ( const char* variable )
 		return 0.0;
 
 	return BZDB.eval(std::string(variable));
+}
+
+BZF_API std::string bz_getBZDString( const char* variable )
+{
+	if (!variable)
+		return std::string("");
+
+	return BZDB.get(std::string(variable));
+}
+
+BZF_API bool bz_getBZDBool( const char* variable )
+{
+	if (!variable)
+		return false;
+
+	return BZDB.eval(std::string(variable)) > 0.0;
+}
+
+BZF_API int bz_getBZDInt( const char* variable )
+{
+	return (int)BZDB.eval(std::string(variable));
 }
 
 // loging
