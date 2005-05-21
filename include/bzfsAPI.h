@@ -342,6 +342,9 @@ BZF_API bool bz_getStandardSpawn ( int playeID, float pos[3], float *rot );
 // dying
 BZF_API bool bz_killPlayer ( int playeID, bool spawnOnBase );
 
+// flags
+BZF_API bool bz_removePlayerFlagr ( int playeID );
+
 
 #endif //_BZFS_API_H_
 

@@ -295,6 +295,20 @@ BZF_API bool bz_killPlayer ( int playeID, bool spawnOnBase )
 	return true;
 }
 
+BZF_API bool bz_removePlayerFlagr ( int playeID )
+{
+	GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playeID);
+	if (!player)
+		return false;
+
+	if (!player->player.isAlive())
+		return false;
+
+	zapFlagByPlayer(playeID);
+
+	return true;
+}
+
 
 
 // Local Variables: ***
