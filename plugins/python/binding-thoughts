@@ -15,6 +15,11 @@ do something like:
 
 BZDB can probably also be exposed as a dictionary
 
+
 not quite sure yet how to handle events
 might want to use another dictionary!
 	BZFlag.Events[BZFlag.Event.Tick].append (callback)
+
+
+Need to decide whether we want the whole BZFlag.Event.Tick thing or just use
+BZFlag.Events['Tick']
