@@ -33,5 +33,9 @@ def tick(time):
 def join():
     print BZFlag.Players
 
+def part():
+    print BZFlag.Players
+
 BZFlag.Events[BZFlag.Event.Tick].append (tick)
 BZFlag.Events[BZFlag.Event.PlayerJoin].append (join)
+BZFlag.Events[BZFlag.Event.PlayerPart].append (part)
