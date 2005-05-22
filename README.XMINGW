@@ -32,48 +32,44 @@ Add to your path the cross compilation factory directory:
 
 $ export PATH=/opt/xmingw/bin:$PATH
 
------- libcurl
-Get a development version of libcurl for Windows, possibly a non SSL version,
-and unpack it on a known location (i.e. ~/curl).
+------ c-ares
+Get c-ares source, untar them and create a directory where to build the c-ares.
+Go to this brand new directory and type:
 
-Copy the include curl subtree in the system include directory:
+../c-ares-1.2.1/configure \
+--host=i386-mingw32msvc --build=i686-pc-linux-gnu \
+--prefix=/opt/xmingw/i386-mingw32msvc
+make
+make install
 
-cp -r ~/curl/include/curl /opt/xmingw/i386-mingw32msvc/include/
+Last operation require /opt/xmingw being writeable 
 
-cp ~/curl/libcurldll.a /opt/xmingw/i386-mingw32msvc/lib/
+------ curl
+Get curl source, untar them and create a directory where to build the curl.
+Go to this brand new directory and type:
 
-copy a curl-config into /opt/xmingw/bin/curl-config
+../curl-7.13.1/configure --host=i386-mingw32msvc --build=i686-pc-linux-gnu \
+--prefix=/opt/xmingw --enable-ares --disable-shared
+make
+make install
 
-and apply the patch:
+apply the patch to /opt/xmingw/bin/curl-config:
 
-@@ -5,7 +5,7 @@
- #
- # $Id$
- #
--prefix=/opt/xmingw/i386-mingw32msvc
-+prefix=/usr
- exec_prefix=${prefix}
- includedir=${prefix}/include
-
-@@ -120,14 +120,14 @@
+--- curl-config.orig    2005-05-22 22:52:16.000000000 +0200
++++ curl-config 2005-05-22 22:54:56.000000000 +0200
+@@ -120,9 +120,9 @@
 
      --cflags)
                 if test "X${prefix}/include" = "X/usr/include"; then
--          echo "-DBUILDING_LIBCURL"
-+          echo ""
+-          echo ""
++          echo "-DBUILDING_LIBCURL"
          else
--          echo "-DBUILDING_LIBCURL -I${prefix}/include"
-+          echo "-I${prefix}/include"
+-          echo "-I${prefix}/include"
++          echo "-I${prefix}/include -DBUILDING_LIBCURL"
          fi
                 ;;
 
-     --libs)
--               echo -L${exec_prefix}/lib -lcurldll
-+               echo -L${exec_prefix}/lib -lcurl    -lidn -lssl -lcrypto -ldl  -lssl -lcrypto -ldl   -lz -lcares
-                ;;
-
-     *)
-
+Last operations require /opt/xmingw being writeable 
 
 ------ libSDL
 Get a development version of libSDL for Windows and unpack it on a known

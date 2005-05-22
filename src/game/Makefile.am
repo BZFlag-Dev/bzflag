@@ -3,7 +3,7 @@ noinst_LIBRARIES = libGame.a
 MAINTAINERCLEANFILES = \
 	Makefile.in
 
-AM_CPPFLAGS = -I$(top_srcdir)/include
+AM_CPPFLAGS = -I$(top_srcdir)/include @CURL_CFLAGS@
 
 libGame_a_SOURCES =			\
 	BzMaterial.cxx			\

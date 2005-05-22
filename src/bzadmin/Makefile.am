@@ -21,7 +21,7 @@ EXTRA_bzadmin_SOURCES = \
 	CursesUI.cxx
 endif
 
-AM_CPPFLAGS = -I$(top_srcdir)/include
+AM_CPPFLAGS = -I$(top_srcdir)/include @CURL_CFLAGS@
 
 bzadmin_SOURCES = \
 	BZAdminClient.h \
