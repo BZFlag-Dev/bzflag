@@ -432,7 +432,7 @@ BZFlag 1.7g2  "Steely Eyed Banana" (2003-06-17 was 1.7g1)
 	- Tim Riker, Dave Brosius, Frank Thilo
 * i18n support in client - Dave Brosius, Isak Styf
 * Optional config file interface for bzfs settings - Dave Brosius
-* inline editing of text fields (<- ->) Dave Brosius, Frank Thilo
+* inline editing of text fields (<- ->) - Dave Brosius, Frank Thilo
 * extend admin command -> /flag reset unused - Dave Brosius
 
 
@@ -614,7 +614,7 @@ BZFlag 1.7e release 000 (2001-01-26)
 * bottoms on floating buildings - Jeremiah Moss
 * Windows highest refresh rate on program switch - Jeremiah Moss
 * dns lookups on list server for faster server lists
-* non-blocking I/O for bzfs and name lookups by crs
+* non-blocking I/O for bzfs and name lookups - crs
 * phantom player fix - Frank Siegert
 
 
