@@ -155,6 +155,8 @@ BZFlag::BZFlag ()
 	// is handled by the individual event handler classes
 	event_listeners = PyDict_New ();
 	CreateHandlerList (event_listeners, bz_eTickEvent);
+	CreateHandlerList (event_listeners, bz_ePlayerJoinEvent);
+	CreateHandlerList (event_listeners, bz_ePlayerPartEvent);
 
 	PyModule_AddObject (module, "Events", event_listeners);
 }
