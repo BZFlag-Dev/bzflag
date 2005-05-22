@@ -45,6 +45,52 @@ TickHandler::process (bz_EventData *eventData)
 	Py_DECREF (arglist);
 }
 
+void
+JoinHandler::process (bz_EventData *eventData)
+{
+	PyObject *listeners = parent->GetListeners (bz_ePlayerJoinEvent);
+	if (listeners == NULL || !PyList_Check (listeners)) {
+		// FIXME - throw error
+		fprintf (stderr, "join listeners is not a list!\n");
+		return;
+	}
+
+	// Call out to all of our listeners
+	int size = PyList_Size (listeners);
+	for (int i = 0; i < size; i++) {
+		PyObject *handler = PyList_GetItem (listeners, i);
+		if (!PyCallable_Check (handler)) {
+			// FIXME - throw error
+			fprintf (stderr, "join listener is not callable\n");
+			return;
+		}
+		PyEval_CallObject (handler, NULL);
+	}
+}
+
+void
+PartHandler::process (bz_EventData *eventData)
+{
+	PyObject *listeners = parent->GetListeners (bz_ePlayerPartEvent);
+	if (listeners == NULL || !PyList_Check (listeners)) {
+		// FIXME - throw error
+		fprintf (stderr, "part listeners is not a list!\n");
+		return;
+	}
+
+	// Call out to all of our listeners
+	int size = PyList_Size (listeners);
+	for (int i = 0; i < size; i++) {
+		PyObject *handler = PyList_GetItem (listeners, i);
+		if (!PyCallable_Check (handler)) {
+			// FIXME - throw error
+			fprintf (stderr, "part listener is not callable\n");
+			return;
+		}
+		PyEval_CallObject (handler, NULL);
+	}
+}
+
 static PyObject *SendTextMessage (PyObject *self, PyObject *args, PyObject *keywords);
 static PyObject *FireWorldWeapon (PyObject *self, PyObject *args);
 static PyObject *GetCurrentTime  (PyObject *self, PyObject *args);
@@ -98,7 +144,11 @@ BZFlag::BZFlag ()
 
 	// Register event handlers
 	tick_handler.parent = this;
-	bz_registerGeneralEvent (bz_eTickEvent, &tick_handler);
+	join_handler.parent = this;
+	part_handler.parent = this;
+	bz_registerGeneralEvent (bz_eTickEvent,       &tick_handler);
+	bz_registerGeneralEvent (bz_ePlayerJoinEvent, &join_handler);
+	bz_registerGeneralEvent (bz_ePlayerPartEvent, &part_handler);
 
 	// Create the dictionary for all the event handlers. Key is the int
 	// event ID, value is a list of callables for our callbacks. Marshalling
@@ -142,6 +192,9 @@ static PyObject *
 FireWorldWeapon (PyObject *self, PyObject *args)
 {
 	printf ("FireWorldWeapon ()\n");
+	char *flag;
+	float lifetime;
+	int from_player;
 	return Py_None;
 }
 

@@ -29,6 +29,20 @@ public:
 	BZFlag *parent;
 };
 
+class JoinHandler : public bz_EventHandler
+{
+public:
+	virtual void process (bz_EventData *eventData);
+	BZFlag *parent;
+};
+
+class PartHandler : public bz_EventHandler
+{
+public:
+	virtual void process (bz_EventData *eventData);
+	BZFlag *parent;
+};
+
 class BZFlag
 {
 public:
@@ -48,6 +62,8 @@ private:
 	PyObject *module;
 
 	TickHandler tick_handler;
+	JoinHandler join_handler;
+	PartHandler part_handler;
 };
 
 };
