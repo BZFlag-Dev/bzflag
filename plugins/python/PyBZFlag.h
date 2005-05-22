@@ -51,6 +51,7 @@ public:
 	static void DeRef ();
 
 	PyObject *GetListeners (int event);
+	void RefreshPlayers ();
 
 protected:
 	BZFlag ();
@@ -59,11 +60,14 @@ private:
 	Event *event_sub;
 	Team  *team_sub;
 	PyObject *event_listeners;
+	PyObject *players;
 	PyObject *module;
 
 	TickHandler tick_handler;
 	JoinHandler join_handler;
 	PartHandler part_handler;
+
+	PyObject *CreatePlayer (bz_PlayerRecord record);
 };
 
 };

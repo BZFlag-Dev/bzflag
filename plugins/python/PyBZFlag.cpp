@@ -48,6 +48,8 @@ TickHandler::process (bz_EventData *eventData)
 void
 JoinHandler::process (bz_EventData *eventData)
 {
+	parent->RefreshPlayers ();
+
 	PyObject *listeners = parent->GetListeners (bz_ePlayerJoinEvent);
 	if (listeners == NULL || !PyList_Check (listeners)) {
 		// FIXME - throw error
@@ -71,6 +73,8 @@ JoinHandler::process (bz_EventData *eventData)
 void
 PartHandler::process (bz_EventData *eventData)
 {
+	parent->RefreshPlayers ();
+
 	PyObject *listeners = parent->GetListeners (bz_ePlayerPartEvent);
 	if (listeners == NULL || !PyList_Check (listeners)) {
 		// FIXME - throw error
@@ -159,6 +163,12 @@ BZFlag::BZFlag ()
 	CreateHandlerList (event_listeners, bz_ePlayerPartEvent);
 
 	PyModule_AddObject (module, "Events", event_listeners);
+
+	// Create the players list
+	players = PyDict_New ();
+	RefreshPlayers ();
+
+	PyModule_AddObject (module, "Players", players);
 }
 
 PyObject *
@@ -169,6 +179,27 @@ BZFlag::GetListeners (int event)
 	Py_DECREF (o);
 
 	return ret;
+}
+
+void
+BZFlag::RefreshPlayers ()
+{
+	std::vector<int> player_list;
+	bz_getPlayerIndexList (&player_list);
+
+	PyDict_Clear (players);
+
+	for (std::vector<int>::iterator it = player_list.begin (); it != player_list.end (); it++) {
+		bz_PlayerRecord record;
+		bz_getPlayerByIndex (*it, &record);
+		PyDict_SetItem (players, PyInt_FromLong (*it), CreatePlayer (record));
+	}
+}
+
+PyObject *
+BZFlag::CreatePlayer (bz_PlayerRecord record)
+{
+	return Py_None;
 }
 
 static PyObject *
