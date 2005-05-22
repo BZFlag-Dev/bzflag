@@ -23,10 +23,15 @@ import BZFlag.Team
 
 BZFlag.SendTextMessage (0, 0, 'hello')
 
+print BZFlag.__dict__
 print BZFlag.Event.__dict__
 print BZFlag.Team.__dict__
 
 def tick(time):
-    print 'tick',time
+    pass
+
+def join():
+    print BZFlag.Players
 
 BZFlag.Events[BZFlag.Event.Tick].append (tick)
+BZFlag.Events[BZFlag.Event.PlayerJoin].append (join)
