@@ -4,7 +4,7 @@
 BZFlag 2.0.3
 ------------
 
-* Added CTF capture event triger option for world weapons - Jeff Myers, Nathan Goings
+* Added CTF capture event trigger option for world weapons - Jeff Myers, Nathan Goings
 * FlipZ on meshpyrs behaves as expected (like pyramids) - Daniel Remenak
 * Fixed /set and /reset command case bug - Daniel Remenak
 * Fixed crash on /ban without -banfile - Daniel Remenak
