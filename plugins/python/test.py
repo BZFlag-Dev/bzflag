@@ -28,7 +28,7 @@ print BZFlag.Event.__dict__
 print BZFlag.Team.__dict__
 
 def tick(time):
-    print 'tick'
+    pass
 
 def join():
     print BZFlag.Players
