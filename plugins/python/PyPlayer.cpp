@@ -67,36 +67,41 @@ Player_getAttr (Player *player, char *name)
 	player->record.update ();
 
 	if (strcmp (name, "id") == 0)
-		attr = Py_None;
+		attr = Py_BuildValue ("i", player->record.playerID);
 	else if (strcmp (name, "callsign") == 0)
-		attr = Py_None;
+		attr = PyString_FromString (player->record.callsign.c_str ());
 	else if (strcmp (name, "team") == 0)
-		attr = Py_None;
+		attr = Py_BuildValue ("i", player->record.team);
 	else if (strcmp (name, "position") == 0)
-		attr = Py_None;
+		attr = Py_BuildValue ("(f,f,f)", player->record.pos[0], player->record.pos[1], player->record.pos[2]);
 	else if (strcmp (name, "rotation") == 0)
-		attr = Py_None;
+		attr = Py_BuildValue ("f", player->record.rot);
 	else if (strcmp (name, "ipAddr") == 0)
-		attr = Py_None;
+		attr = PyString_FromString (player->record.ipAddress.c_str());
 	else if (strcmp (name, "flag") == 0)
 		// skip the Py_None check at the end, since None is a valid return value.
-		return Py_None;
+		if (player->record.currentFlag.length () == 0)
+			return Py_None;
+		else
+			attr = PyString_FromString (player->record.currentFlag.c_str ());
 	else if (strcmp (name, "flagHistory") == 0)
+		// FIXME - create list
 		attr = Py_None;
 	else if (strcmp (name, "spawned") == 0)
-		attr = Py_None;
+		attr = player->record.spawned ? Py_True : Py_False;
 	else if (strcmp (name, "verified") == 0)
-		attr = Py_None;
+		attr = player->record.verified ? Py_True : Py_False;
 	else if (strcmp (name, "global") == 0)
-		attr = Py_None;
+		attr = player->record.globalUser ? Py_True : Py_False;
 	else if (strcmp (name, "admin") == 0)
-		attr = Py_None;
+		attr = player->record.admin ? Py_True : Py_False;
 	else if (strcmp (name, "groups") == 0)
+		// FIXME - create list
 		attr = Py_None;
 	else if (strcmp (name, "wins") == 0)
-		attr = Py_None;
+		attr = Py_BuildValue ("i", player->record.wins);
 	else if (strcmp (name, "losses") == 0)
-		attr = Py_None;
+		attr = Py_BuildValue ("i", player->record.losses);
 
 	if (attr == Py_None)
 		return Py_FindMethod (Player_methods, (PyObject *) player, name);
