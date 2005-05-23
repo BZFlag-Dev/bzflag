@@ -1791,8 +1791,9 @@ static void		handleServerMessage(bool human, uint16_t code,
 	for (int i = 0; i < numRobots; i++)
 	  robots[i]->explodeTank();
 #endif
-      } else if (timeLeft < 0) 
-				hud->setAlert(0, "Game Paused", 10.0f, true);
+      } else if (timeLeft < 0) {
+	hud->setAlert(0, "Game Paused", 10.0f, true);
+      }
       break;
     }
 
@@ -2249,7 +2250,7 @@ static void		handleServerMessage(bool human, uint16_t code,
       // but if I'm on the same team as the capturer then my team won.
       if (capturedTeam == int(myTank->getTeam()))
 	playLocalSound(SFX_LOSE);
-				if (capturer && capturer->getTeam() == myTank->getTeam())
+      if (capturer && capturer->getTeam() == myTank->getTeam())
 	playLocalSound(SFX_CAPTURE);
 			
 

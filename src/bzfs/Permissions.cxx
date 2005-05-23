@@ -354,7 +354,7 @@ std::string nameFromPerm(PlayerAccessInfo::AccessPerm perm)
     case PlayerAccessInfo::shutdownServer: return "shutdownServer";
     case PlayerAccessInfo::spawn: return "spawn";
     case PlayerAccessInfo::superKill: return "superKill";
-    case PlayerAccessInfo::talk: return "talk";				      
+    case PlayerAccessInfo::talk: return "talk";
     case PlayerAccessInfo::unban: return "unban";
     case PlayerAccessInfo::unmute: return "unmute";
     case PlayerAccessInfo::veto: return "veto";

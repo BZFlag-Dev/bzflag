@@ -112,10 +112,10 @@ bool CustomWeapon::read(const char *cmd, std::istream& input) {
 
 void CustomWeapon::writeToWorld(WorldInfo* world) const
 {
-	if (triggerType == eNullEvent)
-		world->addWeapon(type, pos, rotation, tilt, initdelay, delay, sync);
-	else
-		worldEventManager.addEvent(triggerType,eventTeam,new WorldWeaponGlobalEventHandler(type, pos, rotation, tilt));
+  if (triggerType == eNullEvent)
+    world->addWeapon(type, pos, rotation, tilt, initdelay, delay, sync);
+  else
+    worldEventManager.addEvent(triggerType,eventTeam,new WorldWeaponGlobalEventHandler(type, pos, rotation, tilt));
 }
 
 

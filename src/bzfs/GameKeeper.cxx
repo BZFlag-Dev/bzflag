@@ -36,9 +36,9 @@ static void *tcpRx(void* arg) {
 
 void *PackPlayerInfo(void *buf, int playerIndex, uint8_t properties )
 {
-	buf = nboPackUByte(buf, playerIndex);
-	buf = nboPackUByte(buf, properties);
-	return buf;
+  buf = nboPackUByte(buf, playerIndex);
+  buf = nboPackUByte(buf, properties);
+  return buf;
 }
 
 GameKeeper::Player::Player(int _playerIndex,

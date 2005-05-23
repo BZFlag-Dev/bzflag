@@ -35,8 +35,8 @@ class Authentication {
   void	verifyCredential(char *buf, int len);
   bool	isTrusted() {return trusted;};
   std::string getPrincipal() {return principalName;};
-  bool isGlobal ( void ){return globalyAuthenticated;};
-  void global ( bool set ) { globalyAuthenticated = set;}
+  bool isGlobal(void) {return globallyAuthenticated;};
+  void global(bool set) {globallyAuthenticated = set;}
 private:
 #ifdef HAVE_KRB5
   static krb5_context   context;
@@ -49,7 +49,7 @@ private:
   static bool	   authentication;
   bool		  trusted;
   std::string	   principalName;
-  bool				globalyAuthenticated;
+  bool		   globallyAuthenticated;
 };
 
 #endif

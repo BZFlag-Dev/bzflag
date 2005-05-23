@@ -40,7 +40,7 @@ char	   Authentication::ccfile[MAXPATHLEN+6]; // FILE:path+\0
 #endif
 bool	   Authentication::authentication = false;
 
-Authentication::Authentication() : trusted(false), globalyAuthenticated(false)
+Authentication::Authentication() : trusted(false), globallyAuthenticated(false)
 {
 }
 

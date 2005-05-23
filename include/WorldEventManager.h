@@ -38,8 +38,8 @@ typedef enum
 	eUnknownSlashCommand,	// will not take a team
 	eGetPlayerSpawnPosEvent,
 	eGetAutoTeamEvent,		// will not take a team
-	eAllowPlayer,					// will not take a team
-	eTickEvent,						// will not take a team
+	eAllowPlayer,			// will not take a team
+	eTickEvent,			// will not take a team
 	eGenerateWorldEvent,	// will not take a team
 	eGetPlayerInfoEvent  // will not take a team
 }teEventType;

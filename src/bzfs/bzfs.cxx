@@ -392,27 +392,25 @@ void sendPlayerInfo() {
   for (i = 0; i <= int(ObserverTeam); i++)
     numPlayers += team[i].team.size;
   buf = nboPackUByte(bufStart, numPlayers);
-  for (i = 0; i < curMaxPlayers; ++i)
-	{
+  for (i = 0; i < curMaxPlayers; ++i) {
     GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(i);
     if (!playerData)
       continue;
 
-    if (playerData->player.isPlaying()) 
-		{
-			// see if any events want to update the playerInfo before it is sent out
-			
-			GetPlayerInfoEventData playerInfoData;
-			playerInfoData.playerID = i;
-			playerInfoData.callsign = playerData->player.getCallSign();
-			playerInfoData.team = playerData->player.getTeam();
-			playerInfoData.verified = playerData->accessInfo.isVerified();
-			playerInfoData.registerd = playerData->accessInfo.isRegistered();
-			playerInfoData.admin = playerData->accessInfo.isAdmin();
+    if (playerData->player.isPlaying()) {
+      // see if any events want to update the playerInfo before it is sent out
 
-			worldEventManager.callEvents(eGetPlayerInfoEvent,-1,&playerInfoData);
+      GetPlayerInfoEventData playerInfoData;
+      playerInfoData.playerID = i;
+      playerInfoData.callsign = playerData->player.getCallSign();
+      playerInfoData.team = playerData->player.getTeam();
+      playerInfoData.verified = playerData->accessInfo.isVerified();
+      playerInfoData.registerd = playerData->accessInfo.isRegistered();
+      playerInfoData.admin = playerData->accessInfo.isAdmin();
 
-			buf = PackPlayerInfo(buf,i,GetPlayerProperties(playerInfoData.registerd,playerInfoData.verified,playerInfoData.admin));
+      worldEventManager.callEvents(eGetPlayerInfoEvent,-1,&playerInfoData);
+
+      buf = PackPlayerInfo(buf,i,GetPlayerProperties(playerInfoData.registerd,playerInfoData.verified,playerInfoData.admin));
      // buf = playerData->packPlayerInfo(buf);
     }
   }
@@ -443,8 +441,8 @@ void sendIPUpdate(int targetPlayer = -1, int playerIndex = -1) {
 		    (char*)buf - (char*)bufStart, bufStart);
     }
     if (Record::enabled()) {
-      Record::addPacket (MsgAdminInfo,
-			 (char*)buf - (char*)bufStart, bufStart, HiddenPacket);
+      Record::addPacket(MsgAdminInfo,
+		        (char*)buf - (char*)bufStart, bufStart, HiddenPacket);
     }
   } else {
     int i, numPlayers = 0;
@@ -1253,43 +1251,38 @@ static bool defineWorld()
 	}
       }
     }
-  } 
-	else
-	{
-		// check and see if anyone wants to define the world from an event
-		GenerateWorldEventData	worldData;
-		worldData.ctf  = clOptions->gameStyle & TeamFlagGameStyle;
-		worldData.time = TimeKeeper::getCurrent().getSeconds();
+  } else {
+    // check and see if anyone wants to define the world from an event
+    GenerateWorldEventData	worldData;
+    worldData.ctf  = clOptions->gameStyle & TeamFlagGameStyle;
+    worldData.time = TimeKeeper::getCurrent().getSeconds();
 
-		world = new WorldInfo;
-		worldEventManager.callEvents(eGenerateWorldEvent,-1,&worldData);
-		if (!worldData.handled)
-		{
-			delete(world);
-			if (clOptions->gameStyle & TeamFlagGameStyle)
-				world = defineTeamWorld();
-			else
-				world = defineRandomWorld();
-		}
-		else
-		{
-			float worldSize = BZDBCache::worldSize;
-			if (pluginWorldSize > 0 )
-				worldSize = pluginWorldSize;
+    world = new WorldInfo;
+    worldEventManager.callEvents(eGenerateWorldEvent, -1, &worldData);
+    if (!worldData.handled) {
+      delete(world);
+      if (clOptions->gameStyle & TeamFlagGameStyle)
+	world = defineTeamWorld();
+      else
+	world = defineRandomWorld();
+    } else {
+      float worldSize = BZDBCache::worldSize;
+      if (pluginWorldSize > 0)
+	worldSize = pluginWorldSize;
 
-			float wallHeight = BZDB.eval(StateDatabase::BZDB_WALLHEIGHT);
-			if (pluginWorldHeight > 0 )
-				wallHeight = pluginWorldHeight;
+      float wallHeight = BZDB.eval(StateDatabase::BZDB_WALLHEIGHT);
+      if (pluginWorldHeight > 0)
+	wallHeight = pluginWorldHeight;
 
-			world->addWall(0.0f, 0.5f * worldSize, 0.0f, (float)(1.5 * M_PI), 0.5f * worldSize, wallHeight);
-			world->addWall(0.5f * worldSize, 0.0f, 0.0f, (float)M_PI, 0.5f * worldSize, wallHeight);
-			world->addWall(0.0f, -0.5f * worldSize, 0.0f, (float)(0.5 * M_PI), 0.5f * worldSize, wallHeight);
-			world->addWall(-0.5f * worldSize, 0.0f, 0.0f, 0.0f, 0.5f * worldSize, wallHeight);
+      world->addWall(0.0f, 0.5f * worldSize, 0.0f, (float)(1.5 * M_PI), 0.5f * worldSize, wallHeight);
+      world->addWall(0.5f * worldSize, 0.0f, 0.0f, (float)M_PI, 0.5f * worldSize, wallHeight);
+      world->addWall(0.0f, -0.5f * worldSize, 0.0f, (float)(0.5 * M_PI), 0.5f * worldSize, wallHeight);
+      world->addWall(-0.5f * worldSize, 0.0f, 0.0f, 0.0f, 0.5f * worldSize, wallHeight);
 
-			OBSTACLEMGR.makeWorld();
-			world->finishWorld();
-		}
-	}
+      OBSTACLEMGR.makeWorld();
+      world->finishWorld();
+    }
+  }
 
   if (world == NULL) {
     return false;
@@ -1579,18 +1572,18 @@ void sendFilteredMessage(int sendingPlayer, PlayerId recipientPlayer, const char
   if (!senderData) {
     return;
   }
-  if(!senderData->accessInfo.hasPerm(PlayerAccessInfo::talk)) {
+  if (!senderData->accessInfo.hasPerm(PlayerAccessInfo::talk)) {
 
     // if the player were sending to is an admin
     GameKeeper::Player *recipientData = GameKeeper::Player::getPlayerByIndex(recipientPlayer);
 
     // don't care if they're real, just care if they're an admin
     if (recipientData && recipientData->accessInfo.isAdmin()) {
-	sendMessage(sendingPlayer, recipientPlayer, msg);
-	return;
+      sendMessage(sendingPlayer, recipientPlayer, msg);
+      return;
     } else if (recipientPlayer == AdminPlayers) {
-	sendMessage(sendingPlayer, recipientPlayer, msg);
-	return;
+      sendMessage(sendingPlayer, recipientPlayer, msg);
+      return;
     }
 
     sendMessage(ServerPlayer, sendingPlayer, "We're sorry, you are not allowed to talk!");
@@ -1957,10 +1950,9 @@ static void addPlayer(int playerIndex)
   allowData.time = TimeKeeper::getCurrent().getSeconds();
 
   worldEventManager.callEvents(eAllowPlayer,-1,&allowData);
-  if (!allowData.allow)
-  {
-	  rejectPlayer(playerIndex, RejectBadRequest,allowData.reason.c_str());
-	  return;
+  if (!allowData.allow) {
+    rejectPlayer(playerIndex, RejectBadRequest, allowData.reason.c_str());
+    return;
   }
 
   // pick a team
@@ -2401,23 +2393,23 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
   // not to undo operations that haven't been done.
   // first shutdown connection
 
-	GameKeeper::Player *playerData
-		= GameKeeper::Player::getPlayerByIndex(playerIndex);
-	if (!playerData)
-		return;
+  GameKeeper::Player *playerData
+		      = GameKeeper::Player::getPlayerByIndex(playerIndex);
+  if (!playerData)
+    return;
 
-	// call any on part events
-	PlayerJoinPartEventData partEventData;
-	partEventData.eventType = ePlayerPartEvent;
-	partEventData.playerID = playerIndex;
-	partEventData.teamID = playerData->player.getTeam();
-	partEventData.callsign = playerData->player.getCallSign();
-	partEventData.time = TimeKeeper::getCurrent().getSeconds();
-	if (reason)
-		partEventData.reason = reason;
+  // call any on part events
+  PlayerJoinPartEventData partEventData;
+  partEventData.eventType = ePlayerPartEvent;
+  partEventData.playerID = playerIndex;
+  partEventData.teamID = playerData->player.getTeam();
+  partEventData.callsign = playerData->player.getCallSign();
+  partEventData.time = TimeKeeper::getCurrent().getSeconds();
+  if (reason)
+    partEventData.reason = reason;
 
-	worldEventManager.callEvents(ePlayerPartEvent,partEventData.teamID,&partEventData);
-	worldEventManager.callEvents(ePlayerPartEvent,-1,&partEventData);
+  worldEventManager.callEvents(ePlayerPartEvent,partEventData.teamID,&partEventData);
+  worldEventManager.callEvents(ePlayerPartEvent,-1,&partEventData);
 
   if (notify) {
     // send a super kill to be polite
@@ -3130,17 +3122,17 @@ static void captureFlag(int playerIndex, TeamColor teamCaptured)
   buf = nboPackUShort(buf, uint16_t(teamCaptured));
   broadcastMessage(MsgCaptureFlag, (char*)buf-(char*)bufStart, bufStart);
 
-	// find any events for capturing the flags on the caped team or events for ANY team
-	CTFCaptureEventData	eventData;
-	eventData.teamCaped = teamIndex;
-	eventData.teamCaping = teamCaptured;
-	eventData.playerCaping = playerIndex;
-	memcpy(eventData.pos,lastState[playerIndex].pos,sizeof(float)*3);
-	eventData.rot = lastState[playerIndex].azimuth;
-	eventData.time = TimeKeeper::getCurrent().getSeconds();
+  // find any events for capturing the flags on the caped team or events for ANY team
+  CTFCaptureEventData	eventData;
+  eventData.teamCaped = teamIndex;
+  eventData.teamCaping = teamCaptured;
+  eventData.playerCaping = playerIndex;
+  memcpy(eventData.pos,lastState[playerIndex].pos,sizeof(float)*3);
+  eventData.rot = lastState[playerIndex].azimuth;
+  eventData.time = TimeKeeper::getCurrent().getSeconds();
 
-	worldEventManager.callEvents(eCaptureEvent,teamIndex,&eventData);
-	worldEventManager.callEvents(eCaptureEvent,-1,&eventData);
+  worldEventManager.callEvents(eCaptureEvent,teamIndex,&eventData);
+  worldEventManager.callEvents(eCaptureEvent,-1,&eventData);
 
   // everyone on losing team is dead
   for (int i = 0; i < curMaxPlayers; i++) {
@@ -3774,32 +3766,32 @@ possible attack from %s\n",
       if (checkSpam(message, playerData, t))
 	break;
 
-			GameKeeper::Player *toData = GameKeeper::Player::getPlayerByIndex(dstPlayer);
-			int toTeam = -1;
-			if (toData)
-				toTeam = toData->player.getTeam();
+      GameKeeper::Player *toData = GameKeeper::Player::getPlayerByIndex(dstPlayer);
+      int toTeam = -1;
+      if (toData)
+	toTeam = toData->player.getTeam();
 
-			ChatEventData chatData;
-			chatData.from = t;
-			chatData.to = dstPlayer;
-			chatData.message = message;
-			chatData.time = TimeKeeper::getCurrent().getSeconds();
+      ChatEventData chatData;
+      chatData.from = t;
+      chatData.to = dstPlayer;
+      chatData.message = message;
+      chatData.time = TimeKeeper::getCurrent().getSeconds();
 
-			// send any events that want to watch the chat
-			// everyone
-			worldEventManager.callEvents(eChatMessageEvent,-1,&chatData);
+      // send any events that want to watch the chat
+      // everyone
+      worldEventManager.callEvents(eChatMessageEvent,-1,&chatData);
 
-			// the from team
-			if (playerData->player.getTeam() >0)
-				worldEventManager.callEvents(eChatMessageEvent,playerData->player.getTeam(),&chatData);
+      // the from team
+      if (playerData->player.getTeam() > 0)
+	worldEventManager.callEvents(eChatMessageEvent,playerData->player.getTeam(),&chatData);
 
-			// the to team
-			if (toTeam >0)
-				worldEventManager.callEvents(eChatMessageEvent,toTeam,&chatData);
+      // the to team
+      if (toTeam > 0)
+	worldEventManager.callEvents(eChatMessageEvent,toTeam,&chatData);
 
-			// send the actual Message after all the callbacks have done there magic to it.
-			if (chatData.message.size())
-				sendPlayerMessage (playerData, dstPlayer, chatData.message.c_str());
+      // send the actual Message after all the callbacks have done there magic to it.
+      if (chatData.message.size())
+	sendPlayerMessage (playerData, dstPlayer, chatData.message.c_str());
       break;
     }
 
@@ -4358,8 +4350,7 @@ static void doStuffOnPlayer(GameKeeper::Player &playerData)
 
 void initGroups()
 {
- 
-	// make sure that the 'admin' & 'default' groups exist
+  // make sure that the 'admin' & 'default' groups exist
 
   PlayerAccessInfo info;
   info.explicitAllows[PlayerAccessInfo::actionMessage] = true;
@@ -4370,35 +4361,35 @@ void initGroups()
   info.explicitAllows[PlayerAccessInfo::lagStats] = true;
   info.explicitAllows[PlayerAccessInfo::privateMessage] = true;
   info.explicitAllows[PlayerAccessInfo::spawn] = true;
-	info.explicitAllows[PlayerAccessInfo::talk] = true;
-	info.groupState[PlayerAccessInfo::isGroup] = true;
-	info.groupState[PlayerAccessInfo::isDefault] = true;
-	groupAccess["EVERYONE"] = info;
+  info.explicitAllows[PlayerAccessInfo::talk] = true;
+  info.groupState[PlayerAccessInfo::isGroup] = true;
+  info.groupState[PlayerAccessInfo::isDefault] = true;
+  groupAccess["EVERYONE"] = info;
   
-	// VERIFIED
+  // VERIFIED
   info.explicitAllows.reset();
-	info.groupState.reset();
+  info.groupState.reset();
   info.explicitAllows[PlayerAccessInfo::poll] = true;
   info.explicitAllows[PlayerAccessInfo::vote] = true;
-	info.explicitAllows[PlayerAccessInfo::pollBan] = true;
-	info.explicitAllows[PlayerAccessInfo::pollKick] = true;
+  info.explicitAllows[PlayerAccessInfo::pollBan] = true;
+  info.explicitAllows[PlayerAccessInfo::pollKick] = true;
   info.explicitAllows[PlayerAccessInfo::pollSet] = true;
   info.explicitAllows[PlayerAccessInfo::pollFlagReset] = true;
-	info.groupState[PlayerAccessInfo::isGroup] = true;
-	info.groupState[PlayerAccessInfo::isDefault] = true;
-	groupAccess["VERIFIED"] = info;
+  info.groupState[PlayerAccessInfo::isGroup] = true;
+  info.groupState[PlayerAccessInfo::isDefault] = true;
+  groupAccess["VERIFIED"] = info;
 
-	//  LOCAL.ADMIN
+  //  LOCAL.ADMIN
   info.explicitAllows.reset();
-	info.groupState.reset();
+  info.groupState.reset();
   for (int i = 0; i < PlayerAccessInfo::lastPerm; i++)
-  info.explicitAllows[i] = true;
-	info.groupState[PlayerAccessInfo::isGroup] = true;
-	info.groupState[PlayerAccessInfo::isDefault] = true;
+    info.explicitAllows[i] = true;
+  info.groupState[PlayerAccessInfo::isGroup] = true;
+  info.groupState[PlayerAccessInfo::isDefault] = true;
   info.explicitAllows[PlayerAccessInfo::hideAdmin ] = false;
   groupAccess["LOCAL.ADMIN"] = info;
   
-	// load databases
+  // load databases
   if (groupsFile.size())
     PlayerAccessInfo::readGroupsFile(groupsFile);
 }
@@ -4498,8 +4489,8 @@ int main(int argc, char **argv)
   // see if we are going to load any plugins
 #ifdef _USE_BZ_API
   initPlugins();
-  for ( unsigned int plugin = 0;plugin < clOptions->pluginList.size();plugin++)
-	  loadPlugin(clOptions->pluginList[plugin].plugin,clOptions->pluginList[plugin].command);
+  for (unsigned int plugin = 0; plugin < clOptions->pluginList.size(); plugin++)
+    loadPlugin(clOptions->pluginList[plugin].plugin, clOptions->pluginList[plugin].command);
 #endif
 
   // loading lag thresholds
@@ -4532,8 +4523,7 @@ int main(int argc, char **argv)
     if (clOptions->maxTeam[ObserverTeam] == 0) {
       std::cerr << "replay needs at least 1 observer, set to 1" << std::endl;
       clOptions->maxTeam[ObserverTeam] = 1;
-    }
-    else if (clOptions->maxTeam[ObserverTeam] > ReplayObservers) {
+    } else if (clOptions->maxTeam[ObserverTeam] > ReplayObservers) {
       std::cerr << "observer count limited to " << ReplayObservers <<
 		   " for replay" << std::endl;
       clOptions->maxTeam[ObserverTeam] = ReplayObservers;
@@ -4650,8 +4640,7 @@ int main(int argc, char **argv)
 #endif /* defined(_WIN32) */
     std::cerr << "ERROR: A world was not specified" << std::endl;
     return 1;
-  }
-  else if (clOptions->cacheOut != "") {
+  } else if (clOptions->cacheOut != "") {
     if (!saveWorldCache()) {
       std::cerr << "ERROR: could not save world cache file: "
 		<< clOptions->cacheOut << std::endl;
@@ -4809,9 +4798,9 @@ int main(int argc, char **argv)
       waitTime = 0.0f;
     }
 
-		// see if we are within the plug requested max wait time
-		if ( waitTime > pluginMaxWait)
-			waitTime = pluginMaxWait;
+    // see if we are within the plug requested max wait time
+    if (waitTime > pluginMaxWait)
+      waitTime = pluginMaxWait;
 
     /**************
      *  SELECT()  *
@@ -5321,17 +5310,17 @@ int main(int argc, char **argv)
     // Fire world weapons
     world->getWorldWeapons().fire();
 
-		// fire off a tick event
-		TickEventData	tickData;
-		tickData.time = TimeKeeper::getCurrent().getSeconds();
-		worldEventManager.callEvents(eTickEvent,-1,&tickData);
+    // fire off a tick event
+    TickEventData	tickData;
+    tickData.time = TimeKeeper::getCurrent().getSeconds();
+    worldEventManager.callEvents(eTickEvent,-1,&tickData);
 
     // Clean pending players
     GameKeeper::Player::clean();
   }
 
 #ifdef _USE_BZ_API
-	unloadPlugins();
+  unloadPlugins();
 #endif
 
   // print uptime

@@ -322,7 +322,7 @@ static void handleMsgCmd(GameKeeper::Player *playerData, const char *message)
   }
 
   // find the player name, optionally quoted
-  if ( arguments[callsignStart] == '"' ) {
+  if (arguments[callsignStart] == '"') {
     callsignStart++;
 
     // find the trailing quote
@@ -371,25 +371,24 @@ static void handleMsgCmd(GameKeeper::Player *playerData, const char *message)
   }
 
   recipient = arguments.substr(callsignStart, callsignEnd - callsignStart + 1);
-  
-	if (recipient[0] == '>') {
-		// /msg >admin sends on admin channel, /msg >team on team channel
-		recipient.erase(0,1);
-		if ( TextUtils::toupper(recipient) == "ADMIN") 
-			to = AdminPlayers;				
-		else if (TextUtils::toupper(recipient) == "TEAM") 
-			to = 250 - (int)playerData->player.getTeam();
-	}
-	else {
-		to = GameKeeper::Player::getPlayerIDByName(recipient);
 
-  	// valid callsign
-  	if ((to < 0) || (to >= curMaxPlayers)) {
-   	 message2 = TextUtils::format("\"%s\" is not here.  No such callsign.", recipient.c_str());
-  	  sendMessage(ServerPlayer, from, message2.c_str());
-   	 return;
-  	}
-	}
+  if (recipient[0] == '>') {
+    // /msg >admin sends on admin channel, /msg >team on team channel
+    recipient.erase(0,1);
+    if (TextUtils::toupper(recipient) == "ADMIN") 
+      to = AdminPlayers;				
+    else if (TextUtils::toupper(recipient) == "TEAM") 
+      to = 250 - (int)playerData->player.getTeam();
+  } else {
+    to = GameKeeper::Player::getPlayerIDByName(recipient);
+
+    // valid callsign
+    if ((to < 0) || (to >= curMaxPlayers)) {
+      message2 = TextUtils::format("\"%s\" is not here.  No such callsign.", recipient.c_str());
+      sendMessage(ServerPlayer, from, message2.c_str());
+      return;
+    }
+  }
 
   // make sure there is something to send
   if ((messageStart >= arguments.size() - 1) || (messageStart == 0)) {
@@ -519,10 +518,10 @@ static void handleGameoverCmd(GameKeeper::Player *playerData, const char *)
   gameOver = true;
   if (clOptions->timeManualStart) {
     countdownActive = false;
-		countdownPauseStart = TimeKeeper::getNullTime();
-		clOptions->countdownPaused = false;
-  return;
- }
+    countdownPauseStart = TimeKeeper::getNullTime();
+    clOptions->countdownPaused = false;
+    return;
+  }
 }
 
 static void zapAllFlags()
@@ -773,7 +772,7 @@ static void handleKillCmd(GameKeeper::Player *playerData, const char *message)
     }
 
     snprintf(killmessage, MessageLen, "You were killed by %s",
-	    playerData->player.getCallSign());
+	     playerData->player.getCallSign());
     sendMessage(ServerPlayer, i, killmessage);
     if (argv.size() > 2) {
       snprintf(killmessage, MessageLen, " reason given : %s",argv[2].c_str());
@@ -927,11 +926,10 @@ static void handleHostBanCmd(GameKeeper::Player *playerData, const char *message
   std::string msg = message;
   std::vector<std::string> argv = TextUtils::tokenize( msg, " \t", 4 );
 
-  if( argv.size() < 2 ){
+  if (argv.size() < 2) {
     sendMessage(ServerPlayer, t, "Syntax: /hostban <host pattern> [duration] [reason]");
     sendMessage(ServerPlayer, t, "	Please keep in mind that reason is displayed to the user.");
-  }
-  else {
+  } else {
     std::string hostpat = argv[1];
     std::string reason;
     int durationInt = clOptions->banTime;
@@ -1126,8 +1124,8 @@ static void handleReportCmd(GameKeeper::Player *playerData, const char *message)
 {
   int t = playerData->getIndex();
   if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::talk)) {
-	  sendMessage(ServerPlayer, t, "You do not have permission to run the report command");
-	  return;
+    sendMessage(ServerPlayer, t, "You do not have permission to run the report command");
+    return;
   }
 
   if (strlen(message + 1) < 8) {
@@ -1518,29 +1516,29 @@ static void handleGrouppermsCmd(GameKeeper::Player *playerData, const char *)
     line = itr->first + ":   ";
     sendMessage(ServerPlayer, t, line.c_str());
 
-		// allows first
-		if (itr->second.explicitAllows.any()) {
-			sendMessage(ServerPlayer, t, "  Allows");
-    	for (int i = 0; i < PlayerAccessInfo::lastPerm; i++) {
-     		if (itr->second.explicitAllows.test(i) && !itr->second.explicitDenys.test(i) ) {
-		 			line = "     ";
-					line += nameFromPerm((PlayerAccessInfo::AccessPerm)i);
-					sendMessage(ServerPlayer, t, line.c_str());
+    // allows first
+    if (itr->second.explicitAllows.any()) {
+      sendMessage(ServerPlayer, t, "  Allows");
+      for (int i = 0; i < PlayerAccessInfo::lastPerm; i++) {
+     	if (itr->second.explicitAllows.test(i) && !itr->second.explicitDenys.test(i) ) {
+	  line = "     ";
+	  line += nameFromPerm((PlayerAccessInfo::AccessPerm)i);
+	  sendMessage(ServerPlayer, t, line.c_str());
       	}
-    	}
-		}
+      }
+    }
 		
-		// same about denys
-		if (itr->second.explicitDenys.any()) {
-			sendMessage(ServerPlayer, t, "  Denys");
-    	for (int i = 0; i < PlayerAccessInfo::lastPerm; i++) {
-     		if (itr->second.explicitDenys.test(i) ) {
-		 			line = "     ";
-					line += nameFromPerm((PlayerAccessInfo::AccessPerm)i);
-					sendMessage(ServerPlayer, t, line.c_str());
+    // same about denys
+    if (itr->second.explicitDenys.any()) {
+      sendMessage(ServerPlayer, t, "  Denys");
+      for (int i = 0; i < PlayerAccessInfo::lastPerm; i++) {
+     	if (itr->second.explicitDenys.test(i) ) {
+	  line = "     ";
+	  line += nameFromPerm((PlayerAccessInfo::AccessPerm)i);
+	  sendMessage(ServerPlayer, t, line.c_str());
       	}
-    	}
-		}
+      }
+    }
 			
     itr++;
   }

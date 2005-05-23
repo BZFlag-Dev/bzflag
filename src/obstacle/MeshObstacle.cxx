@@ -615,7 +615,7 @@ int MeshObstacle::packSize() const
 static void outputFloat(std::ostream& out, float value)
 {
   char buffer[32];
-  sprintf (buffer, " %.8f", value);
+  snprintf(buffer, 30, " %.8f", value);
   out << buffer;
   return;
 }
