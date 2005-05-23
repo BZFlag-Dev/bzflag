@@ -36,6 +36,7 @@ Event::Event ()
 	PyModule_AddIntConstant (module, "AllowPlayer",            bz_eAllowPlayer);
 	PyModule_AddIntConstant (module, "Tick",                   bz_eTickEvent);
 	PyModule_AddIntConstant (module, "GenerateWorld",          bz_eGenerateWorldEvent);
+	PyModule_AddIntConstant (module, "GetPlayerInfo",          bz_eGetPlayerInfoEvent);
 }
 
 PyObject *
