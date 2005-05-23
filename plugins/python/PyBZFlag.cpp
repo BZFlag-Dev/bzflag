@@ -97,16 +97,20 @@ PartHandler::process (bz_EventData *eventData)
 	}
 }
 
-static PyObject *SendTextMessage (PyObject *self, PyObject *args, PyObject *keywords);
 static PyObject *FireWorldWeapon (PyObject *self, PyObject *args);
 static PyObject *GetCurrentTime  (PyObject *self, PyObject *args);
+static PyObject *GetMaxWaitTime  (PyObject *self, PyObject *args);
+static PyObject *SendTextMessage (PyObject *self, PyObject *args, PyObject *keywords);
+static PyObject *SetMaxWaitTime  (PyObject *self, PyObject *args);
 
 static struct PyMethodDef methods[] =
 {
 	// FIXME - docstrings
-	{"SendTextMessage", (PyCFunction) SendTextMessage, METH_VARARGS | METH_KEYWORDS, NULL},
 	{"FireWorldWeapon", (PyCFunction) FireWorldWeapon, METH_VARARGS,                 NULL},
 	{"GetCurrentTime",  (PyCFunction) GetCurrentTime,  METH_NOARGS,                  NULL},
+	{"GetMaxWaitTime",  (PyCFunction) GetMaxWaitTime,  METH_NOARGS,                  NULL},
+	{"SendTextMessage", (PyCFunction) SendTextMessage, METH_VARARGS | METH_KEYWORDS, NULL},
+	{"SetMaxWaitTime",  (PyCFunction) SetMaxWaitTime,  METH_VARARGS,                 NULL},
 	{NULL,              (PyCFunction) NULL,            0,                            NULL},
 };
 
@@ -208,6 +212,28 @@ BZFlag::RemovePlayer (int id)
 }
 
 static PyObject *
+FireWorldWeapon (PyObject *self, PyObject *args)
+{
+	printf ("FireWorldWeapon ()\n");
+	char *flag;
+	float lifetime;
+	int from_player;
+	return Py_None;
+}
+
+static PyObject *
+GetCurrentTime (PyObject *self, PyObject *args)
+{
+	printf ("GetCurrentTime ()\n");
+	return Py_None;
+}
+
+static PyObject *
+GetMaxWaitTime (PyObject *self, PyObject *args)
+{
+}
+
+static PyObject *
 SendTextMessage (PyObject *self, PyObject *args, PyObject *keywords)
 {
 	int to, from;
@@ -227,20 +253,8 @@ SendTextMessage (PyObject *self, PyObject *args, PyObject *keywords)
 }
 
 static PyObject *
-FireWorldWeapon (PyObject *self, PyObject *args)
+SetMaxWaitTime (PyObject *self, PyObject *args)
 {
-	printf ("FireWorldWeapon ()\n");
-	char *flag;
-	float lifetime;
-	int from_player;
-	return Py_None;
-}
-
-static PyObject *
-GetCurrentTime (PyObject *self, PyObject *args)
-{
-	printf ("GetCurrentTime ()\n");
-	return Py_None;
 }
 
 };
