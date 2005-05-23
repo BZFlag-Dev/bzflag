@@ -40,7 +40,8 @@ typedef enum
 	eGetAutoTeamEvent,		// will not take a team
 	eAllowPlayer,					// will not take a team
 	eTickEvent,						// will not take a team
-	eGenerateWorldEvent	// will not take a team
+	eGenerateWorldEvent,	// will not take a team
+	eGetPlayerInfoEvent  // will not take a team
 }teEventType;
 
 class BaseEventData
@@ -227,6 +228,32 @@ public:
 	bool handled;
 	bool ctf;
 
+	double time;
+};
+
+class GetPlayerInfoEventData : public BaseEventData
+{
+public:
+	GetPlayerInfoEventData()
+	{
+		eventType = eGetPlayerInfoEvent;
+		playerID = -1;
+		team = -1;
+		admin = false;
+		verified = false;
+		registerd = false;
+		time = 0.0;
+	}
+	virtual ~GetPlayerInfoEventData(){};
+
+	int playerID;
+	std::string callsign;
+	std::string ipAddress;
+	int team;
+
+	bool admin;
+	bool verified;
+	bool registerd;
 	double time;
 };
 

@@ -33,6 +33,14 @@ static void *tcpRx(void* arg) {
 }
 #endif
 
+
+void *PackPlayerInfo(void *buf, int playerIndex, uint8_t properties )
+{
+	buf = nboPackUByte(buf, playerIndex);
+	buf = nboPackUByte(buf, properties);
+	return buf;
+}
+
 GameKeeper::Player::Player(int _playerIndex,
 			   const struct sockaddr_in &clientAddr, int fd,
 			   tcpCallback _clientCallback):
@@ -151,8 +159,7 @@ void *GameKeeper::Player::packAdminInfo(void *buf)
 
 void *GameKeeper::Player::packPlayerInfo(void *buf)
 {
-  buf = nboPackUByte(buf, playerIndex);
-  buf = nboPackUByte(buf, accessInfo.getPlayerProperties());
+	buf = PackPlayerInfo(buf, playerIndex,accessInfo.getPlayerProperties() );
   return buf;
 }
 

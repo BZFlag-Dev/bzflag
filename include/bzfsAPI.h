@@ -55,7 +55,8 @@ typedef enum
 	bz_eGetAutoTeamEvent,				// will not take a team
 	bz_eAllowPlayer,						// will not take a team
 	bz_eTickEvent,							// will not take a team
-	bz_eGenerateWorldEvent			// will not take a team
+	bz_eGenerateWorldEvent,			// will not take a team
+	bz_eGetPlayerInfoEvent			// will not take a team
 }bz_teEventType;
 
 #define BZ_ALL_USERS	-1
@@ -294,6 +295,32 @@ public:
 	bool handled;
 	bool ctf;
 
+	double time;
+};
+
+class bz_GetPlayerInfoEventData : public bz_EventData
+{
+public:
+	bz_GetPlayerInfoEventData()
+	{
+		eventType = bz_eGetPlayerInfoEvent;
+		playerID = -1;
+		team = -1;
+		admin = false;
+		verified = false;
+		registerd = false;
+		time = 0.0;
+	}
+	virtual ~bz_GetPlayerInfoEventData(){};
+
+	int playerID;
+	std::string callsign;
+	std::string ipAddress;
+	int team;
+
+	bool admin;
+	bool verified;
+	bool registerd;
 	double time;
 };
 

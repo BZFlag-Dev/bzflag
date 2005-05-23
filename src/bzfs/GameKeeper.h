@@ -136,6 +136,8 @@ inline GameKeeper::Player *GameKeeper::Player::getPlayerByIndex(int
   return playerList[_playerIndex];
 }
 
+void *PackPlayerInfo(void *buf, int playerIndex, uint8_t properties );
+
 #if defined(USE_THREADS)
 inline void GameKeeper::Player::handleTcpPacket(fd_set *) {;};
 #endif

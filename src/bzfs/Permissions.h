@@ -191,6 +191,8 @@ void parsePermissionString(const std::string &permissionString, std::bitset<Play
 bool readPassFile(const std::string &filename);
 bool writePassFile(const std::string &filename);
 
+uint8_t GetPlayerProperties( bool registered, bool verified, bool admin );
+
 #endif
 
 

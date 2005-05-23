@@ -35,6 +35,17 @@ PlayerAccessMap	groupAccess;
 PlayerAccessMap	userDatabase;
 PasswordMap	passwordDatabase;
 
+uint8_t GetPlayerProperties( bool registered, bool verified, bool admin ) {
+	uint8_t result = 0;
+	if (registered)
+		result |= IsRegistered;
+	if (verified)
+		result |= IsVerified;
+	if (admin)
+		result |= IsAdmin;
+	return result;
+}
+
 void setUserPassword(const std::string &nick, const std::string &pass);
 
 PlayerAccessInfo::PlayerAccessInfo()
@@ -152,15 +163,7 @@ void PlayerAccessInfo::setPasswd(const std::string&  pwd) {
 }
 
 uint8_t PlayerAccessInfo::getPlayerProperties() {
-  uint8_t result = 0;
-  if (isRegistered())
-    result |= IsRegistered;
-  if (verified)
-    result |= IsVerified;
-  if (!hasPerm(hideAdmin) &&
-      (Admin || hasPerm(ban) || hasPerm(shortBan)))
-    result |= IsAdmin;
-  return result;
+	return GetPlayerProperties(isRegistered(),verified,!hasPerm(hideAdmin) && (Admin || hasPerm(ban) || hasPerm(shortBan)));
 }
 
 bool PlayerAccessInfo::exists() {

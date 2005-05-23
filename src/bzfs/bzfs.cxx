@@ -392,12 +392,28 @@ void sendPlayerInfo() {
   for (i = 0; i <= int(ObserverTeam); i++)
     numPlayers += team[i].team.size;
   buf = nboPackUByte(bufStart, numPlayers);
-  for (i = 0; i < curMaxPlayers; ++i) {
+  for (i = 0; i < curMaxPlayers; ++i)
+	{
     GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(i);
     if (!playerData)
       continue;
-    if (playerData->player.isPlaying()) {
-      buf = playerData->packPlayerInfo(buf);
+
+    if (playerData->player.isPlaying()) 
+		{
+			// see if any events want to update the playerInfo before it is sent out
+			
+			GetPlayerInfoEventData playerInfoData;
+			playerInfoData.playerID = i;
+			playerInfoData.callsign = playerData->player.getCallSign();
+			playerInfoData.team = playerData->player.getTeam();
+			playerInfoData.verified = playerData->accessInfo.isVerified();
+			playerInfoData.registerd = playerData->accessInfo.isRegistered();
+			playerInfoData.admin = playerData->accessInfo.isAdmin();
+
+			worldEventManager.callEvents(eGetPlayerInfoEvent,-1,&playerInfoData);
+
+			buf = PackPlayerInfo(buf,i,GetPlayerProperties(playerInfoData.registerd,playerInfoData.verified,playerInfoData.admin));
+     // buf = playerData->packPlayerInfo(buf);
     }
   }
   broadcastMessage(MsgPlayerInfo, (char*)buf - (char*)bufStart, bufStart);
