@@ -57,11 +57,51 @@ CreatePlayer (int id)
 static void
 Player_dealloc (Player *player)
 {
+	PyObject_DEL (player);
 }
 
 static PyObject *
 Player_getAttr (Player *player, char *name)
 {
+	PyObject *attr = Py_None;
+	player->record.update ();
+
+	if (strcmp (name, "id") == 0)
+		attr = Py_None;
+	else if (strcmp (name, "callsign") == 0)
+		attr = Py_None;
+	else if (strcmp (name, "team") == 0)
+		attr = Py_None;
+	else if (strcmp (name, "position") == 0)
+		attr = Py_None;
+	else if (strcmp (name, "rotation") == 0)
+		attr = Py_None;
+	else if (strcmp (name, "ipAddr") == 0)
+		attr = Py_None;
+	else if (strcmp (name, "flag") == 0)
+		// skip the Py_None check at the end, since None is a valid return value.
+		return Py_None;
+	else if (strcmp (name, "flagHistory") == 0)
+		attr = Py_None;
+	else if (strcmp (name, "spawned") == 0)
+		attr = Py_None;
+	else if (strcmp (name, "verified") == 0)
+		attr = Py_None;
+	else if (strcmp (name, "global") == 0)
+		attr = Py_None;
+	else if (strcmp (name, "admin") == 0)
+		attr = Py_None;
+	else if (strcmp (name, "groups") == 0)
+		attr = Py_None;
+	else if (strcmp (name, "wins") == 0)
+		attr = Py_None;
+	else if (strcmp (name, "losses") == 0)
+		attr = Py_None;
+
+	if (attr == Py_None)
+		return Py_FindMethod (Player_methods, (PyObject *) player, name);
+
+	return attr;
 }
 
 static int
