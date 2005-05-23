@@ -52,7 +52,8 @@ public:
 	static void DeRef ();
 
 	PyObject *GetListeners (int event);
-	void RefreshPlayers ();
+	void AddPlayer (int id);
+	void RemovePlayer (int id);
 
 protected:
 	BZFlag ();
@@ -68,7 +69,6 @@ private:
 	JoinHandler join_handler;
 	PartHandler part_handler;
 
-	std::map<int,PyObject *> player_map;
 	PyObject *CreatePlayer (bz_PlayerRecord record);
 };
 

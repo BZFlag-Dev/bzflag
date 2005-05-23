@@ -48,7 +48,8 @@ TickHandler::process (bz_EventData *eventData)
 void
 JoinHandler::process (bz_EventData *eventData)
 {
-	parent->RefreshPlayers ();
+	bz_PlayerJoinPartEventData *pjped = (bz_PlayerJoinPartEventData*) eventData;
+	parent->AddPlayer (pjped->playerID);
 
 	PyObject *listeners = parent->GetListeners (bz_ePlayerJoinEvent);
 	if (listeners == NULL || !PyList_Check (listeners)) {
@@ -73,7 +74,8 @@ JoinHandler::process (bz_EventData *eventData)
 void
 PartHandler::process (bz_EventData *eventData)
 {
-	parent->RefreshPlayers ();
+	bz_PlayerJoinPartEventData *pjped = (bz_PlayerJoinPartEventData*) eventData;
+	parent->RemovePlayer (pjped->playerID);
 
 	PyObject *listeners = parent->GetListeners (bz_ePlayerPartEvent);
 	if (listeners == NULL || !PyList_Check (listeners)) {
@@ -166,7 +168,6 @@ BZFlag::BZFlag ()
 
 	// Create the players list
 	players = PyDict_New ();
-	RefreshPlayers ();
 
 	PyModule_AddObject (module, "Players", players);
 }
@@ -191,33 +192,19 @@ bool PlayerExists (std::vector<int> h, int n)
 }
 
 void
-BZFlag::RefreshPlayers ()
+BZFlag::AddPlayer (int id)
 {
-	std::vector<int> player_list;
-	bz_getPlayerIndexList (&player_list);
+	bz_PlayerRecord record;
+	bz_getPlayerByIndex (id, &record);
 
-	// Remove any players that might have parted
-	for (std::map<int,PyObject *>::iterator it = player_map.begin (); it != player_map.end (); it++) {
-		std::pair<int,PyObject *> p = *it;
-		if (!PlayerExists (player_list, p.first)) {
-			fprintf (stderr, "removing player %d\n", p.first);
-			PyDict_DelItem (players, p.second);
-			player_map.erase (it);
-		}
-	}
+	PyObject *pyp = CreatePlayer (record);
+	PyDict_SetItem (players, PyInt_FromLong (id), pyp);
+}
 
-	// Add any new players
-	for (std::vector<int>::iterator it = player_list.begin (); it != player_list.end (); it++) {
-		if (player_map.find (*it) == player_map.end ()) {
-			fprintf (stderr, "adding player %d\n", *it);
-			bz_PlayerRecord record;
-			bz_getPlayerByIndex (*it, &record);
-
-			PyObject *pyp = CreatePlayer (record);
-			PyDict_SetItem (players, PyInt_FromLong (*it), pyp);
-			player_map[*it] = pyp;
-		}
-	}
+void
+BZFlag::RemovePlayer (int id)
+{
+	PyDict_DelItem (players, PyInt_FromLong (id));
 }
 
 PyObject *
