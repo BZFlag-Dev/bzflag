@@ -13,6 +13,7 @@
 #include "PyEvent.h"
 #include "PyTeam.h"
 #include <Python.h>
+#include <map>
 
 #ifndef __PYTHON_BZFLAG_H__
 #define __PYTHON_BZFLAG_H__
@@ -67,6 +68,7 @@ private:
 	JoinHandler join_handler;
 	PartHandler part_handler;
 
+	std::map<int,PyObject *> player_map;
 	PyObject *CreatePlayer (bz_PlayerRecord record);
 };
 

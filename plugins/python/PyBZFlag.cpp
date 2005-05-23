@@ -181,18 +181,42 @@ BZFlag::GetListeners (int event)
 	return ret;
 }
 
+bool PlayerExists (std::vector<int> h, int n)
+{
+	for (std::vector<int>::iterator it = h.begin (); it != h.end (); it++) {
+		if (n == *it)
+			return true;
+	}
+	return false;
+}
+
 void
 BZFlag::RefreshPlayers ()
 {
 	std::vector<int> player_list;
 	bz_getPlayerIndexList (&player_list);
 
-	PyDict_Clear (players);
+	// Remove any players that might have parted
+	for (std::map<int,PyObject *>::iterator it = player_map.begin (); it != player_map.end (); it++) {
+		std::pair<int,PyObject *> p = *it;
+		if (!PlayerExists (player_list, p.first)) {
+			fprintf (stderr, "removing player %d\n", p.first);
+			PyDict_DelItem (players, p.second);
+			player_map.erase (it);
+		}
+	}
 
+	// Add any new players
 	for (std::vector<int>::iterator it = player_list.begin (); it != player_list.end (); it++) {
-		bz_PlayerRecord record;
-		bz_getPlayerByIndex (*it, &record);
-		PyDict_SetItem (players, PyInt_FromLong (*it), CreatePlayer (record));
+		if (player_map.find (*it) == player_map.end ()) {
+			fprintf (stderr, "adding player %d\n", *it);
+			bz_PlayerRecord record;
+			bz_getPlayerByIndex (*it, &record);
+
+			PyObject *pyp = CreatePlayer (record);
+			PyDict_SetItem (players, PyInt_FromLong (*it), pyp);
+			player_map[*it] = pyp;
+		}
 	}
 }
 
