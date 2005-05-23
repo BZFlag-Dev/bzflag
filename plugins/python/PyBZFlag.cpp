@@ -231,6 +231,7 @@ GetCurrentTime (PyObject *self, PyObject *args)
 static PyObject *
 GetMaxWaitTime (PyObject *self, PyObject *args)
 {
+	return Py_BuildValue ("f", bz_getMaxWaitTime ());
 }
 
 static PyObject *
@@ -249,12 +250,23 @@ SendTextMessage (PyObject *self, PyObject *args, PyObject *keywords)
 
 	printf ("SendTextMessage (%d, %d, %s)\n", to, from, message);
 	bool result = bz_sendTextMessage (to, from, message);
+
+	// FIXME - retval?
 	return Py_None;
 }
 
 static PyObject *
 SetMaxWaitTime (PyObject *self, PyObject *args)
 {
+	float time;
+	if (!PyArg_ParseTuple (args, "f", &time)) {
+		fprintf (stderr, "couldn't parse args\n");
+		// FIXME - throw error
+		return NULL;
+	}
+
+	bz_setMaxWaitTime (time);
+	return NULL;
 }
 
 };
