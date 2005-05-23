@@ -52,6 +52,11 @@ bz_Load (const char *commandLine)
 	PyDict_SetItemString (global_dict, "__builtins__", PyEval_GetBuiltins ());
 	PyDict_SetItemString (global_dict, "__name__", PyString_FromString ("__main__"));
 	PyEval_EvalCode (code, global_dict, global_dict);
+
+	if (PyErr_Occurred ()) {
+		PyErr_Print ();
+		return 1;
+	}
 	return 0;
 }
 
