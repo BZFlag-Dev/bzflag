@@ -4639,13 +4639,13 @@ BuildCmd=
 
 [Unit462]
 FileName=..\src\c-ares\ares_process.c
-CompileCpp=1
+CompileCpp=0
 Folder=Source Files/c-ares
 Compile=1
 Link=1
 Priority=1000
 OverrideBuildCmd=0
-BuildCmd=
+BuildCmd=$(CC) -c ares_process.c -o ../src/bzflag/ares_process.o $(CFLAGS)
 
 [Unit461]
 FileName=..\src\game\MsgStrings.cxx
