@@ -22,6 +22,25 @@ static char *code_buffer;
 
 BZ_GET_PLUGIN_VERSION
 
+static void
+AppendSysPath (char *directory)
+{
+	PyObject *mod_sys, *dict, *path, *dir;
+	PyErr_Clear ();
+	dir = Py_BuildValue ("s", directory);
+	mod_sys = PyImport_ImportModule ("sys");
+	dict = PyModule_GetDict (mod_sys);
+	path = PyDict_GetItemString (dict, "path");
+
+	if (!PyList_Check (path))
+		return;
+	PyList_Append (path, dir);
+
+	if (PyErr_Occurred ())
+		Py_FatalError ("could not build sys.path");
+	Py_DECREF (mod_sys);
+}
+
 BZF_PLUGIN_CALL
 int
 bz_Load (const char *commandLine)
@@ -33,8 +52,8 @@ bz_Load (const char *commandLine)
 	}
 
 	if (Python::BZFlag::References == 0) {
-		Py_Initialize ();
 		Py_SetProgramName ("BZFlag");
+		Py_Initialize ();
 	}
 
 	module_bzflag = Python::BZFlag::GetInstance ();
@@ -42,15 +61,60 @@ bz_Load (const char *commandLine)
 	char *buffer = ReadFile (commandLine);
 	code_buffer = buffer;
 
+	PyErr_Clear ();
 	PyCodeObject *code = (PyCodeObject *) Py_CompileString (buffer, commandLine, Py_file_input);
 	if (PyErr_Occurred ()) {
 		PyErr_Print ();
 		return 1;
 	}
 
+	// set up the global dict
 	global_dict = PyDict_New ();
 	PyDict_SetItemString (global_dict, "__builtins__", PyEval_GetBuiltins ());
 	PyDict_SetItemString (global_dict, "__name__", PyString_FromString ("__main__"));
+
+	// pull site-package dirs into sys.path
+	PyObject *mod = PyImport_ImportModule ("site");
+	if (mod) {
+		PyObject *item;
+		int size = 0;
+
+		PyObject *d = PyModule_GetDict (mod);
+		PyObject *m = PyDict_GetItemString (d, "main");
+
+		if (m) {
+			PyEval_CallObject (m, NULL);
+		}
+
+		PyObject *p = PyDict_GetItemString (d, "sitedirs");
+
+		if (p) {
+			size = PyList_Size (p);
+			for (int i = 0; i < size; i++) {
+				item = PySequence_GetItem (p, i);
+				if (item)
+					AppendSysPath (PyString_AsString (item));
+			}
+		}
+
+		Py_DECREF (mod);
+	} else {
+		PyErr_Clear ();
+		fprintf (stderr, "No installed Python found\n");
+		fprintf (stderr, "Only built-in modules are available.  Some scripts may not run\n");
+		fprintf (stderr, "Continuing happily\n");
+	}
+
+	// eek! totally unportable - append the script's directory to sys.path,
+	// in case there are any local modules
+	int len = strrchr (commandLine, '/') - commandLine;
+	char *dir = new char[len + 1];
+	strncpy (dir, commandLine, len);
+	dir[len] = '\0';
+	AppendSysPath (dir);
+	free (dir);
+
+	PyErr_Clear ();
 	PyEval_EvalCode (code, global_dict, global_dict);
 
 	if (PyErr_Occurred ()) {
