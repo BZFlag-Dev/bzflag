@@ -17,7 +17,7 @@ ResourceIncludes=
 MakeIncludes=
 Icon=
 ExeOutput=..\src\bzflag
-ObjectOutput=..\src\bzflag
+ObjectOutput=..\Dev-C++
 OverrideOutput=0
 OverrideOutputName=bzflag.exe
 HostApplication=
@@ -27,7 +27,7 @@ CustomMakefile=
 IncludeVersionInfo=0
 SupportXPThemes=0
 CompilerSet=0
-CompilerSettings=0000000001000000011100
+CompilerSettings=0000000000000000011000
 
 [Unit2]
 FileName=..\src\bzflag\BackgroundRenderer.cxx
@@ -4505,7 +4505,7 @@ Compile=1
 Link=1
 Priority=1000
 OverrideBuildCmd=0
-BuildCmd=
+BuildCmd=$(CC) -c ../src/bzflag/ares__close_sockets.c -o ../src/bzflag/ares_CS.o $(CFLAGS)
 
 [Unit449]
 FileName=..\src\c-ares\ares__read_line.c
