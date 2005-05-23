@@ -197,20 +197,14 @@ BZFlag::AddPlayer (int id)
 	bz_PlayerRecord record;
 	bz_getPlayerByIndex (id, &record);
 
-	PyObject *pyp = CreatePlayer (record);
-	PyDict_SetItem (players, PyInt_FromLong (id), pyp);
+	//PyObject *pyp = CreatePlayer (record);
+	PyDict_SetItem (players, PyInt_FromLong (id), Py_None);
 }
 
 void
 BZFlag::RemovePlayer (int id)
 {
 	PyDict_DelItem (players, PyInt_FromLong (id));
-}
-
-PyObject *
-BZFlag::CreatePlayer (bz_PlayerRecord record)
-{
-	return Py_None;
 }
 
 static PyObject *

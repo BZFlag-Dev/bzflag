@@ -68,8 +68,6 @@ private:
 	TickHandler tick_handler;
 	JoinHandler join_handler;
 	PartHandler part_handler;
-
-	PyObject *CreatePlayer (bz_PlayerRecord record);
 };
 
 };
