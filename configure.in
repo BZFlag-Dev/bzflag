@@ -515,7 +515,6 @@ fi
 
 AC_DEFINE_UNQUOTED(INSTALL_DATA_DIR, "$INSTALL_DATA_DIR",
 [Data file directory])
-
 case $host_os in
      linux*)
 	AC_DEFINE(HALF_RATE_AUDIO, 1, [Half rate Audio])
@@ -527,8 +526,8 @@ case $host_os in
 	#CPPFLAGS="$CPPFLAGS -Wall -W -Wfloat-equal -Wundef -Wshadow -Wpointer-arith -Wcast-qual -Wwrite-strings -Wconversion -Wredundant-decls"
 	CPPFLAGS="$CPPFLAGS -Wall -W -Wshadow"
 	case $host_vendor in
-	     pc)  
-	       if [[ `gcc -dumpversion` > "3.3" ]] ; then
+	     pc)
+	       if expr `$CC -dumpversion` \>= "3.4" > /dev/null ; then
 	         CPPFLAGS="$CPPFLAGS -mtune=$host_cpu";
 	       else
 	         CPPFLAGS="$CPPFLAGS -mcpu=$host_cpu";
@@ -547,7 +546,7 @@ case $host_os in
 	AC_SUBST(WINPORT)
 	AC_DEFINE(HALF_RATE_AUDIO, 1, [Half rate Audio])
 	CPPFLAGS="$CPPFLAGS -Wall -W"
-        if [[ `$CC -dumpversion` > "3.3" ]] ; then
+	if expr `$CC -dumpversion` \>= "3.4" > /dev/null ; then
 	  CPPFLAGS="$CPPFLAGS -mtune=$host_cpu";
 	else
 	  CPPFLAGS="$CPPFLAGS -mcpu=$host_cpu";
