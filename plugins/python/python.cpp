@@ -71,12 +71,16 @@ bz_Load (const char *commandLine)
 
 	// eek! totally unportable - append the script's directory to sys.path,
 	// in case there are any local modules
-	int len = strrchr (commandLine, '/') - commandLine;
-	char *dir = new char[len + 1];
-	strncpy (dir, commandLine, len);
-	dir[len] = '\0';
-	AppendSysPath (dir);
-	free (dir);
+	if (strrchr (commandLine, '/')) {
+		int len = strrchr (commandLine, '/') - commandLine;
+		char *dir = new char[len + 1];
+		strncpy (dir, commandLine, len);
+		dir[len] = '\0';
+		AppendSysPath (dir);
+		free (dir);
+	} else {
+		AppendSysPath (".");
+	}
 
 	// set up the global dict
 	global_dict = PyDict_New ();
