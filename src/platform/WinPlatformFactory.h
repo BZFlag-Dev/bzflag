@@ -20,10 +20,9 @@
 #include "PlatformFactory.h"
 
 #ifdef HAVE_SDL
-  class SDLWindow;
-#else
-  class WinWindow;
+class SDLWindow;
 #endif
+class WinWindow;
 
 class WinPlatformFactory : public PlatformFactory {
   public:
@@ -44,10 +43,9 @@ class WinPlatformFactory : public PlatformFactory {
 
   private:
 #ifdef HAVE_SDL
-    static SDLWindow*	window;
-#else
-    static WinWindow*	window;
+    static SDLWindow*	sdlWindow;
 #endif
+    static WinWindow*	winWindow;
 };
 
 #endif // BZF_WINPLATFORM_FACTORY_H
