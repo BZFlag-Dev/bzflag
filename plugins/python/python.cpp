@@ -68,11 +68,6 @@ bz_Load (const char *commandLine)
 		return 1;
 	}
 
-	// set up the global dict
-	global_dict = PyDict_New ();
-	PyDict_SetItemString (global_dict, "__builtins__", PyEval_GetBuiltins ());
-	PyDict_SetItemString (global_dict, "__name__", PyString_FromString ("__main__"));
-
 	// pull site-package dirs into sys.path
 	PyObject *mod = PyImport_ImportModule ("site");
 	if (mod) {
@@ -113,6 +108,11 @@ bz_Load (const char *commandLine)
 	dir[len] = '\0';
 	AppendSysPath (dir);
 	free (dir);
+
+	// set up the global dict
+	global_dict = PyDict_New ();
+	PyDict_SetItemString (global_dict, "__builtins__", PyEval_GetBuiltins ());
+	PyDict_SetItemString (global_dict, "__name__", PyString_FromString ("__main__"));
 
 	PyErr_Clear ();
 	PyEval_EvalCode (code, global_dict, global_dict);
