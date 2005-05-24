@@ -29,6 +29,9 @@ class BZReactor (selectreactor.SelectReactor):
         BZFlag.Events[BZFlag.Event.Tick].append (self.simulate)
         BZFlag.SetMaxWaitTime (0.1)
 
+    def setMaxDelay (self, time):
+        BZFlag.SetMaxWaitTime (time)
+
     def simulate (self, time):
         """Run simulation loops
         """

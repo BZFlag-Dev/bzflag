@@ -50,7 +50,10 @@ class Hello(Twisted.Page):
         ], id='players')
 
 reactor = BZReactor ()
+
 root = Hello ()
 site = server.Site(root)
 reactor.listenTCP(8080, site)
+
+reactor.setMaxDelay (0.05)
 reactor.run ()
