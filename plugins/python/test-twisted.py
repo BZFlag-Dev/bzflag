@@ -17,9 +17,13 @@
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #
 
+import BZFlag, Nouvelle
 from BZReactor import BZReactor
 from twisted.web import server
-from Nouvelle import tag, Twisted
+from Nouvelle import tag, place, Twisted
+
+class MyTable(Nouvelle.ResortableTable):
+    tableTag = tag ('table', border='1')
 
 class Hello(Twisted.Page):
     isLeaf = 1
@@ -29,8 +33,21 @@ class Hello(Twisted.Page):
                    ],
                    tag('body') [
                        tag('h3')[ "Hello World!" ],
+                       tag('p') [ place("dataTable") ]
                    ],
                ]
+
+    def render_dataTable (self, context):
+        data = []
+
+        for id in BZFlag.Players.keys():
+            player = BZFlag.Players[id]
+            data.append([id, player.callsign])
+
+        return MyTable (data, [
+        Nouvelle.IndexedColumn('id', 0),
+        Nouvelle.IndexedColumn('callsign', 1),
+        ], id='players')
 
 reactor = BZReactor ()
 root = Hello ()
