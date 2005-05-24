@@ -18,11 +18,16 @@ files = [
 
 env = Environment ()
 env.Append (CCFLAGS = '-g')
+
 env.Append (CPPPATH = python_include)
 env.Append (CPPPATH = '../../include')
-#env.Append (LIBPATH = python_libpath)
-#env.Append (LINKFLAGS = '-u Py_TrueStruct')
+
+env.Append (LIBPATH = python_libpath)
+
+env.Append (LINKFLAGS = '-Wl,--export-dynamic')
+
 env.Append (LIBS = python_lib)
 env.Append (LIBS = 'pthread')
+env.Append (LIBS = 'util')
 env['SHLIBPREFIX'] = ''
 env.SharedLibrary (target = 'python.so', source = files)
