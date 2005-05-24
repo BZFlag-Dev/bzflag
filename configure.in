@@ -49,6 +49,7 @@ dnl FIXME: need to move the rest of the ARGs up here too
 AC_PROG_MAKE_SET
 AC_PROG_CC
 AC_PROG_CXX
+AC_EXEEXT
 
 AC_PATH_PROG(CCACHE, ccache)
 if test "$CCACHE"
@@ -152,6 +153,7 @@ AC_CHECK_HEADERS( \
 	sys/param.h \
 	unistd.h \
 	values.h \
+	dsound.h \
 )
 
 #Checks for types
