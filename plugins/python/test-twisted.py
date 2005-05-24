@@ -18,6 +18,22 @@
 #
 
 from BZReactor import BZReactor
+from twisted.web import server
+from Nouvelle import tag, Twisted
+
+class Hello(Twisted.Page):
+    isLeaf = 1
+    document = tag('html')[
+                   tag('head') [
+                       tag('title')[ "Hi" ],
+                   ],
+                   tag('body') [
+                       tag('h3')[ "Hello World!" ],
+                   ],
+               ]
 
 reactor = BZReactor ()
+root = Hello ()
+site = server.Site(root)
+reactor.listenTCP(8080, site)
 reactor.run ()
