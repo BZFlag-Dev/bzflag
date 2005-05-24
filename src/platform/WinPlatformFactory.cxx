@@ -56,9 +56,6 @@ BzfDisplay *WinPlatformFactory::createDisplay(const char* name,
     useNative = false;
 #endif
 
-  // Just to stop compiler complaining about un-use of name & videoFormat
-  if (name == NULL && videoFormat == NULL) {};
-
   BzfDisplay *display;
   if (useNative) {
     WinDisplay* winDisplay = new WinDisplay(name, videoFormat);
