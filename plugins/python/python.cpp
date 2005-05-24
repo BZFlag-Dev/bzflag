@@ -54,6 +54,7 @@ bz_Load (const char *commandLine)
 	if (Python::BZFlag::References == 0) {
 		Py_SetProgramName ("BZFlag");
 		Py_Initialize ();
+		PyEval_InitThreads ();
 	}
 
 	module_bzflag = Python::BZFlag::GetInstance ();

@@ -20,5 +20,4 @@
 from BZReactor import BZReactor
 
 reactor = BZReactor ()
-print reactor
 reactor.run ()

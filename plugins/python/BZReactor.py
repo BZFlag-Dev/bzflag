@@ -25,13 +25,11 @@ class BZReactor (selectreactor.SelectReactor):
     """
 
     def run (self, installSignalHandlers=1):
-        print 'run'
         self.startRunning (installSignalHandlers = installSignalHandlers)
         BZFlag.Events[BZFlag.Event.Tick].append (self.simulate)
         BZFlag.SetMaxWaitTime (0.1)
 
-    def simulate (self):
+    def simulate (self, time):
         """Run simulation loops
         """
-        print 'simulate'
         self.iterate ()

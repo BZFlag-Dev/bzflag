@@ -41,7 +41,12 @@ TickHandler::process (bz_EventData *eventData)
 			Py_DECREF (arglist);
 			return;
 		}
+		PyErr_Clear ();
 		PyEval_CallObject (handler, arglist);
+		if (PyErr_Occurred ()) {
+			PyErr_Print ();
+			return;
+		}
 	}
 	Py_DECREF (arglist);
 }
@@ -68,7 +73,12 @@ JoinHandler::process (bz_EventData *eventData)
 			fprintf (stderr, "join listener is not callable\n");
 			return;
 		}
+		PyErr_Clear ();
 		PyEval_CallObject (handler, NULL);
+		if (PyErr_Occurred ()) {
+			PyErr_Print ();
+			return;
+		}
 	}
 }
 
@@ -94,7 +104,12 @@ PartHandler::process (bz_EventData *eventData)
 			fprintf (stderr, "part listener is not callable\n");
 			return;
 		}
+		PyErr_Clear ();
 		PyEval_CallObject (handler, NULL);
+		if (PyErr_Occurred ()) {
+			PyErr_Print ();
+			return;
+		}
 	}
 }
 
