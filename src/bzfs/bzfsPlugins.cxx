@@ -169,7 +169,7 @@ void loadPlugin ( std::string plugin, std::string config )
 
 	std::string realPluginName = findPlugin(plugin);
 
-	void*	hLib = dlopen(realPluginName.c_str(),RTLD_LAZY);
+	void *hLib = dlopen(realPluginName.c_str(), RTLD_LAZY | RTLD_GLOBAL);
 	if (hLib)
 	{
 		if (getPluginVersion(hLib) < BZ_API_VERSION)
