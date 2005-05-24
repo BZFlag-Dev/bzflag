@@ -27,7 +27,7 @@ env.Append (CPPPATH = '../../include')
 env.Append (LIBPATH = python_libpath)
 
 # extra flags
-env.Append (LINKFLAGS = '-Wl,--export-dynamic')
+env.Append (LINKFLAGS = python_linkflags)
 
 # libraries
 env.Append (LIBS = python_lib)
