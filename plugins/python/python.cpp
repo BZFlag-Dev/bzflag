@@ -68,38 +68,6 @@ bz_Load (const char *commandLine)
 		return 1;
 	}
 
-	// pull site-package dirs into sys.path
-	PyObject *mod = PyImport_ImportModule ("site");
-	if (mod) {
-		PyObject *item;
-		int size = 0;
-
-		PyObject *d = PyModule_GetDict (mod);
-		PyObject *m = PyDict_GetItemString (d, "main");
-
-		if (m) {
-			PyEval_CallObject (m, NULL);
-		}
-
-		PyObject *p = PyDict_GetItemString (d, "sitedirs");
-
-		if (p) {
-			size = PyList_Size (p);
-			for (int i = 0; i < size; i++) {
-				item = PySequence_GetItem (p, i);
-				if (item)
-					AppendSysPath (PyString_AsString (item));
-			}
-		}
-
-		Py_DECREF (mod);
-	} else {
-		PyErr_Clear ();
-		fprintf (stderr, "No installed Python found\n");
-		fprintf (stderr, "Only built-in modules are available.  Some scripts may not run\n");
-		fprintf (stderr, "Continuing happily\n");
-	}
-
 	// eek! totally unportable - append the script's directory to sys.path,
 	// in case there are any local modules
 	int len = strrchr (commandLine, '/') - commandLine;
