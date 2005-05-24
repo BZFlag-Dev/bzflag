@@ -12,13 +12,22 @@
 
 #include <string>
 #include <vector>
-#include "bzfio.h"
-#include "common.h"
-#include "TextUtils.h"
-#include <vector>
 
+#include "common.h"
+#include "bzfio.h"
+#include "version.h"
+#include "TextUtils.h"
 #include "commands.h"
 #include "bzfsAPI.h"
+#include "DirectoryNames.h"
+
+#ifdef _WIN32
+std::string extension = ".dll";
+std::string globalPluginDir = ".\\plugins\\";
+#else
+std::string extension = ".so";
+std::string globalPluginDir = "$(prefix)/lib/bzflag/";
+#endif 
 
 typedef struct 
 {
@@ -30,6 +39,46 @@ typedef struct
 	void*		handle;
 #endif 
 }trPluginRecord;
+
+std::string findPlugin ( std::string pluginName )
+{
+	// see if we can just open the bloody thing
+	FILE	*fp = fopen(pluginName.c_str(),"rb");
+	if (fp)
+	{
+		fclose(fp);
+		return pluginName;
+	}
+
+	// now try it with the standard extension
+	std::string name = pluginName + extension;
+	fp = fopen(name.c_str(),"rb");
+	if (fp)
+	{
+		fclose(fp);
+		return name;
+	}
+
+	// check the local users plugins dir
+	name = getConfigDirName(BZ_CONFIG_DIR_VERSION) + pluginName + extension;
+	fp = fopen(name.c_str(),"rb");
+	if (fp)
+	{
+		fclose(fp);
+		return name;
+	}
+
+	// check the global plugins dir
+	name = globalPluginDir + pluginName + extension;
+	fp = fopen(name.c_str(),"rb");
+	if (fp)
+	{
+		fclose(fp);
+		return name;
+	}
+
+	return std::string("");
+}
 
 std::vector<trPluginRecord>	vPluginList;
 
@@ -51,7 +100,9 @@ void loadPlugin ( std::string plugin, std::string config )
 {
 	int (*lpProc)(const char*);
 
-	HINSTANCE	hLib = LoadLibrary(plugin.c_str());
+	std::string realPluginName = findPlugin(plugin);
+
+	HINSTANCE	hLib = LoadLibrary(realPluginName.c_str());
 	if (hLib)
 	{
 		if (getPluginVersion(hLib) < BZ_API_VERSION)
@@ -116,7 +167,9 @@ void loadPlugin ( std::string plugin, std::string config )
 {
 	int (*lpProc)(const char*);
 
-	void*	hLib = dlopen(plugin.c_str(),RTLD_LAZY);
+	std::string realPluginName = findPlugin(plugin);
+
+	void*	hLib = dlopen(realPluginName.c_str(),RTLD_LAZY);
 	if (hLib)
 	{
 		if (getPluginVersion(hLib) < BZ_API_VERSION)
