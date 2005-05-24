@@ -52,11 +52,15 @@ PyObject *
 CreatePlayer (int id)
 {
 	Player *p = (Player *) PyObject_NEW (Player, &Player_Type);
+	p->record = new bz_PlayerRecord ();
+	bz_getPlayerByIndex (id, p->record);
+	return (PyObject*) p;
 }
 
 static void
 Player_dealloc (Player *player)
 {
+	delete player->record;
 	PyObject_DEL (player);
 }
 
@@ -64,46 +68,46 @@ static PyObject *
 Player_getAttr (Player *player, char *name)
 {
 	PyObject *attr = Py_None;
-	player->record.update ();
+	player->record->update ();
 
 	if (strcmp (name, "id") == 0) {
-		attr = Py_BuildValue ("i", player->record.playerID);
+		attr = Py_BuildValue ("i", player->record->playerID);
 	} else if (strcmp (name, "callsign") == 0) {
-		attr = PyString_FromString (player->record.callsign.c_str ());
+		attr = PyString_FromString (player->record->callsign.c_str ());
 	} else if (strcmp (name, "team") == 0) {
-		attr = Py_BuildValue ("i", player->record.team);
+		attr = Py_BuildValue ("i", player->record->team);
 	} else if (strcmp (name, "position") == 0) {
-		attr = Py_BuildValue ("(f,f,f)", player->record.pos[0], player->record.pos[1], player->record.pos[2]);
+		attr = Py_BuildValue ("(f,f,f)", player->record->pos[0], player->record->pos[1], player->record->pos[2]);
 	} else if (strcmp (name, "rotation") == 0) {
-		attr = Py_BuildValue ("f", player->record.rot);
+		attr = Py_BuildValue ("f", player->record->rot);
 	} else if (strcmp (name, "ipAddr") == 0) {
-		attr = PyString_FromString (player->record.ipAddress.c_str());
+		attr = PyString_FromString (player->record->ipAddress.c_str());
 	} else if (strcmp (name, "flag") == 0) {
 		// skip the Py_None check at the end, since None is a valid return value.
-		if (player->record.currentFlag.length () == 0)
+		if (player->record->currentFlag.length () == 0)
 			return Py_None;
 		else
-			attr = PyString_FromString (player->record.currentFlag.c_str ());
+			attr = PyString_FromString (player->record->currentFlag.c_str ());
 	} else if (strcmp (name, "flagHistory") == 0) {
 		attr = PyList_New (0);
-		for (std::vector<std::string>::iterator it = player->record.flagHistory.begin (); it != player->record.flagHistory.end (); it++)
+		for (std::vector<std::string>::iterator it = player->record->flagHistory.begin (); it != player->record->flagHistory.end (); it++)
 			PyList_Append (attr, PyString_FromString (it->c_str()));
 	} else if (strcmp (name, "spawned") == 0) {
-		attr = player->record.spawned ? Py_True : Py_False;
+		attr = player->record->spawned ? Py_True : Py_False;
 	} else if (strcmp (name, "verified") == 0) {
-		attr = player->record.verified ? Py_True : Py_False;
+		attr = player->record->verified ? Py_True : Py_False;
 	} else if (strcmp (name, "global") == 0) {
-		attr = player->record.globalUser ? Py_True : Py_False;
+		attr = player->record->globalUser ? Py_True : Py_False;
 	} else if (strcmp (name, "admin") == 0) {
-		attr = player->record.admin ? Py_True : Py_False;
+		attr = player->record->admin ? Py_True : Py_False;
 	} else if (strcmp (name, "groups") == 0) {
 		attr = PyList_New (0);
-		for (std::vector<std::string>::iterator it = player->record.groups.begin (); it != player->record.groups.end (); it++)
+		for (std::vector<std::string>::iterator it = player->record->groups.begin (); it != player->record->groups.end (); it++)
 			PyList_Append (attr, PyString_FromString (it->c_str()));
 	} else if (strcmp (name, "wins") == 0) {
-		attr = Py_BuildValue ("i", player->record.wins);
+		attr = Py_BuildValue ("i", player->record->wins);
 	} else if (strcmp (name, "losses") == 0) {
-		attr = Py_BuildValue ("i", player->record.losses);
+		attr = Py_BuildValue ("i", player->record->losses);
 	} else if (strcmp (name, "__members__") == 0) {
 		attr = Py_BuildValue ("[s,s,s,s,s,s,s,s,s,s,s,s,s,s,s]",
 				      "id", "callsign", "team", "position", "rotation", "ipAddr",
@@ -125,11 +129,14 @@ Player_setAttr (Player *player, char *name, PyObject *v)
 static int
 Player_compare (Player *a1, Player *a2)
 {
+	return ((a1->record->playerID == a2->record->playerID) &&
+		(a1->record->callsign == a2->record->callsign));
 }
 
 static PyObject *
 Player_repr (Player *player)
 {
+	return PyString_FromFormat ("[Player \"%s\" (%d)]", player->record->callsign, player->record->playerID);
 }
 
 };

@@ -12,6 +12,7 @@
 
 #include "bzfsAPI.h"
 #include "PyBZFlag.h"
+#include "PyPlayer.h"
 
 namespace Python
 {
@@ -198,11 +199,8 @@ bool PlayerExists (std::vector<int> h, int n)
 void
 BZFlag::AddPlayer (int id)
 {
-	bz_PlayerRecord record;
-	bz_getPlayerByIndex (id, &record);
-
-	//PyObject *pyp = CreatePlayer (record);
-	PyDict_SetItem (players, PyInt_FromLong (id), Py_None);
+	PyObject *pyp = CreatePlayer (id);
+	PyDict_SetItem (players, PyInt_FromLong (id), pyp);
 }
 
 void
@@ -266,7 +264,7 @@ SetMaxWaitTime (PyObject *self, PyObject *args)
 	}
 
 	bz_setMaxWaitTime (time);
-	return NULL;
+	return Py_None;
 }
 
 };

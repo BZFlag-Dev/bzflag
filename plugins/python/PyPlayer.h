@@ -23,7 +23,7 @@ typedef struct
 {
 	PyObject_HEAD
 
-	bz_PlayerRecord record;
+	bz_PlayerRecord *record;
 } Player;
 
 PyObject *CreatePlayer (int id);
