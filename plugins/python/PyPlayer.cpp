@@ -136,7 +136,7 @@ Player_compare (Player *a1, Player *a2)
 static PyObject *
 Player_repr (Player *player)
 {
-	return PyString_FromFormat ("[Player \"%s\" (%d)]", player->record->callsign, player->record->playerID);
+	return PyString_FromFormat ("[Player \"%s\" (%d)]", player->record->callsign.c_str (), player->record->playerID);
 }
 
 };
