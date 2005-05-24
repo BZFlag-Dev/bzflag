@@ -61,9 +61,29 @@ const TimeKeeper&	TimeKeeper::getCurrent(void)
   }
 #else /* !defined(_WIN32) */
   if (qpcFrequency != 0.0) {
+    // for comparison to qpc
+    double tgt = 1.0e-3 * (double)(unsigned long int)timeGetTime();
+
+    // main timer is qpc
     LARGE_INTEGER now;
     QueryPerformanceCounter(&now);
-    currentTime += qpcFrequency * (double)(now.QuadPart - qpcLastTime.QuadPart);
+
+    // tgt tends to have a granularity of between 1 and 15 ms.
+    // qpc can drift on some systems 
+    // check qpc against tgt.  if qpc is more than 20ms behind tgt, reset our timer to the tgt value
+    // maximum timer jitter is 19ms with this method, and should occur about 5x per second if SC's numbers are typical
+    // ideally we ought to compensate for the drift since it seems to be approximately linear, but we need to avoid going backwards
+    double qpcdiff = qpcFrequency * (double)(now.QuadPart - qpcLastTime.QuadPart);
+    double qpctime = currentTime.getSeconds() + qpcdiff;
+    
+    if (qpctime + 20e-3 < tgt) {
+      DEBUG4("QueryPerformanceCounter has drifted > 20ms (was %f/%s).  Resetting to TimeGetTime at %f/%s.\n",
+	     qpctime, printTime(qpctime), tgt, printTime(tgt).c_str());
+      currentTime.seconds = tgt;
+    } else {
+      currentTime += qpcdiff;
+    }
+
     qpcLastTime = now;
   }
   else if (lastTime != 0) {
