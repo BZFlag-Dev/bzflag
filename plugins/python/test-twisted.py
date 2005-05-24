@@ -40,13 +40,15 @@ class Hello(Twisted.Page):
     def render_dataTable (self, context):
         data = []
 
-        for id in BZFlag.Players.keys():
+        for id in BZFlag.Players.keys ():
             player = BZFlag.Players[id]
-            data.append([id, player.callsign])
+            data.append ([id, player.callsign, player.wins - player.losses, player.team])
 
         return MyTable (data, [
-        Nouvelle.IndexedColumn('id', 0),
-        Nouvelle.IndexedColumn('callsign', 1),
+        Nouvelle.IndexedColumn ('id', 0),
+        Nouvelle.IndexedColumn ('callsign', 1),
+        Nouvelle.IndexedColumn ('score', 2),
+        Nouvelle.IndexedColumn ('team', 3),
         ], id='players')
 
 reactor = BZReactor ()
