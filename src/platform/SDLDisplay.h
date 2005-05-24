@@ -28,7 +28,7 @@ class SDLDisplay : public BzfDisplay {
   SDLDisplay();
   ~SDLDisplay();
   bool createWindow();
-  bool isValid() const {return true;};
+  virtual bool isValid() const {return true;};
   bool isEventPending() const;
   bool getEvent(BzfEvent&) const;
   bool peekEvent(BzfEvent&) const;

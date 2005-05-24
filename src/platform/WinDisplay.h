@@ -29,7 +29,7 @@ class WinDisplay : public BzfDisplay {
 				const char* videoFormat);
 			~WinDisplay();
 
-    bool		isValid() const;
+    virtual bool	isValid() const;
     bool		isEventPending() const;
     bool		getEvent(BzfEvent&) const;
     bool		hasGetKeyMode() {return true;};
