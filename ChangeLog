@@ -3,8 +3,12 @@
 
 BZFlag 2.0.3
 ------------
-
-* Added CTF capture event trigger option for world weapons - Jeff Myers, Nathan Goings
+* Fixed Jitter problem on Windows, clock was wrong - Alfredo Tupone
+* Windows platform can switch from SDL to native - Alfredo Tupone
+* Instruction for X-build from linux to windows - Alfredo Tupone
+* bzflag is much less blocking with libcurl - Alfredo Tupone
+* Using c-ares instead of adns for DNS resolving - Alfredo Tupone
+* Added CTF capture event trigger for world weapons - Jeff Myers, Nathan Goings
 * FlipZ on meshpyrs behaves as expected (like pyramids) - Daniel Remenak
 * Fixed /set and /reset command case bug - Daniel Remenak
 * Fixed crash on /ban without -banfile - Daniel Remenak
@@ -22,6 +26,7 @@ BZFlag 2.0.2  "Queen of Maybe" (2005-03-18)
 
 * Added TALK, MUTE, UNMUTE permissions - Angelina Carlton
 * Added /mute, /unmute commands - Angelina Carlton
+* Automatic team try to fix bad player behaviour - Alfredo Tupone
 * bzadmin does not require opengl headers - Alfredo Tupone
 * bzfs handle both -mp specification - Alfredo Tupone
 * bzfs correctly handles ban time - Alfredo Tupone, Julio Jimenez
