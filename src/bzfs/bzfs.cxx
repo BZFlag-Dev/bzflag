@@ -2799,7 +2799,7 @@ void playerKilled(int victimIndex, int killerIndex, int reason,
   dieEvent.teamID = victim->getTeam();
   dieEvent.killerID = killerIndex;
   if (killer)
-	dieEvent.killerTeamID = killer->getTeam();
+    dieEvent.killerTeamID = killer->getTeam();
   dieEvent.flagKilledWith = flagType->label();
   memcpy(dieEvent.pos,lastState[victimIndex].pos,sizeof(float)*3);
   dieEvent.rot = lastState[victimIndex].azimuth;
