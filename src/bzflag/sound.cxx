@@ -18,6 +18,8 @@
 #include "PlatformFactory.h"
 #include "BzfMedia.h"
 #include "BZDBCache.h"
+#include "TextUtils.h"
+#include <map>
 
 const float		SpeedOfSound = 343.0f;			// meters/sec
 const int		MaxEvents = 30;
@@ -174,13 +176,16 @@ static const char*	soundFiles[] = {
 				"flap",
 				"bounce"
 			};
-#define	SFX_COUNT	((int)(countof(soundFiles)))
+#define	STD_SFX_COUNT	((int)(countof(soundFiles)))	// the number of "Standard" sounds
 
 /*
  * producer/consumer shared arena
  */
 
 std::vector<AudioSamples>	soundSamples;
+
+std::map<std::string, int> customSamples;
+
 static long		audioBufferSize;
 static int		soundLevel;
 
@@ -324,7 +329,8 @@ static bool		allocAudioSamples()
 {
   bool anyFile = false;
 
-  for (int i = 0; i < SFX_COUNT; i++) {
+	// load the default samples
+  for (int i = 0; i < STD_SFX_COUNT; i++) {
     // read it
     int numFrames, rate;
     float* samples = PlatformFactory::getMedia()->readSound(soundFiles[i], numFrames, rate);
@@ -465,6 +471,31 @@ void			playLocalSound(int soundCode)
   s.data[2] = 0.0f;
   s.data[3] = 0.0f;
   sendSound(&s);
+}
+
+void			playLocalSound(std::string sound)
+{
+	int  soundCode = -1;
+
+	std::map<std::string,int>::iterator itr = customSamples.find(TextUtils::tolower(sound));
+	if (itr == customSamples.end())
+	{
+		int numFrames, rate;
+		float* samples = PlatformFactory::getMedia()->readSound(TextUtils::tolower(sound).c_str(), numFrames, rate);
+		AudioSamples newSample;
+		if (samples && resampleAudio(samples, numFrames, rate, &newSample))
+		{
+			soundSamples.push_back(newSample);
+			soundCode = (int)soundSamples.size()-1;
+			customSamples[TextUtils::tolower(sound)] = soundCode;
+		}
+		delete[] samples;
+	}
+	else
+		soundCode = itr->second;
+
+	if (soundCode > 0)
+		playLocalSound(soundCode);
 }
 
 void			playFixedSound(int soundCode,

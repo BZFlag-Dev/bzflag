@@ -19,6 +19,8 @@
 
 #include "common.h"
 
+#include <string>
+
 #define SFX_FIRE	0		/* shell fired */
 #define SFX_EXPLOSION	1		/* something other than me blew up */
 #define SFX_RICOCHET	2		/* shot bounced off building */
@@ -68,6 +70,7 @@ void			playWorldSound(int soundCode, const float pos[3],
 
 /* sound effect positioned at receiver */
 void			playLocalSound(int soundCode);
+void			playLocalSound(std::string sound);
 
 /* start playing a sound effect repeatedly at world position */
 void			playFixedSound(int soundCode,
