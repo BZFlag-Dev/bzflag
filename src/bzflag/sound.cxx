@@ -46,16 +46,82 @@ struct SoundCommand {
     float		data[4];
 };
 
-typedef struct {
+class AudioSamples
+{
+public:
+	AudioSamples();
+	AudioSamples(const AudioSamples& r);
+	~AudioSamples();
+	AudioSamples& operator = (const AudioSamples& r);
+
   long			length;		/* total number samples in data */
   long			mlength;	/* total number samples in mono */
+	long			rmlength;	/* total number samples in monoRaw */
   double		dmlength;	/* mlength as a double minus one */
   float*		data;		/* left in even, right in odd */
   float*		mono;		/* avg of channels for world sfx */
   float*		monoRaw;	/* mono with silence before & after */
   double		duration;	/* time to play sound */
-} AudioSamples;
+};
 
+
+AudioSamples::AudioSamples()
+{
+	length = 0;	
+	mlength = 0;	
+	rmlength = 0;
+	dmlength = 0;		
+	data = NULL;		
+	mono = NULL;		
+	monoRaw = NULL;	
+	duration = 0;		
+}
+
+AudioSamples::~AudioSamples()
+{
+	if (data)
+		delete[] data;
+
+	if (monoRaw)
+		delete[] monoRaw;
+}
+
+AudioSamples& AudioSamples::operator = ( const AudioSamples& r)
+{
+	if (data)
+		delete[] data;
+
+	if (monoRaw)
+		delete[] monoRaw;
+
+	length = r.length;	
+	mlength = r.mlength;		
+	dmlength = r.dmlength;	
+	rmlength = r.rmlength;
+	data = new float[length];		
+	memcpy(data,r.data,sizeof(float)*length);
+	monoRaw = new float[rmlength];	
+	memcpy(monoRaw,r.monoRaw,sizeof(float)*rmlength);
+	duration = r.duration;
+
+	mono = monoRaw + (r.mono-r.monoRaw);		
+	return *this;
+}
+
+AudioSamples::AudioSamples ( const AudioSamples& r)
+{
+	length = r.length;	
+	mlength = r.mlength;		
+	dmlength = r.dmlength;	
+	rmlength = r.rmlength;
+	data = new float[length];		
+	memcpy(data,r.data,sizeof(float)*length);
+	mono = new float[mlength];		
+	memcpy(mono,r.mono,sizeof(float)*mlength);
+	monoRaw = new float[rmlength];	
+	memcpy(monoRaw,r.monoRaw,sizeof(float)*rmlength);
+	duration = r.duration;		
+}
 
 /*
  * local functions
@@ -114,7 +180,7 @@ static const char*	soundFiles[] = {
  * producer/consumer shared arena
  */
 
-static AudioSamples	soundSamples[SFX_COUNT];
+std::vector<AudioSamples>	soundSamples;
 static long		audioBufferSize;
 static int		soundLevel;
 
@@ -162,20 +228,13 @@ static bool		audioInnerLoop();
 
 void			openSound(const char*)
 {
-  int i;
+  unsigned int i;
 
   if (usingAudio) return;			// already opened
 
   media = PlatformFactory::getMedia();
   if (!media->openAudio())
     return;
-
-  // initialize buffers
-  for (i = 0; i < SFX_COUNT; i++) {
-    soundSamples[i].data = NULL;
-    soundSamples[i].mono = NULL;
-    soundSamples[i].monoRaw = NULL;
-  }
 
   // open audio data files
   if (!allocAudioSamples()) {
@@ -268,11 +327,11 @@ static bool		allocAudioSamples()
   for (int i = 0; i < SFX_COUNT; i++) {
     // read it
     int numFrames, rate;
-    float* samples = PlatformFactory::getMedia()->
-				readSound(soundFiles[i], numFrames, rate);
-    if (samples && resampleAudio(samples, numFrames, rate, soundSamples + i)) {
+    float* samples = PlatformFactory::getMedia()->readSound(soundFiles[i], numFrames, rate);
+		AudioSamples newSample;
+    if (samples && resampleAudio(samples, numFrames, rate, &newSample))
       anyFile = true;
-    }
+		soundSamples.push_back(newSample);
     delete[] samples;
   }
 
@@ -281,10 +340,8 @@ static bool		allocAudioSamples()
 
 static void		freeAudioSamples(void)
 {
-  for (int i = 0; i < SFX_COUNT; i++) {
-    delete[] soundSamples[i].data;
-    delete[] soundSamples[i].monoRaw;
-  }
+	// do nothing.
+	// the samples are self freeing now
 }
 
 static int		resampleAudio(const float* in,
@@ -1015,7 +1072,7 @@ static bool		audioInnerLoop()
 	  if (i == MaxEvents) break;
 	  event = events + i;
 
-	  event->samples = soundSamples + cmd.code;
+	  event->samples = &soundSamples[cmd.code];
 	  event->ptr = 0;
 	  event->flags = 0;
 	  event->time = curTime;
@@ -1037,7 +1094,7 @@ static bool		audioInnerLoop()
 	  if (i == MaxEvents) break;
 	  event = events + i;
 
-	  event->samples = soundSamples + cmd.code;
+	  event->samples = &soundSamples[cmd.code];
 	  event->ptrFracLeft = 0.0;
 	  event->ptrFracRight = 0.0;
 	  event->flags = SEF_WORLD | SEF_IGNORING;
@@ -1058,7 +1115,7 @@ static bool		audioInnerLoop()
 	  if (i == MaxEvents) break;
 	  event = events + i;
 
-	  event->samples = soundSamples + cmd.code;
+	  event->samples = &soundSamples[cmd.code];
 	  event->ptrFracLeft = 0.0;
 	  event->ptrFracRight = 0.0;
 	  event->flags = SEF_FIXED | SEF_WORLD;
