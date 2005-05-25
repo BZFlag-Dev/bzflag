@@ -684,6 +684,19 @@ Adds a route to teleport a tank between two teleporters.
 \fBend\fR
 .br 
 
+# or, to link  between known teleporters examp_tele1(front) and examp_tele2(back)
+
+\fBlink\fR
+.br
+\fB  name\fR  example_realLink
+.br
+\fB  from\fR examp_tele1:f
+.br
+\fB  to\fR examp_tele2:b
+.br
+\fBend\fR
+.br
+
 
 .B The Base object
 .br 
