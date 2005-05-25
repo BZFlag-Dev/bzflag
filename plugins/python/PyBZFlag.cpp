@@ -113,21 +113,27 @@ PartHandler::process (bz_EventData *eventData)
 	}
 }
 
-static PyObject *FireWorldWeapon (PyObject *self, PyObject *args);
-static PyObject *GetCurrentTime  (PyObject *self, PyObject *args);
-static PyObject *GetMaxWaitTime  (PyObject *self, PyObject *args);
-static PyObject *SendTextMessage (PyObject *self, PyObject *args, PyObject *keywords);
-static PyObject *SetMaxWaitTime  (PyObject *self, PyObject *args);
+static PyObject *FireWorldWeapon      (PyObject *self, PyObject *args);
+static PyObject *GetCurrentTime       (PyObject *self, PyObject *args);
+static PyObject *GetMaxWaitTime       (PyObject *self, PyObject *args);
+static PyObject *GetPublic            (PyObject *self, PyObject *args);
+static PyObject *GetPublicAddr        (PyObject *self, PyObject *args);
+static PyObject *GetPublicDescription (PyObject *self, PyObject *args);
+static PyObject *SendTextMessage      (PyObject *self, PyObject *args, PyObject *keywords);
+static PyObject *SetMaxWaitTime       (PyObject *self, PyObject *args);
 
 static struct PyMethodDef methods[] =
 {
 	// FIXME - docstrings
-	{"FireWorldWeapon", (PyCFunction) FireWorldWeapon, METH_VARARGS,                 NULL},
-	{"GetCurrentTime",  (PyCFunction) GetCurrentTime,  METH_NOARGS,                  NULL},
-	{"GetMaxWaitTime",  (PyCFunction) GetMaxWaitTime,  METH_NOARGS,                  NULL},
-	{"SendTextMessage", (PyCFunction) SendTextMessage, METH_VARARGS | METH_KEYWORDS, NULL},
-	{"SetMaxWaitTime",  (PyCFunction) SetMaxWaitTime,  METH_VARARGS,                 NULL},
-	{NULL,              (PyCFunction) NULL,            0,                            NULL},
+	{"FireWorldWeapon",      (PyCFunction) FireWorldWeapon, METH_VARARGS,                 NULL},
+	{"GetCurrentTime",       (PyCFunction) GetCurrentTime,  METH_NOARGS,                  NULL},
+	{"GetMaxWaitTime",       (PyCFunction) GetMaxWaitTime,  METH_NOARGS,                  NULL},
+	{"GetPublic",            (PyCFunction) GetPublic,       METH_NOARGS,                  NULL},
+	{"GetPublicAddr",        (PyCFunction) GetPublic,       METH_NOARGS,                  NULL},
+	{"GetPublicDescription", (PyCFunction) GetPublic,       METH_NOARGS,                  NULL},
+	{"SendTextMessage",      (PyCFunction) SendTextMessage, METH_VARARGS | METH_KEYWORDS, NULL},
+	{"SetMaxWaitTime",       (PyCFunction) SetMaxWaitTime,  METH_VARARGS,                 NULL},
+	{NULL,                   (PyCFunction) NULL,            0,                            NULL},
 };
 
 BZFlag *BZFlag::instance = NULL;
@@ -245,6 +251,24 @@ static PyObject *
 GetMaxWaitTime (PyObject *self, PyObject *args)
 {
 	return Py_BuildValue ("f", bz_getMaxWaitTime ());
+}
+
+static PyObject *
+GetPublic (PyObject *self, PyObject *args)
+{
+	return (bz_getPublic () ? Py_True : Py_False);
+}
+
+static PyObject *
+GetPublicAddr (PyObject *self, PyObject *args)
+{
+	return PyString_FromString (bz_getPublicAddr ().c_str ());
+}
+
+static PyObject *
+GetPublicDescription (PyObject *self, PyObject *args)
+{
+	return PyString_FromString (bz_getPublicDescription ().c_str ());
 }
 
 static PyObject *
