@@ -129,7 +129,7 @@ BzfMedia*		WinPlatformFactory::createMedia()
 
   if (useNative) {
 #ifdef HAVE_DSOUND_H
-    return new WinMedia(window);
+    return new WinMedia(winWindow);
 #else
     return NULL;
 #endif
