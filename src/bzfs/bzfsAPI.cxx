@@ -452,12 +452,12 @@ BZF_API bool bz_setWorldSize( float size, float wallHeight )
 }
 
 
-BZF_API bool bz_GetPublic( void )
+BZF_API bool bz_getPublic( void )
 {
 	return clOptions->publicizeServer;
 }
 
-BZF_API std::string bz_GetPublicAddr( void )
+BZF_API std::string bz_getPublicAddr( void )
 {
 	if (!clOptions->publicizeServer)
 		return std::string("");
@@ -465,7 +465,7 @@ BZF_API std::string bz_GetPublicAddr( void )
 	return clOptions->publicizedAddress;
 }
 
-BZF_API std::string bz_GetPublicDescription( void )
+BZF_API std::string bz_getPublicDescription( void )
 {
 	if (!clOptions->publicizeServer)
 		return std::string("");

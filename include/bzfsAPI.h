@@ -480,9 +480,9 @@ BZF_API bool bz_addWorldWeapon( std::string flagType, float *pos, float rot, flo
 BZF_API bool bz_setWorldSize( float size, float wallHeight = -1.0 );
 
 // public server info
-BZF_API bool bz_GetPublic( void );
-BZF_API std::string bz_GetPublicAddr( void );
-BZF_API std::string bz_GetPublicDescription( void );
+BZF_API bool bz_getPublic( void );
+BZF_API std::string bz_getPublicAddr( void );
+BZF_API std::string bz_getPublicDescription( void );
 
 #endif //_BZFS_API_H_
 
