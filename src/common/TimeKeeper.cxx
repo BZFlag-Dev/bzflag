@@ -30,7 +30,9 @@ static struct timeval	lastTime = { 0, 0 };
 #  include <mmsystem.h>
 static unsigned long int	lastTime = 0;
 static LARGE_INTEGER	qpcLastTime;
-static double		qpcFrequency = 0.0;
+static LONGLONG	        qpcFrequency = 0;
+static LONGLONG         qpcLastCalibration;
+static DWORD            timeLastCalibration;
 #endif /* !defined(_WIN32) */
 
 /* common implementation headers */
@@ -60,35 +62,30 @@ const TimeKeeper&	TimeKeeper::getCurrent(void)
     gettimeofday(&lastTime, NULL);
   }
 #else /* !defined(_WIN32) */
-  if (qpcFrequency != 0.0) {
-    // for comparison to qpc
-    double tgt = 1.0e-3 * (double)(unsigned long int)timeGetTime();
+  if (qpcFrequency != 0) {
 
     // main timer is qpc
     LARGE_INTEGER now;
     QueryPerformanceCounter(&now);
 
-    // tgt tends to have a granularity of between 1 and 15 ms.
-    // qpc can drift on some systems 
-    // check qpc against tgt.  if qpc is more than 20ms behind tgt, reset our timer to the tgt value
-    // maximum timer jitter is 19ms with this method, and should occur about 5x per second if SC's numbers are typical
-    // ideally we ought to compensate for the drift since it seems to be approximately linear, but we need to avoid going backwards
-    double qpcdiff = qpcFrequency * (double)(now.QuadPart - qpcLastTime.QuadPart);
-    double qpctime = currentTime.getSeconds() + qpcdiff;
-    
-    if (qpctime + 20e-3 < tgt) {
-      // compensate for backwards drift from SpeedStep/PowerNow frequency variation
-      DEBUG4("QueryPerformanceCounter has drifted > 20ms (was %f/%s).  Resetting to TimeGetTime at %f/%s.\n",
-	     qpctime, printTime(qpctime).c_str(), tgt, printTime(tgt).c_str());
-      currentTime.seconds = tgt;
-    } else {
-      // this is the normal case
-      currentTime += qpcdiff;
+    LONGLONG diff     = now.QuadPart - qpcLastTime.QuadPart;
+    LONGLONG clkSpent = now.QuadPart - qpcLastCalibration;
+    double   qpcdiff  = (double) diff / (double) qpcFrequency;
+
+    if (clkSpent > qpcFrequency) {
+      // Recalibrate Frequency
+      DWORD tgt           = timeGetTime();
+      LONGLONG oldqpcfreq = qpcFrequency;
+      qpcFrequency        = (clkSpent * 1000) / (tgt - timeLastCalibration);
+      if (qpcFrequency != oldqpcfreq)
+	DEBUG4("Recalibrated QPC frequency.  Old: %f ; New: %f\n", (double)oldqpcfreq, (double)qpcFrequency);
+      timeLastCalibration = tgt;
+      qpcLastCalibration  = now.QuadPart;
     }
 
+    currentTime += qpcdiff;
     qpcLastTime = now;
-  }
-  else if (lastTime != 0) {
+  } else if (lastTime != 0) {
     unsigned long int now = (unsigned long int)timeGetTime();
     unsigned long int diff;
     if (now <= lastTime) {
@@ -99,8 +96,7 @@ const TimeKeeper&	TimeKeeper::getCurrent(void)
     }
     currentTime += 1.0e-3 * (double)diff;
     lastTime = now;
-  }
-  else {
+  } else {
     static bool sane = true;
 
     // should only get into here once on app start
@@ -111,10 +107,12 @@ const TimeKeeper&	TimeKeeper::getCurrent(void)
 
     LARGE_INTEGER freq;
     if (QueryPerformanceFrequency(&freq)) {
-      qpcFrequency = 1.0 / (double)freq.QuadPart;
       QueryPerformanceCounter(&qpcLastTime);
-    }
-    else {
+      qpcFrequency        = freq.QuadPart;
+      DEBUG4("Actual reported QPC Frequency: %f\n", (double)qpcFrequency);
+      qpcLastCalibration  = qpcLastTime.QuadPart;
+      timeLastCalibration = timeGetTime();
+    } else {
       DEBUG1("QueryPerformanceFrequency failed with error %d\n", GetLastError());
       
       // make sure we're at our best timer resolution possible
