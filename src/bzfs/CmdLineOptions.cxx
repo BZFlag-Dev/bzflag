@@ -448,7 +448,7 @@ static char **parseConfFile( const char *file, int &ac)
       }
    }
   } else {
-	errorHandler.fatalError(std::string("could not find bzflag configuration file"), 0);
+    errorHandler.fatalError(std::string("could not find bzflag configuration file"), 0);
   }
 
   const char **av = new const char*[tokens.size()+1];

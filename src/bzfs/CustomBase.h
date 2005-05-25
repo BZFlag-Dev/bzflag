@@ -33,8 +33,8 @@ class CustomBase : public WorldFileObstacle {
 
   protected:
     int color;
-		bool triggerWorldWep;
-		std::string worldWepType;
+    bool triggerWorldWep;
+    std::string worldWepType;
 };
 
 #endif  /* __CUSTOMBASE_H__ */

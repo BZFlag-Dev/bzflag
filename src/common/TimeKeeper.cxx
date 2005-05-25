@@ -77,10 +77,12 @@ const TimeKeeper&	TimeKeeper::getCurrent(void)
     double qpctime = currentTime.getSeconds() + qpcdiff;
     
     if (qpctime + 20e-3 < tgt) {
+      // compensate for backwards drift from SpeedStep/PowerNow frequency variation
       DEBUG4("QueryPerformanceCounter has drifted > 20ms (was %f/%s).  Resetting to TimeGetTime at %f/%s.\n",
 	     qpctime, printTime(qpctime).c_str(), tgt, printTime(tgt).c_str());
       currentTime.seconds = tgt;
     } else {
+      // this is the normal case
       currentTime += qpcdiff;
     }
 

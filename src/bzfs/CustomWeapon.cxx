@@ -57,8 +57,7 @@ bool CustomWeapon::read(const char *cmd, std::istream& input) {
       if (d < minWeaponDelay) {
 	std::cout << "skipping weapon delay of " << d << " seconds" << std::endl;
 	continue;
-      }
-      else {
+      } else {
 	delay.push_back(d);
       }
     }
@@ -80,28 +79,27 @@ bool CustomWeapon::read(const char *cmd, std::istream& input) {
     // convert to radians
     tilt = (float)(tilt * (M_PI / 180.0));
   }
-  else if (strcmp(cmd, "trigger") == 0) 
-  {
-	  std::string triggerName;
-	  input >> triggerName;
+  else if (strcmp(cmd, "trigger") == 0) {
+    std::string triggerName;
+    input >> triggerName;
 
-	  triggerType = eNullEvent;
+    triggerType = eNullEvent;
 
-	  TextUtils::tolower(triggerName);
-	  if ( triggerName == "oncap")
-		  triggerType = eCaptureEvent;
-	  else if ( triggerName == "onspawn")
-		  triggerType = ePlayerSpawnEvent;
-	  else if ( triggerName == "ondie")
-		  triggerType = ePlayerDieEvent;
-	  else
-	  {
-		  std::cout << "weapon trigger type:" << triggerName << " unknown" << std::endl;
-	  }
+    TextUtils::tolower(triggerName);
+    if (triggerName == "oncap") {
+      triggerType = eCaptureEvent;
+    } else if (triggerName == "onspawn") {
+      triggerType = ePlayerSpawnEvent;
+    } else if (triggerName == "ondie") {
+      triggerType = ePlayerDieEvent;
+    } else {
+      std::cout << "weapon trigger type:" << triggerName << " unknown" << std::endl;
+      return true;
+    }
+    DEBUG4("Adding world weapon triggered '%s'\n", triggerName.c_str());
   }
-  else if (strcmp(cmd, "eventteam") == 0) 
-  {
-	  input >> eventTeam;
+  else if (strcmp(cmd, "eventteam") == 0) {
+    input >> eventTeam;
   }
   else if (!WorldFileLocation::read(cmd, input)) {
     return false;

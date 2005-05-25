@@ -26,8 +26,8 @@ CustomBase::CustomBase()
   size[0] = size[1] = BZDB.eval(StateDatabase::BZDB_BASESIZE);
   color = 0;
 
-	triggerWorldWep = false;
-	worldWepType = "SW";
+  triggerWorldWep = false;
+  worldWepType = "SW";
 }
 
 
@@ -36,14 +36,10 @@ bool CustomBase::read(const char *cmd, std::istream& input) {
     input >> color;
     if ((color < 0) || (color >= CtfTeams))
       return false;
-  }
-	else if (strcmp(cmd, "oncap") == 0)
-	{
-		triggerWorldWep= true;
-		input >> worldWepType;
-	}
-	else
-	{
+  } else if (strcmp(cmd, "oncap") == 0) {
+    triggerWorldWep = true;
+    input >> worldWepType;
+  } else {
     if (!WorldFileObstacle::read(cmd, input))
       return false;
   }
