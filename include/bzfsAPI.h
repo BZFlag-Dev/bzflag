@@ -484,6 +484,10 @@ BZF_API bool bz_getPublic( void );
 BZF_API std::string bz_getPublicAddr( void );
 BZF_API std::string bz_getPublicDescription( void );
 
+// custom client sounds
+BZF_API bool bz_sendPlayCustomLocalSound ( int playerID, const char* soundName );
+
+
 #endif //_BZFS_API_H_
 
 // Local Variables: ***

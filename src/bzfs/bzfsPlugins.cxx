@@ -93,7 +93,7 @@ int getPluginVersion ( HINSTANCE hLib )
 	lpProc = (int (__cdecl *)(void))GetProcAddress(hLib, "bz_GetVersion");
 	if (lpProc)
 		return lpProc(); 
-	return 0;
+	return 2;
 }
 
 void loadPlugin ( std::string plugin, std::string config )

@@ -1686,6 +1686,26 @@ static void		handleServerMessage(bool human, uint16_t code,
 
   switch (code) {
 
+		case MsgCustomSound:
+			{
+				void *buf;
+				char buffer[MessageLen];
+				uint16_t soundType;
+				uint16_t stringLen;
+				std::string soundName;
+
+				buf = nboUnpackUShort (msg, soundType); // the type
+				buf = nboUnpackUShort (buf, stringLen); // how long our str is
+				buf = nboUnpackString (buf, buffer, stringLen);
+
+				buffer[stringLen] = '\0';
+				soundName = buffer;
+
+				if ( soundType == LocalCustomSound)
+					playLocalSound(soundName);
+			}
+			break;
+
     case MsgUDPLinkEstablished:
       // server got our initial UDP packet
       serverLink->enableOutboundUDP();

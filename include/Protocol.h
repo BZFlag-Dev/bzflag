@@ -66,6 +66,7 @@ const uint16_t		MsgAlive = 0x616c;			// 'al'
 const uint16_t		MsgAddPlayer = 0x6170;			// 'ap'
 const uint16_t		MsgAutoPilot = 0x6175;			// 'au'
 const uint16_t		MsgCaptureFlag = 0x6366;		// 'cf'
+const uint16_t		MsgCustomSound = 0x6373;		// 'cs'
 const uint16_t		MsgCacheURL = 0x6375;			// 'cu'
 const uint16_t		MsgDropFlag = 0x6466;			// 'df'
 const uint16_t		MsgEnter = 0x656e;			// 'en'
@@ -157,6 +158,10 @@ const uint16_t		RejectRepeatCallsign = 0x0007;
 const uint16_t		RejectRejoinWaitTime = 0x0008;
 const uint16_t		RejectIPBanned = 0x0009;
 const uint16_t		RejectHostBanned = 0x000A;
+
+// sound type codes
+const uint16_t		LocalCustomSound = 0x0001;
+
 
 // death by obstacle
 // FIXME: really a killed reason, NOT a message type.

@@ -31,6 +31,9 @@ TimeKeeper synct = TimeKeeper::getCurrent();
 extern void sendMessage(int playerIndex, PlayerId dstPlayer, const char *message);
 extern void removePlayer(int playerIndex, const char *reason, bool notify);
 extern void zapFlagByPlayer(int playerIndex);
+extern void broadcastMessage(uint16_t code, int len, const void *msg);
+extern void directMessage(int playerIndex, uint16_t code, int len, const void *msg);
+extern char *getDirectMessageBuffer();
 
 extern CmdLineOptions *clOptions;
 extern uint16_t curMaxPlayers;
@@ -472,6 +475,24 @@ BZF_API std::string bz_getPublicDescription( void )
 
 	return clOptions->publicizedTitle;
 }
+
+BZF_API bool bz_sendPlayCustomLocalSound ( int playerID, const char* soundName )
+{
+	if (playerID == BZ_SERVER || !soundName)
+		return false;
+
+	void *buf, *bufStart = getDirectMessageBuffer();
+	buf = nboPackUShort(bufStart, LocalCustomSound);
+	buf = nboPackUShort(buf, (unsigned short)strlen(soundName));
+	buf = nboPackString(buf, soundName,strlen(soundName));
+	if (playerID == BZ_ALL_USERS)
+		broadcastMessage(MsgCustomSound, (char*)buf - (char*)bufStart, bufStart);
+	else
+		directMessage(playerID,MsgCustomSound, (char*)buf - (char*)bufStart, bufStart);
+
+	return true;
+}
+
 
 
 // Local Variables: ***
