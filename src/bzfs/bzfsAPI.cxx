@@ -452,6 +452,27 @@ BZF_API bool bz_setWorldSize( float size, float wallHeight )
 }
 
 
+BZF_API bool bz_GetPublic( void )
+{
+	return clOptions->publicizeServer;
+}
+
+BZF_API std::string bz_GetPublicAddr( void )
+{
+	if (!clOptions->publicizeServer)
+		return std::string("");
+
+	return clOptions->publicizedAddress;
+}
+
+BZF_API std::string bz_GetPublicDescription( void )
+{
+	if (!clOptions->publicizeServer)
+		return std::string("");
+
+	return clOptions->publicizedTitle;
+}
+
 
 // Local Variables: ***
 // mode:C++ ***
