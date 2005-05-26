@@ -3236,12 +3236,15 @@ static bool		gotBlowedUp(BaseLocalPlayer* tank,
 	    blowedUpNotice += killerPlayer->getCallSign();
 	    blowedUpNotice += " (";
 	    if (World::getWorld()->allowRabbit() && killerPlayer->getTeam() != RabbitTeam) {
-	      blowedUpNotice+= "Hunter";
+	      blowedUpNotice += "Hunter";
 	    } else {
 	      blowedUpNotice += Team::getName(killerPlayer->getTeam());
 	    }
-	    blowedUpNotice += ") ";
-			blowedUpNotice += killerPlayer->getFlag()->label();
+	    blowedUpNotice += ")";
+	    if (flag != Flags::Null) {
+	      blowedUpNotice += " with ";
+	      blowedUpNotice += flag->flagAbbv;
+	    }
 	  }
 	}
       }
