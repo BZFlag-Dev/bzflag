@@ -964,6 +964,7 @@ void			HUDRenderer::renderScoreboard(void)
   // list observers
   y -= (int)dy;
   for (i = curMaxPlayers - 1; i >= curMaxPlayers - obsCount; --i) {
+    setHuntIndicator(false); // don't hunt observer
     RemotePlayer* player = World::getWorld()->getPlayer(players[i]);
     drawPlayerScore(player, x1, x2, x3, xs, (float)y);
     y -= (int)dy;
