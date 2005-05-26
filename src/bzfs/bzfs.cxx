@@ -399,7 +399,7 @@ void sendPlayerInfo() {
 
     if (playerData->player.isPlaying()) {
       // see if any events want to update the playerInfo before it is sent out
-
+#if 0
       GetPlayerInfoEventData playerInfoData;
       playerInfoData.playerID = i;
       playerInfoData.callsign = playerData->player.getCallSign();
@@ -411,7 +411,9 @@ void sendPlayerInfo() {
       worldEventManager.callEvents(eGetPlayerInfoEvent,-1,&playerInfoData);
 
       buf = PackPlayerInfo(buf,i,GetPlayerProperties(playerInfoData.registerd,playerInfoData.verified,playerInfoData.admin));
-     // buf = playerData->packPlayerInfo(buf);
+#else
+      buf = playerData->packPlayerInfo(buf);
+#endif
     }
   }
   broadcastMessage(MsgPlayerInfo, (char*)buf - (char*)bufStart, bufStart);
@@ -4386,7 +4388,7 @@ void initGroups()
     info.explicitAllows[i] = true;
   info.groupState[PlayerAccessInfo::isGroup] = true;
   info.groupState[PlayerAccessInfo::isDefault] = true;
-  info.explicitAllows[PlayerAccessInfo::hideAdmin ] = false;
+  info.explicitAllows[PlayerAccessInfo::hideAdmin] = false;
   groupAccess["LOCAL.ADMIN"] = info;
   
   // load databases
