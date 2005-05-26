@@ -183,7 +183,7 @@ WorldEventManager::~WorldEventManager()
 	while ( teamItr != eventtMap.end() )
 	{
 		tmEventTypeList::iterator eventItr = teamItr->second.begin();
-		while (eventItr == teamItr->second.end())
+		while (eventItr != teamItr->second.end())
 		{
 			tvEventList::iterator itr = eventItr->second.begin();
 			while ( itr != eventItr->second.end() )
