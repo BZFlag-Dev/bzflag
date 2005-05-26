@@ -128,6 +128,6 @@ $ CC=i386-mingw32msvc-gcc CXX=i386-mingw32msvc-g++ \
      RANLIB=i386-mingw32msvc-ranlib AR=i386-mingw32msvc-ar \
      ../bzflag/configure \
      --host=i386-mingw32msvc --build=i686-pc-linux-gnu \
-     --without-x --enable-debug
-
+     --without-x --enable-debug --prefix=`pwd`/bindist
 $ make
+$ make install
