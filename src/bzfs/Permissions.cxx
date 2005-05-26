@@ -101,6 +101,15 @@ bool PlayerAccessInfo::isAdmin() const {
   return Admin;
 }
 
+bool PlayerAccessInfo::showAsAdmin() const {
+  if (hasPerm(hideAdmin))
+    return false;
+  else if (Admin || hasPerm(ban) || hasPerm(shortBan))
+    return true;
+  else
+    return false;
+}
+
 bool PlayerAccessInfo::passwordAttemptsMax() {
   bool maxAttempts = passwordAttempts >= 5;
   // see how many times they have tried, you only get 5
@@ -163,7 +172,7 @@ void PlayerAccessInfo::setPasswd(const std::string&  pwd) {
 }
 
 uint8_t PlayerAccessInfo::getPlayerProperties() {
-  return GetPlayerProperties(isRegistered(),verified,!hasPerm(hideAdmin) && (Admin || hasPerm(ban) || hasPerm(shortBan)));
+  return GetPlayerProperties(isRegistered(), verified, showAsAdmin());
 }
 
 bool PlayerAccessInfo::exists() {
@@ -205,13 +214,14 @@ bool PlayerAccessInfo::removeGroup(const std::string &group)
   return true;
 }
 
-bool PlayerAccessInfo::canSet(const std::string& group) {
+bool PlayerAccessInfo::canSet(const std::string& group)
+{
   if (hasPerm(PlayerAccessInfo::setAll))
     return true;
   return hasGroup(group) && hasPerm(PlayerAccessInfo::setPerms);
 }
 
-bool PlayerAccessInfo::hasPerm(PlayerAccessInfo::AccessPerm right) 
+bool PlayerAccessInfo::hasPerm(PlayerAccessInfo::AccessPerm right) const
 {
   if (Admin && (right != hideAdmin))
     return true;
@@ -220,7 +230,7 @@ bool PlayerAccessInfo::hasPerm(PlayerAccessInfo::AccessPerm right)
   if (explicitAllows.test(right))
     return true;
 
-  for (std::vector<std::string>::iterator itr=groups.begin(); itr!=groups.end(); ++itr) {
+  for (std::vector<std::string>::const_iterator itr=groups.begin(); itr!=groups.end(); ++itr) {
     PlayerAccessMap::iterator group = groupAccess.find(*itr);
     if (group != groupAccess.end() && group->second.explicitAllows.test(right))
       return true;

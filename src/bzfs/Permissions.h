@@ -123,6 +123,7 @@ public:
   void	setPasswd(const std::string& pwd);
   void	setAdmin();
   bool	isAdmin() const;
+  bool	showAsAdmin() const;
 
   void	setPermissionRights();
   void	reloadInfo();
@@ -132,7 +133,7 @@ public:
   bool	removeGroup(const std::string& group);
   bool	canSet(const std::string& group);
 
-  bool	hasPerm(AccessPerm right);
+  bool	hasPerm(AccessPerm right) const;
   void	grantPerm(AccessPerm right);
   void	revokePerm(AccessPerm right);
 

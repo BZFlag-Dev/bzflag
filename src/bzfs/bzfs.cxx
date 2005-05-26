@@ -399,21 +399,17 @@ void sendPlayerInfo() {
 
     if (playerData->player.isPlaying()) {
       // see if any events want to update the playerInfo before it is sent out
-#if 0
       GetPlayerInfoEventData playerInfoData;
       playerInfoData.playerID = i;
       playerInfoData.callsign = playerData->player.getCallSign();
       playerInfoData.team = playerData->player.getTeam();
       playerInfoData.verified = playerData->accessInfo.isVerified();
       playerInfoData.registerd = playerData->accessInfo.isRegistered();
-      playerInfoData.admin = playerData->accessInfo.isAdmin();
+      playerInfoData.admin = playerData->accessInfo.showAsAdmin();
 
       worldEventManager.callEvents(eGetPlayerInfoEvent,-1,&playerInfoData);
 
       buf = PackPlayerInfo(buf,i,GetPlayerProperties(playerInfoData.registerd,playerInfoData.verified,playerInfoData.admin));
-#else
-      buf = playerData->packPlayerInfo(buf);
-#endif
     }
   }
   broadcastMessage(MsgPlayerInfo, (char*)buf - (char*)bufStart, bufStart);
