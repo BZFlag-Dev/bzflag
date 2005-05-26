@@ -150,7 +150,7 @@ public:
   static void updateDatabases();
   std::bitset<lastPerm>		explicitAllows;
   std::bitset<lastPerm>		explicitDenys;
-	std::bitset<lastState>	groupState;
+  std::bitset<lastState>	groupState;
   std::vector<std::string>	groups;
   	
 	

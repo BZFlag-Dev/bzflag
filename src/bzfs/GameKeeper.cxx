@@ -159,7 +159,7 @@ void *GameKeeper::Player::packAdminInfo(void *buf)
 
 void *GameKeeper::Player::packPlayerInfo(void *buf)
 {
-	buf = PackPlayerInfo(buf, playerIndex,accessInfo.getPlayerProperties() );
+  buf = PackPlayerInfo(buf, playerIndex, accessInfo.getPlayerProperties());
   return buf;
 }
 
