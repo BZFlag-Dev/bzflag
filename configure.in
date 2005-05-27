@@ -246,7 +246,6 @@ case $host_os in
     ;;
   beos)
     GLIBS=" -lmedia -lgame $GLIBS"
-#    LIBS="-lbind -lsocket -lbe";;
     LIBS="-lbe"
     LDFLAGS="$LDFLAGS $X_LIBS"
     ;;
@@ -261,8 +260,8 @@ esac;
 AC_CHECK_LIB(m, sqrtf)
 
 # for BeOS - old network stack don't have those libs ( move it in the case switch ?)
-AC_CHECK_LIB(socket, socket)
-AC_CHECK_LIB(bind, gethostent)
+AC_CHECK_LIB([socket], [socket])
+AC_CHECK_LIB([socket], [gethostent], [], AC_CHECK_LIB([bind], [gethostent]))
 
 # check for various IEEE and c99 standard math functions in libm
 AC_CHECK_LIB([m], [acosf], [AC_DEFINE([HAVE_ACOSF],[1],[libm includes acosf])])
