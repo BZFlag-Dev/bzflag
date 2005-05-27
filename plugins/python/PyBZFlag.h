@@ -23,6 +23,13 @@ namespace Python
 
 class BZFlag;
 
+class CaptureHandler : public bz_EventHandler
+{
+public:
+	virtual void process (bz_EventData *eventData);
+	BZFlag *parent;
+};
+
 class TickHandler : public bz_EventHandler
 {
 public:
@@ -65,9 +72,10 @@ private:
 	PyObject *players;
 	PyObject *module;
 
-	TickHandler tick_handler;
-	JoinHandler join_handler;
-	PartHandler part_handler;
+	CaptureHandler capture_handler;
+	TickHandler    tick_handler;
+	JoinHandler    join_handler;
+	PartHandler    part_handler;
 };
 
 };

@@ -18,6 +18,48 @@ namespace Python
 {
 
 void
+CaptureHandler::process (bz_EventData *eventData)
+{
+	PyObject *listeners = parent->GetListeners (bz_eCaptureEvent);
+
+	bz_CTFCaptureEventData *ced = (bz_CTFCaptureEventData *) eventData;
+	if (listeners == NULL || !PyList_Check(listeners)) {
+		// FIXME - throw error
+		fprintf (stderr, "tick listeners is not a list!\n");
+		return;
+	}
+
+	PyObject *arglist = Py_BuildValue ("(iii(fff)fd",
+			ced->teamCaped,
+			ced->teamCaping,
+			ced->playerCaping,
+			ced->pos[0],
+			ced->pos[1],
+			ced->pos[2],
+			ced->rot,
+			ced->time);
+
+	// Call out to all of our listeners
+	int size = PyList_Size (listeners);
+	for (int i = 0; i < size; i++) {
+		PyObject *handler = PyList_GetItem (listeners, i);
+		if (!PyCallable_Check (handler)) {
+			// FIXME - throw error
+			fprintf (stderr, "tick listener is not callable\n");
+			Py_DECREF (arglist);
+			return;
+		}
+		PyErr_Clear ();
+		PyEval_CallObject (handler, arglist);
+		if (PyErr_Occurred ()) {
+			PyErr_Print ();
+			return;
+		}
+	}
+	Py_DECREF (arglist);
+}
+
+void
 TickHandler::process (bz_EventData *eventData)
 {
 	PyObject *listeners = parent->GetListeners (bz_eTickEvent);
@@ -29,7 +71,7 @@ TickHandler::process (bz_EventData *eventData)
 		return;
 	}
 
-	PyObject *arglist = Py_BuildValue("(d)", ted->time);
+	PyObject *arglist = Py_BuildValue ("(d)", ted->time);
 
 	// Call out to all of our listeners
 	int size = PyList_Size (listeners);
@@ -175,9 +217,11 @@ BZFlag::BZFlag ()
 	PyModule_AddObject (module, "Team",   team_sub->GetSubModule ());
 
 	// Register event handlers
-	tick_handler.parent = this;
-	join_handler.parent = this;
-	part_handler.parent = this;
+	tick_handler.parent    = this;
+	join_handler.parent    = this;
+	part_handler.parent    = this;
+	capture_handler.parent = this;
+	bz_registerGeneralEvent (bz_eCaptureEvent,    &capture_handler);
 	bz_registerGeneralEvent (bz_eTickEvent,       &tick_handler);
 	bz_registerGeneralEvent (bz_ePlayerJoinEvent, &join_handler);
 	bz_registerGeneralEvent (bz_ePlayerPartEvent, &part_handler);
