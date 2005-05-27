@@ -4505,7 +4505,7 @@ static void joinInternetGame2()
 			myTank->getEmailAddress(),
 			startupInfo.token);
 
-  // it worked!  pop all the menus.
+  // hopefully it worked!  pop all the menus.
   HUDDialogStack* stack = HUDDialogStack::get();
   while (stack->isActive())
     stack->pop();
