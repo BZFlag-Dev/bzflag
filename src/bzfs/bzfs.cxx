@@ -1978,16 +1978,16 @@ static void addPlayer(int playerIndex)
   // were a regular player isn't in the rejoin list. As well, this all
   // only applies if the game isn't currently empty.
   if ((playerData->player.getTeam() != ObserverTeam) &&
-      (GameKeeper::Player::count() > 0)) {
+      (GameKeeper::Player::count() >= 0)) {
     float waitTime = rejoinList.waitTime (playerIndex);
     if (waitTime > 0.0f) {
       char buffer[MessageLen];
       DEBUG2 ("Player %s [%d] rejoin wait of %.1f seconds\n",
 	      playerData->player.getCallSign(), playerIndex, waitTime);
-      snprintf (buffer, MessageLen, "Can't rejoin for %.1f seconds.", waitTime);
+      snprintf (buffer, MessageLen, "You are unable to begin playing for %.1f seconds.", waitTime);
       sendMessage(ServerPlayer, playerIndex, buffer);
-      removePlayer(playerIndex, "rejoiner");
-      return ;
+      //      removePlayer(playerIndex, "rejoining too quickly");
+      //      return ;
     }
   }
 
@@ -2326,7 +2326,7 @@ static void anointNewRabbit(int killerId = NoPlayer)
 }
 
 
-static void pausePlayer(int playerIndex, bool paused)
+static void pausePlayer(int playerIndex, bool paused = true)
 {
   GameKeeper::Player *playerData
     = GameKeeper::Player::getPlayerByIndex(playerIndex);
@@ -3477,6 +3477,7 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
   void *buf = (char *)rawbuf;
   buf = nboUnpackUShort(buf, len);
   buf = nboUnpackUShort(buf, code);
+  char buffer[MessageLen];
 
   if (udp) {
     switch (code) {
@@ -3614,6 +3615,19 @@ possible attack from %s\n",
 
     // player is coming alive
     case MsgAlive: {
+      // player is on the waiting list
+      float waitTime = rejoinList.waitTime(t);
+      if (waitTime > 0.0f) {
+	snprintf (buffer, MessageLen, "You are unable to begin playing for %.1f seconds.", waitTime);
+	sendMessage(ServerPlayer, t, buffer);
+
+	// Make them pay dearly for trying to rejoin quickly
+	playerAlive(t);
+	playerKilled(t, t, 0, -1, Flags::Null, -1);
+
+	break;
+      }
+
       // player moved before countdown started
       if (clOptions->timeLimit>0.0f && !countdownActive) {
 	playerData->player.setPlayedEarly();
