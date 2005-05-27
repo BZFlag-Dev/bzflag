@@ -123,7 +123,7 @@ void BitmapFont::filter(bool /*dofilter*/)
 {
 }
 
-void BitmapFont::drawString(float scale, GLfloat color[3], const char *str,
+void BitmapFont::drawString(float scale, GLfloat color[4], const char *str,
 			    int len)
 {
   // BitmapFont cannot scale, should never be asked to
@@ -142,7 +142,7 @@ void BitmapFont::drawString(float scale, GLfloat color[3], const char *str,
     return;
 
   if (color[0] >= 0)
-    glColor3fv(color);
+    glColor4fv(color);
 
   glRasterPos3f(0, 0, 0);
 

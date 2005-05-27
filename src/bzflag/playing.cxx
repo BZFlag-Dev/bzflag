@@ -4204,9 +4204,13 @@ void		leaveGame()
   joiningGame = false;
 
   // no more radar
-  controlPanel->setRadarRenderer(NULL);
+  //  radar->setWorld(NULL);
+
+  //  controlPanel->setRadarRenderer(NULL);
+  /*
   delete radar;
   radar = NULL;
+  */
 
 #if defined(ROBOT)
   // shut down robot connections
@@ -4480,9 +4484,9 @@ static void joinInternetGame2()
   mainWindow->getWindow()->yieldCurrent();
 
   // make radar
-  radar = new RadarRenderer(*sceneRenderer, *world);
-  mainWindow->getWindow()->yieldCurrent();
-
+  //  radar = new RadarRenderer(*sceneRenderer, *world);
+  //  mainWindow->getWindow()->yieldCurrent();
+  radar->setWorld(world);
   controlPanel->setRadarRenderer(radar);
   controlPanel->resize();
 
@@ -4555,16 +4559,19 @@ static void drawUI()
   if (hud) {
     hud->render(*sceneRenderer);
   }
+
   // draw the control panel
   if (controlPanel) {
     controlPanel->render(*sceneRenderer);
   }
+
   // draw the radar
   if (radar) {
-    const bool showBlankRadar = myTank && myTank->isPaused();
+    const bool showBlankRadar = !myTank || (myTank && myTank->isPaused());
     const bool observer = myTank && (myTank->getTeam() == ObserverTeam);
     radar->render(*sceneRenderer, showBlankRadar, observer);
   }
+
   // update the HUD (menus)
   renderDialog();
 
@@ -4864,6 +4871,23 @@ void drawFrame(const float dt)
     sceneRenderer->setDim(HUDDialogStack::get()->isActive() || insideDim ||
 			  (myTank && !roaming && !myTank->isAlive() &&
 			   !myTank->isExploding()));
+
+    // turn on panel dimming when showing the menu (both radar and chat)
+    if (HUDDialogStack::get()->isActive()) {
+      if (controlPanel) {
+	controlPanel->setDimming(0.8f);
+      }
+      if (radar) {
+	radar->setDimming(0.8f);
+      }
+    } else {
+      if (controlPanel) {
+	controlPanel->setDimming(0.0f);
+      }
+      if (radar) {
+	radar->setDimming(0.0f);
+      }
+    }      
 
     // set hud state
     hud->setDim(HUDDialogStack::get()->isActive());
@@ -5954,6 +5978,13 @@ void			startPlaying(BzfDisplay* _display,
   // make control panel
   ControlPanel _controlPanel(*mainWindow, *sceneRenderer);
   controlPanel = &_controlPanel;
+
+  // make the radar
+  RadarRenderer _radar(*sceneRenderer, world);
+  radar = &_radar;
+
+  // tie the radar to the control panel
+  controlPanel->setRadarRenderer(radar);
 
   // tell the control panel how many frame buffers there are.  we
   // cheat when drawing the control panel, not drawing it if it

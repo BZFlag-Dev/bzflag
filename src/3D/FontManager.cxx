@@ -39,6 +39,7 @@
 template <>
 FontManager* Singleton<FontManager>::_instance = (FontManager*)0;
 
+
 // ANSI code GLFloat equivalents - these should line up with the enums in AnsiCodes.h
 static GLfloat BrightColors[8][3] = {
   {1.0f,1.0f,0.0f}, // yellow
@@ -51,7 +52,7 @@ static GLfloat BrightColors[8][3] = {
   {0.0f,1.0f,1.0f}  // cyan
 };
 
-GLfloat FontManager::underlineColor[3];
+GLfloat FontManager::underlineColor[4];
 void FontManager::callback(const std::string &, void *)
 {
   // set underline color
@@ -71,7 +72,9 @@ void FontManager::callback(const std::string &, void *)
   }
 }
 
-FontManager::FontManager() : Singleton<FontManager>(), dimFactor(0.7f)
+FontManager::FontManager() : Singleton<FontManager>(), 
+			     opacity(1.0f),
+			     dimFactor(0.7f)
 {
   faceNames.clear();
   fontFaces.clear();
@@ -278,16 +281,17 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
   bool pulsating = false;
   bool underline = false;
   // negatives are invalid, we use them to signal "no change"
-  GLfloat color[3] = {-1.0f, -1.0f, -1.0f};
+  GLfloat color[4] = {-1.0f, -1.0f, -1.0f, 1.0f - opacity};
 
   // underline color changes for bright == false
-  GLfloat dimUnderlineColor[3] = 
-    { underlineColor[0] * dimFactor,
-      underlineColor[1] * dimFactor,
-      underlineColor[2] * dimFactor };
+  GLfloat dimUnderlineColor[4] = { underlineColor[0] * dimFactor,
+				   underlineColor[1] * dimFactor,
+				   underlineColor[2] * dimFactor,
+				   1.0f - opacity };
+  underlineColor[3] = 1.0f - opacity;
 
   // FIXME - this should not be necessary, but the bitmap font renderer needs it
-  OpenGLGState::resetState(); 
+  //  OpenGLGState::resetState(); 
 
   /*
    * ANSI code interpretation is somewhat limited, we only accept values
@@ -323,13 +327,12 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
       glDepthMask(0);
       pFont->drawString(scale, color, &tmpText[startSend], len);
       if (underline) {
-	OpenGLGState::resetState();  // FIXME - full reset required?
 	if (bright && underlineColor[0] >= 0) {
-	  glColor3fv(underlineColor);
+	  glColor4fv(underlineColor);
 	} else if (underlineColor[0] >= 0) {
-	  glColor3fv(dimUnderlineColor);
+	  glColor4fv(dimUnderlineColor);
 	} else if (color[0] >= 0) {
-	  glColor3fv(color);
+	  glColor4fv(color);
 	}
 	// still have a translated matrix, these coordinates are
 	// with respect to the string just drawn

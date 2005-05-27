@@ -30,7 +30,7 @@ public:
   virtual bool isBuilt() const {return loaded;}
 
   virtual void filter(bool dofilter);
-  virtual void drawString(float scale, GLfloat color[3], const char *str, int len);
+  virtual void drawString(float scale, GLfloat color[4], const char *str, int len);
 
   virtual void free();
 

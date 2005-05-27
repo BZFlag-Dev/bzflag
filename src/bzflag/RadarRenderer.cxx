@@ -49,21 +49,30 @@ static bool toggleTank = false;
 
 const float RadarRenderer::colorFactor = 40.0f;
 
-RadarRenderer::RadarRenderer(const SceneRenderer&, const World& _world)
-						   : world(_world)
+RadarRenderer::RadarRenderer(const SceneRenderer&, World* _world)
+  : world(_world),
+    x(0),
+    y(0),
+    w(0),
+    h(0),
+    dimming(0.0f),
+    decay(0.01f),
+    jammed(false),
+    multiSampled(false)
 {
-  jammed = false;
-  x = y = w = h = 0;
-  decay = 0.01f;
 
   setControlColor();
 
-  multiSampled = false;
 #if defined(GLX_SAMPLES_SGIS) && defined(GLX_SGIS_multisample)
   GLint bits;
   glGetIntergerv(GL_SAMPLES_SGIS, &bits);
   if (bits > 0) multiSampled = true;
 #endif
+}
+
+void RadarRenderer::setWorld(World* _world)
+{
+  world = _world;
 }
 
 
@@ -89,6 +98,12 @@ void RadarRenderer::setJammed(bool _jammed)
 {
   jammed = _jammed;
   decay = 0.01;
+}
+
+
+void RadarRenderer::setDimming(float newDimming)
+{
+  dimming = (1.0f - newDimming > 1.0f) ? 1.0f : (1.0f - newDimming < 0.0f) ? 0.0f : 1.0f - newDimming;
 }
 
 
@@ -323,6 +338,10 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
     return;
   }
 
+  if (!world) {
+    return;
+  }
+
   smooth = !multiSampled && BZDBCache::smooth;
   const bool fastRadar = ((BZDBCache::radarStyle == 1) && BZDBCache::zbuffer);
   const LocalPlayer *myTank = LocalPlayer::getMyTank();
@@ -436,9 +455,10 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
       glDisable(GL_TEXTURE_2D);
     }
     if (decay > 0.015f) decay *= 0.5f;
+
   }
 
-  // only draw if there's a local player
+  // only draw if there's a local player and a world
   else if (myTank) {
     // if decay is sufficiently small then boost it so it's more
     // likely a jammed radar will get a few good frames closely
@@ -495,10 +515,8 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
     // setup the blending function
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-
     // draw the buildings
     renderObstacles(fastRadar, radarRange);
-
 
     // antialiasing on for lines and points unless we're multisampling,
     // in which case it's automatic and smoothing makes them look worse.
@@ -509,7 +527,7 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
     }
 
     // draw my shots
-    int maxShots = world.getMaxShots();
+    int maxShots = world->getMaxShots();
     int i;
     float muzzleHeight = BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT);
     for (i = 0; i < maxShots; i++) {
@@ -533,15 +551,14 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
       }
     }
 
-
     // draw other tanks (and any flags on them)
     // note about flag drawing.  each line segment is drawn twice
     // (once in each direction);  this degrades the antialiasing
     // but on systems that don't do correct filtering of endpoints
     // not doing it makes (half) the endpoints jump wildly.
-    const int curMaxPlayers = world.getCurMaxPlayers();
+    const int curMaxPlayers = world->getCurMaxPlayers();
     for (i = 0; i < curMaxPlayers; i++) {
-      RemotePlayer* player = world.getPlayer(i);
+      RemotePlayer* player = world->getPlayer(i);
       if (!player) {
 	continue;
       }
@@ -601,7 +618,7 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
     bool iSeeAll = myTank && (myTank->getFlag() == Flags::Seer);
     maxShots = World::getWorld()->getMaxShots();
     for (i = 0; i < curMaxPlayers; i++) {
-      RemotePlayer* player = world.getPlayer(i);
+      RemotePlayer* player = world->getPlayer(i);
       if (!player) continue;
       for (int j = 0; j < maxShots; j++) {
 	const ShotPath* shot = player->getShot(j);
@@ -623,10 +640,10 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
     }
 
     // draw flags not on tanks.
-    const int maxFlags = world.getMaxFlags();
+    const int maxFlags = world->getMaxFlags();
     const bool drawNormalFlags = BZDB.isTrue("displayRadarFlags");
     for (i = 0; i < maxFlags; i++) {
-      const Flag& flag = world.getFlag(i);
+      const Flag& flag = world->getFlag(i);
       // don't draw flags that don't exist or are on a tank
       if (flag.status == FlagNoExist || flag.status == FlagOnTank)
 	continue;
@@ -686,6 +703,14 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
     }
 
     if (smooth) {
+
+      // darken the entire radar if we're dimmed
+      if (dimming > 0.0f) {
+	// we're drawing positively, so dimming is actually an opacity
+	glColor4f(0.0f, 0.0f, 0.0f, 1.0 - dimming);
+	glRectf((float)(x - xSize), (float)(y - ySize), (float)(x + xSize), (float)(y + ySize));
+      }
+
       glDisable(GL_BLEND);
       glDisable(GL_LINE_SMOOTH);
       glDisable(GL_POINT_SMOOTH);
@@ -1040,10 +1065,10 @@ void RadarRenderer::renderBasesAndTeles()
   int i;
 
   // draw team bases
-  if(world.allowTeamFlags()) {
+  if(world->allowTeamFlags()) {
     for(i = 1; i < NumTeams; i++) {
       for (int j = 0;;j++) {
-	const float *base = world.getBase(i, j);
+	const float *base = world->getBase(i, j);
 	if (base == NULL)
 	  break;
 	glColor3fv(Team::getRadarColor(TeamColor(i)));

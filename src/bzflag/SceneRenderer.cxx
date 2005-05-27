@@ -106,7 +106,6 @@ SceneRenderer::SceneRenderer() :
 				useDepthComplexityOn(false),
 				useWireframeOn(false),
 				useHiddenLineOn(false),
-				panelOpacity(0.3f),
 				radarSize(4),
 				maxMotionFactor(5),
 				useFogHack(false),
@@ -446,6 +445,16 @@ void SceneRenderer::setViewType(ViewType _viewType)
 void SceneRenderer::setExposed()
 {
   exposed = true;
+}
+
+
+void SceneRenderer::clearRadar(float opacity)
+{
+  int size = window->getHeight() - window->getViewHeight();
+  float op = (opacity > 1.0f) ? 1.0f : (opacity < 0.0f) ? 0.0f : opacity;
+  glScissor(window->getOriginX(), 0, size, size);
+  glClearColor(0.0f, 0.0f, 0.0f, op);
+  glClear(GL_COLOR_BUFFER_BIT);
 }
 
 

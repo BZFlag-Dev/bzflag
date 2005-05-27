@@ -56,6 +56,8 @@ class ControlPanel {
     void		setStatus(const char*);
     void		setRadarRenderer(RadarRenderer*);
 
+    void		setDimming(float dimming);
+
   private:
     // no copying!
 			ControlPanel(const ControlPanel&);
@@ -88,6 +90,8 @@ class ControlPanel {
 
     int			fontFace;
     float		fontSize;
+
+    float	      	dimming;
     float		du, dv;
     int			radarAreaPixels[4];
     int			messageAreaPixels[4];
@@ -100,7 +104,14 @@ class ControlPanel {
     float		margin;
     float		lineHeight;
     bool		unRead[MessageModeCount];
+
 };
+
+inline void ControlPanel::setDimming(float newDimming)
+{
+  dimming = (1.0f - newDimming > 1.0f) ? 1.0f : (1.0f - newDimming < 0.0f) ? 0.0f : 1.0f - newDimming;
+}
+
 
 #endif // BZF_CONTROL_PANEL_H
 

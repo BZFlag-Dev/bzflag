@@ -153,6 +153,7 @@ ControlPanel::ControlPanel(MainWindow& _mainWindow, SceneRenderer& _renderer) :
 				radarRenderer(NULL),
 				renderer(&_renderer),
 				fontFace(0),
+				dimming(1.0f),
 				du(0),
 				dv(0),
 				messageMode(MessageAll)
@@ -434,8 +435,9 @@ void			ControlPanel::render(SceneRenderer& _renderer)
     }
 
     // default to drawing text in white
-    GLfloat whiteColor[3] = {1.0f, 1.0f, 1.0f};
-    glColor3fv(whiteColor);
+    GLfloat whiteColor[4] = {1.0f, 1.0f, 1.0f, dimming};
+    glColor4fv(whiteColor);
+    fm.setOpacity(1.0f - dimming);
 
     bool isTab = false;
 

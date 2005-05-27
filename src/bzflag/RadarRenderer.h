@@ -29,8 +29,8 @@ class ShotPath;
 
 class RadarRenderer {
   public:
-			RadarRenderer(const SceneRenderer&,
-						const World& world);
+			RadarRenderer(const SceneRenderer&, World* _world);
+    void		setWorld(World* _world);
 
     void		setControlColor(const GLfloat *color = NULL);
 
@@ -41,6 +41,8 @@ class RadarRenderer {
 
     void		setShape(int x, int y, int w, int h);
     void		setJammed(bool = true);
+
+    void		setDimming(float newDimming);
 
     void		render(SceneRenderer&, bool blank, bool observer);
 
@@ -68,9 +70,10 @@ class RadarRenderer {
     static float	transScale(const float z, const float h);
 
   private:
-    const World&	world;
+    World*		world;
     int			x, y;
     int			w, h;
+    float		dimming;
     float		ps;
     float		range;
     double		decay;

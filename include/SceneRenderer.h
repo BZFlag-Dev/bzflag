@@ -100,6 +100,8 @@ public:
 
   void		setExposed();
 
+  void		clearRadar(float opacity);
+
   void		getGroundUV(const float p[2], float uv[2]) const;
 
   bool		getBlank() const;

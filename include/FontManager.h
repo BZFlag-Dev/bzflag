@@ -61,6 +61,7 @@ public:
   float getStrHeight(std::string face, float size, const std::string &text);
 
   void setDimFactor(float newDimFactor);
+  void setOpacity(float newOpacity);
 
   void unloadAll(void);
 
@@ -76,10 +77,12 @@ private:
 
   std::string	fontDirectory;
 
+  float		opacity;
+
   static void	callback(const std::string& name, void *);
   static void	freeContext(void *data);
   static void	initContext(void *data);
-  static GLfloat underlineColor[3];
+  static GLfloat underlineColor[4];
   float		dimFactor;
   bool		canScale;
 };
@@ -87,6 +90,12 @@ private:
 inline void FontManager::setDimFactor(float newDimFactor)
 {
   dimFactor = newDimFactor;
+}
+
+inline void FontManager::setOpacity(float newOpacity)
+{
+  opacity = newOpacity;
+  underlineColor[3] = 1.0f - opacity;
 }
 
 #endif //_FONT_MANAGER_H_

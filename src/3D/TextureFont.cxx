@@ -135,7 +135,7 @@ void TextureFont::filter(bool dofilter)
   tm.setTextureFilter(textureID, dofilter ? OpenGLTexture::Max : OpenGLTexture::Nearest);
 }
 
-void TextureFont::drawString(float scale, GLfloat color[3], const char *str,
+void TextureFont::drawString(float scale, GLfloat color[4], const char *str,
 			     int len)
 {
   if (!str)
@@ -154,7 +154,7 @@ void TextureFont::drawString(float scale, GLfloat color[3], const char *str,
     return;
 
   if (color[0] >= 0)
-    glColor3fv(color);
+    glColor4fv(color);
 
   glPushMatrix();
   glScalef(scale, scale, 1);
