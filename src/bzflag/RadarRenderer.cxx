@@ -707,7 +707,7 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
       // darken the entire radar if we're dimmed
       if (dimming > 0.0f) {
 	// we're drawing positively, so dimming is actually an opacity
-	glColor4f(0.0f, 0.0f, 0.0f, 1.0 - dimming);
+	glColor4f(0.0f, 0.0f, 0.0f, 1.0f - dimming);
 	glRectf((float)(x - xSize), (float)(y - ySize), (float)(x + xSize), (float)(y + ySize));
       }
 
