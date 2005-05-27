@@ -1212,9 +1212,14 @@ pogue mahone            # gd - kiss my ass
 
 
 # German
+# arch                  # de - ass
+akrampe                 # de - asshole
 arsch                   # de - ass
+arschficker             # de - assfucker
 arschgesicht            # de - "assface" (butthead)
-asch      		# de - ass
+arschkrampe             # de - asshole
+arschlock               # de - asshole
+asch                    # de - ass
 auf wiedersehen fickakopf 	 # de - goodbye fuckhead
 blode fotze             # de - stupid cunt
 blodes arschloch        # de - stupid asshole
@@ -1223,32 +1228,45 @@ depp                    # de - idiot
 drecksau                # de - dirty pig
 du verdammter arschficker 	 # de - you damn assfucker
 dummcopf                # de - (lit. stupid head)
+dummkopf                # de - (lit. stupid head)
 dummes huhn             # de - stupid chicken
-fick dich               # de - fuck you
-fick mich               # de - fuck me
+fick                    # de - fuck
 fotze                   # de - cunt
 himmeldonnerwetter      # de - *no translation--very strong curse*  (lit. heaven thunder weather)
 hosenschlange           # de - lit. - lick my trouser snake
 hure                    # de - whore
 hurensohn               # de - sonuvabitch
 ich moechte mit dir schlafen 	 # de - i want to sleep with (fuck) you
+kacke                   # de - shit
+kanacke                 # de - ? (insinuating something bad about the roots of a person (lit. human))
+kot                     # de - shit
+kotklumpen              # de - piece of shit
 leck mich am arsch      # de - lick my ass
 lesbe                   # de - lesbian
 mach es dir selber      # de - go fuck yourself
 mutterficker            # de - motherfucker
-schies                  # de - shit
+neger                   # de - nigger
+nutte                   # de - whore
+penner                  # de - homeless person (vulgar)
+pimmel                  # de - penis
+poppen                  # de - fuck
+rammel                  # de - fuck
+rammeln                 # de - fuck
 scheis                  # de - shit
-schiese                 # de - shit
 scheise                 # de - shit
+scheissdreck            # de - fucking business (lit: shit)
 scheissekopf            # de - shithead
+schiese                 # de - shit
 schlampe                # de - tramp or slut
 schnoodle noodle        # de - dick snot
 schweinhund             # de - (dumb) pigdog (archaic)
+schwuchtel              # de - faggot (noun)
 schwuchtl               # de - faggot (noun)
-shiess                  # de - shit
 sheiss                  # de - shit
+shiess                  # de - shit
 shiesse                 # de - shit
 sheisse                 # de - shit
+wichser                 # de - motherfucker
 
 
 # Greek
