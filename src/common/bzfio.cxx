@@ -51,9 +51,9 @@ static char *timestamp (char *buf, bool micros)
     struct timeval tv;
     gettimeofday (&tv, NULL);
     tm = localtime((const time_t *)&tv.tv_sec);
-    sprintf (buf, "%04d-%02d-%02d %02d:%02d:%02d.%06ld: ", tm->tm_year+1900,
+    sprintf (buf, "%04d-%02d-%02d %02d:%02d:%02ld.%06ld: ", tm->tm_year+1900,
 	     tm->tm_mon+1,
-             tm->tm_mday, tm->tm_hour, tm->tm_min, tm->tm_sec, tv.tv_usec );
+             tm->tm_mday, tm->tm_hour, tm->tm_min, (long)tm->tm_sec, (long)tv.tv_usec );
 #endif
   } else {
     time_t tt;
