@@ -41,5 +41,6 @@ BZFlag.Events[BZFlag.Event.PlayerJoin].append (join)
 BZFlag.Events[BZFlag.Event.PlayerPart].append (part)
 
 print BZFlag.BZDB
+print BZFlag.BZDB['_worldSize']
 
 BZFlag.SetMaxWaitTime (0.5);
