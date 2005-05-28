@@ -78,15 +78,38 @@ BZFlag::BZFlag ()
 	PyModule_AddObject (module, "Event", event_sub->GetSubModule ());
 	PyModule_AddObject (module, "Team",   team_sub->GetSubModule ());
 
+	capture_handler.parent       = this;
+	die_handler.parent           = this;
+	spawn_handler.parent         = this;
+	zone_entry_handler.parent    = this;
+	zone_exit_handler.parent     = this;
+	join_handler.parent          = this;
+	part_handler.parent          = this;
+	chat_handler.parent          = this;
+	unknownslash_handler.parent  = this;
+	getspawnpos_handler.parent   = this;
+	getautoteam_handler.parent   = this;
+	allowplayer_handler.parent   = this;
+	tick_handler.parent          = this;
+	generateworld_handler.parent = this;
+	getplayerinfo_handler.parent = this;
+
 	// Register event handlers
-	tick_handler.parent    = this;
-	join_handler.parent    = this;
-	part_handler.parent    = this;
-	capture_handler.parent = this;
-	bz_registerGeneralEvent (bz_eCaptureEvent,    &capture_handler);
-	bz_registerGeneralEvent (bz_eTickEvent,       &tick_handler);
-	bz_registerGeneralEvent (bz_ePlayerJoinEvent, &join_handler);
-	bz_registerGeneralEvent (bz_ePlayerPartEvent, &part_handler);
+	bz_registerGeneralEvent (bz_eCaptureEvent,           &capture_handler);
+	bz_registerGeneralEvent (bz_ePlayerDieEvent,         &die_handler);
+	bz_registerGeneralEvent (bz_ePlayerSpawnEvent,       &spawn_handler);
+	bz_registerGeneralEvent (bz_eZoneEntryEvent,         &zone_entry_handler);
+	bz_registerGeneralEvent (bz_eZoneExitEvent,          &zone_exit_handler);
+	bz_registerGeneralEvent (bz_ePlayerJoinEvent,        &join_handler);
+	bz_registerGeneralEvent (bz_ePlayerPartEvent,        &part_handler);
+	bz_registerGeneralEvent (bz_eChatMessageEvent,       &chat_handler);
+	bz_registerGeneralEvent (bz_eUnknownSlashCommand,    &unknownslash_handler);
+	bz_registerGeneralEvent (bz_eGetPlayerSpawnPosEvent, &getspawnpos_handler);
+	bz_registerGeneralEvent (bz_eGetAutoTeamEvent,       &getautoteam_handler);
+	bz_registerGeneralEvent (bz_eAllowPlayer,            &allowplayer_handler);
+	bz_registerGeneralEvent (bz_eTickEvent,              &tick_handler);
+	bz_registerGeneralEvent (bz_eGenerateWorldEvent,     &generateworld_handler);
+	bz_registerGeneralEvent (bz_eGetPlayerInfoEvent,     &getplayerinfo_handler);
 
 	// Create the dictionary for all the event handlers. Key is the int
 	// event ID, value is a list of callables for our callbacks. Marshalling
