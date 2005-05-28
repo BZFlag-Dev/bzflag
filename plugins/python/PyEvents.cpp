@@ -85,6 +85,35 @@ DieHandler::process (bz_EventData *eventData)
 }
 
 void
+SpawnHandler::process (bz_EventData *eventData)
+{
+	bz_PlayerSpawnEventData *psed = (bz_PlayerSpawnEventData *) eventData;
+
+	PyObject *arglist = Py_BuildValue ("ii(fff)fd",
+			psed->playerID,
+			psed->teamID,
+			psed->pos[0],
+			psed->pos[1],
+			psed->pos[2],
+			psed->rot,
+			psed->time);
+	emit (arglist, bz_ePlayerSpawnEvent);
+	Py_DECREF (arglist);
+}
+
+void
+ZoneEntryHandler::process (bz_EventData *eventData)
+{
+	emit (NULL /* FIXME? */, bz_eZoneEntryEvent);
+}
+
+void
+ZoneExitHandler::process (bz_EventData *eventData)
+{
+	emit (NULL /* FIXME? */, bz_eZoneExitEvent);
+}
+
+void
 JoinHandler::process (bz_EventData *eventData)
 {
 	bz_PlayerJoinPartEventData *pjped = (bz_PlayerJoinPartEventData*) eventData;
@@ -115,6 +144,34 @@ PartHandler::process (bz_EventData *eventData)
 			pjped->time);
 
 	emit (arglist, bz_ePlayerPartEvent);
+	Py_DECREF (arglist);
+}
+
+void
+ChatHandler::process (bz_EventData *eventData)
+{
+	bz_ChatEventData *ced = (bz_ChatEventData *) eventData;
+
+	PyObject *arglist = Py_BuildValue ("iisd",
+			ced->from,
+			ced->to,
+			ced->message.c_str (),
+			ced->time);
+	emit (arglist, bz_eChatMessageEvent);
+	Py_DECREF (arglist);
+}
+
+void
+UnknownSlashHandler::process (bz_EventData *eventData)
+{
+	bz_UnknownSlashCommandEventData *usced = (bz_UnknownSlashCommandEventData *) eventData;
+
+	PyObject *arglist = Py_BuildValue ("iosd",
+			usced->from,
+			usced->handled ? Py_True : Py_False,
+			usced->message.c_str (),
+			usced->time);
+	emit (arglist, bz_eUnknownSlashCommand);
 	Py_DECREF (arglist);
 }
 
