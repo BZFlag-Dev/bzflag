@@ -235,7 +235,7 @@ GetPlayerInfoHandler::process (bz_EventData *eventData)
 {
 	bz_GetPlayerInfoEventData *gpied = (bz_GetPlayerInfoEventData *) eventData;
 
-	PyObject *arglist = Py_BuildValue ("",
+	PyObject *arglist = Py_BuildValue ("(issioood)",
 			gpied->playerID,
 			gpied->callsign.c_str (),
 			gpied->ipAddress.c_str (),
