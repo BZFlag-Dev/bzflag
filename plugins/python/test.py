@@ -40,4 +40,6 @@ BZFlag.Events[BZFlag.Event.Tick].append (tick)
 BZFlag.Events[BZFlag.Event.PlayerJoin].append (join)
 BZFlag.Events[BZFlag.Event.PlayerPart].append (part)
 
+print BZFlag.BZDB
+
 BZFlag.SetMaxWaitTime (0.5);

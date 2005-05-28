@@ -117,9 +117,21 @@ BZFlag::BZFlag ()
 	// event ID, value is a list of callables for our callbacks. Marshalling
 	// is handled by the individual event handler classes
 	event_listeners = PyDict_New ();
-	CreateHandlerList (event_listeners, bz_eTickEvent);
+	CreateHandlerList (event_listeners, bz_eCaptureEvent);
+	CreateHandlerList (event_listeners, bz_ePlayerDieEvent);
+	CreateHandlerList (event_listeners, bz_ePlayerSpawnEvent);
+	CreateHandlerList (event_listeners, bz_eZoneEntryEvent);
+	CreateHandlerList (event_listeners, bz_eZoneExitEvent);
 	CreateHandlerList (event_listeners, bz_ePlayerJoinEvent);
 	CreateHandlerList (event_listeners, bz_ePlayerPartEvent);
+	CreateHandlerList (event_listeners, bz_eChatMessageEvent);
+	CreateHandlerList (event_listeners, bz_eUnknownSlashCommand);
+	CreateHandlerList (event_listeners, bz_eGetPlayerSpawnPosEvent);
+	CreateHandlerList (event_listeners, bz_eGetAutoTeamEvent);
+	CreateHandlerList (event_listeners, bz_eAllowPlayer);
+	CreateHandlerList (event_listeners, bz_eTickEvent);
+	CreateHandlerList (event_listeners, bz_eGenerateWorldEvent);
+	CreateHandlerList (event_listeners, bz_eGetPlayerInfoEvent);
 
 	PyModule_AddObject (module, "Events", event_listeners);
 

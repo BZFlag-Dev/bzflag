@@ -16,14 +16,37 @@
 namespace Python
 {
 
+const char *
+event_to_name (int event)
+{
+	switch (event) {
+	case bz_eNullEvent:              return "Null";
+	case bz_eCaptureEvent:           return "Capture";
+	case bz_ePlayerDieEvent:         return "PlayerDie";
+	case bz_ePlayerSpawnEvent:       return "PlayerSpawn";
+	case bz_eZoneEntryEvent:         return "ZoneEntry";
+	case bz_eZoneExitEvent:          return "ZoneExit";
+	case bz_ePlayerJoinEvent:        return "PlayerJoin";
+	case bz_ePlayerPartEvent:        return "PlayerPart";
+	case bz_eChatMessageEvent:       return "ChatMessage";
+	case bz_eUnknownSlashCommand:    return "UnknownSlashCommand";
+	case bz_eGetPlayerSpawnPosEvent: return "GetPlayerSpawnPosition";
+	case bz_eGetAutoTeamEvent:       return "GetAutoTeam";
+	case bz_eAllowPlayer:            return "AllowPlayer";
+	case bz_eTickEvent:              return "Tick";
+	case bz_eGenerateWorldEvent:     return "GenerateWorld";
+	case bz_eGetPlayerInfoEvent:     return "GetPlayerInfo";
+	}
+}
+
 void
-PythonHandler::emit (PyObject *arglist, int event)
+Handler::emit (PyObject *arglist, int event)
 {
 	PyObject *listeners = parent->GetListeners (event);
 
 	if (listeners == NULL || !PyList_Check(listeners)) {
 		// FIXME - throw error
-		fprintf (stderr, "tick listeners is not a list!\n");
+		fprintf (stderr, "%s listeners is not a list!\n", event_to_name (event));
 		return;
 	}
 
@@ -33,7 +56,7 @@ PythonHandler::emit (PyObject *arglist, int event)
 		PyObject *handler = PyList_GetItem (listeners, i);
 		if (!PyCallable_Check (handler)) {
 			// FIXME - throw error
-			fprintf (stderr, "%d listener is not callable\n", event);
+			fprintf (stderr, "%s listener is not callable\n", event_to_name (event));
 			Py_DECREF (arglist);
 			return;
 		}
