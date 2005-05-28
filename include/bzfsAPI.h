@@ -222,7 +222,7 @@ public:
 	bz_GetPlayerSpawnPosEventData()
 	{
 		eventType = bz_eGetPlayerSpawnPosEvent;
-		playeID = -1;
+		playerID = -1;
 		teamID = -1;
 
 		handled = false;
@@ -234,7 +234,7 @@ public:
 
 	virtual ~bz_GetPlayerSpawnPosEventData(){};
 
-	int playeID;
+	int playerID;
 	int teamID;
 
 	bool handled;
