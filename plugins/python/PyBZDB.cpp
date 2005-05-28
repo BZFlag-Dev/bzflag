@@ -16,8 +16,6 @@ namespace Python
 {
 
 static void      BZDB_dealloc       (BZDB *bzdb);
-static PyObject *BZDB_getAttr       (BZDB *bzdb, char *name);
-static int       BZDB_setAttr       (BZDB *bzdb, char *name, PyObject *v);
 static PyObject *BZDB_repr          (BZDB *bzdb);
 static int       BZDB_length        (BZDB *bzdb);
 static PyObject *BZDB_subscript     (BZDB *bzdb, PyObject *key);
@@ -57,19 +55,17 @@ PyTypeObject BZDB_Type = {
 	0,				// tp_doc
 };
 
+PyObject *
+CreateBZDB ()
+{
+	BZDB *bzdb = (BZDB *) PyObject_NEW (BZDB, &BZDB_Type);
+	return ((PyObject *) bzdb);
+}
+
 static void
 BZDB_dealloc (BZDB *bzdb)
 {
-}
-
-static PyObject *
-BZDB_getAttr (BZDB *bzdb, char *name)
-{
-}
-
-static int
-BZDB_setAttr (BZDB *bzdb, char *name, PyObject *v)
-{
+	PyObject_DEL (bzdb);
 }
 
 static PyObject *
@@ -85,6 +81,12 @@ BZDB_length (BZDB *bzdb)
 static PyObject *
 BZDB_subscript (BZDB *bzdb, PyObject *key)
 {
+	if (!PyString_Check (key)) {
+		// FIXME - throw KeyError
+		return NULL;
+	}
+	char *k = PyString_AsString (key);
+	return PyString_FromString (bz_getBZDString (k).c_str ());
 }
 
 static int
