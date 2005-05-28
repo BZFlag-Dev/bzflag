@@ -41,9 +41,19 @@ PyTypeObject Player_Type = {
 	0,				// tp_as_sequence
 	0,				// tp_as_mapping
 	0,				// tp_as_hash
-	0, 0, 0, 0, 0, 0,
+	0,				// tp_call
+	0,				// tp_str
+	0,				// tp_getattro
+	0,				// tp_setattro
+	0,				// tp_as_buffer
+	0,				// tp_flags
 	0,				// tp_doc
-	0, 0, 0, 0, 0, 0,
+	0,				// tp_traverse
+	0,				// tp_clear
+	0,				// tp_richcompare
+	0,				// tp_weaklistoffset
+	0,				// tp_iter
+	0,				// tp_iternext
 	Player_methods,			// tp_methods
 	0,				// tp_members
 };
