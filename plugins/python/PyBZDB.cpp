@@ -15,13 +15,22 @@
 namespace Python
 {
 
-static void      BZDB_dealloc (BZDB *bzdb);
-static PyObject *BZDB_getAttr (BZDB *bzdb, char *name);
-static int       BZDB_setAttr (BZDB *bzdb, char *name, PyObject *v);
-static PyObject *BZDB_repr (BZDB *bzdb);
+static void      BZDB_dealloc       (BZDB *bzdb);
+static PyObject *BZDB_getAttr       (BZDB *bzdb, char *name);
+static int       BZDB_setAttr       (BZDB *bzdb, char *name, PyObject *v);
+static PyObject *BZDB_repr          (BZDB *bzdb);
+static int       BZDB_length        (BZDB *bzdb);
+static PyObject *BZDB_subscript     (BZDB *bzdb, PyObject *key);
+static int       BZDB_ass_subscript (BZDB *bzdb, PyObject *key, PyObject *value);
 
 static PyMethodDef BZDB_methods[] = {
 	{NULL, NULL, 0, NULL},
+};
+
+PyMappingMethods BZDB_mapping = {
+	(inquiry) BZDB_length,			// mp_length
+	(binaryfunc) BZDB_subscript,		// mp_subscript
+	(objobjargproc) BZDB_ass_subscript,	// mp_ass_subscript
 };
 
 PyTypeObject BZDB_Type = {
@@ -38,7 +47,7 @@ PyTypeObject BZDB_Type = {
 	(reprfunc) BZDB_repr,		// tp_repr
 	0,				// tp_as_number
 	0,				// tp_as_sequence
-	0,				// tp_as_mapping
+	&BZDB_mapping,			// tp_as_mapping
 	0,				// tp_as_hash
 	0,				// tp_call
 	0,				// tp_str
@@ -47,5 +56,40 @@ PyTypeObject BZDB_Type = {
 	0,				// tp_flags
 	0,				// tp_doc
 };
+
+static void
+BZDB_dealloc (BZDB *bzdb)
+{
+}
+
+static PyObject *
+BZDB_getAttr (BZDB *bzdb, char *name)
+{
+}
+
+static int
+BZDB_setAttr (BZDB *bzdb, char *name, PyObject *v)
+{
+}
+
+static PyObject *
+BZDB_repr (BZDB *bzdb)
+{
+}
+
+static int
+BZDB_length (BZDB *bzdb)
+{
+}
+
+static PyObject *
+BZDB_subscript (BZDB *bzdb, PyObject *key)
+{
+}
+
+static int
+BZDB_ass_subscript (BZDB *bzdb, PyObject *key, PyObject *value)
+{
+}
 
 }
