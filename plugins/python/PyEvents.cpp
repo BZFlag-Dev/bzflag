@@ -250,7 +250,8 @@ GenerateWorldHandler::process (bz_EventData *eventData)
 			gwed->ctf ? Py_True : Py_False,
 			gwed->time);
 	emit (arglist, bz_eGenerateWorldEvent);
-	Py_DECREF (arglist);
+	// FIXME - dunno why this is crashing
+//	Py_DECREF (arglist);
 }
 
 void
