@@ -308,7 +308,7 @@ public:
 		team = -1;
 		admin = false;
 		verified = false;
-		registerd = false;
+		registered = false;
 		time = 0.0;
 	}
 	virtual ~bz_GetPlayerInfoEventData(){};
@@ -320,7 +320,7 @@ public:
 
 	bool admin;
 	bool verified;
-	bool registerd;
+	bool registered;
 	double time;
 };
 
