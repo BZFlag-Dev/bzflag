@@ -26,6 +26,9 @@ class PythonHandler : public bz_EventHandler
 public:
 	virtual void process (bz_EventData *eventData);
 	BZFlag *parent;
+
+protected:
+	void emit (PyObject *arglist, int event);
 };
 
 #define PY_HANDLER(x) class x : public PythonHandler { public: virtual void process (bz_EventData *eventData); };

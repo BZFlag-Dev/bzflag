@@ -17,16 +17,39 @@ namespace Python
 {
 
 void
-CaptureHandler::process (bz_EventData *eventData)
+PythonHandler::emit (PyObject *arglist, int event)
 {
-	PyObject *listeners = parent->GetListeners (bz_eCaptureEvent);
+	PyObject *listeners = parent->GetListeners (event);
 
-	bz_CTFCaptureEventData *ced = (bz_CTFCaptureEventData *) eventData;
 	if (listeners == NULL || !PyList_Check(listeners)) {
 		// FIXME - throw error
 		fprintf (stderr, "tick listeners is not a list!\n");
 		return;
 	}
+
+	// Call out
+	int size = PyList_Size (listeners);
+	for (int i = 0; i < size; i++) {
+		PyObject *handler = PyList_GetItem (listeners, i);
+		if (!PyCallable_Check (handler)) {
+			// FIXME - throw error
+			fprintf (stderr, "%d listener is not callable\n", event);
+			Py_DECREF (arglist);
+			return;
+		}
+		PyErr_Clear ();
+		PyEval_CallObject (handler, arglist);
+		if (PyErr_Occurred ()) {
+			PyErr_Print ();
+			return;
+		}
+	}
+}
+
+void
+CaptureHandler::process (bz_EventData *eventData)
+{
+	bz_CTFCaptureEventData *ced = (bz_CTFCaptureEventData *) eventData;
 
 	PyObject *arglist = Py_BuildValue ("(iii(fff)fd",
 			ced->teamCaped,
@@ -37,24 +60,7 @@ CaptureHandler::process (bz_EventData *eventData)
 			ced->pos[2],
 			ced->rot,
 			ced->time);
-
-	// Call out to all of our listeners
-	int size = PyList_Size (listeners);
-	for (int i = 0; i < size; i++) {
-		PyObject *handler = PyList_GetItem (listeners, i);
-		if (!PyCallable_Check (handler)) {
-			// FIXME - throw error
-			fprintf (stderr, "tick listener is not callable\n");
-			Py_DECREF (arglist);
-			return;
-		}
-		PyErr_Clear ();
-		PyEval_CallObject (handler, arglist);
-		if (PyErr_Occurred ()) {
-			PyErr_Print ();
-			return;
-		}
-	}
+	emit (arglist, bz_eCaptureEvent);
 	Py_DECREF (arglist);
 }
 
@@ -64,29 +70,7 @@ JoinHandler::process (bz_EventData *eventData)
 	bz_PlayerJoinPartEventData *pjped = (bz_PlayerJoinPartEventData*) eventData;
 	parent->AddPlayer (pjped->playerID);
 
-	PyObject *listeners = parent->GetListeners (bz_ePlayerJoinEvent);
-	if (listeners == NULL || !PyList_Check (listeners)) {
-		// FIXME - throw error
-		fprintf (stderr, "join listeners is not a list!\n");
-		return;
-	}
-
-	// Call out to all of our listeners
-	int size = PyList_Size (listeners);
-	for (int i = 0; i < size; i++) {
-		PyObject *handler = PyList_GetItem (listeners, i);
-		if (!PyCallable_Check (handler)) {
-			// FIXME - throw error
-			fprintf (stderr, "join listener is not callable\n");
-			return;
-		}
-		PyErr_Clear ();
-		PyEval_CallObject (handler, NULL);
-		if (PyErr_Occurred ()) {
-			PyErr_Print ();
-			return;
-		}
-	}
+	emit (NULL /* FIXME */, bz_ePlayerJoinEvent);
 }
 
 void
@@ -95,62 +79,16 @@ PartHandler::process (bz_EventData *eventData)
 	bz_PlayerJoinPartEventData *pjped = (bz_PlayerJoinPartEventData*) eventData;
 	parent->RemovePlayer (pjped->playerID);
 
-	PyObject *listeners = parent->GetListeners (bz_ePlayerPartEvent);
-	if (listeners == NULL || !PyList_Check (listeners)) {
-		// FIXME - throw error
-		fprintf (stderr, "part listeners is not a list!\n");
-		return;
-	}
-
-	// Call out to all of our listeners
-	int size = PyList_Size (listeners);
-	for (int i = 0; i < size; i++) {
-		PyObject *handler = PyList_GetItem (listeners, i);
-		if (!PyCallable_Check (handler)) {
-			// FIXME - throw error
-			fprintf (stderr, "part listener is not callable\n");
-			return;
-		}
-		PyErr_Clear ();
-		PyEval_CallObject (handler, NULL);
-		if (PyErr_Occurred ()) {
-			PyErr_Print ();
-			return;
-		}
-	}
+	emit (NULL /* FIXME */, bz_ePlayerPartEvent);
 }
 
 void
 TickHandler::process (bz_EventData *eventData)
 {
-	PyObject *listeners = parent->GetListeners (bz_eTickEvent);
-
 	bz_TickEventData *ted = (bz_TickEventData*) eventData;
-	if (listeners == NULL || !PyList_Check (listeners)) {
-		// FIXME - throw error
-		fprintf (stderr, "tick listeners is not a list!\n");
-		return;
-	}
 
 	PyObject *arglist = Py_BuildValue ("(d)", ted->time);
-
-	// Call out to all of our listeners
-	int size = PyList_Size (listeners);
-	for (int i = 0; i < size; i++) {
-		PyObject *handler = PyList_GetItem (listeners, i);
-		if (!PyCallable_Check (handler)) {
-			// FIXME - throw error
-			fprintf (stderr, "tick listener is not callable\n");
-			Py_DECREF (arglist);
-			return;
-		}
-		PyErr_Clear ();
-		PyEval_CallObject (handler, arglist);
-		if (PyErr_Occurred ()) {
-			PyErr_Print ();
-			return;
-		}
-	}
+	emit (arglist, bz_eTickEvent);
 	Py_DECREF (arglist);
 }
 
