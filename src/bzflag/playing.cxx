@@ -3241,9 +3241,9 @@ static bool		gotBlowedUp(BaseLocalPlayer* tank,
 	      blowedUpNotice += Team::getName(killerPlayer->getTeam());
 	    }
 	    blowedUpNotice += ")";
-	    if (flag != Flags::Null) {
+	    if (flagType != Flags::Null) {
 	      blowedUpNotice += " with ";
-	      blowedUpNotice += flag->flagAbbv;
+	      blowedUpNotice += flagType->flagAbbv;
 	    }
 	  }
 	}
