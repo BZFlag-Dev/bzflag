@@ -65,6 +65,26 @@ CaptureHandler::process (bz_EventData *eventData)
 }
 
 void
+DieHandler::process (bz_EventData *eventData)
+{
+	bz_PlayerDieEventData *pded = (bz_PlayerDieEventData *) eventData;
+
+	PyObject *arglist = Py_BuildValue ("iiiis(fff)fd",
+			pded->playerID,
+			pded->teamID,
+			pded->killerID,
+			pded->killerTeamID,
+			pded->flagKilledWith.c_str(),
+			pded->pos[0],
+			pded->pos[1],
+			pded->pos[2],
+			pded->rot,
+			pded->time);
+	emit (arglist, bz_ePlayerDieEvent);
+	Py_DECREF (arglist);
+}
+
+void
 JoinHandler::process (bz_EventData *eventData)
 {
 	bz_PlayerJoinPartEventData *pjped = (bz_PlayerJoinPartEventData*) eventData;
