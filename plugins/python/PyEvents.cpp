@@ -51,7 +51,7 @@ CaptureHandler::process (bz_EventData *eventData)
 {
 	bz_CTFCaptureEventData *ced = (bz_CTFCaptureEventData *) eventData;
 
-	PyObject *arglist = Py_BuildValue ("(iii(fff)fd",
+	PyObject *arglist = Py_BuildValue ("(iii(fff)fd)",
 			ced->teamCaped,
 			ced->teamCaping,
 			ced->playerCaping,
@@ -69,7 +69,7 @@ DieHandler::process (bz_EventData *eventData)
 {
 	bz_PlayerDieEventData *pded = (bz_PlayerDieEventData *) eventData;
 
-	PyObject *arglist = Py_BuildValue ("iiiis(fff)fd",
+	PyObject *arglist = Py_BuildValue ("(iiiis(fff)fd)",
 			pded->playerID,
 			pded->teamID,
 			pded->killerID,
@@ -89,7 +89,7 @@ SpawnHandler::process (bz_EventData *eventData)
 {
 	bz_PlayerSpawnEventData *psed = (bz_PlayerSpawnEventData *) eventData;
 
-	PyObject *arglist = Py_BuildValue ("ii(fff)fd",
+	PyObject *arglist = Py_BuildValue ("(ii(fff)fd)",
 			psed->playerID,
 			psed->teamID,
 			psed->pos[0],
@@ -119,7 +119,7 @@ JoinHandler::process (bz_EventData *eventData)
 	bz_PlayerJoinPartEventData *pjped = (bz_PlayerJoinPartEventData*) eventData;
 	parent->AddPlayer (pjped->playerID);
 
-	PyObject *arglist = Py_BuildValue ("iissd",
+	PyObject *arglist = Py_BuildValue ("(iissd)",
 			pjped->playerID,
 			pjped->teamID,
 			pjped->callsign.c_str (),
@@ -136,7 +136,7 @@ PartHandler::process (bz_EventData *eventData)
 	bz_PlayerJoinPartEventData *pjped = (bz_PlayerJoinPartEventData*) eventData;
 	parent->RemovePlayer (pjped->playerID);
 
-	PyObject *arglist = Py_BuildValue ("iissd",
+	PyObject *arglist = Py_BuildValue ("(iissd)",
 			pjped->playerID,
 			pjped->teamID,
 			pjped->callsign.c_str (),
@@ -152,7 +152,7 @@ ChatHandler::process (bz_EventData *eventData)
 {
 	bz_ChatEventData *ced = (bz_ChatEventData *) eventData;
 
-	PyObject *arglist = Py_BuildValue ("iisd",
+	PyObject *arglist = Py_BuildValue ("(iisd)",
 			ced->from,
 			ced->to,
 			ced->message.c_str (),
@@ -166,12 +166,85 @@ UnknownSlashHandler::process (bz_EventData *eventData)
 {
 	bz_UnknownSlashCommandEventData *usced = (bz_UnknownSlashCommandEventData *) eventData;
 
-	PyObject *arglist = Py_BuildValue ("iosd",
+	PyObject *arglist = Py_BuildValue ("(iosd)",
 			usced->from,
 			usced->handled ? Py_True : Py_False,
 			usced->message.c_str (),
 			usced->time);
 	emit (arglist, bz_eUnknownSlashCommand);
+	Py_DECREF (arglist);
+}
+
+void
+GetSpawnPosHandler::process (bz_EventData *eventData)
+{
+	bz_GetPlayerSpawnPosEventData *gpsped = (bz_GetPlayerSpawnPosEventData *) eventData;
+
+	// FIXME - this probably has some way to return data to the main program
+	PyObject *arglist = Py_BuildValue ("(iio(fff)fd)",
+			gpsped->playerID,
+			gpsped->teamID,
+			gpsped->handled ? Py_True : Py_False,
+			gpsped->pos[0],
+			gpsped->pos[1],
+			gpsped->pos[2],
+			gpsped->rot,
+			gpsped->time);
+	emit (arglist, bz_eGetPlayerSpawnPosEvent);
+	Py_DECREF (arglist);
+}
+
+void
+GetAutoTeamHandler::process (bz_EventData *eventData)
+{
+	emit (NULL, bz_eGetAutoTeamEvent);
+}
+
+void
+AllowPlayerHandler::process (bz_EventData *eventData)
+{
+	bz_AllowPlayerEventData *aped = (bz_AllowPlayerEventData *) eventData;
+
+	// FIXME - this probably has some way to return data to the main program
+	PyObject *arglist = Py_BuildValue ("(isssod)",
+			aped->playerID,
+			aped->callsign.c_str (),
+			aped->ipAddress.c_str (),
+			aped->reason.c_str (),
+			aped->allow ? Py_True : Py_False,
+			aped->time);
+	emit (arglist, bz_eAllowPlayer);
+	Py_DECREF (arglist);
+}
+
+void
+GenerateWorldHandler::process (bz_EventData *eventData)
+{
+	bz_GenerateWorldEventData *gwed = (bz_GenerateWorldEventData *) eventData;
+
+	PyObject *arglist = Py_BuildValue ("(ood)",
+			gwed->handled ? Py_True : Py_False,
+			gwed->ctf ? Py_True : Py_False,
+			gwed->time);
+	emit (arglist, bz_eGenerateWorldEvent);
+	Py_DECREF (arglist);
+}
+
+void
+GetPlayerInfoHandler::process (bz_EventData *eventData)
+{
+	bz_GetPlayerInfoEventData *gpied = (bz_GetPlayerInfoEventData *) eventData;
+
+	PyObject *arglist = Py_BuildValue ("",
+			gpied->playerID,
+			gpied->callsign.c_str (),
+			gpied->ipAddress.c_str (),
+			gpied->team,
+			gpied->admin ? Py_True : Py_False,
+			gpied->verified ? Py_True : Py_False,
+			gpied->registered ? Py_True : Py_False,
+			gpied->time);
+	emit (arglist, bz_eGetPlayerInfoEvent);
 	Py_DECREF (arglist);
 }
 
