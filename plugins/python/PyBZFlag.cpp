@@ -74,9 +74,11 @@ BZFlag::BZFlag ()
 	// Create and add submodules
 	event_sub = new Event ();
 	team_sub  = new Team ();
+	bzdb      = CreateBZDB ();
 
 	PyModule_AddObject (module, "Event", event_sub->GetSubModule ());
-	PyModule_AddObject (module, "Team",   team_sub->GetSubModule ());
+	PyModule_AddObject (module, "Team",  team_sub->GetSubModule ());
+	PyModule_AddObject (module, "BZDB",  bzdb);
 
 	capture_handler.parent       = this;
 	die_handler.parent           = this;

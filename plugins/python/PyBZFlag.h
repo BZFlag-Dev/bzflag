@@ -10,6 +10,7 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+#include "PyBZDB.h"
 #include "PyEvent.h"
 #include "PyEvents.h"
 #include "PyTeam.h"
@@ -36,11 +37,16 @@ public:
 protected:
 	BZFlag ();
 private:
+	// yep, we're a singleton
 	static BZFlag *instance;
+
 	Event *event_sub;
 	Team  *team_sub;
+
 	PyObject *event_listeners;
 	PyObject *players;
+	PyObject *bzdb;
+
 	PyObject *module;
 
 	CaptureHandler       capture_handler;
