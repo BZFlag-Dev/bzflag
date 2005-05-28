@@ -90,7 +90,15 @@ JoinHandler::process (bz_EventData *eventData)
 	bz_PlayerJoinPartEventData *pjped = (bz_PlayerJoinPartEventData*) eventData;
 	parent->AddPlayer (pjped->playerID);
 
-	emit (NULL /* FIXME */, bz_ePlayerJoinEvent);
+	PyObject *arglist = Py_BuildValue ("iissd",
+			pjped->playerID,
+			pjped->teamID,
+			pjped->callsign.c_str (),
+			pjped->reason.c_str (),
+			pjped->time);
+
+	emit (arglist, bz_ePlayerJoinEvent);
+	Py_DECREF (arglist);
 }
 
 void
@@ -99,7 +107,15 @@ PartHandler::process (bz_EventData *eventData)
 	bz_PlayerJoinPartEventData *pjped = (bz_PlayerJoinPartEventData*) eventData;
 	parent->RemovePlayer (pjped->playerID);
 
-	emit (NULL /* FIXME */, bz_ePlayerPartEvent);
+	PyObject *arglist = Py_BuildValue ("iissd",
+			pjped->playerID,
+			pjped->teamID,
+			pjped->callsign.c_str (),
+			pjped->reason.c_str (),
+			pjped->time);
+
+	emit (arglist, bz_ePlayerPartEvent);
+	Py_DECREF (arglist);
 }
 
 void
