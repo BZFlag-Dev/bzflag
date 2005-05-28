@@ -11,6 +11,7 @@
  */
 
 #include "PyEvent.h"
+#include "PyEvents.h"
 #include "PyTeam.h"
 #include <Python.h>
 #include <map>
@@ -20,36 +21,6 @@
 
 namespace Python
 {
-
-class BZFlag;
-
-class CaptureHandler : public bz_EventHandler
-{
-public:
-	virtual void process (bz_EventData *eventData);
-	BZFlag *parent;
-};
-
-class TickHandler : public bz_EventHandler
-{
-public:
-	virtual void process (bz_EventData *eventData);
-	BZFlag *parent;
-};
-
-class JoinHandler : public bz_EventHandler
-{
-public:
-	virtual void process (bz_EventData *eventData);
-	BZFlag *parent;
-};
-
-class PartHandler : public bz_EventHandler
-{
-public:
-	virtual void process (bz_EventData *eventData);
-	BZFlag *parent;
-};
 
 class BZFlag
 {
