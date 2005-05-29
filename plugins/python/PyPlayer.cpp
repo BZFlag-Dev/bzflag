@@ -22,15 +22,15 @@ static int       Player_compare    (Player *a1, Player *a2);
 static PyObject *Player_repr       (Player *player);
 static PyObject *Player_ban        (Player *self, PyObject *args);
 static PyObject *Player_kick       (Player *self, PyObject *args);
-static PyObject *Player_kill       (Player *self, PyObject *args);
+static PyObject *Player_kill       (Player *self, PyObject *args, PyObject *keywords);
 static PyObject *Player_removeFlag (Player *self, PyObject *args);
 
 static PyMethodDef Player_methods[] = {
-	{"Ban",        (PyCFunction) Player_ban,        METH_VARARGS, NULL},
-	{"Kick",       (PyCFunction) Player_kick,       METH_VARARGS, NULL},
-	{"Kill",       (PyCFunction) Player_kill,       METH_VARARGS, NULL},
-	{"RemoveFlag", (PyCFunction) Player_removeFlag, METH_VARARGS, NULL},
-	{NULL,         NULL,                            0,            NULL},
+	{"Ban",        (PyCFunction) Player_ban,        METH_VARARGS,                 NULL},
+	{"Kick",       (PyCFunction) Player_kick,       METH_VARARGS,                 NULL},
+	{"Kill",       (PyCFunction) Player_kill,       METH_VARARGS,                 NULL},
+	{"RemoveFlag", (PyCFunction) Player_removeFlag, METH_VARARGS | METH_KEYWORDS, NULL},
+	{NULL,         NULL,                            0,                            NULL},
 };
 
 PyTypeObject Player_Type = {
@@ -168,8 +168,19 @@ Player_kick (Player *self, PyObject *args)
 }
 
 static PyObject *
-Player_kill (Player *self, PyObject *args)
+Player_kill (Player *self, PyObject *args, PyObject *keywords)
 {
+	PyObject *spawn = Py_False;
+
+	static char *kwlist[] = {"spawnOnBase", NULL};
+	if (!PyArg_ParseTupleAndKeywords (args, keywords, "|o", kwlist, &spawn)) {
+		fprintf (stderr, "couldn't parse args\n");
+		// FIXME - throw error
+		return NULL;
+	}
+
+	bool result = bz_killPlayer (self->record->playerID, (spawn == Py_True));
+	return (result ? Py_True : Py_False);
 }
 
 static PyObject *
