@@ -136,7 +136,7 @@ GUIOptionsMenu::GUIOptionsMenu()
   option->setFontFace(fontFace);
   option->setLabel("Radar & Panel Size:");
   option->setCallback(callback, (void*)"R");
-  option->createSlider(11);
+  option->createSlider(maxRadarSize+1);
   option->update();
   listHUD.push_back(option);
 

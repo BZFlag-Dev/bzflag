@@ -4,6 +4,8 @@
 BZFlag 2.0.3
 ------------
 
+* Increase range of radar size setting in GUI Option menu - Mark Thomas
+* Fixed Menu rendering problems when radar size greater than 10 - Sean Morrison, Mark Thomas
 * Fixed Linux name resolution (server list) problem - Sean Morrison
 * Fixed Jitter problem on Windows, clock was wrong - Alfredo Tupone
 * Windows platform can switch from SDL to native - Alfredo Tupone

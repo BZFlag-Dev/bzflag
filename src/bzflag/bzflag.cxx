@@ -49,6 +49,7 @@
 #include "ErrorHandler.h"
 #include "FileManager.h"
 #include "FontManager.h"
+#include "GUIOptionsMenu.h"
 #include "KeyManager.h"
 #include "OSFile.h"
 #include "OpenGLGState.h"
@@ -1513,8 +1514,10 @@ int			main(int argc, char** argv)
 
     if (BZDB.isSet("panelopacity"))
       RENDERER.setPanelOpacity(BZDB.eval("panelopacity"));
+
     if (BZDB.isSet("radarsize"))
-      RENDERER.setRadarSize(atoi(BZDB.get("radarsize").c_str()));
+      RENDERER.setRadarSize(BZDB.getIntClamped("radarsize", 0, GUIOptionsMenu::maxRadarSize));
+
     if (BZDB.isSet("mouseboxsize"))
       RENDERER.setMaxMotionFactor(atoi(BZDB.get("mouseboxsize").c_str()));
   }

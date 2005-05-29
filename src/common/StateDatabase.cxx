@@ -356,6 +356,22 @@ std::string		StateDatabase::get(const std::string& name) const
     return index->second.value;
 }
 
+int		StateDatabase::getIntClamped(const std::string& name, const int min, const int max) const
+{
+  int val;
+  debugLookups(name);
+  Map::const_iterator index = items.find(name);
+  if (index == items.end() || !index->second.isSet)
+    val=0;
+  else
+    val = atoi(index->second.value.c_str());
+  if (val < min)
+    return min;
+  else if (val > max)
+    return max;
+  return val;
+}
+
 void *		StateDatabase::getPointer(const std::string& name) const
 {
   debugLookups(name);

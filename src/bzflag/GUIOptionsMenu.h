@@ -38,6 +38,8 @@ public:
   void resize(int width, int height);
   static void callback(HUDuiControl* w, void* data);
 
+  static const int maxRadarSize = 30;
+
 private:
 };
 

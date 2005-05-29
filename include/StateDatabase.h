@@ -143,6 +143,11 @@ public:
    */
   std::string			get(const std::string& name) const;
 
+  /** get the INT value associated with a name. Clamp value within range.
+   *  Returns 0 (or min) if value is not set.
+   */
+  int	getIntClamped(const std::string& name, const int min, const int max) const;
+
   /** returns the pointer stored with a name.  returns NULL if the
    * name isn't set.
    */
