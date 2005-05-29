@@ -20,15 +20,15 @@ static PyObject *Player_getAttr    (Player *player, char *name);
 static int       Player_setAttr    (Player *player, char *name, PyObject *v);
 static int       Player_compare    (Player *a1, Player *a2);
 static PyObject *Player_repr       (Player *player);
-static PyObject *Player_ban        (Player *self, PyObject *args);
-static PyObject *Player_kick       (Player *self, PyObject *args);
+static PyObject *Player_ban        (Player *self, PyObject *args, PyObject *keywords);
+static PyObject *Player_kick       (Player *self, PyObject *args, PyObject *keywords);
 static PyObject *Player_kill       (Player *self, PyObject *args, PyObject *keywords);
-static PyObject *Player_removeFlag (Player *self, PyObject *args);
+static PyObject *Player_removeFlag (Player *self, PyObject *args, PyObject *keywords);
 
 static PyMethodDef Player_methods[] = {
-	{"Ban",        (PyCFunction) Player_ban,        METH_VARARGS,                 NULL},
-	{"Kick",       (PyCFunction) Player_kick,       METH_VARARGS,                 NULL},
-	{"Kill",       (PyCFunction) Player_kill,       METH_VARARGS,                 NULL},
+	{"Ban",        (PyCFunction) Player_ban,        METH_VARARGS | METH_KEYWORDS, NULL},
+	{"Kick",       (PyCFunction) Player_kick,       METH_VARARGS | METH_KEYWORDS, NULL},
+	{"Kill",       (PyCFunction) Player_kill,       METH_VARARGS | METH_KEYWORDS, NULL},
 	{"RemoveFlag", (PyCFunction) Player_removeFlag, METH_VARARGS | METH_KEYWORDS, NULL},
 	{NULL,         NULL,                            0,                            NULL},
 };
@@ -158,12 +158,12 @@ Player_repr (Player *player)
 }
 
 static PyObject *
-Player_ban (Player *self, PyObject *args)
+Player_ban (Player *self, PyObject *args, PyObject *keywords)
 {
 }
 
 static PyObject *
-Player_kick (Player *self, PyObject *args)
+Player_kick (Player *self, PyObject *args, PyObject *keywords)
 {
 }
 
@@ -184,7 +184,7 @@ Player_kill (Player *self, PyObject *args, PyObject *keywords)
 }
 
 static PyObject *
-Player_removeFlag (Player *self, PyObject *args)
+Player_removeFlag (Player *self, PyObject *args, PyObject *keywords)
 {
 }
 
