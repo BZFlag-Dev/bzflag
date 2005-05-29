@@ -16,13 +16,20 @@ namespace Python
 {
 
 static void      BZDB_dealloc       (BZDB *bzdb);
+static PyObject *BZDB_getAttr       (BZDB *bzdb, char *name);
 static PyObject *BZDB_repr          (BZDB *bzdb);
 static int       BZDB_length        (BZDB *bzdb);
 static PyObject *BZDB_subscript     (BZDB *bzdb, PyObject *key);
 static int       BZDB_ass_subscript (BZDB *bzdb, PyObject *key, PyObject *value);
+static PyObject *BZDB_bool          (BZDB *self, PyObject *args);
+static PyObject *BZDB_double        (BZDB *self, PyObject *args);
+static PyObject *BZDB_int           (BZDB *self, PyObject *args);
 
 static PyMethodDef BZDB_methods[] = {
-	{NULL, NULL, 0, NULL},
+	{"GetBool",   (PyCFunction) BZDB_bool,   METH_VARARGS, NULL},
+	{"GetDouble", (PyCFunction) BZDB_double, METH_VARARGS, NULL},
+	{"GetInt",    (PyCFunction) BZDB_int,    METH_VARARGS, NULL},
+	{NULL,        NULL,                      0,            NULL},
 };
 
 PyMappingMethods BZDB_mapping = {
@@ -39,7 +46,7 @@ PyTypeObject BZDB_Type = {
 	0,				// tp_itemsize
 	(destructor) BZDB_dealloc,	// tp_dealloc
 	0,				// tp_print
-	0,				// tp_getattr
+	(getattrfunc) BZDB_getAttr,	// tp_getattr
 	0,				// tp_setattr
 	0,				// tp_compare
 	0,				// tp_repr - FIXME?
@@ -69,6 +76,12 @@ BZDB_dealloc (BZDB *bzdb)
 }
 
 static PyObject *
+BZDB_getAttr (BZDB *bzdb, char *name)
+{
+	return Py_FindMethod (BZDB_methods, (PyObject *) bzdb, name);
+}
+
+static PyObject *
 BZDB_repr (BZDB *bzdb)
 {
 }
@@ -86,12 +99,55 @@ BZDB_subscript (BZDB *bzdb, PyObject *key)
 		return NULL;
 	}
 	char *k = PyString_AsString (key);
-	return PyString_FromString (bz_getBZDString (k).c_str ());
+	return PyString_FromString (bz_getBZDBString (k).c_str ());
 }
 
 static int
 BZDB_ass_subscript (BZDB *bzdb, PyObject *key, PyObject *value)
 {
+	if (!PyString_Check (key)) {
+		// FIXME - throw error
+		return 0;
+	}
+	if (!PyString_Check (value)) {
+		// FIXME - throw error
+		return 0;
+	}
+	// FIXME - need API for this
+	return 1;
+}
+
+static PyObject *
+BZDB_bool (BZDB *self, PyObject *args)
+{
+	char *key;
+	if (!PyArg_ParseTuple (args, "s", &key)) {
+		// FIXME - throw KeyError
+		return NULL;
+	}
+	return (bz_getBZDBBool (key) ? Py_True : Py_False);
+}
+
+static PyObject *
+BZDB_double (BZDB *self, PyObject *args)
+{
+	char *key;
+	if (!PyArg_ParseTuple (args, "s", &key)) {
+		// FIXME - throw KeyError
+		return NULL;
+	}
+	return PyFloat_FromDouble (bz_getBZDBDouble (key));
+}
+
+static PyObject *
+BZDB_int (BZDB *self, PyObject *args)
+{
+	char *key;
+	if (!PyArg_ParseTuple (args, "s", &key)) {
+		// FIXME - throw KeyError
+		return NULL;
+	}
+	return PyInt_FromLong ((long) bz_getBZDBInt (key));
 }
 
 }
