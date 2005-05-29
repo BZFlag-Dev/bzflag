@@ -59,9 +59,11 @@ BZFlag::DeRef ()
 }
 
 void
-CreateHandlerList (PyObject *dict, int event)
+BZFlag::RegisterEvent (Handler *handler, bz_teEventType event)
 {
-	PyDict_SetItem (dict, PyInt_FromLong (event), PyList_New (0));
+	handler->parent = this;
+	bz_registerGeneralEvent (event, handler);
+	PyDict_SetItem (event_listeners, PyInt_FromLong ((long) event), PyList_New (0));
 }
 
 BZFlag::BZFlag ()
@@ -80,58 +82,23 @@ BZFlag::BZFlag ()
 	PyModule_AddObject (module, "Team",  team_sub->GetSubModule ());
 	PyModule_AddObject (module, "BZDB",  bzdb);
 
-	capture_handler.parent       = this;
-	die_handler.parent           = this;
-	spawn_handler.parent         = this;
-	zone_entry_handler.parent    = this;
-	zone_exit_handler.parent     = this;
-	join_handler.parent          = this;
-	part_handler.parent          = this;
-	chat_handler.parent          = this;
-	unknownslash_handler.parent  = this;
-	getspawnpos_handler.parent   = this;
-	getautoteam_handler.parent   = this;
-	allowplayer_handler.parent   = this;
-	tick_handler.parent          = this;
-	generateworld_handler.parent = this;
-	getplayerinfo_handler.parent = this;
-
 	// Register event handlers
-	bz_registerGeneralEvent (bz_eCaptureEvent,           &capture_handler);
-	bz_registerGeneralEvent (bz_ePlayerDieEvent,         &die_handler);
-	bz_registerGeneralEvent (bz_ePlayerSpawnEvent,       &spawn_handler);
-	bz_registerGeneralEvent (bz_eZoneEntryEvent,         &zone_entry_handler);
-	bz_registerGeneralEvent (bz_eZoneExitEvent,          &zone_exit_handler);
-	bz_registerGeneralEvent (bz_ePlayerJoinEvent,        &join_handler);
-	bz_registerGeneralEvent (bz_ePlayerPartEvent,        &part_handler);
-	bz_registerGeneralEvent (bz_eChatMessageEvent,       &chat_handler);
-	bz_registerGeneralEvent (bz_eUnknownSlashCommand,    &unknownslash_handler);
-	bz_registerGeneralEvent (bz_eGetPlayerSpawnPosEvent, &getspawnpos_handler);
-	bz_registerGeneralEvent (bz_eGetAutoTeamEvent,       &getautoteam_handler);
-	bz_registerGeneralEvent (bz_eAllowPlayer,            &allowplayer_handler);
-	bz_registerGeneralEvent (bz_eTickEvent,              &tick_handler);
-	bz_registerGeneralEvent (bz_eGenerateWorldEvent,     &generateworld_handler);
-	bz_registerGeneralEvent (bz_eGetPlayerInfoEvent,     &getplayerinfo_handler);
-
-	// Create the dictionary for all the event handlers. Key is the int
-	// event ID, value is a list of callables for our callbacks. Marshalling
-	// is handled by the individual event handler classes
 	event_listeners = PyDict_New ();
-	CreateHandlerList (event_listeners, bz_eCaptureEvent);
-	CreateHandlerList (event_listeners, bz_ePlayerDieEvent);
-	CreateHandlerList (event_listeners, bz_ePlayerSpawnEvent);
-	CreateHandlerList (event_listeners, bz_eZoneEntryEvent);
-	CreateHandlerList (event_listeners, bz_eZoneExitEvent);
-	CreateHandlerList (event_listeners, bz_ePlayerJoinEvent);
-	CreateHandlerList (event_listeners, bz_ePlayerPartEvent);
-	CreateHandlerList (event_listeners, bz_eChatMessageEvent);
-	CreateHandlerList (event_listeners, bz_eUnknownSlashCommand);
-	CreateHandlerList (event_listeners, bz_eGetPlayerSpawnPosEvent);
-	CreateHandlerList (event_listeners, bz_eGetAutoTeamEvent);
-	CreateHandlerList (event_listeners, bz_eAllowPlayer);
-	CreateHandlerList (event_listeners, bz_eTickEvent);
-	CreateHandlerList (event_listeners, bz_eGenerateWorldEvent);
-	CreateHandlerList (event_listeners, bz_eGetPlayerInfoEvent);
+	RegisterEvent (&capture_handler,       bz_eCaptureEvent);
+	RegisterEvent (&die_handler,           bz_ePlayerDieEvent);
+	RegisterEvent (&spawn_handler,         bz_ePlayerSpawnEvent);
+	RegisterEvent (&zone_entry_handler,    bz_eZoneEntryEvent);
+	RegisterEvent (&zone_exit_handler,     bz_eZoneExitEvent);
+	RegisterEvent (&join_handler,          bz_ePlayerJoinEvent);
+	RegisterEvent (&part_handler,          bz_ePlayerPartEvent);
+	RegisterEvent (&chat_handler,          bz_eChatMessageEvent);
+	RegisterEvent (&unknownslash_handler,  bz_eUnknownSlashCommand);
+	RegisterEvent (&getspawnpos_handler,   bz_eGetPlayerSpawnPosEvent);
+	RegisterEvent (&getautoteam_handler,   bz_eGetAutoTeamEvent);
+	RegisterEvent (&allowplayer_handler,   bz_eAllowPlayer);
+	RegisterEvent (&tick_handler,          bz_eTickEvent);
+	RegisterEvent (&generateworld_handler, bz_eGenerateWorldEvent);
+	RegisterEvent (&getplayerinfo_handler, bz_eGetPlayerInfoEvent);
 
 	PyModule_AddObject (module, "Events", event_listeners);
 
@@ -149,15 +116,6 @@ BZFlag::GetListeners (int event)
 	Py_DECREF (o);
 
 	return ret;
-}
-
-bool PlayerExists (std::vector<int> h, int n)
-{
-	for (std::vector<int>::iterator it = h.begin (); it != h.end (); it++) {
-		if (n == *it)
-			return true;
-	}
-	return false;
 }
 
 void
