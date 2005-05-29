@@ -9,6 +9,8 @@ BZDB can probably also be exposed as a dictionary
 
 I'm not sure this will actually work. Might require making a custom object
 that acts like a dictionary
+
+Might want to move functions like KillPlayer and KickUser into the Player class
 -----------------------------------------
 TODO:
 

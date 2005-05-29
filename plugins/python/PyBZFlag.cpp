@@ -17,27 +17,41 @@
 namespace Python
 {
 
+static PyObject *BanIP                (PyObject *self, PyObject *args);
+static PyObject *DebugMessage         (PyObject *self, PyObject *args);
 static PyObject *FireWorldWeapon      (PyObject *self, PyObject *args);
 static PyObject *GetCurrentTime       (PyObject *self, PyObject *args);
 static PyObject *GetMaxWaitTime       (PyObject *self, PyObject *args);
 static PyObject *GetPublic            (PyObject *self, PyObject *args);
 static PyObject *GetPublicAddr        (PyObject *self, PyObject *args);
 static PyObject *GetPublicDescription (PyObject *self, PyObject *args);
+static PyObject *GetStandardSpawn     (PyObject *self, PyObject *args);
+static PyObject *KickUser             (PyObject *self, PyObject *args);
+static PyObject *KillPlayer           (PyObject *self, PyObject *args);
+static PyObject *PlayClientSound      (PyObject *self, PyObject *args);
+static PyObject *RemovePlayerFlag     (PyObject *self, PyObject *args);
 static PyObject *SendTextMessage      (PyObject *self, PyObject *args, PyObject *keywords);
 static PyObject *SetMaxWaitTime       (PyObject *self, PyObject *args);
 
 static struct PyMethodDef methods[] =
 {
 	// FIXME - docstrings
-	{"FireWorldWeapon",      (PyCFunction) FireWorldWeapon, METH_VARARGS,                 NULL},
-	{"GetCurrentTime",       (PyCFunction) GetCurrentTime,  METH_NOARGS,                  NULL},
-	{"GetMaxWaitTime",       (PyCFunction) GetMaxWaitTime,  METH_NOARGS,                  NULL},
-	{"GetPublic",            (PyCFunction) GetPublic,       METH_NOARGS,                  NULL},
-	{"GetPublicAddr",        (PyCFunction) GetPublic,       METH_NOARGS,                  NULL},
-	{"GetPublicDescription", (PyCFunction) GetPublic,       METH_NOARGS,                  NULL},
-	{"SendTextMessage",      (PyCFunction) SendTextMessage, METH_VARARGS | METH_KEYWORDS, NULL},
-	{"SetMaxWaitTime",       (PyCFunction) SetMaxWaitTime,  METH_VARARGS,                 NULL},
-	{NULL,                   (PyCFunction) NULL,            0,                            NULL},
+	{"BanIP",                (PyCFunction) BanIP,                METH_VARARGS,                 NULL},
+	{"DebugMessage",         (PyCFunction) DebugMessage,         METH_VARARGS,                 NULL},
+	{"FireWorldWeapon",      (PyCFunction) FireWorldWeapon,      METH_VARARGS,                 NULL},
+	{"GetCurrentTime",       (PyCFunction) GetCurrentTime,       METH_NOARGS,                  NULL},
+	{"GetMaxWaitTime",       (PyCFunction) GetMaxWaitTime,       METH_NOARGS,                  NULL},
+	{"GetPublic",            (PyCFunction) GetPublic,            METH_NOARGS,                  NULL},
+	{"GetPublicAddr",        (PyCFunction) GetPublicAddr,        METH_NOARGS,                  NULL},
+	{"GetPublicDescription", (PyCFunction) GetPublicDescription, METH_NOARGS,                  NULL},
+	{"GetStandardSpawn",     (PyCFunction) GetStandardSpawn,     METH_VARARGS,                 NULL},
+	{"KickUser",             (PyCFunction) KickUser,             METH_VARARGS,                 NULL},
+	{"KillPlayer",           (PyCFunction) KillPlayer,           METH_VARARGS,                 NULL},
+	{"PlayClientSound",      (PyCFunction) PlayClientSound,      METH_VARARGS,                 NULL},
+	{"RemovePlayerFlag",     (PyCFunction) RemovePlayerFlag,     METH_VARARGS,                 NULL},
+	{"SendTextMessage",      (PyCFunction) SendTextMessage,      METH_VARARGS | METH_KEYWORDS, NULL},
+	{"SetMaxWaitTime",       (PyCFunction) SetMaxWaitTime,       METH_VARARGS,                 NULL},
+	{NULL,                   (PyCFunction) NULL,                 0,                            NULL},
 };
 
 BZFlag *BZFlag::instance = NULL;
@@ -132,6 +146,16 @@ BZFlag::RemovePlayer (int id)
 }
 
 static PyObject *
+BanIP (PyObject *self, PyObject *args)
+{
+}
+
+static PyObject *
+DebugMessage (PyObject *self, PyObject *args)
+{
+}
+
+static PyObject *
 FireWorldWeapon (PyObject *self, PyObject *args)
 {
 	printf ("FireWorldWeapon ()\n");
@@ -170,6 +194,31 @@ static PyObject *
 GetPublicDescription (PyObject *self, PyObject *args)
 {
 	return PyString_FromString (bz_getPublicDescription ().c_str ());
+}
+
+static PyObject *
+GetStandardSpawn (PyObject *self, PyObject *args)
+{
+}
+
+static PyObject *
+KickUser (PyObject *self, PyObject *args)
+{
+}
+
+static PyObject *
+KillPlayer (PyObject *self, PyObject *args)
+{
+}
+
+static PyObject *
+PlayClientSound (PyObject *self, PyObject *args)
+{
+}
+
+static PyObject *
+RemovePlayerFlag (PyObject *self, PyObject *args)
+{
 }
 
 static PyObject *
