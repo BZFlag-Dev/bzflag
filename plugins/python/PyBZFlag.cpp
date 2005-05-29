@@ -140,6 +140,17 @@ BZFlag::RemovePlayer (int id)
 static PyObject *
 DebugMessage (PyObject *self, PyObject *args)
 {
+	int level;
+	char *message;
+
+	if (!PyArg_ParseTuple (args, "is", &level, &message)) {
+		fprintf (stderr, "couldn't parse args\n");
+		// FIXME - throw error
+		return NULL;
+	}
+
+	bz_debugMessage (level, message);
+	return NULL;
 }
 
 static PyObject *
@@ -207,11 +218,9 @@ SendTextMessage (PyObject *self, PyObject *args, PyObject *keywords)
 		return NULL;
 	}
 
-	printf ("SendTextMessage (%d, %d, %s)\n", to, from, message);
 	bool result = bz_sendTextMessage (to, from, message);
 
-	// FIXME - retval?
-	return Py_None;
+	return (result ? Py_True : Py_False);
 }
 
 static PyObject *
