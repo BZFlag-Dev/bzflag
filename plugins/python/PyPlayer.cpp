@@ -23,13 +23,13 @@ static PyObject *Player_repr       (Player *player);
 static PyObject *Player_ban        (Player *self, PyObject *args, PyObject *keywords);
 static PyObject *Player_kick       (Player *self, PyObject *args, PyObject *keywords);
 static PyObject *Player_kill       (Player *self, PyObject *args, PyObject *keywords);
-static PyObject *Player_removeFlag (Player *self, PyObject *args, PyObject *keywords);
+static PyObject *Player_removeFlag (Player *self, PyObject *args);
 
 static PyMethodDef Player_methods[] = {
 	{"Ban",        (PyCFunction) Player_ban,        METH_VARARGS | METH_KEYWORDS, NULL},
 	{"Kick",       (PyCFunction) Player_kick,       METH_VARARGS | METH_KEYWORDS, NULL},
 	{"Kill",       (PyCFunction) Player_kill,       METH_VARARGS | METH_KEYWORDS, NULL},
-	{"RemoveFlag", (PyCFunction) Player_removeFlag, METH_VARARGS | METH_KEYWORDS, NULL},
+	{"RemoveFlag", (PyCFunction) Player_removeFlag, METH_VARARGS,                 NULL},
 	{NULL,         NULL,                            0,                            NULL},
 };
 
@@ -165,6 +165,18 @@ Player_ban (Player *self, PyObject *args, PyObject *keywords)
 static PyObject *
 Player_kick (Player *self, PyObject *args, PyObject *keywords)
 {
+	PyObject *notify = Py_True;
+	char *reason;
+
+	static char *kwlist[] = {"reason", "notify", NULL};
+	if (!PyArg_ParseTupleAndKeywords (args, keywords, "s|o", kwlist, &reason, &notify)) {
+		fprintf (stderr, "couldn't parse args\n");
+		// FIXME - throw error
+		return NULL;
+	}
+
+	bool result = bz_kickUser (self->record->playerID, reason, (notify == Py_True));
+	return (result ? Py_True : Py_False);
 }
 
 static PyObject *
@@ -184,8 +196,10 @@ Player_kill (Player *self, PyObject *args, PyObject *keywords)
 }
 
 static PyObject *
-Player_removeFlag (Player *self, PyObject *args, PyObject *keywords)
+Player_removeFlag (Player *self, PyObject *args)
 {
+	bool result = bz_removePlayerFlag (self->record->playerID);
+	return (result ? Py_True : Py_False);
 }
 
 };
