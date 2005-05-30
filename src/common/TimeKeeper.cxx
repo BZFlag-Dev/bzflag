@@ -75,12 +75,16 @@ const TimeKeeper&	TimeKeeper::getCurrent(void)
     if (clkSpent > qpcFrequency) {
       // Recalibrate Frequency
       DWORD tgt           = timeGetTime();
+      DWORD deltaTgt      = tgt - timeLastCalibration;
       LONGLONG oldqpcfreq = qpcFrequency;
-      qpcFrequency        = (clkSpent * 1000) / (tgt - timeLastCalibration);
-      if (qpcFrequency != oldqpcfreq)
-	DEBUG4("Recalibrated QPC frequency.  Old: %f ; New: %f\n", (double)oldqpcfreq, (double)qpcFrequency);
-      timeLastCalibration = tgt;
-      qpcLastCalibration  = now.QuadPart;
+      if (deltaTgt > 0) {
+	qpcFrequency        = (clkSpent * 1000) / deltaTgt;
+	timeLastCalibration = tgt;
+	qpcLastCalibration  = now.QuadPart;
+	if (qpcFrequency != oldqpcfreq)
+	  DEBUG4("Recalibrated QPC frequency.  Old: %f ; New: %f\n",
+		 (double)oldqpcfreq, (double)qpcFrequency);
+      }
     }
 
     currentTime += qpcdiff;
