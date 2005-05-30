@@ -12,9 +12,8 @@
 
 // Jeff Myers 10/13/97 changed direct sound cooperative level to
 //	exclusive for compatibility with NT.
-#include "common.h"
 
-#ifndef HAVE_SDL
+#ifdef HAVE_DSOUND_H
 #include "WinMedia.h"
 #include "WinWindow.h"
 #include "TimeKeeper.h"
