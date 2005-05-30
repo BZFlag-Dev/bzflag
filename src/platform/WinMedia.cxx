@@ -13,12 +13,13 @@
 // Jeff Myers 10/13/97 changed direct sound cooperative level to
 //	exclusive for compatibility with NT.
 
-#ifdef HAVE_DSOUND_H
 #include "WinMedia.h"
 #include "WinWindow.h"
 #include "TimeKeeper.h"
 #include "Pack.h"
 #include <stdio.h>
+
+#ifdef HAVE_DSOUND_H
 
 static const int	defaultOutputRate = 22050;
 static const int	NumChunks = 4;
