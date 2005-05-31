@@ -637,7 +637,7 @@ BZF_API double bz_getBZDBDouble ( const char* variable )
 	return BZDB.eval(std::string(variable));
 }
 
-BZF_API bzApiString bz_getBZDString( const char* variable )
+BZF_API bzApiString bz_getBZDBString( const char* variable )
 {
 	if (!variable)
 		return bzApiString("");
@@ -645,7 +645,7 @@ BZF_API bzApiString bz_getBZDString( const char* variable )
 	return bzApiString(BZDB.get(std::string(variable)));
 }
 
-BZF_API bool bz_getBZDBool( const char* variable )
+BZF_API bool bz_getBZDBBool( const char* variable )
 {
 	if (!variable)
 		return false;
@@ -653,7 +653,7 @@ BZF_API bool bz_getBZDBool( const char* variable )
 	return BZDB.eval(std::string(variable)) > 0.0;
 }
 
-BZF_API int bz_getBZDInt( const char* variable )
+BZF_API int bz_getBZDBInt( const char* variable )
 {
 	return (int)BZDB.eval(std::string(variable));
 }
@@ -670,7 +670,7 @@ BZF_API bool bz_setBZDBDouble ( const char* variable, double val )
 	return !exists;
 }
 
-BZF_API bool bz_setBZDString( const char* variable, const char *val )
+BZF_API bool bz_setBZDBString( const char* variable, const char *val )
 {
 	if (!variable || !val)
 		return false;
@@ -682,7 +682,7 @@ BZF_API bool bz_setBZDString( const char* variable, const char *val )
 	return !exists;
 }
 
-BZF_API bool bz_setBZDBool( const char* variable, bool val )
+BZF_API bool bz_setBZDBBool( const char* variable, bool val )
 {
 	if (!variable)
 		return false;
@@ -694,7 +694,7 @@ BZF_API bool bz_setBZDBool( const char* variable, bool val )
 	return !exists;
 }
 
-BZF_API bool bz_setBZDInt( const char* variable, int val )
+BZF_API bool bz_setBZDBInt( const char* variable, int val )
 {
 	if (!variable)
 		return false;

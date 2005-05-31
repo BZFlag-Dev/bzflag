@@ -542,14 +542,14 @@ BZF_API void bz_setMaxWaitTime ( float time );
 
 // BZDB API
 BZF_API double bz_getBZDBDouble ( const char* variable );
-BZF_API bzApiString bz_getBZDString( const char* variable );
-BZF_API bool bz_getBZDBool( const char* variable );
-BZF_API int bz_getBZDInt( const char* variable );
+BZF_API bzApiString bz_getBZDBString( const char* variable );
+BZF_API bool bz_getBZDBBool( const char* variable );
+BZF_API int bz_getBZDBInt( const char* variable );
 
 BZF_API bool bz_setBZDBDouble ( const char* variable, double val );
-BZF_API bool bz_setBZDString( const char* variable, const char *val );
-BZF_API bool bz_setBZDBool( const char* variable, bool val );
-BZF_API bool bz_setBZDInt( const char* variable, int val );
+BZF_API bool bz_setBZDBString( const char* variable, const char *val );
+BZF_API bool bz_setBZDBBool( const char* variable, bool val );
+BZF_API bool bz_setBZDBInt( const char* variable, int val );
 
 // loging
 BZF_API void bz_debugMessage ( int debugLevel, const char* message );
