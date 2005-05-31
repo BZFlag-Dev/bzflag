@@ -129,6 +129,9 @@ protected:
 	 dataBlob *data;
  };
 
+ BZF_API bzAPIIntList* bz_newIntList ( void );
+ BZF_API void bz_deleteIntList( bzAPIIntList * l );
+
  class BZF_API bzAPIFloatList
  {
  public:
@@ -454,7 +457,7 @@ public:
 	virtual ~bz_GetAutoTeamEventData(){};
 
 	int playeID;
-	std::string callsign;
+	bzApiString callsign;
 	int teamID;
 
 	bool handled;
@@ -645,7 +648,7 @@ BZF_API bool bz_addWorldPyramid ( float *pos, float rot, float* scale, bool flip
 BZF_API bool bz_addWorldBase( float *pos, float rot, float* scale, int team, bz_WorldObjectOptions options );
 BZF_API bool bz_addWorldTeleporter ( float *pos, float rot, float* scale, float border, bz_WorldObjectOptions options );
 BZF_API bool bz_addWorldWaterLevel( float level, bz_MaterialInfo *material );
-BZF_API bool bz_addWorldWeapon( bzApiString flagType, float *pos, float rot, float tilt, float initDelay, bzAPIFloatList &delays );
+BZF_API bool bz_addWorldWeapon( const char* flagType, float *pos, float rot, float tilt, float initDelay, bzAPIFloatList &delays );
 
 BZF_API bool bz_setWorldSize( float size, float wallHeight = -1.0 );
 

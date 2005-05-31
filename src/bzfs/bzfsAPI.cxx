@@ -242,6 +242,16 @@ void bzAPIIntList::clear ( void )
 	data->list.clear();
 }
 
+BZF_API bzAPIIntList* bz_newIntList ( void )
+{
+	return new bzAPIIntList;
+}
+
+BZF_API void bz_deleteIntList( bzAPIIntList * l )
+{
+	delete(l);
+}
+
 //******************************bzAPIFloatList********************************************
 class bzAPIFloatList::dataBlob
 {
@@ -874,10 +884,12 @@ BZF_API bool bz_addWorldWaterLevel( float level, bz_MaterialInfo *material )
 	return true;
 }
 
-BZF_API bool bz_addWorldWeapon( std::string flagType, float *pos, float rot, float tilt, float initDelay, bzAPIFloatList &delays )
+BZF_API bool bz_addWorldWeapon( const char* _flagType, float *pos, float rot, float tilt, float initDelay, bzAPIFloatList &delays )
 {
-	if (!world || world->isFinisihed() )
+	if (!world || world->isFinisihed() || !_flagType )
 		return false;
+
+	std::string flagType = _flagType;
 
 	FlagTypeMap &flagMap = FlagType::getFlagMap();
 	if (flagMap.find(flagType) == flagMap.end())
