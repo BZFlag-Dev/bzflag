@@ -161,6 +161,8 @@ public:
   bool inRect(const float *p1, float angle, const float *size,
 			 float x, float y, float r) const;
 
+  WorldWeapons	worldWeapons;
+
 private:
 
   float size[2];
@@ -171,7 +173,6 @@ private:
 
   LinkManager	links;
   EntryZones	entryZones;
-  WorldWeapons	worldWeapons;
 
   char *database;
   int databaseSize;

@@ -17,6 +17,7 @@
 // class-interface header
 #include "WorldWeapons.h"
 
+#include "WorldInfo.h"
 // system headers
 #include <vector>
 
@@ -26,6 +27,8 @@
 #include "Protocol.h"
 #include "Address.h"
 #include "StateDatabase.h"
+
+extern WorldInfo *world;
 
 char *getDirectMessageBuffer();
 void broadcastMessage(uint16_t code, int len, const void *msg);
@@ -104,10 +107,7 @@ void WorldWeapons::fire()
     if (w->nextTime <= nowTime) {
 
       fireWorldWep((FlagType*)w->type, BZDB.eval(StateDatabase::BZDB_RELOADTIME),
-		   ServerPlayer, w->origin, w->tilt, w->direction, worldShotId++, 0);
-
-      if (worldShotId > 30) // Maximum of 30 world shots
-	worldShotId = 0;
+		   ServerPlayer, w->origin, w->tilt, w->direction, getNewWorldShotID(), 0);
 
       //Set up timer for next shot, and eat any shots that have been missed
       while (w->nextTime <= nowTime) {
@@ -214,7 +214,7 @@ void WorldWeaponGlobalEventHandler::process (bz_EventData *eventData)
     return;
 
   fireWorldWep( type,BZDB.eval(StateDatabase::BZDB_RELOADTIME),
-  ServerPlayer,origin,tilt,direction,0,0);
+  ServerPlayer,origin,tilt,direction,world->worldWeapons.getNewWorldShotID(),0);
 }
 
 

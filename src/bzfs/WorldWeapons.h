@@ -29,6 +29,8 @@
 
 #include "WorldEventManager.h"
 
+#define _MAX_WORLD_SHOTS 30
+
 /** WorldWeapons is a container class that holds weapons
  */
 class WorldWeapons
@@ -46,6 +48,8 @@ public:
   unsigned int count(); // returns the number of world weapons
   int packSize() const;
   void *pack(void *buf) const;
+
+  int getNewWorldShotID ( void ) { return worldShotId++;if (worldShotId > _MAX_WORLD_SHOTS) worldShotId = 0;}
 
 private:
   struct Weapon

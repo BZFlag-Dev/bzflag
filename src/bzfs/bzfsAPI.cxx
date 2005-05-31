@@ -629,8 +629,11 @@ BZF_API bool bz_fireWorldWep ( const char* flagType, float lifetime, int fromPla
 	else
 		player = fromPlayer;
 
+	int realShotID = shotID;
+	if ( realShotID == 0)
+		realShotID = world->worldWeapons.getNewWorldShotID();
 
-	return fireWorldWep(flag,lifetime,player,pos,tilt,direction,shotID,dt) == shotID;
+	return fireWorldWep(flag,lifetime,player,pos,tilt,direction,realShotID,dt) == realShotID;
 }
 
 // time API
