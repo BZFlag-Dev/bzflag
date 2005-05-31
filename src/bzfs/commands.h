@@ -27,7 +27,7 @@ class CustomSlashCommandHandler
 {
 public:
 	virtual ~CustomSlashCommandHandler(){};
-	virtual bool handle ( int playerID, std::string command, std::string message ) = 0;
+	virtual bool handle ( int playerID, const char* command, const char* message ) = 0;
 };
 
 typedef std::map<std::string, CustomSlashCommandHandler*>	tmCustomSlashCommandMap;

@@ -59,7 +59,7 @@ void setBZMatFromAPIMat (BzMaterial &bzmat, bz_MaterialInfo* material )
 	bzmat.setNoSorting(!material->sorting);
 	bzmat.setAlphaThreshold(material->alphaThresh);
 
-	for( unsigned int i = 0; i < material->textures.size();i++ )
+	for( unsigned int i = 0; i < material->numTextures);i++ )
 	{
 		bzmat.addTexture(material->textures[i].texture);
 		bzmat.setCombineMode(material->textures[i].combineMode);
@@ -116,13 +116,13 @@ BZF_API bool bz_updatePlayerData ( bz_PlayerRecord *playerRecord )
 	FlagInfo *flagInfo = FlagInfo::get(flagid);
 
 	if (flagInfo != NULL)
-		playerRecord->currentFlag = flagInfo->flag.type->label();
+		strcpy(playerRecord->currentFlag,flagInfo->flag.type->label().c_str());
 	else
-		playerRecord->currentFlag = std::string("");
+		playerRecord->currentFlag[0] = '\0';
 
 	std::vector<FlagType*>	flagHistoryList = player->flagHistory.get();
 
-	playerRecord->flagHistory.clear();
+//	playerRecord->flagHistory.clear();
 	for ( unsigned int i = 0; i < flagHistoryList.size(); i ++)
 		playerRecord->flagHistory.push_back(flagHistoryList[i]->label());
 

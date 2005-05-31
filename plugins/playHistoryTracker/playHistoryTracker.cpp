@@ -98,6 +98,8 @@ void PlayHistoryTracker::process ( bz_EventData *eventData )
 		//	GameKeeper::Player *killerData = GameKeeper::Player::getPlayerByIndex(deathRecord->killerID);
 			//GameKeeper::Player *victimData = GameKeeper::Player::getPlayerByIndex(deathRecord->playerID);
 
+			 std::string soundToPlay;
+
 			// clear out the dude who got shot, since he won't be having any SPREEs
 			if (playerList.find(deathRecord->playerID) != playerList.end())
 			{
@@ -111,7 +113,10 @@ void PlayHistoryTracker::process ( bz_EventData *eventData )
 					message = std::string("The unstopable reign of ") + record.callsign + std::string(" was ended by ") + killerData.callsign;
 
 				if (message.size())
+				{
 					 bz_sendTextMessage(BZ_SERVER, BZ_ALL_USERS, message.c_str());
+					 soundToPlay = "spree4";
+				}
 
 				record.spreeTotal = 0;
 				record.startTime = deathRecord->time;
@@ -130,17 +135,40 @@ void PlayHistoryTracker::process ( bz_EventData *eventData )
 				std::string message;
 
 				if ( record.spreeTotal == 5 )
+				{
 					message = record.callsign + std::string(" is on a Rampage!");
+					if (!soundToPlay.size())
+						soundToPlay = "spree1";
+				}
 				if ( record.spreeTotal == 10 )
+				{
 					message = record.callsign + std::string(" is on a Killing Spree!");
+					if (!soundToPlay.size())
+						soundToPlay = "spree2";
+				}
 				if ( record.spreeTotal == 20 )
+				{
 					message = record.callsign + std::string(" is Unstoppable!!");
+					if (!soundToPlay.size())
+						soundToPlay = "spree3";
+				}
 				if ( record.spreeTotal > 20 && record.spreeTotal%5 == 0 )
-					message = record.callsign + std::string("'s continues rage");
+				{
+					message = record.callsign + std::string("'s continues to rage on");
+					if (!soundToPlay.size())
+						soundToPlay = "spree4";
+				}
 
 				if (message.size())
+				{
 					bz_sendTextMessage(BZ_SERVER, BZ_ALL_USERS, message.c_str());
-			}
+				}	
+
+			}	
+
+		//	if (soundToPlay.size())
+		//	bz_sendPlayCustomLocalSound(BZ_ALL_USERS,soundToPlay.c_str());
+
 		}
 		break;
 

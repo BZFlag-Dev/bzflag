@@ -256,9 +256,12 @@ class DynamicPluginCommands : public CustomSlashCommandHandler
 {
 public:
 	virtual ~DynamicPluginCommands(){};
-	virtual bool handle ( int playerID, std::string command, std::string message )
+	virtual bool handle ( int playerID, const char* _command, const char* _message )
 	{
 		bz_PlayerRecord	record;
+
+		std::string command = command;
+		std::string message = _message;
 
 		bz_getPlayerByIndex(playerID,&record);
 

@@ -1255,12 +1255,14 @@ int			main(int argc, char** argv)
     if (last)
       *last = '\0';
     strcat(exePath,"\\data");
-    PlatformFactory::getMedia()->setMediaDirectory(exePath);
+		BzfMedia *media = PlatformFactory::getMedia();
+		if (media)
+			media->setMediaDirectory(exePath);
 #else
     // It's only checking existence of l10n directory
     DIR *localedir = opendir("data/l10n/");
     if (localedir == NULL) {
-      PlatformFactory::getMedia()->setMediaDirectory(INSTALL_DATA_DIR);
+				media->setMediaDirectory(INSTALL_DATA_DIR);
     } else {
       closedir(localedir);
     }

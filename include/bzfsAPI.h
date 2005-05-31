@@ -15,9 +15,6 @@
 #ifndef _BZFS_API_H_
 #define _BZFS_API_H_
 
-#include <vector>
-#include <string>
-
 #ifdef _WIN32
 	#ifdef INSIDE_BZ
 		#define BZF_API __declspec( dllexport )
@@ -29,6 +26,10 @@
 	#define BZF_API extern "C"
 	#define BZF_PLUGIN_CALL extern "C"
 #endif
+
+#define BZ_API_SHORT_STR 32
+#define BZ_API_MAX_STR 512
+#define BZ_API_MAX_LIST	256
 
 #define BZ_API_VERSION	2
 
@@ -123,7 +124,7 @@ public:
 	int teamID;
 	int killerID;
 	int killerTeamID;
-	std::string flagKilledWith;
+	char flagKilledWith[BZ_API_SHORT_STR];
 
 	float pos[3];
 	float rot;
@@ -171,7 +172,7 @@ public:
 	int from;
 	int to;
 
-	std::string message;
+	char message[BZ_API_MAX_STR];
 	double time;
 };
 
@@ -191,8 +192,8 @@ public:
 	int playerID;
 	int teamID;
 
-	std::string callsign;
-	std::string reason;
+	char callsign[BZ_API_SHORT_STR];
+	char reason[BZ_API_MAX_STR];
 	double time;
 };
 
@@ -212,7 +213,7 @@ public:
 	int from;
 
 	bool handled;
-	std::string message;
+	char message[BZ_API_MAX_STR];
 	double time;
 };
 
@@ -258,10 +259,10 @@ public:
 	virtual ~bz_AllowPlayerEventData(){};
 
 	int playerID;
-	std::string callsign;
-	std::string ipAddress;
+	char callsign[BZ_API_SHORT_STR];
+	char ipAddress[BZ_API_SHORT_STR];
 
-	std::string reason;
+	char reason[BZ_API_MAX_STR];
 	bool allow;
 
 	double time;
@@ -314,8 +315,8 @@ public:
 	virtual ~bz_GetPlayerInfoEventData(){};
 
 	int playerID;
-	std::string callsign;
-	std::string ipAddress;
+	char callsign[BZ_API_SHORT_STR];
+	char ipAddress[BZ_API_SHORT_STR];
 	int team;
 
 	bool admin;
@@ -342,7 +343,8 @@ BZF_API bool bz_removeEvent ( bz_teEventType eventType, int team, bz_EventHandle
 
 class bz_PlayerRecord;
 
-BZF_API bool bz_getPlayerIndexList ( std::vector<int> *playerList );
+BZF_API bool bz_getPlayerIndexCount ( int *count );
+BZF_API bool bz_getPlayerIndexList ( int *playerList );
 BZF_API bool bz_getPlayerByIndex ( int index, bz_PlayerRecord *playerRecord );
 BZF_API bool bz_updatePlayerData ( bz_PlayerRecord *playerRecord );
 
@@ -371,22 +373,22 @@ public:
 	void update ( void ){bz_updatePlayerData(this);}	// call to update with current data
 
 	int playerID;
-	std::string callsign;
+	char callsign[BZ_API_SHORT_STR];
 	int team;
 
 	float pos[3];
 	float rot;
 
-	std::string ipAddress;
+	char ipAddress[BZ_API_SHORT_STR];
 
-	std::string currentFlag;
-	std::vector<std::string> flagHistory;
+	char currentFlag[BZ_API_SHORT_STR];
+	char flagHistory[BZ_API_SHORT_STR][BZ_API_MAX_LIST];
 
 	bool spawned;
 	bool verified;
 	bool globalUser;
 	bool admin;
-	std::vector<std::string> groups;
+	char groups[BZ_API_SHORT_STR][BZ_API_MAX_LIST];
 
 	int wins;
 	int losses;
@@ -396,7 +398,7 @@ public:
 BZF_API bool bz_sendTextMessage (int from, int to, const char* message);
 
 // world weapons
-BZF_API bool bz_fireWorldWep ( std::string flagType, float lifetime, int fromPlayer, float *pos, float tilt, float direction, int shotID , float dt );
+BZF_API bool bz_fireWorldWep ( const char* flagType, float lifetime, int fromPlayer, float *pos, float tilt, float direction, int shotID , float dt );
 
 // time API
 BZF_API double bz_getCurrentTime ( void );
@@ -404,13 +406,13 @@ BZF_API float bz_getMaxWaitTime ( void );
 BZF_API void bz_setMaxWaitTime ( float time );
 
 // info
-BZF_API double bz_getBZDBDouble ( const char* variable );
-BZF_API std::string bz_getBZDString( const char* variable );
-BZF_API bool bz_getBZDBool( const char* variable );
-BZF_API int bz_getBZDInt( const char* variable );
+BZF_API bool bz_getBZDBDouble ( const char* variable, double *value );
+BZF_API bool bz_getBZDString( const char* variable, char *value );
+BZF_API bool bz_getBZDBool( const char* variable, bool *value );
+BZF_API bool bz_getBZDInt( const char* variable, bool *value );
 
 // loging
-BZF_API void bz_debugMessage ( int debugLevel, const char* message );
+BZF_API bool bz_debugMessage ( int debugLevel, const char* message );
 
 // admin
 BZF_API bool bz_kickUser ( int playerIndex, const char* reason, bool notify );
@@ -422,7 +424,7 @@ class bz_CustomSlashCommandHandler
 {
 public:
 	virtual ~bz_CustomSlashCommandHandler(){};
-	virtual bool handle ( int playerID, std::string command, std::string message ) = 0;
+	virtual bool handle ( int playerID, const char* command, const char* message ) = 0;
 };
 
 BZF_API bool bz_registerCustomSlashCommand ( const char* command, bz_CustomSlashCommandHandler *handler );
@@ -446,18 +448,19 @@ typedef struct
 
 typedef struct bz_MaterialInfo
 {
-	std::string name;
+	char name[BZ_API_MAX_STR];
 
 	typedef struct 
 	{
-		std::string		texture;
+		char		texture[BZ_API_MAX_STR];
 		bool		useAlpha;
 		bool		useColorOnTexture;
 		bool		useSphereMap;
 		int			combineMode;
 	}bz_MaterialTexture;
 
-	std::vector<bz_MaterialInfo::bz_MaterialTexture> textures;
+	int			numTextures;
+	bz_MaterialInfo::bz_MaterialTexture textures[BZ_API_MAX_LIST];
 
 	float		ambient[4];
 	float		diffuse[4];
@@ -475,14 +478,14 @@ BZF_API bool bz_addWorldPyramid ( float *pos, float rot, float* scale, bool flip
 BZF_API bool bz_addWorldBase( float *pos, float rot, float* scale, int team, bz_WorldObjectOptions options );
 BZF_API bool bz_addWorldTeleporter ( float *pos, float rot, float* scale, float border, bz_WorldObjectOptions options );
 BZF_API bool bz_addWorldWaterLevel( float level, bz_MaterialInfo *material );
-BZF_API bool bz_addWorldWeapon( std::string flagType, float *pos, float rot, float tilt, float initDelay, std::vector<float> delays );
+BZF_API bool bz_addWorldWeapon( const char* flagType, float *pos, float rot, float tilt, float initDelay, float *delays, int delaySize );
 
 BZF_API bool bz_setWorldSize( float size, float wallHeight = -1.0 );
 
 // public server info
-BZF_API bool bz_getPublic( void );
-BZF_API std::string bz_getPublicAddr( void );
-BZF_API std::string bz_getPublicDescription( void );
+BZF_API bool bz_getPublic( bool *value );
+BZF_API bool bz_getPublicAddr( char *value );
+BZF_API bool bz_getPublicDescription( char *value );
 
 // custom client sounds
 BZF_API bool bz_sendPlayCustomLocalSound ( int playerID, const char* soundName );
