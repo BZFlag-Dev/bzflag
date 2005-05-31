@@ -658,6 +658,54 @@ BZF_API int bz_getBZDInt( const char* variable )
 	return (int)BZDB.eval(std::string(variable));
 }
 
+BZF_API bool bz_setBZDBDouble ( const char* variable, double val )
+{
+	if (!variable)
+		return false;
+
+	bool exists = BZDB.isSet(std::string(variable));
+
+	BZDB.set(std::string(variable),TextUtils::format("%f",val));
+
+	return !exists;
+}
+
+BZF_API bool bz_setBZDString( const char* variable, const char *val )
+{
+	if (!variable || !val)
+		return false;
+
+	bool exists = BZDB.isSet(std::string(variable));
+
+	BZDB.set(std::string(variable),std::string(val));
+
+	return !exists;
+}
+
+BZF_API bool bz_setBZDBool( const char* variable, bool val )
+{
+	if (!variable)
+		return false;
+
+	bool exists = BZDB.isSet(std::string(variable));
+
+	BZDB.set(std::string(variable),TextUtils::format("%d",val));
+
+	return !exists;
+}
+
+BZF_API bool bz_setBZDInt( const char* variable, int val )
+{
+	if (!variable)
+		return false;
+
+	bool exists = BZDB.isSet(std::string(variable));
+
+	BZDB.set(std::string(variable),TextUtils::format("%d",val));
+
+	return !exists;
+}
+
 // loging
 BZF_API void bz_debugMessage ( int _debugLevel, const char* message )
 {
