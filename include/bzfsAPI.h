@@ -26,7 +26,7 @@
 	#endif
 	#define BZF_PLUGIN_CALL	
 #else
-	#define BZF_API extern "C"
+	#define BZF_API 
 	#define BZF_PLUGIN_CALL extern "C"
 #endif
 

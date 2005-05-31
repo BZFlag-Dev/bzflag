@@ -353,16 +353,16 @@ void initPlugins ( void )
 	registerCustomSlashCommand("listplugins",&command);
 }
 
-bool registerCustomPluginHandaler ( std::string extension, bz_APIPluginHandaler *handaler )
+bool registerCustomPluginHandaler ( std::string exte, bz_APIPluginHandaler *handaler )
 {
-	std::string ext = TextUtils::tolower(extension);
+	std::string ext = TextUtils::tolower(exte);
 	customPluginMap[ext] = handaler;
 	return true;
 }
 
-bool removeCustomPluginHandaler ( std::string extension, bz_APIPluginHandaler *handaler )
+bool removeCustomPluginHandaler ( std::string ext, bz_APIPluginHandaler *handaler )
 {
-	tmCustomPluginMap::iterator itr = customPluginMap.find(TextUtils::tolower(extension));
+	tmCustomPluginMap::iterator itr = customPluginMap.find(TextUtils::tolower(ext));
 
 	if (itr == customPluginMap.end() || itr->second != handaler)
 		return false;
