@@ -1475,7 +1475,10 @@ void			HUDRenderer::renderNotPlaying(SceneRenderer& renderer)
   LocalPlayer* myTank = LocalPlayer::getMyTank();
   if (myTank && globalClock.isOn()) {
 
-    float y = 0.5f * (float)height + fm.getStrHeight(bigFontFace, bigFontSize, "0");
+    float y = 0.5f * (float)viewHeight + fm.getStrHeight(bigFontFace, bigFontSize, "0");
+DEBUG1 (" Y1: %5.2f\n", y1);
+//    float y = 0.5f * (float)height + fm.getStrHeight(bigFontFace, bigFontSize, "0");
+//DEBUG1 (" Y2: %5.2f\n", y);
     if (gameOver) {
       hudColor3fv(messageColor);
       fm.drawString(0.5f * ((float)width - gameOverLabelWidth), y, 0,
