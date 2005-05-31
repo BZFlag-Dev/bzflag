@@ -459,7 +459,7 @@ typedef struct bz_MaterialInfo
 		int			combineMode;
 	}bz_MaterialTexture;
 
-	int			numTextures;
+	unsigned int	numTextures;
 	bz_MaterialInfo::bz_MaterialTexture textures[BZ_API_MAX_LIST];
 
 	float		ambient[4];

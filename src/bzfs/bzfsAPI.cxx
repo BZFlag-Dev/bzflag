@@ -59,7 +59,7 @@ void setBZMatFromAPIMat (BzMaterial &bzmat, bz_MaterialInfo* material )
 	bzmat.setNoSorting(!material->sorting);
 	bzmat.setAlphaThreshold(material->alphaThresh);
 
-	for( unsigned int i = 0; i < material->numTextures);i++ )
+	for( unsigned int i = 0; i < material->numTextures;i++ )
 	{
 		bzmat.addTexture(material->textures[i].texture);
 		bzmat.setCombineMode(material->textures[i].combineMode);
