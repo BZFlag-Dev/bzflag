@@ -1687,6 +1687,10 @@ static void		handleServerMessage(bool human, uint16_t code,
   switch (code) {
 
 		case MsgCustomSound:
+			// bail out if we don't want to do remote sounds
+			if (BZDB.isSet("_noRemoteSounds") && BZDB.isTrue("_noRemoteSounds"))
+				break;
+			else
 			{
 				void *buf;
 				char buffer[MessageLen];
