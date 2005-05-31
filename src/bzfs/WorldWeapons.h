@@ -67,13 +67,13 @@ private:
   WorldWeapons& operator=(const WorldWeapons &w) const;
 };
 
-class WorldWeaponGlobalEventHandler : public BaseEventHandler
+class WorldWeaponGlobalEventHandler : public bz_EventHandler
 {
 public:
 	WorldWeaponGlobalEventHandler(FlagType *type, const float *origin,float direction, float tilt);
 	virtual ~WorldWeaponGlobalEventHandler();
 
-	virtual void process ( BaseEventData *eventData );
+	virtual void process ( bz_EventData *eventData );
 
 protected:
 	FlagType	*type;

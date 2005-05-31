@@ -2755,18 +2755,26 @@ void parseServerCommand(const char *message, int t)
     
     tmCustomSlashCommandMap::iterator itr = customCommands.find(TextUtils::tolower(params[0]));
   
+		bzApiString	command = params[0];
+		bzApiString param;
+
+		if (params.size()>1)
+			param = params[1];
+		else
+			param = message;
+
     if (itr != customCommands.end()) {  // see if we have a registerd custom command and call it
-      if (itr->second->handle(t,params[0],params.size()>1 ? params[1] : message))  //if it handles it, then we are good
+      if (itr->second->handle(t,command,param))  //if it handles it, then we are good
         return;
     }
   
     // lets see if anyone wants to handle the unhandled event
-    UnknownSlashCommandEventData commandData;
+    bz_UnknownSlashCommandEventData commandData;
     commandData.from = t;
     commandData.message = message;
     commandData.time = TimeKeeper::getCurrent().getSeconds();
   
-    worldEventManager.callEvents(eUnknownSlashCommand,-1,&commandData);
+    worldEventManager.callEvents(bz_eUnknownSlashCommand,-1,&commandData);
     if (commandData.handled) // did anyone do it?
       return;
 
@@ -2776,7 +2784,7 @@ void parseServerCommand(const char *message, int t)
   }
 }
 
-void registerCustomSlashCommand(std::string command, CustomSlashCommandHandler* handler)
+void registerCustomSlashCommand(std::string command, bz_CustomSlashCommandHandler* handler)
 {
   if (handler)
     customCommands[TextUtils::tolower(command)] = handler;

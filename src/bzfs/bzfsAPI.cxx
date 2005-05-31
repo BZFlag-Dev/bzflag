@@ -42,13 +42,13 @@ extern float pluginWorldSize;
 extern float pluginWorldHeight;
 extern float pluginMaxWait;
 
-// utility
+// utility functions
 void setBZMatFromAPIMat (BzMaterial &bzmat, bz_MaterialInfo* material )
 {
 	if (!material)
 		return;
 
-	bzmat.setName(material->name);
+	bzmat.setName(std::string(material->name.c_str()));
 	bzmat.setAmbient(material->ambient);
 	bzmat.setDiffuse(material->diffuse);
 	bzmat.setSpecular(material->specular);
@@ -59,9 +59,11 @@ void setBZMatFromAPIMat (BzMaterial &bzmat, bz_MaterialInfo* material )
 	bzmat.setNoSorting(!material->sorting);
 	bzmat.setAlphaThreshold(material->alphaThresh);
 
-	for( unsigned int i = 0; i < material->numTextures;i++ )
+	for( unsigned int i = 0; i < material->textures.size();i++ )
 	{
-		bzmat.addTexture(material->textures[i].texture);
+		bzApiString	name = material->textures[i].texture;
+
+		bzmat.addTexture(std::string(name.c_str()));
 		bzmat.setCombineMode(material->textures[i].combineMode);
 		bzmat.setUseTextureAlpha(material->textures[i].useAlpha);
 		bzmat.setUseColorOnTexture(material->textures[i].useColorOnTexture);
@@ -70,32 +72,426 @@ void setBZMatFromAPIMat (BzMaterial &bzmat, bz_MaterialInfo* material )
 }
 
 
-// versioning
+//******************************Versioning********************************************
 BZF_API int bz_APIVersion ( void )
 {
 	return BZ_API_VERSION;
 }
 
-BZF_API bool bz_registerEvent ( bz_teEventType eventType, int team, bz_EventHandler* eventHandler )
+//******************************bzApiString********************************************
+class bzApiString::dataBlob
+{
+public:
+	std::string str;
+};
+
+bzApiString::bzApiString()
+{
+	data = new dataBlob;
+}
+
+bzApiString::bzApiString(const char* c)
+{
+	data = new dataBlob;
+	data->str = c;
+}
+
+bzApiString::bzApiString(const std::string &s)
+{
+	data = new dataBlob;
+	data->str = s;
+}
+
+bzApiString::bzApiString(const bzApiString &r)
+{
+	data = new dataBlob;
+	data->str = r.data->str;
+}
+
+bzApiString::~bzApiString()
+{
+	delete(data);
+}
+
+bzApiString& bzApiString::operator = ( const bzApiString& r )
+{
+	data->str = r.data->str;
+	return *this;
+}
+
+bzApiString& bzApiString::operator = ( const std::string& r )
+{
+	data->str = r;
+	return *this;
+}
+
+bzApiString& bzApiString::operator = ( const char* r )
+{
+	data->str = r;
+	return *this;
+}
+
+bool bzApiString::operator == ( const bzApiString&r )
+{
+	return data->str == r.data->str;
+}
+
+bool bzApiString::operator == ( const std::string& r )
+{
+	return data->str == r;
+}
+
+bool bzApiString::operator == ( const char* r )
+{
+	return data->str == r;
+}
+
+bool bzApiString::operator != ( const bzApiString&r )
+{
+	return data->str != r.data->str;
+}
+
+bool bzApiString::operator != ( const std::string& r )
+{
+	return data->str != r;
+}
+
+bool bzApiString::operator != ( const char* r )
+{
+	return data->str != r;
+}
+
+unsigned int bzApiString::size ( void )
+{
+	return data->str.size();
+}
+
+const char* bzApiString::c_str(void)
+{
+	return data->str.c_str();
+}
+
+//******************************bzAPIIntList********************************************
+class bzAPIIntList::dataBlob
+{
+public:
+	std::vector<int>	list;
+};
+
+bzAPIIntList::bzAPIIntList()
+{
+	data = new dataBlob;
+}
+
+bzAPIIntList::bzAPIIntList(const bzAPIIntList	&r)
+{
+	data = new dataBlob;
+	data->list = r.data->list;
+}
+
+bzAPIIntList::bzAPIIntList(const std::vector<int>	&r)
+{
+	data = new dataBlob;
+	data->list = r;
+}
+
+bzAPIIntList::~bzAPIIntList()
+{
+	delete(data);
+}
+
+void bzAPIIntList::push_back ( int value )
+{
+	data->list.push_back(value);
+}
+
+int bzAPIIntList::get ( unsigned int i )
+{
+	if (i >= data->list.size())
+		return 0;
+
+	return data->list[i];
+}
+
+const int& bzAPIIntList::operator[] (unsigned int i) const
+{
+	return data->list[i];
+}
+
+bzAPIIntList& bzAPIIntList::operator = ( const bzAPIIntList& r )
+{
+	data->list = r.data->list;
+	return *this;
+}
+
+bzAPIIntList& bzAPIIntList::operator = ( const std::vector<int>& r )
+{
+	data->list = r;
+	return *this;
+}
+
+unsigned int bzAPIIntList::size ( void )
+{
+	return data->list.size();
+}
+
+void bzAPIIntList::clear ( void )
+{
+	data->list.clear();
+}
+
+//******************************bzAPIFloatList********************************************
+class bzAPIFloatList::dataBlob
+{
+public:
+	std::vector<float>	list;
+};
+
+bzAPIFloatList::bzAPIFloatList()
+{
+	data = new dataBlob;
+}
+
+bzAPIFloatList::bzAPIFloatList(const bzAPIFloatList	&r)
+{
+	data = new dataBlob;
+	data->list = r.data->list;
+}
+
+bzAPIFloatList::bzAPIFloatList(const std::vector<float>	&r)
+{
+	data = new dataBlob;
+	data->list = r;
+}
+
+bzAPIFloatList::~bzAPIFloatList()
+{
+	delete(data);
+}
+
+void bzAPIFloatList::push_back ( float value )
+{
+	data->list.push_back(value);
+}
+
+float bzAPIFloatList::get ( unsigned int i )
+{
+	if (i >= data->list.size())
+		return 0;
+
+	return data->list[i];
+}
+
+const float& bzAPIFloatList::operator[] (unsigned int i) const
+{
+	return data->list[i];
+}
+
+bzAPIFloatList& bzAPIFloatList::operator = ( const bzAPIFloatList& r )
+{
+	data->list = r.data->list;
+	return *this;
+}
+
+bzAPIFloatList& bzAPIFloatList::operator = ( const std::vector<float>& r )
+{
+	data->list = r;
+	return *this;
+}
+
+unsigned int bzAPIFloatList::size ( void )
+{
+	return data->list.size();
+}
+
+void bzAPIFloatList::clear ( void )
+{
+	data->list.clear();
+}
+
+BZF_API bzAPIFloatList* bz_newFloatList ( void )
+{
+	return new bzAPIFloatList;
+}
+
+BZF_API void bz_deleteFloatList( bzAPIFloatList * l )
+{
+	if (l)
+		delete(l);
+}
+
+
+//******************************bzApiStringList********************************************
+class bzAPIStringList::dataBlob
+{
+public:
+	std::vector<bzApiString> list;
+};
+
+
+bzAPIStringList::bzAPIStringList()
+{
+	data = new dataBlob;
+}
+
+bzAPIStringList::bzAPIStringList(const bzAPIStringList	&r)
+{
+	data = new dataBlob;
+	data->list = r.data->list;
+}
+
+bzAPIStringList::bzAPIStringList(const std::vector<std::string>	&r)
+{
+	data = new dataBlob;
+
+	for ( unsigned int i = 0; i < r.size(); i++)
+	{
+		std::string d = r[i];
+		data->list.push_back(bzApiString(d));
+	}
+}
+
+bzAPIStringList::~bzAPIStringList()
+{
+	delete(data);
+}
+
+void bzAPIStringList::push_back ( const bzApiString &value )
+{
+	data->list.push_back(value);
+}
+
+void bzAPIStringList::push_back ( const std::string &value )
+{
+	data->list.push_back(bzApiString(value));
+}
+
+bzApiString bzAPIStringList::get ( unsigned int i )
+{
+	if (i >= data->list.size())
+		return bzApiString("");
+
+	return data->list[i];
+}
+
+const bzApiString& bzAPIStringList::operator[] (unsigned int i) const
+{
+	return data->list[i];
+}
+
+bzAPIStringList& bzAPIStringList::operator = ( const bzAPIStringList& r )
+{
+	data->list = r.data->list;
+	return *this;
+}
+
+bzAPIStringList& bzAPIStringList::operator = ( const std::vector<std::string>& r )
+{
+	data->list.clear();
+
+	for ( unsigned int i = 0; i < r.size(); i++)
+		data->list.push_back(bzApiString(r[i]));
+
+	return *this;
+}
+
+unsigned int bzAPIStringList::size ( void )
+{
+	return data->list.size();
+}
+
+void bzAPIStringList::clear ( void )
+{
+	data->list.clear();
+}
+
+//******************************bzApiTextreList********************************************
+
+class bzAPITextureList::dataBlob
+{
+public:
+	std::vector<bz_MaterialTexture> list;
+};
+
+bzAPITextureList::bzAPITextureList()
+{
+	data = new dataBlob;
+}
+
+bzAPITextureList::bzAPITextureList(const bzAPITextureList	&r)
+{
+	data = new dataBlob;
+	data->list = r.data->list;
+}
+
+bzAPITextureList::~bzAPITextureList()
+{
+	delete(data);
+}
+
+void bzAPITextureList::push_back ( bz_MaterialTexture &value )
+{
+	data->list.push_back(value);
+}
+
+bz_MaterialTexture bzAPITextureList::get ( unsigned int i )
+{
+	return data->list[i];
+}
+
+const bz_MaterialTexture& bzAPITextureList::operator[] (unsigned int i) const
+{
+	return data->list[i];
+}
+
+bzAPITextureList& bzAPITextureList::operator = ( const bzAPITextureList& r )
+{
+	data->list = r.data->list;
+	return *this;
+}
+
+unsigned int bzAPITextureList::size ( void )
+{
+	return data->list.size();
+}
+
+void bzAPITextureList::clear ( void )
+{
+	data->list.clear();
+}
+
+bz_MaterialInfo* bz_anewMaterial ( void )
+{
+	return new bz_MaterialInfo;
+}
+
+void bz_adeleteMaterial ( bz_MaterialInfo *material )
+{
+	if (material)
+		delete(material);
+}
+
+// events
+BZF_API bool bz_registerEvent ( bz_eEventType eventType, int team, bz_EventHandler* eventHandler )
 {
 	if (!eventHandler)
 		return false;
 	
-	worldEventManager.addEvent((teEventType)eventType,team,(BaseEventHandler*)eventHandler);
+	worldEventManager.addEvent(eventType,team,eventHandler);
 	return true;
 }
 
-BZF_API bool bz_registerGeneralEvent ( bz_teEventType eventType, bz_EventHandler* eventHandler )
+BZF_API bool bz_registerGeneralEvent ( bz_eEventType eventType, bz_EventHandler* eventHandler )
 {
 	return bz_registerEvent(eventType,-1,eventHandler);
 }
 
-BZF_API bool bz_removeEvent ( bz_teEventType eventType, int team, bz_EventHandler* eventHandler )
+BZF_API bool bz_removeEvent ( bz_eEventType eventType, int team, bz_EventHandler* eventHandler )
 {
 	if (!eventHandler)
 		return false;
 
-	worldEventManager.removeEvent((teEventType)eventType,team,(BaseEventHandler*)eventHandler);
+	worldEventManager.removeEvent(eventType,team,eventHandler);
 	return true;
 }
 
@@ -115,10 +511,7 @@ BZF_API bool bz_updatePlayerData ( bz_PlayerRecord *playerRecord )
 	int flagid = player->player.getFlag();
 	FlagInfo *flagInfo = FlagInfo::get(flagid);
 
-	if (flagInfo != NULL)
-		strcpy(playerRecord->currentFlag,flagInfo->flag.type->label().c_str());
-	else
-		playerRecord->currentFlag[0] = '\0';
+	playerRecord->currentFlag = flagInfo->flag.type->label();
 
 	std::vector<FlagType*>	flagHistoryList = player->flagHistory.get();
 
@@ -137,7 +530,7 @@ BZF_API bool bz_updatePlayerData ( bz_PlayerRecord *playerRecord )
 	return true;
 }
 
-BZF_API bool bz_getPlayerIndexList ( std::vector<int> *playerList )
+BZF_API bool bz_getPlayerIndexList ( bzAPIIntList *playerList )
 {
 	playerList->clear();
 
@@ -194,22 +587,23 @@ BZF_API bool bz_sendTextMessage(int from, int to, const char* message)
 	return true;
 }
 
-BZF_API bool bz_fireWorldWep ( std::string flagType, float lifetime, int fromPlayer, float *pos, float tilt, float direction, int shotID, float dt )
+BZF_API bool bz_fireWorldWep ( const char* flagType, float lifetime, int fromPlayer, float *pos, float tilt, float direction, int shotID, float dt )
 {
-	if (!pos || !flagType.size())
+	if (!pos || !flagType)
 		return false;
 
 	FlagTypeMap &flagMap = FlagType::getFlagMap();
 	if (flagMap.find(flagType) == flagMap.end())
 		return false;
 
-	FlagType *flag = flagMap.find(flagType)->second;
+	FlagType *flag = flagMap.find(std::string(flagType))->second;
 
 	PlayerId player;
 	if ( fromPlayer == BZ_SERVER )
 		player = ServerPlayer;
 	else
 		player = fromPlayer;
+
 
 	return fireWorldWep(flag,lifetime,player,pos,tilt,direction,shotID,dt) == shotID;
 }
@@ -241,12 +635,12 @@ BZF_API double bz_getBZDBDouble ( const char* variable )
 	return BZDB.eval(std::string(variable));
 }
 
-BZF_API std::string bz_getBZDString( const char* variable )
+BZF_API bzApiString bz_getBZDString( const char* variable )
 {
 	if (!variable)
-		return std::string("");
+		return bzApiString("");
 
-	return BZDB.get(std::string(variable));
+	return bzApiString(BZDB.get(std::string(variable)));
 }
 
 BZF_API bool bz_getBZDBool( const char* variable )
@@ -305,7 +699,7 @@ BZF_API bool bz_registerCustomSlashCommand ( const char* command, bz_CustomSlash
 	if (!command || !handler)
 		return false;
 
-	registerCustomSlashCommand(std::string(command),(CustomSlashCommandHandler*)handler);
+	registerCustomSlashCommand(std::string(command),handler);
 	return true;
 }
 
@@ -430,7 +824,7 @@ BZF_API bool bz_addWorldWaterLevel( float level, bz_MaterialInfo *material )
 	return true;
 }
 
-BZF_API bool bz_addWorldWeapon( std::string flagType, float *pos, float rot, float tilt, float initDelay, std::vector<float> delays )
+BZF_API bool bz_addWorldWeapon( std::string flagType, float *pos, float rot, float tilt, float initDelay, bzAPIFloatList &delays )
 {
 	if (!world || world->isFinisihed() )
 		return false;
@@ -441,7 +835,12 @@ BZF_API bool bz_addWorldWeapon( std::string flagType, float *pos, float rot, flo
 
 	FlagType *flag = flagMap.find(flagType)->second;
 
-	world->addWeapon(flag, pos, rot, tilt, initDelay, delays, synct);
+	std::vector<float> realDelays;
+
+	for(unsigned int i = 0; i < delays.size(); i++)
+		realDelays.push_back(delays.get(i));
+
+	world->addWeapon(flag, pos, rot, tilt, initDelay, realDelays, synct);
 	return true;
 }
 
@@ -454,26 +853,25 @@ BZF_API bool bz_setWorldSize( float size, float wallHeight )
 	return true;
 }
 
-
 BZF_API bool bz_getPublic( void )
 {
 	return clOptions->publicizeServer;
 }
 
-BZF_API std::string bz_getPublicAddr( void )
+BZF_API bzApiString bz_getPublicAddr( void )
 {
 	if (!clOptions->publicizeServer)
-		return std::string("");
+		return bzApiString("");
 
-	return clOptions->publicizedAddress;
+	return bzApiString(clOptions->publicizedAddress);
 }
 
-BZF_API std::string bz_getPublicDescription( void )
+BZF_API bzApiString bz_getPublicDescription( void )
 {
 	if (!clOptions->publicizeServer)
-		return std::string("");
+		return bzApiString("");
 
-	return clOptions->publicizedTitle;
+	return bzApiString(clOptions->publicizedTitle);
 }
 
 BZF_API bool bz_sendPlayCustomLocalSound ( int playerID, const char* soundName )

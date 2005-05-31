@@ -18,160 +18,6 @@
 
 #include "WorldEventManager.h"
 
-//-------------------BaseEventData--------------------
-BaseEventData::BaseEventData()
-{
-	eventType = eNullEvent;
-}
-
-//-------------------CTFCaptureEventData--------------------
-CTFCaptureEventData::CTFCaptureEventData()
-{
-	eventType = eCaptureEvent;
-	teamCaped = -1;
-	teamCaping = -1;
-	playerCaping = -1;
-}
-
-CTFCaptureEventData::~CTFCaptureEventData()
-{
-}
-
-//-------------------PlayerDieEventData--------------------
-PlayerDieEventData::PlayerDieEventData()
-{
-	eventType = ePlayerDieEvent;
-	playerID = -1;
-	teamID = -1;
-	killerID = -1;
-	killerTeamID = -1;
-
-	pos[0] = pos[1] = pos[2] = 0.0f;
-	rot = 0.0f;
-	time = 0.0;
-}
-
-PlayerDieEventData::~PlayerDieEventData()
-{
-}
-
-//-------------------PlayerSpawnEventData--------------------
-PlayerSpawnEventData::PlayerSpawnEventData()
-{
-	eventType = ePlayerSpawnEvent;
-	playerID = -1;
-	teamID = -1;
-
-	pos[0] = pos[1] = pos[2] = 0.0f;
-	rot = 0.0f;
-	time = 0.0;
-}
-
-PlayerSpawnEventData::~PlayerSpawnEventData()
-{
-}
-
-//-------------------ZoneEntryExitEventData--------------------
-ZoneEntryExitEventData::ZoneEntryExitEventData()
-{
-	eventType = eZoneEntryEvent;
-	playerID = -1;
-	teamID = -1;
-	zoneID = -1;
-
-	pos[0] = pos[1] = pos[2] = 0.0f;
-	rot = 0.0f;
-	time = 0.0;
-}
-
-ZoneEntryExitEventData::~ZoneEntryExitEventData()
-{
-}
-
-//-------------------PlayerJoinPartEventData--------------------
-PlayerJoinPartEventData::PlayerJoinPartEventData()
-{
-	eventType = ePlayerJoinEvent;
-
-	playerID = -1;
-	teamID = -1;
-	time = 0.0;
-}
-
-PlayerJoinPartEventData::~PlayerJoinPartEventData()
-{
-}
-
-//-------------------ChatEventData--------------------
-ChatEventData::ChatEventData()
-{
-	eventType = eChatMessageEvent;
-	from = -1;
-	to = -1;
-	time = 0.0;
-}
-
-ChatEventData::~ChatEventData()
-{
-}
-
-//-------------------UnknownSlashCommandEventData--------------------
-UnknownSlashCommandEventData::UnknownSlashCommandEventData()
-{
-	eventType = eUnknownSlashCommand;
-	from = -1;
-	handled = false;
-	time = 0.0;
-}
-
-UnknownSlashCommandEventData::~UnknownSlashCommandEventData()
-{
-}
-
-//-------------------GetPlayerSpawnPosEventData--------------------
-GetPlayerSpawnPosEventData::GetPlayerSpawnPosEventData()
-{
-	eventType = eGetPlayerSpawnPosEvent;
-	playeID = -1;
-	teamID = -1;
-
-	handled = false;
-
-	pos[0] = pos[1] = pos[2] = 0.0f;
-	rot = 0.0f;
-	time = 0.0;
-}
-
-GetPlayerSpawnPosEventData::~GetPlayerSpawnPosEventData()
-{
-}
-
-//-------------------GetAutoTeamEventData--------------------
-GetAutoTeamEventData::GetAutoTeamEventData()
-{
-	eventType = eGetAutoTeamEvent;
-	playeID = -1;
-	teamID = -1;
-	handled = false;
-}
-
-GetAutoTeamEventData::~GetAutoTeamEventData()
-{
-}
-
-//-------------------AllowPlayerEventData--------------------
-AllowPlayerEventData::AllowPlayerEventData()
-{
-	eventType = eAllowPlayer;
-	playerID = -1;
-	allow = true;
-	time = 0.0;
-}
-
-AllowPlayerEventData::~AllowPlayerEventData()
-{
-}
-
 //-------------------WorldEventManager--------------------
 WorldEventManager::WorldEventManager()
 {
@@ -200,7 +46,7 @@ WorldEventManager::~WorldEventManager()
 	}
 }
 
-void WorldEventManager::addEvent ( teEventType eventType, int team, BaseEventHandler* theEvetnt )
+void WorldEventManager::addEvent ( bz_eEventType eventType, int team, bz_EventHandler* theEvetnt )
 {
 	if (!theEvetnt)
 		return;
@@ -216,7 +62,7 @@ void WorldEventManager::addEvent ( teEventType eventType, int team, BaseEventHan
 	teamEvents->find(eventType)->second.push_back(theEvetnt);
 }
 
-void WorldEventManager::removeEvent ( teEventType eventType, int team, BaseEventHandler* theEvetnt )
+void WorldEventManager::removeEvent ( bz_eEventType eventType, int team, bz_EventHandler* theEvetnt )
 {
 	if (!theEvetnt)
 		return;
@@ -240,7 +86,7 @@ void WorldEventManager::removeEvent ( teEventType eventType, int team, BaseEvent
 	}
 }
 
-tvEventList WorldEventManager::getEventList ( teEventType eventType, int team )
+tvEventList WorldEventManager::getEventList ( bz_eEventType eventType, int team )
 
 {
 	tvEventList	eventList;
@@ -255,7 +101,7 @@ tvEventList WorldEventManager::getEventList ( teEventType eventType, int team )
 	return eventList;
 }
 
-void WorldEventManager::callEvents ( teEventType eventType, int team, BaseEventData	*eventData )
+void WorldEventManager::callEvents ( bz_eEventType eventType, int team, bz_EventData	*eventData )
 {
 	if (!eventData)
 		return;
@@ -276,7 +122,7 @@ tmEventTypeList* WorldEventManager::getTeamEventList ( int team )
 	return &(eventtMap.find(team)->second);
 }
 
-int WorldEventManager::getEventCount ( teEventType eventType, int team )
+int WorldEventManager::getEventCount ( bz_eEventType eventType, int team )
 {
 	return (int)getEventList(eventType,team).size();
 }

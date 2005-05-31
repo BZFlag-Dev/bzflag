@@ -19,20 +19,14 @@
 #include "TextUtils.h"
 #include <string>
 #include <map>
+#include "bzfsAPI.h"
 
 // parser for the server commands
 void parseServerCommand(const char *message, int dstPlayerId);
 
-class CustomSlashCommandHandler
-{
-public:
-	virtual ~CustomSlashCommandHandler(){};
-	virtual bool handle ( int playerID, const char* command, const char* message ) = 0;
-};
+typedef std::map<std::string, bz_CustomSlashCommandHandler*>	tmCustomSlashCommandMap;
 
-typedef std::map<std::string, CustomSlashCommandHandler*>	tmCustomSlashCommandMap;
-
-void registerCustomSlashCommand ( std::string command, CustomSlashCommandHandler* handler );
+void registerCustomSlashCommand ( std::string command, bz_CustomSlashCommandHandler* handler );
 void removeCustomSlashCommand ( std::string command );
 
 #endif

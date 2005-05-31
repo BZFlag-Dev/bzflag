@@ -47,9 +47,9 @@ void DeathHandler::process ( bz_EventData *eventData )
 	if ( usePlayerForShot )
 		playerToUse = dieData->playerID;
 
+        
 	bz_fireWorldWep("SW",(float)bz_getBZDBDouble("_reloadTime"),playerToUse,dieData->pos,0,0,0,0.0f);
 
 	bz_sendPlayCustomLocalSound(BZ_ALL_USERS,"flag_won");
-
 }
 

@@ -252,16 +252,16 @@ std::vector<std::string> getPluginList ( void )
 
 void parseServerCommand(const char *message, int dstPlayerId);
 
-class DynamicPluginCommands : public CustomSlashCommandHandler
+class DynamicPluginCommands : public bz_CustomSlashCommandHandler
 {
 public:
 	virtual ~DynamicPluginCommands(){};
-	virtual bool handle ( int playerID, const char* _command, const char* _message )
+	virtual bool handle ( int playerID, bzApiString _command, bzApiString _message )
 	{
 		bz_PlayerRecord	record;
 
-		std::string command = command;
-		std::string message = _message;
+		std::string command = _command.c_str();
+		std::string message = _message.c_str();
 
 		bz_getPlayerByIndex(playerID,&record);
 

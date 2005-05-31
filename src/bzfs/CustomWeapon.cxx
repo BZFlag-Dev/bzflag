@@ -37,7 +37,7 @@ CustomWeapon::CustomWeapon()
   delay.push_back(10.0f);
   type = Flags::Null;
   
-  triggerType = eNullEvent;
+  triggerType = bz_eNullEvent;
   eventTeam = -1;
 }
 
@@ -83,15 +83,15 @@ bool CustomWeapon::read(const char *cmd, std::istream& input) {
     std::string triggerName;
     input >> triggerName;
 
-    triggerType = eNullEvent;
+    triggerType = bz_eNullEvent;
 
     TextUtils::tolower(triggerName);
     if (triggerName == "oncap") {
-      triggerType = eCaptureEvent;
+      triggerType = bz_eCaptureEvent;
     } else if (triggerName == "onspawn") {
-      triggerType = ePlayerSpawnEvent;
+      triggerType = bz_ePlayerSpawnEvent;
     } else if (triggerName == "ondie") {
-      triggerType = ePlayerDieEvent;
+      triggerType = bz_ePlayerDieEvent;
     } else {
       std::cout << "weapon trigger type:" << triggerName << " unknown" << std::endl;
       return true;
@@ -110,7 +110,7 @@ bool CustomWeapon::read(const char *cmd, std::istream& input) {
 
 void CustomWeapon::writeToWorld(WorldInfo* world) const
 {
-  if (triggerType == eNullEvent)
+  if (triggerType == bz_eNullEvent)
     world->addWeapon(type, pos, rotation, tilt, initdelay, delay, sync);
   else
     worldEventManager.addEvent(triggerType,eventTeam,new WorldWeaponGlobalEventHandler(type, pos, rotation, tilt));

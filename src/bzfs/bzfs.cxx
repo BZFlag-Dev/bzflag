@@ -399,17 +399,17 @@ void sendPlayerInfo() {
 
     if (playerData->player.isPlaying()) {
       // see if any events want to update the playerInfo before it is sent out
-      GetPlayerInfoEventData playerInfoData;
+      bz_GetPlayerInfoEventData playerInfoData;
       playerInfoData.playerID = i;
       playerInfoData.callsign = playerData->player.getCallSign();
       playerInfoData.team = playerData->player.getTeam();
       playerInfoData.verified = playerData->accessInfo.isVerified();
-      playerInfoData.registerd = playerData->accessInfo.isRegistered();
+      playerInfoData.registered = playerData->accessInfo.isRegistered();
       playerInfoData.admin = playerData->accessInfo.showAsAdmin();
 
-      worldEventManager.callEvents(eGetPlayerInfoEvent,-1,&playerInfoData);
+      worldEventManager.callEvents(bz_eGetPlayerInfoEvent,-1,&playerInfoData);
 
-      buf = PackPlayerInfo(buf,i,GetPlayerProperties(playerInfoData.registerd,playerInfoData.verified,playerInfoData.admin));
+      buf = PackPlayerInfo(buf,i,GetPlayerProperties(playerInfoData.registered,playerInfoData.verified,playerInfoData.admin));
     }
   }
   broadcastMessage(MsgPlayerInfo, (char*)buf - (char*)bufStart, bufStart);
@@ -1251,12 +1251,12 @@ static bool defineWorld()
     }
   } else {
     // check and see if anyone wants to define the world from an event
-    GenerateWorldEventData	worldData;
+    bz_GenerateWorldEventData	worldData;
     worldData.ctf  = clOptions->gameStyle & TeamFlagGameStyle;
     worldData.time = TimeKeeper::getCurrent().getSeconds();
 
     world = new WorldInfo;
-    worldEventManager.callEvents(eGenerateWorldEvent, -1, &worldData);
+    worldEventManager.callEvents(bz_eGenerateWorldEvent, -1, &worldData);
     if (!worldData.handled) {
       delete(world);
       if (clOptions->gameStyle & TeamFlagGameStyle)
@@ -1941,13 +1941,13 @@ static void addPlayer(int playerIndex)
 
   // see if any watchers don't want this guy
 
-  AllowPlayerEventData allowData;
+  bz_AllowPlayerEventData allowData;
   allowData.callsign = playerData->player.getCallSign();
   allowData.ipAddress = playerData->netHandler->getTargetIP();
   allowData.playerID = playerIndex;
   allowData.time = TimeKeeper::getCurrent().getSeconds();
 
-  worldEventManager.callEvents(eAllowPlayer,-1,&allowData);
+  worldEventManager.callEvents(bz_eAllowPlayer,-1,&allowData);
   if (!allowData.allow) {
     rejectPlayer(playerIndex, RejectBadRequest, allowData.reason.c_str());
     return;
@@ -1956,12 +1956,12 @@ static void addPlayer(int playerIndex)
   // pick a team
   TeamColor t = autoTeamSelect(playerData->player.getTeam());
 
-  GetAutoTeamEventData autoTeamData;
+  bz_GetAutoTeamEventData autoTeamData;
   autoTeamData.playeID = playerIndex;
   autoTeamData.teamID = t;
   autoTeamData.callsign = playerData->player.getCallSign();
 
-  worldEventManager.callEvents(eGetAutoTeamEvent,-1,&autoTeamData);
+  worldEventManager.callEvents(bz_eGetAutoTeamEvent,-1,&autoTeamData);
 
   playerData->player.setTeam((TeamColor)autoTeamData.teamID);
   playerData->player.endShotCredit = 0;	// reset shotEndCredit
@@ -2177,15 +2177,15 @@ static void addPlayer(int playerIndex)
   sendPlayerInfo();
 
   // call any on join events
-  PlayerJoinPartEventData	joinEventData;
-  joinEventData.eventType = ePlayerJoinEvent;
+  bz_PlayerJoinPartEventData	joinEventData;
+  joinEventData.eventType = bz_ePlayerJoinEvent;
   joinEventData.playerID = playerIndex;
   joinEventData.teamID = playerData->player.getTeam();
   joinEventData.callsign = playerData->player.getCallSign();
   joinEventData.time = TimeKeeper::getCurrent().getSeconds();
 
-  worldEventManager.callEvents(ePlayerJoinEvent,joinEventData.teamID,&joinEventData);
-  worldEventManager.callEvents(ePlayerJoinEvent,-1,&joinEventData);
+  worldEventManager.callEvents(bz_ePlayerJoinEvent,joinEventData.teamID,&joinEventData);
+  worldEventManager.callEvents(bz_ePlayerJoinEvent,-1,&joinEventData);
 }
 
 
@@ -2397,8 +2397,8 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
     return;
 
   // call any on part events
-  PlayerJoinPartEventData partEventData;
-  partEventData.eventType = ePlayerPartEvent;
+  bz_PlayerJoinPartEventData partEventData;
+  partEventData.eventType = bz_ePlayerPartEvent;
   partEventData.playerID = playerIndex;
   partEventData.teamID = playerData->player.getTeam();
   partEventData.callsign = playerData->player.getCallSign();
@@ -2406,8 +2406,8 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
   if (reason)
     partEventData.reason = reason;
 
-  worldEventManager.callEvents(ePlayerPartEvent,partEventData.teamID,&partEventData);
-  worldEventManager.callEvents(ePlayerPartEvent,-1,&partEventData);
+  worldEventManager.callEvents(bz_ePlayerPartEvent,partEventData.teamID,&partEventData);
+  worldEventManager.callEvents(bz_ePlayerPartEvent,-1,&partEventData);
 
   if (notify) {
     // send a super kill to be polite
@@ -2705,16 +2705,16 @@ static void playerAlive(int playerIndex)
 
   // see if there is anyone to handle the spawn event, and if they want to change it.
 
-  GetPlayerSpawnPosEventData	spawnData;
-  spawnData.playeID = playerIndex;
+  bz_GetPlayerSpawnPosEventData	spawnData;
+  spawnData.playerID = playerIndex;
   spawnData.teamID = playerData->player.getTeam();
   spawnData.pos[0] = spawnPosition->getX();
   spawnData.pos[1] = spawnPosition->getY();
   spawnData.pos[2] = spawnPosition->getZ();
   spawnData.rot = spawnPosition->getAzimuth();
 
-  worldEventManager.callEvents(eGetPlayerSpawnPosEvent,-1,&spawnData);
-  worldEventManager.callEvents(eGetPlayerSpawnPosEvent,spawnData.teamID,&spawnData);
+  worldEventManager.callEvents(bz_eGetPlayerSpawnPosEvent,-1,&spawnData);
+  worldEventManager.callEvents(bz_eGetPlayerSpawnPosEvent,spawnData.teamID,&spawnData);
 
   // update last position immediately
   memcpy(lastState[playerIndex].pos,spawnData.pos,sizeof(float)*3);
@@ -2732,15 +2732,15 @@ static void playerAlive(int playerIndex)
   playerData->player.setAlive();
 
   // call any events for a playerspawn
-  PlayerSpawnEventData	spawnEvent;
+  bz_PlayerSpawnEventData	spawnEvent;
   spawnEvent.playerID = playerIndex;
   spawnEvent.teamID = playerData->player.getTeam();
 
   memcpy(spawnEvent.pos,lastState[playerIndex].pos,sizeof(float)*3);
   spawnEvent.rot = lastState[playerIndex].azimuth;
 
-  worldEventManager.callEvents(ePlayerSpawnEvent,spawnEvent.teamID,&spawnEvent);
-  worldEventManager.callEvents(ePlayerSpawnEvent,-1,&spawnEvent);
+  worldEventManager.callEvents(bz_ePlayerSpawnEvent,spawnEvent.teamID,&spawnEvent);
+  worldEventManager.callEvents(bz_ePlayerSpawnEvent,-1,&spawnEvent);
 
   if (clOptions->gameStyle & int(RabbitChaseGameStyle)) {
     playerData->player.wasNotARabbit();
@@ -2792,7 +2792,7 @@ void playerKilled(int victimIndex, int killerIndex, int reason,
   victim->setDead();
 
   // call any events for a playerdeath
-  PlayerDieEventData	dieEvent;
+  bz_PlayerDieEventData	dieEvent;
   dieEvent.playerID = victimIndex;
   dieEvent.teamID = victim->getTeam();
   dieEvent.killerID = killerIndex;
@@ -2802,8 +2802,8 @@ void playerKilled(int victimIndex, int killerIndex, int reason,
   memcpy(dieEvent.pos,lastState[victimIndex].pos,sizeof(float)*3);
   dieEvent.rot = lastState[victimIndex].azimuth;
 
-  worldEventManager.callEvents(ePlayerDieEvent,dieEvent.teamID,&dieEvent);
-  worldEventManager.callEvents(ePlayerDieEvent,-1,&dieEvent);
+  worldEventManager.callEvents(bz_ePlayerDieEvent,dieEvent.teamID,&dieEvent);
+  worldEventManager.callEvents(bz_ePlayerDieEvent,-1,&dieEvent);
 
   // killing rabbit or killing anything when I am a dead ex-rabbit is allowed
   bool teamkill = false;
@@ -3121,7 +3121,7 @@ static void captureFlag(int playerIndex, TeamColor teamCaptured)
   broadcastMessage(MsgCaptureFlag, (char*)buf-(char*)bufStart, bufStart);
 
   // find any events for capturing the flags on the caped team or events for ANY team
-  CTFCaptureEventData	eventData;
+  bz_CTFCaptureEventData	eventData;
   eventData.teamCaped = teamIndex;
   eventData.teamCaping = teamCaptured;
   eventData.playerCaping = playerIndex;
@@ -3129,8 +3129,8 @@ static void captureFlag(int playerIndex, TeamColor teamCaptured)
   eventData.rot = lastState[playerIndex].azimuth;
   eventData.time = TimeKeeper::getCurrent().getSeconds();
 
-  worldEventManager.callEvents(eCaptureEvent,teamIndex,&eventData);
-  worldEventManager.callEvents(eCaptureEvent,-1,&eventData);
+  worldEventManager.callEvents(bz_eCaptureEvent,teamIndex,&eventData);
+  worldEventManager.callEvents(bz_eCaptureEvent,-1,&eventData);
 
   // everyone on losing team is dead
   for (int i = 0; i < curMaxPlayers; i++) {
@@ -3783,7 +3783,7 @@ possible attack from %s\n",
       if (toData)
 	toTeam = toData->player.getTeam();
 
-      ChatEventData chatData;
+      bz_ChatEventData chatData;
       chatData.from = t;
       chatData.to = dstPlayer;
       chatData.message = message;
@@ -3791,15 +3791,15 @@ possible attack from %s\n",
 
       // send any events that want to watch the chat
       // everyone
-      worldEventManager.callEvents(eChatMessageEvent,-1,&chatData);
+      worldEventManager.callEvents(bz_eChatMessageEvent,-1,&chatData);
 
       // the from team
       if (playerData->player.getTeam() > 0)
-	worldEventManager.callEvents(eChatMessageEvent,playerData->player.getTeam(),&chatData);
+	worldEventManager.callEvents(bz_eChatMessageEvent,playerData->player.getTeam(),&chatData);
 
       // the to team
       if (toTeam > 0)
-	worldEventManager.callEvents(eChatMessageEvent,toTeam,&chatData);
+	worldEventManager.callEvents(bz_eChatMessageEvent,toTeam,&chatData);
 
       // send the actual Message after all the callbacks have done there magic to it.
       if (chatData.message.size())
@@ -5323,9 +5323,9 @@ int main(int argc, char **argv)
     world->getWorldWeapons().fire();
 
     // fire off a tick event
-    TickEventData	tickData;
+    bz_TickEventData	tickData;
     tickData.time = TimeKeeper::getCurrent().getSeconds();
-    worldEventManager.callEvents(eTickEvent,-1,&tickData);
+    worldEventManager.callEvents(bz_eTickEvent,-1,&tickData);
 
     // Clean pending players
     GameKeeper::Player::clean();

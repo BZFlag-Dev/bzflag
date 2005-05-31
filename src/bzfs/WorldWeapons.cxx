@@ -208,9 +208,9 @@ WorldWeaponGlobalEventHandler::~WorldWeaponGlobalEventHandler()
 {
 }
 
-void WorldWeaponGlobalEventHandler::process (BaseEventData *eventData)
+void WorldWeaponGlobalEventHandler::process (bz_EventData *eventData)
 {
-  if (eventData->eventType != eCaptureEvent)
+  if (eventData->eventType != bz_eCaptureEvent)
     return;
 
   fireWorldWep( type,BZDB.eval(StateDatabase::BZDB_RELOADTIME),

@@ -45,7 +45,7 @@ class CustomWeapon : public WorldFileLocation {
     float tilt;
     static TimeKeeper sync;
 
-	teEventType		triggerType;
+	bz_eEventType		triggerType;
 	int				eventTeam;
 };
 
