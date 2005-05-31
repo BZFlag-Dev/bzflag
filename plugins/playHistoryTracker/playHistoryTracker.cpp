@@ -91,12 +91,9 @@ void PlayHistoryTracker::process ( bz_EventData *eventData )
 		{
 			 bz_PlayerDieEventData	*deathRecord = ( bz_PlayerDieEventData*)eventData;
 
-			 bz_PlayerRecord	killerData;
+			 bz_PlayerRecord	*killerData;
 
-			 bz_getPlayerByIndex(deathRecord->killerID,&killerData);
-
-		//	GameKeeper::Player *killerData = GameKeeper::Player::getPlayerByIndex(deathRecord->killerID);
-			//GameKeeper::Player *victimData = GameKeeper::Player::getPlayerByIndex(deathRecord->playerID);
+			 killerData = bz_getPlayerByIndex(deathRecord->killerID);
 
 			 std::string soundToPlay;
 
@@ -106,11 +103,11 @@ void PlayHistoryTracker::process ( bz_EventData *eventData )
 				trPlayerHistoryRecord	&record = playerList.find(deathRecord->playerID)->second;
 				std::string message;
 				if ( record.spreeTotal >= 5 && record.spreeTotal < 10 )
-					message = record.callsign + std::string("'s rampage was stoped by ") + killerData.callsign.c_str();
+					message = record.callsign + std::string("'s rampage was stoped by ") + killerData->callsign.c_str();
 				if ( record.spreeTotal >= 10 && record.spreeTotal < 20 )
-					message = record.callsign + std::string("'s killing spree was halted by ") + killerData.callsign.c_str();
+					message = record.callsign + std::string("'s killing spree was halted by ") + killerData->callsign.c_str();
 				if ( record.spreeTotal >= 20 )
-					message = std::string("The unstopable reign of ") + record.callsign + std::string(" was ended by ") + killerData.callsign.c_str();
+					message = std::string("The unstopable reign of ") + record.callsign + std::string(" was ended by ") + killerData->callsign.c_str();
 
 				if (message.size())
 				{
@@ -165,6 +162,8 @@ void PlayHistoryTracker::process ( bz_EventData *eventData )
 				}	
 
 			}	
+
+			bz_freePlayerRecord(killerData);
 
 		//	if (soundToPlay.size())
 		//	bz_sendPlayCustomLocalSound(BZ_ALL_USERS,soundToPlay.c_str());
