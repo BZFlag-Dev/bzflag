@@ -482,8 +482,9 @@ BZF_API bool bz_removeEvent ( bz_eEventType eventType, int team, bz_EventHandler
 class bz_PlayerRecord;
 
 BZF_API bool bz_getPlayerIndexList ( bzAPIIntList *playerList );
-BZF_API bool bz_getPlayerByIndex ( int index, bz_PlayerRecord *playerRecord );
+BZF_API bz_PlayerRecord *bz_getPlayerByIndex ( int index );
 BZF_API bool bz_updatePlayerData ( bz_PlayerRecord *playerRecord );
+BZF_API bool bz_freePlayerRecord ( bz_PlayerRecord *playerRecord );
 
 class bz_PlayerRecord
 {

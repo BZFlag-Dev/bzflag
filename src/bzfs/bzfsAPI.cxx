@@ -523,7 +523,10 @@ BZF_API bool bz_updatePlayerData ( bz_PlayerRecord *playerRecord )
 	int flagid = player->player.getFlag();
 	FlagInfo *flagInfo = FlagInfo::get(flagid);
 
-	playerRecord->currentFlag = flagInfo->flag.type->label();
+	std::string label;
+	if (flagInfo && flagInfo->flag.type)
+		label = flagInfo->flag.type->label();
+	playerRecord->currentFlag = label;
 
 	std::vector<FlagType*>	flagHistoryList = player->flagHistory.get();
 
@@ -557,12 +560,14 @@ BZF_API bool bz_getPlayerIndexList ( bzAPIIntList *playerList )
 	return playerList->size() > 0;
 }
 
-BZF_API bool bz_getPlayerByIndex ( int index, bz_PlayerRecord *playerRecord )
+BZF_API bz_PlayerRecord * bz_getPlayerByIndex ( int index )
 {
 	GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(index);
 
+	bz_PlayerRecord *playerRecord = new bz_PlayerRecord;
+
 	if (!player || !playerRecord)
-		return false;
+		return NULL;
 
 	playerRecord->callsign = player->player.getCallSign();
 	playerRecord->playerID = index;
@@ -574,6 +579,14 @@ BZF_API bool bz_getPlayerByIndex ( int index, bz_PlayerRecord *playerRecord )
 
 	playerRecord->ipAddress = player->netHandler->getTargetIP();
 	playerRecord->update();
+	return playerRecord;
+}
+
+BZF_API  bool bz_freePlayerRecord( bz_PlayerRecord *playerRecord )
+{
+	if (playerRecord)
+		delete (playerRecord);
+
 	return true;
 }
 

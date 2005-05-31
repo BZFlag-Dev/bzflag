@@ -287,7 +287,13 @@ public:
 		std::string command = _command.c_str();
 		std::string message = _message.c_str();
 
-		bz_getPlayerByIndex(playerID,&record);
+		bz_PlayerRecord	*p = bz_getPlayerByIndex(playerID);
+		if (!p)
+			return false;
+
+		record = *p;
+
+		bz_freePlayerRecord(p);
 
 		if ( !record.admin )
 		{
