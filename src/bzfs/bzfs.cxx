@@ -4501,6 +4501,10 @@ int main(int argc, char **argv)
   // see if we are going to load any plugins
 #ifdef _USE_BZ_API
   initPlugins();
+
+	// check for python by default
+	loadPlugin(std::string("python"),std::string(""));
+
   for (unsigned int plugin = 0; plugin < clOptions->pluginList.size(); plugin++)
     loadPlugin(clOptions->pluginList[plugin].plugin, clOptions->pluginList[plugin].command);
 #endif
