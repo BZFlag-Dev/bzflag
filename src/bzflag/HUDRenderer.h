@@ -228,6 +228,7 @@ private:
   static std::string	headingLabel[36];
   static std::string	scoreSpacingLabel;
   static std::string	scoreLabel;
+  static std::string	killSpacingLabel;
   static std::string	killLabel;
   static std::string	teamScoreLabel;
   static std::string	teamScoreSpacingLabel;

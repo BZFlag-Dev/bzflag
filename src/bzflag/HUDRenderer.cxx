@@ -46,6 +46,7 @@ const GLfloat		HUDRenderer::black[3] = { 0.0f, 0.0f, 0.0f };
 std::string		HUDRenderer::headingLabel[36];
 std::string		HUDRenderer::scoreSpacingLabel("88% 888 (888-888)[88]");
 std::string		HUDRenderer::scoreLabel("Score");
+std::string		HUDRenderer::killSpacingLabel("888/888 ");
 std::string		HUDRenderer::killLabel("Kills");
 std::string		HUDRenderer::teamScoreSpacingLabel("888 (888-888) 888");
 std::string		HUDRenderer::teamScoreLabel("Team Score");
@@ -245,7 +246,7 @@ void			HUDRenderer::setMinorFontSize(int, int height)
   huntedArrowWidth = fm.getStrLength(minorFontFace, minorFontSize, "Hunt->");
 
   scoreLabelWidth = fm.getStrLength(minorFontFace, minorFontSize, scoreSpacingLabel);
-  killsLabelWidth = fm.getStrLength(minorFontFace, minorFontSize, killLabel);
+  killsLabelWidth = fm.getStrLength(minorFontFace, minorFontSize, killSpacingLabel);
   teamScoreLabelWidth = fm.getStrLength(minorFontFace, minorFontSize, teamScoreSpacingLabel);
 
   const float spacing = fm.getStrLength(minorFontFace, minorFontSize, " ");
@@ -869,7 +870,7 @@ void			HUDRenderer::renderScoreboard(void)
 
   const float x1 = 0.01f * window.getWidth();
   const float x2 = x1 + scoreLabelWidth;
-  const float x3 = x2 + scoreLabelWidth;
+  const float x3 = x2 + killsLabelWidth;
   const float x5 = (1.0f - 0.01f) * window.getWidth() - teamScoreLabelWidth;
   const float y0 = (float)window.getViewHeight() - fm.getStrHeight(majorFontFace, majorFontSize, " ")
       - fm.getStrHeight(alertFontFace, alertFontSize, " ") * 2.0f;
