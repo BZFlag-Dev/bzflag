@@ -22,6 +22,9 @@ void loadPlugin ( std::string plugin, std::string config );
 void unloadPlugin ( std::string plugin );
 void unloadPlugins ( void );
 
+bool registerCustomPluginHandaler ( std::string extension, bz_APIPluginHandaler *handaler );
+bool removeCustomPluginHandaler ( std::string extension, bz_APIPluginHandaler *handaler );
+
 std::vector<std::string> getPluginList ( void );
 
 #endif //_BZFS_PLUGINS_H_

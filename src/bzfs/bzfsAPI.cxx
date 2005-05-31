@@ -26,6 +26,8 @@
 
 #include "BzMaterial.h"
 
+#include "bzfsPlugins.h"
+
 TimeKeeper synct = TimeKeeper::getCurrent();
 
 extern void sendMessage(int playerIndex, PlayerId dstPlayer, const char *message);
@@ -891,7 +893,26 @@ BZF_API bool bz_sendPlayCustomLocalSound ( int playerID, const char* soundName )
 	return true;
 }
 
+// custom pluginHandaler
+bool bz_registerCustomPluginHandaler ( const char* extension, bz_APIPluginHandaler *handaler )
+{
+	if (!extension || !handaler)
+		return false;
 
+	std::string ext = extension;
+
+	return registerCustomPluginHandaler( ext,handaler);
+}
+
+bool bz_removeCustomPluginHandaler ( const char* extension, bz_APIPluginHandaler *handaler )
+{
+	if (!extension || !handaler)
+		return false;
+
+	std::string ext = extension;
+
+	return removeCustomPluginHandaler( ext,handaler);
+}
 
 // Local Variables: ***
 // mode:C++ ***

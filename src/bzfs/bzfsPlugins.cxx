@@ -12,6 +12,7 @@
 
 #include <string>
 #include <vector>
+#include <map>
 
 #include "common.h"
 #include "bzfio.h"
@@ -28,6 +29,9 @@ std::string globalPluginDir = ".\\plugins\\";
 std::string extension = ".so";
 std::string globalPluginDir = "$(prefix)/lib/bzflag/";
 #endif 
+
+typedef std::map<std::string, bz_APIPluginHandaler*> tmCustomPluginMap;
+tmCustomPluginMap customPluginMap;
 
 typedef struct 
 {
@@ -96,7 +100,7 @@ int getPluginVersion ( HINSTANCE hLib )
 	return 2;
 }
 
-void loadPlugin ( std::string plugin, std::string config )
+void load1Plugin ( std::string plugin, std::string config )
 {
 	int (*lpProc)(const char*);
 
@@ -163,7 +167,7 @@ int getPluginVersion ( void* hLib )
 	return 0;
 }
 
-void loadPlugin ( std::string plugin, std::string config )
+void load1Plugin ( std::string plugin, std::string config )
 {
 	int (*lpProc)(const char*);
 
@@ -215,6 +219,26 @@ void unload1Plugin ( int iPluginID )
 	plugin.handle = NULL;
 }
 #endif 
+
+
+void loadPlugin ( std::string plugin, std::string config )
+{
+	// check and see if it's an extension we have a handaler for
+	std::string ext;
+
+	std::vector<std::string> parts = TextUtils::tokenize(plugin,std::string("."));
+	ext = parts[parts.size()-1];
+
+	tmCustomPluginMap::iterator itr = customPluginMap.find(TextUtils::tolower(extension));
+
+	if (itr != customPluginMap.end() && itr->second)
+	{
+		bz_APIPluginHandaler *handaler = itr->second;
+		handaler->handle(plugin,config);
+	}
+	else
+		load1Plugin(plugin,config);
+}
 
 void unloadPlugin ( std::string plugin )
 {
@@ -322,10 +346,31 @@ DynamicPluginCommands	command;
 
 void initPlugins ( void )
 {
+	customPluginMap.clear();
+
 	registerCustomSlashCommand("loadplugin",&command);
 	registerCustomSlashCommand("unloadplugin",&command);
 	registerCustomSlashCommand("listplugins",&command);
 }
+
+bool registerCustomPluginHandaler ( std::string extension, bz_APIPluginHandaler *handaler )
+{
+	std::string ext = TextUtils::tolower(extension);
+	customPluginMap[ext] = handaler;
+	return true;
+}
+
+bool removeCustomPluginHandaler ( std::string extension, bz_APIPluginHandaler *handaler )
+{
+	tmCustomPluginMap::iterator itr = customPluginMap.find(TextUtils::tolower(extension));
+
+	if (itr == customPluginMap.end() || itr->second != handaler)
+		return false;
+
+	customPluginMap.erase(itr);
+	return true;
+}
+
 
 // Local Variables: ***
 // mode:C++ ***

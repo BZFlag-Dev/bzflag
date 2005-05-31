@@ -653,6 +653,15 @@ BZF_API bzApiString bz_getPublicDescription( void );
 // custom client sounds
 BZF_API bool bz_sendPlayCustomLocalSound ( int playerID, const char* soundName );
 
+class bz_APIPluginHandaler
+{
+public:
+	virtual ~bz_APIPluginHandaler(){};
+	virtual bool handle ( bzApiString plugin, bzApiString param ) = 0;
+};
+// custom pluginHandaler
+bool bz_registerCustomPluginHandaler ( const char* extension, bz_APIPluginHandaler * handaler );
+bool bz_removeCustomPluginHandaler ( const char* extension, bz_APIPluginHandaler * handaler );
 
 #endif //_BZFS_API_H_
 
