@@ -102,14 +102,16 @@ Player_getAttr (Player *player, char *name)
 		attr = PyString_FromString (player->record->ipAddress.c_str());
 	} else if (strcmp (name, "flag") == 0) {
 		// skip the Py_None check at the end, since None is a valid return value.
-		if (player->record->currentFlag.length () == 0)
+		if (player->record->currentFlag.size () == 0)
 			return Py_None;
 		else
 			attr = PyString_FromString (player->record->currentFlag.c_str ());
 	} else if (strcmp (name, "flagHistory") == 0) {
 		attr = PyList_New (0);
-		for (std::vector<std::string>::iterator it = player->record->flagHistory.begin (); it != player->record->flagHistory.end (); it++)
-			PyList_Append (attr, PyString_FromString (it->c_str()));
+		for (unsigned int i = 0; i < player->record->flagHistory.size (); i++) {
+			bzApiString str = player->record->flagHistory[i];
+			PyList_Append (attr, PyString_FromString (str.c_str()));
+		}
 	} else if (strcmp (name, "spawned") == 0) {
 		attr = player->record->spawned ? Py_True : Py_False;
 	} else if (strcmp (name, "verified") == 0) {
@@ -120,8 +122,10 @@ Player_getAttr (Player *player, char *name)
 		attr = player->record->admin ? Py_True : Py_False;
 	} else if (strcmp (name, "groups") == 0) {
 		attr = PyList_New (0);
-		for (std::vector<std::string>::iterator it = player->record->groups.begin (); it != player->record->groups.end (); it++)
-			PyList_Append (attr, PyString_FromString (it->c_str()));
+		for (unsigned int i = 0; i < player->record->groups.size (); i++) {
+			bzApiString str = player->record->groups[i];
+			PyList_Append (attr, PyString_FromString (str.c_str()));
+		}
 	} else if (strcmp (name, "wins") == 0) {
 		attr = Py_BuildValue ("i", player->record->wins);
 	} else if (strcmp (name, "losses") == 0) {

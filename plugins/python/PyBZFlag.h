@@ -36,7 +36,7 @@ public:
 
 protected:
 	BZFlag ();
-	void RegisterEvent (Handler *handler, bz_teEventType event);
+	void RegisterEvent (Handler *handler, bz_eEventType event);
 private:
 	// yep, we're a singleton
 	static BZFlag *instance;

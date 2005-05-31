@@ -65,7 +65,7 @@ BZFlag::DeRef ()
 }
 
 void
-BZFlag::RegisterEvent (Handler *handler, bz_teEventType event)
+BZFlag::RegisterEvent (Handler *handler, bz_eEventType event)
 {
 	handler->parent = this;
 	bz_registerGeneralEvent (event, handler);
