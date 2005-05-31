@@ -18,7 +18,9 @@
 #define	BZF_WINMEDIA_H
 
 #include "BzfMedia.h"
+#ifdef HAVE_DSOUND_H
 #include <dsound.h>
+#endif
 
 class WinWindow;
 
@@ -48,9 +50,11 @@ class WinMedia : public BzfMedia {
     HWND		window;
     bool		audioReady;
     bool		audioPlaying;
+#ifdef HAVE_DSOUND_H
     IDirectSound*	audioInterface;
     IDirectSoundBuffer*	audioPrimaryPort;
     IDirectSoundBuffer*	audioPort;
+#endif
     int			audioNumChannels;
     int			audioOutputRate;
     int			audioBufferSize;
