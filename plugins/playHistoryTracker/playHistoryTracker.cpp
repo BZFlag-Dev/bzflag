@@ -106,11 +106,11 @@ void PlayHistoryTracker::process ( bz_EventData *eventData )
 				trPlayerHistoryRecord	&record = playerList.find(deathRecord->playerID)->second;
 				std::string message;
 				if ( record.spreeTotal >= 5 && record.spreeTotal < 10 )
-					message = record.callsign + std::string("'s rampage was stoped by ") + killerData.callsign;
+					message = record.callsign + std::string("'s rampage was stoped by ") + killerData.callsign.c_str();
 				if ( record.spreeTotal >= 10 && record.spreeTotal < 20 )
-					message = record.callsign + std::string("'s killing spree was halted by ") + killerData.callsign;
+					message = record.callsign + std::string("'s killing spree was halted by ") + killerData.callsign.c_str();
 				if ( record.spreeTotal >= 20 )
-					message = std::string("The unstopable reign of ") + record.callsign + std::string(" was ended by ") + killerData.callsign;
+					message = std::string("The unstopable reign of ") + record.callsign + std::string(" was ended by ") + killerData.callsign.c_str();
 
 				if (message.size())
 				{
@@ -181,7 +181,7 @@ void PlayHistoryTracker::process ( bz_EventData *eventData )
 			trPlayerHistoryRecord	playerRecord;
 
 			playerRecord.playerID = (( bz_PlayerJoinPartEventData*)eventData)->playerID;
-			playerRecord.callsign = (( bz_PlayerJoinPartEventData*)eventData)->callsign;
+			playerRecord.callsign = (( bz_PlayerJoinPartEventData*)eventData)->callsign.c_str();
 			playerRecord.spreeTotal = 0;
 			playerRecord.lastUpdateTime = (( bz_PlayerJoinPartEventData*)eventData)->time;
 			playerRecord.startTime = playerRecord.lastUpdateTime;
