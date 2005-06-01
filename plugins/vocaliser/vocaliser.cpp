@@ -60,6 +60,8 @@ VocaliserEvents vocEvents;
 
 std::vector<std::string> resourceList;
 
+double minVoiceTime = 45.0;
+
 void loadVoiceProfiles ( std::string configFile )
 {
 	FILE *fp = fopen(configFile.c_str(),"rt");
@@ -201,6 +203,7 @@ bool PlaysndCommand::handle ( int playerID, bzApiString _command, bzApiString _m
 	std::string command = _command.c_str();
 	std::string message = _message.c_str();
 
+	double time = bz_getCurrentTime();
 	if (!mVoices.size())
 	{
 		bz_sendTextMessage (BZ_SERVER, playerID, "There are no voices loaded");
@@ -259,6 +262,14 @@ bool PlaysndCommand::handle ( int playerID, bzApiString _command, bzApiString _m
 		trPlayerVoiceRecord &voice = getPlayerVoiceRecord (playerID);
 		
 		// lets find the command in the voice
+		if ( voice.lastVoiceTime != -1 )
+		{
+			if (time - voice.lastVoiceTime < minVoiceTime)
+			{
+				bz_sendTextMessage (BZ_SERVER, playerID, "You just said something, wait a bit");
+				return true;
+			}
+		}
 
 		trVoiceSet &voiceSet = mVoices[voice.voice];
 		
@@ -280,6 +291,7 @@ bool PlaysndCommand::handle ( int playerID, bzApiString _command, bzApiString _m
 		if (item.team)
 			target = playerInfo->team;
 
+		voice.lastVoiceTime = time;
 
 		bz_sendTextMessage(playerID,target,item.text.c_str());
 		bz_sendPlayCustomLocalSound (target, item.sound.c_str());
