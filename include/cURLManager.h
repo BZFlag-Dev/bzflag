@@ -28,6 +28,7 @@
 #include <curl/curl.h>
 #include <string>
 #include <map>
+#include <vector>
 
 // revert _WINSOCK2API_ to its previous state
 #ifndef _ALREADYHADWS2_
@@ -83,6 +84,43 @@ private:
 			      void *stream);
 
   static std::map<CURL*, cURLManager*> cURLMap;
+};
+
+
+typedef enum
+{
+	eImage,
+	eSound,
+	eFont,
+	eFile,
+	eUnknown
+}teResourceType;
+
+typedef struct 
+{
+	teResourceType	resType;
+	std::string		URL;
+	std::string		filePath;
+	std::string		fileName;
+}trResourceItem;
+
+class resourceGeter : public cURLManager
+{
+public:
+	resourceGeter();
+	virtual ~resourceGeter();
+
+	void addResource ( trResourceItem &item );
+	void flush ( void );
+
+	virtual void finalization(char *data, unsigned int length, bool good);
+
+protected:
+	bool itemExists ( trResourceItem &item );
+	void getResource ( void );
+
+	std::vector<trResourceItem>	resources;
+	bool doingStuff;
 };
 
 #endif // CURL_MANAGER_H

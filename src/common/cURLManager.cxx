@@ -318,6 +318,89 @@ void cURLManager::setTimeCondition(timeCondition condition, time_t &t)
   }
 }
 
+
+//**************************resourceGeter*************************
+
+resourceGeter::resourceGeter()
+{
+	doingStuff = false;
+}
+
+resourceGeter::~resourceGeter()
+{
+
+}
+
+void resourceGeter::addResource ( trResourceItem &item )
+{
+	resources.push_back(item);
+
+	if (!doingStuff)
+		getResource();
+}
+
+void resourceGeter::flush ( void )
+{
+	resources.clear();
+	doingStuff = false;
+}
+
+void resourceGeter::finalization(char *data, unsigned int length, bool good)
+{
+	if (!resources.size() || !doingStuff)
+		return;	// we are suposed to be done
+
+	// this is who we are suposed to be geting
+	trResourceItem item = resources[0]; 
+	resources.erase(resources.begin());
+	if (good)
+	{
+		// save the thing
+		FILE *fp = fopen(item.filePath.c_str(),"wb");
+		if (fp)
+		{
+			fwrite(data,length,1,fp);
+			fclose(fp);
+		}
+
+		// maybe send a message here saying we did it?
+	}
+	
+	// do the next one if we must
+	getResource();
+}
+
+bool resourceGeter::itemExists ( trResourceItem &item )
+{
+	// save the thing
+	FILE *fp = fopen(item.filePath.c_str(),"rb");
+	if (fp)
+	{
+		fclose(fp);
+		return true;
+	}
+	return false;
+}
+
+void resourceGeter::getResource ( void )
+{
+	while ( resources.size() || itemExists(resources[0]) )
+		resources.erase(resources.begin());
+
+	if ( !resources.size() )
+		doingStuff = false;
+	else
+	{
+		trResourceItem item = resources[0]; 
+
+		doingStuff = true;
+		setURL(item.URL);
+		perform();
+	}
+}
+
+
+
 // Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***

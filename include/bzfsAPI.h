@@ -535,6 +535,7 @@ public:
 
 // message API
 BZF_API bool bz_sendTextMessage (int from, int to, const char* message);
+BZF_API bool bz_sentFechResMessage ( int playerID,  const char* URL );
 
 // world weapons
 BZF_API bool bz_fireWorldWep ( const char* flagType, float lifetime, int fromPlayer, float *pos, float tilt, float direction, int shotID , float dt );
@@ -642,7 +643,7 @@ typedef struct bz_MaterialInfo
 // have bz make you a new material
 bz_MaterialInfo* bz_anewMaterial ( void );
 // tell bz you are done with a material
-void bz_adeleteMaterial ( bz_MaterialInfo *material );
+void bz_deleteMaterial ( bz_MaterialInfo *material );
 
 BZF_API bool bz_addWorldBox ( float *pos, float rot, float* scale, bz_WorldObjectOptions options );
 BZF_API bool bz_addWorldPyramid ( float *pos, float rot, float* scale, bool fliped, bz_WorldObjectOptions options );

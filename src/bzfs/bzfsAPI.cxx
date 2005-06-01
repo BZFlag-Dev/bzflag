@@ -25,6 +25,7 @@
 #include "WorldInfo.h"
 
 #include "BzMaterial.h"
+#include "cURLManager.h"
 
 #include "bzfsPlugins.h"
 
@@ -477,7 +478,7 @@ bz_MaterialInfo* bz_anewMaterial ( void )
 	return new bz_MaterialInfo;
 }
 
-void bz_adeleteMaterial ( bz_MaterialInfo *material )
+void bz_deleteMaterial ( bz_MaterialInfo *material )
 {
 	if (material)
 		delete(material);
@@ -609,6 +610,32 @@ BZF_API bool bz_sendTextMessage(int from, int to, const char* message)
 		playerIndex = from;
 
 	sendMessage(playerIndex, dstPlayer, message);
+	return true;
+}
+
+BZF_API bool bz_sentFechResMessage ( int playerID,  const char* URL )
+{
+	if (playerID == BZ_SERVER || !URL)
+		return false;
+
+	teResourceType resType = eFile;
+
+	std::vector<std::string> temp = TextUtils::tokenize(TextUtils::tolower(std::string(URL)),std::string("."));
+
+	std::string ext = temp[temp.size()-1];
+	if (ext == "wav")
+		resType = eSound;
+
+	void *buf, *bufStart = getDirectMessageBuffer();
+	buf = nboPackUShort(bufStart, (short)resType);
+	buf = nboPackUShort(buf, (unsigned short)strlen(URL));
+	buf = nboPackString(buf, URL,strlen(URL));
+
+	if (playerID == BZ_ALL_USERS)
+		broadcastMessage(MsgFetchResources, (char*)buf - (char*)bufStart, bufStart);
+	else
+		directMessage(playerID,MsgFetchResources, (char*)buf - (char*)bufStart, bufStart);
+
 	return true;
 }
 

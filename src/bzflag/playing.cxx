@@ -179,6 +179,8 @@ static void		setRobotTarget(RobotPlayer* robot);
 extern void		doAutoPilot(float &rotation, float &speed);
 extern void		teachAutoPilot( FlagType *, int );
 
+resourceGeter	resourceDownloader;
+
 // Far and Near Frustum clipping planes
 static const float NearPlaneNormal = 1.0f;
 static const float NearPlaneClose = 0.25f; // for drawing in the cockpit
@@ -1685,6 +1687,44 @@ static void		handleServerMessage(bool human, uint16_t code,
   static WordFilter *wordfilter = (WordFilter *)BZDB.getPointer("filter");
 
   switch (code) {
+
+	  case MsgFetchResources:
+		  if (BZDB.isSet("_noRemoteFiles") && BZDB.isTrue("_noRemoteFiles"))
+			  break;
+		  else
+		  {
+			  uint16_t	numItems;
+			  void *buf;
+
+			  buf = nboUnpackUShort (msg, numItems); // the type
+
+			  for ( int i = 0; i < numItems; i++ )
+			  {
+				uint16_t	itemType;
+				char buffer[MessageLen];
+				uint16_t stringLen;
+				trResourceItem item;
+
+				buf = nboUnpackUShort (buf, itemType);
+				item.resType = (teResourceType)itemType;
+
+				// URL
+				buf = nboUnpackUShort (buf, stringLen);
+				buf = nboUnpackString (buf, buffer, stringLen);
+
+				buffer[stringLen] = '\0';
+				item.URL = buffer;
+
+				item.filePath = PlatformFactory::getMedia()->getMediaDirectory();
+				std::vector<std::string> temp = TextUtils::tokenize(item.URL,std::string("/"));
+			
+				item.fileName = temp[temp.size()-1];
+				item.filePath += item.fileName;
+
+				resourceDownloader.addResource(item);
+			  }
+		  }
+		  break;
 
 		case MsgCustomSound:
 			// bail out if we don't want to do remote sounds
