@@ -103,6 +103,8 @@
 #include "AresHandler.h"
 #include "cURLManager.h"
 
+#include "Downloads.h"
+
 // versioning that makes us recompile every time
 #include "version.h"
 
@@ -1721,7 +1723,10 @@ static void		handleServerMessage(bool human, uint16_t code,
 				item.fileName = temp[temp.size()-1];
 				item.filePath += item.fileName;
 
-				resourceDownloader.addResource(item);
+				std::string hostname;
+				parseHostname(item.URL,hostname);
+				if (authorizedServer(hostname))
+					resourceDownloader.addResource(item);
 			  }
 		  }
 		  break;

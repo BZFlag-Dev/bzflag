@@ -67,7 +67,6 @@ static bool       textureDownloading = false;
 
 // Function Prototypes
 static void printAuthNotice();
-static bool authorizedServer(const std::string& hostname);
 static bool checkAuthorizations(BzMaterialManager::TextureSet& set);
 
 
@@ -294,7 +293,7 @@ static void printAuthNotice()
 }
 
 
-static bool authorizedServer(const std::string& hostname)
+bool authorizedServer(const std::string& hostname)
 {
   // Don't do here a DNS lookup, it can block the client
   // DNS is temporary removed until someone code it unblocking
@@ -309,7 +308,7 @@ static bool authorizedServer(const std::string& hostname)
 }
 
 
-static bool parseHostname(const std::string& url, std::string& hostname)
+bool parseHostname(const std::string& url, std::string& hostname)
 {
   std::string protocol, path, ip;
   int port;

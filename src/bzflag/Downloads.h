@@ -13,6 +13,8 @@
 #ifndef DOWNLOADS_H
 #define DOWNLOADS_H
 
+#include <string>
+
 namespace Downloads {
   void startDownloads(bool doDownloads,
 		      bool updateDownloads,
@@ -21,6 +23,10 @@ namespace Downloads {
   void removeTextures(); // free the downloaded GL textures
   bool requestFinalized();
 }
+
+bool authorizedServer(const std::string& hostname);
+bool parseHostname(const std::string& url, std::string& hostname);
+
 
 #endif
 
