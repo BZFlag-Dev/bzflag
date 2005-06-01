@@ -395,7 +395,7 @@ void resourceGeter::getResource ( void )
 
 		doingStuff = true;
 		setURL(item.URL);
-		perform();
+		addHandle();
 	}
 }
 
