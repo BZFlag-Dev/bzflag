@@ -46,9 +46,19 @@ Last operation require /opt/xmingw being writeable
 
 ------ curl
 Get curl source, untar them and create a directory where to build the curl.
-Go to this brand new directory and type:
 
-../curl-7.13.1/configure --host=i386-mingw32msvc --build=i686-pc-linux-gnu \
+There is a bug on curl when trying to detect the c-ares library.
+So go to the curl directory and apply the patch to configure.ac
+
+-       LIBS="$LIBS -lcares"
++       AC_CHECK_LIB(cares, ares_cancel)
+
+then run autoconf from the same directory
+
+
+Go to the directory where to build and type:
+
+../curl-7.14.0/configure --host=i386-mingw32msvc --build=i686-pc-linux-gnu \
 --prefix=/opt/xmingw --enable-ares --disable-shared
 make
 make install
@@ -72,42 +82,22 @@ apply the patch to /opt/xmingw/bin/curl-config:
 Last operations require /opt/xmingw being writeable 
 
 ------ libSDL
-Get a development version of libSDL for Windows and unpack it on a known
-location (i.e. ~).
+Get libSDL source, untar them and create a directory where to build it.
 
-System will create a directiory called SDL-x.x.x (e.g. SDL-1.2.8). Go there and
-copy some of the SDL files in the system include:
-
-cp -r ~/SDL-1.2.8/include/SDL /opt/xmingw/i386-mingw32msvc/include/
-cp ~/SDL-1.2.8/bin/i386-mingw32msvc-sdl-config /opt/xmingw/bin/sdl-config
-cp ~/SDL-1.2.8/lib/libSDLmain.a /opt/xmingw/i386-mingw32msvc/lib/
-cp ~/SDL-1.2.8/lib/libSDL.a /opt/xmingw/i386-mingw32msvc/lib/
-
-For version 1.2.8 you need to change one line of the include file SDL_audio.h
-in /opt/xming32/i386-mingw32msvc/include/SDL:
-
-from
-
-void (SDLCALL *filters[10])(struct SDL_AudioCVT *cvt, Uint16 format);
-
-to
-
-void (*filters[10])(struct SDL_AudioCVT *cvt, Uint16 format);
+Get some extra windows file that libSDL needs:
+http://www.libsdl.org/extras/win32/common/directx-devel.tar.gz
+Create a new directory and unpack the directx-devel file here. You'll have an
+include directory and a lib directory. Copy all the file from the include
+directory into /opt/xmingw/i386-mingw32msvc/include/ . You need su privileges
+to do that.
 
 
-sdl-config should be changed to match the directory where we moved it:
+Type
+../SDL-1.2.8/configure --host=i386-mingw32msvc --build=i686-pc-linux-gnu \
+--prefix=/opt/xmingw
 
---- sdl-config  2005-05-18 07:05:00.000000000 +0200
-+++ sdl-config.new      2005-05-18 07:23:09.000000000 +0200
-@@ -1,6 +1,6 @@
- #!/bin/sh
-
--prefix=/usr/local/cross-tools/i386-mingw32msvc
-+prefix=/opt/xmingw/i386-mingw32msvc
- exec_prefix=${prefix}
- exec_prefix_set=no
-
-
+make
+make install
 
 ------ bzflag
 Now, time to get a copy of bzflag, from CVS or from source tarball.
