@@ -181,7 +181,7 @@ static void		setRobotTarget(RobotPlayer* robot);
 extern void		doAutoPilot(float &rotation, float &speed);
 extern void		teachAutoPilot( FlagType *, int );
 
-resourceGeter	resourceDownloader;
+resourceGeter	*resourceDownloader = NULL;
 
 // Far and Near Frustum clipping planes
 static const float NearPlaneNormal = 1.0f;
@@ -1702,32 +1702,36 @@ static void		handleServerMessage(bool human, uint16_t code,
 
 			  for ( int i = 0; i < numItems; i++ )
 			  {
-				uint16_t	itemType;
-				char buffer[MessageLen];
-				uint16_t stringLen;
-				trResourceItem item;
+					uint16_t	itemType;
+					char buffer[MessageLen];
+					uint16_t stringLen;
+					trResourceItem item;
 
-				buf = nboUnpackUShort (buf, itemType);
-				item.resType = (teResourceType)itemType;
+					buf = nboUnpackUShort (buf, itemType);
+					item.resType = (teResourceType)itemType;
 
-				// URL
-				buf = nboUnpackUShort (buf, stringLen);
-				buf = nboUnpackString (buf, buffer, stringLen);
+					// URL
+					buf = nboUnpackUShort (buf, stringLen);
+					buf = nboUnpackString (buf, buffer, stringLen);
 
-				buffer[stringLen] = '\0';
-				item.URL = buffer;
+					buffer[stringLen] = '\0';
+					item.URL = buffer;
 
-				item.filePath = PlatformFactory::getMedia()->getMediaDirectory();
-				std::vector<std::string> temp = TextUtils::tokenize(item.URL,std::string("/"));
-			
-				item.fileName = temp[temp.size()-1];
-				item.filePath += item.fileName;
+					item.filePath = PlatformFactory::getMedia()->getMediaDirectory();
+					std::vector<std::string> temp = TextUtils::tokenize(item.URL,std::string("/"));
+				
+					item.fileName = temp[temp.size()-1];
+					item.filePath += item.fileName;
 
-				std::string hostname;
-				parseHostname(item.URL,hostname);
-				if (authorizedServer(hostname))
-					resourceDownloader.addResource(item);
-			  }
+					std::string hostname;
+					parseHostname(item.URL,hostname);
+					if (authorizedServer(hostname))
+					{
+						if (!resourceDownloader)
+							resourceDownloader = new resourceGeter;
+						resourceDownloader->addResource(item);
+					}
+				}
 		  }
 		  break;
 
@@ -6317,6 +6321,8 @@ void			startPlaying(BzfDisplay* _display,
   // start game loop
   playingLoop();
 
+	if (resourceDownloader)
+		delete(resourceDownloader);
   // clean up
   delete motd;
   for (unsigned int ext = 0; ext < prototypeExplosions.size(); ext++)

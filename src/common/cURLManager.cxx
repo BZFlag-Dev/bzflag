@@ -321,7 +321,7 @@ void cURLManager::setTimeCondition(timeCondition condition, time_t &t)
 
 //**************************resourceGeter*************************
 
-resourceGeter::resourceGeter()
+resourceGeter::resourceGeter() : cURLManager()
 {
 	doingStuff = false;
 }
