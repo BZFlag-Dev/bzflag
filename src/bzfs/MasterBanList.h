@@ -13,18 +13,16 @@
 #ifndef __MASTER_BAN_LIST_H__
 #define __MASTER_BAN_LIST_H__
 
-// bzflag global header
-#include "global.h"
+// common implementation headers
+#include "cURLManager.h"
 
-class MasterBanList {
+class MasterBanList : cURLManager {
 public:
-	MasterBanList();
-	~MasterBanList();
-
 const std::string& get ( const std::string URL );
 protected:
 	std::string	data;
  private:
+	void finalization(char *cURLdata, unsigned int length, bool good);
 };
 #endif //__MASTER_BAN_LIST_H__
 

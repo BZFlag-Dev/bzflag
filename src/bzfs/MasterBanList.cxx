@@ -14,22 +14,22 @@
 #pragma warning( 4: 4786)
 #endif
 
+// interface header
 #include "MasterBanList.h"
-#include "URLManager.h"
-
-MasterBanList::MasterBanList()
-{
-}
-
-MasterBanList::~MasterBanList()
-{
-
-}
 
 const std::string& MasterBanList::get ( const std::string URL )
 {
   data = "";
   // get all up on the internet and go get the thing
-	URLManager::instance().getURL(URL,data);
+  setURL(URL);
+  performWait();
   return data;
 }
+
+void MasterBanList::finalization(char *cURLdata, unsigned int length,
+				 bool good)
+{
+  if (good)
+    data = std::string(cURLdata, length);
+}
+
