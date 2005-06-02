@@ -62,6 +62,7 @@ public:
   virtual void finalization(char *data, unsigned int length, bool good);
 
   static int perform();
+  void       performWait();
 
 protected:
   void         *theData;

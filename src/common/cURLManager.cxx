@@ -220,6 +220,15 @@ void cURLManager::collectData(char* ptr, int len)
   }
 }
 
+void cURLManager::performWait()
+{
+  CURLcode result;
+  result = curl_easy_perform(easyHandle);
+  if (result != CURLE_OK)
+    DEBUG1("Error while doing easy_perform from libcurl %d : %s\n",
+	   result, errorBuffer);
+}
+
 int cURLManager::perform()
 {
   if (!inited)
