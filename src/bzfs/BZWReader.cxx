@@ -53,7 +53,8 @@
 extern BasesList bases;
 
 
-BZWReader::BZWReader(std::string filename) : location(filename), input(NULL)
+BZWReader::BZWReader(std::string filename) : cURLManager(), location(filename),
+					     input(NULL)
 {
   static const std::string httpProtocol("http://");
   static const std::string ftpProtocol("ftp://");
