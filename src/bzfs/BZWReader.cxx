@@ -18,7 +18,6 @@
 #include <sstream>
 
 // implementation-specific bzflag headers
-#include "URLManager.h"
 #include "BZDBCache.h"
 
 // implementation-specific bzfs-specific headers
@@ -65,7 +64,8 @@ BZWReader::BZWReader(std::string filename) : location(filename), input(NULL)
   if ((filename.substr(0, httpProtocol.size()) == httpProtocol)
       || (filename.substr(0, ftpProtocol.size()) == ftpProtocol)
       || (filename.substr(0, fileProtocol.size()) == fileProtocol)) {
-    URLManager::instance().getURL(location, httpData);
+    setURL(location);
+    performWait();
     input = new std::istringstream(httpData);
   } else {
     input = new std::ifstream(filename.c_str(), std::ios::in);
@@ -92,6 +92,14 @@ BZWReader::~BZWReader()
   delete input;
 }
 
+
+void BZWReader::finalization(char *data, unsigned int length, bool good)
+{
+  if (good)
+    httpData = std::string(data, length);
+  else
+    httpData = "";
+}
 
 void BZWReader::readToken(char *buffer, int n)
 {
