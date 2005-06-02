@@ -857,45 +857,6 @@ void			HUDRenderer::setHunt(bool _showHunt)
   showHunt = _showHunt;
 }
 
-#define CTFMODE 1
-
-void			HUDRenderer::renderTeamScores (float x, float y, float dy){
-  // print teams sorted by score
-  int teams[NumTeams];
-  int teamCount = 0;
-  int i;
-  
-  for (i = RedTeam; i < NumTeams; i++) {
-    if (!Team::isColorTeam(TeamColor(i))) continue;
-    const Team* team = World::getWorld()->getTeams() + i;
-    if (team->size == 0) continue;
-    teams[teamCount++] = i;
-  }
-  qsort(teams, teamCount, sizeof(int), teamScoreCompare);
-  y -= dy;
-
-  char score[44];
-  for (i = 0 ; i < teamCount; i++){
-    Team& team = World::getWorld()->getTeam(teams[i]);
-    sprintf(score, "%d (%d-%d) %d", team.won - team.lost, team.won, team.lost, team.size);
-    FontManager &fm = FontManager::instance();
-    hudColor3fv(Team::getRadarColor((TeamColor)teams[i]));
-    fm.drawString(x, y, 0, minorFontFace, minorFontSize, score);
-    y -= dy;
-  }
-}
-
-
-
-void			HUDRenderer::renderCtfFlags (void){
-
-
-
-  renderTeamScores (x5, y0, dy);
-}
-
-
-
 void			HUDRenderer::renderScoreboard(void)
 {
   int i, j;
@@ -938,9 +899,9 @@ void			HUDRenderer::renderScoreboard(void)
   for (j = 0; j < curMaxPlayers; j++) {
     if ((rp = World::getWorld()->getPlayer(j))) {
       if (rp->getTeam() != ObserverTeam)
-      	players[plrCount++] = j;
+	players[plrCount++] = j;
       else
-      	players[curMaxPlayers - (++obsCount)] = j;
+	players[curMaxPlayers - (++obsCount)] = j;
     }
   }
 
@@ -957,17 +918,17 @@ void			HUDRenderer::renderScoreboard(void)
 
       // toggle the hunt indicator if this is the current player pointed to
       if(getHuntPosition() == i) {
-      	setHuntIndicator(true);
-	      // If hunt is selected set this player to be hunted
-	      if(getHuntSelection()) {
-	        player->setHunted(true);
-	        setHunting(true);
-	        setHuntSelection(false);
-	        setHunt(false);
-	        huntPlayerAlive = true; // hunted player is alive since you selected him
-	      }
+	setHuntIndicator(true);
+	// If hunt is selected set this player to be hunted
+	if(getHuntSelection()) {
+	  player->setHunted(true);
+	  setHunting(true);
+	  setHuntSelection(false);
+	  setHunt(false);
+	  huntPlayerAlive = true; // hunted player is alive since you selected him
+	}
       } else {
-      	setHuntIndicator(false);
+	setHuntIndicator(false);
       }
     } else {
       setHuntIndicator(false);
@@ -977,9 +938,9 @@ void			HUDRenderer::renderScoreboard(void)
     bool myTurn = false;
     if (!drewMyScore && myTank->getTeam() != ObserverTeam)
       if (World::getWorld()->allowRabbit()) {
-      	myTurn = myTank->getRabbitScore() > player->getRabbitScore();
+	myTurn = myTank->getRabbitScore() > player->getRabbitScore();
       } else {
-      	myTurn = myTank->getScore() > player->getScore();
+	myTurn = myTank->getScore() > player->getScore();
       }
     if (myTurn) {
       setHuntIndicator(false); // don't hunt myself
@@ -1016,12 +977,26 @@ void			HUDRenderer::renderScoreboard(void)
 
   delete[] players;
 
-  renderTeamScores (x5, y0, dy);
+  // print teams sorted by score
+  int teams[NumTeams];
+  int teamCount = 0;
+
+  y = (int)y0;
+  for (i = RedTeam; i < NumTeams; i++) {
+    if (!Team::isColorTeam(TeamColor(i))) continue;
+    const Team* team = World::getWorld()->getTeams() + i;
+    if (team->size == 0) continue;
+    teams[teamCount++] = i;
+  }
+
+  qsort(teams, teamCount, sizeof(int), teamScoreCompare);
+
+  y -= (int)dy;
+  for (i = 0 ; i < teamCount; i++){
+    drawTeamScore(teams[i], x5, (float)y);
+    y -= (int)dy;
+  }
 }
-
-
-
-
 
 void			HUDRenderer::renderTankLabels(SceneRenderer& renderer)
 {
@@ -1723,6 +1698,16 @@ void			HUDRenderer::drawPlayerScore(const Player* player,
   }
 }
 
+void			HUDRenderer::drawTeamScore(int teamIndex, float x1, float y)
+{
+  char score[44];
+  Team& team = World::getWorld()->getTeam(teamIndex);
+  sprintf(score, "%d (%d-%d) %d", team.won - team.lost, team.won, team.lost, team.size);
+
+  FontManager &fm = FontManager::instance();
+  hudColor3fv(Team::getRadarColor((TeamColor)teamIndex));
+  fm.drawString(x1, y, 0, minorFontFace, minorFontSize, score);
+}
 
 
 static int compare_float (const void* a, const void* b)

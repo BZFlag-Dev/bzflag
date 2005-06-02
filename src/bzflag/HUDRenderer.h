@@ -114,7 +114,6 @@ protected:
   void		renderOptions(SceneRenderer&);
   void		renderCompose(SceneRenderer&);
   void		renderBox(SceneRenderer&);
-  void		renderTeamScores (float y, float x, float dy);
   void		renderScoreboard(void);
   void		renderTankLabels(SceneRenderer&);
   void		renderPlaying(SceneRenderer&);
@@ -124,6 +123,7 @@ protected:
   void		renderShots(void);
   void		drawPlayerScore(const Player*,
 				float x1, float x2, float x3, float xs, float y);
+  void		drawTeamScore(int team, float x, float y);
 
   void		makeCrack(float crackpattern[HUDNumCracks][(1 << HUDCrackLevels) + 1][2], int n, int l, float a);
   std::string	makeHelpString(const char* help) const;
