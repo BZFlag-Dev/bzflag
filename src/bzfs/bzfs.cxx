@@ -3903,6 +3903,8 @@ possible attack from %s\n",
 	     clOptions->maxlagwarn);
 	  sendMessage(ServerPlayer, t, message);
 	  removePlayer(t, "lag");
+  	sprintf(message, "Lagkick: %s", playerData->player.getCallSign());
+	  sendMessage( ServerPlayer, AdminPlayers, message);
 	}
       }
       break;
@@ -4346,6 +4348,8 @@ static void doStuffOnPlayer(GameKeeper::Player &playerData)
 		clOptions->maxlagwarn);
 	sendMessage(ServerPlayer, p, message);
 	removePlayer(p, "lag");
+	sprintf(message, "Lagkick: %s", playerData.player.getCallSign());
+	sendMessage( ServerPlayer, AdminPlayers, message);
 	return;
       }
     }
