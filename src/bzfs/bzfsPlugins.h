@@ -22,8 +22,8 @@ void loadPlugin ( std::string plugin, std::string config );
 void unloadPlugin ( std::string plugin );
 void unloadPlugins ( void );
 
-bool registerCustomPluginHandaler ( std::string extension, bz_APIPluginHandaler *handaler );
-bool removeCustomPluginHandaler ( std::string extension, bz_APIPluginHandaler *handaler );
+bool registerCustomPluginHandler ( std::string extension, bz_APIPluginHandler *handler );
+bool removeCustomPluginHandler ( std::string extension, bz_APIPluginHandler *handler );
 
 std::vector<std::string> getPluginList ( void );
 

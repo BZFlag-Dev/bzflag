@@ -996,25 +996,25 @@ BZF_API bool bz_sendPlayCustomLocalSound ( int playerID, const char* soundName )
 	return true;
 }
 
-// custom pluginHandaler
-bool bz_registerCustomPluginHandaler ( const char* extension, bz_APIPluginHandaler *handaler )
+// custom pluginHandler
+bool bz_registerCustomPluginHandler ( const char* extension, bz_APIPluginHandler *handler )
 {
-	if (!extension || !handaler)
+	if (!extension || !handler)
 		return false;
 
 	std::string ext = extension;
 
-	return registerCustomPluginHandaler( ext,handaler);
+	return registerCustomPluginHandler( ext,handler);
 }
 
-bool bz_removeCustomPluginHandaler ( const char* extension, bz_APIPluginHandaler *handaler )
+bool bz_removeCustomPluginHandler ( const char* extension, bz_APIPluginHandler *handler )
 {
-	if (!extension || !handaler)
+	if (!extension || !handler)
 		return false;
 
 	std::string ext = extension;
 
-	return removeCustomPluginHandaler( ext,handaler);
+	return removeCustomPluginHandler( ext,handler);
 }
 
 // Local Variables: ***

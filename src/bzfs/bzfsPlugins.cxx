@@ -30,7 +30,7 @@ std::string extension = ".so";
 std::string globalPluginDir = "$(prefix)/lib/bzflag/";
 #endif 
 
-typedef std::map<std::string, bz_APIPluginHandaler*> tmCustomPluginMap;
+typedef std::map<std::string, bz_APIPluginHandler*> tmCustomPluginMap;
 tmCustomPluginMap customPluginMap;
 
 typedef struct 
@@ -223,7 +223,7 @@ void unload1Plugin ( int iPluginID )
 
 void loadPlugin ( std::string plugin, std::string config )
 {
-	// check and see if it's an extension we have a handaler for
+	// check and see if it's an extension we have a handler for
 	std::string ext;
 
 	std::vector<std::string> parts = TextUtils::tokenize(plugin,std::string("."));
@@ -233,8 +233,8 @@ void loadPlugin ( std::string plugin, std::string config )
 
 	if (itr != customPluginMap.end() && itr->second)
 	{
-		bz_APIPluginHandaler *handaler = itr->second;
-		handaler->handle(plugin,config);
+		bz_APIPluginHandler *handler = itr->second;
+		handler->handle(plugin,config);
 	}
 	else
 		load1Plugin(plugin,config);
@@ -359,18 +359,18 @@ void initPlugins ( void )
 	registerCustomSlashCommand("listplugins",&command);
 }
 
-bool registerCustomPluginHandaler ( std::string exte, bz_APIPluginHandaler *handaler )
+bool registerCustomPluginHandler ( std::string exte, bz_APIPluginHandler *handler )
 {
 	std::string ext = TextUtils::tolower(exte);
-	customPluginMap[ext] = handaler;
+	customPluginMap[ext] = handler;
 	return true;
 }
 
-bool removeCustomPluginHandaler ( std::string ext, bz_APIPluginHandaler *handaler )
+bool removeCustomPluginHandler ( std::string ext, bz_APIPluginHandler *handler )
 {
 	tmCustomPluginMap::iterator itr = customPluginMap.find(TextUtils::tolower(ext));
 
-	if (itr == customPluginMap.end() || itr->second != handaler)
+	if (itr == customPluginMap.end() || itr->second != handler)
 		return false;
 
 	customPluginMap.erase(itr);
