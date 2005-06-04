@@ -26,7 +26,7 @@ AresHandler::AresHandler(int _index)
   memset(&hostAddress, 0, sizeof(hostAddress));
 
   /* ask for local "hosts" lookups too */
-  static const char* lookups = "bf";
+  static const char* lookups = "fb";
   struct ares_options opts;
   opts.lookups = (char*)lookups; // we cheat, libares uses strdup
 
@@ -85,9 +85,9 @@ void AresHandler::queryHost(char *hostName)
   }
 
   // launch the asynchronous query to look up this hostname
+  status = HbNPending;
   ares_gethostbyname(aresChannel, queryHostName, AF_INET, staticCallback,
 		     (void *)this);
-  status = HbNPending;
 }
 
 void AresHandler::staticCallback(void *arg, int callbackStatus,
