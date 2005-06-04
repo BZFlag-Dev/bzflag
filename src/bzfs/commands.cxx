@@ -2752,6 +2752,9 @@ void parseServerCommand(const char *message, int t)
   } else {
     // lets see if it is a custom command
     std::vector<std::string> params = TextUtils::tokenize(std::string(message+1),std::string(" "));
+
+    if (params.size() == 0)
+      return;
     
     tmCustomSlashCommandMap::iterator itr = customCommands.find(TextUtils::tolower(params[0]));
   
