@@ -70,8 +70,7 @@ PyObject *
 CreatePlayer (int id)
 {
 	Player *p = (Player *) PyObject_NEW (Player, &Player_Type);
-	p->record = new bz_PlayerRecord ();
-	bz_getPlayerByIndex (id, p->record);
+	p->record = bz_getPlayerByIndex (id);
 	return (PyObject*) p;
 }
 
