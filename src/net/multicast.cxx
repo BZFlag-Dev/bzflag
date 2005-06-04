@@ -150,6 +150,8 @@ int			openBroadcast(int port, const char* service,
 					&req[i].ifr_ifru.ifru_broadaddr;
     if (ntohl(ifbaddr->sin_addr.s_addr) == 0x7ffffffflu)
       continue;
+    if (ifbaddr->sin_addr.s_addr == 0)
+      continue;
 
     // got the broadcast address on the interface
     addr->sin_addr.s_addr = ifbaddr->sin_addr.s_addr;
