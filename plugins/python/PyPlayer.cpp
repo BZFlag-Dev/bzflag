@@ -15,22 +15,24 @@
 namespace Python
 {
 
-static void      Player_dealloc    (Player *player);
-static PyObject *Player_getAttr    (Player *player, char *name);
-static int       Player_setAttr    (Player *player, char *name, PyObject *v);
-static int       Player_compare    (Player *a1, Player *a2);
-static PyObject *Player_repr       (Player *player);
-static PyObject *Player_ban        (Player *self, PyObject *args, PyObject *keywords);
-static PyObject *Player_kick       (Player *self, PyObject *args, PyObject *keywords);
-static PyObject *Player_kill       (Player *self, PyObject *args, PyObject *keywords);
-static PyObject *Player_removeFlag (Player *self, PyObject *args);
+static void      Player_dealloc       (Player *player);
+static PyObject *Player_getAttr       (Player *player, char *name);
+static int       Player_setAttr       (Player *player, char *name, PyObject *v);
+static int       Player_compare       (Player *a1, Player *a2);
+static PyObject *Player_repr          (Player *player);
+static PyObject *Player_ban           (Player *self, PyObject *args, PyObject *keywords);
+static PyObject *Player_kick          (Player *self, PyObject *args, PyObject *keywords);
+static PyObject *Player_kill          (Player *self, PyObject *args, PyObject *keywords);
+static PyObject *Player_removeFlag    (Player *self, PyObject *args);
+static PyObject *Player_fetchResource (Player *self, PyObject *args);
 
 static PyMethodDef Player_methods[] = {
-	{"Ban",        (PyCFunction) Player_ban,        METH_VARARGS | METH_KEYWORDS, NULL},
-	{"Kick",       (PyCFunction) Player_kick,       METH_VARARGS | METH_KEYWORDS, NULL},
-	{"Kill",       (PyCFunction) Player_kill,       METH_VARARGS | METH_KEYWORDS, NULL},
-	{"RemoveFlag", (PyCFunction) Player_removeFlag, METH_VARARGS,                 NULL},
-	{NULL,         NULL,                            0,                            NULL},
+	{"Ban",           (PyCFunction) Player_ban,           METH_VARARGS | METH_KEYWORDS, NULL},
+	{"Kick",          (PyCFunction) Player_kick,          METH_VARARGS | METH_KEYWORDS, NULL},
+	{"Kill",          (PyCFunction) Player_kill,          METH_VARARGS | METH_KEYWORDS, NULL},
+	{"RemoveFlag",    (PyCFunction) Player_removeFlag,    METH_VARARGS,                 NULL},
+	{"FetchResource", (PyCFunction) Player_fetchResource, METH_VARARGS,                 NULL},
+	{NULL,         NULL,                                  0,                            NULL},
 };
 
 PyTypeObject Player_Type = {
@@ -202,6 +204,20 @@ static PyObject *
 Player_removeFlag (Player *self, PyObject *args)
 {
 	bool result = bz_removePlayerFlag (self->record->playerID);
+	return (result ? Py_True : Py_False);
+}
+
+static PyObject *
+Player_fetchResource (Player *self, PyObject *args)
+{
+	char *url;
+	if (!PyArg_ParseTuple (args, "s", &url)) {
+		fprintf (stderr, "couldn't parse args\n");
+		// FIXME - throw error
+		return NULL;
+	}
+
+	bool result = bz_sentFetchResMessage (self->record->playerID, url);
 	return (result ? Py_True : Py_False);
 }
 
