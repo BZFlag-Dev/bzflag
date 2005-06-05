@@ -79,7 +79,7 @@ CreatePlayer (int id)
 static void
 Player_dealloc (Player *player)
 {
-	delete player->record;
+	bz_freePlayerRecord (player->record);
 	PyObject_DEL (player);
 }
 
