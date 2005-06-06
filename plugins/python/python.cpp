@@ -14,6 +14,8 @@
 #include "bzfsAPI.h"
 #include "PyBZFlag.h"
 
+BZ_GET_PLUGIN_VERSION
+
 static char *ReadFile (const char *filename);
 
 static Python::BZFlag *module_bzflag;
@@ -84,8 +86,6 @@ PluginHandler::handle (bzApiString plugin, bzApiString param)
 
 static PluginHandler *py_handler;
 
-BZ_GET_PLUGIN_VERSION
-
 BZF_PLUGIN_CALL
 int
 bz_Load (const char *commandLine)
@@ -103,9 +103,11 @@ bz_Load (const char *commandLine)
 	module_bzflag = new Python::BZFlag ();
 
 	py_handler = new PluginHandler ();
-	bz_registerCustomPluginHandler ("py", py_handler);
+	if (!bz_registerCustomPluginHandler ("py", py_handler))
+		fprintf (stderr, "couldn't register custom plugin handler\n");
 
 	// set up the global dict
+	// FIXME - should this be per-script?
 	global_dict = PyDict_New ();
 	PyDict_SetItemString (global_dict, "__builtins__", PyEval_GetBuiltins ());
 	PyDict_SetItemString (global_dict, "__name__", PyString_FromString ("__main__"));
