@@ -176,9 +176,16 @@ void load1Plugin ( std::string plugin, std::string config )
 	void *hLib = dlopen(realPluginName.c_str(), RTLD_LAZY | RTLD_GLOBAL);
 	if (hLib)
 	{
-		if (getPluginVersion(hLib) < BZ_API_VERSION)
+		if (dlsym(hLib, "bz_Load") == NULL) {
+			DEBUG1("Plugin:%s found but does not contain bz_Load method, error %s\n",plugin.c_str(),dlerror());
+			dlclose(hLib);
+			return;
+		}
+
+		int version = getPluginVersion(hLib);
+		if (version < BZ_API_VERSION)
 		{
-			DEBUG1("Plugin:%s found but expects an older API version (%d), upgrade it\n",plugin.c_str(),getPluginVersion(hLib));
+			DEBUG1("Plugin:%s found but expects an older API version (%d), upgrade it\n", plugin.c_str(), version);
 			dlclose(hLib);
 		}
 		else
@@ -192,11 +199,6 @@ void load1Plugin ( std::string plugin, std::string config )
 				pluginRecord.handle = hLib;
 				pluginRecord.plugin = plugin;
 				vPluginList.push_back(pluginRecord);
-			}
-			else
-			{
-				DEBUG1("Plugin:%s found but does not contain bz_Load method, error %s\n",plugin.c_str(),dlerror());
-				dlclose(hLib);
 			}
 		}
 	}

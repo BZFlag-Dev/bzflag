@@ -613,7 +613,7 @@ BZF_API bool bz_sendTextMessage(int from, int to, const char* message)
 	return true;
 }
 
-BZF_API bool bz_sentFechResMessage ( int playerID,  const char* URL )
+BZF_API bool bz_sentFetchResMessage ( int playerID,  const char* URL )
 {
 	if (playerID == BZ_SERVER || !URL)
 		return false;
