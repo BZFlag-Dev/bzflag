@@ -135,4 +135,4 @@ LDADD = \
 	../net/libNet.a		\
 	../common/libCommon.a	\
 	$(CARESLIB)	\
-	$(REGEX) $(ZLIB) $(CURL_LIBS) $(KRB5_LIBS) ../date/libDate.a
+	$(REGEX) $(ZLIB) $(KRB5_LIBS) ../date/libDate.a

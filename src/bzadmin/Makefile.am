@@ -53,5 +53,4 @@ LDADD = \
 	@CURSES_LIB@		\
 	../game/libGame.a	\
 	../net/libNet.a		\
-	../common/libCommon.a	\
-	$(CURL_LIBS)
+	../common/libCommon.a

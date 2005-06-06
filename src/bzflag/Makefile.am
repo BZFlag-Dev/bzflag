@@ -221,7 +221,6 @@ LDADD =	\
 	$(KRB5_LIBS)			\
 	$(RESOURCE)			\
 	$(SDL_LIBS)			\
-	$(CURL_LIBS)			\
 	$(GLIBS)			\
 	../date/libDate.a
 # This is required to hook in ogg/vorbis libraries

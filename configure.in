@@ -107,8 +107,8 @@ AM_CONDITIONAL(BUILDZLIB, test $BUILDZLIB = yes)
 See http://curl.haxx.se/])
   fi
   AC_SUBST(CURL_CFLAGS)
-  AC_SUBST(CURL_LIBS)
 
+LIBS="$CURL_LIBS $LIBS"
 
 # Testing if kerberos 5 is in the system
 KRB5_CONFIG=no
@@ -363,7 +363,10 @@ AC_SUBST(GLIBS)
 
 case $host_os in
   mingw32*)
-  LIBS="-lwinmm -lws2_32 $LIBS"
+
+  AC_CHECK_LIB(ws2_32, closesocket)
+  AC_CHECK_LIB(winmm, timeGetTime)
+
   GLIBS="-mwindows -lgdi32 -ldxguid -ldsound -ldinput $GLIBS"
   # MingW does some funny stuff with DirectX.
   # Test for a working DirectInput.
