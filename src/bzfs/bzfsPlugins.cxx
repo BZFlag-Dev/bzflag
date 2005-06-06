@@ -231,7 +231,7 @@ void loadPlugin ( std::string plugin, std::string config )
 	std::vector<std::string> parts = TextUtils::tokenize(plugin,std::string("."));
 	ext = parts[parts.size()-1];
 
-	tmCustomPluginMap::iterator itr = customPluginMap.find(TextUtils::tolower(extension));
+	tmCustomPluginMap::iterator itr = customPluginMap.find(TextUtils::tolower(ext));
 
 	if (itr != customPluginMap.end() && itr->second)
 	{
