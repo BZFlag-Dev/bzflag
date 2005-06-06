@@ -20,7 +20,11 @@ static Python::BZFlag *module_bzflag;
 static PyObject *global_dict;
 static char *code_buffer;
 
-BZ_GET_PLUGIN_VERSION
+class PluginHandler : public bz_APIPluginHandler
+{
+public:
+	virtual bool handle (bzApiString plugin, bzApiString param);
+};
 
 static void
 AppendSysPath (char *directory)
@@ -39,7 +43,48 @@ AppendSysPath (char *directory)
 	if (PyErr_Occurred ())
 		Py_FatalError ("could not build sys.path");
 	Py_DECREF (mod_sys);
-}
+};
+
+bool
+PluginHandler::handle (bzApiString plugin, bzApiString param)
+{
+	const char *filename = plugin.c_str ();
+	char *buffer = ReadFile (filename);
+	code_buffer = buffer;
+
+	PyErr_Clear ();
+	PyCodeObject *code = (PyCodeObject *) Py_CompileString (buffer, plugin.c_str (), Py_file_input);
+	if (PyErr_Occurred ()) {
+		PyErr_Print ();
+		return false;
+	}
+
+	// eek! totally unportable - append the script's directory to sys.path,
+	// in case there are any local modules
+	if (strrchr (filename, '/')) {
+		int len = strrchr (filename, '/') - filename;
+		char *dir = new char[len + 1];
+		strncpy (dir, filename, len);
+		dir[len] = '\0';
+		AppendSysPath (dir);
+		free (dir);
+	} else {
+		AppendSysPath (".");
+	}
+
+	PyErr_Clear ();
+	PyEval_EvalCode (code, global_dict, global_dict);
+	if (PyErr_Occurred ()) {
+		PyErr_Print ();
+		return false;
+	}
+
+	return true;
+};
+
+static PluginHandler *py_handler;
+
+BZ_GET_PLUGIN_VERSION
 
 BZF_PLUGIN_CALL
 int
@@ -51,49 +96,20 @@ bz_Load (const char *commandLine)
 		abort ();
 	}
 
-	if (Python::BZFlag::References == 0) {
-		Py_SetProgramName ("BZFlag");
-		Py_Initialize ();
-		PyEval_InitThreads ();
-	}
+	Py_SetProgramName ("BZFlag");
+	Py_Initialize ();
+	PyEval_InitThreads ();
 
-	module_bzflag = Python::BZFlag::GetInstance ();
+	module_bzflag = new Python::BZFlag ();
 
-	char *buffer = ReadFile (commandLine);
-	code_buffer = buffer;
-
-	PyErr_Clear ();
-	PyCodeObject *code = (PyCodeObject *) Py_CompileString (buffer, commandLine, Py_file_input);
-	if (PyErr_Occurred ()) {
-		PyErr_Print ();
-		return 1;
-	}
-
-	// eek! totally unportable - append the script's directory to sys.path,
-	// in case there are any local modules
-	if (strrchr (commandLine, '/')) {
-		int len = strrchr (commandLine, '/') - commandLine;
-		char *dir = new char[len + 1];
-		strncpy (dir, commandLine, len);
-		dir[len] = '\0';
-		AppendSysPath (dir);
-		free (dir);
-	} else {
-		AppendSysPath (".");
-	}
+	py_handler = new PluginHandler ();
+	bz_registerCustomPluginHandler ("py", py_handler);
 
 	// set up the global dict
 	global_dict = PyDict_New ();
 	PyDict_SetItemString (global_dict, "__builtins__", PyEval_GetBuiltins ());
 	PyDict_SetItemString (global_dict, "__name__", PyString_FromString ("__main__"));
 
-	PyErr_Clear ();
-	PyEval_EvalCode (code, global_dict, global_dict);
-
-	if (PyErr_Occurred ()) {
-		PyErr_Print ();
-		return 1;
-	}
 	return 0;
 }
 
@@ -101,12 +117,9 @@ BZF_PLUGIN_CALL
 int
 bz_Unload (void)
 {
-	Python::BZFlag::DeRef ();
-	if (Python::BZFlag::References == 0) {
-		PyDict_Clear (global_dict);
-		Py_DECREF (global_dict);
-		Py_Finalize ();
-	}
+	PyDict_Clear (global_dict);
+	Py_DECREF (global_dict);
+	Py_Finalize ();
 
 	delete [] code_buffer;
 

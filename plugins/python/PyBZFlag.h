@@ -26,20 +26,15 @@ namespace Python
 class BZFlag
 {
 public:
-	static BZFlag *GetInstance ();
-	static int References;
-	static void DeRef ();
+	BZFlag ();
 
 	PyObject *GetListeners (int event);
 	void AddPlayer (int id);
 	void RemovePlayer (int id);
 
 protected:
-	BZFlag ();
 	void RegisterEvent (Handler *handler, bz_eEventType event);
 private:
-	// yep, we're a singleton
-	static BZFlag *instance;
 
 	Event *event_sub;
 	Team  *team_sub;

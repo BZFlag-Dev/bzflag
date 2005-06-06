@@ -46,24 +46,6 @@ static struct PyMethodDef methods[] =
 	{NULL,                   (PyCFunction) NULL,                 0,                            NULL},
 };
 
-BZFlag *BZFlag::instance = NULL;
-int BZFlag::References = 0;
-
-BZFlag *
-BZFlag::GetInstance ()
-{
-	if (instance == NULL)
-		instance = new BZFlag ();
-	References++;
-	return instance;
-}
-
-void
-BZFlag::DeRef ()
-{
-	References--;
-}
-
 void
 BZFlag::RegisterEvent (Handler *handler, bz_eEventType event)
 {
