@@ -36,7 +36,7 @@ protected:
     {
       return theVector.size();
     }
-    void push_back(std::string x)
+    void push_back(const std::string &x)
     {
       theVector.push_back(x);
     }
@@ -57,9 +57,9 @@ public:
 
   // get a chunk given a name of the chunk returns null if it
   // can't find it
-  const std::vector<std::string>* getTextChunk(const std::string chunkName);
+  const std::vector<std::string>* getTextChunk(const std::string &chunkName) const;
 
-  const std::vector<std::string>& getChunkNames()
+  const std::vector<std::string>& getChunkNames() const
   {
     return chunkNames;
   }

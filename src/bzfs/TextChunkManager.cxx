@@ -37,7 +37,7 @@ bool TextChunkManager::parseFile(const std::string &fileName, const std::string 
   return true;
 }
 
-const std::vector<std::string>* TextChunkManager::getTextChunk(const std::string chunkName)
+const std::vector<std::string>* TextChunkManager::getTextChunk(const std::string &chunkName) const
 {
   StringChunkMap::const_iterator it;
   it =theChunks.find(chunkName);
