@@ -4861,6 +4861,7 @@ int main(int argc, char **argv)
 	  countdownDelay = -1; // reset back to "unset"
 	  readySetGo = -1; // reset back to "unset"
 	  countdownActive = true;
+		gameOver = false;
 
 	  // start server's clock
 	  gameStartTime = tm;
