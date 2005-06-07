@@ -3460,8 +3460,8 @@ bool checkSpam(char* message, GameKeeper::Player* playerData, int t)
       if (player.getSpamWarns() > clOptions->spamWarnMax
 	  || clOptions->spamWarnMax == 0) {
 	sendMessage(ServerPlayer, t, "You were kicked because of spamming.");
-	DEBUG2("Kicking player %s [%d] for spamming too much: \
-2 messages sent within %fs after %d warnings",
+	DEBUG2("Kicking player %s [%d] for spamming too much: "
+               "2 messages sent within %fs after %d warnings",
 	       player.getCallSign(), t, dt, player.getSpamWarns());
 	removePlayer(t, "spam");
 	return true;
@@ -3504,8 +3504,8 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
     case MsgUDPLinkEstablished:
       break;
     default:
-      DEBUG1("Player [%d] sent packet type (%x) via udp, \
-possible attack from %s\n",
+      DEBUG1("Player [%d] sent packet type (%x) via udp, "
+             "possible attack from %s\n",
 	     t, code, handler->getTargetIP());
       return;
     }
@@ -4570,12 +4570,12 @@ int main(int argc, char **argv)
   /* initialize the poll arbiter for voting if necessary */
   if (clOptions->voteTime > 0) {
     votingarbiter = new VotingArbiter(clOptions->voteTime, clOptions->vetoTime, clOptions->votesRequired, clOptions->votePercentage, clOptions->voteRepeatTime);
-    DEBUG1("There is a voting arbiter with the following settings:\n" \
-	   "\tvote time is %d seconds\n" \
-	   "\tveto time is %d seconds\n" \
-	   "\tvotes required are %d\n" \
-	   "\tvote percentage necessary is %f\n" \
-	   "\tvote repeat time is %d seconds\n" \
+    DEBUG1("There is a voting arbiter with the following settings:\n"
+	   "\tvote time is %d seconds\n"
+	   "\tveto time is %d seconds\n"
+	   "\tvotes required are %d\n"
+	   "\tvote percentage necessary is %f\n"
+	   "\tvote repeat time is %d seconds\n"
 	   "\tavailable voters is initially set to %d\n",
 	   clOptions->voteTime, clOptions->vetoTime, clOptions->votesRequired, clOptions->votePercentage, clOptions->voteRepeatTime,
 	   maxPlayers);
