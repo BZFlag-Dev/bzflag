@@ -3903,7 +3903,7 @@ possible attack from %s\n",
 	     clOptions->maxlagwarn);
 	  sendMessage(ServerPlayer, t, message);
 	  removePlayer(t, "lag");
-	  snprintf(message, "Lagkick: %s", playerData->player.getCallSign());
+	  snprintf(message, MessageLen,"Lagkick: %s", playerData->player.getCallSign());
 	  sendMessage( ServerPlayer, AdminPlayers, message);
 	}
       }
@@ -4343,13 +4343,13 @@ static void doStuffOnPlayer(GameKeeper::Player &playerData)
       if (kick) {
 	// drop the player
 	sprintf(message,
-		"You have been kicked due to excessive lag\
- (you have been warned %d times).",
+		"You have been kicked due to excessive lag "
+		"(you have been warned %d times).",
 		clOptions->maxlagwarn);
 	sendMessage(ServerPlayer, p, message);
 	removePlayer(p, "lag");
-	snprintf(message, "Lagkick: %s", playerData.player.getCallSign());
-	sendMessage( ServerPlayer, AdminPlayers, message);
+	snprintf(message, MessageLen, "Lagkick: %s", playerData.player.getCallSign());
+	sendMessage(ServerPlayer, AdminPlayers, message);
 	return;
       }
     }
