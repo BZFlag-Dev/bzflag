@@ -3903,7 +3903,7 @@ possible attack from %s\n",
 	     clOptions->maxlagwarn);
 	  sendMessage(ServerPlayer, t, message);
 	  removePlayer(t, "lag");
-  	snprintf(message, "Lagkick: %s", playerData->player.getCallSign());
+	  snprintf(message, "Lagkick: %s", playerData->player.getCallSign());
 	  sendMessage( ServerPlayer, AdminPlayers, message);
 	}
       }
@@ -4861,7 +4861,7 @@ int main(int argc, char **argv)
 	  countdownDelay = -1; // reset back to "unset"
 	  readySetGo = -1; // reset back to "unset"
 	  countdownActive = true;
-		gameOver = false;
+	  gameOver = false;
 
 	  // start server's clock
 	  gameStartTime = tm;

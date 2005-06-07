@@ -6321,8 +6321,8 @@ void			startPlaying(BzfDisplay* _display,
   // start game loop
   playingLoop();
 
-	if (resourceDownloader)
-		delete(resourceDownloader);
+  if (resourceDownloader)
+    delete resourceDownloader;
   // clean up
   delete motd;
   for (unsigned int ext = 0; ext < prototypeExplosions.size(); ext++)
