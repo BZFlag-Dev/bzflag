@@ -1258,7 +1258,7 @@ static bool defineWorld()
     world = new WorldInfo;
     worldEventManager.callEvents(bz_eGenerateWorldEvent, -1, &worldData);
     if (!worldData.handled) {
-      delete(world);
+      delete world;
       if (clOptions->gameStyle & TeamFlagGameStyle)
 	world = defineTeamWorld();
       else
