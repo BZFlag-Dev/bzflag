@@ -3383,6 +3383,20 @@ static bool invalidPlayerAction(PlayerInfo &p, int t, const char *action) {
 }
 
 
+static void lagKick(int playerIndex)
+{
+  char message[MessageLen];
+  sprintf(message,
+          "You have been kicked due to excessive lag (you have been warned %d times).",
+          clOptions->maxlagwarn);
+  sendMessage(ServerPlayer, playerIndex, message);
+  GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(playerIndex);
+  snprintf(message, MessageLen,"Lagkick: %s", playerData->player.getCallSign());
+  sendMessage(ServerPlayer, AdminPlayers, message);
+  removePlayer(playerIndex, "lag");
+}
+
+
 static void adjustTolerances()
 {
   // check for handicap adjustment
@@ -3895,17 +3909,8 @@ possible attack from %s\n",
 	sprintf(message,"*** Server Warning: your lag is too high (%d ms) ***",
 		lag);
 	sendMessage(ServerPlayer, t, message);
-	if (kick) {
-	  // drop the player
-	  sprintf
-	    (message,
-	     "You have been kicked due to excessive lag (you have been warned %d times).",
-	     clOptions->maxlagwarn);
-	  sendMessage(ServerPlayer, t, message);
-	  removePlayer(t, "lag");
-	  snprintf(message, MessageLen,"Lagkick: %s", playerData->player.getCallSign());
-	  sendMessage( ServerPlayer, AdminPlayers, message);
-	}
+        if (kick)
+          lagKick(t);
       }
       break;
     }
@@ -4341,15 +4346,7 @@ static void doStuffOnPlayer(GameKeeper::Player &playerData)
       if (!GameKeeper::Player::getPlayerByIndex(p))
 	return;
       if (kick) {
-	// drop the player
-	sprintf(message,
-		"You have been kicked due to excessive lag "
-		"(you have been warned %d times).",
-		clOptions->maxlagwarn);
-	sendMessage(ServerPlayer, p, message);
-	removePlayer(p, "lag");
-	snprintf(message, MessageLen, "Lagkick: %s", playerData.player.getCallSign());
-	sendMessage(ServerPlayer, AdminPlayers, message);
+        lagKick(p);
 	return;
       }
     }
