@@ -155,7 +155,7 @@ void removePlayer(int playerIndex, const char *reason, bool notify=true);
 void resetFlag(FlagInfo &flag);
 static void dropFlag(GameKeeper::Player &playerData, float pos[3]);
 static void dropAssignedFlag(int playerIndex);
-static std::string evaluateString(const std::string);
+static std::string evaluateString(const std::string&);
 
 int getCurMaxPlayers()
 {
@@ -1794,7 +1794,7 @@ static TeamColor autoTeamSelect(TeamColor t)
   return teamSelect(t, teams);
 }
 
-static std::string evaluateString(const std::string raw)
+static std::string evaluateString(const std::string &raw)
 {
   std::string eval;
   const int rawLen = (int)raw.size();
