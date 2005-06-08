@@ -1,6 +1,6 @@
 #!/bin/sh
 # script to prepare bzflag sources
-aclocal \
+aclocal-1.4 \
 && autoheader \
 && automake --add-missing --copy \
 && autoconf \
