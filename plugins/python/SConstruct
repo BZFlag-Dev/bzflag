@@ -15,6 +15,7 @@ files = [
 	'PyEvents.cpp',
 	'PyPlayer.cpp',
 	'PyTeam.cpp',
+	'PyWorldBox.cpp',
 	'python.cpp',
 	]
 
