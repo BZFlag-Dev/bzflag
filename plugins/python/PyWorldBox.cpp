@@ -109,7 +109,7 @@ Box_compare (Box *a1, Box *a2)
 static PyObject *
 Box_repr (Box *box)
 {
-	return NULL;
+	return PyString_FromFormat ("[Box - position=(%f, %f, %f), rotation=%f, scale=(%f, %f, %f), %s%s%s]", box->pos[0], box->pos[1], box->pos[2], box->rot, box->scale[0], box->scale[1], box->scale[2], box->drive_through ? "drive-through" : "", box->drive_through && box->shoot_through ? ", " : "", box->shoot_through ? "shoot-through" : "");
 }
 
 };
