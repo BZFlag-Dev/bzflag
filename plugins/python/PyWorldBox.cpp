@@ -76,7 +76,24 @@ Box_dealloc (Box *box)
 static PyObject *
 Box_getAttr (Box *box, char *name)
 {
-	return NULL;
+	PyObject *attr = Py_None;
+
+	if (strcmp (name, "position") == 0) {
+		attr = Py_BuildValue ("(fff)", box->pos[0], box->pos[1], box->pos[2]);
+	} else if (strcmp (name, "rotation") == 0) {
+		attr = Py_BuildValue ("f", box->rot);
+	} else if (strcmp (name, "scale") == 0) {
+		attr = Py_BuildValue ("(fff)", box->scale[0], box->scale[1], box->scale[2]);
+	} else if (strcmp (name, "drive_through") == 0) {
+		attr = box->drive_through ? Py_True : Py_False;
+	} else if (strcmp (name, "shoot_through") == 0) {
+		attr = box->shoot_through ? Py_True : Py_False;
+	}
+
+	if (attr == Py_None)
+		return Py_FindMethod (Box_methods, (PyObject *) box, name);
+
+	return attr;
 }
 
 static int

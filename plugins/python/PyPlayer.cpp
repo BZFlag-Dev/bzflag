@@ -96,7 +96,7 @@ Player_getAttr (Player *player, char *name)
 	} else if (strcmp (name, "team") == 0) {
 		attr = Py_BuildValue ("i", player->record->team);
 	} else if (strcmp (name, "position") == 0) {
-		attr = Py_BuildValue ("(f,f,f)", player->record->pos[0], player->record->pos[1], player->record->pos[2]);
+		attr = Py_BuildValue ("(fff)", player->record->pos[0], player->record->pos[1], player->record->pos[2]);
 	} else if (strcmp (name, "rotation") == 0) {
 		attr = Py_BuildValue ("f", player->record->rot);
 	} else if (strcmp (name, "ipAddr") == 0) {
