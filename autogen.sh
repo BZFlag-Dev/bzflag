@@ -1,10 +1,6 @@
 #!/bin/sh
 # script to prepare bzflag sources
-aclocal \
-&& autoheader \
-&& automake --add-missing --copy \
-&& autoconf \
-|| exit 1
+autoreconf --install --force --warning=all || exit 1
 
 if [ -z "$1" ] ; then
  echo BZFlag sources are now prepared. To build here, run:
