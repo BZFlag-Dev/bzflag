@@ -233,7 +233,6 @@ void			ScoreboardRenderer::renderTeamScores (float x, float y, float dy){
   int teamCount = 0;
   int i;
   float xn, xl;
-  bool isCTF = World::getWorld()->allowTeamFlags();
   std::string label;
 
   if (World::getWorld()->allowRabbit())
@@ -243,15 +242,8 @@ void			ScoreboardRenderer::renderTeamScores (float x, float y, float dy){
   FontManager &fm = FontManager::instance();
   hudColor3fv(messageColor);
 
-  if (isCTF){
-    label = bdl->getLocalString("Team Score");
-    xl = xn = x - teamScoreLabelWidth;
-  }else{
-    label = bdl->getLocalString("Teams");
-    xl = x - fm.getStrLength(minorFontFace, minorFontSize, label);
-    xn = x - teamCountLabelWidth;
-  }
-  
+  label = bdl->getLocalString("Team Score");
+  xl = xn = x - teamScoreLabelWidth;
   fm.drawString(xl, y, 0, minorFontFace, minorFontSize, label);
 
   for (i = RedTeam; i < NumTeams; i++) {
@@ -266,10 +258,7 @@ void			ScoreboardRenderer::renderTeamScores (float x, float y, float dy){
   char score[44];
   for (i = 0 ; i < teamCount; i++){
     Team& team = World::getWorld()->getTeam(teams[i]);
-    if (isCTF)
-      sprintf(score, "%d (%d-%d) %d", team.won - team.lost, team.won, team.lost, team.size);
-    else
-      sprintf(score, "%d", team.size);
+    sprintf(score, "%d (%d-%d) %d", team.won - team.lost, team.won, team.lost, team.size);
     hudColor3fv(Team::getRadarColor((TeamColor)teams[i]));
     fm.drawString(xn, y, 0, minorFontFace, minorFontSize, score);
     y -= dy;
