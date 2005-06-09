@@ -53,11 +53,6 @@ MessageQueue	messageHistory;
 unsigned int	messageHistoryIndex = 0;
 
 
-void printout(const std::string& name, void*)
-{
-  std::cout << name << " = " << BZDB.get(name) << std::endl;
-}
-
 
 static bool varIsEqual(const std::string& name)
 {
@@ -164,38 +159,6 @@ bool			ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
       const char* cmd = message.c_str();
       if (LocalCommand::execute(cmd)) {
 	;
-      } else if (strncmp(cmd, "DUMP", 4) == 0) {
-	BZDB.iterate(printout, NULL);
-      } else if (strncmp(cmd, "UNSILENCE", 9) == 0) {
-	Player *loudmouth = getPlayerByName(cmd + 10);
-	if (loudmouth) {
-	  std::vector<std::string>::iterator it = silencePlayers.begin();
-	  for (; it != silencePlayers.end(); it++) {
-	    if (*it == cmd + 10) {
-	      silencePlayers.erase(it);
-	      std::string unsilenceMessage = "Unsilenced ";
-	      unsilenceMessage += (cmd + 10);
-	      addMessage(NULL, unsilenceMessage);
-	      break;
-	    }
-	  }
-	}
-      } else if (message == "CLIENTQUERY") {
-	message = "/clientquery";
-
-	char messageBuffer[MessageLen];
-	memset(messageBuffer, 0, MessageLen);
-	strncpy(messageBuffer, message.c_str(), MessageLen);
-	nboPackString(messageMessage + PlayerIdPLen, messageBuffer, MessageLen);
-	serverLink->send(MsgMessage, sizeof(messageMessage), messageMessage);
-
-      } else if (strncmp(cmd, "SAVEWORLD", 9) == 0) {
-	std::string path = cmd + 10;
-	if (World::getWorld()->writeWorld(path)) {
-	  addMessage(NULL, "World Saved");
-	} else {
-	  addMessage(NULL, "Invalid file name specified");
-	}
       } else if (strncasecmp(cmd, "/highlight", 10) == 0) {
         const char* c = cmd + 10;
         while ((*c != '\0') && isspace(*c)) c++; // skip leading white
