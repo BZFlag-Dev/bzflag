@@ -818,12 +818,13 @@ std::string cmdHunt(const std::string&, const CommandManager::ArgList& args)
 {
   if (args.size() != 0)
     return "usage: hunt";
-  if (hud->getHunting()) {
-    hud->setHunting(false);
+  ScoreboardRenderer *scoreboard = hud->getScoreboard();
+  if (scoreboard->getHunting()) {
+    scoreboard->setHunting(false);
   } else {
     playLocalSound(SFX_HUNT);
-    hud->setHunt(!hud->getHunt());
-    hud->setHuntPosition(0);
+    scoreboard->setHunt(!scoreboard->getHunt());
+    scoreboard->setHuntPosition(0);
     if (!BZDB.isTrue("displayScore"))
       BZDB.set("displayScore", "1");
   }

@@ -366,6 +366,10 @@ SOURCE=..\..\src\bzflag\HUDuiTypeIn.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\bzflag\ScoreboardRenderer.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\bzflag\LocalPlayer.cxx
 # End Source File
 # Begin Source File
@@ -835,6 +839,10 @@ SOURCE=..\..\src\bzflag\HUDuiTextureLabel.h
 # Begin Source File
 
 SOURCE=..\..\src\bzflag\HUDuiTypeIn.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\bzflag\ScoreboardRenderer.h
 # End Source File
 # Begin Source File
 

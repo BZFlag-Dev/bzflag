@@ -44,13 +44,6 @@
 const float		HUDRenderer::altitudeOffset = 20.0f;
 const GLfloat		HUDRenderer::black[3] = { 0.0f, 0.0f, 0.0f };
 std::string		HUDRenderer::headingLabel[36];
-std::string		HUDRenderer::scoreSpacingLabel("88% 888 (888-888)[88]");
-std::string		HUDRenderer::scoreLabel("Score");
-std::string		HUDRenderer::killSpacingLabel("888/888 Hunt->");
-std::string		HUDRenderer::killLabel("Kills");
-std::string		HUDRenderer::teamScoreSpacingLabel("888 (888-888) 888");
-std::string		HUDRenderer::teamScoreLabel("Team Score");
-std::string		HUDRenderer::playerLabel("Player");
 std::string		HUDRenderer::restartLabelFormat("Press %s to start");
 std::string		HUDRenderer::resumeLabel("Press Pause to resume");
 std::string		HUDRenderer::autoPilotLabel("AutoPilot on");
@@ -78,11 +71,6 @@ HUDRenderer::HUDRenderer(const BzfDisplay* _display,
 				roamingLabel("observing"),
 				showCompose(false),
 				showCracks(true),
-				huntIndicator(false),
-				hunting(false),
-				huntPosition(0),
-				huntSelection(false),
-				showHunt(false),
 				dater(false),
 				lastTimeChange(time(NULL))
 {
@@ -125,6 +113,9 @@ HUDRenderer::HUDRenderer(const BzfDisplay* _display,
   composeTypeIn->setMaxLength(MessageLen - 1);
   composeTypeIn->showFocus(false);
 
+  // create scoreboard renderer
+  scoreboard = new ScoreboardRenderer();
+  
   // initialize fonts
   resize(true);
 }
@@ -137,6 +128,14 @@ HUDRenderer::~HUDRenderer()
   // release ui controls
   delete composeTypeIn;
 }
+
+
+ScoreboardRenderer *HUDRenderer::getScoreboard ()
+{
+  return scoreboard;
+}
+
+
 
 void			HUDRenderer::resizeCallback(void* self)
 {
@@ -171,6 +170,11 @@ void			HUDRenderer::resize(bool firstTime)
   setHeadingFontSize(w, vh);
   setComposeFontSize(w, vh);
   setLabelsFontSize(w, vh);
+
+  // set scoreboard window size & location
+  const float sby = window.getViewHeight() - majorFontHeight - alertFontHeight * 2.0f;
+  scoreboard->setWindowSize (0.01f * window.getWidth(), sby, 
+        0.98f * window.getWidth(), sby);
 }
 
 int			HUDRenderer::getNoMotionSize() const
@@ -203,6 +207,7 @@ void			HUDRenderer::setAlertFontSize(int, int height)
   FontManager &fm = FontManager::instance();
   alertFontFace = fm.getFaceID(BZDB.get("sansSerifFont"));
   alertFontSize = floorf(s);
+  alertFontHeight = fm.getStrHeight(alertFontFace, alertFontSize, " ");
 
   for (int i = 0; i < MaxAlerts; i++)
     if (alertClock[i].isOn())
@@ -215,6 +220,7 @@ void			HUDRenderer::setMajorFontSize(int, int height)
   FontManager &fm = FontManager::instance();
   majorFontFace = fm.getFaceID(BZDB.get("serifFont"));
   majorFontSize = floorf(s);
+  majorFontHeight = fm.getStrHeight(majorFontFace, majorFontSize, " ");
 }
 
 void			HUDRenderer::setMinorFontSize(int, int height)
@@ -241,17 +247,6 @@ void			HUDRenderer::setMinorFontSize(int, int height)
     minorFontSize = 16;
     break;
   }
-
-  huntArrowWidth = fm.getStrLength(minorFontFace, minorFontSize, "-> ");
-  huntedArrowWidth = fm.getStrLength(minorFontFace, minorFontSize, "Hunt->");
-
-  scoreLabelWidth = fm.getStrLength(minorFontFace, minorFontSize, scoreSpacingLabel);
-  killsLabelWidth = fm.getStrLength(minorFontFace, minorFontSize, killSpacingLabel);
-  teamScoreLabelWidth = fm.getStrLength(minorFontFace, minorFontSize, teamScoreSpacingLabel);
-
-  const float spacing = fm.getStrLength(minorFontFace, minorFontSize, " ");
-  scoreLabelWidth += spacing;
-  killsLabelWidth += spacing;
 }
 
 void			HUDRenderer::setHeadingFontSize(int, int height)
@@ -307,6 +302,7 @@ void			HUDRenderer::setRoaming(bool _roaming)
 void			HUDRenderer::setDim(bool _dim)
 {
   dim = _dim;
+  scoreboard->setDim (_dim);
 }
 
 void			HUDRenderer::setPlayerHasHighScore(bool hasHigh)
@@ -709,7 +705,6 @@ void			HUDRenderer::renderStatus(void)
       sprintf(buffer, "%4d.%02d.%02d", 1900 + userTime.tm_year, userTime.tm_mon + 1, userTime.tm_mday);
     else
       sprintf(buffer, "%2d:%2.2d", userTime.tm_hour, userTime.tm_min);
-
     x = (float)window.getWidth() - 0.25f * h - fm.getStrLength(majorFontFace, majorFontSize, buffer);
     hudColor3fv(messageColor);
     fm.drawString(x, y, 0, majorFontFace, majorFontSize, buffer);
@@ -807,196 +802,6 @@ int HUDRenderer::teamScoreCompare(const void* _c, const void* _d)
   return (d->won-d->lost) - (c->won-c->lost);
 }
 
-void		HUDRenderer::setHuntPosition(int _huntPosition)
-{
-  huntPosition = _huntPosition;
-}
-
-int			HUDRenderer::getHuntPosition() const
-{
-  return huntPosition;
-}
-
-bool			HUDRenderer::getHuntSelection() const
-{
-  return huntSelection;
-}
-
-void			HUDRenderer::setHuntSelection(bool _huntSelection)
-{
-  huntSelection = _huntSelection;
-}
-
-void		HUDRenderer::setHuntIndicator(bool _huntIndicator)
-{
-  huntIndicator = _huntIndicator;
-}
-
-bool			HUDRenderer::getHuntIndicator() const
-{
-  return huntIndicator;
-}
-
-void		HUDRenderer::setHunting(bool _hunting)
-{
-  hunting = _hunting;
-}
-
-bool			HUDRenderer::getHunting() const
-{
-  return hunting;
-}
-
-bool			HUDRenderer::getHunt() const
-{
-  return showHunt;
-}
-
-void			HUDRenderer::setHunt(bool _showHunt)
-{
-  showHunt = _showHunt;
-}
-
-void			HUDRenderer::renderScoreboard(void)
-{
-  int i, j;
-  bool huntPlayerAlive = false;
-
-  LocalPlayer* myTank = LocalPlayer::getMyTank();
-  if (!myTank || !World::getWorld()) return;
-
-  Bundle *bdl = BundleMgr::getCurrentBundle();
-  FontManager &fm = FontManager::instance();
-
-  const float x1 = 0.01f * window.getWidth();
-  const float x2 = x1 + scoreLabelWidth;
-  const float x3 = x2 + killsLabelWidth;
-  const float x5 = (1.0f - 0.01f) * window.getWidth() - teamScoreLabelWidth;
-  const float y0 = (float)window.getViewHeight() - fm.getStrHeight(majorFontFace, majorFontSize, " ")
-      - fm.getStrHeight(alertFontFace, alertFontSize, " ") * 2.0f;
-  hudColor3fv(messageColor);
-  fm.drawString(x1, y0, 0, minorFontFace, minorFontSize, bdl->getLocalString(scoreLabel));
-  fm.drawString(x2, y0, 0, minorFontFace, minorFontSize, bdl->getLocalString(killLabel));
-  fm.drawString(x3, y0, 0, minorFontFace, minorFontSize, bdl->getLocalString(playerLabel));
-  if (!World::getWorld()->allowRabbit())
-    fm.drawString(x5, y0, 0, minorFontFace, minorFontSize, bdl->getLocalString(teamScoreLabel));
-  const float dy = fm.getStrHeight(minorFontFace, minorFontSize, " ");
-  int y = (int)(y0 - dy);
-
-  // make room for the status marker
-  const float xs = x3 - fm.getStrLength(minorFontFace, minorFontSize, "+|");
-
-  // grab the tk warning ratio
-  tkWarnRatio = BZDB.eval("tkwarnratio");
-
-  // print non-observing players sorted by score, print observers last
-  int plrCount = 0;
-  int obsCount = 0;
-  const int curMaxPlayers = World::getWorld()->getCurMaxPlayers();
-  int* players = new int[curMaxPlayers];
-  RemotePlayer* rp;
-
-  for (j = 0; j < curMaxPlayers; j++) {
-    if ((rp = World::getWorld()->getPlayer(j))) {
-      if (rp->getTeam() != ObserverTeam)
-	players[plrCount++] = j;
-      else
-	players[curMaxPlayers - (++obsCount)] = j;
-    }
-  }
-
-  qsort(players, plrCount, sizeof(int), tankScoreCompare);
-
-  // list player scores
-  bool drewMyScore = false;
-  for (i = 0; i < plrCount; i++) {
-    RemotePlayer* player = World::getWorld()->getPlayer(players[i]);
-    if(getHunt()) {
-      // Make the selection marker wrap.
-      if(getHuntPosition() >= plrCount) setHuntPosition(0);
-      if(getHuntPosition() < 0) setHuntPosition(plrCount-1);
-
-      // toggle the hunt indicator if this is the current player pointed to
-      if(getHuntPosition() == i) {
-	setHuntIndicator(true);
-	// If hunt is selected set this player to be hunted
-	if(getHuntSelection()) {
-	  player->setHunted(true);
-	  setHunting(true);
-	  setHuntSelection(false);
-	  setHunt(false);
-	  huntPlayerAlive = true; // hunted player is alive since you selected him
-	}
-      } else {
-	setHuntIndicator(false);
-      }
-    } else {
-      setHuntIndicator(false);
-      if (!getHunting()) player->setHunted(false); // if not hunting make sure player isn't hunted
-      else if (player->isHunted()) huntPlayerAlive = true; // confirm hunted player is alive
-    }
-    bool myTurn = false;
-    if (!drewMyScore && myTank->getTeam() != ObserverTeam)
-      if (World::getWorld()->allowRabbit()) {
-	myTurn = myTank->getRabbitScore() > player->getRabbitScore();
-      } else {
-	myTurn = myTank->getScore() > player->getScore();
-      }
-    if (myTurn) {
-      setHuntIndicator(false); // don't hunt myself
-      // if i have greater score than remote player draw my name here
-      drawPlayerScore(myTank, x1, x2, x3, xs, (float)y);
-      drewMyScore = true;
-      y -= (int)dy;
-    }
-    if(getHunt() && getHuntPosition() == i) setHuntIndicator(true);// set hunt indicator back to normal
-    drawPlayerScore(player, x1, x2, x3, xs, (float)y);//then draw the remote player
-    y -= (int)dy;
-  }
-  if (!huntPlayerAlive && getHunting()) setHunting(false); //stop hunting if hunted player is dead
-  if (!drewMyScore && (myTank->getTeam() != ObserverTeam)) {
-    setHuntIndicator(false); // don't hunt myself
-    // if my score is smaller or equal to last remote player draw my score here
-    drawPlayerScore(myTank, x1, x2, x3, xs, (float)y);
-    y -= (int)dy;
-    drewMyScore = true;
-  }
-
-  // list observers
-  y -= (int)dy;
-  for (i = curMaxPlayers - 1; i >= curMaxPlayers - obsCount; --i) {
-    setHuntIndicator(false); // don't hunt observer
-    RemotePlayer* player = World::getWorld()->getPlayer(players[i]);
-    drawPlayerScore(player, x1, x2, x3, xs, (float)y);
-    y -= (int)dy;
-  }
-  if (!drewMyScore) {
-    // if I am an observer, list my name
-    drawPlayerScore(myTank, x1, x2, x3, xs, (float)y);
-  }
-
-  delete[] players;
-
-  // print teams sorted by score
-  int teams[NumTeams];
-  int teamCount = 0;
-
-  y = (int)y0;
-  for (i = RedTeam; i < NumTeams; i++) {
-    if (!Team::isColorTeam(TeamColor(i))) continue;
-    const Team* team = World::getWorld()->getTeams() + i;
-    if (team->size == 0) continue;
-    teams[teamCount++] = i;
-  }
-
-  qsort(teams, teamCount, sizeof(int), teamScoreCompare);
-
-  y -= (int)dy;
-  for (i = 0 ; i < teamCount; i++){
-    drawTeamScore(teams[i], x5, (float)y);
-    y -= (int)dy;
-  }
-}
 
 void			HUDRenderer::renderTankLabels(SceneRenderer& renderer)
 {
@@ -1387,7 +1192,7 @@ void			HUDRenderer::renderPlaying(SceneRenderer& renderer)
   renderAlerts();
 
   // show player scoreboard
-  if (BZDB.isTrue("displayScore")) renderScoreboard();
+  if (BZDB.isTrue("displayScore")) scoreboard->render();
 
   // draw flag help
   if (flagHelpClock.isOn()) {
@@ -1462,7 +1267,7 @@ void			HUDRenderer::renderNotPlaying(SceneRenderer& renderer)
   renderAlerts();
 
   // show player scoreboard
-  renderScoreboard();
+  scoreboard->render();
 
   // draw times
   renderTimes();
@@ -1530,7 +1335,7 @@ void			HUDRenderer::renderRoaming(SceneRenderer& renderer)
   renderAlerts();
 
   // show player scoreboard
-  if (BZDB.isTrue("displayScore")) renderScoreboard();
+  if (BZDB.isTrue("displayScore")) scoreboard->render();
 
   // show tank labels
   if (BZDB.isTrue("displayLabels")) renderTankLabels(renderer);
@@ -1562,152 +1367,6 @@ void			HUDRenderer::renderRoaming(SceneRenderer& renderer)
   glPopMatrix();
 }
 
-void			HUDRenderer::drawPlayerScore(const Player* player,
-			    float x1, float x2, float x3, float xs, float y)
-{
-  // dim the font if we're dim
-  const std::string dimString = dim ? ColorStrings[DimColor] : "";
-
-  // score
-  char score[40], kills[40];
-
-  bool highlightTKratio = false;
-  if (tkWarnRatio > 0.0) {
-    if (((player->getWins() > 0) && (player->getTKRatio() > tkWarnRatio)) ||
-        ((player->getWins() == 0) && (player->getTeamKills() >= 3))) {
-      highlightTKratio = true;
-    }
-  }
-
-  if (World::getWorld()->allowRabbit())
-    sprintf(score, "%s%2d%% %d(%d-%d)%s[%d]", dimString.c_str(),
-	    player->getRabbitScore(),
-	    player->getScore(), player->getWins(), player->getLosses(),
-	    highlightTKratio ? ColorStrings[CyanColor].c_str() : "",
-	    player->getTeamKills());
-  else
-    sprintf(score, "%s%d (%d-%d)%s[%d]", dimString.c_str(),
-	    player->getScore(), player->getWins(), player->getLosses(),
-	    highlightTKratio ? ColorStrings[CyanColor].c_str() : "",
-	    player->getTeamKills());
-  if (LocalPlayer::getMyTank() != player)
-    sprintf(kills, "%d/%d", player->getLocalWins(), player->getLocalLosses());
-  else
-    strcpy(kills, "");
-
-
-  // team color
-  TeamColor teamIndex = player->getTeam();
-  if (teamIndex < RogueTeam) {
-    teamIndex = RogueTeam;
-  }
-
-  // authentication status
-  std::string statusInfo = dimString;
-  if (BZDBCache::colorful) {
-    statusInfo += ColorStrings[CyanColor];
-  } else {
-    statusInfo += ColorStrings[teamIndex];;
-  }
-  if (player->isAdmin()) {
-    statusInfo += '@';
-  } else if (player->isVerified()) {
-    statusInfo += '+';
-  } else if (player->isRegistered()) {
-    statusInfo += '-';
-  } else {
-    statusInfo = ""; // don't print
-  }
-
-  std::string playerInfo = dimString;
-  // team color
-  playerInfo += ColorStrings[teamIndex];
-  //Slot number only for admins
-  LocalPlayer* localPlayer = LocalPlayer::getMyTank();
-  if (localPlayer->isAdmin()){
-    char slot[10];
-    sprintf(slot, "%3d",player->getId());
-    playerInfo += slot;
-    playerInfo += " - ";
-  }
-  // callsign
-  playerInfo += player->getCallSign();
-  // email in parenthesis
-  if (player->getEmailAddress()[0] != '\0' && !BZDB.isTrue("hideEmails")) {
-    playerInfo += " (";
-    playerInfo += player->getEmailAddress();
-    playerInfo += ")";
-  }
-  // carried flag
-  bool coloredFlag = false;
-  FlagType* flagd = player->getFlag();
-  if (flagd != Flags::Null) {
-    // color special flags
-    if (BZDBCache::colorful) {
-      if ((flagd == Flags::ShockWave)   ||
-	  (flagd == Flags::Genocide)    ||
-	  (flagd == Flags::Laser)       ||
-	  (flagd == Flags::GuidedMissile)) {
-	playerInfo += ColorStrings[WhiteColor];
-      } else if (flagd->flagTeam != NoTeam) {
-	// use team color for team flags
-	playerInfo += ColorStrings[flagd->flagTeam];
-      }
-      coloredFlag = true;
-    }
-    playerInfo += "/";
-    playerInfo += (flagd->endurance == FlagNormal ? flagd->flagName : flagd->flagAbbv);
-    // back to original color
-    if (coloredFlag) {
-      playerInfo += ColorStrings[teamIndex];
-    }
-  }
-  // status
-  if (player->isPaused())
-    playerInfo += "[p]";
-  else if (player->isNotResponding())
-    playerInfo += "[nr]";
-  else if (player->isAutoPilot())
-    playerInfo += "[auto]";
-
-  FontManager &fm = FontManager::instance();
-  fm.setDimFactor(dimFactor);
-
-  // draw
-  if (player->getTeam() != ObserverTeam) {
-    hudColor3fv(Team::getRadarColor(teamIndex));
-    fm.drawString(x1, y, 0, minorFontFace, minorFontSize, score);
-    hudColor3fv(Team::getRadarColor(teamIndex));
-    fm.drawString(x2, y, 0, minorFontFace, minorFontSize, kills);
-  }
-  fm.drawString(x3, y, 0, minorFontFace, minorFontSize, playerInfo);
-  if (statusInfo.size() > 0) {
-    fm.drawString(xs, y, 0, minorFontFace, minorFontSize, statusInfo);
-  }
-  if (BZDB.isTrue("debugHud")) {
-    printf ("playerInfo: %s\n", playerInfo.c_str()); //FIXME
-  }
-
-  // draw hunting status
-  const float x4 = xs - huntArrowWidth;
-  const float x5 = xs - huntedArrowWidth;
-  if (player->isHunted()) {
-    fm.drawString(x5, y, 0, minorFontFace, minorFontSize, "Hunt->");
-  } else if (getHuntIndicator()) {
-    fm.drawString(x4, y, 0, minorFontFace, minorFontSize, "->");
-  }
-}
-
-void			HUDRenderer::drawTeamScore(int teamIndex, float x1, float y)
-{
-  char score[44];
-  Team& team = World::getWorld()->getTeam(teamIndex);
-  sprintf(score, "%d (%d-%d) %d", team.won - team.lost, team.won, team.lost, team.size);
-
-  FontManager &fm = FontManager::instance();
-  hudColor3fv(Team::getRadarColor((TeamColor)teamIndex));
-  fm.drawString(x1, y, 0, minorFontFace, minorFontSize, score);
-}
 
 
 static int compare_float (const void* a, const void* b)
@@ -1781,6 +1440,7 @@ void			HUDRenderer::renderShots()
   delete[] factors;
 }
 
+  
 // Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***

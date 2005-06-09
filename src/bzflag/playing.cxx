@@ -52,6 +52,7 @@
 #include "BackgroundRenderer.h"
 #include "RadarRenderer.h"
 #include "HUDRenderer.h"
+#include "ScoreboardRenderer.h"
 #include "HUDui.h"
 #include "World.h"
 #include "WorldBuilder.h"
@@ -127,6 +128,7 @@ static SceneRenderer*	sceneRenderer = NULL;
 ControlPanel*		controlPanel = NULL;
 static RadarRenderer*	radar = NULL;
 HUDRenderer*		hud = NULL;
+ScoreboardRenderer*		scoreboard = NULL;
 static SceneDatabaseBuilder* sceneBuilder = NULL;
 static Team*		teams = NULL;
 int			numFlags = 0;
@@ -679,22 +681,22 @@ static bool		doKeyCommon(const BzfKeyEvent& key, bool pressed)
       HUDDialogStack::get()->push(mainMenu);
     }
     return true;
-  } else if (hud->getHunt()) {
+  } else if (scoreboard->getHunt()) {
     if (key.button == BzfKeyEvent::Down ||
 	KEYMGR.get(key, true) == "identify") {
       if (pressed) {
-	hud->setHuntPosition(hud->getHuntPosition()+1);
+	scoreboard->setHuntPosition(scoreboard->getHuntPosition()+1);
       }
       return true;
     } else if (key.button == BzfKeyEvent::Up ||
 	       KEYMGR.get(key, true) == "drop") {
       if (pressed) {
-	hud->setHuntPosition(hud->getHuntPosition()-1);
+	scoreboard->setHuntPosition(scoreboard->getHuntPosition()-1);
       }
       return true;
     } else if (KEYMGR.get(key, true) == "fire") {
       if (pressed) {
-	hud->setHuntSelection(true);
+	scoreboard->setHuntSelection(true);
 	playLocalSound(SFX_HUNT_SELECT);
       }
       return true;
@@ -2386,13 +2388,13 @@ static void		handleServerMessage(bool human, uint16_t code,
 	    hud->setAlert(0, "You are now the rabbit.", 10.0f, false);
 	    playLocalSound(SFX_HUNT_SELECT);
 	  }
-	  hud->setHunting(false);
+	  scoreboard->setHunting(false);
 	} else if (myTank->getTeam() != ObserverTeam) {
 	  myTank->changeTeam(RogueTeam);
 	  if (myTank->isPaused() || myTank->isAlive())
 	    wasRabbit = false;
 	  rabbit->setHunted(true);
-	  hud->setHunting(true);
+	  scoreboard->setHunting(true);
 	}
 
 	addMessage(rabbit, "is now the rabbit", 3, true);
@@ -5676,7 +5678,7 @@ static void		playingLoop()
     if (myTank) {
       if (myTank->isAlive() && !myTank->isPaused()) {
 	doMotion();
-	if (hud->getHunting()) {
+	if (scoreboard->getHunting()) {
 	  setHuntTarget(); //spot hunt target
 	}
 	if (myTank->getTeam() != ObserverTeam &&
@@ -6192,6 +6194,7 @@ void			startPlaying(BzfDisplay* _display,
   // make heads up display
   HUDRenderer _hud(display, renderer);
   hud = &_hud;
+  scoreboard = hud->getScoreboard();
 
   // initialize control panel and hud
   updateNumPlayers();

@@ -627,8 +627,8 @@ msgstr "Daid"
 #msgid "Kills"
 #msgstr ""
 
-#msgid "Team Score"
-#msgstr ""
+msgid "Team Score"
+msgstr "How weez doin"
 
 #msgid "Locale:"
 #msgstr ""
@@ -1765,3 +1765,6 @@ msgstr "time until a bad flag is dropped (if thar's a time limit)."
 
 msgid "Other informational messages may occasionally flash on the HUD."
 msgstr "Other info'mashunal messages may occashunally flash on th' HUD."
+
+msgid "Teams"
+msgstr "Teem Bigness"

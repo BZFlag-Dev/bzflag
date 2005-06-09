@@ -1784,3 +1784,6 @@ msgstr ""
 
 msgid "removed IP pattern"
 msgstr ""
+
+msgid "Teams"
+msgstr ""

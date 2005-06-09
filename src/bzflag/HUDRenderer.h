@@ -31,6 +31,7 @@
 #include "BzfDisplay.h"
 #include "SceneRenderer.h"
 #include "Player.h"
+#include "ScoreboardRenderer.h"
 
 
 const int		MaxAlerts = 3;
@@ -52,8 +53,7 @@ typedef std::vector<HUDMarker> MarkerList;
  */
 class HUDRenderer {
 public:
-  HUDRenderer(const BzfDisplay*,
-	      const SceneRenderer&);
+  HUDRenderer(const BzfDisplay*, const SceneRenderer&);
   ~HUDRenderer();
 
   int			getNoMotionSize() const;
@@ -90,18 +90,8 @@ public:
   void		setComposing(const std::string &prompt, bool _allowEdit);
 
   void		render(SceneRenderer&);
-
-  void		setHunting(bool _hunting);
-  bool		getHunting() const;
-  void		setHuntIndicator(bool _huntIndicator);
-  void		setHuntPosition(int _huntPosition);
-  int		getHuntPosition() const;
-  bool		getHuntSelection() const;
-  void		setHuntSelection(bool _huntSelection);
-  bool		getHuntIndicator() const;
-  bool		getHunt() const;
-  void		setHunt(bool _showHunt);
-
+  ScoreboardRenderer *getScoreboard();
+  
 protected:
   void		hudColor3f(GLfloat, GLfloat, GLfloat);
   void		hudColor4f(GLfloat, GLfloat, GLfloat, GLfloat);
@@ -114,16 +104,12 @@ protected:
   void		renderOptions(SceneRenderer&);
   void		renderCompose(SceneRenderer&);
   void		renderBox(SceneRenderer&);
-  void		renderScoreboard(void);
   void		renderTankLabels(SceneRenderer&);
   void		renderPlaying(SceneRenderer&);
   void		renderNotPlaying(SceneRenderer&);
   void		renderRoaming(SceneRenderer&);
   void		renderTimes(void);
   void		renderShots(void);
-  void		drawPlayerScore(const Player*,
-				float x1, float x2, float x3, float xs, float y);
-  void		drawTeamScore(int team, float x, float y);
 
   void		makeCrack(float crackpattern[HUDNumCracks][(1 << HUDCrackLevels) + 1][2], int n, int l, float a);
   std::string	makeHelpString(const char* help) const;
@@ -144,6 +130,7 @@ private:
 
 private:
   const BzfDisplay*	display;
+  ScoreboardRenderer* scoreboard;
   MainWindow&		window;
   bool			firstRender;
   int			noMotionSize;
@@ -167,6 +154,8 @@ private:
   float		composeFontSize;
   int		labelsFontFace;
   float		labelsFontSize;
+  float   majorFontHeight;
+  float   alertFontHeight;
 
   bool		playing;
   bool		roaming;
@@ -185,9 +174,6 @@ private:
   float		headingLabelWidth[36];
   float		altitudeMarkSpacing;
   float		altitudeLabelMaxWidth;
-  float		scoreLabelWidth;
-  float		killsLabelWidth;
-  float		teamScoreLabelWidth;
   float		restartLabelWidth;
   float		resumeLabelWidth;
   float		autoPilotWidth;
@@ -226,23 +212,11 @@ private:
   static const float	altitudeOffset;
   static const GLfloat black[3];
   static std::string	headingLabel[36];
-  static std::string	scoreSpacingLabel;
-  static std::string	scoreLabel;
-  static std::string	killSpacingLabel;
-  static std::string	killLabel;
-  static std::string	teamScoreLabel;
-  static std::string	teamScoreSpacingLabel;
-  static std::string	playerLabel;
   static std::string	restartLabelFormat;
   static std::string	resumeLabel;
   static std::string	cancelDestructLabel;
   static std::string	gameOverLabel;
   static std::string	autoPilotLabel;
-  bool		huntIndicator;
-  bool		hunting;
-  int			huntPosition;
-  bool		huntSelection;
-  bool		showHunt;
   bool    dater;
   unsigned int lastTimeChange;
 };
