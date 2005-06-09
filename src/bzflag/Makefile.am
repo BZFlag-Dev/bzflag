@@ -30,6 +30,7 @@ bzflag_SOURCES =			\
 	BaseLocalPlayer.h		\
 	CacheMenu.cxx			\
 	CacheMenu.h			\
+	CommandsImplementation.cxx	\
 	ComposeDefaultKey.cxx		\
 	ComposeDefaultKey.h		\
 	ControlPanel.cxx		\
@@ -80,6 +81,8 @@ bzflag_SOURCES =			\
 	InputMenu.h			\
 	KeyboardMapMenu.cxx		\
 	KeyboardMapMenu.h		\
+	LocalCommand.cxx		\
+	LocalCommand.h			\
 	LocalPlayer.cxx			\
 	LocalPlayer.h			\
 	MainMenu.cxx			\

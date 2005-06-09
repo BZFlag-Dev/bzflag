@@ -33,6 +33,7 @@
 #include "World.h"
 #include "HUDRenderer.h"
 #include "Roster.h"
+#include "LocalCommand.h"
 
 
 /* FIXME -- pulled from player.h */
@@ -161,14 +162,8 @@ bool			ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
     std::string message = hud->getComposeString();
     if (message.length() > 0) {
       const char* cmd = message.c_str();
-      if (strncmp(cmd, "SILENCE", 7) == 0) {
-	Player *loudmouth = getPlayerByName(cmd + 8);
-	if (loudmouth) {
-	  silencePlayers.push_back(cmd + 8);
-	  std::string silenceMessage = "Silenced ";
-	  silenceMessage += (cmd + 8);
-	  addMessage(NULL, silenceMessage);
-	}
+      if (LocalCommand::execute(cmd)) {
+	;
       } else if (strncmp(cmd, "DUMP", 4) == 0) {
 	BZDB.iterate(printout, NULL);
       } else if (strncmp(cmd, "UNSILENCE", 9) == 0) {
