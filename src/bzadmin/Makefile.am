@@ -1,6 +1,3 @@
-AM_CXXFLAGS = -DBUILDING_BZADMIN
-INCLUDES = -I@top_srcdir@/src/bzflag
-
 MAINTAINERCLEANFILES = \
 	ServerLink.cxx \
 	Makefile.in
@@ -21,7 +18,8 @@ EXTRA_bzadmin_SOURCES = \
 	CursesUI.cxx
 endif
 
-AM_CPPFLAGS = -I$(top_srcdir)/include @CURL_CFLAGS@
+AM_CPPFLAGS = -DBUILDING_BZADMIN -I$(top_srcdir)/include \
+-I$(top_srcdir)/src/bzflag @CURL_CFLAGS@
 
 bzadmin_SOURCES = \
 	BZAdminClient.h \
