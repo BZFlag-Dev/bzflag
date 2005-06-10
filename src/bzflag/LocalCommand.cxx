@@ -13,28 +13,32 @@
 // interface header
 #include "LocalCommand.h"
 
-std::map<std::string, LocalCommand *> LocalCommand::mapOfCommands;
+LocalCommand::MapOfCommands *LocalCommand::mapOfCommands = NULL;
 
 LocalCommand::LocalCommand(std::string _commandName)
   : commandName(_commandName)
 {
-  mapOfCommands[commandName] = this;
+  if (!mapOfCommands)
+    mapOfCommands = new MapOfCommands;
+  (*mapOfCommands)[commandName] = this;
 }
 
 LocalCommand::~LocalCommand()
 {
-  mapOfCommands.erase(commandName);
+  (*mapOfCommands).erase(commandName);
 }
 
 bool LocalCommand::execute(const char *commandLine)
 {
+  if (!mapOfCommands)
+    return false;
   int i;
   for (i = 0; commandLine[i] && !isspace(commandLine[i]); i++);
   std::string commandToken(commandLine, i);
 
   std::map<std::string, LocalCommand *>::iterator it
-    = mapOfCommands.find(commandToken);
-  if (it == mapOfCommands.end())
+    = (*mapOfCommands).find(commandToken);
+  if (it == (*mapOfCommands).end())
     return false;
   return (*(it->second))(commandLine);
 }

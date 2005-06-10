@@ -34,7 +34,9 @@ class LocalCommand {
 
   std::string commandName;
 
-  static std::map<std::string, LocalCommand *> mapOfCommands;
+  typedef std::map<std::string, LocalCommand *> MapOfCommands;
+
+  static MapOfCommands *mapOfCommands;
 };
 
 #endif

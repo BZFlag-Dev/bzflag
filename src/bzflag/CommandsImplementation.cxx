@@ -10,12 +10,17 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+// common implementation headers
+#include "BZDBCache.h"
+#include "AnsiCodes.h"
+#include "TextUtils.h"
+#include "CommandsStandard.h"
+
 // local implementation headers
 #include "LocalCommand.h"
 #include "Player.h"
 #include "Roster.h"
 #include "playing.h"
-#include "World.h"
 
 class SilenceCommand : LocalCommand {
 public:
@@ -45,9 +50,39 @@ public:
   virtual bool operator() (const char *commandLine);
 };
 
-class SaveWorldCommand : LocalCommand {
+class HighlightCommand : LocalCommand {
 public:
-  SaveWorldCommand();
+  HighlightCommand();
+
+  virtual bool operator() (const char *commandLine);
+};
+
+class SetCommand : LocalCommand {
+public:
+  SetCommand();
+
+  virtual bool operator() (const char *commandLine);
+};
+
+class DiffCommand : LocalCommand {
+public:
+  DiffCommand();
+
+  virtual bool operator() (const char *commandLine);
+};
+
+#ifdef DEBUG
+class LocalSetCommand : LocalCommand {
+public:
+  LocalSetCommand();
+
+  virtual bool operator() (const char *commandLine);
+};
+#endif
+
+class QuitCommand : LocalCommand {
+public:
+  QuitCommand();
 
   virtual bool operator() (const char *commandLine);
 };
@@ -56,7 +91,13 @@ static SilenceCommand     silenceCommand;
 static UnsilenceCommand   unsilenceCommand;
 static DumpCommand        dumpCommand;
 static ClientQueryCommand clientQueryCommand;
-static SaveWorldCommand   saveWorldCommand;
+static HighlightCommand   highlightCommand;
+static SetCommand         setCommand;
+static DiffCommand        diffCommand;
+#ifdef DEBUG
+static LocalSetCommand    localSetCommand;
+#endif
+static QuitCommand        quitCommand;
 
 SilenceCommand::SilenceCommand() : LocalCommand("SILENCE")
 {
@@ -115,8 +156,10 @@ ClientQueryCommand::ClientQueryCommand() : LocalCommand("CLIENTQUERY")
 {
 }
 
-bool ClientQueryCommand::operator() (const char *)
+bool ClientQueryCommand::operator() (const char *commandLine)
 {
+  if (strlen(commandLine) != 11)
+    return false;
   char messageBuffer[MessageLen];
   memset(messageBuffer, 0, MessageLen);
   strncpy(messageBuffer, "/clientquery", MessageLen);
@@ -126,18 +169,145 @@ bool ClientQueryCommand::operator() (const char *)
   return true;
 }
 
-SaveWorldCommand::SaveWorldCommand() : LocalCommand("SAVEWORLD")
+HighlightCommand::HighlightCommand() : LocalCommand("/highlight")
 {
 }
 
-bool SaveWorldCommand::operator() (const char *commandLine)
+bool HighlightCommand::operator() (const char *commandLine)
 {
-  std::string path = commandLine + 10;
-  if (World::getWorld()->writeWorld(path)) {
-    addMessage(NULL, "World Saved");
-  } else {
-    addMessage(NULL, "Invalid file name specified");
+  const char* c = commandLine + 10;
+  while ((*c != '\0') && isspace(*c)) c++; // skip leading white
+  BZDB.set("highlightPattern", std::string(c));
+  return true;
+}
+
+static bool foundVarDiff = false;
+
+static bool varIsEqual(const std::string& name)
+{
+  // avoid "poll"
+  if (name[0] != '_') {
+    return true;
   }
+
+  // get the parameters
+  const std::string exp = BZDB.get(name);
+  const std::string defexp = BZDB.getDefault(name);
+  const float val = BZDB.eval(name);
+  BZDB.set("tmp", defexp); // BZDB.eval() can't take expressions directly
+  BZDB.setPersistent("tmp", false);
+  const float defval = BZDB.eval("tmp");
+  const bool valNaN = !(val == val);
+  const bool defNaN = !(defval == defval);
+
+  if (valNaN != defNaN) {
+    return false;
+  }
+
+  if (valNaN) {
+    return (exp == defexp);
+  } else {
+    return (val == defval);
+  }
+}
+
+static void listSetVars(const std::string& name, void* boolPtr)
+{
+  bool& diff = *((bool*)boolPtr);
+
+  if (diff) {
+    if (varIsEqual(name)) {
+      return;
+    } else {
+      foundVarDiff = true;
+    }
+  }
+
+  char message[MessageLen];
+  if (BZDB.getPermission(name) == StateDatabase::Locked) {
+    if (BZDBCache::colorful) {
+      sprintf(message, "/set %s%s %s%f %s%s",
+	      ColorStrings[RedColor].c_str(), name.c_str(),
+	      ColorStrings[GreenColor].c_str(), BZDB.eval(name),
+	      ColorStrings[BlueColor].c_str(), BZDB.get(name).c_str());
+    } else {
+      sprintf(message, "/set %s <%f> %s", name.c_str(),
+	      BZDB.eval(name), BZDB.get(name).c_str());
+    }
+    addMessage(LocalPlayer::getMyTank(), message, 2);
+  }
+}
+
+
+SetCommand::SetCommand() : LocalCommand("/set")
+{
+}
+
+bool SetCommand::operator() (const char *commandLine)
+{
+  if (strlen(commandLine) != 4)
+    return false;
+  bool diff = false;
+  BZDB.iterate(listSetVars, &diff);
+  return true;
+}
+
+DiffCommand::DiffCommand() : LocalCommand("/diff")
+{
+}
+
+bool DiffCommand::operator() (const char *commandLine)
+{
+  if (strlen(commandLine) != 5)
+    return false;
+  bool diff = true;
+  foundVarDiff = false;
+  BZDB.iterate(listSetVars, &diff);
+  if (!foundVarDiff) {
+    addMessage(LocalPlayer::getMyTank(), "all variables are at defaults", 2);
+  }
+  return true;
+}
+
+#ifdef DEBUG
+LocalSetCommand::LocalSetCommand() : LocalCommand("/localset")
+{
+}
+
+bool LocalSetCommand::operator() (const char *commandLine)
+{
+  std::string params              = commandLine + 9;
+  std::vector<std::string> tokens = TextUtils::tokenize(params, " ", 2);
+  if (tokens.size() == 2) {
+    if (!(BZDB.getPermission(tokens[0]) == StateDatabase::Server)) {
+      BZDB.setPersistent(tokens[0], BZDB.isPersistent(tokens[0]));
+      BZDB.set(tokens[0], tokens[1]);
+      std::string msg = "/localset " + tokens[0] + " " + tokens[1];
+      addMessage(NULL, msg);
+    } else {
+      addMessage
+	(NULL,
+	 "This is a server-defined variable.  Use /set instead of /localset.");
+    }
+  } else {
+    addMessage(NULL, "usage: /localset <variable> <value>");
+  }
+  return true;
+}
+#endif
+
+QuitCommand::QuitCommand() : LocalCommand("/quit")
+{
+}
+
+bool QuitCommand::operator() (const char *commandLine)
+{
+  char messageBuffer[MessageLen]; // send message
+  memset(messageBuffer, 0, MessageLen);
+  strncpy(messageBuffer, commandLine, MessageLen);
+  nboPackString(messageMessage + PlayerIdPLen, messageBuffer, MessageLen);
+  serverLink->send(MsgMessage, sizeof(messageMessage), messageMessage);
+  CommandsStandard::quit(); // kill client
   return true;
 }
 

@@ -13,26 +13,14 @@
 /* interface header */
 #include "ComposeDefaultKey.h"
 
-/* system headers */
-#include <iostream>
-#include <vector>
-#include <string>
-
 /* common implementation headers */
 #include "BzfEvent.h"
-#include "RemotePlayer.h"
 #include "KeyManager.h"
 #include "AutoCompleter.h"
-#include "BZDBCache.h"
-#include "AnsiCodes.h"
-#include "TextUtils.h"
-#include "CommandsStandard.h"
 
 /* local implementation headers */
 #include "LocalPlayer.h"
-#include "World.h"
 #include "HUDRenderer.h"
-#include "Roster.h"
 #include "LocalCommand.h"
 
 
@@ -46,69 +34,9 @@ extern ServerLink*	serverLink;
 extern DefaultCompleter completer;
 void selectNextRecipient (bool forward, bool robotIn);
 
-static bool foundVarDiff = false;
-
-
 MessageQueue	messageHistory;
 unsigned int	messageHistoryIndex = 0;
 
-
-
-static bool varIsEqual(const std::string& name)
-{
-  // avoid "poll"
-  if (name[0] != '_') {
-    return true;
-  }
-
-  // get the parameters
-  const std::string exp = BZDB.get(name);
-  const std::string defexp = BZDB.getDefault(name);
-  const float val = BZDB.eval(name);
-  BZDB.set("tmp", defexp); // BZDB.eval() can't take expressions directly
-  BZDB.setPersistent("tmp", false);
-  const float defval = BZDB.eval("tmp");
-  const bool valNaN = !(val == val);
-  const bool defNaN = !(defval == defval);
-
-  if (valNaN != defNaN) {
-    return false;
-  }
-
-  if (valNaN) {
-    return (exp == defexp);
-  } else {
-    return (val == defval);
-  }
-}
-
-
-static void listSetVars(const std::string& name, void* boolPtr)
-{
-  bool& diff = *((bool*)boolPtr);
-
-  if (diff) {
-    if (varIsEqual(name)) {
-      return;
-    } else {
-      foundVarDiff = true;
-    }
-  }
-
-  char message[MessageLen];
-  if (BZDB.getPermission(name) == StateDatabase::Locked) {
-    if (BZDBCache::colorful) {
-      sprintf(message, "/set %s%s %s%f %s%s",
-	      ColorStrings[RedColor].c_str(), name.c_str(),
-	      ColorStrings[GreenColor].c_str(), BZDB.eval(name),
-	      ColorStrings[BlueColor].c_str(), BZDB.get(name).c_str());
-    } else {
-      sprintf(message, "/set %s <%f> %s", name.c_str(),
-	      BZDB.eval(name), BZDB.get(name).c_str());
-    }
-    addMessage(LocalPlayer::getMyTank(), message, 2);
-  }
-}
 
 
 bool			ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
@@ -159,53 +87,12 @@ bool			ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
       const char* cmd = message.c_str();
       if (LocalCommand::execute(cmd)) {
 	;
-      } else if (strncasecmp(cmd, "/highlight", 10) == 0) {
-        const char* c = cmd + 10;
-        while ((*c != '\0') && isspace(*c)) c++; // skip leading white
-        BZDB.set("highlightPattern", std::string(c));
-      } else if (message == "/set") {
-	bool diff = false;
-	BZDB.iterate(listSetVars, &diff);
-      } else if (message == "/diff") {
-	bool diff = true;
-	foundVarDiff = false;
-	BZDB.iterate(listSetVars, &diff);
-	if (!foundVarDiff) {
-	  addMessage(LocalPlayer::getMyTank(), "all variables are at defaults", 2);
-	}
-#ifdef DEBUG
-      } else if (strncmp(cmd, "/localset", 9) == 0) {
-	std::string params = cmd + 9;
-	std::vector<std::string> tokens =
-	  TextUtils::tokenize(params, " ", 2);
-	if (tokens.size() == 2) {
-	  if (!(BZDB.getPermission(tokens[0]) == StateDatabase::Server)) {
-	    BZDB.setPersistent(tokens[0], BZDB.isPersistent(tokens[0]));
-	    BZDB.set(tokens[0], tokens[1]);
-	    std::string msg = "/localset " + tokens[0] + " " + tokens[1];
-	    addMessage(NULL, msg);
-	  } else {
-	    addMessage(NULL, "This is a server-defined variable.  Use /set instead of /localset.");
-	  }
-	} else {
-	  addMessage(NULL, "usage: /localset <variable> <value>");
-	}
-#endif
-      } else if (strncmp(message.c_str(), "/quit", 5) == 0 ) {
-
-	char messageBuffer[MessageLen]; // send message
-	memset(messageBuffer, 0, MessageLen);
-	strncpy(messageBuffer, message.c_str(), MessageLen);
-	nboPackString(messageMessage + PlayerIdPLen, messageBuffer, MessageLen);
-	serverLink->send(MsgMessage, sizeof(messageMessage), messageMessage);
-
-	CommandsStandard::quit(); // kill client
-
       } else if (serverLink) {
 	char messageBuffer[MessageLen];
 	memset(messageBuffer, 0, MessageLen);
 	strncpy(messageBuffer, message.c_str(), MessageLen);
-	nboPackString(messageMessage + PlayerIdPLen, messageBuffer, MessageLen);
+	nboPackString(messageMessage + PlayerIdPLen, messageBuffer,
+		      MessageLen);
 	serverLink->send(MsgMessage, sizeof(messageMessage), messageMessage);
       }
 
