@@ -34,7 +34,7 @@ CustomBase::CustomBase()
 bool CustomBase::read(const char *cmd, std::istream& input) {
   if (strcmp(cmd, "color") == 0) {
     input >> color;
-    if ((color < 0) || (color >= CtfTeams))
+    if ((color <= 0) || (color >= CtfTeams))
       return false;
   } else if (strcmp(cmd, "oncap") == 0) {
     triggerWorldWep = true;
