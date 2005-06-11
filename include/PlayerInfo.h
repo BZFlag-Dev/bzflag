@@ -116,6 +116,8 @@ public:
   static TimeKeeper now;
   int endShotCredit;
 
+	PlayerType getType( void ) {return type;}
+
 private:
 
   void	cleanEMail();

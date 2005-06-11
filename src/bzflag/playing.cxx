@@ -104,6 +104,7 @@
 #include "AresHandler.h"
 #include "cURLManager.h"
 
+#include "messages.h"
 #include "Downloads.h"
 
 // versioning that makes us recompile every time
@@ -1288,9 +1289,9 @@ void			notifyBzfKeyMapChanged()
 // server message handling
 //
 
-static Player*		addPlayer(PlayerId id, void* msg, int showMessage)
+static Player*		addPlayer(PlayerId id, PlayerAddMessage &msg, int showMessage)
 {
-  uint16_t team, type, wins, losses, tks;
+ /* uint16_t team, type, wins, losses, tks;
   char callsign[CallSignLen];
   char email[EmailLen];
   msg = nboUnpackUShort(msg, type);
@@ -1299,13 +1300,20 @@ static Player*		addPlayer(PlayerId id, void* msg, int showMessage)
   msg = nboUnpackUShort(msg, losses);
   msg = nboUnpackUShort(msg, tks);
   msg = nboUnpackString(msg, callsign, CallSignLen);
-  msg = nboUnpackString(msg, email, EmailLen);
+  msg = nboUnpackString(msg, email, EmailLen);*/
 
   // Strip any ANSI color codes
-  strncpy(callsign, stripAnsiCodes(std::string(callsign)).c_str(), 32);
+	std::string callsign = stripAnsiCodes(msg.callsign);
+	std::string email = msg.email;
+	short wins = (short)msg.wins;
+	short losses = (short)msg.losses;
+	short tks = (short)msg.tks;
+	PlayerType type = (PlayerType)msg.type;
+	TeamColor team = (TeamColor)msg.team;
 
   // id is slot, check if it's empty
   const int i = id;
+
 
   // sanity check
   if (i < 0) {
@@ -1326,19 +1334,17 @@ static Player*		addPlayer(PlayerId id, void* msg, int showMessage)
     World::getWorld()->setCurMaxPlayers(curMaxPlayers);
   }
   // add player
-  if (PlayerType(type) == TankPlayer || PlayerType(type) == ComputerPlayer) {
-    player[i] = new RemotePlayer(id, TeamColor(team), callsign, email,
-				 PlayerType(type));
-    player[i]->changeScore(short(wins), short(losses), short(tks));
+  if (type == TankPlayer || type == ComputerPlayer) {
+    player[i] = new RemotePlayer(id, team, callsign.c_str(), email.c_str(),type);
+    player[i]->changeScore(wins, losses, tks);
   }
 
 #ifdef ROBOT
-  if (PlayerType(type) == ComputerPlayer)
+  if (PlayerType(msg.type) == ComputerPlayer)
     for (int j = 0; j < numRobots; j++)
-      if (robots[j] && !strncmp(robots[j]->getCallSign(), callsign,
-				CallSignLen)) {
-	robots[j]->setTeam(TeamColor(team));
-	break;
+      if (robots[j] && !strncmp(robots[j]->getCallSign(), msg.callsign.c_str(),CallSignLen)) {
+				robots[j]->setTeam(team);
+				break;
       }
 #endif
 
@@ -1347,7 +1353,7 @@ static Player*		addPlayer(PlayerId id, void* msg, int showMessage)
    */
   if (showMessage && !myTank->hasPlayerList()) {
     std::string message("joining as a");
-    switch (PlayerType(type)) {
+    switch (type) {
       case TankPlayer:
 	message += " tank";
 	break;
@@ -1913,15 +1919,21 @@ static void		handleServerMessage(bool human, uint16_t code,
 
     case MsgAddPlayer: {
       PlayerId id;
-      msg = nboUnpackUByte(msg, id);
+
+			PlayerAddMessage addMsg;
+			addMsg.unpack(msg);
+
+			id = addMsg.playerID;
+
 #if defined(FIXME) && defined(ROBOT)
+			msg = nboUnpackUByte(msg, id);
       saveRobotInfo(id, msg);
 #endif
       if (id == myTank->getId()) {
 	// it's me!  should be the end of updates
 	enteringServer(msg);
       } else {
-	addPlayer(id, msg, entered);
+	addPlayer(id, addMsg, entered);
 	updateNumPlayers();
 	checkScores = true;
       }

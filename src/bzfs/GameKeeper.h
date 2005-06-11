@@ -36,6 +36,7 @@
 #include "RecordReplay.h"
 #include "NetHandler.h"
 #include "Authentication.h"
+#include "messages.h"
 
 const int PlayerSlot = MaxPlayers + ReplayObservers;
 
@@ -71,6 +72,9 @@ public:
     void	  *packAdminInfo(void *buf);
     void	  *packPlayerInfo(void *buf);
     void	  *packPlayerUpdate(void *buf);
+
+		void		setPlayerAddMessage ( PlayerAddMessage &msg );
+
     void	   signingOn(bool ctf);
     void	   close();
     static void    clean();

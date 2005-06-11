@@ -172,6 +172,19 @@ void *GameKeeper::Player::packPlayerUpdate(void *buf)
   return buf;
 }
 
+void GameKeeper::Player::setPlayerAddMessage ( PlayerAddMessage &msg )
+{
+	msg.playerID = playerIndex;
+	msg.team = player.getTeam();
+	msg.type = player.getType();
+	msg.wins = score.getWins();
+	msg.losses = score.getLosses();
+	msg.tks = score.getTKs();
+	msg.callsign =  player.getCallSign();
+	msg.email =  player.getEMail();
+}
+
+
 std::vector<int> GameKeeper::Player::allowed(PlayerAccessInfo::AccessPerm right,
 					     int targetPlayer)
 {

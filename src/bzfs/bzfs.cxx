@@ -376,7 +376,10 @@ static void sendPlayerUpdate(GameKeeper::Player *playerData, int index)
     return;
 
   void *bufStart = getDirectMessageBuffer();
-  void *buf      = playerData->packPlayerUpdate(bufStart);
+	PlayerAddMessage	msg;
+	playerData->setPlayerAddMessage(msg);
+
+	void *buf      = msg.pack(bufStart);
 
   if (playerData->getIndex() == index) {
     // send all players info about player[playerIndex]

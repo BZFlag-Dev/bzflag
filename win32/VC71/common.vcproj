@@ -570,6 +570,9 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath="..\..\src\common\messages.cxx">
+			</File>
+			<File
 				RelativePath="..\..\src\common\OSFile.cxx">
 			</File>
 			<File

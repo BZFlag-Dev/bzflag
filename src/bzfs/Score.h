@@ -32,6 +32,7 @@ class Score {
   bool  reached();
   int	getWins(){return wins;}
   int	getLosses(){return losses;}
+	int	getTKs(){return tks;}
 
   static void setTeamKillRatio(int _tkKickRatio);
   static void setWinLimit(int _score);
