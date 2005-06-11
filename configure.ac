@@ -130,7 +130,7 @@ AC_MSG_CHECKING([for artificial intelligence for bz's robots])
 AC_MSG_RESULT([not found])
 
 #Checks for headers
-AC_STDC_HEADERS
+AC_HEADER_STDC
 AC_LANG_SAVE
 AC_LANG_CPLUSPLUS
 AC_CHECK_HEADERS( \
