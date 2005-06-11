@@ -162,8 +162,8 @@ bool BasicEffect::update( float time )
 SpawnFlashEffect::SpawnFlashEffect() : BasicEffect()
 {
 	texture = TextureManager::instance().getTextureID("blend_flash",false);
-	lifetime = 5.0f;
-	radius = 1.0f;
+	lifetime = 2.5f;
+	radius = 1.75f;
 
 
 	OpenGLGStateBuilder gstate;
@@ -193,7 +193,7 @@ bool SpawnFlashEffect::update ( float time )
 	// we live another day
 	// do stuff that maybe need to be done every time to animage
 
-	radius += deltaTime;
+	radius += deltaTime*4;
 	return false;
 }
 
