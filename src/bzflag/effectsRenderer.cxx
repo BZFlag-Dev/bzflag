@@ -205,7 +205,45 @@ void SpawnFlashEffect::draw ( const SceneRenderer& sr )
 
 	ringState.setState();
 
-	glColor4f(1,1,1,1.0f-(age/lifetime));
+	float color[3] = {0};
+	switch(teamColor)
+	{
+	default:
+		color[0] = color[1] = color[2] = 1;
+		break;
+
+	case BlueTeam:
+		color[0] = 0.25f;
+		color[1] = 0.25f;
+		color[2] = 1;
+		break;
+
+	case GreenTeam:
+		color[0] = 0.25f;
+		color[1] = 1;
+		color[2] = 0.25f;
+		break;
+
+	case RedTeam:
+		color[0] = 1;
+		color[1] = 0.25f;
+		color[2] = 0.25f;
+		break;
+
+	case PurpleTeam:
+		color[0] = 1;
+		color[1] = 0.25f;
+		color[2] = 1.0f;
+		break;
+
+	case RogueTeam:
+		color[0] = 0.25;
+		color[1] = 0.25f;
+		color[2] = 0.25f;
+		break;
+	}
+
+	glColor4f(color[0],color[1],color[2],1.0f-(age/lifetime));
 	glDepthMask(0);
 
 	drawRing(radius*0.1f,1.5f+(age*2));
