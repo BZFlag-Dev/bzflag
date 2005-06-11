@@ -41,6 +41,8 @@ bzflag_SOURCES =			\
 	Downloads.h			\
 	EffectsMenu.cxx			\
 	EffectsMenu.h			\
+	effectsRenderer.cxx			\
+	effectsRenderer.h			\
 	EntryZone.cxx			\
 	EntryZone.h			\
 	FlashClock.cxx			\

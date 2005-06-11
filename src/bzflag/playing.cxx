@@ -2004,6 +2004,9 @@ static void		handleServerMessage(bool human, uint16_t code,
 	  }
 	}
 
+	if ( !( BZDB.isTrue("-no_spawnEffects")) && SceneRenderer::instance().useQuality() >= 2)
+		SceneRenderer::instance().getBackground()->effects.addSpawnFlash(tank->getTeam(),pos);
+
 	tank->setStatus(PlayerState::Alive);
 	tank->move(pos, forward);
 	tank->setVelocity(zero);

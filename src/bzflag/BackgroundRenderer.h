@@ -30,6 +30,7 @@
 #include "OpenGLGState.h"
 #include "SceneRenderer.h"
 #include "WeatherRenderer.h"
+#include "effectsRenderer.h"
 
 class BackgroundRenderer {
   public:
@@ -57,6 +58,9 @@ class BackgroundRenderer {
 				     const float moonDirection[3]);
     void		addCloudDrift(GLfloat uDrift, GLfloat vDrift);
     void		notifyStyleChange();
+
+	// effects
+	EffectsRenderer	effects;
 
     std::string		userTextures[2];
   protected:

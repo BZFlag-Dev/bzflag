@@ -606,6 +606,9 @@ copy debug\*.pdb ..\..\*.pdb
 					</FileConfiguration>
 				</File>
 				<File
+					RelativePath="..\..\src\bzflag\effectsRenderer.cxx">
+				</File>
+				<File
 					RelativePath="..\..\src\bzflag\HUDDialog.cxx">
 					<FileConfiguration
 						Name="Debug|Win32">
@@ -1422,6 +1425,9 @@ copy debug\*.pdb ..\..\*.pdb
 				RelativePath="..\..\src\bzflag\EffectsMenu.h">
 			</File>
 			<File
+				RelativePath="..\..\src\bzflag\effectsRenderer.h">
+			</File>
+			<File
 				RelativePath="..\..\src\bzflag\EntryZone.h">
 			</File>
 			<File
@@ -1642,6 +1648,21 @@ copy debug\*.pdb ..\..\*.pdb
 				RelativePath="bzflag.ico">
 			</File>
 		</Filter>
+		<File
+			RelativePath="..\..\src\bzflag\Makefile.am">
+			<FileConfiguration
+				Name="Debug|Win32"
+				ExcludedFromBuild="TRUE">
+				<Tool
+					Name="VCCustomBuildTool"/>
+			</FileConfiguration>
+			<FileConfiguration
+				Name="Release|Win32"
+				ExcludedFromBuild="TRUE">
+				<Tool
+					Name="VCCustomBuildTool"/>
+			</FileConfiguration>
+		</File>
 	</Files>
 	<Globals>
 	</Globals>
