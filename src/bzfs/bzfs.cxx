@@ -369,24 +369,20 @@ void sendTeamUpdate(int playerIndex = -1, int teamIndex1 = -1, int teamIndex2 = 
     directMessage(playerIndex, MsgTeamUpdate, (char*)buf - (char*)bufStart, bufStart);
 }
 
-
 static void sendPlayerUpdate(GameKeeper::Player *playerData, int index)
 {
-  if (!playerData->player.isPlaying())
-    return;
+	if (!playerData->player.isPlaying())
+		return;
 
-  void *bufStart = getDirectMessageBuffer();
-	PlayerAddMessage	msg;
-	playerData->setPlayerAddMessage(msg);
+	void *bufStart = getDirectMessageBuffer();
+	void *buf      = playerData->packPlayerUpdate(bufStart);
 
-	void *buf      = msg.pack(bufStart);
-
-  if (playerData->getIndex() == index) {
-    // send all players info about player[playerIndex]
-    broadcastMessage(MsgAddPlayer, (char*)buf - (char*)bufStart, bufStart);
-  } else {
-    directMessage(index, MsgAddPlayer, (char*)buf - (char*)bufStart, bufStart);
-  }
+	if (playerData->getIndex() == index) {
+		// send all players info about player[playerIndex]
+		broadcastMessage(MsgAddPlayer, (char*)buf - (char*)bufStart, bufStart);
+	} else {
+		directMessage(index, MsgAddPlayer, (char*)buf - (char*)bufStart, bufStart);
+	}
 }
 
 void sendPlayerInfo() {

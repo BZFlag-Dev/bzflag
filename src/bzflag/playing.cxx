@@ -104,7 +104,7 @@
 #include "AresHandler.h"
 #include "cURLManager.h"
 
-#include "messages.h"
+//#include "messages.h"
 #include "Downloads.h"
 
 // versioning that makes us recompile every time
@@ -1288,92 +1288,86 @@ void			notifyBzfKeyMapChanged()
 //
 // server message handling
 //
-
-static Player*		addPlayer(PlayerId id, PlayerAddMessage &msg, int showMessage)
+static Player*		addPlayer(PlayerId id, void* msg, int showMessage)
 {
- /* uint16_t team, type, wins, losses, tks;
-  char callsign[CallSignLen];
-  char email[EmailLen];
-  msg = nboUnpackUShort(msg, type);
-  msg = nboUnpackUShort(msg, team);
-  msg = nboUnpackUShort(msg, wins);
-  msg = nboUnpackUShort(msg, losses);
-  msg = nboUnpackUShort(msg, tks);
-  msg = nboUnpackString(msg, callsign, CallSignLen);
-  msg = nboUnpackString(msg, email, EmailLen);*/
+	uint16_t team, type, wins, losses, tks;
+	char callsign[CallSignLen];
+	char email[EmailLen];
+	msg = nboUnpackUShort(msg, type);
+	msg = nboUnpackUShort(msg, team);
+	msg = nboUnpackUShort(msg, wins);
+	msg = nboUnpackUShort(msg, losses);
+	msg = nboUnpackUShort(msg, tks);
+	msg = nboUnpackString(msg, callsign, CallSignLen);
+	msg = nboUnpackString(msg, email, EmailLen);
 
-  // Strip any ANSI color codes
-	std::string callsign = stripAnsiCodes(msg.callsign);
-	std::string email = msg.email;
-	short wins = (short)msg.wins;
-	short losses = (short)msg.losses;
-	short tks = (short)msg.tks;
-	PlayerType type = (PlayerType)msg.type;
-	TeamColor team = (TeamColor)msg.team;
+	// Strip any ANSI color codes
+	strncpy(callsign, stripAnsiCodes(std::string(callsign)).c_str(), 32);
 
-  // id is slot, check if it's empty
-  const int i = id;
+	// id is slot, check if it's empty
+	const int i = id;
 
+	// sanity check
+	if (i < 0) {
+		printError(TextUtils::format("Invalid player identification (%d)", i));
+		std::cerr << "WARNING: invalid player identification when adding player with id " << i << std::endl;
+		return NULL;
+	}
 
-  // sanity check
-  if (i < 0) {
-    printError(TextUtils::format("Invalid player identification (%d)", i));
-    std::cerr << "WARNING: invalid player identification when adding player with id " << i << std::endl;
-    return NULL;
-  }
+	if (player[i]) {
+		// we're not in synch with server -> help!  not a good sign, but not fatal.
+		printError("Server error when adding player, player already added");
+		std::cerr << "WARNING: player already exists at location with id " << i << std::endl;
+		return NULL;
+	}
 
-  if (player[i]) {
-    // we're not in synch with server -> help!  not a good sign, but not fatal.
-    printError("Server error when adding player, player already added");
-    std::cerr << "WARNING: player already exists at location with id " << i << std::endl;
-    return NULL;
-  }
-
-  if (i >= curMaxPlayers) {
-    curMaxPlayers = i+1;
-    World::getWorld()->setCurMaxPlayers(curMaxPlayers);
-  }
-  // add player
-  if (type == TankPlayer || type == ComputerPlayer) {
-    player[i] = new RemotePlayer(id, team, callsign.c_str(), email.c_str(),type);
-    player[i]->changeScore(wins, losses, tks);
-  }
+	if (i >= curMaxPlayers) {
+		curMaxPlayers = i+1;
+		World::getWorld()->setCurMaxPlayers(curMaxPlayers);
+	}
+	// add player
+	if (PlayerType(type) == TankPlayer || PlayerType(type) == ComputerPlayer) {
+		player[i] = new RemotePlayer(id, TeamColor(team), callsign, email,
+			PlayerType(type));
+		player[i]->changeScore(short(wins), short(losses), short(tks));
+	}
 
 #ifdef ROBOT
-  if (PlayerType(msg.type) == ComputerPlayer)
-    for (int j = 0; j < numRobots; j++)
-      if (robots[j] && !strncmp(robots[j]->getCallSign(), msg.callsign.c_str(),CallSignLen)) {
-				robots[j]->setTeam(team);
-				break;
-      }
+	if (PlayerType(type) == ComputerPlayer)
+		for (int j = 0; j < numRobots; j++)
+			if (robots[j] && !strncmp(robots[j]->getCallSign(), callsign,
+				CallSignLen)) {
+					robots[j]->setTeam(TeamColor(team));
+					break;
+				}
 #endif
 
-  /* show the message if we don't have the playerlist permission.  if
-   * we do, MsgAdminInfo should arrive with more info.
-   */
-  if (showMessage && !myTank->hasPlayerList()) {
-    std::string message("joining as a");
-    switch (type) {
-      case TankPlayer:
-	message += " tank";
-	break;
-      case ComputerPlayer:
-	message += " robot tank";
-	break;
-      default:
-	message += "n unknown type";
-	break;
-    }
-    if (!player[i]) {
-      std::string name(callsign);
-      name += ": " + message;
-      message = name;
-    }
-    addMessage(player[i], message);
-  }
-  completer.registerWord(callsign);
+				/* show the message if we don't have the playerlist permission.  if
+				* we do, MsgAdminInfo should arrive with more info.
+				*/
+				if (showMessage && !myTank->hasPlayerList()) {
+					std::string message("joining as a");
+					switch (PlayerType(type)) {
+	  case TankPlayer:
+		  message += " tank";
+		  break;
+	  case ComputerPlayer:
+		  message += " robot tank";
+		  break;
+	  default:
+		  message += "n unknown type";
+		  break;
+					}
+					if (!player[i]) {
+						std::string name(callsign);
+						name += ": " + message;
+						message = name;
+					}
+					addMessage(player[i], message);
+				}
+				completer.registerWord(callsign);
 
-  return player[i];
+				return player[i];
 }
 
 
@@ -1919,21 +1913,15 @@ static void		handleServerMessage(bool human, uint16_t code,
 
     case MsgAddPlayer: {
       PlayerId id;
-
-			PlayerAddMessage addMsg;
-			addMsg.unpack(msg);
-
-			id = addMsg.playerID;
-
+      msg = nboUnpackUByte(msg, id);
 #if defined(FIXME) && defined(ROBOT)
-			msg = nboUnpackUByte(msg, id);
       saveRobotInfo(id, msg);
 #endif
       if (id == myTank->getId()) {
 	// it's me!  should be the end of updates
 	enteringServer(msg);
       } else {
-	addPlayer(id, addMsg, entered);
+	addPlayer(id, msg, entered);
 	updateNumPlayers();
 	checkScores = true;
       }
