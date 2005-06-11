@@ -9,7 +9,7 @@
 .\" IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
 .\" WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 .\" 
-.TH "bzflag" "6" "BUILD_DATE" "bzflag-BUILD_VERSION" "BZFlag"
+.TH "bzflag" "6" "@BZFLAG_DATE@" "bzflag-@BZFLAG_VERSION@" "BZFlag"
 .SH "NAME"
 BZFlag \- a tank battle game
 .SH "SYNOPSIS"
@@ -114,7 +114,7 @@ verbosity.
 Looks for data files in \fIdirectory\fR first.  This defaults to a
 directory named \fIdata\fR in the current directory.  If not found
 there, the game looks for data files in the current directory, then
-in the default installation location \fIINSTALL_DATA_DIR\fR.
+in the default installation location \fI@INSTALL_DATA_DIR@\fR.
 .TP 
 .B \-config
 Specify the configuration file to load. The name is relative to the

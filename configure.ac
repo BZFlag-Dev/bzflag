@@ -8,6 +8,7 @@ MINOR_VERSION=`sed -e 's/#.*define.*BZ_MINOR_VERSION[^0-9]*\(.*\)/\1/' -e t -e d
 REV=`sed -e 's/#.*define.*BZ_REV[^0-9]*\(.*\)/\1/' -e t -e d < \$srcdir/src/date/buildDate.cxx`
 
 CONF_DATE=`date -u +%Y%m%d`
+BZFLAG_DATE=`date -u +%Y-%m-%d`
 BZFLAG_VERSION="$MAJOR_VERSION.$MINOR_VERSION.$REV"
 echo "BZFlag-$BZFLAG_VERSION.$CONF_DATE"
 AC_CANONICAL_SYSTEM
@@ -17,6 +18,7 @@ AM_CONFIG_HEADER(include/config.h)
 AC_SUBST(MAJOR_VERSION)
 AC_SUBST(MINOR_VERSION)
 AC_SUBST(BZFLAG_VERSION)
+AC_SUBST(BZFLAG_DATE)
 
 # Let the C++ code know about OS and user
 AC_DEFINE_UNQUOTED(BZ_BUILD_OS, "$host_os", [BZFlag System Environment])
@@ -713,6 +715,10 @@ AC_OUTPUT(bzflag.info
 	include/Makefile
 	misc/Makefile
 	man/Makefile
+	man/bzadmin.6
+	man/bzfs.6
+	man/bzflag.6
+	man/bzw.5
 	package/Makefile
 	package/linux/Makefile
 	package/rpm/Makefile
