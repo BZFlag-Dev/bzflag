@@ -162,7 +162,7 @@ bool BasicEffect::update( float time )
 SpawnFlashEffect::SpawnFlashEffect() : BasicEffect()
 {
 	texture = TextureManager::instance().getTextureID("blend_flash",false);
-	lifetime = 2.5f;
+	lifetime = 2.0f;
 	radius = 1.75f;
 
 
@@ -193,7 +193,7 @@ bool SpawnFlashEffect::update ( float time )
 	// we live another day
 	// do stuff that maybe need to be done every time to animage
 
-	radius += deltaTime*4;
+	radius += deltaTime*5;
 	return false;
 }
 
@@ -213,8 +213,8 @@ void SpawnFlashEffect::draw ( const SceneRenderer& sr )
 		break;
 
 	case BlueTeam:
-		color[0] = 0.25f;
-		color[1] = 0.25f;
+		color[0] = 0.35f;
+		color[1] = 0.35f;
 		color[2] = 1;
 		break;
 
@@ -226,28 +226,30 @@ void SpawnFlashEffect::draw ( const SceneRenderer& sr )
 
 	case RedTeam:
 		color[0] = 1;
-		color[1] = 0.25f;
-		color[2] = 0.25f;
+		color[1] = 0.35f;
+		color[2] = 0.35f;
 		break;
 
 	case PurpleTeam:
 		color[0] = 1;
-		color[1] = 0.25f;
+		color[1] = 0.35f;
 		color[2] = 1.0f;
 		break;
 
 	case RogueTeam:
-		color[0] = 0.25;
-		color[1] = 0.25f;
-		color[2] = 0.25f;
+		color[0] = 0.5;
+		color[1] = 0.5f;
+		color[2] = 0.5f;
 		break;
 	}
+
+	float ageParam = age/lifetime;
 
 	glColor4f(color[0],color[1],color[2],1.0f-(age/lifetime));
 	glDepthMask(0);
 
-	drawRing(radius*0.1f,1.5f+(age*2));
-	drawRing(radius*0.5f,1.5f,0.5f,0.5f);
+	drawRing(radius*0.1f,2.5f+(age*2));
+	drawRing(radius*0.5f,1.5f + (ageParam/1.0f * 2),0.5f,0.5f);
 	drawRing(radius,2);
 
 	glColor4f(1,1,1,1);
