@@ -32,6 +32,7 @@
 #include "HUDuiControl.h"
 #include "HUDuiList.h"
 #include "HUDuiLabel.h"
+#include "effectsRenderer.h"
 
 
 EffectsMenu::EffectsMenu()
@@ -99,7 +100,7 @@ EffectsMenu::EffectsMenu()
   // Track Mark Fading Scale
   option = new HUDuiList;
   option->setFontFace(MainMenu::getFontFace());
-  option->setLabel("Track Marks :");
+  option->setLabel("Track Marks:");
   option->setCallback(callback, (void*)"t");
   options = &option->getList();
   options->push_back(std::string("Off"));
@@ -116,6 +117,63 @@ EffectsMenu::EffectsMenu()
   options->push_back(std::string("None"));
   options->push_back(std::string("Fast"));
   options->push_back(std::string("Best"));
+  option->update();
+  listHUD.push_back(option);
+
+  // Fancy effects from effectsRenderer
+  option = new HUDuiList;
+  option->setFontFace(MainMenu::getFontFace());
+  option->setLabel("Fancy Effects:");
+  option->setCallback(callback, (void*)"f");
+  options = &option->getList();
+  options->push_back(std::string("On"));
+  options->push_back(std::string("Off"));
+  option->update();
+  listHUD.push_back(option);
+
+  std::vector<std::string> optbuf;
+
+  // Fancy effects I: Spawn
+  option = new HUDuiList;
+  option->setFontFace(MainMenu::getFontFace());
+  option->setLabel("  Spawn Effect:");
+  option->setCallback(callback, (void*)"s");
+  options = &option->getList();
+  optbuf = EffectsRenderer::instance().getSpawnFlashTypes();
+  options->assign(optbuf.begin(), optbuf.end());
+  option->update();
+  listHUD.push_back(option);
+
+  // Fancy effects II: Death
+  option = new HUDuiList;
+  option->setFontFace(MainMenu::getFontFace());
+  option->setLabel("  Death Effect:");
+  option->setCallback(callback, (void*)"d");
+  options = &option->getList();
+  optbuf = EffectsRenderer::instance().getDeathFlashTypes();
+  options->assign(optbuf.begin(), optbuf.end());
+  option->update();
+  listHUD.push_back(option);
+
+  // Fancy effects III: Shots
+  option = new HUDuiList;
+  option->setFontFace(MainMenu::getFontFace());
+  option->setLabel("  Shot Fired Effect:");
+  option->setCallback(callback, (void*)"S");
+  options = &option->getList();
+  optbuf = EffectsRenderer::instance().getShotFlashTypes();
+  options->assign(optbuf.begin(), optbuf.end());
+  option->update();
+  listHUD.push_back(option);
+
+  // Fancy effects IV: Local shots
+  option = new HUDuiList;
+  option->setFontFace(MainMenu::getFontFace());
+  option->setLabel("  Local Shot Effect:");
+  option->setCallback(callback, (void*)"l");
+  options = &option->getList();
+  options->push_back(std::string("Same as shots"));
+  options->push_back(std::string("Disabled"));
   option->update();
   listHUD.push_back(option);
 
@@ -163,7 +221,7 @@ void EffectsMenu::resize(int _width, int _height)
   for (i = 1; i < count; i++) {
     listHUD[i]->setFontSize(fontSize);
     listHUD[i]->setPosition(x, y);
-    if ((i == 2) || (i == 4)) {
+    if ((i == 2) || (i == 4) || (i == 6)) {
       y -= 1.75f * h;
     } else {
       y -= 1.0f * h;
@@ -187,6 +245,11 @@ void EffectsMenu::resize(int _width, int _height)
   } else {
     ((HUDuiList*)listHUD[i++])->setIndex(2);
   }
+  ((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("useFancyEffects") ? 1 : 0);
+  ((HUDuiList*)listHUD[i++])->setIndex(static_cast<int>(BZDB.eval("spawnEffect")));
+  ((HUDuiList*)listHUD[i++])->setIndex(static_cast<int>(BZDB.eval("deathEffect")));
+  ((HUDuiList*)listHUD[i++])->setIndex(static_cast<int>(BZDB.eval("shotEffect")));
+  ((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("enableLocalShotEffect") ? 1 : 0);
 }
 
 
@@ -227,6 +290,26 @@ void EffectsMenu::callback(HUDuiControl* w, void* data)
       } else {
 	TrackMarks::setAirCulling(TrackMarks::FullAirCull);
       }
+      break;
+    }
+    case 'f': {
+      BZDB.set("useFancyEffects", list->getIndex() ? "1" : "0");
+      break;
+    }
+    case 's': {
+      BZDB.set("spawnEffect", TextUtils::format("%d", list->getIndex()));
+      break;
+    }
+    case 'd': {
+      BZDB.set("deathEffect", TextUtils::format("%d", list->getIndex()));
+      break;
+    }
+    case 'S': {
+      BZDB.set("shotEffect", TextUtils::format("%d", list->getIndex()));
+      break;
+    }
+    case 'l': {
+      BZDB.set("enableLocalShotEffect", list->getIndex() ? "1" : "0");
       break;
     }
   }

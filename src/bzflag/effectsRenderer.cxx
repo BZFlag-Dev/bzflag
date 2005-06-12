@@ -133,7 +133,7 @@ void EffectsRenderer::addSpawnFlash ( int team, const float* pos )
 		effectsList.push_back(effect);
 }
 
-std::vector<std::string> getSpawnFlashTypes ( void )
+std::vector<std::string> EffectsRenderer::getSpawnFlashTypes ( void )
 {
 	std::vector<std::string> ret;
 	ret.push_back(std::string("none"));
@@ -153,6 +153,15 @@ void EffectsRenderer::addShotFlash ( int team, const float* pos, float rot )
 	flash->setTeam(team);
 
 	effectsList.push_back(flash);
+}
+
+std::vector<std::string> EffectsRenderer::getShotFlashTypes ( void )
+{
+	std::vector<std::string> ret;
+	ret.push_back(std::string("none"));
+	ret.push_back(std::string("standard"));
+
+	return ret;
 }
 
 void EffectsRenderer::addDeathEffect ( int team, const float* pos, float rot )
@@ -185,6 +194,14 @@ void EffectsRenderer::addDeathEffect ( int team, const float* pos, float rot )
 		effectsList.push_back(effect);
 }
 
+std::vector<std::string> EffectsRenderer::getDeathFlashTypes ( void )
+{
+	std::vector<std::string> ret;
+	ret.push_back(std::string("none"));
+	ret.push_back(std::string("standard"));
+
+	return ret;
+}
 
 
 //****************** effects base class*******************************

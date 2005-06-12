@@ -135,9 +135,11 @@ public:
 
 	// shot flashes
 	void addShotFlash ( int team, const float* pos, float rot );
+	std::vector<std::string> getShotFlashTypes ( void );
 
 	// death effects
 	void addDeathEffect ( int team, const float* pos, float rot );
+	std::vector<std::string> getDeathFlashTypes ( void );
 
 protected:
 	friend class Singleton<EffectsRenderer>;

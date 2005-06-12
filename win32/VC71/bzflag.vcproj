@@ -317,9 +317,6 @@ copy debug\*.pdb ..\..\*.pdb
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\src\bzflag\CacheMenu.cxx">
-			</File>
-			<File
 				RelativePath="..\..\src\bzflag\callbacks.cxx">
 				<FileConfiguration
 					Name="Debug|Win32">
@@ -1325,6 +1322,9 @@ copy debug\*.pdb ..\..\*.pdb
 				Filter="">
 				<File
 					RelativePath="..\..\src\bzflag\AudioMenu.cxx">
+				</File>
+				<File
+					RelativePath="..\..\src\bzflag\CacheMenu.cxx">
 				</File>
 				<File
 					RelativePath="..\..\src\bzflag\DisplayMenu.cxx">
