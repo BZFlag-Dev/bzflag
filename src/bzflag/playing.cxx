@@ -2071,6 +2071,9 @@ static void		handleServerMessage(bool human, uint16_t code,
 	explodePos[1] = pos[1];
 	explodePos[2] = pos[2] + victimPlayer->getMuzzleHeight();
 	addTankExplosion(explodePos);
+
+	EffectsRenderer::instance().addDeathEffect(victimPlayer->getTeam(),pos,victimPlayer->getAngle());
+
       }
 
       if (killerLocal) {
@@ -2360,6 +2363,9 @@ static void		handleServerMessage(bool human, uint16_t code,
 	  explodePos[1] = pos[1];
 	  explodePos[2] = pos[2] + player[i]->getMuzzleHeight();
 	  addTankExplosion(explodePos);
+	
+		EffectsRenderer::instance().addDeathEffect(player[i]->getTeam(),pos,player[i]->getAngle());
+
 	}
       }
 
@@ -3228,7 +3234,8 @@ static bool		gotBlowedUp(BaseLocalPlayer* tank,
   if (reason != GotShot || flag != Flags::Shield) {
     // blow me up
     tank->explodeTank();
-    if (tank == myTank) {
+		EffectsRenderer::instance().addDeathEffect(tank->getTeam(),tank->getPosition(),tank->getAngle());
+   if (tank == myTank) {
       if (reason == GotRunOver)
 	playLocalSound(SFX_RUNOVER);
       else
@@ -3248,7 +3255,9 @@ static bool		gotBlowedUp(BaseLocalPlayer* tank,
       explodePos[1] = pos[1];
       explodePos[2] = pos[2] + tank->getMuzzleHeight();
       addTankExplosion(explodePos);
-    }
+
+   }
+
 
     // i lose a point
     if (reason != GotCaptured)

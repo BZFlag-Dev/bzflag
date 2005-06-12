@@ -77,8 +77,6 @@ protected:
 	OpenGLGState	ringState;
 
 	float			radius;
-
-	void drawRing ( float rad, float z, float topsideOffset = 0, float bottomUV = 0);
 };
 
 class ShotFlashEffect : public BasicEffect
@@ -95,8 +93,22 @@ protected:
 	OpenGLGState	ringState;
 
 	float			radius;
+};
 
-	void drawRing ( float rad, float z, float topsideOffset = 0, float bottomUV = 0, float ZOffset = 0);
+class StdDeathEffect : public BasicEffect
+{
+public:
+	StdDeathEffect();
+	virtual ~StdDeathEffect();
+
+	virtual bool update ( float time );
+	virtual void draw ( const SceneRenderer& sr );
+
+protected:
+	int				texture;
+	OpenGLGState	ringState;
+
+	float			radius;
 };
 
 class EffectsRenderer : public Singleton<EffectsRenderer>
@@ -123,6 +135,9 @@ public:
 
 	// shot flashes
 	void addShotFlash ( int team, const float* pos, float rot );
+
+	// death effects
+	void addDeathEffect ( int team, const float* pos, float rot );
 
 protected:
 	friend class Singleton<EffectsRenderer>;
