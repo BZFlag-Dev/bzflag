@@ -470,6 +470,12 @@ void ConeSpawnEffect::draw(const SceneRenderer &)
 
 
 //******************RingSpawnEffect****************
+RingSpawnEffect::RingSpawnEffect()
+{
+	radius = 4.0f;
+	maxZ = 10.0f;
+}
+
 bool RingSpawnEffect::update ( float time )
 {
 	// see if it's time to die
@@ -480,8 +486,6 @@ bool RingSpawnEffect::update ( float time )
 	// nope it's not.
 	// we live another day
 	// do stuff that maybe need to be done every time to animage
-
-	radius  = 4.0f;
 	return false;
 }
 
@@ -494,109 +498,51 @@ void RingSpawnEffect::draw(const SceneRenderer &)
 	ringState.setState();
 
 	float color[3] = {0};
-
-	getSpawnTeamColor(teamColor,color);
+	getSpawnTeamColor(teamColor, color);
 
 	glDepthMask(0);
 
-	float range = lifetime/4.0f;	// first 3/4ths of the life are rings, last is fade
-	range = (range*3)/4.0f; // of the ring section there are 4 ring segments
-	float bigRange = range*3;
+	ringRange = lifetime / 4.0f;  // first 3/4ths of the life are rings, last is fade
+	ringRange = (ringRange * 3) / 4.0f; // of the ring section there are 4 ring segments
 
-	float posZ = 0;
-	float maxZ = 10;
-	float alpha;
+	const float bigRange = ringRange * 3;
 
 	float coreAlpha = 1;
+	if (age >= bigRange)
+		coreAlpha = 1.0f - ((age - bigRange) / (lifetime - bigRange));
 
-	if ( age >= bigRange)
-	{
-		coreAlpha = 1.0f - ((age-bigRange)/(lifetime-bigRange));
-	}
-	// range is now how long one ring segement is
-	if (age > 0 )	// the first ring
-	{
-		if ( age < range ) // the ring is still coming in
-		{ 
-			posZ = maxZ - ((age/range)*maxZ);
-			alpha = age/range;
-		}
-		else
-		{
-			posZ = 0;
-			alpha = coreAlpha;
-		}
-
-		glPushMatrix();
-		glTranslatef(0,0,posZ);
-		glColor4f(color[0],color[1],color[2],alpha);
-		drawRingXY(radius,2.5f);
-		glPopMatrix();
-	}
-
-	if (age > range )	// second ring in?
-	{
-		if ( age < range*2 ) // the ring is still coming in
-		{ 
-			posZ = maxZ - ((age-range)/range)*(maxZ-2.5f);
-			alpha = (age-range)/(range*2);
-		}
-		else
-		{
-			posZ = 2.5f;
-			alpha = coreAlpha;
-		}
-
-		glPushMatrix();
-		glTranslatef(0,0,posZ);
-		glColor4f(color[0],color[1],color[2],alpha);
-		drawRingXY(radius,2.5f);
-		glPopMatrix();
-	}
-
-	if (age > (range*2) )	// third ring in?
-	{
-		if ( age < range*3 ) // the ring is still coming in
-		{ 
-			posZ = maxZ - ((age-range*2)/range)*(maxZ-5.0f);
-			alpha = (age-range)/(range*3);
-		}
-		else
-		{
-			posZ = 5.0f;
-			alpha = coreAlpha;
-		}
-
-		glPushMatrix();
-		glTranslatef(0,0,posZ);
-		glColor4f(color[0],color[1],color[2],alpha);
-		drawRingXY(radius,2.5f);
-		glPopMatrix();
-	}
-	
-	if (age > (range*3) )	// third ring in?
-	{
-		if ( age < range*4 ) // the ring is still coming in
-		{ 
-			posZ = maxZ - ((age-range*3)/range)*(maxZ-7.5f);
-			alpha = (age-range)/(range*43);
-		}
-		else
-		{
-			posZ = 7.5f;
-			alpha = coreAlpha;
-		}
-
-		glPushMatrix();
-		glTranslatef(0,0,posZ);
-		glColor4f(color[0],color[1],color[2],alpha);
-		drawRingXY(radius,2.5f);
-		glPopMatrix();
-	} 
+	for (int n = 0; n < 4; ++n)
+		drawRing(n, color, coreAlpha);
 
 	glColor4f(1,1,1,1);
 	glDepthMask(1);
 	glPopMatrix();
+}
+
+void RingSpawnEffect::drawRing(int n, float color[3], float coreAlpha)
+{
+	float posZ = 0;
+	float alpha;
+
+	if (age > (ringRange * (n-1)))	// this ring in?
+	{
+		if ( age < ringRange * n) // the ring is still coming in
+		{ 
+			posZ = maxZ - ((age - ringRange * (n-1)) / ringRange) * (maxZ - n * 2.5f);
+			alpha = (age - ringRange) / (ringRange * n);
+		}
+		else
+		{
+			posZ = n * 2.5f;
+			alpha = coreAlpha;
+		}
+
+		glPushMatrix();
+		glTranslatef(0, 0, posZ);
+		glColor4f(color[0], color[1], color[2], alpha);
+		drawRingXY(radius, 2.5f * n);
+		glPopMatrix();
+	}
 }
 
 //******************StdShotEffect****************

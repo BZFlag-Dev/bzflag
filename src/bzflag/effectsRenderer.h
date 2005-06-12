@@ -91,8 +91,17 @@ public:
 class RingSpawnEffect : public StdSpawnEffect
 {
 public:
+	RingSpawnEffect();
+
 	virtual bool update ( float time );
 	virtual void draw ( const SceneRenderer& sr );
+
+private:
+	void drawRing(int n, float color[3], float coreAlpha);
+
+	float maxZ;
+	float ringRange;
+	float numRings;
 };
 
 class StdShotEffect : public BasicEffect
