@@ -274,7 +274,7 @@ void EffectsMenu::resize(int _width, int _height)
   ((HUDuiList*)listHUD[i++])->setIndex(static_cast<int>(BZDB.eval("deathEffect")));
   ((HUDuiList*)listHUD[i++])->setIndex(static_cast<int>(BZDB.eval("shotEffect")));
   ((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("enableLocalShotEffect") ? 1 : 0);
-	((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("useVelOnShotEffects") ? 1 : 0);
+  ((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("useVelOnShotEffects") ? 1 : 0);
 }
 
 
@@ -341,11 +341,11 @@ void EffectsMenu::callback(HUDuiControl* w, void* data)
       BZDB.set("enableLocalShotEffect", list->getIndex() ? "1" : "0");
       break;
     }
-		case 'V': {
-			BZDB.set("useVelOnShotEffects", list->getIndex() ? "1" : "0");
-			break;
-							}
-	}
+    case 'V': {
+      BZDB.set("useVelOnShotEffects", list->getIndex() ? "1" : "0");
+      break;
+    }
+  }
 }
 
 
