@@ -172,6 +172,9 @@ void EffectsRenderer::addShotEffect ( int team, const float* pos, float rot, con
 		case 1:
 			effect = new StdShotEffect;
 			break;
+		case 2:
+			effect = new FlashShotEffect;
+			break;
 	}
 
 	if (effect)
@@ -191,6 +194,7 @@ std::vector<std::string> EffectsRenderer::getShotEffectTypes ( void )
 	std::vector<std::string> ret;
 	ret.push_back(std::string("None"));
 	ret.push_back(std::string("Smoke Rings"));
+	ret.push_back(std::string("Muzzle Flash"));
 
 	return ret;
 }
@@ -609,6 +613,105 @@ void StdShotEffect::draw(const SceneRenderer &)
 	glDepthMask(0);
 
 	drawRingYZ(radius,0.5f /*+ (age * 0.125f)*/,1.0f+age*5,0.65f,pos[2]);
+
+	glColor4f(1,1,1,1);
+	glDepthMask(1);
+	glPopMatrix();
+}
+
+//******************FlashShotEffect****************
+FlashShotEffect::FlashShotEffect() : StdShotEffect()
+{
+	// we use the jump jet texture upside-down to get a decent muzzle flare effect
+	texture = TextureManager::instance().getTextureID("jumpjets",false);
+	lifetime = 0.75f;
+	radius = 0.5f;
+
+	OpenGLGStateBuilder gstate;
+	gstate.reset();
+	gstate.setShading();
+	gstate.setBlending((GLenum) GL_SRC_ALPHA,(GLenum) GL_ONE_MINUS_SRC_ALPHA);
+	gstate.setAlphaFunc();
+
+	if (texture >-1)
+		gstate.setTexture(texture);
+
+	ringState = gstate.getState();
+}
+
+bool FlashShotEffect::update ( float time )
+{
+	// see if it's time to die
+	// if not update all those fun times
+	if (BasicEffect::update(time))
+		return true;
+
+	// nope it's not.
+	// we live another day
+	// do stuff that maybe need to be done every time to animage
+	if (age < lifetime / 2)
+	  length = 6 * (age / lifetime);
+	else
+	  length = 6 * (1 - (age / lifetime));
+
+	return false;
+}
+
+void FlashShotEffect::draw(const SceneRenderer &)
+{
+	glPushMatrix();
+
+	float pos[3];
+
+	pos[0] = position[0] + velocity[0] * age;
+	pos[1] = position[1] + velocity[1] * age;
+	pos[2] = position[2] + velocity[2] * age;
+
+	glTranslatef(pos[0],pos[1],pos[2]);
+	glRotatef(270+rotation[2]/deg2Rad,0,0,1);
+
+	ringState.setState();
+
+	float color[3] = {0};
+	color[0] = color[1] = color[2] = 1;
+
+	float alpha = 0.8f-(age/lifetime);
+	if (alpha < 0.001f)
+		alpha = 0.001f;
+
+	glColor4f(color[0],color[1],color[2],alpha);
+	glDepthMask(0);
+
+	// draw me here
+	glBegin(GL_QUADS);
+
+		// side 1
+		glTexCoord2f(0,1);
+		glVertex3f(0,0,radius);
+
+		glTexCoord2f(0,0);
+		glVertex3f(0,length,radius);
+
+		glTexCoord2f(1,0);
+		glVertex3f(0,length,-radius);
+
+		glTexCoord2f(1,1);
+		glVertex3f(0,0,-radius);
+
+		// side 2
+		glTexCoord2f(0,0);
+		glVertex3f(0,0,-radius);
+
+		glTexCoord2f(0,1);
+		glVertex3f(0,length,-radius);
+
+		glTexCoord2f(1,1);
+		glVertex3f(0,length,radius);
+
+		glTexCoord2f(1,0);
+		glVertex3f(0,0,radius);
+
+	glEnd();
 
 	glColor4f(1,1,1,1);
 	glDepthMask(1);

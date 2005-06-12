@@ -111,6 +111,18 @@ protected:
 	float			radius;
 };
 
+class FlashShotEffect : public StdShotEffect
+{
+public:
+	FlashShotEffect();
+
+	virtual bool update ( float time );
+	virtual void draw ( const SceneRenderer& sr );
+
+private:
+	float	     length;
+};
+
 class StdDeathEffect : public BasicEffect
 {
 public:
