@@ -2420,7 +2420,17 @@ static void		handleServerMessage(bool human, uint16_t code,
       const int shooterid = firingInfo.shot.player;
       if (shooterid != ServerPlayer) {
 	if (player[shooterid] && player[shooterid]->getId() == shooterid)
+	{
 	  player[shooterid]->addShot(firingInfo);
+
+	  if ( !( BZDB.isTrue("-no_shotEffects")) && SceneRenderer::instance().useQuality() >= 2)
+	  {
+		  float	shotPos[3];
+		  player[shooterid]->getMuzzle(shotPos);
+		  
+		  SceneRenderer::instance().getBackground()->effects.addShotFlash(player[shooterid]->getTeam(),shotPos,player[shooterid]->getAngle());
+	  }
+	}
 	else
 	  break;
       }

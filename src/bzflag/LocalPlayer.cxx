@@ -32,6 +32,8 @@
 #include "RemotePlayer.h"
 #include "ForceFeedback.h"
 
+#include "SceneRenderer.h"
+#include "BackgroundRenderer.h"
 
 LocalPlayer*		LocalPlayer::mainPlayer = NULL;
 
@@ -1243,6 +1245,10 @@ bool			LocalPlayer::fireShot()
   firingInfo.timeSent = timeStamp;
 
   server->sendBeginShot(firingInfo);
+
+  if ( !( BZDB.isTrue("-no_shotEffects"))  && !( BZDB.isTrue("-no_localShotEffects")) && SceneRenderer::instance().useQuality() >= 2)
+	  SceneRenderer::instance().getBackground()->effects.addShotFlash(getTeam(),firingInfo.shot.pos,getAngle());
+
   if (gettingSound) {
     if (firingInfo.flagType == Flags::ShockWave) {
       playLocalSound(SFX_SHOCK);

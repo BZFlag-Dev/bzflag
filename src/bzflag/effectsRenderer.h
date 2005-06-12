@@ -37,7 +37,7 @@ public:
 	BasicEffect();
 	virtual ~BasicEffect(){};
 
-	virtual void setPos ( float *pos, float *rot );
+	virtual void setPos ( const float *pos, const float *rot );
 	virtual void setTeam ( int team );
 	virtual void setStartTime ( float time );
 
@@ -79,6 +79,24 @@ protected:
 	void drawRing ( float rad, float z, float topsideOffset = 0, float bottomUV = 0);
 };
 
+class ShotFlashEffect : public BasicEffect
+{
+public:
+	ShotFlashEffect();
+	virtual ~ShotFlashEffect();
+
+	virtual bool update ( float time );
+	virtual void draw ( const SceneRenderer& sr );
+
+protected:
+	int				texture;
+	OpenGLGState	ringState;
+
+	float			radius;
+
+	void drawRing ( float rad, float z, float topsideOffset = 0, float bottomUV = 0, float ZOffset = 0);
+};
+
 class EffectsRenderer {
 public:
 	EffectsRenderer();
@@ -99,7 +117,8 @@ public:
 	// called when the GL lists need to be remade
 	void rebuildContext(void);
 
-	void addSpawnFlash ( int team, float* pos );
+	void addSpawnFlash ( int team, const float* pos );
+	void addShotFlash ( int team, const float* pos, float rot );
 
 protected:
 	tvEffectsList	effectsList;
