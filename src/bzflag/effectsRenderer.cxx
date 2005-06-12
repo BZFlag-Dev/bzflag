@@ -150,10 +150,10 @@ void EffectsRenderer::addSpawnEffect ( int team, const float* pos )
 std::vector<std::string> EffectsRenderer::getSpawnEffectTypes ( void )
 {
 	std::vector<std::string> ret;
-	ret.push_back(std::string("none"));
-	ret.push_back(std::string("standard"));
-	ret.push_back(std::string("cone"));
-	ret.push_back(std::string("ring"));
+	ret.push_back(std::string("None"));
+	ret.push_back(std::string("Energy Fountain"));
+	ret.push_back(std::string("Cone"));
+	ret.push_back(std::string("Rings"));
 
 	return ret;
 }
@@ -190,8 +190,8 @@ void EffectsRenderer::addShotEffect ( int team, const float* pos, float rot, con
 std::vector<std::string> EffectsRenderer::getShotEffectTypes ( void )
 {
 	std::vector<std::string> ret;
-	ret.push_back(std::string("none"));
-	ret.push_back(std::string("standard"));
+	ret.push_back(std::string("None"));
+	ret.push_back(std::string("Smoke Rings"));
 
 	return ret;
 }
@@ -232,7 +232,7 @@ void EffectsRenderer::addDeathEffect ( int team, const float* pos, float rot )
 std::vector<std::string> EffectsRenderer::getDeathEffectTypes ( void )
 {
 	std::vector<std::string> ret;
-	ret.push_back(std::string("none"));
+	ret.push_back(std::string("None"));
 	ret.push_back(std::string("We Got Death Star"));
 
 	return ret;
