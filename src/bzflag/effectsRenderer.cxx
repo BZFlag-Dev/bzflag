@@ -37,6 +37,10 @@
 #include "Intersect.h"
 #include "RoofTops.h"
 
+template <>
+EffectsRenderer* Singleton<EffectsRenderer>::_instance = (EffectsRenderer*)0;
+
+
 EffectsRenderer::EffectsRenderer()
 {
 }

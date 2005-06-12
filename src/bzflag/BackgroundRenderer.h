@@ -59,9 +59,6 @@ class BackgroundRenderer {
     void		addCloudDrift(GLfloat uDrift, GLfloat vDrift);
     void		notifyStyleChange();
 
-	// effects
-	EffectsRenderer	effects;
-
     std::string		userTextures[2];
   protected:
     void		drawSky(SceneRenderer&, bool mirror);

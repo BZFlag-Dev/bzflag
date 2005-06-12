@@ -31,6 +31,8 @@
 #include "OpenGLGState.h"
 #include "SceneRenderer.h"
 
+#include "Singleton.h"
+
 class BasicEffect
 {
 public:
@@ -97,11 +99,9 @@ protected:
 	void drawRing ( float rad, float z, float topsideOffset = 0, float bottomUV = 0, float ZOffset = 0);
 };
 
-class EffectsRenderer {
+class EffectsRenderer : public Singleton<EffectsRenderer>
+{
 public:
-	EffectsRenderer();
-	~EffectsRenderer();
-
 	// called once to setup the effects system
 	void init(void);
 
@@ -121,6 +121,12 @@ public:
 	void addShotFlash ( int team, const float* pos, float rot );
 
 protected:
+	friend class Singleton<EffectsRenderer>;
+
+protected:
+	EffectsRenderer();
+	~EffectsRenderer();
+
 	tvEffectsList	effectsList;
 };
 
