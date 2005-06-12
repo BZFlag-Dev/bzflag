@@ -117,7 +117,11 @@ public:
 	// called when the GL lists need to be remade
 	void rebuildContext(void);
 
+	// spawn flashes
 	void addSpawnFlash ( int team, const float* pos );
+	std::vector<std::string> getSpawnFlashTypes ( void );
+
+	// shot flashes
 	void addShotFlash ( int team, const float* pos, float rot );
 
 protected:

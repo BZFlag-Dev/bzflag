@@ -101,12 +101,38 @@ void EffectsRenderer::rebuildContext(void)
 
 void EffectsRenderer::addSpawnFlash ( int team, const float* pos )
 {
-	SpawnFlashEffect	*flash = new SpawnFlashEffect;
-	flash->setPos(pos,NULL);
-	flash->setStartTime((float)TimeKeeper::getCurrent().getSeconds());
-	flash->setTeam(team);
+	int flashType = 1;	// dude bzdb REALY
+	
+	if (flashType == 0)
+		return;
 
-	effectsList.push_back(flash);
+	BasicEffect	*effect = NULL;
+
+	switch(flashType)
+	{
+		case 1:
+			{
+				SpawnFlashEffect	*flash = new SpawnFlashEffect;
+				flash->setPos(pos,NULL);
+				flash->setStartTime((float)TimeKeeper::getCurrent().getSeconds());
+				flash->setTeam(team);
+
+				effect = flash;
+				break;
+			}
+	}
+
+	if (effect)
+		effectsList.push_back(effect);
+}
+
+std::vector<std::string> getSpawnFlashTypes ( void )
+{
+	std::vector<std::string> ret;
+	ret.push_back(std::string("none"));
+	ret.push_back(std::string("standard"));
+
+	return ret;
 }
 
 void EffectsRenderer::addShotFlash ( int team, const float* pos, float rot )
