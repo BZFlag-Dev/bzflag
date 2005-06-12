@@ -40,6 +40,7 @@ public:
 	virtual ~BasicEffect(){};
 
 	virtual void setPos ( const float *pos, const float *rot );
+	virtual void setVel ( const float *vel );
 	virtual void setTeam ( int team );
 	virtual void setStartTime ( float time );
 
@@ -53,6 +54,7 @@ protected:
 
 	float	position[3];
 	float	rotation[3];
+	float velocity[3];
 	int		teamColor;
 	float	startTime;
 	float	lifetime;
@@ -148,7 +150,7 @@ public:
 	std::vector<std::string> getSpawnEffectTypes ( void );
 
 	// shot flashes
-	void addShotEffect ( int team, const float* pos, float rot );
+	void addShotEffect ( int team, const float* pos, float rot, const float* vel = NULL );
 	std::vector<std::string> getShotEffectTypes ( void );
 
 	// death effects

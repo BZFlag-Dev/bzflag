@@ -2435,7 +2435,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 		  float	shotPos[3];
 		  player[shooterid]->getMuzzle(shotPos);
 		  
-		  EffectsRenderer::instance().addShotEffect(player[shooterid]->getTeam(),shotPos,player[shooterid]->getAngle());
+		  EffectsRenderer::instance().addShotEffect(player[shooterid]->getTeam(),shotPos,player[shooterid]->getAngle(),player[shooterid]->getVelocity());
 	  }
 	}
 	else

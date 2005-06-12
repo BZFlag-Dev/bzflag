@@ -158,7 +158,7 @@ std::vector<std::string> EffectsRenderer::getSpawnEffectTypes ( void )
 	return ret;
 }
 
-void EffectsRenderer::addShotEffect ( int team, const float* pos, float rot )
+void EffectsRenderer::addShotEffect ( int team, const float* pos, float rot, const float *vel )
 {
 	if (!BZDB.isTrue("useFancyEffects"))
 		return;
@@ -178,6 +178,8 @@ void EffectsRenderer::addShotEffect ( int team, const float* pos, float rot )
 
 				flash->setPos(pos,rots);
 				flash->setStartTime((float)TimeKeeper::getCurrent().getSeconds());
+				if (BZDB.isTrue("useVelOnShotEffects"))
+					flash->setVel(vel);
 				flash->setTeam(team);
 
 				effectsList.push_back(flash);
@@ -241,6 +243,7 @@ BasicEffect::BasicEffect()
 {
 	position[0] = position[1] = position[2] = 0.0f;
 	rotation[0] = rotation[1] = rotation[2] = 0.0f;
+	velocity[0] = velocity[1] = velocity[2] = 0.0f;
 	teamColor = -1;
 	startTime = (float)TimeKeeper::getCurrent().getSeconds();
 
@@ -266,6 +269,15 @@ void BasicEffect::setPos ( const float *pos, const float *rot )
 	}
 }
 
+void BasicEffect::setVel ( const float *vel )
+{
+	if (vel)
+	{
+		velocity[0] = vel[0];
+		velocity[1] = vel[1];
+		velocity[2] = vel[2];
+	}
+}
 void BasicEffect::setTeam ( int team )
 {
 	teamColor = team;
@@ -582,7 +594,13 @@ void StdShotEffect::draw(const SceneRenderer &)
 {
 	glPushMatrix();
 
-	glTranslatef(position[0],position[1],position[2]);
+	float pos[3];
+
+	pos[0] = position[0] + velocity[0] * age;
+	pos[1] = position[1] + velocity[1] * age;
+	pos[2] = position[2] + velocity[2] * age;
+
+	glTranslatef(pos[0],pos[1],pos[2]);
 	glRotatef(180+rotation[2]/deg2Rad,0,0,1);
 
 	ringState.setState();
@@ -597,7 +615,7 @@ void StdShotEffect::draw(const SceneRenderer &)
 	glColor4f(color[0],color[1],color[2],alpha);
 	glDepthMask(0);
 
-	drawRingYZ(radius,0.5f /*+ (age * 0.125f)*/,1.0f+age*5,0.65f,position[2]);
+	drawRingYZ(radius,0.5f /*+ (age * 0.125f)*/,1.0f+age*5,0.65f,pos[2]);
 
 	glColor4f(1,1,1,1);
 	glDepthMask(1);
