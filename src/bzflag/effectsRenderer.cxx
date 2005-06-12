@@ -384,8 +384,8 @@ void SpawnFlashEffect::drawRing ( float rad, float z, float topsideOffset, float
 ShotFlashEffect::ShotFlashEffect() : BasicEffect()
 {
 	texture = TextureManager::instance().getTextureID("blend_flash",false);
-	lifetime = 2.0f;
-	radius = 0.025f;
+	lifetime = 1.5f;
+	radius = 0.125f;
 
 
 	OpenGLGStateBuilder gstate;
@@ -415,7 +415,7 @@ bool ShotFlashEffect::update ( float time )
 	// we live another day
 	// do stuff that maybe need to be done every time to animage
 
-	radius += deltaTime*1.75f;
+	radius += deltaTime*6;
 	return false;
 }
 
@@ -477,7 +477,7 @@ void ShotFlashEffect::draw ( const SceneRenderer& sr )
 	glColor4f(color[0],color[1],color[2],alpha);
 	glDepthMask(0);
 
-	drawRing(radius,0.5f + (age * 1.5f),1.0f+age*3,0.65f,position[2]);
+	drawRing(radius,0.5f /*+ (age * 0.125f)*/,1.0f+age*5,0.65f,position[2]);
 
 	glColor4f(1,1,1,1);
 	glDepthMask(1);
