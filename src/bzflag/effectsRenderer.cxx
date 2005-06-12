@@ -437,10 +437,7 @@ void RingSpawnEffect::draw ( const SceneRenderer& sr )
 
 	float ageParam = age/lifetime;
 
-//	glColor4f(color[0],color[1],color[2],1.0f-(age/lifetime));
 	glDepthMask(0);
-
-//	drawRingXY(radius,2.0f);
 
 	float range = lifetime/4.0f;	// first 3/4ths of the life are rings, last is fade
 	range = (range*3)/4.0f; // of the ring section there are 4 ring segments
@@ -472,7 +469,7 @@ void RingSpawnEffect::draw ( const SceneRenderer& sr )
 
 		glPushMatrix();
 		glTranslatef(0,0,posZ);
-		glColor4f(1,1,1,alpha);
+		glColor4f(color[0],color[1],color[2],alpha);
 		drawRingXY(radius,2.5f);
 		glPopMatrix();
 	}
@@ -492,7 +489,7 @@ void RingSpawnEffect::draw ( const SceneRenderer& sr )
 
 		glPushMatrix();
 		glTranslatef(0,0,posZ);
-		glColor4f(1,1,1,alpha);
+		glColor4f(color[0],color[1],color[2],alpha);
 		drawRingXY(radius,2.5f);
 		glPopMatrix();
 	}
@@ -512,7 +509,7 @@ void RingSpawnEffect::draw ( const SceneRenderer& sr )
 
 		glPushMatrix();
 		glTranslatef(0,0,posZ);
-		glColor4f(1,1,1,alpha);
+		glColor4f(color[0],color[1],color[2],alpha);
 		drawRingXY(radius,2.5f);
 		glPopMatrix();
 	}
@@ -532,7 +529,7 @@ void RingSpawnEffect::draw ( const SceneRenderer& sr )
 
 		glPushMatrix();
 		glTranslatef(0,0,posZ);
-		glColor4f(1,1,1,alpha);
+		glColor4f(color[0],color[1],color[2],alpha);
 		drawRingXY(radius,2.5f);
 		glPopMatrix();
 	} 
