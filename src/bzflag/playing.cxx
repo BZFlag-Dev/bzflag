@@ -1994,7 +1994,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 
 	if (SceneRenderer::instance().useQuality() >= 2)
 	  if ((tank != myTank) || BZDB.isTrue("enableLocalSpawnEffect"))
-	    EffectsRenderer::instance().addSpawnFlash(tank->getTeam(),pos);
+	    EffectsRenderer::instance().addSpawnEffect(tank->getTeam(),pos);
 
 	tank->setStatus(PlayerState::Alive);
 	tank->move(pos, forward);
@@ -2435,7 +2435,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 		  float	shotPos[3];
 		  player[shooterid]->getMuzzle(shotPos);
 		  
-		  EffectsRenderer::instance().addShotFlash(player[shooterid]->getTeam(),shotPos,player[shooterid]->getAngle());
+		  EffectsRenderer::instance().addShotEffect(player[shooterid]->getTeam(),shotPos,player[shooterid]->getAngle());
 	  }
 	}
 	else

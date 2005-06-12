@@ -44,6 +44,7 @@ EffectsRenderer* Singleton<EffectsRenderer>::_instance = (EffectsRenderer*)0;
 void drawRingYZ ( float rad, float z, float topsideOffset = 0, float bottomUV = 0, float ZOffset = 0);
 void drawRingXY ( float rad, float z, float topsideOffset = 0, float bottomUV = 0);
 void RadialToCartesian ( float angle, float rad, float *pos );
+void getSpawnTeamColor ( int teamColor, float *color );
 
 #define deg2Rad 0.017453292519943295769236907684886f
 
@@ -106,7 +107,7 @@ void EffectsRenderer::rebuildContext(void)
 		effectsList[i]->rebuildContext();
 }
 
-void EffectsRenderer::addSpawnFlash ( int team, const float* pos )
+void EffectsRenderer::addSpawnEffect ( int team, const float* pos )
 {
 	if (!BZDB.isTrue("useFancyEffects"))
 		return;
@@ -117,35 +118,47 @@ void EffectsRenderer::addSpawnFlash ( int team, const float* pos )
 		return;
 
 	BasicEffect	*effect = NULL;
-
+	StdSpawnEffect	*flash = NULL;
 	switch(flashType)
 	{
 		case 1:
-			{
-				SpawnFlashEffect	*flash = new SpawnFlashEffect;
-				flash->setPos(pos,NULL);
-				flash->setStartTime((float)TimeKeeper::getCurrent().getSeconds());
-				flash->setTeam(team);
+			flash = new StdSpawnEffect;
+			break;
 
-				effect = flash;
-				break;
-			}
+		case 2:
+			flash = new ConeSpawnEffect;
+			break;
+
+		case 3:
+			flash = new RingSpawnEffect;
+			break;
 	}
+
+	if (flash)
+	{
+		flash->setPos(pos,NULL);
+		flash->setStartTime((float)TimeKeeper::getCurrent().getSeconds());
+		flash->setTeam(team);
+	}
+
+	effect = flash;
 
 	if (effect)
 		effectsList.push_back(effect);
 }
 
-std::vector<std::string> EffectsRenderer::getSpawnFlashTypes ( void )
+std::vector<std::string> EffectsRenderer::getSpawnEffectTypes ( void )
 {
 	std::vector<std::string> ret;
 	ret.push_back(std::string("none"));
 	ret.push_back(std::string("standard"));
+	ret.push_back(std::string("cone"));
+	ret.push_back(std::string("ring"));
 
 	return ret;
 }
 
-void EffectsRenderer::addShotFlash ( int team, const float* pos, float rot )
+void EffectsRenderer::addShotEffect ( int team, const float* pos, float rot )
 {
 	if (!BZDB.isTrue("useFancyEffects"))
 		return;
@@ -159,7 +172,7 @@ void EffectsRenderer::addShotFlash ( int team, const float* pos, float rot )
 	{
 		case 1:
 			{
-				ShotFlashEffect	*flash = new ShotFlashEffect;
+				StdShotEffect	*flash = new StdShotEffect;
 				float rots[3] = {0};
 				rots[2] = rot;
 
@@ -172,7 +185,7 @@ void EffectsRenderer::addShotFlash ( int team, const float* pos, float rot )
 	}
 }
 
-std::vector<std::string> EffectsRenderer::getShotFlashTypes ( void )
+std::vector<std::string> EffectsRenderer::getShotEffectTypes ( void )
 {
 	std::vector<std::string> ret;
 	ret.push_back(std::string("none"));
@@ -214,15 +227,14 @@ void EffectsRenderer::addDeathEffect ( int team, const float* pos, float rot )
 		effectsList.push_back(effect);
 }
 
-std::vector<std::string> EffectsRenderer::getDeathFlashTypes ( void )
+std::vector<std::string> EffectsRenderer::getDeathEffectTypes ( void )
 {
 	std::vector<std::string> ret;
 	ret.push_back(std::string("none"));
-	ret.push_back(std::string("standard"));
+	ret.push_back(std::string("We Got Death Star"));
 
 	return ret;
 }
-
 
 //****************** effects base class*******************************
 BasicEffect::BasicEffect()
@@ -278,13 +290,12 @@ bool BasicEffect::update( float time )
 	return false;
 }
 
-//******************SpawnFlashEffect****************
-SpawnFlashEffect::SpawnFlashEffect() : BasicEffect()
+//******************StdSpawnEffect****************
+StdSpawnEffect::StdSpawnEffect() : BasicEffect()
 {
 	texture = TextureManager::instance().getTextureID("blend_flash",false);
 	lifetime = 2.0f;
 	radius = 1.75f;
-
 
 	OpenGLGStateBuilder gstate;
 	gstate.reset();
@@ -298,11 +309,11 @@ SpawnFlashEffect::SpawnFlashEffect() : BasicEffect()
 	ringState = gstate.getState();
 }
 
-SpawnFlashEffect::~SpawnFlashEffect()
+StdSpawnEffect::~StdSpawnEffect()
 {
 }
 
-bool SpawnFlashEffect::update ( float time )
+bool StdSpawnEffect::update ( float time )
 {
 	// see if it's time to die
 	// if not update all those fun times
@@ -317,7 +328,7 @@ bool SpawnFlashEffect::update ( float time )
 	return false;
 }
 
-void SpawnFlashEffect::draw(const SceneRenderer &)
+void StdSpawnEffect::draw ( const SceneRenderer& sr )
 {
 	glPushMatrix();
 
@@ -326,43 +337,9 @@ void SpawnFlashEffect::draw(const SceneRenderer &)
 	ringState.setState();
 
 	float color[3] = {0};
-	switch(teamColor)
-	{
-	default:
-		color[0] = color[1] = color[2] = 1;
-		break;
 
-	case BlueTeam:
-		color[0] = 0.35f;
-		color[1] = 0.35f;
-		color[2] = 1;
-		break;
-
-	case GreenTeam:
-		color[0] = 0.25f;
-		color[1] = 1;
-		color[2] = 0.25f;
-		break;
-
-	case RedTeam:
-		color[0] = 1;
-		color[1] = 0.35f;
-		color[2] = 0.35f;
-		break;
-
-	case PurpleTeam:
-		color[0] = 1;
-		color[1] = 0.35f;
-		color[2] = 1.0f;
-		break;
-
-	case RogueTeam:
-		color[0] = 0.5;
-		color[1] = 0.5f;
-		color[2] = 0.5f;
-		break;
-	}
-
+	getSpawnTeamColor(teamColor,color);
+	
 	float ageParam = age/lifetime;
 
 	glColor4f(color[0],color[1],color[2],1.0f-(age/lifetime));
@@ -377,8 +354,196 @@ void SpawnFlashEffect::draw(const SceneRenderer &)
 	glPopMatrix();
 }
 
-//******************ShotFlashEffect****************
-ShotFlashEffect::ShotFlashEffect() : BasicEffect()
+//******************ConeSpawnEffect****************
+bool ConeSpawnEffect::update ( float time )
+{
+	// see if it's time to die
+	// if not update all those fun times
+	if ( BasicEffect::update(time))
+		return true;
+
+	// nope it's not.
+	// we live another day
+	// do stuff that maybe need to be done every time to animage
+
+	radius += deltaTime*5;
+	return false;
+}
+
+void ConeSpawnEffect::draw ( const SceneRenderer& sr )
+{
+	glPushMatrix();
+
+	glTranslatef(position[0],position[1],position[2]+0.1f);
+
+	ringState.setState();
+
+	float color[3] = {0};
+
+	getSpawnTeamColor(teamColor,color);
+
+	float ageParam = age/lifetime;
+
+	glColor4f(color[0],color[1],color[2],1.0f-(age/lifetime));
+	glDepthMask(0);
+
+	drawRingXY(radius*0.5f,1.25f);
+	
+	glTranslatef(0,0,2);
+	drawRingXY(radius*0.6f,1.5f);
+
+	glTranslatef(0,0,2);
+	drawRingXY(radius*0.75f,1.75f);
+
+	glTranslatef(0,0,2);
+	drawRingXY(radius*0.85f,1.89f);
+
+	glTranslatef(0,0,2);
+	drawRingXY(radius,2.0f);
+
+	glColor4f(1,1,1,1);
+	glDepthMask(1);
+	glPopMatrix();
+}
+
+
+//******************RingSpawnEffect****************
+bool RingSpawnEffect::update ( float time )
+{
+	// see if it's time to die
+	// if not update all those fun times
+	if ( BasicEffect::update(time))
+		return true;
+
+	// nope it's not.
+	// we live another day
+	// do stuff that maybe need to be done every time to animage
+
+	radius  = 4.0f;
+	return false;
+}
+
+void RingSpawnEffect::draw ( const SceneRenderer& sr )
+{
+	glPushMatrix();
+
+	glTranslatef(position[0],position[1],position[2]);
+
+	ringState.setState();
+
+	float color[3] = {0};
+
+	getSpawnTeamColor(teamColor,color);
+
+	float ageParam = age/lifetime;
+
+//	glColor4f(color[0],color[1],color[2],1.0f-(age/lifetime));
+	glDepthMask(0);
+
+//	drawRingXY(radius,2.0f);
+
+	float range = lifetime/4.0f;	// first 3/4ths of the life are rings, last is fade
+	range = (range*3)/4.0f; // of the ring section there are 4 ring segments
+	float bigRange = range*3;
+
+	float posZ = 0;
+	float maxZ = 10;
+	float alpha;
+
+	float coreAlpha = 1;
+
+	if ( age >= bigRange)
+	{
+		coreAlpha = 1.0f - ((age-bigRange)/(lifetime-bigRange));
+	}
+	// range is now how long one ring segement is
+	if (age > 0 )	// the first ring
+	{
+		if ( age < range ) // the ring is still coming in
+		{ 
+			posZ = maxZ - ((age/range)*maxZ);
+			alpha = age/range;
+		}
+		else
+		{
+			posZ = 0;
+			alpha = coreAlpha;
+		}
+
+		glPushMatrix();
+		glTranslatef(0,0,posZ);
+		glColor4f(1,1,1,alpha);
+		drawRingXY(radius,2.5f);
+		glPopMatrix();
+	}
+
+	if (age > range )	// second ring in?
+	{
+		if ( age < range*2 ) // the ring is still coming in
+		{ 
+			posZ = maxZ - ((age-range)/range)*(maxZ-2.5f);
+			alpha = (age-range)/(range*2);
+		}
+		else
+		{
+			posZ = 2.5f;
+			alpha = coreAlpha;
+		}
+
+		glPushMatrix();
+		glTranslatef(0,0,posZ);
+		glColor4f(1,1,1,alpha);
+		drawRingXY(radius,2.5f);
+		glPopMatrix();
+	}
+
+	if (age > (range*2) )	// third ring in?
+	{
+		if ( age < range*3 ) // the ring is still coming in
+		{ 
+			posZ = maxZ - ((age-range*2)/range)*(maxZ-5.0f);
+			alpha = (age-range)/(range*3);
+		}
+		else
+		{
+			posZ = 5.0f;
+			alpha = coreAlpha;
+		}
+
+		glPushMatrix();
+		glTranslatef(0,0,posZ);
+		glColor4f(1,1,1,alpha);
+		drawRingXY(radius,2.5f);
+		glPopMatrix();
+	}
+	
+	if (age > (range*3) )	// third ring in?
+	{
+		if ( age < range*4 ) // the ring is still coming in
+		{ 
+			posZ = maxZ - ((age-range*3)/range)*(maxZ-7.5f);
+			alpha = (age-range)/(range*43);
+		}
+		else
+		{
+			posZ = 7.5f;
+			alpha = coreAlpha;
+		}
+
+		glPushMatrix();
+		glTranslatef(0,0,posZ);
+		glColor4f(1,1,1,alpha);
+		drawRingXY(radius,2.5f);
+		glPopMatrix();
+	} 
+
+	glColor4f(1,1,1,1);
+	glDepthMask(1);
+	glPopMatrix();
+}
+
+//******************StdShotEffect****************
+StdShotEffect::StdShotEffect() : BasicEffect()
 {
 	texture = TextureManager::instance().getTextureID("blend_flash",false);
 	lifetime = 1.5f;
@@ -397,11 +562,11 @@ ShotFlashEffect::ShotFlashEffect() : BasicEffect()
 	ringState = gstate.getState();
 }
 
-ShotFlashEffect::~ShotFlashEffect()
+StdShotEffect::~StdShotEffect()
 {
 }
 
-bool ShotFlashEffect::update ( float time )
+bool StdShotEffect::update ( float time )
 {
 	// see if it's time to die
 	// if not update all those fun times
@@ -416,7 +581,7 @@ bool ShotFlashEffect::update ( float time )
 	return false;
 }
 
-void ShotFlashEffect::draw(const SceneRenderer &)
+void StdShotEffect::draw(const SceneRenderer &)
 {
 	glPushMatrix();
 
@@ -520,11 +685,9 @@ void StdDeathEffect::draw(const SceneRenderer &)
 	drawRingXY(radius*0.75f,1.5f + (ageParam/1.0f * 10),0.5f*age,0.5f);
 	drawRingXY(radius,-0.5f,0.5f+ age,0.5f);
 
-//	drawRingYZ(radius,3,0,0,0.0f);
 	glRotatef(90,0,0,1);
 	drawRingYZ(radius,3,0,0,position[2]+0.5f);
 	glPopMatrix();
-
 
 	glColor4f(1,1,1,1);
 	glDepthMask(1);
@@ -541,7 +704,7 @@ void RadialToCartesian ( float angle, float rad, float *pos )
 
 void drawRingXY ( float rad, float z, float topsideOffset, float bottomUV )
 {
-	int segements = 16;
+	int segements = 32;
 
 	for ( int i = 0; i < segements; i ++)
 	{
@@ -618,7 +781,7 @@ float clampedZ ( float z, float offset )
 
 void drawRingYZ ( float rad, float z, float topsideOffset, float bottomUV, float ZOffset )
 {
-	int segements = 16;
+	int segements = 32;
 
 	for ( int i = 0; i < segements; i ++)
 	{
@@ -682,6 +845,46 @@ void drawRingYZ ( float rad, float z, float topsideOffset, float bottomUV, float
 		glVertex3f(0,thispos[1],clampedZ(thispos[0],ZOffset));
 
 		glEnd();
+	}
+}
+
+void getSpawnTeamColor ( int teamColor, float *color )
+{
+	switch(teamColor)
+	{
+	default:
+		color[0] = color[1] = color[2] = 1;
+		break;
+
+	case BlueTeam:
+		color[0] = 0.35f;
+		color[1] = 0.35f;
+		color[2] = 1;
+		break;
+
+	case GreenTeam:
+		color[0] = 0.25f;
+		color[1] = 1;
+		color[2] = 0.25f;
+		break;
+
+	case RedTeam:
+		color[0] = 1;
+		color[1] = 0.35f;
+		color[2] = 0.35f;
+		break;
+
+	case PurpleTeam:
+		color[0] = 1;
+		color[1] = 0.35f;
+		color[2] = 1.0f;
+		break;
+
+	case RogueTeam:
+		color[0] = 0.5;
+		color[1] = 0.5f;
+		color[2] = 0.5f;
+		break;
 	}
 }
 

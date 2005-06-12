@@ -139,7 +139,7 @@ EffectsMenu::EffectsMenu()
   option->setLabel("  Spawn Effect:");
   option->setCallback(callback, (void*)"s");
   options = &option->getList();
-  optbuf = EffectsRenderer::instance().getSpawnFlashTypes();
+  optbuf = EffectsRenderer::instance().getSpawnEffectTypes();
   options->assign(optbuf.begin(), optbuf.end());
   option->update();
   listHUD.push_back(option);
@@ -161,7 +161,7 @@ EffectsMenu::EffectsMenu()
   option->setLabel("  Death Effect:");
   option->setCallback(callback, (void*)"d");
   options = &option->getList();
-  optbuf = EffectsRenderer::instance().getDeathFlashTypes();
+  optbuf = EffectsRenderer::instance().getDeathEffectTypes();
   options->assign(optbuf.begin(), optbuf.end());
   option->update();
   listHUD.push_back(option);
@@ -172,7 +172,7 @@ EffectsMenu::EffectsMenu()
   option->setLabel("  Shot Fired Effect:");
   option->setCallback(callback, (void*)"S");
   options = &option->getList();
-  optbuf = EffectsRenderer::instance().getShotFlashTypes();
+  optbuf = EffectsRenderer::instance().getShotEffectTypes();
   options->assign(optbuf.begin(), optbuf.end());
   option->update();
   listHUD.push_back(option);

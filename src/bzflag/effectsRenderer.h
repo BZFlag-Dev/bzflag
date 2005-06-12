@@ -63,11 +63,11 @@ protected:
 
 typedef std::vector<BasicEffect*>	tvEffectsList;
 
-class SpawnFlashEffect : public BasicEffect
+class StdSpawnEffect : public BasicEffect
 {
 public:
-	SpawnFlashEffect();
-	virtual ~SpawnFlashEffect();
+	StdSpawnEffect();
+	virtual ~StdSpawnEffect();
 
 	virtual bool update ( float time );
 	virtual void draw ( const SceneRenderer& sr );
@@ -79,11 +79,25 @@ protected:
 	float			radius;
 };
 
-class ShotFlashEffect : public BasicEffect
+class ConeSpawnEffect : public StdSpawnEffect
 {
 public:
-	ShotFlashEffect();
-	virtual ~ShotFlashEffect();
+	virtual bool update ( float time );
+	virtual void draw ( const SceneRenderer& sr );
+};
+
+class RingSpawnEffect : public StdSpawnEffect
+{
+public:
+	virtual bool update ( float time );
+	virtual void draw ( const SceneRenderer& sr );
+};
+
+class StdShotEffect : public BasicEffect
+{
+public:
+	StdShotEffect();
+	virtual ~StdShotEffect();
 
 	virtual bool update ( float time );
 	virtual void draw ( const SceneRenderer& sr );
@@ -130,16 +144,16 @@ public:
 	void rebuildContext(void);
 
 	// spawn flashes
-	void addSpawnFlash ( int team, const float* pos );
-	std::vector<std::string> getSpawnFlashTypes ( void );
+	void addSpawnEffect ( int team, const float* pos );
+	std::vector<std::string> getSpawnEffectTypes ( void );
 
 	// shot flashes
-	void addShotFlash ( int team, const float* pos, float rot );
-	std::vector<std::string> getShotFlashTypes ( void );
+	void addShotEffect ( int team, const float* pos, float rot );
+	std::vector<std::string> getShotEffectTypes ( void );
 
 	// death effects
 	void addDeathEffect ( int team, const float* pos, float rot );
-	std::vector<std::string> getDeathFlashTypes ( void );
+	std::vector<std::string> getDeathEffectTypes ( void );
 
 protected:
 	friend class Singleton<EffectsRenderer>;
