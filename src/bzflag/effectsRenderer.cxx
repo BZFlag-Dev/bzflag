@@ -118,33 +118,28 @@ void EffectsRenderer::addSpawnEffect ( int team, const float* pos )
 		return;
 
 	BasicEffect	*effect = NULL;
-	StdSpawnEffect	*flash = NULL;
 	switch(flashType)
 	{
 		case 1:
-			flash = new StdSpawnEffect;
+			effect = new StdSpawnEffect;
 			break;
 
 		case 2:
-			flash = new ConeSpawnEffect;
+			effect = new ConeSpawnEffect;
 			break;
 
 		case 3:
-			flash = new RingSpawnEffect;
+			effect = new RingSpawnEffect;
 			break;
 	}
 
-	if (flash)
-	{
-		flash->setPos(pos,NULL);
-		flash->setStartTime((float)TimeKeeper::getCurrent().getSeconds());
-		flash->setTeam(team);
-	}
-
-	effect = flash;
-
 	if (effect)
+	{
+		effect->setPos(pos,NULL);
+		effect->setStartTime((float)TimeKeeper::getCurrent().getSeconds());
+		effect->setTeam(team);
 		effectsList.push_back(effect);
+	}
 }
 
 std::vector<std::string> EffectsRenderer::getSpawnEffectTypes ( void )
@@ -168,22 +163,26 @@ void EffectsRenderer::addShotEffect ( int team, const float* pos, float rot, con
 	if (flashType == 0)
 		return;
 
+	float rots[3] = {0};
+	rots[2] = rot;
+
+	BasicEffect	*effect = NULL;
 	switch(flashType)
 	{
 		case 1:
-			{
-				StdShotEffect	*flash = new StdShotEffect;
-				float rots[3] = {0};
-				rots[2] = rot;
+			effect = new StdShotEffect;
+			break;
+	}
 
-				flash->setPos(pos,rots);
-				flash->setStartTime((float)TimeKeeper::getCurrent().getSeconds());
-				if (BZDB.isTrue("useVelOnShotEffects"))
-					flash->setVel(vel);
-				flash->setTeam(team);
+	if (effect)
+	{
+		effect->setPos(pos,rots);
+		effect->setStartTime((float)TimeKeeper::getCurrent().getSeconds());
+		if (BZDB.isTrue("useVelOnShotEffects"))
+			effect->setVel(vel);
+		effect->setTeam(team);
 
-				effectsList.push_back(flash);
-			}
+		effectsList.push_back(effect);
 	}
 }
 
@@ -213,20 +212,18 @@ void EffectsRenderer::addDeathEffect ( int team, const float* pos, float rot )
 
 	switch(effectType)
 	{
-	case 1:
-		{
-			StdDeathEffect	*stdDeath = new StdDeathEffect;
-			stdDeath->setPos(pos,rots);
-			stdDeath->setStartTime((float)TimeKeeper::getCurrent().getSeconds());
-			stdDeath->setTeam(team);
-
-			effect = stdDeath;
+		case 1:
+			effect = new StdDeathEffect;
 			break;
-		}
 	}
 
 	if (effect)
+	{
+		effect->setPos(pos,rots);
+		effect->setStartTime((float)TimeKeeper::getCurrent().getSeconds());
+		effect->setTeam(team);
 		effectsList.push_back(effect);
+	}
 }
 
 std::vector<std::string> EffectsRenderer::getDeathEffectTypes ( void )
