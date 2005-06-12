@@ -126,8 +126,8 @@ EffectsMenu::EffectsMenu()
   option->setLabel("Fancy Effects:");
   option->setCallback(callback, (void*)"f");
   options = &option->getList();
-  options->push_back(std::string("On"));
   options->push_back(std::string("Off"));
+  options->push_back(std::string("On"));
   option->update();
   listHUD.push_back(option);
 
@@ -172,8 +172,8 @@ EffectsMenu::EffectsMenu()
   option->setLabel("  Local Shot Effect:");
   option->setCallback(callback, (void*)"l");
   options = &option->getList();
-  options->push_back(std::string("Same as shots"));
   options->push_back(std::string("Disabled"));
+  options->push_back(std::string("Same as shots"));
   option->update();
   listHUD.push_back(option);
 
