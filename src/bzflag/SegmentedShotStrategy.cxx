@@ -337,6 +337,10 @@ void			SegmentedShotStrategy::makeSegments(ObstacleEffect e)
   float timeLeft            = shotPath.getLifetime();
   float           minTime   = BZDB.eval(StateDatabase::BZDB_MUZZLEFRONT)
     / hypotf(v[0], hypotf(v[1], v[2]));
+  // A patch for now ... MUZZLEFRONT should be used both here and
+  // where we get the start position of shot. Probably they were
+  // aligned some day.
+  minTime                   = 0.0f;
 
   // if all shots ricochet and obstacle effect is stop, then make it ricochet
   if (e == Stop && World::getWorld()->allShotsRicochet()) {
