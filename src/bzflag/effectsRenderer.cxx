@@ -317,7 +317,7 @@ bool SpawnFlashEffect::update ( float time )
 	return false;
 }
 
-void SpawnFlashEffect::draw ( const SceneRenderer& sr )
+void SpawnFlashEffect::draw(const SceneRenderer &)
 {
 	glPushMatrix();
 
@@ -416,7 +416,7 @@ bool ShotFlashEffect::update ( float time )
 	return false;
 }
 
-void ShotFlashEffect::draw ( const SceneRenderer& sr )
+void ShotFlashEffect::draw(const SceneRenderer &)
 {
 	glPushMatrix();
 
@@ -427,8 +427,6 @@ void ShotFlashEffect::draw ( const SceneRenderer& sr )
 
 	float color[3] = {0};
 	color[0] = color[1] = color[2] = 1;
-
-	float ageParam = age/lifetime;
 
 	float alpha = 0.5f-(age/lifetime);
 	if (alpha < 0.001f)
@@ -483,7 +481,7 @@ bool StdDeathEffect::update ( float time )
 	return false;
 }
 
-void StdDeathEffect::draw ( const SceneRenderer& sr )
+void StdDeathEffect::draw(const SceneRenderer &)
 {
 	glPushMatrix();
 
