@@ -337,7 +337,7 @@ bool StdSpawnEffect::update ( float time )
 	return false;
 }
 
-void StdSpawnEffect::draw ( const SceneRenderer& sr )
+void StdSpawnEffect::draw(const SceneRenderer &)
 {
 	glPushMatrix();
 
@@ -379,7 +379,7 @@ bool ConeSpawnEffect::update ( float time )
 	return false;
 }
 
-void ConeSpawnEffect::draw ( const SceneRenderer& sr )
+void ConeSpawnEffect::draw(const SceneRenderer &)
 {
 	glPushMatrix();
 
@@ -390,8 +390,6 @@ void ConeSpawnEffect::draw ( const SceneRenderer& sr )
 	float color[3] = {0};
 
 	getSpawnTeamColor(teamColor,color);
-
-	float ageParam = age/lifetime;
 
 	glColor4f(color[0],color[1],color[2],1.0f-(age/lifetime));
 	glDepthMask(0);
@@ -432,7 +430,7 @@ bool RingSpawnEffect::update ( float time )
 	return false;
 }
 
-void RingSpawnEffect::draw ( const SceneRenderer& sr )
+void RingSpawnEffect::draw(const SceneRenderer &)
 {
 	glPushMatrix();
 
@@ -443,8 +441,6 @@ void RingSpawnEffect::draw ( const SceneRenderer& sr )
 	float color[3] = {0};
 
 	getSpawnTeamColor(teamColor,color);
-
-	float ageParam = age/lifetime;
 
 	glDepthMask(0);
 
