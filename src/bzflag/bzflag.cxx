@@ -211,9 +211,10 @@ static DefaultDBItem	defaultDBItems[] = {
   // effects options
   { "useFancyEffects",		"1",			true,	StateDatabase::ReadWrite,	NULL },
   { "spawnEffect",		"1",			true,	StateDatabase::ReadWrite,	NULL },
+  { "enableLocalSpawnEffect",	"1",			true,	StateDatabase::ReadWrite,	NULL },
   { "shotEffect",		"1",			true,	StateDatabase::ReadWrite,	NULL },
-  { "deathEffect",		"1",			true,	StateDatabase::ReadWrite,	NULL },
   { "enableLocalShotEffect",	"1",			true,	StateDatabase::ReadWrite,	NULL },
+  { "deathEffect",		"1",			true,	StateDatabase::ReadWrite,	NULL },
 
   // URL timeouts
   { "httpTimeout",		"15",			true,	StateDatabase::ReadWrite,	NULL }

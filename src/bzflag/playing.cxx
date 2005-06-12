@@ -1993,7 +1993,8 @@ static void		handleServerMessage(bool human, uint16_t code,
 	}
 
 	if (SceneRenderer::instance().useQuality() >= 2)
-	  EffectsRenderer::instance().addSpawnFlash(tank->getTeam(),pos);
+	  if ((tank != myTank) || BZDB.isTrue("enableLocalSpawnEffect"))
+	    EffectsRenderer::instance().addSpawnFlash(tank->getTeam(),pos);
 
 	tank->setStatus(PlayerState::Alive);
 	tank->move(pos, forward);

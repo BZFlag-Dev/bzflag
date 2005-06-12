@@ -144,6 +144,17 @@ EffectsMenu::EffectsMenu()
   option->update();
   listHUD.push_back(option);
 
+  // Fancy effects Ia: Local spawn
+  option = new HUDuiList;
+  option->setFontFace(MainMenu::getFontFace());
+  option->setLabel("  Local Spawn Effect:");
+  option->setCallback(callback, (void*)"L");
+  options = &option->getList();
+  options->push_back(std::string("Disabled"));
+  options->push_back(std::string("Same as spawns"));
+  option->update();
+  listHUD.push_back(option);
+
   // Fancy effects II: Death
   option = new HUDuiList;
   option->setFontFace(MainMenu::getFontFace());
@@ -247,6 +258,7 @@ void EffectsMenu::resize(int _width, int _height)
   }
   ((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("useFancyEffects") ? 1 : 0);
   ((HUDuiList*)listHUD[i++])->setIndex(static_cast<int>(BZDB.eval("spawnEffect")));
+  ((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("enableLocalSpawnEffect") ? 1 : 0);
   ((HUDuiList*)listHUD[i++])->setIndex(static_cast<int>(BZDB.eval("deathEffect")));
   ((HUDuiList*)listHUD[i++])->setIndex(static_cast<int>(BZDB.eval("shotEffect")));
   ((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("enableLocalShotEffect") ? 1 : 0);
@@ -298,6 +310,10 @@ void EffectsMenu::callback(HUDuiControl* w, void* data)
     }
     case 's': {
       BZDB.set("spawnEffect", TextUtils::format("%d", list->getIndex()));
+      break;
+    }
+    case 'L': {
+      BZDB.set("enableLocalSpawnEffect", list->getIndex() ? "1" : "0");
       break;
     }
     case 'd': {
