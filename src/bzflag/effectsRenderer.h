@@ -139,6 +139,22 @@ protected:
 	float			radius;
 };
 
+class StdLandEffect : public BasicEffect
+{
+public:
+	StdLandEffect();
+	virtual ~StdLandEffect();
+
+	virtual bool update ( float time );
+	virtual void draw ( const SceneRenderer& sr );
+
+protected:
+	int				texture;
+	OpenGLGState	ringState;
+
+	float			radius;
+};
+
 class EffectsRenderer : public Singleton<EffectsRenderer>
 {
 public:
@@ -168,6 +184,10 @@ public:
 	// death effects
 	void addDeathEffect ( int team, const float* pos, float rot );
 	std::vector<std::string> getDeathEffectTypes ( void );
+
+	// landing effects
+	void addLandEffect ( int team, const float* pos, float rot );
+	std::vector<std::string> getLandEffectTypes ( void );
 
 protected:
 	friend class Singleton<EffectsRenderer>;

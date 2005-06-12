@@ -750,6 +750,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
 
   if (justLanded) {
     setLandingSpeed(oldVelocity[2]);
+		EffectsRenderer::instance().addLandEffect(getTeam(),newPos,getAngle());
   }
   if (gettingSound) {
     const PhysicsDriver* phydriver = PHYDRVMGR.getDriver(getPhysicsDriver());

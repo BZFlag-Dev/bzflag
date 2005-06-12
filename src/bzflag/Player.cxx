@@ -37,7 +37,7 @@
 #include "ShotStatistics.h"
 #include "TrackMarks.h"
 #include "sound.h"
-
+#include "effectsRenderer.h"
 
 // for dead reckoning
 static const float	MaxUpdateTime = 1.0f;		// seconds
@@ -1237,6 +1237,8 @@ void Player::doDeadReckoning()
 	((inputStatus & PlayerState::Falling) == 0)) {
       // setup the squish effect
       setLandingSpeed(oldZSpeed);
+			// make it "land"
+			EffectsRenderer::instance().addLandEffect(getTeam(),state.pos,state.azimuth);
       // setup the sound
       if (BZDB.isTrue("remoteSounds")) {
 	if ((getFlag() != Flags::Burrow) || (predictedPos[2] > 0.0f)) {

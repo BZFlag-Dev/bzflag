@@ -42,7 +42,7 @@ EffectsRenderer* Singleton<EffectsRenderer>::_instance = (EffectsRenderer*)0;
 
 // utils for geo
 void drawRingYZ ( float rad, float z, float topsideOffset = 0, float bottomUV = 0, float ZOffset = 0);
-void drawRingXY ( float rad, float z, float topsideOffset = 0, float bottomUV = 0);
+void drawRingXY ( float rad, float z, float topsideOffset = 0, float bottomUV = 0, float topUV = 1.0f);
 void RadialToCartesian ( float angle, float rad, float *pos );
 void getSpawnTeamColor ( int teamColor, float *color );
 
@@ -146,7 +146,7 @@ std::vector<std::string> EffectsRenderer::getSpawnEffectTypes ( void )
 {
 	std::vector<std::string> ret;
 	ret.push_back(std::string("None"));
-	ret.push_back(std::string("Energy Fountain"));
+	ret.push_back(std::string("Blosom"));
 	ret.push_back(std::string("Cone"));
 	ret.push_back(std::string("Rings"));
 
@@ -247,6 +247,48 @@ std::vector<std::string> EffectsRenderer::getDeathEffectTypes ( void )
 
 	return ret;
 }
+
+// landing effects
+void EffectsRenderer::addLandEffect ( int team, const float* pos, float rot )
+{
+	if (!BZDB.isTrue("useFancyEffects"))
+		return;
+
+	int effectType = static_cast<int>(BZDB.eval("landEffect"));
+
+	if (effectType == 0)
+		return;
+
+	BasicEffect	*effect = NULL;
+
+	float rots[3] = {0};
+	rots[2] = rot;
+
+	switch(effectType)
+	{
+	case 1:
+		effect = new StdLandEffect;
+		break;
+	}
+
+	if (effect)
+	{
+		effect->setPos(pos,rots);
+		effect->setStartTime((float)TimeKeeper::getCurrent().getSeconds());
+		effect->setTeam(team);
+		effectsList.push_back(effect);
+	}
+}
+
+std::vector<std::string> EffectsRenderer::getLandEffectTypes ( void )
+{
+	std::vector<std::string> ret;
+	ret.push_back(std::string("None"));
+	ret.push_back(std::string("Dirt Flash"));
+
+	return ret;
+}
+
 
 //****************** effects base class*******************************
 BasicEffect::BasicEffect()
@@ -814,6 +856,68 @@ void StdDeathEffect::draw(const SceneRenderer &)
 	glPopMatrix();
 }
 
+//******************StdLandEffect****************
+StdLandEffect::StdLandEffect() : BasicEffect()
+{
+	texture = TextureManager::instance().getTextureID("dusty_flare",false);
+	lifetime = 1.0f;
+	radius = 2.5f;
+
+	OpenGLGStateBuilder gstate;
+	gstate.reset();
+	gstate.setShading();
+	gstate.setBlending((GLenum) GL_SRC_ALPHA,(GLenum) GL_ONE_MINUS_SRC_ALPHA);
+	gstate.setAlphaFunc();
+
+	if (texture >-1)
+		gstate.setTexture(texture);
+
+	ringState = gstate.getState();
+}
+
+StdLandEffect::~StdLandEffect()
+{
+}
+
+bool StdLandEffect::update ( float time )
+{
+	// see if it's time to die
+	// if not update all those fun times
+	if ( BasicEffect::update(time))
+		return true;
+
+	// nope it's not.
+	// we live another day
+	// do stuff that maybe need to be done every time to animage
+
+	radius += deltaTime * 3.5f;
+	return false;
+}
+
+void StdLandEffect::draw(const SceneRenderer &)
+{
+	glPushMatrix();
+
+	glTranslatef(position[0],position[1],position[2]);
+
+	ringState.setState();
+
+	float color[3] = {1,1,1};
+
+	//getSpawnTeamColor(teamColor,color);
+
+	float ageParam = age/lifetime;
+
+	glColor4f(color[0],color[1],color[2],1.0f-(age/lifetime));
+	glDepthMask(0);
+
+	drawRingXY(radius,0.5f + age,0.05f*radius,0.0f,0.9f);
+
+	glColor4f(1,1,1,1);
+	glDepthMask(1);
+	glPopMatrix();
+}
+
 //******************************** geo utiliys********************************
 
 void RadialToCartesian ( float angle, float rad, float *pos )
@@ -822,7 +926,7 @@ void RadialToCartesian ( float angle, float rad, float *pos )
 	pos[1] = cos(angle*deg2Rad)*rad;
 }
 
-void drawRingXY ( float rad, float z, float topsideOffset, float bottomUV )
+void drawRingXY ( float rad, float z, float topsideOffset, float bottomUV, float topUV )
 {
 	int segements = 32;
 
@@ -862,21 +966,21 @@ void drawRingXY ( float rad, float z, float topsideOffset, float bottomUV )
 		glVertex3f(nextPos[0],nextPos[1],0);
 
 		glNormal3f(-nextNormal[0],-nextNormal[1],-nextNormal[2]);
-		glTexCoord2f(1,1);
+		glTexCoord2f(1,topUV);
 		glVertex3f(nextPos2[0],nextPos2[1],z);
 
 		glNormal3f(-thisNormal[0],-thisNormal[1],-thisNormal[2]);
-		glTexCoord2f(0,1);
+		glTexCoord2f(0,topUV);
 		glVertex3f(thispos2[0],thispos2[1],z);
 
 		// the "outside"
 
 		glNormal3f(thisNormal[0],thisNormal[1],thisNormal[2]);
-		glTexCoord2f(0,1);
+		glTexCoord2f(0,topUV);
 		glVertex3f(thispos2[0],thispos2[1],z);
 
 		glNormal3f(nextNormal[0],nextNormal[1],nextNormal[2]);
-		glTexCoord2f(1,1);
+		glTexCoord2f(1,topUV);
 		glVertex3f(nextPos2[0],nextPos2[1],z);
 
 		glNormal3f(nextNormal[0],nextNormal[1],nextNormal[2]);

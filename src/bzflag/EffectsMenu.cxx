@@ -188,7 +188,7 @@ EffectsMenu::EffectsMenu()
   option->update();
   listHUD.push_back(option);
 
-	// Velocity for shot effects
+	// Fancy effects V: Velocity for shot effects
 	option = new HUDuiList;
 	option->setFontFace(MainMenu::getFontFace());
 	option->setLabel("Use Velocity on Shot Effects:");
@@ -199,6 +199,16 @@ EffectsMenu::EffectsMenu()
 	option->update();
 	listHUD.push_back(option);
 
+	// Fancy effects VI: Landing effects
+	option = new HUDuiList;
+	option->setFontFace(MainMenu::getFontFace());
+	option->setLabel("  Landing Effect:");
+	option->setCallback(callback, (void*)"b");
+	options = &option->getList();
+	optbuf = EffectsRenderer::instance().getLandEffectTypes();
+	options->assign(optbuf.begin(), optbuf.end());
+	option->update();
+	listHUD.push_back(option);
 
   initNavigation(listHUD, 1, listHUD.size() - 1);
 }
@@ -274,7 +284,8 @@ void EffectsMenu::resize(int _width, int _height)
   ((HUDuiList*)listHUD[i++])->setIndex(static_cast<int>(BZDB.eval("deathEffect")));
   ((HUDuiList*)listHUD[i++])->setIndex(static_cast<int>(BZDB.eval("shotEffect")));
   ((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("enableLocalShotEffect") ? 1 : 0);
-  ((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("useVelOnShotEffects") ? 1 : 0);
+	((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("useVelOnShotEffects") ? 1 : 0);
+	((HUDuiList*)listHUD[i++])->setIndex(static_cast<int>(BZDB.eval("landEffect")));
 }
 
 
@@ -341,11 +352,15 @@ void EffectsMenu::callback(HUDuiControl* w, void* data)
       BZDB.set("enableLocalShotEffect", list->getIndex() ? "1" : "0");
       break;
     }
-    case 'V': {
-      BZDB.set("useVelOnShotEffects", list->getIndex() ? "1" : "0");
-      break;
-    }
-  }
+		case 'V': {
+			BZDB.set("useVelOnShotEffects", list->getIndex() ? "1" : "0");
+			break;
+		}
+		case 'b': {
+			BZDB.set("landEffect", TextUtils::format("%d", list->getIndex()));
+			break;
+		}
+	}
 }
 
 
