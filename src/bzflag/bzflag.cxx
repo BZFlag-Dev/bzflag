@@ -208,6 +208,11 @@ static DefaultDBItem	defaultDBItems[] = {
   // type prefixes
   { "superPrefix",		"super_",		true,	StateDatabase::ReadWrite,	NULL },
 
+  // effects options
+  { "spawnEffect",		"default",		true,	StateDatabase::ReadWrite,	NULL },
+  { "shotEffect",		"default",		true,	StateDatabase::ReadWrite,	NULL },
+  { "enableLocalShotEffect",	"1",			true,	StateDatabase::ReadWrite,	NULL },
+
   // URL timeouts
   { "httpTimeout",		"15",			true,	StateDatabase::ReadWrite,	NULL }
 
