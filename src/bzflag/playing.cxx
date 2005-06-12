@@ -1992,7 +1992,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 	  }
 	}
 
-	if (!(BZDB.get("spawnEffect") == "none") && SceneRenderer::instance().useQuality() >= 2)
+	if (SceneRenderer::instance().useQuality() >= 2)
 	  EffectsRenderer::instance().addSpawnFlash(tank->getTeam(),pos);
 
 	tank->setStatus(PlayerState::Alive);
@@ -2429,7 +2429,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 	{
 	  player[shooterid]->addShot(firingInfo);
 
-	  if (!(BZDB.get("shotEffect") == "none") && SceneRenderer::instance().useQuality() >= 2)
+	  if (SceneRenderer::instance().useQuality() >= 2)
 	  {
 		  float	shotPos[3];
 		  player[shooterid]->getMuzzle(shotPos);

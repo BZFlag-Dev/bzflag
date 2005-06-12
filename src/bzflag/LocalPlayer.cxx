@@ -1246,7 +1246,7 @@ bool			LocalPlayer::fireShot()
 
   server->sendBeginShot(firingInfo);
 
-  if (!(BZDB.get("shotEffect") == "none") && BZDB.isTrue("enableLocalShotEffect") && SceneRenderer::instance().useQuality() >= 2)
+  if (BZDB.isTrue("enableLocalShotEffect") && SceneRenderer::instance().useQuality() >= 2)
 		EffectsRenderer::instance().addShotFlash(getTeam(),firingInfo.shot.pos,getAngle());
 
   if (gettingSound) {

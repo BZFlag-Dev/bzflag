@@ -108,7 +108,10 @@ void EffectsRenderer::rebuildContext(void)
 
 void EffectsRenderer::addSpawnFlash ( int team, const float* pos )
 {
-	int flashType = 1;	// dude bzdb REALY
+	if (!BZDB.isTrue("useFancyEffects"))
+		return;
+
+	int flashType = static_cast<int>(BZDB.eval("spawnEffect"));
 	
 	if (flashType == 0)
 		return;
@@ -144,15 +147,29 @@ std::vector<std::string> EffectsRenderer::getSpawnFlashTypes ( void )
 
 void EffectsRenderer::addShotFlash ( int team, const float* pos, float rot )
 {
-	ShotFlashEffect	*flash = new ShotFlashEffect;
-	float rots[3] = {0};
-	rots[2] = rot;
+	if (!BZDB.isTrue("useFancyEffects"))
+		return;
 
-	flash->setPos(pos,rots);
-	flash->setStartTime((float)TimeKeeper::getCurrent().getSeconds());
-	flash->setTeam(team);
+	int flashType = static_cast<int>(BZDB.eval("shotEffect"));
+	
+	if (flashType == 0)
+		return;
 
-	effectsList.push_back(flash);
+	switch(flashType)
+	{
+		case 1:
+			{
+				ShotFlashEffect	*flash = new ShotFlashEffect;
+				float rots[3] = {0};
+				rots[2] = rot;
+
+				flash->setPos(pos,rots);
+				flash->setStartTime((float)TimeKeeper::getCurrent().getSeconds());
+				flash->setTeam(team);
+
+				effectsList.push_back(flash);
+			}
+	}
 }
 
 std::vector<std::string> EffectsRenderer::getShotFlashTypes ( void )
@@ -166,7 +183,10 @@ std::vector<std::string> EffectsRenderer::getShotFlashTypes ( void )
 
 void EffectsRenderer::addDeathEffect ( int team, const float* pos, float rot )
 {
-	int effectType = 1;	// dude bzdb REALY
+	if (!BZDB.isTrue("useFancyEffects"))
+		return;
+
+	int effectType = static_cast<int>(BZDB.eval("deathEffect"));
 
 	if (effectType == 0)
 		return;
