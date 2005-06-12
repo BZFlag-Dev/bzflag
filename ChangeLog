@@ -4,6 +4,7 @@
 BZFlag 2.0.3
 ------------
 
+* Ricochet is performed on shots fired over the boundary wall - Daniel Remenak
 * Increase range of radar size setting in GUI Option menu - Mark Thomas
 * Fixed Menu rendering problems when radar size greater than 10 - Sean Morrison, Mark Thomas
 * Fixed Linux name resolution (server list) problem - Sean Morrison
@@ -22,7 +23,7 @@ BZFlag 2.0.3
 * Fixed bzfs crash because poll kick/ban - Julio Jimenez
 * Allow additional group modify permission lines - Frank Evers
 * bzfs creates default groups before parsing groupdb file - Frank Evers
-* +ALL and -ALL adds/removes all perms froma a group in groupdb - Frank Evers
+* +ALL and -ALL adds/removes all perms from a group in groupdb - Frank Evers
 * Support for +,- and ! operators in bzfs' groupdb file - Frank Evers
 
 BZFlag 2.0.2  "Queen of Maybe" (2005-03-18)

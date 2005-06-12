@@ -371,13 +371,14 @@ void			SegmentedShotStrategy::makeSegments(ObstacleEffect e)
     const Teleporter* teleporter = getFirstTeleporter(r, Epsilon, t, face);
     t -= minTime;
     minTime = 0.0f;
+    bool ignoreHit = false;
 
     // if hit outer wall with ricochet and hit is above top of wall
     // then ignore hit.
     if (!teleporter && building && (e == Reflect) &&
 	(building->getType() == WallObstacle::getClassName()) &&
 	((o[2] + t * d[2]) > building->getHeight())) {
-      t = timeLeft;
+      ignoreHit = true;
     }
 
     // construct next shot segment and add it to list
@@ -400,7 +401,13 @@ void			SegmentedShotStrategy::makeSegments(ObstacleEffect e)
 
     // check in reverse order to see what we hit first
     reason = ShotPathSegment::Through;
-    if (teleporter) {
+    if (ignoreHit) {
+      // uh...ignore this.  usually used if you shoot over the boundary wall.
+      // just move the point of origin and build the next segment
+      o[0] += t * d[0];
+      o[1] += t * d[1];
+      o[2] += t * d[2];
+    } else if (teleporter) {
       // entered teleporter -- teleport it
       unsigned int seed = shotPath.getShotId() + i;
       int source = World::getWorld()->getTeleporter(teleporter, face);
@@ -455,7 +462,7 @@ void			SegmentedShotStrategy::makeSegments(ObstacleEffect e)
 	  o[1] += t * d[1];
 	  o[2] += t * d[2];
 
-	  // reflect direction about normal to building
+	  // reflect direction about normal to ground
 	  float normal[3];
 	  normal[0] = 0.0f;
 	  normal[1] = 0.0f;
