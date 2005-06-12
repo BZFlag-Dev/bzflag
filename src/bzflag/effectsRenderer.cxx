@@ -634,7 +634,7 @@ FlashShotEffect::FlashShotEffect() : StdShotEffect()
 	// we use the jump jet texture upside-down to get a decent muzzle flare effect
 	texture = TextureManager::instance().getTextureID("jumpjets",false);
 	lifetime = 0.75f;
-	radius = 0.5f;
+	radius = 0.75f;
 
 	OpenGLGStateBuilder gstate;
 	gstate.reset();
@@ -659,9 +659,9 @@ bool FlashShotEffect::update ( float time )
 	// we live another day
 	// do stuff that maybe need to be done every time to animage
 	if (age < lifetime / 2)
-	  length = 6 * (age / lifetime);
+	  length = 8 * (age / lifetime);
 	else
-	  length = 6 * (1 - (age / lifetime));
+	  length = 8 * (1 - (age / lifetime));
 
 	return false;
 }
