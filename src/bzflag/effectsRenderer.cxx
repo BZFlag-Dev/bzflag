@@ -175,6 +175,14 @@ void EffectsRenderer::addShotEffect ( int team, const float* pos, float rot, con
 		case 2:
 			effect = new FlashShotEffect;
 			break;
+		case 3:
+			// composite effect
+			BZDB.set("shotEffect", "1", StateDatabase::User);
+			addShotEffect(team, pos, rot, vel);
+			BZDB.set("shotEffect", "2", StateDatabase::User);
+			addShotEffect(team, pos, rot, vel);
+			BZDB.set("shotEffect", "3", StateDatabase::User);
+			break;
 	}
 
 	if (effect)
@@ -195,6 +203,7 @@ std::vector<std::string> EffectsRenderer::getShotEffectTypes ( void )
 	ret.push_back(std::string("None"));
 	ret.push_back(std::string("Smoke Rings"));
 	ret.push_back(std::string("Muzzle Flash"));
+	ret.push_back(std::string("Smoke and Flash"));
 
 	return ret;
 }
