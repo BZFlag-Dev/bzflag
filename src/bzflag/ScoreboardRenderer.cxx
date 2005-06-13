@@ -34,7 +34,7 @@
 
 #define DEBUG_SHOWRATIOS 1
 
-std::string		ScoreboardRenderer::scoreSpacingLabel("88% 888 (888-888)[88]");
+std::string		ScoreboardRenderer::scoreSpacingLabel("88% 8888 888-888 [88]");
 std::string		ScoreboardRenderer::scoreLabel("Score");
 std::string		ScoreboardRenderer::killSpacingLabel("888/888 Hunt->");
 std::string		ScoreboardRenderer::killLabel("Kills");
@@ -251,7 +251,7 @@ void			ScoreboardRenderer::renderTeamScores (float x, float y, float dy){
   char score[44];
   for (i = 0 ; i < teamCount; i++){
     Team& team = World::getWorld()->getTeam(teams[i]);
-    sprintf(score, "%d (%d-%d) %d", team.won - team.lost, team.won, team.lost, team.size);
+    sprintf(score, "%3d (%3d-%-3d) %3d", team.won - team.lost, team.won, team.lost, team.size);
     hudColor3fv(Team::getRadarColor((TeamColor)teams[i]));
     fm.drawString(xn, y, 0, minorFontFace, minorFontSize, score);
     y -= dy;
@@ -425,18 +425,18 @@ void			ScoreboardRenderer::drawPlayerScore(const Player* player,
   }
 
   if (World::getWorld()->allowRabbit())
-    sprintf(score, "%s%2d%% %d(%d-%d)%s[%d]", dimString.c_str(),
+    sprintf(score, "%s%2d%% %4d %3d~%-3d%s[%2d]", dimString.c_str(),
 	    player->getRabbitScore(),
 	    player->getScore(), player->getWins(), player->getLosses(),
 	    highlightTKratio ? ColorStrings[CyanColor].c_str() : "",
 	    player->getTeamKills());
   else
-    sprintf(score, "%s%d (%d-%d)%s[%d]", dimString.c_str(),
+    sprintf(score, "%s%4d %4d~%-4d%s[%2d]", dimString.c_str(),
 	    player->getScore(), player->getWins(), player->getLosses(),
 	    highlightTKratio ? ColorStrings[CyanColor].c_str() : "",
 	    player->getTeamKills());
   if (LocalPlayer::getMyTank() != player)
-    sprintf(kills, "%d/%d", player->getLocalWins(), player->getLocalLosses());
+    sprintf(kills, "%3d/%-3d", player->getLocalWins(), player->getLocalLosses());
   else
     kills[0] = '\0';
 
