@@ -51,7 +51,7 @@ public:
     
   static void    setSort (int _sortby);
   static int     getSort (); 
-  const static char **getSortLabels();
+  static const char **getSortLabels();
   static const int SORT_SCORE = 0;
   static const int SORT_NORMALIZED = 1;
   static const int SORT_CALLSIGN = 2;

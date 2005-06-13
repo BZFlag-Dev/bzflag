@@ -943,7 +943,7 @@ void StdLandEffect::draw(const SceneRenderer &)
 
 	//getSpawnTeamColor(teamColor,color);
 
-	float ageParam = age/lifetime;
+//	float ageParam = age/lifetime;
 
 	glColor4f(color[0],color[1],color[2],1.0f-(age/lifetime));
 	glDepthMask(0);
