@@ -32,6 +32,7 @@
 #include "sound.h"
 #include "LocalPlayer.h"
 #include "World.h"
+#include "effectsRenderer.h"
 
 /* FIXME -- declarations from player.h */
 Player* lookupPlayer(PlayerId id);
@@ -97,6 +98,20 @@ void			SegmentedShotStrategy::update(float dt)
 	    const float* pos = segments[segment].ray.getOrigin();
 	    playWorldSound(SFX_RICOCHET, pos,
 		getPath().getPlayer() == LocalPlayer::getMyTank()->getId());
+
+			// this is fugly but it's what we do
+			float dir[3];
+			dir[0] = segments[segment].ray.getDirection()[0] - segments[segment-1].ray.getDirection()[0];
+			dir[1] = segments[segment].ray.getDirection()[1] - segments[segment-1].ray.getDirection()[1];
+			dir[2] = segments[segment].ray.getDirection()[2] - segments[segment-1].ray.getDirection()[2];
+
+			float rots[2];
+			rots[0] = atan2(dir[1],dir[0]);
+
+			float mag = sqrt(dir[0]*dir[0] + dir[1]*dir[1] + dir[2]*dir[2]);
+			rots[1] = atan2(dir[2]/mag,1);
+			
+			EffectsRenderer::instance().addRicoEffect(0,pos,rots);
 	    break;
 	  }
 	  default:

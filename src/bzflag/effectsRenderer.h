@@ -179,6 +179,21 @@ protected:
 	float			radius;
 };
 
+class StdRicoEffect : public BasicEffect
+{
+public:
+	StdRicoEffect();
+	virtual ~StdRicoEffect();
+
+	virtual bool update ( float time );
+	virtual void draw ( const SceneRenderer& sr );
+protected:
+	int				texture;
+	OpenGLGState	ringState;
+
+	float			radius;
+};
+
 class EffectsRenderer : public Singleton<EffectsRenderer>
 {
 public:
@@ -216,6 +231,11 @@ public:
 	// landing effects
 	void addLandEffect ( int team, const float* pos, float rot );
 	std::vector<std::string> getLandEffectTypes ( void );
+
+	// rico effect
+	void addRicoEffect ( int team, const float* pos, float rot[2], const float* vel = NULL );
+	std::vector<std::string> getRicoEffectTypes ( void );
+
 
 protected:
 	friend class Singleton<EffectsRenderer>;

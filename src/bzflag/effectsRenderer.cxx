@@ -336,6 +336,50 @@ std::vector<std::string> EffectsRenderer::getLandEffectTypes ( void )
 	return ret;
 }
 
+void EffectsRenderer::addRicoEffect ( int team, const float* pos, float rot[2], const float* vel)
+{
+	if (!BZDB.isTrue("useFancyEffects"))
+		return;
+
+	int flashType = static_cast<int>(BZDB.eval("ricoEffect"));
+
+	if (flashType == 0)
+		return;
+
+	float rots[3] = {0};
+	rots[2] = rot[0];
+	rots[1] = rot[1];
+
+	BasicEffect	*effect = NULL;
+	switch(flashType)
+	{
+	case 1:
+		effect = new StdRicoEffect;
+		break;
+	}
+
+	if (effect)
+	{
+		effect->setPos(pos,rots);
+		effect->setStartTime((float)TimeKeeper::getCurrent().getSeconds());
+		if (BZDB.isTrue("useVelOnShotEffects"))
+			effect->setVel(vel);
+		effect->setTeam(team);
+
+		effectsList.push_back(effect);
+	}
+}
+
+std::vector<std::string> EffectsRenderer::getRicoEffectTypes ( void )
+{
+	std::vector<std::string> ret;
+	ret.push_back(std::string("None"));
+	ret.push_back(std::string("Ring"));
+//	ret.push_back(std::string("Sparks"));
+
+	return ret;
+}
+
 
 //****************** effects base class*******************************
 BasicEffect::BasicEffect()
@@ -977,6 +1021,78 @@ void StdGMPuffEffect::draw(const SceneRenderer &)
 	glDepthMask(0);
 
 	drawRingYZ(radius,-0.25f -(age * 0.125f),0.5f+age*0.75f,0.50f,pos[2]);
+
+	glColor4f(1,1,1,1);
+	glDepthMask(1);
+	glPopMatrix();
+}
+
+//******************StdRicoEffect****************
+StdRicoEffect::StdRicoEffect() : BasicEffect()
+{
+	texture = TextureManager::instance().getTextureID("blend_flash",false);
+	lifetime = 0.5f;
+	radius = 0.25f;
+
+
+	OpenGLGStateBuilder gstate;
+	gstate.reset();
+	gstate.setShading();
+	gstate.setBlending((GLenum) GL_SRC_ALPHA,(GLenum) GL_ONE_MINUS_SRC_ALPHA);
+	gstate.setAlphaFunc();
+
+	if (texture >-1)
+		gstate.setTexture(texture);
+
+	ringState = gstate.getState();
+}
+
+StdRicoEffect::~StdRicoEffect()
+{
+}
+
+bool StdRicoEffect::update ( float time )
+{
+	// see if it's time to die
+	// if not update all those fun times
+	if ( BasicEffect::update(time))
+		return true;
+
+	// nope it's not.
+	// we live another day
+	// do stuff that maybe need to be done every time to animage
+
+	radius += deltaTime*6.5f;
+	return false;
+}
+
+void StdRicoEffect::draw(const SceneRenderer &)
+{
+	glPushMatrix();
+
+	float pos[3];
+
+	pos[0] = position[0] + velocity[0] * age;
+	pos[1] = position[1] + velocity[1] * age;
+	pos[2] = position[2] + velocity[2] * age;
+
+	glTranslatef(pos[0],pos[1],pos[2]);
+	glRotatef((rotation[2]/deg2Rad)+180,0,0,1);
+	glRotatef(rotation[1]/deg2Rad,0,1,0);
+
+	ringState.setState();
+
+	float color[3] = {0};
+	color[0] = color[1] = color[2] = 1;
+
+	float alpha = 0.5f-(age/lifetime);
+	if (alpha < 0.000001f)
+		alpha = 0.000001f;
+
+	glColor4f(color[0],color[1],color[2],alpha);
+	glDepthMask(0);
+
+	drawRingYZ(radius,-0.5f,0.5f,0.50f,pos[2]);
 
 	glColor4f(1,1,1,1);
 	glDepthMask(1);
