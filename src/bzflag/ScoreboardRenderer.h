@@ -23,6 +23,7 @@
 
 /* local interface headers */
 #include "Player.h"
+#include "RemotePlayer.h"
 
 
 /**
@@ -37,30 +38,50 @@ public:
   void		setDim(bool);
   void    setWindowSize (float x, float y, float width, float height);
   void		render();
-  void		setHunting(bool _hunting);
-  bool		getHunting() const;
-  void		setHuntIndicator(bool _huntIndicator);
-  void		setHuntPosition(int _huntPosition);
-  int		  getHuntPosition() const;
-  bool		getHuntSelection() const;
-  void		setHuntSelection(bool _huntSelection);
-  bool		getHuntIndicator() const;
-  bool		getHunt() const;
-  void		setHunt(bool _showHunt);
-  
+
+  static const int HUNT_NONE = 0;
+  static const int HUNT_SELECTING = 1;
+  static const int HUNT_ENABLED = 2;
+  void	  setHuntState(int _state);
+  int		  getHuntState() const;
+  void		setHuntNextEvent ();    // invoked when 'down' button pressed
+  void		setHuntPrevEvent ();    // invoked when 'up' button pressed
+  void		setHuntSelectEvent ();  // invoked when 'fire' button pressed
+  void    clearHuntedTank ();
+    
+  static void    setSort (int _sortby);
+  static int     getSort (); 
+  const static char **getSortLabels();
+  static const int SORT_SCORE = 0;
+  static const int SORT_NORMALIZED = 1;
+  static const int SORT_CALLSIGN = 2;
+  static const int SORT_TKS = 3;
+  static const int SORT_TKRATIO = 4;
+  static const int SORT_TEAM = 5;
+  static const int SORT_MYRATIO = 6;
+  static const int SORT_MAXNUM = SORT_MYRATIO;
+
 protected:
   void		hudColor3fv(const GLfloat*);
   void		renderTeamScores (float y, float x, float dy);
   void		renderScoreboard(void);
   void	  renderCtfFlags (void);
   void		drawPlayerScore(const Player*,
-				  float x1, float x2, float x3, float xs, float y);
+				  float x1, float x2, float x3, float xs, float y, bool huntInd);
+  static const char *sortLabels[SORT_MAXNUM+2];
+  static int sortMode;
+  void   stringAppendNormalized (std::string *s, float n);
+
+
 
 private:
   void		setMinorFontSize(float height);
   void		setLabelsFontSize(float height);
-  static int	tankScoreCompare(const void* _a, const void* _b);
   static int	teamScoreCompare(const void* _a, const void* _b);
+  static int  sortCompareCp(const void* _a, const void* _b);
+  static int  sortCompareI2(const void* _a, const void* _b);
+  Player** newSortedList (int sortType, bool obsLast, int *_numPlayers);
+
 
 private:
   float winX;
@@ -68,7 +89,7 @@ private:
   float winWidth;
   float winHeight;
 
-  GLfloat		messageColor[3];
+  GLfloat	messageColor[3];
   int		  minorFontFace;
   float		minorFontSize;
   int		  labelsFontFace;
@@ -91,10 +112,10 @@ private:
   static std::string	playerLabel;
   static std::string	teamCountSpacingLabel;
   bool		huntIndicator;
-  bool		hunting;
   int			huntPosition;
-  bool		huntSelection;
-  bool		showHunt;
+  bool		huntSelectEvent;
+  int 		huntPositionEvent;
+  int     huntState;  
 };
 
 

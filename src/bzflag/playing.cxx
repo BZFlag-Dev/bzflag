@@ -682,23 +682,19 @@ static bool		doKeyCommon(const BzfKeyEvent& key, bool pressed)
       HUDDialogStack::get()->push(mainMenu);
     }
     return true;
-  } else if (scoreboard->getHunt()) {
-    if (key.button == BzfKeyEvent::Down ||
-	KEYMGR.get(key, true) == "identify") {
-      if (pressed) {
-	scoreboard->setHuntPosition(scoreboard->getHuntPosition()+1);
-      }
+  } else if (scoreboard->getHuntState() == ScoreboardRenderer::HUNT_SELECTING) {
+    if (key.button == BzfKeyEvent::Down || KEYMGR.get(key, true) == "identify") {
+      if (pressed)
+      	scoreboard->setHuntNextEvent();
       return true;
-    } else if (key.button == BzfKeyEvent::Up ||
-	       KEYMGR.get(key, true) == "drop") {
-      if (pressed) {
-	scoreboard->setHuntPosition(scoreboard->getHuntPosition()-1);
-      }
+    } else if (key.button == BzfKeyEvent::Up || KEYMGR.get(key, true) == "drop") {
+      if (pressed)
+      	scoreboard->setHuntPrevEvent();
       return true;
     } else if (KEYMGR.get(key, true) == "fire") {
       if (pressed) {
-	scoreboard->setHuntSelection(true);
-	playLocalSound(SFX_HUNT_SELECT);
+      	scoreboard->setHuntSelectEvent();
+      	playLocalSound(SFX_HUNT_SELECT);
       }
       return true;
     }
@@ -2398,13 +2394,13 @@ static void		handleServerMessage(bool human, uint16_t code,
 	    hud->setAlert(0, "You are now the rabbit.", 10.0f, false);
 	    playLocalSound(SFX_HUNT_SELECT);
 	  }
-	  scoreboard->setHunting(false);
+	  scoreboard->setHuntState(ScoreboardRenderer::HUNT_NONE);
 	} else if (myTank->getTeam() != ObserverTeam) {
 	  myTank->changeTeam(RogueTeam);
 	  if (myTank->isPaused() || myTank->isAlive())
 	    wasRabbit = false;
 	  rabbit->setHunted(true);
-	  scoreboard->setHunting(true);
+	  scoreboard->setHuntState(ScoreboardRenderer::HUNT_ENABLED);
 	}
 
 	addMessage(rabbit, "is now the rabbit", 3, true);
@@ -5714,7 +5710,7 @@ static void		playingLoop()
     if (myTank) {
       if (myTank->isAlive() && !myTank->isPaused()) {
 	doMotion();
-	if (scoreboard->getHunting()) {
+	if (scoreboard->getHuntState()==ScoreboardRenderer::HUNT_ENABLED) {
 	  setHuntTarget(); //spot hunt target
 	}
 	if (myTank->getTeam() != ObserverTeam &&

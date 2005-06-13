@@ -32,6 +32,7 @@
 #include "HUDuiControl.h"
 #include "HUDuiList.h"
 #include "HUDuiLabel.h"
+#include "ScoreboardRenderer.h"
 
 /* FIXME - from playing.h */
 SceneRenderer* getSceneRenderer();
@@ -59,6 +60,17 @@ GUIOptionsMenu::GUIOptionsMenu()
   options->push_back(std::string("Normal"));
   options->push_back(std::string("Fast"));
   options->push_back(std::string("Enhanced"));
+  option->update();
+  listHUD.push_back(option);
+
+  option = new HUDuiList;
+  option->setFontFace(fontFace);
+  option->setLabel("Scoreboard Sort:");
+  option->setCallback(callback, (void*)"p");
+  options = &option->getList();
+  const char **sortLabels = ScoreboardRenderer::getSortLabels();
+  while ( *sortLabels != NULL)
+    options->push_back(std::string(*sortLabels++));
   option->update();
   listHUD.push_back(option);
 
@@ -305,6 +317,7 @@ void			GUIOptionsMenu::resize(int _width, int _height)
   if (renderer) {
     int i = 1;
     ((HUDuiList*)listHUD[i++])->setIndex(BZDBCache::radarStyle);
+    ((HUDuiList*)listHUD[i++])->setIndex(ScoreboardRenderer::getSort());
     ((HUDuiList*)listHUD[i++])->setIndex(static_cast<int>(BZDB.eval
 							  ("scorefontsize")));
     ((HUDuiList*)listHUD[i++])->setIndex(static_cast<int>(BZDB.eval
@@ -473,6 +486,10 @@ void			GUIOptionsMenu::callback(HUDuiControl* w, void* data)
 	BZDB.set("displayReloadTimer", list->getIndex() ? "1" : "0");
 	break;
       }
+      
+    case 'p':
+      ScoreboardRenderer::setSort (list->getIndex());
+      break;
 
   }
 }

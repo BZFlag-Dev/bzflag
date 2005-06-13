@@ -4,6 +4,7 @@
 BZFlag 2.0.3
 ------------
 
+* Added scoreboard sort option - Mark Thomas, Karsten Behrmann ('BearPerson')
 * Ricochet is performed on shots fired over the boundary wall - Daniel Remenak
 * Increase range of radar size setting in GUI Option menu - Mark Thomas
 * Fixed Menu rendering problems when radar size greater than 10 - Sean Morrison, Mark Thomas

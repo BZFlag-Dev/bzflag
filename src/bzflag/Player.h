@@ -85,6 +85,8 @@ public:
   short		getLosses() const;
   short		getTeamKills() const;
   float		getTKRatio() const;
+  float		getNormalizedScore() const;
+  float		getLocalNormalizedScore() const;
   short		getScore() const;
   const float*	getDimensions() const;
   short		getRabbitScore() const;

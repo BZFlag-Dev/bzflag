@@ -160,6 +160,18 @@ float Player::getTKRatio() const
   }
 }
 
+// returns a value between 1.0 and -1.0
+float Player::getNormalizedScore() const
+{
+  return ((float)wins - losses) / ((wins+losses>20) ? wins+losses : 20);
+}
+
+float Player::getLocalNormalizedScore() const
+{
+  return ((float)localWins - localLosses) 
+        / ((localWins+localLosses>5) ? localWins+localLosses : 5);
+}
+
 short Player::getRabbitScore() const
 {
   return (int)(rabbitRank(wins, losses) * 100.0);
