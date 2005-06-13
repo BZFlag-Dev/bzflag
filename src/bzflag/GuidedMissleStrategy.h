@@ -56,6 +56,8 @@ class GuidedMissileStrategy : public ShotStrategy {
     float		nextPos[3];
     BoltSceneNode*	ptSceneNode;
 
+		float	puffTime;
+		TimeKeeper lastPuff;
     bool		needUpdate;
     PlayerId		lastTarget;
 };

@@ -210,6 +210,18 @@ EffectsMenu::EffectsMenu()
   option->update();
   listHUD.push_back(option);
 
+	// Fancy effects VI: Landing effects
+	option = new HUDuiList;
+	option->setFontFace(MainMenu::getFontFace());
+	option->setLabel("  GM Smoke Effect:");
+	option->setCallback(callback, (void*)"G");
+	options = &option->getList();
+	optbuf = EffectsRenderer::instance().getGMPuffEffectTypes();
+	options->assign(optbuf.begin(), optbuf.end());
+	option->update();
+	listHUD.push_back(option);
+
+
   initNavigation(listHUD, 1, listHUD.size() - 1);
 }
 
@@ -284,8 +296,9 @@ void EffectsMenu::resize(int _width, int _height)
   ((HUDuiList*)listHUD[i++])->setIndex(static_cast<int>(BZDB.eval("deathEffect")));
   ((HUDuiList*)listHUD[i++])->setIndex(static_cast<int>(BZDB.eval("shotEffect")));
   ((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("enableLocalShotEffect") ? 1 : 0);
-  ((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("useVelOnShotEffects") ? 1 : 0);
-  ((HUDuiList*)listHUD[i++])->setIndex(static_cast<int>(BZDB.eval("landEffect")));
+	((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("useVelOnShotEffects") ? 1 : 0);
+	((HUDuiList*)listHUD[i++])->setIndex(static_cast<int>(BZDB.eval("landEffect")));
+	((HUDuiList*)listHUD[i++])->setIndex(static_cast<int>(BZDB.eval("gmPuffEffect")));
 }
 
 
@@ -352,15 +365,19 @@ void EffectsMenu::callback(HUDuiControl* w, void* data)
       BZDB.set("enableLocalShotEffect", list->getIndex() ? "1" : "0");
       break;
     }
-    case 'V': {
-      BZDB.set("useVelOnShotEffects", list->getIndex() ? "1" : "0");
-      break;
-    }
-    case 'b': {
-      BZDB.set("landEffect", TextUtils::format("%d", list->getIndex()));
-      break;
-    }
-  }
+		case 'V': {
+			BZDB.set("useVelOnShotEffects", list->getIndex() ? "1" : "0");
+			break;
+		}
+		case 'b': {
+			BZDB.set("landEffect", TextUtils::format("%d", list->getIndex()));
+			break;
+		}
+		case 'G': {
+			BZDB.set("gmPuffEffect", TextUtils::format("%d", list->getIndex()));
+			break;
+		}
+	}
 }
 
 

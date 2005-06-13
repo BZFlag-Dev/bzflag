@@ -110,6 +110,7 @@ const std::string StateDatabase::BZDB_FRICTION		= std::string("_friction");
 const std::string StateDatabase::BZDB_GMACTIVATIONTIME	= std::string("_gmActivationTime");
 const std::string StateDatabase::BZDB_GMADLIFE		= std::string("_gmAdLife");
 const std::string StateDatabase::BZDB_GMTURNANGLE	= std::string("_gmTurnAngle");
+const std::string StateDatabase::BZDB_GMPUFFTIME	= std::string("_gmPuffTime");
 const std::string StateDatabase::BZDB_GRAVITY		= std::string("_gravity");
 const std::string StateDatabase::BZDB_HANDICAPSCOREDIFF = std::string("_handicapScoreDiff");
 const std::string StateDatabase::BZDB_HANDICAPVELAD	= std::string("_handicapVelAd");

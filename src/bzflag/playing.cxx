@@ -3060,9 +3060,22 @@ void			addShotExplosion(const float* pos)
     playWorldSound(SFX_SHOT_BOOM, pos);
 }
 
-void			addShotPuff(const float* pos)
+void			addShotPuff(const float* pos, float azimuth, float elevation)
 {
-  addExplosion(pos, 0.3f * BZDBCache::tankLength, 0.8f, true);
+	bool useClasicPuff  = false;
+
+	if (BZDB.evalInt("gmPuffEffect") == 1)
+		useClasicPuff = true;
+
+	if (useClasicPuff)
+	{
+		addExplosion(pos, 0.3f * BZDBCache::tankLength, 0.8f, true);
+		return;
+	}
+
+	float rots[2] = {azimuth,elevation};
+	EffectsRenderer::instance().addGMPuffEffect(0,pos,rots,NULL);
+
 }
 
 // update events from outside if they should be checked

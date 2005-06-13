@@ -217,6 +217,7 @@ static DefaultDBItem	defaultDBItems[] = {
   { "deathEffect",		"1",			true,	StateDatabase::ReadWrite,	NULL },
 	{ "useVelOnShotEffects",		"1",			true,	StateDatabase::ReadWrite,	NULL },
 	{ "landEffect",		"1",			true,	StateDatabase::ReadWrite,	NULL },
+	{ "gmPuffEffect",		"2",			true,	StateDatabase::ReadWrite,	NULL },
 
   // URL timeouts
   { "httpTimeout",		"15",			true,	StateDatabase::ReadWrite,	NULL }

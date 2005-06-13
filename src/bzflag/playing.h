@@ -65,7 +65,7 @@ bool			addExplosion(const float* pos,
 				float size, float duration);
 void			addTankExplosion(const float* pos);
 void			addShotExplosion(const float* pos);
-void			addShotPuff(const float* pos);
+void			addShotPuff(const float* pos, float azimuth, float elevation);
 void			warnAboutMainFlags();
 void			warnAboutRadarFlags();
 void			addPlayingCallback(PlayingCallback, void* data);

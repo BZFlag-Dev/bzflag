@@ -153,12 +153,14 @@ std::vector<std::string> EffectsRenderer::getSpawnEffectTypes ( void )
 	return ret;
 }
 
-void EffectsRenderer::addShotEffect ( int team, const float* pos, float rot, const float *vel )
+void EffectsRenderer::addShotEffect ( int team, const float* pos, float rot, const float *vel, int _type)
 {
 	if (!BZDB.isTrue("useFancyEffects"))
 		return;
 
-	int flashType = static_cast<int>(BZDB.eval("shotEffect"));
+	int flashType = _type;
+	if (flashType < 0)
+		flashType = static_cast<int>(BZDB.eval("shotEffect"));
 	
 	if (flashType == 0)
 		return;
@@ -177,11 +179,8 @@ void EffectsRenderer::addShotEffect ( int team, const float* pos, float rot, con
 			break;
 		case 3:
 			// composite effect
-			BZDB.set("shotEffect", "1", StateDatabase::User);
-			addShotEffect(team, pos, rot, vel);
-			BZDB.set("shotEffect", "2", StateDatabase::User);
-			addShotEffect(team, pos, rot, vel);
-			BZDB.set("shotEffect", "3", StateDatabase::User);
+			addShotEffect(team, pos, rot, vel,1);
+			addShotEffect(team, pos, rot, vel,2);
 			break;
 	}
 
@@ -204,6 +203,54 @@ std::vector<std::string> EffectsRenderer::getShotEffectTypes ( void )
 	ret.push_back(std::string("Smoke Rings"));
 	ret.push_back(std::string("Muzzle Flash"));
 	ret.push_back(std::string("Smoke and Flash"));
+
+	return ret;
+}
+
+void EffectsRenderer::addGMPuffEffect ( int team, const float* pos, float rot[2], const float* vel)
+{
+	if (!BZDB.isTrue("useFancyEffects"))
+		return;
+
+	int flashType = static_cast<int>(BZDB.eval("gmPuffEffect"));
+
+	if (flashType == 0)
+		return;
+
+	float rots[3] = {0};
+	rots[2] = rot[0];
+	rots[1] = rot[1];
+
+	BasicEffect	*effect = NULL;
+	switch(flashType)
+	{
+	case 1:
+		// handled outside this manager in the "old" code
+		break;
+
+	case 2:
+		effect = new StdGMPuffEffect;
+		break;
+	}
+
+	if (effect)
+	{
+		effect->setPos(pos,rots);
+		effect->setStartTime((float)TimeKeeper::getCurrent().getSeconds());
+		if (BZDB.isTrue("useVelOnShotEffects"))
+			effect->setVel(vel);
+		effect->setTeam(team);
+
+		effectsList.push_back(effect);
+	}
+}
+
+std::vector<std::string> EffectsRenderer::getGMPuffEffectTypes ( void )
+{
+	std::vector<std::string> ret;
+	ret.push_back(std::string("None"));
+	ret.push_back(std::string("Clasic Puff"));
+	ret.push_back(std::string("Shock Cone"));
 
 	return ret;
 }
@@ -622,7 +669,7 @@ FlashShotEffect::FlashShotEffect() : StdShotEffect()
 	// we use the jump jet texture upside-down to get a decent muzzle flare effect
 	texture = TextureManager::instance().getTextureID("jumpjets",false);
 	lifetime = 0.75f;
-	radius = 0.75f;
+	radius = 0.5f;
 
 	OpenGLGStateBuilder gstate;
 	gstate.reset();
@@ -647,9 +694,9 @@ bool FlashShotEffect::update ( float time )
 	// we live another day
 	// do stuff that maybe need to be done every time to animage
 	if (age < lifetime / 2)
-	  length = 8 * (age / lifetime);
+	  length = 6 * (age / lifetime);
 	else
-	  length = 8 * (1 - (age / lifetime));
+	  length = 6 * (1 - (age / lifetime));
 
 	return false;
 }
@@ -696,16 +743,16 @@ void FlashShotEffect::draw(const SceneRenderer &)
 		glVertex3f(0,0,-radius);
 
 		// side 2
-		glTexCoord2f(1,1);
+		glTexCoord2f(0,0);
 		glVertex3f(0,0,-radius);
 
-		glTexCoord2f(1,0);
+		glTexCoord2f(0,1);
 		glVertex3f(0,length,-radius);
 
-		glTexCoord2f(0,0);
+		glTexCoord2f(1,1);
 		glVertex3f(0,length,radius);
 
-		glTexCoord2f(0,1);
+		glTexCoord2f(1,0);
 		glVertex3f(0,0,radius);
 
 	glEnd();
@@ -858,6 +905,78 @@ void StdLandEffect::draw(const SceneRenderer &)
 	glDepthMask(0);
 
 	drawRingXY(radius,0.5f + age,0.05f*radius,0.0f,0.9f);
+
+	glColor4f(1,1,1,1);
+	glDepthMask(1);
+	glPopMatrix();
+}
+
+//******************StdGMPuffEffect****************
+StdGMPuffEffect::StdGMPuffEffect() : BasicEffect()
+{
+	texture = TextureManager::instance().getTextureID("blend_flash",false);
+	lifetime = 6.5f;
+	radius = 0.125f;
+
+
+	OpenGLGStateBuilder gstate;
+	gstate.reset();
+	gstate.setShading();
+	gstate.setBlending((GLenum) GL_SRC_ALPHA,(GLenum) GL_ONE_MINUS_SRC_ALPHA);
+	gstate.setAlphaFunc();
+
+	if (texture >-1)
+		gstate.setTexture(texture);
+
+	ringState = gstate.getState();
+}
+
+StdGMPuffEffect::~StdGMPuffEffect()
+{
+}
+
+bool StdGMPuffEffect::update ( float time )
+{
+	// see if it's time to die
+	// if not update all those fun times
+	if ( BasicEffect::update(time))
+		return true;
+
+	// nope it's not.
+	// we live another day
+	// do stuff that maybe need to be done every time to animage
+
+	radius += deltaTime*0.5f;
+	return false;
+}
+
+void StdGMPuffEffect::draw(const SceneRenderer &)
+{
+	glPushMatrix();
+
+	float pos[3];
+
+	pos[0] = position[0] + velocity[0] * age;
+	pos[1] = position[1] + velocity[1] * age;
+	pos[2] = position[2] + velocity[2] * age;
+
+	glTranslatef(pos[0],pos[1],pos[2]);
+	glRotatef(180+rotation[2]/deg2Rad,0,0,1);
+	glRotatef(rotation[1]/deg2Rad,0,1,0);
+
+	ringState.setState();
+
+	float color[3] = {0};
+	color[0] = color[1] = color[2] = 1;
+
+	float alpha = 0.5f-(age/lifetime);
+	if (alpha < 0.000001f)
+		alpha = 0.000001f;
+
+	glColor4f(color[0],color[1],color[2],alpha);
+	glDepthMask(0);
+
+	drawRingYZ(radius,-0.25f -(age * 0.125f),0.5f+age*0.75f,0.50f,pos[2]);
 
 	glColor4f(1,1,1,1);
 	glDepthMask(1);

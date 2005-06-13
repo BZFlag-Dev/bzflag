@@ -164,6 +164,21 @@ protected:
 	float			radius;
 };
 
+class StdGMPuffEffect : public BasicEffect
+{
+public:
+	StdGMPuffEffect();
+	virtual ~StdGMPuffEffect();
+
+	virtual bool update ( float time );
+	virtual void draw ( const SceneRenderer& sr );
+protected:
+	int				texture;
+	OpenGLGState	ringState;
+
+	float			radius;
+};
+
 class EffectsRenderer : public Singleton<EffectsRenderer>
 {
 public:
@@ -187,8 +202,12 @@ public:
 	std::vector<std::string> getSpawnEffectTypes ( void );
 
 	// shot flashes
-	void addShotEffect ( int team, const float* pos, float rot, const float* vel = NULL );
+	void addShotEffect ( int team, const float* pos, float rot, const float* vel = NULL, int _type = -1 );
 	std::vector<std::string> getShotEffectTypes ( void );
+
+	// gm puffs
+	void addGMPuffEffect ( int team, const float* pos, float rot[2], const float* vel = NULL );
+	std::vector<std::string> getGMPuffEffectTypes ( void );
 
 	// death effects
 	void addDeathEffect ( int team, const float* pos, float rot );

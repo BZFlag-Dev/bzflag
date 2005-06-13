@@ -27,7 +27,7 @@
 /* FIXME - from player.h */
 void addShotExplosion(const float* pos);
 Player* lookupPlayer(PlayerId id);
-void addShotPuff(const float* pos);
+void addShotPuff(const float* pos, float azimuth, float elevation);
 
 
 static float limitAngle(float a)
@@ -99,6 +99,9 @@ GuidedMissileStrategy::GuidedMissileStrategy(ShotPath* _path) :
 
   // no last target
   lastTarget = NoPlayer;
+
+	lastPuff = currentTime;
+	puffTime = BZDB.eval(StateDatabase::BZDB_GMPUFFTIME);
 }
 
 GuidedMissileStrategy::~GuidedMissileStrategy()
@@ -203,12 +206,13 @@ void GuidedMissileStrategy::update(float dt)
   newDirection[2] = sinf(elevation);
   Ray ray = Ray(nextPos, newDirection);
 
-  // Changed: GM leave smoke trail, call add puff every 3 updates
-  if (!BZDB.isTrue ("SupressGMSmoke")) {
-    if ((++renderTimes % 3) == 0) {
-      addShotPuff (nextPos);
-    }
-  }
+	renderTimes++;
+  // Changed: GM smoke trail, leave it every seconds, none of this per frame crap
+	if ( currentTime.getSeconds() - lastPuff.getSeconds() > puffTime )
+	{
+		lastPuff = currentTime;
+		addShotPuff (nextPos,azimuth,elevation);
+	}
 
   // get next position
   float shotSpeed = BZDB.eval(StateDatabase::BZDB_SHOTSPEED);
