@@ -146,7 +146,7 @@ std::vector<std::string> EffectsRenderer::getSpawnEffectTypes ( void )
 {
 	std::vector<std::string> ret;
 	ret.push_back(std::string("None"));
-	ret.push_back(std::string("Blosom"));
+	ret.push_back(std::string("Blossom"));
 	ret.push_back(std::string("Cone"));
 	ret.push_back(std::string("Rings"));
 
