@@ -145,7 +145,7 @@ void EffectsRenderer::addSpawnEffect ( int team, const float* pos )
 std::vector<std::string> EffectsRenderer::getSpawnEffectTypes ( void )
 {
 	std::vector<std::string> ret;
-	ret.push_back(std::string("None"));
+	ret.push_back(std::string("Off"));
 	ret.push_back(std::string("Blossom"));
 	ret.push_back(std::string("Cone"));
 	ret.push_back(std::string("Rings"));
@@ -199,7 +199,7 @@ void EffectsRenderer::addShotEffect ( int team, const float* pos, float rot, con
 std::vector<std::string> EffectsRenderer::getShotEffectTypes ( void )
 {
 	std::vector<std::string> ret;
-	ret.push_back(std::string("None"));
+	ret.push_back(std::string("Off"));
 	ret.push_back(std::string("Smoke Rings"));
 	ret.push_back(std::string("Muzzle Flash"));
 	ret.push_back(std::string("Smoke and Flash"));
@@ -248,7 +248,7 @@ void EffectsRenderer::addGMPuffEffect ( int team, const float* pos, float rot[2]
 std::vector<std::string> EffectsRenderer::getGMPuffEffectTypes ( void )
 {
 	std::vector<std::string> ret;
-	ret.push_back(std::string("None"));
+	ret.push_back(std::string("Off"));
 	ret.push_back(std::string("Classic Puff"));
 	ret.push_back(std::string("Shock Cone"));
 
@@ -289,7 +289,7 @@ void EffectsRenderer::addDeathEffect ( int team, const float* pos, float rot )
 std::vector<std::string> EffectsRenderer::getDeathEffectTypes ( void )
 {
 	std::vector<std::string> ret;
-	ret.push_back(std::string("None"));
+	ret.push_back(std::string("Off"));
 	ret.push_back(std::string("We Got Death Star"));
 
 	return ret;
@@ -330,7 +330,7 @@ void EffectsRenderer::addLandEffect ( int team, const float* pos, float rot )
 std::vector<std::string> EffectsRenderer::getLandEffectTypes ( void )
 {
 	std::vector<std::string> ret;
-	ret.push_back(std::string("None"));
+	ret.push_back(std::string("Off"));
 	ret.push_back(std::string("Dirt Flash"));
 
 	return ret;
@@ -373,7 +373,7 @@ void EffectsRenderer::addRicoEffect ( int team, const float* pos, float rot[2], 
 std::vector<std::string> EffectsRenderer::getRicoEffectTypes ( void )
 {
 	std::vector<std::string> ret;
-	ret.push_back(std::string("None"));
+	ret.push_back(std::string("Off"));
 	ret.push_back(std::string("Ring"));
 //	ret.push_back(std::string("Sparks"));
 

@@ -114,7 +114,7 @@ EffectsMenu::EffectsMenu()
   option->setLabel("Track Mark Culling:");
   option->setCallback(callback, (void*)"c");
   options = &option->getList();
-  options->push_back(std::string("None"));
+  options->push_back(std::string("Off"));
   options->push_back(std::string("Fast"));
   options->push_back(std::string("Best"));
   option->update();
@@ -150,7 +150,7 @@ EffectsMenu::EffectsMenu()
   option->setLabel("Local Spawn Effect:");
   option->setCallback(callback, (void*)"L");
   options = &option->getList();
-  options->push_back(std::string("Disabled"));
+  options->push_back(std::string("Off"));
   options->push_back(std::string("Same as spawns"));
   option->update();
   listHUD.push_back(option);
@@ -183,7 +183,7 @@ EffectsMenu::EffectsMenu()
   option->setLabel("Local Shot Effect:");
   option->setCallback(callback, (void*)"l");
   options = &option->getList();
-  options->push_back(std::string("Disabled"));
+  options->push_back(std::string("Off"));
   options->push_back(std::string("Same as shots"));
   option->update();
   listHUD.push_back(option);
