@@ -48,7 +48,6 @@ const struct GlobalDBItem globalDBItems[] = {
   { "_gmActivationTime",	"0.5",				false, StateDatabase::Locked},
   { "_gmAdLife",		"0.95",				false, StateDatabase::Locked},
   { "_gmTurnAngle",		"0.628319",			false, StateDatabase::Locked},
-	{ "_gmPuffTime",		"0.06666",			false, StateDatabase::Locked},
   { "_gravity",			"-9.8",				false, StateDatabase::Locked},
   { "_handicapScoreDiff",	"50.0",				false, StateDatabase::Locked},
   { "_handicapVelAd",		"2.0",				false, StateDatabase::Locked},

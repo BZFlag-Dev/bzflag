@@ -312,7 +312,6 @@ public:
   static const std::string	BZDB_WINGSJUMPVELOCITY;
   static const std::string	BZDB_WINGSSLIDETIME;
   static const std::string	BZDB_WORLDSIZE;
-	static const std::string	BZDB_GMPUFFTIME;
 
 
 protected:

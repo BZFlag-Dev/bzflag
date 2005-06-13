@@ -249,7 +249,7 @@ std::vector<std::string> EffectsRenderer::getGMPuffEffectTypes ( void )
 {
 	std::vector<std::string> ret;
 	ret.push_back(std::string("None"));
-	ret.push_back(std::string("Clasic Puff"));
+	ret.push_back(std::string("Classic Puff"));
 	ret.push_back(std::string("Shock Cone"));
 
 	return ret;
