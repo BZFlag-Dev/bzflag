@@ -136,7 +136,7 @@ EffectsMenu::EffectsMenu()
   // Fancy effects I: Spawn
   option = new HUDuiList;
   option->setFontFace(MainMenu::getFontFace());
-  option->setLabel("  Spawn Effect:");
+  option->setLabel("Spawn Effect:");
   option->setCallback(callback, (void*)"s");
   options = &option->getList();
   optbuf = EffectsRenderer::instance().getSpawnEffectTypes();
@@ -147,7 +147,7 @@ EffectsMenu::EffectsMenu()
   // Fancy effects Ia: Local spawn
   option = new HUDuiList;
   option->setFontFace(MainMenu::getFontFace());
-  option->setLabel("  Local Spawn Effect:");
+  option->setLabel("Local Spawn Effect:");
   option->setCallback(callback, (void*)"L");
   options = &option->getList();
   options->push_back(std::string("Disabled"));
@@ -158,7 +158,7 @@ EffectsMenu::EffectsMenu()
   // Fancy effects II: Death
   option = new HUDuiList;
   option->setFontFace(MainMenu::getFontFace());
-  option->setLabel("  Death Effect:");
+  option->setLabel("Death Effect:");
   option->setCallback(callback, (void*)"d");
   options = &option->getList();
   optbuf = EffectsRenderer::instance().getDeathEffectTypes();
@@ -169,7 +169,7 @@ EffectsMenu::EffectsMenu()
   // Fancy effects III: Shots
   option = new HUDuiList;
   option->setFontFace(MainMenu::getFontFace());
-  option->setLabel("  Shot Fired Effect:");
+  option->setLabel("Shot Fired Effect:");
   option->setCallback(callback, (void*)"S");
   options = &option->getList();
   optbuf = EffectsRenderer::instance().getShotEffectTypes();
@@ -180,7 +180,7 @@ EffectsMenu::EffectsMenu()
   // Fancy effects IV: Local shots
   option = new HUDuiList;
   option->setFontFace(MainMenu::getFontFace());
-  option->setLabel("  Local Shot Effect:");
+  option->setLabel("Local Shot Effect:");
   option->setCallback(callback, (void*)"l");
   options = &option->getList();
   options->push_back(std::string("Disabled"));
@@ -202,7 +202,7 @@ EffectsMenu::EffectsMenu()
   // Fancy effects VI: Landing effects
   option = new HUDuiList;
   option->setFontFace(MainMenu::getFontFace());
-  option->setLabel("  Landing Effect:");
+  option->setLabel("Landing Effect:");
   option->setCallback(callback, (void*)"b");
   options = &option->getList();
   optbuf = EffectsRenderer::instance().getLandEffectTypes();
@@ -210,17 +210,16 @@ EffectsMenu::EffectsMenu()
   option->update();
   listHUD.push_back(option);
 
-	// Fancy effects VI: Landing effects
-	option = new HUDuiList;
-	option->setFontFace(MainMenu::getFontFace());
-	option->setLabel("  GM Smoke Effect:");
-	option->setCallback(callback, (void*)"G");
-	options = &option->getList();
-	optbuf = EffectsRenderer::instance().getGMPuffEffectTypes();
-	options->assign(optbuf.begin(), optbuf.end());
-	option->update();
-	listHUD.push_back(option);
-
+  // Fancy effects VII: GM Puff effect
+  option = new HUDuiList;
+  option->setFontFace(MainMenu::getFontFace());
+  option->setLabel("GM Smoke Effect:");
+  option->setCallback(callback, (void*)"G");
+  options = &option->getList();
+  optbuf = EffectsRenderer::instance().getGMPuffEffectTypes();
+  options->assign(optbuf.begin(), optbuf.end());
+  option->update();
+  listHUD.push_back(option);
 
   initNavigation(listHUD, 1, listHUD.size() - 1);
 }
@@ -365,19 +364,19 @@ void EffectsMenu::callback(HUDuiControl* w, void* data)
       BZDB.set("enableLocalShotEffect", list->getIndex() ? "1" : "0");
       break;
     }
-		case 'V': {
-			BZDB.set("useVelOnShotEffects", list->getIndex() ? "1" : "0");
-			break;
-		}
-		case 'b': {
-			BZDB.set("landEffect", TextUtils::format("%d", list->getIndex()));
-			break;
-		}
-		case 'G': {
-			BZDB.set("gmPuffEffect", TextUtils::format("%d", list->getIndex()));
-			break;
-		}
-	}
+    case 'V': {
+	    BZDB.set("useVelOnShotEffects", list->getIndex() ? "1" : "0");
+	    break;
+    }
+    case 'b': {
+	    BZDB.set("landEffect", TextUtils::format("%d", list->getIndex()));
+	    break;
+    }
+    case 'G': {
+	    BZDB.set("gmPuffEffect", TextUtils::format("%d", list->getIndex()));
+	    break;
+    }
+  }
 }
 
 
