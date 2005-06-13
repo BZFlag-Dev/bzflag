@@ -352,10 +352,6 @@ void			SegmentedShotStrategy::makeSegments(ObstacleEffect e)
   float timeLeft            = shotPath.getLifetime();
   float           minTime   = BZDB.eval(StateDatabase::BZDB_MUZZLEFRONT)
     / hypotf(v[0], hypotf(v[1], v[2]));
-  // A patch for now ... MUZZLEFRONT should be used both here and
-  // where we get the start position of shot. Probably they were
-  // aligned some day.
-  minTime                   = 0.0f;
 
   // if all shots ricochet and obstacle effect is stop, then make it ricochet
   if (e == Stop && World::getWorld()->allShotsRicochet()) {
@@ -375,12 +371,24 @@ void			SegmentedShotStrategy::makeSegments(ObstacleEffect e)
   ShotPathSegment::Reason reason = ShotPathSegment::Initial;
   int i;
   const int maxSegment = 100;
+  float worldSize = BZDBCache::worldSize / 2.0f - 0.01f;
   for (i = 0; (i < maxSegment) && (timeLeft > Epsilon); i++) {
     // construct ray and find the first building, teleporter, or outer wall
     float o2[3];
     o2[0] = o[0] - minTime * d[0];
     o2[1] = o[1] - minTime * d[1];
     o2[2] = o[2] - minTime * d[2];
+
+    // Sometime shot start outside world
+    if (o2[0] <= -worldSize)
+      o2[0] = -worldSize;
+    if (o2[0] >= worldSize)
+      o2[0] = worldSize;
+    if (o2[1] <= -worldSize)
+      o2[1] = -worldSize;
+    if (o2[1] >= worldSize)
+      o2[1] = worldSize;
+
     Ray r(o2, d);
     Ray rs(o, d);
     float t = timeLeft + minTime;
