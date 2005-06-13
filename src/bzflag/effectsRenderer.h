@@ -194,6 +194,22 @@ protected:
 	float			radius;
 };
 
+class StdShotTeleportEffect : public BasicEffect
+{
+public:
+	StdShotTeleportEffect();
+	virtual ~StdShotTeleportEffect();
+
+	virtual bool update ( float time );
+	virtual void draw ( const SceneRenderer& sr );
+protected:
+	int				texture;
+	OpenGLGState	ringState;
+
+	float			radius;
+};
+
+
 class EffectsRenderer : public Singleton<EffectsRenderer>
 {
 public:
@@ -235,6 +251,10 @@ public:
 	// rico effect
 	void addRicoEffect ( int team, const float* pos, float rot[2], const float* vel = NULL );
 	std::vector<std::string> getRicoEffectTypes ( void );
+
+	// shot teleport effect
+	void addShotTeleportEffect ( int team, const float* pos, float rot[2], const float* vel = NULL );
+	std::vector<std::string> getShotTeleportEffectTypes ( void );
 
 
 protected:

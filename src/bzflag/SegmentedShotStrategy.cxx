@@ -116,6 +116,21 @@ void			SegmentedShotStrategy::update(float dt)
 	  }
 	  default:
 	    // currently no sounds for anything else
+			{
+				// this is fugly but it's what we do
+				float dir[3];
+				dir[0] = segments[segment].ray.getDirection()[0];// - segments[segment-1].ray.getDirection()[0];
+				dir[1] = segments[segment].ray.getDirection()[1];// - segments[segment-1].ray.getDirection()[1];
+				dir[2] = segments[segment].ray.getDirection()[2];// - segments[segment-1].ray.getDirection()[2];
+
+				float rots[2];
+				rots[0] = atan2(dir[1],dir[0]);
+
+				float mag = sqrt(dir[0]*dir[0] + dir[1]*dir[1] + dir[2]*dir[2]);
+				rots[1] = atan2(dir[2]/mag,1);
+
+				EffectsRenderer::instance().addShotTeleportEffect(0,segments[segment].ray.getOrigin(),rots);
+			}
 	    break;
 	}
       }

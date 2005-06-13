@@ -241,6 +241,17 @@ EffectsMenu::EffectsMenu()
   option->update();
   listHUD.push_back(option);
 
+	// Fancy effects IX: shot Teleporter effects
+	option = new HUDuiList;
+	option->setFontFace(MainMenu::getFontFace());
+	option->setLabel("  Teleport Shot Effect:");
+	option->setCallback(callback, (void*)"7");
+	options = &option->getList();
+	optbuf = EffectsRenderer::instance().getShotTeleportEffectTypes();
+	options->assign(optbuf.begin(), optbuf.end());
+	option->update();
+	listHUD.push_back(option);
+
   initNavigation(listHUD, 1, listHUD.size() - 1);
 }
 
@@ -318,8 +329,8 @@ void EffectsMenu::resize(int _width, int _height)
   ((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("useVelOnShotEffects") ? 1 : 0);
   ((HUDuiList*)listHUD[i++])->setIndex(static_cast<int>(BZDB.eval("landEffect")));
   ((HUDuiList*)listHUD[i++])->setIndex(static_cast<int>(BZDB.eval("gmPuffEffect")));
-  ((HUDuiList*)listHUD[i++])->setIndex(static_cast<int>(1 / BZDB.eval("gmPuffTime") - 3));
   ((HUDuiList*)listHUD[i++])->setIndex(static_cast<int>(BZDB.eval("ricoEffect")));
+  ((HUDuiList*)listHUD[i++])->setIndex(static_cast<int>(BZDB.eval("tpEffect")));
 }
 
 
@@ -386,26 +397,26 @@ void EffectsMenu::callback(HUDuiControl* w, void* data)
       BZDB.set("enableLocalShotEffect", list->getIndex() ? "1" : "0");
       break;
     }
-    case 'V': {
-      BZDB.set("useVelOnShotEffects", list->getIndex() ? "1" : "0");
-      break;
-    }
-    case 'b': {
-      BZDB.set("landEffect", TextUtils::format("%d", list->getIndex()));
-      break;
-    }
-    case 'G': {
-      BZDB.set("gmPuffEffect", TextUtils::format("%d", list->getIndex()));
-      break;
-    }
-    case 'g': {
-      BZDB.set("gmPuffTime", TextUtils::format("1/(%d+3)", list->getIndex()));
-      break;
-    }
-    case 'R': {
-      BZDB.set("ricoEffect", TextUtils::format("%d", list->getIndex()));
-      break;
-    }
+	case 'V': {
+		BZDB.set("useVelOnShotEffects", list->getIndex() ? "1" : "0");
+		break;
+	}
+	case 'b': {
+		BZDB.set("landEffect", TextUtils::format("%d", list->getIndex()));
+		break;
+	}
+	case 'G': {
+		BZDB.set("gmPuffEffect", TextUtils::format("%d", list->getIndex()));
+		break;
+	}
+	case 'R': {
+		BZDB.set("ricoEffect", TextUtils::format("%d", list->getIndex()));
+		break;
+	}
+	case '7': {
+		BZDB.set("tpEffect", TextUtils::format("%d", list->getIndex()));
+		break;
+	}
   }
 }
 

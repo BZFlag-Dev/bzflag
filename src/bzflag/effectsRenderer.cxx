@@ -41,8 +41,8 @@ template <>
 EffectsRenderer* Singleton<EffectsRenderer>::_instance = (EffectsRenderer*)0;
 
 // utils for geo
-void drawRingYZ ( float rad, float z, float topsideOffset = 0, float bottomUV = 0, float ZOffset = 0);
-void drawRingXY ( float rad, float z, float topsideOffset = 0, float bottomUV = 0, float topUV = 1.0f);
+void drawRingYZ ( float rad, float z, float topsideOffset = 0, float bottomUV = 0, float ZOffset = 0, float topUV = 1.0f, int segments = 32);
+void drawRingXY ( float rad, float z, float topsideOffset = 0, float bottomUV = 0, float topUV = 1.0f, int segments = 32);
 void RadialToCartesian ( float angle, float rad, float *pos );
 void getSpawnTeamColor ( int teamColor, float *color );
 
@@ -379,6 +379,51 @@ std::vector<std::string> EffectsRenderer::getRicoEffectTypes ( void )
 
 	return ret;
 }
+
+void EffectsRenderer::addShotTeleportEffect ( int team, const float* pos, float rot[2], const float* vel)
+{
+	if (!BZDB.isTrue("useFancyEffects"))
+		return;
+
+	int flashType = static_cast<int>(BZDB.eval("tpEffect"));
+
+	if (flashType == 0)
+		return;
+
+	float rots[3] = {0};
+	rots[2] = rot[0];
+	rots[1] = rot[1];
+
+	BasicEffect	*effect = NULL;
+	switch(flashType)
+	{
+	case 1:
+		effect = new StdShotTeleportEffect;
+		break;
+	}
+
+	if (effect)
+	{
+		effect->setPos(pos,rots);
+		effect->setStartTime((float)TimeKeeper::getCurrent().getSeconds());
+		if (BZDB.isTrue("useVelOnShotEffects"))
+			effect->setVel(vel);
+		effect->setTeam(team);
+
+		effectsList.push_back(effect);
+	}
+}
+
+std::vector<std::string> EffectsRenderer::getShotTeleportEffectTypes ( void )
+{
+	std::vector<std::string> ret;
+	ret.push_back(std::string("None"));
+	ret.push_back(std::string("IDL"));
+	//	ret.push_back(std::string("Sparks"));
+
+	return ret;
+}
+
 
 
 //****************** effects base class*******************************
@@ -1099,6 +1144,84 @@ void StdRicoEffect::draw(const SceneRenderer &)
 	glPopMatrix();
 }
 
+//******************StdShotTeleportEffect****************
+StdShotTeleportEffect::StdShotTeleportEffect() : BasicEffect()
+{
+	texture = TextureManager::instance().getTextureID("dusty_flare",false);
+	lifetime = 4.0f;
+	radius = 0.25f;
+
+
+	OpenGLGStateBuilder gstate;
+	gstate.reset();
+	gstate.setShading();
+	gstate.setBlending((GLenum) GL_SRC_ALPHA,(GLenum) GL_ONE_MINUS_SRC_ALPHA);
+	gstate.setAlphaFunc();
+
+	if (texture >-1)
+		gstate.setTexture(texture);
+
+	ringState = gstate.getState();
+}
+
+StdShotTeleportEffect::~StdShotTeleportEffect()
+{
+}
+
+bool StdShotTeleportEffect::update ( float time )
+{
+	// see if it's time to die
+	// if not update all those fun times
+	if ( BasicEffect::update(time))
+		return true;
+
+	// nope it's not.
+	// we live another day
+	// do stuff that maybe need to be done every time to animage
+
+	//radius += deltaTime*6.5f;
+	return false;
+}
+
+void StdShotTeleportEffect::draw(const SceneRenderer &)
+{
+	glPushMatrix();
+
+	float pos[3];
+
+	pos[0] = position[0] + velocity[0] * age;
+	pos[1] = position[1] + velocity[1] * age;
+	pos[2] = position[2] + velocity[2] * age;
+
+	glTranslatef(pos[0],pos[1],pos[2]);
+	glRotatef((rotation[2]/deg2Rad),0,0,1);
+	glRotatef(rotation[1]/deg2Rad,0,1,0);
+	glRotatef(age*90,1,0,0);
+
+	ringState.setState();
+
+	float color[3] = {0};
+	color[0] = color[1] = color[2] = 1;
+
+	float alpha = 1.0f;
+//	if ( age/lifetime < 0.5f)
+//		alpha = 1.0f-(age/lifetime*2.0);
+	if (alpha < 0.000001f)
+		alpha = 0.000001f;
+
+	glColor4f(color[0],color[1],color[2],alpha);
+	glDepthMask(0);
+
+	float mod = age-(int)age;
+	mod -= 0.5f;
+
+	drawRingYZ(radius,0.5f + mod*0.5f,0.125f,0.00f,pos[2],0.8f,6);
+
+	glColor4f(1,1,1,1);
+	glDepthMask(1);
+	glPopMatrix();
+}
+
 //******************************** geo utiliys********************************
 
 void RadialToCartesian ( float angle, float rad, float *pos )
@@ -1107,10 +1230,8 @@ void RadialToCartesian ( float angle, float rad, float *pos )
 	pos[1] = cos(angle*deg2Rad)*rad;
 }
 
-void drawRingXY ( float rad, float z, float topsideOffset, float bottomUV, float topUV )
+void drawRingXY ( float rad, float z, float topsideOffset, float bottomUV, float topUV, int segements )
 {
-	int segements = 32;
-
 	for ( int i = 0; i < segements; i ++)
 	{
 		float thisAng = 360.0f/segements * i;
@@ -1184,10 +1305,8 @@ float clampedZ ( float z, float offset )
 	return -offset;
 }
 
-void drawRingYZ ( float rad, float z, float topsideOffset, float bottomUV, float ZOffset )
+void drawRingYZ ( float rad, float z, float topsideOffset, float bottomUV, float ZOffset, float topUV, int segements )
 {
-	int segements = 32;
-
 	for ( int i = 0; i < segements; i ++)
 	{
 		float thisAng = 360.0f/segements * i;
@@ -1224,21 +1343,21 @@ void drawRingYZ ( float rad, float z, float topsideOffset, float bottomUV, float
 		glVertex3f(0,nextPos[1],clampedZ(nextPos[0],ZOffset));
 
 		glNormal3f(-nextNormal[0],-nextNormal[1],-nextNormal[2]);
-		glTexCoord2f(1,1);
+		glTexCoord2f(1,topUV);
 		glVertex3f(z,nextPos2[1],clampedZ(nextPos2[0],ZOffset));
 
 		glNormal3f(-thisNormal[0],-thisNormal[1],-thisNormal[2]);
-		glTexCoord2f(0,1);
+		glTexCoord2f(0,topUV);
 		glVertex3f(z,thispos2[1],clampedZ(thispos2[0],ZOffset));
 
 		// the "outside"
 
 		glNormal3f(thisNormal[0],thisNormal[1],thisNormal[2]);
-		glTexCoord2f(0,1);
+		glTexCoord2f(0,topUV);
 		glVertex3f(z,thispos2[1],clampedZ(thispos2[0],ZOffset));
 
 		glNormal3f(nextNormal[0],nextNormal[1],nextNormal[2]);
-		glTexCoord2f(1,1);
+		glTexCoord2f(1,topUV);
 		glVertex3f(z,nextPos2[1],clampedZ(nextPos2[0],ZOffset));
 
 		glNormal3f(nextNormal[0],nextNormal[1],nextNormal[2]);
