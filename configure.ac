@@ -692,7 +692,7 @@ LIBDIR="\$(top_srcdir)/lib"
 AC_SUBST(LIBDIR)
 
 
-AC_OUTPUT(bzflag.info
+AC_CONFIG_FILES(bzflag.info
 	bzflag.lsm
 	BZFlag.xcode/Makefile
 	Dev-C++/Makefile
@@ -756,6 +756,7 @@ AC_OUTPUT(bzflag.info
 	win32/Makefile
 	win32/VC6/Makefile
 	win32/VC71/Makefile)
+AC_OUTPUT
 
 # use AC_MSG_RESULT instead of AC_MSG_NOTIFY to support old autoconf
 
