@@ -304,14 +304,14 @@ esac
 
 AC_LANG(C++)
 
-AC_TRY_LINK([
+AC_LINK_IFELSE([AC_LANG_PROGRAM([[
 #include <sys/types.h>
 #include <regex.h>
-], [
+]], [[
 regcomp(0, 0, 0);
 regexec(0, 0, 0, 0, 0);
-],
-[AC_DEFINE(HAVE_REGEX_H, 1, [Define to 1 if you have regex stuff available])], [])
+]])],[AC_DEFINE(HAVE_REGEX_H, 1,
+		[Define to 1 if you have regex stuff available])],[])
 
 AC_TRY_COMPILE([
 #include <algorithm>
@@ -327,15 +327,15 @@ ac_cv_search_gluScaleImage=no
 ac_func_search_save_LIBS=$LIBS
 
 LIBS="-framework OpenGL $GLIBS $ac_func_search_save_LIBS"
-AC_TRY_LINK([#include <OpenGL/gl.h>],
-            [glBegin(GL_POINTS)],
-            [ac_cv_search_glBegin="-framework OpenGL"])
+AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <OpenGL/gl.h>]],
+				[[glBegin(GL_POINTS)]])],
+	       [ac_cv_search_glBegin="-framework OpenGL"],[])
 for ac_lib in opengl32 GL GL2; do
   LIBS="-l$ac_lib $GLIBS $ac_func_search_save_LIBS"
-  AC_TRY_LINK([#include <GL/gl.h>],
-              [glBegin(GL_POINTS)],
-              [ac_cv_search_glBegin="-l$ac_lib"
-               break])
+  AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <GL/gl.h>]],
+				  [[glBegin(GL_POINTS)]])],
+		 [ac_cv_search_glBegin="-l$ac_lib"
+                  break],[])
 done
 if test "$ac_cv_search_glBegin" != no; then
   GLIBS="$ac_cv_search_glBegin $GLIBS"
@@ -344,15 +344,15 @@ if test "$ac_cv_search_glBegin" != no; then
   fi
 
   LIBS="-framework OpenGL $ac_func_search_save_LIBS"
-  AC_TRY_LINK([#include <OpenGL/glu.h>],
-              [gluScaleImage(GL_RED,0,0,GL_INT,0,0,0,GL_INT,0)],
-              [ac_cv_search_gluScaleImage="-framework OpenGL"])
+  AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <OpenGL/glu.h>]],
+			[[gluScaleImage(GL_RED,0,0,GL_INT,0,0,0,GL_INT,0)]])],
+		 [ac_cv_search_gluScaleImage="-framework OpenGL"],[])
   for ac_lib in glu32 GL GLU; do
     LIBS="-l$ac_lib $GLIBS $ac_func_search_save_LIBS"
-    AC_TRY_LINK([#include <GL/glu.h>],
-                [gluScaleImage(GL_RED,0,0,GL_INT,0,0,0,GL_INT,0)],
-		[ac_cv_search_gluScaleImage="-l$ac_lib"
-		 break])
+    AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <GL/glu.h>]],
+			[[gluScaleImage(GL_RED,0,0,GL_INT,0,0,0,GL_INT,0)]])],
+		   [ac_cv_search_gluScaleImage="-l$ac_lib"
+		    break],[])
   done
   if test "$ac_cv_search_gluScaleImage" != no; then
     GLIBS="$ac_cv_search_gluScaleImage $GLIBS"
@@ -371,16 +371,15 @@ case $host_os in
   GLIBS="-mwindows -lgdi32 -ldxguid -ldsound -ldinput $GLIBS"
   # MingW does some funny stuff with DirectX.
   # Test for a working DirectInput.
-  AC_TRY_LINK([
+  AC_LINK_IFELSE([AC_LANG_PROGRAM([[
   #define DIRECTINPUT_VERSION 0x0700
   #include <dinput.h>
-  ], [
+  ]], [[
   IDirectInput7* directInput;
   HINSTANCE hinst = GetModuleHandle(NULL);
   HRESULT success = DirectInputCreateEx(hinst, DIRECTINPUT_VERSION,
                     IID_IDirectInput7, (void**)&directInput, NULL);
-  ], [],
-  [AC_DEFINE(BROKEN_DINPUT, 1, [Define to 1 if your DirectInput headers and libraries are broken or mismatched.])])
+  ]])],[],[AC_DEFINE(BROKEN_DINPUT, 1, [Define to 1 if your DirectInput headers and libraries are broken or mismatched.])])
   ;;
 esac
 
@@ -465,7 +464,8 @@ if test x$with_SDL = xyes; then
   savedLDFLAGS="$LDFLAGS"
   LDFLAGS="$LDFLAGS -framework SDL"
   framework_SDL_flag_works=yes
-  AC_TRY_LINK( [#include <SDL/SDL_version.h>], [], [], [framework_SDL_flag_works=no] )
+  AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <SDL/SDL_version.h>]], [[]])],
+		 [],[framework_SDL_flag_works=no ])
   AC_MSG_RESULT([$framework_SDL_flag_works])
   if test x$framework_SDL_flag_works = xno ; then
     LDFLAGS="$savedLDFLAGS"
@@ -642,7 +642,8 @@ AC_MSG_CHECKING([if the compiler understands $search_paths_first_flag])
 search_paths_first_flag_works=yes
 PRELDFLAGS="$LDFLAGS"
 LDFLAGS="$LDFLAGS $search_paths_first_flag"
-AC_TRY_LINK( [], [], [], [search_paths_first_flag_works=no])
+AC_LINK_IFELSE([AC_LANG_PROGRAM([[]], [[]])],[],
+	       [search_paths_first_flag_works=no])
 AC_MSG_RESULT($search_paths_first_flag_works)
 if test "x$search_paths_first_flag_works" = "xno" ; then
         LDFLAGS="$PRELDFLAGS"

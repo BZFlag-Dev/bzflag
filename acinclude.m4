@@ -9,10 +9,10 @@ AC_ARG_WITH(curses, [  --with-curses           Force the use of curses over ncur
    then
      AC_CACHE_CHECK([for working ncurses], mp_cv_ncurses,
        [LIBS="$LIBS -lncurses"
-        AC_TRY_LINK(
-          [#include <ncurses.h>],
-          [chtype a; int b=A_STANDOUT, c=KEY_LEFT; initscr(); ],
-          mp_cv_ncurses=yes, mp_cv_ncurses=no)])
+	AC_LINK_IFELSE([
+	AC_LANG_PROGRAM([[#include <ncurses.h>
+	]], [[chtype a; int b=A_STANDOUT, c=KEY_LEFT; initscr();
+	]])], [mp_cv_ncurses=yes], [mp_cv_ncurses=no])])
      if test "$mp_cv_ncurses" = yes
      then
        AC_DEFINE(HAVE_NCURSES_H, , [Use the header file ncurses.h])
@@ -23,10 +23,10 @@ AC_ARG_WITH(curses, [  --with-curses           Force the use of curses over ncur
    then
      AC_CACHE_CHECK([for working curses], mp_cv_curses,
        [LIBS="$mp_save_LIBS -lcurses"
-        AC_TRY_LINK(
-          [#include <curses.h>],
-          [chtype a; int b=A_STANDOUT, c=KEY_LEFT; initscr(); ],
-          mp_cv_curses=yes, mp_cv_curses=no)])
+	AC_LINK_IFELSE([
+	AC_LANG_PROGRAM([[#include <curses.h>
+	]], [[chtype a; int b=A_STANDOUT, c=KEY_LEFT; initscr();
+	]])], [mp_cv_curses=yes], [mp_cv_curses=no])])
      if test "$mp_cv_curses" = yes
      then
        AC_DEFINE(HAVE_CURSES_H, , [Use the header file curses.h])
@@ -37,10 +37,10 @@ AC_ARG_WITH(curses, [  --with-curses           Force the use of curses over ncur
    then
      AC_CACHE_CHECK([for working PDcurses], mp_cv_pdcurses,
        [LIBS="$mp_save_LIBS -lpdcurses"
-        AC_TRY_LINK(
-          [#include <curses.h>],
-          [chtype a; int b=A_STANDOUT, c=KEY_LEFT; initscr(); ],
-          mp_cv_pdcurses=yes, mp_cv_pdcurses=no)])
+	AC_LINK_IFELSE([
+	AC_LANG_PROGRAM([[#include <curses.h>
+	]], [[chtype a; int b=A_STANDOUT, c=KEY_LEFT; initscr();
+	]])], [mp_cv_pdcurses=yes], [mp_cv_pdcurses=no])])
      if test "$mp_cv_pdcurses" = yes
      then
        AC_DEFINE(HAVE_CURSES_H, , [Use the header file curses.h])
@@ -52,10 +52,10 @@ AC_ARG_WITH(curses, [  --with-curses           Force the use of curses over ncur
      xcurses_deplibs="-L$x_libraries -lXaw -lXmu -lXt -lX11 -lSM -lICE -lXext"
      AC_CACHE_CHECK([for working XCurses], mp_cv_xcurses,
        [LIBS="$mp_save_LIBS -lXCurses $xcurses_deplibs"
-        AC_TRY_LINK(
-          [#include <xcurses.h>],
-          [chtype a; int b=A_STANDOUT, c=KEY_LEFT; initscr(); ],
-          mp_cv_xcurses=yes, mp_cv_xcurses=no)])
+	AC_LINK_IFELSE([
+	AC_LANG_PROGRAM([[#include <xcurses.h>
+	]], [[chtype a; int b=A_STANDOUT, c=KEY_LEFT; initscr();
+	]])], [mp_cv_xcurses=yes], [mp_cv_xcurses=no])])
      if test "$mp_cv_xcurses" = yes
      then
        AC_DEFINE(HAVE_XCURSES_H, , [Use the header file xcurses.h])
@@ -209,7 +209,7 @@ int main (int argc, char *argv[])
           CFLAGS="$CFLAGS $SDL_CFLAGS"
           CXXFLAGS="$CXXFLAGS $SDL_CFLAGS"
           LIBS="$LIBS $SDL_LIBS"
-          AC_TRY_LINK([
+	  AC_LINK_IFELSE([AC_LANG_PROGRAM([[
 #include <stdio.h>
 #include "SDL.h"
 
@@ -217,7 +217,9 @@ int main(int argc, char *argv[])
 { return 0; }
 #undef  main
 #define main K_and_R_C_main
-],      [ return 0; ],
+]], [[
+return 0;
+]])],
         [ echo "*** The test program compiled, but did not run. This usually means"
           echo "*** that the run-time linker is not finding SDL or finding the wrong"
           echo "*** version of SDL. If it is not finding SDL, you'll need to set your"
