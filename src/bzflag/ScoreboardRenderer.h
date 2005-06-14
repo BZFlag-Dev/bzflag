@@ -36,7 +36,7 @@ public:
 
   void		setDim(bool);
   void    setWindowSize (float x, float y, float width, float height);
-  void		render();
+  void		render(bool forceDisplay);
   Player* getLeader(std::string *label=NULL);
   
   static const int HUNT_NONE = 0;
@@ -48,6 +48,9 @@ public:
   void		setHuntPrevEvent ();    // invoked when 'up' button pressed
   void		setHuntSelectEvent ();  // invoked when 'fire' button pressed
   void    clearHuntedTank ();
+  
+  static void    setAlwaysTeamScore (bool onoff);
+  static bool    getAlwaysTeamScore ();
     
   static void    setSort (int _sortby);
   static int     getSort (); 
@@ -69,10 +72,9 @@ protected:
   void		drawPlayerScore(const Player*,
 				  float x1, float x2, float x3, float xs, float y, bool huntInd);
   static const char *sortLabels[SORT_MAXNUM+2];
-  static int sortMode;
+  static int  sortMode;
+  static bool alwaysShowTeamScore;
   void   stringAppendNormalized (std::string *s, float n);
-
-
 
 private:
   void		setMinorFontSize(float height);
@@ -81,7 +83,6 @@ private:
   static int  sortCompareCp(const void* _a, const void* _b);
   static int  sortCompareI2(const void* _a, const void* _b);
   Player** newSortedList (int sortType, bool obsLast, int *_numPlayers=NULL);
-
 
 private:
   float winX;

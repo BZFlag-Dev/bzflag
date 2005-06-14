@@ -46,7 +46,7 @@ std::string		ScoreboardRenderer::playerLabel("Player");
 const char *ScoreboardRenderer::sortLabels[] = {
   "[Score]", "[Normalized Score]", "[Callsign]", "[Team Kills]", "[TK ratio]", "[Team]", "[1on1]", NULL};
 int ScoreboardRenderer::sortMode = 0;
-
+bool ScoreboardRenderer::alwaysShowTeamScore = 0;
 
 ScoreboardRenderer::ScoreboardRenderer() :
         winWidth (0.0),
@@ -62,6 +62,7 @@ ScoreboardRenderer::ScoreboardRenderer() :
   messageColor[1] = 1.0f;
   messageColor[2] = 1.0f;
   sortMode = BZDB.getIntClamped ("scoreboardSort", 0, SORT_MAXNUM);
+  alwaysShowTeamScore = BZDB.getIntClamped ("alwaysShowTeamScore", 0, 1);
 }
 
 
@@ -103,8 +104,18 @@ int			ScoreboardRenderer::getSort ()
   return sortMode;
 }  
 
-
-void			ScoreboardRenderer::setMinorFontSize(float height)
+void    ScoreboardRenderer::setAlwaysTeamScore (bool _onoff)
+{
+  alwaysShowTeamScore = _onoff;
+  BZDB.set ("alwaysShowTeamScores", _onoff ? "1" : "0");
+}
+  
+bool    ScoreboardRenderer::getAlwaysTeamScore ()
+{
+  return alwaysShowTeamScore;
+}
+  
+void		ScoreboardRenderer::setMinorFontSize(float height)
 {
   FontManager &fm = FontManager::instance();
   minorFontFace = fm.getFaceID(BZDB.get("consoleFont"));
@@ -167,12 +178,18 @@ void			ScoreboardRenderer::hudColor3fv(const GLfloat* c)
 }
 
 
-void			ScoreboardRenderer::render()
+void			ScoreboardRenderer::render(bool forceDisplay)
 {
   if (winWidth == 0.0f)
-    return    // can't do anything if window size not set
-  OpenGLGState::resetState();
-  renderScoreboard();
+    return;    // can't do anything if window size not set
+  if (BZDB.isTrue("displayScore") || forceDisplay){
+    OpenGLGState::resetState();
+    renderScoreboard();
+  } else if (BZDB.isTrue("alwaysShowTeamScores")){
+    OpenGLGState::resetState();
+    renderTeamScores (winWidth, winY, 
+          (int)FontManager::instance().getStrHeight(minorFontFace, minorFontSize, " "));
+  }
 }
 
 
