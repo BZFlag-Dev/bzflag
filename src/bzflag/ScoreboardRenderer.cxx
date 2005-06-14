@@ -36,10 +36,10 @@
 
 std::string		ScoreboardRenderer::scoreSpacingLabel("88% 8888 888-888 [88]");
 std::string		ScoreboardRenderer::scoreLabel("Score");
-std::string		ScoreboardRenderer::killSpacingLabel("888/888 Hunt->");
-std::string		ScoreboardRenderer::killLabel("Kills");
-std::string		ScoreboardRenderer::teamScoreSpacingLabel("888 (888-888) 88");
-std::string		ScoreboardRenderer::teamCountSpacingLabel("88");
+std::string		ScoreboardRenderer::killSpacingLabel("888~888 Hunt->");
+std::string		ScoreboardRenderer::killLabel(" Kills");
+std::string		ScoreboardRenderer::teamScoreSpacingLabel("88 (888-888) 88");
+std::string		ScoreboardRenderer::teamCountSpacingLabel("888");
 std::string		ScoreboardRenderer::playerLabel("Player");
 
 // NOTE: order of sort labels must match SORT_ consts
@@ -425,18 +425,18 @@ void			ScoreboardRenderer::drawPlayerScore(const Player* player,
   }
 
   if (World::getWorld()->allowRabbit())
-    sprintf(score, "%s%2d%% %4d %3d~%-3d%s[%2d]", dimString.c_str(),
+    sprintf(score, "%s%2d%% %4d %3d-%-3d%s[%2d]", dimString.c_str(),
 	    player->getRabbitScore(),
 	    player->getScore(), player->getWins(), player->getLosses(),
 	    highlightTKratio ? ColorStrings[CyanColor].c_str() : "",
 	    player->getTeamKills());
   else
-    sprintf(score, "%s%4d %4d~%-4d%s[%2d]", dimString.c_str(),
+    sprintf(score, "%s%4d %4d-%-4d%s[%2d]", dimString.c_str(),
 	    player->getScore(), player->getWins(), player->getLosses(),
 	    highlightTKratio ? ColorStrings[CyanColor].c_str() : "",
 	    player->getTeamKills());
   if (LocalPlayer::getMyTank() != player)
-    sprintf(kills, "%3d/%-3d", player->getLocalWins(), player->getLocalLosses());
+    sprintf(kills, "%3d~%-3d", player->getLocalWins(), player->getLocalLosses());
   else
     kills[0] = '\0';
 

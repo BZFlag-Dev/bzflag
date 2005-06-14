@@ -4,6 +4,7 @@
 BZFlag 2.0.3
 ------------
 
+* Added beautify scores - Julio Jimenez
 * Added scoreboard sort option - Mark Thomas, Karsten Behrmann ('BearPerson')
 * Ricochet is performed on shots fired over the boundary wall - Daniel Remenak
 * Increase range of radar size setting in GUI Option menu - Mark Thomas
