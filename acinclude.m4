@@ -128,7 +128,7 @@ dnl Now check if the installed SDL is sufficiently new. (Also sanity
 dnl checks the results of sdl-config to some extent
 dnl
       rm -f conf.sdltest
-      AC_TRY_RUN([
+      AC_RUN_IFELSE([AC_LANG_SOURCE([[
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -185,7 +185,7 @@ int main (int argc, char *argv[])
     }
 }
 
-],, no_sdl=yes,[echo $ac_n "cross compiling; assumed OK... $ac_c"])
+]])],[],[no_sdl=yes],[echo $ac_n "cross compiling; assumed OK... $ac_c"])
        CFLAGS="$ac_save_CFLAGS"
        CXXFLAGS="$ac_save_CXXFLAGS"
        LIBS="$ac_save_LIBS"
