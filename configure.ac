@@ -131,8 +131,7 @@ AC_MSG_RESULT([not found])
 
 #Checks for headers
 AC_HEADER_STDC
-AC_LANG_SAVE
-AC_LANG_CPLUSPLUS
+AC_LANG(C++)
 AC_CHECK_HEADERS( \
 	cstdlib \
 	cstdio \
@@ -144,7 +143,7 @@ if test "x$with_kerberos" = "xyes" ; then
 	Kerberos/Kerberos.h \
   )
 fi
-AC_LANG_RESTORE
+AC_LANG(C)
 AC_CHECK_HEADERS( \
 	GL/glx.h \
 	SDL/SDL.h \
@@ -303,7 +302,7 @@ case $host_os in
     ;;
 esac
 
-AC_LANG_CPLUSPLUS
+AC_LANG(C++)
 
 AC_TRY_LINK([
 #include <sys/types.h>
@@ -459,7 +458,7 @@ fi
 
 savedLIBS=$LIBS
 LIBS="$GLIBS $LIBS"
-AC_LANG_C
+AC_LANG(C)
 if test x$with_SDL = xyes; then
 
   AC_MSG_CHECKING([for SDL framework])
@@ -480,7 +479,7 @@ if test x$with_SDL = xyes; then
     fi
   fi
 fi
-AC_LANG_CPLUSPLUS
+AC_LANG(C++)
 LIBS=$savedLIBS
 if test x$with_SDL = xyes; then
   AC_DEFINE(HAVE_SDL, 1, [Using SDL])
