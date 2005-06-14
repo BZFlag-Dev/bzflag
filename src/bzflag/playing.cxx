@@ -588,19 +588,11 @@ void setRoamingLabel()
   std::string playerString = "";
 
   if (roamTrackTank == -1) {
-    if (roamTrackWinner == -1) {
-      // in case we don't find one
+    Player *top = scoreboard->getLeader(&playerString);
+    if (top == NULL)
       roamTrackWinner = 0;
-    }
-    // FIXME find the current living winner alive
-    int bestScore = -65536; // nobody should be this bad, should they?
-    for (int i = 0; i < curMaxPlayers; i++) {
-      if (player[i] && player[i]->isAlive() && player[i]->getScore() >= bestScore) {
-	roamTrackWinner = i;
-	bestScore = player[i]->getScore();
-      }
-    }
-    playerString = "Winner ";
+    else
+      roamTrackWinner = top->getId();
   }
 
   Player* tracked = player[roamTrackWinner];

@@ -551,6 +551,30 @@ void			ScoreboardRenderer::drawPlayerScore(const Player* player,
 }
 
 
+// get current 'leader' (NULL if no player)
+Player*   ScoreboardRenderer::getLeader(std::string *label){
+  int sortType=sortMode;
+
+  if (sortMode==SORT_CALLSIGN || sortMode==SORT_MYRATIO || sortMode==SORT_TEAM){
+    sortType = SORT_SCORE;  
+  }
+  if (label != NULL){
+    if (sortMode==SORT_TKS)
+      *label = "TK Leader ";
+    else if (sortMode==SORT_TKRATIO)
+      *label = "TK Ratio Leader ";
+    else
+      *label = "Leader ";
+  }
+  Player** list = newSortedList (sortType, true);
+  Player* top = list[0];
+  delete[] list;
+  
+  if (top==NULL || top->getTeam()==ObserverTeam)
+    return NULL;
+  return top;
+}
+
 /************************ Sort logic follows .... **************************/
 
 struct st_playersort{
@@ -581,7 +605,7 @@ int       ScoreboardRenderer::sortCompareI2(const void* _a, const void* _b)
 
 
 // creates (allocates) a null-terminated array of Player*
-Player **  ScoreboardRenderer::newSortedList (int sortType, bool obsLast, int *_numPlayers=NULL)
+Player **  ScoreboardRenderer::newSortedList (int sortType, bool obsLast, int *_numPlayers)
 {
   LocalPlayer *myTank = LocalPlayer::getMyTank();
   World *world = World::getWorld();

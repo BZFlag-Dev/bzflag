@@ -23,7 +23,6 @@
 
 /* local interface headers */
 #include "Player.h"
-#include "RemotePlayer.h"
 
 
 /**
@@ -38,7 +37,8 @@ public:
   void		setDim(bool);
   void    setWindowSize (float x, float y, float width, float height);
   void		render();
-
+  Player* getLeader(std::string *label=NULL);
+  
   static const int HUNT_NONE = 0;
   static const int HUNT_SELECTING = 1;
   static const int HUNT_ENABLED = 2;
@@ -80,7 +80,7 @@ private:
   static int	teamScoreCompare(const void* _a, const void* _b);
   static int  sortCompareCp(const void* _a, const void* _b);
   static int  sortCompareI2(const void* _a, const void* _b);
-  Player** newSortedList (int sortType, bool obsLast, int *_numPlayers);
+  Player** newSortedList (int sortType, bool obsLast, int *_numPlayers=NULL);
 
 
 private:
