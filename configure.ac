@@ -66,12 +66,12 @@ dnl On SGI systems, figure out if we are using MIPSPro compiler
 using_mipspro=no
 if test "$build_vendor" = "sgi" ; then
     AC_MSG_CHECKING([whether we are using the MIPSPro compiler])
-    AC_TRY_COMPILE([],
-		   [#if defined(sgi) && !defined(__GNUC__) && defined(_COMPILER_VERSION)
+    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[]],
+	[[#if defined(sgi) && !defined(__GNUC__) && defined(_COMPILER_VERSION)
 this line should cause a compile failure when building with the MIPSpro compiler;
 #endif
 int main() { return 0; }
-    ], using_mipspro=no, using_mipspro=yes)
+    ]])],[using_mipspro=no],[using_mipspro=yes])
     AC_MSG_RESULT([$using_mipspro])
 fi
 
@@ -163,11 +163,10 @@ AC_CHECK_HEADERS( \
 AC_CONST
 
 AC_MSG_CHECKING([for socklen_t type])
-AC_TRY_COMPILE([#include <sys/types.h>
-		#include <sys/socket.h>],
-	       [socklen_t len = 42; return 0;],
-               ac_cv_type_socklen_t=yes,
-               ac_cv_type_socklen_t=no)
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <sys/types.h>
+		#include <sys/socket.h>]],
+ [[socklen_t len = 42; return 0;]])],
+ [ac_cv_type_socklen_t=yes],[ac_cv_type_socklen_t=no])
 if test $ac_cv_type_socklen_t != yes; then
     AC_DEFINE(socklen_t, int, [if socklen_t is not defined, provide something useful])
 else
@@ -177,10 +176,9 @@ AC_MSG_RESULT([$ac_cv_type_socklen_t])
 
 # Check for working FF_RUMBLE support in linux/input.h
 AC_MSG_CHECKING([for linux rumble joystick support])
-AC_TRY_COMPILE([#include <linux/input.h>],
-	       [struct ff_effect x; x.u.rumble.weak_magnitude = 42; return 0;],
-               ac_ff_effect_rumble=yes,
-               ac_ff_effect_rumble=no)
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <linux/input.h>]],
+	[[struct ff_effect x; x.u.rumble.weak_magnitude = 42; return 0;]])],
+	[ac_ff_effect_rumble=yes],[ac_ff_effect_rumble=no])
 if test x$ac_ff_effect_rumble = xyes; then
     AC_DEFINE(HAVE_FF_EFFECT_RUMBLE, 1, [we appear to have working support for rumble force feedback effects])
 fi
@@ -313,14 +311,13 @@ regexec(0, 0, 0, 0, 0);
 ]])],[AC_DEFINE(HAVE_REGEX_H, 1,
 		[Define to 1 if you have regex stuff available])],[])
 
-AC_TRY_COMPILE([
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
 #include <algorithm>
-], [
+]], [[
 char array[] = "test";
 int i = std::count(array, array + 5, 't');
-],
-[AC_DEFINE(HAVE_STD_COUNT, 1, [Define to 1 if you have a conforming
-std::count, otherwise old version of count template is assumed])])
+]])],[AC_DEFINE(HAVE_STD_COUNT, 1, [Define to 1 if you have a conforming
+std::count, otherwise old version of count template is assumed])],[])
 
 ac_cv_search_glBegin=no
 ac_cv_search_gluScaleImage=no
