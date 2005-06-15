@@ -831,7 +831,7 @@ msgid "Oscillation Overthruster (+OO):  Can drive through buildings.  Can't back
 msgstr "Oscillation Overthruster (+OO): Ermöglicht das Fahren durch Wände und Gebäude, kann im Gebäude jedoch nicht schießen."
 
 msgid "rapid Fire (+F):  Shoots more often.  Shells go faster but not as far."
-msgstr "Schnellfeuer (+F): Schiesst öfter jedoch bei verminderter Reichweite."
+msgstr "Schnellfeuer (+F): Schießt öfter jedoch bei verminderter Reichweite."
 
 msgid "Machine Gun (+MG):  Very fast reload and very short range."
 msgstr "Maschinenpistole (+MG): Sehr schnelles Nachladen bei sehr geringer Reichweite."
