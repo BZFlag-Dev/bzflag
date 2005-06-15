@@ -269,13 +269,11 @@ void			ServerList::checkEchos(StartupInfo *info)
     
     std::string url = info->listServerURL;
 
-    url += "?action=LIST&version=";
-    url += getServerVersion();
-    url += "&callsign=";
-    url += TextUtils::url_encode(info->callsign);
-    url += "&password=";
-    url += TextUtils::url_encode(info->password);
-
+    addFormData("action", "LIST");
+    addFormData("version", getServerVersion());
+    addFormData("callsign", TextUtils::url_encode(info->callsign).c_str());
+    addFormData("password", TextUtils::url_encode(info->password).c_str());
+    setPostMode();
     setURL(url);
     addHandle();
 

@@ -28,8 +28,10 @@ cURLManager::cURLManager()
 
   theData   = NULL;
   theLen    = 0;
-  errorCode = CURLE_OK;
   added     = false;
+
+  formPost  = NULL;
+  formLast  = NULL;
 
   if (!inited)
     setup();
@@ -49,13 +51,11 @@ cURLManager::cURLManager()
 
   result = curl_easy_setopt(easyHandle, CURLOPT_ERRORBUFFER, errorBuffer);
   if (result != CURLE_OK) {
-    errorCode = result;
     DEBUG1("CURLOPT_ERRORBUFFER error: %d\n", result);
   }
 
   result = curl_easy_setopt(easyHandle, CURLOPT_NOSIGNAL, true);
   if (result != CURLE_OK) {
-    errorCode = result;
     DEBUG1("CURLOPT_NOSIGNAL error %d : %s\n", result, errorBuffer);
   }
 
@@ -107,7 +107,6 @@ void cURLManager::setTimeout(long timeout)
 
   result = curl_easy_setopt(easyHandle, CURLOPT_TIMEOUT, timeout);
   if (result != CURLE_OK) {
-    errorCode = result;
     DEBUG1("CURLOPT_TIMEOUT error %d : %s\n", result, errorBuffer);
   }
 }
@@ -119,7 +118,6 @@ void cURLManager::setNoBody()
 
   result = curl_easy_setopt(easyHandle, CURLOPT_NOBODY, nobody);
   if (result != CURLE_OK) {
-    errorCode = result;
     DEBUG1("CURLOPT_NOBODY error %d : %s\n", result, errorBuffer);
   }
 }
@@ -131,9 +129,17 @@ void cURLManager::setGetMode()
 
   result = curl_easy_setopt(easyHandle, CURLOPT_HTTPGET, get);
   if (result != CURLE_OK) {
-    errorCode = result;
     DEBUG1("CURLOPT_GET error %d : %s\n", result, errorBuffer);
   }
+}
+
+void cURLManager::setPostMode()
+{
+  CURLcode result;
+
+  result = curl_easy_setopt(easyHandle, CURLOPT_HTTPPOST, formPost);
+  if (result != CURLE_OK)
+    DEBUG1("CURLOPT_POST error %d : %s\n", result, errorBuffer);
 }
 
 void cURLManager::setURL(const std::string url)
@@ -150,7 +156,6 @@ void cURLManager::setURL(const std::string url)
     DEBUG2("CURLOPT_URL is : %s\n", usedUrl.c_str());
   }
   if (result != CURLE_OK) {
-    errorCode = result;
     DEBUG1("CURLOPT_URL error %d : %s\n", result, errorBuffer);
   }
 }
@@ -168,7 +173,6 @@ void cURLManager::setProgressFunction(curl_progress_callback func, void* data)
    result = curl_easy_setopt(easyHandle, CURLOPT_NOPROGRESS, 1);
   }
   if (result != CURLE_OK) {
-    errorCode = result;
     DEBUG1("CURLOPT_SET_PROGRESS error %d : %s\n", result, errorBuffer);
   }
 }
@@ -179,7 +183,6 @@ void cURLManager::setRequestFileTime(bool request)
   long     requestFileTime = request ? 1 : 0;
   result = curl_easy_setopt(easyHandle, CURLOPT_FILETIME, requestFileTime);
   if (result != CURLE_OK) {
-    errorCode = result;
     DEBUG1("CURLOPT_FILETIME error %d : %s\n", result, errorBuffer);
   }
 }
@@ -272,6 +275,11 @@ void cURLManager::infoComplete(CURLcode result)
   if (result != CURLE_OK)
     DEBUG1("File transfer terminated with error from libcurl %d : %s\n",
 	   result, errorBuffer);
+  if (formPost) {
+    curl_formfree(formPost);
+    formPost = NULL;
+    formLast = NULL;
+  }
   finalization((char *)theData, theLen, result == CURLE_OK);
   free(theData);
   removeHandle();
@@ -302,7 +310,6 @@ void cURLManager::setTimeCondition(timeCondition condition, time_t &t)
 			      CURLOPT_TIMECONDITION,
 			      CURL_TIMECOND_NONE);
     if (result != CURLE_OK) {
-      errorCode = result;
       DEBUG1("CURLOPT_TIMECONDITION error %d : %s\n", result, errorBuffer);
     }
     break;
@@ -311,20 +318,30 @@ void cURLManager::setTimeCondition(timeCondition condition, time_t &t)
 			      CURLOPT_TIMECONDITION,
 			      CURL_TIMECOND_IFMODSINCE);
     if (result != CURLE_OK) {
-      errorCode = result;
       DEBUG1("CURLOPT_TIMECONDITION error %d : %s\n", result, errorBuffer);
     }
     result = curl_easy_setopt(easyHandle,
 			      CURLOPT_TIMEVALUE,
 			      (long)t);
     if (result != CURLE_OK) {
-      errorCode = result;
       DEBUG1("CURLOPT_TIMEVALUE error %d : %s\n", result, errorBuffer);
     }
     break;
   default:
     break;
   }
+}
+
+void cURLManager::addFormData(const char *key, const char *value)
+{
+  CURLFORMcode result;
+  result = curl_formadd(&formPost, &formLast, 
+			CURLFORM_COPYNAME, key,
+			CURLFORM_COPYCONTENTS, value,
+			CURLFORM_CONTENTSLENGTH, strlen(value),
+			CURLFORM_END); 
+  if (result != CURL_FORMADD_OK)
+    DEBUG1("addFormData error %d : %s\n", result, errorBuffer);
 }
 
 

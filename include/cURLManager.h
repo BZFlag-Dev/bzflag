@@ -51,10 +51,13 @@ public:
   void setTimeout(long timeout);
   void setNoBody();
   void setGetMode();
+  void setPostMode();
   void setRequestFileTime(bool request);
   void setURL(const std::string url);
   void setProgressFunction(curl_progress_callback func, void* data);
   void setTimeCondition(timeCondition condition, time_t &t);
+
+  void addFormData(const char *key, const char *value);
 
   bool getFileTime(time_t &t);
 
@@ -72,12 +75,14 @@ private:
   void          infoComplete(CURLcode result);
 
   static bool   inited;
-  int           errorCode;
   CURL         *easyHandle;
   static CURLM *multiHandle;
   static char   errorBuffer[CURL_ERROR_SIZE];
   bool          added;
   std::string   usedUrl;
+
+  struct curl_httppost* formPost;
+  struct curl_httppost* formLast;
 
   static void   setup();
 
