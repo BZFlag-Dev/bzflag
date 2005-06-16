@@ -271,8 +271,8 @@ void			ServerList::checkEchos(StartupInfo *info)
 
     addFormData("action", "LIST");
     addFormData("version", getServerVersion());
-    addFormData("callsign", TextUtils::url_encode(info->callsign).c_str());
-    addFormData("password", TextUtils::url_encode(info->password).c_str());
+    addFormData("callsign", info->callsign);
+    addFormData("password", info->password);
     setPostMode();
     setURL(url);
     addHandle();
