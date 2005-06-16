@@ -10,7 +10,7 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include "..\include\resource.h"
+#include "../include/resource.h"
 #include <windows.h>
 
 // English (U.S.) resources
