@@ -4,12 +4,16 @@
 BZFlag 2.0.3
 ------------
 
+* The url now does not contain the password (sent with POST) - Tupone Alfredo
+* Fixing Tiny tank shooting from the world edge - Tupone Alfredo
+* Fixing client requesting lan server on some systems - Tupone Alfredo
+* Observer are no more hunted - Tupone Alfredo
 * Added 'Always Show Team Scores' option (GUI Options Menu) - Mark Thomas
 * Added beautify scores - Julio Jimenez
 * Added scoreboard sort option - Mark Thomas, Karsten Behrmann ('BearPerson')
 * Ricochet is performed on shots fired over the boundary wall - Daniel Remenak
 * Increase range of radar size setting in GUI Option menu - Mark Thomas
-* Fixed Menu rendering problems when radar size greater than 10 - Sean Morrison, Mark Thomas
+* Fixed Menu rendering when radar size is great - Sean Morrison, Mark Thomas
 * Fixed Linux name resolution (server list) problem - Sean Morrison
 * Fixed Jitter problem on Windows, clock was wrong - Alfredo Tupone
 * Windows platform can switch from SDL to native - Alfredo Tupone
