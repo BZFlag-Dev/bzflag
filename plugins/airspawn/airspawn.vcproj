@@ -65,7 +65,7 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="Release"
+			OutputDirectory="../"
 			IntermediateDirectory="Release"
 			ConfigurationType="2"
 			CharacterSet="2">
@@ -85,9 +85,10 @@
 				AdditionalDependencies="bzfs.lib"
 				OutputFile="$(OutDir)/airspawn.dll"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="../../src/bzfs/release/"
+				AdditionalLibraryDirectories="../../src/bzfs/"
 				ModuleDefinitionFile="airspawn.def"
 				GenerateDebugInformation="TRUE"
+				ProgramDatabaseFile="Release/$(ProjectName).pdb"
 				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
@@ -123,6 +124,12 @@
 			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx"
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}">
 			<File
+				RelativePath=".\airspawn.cpp">
+			</File>
+			<File
+				RelativePath=".\airspawn.def">
+			</File>
+			<File
 				RelativePath=".\Makefile">
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -136,12 +143,6 @@
 					<Tool
 						Name="VCCustomBuildTool"/>
 				</FileConfiguration>
-			</File>
-			<File
-				RelativePath=".\airspawn.cpp">
-			</File>
-			<File
-				RelativePath=".\airspawn.def">
 			</File>
 		</Filter>
 		<Filter

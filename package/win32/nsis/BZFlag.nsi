@@ -7,7 +7,7 @@
 ;
 
 !define VER_MAJOR 2.0
-!define VER_MINOR .3b4
+!define VER_MINOR .3b8
 
 ; Main Installer Options
 Name "BZFlag"
@@ -48,6 +48,7 @@ Section "BZFlag (required)"
 	File ..\..\..\src\bzadmin\bzadmin.exe
 	File ..\..\..\src\bzfs\bzfs.exe
 	File ..\..\..\libcurl.dll
+	File ..\..\..\plugins\*.dll
 
 	; See http://msdn.microsoft.com/library/default.asp?url=/library/en-us/vclib/html/_crt_c_run.2d.time_libraries.asp
 	; "An application should use and redistribute msvcr71.dll [and msvcp71.dll], and it should avoid placing a copy or using an existing copy of msvcr71.dll in the system directory. Instead, the application should keep a copy of msvcr71.dll [and msvcp71.dll] in its application directory with the program executable."

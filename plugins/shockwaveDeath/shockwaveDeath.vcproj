@@ -65,7 +65,7 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="Release"
+			OutputDirectory="../"
 			IntermediateDirectory="Release"
 			ConfigurationType="2"
 			CharacterSet="2">
@@ -85,9 +85,10 @@
 				AdditionalDependencies="bzfs.lib"
 				OutputFile="$(OutDir)/shockwaveDeath.dll"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="../../src/bzfs/release/"
+				AdditionalLibraryDirectories="../../src/bzfs/"
 				ModuleDefinitionFile="shockwaveDeath.def"
 				GenerateDebugInformation="TRUE"
+				ProgramDatabaseFile="Release/$(ProjectName).pdb"
 				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"

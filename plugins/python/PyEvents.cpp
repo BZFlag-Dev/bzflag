@@ -37,6 +37,7 @@ event_to_name (int event)
 	case bz_eGenerateWorldEvent:     return "GenerateWorld";
 	case bz_eGetPlayerInfoEvent:     return "GetPlayerInfo";
 	}
+	return NULL;
 }
 
 void

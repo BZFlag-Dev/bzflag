@@ -669,8 +669,8 @@ public:
 	virtual bool handle ( bzApiString plugin, bzApiString param ) = 0;
 };
 // custom pluginHandler
-bool bz_registerCustomPluginHandler ( const char* extension, bz_APIPluginHandler * handler );
-bool bz_removeCustomPluginHandler ( const char* extension, bz_APIPluginHandler * handler );
+bool BZF_API bz_registerCustomPluginHandler ( const char* extension, bz_APIPluginHandler * handler );
+bool BZF_API bz_removeCustomPluginHandler ( const char* extension, bz_APIPluginHandler * handler );
 
 #endif //_BZFS_API_H_
 

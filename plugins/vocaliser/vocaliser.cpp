@@ -311,7 +311,7 @@ void VocaliserEvents::process ( bz_EventData *eventData )
 	case bz_ePlayerJoinEvent:
 		// send em out a resource list
 		for ( unsigned int i = 0; i < resourceList.size(); i++)
-			bz_sentFechResMessage(joinPartData->playerID,resourceList[i].c_str());
+			bz_sentFetchResMessage(joinPartData->playerID,resourceList[i].c_str());
 		break;
 
 	case bz_ePlayerPartEvent:

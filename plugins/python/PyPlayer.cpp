@@ -147,6 +147,7 @@ Player_getAttr (Player *player, char *name)
 static int
 Player_setAttr (Player *player, char *name, PyObject *v)
 {
+	return 0;
 }
 
 static int
@@ -165,6 +166,7 @@ Player_repr (Player *player)
 static PyObject *
 Player_ban (Player *self, PyObject *args, PyObject *keywords)
 {
+	return 0;
 }
 
 static PyObject *

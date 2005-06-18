@@ -179,11 +179,13 @@ GetPublicDescription (PyObject *self, PyObject *args)
 static PyObject *
 GetStandardSpawn (PyObject *self, PyObject *args)
 {
+	return Py_None;
 }
 
 static PyObject *
 PlayClientSound (PyObject *self, PyObject *args)
 {
+	return Py_None;
 }
 
 static PyObject *

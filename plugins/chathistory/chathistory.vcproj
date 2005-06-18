@@ -64,13 +64,13 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="Release"
+			OutputDirectory="../"
 			IntermediateDirectory="Release"
 			ConfigurationType="2"
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="../../include"
+				AdditionalIncludeDirectories="../../include; ../../win32/vc71/"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;chathistory_EXPORTS"
 				RuntimeLibrary="0"
 				UsePrecompiledHeader="0"
@@ -84,8 +84,9 @@
 				AdditionalDependencies="bzfs.lib"
 				OutputFile="$(OutDir)/chathistory.dll"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="../../src/bzfs/release/"
+				AdditionalLibraryDirectories="../../src/bzfs/"
 				GenerateDebugInformation="TRUE"
+				ProgramDatabaseFile="Release/$(ProjectName).pdb"
 				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
@@ -121,13 +122,13 @@
 			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx"
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}">
 			<File
-				RelativePath="..\..\src\common\TextUtils.cxx">
-			</File>
-			<File
 				RelativePath=".\chathistory.cpp">
 			</File>
 			<File
 				RelativePath=".\chathistory.def">
+			</File>
+			<File
+				RelativePath="..\..\src\common\TextUtils.cxx">
 			</File>
 		</Filter>
 		<Filter

@@ -99,11 +99,13 @@ Box_getAttr (Box *box, char *name)
 static int
 Box_setAttr (Box *box, char *name, PyObject *v)
 {
+	return 0;
 }
 
 static int
 Box_compare (Box *a1, Box *a2)
 {
+	return 0;
 }
 
 static PyObject *

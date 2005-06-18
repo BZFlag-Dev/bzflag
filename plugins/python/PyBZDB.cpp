@@ -95,6 +95,7 @@ BZDB_repr (BZDB *bzdb)
 static int
 BZDB_length (BZDB *bzdb)
 {
+	return 0;
 }
 
 static PyObject *

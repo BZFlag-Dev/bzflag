@@ -64,7 +64,7 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="Release"
+			OutputDirectory="../"
 			IntermediateDirectory="Release"
 			ConfigurationType="2"
 			CharacterSet="2">
@@ -86,6 +86,7 @@
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="../../src/bzfs/"
 				GenerateDebugInformation="TRUE"
+				ProgramDatabaseFile="Release/$(ProjectName).pdb"
 				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
@@ -121,10 +122,19 @@
 			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx"
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}">
 			<File
+				RelativePath=".\PyBZDB.cpp">
+			</File>
+			<File
 				RelativePath=".\PyBZFlag.cpp">
 			</File>
 			<File
 				RelativePath=".\PyEvent.cpp">
+			</File>
+			<File
+				RelativePath=".\PyEvents.cpp">
+			</File>
+			<File
+				RelativePath=".\PyPlayer.cpp">
 			</File>
 			<File
 				RelativePath=".\PyTeam.cpp">
@@ -134,6 +144,9 @@
 			</File>
 			<File
 				RelativePath=".\python.def">
+			</File>
+			<File
+				RelativePath=".\PyWorldBox.cpp">
 			</File>
 		</Filter>
 		<Filter
