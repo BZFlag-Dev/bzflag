@@ -96,10 +96,8 @@ public:
   inline static T* pInstance() {
     if (_instance == 0) {
       _instance = new T;
-#ifdef _WIN32
+#ifdef HAVE_ATEXIT
       atexit(Singleton::destroy);
-#else
-      std::atexit(Singleton::destroy);
 #endif
     }
     return Singleton::_instance;
