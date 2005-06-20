@@ -51,6 +51,8 @@ void ServerList::startServerPings(StartupInfo *info) {
   // schedule lookup of server list url.  dereference URL chain every
   // time instead of only first time just in case one of the pointers
   // has changed.
+  if (phase > -1 && phase < 4)
+    return;
   if (info->listServerURL.size() == 0)
     phase = -1;
   else
