@@ -36,7 +36,7 @@ libcares_a_SOURCES =		\
 	ares_version.h		\
 	setup.h
 
-EXTRA_libcares_a_SOURCES = winport.c
+EXTRA_libcares_a_SOURCES = windows_port.c
 
 libcares_a_LIBADD = @WINPORT@
 libcares_a_DEPENDENCIES = @WINPORT@
