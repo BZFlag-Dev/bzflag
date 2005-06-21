@@ -141,6 +141,7 @@ noinst_HEADERS =			\
 	cURLManager.h			\
 	global.h			\
 	md5.h				\
+	messages.h			\
 	multicast.h			\
 	network.h			\
 	regex.h				\
