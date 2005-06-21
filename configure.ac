@@ -185,7 +185,7 @@ fi
 AC_MSG_RESULT([$ac_ff_effect_rumble])
 
 case $host_os in
-     linux*|freebsd*) linux=true;;
+     linux*|freebsd*|netbsd*) linux=true;;
      *) linux=false;;
 esac
 AM_CONDITIONAL(LINUX, $linux)
@@ -232,27 +232,25 @@ case $host_os in
 esac
 
 AC_PATH_XTRA
-CPPFLAGS="$CPPFLAGS $X_CFLAGS"
+CPPFLAGS="$CPPFLAGS $X_CFLAGS" 
+LDFLAGS="$LDFLAGS $X_LIBS"
 
 case $host_os in
   solaris*)
     GLIBS="-lresolv -laudio $GLIBS"
     LIBS="-lsocket -lnsl -lresolv"
-    LDFLAGS="$LDFLAGS $X_LIBS -L/usr/demo/SOUND/lib"
+    LDFLAGS="$LDFLAGS -L/usr/demo/SOUND/lib"
     ;;
   irix*)
     GLIBS="-lXsgivc -lX11 -laudio $GLIBS"
-    LDFLAGS="$LDFLAGS $X_LIBS"
     ;;
   beos)
     GLIBS=" -lmedia -lgame $GLIBS"
     LIBS="-lbe"
-    LDFLAGS="$LDFLAGS $X_LIBS"
     ;;
   macos|darwin*)
     ;;
   *)
-    LDFLAGS="$LDFLAGS $X_LIBS"
     ;;
 esac;
 
