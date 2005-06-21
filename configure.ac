@@ -232,6 +232,7 @@ case $host_os in
 esac
 
 AC_PATH_XTRA
+CPPFLAGS="$CPPFLAGS $X_CFLAGS"
 
 case $host_os in
   solaris*)
