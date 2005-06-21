@@ -125,6 +125,7 @@ bzflag_SOURCES =			\
 	SceneBuilder.h			\
 	SceneRenderer.cxx		\
 	ScoreboardRenderer.cxx		\
+	ScoreboardRenderer.h		\
 	SegmentedShotStrategy.cxx	\
 	SegmentedShotStrategy.h		\
 	ServerCommandKey.cxx		\
