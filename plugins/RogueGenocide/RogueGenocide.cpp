@@ -4,6 +4,7 @@
 #include "bzfsAPI.h"
 #include <string>
 #include <map>
+#include "global.h"
 
 BZ_GET_PLUGIN_VERSION
 
@@ -83,10 +84,10 @@ void RogueDeathHandler::process ( bz_EventData *eventData )
 			if (dieData->flagKilledWith != "G" )
 				break;
 			// if the tank killed was not a rogue, let the server/client do the normal killing
-			if (dieData->teamID != 0 )
+			if (dieData->teamID != RogueTeam )
 				break;
 			// if the tank killed was a rogue, and the killer was a rogue, kill the lousy tk'er
-			if (dieData->killerTeamID == 0 ) 
+			if (dieData->killerTeamID == RogueTeam ) 
 			{
 				bz_killPlayer ( dieData->killerID, 0 );
 				bz_sendTextMessage(BZ_SERVER,dieData->killerID,"You should be more careful with Genocide");
