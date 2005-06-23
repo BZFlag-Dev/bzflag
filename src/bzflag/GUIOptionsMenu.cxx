@@ -499,11 +499,11 @@ void			GUIOptionsMenu::callback(HUDuiControl* w, void* data)
       }
       
     case 'p':
-      ScoreboardRenderer::setSort (list->getIndex());
+      ScoreboardRenderer::setSort(list->getIndex());
       break;
 
     case 'q':
-      ScoreboardRenderer::setAlwaysTeamScore (list->getIndex());
+      ScoreboardRenderer::setAlwaysTeamScore(list->getIndex() ? true : false);
       break;
 
   }

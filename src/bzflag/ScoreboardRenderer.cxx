@@ -61,8 +61,8 @@ ScoreboardRenderer::ScoreboardRenderer() :
   messageColor[0] = 1.0f;
   messageColor[1] = 1.0f;
   messageColor[2] = 1.0f;
-  sortMode = BZDB.getIntClamped ("scoreboardSort", 0, SORT_MAXNUM);
-  alwaysShowTeamScore = BZDB.getIntClamped ("alwaysShowTeamScore", 0, 1);
+  sortMode = BZDB.getIntClamped("scoreboardSort", 0, SORT_MAXNUM);
+  alwaysShowTeamScore = (BZDB.getIntClamped("alwaysShowTeamScore", 0, 1) != 0);
 }
 
 
@@ -187,8 +187,8 @@ void			ScoreboardRenderer::render(bool forceDisplay)
     renderScoreboard();
   } else if (BZDB.isTrue("alwaysShowTeamScores")){
     OpenGLGState::resetState();
-    renderTeamScores (winWidth, winY, 
-          (int)FontManager::instance().getStrHeight(minorFontFace, minorFontSize, " "));
+    renderTeamScores(winWidth, winY, 
+          FontManager::instance().getStrHeight(minorFontFace, minorFontSize, " "));
   }
 }
 
@@ -359,8 +359,8 @@ void			ScoreboardRenderer::renderScoreboard(void)
   fm.drawString(x1, y0, 0, minorFontFace, minorFontSize, bdl->getLocalString(scoreLabel));
   fm.drawString(x2, y0, 0, minorFontFace, minorFontSize, bdl->getLocalString(killLabel));
   fm.drawString(x3, y0, 0, minorFontFace, minorFontSize, psLabel);
-  const int dy = (int)fm.getStrHeight(minorFontFace, minorFontSize, " ");
-  int y = (int)(y0 - dy);
+  const float dy = fm.getStrHeight(minorFontFace, minorFontSize, " ");
+  float y = y0 - dy;
 
   // make room for the status marker
   const float xs = x3 - fm.getStrLength(minorFontFace, minorFontSize, "+|");
@@ -385,7 +385,7 @@ void			ScoreboardRenderer::renderScoreboard(void)
       if (huntSelectEvent){             // if 'fire' was pressed ... 
         huntState = HUNT_ENABLED;
         clearHuntedTank ();
-	      players[huntPosition]->setHunted(true);
+	players[huntPosition]->setHunted(true);
       }
     }
   }
@@ -411,7 +411,7 @@ void			ScoreboardRenderer::renderScoreboard(void)
     huntState = HUNT_NONE;        // hunted player must have left the game
 
   delete[] players;
-  renderTeamScores (winWidth, y0, dy);
+  renderTeamScores(winWidth, y0, dy);
 }
 
 
