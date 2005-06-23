@@ -303,10 +303,10 @@ public:
 			std::vector<std::string>	plugins = getPluginList();
 
 			if (!plugins.size())
-				bz_sendTextMessage(BZ_SERVER,playerID,"No Plug-ins loaded;");
+				bz_sendTextMessage(BZ_SERVER,playerID,"No Plug-ins loaded.");
 			else
 			{
-				bz_sendTextMessage(BZ_SERVER,playerID,"Plug-isn loaded;");
+				bz_sendTextMessage(BZ_SERVER,playerID,"Plug-ins loaded:");
 
 				for ( unsigned int i = 0; i < plugins.size(); i++)
 					bz_sendTextMessage(BZ_SERVER,playerID,plugins[i].c_str());
@@ -316,18 +316,18 @@ public:
 
 		if ( !record.admin )
 		{
-			bz_sendTextMessage(BZ_SERVER,playerID,"Permision denied: ADMIN");
-			return true;
-		}
-
-		if ( !message.size() )
-		{
-			bz_sendTextMessage(BZ_SERVER,playerID,"Error: Command must have a plugin name");
+			bz_sendTextMessage(BZ_SERVER,playerID,"You do not have permission to (un)load plug-ins.");
 			return true;
 		}
 
 		if ( TextUtils::tolower(command) == "loadplugin" )
 		{
+			if ( !message.size() )
+			{
+				bz_sendTextMessage(BZ_SERVER,playerID,"Usage: /loadplugin plug-in");
+				return true;
+			}
+
 			std::vector<std::string> params = TextUtils::tokenize(message,std::string(","));
 
 			std::string config;
@@ -336,15 +336,21 @@ public:
 
 			loadPlugin(params[0],config);
 
-			bz_sendTextMessage(BZ_SERVER,playerID,"Plug-in loaded");
+			bz_sendTextMessage(BZ_SERVER,playerID,"Plug-in loaded.");
 			return true;
 		}
 
 		if ( TextUtils::tolower(command) == "unloadplugin" )
 		{
+			if ( !message.size() )
+			{
+				bz_sendTextMessage(BZ_SERVER,playerID,"Usage: /unloadplugin plug-in");
+				return true;
+			}
+
 			unloadPlugin(message);
 
-			bz_sendTextMessage(BZ_SERVER,playerID,"Plug-in unloaded");
+			bz_sendTextMessage(BZ_SERVER,playerID,"Plug-in unloaded.");
 			return true;
 		}
 		return true;
