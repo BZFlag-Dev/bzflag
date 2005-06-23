@@ -37,6 +37,7 @@ extern void zapFlagByPlayer(int playerIndex);
 extern void broadcastMessage(uint16_t code, int len, const void *msg);
 extern void directMessage(int playerIndex, uint16_t code, int len, const void *msg);
 extern char *getDirectMessageBuffer();
+extern void playerKilled(int victimIndex, int killerIndex, int reason, int16_t shotIndex, const FlagType* flagType, int phydrv);
 
 extern CmdLineOptions *clOptions;
 extern uint16_t curMaxPlayers;
@@ -835,7 +836,7 @@ BZF_API bool bz_getStandardSpawn ( int playeID, float pos[3], float *rot )
 	return true;
 }
 
-BZF_API bool bz_killPlayer ( int playeID, bool spawnOnBase )
+BZF_API bool bz_killPlayer ( int playeID, bool spawnOnBase, int killerID, const char* flagType  )
 {
 	GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playeID);
 	if (!player)
@@ -844,9 +845,25 @@ BZF_API bool bz_killPlayer ( int playeID, bool spawnOnBase )
 	if (!player->player.isAlive())
 		return false;
 
-	player->player.setDead();
-	player->player.setRestartOnBase(spawnOnBase);
-	zapFlagByPlayer(playeID);
+	if (killerID == -1)
+	{
+		player->player.setDead();
+		player->player.setRestartOnBase(spawnOnBase);
+		zapFlagByPlayer(playeID);
+		return true;
+	}
+
+	FlagType *flag = NULL;
+	if ( flagType )
+	{
+		FlagTypeMap &flagMap = FlagType::getFlagMap();
+		if (flagMap.find(flagType) == flagMap.end())
+			return false;
+
+		flag = flagMap.find(std::string(flagType))->second;
+	}
+
+	playerKilled(playeID, killerID, 0, -1, flag ? flag : Flags::Null, -1);
 
 	return true;
 }

@@ -30,7 +30,7 @@
 	#define BZF_PLUGIN_CALL extern "C"
 #endif
 
-#define BZ_API_VERSION	3
+#define BZ_API_VERSION	4
 
 #define BZ_GET_PLUGIN_VERSION BZF_PLUGIN_CALL int bz_GetVersion ( void ) { return BZ_API_VERSION;}
 
@@ -580,7 +580,7 @@ BZF_API bool bz_removeCustomSlashCommand ( const char* command );
 BZF_API bool bz_getStandardSpawn ( int playeID, float pos[3], float *rot );
 
 // dying
-BZF_API bool bz_killPlayer ( int playeID, bool spawnOnBase );
+BZF_API bool bz_killPlayer ( int playeID, bool spawnOnBasem, int killerID = -1, const char* flagID = NULL );
 
 // flags
 BZF_API bool bz_removePlayerFlag ( int playeID );
