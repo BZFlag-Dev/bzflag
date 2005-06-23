@@ -646,7 +646,7 @@ BZF_API bool bz_fireWorldWep ( const char* flagType, float lifetime, int fromPla
 		return false;
 
 	FlagTypeMap &flagMap = FlagType::getFlagMap();
-	if (flagMap.find(flagType) == flagMap.end())
+	if (flagMap.find(std::string(flagType)) == flagMap.end())
 		return false;
 
 	FlagType *flag = flagMap.find(std::string(flagType))->second;
@@ -857,7 +857,7 @@ BZF_API bool bz_killPlayer ( int playeID, bool spawnOnBase, int killerID, const 
 	if ( flagType )
 	{
 		FlagTypeMap &flagMap = FlagType::getFlagMap();
-		if (flagMap.find(flagType) == flagMap.end())
+		if (flagMap.find(std::string(flagType)) == flagMap.end())
 			return false;
 
 		flag = flagMap.find(std::string(flagType))->second;
@@ -952,10 +952,10 @@ BZF_API bool bz_addWorldWeapon( const char* _flagType, float *pos, float rot, fl
 	std::string flagType = _flagType;
 
 	FlagTypeMap &flagMap = FlagType::getFlagMap();
-	if (flagMap.find(flagType) == flagMap.end())
+	if (flagMap.find(std::string(flagType)) == flagMap.end())
 		return false;
 
-	FlagType *flag = flagMap.find(flagType)->second;
+	FlagType *flag = flagMap.find(std::string(flagType))->second;
 
 	std::vector<float> realDelays;
 
