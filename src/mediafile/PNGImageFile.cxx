@@ -345,7 +345,7 @@ bool PNGImageFile::expand()
       if (colorDepth == 3) {
 	// colormapped
 	for (int i = myWidth-1; i >= 0; i--) {
-	  PNGRGB &rgb = palette->get(*(pData+i));
+	  PNGRGB &rgb = palette->get(*(pData+i+1));
 	  *(pData + i*3 + 1) = rgb.red;
 	  *(pData + i*3 + 2) = rgb.green;
 	  *(pData + i*3 + 3) = rgb.blue;
