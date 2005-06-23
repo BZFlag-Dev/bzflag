@@ -539,7 +539,8 @@ BZF_API bool bz_updatePlayerData ( bz_PlayerRecord *playerRecord )
 	playerRecord->groups.clear();
 	playerRecord->groups = player->accessInfo.groups;
 
-	playerRecord->admin = player->accessInfo.isVerified();
+	playerRecord->admin = player->accessInfo.isAdmin();
+	playerRecord->verified = player->accessInfo.isVerified();
 
 	playerRecord->wins = player->score.getWins();
 	playerRecord->losses = player->score.getLosses();
