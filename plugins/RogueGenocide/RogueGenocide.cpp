@@ -89,7 +89,7 @@ void RogueDeathHandler::process ( bz_EventData *eventData )
 			// if the tank killed was a rogue, and the killer was a rogue, kill the lousy tk'er
 			if (dieData->killerTeamID == RogueTeam ) 
 			{
-				bz_killPlayer ( dieData->killerID, 0 );
+				bz_killPlayer ( dieData->killerID, 0, dieData->killerID, "G" );
 				bz_sendTextMessage(BZ_SERVER,dieData->killerID,"You should be more careful with Genocide");
 			// if the tank killed was a rogue, and the killer wasnt, kill all rogues.
 			// note the possible issue if the rogue tank being killed has not spawned
@@ -97,7 +97,7 @@ void RogueDeathHandler::process ( bz_EventData *eventData )
 			} else {
 				for ( std::map<int, trRogueDeathHandler >::iterator itr = rogueList.begin(); itr != rogueList.end(); itr++ )
 				{ 
-					bz_killPlayer( itr->first, 0 );
+					bz_killPlayer( itr->first, 0, dieData->killerID, "G" );
 					bz_sendTextMessage(BZ_SERVER,itr->first,"You were a victim of Rogue Genocide");
 				}
 			}
