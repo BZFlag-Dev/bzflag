@@ -150,7 +150,7 @@ void sendMessage(int playerIndex, PlayerId dstPlayer, const char *message);
 void sendFilteredMessage(int playerIndex, PlayerId dstPlayer, const char *message);
 void sendPlayerMessage(GameKeeper::Player* playerData, PlayerId dstPlayer,
 		       const char *message);
-void playerKilled(int victimIndex, int killerIndex, int reason, int16_t shotIndex, const FlagType* flagType, int phydrv);
+void playerKilled(int victimIndex, int killerIndex, int reason, int16_t shotIndex, const FlagType* flagType, int phydrv, bool respawnOnBase = false);
 void removePlayer(int playerIndex, const char *reason, bool notify=true);
 void resetFlag(FlagInfo &flag);
 static void dropFlag(GameKeeper::Player &playerData, float pos[3]);
@@ -2768,7 +2768,7 @@ static void checkTeamScore(int playerIndex, int teamIndex)
 //   It is taken by killerIndex when autocalled, but only if != -1
 // killer could be InvalidPlayer or a number within [0 curMaxPlayer)
 void playerKilled(int victimIndex, int killerIndex, int reason,
-			int16_t shotIndex, const FlagType* flagType, int phydrv)
+			int16_t shotIndex, const FlagType* flagType, int phydrv, bool respawnOnBase )
 {
   GameKeeper::Player *killerData = NULL;
   GameKeeper::Player *victimData
@@ -2788,6 +2788,7 @@ void playerKilled(int victimIndex, int killerIndex, int reason,
   // victim was already dead. keep score.
   if (!victim->isAlive()) return;
 
+  victim->setRestartOnBase(respawnOnBase);
   victim->setDead();
 
   // call any events for a playerdeath
@@ -2852,7 +2853,7 @@ void playerKilled(int victimIndex, int killerIndex, int reason,
       if (victimIndex != killerIndex) {
 	if (teamkill) {
 	  if (clOptions->teamKillerDies)
-	    playerKilled(killerIndex, killerIndex, reason, -1, Flags::Null, -1);
+	    playerKilled(killerIndex, killerIndex, reason, -1, Flags::Null, -1,true);
 	  else
 	    killerData->score.killedBy();
 	} else {

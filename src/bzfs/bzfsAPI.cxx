@@ -37,7 +37,7 @@ extern void zapFlagByPlayer(int playerIndex);
 extern void broadcastMessage(uint16_t code, int len, const void *msg);
 extern void directMessage(int playerIndex, uint16_t code, int len, const void *msg);
 extern char *getDirectMessageBuffer();
-extern void playerKilled(int victimIndex, int killerIndex, int reason, int16_t shotIndex, const FlagType* flagType, int phydrv);
+extern void playerKilled(int victimIndex, int killerIndex, int reason, int16_t shotIndex, const FlagType* flagType, int phydrv, bool respawnOnBase = false);
 
 extern CmdLineOptions *clOptions;
 extern uint16_t curMaxPlayers;
@@ -864,7 +864,7 @@ BZF_API bool bz_killPlayer ( int playeID, bool spawnOnBase, int killerID, const 
 		flag = flagMap.find(std::string(flagType))->second;
 	}
 
-	playerKilled(playeID, killerID, 0, -1, flag ? flag : Flags::Null, -1);
+	playerKilled(playeID, killerID, 0, -1, flag ? flag : Flags::Null, -1,spawnOnBase);
 
 	return true;
 }
