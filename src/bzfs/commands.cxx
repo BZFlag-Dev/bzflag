@@ -75,7 +75,7 @@ extern uint16_t curMaxPlayers;
 
 // externs that ghost needs
 extern void removePlayer(int playerIndex, const char *reason, bool notify=true);
-extern void playerKilled(int victimIndex, int killerIndex, int reason, int16_t shotIndex, const FlagType* flagType, int phydrv);
+extern void playerKilled(int victimIndex, int killerIndex, int reason, int16_t shotIndex, const FlagType* flagType, int phydrv, bool respawnOnBase = false);
 // externs that shutdownserver requires
 extern bool done;
 
