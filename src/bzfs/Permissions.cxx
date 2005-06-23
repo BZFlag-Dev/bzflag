@@ -229,14 +229,20 @@ bool PlayerAccessInfo::hasPerm(PlayerAccessInfo::AccessPerm right) const
     return false;
   if (explicitAllows.test(right))
     return true;
-
-  for (std::vector<std::string>::const_iterator itr=groups.begin(); itr!=groups.end(); ++itr) {
+	
+  bool isAllowed = false;
+	for (std::vector<std::string>::const_iterator itr=groups.begin(); itr!=groups.end(); ++itr) {
     PlayerAccessMap::iterator group = groupAccess.find(*itr);
-    if (group != groupAccess.end() && group->second.explicitAllows.test(right))
-      return true;
+    if (group != groupAccess.end()){
+      if (group->second.explicitDenys.test(right))
+      return false;
+      else if (group->second.explicitAllows.test(right))
+        isAllowed = true;
+    } 
   }
-  return false;
+  return isAllowed;
 }
+
 // grant and revoke perms used with /mute and /unmute
 void PlayerAccessInfo::grantPerm(PlayerAccessInfo::AccessPerm right) 
 {
