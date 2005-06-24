@@ -447,6 +447,7 @@ void			playWorldSound(int soundCode, const float pos[3],
     return;
   }
   SoundCommand s;
+  if (soundSamples.size() <= soundCode) return;
   if (soundSamples[soundCode].length == 0) return;
   s.cmd = important ? SQC_IWORLD_SFX : SQC_WORLD_SFX;
   s.code = soundCode;
@@ -463,6 +464,7 @@ void			playLocalSound(int soundCode)
     return;
   }
   SoundCommand s;
+  if (soundSamples.size() <= soundCode) return;
   if (soundSamples[soundCode].length == 0) return;
   s.cmd = SQC_LOCAL_SFX;
   s.code = soundCode;
@@ -505,6 +507,7 @@ void			playFixedSound(int soundCode,
     return;
   }
   SoundCommand s;
+  if (soundSamples.size() <= soundCode) return;
   if (soundSamples[soundCode].length == 0) return;
   s.cmd = SQC_FIXED_SFX;
   s.code = soundCode;
