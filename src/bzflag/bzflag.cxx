@@ -213,7 +213,7 @@ static DefaultDBItem	defaultDBItems[] = {
   { "spawnEffect",		"1",			true,	StateDatabase::ReadWrite,	NULL },
   { "enableLocalSpawnEffect",	"1",			true,	StateDatabase::ReadWrite,	NULL },
   { "shotEffect",		"1",			true,	StateDatabase::ReadWrite,	NULL },
-  { "enableLocalShotEffect",	"1",			true,	StateDatabase::ReadWrite,	NULL },
+  { "enableLocalShotEffect",	"0",			true,	StateDatabase::ReadWrite,	NULL },
   { "deathEffect",		"1",			true,	StateDatabase::ReadWrite,	NULL },
   { "useVelOnShotEffects",	"1",			true,	StateDatabase::ReadWrite,	NULL },
   { "landEffect",		"1",			true,	StateDatabase::ReadWrite,	NULL },
