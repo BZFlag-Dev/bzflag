@@ -98,7 +98,7 @@ void RogueDeathHandler::process ( bz_EventData *eventData )
 				for ( std::map<int, trRogueDeathHandler >::iterator itr = rogueList.begin(); itr != rogueList.end(); itr++ )
 				{ 
 					bz_killPlayer( itr->first, 0, dieData->killerID, "G" );
-					bz_sendTextMessage(BZ_SERVER,itr->first,"You were a victim of Rogue Genocide");
+					// bz_sendTextMessage(BZ_SERVER,itr->first,"You were a victim of Rogue Genocide");
 				}
 			}
 		}
