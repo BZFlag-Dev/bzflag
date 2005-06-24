@@ -291,7 +291,7 @@ bool PlaysndCommand::handle ( int playerID, bzApiString _command, bzApiString _m
 		if (item.team)
 			target = playerInfo->team;
 
-		voice.lastVoiceTime = time;
+		voice.lastVoiceTime = (int)time;
 
 		bz_sendTextMessage(playerID,target,item.text.c_str());
 		bz_sendPlayCustomLocalSound (target, item.sound.c_str());
