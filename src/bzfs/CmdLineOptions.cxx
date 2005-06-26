@@ -104,6 +104,7 @@ const char *usageString =
 #ifdef PRINTSCORE
 "[-printscore] "
 #endif
+"[-privateaddr <server-hostname>[:<server-port>]] "
 "[-public <server-description>] "
 "[-publicaddr <server-hostname>[:<server-port>]] "
 "[-publiclist <list-server-url>] "
@@ -194,6 +195,7 @@ const char *extraUsageString =
 #ifdef PRINTSCORE
 "\t-printscore: write score to stdout whenever it changes\n"
 #endif
+"\t-privateaddr like -publicaddr, but do not list server. For global login.\n"
 "\t-public <server-description>\n"
 "\t-publicaddr <effective-server-hostname>[:<effective-server-port>]\n"
 "\t-publiclist <list-server-url>\n"
@@ -879,6 +881,12 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       checkArgc(1, i, argc, argv[i]);
       options.publicizedAddress = argv[i];
       options.publicizeServer = true;
+    } else if (strcmp(argv[i], "-privateaddr") == 0) {
+      checkFromWorldFile(argv[i], fromWorldFile);
+      checkArgc(1, i, argc, argv[i]);
+      options.publicizedAddress = argv[i];
+      options.publicizeServer = true;
+      options.privateServer = true;
     } else if (strcmp(argv[i], "-publiclist") == 0) {
       /* if this is the first -publiclist, override the default list
        * server.  otherwise just keep adding urls.

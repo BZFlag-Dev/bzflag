@@ -55,7 +55,7 @@ struct CmdLineOptions
     servermsg(""), advertisemsg(""), worldFile(""),
     pingInterface(""), password(""),
     listServerOverridden(false), publicizedTitle(""), publicizedAddress(""),
-    suppressMasterBanList(false), masterBanListOverridden(false),
+    privateServer (false), suppressMasterBanList(false), masterBanListOverridden(false),
     maxShots(1), maxTeamScore(0), maxPlayerScore(0),
     numExtraFlags(0), teamKillerKickRatio(0),
     numAllowedFlags(0), shakeWins(0), shakeTimeout(0),
@@ -107,6 +107,7 @@ struct CmdLineOptions
 
   std::string	publicizedTitle;
   std::string	publicizedAddress;
+  bool	privateServer;
 
   bool			suppressMasterBanList;
   bool			masterBanListOverridden;
