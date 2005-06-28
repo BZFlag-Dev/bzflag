@@ -52,7 +52,7 @@ bzfs \- BZFlag game server
 [\fB\-mps \fR{\fImax\-score\fR}]
 [\fB\-ms \fIshots\fR]
 [\fB\-mts \fR{\fImax\-score\fR}]
-[\fB\-noMasterBanList\fR]
+[\fB\-noMasterBanlist\fR]
 [\fB\-p \fIport\fR]
 [\fB\-passdb \fIfile\fR]
 [\fB\-passwd \fIpassword\fR]
@@ -272,7 +272,7 @@ This is 1 by default.
 Sets a maximum score for teams.  The first team to reach this score is
 declared the winner and the game is over.
 .TP 
-.B \-noMasterBanList
+.B \-noMasterBanlist
 Forces the server to not attempt to load the master ban list from the internet.
 .TP 
 \fB\-p \fIport\fR
