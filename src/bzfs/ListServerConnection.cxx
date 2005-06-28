@@ -41,8 +41,7 @@ extern CmdLineOptions *clOptions;
 
 const int ListServerLink::NotConnected = -1;
 
-ListServerLink::ListServerLink(std::string listServerURL, std::string publicizedAddress, 
-      std::string publicizedTitle, bool _privateServer)
+ListServerLink::ListServerLink(std::string listServerURL, std::string publicizedAddress, std::string publicizedTitle)
 {
   // parse url
   std::string protocol, _hostname, _pathname;
@@ -82,7 +81,6 @@ ListServerLink::ListServerLink(std::string listServerURL, std::string publicized
   this->publicizeAddress     = publicizedAddress;
   this->publicizeDescription = publicizedTitle;
   this->publicizeServer	     = true;  //if this c'tor is called, it's safe to publicize
-  this->privateServer        = _privateServer;
   
   // schedule initial ADD message
   queueMessage(ListServerLink::ADD);
@@ -325,7 +323,7 @@ void ListServerLink::sendQueuedMessages()
 
   if (nextMessageType == ListServerLink::ADD) {
     DEBUG3("Queuing ADD message to list server\n");
-    addMe(getTeamCounts(), publicizeAddress, TextUtils::url_encode(publicizeDescription), privateServer);
+    addMe(getTeamCounts(), publicizeAddress, TextUtils::url_encode(publicizeDescription));
     lastAddTime = TimeKeeper::getCurrent();
   } else if (nextMessageType == ListServerLink::REMOVE) {
     DEBUG3("Queuing REMOVE message to list server\n");
@@ -335,7 +333,7 @@ void ListServerLink::sendQueuedMessages()
 
 void ListServerLink::addMe(PingPacket pingInfo,
 			   std::string publicizedAddress,
-			   std::string publicizedTitle, bool noList)
+			   std::string publicizedTitle)
 {
   std::string msg;
 
@@ -379,9 +377,6 @@ void ListServerLink::addMe(PingPacket pingInfo,
     }
   }
 
-  if (noList)
-    msg+="&nolist=1";
-
   msg += TextUtils::format("&title=%s HTTP/1.1\r\n"
       "User-Agent: bzfs %s\r\n"
       "Host: %s\r\n"
@@ -391,7 +386,6 @@ void ListServerLink::addMe(PingPacket pingInfo,
     publicizedTitle.c_str(),
     getAppVersion(),
     hostname.c_str());
-
   sendLSMessage(msg);
 }
 
