@@ -227,9 +227,7 @@ void cURLManager::performWait()
 {
   CURLcode result;
   result = curl_easy_perform(easyHandle);
-  if (result != CURLE_OK)
-    DEBUG1("Error while doing easy_perform from libcurl %d : %s\n",
-	   result, errorBuffer);
+  infoComplete(result);
 }
 
 int cURLManager::perform()
