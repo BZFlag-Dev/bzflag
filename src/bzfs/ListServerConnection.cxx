@@ -345,21 +345,24 @@ void ListServerLink::sendQueuedMessages()
   }
 }
 
+
+
+
 void ListServerLink::addMe(PingPacket pingInfo,
 			   std::string publicizedAddress,
 			   std::string publicizedTitle)
 {
   std::string msg;
+  std::string hdr;
 
   // encode ping reply as ascii hex digits plus NULL
   char gameInfo[PingPacketHexPackedSize + 1];
   pingInfo.packHex(gameInfo);
 
-  // TODO we probably should convert to a POST. List server now allows either
   // send ADD message (must send blank line)
   msg = TextUtils::format
-    ("POST %s?action=ADD&nameport=%s&version=%s&gameinfo=%s&build=%s",
-    pathname.c_str(), publicizedAddress.c_str(),
+    ("action=ADD&nameport=%s&version=%s&gameinfo=%s&build=%s",
+    publicizedAddress.c_str(),
     getServerVersion(), gameInfo,
     getAppVersion());
   msg += "&checktokens=";
@@ -376,8 +379,8 @@ void ListServerLink::addMe(PingPacket pingInfo,
       msg += encodedCallsign;
       Address addr = handler->getIPAddress();
       if (!addr.isPrivate()) {
-	msg += "@";
-	msg += handler->getTargetIP();
+	      msg += "@";
+	      msg += handler->getTargetIP();
       }
       msg += "=";
       msg += playerData->player.getToken();
@@ -394,34 +397,39 @@ void ListServerLink::addMe(PingPacket pingInfo,
     }
   }
 
-  msg += TextUtils::format("&title=%s HTTP/1.1\r\n"
+  msg += TextUtils::format("&title=%s\r\n", publicizedTitle.c_str());
+  hdr = TextUtils::format(
+      "POST %s HTTP/1.1\r\n"
       "User-Agent: bzfs %s\r\n"
       "Host: %s\r\n"
       "Cache-Control: no-cache\r\n"
       "Connection: close\r\n"
+      "Content-Type: application/x-www-form-urlencoded\r\n"
+      "Content-Length: %d\r\n"
       "\r\n",
-    publicizedTitle.c_str(),
-    getAppVersion(),
-    hostname.c_str());
-  sendLSMessage(msg);
+      pathname.c_str(), getAppVersion(), hostname.c_str(), msg.length());
+  sendLSMessage(hdr+msg);
 }
+
 
 void ListServerLink::removeMe(std::string publicizedAddress)
 {
   std::string msg;
+  
   // send REMOVE (must send blank line)
-  msg = TextUtils::format("POST %s?action=REMOVE&nameport=%s HTTP/1.1\r\n"
-    "User-Agent: bzfs %s\r\n"
-    "Host: %s\r\n"
-    "Cache-Control: no-cache\r\n"
-    "Connection: close\r\n"
-    "\r\n",
-    pathname.c_str(),
-    publicizedAddress.c_str(),
-    getAppVersion(),
-    hostname.c_str());
-  sendLSMessage(msg);
+  msg = TextUtils::format("action=REMOVE&nameport=%s\r\n",  publicizedAddress.c_str());
+  sendLSMessage(TextUtils::format(
+      "POST %s HTTP/1.1\r\n"
+      "User-Agent: bzfs %s\r\n"
+      "Host: %s\r\n"
+      "Cache-Control: no-cache\r\n"
+      "Connection: close\r\n"
+      "Content-Type: application/x-www-form-urlencoded\r\n"
+      "Content-Length: %d\r\n"
+      "\r\n",
+      pathname.c_str(), getAppVersion(), hostname.c_str(), msg.length())   + msg);
 }
+
 
 void ListServerLink::sendLSMessage(std::string message)
 {
