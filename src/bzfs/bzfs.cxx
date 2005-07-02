@@ -617,10 +617,6 @@ static void serverStop()
   // close connections
   NetHandler::destroyHandlers();
 
-  // remove from list server and disconnect
-  // this destructor must be explicitly called
-  listServerLink->~ListServerLink();
-
   // clean up Kerberos
   Authentication::cleanUp();
 }
@@ -5347,6 +5343,9 @@ int main(int argc, char **argv)
 
   GameKeeper::Player::freeTCPMutex();
   serverStop();
+
+  // remove from list server and disconnect
+  delete listServerLink;
 
   // free misc stuff
   delete clOptions; clOptions = NULL;
