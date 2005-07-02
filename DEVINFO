@@ -213,6 +213,9 @@ code serves for examples but some rules:
       patches with "// Added by foo on xx" comments. This is what
       version control software is for.
 
+ 10)  Do not code very long line. Try to stay within 80 column if possible,
+      for any reason you should raise that limit, don't go over 132.
+
 Violations of these rules in the existing code are not excuses to
 follow suit.  Non-conformant code may be fixed.  Patches to
 non-conformant code should follow the non-conformant code's style if
