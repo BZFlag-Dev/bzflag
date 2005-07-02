@@ -34,14 +34,17 @@
 // FIXME remove externs!
 extern PingPacket getTeamCounts();
 extern uint16_t curMaxPlayers;
-extern void sendMessage(int playerIndex, PlayerId targetPlayer, const char *message);
+extern void sendMessage(int playerIndex, PlayerId targetPlayer,
+			const char *message);
 extern void sendPlayerInfo(void);
 extern void sendIPUpdate(int targetPlayer, int playerIndex);
 extern CmdLineOptions *clOptions;
 
 const int ListServerLink::NotConnected = -1;
 
-ListServerLink::ListServerLink(std::string listServerURL, std::string publicizedAddress, std::string publicizedTitle)
+ListServerLink::ListServerLink(std::string listServerURL,
+			       std::string publicizedAddress,
+			       std::string publicizedTitle)
 {
   // parse url
   std::string protocol, _hostname, _pathname;
@@ -66,7 +69,8 @@ ListServerLink::ListServerLink(std::string listServerURL, std::string publicized
   if (useDefault) {
     BzfNetwork::parseURL(DefaultListServerURL, protocol, _hostname, _port,
 			 _pathname);
-    DEBUG1("Provided list server URL (%s) is invalid.  Using default of %s.\n", listServerURL.c_str(), DefaultListServerURL);
+    DEBUG1("Provided list server URL (%s) is invalid.  Using default of %s.\n",
+	   listServerURL.c_str(), DefaultListServerURL);
   }
 
   // add to list
@@ -77,10 +81,11 @@ ListServerLink::ListServerLink(std::string listServerURL, std::string publicized
   this->linkSocket = NotConnected;
 
   if (clOptions->pingInterface != "")
-    this->localAddress	     = Address::getHostAddress(clOptions->pingInterface);
-  this->publicizeAddress     = publicizedAddress;
-  this->publicizeDescription = publicizedTitle;
-  this->publicizeServer	     = true;  //if this c'tor is called, it's safe to publicize
+    localAddress = Address::getHostAddress(clOptions->pingInterface);
+  publicizeAddress     = publicizedAddress;
+  publicizeDescription = publicizedTitle;
+  //if this c'tor is called, it's safe to publicize
+  publicizeServer      = true;
   
   // schedule initial ADD message
   queueMessage(ListServerLink::ADD);
@@ -188,12 +193,15 @@ void ListServerLink::read()
 	while (*group && (*group == ':')) *group++ = 0;
 	int playerIndex = GameKeeper::Player::getPlayerIDByName(callsign);
 	if (playerIndex < curMaxPlayers) {
-	  GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(playerIndex);
+	  GameKeeper::Player *playerData
+	    = GameKeeper::Player::getPlayerByIndex(playerIndex);
 	  if (playerData != NULL) {
-	    // don't accept the global auth if there's a local account of the same name
-	    // and the local account is not marked as being the same as the global account
+	    // don't accept the global auth if there's a local account
+	    // of the same name and the local account is not marked as
+	    // being the same as the global account
 	    if (!playerData->accessInfo.hasRealPassword()
-		|| playerData->accessInfo.getUserInfo(callsign).hasGroup("LOCAL.GLOBAL")) {
+		|| playerData->accessInfo.getUserInfo(callsign)
+		.hasGroup("LOCAL.GLOBAL")) {
 	      if (!playerData->accessInfo.isRegistered())
 		playerData->accessInfo.storeInfo(NULL);
 	      playerData->accessInfo.setPermissionRights();
@@ -202,7 +210,6 @@ void ListServerLink::read()
 		while (*nextgroup && (*nextgroup != ':')) nextgroup++;
 		while (*nextgroup && (*nextgroup == ':')) *nextgroup++ = 0;
 		playerData->accessInfo.addGroup(group);
-		//DEBUG3("Got: [%d] \"%s\" \"%s\"\n", playerIndex, callsign, group);
 		group = nextgroup;
 	      }
 		  playerData->authentication.global(true);
@@ -211,25 +218,31 @@ void ListServerLink::read()
 	      sendPlayerInfo();
 	    } else {
 	      sendMessage(ServerPlayer, playerIndex, "Global login rejected. "
-			  "This callsign is registered locally on this server.");
-	      sendMessage(ServerPlayer, playerIndex, "If the local account is yours, "
+			  "This callsign is registered locally on this "
+			  "server.");
+	      sendMessage(ServerPlayer, playerIndex,
+			  "If the local account is yours, "
 			  "/identify, /deregister and reconnnect, "
 			  "or ask an admin for the LOCAL.GLOBAL group.");
-	      sendMessage(ServerPlayer, playerIndex, "If it is not yours, please ask an admin "
-			  "to deregister it so that you may use your global callsign.");
+	      sendMessage(ServerPlayer, playerIndex,
+			  "If it is not yours, please ask an admin "
+			  "to deregister it so that you may use your global "
+			  "callsign.");
 	    }
 	    playerData->setNeedThisHostbanChecked(true);
 	    playerData->player.clearToken();
 	  }
 	}
-      } else if (strncmp(base, tokBadIdentifier, strlen(tokBadIdentifier)) == 0) {
+      } else if (!strncmp(base, tokBadIdentifier, strlen(tokBadIdentifier))) {
 	char *callsign;
 	callsign = base + strlen(tokBadIdentifier);
 	int playerIndex = GameKeeper::Player::getPlayerIDByName(callsign);
 	DEBUG3("Got: [%d] %s\n", playerIndex, base);
 	if (playerIndex < curMaxPlayers) {
-	  GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(playerIndex);
-	  sendMessage(ServerPlayer, playerIndex, "Global login rejected, bad token.");
+	  GameKeeper::Player *playerData
+	    = GameKeeper::Player::getPlayerByIndex(playerIndex);
+	  sendMessage(ServerPlayer, playerIndex,
+		      "Global login rejected, bad token.");
 	  if (playerData != NULL) {
 	    playerData->setNeedThisHostbanChecked(true);
 	    playerData->player.clearToken();
@@ -323,7 +336,8 @@ void ListServerLink::sendQueuedMessages()
 
   if (nextMessageType == ListServerLink::ADD) {
     DEBUG3("Queuing ADD message to list server\n");
-    addMe(getTeamCounts(), publicizeAddress, TextUtils::url_encode(publicizeDescription));
+    addMe(getTeamCounts(), publicizeAddress,
+	  TextUtils::url_encode(publicizeDescription));
     lastAddTime = TimeKeeper::getCurrent();
   } else if (nextMessageType == ListServerLink::REMOVE) {
     DEBUG3("Queuing REMOVE message to list server\n");
@@ -343,7 +357,8 @@ void ListServerLink::addMe(PingPacket pingInfo,
 
   // TODO we probably should convert to a POST. List server now allows either
   // send ADD message (must send blank line)
-  msg = TextUtils::format("POST %s?action=ADD&nameport=%s&version=%s&gameinfo=%s&build=%s",
+  msg = TextUtils::format
+    ("POST %s?action=ADD&nameport=%s&version=%s&gameinfo=%s&build=%s",
     pathname.c_str(), publicizedAddress.c_str(),
     getServerVersion(), gameInfo,
     getAppVersion());
@@ -354,8 +369,10 @@ void ListServerLink::addMe(PingPacket pingInfo,
     if (!playerData)
       continue;
     NetHandler *handler = playerData->netHandler;
-    std::string encodedCallsign = TextUtils::url_encode(playerData->player.getCallSign());
-    if (strlen(playerData->player.getCallSign()) && strlen(playerData->player.getToken())) {
+    std::string encodedCallsign
+      = TextUtils::url_encode(playerData->player.getCallSign());
+    if (strlen(playerData->player.getCallSign())
+	&& strlen(playerData->player.getToken())) {
       msg += encodedCallsign;
       Address addr = handler->getIPAddress();
       if (!addr.isPrivate()) {

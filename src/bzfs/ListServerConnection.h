@@ -28,8 +28,10 @@
 
 class ListServerLink {
 public:
-    // c'tor will fill list and local server information variables and do an initial ADD
-    ListServerLink(std::string listServerURL, std::string publicizedAddress, std::string publicizedTitle);
+    // c'tor will fill list and local server information variables and
+    // do an initial ADD
+    ListServerLink(std::string listServerURL, std::string publicizedAddress,
+		   std::string publicizedTitle);
     // c'tor with no arguments called when we don't want to use a list server.
     ListServerLink();
     // d'tor will REMOVE server and close connection
@@ -45,7 +47,8 @@ public:
     void sendQueuedMessages();
     void read();
 
-//  FIXME - linkSocket shouldn't have to be public.  Write functions to avoid directly accessing the socket.
+//  FIXME - linkSocket shouldn't have to be public.  Write functions
+//  to avoid directly accessing the socket.
     int linkSocket;
 
 private:
@@ -68,7 +71,8 @@ private:
     std::string publicizeDescription;
     
     // messages to send, used by sendQueuedMessages
-    void addMe(PingPacket pingInfo, std::string publicizedAddress, std::string publicizedTitle);
+    void addMe(PingPacket pingInfo, std::string publicizedAddress,
+	       std::string publicizedTitle);
     void removeMe(std::string publicizedAddress);
     void sendLSMessage(std::string message);
 };
