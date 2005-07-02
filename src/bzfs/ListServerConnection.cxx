@@ -343,7 +343,7 @@ void ListServerLink::addMe(PingPacket pingInfo,
 
   // TODO we probably should convert to a POST. List server now allows either
   // send ADD message (must send blank line)
-  msg = TextUtils::format("GET %s?action=ADD&nameport=%s&version=%s&gameinfo=%s&build=%s",
+  msg = TextUtils::format("POST %s?action=ADD&nameport=%s&version=%s&gameinfo=%s&build=%s",
     pathname.c_str(), publicizedAddress.c_str(),
     getServerVersion(), gameInfo,
     getAppVersion());
@@ -393,7 +393,7 @@ void ListServerLink::removeMe(std::string publicizedAddress)
 {
   std::string msg;
   // send REMOVE (must send blank line)
-  msg = TextUtils::format("GET %s?action=REMOVE&nameport=%s HTTP/1.1\r\n"
+  msg = TextUtils::format("POST %s?action=REMOVE&nameport=%s HTTP/1.1\r\n"
     "User-Agent: bzfs %s\r\n"
     "Host: %s\r\n"
     "Cache-Control: no-cache\r\n"
