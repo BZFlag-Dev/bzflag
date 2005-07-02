@@ -78,7 +78,7 @@ ListServerLink::ListServerLink(std::string listServerURL,
   port             = _port;
   pathname         = _pathname;
   hostname         = _hostname;
-  this->linkSocket = NotConnected;
+  linkSocket       = NotConnected;
 
   if (clOptions->pingInterface != "")
     localAddress = Address::getHostAddress(clOptions->pingInterface);
@@ -96,8 +96,8 @@ ListServerLink::ListServerLink()
   // does not create a usable link, so checks should be placed
   // in  all public member functions to ensure that nothing tries
   // to happen if publicizeServer is false
-  this->linkSocket = NotConnected;
-  this->publicizeServer = false;
+  linkSocket      = NotConnected;
+  publicizeServer = false;
 }
 
 ListServerLink::~ListServerLink()
@@ -304,7 +304,7 @@ void ListServerLink::openLink()
       if (getErrno() != EINPROGRESS) {
 	nerror("connecting to list server");
 	// try to lookup dns name again in case it moved
-	this->address = Address::getHostAddress(this->hostname);
+	address = Address::getHostAddress(hostname);
 	closeLink();
       } else {
 	phase = CONNECTING;
