@@ -46,47 +46,22 @@ ListServerLink::ListServerLink(std::string listServerURL,
 			       std::string publicizedAddress,
 			       std::string publicizedTitle)
 {
-  // parse url
-  std::string protocol, _hostname, _pathname;
-  int _port = 80;
-  bool useDefault = false;
 
-  // use default if it can't be parsed
-  if (!BzfNetwork::parseURL(listServerURL, protocol, _hostname, _port,
-			    _pathname))
-    useDefault = true;
+  std::string bzfsUserAgent = "bzfs ";
+  bzfsUserAgent            += getAppVersion();
 
-  // use default if wrong protocol or invalid port
-  if ((protocol != "http") || (_port < 1) || (_port > 65535))
-    useDefault = true;
+  setURL(listServerURL);
 
-  // use default if bad address
-  Address _address = Address::getHostAddress(_hostname);
-  if (_address.isAny())
-    useDefault = true;
-
-  // parse default list server URL if we need to; assume default works
-  if (useDefault) {
-    BzfNetwork::parseURL(DefaultListServerURL, protocol, _hostname, _port,
-			 _pathname);
-    DEBUG1("Provided list server URL (%s) is invalid.  Using default of %s.\n",
-	   listServerURL.c_str(), DefaultListServerURL);
-  }
-
-  // add to list
-  address          = _address;
-  port             = _port;
-  pathname         = _pathname;
-  hostname         = _hostname;
-  linkSocket       = NotConnected;
+  setUserAgent(bzfsUserAgent);
 
   if (clOptions->pingInterface != "")
-    localAddress = Address::getHostAddress(clOptions->pingInterface);
+    setInterface(clOptions->pingInterface);
+
   publicizeAddress     = publicizedAddress;
   publicizeDescription = publicizedTitle;
   //if this c'tor is called, it's safe to publicize
   publicizeServer      = true;
-  
+  queuedRequest        = false;
   // schedule initial ADD message
   queueMessage(ListServerLink::ADD);
 }
@@ -96,7 +71,6 @@ ListServerLink::ListServerLink()
   // does not create a usable link, so checks should be placed
   // in  all public member functions to ensure that nothing tries
   // to happen if publicizeServer is false
-  linkSocket      = NotConnected;
   publicizeServer = false;
 }
 
@@ -113,63 +87,21 @@ ListServerLink::~ListServerLink()
     return;
 
   queueMessage(ListServerLink::REMOVE);
-  TimeKeeper start = TimeKeeper::getCurrent();
-  do {
-    // compute timeout
-    float waitTime = float(3.0 - (TimeKeeper::getCurrent() - start));
-    if (waitTime <= 0.0f)
+  for (int i = 0; i < 12; i++) {
+    cURLManager::perform();
+    if (!queuedRequest)
       break;
-    if (!isConnected()) //queueMessage should have connected us
-      break;
-    // check for list server socket connection
-    int fdMax = -1;
-    fd_set write_set;
-    fd_set read_set;
-    FD_ZERO(&write_set);
-    FD_ZERO(&read_set);
-    if (phase == ListServerLink::CONNECTING) {
-      FD_SET((unsigned int)linkSocket, &write_set);
-    } else {
-      FD_SET((unsigned int)linkSocket, &read_set);
-    }
-    fdMax = linkSocket;
-
-    // wait for socket to connect or timeout
-    struct timeval timeout;
-    timeout.tv_sec = long(floorf(waitTime));
-    timeout.tv_usec = long(1.0e+6f * (waitTime - floorf(waitTime)));
-    int nfound = select(fdMax + 1, (fd_set*)&read_set, (fd_set*)&write_set,
-			0, &timeout);
-    if (nfound == 0)
-      // Time has gone, close and go
-      break;
-    // check for connection to list server
-    if (FD_ISSET(linkSocket, &write_set))
-      sendQueuedMessages();
-    else if (FD_ISSET(linkSocket, &read_set))
-      read();
-  } while (true);
-
-  // stop list server communication
-  closeLink();
-}
-
-void ListServerLink::closeLink()
-{
-  if (isConnected()) {
-    close(linkSocket);
-    DEBUG4("Closing List Server\n");
-    linkSocket = NotConnected;
+    TimeKeeper::sleep(0.25f);
   }
 }
 
-void ListServerLink::read()
+void ListServerLink::finalization(char *data, unsigned int length, bool good)
 {
-  if (isConnected()) {
+  queuedRequest = false;
+  if (good && (length < 2048)) {
     char buf[2048];
-    int bytes = recv(linkSocket, buf, sizeof(buf)-1, 0);
-    // TODO don't close unless we've got it all
-    closeLink();
+    memcpy(buf, data, length);
+    int bytes = length;
     buf[bytes]=0;
     char* base = buf;
     static char *tokGoodIdentifier = "TOKGOOD: ";
@@ -253,67 +185,11 @@ void ListServerLink::read()
       // next reply
       base = scan;
     }
-    if (nextMessageType != ListServerLink::NONE) {
-      // There was a pending request arrived after we write:
-      // we should redo all the stuff
-      openLink();
-    }
   }
-}
-
-void ListServerLink::openLink()
-{
-  // start opening connection if not already doing so
-  if (!isConnected()) {
-    linkSocket = socket(AF_INET, SOCK_STREAM, 0);
-    DEBUG4("Opening List Server\n");
-    if (!isConnected()) {
-      return;
-    }
-
-    // set to non-blocking for connect
-    if (BzfNetwork::setNonBlocking(linkSocket) < 0) {
-      closeLink();
-      return;
-    }
-
-    // Make our connection come from our serverAddress in case we have
-    // multiple/masked IPs so the list server can verify us.
-    struct sockaddr_in addr;
-    memset(&addr, 0, sizeof(addr));
-    addr.sin_family = AF_INET;
-    addr.sin_addr = localAddress;
-
-    // assign the address to the socket
-    if (bind(linkSocket, (CNCTType*)&addr, sizeof(addr)) < 0) {
-      closeLink();
-      return;
-    }
-
-    // connect.  this should fail with EINPROGRESS but check for
-    // success just in case.
-    memset(&addr, 0, sizeof(addr));
-    addr.sin_family = AF_INET;
-    addr.sin_port   = htons(port);
-    addr.sin_addr   = address;
-    if (connect(linkSocket, (CNCTType*)&addr, sizeof(addr)) < 0) {
-#if defined(_WIN32)
-#undef EINPROGRESS
-#define EINPROGRESS EWOULDBLOCK
-#endif
-      if (getErrno() != EINPROGRESS) {
-	nerror("connecting to list server");
-	// try to lookup dns name again in case it moved
-	address = Address::getHostAddress(hostname);
-	closeLink();
-      } else {
-	phase = CONNECTING;
-      }
-    } else {
-      // shouldn't arrive here. Just in case, clean
-      DEBUG3("list server connect and close?\n");
-      closeLink();
-    }
+  if (nextMessageType != ListServerLink::NONE) {
+    // There was a pending request arrived after we write:
+    // we should redo all the stuff
+    sendQueuedMessages();
   }
 }
 
@@ -322,31 +198,26 @@ void ListServerLink::queueMessage(MessageType type)
   // ignore if the server is not public
   if (!publicizeServer) return;
 
-  // Open network connection only if closed
-  if (!isConnected()) openLink();
-
   // record next message to send.
   nextMessageType = type;
+
+  if (!queuedRequest)
+    sendQueuedMessages();
 }
 
 void ListServerLink::sendQueuedMessages()
 {
-  if (!isConnected())
-    return;
-
+  queuedRequest = true;
   if (nextMessageType == ListServerLink::ADD) {
     DEBUG3("Queuing ADD message to list server\n");
-    addMe(getTeamCounts(), publicizeAddress,
-	  TextUtils::url_encode(publicizeDescription));
+    addMe(getTeamCounts(), publicizeAddress, publicizeDescription);
     lastAddTime = TimeKeeper::getCurrent();
   } else if (nextMessageType == ListServerLink::REMOVE) {
     DEBUG3("Queuing REMOVE message to list server\n");
     removeMe(publicizeAddress);
   }
+  nextMessageType = ListServerLink::NONE;
 }
-
-
-
 
 void ListServerLink::addMe(PingPacket pingInfo,
 			   std::string publicizedAddress,
@@ -360,23 +231,21 @@ void ListServerLink::addMe(PingPacket pingInfo,
   pingInfo.packHex(gameInfo);
 
   // send ADD message (must send blank line)
-  msg = TextUtils::format
-    ("action=ADD&nameport=%s&version=%s&gameinfo=%s&build=%s",
-    publicizedAddress.c_str(),
-    getServerVersion(), gameInfo,
-    getAppVersion());
-  msg += "&checktokens=";
+  addFormData("action",   "ADD");
+  addFormData("nameport", publicizedAddress.c_str());
+  addFormData("version",  getServerVersion());
+  addFormData("gameinfo", gameInfo);
+  addFormData("build",    getAppVersion());
+
   // callsign1@ip1=token1%0D%0Acallsign2@ip2=token2%0D%0A
   for (int i = 0; i < curMaxPlayers; i++) {
     GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(i);
     if (!playerData)
       continue;
     NetHandler *handler = playerData->netHandler;
-    std::string encodedCallsign
-      = TextUtils::url_encode(playerData->player.getCallSign());
     if (strlen(playerData->player.getCallSign())
 	&& strlen(playerData->player.getToken())) {
-      msg += encodedCallsign;
+      msg += playerData->player.getCallSign();
       Address addr = handler->getIPAddress();
       if (!addr.isPrivate()) {
 	      msg += "@";
@@ -387,8 +256,10 @@ void ListServerLink::addMe(PingPacket pingInfo,
       msg += "%0D%0A";
     }
   }
+  addFormData("checktokens", msg.c_str());
+
   // *groups=GROUP0%0D%0AGROUP1%0D%0A
-  msg += "&groups=";
+  msg = "";
   PlayerAccessMap::iterator itr = groupAccess.begin();
   for ( ; itr != groupAccess.end(); itr++) {
     if (itr->first.substr(0, 6) != "LOCAL.") {
@@ -396,60 +267,21 @@ void ListServerLink::addMe(PingPacket pingInfo,
       msg += "%0D%0A";
     }
   }
+  addFormData("groups", msg.c_str());
 
-  msg += TextUtils::format("&title=%s", publicizedTitle.c_str());
-  hdr = TextUtils::format(
-      "POST %s HTTP/1.1\r\n"
-      "User-Agent: bzfs %s\r\n"
-      "Host: %s\r\n"
-      "Cache-Control: no-cache\r\n"
-      "Connection: close\r\n"
-      "Content-Type: application/x-www-form-urlencoded\r\n"
-      "Content-Length: %d\r\n"
-      "\r\n",
-      pathname.c_str(), getAppVersion(), hostname.c_str(), msg.length());
-  sendLSMessage(hdr+msg);
+  addFormData("title",  publicizedTitle.c_str());
+
+  addHandle();
 }
-
 
 void ListServerLink::removeMe(std::string publicizedAddress)
 {
   std::string msg;
   
-  // send REMOVE (must send blank line)
-  msg = TextUtils::format("action=REMOVE&nameport=%s",  publicizedAddress.c_str());
-  sendLSMessage(TextUtils::format(
-      "POST %s HTTP/1.1\r\n"
-      "User-Agent: bzfs %s\r\n"
-      "Host: %s\r\n"
-      "Cache-Control: no-cache\r\n"
-      "Connection: close\r\n"
-      "Content-Type: application/x-www-form-urlencoded\r\n"
-      "Content-Length: %d\r\n"
-      "\r\n",
-      pathname.c_str(), getAppVersion(), hostname.c_str(), msg.length())   + msg);
-}
+  addFormData("action",   "REMOVE");
+  addFormData("nameport", publicizedAddress.c_str());
 
-
-void ListServerLink::sendLSMessage(std::string message)
-{
-  const int bufsize = 4096;
-  char msg[bufsize];
-  strncpy(msg, message.c_str(), bufsize);
-  msg[bufsize - 1] = 0;
-  if (strlen(msg) > 0) {
-    DEBUG3("%s\n", msg);
-    if (send(linkSocket, msg, strlen(msg), 0) == -1) {
-      perror("List server send failed");
-      DEBUG3("Unable to send to the list server!\n");
-      closeLink();
-    } else {
-      nextMessageType = ListServerLink::NONE;
-      phase	   = ListServerLink::WRITTEN;
-    }
-  } else {
-    closeLink();
-  }
+  addHandle();
 }
 
 // Local Variables: ***

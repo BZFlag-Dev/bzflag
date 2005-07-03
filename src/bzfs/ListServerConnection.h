@@ -25,8 +25,9 @@
 #include "Address.h"
 #include "Ping.h"
 #include "TimeKeeper.h"
+#include "cURLManager.h"
 
-class ListServerLink {
+class ListServerLink : cURLManager {
 public:
     // c'tor will fill list and local server information variables and
     // do an initial ADD
@@ -38,18 +39,10 @@ public:
     ~ListServerLink();
 
     enum MessageType {NONE, ADD, REMOVE} nextMessageType;
-    enum Phase {CONNECTING, WRITTEN} phase;
     TimeKeeper lastAddTime;
 
     // connection functions
-    bool isConnected();
     void queueMessage(MessageType type);
-    void sendQueuedMessages();
-    void read();
-
-//  FIXME - linkSocket shouldn't have to be public.  Write functions
-//  to avoid directly accessing the socket.
-    int linkSocket;
 
 private:
     static const int NotConnected;
@@ -60,28 +53,22 @@ private:
     std::string hostname;
     std::string pathname;
 
-    // connect/disconnect
-    void openLink();
-    void closeLink();
-
     // local server information
     Address localAddress;
     bool publicizeServer;
     std::string publicizeAddress;
     std::string publicizeDescription;
     
+    virtual void finalization(char *data, unsigned int length, bool good);
+
     // messages to send, used by sendQueuedMessages
     void addMe(PingPacket pingInfo, std::string publicizedAddress,
 	       std::string publicizedTitle);
     void removeMe(std::string publicizedAddress);
-    void sendLSMessage(std::string message);
+    void sendQueuedMessages();
+
+  bool queuedRequest;
 };
-
-inline bool ListServerLink::isConnected()
-{
-  return (linkSocket != NotConnected);
-}
-
 #endif //__LISTSERVERCONNECTION_H__
 
 // Local Variables: ***

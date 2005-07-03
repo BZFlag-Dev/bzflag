@@ -4739,17 +4739,10 @@ int main(int argc, char **argv)
       maxFileDescriptor = wksSocket;
     }
 
-    // check for list server socket connected
-    if (listServerLinksCount) {
-      if (listServerLink->isConnected()) {
-	if (listServerLink->phase == ListServerLink::CONNECTING)
-	  FD_SET((unsigned int)listServerLink->linkSocket, &write_set);
-	else
-	  FD_SET((unsigned int)listServerLink->linkSocket, &read_set);
-	if (listServerLink->linkSocket > maxFileDescriptor)
-	  maxFileDescriptor = listServerLink->linkSocket;
-      }
-    }
+    // Check for cURL needed activity
+    int cURLmaxFile = cURLManager::fdset(read_set, write_set);
+    if (cURLmaxFile > maxFileDescriptor)
+      maxFileDescriptor = cURLmaxFile;
 
     // find timeout when next flag would hit ground
     TimeKeeper tm = TimeKeeper::getCurrent();
@@ -5241,20 +5234,15 @@ int main(int argc, char **argv)
 	listServerLink->queueMessage(ListServerLink::ADD);
       }
 
+    // cURLperform should be called in any case as we could incur in timeout
+    cURLManager::perform();
+
     // check messages
     if (nfound > 0) {
       //DEBUG1("chkmsg nfound,read,write %i,%08lx,%08lx\n", nfound, read_set, write_set);
       // first check initial contacts
       if (FD_ISSET(wksSocket, &read_set))
 	acceptClient();
-
-      // check for connection to list server
-      if (listServerLinksCount)
-	if (listServerLink->isConnected())
-	  if (FD_ISSET(listServerLink->linkSocket, &write_set))
-	    listServerLink->sendQueuedMessages();
-	  else if (FD_ISSET(listServerLink->linkSocket, &read_set))
-	    listServerLink->read();
 
       // check if we have any UDP packets pending
       if (NetHandler::isUdpFdSet(&read_set)) {
