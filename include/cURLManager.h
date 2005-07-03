@@ -56,6 +56,8 @@ public:
   void setURL(const std::string url);
   void setProgressFunction(curl_progress_callback func, void* data);
   void setTimeCondition(timeCondition condition, time_t &t);
+  void setInterface(const std::string interface);
+  void setUserAgent(const std::string userAgent);
 
   void addFormData(const char *key, const char *value);
 
@@ -64,6 +66,7 @@ public:
   virtual void collectData(char *ptr, int len);
   virtual void finalization(char *data, unsigned int length, bool good);
 
+  static int fdset(fd_set &read, fd_set &write);
   static int perform();
   void       performWait();
 
@@ -80,6 +83,8 @@ private:
   static char   errorBuffer[CURL_ERROR_SIZE];
   bool          added;
   std::string   usedUrl;
+  std::string   interface;
+  std::string   userAgent;
 
   struct curl_httppost* formPost;
   struct curl_httppost* formLast;

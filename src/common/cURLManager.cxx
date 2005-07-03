@@ -230,6 +230,21 @@ void cURLManager::performWait()
   infoComplete(result);
 }
 
+int cURLManager::fdset(fd_set &read, fd_set &write)
+{
+  fd_set    exc;
+  int       max_fd = -1;
+  CURLMcode result;
+
+  FD_ZERO(&exc);
+
+  result = curl_multi_fdset(multiHandle, &read, &write, &exc, &max_fd);
+  if (result != CURLM_OK)
+    DEBUG1("Error while doing multi_fdset from libcurl %d : %s\n",
+	   result, errorBuffer);
+  return max_fd;
+}
+
 int cURLManager::perform()
 {
   if (!inited)
@@ -328,6 +343,32 @@ void cURLManager::setTimeCondition(timeCondition condition, time_t &t)
   default:
     break;
   }
+}
+
+void cURLManager::setInterface(const std::string _interface)
+{
+  interface = _interface;
+
+  CURLcode result;
+
+  result = curl_easy_setopt(easyHandle,
+			    CURLOPT_INTERFACE,
+			    interface.c_str());
+  if (result != CURLE_OK)
+    DEBUG1("CURLOPT_SET_INTERFACE error %d : %s\n", result, errorBuffer);
+}
+
+void cURLManager::setUserAgent(const std::string _userAgent)
+{
+  userAgent = _userAgent;
+
+  CURLcode result;
+
+  result = curl_easy_setopt(easyHandle,
+			    CURLOPT_USERAGENT,
+			    userAgent.c_str());
+  if (result != CURLE_OK)
+    DEBUG1("CURLOPT_SET_USERAGENT error %d : %s\n", result, errorBuffer);
 }
 
 void cURLManager::addFormData(const char *key, const char *value)
