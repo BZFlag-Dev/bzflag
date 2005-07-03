@@ -51,7 +51,6 @@ ListServerLink::ListServerLink(std::string listServerURL,
   bzfsUserAgent            += getAppVersion();
 
   setURL(listServerURL);
-
   setUserAgent(bzfsUserAgent);
 
   if (clOptions->pingInterface != "")
@@ -271,6 +270,7 @@ void ListServerLink::addMe(PingPacket pingInfo,
 
   addFormData("title",  publicizedTitle.c_str());
 
+  setPostMode();
   addHandle();
 }
 
@@ -281,6 +281,7 @@ void ListServerLink::removeMe(std::string publicizedAddress)
   addFormData("action",   "REMOVE");
   addFormData("nameport", publicizedAddress.c_str());
 
+  setPostMode();
   addHandle();
 }
 
