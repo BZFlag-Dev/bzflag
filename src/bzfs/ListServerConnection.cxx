@@ -397,7 +397,7 @@ void ListServerLink::addMe(PingPacket pingInfo,
     }
   }
 
-  msg += TextUtils::format("&title=%s\r\n", publicizedTitle.c_str());
+  msg += TextUtils::format("&title=%s", publicizedTitle.c_str());
   hdr = TextUtils::format(
       "POST %s HTTP/1.1\r\n"
       "User-Agent: bzfs %s\r\n"
@@ -417,7 +417,7 @@ void ListServerLink::removeMe(std::string publicizedAddress)
   std::string msg;
   
   // send REMOVE (must send blank line)
-  msg = TextUtils::format("action=REMOVE&nameport=%s\r\n",  publicizedAddress.c_str());
+  msg = TextUtils::format("action=REMOVE&nameport=%s",  publicizedAddress.c_str());
   sendLSMessage(TextUtils::format(
       "POST %s HTTP/1.1\r\n"
       "User-Agent: bzfs %s\r\n"
