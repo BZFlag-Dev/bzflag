@@ -289,6 +289,8 @@ bool SDLDisplay::setupEvent(BzfEvent& _event, const SDL_Event& event) const
       } else {
 	_event.type = BzfEvent::Map;
       }
+    else
+      return false;
     break;
 
   default:
