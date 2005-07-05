@@ -270,7 +270,7 @@ void ListServerLink::addMe(PingPacket pingInfo,
 
   addFormData("title",  publicizedTitle.c_str());
 
-  setPostMode();
+  setHTTPPostMode();
   addHandle();
 }
 
@@ -281,7 +281,7 @@ void ListServerLink::removeMe(std::string publicizedAddress)
   addFormData("action",   "REMOVE");
   addFormData("nameport", publicizedAddress.c_str());
 
-  setPostMode();
+  setHTTPPostMode();
   addHandle();
 }
 

@@ -51,7 +51,7 @@ public:
   void setTimeout(long timeout);
   void setNoBody();
   void setGetMode();
-  void setPostMode();
+  void setHTTPPostMode();
   void setRequestFileTime(bool request);
   void setURL(const std::string url);
   void setProgressFunction(curl_progress_callback func, void* data);

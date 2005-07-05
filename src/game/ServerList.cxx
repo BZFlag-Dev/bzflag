@@ -275,7 +275,7 @@ void			ServerList::checkEchos(StartupInfo *info)
     addFormData("version", getServerVersion());
     addFormData("callsign", info->callsign);
     addFormData("password", info->password);
-    setPostMode();
+    setHTTPPostMode();
     setURL(url);
     addHandle();
 

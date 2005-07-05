@@ -133,7 +133,7 @@ void cURLManager::setGetMode()
   }
 }
 
-void cURLManager::setPostMode()
+void cURLManager::setHTTPPostMode()
 {
   CURLcode result;
 
