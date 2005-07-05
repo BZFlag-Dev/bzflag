@@ -362,15 +362,15 @@ void cURLManager::setTimeCondition(timeCondition condition, time_t &t)
   }
 }
 
-void cURLManager::setInterface(const std::string _interface)
+void cURLManager::setInterface(const std::string _interfaceIP)
 {
-  interface = _interface;
+  interfaceIP = _interfaceIP;
 
   CURLcode result;
 
   result = curl_easy_setopt(easyHandle,
 			    CURLOPT_INTERFACE,
-			    interface.c_str());
+			    interfaceIP.c_str());
   if (result != CURLE_OK)
     DEBUG1("CURLOPT_SET_INTERFACE error %d : %s\n", result, errorBuffer);
 }
