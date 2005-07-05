@@ -2387,9 +2387,23 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
   // first shutdown connection
 
   GameKeeper::Player *playerData
-		      = GameKeeper::Player::getPlayerByIndex(playerIndex);
-  if (!playerData)
-    return;
+		      = GameKeeper::Player::getValidPlayerByIndex(playerIndex);
+  if (!playerData) {
+		playerData = GameKeeper::Player::getPlayerByIndex(playerIndex);
+		if (!playerData)
+			return;
+		else {
+			std::string timeStamp = TimeKeeper::timestamp();
+      DEBUG1("Player %s [%d] removed at %s: %s\n",
+	      playerData->player.getCallSign(),
+	      playerIndex, timeStamp.c_str(), reason);
+			DEBUG1("Might have been empty slot");
+			playerData->netHandler->closing();
+			playerData->close();
+			return;
+		}
+	}
+			
 
   // call any on part events
   bz_PlayerJoinPartEventData partEventData;
