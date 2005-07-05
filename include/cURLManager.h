@@ -52,6 +52,7 @@ public:
   void setNoBody();
   void setGetMode();
   void setHTTPPostMode();
+  void setPostMode(std::string postData);
   void setRequestFileTime(bool request);
   void setURL(const std::string url);
   void setProgressFunction(curl_progress_callback func, void* data);
@@ -85,6 +86,7 @@ private:
   std::string   usedUrl;
   std::string   interface;
   std::string   userAgent;
+  std::string   postData;
 
   struct curl_httppost* formPost;
   struct curl_httppost* formLast;

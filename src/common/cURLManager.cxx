@@ -133,13 +133,30 @@ void cURLManager::setGetMode()
   }
 }
 
+void cURLManager::setPostMode(std::string _postData)
+{
+  CURLcode result;
+
+  postData = _postData;
+
+  result = curl_easy_setopt(easyHandle, CURLOPT_POSTFIELDS, postData.c_str());
+  if (result != CURLE_OK)
+    DEBUG1("CURLOPT_POSTFIELD error %d : %s\n", result, errorBuffer);
+  result = curl_easy_setopt(easyHandle, CURLOPT_POSTFIELDSIZE, -1);
+  if (result != CURLE_OK)
+    DEBUG1("CURLOPT_POSTFIELD error %d : %s\n", result, errorBuffer);
+  result = curl_easy_setopt(easyHandle, CURLOPT_POST, 1);
+  if (result != CURLE_OK)
+    DEBUG1("CURLOPT_POST error %d : %s\n", result, errorBuffer);
+}
+
 void cURLManager::setHTTPPostMode()
 {
   CURLcode result;
 
   result = curl_easy_setopt(easyHandle, CURLOPT_HTTPPOST, formPost);
   if (result != CURLE_OK)
-    DEBUG1("CURLOPT_POST error %d : %s\n", result, errorBuffer);
+    DEBUG1("CURLOPT_HTTPPOST error %d : %s\n", result, errorBuffer);
 }
 
 void cURLManager::setURL(const std::string url)
