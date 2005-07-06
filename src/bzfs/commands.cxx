@@ -288,21 +288,6 @@ static void handleQuitCmd(GameKeeper::Player *playerData, const char *message)
   removePlayer(t, byeStatement.c_str());
 }
 
-void handleMeCmd(GameKeeper::Player *playerData, const char *message)
-{
-  std::string message2;
-
-  if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::actionMessage)) {
-    char reply[MessageLen] = {0};
-    sprintf(reply, "%s, you are not presently authorized to perform /me actions", playerData->player.getCallSign());
-    sendMessage(ServerPlayer, playerData->getIndex(), reply);
-    return;
-  }
-
-  // wrap the action using "* blah\t*" for effect.
-  message2 = TextUtils::format("* %s %s\t*", playerData->player.getCallSign(), message + 4);
-  sendPlayerMessage(playerData, AllPlayers, message2.c_str());
-}
 
 static void handleMsgCmd(GameKeeper::Player *playerData, const char *message)
 {
@@ -2613,9 +2598,6 @@ void parseServerCommand(const char *message, int t)
 
   if (strncasecmp(message + 1, "msg", 3) == 0) {
     handleMsgCmd(playerData, message);
-
-  } else if (strncasecmp(message + 1, "me ", 3) == 0) {
-    handleMeCmd(playerData, message);
 
   } else if (strncasecmp(message + 1, "serverquery", 11) == 0) {
     handleServerQueryCmd(playerData, message);

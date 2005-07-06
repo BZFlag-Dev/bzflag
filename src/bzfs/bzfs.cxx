@@ -1496,8 +1496,40 @@ void sendPlayerMessage(GameKeeper::Player *playerData, PlayerId dstPlayer,
 {
   const PlayerId srcPlayer = playerData->getIndex();
 
+  // reformat any '/me' action messages
+  // this is here instead of in commands.cxx to allow player-player/player-channel targetted messages
+  if (strncasecmp(message, "/me", 3) == 0) {
+
+    // don't bother with empty messages
+    if (message[3] == '\0' || (message[3] == ' ' && message[4] == '\0')) {
+      char reply[MessageLen] = {0};
+      sprintf(reply, "%s, the /me command requires an argument", playerData->player.getCallSign());
+      sendMessage(ServerPlayer, srcPlayer, reply);
+      return;
+    }
+
+    // don't intercept other messages beginning with /me...
+    if (message[3] != ' ') {
+      parseServerCommand(message, srcPlayer);
+      return;
+    }
+
+    // check for permissions
+    if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::actionMessage)) {
+      char reply[MessageLen] = {0};
+      sprintf(reply, "%s, you are not presently authorized to perform /me actions", playerData->player.getCallSign());
+      sendMessage(ServerPlayer, srcPlayer, reply);
+      return;
+    }
+
+    // format and send it
+    std::string actionMsg = TextUtils::format("* %s %s\t*", 
+				playerData->player.getCallSign(), message + 4);
+    message = actionMsg.c_str();
+  }
+
   // check for a server command
-  if ((message[0] == '/') && (message[1] != '/')) {
+  else if ((message[0] == '/') && (message[1] != '/')) {
     // record server commands
     if (Record::enabled()) {
       void *buf, *bufStart = getDirectMessageBuffer();
