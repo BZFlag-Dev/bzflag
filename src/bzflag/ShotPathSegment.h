@@ -20,7 +20,7 @@
 
 class ShotPathSegment {
   public:
-    enum Reason		{ Initial, Through, Ricochet, Teleport };
+    enum Reason		{ Initial, Through, Ricochet, Teleport, Boundary };
 
 			ShotPathSegment();
 			ShotPathSegment(const TimeKeeper& start,
