@@ -230,11 +230,15 @@ void ListServerLink::addMe(PingPacket pingInfo,
   pingInfo.packHex(gameInfo);
 
   // send ADD message (must send blank line)
-  addFormData("action",   "ADD");
-  addFormData("nameport", publicizedAddress.c_str());
-  addFormData("version",  getServerVersion());
-  addFormData("gameinfo", gameInfo);
-  addFormData("build",    getAppVersion());
+  msg  = "action=ADD&nameport=";
+  msg += publicizedAddress;
+  msg += "&version=";
+  msg += getServerVersion();
+  msg += "&gameinfo=";
+  msg += gameInfo;
+  msg += "&build=";
+  msg += getAppVersion();
+  msg += "&checktokens=";
 
   // callsign1@ip1=token1%0D%0Acallsign2@ip2=token2%0D%0A
   for (int i = 0; i < curMaxPlayers; i++) {
@@ -244,7 +248,7 @@ void ListServerLink::addMe(PingPacket pingInfo,
     NetHandler *handler = playerData->netHandler;
     if (strlen(playerData->player.getCallSign())
 	&& strlen(playerData->player.getToken())) {
-      msg += playerData->player.getCallSign();
+      msg += TextUtils::url_encode(playerData->player.getCallSign());
       Address addr = handler->getIPAddress();
       if (!addr.isPrivate()) {
 	      msg += "@";
@@ -255,10 +259,9 @@ void ListServerLink::addMe(PingPacket pingInfo,
       msg += "%0D%0A";
     }
   }
-  addFormData("checktokens", msg.c_str());
 
+  msg += "&groups=";
   // *groups=GROUP0%0D%0AGROUP1%0D%0A
-  msg = "";
   PlayerAccessMap::iterator itr = groupAccess.begin();
   for ( ; itr != groupAccess.end(); itr++) {
     if (itr->first.substr(0, 6) != "LOCAL.") {
@@ -266,11 +269,11 @@ void ListServerLink::addMe(PingPacket pingInfo,
       msg += "%0D%0A";
     }
   }
-  addFormData("groups", msg.c_str());
 
-  addFormData("title",  publicizedTitle.c_str());
+  msg += "&title=";
+  msg += publicizedTitle;
 
-  setHTTPPostMode();
+  setPostMode(msg);
   addHandle();
 }
 
@@ -278,10 +281,10 @@ void ListServerLink::removeMe(std::string publicizedAddress)
 {
   std::string msg;
   
-  addFormData("action",   "REMOVE");
-  addFormData("nameport", publicizedAddress.c_str());
+  msg  = "action=REMOVE&nameport=";
+  msg += publicizedAddress;
 
-  setHTTPPostMode();
+  setPostMode(msg);
   addHandle();
 }
 
