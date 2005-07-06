@@ -17,8 +17,6 @@
 			sourceTree = "<group>";
 		};
 		147C9C3D0794FB1800910F8C = {
-			buildRules = (
-			);
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
 			};
@@ -26,8 +24,6 @@
 			name = Development;
 		};
 		147C9C3E0794FB1800910F8C = {
-			buildRules = (
-			);
 			buildSettings = {
 				COPY_PHASE_STRIP = YES;
 			};
@@ -293,7 +289,7 @@
 		14CF6D6B0798A1510071D7DA = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
-			lastKnownFileType = text.plist.xml;
+			lastKnownFileType = text.xml;
 			name = "BZFlag-Info.plist";
 			path = "src/platform/MacOSX/BZFlag-Info.plist";
 			refType = 4;
