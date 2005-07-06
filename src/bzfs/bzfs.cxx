@@ -4863,7 +4863,7 @@ int main(int argc, char **argv)
 	  if (clOptions->gameStyle & int(TeamFlagGameStyle)) {
 	    for (int j = 0; j < curMaxPlayers; j++) {
 	      void *buf, *bufStart = getDirectMessageBuffer();
-	      player = GameKeeper::Player::getPlayerByIndex(j);
+	      player = GameKeeper::Player::getValidPlayerByIndex(j);
 	      if (!player || player->player.isObserver()) continue;
 
 	      // the server gets to capture the flag -- send some
