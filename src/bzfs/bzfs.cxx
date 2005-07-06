@@ -1495,28 +1495,16 @@ void sendPlayerMessage(GameKeeper::Player *playerData, PlayerId dstPlayer,
 		       const char *message)
 {
   const PlayerId srcPlayer = playerData->getIndex();
-  bool isAction = false;
-  std::string actionMsg;
-
-  // reformat any '/me' action messages
-  if ((message[0] == '/') &&
-      (tolower(message[1]) == 'm') && (tolower(message[2]) == 'e')) {
-    isAction = true;
-
-    actionMsg = TextUtils::format("* %s %s\t*", playerData->player.getCallSign(),
-				  message + 4);
-    message = actionMsg.c_str();
-  }
 
   // check for a server command
-  if (!isAction && (message[0] == '/') && (message[1] != '/')) {
+  if ((message[0] == '/') && (message[1] != '/')) {
     // record server commands
     if (Record::enabled()) {
       void *buf, *bufStart = getDirectMessageBuffer();
-      buf = nboPackUByte (bufStart, srcPlayer);
-      buf = nboPackUByte (buf, dstPlayer);
-      buf = nboPackString (buf, message, strlen(message) + 1);
-      Record::addPacket (MsgMessage, (char*)buf - (char*)bufStart, bufStart,
+      buf = nboPackUByte(bufStart, srcPlayer);
+      buf = nboPackUByte(buf, dstPlayer);
+      buf = nboPackString(buf, message, strlen(message) + 1);
+      Record::addPacket(MsgMessage, (char*)buf - (char*)bufStart, bufStart,
 			 HiddenPacket);
     }
     parseServerCommand(message, srcPlayer);

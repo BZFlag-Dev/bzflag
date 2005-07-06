@@ -288,6 +288,21 @@ static void handleQuitCmd(GameKeeper::Player *playerData, const char *message)
   removePlayer(t, byeStatement.c_str());
 }
 
+void handleMeCmd(GameKeeper::Player *playerData, const char *message)
+{
+  std::string message2;
+
+  if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::actionMessage)) {
+    char reply[MessageLen] = {0};
+    sprintf(reply, "%s, you are not presently authorized to perform /me actions", playerData->player.getCallSign());
+    sendMessage(ServerPlayer, playerData->getIndex(), reply);
+    return;
+  }
+
+  // wrap the action using "* blah\t*" for effect.
+  message2 = TextUtils::format("* %s %s\t*", playerData->player.getCallSign(), message + 4);
+  sendPlayerMessage(playerData, AllPlayers, message2.c_str());
+}
 
 static void handleMsgCmd(GameKeeper::Player *playerData, const char *message)
 {
@@ -2599,6 +2614,9 @@ void parseServerCommand(const char *message, int t)
   if (strncasecmp(message + 1, "msg", 3) == 0) {
     handleMsgCmd(playerData, message);
 
+  } else if (strncasecmp(message + 1, "me ", 3) == 0) {
+    handleMeCmd(playerData, message);
+
   } else if (strncasecmp(message + 1, "serverquery", 11) == 0) {
     handleServerQueryCmd(playerData, message);
 
@@ -2758,16 +2776,16 @@ void parseServerCommand(const char *message, int t)
     
     tmCustomSlashCommandMap::iterator itr = customCommands.find(TextUtils::tolower(params[0]));
   
-		bzApiString	command = params[0];
-		bzApiString param;
+    bzApiString	command = params[0];
+    bzApiString param;
 
-		if (params.size()>1)
-			param = params[1];
-		else
-			param = message;
+    if (params.size()>1)
+      param = params[1];
+    else
+      param = message;
 
     if (itr != customCommands.end()) {  // see if we have a registerd custom command and call it
-      if (itr->second->handle(t,command,param))  //if it handles it, then we are good
+      if (itr->second->handle(t, command, param))  // if it handles it, then we are good
         return;
     }
   
@@ -2777,7 +2795,7 @@ void parseServerCommand(const char *message, int t)
     commandData.message = message;
     commandData.time = TimeKeeper::getCurrent().getSeconds();
   
-    worldEventManager.callEvents(bz_eUnknownSlashCommand,-1,&commandData);
+    worldEventManager.callEvents(bz_eUnknownSlashCommand, -1, &commandData);
     if (commandData.handled) // did anyone do it?
       return;
 
