@@ -269,7 +269,6 @@ bool DiffCommand::operator() (const char *commandLine)
   return true;
 }
 
-#ifdef DEBUG
 LocalSetCommand::LocalSetCommand() : LocalCommand("/localset")
 {
 }
@@ -294,7 +293,6 @@ bool LocalSetCommand::operator() (const char *commandLine)
   }
   return true;
 }
-#endif
 
 QuitCommand::QuitCommand() : LocalCommand("/quit")
 {
