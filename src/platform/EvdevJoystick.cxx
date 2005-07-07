@@ -32,6 +32,7 @@
 
 /* implementation headers */
 #include "ErrorHandler.h"
+#include "bzfio.h"
 
 #define test_bit(nr, addr) \
 	(((1UL << ((nr) & 31)) & (((const unsigned int *) addr)[(nr) >> 5])) != 0)
@@ -88,14 +89,25 @@ void	     EvdevJoystick::scanForJoysticks(std::map<std::string,
     if (strncmp(dent->d_name, "event", 5))
       continue;
 
-    /* Can we open it? */
+    /* Can we open it for r/w? */
     info.filename = inputdirName + "/" + dent->d_name;
     int fd = open(info.filename.c_str(), O_RDWR);
-    if (!fd)
+    /* if we can't open read/write, try just read...if it's not ff it'll work anyhow */
+    if (!fd) {
+      fd = open(info.filename.c_str(), O_RDONLY);
+      if (fd) DEBUG3("Opened event device %s as read-only", info.filename.c_str());
+    } else {
+      DEBUG3("Opened event device %s as read-write.", info.filename.c_str());
+    }
+    /* no good, can't open it */
+    if (!fd) {
+      DEBUG3("Can't open event device %s.  Check permissions.", info.filename.c_str());
       continue;
+    }
 
     /* Does it look like a joystick? */
     if (!(collectJoystickBits(fd, info) && isJoystick(info))) {
+      DEBUG3("Device %s doesn't seem to be a joystick.  Skipping.", info.filename.c_str());
       close(fd);
       continue;
     }
