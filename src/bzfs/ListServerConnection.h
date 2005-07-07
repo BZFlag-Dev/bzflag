@@ -32,7 +32,7 @@ public:
     // c'tor will fill list and local server information variables and
     // do an initial ADD
     ListServerLink(std::string listServerURL, std::string publicizedAddress,
-		   std::string publicizedTitle);
+		   std::string publicizedTitle, std::string advertiseGroups);
     // c'tor with no arguments called when we don't want to use a list server.
     ListServerLink();
     // d'tor will REMOVE server and close connection
@@ -58,12 +58,13 @@ private:
     bool publicizeServer;
     std::string publicizeAddress;
     std::string publicizeDescription;
+    std::string advertiseGroups;
     
     virtual void finalization(char *data, unsigned int length, bool good);
 
     // messages to send, used by sendQueuedMessages
     void addMe(PingPacket pingInfo, std::string publicizedAddress,
-	       std::string publicizedTitle);
+	       std::string publicizedTitle, std::string advertiseGroups);
     void removeMe(std::string publicizedAddress);
     void sendQueuedMessages();
 

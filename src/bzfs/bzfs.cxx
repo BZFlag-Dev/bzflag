@@ -503,7 +503,8 @@ static void publicize()
   if (clOptions->publicizeServer) {
     // list server initialization
     for (std::vector<std::string>::const_iterator i = clOptions->listServerURL.begin(); i < clOptions->listServerURL.end(); i++) {
-      listServerLink = new ListServerLink(i->c_str(), clOptions->publicizedAddress, clOptions->publicizedTitle);
+      listServerLink = new ListServerLink(i->c_str(), 
+            clOptions->publicizedAddress, clOptions->publicizedTitle, clOptions->advertiseGroups);
       listServerLinksCount++;
     }
   } else {

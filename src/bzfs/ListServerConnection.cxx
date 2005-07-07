@@ -44,7 +44,8 @@ const int ListServerLink::NotConnected = -1;
 
 ListServerLink::ListServerLink(std::string listServerURL,
 			       std::string publicizedAddress,
-			       std::string publicizedTitle)
+			       std::string publicizedTitle,
+             std::string _advertiseGroups)
 {
 
   std::string bzfsUserAgent = "bzfs ";
@@ -58,6 +59,8 @@ ListServerLink::ListServerLink(std::string listServerURL,
 
   publicizeAddress     = publicizedAddress;
   publicizeDescription = publicizedTitle;
+  advertiseGroups      = _advertiseGroups;
+
   //if this c'tor is called, it's safe to publicize
   publicizeServer      = true;
   queuedRequest        = false;
@@ -209,7 +212,7 @@ void ListServerLink::sendQueuedMessages()
   queuedRequest = true;
   if (nextMessageType == ListServerLink::ADD) {
     DEBUG3("Queuing ADD message to list server\n");
-    addMe(getTeamCounts(), publicizeAddress, publicizeDescription);
+    addMe(getTeamCounts(), publicizeAddress, publicizeDescription, advertiseGroups);
     lastAddTime = TimeKeeper::getCurrent();
   } else if (nextMessageType == ListServerLink::REMOVE) {
     DEBUG3("Queuing REMOVE message to list server\n");
@@ -220,7 +223,8 @@ void ListServerLink::sendQueuedMessages()
 
 void ListServerLink::addMe(PingPacket pingInfo,
 			   std::string publicizedAddress,
-			   std::string publicizedTitle)
+			   std::string publicizedTitle,
+         std::string _advertiseGroups)
 {
   std::string msg;
   std::string hdr;
@@ -270,6 +274,8 @@ void ListServerLink::addMe(PingPacket pingInfo,
     }
   }
 
+  msg += "&advertgroups=";
+  msg += _advertiseGroups;
   msg += "&title=";
   msg += publicizedTitle;
 

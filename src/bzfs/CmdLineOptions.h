@@ -55,6 +55,7 @@ struct CmdLineOptions
     servermsg(""), advertisemsg(""), worldFile(""),
     pingInterface(""), password(""),
     listServerOverridden(false), publicizedTitle(""), publicizedAddress(""),
+    advertiseGroups("EVERYONE"),
     suppressMasterBanList(false), masterBanListOverridden(false),
     maxShots(1), maxTeamScore(0), maxPlayerScore(0),
     numExtraFlags(0), teamKillerKickRatio(0),
@@ -107,6 +108,7 @@ struct CmdLineOptions
 
   std::string	publicizedTitle;
   std::string	publicizedAddress;
+  std::string	advertiseGroups;
 
   bool			suppressMasterBanList;
   bool			masterBanListOverridden;
@@ -201,7 +203,7 @@ struct CmdLineOptions
 
 
 void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile = false);
-
+bool checkCommaList (const char *list, int maxlen);
 
 #else
 struct CmdLineOptions;

@@ -59,6 +59,7 @@ extern uint16_t maxRealPlayers;
 const char *usageString =
 "[-a <vel> <rot>] "
 "[-admsg <text>] "
+"[-advertise <group,group...>]"
 "[-autoTeam] "
 "[-b] "
 "[-badwords <filename>] "
@@ -149,6 +150,7 @@ const char *extraUsageString =
 "\n"
 "\t-a: maximum acceleration settings\n"
 "\t-admsg: specify a <msg> which will be broadcast every 15 minutes\n"
+"\t-advertise: specify which groups to advertise to (list server)\n"
 "\t-autoTeam: automatically assign players to teams when they join\n"
 "\t-b: randomly oriented buildings\n"
 "\t-badwords: bad-world file\n"
@@ -301,6 +303,8 @@ static void checkFromWorldFile (const char *option, bool fromWorldFile)
     usage("bzfs");
   }
 }
+
+
 
 static bool parsePlayerCount(const char *argv, CmdLineOptions &options)
 {
@@ -548,6 +552,12 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
 	options.advertisemsg += "\\n";
       }
       options.advertisemsg += argv[i];
+    } else if (strcmp(argv[i], "-advertise") == 0) {
+      checkArgc(1, i, argc, argv[i]);
+      if (checkCommaList (argv[i], 2048))
+	      std::cerr << "Invalid group list for -advertise" << std::endl;
+      else
+        options.advertiseGroups = argv[i];
     } else if (strcmp(argv[i], "-autoTeam") == 0) {
       options.autoTeam = true;
     } else if (strcmp(argv[i], "-b") == 0) {
@@ -1287,6 +1297,22 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
 	   0.1f * float(options.shakeTimeout), options.shakeWins);
   if (options.gameStyle & int(AntidoteGameStyle))
     DEBUG1("  antidote flags\n");
+}
+
+
+
+// simple syntax check of comma-seperated list of group names (returns true if error)
+bool checkCommaList (const char *list, int maxlen){
+  int x = strlen (list);
+  unsigned char c;
+  if (x > maxlen)
+    return true;
+  if (*list==',' || list[x-1]==',')
+    return true;
+  while ((c=*list++) != '\0') 
+    if (c<' ' || c>'z' ||  c=='\'' || c=='"')
+      return true;
+  return false;
 }
 
 
