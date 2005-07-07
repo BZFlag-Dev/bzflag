@@ -71,14 +71,12 @@ public:
   virtual bool operator() (const char *commandLine);
 };
 
-#ifdef DEBUG
 class LocalSetCommand : LocalCommand {
 public:
   LocalSetCommand();
 
   virtual bool operator() (const char *commandLine);
 };
-#endif
 
 class QuitCommand : LocalCommand {
 public:
@@ -94,9 +92,7 @@ static ClientQueryCommand clientQueryCommand;
 static HighlightCommand   highlightCommand;
 static SetCommand         setCommand;
 static DiffCommand        diffCommand;
-#ifdef DEBUG
 static LocalSetCommand    localSetCommand;
-#endif
 static QuitCommand        quitCommand;
 
 SilenceCommand::SilenceCommand() : LocalCommand("SILENCE")
