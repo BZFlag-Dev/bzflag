@@ -342,6 +342,8 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
     return;
   }
 
+  bool rabbitMode = World::getWorld()->allowRabbit();
+
   smooth = !multiSampled && BZDBCache::smooth;
   const bool fastRadar = ((BZDBCache::radarStyle == 1) && BZDBCache::zbuffer);
   const LocalPlayer *myTank = LocalPlayer::getMyTank();
@@ -580,8 +582,13 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
 
       if (player->isPaused() || player->isNotResponding()) {
 	const float dimfactor = 0.4f;
-	const float *color = Team::getRadarColor(myTank->getFlag() ==
-			     Flags::Colorblindness ? RogueTeam : player->getTeam());
+
+	TeamColor	 teamColor = player->getTeam();
+
+	if (myTank->getFlag() == Flags::Colorblindness)
+		teamColor = RogueTeam;
+
+	const float *color = Team::getRadarColor(teamColor,rabbitMode);
 	float dimmedcolor[3];
 	dimmedcolor[0] = color[0] * dimfactor;
 	dimmedcolor[1] = color[1] * dimfactor;
@@ -589,7 +596,7 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
 	glColor3fv(dimmedcolor);
       } else {
 	glColor3fv(Team::getRadarColor(myTank->getFlag() ==
-			     Flags::Colorblindness ? RogueTeam : player->getTeam()));
+			     Flags::Colorblindness ? RogueTeam : player->getTeam(),rabbitMode));
       }
       // If this tank is hunted flash it on the radar
       if (player->isHunted() && myTank->getFlag() != Flags::Colorblindness) {
@@ -626,9 +633,9 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
 	  const float *shotcolor;
 	  if (coloredShot) {
 	    if (myTank->getFlag() == Flags::Colorblindness)
-	      shotcolor = Team::getRadarColor(RogueTeam);
+	      shotcolor = Team::getRadarColor(RogueTeam,rabbitMode);
 	    else
-	      shotcolor = Team::getRadarColor(player->getTeam());
+	      shotcolor = Team::getRadarColor(player->getTeam(),rabbitMode);
 	    const float cs = colorScale(shot->getPosition()[2], muzzleHeight);
 	    glColor3f(shotcolor[0] * cs, shotcolor[1] * cs, shotcolor[2] * cs);
 	  } else {

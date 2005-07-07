@@ -265,11 +265,13 @@ void			ScoreboardRenderer::renderTeamScores (float x, float y, float dy){
   qsort(teams, teamCount, sizeof(int), teamScoreCompare);
   y -= dy;
 
+  bool rabbitMode = World::getWorld()->allowRabbit();
+
   char score[44];
   for (i = 0 ; i < teamCount; i++){
     Team& team = World::getWorld()->getTeam(teams[i]);
     sprintf(score, "%3d (%3d-%-3d) %3d", team.won - team.lost, team.won, team.lost, team.size);
-    hudColor3fv(Team::getRadarColor((TeamColor)teams[i]));
+    hudColor3fv(Team::getRadarColor((TeamColor)teams[i],rabbitMode));
     fm.drawString(xn, y, 0, minorFontFace, minorFontSize, score);
     y -= dy;
   }
@@ -543,12 +545,13 @@ void			ScoreboardRenderer::drawPlayerScore(const Player* player,
 
   FontManager &fm = FontManager::instance();
   fm.setDimFactor(dimFactor);
+  bool rabbitMode = World::getWorld()->allowRabbit();
 
   // draw
   if (player->getTeam() != ObserverTeam) {
-    hudColor3fv(Team::getRadarColor(teamIndex));
+    hudColor3fv(Team::getRadarColor(teamIndex,rabbitMode));
     fm.drawString(x1, y, 0, minorFontFace, minorFontSize, score);
-    hudColor3fv(Team::getRadarColor(teamIndex));
+    hudColor3fv(Team::getRadarColor(teamIndex,rabbitMode));
     fm.drawString(x2, y, 0, minorFontFace, minorFontSize, kills);
   }
   fm.drawString(x3, y, 0, minorFontFace, minorFontSize, playerInfo);

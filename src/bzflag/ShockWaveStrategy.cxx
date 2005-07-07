@@ -20,6 +20,8 @@
 /* local implementation headers */
 #include "LocalPlayer.h"
 
+#include "World.h"
+
 /* FIXME - from playing.h */
 Player* lookupPlayer(PlayerId id);
 
@@ -37,7 +39,8 @@ ShockWaveStrategy::ShockWaveStrategy(ShotPath *_path) :
   shockNode = new SphereSceneNode(_path->getPosition(), radius);
   Player* p = lookupPlayer(_path->getPlayer());
   TeamColor team = p ? p->getTeam() : RogueTeam;
-  const float* c = Team::getRadarColor(team);
+  bool rabbitMode = World::getWorld()->allowRabbit();
+  const float* c = Team::getRadarColor(team,rabbitMode);
   shockNode->setColor(c[0], c[1], c[2], 0.75f);
 }
 
@@ -58,7 +61,8 @@ void ShockWaveStrategy::update(float dt)
   Player* p = lookupPlayer(getPath().getPlayer());
   const LocalPlayer* myTank = LocalPlayer::getMyTank();
   TeamColor team = p && !(myTank->getFlag() == Flags::Colorblindness) ? p->getTeam() : RogueTeam;
-  const float* c = Team::getRadarColor(team);
+  bool rabbitMode = World::getWorld()->allowRabbit();
+  const float* c = Team::getRadarColor(team,rabbitMode);
   shockNode->setColor(c[0], c[1], c[2], 0.75f - 0.5f * frac);
 
   // expire when full size

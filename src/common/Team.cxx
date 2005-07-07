@@ -33,6 +33,8 @@ float			Team::radarColor[NumTeams][3] = {
 				{ 1.0f, 1.0f, 1.0f }    // rabbit
 			};
 
+float			Team::hunterRadarColor[3] =  { 1.0f, 0.5f, 0.0f };	// hunter orange
+
 Team::Team()
 {
   size = 0;
@@ -109,8 +111,10 @@ const float*		Team::getTankColor(TeamColor team) // const
   return tankColor[int(team)];
 }
 
-const float*		Team::getRadarColor(TeamColor team) // const
+const float*		Team::getRadarColor(TeamColor team, bool rabbitMode) // const
 {
+  if (rabbitMode && team == RogueTeam)
+	  return hunterRadarColor;
   if (int(team) < 0) {
     return radarColor[0];
   }

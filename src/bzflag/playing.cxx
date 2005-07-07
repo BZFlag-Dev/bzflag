@@ -4047,7 +4047,9 @@ static void enteringServer(void *buf)
 		  (TeamColor)team==ObserverTeam?true:false);
     addMessage(NULL, teamMsg.c_str(), 3, true);
   }
-  controlPanel->setControlColor(Team::getRadarColor(myTank->getTeam()));
+  bool rabbitMode = World::getWorld()->allowRabbit();
+
+  controlPanel->setControlColor(Team::getRadarColor(myTank->getTeam(),rabbitMode));
   radar->setControlColor(Team::getRadarColor(myTank->getTeam()));
   roaming = (myTank->getTeam() == ObserverTeam) || devDriving;
 
