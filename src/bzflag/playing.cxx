@@ -12,6 +12,9 @@
 
 #include "common.h"
 
+#define CHESTAL_LOG 0
+
+
 // system includes
 #include <string.h>
 #include <vector>
@@ -5490,6 +5493,71 @@ static void		updateDestructCountdown(float dt)
 }
 
 
+//@@@
+// simple log format:
+// worldsize tankradius tanklength tankwidth
+// timestamp
+// "t" tank# tankpos[2] tankdir tankvel[2]
+// ...
+// "s" shot# shotpos[2] shotvel[2]
+// ...
+// blank line
+// timestamp
+// ...
+void LogState()
+{
+  static std::ofstream logfile("bzflag.log");
+  static TimeKeeper start, last;
+  static bool first = true;
+
+  if (!myTank)
+    return;
+
+  if (first) {
+    first = false;
+    start = last = TimeKeeper::getTick();
+    logfile << BZDBCache::worldSize << ' ' << BZDBCache::tankRadius << ' ' <<
+      BZDBCache::tankLength << ' ' << BZDBCache::tankWidth << std::endl;
+  }
+  if (TimeKeeper::getTick() - last < 0.02f)
+    return;
+  last = TimeKeeper::getTick();
+
+  logfile << TimeKeeper::getTick() - start << '\n';
+
+  int i;
+  for (i=0; i < curMaxPlayers+1; i++) {
+    if (i-1 == myTank->getId())
+      continue;
+    Player *p = (i==0) ? myTank : lookupPlayer(i-1);
+    if (p && p->isAlive()) {
+      logfile << "t " << i << ' ' << p->getPosition()[0] << ' ' << p->getPosition()[1] << ' ' <<
+        p->getAngle() << ' ' << p->getVelocity()[0] << ' ' << p->getVelocity()[1] << '\n';
+    }
+  }
+
+  const int maxShots = myTank->getMaxShots();
+
+  for (i = 0; i < curMaxPlayers+2; i++) {
+    if (i-1 == myTank->getId())
+      continue;
+    Player *p = (i==0) ? static_cast<Player*>(myTank) :
+      (i < curMaxPlayers+1) ? lookupPlayer(i-1) :
+      static_cast<Player*>(World::getWorld()->getWorldWeapons());
+    if (p) {
+      for (int j = 0; j < maxShots; j++) {
+        const ShotPath* shot = p->getShot(j);
+        if (!shot || shot->isExpired()) continue;
+        logfile << "s " << i*maxShots+j << ' ' <<
+          shot->getPosition()[0] << ' ' << shot->getPosition()[1] << ' ' <<
+          shot->getVelocity()[0] << ' ' << shot->getVelocity()[1] << '\n';
+      }
+    }
+  }
+  logfile << '\n';
+}
+
+
 //
 // main playing loop
 //
@@ -5723,6 +5791,11 @@ static void		playingLoop()
     if (entered) {
       updateRobots(dt);
     }
+#endif
+
+    //@@@
+#if CHESTAL_LOG
+    LogState();
 #endif
 
     // check for flags and hits

@@ -4,6 +4,7 @@
 BZFlag 2.0.3
 ------------
 
+* Implemented "-advertise" option for bzfs - Mark Thomas
 * The url now does not contain the password (sent with POST) - Tupone Alfredo
 * Fixing Tiny tank shooting from the world edge - Tupone Alfredo
 * Fixing client requesting lan server on some systems - Tupone Alfredo
