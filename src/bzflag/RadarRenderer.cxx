@@ -583,12 +583,13 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
       if (player->isPaused() || player->isNotResponding()) {
 	const float dimfactor = 0.4f;
 
-	TeamColor	 teamColor = player->getTeam();
+	const float *color;
+	if (myTank->getFlag() == Flags::Colorblindness) {
+          color = Team::getRadarColor(RogueTeam,rabbitMode);
+        } else {
+          color = Team::getRadarColor(player->getTeam(),rabbitMode);
+        }
 
-	if (myTank->getFlag() == Flags::Colorblindness)
-		teamColor = RogueTeam;
-
-	const float *color = Team::getRadarColor(teamColor,rabbitMode);
 	float dimmedcolor[3];
 	dimmedcolor[0] = color[0] * dimfactor;
 	dimmedcolor[1] = color[1] * dimfactor;
