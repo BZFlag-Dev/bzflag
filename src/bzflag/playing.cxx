@@ -4050,7 +4050,7 @@ static void enteringServer(void *buf)
   bool rabbitMode = World::getWorld()->allowRabbit();
 
   controlPanel->setControlColor(Team::getRadarColor(myTank->getTeam(),rabbitMode));
-  radar->setControlColor(Team::getRadarColor(myTank->getTeam()));
+  radar->setControlColor(Team::getRadarColor(myTank->getTeam(),rabbitMode));
   roaming = (myTank->getTeam() == ObserverTeam) || devDriving;
 
   // scan through flags and, for flags on
