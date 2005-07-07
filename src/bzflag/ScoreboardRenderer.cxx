@@ -49,7 +49,7 @@ int ScoreboardRenderer::sortMode = 0;
 bool ScoreboardRenderer::alwaysShowTeamScore = 0;
 
 ScoreboardRenderer::ScoreboardRenderer() :
-        winWidth (0.0),
+				winWidth (0.0),
 				dim(false),
 				huntIndicator(false),
 				huntPosition(0),
@@ -293,14 +293,13 @@ void			ScoreboardRenderer::renderCtfFlags (){
 
   hudColor3fv(messageColor);
   fm.drawString(x, y, 0, minorFontFace, minorFontSize, "Team Flags");
-    
+
   for (i=0; i < curMaxPlayers; i++) {
-    if ( (player = World::getWorld()->getPlayer(i)) ) {
+    if ((player = World::getWorld()->getPlayer(i))) {
       FlagType* flagd = player->getFlag();
       TeamColor teamIndex = player->getTeam();
       if (flagd!=Flags::Null && flagd->flagTeam != NoTeam) {   // if player has team flag ...
-        std::string playerInfo = dim ? ColorStrings[DimColor] : "";
-        playerInfo += ColorStrings[flagd->flagTeam];
+	std::string playerInfo = ColorStrings[flagd->flagTeam];
         sprintf (flagColor, "%-12s", flagd->flagName);
         playerInfo += flagColor;
         playerInfo += ColorStrings[teamIndex];
@@ -429,9 +428,6 @@ void      ScoreboardRenderer::stringAppendNormalized (std::string *s, float n)
 void			ScoreboardRenderer::drawPlayerScore(const Player* player,
 			    float x1, float x2, float x3, float xs, float y, bool huntCursor)
 {
-  // dim the font if we're dim
-  const std::string dimString = dim ? ColorStrings[DimColor] : "";
-
   // score
   char score[40], kills[40];
 
@@ -444,14 +440,13 @@ void			ScoreboardRenderer::drawPlayerScore(const Player* player,
   }
 
   if (World::getWorld()->allowRabbit())
-    sprintf(score, "%s%2d%% %4d %3d-%-3d%s[%2d]", dimString.c_str(),
-	    player->getRabbitScore(),
+    sprintf(score, "%2d%% %4d %3d-%-3d%s[%2d]", player->getRabbitScore(),
 	    player->getScore(), player->getWins(), player->getLosses(),
 	    highlightTKratio ? ColorStrings[CyanColor].c_str() : "",
 	    player->getTeamKills());
   else
-    sprintf(score, "%s%4d %4d-%-4d%s[%2d]", dimString.c_str(),
-	    player->getScore(), player->getWins(), player->getLosses(),
+    sprintf(score, "%4d %4d-%-4d%s[%2d]", player->getScore(),
+	    player->getWins(), player->getLosses(),
 	    highlightTKratio ? ColorStrings[CyanColor].c_str() : "",
 	    player->getTeamKills());
   if (LocalPlayer::getMyTank() != player)
@@ -467,7 +462,7 @@ void			ScoreboardRenderer::drawPlayerScore(const Player* player,
   }
 
   // authentication status
-  std::string statusInfo = dimString;
+  std::string statusInfo;
   if (BZDBCache::colorful) {
     statusInfo += ColorStrings[CyanColor];
   } else {
@@ -483,7 +478,7 @@ void			ScoreboardRenderer::drawPlayerScore(const Player* player,
     statusInfo = ""; // don't print
   }
 
-  std::string playerInfo = dimString;
+  std::string playerInfo;
   // team color
   playerInfo += ColorStrings[teamIndex];
   //Slot number only for admins
