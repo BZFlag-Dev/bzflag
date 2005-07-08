@@ -5255,9 +5255,6 @@ int main(int argc, char **argv)
 	listServerLink->queueMessage(ListServerLink::ADD);
       }
 
-    // cURLperform should be called in any case as we could incur in timeout
-    cURLManager::perform();
-
     // check messages
     if (nfound > 0) {
       //DEBUG1("chkmsg nfound,read,write %i,%08lx,%08lx\n", nfound, read_set, write_set);
@@ -5340,6 +5337,9 @@ int main(int argc, char **argv)
 
     // Clean pending players
     GameKeeper::Player::clean();
+
+    // cURLperform should be called in any case as we could incur in timeout
+    cURLManager::perform();
   }
 
 #ifdef _USE_BZ_API
