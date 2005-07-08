@@ -1144,8 +1144,11 @@ bool Player::isDeadReckoningWrong() const
     return true;
   }
 
+  // time since setdeadreckoning
+  const float dt = float(TimeKeeper::getTick() - inputTime);
+
   // otherwise always send at least one packet per second
-  if ((TimeKeeper::getTick() - inputTime) >= MaxUpdateTime) {
+  if (dt >= MaxUpdateTime) {
     return true;
   }
 
@@ -1153,7 +1156,6 @@ bool Player::isDeadReckoningWrong() const
   float predictedPos[3];
   float predictedVel[3];
   float predictedAzimuth;
-  float dt = float(TimeKeeper::getTick() - inputTime);
   getDeadReckoning(predictedPos, &predictedAzimuth, predictedVel, dt);
 
   // always send a new packet on reckoned touchdown
@@ -1168,7 +1170,7 @@ bool Player::isDeadReckoningWrong() const
   // client side throttling
   const int throttleRate = int(BZDB.eval(StateDatabase::BZDB_UPDATETHROTTLERATE));
   const float minUpdateTime = (throttleRate > 0) ? (1.0f / throttleRate) : 0.0f;
-  if (TimeKeeper::getTick() - inputTime < minUpdateTime) {
+  if (dt < minUpdateTime) {
     return false;
   }
 
