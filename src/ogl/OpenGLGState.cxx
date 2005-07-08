@@ -132,6 +132,9 @@ class OpenGLGStateState {
 // OpenGLGStateRep
 //
 
+// forward-declare to make friend
+class SortedGState;
+
 class OpenGLGStateRep {
   public:
 			OpenGLGStateRep();
