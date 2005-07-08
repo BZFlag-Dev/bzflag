@@ -1367,7 +1367,7 @@ void Player::setDeadReckoning()
   // the relative motion information (with respect to the physics drivers)
   calcRelativeMotion(inputRelVel, inputRelSpeed, inputRelAngVel);
 
-  // setup the turning pararmeters
+  // setup the turning parameters
   inputTurning = false;
   if (fabsf(inputRelAngVel) > 0.001f) {
     inputTurning = true;
