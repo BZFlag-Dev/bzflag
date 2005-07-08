@@ -310,9 +310,9 @@ void cURLManager::infoComplete(CURLcode result)
     formPost = NULL;
     formLast = NULL;
   }
+  removeHandle();
   finalization((char *)theData, theLen, result == CURLE_OK);
   free(theData);
-  removeHandle();
   theData = NULL;
   theLen  = 0;
 }
