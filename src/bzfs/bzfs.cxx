@@ -2870,7 +2870,7 @@ void playerKilled(int victimIndex, int killerIndex, int reason,
       if (victimIndex != killerIndex) {
 	if (teamkill) {
 	  if (clOptions->teamKillerDies)
-	    playerKilled(killerIndex, killerIndex, reason, -1, Flags::Null, -1,true);
+	    playerKilled(killerIndex, killerIndex, reason, -1, Flags::Null, -1);
 	  else
 	    killerData->score.killedBy();
 	} else {
