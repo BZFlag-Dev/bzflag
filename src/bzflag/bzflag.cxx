@@ -204,6 +204,7 @@ static DefaultDBItem	defaultDBItems[] = {
   { "rabbitTeamPrefix",		"rabbit_",		true,	StateDatabase::ReadWrite,	NULL },
   { "hunterTeamPrefix",		"hunter_",		true,	StateDatabase::ReadWrite,	NULL },
   { "rogueTeamPrefix",		"rogue_",		true,	StateDatabase::ReadWrite,	NULL },
+  { "observerTeamPrefix",	"observer_",		true,	StateDatabase::ReadWrite,	NULL },
 
   // type prefixes
   { "superPrefix",		"super_",		true,	StateDatabase::ReadWrite,	NULL },

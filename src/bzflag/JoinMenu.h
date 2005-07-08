@@ -30,6 +30,7 @@
 #include "HUDuiLabel.h"
 #include "HUDuiList.h"
 #include "HUDuiTypeIn.h"
+#include "HUDuiTextureLabel.h"
 
 class ServerStartMenu;
 class ServerMenu;
@@ -45,6 +46,7 @@ class JoinMenu : public HUDDialog {
     void		execute();
     void		dismiss();
     void		resize(int width, int height);
+    void		updateTeamTexture();
 
   private:
     static void		teamCallback(HUDuiControl*, void*);
@@ -57,9 +59,10 @@ class JoinMenu : public HUDDialog {
   private:
     float		center;
     HUDuiTypeIn*	callsign;
-	HUDuiTypeIn*	password;
+    HUDuiTypeIn*	password;
     HUDuiTypeIn*	email;
     HUDuiList*		team;
+    HUDuiTextureLabel*  teamIcon;
     HUDuiTypeIn*	server;
     HUDuiTypeIn*	port;
     HUDuiLabel*		status;

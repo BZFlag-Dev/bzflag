@@ -20,6 +20,7 @@
 #include "StartupInfo.h"
 #include "TimeKeeper.h"
 #include "cURLManager.h"
+#include "StateDatabase.h"
 
 /* local implementation headers */
 #include "HUDDialogStack.h"
@@ -27,6 +28,7 @@
 #include "MenuDefaultKey.h"
 #include "ServerMenu.h"
 #include "ServerStartMenu.h"
+#include "TextureManager.h"
 
 
 /* from playing.h */
@@ -78,7 +80,7 @@ JoinMenu::JoinMenu() : serverStartMenu(NULL), serverMenu(NULL)
   team = new HUDuiList;
   team->setFontFace(fontFace);
   team->setLabel("Team:");
-  team->setCallback(teamCallback, NULL);
+  team->setCallback(teamCallback, this);
   std::vector<std::string>& teams = team->getList();
   // these do not need to be in enum order, but must match getTeam() & setTeam()
   teams.push_back(std::string(Team::getName(AutomaticTeam)));
@@ -91,6 +93,12 @@ JoinMenu::JoinMenu() : serverStartMenu(NULL), serverMenu(NULL)
   team->update();
   setTeam(info->team);
   listHUD.push_back(team);
+
+  teamIcon = new HUDuiTextureLabel;
+  teamIcon->setFontFace(fontFace);
+  teamIcon->setString(" ");
+  updateTeamTexture();
+  listHUD.push_back(teamIcon);
 
   server = new HUDuiTypeIn;
   server->setFontFace(fontFace);
@@ -131,6 +139,10 @@ JoinMenu::JoinMenu() : serverStartMenu(NULL), serverMenu(NULL)
   listHUD.push_back(failedMessage);
 
   initNavigation(listHUD, 1, listHUD.size() - 3);
+
+  // cut teamIcon out of the nav loop
+  team->setNext(server);
+  server->setPrev(team);
 }
 
 JoinMenu::~JoinMenu()
@@ -273,9 +285,30 @@ void JoinMenu::setStatus(const char* msg, const std::vector<std::string> *)
   status->setPosition(center - 0.5f * _width, status->getY());
 }
 
-void JoinMenu::teamCallback(HUDuiControl*, void*)
+void JoinMenu::teamCallback(HUDuiControl*, void* source)
 {
-  // do nothing (for now)
+  ((JoinMenu*)source)->updateTeamTexture();
+}
+
+void JoinMenu::updateTeamTexture()
+{
+  TextureManager &tm = TextureManager::instance();
+  FontManager &fm = FontManager::instance();
+
+  // load the appropriate texture
+  std::string texture;
+  texture = Team::getImagePrefix(getTeam());
+  texture += "icon";
+  int id = tm.getTextureID(texture.c_str());
+  teamIcon->setTexture(id);
+
+  // make it big enough
+  teamIcon->setFontSize(team->getFontSize() * 1.5f);
+
+  // put it at the end of the text
+  const float x = team->getX() + fm.getStrLength(team->getFontFace(),
+	  team->getFontSize(), team->getList()[team->getIndex()] + "x");
+  teamIcon->setPosition(x, team->getY());
 }
 
 void JoinMenu::resize(int _width, int _height)
@@ -308,9 +341,12 @@ void JoinMenu::resize(int _width, int _height)
   for (int i = 1; i < count; i++) {
     listHUD[i]->setFontSize(fontSize);
     listHUD[i]->setPosition(x, y);
-    y -= 1.0f * h;
-    if (i <= 2 || i == 8) y -= 0.5f * h;
+    if (i != 5)
+      y -= 1.0f * h;
+    if (i <= 2 || i == 9) y -= 0.5f * h;
   }
+  
+  updateTeamTexture();
 }
 
 // Local Variables: ***

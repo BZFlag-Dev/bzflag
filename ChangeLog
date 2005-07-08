@@ -4,6 +4,10 @@
 BZFlag 2.0.3
 ------------
 
+* New icon and menu arrow - Harry Keller, Jeff Meyers
+* Special effects for many events - Jeff Meyers, Daniel Remenak
+* Server-side plugin API and plugins - Jeff Meyers
+* Join menu displays team icon - Daniel Remenak, Harry Keller
 * Implemented "-advertise" option for bzfs - Mark Thomas
 * The url now does not contain the password (sent with POST) - Tupone Alfredo
 * Fixing Tiny tank shooting from the world edge - Tupone Alfredo
