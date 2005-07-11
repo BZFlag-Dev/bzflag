@@ -4,8 +4,14 @@ else
 ZLIB_DIR =
 endif
 
+if BUILDCARES
+CARES_DIR = c-ares
+else
+CARES_DIR =
+endif
+
 SUBDIRS = \
-	c-ares	\
+	${CARES_DIR}	\
 	3D \
 	regex \
 	common \
