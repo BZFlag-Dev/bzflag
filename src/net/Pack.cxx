@@ -94,8 +94,7 @@ void*			nboPackFloat(void* b, float v)
 {
   // hope that float is a 4 byte IEEE 754 standard encoding
   uint32_t x = htonl(*((uint32_t*)&v));
-  const float y = *((float*)&x);
-  ::memcpy(b, &y, sizeof(float));
+  ::memcpy(b, &x, sizeof(float));
   return ADV(b, float);
 }
 
