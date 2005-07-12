@@ -59,7 +59,6 @@ GameKeeper::Player::Player(int _playerIndex,
     std::cerr << "Could not create thread" << std::endl;
   refCount	 = 1;
 #endif
-	hasSignedOn = false;
 }
 
 GameKeeper::Player::~Player()
@@ -240,7 +239,6 @@ void GameKeeper::Player::signingOn(bool ctf)
   player.resetPlayer(ctf);
   player.signingOn();
   lagInfo.reset();
-	hasSignedOn = true;
 }
 
 int GameKeeper::Player::getPlayerIDByName(const std::string &name)
@@ -308,15 +306,6 @@ void GameKeeper::Player::handleTcpPacket(fd_set *set)
       return;
     clientCallback(*netHandler, playerIndex, e);
   }
-}
-
-GameKeeper::Player *GameKeeper::Player::getValidPlayerByIndex(int _playerIndex)
-{
-  Player *_playerData = getPlayerByIndex(_playerIndex);
-	if ( _playerData && _playerData->hasSignedOn )
-		return _playerData;
-	else
-		return NULL;
 }
 
 #endif

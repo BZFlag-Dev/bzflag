@@ -57,7 +57,6 @@ public:
     int	    getIndex();
     static int     getFreeIndex(int min, int max);
     static Player *getPlayerByIndex(int _playerIndex);
-		static Player *getValidPlayerByIndex(int _playerIndex);
     static int     count();
     static void    updateLatency(float &waitTime);
     static void    dumpScore();
@@ -120,8 +119,6 @@ public:
     // In case you want recheck all condition on all players
     static bool       allNeedHostbanChecked;
 	  
-	  // this isn't an empty slot
-	  bool hasSignedOn;
   };
   class Flag {
   };

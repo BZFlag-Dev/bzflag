@@ -1682,7 +1682,7 @@ static void fixTeamCount() {
   for (teamNum = RogueTeam; teamNum < RabbitTeam; teamNum++)
     team[teamNum].team.size = 0;
   for (playerIndex = 0; playerIndex < curMaxPlayers; playerIndex++) {
-    GameKeeper::Player *p = GameKeeper::Player::getValidPlayerByIndex(playerIndex);
+    GameKeeper::Player *p = GameKeeper::Player::getPlayerByIndex(playerIndex);
     if (p && p->player.isPlaying()) {
       teamNum = p->player.getTeam();
       if (teamNum == RabbitTeam)
@@ -4884,7 +4884,7 @@ int main(int argc, char **argv)
 	  if (clOptions->gameStyle & int(TeamFlagGameStyle)) {
 	    for (int j = 0; j < curMaxPlayers; j++) {
 	      void *buf, *bufStart = getDirectMessageBuffer();
-	      player = GameKeeper::Player::getValidPlayerByIndex(j);
+	      player = GameKeeper::Player::getPlayerByIndex(j);
 	      if (!player || player->player.isObserver()) continue;
 
 	      // the server gets to capture the flag -- send some
