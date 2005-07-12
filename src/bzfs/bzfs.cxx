@@ -4885,7 +4885,8 @@ int main(int argc, char **argv)
 	    for (int j = 0; j < curMaxPlayers; j++) {
 	      void *buf, *bufStart = getDirectMessageBuffer();
 	      player = GameKeeper::Player::getPlayerByIndex(j);
-	      if (!player || player->player.isObserver()) continue;
+	      if (!player || player->player.isObserver() || !player->player.isPlaying())
+					continue;
 
 	      // the server gets to capture the flag -- send some
 	      // bogus player id
