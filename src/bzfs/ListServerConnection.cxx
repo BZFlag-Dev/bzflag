@@ -205,6 +205,8 @@ void ListServerLink::queueMessage(MessageType type)
 
   if (!queuedRequest)
     sendQueuedMessages();
+  else
+    DEBUG3("There is a message already queued to the list server: not sending this one yet.\n");
 }
 
 void ListServerLink::sendQueuedMessages()
