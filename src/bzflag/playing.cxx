@@ -184,7 +184,7 @@ static void		setRobotTarget(RobotPlayer* robot);
 extern void		doAutoPilot(float &rotation, float &speed);
 extern void		teachAutoPilot( FlagType *, int );
 
-resourceGeter	*resourceDownloader = NULL;
+ResourceGetter	*resourceDownloader = NULL;
 
 // Far and Near Frustum clipping planes
 static const float NearPlaneNormal = 1.0f;
@@ -1718,7 +1718,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 					if (authorizedServer(hostname))
 					{
 						if (!resourceDownloader)
-							resourceDownloader = new resourceGeter;
+							resourceDownloader = new ResourceGetter;
 						resourceDownloader->addResource(item);
 					}
 				}

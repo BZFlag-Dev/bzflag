@@ -118,11 +118,11 @@ typedef struct
 	std::string		fileName;
 }trResourceItem;
 
-class resourceGeter :  cURLManager
+class ResourceGetter :  cURLManager
 {
 public:
-	resourceGeter();
-	virtual ~resourceGeter();
+	ResourceGetter();
+	virtual ~ResourceGetter();
 
 	void addResource ( trResourceItem &item );
 	void flush ( void );

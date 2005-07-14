@@ -412,19 +412,19 @@ void cURLManager::setDNSCachingTime(int time)
 	   result, errorBuffer);
 }
 
-//**************************resourceGeter*************************
+//**************************ResourceGetter*************************
 
-resourceGeter::resourceGeter() : cURLManager()
+ResourceGetter::ResourceGetter() : cURLManager()
 {
 	doingStuff = false;
 }
 
-resourceGeter::~resourceGeter()
+ResourceGetter::~ResourceGetter()
 {
 
 }
 
-void resourceGeter::addResource ( trResourceItem &item )
+void ResourceGetter::addResource ( trResourceItem &item )
 {
 	resources.push_back(item);
 
@@ -432,13 +432,13 @@ void resourceGeter::addResource ( trResourceItem &item )
 		getResource();
 }
 
-void resourceGeter::flush ( void )
+void ResourceGetter::flush ( void )
 {
 	resources.clear();
 	doingStuff = false;
 }
 
-void resourceGeter::finalization(char *data, unsigned int length, bool good)
+void ResourceGetter::finalization(char *data, unsigned int length, bool good)
 {
 	if (!resources.size() || !doingStuff)
 		return;	// we are suposed to be done
@@ -463,7 +463,7 @@ void resourceGeter::finalization(char *data, unsigned int length, bool good)
 	getResource();
 }
 
-bool resourceGeter::itemExists ( trResourceItem &item )
+bool ResourceGetter::itemExists ( trResourceItem &item )
 {
 	// save the thing
 	FILE *fp = fopen(item.filePath.c_str(),"rb");
@@ -475,7 +475,7 @@ bool resourceGeter::itemExists ( trResourceItem &item )
 	return false;
 }
 
-void resourceGeter::getResource ( void )
+void ResourceGetter::getResource ( void )
 {
 	while ( resources.size() || itemExists(resources[0]) )
 		resources.erase(resources.begin());
