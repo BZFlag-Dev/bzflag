@@ -16,6 +16,7 @@ bzfs \- BZFlag game server
 .B bzfs
 [\fB\-a \fIvelocity\fR \fIrotation\fR]
 [\fB\-admsg \fImessage\fR]
+[\fB\-advertise \fIGROUPNAME,GROUPNAME,...\fR]
 [\fB\-autoTeam\fR]
 [\fB\-b\fR]
 [\fB\-badwords \fIbadwordfile\fR]
@@ -115,6 +116,14 @@ yield greater inertia.
 \fB\-admsg \fImessage\fR
 Define a message which will be broadcast to all players every 15 minutes.
 This option can be used multiple times to define a multiline message.
+.TP 
+.B \-advertise \fIgroupname,groupname,...\fR
+Allows control of who can see this server on the server list. 
+Use: \fB\-advertise NONE\fR to make a private server (no one will see the
+server, but global logins can be used). The default, if -advertise is not 
+specified, is to allow everyone to see the server. 
+Otherwise, your server will only be listed to members of
+the groups which you specify, eg: \fB\-advertise JOE,BOB\fR.
 .TP 
 .B \-autoTeam
 Automatically assign players to teams when they connect so that there
@@ -851,7 +860,7 @@ cheaters and abuse.
 The server will automatically create three groups: EVERYONE, VERIFIED, 
 and LOCAL.ADMIN.  EVERYONE  has  ACTIONMESSAGE, ADMINMESSAGESEND, DATE, 
 FLAGHISTORY, IDLESTATS, LAGSTATS, PRIVATEMESSAGE and SPAWN by default.  
-VERIFIED has POLL, POLLKICK, POLLBAN, POLLSET,POLLFLAGRESET, and VOTE. The 
+VERIFIED has POLL, POLLKICK, POLLBAN, POLLSET, POLLFLAGRESET, and VOTE. The 
 LOCAL.ADMIN group has almost every permission possible (similar to granting 
 admin powers via /password).
 
@@ -871,8 +880,8 @@ with "LOCAL.".  If they are a member of a group in question, then they
 are granted the permissions you specify for that group.
 
 A group database file is set up to contain the specific local and
-global groups you care to have on your server additionally to default groups 
-and exactly what permissions are granted by each.  These files are laid out 
+global groups you care to have on your server in addition to default groups 
+and exactly which permissions are granted by each.  These files are laid out 
 with one line per group, using the following format:
 
 GROUP_NAME: [@Group] [+|-|!]perm1 [+|-|!]perm2 ... permN
@@ -887,7 +896,7 @@ GROUP_NAME: [@Group] [+|-|!]perm1 [+|-|!]perm2 ... permN
 -perm: remove perm from this group
 .br
 
-!perm: forbid perm for this group. makes perm unaccessable wether it's granted 
+!perm: forbid perm for this group. makes perm inaccessable whether it's granted 
 from another group or not
 
 If no operator is given with a permission it is handled like +perm. A group
@@ -908,7 +917,7 @@ could look like this:
 
 USERADMIN: @COPS +BAN +UNBAN
 
-Probably you don't want to define customised permissions for the default
+Probably you don't want to define customized permissions for the default
 group "VERIFIED" instead of those automatically asigned by the server:
 
 VERIFIED: -ALL +perm1 +perm2 ...
