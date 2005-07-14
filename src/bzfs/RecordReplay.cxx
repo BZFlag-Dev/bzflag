@@ -783,7 +783,12 @@ bool Replay::loadFile(int playerIndex, const char *filename)
   sendMessage(ServerPlayer, playerIndex, buffer);
 
   time_t startTime = (time_t)(ReplayPos->timestamp / 1000000);
-  snprintf(buffer, MessageLen, "  date:       %s", ctime(&startTime));
+  snprintf(buffer, MessageLen, "  start:      %s", ctime(&startTime));
+  sendMessage(ServerPlayer, playerIndex, buffer);
+
+  time_t endTime =
+    (time_t)((header.filetime + ReplayPos->timestamp) / 1000000);
+  snprintf(buffer, MessageLen, "  end:        %s", ctime(&endTime));
   sendMessage(ServerPlayer, playerIndex, buffer);
 
   return true;
