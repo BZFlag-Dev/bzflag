@@ -6286,6 +6286,7 @@ void			startPlaying(BzfDisplay* _display,
     char bombMessage[80];
     sprintf(bombMessage, "BZFlag version %s", getAppVersion());
     controlPanel->addMessage("");
+    DEBUG1("%s\n", bombMessage);
     tmpString = ColorStrings[RedColor];
     tmpString += (const char *) bombMessage;
     controlPanel->addMessage(tmpString);
