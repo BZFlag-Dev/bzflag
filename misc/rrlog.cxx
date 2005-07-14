@@ -186,17 +186,30 @@ int main(int argc, char** argv)
   secs = secs % 60;
   unsigned int usecs = header.filetime % 1000000;
 
-  printf("magic:	   0x%04X\n", header.magic);
-  printf("replay:	  version %i\n", header.version);
-  printf("offset:	  %i\n", header.offset);
-  printf("time:	    %i days, %i hours, %i minutes, %i seconds, %i usecs\n",
+  // load the first packet for its timestamp
+  p = loadPacket(file);
+
+  time_t startTime, endTime;
+  if (p != NULL) {
+    startTime = (time_t)(p->timestamp / 1000000);
+    endTime = (time_t)((header.filetime + p->timestamp) / 1000000);
+  } else {
+    startTime = endTime = 0;
+  }
+    
+  printf("magic:     0x%04X\n", header.magic);
+  printf("replay:    version %i\n", header.version);
+  printf("offset:    %i\n", header.offset);
+  printf("length:    %-i days, %i hours, %i minutes, %i seconds, %i usecs\n",
 	  days, hours, minutes, secs, usecs);
-  printf("author:	  %s  (%s)\n", header.callSign, header.email);
-  printf("bzfs:	    bzfs-%s\n", header.appVersion);
-  printf("protocol:	%.8s\n", header.serverVersion);
-  printf("flagSize:	%i\n", header.flagsSize);
-  printf("worldSize:       %i\n", header.worldSize);
-  printf("worldHash:       %s\n", header.realHash);
+  printf("start:     %s", ctime(&startTime)); 
+  printf("end:       %s", ctime(&endTime)); 
+  printf("author:    %s  (%s)\n", header.callSign, header.email);
+  printf("bzfs:      bzfs-%s\n", header.appVersion);
+  printf("protocol:  %.8s\n", header.serverVersion);
+  printf("flagSize:  %i\n", header.flagsSize);
+  printf("worldSize: %i\n", header.worldSize);
+  printf("worldHash: %s\n", header.realHash);
   printf("\n");
 
 
@@ -206,7 +219,7 @@ int main(int argc, char** argv)
 //  MsgStrings::colorize(false);
   bool needUpdate = true;
 
-  while ((p = loadPacket(file)) != NULL) {
+  do {
     if (needUpdate && (p->mode == RealPacket)) {
       needUpdate = false;
     }
@@ -243,7 +256,7 @@ int main(int argc, char** argv)
 
     delete[] p->data;
     delete p;
-  }
+  } while ((p = loadPacket(file)) != NULL);
 
   delete[] header.world;
   delete[] header.flags;
