@@ -208,7 +208,7 @@ Turn on the filtering of callsigns and email addresses.  Callsigns and
 addresses are compared against bad words provided via \fB\-badwords\fR.
 .TP 
 .B \-filterChat
-Turn on the filtering of chat messages.  Messages have words provided via
+Turn on the filtering of chat messages.  Messages that contain words listed via
 a \fB\-badwords\fR file are replaced with !@#$%^&* characters.
 .TP 
 .B \-filterSimple
@@ -282,7 +282,7 @@ Sets a maximum score for teams.  The first team to reach this score is
 declared the winner and the game is over.
 .TP 
 .B \-noMasterBanlist
-Forces the server to not attempt to load the master ban list from the internet.
+Server will not attempt to load the master ban list from the internet.
 .TP 
 \fB\-p \fIport\fR
 Listen for game connections on \fIport\fR instead of the default port.
@@ -293,7 +293,7 @@ Load passwords from file
 .TP 
 \fB\-passwd \fIpassword\fR
 Specify a server administrator password for use in remote administration
-such as /kick messages.
+such as /kick, /ban, /mute, etc  messages.
 .TP 
 \fB\-pidfile \fIfilename\fR
 Specify a file where the server will write its process ID so it may be used for
@@ -304,13 +304,13 @@ Configure several aspects of the in\-game polling system
 .RS
 .TP 
 \fBbanTime\fR
-number of minutes player should be banned (default is 300)
+default number of minutes player should be banned (unspecified, the  default is 300)
 .TP 
 \fBvetoTime\fR
 max seconds authorized user has to abort poll (default is 20)
 .TP 
 \fBvotePercentage\fR
-percentage of players required to affirm a poll (default is 50.1%)
+percentage of players required to affirm a poll (unspecified, the default is 50.1%)
 .TP 
 \fBvoteRepeatTime\fR
 minimum seconds required before a player may request
@@ -418,10 +418,10 @@ Set BZDB variable \fIname\fR to \fIvalue\fR
 Restrict flag \fIid\fR to \fInum\fR shots.
 .TP 
 \fB\-spamtime \fItime\fR
-Make <time> be the required time in seconds between messages sent that are alike.
+Minimum <time> between player chat messages that are alike.  
 .TP 
 \fB\-spamwarn \fIwarnLimit\fR
-Warn a spammer that sends messages before \-spamtime times out <warnLimit> many times.
+Number of warnings a player/spammer gets, who  violates \-spamtime.
 .TP 
 \fB\-speedtol \fIfactor\fR
 Override the default speed auto kick factor. The factor should not be less then 1.0. The factor is a multiplier.
@@ -464,7 +464,7 @@ using the \fI/countdown\fR command. This is useful for matches.
 .B \-tk
 Changes the default behavior where a player dies when he kills a teammate.
 When using this option, he will just get a \-1 score penalty for the kill but
-stay alive.
+not be killed in game.
 .TP 
 \fB\-tkkr \fIpercent\fR
 Kicks players whose team killing to normal kill ratio is greater than
@@ -521,11 +521,12 @@ players to drop bad flags with any of \-sa, \-st, and \-sw.
 .RE
 .PP 
 Notice that the maximum number of shots for these styles is one.  Having
-only one shot greatly increases playability and learning speed.  Multiple
-shots decrease the required skill level and make it virtually impossible
-for even a skilled player to avoid getting shot for any length of time.
-More experienced players will still dominate the game, but beginners will
-have an easier time making kills.
+low shot counts can greatly increase general playability and learning speed.
+However, this is not always true of every game style or game world, and a skilled 
+player will learn to deal with a variety of shot counts.  Single shot games
+have additional disadvantage in WAN games where lag/jitter can cause unfair
+advantage.  Single shot, non-Jump games will teach valuable lessons in dodging,
+however, and are excellent starting points for the beginner.
 .SS Networking
 Communication between the server and clients (i.e. between \fBbzfs\fR and
 \fBbzflag\fR) during a game is via TCP and UDP.  Use the \fB\-help\fR option
