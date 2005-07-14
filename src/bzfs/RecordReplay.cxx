@@ -137,6 +137,8 @@ static u32 RecordFilePrevPos = 0;
 static bool Replaying = false;
 static bool ReplayMode = false;
 static bool ReplayLoop = false;
+static RRtime ReplayFileTime = 0;
+static RRtime ReplayStartTime = 0;
 static RRtime ReplayOffset = 0;
 static long ReplayFileStart = 0;
 static RRpacket *ReplayPos = NULL;
@@ -756,6 +758,8 @@ bool Replay::loadFile(int playerIndex, const char *filename)
   }
 
   ReplayPos = ReplayBuf.tail; // setup the initial position
+  ReplayFileTime = header.filetime;
+  ReplayStartTime = ReplayPos->timestamp;
 
   if (!preloadVariables()) {
     snprintf(buffer, MessageLen, "Could not preload variables: %s",
@@ -764,20 +768,23 @@ bool Replay::loadFile(int playerIndex, const char *filename)
     replayReset();
     return false;
   }
-
-  snprintf(buffer, MessageLen, "Loaded file: %s", name.c_str());
+  
+  snprintf(buffer, MessageLen, "Loaded file:  %s", name.c_str());
   sendMessage(ServerPlayer, playerIndex, buffer);
-  snprintf(buffer, MessageLen, "  author:    %s (%s)",
+  snprintf(buffer, MessageLen, "  author:     %s (%s)",
 	    header.callSign, header.email);
   sendMessage(ServerPlayer, playerIndex, buffer);
-  snprintf(buffer, MessageLen, "  protocol:  %.8s", header.serverVersion);
+  snprintf(buffer, MessageLen, "  protocol:   %.8s", header.serverVersion);
   sendMessage(ServerPlayer, playerIndex, buffer);
-  snprintf(buffer, MessageLen, "  server:    %s", header.appVersion);
+  snprintf(buffer, MessageLen, "  server:     %s", header.appVersion);
   sendMessage(ServerPlayer, playerIndex, buffer);
-  snprintf(buffer, MessageLen, "  seconds:   %.1f",
+  snprintf(buffer, MessageLen, "  seconds:    %.1f",
 	    (float)header.filetime/1000000.0f);
   sendMessage(ServerPlayer, playerIndex, buffer);
 
+  time_t startTime = (time_t)(ReplayPos->timestamp / 1000000);
+  snprintf(buffer, MessageLen, "  date:       %s", ctime(&startTime));
+  sendMessage(ServerPlayer, playerIndex, buffer);
 
   return true;
 }
@@ -973,8 +980,12 @@ bool Replay::sendStats(int playerIndex)
 
   char buffer[MessageLen];
   time_t replayTime = (time_t)(ReplayPos->timestamp / 1000000);
-  snprintf(buffer, MessageLen, "Replay Date:  %s", ctime(&replayTime));
-            
+  float fullTime = (float)ReplayFileTime / 1000000.0f;
+  float usedTime =(float)(ReplayPos->timestamp - ReplayStartTime) / 1000000.0f;
+  float percent = 100.0f * (usedTime / fullTime);
+  snprintf(buffer, MessageLen,
+           "Replay Date:  %s [%.2f %%]  (%.1f secs / %.1f secs)",
+           ctime(&replayTime), percent, usedTime, fullTime);
   sendMessage(ServerPlayer, playerIndex, buffer);
 
   return true;
