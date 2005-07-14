@@ -53,6 +53,7 @@ ListServerLink::ListServerLink(std::string listServerURL,
 
   setURL(listServerURL);
   setUserAgent(bzfsUserAgent);
+  setDNSCachingTime(-1);
 
   if (clOptions->pingInterface != "")
     setInterface(clOptions->pingInterface);

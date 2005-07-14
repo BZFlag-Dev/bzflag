@@ -400,6 +400,17 @@ void cURLManager::addFormData(const char *key, const char *value)
     DEBUG1("addFormData error %d : %s\n", result, errorBuffer);
 }
 
+void cURLManager::setDNSCachingTime(int time)
+{
+  CURLcode result;
+
+  result = curl_easy_setopt(easyHandle,
+			    CURLOPT_DNS_CACHE_TIMEOUT,
+			    (long)time);
+  if (result != CURLE_OK)
+    DEBUG1("CURLOPT_SET_DNS_CACHE_TIMEOUT error %d : %s\n",
+	   result, errorBuffer);
+}
 
 //**************************resourceGeter*************************
 
