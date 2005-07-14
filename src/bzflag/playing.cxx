@@ -6292,6 +6292,20 @@ void			startPlaying(BzfDisplay* _display,
     controlPanel->addMessage(tmpString);
   }
 
+  // windows version can be very helpful in debug logs
+#ifdef _WIN32
+  if (debugLevel >= 1) {
+    OSVERSIONINFO info;
+    ZeroMemory(&info, sizeof(OSVERSIONINFO));
+    info.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
+    GetVersionEx(&info);
+    DEBUG1("Running on Windows %s%d.%d %s\n",
+      (info.dwPlatformId == VER_PLATFORM_WIN32_NT) ? "NT " : "",
+      info.dwMajorVersion, info.dwMinorVersion,
+      info.szCSDVersion);
+  }
+#endif
+
   // print expiration
   if (timeBombString()) {
     // add message about date of expiration
