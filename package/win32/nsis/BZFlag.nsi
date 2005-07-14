@@ -7,7 +7,7 @@
 ;
 
 !define VER_MAJOR 2.0
-!define VER_MINOR .3b8
+!define VER_MINOR .3b10
 
 ; Main Installer Options
 Name "BZFlag"
@@ -52,8 +52,8 @@ Section "BZFlag (required)"
 
 	; See http://msdn.microsoft.com/library/default.asp?url=/library/en-us/vclib/html/_crt_c_run.2d.time_libraries.asp
 	; "An application should use and redistribute msvcr71.dll [and msvcp71.dll], and it should avoid placing a copy or using an existing copy of msvcr71.dll in the system directory. Instead, the application should keep a copy of msvcr71.dll [and msvcp71.dll] in its application directory with the program executable."
-	;File ..\..\..\msvcr71.dll
-	;File ..\..\..\msvcp71.dll
+	File ..\..\..\msvcr71.dll
+	File ..\..\..\msvcp71.dll
 
 	; make the data dir
 	SetOutPath $INSTDIR\data
@@ -136,13 +136,13 @@ Section "Uninstall"
 	Delete $INSTDIR\bzflag.exe
 	Delete $INSTDIR\bzfs.exe
 	Delete $INSTDIR\bzadmin.exe
-	Delete $INSTDIR\libcurl.dll
-	Delete $INSTDIR\msvcr71.dll
-	Delete $INSTDIR\msvcp71.dll
 	Delete $INSTDIR\doc\*.*
 	Delete $INSTDIR\data\fonts\*.*
 	Delete $INSTDIR\data\*.*
 	Delete $INSTDIR\data\l10n\*.*
+
+	; This nails libcurl, the msvcrts, and any plugins
+	Delete $INSTDIR\*.dll
 
 	; MUST REMOVE UNINSTALLER, too
 	Delete $INSTDIR\uninstall.exe
