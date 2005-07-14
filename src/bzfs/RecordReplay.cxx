@@ -1142,6 +1142,7 @@ bool Replay::sendPackets()
     else {
       resetStates();
       Replaying = false;
+      ReplayPos = ReplayBuf.tail;
       sendMessage(ServerPlayer, AllPlayers, "Replay Finished");
       return false;
     }
@@ -1191,8 +1192,8 @@ void Replay::sendHelp(int playerIndex)
   sendMessage(ServerPlayer, playerIndex, "  /replay load <filename>");
   sendMessage(ServerPlayer, playerIndex, "  /replay play");
   sendMessage(ServerPlayer, playerIndex, "  /replay loop");
-  sendMessage(ServerPlayer, playerIndex, "  /replay date");
   sendMessage(ServerPlayer, playerIndex, "  /replay skip [+/-seconds]");
+  sendMessage(ServerPlayer, playerIndex, "  /replay stats");
   return;
 }
 
