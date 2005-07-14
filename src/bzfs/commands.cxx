@@ -2361,18 +2361,27 @@ static void handleRecordCmd(GameKeeper::Player *playerData, const char * message
  *  /replay list		# list available replay files
  *  /replay load [filename]     # set the replay file (or load the default)
  *  /replay play		# began playing
+ *  /replay loop		# began playing in looped mode
+ *  /replay stats		# report the current replay state
  *  /replay skip <secs>	 # fast foward or rewind in time
  */
 static void handleReplayCmd(GameKeeper::Player *playerData, const char * message)
 {
   int t = playerData->getIndex();
   const char *buf = message + 7;
+  while ((*buf != '\0') && isspace (*buf)) { // eat whitespace
+    buf++;
+  }
+  
+  // everyone can use the replay stats command
+  if (strncasecmp (buf, "stats", 4) == 0) {
+    Replay::sendStats (t);
+    return;
+  }
+
   if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::replay)) {
     sendMessage(ServerPlayer, t, "You do not have permission to run the /replay command");
     return;
-  }
-  while ((*buf != '\0') && isspace (*buf)) { // eat whitespace
-    buf++;
   }
 
   if (strncasecmp (buf, "list", 4) == 0) {
@@ -2391,6 +2400,9 @@ static void handleReplayCmd(GameKeeper::Player *playerData, const char * message
   }
   else if (strncasecmp (buf, "play", 4) == 0) {
     Replay::play (t);
+  }
+  else if (strncasecmp (buf, "loop", 4) == 0) {
+    Replay::loop (t);
   }
   else if (strncasecmp (buf, "skip", 4) == 0) {
     buf = buf + 4;

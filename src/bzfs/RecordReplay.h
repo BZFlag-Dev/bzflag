@@ -55,6 +55,8 @@ namespace Replay {
   extern bool loadFile (int playerIndex, const char *filename);
   extern bool unloadFile (int playerIndex);
   extern bool play (int playerIndex);
+  extern bool loop (int playerIndex);
+  extern bool sendStats (int playerIndex);
   extern bool skip (int playerIndex, int seconds); // 0 secs jumps to next packet
   extern bool pause (int playerIndex);
 

@@ -136,6 +136,7 @@ static u32 RecordFilePrevPos = 0;
 
 static bool Replaying = false;
 static bool ReplayMode = false;
+static bool ReplayLoop = false;
 static RRtime ReplayOffset = 0;
 static long ReplayFileStart = 0;
 static RRpacket *ReplayPos = NULL;
@@ -162,6 +163,8 @@ static bool resetStates();
 
 static bool setVariables(void *data);
 static bool preloadVariables();
+
+static void rewind();
 
 // saves straight to a file, or into the buffer
 static bool routePacket(u16 code, int len, const void *data, u16 mode);
@@ -632,6 +635,7 @@ static bool replayReset()
 
   ReplayMode = true;
   Replaying = false;
+  ReplayLoop = false;
   ReplayOffset = 0;
   ReplayFileStart = 0;
   ReplayPos = NULL;
@@ -897,6 +901,7 @@ bool Replay::play(int playerIndex)
   }
 
   Replaying = true;
+  ReplayLoop = false;
 
   if (ReplayPos != NULL) {
     ReplayOffset = getRRtime() - ReplayPos->timestamp;
@@ -911,6 +916,66 @@ bool Replay::play(int playerIndex)
   resetStates();
 
   sendMessage(ServerPlayer, playerIndex, "Starting replay");
+
+  return true;
+}
+
+
+bool Replay::loop(int playerIndex)
+{
+  if (!ReplayMode) {
+    sendMessage(ServerPlayer, playerIndex, "Server is not in replay mode");
+    return false;
+  }
+
+  if (ReplayFile == NULL) {
+    sendMessage(ServerPlayer, playerIndex, "No replay file loaded");
+    return false;
+  }
+
+  Replaying = true;
+  ReplayLoop = true;
+
+  if (ReplayPos != NULL) {
+    ReplayOffset = getRRtime() - ReplayPos->timestamp;
+  }
+  else {
+    sendMessage(ServerPlayer, playerIndex, "Internal replay error");
+    replayReset();
+    return false;
+  }
+
+  // reset the replay observers' view of state
+  resetStates();
+
+  sendMessage(ServerPlayer, playerIndex, "Starting replay loop");
+
+  return true;
+}
+
+
+bool Replay::sendStats(int playerIndex)
+{
+  if (!ReplayMode) {
+    sendMessage(ServerPlayer, playerIndex, "Server is not in replay mode");
+    return false;
+  }
+
+  if (ReplayFile == NULL) {
+    sendMessage(ServerPlayer, playerIndex, "No replay file loaded");
+    return false;
+  }
+
+  if (ReplayPos == NULL) {
+    sendMessage(ServerPlayer, playerIndex, "Internal replay error");
+    return false;
+  }
+
+  char buffer[MessageLen];
+  time_t replayTime = (time_t)(ReplayPos->timestamp / 1000000);
+  snprintf(buffer, MessageLen, "Replay Date:  %s", ctime(&replayTime));
+            
+  sendMessage(ServerPlayer, playerIndex, buffer);
 
   return true;
 }
@@ -1068,11 +1133,18 @@ bool Replay::sendPackets()
   } // while loop
 
   if (p == NULL) {
-    resetStates();
-    Replaying = false;
-    ReplayPos = ReplayBuf.tail;
-    sendMessage(ServerPlayer, AllPlayers, "Replay Finished");
-    return false;
+    if (ReplayLoop) {
+      rewind();
+      resetStates();
+      sendMessage(ServerPlayer, AllPlayers, "Replay Looping");
+      return true;
+    }
+    else {
+      resetStates();
+      Replaying = false;
+      sendMessage(ServerPlayer, AllPlayers, "Replay Finished");
+      return false;
+    }
   }
 
   if (sent && (ReplayPos->prev != NULL)) {
@@ -1118,8 +1190,22 @@ void Replay::sendHelp(int playerIndex)
   sendMessage(ServerPlayer, playerIndex, "  /replay list");
   sendMessage(ServerPlayer, playerIndex, "  /replay load <filename>");
   sendMessage(ServerPlayer, playerIndex, "  /replay play");
+  sendMessage(ServerPlayer, playerIndex, "  /replay loop");
+  sendMessage(ServerPlayer, playerIndex, "  /replay date");
   sendMessage(ServerPlayer, playerIndex, "  /replay skip [+/-seconds]");
   return;
+}
+
+
+static void rewind()
+{
+  RRpacket* p;
+  do {
+    p = prevStatePacket();
+  } while (p != NULL);
+  
+  // setup the new time offset
+  ReplayOffset = getRRtime() - ReplayPos->timestamp;
 }
 
 
