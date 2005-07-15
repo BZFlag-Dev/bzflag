@@ -904,6 +904,7 @@ static bool getFileList(int playerIndex, std::vector<FileEntry>& entries)
       if (file != NULL) {
 	RRtime filetime;
 	if (loadFileTime(&filetime, file)) {
+          FileEntry entry;
           entry.file = findData.cFileName;
           entry.time = (float)filetime / 1000000.0f;
 	  entries.push_back(entry);
