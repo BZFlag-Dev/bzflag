@@ -157,10 +157,18 @@ void	      DXJoystick::initJoystick(const char* joystickName)
   range.diph.dwObj = DIJOFS_Y;
   success = device->SetProperty(DIPROP_RANGE, &range.diph);
   if (success != DI_OK) {
-    // couldn't set y axis range, what to do now?
-    DXError("Could not set Y-axis range", success);
-    device = NULL;
-    return;
+    // check out the sliders and see if we can map one of them to Y
+    // this little trick should allow most wheels to work out of the box
+    range.diph.dwObj = DIJOFS_SLIDER(0);
+    success = device->SetProperty(DIPROP_RANGE, &range.diph);
+    if (success == DI_OK) {
+      yAxis = "Slider 1";
+    } else {
+      // couldn't set y axis range, what to do now?
+      DXError("Could not set Y-axis range", success);
+      device = NULL;
+      return;
+    }
   }
 
   range.diph.dwObj = DIJOFS_Z;
