@@ -336,7 +336,7 @@ void	      DXJoystick::ffRumble(int count, float delay, float duration,
 
   // Generate a string to identify a specific rumble effect,
   // based on the paramaters of the rumble
-  std::string effectType = TextUtils::format("%d|%d|%d|%d|%d", count, delay, duration, strong_motor, weak_motor);
+  std::string effectType = TextUtils::format("R%d|%d|%d|%d|%d", count, delay, duration, strong_motor, weak_motor);
 
   // Check if we need to create the effect
   EffectMap::iterator itr = effectDatabase.find(effectType);
@@ -382,8 +382,8 @@ void	      DXJoystick::ffRumble(int count, float delay, float duration,
       return;
     }
 
-	// Store the effect for later use
-	effectDatabase[effectType] = createdEffect;
+    // Store the effect for later use
+    effectDatabase[effectType] = createdEffect;
   }
 
   // play the thing
@@ -396,6 +396,100 @@ void	      DXJoystick::ffRumble(int count, float delay, float duration,
   }
 
   return;
+}
+
+void	DXJoystick::ffDirectionalConstant(int count, float delay, float duration,
+					  float x_direction, float y_direction,
+					  float strength)
+{
+  if (!device)
+    return;
+
+  /*
+   * Create a constant effect with the specified parameters
+   */
+  DICONSTANTFORCE constantForce;
+
+  constantForce.lMagnitude = (LONG)(DI_FFNOMINALMAX * strength);
+
+  HRESULT success = DI_OK;
+
+  // Generate a string to identify a specific constant effect,
+  // based on the paramaters of the effect
+  std::string effectType = TextUtils::format("C%d|%d|%d|%d|%d|%d", count, delay, duration, x_direction, y_direction, strength);
+
+  // Check if we need to create the effect
+  EffectMap::iterator itr = effectDatabase.find(effectType);
+  if (itr == effectDatabase.end()) {
+
+    /*
+     * Wasn't in effect database, so build it
+     */
+    DWORD axes[2] = {DIJOFS_X, DIJOFS_Y};
+    LONG  dir[2] = {(int)(1000.0f * x_direction),
+		    (int)(1000.0f * y_direction)};
+
+    LPDIRECTINPUTEFFECT createdEffect;
+
+    DIEFFECT effect;
+    effect.dwSize = sizeof(DIEFFECT);
+    // cartesian coordinate system
+    effect.dwFlags = DIEFF_OBJECTOFFSETS | DIEFF_CARTESIAN;
+    // duration
+    effect.dwDuration = (DWORD)(duration * DI_SECONDS);
+    // defaults
+    effect.dwSamplePeriod = 0;
+    effect.dwGain = DI_FFNOMINALMAX;
+    effect.dwTriggerButton = DIEB_NOTRIGGER;
+    effect.dwTriggerRepeatInterval = 0;
+    // x and y axes
+    effect.cAxes = 2;
+    effect.rgdwAxes = &axes[0];
+    // direction
+    effect.rglDirection = &dir[0];
+    // no envelope
+    effect.lpEnvelope = NULL;
+    // use the constant force data
+    effect.cbTypeSpecificParams = sizeof(DICONSTANTFORCE);
+    effect.lpvTypeSpecificParams = &constantForce;
+    // start delay
+    effect.dwStartDelay = (DWORD)(delay * DI_SECONDS);
+
+    // create the effect
+    success = device->CreateEffect(GUID_ConstantForce, &effect, &createdEffect, NULL);
+
+    if (success != DI_OK) {
+      DXError("Could not create directional constant effect", success);
+      return;
+    }
+
+    // Store the effect for later use
+    effectDatabase[effectType] = createdEffect;
+  }
+
+  // play the thing
+  if (effectDatabase[effectType])
+    success = effectDatabase[effectType]->Start(count, 0);
+
+  if (success != DI_OK) {
+    // uh-oh, no worky
+    DXError("Could not play directional constant effect", success);
+  }
+
+  return;
+}
+
+void	DXJoystick::ffDirectionalPeriodic(int count, float delay, float duration,
+					  float x_direction, float y_direction,
+					  float amplitude, float period, PeriodicType type)
+{
+}
+
+bool	DXJoystick::ffHasDirectional() const
+{
+  /* FIXME: sadly, there's no easy way to figure out what TYPE of
+     force feedback a windows joystick supports :( */
+  return ffHasRumble();
 }
 
 void DXJoystick::enumerateDevices()

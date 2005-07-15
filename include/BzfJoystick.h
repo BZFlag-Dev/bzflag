@@ -43,9 +43,9 @@ class BzfJoystick {
     virtual void	setXAxis(const std::string axis);
     virtual void	setYAxis(const std::string axis);
 
-    /* Force feedback support. Currently we only support 'rumble' force
-     * feedback- a motor in the controller vibrates it, as tactile feedback
-     * for explosions, collisions, engines starting, death, that sort of thing.
+    /* Rumble force feedback support - a motor in the controller vibrates it, 
+     * as tactile feedback for explosions, collisions, engines starting, death,
+     * that sort of thing.
      *
      * A device that supports rumble will return true from ffHasRumble(),
      * and ffRumble() will start playing a force feedback effect. For devices
@@ -67,6 +67,30 @@ class BzfJoystick {
     virtual void	ffRumble(int count,
 				 float delay, float duration,
 				 float strong_motor, float weak_motor=0.0f);
+
+    /* Directional force feedback support - the controller pulls or pushes in
+     * a certain direction with a certain amount of force.
+     *
+     * Currently this is pretty limited, basically we support a few types of
+     * periodic effects, and constant forces.
+     */
+    enum PeriodicType {
+      FF_Sine = 0,
+      FF_Square,
+      FF_Triangle,
+      FF_SawtoothUp,
+      FF_SawtoothDown
+    };
+    virtual bool	ffHasDirectional() const;
+    virtual void	ffDirectionalConstant(int count,
+					      float delay, float duration,
+					      float x_direction, float y_direction,
+					      float strength);
+    virtual void	ffDirectionalPeriodic(int count,
+					      float delay, float duration,
+					      float x_direction, float y_direction,
+					      float amplitude, float period,
+					      PeriodicType type);
 };
 
 #endif // BZF_JOYSTICK_H

@@ -98,6 +98,7 @@ InputMenu::InputMenu() : keyboardMapMenu(NULL)
   options = &option->getList();
   options->push_back(std::string("None"));
   options->push_back(std::string("Rumble"));
+  options->push_back(std::string("Directional"));
   for (i = 0; i < (int)options->size(); i++) {
     std::string currentOption = (*options)[i];
     if (BZDB.get("forceFeedback") == currentOption)
