@@ -1833,7 +1833,7 @@ static std::string evaluateString(const std::string &raw)
         }
         case '{' : {
           unsigned int start = (i + 2);
-          unsigned int end = raw.find_first_of('}', start);
+	  std::string::size_type end = raw.find_first_of('}', start);
           if (end == std::string::npos) {
             i = rawLen; // unterminated, ignore the rest of the string
           } else {
@@ -1849,7 +1849,7 @@ static std::string evaluateString(const std::string &raw)
         }
         case '(' : {
           unsigned int start = (i + 2);
-          unsigned int end = raw.find_first_of(')', start);
+	  std::string::size_type end = raw.find_first_of(')', start);
           if (end == std::string::npos) {
             i = rawLen; // unterminated, ignore the rest of the string
           } else {
