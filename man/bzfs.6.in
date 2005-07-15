@@ -704,8 +704,9 @@ that many previous seconds into the file.
 .B /replay list
 List all files in the recordings directory
 .TP 
-.B /replay load <filename>
-Load the specified recording file
+.B /replay load <filename|#index>
+Load the specified recording file by name, or by index
+(same indices as produced by the 'replay list' command)
 .TP 
 .B /replay play
 Start playing the recording. This will oftentimes require that all players connected

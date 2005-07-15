@@ -1248,7 +1248,7 @@ void Replay::sendHelp(int playerIndex)
 {
   sendMessage(ServerPlayer, playerIndex, "usage:");
   sendMessage(ServerPlayer, playerIndex, "  /replay list");
-  sendMessage(ServerPlayer, playerIndex, "  /replay load <filename>");
+  sendMessage(ServerPlayer, playerIndex, "  /replay load <filename|#index>");
   sendMessage(ServerPlayer, playerIndex, "  /replay play");
   sendMessage(ServerPlayer, playerIndex, "  /replay loop");
   sendMessage(ServerPlayer, playerIndex, "  /replay skip [+/-seconds]");
