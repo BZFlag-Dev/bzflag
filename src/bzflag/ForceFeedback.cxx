@@ -98,6 +98,21 @@ namespace ForceFeedback {
       getJoystick()->ffDirectionalPeriodic(1, 0.0f, 1.0f, 0.0f, -1.0f, 0.5f, 0.1f, BzfJoystick::FF_Sine);
   }
 
+  /* Burrowed, oscillating, etc, tanks get a special resistance force 
+   * when moving through solid matter.  We use half-second increments
+   * of force-on time.
+   */
+  static TimeKeeper friction_timer = TimeKeeper::getSunGenesisTime();
+  void solidMatterFriction()
+  {
+    /* There is no way to simulate this with a rumble effect */
+    if (useForceFeedback("Directional")) {
+      if ((TimeKeeper::getCurrent() - friction_timer) >= 0.5f) {
+	getJoystick()->ffDirectionalResistance(0.5f, 1.0f, 0.5f, BzfJoystick::FF_Position);
+	friction_timer = TimeKeeper::getCurrent();
+      }
+    }
+  }
 }
 
 // Local Variables: ***

@@ -81,6 +81,8 @@ class DXJoystick : public BzfJoystick {
 				      float x_direction, float y_direction,
 				      float amplitude, float period,
 				      PeriodicType type);
+    void	ffDirectionalResistance(float time, float coefficient,
+				      float saturation, ResistanceType type);
 
   private:
     DIJOYSTATE	pollDevice();

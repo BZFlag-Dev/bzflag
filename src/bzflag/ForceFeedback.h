@@ -23,6 +23,7 @@ namespace ForceFeedback {
   void shotFired();
   void laserFired();
   void shockwaveFired();
+  void solidMatterFriction();
 
 }
 

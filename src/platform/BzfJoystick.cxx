@@ -88,6 +88,10 @@ void		    BzfJoystick::ffDirectionalPeriodic(int, float, float, float, float, fl
 {
 }
 
+void		    BzfJoystick::ffDirectionalResistance(float, float, float, ResistanceType)
+{
+}
+
 void		    BzfJoystick::setXAxis(const std::string)
 {
 }

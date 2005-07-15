@@ -542,11 +542,12 @@ void	DXJoystick::ffDirectionalPeriodic(int count, float delay, float duration,
     // create the effect
     GUID guid;
     switch (type) {
-      case BzfJoystick::FF_Sine: guid = GUID_Sine;
-      case BzfJoystick::FF_Square: guid = GUID_Square;
-      case BzfJoystick::FF_Triangle: guid = GUID_Triangle;
-      case BzfJoystick::FF_SawtoothUp: guid = GUID_SawtoothUp;
-      case BzfJoystick::FF_SawtoothDown: guid = GUID_SawtoothDown;
+      case BzfJoystick::FF_Sine: guid = GUID_Sine; break;
+      case BzfJoystick::FF_Square: guid = GUID_Square; break;
+      case BzfJoystick::FF_Triangle: guid = GUID_Triangle; break;
+      case BzfJoystick::FF_SawtoothUp: guid = GUID_SawtoothUp; break;
+      case BzfJoystick::FF_SawtoothDown: guid = GUID_SawtoothDown; break;
+      default: DXError("Unknown directional periodic effect type", type); return;
     }
     success = device->CreateEffect(guid, &effect, &createdEffect, NULL);
 
@@ -566,6 +567,100 @@ void	DXJoystick::ffDirectionalPeriodic(int count, float delay, float duration,
   if (success != DI_OK) {
     // uh-oh, no worky
     DXError("Could not play directional periodic effect", success);
+  }
+
+  return;
+}
+
+void	DXJoystick::ffDirectionalResistance(float time, float coefficient,
+					    float saturation, ResistanceType type)
+{
+  if (!device)
+    return;
+
+  /*
+   * Create a resistance effect with the specified parameters
+   */
+  DICONDITION resistForce[2];
+
+  resistForce[0].lOffset = 0;
+  resistForce[0].lPositiveCoefficient = resistForce[0].lNegativeCoefficient = (int)(10000 * coefficient);
+  resistForce[0].dwPositiveSaturation = resistForce[0].dwNegativeSaturation = (int)(10000 * saturation);
+  resistForce[0].lDeadBand = 0;
+
+  resistForce[1].lOffset = 0;
+  resistForce[1].lPositiveCoefficient = resistForce[1].lNegativeCoefficient = (int)(10000 * coefficient);
+  resistForce[1].dwPositiveSaturation = resistForce[1].dwNegativeSaturation = (int)(10000 * saturation);
+  resistForce[1].lDeadBand = 0;
+
+  HRESULT success = DI_OK;
+
+  // Generate a string to identify a specific resistance effect,
+  // based on the paramaters of the effect
+  std::string effectType = TextUtils::format("F%d|%d|%d|%d", time, coefficient, saturation, type);
+
+  // Check if we need to create the effect
+  EffectMap::iterator itr = effectDatabase.find(effectType);
+  if (itr == effectDatabase.end()) {
+
+    /*
+     * Wasn't in effect database, so build it
+     */
+    DWORD axes[2] = {DIJOFS_X, DIJOFS_Y};
+    LONG  dir[2] = {1, 1};
+
+    LPDIRECTINPUTEFFECT createdEffect;
+
+    DIEFFECT effect;
+    effect.dwSize = sizeof(DIEFFECT);
+    // cartesian coordinate system
+    effect.dwFlags = DIEFF_OBJECTOFFSETS | DIEFF_CARTESIAN;
+    // duration
+    effect.dwDuration = (DWORD)(time * DI_SECONDS);
+    // defaults
+    effect.dwSamplePeriod = 0;
+    effect.dwGain = DI_FFNOMINALMAX;
+    effect.dwTriggerButton = DIEB_NOTRIGGER;
+    effect.dwTriggerRepeatInterval = 0;
+    // x and y axes
+    effect.cAxes = 2;
+    effect.rgdwAxes = &axes[0];
+    // direction
+    effect.rglDirection = &dir[0];
+    // no envelope
+    effect.lpEnvelope = NULL;
+    // use the constant force data
+    effect.cbTypeSpecificParams = sizeof(DICONDITION) * 2;
+    effect.lpvTypeSpecificParams = &resistForce[0];
+    // start delay
+    effect.dwStartDelay = 0;
+
+    // create the effect
+    GUID guid;
+    switch (type) {
+      case BzfJoystick::FF_Position: guid = GUID_Spring; break;
+      case BzfJoystick::FF_Velocity: guid = GUID_Damper; break;
+      case BzfJoystick::FF_Acceleration: guid = GUID_Inertia; break;
+      default: DXError("Unknown directional resistance effect type", type); return;
+    }
+    success = device->CreateEffect(guid, &effect, &createdEffect, NULL);
+
+    if (success != DI_OK) {
+      DXError("Could not create directional resistance effect", success);
+      return;
+    }
+
+    // Store the effect for later use
+    effectDatabase[effectType] = createdEffect;
+  }
+
+  // play the thing
+  if (effectDatabase[effectType])
+    success = effectDatabase[effectType]->Start(1, 0);
+
+  if (success != DI_OK) {
+    // uh-oh, no worky
+    DXError("Could not play directional resistance effect", success);
   }
 
   return;

@@ -803,6 +803,11 @@ void			LocalPlayer::doUpdateMotion(float dt)
     break;
   }
 
+  // burrowed and oscillating tanks get some resistance in their joystick
+  // if they have ff on
+  if ((location == InBuilding) || (newPos[2] < -0.5f))
+    ForceFeedback::solidMatterFriction();
+
   // calculate the list of inside buildings
   insideBuildings.clear();
   if (location == InBuilding) {
