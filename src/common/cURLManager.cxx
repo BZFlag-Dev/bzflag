@@ -142,7 +142,7 @@ void cURLManager::setPostMode(std::string _postData)
   result = curl_easy_setopt(easyHandle, CURLOPT_POSTFIELDS, postData.c_str());
   if (result != CURLE_OK)
     DEBUG1("CURLOPT_POSTFIELD error %d : %s\n", result, errorBuffer);
-  result = curl_easy_setopt(easyHandle, CURLOPT_POSTFIELDSIZE, -1);
+  result = curl_easy_setopt(easyHandle, CURLOPT_POSTFIELDSIZE, postData.size());
   if (result != CURLE_OK)
     DEBUG1("CURLOPT_POSTFIELD error %d : %s\n", result, errorBuffer);
   result = curl_easy_setopt(easyHandle, CURLOPT_POST, 1);
