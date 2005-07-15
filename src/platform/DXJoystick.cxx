@@ -135,6 +135,8 @@ void	      DXJoystick::initJoystick(const char* joystickName)
   axes["Rx"] = false;
   axes["Ry"] = false;
   axes["Rz"] = false;
+  axes["Slider1"] = false;
+  axes["Slider2"] = false;
 
   DIPROPRANGE range;
   range.diph.dwSize       = sizeof(range);
@@ -181,6 +183,16 @@ void	      DXJoystick::initJoystick(const char* joystickName)
   if (success == DI_OK)
     axes["Rz"] = true;
 
+  range.diph.dwObj = DIJOFS_SLIDER(0);
+  success = device->SetProperty(DIPROP_RANGE, &range.diph);
+  if (success == DI_OK)
+    axes["Slider 1"] = true;
+
+  range.diph.dwObj = DIJOFS_SLIDER(1);
+  success = device->SetProperty(DIPROP_RANGE, &range.diph);
+  if (success == DI_OK)
+    axes["Slider 2"] = true;
+
   /*
    * Acquire the device so that we can get input from it.
    */
@@ -205,6 +217,8 @@ void	      DXJoystick::getJoy(int& x, int& y)
   else if (xAxis == "Rx") x = state.lRx;
   else if (xAxis == "Ry") x = state.lRy;
   else if (xAxis == "Rz") x = state.lRz;
+  else if (xAxis == "Slider 1") x = state.rglSlider[0];
+  else if (xAxis == "Slider 2") x = state.rglSlider[1];
 
   if (yAxis == "X")	 y = state.lX;
   else if (yAxis == "Y")  y = state.lY;
@@ -212,6 +226,8 @@ void	      DXJoystick::getJoy(int& x, int& y)
   else if (yAxis == "Rx") y = state.lRx;
   else if (yAxis == "Ry") y = state.lRy;
   else if (yAxis == "Rz") y = state.lRz;
+  else if (yAxis == "Slider 1") y = state.rglSlider[0];
+  else if (yAxis == "Slider 2") y = state.rglSlider[1];
 
   // ballistics
   x = (x * abs(x)) / 1000;
