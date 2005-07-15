@@ -483,6 +483,92 @@ void	DXJoystick::ffDirectionalPeriodic(int count, float delay, float duration,
 					  float x_direction, float y_direction,
 					  float amplitude, float period, PeriodicType type)
 {
+  if (!device)
+    return;
+
+  /*
+   * Create a constant effect with the specified parameters
+   */
+  DIPERIODIC periodicForce;
+
+  periodicForce.dwMagnitude = (DWORD)(DI_FFNOMINALMAX * amplitude);
+  periodicForce.lOffset = 0;
+  periodicForce.dwPhase = 0;
+  periodicForce.dwPeriod = (int)(DI_SECONDS * period);
+
+  HRESULT success = DI_OK;
+
+  // Generate a string to identify a specific periodic effect,
+  // based on the paramaters of the effect
+  std::string effectType = TextUtils::format("P%d|%d|%d|%d|%d|%d|%d|%d", count, delay, duration, x_direction, y_direction, amplitude, period, type);
+
+  // Check if we need to create the effect
+  EffectMap::iterator itr = effectDatabase.find(effectType);
+  if (itr == effectDatabase.end()) {
+
+    /*
+     * Wasn't in effect database, so build it
+     */
+    DWORD axes[2] = {DIJOFS_X, DIJOFS_Y};
+    LONG  dir[2] = {(int)(1000.0f * x_direction),
+		    (int)(1000.0f * y_direction)};
+
+    LPDIRECTINPUTEFFECT createdEffect;
+
+    DIEFFECT effect;
+    effect.dwSize = sizeof(DIEFFECT);
+    // cartesian coordinate system
+    effect.dwFlags = DIEFF_OBJECTOFFSETS | DIEFF_CARTESIAN;
+    // duration
+    effect.dwDuration = (DWORD)(duration * DI_SECONDS);
+    // defaults
+    effect.dwSamplePeriod = 0;
+    effect.dwGain = DI_FFNOMINALMAX;
+    effect.dwTriggerButton = DIEB_NOTRIGGER;
+    effect.dwTriggerRepeatInterval = 0;
+    // x and y axes
+    effect.cAxes = 2;
+    effect.rgdwAxes = &axes[0];
+    // direction
+    effect.rglDirection = &dir[0];
+    // no envelope
+    effect.lpEnvelope = NULL;
+    // use the constant force data
+    effect.cbTypeSpecificParams = sizeof(DIPERIODIC);
+    effect.lpvTypeSpecificParams = &periodicForce;
+    // start delay
+    effect.dwStartDelay = (DWORD)(delay * DI_SECONDS);
+
+    // create the effect
+    GUID guid;
+    switch (type) {
+      case BzfJoystick::FF_Sine: guid = GUID_Sine;
+      case BzfJoystick::FF_Square: guid = GUID_Square;
+      case BzfJoystick::FF_Triangle: guid = GUID_Triangle;
+      case BzfJoystick::FF_SawtoothUp: guid = GUID_SawtoothUp;
+      case BzfJoystick::FF_SawtoothDown: guid = GUID_SawtoothDown;
+    }
+    success = device->CreateEffect(guid, &effect, &createdEffect, NULL);
+
+    if (success != DI_OK) {
+      DXError("Could not create directional periodic effect", success);
+      return;
+    }
+
+    // Store the effect for later use
+    effectDatabase[effectType] = createdEffect;
+  }
+
+  // play the thing
+  if (effectDatabase[effectType])
+    success = effectDatabase[effectType]->Start(count, 0);
+
+  if (success != DI_OK) {
+    // uh-oh, no worky
+    DXError("Could not play directional periodic effect", success);
+  }
+
+  return;
 }
 
 bool	DXJoystick::ffHasDirectional() const

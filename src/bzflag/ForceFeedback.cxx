@@ -64,7 +64,7 @@ namespace ForceFeedback {
     if (useForceFeedback("Rumble"))
       getJoystick()->ffRumble(1, 0.0f, 1.5f, 1.0f, 0.0f);
     else if (useForceFeedback("Directional"))
-      getJoystick()->ffDirectionalPeriodic(1, 0.0f, 1.5f, 1.0f, 1.0f, 1.0f, 0.33f, BzfJoystick::FF_SawtoothDown);
+      getJoystick()->ffDirectionalPeriodic(1, 0.0f, 1.5f, 1.0f, 0.0f, 1.0f, 0.15f, BzfJoystick::FF_SawtoothDown);
   }
 
   void shotFired()
