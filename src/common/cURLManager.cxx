@@ -17,6 +17,7 @@
 #include "bzfio.h"
 
 bool                    cURLManager::inited      = false;
+bool                    cURLManager::justCalled;
 CURLM                  *cURLManager::multiHandle = NULL;
 std::map<CURL*,
 	 cURLManager*>  cURLManager::cURLMap;
@@ -98,6 +99,7 @@ size_t cURLManager::writeFunction(void *ptr, size_t size, size_t nmemb,
 {
   int len = size * nmemb;
   ((cURLManager*)stream)->collectData((char*)ptr, len);
+  justCalled = true;
   return len;
 }
 
@@ -270,30 +272,34 @@ int cURLManager::perform()
   int activeTransfers = 0;
   CURLMcode result;
   while (true) {
-    result = curl_multi_perform(multiHandle, &activeTransfers);
-    if (result != CURLM_CALL_MULTI_PERFORM)
-      break;
-  }
-  if (result != CURLM_OK)
-    DEBUG1("Error while doing multi_perform from libcurl %d : %s\n",
-	   result, errorBuffer);
+    justCalled = false;
+    while (true) {
+      result = curl_multi_perform(multiHandle, &activeTransfers);
+      if (result != CURLM_CALL_MULTI_PERFORM)
+	break;
+    }
+    if (result != CURLM_OK)
+      DEBUG1("Error while doing multi_perform from libcurl %d : %s\n",
+	     result, errorBuffer);
 
-  int      msgs_in_queue;
-  CURLMsg *pendingMsg;
-  CURL    *easy;
+    int      msgs_in_queue;
+    CURLMsg *pendingMsg;
+    CURL    *easy;
 
+    while (true) {
+      pendingMsg = curl_multi_info_read(multiHandle, &msgs_in_queue);
+      if (!pendingMsg)
+	break;
 
-  while (true) {
-    pendingMsg = curl_multi_info_read(multiHandle, &msgs_in_queue);
-    if (!pendingMsg)
-      break;
+      easy        = pendingMsg->easy_handle;
 
-    easy        = pendingMsg->easy_handle;
+      if (cURLMap.count(easy))
+	cURLMap[easy]->infoComplete(pendingMsg->data.result);
 
-    if (cURLMap.count(easy))
-      cURLMap[easy]->infoComplete(pendingMsg->data.result);
-
-    if (msgs_in_queue <= 0)
+      if (msgs_in_queue <= 0)
+	break;
+    }
+    if (!justCalled)
       break;
   }
 
@@ -312,6 +318,7 @@ void cURLManager::infoComplete(CURLcode result)
   }
   removeHandle();
   finalization((char *)theData, theLen, result == CURLE_OK);
+  justCalled = true;
   free(theData);
   theData = NULL;
   theLen  = 0;

@@ -80,6 +80,7 @@ private:
   void          infoComplete(CURLcode result);
 
   static bool   inited;
+  static bool   justCalled;
   CURL         *easyHandle;
   static CURLM *multiHandle;
   static char   errorBuffer[CURL_ERROR_SIZE];
