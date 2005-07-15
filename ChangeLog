@@ -4,6 +4,7 @@
 BZFlag 2.0.3
 ------------
 
+* Authentication credential are requested asap - Alfredo Tupone
 * Directional force feedback support - Daniel Remenak
 * New icon and menu arrow - Harry Keller, Jeff Meyers
 * Special effects for many events - Jeff Meyers, Daniel Remenak
