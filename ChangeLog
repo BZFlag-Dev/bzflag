@@ -4,6 +4,7 @@
 BZFlag 2.0.3
 ------------
 
+* Directional force feedback support - Daniel Remenak
 * New icon and menu arrow - Harry Keller, Jeff Meyers
 * Special effects for many events - Jeff Meyers, Daniel Remenak
 * Server-side plugin API and plugins - Jeff Meyers
