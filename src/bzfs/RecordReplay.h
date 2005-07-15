@@ -30,6 +30,7 @@ namespace Record {
   extern bool kill ();
 
   extern bool setDirectory (const char *dirname);
+  extern const char* getDirectory ();
 
   extern bool start (int playerIndex);
   extern bool stop (int playerIndex);

@@ -28,6 +28,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <time.h>
+#include <vector>
 #ifndef _WIN32
 #  include <sys/time.h>
 #  include <unistd.h>
@@ -113,6 +114,11 @@ typedef struct {
 static const unsigned int ReplayHeaderSize =
   sizeof(ReplayHeader) - (2 * sizeof(char*));
 
+typedef struct {
+  std::string file;
+  float time;
+} FileEntry;
+
 
 // Local Variables
 // ---------------
@@ -191,6 +197,7 @@ static bool replaceWorldDatabase(ReplayHeader *h);
 static bool flagIsActive(FlagType *type);
 static bool packFlagTypes(char *flags, u32 *flagsSize);
 
+static bool getFileList(int playerIndex, std::vector<FileEntry>& entries);
 static FILE *openFile(const char *filename, const char *mode);
 static FILE *openWriteFile(int playerIndex, const char *filename);
 static bool badFilename(const char *name);
@@ -311,6 +318,12 @@ bool Record::stop(int playerIndex)
   }
 
   return true;
+}
+
+
+const char* Record::getDirectory()
+{
+  return RecordDir.c_str();
 }
 
 
@@ -696,23 +709,40 @@ static bool preloadVariables()
 
 bool Replay::loadFile(int playerIndex, const char *filename)
 {
+  if (!ReplayMode) {
+    sendMessage(ServerPlayer, playerIndex, "Server is not in replay mode");
+    return false;
+  }
+  
+  std::string indexname;
+  if (filename[0] == '#') {
+    std::vector<FileEntry> entries;
+    if (!getFileList(playerIndex, entries)) {
+      sendMessage(ServerPlayer, playerIndex, "Could not get file index list");
+      return false;
+    }
+    int index = atoi(filename + 1);
+    if ((index < 1) || (index > (int)entries.size())) {
+      sendMessage(ServerPlayer, playerIndex, "Invalid file index");
+      return false;
+    }
+    indexname = entries[index - 1].file;
+    filename = indexname.c_str();    // new filename
+  }
+  else {
+    if (badFilename(filename)) {
+      sendMessage(ServerPlayer, playerIndex,
+                  "Files must be in the recordings directory");
+      return false;
+    }
+  }
+
   ReplayHeader header;
   RRpacket *p;
   char buffer[MessageLen];
   std::string name = RecordDir;
   name += filename;
-
-  if (!ReplayMode) {
-    sendMessage(ServerPlayer, playerIndex, "Server is not in replay mode");
-    return false;
-  }
-
-  if (badFilename(filename)) {
-    sendMessage(ServerPlayer, playerIndex,
-		 "Files must be in the recordings directory");
-    return false;
-  }
-
+  
   replayReset();
   resetStates();
 
@@ -763,7 +793,7 @@ bool Replay::loadFile(int playerIndex, const char *filename)
 
   if (!preloadVariables()) {
     snprintf(buffer, MessageLen, "Could not preload variables: %s",
-	      name.c_str());
+             name.c_str());
     sendMessage(ServerPlayer, playerIndex, buffer);
     replayReset();
     return false;
@@ -820,13 +850,9 @@ static FILE *getRecordFile(const char *filename)
 }
 
 
-bool Replay::sendFileList(int playerIndex)
+static bool getFileList(int playerIndex, std::vector<FileEntry>& entries)
 {
-  int count = 0;
-  char buffer[MessageLen];
-
-  snprintf(buffer, MessageLen, "dir:   %s",RecordDir.c_str());
-  sendMessage(ServerPlayer, playerIndex, buffer);
+  entries.clear();
 
 #ifndef _MSC_VER
 
@@ -849,10 +875,10 @@ bool Replay::sendFileList(int playerIndex)
     if (file != NULL) {
       RRtime filetime;
       if (loadFileTime(&filetime, file)) {
-	snprintf(buffer, MessageLen, "file:  %-20s  [%9.1f seconds]",
-		  de->d_name, (float)filetime/1000000.0f);
-	sendMessage(ServerPlayer, playerIndex, buffer);
-	count++;
+        FileEntry entry;
+        entry.file = de->d_name;
+        entry.time = (float)filetime / 1000000.0f;
+	entries.push_back(entry);
       }
       fclose(file);
     }
@@ -878,10 +904,9 @@ bool Replay::sendFileList(int playerIndex)
       if (file != NULL) {
 	RRtime filetime;
 	if (loadFileTime(&filetime, file)) {
-	  snprintf(buffer, MessageLen, "file:  %-20s  [%9.1f seconds]",
-		    findData.cFileName, (float)filetime/1000000.0f);
-	  sendMessage(ServerPlayer, playerIndex, buffer);
-	  count++;
+          entry.file = findData.cFileName;
+          entry.time = (float)filetime / 1000000.0f;
+	  entries.push_back(entry);
 	}
 	fclose(file);
       }
@@ -892,8 +917,26 @@ bool Replay::sendFileList(int playerIndex)
 
 #endif // _MSC_VER
 
-  if (count == 0) {
-    sendMessage(ServerPlayer, playerIndex, "*** no record files found ***");
+  return true;
+}
+
+
+bool Replay::sendFileList(int playerIndex)
+{
+  std::vector<FileEntry> entries;
+  if (!getFileList(playerIndex, entries)) {
+    return false;
+  }
+
+  char buffer[MessageLen];
+  snprintf(buffer, MessageLen, "dir:   %s",RecordDir.c_str());
+  sendMessage(ServerPlayer, playerIndex, buffer);
+  
+  for (unsigned int i = 0; i < entries.size(); i++) {
+    const FileEntry& entry = entries[i];
+    snprintf(buffer, MessageLen, "file(#%02i):  %-30s  [%9.1f seconds]", i + 1,
+             entry.file.c_str(), entry.time);
+    sendMessage(ServerPlayer, playerIndex, buffer);
   }
 
   return true;
