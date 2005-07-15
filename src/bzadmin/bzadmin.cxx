@@ -166,7 +166,7 @@ int main(int argc, char** argv) {
     // if we have a token wait a bit for global login
     // FIXME: should "know" when we are logged in (or fail) and only wait that long.
     if (startupInfo.token[0] != 0)
-      TimeKeeper::sleep(5.0f);
+      TimeKeeper::sleep(5.0);
     for (unsigned int j = 1; j < op.getParameters().size(); ++j) {
       if (op.getParameters()[j] == "/quit") {
 	client.waitForServer();
