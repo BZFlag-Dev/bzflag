@@ -1253,7 +1253,7 @@ bool			LocalPlayer::fireShot()
   if (gettingSound) {
     if (firingInfo.flagType == Flags::ShockWave) {
       playLocalSound(SFX_SHOCK);
-      ForceFeedback::shotFired();
+      ForceFeedback::shockwaveFired();
     }
     else if (firingInfo.flagType == Flags::Laser) {
       playLocalSound(SFX_LASER);

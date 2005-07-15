@@ -89,6 +89,15 @@ namespace ForceFeedback {
       getJoystick()->ffDirectionalPeriodic(4, 0.1f, 0.1f, 0.0f, -1.0f, 0.5f, 0.05f, BzfJoystick::FF_Sine);
   }
 
+  void shockwaveFired()
+  {
+    /* try to 'match' the shockwave sound */
+    if (useForceFeedback("Rumble"))
+      getJoystick()->ffRumble(1, 0.0f, 0.5f, 0.0f, 1.0f);
+    else if (useForceFeedback("Directional"))
+      getJoystick()->ffDirectionalPeriodic(1, 0.0f, 1.0f, 0.0f, -1.0f, 0.5f, 0.1f, BzfJoystick::FF_Sine);
+  }
+
 }
 
 // Local Variables: ***
