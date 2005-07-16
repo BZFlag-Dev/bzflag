@@ -97,7 +97,7 @@ class DXJoystick : public BzfJoystick {
     std::string yAxis;
 
     static std::vector<DIDEVICEINSTANCE> devices;
-	static EffectMap effectDatabase;
+    static EffectMap effectDatabase;
 
     IDirectInput7* directInput;
     IDirectInputDevice7* device;
