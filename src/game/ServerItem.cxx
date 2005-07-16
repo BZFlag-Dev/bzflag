@@ -145,10 +145,10 @@ bool ServerItem::operator<(const ServerItem &right)
 {
   const ServerItem & left = *this;
   if (left.cached && right.cached){
-    if (left.getPlayerCount() < right.getPlayerCount()){
+    if (left.getSortFactor() < right.getSortFactor()){
       return true;
     }
-    else if (left.getPlayerCount() == right.getPlayerCount()){
+    else if (left.getSortFactor() == right.getSortFactor()){
       if (left.getAgeMinutes() > right.getAgeMinutes()){
 	return true;
       }
@@ -161,7 +161,7 @@ bool ServerItem::operator<(const ServerItem &right)
     }
   }
   else if (!left.cached && !right.cached) {
-    if (left.getPlayerCount() < right.getPlayerCount()){
+    if (left.getSortFactor() < right.getSortFactor()){
       return true;
     }
     else {
@@ -189,6 +189,21 @@ int ServerItem::getPlayerCount() const
       curPlayer = maxPlayer;
   }
   return curPlayer;
+}
+
+unsigned int ServerItem::getSortFactor() const
+{
+  // if null ping we return a 0 player count
+  unsigned int value = 0;
+  if (&ping != 0) {
+    // real players are worth a 1000
+    value = ping.rogueCount + ping.redCount + ping.greenCount +
+            ping.blueCount + ping.purpleCount;
+    value *= 1000;
+    // include the lowly observers, 1 point each
+    value += ping.observerCount;
+  }
+  return value;
 }
 
 
