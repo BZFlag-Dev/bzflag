@@ -95,19 +95,19 @@ void	     EvdevJoystick::scanForJoysticks(std::map<std::string,
     /* if we can't open read/write, try just read...if it's not ff it'll work anyhow */
     if (!fd) {
       fd = open(info.filename.c_str(), O_RDONLY);
-      if (fd) DEBUG3("Opened event device %s as read-only", info.filename.c_str());
+      if (fd) DEBUG4("Opened event device %s as read-only.\n", info.filename.c_str());
     } else {
-      DEBUG3("Opened event device %s as read-write.", info.filename.c_str());
+      DEBUG4("Opened event device %s as read-write.\n", info.filename.c_str());
     }
     /* no good, can't open it */
     if (!fd) {
-      DEBUG3("Can't open event device %s.  Check permissions.", info.filename.c_str());
+      DEBUG4("Can't open event device %s.  Check permissions.\n", info.filename.c_str());
       continue;
     }
 
     /* Does it look like a joystick? */
     if (!(collectJoystickBits(fd, info) && isJoystick(info))) {
-      DEBUG3("Device %s doesn't seem to be a joystick.  Skipping.", info.filename.c_str());
+      DEBUG4("Device %s doesn't seem to be a joystick.  Skipping.\n", info.filename.c_str());
       close(fd);
       continue;
     }
@@ -208,10 +208,19 @@ void			EvdevJoystick::initJoystick(const char* joystickName)
   if (joystickfd > 0) {
     /* Yay, it worked */
     currentJoystick = info;
+    currentJoystick->readonly = false;
+  } else {
+    joystickfd = open(info->filename.c_str(), O_RDONLY | O_NONBLOCK);
+    if (joystickfd > 0) {
+      /* Got it in read only */
+      currentJoystick = info;
+      currentJoystick->readonly = true;
+      printError("No write access to joystick device, force feedback disabled.");
+    } else { 
+      printError("Error opening the selected joystick.");
+    }
   }
-  else {
-    printError("Error opening the selected joystick.");
-  }
+
 
   buttons = 0;
 }
@@ -346,7 +355,8 @@ bool		    EvdevJoystick::ffHasRumble() const
     return false;
   else
     return test_bit(EV_FF, currentJoystick->evbit) &&
-	   test_bit(FF_RUMBLE, currentJoystick->ffbit);
+	   test_bit(FF_RUMBLE, currentJoystick->ffbit) &&
+	   !currentJoystick->readonly;
 #else
   return false;
 #endif

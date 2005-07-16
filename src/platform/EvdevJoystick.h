@@ -53,6 +53,9 @@ struct EvdevJoystickInfo {
     int fuzz;
     int flat;
   } axis_info[2];
+
+  /* if we can only read from this joystick, remember that */
+  bool readonly;
 };
 
 class EvdevJoystick : public BzfJoystick {
