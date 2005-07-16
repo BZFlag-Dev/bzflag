@@ -1,6 +1,9 @@
 recent bugs
 ------------
 
+- ANSI codes can be used in the server -public messages
+  The best solution is probably to strip the codes at the listserver
+
 - at high frame rates (approx. > 500), isDeadReckoningWrong() often returns true
   when tank is moving at constant speed. This leads to many unnecessary
   MsgPlayerUpdate packets to be sent. Maybe floating point inaccuracies?
