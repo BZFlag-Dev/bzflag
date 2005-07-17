@@ -21,6 +21,8 @@
 #include "TimeKeeper.h"
 #include "cURLManager.h"
 #include "StateDatabase.h"
+#include "Bundle.h"
+#include "BundleMgr.h"
 
 /* local implementation headers */
 #include "HUDDialogStack.h"
@@ -29,7 +31,6 @@
 #include "ServerMenu.h"
 #include "ServerStartMenu.h"
 #include "TextureManager.h"
-
 
 /* from playing.h */
 extern StartupInfo* getStartupInfo();
@@ -306,8 +307,10 @@ void JoinMenu::updateTeamTexture()
   teamIcon->setFontSize(team->getFontSize() * 1.5f);
 
   // put it at the end of the text
+  Bundle *bdl = BundleMgr::getCurrentBundle();
   const float x = team->getX() + fm.getStrLength(team->getFontFace(),
-	  team->getFontSize(), team->getList()[team->getIndex()] + "x");
+	  team->getFontSize(), 
+	  bdl->getLocalString(team->getList()[team->getIndex()]) + "x");
   teamIcon->setPosition(x, team->getY());
 }
 
