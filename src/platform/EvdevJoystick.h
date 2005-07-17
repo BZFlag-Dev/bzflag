@@ -74,6 +74,19 @@ class EvdevJoystick : public BzfJoystick {
 			 float delay, float duration,
 			 float strong_motor, float weak_motor=0.0f);
 
+    bool        ffHasDirectional() const;
+    void        ffDirectionalConstant(int count,
+                                      float delay, float duration,
+                                      float x_direction, float y_direction,
+                                      float strength);
+    void        ffDirectionalPeriodic(int count,
+                                      float delay, float duration,
+                                      float x_direction, float y_direction,
+                                      float amplitude, float period,
+                                      PeriodicType type);
+    void        ffDirectionalResistance(float time, float coefficient,
+                                        float saturation, ResistanceType type);
+
     /* Test whether this driver should be used without actually
      * loading it. Will return false if no event devices can be
      * located, or if it has been specifically disabled by setting
@@ -89,7 +102,7 @@ class EvdevJoystick : public BzfJoystick {
     void	poll();
     void	setButton(int button_num, int state);
     int	 mapButton(int bit_num);
-    void	ffResetRumble();
+    void	ffResetEffect();
 
     std::map<std::string,EvdevJoystickInfo> joysticks;
 
@@ -98,6 +111,9 @@ class EvdevJoystick : public BzfJoystick {
     int			 buttons;
     struct ff_effect*	   ff_rumble;
 };
+
+// The drivers don't define a minimum delay that I can tell.  This seems to work.
+#define FF_NOMINAL_MIN 0x10;
 
 #endif // BZF_EVDEV_JOY_H
 

@@ -187,8 +187,8 @@ AC_MSG_RESULT([$ac_ff_effect_rumble])
 # Check for working directional FF support in linux/input.h
 AC_MSG_CHECKING([for linux force feedback joystick support])
 AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <linux/input.h>]],
-	[[struct ff_effect x; x.u.periodic.waveform = FF_SINE; return 0;]])],
-	[ac_ff_effect_directional=yes],[ac_ff_effect_direction=no])
+	[[struct ff_effect x; x.direction = 0x4000; return 0;]])],
+	[ac_ff_effect_directional=yes],[ac_ff_effect_directional=no])
 if test x$ac_ff_effect_directional = xyes; then
     AC_DEFINE(HAVE_FF_EFFECT_DIRECTIONAL, 1, [we appear to have working support for directional force feedback effects])
 fi

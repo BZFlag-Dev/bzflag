@@ -184,7 +184,7 @@ bool			EvdevJoystick::isJoystick(struct EvdevJoystickInfo &info)
 void			EvdevJoystick::initJoystick(const char* joystickName)
 {
   /* Close the previous joystick */
-  ffResetRumble();
+  ffResetEffect();
   if (joystickfd > 0)
     close(joystickfd);
   currentJoystick = NULL;
@@ -362,13 +362,13 @@ bool		    EvdevJoystick::ffHasRumble() const
 #endif
 }
 
-void		    EvdevJoystick::ffResetRumble()
+void		    EvdevJoystick::ffResetEffect()
 {
-#ifdef HAVE_FF_EFFECT_RUMBLE
+#if (defined HAVE_FF_EFFECT_DIRECTIONAL || defined HAVE_FF_EFFECT_RUMBLE)
   /* Erase old effects before closing a device,
    * if we had any, then initialize the ff_rumble struct.
    */
-  if (ffHasRumble() && ff_rumble->id != -1) {
+  if ((ffHasRumble() || ffHasDirectional()) && ff_rumble->id != -1) {
 
     /* Stop the effect first */
     struct input_event event;
@@ -387,7 +387,6 @@ void		    EvdevJoystick::ffResetRumble()
    * as long as we have the device open.
    */
   memset(ff_rumble, 0, sizeof(*ff_rumble));
-  ff_rumble->type = FF_RUMBLE;
   ff_rumble->id = -1;
 #endif
 }
@@ -412,6 +411,7 @@ void		    EvdevJoystick::ffRumble(int count,
 
   if (count > 0) {
     /* Download an updated effect */
+    ff_rumble->type = FF_RUMBLE;
     ff_rumble->u.rumble.strong_magnitude = (int) (0xFFFF * strong_motor + 0.5);
     ff_rumble->u.rumble.weak_magnitude = (int) (0xFFFF * weak_motor + 0.5);
     ff_rumble->replay.length = (int) (duration * 1000 + 0.5);
@@ -428,6 +428,92 @@ void		    EvdevJoystick::ffRumble(int count,
 }
 #else
 void EvdevJoystick::ffRumble(int, float, float, float, float)
+{
+}
+#endif
+
+bool EvdevJoystick::ffHasDirectional() const
+{
+#ifdef HAVE_FF_EFFECT_DIRECTIONAL
+  if (!currentJoystick)
+    return false;
+  else
+    return test_bit(EV_FF, currentJoystick->evbit) &&
+           test_bit(FF_PERIODIC, currentJoystick->ffbit) &&
+	   test_bit(FF_CONSTANT, currentJoystick->ffbit) &&	
+           !currentJoystick->readonly;
+#else
+  return false;
+#endif
+}
+
+#ifdef HAVE_FF_EFFECT_DIRECTIONAL
+void EvdevJoystick::ffDirectionalConstant(int count, float delay, float duration,
+                                          float x_direction, float y_direction,
+                                          float strength)
+{
+  if (!ffHasDirectional())
+    return;
+
+  /* Stop the previous effect we were playing, if any */
+  if (ff_rumble->id != -1) {
+    struct input_event event;
+    event.type = EV_FF;
+    event.code = ff_rumble->id;
+    event.value = 0;
+    write(joystickfd, &event, sizeof(event));
+  }
+
+  if (count > 0) {
+    /* Download an updated effect */
+    ff_rumble->type = FF_CONSTANT;
+    ff_rumble->u.constant.level = (int) (0x7FFF * strength + 0.5f);
+    ff_rumble->direction = (int) (0xFFFF * (1.0 / (2.0 * M_PI)) *
+	        	          atan2(x_direction, -y_direction) + 0.5);
+    ff_rumble->u.constant.envelope.attack_length = FF_NOMINAL_MIN;
+    ff_rumble->u.constant.envelope.fade_length = FF_NOMINAL_MIN;
+    ff_rumble->u.constant.envelope.attack_level = ff_rumble->u.constant.level;
+    ff_rumble->u.constant.envelope.fade_level = ff_rumble->u.constant.level;
+    ff_rumble->replay.length = (int) (duration * 1000 + 0.5f);
+    ff_rumble->replay.delay = (int) (delay * 1000 + 0.5f);
+    if (ioctl(joystickfd, EVIOCSFF, ff_rumble) == -1)
+      printError("Effect upload failed.");
+
+    /* Play it the indicated number of times */
+    struct input_event event;
+    event.type = EV_FF;
+    event.code = ff_rumble->id;
+    event.value = count;
+    write(joystickfd, &event, sizeof(event));
+  }
+}
+#else
+void EvdevJoystick::ffDirectionalConstant(int, float, float, float, float, float)
+{
+}
+#endif
+
+#ifdef HAVE_FF_EFFECT_DIRECTIONAL
+void EvdevJoystick::ffDirectionalPeriodic(int count, float delay, float duration,
+                                          float x_direction, float y_direction,
+                                          float amplitude, float period,
+					  PeriodicType type)
+{
+}
+#else
+void EvdevJoystick::ffDirectionalPeriodic(int, float, float, float, float, float
+					  float, PeriodicType)
+{
+}
+#endif
+
+#ifdef HAVE_FF_EFFECT_DIRECTIONAL
+void EvdevJoystick::ffDirectionalResistance(float time, float coefficient,
+                                            float saturation, ResistanceType type)
+{
+}
+#else
+void EvdevJoystick::ffDirectionalPeriodic(float, float, float, ResistanceType)
 {
 }
 #endif
