@@ -111,6 +111,7 @@ class EvdevJoystick : public BzfJoystick {
 
     std::map<std::string,EvdevJoystickInfo> joysticks;
 
+    int		useaxis[2];
     EvdevJoystickInfo*	  currentJoystick;
     int			 joystickfd;
     int			 buttons;

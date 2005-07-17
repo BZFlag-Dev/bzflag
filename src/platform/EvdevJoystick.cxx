@@ -221,7 +221,8 @@ void			EvdevJoystick::initJoystick(const char* joystickName)
     }
   }
 
-
+  useaxis[0] = ABS_X;
+  useaxis[1] = ABS_Y;
   buttons = 0;
 }
 
@@ -239,10 +240,9 @@ void		    EvdevJoystick::poll()
     switch (ev.type) {
 
     case EV_ABS:
-      switch (ev.code) {
-      case ABS_X: currentJoystick->axis_info[0].value = ev.value; break;
-      case ABS_Y: currentJoystick->axis_info[1].value = ev.value; break;
-      }
+      if (ev.code - ABS_X > 8)
+	break;
+      currentJoystick->axis_info[ev.code - ABS_X].value = ev.value; break;
       break;
 
     case EV_KEY:
@@ -296,10 +296,12 @@ void			EvdevJoystick::getJoy(int& x, int& y)
   if (currentJoystick) {
     poll();
 
-    int axes[2];
+    int axes[9];
     int axis;
     int value;
-    for (axis=0; axis<2; axis++) {
+    for (axis=0; axis<9; axis++) {
+      if (!(test_bit(ABS_X + axis, currentJoystick->absbit)))
+	continue;
 
       /* Each axis gets scaled from evdev's reported minimum
        * and maximum into bzflag's [-1000, 1000] range.
@@ -321,10 +323,9 @@ void			EvdevJoystick::getJoy(int& x, int& y)
 
       axes[axis] = value;
     }
-    x = axes[0];
-    y = axes[1];
-  }
-  else {
+    x = axes[useaxis[0]];
+    y = axes[useaxis[1]];
+  } else {
     x = y = 0;
   }
 }
@@ -348,18 +349,33 @@ void		    EvdevJoystick::getJoyDevices(std::vector<std::string>
     list.push_back(i->first);
 }
 
+static const std::string anames[9] = { "X", "Y", "Z", "Rx", "Ry", "Rz", "Throttle", "Rudder", "Wheel" };
+
 void                EvdevJoystick::getJoyDeviceAxes(std::vector<std::string>
 						    &list) const
 {
   list.clear();
+
+  if (!currentJoystick)
+    return;
+
+  for (int i = 0; i < 9; ++i)
+    if (test_bit(ABS_X + i, currentJoystick->absbit))
+      list.push_back(anames[i]);
 }
 
-void		    EvdevJoystick::setXAxis(const std::string)
+void		    EvdevJoystick::setXAxis(const std::string axis)
 {
+  for (int i = 0; i < 9; ++i)
+    if (anames[i] == axis)
+      useaxis[0] = ABS_X + i; 
 }
 
-void		    EvdevJoystick::setYAxis(const std::string)
+void		    EvdevJoystick::setYAxis(const std::string axis)
 {
+  for (int i = 0; i < 9; ++i)
+    if (anames[i] == axis)
+      useaxis[1] = ABS_X + i;
 }
 
 bool		    EvdevJoystick::ffHasRumble() const
