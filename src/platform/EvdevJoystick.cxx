@@ -571,9 +571,59 @@ void EvdevJoystick::ffDirectionalPeriodic(int, float, float, float, float, float
 void EvdevJoystick::ffDirectionalResistance(float time, float coefficient,
                                             float saturation, ResistanceType type)
 {
+  if (!ffHasDirectional())
+    return;
+
+  /* whenever we switch effect types we must reset the effect
+   * this could be avoided by tracking the slot numbers and only
+   * using one for each type.
+   * When we don't switch types we still must stop the previous
+   * effect we were playing, if any.
+   */
+  if ((ff_rumble->type != FF_SPRING) &&
+      (ff_rumble->type != FF_FRICTION) &&
+      (ff_rumble->type != FF_DAMPER)) {
+    ffResetEffect();
+  } else if (ff_rumble->id != -1) {
+    struct input_event event;
+    event.type = EV_FF;
+    event.code = ff_rumble->id;
+    event.value = 0;
+    write(joystickfd, &event, sizeof(event));
+  }
+
+  if (1 > 0) {
+    /* Download an updated effect */
+    int lintype;
+    switch (type) {
+      case FF_Position: lintype = FF_SPRING; break;
+      case FF_Velocity: lintype = FF_FRICTION; break;
+      case FF_Acceleration: lintype = FF_DAMPER; break;
+      default: printError("Unrecognized force feedback resistance type."); return;
+    }
+    ff_rumble->type = lintype;
+    ff_rumble->u.condition[0].right_saturation =
+    ff_rumble->u.condition[0].left_saturation = (int) (0x7FFF * saturation + 0.5f);
+    ff_rumble->u.condition[0].right_coeff =
+    ff_rumble->u.condition[0].left_coeff = (int) (0x7FFF * coefficient + 0.5f);
+    ff_rumble->u.condition[0].deadband = 0;
+    ff_rumble->u.condition[0].center = 0;
+    ff_rumble->u.condition[1] = ff_rumble->u.condition[0];
+    ff_rumble->replay.length = (int) (time * 1000 + 0.5f);
+    ff_rumble->replay.delay = 0;
+    if (ioctl(joystickfd, EVIOCSFF, ff_rumble) == -1)
+      printError("Effect upload failed.");
+
+    /* Play it just once */
+    struct input_event event;
+    event.type = EV_FF;
+    event.code = ff_rumble->id;
+    event.value = 1;
+    write(joystickfd, &event, sizeof(event));
+  }
 }
 #else
-void EvdevJoystick::ffDirectionalPeriodic(float, float, float, ResistanceType)
+void EvdevJoystick::ffDirectionalResistance(float, float, float, ResistanceType)
 {
 }
 #endif
