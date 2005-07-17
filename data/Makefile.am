@@ -8,6 +8,7 @@ EXTRA_DIST =			\
 	blue_laser.png		\
 	blue_super_bolt.png	\
 	blue_tank.png		\
+	blend_flash.png		\
 	boom.wav		\
 	bounce.wav		\
 	boxwall.png		\
@@ -18,6 +19,7 @@ EXTRA_DIST =			\
 	bzflag-48x48.png	\
 	caution.png		\
 	clouds.png		\
+	dusty_flare.png		\
 	explode1.png		\
 	explode2.png		\
 	explosion.wav		\
