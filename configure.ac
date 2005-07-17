@@ -103,7 +103,6 @@ AM_CONDITIONAL(BUILDZLIB, test $BUILDZLIB = yes)
         CURL_LIBS="`echo $CURL_LIBS | sed 's/-arch i386//'`"
       fi
     fi
-    AC_DEFINE(HAVE_CURL, 1, [Define if using libcurl])
   else
     AC_MSG_ERROR([libcurl is required. You must install it. \
 See http://curl.haxx.se/])
