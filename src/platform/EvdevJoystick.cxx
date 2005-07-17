@@ -455,8 +455,15 @@ void EvdevJoystick::ffDirectionalConstant(int count, float delay, float duration
   if (!ffHasDirectional())
     return;
 
-  /* Stop the previous effect we were playing, if any */
-  if (ff_rumble->id != -1) {
+  /* whenever we switch effect types we must reset the effect
+   * this could be avoided by tracking the slot numbers and only
+   * using one for each type.
+   * When we don't switch types we still must stop the previous
+   * effect we were playing, if any. 
+   */
+  if (ff_rumble->type != FF_CONSTANT) {
+    ffResetEffect();
+  } else if (ff_rumble->id != -1) {
     struct input_event event;
     event.type = EV_FF;
     event.code = ff_rumble->id;
@@ -499,6 +506,59 @@ void EvdevJoystick::ffDirectionalPeriodic(int count, float delay, float duration
                                           float amplitude, float period,
 					  PeriodicType type)
 {
+  if (!ffHasDirectional())
+    return;
+
+  /* whenever we switch effect types we must reset the effect
+   * this could be avoided by tracking the slot numbers and only
+   * using one for each type.
+   * When we don't switch types we still must stop the previous
+   * effect we were playing, if any.
+   */
+  if (ff_rumble->type != FF_PERIODIC) {
+    ffResetEffect();
+  } else if (ff_rumble->id != -1) {
+    struct input_event event;
+    event.type = EV_FF;
+    event.code = ff_rumble->id;
+    event.value = 0;
+    write(joystickfd, &event, sizeof(event));
+  }
+
+  if (count > 0) {
+    /* Download an updated effect */
+    ff_rumble->type = FF_PERIODIC;
+    int wave = 0;
+    switch (type) {
+      case FF_Sine: wave = FF_SINE; break;
+      case FF_Square: wave = FF_SQUARE; break;
+      case FF_Triangle: wave = FF_TRIANGLE; break;
+      case FF_SawtoothUp: wave = FF_SAW_UP; break;
+      case FF_SawtoothDown: wave = FF_SAW_DOWN; break;
+      default: printError("Unknown periodic force feedback waveform."); return;
+    }
+    ff_rumble->u.periodic.waveform = wave; 
+    ff_rumble->u.periodic.magnitude = (int) (0x7FFF * amplitude + 0.5f);
+    ff_rumble->u.periodic.period = (int) (period * 1000 + 0.5f);
+    ff_rumble->u.periodic.offset = ff_rumble->u.periodic.phase = 0;
+    ff_rumble->direction = (int) (0xFFFF * (1.0 / (2.0 * M_PI)) *
+                                  atan2(x_direction, -y_direction) + 0.5);
+    ff_rumble->u.periodic.envelope.attack_length = FF_NOMINAL_MIN;
+    ff_rumble->u.periodic.envelope.fade_length = FF_NOMINAL_MIN;
+    ff_rumble->u.periodic.envelope.attack_level = ff_rumble->u.periodic.magnitude;
+    ff_rumble->u.periodic.envelope.fade_level = ff_rumble->u.periodic.magnitude;
+    ff_rumble->replay.length = (int) (duration * 1000 + 0.5f);
+    ff_rumble->replay.delay = (int) (delay * 1000 + 0.5f);
+    if (ioctl(joystickfd, EVIOCSFF, ff_rumble) == -1)
+      printError("Effect upload failed.");
+
+    /* Play it the indicated number of times */
+    struct input_event event;
+    event.type = EV_FF;
+    event.code = ff_rumble->id;
+    event.value = count;
+    write(joystickfd, &event, sizeof(event));
+  }
 }
 #else
 void EvdevJoystick::ffDirectionalPeriodic(int, float, float, float, float, float
