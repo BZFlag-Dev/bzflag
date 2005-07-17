@@ -348,6 +348,20 @@ void		    EvdevJoystick::getJoyDevices(std::vector<std::string>
     list.push_back(i->first);
 }
 
+void                EvdevJoystick::getJoyDeviceAxes(std::vector<std::string>
+						    &list) const
+{
+  list.clear();
+}
+
+void		    EvdevJoystick::setXAxis(const std::string)
+{
+}
+
+void		    EvdevJoystick::setYAxis(const std::string)
+{
+}
+
 bool		    EvdevJoystick::ffHasRumble() const
 {
 #ifdef HAVE_FF_EFFECT_RUMBLE
