@@ -151,7 +151,7 @@ bool		    EvdevJoystick::collectJoystickBits(int fd, struct EvdevJoystickInfo &i
 
   /* Collect information about our absolute axes */
   int axis;
-  for (axis=0; axis<2; axis++) {
+  for (axis=0; axis<8; axis++) {
     if (ioctl(fd, EVIOCGABS(axis + ABS_X), &info.axis_info[axis]) < 0)
       return false;
   }
@@ -561,7 +561,7 @@ void EvdevJoystick::ffDirectionalPeriodic(int count, float delay, float duration
   }
 }
 #else
-void EvdevJoystick::ffDirectionalPeriodic(int, float, float, float, float, float
+void EvdevJoystick::ffDirectionalPeriodic(int, float, float, float, float, float,
 					  float, PeriodicType)
 {
 }

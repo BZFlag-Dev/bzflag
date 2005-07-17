@@ -27,7 +27,8 @@
 
 #include "BzfJoystick.h"
 #include <map>
-
+#include <string>
+#include <vector>
 
 struct EvdevJoystickInfo {
   /* Information about a joystick that's installed on the
@@ -52,7 +53,7 @@ struct EvdevJoystickInfo {
     int maximum;
     int fuzz;
     int flat;
-  } axis_info[2];
+  } axis_info[9];
 
   /* if we can only read from this joystick, remember that */
   bool readonly;
@@ -68,6 +69,10 @@ class EvdevJoystick : public BzfJoystick {
     void	getJoy(int& x, int& y);
     unsigned long getJoyButtons();
     void	getJoyDevices(std::vector<std::string> &list) const;
+
+    void        getJoyDeviceAxes(std::vector<std::string> &list) const;
+    void        setXAxis(const std::string axis);
+    void        setYAxis(const std::string axis);
 
     bool	ffHasRumble() const;
     void	ffRumble(int count,
