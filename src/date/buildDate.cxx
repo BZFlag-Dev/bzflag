@@ -138,9 +138,6 @@ const char*		getAppVersion()
 #ifdef HAVE_SDL
     appVersionStream << "-SDL";
 #endif
-#ifdef HAVE_CURL
-    appVersionStream << "-CURL";
-#endif
     appVersion = appVersionStream.str();
   }
   return appVersion.c_str();
