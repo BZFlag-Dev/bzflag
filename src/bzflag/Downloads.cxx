@@ -60,9 +60,6 @@ static const char DownloadContent[] =
 static AccessList DownloadAccessList("DownloadAccess.txt", DownloadContent);
 
 static bool       textureDownloading = false;
-/******************************************************************************/
-#ifdef HAVE_CURL
-/******************************************************************************/
 
 
 // Function Prototypes
@@ -374,67 +371,6 @@ static bool checkAuthorizations(BzMaterialManager::TextureSet& set)
 
   return hostFailed;  
 }
-
-
-/******************************************************************************/
-#else // ! HAVE_CURL
-/******************************************************************************/
-
-
-void Downloads::doDownloads()
-{
-  bool needWarning = false;
-  BzMaterialManager::TextureSet set;
-  BzMaterialManager::TextureSet::iterator set_it;
-  MATERIALMGR.makeTextureList(set, false /* ignore referencing */);
-
-  for (set_it = set.begin(); set_it != set.end(); set_it++) {
-    const std::string& texUrl = set_it->c_str();
-    if (CACHEMGR.isCacheFileType(texUrl)) {
-      needWarning = true;
-      // one time warning
-      std::string msg = ColorStrings[GreyColor];
-      msg += "not downloading: " + texUrl;
-      addMessage(NULL, msg);
-      // avoid future warnings
-      MATERIALMGR.setTextureLocal(texUrl, "");
-    }
-  }
-
-  if (needWarning && BZDB.isTrue("doDownloads")) {
-    std::string msg = ColorStrings[RedColor];
-    msg += "Downloads are not available for clients without libcurl";
-    addMessage(NULL, msg);
-    msg = ColorStrings[YellowColor];
-    msg += "To disable this message, disable [Automatic Downloads] in";
-    addMessage(NULL, msg);
-    msg = ColorStrings[YellowColor];
-    msg += "Options -> Cache Options, or get a client with libcurl";
-    addMessage(NULL, msg);
-  }
-
-  return;
-}
-
-
-bool Downloads::updateDownloads()
-{
-  std::string msg = ColorStrings[RedColor];
-  msg += "Downloads are not available for clients without libcurl";
-  addMessage(NULL, msg);
-  return false;
-}
-
-
-void Downloads::removeTextures()
-{
-  return;
-}
-
-
-/******************************************************************************/
-#endif // HAVE_CURL
-/******************************************************************************/
 
 
 // Local Variables: ***
