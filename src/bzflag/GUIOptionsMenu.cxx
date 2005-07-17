@@ -59,6 +59,7 @@ GUIOptionsMenu::GUIOptionsMenu()
   std::vector<std::string>* options = &option->getList();
   options->push_back(std::string("Normal"));
   options->push_back(std::string("Fast"));
+  options->push_back(std::string("Fast Sorted"));
   options->push_back(std::string("Enhanced"));
   option->update();
   listHUD.push_back(option);

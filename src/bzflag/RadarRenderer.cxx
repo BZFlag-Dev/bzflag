@@ -345,7 +345,8 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
   bool rabbitMode = World::getWorld()->allowRabbit();
 
   smooth = !multiSampled && BZDBCache::smooth;
-  const bool fastRadar = ((BZDBCache::radarStyle == 1) && BZDBCache::zbuffer);
+  const bool fastRadar = ((BZDBCache::radarStyle == 1) ||
+                          (BZDBCache::radarStyle == 2)) && BZDBCache::zbuffer;
   const LocalPlayer *myTank = LocalPlayer::getMyTank();
 
   // setup the radar range

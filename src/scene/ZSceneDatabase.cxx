@@ -25,6 +25,7 @@
 #include "SphereSceneNode.h"
 #include "SceneRenderer.h"
 #include "StateDatabase.h"
+#include "BZDBCache.h"
 #include "TimeKeeper.h"
 #include "Intersect.h"
 
@@ -267,7 +268,7 @@ void ZSceneDatabase::renderRadarNodes(const ViewFrustum& vf)
 
     // FIXME: - this helps the look of things, but it takes too much time
     //	* it may be reasonable now
-    if (BZDB.isTrue("radarSort")) {
+    if (BZDBCache::radarStyle == 2) {
       qsort(culledList, culledCount, sizeof(SceneNode*), compareZExtents);
     }
   }

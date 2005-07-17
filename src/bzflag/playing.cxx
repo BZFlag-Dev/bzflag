@@ -5913,7 +5913,7 @@ static void		timeConfigurations()
   sceneRenderer->setQuality(2);
   BZDB.set("dither", "1");
   BZDB.set("shadows", "1");
-  BZDB.set("radarStyle", "2");
+  BZDB.set("radarStyle", "3");
   if (timeConfiguration(true) < MaxFrameTime) return;
   if (timeConfiguration(false) < MaxFrameTime) return;
 
