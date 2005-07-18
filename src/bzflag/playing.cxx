@@ -1099,10 +1099,16 @@ void		addMessage(const Player *_player, const std::string& msg,
 	else if (BZDB.get("killerhighlight") == "2")
 	  fullMessage += ColorStrings[UnderlineColor];
       }
-      int color = _player->getTeam();
-      if (color < 0 || color > 4) color = 5;
-
-      fullMessage += ColorStrings[color];
+      int color;
+      if (_player->getId() < 200) {
+        color = _player->getTeam();
+        if (color < 0 || color > 4) {
+          color = 5;
+        }
+        fullMessage += ColorStrings[color];
+      } else {
+        fullMessage += ColorStrings[CyanColor]; //replay observers
+      }
       fullMessage += _player->getCallSign();
 
       if (highlight)
@@ -1365,18 +1371,24 @@ static void printIpInfo (const Player *_player, const Address& addr,
   if (_player == NULL) {
     return;
   }
-  int color = _player->getTeam();
-  if ((color < 0) || (color > 4)) {
-    color = 5;
+  std::string colorStr;
+  if (_player->getId() < 200) {
+    int color = _player->getTeam();
+    if ((color < 0) || (color > 4)) {
+      color = 5;
+    }
+    colorStr = ColorStrings[color];
+  } else {
+    colorStr = ColorStrings[CyanColor]; // replay observers
   }
   const std::string addrStr = addr.getDotNotation();
   std::string message = ColorStrings[CyanColor]; // default color
   message += "IPINFO: ";
-  if (BZDBCache::colorful) message += ColorStrings[color];
+  if (BZDBCache::colorful) message += colorStr;
   message += _player->getCallSign();
   if (BZDBCache::colorful) message += ColorStrings[CyanColor];
   message += "\t from: ";
-  if (BZDBCache::colorful) message += ColorStrings[color];
+  if (BZDBCache::colorful) message += colorStr;
   message += addrStr;
 
   message += ColorStrings[WhiteColor];
@@ -2617,10 +2629,15 @@ static void		handleServerMessage(bool human, uint16_t code,
 	// message is for me
 	std::string colorStr;
 
-	if (srcPlayer && srcPlayer->getTeam() != NoTeam)
-	  colorStr += ColorStrings[srcPlayer->getTeam()];
-	else
-	  colorStr += ColorStrings[RogueTeam];
+        if (srcPlayer->getId() < 200) {
+          if (srcPlayer && srcPlayer->getTeam() != NoTeam)
+            colorStr += ColorStrings[srcPlayer->getTeam()];
+          else
+            colorStr += ColorStrings[RogueTeam];
+        } else {
+          colorStr += ColorStrings[CyanColor]; // replay observers
+        }
+         
 
 	fullMsg += colorStr;
 

@@ -460,13 +460,19 @@ void			ScoreboardRenderer::drawPlayerScore(const Player* player,
   if (teamIndex < RogueTeam) {
     teamIndex = RogueTeam;
   }
+  std::string teamColor;
+  if (player->getId() < 200) {
+    teamColor = ColorStrings[teamIndex];
+  } else {
+    teamColor = ColorStrings[CyanColor]; // replay observers
+  }
 
   // authentication status
   std::string statusInfo;
   if (BZDBCache::colorful) {
     statusInfo += ColorStrings[CyanColor];
   } else {
-    statusInfo += ColorStrings[teamIndex];
+    statusInfo += teamColor;
   }
   if (player->isAdmin()) {
     statusInfo += '@';
@@ -480,7 +486,7 @@ void			ScoreboardRenderer::drawPlayerScore(const Player* player,
 
   std::string playerInfo;
   // team color
-  playerInfo += ColorStrings[teamIndex];
+  playerInfo += teamColor;
   //Slot number only for admins
   LocalPlayer* localPlayer = LocalPlayer::getMyTank();
   if (localPlayer->isAdmin()){
@@ -518,7 +524,7 @@ void			ScoreboardRenderer::drawPlayerScore(const Player* player,
     playerInfo += (flagd->endurance == FlagNormal ? flagd->flagName : flagd->flagAbbv);
     // back to original color
     if (coloredFlag) {
-      playerInfo += ColorStrings[teamIndex];
+      playerInfo += teamColor;
     }
   }
   // status
