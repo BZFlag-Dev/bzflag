@@ -1099,9 +1099,9 @@ void		addMessage(const Player *_player, const std::string& msg,
 	else if (BZDB.get("killerhighlight") == "2")
 	  fullMessage += ColorStrings[UnderlineColor];
       }
-      int color;
-      if (_player->getId() < 200) {
-        color = _player->getTeam();
+      const PlayerId pid = _player->getId();
+      if ((pid < 200) || (pid == ServerPlayer)) {
+        int color = _player->getTeam();
         if (color < 0 || color > 4) {
           color = 5;
         }
@@ -2628,17 +2628,20 @@ static void		handleServerMessage(bool human, uint16_t code,
 	  dstTeam == myTank->getTeam()) {
 	// message is for me
 	std::string colorStr;
-
-        if (srcPlayer->getId() < 200) {
-          if (srcPlayer && srcPlayer->getTeam() != NoTeam)
-            colorStr += ColorStrings[srcPlayer->getTeam()];
-          else
-            colorStr += ColorStrings[RogueTeam];
+        if (srcPlayer == NULL) {
+          colorStr += ColorStrings[RogueTeam];
         } else {
-          colorStr += ColorStrings[CyanColor]; // replay observers
+          const PlayerId pid = srcPlayer->getId();
+          if ((pid < 200) || (pid == ServerPlayer)) {
+            if (srcPlayer && srcPlayer->getTeam() != NoTeam)
+              colorStr += ColorStrings[srcPlayer->getTeam()];
+            else
+              colorStr += ColorStrings[RogueTeam];
+          } else {
+            colorStr += ColorStrings[CyanColor]; // replay observers
+          }
         }
          
-
 	fullMsg += colorStr;
 
 	// display action messages differently
