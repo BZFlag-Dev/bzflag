@@ -253,6 +253,15 @@ static const char*	configViewValues[] = {
 				"interlaced"
 			};
 
+// so that Windows can kill the wsa stuff if needed
+int bail ( int returnCode )
+{
+#ifdef _WIN32
+	WSACleanup();
+#endif
+	return returnCode;
+}
+
 static std::string	getOldConfigFileName()
 {
 #if !defined(_WIN32)
@@ -666,6 +675,7 @@ static void		parse(int argc, char** argv)
 		getAppVersion(),
 		getProtocolVersion(),
 		bzfcopyright);
+	  bail(0);
       exit(0);
     } else if (strcmp(argv[i], "-window") == 0) {
       BZDB.set("_window", "1");
@@ -930,6 +940,7 @@ static void createCacheSignature ()
   return;
 }
 
+
 //
 // main()
 //	initialize application and enter event loop
@@ -956,8 +967,7 @@ int			main(int argc, char** argv)
 		    (int)LOBYTE(wsaData.wVersion),
 		    (int)HIBYTE(wsaData.wVersion),
 		    major, minor);
-    WSACleanup();
-    return 1;
+    return bail(1);
   }
 #endif
 
@@ -974,6 +984,7 @@ int			main(int argc, char** argv)
     printFatalError("This release expired on %s. \n"
 		"Please upgrade to the latest release. \n"
 		"Exiting.", timeBombString());
+	bail(0);
     exit(0);
   }
 
@@ -1222,7 +1233,7 @@ int			main(int argc, char** argv)
   display = platformFactory->createDisplay(NULL, NULL);
   if (!display) {
     printFatalError("Can't open display.  Exiting.");
-    return 1;
+    return bail(1);
   }
 
   // choose visual
@@ -1233,7 +1244,7 @@ int			main(int argc, char** argv)
   BzfWindow* window = platformFactory->createWindow(display, visual);
   if (!window->isValid()) {
     printFatalError("Can't create window.  Exiting.");
-    return 1;
+    return bail(1);
   }
   window->setTitle("bzflag");
 
@@ -1290,7 +1301,7 @@ int			main(int argc, char** argv)
   // try to get a font - only returns -1 if there are no fonts at all
   if (fm.getFaceID(BZDB.get("consoleFont")) < 0) {
     printFatalError("No fonts found  (the -directory option may help).  Exiting");
-    return 1;
+    return bail(1);
   }
 
   // initialize locale system
@@ -1360,7 +1371,7 @@ int			main(int argc, char** argv)
   MainWindow& mainWindow = *pmainWindow;
   if (mainWindow.isInFault()) {
     printFatalError("Error creating window - Exiting");
-    return 1;
+    return bail(1);
   }
 
   std::string videoFormat;
@@ -1412,6 +1423,7 @@ int			main(int argc, char** argv)
       delete display;
       display=NULL;
     }
+	bail(1);
     exit(1);
   }
   OpenGLGState::init();
@@ -1464,6 +1476,7 @@ int			main(int argc, char** argv)
       delete display;
       display=NULL;
     }
+	bail(1);
     exit(1);
 
   } else {
