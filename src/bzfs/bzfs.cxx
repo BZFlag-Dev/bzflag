@@ -1919,33 +1919,6 @@ static void addPlayer(int playerIndex)
       return;
     }
 
-  // make sure the callsign is not obscene/filtered
-  if (clOptions->filterCallsigns) {
-    DEBUG2("checking callsign: %s\n",playerData->player.getCallSign());
-    bool filtered = false;
-    char cs[CallSignLen];
-    memcpy(cs, playerData->player.getCallSign(), sizeof(char) * CallSignLen);
-    filtered = clOptions->filter.filter(cs, clOptions->filterSimple);
-    if (filtered) {
-      rejectPlayer(playerIndex, RejectBadCallsign,
-		   "The callsign was rejected.  Try a different callsign.");
-      return ;
-    }
-  }
-
-  // make sure the email is not obscene/filtered
-  if (clOptions->filterCallsigns) {
-    DEBUG2("checking email: %s\n",playerData->player.getEMail());
-    char em[EmailLen];
-    memcpy(em, playerData->player.getEMail(), sizeof(char) * EmailLen);
-    bool filtered = clOptions->filter.filter(em, clOptions->filterSimple);
-    if (filtered) {
-      rejectPlayer(playerIndex, RejectBadEmail,
-		   "The e-mail was rejected.  Try a different e-mail.");
-      return ;
-    }
-  }
-  
   // # not allowed in first position because used in /kick /ban #slot
   char cs[CallSignLen];
   memcpy(cs, playerData->player.getCallSign(), sizeof(char) * CallSignLen);
@@ -3533,12 +3506,21 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
     case MsgEnter: {
       uint16_t rejectCode;
       char     rejectMsg[128];
-      bool result = playerData->loadEnterData(buf, rejectCode, rejectMsg);
+      if (!playerData->player.unpackEnter(buf, rejectCode, rejectMsg)) {
+	rejectPlayer(t, rejectCode, rejectMsg);
+	break;
+      }
       std::string timeStamp = TimeKeeper::timestamp();
       DEBUG1("Player %s [%d] has joined from %s at %s with token \"%s\"\n",
 	     playerData->player.getCallSign(),
 	     t, handler->getTargetIP(), timeStamp.c_str(),
 	     playerData->player.getToken());
+
+      const char *token = playerData->player.getToken();
+      if (token[0] == '\0') {
+	playerData->setNeedThisHostbanChecked(true);
+      }
+      bool result = result = playerData->loadEnterData(rejectCode, rejectMsg);
       if (result) {
 	addPlayer(t);
       } else if (playerData->player.getToken()[0] != '\0'
@@ -4533,6 +4515,9 @@ int main(int argc, char **argv)
   // loading extra flag number
   FlagInfo::setExtra(clOptions->numExtraFlags);
 
+  PlayerInfo::setFilterParameters(clOptions->filterCallsigns,
+				  clOptions->filter,
+				  clOptions->filterSimple);
   // enable replay server mode
   if (clOptions->replayServer) {
 
