@@ -4,6 +4,7 @@
 BZFlag 2.0.3
 ------------
 
+* Sort lagstat to have non-observer at the bottom - Thomas Stauer
 * Authentication credential are requested asap - Alfredo Tupone
 * Allow the use of game device sliders as axes on Windows - Daniel Remenak
 * Directional force feedback support - Daniel Remenak
