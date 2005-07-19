@@ -169,7 +169,7 @@ char			messageMessage[PlayerIdPLen + MessageLen];
 
 void			setTarget();
 static void		setHuntTarget();
-static void		initTankFlags();
+static void		setTankFlags();
 static void*		handleMsgSetVars(void *msg);
 void			handleFlagDropped(Player* tank);
 static void		handlePlayerMessage(uint16_t, uint16_t, void*);
@@ -1928,7 +1928,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 	
 	// update the tank flags when in replay mode.
         if (myTank->getId() >= 200) {
-          initTankFlags();
+          setTankFlags();
         }
       }
       break;
@@ -4037,7 +4037,7 @@ static void		addRobots()
 #endif
 
 
-static void initTankFlags()
+static void setTankFlags()
 {
   // scan through flags and, for flags on
   // tanks, tell the tank about its flag.
@@ -4099,7 +4099,7 @@ static void enteringServer(void *buf)
   radar->setControlColor(Team::getRadarColor(myTank->getTeam(),rabbitMode));
   roaming = (myTank->getTeam() == ObserverTeam) || devDriving;
 
-  initTankFlags();
+  setTankFlags();
 
   // clear now invalid token
   startupInfo.token[0] = '\0';
