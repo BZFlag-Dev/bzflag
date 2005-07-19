@@ -1024,6 +1024,10 @@ static void handleLagwarnCmd(GameKeeper::Player *playerData, const char *message
 
 bool lagCompare(const GameKeeper::Player *a, const GameKeeper::Player *b)
 {
+  if (a->player.isObserver() && !b->player.isObserver())
+    return true;
+  if (!a->player.isObserver() && b->player.isObserver())
+    return false;
   return a->lagInfo.getLag() < b->lagInfo.getLag();
 }
 
