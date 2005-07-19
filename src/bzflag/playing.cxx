@@ -169,6 +169,7 @@ char			messageMessage[PlayerIdPLen + MessageLen];
 
 void			setTarget();
 static void		setHuntTarget();
+static void		initTankFlags();
 static void*		handleMsgSetVars(void *msg);
 void			handleFlagDropped(Player* tank);
 static void		handlePlayerMessage(uint16_t, uint16_t, void*);
@@ -1924,6 +1925,11 @@ static void		handleServerMessage(bool human, uint16_t code,
 	addPlayer(id, msg, entered);
 	updateNumPlayers();
 	checkScores = true;
+	
+	// update the tank flags when in replay mode.
+        if (myTank->getId() >= 200) {
+          initTankFlags();
+        }
       }
       break;
     }
@@ -4030,6 +4036,26 @@ static void		addRobots()
 
 #endif
 
+
+static void initTankFlags()
+{
+  // scan through flags and, for flags on
+  // tanks, tell the tank about its flag.
+  const int maxFlags = world->getMaxFlags();
+  for (int i = 0; i < maxFlags; i++) {
+    const Flag& flag = world->getFlag(i);
+    if (flag.status == FlagOnTank) {
+      for (int j = 0; j < curMaxPlayers; j++) {
+	if (player[j] && player[j]->getId() == flag.owner) {
+	  player[j]->setFlag(flag.type);
+	  break;
+	}
+      }
+    }
+  }
+}
+
+
 static void enteringServer(void *buf)
 {
   // the server sends back the team the player was joined to
@@ -4073,20 +4099,7 @@ static void enteringServer(void *buf)
   radar->setControlColor(Team::getRadarColor(myTank->getTeam(),rabbitMode));
   roaming = (myTank->getTeam() == ObserverTeam) || devDriving;
 
-  // scan through flags and, for flags on
-  // tanks, tell the tank about its flag.
-  const int maxFlags = world->getMaxFlags();
-  for (int i = 0; i < maxFlags; i++) {
-    const Flag& flag = world->getFlag(i);
-    if (flag.status == FlagOnTank) {
-      for (int j = 0; j < curMaxPlayers; j++) {
-	if (player[j] && player[j]->getId() == flag.owner) {
-	  player[j]->setFlag(flag.type);
-	  break;
-	}
-      }
-    }
-  }
+  initTankFlags();
 
   // clear now invalid token
   startupInfo.token[0] = '\0';

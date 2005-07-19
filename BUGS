@@ -51,9 +51,6 @@ recent bugs
 
 - Observer movement controls seems to get locked-up in Hunt mode.
 
-- Record/Replay does not immediately reassign flags to players after a
-  state reset, you have to wait until the first MsgGrabFlag.
-
 - Burrowed tank shadows should be ground clipped
   (the shadow perspective matrix messes with the clip plane?)
 
