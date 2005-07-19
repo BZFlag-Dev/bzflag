@@ -1469,7 +1469,7 @@ static bool saveFlagsState()
 
   for (flagIndex = 0; flagIndex < numFlags; flagIndex++) {
     FlagInfo &flag = *FlagInfo::get(flagIndex);
-    if (flag.flag.status != FlagNoExist) {
+    if (flag.exist()) {
       if ((length + sizeof(u16) + FlagPLen) > MaxPacketLen - 2*sizeof(u16)) {
 	// packet length overflow
 	nboPackUShort(bufStart, cnt);
