@@ -205,13 +205,9 @@ std::vector<int> GameKeeper::Player::allowed(PlayerAccessInfo::AccessPerm right,
   return receivers;
 }
 
-bool GameKeeper::Player::loadEnterData(void *buf,
-				       uint16_t &rejectCode,
+bool GameKeeper::Player::loadEnterData(uint16_t &rejectCode,
 				       char *rejectMsg)
 {
-  bool result = player.unpackEnter(buf, rejectCode, rejectMsg);
-  if (!result)
-    return false;
   // look if there is as name clash, we won't allow this
   for (int i = 0; i < PlayerSlot; i++) {
     Player *otherData = playerList[i];
@@ -224,10 +220,6 @@ bool GameKeeper::Player::loadEnterData(void *buf,
       strcpy(rejectMsg, "The callsign specified is already in use.");
       return false;
     }
-  }
-  const char *token = player.getToken();
-  if (token[0] == '\0') {
-    setNeedThisHostbanChecked(true);
   }
 
   return true;

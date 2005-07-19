@@ -23,6 +23,10 @@
 WordFilter PlayerInfo::serverSpoofingFilter;
 TimeKeeper PlayerInfo::now = TimeKeeper::getCurrent();
 
+bool        PlayerInfo::callSignFiltering = false;
+WordFilter *PlayerInfo::filterData        = NULL;
+bool        PlayerInfo::simpleFiltering   = true;
+
 PlayerInfo::PlayerInfo(int _playerIndex) :
   playerIndex(_playerIndex), state(PlayerInLimbo), flag(-1),
   spamWarns(0), lastMsgTime(now), paused(false),
@@ -33,6 +37,15 @@ PlayerInfo::PlayerInfo(int _playerIndex) :
   memset(callSign, 0, CallSignLen);
   memset(token, 0, TokenLen);
   memset(clientVersion, 0, VersionLen);
+}
+
+void PlayerInfo::setFilterParameters(bool        _callSignFiltering,
+				     WordFilter &_filterData,
+				     bool        _simpleFiltering)
+{
+  callSignFiltering = _callSignFiltering;
+  filterData        = &_filterData;
+  simpleFiltering   = _simpleFiltering;
 }
 
 void PlayerInfo::resetPlayer(bool ctf) {
@@ -123,6 +136,43 @@ bool PlayerInfo::unpackEnter(void *buf, uint16_t &rejectCode, char *rejectMsg)
     strcpy(rejectMsg, "The e-mail was rejected.  Try a different e-mail.");
     return false;
   }
+
+  // make sure the callsign is not obscene/filtered
+  if (callSignFiltering) {
+    DEBUG2("checking callsign: %s\n",callSign);
+    
+    char cs[CallSignLen];
+    memcpy(cs, callSign, sizeof(char) * CallSignLen);
+    if (filterData->filter(cs, simpleFiltering)) {
+      rejectCode = RejectBadCallsign;
+      strcpy(rejectMsg,
+	     "The callsign was rejected. Try a different callsign.");
+      return false;
+    }
+  }
+
+  // make sure the email is not obscene/filtered
+  if (callSignFiltering) {
+    DEBUG2("checking email: %s\n", email);
+    char em[EmailLen];
+    memcpy(em, email, sizeof(char) * EmailLen);
+    if (filterData->filter(em, simpleFiltering)) {
+      rejectCode = RejectBadEmail;
+      strcpy(rejectMsg, "The e-mail was rejected. Try a different e-mail.");
+      return false;
+    }
+  }
+  
+  // # not allowed in first position because used in /kick /ban #slot
+  char cs[CallSignLen];
+  memcpy(cs, callSign, sizeof(char) * CallSignLen);
+  if (cs[0] == '#') {
+    rejectCode = RejectBadCallsign;
+    strcpy(rejectMsg,
+	   "The callsign was rejected. Not allowed starting in #");
+    return false;
+  }
+
   return true;
 }
 
