@@ -169,7 +169,7 @@ bool PlayerInfo::unpackEnter(void *buf, uint16_t &rejectCode, char *rejectMsg)
   if (cs[0] == '#') {
     rejectCode = RejectBadCallsign;
     strcpy(rejectMsg,
-	   "The callsign was rejected. Not allowed starting in #");
+	   "The callsign was rejected. Callsigns are not allowed to start with #.");
     return false;
   }
 
