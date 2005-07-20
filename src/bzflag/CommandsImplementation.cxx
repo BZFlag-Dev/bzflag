@@ -10,6 +10,9 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+// BZFlag common header
+#include "common.h"
+
 // system implementation headers
 #include <math.h>
 
@@ -365,10 +368,10 @@ bool RoamPosCommand::operator() (const char *commandLine)
     } else {
       const float degrees = parseFloatExpr(tokens[0], true);
       const float ws = BZDB.eval(StateDatabase::BZDB_WORLDSIZE);
-      const float radians = degrees * (M_PI/180.0f);
-      roamPos[0] = cosf(radians)* 0.5f * ws * M_SQRT2;
-      roamPos[1] = sinf(radians)* 0.5f * ws * M_SQRT2;
-      roamPos[2] = +0.25 * ws;
+      const float radians = degrees * ((float)M_PI/180.0f);
+      roamPos[0] = cosf(radians)* 0.5f * ws * (float)M_SQRT2;
+      roamPos[1] = sinf(radians)* 0.5f * ws * (float)M_SQRT2;
+      roamPos[2] = +0.25f * ws;
       roamTheta = degrees + 180.0f;
       roamPhi = -30.0f;
       roamZoom = 60.0f;
