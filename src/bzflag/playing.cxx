@@ -1693,75 +1693,74 @@ static void		handleServerMessage(bool human, uint16_t code,
 
   switch (code) {
 
-	  case MsgFetchResources:
-		  if (BZDB.isSet("_noRemoteFiles") && BZDB.isTrue("_noRemoteFiles"))
-			  break;
-		  else
-		  {
-			  uint16_t	numItems;
-			  void *buf;
+    case MsgFetchResources:
+      if (BZDB.isSet ("_noRemoteFiles") && BZDB.isTrue ("_noRemoteFiles")) {
+        break;
+      }
+      else {
+        uint16_t numItems;
+        void *buf;
 
-			  buf = nboUnpackUShort (msg, numItems); // the type
+        buf = nboUnpackUShort (msg, numItems);    // the type
 
-			  for ( int i = 0; i < numItems; i++ )
-			  {
-					uint16_t	itemType;
-					char buffer[MessageLen];
-					uint16_t stringLen;
-					trResourceItem item;
+        for (int i = 0; i < numItems; i++) {
+          uint16_t itemType;
+          char buffer[MessageLen];
+          uint16_t stringLen;
+          trResourceItem item;
 
-					buf = nboUnpackUShort (buf, itemType);
-					item.resType = (teResourceType)itemType;
+          buf = nboUnpackUShort (buf, itemType);
+          item.resType = (teResourceType) itemType;
 
-					// URL
-					buf = nboUnpackUShort (buf, stringLen);
-					buf = nboUnpackString (buf, buffer, stringLen);
+          // URL
+          buf = nboUnpackUShort (buf, stringLen);
+          buf = nboUnpackString (buf, buffer, stringLen);
 
-					buffer[stringLen] = '\0';
-					item.URL = buffer;
+          buffer[stringLen] = '\0';
+          item.URL = buffer;
 
-					item.filePath = PlatformFactory::getMedia()->getMediaDirectory();
-					std::vector<std::string> temp = TextUtils::tokenize(item.URL,std::string("/"));
-				
-					item.fileName = temp[temp.size()-1];
-					item.filePath += item.fileName;
+          item.filePath = PlatformFactory::getMedia ()->getMediaDirectory ();
+          std::vector < std::string > temp =
+              TextUtils::tokenize (item.URL, std::string ("/"));
 
-					std::string hostname;
-					parseHostname(item.URL,hostname);
-					if (authorizedServer(hostname))
-					{
-						if (!resourceDownloader)
-							resourceDownloader = new ResourceGetter;
-						resourceDownloader->addResource(item);
-					}
-				}
-		  }
-		  break;
+          item.fileName = temp[temp.size () - 1];
+          item.filePath += item.fileName;
 
-		case MsgCustomSound:
-			// bail out if we don't want to do remote sounds
-			if (BZDB.isSet("_noRemoteSounds") && BZDB.isTrue("_noRemoteSounds"))
-				break;
-			else
-			{
-				void *buf;
-				char buffer[MessageLen];
-				uint16_t soundType;
-				uint16_t stringLen;
-				std::string soundName;
+          std::string hostname;
+          parseHostname (item.URL, hostname);
+          if (authorizedServer (hostname)) {
+            if (!resourceDownloader)
+              resourceDownloader = new ResourceGetter;
+            resourceDownloader->addResource (item);
+          }
+        }
+      }
+      break;
 
-				buf = nboUnpackUShort (msg, soundType); // the type
-				buf = nboUnpackUShort (buf, stringLen); // how long our str is
-				buf = nboUnpackString (buf, buffer, stringLen);
+    case MsgCustomSound:
+      // bail out if we don't want to do remote sounds
+      if (BZDB.isSet ("_noRemoteSounds") && BZDB.isTrue ("_noRemoteSounds")) {
+        break;
+      }
+      else {
+        void *buf;
+        char buffer[MessageLen];
+        uint16_t soundType;
+        uint16_t stringLen;
+        std::string soundName;
 
-				buffer[stringLen] = '\0';
-				soundName = buffer;
+        buf = nboUnpackUShort (msg, soundType);   // the type
+        buf = nboUnpackUShort (buf, stringLen);   // how long our str is
+        buf = nboUnpackString (buf, buffer, stringLen);
 
-				if ( soundType == LocalCustomSound)
-					playLocalSound(soundName);
-			}
-			break;
+        buffer[stringLen] = '\0';
+        soundName = buffer;
 
+        if (soundType == LocalCustomSound)
+          playLocalSound (soundName);
+      }
+      break;
+      
     case MsgUDPLinkEstablished:
       // server got our initial UDP packet
       serverLink->enableOutboundUDP();
@@ -5351,7 +5350,6 @@ static void		setupRoamingCamera(float dt)
     roamDPos[0] = 0.0;
     roamDPos[1] = 0.0;
     roamDPos[2] = 0.0;
-    roamDTheta  = 0.0;
     roamDTheta  = 0.0;
     roamDPhi    = 0.0;
     if (!control && !shift) {

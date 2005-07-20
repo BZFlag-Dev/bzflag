@@ -10,17 +10,46 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+// system implementation headers
+#include <math.h>
+
 // common implementation headers
 #include "BZDBCache.h"
 #include "AnsiCodes.h"
 #include "TextUtils.h"
 #include "CommandsStandard.h"
+#include "StateDatabase.h"
 
 // local implementation headers
 #include "LocalCommand.h"
 #include "Player.h"
 #include "Roster.h"
 #include "playing.h"
+
+// externs for RoamPos command
+extern float roamPos[3];
+extern float roamTheta;
+extern float roamPhi;
+extern float roamZoom;
+
+
+static float parseFloatExpr(const std::string& str, bool zeroNan)
+{
+  // BZDB.eval() can't take expressions directly
+  BZDB.set("tmp", str);
+  BZDB.setPersistent("tmp", false);
+  float value = BZDB.eval("tmp");
+  if (!zeroNan) {
+    return value;
+  } else {
+    if (value == value) {
+      return value;
+    } else {
+      return 0.0f;
+    }
+  }
+}
+
 
 class SilenceCommand : LocalCommand {
 public:
@@ -85,6 +114,13 @@ public:
   virtual bool operator() (const char *commandLine);
 };
 
+class RoamPosCommand : LocalCommand {
+public:
+  RoamPosCommand();
+
+  virtual bool operator() (const char *commandLine);
+};
+
 static SilenceCommand     silenceCommand;
 static UnsilenceCommand   unsilenceCommand;
 static DumpCommand        dumpCommand;
@@ -94,6 +130,7 @@ static SetCommand         setCommand;
 static DiffCommand        diffCommand;
 static LocalSetCommand    localSetCommand;
 static QuitCommand        quitCommand;
+static RoamPosCommand     roamPosCommand;
 
 SilenceCommand::SilenceCommand() : LocalCommand("SILENCE")
 {
@@ -190,9 +227,7 @@ static bool varIsEqual(const std::string& name)
   const std::string exp = BZDB.get(name);
   const std::string defexp = BZDB.getDefault(name);
   const float val = BZDB.eval(name);
-  BZDB.set("tmp", defexp); // BZDB.eval() can't take expressions directly
-  BZDB.setPersistent("tmp", false);
-  const float defval = BZDB.eval("tmp");
+  const float defval = parseFloatExpr(defexp, false);
   const bool valNaN = !(val == val);
   const bool defNaN = !(defval == defval);
 
@@ -302,6 +337,61 @@ bool QuitCommand::operator() (const char *commandLine)
   nboPackString(messageMessage + PlayerIdPLen, messageBuffer, MessageLen);
   serverLink->send(MsgMessage, sizeof(messageMessage), messageMessage);
   CommandsStandard::quit(); // kill client
+  return true;
+}
+
+
+RoamPosCommand::RoamPosCommand() : LocalCommand("/roampos")
+{
+}
+
+bool RoamPosCommand::operator() (const char *commandLine)
+{
+  // change the observer position and orientation
+  const char infoStr[] =
+    "/roampos  [ \"reset\" | degrees | {x y z [theta [phi [zoom]]]} ]";
+    
+  std::string params = commandLine + 8;
+  std::vector<std::string> tokens = TextUtils::tokenize(params, " ");
+  
+  if (tokens.size() == 1) {
+    if (TextUtils::tolower(tokens[0]) == "reset") {
+      roamPos[0] = 0.0f;
+      roamPos[1] = 0.0f;
+      roamPos[2] = BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT);
+      roamTheta = 0.0f;
+      roamPhi = -0.0f;
+      roamZoom = 60.0f;
+    } else {
+      const float degrees = parseFloatExpr(tokens[0], true);
+      const float ws = BZDB.eval(StateDatabase::BZDB_WORLDSIZE);
+      const float radians = degrees * (M_PI/180.0f);
+      roamPos[0] = cosf(radians)* 0.5f * ws * M_SQRT2;
+      roamPos[1] = sinf(radians)* 0.5f * ws * M_SQRT2;
+      roamPos[2] = +0.25 * ws;
+      roamTheta = degrees + 180.0f;
+      roamPhi = -30.0f;
+      roamZoom = 60.0f;
+    }
+  }
+  else if (tokens.size() >= 3) {
+    roamPos[0] = parseFloatExpr(tokens[0], true);
+    roamPos[1] = parseFloatExpr(tokens[1], true);
+    roamPos[2] = parseFloatExpr(tokens[2], true);
+    if (tokens.size() >= 4) {
+      roamTheta = parseFloatExpr(tokens[3], true);
+    }
+    if (tokens.size() >= 5) {
+      roamPhi = parseFloatExpr(tokens[4], true);
+    }
+    if (tokens.size() == 6) {
+      roamZoom = parseFloatExpr(tokens[5], true);
+    }
+  }
+  else {
+   addMessage(NULL, infoStr);
+  }
+  
   return true;
 }
 

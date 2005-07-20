@@ -118,6 +118,7 @@ void DefaultCompleter::setDefaults() {
   registerWord("skip");
   registerWord("/report ");
   registerWord("/reset");
+  registerWord("/roampos ");
   registerWord("/set");
   registerWord("/setgroup ");
   registerWord("/setpass ");
