@@ -2539,14 +2539,15 @@ static void handleMasterBanCmd(GameKeeper::Player *playerData, const char *messa
 
     if (clOptions->publicizeServer && !clOptions->suppressMasterBanList) {
       MasterBanList	banList;
+      int               banCount;
 
       clOptions->acl.purgeMasters();
       sendMessage(ServerPlayer, t, "Previous master ban list entries have been flushed.");
 
       for (std::vector<std::string>::const_iterator i = clOptions->masterBanListURL.begin(); i != clOptions->masterBanListURL.end(); i++) {
-	std::string reloadmsg = TextUtils::format("Reloaded master ban list from %s\n", i->c_str());
-	clOptions->acl.merge(banList.get(i->c_str()));
-	DEBUG1("%s", reloadmsg.c_str());
+	banCount = clOptions->acl.merge(banList.get(i->c_str()));
+	std::string reloadmsg = TextUtils::format("Loaded %d master bans from %s", banCount, i->c_str());
+	DEBUG1("%s\n", reloadmsg.c_str());
 	sendMessage(ServerPlayer, t, reloadmsg.c_str());
       }
 

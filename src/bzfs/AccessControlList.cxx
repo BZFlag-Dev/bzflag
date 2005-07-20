@@ -389,9 +389,11 @@ void AccessControlList::save() {
   }
 }
 
-bool AccessControlList::merge(const std::string& banData) {
-  if (!banData.size())
-    return true;
+int AccessControlList::merge(const std::string& banData) {
+  if (!banData.size()) {
+    return 0;
+  }
+  int bansAdded = 0;
   std::stringstream	is(banData,std::stringstream::in);
 
   // try to read ban entries
@@ -404,7 +406,7 @@ bool AccessControlList::merge(const std::string& banData) {
       is>>hostpat;
     is>>tmp;
     if (tmp != "end:")
-      return false;
+      return bansAdded;
     is>>banEnd;
     if (banEnd != 0) {
       banEnd -= long(time(NULL));
@@ -414,12 +416,12 @@ bool AccessControlList::merge(const std::string& banData) {
     }
     is>>tmp;
     if (tmp != "banner:")
-      return false;
+      return bansAdded;
     is.ignore(1);
     std::getline(is, bannedBy);
     is>>tmp;
     if (tmp != "reason:")
-      return false;
+      return bansAdded;
     is.ignore(1);
     std::getline(is, reason);
     is>>std::ws;
@@ -428,6 +430,7 @@ bool AccessControlList::merge(const std::string& banData) {
     if (ipAddress == "host:") {
       hostBan(hostpat, (bannedBy.size() ? bannedBy.c_str(): NULL), banEnd,
 	      (reason.size() > 0 ? reason.c_str() : NULL),true);
+      bansAdded++;
     } else {
       std::string::size_type n;
       while ((n = ipAddress.find('*')) != std::string::npos) {
@@ -435,10 +438,11 @@ bool AccessControlList::merge(const std::string& banData) {
       }
       if (!ban(ipAddress, (bannedBy.size() ? bannedBy.c_str(): NULL), banEnd,
 	  (reason.size() > 0 ? reason.c_str() : NULL),true))
-	return false;
+	return bansAdded;
+      bansAdded++;
     }
   }
-  return true;
+  return bansAdded;
 }
 
 void AccessControlList::purgeMasters(void) {

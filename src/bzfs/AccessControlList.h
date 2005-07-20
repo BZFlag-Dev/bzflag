@@ -186,7 +186,7 @@ public:
   /** This function merges in a banlist from the master ban list ban file,
       if it has been set. It only returns @c false if the file exist but is not
       in the correct format, otherwise @c true is returned. */
-  bool merge(const std::string& banData);
+  int  merge(const std::string& banData);
 
   /** This function purges any bans that are flagged as from the master ban list,
       presumably so it can be remerged */
