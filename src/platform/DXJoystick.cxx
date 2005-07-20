@@ -336,7 +336,7 @@ bool	      DXJoystick::ffHasRumble() const
 void	      DXJoystick::ffRumble(int count, float delay, float duration,
 				   float strong_motor, float weak_motor)
 {
-  if (!device)
+  if (!ffHasRumble())
     return;
 
   /*
@@ -426,7 +426,7 @@ void	DXJoystick::ffDirectionalConstant(int count, float delay, float duration,
 					  float x_direction, float y_direction,
 					  float strength)
 {
-  if (!device)
+  if (!ffHasDirectional())
     return;
 
   /*
@@ -507,7 +507,7 @@ void	DXJoystick::ffDirectionalPeriodic(int count, float delay, float duration,
 					  float x_direction, float y_direction,
 					  float amplitude, float period, PeriodicType type)
 {
-  if (!device)
+  if (!ffHasDirectional())
     return;
 
   /*
@@ -599,7 +599,7 @@ void	DXJoystick::ffDirectionalPeriodic(int count, float delay, float duration,
 void	DXJoystick::ffDirectionalResistance(float time, float coefficient,
 					    float saturation, ResistanceType type)
 {
-  if (!device)
+  if (!ffHasDirectional())
     return;
 
   /*
