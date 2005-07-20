@@ -1879,7 +1879,7 @@ static std::string evaluateString(const std::string &raw)
 static void addPlayer(int playerIndex, GameKeeper::Player *playerData)
 {
   uint16_t rejectCode;
-  char     rejectMsg[128];
+  char     rejectMsg[MessageLen];
   bool     resultEnter = playerData->loadEnterData(rejectCode, rejectMsg);
 
   if (!resultEnter
@@ -3524,7 +3524,7 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
     // player joining
     case MsgEnter: {
       uint16_t rejectCode;
-      char     rejectMsg[128];
+      char     rejectMsg[MessageLen];
       if (!playerData->player.unpackEnter(buf, rejectCode, rejectMsg)) {
 	rejectPlayer(t, rejectCode, rejectMsg);
 	break;
