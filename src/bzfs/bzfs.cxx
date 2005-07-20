@@ -1876,12 +1876,40 @@ static std::string evaluateString(const std::string &raw)
   return eval;
 }
 
-static void addPlayer(int playerIndex)
+static void addPlayer(int playerIndex, GameKeeper::Player *playerData)
 {
-  GameKeeper::Player *playerData
-    = GameKeeper::Player::getPlayerByIndex(playerIndex);
-  if (!playerData)
+  uint16_t rejectCode;
+  char     rejectMsg[128];
+  bool     resultEnter = playerData->loadEnterData(rejectCode, rejectMsg);
+
+  if (!resultEnter
+      && ((playerData->player.getToken()[0] == '\0')
+	  || !strcmp(playerData->player.getToken(), "badtoken"))) {
+    rejectPlayer(playerIndex, rejectCode, rejectMsg);
     return;
+  }
+  if (!resultEnter)
+    // Find the user already logged on and kick
+    // them if someone else is trying to log on
+    // and has globally authenticated.
+    for (int i = 0; i < curMaxPlayers; i++) {
+      // don't kick _us_, kick the other guy
+      if (playerIndex == i)
+	continue;
+      GameKeeper::Player *otherPlayer
+	= GameKeeper::Player::getPlayerByIndex(i);
+      if (!otherPlayer)
+	continue;
+      if (strcasecmp(otherPlayer->player.getCallSign(),
+		     playerData->player.getCallSign()) == 0) {
+	sendMessage(ServerPlayer, i ,
+		    "Another client has demonstrated ownership of your "
+		    "callsign with the correct password.  You have been "
+		    "ghosted.");
+	removePlayer(i, "Ghost");
+	break;
+      }
+    }
 
   int filterIndex = 0;
   Filter::Action filterAction = filter.check(*playerData, filterIndex);
@@ -3511,30 +3539,7 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
       if (token[0] == '\0') {
 	playerData->setNeedThisHostbanChecked(true);
       }
-      bool result = result = playerData->loadEnterData(rejectCode, rejectMsg);
-      if (result) {
-	addPlayer(t);
-      } else if (playerData->player.getToken()[0] != '\0'
-	 && strcmp(playerData->player.getToken(), "badtoken")) {
-
-	 // Find the user already logged on and kick
-	 // them if someone else is trying to log on
-	 // and has globally authenticated.
-	 for (int i = 0; i < curMaxPlayers; i++) {
-	   // don't kick _us_, kick the other guy
-	   if (t == i) continue;
-	   GameKeeper::Player *otherPlayer = GameKeeper::Player::getPlayerByIndex(i);
-	   if (!otherPlayer) continue;
-	   if (strcasecmp(otherPlayer->player.getCallSign(), playerData->player.getCallSign()) == 0){
-	     sendMessage(ServerPlayer,i,"Another client has demonstrated ownership of your callsign with the correct password.  You have been ghosted.");
-	     removePlayer(i, "Ghost");
-	     break;
-	   }
-	}
-	addPlayer(t);
-      } else {
-	rejectPlayer(t, rejectCode, rejectMsg);
-      }
+      addPlayer(t, playerData);
       break;
     }
 
