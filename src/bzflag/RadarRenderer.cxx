@@ -990,9 +990,11 @@ void RadarRenderer::renderBoxPyrMesh()
       if (face->getPlane()[2] <= 0.0f) {
 	continue;
       }
-      const BzMaterial* bzmat = face->getMaterial();
-      if ((bzmat != NULL) && bzmat->getNoRadar()) {
-        continue;
+      if (enhanced) {
+        const BzMaterial* bzmat = face->getMaterial();
+        if ((bzmat != NULL) && bzmat->getNoRadar()) {
+          continue;
+        }
       }
       const float z = face->getPosition()[2];
       const float bh = face->getHeight();
