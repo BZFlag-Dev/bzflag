@@ -57,18 +57,21 @@ class MeshFragSceneNode : public WallSceneNode {
 	Geometry(MeshFragSceneNode* node);
 	~Geometry();
 
-	void render();
-	void renderShadow();
+        void init();
 	void setStyle(int _style) { style = _style; }
+	void setNoRadar();
+	void render();
+	void renderRadar();
+	void renderShadow();
 	const GLfloat* getPosition() const { return sceneNode->getSphere(); }
       private:
 	void drawV() const; // draw with just vertices
 	void drawVT() const; // draw with texcoords
 	void drawVN() const; // draw with normals
 	void drawVTN() const; // draw with texcoords and normals
-
       private:
 	int style;
+        bool drawRadar;
 	MeshFragSceneNode* sceneNode;
     };
 

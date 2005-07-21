@@ -311,8 +311,14 @@ MeshPolySceneNode* MeshSceneNodeGenerator::getMeshPolySceneNode(const MeshFace* 
     makeTexcoords (face->getPlane(), vertices, texcoords);
   }
 
+  bool noRadar = false;
+  const BzMaterial* bzmat = face->getMaterial();
+  if (bzmat != NULL) {
+    noRadar = bzmat->getNoRadar();
+  }
   MeshPolySceneNode* node =
-    new MeshPolySceneNode(face->getPlane(), vertices, normals, texcoords);
+    new MeshPolySceneNode(face->getPlane(), noRadar,
+                          vertices, normals, texcoords);
 
   return node;
 }

@@ -31,6 +31,7 @@ class RenderNode {
 
     virtual void	render() = 0;
     virtual void	renderShadow() { render(); }
+    virtual void	renderRadar() { renderShadow(); }
     virtual const GLfloat* getPosition() const = 0;
 };
 

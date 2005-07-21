@@ -52,6 +52,7 @@ class BzMaterial {
     void setEmission(const float[4]);
     void setShininess(const float);
 
+    void setNoRadar(bool);
     void setNoCulling(bool);
     void setNoSorting(bool);
     void setAlphaThreshold(const float);
@@ -84,6 +85,7 @@ class BzMaterial {
     const float* getEmission() const;
     float getShininess() const;
 
+    bool getNoRadar() const;
     bool getNoCulling() const;
     bool getNoSorting() const;
     float getAlphaThreshold() const;
@@ -125,6 +127,7 @@ class BzMaterial {
     float emission[4];
     float shininess;
 
+    bool noRadar;
     bool noCulling;
     bool noSorting;
     float alphaThreshold;

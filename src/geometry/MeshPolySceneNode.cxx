@@ -40,6 +40,7 @@ MeshPolySceneNode::Geometry::Geometry(MeshPolySceneNode* node,
 {
   sceneNode = node;
   normal = _normal;
+  drawRadar = true;
   style = 0;
   return;
 }
@@ -71,6 +72,26 @@ void MeshPolySceneNode::Geometry::render()
   }
 
   return;
+}
+
+
+bool MeshPolySceneNode::Geometry::getNoRadar() const
+{
+  return drawRadar;
+}
+
+
+void MeshPolySceneNode::Geometry::setNoRadar()
+{
+  drawRadar = false;
+}
+
+
+void MeshPolySceneNode::Geometry::renderRadar()
+{
+  if (drawRadar) {
+    drawV();
+  }
 }
 
 
@@ -136,7 +157,7 @@ void MeshPolySceneNode::Geometry::drawVTN() const
 // MeshPolySceneNode
 //
 
-MeshPolySceneNode::MeshPolySceneNode(const float _plane[4],
+MeshPolySceneNode::MeshPolySceneNode(const float _plane[4], bool noRadar,
 				     const GLfloat3Array& vertices,
 				     const GLfloat3Array& normals,
 				     const GLfloat2Array& texcoords) :
@@ -148,6 +169,10 @@ MeshPolySceneNode::MeshPolySceneNode(const float _plane[4],
   assert((normals.getSize() == 0) || (normals.getSize() == count));
 
   setPlane(_plane);
+  
+  if (noRadar) {
+    node.setNoRadar();
+  }
 
   // choose axis to ignore (the one with the largest normal component)
   int ignoreAxis;
@@ -471,8 +496,11 @@ int MeshPolySceneNode::splitWallVTN(const GLfloat* splitPlane,
   }
 
   // make new nodes
-  front = new MeshPolySceneNode(getPlane(), vertexFront, normalFront, uvFront);
-  back = new MeshPolySceneNode(getPlane(), vertexBack, normalBack, uvBack);
+  const bool noRadar = node.getNoRadar();
+  front = new MeshPolySceneNode(getPlane(), noRadar,
+                                vertexFront, normalFront, uvFront);
+  back = new MeshPolySceneNode(getPlane(), noRadar,
+                               vertexBack, normalBack, uvBack);
 
   // free the arrays, if required
   if (count > staticSize) {
@@ -678,8 +706,11 @@ int MeshPolySceneNode::splitWallVT(const GLfloat* splitPlane,
   }
 
   // make new nodes
-  front = new MeshPolySceneNode(getPlane(), vertexFront, normalFront, uvFront);
-  back = new MeshPolySceneNode(getPlane(), vertexBack, normalBack, uvBack);
+  const bool noRadar = node.getNoRadar();
+  front = new MeshPolySceneNode(getPlane(), noRadar,
+                                vertexFront, normalFront, uvFront);
+  back = new MeshPolySceneNode(getPlane(), noRadar,
+                               vertexBack, normalBack, uvBack);
 
   // free the arrays, if required
   if (count > staticSize) {

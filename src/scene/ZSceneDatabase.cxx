@@ -281,13 +281,13 @@ void ZSceneDatabase::renderRadarNodes(const ViewFrustum& vf)
       if (plane[2] > 0.0f) {
 	RenderNode* rnode = snode->getRenderNode(0);
 	if (rnode != NULL) {
-	  rnode->renderShadow();
+	  rnode->renderRadar();
 	}
       }
     } else {
       RenderNode* rnode = snode->getRenderNode(0);
       if (rnode != NULL) {
-	rnode->renderShadow();
+	rnode->renderRadar();
       }
     }
 

@@ -292,11 +292,14 @@ void SceneDatabaseBuilder::addWaterLevel(SceneDatabase* db,
   t[0][0] = t[0][1] = t[1][1] = t[3][0] = 0.0f;
   t[1][0] = t[2][0] = t[2][1] = t[3][1] = 2.0f;
 
+  // get the material
+  const BzMaterial* mat = world->getWaterMaterial();
+  const bool noRadar = mat->getNoRadar();
+  
   MeshPolySceneNode* node =
-    new MeshPolySceneNode(plane, v, n, t);
+    new MeshPolySceneNode(plane, noRadar, v, n, t);
 
   // setup the material
-  const BzMaterial* mat = world->getWaterMaterial();
   MeshSceneNodeGenerator::setupNodeMaterial(node, mat);
 
   db->addStaticNode(node, false);

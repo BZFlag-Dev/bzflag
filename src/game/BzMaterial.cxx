@@ -227,6 +227,7 @@ void BzMaterial::reset()
   memcpy (emission, defEmission, sizeof(emission));
   shininess = 0.0f;
   alphaThreshold = 0.0f;
+  noRadar = false;
   noCulling = false;
   noSorting = false;
 
@@ -285,6 +286,7 @@ BzMaterial& BzMaterial::operator=(const BzMaterial& m)
   memcpy (emission, m.emission, sizeof(emission));
   shininess = m.shininess;
   alphaThreshold = m.alphaThreshold;
+  noRadar = m.noRadar;
   noCulling = m.noCulling;
   noSorting = m.noSorting;
 
@@ -324,7 +326,7 @@ bool BzMaterial::operator==(const BzMaterial& m) const
       (memcmp (specular, m.specular, sizeof(float[4])) != 0) ||
       (memcmp (emission, m.emission, sizeof(float[4])) != 0) ||
       (shininess != m.shininess) ||
-      (alphaThreshold != m.alphaThreshold) ||
+      (alphaThreshold != m.alphaThreshold) || (noRadar != m.noRadar) ||
       (noCulling != m.noCulling) || (noSorting != m.noSorting)) {
     return false;
   }
@@ -385,6 +387,7 @@ void* BzMaterial::pack(void* buf) const
   uint8_t modeByte = 0;
   if (noCulling) modeByte |= (1 << 0);
   if (noSorting) modeByte |= (1 << 1);
+  if (noRadar) modeByte |= (1 << 2);
   buf = nboPackUByte(buf, modeByte);
 
   buf = nboPackInt(buf, dynamicColor);
@@ -435,6 +438,7 @@ void* BzMaterial::unpack(void* buf)
   buf = nboUnpackUByte(buf, modeByte);
   noCulling = (modeByte & (1 << 0)) != 0;
   noSorting = (modeByte & (1 << 1)) != 0;
+  noRadar = (modeByte & (1 << 2)) != 0;
 
   buf = nboUnpackInt(buf, inTmp);
   dynamicColor = int(inTmp);
@@ -552,6 +556,9 @@ void BzMaterial::print(std::ostream& out, const std::string& /*indent*/) const
   if (alphaThreshold != defaultMaterial.alphaThreshold) {
     out << "  alphathresh " << alphaThreshold << std::endl;
   }
+  if (noRadar) {
+    out << "  noradar" << std::endl;
+  }
   if (noCulling) {
     out << "  noculling" << std::endl;
   }
@@ -655,6 +662,12 @@ void BzMaterial::setShininess(const float shine)
 void BzMaterial::setAlphaThreshold(const float thresh)
 {
   alphaThreshold = thresh;
+  return;
+}
+
+void BzMaterial::setNoRadar(bool value)
+{
+  noRadar = value;
   return;
 }
 
@@ -839,6 +852,11 @@ float BzMaterial::getShininess() const
 float BzMaterial::getAlphaThreshold() const
 {
   return alphaThreshold;
+}
+
+bool BzMaterial::getNoRadar() const
+{
+  return noRadar;
 }
 
 bool BzMaterial::getNoCulling() const

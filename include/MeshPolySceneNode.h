@@ -24,6 +24,7 @@
 class MeshPolySceneNode : public WallSceneNode {
   public:
     MeshPolySceneNode(const float plane[4],
+                      bool noRadar,
 		      const GLfloat3Array& vertices,
 		      const GLfloat3Array& normals,
 		      const GLfloat2Array& texcoords);
@@ -54,7 +55,10 @@ class MeshPolySceneNode : public WallSceneNode {
 		 const GLfloat* normal);
 	~Geometry();
 	void setStyle(int _style) { style = _style; }
+	bool getNoRadar() const;
+	void setNoRadar();
 	void render();
+	void renderRadar();
 	void renderShadow();
 	const GLfloat* getVertex(int i) const;
 	const GLfloat (*getVertices() const)[3];
@@ -68,6 +72,7 @@ class MeshPolySceneNode : public WallSceneNode {
       private:
 	MeshPolySceneNode* sceneNode;
 	int style;
+	bool drawRadar;
 	const GLfloat* normal;
       public:
 	GLfloat3Array vertices;
