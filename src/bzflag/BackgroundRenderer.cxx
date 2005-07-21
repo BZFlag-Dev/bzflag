@@ -183,9 +183,9 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
   }
 
   // rain stuff
-	weather.init();
+  weather.init();
   // effects
-	EffectsRenderer::instance().init();
+  EffectsRenderer::instance().init();
 
   // make mountain stuff
   mountainsAvailable = false;
@@ -679,10 +679,12 @@ void BackgroundRenderer::renderGroundEffects(SceneRenderer& renderer,
       // light the mountains (so that they get dark when the sun goes down).
       // don't do zbuffer test since they occlude all drawn before them and
       // are occluded by all drawn after.
-      if (mountainsVisible) drawMountains();
+      if (mountainsVisible && BZDB.isTrue("_drawMountains")) {
+        drawMountains();
+      }
 
       // draw clouds
-      if (cloudsVisible) {
+      if (cloudsVisible && BZDB.isTrue("_drawClouds")) {
 	cloudsGState.setState();
 	glMatrixMode(GL_TEXTURE);
 	glPushMatrix();
@@ -702,7 +704,7 @@ void BackgroundRenderer::renderEnvironment(SceneRenderer& renderer, bool update)
   if (!blank) {
     if (update) {
       weather.update();
-	    EffectsRenderer::instance().update();
+      EffectsRenderer::instance().update();
     }
     EffectsRenderer::instance().draw(renderer);
     weather.draw(renderer);
@@ -727,107 +729,113 @@ void BackgroundRenderer::resizeSky() {
 
 void BackgroundRenderer::drawSky(SceneRenderer& renderer, bool mirror)
 {
-  // rotate sky so that horizon-point-toward-sun-color is actually
-  // toward the sun
   glPushMatrix();
-  glRotatef((GLfloat)((atan2f(sunDirection[1], sunDirection[0]) * 180.0 + 135.0) / M_PI),
-	    0.0f, 0.0f, 1.0f);
+  
+  if (BZDB.isTrue("_drawSky")) {
+    // rotate sky so that horizon-point-toward-sun-color is actually
+    // toward the sun
+    glRotatef((GLfloat)((atan2f(sunDirection[1], sunDirection[0]) * 180.0 + 135.0) / M_PI),
+              0.0f, 0.0f, 1.0f);
 
-  // draw sky
-  skyGState.setState();
-  if (!doSunset) {
-    // just a pyramid
-    glBegin(GL_TRIANGLE_FAN);
-      glColor3fv(skyZenithColor);
-      glVertex3fv(skyPyramid[4]);
-      glColor3fv(skyCrossSunDirColor);
-      glVertex3fv(skyPyramid[0]);
-      glColor3fv(skySunDirColor);
-      glVertex3fv(skyPyramid[3]);
-      glColor3fv(skyCrossSunDirColor);
-      glVertex3fv(skyPyramid[2]);
-      glColor3fv(skyAntiSunDirColor);
-      glVertex3fv(skyPyramid[1]);
-      glColor3fv(skyCrossSunDirColor);
-      glVertex3fv(skyPyramid[0]);
-    glEnd();
-  }
-  else {
-    // overall shape is a pyramid, but the solar sides are two
-    // triangles each.  the top triangle is all zenith color,
-    // the bottom goes from zenith to sun-dir color.
-    glBegin(GL_TRIANGLE_FAN);
-      glColor3fv(skyZenithColor);
-      glVertex3fv(skyPyramid[4]);
-      glColor3fv(skyCrossSunDirColor);
-      glVertex3fv(skyPyramid[2]);
-      glColor3fv(skyAntiSunDirColor);
-      glVertex3fv(skyPyramid[1]);
-      glColor3fv(skyCrossSunDirColor);
-      glVertex3fv(skyPyramid[0]);
-    glEnd();
 
-    GLfloat sunsetTopPoint[3];
-    sunsetTopPoint[0] = skyPyramid[3][0] * (1.0f - sunsetTop);
-    sunsetTopPoint[1] = skyPyramid[3][1] * (1.0f - sunsetTop);
-    sunsetTopPoint[2] = skyPyramid[4][2] * sunsetTop;
-    glBegin(GL_TRIANGLES);
-      glColor3fv(skyZenithColor);
-      glVertex3fv(skyPyramid[4]);
-      glColor3fv(skyCrossSunDirColor);
-      glVertex3fv(skyPyramid[0]);
-      glColor3fv(skyZenithColor);
-      glVertex3fv(sunsetTopPoint);
-      glVertex3fv(skyPyramid[4]);
-      glVertex3fv(sunsetTopPoint);
-      glColor3fv(skyCrossSunDirColor);
-      glVertex3fv(skyPyramid[2]);
-      glColor3fv(skyZenithColor);
-      glVertex3fv(sunsetTopPoint);
-      glColor3fv(skyCrossSunDirColor);
-      glVertex3fv(skyPyramid[0]);
-      glColor3fv(skySunDirColor);
-      glVertex3fv(skyPyramid[3]);
-      glColor3fv(skyCrossSunDirColor);
-      glVertex3fv(skyPyramid[2]);
-      glColor3fv(skyZenithColor);
-      glVertex3fv(sunsetTopPoint);
-      glColor3fv(skySunDirColor);
-      glVertex3fv(skyPyramid[3]);
-    glEnd();
+    // draw sky
+    skyGState.setState();
+    if (!doSunset) {
+      // just a pyramid
+      glBegin(GL_TRIANGLE_FAN);
+        glColor3fv(skyZenithColor);
+        glVertex3fv(skyPyramid[4]);
+        glColor3fv(skyCrossSunDirColor);
+        glVertex3fv(skyPyramid[0]);
+        glColor3fv(skySunDirColor);
+        glVertex3fv(skyPyramid[3]);
+        glColor3fv(skyCrossSunDirColor);
+        glVertex3fv(skyPyramid[2]);
+        glColor3fv(skyAntiSunDirColor);
+        glVertex3fv(skyPyramid[1]);
+        glColor3fv(skyCrossSunDirColor);
+        glVertex3fv(skyPyramid[0]);
+      glEnd();
+    }
+    else {
+      // overall shape is a pyramid, but the solar sides are two
+      // triangles each.  the top triangle is all zenith color,
+      // the bottom goes from zenith to sun-dir color.
+      glBegin(GL_TRIANGLE_FAN);
+        glColor3fv(skyZenithColor);
+        glVertex3fv(skyPyramid[4]);
+        glColor3fv(skyCrossSunDirColor);
+        glVertex3fv(skyPyramid[2]);
+        glColor3fv(skyAntiSunDirColor);
+        glVertex3fv(skyPyramid[1]);
+        glColor3fv(skyCrossSunDirColor);
+        glVertex3fv(skyPyramid[0]);
+      glEnd();
+
+      GLfloat sunsetTopPoint[3];
+      sunsetTopPoint[0] = skyPyramid[3][0] * (1.0f - sunsetTop);
+      sunsetTopPoint[1] = skyPyramid[3][1] * (1.0f - sunsetTop);
+      sunsetTopPoint[2] = skyPyramid[4][2] * sunsetTop;
+      glBegin(GL_TRIANGLES);
+        glColor3fv(skyZenithColor);
+        glVertex3fv(skyPyramid[4]);
+        glColor3fv(skyCrossSunDirColor);
+        glVertex3fv(skyPyramid[0]);
+        glColor3fv(skyZenithColor);
+        glVertex3fv(sunsetTopPoint);
+        glVertex3fv(skyPyramid[4]);
+        glVertex3fv(sunsetTopPoint);
+        glColor3fv(skyCrossSunDirColor);
+        glVertex3fv(skyPyramid[2]);
+        glColor3fv(skyZenithColor);
+        glVertex3fv(sunsetTopPoint);
+        glColor3fv(skyCrossSunDirColor);
+        glVertex3fv(skyPyramid[0]);
+        glColor3fv(skySunDirColor);
+        glVertex3fv(skyPyramid[3]);
+        glColor3fv(skyCrossSunDirColor);
+        glVertex3fv(skyPyramid[2]);
+        glColor3fv(skyZenithColor);
+        glVertex3fv(sunsetTopPoint);
+        glColor3fv(skySunDirColor);
+        glVertex3fv(skyPyramid[3]);
+      glEnd();
+    }
   }
 
   glLoadIdentity();
   renderer.getViewFrustum().executeOrientation();
 
-  if (mirror) {
-    glEnable(GL_CLIP_PLANE0);
-    const GLdouble plane[4] = {0.0, 0.0, +1.0, 0.0};
-    glClipPlane(GL_CLIP_PLANE0, plane);
-  }
+  if (BZDB.isTrue("_drawCelestial")) {
+    if (mirror) {
+      glEnable(GL_CLIP_PLANE0);
+      const GLdouble plane[4] = {0.0, 0.0, +1.0, 0.0};
+      glClipPlane(GL_CLIP_PLANE0, plane);
+    }
 
-  if (sunDirection[2] > -0.009f) {
-    sunGState.setState();
-    glColor3fv(renderer.getSunScaledColor());
-    glCallList(sunXFormList);
-  }
+    if (sunDirection[2] > -0.009f) {
+      sunGState.setState();
+      glColor3fv(renderer.getSunScaledColor());
+      glCallList(sunXFormList);
+    }
 
-  if (doStars) {
-    starGState[starGStateIndex].setState();
-    glCallList(starXFormList);
-  }
+    if (doStars) {
+      starGState[starGStateIndex].setState();
+      glCallList(starXFormList);
+    }
 
-  if (moonDirection[2] > -0.009f) {
-    moonGState[doStars ? 1 : 0].setState();
-    glColor3f(1.0f, 1.0f, 1.0f);
- //   if (useMoonTexture)
- //     glEnable(GL_TEXTURE_2D);
-    glCallList(moonList);
-  }
+    if (moonDirection[2] > -0.009f) {
+      moonGState[doStars ? 1 : 0].setState();
+      glColor3f(1.0f, 1.0f, 1.0f);
+   //   if (useMoonTexture)
+   //     glEnable(GL_TEXTURE_2D);
+      glCallList(moonList);
+    }
 
-  if (mirror) {
-    glDisable(GL_CLIP_PLANE0);
-  }
+    if (mirror) {
+      glDisable(GL_CLIP_PLANE0);
+    }
+  } 
 
   glPopMatrix();
 }
@@ -835,27 +843,29 @@ void BackgroundRenderer::drawSky(SceneRenderer& renderer, bool mirror)
 
 void BackgroundRenderer::drawGround()
 {
-  // draw ground
-  glNormal3f(0.0f, 0.0f, 1.0f);
-  if (invert) {
-    glColor4fv(groundColorInv[styleIndex]);
-    invGroundGState[styleIndex].setState();
-  } else {
-    if (BZDB.isSet("GroundOverideColor")) {
-      float color[4];
-      parseColorString(BZDB.get("GroundOverideColor"), color);
-      glColor4fv(color);
+  if (BZDB.isTrue("_drawGround")) {
+    // draw ground
+    glNormal3f(0.0f, 0.0f, 1.0f);
+    if (invert) {
+      glColor4fv(groundColorInv[styleIndex]);
+      invGroundGState[styleIndex].setState();
+    } else {
+      if (BZDB.isSet("GroundOverideColor")) {
+        float color[4];
+        parseColorString(BZDB.get("GroundOverideColor"), color);
+        glColor4fv(color);
+      }
+      else {
+        glColor4fv(groundColor[styleIndex]);
+      }
+      groundGState[styleIndex].setState();
     }
-    else {
-      glColor4fv(groundColor[styleIndex]);
-    }
-    groundGState[styleIndex].setState();
-  }
 
-  if (RENDERER.useQuality() >= 3) {
-    drawGroundCentered();
-  } else {
-    glCallList(simpleGroundList[styleIndex]);
+    if (RENDERER.useQuality() >= 3) {
+      drawGroundCentered();
+    } else {
+      glCallList(simpleGroundList[styleIndex]);
+    }
   }
 }
 
