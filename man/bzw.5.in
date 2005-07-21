@@ -352,6 +352,12 @@ properties:
 .br 
   # the color will be used (untextured)
 .br 
+\fB  noradar\fR              # do not display on radar
+.br 
+\fB  noculling\fR            # do not cull by face winding  (double-sided)
+.br 
+\fB  nosorting\fR            # do not do front-to-back alpha sorting
+.br 
 \fB  texmat\fR \-1                 # texture matrix  (\-1 for none)
 .br 
 \fB  dyncol\fR \-1                 # dynamic color  (\-1 for none)
@@ -912,6 +918,12 @@ material :=
 	| "notexcolor"
 .br 
 	| "spheremap"
+.br 
+	| "noradar"
+.br 
+	| "noculling"
+.br 
+	| "nosorting"
 .br 
 	| "shader" <shader_name>  # NOT IMPLEMENTED
 .br 
