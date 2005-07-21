@@ -77,8 +77,14 @@ public:
   /** returns a timekeeper representing an unset timekeeper */
   static const TimeKeeper&	getNullTime(void);
 
+
+  /** returns the local time */
+  static void localTime(int *year = NULL, int *month = NULL, int* day = NULL, int* hour = NULL, int* min = NULL, int* sec = NULL, bool* dst = NULL);
+
   /** returns a string of the local time */
   static const char		*timestamp(void);
+
+  static void localTime( int &day);
 
   /** converts a time difference into an array of integers
       representing days, hours, minutes, seconds */

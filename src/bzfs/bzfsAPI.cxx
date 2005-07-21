@@ -684,6 +684,14 @@ BZF_API void bz_setMaxWaitTime ( float time )
 		pluginMaxWait = time;
 }
 
+BZF_API void bz_getLocaltime ( bz_localTime	*ts )
+{
+	if (!ts)
+		return;
+
+	TimeKeeper::localTime(&ts->year,&ts->month,&ts->day,&ts->hour,&ts->minute,&ts->second,&ts->daylightSavings);
+}
+
 
 // info
 BZF_API double bz_getBZDBDouble ( const char* variable )

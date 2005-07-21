@@ -177,6 +177,29 @@ const char *TimeKeeper::timestamp(void) // const
   return buffer;
 }
 
+void TimeKeeper::localTime(int *year, int *month, int* day, int* hour, int* min, int* sec, bool* dst) // const
+{
+	time_t tnow = time(0);
+	struct tm *now = localtime(&tnow);
+	now->tm_year += 1900;
+	++now->tm_mon;
+
+	if ( year )
+		*year = now->tm_year;
+	if ( month )
+		*month = now->tm_mon;
+	if ( day )
+		*day = now->tm_mday;
+	if ( hour )
+		*hour = now->tm_hour;
+	if ( min )
+		*min = now->tm_min;
+	if ( sec )
+		*sec = now->tm_sec;
+	if ( dst )
+		*dst = now->tm_isdst != 0;
+}
+
 // function for converting a float time (e.g. difference of two TimeKeepers)
 // into an array of ints
 const void TimeKeeper::convertTime(double raw, long int convertedTimes[])

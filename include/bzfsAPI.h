@@ -545,6 +545,19 @@ BZF_API double bz_getCurrentTime ( void );
 BZF_API float bz_getMaxWaitTime ( void );
 BZF_API void bz_setMaxWaitTime ( float time );
 
+typedef struct 
+{
+	int year;
+	int month;
+	int day;
+	int hour;
+	int minute;
+	int second;
+	bool daylightSavings;
+}bz_localTime;
+
+BZF_API void bz_getLocaltime ( bz_localTime	*ts );
+
 // BZDB API
 BZF_API double bz_getBZDBDouble ( const char* variable );
 BZF_API bzApiString bz_getBZDBString( const char* variable );
