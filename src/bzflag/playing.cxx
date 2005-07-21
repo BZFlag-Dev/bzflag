@@ -4311,6 +4311,15 @@ static void saveRobotInfo(Playerid id, void *msg)
 }
 #endif
 
+static void resetServerVar(const std::string& name, void*)
+{
+  // reset server-side variables
+  if (BZDB.getPermission(name) == StateDatabase::Locked) {
+    const std::string defval = BZDB.getDefault(name);
+    BZDB.set(name, defval);
+  }
+}
+
 void		leaveGame()
 {
   entered = false;
@@ -4421,6 +4430,9 @@ void		leaveGame()
 
   // delete scene database (after the world has been destroyed)
   sceneRenderer->setSceneDatabase(NULL);
+  
+  // reset the BZDB variables
+  BZDB.iterate(resetServerVar, NULL);
 
   return;
 }
