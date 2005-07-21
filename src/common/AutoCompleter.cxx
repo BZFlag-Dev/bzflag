@@ -86,9 +86,7 @@ void DefaultCompleter::setDefaults() {
   registerWord("/kill ");
   registerWord("/lagstats");
   registerWord("/lagwarn ");
-#ifdef DEBUG
   registerWord("/localset ");
-#endif
   registerWord("/mute ");
   registerWord("/password ");
   registerWord("/playerlist");
