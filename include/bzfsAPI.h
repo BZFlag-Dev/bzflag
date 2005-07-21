@@ -53,10 +53,11 @@ typedef enum
 	bz_eUnknownSlashCommand,		// will not take a team
 	bz_eGetPlayerSpawnPosEvent,
 	bz_eGetAutoTeamEvent,			// will not take a team
-	bz_eAllowPlayer,			// will not take a team
-	bz_eTickEvent,				// will not take a team
+	bz_eAllowPlayer,				// will not take a team
+	bz_eTickEvent,					// will not take a team
 	bz_eGenerateWorldEvent,			// will not take a team
-	bz_eGetPlayerInfoEvent			// will not take a team
+	bz_eGetPlayerInfoEvent,			// will not take a team
+	bz_eAllowSpawn				
 }bz_eEventType;
 
 #define BZ_ALL_USERS	-1
@@ -461,6 +462,31 @@ public:
 	int teamID;
 
 	bool handled;
+};
+
+class  bz_AllowSpawnData : public bz_EventData
+{
+public:
+	bz_AllowSpawnData()
+	{
+		eventType = bz_eAllowSpawn;
+		playerID = -1;
+		teamID = -1;
+
+		handled = false;
+		allow = true;
+
+		time = 0.0;
+	}
+
+	virtual ~bz_AllowSpawnData(){};
+
+	int playerID;
+	int teamID;
+
+	bool handled;
+	bool allow;
+	double time;
 };
 
 // event handler callback

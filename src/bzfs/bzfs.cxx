@@ -2687,20 +2687,34 @@ static void playerAlive(int playerIndex)
     return;
   }
 
+  bz_AllowSpawnData	spawnAllowData;
+  spawnAllowData.playerID = playerIndex;
+  spawnAllowData.teamID = playerData->player.getTeam();
+
   if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::spawn)) {
     sendMessage(ServerPlayer, playerIndex, "You do not have permission to spawn on this server.");
     sendMessage(ServerPlayer, playerIndex, "This server may require identification before you can join.");
     sendMessage(ServerPlayer, playerIndex, "Please use /identify, or /register if you have not registerd your callsign or");
     sendMessage(ServerPlayer, playerIndex, "register on http://my.BZFlag.org/bb/ and use that callsign/password.");
-    // client won't send another enter so kick em =(
-    removePlayer(playerIndex, "Not allowed to spawn");
-  }
+	spawnAllowData.allow = false;
+	}
 
   if (playerData->player.isBot()
       && BZDB.isTrue(StateDatabase::BZDB_DISABLEBOTS)) {
     sendMessage(ServerPlayer, playerIndex, "I'm sorry, we do not allow bots on this server.");
     removePlayer(playerIndex, "ComputerPlayer");
     return;
+  }
+
+  // check for any spawn allow events
+  worldEventManager.callEvents(bz_eAllowSpawn,-1,&spawnAllowData);
+  worldEventManager.callEvents(bz_eAllowSpawn,spawnAllowData.teamID,&spawnAllowData);
+
+  if(!spawnAllowData.allow)
+  {  
+    // client won't send another enter so kick em =(
+	removePlayer(playerIndex, "Not allowed to spawn");
+	return;
   }
 
   // player is coming alive.
