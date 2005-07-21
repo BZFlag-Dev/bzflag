@@ -102,6 +102,9 @@ extern TimeKeeper countdownPauseStart;
 extern void sendIPUpdate(int targetPlayer, int playerIndex);
 extern void sendPlayerInfo(void);
 
+// externs that the flag command requires
+extern void zapAllFlags();
+
 tmCustomSlashCommandMap	customCommands;
 
 class NoDigit {
@@ -524,12 +527,6 @@ static void handleGameoverCmd(GameKeeper::Player *playerData, const char *)
   }
 }
 
-static void zapAllFlags()
-{
-  // reset all flags
-  for (int i = 0; i < numFlags; i++)
-    zapFlag(*FlagInfo::get(i));
-}
 
 static void handleCountdownCmd(GameKeeper::Player *playerData, const char *message)
 {
@@ -651,17 +648,7 @@ static void handleFlagCmd(GameKeeper::Player *playerData, const char *message)
   }
   if (strncasecmp(message + 6, "reset", 5) == 0) {
     bool onlyUnused = strncasecmp(message + 11, " unused", 7) == 0;
-    if (onlyUnused)
-      for (int i = 0; i < numFlags; i++) {
-	FlagInfo &flag = *FlagInfo::get(i);
-	// see if someone had grabbed flag,
-	const int playerIndex = flag.player;
-	if (playerIndex == -1) {
-	  resetFlag(flag);
-	}
-      }
-    else
-      zapAllFlags();
+    bz_resetFlags(onlyUnused);
   } else if (strncasecmp(message + 6, "up", 2) == 0) {
     for (int i = 0; i < numFlags; i++) {
       FlagInfo &flag = *FlagInfo::get(i);

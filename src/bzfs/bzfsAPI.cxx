@@ -39,6 +39,8 @@ extern void directMessage(int playerIndex, uint16_t code, int len, const void *m
 extern char *getDirectMessageBuffer();
 extern void playerKilled(int victimIndex, int killerIndex, int reason, int16_t shotIndex, const FlagType* flagType, int phydrv, bool respawnOnBase = false);
 extern void sendTeamUpdate(int playerIndex = -1, int teamIndex1 = -1, int teamIndex2 = -1);
+extern void zapAllFlags();
+extern void resetFlag(FlagInfo &flag);
 
 extern CmdLineOptions *clOptions;
 extern uint16_t curMaxPlayers;
@@ -47,6 +49,7 @@ extern float pluginWorldSize;
 extern float pluginWorldHeight;
 extern float pluginMaxWait;
 extern TeamInfo team[NumTeams];
+extern int numFlags;
 
 
 // utility functions
@@ -894,6 +897,23 @@ BZF_API bool bz_removePlayerFlag ( int playeID )
 	return true;
 }
 
+BZF_API void bz_resetFlags ( bool onlyUnused )
+{
+	if (onlyUnused)
+	{
+		for (int i = 0; i < numFlags; i++)
+		{
+			FlagInfo &flag = *FlagInfo::get(i);
+			// see if someone had grabbed flag,
+			const int playerIndex = flag.player;
+			if (playerIndex == -1)
+				resetFlag(flag);
+		}
+	}
+	else
+		zapAllFlags();
+}
+
 BZF_API bool bz_addWorldBox ( float *pos, float rot, float* scale, bz_WorldObjectOptions options )
 {
 	if (!world || world->isFinisihed() || !pos || !scale)
@@ -1025,7 +1045,7 @@ BZF_API bool bz_sendPlayCustomLocalSound ( int playerID, const char* soundName )
 }
 
 // custom pluginHandler
-bool bz_registerCustomPluginHandler ( const char* extension, bz_APIPluginHandler *handler )
+BZF_API bool bz_registerCustomPluginHandler ( const char* extension, bz_APIPluginHandler *handler )
 {
 	if (!extension || !handler)
 		return false;
@@ -1035,7 +1055,7 @@ bool bz_registerCustomPluginHandler ( const char* extension, bz_APIPluginHandler
 	return registerCustomPluginHandler( ext,handler);
 }
 
-bool bz_removeCustomPluginHandler ( const char* extension, bz_APIPluginHandler *handler )
+BZF_API bool bz_removeCustomPluginHandler ( const char* extension, bz_APIPluginHandler *handler )
 {
 	if (!extension || !handler)
 		return false;
@@ -1046,7 +1066,7 @@ bool bz_removeCustomPluginHandler ( const char* extension, bz_APIPluginHandler *
 }
 
 // team info
-int bz_getTeamCount (int teamIndex )
+BZF_API int bz_getTeamCount (int teamIndex )
 {
 	int count = 0;
 	if ( teamIndex < 0 || teamIndex >= NumTeams)
@@ -1065,7 +1085,7 @@ int bz_getTeamCount (int teamIndex )
 	return count;
 }
 
-int bz_getTeamScore (int teamIndex )
+BZF_API int bz_getTeamScore (int teamIndex )
 {
 	if ( teamIndex < 0 || teamIndex >= NumTeams)
 		return 0;
@@ -1073,7 +1093,7 @@ int bz_getTeamScore (int teamIndex )
 	return team[teamIndex].team.won - team[teamIndex].team.lost;
 }
 
-int bz_getTeamWins (int teamIndex )
+BZF_API int bz_getTeamWins (int teamIndex )
 {
 	if ( teamIndex < 0 || teamIndex >= NumTeams)
 		return 0;
@@ -1081,7 +1101,7 @@ int bz_getTeamWins (int teamIndex )
 	return team[teamIndex].team.won ;
 }
 
-int bz_getTeamLosses (int teamIndex )
+BZF_API int bz_getTeamLosses (int teamIndex )
 {
 	if ( teamIndex < 0 || teamIndex >= NumTeams)
 		return 0;
@@ -1089,7 +1109,7 @@ int bz_getTeamLosses (int teamIndex )
 	return team[teamIndex].team.lost;
 }
 
-void bz_setTeamWins (int teamIndex, int wins )
+BZF_API void bz_setTeamWins (int teamIndex, int wins )
 {
 	if ( teamIndex < 0 || teamIndex >= NumTeams)
 		return ;
@@ -1098,7 +1118,7 @@ void bz_setTeamWins (int teamIndex, int wins )
 	sendTeamUpdate(-1,teamIndex);
 }
 
-void bz_setTeamLosses (int teamIndex, int losses )
+BZF_API void bz_setTeamLosses (int teamIndex, int losses )
 {
 	if ( teamIndex < 0 || teamIndex >= NumTeams)
 		return ;
@@ -1107,7 +1127,7 @@ void bz_setTeamLosses (int teamIndex, int losses )
 	sendTeamUpdate(-1,teamIndex);
 }
 
-void bz_reetTeamScore (int teamIndex )
+BZF_API void bz_resetTeamScore (int teamIndex )
 {
 	if ( teamIndex < 0 || teamIndex >= NumTeams)
 		return ;

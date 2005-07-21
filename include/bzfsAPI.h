@@ -623,6 +623,8 @@ BZF_API bool bz_killPlayer ( int playeID, bool spawnOnBasem, int killerID = -1, 
 
 // flags
 BZF_API bool bz_removePlayerFlag ( int playeID );
+BZF_API void bz_resetFlags ( bool onlyUnused );
+
 
 // world
 typedef struct 
@@ -720,7 +722,8 @@ BZF_API int bz_getTeamLosses (int teamIndex );
 BZF_API void bz_setTeamWins (int teamIndex, int wins );
 BZF_API void bz_setTeamLosses (int teamIndex, int losses );
 
-BZF_API void bz_reetTeamScore (int teamIndex );
+BZF_API void bz_resetTeamScore (int teamIndex );
+
 
 
 #endif //_BZFS_API_H_
