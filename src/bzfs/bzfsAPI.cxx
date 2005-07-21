@@ -81,6 +81,19 @@ void setBZMatFromAPIMat (BzMaterial &bzmat, bz_MaterialInfo* material )
 	}
 }
 
+void broadcastPlayerScoreUpdate ( int playerID )
+{
+	GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerID);
+	if (!player)
+		return;
+
+	void *buf, *bufStart;
+	bufStart = getDirectMessageBuffer();
+	buf = nboPackUByte(bufStart, 1);
+	buf = nboPackUByte(buf, playerID);
+	buf = player->score.pack(buf);
+	broadcastMessage(MsgScore, (char*)buf-(char*)bufStart, bufStart);
+}
 
 //******************************Versioning********************************************
 BZF_API int bz_APIVersion ( void )
@@ -538,7 +551,7 @@ BZF_API bool bz_updatePlayerData ( bz_PlayerRecord *playerRecord )
 
 	std::vector<FlagType*>	flagHistoryList = player->flagHistory.get();
 
-//	playerRecord->flagHistory.clear();
+	playerRecord->flagHistory.clear();
 	for ( unsigned int i = 0; i < flagHistoryList.size(); i ++)
 		playerRecord->flagHistory.push_back(flagHistoryList[i]->label());
 
@@ -550,7 +563,7 @@ BZF_API bool bz_updatePlayerData ( bz_PlayerRecord *playerRecord )
 
 	playerRecord->wins = player->score.getWins();
 	playerRecord->losses = player->score.getLosses();
-
+	playerRecord->teamKills = player->score.getTKs();
 	return true;
 }
 
@@ -596,6 +609,56 @@ BZF_API  bool bz_freePlayerRecord( bz_PlayerRecord *playerRecord )
 	if (playerRecord)
 		delete (playerRecord);
 
+	return true;
+}
+
+BZF_API bool bz_setPlayerWins (int playerId, int wins)
+{
+	GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerId);
+
+	if (!player)
+		return false;
+
+	player->score.setWins(wins);
+	broadcastPlayerScoreUpdate(playerId);
+	return true;
+}
+
+BZF_API bool bz_setPlayerLosses (int playerId, int losses)
+{
+	GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerId);
+
+	if (!player)
+		return false;
+
+	player->score.setLosses(losses);
+	broadcastPlayerScoreUpdate(playerId);
+	return true;
+}
+
+BZF_API bool bz_setPlayerTKs(int playerId, int tks)
+{
+	GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerId);
+
+	if (!player)
+		return false;
+
+	player->score.setTKs(tks);
+	broadcastPlayerScoreUpdate(playerId);
+	return true;
+}
+
+BZF_API bool bz_resetPlayerScore(int playerId)
+{
+	GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerId);
+
+	if (!player)
+		return false;
+
+	player->score.setWins(0);
+	player->score.setLosses(0);
+	player->score.setTKs(0);
+	broadcastPlayerScoreUpdate(playerId);
 	return true;
 }
 
@@ -695,7 +758,6 @@ BZF_API void bz_getLocaltime ( bz_localTime	*ts )
 
 	TimeKeeper::localTime(&ts->year,&ts->month,&ts->day,&ts->hour,&ts->minute,&ts->second,&ts->daylightSavings);
 }
-
 
 // info
 BZF_API double bz_getBZDBDouble ( const char* variable )

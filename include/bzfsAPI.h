@@ -30,7 +30,7 @@
 	#define BZF_PLUGIN_CALL extern "C"
 #endif
 
-#define BZ_API_VERSION	4
+#define BZ_API_VERSION	5
 
 #define BZ_GET_PLUGIN_VERSION BZF_PLUGIN_CALL int bz_GetVersion ( void ) { return BZ_API_VERSION;}
 
@@ -557,7 +557,13 @@ public:
 
 	int wins;
 	int losses;
+	int teamKills;
 };
+
+BZF_API bool bz_setPlayerWins (int playerId, int wins);
+BZF_API bool bz_setPlayerLosses (int playerId, int losses);
+BZF_API bool bz_setPlayerTKs(int playerId, int tks);
+BZF_API bool bz_resetPlayerScore(int playerId);
 
 // message API
 BZF_API bool bz_sendTextMessage (int from, int to, const char* message);
@@ -624,7 +630,6 @@ BZF_API bool bz_killPlayer ( int playeID, bool spawnOnBasem, int killerID = -1, 
 // flags
 BZF_API bool bz_removePlayerFlag ( int playeID );
 BZF_API void bz_resetFlags ( bool onlyUnused );
-
 
 // world
 typedef struct 

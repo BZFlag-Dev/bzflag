@@ -32,7 +32,12 @@ class Score {
   bool  reached();
   int	getWins(){return wins;}
   int	getLosses(){return losses;}
-	int	getTKs(){return tks;}
+  int	getTKs(){return tks;}
+
+  void	setWins(int v){wins = v;}
+  void	setLosses(int v){losses = v;}
+  void	setTKs(int v){tks = v;}
+
 
   static void setTeamKillRatio(int _tkKickRatio);
   static void setWinLimit(int _score);
