@@ -488,12 +488,12 @@ void bz_deleteMaterial ( bz_MaterialInfo *material )
 }
 
 // events
-BZF_API bool bz_registerEvent ( bz_eEventType eventType, int team, bz_EventHandler* eventHandler )
+BZF_API bool bz_registerEvent ( bz_eEventType eventType, int teamIndex, bz_EventHandler* eventHandler )
 {
 	if (!eventHandler)
 		return false;
 	
-	worldEventManager.addEvent(eventType,team,eventHandler);
+	worldEventManager.addEvent(eventType,teamIndex,eventHandler);
 	return true;
 }
 
@@ -502,12 +502,12 @@ BZF_API bool bz_registerGeneralEvent ( bz_eEventType eventType, bz_EventHandler*
 	return bz_registerEvent(eventType,-1,eventHandler);
 }
 
-BZF_API bool bz_removeEvent ( bz_eEventType eventType, int team, bz_EventHandler* eventHandler )
+BZF_API bool bz_removeEvent ( bz_eEventType eventType, int teamIndex, bz_EventHandler* eventHandler )
 {
 	if (!eventHandler)
 		return false;
 
-	worldEventManager.removeEvent(eventType,team,eventHandler);
+	worldEventManager.removeEvent(eventType,teamIndex,eventHandler);
 	return true;
 }
 
@@ -903,12 +903,12 @@ BZF_API bool bz_addWorldPyramid ( float *pos, float rot, float* scale, bool flip
 	return true;
 }
 
-BZF_API bool bz_addWorldBase( float *pos, float rot, float* scale, int team, bz_WorldObjectOptions options )
+BZF_API bool bz_addWorldBase( float *pos, float rot, float* scale, int teamIndex, bz_WorldObjectOptions options )
 {
 	if (!world || world->isFinisihed() || !pos || !scale)
 		return false;
 
-	world->addBase(pos,rot,scale,team,options.driveThru,options.shootThru);
+	world->addBase(pos,rot,scale,teamIndex,options.driveThru,options.shootThru);
 	return true;
 }
 
