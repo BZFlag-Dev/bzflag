@@ -38,6 +38,7 @@ extern void broadcastMessage(uint16_t code, int len, const void *msg);
 extern void directMessage(int playerIndex, uint16_t code, int len, const void *msg);
 extern char *getDirectMessageBuffer();
 extern void playerKilled(int victimIndex, int killerIndex, int reason, int16_t shotIndex, const FlagType* flagType, int phydrv, bool respawnOnBase = false);
+extern void sendTeamUpdate(int playerIndex = -1, int teamIndex1 = -1, int teamIndex2 = -1);
 
 extern CmdLineOptions *clOptions;
 extern uint16_t curMaxPlayers;
@@ -1087,6 +1088,35 @@ int bz_getTeamLosses (int teamIndex )
 
 	return team[teamIndex].team.lost;
 }
+
+void bz_setTeamWins (int teamIndex, int wins )
+{
+	if ( teamIndex < 0 || teamIndex >= NumTeams)
+		return ;
+
+	team[teamIndex].team.won = wins;
+	sendTeamUpdate(-1,teamIndex);
+}
+
+void bz_setTeamLosses (int teamIndex, int losses )
+{
+	if ( teamIndex < 0 || teamIndex >= NumTeams)
+		return ;
+
+	team[teamIndex].team.lost = losses;
+	sendTeamUpdate(-1,teamIndex);
+}
+
+void bz_reetTeamScore (int teamIndex )
+{
+	if ( teamIndex < 0 || teamIndex >= NumTeams)
+		return ;
+
+	team[teamIndex].team.won = 0;
+	team[teamIndex].team.lost = 0;
+	sendTeamUpdate(-1,teamIndex);
+}
+
 
 
 // Local Variables: ***

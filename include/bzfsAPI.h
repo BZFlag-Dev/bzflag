@@ -708,14 +708,20 @@ public:
 	virtual bool handle ( bzApiString plugin, bzApiString param ) = 0;
 };
 // custom pluginHandler
-bool BZF_API bz_registerCustomPluginHandler ( const char* extension, bz_APIPluginHandler * handler );
-bool BZF_API bz_removeCustomPluginHandler ( const char* extension, bz_APIPluginHandler * handler );
+BZF_API bool bz_registerCustomPluginHandler ( const char* extension, bz_APIPluginHandler * handler );
+BZF_API bool bz_removeCustomPluginHandler ( const char* extension, bz_APIPluginHandler * handler );
 
 // team info
-int BZF_API bz_getTeamCount (int teamIndex );
-int BZF_API bz_getTeamScore (int teamIndex );
-int BZF_API bz_getTeamWins (int teamIndex );
-int BZF_API bz_getTeamLosses (int teamIndex );
+BZF_API int bz_getTeamCount (int teamIndex );
+BZF_API int bz_getTeamScore (int teamIndex );
+BZF_API int bz_getTeamWins (int teamIndex );
+BZF_API int bz_getTeamLosses (int teamIndex );
+
+BZF_API void bz_setTeamWins (int teamIndex, int wins );
+BZF_API void bz_setTeamLosses (int teamIndex, int losses );
+
+BZF_API void bz_reetTeamScore (int teamIndex );
+
 
 #endif //_BZFS_API_H_
 
