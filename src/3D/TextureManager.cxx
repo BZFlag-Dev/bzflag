@@ -138,6 +138,17 @@ bool TextureManager::removeTexture(const std::string& name)
 }
 
 
+bool TextureManager::reloadTextures()
+{
+  TextureNameMap::iterator it = textureNames.begin();
+  while (it != textureNames.end()) {
+    reloadTextureImage(it->first);
+    it++;
+  }
+  return true;
+}
+
+
 bool TextureManager::reloadTextureImage(const std::string& name)
 {
   TextureNameMap::iterator it = textureNames.find(name);
@@ -154,9 +165,13 @@ bool TextureManager::reloadTextureImage(const std::string& name)
   fileInit.filter = OpenGLTexture::LinearMipmapLinear;
   fileInit.name = name;
   OpenGLTexture* newTex = loadTexture(fileInit, false);
-  newTex->setFilter(filter);
+  if (newTex == NULL) {
+    // couldn't reload, leave it alone
+    return false;
+  }
 
   //  name and id fields are not changed
+  newTex->setFilter(filter);
   info.texture = newTex;
   info.alpha = newTex->hasAlpha();
   info.x = newTex->getWidth();

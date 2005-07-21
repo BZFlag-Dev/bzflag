@@ -54,6 +54,7 @@ public:
 
   bool isLoaded(const std::string& name);
   bool removeTexture(const std::string& name);
+  bool reloadTextures();
   bool reloadTextureImage(const std::string& name);
 
   void updateTextureFilters();

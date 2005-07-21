@@ -22,6 +22,7 @@
 #include "TextUtils.h"
 #include "CommandsStandard.h"
 #include "StateDatabase.h"
+#include "TextureManager.h"
 
 // local implementation headers
 #include "LocalCommand.h"
@@ -124,6 +125,13 @@ public:
   virtual bool operator() (const char *commandLine);
 };
 
+class ReTextureCommand : LocalCommand {
+public:
+  ReTextureCommand();
+
+  virtual bool operator() (const char *commandLine);
+};
+
 static SilenceCommand     silenceCommand;
 static UnsilenceCommand   unsilenceCommand;
 static DumpCommand        dumpCommand;
@@ -134,6 +142,7 @@ static DiffCommand        diffCommand;
 static LocalSetCommand    localSetCommand;
 static QuitCommand        quitCommand;
 static RoamPosCommand     roamPosCommand;
+static ReTextureCommand   reTextureCommand;
 
 SilenceCommand::SilenceCommand() : LocalCommand("SILENCE")
 {
@@ -397,6 +406,19 @@ bool RoamPosCommand::operator() (const char *commandLine)
   
   return true;
 }
+
+
+ReTextureCommand::ReTextureCommand() : LocalCommand("/retexture")
+{
+}
+
+bool ReTextureCommand::operator() (const char *)
+{
+  TextureManager& tm = TextureManager::instance();
+  tm.reloadTextures();
+  return true;
+}
+
 
 // Local Variables: ***
 // mode:C++ ***
