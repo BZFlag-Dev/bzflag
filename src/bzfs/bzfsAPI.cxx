@@ -45,6 +45,8 @@ extern WorldInfo *world;
 extern float pluginWorldSize;
 extern float pluginWorldHeight;
 extern float pluginMaxWait;
+extern TeamInfo team[NumTeams];
+
 
 // utility functions
 void setBZMatFromAPIMat (BzMaterial &bzmat, bz_MaterialInfo* material )
@@ -967,7 +969,6 @@ BZF_API bool bz_addWorldWeapon( const char* _flagType, float *pos, float rot, fl
 	return true;
 }
 
-
 BZF_API bool bz_setWorldSize( float size, float wallHeight )
 {
 	pluginWorldHeight = wallHeight;
@@ -1034,6 +1035,51 @@ bool bz_removeCustomPluginHandler ( const char* extension, bz_APIPluginHandler *
 
 	return removeCustomPluginHandler( ext,handler);
 }
+
+// team info
+int bz_getTeamCount (int teamIndex )
+{
+	int count = 0;
+	if ( teamIndex < 0 || teamIndex >= NumTeams)
+		return 0;
+
+	for (int i = 0; i < curMaxPlayers; i++)
+	{
+		GameKeeper::Player *p = GameKeeper::Player::getPlayerByIndex(i);
+		if ((p == NULL))
+			continue;
+
+		if (p->player.getTeam() == teamIndex)
+			count++;
+	}
+
+	return count;
+}
+
+int bz_getTeamScore (int teamIndex )
+{
+	if ( teamIndex < 0 || teamIndex >= NumTeams)
+		return 0;
+
+	return team[teamIndex].team.won - team[teamIndex].team.lost;
+}
+
+int bz_getTeamWins (int teamIndex )
+{
+	if ( teamIndex < 0 || teamIndex >= NumTeams)
+		return 0;
+
+	return team[teamIndex].team.won ;
+}
+
+int bz_getTeamLosses (int teamIndex )
+{
+	if ( teamIndex < 0 || teamIndex >= NumTeams)
+		return 0;
+
+	return team[teamIndex].team.lost;
+}
+
 
 // Local Variables: ***
 // mode:C++ ***

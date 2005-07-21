@@ -672,6 +672,12 @@ public:
 bool BZF_API bz_registerCustomPluginHandler ( const char* extension, bz_APIPluginHandler * handler );
 bool BZF_API bz_removeCustomPluginHandler ( const char* extension, bz_APIPluginHandler * handler );
 
+// team info
+int BZF_API bz_getTeamCount (int teamIndex );
+int BZF_API bz_getTeamScore (int teamIndex );
+int BZF_API bz_getTeamWins (int teamIndex );
+int BZF_API bz_getTeamLosses (int teamIndex );
+
 #endif //_BZFS_API_H_
 
 // Local Variables: ***
