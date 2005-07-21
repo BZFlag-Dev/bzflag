@@ -360,9 +360,6 @@ RoamPosCommand::RoamPosCommand() : LocalCommand("/roampos")
 bool RoamPosCommand::operator() (const char *commandLine)
 {
   // change the observer position and orientation
-  const char infoStr[] =
-    "/roampos  [ \"reset\" | degrees | {x y z [theta [phi [zoom]]]} ]";
-    
   std::string params = commandLine + 8;
   std::vector<std::string> tokens = TextUtils::tokenize(params, " ");
   
@@ -401,7 +398,15 @@ bool RoamPosCommand::operator() (const char *commandLine)
     }
   }
   else {
-   addMessage(NULL, infoStr);
+    addMessage(NULL,
+      "/roampos  [ \"reset\" | degrees | {x y z [theta [phi [ zoom ]]] } ]");
+      
+    char buffer[MessageLen];
+    snprintf(buffer, MessageLen,
+             "  <%.3f, %.3f, %.3f> theta = %.3f, phi = %.3f, zoom = %.3f",
+             roamPos[0], roamPos[1], roamPos[2],
+             roamTheta, roamPhi, roamZoom);
+    addMessage(NULL, buffer);
   }
   
   return true;
