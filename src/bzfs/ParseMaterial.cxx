@@ -245,6 +245,7 @@ bool parseMaterialsByName(const char* cmd, std::istream& input,
       std::string line, matcmd;
       std::getline(input, line);
       std::istringstream parms(line);
+      input.putback('\n');
       if (!(parms >> matcmd)) {
 	error = true;
       } else {
