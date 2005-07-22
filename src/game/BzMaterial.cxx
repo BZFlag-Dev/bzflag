@@ -80,7 +80,7 @@ const BzMaterial* BzMaterialManager::findMaterial(const std::string& target) con
   }
   else {
     for (unsigned int i = 0; i < materials.size(); i++) {
-      if (target == materials[i]->getName()) {
+      if (target.c_str() == materials[i]->getName()) {
 	return materials[i];
       }
     }
