@@ -1327,6 +1327,86 @@ BZF_API bool bz_stopAllURLJobs ( void )
 	return true;
 }
 
+// inter plugin comunication
+std::map<std::string,std::string>	globalPluginData;
+
+BZF_API bool bz_clipFieldExists ( const char *_name )
+{
+	if (!_name)
+		return false;
+
+	std::string name = _name;
+
+	return globalPluginData.find(name) != globalPluginData.end();
+}
+
+BZF_API const char* bz_getclipFieldString ( const char *_name )
+{
+	if (!bz_clipFieldExists(_name))
+		return NULL;
+
+	std::string name = _name;
+
+	return globalPluginData[name].c_str();
+}
+
+BZF_API float bz_getclipFieldFloat ( const char *_name )
+{
+	if (!bz_clipFieldExists(_name))
+		return 0.0f;
+
+	std::string name = _name;
+
+	return (float)atof(globalPluginData[name].c_str());
+
+}
+
+BZF_API int bz_getclipFieldint( const char *_name )
+{
+	if (!bz_clipFieldExists(_name))
+		return 0;
+
+	std::string name = _name;
+
+	return atoi(globalPluginData[name].c_str());
+}
+
+BZF_API bool bz_setclipFieldString ( const char *_name, const char* data )
+{
+	bool existed = bz_clipFieldExists(_name);
+	if (!data)
+		return false;
+
+	std::string name = _name;
+
+	globalPluginData[name] = std::string(data);
+	return existed;
+}
+
+BZF_API bool bz_setclipFieldFloat ( const char *_name, float data )
+{
+	bool existed = bz_clipFieldExists(_name);
+	if (!data)
+		return false;
+
+	std::string name = _name;
+
+	globalPluginData[name] = TextUtils::format("%f",data);
+	return existed;
+}
+
+BZF_API bool bz_setclipFieldInt( const char *_name, int data )
+{
+	bool existed = bz_clipFieldExists(_name);
+	if (!data)
+		return false;
+
+	std::string name = _name;
+
+	globalPluginData[name] = TextUtils::format("%d",data);
+	return existed;
+}
+
 // Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***

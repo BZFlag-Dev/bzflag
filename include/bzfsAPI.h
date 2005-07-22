@@ -767,6 +767,17 @@ BZF_API bool bz_addURLJob ( const char* URL, bz_URLHandler* handler );
 BZF_API bool bz_removeURLJob ( const char* URL );
 BZF_API bool bz_stopAllURLJobs ( void );
 
+// inter plugin comunication
+BZF_API bool bz_clipFieldExists ( const char *name );
+BZF_API const char* bz_getclipFieldString ( const char *name );
+BZF_API float bz_getclipFieldFloat ( const char *name );
+BZF_API int bz_getclipFieldint( const char *name );
+
+BZF_API bool bz_setclipFieldString ( const char *name, const char* data );
+BZF_API bool bz_setclipFieldFloat ( const char *name, float data );
+BZF_API bool bz_setclipFieldInt( const char *name, int data );
+
+
 #endif //_BZFS_API_H_
 
 // Local Variables: ***
