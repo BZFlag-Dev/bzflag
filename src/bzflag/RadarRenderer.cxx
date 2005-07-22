@@ -388,6 +388,7 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
   glLoadIdentity();
 
   OpenGLGState::resetState();
+  
 
   // if jammed then draw white noise.  occasionally draw a good frame.
   if (jammed && (bzfrand() > decay)) {
@@ -979,6 +980,9 @@ void RadarRenderer::renderBoxPyrMesh()
   if (smooth) {
     glEnable(GL_POLYGON_SMOOTH);
   }
+  if (!enhanced) {
+    glDisable(GL_CULL_FACE);
+  }
   const ObstacleList& meshes = OBSTACLEMGR.getMeshes();
   count = meshes.size();
   for (i = 0; i < count; i++) {
@@ -1015,6 +1019,9 @@ void RadarRenderer::renderBoxPyrMesh()
       }
       glEnd();
     }
+  }
+  if (!enhanced) {
+    glEnable(GL_CULL_FACE);
   }
   if (smooth) {
     glDisable(GL_POLYGON_SMOOTH);
