@@ -248,12 +248,7 @@ bool parseMaterialsByName(const char* cmd, std::istream& input,
       if (!(parms >> matcmd)) {
 	error = true;
       } else {
-	// put the material command string back into the stream
-        input.putback('\n');
-	for (int i = 1; i < (int)(line.size() - matcmd.size()); i++) {
-	  input.putback(line[line.size() - i]);
-	}
-	if (!parseMaterials(matcmd.c_str(), input, &materials[n], 1, error)) {
+	if (!parseMaterials(matcmd.c_str(), parms, &materials[n], 1, error)) {
 	  error = true;
 	}
       }
