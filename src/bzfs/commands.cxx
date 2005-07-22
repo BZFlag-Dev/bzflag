@@ -88,9 +88,7 @@ extern void broadcastMessage(uint16_t code, int len, const void *msg);
 extern TeamInfo team[NumTeams];
 extern void sendTeamUpdate(int playerIndex = -1, int teamIndex1 = -1, int teamIndex2 = -1);
 extern int numFlags;
-extern void zapFlag(FlagInfo & flag);
 extern void sendFlagUpdate(FlagInfo &flag);
-extern void resetFlag(FlagInfo &flag);
 extern void sendDrop(FlagInfo &flag);
 
 // externs that countdown requires
@@ -101,9 +99,6 @@ extern TimeKeeper countdownPauseStart;
 // externs that identify and password requires
 extern void sendIPUpdate(int targetPlayer, int playerIndex);
 extern void sendPlayerInfo(void);
-
-// externs that the flag command requires
-extern void zapAllFlags();
 
 tmCustomSlashCommandMap	customCommands;
 

@@ -39,7 +39,7 @@ extern void directMessage(int playerIndex, uint16_t code, int len, const void *m
 extern char *getDirectMessageBuffer();
 extern void playerKilled(int victimIndex, int killerIndex, int reason, int16_t shotIndex, const FlagType* flagType, int phydrv, bool respawnOnBase = false);
 extern void sendTeamUpdate(int playerIndex = -1, int teamIndex1 = -1, int teamIndex2 = -1);
-extern void zapAllFlags();
+extern void sendDrop(FlagInfo &flag);
 extern void resetFlag(FlagInfo &flag);
 
 extern CmdLineOptions *clOptions;
@@ -961,19 +961,19 @@ BZF_API bool bz_removePlayerFlag ( int playeID )
 
 BZF_API void bz_resetFlags ( bool onlyUnused )
 {
-	if (onlyUnused)
+	for (int i = 0; i < numFlags; i++)
 	{
-		for (int i = 0; i < numFlags; i++)
+		FlagInfo &flag = *FlagInfo::get(i);
+		// see if someone had grabbed flag,
+		const int playerIndex = flag.player;
+		if (!onlyUnused || (playerIndex == -1))
 		{
-			FlagInfo &flag = *FlagInfo::get(i);
-			// see if someone had grabbed flag,
-			const int playerIndex = flag.player;
-			if (playerIndex == -1)
-				resetFlag(flag);
+			if (playerIndex != -1)
+				sendDrop(flag);
+
+			resetFlag(flag);
 		}
 	}
-	else
-		zapAllFlags();
 }
 
 BZF_API bool bz_addWorldBox ( float *pos, float rot, float* scale, bz_WorldObjectOptions options )

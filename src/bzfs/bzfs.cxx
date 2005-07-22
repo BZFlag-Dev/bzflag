@@ -2285,14 +2285,6 @@ void zapFlag(FlagInfo &flag)
   resetFlag(flag);
 }
 
-void zapAllFlags()
-{
-	// reset all flags
-	for (int i = 0; i < numFlags; i++)
-		zapFlag(*FlagInfo::get(i));
-}
-
-
 // try to get over a bug where extraneous flag are attached to a tank
 // not really found why, but this should fix
 // Should be called when we sure that tank does not hold any
