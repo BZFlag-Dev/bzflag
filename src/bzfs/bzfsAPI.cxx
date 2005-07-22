@@ -1251,7 +1251,7 @@ public:
 			{
 				if ( i == 0 )
 				{
-					// do something here to stop the allready in progress transfer
+					removeHandle();
 				}
 				jobs.erase(jobs.begin()+i);
 				i = jobs.size() + 1;
@@ -1261,6 +1261,7 @@ public:
 
 	void flush ( void )
 	{
+		removeHandle();
 		jobs.clear();
 		doingStuff = false;
 	}
