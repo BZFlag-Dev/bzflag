@@ -1205,7 +1205,126 @@ BZF_API void bz_updateListServer ( void )
 	publicize();
 }
 
+typedef struct 
+{
+	std::string url;
+	bz_URLHandler	*handaler;
+}trURLJob;
 
+class BZ_APIURLManager :  cURLManager
+{
+public:
+	BZ_APIURLManager()
+	{
+		doingStuff = false;
+	}
+
+	virtual ~BZ_APIURLManager()
+	{
+	}
+
+	void addJob ( const char* URL, bz_URLHandler *handaler )
+	{
+		if (!URL || !handaler)
+			return;
+
+		trURLJob	job;
+		job.url = URL;
+		job.handaler = handaler;
+
+		jobs.push_back(job);
+
+		if (!doingStuff)
+			doJob();
+	}
+
+	void removeJob ( const char* URL )
+	{
+		if (!URL)
+			return;
+
+		std::string url = URL;
+
+		for ( unsigned int i = 0; i < jobs.size(); i++ )
+		{
+			if ( jobs[i].url == url)
+			{
+				if ( i == 0 )
+				{
+					// do something here to stop the allready in progress transfer
+				}
+				jobs.erase(jobs.begin()+i);
+				i = jobs.size() + 1;
+			}
+		}
+	}
+
+	void flush ( void )
+	{
+		jobs.clear();
+		doingStuff = false;
+	}
+
+	virtual void finalization(char *data, unsigned int length, bool good)
+	{
+		if (!jobs.size() || !doingStuff)
+			return;	// we are suposed to be done
+
+		// this is who we are suposed to be geting
+		trURLJob job = jobs[0]; 
+		jobs.erase(jobs.begin());
+		if (good)
+			job.handaler->done(job.url.c_str(),data,length,good);
+		else
+			job.handaler->error(job.url.c_str(),1,"badness");
+
+		// do the next one if we must
+		doJob();
+	}
+
+protected:
+	void doJob ( void )
+	{
+		if ( !jobs.size() )
+			doingStuff = false;
+		else
+		{
+			trURLJob job = jobs[0]; 
+			doingStuff = true;
+			setURL(job.url);
+			addHandle();
+		}
+	}
+
+	std::vector<trURLJob>	jobs;
+	bool doingStuff;
+};
+
+BZ_APIURLManager	bz_apiURLManager;
+
+BZF_API bool bz_addURLJob ( const char* URL, bz_URLHandler* handaler )
+{
+	if (!URL || !handaler)
+		return false;
+
+	bz_apiURLManager.addJob(URL,handaler);
+	return true;
+}
+
+BZF_API bool bz_removeURLJob ( const char* URL )
+{
+	if (!URL)
+		return false;
+
+	bz_apiURLManager.removeJob(URL);
+	return true;
+}
+
+BZF_API bool bz_stopAllURLJobs ( void )
+{
+	bz_apiURLManager.flush();
+	return true;
+}
 
 // Local Variables: ***
 // mode:C++ ***
