@@ -57,7 +57,8 @@ typedef enum
 	bz_eTickEvent,					// will not take a team
 	bz_eGenerateWorldEvent,			// will not take a team
 	bz_eGetPlayerInfoEvent,			// will not take a team
-	bz_eAllowSpawn				
+	bz_eAllowSpawn,
+	bz_eListServerUpdateEvent		// will not take a team
 }bz_eEventType;
 
 #define BZ_ALL_USERS	-1
@@ -489,6 +490,26 @@ public:
 	double time;
 };
 
+class  bz_ListServerUpdateEvent : public bz_EventData
+{
+public:
+	bz_ListServerUpdateEvent()
+	{
+		eventType = bz_eListServerUpdateEvent;
+		handled = false;
+		time = 0.0;
+	}
+
+	virtual ~bz_ListServerUpdateEvent(){};
+
+	bzApiString		address;
+	bzApiString		description;
+	bzApiString		groups;
+
+	bool handled;
+	double time;
+};
+
 // event handler callback
 class bz_EventHandler
 {
@@ -729,6 +750,8 @@ BZF_API void bz_setTeamLosses (int teamIndex, int losses );
 
 BZF_API void bz_resetTeamScore (int teamIndex );
 
+// list server 
+BZF_API void bz_updateListServer ( void );
 
 
 #endif //_BZFS_API_H_

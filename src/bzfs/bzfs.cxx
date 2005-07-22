@@ -489,7 +489,7 @@ PingPacket getTeamCounts()
   return pingReply;
 }
 
-static void publicize()
+void publicize()
 {
   /* // hangup any previous list server sockets
   if (listServerLinksCount)

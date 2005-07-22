@@ -27,6 +27,8 @@
 #include "TextUtils.h"
 #include "Protocol.h"
 #include "GameKeeper.h"
+#include "bzfsAPI.h"
+#include "WorldEventManager.h"
 
 /* local implementation headers */
 #include "CmdLineOptions.h"
@@ -215,7 +217,15 @@ void ListServerLink::sendQueuedMessages()
   queuedRequest = true;
   if (nextMessageType == ListServerLink::ADD) {
     DEBUG3("Queuing ADD message to list server\n");
-    addMe(getTeamCounts(), publicizeAddress, publicizeDescription, advertiseGroups);
+
+	bz_ListServerUpdateEvent	updateEvent;
+	updateEvent.address = publicizeAddress;
+	updateEvent.description = publicizeDescription;
+	updateEvent.groups = advertiseGroups;
+
+	worldEventManager.callEvents(bz_eListServerUpdateEvent,-1,&updateEvent);
+
+	addMe(getTeamCounts(), std::string(updateEvent.address.c_str()), std::string(updateEvent.description.c_str()), std::string(updateEvent.groups.c_str()));
     lastAddTime = TimeKeeper::getCurrent();
   } else if (nextMessageType == ListServerLink::REMOVE) {
     DEBUG3("Queuing REMOVE message to list server\n");

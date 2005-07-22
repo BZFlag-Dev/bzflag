@@ -41,6 +41,7 @@ extern void playerKilled(int victimIndex, int killerIndex, int reason, int16_t s
 extern void sendTeamUpdate(int playerIndex = -1, int teamIndex1 = -1, int teamIndex2 = -1);
 extern void sendDrop(FlagInfo &flag);
 extern void resetFlag(FlagInfo &flag);
+extern void publicize();
 
 extern CmdLineOptions *clOptions;
 extern uint16_t curMaxPlayers;
@@ -1197,6 +1198,11 @@ BZF_API void bz_resetTeamScore (int teamIndex )
 	team[teamIndex].team.won = 0;
 	team[teamIndex].team.lost = 0;
 	sendTeamUpdate(-1,teamIndex);
+}
+
+BZF_API void bz_updateListServer ( void )
+{
+	publicize();
 }
 
 
