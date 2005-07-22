@@ -36,7 +36,7 @@ bool parseMaterials(const char* cmd, std::istream& input,
       error = true;
     }
     const BzMaterial* matref = MATERIALMGR.findMaterial(name);
-    if ((matref == NULL) && (name != "-1")) {
+    if (matref == NULL) {
       std::cout << "couldn't find reference material: " << name << std::endl;
       error = true;
     } else {
