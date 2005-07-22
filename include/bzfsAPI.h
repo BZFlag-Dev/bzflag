@@ -763,7 +763,7 @@ public:
 	virtual void error ( const char* URL, int errorCode, const char *errorString ){};
 };
 
-BZF_API bool bz_addURLJob ( const char* URL, bz_URLHandler* handaler );
+BZF_API bool bz_addURLJob ( const char* URL, bz_URLHandler* handler );
 BZF_API bool bz_removeURLJob ( const char* URL );
 BZF_API bool bz_stopAllURLJobs ( void );
 

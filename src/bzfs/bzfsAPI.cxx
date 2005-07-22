@@ -1208,7 +1208,7 @@ BZF_API void bz_updateListServer ( void )
 typedef struct 
 {
 	std::string url;
-	bz_URLHandler	*handaler;
+	bz_URLHandler	*handler;
 }trURLJob;
 
 class BZ_APIURLManager :  cURLManager
@@ -1223,14 +1223,14 @@ public:
 	{
 	}
 
-	void addJob ( const char* URL, bz_URLHandler *handaler )
+	void addJob ( const char* URL, bz_URLHandler *handler )
 	{
-		if (!URL || !handaler)
+		if (!URL || !handler)
 			return;
 
 		trURLJob	job;
 		job.url = URL;
-		job.handaler = handaler;
+		job.handler = handler;
 
 		jobs.push_back(job);
 
@@ -1274,9 +1274,9 @@ public:
 		trURLJob job = jobs[0]; 
 		jobs.erase(jobs.begin());
 		if (good)
-			job.handaler->done(job.url.c_str(),data,length,good);
+			job.handler->done(job.url.c_str(),data,length,good);
 		else
-			job.handaler->error(job.url.c_str(),1,"badness");
+			job.handler->error(job.url.c_str(),1,"badness");
 
 		// do the next one if we must
 		doJob();
@@ -1302,12 +1302,12 @@ protected:
 
 BZ_APIURLManager	bz_apiURLManager;
 
-BZF_API bool bz_addURLJob ( const char* URL, bz_URLHandler* handaler )
+BZF_API bool bz_addURLJob ( const char* URL, bz_URLHandler* handler )
 {
-	if (!URL || !handaler)
+	if (!URL || !handler)
 		return false;
 
-	bz_apiURLManager.addJob(URL,handaler);
+	bz_apiURLManager.addJob(URL,handler);
 	return true;
 }
 
