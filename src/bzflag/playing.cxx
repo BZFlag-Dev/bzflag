@@ -5384,8 +5384,8 @@ static void		setupRoamingCamera(float dt)
   bool tracking = false;
   const float* trackPos;
   if (roamView == roamViewTrack) {
-    Player *target;   
-    if (!devDriving) {
+    Player *target;
+    if (!devDriving && (roamTrackWinner < curMaxPlayers)) {
       target = player[roamTrackWinner];
     } else {
       target = myTank;
@@ -5396,7 +5396,7 @@ static void		setupRoamingCamera(float dt)
     }
   }
   else if (roamView == roamViewFlag) {
-    if (roamTrackFlag < world->getMaxFlags()) {
+    if ((world != NULL) && (roamTrackFlag < world->getMaxFlags())) {
       Flag &flag = world->getFlag(roamTrackFlag);
       trackPos = flag.position;
       tracking = true;
