@@ -596,7 +596,7 @@ void setRoamingLabel()
       roamTrackWinner = top->getId();
   }
 
-  Player* tracked = player[roamTrackWinner];
+  Player* tracked;
   if (!devDriving) {
     tracked = player[roamTrackWinner];
   } else {
@@ -5379,18 +5379,76 @@ static void		setupRoamingCamera(float dt)
       roamDPos[2] = (float)(-4 * myTank->getSpeed()) * BZDBCache::tankSpeed;
     }
   }
-  float c, s;
-  c = cosf((float)(roamTheta * M_PI / 180.0));
-  s = sinf((float)(roamTheta * M_PI / 180.0));
-  roamPos[0] += dt * (c * roamDPos[0] - s * roamDPos[1]);
-  roamPos[1] += dt * (c * roamDPos[1] + s * roamDPos[0]);
+
+  // are we tracking?  
+  bool tracking = false;
+  const float* trackPos;
+  if (roamView == roamViewTrack) {
+    Player *target;   
+    if (!devDriving) {
+      target = player[roamTrackWinner];
+    } else {
+      target = myTank;
+    }
+    if (target != NULL) {
+      trackPos = target->getPosition();
+      tracking = true;
+    }
+  }
+  else if (roamView == roamViewFlag) {
+    if (roamTrackFlag < world->getMaxFlags()) {
+      Flag &flag = world->getFlag(roamTrackFlag);
+      trackPos = flag.position;
+      tracking = true;
+    }
+  }
+
+  // modify X and Y coords  
+  if (!tracking) {
+    const float c = cosf(roamTheta * (float)(M_PI / 180.0f));
+    const float s = sinf(roamTheta * (float)(M_PI / 180.0f));
+    roamPos[0] += dt * (c * roamDPos[0] - s * roamDPos[1]);
+    roamPos[1] += dt * (c * roamDPos[1] + s * roamDPos[0]);
+  } else {
+    float dx = roamPos[0] - trackPos[0];
+    float dy = roamPos[1] - trackPos[1];
+    float dist = sqrtf((dx * dx) + (dy * dy));
+    float newDist = dist - (dt * roamDPos[0]);
+    if (newDist < 0.001f) {
+      newDist = 0.001f;
+    }
+    float scale = 0.0f;
+    if (dist > 0.0f) {
+      scale = newDist / dist;
+    }
+    dx = dx * scale;
+    dy = dy * scale;
+    if (fabsf(dx) < 0.001f) dx = 0.001f;
+    if (fabsf(dy) < 0.001f) dy = 0.001f;
+    const float dtheta = -(dt * roamDTheta * (float)(M_PI / 180.0f));
+    const float c = cosf(dtheta);
+    const float s = sinf(dtheta);
+    roamPos[0] = trackPos[0] + ((c * dx) - (s * dy));
+    roamPos[1] = trackPos[1] + ((c * dy) + (s * dx));
+    // setup so that free roam stays in the last state
+    roamTheta = atan2f(trackPos[1] - roamPos[1], trackPos[0] - roamPos[0]);
+    roamTheta *= (float)(180.0f / M_PI);
+    roamPhi = atan2f(trackPos[2] - roamPos[2], newDist);
+    roamPhi *= (float)(180.0f / M_PI);
+  }
+
+  // modify Z coordinate
   roamPos[2] += dt * roamDPos[2];
   float muzzleHeight = BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT);
   if (roamPos[2] < muzzleHeight) {
     roamPos[2] = muzzleHeight;
   }
-  roamTheta  += dt * roamDTheta;
-  roamPhi    += dt * roamDPhi;
+
+  // adjust the angles
+  if (!tracking) {
+    roamTheta  += dt * roamDTheta;
+    roamPhi    += dt * roamDPhi;
+  }
   roamZoom   += dt * roamDZoom;
   if (roamZoom < BZDB.eval("roamZoomMin")) {
     roamZoom = BZDB.eval("roamZoomMin");
