@@ -5418,8 +5418,13 @@ static void		setupRoamingCamera(float dt)
     float dy = roamPos[1] - trackPos[1];
     float dist = sqrtf((dx * dx) + (dy * dy));
     float newDist = dist - (dt * roamDPos[0]);
-    if (newDist < 0.001f) {
-      newDist = 0.001f;
+    const float minDist = BZDBCache::tankLength * 0.5f;
+    if (newDist < minDist) {
+      if (dist >= minDist) {
+        newDist = minDist;
+      } else {
+        newDist = dist;
+      }
     }
     float scale = 0.0f;
     if (dist > 0.0f) {
