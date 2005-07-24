@@ -4825,7 +4825,8 @@ void drawFrame(const float dt)
 	  eyePoint[2] = roamPos[2];
 	  targetPoint[0] = target->getPosition()[0];
 	  targetPoint[1] = target->getPosition()[1];
-	  targetPoint[2] = target->getPosition()[2];
+	  targetPoint[2] = target->getPosition()[2] +
+	                   target->getMuzzleHeight();;
 	}
 	// camera following target
 	else if (roamView == roamViewFollow) {
@@ -4854,7 +4855,12 @@ void drawFrame(const float dt)
 	  eyePoint[2] = roamPos[2];
 	  targetPoint[0] = targetFlag.position[0];
 	  targetPoint[1] = targetFlag.position[1];
-	  targetPoint[2] = targetFlag.position[2];
+          targetPoint[2] = targetFlag.position[2];
+	  if (targetFlag.status != FlagOnTank) {
+	    targetPoint[2] += muzzleHeight;
+          } else {
+            targetPoint[2] -= (BZDBCache::tankHeight - muzzleHeight);
+          }
 	}
 	roamViewAngle = (float) (atan2(targetPoint[1]-eyePoint[1],
 				       targetPoint[0]-eyePoint[0]) * 180.0f / M_PI);
