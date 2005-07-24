@@ -1301,14 +1301,17 @@ protected:
 	bool doingStuff;
 };
 
-BZ_APIURLManager	bz_apiURLManager;
+BZ_APIURLManager	*bz_apiURLManager = NULL;
 
 BZF_API bool bz_addURLJob ( const char* URL, bz_URLHandler* handler )
 {
 	if (!URL || !handler)
 		return false;
 
-	bz_apiURLManager.addJob(URL,handler);
+	if (!bz_apiURLManager)
+		bz_apiURLManager = new BZ_APIURLManager;
+
+	bz_apiURLManager->addJob(URL,handler);
 	return true;
 }
 
@@ -1317,13 +1320,19 @@ BZF_API bool bz_removeURLJob ( const char* URL )
 	if (!URL)
 		return false;
 
-	bz_apiURLManager.removeJob(URL);
+	if (!bz_apiURLManager)
+		bz_apiURLManager = new BZ_APIURLManager;
+
+	bz_apiURLManager->removeJob(URL);
 	return true;
 }
 
 BZF_API bool bz_stopAllURLJobs ( void )
 {
-	bz_apiURLManager.flush();
+	if (!bz_apiURLManager)
+		bz_apiURLManager = new BZ_APIURLManager;
+
+	bz_apiURLManager->flush();
 	return true;
 }
 
