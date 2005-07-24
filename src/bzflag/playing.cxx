@@ -580,6 +580,22 @@ float roamTheta = 0.0f, roamDTheta = 0.0f;
 float roamPhi = 0.0f, roamDPhi = 0.0f;
 float roamZoom = 60.0f, roamDZoom = 0.0f;
 
+
+static Player* getCurrentRabbit()
+{
+  if (player == NULL) {
+    return NULL;
+  }
+  for (int i = 0; i < curMaxPlayers; i++) {
+    Player* p = player[i];
+    if (p && p->isAlive() && (p->getTeam() == RabbitTeam)) {
+      return p;
+    }
+  }
+  return NULL;
+} 
+
+
 void setRoamingLabel()
 {
   if (!player) {
@@ -588,12 +604,26 @@ void setRoamingLabel()
 
   std::string playerString = "";
 
+  // follow the important tank
   if (roamTrackTank == -1) {
-    Player *top = scoreboard->getLeader(&playerString);
-    if (top == NULL)
-      roamTrackWinner = 0;
-    else
-      roamTrackWinner = top->getId();
+    Player* top = NULL;
+    if (world && world->allowRabbit()) {
+      // follow the white rabbit
+      top = getCurrentRabbit();
+      if (top != NULL) {
+        playerString = "Rabbit ";
+        roamTrackWinner = top->getId();
+      }
+    }
+    if (top == NULL) {
+      // find the leader
+      top = scoreboard->getLeader(&playerString);
+      if (top == NULL) {
+        roamTrackWinner = 0;
+      } else {
+        roamTrackWinner = top->getId();
+      }
+    }
   }
 
   Player* tracked;
