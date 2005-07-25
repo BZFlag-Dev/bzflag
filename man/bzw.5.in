@@ -336,31 +336,9 @@ properties:
 .br 
 \fB  name\fR example_material
 .br 
-\fB  texture\fR filename     # set working texture (without PNG extension)
+\fB  resetmat\fR                  # restore default values
 .br 
-\fB  addtexture\fR filename  # add texture (without PNG extension)
-.br 
-\fB  notextures\fR           # specify that no textures are to be used
-.br 
-\fB  notexcolor\fR           # the color is not applied to the texture
-.br 
-\fB  notexalpha\fR           # don't use the texture's alpha channel
-.br 
-  # if a texture is specified, but not found, the default texture
-.br 
-  # will be used. if the default texture is also not available, then
-.br 
-  # the color will be used (untextured)
-.br 
-\fB  noradar\fR              # do not display on radar
-.br 
-\fB  noculling\fR            # do not cull by face winding  (double-sided)
-.br 
-\fB  nosorting\fR            # do not do front-to-back alpha sorting
-.br 
-\fB  texmat\fR \-1                 # texture matrix  (\-1 for none)
-.br 
-\fB  dyncol\fR \-1                 # dynamic color  (\-1 for none)
+\fB  matref\fR material_name      # copy another material's properties
 .br 
 \fB  ambient\fR  0.2 0.2 0.2 1.0  # ambient color
 .br 
@@ -372,17 +350,45 @@ properties:
 .br 
 \fB  emission\fR 0.0 0.0 0.0 1.0  # emission color
 .br 
-\fB  shininess\fR 0.0             # shininess
+\fB  shininess\fR 0.0             # shininess (0.0 - 128.0)
 .br 
-\fB  resetmat\fR                  # restore default values
+\fB  texture\fR filename     # set working texture
 .br 
-\fBend\fR                  # restore default values
+\fB  addtexture\fR filename  # add texture
 .br 
-
-Materials may also be setup using a material reference within the
-object. An example would be:
+\fB  notextures\fR           # specify that no textures are to be used
 .br 
-\fBmatref\fR example_material
+\fB  notexalpha\fR           # don't use the texture's alpha channel
+.br 
+\fB  notexcolor\fR           # the color is not applied to the texture
+.br 
+  # if a texture is specified, but not found, the default texture
+.br 
+  # will be used. if the default texture is also not available, then
+.br 
+  # the color will be used (untextured)
+.br 
+\fB  spheremap\fR            # use spherical texture coordinate mapping
+.br 
+\fB  texmat\fR \-1            # texture matrix  (\-1 for none)
+.br 
+\fB  dyncol\fR \-1            # dynamic color  (\-1 for none)
+.br 
+\fB  noradar\fR              # do not display on radar  (except normal mode)
+.br 
+\fB  noshadow\fR             # do not render shadows
+.br 
+\fB  noculling\fR            # do not cull by face winding  (double-sided)
+.br 
+\fB  nosorting\fR            # do not do front-to-back alpha sorting
+.br 
+\fB  alphathresh 0.0\fR      # alpha thresholding value
+.br 
+\fB  groupAlpha\fR           # sort translucent faces as a group
+.br 
+\fB  occluder\fR             # faces with this material will occlude
+.br 
+\fBend\fR
 .br 
 
 
@@ -420,15 +426,15 @@ object. An example would be:
 .br 
   # The same pattern is used to apply physics drivers.
 .br 
-\fB  inside\fR 5.5 4.5 1.2  # add an inside point       (\fBrepeatable\fR)
-.br 
-\fB  outside\fR 0 0 1000    # add an outside point      (\fBrepeatable\fR)
-.br 
 \fB  vertex\fR 100 200 300  # add a vertex              (\fBrepeatable\fR)
 .br 
 \fB  normal\fR 1.0 0 0      # add a normal              (\fBrepeatable\fR)
 .br 
 \fB  texcoord\fR 0.1 0.75   # add a texture coordinate  (\fBrepeatable\fR)
+.br 
+\fB  inside\fR 5.5 4.5 1.2  # add an inside point       (\fBrepeatable\fR)
+.br 
+\fB  outside\fR 0 0 1000    # add an outside point      (\fBrepeatable\fR)
 .br 
 \fB  shift\fR 0 0 0           # (\fBrepeatable\fR)
 .br 
@@ -444,11 +450,11 @@ object. An example would be:
 .br 
 \fB  noclusters\fR            # render each mesh face individually
 .br 
-                        # (this can be useful for occluders)
-.br 
 \fB  face\fR  # start a face   (\fBrepeatable\fR)
 .br 
-    # faces must be convex polygons
+    # faces must be convex planar polygons
+.br 
+    # the front-face winding is counter-clockwise
 .br 
 \fB    vertices\fR 1 4 0 3 5   # list of vertices (requires at least three)
 .br 
@@ -921,9 +927,17 @@ material :=
 .br 
 	| "noradar"
 .br 
+	| "noshadow"
+.br 
 	| "noculling"
 .br 
 	| "nosorting"
+.br 
+	| "alphathresh value"
+.br 
+	| "groupAlpha"
+.br 
+	| "occluder"
 .br 
 	| "shader" <shader_name>  # NOT IMPLEMENTED
 .br 
