@@ -298,7 +298,10 @@ void JoinMenu::updateTeamTexture()
 
   // load the appropriate texture
   std::string texture;
-  texture = Team::getImagePrefix(getTeam());
+  if (getTeam() == AutomaticTeam)
+    texture = "automatic_";
+  else
+    texture = Team::getImagePrefix(getTeam());
   texture += "icon";
   int id = tm.getTextureID(texture.c_str());
   teamIcon->setTexture(id);
