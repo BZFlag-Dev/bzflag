@@ -1,6 +1,7 @@
 SUBDIRS = l10n fonts
 
 EXTRA_DIST =			\
+	automatic_icon.png	\
 	blue_basetop.png	\
 	blue_basewall.png	\
 	blue_bolt.png		\
