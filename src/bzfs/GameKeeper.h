@@ -89,6 +89,17 @@ public:
     void	   setNeedThisHostbanChecked(bool set);
     bool	   needsHostbanChecked();
 
+    enum LSAState
+      {
+	notRequired,
+	required,
+	requesting,
+	checking,
+	timed,
+	failed,
+	verified
+      } _LSAState;
+
     // players
     PlayerInfo	player;
     // Net Handler

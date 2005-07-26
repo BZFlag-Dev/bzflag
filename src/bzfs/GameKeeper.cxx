@@ -59,6 +59,7 @@ GameKeeper::Player::Player(int _playerIndex,
     std::cerr << "Could not create thread" << std::endl;
   refCount	 = 1;
 #endif
+  _LSAState = notRequired;
 }
 
 GameKeeper::Player::~Player()

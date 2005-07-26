@@ -264,14 +264,13 @@ int cURLManager::fdset(fd_set &read, fd_set &write)
   return max_fd;
 }
 
-int cURLManager::perform()
+bool cURLManager::perform()
 {
   if (!inited)
     setup();
 
   int activeTransfers = 0;
   CURLMcode result;
-  while (true) {
     justCalled = false;
     while (true) {
       result = curl_multi_perform(multiHandle, &activeTransfers);
@@ -299,11 +298,8 @@ int cURLManager::perform()
       if (msgs_in_queue <= 0)
 	break;
     }
-    if (!justCalled)
-      break;
-  }
 
-  return activeTransfers;
+  return justCalled;
 }
 
 void cURLManager::infoComplete(CURLcode result)

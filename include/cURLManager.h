@@ -69,7 +69,7 @@ public:
   virtual void finalization(char *data, unsigned int length, bool good);
 
   static int fdset(fd_set &read, fd_set &write);
-  static int perform();
+  static bool perform();
   void       performWait();
 
 protected:

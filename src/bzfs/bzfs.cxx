@@ -1876,15 +1876,17 @@ static std::string evaluateString(const std::string &raw)
   return eval;
 }
 
+static bool spawnSoon = false;
+
+static void playerAlive(int playerIndex);
+
 static void addPlayer(int playerIndex, GameKeeper::Player *playerData)
 {
   uint16_t rejectCode;
   char     rejectMsg[MessageLen];
   bool     resultEnter = playerData->loadEnterData(rejectCode, rejectMsg);
 
-  if (!resultEnter
-      && ((playerData->player.getToken()[0] == '\0')
-	  || !strcmp(playerData->player.getToken(), "badtoken"))) {
+  if (!resultEnter && playerData->_LSAState != verified) {
     rejectPlayer(playerIndex, rejectCode, rejectMsg);
     return;
   }
@@ -2194,6 +2196,8 @@ static void addPlayer(int playerIndex, GameKeeper::Player *playerData)
 
   worldEventManager.callEvents(bz_ePlayerJoinEvent,joinEventData.teamID,&joinEventData);
   worldEventManager.callEvents(bz_ePlayerJoinEvent,-1,&joinEventData);
+  if (spawnSoon)
+    playerAlive(playerIndex);
 }
 
 
@@ -2674,6 +2678,11 @@ static void playerAlive(int playerIndex)
   if (!playerData)
     return;
 
+  if (!playerData->player.isPlaying()) {
+    spawnSoon = true;
+    return;
+  }
+  spawnSoon = false;
   // ignore multiple MsgAlive; also observer should not send MsgAlive;
   // diagnostic?
   if (playerData->player.isAlive() || playerData->player.isObserver())
@@ -3552,8 +3561,10 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
       const char *token = playerData->player.getToken();
       if (token[0] == '\0') {
 	playerData->setNeedThisHostbanChecked(true);
+        addPlayer(t, playerData);
+      } else if (strlen(playerData->player.getCallSign())) {
+	playerData->_LSAState = GameKeeper::Player::required;
       }
-      addPlayer(t, playerData);
       break;
     }
 
@@ -4273,6 +4284,7 @@ static std::string cmdReset(const std::string&, const CommandManager::ArgList& a
   }
 }
 
+static bool requestAuthentication;
 
 static void doStuffOnPlayer(GameKeeper::Player &playerData)
 {
@@ -4287,6 +4299,21 @@ static void doStuffOnPlayer(GameKeeper::Player &playerData)
       removePlayer(p, "idling");
       return;
     }
+  }
+
+  // Check authorization
+  if (playerData._LSAState == GameKeeper::Player::required) {
+     requestAuthentication = true;
+     playerData._LSAState = GameKeeper::Player::requesting;
+  } else if (playerData._LSAState == GameKeeper::Player::verified) {
+     addPlayer(p, &playerData);
+     playerData._LSAState = GameKeeper::Player::notRequired;
+  } else if (playerData._LSAState == GameKeeper::Player::timed) {
+     addPlayer(p, &playerData);
+     playerData._LSAState = GameKeeper::Player::notRequired;
+  } else if (playerData._LSAState == GameKeeper::Player::failed) {
+     addPlayer(p, &playerData);
+     playerData._LSAState = GameKeeper::Player::notRequired;
   }
 
   // Check host bans
@@ -4738,6 +4765,7 @@ int main(int argc, char **argv)
   GameKeeper::Player::passTCPMutex();
   int i;
   int readySetGo = -1; // match countdown timer
+  bool dontWait = true;
   while (!done) {
 
     // see if the octree needs to be reloaded
@@ -4823,6 +4851,10 @@ int main(int argc, char **argv)
     // see if we are within the plug requested max wait time
     if (waitTime > pluginMaxWait)
       waitTime = pluginMaxWait;
+
+    // if curl has called callback lately, don't wait
+    if (dontWait)
+      waitTime = 0.0f;
 
     /**************
      *  SELECT()  *
@@ -4963,11 +4995,16 @@ int main(int argc, char **argv)
       }
     }
 
+    requestAuthentication = false;
     for (int p = 0; p < curMaxPlayers; p++) {
       GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(p);
       if (!playerData)
 	continue;
       doStuffOnPlayer(*playerData);
+    }
+    if (requestAuthentication) {
+       // Request the listserver authentication
+       listServerLink->queueMessage(ListServerLink::ADD);
     }
     GameKeeper::Player::setAllNeedHostbanChecked(false);
 
@@ -5335,7 +5372,7 @@ int main(int argc, char **argv)
     GameKeeper::Player::clean();
 
     // cURLperform should be called in any case as we could incur in timeout
-    cURLManager::perform();
+    dontWait = cURLManager::perform();
   }
 
 #ifdef _USE_BZ_API
