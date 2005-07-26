@@ -139,6 +139,8 @@ static u32 RecordMaxBytes = DefaultMaxBytes;
 static u32 RecordFileBytes = 0;
 static u32 RecordFilePackets = 0;
 static u32 RecordFilePrevPos = 0;
+static bool allowFileRecords = false;
+
 
 static bool Replaying = false;
 static bool ReplayMode = false;
@@ -419,6 +421,12 @@ bool Record::saveFile(int playerIndex, const char *filename)
     return false;
   }
 
+  if (!allowFileRecords) {
+    sendMessage(ServerPlayer, playerIndex,
+                "This server doesn't allow recording straight to a file");
+    return false;
+  }
+
   if (badFilename(filename)) {
     sendMessage(ServerPlayer, playerIndex,
 		 "Files must be with the local directory");
@@ -613,6 +621,19 @@ static bool routePacket(u16 code, int len, const void * data, u16 mode)
   }
 
   return true;
+}
+
+
+void Record::setAllowFileRecs(bool value)
+{
+  allowFileRecords = value;
+  return;
+}
+
+
+bool Record::getAllowFileRecs()
+{
+  return allowFileRecords;
 }
 
 

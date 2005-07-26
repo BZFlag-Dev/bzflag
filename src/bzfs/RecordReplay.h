@@ -28,7 +28,7 @@ enum ReplayPacketMode {
 namespace Record {
   extern bool init ();
   extern bool kill ();
-
+  
   extern bool setDirectory (const char *dirname);
   extern const char* getDirectory ();
 
@@ -41,6 +41,9 @@ namespace Record {
   extern bool sendStats (int playerIndex);
 
   extern bool enabled ();
+
+  extern bool getAllowFileRecs();
+  extern void setAllowFileRecs(bool value);
 
   extern bool addPacket (uint16_t code, int len, const void * data,
 			 uint16_t mode = RealPacket);
