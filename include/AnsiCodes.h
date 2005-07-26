@@ -40,34 +40,42 @@
 #define ANSI_STR_FG_CYAN	"\033[36m"
 #define ANSI_STR_FG_WHITE	"\033[37m"
 
+#define ANSI_STR_FG_ORANGE	"\033[130m"	// orange (custom; not defined in ISO 6429)
+
 // Color definitions
 typedef enum {
-  // the first 5 codes line up with the TeamColor enum from global.h
+  // the first 7 codes line up with the TeamColor enum from global.h
   RogueColor		= 0,	// team (yellow)
   RedColor		= 1,	// team
   GreenColor		= 2,	// team
   BlueColor		= 3,	// team
   PurpleColor		= 4,	// team
+  WhiteColor		= 5,	// observer
+  GreyColor		= 6,	// rabbit
 
-  WhiteColor		= 5,
-  GreyColor		= 6,
   CyanColor		= 7,
+  OrangeColor		= 8,
 
-  ResetColor		= 8,
-  FinalResetColor       = 11,
-  BrightColor		= 12,
-  DimColor		= 13,
-  PulsatingColor	= 9,
-  NonPulsatingColor	= 14,
-  UnderlineColor	= 10,
-  NonUnderlineColor	= 15,
+  LastColor		= 8,	// last of the actual colors, the rest are modifiers
 
-  YellowColor		= 0,
+  ResetColor		= 9,
+  FinalResetColor       = 12,
+  BrightColor		= 13,
+  DimColor		= 14,
+  PulsatingColor	= 10,
+  NonPulsatingColor	= 15,
+  UnderlineColor	= 11,
+  NonUnderlineColor	= 16,
+
+  LastCode		= 16,	// last of the codes
+
+  // aliases
+  YellowColor		= 0,	// aka RogueColor
   DefaultColor		= 6	// default to grey
 } ColorCodes;
 
 // These enum values have to line up with those above
-static std::string ColorStrings[16] = {
+static const std::string ColorStrings[17] = {
   ANSI_STR_FG_YELLOW,   // 0  Rogue     (yellow)
   ANSI_STR_FG_RED,      // 1  Red
   ANSI_STR_FG_GREEN,    // 2  Green
@@ -76,14 +84,15 @@ static std::string ColorStrings[16] = {
   ANSI_STR_FG_WHITE,    // 5  White
   ANSI_STR_FG_BLACK,    // 6  Grey      (bright black is grey)
   ANSI_STR_FG_CYAN,     // 7  Cyan
-  ANSI_STR_RESET,       // 8  Reset
-  ANSI_STR_PULSATING,   // 9  Pulsating
-  ANSI_STR_UNDERLINE,   // 10 Underline
-  ANSI_STR_RESET_FINAL, // 11 Really reset (no brightness added)
-  ANSI_STR_BRIGHT,	// 12 Bright mode
-  ANSI_STR_DIM,	// 13 Dim mode
-  ANSI_STR_NO_PULSATE,  // 14 No Pulsating
-  ANSI_STR_NO_UNDERLINE // 15 No Underlining
+  ANSI_STR_FG_ORANGE,	// 8  Orange	(nonstandard)
+  ANSI_STR_RESET,       // 9  Reset
+  ANSI_STR_PULSATING,   // 10 Pulsating
+  ANSI_STR_UNDERLINE,   // 11 Underline
+  ANSI_STR_RESET_FINAL, // 12 Really reset (no brightness added)
+  ANSI_STR_BRIGHT,	// 13 Bright mode
+  ANSI_STR_DIM,		// 14 Dim mode
+  ANSI_STR_NO_PULSATE,  // 15 No Pulsating
+  ANSI_STR_NO_UNDERLINE // 16 No Underlining
 };
 
 // strip ANSI codes from a string

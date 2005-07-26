@@ -41,7 +41,7 @@ FontManager* Singleton<FontManager>::_instance = (FontManager*)0;
 
 
 // ANSI code GLFloat equivalents - these should line up with the enums in AnsiCodes.h
-static GLfloat BrightColors[8][3] = {
+static GLfloat BrightColors[9][3] = {
   {1.0f,1.0f,0.0f}, // yellow
   {1.0f,0.0f,0.0f}, // red
   {0.0f,1.0f,0.0f}, // green
@@ -49,7 +49,8 @@ static GLfloat BrightColors[8][3] = {
   {1.0f,0.0f,1.0f}, // purple
   {1.0f,1.0f,1.0f}, // white
   {0.5f,0.5f,0.5f}, // grey
-  {0.0f,1.0f,1.0f}  // cyan
+  {0.0f,1.0f,1.0f}, // cyan
+  {1.0f,0.5f,0.0f}  // orange (nonstandard)
 };
 
 GLfloat FontManager::underlineColor[4];
@@ -355,7 +356,7 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
       tookCareOfANSICode = false;
       std::string tmpText = text.substr(endSend, (text.find('m', endSend) - endSend) + 1);
       // colors
-      for (int i = 0; i < 8; i++) {
+      for (int i = 0; i <= LastColor; i++) {
 	if (tmpText == ColorStrings[i]) {
 	  if (bright) {
 	    color[0] = BrightColors[i][0];

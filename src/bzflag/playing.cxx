@@ -636,8 +636,12 @@ void setRoamingLabel()
   if (tracked) {
     if (BZDBCache::colorful) {
       int color = tracked->getTeam();
-      if (color < 0 || color > 4) {
-	color = 5;
+      if (World::getWorld()->allowRabbit() && (color == RogueTeam)) {
+	// hunters are orange (hack)
+	color = OrangeColor;
+      } else if (color < 0 || color > 4) {
+	// non-teamed, rabbit are white (same as observer)
+	color = WhiteColor;
       }
       playerString += ColorStrings[color];
     }
@@ -1131,12 +1135,18 @@ void		addMessage(const Player *_player, const std::string& msg,
 	  fullMessage += ColorStrings[UnderlineColor];
       }
       const PlayerId pid = _player->getId();
-      if ((pid < 200) || (pid == ServerPlayer)) {
+      if (pid < 200) {
         int color = _player->getTeam();
-        if (color < 0 || color > 4) {
-          color = 5;
-        }
+	if (World::getWorld()->allowRabbit() && (color == RogueTeam)) {
+	  // hunters are orange (hack)
+	  color = OrangeColor;
+	} else if (color < 0 || color > 4) {
+	  // non-teamed, rabbit are white (same as observer)
+	  color = WhiteColor;
+	}
         fullMessage += ColorStrings[color];
+      } else if (pid == ServerPlayer) {
+	fullMessage += ColorStrings[YellowColor];
       } else {
         fullMessage += ColorStrings[CyanColor]; //replay observers
       }
@@ -1405,8 +1415,12 @@ static void printIpInfo (const Player *_player, const Address& addr,
   std::string colorStr;
   if (_player->getId() < 200) {
     int color = _player->getTeam();
-    if ((color < 0) || (color > 4)) {
-      color = 5;
+    if (World::getWorld()->allowRabbit() && (color == RogueTeam)) {
+      // hunters are orange (hack)
+      color = OrangeColor;
+    } else if (color < 0 || color > 4) {
+      // non-teamed, rabbit are white (same as observer)
+      color = WhiteColor;
     }
     colorStr = ColorStrings[color];
   } else {
@@ -2211,7 +2225,12 @@ static void		handleServerMessage(bool human, uint16_t code,
 	    else if (BZDB.get("killerhighlight") == "2")
 	      playerStr += ColorStrings[UnderlineColor];
 	  }
-	  playerStr += ColorStrings[killerPlayer->getTeam()];
+	  int color = killerPlayer->getTeam();
+	  if (World::getWorld()->allowRabbit() && (color == RogueTeam)) {
+	    // hunters are orange (hack)
+	    color = OrangeColor;
+	  }
+	  playerStr += ColorStrings[color];
 	  playerStr += killerPlayer->getCallSign();
 
 	  if (victimPlayer == myTank)
@@ -2667,11 +2686,15 @@ static void		handleServerMessage(bool human, uint16_t code,
           colorStr += ColorStrings[RogueTeam];
         } else {
           const PlayerId pid = srcPlayer->getId();
-          if ((pid < 200) || (pid == ServerPlayer)) {
-            if (srcPlayer && srcPlayer->getTeam() != NoTeam)
+          if (pid < 200) {
+	    if (World::getWorld()->allowRabbit() && srcPlayer && (srcPlayer->getTeam() == RogueTeam))
+	      colorStr += ColorStrings[OrangeColor]; // hunters are orange (hack)
+	    else if (srcPlayer && srcPlayer->getTeam() != NoTeam)
               colorStr += ColorStrings[srcPlayer->getTeam()];
             else
               colorStr += ColorStrings[RogueTeam];
+	  } else if (pid == ServerPlayer) {
+	    colorStr += ColorStrings[YellowColor];
           } else {
             colorStr += ColorStrings[CyanColor]; // replay observers
           }
@@ -2778,6 +2801,8 @@ static void		handleServerMessage(bool human, uint16_t code,
 	  oldcolor = ColorStrings[RogueTeam];
 	else if (srcPlayer->getTeam() == ObserverTeam)
 	  oldcolor = ColorStrings[CyanColor];
+	else if (World::getWorld()->allowRabbit() && (srcPlayer->getTeam() == RogueTeam))
+	  oldcolor = ColorStrings[OrangeColor]; // hunters are orange (hack)
 	else
 	  oldcolor = ColorStrings[srcPlayer->getTeam()];
 	if (fromServer)

@@ -456,13 +456,20 @@ void			ScoreboardRenderer::drawPlayerScore(const Player* player,
 
 
   // team color
+  bool rabbitMode = World::getWorld()->allowRabbit();
   TeamColor teamIndex = player->getTeam();
   if (teamIndex < RogueTeam) {
     teamIndex = RogueTeam;
   }
   std::string teamColor;
   if (player->getId() < 200) {
-    teamColor = ColorStrings[teamIndex];
+    if (rabbitMode && (teamIndex == RogueTeam)) {
+      // hunters get orange (hack)
+      teamColor = ColorStrings[OrangeColor];
+    } else {
+      // ordinary players
+      teamColor = ColorStrings[teamIndex];
+    }
   } else {
     teamColor = ColorStrings[CyanColor]; // replay observers
   }
@@ -546,7 +553,6 @@ void			ScoreboardRenderer::drawPlayerScore(const Player* player,
 
   FontManager &fm = FontManager::instance();
   fm.setDimFactor(dimFactor);
-  bool rabbitMode = World::getWorld()->allowRabbit();
 
   // draw
   if (player->getTeam() != ObserverTeam) {
