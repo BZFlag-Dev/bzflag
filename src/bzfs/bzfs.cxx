@@ -3559,7 +3559,7 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
 	     playerData->player.getToken());
 
       const char *token = playerData->player.getToken();
-      if (token[0] == '\0') {
+      if (token[0] == '\0' || !clOptions->publicizeServer) {
 	playerData->setNeedThisHostbanChecked(true);
         addPlayer(t, playerData);
       } else if (strlen(playerData->player.getCallSign())) {
