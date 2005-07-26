@@ -1886,7 +1886,7 @@ static void addPlayer(int playerIndex, GameKeeper::Player *playerData)
   char     rejectMsg[MessageLen];
   bool     resultEnter = playerData->loadEnterData(rejectCode, rejectMsg);
 
-  if (!resultEnter && playerData->_LSAState != verified) {
+  if (!resultEnter && playerData->_LSAState != GameKeeper::Player::verified) {
     rejectPlayer(playerIndex, rejectCode, rejectMsg);
     return;
   }
