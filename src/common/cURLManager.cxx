@@ -43,7 +43,7 @@ cURLManager::cURLManager()
     return;
   }
 
-  if (debugLevel >= 2) {
+  if (debugLevel >= 4) {
     result = curl_easy_setopt(easyHandle, CURLOPT_VERBOSE, (long)1);
     if (result != CURLE_OK) {
       DEBUG1("CURLOPT_VERBOSE error: %d\n", result);
