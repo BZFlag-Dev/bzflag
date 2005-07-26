@@ -67,6 +67,7 @@ bzfs \- BZFlag game server
 [\fB\+r\fR]
 [\fB\-rabbit [\fBscore\fR|\fBkiller\fR|\fBrandom\fR]]
 [\fB\-recbuf \fIsize\fR]
+[\fB\-recbufonly\fR]
 [\fB\-recdir \fIdirectory\fR]
 [\fB\-replay\fR]
 [\fB\-reportfile \fIfilename\fR]
@@ -373,6 +374,9 @@ algorithm randomly picks a new rabbit without regard to score.  (The
 .TP 
 .B \-recbuf \fIsize\fR
 Start with the recording buffer active, with the specified size (in megabytes).
+.TP 
+.B \-recbufonly
+Disable recording straight to files
 .TP 
 .B \-recdir \fIdirectory\fR
 Specify the directory for record and replay files.

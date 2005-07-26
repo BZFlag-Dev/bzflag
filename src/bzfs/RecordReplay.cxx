@@ -423,7 +423,7 @@ bool Record::saveFile(int playerIndex, const char *filename)
 
   if (!allowFileRecords) {
     sendMessage(ServerPlayer, playerIndex,
-                "This server doesn't allow recording straight to a file");
+                "This server does not allow recording straight to a file");
     return false;
   }
 
