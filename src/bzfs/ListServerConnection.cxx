@@ -130,7 +130,7 @@ void ListServerLink::finalization(char *data, unsigned int length, bool good)
 	while (*group && (*group != ':')) group++;
 	while (*group && (*group == ':')) *group++ = 0;
 	int playerIndex;
-	GameKeeper::Player *playerData;
+	GameKeeper::Player *playerData = NULL;
 	for (playerIndex = 0; playerIndex < curMaxPlayers; playerIndex++) {
 	  playerData = GameKeeper::Player::getPlayerByIndex(playerIndex);
 	  if (!playerData)
@@ -183,7 +183,7 @@ void ListServerLink::finalization(char *data, unsigned int length, bool good)
 	char *callsign;
 	callsign = base + strlen(tokBadIdentifier);
 	int playerIndex;
-	GameKeeper::Player *playerData;
+	GameKeeper::Player *playerData = NULL;
 	for (playerIndex = 0; playerIndex < curMaxPlayers; playerIndex++) {
 	  playerData = GameKeeper::Player::getPlayerByIndex(playerIndex);
 	  if (!playerData)
