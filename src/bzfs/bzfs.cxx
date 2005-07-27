@@ -2084,6 +2084,7 @@ static void addPlayer(int playerIndex, GameKeeper::Player *playerData)
 
   // send IP update to everyone with PLAYERLIST permission
   sendIPUpdate(-1, playerIndex);
+  sendIPUpdate(playerIndex, -1);
 
   // send rabbit information
   if (clOptions->gameStyle & int(RabbitChaseGameStyle)) {
