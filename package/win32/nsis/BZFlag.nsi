@@ -7,7 +7,7 @@
 ;
 
 !define VER_MAJOR 2.0
-!define VER_MINOR .3b11
+!define VER_MINOR .3b12
 
 ; Main Installer Options
 Name "BZFlag"
