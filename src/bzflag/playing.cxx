@@ -2893,6 +2893,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 
 	  int playerIndex = lookupPlayerIndex(playerId);
 	  Player *_player = getPlayerByIndex(playerIndex);
+	  if (!_player) continue;
           printIpInfo(_player, addr, "(join)");
           _player->setIpAddress(addr); // save for the signoff message
 	} // end for loop
