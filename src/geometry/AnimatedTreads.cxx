@@ -24,7 +24,6 @@ using namespace TankGeometryUtils;
 
 static int treadStyle = TankGeometryUtils::Covered;
 
-
 // setup in setTreadStyle()
 static int treadCount;
 static float fullLength;
@@ -44,6 +43,46 @@ static float wheelTexCoordLen;
 static float casingWidth;
 static float wheelInsideTexRad;
 static float wheelOutsideTexRad;
+
+
+void TankGeometryUtils::setTreadStyle(int style)
+{
+  if (style == TankGeometryUtils::Exposed) {
+    fullLength = 6.0f;
+    treadHeight = 1.2f;
+    treadInside = 0.875f;
+    treadOutside = 1.4f;
+    treadStyle = TankGeometryUtils::Exposed;
+  } else {
+    fullLength = 5.4f;
+    treadHeight = 1.1f;
+    treadInside = 0.877f;
+    treadOutside = 1.38f;
+    treadStyle = TankGeometryUtils::Covered;
+  }
+  
+  treadCount = 1;
+  
+  treadThickness = 0.15f;
+  treadWidth = treadOutside - treadInside;
+  treadRadius = 0.5f * treadHeight;
+  treadYCenter = treadInside + (0.5f * treadWidth);
+  treadLength = (float)(((fullLength - treadHeight) * 2.0) +
+                                   (M_PI * treadHeight));
+  treadTexCoordLen = (float)treadCount;
+
+  wheelRadius = treadRadius - (0.7f * treadThickness);
+  wheelWidth = treadWidth * 0.9f;
+  wheelSpacing = (fullLength - treadHeight) / 3.0f;
+  wheelTexCoordLen = 1.0f;
+
+  casingWidth = treadWidth * 0.6f;
+
+  wheelInsideTexRad = 0.4f;
+  wheelOutsideTexRad = 0.5f;
+
+  return;  
+}
 
 
 float TankGeometryUtils::getWheelScale()
@@ -425,45 +464,6 @@ static void buildWheel(const float pos[3], float angle, int divisions)
   return;
 }
 
-
-void TankGeometryUtils::setTreadStyle(int style)
-{
-  if (style == TankGeometryUtils::Covered) {
-    fullLength = 6.0f;
-    treadHeight = 1.2f;
-    treadInside = 0.875f;
-    treadOutside = 1.4f;
-    treadStyle = TankGeometryUtils::Covered;
-  } else {
-    fullLength = 5.4f;
-    treadHeight = 1.1f;
-    treadInside = 0.877f;
-    treadOutside = 1.38f;
-    treadStyle = TankGeometryUtils::Exposed;
-  }
-  
-  treadCount = 1;
-  
-  treadThickness = 0.15f;
-  treadWidth = treadOutside - treadInside;
-  treadRadius = 0.5f * treadHeight;
-  treadYCenter = treadInside + (0.5f * treadWidth);
-  treadLength = (float)(((fullLength - treadHeight) * 2.0) +
-                                   (M_PI * treadHeight));
-  treadTexCoordLen = (float)treadCount;
-
-  wheelRadius = treadRadius - (0.7f * treadThickness);
-  wheelWidth = treadWidth * 0.9f;
-  wheelSpacing = (fullLength - treadHeight) / 3.0f;
-  wheelTexCoordLen = 1.0f;
-
-  casingWidth = treadWidth * 0.6f;
-
-  wheelInsideTexRad = 0.4f;
-  wheelOutsideTexRad = 0.5f;
-
-  return;  
-}
 
 void TankGeometryUtils::buildHighLCasingAnim()
 {
