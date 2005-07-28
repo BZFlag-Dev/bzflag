@@ -219,7 +219,7 @@ static RRtime getRRtime();
 static void *nboPackRRtime(void *buf, RRtime value);
 static void *nboUnpackRRtime(void *buf, RRtime& value);
 
-static bool checkReplayMode (int playerIndex);
+static bool checkReplayMode(int playerIndex);
 
 static const char *msgString(u16 code);
 
@@ -244,7 +244,7 @@ extern void sendMessage(int playerIndex, PlayerId targetPlayer,
 			const char *message);
 
 
-/****************************************************************************/
+/******************************************************************************/
 
 // Record Functions
 
@@ -659,9 +659,21 @@ void Record::sendHelp(int playerIndex)
   return;
 }
 
-/****************************************************************************/
+/******************************************************************************/
 
 // Replay Functions
+
+static bool checkReplayMode(int playerIndex)
+{
+  if (!ReplayMode) {
+    sendMessage(ServerPlayer, playerIndex,
+                "Server is not in replay mode."
+                "Restart server with '-replay' option to enable playback.");
+    return false;
+  }
+  return true;
+}
+
 
 static bool replayReset()
 {
@@ -732,8 +744,9 @@ static bool preloadVariables()
 
 bool Replay::loadFile(int playerIndex, const char *filename)
 {
-  if (!checkReplayMode(playerIndex))
+  if (!checkReplayMode(playerIndex)) {
     return false;
+  }
   
   std::string indexname;
   if (filename[0] == '#') {
@@ -967,8 +980,9 @@ bool Replay::sendFileList(int playerIndex)
 
 bool Replay::play(int playerIndex)
 {
-  if (!checkReplayMode(playerIndex))
+  if (!checkReplayMode(playerIndex)) {
     return false;
+  }
 
   if (ReplayFile == NULL) {
     sendMessage(ServerPlayer, playerIndex, "No replay file loaded");
@@ -998,8 +1012,9 @@ bool Replay::play(int playerIndex)
 
 bool Replay::loop(int playerIndex)
 {
-  if (!checkReplayMode(playerIndex))
+  if (!checkReplayMode(playerIndex)) {
     return false;
+  }
 
   if (ReplayFile == NULL) {
     sendMessage(ServerPlayer, playerIndex, "No replay file loaded");
@@ -1029,8 +1044,9 @@ bool Replay::loop(int playerIndex)
 
 bool Replay::sendStats(int playerIndex)
 {
-  if (!checkReplayMode(playerIndex))
+  if (!checkReplayMode(playerIndex)) {
     return false;
+  }
 
   if (ReplayFile == NULL) {
     sendMessage(ServerPlayer, playerIndex, "No replay file loaded");
@@ -1058,8 +1074,9 @@ bool Replay::sendStats(int playerIndex)
 
 bool Replay::skip(int playerIndex, int seconds)
 {
-  if (!checkReplayMode(playerIndex))
+  if (!checkReplayMode(playerIndex)) {
     return false;
+  }
 
   if ((ReplayFile == NULL) || (ReplayPos == NULL)) {
     sendMessage(ServerPlayer, playerIndex, "No replay file loaded");
@@ -1424,7 +1441,7 @@ static RRpacket *prevStatePacket()
 }
 
 
-/****************************************************************************/
+/******************************************************************************/
 
 // State Management Functions
 
@@ -1692,7 +1709,7 @@ static bool resetStates()
 }
 
 
-/****************************************************************************/
+/******************************************************************************/
 
 // File Functions
 
@@ -2232,7 +2249,7 @@ static bool packFlagTypes(char *flags, u32 *flagsSize)
 }
 
 
-/****************************************************************************/
+/******************************************************************************/
 
 // Buffer Functions
 
@@ -2373,7 +2390,7 @@ static void freeBuffer(RRbuffer *b)
 }
 
 
-/****************************************************************************/
+/******************************************************************************/
 
 // Timing Functions
 
@@ -2426,17 +2443,7 @@ static void *nboUnpackRRtime(void *buf, RRtime& value)
 }
 
 
-static bool checkReplayMode (int playerIndex)
-{
-  if (!ReplayMode) {
-    sendMessage(ServerPlayer, playerIndex, "Server is not in replay mode. Restart server with '-replay' option to enable playback.");
-    return false;
-  }
-  return true;
-}
-
-
-/****************************************************************************/
+/******************************************************************************/
 
 static const char *msgString(u16 code)
 {
@@ -2498,7 +2505,7 @@ static const char *msgString(u16 code)
 }
 
 
-/****************************************************************************/
+/******************************************************************************/
 
 // Local Variables: ***
 // mode: C++ ***
