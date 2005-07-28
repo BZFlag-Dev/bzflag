@@ -40,6 +40,7 @@ class AresHandler {
   ResolutionStatus getHostAddress(struct in_addr *clientAddr);
   void        setFd(fd_set *read_set, fd_set *write_set, int &maxFile);
   void        process(fd_set *read_set, fd_set *write_set);
+  ResolutionStatus getStatus() {return status;};
  private:
   static void staticCallback(void *arg, int statusCallback,
 			     struct hostent *hostent);
