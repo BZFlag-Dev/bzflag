@@ -219,6 +219,8 @@ static RRtime getRRtime();
 static void *nboPackRRtime(void *buf, RRtime value);
 static void *nboUnpackRRtime(void *buf, RRtime& value);
 
+static bool checkReplayMode (int playerIndex);
+
 static const char *msgString(u16 code);
 
 
@@ -730,10 +732,8 @@ static bool preloadVariables()
 
 bool Replay::loadFile(int playerIndex, const char *filename)
 {
-  if (!ReplayMode) {
-    sendMessage(ServerPlayer, playerIndex, "Server is not in replay mode");
+  if (!checkReplayMode(playerIndex))
     return false;
-  }
   
   std::string indexname;
   if (filename[0] == '#') {
@@ -967,10 +967,8 @@ bool Replay::sendFileList(int playerIndex)
 
 bool Replay::play(int playerIndex)
 {
-  if (!ReplayMode) {
-    sendMessage(ServerPlayer, playerIndex, "Server is not in replay mode");
+  if (!checkReplayMode(playerIndex))
     return false;
-  }
 
   if (ReplayFile == NULL) {
     sendMessage(ServerPlayer, playerIndex, "No replay file loaded");
@@ -1000,10 +998,8 @@ bool Replay::play(int playerIndex)
 
 bool Replay::loop(int playerIndex)
 {
-  if (!ReplayMode) {
-    sendMessage(ServerPlayer, playerIndex, "Server is not in replay mode");
+  if (!checkReplayMode(playerIndex))
     return false;
-  }
 
   if (ReplayFile == NULL) {
     sendMessage(ServerPlayer, playerIndex, "No replay file loaded");
@@ -1033,10 +1029,8 @@ bool Replay::loop(int playerIndex)
 
 bool Replay::sendStats(int playerIndex)
 {
-  if (!ReplayMode) {
-    sendMessage(ServerPlayer, playerIndex, "Server is not in replay mode");
+  if (!checkReplayMode(playerIndex))
     return false;
-  }
 
   if (ReplayFile == NULL) {
     sendMessage(ServerPlayer, playerIndex, "No replay file loaded");
@@ -1064,10 +1058,8 @@ bool Replay::sendStats(int playerIndex)
 
 bool Replay::skip(int playerIndex, int seconds)
 {
-  if (!ReplayMode) {
-    sendMessage(ServerPlayer, playerIndex, "Server is not in replay mode");
+  if (!checkReplayMode(playerIndex))
     return false;
-  }
 
   if ((ReplayFile == NULL) || (ReplayPos == NULL)) {
     sendMessage(ServerPlayer, playerIndex, "No replay file loaded");
@@ -2431,6 +2423,16 @@ static void *nboUnpackRRtime(void *buf, RRtime& value)
   buf = nboUnpackUInt(buf, lsb);
   value = ((RRtime)msb << 32) + (RRtime)lsb;
   return buf;
+}
+
+
+static bool checkReplayMode (int playerIndex)
+{
+  if (!ReplayMode) {
+    sendMessage(ServerPlayer, playerIndex, "Server is not in replay mode. Restart server with '-replay' option to enable playback.");
+    return false;
+  }
+  return true;
 }
 
 
