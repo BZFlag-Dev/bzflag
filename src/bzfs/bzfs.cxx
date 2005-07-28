@@ -4343,7 +4343,7 @@ static void doStuffOnPlayer(GameKeeper::Player &playerData)
 	if (hostInfo.fromMaster)
 	  reason += " from the master server";
 
-	removePlayer(p, reason.c_str());
+	rejectPlayer(p, RejectHostBanned, reason.c_str());
 	return;
       }
     }
