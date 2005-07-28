@@ -160,6 +160,7 @@ static DefaultDBItem	defaultDBItems[] = {
   { "userMirror",		"1",			true,	StateDatabase::ReadWrite,	NULL },
   { "showTreads",		"0",			true,	StateDatabase::ReadWrite,	NULL },
   { "animatedTreads",		"1",			true,	StateDatabase::ReadWrite,	NULL },
+  { "treadStyle",		"1",			true,	StateDatabase::ReadWrite,	NULL },
   { "userTrackFade",		"1.0",			true,	StateDatabase::ReadWrite,	NULL },
   { "trackMarkCulling",		"3",			true,	StateDatabase::ReadWrite,	NULL },
   { "scrollPages",		"20",			true,	StateDatabase::ReadWrite,	NULL },
@@ -173,6 +174,7 @@ static DefaultDBItem	defaultDBItems[] = {
   { "maxCacheMB",		"32",			true,	StateDatabase::ReadWrite,	NULL },
   { "doDownloads",		"1",			true,	StateDatabase::ReadWrite,	NULL },
   { "updateDownloads",		"0",			true,	StateDatabase::ReadWrite,	NULL },
+  { "useDrawInfo",		"1",			true,	StateDatabase::ReadWrite,	NULL },
 
   // default texture names
   { "stdGroundTexture",		"std_ground",		true,	StateDatabase::ReadWrite,	NULL },
