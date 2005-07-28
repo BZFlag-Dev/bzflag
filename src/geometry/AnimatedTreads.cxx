@@ -472,7 +472,7 @@ void TankGeometryUtils::buildHighLCasingAnim()
   if (treadStyle == TankGeometryUtils::Covered) {
     glShadeModel(GL_FLAT);
     {
-      //draw the left tread casing
+      //draw the left tread cover
       glBegin(GL_TRIANGLE_STRIP);
         doNormal3f(0.984696f, 0.000000f, 0.174282f);
         doTexCoord2f(-0.193f, 0.727f);
@@ -645,7 +645,6 @@ void TankGeometryUtils::buildHighLCasingAnim()
         doTexCoord2f(0.009f, 0.356f);
         doVertex3f(3.000f, 1.400f, 0.770f);
       glEnd();
-
     }
     glShadeModel(GL_SMOOTH);
   }
@@ -659,7 +658,7 @@ void TankGeometryUtils::buildHighRCasingAnim()
   if (treadStyle == TankGeometryUtils::Covered) {
     glShadeModel(GL_FLAT);
     {
-      //draw the left tread casing
+      //draw the right tread cover
       glBegin(GL_TRIANGLE_STRIP); 
         doNormal3f(0.984696f, 0.000000f, 0.174282f);
         doTexCoord2f(-0.295f, 0.041f);
@@ -832,7 +831,6 @@ void TankGeometryUtils::buildHighRCasingAnim()
         doTexCoord2f(0.045f, -0.208f);
         doVertex3f(3.000f, -0.875f, 0.770f);
       glEnd();
-
     }
     glShadeModel(GL_SMOOTH);
   }
