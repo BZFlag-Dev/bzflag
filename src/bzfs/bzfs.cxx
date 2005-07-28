@@ -1921,6 +1921,7 @@ static void addPlayer(int playerIndex, GameKeeper::Player *playerData)
   }
 
   // check against ban lists
+  playerData->setNeedThisHostbanChecked(true);
   bool playerIsAntiBanned = playerData->accessInfo.hasPerm(PlayerAccessInfo::antiban);
   in_addr playerIP = playerData->netHandler->getIPAddress();
   BanInfo info(playerIP);
