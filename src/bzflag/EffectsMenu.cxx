@@ -93,7 +93,8 @@ EffectsMenu::EffectsMenu()
   option->setCallback(callback, (void*)"a");
   options = &option->getList();
   options->push_back(std::string("Off"));
-  options->push_back(std::string("On"));
+  options->push_back(std::string("Covered"));
+  options->push_back(std::string("Exposed"));
   option->update();
   listHUD.push_back(option);
 
@@ -309,7 +310,14 @@ void EffectsMenu::resize(int _width, int _height)
 					    * 10.0f) + 0.5f));
   ((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("userMirror") ? 1 : 0);
   ((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("showTreads") ? 1 : 0);
-  ((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("animatedTreads") ? 1 : 0);
+  int treadIndex = 0;
+  if (BZDB.isTrue("animatedTreads")) {
+    treadIndex++;
+    if (BZDB.isTrue("treadStyle")) {
+      treadIndex++;
+    }
+  }
+  ((HUDuiList*)listHUD[i++])->setIndex(treadIndex);
   ((HUDuiList*)listHUD[i++])->setIndex(int((TrackMarks::getUserFade() * 10.0f)
 					   + 0.5f));
   TrackMarks::AirCullStyle style = TrackMarks::getAirCulling();
@@ -354,7 +362,25 @@ void EffectsMenu::callback(HUDuiControl* w, void* data)
       break;
     }
     case 'a': {
-      BZDB.set("animatedTreads", list->getIndex() ? "1" : "0");
+      switch (list->getIndex()) {
+        case 1:
+          BZDB.set("animatedTreads", "1");
+          BZDB.set("treadStyle", "0");
+          break;
+        case 2:
+          BZDB.set("animatedTreads", "1");
+          BZDB.set("treadStyle", "1");
+          break;
+        default:
+          BZDB.set("animatedTreads", "0");
+          BZDB.set("treadStyle", "0");
+          break;
+      }
+      RENDERER.setRebuildTanks();
+      break;
+    }
+    case 'x': {
+      BZDB.set("treadStyle", list->getIndex() ? "1" : "0");
       RENDERER.setRebuildTanks();
       break;
     }

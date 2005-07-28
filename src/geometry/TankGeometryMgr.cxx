@@ -162,6 +162,9 @@ void TankGeometryMgr::deleteLists()
 
 void TankGeometryMgr::buildLists()
 {
+  // setup the tread style
+  setTreadStyle(BZDB.evalInt("treadStyle"));
+  
   // setup the scale factors
   setupScales();
   currentScaleFactor = scaleFactors[Normal];

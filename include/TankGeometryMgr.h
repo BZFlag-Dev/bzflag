@@ -90,13 +90,19 @@ namespace TankGeometryMgr {
 
 namespace TankGeometryUtils {
 
+  enum TreadStyle {
+    Covered = 0,
+    Exposed = 1
+  };
+  void setTreadStyle(int style);
+
   // degrees / meter
   float getWheelScale();
   // texcoords / meter
   float getTreadScale();
   // texcoords
   float getTreadTexLen();
-
+  
   // help to scale vertices and normals
   void doVertex3f(GLfloat x, GLfloat y, GLfloat z);
   void doNormal3f(GLfloat x, GLfloat y, GLfloat z);
