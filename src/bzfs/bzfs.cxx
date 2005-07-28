@@ -3560,7 +3560,6 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
 	     playerData->player.getToken());
 
       const char *token = playerData->player.getToken();
-      playerData->setNeedThisHostbanChecked(true);
       if (token[0] == '\0' || !clOptions->publicizeServer) {
 	playerData->_LSAState = GameKeeper::Player::notRequired;
       } else if (strlen(playerData->player.getCallSign())) {

@@ -176,7 +176,6 @@ void ListServerLink::finalization(char *data, unsigned int length, bool good)
 			"to deregister it so that you may use your global "
 			"callsign.");
 	  }
-	  playerData->setNeedThisHostbanChecked(true);
 	  playerData->player.clearToken();
 	}
       } else if (!strncmp(base, tokBadIdentifier, strlen(tokBadIdentifier))) {
@@ -199,7 +198,6 @@ void ListServerLink::finalization(char *data, unsigned int length, bool good)
 	  playerData->_LSAState = GameKeeper::Player::failed;
 	  sendMessage(ServerPlayer, playerIndex,
 		      "Global login rejected, bad token.");
-	  playerData->setNeedThisHostbanChecked(true);
 	  playerData->player.clearToken();
 	}
       }
