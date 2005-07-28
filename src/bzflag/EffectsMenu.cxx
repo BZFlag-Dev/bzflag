@@ -379,11 +379,6 @@ void EffectsMenu::callback(HUDuiControl* w, void* data)
       RENDERER.setRebuildTanks();
       break;
     }
-    case 'x': {
-      BZDB.set("treadStyle", list->getIndex() ? "1" : "0");
-      RENDERER.setRebuildTanks();
-      break;
-    }
     case 't': {
       int fade = list->getIndex();
       TrackMarks::setUserFade(float(fade) / 10.0f);
