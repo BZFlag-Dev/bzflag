@@ -3560,9 +3560,9 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
 	     playerData->player.getToken());
 
       const char *token = playerData->player.getToken();
+      playerData->setNeedThisHostbanChecked(true);
       if (token[0] == '\0' || !clOptions->publicizeServer) {
-	playerData->setNeedThisHostbanChecked(true);
-        addPlayer(t, playerData);
+	playerData->_LSAState = GameKeeper::Player::notRequired;
       } else if (strlen(playerData->player.getCallSign())) {
 	playerData->_LSAState = GameKeeper::Player::required;
       }
@@ -4306,15 +4306,20 @@ static void doStuffOnPlayer(GameKeeper::Player &playerData)
   if (playerData._LSAState == GameKeeper::Player::required) {
      requestAuthentication = true;
      playerData._LSAState = GameKeeper::Player::requesting;
-  } else if (playerData._LSAState == GameKeeper::Player::verified) {
-     addPlayer(p, &playerData);
-     playerData._LSAState = GameKeeper::Player::notRequired;
-  } else if (playerData._LSAState == GameKeeper::Player::timed) {
-     addPlayer(p, &playerData);
-     playerData._LSAState = GameKeeper::Player::notRequired;
-  } else if (playerData._LSAState == GameKeeper::Player::failed) {
-     addPlayer(p, &playerData);
-     playerData._LSAState = GameKeeper::Player::notRequired;
+  } else if (playerData.netHandler->reverseDNSDone()) {
+    if (playerData._LSAState == GameKeeper::Player::verified) {
+      addPlayer(p, &playerData);
+      playerData._LSAState = GameKeeper::Player::done;
+    } else if (playerData._LSAState == GameKeeper::Player::timed) {
+      addPlayer(p, &playerData);
+      playerData._LSAState = GameKeeper::Player::done;
+    } else if (playerData._LSAState == GameKeeper::Player::failed) {
+      addPlayer(p, &playerData);
+      playerData._LSAState = GameKeeper::Player::done;
+    } else if (playerData._LSAState == GameKeeper::Player::notRequired) {
+      addPlayer(p, &playerData);
+      playerData._LSAState = GameKeeper::Player::done;
+    }
   }
 
   // Check host bans

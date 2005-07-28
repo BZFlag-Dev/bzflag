@@ -91,13 +91,15 @@ public:
 
     enum LSAState
       {
+	start,
 	notRequired,
 	required,
 	requesting,
 	checking,
 	timed,
 	failed,
-	verified
+	verified,
+	done
       } _LSAState;
 
     // players
