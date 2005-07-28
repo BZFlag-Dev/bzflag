@@ -129,6 +129,7 @@ public:
   static int	whoIsAtIP(const std::string& IP);
   in_addr	getIPAddress();
   const char*	getHostname();
+  bool          reverseDNSDone();
 
   /// Notify that the channel is going to be close.
   /// In the meantime any pwrite call will do nothing.

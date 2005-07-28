@@ -679,6 +679,13 @@ const char *NetHandler::getHostname() {
   return ares.getHostname();
 }
 
+bool NetHandler::reverseDNSDone()
+{
+  AresHandler::ResolutionStatus status = ares.getStatus();
+  return (status == AresHandler::Failed)
+    || (status == AresHandler::HbASucceeded);
+}
+
 // Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***
