@@ -1973,6 +1973,12 @@ static void handlePollCmd(GameKeeper::Player *playerData, const char *message)
 
     arguments = arguments.substr(endPosition);
 
+    if (arguments.size() == 0) {
+      sendMessage(ServerPlayer, t, "/poll: incorrect syntax, argument required.");
+      DEBUG3("No command arguments, stopping poll.\n");
+      return;
+    }
+    
     DEBUG3("Command arguments are [%s]\n", arguments.c_str());
 
     /* find the start of the target (e.g. player name) */
@@ -2046,7 +2052,7 @@ static void handlePollCmd(GameKeeper::Player *playerData, const char *message)
       return;
     }
 
-	if ((cmd != "set") && (cmd != "flagreset")) {
+    if ((cmd != "set") && (cmd != "flagreset")) {
       // all polls that are not set or flagreset polls take a player name
 
       /* make sure the requested player is actually here */
