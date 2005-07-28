@@ -4,6 +4,8 @@
 BZFlag 2.0.3
 ------------
 
+* Wait for authentication to complete before entering game - Alfredo Tupone
+* Antiban works even on IP number - Alfredo Tupone
 * Sort lagstat to have non-observer at the bottom - Thomas Stauer
 * Authentication credential are requested asap - Alfredo Tupone
 * Allow the use of game device sliders as axes on Windows - Daniel Remenak
