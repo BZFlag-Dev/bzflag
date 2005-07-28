@@ -599,7 +599,7 @@ void Player::updateTreads(float dt)
   }
 
   // setup the angular component
-  const float angularScale = 2.0f; // spin factor (at 1.0, the edges line up)
+  const float angularScale = 4.0f; // spin factor (at 1.0, the edges line up)
   angularFactor *= angularScale;
   const float halfWidth = 0.5f * BZDBCache::tankWidth;
   // not using dimensions[1], because it may be set to 0.001 by a Narrow flag
