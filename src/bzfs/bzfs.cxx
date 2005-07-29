@@ -2175,7 +2175,8 @@ static void addPlayer(int playerIndex, GameKeeper::Player *playerData)
 
 
   if (GameKeeper::Player::getPlayerByIndex(playerIndex)
-      && playerData->accessInfo.isRegistered()) {
+      && playerData->accessInfo.isRegistered()
+      && playerData->_LSAState != GameKeeper::Player::verified) {
     // nick is in the DB send him a message to identify.
     if (playerData->accessInfo.isIdentifyRequired())
       sendMessage(ServerPlayer, playerIndex, "This callsign is registered.  You must identify yourself before playing.");
