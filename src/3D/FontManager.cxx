@@ -328,7 +328,8 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
       glDepthMask(0);
       pFont->drawString(scale, color, &tmpText[startSend], len);
       if (underline) {
-	if (bright && underlineColor[0] >= 0) {
+        OpenGLGState::resetState();  // FIXME - full reset required?
+        if (bright && underlineColor[0] >= 0) {
 	  glColor4fv(underlineColor);
 	} else if (underlineColor[0] >= 0) {
 	  glColor4fv(dimUnderlineColor);
