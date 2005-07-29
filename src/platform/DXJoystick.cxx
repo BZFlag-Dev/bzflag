@@ -372,7 +372,7 @@ void	      DXJoystick::ffRumble(int count, float delay, float duration,
     DWORD axes[2] = {DIJOFS_X, DIJOFS_Y};
     LONG  dir[2] = {1, 1};
 
-    LPDIRECTINPUTEFFECT createdEffect;
+    LPDIRECTINPUTEFFECT createdEffect = NULL;
 
     DIEFFECT effect;
     effect.dwSize = sizeof(DIEFFECT);
@@ -401,7 +401,7 @@ void	      DXJoystick::ffRumble(int count, float delay, float duration,
     // create the effect
     success = device->CreateEffect(GUID_ConstantForce, &effect, &createdEffect, NULL);
 
-    if (success != DI_OK) {
+    if ((success != DI_OK) || (createdEffect == NULL)) {
       DXError("Could not create rumble effect", success);
       return;
     }
@@ -453,7 +453,7 @@ void	DXJoystick::ffDirectionalConstant(int count, float delay, float duration,
     LONG  dir[2] = {(int)(1000.0f * x_direction),
 		    (int)(1000.0f * y_direction)};
 
-    LPDIRECTINPUTEFFECT createdEffect;
+    LPDIRECTINPUTEFFECT createdEffect = NULL;
 
     DIEFFECT effect;
     effect.dwSize = sizeof(DIEFFECT);
@@ -482,7 +482,7 @@ void	DXJoystick::ffDirectionalConstant(int count, float delay, float duration,
     // create the effect
     success = device->CreateEffect(GUID_ConstantForce, &effect, &createdEffect, NULL);
 
-    if (success != DI_OK) {
+    if ((success != DI_OK) || (createdEffect == NULL)) {
       DXError("Could not create directional constant effect", success);
       return;
     }
@@ -537,7 +537,7 @@ void	DXJoystick::ffDirectionalPeriodic(int count, float delay, float duration,
     LONG  dir[2] = {(int)(1000.0f * x_direction),
 		    (int)(1000.0f * y_direction)};
 
-    LPDIRECTINPUTEFFECT createdEffect;
+    LPDIRECTINPUTEFFECT createdEffect = NULL;
 
     DIEFFECT effect;
     effect.dwSize = sizeof(DIEFFECT);
@@ -575,7 +575,7 @@ void	DXJoystick::ffDirectionalPeriodic(int count, float delay, float duration,
     }
     success = device->CreateEffect(guid, &effect, &createdEffect, NULL);
 
-    if (success != DI_OK) {
+    if ((success != DI_OK) || (createdEffect == NULL)) {
       DXError("Could not create directional periodic effect", success);
       return;
     }
@@ -633,7 +633,7 @@ void	DXJoystick::ffDirectionalResistance(float time, float coefficient,
     DWORD axes[2] = {DIJOFS_X, DIJOFS_Y};
     LONG  dir[2] = {1, 1};
 
-    LPDIRECTINPUTEFFECT createdEffect;
+    LPDIRECTINPUTEFFECT createdEffect = NULL;
 
     DIEFFECT effect;
     effect.dwSize = sizeof(DIEFFECT);
@@ -669,7 +669,7 @@ void	DXJoystick::ffDirectionalResistance(float time, float coefficient,
     }
     success = device->CreateEffect(guid, &effect, &createdEffect, NULL);
 
-    if (success != DI_OK) {
+    if ((success != DI_OK) || (createdEffect == NULL)) {
       DXError("Could not create directional resistance effect", success);
       return;
     }
