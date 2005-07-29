@@ -197,6 +197,11 @@ bool PlayerInfo::isCallSignReadable() {
     return false;
   }
 
+  if (*callSign=='+' || *callSign=='@') {
+    errorString = "Leading + or @ signs are not allowed in callsigns.";
+    return false;
+  }
+
   // start with true to reject leading space
   bool lastWasSpace = true;
   int alnumCount = 0;
@@ -209,22 +214,21 @@ bool PlayerInfo::isCallSignReadable() {
     }
 
     // reject ' and " and any nonprintable
-    if ((*sp == '\'') || (*sp == '"') || ((unsigned)*sp > 0x7f)
-	|| !isprint(*sp)) {
+    if ((*sp == '\'') || (*sp == '"') || ((unsigned)*sp > 0x7f) || !isprint(*sp)) {
       errorString = "Non-printable characters and quotes are not allowed in callsigns.";
       return false;
     }
     if (isspace(*sp)) {
       // only space is valid, not tab etc.
       if (*sp != ' ') {
-	errorString = "Invalid whitespace in callsign.";
-	return false;
+	      errorString = "Invalid whitespace in callsign.";
+	      return false;
       }
       lastWasSpace = true;
     } else {
       lastWasSpace = false;
       if (isalnum(*sp))
-	alnumCount++;
+	      alnumCount++;
     }
   } while (*++sp);
 

@@ -4,6 +4,7 @@
 BZFlag 2.0.3
 ------------
 
+* Disallow + or @ as first char of callsign (bzfs) - Mark Thomas
 * Wait for authentication to complete before entering game - Alfredo Tupone
 * Antiban works even on IP number - Alfredo Tupone
 * Sort lagstat to have non-observer at the bottom - Thomas Stauer
