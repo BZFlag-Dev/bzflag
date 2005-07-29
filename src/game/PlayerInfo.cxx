@@ -163,16 +163,6 @@ bool PlayerInfo::unpackEnter(void *buf, uint16_t &rejectCode, char *rejectMsg)
     }
   }
   
-  // # not allowed in first position because used in /kick /ban #slot
-  char cs[CallSignLen];
-  memcpy(cs, callSign, sizeof(char) * CallSignLen);
-  if (cs[0] == '#') {
-    rejectCode = RejectBadCallsign;
-    strcpy(rejectMsg,
-	   "The callsign was rejected. Callsigns are not allowed to start with #.");
-    return false;
-  }
-
   return true;
 }
 
@@ -197,8 +187,10 @@ bool PlayerInfo::isCallSignReadable() {
     return false;
   }
 
-  if (*callSign=='+' || *callSign=='@') {
-    errorString = "Leading + or @ signs are not allowed in callsigns.";
+  // prevent spoofing global login indicators + and @ in the scoreboard
+  // and reserve # for /kick or /ban #slot
+  if (*callSign=='+' || *callSign=='@' || *callSign=='#' ) {
+    errorString = "Callsigns are not allowed to start with +, @, or #.";
     return false;
   }
 
