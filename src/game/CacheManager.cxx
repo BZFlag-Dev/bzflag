@@ -230,9 +230,13 @@ bool CacheManager::saveIndex()
 
   fclose(file);
 
-#ifdef _WIN32	// you can't rename a file to a file that allready exists, so on windows remove it first
-	remove(indexName.c_str());
+#ifdef _WIN32
+  // Windows sucks yet again. You can't rename a file to a file that
+  // already exists, you have to remove the existing file first. No
+  // atomic transactions.
+  remove(indexName.c_str());
 #endif
+
   return (rename(tmpIndexName.c_str(), indexName.c_str()) == 0);
 }
 
