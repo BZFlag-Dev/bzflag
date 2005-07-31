@@ -7,11 +7,11 @@ CXXFLAGS = -fPIC -frtti -I../../include -O
 
 LDLIBS = -ldl
 
-all : vocaliser.so
+all : chathistory.so
 
 # link the shared libraries with the -shared flag.
 
-vocaliser.so : vocaliser.o
+chathistory.so : chathistory.o
 	$(CXX) $(CXXFLAGS) -shared -rdynamic  $^ -o $@	
 
 clean :
