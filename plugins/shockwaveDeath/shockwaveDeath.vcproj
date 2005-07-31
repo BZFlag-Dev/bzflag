@@ -45,7 +45,8 @@
 			<Tool
 				Name="VCMIDLTool"/>
 			<Tool
-				Name="VCPostBuildEventTool"/>
+				Name="VCPostBuildEventTool"
+				CommandLine="copy debug\*.dll ..\"/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
 			<Tool

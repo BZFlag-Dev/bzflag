@@ -15,10 +15,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "playHistoryTracker", "..\pl
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "python", "..\python\python.vcproj", "{557E9CF9-11CE-4FFA-95D5-FDB836F12A48}"
-	ProjectSection(ProjectDependencies) = postProject
-	EndProjectSection
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "shockwaveDeath", "..\shockwaveDeath\shockwaveDeath.vcproj", "{1F43075E-8AF6-486F-AEDF-6B350A6CE141}"
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
@@ -53,10 +49,6 @@ Global
 		{1F43075E-8AF6-486F-AEDF-6B350A6CE141}.Debug.Build.0 = Debug|Win32
 		{1F43075E-8AF6-486F-AEDF-6B350A6CE141}.Release.ActiveCfg = Release|Win32
 		{1F43075E-8AF6-486F-AEDF-6B350A6CE141}.Release.Build.0 = Release|Win32
-		{557E9CF9-11CE-4FFA-95D5-FDB836F12A48}.Debug.ActiveCfg = Debug|Win32
-		{557E9CF9-11CE-4FFA-95D5-FDB836F12A48}.Debug.Build.0 = Debug|Win32
-		{557E9CF9-11CE-4FFA-95D5-FDB836F12A48}.Release.ActiveCfg = Release|Win32
-		{557E9CF9-11CE-4FFA-95D5-FDB836F12A48}.Release.Build.0 = Release|Win32
 		{1F43075E-8AF6-486F-AEDF-6B350A6CE141}.Debug.ActiveCfg = Debug|Win32
 		{1F43075E-8AF6-486F-AEDF-6B350A6CE141}.Debug.Build.0 = Debug|Win32
 		{1F43075E-8AF6-486F-AEDF-6B350A6CE141}.Release.ActiveCfg = Release|Win32
