@@ -759,8 +759,8 @@ class bz_URLHandler
 public:
 	virtual ~bz_URLHandler(){};
 	virtual void done ( const char* URL, void * data, unsigned int size, bool complete ) = 0;
-	virtual void timeout ( const char* URL, int errorCode ){};
-	virtual void error ( const char* URL, int errorCode, const char *errorString ){};
+	virtual void timeout ( const char* /*URL*/, int /*errorCode*/ ){};
+	virtual void error ( const char* /*URL*/, int /*errorCode*/, const char * /*errorString*/ ){};
 };
 
 BZF_API bool bz_addURLJob ( const char* URL, bz_URLHandler* handler );
