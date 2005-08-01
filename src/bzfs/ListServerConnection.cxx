@@ -39,7 +39,6 @@ extern PingPacket getTeamCounts();
 extern uint16_t curMaxPlayers;
 extern void sendMessage(int playerIndex, PlayerId targetPlayer,
 			const char *message);
-extern void sendPlayerInfo(void);
 extern CmdLineOptions *clOptions;
 
 const int ListServerLink::NotConnected = -1;
@@ -161,7 +160,6 @@ void ListServerLink::finalization(char *data, unsigned int length, bool good)
 	    }
 	    playerData->authentication.global(true);
 	    sendMessage(ServerPlayer, playerIndex, "Global login approved!");
-	    sendPlayerInfo();
 	  } else {
 	    playerData->_LSAState = GameKeeper::Player::failed;
 	    sendMessage(ServerPlayer, playerIndex, "Global login rejected. "
