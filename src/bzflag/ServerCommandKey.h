@@ -32,16 +32,16 @@ private:
 private:
   enum Mode {
     Kick,
-	Kill,
+    Kill,
     BanIp,
     Ban1,
     Ban2,
     Ban3,
-    Unban,
     Showgroup,
     Setgroup,
     Removegroup,
     Ghost,
+    Unban,
     Banlist,
     Playerlist,
     FlagReset,
