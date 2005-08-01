@@ -289,6 +289,14 @@ void
 AllowSpawnHandler::process (bz_EventData *eventData)
 {
 	bz_AllowSpawnData *ased = (bz_AllowSpawnData*) eventData;
+	PyObject *arglist = Py_BuildValue ("(iiod)",
+			ased->playerID,
+			ased->teamID,
+			ased->handled ? Py_True : Py_False,
+			ased->time);
+	emit (arglist, bz_eAllowSpawn);
+	// FIXME - return
+	Py_DECREF (arglist);
 }
 
 void
