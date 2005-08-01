@@ -640,8 +640,13 @@ void NetHandler::getPlayerList(char *list) {
 	  udpout ? "+" : "");
 }
 
-const char *NetHandler::getTargetIP() {
-  return peer.getDotNotation().c_str();
+const char* NetHandler::getTargetIP() {
+  /* peer->getDotNotation returns a temp variable that is not safe
+   * to pass around.  we keep a copy in allocated memory for safety.
+   */
+  if (dotNotation.size() == 0)
+    dotNotation = peer.getDotNotation();
+  return dotNotation.c_str();
 }
 
 int NetHandler::sizeOfIP() {

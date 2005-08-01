@@ -160,6 +160,10 @@ private:
 
   /// peer's network address
   Address peer;
+  /* peer->getDotNotation returns a temp variable that is not safe
+   * to pass around.  This variable lets us keep a copy in allocated
+   * memory for as long as we need to */
+  std::string dotNotation;
 
   /// input buffers
   /// current TCP msg
