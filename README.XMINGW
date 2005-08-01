@@ -19,12 +19,6 @@ written in c++:
 
 # emerge xmingw-gcc
 
-hypotf function seems to be defined twice, in math.h as inline, and in the
-libstdc++ . I removed the inline from math.h, leaving only the prototype.
-math.h in my system is in /opt/xmingw/i386-mingw32msvc/include/math.h
-
-Same for powf
-
 Next operation are available to a non super-user too, so a normal user is the
 preferred way.
 
