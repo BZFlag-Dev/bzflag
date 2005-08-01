@@ -48,10 +48,14 @@ void LagInfo::getLagStats(char* msg) const
     if (lastLag > lag)
       lag = lastLag;
   }
-  sprintf(msg,"%s\t: %3d +- %2dms", info->getCallSign(),
-	  lag, int(jitteravg * 1000));
-  if (lostavg >= 0.01f)
-    sprintf(msg + strlen(msg), " %d%% lost/ooo", int(lostavg * 100));
+  int numchars = sprintf(msg, "%s\t: %3d", info->getCallSign(), lag);
+  if (info->isObserver()) {
+    sprintf(msg+numchars, "ms");
+  } else {
+    numchars += sprintf(msg + numchars, " +- %2dms", int(jitteravg * 1000));
+    if (lostavg >= 0.01f)
+      sprintf(msg + numchars, " %d%% lost/ooo", int(lostavg * 100));
+  }
 }
 
 // update absolute latency based on LagPing messages
