@@ -47,6 +47,8 @@ PY_HANDLER(AllowPlayerHandler)
 PY_HANDLER(TickHandler)
 PY_HANDLER(GenerateWorldHandler)
 PY_HANDLER(GetPlayerInfoHandler)
+PY_HANDLER(AllowSpawnHandler)
+PY_HANDLER(ListServerUpdateHandler)
 #undef PY_HANDLER
 
 };

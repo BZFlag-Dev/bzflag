@@ -36,6 +36,8 @@ event_to_name (int event)
 	case bz_eTickEvent:              return "Tick";
 	case bz_eGenerateWorldEvent:     return "GenerateWorld";
 	case bz_eGetPlayerInfoEvent:     return "GetPlayerInfo";
+	case bz_eAllowSpawn:             return "AllowSpawn";
+	case bz_eListServerUpdateEvent:  return "ListServerUpdate";
 	}
 	return NULL;
 }
@@ -281,6 +283,18 @@ TickHandler::process (bz_EventData *eventData)
 	PyObject *arglist = Py_BuildValue ("(d)", ted->time);
 	emit (arglist, bz_eTickEvent);
 	Py_DECREF (arglist);
+}
+
+void
+AllowSpawnHandler::process (bz_EventData *eventData)
+{
+	bz_AllowSpawnData *ased = (bz_AllowSpawnData*) eventData;
+}
+
+void
+ListServerUpdateHandler::process (bz_EventData *eventData)
+{
+	bz_ListServerUpdateEvent *lsued = (bz_ListServerUpdateEvent*) eventData;
 }
 
 };

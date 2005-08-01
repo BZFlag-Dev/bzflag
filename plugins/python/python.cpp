@@ -91,8 +91,8 @@ int
 bz_Load (const char *commandLine)
 {
 	// I would use assert here, but "Assertion `3 == 2' failed" is really not a useful error at all
-	if (BZ_API_VERSION != 3) {
-		fprintf (stderr, "Python plugin currently wraps the version 2 API, but BZFS is exporting version %d. Please complain loudly\n", BZ_API_VERSION);
+	if (BZ_API_VERSION != 5) {
+		fprintf (stderr, "Python plugin currently wraps the version 5 API, but BZFS is exporting version %d. Please complain loudly\n", BZ_API_VERSION);
 		abort ();
 	}
 
