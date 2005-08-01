@@ -145,6 +145,7 @@ static RejoinList rejoinList;
 
 static TimeKeeper lastWorldParmChange;
 static bool       isIdentifyFlagIn = false;
+static bool       playerHadWorld   = false;
 
 void sendMessage(int playerIndex, PlayerId dstPlayer, const char *message);
 void sendFilteredMessage(int playerIndex, PlayerId dstPlayer, const char *message);
@@ -2527,11 +2528,6 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
       if (clOptions->oneGameOnly) {
 	done = true;
 	exitCode = 0;
-      }
-      else if ((clOptions->worldFile == "") &&
-	       (!Replay::enabled()) && (!defineWorld())) {
-	done = true;
-	exitCode = 1;
       } else {
 	// republicize ourself.  this dereferences the URL chain
 	// again so we'll notice any pointer change when any game
@@ -2552,6 +2548,7 @@ bool areFoes(TeamColor team1, TeamColor team2)
 
 static void sendWorld(int playerIndex, uint32_t ptr)
 {
+  playerHadWorld = true;
   // send another small chunk of the world database
   assert((world != NULL) && (worldDatabase != NULL));
   void *buf, *bufStart = getDirectMessageBuffer();
@@ -5377,7 +5374,12 @@ int main(int argc, char **argv)
     worldEventManager.callEvents(bz_eTickEvent,-1,&tickData);
 
     // Clean pending players
-    GameKeeper::Player::clean();
+    bool resetGame = GameKeeper::Player::clean();
+
+    if (resetGame && playerHadWorld) {
+      playerHadWorld = false;
+      (clOptions->worldFile == "") && !Replay::enabled() && defineWorld();
+    }
 
     // cURLperform should be called in any case as we could incur in timeout
     dontWait = cURLManager::perform();

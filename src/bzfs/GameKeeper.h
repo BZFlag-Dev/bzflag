@@ -76,7 +76,7 @@ public:
 
     void	   signingOn(bool ctf);
     void	   close();
-    static void    clean();
+    static bool    clean();
     void	   handleTcpPacket(fd_set *set);
 #if defined(USE_THREADS)
     void	   handleTcpPacketT();

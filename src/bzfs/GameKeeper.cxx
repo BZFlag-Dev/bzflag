@@ -256,16 +256,25 @@ void GameKeeper::Player::close()
   closed = true;
 }
 
-void GameKeeper::Player::clean()
+bool GameKeeper::Player::clean()
 {
   Player* playerData;
+  // Trying to detect if this action cleaned the array of player
+  bool empty    = true;
+  bool ICleaned = false;
   for (int i = 0; i < PlayerSlot; i++)
-    if ((playerData = playerList[i]) && playerData->closed
+    if ((playerData = playerList[i]))
+      if (playerData->closed
 #if defined(USE_THREADS)
-	&& !playerData->refCount
+	  && !playerData->refCount
 #endif
-	)
-      delete playerData;
+	  ) {
+	delete playerData;
+	ICleaned = true;
+      } else {
+	empty = false;
+      }
+  return empty && ICleaned;
 }
 
 int GameKeeper::Player::getFreeIndex(int min, int max)
