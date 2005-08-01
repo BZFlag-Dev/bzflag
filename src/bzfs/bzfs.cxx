@@ -3555,6 +3555,7 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
 	rejectPlayer(t, rejectCode, rejectMsg);
 	break;
       }
+      playerData->accessInfo.setName(playerData->player.getCallSign());
       std::string timeStamp = TimeKeeper::timestamp();
       DEBUG1("Player %s [%d] has joined from %s at %s with token \"%s\"\n",
 	     playerData->player.getCallSign(),

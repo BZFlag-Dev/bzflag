@@ -228,7 +228,6 @@ bool GameKeeper::Player::loadEnterData(uint16_t &rejectCode,
 
 void GameKeeper::Player::signingOn(bool ctf)
 {
-  accessInfo.setName(player.getCallSign());
   player.resetPlayer(ctf);
   player.signingOn();
   lagInfo.reset();
