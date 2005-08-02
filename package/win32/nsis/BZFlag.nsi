@@ -55,6 +55,11 @@ Section "BZFlag (required)"
 	File ..\..\..\msvcr71.dll
 	File ..\..\..\msvcp71.dll
 
+
+	SetOutPath $INSTDIR\API
+	File ..\..\..\src\bzfs\bzfs.lib
+	File ..\..\..\include\bzfsAPI.h
+
 	; make the data dir
 	SetOutPath $INSTDIR\data
 	File ..\..\..\data\*.*
@@ -140,6 +145,7 @@ Section "Uninstall"
 	Delete $INSTDIR\data\fonts\*.*
 	Delete $INSTDIR\data\*.*
 	Delete $INSTDIR\data\l10n\*.*
+	Delete $INSTDIR\API\*.*
 
 	; This nails libcurl, the msvcrts, and any plugins
 	Delete $INSTDIR\*.dll
@@ -161,6 +167,7 @@ Section "Uninstall"
 	RMDir "$INSTDIR\data\fonts"
 	RMDir "$INSTDIR\data"
 	RMDir "$INSTDIR\doc"
+	RMDir "$INSTDIR\API"
 	RMDir "$INSTDIR"
 SectionEnd
 
