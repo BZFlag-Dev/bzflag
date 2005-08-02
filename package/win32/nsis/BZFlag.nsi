@@ -79,6 +79,7 @@ Section "BZFlag (required)"
 	File ..\..\..\doc\*.*
 	File ..\ReadMe.win32.html
 	File ..\..\..\COPYING
+	File ..\..\..\plugins\bzAPI.txt
 
 	; Write the installation path into the registry
 	WriteRegStr HKLM SOFTWARE\BZFlag "Install_Dir" "$INSTDIR"
