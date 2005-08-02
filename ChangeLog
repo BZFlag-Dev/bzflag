@@ -4,6 +4,9 @@
 BZFlag 2.0.3
 ------------
 
+* Default server side plugins added to windows build - Jeff Myers
+* Include web token verification script - Garrett Padera
+* Fix texture cache on windows. - Jeff Myers
 * Disallow + or @ as first char of callsign (bzfs) - Mark Thomas
 * Wait for authentication to complete before entering game - Alfredo Tupone
 * Antiban works even on IP number - Alfredo Tupone
