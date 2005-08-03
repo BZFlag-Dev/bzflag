@@ -34,10 +34,14 @@ To make a plug-in you will need to know at least C and should be familar with
 the C++ language. Many of the API calls and structures will use C++, but they 
 can be called in a C "style" if you wish. Since plug-ins are compiled code you
 will need a compiler for your OS and the knowledge of how to use it. The sample
-plugin has makefiles and Windows VC projects that you can use as a basis. You
-will also need the bzflag source code so that your code can have access to the
-functions that bzfs provides ( bzfsAPI.h ).
-
+plugin has makefiles and Windows VC projects that you can use as a basis. 
+If you are on windows, there is a free version of visual studio that you cean
+use to build plugins. You can download it for free from 
+http://lab.msdn.microsoft.com/express/visualc/default.aspx . You will allso 
+need access to some of the source files from the bzflag source distribution.
+If you are on windows, the required header and library files are included with
+the installer in the API folder. Other OSs can get the full source tree from
+www.bzflag.org
 
 
 //****************** plug-in entry points  ************************************
@@ -136,7 +140,7 @@ bz_PlayerDieEventData
 	int			teamID;				// the team of the player who died
 	int			killerID;			// the ID of the player doing the killing
 	int			killerTeamID;		// the team of the killer
-	std::string flagKilledWith;		// the flag the killer had when killing
+	bzApiString flagKilledWith;		// the flag the killer had when killing
 	float		pos[3];				// the last known position of the victim
 	float		rot;				// the last known rotation of the victim
 	double		time;				// the time of the death
@@ -158,8 +162,8 @@ bz_PlayerJoinPartEventData()
 {
 	int playerID;					// the ID of the user that has joined or parted
 	int teamID;						// the team ID of the user
-	std::string callsign;			// the callsign used by the user
-	std::string reason;				// if a part event, the reason for the part
+	bzApiString callsign;			// the callsign used by the user
+	bzApiString reason;				// if a part event, the reason for the part
 	double time;					// the time of the event
 }
 
@@ -168,7 +172,7 @@ bz_ChatEventData
 {
 	int from;						// the player ID of who the message is from
 	int to;							// the player ID of who the message is for
-	std::string message;			// the message
+	bzApiString message;			// the message
 	double time;					// the time of the message
 }
 
@@ -179,7 +183,7 @@ bz_UnknownSlashCommandEventData
 	bool handled;					// flag that tells if the command was handled.
 									// if the plugin handles this command it must
 									// set this value to true before it returns
-	std::string message;			// the message
+	bzApiString message;			// the message
 	double time;					// the time of the message
 }
 
@@ -216,16 +220,16 @@ The player data class contains the following data;
 bz_PlayerRecord
 {
 	int playerID;							// id of the player
-	std::string callsign;					// callsign the player is using
+	bzApiString callsign;					// callsign the player is using
 	int team;								// team 
 
 	float pos[3];							// last known position
 	float rot;								// last known heading
 
-	std::string ipAddress;					// the network address for this connection
+	bzApiString ipAddress;					// the network address for this connection
 	
-	std::string currentFlag;				// the flag the user presently has
-	std::vector<std::string> flagHistory;	// a list of all flags the user has had
+	bzApiString currentFlag;				// the flag the user presently has
+	std::vector<bzApiString> flagHistory;	// a list of all flags the user has had
 
 	bool spawned;							// true if the user is in game as a tank
 	bool verified;							// true if the user has been authenticated
@@ -233,7 +237,7 @@ bz_PlayerRecord
 	bool globalUser;						// true if the user was verified from the
 											// global login system
 	bool admin;								// true if the user is an admin
-	std::vector<std::string> groups;		// a list of all the groups the user is a member of.
+	std::vector<bzApiString> groups;		// a list of all the groups the user is a member of.
 }
 
 bz_PlayerRecord also contains an update() method. This is used to update the data for the player
@@ -251,7 +255,7 @@ Sends a text message to the specifid user. BZ_SERVER should be used for
 messages from the server. BZ_ALL_USERS for a to user will send the message
 to all connected users.
 
-BZF_API bool bz_fireWorldWep ( std::string flagType, float lifetime, 
+BZF_API bool bz_fireWorldWep ( bzApiString flagType, float lifetime, 
 								int fromPlayer, float *pos, float tilt,
 								float direction, int shotID , float dt )
 Adds a shot to the world of the specified type with the specified paramaters.
@@ -297,7 +301,7 @@ class bz_CustomSlashCommandHandler
 {
 public:
 	virtual ~bz_CustomSlashCommandHandler(){};
-	virtual bool handle ( int playerID, std::string command, std::string message ) = 0;
+	virtual bool handle ( int playerID, bzApiString command, bzApiString message ) = 0;
 };
 
 When a player issues the command, the handler will have it's handle method called.
@@ -311,5 +315,5 @@ Only one custom slash command can be installed at a time.
 
 //****************** examples *****************************
 
-    get some
+    get some..
 
