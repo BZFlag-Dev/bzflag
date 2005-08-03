@@ -43,6 +43,16 @@ If you are on windows, the required header and library files are included with
 the installer in the API folder. Other OSs can get the full source tree from
 www.bzflag.org
 
+* How do I start a new plugin project
+
+If you are not familar with making projects and using makefiles, the bzflag source
+tree provides a template plugin in /plugins/SAMPLE_PLUGIN/. This is an empty plugin
+project for most OSs. All you have to do is replace the term SAMPLE_PLUGIN with 
+your plugin name. Do this to every file name that contains the term SAMPLE_PLUGIN.
+Also open each file ( even the .sln and .vcprog, don't double click them yet)
+in a text editor ( notepad ) and do a search and replace.
+Replace SAMPLE_PLUGIN with your plugin name. The project will then be ready to build.
+
 
 //****************** plug-in entry points  ************************************
 
