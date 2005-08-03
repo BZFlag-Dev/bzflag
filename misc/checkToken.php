@@ -1,21 +1,23 @@
 <?php
 
-// this function will check a username and token returned by the bzflag weblogin page
-// at http://my.bzflag.org/weblogin?action=weblogin
-// you can use this URL to ask a user for his bzflag global login.
-// your page needs to pass in a URL paramater to the weblogin that contains the URL to be called with the username
-// and token. This prevents allows your site to use the same usernames and passwords as the forums with out having
-// to worry about being accused of sealing passwords.
-// the URL paramater can have the keys %TOKEN% and %USERNAME% that will be replaced with the real username and token
-// when the URL is called.
+// This function will check a username and token returned by the bzflag 
+// weblogin page at http://my.bzflag.org/weblogin?action=weblogin. You can use
+// this URL to ask a user for his bzflag global login. Your page needs to pass
+// in an URL paramater to the weblogin that contains your URL to be called with
+// the username and token. This allows your site to use the same usernames and
+// passwords as the forums with out having to worry about being accused of
+// stealing passwords. The URL paramater can have the keys %TOKEN% and
+// %USERNAME% that will be replaced with the real username and token when the
+// URL is called. For example:
 //
-// example: http://my.bzflag.org/weblogin?action=weblogin&url=http://www.mysite.com/mydir/login.php?token=%TOKEN%&callsign=%USERNAME%
+// http://my.bzflag.org/weblogin?action=weblogin&url=http://www.mysite.com/mydir/login.php?token=%TOKEN%&callsign=%USERNAME%
 //
-// this would call mysite.com with the token and username passed in as paramaters after the user has given the page a valid username
-// and password.
+// This would call mysite.com with the token and username passed in as
+// paramaters after the user has given the page a valid username and password.
 
-// this function should be used after you get the info from the login callback, to verify that it is a valid token, and the
-// user belongs to any groups you care about.
+// This function should be used after you get the info from the login callback,
+// to verify that it is a valid token, and the user belongs to any groups you
+// care about.
 
 function validate_token($token, $callsign, $groups=array()){
 	//Some config options
