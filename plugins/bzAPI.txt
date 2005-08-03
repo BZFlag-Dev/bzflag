@@ -46,8 +46,9 @@ www.bzflag.org
 
 //****************** plug-in entry points  ************************************
 
-There are 2 primary entry points into the plug-in. These are the 2 core
-functions that the plugin must implement. These are defined as such;
+There are 3 primary entry points into the plug-in. These are the 3 core
+functions that the plugin must implement. The first 2 are the main functions
+used by the plugin, these are defined as such;
 
 BZF_PLUGIN_CALL int bz_Load ( const char* command );
 BZF_PLUGIN_CALL int bz_Unload ( void );
@@ -63,9 +64,77 @@ in this callback.
 Both functions should be proceded with the BZF_PLUGIN_CALL macro. This 
 macro will tell your compiler to export these functions so bzfs can call them.
 
+The last function is defined as;
+BZF_PLUGIN_CALL int bz_GetVersion ( void );
 
-These will be the only 2 functions called by bzfs for non event actions.
+bz_GetVersion is called buy bzfs before any other functions are called.
+The function should return the version of the API that it is writen for.
+This is to prevent bzfs from atempting to load incompatable plugins.
 
+There is a C++ MACRO defined to ease the implementation of this function.
+All a plugin must do is put the macro;
+BZ_GET_PLUGIN_VERSION
+somewhere in it's sources, and then export the function. This will automaticly
+return the API version of the current API you are using. See the sample plugins
+for exmaples.
+
+These will be the only 3 functions called by bzfs for non event actions.
+
+
+//****************** general plugin execution *****************************
+
+The basic idea behind a plugin flow is as follows;
+
+Plugin is loaded.
+Plugin regisers event handlers for any events it cares to know about.
+BZFS runs.
+BZFS calls installed event handlers as the event condtions happen.
+Code in plugin handalers modify the data used but the event, or 
+   perform new actions based on the event using other API functions.
+BZFS returns from the event call and uses any modified data.
+BZFS runs till it's final termius as normal repeating any event calls
+  as they happen.
+Plugin is unloaded when bzfs is quit, or plugin is manual unloaded using
+ /unloadplugin command
+Plugin unregisters any event handalers it had installed.
+
+
+This allows for a plugin to do many difrent things depending on what events
+it hooks itself into. Plugins can hook into any number of events they wish
+and are allowed to do anything the develper wishes to do. A plugin does not
+have access to 100% of the internals of BZFS. It must access it by using
+the BZFSAPI set of functions as described below. Most of these API functions
+will directly map to internal bzfs functions. In fact there are many cases
+where internal features of bzfs use the same API functions that plugins can
+use. Plugins may also link in any external library and call any external functions
+or code that they wish.
+
+As allways open source projects are evolving. If you do not see an API function
+that you need, please let us know and we can try to add it for you, or code it
+in yourself, and submit it as a patch.
+
+
+//****************** BZFSAPI data types			*****************************
+Due to how windows handles memory access between an application and dynamicly
+loaded DLLs, there are a few custom data types that are used in the API. These
+are used for common STL style contatiners, for strings and lists.
+
+Any text passed back from the API or events will come in the form of a 
+bzApiString. This is a class defined in the API that behaves much like a std::string.
+The c_str() method can be used to get the text out as a normal const char*.
+The class also supports many assignment functions for seting it's contents.
+
+A few API functions require lists of integers, strings, or floats. For these functions
+The plugin will need to use the bzAPIIntList, bzAPIFloatList, or bzAPIStringList classes.
+These classes are similar to the std::vector. When a plugin needs to allocate one
+of these lists, it must use the approriate allocator fucntion, to tell the API
+to make a new list for the plugin to use. These functions are bz_newIntList, bz_newFloatList, 
+and bz_newStringList. These will return a pointer to a new list for the plugin to use.
+When the plugin is finshes with the list, it needs to remove the list with a call
+to bz_deleteIntList, bz_deleteFloatList, or bz_deleteStringList as aproprate.
+
+Sadly these are a litte clunky but are requred to let bzfs allocate any memory it may free
+on windows. Hopefully future releases of windows will remove this limitation.
 
 //****************** registering event handlers  *****************************
 
@@ -78,16 +147,23 @@ bool bz_registerEvent ( bz_teEventType eventType, int team,
 
 where eventType is one of the following enumerations;
 
-	bz_eCaptureEvent        // flag is captured in a CTF game
-	bz_ePlayerDieEvent      // a player gets killed
-	bz_ePlayerSpawnEvent    // a player joins as a tank
-	bz_eZoneEntryEvent      // a player enters a zone ( not implemented )
-	bz_eZoneExitEvent       // a player exits a zone ( not implemented )
-	bz_ePlayerJoinEvent     // a user joins the server ( player or observer )
-	bz_ePlayerPartEvent     // a user leaves the server ( player or observer )
-	bz_eChatMessageEvent    // a chat message is sent 
-              bz_eUnknownSlashCommand // a "/" command was issued but not handled
-	bz_eGetPlayerSpawnPosEvent // the server needs a spawn posttion for a player.
+	bz_eCaptureEvent				// flag is captured in a CTF game
+	bz_ePlayerDieEvent				// a player gets killed
+	bz_ePlayerSpawnEvent			// a player joins as a tank
+	bz_eZoneEntryEvent				// a player enters a zone ( not implemented )
+	bz_eZoneExitEvent				// a player exits a zone ( not implemented )
+	bz_ePlayerJoinEvent				// a user joins the server ( player or observer )
+	bz_ePlayerPartEvent				// a user leaves the server ( player or observer )
+	bz_eChatMessageEvent			// a chat message is sent 
+	bz_eUnknownSlashCommand			// a "/" command was issued but not handled
+	bz_eGetPlayerSpawnPosEvent		// the server needs a spawn posttion for a player.
+	bz_eGetAutoTeamEvent,			// The server is asigning a player to a team automaticly.
+	bz_eAllowPlayer,				// The server is about to allow or disalow a player
+	bz_eTickEvent,					// The server has executed one of it's normal event loops
+	bz_eGenerateWorldEvent,			// The server is generating or loading a world.
+	bz_eGetPlayerInfoEvent,			// The server needs the info bits about a player
+	bz_eAllowSpawn,					// The server is about to allow a player to spawn.
+	bz_eListServerUpdateEvent		// The server is about to update the list server with new information.
 
 team is an integer that defines a team filter for the event. The value of; BZ_ALL_USERS indicates
 that the event will be called every time it happens, regardless of team.
@@ -122,7 +198,7 @@ for more then one type of event.
 The event data for event types are as follows, along with there associated data items.
 Some events may share event data types
 
-bz_eCaptureEvent
+bz_eCaptureEvent provides the folowing data;
 bz_CTFCaptureEventData
 {
 	int 	teamCaped;		// the team that had there flag captured
@@ -132,8 +208,10 @@ bz_CTFCaptureEventData
 	float	rot;			// the last known angle of the player
 	double	time;			// the time in seconds of the event
 }
+Handle this event when you want to do something when ever somone caputures a team flag.
+Usefull for events like clearing bases, tracking scores, or playing sounds.
 
-bz_ePlayerDieEvent
+bz_ePlayerDieEvent provides the folowing data;
 bz_PlayerDieEventData
 {
 	int			playerID;			// the ID of the player who died
@@ -145,9 +223,9 @@ bz_PlayerDieEventData
 	float		rot;				// the last known rotation of the victim
 	double		time;				// the time of the death
 }
+This even is called when ever a player is killed.
 
-
-bz_ePlayerSpawnEvent
+bz_ePlayerSpawnEvent provides the folowing data;
 bz_PlayerSpawnEventData
 {
 	int playerID					// the ID of the player that has spawned;
@@ -156,8 +234,11 @@ bz_PlayerSpawnEventData
 	float rot;						// the rotation of the spawn
 	double time;					// the time of the spawn
 }
+Track this event when you wish to know if somone has spawned, and where they have spawned at.
+This event does not let you set the spaw position, it is only called AFTER the spawn has been 
+computed and sent to the playes.
 
-bz_ePlayerJoinEvent AND bz_ePlayerPartEvent
+bz_ePlayerJoinEvent AND bz_ePlayerPartEvent both provide the folowing data;
 bz_PlayerJoinPartEventData()
 {
 	int playerID;					// the ID of the user that has joined or parted
@@ -166,8 +247,10 @@ bz_PlayerJoinPartEventData()
 	bzApiString reason;				// if a part event, the reason for the part
 	double time;					// the time of the event
 }
+These events are called when ever a user joins or leaves the server. These events are
+called for both players and observers.
 
-bz_eChatMessageEvent
+bz_eChatMessageEvent provides the folowing data;
 bz_ChatEventData
 {
 	int from;						// the player ID of who the message is from
@@ -175,8 +258,14 @@ bz_ChatEventData
 	bzApiString message;			// the message
 	double time;					// the time of the message
 }
+This event is called when ever the server is asked to deliver a chat message. This
+includes private messages, team messages, and general chat. ANYTHING that is not a
+/ command goes in here. The plugin CAN change the chat message before it is sent.
+This can allow for a plugin to filter chat text or insert aditional text. If the plugin
+clears the message text, then the chat message will not be sent. The text sent to this
+plugin may have been filtered by another plugin first.
 
-bz_eUnknownSlashCommand
+bz_eUnknownSlashCommand provides the folowing data;
 bz_UnknownSlashCommandEventData
 {
 	int from;						// the player ID of who the message is from
@@ -186,8 +275,11 @@ bz_UnknownSlashCommandEventData
 	bzApiString message;			// the message
 	double time;					// the time of the message
 }
+This event is called when a user atempts to use a / comand that does not exist.
+It is not very usefull for anything other then error reporting. If you wish to
+install your own custom / command then use the customSlashCommand functions.
 
-bz_eGetPlayerSpawnPosEvent
+bz_eGetPlayerSpawnPosEvent provides the folowing data;
 bz_GetPlayerSpawnPosEventData(
 {
 	int playeID;					// the player ID of who needs to be spawned
@@ -200,6 +292,53 @@ bz_GetPlayerSpawnPosEventData(
 	float rot;						// the proposed spawn rotation
 	double time;					// the time of the request
 }
+This event is called when ever a player spawn position is needed. The standard
+spawn position will be set in the pos and rot fields. The plugin may modify or
+set new spawn data if it wishes to. This can allow a plugin to do it's own 
+spawn calculations. The position may have been modified by another plugin first
+if multiple plugins are handaling the event. If so the "handled" field should be true.
+If your plugin modifys the spawn data it too should set the "handled" bit to true.
+
+bz_eAllowPlayer provides the folowing data;
+bz_AllowPlayerEventData
+{	
+	int playerID;				// the player ID of the joining player
+	bzApiString callsign;		// the callsign of the player
+	bzApiString ipAddress;		// the address of the player
+	bzApiString reason;			// a reason string with the reason the player is to be disalowed to join
+	bool allow;					// flag to allow or disallow the player. 
+	double time;				// the time of the request
+}
+This event is called every time a user joins a server. The server will do it's normal 
+ban/disallow logic then pass the value to the plugin in the allow field. 
+The plugin can then chose to allow or disalow the player as it sees fit. If the player
+is to be disallowed, then please provide a reason.
+
+bz_TickEvent provides the folowing data;
+bz_TickEventData
+{
+	double time;				// time of the event.
+}
+This event is not called due to any user or player interaction. This event is called
+automaticly by bzfs every time it has completed one of it's normal execution loops.
+This event is usefull when plugins need to perform update actions, periodic mentance,
+or other actions that are not direclty tied to a user event, like checking to see
+if it is time to start a match. A plugin can set the maximum allowable time between
+calls to this event using the function bz_setMaxWaitTime described below.
+
+bz_GenerateWorldEvent provides the folowing data;
+bz_GenerateWorldEventData 
+{
+	bool handled;				// flag to set to true if the plugin has generated the world.
+	bool ctf;					// true if the world is a CTF world
+	double time;				// the time of the request.
+}
+This event is called by bzfs when it begins to build or load the world. THe event is called
+BEFORE any map file is loaded. If the plugin wishes to define the world, it must call
+any world creation functions during this event, and then set the handled flag to true. If the
+plugin generates the world, then bzfs will NOT load the map file, and will NOT generate a
+random world. Calls to any world creation functions outside this event will fail.
+
 
 //****************** calling bzfs functions  *****************************
 
@@ -209,7 +348,6 @@ called directly. These functions will perform actions and return data about
 the current game state.
 
 The functions are as follows;
-
 
 BZF_API bool bz_getPlayerByIndex ( int index, bz_PlayerRecord *playerRecord );
 This function will take a player index, and fill out the passed in player data
