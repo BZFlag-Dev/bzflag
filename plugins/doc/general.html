@@ -1,10 +1,13 @@
-<HTML>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
 <head>
-<title>BZFlag - web login</title>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-<link rel="stylesheet" type="text/css" href="http://www.bzflag.org/general.css">
-<link href="http://www.bzflag.or/favicon.ico" rel="shortcut icon">
-<style type="text/css">
+  <title>BZFlag - web login</title>
+  <meta http-equiv="Content-Type"
+ content="text/html; charset=iso-8859-1">
+  <link rel="stylesheet" type="text/css"
+ href="http://www.bzflag.org/general.css">
+  <link href="http://www.bzflag.or/favicon.ico" rel="shortcut icon">
+  <style type="text/css">
 <!--
 .style1 {
 	font-size: 16px;
@@ -14,158 +17,193 @@
 .style4 {font-size: 18px; font-weight: bold; }
 .style5 {color: #999999}
 -->
-</style>
+  </style>
 </head>
-<BODY>
-<table width="100%" border="0" cellpadding="0" cellspacing="1" bgcolor="#DDDDDD">
-<tr height="50" valign="top">
-	<td colspan="2">
-		<table border="0" cellpadding="0" cellspacing="0" width="100%">
-			<tr>
-				<td bgcolor="#013571" align="right"><img src="http://www.bzflag.org/images/logo2-1.jpg" alt="logo"></td>
-				<td bgcolor="#818181" align="left"><img src="http://www.bzflag.org/images/logo2-2.jpg" alt=""></td>
-			</tr>
-	  </table>
-	</td>
-</tr>
-<tr valign="top">
-	<td>
-		<table width="100%">
-			<tr>
-				<td width="14%" align="center" valign="top">
-					<table width="179" border="1" align="center" bordercolor="#000000" bgcolor="#FFFFFF">
-					<tr>
-						<td align="center"><span class="style4">
-						  Contents
-						</span></td>
-					</tr>
-					<tr>
-						<td align="center">
-							<strong>Overview
-                        </strong></a> </td>
-					</tr>
-					<tr>
-						<td align="center">
-							<a href="index.html">Introduction
-                        </a> </td>
-					</tr>
-					<tr>
-						<td align="center">
-							<a href="general.html">General Info
-                        </a> </td>
-					</tr>
-					<tr>
-						<td align="center">
-							<strong>Refrence
-                        </strong></a> </td>
-					</tr>
-					<tr>
-						<td align="center">
-							<a href="entrys.html">Entrys</a> </td>
-					  </tr>
-					<tr>
-					<tr>
-						<td align="center">
-							<a href="types.html">Types</a> </td>
-					  </tr>
-					<tr>
-					<tr>
-						<td align="center">
-							<a href="events.html">Events </a></td>
-					  </tr>
-					<tr>
-					<tr>
-						<td align="center">
-							Functions </td>
-					  </tr>
-					<tr>
-					<tr>
-						<td align="center">
-							<strong>Examples
-                        </strong></a> </td>
-					</tr>
-					<tr>
-						<td align="center">
-							shockwaveDeath </td>
-					  </tr>
-					<tr>
-					<tr>
-						<td align="center">
-							scoreReset </td>
-					  </tr>
-					<tr>
-				  </table>
-			  </td>
-				<td width="86%">
-				<table width="100%" border="0" align="left" cellpadding="2" cellspacing="2" bgcolor="#FFFFFF">
-					<tr>
-						<td valign="top"><center><b>BZFS API Documentation</b></center></td>
-					</tr>
-					<tr>
-					<td align="left">
-					
-					  <p align="center" class="style1 style2">General Information </p>
-					  <p>The basic idea behind a plugin flow is as follows;
-</p>
-					  <ul>
-					    <li>Plugin is loaded.</li>
-				        <li>Plugin regisers event handlers for any events it cares to know about.</li>
-					    <li>BZFS runs.</li>
-					    <li>BZFS calls installed event handlers as the event condtions happen.</li>
-					    <li>Code in plugin handalers modify the data used but the event, or perform new actions based on the event using other API functions.</li>
-					    <li>BZFS returns from the event call and uses any modified data.</li>
-					    <li>BZFS runs till it's final termius as normal repeating any event calls as they happen.</li>
-					    <li>Plugin is unloaded when bzfs is quit, or plugin is manual unloaded using /unloadplugin command.</li>
-					    <li>Plugin unregisters any event handalers it had installed.</li>
-					  </ul>					  
-					  <p>      This allows for a plugin to do many difrent things depending on what events
-      it hooks itself into. Plugins can hook into any number of events they wish
-      and are allowed to do anything the develper wishes to do. A plugin does not
-      have access to 100% of the internals of BZFS. It must access it by using
-      the BZFSAPI set of functions as described below. Most of these API functions
-      will directly map to internal bzfs functions. In fact there are many cases
-      where internal features of bzfs use the same API functions that plugins can
-      use. Plugins may also link in any external library and call any external functions
-      or code that they wish.</p>
-					  <p>As allways open source projects are evolving. If you do not see an API function
-          that you need, please let us know and we can try to add it for you, or code it
-          in yourself, and submit it as a patch. </p></td>
-				  </tr>
-					<tr>
-					<td>
-					  <div align="left"><a href="index.html">Previous</a></div> 
-					  <div align="right"><a href="entrys.html">Next</a></div>
-					  </td>
-					</tr>
-				</table>
-				</td>
-			</tr>
-	  </table>
-	</td>
-</tr>
-<tr valign="bottom">
-<td bgcolor="#000000" cellpadding="2">
-	<table width="100%" border="0" cellpadding="2" bgcolor="#FFFFFF">
-		<tr>
-			<td align="right">
-				<span class="copyright">copyright &copy; <a href="http://www.bzflag.org/wiki/CurrentMaintainer">CurrentMaintainer</a> 1993-2005&nbsp;</span>	
-			</td>
-		</tr>
-		<tr>
-			<td>
-				<table width="100%" border="0" cellpadding="2" bgcolor="#FFFFFF"><tr><td align="center">
-				<a href="http://www.opengl.org/"><img src="http://www.bzflag.org//images/opengl.gif" alt="opengl" width="88" height="31" border="0"></a>
-				<a href="http://sourceforge.net/project/?group_id=3248"><img src="http://sourceforge.net/sflogo.php?group_id=3248&amp;type=1" width="88" height="31" alt="sourceforge" border="0"></a>
-				<a href="http://sourceforge.net/donate/index.php?group_id=3248"><img src="http://images.sourceforge.net/images/project-support.jpg" width="88" height="32" border="0" alt="Support This Project" /> </a>
-				<a href="http://www.linuxgames.com/"><img src="http://www.bzflag.org/images/linuxgames.gif" width="88" height="31" alt="linuxgames" border="0"></a>
-				<a href="http://www.telefragged.com/"><img src="http://www.bzflag.org//images/telefragged.gif" width="88" height="31" alt="telefragged" border="0"></a>
-			</td>
-		</tr>
-	</table>
-	</td></tr></table>
-</td>	
-</tr>
+<body>
+<table bgcolor="#dddddd" border="0" cellpadding="0" cellspacing="1"
+ width="100%">
+  <tbody>
+    <tr height="50" valign="top">
+      <td colspan="2">
+      <table border="0" cellpadding="0" cellspacing="0" width="100%">
+        <tbody>
+          <tr>
+            <td align="right" bgcolor="#013571"><img
+ src="http://www.bzflag.org/images/logo2-1.jpg" alt="logo"></td>
+            <td align="left" bgcolor="#818181"><img
+ src="http://www.bzflag.org/images/logo2-2.jpg" alt=""></td>
+          </tr>
+        </tbody>
+      </table>
+      </td>
+    </tr>
+    <tr valign="top">
+      <td>
+      <table width="100%">
+        <tbody>
+          <tr>
+            <td align="center" valign="top" width="14%">
+            <table align="center" bgcolor="#ffffff" border="1"
+ bordercolor="#000000" width="179">
+              <tbody>
+                <tr>
+                  <td align="center"><span class="style4"> Contents </span></td>
+                </tr>
+                <tr>
+                  <td align="center"> <strong>Overview </strong> </td>
+                </tr>
+                <tr>
+                  <td align="center"> <a href="index.html">Introduction
+                  </a> </td>
+                </tr>
+                <tr>
+                  <td align="center"> <a href="general.html">General
+Info </a> </td>
+                </tr>
+                <tr>
+                  <td align="center"> <strong>Reference </strong> </td>
+                </tr>
+                <tr>
+                  <td align="center"> <a href="entrys.html">Entrys</a>
+                  </td>
+                </tr>
+                <tr>
+                </tr>
+                <tr>
+                  <td align="center"> <a href="types.html">Types</a> </td>
+                </tr>
+                <tr>
+                </tr>
+                <tr>
+                  <td align="center"> <a href="events.html">Events </a></td>
+                </tr>
+                <tr>
+                </tr>
+                <tr>
+                  <td align="center"> Functions </td>
+                </tr>
+                <tr>
+                </tr>
+                <tr>
+                  <td align="center"> <strong>Examples </strong> </td>
+                </tr>
+                <tr>
+                  <td align="center"> shockwaveDeath </td>
+                </tr>
+                <tr>
+                </tr>
+                <tr>
+                  <td align="center"> scoreReset </td>
+                </tr>
+                <tr>
+                </tr>
+              </tbody>
+            </table>
+            </td>
+            <td width="86%">
+            <table align="left" bgcolor="#ffffff" border="0"
+ cellpadding="2" cellspacing="2" width="100%">
+              <tbody>
+                <tr>
+                  <td valign="top">
+                  <center><b>BZFS API Documentation</b></center>
+                  </td>
+                </tr>
+                <tr>
+                  <td align="left">
+                  <p class="style1 style2" align="center">General
+Information </p>
+                  <p>The basic idea behind a plugin flow is as follows;
+                  </p>
+                  <ul>
+                    <li>Plugin is loaded.</li>
+                    <li>Plugin registers event handlers for any events
+it cares to know about.</li>
+                    <li>BZFS runs.</li>
+                    <li>BZFS calls installed event handlers as the
+event conditions happen.</li>
+                    <li>Code in plugin handlers modify the data used
+but the event, or perform new actions based on the event using other
+API functions.</li>
+                    <li>BZFS returns from the event call and uses any
+modified data.</li>
+                    <li>BZFS runs till it's final termius as normal
+repeating any event calls as they happen.</li>
+                    <li>Plugin is unloaded when bzfs is quit, or plugin
+is manual unloaded using /unloadplugin command.</li>
+                    <li>Plugin unregisters any event handlers it had
+installed.</li>
+                  </ul>
+                  <p> This allows for a plugin to do many different
+things depending on what events it hooks itself into. Plugins can hook
+into any number of events they wish and are allowed to do anything the
+developer wishes to do. A plugin does not have access to 100% of the
+internals of BZFS. It must access it by using the BZFS API set of
+functions as described below. Most of these API functions will directly
+map to internal bzfs functions. In fact there are many cases where
+internal features of bzfs use the same API functions that plugins can
+use. Plugins may also link in any external library and call any
+external functions or code that they wish.</p>
+                  <p>As always open source projects are evolving. If
+you do not see an API function that you need, please let us know and we
+can try to add it for you, or code it in yourself, and submit it as a
+patch. </p>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                  <div align="left"><a href="index.html">Previous</a></div>
+                  <div align="right"><a href="entrys.html">Next</a></div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      </td>
+    </tr>
+    <tr valign="bottom">
+      <td cellpadding="2" bgcolor="#000000">
+      <table bgcolor="#ffffff" border="0" cellpadding="2" width="100%">
+        <tbody>
+          <tr>
+            <td align="right"> <span class="copyright">copyright
+&copy; <a href="http://www.bzflag.org/wiki/CurrentMaintainer">CurrentMaintainer</a>
+1993-2005&nbsp;</span> </td>
+          </tr>
+          <tr>
+            <td>
+            <table bgcolor="#ffffff" border="0" cellpadding="2"
+ width="100%">
+              <tbody>
+                <tr>
+                  <td align="center"> <a href="http://www.opengl.org/"><img
+ src="http://www.bzflag.org//images/opengl.gif" alt="opengl" border="0"
+ height="31" width="88"></a> <a
+ href="http://sourceforge.net/project/?group_id=3248"><img
+ src="http://sourceforge.net/sflogo.php?group_id=3248&amp;type=1"
+ alt="sourceforge" border="0" height="31" width="88"></a> <a
+ href="http://sourceforge.net/donate/index.php?group_id=3248"><img
+ src="http://images.sourceforge.net/images/project-support.jpg"
+ alt="Support This Project" border="0" height="32" width="88"> </a> <a
+ href="http://www.linuxgames.com/"><img
+ src="http://www.bzflag.org/images/linuxgames.gif" alt="linuxgames"
+ border="0" height="31" width="88"></a> <a
+ href="http://www.telefragged.com/"><img
+ src="http://www.bzflag.org//images/telefragged.gif" alt="telefragged"
+ border="0" height="31" width="88"></a> </td>
+                </tr>
+              </tbody>
+            </table>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      </td>
+    </tr>
+  </tbody>
 </table>
-
-</BODY>
-</HTML> 
+</body>
+</html>
