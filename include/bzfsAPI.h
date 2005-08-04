@@ -30,7 +30,7 @@
 	#define BZF_PLUGIN_CALL extern "C"
 #endif
 
-#define BZ_API_VERSION	5
+#define BZ_API_VERSION	6
 
 #define BZ_GET_PLUGIN_VERSION BZF_PLUGIN_CALL int bz_GetVersion ( void ) { return BZ_API_VERSION;}
 
@@ -559,6 +559,7 @@ public:
 
 	int playerID;
 	bzApiString callsign;
+	bzApiString email;
 
 	int team;
 

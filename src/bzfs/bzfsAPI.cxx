@@ -593,6 +593,7 @@ BZF_API bz_PlayerRecord * bz_getPlayerByIndex ( int index )
 		return NULL;
 
 	playerRecord->callsign = player->player.getCallSign();
+	playerRecord->email =  player->player.getEMail();
 	playerRecord->playerID = index;
 	playerRecord->team = player->player.getTeam();
 
