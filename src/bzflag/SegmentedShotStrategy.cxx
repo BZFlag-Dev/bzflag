@@ -99,23 +99,25 @@ void			SegmentedShotStrategy::update(float dt)
 	    {
 	      // play ricochet sound.  ricochet of local player's shots
 	      // are important, others are not.
+	      const PlayerId myTankId = LocalPlayer::getMyTank()->getId();
+	      const bool important = (getPath().getPlayer() == myTankId);
 	      const float* pos = segments[segment].ray.getOrigin();
-	      playWorldSound(SFX_RICOCHET, pos,
-		  getPath().getPlayer() == LocalPlayer::getMyTank()->getId());
+	      playWorldSound(SFX_RICOCHET, pos, important);
 
 	      // this is fugly but it's what we do
 	      float dir[3];
-	      dir[0] = segments[segment].ray.getDirection()[0] - segments[segment-1].ray.getDirection()[0];
-	      dir[1] = segments[segment].ray.getDirection()[1] - segments[segment-1].ray.getDirection()[1];
-	      dir[2] = segments[segment].ray.getDirection()[2] - segments[segment-1].ray.getDirection()[2];
+	      const float* newDir = segments[segment].ray.getDirection();
+	      const float* oldDir = segments[segment - 1].ray.getDirection();
+	      dir[0] = newDir[0] - oldDir[0];
+	      dir[1] = newDir[1] - oldDir[1];
+	      dir[2] = newDir[2] - oldDir[2];
 
 	      float rots[2];
-	      rots[0] = atan2(dir[1],dir[0]);
-
-	      float mag = sqrt(dir[0]*dir[0] + dir[1]*dir[1] + dir[2]*dir[2]);
-	      rots[1] = atan2(dir[2]/mag,1);
+	      const float horiz = sqrtf((dir[0]*dir[0]) + (dir[1]*dir[1]));
+	      rots[0] = atan2f(dir[1], dir[0]);
+	      rots[1] = atan2f(dir[2], horiz);
   	    
-	      EffectsRenderer::instance().addRicoEffect(0,pos,rots);
+	      EffectsRenderer::instance().addRicoEffect(0, pos, rots);
 	      break;
 	    }
 	  case ShotPathSegment::Boundary:
@@ -124,17 +126,17 @@ void			SegmentedShotStrategy::update(float dt)
 	    {
 	      // this is fugly but it's what we do
 	      float dir[3];
-	      dir[0] = segments[segment].ray.getDirection()[0];// - segments[segment-1].ray.getDirection()[0];
-	      dir[1] = segments[segment].ray.getDirection()[1];// - segments[segment-1].ray.getDirection()[1];
-	      dir[2] = segments[segment].ray.getDirection()[2];// - segments[segment-1].ray.getDirection()[2];
+	      dir[0] = segments[segment].ray.getDirection()[0];
+	      dir[1] = segments[segment].ray.getDirection()[1];
+	      dir[2] = segments[segment].ray.getDirection()[2];
 
 	      float rots[2];
-	      rots[0] = atan2(dir[1],dir[0]);
+	      const float horiz = sqrtf((dir[0]*dir[0]) + (dir[1]*dir[1]));
+	      rots[0] = atan2f(dir[1], dir[0]);
+	      rots[1] = atan2f(dir[2], horiz);
 
-	      float mag = sqrt(dir[0]*dir[0] + dir[1]*dir[1] + dir[2]*dir[2]);
-	      rots[1] = atan2(dir[2]/mag,1);
-
-	      EffectsRenderer::instance().addShotTeleportEffect(0,segments[segment].ray.getOrigin(),rots);
+              const float* pos = segments[segment].ray.getOrigin();
+	      EffectsRenderer::instance().addShotTeleportEffect(0, pos, rots);
 	    }
 	    break;
 	}
