@@ -76,7 +76,7 @@ void WorldEventManager::removeEvent ( bz_eEventType eventType, int team, bz_Even
 	if ( eventTypeItr != teamEvents->end() )
 	{
 		tvEventList::iterator itr = eventTypeItr->second.begin();
-		while (itr == eventTypeItr->second.end())
+		while (itr != eventTypeItr->second.end())
 		{
 			if (*itr == theEvetnt)
 				itr = eventTypeItr->second.erase(itr);
