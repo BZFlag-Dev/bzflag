@@ -18,7 +18,7 @@
 
 void initPlugins ( void );
 
-void loadPlugin ( std::string plugin, std::string config );
+bool loadPlugin ( std::string plugin, std::string config );
 void unloadPlugin ( std::string plugin );
 void unloadPlugins ( void );
 

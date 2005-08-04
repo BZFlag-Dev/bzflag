@@ -97,10 +97,10 @@ int getPluginVersion ( HINSTANCE hLib )
 	lpProc = (int (__cdecl *)(void))GetProcAddress(hLib, "bz_GetVersion");
 	if (lpProc)
 		return lpProc(); 
-	return 2;
+	return 0;
 }
 
-void load1Plugin ( std::string plugin, std::string config )
+bool load1Plugin ( std::string plugin, std::string config )
 {
 	int (*lpProc)(const char*);
 
@@ -113,6 +113,7 @@ void load1Plugin ( std::string plugin, std::string config )
 		{
 			DEBUG1("Plugin:%s found but expects an older API version (%d), upgrade it\n",plugin.c_str(),getPluginVersion(hLib));
 			FreeLibrary(hLib);
+			return false;
 		}
 		else
 		{
@@ -126,16 +127,21 @@ void load1Plugin ( std::string plugin, std::string config )
 				pluginRecord.handle = hLib;
 				pluginRecord.plugin = plugin;
 				vPluginList.push_back(pluginRecord);
+				return true;
 			}
 			else
 			{
 				DEBUG1("Plugin:%s found but does not contain bz_Load method\n",plugin.c_str());
 				FreeLibrary(hLib);
+				return false;
 			}
 		}
 	}
 	else
+	{
 		DEBUG1("Plugin:%s not found\n",plugin.c_str());
+		return true;
+	}
 }
 
 void unload1Plugin ( int iPluginID )
@@ -167,7 +173,7 @@ int getPluginVersion ( void* hLib )
 	return 0;
 }
 
-void load1Plugin ( std::string plugin, std::string config )
+bool load1Plugin ( std::string plugin, std::string config )
 {
 	int (*lpProc)(const char*);
 
@@ -179,7 +185,7 @@ void load1Plugin ( std::string plugin, std::string config )
 		if (dlsym(hLib, "bz_Load") == NULL) {
 			DEBUG1("Plugin:%s found but does not contain bz_Load method, error %s\n",plugin.c_str(),dlerror());
 			dlclose(hLib);
-			return;
+			return false;
 		}
 
 		int version = getPluginVersion(hLib);
@@ -187,6 +193,7 @@ void load1Plugin ( std::string plugin, std::string config )
 		{
 			DEBUG1("Plugin:%s found but expects an older API version (%d), upgrade it\n", plugin.c_str(), version);
 			dlclose(hLib);
+			return false
 		}
 		else
 		{
@@ -199,11 +206,15 @@ void load1Plugin ( std::string plugin, std::string config )
 				pluginRecord.handle = hLib;
 				pluginRecord.plugin = plugin;
 				vPluginList.push_back(pluginRecord);
+				return true;
 			}
 		}
 	}
 	else
+	{
 		DEBUG1("Plugin:%s not found, error %s\n",plugin.c_str(), dlerror());
+		return false;
+	}
 }
 
 void unload1Plugin ( int iPluginID )
@@ -223,7 +234,7 @@ void unload1Plugin ( int iPluginID )
 #endif 
 
 
-void loadPlugin ( std::string plugin, std::string config )
+bool loadPlugin ( std::string plugin, std::string config )
 {
 	// check and see if it's an extension we have a handler for
 	std::string ext;
@@ -236,10 +247,10 @@ void loadPlugin ( std::string plugin, std::string config )
 	if (itr != customPluginMap.end() && itr->second)
 	{
 		bz_APIPluginHandler *handler = itr->second;
-		handler->handle(plugin,config);
+		return handler->handle(plugin,config);
 	}
 	else
-		load1Plugin(plugin,config);
+		return load1Plugin(plugin,config);
 }
 
 void unloadPlugin ( std::string plugin )
@@ -334,9 +345,10 @@ public:
 			if ( params.size() >1)
 				config = params[1];
 
-			loadPlugin(params[0],config);
-
-			bz_sendTextMessage(BZ_SERVER,playerID,"Plug-in loaded.");
+			if (loadPlugin(params[0],config))
+				bz_sendTextMessage(BZ_SERVER,playerID,"Plug-in loaded.");
+			else
+				bz_sendTextMessage(BZ_SERVER,playerID,"Plug-in load failed.");
 			return true;
 		}
 
