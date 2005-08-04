@@ -193,7 +193,7 @@ bool load1Plugin ( std::string plugin, std::string config )
 		{
 			DEBUG1("Plugin:%s found but expects an older API version (%d), upgrade it\n", plugin.c_str(), version);
 			dlclose(hLib);
-			return false
+			return false;
 		}
 		else
 		{
@@ -215,6 +215,9 @@ bool load1Plugin ( std::string plugin, std::string config )
 		DEBUG1("Plugin:%s not found, error %s\n",plugin.c_str(), dlerror());
 		return false;
 	}
+
+	DEBUG1("If you see this, there is something terribly wrong.\n");
+	return false;
 }
 
 void unload1Plugin ( int iPluginID )
