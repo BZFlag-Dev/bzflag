@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
-  <title>BZFlag - web login</title>
+  <title>BZFS API Documentation: General Information</title>
   <meta http-equiv="Content-Type"
  content="text/html; charset=iso-8859-1">
   <link rel="stylesheet" type="text/css"
@@ -122,15 +122,17 @@ it cares to know about.</li>
                     <li>BZFS runs.</li>
                     <li>BZFS calls installed event handlers as the
 event conditions happen.</li>
-                    <li>Code in plugin handlers modify the data used
-but the event, or perform new actions based on the event using other
+                    <li>Code in plugin handlers modify the data passed
+in with the event, or perform new actions based on the event using
+other
 API functions.</li>
                     <li>BZFS returns from the event call and uses any
 modified data.</li>
-                    <li>BZFS runs till it's final termius as normal
-repeating any event calls as they happen.</li>
+                    <li>BZFS runs, performing any event calls as they
+happen, until it finally terminates as
+normal.</li>
                     <li>Plugin is unloaded when bzfs is quit, or plugin
-is manual unloaded using /unloadplugin command.</li>
+is manually unloaded using the /unloadplugin command.</li>
                     <li>Plugin unregisters any event handlers it had
 installed.</li>
                   </ul>

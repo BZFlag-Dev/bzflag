@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
-  <title>BZFlag - web login</title>
+  <title>BZFS API Documentation: Introduction</title>
   <meta http-equiv="Content-Type"
  content="text/html; charset=iso-8859-1">
   <link rel="stylesheet" type="text/css"
@@ -115,29 +115,34 @@ Info </a> </td>
                   <p class="style1 style2" align="center">Introduction</p>
                   <p><strong>* This document:</strong></p>
                   <p>This document is a description of the BZFlag
-plug-in system and it's associated API. It will attempt to explain how
-to make a plug-in, what you can do in a plug-in and what the basic API
-features are. * What is a plug-in A plug-in is a compiled code module
+plugin system and it's associated API. It will attempt to explain how
+to make a plugin, what you can do in a plugin and what the basic API
+features are.<br>
+                  </p>
+                  <p><span style="font-weight: bold;">* What is a
+plugin?</span><br>
+                  </p>
+                  <p>A plugin is a compiled code module
 that is loadable at runtime by the BZFlag game server (bzfs) that can
-change the way that the server runs. Since plug-ins are compiled
-Plug-ins need to be built on the platform they are to be run with. This
-means that a plug-in built for windows will not work on Linux, and
-vice/ versa. Plug-ins are written in C++ as Dynamic Libraries, ether as
+change the way that the server runs. Since plugins are compiled,
+plugins need to be built on the platform they are to be run with. This
+means that a plugin built for windows will not work on Linux, and
+vice/ versa. Plugins are written in C++ as Dynamic Libraries, ether as
 a DLL on windows or a .so file on Linux or OS X.</p>
-                  <p><strong>* What can a plug-in do.</strong></p>
+                  <p><strong>* What can a plugin do?</strong></p>
                   <p>Plug ins can install event handlers for a number
 of events in bzfs. Events are actions that happen in the game, such as
-the capture of a team flag, or the death of a player. Plug-ins can then
+the capture of a team flag, or the death of a player. Plugins can then
 call API functions that can change the game state in response to the
 event, such as sending a text message, activating a world weapon, or
-kicking a player. All plug-in actions are event driven. A plug in is
+kicking a player. All plugin actions are event driven. A plug in is
 always called first by the server in response to an action.</p>
-                  <p><strong>* What do I need to make a plug-in, and
-what do I need to know.</strong></p>
-                  <p> To make a plug-in you will need to know at least
+                  <p><strong>* What do I need to make a plugin, and
+what do I need to know?</strong></p>
+                  <p> To make a plugin you will need to know at least
 C and should be familiar with the C++ language. Many of the API calls
 and structures will use C++, but they can be called in a C "style" if
-you wish. Since plug-ins are compiled code you will need a compiler for
+you wish. Since plugins are compiled code you will need a compiler for
 your OS and the knowledge of how to use it. The sample plug in has
 makefiles and Windows VC projects that you can use as a basis. If you
 are on windows, there is a free version of visual studio that you can
