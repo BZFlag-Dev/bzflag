@@ -48,7 +48,7 @@ BZF_PLUGIN_CALL int bz_Load ( const char* commandLine )
 	bz_registerCustomSlashCommand("last",&lastChatCommand);
 	bz_registerCustomSlashCommand("flushchat",&lastChatCommand);
 
-	bz_registerGeneralEvent(bz_eChatMessageEvent,&chatEvents);
+	bz_registerEvent(bz_eChatMessageEvent,&chatEvents);
 
 	return 0;
 }
@@ -58,7 +58,7 @@ BZF_PLUGIN_CALL int bz_Unload ( void )
 	bz_removeCustomSlashCommand("last");
 	bz_removeCustomSlashCommand("flushchat");
 
-	bz_removeEvent(bz_eChatMessageEvent,-1,&chatEvents);
+	bz_removeEvent(bz_eChatMessageEvent,&chatEvents);
 
 	bz_debugMessage(4,"ChatEvents plugin unloaded");
 	return 0;

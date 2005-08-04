@@ -158,8 +158,8 @@ BZF_PLUGIN_CALL int bz_Load ( const char* commandLine )
 	bz_registerCustomSlashCommand("listvoices",&playsndCommand);
 	bz_registerCustomSlashCommand("listvoiceitems",&playsndCommand);
 
-	bz_registerGeneralEvent(bz_ePlayerJoinEvent,&vocEvents);
-	bz_registerGeneralEvent(bz_ePlayerPartEvent,&vocEvents);
+	bz_registerEvent(bz_ePlayerJoinEvent,&vocEvents);
+	bz_registerEvent(bz_ePlayerPartEvent,&vocEvents);
 
 	loadVoiceProfiles(std::string(commandLine));
 
@@ -171,8 +171,8 @@ BZF_PLUGIN_CALL int bz_Unload ( void )
 	bz_removeCustomSlashCommand("playsnd");
 	bz_removeCustomSlashCommand("setvoice");
 
-	bz_removeEvent(bz_ePlayerJoinEvent,-1,&vocEvents);
-	bz_removeEvent(bz_ePlayerPartEvent,-1,&vocEvents);
+	bz_removeEvent(bz_ePlayerJoinEvent,&vocEvents);
+	bz_removeEvent(bz_ePlayerPartEvent,&vocEvents);
 
 	bz_debugMessage(4,"vocaliser plugin unloaded");
 	return 0;

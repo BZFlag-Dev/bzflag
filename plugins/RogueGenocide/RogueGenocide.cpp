@@ -39,9 +39,9 @@ BZF_PLUGIN_CALL int bz_Load ( const char* commandLine )
 {
 	bz_debugMessage(4,"rogueGenocide plugin loaded");
 
-	bz_registerEvent(bz_ePlayerDieEvent,BZ_ALL_USERS,&deathHandler);
-	bz_registerEvent(bz_ePlayerPartEvent,BZ_ALL_USERS,&deathHandler);
-	bz_registerEvent(bz_ePlayerJoinEvent,BZ_ALL_USERS,&deathHandler);
+	bz_registerEvent(bz_ePlayerDieEvent,&deathHandler);
+	bz_registerEvent(bz_ePlayerPartEvent,&deathHandler);
+	bz_registerEvent(bz_ePlayerJoinEvent,&deathHandler);
 
 
 	return 0;
@@ -49,9 +49,9 @@ BZF_PLUGIN_CALL int bz_Load ( const char* commandLine )
 
 BZF_PLUGIN_CALL int bz_Unload ( void )
 {
-	bz_removeEvent(bz_ePlayerDieEvent,BZ_ALL_USERS,&deathHandler);
-	bz_removeEvent(bz_ePlayerPartEvent,BZ_ALL_USERS,&deathHandler);
-	bz_removeEvent(bz_ePlayerJoinEvent,BZ_ALL_USERS,&deathHandler);
+	bz_removeEvent(bz_ePlayerDieEvent,&deathHandler);
+	bz_removeEvent(bz_ePlayerPartEvent,&deathHandler);
+	bz_removeEvent(bz_ePlayerJoinEvent,&deathHandler);
 
 	bz_debugMessage(4,"rogueGenocide plugin unloaded");
 	return 0;

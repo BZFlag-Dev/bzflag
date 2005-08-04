@@ -28,14 +28,14 @@ BZF_PLUGIN_CALL int bz_Load ( const char* commandLine )
 {
 	bz_debugMessage(4,"HiddenAdmin plugin loaded");
 
-	bz_registerEvent(bz_eGetPlayerInfoEvent,BZ_ALL_USERS,&hiddenAdmin);
+	bz_registerEvent(bz_eGetPlayerInfoEvent,&hiddenAdmin);
 
 	return 0;
 }
 
 BZF_PLUGIN_CALL int bz_Unload ( void )
 {
-	bz_removeEvent(bz_eGetPlayerInfoEvent,BZ_ALL_USERS,&hiddenAdmin);
+	bz_removeEvent(bz_eGetPlayerInfoEvent,&hiddenAdmin);
 
 	bz_debugMessage(4,"HiddenAdmin plugin unloaded");
 	return 0;

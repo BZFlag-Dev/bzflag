@@ -506,26 +506,21 @@ void bz_deleteMaterial ( bz_MaterialInfo *material )
 }
 
 // events
-BZF_API bool bz_registerEvent ( bz_eEventType eventType, int teamIndex, bz_EventHandler* eventHandler )
+BZF_API bool bz_registerEvent ( bz_eEventType eventType, bz_EventHandler* eventHandler )
 {
 	if (!eventHandler)
 		return false;
 	
-	worldEventManager.addEvent(eventType,teamIndex,eventHandler);
+	worldEventManager.addEvent(eventType,eventHandler);
 	return true;
 }
 
-BZF_API bool bz_registerGeneralEvent ( bz_eEventType eventType, bz_EventHandler* eventHandler )
-{
-	return bz_registerEvent(eventType,-1,eventHandler);
-}
-
-BZF_API bool bz_removeEvent ( bz_eEventType eventType, int teamIndex, bz_EventHandler* eventHandler )
+BZF_API bool bz_removeEvent ( bz_eEventType eventType, bz_EventHandler* eventHandler )
 {
 	if (!eventHandler)
 		return false;
 
-	worldEventManager.removeEvent(eventType,teamIndex,eventHandler);
+	worldEventManager.removeEvent(eventType,eventHandler);
 	return true;
 }
 

@@ -2782,7 +2782,7 @@ void parseServerCommand(const char *message, int t)
     commandData.message = message;
     commandData.time = TimeKeeper::getCurrent().getSeconds();
   
-    worldEventManager.callEvents(bz_eUnknownSlashCommand, -1, &commandData);
+    worldEventManager.callEvents(bz_eUnknownSlashCommand, &commandData);
     if (commandData.handled) // did anyone do it?
       return;
 

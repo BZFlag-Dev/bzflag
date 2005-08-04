@@ -39,20 +39,20 @@ BZF_PLUGIN_CALL int bz_Load ( const char* commandLine )
 {
 	bz_debugMessage(4,"PlayHistoryTracker plugin loaded");
 
-	bz_registerEvent(bz_ePlayerDieEvent,BZ_ALL_USERS,&historyTracker);
-	bz_registerEvent(bz_ePlayerPartEvent,BZ_ALL_USERS,&historyTracker);
-	bz_registerEvent(bz_ePlayerSpawnEvent,BZ_ALL_USERS,&historyTracker);
-	bz_registerEvent(bz_ePlayerJoinEvent,BZ_ALL_USERS,&historyTracker);
+	bz_registerEvent(bz_ePlayerDieEvent,&historyTracker);
+	bz_registerEvent(bz_ePlayerPartEvent,&historyTracker);
+	bz_registerEvent(bz_ePlayerSpawnEvent,&historyTracker);
+	bz_registerEvent(bz_ePlayerJoinEvent,&historyTracker);
 
 	return 0;
 }
 
 BZF_PLUGIN_CALL int bz_Unload ( void )
 {
-	bz_removeEvent(bz_ePlayerDieEvent,BZ_ALL_USERS,&historyTracker);
-	bz_removeEvent(bz_ePlayerPartEvent,BZ_ALL_USERS,&historyTracker);
-	bz_removeEvent(bz_ePlayerSpawnEvent,BZ_ALL_USERS,&historyTracker);
-	bz_removeEvent(bz_ePlayerJoinEvent,BZ_ALL_USERS,&historyTracker);
+	bz_removeEvent(bz_ePlayerDieEvent,&historyTracker);
+	bz_removeEvent(bz_ePlayerPartEvent,&historyTracker);
+	bz_removeEvent(bz_ePlayerSpawnEvent,&historyTracker);
+	bz_removeEvent(bz_ePlayerJoinEvent,&historyTracker);
 
 	bz_debugMessage(4,"PlayHistoryTracker plugin unloaded");
 	return 0;

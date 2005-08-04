@@ -407,7 +407,7 @@ void sendPlayerInfo() {
       playerInfoData.registered = playerData->accessInfo.isRegistered();
       playerInfoData.admin = playerData->accessInfo.showAsAdmin();
 
-      worldEventManager.callEvents(bz_eGetPlayerInfoEvent,-1,&playerInfoData);
+      worldEventManager.callEvents(bz_eGetPlayerInfoEvent,&playerInfoData);
 
       buf = PackPlayerInfo(buf,i,GetPlayerProperties(playerInfoData.registered,playerInfoData.verified,playerInfoData.admin));
     }
@@ -1253,7 +1253,7 @@ static bool defineWorld()
     worldData.time = TimeKeeper::getCurrent().getSeconds();
 
     world = new WorldInfo;
-    worldEventManager.callEvents(bz_eGenerateWorldEvent, -1, &worldData);
+    worldEventManager.callEvents(bz_eGenerateWorldEvent, &worldData);
     if (!worldData.handled) {
       delete world;
       if (clOptions->gameStyle & TeamFlagGameStyle)
@@ -1959,7 +1959,7 @@ static void addPlayer(int playerIndex, GameKeeper::Player *playerData)
   allowData.playerID = playerIndex;
   allowData.time = TimeKeeper::getCurrent().getSeconds();
 
-  worldEventManager.callEvents(bz_eAllowPlayer,-1,&allowData);
+  worldEventManager.callEvents(bz_eAllowPlayer,&allowData);
   if (!allowData.allow) {
     rejectPlayer(playerIndex, RejectBadRequest, allowData.reason.c_str());
     return;
@@ -1973,7 +1973,7 @@ static void addPlayer(int playerIndex, GameKeeper::Player *playerData)
   autoTeamData.teamID = t;
   autoTeamData.callsign = playerData->player.getCallSign();
 
-  worldEventManager.callEvents(bz_eGetAutoTeamEvent,-1,&autoTeamData);
+  worldEventManager.callEvents(bz_eGetAutoTeamEvent,&autoTeamData);
 
   playerData->player.setTeam((TeamColor)autoTeamData.teamID);
   playerData->player.endShotCredit = 0;	// reset shotEndCredit
@@ -2198,8 +2198,7 @@ static void addPlayer(int playerIndex, GameKeeper::Player *playerData)
   joinEventData.callsign = playerData->player.getCallSign();
   joinEventData.time = TimeKeeper::getCurrent().getSeconds();
 
-  worldEventManager.callEvents(bz_ePlayerJoinEvent,joinEventData.teamID,&joinEventData);
-  worldEventManager.callEvents(bz_ePlayerJoinEvent,-1,&joinEventData);
+  worldEventManager.callEvents(bz_ePlayerJoinEvent,&joinEventData);
   if (spawnSoon)
     playerAlive(playerIndex);
 }
@@ -2422,8 +2421,7 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
   if (reason)
     partEventData.reason = reason;
 
-  worldEventManager.callEvents(bz_ePlayerPartEvent,partEventData.teamID,&partEventData);
-  worldEventManager.callEvents(bz_ePlayerPartEvent,-1,&partEventData);
+  worldEventManager.callEvents(bz_ePlayerPartEvent,&partEventData);
 
   if (notify) {
     // send a super kill to be polite
@@ -2716,8 +2714,7 @@ static void playerAlive(int playerIndex)
   }
 
   // check for any spawn allow events
-  worldEventManager.callEvents(bz_eAllowSpawn,-1,&spawnAllowData);
-  worldEventManager.callEvents(bz_eAllowSpawn,spawnAllowData.teamID,&spawnAllowData);
+  worldEventManager.callEvents(bz_eAllowSpawn,&spawnAllowData);
 
   if(!spawnAllowData.allow)
   {  
@@ -2744,8 +2741,7 @@ static void playerAlive(int playerIndex)
   spawnData.pos[2] = spawnPosition->getZ();
   spawnData.rot = spawnPosition->getAzimuth();
 
-  worldEventManager.callEvents(bz_eGetPlayerSpawnPosEvent,-1,&spawnData);
-  worldEventManager.callEvents(bz_eGetPlayerSpawnPosEvent,spawnData.teamID,&spawnData);
+  worldEventManager.callEvents(bz_eGetPlayerSpawnPosEvent,&spawnData);
 
   // update last position immediately
   memcpy(lastState[playerIndex].pos,spawnData.pos,sizeof(float)*3);
@@ -2770,8 +2766,7 @@ static void playerAlive(int playerIndex)
   memcpy(spawnEvent.pos,lastState[playerIndex].pos,sizeof(float)*3);
   spawnEvent.rot = lastState[playerIndex].azimuth;
 
-  worldEventManager.callEvents(bz_ePlayerSpawnEvent,spawnEvent.teamID,&spawnEvent);
-  worldEventManager.callEvents(bz_ePlayerSpawnEvent,-1,&spawnEvent);
+  worldEventManager.callEvents(bz_ePlayerSpawnEvent,&spawnEvent);
 
   if (clOptions->gameStyle & int(RabbitChaseGameStyle)) {
     playerData->player.wasNotARabbit();
@@ -2834,8 +2829,7 @@ void playerKilled(int victimIndex, int killerIndex, int reason,
   memcpy(dieEvent.pos,lastState[victimIndex].pos,sizeof(float)*3);
   dieEvent.rot = lastState[victimIndex].azimuth;
 
-  worldEventManager.callEvents(bz_ePlayerDieEvent,dieEvent.teamID,&dieEvent);
-  worldEventManager.callEvents(bz_ePlayerDieEvent,-1,&dieEvent);
+  worldEventManager.callEvents(bz_ePlayerDieEvent,&dieEvent);
 
   // killing rabbit or killing anything when I am a dead ex-rabbit is allowed
   bool teamkill = false;
@@ -3161,8 +3155,7 @@ static void captureFlag(int playerIndex, TeamColor teamCaptured)
   eventData.rot = lastState[playerIndex].azimuth;
   eventData.time = TimeKeeper::getCurrent().getSeconds();
 
-  worldEventManager.callEvents(bz_eCaptureEvent,teamIndex,&eventData);
-  worldEventManager.callEvents(bz_eCaptureEvent,-1,&eventData);
+  worldEventManager.callEvents(bz_eCaptureEvent,&eventData);
 
   // everyone on losing team is dead
   for (int i = 0; i < curMaxPlayers; i++) {
@@ -3825,15 +3818,7 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
 
       // send any events that want to watch the chat
       // everyone
-      worldEventManager.callEvents(bz_eChatMessageEvent,-1,&chatData);
-
-      // the from team
-      if (playerData->player.getTeam() > 0)
-	worldEventManager.callEvents(bz_eChatMessageEvent,playerData->player.getTeam(),&chatData);
-
-      // the to team
-      if (toTeam > 0)
-	worldEventManager.callEvents(bz_eChatMessageEvent,toTeam,&chatData);
+      worldEventManager.callEvents(bz_eChatMessageEvent,&chatData);
 
       // send the actual Message after all the callbacks have done there magic to it.
       if (chatData.message.size())
@@ -5371,7 +5356,7 @@ int main(int argc, char **argv)
     // fire off a tick event
     bz_TickEventData	tickData;
     tickData.time = TimeKeeper::getCurrent().getSeconds();
-    worldEventManager.callEvents(bz_eTickEvent,-1,&tickData);
+    worldEventManager.callEvents(bz_eTickEvent,&tickData);
 
     // Clean pending players
     bool resetGame = GameKeeper::Player::clean();

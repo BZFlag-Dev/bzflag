@@ -21,7 +21,7 @@ BZF_PLUGIN_CALL int bz_Load ( const char* commandLine )
 {
 	bz_debugMessage(4,"shockwaveDeath plugin loaded");
 
-	bz_registerEvent(bz_ePlayerDieEvent,BZ_ALL_USERS,&deathHandler);
+	bz_registerEvent(bz_ePlayerDieEvent,&deathHandler);
 
 	std::string param = commandLine;
 
@@ -31,7 +31,7 @@ BZF_PLUGIN_CALL int bz_Load ( const char* commandLine )
 
 BZF_PLUGIN_CALL int bz_Unload ( void )
 {
-	bz_removeEvent(bz_ePlayerDieEvent,BZ_ALL_USERS,&deathHandler);
+	bz_removeEvent(bz_ePlayerDieEvent,&deathHandler);
 	bz_debugMessage(4,"shockwaveDeath plugin unloaded");
 	return 0;
 }

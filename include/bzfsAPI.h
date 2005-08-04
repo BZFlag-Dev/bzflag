@@ -30,7 +30,7 @@
 	#define BZF_PLUGIN_CALL extern "C"
 #endif
 
-#define BZ_API_VERSION	6
+#define BZ_API_VERSION	7
 
 #define BZ_GET_PLUGIN_VERSION BZF_PLUGIN_CALL int bz_GetVersion ( void ) { return BZ_API_VERSION;}
 
@@ -519,10 +519,8 @@ public:
 	virtual bool autoDelete ( void ) { return false; }	// only set this to true if you are internal to the bzfs module ( on windows )
 };
 
-BZF_API bool bz_registerEvent ( bz_eEventType eventType, int team, bz_EventHandler* eventHandler );
-BZF_API bool bz_registerGeneralEvent ( bz_eEventType eventType, bz_EventHandler* eventHandler );	// does "everyone" automaticly
-
-BZF_API bool bz_removeEvent ( bz_eEventType eventType, int team, bz_EventHandler* eventHandler );
+BZF_API bool bz_registerEvent ( bz_eEventType eventType, bz_EventHandler* eventHandler );
+BZF_API bool bz_removeEvent ( bz_eEventType eventType, bz_EventHandler* eventHandler );
 
 // player info
 

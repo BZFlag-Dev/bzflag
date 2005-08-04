@@ -36,13 +36,13 @@ BZF_PLUGIN_CALL int bz_Load ( const char* commandLine )
 		range = 10.0f;
 	
 	airspawnHandaler.spawnRange = range;
-	bz_registerEvent(bz_eGetPlayerSpawnPosEvent,BZ_ALL_USERS,&airspawnHandaler);
+	bz_registerEvent(bz_eGetPlayerSpawnPosEvent,&airspawnHandaler);
 	return 0;
 }
 
 BZF_PLUGIN_CALL int bz_Unload ( void )
 {
-	bz_removeEvent(bz_eGetPlayerSpawnPosEvent,BZ_ALL_USERS,&airspawnHandaler);
+	bz_removeEvent(bz_eGetPlayerSpawnPosEvent,&airspawnHandaler);
 	bz_debugMessage(4,"airspawn plugin unloaded");
 	return 0;
 }

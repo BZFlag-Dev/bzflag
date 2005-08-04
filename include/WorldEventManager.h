@@ -28,7 +28,6 @@
 
 typedef std::vector<bz_EventHandler*> tvEventList;
 typedef std::map<bz_eEventType, tvEventList> tmEventTypeList;
-typedef std::map<int, tmEventTypeList> tmEventMap;
 
 class WorldEventManager
 {
@@ -36,16 +35,15 @@ public:
 	WorldEventManager();
 	~WorldEventManager();
 
-	void addEvent ( bz_eEventType eventType, int team, bz_EventHandler* theEvetnt );
-	void removeEvent ( bz_eEventType eventType, int team, bz_EventHandler* theEvetnt );
-	tvEventList getEventList ( bz_eEventType eventType, int team );
-	void callEvents ( bz_eEventType eventType, int team, bz_EventData	*eventData );
+	void addEvent ( bz_eEventType eventType, bz_EventHandler* theEvetnt );
+	void removeEvent ( bz_eEventType eventType, bz_EventHandler* theEvetnt );
+	tvEventList getEventList ( bz_eEventType eventType);
+	void callEvents ( bz_eEventType eventType, bz_EventData	*eventData );
 
-	int getEventCount ( bz_eEventType eventType, int team );
+	int getEventCount ( bz_eEventType eventType );
 protected:
-	tmEventMap eventtMap;
+	tmEventTypeList eventList;
 
-	tmEventTypeList* getTeamEventList ( int team );
 };
 
 extern WorldEventManager	worldEventManager;

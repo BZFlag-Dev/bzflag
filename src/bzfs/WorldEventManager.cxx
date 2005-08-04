@@ -25,55 +25,46 @@ WorldEventManager::WorldEventManager()
 
 WorldEventManager::~WorldEventManager()
 {
-	tmEventMap::iterator teamItr = eventtMap.begin();
-	while ( teamItr != eventtMap.end() )
+	tmEventTypeList::iterator eventItr = eventList.begin();
+	while (eventItr != eventList.end())
 	{
-		tmEventTypeList::iterator eventItr = teamItr->second.begin();
-		while (eventItr != teamItr->second.end())
+		tvEventList::iterator itr = eventItr->second.begin();
+		while ( itr != eventItr->second.end() )
 		{
-			tvEventList::iterator itr = eventItr->second.begin();
-			while ( itr != eventItr->second.end() )
-			{
-				if ((*itr) && (*itr)->autoDelete())
-					delete (*itr);
-				*itr = NULL;
+			if ((*itr) && (*itr)->autoDelete())
+				delete (*itr);
+			*itr = NULL;
 
-				itr++;
-			}
-			eventItr++;
+			itr++;
 		}
-		teamItr++;
+		eventItr++;
 	}
 }
 
-void WorldEventManager::addEvent ( bz_eEventType eventType, int team, bz_EventHandler* theEvetnt )
+void WorldEventManager::addEvent ( bz_eEventType eventType, bz_EventHandler* theEvetnt )
 {
 	if (!theEvetnt)
 		return;
 
-	tmEventTypeList*	teamEvents = getTeamEventList(team);
-
-	if (teamEvents->find(eventType) == teamEvents->end())
+	if (eventList.find(eventType) == eventList.end())
 	{
 		tvEventList newList;
-		(*teamEvents)[eventType] = newList;
+		eventList[eventType] = newList;
 	}
 
-	teamEvents->find(eventType)->second.push_back(theEvetnt);
+	eventList.find(eventType)->second.push_back(theEvetnt);
 }
 
-void WorldEventManager::removeEvent ( bz_eEventType eventType, int team, bz_EventHandler* theEvetnt )
+void WorldEventManager::removeEvent ( bz_eEventType eventType, bz_EventHandler* theEvetnt )
 {
 	if (!theEvetnt)
 		return;
 
-	tmEventTypeList*	teamEvents = getTeamEventList(team);
-
-	if (teamEvents->find(eventType) == teamEvents->end())
+	if (eventList.find(eventType) == eventList.end())
 		return;
 
-	tmEventTypeList::iterator eventTypeItr = teamEvents->begin();
-	if ( eventTypeItr != teamEvents->end() )
+	tmEventTypeList::iterator eventTypeItr = eventList.begin();
+	if ( eventTypeItr != eventList.end() )
 	{
 		tvEventList::iterator itr = eventTypeItr->second.begin();
 		while (itr != eventTypeItr->second.end())
@@ -86,45 +77,32 @@ void WorldEventManager::removeEvent ( bz_eEventType eventType, int team, bz_Even
 	}
 }
 
-tvEventList WorldEventManager::getEventList ( bz_eEventType eventType, int team )
-
+tvEventList WorldEventManager::getEventList ( bz_eEventType eventType)
 {
-	tvEventList	eventList;
+	tvEventList	eList;
 
-	tmEventTypeList*	teamEvents = getTeamEventList(team);
+	tmEventTypeList::iterator itr = eventList.find(eventType);
+	if ( itr == eventList.end() )
+		return eList;
 
-	tmEventTypeList::iterator teamItr = teamEvents->find(eventType);
-	if ( teamItr == teamEvents->end() )
-		return eventList;
-
-	eventList = teamItr->second;
-	return eventList;
+	eList = itr->second;
+	return eList;
 }
 
-void WorldEventManager::callEvents ( bz_eEventType eventType, int team, bz_EventData	*eventData )
+void WorldEventManager::callEvents ( bz_eEventType eventType, bz_EventData	*eventData )
 {
 	if (!eventData)
 		return;
 
-	tvEventList	eventList = getEventList(eventType,team);
+	tvEventList	eList = getEventList(eventType);
 
-	for ( unsigned int i = 0; i < eventList.size(); i++)
-		eventList[i]->process(eventData);
+	for ( unsigned int i = 0; i < eList.size(); i++)
+		eList[i]->process(eventData);
 }
 
-tmEventTypeList* WorldEventManager::getTeamEventList ( int team )
+int WorldEventManager::getEventCount ( bz_eEventType eventType)
 {
-	if (eventtMap.find(team) == eventtMap.end())
-	{
-		tmEventTypeList newList;
-		eventtMap[team] = newList;
-	}
-	return &(eventtMap.find(team)->second);
-}
-
-int WorldEventManager::getEventCount ( bz_eEventType eventType, int team )
-{
-	return (int)getEventList(eventType,team).size();
+	return (int)getEventList(eventType).size();
 }
 
 

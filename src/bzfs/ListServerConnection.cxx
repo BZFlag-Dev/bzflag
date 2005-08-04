@@ -244,7 +244,7 @@ void ListServerLink::sendQueuedMessages()
 	updateEvent.description = publicizeDescription;
 	updateEvent.groups = advertiseGroups;
 
-	worldEventManager.callEvents(bz_eListServerUpdateEvent,-1,&updateEvent);
+	worldEventManager.callEvents(bz_eListServerUpdateEvent,&updateEvent);
 
 	addMe(getTeamCounts(), std::string(updateEvent.address.c_str()), std::string(updateEvent.description.c_str()), std::string(updateEvent.groups.c_str()));
     lastAddTime = TimeKeeper::getCurrent();
