@@ -50,15 +50,15 @@ typedef enum
 	bz_ePlayerJoinEvent,
 	bz_ePlayerPartEvent,
 	bz_eChatMessageEvent,
-	bz_eUnknownSlashCommand,		// will not take a team
+	bz_eUnknownSlashCommand,
 	bz_eGetPlayerSpawnPosEvent,
-	bz_eGetAutoTeamEvent,			// will not take a team
-	bz_eAllowPlayer,				// will not take a team
-	bz_eTickEvent,					// will not take a team
-	bz_eGenerateWorldEvent,			// will not take a team
-	bz_eGetPlayerInfoEvent,			// will not take a team
+	bz_eGetAutoTeamEvent,
+	bz_eAllowPlayer,
+	bz_eTickEvent,
+	bz_eGenerateWorldEvent,
+	bz_eGetPlayerInfoEvent,
 	bz_eAllowSpawn,
-	bz_eListServerUpdateEvent		// will not take a team
+	bz_eListServerUpdateEvent
 }bz_eEventType;
 
 #define BZ_ALL_USERS	-1
