@@ -112,28 +112,30 @@
 					  <p>A plugin is basically useless if it can't react to events in game. To allow this
   a plugin needs to tell bzfs that it would like to listen for events. To do that
   the plugin will need to call the following function;</p>
-					  <p class="Code"> bool bz_registerEvent ( bz_teEventType eventType,,
+					  <p class="Code"> bool bz_registerEvent ( bz_teEventType eventType,
                           bz_EventHandler* eventHandler );</p>
 					  <p>where <span class="Code">eventType</span> is one of the following enumerations;</p>
-					  <ul>
-					    <li><span class="Code">bz_eCaptureEvent</span> // flag is captured in a CTF game</li>
-				        <li><span class="Code">bz_ePlayerDieEvent</span> // a player gets killed </li>
-					    <li><span class="Code">bz_ePlayerSpawnEvent</span> // a player joins as a tank</li>
-					    <li><span class="Code">bz_eZoneEntryEvent</span> // a player enters a zone ( not implemented ) </li>
-					    <li><span class="Code">bz_eZoneExitEvent</span> // a player exits a zone ( not implemented )</li>
-					    <li><span class="Code">bz_ePlayerJoinEvent</span> // a user joins the server ( player or observer )</li>
-					    <li><span class="Code">bz_ePlayerPartEvent</span> // a user leaves the server ( player or observer )</li>
-					    <li><span class="Code">bz_eChatMessageEvent</span> // a chat message is sent </li>
-					    <li><span class="Code">bz_eUnknownSlashCommand</span> // a "/" command was issued but not handled</li>
-					    <li><span class="Code">bz_eGetPlayerSpawnPosEvent</span> // the server needs a spawn posttion for a player</li>
-					    <li><span class="Code">bz_eGetAutoTeamEvent</span>, // The server is asigning a player to a team automaticly</li>
-					    <li><span class="Code">bz_eAllowPlayer</span>, // The server is about to allow or disalow a player</li>
-					    <li> <span class="Code">bz_eTickEvent</span>, // The server has executed one of it's normal event loops </li>
-					    <li><span class="Code">bz_eGenerateWorldEvent</span>, // The server is generating or loading a world</li>
-					    <li> <span class="Code">bz_eGetPlayerInfoEvent</span>, // The server needs the info bits about a player</li>
-					    <li><span class="Code">bz_eAllowSpawn</span>, // The server is about to allow a player to spawn</li>
-					    <li><span class="Code">bz_eListServerUpdateEvent</span> // The server is about to update the list server with new information</li>
-					  </ul>					  <p>	      <span class="Code">eventHandler</span> is a pointer to a event handler class. Plug-ins should derive their own versions
+					  <table>
+					    <tr><td><span class="Code">bz_eCaptureEvent</span> </td><td> flag is captured in a CTF game</td></tr>
+				        <tr><td><span class="Code">bz_ePlayerDieEvent</span> </td><td> a player gets killed </td></tr>
+					    <tr><td><span class="Code">bz_ePlayerSpawnEvent</span> </td><td> a player joins as a tank</td></tr>
+					    <tr><td><span class="Code">bz_eZoneEntryEvent</span> </td><td> a player enters a zone ( not implemented ) </td></tr>
+					    <tr><td><span class="Code">bz_eZoneExitEvent</span> </td><td> a player exits a zone ( not implemented )</td></tr>
+					    <tr><td><span class="Code">bz_ePlayerJoinEvent</span> </td><td> a user joins the server ( player or observer )</td></tr>
+					    <tr><td><span class="Code">bz_ePlayerPartEvent</span> </td><td> a user leaves the server ( player or observer )</td></tr>
+					    <tr><td><span class="Code">bz_eChatMessageEvent</span> </td><td> a chat message is sent </td></tr>
+					    <tr><td><span class="Code">bz_eUnknownSlashCommand</span> </td><td> a "/" command was issued but not handled</td></tr>
+					    <tr><td><span class="Code">bz_eGetPlayerSpawnPosEvent</span> </td><td> the server needs a spawn posttion for a player</td></tr>
+					    <tr><td><span class="Code">bz_eGetAutoTeamEvent</span>, </td><td> The server is asigning a player to a team automaticly</td></tr>
+					    <tr><td><span class="Code">bz_eAllowPlayer</span>, </td><td> The server is about to allow or disalow a player</td></tr>
+					    <tr><td> <span class="Code">bz_eTickEvent</span>, </td><td> The server has executed one of it's normal event loops </td></tr>
+					    <tr><td><span class="Code">bz_eGenerateWorldEvent</span>, </td><td> The server is generating or loading a world</td></tr>
+					    <tr><td> <span class="Code">bz_eGetPlayerInfoEvent</span>, </td><td> The server needs the info bits about a player</td></tr>
+					    <tr><td><span class="Code">bz_eAllowSpawn</span>, </td><td> The server is about to allow a player to spawn</td></tr>
+					    <tr><td><span class="Code">bz_eListServerUpdateEvent</span> </td><td> The server is about to update the list server with new information</td></tr>
+					  </table>	
+					  
+					  <p>	      <span class="Code">eventHandler</span> is a pointer to a event handler class. Plug-ins should derive their own versions
       of the event handler class from bz_EventHandler and pass this pointer into the function.
       When the event happens the process function of the class will be called so that the plugin can
       perform any actions it desires.
@@ -261,6 +263,318 @@ double time; // the time of the event</blockquote>
                             <tr>
                               <td>
 These events are called when ever a user joins or leaves the server. These events are called for both players and observers.
+                            </tr>
+                          </table>
+						  </td>
+                        </tr>
+                      </table>
+					  
+					  <br><br>
+					  <table border="1" bgcolor="#DDDDDD">
+                        <tr>
+                          <td align="left" valign="top">
+						  <table border="0" cellpadding="2" cellspacing="2">
+                            <tr>
+                              <td><span class="Code">bz_eTYPEvent</span>provides the folowing data</tr>
+                            <tr>
+                              <td><span class="Code">bz_EventData<br>
+{<br>
+                              </span>
+                                <blockquote class="Code"> int thing;					// comment<br>
+int thing2; // comment</blockquote>
+                                <p class="Code">}</p></td>
+                            </tr>
+                            <tr>
+                              <td>
+Event description
+                            </tr>
+                          </table>
+						  </td>
+                        </tr>
+                      </table>
+					  
+					  <br><br>
+					  <table border="1" bgcolor="#DDDDDD">
+                        <tr>
+                          <td align="left" valign="top">
+						  <table border="0" cellpadding="2" cellspacing="2">
+                            <tr>
+                              <td><span class="Code">bz_eTYPEvent</span>provides the folowing data</tr>
+                            <tr>
+                              <td><span class="Code">bz_EventData<br>
+{<br>
+                              </span>
+                                <blockquote class="Code"> int thing;					// comment<br>
+int thing2; // comment</blockquote>
+                                <p class="Code">}</p></td>
+                            </tr>
+                            <tr>
+                              <td>
+Event description
+                            </tr>
+                          </table>
+						  </td>
+                        </tr>
+                      </table>
+					  
+					  <br><br>
+					  <table border="1" bgcolor="#DDDDDD">
+                        <tr>
+                          <td align="left" valign="top">
+						  <table border="0" cellpadding="2" cellspacing="2">
+                            <tr>
+                              <td><span class="Code">bz_eTYPEvent</span>provides the folowing data</tr>
+                            <tr>
+                              <td><span class="Code">bz_EventData<br>
+{<br>
+                              </span>
+                                <blockquote class="Code"> int thing;					// comment<br>
+int thing2; // comment</blockquote>
+                                <p class="Code">}</p></td>
+                            </tr>
+                            <tr>
+                              <td>
+Event description
+                            </tr>
+                          </table>
+						  </td>
+                        </tr>
+                      </table>
+					  
+					  <br><br>
+					  <table border="1" bgcolor="#DDDDDD">
+                        <tr>
+                          <td align="left" valign="top">
+						  <table border="0" cellpadding="2" cellspacing="2">
+                            <tr>
+                              <td><span class="Code">bz_eTYPEvent</span>provides the folowing data</tr>
+                            <tr>
+                              <td><span class="Code">bz_EventData<br>
+{<br>
+                              </span>
+                                <blockquote class="Code"> int thing;					// comment<br>
+int thing2; // comment</blockquote>
+                                <p class="Code">}</p></td>
+                            </tr>
+                            <tr>
+                              <td>
+Event description
+                            </tr>
+                          </table>
+						  </td>
+                        </tr>
+                      </table>
+					  
+					  <br><br>
+					  <table border="1" bgcolor="#DDDDDD">
+                        <tr>
+                          <td align="left" valign="top">
+						  <table border="0" cellpadding="2" cellspacing="2">
+                            <tr>
+                              <td><span class="Code">bz_eTYPEvent</span>provides the folowing data</tr>
+                            <tr>
+                              <td><span class="Code">bz_EventData<br>
+{<br>
+                              </span>
+                                <blockquote class="Code"> int thing;					// comment<br>
+int thing2; // comment</blockquote>
+                                <p class="Code">}</p></td>
+                            </tr>
+                            <tr>
+                              <td>
+Event description
+                            </tr>
+                          </table>
+						  </td>
+                        </tr>
+                      </table>
+					  
+					  <br><br>
+					  <table border="1" bgcolor="#DDDDDD">
+                        <tr>
+                          <td align="left" valign="top">
+						  <table border="0" cellpadding="2" cellspacing="2">
+                            <tr>
+                              <td><span class="Code">bz_eTYPEvent</span>provides the folowing data</tr>
+                            <tr>
+                              <td><span class="Code">bz_EventData<br>
+{<br>
+                              </span>
+                                <blockquote class="Code"> int thing;					// comment<br>
+int thing2; // comment</blockquote>
+                                <p class="Code">}</p></td>
+                            </tr>
+                            <tr>
+                              <td>
+Event description
+                            </tr>
+                          </table>
+						  </td>
+                        </tr>
+                      </table>
+					  
+					  <br><br>
+					  <table border="1" bgcolor="#DDDDDD">
+                        <tr>
+                          <td align="left" valign="top">
+						  <table border="0" cellpadding="2" cellspacing="2">
+                            <tr>
+                              <td><span class="Code">bz_eTYPEvent</span>provides the folowing data</tr>
+                            <tr>
+                              <td><span class="Code">bz_EventData<br>
+{<br>
+                              </span>
+                                <blockquote class="Code"> int thing;					// comment<br>
+int thing2; // comment</blockquote>
+                                <p class="Code">}</p></td>
+                            </tr>
+                            <tr>
+                              <td>
+Event description
+                            </tr>
+                          </table>
+						  </td>
+                        </tr>
+                      </table>
+					  
+					  <br><br>
+					  <table border="1" bgcolor="#DDDDDD">
+                        <tr>
+                          <td align="left" valign="top">
+						  <table border="0" cellpadding="2" cellspacing="2">
+                            <tr>
+                              <td><span class="Code">bz_eTYPEvent</span>provides the folowing data</tr>
+                            <tr>
+                              <td><span class="Code">bz_EventData<br>
+{<br>
+                              </span>
+                                <blockquote class="Code"> int thing;					// comment<br>
+int thing2; // comment</blockquote>
+                                <p class="Code">}</p></td>
+                            </tr>
+                            <tr>
+                              <td>
+Event description
+                            </tr>
+                          </table>
+						  </td>
+                        </tr>
+                      </table>
+					  
+					  <br><br>
+					  <table border="1" bgcolor="#DDDDDD">
+                        <tr>
+                          <td align="left" valign="top">
+						  <table border="0" cellpadding="2" cellspacing="2">
+                            <tr>
+                              <td><span class="Code">bz_eTYPEvent</span>provides the folowing data</tr>
+                            <tr>
+                              <td><span class="Code">bz_EventData<br>
+{<br>
+                              </span>
+                                <blockquote class="Code"> int thing;					// comment<br>
+int thing2; // comment</blockquote>
+                                <p class="Code">}</p></td>
+                            </tr>
+                            <tr>
+                              <td>
+Event description
+                            </tr>
+                          </table>
+						  </td>
+                        </tr>
+                      </table>
+					  
+					  <br><br>
+					  <table border="1" bgcolor="#DDDDDD">
+                        <tr>
+                          <td align="left" valign="top">
+						  <table border="0" cellpadding="2" cellspacing="2">
+                            <tr>
+                              <td><span class="Code">bz_eTYPEvent</span>provides the folowing data</tr>
+                            <tr>
+                              <td><span class="Code">bz_EventData<br>
+{<br>
+                              </span>
+                                <blockquote class="Code"> int thing;					// comment<br>
+int thing2; // comment</blockquote>
+                                <p class="Code">}</p></td>
+                            </tr>
+                            <tr>
+                              <td>
+Event description
+                            </tr>
+                          </table>
+						  </td>
+                        </tr>
+                      </table>
+					  
+					  <br><br>
+					  <table border="1" bgcolor="#DDDDDD">
+                        <tr>
+                          <td align="left" valign="top">
+						  <table border="0" cellpadding="2" cellspacing="2">
+                            <tr>
+                              <td><span class="Code">bz_eTYPEvent</span>provides the folowing data</tr>
+                            <tr>
+                              <td><span class="Code">bz_EventData<br>
+{<br>
+                              </span>
+                                <blockquote class="Code"> int thing;					// comment<br>
+int thing2; // comment</blockquote>
+                                <p class="Code">}</p></td>
+                            </tr>
+                            <tr>
+                              <td>
+Event description
+                            </tr>
+                          </table>
+						  </td>
+                        </tr>
+                      </table>
+					  
+					  <br><br>
+					  <table border="1" bgcolor="#DDDDDD">
+                        <tr>
+                          <td align="left" valign="top">
+						  <table border="0" cellpadding="2" cellspacing="2">
+                            <tr>
+                              <td><span class="Code">bz_eTYPEvent</span>provides the folowing data</tr>
+                            <tr>
+                              <td><span class="Code">bz_EventData<br>
+{<br>
+                              </span>
+                                <blockquote class="Code"> int thing;					// comment<br>
+int thing2; // comment</blockquote>
+                                <p class="Code">}</p></td>
+                            </tr>
+                            <tr>
+                              <td>
+Event description
+                            </tr>
+                          </table>
+						  </td>
+                        </tr>
+                      </table>
+					  
+					  <br><br>
+					  <table border="1" bgcolor="#DDDDDD">
+                        <tr>
+                          <td align="left" valign="top">
+						  <table border="0" cellpadding="2" cellspacing="2">
+                            <tr>
+                              <td><span class="Code">bz_eTYPEvent</span>provides the folowing data</tr>
+                            <tr>
+                              <td><span class="Code">bz_EventData<br>
+{<br>
+                              </span>
+                                <blockquote class="Code"> int thing;					// comment<br>
+int thing2; // comment</blockquote>
+                                <p class="Code">}</p></td>
+                            </tr>
+                            <tr>
+                              <td>
+Event description
                             </tr>
                           </table>
 						  </td>
