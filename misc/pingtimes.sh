@@ -27,7 +27,7 @@ echo " okay"
 
 
 echo -n "... getting list of servers ..."
-servers=`curl http://my.BZFlag.org/db/ 2>/dev/null`
+servers=`curl "http://my.BZFlag.org/db/?action=LIST" 2>/dev/null`
 [ $? != 0 ] && echo " NOT okay" && echo "ERROR: unable to curl http://my.BZFlag.org/db" && exit 1
 echo " okay"
 
