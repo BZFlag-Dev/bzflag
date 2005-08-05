@@ -826,7 +826,7 @@ static void handleBanCmd(GameKeeper::Player *playerData, const char *message)
 
     // check the ban duration
     regex_t preg;
-    int res = regcomp(&preg, "(^[:digit:]|[[:digit:]]+[h|w|d]?$)+",
+    int res = regcomp(&preg, "^([[:digit:]]+[h|w|d]?)+$",
 		      REG_ICASE | REG_NOSUB | REG_EXTENDED);
     res = regexec(&preg,argv[2].c_str(), 0, NULL, 0);
     regfree(&preg);
