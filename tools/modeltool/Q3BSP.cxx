@@ -187,8 +187,6 @@ bool Quake3Level::dumpToModel ( CModel &model )
 
 void Quake3Level::initialise(void)
 {
-	int i=0;
-
 	FILE *fp = fopen(theFileName.c_str(),"rb");
 	if (!fp)
 		return;
@@ -251,6 +249,8 @@ void Quake3Level::initialise(void)
 	mNumBrushSides = getLumpSize(BSP_BRUSHSIDES_LUMP)/sizeof(bsp_brushside_t);
 
 #ifdef __APPLE___
+	int i=0;
+
 	// swap header
 	SwapFourBytes (&mHeader->version);
 	SwapFourBytesGrup ((unsigned long*)mElements, mNumElements*sizeof(int));
