@@ -304,6 +304,7 @@ class Quake3Level
 {
 public:
 	Quake3Level();
+	~Quake3Level();
 
 	/** Reads Quake3 bsp data from a chunk of memory as read from the file.
 	Since ResourceManagers generally locate data in a variety of
@@ -346,6 +347,8 @@ public:
 	// NB no brushes, fog or local lightvolumes yet
 //	DataChunk mChunk;
 	std::string theFileName;
+
+	char *data;
 
 	bsp_header_t* mHeader;
 	unsigned char* mLumpStart;
@@ -396,3 +399,4 @@ public:
 };
 
 #endif
+

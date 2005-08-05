@@ -28,9 +28,16 @@ http://www.gnu.org/copyleft/lesser.txt.
 #include <iostream>
 #include <fstream>
 
+float bzpScale = 0.25f;
+
 Quake3Level::Quake3Level()
 {
-
+	data = NULL;
+}
+Quake3Level::~Quake3Level()
+{
+	if (data)
+		free (data);
 }
 
 void Quake3Level::loadFromFile ( const char* fileName)
@@ -70,7 +77,112 @@ void SwapFourBytesGrup (unsigned long *src, int size)
 
 bool Quake3Level::dumpToModel ( CModel &model )
 {
-	return false;
+	model.clear();
+
+
+	for ( int i = 0; i < mNumShaders; i++)
+	{
+		CMaterial	material;
+
+		char	temp[128];
+		strcpy(temp, mShaders[i].name);
+		if (strrchr(temp,'.'))
+			*(strrchr(temp,'.')) = 0;
+
+		material.texture = temp;
+		material.texture += ".png";
+
+		model.materials[std::string(temp)] = material;
+	}
+
+	for ( int i = 0; i < mNumFaces; i++ )
+	{
+		switch( mFaces[i].type )
+		{
+			case 1: // polygon face
+			case 3: // mesh face
+			{
+				CMesh mesh;
+
+				// add in the verts and normals and UVs
+				for ( int j = mFaces[i].vert_count-1; j >= 0; j-- )
+				{
+					CVertex	vert;
+					CVertex	norm;
+					CTexCoord	coord;
+
+					int index = mFaces[i].vert_start + j;
+					if ( index > 0 && index < mNumVertices)
+					{
+						vert.x = mVertices[index].point[0]*bzpScale;
+						vert.y = mVertices[index].point[1]*bzpScale;
+						vert.z = mVertices[index].point[2]*bzpScale;
+
+						norm.x = mVertices[index].normal[0];
+						norm.y = mVertices[index].normal[1];
+						norm.z = mVertices[index].normal[2];
+
+						coord.u = mVertices[index].texture[0];
+						coord.v = mVertices[index].texture[1];
+					}
+					mesh.verts.push_back(vert);
+					mesh.normals.push_back(norm);
+					mesh.texCoords.push_back(coord);
+				}
+
+				// now do the face
+				CFace	face;
+
+				if ( mFaces[i].shader > 0 && mFaces[i].shader < mNumShaders)
+				{
+					char	temp[128];
+					if (strlen(mShaders[mFaces[i].shader].name) )
+					{
+						strcpy(temp, mShaders[mFaces[i].shader].name);
+						char *p = strrchr(temp,'.');
+						if (p)
+							*p = 0;
+
+						face.material = temp;
+					}
+
+					int iBlarg = 10;
+					iBlarg++;
+				}
+
+				int maxIndex = mFaces[i].vert_start + mFaces[i].vert_count -1;
+
+				if ( maxIndex < mNumVertices)
+				{
+
+					for( int j = 0; j < mFaces[i].vert_count; j++)
+					{
+						face.verts.push_back(j);
+						face.normals.push_back(j);
+						face.texCoords.push_back(j);
+					}
+
+					mesh.faces.push_back(face);
+				}
+				if ( mesh.faces.size())
+					model.meshes.push_back(mesh);
+			}
+			break;
+
+			case 2:	// surface
+
+			break;
+
+			case 4: //billboard
+			break;
+
+			default:
+				// something else
+			break;
+		}
+	}
+
+	return model.meshes.size() > 0;
 }
 
 void Quake3Level::initialise(void)
@@ -84,12 +196,14 @@ void Quake3Level::initialise(void)
 	fseek(fp,0,SEEK_END);
 	unsigned int size = ftell(fp);
 	fseek(fp,0,SEEK_SET);
+	if (data)
+		free(data);
 
-	char *p = (char*)malloc(size);
-	fread(p,size,1,fp);
+	data = (char*)malloc(size);
+	fread(data,size,1,fp);
 	fclose(fp);
 
-	mHeader = (bsp_header_t*)p;
+	mHeader = (bsp_header_t*)data;
 	mLumpStart = ((unsigned char*)mHeader) + sizeof(mHeader);
 
 	mEntities = (unsigned char*)getLump(BSP_ENTITIES_LUMP);
@@ -157,8 +271,6 @@ void Quake3Level::initialise(void)
 	SwapFourBytesGrup ((unsigned long*)mBrushes,  mNumBrushes*sizeof(bsp_brush_t));
 	SwapFourBytesGrup ((unsigned long*)mBrushSides, mNumBrushSides*sizeof(bsp_brushside_t));
 #endif
-
-	free(p);
 }
 
 void* Quake3Level::getLump(int lumpType)
@@ -200,7 +312,7 @@ void Quake3Level::dumpContents(void)
 	of << "Planes       : " << mNumPlanes << std::endl;
 	of << "Shaders      : " << mNumShaders << std::endl;
 	of << "Vertices     : " << mNumVertices << std::endl;
-	of << "Vis Clusters : " << mVis->cluster_count << std::endl;
+//	of << "Vis Clusters : " << mVis->cluster_count << std::endl;
 
 	of << std::endl;
 	of << "-= Shaders =-";
