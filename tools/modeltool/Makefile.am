@@ -3,7 +3,9 @@ SUBDIRS = vc71
 bin_PROGRAMS = modeltool
 
 modeltool_SOURCES = \
-	modeltool.cxx
+	modeltool.cxx \
+	wavefrontOBJ.cxx\
+	Q3BSP.cxx
 
 modeltool_CPPFLAGS = \
 	-I$(top_srcdir)/include

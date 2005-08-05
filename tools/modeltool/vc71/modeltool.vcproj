@@ -118,13 +118,28 @@
 				RelativePath="..\modeltool.cxx">
 			</File>
 			<File
+				RelativePath="..\Q3BSP.cxx">
+			</File>
+			<File
 				RelativePath="..\..\..\src\common\TextUtils.cxx">
+			</File>
+			<File
+				RelativePath="..\wavefrontOBJ.cxx">
 			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}">
+			<File
+				RelativePath="..\model.h">
+			</File>
+			<File
+				RelativePath="..\Q3BSP.h">
+			</File>
+			<File
+				RelativePath="..\wavefrontOBJ.h">
+			</File>
 		</Filter>
 		<Filter
 			Name="Resource Files"
