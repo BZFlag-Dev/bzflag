@@ -824,16 +824,15 @@ static void handleBanCmd(GameKeeper::Player *playerData, const char *message)
 	ip = playerBannedData->netHandler->getTargetIP();
     }
 
-    // set the ban time
+    // check the ban duration
     regex_t preg;
-    int res = regcomp(&preg, "(^[[:digit:]]+[h|w|d]?$)+",
+    int res = regcomp(&preg, "(^[:digit:]|[[:digit:]]+[h|w|d]?$)+",
 		      REG_ICASE | REG_NOSUB | REG_EXTENDED);
     res = regexec(&preg,argv[2].c_str(), 0, NULL, 0);
     regfree(&preg);
     if (res == REG_NOMATCH) {
-      sendMessage(ServerPlayer, t,
-		  "Syntax: /ban <#slot | PlayerName | \"Player Name\" | ip>"
-		  " <duration> <reason>");
+      sendMessage(ServerPlayer, t, "Error: invalid ban duration");
+      sendMessage(ServerPlayer, t, "Duration examples:  30 1h  1d  1w  and mixing: 1w2d4h");
       return;
     }
     
