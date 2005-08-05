@@ -37,6 +37,11 @@ class CustomWorld : public WorldFileObject {
     double _fHeight;
 };
 
+
+extern std::map<std::string,bz_CustomMapObjectHandler*>	customObjectMap;
+
+void registerCustomMapObject ( const char* object, bz_CustomMapObjectHandler *handler );
+void removeCustomMapObject ( const char* object );
 #endif  /* __CUSTOMWORLD_H__ */
 
 // Local variables: ***

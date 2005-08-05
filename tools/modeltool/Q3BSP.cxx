@@ -155,7 +155,7 @@ bool Quake3Level::dumpToModel ( CModel &model )
 					}
 				}
 
-				if (0)
+				if (1)
 				{
 					int maxIndex = mFaces[i].vert_start + mFaces[i].vert_count -1;
 
@@ -174,21 +174,42 @@ bool Quake3Level::dumpToModel ( CModel &model )
 				}
 				else if (mFaces[i].vert_count > 2)
 				{
+					bool flop = false;
 
 					for( int j = 1; j < mFaces[i].vert_count-1; j++)
 					{
 						face.clear();
-						face.verts.push_back(0);
-						face.normals.push_back(0);
-						face.texCoords.push_back(0);
 
-						face.verts.push_back(j);
-						face.normals.push_back(j);
-						face.texCoords.push_back(j);
+						if ( flop )
+						{
+							face.verts.push_back(0);
+							face.normals.push_back(0);
+							face.texCoords.push_back(0);
 
-						face.verts.push_back(j+1);
-						face.normals.push_back(j+1);
-						face.texCoords.push_back(j+1);
+							face.verts.push_back(j);
+							face.normals.push_back(j);
+							face.texCoords.push_back(j);
+
+							face.verts.push_back(j+1);
+							face.normals.push_back(j+1);
+							face.texCoords.push_back(j+1);
+						}
+						else
+						{
+							face.verts.push_back(j+1);
+							face.normals.push_back(j+1);
+							face.texCoords.push_back(j+1);
+
+							face.verts.push_back(j);
+							face.normals.push_back(j);
+							face.texCoords.push_back(j);
+
+							face.verts.push_back(0);
+							face.normals.push_back(0);
+							face.texCoords.push_back(0);
+						}
+
+						flop = !flop;
 					}
 					mesh.faces.push_back(face);
 				}

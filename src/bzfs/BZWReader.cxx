@@ -179,7 +179,6 @@ static bool parseNormalObject(const char* token, WorldFileObject** object)
   }
 }
 
-
 bool BZWReader::readWorldStream(std::vector<WorldFileObject*>& wlist,
 				GroupDefinition* groupDef)
 {
@@ -197,6 +196,9 @@ bool BZWReader::readWorldStream(std::vector<WorldFileObject*>& wlist,
   GroupDefinition* const worldDef = (GroupDefinition*)OBSTACLEMGR.getWorld();
   GroupDefinition* const startDef = groupDef;
 
+  std::string customObject;
+  std::vector<std::string>	customLines;
+
   bool gotWorld = false;
 
   while (!input->eof() && !input->fail() && input->good())
@@ -208,6 +210,11 @@ bool BZWReader::readWorldStream(std::vector<WorldFileObject*>& wlist,
 	  std::string("discarding incomplete object"), line);
 	if (object != fakeObject) {
 	  delete object;
+	}
+	else if (customObject.size())
+	{
+		customObject = "";
+		customLines.clear();
 	}
       }
       object = newObject;
@@ -235,7 +242,16 @@ bool BZWReader::readWorldStream(std::vector<WorldFileObject*>& wlist,
 	  }
 	}
 	object = NULL;
-      } else {
+      } 
+	  else if (customObject.size())
+	  {	
+		bz_CustomMapObjectInfo data;
+		data.name = bzApiString(customObject);
+		for(unsigned int i = 0; i < customLines.size(); i++)
+			data.data.push_back(customLines[i]);
+		customObjectMap[customObject]->handle(bzApiString(customObject),&data);
+		object = NULL;
+	  }else {
 	errorHandler->fatalError(
 	  std::string("unexpected \"end\" token"), line);
 	return false;
@@ -339,14 +355,25 @@ bool BZWReader::readWorldStream(std::vector<WorldFileObject*>& wlist,
 	  // return false;
 	}
       }
+	  else if (customObject.size())
+		  customLines.push_back(std::string(buffer));
 
     } else { // filling the current object
       // unknown token
+		if (customObjectMap.find(TextUtils::toupper(std::string(buffer))) != customObjectMap.end() ) 
+		{
+			customObject = TextUtils::toupper(std::string(buffer));
+			object = fakeObject;
+			customLines.clear();
+		}
+		else
+		{
       errorHandler->warning(
 	std::string("invalid object type \"") +
 	std::string(buffer) + std::string("\" - skipping"), line);
       if (object != fakeObject)
 	delete object;
+		}
      // return false;
     }
 

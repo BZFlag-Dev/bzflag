@@ -29,6 +29,8 @@
 
 #include "bzfsPlugins.h"
 
+#include "CustomWorld.h"
+
 TimeKeeper synct = TimeKeeper::getCurrent();
 
 extern void sendMessage(int playerIndex, PlayerId dstPlayer, const char *message);
@@ -1062,6 +1064,24 @@ BZF_API bool bz_setWorldSize( float size, float wallHeight )
 	pluginWorldHeight = wallHeight;
 	pluginWorldSize = size;
 
+	return true;
+}
+
+BZF_API bool bz_registerCustomMapObject ( const char* object, bz_CustomMapObjectHandler *handler )
+{
+	if (!object || !handler)
+		return false;
+
+	registerCustomMapObject(object,handler);
+	return true;
+}
+
+BZF_API bool bz_removeCustomMapObject ( const char* object )
+{
+	if (!object)
+		return false;
+
+	removeCustomMapObject(object);
 	return true;
 }
 

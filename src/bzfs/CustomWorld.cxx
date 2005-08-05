@@ -50,6 +50,23 @@ void CustomWorld::writeToWorld(WorldInfo*) const
 {
 }
 
+std::map<std::string,bz_CustomMapObjectHandler*>	customObjectMap;
+
+void registerCustomMapObject ( const char* object, bz_CustomMapObjectHandler *handler )
+{
+	std::string objectName = object;
+
+	customObjectMap[TextUtils::toupper(objectName)] = handler;
+}
+
+void removeCustomMapObject ( const char* object )
+{
+	std::string objectName = object;
+
+	if ( customObjectMap.find(TextUtils::toupper(objectName)) != customObjectMap.end() )
+		customObjectMap.erase(customObjectMap.find(TextUtils::toupper(objectName)));
+}
+
 // Local variables: ***
 // mode: C++ ***
 // tab-width: 8 ***

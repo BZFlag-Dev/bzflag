@@ -720,6 +720,26 @@ BZF_API bool bz_addWorldWeapon( const char* flagType, float *pos, float rot, flo
 
 BZF_API bool bz_setWorldSize( float size, float wallHeight = -1.0 );
 
+// custom map objects
+
+typedef struct bz_CustomMapObjectInfo
+{
+	bzApiString name;
+	bzAPIStringList data;
+}bz_CustomMapObjectInfo;
+
+class bz_CustomMapObjectHandler
+{
+public:
+	virtual ~bz_CustomMapObjectHandler(){};
+	virtual bool handle ( bzApiString object, bz_CustomMapObjectInfo *data ) = 0;
+
+};
+
+BZF_API bool bz_registerCustomMapObject ( const char* object, bz_CustomMapObjectHandler *handler );
+BZF_API bool bz_removeCustomMapObject ( const char* object );
+
+
 // public server info
 BZF_API bool bz_getPublic( void );
 BZF_API bzApiString bz_getPublicAddr( void );
