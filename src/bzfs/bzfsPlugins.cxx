@@ -256,7 +256,7 @@ bool loadPlugin ( std::string plugin, std::string config )
 		return load1Plugin(plugin,config);
 }
 
-void unloadPlugin ( std::string plugin )
+bool unloadPlugin ( std::string plugin )
 {
 	// unload the first one of the name we find
 	for (unsigned int i = 0; i < vPluginList.size();i++)
@@ -265,9 +265,10 @@ void unloadPlugin ( std::string plugin )
 		{
 			unload1Plugin(i);
 			vPluginList.erase(vPluginList.begin()+i);
-			return;
+			return true;
 		}
 	}
+        return false;
 }
 
 void unloadPlugins ( void )
@@ -363,9 +364,9 @@ public:
 				return true;
 			}
 
-			unloadPlugin(message);
+			if ( unloadPlugin(message) )
+				bz_sendTextMessage(BZ_SERVER,playerID,"Plug-in unloaded.");
 
-			bz_sendTextMessage(BZ_SERVER,playerID,"Plug-in unloaded.");
 			return true;
 		}
 		return true;

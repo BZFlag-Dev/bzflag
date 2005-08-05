@@ -19,7 +19,7 @@
 void initPlugins ( void );
 
 bool loadPlugin ( std::string plugin, std::string config );
-void unloadPlugin ( std::string plugin );
+bool unloadPlugin ( std::string plugin );
 void unloadPlugins ( void );
 
 bool registerCustomPluginHandler ( std::string extension, bz_APIPluginHandler *handler );
