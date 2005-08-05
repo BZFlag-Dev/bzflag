@@ -140,7 +140,7 @@ bool load1Plugin ( std::string plugin, std::string config )
 	else
 	{
 		DEBUG1("Plugin:%s not found\n",plugin.c_str());
-		return true;
+		return false;
 	}
 }
 
