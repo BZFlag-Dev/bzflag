@@ -42,6 +42,12 @@ float shineFactor = 1.0f;
 
 float maxShineExponent = 128.0f; // OpenGL minimum shininess
 
+
+float globalScale = 1.0f;
+float globalShift[3] = {0,0,0};
+std::vector<std::string> bspMaterialSkips; // materials to skip in a bsp map
+
+
 static void writeBZW  ( CModel &model, std::string file )
 {
 	if (model.meshes.size() < 1 )
@@ -114,7 +120,7 @@ static void writeBZW  ( CModel &model, std::string file )
 		tvVertList::iterator vertItr = mesh.verts.begin();
 		while ( vertItr != mesh.verts.end() )
 		{
-			fprintf (fp,"  vertex %f %f %f\n", vertItr->x,vertItr->y,vertItr->z);
+			fprintf (fp,"  vertex %f %f %f\n", vertItr->x*globalScale+globalShift[0],vertItr->y*globalScale+globalShift[1],vertItr->z*globalScale+globalShift[2]);
 			vertItr++;
 		}
 
@@ -200,6 +206,11 @@ static int  dumpUsage ( char *exeName, const char* reason )
 	printf("       -sh        : disable shininess\n");
 	printf("       -sf <val>  : shine multiplier\n");
 	printf("       -e         : disable emission coloring\n\n");
+	printf("       -gx <val>  : scale the model by this factor\n\n");
+	printf("       -gsx <val> : shift the map by this value in X\n\n");
+	printf("       -gsy <val> : shift the map by this value in Y\n\n");
+	printf("       -gsz <val> : shift the map by this value in Z\n\n");
+	printf("       -bspskip <val> : skip faces with this material when importing a bsp\n\n");
 	return 1;
 }
 
@@ -294,6 +305,46 @@ int main(int argc, char* argv[])
 		}
 		else if (command == "-e") {
 			useEmission = false;
+		}
+		else if (command == "-gx"){
+			if ((i + 1) < argc) {
+				i++;
+				globalScale = (float)atof(argv[i]);
+			} else {
+				printf ("missing -gx argument\n");
+			}
+		}
+		else if (command == "-gsx"){
+			if ((i + 1) < argc) {
+				i++;
+				globalShift[0] = (float)atof(argv[i]);
+			} else {
+				printf ("missing -gsx argument\n");
+			}
+		}
+		else if (command == "-gsy"){
+			if ((i + 1) < argc) {
+				i++;
+				globalShift[1] = (float)atof(argv[i]);
+			} else {
+				printf ("missing -gsy argument\n");
+			}
+		}
+		else if (command == "-gsz"){
+			if ((i + 1) < argc) {
+				i++;
+				globalShift[2] = (float)atof(argv[i]);
+			} else {
+				printf ("missing -gsz argument\n");
+			}
+		}
+		else if (command == "-bspskip"){
+			if ((i + 1) < argc) {
+				i++;
+				bspMaterialSkips.push_back(std::string(argv[i]));
+			} else {
+				printf ("missing -bspskip argument\n");
+			}
 		}
 	}
 	// make a model

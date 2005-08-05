@@ -23,8 +23,12 @@ extern bool useTexcoords ;
 extern bool flipYZ;
 extern bool useSmoothBounce;
 extern float shineFactor;
+extern float globalScale;
+extern float globalShift[3];
 
 extern float maxShineExponent; // OpenGL minimum shininess
+
+extern std::vector<std::string> bspMaterialSkips; // materials to skip in a bsp map
 
 typedef std::vector<int> tvIndexList;
 
@@ -103,6 +107,8 @@ public:
 	tvIndexList verts;
 	tvIndexList	normals;
 	tvIndexList	texCoords;
+
+	void clear ( void ) {verts.clear();normals.clear();texCoords.clear();}
 };
 typedef std::vector<CFace> tvFaceList;
 

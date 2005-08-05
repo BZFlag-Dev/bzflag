@@ -133,6 +133,8 @@ bool Quake3Level::dumpToModel ( CModel &model )
 				// now do the face
 				CFace	face;
 
+				bool skipFace = false;
+
 				if ( mFaces[i].shader > 0 && mFaces[i].shader < mNumShaders)
 				{
 					char	temp[128];
@@ -143,11 +145,14 @@ bool Quake3Level::dumpToModel ( CModel &model )
 						if (p)
 							*p = 0;
 
-						face.material = temp;
+						if (strcmp(temp,"noshader") != 0)
+							face.material = temp;
 					}
-
-					int iBlarg = 10;
-					iBlarg++;
+					for ( unsigned int t =0; t< bspMaterialSkips.size(); t++)
+					{
+						if (face.material == bspMaterialSkips[t])
+							skipFace = true;
+					}
 				}
 
 				int maxIndex = mFaces[i].vert_start + mFaces[i].vert_count -1;
@@ -164,13 +169,114 @@ bool Quake3Level::dumpToModel ( CModel &model )
 
 					mesh.faces.push_back(face);
 				}
-				if ( mesh.faces.size())
+				if ( !skipFace && mesh.faces.size())
 					model.meshes.push_back(mesh);
 			}
 			break;
 
 			case 2:	// surface
+				{
+					CMesh mesh;
+					CFace	face;
 
+					// add in the verts and normals and UVs
+					for ( int j = mFaces[i].vert_count-1; j >= 0; j-- )
+					{
+						CVertex	vert;
+						CVertex	norm;
+						CTexCoord	coord;
+
+						int index = mFaces[i].vert_start + j;
+						if ( index > 0 && index < mNumVertices)
+						{
+							vert.x = mVertices[index].point[0]*bzpScale;
+							vert.y = mVertices[index].point[1]*bzpScale;
+							vert.z = mVertices[index].point[2]*bzpScale;
+
+							norm.x = mVertices[index].normal[0];
+							norm.y = mVertices[index].normal[1];
+							norm.z = mVertices[index].normal[2];
+
+							coord.u = mVertices[index].texture[0];
+							coord.v = mVertices[index].texture[1];
+						}
+						mesh.verts.push_back(vert);
+						mesh.normals.push_back(norm);
+						mesh.texCoords.push_back(coord);
+					}
+
+					// now do the face
+
+					bool skipFace = false;
+
+					if ( mFaces[i].shader > 0 && mFaces[i].shader < mNumShaders)
+					{
+						char	temp[128];
+						if (strlen(mShaders[mFaces[i].shader].name) )
+						{
+							strcpy(temp, mShaders[mFaces[i].shader].name);
+							char *p = strrchr(temp,'.');
+							if (p)
+								*p = 0;
+
+							face.material = temp;
+						}
+
+						for ( unsigned int t =0; t< bspMaterialSkips.size(); t++)
+						{
+							if (face.material == bspMaterialSkips[t])
+								skipFace = true;
+						}
+					}
+
+					if (mFaces[i].mesh_cp[1]*mFaces[i].mesh_cp[0] + mFaces[i].vert_start < mNumVertices)
+					{
+						for ( int y = 0; y < mFaces[i].mesh_cp[1]-1; y++)
+						{
+							for( int x = 0; x < mFaces[i].mesh_cp[0]-1; x++)
+							{
+								face.clear();
+								int index = (y*mFaces[i].mesh_cp[1])+x;
+								face.verts.push_back(index);
+								face.normals.push_back(index);
+								face.texCoords.push_back(index);
+
+								index = (y+1*mFaces[i].mesh_cp[1])+x;
+								face.verts.push_back(index);
+								face.normals.push_back(index);
+								face.texCoords.push_back(index);
+
+								index = (y+1*mFaces[i].mesh_cp[1])+x+1;
+								face.verts.push_back(index);
+								face.normals.push_back(index);
+								face.texCoords.push_back(index);
+
+								mesh.faces.push_back(face);
+
+
+								index = (y*mFaces[i].mesh_cp[1])+x;
+								face.verts.push_back(index);
+								face.normals.push_back(index);
+								face.texCoords.push_back(index);
+
+								index = (y+1*mFaces[i].mesh_cp[1])+x+1;
+								face.verts.push_back(index);
+								face.normals.push_back(index);
+								face.texCoords.push_back(index);
+
+								index = (y*mFaces[i].mesh_cp[1])+x+1;
+								face.verts.push_back(index);
+								face.normals.push_back(index);
+								face.texCoords.push_back(index);
+
+								mesh.faces.push_back(face);
+
+							}
+						}
+					}
+					if ( !skipFace && mesh.faces.size())
+						model.meshes.push_back(mesh);
+				}
 			break;
 
 			case 4: //billboard
