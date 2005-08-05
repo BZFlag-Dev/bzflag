@@ -60,20 +60,17 @@ void WorldEventManager::removeEvent ( bz_eEventType eventType, bz_EventHandler* 
 	if (!theEvetnt)
 		return;
 
-	if (eventList.find(eventType) == eventList.end())
+	tmEventTypeList::iterator eventTypeItr = eventList.find(eventType);
+	if (eventTypeItr == eventList.end())
 		return;
 
-	tmEventTypeList::iterator eventTypeItr = eventList.begin();
-	if ( eventTypeItr != eventList.end() )
+	tvEventList::iterator itr = eventTypeItr->second.begin();
+	while (itr != eventTypeItr->second.end())
 	{
-		tvEventList::iterator itr = eventTypeItr->second.begin();
-		while (itr != eventTypeItr->second.end())
-		{
-			if (*itr == theEvetnt)
-				itr = eventTypeItr->second.erase(itr);
-			else
-				itr++;
-		}
+		if (*itr == theEvetnt)
+			itr = eventTypeItr->second.erase(itr);
+		else
+			itr++;
 	}
 }
 
