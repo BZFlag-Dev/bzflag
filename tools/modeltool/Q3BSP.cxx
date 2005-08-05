@@ -155,20 +155,44 @@ bool Quake3Level::dumpToModel ( CModel &model )
 					}
 				}
 
-				int maxIndex = mFaces[i].vert_start + mFaces[i].vert_count -1;
+				if (0)
+				{
+					int maxIndex = mFaces[i].vert_start + mFaces[i].vert_count -1;
 
-				if ( maxIndex < mNumVertices)
+					if ( maxIndex < mNumVertices)
+					{
+
+						for( int j = 0; j < mFaces[i].vert_count; j++)
+						{
+							face.verts.push_back(j);
+							face.normals.push_back(j);
+							face.texCoords.push_back(j);
+						}
+
+						mesh.faces.push_back(face);
+					}
+				}
+				else if (mFaces[i].vert_count > 2)
 				{
 
-					for( int j = 0; j < mFaces[i].vert_count; j++)
+					for( int j = 1; j < mFaces[i].vert_count-1; j++)
 					{
+						face.clear();
+						face.verts.push_back(0);
+						face.normals.push_back(0);
+						face.texCoords.push_back(0);
+
 						face.verts.push_back(j);
 						face.normals.push_back(j);
 						face.texCoords.push_back(j);
-					}
 
+						face.verts.push_back(j+1);
+						face.normals.push_back(j+1);
+						face.texCoords.push_back(j+1);
+					}
 					mesh.faces.push_back(face);
 				}
+
 				if ( !skipFace && mesh.faces.size())
 					model.meshes.push_back(mesh);
 			}
