@@ -117,9 +117,8 @@ Info </a> </td>
                 <tr>
                   <td align="left">
                   <p class="Bold style2" align="center">Events</p>
-
-                  <p><span class="SubHeader">Registering to Receive Events</span></p>
-                  
+                  <p><span class="SubHeader">Registering to Receive
+Events</span></p>
                   <p>A plugin is basically useless if it can't react to
 events in game. To allow this a plugin needs to tell bzfs that it would
 like to listen for events. To do that the plugin will need to call the
@@ -184,34 +183,34 @@ observer )</td>
 player</td>
                       </tr>
                       <tr>
-                        <td><span class="Code">bz_eGetAutoTeamEvent</span>,
+                        <td><span class="Code">bz_eGetAutoTeamEvent</span>
                         </td>
                         <td> The server is assigning a player to a team
 automatically</td>
                       </tr>
                       <tr>
-                        <td><span class="Code">bz_eAllowPlayer</span>, </td>
+                        <td><span class="Code">bz_eAllowPlayer</span></td>
                         <td> The server is about to allow or disallow a
 player</td>
                       </tr>
                       <tr>
-                        <td> <span class="Code">bz_eTickEvent</span>, </td>
+                        <td> <span class="Code">bz_eTickEvent</span></td>
                         <td> The server has executed one of it's normal
 event loops </td>
                       </tr>
                       <tr>
-                        <td><span class="Code">bz_eGenerateWorldEvent</span>,
+                        <td><span class="Code">bz_eGenerateWorldEvent</span>
                         </td>
                         <td> The server is generating or loading a world</td>
                       </tr>
                       <tr>
-                        <td> <span class="Code">bz_eGetPlayerInfoEvent</span>,
+                        <td> <span class="Code">bz_eGetPlayerInfoEvent</span>
                         </td>
                         <td> The server needs the info bits about a
 player</td>
                       </tr>
                       <tr>
-                        <td><span class="Code">bz_eAllowSpawn</span>, </td>
+                        <td><span class="Code">bz_eAllowSpawn</span></td>
                         <td> The server is about to allow a player to
 spawn</td>
                       </tr>
@@ -412,25 +411,32 @@ players and observers. </td>
  cellspacing="2">
                           <tbody>
                             <tr>
-                              <td><span class="Code">bz_eChatMessageEvent</span> 
+                              <td><span class="Code">bz_eChatMessageEvent</span>
 provides the following data</td>
                             </tr>
                             <tr>
                               <td><span class="Code">bz_ChatEventData<br>
 {<br>
                               </span>
-                              <blockquote class="Code"> int from;						// the player ID of who the message is from<br>
+                              <blockquote class="Code"> int from; //
+the player ID of who the message is from<br>
 int to; // the player ID of who the message is for<br>
 bzApiString message; // the message<br>
 double time; // the time of the message</blockquote>
-                              <p class="Code">}</p>                              </td>
+                              <p class="Code">}</p>
+                              </td>
                             </tr>
                             <tr>
-                              <td>This event is called when ever the server is asked to deliver a chat message. This
-includes private messages, team messages, and general chat. ANYTHING that is not a
-/ command goes in here. The plugin CAN change the chat message before it is sent.
-This can allow for a plugin to filter chat text or insert aditional text. If the plugin
-clears the message text, then the chat message will not be sent. The text sent to this
+                              <td>This event is called when ever the
+server is asked to deliver a chat message. This
+includes private messages, team messages, and general chat. ANYTHING
+that is not a
+/ command goes in here. The plugin CAN change the chat message before
+it is sent.
+This can allow for a plugin to filter chat text or insert additional
+text. If the plugin
+clears the message text, then the chat message will not be sent. The
+text sent to this
 plugin may have been filtered by another plugin first.</td>
                             </tr>
                           </tbody>
@@ -449,25 +455,30 @@ plugin may have been filtered by another plugin first.</td>
  cellspacing="2">
                           <tbody>
                             <tr>
-                              <td><span class="Code">bz_eUnknownSlashCommand</span> 
+                              <td><span class="Code">bz_eUnknownSlashCommand</span>
 provides the following data</td>
                             </tr>
                             <tr>
                               <td><span class="Code">bz_UnknownSlashCommandEventData<br>
 {<br>
                               </span>
-                              <blockquote class="Code"> int from;						// the player ID of who the message is from<br>
+                              <blockquote class="Code"> int from; //
+the player ID of who the message is from<br>
 bool handled; // flag that tells if the command was handled.<br>
 // if the plugin handles this command it must<br>
 // set this value to true before it returns<br>
 bzApiString message; // the message<br>
 double time; // the time of the message</blockquote>
-                              <p class="Code">}</p>                              </td>
+                              <p class="Code">}</p>
+                              </td>
                             </tr>
                             <tr>
-                              <td>This event is called when a user atempts to use a / comand that does not exist.
-It is not very usefull for anything other then error reporting. If you wish to
-install your own custom / command then use the customSlashCommand functions.</td>
+                              <td>This event is called when a user
+attempts to use a / command that does not exist.
+It is not very useful for anything other then error reporting. If you
+wish to
+install your own custom / command then use the customSlashCommand
+functions.</td>
                             </tr>
                           </tbody>
                         </table>
@@ -495,7 +506,8 @@ provides</span> the following data</td>
                               <blockquote class="Code"> int thing; //
 comment<br>
 int thing2; // comment</blockquote>
-                              <p class="Code">}</p>                              </td>
+                              <p class="Code">}</p>
+                              </td>
                             </tr>
                             <tr>
                               <td>Event description </td>
