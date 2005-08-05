@@ -825,7 +825,19 @@ static void handleBanCmd(GameKeeper::Player *playerData, const char *message)
     }
 
     // set the ban time
-    if (argv.size() >= 3) {
+    regex_t preg;
+    int res = regcomp(&preg, "(^[[:digit:]]+[h|w|d]?$)+",
+		      REG_ICASE | REG_NOSUB | REG_EXTENDED);
+    res = regexec(&preg,argv[2].c_str(), 0, NULL, 0);
+    regfree(&preg);
+    if (res == REG_NOMATCH) {
+      sendMessage(ServerPlayer, t,
+		  "Syntax: /ban <#slot | PlayerName | \"Player Name\" | ip>"
+		  " <duration> <reason>");
+      return;
+    }
+    
+
       int specifiedDuration = TextUtils::parseDuration(argv[2]);
       if ((durationInt > 0) &&
 	  ((specifiedDuration > durationInt) || (specifiedDuration <= 0)) &&
@@ -835,7 +847,6 @@ static void handleBanCmd(GameKeeper::Player *playerData, const char *message)
       } else {
 	durationInt = specifiedDuration;
       }
-    }
 
     // set the ban reason
     if (argv.size() == 4) {
