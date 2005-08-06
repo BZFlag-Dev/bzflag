@@ -143,7 +143,6 @@ public:
 
 typedef std::map<std::string,CMaterial> tmMaterialMap;
 
-
 class CMesh
 {
 public:
@@ -209,6 +208,18 @@ public:
 
 typedef std::vector<CMesh> tvMeshList;
 
+
+class CCustomObject
+{
+public:
+	std::string name;
+	std::vector<std::string> params;
+
+	void clear ( void ) {params.clear();name="";}
+};
+
+typedef std::vector<CCustomObject> tvCustomObjectList;
+
 class CModel
 {
 public:
@@ -217,6 +228,7 @@ public:
 
 	tmMaterialMap	materials;
 	tvMeshList		meshes;
+	tvCustomObjectList	customObjects;
 
 	void pushAboveAxis ( teModelAxis axis )
 	{
@@ -237,6 +249,7 @@ public:
 	{
 		meshes.clear();
 		materials.clear();
+		customObjects.clear();
 	}
 };
 

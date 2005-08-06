@@ -23,6 +23,7 @@ http://www.gnu.org/copyleft/lesser.txt.
 -----------------------------------------------------------------------------
 */
 #include "Q3BSP.h"
+#include "TextUtils.h"
 
 #include <stdio.h>
 #include <iostream>
@@ -330,6 +331,70 @@ bool Quake3Level::dumpToModel ( CModel &model )
 			default:
 				// something else
 			break;
+		}
+	}
+
+	// parse out the custom features
+
+	if (mEntities)
+	{
+		std::string ents = (char*)mEntities;
+		std::vector<std::string> entList = TextUtils::tokenize(ents,std::string("\n"));
+
+		CCustomObject	cObject;
+		bool hasPos = false;
+
+		bool inTag = false;
+		for ( unsigned int i = 0; i < entList.size(); i++)
+		{
+			if ( entList[i] == "{" )
+			{
+				hasPos = false;
+				cObject.clear();
+				inTag = true;
+			}
+			else if (entList[i] == "}" )
+			{
+				inTag = false;
+				if ( cObject.name.size() &&  hasPos)
+				{
+					// we only want lights and object spawns
+					if ( cObject.name != "light" && cObject.name != "misc_model" )
+						cObject.name = "spawn";
+					model.customObjects.push_back(cObject);
+				}
+			}
+			else
+			{
+				if (inTag)
+				{
+					// parse it up
+					std::vector<std::string> nubs = TextUtils::tokenize(ents,std::string(" "),0,true);
+					if ( TextUtils::tolower(nubs[0]) == "classname" )
+					{
+						if (nubs.size()>1)
+							cObject.name = nubs[1];
+					}
+					else if ( TextUtils::tolower(nubs[0]) == "origin" )
+					{
+						hasPos = true;
+						std::string line = "position " + nubs[1];
+						cObject.params.push_back(line);
+					}
+					else
+					{
+						std::string line;
+
+						for ( unsigned int j=0; j < nubs.size(); j++)
+						{
+							line += nubs[i];
+							if ( j != nubs.size()-1)
+								line += " ";
+						}
+						cObject.params.push_back(line);
+					}
+				}
+			}
 		}
 	}
 

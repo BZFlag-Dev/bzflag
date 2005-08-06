@@ -184,6 +184,16 @@ static void writeBZW  ( CModel &model, std::string file )
 	if (groupName.size() > 0) {
 	  fprintf (fp, "enddef # %s\n", groupName.c_str());
 	}
+
+	// do the custom objects.
+
+	for ( unsigned int i = 0; i < model.customObjects.size(); i++ )
+	{
+		fprintf (fp, "%s\n", model.customObjects[i].name.c_str());
+		for (unsigned int j = 0; j < model.customObjects[i].params.size(); j++ )
+			fprintf (fp, "  %s\n", model.customObjects[i].params[j].c_str());
+		fprintf (fp, "end\n\n");
+	}
 	
 	fclose(fp);
 }
