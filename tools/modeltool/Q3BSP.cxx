@@ -80,7 +80,6 @@ bool Quake3Level::dumpToModel ( CModel &model )
 {
 	model.clear();
 
-
 	for ( int i = 0; i < mNumShaders; i++)
 	{
 		CMaterial	material;
@@ -106,7 +105,7 @@ bool Quake3Level::dumpToModel ( CModel &model )
 				CMesh mesh;
 
 				// add in the verts and normals and UVs
-				for ( int j = mFaces[i].vert_count-1; j >= 0; j-- )
+				for ( int j = 0; j < mFaces[i].vert_count; j++ )
 				{
 					CVertex	vert;
 					CVertex	norm;
@@ -156,37 +155,37 @@ bool Quake3Level::dumpToModel ( CModel &model )
 					}
 				}
 
-				if (1)
+				if (mFaces[i].type == 1)
 				{
-					int maxIndex = mFaces[i].vert_start + mFaces[i].vert_count -1;
-
-					if ( maxIndex < mNumVertices)
+					if (mFaces[i].vert_count > 2)
 					{
-
-						for( int j = 0; j < mFaces[i].vert_count; j++)
+						for( int j = 2; j < mFaces[i].vert_count; j++)
 						{
+							face.clear();
+
 							face.verts.push_back(j);
 							face.normals.push_back(j);
 							face.texCoords.push_back(j);
-						}
 
-						mesh.faces.push_back(face);
+							face.verts.push_back(j-1);
+							face.normals.push_back(j-1);
+							face.texCoords.push_back(j-1);
+
+							face.verts.push_back(0);
+							face.normals.push_back(0);
+							face.texCoords.push_back(0);
+
+							mesh.faces.push_back(face);
+						}
 					}
 				}
-				else if (mFaces[i].vert_count > 2)
+				else	// it's a mesh
 				{
-					bool flop = false;
-
-					for( int j = 1; j < mFaces[i].vert_count-1; j++)
+					if (mFaces[i].vert_count > 2)
 					{
 						face.clear();
-
-						if ( flop )
+						for( int j = 0; j < mFaces[i].vert_count; j+= 1)
 						{
-							face.verts.push_back(0);
-							face.normals.push_back(0);
-							face.texCoords.push_back(0);
-
 							face.verts.push_back(j);
 							face.normals.push_back(j);
 							face.texCoords.push_back(j);
@@ -194,25 +193,14 @@ bool Quake3Level::dumpToModel ( CModel &model )
 							face.verts.push_back(j+1);
 							face.normals.push_back(j+1);
 							face.texCoords.push_back(j+1);
+
+							face.verts.push_back(j+2);
+							face.normals.push_back(j+2);
+							face.texCoords.push_back(j+2);
+
 						}
-						else
-						{
-							face.verts.push_back(j+1);
-							face.normals.push_back(j+1);
-							face.texCoords.push_back(j+1);
-
-							face.verts.push_back(j);
-							face.normals.push_back(j);
-							face.texCoords.push_back(j);
-
-							face.verts.push_back(0);
-							face.normals.push_back(0);
-							face.texCoords.push_back(0);
-						}
-
-						flop = !flop;
-					}
-					mesh.faces.push_back(face);
+						mesh.faces.push_back(face);
+					}	
 				}
 
 				if ( !skipFace && mesh.faces.size())
@@ -347,6 +335,7 @@ bool Quake3Level::dumpToModel ( CModel &model )
 		bool inTag = false;
 		for ( unsigned int i = 0; i < entList.size(); i++)
 		{
+			std::string theLine = entList[i];
 			if ( entList[i] == "{" )
 			{
 				hasPos = false;
@@ -361,7 +350,9 @@ bool Quake3Level::dumpToModel ( CModel &model )
 					// we only want lights and object spawns
 					if ( cObject.name != "light" && cObject.name != "misc_model" )
 						cObject.name = "spawn";
-					model.customObjects.push_back(cObject);
+
+					if (cObject.name  == "spawn" )
+						model.customObjects.push_back(cObject);
 				}
 			}
 			else
@@ -369,7 +360,7 @@ bool Quake3Level::dumpToModel ( CModel &model )
 				if (inTag)
 				{
 					// parse it up
-					std::vector<std::string> nubs = TextUtils::tokenize(ents,std::string(" "),0,true);
+					std::vector<std::string> nubs = TextUtils::tokenize(theLine,std::string(" "),0,true);
 					if ( TextUtils::tolower(nubs[0]) == "classname" )
 					{
 						if (nubs.size()>1)
@@ -378,16 +369,32 @@ bool Quake3Level::dumpToModel ( CModel &model )
 					else if ( TextUtils::tolower(nubs[0]) == "origin" )
 					{
 						hasPos = true;
-						std::string line = "position " + nubs[1];
+						float pos[3] ={0,0,0};
+						sscanf(nubs[1].c_str(),"%f %f %f",&pos[0],&pos[1],&pos[2]);
+
+						pos[0] *= bzpScale;
+						pos[0] *= globalScale;
+						pos[0] += globalShift[0];
+
+						pos[1] *= bzpScale;
+						pos[1] *= globalScale;
+						pos[1] += globalShift[1];
+
+						pos[2] *= bzpScale;
+						pos[2] *= globalScale;
+						pos[2] += globalShift[2];
+
+						std::string line = "position " + TextUtils::format("%f %f %f",pos[0],pos[1],pos[2]);
 						cObject.params.push_back(line);
 					}
 					else
 					{
 						std::string line;
 
-						for ( unsigned int j=0; j < nubs.size(); j++)
+						unsigned int nubsize = (unsigned int)nubs.size();
+						for ( unsigned int j=0; j < nubsize; j++)
 						{
-							line += nubs[i];
+							line += nubs[j];
 							if ( j != nubs.size()-1)
 								line += " ";
 						}
