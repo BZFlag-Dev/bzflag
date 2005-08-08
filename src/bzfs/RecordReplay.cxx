@@ -962,18 +962,12 @@ static bool getFileList(int playerIndex, std::vector<FileEntry>& entries)
 }
 
 
-static bool sortFileTime (FileEntry a, FileEntry b) {
-  if (a.time < b.time) {
-    return true;
-  }
-  return false;
+static bool sortFileTime (const FileEntry& a, const FileEntry& b) {
+  return (a.time < b.time);
 }
 
-static bool sortFileName (const FileEntry a, const FileEntry b) {
-  if (strcmp (a.file.c_str(), b.file.c_str()) < 0) {
-    return true;
-  }
-  return false;
+static bool sortFileName (const FileEntry& a, const FileEntry& b) {
+  return (a.file < b.file);
 }
 
 
