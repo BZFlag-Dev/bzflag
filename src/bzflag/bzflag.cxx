@@ -175,7 +175,7 @@ static DefaultDBItem	defaultDBItems[] = {
   { "doDownloads",		"1",			true,	StateDatabase::ReadWrite,	NULL },
   { "updateDownloads",		"0",			true,	StateDatabase::ReadWrite,	NULL },
   { "useDrawInfo",		"1",			true,	StateDatabase::ReadWrite,	NULL },
-  { "roamSmoothTime",		"1.0",			true,	StateDatabase::ReadWrite,	NULL },
+  { "roamSmoothTime",		"0.5",			true,	StateDatabase::ReadWrite,	NULL },
 
   // default texture names
   { "stdGroundTexture",		"std_ground",		true,	StateDatabase::ReadWrite,	NULL },
