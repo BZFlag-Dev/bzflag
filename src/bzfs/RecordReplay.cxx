@@ -139,7 +139,7 @@ static u32 RecordMaxBytes = DefaultMaxBytes;
 static u32 RecordFileBytes = 0;
 static u32 RecordFilePackets = 0;
 static u32 RecordFilePrevPos = 0;
-static bool allowFileRecords = false;
+static bool allowFileRecords = true;
 
 
 static bool Replaying = false;
@@ -1911,16 +1911,23 @@ static bool saveHeader(int p, RRtime filetime, FILE *f)
     return false;
   }
 
-  GameKeeper::Player *gkPlayer = GameKeeper::Player::getPlayerByIndex(p);
-  if (gkPlayer == NULL) {
-    return false;
+  const char* callsign = "SERVER";
+  const char* email = "";
+  if (p != ServerPlayer) {
+    GameKeeper::Player *gkPlayer = GameKeeper::Player::getPlayerByIndex(p);
+    if (gkPlayer == NULL) {
+      return false;
+    } else {
+      PlayerInfo *pi = &gkPlayer->player;
+      callsign = pi->getCallSign();
+      email = pi->getEMail();
+    }
   }
-  PlayerInfo *pi = &gkPlayer->player;
 
   // setup the data
   memset(&hdr, 0, sizeof(hdr));
-  strncpy(hdr.callSign, pi->getCallSign(), sizeof(hdr.callSign));
-  strncpy(hdr.email, pi->getEMail(), sizeof(hdr.email));
+  strncpy(hdr.callSign, callsign, sizeof(hdr.callSign));
+  strncpy(hdr.email, email, sizeof(hdr.email));
   strncpy(hdr.serverVersion, getServerVersion(), sizeof(hdr.serverVersion));
   strncpy(hdr.appVersion, getAppVersion(), sizeof(hdr.appVersion));
   strncpy(hdr.realHash, hexDigest, sizeof(hdr.realHash));
