@@ -31,10 +31,8 @@
 #include "playing.h"
 
 // externs for RoamPos command
-extern float roamPos[3];
-extern float roamTheta;
-extern float roamPhi;
-extern float roamZoom;
+extern float roamPos[3], roamTheta, roamPhi, roamZoom;
+extern float roamDPos[3], roamDTheta, roamDPhi, roamDZoom;
 
 
 static float parseFloatExpr(const std::string& str, bool zeroNan)
@@ -369,8 +367,14 @@ bool RoamPosCommand::operator() (const char *commandLine)
       roamPos[1] = 0.0f;
       roamPos[2] = BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT);
       roamTheta = 0.0f;
-      roamPhi = -0.0f;
       roamZoom = 60.0f;
+      roamPhi = -0.0f;
+      roamDPos[0] = 0.0f;
+      roamDPos[1] = 0.0f;
+      roamDPos[2] = 0.0f;
+      roamDTheta = 0.0f;
+      roamDZoom = 0.0f;
+      roamDPhi = 0.0f;
     } else {
       const float degrees = parseFloatExpr(tokens[0], true);
       const float ws = BZDB.eval(StateDatabase::BZDB_WORLDSIZE);

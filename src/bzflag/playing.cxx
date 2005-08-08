@@ -1325,84 +1325,89 @@ void			notifyBzfKeyMapChanged()
 //
 static Player*		addPlayer(PlayerId id, void* msg, int showMessage)
 {
-	uint16_t team, type, wins, losses, tks;
-	char callsign[CallSignLen];
-	char email[EmailLen];
-	msg = nboUnpackUShort(msg, type);
-	msg = nboUnpackUShort(msg, team);
-	msg = nboUnpackUShort(msg, wins);
-	msg = nboUnpackUShort(msg, losses);
-	msg = nboUnpackUShort(msg, tks);
-	msg = nboUnpackString(msg, callsign, CallSignLen);
-	msg = nboUnpackString(msg, email, EmailLen);
+  uint16_t team, type, wins, losses, tks;
+  char callsign[CallSignLen];
+  char email[EmailLen];
+  msg = nboUnpackUShort (msg, type);
+  msg = nboUnpackUShort (msg, team);
+  msg = nboUnpackUShort (msg, wins);
+  msg = nboUnpackUShort (msg, losses);
+  msg = nboUnpackUShort (msg, tks);
+  msg = nboUnpackString (msg, callsign, CallSignLen);
+  msg = nboUnpackString (msg, email, EmailLen);
 
-	// Strip any ANSI color codes
-	strncpy(callsign, stripAnsiCodes(std::string(callsign)).c_str(), 32);
+  // Strip any ANSI color codes
+  strncpy (callsign, stripAnsiCodes (std::string (callsign)).c_str (), 32);
 
-	// id is slot, check if it's empty
-	const int i = id;
+  // id is slot, check if it's empty
+  const int i = id;
 
-	// sanity check
-	if (i < 0) {
-		printError(TextUtils::format("Invalid player identification (%d)", i));
-		std::cerr << "WARNING: invalid player identification when adding player with id " << i << std::endl;
-		return NULL;
-	}
+  // sanity check
+  if (i < 0) {
+    printError (TextUtils::format ("Invalid player identification (%d)", i));
+    std::
+        cerr <<
+        "WARNING: invalid player identification when adding player with id "
+        << i << std::endl;
+    return NULL;
+  }
 
-	if (player[i]) {
-		// we're not in synch with server -> help!  not a good sign, but not fatal.
-		printError("Server error when adding player, player already added");
-		std::cerr << "WARNING: player already exists at location with id " << i << std::endl;
-		return NULL;
-	}
+  if (player[i]) {
+    // we're not in synch with server -> help! not a good sign, but not fatal.
+    printError ("Server error when adding player, player already added");
+    std::cerr << "WARNING: player already exists at location with id "
+              << i << std::endl;
+    return NULL;
+  }
 
-	if (i >= curMaxPlayers) {
-		curMaxPlayers = i+1;
-		World::getWorld()->setCurMaxPlayers(curMaxPlayers);
-	}
-	// add player
-	if (PlayerType(type) == TankPlayer || PlayerType(type) == ComputerPlayer) {
-		player[i] = new RemotePlayer(id, TeamColor(team), callsign, email,
-			PlayerType(type));
-		player[i]->changeScore(short(wins), short(losses), short(tks));
-	}
+  if (i >= curMaxPlayers) {
+    curMaxPlayers = i + 1;
+    World::getWorld ()->setCurMaxPlayers (curMaxPlayers);
+  }
+
+  // add player
+  if (PlayerType (type) == TankPlayer || PlayerType (type) == ComputerPlayer) {
+    player[i] = new RemotePlayer (id, TeamColor (team), callsign, email,
+                                  PlayerType (type));
+    player[i]->changeScore (short (wins), short (losses), short (tks));
+  }
 
 #ifdef ROBOT
-	if (PlayerType(type) == ComputerPlayer)
-		for (int j = 0; j < numRobots; j++)
-			if (robots[j] && !strncmp(robots[j]->getCallSign(), callsign,
-				CallSignLen)) {
-					robots[j]->setTeam(TeamColor(team));
-					break;
-				}
+  if (PlayerType (type) == ComputerPlayer)
+    for (int j = 0; j < numRobots; j++)
+      if (robots[j] && !strncmp (robots[j]->getCallSign (), callsign,
+                                 CallSignLen)) {
+        robots[j]->setTeam (TeamColor (team));
+        break;
+      }
 #endif
 
-				/* show the message if we don't have the playerlist permission.  if
-				* we do, MsgAdminInfo should arrive with more info.
-				*/
-				if (showMessage && !myTank->hasPlayerList()) {
-					std::string message("joining as a");
-					switch (PlayerType(type)) {
-	  case TankPlayer:
-		  message += " tank";
-		  break;
-	  case ComputerPlayer:
-		  message += " robot tank";
-		  break;
-	  default:
-		  message += "n unknown type";
-		  break;
-					}
-					if (!player[i]) {
-						std::string name(callsign);
-						name += ": " + message;
-						message = name;
-					}
-					addMessage(player[i], message);
-				}
-				completer.registerWord(callsign);
+  // show the message if we don't have the playerlist
+  // permission.  if * we do, MsgAdminInfo should arrive
+  // with more info. 
+  if (showMessage && !myTank->hasPlayerList ()) {
+    std::string message ("joining as a");
+    switch (PlayerType (type)) {
+      case TankPlayer:
+        message += " tank";
+        break;
+      case ComputerPlayer:
+        message += " robot tank";
+        break;
+      default:
+        message += "n unknown type";
+        break;
+    }
+    if (!player[i]) {
+      std::string name (callsign);
+      name += ": " + message;
+      message = name;
+    }
+    addMessage (player[i], message);
+  }
+  completer.registerWord (callsign);
 
-				return player[i];
+  return player[i];
 }
 
 
@@ -5413,6 +5418,10 @@ void drawFrame(const float dt)
 
 static void		setupRoamingCamera(float dt)
 {
+  static float prevDTheta = 0.0f;
+  static float prevDPhi = 0.0f;
+  static float prevDPos[3] = {0.0f, 0.0f, 0.0f};
+
   // move roaming camera
   if (myTank) {
     bool control = ((shiftKeyStatus & BzfKeyEvent::ControlKey) != 0);
@@ -5440,6 +5449,21 @@ static void		setupRoamingCamera(float dt)
     if (shift) {
       roamDPos[2] = (float)(-4 * myTank->getSpeed()) * BZDBCache::tankSpeed;
     }
+  }
+  
+  // adjust for slow keyboard
+  if (BZDB.isTrue("slowKeyboard")) {
+    float st = BZDB.eval("roamSmoothTime");
+    if (st < 0.1f) {
+      st = 0.1f;
+    }
+    const float at = (dt / st);
+    const float bt = 1.0f - at;
+    roamDPos[0] = (at * roamDPos[0]) + (bt * prevDPos[0]);
+    roamDPos[1] = (at * roamDPos[1]) + (bt * prevDPos[1]);
+    roamDPos[2] = (at * roamDPos[2]) + (bt * prevDPos[2]);
+    roamDTheta  = (at * roamDTheta) + (bt * prevDTheta);
+    roamDPhi    = (at * roamDPhi) + (bt * prevDPhi);
   }
 
   // are we tracking?  
@@ -5520,13 +5544,19 @@ static void		setupRoamingCamera(float dt)
     roamTheta  += dt * roamDTheta;
     roamPhi    += dt * roamDPhi;
   }
-  roamZoom   += dt * roamDZoom;
+  roamZoom += dt * roamDZoom;
   if (roamZoom < BZDB.eval("roamZoomMin")) {
     roamZoom = BZDB.eval("roamZoomMin");
   }
   else if (roamZoom > BZDB.eval("roamZoomMax")) {
     roamZoom = BZDB.eval("roamZoomMax");
   }
+
+  // copy the old delta values
+  prevDTheta = roamDTheta;
+  prevDPhi = roamDPhi;
+  memcpy(prevDPos, roamDPos, sizeof(float[3]));
+  
   return;
 }
 
