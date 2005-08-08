@@ -518,27 +518,29 @@ static void		setVisual(BzfVisual* visual)
 static void		usage()
 {
   printFatalError("usage: %s"
-	" [-3dfx]"
-	" [-no3dfx]"
+	" [-3dfx] [-no3dfx]"
 	" [-anonymous]"
 	" [-badwords <filterfile>]"
 	" [-config <configfile>]"
 	" [-d | -debug]"
-	" [-dir | -directory <data-directory>]"
-	" [-echo]"
-	" [-echoAnsi]"
-	" [-geometry <geometry-spec>]"
+	" [-date mm/dd/yyyy]"
+	" [{-dir | -directory} <data-directory>]"
+	" [-e | -echo]"
+	" [-ea | -echoAnsi]"
+	" [{-g | -geometry} <geometry-spec>]"
+	" [-h | -help | --help]"
 	" [-latitude <latitude>] [-longitude <longitude>]"
 	" [-list <list-server-url>] [-nolist]"
 	" [-locale <locale>]"
+	" [-m | -mute]"
+	" [-motd <motd-url>] [-nomotd]"
 	" [-multisample]"
-	" [-mute]"
 #ifdef ROBOT
 	" [-solo <num-robots>]"
 #endif
 	" [-team {red|green|blue|purple|rogue|observer}]"
 	" [-time hh:mm:ss] [-notime]"
-	" [-version]"
+	" [-v | -version | --version]"
 	" [-view {normal|stereo|stacked|three|anaglyph|interlaced}]"
 	" [-window]"
 	" [-zoom <zoom-factor>]"
@@ -621,7 +623,7 @@ static void		parse(int argc, char** argv)
     } else if (strcmp(argv[i], "-list") == 0) {
       checkArgc(i, argc, argv[i]);
       if (strcmp(argv[i], "default") == 0) {
-	BZDB.unset("list");
+	BZDB.set("list", BZDB.getDefault("list"));
       } else {
 	startupInfo.listServerURL = argv[i];
 	BZDB.set("list", argv[i]);
@@ -631,7 +633,14 @@ static void		parse(int argc, char** argv)
       BZDB.set("locale", argv[i]);
     } else if (strcmp(argv[i], "-motd") == 0) {
       checkArgc(i, argc, argv[i]);
-      BZDB.set("motdServer", argv[i]);
+      if (strcmp(argv[i], "default") == 0) {
+        BZDB.set("motdServer", BZDB.getDefault("motdServer"));
+      } else {
+        BZDB.set("motdServer", argv[i]);
+      }
+      BZDB.unset("disableMOTD");
+    } else if (strcmp(argv[i], "-nomotd") == 0) {
+      BZDB.set("disableMOTD", "1");
     } else if (strcmp(argv[i], "-nolist") == 0) {
       startupInfo.listServerURL = "";
       BZDB.set("list", "");
