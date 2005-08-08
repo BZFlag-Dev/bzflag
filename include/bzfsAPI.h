@@ -58,7 +58,8 @@ typedef enum
 	bz_eGenerateWorldEvent,
 	bz_eGetPlayerInfoEvent,
 	bz_eAllowSpawn,
-	bz_eListServerUpdateEvent
+	bz_eListServerUpdateEvent,
+	bz_eBanEvent
 }bz_eEventType;
 
 #define BZ_ALL_USERS	-1
@@ -508,6 +509,21 @@ public:
 
 	bool handled;
 	double time;
+};
+
+class bz_BanEventData : public bz_EventData
+{
+public:
+	bz_BanEventData()
+	{
+		eventType = bz_eBanEvent;
+		bannerID = -1;
+	}
+	virtual ~bz_BanEventData(){};
+
+	int bannerID;
+	bzApiString ipAddress;
+	bzApiString reason;
 };
 
 // event handler callback

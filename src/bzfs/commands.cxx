@@ -851,6 +851,14 @@ static void handleBanCmd(GameKeeper::Player *playerData, const char *message)
     if (argv.size() == 4) {
       reason = argv[3];
     }
+		
+		// call any plugin events registered for /ban
+		bz_BanEventData banEvent;
+		banEvent.bannerID = t;
+		banEvent.ipAddress = ip.c_str();
+		banEvent.reason = reason.c_str();
+		
+		worldEventManager.callEvents(bz_eBanEvent,&banEvent);
 
     // reload the banlist in case anyone else has added
     clOptions->acl.load();
