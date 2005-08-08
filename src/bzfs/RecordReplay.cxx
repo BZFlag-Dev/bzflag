@@ -123,6 +123,8 @@ typedef struct {
 // Local Variables
 // ---------------
 
+#define REPLAY_LABEL "[REPLAY] "
+
 static const u32 ReplayMagic       = 0x7272425A; // "rrBZ"
 static const u32 ReplayVersion     = 0x0001;
 static const u32 DefaultMaxBytes   = (16 * 1024 * 1024); // 16 Mbytes
@@ -667,7 +669,7 @@ static bool checkReplayMode(int playerIndex)
 {
   if (!ReplayMode) {
     sendMessage(ServerPlayer, playerIndex,
-                "Server is not in replay mode."
+                "Server is not in replay mode. "
                 "Restart server with '-replay' option to enable playback.");
     return false;
   }
@@ -964,12 +966,12 @@ bool Replay::sendFileList(int playerIndex)
   }
 
   char buffer[MessageLen];
-  snprintf(buffer, MessageLen, "dir:   %s",RecordDir.c_str());
+  snprintf(buffer, MessageLen, "dir:  %s",RecordDir.c_str());
   sendMessage(ServerPlayer, playerIndex, buffer);
   
   for (unsigned int i = 0; i < entries.size(); i++) {
     const FileEntry& entry = entries[i];
-    snprintf(buffer, MessageLen, "file(#%02i):  %-30s  [%9.1f seconds]", i + 1,
+    snprintf(buffer, MessageLen, "#%02i:  %-30s  [%9.1f seconds]", i + 1,
              entry.file.c_str(), entry.time);
     sendMessage(ServerPlayer, playerIndex, buffer);
   }
@@ -1004,7 +1006,7 @@ bool Replay::play(int playerIndex)
   // reset the replay observers' view of state
   resetStates();
 
-  sendMessage(ServerPlayer, playerIndex, "Starting replay");
+  sendMessage(playerIndex, AllPlayers, REPLAY_LABEL "starting replay");
 
   return true;
 }
@@ -1036,7 +1038,7 @@ bool Replay::loop(int playerIndex)
   // reset the replay observers' view of state
   resetStates();
 
-  sendMessage(ServerPlayer, playerIndex, "Starting replay loop");
+  sendMessage(playerIndex, AllPlayers, REPLAY_LABEL "starting replay loop");
 
   return true;
 }
@@ -1100,7 +1102,7 @@ bool Replay::skip(int playerIndex, int seconds)
 	p = nextStatePacket();
       } while ((p != NULL) && (p->timestamp < target));
       if (p == NULL) {
-	sendMessage(ServerPlayer, playerIndex, "skipped to the end");
+	sendMessage(playerIndex, AllPlayers, REPLAY_LABEL "skipped to the end");
       }
     }
     else {
@@ -1108,7 +1110,7 @@ bool Replay::skip(int playerIndex, int seconds)
 	p = prevStatePacket();
       } while ((p != NULL) && (p->timestamp > target));
       if (p == NULL) {
-	sendMessage(ServerPlayer, playerIndex, "skipped to the beginning");
+	sendMessage(playerIndex, AllPlayers, REPLAY_LABEL "skipped to the beginning");
       }
     }
 
@@ -1122,9 +1124,9 @@ bool Replay::skip(int playerIndex, int seconds)
   // print the amount of time skipped
   RRtime diff = ReplayPos->timestamp - nowtime;
   char buffer[MessageLen];
-  snprintf(buffer, MessageLen, "Skipping %.1f seconds (asked %i)",
+  snprintf(buffer, MessageLen, REPLAY_LABEL "skipped %.1f seconds (asked %i)",
 	   (float)diff/1000000.0f, seconds);
-  sendMessage(ServerPlayer, playerIndex, buffer);
+  sendMessage(playerIndex, AllPlayers, buffer);
 
   return true;
 }
@@ -1134,7 +1136,7 @@ bool Replay::pause(int playerIndex)
 {
   if ((ReplayFile != NULL) && (ReplayPos != NULL) && Replaying) {
     Replaying = false;
-    sendMessage(ServerPlayer, playerIndex, "Replay paused");
+    sendMessage(playerIndex, AllPlayers, REPLAY_LABEL "paused");
   }
   else {
     sendMessage(ServerPlayer, playerIndex, "Can't pause, not playing");
@@ -1911,6 +1913,7 @@ static bool saveHeader(int p, RRtime filetime, FILE *f)
     return false;
   }
 
+  // player callsign and email
   const char* callsign = "SERVER";
   const char* email = "";
   if (p != ServerPlayer) {
