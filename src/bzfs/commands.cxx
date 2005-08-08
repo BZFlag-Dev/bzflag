@@ -2322,7 +2322,18 @@ static void handleRecordCmd(GameKeeper::Player *playerData, const char * message
     Record::sendStats(t);
   }
   else if (strncasecmp (buf, "list", 4) == 0) {
-    Replay::sendFileList (t); // stolen from '/replay'
+    buf = buf + 4;
+    while ((*buf != '\0') && isspace (*buf)) buf++; // eat whitespace
+
+    if (*buf == '\0') {
+      Replay::sendFileList (t, SortNone);   // stolen from '/replay'
+    } else if (strncasecmp (buf, "-t", 2) == 0) {
+      Replay::sendFileList (t, SortByTime);  
+    } else if (strncasecmp (buf, "-n", 2) == 0) {
+      Replay::sendFileList (t, SortByName); 
+    } else {
+      Record::sendHelp (t);
+    }
   }
   else if (strncasecmp (buf, "save", 4) == 0) {
     buf = buf + 4;
@@ -2395,7 +2406,18 @@ static void handleReplayCmd(GameKeeper::Player *playerData, const char * message
   }
 
   if (strncasecmp (buf, "list", 4) == 0) {
-    Replay::sendFileList (t);
+    buf = buf + 4;
+    while ((*buf != '\0') && isspace (*buf)) buf++; // eat whitespace
+
+    if (*buf == '\0') {
+      Replay::sendFileList (t, SortNone); 
+    } else if (strncasecmp (buf, "-t", 2) == 0) {
+      Replay::sendFileList (t, SortByTime);  
+    } else if (strncasecmp (buf, "-n", 2) == 0) {
+      Replay::sendFileList (t, SortByName); 
+    } else {
+      Replay::sendHelp (t);
+    }
   }
   else if (strncasecmp (buf, "load", 4) == 0) {
     buf = buf + 4;

@@ -4,6 +4,7 @@
 BZFlag 2.0.3
 ------------
 
+* Added sort options to "/replay list" and "/record list" - Mark Thomas
 * Map mismatch fixed - Alfredo Tupone
 * Quick server command key works better - Alfredo Tupone
 * Default server side plugins added to windows build - Jeff Myers

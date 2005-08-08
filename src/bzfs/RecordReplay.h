@@ -25,6 +25,12 @@ enum ReplayPacketMode {
   HiddenPacket = 3  // never broadcasted (stored for admin. purposes)
 };
 
+enum ReplayListSort {
+  SortNone = 0,
+  SortByName = 1,
+  SortByTime = 2
+};
+
 namespace Record {
   extern bool init ();
   extern bool kill ();
@@ -55,7 +61,7 @@ namespace Replay {
   extern bool init (); // must be done before any players join
   extern bool kill ();
 
-  extern bool sendFileList (int playerIndex);
+  extern bool sendFileList (int playerIndex, ReplayListSort sortBy);
   extern bool loadFile (int playerIndex, const char *filename);
   extern bool unloadFile (int playerIndex);
   extern bool play (int playerIndex);

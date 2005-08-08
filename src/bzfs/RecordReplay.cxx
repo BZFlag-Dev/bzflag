@@ -117,6 +117,7 @@ static const unsigned int ReplayHeaderSize =
 typedef struct {
   std::string file;
   float time;
+  int entryNum;
 } FileEntry;
 
 
@@ -655,7 +656,7 @@ void Record::sendHelp(int playerIndex)
   sendMessage(ServerPlayer, playerIndex, "  /record size <Mbytes>");
   sendMessage(ServerPlayer, playerIndex, "  /record rate <seconds>");
   sendMessage(ServerPlayer, playerIndex, "  /record stats");
-  sendMessage(ServerPlayer, playerIndex, "  /record list");
+  sendMessage(ServerPlayer, playerIndex, "  /record list [-t | -n]");
   sendMessage(ServerPlayer, playerIndex, "  /record save <filename> [seconds]");
   sendMessage(ServerPlayer, playerIndex, "  /record file <filename>");
   return;
@@ -889,6 +890,7 @@ static FILE *getRecordFile(const char *filename)
 static bool getFileList(int playerIndex, std::vector<FileEntry>& entries)
 {
   entries.clear();
+  int entNum = 0;
 
 #ifndef _MSC_VER
 
@@ -914,7 +916,8 @@ static bool getFileList(int playerIndex, std::vector<FileEntry>& entries)
         FileEntry entry;
         entry.file = de->d_name;
         entry.time = (float)filetime / 1000000.0f;
-	entries.push_back(entry);
+        entry.entryNum = entNum++;
+      	entries.push_back(entry);
       }
       fclose(file);
     }
@@ -943,7 +946,8 @@ static bool getFileList(int playerIndex, std::vector<FileEntry>& entries)
           FileEntry entry;
           entry.file = findData.cFileName;
           entry.time = (float)filetime / 1000000.0f;
-	  entries.push_back(entry);
+          entry.entryNum = entNum++;
+	        entries.push_back(entry);
 	}
 	fclose(file);
       }
@@ -958,7 +962,22 @@ static bool getFileList(int playerIndex, std::vector<FileEntry>& entries)
 }
 
 
-bool Replay::sendFileList(int playerIndex)
+static bool sortFileTime (FileEntry a, FileEntry b) {
+  if (a.time < b.time) {
+    return true;
+  }
+  return false;
+}
+
+static bool sortFileName (const FileEntry a, const FileEntry b) {
+  if (strcmp (a.file.c_str(), b.file.c_str()) < 0) {
+    return true;
+  }
+  return false;
+}
+
+
+bool Replay::sendFileList(int playerIndex, ReplayListSort sortBy)
 {
   std::vector<FileEntry> entries;
   if (!getFileList(playerIndex, entries)) {
@@ -968,10 +987,16 @@ bool Replay::sendFileList(int playerIndex)
   char buffer[MessageLen];
   snprintf(buffer, MessageLen, "dir:  %s",RecordDir.c_str());
   sendMessage(ServerPlayer, playerIndex, buffer);
-  
+
+  if (sortBy == SortByTime) {
+    std::sort (entries.begin(), entries.end(), sortFileTime);  
+  } else if (sortBy == SortByName) {
+    std::sort (entries.begin(), entries.end(), sortFileName);  
+  }
+    
   for (unsigned int i = 0; i < entries.size(); i++) {
     const FileEntry& entry = entries[i];
-    snprintf(buffer, MessageLen, "#%02i:  %-30s  [%9.1f seconds]", i + 1,
+    snprintf(buffer, MessageLen, "#%02i:  %-30s  [%9.1f seconds]", entry.entryNum + 1,
              entry.file.c_str(), entry.time);
     sendMessage(ServerPlayer, playerIndex, buffer);
   }
@@ -1280,7 +1305,7 @@ bool Replay::playing()
 void Replay::sendHelp(int playerIndex)
 {
   sendMessage(ServerPlayer, playerIndex, "usage:");
-  sendMessage(ServerPlayer, playerIndex, "  /replay list");
+  sendMessage(ServerPlayer, playerIndex, "  /replay list [-t | -n]");
   sendMessage(ServerPlayer, playerIndex, "  /replay load <filename|#index>");
   sendMessage(ServerPlayer, playerIndex, "  /replay play");
   sendMessage(ServerPlayer, playerIndex, "  /replay loop");
