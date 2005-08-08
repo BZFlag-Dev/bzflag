@@ -796,6 +796,8 @@ BZF_API bool bz_setclipFieldString ( const char *name, const char* data );
 BZF_API bool bz_setclipFieldFloat ( const char *name, float data );
 BZF_API bool bz_setclipFieldInt( const char *name, int data );
 
+// Record-Replay
+BZF_API bool bz_saveRecBuf( const char * _filename, int seconds);
 
 #endif //_BZFS_API_H_
 

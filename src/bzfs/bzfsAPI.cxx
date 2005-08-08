@@ -1432,6 +1432,15 @@ BZF_API bool bz_setclipFieldInt( const char *_name, int data )
 	return existed;
 }
 
+BZF_API bool bz_saveRecBuf( const char * _filename, int seconds)
+{
+	if (!Record::enabled() || !_filename)
+		return false;
+	
+	bool result = Record::saveBuffer( ServerPlayer, _filename, seconds);
+	return result;
+}
+
 // Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***
