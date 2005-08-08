@@ -10,10 +10,16 @@ else
 CARES_DIR =
 endif
 
+if BUILD_REGEX
+REGEX_DIR = regex
+else
+REGEX_DIR =
+endif
+
 SUBDIRS = \
 	${CARES_DIR}	\
 	3D \
-	regex \
+	${REGEX_DIR} \
 	common \
 	net \
 	game \

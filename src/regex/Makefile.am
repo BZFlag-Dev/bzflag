@@ -1,6 +1,4 @@
-if BUILD_REGEX
 noinst_LIBRARIES = libregex.a
-endif
 
 AM_CPPFLAGS = -I$(top_srcdir)/include
 
