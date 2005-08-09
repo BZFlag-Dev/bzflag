@@ -519,10 +519,14 @@ public:
 	{
 		eventType = bz_eBanEvent;
 		bannerID = -1;
+		banneeID = -1;
+		duration = -1;
 	}
 	virtual ~bz_BanEventData(){};
 
 	int bannerID;
+	int banneeID;
+	int duration;
 	bzApiString ipAddress;
 	bzApiString reason;
 };
