@@ -240,18 +240,18 @@ bool BZWReader::readWorldStream(std::vector<WorldFileObject*>& wlist,
 	  } else {
 	    wlist.push_back(object);
 	  }
-	}
-	object = NULL;
-      } 
-	  else if (customObject.size())
-	  {	
+	}else if (customObject.size())
+	{	
 		bz_CustomMapObjectInfo data;
 		data.name = bzApiString(customObject);
 		for(unsigned int i = 0; i < customLines.size(); i++)
 			data.data.push_back(customLines[i]);
 		customObjectMap[customObject]->handle(bzApiString(customObject),&data);
 		object = NULL;
-	  }else {
+	}
+	object = NULL;
+      } 
+			else {
 	errorHandler->fatalError(
 	  std::string("unexpected \"end\" token"), line);
 	return false;
@@ -356,7 +356,18 @@ bool BZWReader::readWorldStream(std::vector<WorldFileObject*>& wlist,
 	}
       }
 	  else if (customObject.size())
-		  customLines.push_back(std::string(buffer));
+		{
+			std::string thisline = buffer;
+			thisline += " ";
+
+			while (input->good() && input->peek() != '\n')
+			{
+				input->get(buffer, sizeof(buffer));
+				thisline += buffer;
+			}
+
+		  customLines.push_back(thisline);
+		}
 
     } else { // filling the current object
       // unknown token
