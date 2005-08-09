@@ -669,10 +669,17 @@ BZF_API bool bz_sendTextMessage(int from, int to, const char* message)
 	int playerIndex;
 	PlayerId dstPlayer;
 
-	if (to == BZ_ALL_USERS)
+	switch(to)
+	{
+	case BZ_ADMINCHANNEL:
+		dstPlayer = AdminPlayers;
+		break;
+	case BZ_ALL_USERS:
 		dstPlayer = AllPlayers;
-	else
+		break;
+	default:
 		dstPlayer = (PlayerId)to;
+	}
 
 	if (from == BZ_SERVER)
 		playerIndex = ServerPlayer;

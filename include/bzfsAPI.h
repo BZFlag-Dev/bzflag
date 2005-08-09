@@ -71,6 +71,7 @@ typedef enum
 #define BZ_RABBIT_TEAM	5
 #define BZ_HUNTER_TEAM	6
 #define BZ_OBSERVERs	7
+#define BZ_ADMINCHANNEL -3
 
 #define BZ_SERVER		-2
 
