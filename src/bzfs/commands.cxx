@@ -689,6 +689,16 @@ static void handleKickCmd(GameKeeper::Player *playerData, const char *message)
   i = getSlotNumber(argv[1]);
 
   if (i >= 0) {
+		
+		// call any plugin events registered for /kick
+		bz_KickEventData kickEvent;
+		kickEvent.kickerID = t;
+		kickEvent.kickedID = i;
+		kickEvent.reason = argv[2].c_str();
+		
+		worldEventManager.callEvents(bz_eKickEvent,&kickEvent);
+		
+
     char kickmessage[MessageLen];
     
     GameKeeper::Player *p = GameKeeper::Player::getPlayerByIndex(i);
@@ -740,6 +750,16 @@ static void handleKillCmd(GameKeeper::Player *playerData, const char *message)
   i = getSlotNumber(argv[1]);
 
   if (i >= 0) {
+		// call any plugin events registered for /kick
+		bz_KillEventData killEvent;
+		killEvent.killerID = t;
+		killEvent.killedID = i;
+		if (argv.size() > 2)
+			killEvent.reason = argv[2].c_str();
+		
+		worldEventManager.callEvents(bz_eKillEvent,&killEvent);
+
+		
     char killmessage[MessageLen];
 
     // admins can override antiperms
@@ -956,6 +976,16 @@ static void handleHostBanCmd(GameKeeper::Player *playerData, const char *message
       reason = argv[3];
     }
 
+		// call any plugin events registered for /hostban
+		bz_HostBanEventData hostBanEvent;
+		hostBanEvent.bannerID = t;
+		hostBanEvent.hostPattern = hostpat.c_str();
+		hostBanEvent.reason = reason.c_str();
+		hostBanEvent.duration = durationInt;
+		
+		worldEventManager.callEvents(bz_eHostBanEvent,&hostBanEvent);
+
+		
     clOptions->acl.hostBan(hostpat, playerData->player.getCallSign(),
 			   durationInt,
 			   reason.c_str());

@@ -59,7 +59,10 @@ typedef enum
 	bz_eGetPlayerInfoEvent,
 	bz_eAllowSpawn,
 	bz_eListServerUpdateEvent,
-	bz_eBanEvent
+	bz_eBanEvent,
+	bz_eHostBanEvent,
+	bz_eKickEvent,
+	bz_eKillEvent
 }bz_eEventType;
 
 #define BZ_ALL_USERS	-1
@@ -528,6 +531,55 @@ public:
 	int banneeID;
 	int duration;
 	bzApiString ipAddress;
+	bzApiString reason;
+};
+
+class bz_HostBanEventData : public bz_EventData
+{
+public:
+	bz_HostBanEventData()
+	{
+		eventType = bz_eHostBanEvent;
+		bannerID = -1;
+		duration = -1;
+	}
+	virtual ~bz_HostBanEventData(){};
+
+	int bannerID;
+	int duration;
+	bzApiString hostPattern;
+	bzApiString reason;
+};
+
+class bz_KickEventData : public bz_EventData
+{
+public:
+	bz_KickEventData()
+	{
+		eventType = bz_eKickEvent;
+		kickerID = -1;
+		kickedID = -1;
+	}
+	virtual ~bz_KickEventData(){};
+
+	int kickerID;
+	int kickedID;
+	bzApiString reason;
+};
+
+class bz_KillEventData : public bz_EventData
+{
+public:
+	bz_KillEventData()
+	{
+		eventType = bz_eKillEvent;
+		killerID = -1;
+		killedID = -1;
+	}
+	virtual ~bz_KillEventData(){};
+
+	int killerID;
+	int killedID;
 	bzApiString reason;
 };
 
