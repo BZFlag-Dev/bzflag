@@ -759,13 +759,19 @@ static void handleKillCmd(GameKeeper::Player *playerData, const char *message)
 		
 		worldEventManager.callEvents(bz_eKillEvent,&killEvent);
 
+		// need to update playerIndex ?
+		if (playerData->getIndex() != t) {
+			playerData = GameKeeper::Player::getPlayerByIndex(killEvent.killerID);
+			if (!playerData)
+				return;
+		}
 		
     char killmessage[MessageLen];
 
     // admins can override antiperms
     if (!playerData->accessInfo.isAdmin()) {
       // otherwise make sure the player is not protected with an antiperm
-      GameKeeper::Player *p = GameKeeper::Player::getPlayerByIndex(i);
+      GameKeeper::Player *p = GameKeeper::Player::getPlayerByIndex(killEvent.killedID);
       if ((p != NULL) && (p->accessInfo.hasPerm(PlayerAccessInfo::antikill))) {
 	snprintf(killmessage, MessageLen, "%s is protected from being killed.", p->player.getCallSign());
 	sendMessage(ServerPlayer, i, killmessage);
@@ -775,13 +781,13 @@ static void handleKillCmd(GameKeeper::Player *playerData, const char *message)
 
     snprintf(killmessage, MessageLen, "You were killed by %s",
 	     playerData->player.getCallSign());
-    sendMessage(ServerPlayer, i, killmessage);
-    if (argv.size() > 2) {
-      snprintf(killmessage, MessageLen, " reason given : %s",argv[2].c_str());
-      sendMessage(ServerPlayer, i, killmessage);
+    sendMessage(ServerPlayer, killEvent.killedID, killmessage);
+    if (killEvent.reason.size() > 0) {
+      snprintf(killmessage, MessageLen, " reason given : %s",killEvent.reason.c_str());
+      sendMessage(ServerPlayer, killEvent.killedID, killmessage);
     }
     // kill the player
-    playerKilled(i, ServerPlayer, 0, -1, Flags::Null, -1);
+    playerKilled(killEvent.killedID, ServerPlayer, 0, -1, Flags::Null, -1);
 
   } else {
     char errormessage[MessageLen];
