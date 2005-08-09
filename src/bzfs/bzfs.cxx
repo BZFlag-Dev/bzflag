@@ -3800,7 +3800,20 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
       buf = nboUnpackUByte(buf, dstPlayer);
       buf = nboUnpackString(buf, message, sizeof(message));
       message[MessageLen - 1] = '\0';
-      playerData->player.hasSent(message);
+      playerData->player.hasSent();
+      if (dstPlayer == AllPlayers) {
+	DEBUG1("Player %s [%d] -> All: %s\n", playerData->player.getCallSign(),
+	       t, message);
+      } else if (dstPlayer == AdminPlayers) {
+	DEBUG1("Player %s [%d] -> Admin: %s\n",
+	       playerData->player.getCallSign(), t, message);
+      } else if (dstPlayer > LastRealPlayer) {
+	DEBUG1("Player %s [%d] -> Team: %s\n",
+	       playerData->player.getCallSign(), t, message);
+      } else {
+	DEBUG1("Player %s [%d] -> Player [%d]: %s\n",
+	       playerData->player.getCallSign(), t, dstPlayer, message);
+      }
       // check for spamming
       if (checkSpam(message, playerData, t))
 	break;

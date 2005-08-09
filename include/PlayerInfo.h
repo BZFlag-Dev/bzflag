@@ -103,7 +103,7 @@ public:
   void	setAutoPilot(bool autopilot);
   bool	isTooMuchIdling(float kickThresh);
   bool	hasStartedToNotRespond();
-  void	hasSent(char message[]);
+  void	hasSent();
   bool	hasPlayedEarly();
   void	setPlayedEarly(bool early = true);
   void	setReplayState(PlayerReplayState state);

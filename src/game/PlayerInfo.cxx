@@ -382,9 +382,8 @@ bool PlayerInfo::hasStartedToNotRespond() {
   return startingToNotRespond;
 }
 
-void PlayerInfo::hasSent(char message[]) {
+void PlayerInfo::hasSent() {
   lastmsg = now;
-  DEBUG1("Player %s [%d]: %s\n", callSign, playerIndex, message);
 }
 
 bool PlayerInfo::hasPlayedEarly() {
