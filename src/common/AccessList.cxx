@@ -22,7 +22,6 @@
 // common headers
 #include "bzfio.h"
 #include "bzglob.h"
-#include "regex.h"
 #include "FileManager.h"
 #include "DirectoryNames.h"
 

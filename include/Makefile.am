@@ -144,7 +144,7 @@ noinst_HEADERS =			\
 	messages.h			\
 	multicast.h			\
 	network.h			\
-	regex.h				\
+	bzregex.h			\
 	resource.h			\
 	vectors.h			\
 	version.h			\

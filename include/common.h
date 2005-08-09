@@ -197,6 +197,14 @@ typedef unsigned char	uint8_t;
 #define std_max(a,b) std::max(a,b)
 #endif
 
+#ifdef BUILD_REGEX
+#  include "bzregex.h"
+#elif defined(HAVE_REGEX_H)
+#  include <regex.h>
+#else
+#  define regex_t void
+#endif
+
 #endif // BZF_COMMON_H
 
 

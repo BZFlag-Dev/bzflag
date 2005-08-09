@@ -24,7 +24,6 @@
 
 /* common implementation headers */
 #include "bzfgl.h"
-#include "regex.h"
 #include "global.h"
 #include "BzfWindow.h"
 #include "ErrorHandler.h"

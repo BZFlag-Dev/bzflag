@@ -27,14 +27,6 @@
 #include <ctype.h>
 #include <sys/types.h>
 
-#ifdef BUILD_REGEX
-#  include "regex.h"
-#elif defined(HAVE_REGEX_H)
-#  include <regex.h>
-#else
-#  define regex_t void
-#endif
-
 /* common interface headers */
 #include "TextUtils.h"
 

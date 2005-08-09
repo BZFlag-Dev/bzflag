@@ -51,7 +51,7 @@ static char rcsid[] = "$NetBSD: regfree.c,v 1.4 1995/02/27 13:29:56 cgd Exp $";
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "regex.h"
+#include "bzregex.h"
 #include "./utils.h"
 #include "./regex2.h"
 
