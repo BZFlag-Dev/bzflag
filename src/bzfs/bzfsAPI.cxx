@@ -854,9 +854,14 @@ BZF_API bool bz_kickUser ( int playerIndex, const char* reason, bool notify )
 		return false;
 
 	if (notify)
-		sendMessage(ServerPlayer, AdminPlayers, reason);
+	{
+		std::string msg = std::string("You have been kicked from the server for: ") + reason;
+		sendMessage(ServerPlayer, playerIndex, msg.c_str());
 
-
+		msg = player->player.getCallSign();
+		msg += std::string(" was kicked for:") + reason;
+		sendMessage(ServerPlayer, AdminPlayers, msg.c_str());
+	}
 	removePlayer(playerIndex,reason);
 	return true;
 }
