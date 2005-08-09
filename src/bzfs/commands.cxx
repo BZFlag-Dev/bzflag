@@ -857,6 +857,10 @@ static void handleBanCmd(GameKeeper::Player *playerData, const char *message)
 		banEvent.bannerID = t;
 		banEvent.ipAddress = ip.c_str();
 		banEvent.reason = reason.c_str();
+		banEvent.duration = durationInt;
+		// if we know for sure who is to be banned, submit it	
+		if (victim >= 0)
+			banEvent.banneeID = victim;
 		
 		worldEventManager.callEvents(bz_eBanEvent,&banEvent);
 
