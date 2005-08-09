@@ -34,7 +34,7 @@
 TimeKeeper synct = TimeKeeper::getCurrent();
 
 extern void sendMessage(int playerIndex, PlayerId dstPlayer, const char *message);
-extern void removePlayer(int playerIndex, const char *reason, bool notify);
+extern void removePlayer(int playerIndex, const char *reason, bool notify=true);
 extern void zapFlagByPlayer(int playerIndex);
 extern void broadcastMessage(uint16_t code, int len, const void *msg);
 extern void directMessage(int playerIndex, uint16_t code, int len, const void *msg);
@@ -853,7 +853,11 @@ BZF_API bool bz_kickUser ( int playerIndex, const char* reason, bool notify )
 	if (!player || !reason)
 		return false;
 
-	removePlayer(playerIndex,reason,notify);
+	if (notify)
+		sendMessage(ServerPlayer, AdminPlayers, reason);
+
+
+	removePlayer(playerIndex,reason);
 	return true;
 }
 
