@@ -747,7 +747,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       options.lagwarnthresh = atoi(argv[i])/1000.0f;
     } else if (strcmp(argv[i], "-loadplugin") == 0) {
       checkArgc(1, i, argc, argv[i]);
-      std::vector<std::string> a = TextUtils::tokenize(argv[i],std::string(","));
+      std::vector<std::string> a = TextUtils::tokenize(argv[i],std::string(","), 2);
       CmdLineOptions::pluginDef	pDef;
       if (a.size() >= 1)
         pDef.plugin = a[0];
