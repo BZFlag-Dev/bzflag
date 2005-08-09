@@ -15,10 +15,11 @@
 #include "common.h"
 
 #include <assert.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+
 #if defined(_WIN32)
 #  include <shlobj.h>
-#  include <sys/types.h>
-#  include <sys/stat.h>
 #  include <direct.h>
 #else
 #  include <pwd.h>
