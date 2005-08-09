@@ -1179,7 +1179,7 @@ int			main(int argc, char** argv)
     if (BZDB.isSet("view")) {
       RENDERER.setViewType(SceneRenderer::Normal);
       std::string value = BZDB.get("view");
-      for (i = 0; i < (int)configViewValues.size(); i++)
+      for (i = 0; i < configViewValues.size(); i++)
 	if (value == configViewValues[i]) {
 	  RENDERER.setViewType((SceneRenderer::ViewType)i);
 	  break;
