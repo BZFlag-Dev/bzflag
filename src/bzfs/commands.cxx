@@ -698,31 +698,37 @@ static void handleKickCmd(GameKeeper::Player *playerData, const char *message)
 		
 		worldEventManager.callEvents(bz_eKickEvent,&kickEvent);
 		
+		// need to update playerIndex ?
+		if (playerData->getIndex() != t) {
+			playerData = GameKeeper::Player::getPlayerByIndex(kickEvent.kickerID);
+			if (!playerData)
+				return;
+		}
 
     char kickmessage[MessageLen];
     
-    GameKeeper::Player *p = GameKeeper::Player::getPlayerByIndex(i);
+    GameKeeper::Player *p = GameKeeper::Player::getPlayerByIndex(kickEvent.kickedID);
 
     // admins can override antiperms
     if (!playerData->accessInfo.isAdmin()) {
       // otherwise make sure the player is not protected with an antiperm      
       if ((p != NULL) && (p->accessInfo.hasPerm(PlayerAccessInfo::antikick))) {
 	snprintf(kickmessage, MessageLen, "%s is protected from being kicked.", p->player.getCallSign());
-	sendMessage(ServerPlayer, i, kickmessage);
+	sendMessage(ServerPlayer,kickEvent.kickerID, kickmessage);
 	return;
       }
     }
 
     snprintf(kickmessage, MessageLen, "You were kicked off the server by %s",
 	    playerData->player.getCallSign());
-    sendMessage(ServerPlayer, i, kickmessage);
-    if (argv.size() > 2) {
-      snprintf(kickmessage, MessageLen, " reason given : %s",argv[2].c_str());
-      sendMessage(ServerPlayer, i, kickmessage);
+    sendMessage(ServerPlayer, kickEvent.kickedID, kickmessage);
+    if (kickEvent.reason.size() > 0) {
+      snprintf(kickmessage, MessageLen, " reason given : %s",kickEvent.reason.c_str());
+      sendMessage(ServerPlayer, kickEvent.kickedID, kickmessage);
     }
-    snprintf(kickmessage, MessageLen, "%s kicked by %s, reason: %s", p->player.getCallSign(), playerData->player.getCallSign(),argv[2].c_str());
+    snprintf(kickmessage, MessageLen, "%s kicked by %s, reason: %s", p->player.getCallSign(), playerData->player.getCallSign(),kickEvent.reason.c_str());
     sendMessage(ServerPlayer, AdminPlayers, kickmessage);
-    removePlayer(i, "/kick");
+    removePlayer(kickEvent.kickedID, "/kick");
   } else {
     char errormessage[MessageLen];
     snprintf(errormessage, MessageLen, "player \"%s\" not found", argv[1].c_str());
