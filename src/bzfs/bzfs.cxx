@@ -3811,8 +3811,14 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
 	DEBUG1("Player %s [%d] -> Team: %s\n",
 	       playerData->player.getCallSign(), t, message);
       } else {
-	DEBUG1("Player %s [%d] -> Player [%d]: %s\n",
+        GameKeeper::Player *p = GameKeeper::Player::getPlayerByIndex(dstPlayer);
+        if (p != NULL) {
+          DEBUG1("Player %s [%d] -> Player %s [%d]: %s\n",
+	       playerData->player.getCallSign(), t, p->player.getCallSign(), dstPlayer, message);
+        } else {
+	      DEBUG1("Player %s [%d] -> Player Unknown [%d]: %s\n",
 	       playerData->player.getCallSign(), t, dstPlayer, message);
+        }
       }
       // check for spamming
       if (checkSpam(message, playerData, t))
