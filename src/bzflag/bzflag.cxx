@@ -80,6 +80,11 @@
 // invoke incessant rebuilding for build versioning
 #include "version.h"
 
+// defaults for bzdb
+#include "defaultBZDB.h"
+
+// client prefrences
+#include "clientConfig.h"
 
 int beginendCount = 0;
 
@@ -96,140 +101,7 @@ int			debugLevel = 0;
 
 static BzfDisplay*	display = NULL;
 
-// default database entries
-struct DefaultDBItem {
-  const char*			name;
-  const char*			value;
-  bool				persistent;
-  StateDatabase::Permission	permission;
-  StateDatabase::Callback	callback;
-};
 
-static DefaultDBItem	defaultDBItems[] = {
-  { "udpnet",			"1",			true,	StateDatabase::ReadWrite,	NULL },
-  { "timedate",			"0",			true,	StateDatabase::ReadWrite,	NULL },
-  { "email",			"default",		true,	StateDatabase::ReadWrite,	NULL },
-  { "team",			"Rogue",		true,	StateDatabase::ReadWrite,	NULL },
-  { "list",			DefaultListServerURL,	true,	StateDatabase::ReadWrite,	NULL },
-  { "motdServer",		DefaultMOTDServer,	true,	StateDatabase::ReadWrite,	NULL },
-  { "volume",			"10",			true,	StateDatabase::ReadWrite,	NULL },
-  { "latitude",			"37.5",			true,	StateDatabase::ReadWrite,	NULL },
-  { "longitude",		"122",			true,	StateDatabase::ReadWrite,	NULL },
-  { "radarStyle",		"3",			true,	StateDatabase::ReadWrite,	NULL },
-  { "radarTankPixels",		"2.0",			true,	StateDatabase::ReadWrite,	NULL },
-  { "coloredradarshots",	"1",			true,	StateDatabase::ReadWrite,	NULL },
-  { "linedradarshots",		"0",			true,	StateDatabase::ReadWrite,	NULL },
-  { "sizedradarshots",		"0",			true,	StateDatabase::ReadWrite,	NULL },
-  { "panelopacity",		"0.3",			true,	StateDatabase::ReadWrite,	NULL },
-  { "radarsize",		"4",			true,	StateDatabase::ReadWrite,	NULL },
-  { "mouseboxsize",		"5",			true,	StateDatabase::ReadWrite,	NULL },
-  { "cpanelfontsize",		"0",			true,	StateDatabase::ReadWrite,	NULL },
-  { "scorefontsize",		"0",			true,	StateDatabase::ReadWrite,	NULL },
-  { "colorful",			"1",			true,	StateDatabase::ReadWrite,	NULL },
-  { "tkwarnratio",		"0.0",			true,   StateDatabase::ReadWrite,	NULL },
-  { "showtabs",			"2",			true,   StateDatabase::ReadWrite,	NULL },
-  { "underlineColor",		"cyan",			true,	StateDatabase::ReadWrite,	NULL },
-  { "zbuffer",			"1",			true,	StateDatabase::ReadWrite,	NULL },
-  { "highlightPattern",		"",			true,	StateDatabase::ReadWrite,	NULL },
-  { "killerhighlight",		"2",			true,	StateDatabase::ReadWrite,	NULL },
-  { "serverCacheAge",		"0",			true,	StateDatabase::ReadWrite,	NULL },
-  { "slowKeyboard",		"0",			false,	StateDatabase::ReadWrite,	NULL },
-  { "displayRadarFlags",	"1",			false,	StateDatabase::ReadWrite,	NULL },
-  { "displayMainFlags",		"1",			false,	StateDatabase::ReadWrite,	NULL },
-  { "displayScore",		"1",			true,	StateDatabase::ReadWrite,	NULL },
-  { "displayZoom",		"1",			true,	StateDatabase::ReadWrite,	NULL },
-  { "displayFlagHelp",		"1",			true,	StateDatabase::ReadWrite,	setFlagHelp },
-  { "displayConsole",		"1",			false,	StateDatabase::ReadWrite,	NULL },
-  { "displayReloadTimer",	"1",			true,	StateDatabase::ReadWrite,	NULL },
-  { "displayRadar",		"1",			false,	StateDatabase::ReadWrite,	NULL },
-  { "displayRadarRange",	"0.5",			false,	StateDatabase::ReadWrite,	NULL },
-  { "displayFOV",		"60.0",			false,  StateDatabase::ReadWrite,	NULL },
-  { "roamZoomMax",		"120",			false,	StateDatabase::ReadWrite,	NULL },
-  { "roamZoomMin",		"15",			false,	StateDatabase::ReadWrite,	NULL },
-  { "maxQuality",		"3",			false,	StateDatabase::ReadWrite,	NULL },
-  { "groundTexRepeat",		"0.1",			true,	StateDatabase::ReadWrite,	NULL },
-  { "groundHighResTexRepeat",	"0.05",			true,	StateDatabase::ReadWrite,	NULL },
-  { "boxWallTexRepeat",		"1.5",			true,	StateDatabase::ReadWrite,	NULL },
-  { "boxWallHighResTexRepeat",	"5.0",			true,	StateDatabase::ReadWrite,	NULL },
-  { "pyrWallTexRepeat",		"3.0",			true,	StateDatabase::ReadWrite,	NULL },
-  { "pyrWallHighResTexRepeat",	"8.0",			true,	StateDatabase::ReadWrite,	NULL },
-  { "allowInputChange",		"1",			true,	StateDatabase::ReadWrite,	NULL },
-  { "pulseDepth",		"0.4",			true,	StateDatabase::ReadWrite,	NULL },
-  { "pulseRate",		"1.0",			true,	StateDatabase::ReadWrite,	NULL },
-  { "userRainScale",		"1.0",			true,	StateDatabase::ReadWrite,	NULL },
-  { "userMirror",		"1",			true,	StateDatabase::ReadWrite,	NULL },
-  { "showTreads",		"0",			true,	StateDatabase::ReadWrite,	NULL },
-  { "animatedTreads",		"1",			true,	StateDatabase::ReadWrite,	NULL },
-  { "treadStyle",		"1",			true,	StateDatabase::ReadWrite,	NULL },
-  { "userTrackFade",		"1.0",			true,	StateDatabase::ReadWrite,	NULL },
-  { "trackMarkCulling",		"3",			true,	StateDatabase::ReadWrite,	NULL },
-  { "scrollPages",		"20",			true,	StateDatabase::ReadWrite,	NULL },
-  { "remoteSounds",		"1",			true,	StateDatabase::ReadWrite,	NULL },
-  { "leadingShotLine",		"0",			true,	StateDatabase::ReadWrite,	NULL },
-  { "saveIdentity",		"2",			true,	StateDatabase::ReadWrite,	NULL },
-  { "showCollisionGrid",	"0",			true,	StateDatabase::ReadWrite,	NULL },
-  { "showCullingGrid",		"0",			true,	StateDatabase::ReadWrite,	NULL },
-  { "showCoordinates",		"0",			true,	StateDatabase::ReadWrite,	NULL },
-  { "jumpTyping",		"1",			true,	StateDatabase::ReadWrite,	NULL },
-  { "maxCacheMB",		"32",			true,	StateDatabase::ReadWrite,	NULL },
-  { "doDownloads",		"1",			true,	StateDatabase::ReadWrite,	NULL },
-  { "updateDownloads",		"0",			true,	StateDatabase::ReadWrite,	NULL },
-  { "useDrawInfo",		"1",			true,	StateDatabase::ReadWrite,	NULL },
-  { "roamSmoothTime",		"0.5",			true,	StateDatabase::ReadWrite,	NULL },
-
-  // default texture names
-  { "stdGroundTexture",		"std_ground",		true,	StateDatabase::ReadWrite,	NULL },
-  { "zoneGroundTexture",	"zone_ground",		true,	StateDatabase::ReadWrite,	NULL },
-  { "boxWallTexture",		"boxwall",		true,	StateDatabase::ReadWrite,	NULL },
-  { "boxTopTexture",		"roof",			true,	StateDatabase::ReadWrite,	NULL },
-  { "pyrWallTexture",		"pyrwall",		true,	StateDatabase::ReadWrite,	NULL },
-  { "cautionTexture",		"caution",		true,	StateDatabase::ReadWrite,	NULL },
-  { "waterTexture",		"water",		true,	StateDatabase::ReadWrite,	NULL },
-
-  // default fonts
-  { "consoleFont",		"VeraMonoBold",		true,	StateDatabase::ReadWrite,	NULL },
-  { "sansSerifFont",		"TogaSansBold",		true,	StateDatabase::ReadWrite,	NULL },
-  { "serifFont",		"TogaSerifBold",	true,	StateDatabase::ReadWrite,	NULL },
-
-  // team based object sufixes
-  { "tankTexture",		"tank",			true,	StateDatabase::ReadWrite,	NULL },
-  { "boltTexture",		"bolt",			true,	StateDatabase::ReadWrite,	NULL },
-  { "laserTexture",		"laser",		true,	StateDatabase::ReadWrite,	NULL },
-  { "baseTopTexture",		"basetop",		true,	StateDatabase::ReadWrite,	NULL },
-  { "baseWallTexture",		"basewall",		true,	StateDatabase::ReadWrite,	NULL },
-
-  // team prefixes
-  { "redTeamPrefix",		"red_",			true,	StateDatabase::ReadWrite,	NULL },
-  { "blueTeamPrefix",		"blue_",		true,	StateDatabase::ReadWrite,	NULL },
-  { "greenTeamPrefix",		"green_",		true,	StateDatabase::ReadWrite,	NULL },
-  { "purpleTeamPrefix",		"purple_",		true,	StateDatabase::ReadWrite,	NULL },
-  { "rabbitTeamPrefix",		"rabbit_",		true,	StateDatabase::ReadWrite,	NULL },
-  { "hunterTeamPrefix",		"hunter_",		true,	StateDatabase::ReadWrite,	NULL },
-  { "rogueTeamPrefix",		"rogue_",		true,	StateDatabase::ReadWrite,	NULL },
-  { "observerTeamPrefix",	"observer_",		true,	StateDatabase::ReadWrite,	NULL },
-
-  // type prefixes
-  { "superPrefix",		"super_",		true,	StateDatabase::ReadWrite,	NULL },
-
-  // effects options
-  { "useFancyEffects",		"1",			true,	StateDatabase::ReadWrite,	NULL },
-  { "spawnEffect",		"1",			true,	StateDatabase::ReadWrite,	NULL },
-  { "enableLocalSpawnEffect",	"1",			true,	StateDatabase::ReadWrite,	NULL },
-  { "shotEffect",		"1",			true,	StateDatabase::ReadWrite,	NULL },
-  { "enableLocalShotEffect",	"0",			true,	StateDatabase::ReadWrite,	NULL },
-  { "deathEffect",		"1",			true,	StateDatabase::ReadWrite,	NULL },
-  { "useVelOnShotEffects",	"1",			true,	StateDatabase::ReadWrite,	NULL },
-  { "landEffect",		"1",			true,	StateDatabase::ReadWrite,	NULL },
-  { "gmPuffEffect",		"2",			true,	StateDatabase::ReadWrite,	NULL },
-  { "gmPuffTime",		"1/8",			true,	StateDatabase::ReadWrite,	NULL },
-  { "ricoEffect",		"1",			true,	StateDatabase::ReadWrite,	NULL },
-  { "tpEffect",			"1",			true,	StateDatabase::ReadWrite,	NULL },
-
-  // URL timeouts
-  { "httpTimeout",		"15",			true,	StateDatabase::ReadWrite,	NULL }
-
-
-};
 
 #ifdef ROBOT
 // ROBOT -- tidy up
@@ -241,21 +113,6 @@ int numRobotTanks = 0;
 // application initialization
 //
 
-static const char*	configQualityValues[] = {
-				"low",
-				"medium",
-				"high",
-				"experimental"
-			};
-static const char*	configViewValues[] = {
-				"normal",
-				"stereo",
-				"stacked",
-				"three",
-				"anaglyph",
-				"interlaced"
-			};
-
 // so that Windows can kill the wsa stuff if needed
 int bail ( int returnCode )
 {
@@ -263,216 +120,6 @@ int bail ( int returnCode )
 	WSACleanup();
 #endif
 	return returnCode;
-}
-
-static std::string	getOldConfigFileName()
-{
-#if !defined(_WIN32)
-
-  std::string name = getConfigDirName();
-  name += "config";
-
-  // add in hostname on UNIX
-  if (getenv("HOST")) {
-    name += ".";
-    name += getenv("HOST");
-  }
-
-  return name;
-
-#elif defined(_WIN32) /* !defined(_WIN32) */
-
-  // get location of personal files from system.  this appears to be
-  // the closest thing to a home directory on windows.  use root of
-  // C drive as a default in case we can't get the path or it doesn't
-  // exist.
-  std::string oldConfigName = "bzflag19.bzc";
-  std::string name = getConfigDirName();
-  name += oldConfigName;
-  return name;
-
-#endif /* !defined(_WIN32) */
-}
-
-#if !defined(_WIN32)		// who uses this sucker any more?
-static std::string	getReallyOldConfigFileName()
-{
-  std::string name = getConfigDirName();
-  name += "config";
-  return name;
-}
-#endif
-
-std::string getCurrentConfigFileName(void)
-{
-  std::string configFile = BZ_CONFIG_FILE_NAME;
-
-  std::string name = getConfigDirName(BZ_CONFIG_DIR_VERSION);
-  name += configFile;
-
-#if !defined(_WIN32)
-  // add in hostname on UNIX
-  if (getenv("HOST")) {
-    name += ".";
-    name += getenv("HOST");
-  }
-#endif
-  return name;
-}
-
-// this function will look for the config, if it's not there,
-// it will TRY and find an old one and copy it
-// so that the update function can upgrade it to the current version
-// the assumption is that there is a unique config per version
-void findConfigFile(void)
-{
-  // look for the current file
-  std::string configName = getCurrentConfigFileName();
-  FILE *fp = fopen(configName.c_str(), "rb");
-  if (fp) {
-    // we found the current file, nothing to do, just return
-    fclose(fp);
-    return;
-  }
-
-  // try and find the old file
-  std::string oldConfigName = getOldConfigFileName();
-  fp = fopen(oldConfigName.c_str(), "rb");
-  if (fp) {
-    // there is an old config so lets copy it to the new dir and let the update take care of it.
-#if defined(_WIN32)
-    fclose(fp);
-    // make the dir if we need to
-    mkdir(getConfigDirName(BZ_CONFIG_DIR_VERSION).c_str());
-    // copy the old config to the new dir location with the new name
-    CopyFile(oldConfigName.c_str(), configName.c_str(),true);
-
-#else	// the other OSs should do what they need to do
-    mkdir(getConfigDirName(BZ_CONFIG_DIR_VERSION).c_str(), 0755);
-
-    FILE *newFile = fopen(configName.c_str(),"wb");
-    if (newFile) {
-      fseek(fp, 0, SEEK_END);
-      int len = ftell(fp);
-      fseek(fp, 0, SEEK_SET);
-
-      unsigned char* temp = (unsigned char*) malloc(len);
-
-      fread(temp, len, 1, fp);
-      fwrite(temp, len, 1, newFile);
-
-      free(temp);
-
-      fclose(newFile);
-      fclose(fp);
-    }
-#endif
-  }
-
-  // try and find the REALLY old file
-  // who uses this sucker any more?
-#if !defined(_WIN32)
-  std::string realyOldConfigName = getReallyOldConfigFileName();
-  fp = fopen(realyOldConfigName.c_str(), "rb");
-  if (fp) {
-    // there is an old config so lets copy it to the new dir and let the update take care of it.
-    // apparently only linux needs this so do the magic
-    mkdir(getConfigDirName(BZ_CONFIG_DIR_VERSION).c_str(), 0755);
-
-    FILE *newFile = fopen(configName.c_str(),"wb");
-    if (newFile) {
-      fseek(fp, 0, SEEK_END);
-      int len = ftell(fp);
-      fseek(fp, 0, SEEK_SET);
-
-      unsigned char* temp = (unsigned char*) malloc(len);
-
-      fread(temp, len, 1, fp);
-      fwrite(temp, len, 1, newFile);
-
-      free(temp);
-      fclose(newFile);
-      fclose(fp);
-    }
-  }
-#endif
-}
-
-void updateConfigFile(void)
-{
-  int		configVersion = 0;
-  if (BZDB.isSet("config_version"))
-    configVersion = (int)BZDB.eval("config_version");
-
-  switch (configVersion) {
-  case 0: // 1.10-1.12
-    // update from old unversioned config
-    // roaming fixes - remove keys bound to "roam translate *" and "roam rotate *"
-    KEYMGR.unbindCommand("roam translate left");
-    KEYMGR.unbindCommand("roam translate right");
-    KEYMGR.unbindCommand("roam translate up");
-    KEYMGR.unbindCommand("roam translate down");
-    KEYMGR.unbindCommand("roam translate forward");
-    KEYMGR.unbindCommand("roam translate backward");
-    KEYMGR.unbindCommand("roam rotate left");
-    KEYMGR.unbindCommand("roam rotate right");
-    KEYMGR.unbindCommand("roam rotate up");
-    KEYMGR.unbindCommand("roam rotate down");
-    KEYMGR.unbindCommand("roam rotate stop");
-
-    // add new default keybindings if there's no conflict
-
-    // iconify
-    BzfKeyEvent key;
-    if (KEYMGR.stringToKeyEvent("F4", key)
-	&& (KEYMGR.get(key, true) == ""))
-      KEYMGR.bind(key, true, "iconify");
-    // toggle console & radar
-    if (KEYMGR.stringToKeyEvent("Q", key)
-	&& (KEYMGR.get(key, true) == ""))
-      KEYMGR.bind(key, true, "toggleRadar");
-    if (KEYMGR.stringToKeyEvent("W", key)
-	&& (KEYMGR.get(key, true) == ""))
-      KEYMGR.bind(key, true, "toggleConsole");
-    // controlpanel tabs - all or nothing
-    if (KEYMGR.stringToKeyEvent("Shift+F1", key)
-	&& (KEYMGR.get(key, true) == "")
-	&& KEYMGR.stringToKeyEvent("Shift+F2", key)
-	&& (KEYMGR.get(key, true) == "")
-	&& KEYMGR.stringToKeyEvent("Shift+F3", key)
-	&& (KEYMGR.get(key, true) == "")
-	&& KEYMGR.stringToKeyEvent("Shift+F4", key)
-	&& (KEYMGR.get(key, true) == "")) {
-      KEYMGR.stringToKeyEvent("Shift+F1", key);
-      KEYMGR.bind(key, true, "messagepanel all");
-      KEYMGR.stringToKeyEvent("Shift+F2", key);
-      KEYMGR.bind(key, true, "messagepanel chat");
-      KEYMGR.stringToKeyEvent("Shift+F3", key);
-      KEYMGR.bind(key, true, "messagepanel server");
-      KEYMGR.stringToKeyEvent("Shift+F4", key);
-      KEYMGR.bind(key, true, "messagepanel misc");
-    }
-
-    // TODO - any other breaking changes from 1.10 to 2.0
-
-  case 1: // 1.11.20
-    if (KEYMGR.stringToKeyEvent("Tab", key)
-	&& (KEYMGR.get(key, false) == ""))
-      KEYMGR.bind(key, false, "jump");
-
-  case 2: // 2.0
-    break; // no action, current version
-
-  default: // hm, we don't know about this one...
-    printError(TextUtils::format("Config file is tagged version \"%d\", "
-				   "which was not expected (too new perhaps). "
-				   "Trying to load anyhow.", configVersion));
-    break;
-  }
-
-  // set us as the updated version
-  configVersion = BZ_CONFIG_FILE_VERSION;
-  BZDB.setInt("config_version", configVersion);
 }
 
 static void		setTeamColor(TeamColor team, const std::string& str)
@@ -920,8 +567,7 @@ static bool		needsFullscreen()
 
   // fullscreen if view is not default
   std::string value = BZDB.get("view");
-  for (int i = 1; i < (int)(sizeof(configViewValues) /
-			sizeof(configViewValues[0])); i++)
+  for (int i = 1; i < (int)configViewValues.size(); i++)
     if (value == configViewValues[i])
       return true;
 
@@ -1037,17 +683,8 @@ int			main(int argc, char** argv)
   CommandsStandard::add();
   unsigned int i;
 
-  // prepare DB entries
-  for (i = 0; i < countof(defaultDBItems); ++i) {
-    assert(defaultDBItems[i].name != NULL);
-    if (defaultDBItems[i].value != NULL) {
-      BZDB.set(defaultDBItems[i].name, defaultDBItems[i].value);
-      BZDB.setDefault(defaultDBItems[i].name, defaultDBItems[i].value);
-    }
-    BZDB.setPersistent(defaultDBItems[i].name, defaultDBItems[i].persistent);
-    BZDB.setPermission(defaultDBItems[i].name, defaultDBItems[i].permission);
-    BZDB.addCallback(defaultDBItems[i].name, defaultDBItems[i].callback, NULL);
-  }
+  initConfigData();
+  loadBZDBDefaults();
 
   // parse for the config filename
   // the rest of the options are parsed after the config file
@@ -1523,7 +1160,7 @@ int			main(int argc, char** argv)
     }
     if (BZDB.isSet("quality")) {
       std::string value = BZDB.get("quality");
-      const int qualityLevels = countof(configQualityValues);
+      const int qualityLevels = (int)configQualityValues.size();
       for (int j = 0; j < qualityLevels; j++) {
 	if (value == configQualityValues[j]) {
 	  RENDERER.setQuality(j);
@@ -1542,8 +1179,7 @@ int			main(int argc, char** argv)
     if (BZDB.isSet("view")) {
       RENDERER.setViewType(SceneRenderer::Normal);
       std::string value = BZDB.get("view");
-      for (i = 0; i < (int)(sizeof(configViewValues) /
-				sizeof(configViewValues[0])); i++)
+      for (i = 0; i < (int)configViewValues.size(); i++)
 	if (value == configViewValues[i]) {
 	  RENDERER.setViewType((SceneRenderer::ViewType)i);
 	  break;

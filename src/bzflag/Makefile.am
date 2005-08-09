@@ -30,11 +30,15 @@ bzflag_SOURCES =			\
 	BaseLocalPlayer.h		\
 	CacheMenu.cxx			\
 	CacheMenu.h			\
+	clientConfig.cxx			\
+	clientConfig.h			\
 	CommandsImplementation.cxx	\
 	ComposeDefaultKey.cxx		\
 	ComposeDefaultKey.h		\
 	ControlPanel.cxx		\
 	ControlPanel.h			\
+	defaultBZDB.h			\
+	defaultBZDB.cxx			\
 	DisplayMenu.cxx			\
 	DisplayMenu.h			\
 	Downloads.cxx			\

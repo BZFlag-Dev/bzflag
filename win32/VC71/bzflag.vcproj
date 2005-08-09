@@ -1381,6 +1381,26 @@ copy debug\*.pdb ..\..\*.pdb
 					RelativePath="..\..\src\bzflag\ServerStartMenu.cxx">
 				</File>
 			</Filter>
+			<Filter
+				Name="bzdb"
+				Filter="">
+				<File
+					RelativePath="..\..\src\bzflag\defaultBZDB.cxx">
+				</File>
+				<File
+					RelativePath="..\..\src\bzflag\defaultBZDB.h">
+				</File>
+			</Filter>
+			<Filter
+				Name="Config"
+				Filter="">
+				<File
+					RelativePath="..\..\src\bzflag\clientConfig.cxx">
+				</File>
+				<File
+					RelativePath="..\..\src\bzflag\clientConfig.h">
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Header Files"
