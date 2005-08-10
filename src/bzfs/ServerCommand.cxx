@@ -30,13 +30,11 @@ bool ServerCommand::execute(const char         *commandLine,
 {
   MapOfCommands &commandMap = *getMapRef();
   int i;
-  char commandName[256];
-  for (i = 0; commandLine[i] && !isspace(commandLine[i]); i++)
-    commandName[i] = tolower(commandLine[i]);
-  commandName[i] = 0;
+  for (i = 0; commandLine[i] && !isspace(commandLine[i]); i++);
+  std::string commandToken(commandLine, i);
   
   std::map<std::string, ServerCommand *>::iterator it
-    = commandMap.find(commandName);
+    = commandMap.find(TextUtils::tolower(commandToken));
   if (it == commandMap.end())
     return false;
   return (*(it->second))(commandLine, playerData);
