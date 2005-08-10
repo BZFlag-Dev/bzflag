@@ -309,10 +309,9 @@ these will be replaced by '_'. If seconds is not given the whole buffer is saved
                               <tr>
                                 <td><span class="Code">class bz_CustomSlashCommandHandler<br>
                 {<br>
-                                  </span>
-                                    <blockquote class="Code"> public:<br>
+                                  </span>                                    <blockquote class="Code"> public:<br>
 virtual ~bz_CustomSlashCommandHandler(){};<br>
-virtual bool handle ( int playerID, bzApiString command, bzApiString message ) = 0;</blockquote>
+virtual bool handle ( int playerID, bzApiString command, bzApiString message, bzAPIStringList *params) = 0;</blockquote>
                                     <p class="Code">};</p></td>
                               </tr>
                             </tbody>
@@ -320,7 +319,7 @@ virtual bool handle ( int playerID, bzApiString command, bzApiString message ) =
                       </tr>
                     </tbody>
                   </table>
-                  <p>When a player issues the command, the handler will have it's handle method called and then it can then do what ever it needs.</p>
+                  <p>When a player issues the command, the handler will have it's handle method called and then it can then do what ever it needs. The Message Paramater to the handle function will contain all the text the user has entered, except the /command name itself. The Params item will contain a list of the text broken into a space delimited list. This is usefull for commands that take paramaters. </p>
                   <p><strong>BZF_API bool bz_removeCustomSlashCommand ( const char* command );</strong><br> 
                     This command will remove a custom slash command from BZFS. Only one custom slash command per name can be installed at a time. It is a good idea to make your command name unique.</p>                  <p><br>
                     <br>

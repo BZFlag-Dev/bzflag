@@ -297,7 +297,7 @@ class DynamicPluginCommands : public bz_CustomSlashCommandHandler
 {
 public:
 	virtual ~DynamicPluginCommands(){};
-	virtual bool handle ( int playerID, bzApiString _command, bzApiString _message )
+	virtual bool handle ( int playerID, bzApiString _command, bzApiString _message, bzAPIStringList *params )
 	{
 		bz_PlayerRecord	record;
 
@@ -337,19 +337,19 @@ public:
 
 		if ( TextUtils::tolower(command) == "loadplugin" )
 		{
-			if ( !message.size() )
+			if ( !params->size() )
 			{
 				bz_sendTextMessage(BZ_SERVER,playerID,"Usage: /loadplugin plug-in");
 				return true;
 			}
 
-			std::vector<std::string> params = TextUtils::tokenize(message,std::string(","));
+			std::vector<std::string> subparams = TextUtils::tokenize(message,std::string(","));
 
 			std::string config;
-			if ( params.size() >1)
-				config = params[1];
+			if ( subparams.size() >1)
+				config = subparams[1];
 
-			if (loadPlugin(params[0],config))
+			if (loadPlugin(subparams[0],config))
 				bz_sendTextMessage(BZ_SERVER,playerID,"Plug-in loaded.");
 			else
 				bz_sendTextMessage(BZ_SERVER,playerID,"Plug-in load failed.");
@@ -358,13 +358,13 @@ public:
 
 		if ( TextUtils::tolower(command) == "unloadplugin" )
 		{
-			if ( !message.size() )
+			if ( !params->size() )
 			{
 				bz_sendTextMessage(BZ_SERVER,playerID,"Usage: /unloadplugin plug-in");
 				return true;
 			}
 
-			if ( unloadPlugin(message) )
+			if ( unloadPlugin(std::string(params->get(0).c_str())) )
 				bz_sendTextMessage(BZ_SERVER,playerID,"Plug-in unloaded.");
 
 			return true;

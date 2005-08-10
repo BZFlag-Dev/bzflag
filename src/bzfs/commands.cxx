@@ -2971,15 +2971,17 @@ void parseServerCommand(const char *message, int t)
     tmCustomSlashCommandMap::iterator itr = customCommands.find(TextUtils::tolower(params[0]));
   
     bzApiString	command = params[0];
-    bzApiString param;
+    bzApiString APIMessage;
+	bzAPIStringList	APIParams;
+	
+	for ( unsigned int i = 1; i < params.size(); i++)
+		APIParams.push_back(params[i]);
 
-    if (params.size()>1)
-      param = params[1];
-    else
-      param = message;
+	if ( strlen(message) > params[0].size())
+		APIMessage = (message+params[0].size()+2);
 
     if (itr != customCommands.end()) {  // see if we have a registerd custom command and call it
-      if (itr->second->handle(t, command, param))  // if it handles it, then we are good
+      if (itr->second->handle(t, command, APIMessage, &APIParams))  // if it handles it, then we are good
         return;
     }
   

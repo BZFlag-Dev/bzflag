@@ -30,7 +30,7 @@
 	#define BZF_PLUGIN_CALL extern "C"
 #endif
 
-#define BZ_API_VERSION	7
+#define BZ_API_VERSION	8
 
 #define BZ_GET_PLUGIN_VERSION BZF_PLUGIN_CALL int bz_GetVersion ( void ) { return BZ_API_VERSION;}
 
@@ -707,7 +707,7 @@ class bz_CustomSlashCommandHandler
 {
 public:
 	virtual ~bz_CustomSlashCommandHandler(){};
-	virtual bool handle ( int playerID, bzApiString command, bzApiString message ) = 0;
+	virtual bool handle ( int playerID, bzApiString command, bzApiString message, bzAPIStringList *params ) = 0;
 
 };
 
