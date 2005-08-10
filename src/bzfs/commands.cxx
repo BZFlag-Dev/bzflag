@@ -699,7 +699,7 @@ static void handleKickCmd(GameKeeper::Player *playerData, const char *message)
 		worldEventManager.callEvents(bz_eKickEvent,&kickEvent);
 		
 		// need to update playerIndex ?
-		if (playerData->getIndex() != t) {
+		if (t != kickEvent.kickerID) {
 			playerData = GameKeeper::Player::getPlayerByIndex(kickEvent.kickerID);
 			if (!playerData)
 				return;
@@ -766,7 +766,7 @@ static void handleKillCmd(GameKeeper::Player *playerData, const char *message)
 		worldEventManager.callEvents(bz_eKillEvent,&killEvent);
 
 		// need to update playerIndex ?
-		if (playerData->getIndex() != t) {
+		if (t != killEvent.killerID) {
 			playerData = GameKeeper::Player::getPlayerByIndex(killEvent.killerID);
 			if (!playerData)
 				return;
@@ -895,12 +895,20 @@ static void handleBanCmd(GameKeeper::Player *playerData, const char *message)
 			banEvent.banneeID = victim;
 		
 		worldEventManager.callEvents(bz_eBanEvent,&banEvent);
+		
+		// a plugin might have changed bannerID
+		if (t != banEvent.bannerID) {
+			playerData = GameKeeper::Player::getPlayerByIndex(banEvent.bannerID);
+			if (!playerData)
+				return;
+		}
+
 
     // reload the banlist in case anyone else has added
     clOptions->acl.load();
 
-    if (clOptions->acl.ban(ip, playerData->player.getCallSign(), durationInt,
-			   reason.c_str())) {
+    if (clOptions->acl.ban(banEvent.ipAddress.c_str(), 
+			playerData->player.getCallSign(), banEvent.duration, banEvent.reason.c_str())) {
       clOptions->acl.save();
 
       sendMessage(ServerPlayer, t, "IP pattern added to banlist");
@@ -930,11 +938,13 @@ static void handleBanCmd(GameKeeper::Player *playerData, const char *message)
 		  playerData->player.getCallSign());
 	  sendMessage(ServerPlayer, i, kickmessage);
 	  if (reason.length() > 0) {
-	    snprintf(kickmessage, MessageLen, "Reason given: %s", reason.c_str());
+	    snprintf(kickmessage, MessageLen, "Reason given: %s", banEvent.reason.c_str());
 	    sendMessage(ServerPlayer, i, kickmessage);
 	  }
 	  if (otherPlayer) {
-	    snprintf(kickmessage, MessageLen, "%s banned by %s, reason: %s", otherPlayer->player.getCallSign(), playerData->player.getCallSign(),reason.c_str());
+	    snprintf(kickmessage, MessageLen, "%s banned by %s, reason: %s", 
+			otherPlayer->player.getCallSign(), playerData->player.getCallSign(),
+			banEvent.reason.c_str());
 	    sendMessage(ServerPlayer, AdminPlayers, kickmessage);
 	  }
 	  removePlayer(i, "/ban");
@@ -997,10 +1007,16 @@ static void handleHostBanCmd(GameKeeper::Player *playerData, const char *message
 		
 		worldEventManager.callEvents(bz_eHostBanEvent,&hostBanEvent);
 
+		// a plugin might have changed bannerID
+		if (t != hostBanEvent.bannerID) {
+			playerData = GameKeeper::Player::getPlayerByIndex(hostBanEvent.bannerID);
+			if (!playerData)
+				return;
+		}
 		
-    clOptions->acl.hostBan(hostpat, playerData->player.getCallSign(),
-			   durationInt,
-			   reason.c_str());
+    clOptions->acl.hostBan(hostBanEvent.hostPattern.c_str(), 
+		     playerData->player.getCallSign(), hostBanEvent.duration,
+			   hostBanEvent.reason.c_str());
     clOptions->acl.save();
 
     GameKeeper::Player::setAllNeedHostbanChecked(true);
