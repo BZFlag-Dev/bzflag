@@ -13,27 +13,22 @@
 // interface header
 #include "ServerCommand.h"
 
-ServerCommand::MapOfCommands *ServerCommand::mapOfCommands = NULL;
-
 // Use only lower case command name
 ServerCommand::ServerCommand(std::string _commandName)
   : commandName(_commandName)
 {
-  if (!mapOfCommands)
-    mapOfCommands = new MapOfCommands;
-  (*mapOfCommands)[commandName] = this;
+  (*getMapRef())[commandName] = this;
 }
 
 ServerCommand::~ServerCommand()
 {
-  (*mapOfCommands).erase(commandName);
+  (*getMapRef()).erase(commandName);
 }
 
 bool ServerCommand::execute(const char         *commandLine,
 			    GameKeeper::Player *playerData)
 {
-  if (!mapOfCommands)
-    return false;
+  MapOfCommands &commandMap = *getMapRef();
   int i;
   char commandName[256];
   for (i = 0; commandLine[i] && !isspace(commandLine[i]); i++)
@@ -41,8 +36,8 @@ bool ServerCommand::execute(const char         *commandLine,
   commandName[i] = 0;
   
   std::map<std::string, ServerCommand *>::iterator it
-    = (*mapOfCommands).find(commandName);
-  if (it == (*mapOfCommands).end())
+    = commandMap.find(commandName);
+  if (it == commandMap.end())
     return false;
   return (*(it->second))(commandLine, playerData);
 }
@@ -50,6 +45,13 @@ bool ServerCommand::execute(const char         *commandLine,
 bool ServerCommand::operator() (const char *, GameKeeper::Player *)
 {
   return true;
+}
+
+ServerCommand::MapOfCommands *ServerCommand::getMapRef()
+{
+  static MapOfCommands mapOfCommands;
+
+  return &mapOfCommands;
 }
 
 // Local Variables: ***
