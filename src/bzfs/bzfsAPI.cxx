@@ -1448,11 +1448,20 @@ BZF_API bool bz_setclipFieldInt( const char *_name, int data )
 	return existed;
 }
 
-BZF_API bool bz_saveRecBuf( const char * _filename, int seconds)
+BZF_API bool bz_saveRecBuf( char * _filename, int seconds = 0 )
 {
 	if (!Record::enabled() || !_filename)
 		return false;
 	
+	// replace anything but alphanumeric charcters or dots in filename by '_'
+	// should be safe on every supported platform
+	char * buf = _filename;
+	while (*buf != '\0') { 
+    if ( !isalnum(*buf) ||  *buf != '.' )
+			*buf = '_';
+		buf++;
+  }
+
 	bool result = Record::saveBuffer( ServerPlayer, _filename, seconds);
 	return result;
 }
