@@ -173,7 +173,7 @@ class TankSceneNode : public SceneNode {
     TankRenderNode	tankRenderNode;
     TankRenderNode	shadowRenderNode;
     TankGeometryEnums::TankSize tankSize;
-    GLfloat vel[TankGeometryEnums::LastTankPart][2];
+    GLfloat vel[TankGeometryEnums::LastTankPart][3];
     GLfloat spin[TankGeometryEnums::LastTankPart][4];
     bool		jumpJetsOn;
     GLfloat		jumpJetsScale;
