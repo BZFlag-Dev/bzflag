@@ -173,8 +173,12 @@ where eventType is one of the following enumerations;
 	bz_eGenerateWorldEvent,			// The server is generating or loading a world.
 	bz_eGetPlayerInfoEvent,			// The server needs the info bits about a player
 	bz_eAllowSpawn,					// The server is about to allow a player to spawn.
-	bz_eListServerUpdateEvent		// The server is about to update the list server with new information.
-
+	bz_eListServerUpdateEvent,		// The server is about to update the list server with new information.
+	bz_eBanEvent,						// an IP/player is going to be banned
+	bz_eHostBanEvent,					// a hostban is triggered
+	bz_eKickEvent,					// a player is to be kicked
+	bz_eKillEvent						// a player is to be killed by /kill
+	
 team is an integer that defines a team filter for the event. The value of; BZ_ALL_USERS indicates
 that the event will be called every time it happens, regardless of team.
 
@@ -464,4 +468,3 @@ Only one custom slash command can be installed at a time.
 //****************** examples *****************************
 
     get some..
-
