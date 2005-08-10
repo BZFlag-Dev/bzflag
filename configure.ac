@@ -1,6 +1,7 @@
 # Process this file with autoconf to produce a configure script.
 
-AC_INIT(src/bzflag/bzflag.cxx)
+AC_INIT
+AC_CONFIG_SRCDIR(src/bzflag/bzflag.cxx)
 
 # sed magic to get version numbers from src/date/buildDate.cxx
 MAJOR_VERSION=`sed -e 's/#.*define.*BZ_MAJOR_VERSION[^0-9]*\(.*\)/\1/' -e t -e d < \$srcdir/src/date/buildDate.cxx`
@@ -51,7 +52,6 @@ dnl FIXME: need to move the rest of the ARGs up here too
 AC_PROG_MAKE_SET
 AC_PROG_CC
 AC_PROG_CXX
-AC_EXEEXT
 
 AC_PATH_PROG(CCACHE, ccache)
 if test "$CCACHE"
