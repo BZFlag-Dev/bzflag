@@ -478,6 +478,9 @@ copy ..\..\src\bzfs\debug\*.exe ..\..\*.exe
 				RelativePath="..\..\src\bzfs\Score.cxx">
 			</File>
 			<File
+				RelativePath="..\..\src\bzfs\ServerCommand.cxx">
+			</File>
+			<File
 				RelativePath="..\..\src\bzfs\SpawnPosition.cxx">
 			</File>
 			<File
@@ -1070,6 +1073,9 @@ copy ..\..\src\bzfs\debug\*.exe ..\..\*.exe
 			</File>
 			<File
 				RelativePath="..\..\src\bzfs\Score.h">
+			</File>
+			<File
+				RelativePath="..\..\src\bzfs\ServerCommand.h">
 			</File>
 			<File
 				RelativePath="..\..\src\bzfs\SpawnPosition.h">
