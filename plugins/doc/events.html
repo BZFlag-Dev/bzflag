@@ -85,7 +85,7 @@ Info </a> </td>
                 <tr>
                 </tr>
                 <tr>
-                  <td align="center"> Functions </td>
+                  <td align="center"> <a href="functions.html">Functions</a> </td>
                 </tr>
                 <tr>
                 </tr>
@@ -496,21 +496,28 @@ functions.</td>
  cellspacing="2">
                           <tbody>
                             <tr>
-                              <td><span class="Code">bz_eTYPEvent
-provides</span> the following data</td>
+                              <td><span class="Code">bz_eGetPlayerSpawnPosEvent</span> 
+provides the following data</td>
                             </tr>
                             <tr>
-                              <td><span class="Code">bz_UnknownSlashCommandEventData<br>
+                              <td><span class="Code">bz_GetPlayerSpawnPosEventData<br>
 {<br>
                               </span>
-                              <blockquote class="Code"> int thing; //
-comment<br>
-int thing2; // comment</blockquote>
-                              <p class="Code">}</p>
-                              </td>
+                              <blockquote class="Code"> int playeID;					// the player ID of who needs to be spawned<br>
+int teamID; // the players team<br>
+bool handled; // if the action has been/will be handled <br>
+float pos[3]; // the proposed spawn position<br>
+float rot; // the proposed spawn rotation<br>
+double time; // the time of the request</blockquote>
+                              <p class="Code">}</p>                              </td>
                             </tr>
                             <tr>
-                              <td>Event description </td>
+                              <td>This event is called when ever a player spawn position is needed. The standard
+spawn position will be set in the pos and rot fields. The plugin may modify or
+set new spawn data if it wishes to. This can allow a plugin to do it's own 
+spawn calculations. The position may have been modified by another plugin first
+if multiple plugins are handaling the event. If so the "handled" field should be true.
+If your plugin modifys the spawn data it too should set the "handled" bit to true. </td>
                             </tr>
                           </tbody>
                         </table>
@@ -528,21 +535,26 @@ int thing2; // comment</blockquote>
  cellspacing="2">
                           <tbody>
                             <tr>
-                              <td><span class="Code">bz_eTYPEvent
-provides</span> the following data</td>
+                              <td><span class="Code">bz_eAllowPlayer</span>
+provides the following data</td>
                             </tr>
                             <tr>
-                              <td><span class="Code">bz_EventData<br>
+                              <td><span class="Code">bz_AllowPlayerEventData<br>
 {<br>
                               </span>
-                              <blockquote class="Code"> int thing; //
-comment<br>
-int thing2; // comment</blockquote>
-                              <p class="Code">}</p>
-                              </td>
+                              <blockquote class="Code"> 	int playerID;				// the player ID of the joining player<br>
+bzApiString callsign; // the callsign of the player<br>
+bzApiString ipAddress; // the address of the player<br>
+bzApiString reason; // a reason string with the reason the player is to be disalowed to join<br>
+bool allow; // flag to allow or disallow the player. <br>
+double time; // the time of the request</blockquote>
+                              <p class="Code">}</p>                              </td>
                             </tr>
                             <tr>
-                              <td>Event description </td>
+                              <td>This event is called every time a user joins a server. The server will do it's normal 
+ban/disallow logic then pass the value to the plugin in the allow field. 
+The plugin can then chose to allow or disalow the player as it sees fit. If the player
+is to be disallowed, then please provide a reason. </td>
                             </tr>
                           </tbody>
                         </table>
@@ -560,21 +572,23 @@ int thing2; // comment</blockquote>
  cellspacing="2">
                           <tbody>
                             <tr>
-                              <td><span class="Code">bz_eTYPEvent
-provides</span> the following data</td>
+                              <td><span class="Code">bz_TickEvent</span> 
+provides the following data</td>
                             </tr>
                             <tr>
-                              <td><span class="Code">bz_EventData<br>
+                              <td><span class="Code">bz_TickEventData<br>
 {<br>
                               </span>
-                              <blockquote class="Code"> int thing; //
-comment<br>
-int thing2; // comment</blockquote>
-                              <p class="Code">}</p>
-                              </td>
+                              <blockquote class="Code"> double time;				// time of the event.</blockquote>
+                              <p class="Code">}</p>                              </td>
                             </tr>
                             <tr>
-                              <td>Event description </td>
+                              <td>This event is not called due to any user or player interaction. This event is called
+automaticly by bzfs every time it has completed one of it's normal execution loops.
+This event is usefull when plugins need to perform update actions, periodic mentance,
+or other actions that are not direclty tied to a user event, like checking to see
+if it is time to start a match. A plugin can set the maximum allowable time between
+calls to this event using the function bz_setMaxWaitTime described below. </td>
                             </tr>
                           </tbody>
                         </table>
@@ -592,21 +606,24 @@ int thing2; // comment</blockquote>
  cellspacing="2">
                           <tbody>
                             <tr>
-                              <td><span class="Code">bz_eTYPEvent
-provides</span> the following data</td>
+                              <td><span class="Code">bz_GenerateWorldEvent</span> 
+provides the following data</td>
                             </tr>
                             <tr>
-                              <td><span class="Code">bz_EventData<br>
+                              <td><span class="Code">bz_GenerateWorldEventData <br>
 {<br>
                               </span>
-                              <blockquote class="Code"> int thing; //
-comment<br>
-int thing2; // comment</blockquote>
-                              <p class="Code">}</p>
-                              </td>
+                              <blockquote class="Code"> bool handled;				// flag to set to true if the plugin has generated the world.<br>
+bool ctf; // true if the world is a CTF world<br>
+double time; // the time of the request.</blockquote>
+                              <p class="Code">}</p>                              </td>
                             </tr>
                             <tr>
-                              <td>Event description </td>
+                              <td>This event is called by bzfs when it begins to build or load the world. The event is called
+BEFORE any map file is loaded. If the plugin wishes to define the world, it must call
+any world creation functions during this event, and then set the handled flag to true. If the
+plugin generates the world, then bzfs will NOT load the map file, and will NOT generate a
+random world. Calls to any world creation functions outside this event will fail.</td>
                             </tr>
                           </tbody>
                         </table>
@@ -615,235 +632,12 @@ int thing2; // comment</blockquote>
                     </tbody>
                   </table>
                   <br>
-                  <br>
-                  <table bgcolor="#dddddd" border="1">
-                    <tbody>
-                      <tr>
-                        <td align="left" valign="top">
-                        <table border="0" cellpadding="2"
- cellspacing="2">
-                          <tbody>
-                            <tr>
-                              <td><span class="Code">bz_eTYPEvent
-provides</span> the following data</td>
-                            </tr>
-                            <tr>
-                              <td><span class="Code">bz_EventData<br>
-{<br>
-                              </span>
-                              <blockquote class="Code"> int thing; //
-comment<br>
-int thing2; // comment</blockquote>
-                              <p class="Code">}</p>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>Event description </td>
-                            </tr>
-                          </tbody>
-                        </table>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                  <br>
-                  <br>
-                  <table bgcolor="#dddddd" border="1">
-                    <tbody>
-                      <tr>
-                        <td align="left" valign="top">
-                        <table border="0" cellpadding="2"
- cellspacing="2">
-                          <tbody>
-                            <tr>
-                              <td><span class="Code">bz_eTYPEvent
-provides</span> the following data</td>
-                            </tr>
-                            <tr>
-                              <td><span class="Code">bz_EventData<br>
-{<br>
-                              </span>
-                              <blockquote class="Code"> int thing; //
-comment<br>
-int thing2; // comment</blockquote>
-                              <p class="Code">}</p>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>Event description </td>
-                            </tr>
-                          </tbody>
-                        </table>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                  <br>
-                  <br>
-                  <table bgcolor="#dddddd" border="1">
-                    <tbody>
-                      <tr>
-                        <td align="left" valign="top">
-                        <table border="0" cellpadding="2"
- cellspacing="2">
-                          <tbody>
-                            <tr>
-                              <td><span class="Code">bz_eTYPEvent
-provides</span> the following data</td>
-                            </tr>
-                            <tr>
-                              <td><span class="Code">bz_EventData<br>
-{<br>
-                              </span>
-                              <blockquote class="Code"> int thing; //
-comment<br>
-int thing2; // comment</blockquote>
-                              <p class="Code">}</p>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>Event description </td>
-                            </tr>
-                          </tbody>
-                        </table>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                  <br>
-                  <br>
-                  <table bgcolor="#dddddd" border="1">
-                    <tbody>
-                      <tr>
-                        <td align="left" valign="top">
-                        <table border="0" cellpadding="2"
- cellspacing="2">
-                          <tbody>
-                            <tr>
-                              <td><span class="Code">bz_eTYPEvent
-provides</span> the following data</td>
-                            </tr>
-                            <tr>
-                              <td><span class="Code">bz_EventData<br>
-{<br>
-                              </span>
-                              <blockquote class="Code"> int thing; //
-comment<br>
-int thing2; // comment</blockquote>
-                              <p class="Code">}</p>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>Event description </td>
-                            </tr>
-                          </tbody>
-                        </table>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                  <br>
-                  <br>
-                  <table bgcolor="#dddddd" border="1">
-                    <tbody>
-                      <tr>
-                        <td align="left" valign="top">
-                        <table border="0" cellpadding="2"
- cellspacing="2">
-                          <tbody>
-                            <tr>
-                              <td><span class="Code">bz_eTYPEvent
-provides</span> the following data</td>
-                            </tr>
-                            <tr>
-                              <td><span class="Code">bz_EventData<br>
-{<br>
-                              </span>
-                              <blockquote class="Code"> int thing; //
-comment<br>
-int thing2; // comment</blockquote>
-                              <p class="Code">}</p>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>Event description </td>
-                            </tr>
-                          </tbody>
-                        </table>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                  <br>
-                  <br>
-                  <table bgcolor="#dddddd" border="1">
-                    <tbody>
-                      <tr>
-                        <td align="left" valign="top">
-                        <table border="0" cellpadding="2"
- cellspacing="2">
-                          <tbody>
-                            <tr>
-                              <td><span class="Code">bz_eTYPEvent
-provides</span> the following data</td>
-                            </tr>
-                            <tr>
-                              <td><span class="Code">bz_EventData<br>
-{<br>
-                              </span>
-                              <blockquote class="Code"> int thing; //
-comment<br>
-int thing2; // comment</blockquote>
-                              <p class="Code">}</p>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>Event description </td>
-                            </tr>
-                          </tbody>
-                        </table>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                  <br>
-                  <br>
-                  <table bgcolor="#dddddd" border="1">
-                    <tbody>
-                      <tr>
-                        <td align="left" valign="top">
-                        <table border="0" cellpadding="2"
- cellspacing="2">
-                          <tbody>
-                            <tr>
-                              <td><span class="Code">bz_eTYPEvent
-provides</span> the following data</td>
-                            </tr>
-                            <tr>
-                              <td><span class="Code">bz_EventData<br>
-{<br>
-                              </span>
-                              <blockquote class="Code"> int thing; //
-comment<br>
-int thing2; // comment</blockquote>
-                              <p class="Code">}</p>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>Event description </td>
-                            </tr>
-                          </tbody>
-                        </table>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
                   </td>
                 </tr>
                 <tr>
                   <td>
                   <div align="left"><a href="types.html">Previous</a></div>
-                  <div class="Disabled" align="right">Next</div>
+                  <div align="right"><a href="functions.html">Next</a></div>
                   </td>
                 </tr>
               </tbody>
