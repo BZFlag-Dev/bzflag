@@ -286,7 +286,14 @@ Sets the team wins for the speficied team </p>
                   <p><strong>BZF_API void bz_setTeamLosses (int teamIndex, int losses );</strong><br>
   Sets the team losses for the specified team </p>
                   <p><strong>BZF_API void bz_resetTeamScore (int teamIndex );</strong><br> 
-                    Resets to Zero the score for the specified team </p>                  <p>&nbsp;</p>
+                    Resets to Zero the score for the specified team </p>
+                  <p>&nbsp;</p>                  
+                  <p><span class="style4 style7">Recording Functions </span></p>
+                  <p><strong>BZF_API bool bz_saveRecBuf( const char * _filename, int seconds);</strong><br>
+  If a record buffer it active this saves the last 'seconds' seconds of it into 
+the file '_filename'. if _filename contains characters other than alnum or '.'
+these will be replaced by '_'. If seconds is not given the whole buffer is saved. </p>
+                  <p>&nbsp;</p>
                   <p><span class="style4 style7">Custom Slash Command Functions </span></p>
                   <p>A plug-in can register a special handler for a custom / command. This allows a plug-in to handle commands easyer then hooking into the UnknownSlashCommand Event.</p>
                   <p>Similar to other events, custom slash commands provide a pointer to a handler class that the plugin overides using the function.</p>
