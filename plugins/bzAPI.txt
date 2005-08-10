@@ -340,7 +340,7 @@ or other actions that are not direclty tied to a user event, like checking to se
 if it is time to start a match. A plugin can set the maximum allowable time between
 calls to this event using the function bz_setMaxWaitTime described below.
 
-bz_GenerateWorldEvent provides the folowing data;
+bz_eGenerateWorldEvent provides the folowing data;
 bz_GenerateWorldEventData 
 {
 	bool handled;				// flag to set to true if the plugin has generated the world.
@@ -353,6 +353,59 @@ any world creation functions during this event, and then set the handled flag to
 plugin generates the world, then bzfs will NOT load the map file, and will NOT generate a
 random world. Calls to any world creation functions outside this event will fail.
 
+bz_eBanEvent provides the following data;
+bz_BanEventData
+{
+	int bannerID;        // the ID of the player invoking the ban
+	int banneeID;        // the ID of the player going to be banned. This information
+	                     // is only available if the player was banned by callsign
+											 // or ID, NOT if an IP was given explicitly. In this case 
+											 // banneeID is -1
+	int duration;        // the time in minutes the bannee is to be banned
+	bzApiString ipAddress;       // the IP going to be banned
+	bzApiString reason;        // the reason given by the banner 
+};
+This event is called when a player with the aproprate permission invokes the /ban
+server command, and before the ban is executed. Changing the data will affect 
+the ban. Changing banneeID has no effect, it's only provided as extra information.
+Changing bannerID to an illegal value (empty player slot) cancels the ban.
+
+bz_eHostBanEvent provides the following data;
+bz_HostBanEventData
+{
+	int bannerID;        // the ID of the player invoking the hostban
+	int duration;        // the time in minutes the bannee is to be banned
+	bzApiString hostPattern;        // the to be banned host pattern
+	bzApiString reason;        // the reason given by the banner
+};
+This event is called when a player with the aproprate permission invokes the 
+/hostban server command, and before the ban is executed. Changing the data will 
+affect the hostban. Changing bannerID to an illegal value (empty player slot) 
+cancels the ban.
+
+bz_eKickEvent provides the following data;
+bz_KickEventData
+{
+	int kickerID;        // the ID of the player invoking the kick
+	int kickedID;        // the ID of the player going to be kicked
+	bzApiString reason;        // the reason given by the kicker
+};
+This event is called when a player with the aproprate permission invokes the 
+/kick server command, and before the kick is executed. Changing the data will 
+affect the kick. Changing kickerID to an illegal value (empty player slot) 
+cancels the kick execution.
+
+bz_eKillEvent provides the following data;
+bz_KillEventData
+{
+	int killerID;        // the ID of the player invoking the kill
+	int killedID;        // the ID of the player going to be killed
+	bzApiString reason;        // the reason given by the killer
+};
+This event is called when a player with the aproprate permission invokes the 
+/kill server command, and before the kill is executed. Changing the data will 
+affect the kill. Changing killerID to an illegal value (empty player slot) 
+cancels the kill execution.
 
 //****************** calling bzfs functions  *****************************
 
@@ -435,6 +488,11 @@ Returns a normal spawn position for the specified user.
 BZF_API bool bz_killPlayer ( int playeID, bool spawnOnBase );
 Kills the specified player. If spawnOnBase is true, then the user will
 respawn back at his CTF base.
+
+BZF_API bool bz_saveRecBuf( const char * _filename, int seconds);
+If a record buffer it active this saves the last 'seconds' seconds of it into 
+the file '_filename'. if _filename contains characters other than alnum or '.'
+these will be replaced by '_'. If seconds is not given the whole buffer is saved.
 
 //****************** custom slash commands *****************************
 A plug-in can register a special handler for a custom / command. This allows
