@@ -185,6 +185,46 @@ public:
 			   GameKeeper::Player *playerData);
 };
 
+class ResetCommand : ServerCommand {
+public:
+  ResetCommand();
+
+  virtual bool operator() (const char         *commandLine,
+			   GameKeeper::Player *playerData);
+};
+
+class ShutdownCommand : ServerCommand {
+public:
+  ShutdownCommand();
+
+  virtual bool operator() (const char         *commandLine,
+			   GameKeeper::Player *playerData);
+};
+
+class SuperkillCommand : ServerCommand {
+public:
+  SuperkillCommand();
+
+  virtual bool operator() (const char         *commandLine,
+			   GameKeeper::Player *playerData);
+};
+
+class GameOverCommand : ServerCommand {
+public:
+  GameOverCommand();
+
+  virtual bool operator() (const char         *commandLine,
+			   GameKeeper::Player *playerData);
+};
+
+class CountdownCommand : ServerCommand {
+public:
+  CountdownCommand();
+
+  virtual bool operator() (const char         *commandLine,
+			   GameKeeper::Player *playerData);
+};
+
 static MsgCommand         msgCommand;
 static ServerQueryCommand serverQueryCommand;
 static PartCommand        partCommand;
@@ -192,6 +232,11 @@ static QuitCommand        quitCommand;
 static UpTimeCommand      upTimeCommand;
 static PasswordCommand    passwordCommand;
 static SetCommand         setCommand;
+static ResetCommand       resetCommand;
+static ShutdownCommand    shutdownCommand;
+static SuperkillCommand   superkillCommand;
+static GameOverCommand    gameOverCommand;
+static CountdownCommand   countdownCommand;
 
 MsgCommand::MsgCommand()                 : ServerCommand("/msg") {}
 ServerQueryCommand::ServerQueryCommand() : ServerCommand("/serverquery") {}
@@ -200,6 +245,11 @@ QuitCommand::QuitCommand()               : ServerCommand("/quit") {}
 UpTimeCommand::UpTimeCommand()           : ServerCommand("/uptime") {}
 PasswordCommand::PasswordCommand()       : ServerCommand("/password") {}
 SetCommand::SetCommand()                 : ServerCommand("/set") {}
+ResetCommand::ResetCommand()             : ServerCommand("/reset") {}
+ShutdownCommand::ShutdownCommand()       : ServerCommand("/shutdown") {}
+SuperkillCommand::SuperkillCommand()     : ServerCommand("/superkill") {}
+GameOverCommand::GameOverCommand()       : ServerCommand("/gameover") {}
+CountdownCommand::CountdownCommand()     : ServerCommand("/countdown") {}
 
 static void handleMuteCmd(GameKeeper::Player *playerData, const char *message)
 {
@@ -535,61 +585,65 @@ bool SetCommand::operator() (const char         *message,
 }
 
 
-static void handleResetCmd(GameKeeper::Player *playerData, const char *message)
+bool ResetCommand::operator() (const char         *message,
+			       GameKeeper::Player *playerData)
 {
   int t = playerData->getIndex();
   if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::setVar)
       && !playerData->accessInfo.hasPerm(PlayerAccessInfo::setAll)) {
     sendMessage(ServerPlayer, t, "You do not have permission to run the reset command");
-    return;
+    return true;
   }
   if (Replay::enabled()) {
     sendMessage(ServerPlayer, t, "You can't /reset variables in replay mode");
-    return;
+    return true;
   }
   std::string command = (message + 1);
   // we aren't case sensitive but CMDMGR is
   for (int i = 0; i < 5 /*"reset"*/; ++i)
     command[i] = tolower(command[i]);
   sendMessage(ServerPlayer, t, CMDMGR.run(command).c_str());
-  return;
+  return true;
 }
 
 
-static void handleShutdownserverCmd(GameKeeper::Player *playerData, const char *)
+bool ShutdownCommand::operator() (const char         *,
+				  GameKeeper::Player *playerData)
 {
   int t = playerData->getIndex();
   if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::shutdownServer)) {
     sendMessage(ServerPlayer, t, "You do not have permission to run the shutdown command");
-    return;
+    return true;
   }
   done = true;
-  return;
+  return true;
 }
 
 
-static void handleSuperkillCmd(GameKeeper::Player *playerData, const char *)
+bool SuperkillCommand::operator() (const char         *,
+				   GameKeeper::Player *playerData)
 {
   int t = playerData->getIndex();
   if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::superKill)) {
     sendMessage(ServerPlayer, t, "You do not have permission to run the superkill command");
-    return;
+    return true;
   }
   for (int i = 0; i < curMaxPlayers; i++)
     removePlayer(i, "/superkill");
   gameOver = true;
   if (clOptions->timeManualStart)
     countdownActive = false;
-  return;
+  return true;
 }
 
 
-static void handleGameoverCmd(GameKeeper::Player *playerData, const char *)
+bool GameOverCommand::operator() (const char         *,
+				  GameKeeper::Player *playerData)
 {
   int t = playerData->getIndex();
   if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::endGame)) {
     sendMessage(ServerPlayer, t, "You do not have permission to run the gameover command");
-    return;
+    return true;
   }
 
   void *buf, *bufStart = getDirectMessageBuffer();
@@ -601,24 +655,25 @@ static void handleGameoverCmd(GameKeeper::Player *playerData, const char *)
     countdownActive = false;
     countdownPauseStart = TimeKeeper::getNullTime();
     clOptions->countdownPaused = false;
-    return;
   }
+  return true;
 }
 
 
-static void handleCountdownCmd(GameKeeper::Player *playerData, const char *message)
+bool CountdownCommand::operator() (const char         * message,
+				   GameKeeper::Player *playerData)
 {
   // /countdown starts timed game, if start is manual, everyone is allowed to
   int t = playerData->getIndex();
   if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::countdown)) {
     sendMessage(ServerPlayer, t, "You do not have permission to run the countdown command");
-    return;
+    return true;
   } else if (!clOptions->timeManualStart) {
     sendMessage(ServerPlayer, t, "This server was not configured for manual clock countdowns");
-    return;
+    return true;
   } else if (countdownDelay > 0) {
     sendMessage(ServerPlayer, t, "There is a countdown already in progress");
-    return;
+    return true;
   }
 
   // if the timelimit is not set .. don't countdown
@@ -632,30 +687,30 @@ static void handleCountdownCmd(GameKeeper::Player *playerData, const char *messa
 	// pause the countdown
 	if (!countdownActive) {
 	  sendMessage(ServerPlayer, t, "There is no active game to pause");
-	  return;
+	  return true;
 	} else if (clOptions->countdownPaused) {
 	  sendMessage(ServerPlayer, t, "The game is already paused");
-	  return;
+	  return true;
 	}
 	clOptions->countdownPaused = true;
 	sendMessage(ServerPlayer, AllPlayers, TextUtils::format("Countdown paused by %s",playerData->player.getCallSign()).c_str());
-	return;
+	return true;
       } else if (parts[1] == "resume") {
 	// resume countdown if it was paused before
 	if (!clOptions->countdownPaused) {
 	  sendMessage(ServerPlayer, t, "The game is not paused");
-	  return;
+	  return true;
 	}
 	clOptions->countdownPaused = false;
 	sendMessage(ServerPlayer, AllPlayers, TextUtils::format("Countdown resumed by %s",playerData->player.getCallSign()).c_str());
-	return;
+	return true;
 	      
       } else {
 	// so it's the countdown delay? else tell the player how to use /countdown
 	std::istringstream timespec(message+10);
 	if (!(timespec >> countdownDelay)) {
 	  sendMessage(ServerPlayer, t, "Usage: /countdown [<seconds>|pause|resume]");
-	  return;
+	  return true;
 	}
       }
     } else {
@@ -666,7 +721,7 @@ static void handleCountdownCmd(GameKeeper::Player *playerData, const char *messa
     if (countdownActive) {
       sendMessage(ServerPlayer, t, "A game is already in progress");
       countdownDelay = -1;
-      return;
+      return true;
     }
 
     // limit/sanity check
@@ -713,7 +768,7 @@ static void handleCountdownCmd(GameKeeper::Player *playerData, const char *messa
   }
   sendTeamUpdate();
 
-  return;
+  return true;
 }
 
 
@@ -2789,22 +2844,7 @@ void parseServerCommand(const char *message, int t)
   if (ServerCommand::execute(message, playerData))
     return;
 
-  if (strncasecmp(message + 1, "reset", 5) == 0) {
-    handleResetCmd(playerData, message);
-
-  } else if (strncasecmp(message + 1, "shutdownserver", 8) == 0) {
-    handleShutdownserverCmd(playerData, message);
-
-  } else if (strncasecmp(message + 1, "superkill", 8) == 0) {
-    handleSuperkillCmd(playerData, message);
-
-  } else if (strncasecmp(message + 1, "gameover", 8) == 0) {
-    handleGameoverCmd(playerData, message);
-
-  } else if (strncasecmp(message + 1, "countdown", 9) == 0) {
-    handleCountdownCmd(playerData, message);
-
-  } else if (strncasecmp(message + 1, "flag ", 5) == 0) {
+  if (strncasecmp(message + 1, "flag ", 5) == 0) {
     handleFlagCmd(playerData,message);
 
   } else if (strncasecmp(message + 1, "kick", 4) == 0) {
