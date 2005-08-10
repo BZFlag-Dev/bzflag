@@ -798,6 +798,8 @@ void Player::addToScene(SceneDatabase* scene, TeamColor effectiveTeam,
 			bool inCockpit, bool seerView,
 			bool showTreads, bool showIDL)
 {
+  const GLfloat groundPlane[4] = {0.0f, 0.0f, 1.0f, 0.0f};
+
   if (!isAlive() && !isExploding()) {
     return; // don't draw anything
   }
@@ -885,11 +887,7 @@ void Player::addToScene(SceneDatabase* scene, TeamColor effectiveTeam,
     }
     else if (getPosition()[2] < 0.0f) {
       // this should only happen with Burrow flags
-      GLfloat plane[4];
-      plane[0] = plane[1] = 0.0f;
-      plane[2] = 1.0f;
-      plane[3] = 0.0f;
-      tankNode->setClipPlane(plane);
+      tankNode->setClipPlane(groundPlane);
     } // isCrossingWall()
   }   // isAlive()
   else if (isExploding() && (state.pos[2] > ZERO_TOLERANCE)) {
@@ -902,7 +900,17 @@ void Player::addToScene(SceneDatabase* scene, TeamColor effectiveTeam,
       // shouldn't happen but why take chances
       t = 0.0f;
     }
+    // fade at the end of the explosion
+    const float fadeRatio = 0.8f;
+    if (t > fadeRatio) {
+      GLfloat newColor[4];
+      memcpy(newColor, color, sizeof(float[3]));
+      const float fadeFactor = (1.0f - t) / (1.0f - fadeRatio);
+      newColor[3] = color[3] * fadeFactor;
+      tankNode->setColor(newColor);
+    }
     tankNode->setExplodeFraction(t);
+    tankNode->setClipPlane(groundPlane); // shadows are not clipped
     scene->addDynamicNode(tankNode);
   }
 

@@ -31,7 +31,9 @@
 
 using namespace TankGeometryEnums;
 
-const float MuzzleMaxX = 4.94f;
+static const float MuzzleMaxX = 4.94f;
+static const float maxExplosionVel = 40.0f;
+static const float vertExplosionRatio = 0.5f;
 
 
 // parts: body, turret, barrel, left tread, right tread
@@ -357,6 +359,13 @@ void TankSceneNode::setDimensions(const float dims[3])
 void TankSceneNode::setExplodeFraction(float t)
 {
   explodeFraction = t;
+  if (t != 0.0f) {
+    const float radius = sqrtf(getSphere()[3]);
+    const float radinc = t * maxExplosionVel;
+    const float newrad = radius + radinc;
+    setRadius(newrad * newrad);
+  }
+  return;
 }
 
 
@@ -448,9 +457,17 @@ void TankSceneNode::rebuildExplosion()
     // now an angular velocity -- make sure we get at least 2 complete turns
     spin[i][3] = 360.0f * (5.0f * (float)bzfrand() + 2.0f);
 
-    // make arbitrary 2d translation
-    vel[i][0] = 80.0f * ((float)bzfrand() - 0.5f);
-    vel[i][1] = 80.0f * ((float)bzfrand() - 0.5f);
+    // cheezy spheroid explosion pattern
+    const float vhMax = maxExplosionVel;
+    const float vhMag = vhMax * sinf((float)(M_PI * 0.5 * bzfrand()));
+    const float vhAngle = (float)(2.0 * M_PI * bzfrand());
+    vel[i][0] = cosf(vhAngle) * vhMag;
+    vel[i][1] = sinf(vhAngle) * vhMag;
+    const float vz = sqrtf(fabsf((vhMax*vhMax) - (vhMag*vhMag)));
+    vel[i][2] = vz * vertExplosionRatio; // flatten it a little
+    if (bzfrand() > 0.5) {
+      vel[i][2] = -vel[i][2];
+    }
   }
   return;
 }
@@ -1133,7 +1150,7 @@ void TankSceneNode::TankRenderNode::renderPart(TankPart part)
     const float* cog = centerOfGravity[part];
     glTranslatef(cog[0] + (explodeFraction * vel[0]),
 		 cog[1] + (explodeFraction * vel[1]),
-		 cog[2]);
+		 cog[2] + (explodeFraction * vel[2]));
     glRotatef(spin[3] * explodeFraction, spin[0], spin[1], spin[2]);
     glTranslatef(-cog[0], -cog[1], -cog[2]);
   }
