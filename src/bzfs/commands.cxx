@@ -145,11 +145,61 @@ public:
 			   GameKeeper::Player *playerData);
 };
 
+class PartCommand : ServerCommand {
+public:
+  PartCommand();
+
+  virtual bool operator() (const char         *commandLine,
+			   GameKeeper::Player *playerData);
+};
+
+class QuitCommand : ServerCommand {
+public:
+  QuitCommand();
+
+  virtual bool operator() (const char         *commandLine,
+			   GameKeeper::Player *playerData);
+};
+
+class UpTimeCommand : ServerCommand {
+public:
+  UpTimeCommand();
+
+  virtual bool operator() (const char         *commandLine,
+			   GameKeeper::Player *playerData);
+};
+
+class PasswordCommand : ServerCommand {
+public:
+  PasswordCommand();
+
+  virtual bool operator() (const char         *commandLine,
+			   GameKeeper::Player *playerData);
+};
+
+class SetCommand : ServerCommand {
+public:
+  SetCommand();
+
+  virtual bool operator() (const char         *commandLine,
+			   GameKeeper::Player *playerData);
+};
+
 static MsgCommand         msgCommand;
 static ServerQueryCommand serverQueryCommand;
+static PartCommand        partCommand;
+static QuitCommand        quitCommand;
+static UpTimeCommand      upTimeCommand;
+static PasswordCommand    passwordCommand;
+static SetCommand         setCommand;
 
 MsgCommand::MsgCommand()                 : ServerCommand("/msg") {}
 ServerQueryCommand::ServerQueryCommand() : ServerCommand("/serverquery") {}
+PartCommand::PartCommand()               : ServerCommand("/part") {}
+QuitCommand::QuitCommand()               : ServerCommand("/quit") {}
+UpTimeCommand::UpTimeCommand()           : ServerCommand("/uptime") {}
+PasswordCommand::PasswordCommand()       : ServerCommand("/password") {}
+SetCommand::SetCommand()                 : ServerCommand("/set") {}
 
 static void handleMuteCmd(GameKeeper::Player *playerData, const char *message)
 {
@@ -229,7 +279,8 @@ static void handleUnmuteCmd(GameKeeper::Player *playerData, const char *message)
   }
 }
 
-static void handleUptimeCmd(GameKeeper::Player *playerData, const char *)
+bool UpTimeCommand::operator() (const char         *,
+				GameKeeper::Player *playerData)
 {
   float rawTime;
   int t = playerData->getIndex();
@@ -238,6 +289,7 @@ static void handleUptimeCmd(GameKeeper::Player *playerData, const char *)
   rawTime = float(TimeKeeper::getCurrent() - TimeKeeper::getStartTime());
   snprintf(reply, MessageLen, "%s.", TimeKeeper::printTime(rawTime).c_str());
   sendMessage(ServerPlayer, t, reply);
+  return true;
 }
 
 bool ServerQueryCommand::operator() (const char         *,
@@ -253,7 +305,8 @@ bool ServerQueryCommand::operator() (const char         *,
 }
 
 
-static void handlePartCmd(GameKeeper::Player *playerData, const char *message)
+bool PartCommand::operator() (const char         *message,
+			      GameKeeper::Player *playerData)
 {
   std::string byeStatement = "";
 
@@ -262,7 +315,7 @@ static void handlePartCmd(GameKeeper::Player *playerData, const char *message)
       char reply[MessageLen] = {0};
       snprintf(reply, MessageLen, "Unknown command [%s]", message);
       sendMessage(ServerPlayer, playerData->getIndex(), reply);
-      return;
+      return true;
     }
     byeStatement = message + 6;
   }
@@ -279,10 +332,12 @@ static void handlePartCmd(GameKeeper::Player *playerData, const char *message)
   // now to kick the player
   int t = playerData->getIndex();
   removePlayer(t, byeStatement.c_str());
+  return true;
 }
 
 
-static void handleQuitCmd(GameKeeper::Player *playerData, const char *message)
+bool QuitCommand::operator() (const char         *message,
+			      GameKeeper::Player *playerData)
 {
   std::string byeStatement = "";
 
@@ -291,7 +346,7 @@ static void handleQuitCmd(GameKeeper::Player *playerData, const char *message)
       char reply[MessageLen] = {0};
       snprintf(reply, MessageLen, "Unknown command [%s]", message);
       sendMessage(ServerPlayer, playerData->getIndex(), reply);
-      return;
+      return true;
     }
     byeStatement = message + 6;
   }
@@ -308,6 +363,7 @@ static void handleQuitCmd(GameKeeper::Player *playerData, const char *message)
   // now to kick the player
   int t = playerData->getIndex();
   removePlayer(t, byeStatement.c_str());
+  return true;
 }
 
 
@@ -427,7 +483,8 @@ bool MsgCommand::operator() (const char         *message,
 }
 
 
-static void handlePasswordCmd(GameKeeper::Player *playerData, const char *message)
+bool PasswordCommand::operator() (const char         *message,
+				  GameKeeper::Player *playerData)
 {
   int t = playerData->getIndex();
   if (playerData->accessInfo.passwordAttemptsMax()) {
@@ -444,11 +501,12 @@ static void handlePasswordCmd(GameKeeper::Player *playerData, const char *messag
       sendMessage(ServerPlayer, t, "Wrong Password!");
     }
   }
-  return;
+  return true;
 }
 
 
-static void handleSetCmd(GameKeeper::Player *playerData, const char *message)
+bool SetCommand::operator() (const char         *message,
+			     GameKeeper::Player *playerData)
 {
   int t = playerData->getIndex();
   int setvar = playerData->accessInfo.hasPerm(PlayerAccessInfo::setVar) ? 1 : 0;
@@ -458,11 +516,11 @@ static void handleSetCmd(GameKeeper::Player *playerData, const char *message)
       && !playerData->accessInfo.hasPerm(PlayerAccessInfo::setAll)) {
     sendMessage(ServerPlayer, t, "You do not have permission to run the set command");
 	DEBUG3("set failed by %s, setvar=%d, setall=%d\n",playerData->player.getCallSign(),setvar,setall);
-   return;
+   return true;
   }
   if (Replay::enabled()) {
     sendMessage(ServerPlayer, t, "You can't /set variables in replay mode");
-    return;
+    return true;
   }
   DEBUG3("set executed by %s, setvar=%d, setall=%d\n",playerData->player.getCallSign(),setvar,setall);
   std::string command = (message + 1);
@@ -473,7 +531,7 @@ static void handleSetCmd(GameKeeper::Player *playerData, const char *message)
   snprintf(message2, MessageLen, "Variable Modification Notice by %s of %s",
 	   playerData->player.getCallSign(), command.c_str());
   sendMessage(ServerPlayer, AllPlayers, message2);
-  return;
+  return true;
 }
 
 
@@ -2731,22 +2789,7 @@ void parseServerCommand(const char *message, int t)
   if (ServerCommand::execute(message, playerData))
     return;
 
-  if (strncasecmp(message + 1, "part", 4) == 0) {
-    handlePartCmd(playerData, message);
-
-  } else if (strncasecmp(message + 1, "quit", 4) == 0) {
-    handleQuitCmd(playerData, message);
-
-  } else if (strncasecmp(message + 1, "uptime", 6) == 0) {
-    handleUptimeCmd(playerData, message);
-
-  } else if (strncasecmp(message + 1, "password", 8) == 0) {
-    handlePasswordCmd(playerData, message);
-
-  } else if (strncasecmp(message + 1, "set ", 4) == 0) {
-    handleSetCmd(playerData, message);
-
-  } else if (strncasecmp(message + 1, "reset", 5) == 0) {
+  if (strncasecmp(message + 1, "reset", 5) == 0) {
     handleResetCmd(playerData, message);
 
   } else if (strncasecmp(message + 1, "shutdownserver", 8) == 0) {
