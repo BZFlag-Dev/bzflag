@@ -13,7 +13,7 @@ class ScoreResetCommand : public bz_CustomSlashCommandHandler
 {
 public:
 	virtual ~ScoreResetCommand(){};
-	virtual bool handle ( int playerID, bzApiString command, bzApiString message );
+	virtual bool handle ( int playerID, bzApiString command, bzApiString message, bzAPIStringList *param );
 };
 
 ScoreResetCommand	scoreResetCommand;
@@ -37,7 +37,7 @@ BZF_PLUGIN_CALL int bz_Unload ( void )
 }
 
 
-bool ScoreResetCommand::handle ( int playerID, bzApiString _command, bzApiString _message )
+bool ScoreResetCommand::handle ( int playerID, bzApiString _command, bzApiString _message, bzAPIStringList *_param )
 {
 	std::string command = _command.c_str();
 	std::string message = _message.c_str();

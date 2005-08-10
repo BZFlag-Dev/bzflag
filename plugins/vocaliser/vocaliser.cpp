@@ -43,7 +43,7 @@ class PlaysndCommand : public bz_CustomSlashCommandHandler
 {
 public:
 	virtual ~PlaysndCommand(){};
-	virtual bool handle ( int playerID, bzApiString command, bzApiString message );
+	virtual bool handle ( int playerID, bzApiString command, bzApiString message, bzAPIStringList *param );
 };
 
 PlaysndCommand	playsndCommand;
@@ -198,7 +198,7 @@ void clearPlayerVoiceRecord ( int playerID )
 		playerVoices.erase(playerVoices.find(playerID));
 }
 
-bool PlaysndCommand::handle ( int playerID, bzApiString _command, bzApiString _message )
+bool PlaysndCommand::handle ( int playerID, bzApiString _command, bzApiString _message, bzAPIStringList *_param )
 {
 	std::string command = _command.c_str();
 	std::string message = _message.c_str();

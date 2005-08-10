@@ -13,7 +13,7 @@ class LastChatCommand : public bz_CustomSlashCommandHandler
 {
 public:
 	virtual ~LastChatCommand(){};
-	virtual bool handle ( int playerID, bzApiString command, bzApiString message );
+	virtual bool handle ( int playerID, bzApiString command, bzApiString message, bzAPIStringList *param );
 };
 
 LastChatCommand	lastChatCommand;
@@ -65,7 +65,7 @@ BZF_PLUGIN_CALL int bz_Unload ( void )
 }
 
 
-bool LastChatCommand::handle ( int playerID, bzApiString _command, bzApiString _message )
+bool LastChatCommand::handle ( int playerID, bzApiString _command, bzApiString _message, bzAPIStringList *_param )
 {
 	std::string command = _command.c_str();
 	std::string message = _message.c_str();
