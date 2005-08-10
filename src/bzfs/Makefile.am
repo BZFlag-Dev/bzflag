@@ -88,6 +88,8 @@ bzfs_SOURCES = \
 	RejoinList.h \
 	Score.h	\
 	Score.cxx	\
+	ServerCommand.cxx		\
+	ServerCommand.h			\
 	DropGeometry.cxx \
 	DropGeometry.h \
 	SpawnPosition.cxx \
