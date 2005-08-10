@@ -54,6 +54,7 @@
 #include "Permissions.h"
 #include "RecordReplay.h"
 #include "MasterBanList.h"
+#include "ServerCommand.h"
 
 
 #if defined(_WIN32)
@@ -127,6 +128,28 @@ int getSlotNumber(std::string player) {
 
   return slot;
 }
+
+class MsgCommand : ServerCommand {
+public:
+  MsgCommand();
+
+  virtual bool operator() (const char         *commandLine,
+			   GameKeeper::Player *playerData);
+};
+
+class ServerQueryCommand : ServerCommand {
+public:
+  ServerQueryCommand();
+
+  virtual bool operator() (const char         *commandLine,
+			   GameKeeper::Player *playerData);
+};
+
+static MsgCommand         msgCommand;
+static ServerQueryCommand serverQueryCommand;
+
+MsgCommand::MsgCommand()                 : ServerCommand("/msg") {}
+ServerQueryCommand::ServerQueryCommand() : ServerCommand("/serverquery") {}
 
 static void handleMuteCmd(GameKeeper::Player *playerData, const char *message)
 {
@@ -217,7 +240,8 @@ static void handleUptimeCmd(GameKeeper::Player *playerData, const char *)
   sendMessage(ServerPlayer, t, reply);
 }
 
-static void handleServerQueryCmd(GameKeeper::Player *playerData, const char *)
+bool ServerQueryCommand::operator() (const char         *,
+				     GameKeeper::Player *playerData)
 {
   int t = playerData->getIndex();
   DEBUG2("Server query requested by %s [%d]\n",
@@ -225,7 +249,7 @@ static void handleServerQueryCmd(GameKeeper::Player *playerData, const char *)
 
   sendMessage(ServerPlayer, t,
 	      TextUtils::format("BZFS Version: %s", getAppVersion()).c_str());
-  return;
+  return true;
 }
 
 
@@ -287,7 +311,8 @@ static void handleQuitCmd(GameKeeper::Player *playerData, const char *message)
 }
 
 
-static void handleMsgCmd(GameKeeper::Player *playerData, const char *message)
+bool MsgCommand::operator() (const char         *message,
+			     GameKeeper::Player *playerData)
 {
   int from = playerData->getIndex();
   int to= -1;
@@ -299,7 +324,7 @@ static void handleMsgCmd(GameKeeper::Player *playerData, const char *message)
     char reply[MessageLen] = {0};
     snprintf(reply, MessageLen, "%s, you are not presently authorized to /msg people privately", playerData->player.getCallSign());
     sendMessage(ServerPlayer, from, reply);
-    return;
+    return true;
   }
 
   // start from after "/msg"
@@ -316,7 +341,7 @@ static void handleMsgCmd(GameKeeper::Player *playerData, const char *message)
   // make sure there was _some_ whitespace after /msg
   if (callsignStart == 0) {
     sendMessage(ServerPlayer, from, "Usage: /msg \"some callsign\" some message");
-    return;
+    return true;
   }
 
   // find the player name, optionally quoted
@@ -340,7 +365,7 @@ static void handleMsgCmd(GameKeeper::Player *playerData, const char *message)
     if (!foundQuote) {
       sendMessage(ServerPlayer, from, "Quote mismatch?");
       sendMessage(ServerPlayer, from, "Usage: /msg \"some callsign\" some message");
-      return;
+      return true;
     }
 
   } else {
@@ -384,7 +409,7 @@ static void handleMsgCmd(GameKeeper::Player *playerData, const char *message)
     if ((to < 0) || (to >= curMaxPlayers)) {
       message2 = TextUtils::format("\"%s\" is not here.  No such callsign.", recipient.c_str());
       sendMessage(ServerPlayer, from, message2.c_str());
-      return;
+      return true;
     }
   }
 
@@ -393,12 +418,12 @@ static void handleMsgCmd(GameKeeper::Player *playerData, const char *message)
     // found player, but nothing to send
     message2 = TextUtils::format("No text to send to \"%s\".", recipient.c_str());
     sendMessage(ServerPlayer, from, message2.c_str());
-    return;
+    return true;
   }
 
   // send the message
   sendPlayerMessage(playerData, to, arguments.c_str() + messageStart + 1);
-  return;
+  return true;
 }
 
 
@@ -2703,13 +2728,10 @@ void parseServerCommand(const char *message, int t)
   if (!playerData)
     return;
 
-  if (strncasecmp(message + 1, "msg", 3) == 0) {
-    handleMsgCmd(playerData, message);
+  if (ServerCommand::execute(message, playerData))
+    return;
 
-  } else if (strncasecmp(message + 1, "serverquery", 11) == 0) {
-    handleServerQueryCmd(playerData, message);
-
-  } else if (strncasecmp(message + 1, "part", 4) == 0) {
+  if (strncasecmp(message + 1, "part", 4) == 0) {
     handlePartCmd(playerData, message);
 
   } else if (strncasecmp(message + 1, "quit", 4) == 0) {
