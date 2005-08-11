@@ -795,7 +795,61 @@ BZF_API int bz_getBZDBInt( const char* variable )
 	return (int)BZDB.eval(std::string(variable));
 }
 
-BZF_API bool bz_setBZDBDouble ( const char* variable, double val )
+BZF_API int bz_getBZDBItemPerms( const char* variable )
+{
+	if (!bz_BZDBItemExists(variable))
+		return BZ_BZDBPERM_NA;
+
+	switch(BZDB.getPermission(std::string(variable)))
+	{
+	case StateDatabase::Permission::ReadWrite:
+		return BZ_BZDBPERM_USER;
+
+	case StateDatabase::Permission::Locked:
+		return BZ_BZDBPERM_SERVER;
+
+	case StateDatabase::Permission::ReadOnly:
+		return BZ_BZDBPERM_CLIENT;
+
+	default:
+		return BZ_BZDBPERM_NA;
+	}
+}
+
+BZF_API bool bz_getBZDBItemPesistent( const char* variable )
+{
+	if (!bz_BZDBItemExists(variable))
+		return false;
+	
+	return BZDB.isPersistent(std::string(variable));
+}
+
+BZF_API bool bz_BZDBItemExists( const char* variable )
+{
+	if (!variable)
+		return false;
+
+	return BZDB.isSet(std::string(variable));
+}
+
+void setVarPerms ( const char* variable, int perms, bool persistent)
+{
+	if (perms != BZ_BZDBPERM_NA)
+	{
+		switch(perms) {
+		case BZ_BZDBPERM_USER:
+			BZDB.setPermission(std::string(variable),StateDatabase::Permission::ReadWrite);
+			break;
+		case BZ_BZDBPERM_SERVER:
+			BZDB.setPermission(std::string(variable),StateDatabase::Permission::Locked);
+		default:
+			BZDB.setPermission(std::string(variable),StateDatabase::Permission::ReadOnly);
+		}
+	}
+	BZDB.setPersistent(std::string(variable),persistent);
+}
+
+BZF_API bool bz_setBZDBDouble ( const char* variable, double val, int perms, bool persistent)
 {
 	if (!variable)
 		return false;
@@ -803,11 +857,12 @@ BZF_API bool bz_setBZDBDouble ( const char* variable, double val )
 	bool exists = BZDB.isSet(std::string(variable));
 
 	BZDB.set(std::string(variable),TextUtils::format("%f",val));
+	setVarPerms(variable,perms,persistent);
 
 	return !exists;
 }
 
-BZF_API bool bz_setBZDBString( const char* variable, const char *val )
+BZF_API bool bz_setBZDBString( const char* variable, const char *val, int perms, bool persistent )
 {
 	if (!variable || !val)
 		return false;
@@ -815,11 +870,12 @@ BZF_API bool bz_setBZDBString( const char* variable, const char *val )
 	bool exists = BZDB.isSet(std::string(variable));
 
 	BZDB.set(std::string(variable),std::string(val));
+	setVarPerms(variable,perms,persistent);
 
 	return !exists;
 }
 
-BZF_API bool bz_setBZDBBool( const char* variable, bool val )
+BZF_API bool bz_setBZDBBool( const char* variable, bool val, int perms, bool persistent )
 {
 	if (!variable)
 		return false;
@@ -827,11 +883,12 @@ BZF_API bool bz_setBZDBBool( const char* variable, bool val )
 	bool exists = BZDB.isSet(std::string(variable));
 
 	BZDB.set(std::string(variable),TextUtils::format("%d",val));
+	setVarPerms(variable,perms,persistent);
 
 	return !exists;
 }
 
-BZF_API bool bz_setBZDBInt( const char* variable, int val )
+BZF_API bool bz_setBZDBInt( const char* variable, int val, int perms, bool persistent )
 {
 	if (!variable)
 		return false;
@@ -839,6 +896,7 @@ BZF_API bool bz_setBZDBInt( const char* variable, int val )
 	bool exists = BZDB.isSet(std::string(variable));
 
 	BZDB.set(std::string(variable),TextUtils::format("%d",val));
+	setVarPerms(variable,perms,persistent);
 
 	return !exists;
 }

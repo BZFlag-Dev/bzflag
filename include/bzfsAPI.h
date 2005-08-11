@@ -78,6 +78,11 @@ typedef enum
 
 #define BZ_SERVER		-2
 
+#define BZ_BZDBPERM_NA		0
+#define BZ_BZDBPERM_USER	1
+#define BZ_BZDBPERM_SERVER	2
+#define BZ_BZDBPERM_CLIENT	3	
+
 //utility classes
  class BZF_API bzApiString
 {
@@ -689,10 +694,15 @@ BZF_API bzApiString bz_getBZDBString( const char* variable );
 BZF_API bool bz_getBZDBBool( const char* variable );
 BZF_API int bz_getBZDBInt( const char* variable );
 
-BZF_API bool bz_setBZDBDouble ( const char* variable, double val );
-BZF_API bool bz_setBZDBString( const char* variable, const char *val );
-BZF_API bool bz_setBZDBBool( const char* variable, bool val );
-BZF_API bool bz_setBZDBInt( const char* variable, int val );
+BZF_API int bz_getBZDBItemPerms( const char* variable );
+BZF_API bool bz_getBZDBItemPesistent( const char* variable );
+BZF_API bool bz_BZDBItemExists( const char* variable );
+
+BZF_API bool bz_setBZDBDouble ( const char* variable, double val, int perms = 0, bool persistent = false );
+BZF_API bool bz_setBZDBString( const char* variable, const char *val, int perms = 0, bool persistent = false  );
+BZF_API bool bz_setBZDBBool( const char* variable, bool val, int perms = 0, bool persistent = false  );
+BZF_API bool bz_setBZDBInt( const char* variable, int val, int perms = 0, bool persistent = false  );
+
 
 // loging
 BZF_API void bz_debugMessage ( int debugLevel, const char* message );
