@@ -21,7 +21,7 @@
 #include <assert.h>
 
 /* common implementation headers */
-#include "bzfio.h" // for DEBUG1
+#include "bzfio.h" // for DEBUG3()
 #include "OpenGLGState.h"
 #include "TextureManager.h"
 #include "TextureMatrix.h"
@@ -1172,7 +1172,7 @@ void OpenGLGState::registerContextInitializer(
 		     void* userData)
 {
   if ((freeCallback == NULL) || (initCallback == NULL)) {
-    DEBUG1("registerContextInitializer() error\n");
+    DEBUG3("registerContextInitializer() error\n");
     return;
   }
   new ContextInitializer(freeCallback, initCallback, userData);
@@ -1187,7 +1187,7 @@ void OpenGLGState::unregisterContextInitializer(
   ContextInitializer* ci =
     ContextInitializer::find(freeCallback, initCallback, userData);
   if (ci == NULL) {
-    DEBUG1("unregisterContextInitializer() error\n");
+    DEBUG3("unregisterContextInitializer() error\n");
   }
   delete ci;
 }
@@ -1196,14 +1196,14 @@ void OpenGLGState::unregisterContextInitializer(
 void OpenGLGState::initContext()
 {
   if (!haveGLContext()) {
-    DEBUG1("OpenGLGState::initContext(), no context\n");
+    DEBUG3("OpenGLGState::initContext(), no context\n");
     return;
   }
 
   // call all of the freeing functions first
-  DEBUG1("ContextInitializer::executeFreeFuncs() start\n");
+  DEBUG3("ContextInitializer::executeFreeFuncs() start\n");
   ContextInitializer::executeFreeFuncs();
-  DEBUG1("ContextInitializer::executeFreeFuncs() end\n");
+  DEBUG3("ContextInitializer::executeFreeFuncs() end\n");
 
   // initialize GL state
   initGLState();
@@ -1212,9 +1212,9 @@ void OpenGLGState::initContext()
   resetState();
 
   // call all initializers
-  DEBUG1("ContextInitializer::executeInitFuncs() start\n");
+  DEBUG3("ContextInitializer::executeInitFuncs() start\n");
   ContextInitializer::executeInitFuncs();
-  DEBUG1("ContextInitializer::executeInitFuncs() end\n");
+  DEBUG3("ContextInitializer::executeInitFuncs() end\n");
 
   // initialize the GL state again in case one of the initializers
   // messed it up.
@@ -1525,7 +1525,7 @@ void bzMatrixMode(GLenum mode)
   }
   matrixMode = mode;
   glMatrixMode(mode);
-  DEBUG1 ("MatrixMode: %i %i %i\n", matrixDepth[0], matrixDepth[1], matrixDepth[2]);
+  DEBUG3 ("MatrixMode: %i %i %i\n", matrixDepth[0], matrixDepth[1], matrixDepth[2]);
 }
 
 #endif // DEBUG_GL_MATRIX_STACKS
