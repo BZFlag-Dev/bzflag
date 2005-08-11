@@ -1307,7 +1307,7 @@ const float maxToleratedJitter = 1.0f;
 
 void Player::setDeadReckoning(float timestamp)
 {
-  // offset should be the time packet has been delayed above average
+  // offset should be the time packet is earlier above average
   offset = float(timestamp - (TimeKeeper::getTick() - TimeKeeper::getNullTime())
     - deltaTime);
 
@@ -1315,16 +1315,16 @@ void Player::setDeadReckoning(float timestamp)
   // differences in time (local & remote) the values is then updated
   // with the new samples, smoothed with the old values
   float alphaFactor = 1.0f / float(deadReckoningState + 1);
-  if (deadReckoningState >= DRStateStable) {
-    if (fabs(offset) > maxToleratedJitter) {
-      // Put a threshold on untimed measurement
-      offset = (offset > 0) ? maxToleratedJitter : -maxToleratedJitter;
-    } else if (offset > 0) {
-      // fast alignment to the packet that take less travel time
-      // that's for trying to have less lag
-      alphaFactor = 1.0f;
-    }
-  }
+//   if (deadReckoningState >= DRStateStable) {
+//     if (fabs(offset) > maxToleratedJitter) {
+//       // Put a threshold on untimed measurement
+//       offset = (offset > 0) ? maxToleratedJitter : -maxToleratedJitter;
+//     } else if (offset > 0) {
+//       // fast alignment to the packet that take less travel time
+//       // that's for trying to have less lag
+//       alphaFactor = 1.0f;
+//     }
+//   }
   // alpha filtering
   deltaTime = deltaTime + (offset * alphaFactor);
   // when alphaFactor is 1, that really means we are

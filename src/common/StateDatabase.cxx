@@ -124,6 +124,7 @@ const std::string StateDatabase::BZDB_LATITUDE		= std::string("_latitude");
 const std::string StateDatabase::BZDB_LOCKONANGLE	= std::string("_lockOnAngle");
 const std::string StateDatabase::BZDB_LONGITUDE		= std::string("_longitude");
 const std::string StateDatabase::BZDB_LRADRATE		= std::string("_lRAdRate");
+const std::string StateDatabase::BZDB_MAXLINEARACC      = std::string("_maxLinearAcceleration");
 const std::string StateDatabase::BZDB_MAXBUMPHEIGHT     = std::string("_maxBumpHeight");
 const std::string StateDatabase::BZDB_MAXFLAGGRABS      = std::string("_maxFlagGrabs");
 const std::string StateDatabase::BZDB_MAXLOD		= std::string("_maxLOD");

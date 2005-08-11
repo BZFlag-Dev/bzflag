@@ -92,6 +92,9 @@ public:
     // To handle player State
     void           setPlayerState(float pos[3], float azimuth);
     void           getPlayerState(float pos[3], float &azimuth);
+    void           setPlayerState(PlayerState state, float timestamp);
+    bool           validatePlayerState(PlayerState state, float timestamp,
+				       std::string &message);
 
     enum LSAState
       {
@@ -116,6 +119,7 @@ public:
     PlayerAccessInfo  accessInfo;
     // Last known position, vel, etc
     PlayerState       lastState;
+    float             stateTimeStamp;
     // FlagHistory
     FlagHistory       flagHistory;
     // Score

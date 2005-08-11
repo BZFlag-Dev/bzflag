@@ -2752,9 +2752,6 @@ static void playerAlive(int playerIndex)
   buf = nboPackFloat(buf, playerData->lastState.azimuth);
   broadcastMessage(MsgAlive, (char*)buf - (char*)bufStart, bufStart);
 
-  // player is alive.
-  playerData->player.setAlive();
-
   // call any events for a playerspawn
   bz_PlayerSpawnEventData	spawnEvent;
   spawnEvent.playerID = playerIndex;
@@ -3949,11 +3946,6 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
       if (state.order <= playerData->lastState.order)
 	break;
 
-      playerData->lagInfo.updateLag(timestamp,
-				    state.order - playerData->lastState.order
-				    > 1);
-      playerData->player.updateIdleTime();
-
       //Don't kick players up to 10 seconds after a world parm has changed,
       TimeKeeper now = TimeKeeper::getCurrent();
 
@@ -4099,9 +4091,13 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
 	    }
 	  }
 	}
+	std::string message;
+	if (!playerData->validatePlayerState(state, timestamp, message)) {
+	  removePlayer(t, message.c_str());
+	}
       }
 
-      playerData->lastState = state;
+      playerData->setPlayerState(state, timestamp);
 
       // Player might already be dead and did not know it yet (e.g. teamkill)
       // do not propogate
