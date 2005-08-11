@@ -2725,19 +2725,20 @@ static void playerAlive(int playerIndex)
   dropAssignedFlag(playerIndex);
 
   // get the spawn position
-  SpawnPosition* spawnPosition = new SpawnPosition(playerIndex,
-      (!clOptions->respawnOnBuildings) || (playerData->player.isBot()),
-       clOptions->gameStyle & TeamFlagGameStyle);
+  SpawnPosition spawnPosition
+    (playerIndex,
+     (!clOptions->respawnOnBuildings) || (playerData->player.isBot()),
+     clOptions->gameStyle & TeamFlagGameStyle);
 
   // see if there is anyone to handle the spawn event, and if they want to change it.
 
   bz_GetPlayerSpawnPosEventData	spawnData;
   spawnData.playerID = playerIndex;
-  spawnData.teamID = playerData->player.getTeam();
-  spawnData.pos[0] = spawnPosition->getX();
-  spawnData.pos[1] = spawnPosition->getY();
-  spawnData.pos[2] = spawnPosition->getZ();
-  spawnData.rot = spawnPosition->getAzimuth();
+  spawnData.teamID   = playerData->player.getTeam();
+  spawnData.pos[0]   = spawnPosition.getX();
+  spawnData.pos[1]   = spawnPosition.getY();
+  spawnData.pos[2]   = spawnPosition.getZ();
+  spawnData.rot      = spawnPosition.getAzimuth();
 
   worldEventManager.callEvents(bz_eGetPlayerSpawnPosEvent,&spawnData);
 
@@ -2751,7 +2752,6 @@ static void playerAlive(int playerIndex)
   buf = nboPackVector(buf, playerData->lastState.pos);
   buf = nboPackFloat(buf, spawnData.rot);
   broadcastMessage(MsgAlive, (char*)buf - (char*)bufStart, bufStart);
-  delete spawnPosition;
 
   // player is alive.
   playerData->player.setAlive();
