@@ -3567,6 +3567,19 @@ static void		checkEnvironment()
   }
 }
 
+
+static inline bool tankHasShotType(const Player* tank, const FlagType* ft)
+{
+  const int maxShots = tank->getMaxShots();
+  for (int i = 0; i < maxShots; i++) {
+    const ShotPath* sp = tank->getShot(i);
+    if ((sp != NULL) && (sp->getFlag() == ft)) {
+      return true;
+    }
+  }
+  return false;
+}
+
 void setTarget()
 {
   // get info about my tank
@@ -3597,12 +3610,13 @@ void setTarget()
     const float a = fabsf(y / d);
 
     // see if it's inside lock-on angle (if we're trying to lock-on)
-    if (a < BZDB.eval(StateDatabase::BZDB_LOCKONANGLE) &&					// about 8.5 degrees
-	myTank->getFlag() == Flags::GuidedMissile &&	// am i locking on?
+    if (a < BZDB.eval(StateDatabase::BZDB_LOCKONANGLE) &&	// about 8.5 degrees
+	((myTank->getFlag() == Flags::GuidedMissile) ||		// am i locking on?
+          tankHasShotType(myTank, Flags::GuidedMissile)) &&
 	player[i]->getFlag() != Flags::Stealth &&		// can't lock on stealth
-	!player[i]->isPaused() &&			// can't lock on paused
-	!player[i]->isNotResponding() &&		// can't lock on not responding
-	d < bestDistance) {				// is it better?
+	!player[i]->isPaused() &&				// can't lock on paused
+	!player[i]->isNotResponding() &&			// can't lock on not responding
+	d < bestDistance) {					// is it better?
       bestTarget = player[i];
       bestDistance = d;
       lockedOn = true;
