@@ -187,7 +187,7 @@ static const float TreadMiddle = 0.5f * (TreadOutside + TreadInside);
 static const float TreadMarkWidth = 0.2f;
 
 static OpenGLGState smokeGState;
-static const char smokeTexture[] = "smoke";
+static const char smokeTexture[] = "puddle"; // FIXME - not implemented
 static OpenGLGState puddleGState;
 static const char puddleTexture[] = "puddle";
 static OpenGLGState treadsGState;
