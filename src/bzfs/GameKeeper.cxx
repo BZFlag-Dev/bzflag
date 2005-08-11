@@ -310,6 +310,18 @@ void GameKeeper::Player::handleTcpPacket(fd_set *set)
 
 #endif
 
+void GameKeeper::Player::setPlayerState(float pos[3], float azimuth)
+{
+  memcpy(lastState.pos, pos, sizeof(pos));
+  lastState.azimuth = azimuth;
+}
+
+void GameKeeper::Player::getPlayerState(float pos[3], float &azimuth)
+{
+  memcpy(pos, lastState.pos, sizeof(pos));
+  azimuth = lastState.azimuth;
+}
+
 // Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***

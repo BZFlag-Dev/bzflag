@@ -2743,14 +2743,13 @@ static void playerAlive(int playerIndex)
   worldEventManager.callEvents(bz_eGetPlayerSpawnPosEvent,&spawnData);
 
   // update last position immediately
-  memcpy(playerData->lastState.pos, spawnData.pos, sizeof(float) * 3);
-  playerData->lastState.azimuth = spawnData.rot;
+  playerData->setPlayerState(spawnData.pos, spawnData.rot);
 
   // send MsgAlive
   void *buf, *bufStart = getDirectMessageBuffer();
   buf = nboPackUByte(bufStart, playerIndex);
   buf = nboPackVector(buf, playerData->lastState.pos);
-  buf = nboPackFloat(buf, spawnData.rot);
+  buf = nboPackFloat(buf, playerData->lastState.azimuth);
   broadcastMessage(MsgAlive, (char*)buf - (char*)bufStart, bufStart);
 
   // player is alive.
@@ -2761,8 +2760,7 @@ static void playerAlive(int playerIndex)
   spawnEvent.playerID = playerIndex;
   spawnEvent.teamID = playerData->player.getTeam();
 
-  memcpy(spawnEvent.pos, playerData->lastState.pos, sizeof(float) * 3);
-  spawnEvent.rot = playerData->lastState.azimuth;
+  playerData->getPlayerState(spawnEvent.pos, spawnEvent.rot);
 
   worldEventManager.callEvents(bz_ePlayerSpawnEvent,&spawnEvent);
 
@@ -2824,8 +2822,7 @@ void playerKilled(int victimIndex, int killerIndex, int reason,
   if (killer)
     dieEvent.killerTeamID = killer->getTeam();
   dieEvent.flagKilledWith = flagType->flagAbbv;
-  memcpy(dieEvent.pos, victimData->lastState.pos, sizeof(float) * 3);
-  dieEvent.rot = victimData->lastState.azimuth;
+  victimData->getPlayerState(dieEvent.pos, dieEvent.rot);
 
   worldEventManager.callEvents(bz_ePlayerDieEvent,&dieEvent);
 
@@ -3149,8 +3146,7 @@ static void captureFlag(int playerIndex, TeamColor teamCaptured)
   eventData.teamCaped = teamIndex;
   eventData.teamCaping = teamCaptured;
   eventData.playerCaping = playerIndex;
-  memcpy(eventData.pos, playerData->lastState.pos, sizeof(float) * 3);
-  eventData.rot = playerData->lastState.azimuth;
+  playerData->getPlayerState(eventData.pos, eventData.rot);
   eventData.time = TimeKeeper::getCurrent().getSeconds();
 
   worldEventManager.callEvents(bz_eCaptureEvent,&eventData);

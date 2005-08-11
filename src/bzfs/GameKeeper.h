@@ -89,6 +89,10 @@ public:
     void	   setNeedThisHostbanChecked(bool set);
     bool	   needsHostbanChecked();
 
+    // To handle player State
+    void           setPlayerState(float pos[3], float azimuth);
+    void           getPlayerState(float pos[3], float &azimuth);
+
     enum LSAState
       {
 	start,
