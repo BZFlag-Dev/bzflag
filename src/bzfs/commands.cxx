@@ -225,6 +225,46 @@ public:
 			   GameKeeper::Player *playerData);
 };
 
+class FlagCommand : ServerCommand {
+public:
+  FlagCommand();
+
+  virtual bool operator() (const char         *commandLine,
+			   GameKeeper::Player *playerData);
+};
+
+class KickCommand : ServerCommand {
+public:
+  KickCommand();
+
+  virtual bool operator() (const char         *commandLine,
+			   GameKeeper::Player *playerData);
+};
+
+class KillCommand : ServerCommand {
+public:
+  KillCommand();
+
+  virtual bool operator() (const char         *commandLine,
+			   GameKeeper::Player *playerData);
+};
+
+class BanListCommand : ServerCommand {
+public:
+  BanListCommand();
+
+  virtual bool operator() (const char         *commandLine,
+			   GameKeeper::Player *playerData);
+};
+
+class HostbanListCommand : ServerCommand {
+public:
+  HostbanListCommand();
+
+  virtual bool operator() (const char         *commandLine,
+			   GameKeeper::Player *playerData);
+};
+
 static MsgCommand         msgCommand;
 static ServerQueryCommand serverQueryCommand;
 static PartCommand        partCommand;
@@ -237,6 +277,11 @@ static ShutdownCommand    shutdownCommand;
 static SuperkillCommand   superkillCommand;
 static GameOverCommand    gameOverCommand;
 static CountdownCommand   countdownCommand;
+static FlagCommand        flagCommand;
+static KickCommand        kickCommand;
+static KillCommand        killCommand;
+static BanListCommand     banListCommand;
+static HostbanListCommand hostbanListCommand;
 
 MsgCommand::MsgCommand()                 : ServerCommand("/msg") {}
 ServerQueryCommand::ServerQueryCommand() : ServerCommand("/serverquery") {}
@@ -250,6 +295,11 @@ ShutdownCommand::ShutdownCommand()       : ServerCommand("/shutdown") {}
 SuperkillCommand::SuperkillCommand()     : ServerCommand("/superkill") {}
 GameOverCommand::GameOverCommand()       : ServerCommand("/gameover") {}
 CountdownCommand::CountdownCommand()     : ServerCommand("/countdown") {}
+FlagCommand::FlagCommand()               : ServerCommand("/flag") {}
+KickCommand::KickCommand()               : ServerCommand("/kick") {}
+KillCommand::KillCommand()               : ServerCommand("/kill") {}
+BanListCommand::BanListCommand()         : ServerCommand("/banlist") {}
+HostbanListCommand::HostbanListCommand() : ServerCommand("/hostbanlist") {}
 
 static void handleMuteCmd(GameKeeper::Player *playerData, const char *message)
 {
@@ -772,12 +822,13 @@ bool CountdownCommand::operator() (const char         * message,
 }
 
 
-static void handleFlagCmd(GameKeeper::Player *playerData, const char *message)
+bool FlagCommand::operator() (const char         *message,
+			      GameKeeper::Player *playerData)
 {
   int t = playerData->getIndex();
   if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::flagMod)) {
     sendMessage(ServerPlayer, t, "You do not have permission to run the flag command");
-    return;
+    return true;
   }
   if (strncasecmp(message + 6, "reset", 5) == 0) {
     bool onlyUnused = strncasecmp(message + 11, " unused", 7) == 0;
@@ -803,16 +854,17 @@ static void handleFlagCmd(GameKeeper::Player *playerData, const char *message)
   } else {
     sendMessage(ServerPlayer, t, "reset|show|up");
   }
-  return;
+  return true;
 }
 
 
-static void handleKickCmd(GameKeeper::Player *playerData, const char *message)
+bool KickCommand::operator() (const char         *message,
+			      GameKeeper::Player *playerData)
 {
   int t = playerData->getIndex();
   if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::kick)) {
     sendMessage(ServerPlayer, t, "You do not have permission to run the kick command");
-    return;
+    return true;
   }
   int i;
   std::vector<std::string> argv = TextUtils::tokenize(message, " \t", 3, true);
@@ -820,7 +872,7 @@ static void handleKickCmd(GameKeeper::Player *playerData, const char *message)
   if (argv.size() < 3) {
     sendMessage(ServerPlayer, t, "Syntax: /kick <#slot | PlayerName | \"Player Name\"> <reason>");
     sendMessage(ServerPlayer, t, "	Please keep in mind that reason is displayed to the user.");
-    return;
+    return true;
   }
   
 
@@ -840,7 +892,7 @@ static void handleKickCmd(GameKeeper::Player *playerData, const char *message)
 		if (t != kickEvent.kickerID) {
 			playerData = GameKeeper::Player::getPlayerByIndex(kickEvent.kickerID);
 			if (!playerData)
-				return;
+				return true;
 		}
 
     char kickmessage[MessageLen];
@@ -853,7 +905,7 @@ static void handleKickCmd(GameKeeper::Player *playerData, const char *message)
       if ((p != NULL) && (p->accessInfo.hasPerm(PlayerAccessInfo::antikick))) {
 	snprintf(kickmessage, MessageLen, "%s is protected from being kicked.", p->player.getCallSign());
 	sendMessage(ServerPlayer,kickEvent.kickerID, kickmessage);
-	return;
+	return true;
       }
     }
 
@@ -872,15 +924,16 @@ static void handleKickCmd(GameKeeper::Player *playerData, const char *message)
     snprintf(errormessage, MessageLen, "player \"%s\" not found", argv[1].c_str());
     sendMessage(ServerPlayer, t, errormessage);
   }
-  return;
+  return true;
 }
 
-static void handleKillCmd(GameKeeper::Player *playerData, const char *message)
+bool KillCommand::operator() (const char         *message,
+			      GameKeeper::Player *playerData)
 {
   int t = playerData->getIndex();
   if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::kill)) {
     sendMessage(ServerPlayer, t, "You do not have permission to run the kill command");
-    return;
+    return true;
   }
   int i;
   std::vector<std::string> argv = TextUtils::tokenize(message, " \t", 3, true);
@@ -888,7 +941,7 @@ static void handleKillCmd(GameKeeper::Player *playerData, const char *message)
   if (argv.size() < 2) {
     sendMessage(ServerPlayer, t, "Syntax: /kill <#slot | PlayerName | \"Player Name\">  [reason]");
     sendMessage(ServerPlayer, t, "	Please keep in mind that reason is displayed to the user.");
-    return;
+    return true;
   }
 
   i = getSlotNumber(argv[1]);
@@ -907,7 +960,7 @@ static void handleKillCmd(GameKeeper::Player *playerData, const char *message)
 		if (t != killEvent.killerID) {
 			playerData = GameKeeper::Player::getPlayerByIndex(killEvent.killerID);
 			if (!playerData)
-				return;
+				return true;
 		}
 		
     char killmessage[MessageLen];
@@ -919,7 +972,7 @@ static void handleKillCmd(GameKeeper::Player *playerData, const char *message)
       if ((p != NULL) && (p->accessInfo.hasPerm(PlayerAccessInfo::antikill))) {
 	snprintf(killmessage, MessageLen, "%s is protected from being killed.", p->player.getCallSign());
 	sendMessage(ServerPlayer, i, killmessage);
-	return;
+	return true;
       }
     }
 
@@ -938,30 +991,32 @@ static void handleKillCmd(GameKeeper::Player *playerData, const char *message)
     snprintf(errormessage, MessageLen, "player \"%s\" not found", argv[1].c_str());
     sendMessage(ServerPlayer, t, errormessage);
   }
-  return;
+  return true;
 }
 
-static void handleBanlistCmd(GameKeeper::Player *playerData, const char *)
+bool BanListCommand::operator() (const char         *,
+				 GameKeeper::Player *playerData)
 {
   int t = playerData->getIndex();
   if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::banlist)) {
     sendMessage(ServerPlayer, t, "You do not have permission to run the banlist command");
-    return;
+    return true;
   }
   clOptions->acl.sendBans(t);
-  return;
+  return true;
 }
 
 
-static void handleHostBanlistCmd(GameKeeper::Player *playerData, const char *)
+bool HostbanListCommand::operator() (const char         *,
+				     GameKeeper::Player *playerData)
 {
   int t = playerData->getIndex();
   if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::banlist)) {
     sendMessage(ServerPlayer, t, "You do not have permission to run the banlist command");
-    return;
+    return true;
   }
   clOptions->acl.sendHostBans(t);
-  return;
+  return true;
 }
 
 
@@ -2844,22 +2899,7 @@ void parseServerCommand(const char *message, int t)
   if (ServerCommand::execute(message, playerData))
     return;
 
-  if (strncasecmp(message + 1, "flag ", 5) == 0) {
-    handleFlagCmd(playerData,message);
-
-  } else if (strncasecmp(message + 1, "kick", 4) == 0) {
-    handleKickCmd(playerData, message);
-
-  } else if (strncasecmp(message + 1, "kill", 4) == 0) {
-    handleKillCmd(playerData, message);
-
-  } else if (strncasecmp(message+1, "banlist", 7) == 0) {
-    handleBanlistCmd(playerData, message);
-
-  } else if (strncasecmp(message+1, "hostbanlist", 11) == 0) {
-    handleHostBanlistCmd(playerData, message);
-
-  } else if (strncasecmp(message+1, "ban", 3) == 0) {
+  if (strncasecmp(message+1, "ban", 3) == 0) {
     handleBanCmd(playerData, message);
 
   } else if (strncasecmp(message+1, "hostban", 7) == 0) {
