@@ -1256,7 +1256,7 @@ public:
 	{
 	}
 
-	void addJob ( const char* URL, bz_URLHandler *handler, const char* postData )
+	void addJob ( const char* URL, bz_URLHandler *handler, const char* _postData )
 	{
 		if (!URL)
 			return;
@@ -1264,8 +1264,8 @@ public:
 		trURLJob	job;
 		job.url = URL;
 		job.handler = handler;
-		if (postData)
-			job.postData = postData;
+		if (_postData)
+			job.postData = _postData;
 
 		jobs.push_back(job);
 
