@@ -1460,20 +1460,37 @@ BZF_API bool bz_setclipFieldInt( const char *_name, int data )
 	return existed;
 }
 
-BZF_API bool bz_saveRecBuf( char * _filename, int seconds = 0 )
+BZF_API bzApiString bz_filterPath ( const char* path )
+{
+	if (path)
+		return bzApiString("");
+
+	char *temp;
+	temp = (char*)malloc(strlen(path)+1);
+
+	strcpy(temp,path);
+
+	// replace anything but alphanumeric charcters or dots in filename by '_'
+	// should be safe on every supported platform
+
+	char * buf = temp;
+	while (*buf != '\0')
+	{ 
+		if ( !isalnum(*buf) ||  *buf != '.' )
+			*buf = '_';
+
+		buf++;
+	}
+	bzApiString ret(temp);
+	free(temp);
+	return ret;
+}
+
+BZF_API bool bz_saveRecBuf( const char * _filename, int seconds = 0 )
 {
 	if (!Record::enabled() || !_filename)
 		return false;
 	
-	// replace anything but alphanumeric charcters or dots in filename by '_'
-	// should be safe on every supported platform
-	char * buf = _filename;
-	while (*buf != '\0') { 
-    if ( !isalnum(*buf) ||  *buf != '.' )
-			*buf = '_';
-		buf++;
-  }
-
 	bool result = Record::saveBuffer( ServerPlayer, _filename, seconds);
 	return result;
 }
