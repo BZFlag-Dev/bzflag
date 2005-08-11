@@ -855,7 +855,7 @@ public:
 	virtual void error ( const char* /*URL*/, int /*errorCode*/, const char * /*errorString*/ ){};
 };
 
-BZF_API bool bz_addURLJob ( const char* URL, bz_URLHandler* handler, const char* postData = NULL );
+BZF_API bool bz_addURLJob ( const char* URL, bz_URLHandler* handler = NULL, const char* postData = NULL );
 BZF_API bool bz_removeURLJob ( const char* URL );
 BZF_API bool bz_stopAllURLJobs ( void );
 
