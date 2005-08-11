@@ -289,7 +289,7 @@ Sets the team wins for the speficied team </p>
                     Resets to Zero the score for the specified team </p>
                   <p>&nbsp;</p>                  
                   <p><span class="style4 style7">Recording Functions </span></p>
-                  <p><strong>BZF_API bool bz_saveRecBuf( const char * _filename, int seconds);</strong><br>
+                  <p><strong>BZF_API bool bz_saveRecBuf( char * _filename, int seconds);</strong><br>
   If a record buffer it active this saves the last 'seconds' seconds of it into 
 the file '_filename'. if _filename contains characters other than alnum or '.'
 these will be replaced by '_'. If seconds is not given the whole buffer is saved. </p>
