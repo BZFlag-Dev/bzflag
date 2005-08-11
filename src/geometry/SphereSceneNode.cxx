@@ -153,11 +153,14 @@ void			SphereSceneNode::addRenderNodes(
 }
 
 void			SphereSceneNode::addShadowNodes(
-				SceneRenderer& renderer)
+                                SceneRenderer& /*renderer*/)
 {
+  return;
+/*
   renderNode.setHighResolution(false);
   renderNode.setBaseIndex(0);
   renderer.addShadowNode(&renderNode);
+*/
 }
 
 //
@@ -357,9 +360,12 @@ void			SphereFragmentSceneNode::addRenderNodes
 }
 
 void			SphereFragmentSceneNode::addShadowNodes(
-				SceneRenderer& renderer)
+				SceneRenderer& /*renderer*/)
 {
+  return;
+/*
   renderer.addShadowNode(&renderNode);
+*/
 }
 
 //
