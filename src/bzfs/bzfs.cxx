@@ -1912,11 +1912,14 @@ static void addPlayer(int playerIndex, GameKeeper::Player *playerData)
       }
     }
 
-  int filterIndex = 0;
-  Filter::Action filterAction = filter.check(*playerData, filterIndex);
-  if (filterAction == Filter::DROP) {
-    rejectPlayer(playerIndex, RejectBadCallsign, "Player has been banned");
-    return ;
+  if ( clOptions->filterCallsigns)
+  {
+	int filterIndex = 0;
+	Filter::Action filterAction = filter.check(*playerData, filterIndex);
+	if (filterAction == Filter::DROP) {
+		rejectPlayer(playerIndex, RejectBadCallsign, "Player has been banned");
+		return ;
+	}
   }
 
   // check against ban lists
