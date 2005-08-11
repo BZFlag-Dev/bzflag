@@ -64,14 +64,15 @@ void TextureFont::preLoadLists()
   TextureManager &tm = TextureManager::instance();
   std::string textureAndDir = "fonts/" + texture;
   textureID = tm.getTextureID(textureAndDir.c_str());
-  tm.setTextureFilter(textureID, OpenGLTexture::Nearest);
-
-  DEBUG4("Font %s (face %s) has texture ID %d\n", texture.c_str(), faceName.c_str(), textureID);
 
   if (textureID == -1) {
     DEBUG2("Font texture %s has invalid ID\n", texture.c_str());
     return;
   }
+  DEBUG4("Font %s (face %s) has texture ID %d\n", texture.c_str(), faceName.c_str(), textureID);
+
+  // fonts are usually pixel aligned
+  tm.setTextureFilter(textureID, OpenGLTexture::Nearest);
 
   for (int i = 0; i < numberOfCharacters; i++) {
     if (listIDs[i] != INVALID_GL_LIST_ID) {
@@ -132,7 +133,11 @@ void TextureFont::free(void)
 void TextureFont::filter(bool dofilter)
 {
   TextureManager &tm = TextureManager::instance();
-  tm.setTextureFilter(textureID, dofilter ? OpenGLTexture::Max : OpenGLTexture::Nearest);
+  if (textureID >= 0) {
+    const OpenGLTexture::Filter type = dofilter ? OpenGLTexture::Max
+                                                : OpenGLTexture::Nearest;
+    tm.setTextureFilter(textureID, type);
+  }
 }
 
 void TextureFont::drawString(float scale, GLfloat color[4], const char *str,
