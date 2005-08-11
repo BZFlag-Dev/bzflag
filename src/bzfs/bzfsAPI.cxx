@@ -535,9 +535,9 @@ BZF_API bool bz_updatePlayerData ( bz_PlayerRecord *playerRecord )
 	if (!player)
 		return false;
 
-	memcpy(playerRecord->pos,player->lastState->pos,sizeof(float)*3);
+	memcpy(playerRecord->pos, player->lastState.pos, sizeof(float) * 3);
 
-	playerRecord->rot = player->lastState->azimuth;
+	playerRecord->rot = player->lastState.azimuth;
 
 	int flagid = player->player.getFlag();
 	FlagInfo *flagInfo = FlagInfo::get(flagid);

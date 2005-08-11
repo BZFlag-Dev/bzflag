@@ -86,8 +86,6 @@ bool handlePings = true;
 static PingPacket pingReply;
 // highest fd used
 static int maxFileDescriptor;
-// Last known position, vel, etc
-PlayerState lastState[MaxPlayers  + ReplayObservers];
 // team info
 TeamInfo team[NumTeams];
 // num flags in flag list
@@ -2393,7 +2391,7 @@ void zapFlagByPlayer(int playerIndex)
   // do not simply zap team flag
   Flag &carriedflag = flag.flag;
   if (carriedflag.type->flagTeam != ::NoTeam) {
-    dropFlag(*playerData, playerData->lastState->pos);
+    dropFlag(*playerData, playerData->lastState.pos);
   } else {
     zapFlag(flag);
   }
@@ -2744,13 +2742,13 @@ static void playerAlive(int playerIndex)
   worldEventManager.callEvents(bz_eGetPlayerSpawnPosEvent,&spawnData);
 
   // update last position immediately
-  memcpy(lastState[playerIndex].pos,spawnData.pos,sizeof(float)*3);
-  lastState[playerIndex].azimuth = spawnData.rot;
+  memcpy(playerData->lastState.pos, spawnData.pos, sizeof(float) * 3);
+  playerData->lastState.azimuth = spawnData.rot;
 
   // send MsgAlive
   void *buf, *bufStart = getDirectMessageBuffer();
   buf = nboPackUByte(bufStart, playerIndex);
-  buf = nboPackVector(buf, lastState[playerIndex].pos);
+  buf = nboPackVector(buf, playerData->lastState.pos);
   buf = nboPackFloat(buf, spawnData.rot);
   broadcastMessage(MsgAlive, (char*)buf - (char*)bufStart, bufStart);
   delete spawnPosition;
@@ -2763,8 +2761,8 @@ static void playerAlive(int playerIndex)
   spawnEvent.playerID = playerIndex;
   spawnEvent.teamID = playerData->player.getTeam();
 
-  memcpy(spawnEvent.pos,lastState[playerIndex].pos,sizeof(float)*3);
-  spawnEvent.rot = lastState[playerIndex].azimuth;
+  memcpy(spawnEvent.pos, playerData->lastState.pos, sizeof(float) * 3);
+  spawnEvent.rot = playerData->lastState.azimuth;
 
   worldEventManager.callEvents(bz_ePlayerSpawnEvent,&spawnEvent);
 
@@ -2826,8 +2824,8 @@ void playerKilled(int victimIndex, int killerIndex, int reason,
   if (killer)
     dieEvent.killerTeamID = killer->getTeam();
   dieEvent.flagKilledWith = flagType->flagAbbv;
-  memcpy(dieEvent.pos,lastState[victimIndex].pos,sizeof(float)*3);
-  dieEvent.rot = lastState[victimIndex].azimuth;
+  memcpy(dieEvent.pos, victimData->lastState.pos, sizeof(float) * 3);
+  dieEvent.rot = victimData->lastState.azimuth;
 
   worldEventManager.callEvents(bz_ePlayerDieEvent,&dieEvent);
 
@@ -2966,7 +2964,7 @@ static void grabFlag(int playerIndex, FlagInfo &flag)
   const float tankRadius = BZDBCache::tankRadius;
   const float tankSpeed = BZDBCache::tankSpeed;
   const float radius2 = (tankSpeed + tankRadius + BZDBCache::flagRadius) * (tankSpeed + tankRadius + BZDBCache::flagRadius);
-  const float* tpos = lastState[playerIndex].pos;
+  const float* tpos = playerData->lastState.pos;
   const float* fpos = flag.flag.position;
   const float delta = (tpos[0] - fpos[0]) * (tpos[0] - fpos[0]) +
 		      (tpos[1] - fpos[1]) * (tpos[1] - fpos[1]);
@@ -3108,9 +3106,9 @@ static void captureFlag(int playerIndex, TeamColor teamCaptured)
     return;
 
   { //cheat checking
-    TeamColor base = whoseBase(lastState[playerIndex].pos[0],
-			       lastState[playerIndex].pos[1],
-			       lastState[playerIndex].pos[2]);
+    TeamColor base = whoseBase(playerData->lastState.pos[0],
+			       playerData->lastState.pos[1],
+			       playerData->lastState.pos[2]);
     if ((teamIndex == playerData->player.getTeam() &&
 	 base == playerData->player.getTeam()))	{
       DEBUG1("Player %s [%d] might have sent MsgCaptureFlag for taking their own "
@@ -3125,8 +3123,8 @@ static void captureFlag(int playerIndex, TeamColor teamCaptured)
 	     playerData->player.getCallSign(), playerIndex,
 	     Team::getName(playerData->player.getTeam()),
 	     Team::getName((TeamColor)teamIndex),
-	     lastState[playerIndex].pos[0], lastState[playerIndex].pos[1],
-	     lastState[playerIndex].pos[2]);
+	     playerData->lastState.pos[0], playerData->lastState.pos[1],
+	     playerData->lastState.pos[2]);
       //char message[MessageLen];
       //strcpy(message, "Autokick: Tried to capture opponent flag without landing on your base");
       //sendMessage(ServerPlayer, playerIndex, message);
@@ -3151,8 +3149,8 @@ static void captureFlag(int playerIndex, TeamColor teamCaptured)
   eventData.teamCaped = teamIndex;
   eventData.teamCaping = teamCaptured;
   eventData.playerCaping = playerIndex;
-  memcpy(eventData.pos,lastState[playerIndex].pos,sizeof(float)*3);
-  eventData.rot = lastState[playerIndex].azimuth;
+  memcpy(eventData.pos, playerData->lastState.pos, sizeof(float) * 3);
+  eventData.rot = playerData->lastState.azimuth;
   eventData.time = TimeKeeper::getCurrent().getSeconds();
 
   worldEventManager.callEvents(bz_eCaptureEvent,&eventData);
@@ -3272,7 +3270,8 @@ static void shotFired(int playerIndex, void *buf, int len)
     tankSpeed *= BZDB.eval(StateDatabase::BZDB_AGILITYADVEL);
   } else {
     //If shot is different height than player, can't be sure they didn't drop V in air
-    if (lastState[playerIndex].pos[2] != (shot.pos[2]-BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT))) {
+    if (playerData->lastState.pos[2]
+	!= (shot.pos[2]-BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT))) {
       tankSpeed *= tankSpeedMult;
     }
   }
@@ -3301,7 +3300,7 @@ static void shotFired(int playerIndex, void *buf, int len)
   float muzzleHeight = BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT);
   if (firingInfo.flagType == Flags::Obesity)
     muzzleFront *= BZDB.eval(StateDatabase::BZDB_OBESEFACTOR);
-  const PlayerState &last = lastState[playerIndex];
+  const PlayerState &last = playerData->lastState;
   float dx = last.pos[0] - shot.pos[0];
   float dy = last.pos[1] - shot.pos[1];
   float dz = last.pos[2] + muzzleHeight - shot.pos[2];
@@ -3349,7 +3348,7 @@ static void shotFired(int playerIndex, void *buf, int len)
 	  // also handle case where limit was set to 0
 	  float lastPos [3];
 	  for (int i = 0; i < 3; i ++){
-	    lastPos[i] = lastState[playerIndex].pos[i];
+	    lastPos[i] = playerData->lastState.pos[i];
 	  }
 	  fInfo.grabs = 0; // recycle this flag now
 	  dropFlag(*playerData, lastPos);
@@ -3951,11 +3950,12 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
       buf = state.unpack(buf, code);
 
       // silently drop old packet
-      if (state.order <= lastState[t].order)
+      if (state.order <= playerData->lastState.order)
 	break;
 
       playerData->lagInfo.updateLag(timestamp,
-				    state.order - lastState[t].order > 1);
+				    state.order - playerData->lastState.order
+				    > 1);
       playerData->player.updateIdleTime();
 
       //Don't kick players up to 10 seconds after a world parm has changed,
@@ -4063,8 +4063,8 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
 	      else if (flag.flag.type == Flags::Agility)
 		maxPlanarSpeed *= BZDB.eval(StateDatabase::BZDB_AGILITYADVEL);
 	      else if ((flag.flag.type == Flags::Burrow) &&
-		(lastState[t].pos[2] == state.pos[2]) &&
-		(lastState[t].velocity[2] == state.velocity[2]) &&
+		(playerData->lastState.pos[2] == state.pos[2]) &&
+		(playerData->lastState.velocity[2] == state.velocity[2]) &&
 		(state.pos[2] <= BZDB.eval(StateDatabase::BZDB_BURROWDEPTH)))
 		// if we have burrow and are not actively burrowing
 		// You may have burrow and still be above ground. Must
@@ -4076,8 +4076,8 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
 	    // If player is moving vertically, or not alive the speed checks
 	    // seem to be problematic. If this happens, just log it for now,
 	    // but don't actually kick
-	    if ((lastState[t].pos[2] != state.pos[2])
-	    ||  (lastState[t].velocity[2] != state.velocity[2])
+	    if ((playerData->lastState.pos[2] != state.pos[2])
+	    ||  (playerData->lastState.velocity[2] != state.velocity[2])
 	    ||  ((state.status & PlayerState::Alive) == 0)) {
 	      logOnly = true;
 	    }
@@ -4105,7 +4105,7 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
 	}
       }
 
-      lastState[t] = state;
+      playerData->lastState = state;
 
       // Player might already be dead and did not know it yet (e.g. teamkill)
       // do not propogate
@@ -4365,7 +4365,7 @@ static void doStuffOnPlayer(GameKeeper::Player &playerData)
     // if player is holding a flag, drop it
     for (int j = 0; j < numFlags; j++)
       if (FlagInfo::get(j)->player == p) {
-	dropFlag(playerData, lastState[p].pos);
+	dropFlag(playerData, playerData.lastState.pos);
 	// Should recheck if player is still available
 	if (!GameKeeper::Player::getPlayerByIndex(p))
 	  return;

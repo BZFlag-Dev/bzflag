@@ -111,7 +111,7 @@ public:
     // player access
     PlayerAccessInfo  accessInfo;
     // Last known position, vel, etc
-    PlayerState      *lastState;
+    PlayerState       lastState;
     // FlagHistory
     FlagHistory       flagHistory;
     // Score

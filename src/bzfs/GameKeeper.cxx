@@ -45,13 +45,12 @@ GameKeeper::Player::Player(int _playerIndex,
 			   const struct sockaddr_in &clientAddr, int fd,
 			   tcpCallback _clientCallback):
   player(_playerIndex), lagInfo(&player),
-  lastState(&::lastState[_playerIndex]),
   playerIndex(_playerIndex), closed(false), clientCallback(_clientCallback),
   needThisHostbanChecked(false)
 {
   playerList[playerIndex] = this;
 
-  lastState->order = 0;
+  lastState.order  = 0;
   netHandler       = new NetHandler(&player, clientAddr, playerIndex, fd);
 #if defined(USE_THREADS)
   int result = pthread_create(&thread, NULL, tcpRx, (void *)this);

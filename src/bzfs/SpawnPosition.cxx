@@ -165,8 +165,8 @@ const bool SpawnPosition::isImminentlyDangerous() const
     if (!playerData)
       continue;
     if (playerData->player.isAlive()) {
-      float *enemyPos = playerData->lastState->pos;
-      float enemyAngle = playerData->lastState->azimuth;
+      float *enemyPos   = playerData->lastState.pos;
+      float  enemyAngle = playerData->lastState.azimuth;
       if (playerData->player.getFlag() >= 0) {
 	// check for dangerous flags
 	const FlagInfo *finfo = FlagInfo::get(playerData->player.getFlag());
@@ -212,14 +212,14 @@ const float SpawnPosition::enemyProximityCheck(float &enemyAngle) const
       continue;
     if (playerData->player.isAlive()
 	&& areFoes(playerData->player.getTeam(), team)) {
-      float *enemyPos = playerData->lastState->pos;
+      float *enemyPos = playerData->lastState.pos;
       if (fabs(enemyPos[2] - testPos[2]) < 1.0f) {
 	float x = enemyPos[0] - testPos[0];
 	float y = enemyPos[1] - testPos[1];
 	float distSq = x * x + y * y;
 	if (distSq < worstDist) {
 	  worstDist  = distSq;
-	  enemyAngle = playerData->lastState->azimuth;
+	  enemyAngle = playerData->lastState.azimuth;
 	  noEnemy    = false;
 	}
       }
