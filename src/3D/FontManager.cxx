@@ -328,8 +328,9 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
       glDepthMask(0);
       pFont->drawString(scale, color, &tmpText[startSend], len);
       if (underline) {
-        OpenGLGState::resetState();  // FIXME - full reset required?
-	glEnable(GL_ALPHA_TEST);
+        if (canScale) {
+          glDisable(GL_TEXTURE_2D);
+        }
 	glEnable(GL_BLEND);
         if (bright && underlineColor[0] >= 0) {
 	  glColor4fv(underlineColor);
@@ -344,6 +345,9 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
 	glVertex2f(0.0f, 0.0f);
 	glVertex2f(width, 0.0f);
 	glEnd();
+	if (canScale) {
+	  glEnable(GL_TEXTURE_2D);
+        }
       }
       glDepthMask(depthMask);
       glPopMatrix();
