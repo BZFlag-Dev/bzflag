@@ -157,50 +157,79 @@ bool Quake3Level::dumpToModel ( CModel &model )
 
 				if (mFaces[i].type == 1)
 				{
-					if (mFaces[i].vert_count > 2)
+					
+					if (0)
 					{
-						for( int j = 2; j < mFaces[i].vert_count; j++)
+						if (mFaces[i].vert_count > 2)
 						{
-							face.clear();
+							for( int j = 2; j < mFaces[i].vert_count; j++)
+							{
+								face.clear();
 
+								face.verts.push_back(j);
+								face.normals.push_back(j);
+								face.texCoords.push_back(j);
+
+								face.verts.push_back(j-1);
+								face.normals.push_back(j-1);
+								face.texCoords.push_back(j-1);
+
+								face.verts.push_back(0);
+								face.normals.push_back(0);
+								face.texCoords.push_back(0);
+
+								mesh.faces.push_back(face);
+							}
+						}
+					}
+					else
+					{
+						face.clear();
+						for( int j = 0; j < mFaces[i].vert_count; j++)
+						{
 							face.verts.push_back(j);
 							face.normals.push_back(j);
 							face.texCoords.push_back(j);
-
-							face.verts.push_back(j-1);
-							face.normals.push_back(j-1);
-							face.texCoords.push_back(j-1);
-
-							face.verts.push_back(0);
-							face.normals.push_back(0);
-							face.texCoords.push_back(0);
-
-							mesh.faces.push_back(face);
 						}
+						mesh.faces.push_back(face);
 					}
 				}
 				else	// it's a mesh
 				{
-					if (mFaces[i].vert_count > 2)
+					if (0)
+					{
+						if (mFaces[i].vert_count > 2)
+						{
+							face.clear();
+							for( int j = 0; j < mFaces[i].vert_count; j+= 1)
+							{
+								face.verts.push_back(j);
+								face.normals.push_back(j);
+								face.texCoords.push_back(j);
+
+								face.verts.push_back(j+1);
+								face.normals.push_back(j+1);
+								face.texCoords.push_back(j+1);
+
+								face.verts.push_back(j+2);
+								face.normals.push_back(j+2);
+								face.texCoords.push_back(j+2);
+
+							}
+							mesh.faces.push_back(face);
+						}
+					}
+					else
 					{
 						face.clear();
-						for( int j = 0; j < mFaces[i].vert_count; j+= 1)
+						for( int j = 0; j < mFaces[i].vert_count; j++)
 						{
 							face.verts.push_back(j);
 							face.normals.push_back(j);
 							face.texCoords.push_back(j);
-
-							face.verts.push_back(j+1);
-							face.normals.push_back(j+1);
-							face.texCoords.push_back(j+1);
-
-							face.verts.push_back(j+2);
-							face.normals.push_back(j+2);
-							face.texCoords.push_back(j+2);
-
 						}
 						mesh.faces.push_back(face);
-					}	
+					}
 				}
 
 				if ( !skipFace && mesh.faces.size())
