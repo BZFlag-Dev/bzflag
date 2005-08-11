@@ -802,13 +802,13 @@ BZF_API int bz_getBZDBItemPerms( const char* variable )
 
 	switch(BZDB.getPermission(std::string(variable)))
 	{
-	case StateDatabase::Permission::ReadWrite:
+	case StateDatabase::ReadWrite:
 		return BZ_BZDBPERM_USER;
 
-	case StateDatabase::Permission::Locked:
+	case StateDatabase::Locked:
 		return BZ_BZDBPERM_SERVER;
 
-	case StateDatabase::Permission::ReadOnly:
+	case StateDatabase::ReadOnly:
 		return BZ_BZDBPERM_CLIENT;
 
 	default:
@@ -838,12 +838,12 @@ void setVarPerms ( const char* variable, int perms, bool persistent)
 	{
 		switch(perms) {
 		case BZ_BZDBPERM_USER:
-			BZDB.setPermission(std::string(variable),StateDatabase::Permission::ReadWrite);
+			BZDB.setPermission(std::string(variable),StateDatabase::ReadWrite);
 			break;
 		case BZ_BZDBPERM_SERVER:
-			BZDB.setPermission(std::string(variable),StateDatabase::Permission::Locked);
+			BZDB.setPermission(std::string(variable),StateDatabase::Locked);
 		default:
-			BZDB.setPermission(std::string(variable),StateDatabase::Permission::ReadOnly);
+			BZDB.setPermission(std::string(variable),StateDatabase::ReadOnly);
 		}
 	}
 	BZDB.setPersistent(std::string(variable),persistent);
