@@ -30,7 +30,7 @@
 	#define BZF_PLUGIN_CALL extern "C"
 #endif
 
-#define BZ_API_VERSION	8
+#define BZ_API_VERSION	9
 
 #define BZ_GET_PLUGIN_VERSION BZF_PLUGIN_CALL int bz_GetVersion ( void ) { return BZ_API_VERSION;}
 
@@ -855,7 +855,7 @@ public:
 	virtual void error ( const char* /*URL*/, int /*errorCode*/, const char * /*errorString*/ ){};
 };
 
-BZF_API bool bz_addURLJob ( const char* URL, bz_URLHandler* handler );
+BZF_API bool bz_addURLJob ( const char* URL, bz_URLHandler* handler, const char* postData = NULL );
 BZF_API bool bz_removeURLJob ( const char* URL );
 BZF_API bool bz_stopAllURLJobs ( void );
 

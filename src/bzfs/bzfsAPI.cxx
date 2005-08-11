@@ -1241,6 +1241,7 @@ typedef struct
 {
 	std::string url;
 	bz_URLHandler	*handler;
+	std::string postData;
 }trURLJob;
 
 class BZ_APIURLManager :  cURLManager
@@ -1255,14 +1256,16 @@ public:
 	{
 	}
 
-	void addJob ( const char* URL, bz_URLHandler *handler )
+	void addJob ( const char* URL, bz_URLHandler *handler, const char* postData )
 	{
-		if (!URL || !handler)
+		if (!URL)
 			return;
 
 		trURLJob	job;
 		job.url = URL;
 		job.handler = handler;
+		if (postData)
+			job.postData = postData;
 
 		jobs.push_back(job);
 
@@ -1306,9 +1309,9 @@ public:
 		// this is who we are suposed to be geting
 		trURLJob job = jobs[0]; 
 		jobs.erase(jobs.begin());
-		if (good)
+		if (good && job.handler)
 			job.handler->done(job.url.c_str(),data,length,good);
-		else
+		else if (job.handler)
 			job.handler->error(job.url.c_str(),1,"badness");
 
 		// do the next one if we must
@@ -1325,6 +1328,15 @@ protected:
 			trURLJob job = jobs[0]; 
 			doingStuff = true;
 			setURL(job.url);
+
+			if ( job.postData.size())
+			{
+				setHTTPPostMode();
+				setPostMode(job.postData);
+			}
+			else
+				setGetMode();
+
 			addHandle();
 		}
 	}
@@ -1335,15 +1347,15 @@ protected:
 
 BZ_APIURLManager	*bz_apiURLManager = NULL;
 
-BZF_API bool bz_addURLJob ( const char* URL, bz_URLHandler* handler )
+BZF_API bool bz_addURLJob ( const char* URL, bz_URLHandler* handler, const char* postData )
 {
-	if (!URL || !handler)
+	if (!URL)
 		return false;
 
 	if (!bz_apiURLManager)
 		bz_apiURLManager = new BZ_APIURLManager;
 
-	bz_apiURLManager->addJob(URL,handler);
+	bz_apiURLManager->addJob(URL,handler,postData);
 	return true;
 }
 
