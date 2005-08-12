@@ -160,7 +160,10 @@ static RRbuffer ReplayBuf = {0, 0, NULL, NULL}; // for replaying
 static RRbuffer RecordBuf = {0, 0, NULL, NULL};  // for recording
 
 static FILE *ReplayFile = NULL;
+static std::string ReplayFilename = "";
+
 static FILE *RecordFile = NULL;
+static std::string RecordFilename = "";
 
 
 // Local Function Prototypes
@@ -262,6 +265,7 @@ static bool recordReset()
     fclose(RecordFile);
     RecordFile = NULL;
   }
+  RecordFilename = "";
   freeBuffer(&RecordBuf);
 
   Recording = false;
@@ -304,7 +308,7 @@ bool Record::start(int playerIndex)
   }
   Recording = true;
   saveStates();
-  sendMessage(ServerPlayer, playerIndex, "Record started");
+  sendMessage(ServerPlayer, playerIndex, "Recording started");
 
   return true;
 }
@@ -317,12 +321,9 @@ bool Record::stop(int playerIndex)
     return false;
   }
 
-  sendMessage(ServerPlayer, playerIndex, "Record stopped");
+  sendMessage(ServerPlayer, playerIndex, "Recording stopped");
 
-  Recording = false;
-  if (RecordMode == StraightToFile) {
-    recordReset();
-  }
+  recordReset();
 
   return true;
 }
@@ -383,15 +384,13 @@ bool Record::setRate(int playerIndex, int seconds)
 
 bool Record::sendStats(int playerIndex)
 {
+  if (!Recording) {
+    sendMessage(ServerPlayer, playerIndex, "Not Recording");
+    return false;
+  }
+
   char buffer[MessageLen];
   float saveTime = 0.0f;
-
-  if (Recording) {
-    sendMessage(ServerPlayer, playerIndex, "Recording enabled");
-  }
-  else {
-    sendMessage(ServerPlayer, playerIndex, "Recording disabled");
-  }
 
   if (RecordMode == BufferedRecord) {
     if ((RecordBuf.tail != NULL) && (RecordBuf.head != NULL)) {
@@ -399,17 +398,21 @@ bool Record::sendStats(int playerIndex)
       saveTime = (float)diff / 1000000.0f;
     }
     snprintf(buffer, MessageLen,
-	      "  buffered: %i bytes / %i packets / %.1f seconds",
+	      "Buffered:  %i bytes / %i packets / %.1f seconds",
 	      RecordBuf.byteCount, RecordBuf.packetCount, saveTime);
+    sendMessage(ServerPlayer, playerIndex, buffer);
   }
   else {
     RRtime diff = getRRtime() - RecordStartTime;
     saveTime = (float)diff / 1000000.0f;
     snprintf(buffer, MessageLen,
-	      "  saved: %i bytes / %i packets / %.1f seconds",
+              "Filename:  %s", RecordFilename.c_str());
+    sendMessage(ServerPlayer, playerIndex, buffer);
+    snprintf(buffer, MessageLen,
+	      "   saved:  %i bytes / %i packets / %.1f seconds",
 	      RecordFileBytes, RecordFilePackets, saveTime);
+    sendMessage(ServerPlayer, playerIndex, buffer);
   }
-  sendMessage(ServerPlayer, playerIndex, buffer);
 
   return true;
 }
@@ -468,6 +471,8 @@ bool Record::saveFile(int playerIndex, const char *filename)
 
   snprintf(buffer, MessageLen, "Recording to file: %s", name.c_str());
   sendMessage(ServerPlayer, playerIndex, buffer);
+  
+  RecordFilename = name.c_str();
 
   return true;
 }
@@ -684,6 +689,7 @@ static bool replayReset()
     fclose(ReplayFile);
     ReplayFile = NULL;
   }
+  ReplayFilename = "";
   freeBuffer(&ReplayBuf);
 
   ReplayMode = true;
@@ -835,6 +841,8 @@ bool Replay::loadFile(int playerIndex, const char *filename)
     replayReset();
     return false;
   }
+  
+  ReplayFilename = filename;
   
   snprintf(buffer, MessageLen, "Loaded file:  %s", name.c_str());
   sendMessage(ServerPlayer, playerIndex, buffer);
@@ -1080,6 +1088,10 @@ bool Replay::sendStats(int playerIndex)
   }
 
   char buffer[MessageLen];
+  snprintf(buffer, MessageLen,
+           "Replay File:  %s", ReplayFilename.c_str());
+  sendMessage(ServerPlayer, playerIndex, buffer);
+
   time_t replayTime = (time_t)(ReplayPos->timestamp / 1000000);
   float fullTime = (float)ReplayFileTime / 1000000.0f;
   float usedTime =(float)(ReplayPos->timestamp - ReplayStartTime) / 1000000.0f;
