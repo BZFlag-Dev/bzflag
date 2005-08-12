@@ -4079,28 +4079,37 @@ static void		addRobots()
   uint16_t code, len;
   char msg[MaxPacketLen];
   char callsign[CallSignLen];
-
-  for (int j = 0; j < numRobots;) {
-
+  int  j;
+  for (j = 0; j < numRobots; j++) {
     snprintf(callsign, CallSignLen, "%s%2.2d", myTank->getCallSign(), j);
-
-    robots[j] = new RobotPlayer(robotServer[j]->getId(), callsign, robotServer[j], myTank->getEmailAddress());
+    robots[j] = new RobotPlayer(robotServer[j]->getId(), callsign,
+				robotServer[j], myTank->getEmailAddress());
     robots[j]->setTeam(AutomaticTeam);
     robotServer[j]->sendEnter(ComputerPlayer, robots[j]->getTeam(),
-			      robots[j]->getCallSign(), robots[j]->getEmailAddress(), "");
-
+			      robots[j]->getCallSign(),
+			      robots[j]->getEmailAddress(), "");
+  }
+  for (j = 0; j < numRobots; j++) {
     // wait for response
     if (robotServer[j]->read(code, len, msg, -1) < 0 || code != MsgAccept) {
       delete robots[j];
       delete robotServer[j];
       robots[j] = NULL;
-      robotServer[j] = robotServer[--numRobots];
-      robotServer[numRobots] = NULL;
-      continue;
+      robotServer[j] = NULL;
     }
-
-    j++;
   }
+
+  int k;
+  // packing
+  for (k = 0, j = 0; j < numRobots; j++) {
+    if (k != j) {
+      robotServer[k] = robotServer[j];
+      robots[k]      = robots[j];
+    }
+    if (robotServer[j])
+      k++;
+  }
+  numRobots = k;
 
   if (numRobots > 0) {
     makeObstacleList();
