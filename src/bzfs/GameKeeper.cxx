@@ -340,7 +340,7 @@ bool GameKeeper::Player::validatePlayerState(PlayerState state,
 {
   bool result = true;
   message     = "";
-  if (stateTimeStamp > 0.0f) {
+  if (stateTimeStamp > 0.0f && (state.status & PlayerState::Alive)) {
     float deltaSpeed
       = hypotf(state.velocity[0] - lastState.velocity[0],
 	       hypotf(state.velocity[1] - lastState.velocity[1],
