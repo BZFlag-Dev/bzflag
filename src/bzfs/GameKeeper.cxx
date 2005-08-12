@@ -347,7 +347,7 @@ bool GameKeeper::Player::validatePlayerState(PlayerState state,
 		      state.velocity[2] - lastState.velocity[2]));
     float deltaTime  = timestamp - stateTimeStamp;
     float maxAcc     = BZDB.eval(StateDatabase::BZDB_MAXLINEARACC);
-    if (deltaSpeed > deltaTime * maxAcc) {
+    if (maxAcc > 0.0f && deltaSpeed > deltaTime * maxAcc) {
       message = "tank accelearation above limit";
       result = false;
     }

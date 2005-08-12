@@ -67,7 +67,7 @@ const struct GlobalDBItem globalDBItems[] = {
   { "_lockOnAngle",		"0.15",				false, StateDatabase::Locked},
   { "_longitude",		"122",				false, StateDatabase::Locked},
   { "_lRAdRate",		"0.5",				false, StateDatabase::Locked},
-  { "_maxLinearAcceleration",	"99999.9",			false, StateDatabase::Locked},
+  { "_maxLinearAcceleration",	"-1.0", 			false, StateDatabase::Locked},
   { "_maxBumpHeight",		"0.33",				false, StateDatabase::Locked},
   { "_maxFlagGrabs",		"4.0",				false, StateDatabase::Locked},
   { "_maxLOD",			"32767.0",			false, StateDatabase::Locked},
