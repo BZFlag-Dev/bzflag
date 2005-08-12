@@ -1,34 +1,34 @@
 # This is generic Danish
 
 msgid "Join Game"
-msgstr "Tilslut spil"
+msgstr "Deltag i spil"
 
 msgid "da"
-msgstr "Danish"
+msgstr "Dansk"
 
-#msgid "translator"
-#msgstr ""
+msgid "translator"
+msgstr "Dennis Møllegaard Pedersen"
 
-#msgid "Find Server"
-#msgstr ""
+msgid "Find Server"
+msgstr "Find server"
 
 msgid "Connect"
 msgstr "Tilslut"
 
 msgid "Callsign:"
-msgstr "Navn"
+msgstr "Kaldenavn:"
 
 msgid "Team:"
-msgstr "Hold"
+msgstr "Hold:"
 
-#msgid "Server:"
-#msgstr ""
+msgid "Server:"
+msgstr "Server:"
 
-#msgid "Port:"
-#msgstr ""
+msgid "Port:"
+msgstr "Port:"
 
-#msgid "Start Server"
-#msgstr ""
+msgid "Start Server"
+msgstr "Start server"
 
 msgid "Up/Down arrows to move, Enter to select, Esc to dismiss"
 msgstr "Op/ned piltaster for at bevæge sig, Enter for at vælge, Esc for at fortryde"
@@ -42,14 +42,14 @@ msgstr "Hjælp"
 msgid "Quit"
 msgstr "Afslut"
 
-#msgid "on"
-#msgstr ""
+msgid "on"
+msgstr "til"
 
-msgid "Dithering:"
-msgstr "Punktning:"
+#msgid "Dithering:"
+#msgstr "Punktning:"
 
-#msgid "off"
-#msgstr ""
+msgid "off"
+msgstr "fra"
 
 msgid "Off"
 msgstr "Fra"
@@ -57,35 +57,35 @@ msgstr "Fra"
 msgid "On"
 msgstr "Til"
 
-msgid "Blending:"
-msgstr "Blandning:"
+#msgid "Blending:"
+#msgstr "Blandning:"
 
-msgid "Smoothing:"
-msgstr "Udjævning:"
+#msgid "Smoothing:"
+#msgstr "Udjævning:"
 
-msgid "Lighting:"
-msgstr "Lysforhold:"
+#msgid "Lighting:"
+#msgstr "Lysforhold:"
 
 msgid "Texturing:"
 msgstr "Teksturer:"
 
-msgid "Nearest"
-msgstr "Nærmest"
+#msgid "Nearest"
+#msgstr "Nærmest"
 
-msgid "Linear"
-msgstr "Lineær"
+#msgid "Linear"
+#msgstr "Lineær"
 
-msgid "Nearest Mipmap Nearest"
-msgstr "Nærmest Mipmap Nærmest"
+#msgid "Nearest Mipmap Nearest"
+#msgstr ""
 
-msgid "Linear Mipmap Nearest"
-msgstr "Lineær Mipmap Nærmest"
+#msgid "Linear Mipmap Nearest"
+#msgstr ""
 
-msgid "Nearest Mipmap Linear"
-msgstr "Nærmest Mipmap Lineær"
+#msgid "Nearest Mipmap Linear"
+#msgstr "Nærmest Mipmap Lineær"
 
-msgid "Linear Mipmap Linear"
-msgstr "Lineær Mipmap Lineær"
+#msgid "Linear Mipmap Linear"
+#msgstr "Lineær Mipmap Lineær"
 
 msgid "Quality:"
 msgstr "Kvalitet:"
@@ -102,14 +102,14 @@ msgstr "Høj"
 msgid "Shadows:"
 msgstr "Skygger:"
 
-msgid "Depth Buffer:"
-msgstr "Dybte Buffer:"
+#msgid "Depth Buffer:"
+#msgstr "Dybte Buffer:"
 
 msgid "Not available"
-msgstr "Ikke muligt"
+msgstr "Ikke tilgængeligt"
 
 msgid "Change Video Format"
-msgstr "Skift skærmopløsning"
+msgstr "Ændr skærmopløsning"
 
 msgid "Brightness:"
 msgstr "Lys styrke:"
@@ -117,44 +117,44 @@ msgstr "Lys styrke:"
 msgid "Sound Volume:"
 msgstr "Lyd styrke:"
 
-#msgid "Off / Backup Mode"
-#msgstr ""
+msgid "Off / Backup Mode"
+msgstr "Fra / Backup mode"
 
-#msgid "5 Minutes"
-#msgstr ""
+msgid "5 Minutes"
+msgstr "5 minutter"
 
-#msgid "15 Minutes"
-#msgstr ""
+msgid "15 Minutes"
+msgstr "15 minutter"
 
-#msgid "30 Minutes"
-#msgstr ""
+msgid "30 Minutes"
+msgstr "30 minutter"
 
-#msgid "1 Hour"
-#msgstr ""
+msgid "1 Hour"
+msgstr "1 time"
 
-#msgid "5 Hours"
-#msgstr ""
+msgid "5 Hours"
+msgstr "5 timer"
 
-#msgid "15 Hours"
-#msgstr ""
+msgid "15 Hours"
+msgstr "15 timer"
 
-#msgid "1 day"
-#msgstr ""
+msgid "1 day"
+msgstr "1 dag"
 
-#msgid "15 days"
-#msgstr ""
+msgid "15 days"
+msgstr "15 dage"
 
-#msgid "30 days"
-#msgstr ""
+msgid "30 days"
+msgstr "30 dage"
 
 msgid "UDP network connection:"
-msgstr "Brug UDP:"
+msgstr "Brug UDP forbindelse:"
 
-#msgid "Server List Cache:"
-#msgstr ""
+msgid "Server List Cache:"
+msgstr "Server list cache:"
 
-#msgid "Clear Server List Cache"
-#msgstr ""
+msgid "Clear Server List Cache"
+msgstr "Ryd server list cachen"
 
 msgid "Change Key Mapping"
 msgstr "Ændre tasterturopsætning"
@@ -183,20 +183,20 @@ msgstr "Farvet skud på radaren:"
 msgid "Radar Shot Length:"
 msgstr "Radar skud længde:"
 
-#msgid "Radar & Panel Size:"
-#msgstr ""
+msgid "Radar & Panel Size:"
+msgstr "Radar- & panelstørrelse:"
 
-#msgid "Mouse Box Size:"
-#msgstr ""
+msgid "Mouse Box Size:"
+msgstr "Muskasse størrelse:"
 
-#msgid "Control panel coloring:"
-#msgstr ""
+msgid "Control panel coloring:"
+msgstr "Kontrolpanel farve:"
 
-#msgid "Underline color:"
-#msgstr ""
+msgid "Underline color:"
+msgstr "Understregningsfarve:"
 
-#msgid "Killer Highlight:"
-#msgstr ""
+msgid "Killer Highlight:"
+msgstr "Dræber fremhævelse:"
 
 msgid "Page Down for next page"
 msgstr "'Page Down' til næste side"
@@ -288,14 +288,14 @@ msgstr "Tid fremad:"
 msgid "Time Backward:"
 msgstr "Tid tilbage:"
 
-#msgid "Pause/Resume:"
-#msgstr "Pause/Resume"
+msgid "Pause/Resume:"
+msgstr "Pause/Forsæt"
 
 msgid "Self Destruct/Cancel:"
 msgstr "Selvmord/Fortryd:"
 
-#msgid "SelfDestruct/Cancel:"
-#msgstr ""
+msgid "SelfDestruct/Cancel:"
+msgstr "Selvmord/Fortryd:"
 
 msgid "Fast Quit:"
 msgstr "Hurtig afslut:"
@@ -369,8 +369,8 @@ msgstr "stil tidspunkt tilbage"
 msgid "set time of day forward"
 msgstr "stil tidspuntk frem"
 
-#msgid "pause/resume"
-#msgstr "pause/resume"
+msgid "pause/resume"
+msgstr "pause/forsæt"
 
 msgid "self Destruct/Cancel"
 msgstr "selvmord/fortryd"
@@ -384,35 +384,35 @@ msgstr "spol tilbage i beskeder"
 msgid "scroll message log forward"
 msgstr "spol frem i beskeder"
 
-#msgid "Slow Keyboard Motion"
-#msgstr ""
+msgid "Slow Keyboard Motion"
+msgstr "Langsom keyboard bevægelse"
 
-#msgid "Toggle Radar Flags"
-#msgstr ""
+msgid "Toggle Radar Flags"
+msgstr "Vis flag i radar (til/fra)"
 
-#msgid "Toggle Main Flags"
-#msgstr ""
+msgid "Toggle Main Flags"
+msgstr "Vis flag (til/fra)"
 
-#msgid "Silence/UnSilence"
-#msgstr ""
+msgid "Silence/UnSilence"
+msgstr "Ignorer/Ophæv ignorer"
 
-#msgid "Server Admin"
-#msgstr ""
+msgid "Server Admin"
+msgstr "Server admin"
 
-#msgid "Hunt"
-#msgstr ""
+msgid "Hunt"
+msgstr "Jæg"
 
-#msgid "autopilot enabled"
-#msgstr ""
+msgid "autopilot enabled"
+msgstr "automatpilot"
 
-#msgid "autopilot disabled"
-#msgstr ""
+msgid "autopilot disabled"
+msgstr "automatpilot fjernet"
 
 msgid "show/dismiss menu"
 msgstr "vis/skjul menu"
 
-#msgid "Esc:"
-#msgstr "Esc:"
+msgid "Esc:"
+msgstr "Esc:"
 
 msgid "Maintainer:"
 msgstr "Nuværende udvikler:"
@@ -486,8 +486,8 @@ msgstr "Fri"
 msgid "Capture-the-Flag"
 msgstr "Erobre-flaget"
 
-#msgid "Rabbit Chase"
-#msgstr ""
+msgid "Rabbit Chase"
+msgstr "Kaninjagt"
 
 msgid "Super Flags"
 msgstr "Super flag"
@@ -519,122 +519,122 @@ msgstr "Skjult"
 msgid "Zoned"
 msgstr "Fantom"
 
-#msgid "You are now the rabbit."
-#msgstr ""
+msgid "You are now the rabbit."
+msgstr "Du er nu kaninen"
 
-#msgid "Servers found: {1}"
-#msgstr ""
+msgid "Servers found: {1}"
+msgstr "Servers fundet: {1}"
 
-#msgid "{1} Shot"
-#msgstr ""
+msgid "{1} Shot"
+msgstr "{1} skud"
 
-#msgid "{1} Shots"
-#msgstr ""
+msgid "{1} Shots"
+msgstr "{1} skud"
 
-#msgid "{1} sec To Drop Bad Flag"
-#msgstr ""
+msgid "{1} sec To Drop Bad Flag"
+msgstr "{1} sekund før flag smides"
 
-#msgid "{1} secs To Drop Bad Flag"
-#msgstr ""
+msgid "{1} secs To Drop Bad Flag"
+msgstr "{1} sekunder før flag fjernes"
 
-#msgid "{1} Win Drops Bad Flag"
-#msgstr ""
+msgid "{1} Win Drops Bad Flag"
+msgstr "{1} drab før flaget fjernes"
 
-#msgid "{1} Wins Drops Bad Flag"
-#msgstr ""
+msgid "{1} Wins Drops Bad Flag"
+msgstr "{1} drab før flaget fjernes"
 
-#msgid "Time limit: {1}"
-#msgstr ""
+msgid "Time limit: {1}"
+msgstr "Tidsgrænse: {1}"
 
-#msgid "Max team score: {1}"
-#msgstr ""
+msgid "Max team score: {1}"
+msgstr "Max hold score: {1}"
 
-#msgid "Max player score: {1}"
-#msgstr ""
+msgid "Max player score: {1}"
+msgstr "Max spiller score: {1}"
 
-#msgid "Page {1} of {2}"
-#msgstr ""
+msgid "Page {1} of {2}"
+msgstr "Side {1} af {2}"
 
-#msgid "openBroadcast: No udp service {1}"
-#msgstr ""
+msgid "openBroadcast: No udp service {1}"
+msgstr "openBroadcast: Ingen UDP service {1}"
 
-#msgid "joystick '{1}' not supported..."
-#msgstr ""
+msgid "joystick '{1}' not supported..."
+msgstr "joystick '{1}' understøttes ikke.."
 
-#msgid "Server did send endpoint information, UDP connection up"
-#msgstr ""
+msgid "Server did send endpoint information, UDP connection up"
+msgstr "Server sendte endpoint information, UDP forbindelse benyttes"
 
-#msgid "Ignoring Finder argument '{1}'"
-#msgstr ""
+msgid "Ignoring Finder argument '{1}'"
+msgstr "Ignorer søgeargument '{1}'"
 
-#msgid "Can't open list server: {1}"
-#msgstr ""
+msgid "Can't open list server: {1}"
+msgstr "Kan ikke åbne list server: {1}"
 
-#msgid "Server sent downlink endpoint information, port {1}"
-#msgstr ""
+msgid "Server sent downlink endpoint information, port {1}"
+msgstr "Server sendte downlink endpoint information, port {1}"
 
-#msgid "Communication error joining game [Wrong Code {1}]."
-#msgstr ""
+msgid "Communication error joining game [Wrong Code {1}]."
+msgstr "Kommunikationsfejl ved tilslutning til spillet [Forkert kode {1}]."
 
-#msgid "Server sent UDP request, UDP up. Info: [{1}:{2}:{3}]"
-#msgstr ""
+msgid "Server sent UDP request, UDP up. Info: [{1}:{2}:{3}]"
+msgstr "Server beder om UDP, UDP benyttes. Info: [{1}:{2}:{3}]"
 
-#msgid "Configuration file:  Error on line {1}: Stream failure"
-#msgstr ""
+msgid "Configuration file:  Error on line {1}: Stream failure"
+msgstr "Konfigurationsfil:  Fejl i linje {1}: læsefejl"
 
-#msgid "Configuration file:  Error on line {1}: Line too long"
-#msgstr ""
+msgid "Configuration file:  Error on line {1}: Line too long"
+msgstr "Konfigurationsfil:  Fejl i linje {1}: Linjen er for lang"
 
-#msgid "Network: Created local UDP downlink port {1}"
-#msgstr ""
+msgid "Network: Created local UDP downlink port {1}"
+msgstr "Netværk: Oprettet lokal UDP downlink port {1}"
 
 #msgid "msgid "
 #msgstr ""
 
-#msgid "More Info: [{1}:{2}:{3}]"
-#msgstr ""
+msgid "More Info: [{1}:{2}:{3}]"
+msgstr "Yderligere info: [{1}:{2}:{3}]"
 
-#msgid "cannot load texture: {1}"
-#msgstr ""
+msgid "cannot load texture: {1}"
+msgstr "Kan ikke indlæse tekstur: {1}"
 
-#msgid "Connection failed."
-#msgstr ""
+msgid "Connection failed."
+msgstr "Forbindelse mislykkes."
 
-#msgid "Server forced a disconnect"
-#msgstr ""
+msgid "Server forced a disconnect"
+msgstr "Serveren har afbrudt forbindelsen"
 
-#msgid "Rogues not allowed.  Try another team."
-#msgstr ""
+msgid "Rogues not allowed.  Try another team."
+msgstr "Slyngler ikke tilladt. Prøv et andet hold."
 
-#msgid "This team is full.  Try another team."
-#msgstr ""
+msgid "This team is full.  Try another team."
+msgstr "Dette hold er fuldt. Prø et andet hold."
 
-#msgid "This game is full.  Try again later."
-#msgstr ""
+msgid "This game is full.  Try again later."
+msgstr "Spillet er optaget. Prøv igen senere."
 
-#msgid "Game is full or over.  Try again later."
-#msgstr ""
+msgid "Game is full or over.  Try again later."
+msgstr "Spillet er optaget eller afsluttet. Prøv igen senere"
 
-#msgid "Error connecting to server."
-#msgstr ""
+msgid "Error connecting to server."
+msgstr "Fejl ved tilslutning til server."
 
-#msgid "Error downloading world database"
-#msgstr ""
+msgid "Error downloading world database"
+msgstr "Indlæsning af verdensdatabase fejlede"
 
-#msgid "Score"
-#msgstr ""
+msgid "Score"
+msgstr "Score"
 
-#msgid "Kills"
-#msgstr ""
+msgid "Kills"
+msgstr "Dræbte"
 
-#msgid "Team Score"
-#msgstr ""
+msgid "Team Score"
+msgstr "Hold score"
 
-#msgid "Locale:"
-#msgstr ""
+msgid "Locale:"
+msgstr "Sprog:"
 
-#msgid "Player"
-#msgstr ""
+msgid "Player"
+msgstr "Spiller"
 
 # Super Flags
 
@@ -648,7 +648,7 @@ msgid "Oscillation Overthruster"
 msgstr "Oscillation Overthruster"
 
 msgid "Rapid Fire"
-msgstr "Turbo-skud"
+msgstr "Turboskud"
 
 msgid "Machine Gun"
 msgstr "Maskinegevær"
@@ -736,101 +736,98 @@ msgstr "Dit holds flag: forhindre andre hold i at fange det!"
 msgid "Opponent's team flag:  take it to your base to capture it!"
 msgstr "Modstanderens flag: tag det til din base for at erobre det!"
 
-#msgid "Velocity (V):  Tank moves faster.  Outrun bad guys."
-#msgstr ""
+msgid "Velocity (V):  Tank moves faster.  Outrun bad guys."
+msgstr "Hastighed (V):  Kampvognen kører stærkere."
 
-#msgid "Useless"
-#msgstr ""
+msgid "Useless"
+msgstr "Ubrugelig"
 
-#msgid "Thief"
-#msgstr ""
+msgid "Thief"
+msgstr "Tyv"
 
 #msgid "Masquerade"
 #msgstr ""
 
-#msgid "Seer"
+msgid "Seer"
 #msgstr ""
 
 #msgid "Burrow"
 #msgstr ""
 
-#msgid "Angular velocity (A): Tank turns faster.  Dodge quicker."
-#msgstr ""
+msgid "Angular velocity (A): Tank turns faster.  Dodge quicker."
+msgstr "Hurtig manøvre (A): Kampvognen drejer hurtigere."
 
-#msgid "Team flag:  If it's yours, prevent other teams from taking it.  If it's not take it to your base to capture it!"
-#msgstr ""
+msgid "Team flag:  If it's yours, prevent other teams from taking it.  If it's not take it to your base to capture it!"
+msgstr "Team flag:  Hvis det er dit holds flag; Forhindre de andre hold i at tage det. Hvis det er et andet holds flag; Tag det hjem til din base!"
 
-#msgid "Oscillation Overthruster (OO):  Can drive through buildings.  Can't backup or shoot while inside."
-#msgstr ""
+msgid "Oscillation Overthruster (OO):  Can drive through buildings.  Can't backup or shoot while inside."
+msgstr "Oscullation Overthruster (OO):  Kan køre igennem bygninger, men du har ikke muliged for at skyde inde fra bygninger."
 
-#msgid "rapid Fire (F):  Shoots more often.  Shells go faster but not as far."
-#msgstr ""
+msgid "rapid Fire (F):  Shoots more often.  Shells go faster but not as far."
+msgstr "Turboskud (F):  Skyd ofte, men dine skud har kortere rækkevidde."
 
-#msgid "Machine Gun (MG):  Very fast reload and very short range."
-#msgstr ""
+msgid "Machine Gun (MG):  Very fast reload and very short range."
+msgstr "Maskinegevær (MG):  Hurtig ladning men meget kort rækkevidde."
 
-#msgid "Guided Missile (GM):  Shots track a target.  Lock on with right button.  Can lock on or retarget after firing."
-#msgstr ""
+msgid "Guided Missile (GM):  Shots track a target.  Lock on with right button.  Can lock on or retarget after firing."
+msgstr "Varmesøgende missler (+GM): Lås med højre knap og missilet vil følge målet. Man kan også skyde før man låser missilet på et mål."
 
-#msgid "Laser (L):  Shoots a laser.  Infinite speed and range but long reload time."
-#msgstr ""
+msgid "Laser (L):  Shoots a laser.  Infinite speed and range but long reload time."
+msgstr "Laser (L):  Skyd med laser. Uendelig hurtig og rækkevidde, men lang ladetid."
 
-#msgid "Ricochet (R):  Shots bounce off walls.  Don't shoot yourself!"
-#msgstr ""
+msgid "Ricochet (R):  Shots bounce off walls.  Don't shoot yourself!"
+msgstr "Ricochet (R):  Skud reflekteres af vægge. Undgå at ramme dig selv!"
 
-#msgid "SuperBullet (SB):  Shoots through buildings.  Can kill Phantom Zone."
-#msgstr ""
+msgid "SuperBullet (SB):  Shoots through buildings.  Can kill Phantom Zone."
+msgstr "Superskud (SB):  Skyd igennem bygninger. Kan dræbe fantom kampvogne"
 
-#msgid "Invisible Bullet (IB):  Your shots don't appear on other radars.  Can still see them out window."
-#msgstr ""
+msgid "Invisible Bullet (IB):  Your shots don't appear on other radars.  Can still see them out window."
+msgstr "Usynlige skud (IB):  Dine skud kan ikke ses på radaren."
 
-#msgid "STealth (ST):  Tank is invisible on radar.  Shots are still visible.  Sneak up behind enemies!"
-#msgstr ""
+msgid "STealth (ST):  Tank is invisible on radar.  Shots are still visible.  Sneak up behind enemies!"
+msgstr "Stealth (ST):  Kampvognene er usynlige på radaren, mens skud stadig kan ses"
 
-#msgid "Tiny (T):  Tank is small and can get through small openings.  Very hard to hit."
-#msgstr ""
+msgid "Tiny (T):  Tank is small and can get through small openings.  Very hard to hit."
+msgstr "Lille (T):  Kampvognen er lille og kan komme igennem smalle passaser. Svær at ramme"
 
-#msgid "Narrow (N):  Tank is super thin.  Very hard to hit from front but is normal size from side.  Can get through small openings."
-#msgstr ""
+msgid "Narrow (N):  Tank is super thin.  Very hard to hit from front but is normal size from side.  Can get through small openings."
+msgstr "Smal (N):  Kampvognen er supersmal.  Meget svær at ramme fra fronten men har normal størrelse fra siderne."
 
-#msgid "SHield (SH):  Getting hit only drops flag.  Flag flys an extra-long time."
-#msgstr ""
+msgid "SHield (SH):  Getting hit only drops flag.  Flag flys an extra-long time."
+msgstr "Skjold (SH):  Når du rammes, taber du blot flaget."
 
-#msgid "SteamRoller (SR):  Destroys tanks you touch but you have to get really close."
-#msgstr ""
+msgid "SteamRoller (SR):  Destroys tanks you touch but you have to get really close."
+msgstr "Damptromle (SR):  Dræber kampvogne så snart du rører dem."
 
-#msgid "Shock Wave (SW):  Firing destroys all tanks nearby.  Don't kill teammates!  Can kill tanks on/in buildings."
-#msgstr ""
+msgid "Shock Wave (SW):  Firing destroys all tanks nearby.  Don't kill teammates!  Can kill tanks on/in buildings."
+msgstr "Shockbølge (SW):  Dræber alle kampvogne i nærheden. Undgå at dræbe holdkammerater. Kan dræbe kampvogne i/på bygninger."
 
-#msgid "Phantom Zone (PZ):  Teleporting toggles Zoned effect.  Zoned tank can drive through buildings.  Zoned tank can't shoot or be shot (except by superbullet and shock wave)."
-#msgstr ""
+msgid "Phantom Zone (PZ):  Teleporting toggles Zoned effect.  Zoned tank can drive through buildings.  Zoned tank can't shoot or be shot (except by superbullet and shock wave)."
+msgstr "Fantom zone (PZ):   Teleportering slå zone effekten til/fra. Kampvogne i zonen kan køre igennem bygninger, men kan ikke skyde eller bliver skudt (undtaget med superskud eller shockbølgen)."
 
-#msgid "Genocide (G):  Killing one tank kills that tank's whole team."
-#msgstr ""
+msgid "Genocide (G):  Killing one tank kills that tank's whole team."
+msgstr "Massemord (G):  Hvis du rammer en kampvogn, dør alle på holdet."
 
-#msgid "JumPing (JP):  Tank can jump.  Use Tab key.  Can't steer in the air."
-#msgstr ""
+msgid "JumPing (JP):  Tank can jump.  Use Tab key.  Can't steer in the air."
+msgstr "Hop (JP):  Din kampvogn kan hoppe - brug tab tasten.  Du kan ikke styre i luften."
 
-#msgid "IDentify (ID):  Identifies type of nearest flag."
-#msgstr ""
+msgid "IDentify (ID):  Identifies type of nearest flag."
+msgstr "Identificér (ID):  Identificér det nærmeste flag."
 
-#msgid "CLoaking (CL):  Makes your tank invisible out-the-window.  Still visible on radar."
-#msgstr ""
+msgid "CLoaking (CL):  Makes your tank invisible out-the-window.  Still visible on radar."
+msgstr "Usynlighed (CL):  Gør din kampvogn usynlig - men den kan stadig ses på radaren."
 
 msgid "Velocity (+V):  Tank moves faster.  Outrun bad guys."
 msgstr "Hurtighed (+V): Din tank bevæger sig hurtigere."
 
 msgid "Angular velocity (+A): Tank turns faster.  Dodge quicker."
-msgstr "Drejehastighed (+A): Din tank drejer hurtigere. Nemmere at undgå skud."
-
-#msgid "Angular velocity (+A):  Tank turns faster.  Dodge quicker."
-#msgstr ""
+msgstr "Hurtig manøvre (+A): Din tank drejer hurtigere. Nemmere at undgå skud."
 
 msgid "Oscillation Overthruster (+OO):  Can drive through buildings.  Can't backup or shoot while inside."
 msgstr "Oscillation Overthruster (+OO):  Kan kører igennem bygninger. Men kan ikke skyde derinde."
 
 msgid "rapid Fire (+F):  Shoots more often.  Shells go faster but not as far."
-msgstr "Turbo-skud (+F):  Skyd oftere. Skuddene flyver hurtigere men ikke ligeså langt."
+msgstr "Turboskud (+F):  Skyd oftere. Skuddene flyver hurtigere men ikke ligeså langt."
 
 msgid "Machine Gun (+MG):  Very fast reload and very short range."
 msgstr "Maskingevær (+MG):  Meget hurtig til at lade og meget kort rækkevidde."
@@ -852,9 +849,6 @@ msgstr "Usynlige skud (+IB): Dine skud er ikke synlige på andres radar, men kan 
 
 msgid "STealth (+ST):  Tank is invisible on radar.  Shots are still visible.  Sneak up behind enemies!"
 msgstr "STealth (+ST): Din tank kan ikke ses på radaren, men dine skud kan."
-
-#msgid "Stealth (+ST):  Tank is invisible on radar.  Shots are still visible.  Sneak up behind enemies!"
-#msgstr ""
 
 msgid "Tiny (+T):  Tank is small and can get through small openings.  Very hard to hit."
 msgstr "Lille (+T): Tanken er lille og kan komme igennem små sprækker. Svær at ramme."
@@ -1090,7 +1084,7 @@ msgid "faster shots more often"
 msgstr "hurtigere skud"
 
 msgid "Rapid Fire (F)"
-msgstr "Turbo-skud (F)"
+msgstr "Turboskud (F)"
 
 msgid "very fast reload, very short range"
 msgstr "lader hurtigt, meget kort rækkevidde"
@@ -1267,172 +1261,172 @@ msgstr "er gule. Størrelsen på tankens prik er en indikation af hvor "
 msgid "altitude:  higher tanks have larger dots.  Flags are small crosses.  Team"
 msgstr "højt oppe tanken er: jo større prik jo højere oppe. Flag er små krydser. Holdflag"
 
-#msgid "Toggle Radar Flags:"
-#msgstr ""
+msgid "Toggle Radar Flags:"
+msgstr "Radar flag (til/fra): "
 
-#msgid "Toggle Main Flags:"
-#msgstr ""
+msgid "Toggle Main Flags:"
+msgstr "Flag (til/fra): "
 
-#msgid "Silience/UnSilence"
-#msgstr ""
+msgid "Silience/UnSilence"
+msgstr "Ignorer/Ophæv ignorer"
 
-#msgid "Silience/UnSilence Key:"
-#msgstr ""
+msgid "Silience/UnSilence Key:"
+msgstr "Ignorer/Ophæv ignorer tast"
 
-#msgid "Server Command Key:"
-#msgstr ""
+msgid "Server Command Key:"
+msgstr "Server kommandotast: "
 
-#msgid "self destruct/cancel"
-#msgstr ""
+msgid "self destruct/cancel"
+msgstr "selvmord/fortryd"
 
-# Start serveru
 # Start server
-#msgid "yes"
-#msgstr ""
 
-#msgid "no"
-#msgstr ""
+msgid "yes"
+msgstr "ja"
 
-#msgid "Style:"
-#msgstr ""
+msgid "no"
+msgstr "nej"
 
-#msgid "Free for All"
-#msgstr ""
+msgid "Style:"
+msgstr "Stil"
 
-#msgid "Capture the Flag"
-#msgstr ""
+msgid "Free for All"
+msgstr "Frit for alle"
 
-#msgid "Max Players:"
-#msgstr ""
+msgid "Capture the Flag"
+msgstr "Erobre-flaget"
 
-#msgid "Max Shots:"
-#msgstr ""
+msgid "Max Players:"
+msgstr "Max antal spillere:"
 
-#msgid "Teleporters:"
-#msgstr ""
+msgid "Max Shots:"
+msgstr "Max antal skud:"
+
+msgid "Teleporters:"
+msgstr "Teleporters:"
 
 #msgid "Ricochet:"
 #msgstr ""
 
-#msgid "Jumping:"
-#msgstr ""
+msgid "Jumping:"
+msgstr "Hob"
 
-#msgid "Superflags:"
-#msgstr ""
+msgid "Superflags:"
+msgstr "Superflag:"
 
-#msgid "all flags"
-#msgstr ""
+msgid "all flags"
+msgstr "alle flag"
 
-#msgid "good flags only"
-#msgstr ""
+msgid "good flags only"
+msgstr "kun gode flag"
 
-#msgid "Max Superflags:"
-#msgstr ""
+msgid "Max Superflags:"
+msgstr "Max antal superflag:"
 
-#msgid "Bad Flag Antidote:"
-#msgstr ""
+msgid "Bad Flag Antidote:"
+msgstr "Dårlig flag modgift:"
 
-#msgid "Bad Flag Time Limit:"
-#msgstr ""
+msgid "Bad Flag Time Limit:"
+msgstr "Dårlig flag tidsgrænse:"
 
-#msgid "no limit"
-#msgstr ""
+msgid "no limit"
+msgstr "ingen grænse"
 
-#msgid "15 seconds"
-#msgstr ""
+msgid "15 seconds"
+msgstr "15 sekunder"
 
-#msgid "30 seconds"
-#msgstr ""
+msgid "30 seconds"
+msgstr "30 sekunder"
 
-#msgid "60 seconds"
-#msgstr ""
+msgid "60 seconds"
+msgstr "60 sekunder"
 
-#msgid "180 seconds"
-#msgstr ""
+msgid "180 seconds"
+msgstr "180 sekunder"
 
-#msgid "Bad Flag Win Limit:"
-#msgstr ""
+msgid "Bad Flag Win Limit:"
+msgstr "Dårlig flag drab grænse:"
 
-#msgid "drop after 1 win"
-#msgstr ""
+msgid "drop after 1 win"
+msgstr "smid efter 1 drab"
 
-#msgid "drop after 2 wins"
-#msgstr ""
+msgid "drop after 2 wins"
+msgstr "smid efter 2 drab"
 
-#msgid "drop after 3 wins"
-#msgstr ""
+msgid "drop after 3 wins"
+msgstr "smid efter 3 drab"
 
-#msgid "Server Visibility:"
-#msgstr ""
+msgid "Server Visibility:"
+msgstr "Server synlighed:"
 
-#msgid "local host only (ttl=0)"
-#msgstr ""
+msgid "local host only (ttl=0)"
+msgstr "kun localhost (ttl=0)"
 
-#msgid "subnet only (ttl=1)"
-#msgstr ""
+msgid "subnet only (ttl=1)"
+msgstr "kun subnet (ttl=1)"
 
-#msgid "local area (ttl=8)"
-#msgstr ""
+msgid "local area (ttl=8)"
+msgstr "lan (ttl=8)"
 
 #msgid "site (ttl=32)"
 #msgstr ""
 
-#msgid "organization (ttl=64)"
-#msgstr ""
+msgid "organization (ttl=64)"
+msgstr "organisation (ttl=64)"
 
-#msgid "continent (ttl=128)"
-#msgstr ""
+msgid "continent (ttl=128)"
+msgstr "kontinent (ttl=128)"
 
-#msgid "world (ttl=255)"
-#msgstr ""
+msgid "world (ttl=255)"
+msgstr "verden (ttl=255)"
 
-#msgid "Game Over:"
-#msgstr ""
+msgid "Game Over:"
+msgstr "Spillet afsluttes:"
 
-#msgid "never"
-#msgstr ""
+msgid "never"
+msgstr "aldrig"
 
-#msgid "after 5 minutes"
-#msgstr ""
+msgid "after 5 minutes"
+msgstr "efter 5 minutter"
 
-#msgid "after 15 minutes"
-#msgstr ""
+msgid "after 15 minutes"
+msgstr "efter 15 minutter"
 
-#msgid "after 60 minutes"
-#msgstr ""
+msgid "after 60 minutes"
+msgstr "efter 60 minutter"
 
-#msgid "after 3 hours"
-#msgstr ""
+msgid "after 3 hours"
+msgstr "efter 3 timer"
 
-#msgid "when a player gets +3"
-#msgstr ""
+msgid "when a player gets +3"
+msgstr "når en spiller når +3"
 
-#msgid "when a player gets +10"
-#msgstr ""
+msgid "when a player gets +10"
+msgstr "når en spiller når +10"
 
-#msgid "when a player gets +25"
-#msgstr ""
+msgid "when a player gets +25"
+msgstr "når en spiller når +25"
 
-#msgid "when a team gets +3"
-#msgstr ""
+msgid "when a team gets +3"
+msgstr "når et hold når +3"
 
-#msgid "when a team gets +10"
-#msgstr ""
+msgid "when a team gets +10"
+msgstr "når et hold når +10"
 
-#msgid "when a team gets +25"
-#msgstr ""
+msgid "when a team gets +25"
+msgstr "når et hold når +25"
 
-#msgid "when a team gets +100"
-#msgstr ""
+msgid "when a team gets +100"
+msgstr "når et hold når +100"
 
-#msgid "Server Reset:"
-#msgstr ""
+msgid "Server Reset:"
+msgstr "Server reset:"
 
-#msgid "no, quit after game"
-#msgstr ""
+msgid "no, quit after game"
+msgstr "nej, afslut spillet"
 
-#msgid "yes, reset for more games"
-#msgstr ""
+msgid "yes, reset for more games"
+msgstr "ja, reset og spil igen"
 
 msgid "flags are in the team color, superflags are white, and the antidote flag"
 msgstr "er i holdes egen farve, superflag er hvide, modgiftsflag er gule."
@@ -1443,223 +1437,223 @@ msgstr "Skud er små prikker, laser er linier og shockbølger er cirkler. "
 #msgid "cyan"
 #msgstr ""
 
-#msgid "grey"
-#msgstr ""
+msgid "grey"
+msgstr "grå"
 
-#msgid "text"
-#msgstr ""
+msgid "text"
+msgstr "tekst"
 
 msgid "shock waves, respectively).  Your tank is always dead center and forward"
 msgstr "Din egen tank er altid i centrum og fremad er altid op"
 
-#msgid "None"
-#msgstr ""
+msgid "None"
+msgstr "Ingen"
 
-#msgid "Pulsating"
-#msgstr ""
+msgid "Pulsating"
+msgstr "Blinkende"
 
-#msgid "Underline"
-#msgstr ""
+msgid "Underline"
+msgstr "Understreget"
 
-# Identifikace vlajek
 # Flags identification
-#msgid "Closest Flag: High Speed"
-#msgstr ""
 
-#msgid "Closest Flag: Quick Turn"
-#msgstr ""
+msgid "Closest Flag: High Speed"
+msgstr "Nærmeste flag: Høj hastighed"
 
-#msgid "Closest Flag: Oscillation Overthurster"
-#msgstr ""
+msgid "Closest Flag: Quick Turn"
+msgstr "Nærmeste flag: Hurtig manøvre"
 
-#msgid "Closest Flag: Rapid Fire"
-#msgstr ""
+msgid "Closest Flag: Oscillation Overthurster"
+msgstr "Nærmeste flag: Oscillation Overthruster"
 
-#msgid "Closest Flag: Machine Gun"
-#msgstr ""
+msgid "Closest Flag: Rapid Fire"
+msgstr "Nærmeste flag: Turboskud"
 
-#msgid "Closest Flag: Guided Missile"
-#msgstr ""
+msgid "Closest Flag: Machine Gun"
+msgstr "Nærmeste flag: Maskingevær"
 
-#msgid "Closest Flag: Laser"
-#msgstr ""
+msgid "Closest Flag: Guided Missile"
+msgstr "Nærmeste flag: Varmesøgende missiler"
 
-#msgid "Closest Flag: Ricochet"
-#msgstr ""
+msgid "Closest Flag: Laser"
+msgstr "Nærmeste flag: Laser"
 
-#msgid "Closest Flag: Super Bullet"
-#msgstr ""
+msgid "Closest Flag: Ricochet"
+msgstr "Nærmeste flag: Ricochet"
 
-#msgid "Closest Flag: Stealth"
-#msgstr ""
+msgid "Closest Flag: Super Bullet"
+msgstr "Nærmeste flag: Superskud"
 
-#msgid "Closest Flag: Cloaking"
-#msgstr ""
+msgid "Closest Flag: Stealth"
+msgstr "Nærmeste flag: Stealth"
 
-#msgid "Closest Flag: Invisible Bullet"
-#msgstr ""
+msgid "Closest Flag: Cloaking"
+msgstr "Nærmeste flag: Usynlighed"
 
-#msgid "Closest Flag: Tiny"
-#msgstr ""
+msgid "Closest Flag: Invisible Bullet"
+msgstr "Nærmeste flag: Usynlige skud"
 
-#msgid "Closest Flag: Narrow"
-#msgstr ""
+msgid "Closest Flag: Tiny"
+msgstr "Nærmeste flag: Lille"
 
-#msgid "Closest Flag: Shield"
-#msgstr ""
+msgid "Closest Flag: Narrow"
+msgstr "Nærmeste flag: Smal"
 
-#msgid "Closest Flag: Steamroller"
-#msgstr ""
+msgid "Closest Flag: Shield"
+msgstr "Nærmeste flag: Skjold"
 
-#msgid "Closest Flag: Shock Wave"
-#msgstr ""
+msgid "Closest Flag: Steamroller"
+msgstr "Nærmeste flag: Damptromle"
 
-#msgid "Closest Flag: Phantom Zone"
-#msgstr ""
+msgid "Closest Flag: Shock Wave"
+msgstr "Nærmeste flag: Shockbølge"
 
-#msgid "Closest Flag: Genocide"
-#msgstr ""
+msgid "Closest Flag: Phantom Zone"
+msgstr "Nærmeste flag: Fantom zone"
 
-#msgid "Closest Flag: Jumping"
-#msgstr ""
+msgid "Closest Flag: Genocide"
+msgstr "Nærmeste flag: Massemord"
 
-#msgid "Closest Flag: Identify"
-#msgstr ""
+msgid "Closest Flag: Jumping"
+msgstr "Nærmeste flag: Hop"
 
-#msgid "Closest Flag: Colorblindness"
-#msgstr ""
+msgid "Closest Flag: Identify"
+msgstr "Nærmeste flag: Identificér"
 
-#msgid "Closest Flag: Obesity"
-#msgstr ""
+msgid "Closest Flag: Colorblindness"
+msgstr "Nærmeste flag: Farveblindhed"
 
-#msgid "Closest Flag: Left Turn Only"
-#msgstr ""
+msgid "Closest Flag: Obesity"
+msgstr "Nærmeste flag: Forstørrelse"
 
-#msgid "Closest Flag: Right Turn Only"
-#msgstr ""
+msgid "Closest Flag: Left Turn Only"
+msgstr "Nærmeste flag: Kun venstresving"
 
-#msgid "Closest Flag: Momentum"
-#msgstr ""
+msgid "Closest Flag: Right Turn Only"
+msgstr "Nærmeste flag: Kun højresving"
 
-#msgid "Closest Flag: Blindness"
-#msgstr ""
+msgid "Closest Flag: Momentum"
+msgstr "Nærmeste flag: Dobbelt vægt"
 
-#msgid "Closest Flag: Jamming"
-#msgstr ""
+msgid "Closest Flag: Blindness"
+msgstr "Nærmeste flag: Blindhed"
 
-#msgid "Closest Flag: Wide Angle"
-#msgstr ""
+msgid "Closest Flag: Jamming"
+msgstr "Nærmeste flag: Jamming"
 
-# Ostatni
+msgid "Closest Flag: Wide Angle"
+msgstr "Nærmeste flag: Vid vinkel"
+
 # Other
-#msgid "Server started."
-#msgstr ""
 
-#msgid "Shot myself"
-#msgstr ""
+msgid "Server started."
+msgstr "Serveren startet."
 
-# !!! Hlaseni nize nelze prelozit :-(
+msgid "Shot myself"
+msgstr "Skød migselv"
+
 # !!! Messages below cannot be translated :-(
 
 # Informace o vlajce, kterou sebrali hraci
 # Informations about flags grabbed by opponents
-#msgid "grabbed High Speed flag"
-#msgstr ""
 
-#msgid "grabbed Quick Turn flag"
-#msgstr ""
+msgid "grabbed High Speed flag"
+msgstr "tog 'Høj hastighed' flaget"
 
-#msgid "grabbed Oscillation Overthurster flag"
-#msgstr ""
+msgid "grabbed Quick Turn flag"
+msgstr "tog 'Hurtig manøvre' flaget"
 
-#msgid "grabbed Rapid Fire flag"
-#msgstr ""
+msgid "grabbed Oscillation Overthurster flag"
+msgstr "tog 'Oscillation Overthurster' flaget"
 
-#msgid "grabbed Machine Gun flag"
-#msgstr ""
+msgid "grabbed Rapid Fire flag"
+msgstr "tog 'Hurtig sud' flaget"
 
-#msgid "grabbed Guided Missile flag"
-#msgstr ""
+msgid "grabbed Machine Gun flag"
+msgstr "tog 'Maskinegevær' flaget"
 
-#msgid "grabbed Laser flag"
-#msgstr ""
+msgid "grabbed Guided Missile flag"
+msgstr "tog 'Varmesøgende missiler' flaget"
 
-#msgid "grabbed Ricochet flag"
-#msgstr ""
+msgid "grabbed Laser flag"
+msgstr "tog 'Laser' flaget"
 
-#msgid "grabbed Super Bullet flag"
-#msgstr ""
+msgid "grabbed Ricochet flag"
+msgstr "tog 'Ricochet' flaget"
 
-#msgid "grabbed Stealth flag"
-#msgstr ""
+msgid "grabbed Super Bullet flag"
+msgstr "tog 'Superskud' flaget"
 
-#msgid "grabbed Cloaking flag"
-#msgstr ""
+msgid "grabbed Stealth flag"
+msgstr "tog 'Stealth' flaget"
 
-#msgid "grabbed Invisible Bullet flag"
-#msgstr ""
+msgid "grabbed Cloaking flag"
+msgstr "tog 'Usynlighed' flaget"
 
-#msgid "grabbed Tiny flag"
-#msgstr ""
+msgid "grabbed Invisible Bullet flag"
+msgstr "tog 'Usynlige skud' flaget"
 
-#msgid "grabbed Narrow flag"
-#msgstr ""
+msgid "grabbed Tiny flag"
+msgstr "tog 'Lille' flaget"
 
-#msgid "grabbed Shield flag"
-#msgstr ""
+msgid "grabbed Narrow flag"
+msgstr "tog 'Smal' flaget"
 
-#msgid "grabbed Steamroller flag"
-#msgstr ""
+msgid "grabbed Shield flag"
+msgstr "tog 'Skjold' flaget"
 
-#msgid "grabbed Shock Wave flag"
-#msgstr ""
+msgid "grabbed Steamroller flag"
+msgstr "tog 'Damptromle' flaget"
 
-#msgid "grabbed Phantom Zone flag"
-#msgstr ""
+msgid "grabbed Shock Wave flag"
+msgstr "tog 'Shockbølge' flaget"
 
-#msgid "grabbed Genocide flag"
-#msgstr ""
+msgid "grabbed Phantom Zone flag"
+msgstr "tog 'Fantom zone' flaget"
 
-#msgid "grabbed Jumping flag"
-#msgstr ""
+msgid "grabbed Genocide flag"
+msgstr "tog 'Massemord' flaget"
 
-#msgid "grabbed Identify flag"
-#msgstr ""
+msgid "grabbed Jumping flag"
+msgstr "tog 'Hop' flaget"
 
-#msgid "rabbed Colorblindness flag"
-#msgstr ""
+msgid "grabbed Identify flag"
+msgstr "tog 'Identificér' flaget"
 
-#msgid "grabbed Obesity flag"
-#msgstr ""
+msgid "grabbed Colorblindness flag"
+msgstr "tog 'Farveblindhed' flaget"
 
-#msgid "grabbed Left Turn Only flag"
-#msgstr ""
+msgid "grabbed Obesity flag"
+msgstr "tog 'Forstørelse' flaget"
 
-#msgid "grabbed Right Turn Only flag"
-#msgstr ""
+msgid "grabbed Left Turn Only flag"
+msgstr "tog 'Kun venstresving' flaget"
 
-#msgid "grabbed Momentum flag"
-#msgstr ""
+msgid "grabbed Right Turn Only flag"
+msgstr "tog 'Kun højresving' flaget"
 
-#msgid "grabbed Blindness flag"
-#msgstr ""
+msgid "grabbed Momentum flag"
+msgstr "tog 'Dobbelt vægt' flaget"
 
-#msgid "grabbed Jamming flag"
-#msgstr ""
+msgid "grabbed Blindness flag"
+msgstr "tog 'Blindhed' flaget"
 
-#msgid "grabbed Wide Angle flag"
-#msgstr ""
+msgid "grabbed Jamming flag"
+msgstr "tog 'Jamming' flaget"
 
-# Ostatni hlasky, ktere nelze prelozit
+msgid "grabbed Wide Angle flag"
+msgstr "tog 'Vidvinkel' flaget"
+
 # Other messages that cannot be translated
-#msgid "Pausing in"
-#msgstr ""
 
-#msgid "Press Pause to resume"
-#msgstr ""
+msgid "Pausing in"
+msgstr "Pauser om"
 
-#msgid "Got shot by "
-#msgstr ""
+msgid "Press Pause to resume"
+msgstr "Tryk pause for at forsætte"
+
+msgid "Got shot by "
+msgstr "Blev skudt af "
 
 #msgid "got skewred by "
 #msgstr ""
