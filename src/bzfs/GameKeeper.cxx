@@ -334,27 +334,6 @@ void GameKeeper::Player::setPlayerState(PlayerState state, float timestamp)
   stateTimeStamp = timestamp;
 }
 
-bool GameKeeper::Player::validatePlayerState(PlayerState state,
-					     float timestamp,
-					     std::string &message)
-{
-  bool result = true;
-  message     = "";
-  if (stateTimeStamp > 0.0f && (state.status & PlayerState::Alive)) {
-    float deltaSpeed
-      = hypotf(state.velocity[0] - lastState.velocity[0],
-	       hypotf(state.velocity[1] - lastState.velocity[1],
-		      state.velocity[2] - lastState.velocity[2]));
-    float deltaTime  = timestamp - stateTimeStamp;
-    float maxAcc     = BZDB.eval(StateDatabase::BZDB_MAXLINEARACC);
-    if (maxAcc > 0.0f && deltaSpeed > deltaTime * maxAcc) {
-      message = "tank accelearation above limit";
-      result = false;
-    }
-  }
-  return result;
-}
-
 void GameKeeper::Player::getPlayerState(float pos[3], float &azimuth)
 {
   memcpy(pos, lastState.pos, sizeof(float) * 3);

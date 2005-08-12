@@ -93,8 +93,6 @@ public:
     void           setPlayerState(float pos[3], float azimuth);
     void           getPlayerState(float pos[3], float &azimuth);
     void           setPlayerState(PlayerState state, float timestamp);
-    bool           validatePlayerState(PlayerState state, float timestamp,
-				       std::string &message);
 
     enum LSAState
       {

@@ -4094,12 +4094,6 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
 	    }
 	  }
 	}
-	std::string message;
-	if (!playerData->validatePlayerState(state, timestamp, message)) {
-	  sendMessage(ServerPlayer, t, message.c_str());
-	  removePlayer(t, message.c_str());
-	  break;
-	}
       }
 
       playerData->setPlayerState(state, timestamp);
