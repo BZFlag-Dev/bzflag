@@ -314,10 +314,10 @@ void GameKeeper::Player::handleTcpPacket(fd_set *set)
 
 void GameKeeper::Player::setPlayerState(float pos[3], float azimuth)
 {
-  memcpy(lastState.pos, pos, sizeof(pos));
+  memcpy(lastState.pos, pos, sizeof(float) * 3);
   lastState.azimuth = azimuth;
   // Set Speeds to 0 too
-  memset(lastState.velocity, 0, sizeof(lastState.velocity));
+  memset(lastState.velocity, 0, sizeof(float) * 3);
   lastState.angVel = 0.0f;
   stateTimeStamp   = 0.0f;
 
@@ -357,7 +357,7 @@ bool GameKeeper::Player::validatePlayerState(PlayerState state,
 
 void GameKeeper::Player::getPlayerState(float pos[3], float &azimuth)
 {
-  memcpy(pos, lastState.pos, sizeof(pos));
+  memcpy(pos, lastState.pos, sizeof(float) * 3);
   azimuth = lastState.azimuth;
 }
 
