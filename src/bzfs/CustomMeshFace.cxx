@@ -127,7 +127,8 @@ void CustomMeshFace::write(MeshObstacle *mesh) const
 {
   const BzMaterial* matref = MATERIALMGR.addMaterial(&material);
   mesh->addFace(vertices, normals, texcoords, matref, phydrv,
-		noclusters, smoothBounce, driveThrough, shootThrough);
+		noclusters, smoothBounce, driveThrough, shootThrough,
+		true /* triangulate if required */);
   return;
 }
 

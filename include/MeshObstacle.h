@@ -27,6 +27,7 @@
 #include "MeshFace.h"
 #include "MeshTransform.h"
 
+class MeshDrawInfo;
 
 class MeshObstacle : public Obstacle {
   public:
@@ -44,7 +45,8 @@ class MeshObstacle : public Obstacle {
 		  const std::vector<int>& normals,
 		  const std::vector<int>& texcoords,
 		  const BzMaterial* bzMaterial, int physics,
-		  bool noclusters, bool bounce, bool drive, bool shoot);
+		  bool noclusters, bool bounce, bool drive, bool shoot,
+		  bool triangulate);
 
     ~MeshObstacle();
 
@@ -53,6 +55,9 @@ class MeshObstacle : public Obstacle {
     Obstacle* copyWithTransform(const MeshTransform&) const;
     void copyFace(int face, MeshObstacle* mesh) const;
 
+    void setName(const std::string& name);
+    const std::string&	getName() const;
+    
     enum CheckType {
       CheckInside =  0,
       CheckOutside = 1,
@@ -99,6 +104,9 @@ class MeshObstacle : public Obstacle {
     bool useSmoothBounce() const;
     bool noClusters() const;
 
+    const MeshDrawInfo* getDrawInfo() const;
+    void setDrawInfo(MeshDrawInfo*);
+
     int packSize() const;
     void *pack(void*) const;
     void *unpack(void*);
@@ -106,8 +114,15 @@ class MeshObstacle : public Obstacle {
     void print(std::ostream& out, const std::string& indent) const;
 
   private:
-
+    void makeFacePointers(const std::vector<int>& _vertices,
+                          const std::vector<int>& _normals,
+                          const std::vector<int>& _texcoords,
+                          float**& v, float**& n, float**& t);
+  
+  private:
     static const char* typeName;
+    
+    std::string name;
 
     int checkCount;
     char* checkTypes;
@@ -125,6 +140,8 @@ class MeshObstacle : public Obstacle {
     bool inverted; // used during building. can be ditched if
 		   // edge tables are setup with bi-directional
 		   // ray-vs-face tests and parity counts.
+
+    MeshDrawInfo* drawInfo; // hidden data stored in extra texcoords
 };
 
 inline const char *MeshObstacle::getCheckTypes() const
@@ -185,6 +202,22 @@ inline bool MeshObstacle::useSmoothBounce() const
 inline bool MeshObstacle::noClusters() const
 {
   return noclusters;
+}
+
+inline const MeshDrawInfo* MeshObstacle::getDrawInfo() const
+{
+  return drawInfo;
+}
+
+inline const std::string& MeshObstacle::getName() const
+{
+  return name;
+}
+
+inline void MeshObstacle::setName(const std::string& str)
+{
+  name = str;
+  return;
 }
 
 #endif // BZF_MESH_OBSTACLE_H

@@ -24,6 +24,8 @@ libObstacle_a_SOURCES =			\
 	MeshFace.cxx			\
 	MeshObstacle.cxx		\
 	MeshUtils.h			\
+	Triangulate.h			\
+	Triangulate.cxx			\
 	PyramidBuilding.cxx		\
 	Teleporter.cxx			\
 	TetraBuilding.cxx		\
@@ -41,6 +43,9 @@ libObstacle_a_SOURCES =			\
 	BoxBuilding.cxx			\
 	MeshFace.cxx			\
 	MeshObstacle.cxx		\
+	MeshUtils.h			\
+	Triangulate.h			\
+	Triangulate.cxx			\
 	PyramidBuilding.cxx		\
 	Teleporter.cxx			\
 	TetraBuilding.cxx		\

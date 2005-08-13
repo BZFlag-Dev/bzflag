@@ -49,16 +49,16 @@ static inline void push4Ints(std::vector<int>& list, int i0, int i1, int i2, int
 }
 
 
-static inline void addFace (MeshObstacle* mesh,
-			    std::vector<int>& verticesList,
-			    std::vector<int>& normalsList,
-			    std::vector<int>& texcoordsList,
-			    const BzMaterial* material, int phydrv)
+static inline void addFace(MeshObstacle* mesh,
+			   std::vector<int>& verticesList,
+			   std::vector<int>& normalsList,
+			   std::vector<int>& texcoordsList,
+			   const BzMaterial* material, int phydrv)
 {
   // use the mesh defaults for smoothBounce, driveThrough, and shootThough
   const BzMaterial* matref = MATERIALMGR.addMaterial(material);
   mesh->addFace(verticesList, normalsList, texcoordsList, matref, phydrv,
-		false, false, false, false);
+		false, false, false, false, false);
   verticesList.clear();
   normalsList.clear();
   texcoordsList.clear();
