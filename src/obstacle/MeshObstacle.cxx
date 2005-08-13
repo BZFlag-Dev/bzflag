@@ -243,7 +243,9 @@ bool MeshObstacle::addFace(const std::vector<int>& _vertices,
         if (face->isValid()) {
           faces[faceCount] = face;
           faceCount++;
-        } 
+        } else {
+          delete face;
+        }
       }
     }
   }
