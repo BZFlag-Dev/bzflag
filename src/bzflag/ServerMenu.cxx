@@ -186,13 +186,14 @@ void ServerMenu::setSelected(int index)
     for (int i = 0; i < NumItems; ++i) {
       HUDuiLabel* label = (HUDuiLabel*)listHUD[i + NumReadouts];
       if (base + i < (int)serverList.size()) {
-	label->setString(serverList.getServers()[base + i].description);
-	if (serverList.getServers()[base + i].cached ){
-	  label->setDarker(true);
-	}
-	else {
-	  label->setDarker(false);
-	}
+	const ServerItem &server = serverList.getServers()[base + i];
+	label->setString(server.description);
+	label->setDarker(server.cached);
+	// colorize servers: many shots->red, jumping->green, CTF->blue
+	const float rf = std::min(1.0f, logf(server.ping.maxShots) / logf(20.0f));
+	const float gf = server.ping.gameStyle & JumpingGameStyle ? 1.0f : 0.0f;
+	const float bf = server.ping.gameStyle & TeamFlagGameStyle ? 1.0f : 0.0f;
+	label->setColor(0.5f + rf * 0.5f, 0.5f + gf * 0.5f, 0.5f + bf * 0.5f);
       }
       else {
 	label->setString("");

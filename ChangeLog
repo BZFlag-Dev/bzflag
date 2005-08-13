@@ -4,6 +4,7 @@
 BZFlag 2.0.3
 ------------
 
+* Experimental server colorizing in server list - Frank Thilo
 * Added sort options to "/replay list" and "/record list" - Mark Thomas
 * Map mismatch fixed - Alfredo Tupone
 * Quick server command key works better - Alfredo Tupone
