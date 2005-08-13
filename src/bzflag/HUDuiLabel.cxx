@@ -35,6 +35,9 @@ HUDuiLabel::HUDuiLabel() : HUDuiControl()
 {
   darker = false;
   params = NULL;
+  color[0] = textColor[0];
+  color[1] = textColor[1];
+  color[2] = textColor[2];
 }
 
 HUDuiLabel::~HUDuiLabel()
@@ -110,11 +113,19 @@ void			HUDuiLabel::setDarker(bool d)
   darker = d;
 }
 
+void			HUDuiLabel::setColor(GLfloat r, GLfloat g, GLfloat b)
+{
+  color[0] = r;
+  color[1] = g;
+  color[2] = b;
+}
+
 void			HUDuiLabel::doRender()
 {
   if (getFontFace() < 0) return;
   // render string
-  glColor3fv(hasFocus() ? textColor : dimTextColor);
+  GLfloat dimmedcolor[3] = {color[0]*0.7f, color[1]*0.7f, color[2]*0.7f};
+  glColor3fv(hasFocus() ?  color : dimmedcolor);
   if (!hasFocus() && darker) glColor3fv(moreDimTextColor);
   FontManager &fm = FontManager::instance();
   fm.drawString(getX(), getY(), 0, getFontFace(), getFontSize(), getString());
