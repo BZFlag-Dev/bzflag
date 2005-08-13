@@ -373,6 +373,9 @@
 				RelativePath="..\..\src\obstacle\TetraBuilding.cxx">
 			</File>
 			<File
+				RelativePath="..\..\src\obstacle\Triangulate.cxx">
+			</File>
+			<File
 				RelativePath="..\..\src\obstacle\WallObstacle.cxx">
 				<FileConfiguration
 					Name="Release|Win32">
@@ -525,6 +528,9 @@
 			</File>
 			<File
 				RelativePath="..\..\include\TetraBuilding.h">
+			</File>
+			<File
+				RelativePath="..\..\src\obstacle\Triangulate.h">
 			</File>
 			<File
 				RelativePath="..\..\include\TriWallSceneNode.h">
