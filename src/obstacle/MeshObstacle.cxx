@@ -234,7 +234,7 @@ bool MeshObstacle::addFace(const std::vector<int>& _vertices,
             triN.push_back(_normals[index]);
           }
           if (_texcoords.size() > 0) {
-            triT.push_back(_normals[index]);
+            triT.push_back(_texcoords[index]);
           }
         }
         makeFacePointers(triV, triN, triT, v, n, t);
