@@ -39,13 +39,8 @@ HUDuiLabel::HUDuiLabel() : HUDuiControl()
 
 HUDuiLabel::~HUDuiLabel()
 {
-  if (params) {
-    while (params->size()) {
-      params->erase(params->begin());
-    }
+  if (params)
     delete params;
-    params = NULL;
-  }
 }
 
 std::string		HUDuiLabel::getString() const
@@ -64,17 +59,10 @@ void			HUDuiLabel::setString(const std::string& _string, const std::vector<std::
 {
   string = _string;
   if (_params) {
-    if (params != NULL) {
-      while (params->size() > 0)
-	params->erase(params->begin());
+    if (params != NULL)
       delete params;
-    }
-    params = new std::vector<std::string>;
-    if (params) {
-      for (int i = 0; i < (int)_params->size(); i++) {
-	params->push_back((*_params)[i]);
-      }
-    }
+
+    params = new std::vector<std::string>(*_params);
   }
   onSetFont();
 }
