@@ -573,6 +573,8 @@ void			ControlPanel::render(SceneRenderer& _renderer)
   } glEnd();
 
   glPopMatrix();
+
+  fm.setOpacity(0.0f);
 }
 
 void			ControlPanel::resize()

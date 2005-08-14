@@ -187,13 +187,56 @@ void ServerMenu::setSelected(int index)
       HUDuiLabel* label = (HUDuiLabel*)listHUD[i + NumReadouts];
       if (base + i < (int)serverList.size()) {
 	const ServerItem &server = serverList.getServers()[base + i];
-	label->setString(server.description);
+        const short gameStyle = server.ping.gameStyle;
+	std::string fullLabel;
+	if (BZDB.isTrue("listIcons")) {
+          // game mode
+          if (gameStyle & TeamFlagGameStyle) {
+            fullLabel += ANSI_STR_FG_RED "M"; // ctf
+          } else if (gameStyle & RabbitChaseGameStyle) {
+            fullLabel += ANSI_STR_FG_WHITE "M"; // white rabbit
+          } else {
+            fullLabel += ANSI_STR_FG_YELLOW "M"; // free-for-all
+          }
+          // jumping?
+          if (gameStyle & JumpingGameStyle) {
+            fullLabel += ANSI_STR_BRIGHT ANSI_STR_FG_MAGENTA "J";
+          } else {
+            fullLabel += ANSI_STR_DIM ANSI_STR_FG_WHITE "J";
+          }
+          // superflags ?
+          if (gameStyle & SuperFlagGameStyle) {
+            fullLabel += ANSI_STR_BRIGHT ANSI_STR_FG_BLUE "F";
+          } else {
+            fullLabel += ANSI_STR_DIM ANSI_STR_FG_WHITE "F";
+          }
+          // ricochet?
+          if (gameStyle & RicochetGameStyle) {
+            fullLabel += ANSI_STR_BRIGHT ANSI_STR_FG_GREEN "R";
+          } else {
+            fullLabel += ANSI_STR_DIM ANSI_STR_FG_WHITE "R";
+          }
+	  fullLabel += ANSI_STR_RESET "   ";
+
+          // colorize servers: many shots->red
+          const float shotScale = std::min(1.0f, logf(server.ping.maxShots) / logf(20.0f));
+          const float rf = 1.0f;
+          const float gf = 1.0f - shotScale;
+          const float bf = 1.0f - shotScale;
+          label->setColor(rf, gf, bf);
+        }
+        else {
+          // colorize servers: many shots->red, jumping->green, CTF->blue
+          const float rf = std::min(1.0f, logf(server.ping.maxShots) / logf(20.0f));
+          const float gf = gameStyle & JumpingGameStyle ? 1.0f : 0.0f;
+          const float bf = gameStyle & TeamFlagGameStyle ? 1.0f : 0.0f;
+          label->setColor(0.5f + rf * 0.5f, 0.5f + gf * 0.5f, 0.5f + bf * 0.5f);
+        }
+	
+	fullLabel += server.description;
+	label->setString(fullLabel);
 	label->setDarker(server.cached);
-	// colorize servers: many shots->red, jumping->green, CTF->blue
-	const float rf = std::min(1.0f, logf(server.ping.maxShots) / logf(20.0f));
-	const float gf = server.ping.gameStyle & JumpingGameStyle ? 1.0f : 0.0f;
-	const float bf = server.ping.gameStyle & TeamFlagGameStyle ? 1.0f : 0.0f;
-	label->setColor(0.5f + rf * 0.5f, 0.5f + gf * 0.5f, 0.5f + bf * 0.5f);
+
       }
       else {
 	label->setString("");
@@ -536,11 +579,17 @@ void			ServerMenu::resize(int _width, int _height)
   fontSize = (float)_height / 54.0f;
   fontHeight = fm.getStrHeight(MainMenu::getFontFace(), fontSize, " ");
   x = 0.125f * (float)_width;
+  const bool useIcons = BZDB.isTrue("listIcons");
   for (i = -1; i < NumItems; ++i) {
     HUDuiLabel* label = (HUDuiLabel*)listHUD[i + NumReadouts];
     label->setFontSize(fontSize);
     y -= 1.0f * fontHeight;
-    label->setPosition(x, y);
+    if (useIcons && (i >= 0)) {
+      const float offset = fm.getStrLength(status->getFontFace(), fontSize, "MJFR   ");
+      label->setPosition(x - offset, y);
+    } else {
+      label->setPosition(x, y);
+    }
   }
 }
 

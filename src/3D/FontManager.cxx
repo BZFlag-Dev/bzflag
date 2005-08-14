@@ -1,14 +1,14 @@
 /* bzflag
-* Copyright (c) 1993 - 2005 Tim Riker
-*
-* This package is free software;  you can redistribute it and/or
-* modify it under the terms of the license found in the file
-* named COPYING that should have accompanied this file.
-*
-* THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
-* IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
-* WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-*/
+ * Copyright (c) 1993 - 2005 Tim Riker
+ *
+ * This package is free software;  you can redistribute it and/or
+ * modify it under the terms of the license found in the file
+ * named COPYING that should have accompanied this file.
+ *
+ * THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
+ * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
+ * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ */
 
 // BZFlag common header
 #include "common.h"
@@ -235,7 +235,7 @@ const char* FontManager::getFaceName(int faceID)
 }
 
 void FontManager::drawString(float x, float y, float z, int faceID, float size,
-			     const std::string &text)
+			     const std::string &text, const float* resetColor)
 {
   if (text.size() == 0)
     return;
@@ -283,6 +283,13 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
   bool underline = false;
   // negatives are invalid, we use them to signal "no change"
   GLfloat color[4] = {-1.0f, -1.0f, -1.0f, 1.0f - opacity};
+  if (resetColor != NULL) {
+    color[0] = resetColor[0];
+    color[1] = resetColor[1];
+    color[2] = resetColor[2];
+  } else {
+    resetColor = BrightColors[WhiteColor];
+  }
 
   // underline color changes for bright == false
   GLfloat dimUnderlineColor[4] = { underlineColor[0] * dimFactor,
@@ -385,16 +392,16 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
 	  bright = true;
 	  pulsating = false;
 	  underline = false;
-	  color[0] = BrightColors[WhiteColor][0];
-	  color[1] = BrightColors[WhiteColor][1];
-	  color[2] = BrightColors[WhiteColor][2];
+	  color[0] = resetColor[0];
+	  color[1] = resetColor[1];
+	  color[2] = resetColor[2];
 	} else if (tmpText == ANSI_STR_RESET_FINAL) {
 	  bright = false;
 	  pulsating = false;
 	  underline = false;
-	  color[0] = BrightColors[WhiteColor][0] * dimFactor;
-	  color[1] = BrightColors[WhiteColor][1] * dimFactor;
-	  color[2] = BrightColors[WhiteColor][2] * dimFactor;
+	  color[0] = resetColor[0] * dimFactor;
+	  color[1] = resetColor[1] * dimFactor;
+	  color[2] = resetColor[2] * dimFactor;
 	} else if (tmpText == ANSI_STR_BRIGHT) {
 	  bright = true;
 	} else if (tmpText == ANSI_STR_DIM) {
@@ -429,9 +436,10 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
 
 void FontManager::drawString(float x, float y, float z,
 			     const std::string &face, float size,
-			     const std::string &text)
+			     const std::string &text,
+			     const float* resetColor)
 {
-  drawString(x, y, z, getFaceID(face), size, text);
+  drawString(x, y, z, getFaceID(face), size, text, resetColor);
 }
 
 float FontManager::getStrLength(int faceID, float size,	const std::string &text,

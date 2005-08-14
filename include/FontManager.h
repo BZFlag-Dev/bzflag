@@ -48,9 +48,11 @@ public:
   const char* getFaceName(int faceID);
 
   void drawString(float x, float y, float z, int faceID, float size,
-		  const std::string &text);
+		  const std::string &text,
+		  const float* resetColor = NULL);
   void drawString(float x, float y, float z, const std::string &face,
-		  float size, const std::string &text);
+		  float size, const std::string &text,
+		  const float* resetColor = NULL);
 
   float getStrLength(int faceID, float size, const std::string &text,
 		     bool alreadyStripped = false);
