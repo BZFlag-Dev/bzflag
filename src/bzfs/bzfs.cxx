@@ -63,6 +63,9 @@
 #include "bzfsPlugins.h"
 #endif
 
+// pass through the SELECT loop
+static bool dontWait = true;
+
 // every ListServerReAddTime server add ourself to the list
 // server again.  this is in case the list server has reset
 // or dropped us for some reason.
@@ -1882,13 +1885,14 @@ static void playerAlive(int playerIndex);
 static void addPlayer(int playerIndex, GameKeeper::Player *playerData)
 {
   uint16_t rejectCode;
-  char     rejectMsg[MessageLen];
-  bool     resultEnter = playerData->loadEnterData(rejectCode, rejectMsg);
+  char rejectMsg[MessageLen];
+  bool resultEnter = playerData->loadEnterData(rejectCode, rejectMsg);
 
   if (!resultEnter && playerData->_LSAState != GameKeeper::Player::verified) {
     rejectPlayer(playerIndex, rejectCode, rejectMsg);
     return;
   }
+  
   if (!resultEnter)
     // Find the user already logged on and kick
     // them if someone else is trying to log on
@@ -3553,6 +3557,7 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
       } else if (strlen(playerData->player.getCallSign())) {
 	playerData->_LSAState = GameKeeper::Player::required;
       }
+      dontWait = true;
       break;
     }
 
@@ -4765,7 +4770,6 @@ int main(int argc, char **argv)
   GameKeeper::Player::passTCPMutex();
   int i;
   int readySetGo = -1; // match countdown timer
-  bool dontWait = true;
   while (!done) {
 
     // see if the octree needs to be reloaded
@@ -4870,6 +4874,7 @@ int main(int argc, char **argv)
     nfound = select(maxFileDescriptor+1, (fd_set*)&read_set, (fd_set*)&write_set, 0, &timeout);
     //if (nfound)
     //	DEBUG1("nfound,read,write %i,%08lx,%08lx\n", nfound, read_set, write_set);
+    dontWait = false;
 
     // send replay packets
     // (this check and response should follow immediately after the select() call)
@@ -5377,7 +5382,7 @@ int main(int argc, char **argv)
     }
 
     // cURLperform should be called in any case as we could incur in timeout
-    dontWait = cURLManager::perform();
+    dontWait = dontWait || cURLManager::perform();
   }
 
 #ifdef _USE_BZ_API
