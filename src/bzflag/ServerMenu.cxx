@@ -192,23 +192,23 @@ void ServerMenu::setSelected(int index)
 	if (BZDB.isTrue("listIcons")) {
           // game mode
           if (gameStyle & TeamFlagGameStyle) {
-            fullLabel += ANSI_STR_FG_RED "M"; // ctf
+            fullLabel += ANSI_STR_FG_RED "M "; // ctf
           } else if (gameStyle & RabbitChaseGameStyle) {
-            fullLabel += ANSI_STR_FG_WHITE "M"; // white rabbit
+            fullLabel += ANSI_STR_FG_WHITE "M "; // white rabbit
           } else {
-            fullLabel += ANSI_STR_FG_YELLOW "M"; // free-for-all
+            fullLabel += ANSI_STR_FG_YELLOW "M "; // free-for-all
           }
           // jumping?
           if (gameStyle & JumpingGameStyle) {
-            fullLabel += ANSI_STR_BRIGHT ANSI_STR_FG_MAGENTA "J";
+            fullLabel += ANSI_STR_BRIGHT ANSI_STR_FG_MAGENTA "J ";
           } else {
-            fullLabel += ANSI_STR_DIM ANSI_STR_FG_WHITE "J";
+            fullLabel += ANSI_STR_DIM ANSI_STR_FG_WHITE "J ";
           }
           // superflags ?
           if (gameStyle & SuperFlagGameStyle) {
-            fullLabel += ANSI_STR_BRIGHT ANSI_STR_FG_BLUE "F";
+            fullLabel += ANSI_STR_BRIGHT ANSI_STR_FG_BLUE "F ";
           } else {
-            fullLabel += ANSI_STR_DIM ANSI_STR_FG_WHITE "F";
+            fullLabel += ANSI_STR_DIM ANSI_STR_FG_WHITE "F ";
           }
           // ricochet?
           if (gameStyle & RicochetGameStyle) {
@@ -585,7 +585,7 @@ void			ServerMenu::resize(int _width, int _height)
     label->setFontSize(fontSize);
     y -= 1.0f * fontHeight;
     if (useIcons && (i >= 0)) {
-      const float offset = fm.getStrLength(status->getFontFace(), fontSize, "MJFR   ");
+      const float offset = fm.getStrLength(status->getFontFace(), fontSize, "M J F R   ");
       label->setPosition(x - offset, y);
     } else {
       label->setPosition(x, y);
