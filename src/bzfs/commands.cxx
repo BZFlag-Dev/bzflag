@@ -265,6 +265,14 @@ public:
 			   GameKeeper::Player *playerData);
 };
 
+class BanCommand : ServerCommand {
+public:
+  BanCommand();
+
+  virtual bool operator() (const char         *commandLine,
+			   GameKeeper::Player *playerData);
+};
+
 static MsgCommand         msgCommand;
 static ServerQueryCommand serverQueryCommand;
 static PartCommand        partCommand;
@@ -282,6 +290,7 @@ static KickCommand        kickCommand;
 static KillCommand        killCommand;
 static BanListCommand     banListCommand;
 static HostbanListCommand hostbanListCommand;
+static BanCommand         banCommand;
 
 MsgCommand::MsgCommand()                 : ServerCommand("/msg") {}
 ServerQueryCommand::ServerQueryCommand() : ServerCommand("/serverquery") {}
@@ -300,6 +309,7 @@ KickCommand::KickCommand()               : ServerCommand("/kick") {}
 KillCommand::KillCommand()               : ServerCommand("/kill") {}
 BanListCommand::BanListCommand()         : ServerCommand("/banlist") {}
 HostbanListCommand::HostbanListCommand() : ServerCommand("/hostbanlist") {}
+BanCommand::BanCommand()                 : ServerCommand("/ban") {}
 
 static void handleMuteCmd(GameKeeper::Player *playerData, const char *message)
 {
@@ -1020,21 +1030,27 @@ bool HostbanListCommand::operator() (const char         *,
 }
 
 
-static void handleBanCmd(GameKeeper::Player *playerData, const char *message)
+bool BanCommand::operator() (const char         *message,
+			     GameKeeper::Player *playerData)
 {
   int t = playerData->getIndex();
   if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::ban) &&
       !playerData->accessInfo.hasPerm(PlayerAccessInfo::shortBan)) {
-    sendMessage(ServerPlayer, t, "You do not have permission to run the ban command");
-    return;
+    sendMessage(ServerPlayer, t,
+		"You do not have permission to run the ban command");
+    return true;
   }
 
   std::string msg = message;
   std::vector<std::string> argv = TextUtils::tokenize(msg, " \t", 4, true);
 
   if (argv.size() < 4) {
-    sendMessage(ServerPlayer, t, "Syntax: /ban <#slot | PlayerName | \"Player Name\" | ip> <duration> <reason>");
-    sendMessage(ServerPlayer, t, "	Please keep in mind that reason is displayed to the user.");
+    sendMessage(ServerPlayer, t,
+		"Syntax: /ban <#slot | PlayerName | \"Player Name\" | ip> "
+		"<duration> <reason>");
+    sendMessage(ServerPlayer, t,
+		"	Please keep in mind that reason is displayed to the "
+		"user.");
   } else {
     std::string ip = argv[1];
     std::string reason;
@@ -1044,7 +1060,8 @@ static void handleBanCmd(GameKeeper::Player *playerData, const char *message)
     
     if (victim >= 0) {
       // valid slot or callsign
-      GameKeeper::Player *playerBannedData  = GameKeeper::Player::getPlayerByIndex(victim);
+      GameKeeper::Player *playerBannedData
+	= GameKeeper::Player::getPlayerByIndex(victim);
       if (playerBannedData)
 	ip = playerBannedData->netHandler->getTargetIP();
     }
@@ -1057,51 +1074,54 @@ static void handleBanCmd(GameKeeper::Player *playerData, const char *message)
     regfree(&preg);
     if (res == REG_NOMATCH) {
       sendMessage(ServerPlayer, t, "Error: invalid ban duration");
-      sendMessage(ServerPlayer, t, "Duration examples:  30 1h  1d  1w  and mixing: 1w2d4h 1w2d1");
-      return;
+      sendMessage(ServerPlayer, t,
+		  "Duration examples:  30 1h  1d  1w  and mixing: 1w2d4h "
+		  "1w2d1");
+      return true;
     }
     
 
-      int specifiedDuration = TextUtils::parseDuration(argv[2]);
-      if ((durationInt > 0) &&
-	  ((specifiedDuration > durationInt) || (specifiedDuration <= 0)) &&
-	  !playerData->accessInfo.hasPerm(PlayerAccessInfo::ban)) {
-	sendMessage (ServerPlayer, t, "You only have SHORTBAN privileges,"
-				      " using default ban time");
-      } else {
-	durationInt = specifiedDuration;
-      }
+    int specifiedDuration = TextUtils::parseDuration(argv[2]);
+    if ((durationInt > 0) &&
+	((specifiedDuration > durationInt) || (specifiedDuration <= 0)) &&
+	!playerData->accessInfo.hasPerm(PlayerAccessInfo::ban)) {
+      sendMessage (ServerPlayer, t, "You only have SHORTBAN privileges,"
+		   " using default ban time");
+    } else {
+      durationInt = specifiedDuration;
+    }
 
     // set the ban reason
     if (argv.size() == 4) {
       reason = argv[3];
     }
 		
-		// call any plugin events registered for /ban
-		bz_BanEventData banEvent;
-		banEvent.bannerID = t;
-		banEvent.ipAddress = ip.c_str();
-		banEvent.reason = reason.c_str();
-		banEvent.duration = durationInt;
-		// if we know for sure who is to be banned, submit it	
-		if (victim >= 0)
-			banEvent.banneeID = victim;
-		
-		worldEventManager.callEvents(bz_eBanEvent,&banEvent);
-		
-		// a plugin might have changed bannerID
-		if (t != banEvent.bannerID) {
-			playerData = GameKeeper::Player::getPlayerByIndex(banEvent.bannerID);
-			if (!playerData)
-				return;
-		}
+    // call any plugin events registered for /ban
+    bz_BanEventData banEvent;
+    banEvent.bannerID = t;
+    banEvent.ipAddress = ip.c_str();
+    banEvent.reason = reason.c_str();
+    banEvent.duration = durationInt;
+    // if we know for sure who is to be banned, submit it	
+    if (victim >= 0)
+      banEvent.banneeID = victim;
+
+    worldEventManager.callEvents(bz_eBanEvent,&banEvent);
+
+    // a plugin might have changed bannerID
+    if (t != banEvent.bannerID) {
+      playerData = GameKeeper::Player::getPlayerByIndex(banEvent.bannerID);
+      if (!playerData)
+	return true;
+    }
 
 
     // reload the banlist in case anyone else has added
     clOptions->acl.load();
 
     if (clOptions->acl.ban(banEvent.ipAddress.c_str(), 
-			playerData->player.getCallSign(), banEvent.duration, banEvent.reason.c_str())) {
+			   playerData->player.getCallSign(), banEvent.duration,
+			   banEvent.reason.c_str())) {
       clOptions->acl.save();
 
       sendMessage(ServerPlayer, t, "IP pattern added to banlist");
@@ -1120,24 +1140,28 @@ static void handleBanCmd(GameKeeper::Player *playerData, const char *message)
 	    if ((p != NULL)
 		&& (p->accessInfo.hasPerm(PlayerAccessInfo::antiban))) {
 	      snprintf(kickmessage, MessageLen, 
-		      "%s is protected from being banned (skipped).",
-		      p->player.getCallSign());
+		       "%s is protected from being banned (skipped).",
+		       p->player.getCallSign());
 	      sendMessage(ServerPlayer, t, kickmessage);
 	      continue;
 	    }
 	  }
 
-	  snprintf(kickmessage, MessageLen, "You were banned from this server by %s",
-		  playerData->player.getCallSign());
+	  snprintf(kickmessage, MessageLen,
+		   "You were banned from this server by %s",
+		   playerData->player.getCallSign());
 	  sendMessage(ServerPlayer, i, kickmessage);
 	  if (reason.length() > 0) {
-	    snprintf(kickmessage, MessageLen, "Reason given: %s", banEvent.reason.c_str());
+	    snprintf(kickmessage, MessageLen, "Reason given: %s",
+		     banEvent.reason.c_str());
 	    sendMessage(ServerPlayer, i, kickmessage);
 	  }
 	  if (otherPlayer) {
-	    snprintf(kickmessage, MessageLen, "%s banned by %s, reason: %s", 
-			otherPlayer->player.getCallSign(), playerData->player.getCallSign(),
-			banEvent.reason.c_str());
+	    snprintf(kickmessage, MessageLen,
+		     "%s banned by %s, reason: %s", 
+		     otherPlayer->player.getCallSign(),
+		     playerData->player.getCallSign(),
+		     banEvent.reason.c_str());
 	    sendMessage(ServerPlayer, AdminPlayers, kickmessage);
 	  }
 	  removePlayer(i, "/ban");
@@ -1145,11 +1169,13 @@ static void handleBanCmd(GameKeeper::Player *playerData, const char *message)
       }
     } else {
       char errormessage[MessageLen];
-      snprintf(errormessage, MessageLen, "Malformed address or invalid Player/Slot: %s", argv[1].c_str());
+      snprintf(errormessage, MessageLen,
+	       "Malformed address or invalid Player/Slot: %s",
+	       argv[1].c_str());
       sendMessage(ServerPlayer, t, errormessage);
     }
   }
-  return;
+  return true;
 }
 
 
@@ -2899,10 +2925,7 @@ void parseServerCommand(const char *message, int t)
   if (ServerCommand::execute(message, playerData))
     return;
 
-  if (strncasecmp(message+1, "ban", 3) == 0) {
-    handleBanCmd(playerData, message);
-
-  } else if (strncasecmp(message+1, "hostban", 7) == 0) {
+  if (strncasecmp(message+1, "hostban", 7) == 0) {
     handleHostBanCmd(playerData, message);
 
   } else if (strncasecmp(message+1, "unban", 5) == 0) {
