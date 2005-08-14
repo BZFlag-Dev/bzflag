@@ -191,7 +191,10 @@ void ServerMenu::setSelected(int index)
 	std::string fullLabel;
 	if (BZDB.isTrue("listIcons")) {
           // game mode
-          if (gameStyle & TeamFlagGameStyle) {
+          if ((server.ping.observerMax == 16) &&
+              (server.ping.maxPlayers == 200)) {
+            fullLabel += ANSI_STR_FG_CYAN "M "; // replay
+          } else if (gameStyle & TeamFlagGameStyle) {
             fullLabel += ANSI_STR_FG_RED "M "; // ctf
           } else if (gameStyle & RabbitChaseGameStyle) {
             fullLabel += ANSI_STR_FG_WHITE "M "; // white rabbit
