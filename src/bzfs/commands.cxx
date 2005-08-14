@@ -449,6 +449,54 @@ public:
 			   GameKeeper::Player *playerData);
 };
 
+class ReloadCommand : ServerCommand {
+public:
+  ReloadCommand();
+
+  virtual bool operator() (const char         *commandLine,
+			   GameKeeper::Player *playerData);
+};
+
+class PollCommand : ServerCommand {
+public:
+  PollCommand();
+
+  virtual bool operator() (const char         *commandLine,
+			   GameKeeper::Player *playerData);
+};
+
+class VoteCommand : ServerCommand {
+public:
+  VoteCommand();
+
+  virtual bool operator() (const char         *commandLine,
+			   GameKeeper::Player *playerData);
+};
+
+class VetoCommand : ServerCommand {
+public:
+  VetoCommand();
+
+  virtual bool operator() (const char         *commandLine,
+			   GameKeeper::Player *playerData);
+};
+
+class ViewReportCommand : ServerCommand {
+public:
+  ViewReportCommand();
+
+  virtual bool operator() (const char         *commandLine,
+			   GameKeeper::Player *playerData);
+};
+
+class ClientQueryCommand : ServerCommand {
+public:
+  ClientQueryCommand();
+
+  virtual bool operator() (const char         *commandLine,
+			   GameKeeper::Player *playerData);
+};
+
 static MsgCommand         msgCommand;
 static ServerQueryCommand serverQueryCommand;
 static PartCommand        partCommand;
@@ -489,6 +537,12 @@ static ShowGroupCommand   showGroupCommand;
 static GroupPermsCommand  groupPermsCommand;
 static SetGroupCommand    setGroupCommand;
 static RemoveGroupCommand removeGroupCommand;
+static ReloadCommand      reloadCommand;
+static PollCommand        pollCommand;
+static VoteCommand        voteCommand;
+static VetoCommand        vetoCommand;
+static ViewReportCommand  viewReportCommand;
+static ClientQueryCommand clientQueryCommand;
 
 MsgCommand::MsgCommand()                 : ServerCommand("/msg") {}
 ServerQueryCommand::ServerQueryCommand() : ServerCommand("/serverquery") {}
@@ -530,6 +584,12 @@ ShowGroupCommand::ShowGroupCommand()     : ServerCommand("/showgroup") {}
 GroupPermsCommand::GroupPermsCommand()   : ServerCommand("/groupperms") {}
 SetGroupCommand::SetGroupCommand()       : ServerCommand("/setgroup") {}
 RemoveGroupCommand::RemoveGroupCommand() : ServerCommand("/removegroup") {}
+ReloadCommand::ReloadCommand()           : ServerCommand("/reload") {}
+PollCommand::PollCommand()               : ServerCommand("/poll") {}
+VoteCommand::VoteCommand()               : ServerCommand("/vote") {}
+VetoCommand::VetoCommand()               : ServerCommand("/veto") {}
+ViewReportCommand::ViewReportCommand()   : ServerCommand("/viewreports") {}
+ClientQueryCommand::ClientQueryCommand() : ServerCommand("/clientquery") {}
 
 bool MuteCommand::operator() (const char         *message,
 			      GameKeeper::Player *playerData)
@@ -2178,12 +2238,14 @@ bool RemoveGroupCommand::operator() (const char         *message,
 }
 
 
-static void handleReloadCmd(GameKeeper::Player *playerData, const char *)
+bool ReloadCommand::operator() (const char         *,
+				GameKeeper::Player *playerData)
 {
   int t = playerData->getIndex();
   if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::setAll)) {
-    sendMessage(ServerPlayer, t, "You do not have permission to run the reload command");
-    return;
+    sendMessage(ServerPlayer, t,
+		"You do not have permission to run the reload command");
+    return true;
   }
 
   // reload the banlist
@@ -2211,37 +2273,39 @@ static void handleReloadCmd(GameKeeper::Player *playerData, const char *)
   // Check IP bans
   for (int i = 0; i < curMaxPlayers; i++) {
     GameKeeper::Player *otherPlayer = GameKeeper::Player::getPlayerByIndex(i);
-      if (otherPlayer && !clOptions->acl.validate
+    if (otherPlayer && !clOptions->acl.validate
 	(otherPlayer->netHandler->getIPAddress())) {
-	  // admins can override antiperms
-	  if (!playerData->accessInfo.isAdmin()) {
-	    // make sure this player isn't protected
-	    GameKeeper::Player *p = GameKeeper::Player::getPlayerByIndex(i);
-	    if ((p != NULL)
-		&& (p->accessInfo.hasPerm(PlayerAccessInfo::antiban))) {
-	      snprintf(kickmessage, MessageLen, 
-		    "%s is protected from being banned (skipped).",
-		    p->player.getCallSign());
-	      sendMessage(ServerPlayer, t, kickmessage);
-	      continue;
-	    }
-	  }
-
-	  snprintf(kickmessage, MessageLen, "You were banned from this server by %s",
-		  playerData->player.getCallSign());
-	  sendMessage(ServerPlayer, i, kickmessage);
-	  if (reason.length() > 0) {
-	    snprintf(kickmessage, MessageLen, "Reason given: %s", reason.c_str());
-	    sendMessage(ServerPlayer, i, kickmessage);
-	  }
-	  removePlayer(i, "/ban");
+      // admins can override antiperms
+      if (!playerData->accessInfo.isAdmin()) {
+	// make sure this player isn't protected
+	GameKeeper::Player *p = GameKeeper::Player::getPlayerByIndex(i);
+	if ((p != NULL)
+	    && (p->accessInfo.hasPerm(PlayerAccessInfo::antiban))) {
+	  snprintf(kickmessage, MessageLen, 
+		   "%s is protected from being banned (skipped).",
+		   p->player.getCallSign());
+	  sendMessage(ServerPlayer, t, kickmessage);
+	  continue;
 	}
+      }
+
+      snprintf(kickmessage, MessageLen,
+	       "You were banned from this server by %s",
+	       playerData->player.getCallSign());
+      sendMessage(ServerPlayer, i, kickmessage);
+      if (reason.length() > 0) {
+	snprintf(kickmessage, MessageLen, "Reason given: %s", reason.c_str());
+	sendMessage(ServerPlayer, i, kickmessage);
+      }
+      removePlayer(i, "/ban");
+    }
   }
-  return;
+  return true;
 }
 
 
-static void handleVoteCmd(GameKeeper::Player *playerData, const char *message)
+bool VoteCommand::operator() (const char         *message,
+			      GameKeeper::Player *playerData)
 {
   int t = playerData->getIndex();
   char reply[MessageLen] = {0};
@@ -2251,13 +2315,13 @@ static void handleVoteCmd(GameKeeper::Player *playerData, const char *message)
     /* permission denied for /vote */
     snprintf(reply, MessageLen, "%s, you are presently not authorized to run /vote", callsign.c_str());
     sendMessage(ServerPlayer, t, reply);
-    return;
+    return true;
   }
 
   /* make sure that there is a poll arbiter */
   if (BZDB.isEmpty("poll")) {
     sendMessage(ServerPlayer, t, "ERROR: the poll arbiter has disappeared (this should never happen)");
-    return;
+    return true;
   }
 
   // only need to get this once
@@ -2266,7 +2330,7 @@ static void handleVoteCmd(GameKeeper::Player *playerData, const char *message)
   /* make sure that there is a poll to vote upon */
   if ((arbiter != NULL) && !arbiter->knowsPoll()) {
     sendMessage(ServerPlayer, t, "A poll is not presently in progress.  There is nothing to vote on");
-    return;
+    return true;
   }
 
   std::string voteCmd = &message[5];
@@ -2347,28 +2411,29 @@ static void handleVoteCmd(GameKeeper::Player *playerData, const char *message)
       sendMessage(ServerPlayer, t, reply);
     }
     sendMessage(ServerPlayer, t, "Usage: /vote yes|no|y|n|1|0|yea|nay|si|ja|nein|oui|non|sim|nao");
-    return;
+    return true;
   }
 
   if (arbiter->hasVoted(callsign)) {
     /* player already voted */
     snprintf(reply, MessageLen, "%s, you have already voted on the poll to %s %s", callsign.c_str(), arbiter->getPollAction().c_str(), arbiter->getPollTarget().c_str());
     sendMessage(ServerPlayer, t, reply);
-    return;
+    return true;
   }
 
   if (!cast){
     /* There was an error while voting, probably could send a less generic message */
     snprintf(reply, MessageLen, "%s, there was an error while voting on the poll to %s %s", callsign.c_str(), arbiter->getPollAction().c_str(), arbiter->getPollTarget().c_str());
     sendMessage(ServerPlayer, t, reply);
-    return;
+    return true;
   }
 
-  return;
+  return true;
 }
 
 
-static void handleVetoCmd(GameKeeper::Player *playerData, const char * /*message*/)
+bool VetoCommand::operator() (const char         *,
+			      GameKeeper::Player *playerData)
 {
   int t = playerData->getIndex();
   if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::veto)) {
@@ -2377,13 +2442,13 @@ static void handleVetoCmd(GameKeeper::Player *playerData, const char * /*message
 		TextUtils::format
 		("%s, you are presently not authorized to run /veto",
 		 playerData->player.getCallSign()).c_str());
-    return;
+    return true;
   }
 
   /* make sure that there is a poll arbiter */
   if (BZDB.isEmpty("poll")) {
     sendMessage(ServerPlayer, t, "ERROR: the poll arbiter has disappeared (this should never happen)");
-    return;
+    return true;
   }
 
   // only need to do this once
@@ -2395,7 +2460,7 @@ static void handleVetoCmd(GameKeeper::Player *playerData, const char * /*message
 		TextUtils::format
 		("%s, there is presently no active poll to veto",
 		 playerData->player.getCallSign()).c_str());
-    return;
+    return true;
   }
 
   sendMessage(ServerPlayer, t,
@@ -2411,11 +2476,12 @@ static void handleVetoCmd(GameKeeper::Player *playerData, const char * /*message
 	      TextUtils::format("The poll was cancelled by %s",
 				  playerData->player.getCallSign()).c_str());
 
-  return;
+  return true;
 }
 
 
-static void handlePollCmd(GameKeeper::Player *playerData, const char *message)
+bool PollCommand::operator() (const char         *message,
+			      GameKeeper::Player *playerData)
 {
   int t = playerData->getIndex();
   char reply[MessageLen] = {0};
@@ -2427,7 +2493,7 @@ static void handlePollCmd(GameKeeper::Player *playerData, const char *message)
   if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::poll)) {
     snprintf(reply, MessageLen, "%s, you are presently not authorized to run /poll", callsign.c_str());
     sendMessage(ServerPlayer, t, reply);
-    return;
+    return true;
   }
 
   DEBUG3("Player has permission to run /poll\n");
@@ -2435,7 +2501,7 @@ static void handlePollCmd(GameKeeper::Player *playerData, const char *message)
   /* make sure that there is a poll arbiter */
   if (BZDB.isEmpty("poll")) {
     sendMessage(ServerPlayer, t, "ERROR: the poll arbiter has disappeared (this should never happen)");
-    return;
+    return true;
   }
 
   DEBUG3("BZDB poll value is not empty\n");
@@ -2450,7 +2516,7 @@ static void handlePollCmd(GameKeeper::Player *playerData, const char *message)
     snprintf(reply, MessageLen, "A poll to %s %s is presently in progress", arbiter->getPollAction().c_str(), arbiter->getPollTarget().c_str());
     sendMessage(ServerPlayer, t, reply);
     sendMessage(ServerPlayer, t, "Unable to start a new poll until the current one is over");
-    return;
+    return true;
   }
 
   DEBUG3("The arbiter says there is not another poll active\n");
@@ -2479,7 +2545,7 @@ static void handlePollCmd(GameKeeper::Player *playerData, const char *message)
 	    available - 1,
 	    available - 1 == 1 ? "is" : "are");
     sendMessage(ServerPlayer, t, reply);
-    return;
+    return true;
   }
 
   std::string arguments = &message[5]; /* skip "/poll" */
@@ -2526,7 +2592,7 @@ static void handlePollCmd(GameKeeper::Player *playerData, const char *message)
     if (arguments.size() == 0) {
       sendMessage(ServerPlayer, t, "/poll: incorrect syntax, argument required.");
       DEBUG3("No command arguments, stopping poll.\n");
-      return;
+      return true;
     }
     
     DEBUG3("Command arguments are [%s]\n", arguments.c_str());
@@ -2566,7 +2632,7 @@ static void handlePollCmd(GameKeeper::Player *playerData, const char *message)
       sendMessage(ServerPlayer, t, reply);
       snprintf(reply, MessageLen, "Usage: /poll %s target", cmd.c_str());
       sendMessage(ServerPlayer, t, reply);
-      return;
+      return true;
     }
 
     // Make sure the specific poll type is allowed
@@ -2574,32 +2640,32 @@ static void handlePollCmd(GameKeeper::Player *playerData, const char *message)
       snprintf(reply, MessageLen, "%s, you may not /poll set on this server", callsign.c_str());
       sendMessage(ServerPlayer, t, reply);
       DEBUG3("Player %s is not allowed to /poll set\n", callsign.c_str());
-      return;
+      return true;
     }
     if ((cmd == "flagreset") && (!playerData->accessInfo.hasPerm(PlayerAccessInfo::pollFlagReset))) {
       snprintf(reply, MessageLen, "%s, you may not /poll flagreset on this server", callsign.c_str());
       sendMessage(ServerPlayer, t, reply);
       DEBUG3("Player %s is not allowed to /poll flagreset\n", callsign.c_str());
-      return;
+      return true;
     }
     if ((cmd == "ban") && (!playerData->accessInfo.hasPerm(PlayerAccessInfo::pollBan))) {
       snprintf(reply, MessageLen, "%s, you may not /poll ban on this server", callsign.c_str());
       sendMessage(ServerPlayer, t, reply);
       DEBUG3("Player %s is not allowed to /poll ban\n", callsign.c_str());
-      return;
+      return true;
     }
     if ((cmd == "kick") && (!playerData->accessInfo.hasPerm(PlayerAccessInfo::pollKick))) {
       snprintf(reply, MessageLen, "%s, you may not /poll kick on this server", callsign.c_str());
       sendMessage(ServerPlayer, t, reply);
       DEBUG3("Player %s is not allowed to /poll kick\n", callsign.c_str());
-      return;
+      return true;
     }
 
     if ((cmd == "kill") && (!playerData->accessInfo.hasPerm(PlayerAccessInfo::pollKill))) {
       snprintf(reply, MessageLen, "%s, you may not /poll kill on this server", callsign.c_str());
       sendMessage(ServerPlayer, t, reply);
       DEBUG3("Player %s is not allowed to /poll kill\n", callsign.c_str());
-      return;
+      return true;
     }
 
     if ((cmd != "set") && (cmd != "flagreset")) {
@@ -2612,14 +2678,14 @@ static void handlePollCmd(GameKeeper::Player *playerData, const char *message)
 	snprintf(reply, MessageLen, 
 		"The player specified for a %s vote is not here", cmd.c_str());
 	sendMessage(ServerPlayer, t, reply);
-	return;
+	return true;
       }
       GameKeeper::Player* targetData = GameKeeper::Player::getPlayerByIndex(v);
       if (!targetData) {
 	/* wrong name? */
 	snprintf(reply, MessageLen, "The server has no information on %s.", cmd.c_str());
 	sendMessage(ServerPlayer, t, reply);
-	return;
+	return true;
       }
       targetIP = targetData->netHandler->getTargetIP();
 
@@ -2631,25 +2697,25 @@ static void handlePollCmd(GameKeeper::Player *playerData, const char *message)
 	  if (p->accessInfo.hasPerm(PlayerAccessInfo::antipoll)) {
 	    snprintf(reply, MessageLen, "%s is protected from being polled against.", p->player.getCallSign());
 	    sendMessage(ServerPlayer, t, reply);
-	    return;
+	    return true;
 	  }
 	  if (cmd == "ban") {
 	    if (p->accessInfo.hasPerm(PlayerAccessInfo::antipollban)) {
 	      snprintf(reply, MessageLen, "%s is protected from being poll banned.", p->player.getCallSign());
 	      sendMessage(ServerPlayer, t, reply);
-	      return;
+	      return true;
 	    }
 	  } else if (cmd == "kick") {
 	    if (p->accessInfo.hasPerm(PlayerAccessInfo::antipollkick)) {
 	      snprintf(reply, MessageLen, "%s is protected from being poll kicked.", p->player.getCallSign());
 	      sendMessage(ServerPlayer, t, reply);
-	      return;
+	      return true;
 	    }
 	  } else if (cmd == "kill") {
 	    if (p->accessInfo.hasPerm(PlayerAccessInfo::antipollkill)) {
 	      snprintf(reply, MessageLen, "%s is protected from being poll killed.", p->player.getCallSign());
 	      sendMessage(ServerPlayer, t, reply);
-	      return;
+	      return true;
 	    }
 	  }
 	}
@@ -2674,7 +2740,7 @@ static void handlePollCmd(GameKeeper::Player *playerData, const char *message)
     if (!canDo) {
       snprintf(reply, MessageLen, "You are not able to request a %s poll right now, %s", cmd.c_str(), callsign.c_str());
       sendMessage(ServerPlayer, t, reply);
-      return;
+      return true;
     } else {
       snprintf(reply, MessageLen, "A poll to %s %s has been requested by %s", cmd.c_str(), target.c_str(), callsign.c_str());
       sendMessage(ServerPlayer, AllPlayers, reply);
@@ -2709,14 +2775,14 @@ static void handlePollCmd(GameKeeper::Player *playerData, const char *message)
   } else if (cmd == "vote") {
     std::string voteCmd = "/vote ";
     voteCmd += arguments;
-    handleVoteCmd(playerData, voteCmd.c_str());
-    return;
+    voteCommand(voteCmd.c_str(), playerData);
+    return true;
 
   } else if (cmd == "veto") {
     std::string vetoCmd = "/veto ";
     vetoCmd += arguments;
-    handleVetoCmd(playerData, vetoCmd.c_str());
-    return;
+    vetoCommand(vetoCmd.c_str(), playerData);
+    return true;
 
   } else {
     sendMessage(ServerPlayer, t, "Invalid option to the poll command");
@@ -2734,17 +2800,18 @@ static void handlePollCmd(GameKeeper::Player *playerData, const char *message)
 
   } /* end handling of poll subcommands */
 
-  return;
+  return true;
 }
 
 
-static void handleViewReportsCmd(GameKeeper::Player *playerData, const char *)
+bool ViewReportCommand::operator() (const char         *,
+				    GameKeeper::Player *playerData)
 {
   int t = playerData->getIndex();
   std::string line;
   if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::viewReports)) {
     sendMessage(ServerPlayer, t, "You do not have permission to run the viewreports command");
-    return;
+    return true;
   }
   if (clOptions->reportFile.size() == 0 && clOptions->reportPipe.size() == 0) {
     line = "The /report command is disabled on this server or there are no reports filed.";
@@ -2753,14 +2820,16 @@ static void handleViewReportsCmd(GameKeeper::Player *playerData, const char *)
   std::ifstream ifs(clOptions->reportFile.c_str(), std::ios::in);
   if (ifs.fail()) {
     sendMessage(ServerPlayer, t, "Error reading from report file.");
-    return;
+    return true;
   }
   while (std::getline(ifs, line))
     sendMessage(ServerPlayer, t, line.c_str());
+  return true;
 }
 
 
-static void handleClientqueryCmd(GameKeeper::Player *playerData, const char * message)
+bool ClientQueryCommand::operator() (const char         *message,
+				     GameKeeper::Player *playerData)
 {
   int t = playerData->getIndex();
   DEBUG2("Clientquery requested by %s [%d]\n",
@@ -2776,11 +2845,11 @@ static void handleClientqueryCmd(GameKeeper::Player *playerData, const char * me
       if (target && strcmp(target->player.getCallSign(), name.c_str()) == 0) {
 	sendMessage(i, t, TextUtils::format("Version: %s",
 		     target->player.getClientVersion()).c_str());
-	return;
+	return true;
       }
     }
     sendMessage(ServerPlayer, t, "Player not found.");
-    return;
+    return true;
   }
   sendMessage(ServerPlayer, AllPlayers, "[Sent version information per request]");
   // send server's own version string just for kicks
@@ -2798,7 +2867,7 @@ static void handleClientqueryCmd(GameKeeper::Player *playerData, const char * me
 		   otherData->player.getClientVersion()).c_str());
     }
   }
-  return;
+  return true;
 }
 
 
@@ -3176,25 +3245,7 @@ void parseServerCommand(const char *message, int t)
   if (ServerCommand::execute(message, playerData))
     return;
 
-  if (strncasecmp(message + 1, "reload", 6) == 0) {
-    handleReloadCmd(playerData, message);
-
-  } else if (strncasecmp(message + 1, "poll", 4) == 0) {
-    handlePollCmd(playerData, message);
-
-  } else if (strncasecmp(message + 1, "vote", 4) == 0) {
-    handleVoteCmd(playerData, message);
-
-  } else if (strncasecmp(message + 1, "veto", 4) == 0) {
-    handleVetoCmd(playerData, message);
-
-  } else if (strncasecmp(message + 1, "viewreports", 11) == 0) {
-    handleViewReportsCmd(playerData, message);
-
-  } else if (strncasecmp(message + 1, "clientquery", 11) == 0) {
-    handleClientqueryCmd(playerData, message);
-
-  } else if (strncasecmp(message + 1, "date", 4) == 0 || strncasecmp(message + 1, "time", 4) == 0) {
+  if (strncasecmp(message + 1, "date", 4) == 0 || strncasecmp(message + 1, "time", 4) == 0) {
     handleDateCmd(playerData, message);
 
   } else if (strncasecmp(message + 1, "record", 6) == 0) {
