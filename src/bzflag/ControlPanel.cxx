@@ -265,7 +265,7 @@ void			ControlPanel::render(SceneRenderer& _renderer)
   OpenGLGState::resetState();
 
   FontManager &fm = FontManager::instance();
-  fm.setOpacity(1.0f - dimming);
+  fm.setOpacity(dimming);
 
   if (changedMessage > 0) {
     changedMessage--;
@@ -574,7 +574,7 @@ void			ControlPanel::render(SceneRenderer& _renderer)
 
   glPopMatrix();
 
-  fm.setOpacity(0.0f);
+  fm.setOpacity(1.0f);
 }
 
 void			ControlPanel::resize()

@@ -282,7 +282,7 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
   bool pulsating = false;
   bool underline = false;
   // negatives are invalid, we use them to signal "no change"
-  GLfloat color[4] = {-1.0f, -1.0f, -1.0f, 1.0f - opacity};
+  GLfloat color[4] = {-1.0f, -1.0f, -1.0f, opacity};
   if (resetColor != NULL) {
     color[0] = resetColor[0];
     color[1] = resetColor[1];
@@ -295,8 +295,8 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
   GLfloat dimUnderlineColor[4] = { underlineColor[0] * dimFactor,
 				   underlineColor[1] * dimFactor,
 				   underlineColor[2] * dimFactor,
-				   1.0f - opacity };
-  underlineColor[3] = 1.0f - opacity;
+				   opacity };
+  underlineColor[3] = opacity;
 
   // FIXME - this should not be necessary, but the bitmap font renderer needs it
   //  OpenGLGState::resetState(); 

@@ -183,7 +183,7 @@ void			ScoreboardRenderer::render(bool forceDisplay)
 {
   FontManager &fm = FontManager::instance();
   if (dim) {
-    fm.setOpacity(1.0f - dimFactor);
+    fm.setOpacity(dimFactor);
   }
   
   if (BZDB.isTrue("displayScore") || forceDisplay){
@@ -196,7 +196,7 @@ void			ScoreboardRenderer::render(bool forceDisplay)
   }
 
   if (dim) {
-    fm.setOpacity(0.0f);
+    fm.setOpacity(1.0f);
   }
 }
 

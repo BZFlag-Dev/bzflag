@@ -97,7 +97,7 @@ inline void FontManager::setDimFactor(float newDimFactor)
 inline void FontManager::setOpacity(float newOpacity)
 {
   opacity = newOpacity;
-  underlineColor[3] = 1.0f - opacity;
+  underlineColor[3] = opacity;
 }
 
 #endif //_FONT_MANAGER_H_
