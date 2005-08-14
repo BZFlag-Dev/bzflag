@@ -26,6 +26,7 @@
 #include "Team.h"
 #include "FontManager.h"
 #include "BZDBCache.h"
+#include "AnsiCodes.h"
 
 /* local implementation headers */
 #include "LocalPlayer.h"
@@ -294,6 +295,8 @@ void			ScoreboardRenderer::renderCtfFlags (){
   hudColor3fv(messageColor);
   fm.drawString(x, y, 0, minorFontFace, minorFontSize, "Team Flags");
 
+  fm.setDimFactor(dimFactor);
+  
   for (i=0; i < curMaxPlayers; i++) {
     if ((player = World::getWorld()->getPlayer(i))) {
       FlagType* flagd = player->getFlag();
@@ -305,7 +308,6 @@ void			ScoreboardRenderer::renderCtfFlags (){
         playerInfo += ColorStrings[teamIndex];
         playerInfo += player->getCallSign();
 
-        fm.setDimFactor(dimFactor);
         fm.drawString(x, y0, 0, minorFontFace, minorFontSize, playerInfo);
         y0 -= dy;
       }
@@ -428,8 +430,16 @@ void      ScoreboardRenderer::stringAppendNormalized (std::string *s, float n)
 void			ScoreboardRenderer::drawPlayerScore(const Player* player,
 			    float x1, float x2, float x3, float xs, float y, bool huntCursor)
 {
+  // dimming
+  std::string dimString;
+  if (dim) {
+    dimString += ANSI_STR_DIM;
+  }
+
   // score
-  char score[40], kills[40];
+  char buffer[40];
+  std::string score = dimString;
+  std::string kills = dimString;
 
   bool highlightTKratio = false;
   if (tkWarnRatio > 0.0) {
@@ -439,20 +449,26 @@ void			ScoreboardRenderer::drawPlayerScore(const Player* player,
     }
   }
 
-  if (World::getWorld()->allowRabbit())
-    sprintf(score, "%2d%% %4d %3d-%-3d%s[%2d]", player->getRabbitScore(),
+  if (World::getWorld()->allowRabbit()) {
+    sprintf(buffer, "%2d%% %4d %3d-%-3d%s[%2d]", player->getRabbitScore(),
 	    player->getScore(), player->getWins(), player->getLosses(),
 	    highlightTKratio ? ColorStrings[CyanColor].c_str() : "",
 	    player->getTeamKills());
-  else
-    sprintf(score, "%4d %4d-%-4d%s[%2d]", player->getScore(),
+  } else {
+    sprintf(buffer, "%4d %4d-%-4d%s[%2d]", player->getScore(),
 	    player->getWins(), player->getLosses(),
 	    highlightTKratio ? ColorStrings[CyanColor].c_str() : "",
 	    player->getTeamKills());
-  if (LocalPlayer::getMyTank() != player)
-    sprintf(kills, "%3d~%-3d", player->getLocalWins(), player->getLocalLosses());
-  else
-    kills[0] = '\0';
+  }
+  score += buffer;
+  
+  // kills
+  if (LocalPlayer::getMyTank() != player) {
+    sprintf(buffer, "%3d~%-3d", player->getLocalWins(), player->getLocalLosses());
+  } else {
+    buffer[0] = '\0';
+  }
+  kills += buffer;
 
 
   // team color
@@ -475,7 +491,7 @@ void			ScoreboardRenderer::drawPlayerScore(const Player* player,
   }
 
   // authentication status
-  std::string statusInfo;
+  std::string statusInfo = dimString;
   if (BZDBCache::colorful) {
     statusInfo += ColorStrings[CyanColor];
   } else {
@@ -491,7 +507,7 @@ void			ScoreboardRenderer::drawPlayerScore(const Player* player,
     statusInfo = ""; // don't print
   }
 
-  std::string playerInfo;
+  std::string playerInfo = dimString;;
   // team color
   playerInfo += teamColor;
   //Slot number only for admins
