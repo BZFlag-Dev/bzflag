@@ -273,6 +273,102 @@ public:
 			   GameKeeper::Player *playerData);
 };
 
+class HostbanCommand : ServerCommand {
+public:
+  HostbanCommand();
+
+  virtual bool operator() (const char         *commandLine,
+			   GameKeeper::Player *playerData);
+};
+
+class UnbanCommand : ServerCommand {
+public:
+  UnbanCommand();
+
+  virtual bool operator() (const char         *commandLine,
+			   GameKeeper::Player *playerData);
+};
+
+class HostUnbanCommand : ServerCommand {
+public:
+  HostUnbanCommand();
+
+  virtual bool operator() (const char         *commandLine,
+			   GameKeeper::Player *playerData);
+};
+
+class LagWarnCommand : ServerCommand {
+public:
+  LagWarnCommand();
+
+  virtual bool operator() (const char         *commandLine,
+			   GameKeeper::Player *playerData);
+};
+
+class LagStatCommand : ServerCommand {
+public:
+  LagStatCommand();
+
+  virtual bool operator() (const char         *commandLine,
+			   GameKeeper::Player *playerData);
+};
+
+class IdleStatCommand : ServerCommand {
+public:
+  IdleStatCommand();
+
+  virtual bool operator() (const char         *commandLine,
+			   GameKeeper::Player *playerData);
+};
+
+class FlagHistoryCommand : ServerCommand {
+public:
+  FlagHistoryCommand();
+
+  virtual bool operator() (const char         *commandLine,
+			   GameKeeper::Player *playerData);
+};
+
+class MuteCommand : ServerCommand {
+public:
+  MuteCommand();
+
+  virtual bool operator() (const char         *commandLine,
+			   GameKeeper::Player *playerData);
+};
+
+class UnmuteCommand : ServerCommand {
+public:
+  UnmuteCommand();
+
+  virtual bool operator() (const char         *commandLine,
+			   GameKeeper::Player *playerData);
+};
+
+class PlayerListCommand : ServerCommand {
+public:
+  PlayerListCommand();
+
+  virtual bool operator() (const char         *commandLine,
+			   GameKeeper::Player *playerData);
+};
+
+class ReportCommand : ServerCommand {
+public:
+  ReportCommand();
+
+  virtual bool operator() (const char         *commandLine,
+			   GameKeeper::Player *playerData);
+};
+
+class HelpCommand : ServerCommand {
+public:
+  HelpCommand();
+
+  virtual bool operator() (const char         *commandLine,
+			   GameKeeper::Player *playerData);
+};
+
 static MsgCommand         msgCommand;
 static ServerQueryCommand serverQueryCommand;
 static PartCommand        partCommand;
@@ -291,6 +387,18 @@ static KillCommand        killCommand;
 static BanListCommand     banListCommand;
 static HostbanListCommand hostbanListCommand;
 static BanCommand         banCommand;
+static HostbanCommand     hostbanCommand;
+static UnbanCommand       unbanCommand;
+static HostUnbanCommand   hostUnbanCommand;
+static LagWarnCommand     lagWarnCommand;
+static LagStatCommand     lagStatCommand;
+static IdleStatCommand    idleStatCommand;
+static FlagHistoryCommand flagHistoryCommand;
+static MuteCommand        muteCommand;
+static UnmuteCommand      unmuteCommand;
+static PlayerListCommand  playerListCommand;
+static ReportCommand      ReportCommand;
+static HelpCommand        helpCommand;
 
 MsgCommand::MsgCommand()                 : ServerCommand("/msg") {}
 ServerQueryCommand::ServerQueryCommand() : ServerCommand("/serverquery") {}
@@ -310,13 +418,26 @@ KillCommand::KillCommand()               : ServerCommand("/kill") {}
 BanListCommand::BanListCommand()         : ServerCommand("/banlist") {}
 HostbanListCommand::HostbanListCommand() : ServerCommand("/hostbanlist") {}
 BanCommand::BanCommand()                 : ServerCommand("/ban") {}
+HostbanCommand::HostbanCommand()         : ServerCommand("/hostban") {}
+UnbanCommand::UnbanCommand()             : ServerCommand("/unban") {}
+HostUnbanCommand::HostUnbanCommand()     : ServerCommand("/hostunban") {}
+LagWarnCommand::LagWarnCommand()         : ServerCommand("/lagwarn") {}
+LagStatCommand::LagStatCommand()         : ServerCommand("/lagstat") {}
+IdleStatCommand::IdleStatCommand()       : ServerCommand("/idlestats") {}
+FlagHistoryCommand::FlagHistoryCommand() : ServerCommand("/flaghistory") {}
+MuteCommand::MuteCommand()               : ServerCommand("/mute") {}
+UnmuteCommand::UnmuteCommand()           : ServerCommand("/unmute") {}
+PlayerListCommand::PlayerListCommand()   : ServerCommand("/playerlist") {}
+ReportCommand::ReportCommand()           : ServerCommand("/report") {}
+HelpCommand::HelpCommand()               : ServerCommand("/help") {}
 
-static void handleMuteCmd(GameKeeper::Player *playerData, const char *message)
+bool MuteCommand::operator() (const char         *message,
+			      GameKeeper::Player *playerData)
 {
   int t = playerData->getIndex();
   if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::mute)) {
     sendMessage(ServerPlayer, t, "You do not have permission to run the unmute command");
-    return;
+    return true;
   }
   
   
@@ -324,7 +445,7 @@ static void handleMuteCmd(GameKeeper::Player *playerData, const char *message)
 
   if (argv.size() < 2) {
     sendMessage(ServerPlayer, t, "Syntax: /mute <#slot | PlayerName | \"Player Name\">");
-    return;
+    return true;
   }
   
   int i = getSlotNumber(argv[1]);
@@ -335,7 +456,7 @@ static void handleMuteCmd(GameKeeper::Player *playerData, const char *message)
   if (i < 0) {
     snprintf(msg, MessageLen, "player \"%s\" not found", argv[1].c_str());
     sendMessage(ServerPlayer, t, msg);
-    return;
+    return true;
   }
   
   // mute the player
@@ -348,14 +469,16 @@ static void handleMuteCmd(GameKeeper::Player *playerData, const char *message)
     snprintf(msg, MessageLen, "player id #%d \"%s\" is now muted.", i, muteData->player.getCallSign());
     sendMessage(ServerPlayer, t, msg);
   }
+  return true;
 }
 
-static void handleUnmuteCmd(GameKeeper::Player *playerData, const char *message)
+bool UnmuteCommand::operator() (const char         *message,
+			      GameKeeper::Player *playerData)
 {
   int t = playerData->getIndex();
   if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::mute)) {
     sendMessage(ServerPlayer, t, "You do not have permission to run the unmute command");
-    return;
+    return true;
   }
   
   
@@ -363,7 +486,7 @@ static void handleUnmuteCmd(GameKeeper::Player *playerData, const char *message)
 
   if (argv.size() < 2) {
     sendMessage(ServerPlayer, t, "Syntax: /unmute <#slot | PlayerName | \"Player Name\">");
-    return;
+    return true;
   }
   
   int i = getSlotNumber(argv[1]);
@@ -374,7 +497,7 @@ static void handleUnmuteCmd(GameKeeper::Player *playerData, const char *message)
   if (i < 0) {
     snprintf(msg, MessageLen, "player \"%s\" not found", argv[1].c_str());
     sendMessage(ServerPlayer, t, msg);
-    return;
+    return true;
   }
   
   // unmute the player
@@ -387,6 +510,7 @@ static void handleUnmuteCmd(GameKeeper::Player *playerData, const char *message)
     snprintf(msg, MessageLen, "player id #%d \"%s\" is now unmuted.", i, unmuteData->player.getCallSign());
     sendMessage(ServerPlayer, t, msg);
   }
+  return true;
 }
 
 bool UpTimeCommand::operator() (const char         *,
@@ -1179,21 +1303,26 @@ bool BanCommand::operator() (const char         *message,
 }
 
 
-static void handleHostBanCmd(GameKeeper::Player *playerData, const char *message)
+bool HostbanCommand::operator() (const char         *message,
+				 GameKeeper::Player *playerData)
 {
   int t = playerData->getIndex();
   if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::ban) &&
       !playerData->accessInfo.hasPerm(PlayerAccessInfo::shortBan)) {
-    sendMessage(ServerPlayer, t, "You do not have permission to run the ban command");
-    return;
+    sendMessage(ServerPlayer, t,
+		"You do not have permission to run the ban command");
+    return true;
   }
 
   std::string msg = message;
   std::vector<std::string> argv = TextUtils::tokenize( msg, " \t", 4 );
 
   if (argv.size() < 2) {
-    sendMessage(ServerPlayer, t, "Syntax: /hostban <host pattern> [duration] [reason]");
-    sendMessage(ServerPlayer, t, "	Please keep in mind that reason is displayed to the user.");
+    sendMessage(ServerPlayer, t,
+		"Syntax: /hostban <host pattern> [duration] [reason]");
+    sendMessage(ServerPlayer, t,
+		"	Please keep in mind that reason is displayed to the "
+		"user.");
   } else {
     std::string hostpat = argv[1];
     std::string reason;
@@ -1206,7 +1335,7 @@ static void handleHostBanCmd(GameKeeper::Player *playerData, const char *message
 	  ((specifiedDuration > durationInt) || (specifiedDuration <= 0)) &&
 	  !playerData->accessInfo.hasPerm(PlayerAccessInfo::ban)) {
 	sendMessage (ServerPlayer, t, "You only have SHORTBAN privileges,"
-				      " using default ban time");
+		     " using default ban time");
       } else {
 	durationInt = specifiedDuration;
       }
@@ -1217,24 +1346,25 @@ static void handleHostBanCmd(GameKeeper::Player *playerData, const char *message
       reason = argv[3];
     }
 
-		// call any plugin events registered for /hostban
-		bz_HostBanEventData hostBanEvent;
-		hostBanEvent.bannerID = t;
-		hostBanEvent.hostPattern = hostpat.c_str();
-		hostBanEvent.reason = reason.c_str();
-		hostBanEvent.duration = durationInt;
-		
-		worldEventManager.callEvents(bz_eHostBanEvent,&hostBanEvent);
+    // call any plugin events registered for /hostban
+    bz_HostBanEventData hostBanEvent;
+    hostBanEvent.bannerID = t;
+    hostBanEvent.hostPattern = hostpat.c_str();
+    hostBanEvent.reason = reason.c_str();
+    hostBanEvent.duration = durationInt;
 
-		// a plugin might have changed bannerID
-		if (t != hostBanEvent.bannerID) {
-			playerData = GameKeeper::Player::getPlayerByIndex(hostBanEvent.bannerID);
-			if (!playerData)
-				return;
-		}
-		
+    worldEventManager.callEvents(bz_eHostBanEvent,&hostBanEvent);
+
+    // a plugin might have changed bannerID
+    if (t != hostBanEvent.bannerID) {
+      playerData = GameKeeper::Player::getPlayerByIndex(hostBanEvent.bannerID);
+      if (!playerData)
+	return true;
+    }
+
     clOptions->acl.hostBan(hostBanEvent.hostPattern.c_str(), 
-		     playerData->player.getCallSign(), hostBanEvent.duration,
+			   playerData->player.getCallSign(),
+			   hostBanEvent.duration,
 			   hostBanEvent.reason.c_str());
     clOptions->acl.save();
 
@@ -1242,16 +1372,17 @@ static void handleHostBanCmd(GameKeeper::Player *playerData, const char *message
 
     sendMessage(ServerPlayer, t, "Host pattern added to banlist");
   }
-  return;
+  return true;
 }
 
 
-static void handleUnbanCmd(GameKeeper::Player *playerData, const char *message)
+bool UnbanCommand::operator() (const char         *message,
+			       GameKeeper::Player *playerData)
 {
   int t = playerData->getIndex();
   if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::unban)) {
     sendMessage(ServerPlayer, t, "You do not have permission to run the unban command");
-    return;
+    return true;
   }
 
   if (clOptions->acl.unban(message + 7)) {
@@ -1260,15 +1391,16 @@ static void handleUnbanCmd(GameKeeper::Player *playerData, const char *message)
   } else {
     sendMessage(ServerPlayer, t, "No pattern removed");
   }
-  return;
+  return true;
 }
 
-static void handleHostUnbanCmd(GameKeeper::Player *playerData, const char *message)
+bool HostUnbanCommand::operator() (const char         *message,
+				   GameKeeper::Player *playerData)
 {
   int t = playerData->getIndex();
   if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::unban)) {
     sendMessage(ServerPlayer, t, "You do not have permission to run the unban command");
-    return;
+    return true;
   }
 
   if (clOptions->acl.hostUnban(message + 11)) {
@@ -1277,16 +1409,17 @@ static void handleHostUnbanCmd(GameKeeper::Player *playerData, const char *messa
   } else {
     sendMessage(ServerPlayer, t, "No pattern removed");
   }
-  return;
+  return true;
 }
 
 
-static void handleLagwarnCmd(GameKeeper::Player *playerData, const char *message)
+bool LagWarnCommand::operator() (const char         *message,
+				 GameKeeper::Player *playerData)
 {
   int t = playerData->getIndex();
   if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::lagwarn)) {
     sendMessage(ServerPlayer, t, "You do not have permission to run the lagwarn command");
-    return;
+    return true;
   }
 
   char reply[MessageLen] = {0};
@@ -1299,7 +1432,7 @@ static void handleLagwarnCmd(GameKeeper::Player *playerData, const char *message
     snprintf(reply, MessageLen, "lagwarn is set to %d ms", int(clOptions->lagwarnthresh * 1000 + 0.5));
   }
   sendMessage(ServerPlayer, t, reply);
-  return;
+  return true;
 }
 
 
@@ -1312,12 +1445,13 @@ bool lagCompare(const GameKeeper::Player *a, const GameKeeper::Player *b)
   return a->lagInfo.getLag() < b->lagInfo.getLag();
 }
 
-static void handleLagstatsCmd(GameKeeper::Player *playerData, const char *)
+bool LagStatCommand::operator() (const char         *,
+				 GameKeeper::Player *playerData)
 {
   int t = playerData->getIndex();
   if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::lagStats)) {
     sendMessage(ServerPlayer, t, "You do not have permission to run the lagstats command");
-    return;
+    return true;
   }
   // yeah, ok this is ugly but it works - curMaxPlayers is never >255
   GameKeeper::Player *sortedPlayer[256];
@@ -1337,15 +1471,17 @@ static void handleLagstatsCmd(GameKeeper::Player *playerData, const char *)
     if (reply[0])
       sendMessage(ServerPlayer, t, reply);
   }
+  return true;
 }
 
 
-static void handleIdlestatsCmd(GameKeeper::Player *playerData, const char *)
+bool IdleStatCommand::operator() (const char         *,
+				  GameKeeper::Player *playerData)
 {
   int t = playerData->getIndex();
   if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::idleStats)) {
     sendMessage(ServerPlayer, t, "You do not have permission to run the idlestats command");
-    return;
+    return true;
   }
 
   GameKeeper::Player *otherData;
@@ -1358,16 +1494,17 @@ static void handleIdlestatsCmd(GameKeeper::Player *playerData, const char *)
     if (reply != "")
       sendMessage(ServerPlayer, t, reply.c_str());
   }
-  return;
+  return true;
 }
 
 
-static void handleFlaghistoryCmd(GameKeeper::Player *playerData, const char *)
+bool FlagHistoryCommand::operator() (const char         *,
+				     GameKeeper::Player *playerData)
 {
   int t = playerData->getIndex();
   if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::flagHistory)) {
     sendMessage(ServerPlayer, t, "You do not have permission to run the flaghistory command");
-    return;
+    return true;
   }
 
   char reply[MessageLen];
@@ -1380,15 +1517,17 @@ static void handleFlaghistoryCmd(GameKeeper::Player *playerData, const char *)
       sendMessage(ServerPlayer, t, reply);
     }
   }
+  return true;
 }
 
 
-static void handlePlayerlistCmd(GameKeeper::Player *playerData, const char *)
+bool PlayerListCommand::operator() (const char         *,
+				    GameKeeper::Player *playerData)
 {
   int t = playerData->getIndex();
   if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::playerList)) {
     sendMessage(ServerPlayer, t, "You do not have permission to run the playerlist command");
-    return;
+    return true;
   }
 
   GameKeeper::Player *otherData;
@@ -1401,16 +1540,17 @@ static void handlePlayerlistCmd(GameKeeper::Player *playerData, const char *)
       sendMessage(ServerPlayer, t, reply);
     }
   }
-  return;
+  return true;
 }
 
 
-static void handleReportCmd(GameKeeper::Player *playerData, const char *message)
+bool ReportCommand::operator() (const char         *message,
+				GameKeeper::Player *playerData)
 {
   int t = playerData->getIndex();
   if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::talk)) {
     sendMessage(ServerPlayer, t, "You do not have permission to run the report command");
-    return;
+    return true;
   }
 
   if (strlen(message + 1) < 8) {
@@ -1441,7 +1581,7 @@ static void handleReportCmd(GameKeeper::Player *playerData, const char *message)
 			 (message + 8);
       if (temp.size() <= (unsigned) MessageLen) {
 	sendMessage (ServerPlayer, AdminPlayers, temp.c_str());
-	return;
+	return true;
       }
       const std::vector<std::string> words = TextUtils::tokenize(temp, " \t");
       unsigned int cur = 0;
@@ -1464,11 +1604,12 @@ static void handleReportCmd(GameKeeper::Player *playerData, const char *message)
     }
   }
 
-  return;
+  return true;
 }
 
 
-static void handleHelpCmd(GameKeeper::Player *playerData, const char *message)
+bool HelpCommand::operator() (const char         *message,
+			      GameKeeper::Player *playerData)
 {
   int t = playerData->getIndex();
   char reply[MessageLen] = {0};
@@ -1499,7 +1640,7 @@ static void handleHelpCmd(GameKeeper::Player *playerData, const char *message)
       sendMessage(ServerPlayer, t, reply);
     }
   }
-  return;
+  return true;
 }
 
 
@@ -2925,43 +3066,7 @@ void parseServerCommand(const char *message, int t)
   if (ServerCommand::execute(message, playerData))
     return;
 
-  if (strncasecmp(message+1, "hostban", 7) == 0) {
-    handleHostBanCmd(playerData, message);
-
-  } else if (strncasecmp(message+1, "unban", 5) == 0) {
-    handleUnbanCmd(playerData, message);
-
-  } else if (strncasecmp(message+1, "hostunban", 9) == 0) {
-    handleHostUnbanCmd(playerData, message);
-
-  } else if (strncasecmp(message+1, "lagwarn",7) == 0) {
-    handleLagwarnCmd(playerData, message);
-
-  } else if (strncasecmp(message+1, "lagstats",8) == 0) {
-    handleLagstatsCmd(playerData, message);
-
-  } else if (strncasecmp(message+1, "idlestats",9) == 0) {
-    handleIdlestatsCmd(playerData, message);
-
-  } else if (strncasecmp(message+1, "flaghistory", 11 ) == 0) {
-    handleFlaghistoryCmd(playerData, message); 
-
-  } else if (strncasecmp(message+1, "mute", 4 ) == 0 ) {
-    handleMuteCmd(playerData, message);
-
-  } else if (strncasecmp(message+1, "unmute", 6 ) == 0 ) {
-    handleUnmuteCmd(playerData, message);
-
-  } else if (strncasecmp(message+1, "playerlist", 10) == 0) {
-    handlePlayerlistCmd(playerData, message);
-
-  } else if (strncasecmp(message+1, "report", 6) == 0) {
-    handleReportCmd(playerData, message);
-
-  } else if (strncasecmp(message+1, "help", 4) == 0) {
-    handleHelpCmd(playerData, message);
-
-  } else if (strncasecmp(message + 1, "identify", 8) == 0) {
+  if (strncasecmp(message + 1, "identify", 8) == 0) {
     handleIdentifyCmd(playerData, message);
 
   } else if (strncasecmp(message + 1, "register", 8) == 0) {
