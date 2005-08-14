@@ -515,6 +515,38 @@ public:
   TimeCommand();
 };
 
+class RecordCommand : ServerCommand {
+public:
+  RecordCommand();
+
+  virtual bool operator() (const char         *commandLine,
+			   GameKeeper::Player *playerData);
+};
+
+class ReplayCommand : ServerCommand {
+public:
+  ReplayCommand();
+
+  virtual bool operator() (const char         *commandLine,
+			   GameKeeper::Player *playerData);
+};
+
+class SayCommand : ServerCommand {
+public:
+  SayCommand();
+
+  virtual bool operator() (const char         *commandLine,
+			   GameKeeper::Player *playerData);
+};
+
+class MasterBanCommand : ServerCommand {
+public:
+  MasterBanCommand();
+
+  virtual bool operator() (const char         *commandLine,
+			   GameKeeper::Player *playerData);
+};
+
 static MsgCommand         msgCommand;
 static ServerQueryCommand serverQueryCommand;
 static PartCommand        partCommand;
@@ -563,6 +595,10 @@ static ViewReportCommand  viewReportCommand;
 static ClientQueryCommand clientQueryCommand;
 static DateCommand        dateCommand;
 static TimeCommand        timeCommand;
+static RecordCommand      recordCommand;
+static ReplayCommand      replayCommand;
+static SayCommand         sayCommand;
+static MasterBanCommand   masterBanCommand;
 
 MsgCommand::MsgCommand()                 : ServerCommand("/msg") {}
 ServerQueryCommand::ServerQueryCommand() : ServerCommand("/serverquery") {}
@@ -612,6 +648,10 @@ ViewReportCommand::ViewReportCommand()   : ServerCommand("/viewreports") {}
 ClientQueryCommand::ClientQueryCommand() : ServerCommand("/clientquery") {}
 DateCommand::DateCommand()               : DateTimeCommand("/date") {}
 TimeCommand::TimeCommand()               : DateTimeCommand("/time") {}
+RecordCommand::RecordCommand()           : ServerCommand("/record") {}
+ReplayCommand::ReplayCommand()           : ServerCommand("/replay") {}
+SayCommand::SayCommand()                 : ServerCommand("/say") {}
+MasterBanCommand::MasterBanCommand()     : ServerCommand("/masterban") {}
 
 bool MuteCommand::operator() (const char         *message,
 			      GameKeeper::Player *playerData)
@@ -2903,13 +2943,14 @@ bool ClientQueryCommand::operator() (const char         *message,
  *  /record file [filename]     # begin capturing straight to file, flush buffer
  *  /record save [filename]     # save buffer to file (or default filename)
  */
-static void handleRecordCmd(GameKeeper::Player *playerData, const char * message)
+bool RecordCommand::operator() (const char         *message,
+				GameKeeper::Player *playerData)
 {
   int t = playerData->getIndex();
   const char *buf = message + 8;
   if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::record)) {
     sendMessage(ServerPlayer, t, "You do not have permission to run the /record command");
-    return;
+    return true;
   }
   while ((*buf != '\0') && isspace (*buf)) buf++; // eat whitespace
 
@@ -2925,7 +2966,7 @@ static void handleRecordCmd(GameKeeper::Player *playerData, const char * message
 
     if (*buf == '\0') {
       Record::sendHelp (t);
-      return;
+      return true;
     }
     int size = atoi (buf);
     Record::setSize (t, size);
@@ -2936,7 +2977,7 @@ static void handleRecordCmd(GameKeeper::Player *playerData, const char * message
 
     if (*buf == '\0') {
       Record::sendHelp (t);
-      return;
+      return true;
     }
     int seconds = atoi (buf);
     Record::setRate (t, seconds);
@@ -2996,7 +3037,7 @@ static void handleRecordCmd(GameKeeper::Player *playerData, const char * message
     Record::sendHelp (t);
   }
 
-  return;
+  return true;
 }
 
 
@@ -3009,7 +3050,8 @@ static void handleRecordCmd(GameKeeper::Player *playerData, const char * message
  *  /replay stats		# report the current replay state
  *  /replay skip <secs>	 # fast foward or rewind in time
  */
-static void handleReplayCmd(GameKeeper::Player *playerData, const char * message)
+bool ReplayCommand::operator() (const char         *message,
+				GameKeeper::Player *playerData)
 {
   int t = playerData->getIndex();
   const char *buf = message + 7;
@@ -3020,12 +3062,12 @@ static void handleReplayCmd(GameKeeper::Player *playerData, const char * message
   // everyone can use the replay stats command
   if (strncasecmp (buf, "stats", 4) == 0) {
     Replay::sendStats (t);
-    return;
+    return true;
   }
 
   if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::replay)) {
     sendMessage(ServerPlayer, t, "You do not have permission to run the /replay command");
-    return;
+    return true;
   }
 
   if (strncasecmp (buf, "list", 4) == 0) {
@@ -3078,10 +3120,11 @@ static void handleReplayCmd(GameKeeper::Player *playerData, const char * message
     Replay::sendHelp (t);
   }
 
-  return;
+  return true;
 }
 
-static void handleSayCmd(GameKeeper::Player *playerData, const char * message)
+bool SayCommand::operator() (const char         *message,
+			     GameKeeper::Player *playerData)
 {
   size_t messageStart = 0;
   int t = playerData->getIndex();
@@ -3090,7 +3133,7 @@ static void handleSayCmd(GameKeeper::Player *playerData, const char * message)
     char reply[MessageLen] = {0};
     snprintf(reply, MessageLen, "%s, you do not have permission to run the /say command", playerData->player.getCallSign());
     sendMessage(ServerPlayer, t, reply);
-    return;
+    return true;
   }
 
   std::string messageText = &message[4];
@@ -3104,7 +3147,7 @@ static void handleSayCmd(GameKeeper::Player *playerData, const char * message)
   // make sure there was _some_ whitespace after /say
   if (messageStart == 0) {
     sendMessage(ServerPlayer, t, "Usage: /say some message");
-    return;
+    return true;
   }
 
   // no anonymous messages
@@ -3114,7 +3157,7 @@ static void handleSayCmd(GameKeeper::Player *playerData, const char * message)
 
   // send the message
   sendMessage(ServerPlayer, AllPlayers, messageText.c_str() + messageStart );
-  return;
+  return true;
 }
 
 
@@ -3141,7 +3184,8 @@ bool DateTimeCommand::operator() (const char         *,
  * /masterban reload	    # reread and reload all master ban entries
  * /masterban list	      # output a list of who is banned
  */
-static void handleMasterBanCmd(GameKeeper::Player *playerData, const char *message)
+bool MasterBanCommand::operator() (const char         *message,
+				   GameKeeper::Player *playerData)
 {
   int t = playerData->getIndex();
   std::string callsign = std::string(playerData->player.getCallSign());
@@ -3150,7 +3194,7 @@ static void handleMasterBanCmd(GameKeeper::Player *playerData, const char *messa
 
   if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::masterBan)) {
     sendMessage(ServerPlayer, t, TextUtils::format("%s, you are presently not authorized to run /masterban", callsign.c_str()).c_str());
-    return;
+    return true;
   }
 
   DEBUG3("Player has permission to run /masterban\n");
@@ -3187,7 +3231,7 @@ static void handleMasterBanCmd(GameKeeper::Player *playerData, const char *messa
 	!playerData->accessInfo.hasPerm(PlayerAccessInfo::unban)) {
       sendMessage(ServerPlayer, t, "You do not have permission to reload the master ban list.");
       sendMessage(ServerPlayer, t, "Permission to ban and unban is required to reload the master ban list.");
-      return;
+      return true;
     }
 
     if (clOptions->publicizeServer && !clOptions->suppressMasterBanList) {
@@ -3212,7 +3256,7 @@ static void handleMasterBanCmd(GameKeeper::Player *playerData, const char *messa
     if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::unban)) {
       sendMessage(ServerPlayer, t, "You do not have permission to reload the master ban list.");
       sendMessage(ServerPlayer, t, "Permission to unban is required to flush the master ban list.");
-      return;
+      return true;
     }
 
     clOptions->acl.purgeMasters();
@@ -3250,7 +3294,7 @@ static void handleMasterBanCmd(GameKeeper::Player *playerData, const char *messa
     sendMessage(ServerPlayer, t, TextUtils::format("Usage: /masterban list|reload|flush").c_str());
   }
 
-  return;
+  return true;
 }
 
 
@@ -3269,19 +3313,7 @@ void parseServerCommand(const char *message, int t)
   if (ServerCommand::execute(message, playerData))
     return;
 
-  if (strncasecmp(message + 1, "record", 6) == 0) {
-    handleRecordCmd(playerData, message);
-
-  } else if (strncasecmp(message + 1, "replay", 6) == 0) {
-    handleReplayCmd(playerData, message);
-
-  } else if (strncasecmp(message + 1, "say", 3) == 0) {
-    handleSayCmd(playerData, message);
-
-  } else if (strncasecmp(message + 1, "masterban", 9) == 0) {
-    handleMasterBanCmd(playerData, message);
-
-  } else {
+  {
     // lets see if it is a custom command
     std::vector<std::string> params = TextUtils::tokenize(std::string(message+1),std::string(" "));
 
