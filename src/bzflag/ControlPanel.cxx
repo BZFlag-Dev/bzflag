@@ -265,6 +265,7 @@ void			ControlPanel::render(SceneRenderer& _renderer)
   OpenGLGState::resetState();
 
   FontManager &fm = FontManager::instance();
+  fm.setOpacity(1.0f - dimming);
 
   if (changedMessage > 0) {
     changedMessage--;
@@ -353,11 +354,11 @@ void			ControlPanel::render(SceneRenderer& _renderer)
 
       // current mode is bright, others are not so bright
       if (messageMode == MessageModes(tab)) {
-	glColor3f(1.0f, 1.0f, 1.0f);
+	glColor4f(1.0f, 1.0f, 1.0f, dimming);
       } else if (unRead[MessageModes(tab)]) {
-	glColor3f(0.5f, 0.0f, 0.0f);
+	glColor4f(0.5f, 0.0f, 0.0f, dimming);
       } else {
-	glColor3f(0.5f, 0.5f, 0.5f);
+	glColor4f(0.5f, 0.5f, 0.5f, dimming);
       }
 
       if (tabsOnRight) {
@@ -436,7 +437,6 @@ void			ControlPanel::render(SceneRenderer& _renderer)
     // default to drawing text in white
     GLfloat whiteColor[4] = {1.0f, 1.0f, 1.0f, dimming};
     glColor4fv(whiteColor);
-    fm.setOpacity(1.0f - dimming);
 
     bool isTab = false;
 
