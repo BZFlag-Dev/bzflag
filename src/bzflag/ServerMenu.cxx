@@ -17,9 +17,13 @@
 #include <sys/types.h>
 #if !defined(_WIN32)
 #include <errno.h>
+#define STD_MIN std::min
+#else
+#define STD_MIN min
 #endif
 #include <vector>
 #include <string>
+
 
 /* common implementation headers */
 #include "FontManager.h"
@@ -222,7 +226,7 @@ void ServerMenu::setSelected(int index)
 	  fullLabel += ANSI_STR_RESET "   ";
 
           // colorize servers: many shots->red
-          const float shotScale = min(1.0f, logf(server.ping.maxShots) / logf(20.0f));
+		const float shotScale = STD_MIN(1.0f, logf(server.ping.maxShots) / logf(20.0f));
           const float rf = 1.0f;
           const float gf = 1.0f - shotScale;
           const float bf = 1.0f - shotScale;
@@ -230,7 +234,7 @@ void ServerMenu::setSelected(int index)
         }
         else {
           // colorize servers: many shots->red, jumping->green, CTF->blue
-          const float rf = min(1.0f, logf(server.ping.maxShots) / logf(20.0f));
+          const float rf = STD_MIN(1.0f, logf(server.ping.maxShots) / logf(20.0f));
           const float gf = gameStyle & JumpingGameStyle ? 1.0f : 0.0f;
           const float bf = gameStyle & TeamFlagGameStyle ? 1.0f : 0.0f;
           label->setColor(0.5f + rf * 0.5f, 0.5f + gf * 0.5f, 0.5f + bf * 0.5f);
