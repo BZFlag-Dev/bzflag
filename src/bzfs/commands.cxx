@@ -369,6 +369,86 @@ public:
 			   GameKeeper::Player *playerData);
 };
 
+class IdentifyCommand : ServerCommand {
+public:
+  IdentifyCommand();
+
+  virtual bool operator() (const char         *commandLine,
+			   GameKeeper::Player *playerData);
+};
+
+class RegisterCommand : ServerCommand {
+public:
+  RegisterCommand();
+
+  virtual bool operator() (const char         *commandLine,
+			   GameKeeper::Player *playerData);
+};
+
+class GhostCommand : ServerCommand {
+public:
+  GhostCommand();
+
+  virtual bool operator() (const char         *commandLine,
+			   GameKeeper::Player *playerData);
+};
+
+class DeregisterCommand : ServerCommand {
+public:
+  DeregisterCommand();
+
+  virtual bool operator() (const char         *commandLine,
+			   GameKeeper::Player *playerData);
+};
+
+class SetPassCommand : ServerCommand {
+public:
+  SetPassCommand();
+
+  virtual bool operator() (const char         *commandLine,
+			   GameKeeper::Player *playerData);
+};
+
+class GroupListCommand : ServerCommand {
+public:
+  GroupListCommand();
+
+  virtual bool operator() (const char         *commandLine,
+			   GameKeeper::Player *playerData);
+};
+
+class ShowGroupCommand : ServerCommand {
+public:
+  ShowGroupCommand();
+
+  virtual bool operator() (const char         *commandLine,
+			   GameKeeper::Player *playerData);
+};
+
+class GroupPermsCommand : ServerCommand {
+public:
+  GroupPermsCommand();
+
+  virtual bool operator() (const char         *commandLine,
+			   GameKeeper::Player *playerData);
+};
+
+class SetGroupCommand : ServerCommand {
+public:
+  SetGroupCommand();
+
+  virtual bool operator() (const char         *commandLine,
+			   GameKeeper::Player *playerData);
+};
+
+class RemoveGroupCommand : ServerCommand {
+public:
+  RemoveGroupCommand();
+
+  virtual bool operator() (const char         *commandLine,
+			   GameKeeper::Player *playerData);
+};
+
 static MsgCommand         msgCommand;
 static ServerQueryCommand serverQueryCommand;
 static PartCommand        partCommand;
@@ -399,6 +479,16 @@ static UnmuteCommand      unmuteCommand;
 static PlayerListCommand  playerListCommand;
 static ReportCommand      ReportCommand;
 static HelpCommand        helpCommand;
+static IdentifyCommand    identifyCommand;
+static RegisterCommand    registerCommand;
+static GhostCommand       ghostCommand;
+static DeregisterCommand  deregisterCommand;
+static SetPassCommand     setPassCommand;
+static GroupListCommand   groupListCommand;
+static ShowGroupCommand   showGroupCommand;
+static GroupPermsCommand  groupPermsCommand;
+static SetGroupCommand    setGroupCommand;
+static RemoveGroupCommand removeGroupCommand;
 
 MsgCommand::MsgCommand()                 : ServerCommand("/msg") {}
 ServerQueryCommand::ServerQueryCommand() : ServerCommand("/serverquery") {}
@@ -430,6 +520,16 @@ UnmuteCommand::UnmuteCommand()           : ServerCommand("/unmute") {}
 PlayerListCommand::PlayerListCommand()   : ServerCommand("/playerlist") {}
 ReportCommand::ReportCommand()           : ServerCommand("/report") {}
 HelpCommand::HelpCommand()               : ServerCommand("/help") {}
+IdentifyCommand::IdentifyCommand()       : ServerCommand("/identify") {}
+RegisterCommand::RegisterCommand()       : ServerCommand("/register") {}
+GhostCommand::GhostCommand()             : ServerCommand("/ghost") {}
+DeregisterCommand::DeregisterCommand()   : ServerCommand("/deregister") {}
+SetPassCommand::SetPassCommand()         : ServerCommand("/setpass") {}
+GroupListCommand::GroupListCommand()     : ServerCommand("/grouplist") {}
+ShowGroupCommand::ShowGroupCommand()     : ServerCommand("/showgroup") {}
+GroupPermsCommand::GroupPermsCommand()   : ServerCommand("/groupperms") {}
+SetGroupCommand::SetGroupCommand()       : ServerCommand("/setgroup") {}
+RemoveGroupCommand::RemoveGroupCommand() : ServerCommand("/removegroup") {}
 
 bool MuteCommand::operator() (const char         *message,
 			      GameKeeper::Player *playerData)
@@ -1644,12 +1744,13 @@ bool HelpCommand::operator() (const char         *message,
 }
 
 
-static void handleIdentifyCmd(GameKeeper::Player *playerData, const char *message)
+bool IdentifyCommand::operator() (const char         *message,
+				  GameKeeper::Player *playerData)
 {
   int t = playerData->getIndex();
   if (!passFile.size()){
     sendMessage(ServerPlayer, t, "/identify command disabled");
-    return;
+    return true;
   }
   // player is trying to send an ID
   if (playerData->accessInfo.isVerified()) {
@@ -1679,16 +1780,17 @@ static void handleIdentifyCmd(GameKeeper::Player *playerData, const char *messag
       }
     }
   }
-  return;
+  return true;
 }
 
 
-static void handleRegisterCmd(GameKeeper::Player *playerData, const char *message)
+bool RegisterCommand::operator() (const char         *message,
+				  GameKeeper::Player *playerData)
 {
   int t = playerData->getIndex();
   if (!passFile.size()){
     sendMessage(ServerPlayer, t, "/register command disabled");
-    return;
+    return true;
   }
   if (playerData->accessInfo.isVerified()) {
     sendMessage(ServerPlayer, t, "You have already registered and"
@@ -1707,16 +1809,17 @@ static void handleRegisterCmd(GameKeeper::Player *playerData, const char *messag
       }
     }
   }
-  return;
+  return true;
 }
 
 
-static void handleGhostCmd(GameKeeper::Player *playerData, const char *message)
+bool GhostCommand::operator() (const char         *message,
+			       GameKeeper::Player *playerData)
 {
   int t = playerData->getIndex();
   if (!passFile.size()){
     sendMessage(ServerPlayer, t, "/ghost command disabled");
-    return;
+    return true;
   }
   char *p1 = (char*)strchr(message + 1, '\"');
   char *p2 = 0;
@@ -1751,20 +1854,21 @@ static void handleGhostCmd(GameKeeper::Player *playerData, const char *message)
       }
     }
   }
-  return;
+  return true;
 }
 
 
-static void handleDeregisterCmd(GameKeeper::Player *playerData, const char *message)
+bool DeregisterCommand::operator() (const char         *message,
+				    GameKeeper::Player *playerData)
 {
   int t = playerData->getIndex();
   if (!passFile.size()){
     sendMessage(ServerPlayer, t, "/deregister command disabled");
-    return;
+    return true;
   }
   if (!playerData->accessInfo.isVerified()) {
     sendMessage(ServerPlayer, t, "You must be registered and verified to run the deregister command");
-    return;
+    return true;
   }
 
   if (strlen(message) == 11) {
@@ -1790,7 +1894,7 @@ static void handleDeregisterCmd(GameKeeper::Player *playerData, const char *mess
 	if ((p != NULL) && (p->accessInfo.hasPerm(PlayerAccessInfo::antideregister))) {
 	  snprintf(reply, MessageLen, "%s is protected from being deregistered.", p->player.getCallSign());
 	  sendMessage(ServerPlayer, t, reply);
-	  return;
+	  return true;
 	}
       }
 
@@ -1808,20 +1912,21 @@ static void handleDeregisterCmd(GameKeeper::Player *playerData, const char *mess
     sendMessage(ServerPlayer, t, "You do not have permission to deregister this user");
   }
 
-  return;
+  return true;
 }
 
 
-static void handleSetpassCmd(GameKeeper::Player *playerData, const char *message)
+bool SetPassCommand::operator() (const char         *message,
+				 GameKeeper::Player *playerData)
 {
   int t = playerData->getIndex();
   if (!passFile.size()){
     sendMessage(ServerPlayer, t, "/setpass command disabled");
-    return;
+    return true;
   }
   if (!playerData->accessInfo.isVerified()) {
     sendMessage(ServerPlayer, t, "You must be registered and verified to run the setpass command");
-    return;
+    return true;
   }
 
   size_t startPosition = 7;
@@ -1830,18 +1935,19 @@ static void handleSetpassCmd(GameKeeper::Player *playerData, const char *message
     ;
   if (startPosition == strlen(message) || !isspace(message[8])) {
     sendMessage(ServerPlayer, t, "Not enough parameters: usage /setpass PASSWORD");
-    return;
+    return true;
   }
   std::string pass = message + startPosition;
   playerData->accessInfo.setPasswd(pass);
   char text[MessageLen];
   snprintf(text, MessageLen, "Your password is now set to \"%s\"", pass.c_str());
   sendMessage(ServerPlayer, t, text);
-  return;
+  return true;
 }
 
 
-static void handleGrouplistCmd(GameKeeper::Player *playerData, const char *)
+bool GroupListCommand::operator() (const char         *,
+				   GameKeeper::Player *playerData)
 {
   int t = playerData->getIndex();
   sendMessage(ServerPlayer, t, "Group List:");
@@ -1850,11 +1956,12 @@ static void handleGrouplistCmd(GameKeeper::Player *playerData, const char *)
     sendMessage(ServerPlayer, t, itr->first.c_str());
     itr++;
   }
-  return;
+  return true;
 }
 
 
-static void handleShowgroupCmd(GameKeeper::Player *playerData, const char *message)
+bool ShowGroupCommand::operator() (const char         *message,
+				   GameKeeper::Player *playerData)
 {
   int t = playerData->getIndex();
   std::string settie;
@@ -1928,11 +2035,12 @@ static void handleShowgroupCmd(GameKeeper::Player *playerData, const char *messa
       sendMessage(ServerPlayer, t, "There is no user by that name");
     }
   }
-  return;
+  return true;
 }
 
 
-static void handleGrouppermsCmd(GameKeeper::Player *playerData, const char *)
+bool GroupPermsCommand::operator() (const char         *,
+				    GameKeeper::Player *playerData)
 {
   int t = playerData->getIndex();
   sendMessage(ServerPlayer, t, "Group List:");
@@ -1968,16 +2076,17 @@ static void handleGrouppermsCmd(GameKeeper::Player *playerData, const char *)
 			
     itr++;
   }
-  return;
+  return true;
 }
 
 
-static void handleSetgroupCmd(GameKeeper::Player *playerData, const char *message)
+bool SetGroupCommand::operator() (const char         *message,
+				  GameKeeper::Player *playerData)
 {
   int t = playerData->getIndex();
   if (!userDatabaseFile.size()) {
     sendMessage(ServerPlayer, t, "/setgroup command disabled");
-    return;
+    return true;
   }
   char *p1 = (char*)strchr(message + 1, '\"');
   char *p2 = 0;
@@ -2017,16 +2126,17 @@ static void handleSetgroupCmd(GameKeeper::Player *playerData, const char *messag
       sendMessage(ServerPlayer, t, "There is no user by that name");
     }
   }
-  return;
+  return true;
 }
 
 
-static void handleRemovegroupCmd(GameKeeper::Player *playerData, const char *message)
+bool RemoveGroupCommand::operator() (const char         *message,
+				     GameKeeper::Player *playerData)
 {
   int t = playerData->getIndex();
   if (!userDatabaseFile.size()) {
     sendMessage(ServerPlayer, t, "/removegroup command disabled");
-    return;
+    return true;
   }
   char *p1 = (char*)strchr(message + 1, '\"');
   char *p2 = 0;
@@ -2064,7 +2174,7 @@ static void handleRemovegroupCmd(GameKeeper::Player *playerData, const char *mes
       sendMessage(ServerPlayer, t, "There is no user by that name");
     }
   }
-  return;
+  return true;
 }
 
 
@@ -3066,37 +3176,7 @@ void parseServerCommand(const char *message, int t)
   if (ServerCommand::execute(message, playerData))
     return;
 
-  if (strncasecmp(message + 1, "identify", 8) == 0) {
-    handleIdentifyCmd(playerData, message);
-
-  } else if (strncasecmp(message + 1, "register", 8) == 0) {
-    handleRegisterCmd(playerData, message);
-
-  } else if (strncasecmp(message + 1, "ghost", 5) == 0) {
-    handleGhostCmd(playerData, message);
-
-  } else if (strncasecmp(message + 1, "deregister", 10) == 0) {
-    handleDeregisterCmd(playerData, message);
-
-  } else if (strncasecmp(message + 1, "setpass", 7) == 0) {
-    handleSetpassCmd(playerData, message);
-
-  } else if (strncasecmp(message + 1, "grouplist", 9) == 0) {
-    handleGrouplistCmd(playerData, message);
-
-  } else if (strncasecmp(message + 1, "showgroup", 9) == 0) {
-    handleShowgroupCmd(playerData, message);
-
-  } else if (strncasecmp(message + 1, "groupperms", 10) == 0) {
-    handleGrouppermsCmd(playerData, message);
-
-  } else if (strncasecmp(message + 1, "setgroup", 8) == 0) {
-    handleSetgroupCmd(playerData, message);
-
-  } else if (strncasecmp(message + 1, "removegroup", 11) == 0) {
-    handleRemovegroupCmd(playerData, message);
-
-  } else if (strncasecmp(message + 1, "reload", 6) == 0) {
+  if (strncasecmp(message + 1, "reload", 6) == 0) {
     handleReloadCmd(playerData, message);
 
   } else if (strncasecmp(message + 1, "poll", 4) == 0) {
