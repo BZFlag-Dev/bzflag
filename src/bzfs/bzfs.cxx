@@ -4856,9 +4856,11 @@ int main(int argc, char **argv)
     if (waitTime > pluginMaxWait)
       waitTime = pluginMaxWait;
 
-    // if curl has called callback lately, don't wait
-    if (dontWait)
+    // don't wait (used by CURL and MsgEnter)
+    if (dontWait) {
       waitTime = 0.0f;
+      dontWait = false;
+    }
 
     /**************
      *  SELECT()  *
@@ -4874,7 +4876,6 @@ int main(int argc, char **argv)
     nfound = select(maxFileDescriptor+1, (fd_set*)&read_set, (fd_set*)&write_set, 0, &timeout);
     //if (nfound)
     //	DEBUG1("nfound,read,write %i,%08lx,%08lx\n", nfound, read_set, write_set);
-    dontWait = false;
 
     // send replay packets
     // (this check and response should follow immediately after the select() call)
