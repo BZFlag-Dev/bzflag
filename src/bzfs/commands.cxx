@@ -497,6 +497,24 @@ public:
 			   GameKeeper::Player *playerData);
 };
 
+class DateTimeCommand : ServerCommand {
+public:
+  virtual bool operator() (const char         *commandLine,
+			   GameKeeper::Player *playerData);
+protected:
+  DateTimeCommand(std::string _commandName) : ServerCommand(_commandName) {};
+};
+
+class DateCommand : DateTimeCommand {
+public:
+  DateCommand();
+};
+
+class TimeCommand : DateTimeCommand {
+public:
+  TimeCommand();
+};
+
 static MsgCommand         msgCommand;
 static ServerQueryCommand serverQueryCommand;
 static PartCommand        partCommand;
@@ -543,6 +561,8 @@ static VoteCommand        voteCommand;
 static VetoCommand        vetoCommand;
 static ViewReportCommand  viewReportCommand;
 static ClientQueryCommand clientQueryCommand;
+static DateCommand        dateCommand;
+static TimeCommand        timeCommand;
 
 MsgCommand::MsgCommand()                 : ServerCommand("/msg") {}
 ServerQueryCommand::ServerQueryCommand() : ServerCommand("/serverquery") {}
@@ -590,6 +610,8 @@ VoteCommand::VoteCommand()               : ServerCommand("/vote") {}
 VetoCommand::VetoCommand()               : ServerCommand("/veto") {}
 ViewReportCommand::ViewReportCommand()   : ServerCommand("/viewreports") {}
 ClientQueryCommand::ClientQueryCommand() : ServerCommand("/clientquery") {}
+DateCommand::DateCommand()               : DateTimeCommand("/date") {}
+TimeCommand::TimeCommand()               : DateTimeCommand("/time") {}
 
 bool MuteCommand::operator() (const char         *message,
 			      GameKeeper::Player *playerData)
@@ -3097,17 +3119,19 @@ static void handleSayCmd(GameKeeper::Player *playerData, const char * message)
 
 
 
-static void handleDateCmd(GameKeeper::Player *playerData, const char * /*message*/)
+bool DateTimeCommand::operator() (const char         *,
+				  GameKeeper::Player *playerData)
 {
   int t = playerData->getIndex();
   if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::date)) {
     sendMessage(ServerPlayer, t, "You do not have permission to run the /date command");
-    return;
+    return true;
   }
   time_t now = time(NULL);
   char* timeStr = ctime(&now);
   timeStr[24] = '\0';
   sendMessage(ServerPlayer, t, timeStr);
+  return true;
 }
 
 
@@ -3245,10 +3269,7 @@ void parseServerCommand(const char *message, int t)
   if (ServerCommand::execute(message, playerData))
     return;
 
-  if (strncasecmp(message + 1, "date", 4) == 0 || strncasecmp(message + 1, "time", 4) == 0) {
-    handleDateCmd(playerData, message);
-
-  } else if (strncasecmp(message + 1, "record", 6) == 0) {
+  if (strncasecmp(message + 1, "record", 6) == 0) {
     handleRecordCmd(playerData, message);
 
   } else if (strncasecmp(message + 1, "replay", 6) == 0) {
