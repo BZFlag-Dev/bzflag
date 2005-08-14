@@ -75,7 +75,7 @@ void FontManager::callback(const std::string &, void *)
 
 FontManager::FontManager() : Singleton<FontManager>(), 
 			     opacity(1.0f),
-			     dimFactor(0.7f)
+			     dimFactor(0.2f)
 {
   faceNames.clear();
   fontFaces.clear();
