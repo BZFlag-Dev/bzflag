@@ -14,8 +14,9 @@
 #include "ServerCommand.h"
 
 // Use only lower case command name
-ServerCommand::ServerCommand(std::string _commandName)
-  : commandName(_commandName)
+ServerCommand::ServerCommand(std::string _commandName,
+			     std::string _oneLineHelp)
+  : commandName(_commandName), oneLineHelp(_oneLineHelp)
 {
   (*getMapRef())[commandName] = this;
 }
@@ -33,7 +34,7 @@ bool ServerCommand::execute(const char         *commandLine,
   for (i = 0; commandLine[i] && !isspace(commandLine[i]); i++);
   std::string commandToken(commandLine, i);
   
-  std::map<std::string, ServerCommand *>::iterator it
+  MapOfCommands::iterator it
     = commandMap.find(TextUtils::tolower(commandToken));
   if (it == commandMap.end())
     return false;
@@ -50,6 +51,11 @@ ServerCommand::MapOfCommands *ServerCommand::getMapRef()
   static MapOfCommands mapOfCommands;
 
   return &mapOfCommands;
+}
+
+std::string ServerCommand::getHelp()
+{
+  return oneLineHelp;
 }
 
 // Local Variables: ***

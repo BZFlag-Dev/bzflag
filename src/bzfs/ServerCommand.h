@@ -29,17 +29,19 @@ class ServerCommand {
   static bool execute(const char         *commandToken,
 		      GameKeeper::Player *playerData);
 
+  std::string getHelp();
+
  protected:
 
-  ServerCommand(std::string _commandName);
+  ServerCommand(std::string _commandName, std::string _oneLineHelp = "");
   virtual ~ServerCommand();
 
   virtual bool operator () (const char         *commandLine,
 			    GameKeeper::Player *playerData);
 
   std::string commandName;
+  std::string oneLineHelp;
 
-private:
   typedef std::map<std::string, ServerCommand *> MapOfCommands;
 
   static MapOfCommands *getMapRef();

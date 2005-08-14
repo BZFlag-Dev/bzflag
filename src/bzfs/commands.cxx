@@ -547,6 +547,14 @@ public:
 			   GameKeeper::Player *playerData);
 };
 
+class CmdList : ServerCommand {
+public:
+  CmdList();
+
+  virtual bool operator() (const char         *commandLine,
+			   GameKeeper::Player *playerData);
+};
+
 static MsgCommand         msgCommand;
 static ServerQueryCommand serverQueryCommand;
 static PartCommand        partCommand;
@@ -599,8 +607,11 @@ static RecordCommand      recordCommand;
 static ReplayCommand      replayCommand;
 static SayCommand         sayCommand;
 static MasterBanCommand   masterBanCommand;
+static CmdList            cmdList;
 
-MsgCommand::MsgCommand()                 : ServerCommand("/msg") {}
+MsgCommand::MsgCommand()
+  : ServerCommand("/msg",
+		  "/msg <nick> text - Send text message to nick") {}
 ServerQueryCommand::ServerQueryCommand() : ServerCommand("/serverquery") {}
 PartCommand::PartCommand()               : ServerCommand("/part") {}
 QuitCommand::QuitCommand()               : ServerCommand("/quit") {}
@@ -652,6 +663,38 @@ RecordCommand::RecordCommand()           : ServerCommand("/record") {}
 ReplayCommand::ReplayCommand()           : ServerCommand("/replay") {}
 SayCommand::SayCommand()                 : ServerCommand("/say") {}
 MasterBanCommand::MasterBanCommand()     : ServerCommand("/masterban") {}
+CmdList::CmdList()                       : ServerCommand("_1") {}
+
+bool CmdList::operator() (const char         *message,
+			  GameKeeper::Player *playerData)
+{
+  int i;
+  for (i = 0; message[i] && !isspace(message[i]); i++);
+  if (!i)
+    return false;
+  i--;
+  if (message[i] != '?')
+    return false;
+  std::string commandToken(message, i);
+
+  int t = playerData->getIndex();
+  MapOfCommands::iterator it;
+  MapOfCommands &commandMap = *getMapRef();
+  for (it = commandMap.begin(); it != commandMap.end(); it++) {
+    std::string master = it->first;
+    master.resize(i);
+    if (master == commandToken) {
+      std::string helpLine = it->second->getHelp();
+      std::string text;
+      if (helpLine == "")
+	text = it->first;
+      else
+	text = helpLine;
+      sendMessage(ServerPlayer, t, text.c_str());
+    }
+  }
+  return true;
+}
 
 bool MuteCommand::operator() (const char         *message,
 			      GameKeeper::Player *playerData)
@@ -3311,6 +3354,9 @@ void parseServerCommand(const char *message, int t)
     return;
 
   if (ServerCommand::execute(message, playerData))
+    return;
+
+  if (cmdList(message, playerData))
     return;
 
   {
