@@ -23,7 +23,7 @@ protected:
         typedef struct
         {
                 int playerID;
-                int teamID;
+                bz_eTeamType team;
                 std::string callsign;
                 double startTime;
                 double lastUpdateTime;
@@ -84,10 +84,10 @@ void RogueDeathHandler::process ( bz_EventData *eventData )
 			if (dieData->flagKilledWith != "G" )
 				break;
 			// if the tank killed was not a rogue, let the server/client do the normal killing
-			if (dieData->teamID != RogueTeam )
+			if (dieData->team != eRogueTeam )
 				break;
 			// if the tank killed was a rogue, and the killer was a rogue, kill the lousy tk'er
-			if (dieData->killerTeamID == RogueTeam ) 
+			if (dieData->killerTeam == eRogueTeam ) 
 			{
 				bz_killPlayer ( dieData->killerID, 0, dieData->killerID, "G" );
 				bz_sendTextMessage(BZ_SERVER,dieData->killerID,"You should be more careful with Genocide");
@@ -119,12 +119,12 @@ void RogueDeathHandler::process ( bz_EventData *eventData )
 			 trRogueDeathHandler   rogueRecord;
 
 			rogueRecord.playerID = (( bz_PlayerJoinPartEventData*)eventData)->playerID;
-			rogueRecord.teamID = (( bz_PlayerJoinPartEventData*)eventData)->teamID;
+			rogueRecord.team = (( bz_PlayerJoinPartEventData*)eventData)->team;
 			rogueRecord.callsign = (( bz_PlayerJoinPartEventData*)eventData)->callsign.c_str();
 			rogueRecord.lastUpdateTime = (( bz_PlayerJoinPartEventData*)eventData)->time;
 			rogueRecord.startTime = rogueRecord.lastUpdateTime;
 
-			if (rogueRecord.teamID == RogueTeam )
+			if (rogueRecord.team == eRogueTeam )
 			{
 				rogueList[(( bz_PlayerJoinPartEventData*)eventData)->playerID] = rogueRecord;
 			}

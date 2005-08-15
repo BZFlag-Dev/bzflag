@@ -24,7 +24,7 @@ public:
 		std::string msg = player->callsign.c_str();
 		msg += " has killed everyone";
 
-		bz_sendTextMessage(BZ_SERVER,BZ_ALL_USERS,msg.c_str());
+		bz_sendTextMessage(BZ_SERVER,BZ_ALLUSERS,msg.c_str());
 
 		bzAPIIntList *playerList = bz_newIntList();
 

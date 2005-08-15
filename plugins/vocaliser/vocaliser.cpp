@@ -287,7 +287,7 @@ bool PlaysndCommand::handle ( int playerID, bzApiString _command, bzApiString _m
 			bz_debugMessage(1,"vocaliser plugin: bz_getPlayerByIndex failed");
 			return true;
 		}
-		int target = BZ_ALL_USERS;
+		int target = BZ_ALLUSERS;
 		if (item.team)
 			target = playerInfo->team;
 

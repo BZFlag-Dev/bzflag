@@ -56,13 +56,13 @@ bool ScoreResetCommand::handle ( int playerID, bzApiString _command, bzApiString
 
 		bz_PlayerRecord *dude = bz_getPlayerByIndex ( playerID );
 		if (dude)
-			bz_sendTextMessage(BZ_SERVER,BZ_ALL_USERS,TextUtils::format("%s has reset all scores",dude->callsign.c_str()).c_str());
+			bz_sendTextMessage(BZ_SERVER,BZ_ALLUSERS,TextUtils::format("%s has reset all scores",dude->callsign.c_str()).c_str());
 		
 		bzAPIIntList	*playerList = bz_newIntList();
 
 		bz_getPlayerIndexList(playerList);
 
-		bz_resetTeamScore(-1);
+		bz_resetTeamScore(eNoTeam);
 
 		for( int i = 0; i < (int)playerList->size(); i ++)
 			bz_resetPlayerScore(i);

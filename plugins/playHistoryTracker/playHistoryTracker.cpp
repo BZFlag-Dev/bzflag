@@ -111,7 +111,7 @@ void PlayHistoryTracker::process ( bz_EventData *eventData )
 
 				if (message.size())
 				{
-					 bz_sendTextMessage(BZ_SERVER, BZ_ALL_USERS, message.c_str());
+					 bz_sendTextMessage(BZ_SERVER, BZ_ALLUSERS, message.c_str());
 					 soundToPlay = "spree4";
 				}
 
@@ -158,7 +158,7 @@ void PlayHistoryTracker::process ( bz_EventData *eventData )
 
 				if (message.size())
 				{
-					bz_sendTextMessage(BZ_SERVER, BZ_ALL_USERS, message.c_str());
+					bz_sendTextMessage(BZ_SERVER, BZ_ALLUSERS, message.c_str());
 				}	
 
 			}	
@@ -166,7 +166,7 @@ void PlayHistoryTracker::process ( bz_EventData *eventData )
 			bz_freePlayerRecord(killerData);
 
 			if (soundToPlay.size())
-				bz_sendPlayCustomLocalSound(BZ_ALL_USERS,soundToPlay.c_str());
+				bz_sendPlayCustomLocalSound(BZ_ALLUSERS,soundToPlay.c_str());
 
 		}
 		break;

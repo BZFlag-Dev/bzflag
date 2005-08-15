@@ -1322,12 +1322,24 @@ BZF_API void bz_resetTeamScore (bz_eTeamType _team )
 {
 	int teamIndex = (int)convertTeam(_team);
 
-	if ( teamIndex < 0 || teamIndex >= NumTeams)
+	if ( teamIndex >= NumTeams)
 		return ;
 
-	team[teamIndex].team.won = 0;
-	team[teamIndex].team.lost = 0;
-	sendTeamUpdate(-1,teamIndex);
+	if ( teamIndex >= 0 )
+	{
+		team[teamIndex].team.won = 0;
+		team[teamIndex].team.lost = 0;
+		sendTeamUpdate(-1,teamIndex);
+	}
+	else
+	{
+		for ( int i =0; i < NumTeams; i++)
+		{
+			team[i].team.won = 0;
+			team[teamIndex].team.lost = 0;
+			sendTeamUpdate(-1,i);
+		}
+	}
 }
 
 BZF_API void bz_updateListServer ( void )
