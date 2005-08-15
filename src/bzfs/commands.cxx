@@ -555,6 +555,14 @@ public:
 			   GameKeeper::Player *playerData);
 };
 
+class CmdHelp : ServerCommand {
+public:
+  CmdHelp();
+
+  virtual bool operator() (const char         *commandLine,
+			   GameKeeper::Player *playerData);
+};
+
 static MsgCommand         msgCommand;
 static ServerQueryCommand serverQueryCommand;
 static PartCommand        partCommand;
@@ -608,19 +616,31 @@ static ReplayCommand      replayCommand;
 static SayCommand         sayCommand;
 static MasterBanCommand   masterBanCommand;
 static CmdList            cmdList;
+static CmdHelp            cmdHelp;
 
-MsgCommand::MsgCommand()
-  : ServerCommand("/msg",
-		  "/msg <nick> text - Send text message to nick") {}
-ServerQueryCommand::ServerQueryCommand() : ServerCommand("/serverquery") {}
-PartCommand::PartCommand()               : ServerCommand("/part") {}
-QuitCommand::QuitCommand()               : ServerCommand("/quit") {}
-UpTimeCommand::UpTimeCommand()           : ServerCommand("/uptime") {}
-PasswordCommand::PasswordCommand()       : ServerCommand("/password") {}
-SetCommand::SetCommand()                 : ServerCommand("/set") {}
-ResetCommand::ResetCommand()             : ServerCommand("/reset") {}
-ShutdownCommand::ShutdownCommand()       : ServerCommand("/shutdown") {}
-SuperkillCommand::SuperkillCommand()     : ServerCommand("/superkill") {}
+CmdHelp::CmdHelp()                       : ServerCommand("") {} // fake entry
+CmdList::CmdList()                       : ServerCommand("/?",
+  "/? - display the list of server-side commands") {}
+MsgCommand::MsgCommand() 		 : ServerCommand("/msg",
+  "/msg <nick> text - Send text message to nick") {}
+ServerQueryCommand::ServerQueryCommand() : ServerCommand("/serverquery",
+  "/serverquery - show the server version") {}
+PartCommand::PartCommand()               : ServerCommand("/part",
+  "/part message - leave the game with a parthing message") {}
+QuitCommand::QuitCommand()               : ServerCommand("/quit",
+  "/quit - leaves the game") {}
+UpTimeCommand::UpTimeCommand()           : ServerCommand("/uptime",
+  "/uptime - show the servers uptime") {}
+PasswordCommand::PasswordCommand()       : ServerCommand("/password",
+  "/password <passwd> - become an administrator with <passwd>") {}
+SetCommand::SetCommand()                 : ServerCommand("/set",
+  "/set[ <var> <value>] - set BZDB variable to value, or display variables") {}
+ResetCommand::ResetCommand()             : ServerCommand("/reset",
+  "/reset - reset the BZDB variables") {}
+ShutdownCommand::ShutdownCommand()       : ServerCommand("/shutdown",
+  "/shutdown - kill the server") {}
+SuperkillCommand::SuperkillCommand()     : ServerCommand("/superkill",
+  "/superkill - kick all of the players") {}
 GameOverCommand::GameOverCommand()       : ServerCommand("/gameover") {}
 CountdownCommand::CountdownCommand()     : ServerCommand("/countdown") {}
 FlagCommand::FlagCommand()               : ServerCommand("/flag") {}
@@ -633,7 +653,7 @@ HostbanCommand::HostbanCommand()         : ServerCommand("/hostban") {}
 UnbanCommand::UnbanCommand()             : ServerCommand("/unban") {}
 HostUnbanCommand::HostUnbanCommand()     : ServerCommand("/hostunban") {}
 LagWarnCommand::LagWarnCommand()         : ServerCommand("/lagwarn") {}
-LagStatCommand::LagStatCommand()         : ServerCommand("/lagstat") {}
+LagStatCommand::LagStatCommand()         : ServerCommand("/lagstats") {}
 IdleStatCommand::IdleStatCommand()       : ServerCommand("/idlestats") {}
 FlagHistoryCommand::FlagHistoryCommand() : ServerCommand("/flaghistory") {}
 MuteCommand::MuteCommand()               : ServerCommand("/mute") {}
@@ -657,17 +677,68 @@ VoteCommand::VoteCommand()               : ServerCommand("/vote") {}
 VetoCommand::VetoCommand()               : ServerCommand("/veto") {}
 ViewReportCommand::ViewReportCommand()   : ServerCommand("/viewreports") {}
 ClientQueryCommand::ClientQueryCommand() : ServerCommand("/clientquery") {}
-DateCommand::DateCommand()               : DateTimeCommand("/date") {}
-TimeCommand::TimeCommand()               : DateTimeCommand("/time") {}
 RecordCommand::RecordCommand()           : ServerCommand("/record") {}
 ReplayCommand::ReplayCommand()           : ServerCommand("/replay") {}
 SayCommand::SayCommand()                 : ServerCommand("/say") {}
 MasterBanCommand::MasterBanCommand()     : ServerCommand("/masterban") {}
-CmdList::CmdList()                       : ServerCommand("_1") {}
+DateCommand::DateCommand()               : DateTimeCommand("/date") {}
+TimeCommand::TimeCommand()               : DateTimeCommand("/time") {}
 
-bool CmdList::operator() (const char         *message,
-			  GameKeeper::Player *playerData)
+
+bool CmdList::operator() (const char*, GameKeeper::Player *playerData)
 {
+  const int maxLineLen = 64;
+
+  MapOfCommands::iterator it;
+  MapOfCommands &commandMap = *getMapRef();
+  
+  // get the maximum length
+  unsigned int maxCmdLen = 0;
+  for (it = commandMap.begin(); it != commandMap.end(); it++) {
+    const std::string& cmd = it->first;
+    if (cmd.size() > maxCmdLen) {
+      maxCmdLen = cmd.size();
+    }
+  }
+  maxCmdLen += 2; // add some padding
+  
+  const int maxColumns = maxLineLen / maxCmdLen;
+
+  char format[8];
+  snprintf(format, 8, "%%-%is", maxCmdLen);
+
+  char buffer[MessageLen];
+  char* c = buffer;
+
+  int column = 0;
+  const int t = playerData->getIndex();
+
+  it = commandMap.begin();
+  while (it != commandMap.end()) {
+    const std::string& cmd = it->first;
+    sprintf(c, format, cmd.c_str());
+    it++;
+    if (cmd[0] != '/') {
+      continue; // ignore any fake entries (ex: CmdHelp)
+    }
+    column++;
+    if ((column >= maxColumns) || (it == commandMap.end())) {
+      sendMessage(ServerPlayer, t, buffer);
+      column = 0;
+      c = buffer;
+    } else {
+      c += maxCmdLen;
+    }
+  }
+  
+  return true;
+}
+
+
+bool CmdHelp::operator() (const char         *message,
+			     GameKeeper::Player *playerData)
+{
+  
   int i;
   for (i = 0; message[i] && !isspace(message[i]); i++);
   if (!i)
@@ -695,6 +766,7 @@ bool CmdList::operator() (const char         *message,
   }
   return true;
 }
+
 
 bool MuteCommand::operator() (const char         *message,
 			      GameKeeper::Player *playerData)
@@ -3166,6 +3238,7 @@ bool ReplayCommand::operator() (const char         *message,
   return true;
 }
 
+
 bool SayCommand::operator() (const char         *message,
 			     GameKeeper::Player *playerData)
 {
@@ -3356,30 +3429,34 @@ void parseServerCommand(const char *message, int t)
   if (ServerCommand::execute(message, playerData))
     return;
 
-  if (cmdList(message, playerData))
+  if (cmdHelp(message, playerData))
     return;
 
   {
     // lets see if it is a custom command
-    std::vector<std::string> params = TextUtils::tokenize(std::string(message+1),std::string(" "));
+    std::vector<std::string> params =
+      TextUtils::tokenize(std::string(message+1),std::string(" "));
 
     if (params.size() == 0)
       return;
     
-    tmCustomSlashCommandMap::iterator itr = customCommands.find(TextUtils::tolower(params[0]));
+    tmCustomSlashCommandMap::iterator itr =
+      customCommands.find(TextUtils::tolower(params[0]));
   
     bzApiString	command = params[0];
     bzApiString APIMessage;
 	bzAPIStringList	APIParams;
 	
-	for ( unsigned int i = 1; i < params.size(); i++)
-		APIParams.push_back(params[i]);
+    for ( unsigned int i = 1; i < params.size(); i++)
+      APIParams.push_back(params[i]);
 
-	if ( strlen(message) > params[0].size())
-		APIMessage = (message+params[0].size()+2);
+    if ( strlen(message) > params[0].size())
+      APIMessage = (message+params[0].size()+2);
 
-    if (itr != customCommands.end()) {  // see if we have a registerd custom command and call it
-      if (itr->second->handle(t, command, APIMessage, &APIParams))  // if it handles it, then we are good
+    // see if we have a registerd custom command and call it
+    if (itr != customCommands.end()) {
+      // if it handles it, then we are good
+      if (itr->second->handle(t, command, APIMessage, &APIParams))
         return;
     }
   
