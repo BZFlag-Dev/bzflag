@@ -549,50 +549,60 @@ TimeCommand::TimeCommand()               : DateTimeCommand("/time") {}
 
 bool CmdList::operator() (const char*, GameKeeper::Player *playerData)
 {
+  int i;
   const int maxLineLen = 64;
+  const int playerId = playerData->getIndex();
 
+  // build a std::vector<> from the std::map<> of command names
+  std::vector<const std::string*> commands;
   MapOfCommands::iterator it;
   MapOfCommands &commandMap = *getMapRef();
-  
-  // get the maximum length
-  unsigned int maxCmdLen = 0;
   for (it = commandMap.begin(); it != commandMap.end(); it++) {
     const std::string& cmd = it->first;
-    if (cmd.size() > maxCmdLen) {
-      maxCmdLen = cmd.size();
+    if (cmd[0] != '/') {
+      continue; // ignore any fake entries (ex: CmdHelp)
+    } else {
+      commands.push_back(&cmd);
+    }
+  }
+  const int cmdCount = (int)commands.size();
+
+  // get the maximum length
+  unsigned int maxCmdLen = 0;
+  for (i = 0; i < cmdCount; i++) {
+    if (commands[i]->size() > maxCmdLen) {
+      maxCmdLen = commands[i]->size();
     }
   }
   maxCmdLen += 2; // add some padding
-  
-  const int maxColumns = maxLineLen / maxCmdLen;
 
+  // formatting parameters
+  const int cols = (maxLineLen / maxCmdLen);
+  const int rows = (cmdCount / cols);
+  const int extraCols = (cmdCount % cols);
+
+  // message generation variables
+  char buffer[MessageLen];
+  char* c = buffer;
   char format[8];
   snprintf(format, 8, "%%-%is", maxCmdLen);
 
-  char buffer[MessageLen];
-  char* c = buffer;
-
-  int column = 0;
-  const int t = playerData->getIndex();
-
-  it = commandMap.begin();
-  while (it != commandMap.end()) {
-    const std::string& cmd = it->first;
-    it++;
-    if (cmd[0] != '/') {
-      continue; // ignore any fake entries (ex: CmdHelp)
-    }
-    sprintf(c, format, cmd.c_str());
-    column++;
-    if ((column >= maxColumns) || (it == commandMap.end())) {
-      sendMessage(ServerPlayer, t, buffer);
-      column = 0;
+  int row = 0;
+  for (i = 0; i < cmdCount; i++) {
+    const int col = (i % cols);
+    const int extra = (col < extraCols) ? col : extraCols;
+    const int index = ((col * rows) + row) + extra;
+    sprintf(c, format, commands[index]->c_str());
+    const int next = (i + 1);
+    if ((next == cmdCount) || ((next % cols) == 0)) {
+      sendMessage(ServerPlayer, playerId, buffer);
       c = buffer;
+      row++;
     } else {
       c += maxCmdLen;
     }
   }
-  
+
   return true;
 }
 
