@@ -53,6 +53,13 @@ static float parseFloatExpr(const std::string& str, bool zeroNan)
 }
 
 
+class CommandList : LocalCommand {
+public:
+  CommandList();
+
+  virtual bool operator() (const char *commandLine);
+};
+
 class SilenceCommand : LocalCommand {
 public:
   SilenceCommand();
@@ -130,6 +137,8 @@ public:
   virtual bool operator() (const char *commandLine);
 };
 
+
+static CommandList        commandList;
 static SilenceCommand     silenceCommand;
 static UnsilenceCommand   unsilenceCommand;
 static DumpCommand        dumpCommand;
@@ -141,6 +150,61 @@ static LocalSetCommand    localSetCommand;
 static QuitCommand        quitCommand;
 static RoamPosCommand     roamPosCommand;
 static ReTextureCommand   reTextureCommand;
+
+
+CommandList::CommandList() : LocalCommand("/cmds")
+{
+}
+
+bool CommandList::operator() (const char *)
+{
+  int i;
+  const int maxLineLen = 64;
+
+  // build a std::vector<> from the std::map<> of command names
+  std::vector<const std::string*> cmds;
+  MapOfCommands::iterator it;
+  MapOfCommands &commandMap = *mapOfCommands;
+  for (it = commandMap.begin(); it != commandMap.end(); it++) {
+    const std::string& cmd = it->first;
+    cmds.push_back(&cmd);
+  }
+  const int cmdCount = (int)cmds.size();
+
+  // get the maximum length
+  unsigned int maxCmdLen = 0;
+  for (i = 0; i < cmdCount; i++) {
+    if (cmds[i]->size() > maxCmdLen) {
+      maxCmdLen = cmds[i]->size();
+    }
+  }
+  maxCmdLen += 2; // add some padding
+
+  // message generation variables
+  char buffer[MessageLen];
+  char* cptr = buffer;
+  char format[8];
+  snprintf(format, 8, "%%-%is", maxCmdLen);
+
+  // formatting parameters
+  const int cols = (maxLineLen / maxCmdLen);
+  const int rows = ((cmdCount + (cols - 1)) / cols);
+  
+  for (int row = 0; row < rows; row++) {
+    cptr = buffer;
+    for (int col = 0; col < cols; col++) {
+      const int index = (col * rows) + row;
+      if (index >= cmdCount) {
+        break;
+      }
+      sprintf(cptr, format, cmds[index]->c_str());
+      cptr += maxCmdLen;
+    }
+    addMessage(NULL, buffer);
+  }
+  return true;
+}
+
 
 SilenceCommand::SilenceCommand() : LocalCommand("SILENCE")
 {
@@ -157,6 +221,7 @@ bool SilenceCommand::operator() (const char *commandLine)
   }
   return true;
 }
+
 
 UnsilenceCommand::UnsilenceCommand() : LocalCommand("UNSILENCE")
 {
@@ -180,7 +245,8 @@ bool UnsilenceCommand::operator() (const char *commandLine)
   return true;
 }
 
-void printout(const std::string& name, void*)
+
+static void printout(const std::string& name, void*)
 {
   std::cout << name << " = " << BZDB.get(name) << std::endl;
 }
@@ -194,6 +260,7 @@ bool DumpCommand::operator() (const char *)
   BZDB.iterate(printout, NULL);
   return true;
 }
+
 
 ClientQueryCommand::ClientQueryCommand() : LocalCommand("CLIENTQUERY")
 {
@@ -211,6 +278,7 @@ bool ClientQueryCommand::operator() (const char *commandLine)
 
   return true;
 }
+
 
 HighlightCommand::HighlightCommand() : LocalCommand("/highlight")
 {
@@ -293,6 +361,7 @@ bool SetCommand::operator() (const char *commandLine)
   return true;
 }
 
+
 DiffCommand::DiffCommand() : LocalCommand("/diff")
 {
 }
@@ -309,6 +378,7 @@ bool DiffCommand::operator() (const char *commandLine)
   }
   return true;
 }
+
 
 LocalSetCommand::LocalSetCommand() : LocalCommand("/localset")
 {
@@ -334,6 +404,7 @@ bool LocalSetCommand::operator() (const char *commandLine)
   }
   return true;
 }
+
 
 QuitCommand::QuitCommand() : LocalCommand("/quit")
 {
