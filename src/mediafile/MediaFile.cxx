@@ -21,12 +21,14 @@
 // common headers
 #include "MediaFile.h"
 
+
 #ifdef WIN32
-void ConvertPath(std::string &path)
+static void ConvertPath(std::string &path)
 {
   std::replace(path.begin(), path.end(), '/', '\\');
 }
 #endif
+
 
 //
 // MediaFile
