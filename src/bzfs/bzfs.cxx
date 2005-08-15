@@ -2210,6 +2210,10 @@ static void checkTeamScore(int playerIndex, int teamIndex)
     buf = nboPackUShort(buf, uint16_t(teamIndex));
     broadcastMessage(MsgScoreOver, (char*)buf-(char*)bufStart, bufStart);
     gameOver = true;
+	if (clOptions->oneGameOnly) {
+	  done = true;
+	  exitCode = 0;
+	}
   }
 }
 
@@ -2333,6 +2337,10 @@ void playerKilled(int victimIndex, int killerIndex, int reason,
       buf = nboPackUShort(buf, uint16_t(NoTeam));
       broadcastMessage(MsgScoreOver, (char*)buf-(char*)bufStart, bufStart);
       gameOver = true;
+	  if (clOptions->oneGameOnly) {
+		  done = true;
+		  exitCode = 0;
+	  }
     }
   }
 

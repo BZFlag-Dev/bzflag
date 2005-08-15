@@ -4,6 +4,8 @@
 BZFlag 2.0.3
 ------------
 
+* Add Quake3 BSP import to modeltool - Jeff Myers
+* Exit BZFS if -g is used with -mts or -mps -  Joshua Rogers
 * Experimental server colorizing in server list - Frank Thilo
 * Added sort options to "/replay list" and "/record list" - Mark Thomas
 * Map mismatch fixed - Alfredo Tupone
@@ -18,9 +20,9 @@ BZFlag 2.0.3
 * Authentication credential are requested asap - Alfredo Tupone
 * Allow the use of game device sliders as axes on Windows - Daniel Remenak
 * Directional force feedback support - Daniel Remenak
-* New icon and menu arrow - Harry Keller, Jeff Meyers
-* Special effects for many events - Jeff Meyers, Daniel Remenak
-* Server-side plugin API and plugins - Jeff Meyers
+* New icon and menu arrow - Harry Keller, Jeff Myers
+* Special effects for many events - Jeff Myers, Daniel Remenak
+* Server-side plugin API and plugins - Jeff Myers
 * Join menu displays team icon - Daniel Remenak, Harry Keller
 * Implemented "-advertise" option for bzfs - Mark Thomas
 * The url now does not contain the password (sent with POST) - Tupone Alfredo
@@ -29,7 +31,7 @@ BZFlag 2.0.3
 * Observer are no more hunted - Tupone Alfredo
 * Added 'Always Show Team Scores' option (GUI Options Menu) - Mark Thomas
 * Added beautify scores - Julio Jimenez
-* Added scoreboard sort option - Mark Thomas, Karsten Behrmann ('BearPerson')
+* Added scoreboard sort option - Mark Thomas, Karsten Behrmann
 * Shots fired over the boundary wall end at the wall - Daniel Remenak
 * Increase range of radar size setting in GUI Option menu - Mark Thomas
 * Fixed Menu rendering when radar size is great - Sean Morrison, Mark Thomas
@@ -302,7 +304,7 @@ BZFlag 1.10.4  "not a smurf" (2004-01-24)
 * Improved transparent proxy support - Alfredo Tupone, Sean Morrison
 * Ground Texture Repeat added to BZDB, default increased to 0.1  - Jeff Myers
 * Added ability to have and use per-team colored textures - Jeff Myers
-* Added support for colored and zoned ground textures - Jeff Meyers
+* Added support for colored and zoned ground textures - Jeff Myers
 * Hunter tanks try to use "hunter" texture if found - Jeff Myers
 * Hunter tanks are colored orange color if not using a texture - Jeff Myers
 * Menu uses its own image for the arrow, menu_arrow.png - Jeff Myers
