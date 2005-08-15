@@ -64,6 +64,7 @@ public:
 
   void setDimFactor(float newDimFactor);
   void setOpacity(float newOpacity);
+  void setDarkness(float newDimFactor);
 
   void unloadAll(void);
 
@@ -80,12 +81,14 @@ private:
   std::string	fontDirectory;
 
   float		opacity;
+  float		dimFactor; // ANSI code dimming
+  float		darkness;  // darkening of all colors
 
   static void	callback(const std::string& name, void *);
   static void	freeContext(void *data);
   static void	initContext(void *data);
   static GLfloat underlineColor[4];
-  float		dimFactor;
+
   bool		canScale;
 };
 
@@ -98,6 +101,11 @@ inline void FontManager::setOpacity(float newOpacity)
 {
   opacity = newOpacity;
   underlineColor[3] = opacity;
+}
+
+inline void FontManager::setDarkness(float newDarkness)
+{
+  darkness = newDarkness;
 }
 
 #endif //_FONT_MANAGER_H_

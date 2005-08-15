@@ -126,19 +126,20 @@ void			HUDuiLabel::doRender()
     return;
   }
   // render string
-  GLfloat dimmedcolor[3] = {color[0]*0.7f, color[1]*0.7f, color[2]*0.7f};
-  const float* myColor;
-  if (hasFocus()) {
-    myColor = color;
-  } else if (!darker) {
-    myColor = dimmedcolor;
-  } else {
-    myColor = moreDimTextColor;
-  }
   FontManager &fm = FontManager::instance();
+  float darkness;
+  if (hasFocus()) {
+    darkness = 1.0f;
+  } else if (!darker) {
+    darkness = 0.7f;
+  } else {
+    darkness = 0.4f;
+  }
+  fm.setDarkness(darkness);
   fm.drawString(getX(), getY(), 0,
                 getFontFace(), getFontSize(),
-                getString(), myColor);
+                getString(), color);
+  fm.setDarkness(1.0f);
 }
 
 // Local Variables: ***

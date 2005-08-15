@@ -197,13 +197,13 @@ void ServerMenu::setSelected(int index)
           // game mode
           if ((server.ping.observerMax == 16) &&
               (server.ping.maxPlayers == 200)) {
-            fullLabel += ANSI_STR_FG_CYAN "M "; // replay
+            fullLabel += ANSI_STR_FG_CYAN "*  "; // replay
           } else if (gameStyle & TeamFlagGameStyle) {
-            fullLabel += ANSI_STR_FG_RED "M "; // ctf
+            fullLabel += ANSI_STR_FG_RED "*  "; // ctf
           } else if (gameStyle & RabbitChaseGameStyle) {
-            fullLabel += ANSI_STR_FG_WHITE "M "; // white rabbit
+            fullLabel += ANSI_STR_FG_WHITE "*  "; // white rabbit
           } else {
-            fullLabel += ANSI_STR_FG_YELLOW "M "; // free-for-all
+            fullLabel += ANSI_STR_FG_YELLOW "*  "; // free-for-all
           }
           // jumping?
           if (gameStyle & JumpingGameStyle) {
@@ -225,12 +225,27 @@ void ServerMenu::setSelected(int index)
           }
 	  fullLabel += ANSI_STR_RESET "   ";
 
-          // colorize servers: many shots->red
-		const float shotScale = STD_MIN(1.0f, logf(server.ping.maxShots) / logf(20.0f));
-          const float rf = 1.0f;
-          const float gf = 1.0f - shotScale;
-          const float bf = 1.0f - shotScale;
-          label->setColor(rf, gf, bf);
+          // colorize server descriptions by shot counts
+          const int maxShots = server.ping.maxShots;
+          if (maxShots <= 0) {
+            label->setColor(0.0f, 0.0f, 0.0f); // black
+          }
+          else if (maxShots == 1) {
+            label->setColor(1.0f, 1.0f, 1.0f); // white
+          }
+          else if (maxShots == 2) {
+            label->setColor(0.25f, 1.0f, 0.25f); // green
+          }
+          else if (maxShots == 3) {
+            label->setColor(1.0f, 1.0f, 0.25f); // yellow
+          }
+          else {
+            const float shotScale = STD_MIN(1.0f, log10f(maxShots));
+            const float rf = 1.0f;
+            const float gf = 1.0f - 0.75f * shotScale;
+            const float bf = 1.0f - 0.75f * shotScale;
+            label->setColor(rf, gf, bf);
+          }
         }
         else {
           // colorize servers: many shots->red, jumping->green, CTF->blue
@@ -239,11 +254,20 @@ void ServerMenu::setSelected(int index)
           const float bf = gameStyle & TeamFlagGameStyle ? 1.0f : 0.0f;
           label->setColor(0.5f + rf * 0.5f, 0.5f + gf * 0.5f, 0.5f + bf * 0.5f);
         }
-	
-	fullLabel += server.description;
+
+        std::string addr = stripAnsiCodes(server.description);
+        std::string desc;
+        unsigned int pos = addr.find_first_of(';');
+        if (pos != std::string::npos) {
+          desc = addr.substr(pos > 0 ? pos+1 : pos);
+          addr.resize(pos);
+        }
+        fullLabel += ANSI_STR_FG_WHITE;
+        fullLabel += addr;
+        fullLabel += ANSI_STR_RESET " ";
+        fullLabel += desc;
 	label->setString(fullLabel);
 	label->setDarker(server.cached);
-
       }
       else {
 	label->setString("");
@@ -592,7 +616,7 @@ void			ServerMenu::resize(int _width, int _height)
     label->setFontSize(fontSize);
     y -= 1.0f * fontHeight;
     if (useIcons && (i >= 0)) {
-      const float offset = fm.getStrLength(status->getFontFace(), fontSize, "M J F R   ");
+      const float offset = fm.getStrLength(status->getFontFace(), fontSize, "*  J F R   ");
       label->setPosition(x - offset, y);
     } else {
       label->setPosition(x, y);

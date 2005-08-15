@@ -75,7 +75,8 @@ void FontManager::callback(const std::string &, void *)
 
 FontManager::FontManager() : Singleton<FontManager>(), 
 			     opacity(1.0f),
-			     dimFactor(0.2f)
+			     dimFactor(0.2f),
+			     darkness(1.0f)
 {
   faceNames.clear();
   fontFaces.clear();
@@ -284,17 +285,19 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
   // negatives are invalid, we use them to signal "no change"
   GLfloat color[4] = {-1.0f, -1.0f, -1.0f, opacity};
   if (resetColor != NULL) {
-    color[0] = resetColor[0];
-    color[1] = resetColor[1];
-    color[2] = resetColor[2];
+    color[0] = resetColor[0] * darkness;
+    color[1] = resetColor[1] * darkness;
+    color[2] = resetColor[2] * darkness;
   } else {
     resetColor = BrightColors[WhiteColor];
   }
 
+  const float darkDim = dimFactor * darkness;
+
   // underline color changes for bright == false
-  GLfloat dimUnderlineColor[4] = { underlineColor[0] * dimFactor,
-				   underlineColor[1] * dimFactor,
-				   underlineColor[2] * dimFactor,
+  GLfloat dimUnderlineColor[4] = { underlineColor[0] * darkDim,
+				   underlineColor[1] * darkDim,
+				   underlineColor[2] * darkDim,
 				   opacity };
   underlineColor[3] = opacity;
 
@@ -373,13 +376,13 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
       for (int i = 0; i <= LastColor; i++) {
 	if (tmpText == ColorStrings[i]) {
 	  if (bright) {
-	    color[0] = BrightColors[i][0];
-	    color[1] = BrightColors[i][1];
-	    color[2] = BrightColors[i][2];
+	    color[0] = BrightColors[i][0] * darkness;
+	    color[1] = BrightColors[i][1] * darkness;
+	    color[2] = BrightColors[i][2] * darkness;
 	  } else {
-	    color[0] = BrightColors[i][0] * dimFactor;
-	    color[1] = BrightColors[i][1] * dimFactor;
-	    color[2] = BrightColors[i][2] * dimFactor;
+	    color[0] = BrightColors[i][0] * darkDim;
+	    color[1] = BrightColors[i][1] * darkDim;
+	    color[2] = BrightColors[i][2] * darkDim;
 	  }
 	  tookCareOfANSICode = true;
 	  break;
@@ -392,16 +395,16 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
 	  bright = true;
 	  pulsating = false;
 	  underline = false;
-	  color[0] = resetColor[0];
-	  color[1] = resetColor[1];
-	  color[2] = resetColor[2];
+	  color[0] = resetColor[0] * darkness;
+	  color[1] = resetColor[1] * darkness;
+	  color[2] = resetColor[2] * darkness;
 	} else if (tmpText == ANSI_STR_RESET_FINAL) {
 	  bright = false;
 	  pulsating = false;
 	  underline = false;
-	  color[0] = resetColor[0] * dimFactor;
-	  color[1] = resetColor[1] * dimFactor;
-	  color[2] = resetColor[2] * dimFactor;
+	  color[0] = resetColor[0] * darkDim;
+	  color[1] = resetColor[1] * darkDim;
+	  color[2] = resetColor[2] * darkDim;
 	} else if (tmpText == ANSI_STR_BRIGHT) {
 	  bright = true;
 	} else if (tmpText == ANSI_STR_DIM) {
