@@ -64,6 +64,8 @@ bzfs_SOURCES = \
 	CustomWorld.h \
 	CustomZone.cxx \
 	CustomZone.h \
+	DropGeometry.cxx \
+	DropGeometry.h \
 	EntryZones.cxx \
 	EntryZones.h \
 	Filter.cxx	\
@@ -91,8 +93,6 @@ bzfs_SOURCES = \
 	Score.cxx	\
 	ServerCommand.cxx		\
 	ServerCommand.h			\
-	DropGeometry.cxx \
-	DropGeometry.h \
 	SpawnPosition.cxx \
 	SpawnPosition.h \
 	TeamBases.cxx \
@@ -105,6 +105,8 @@ bzfs_SOURCES = \
 	WorldFileObject.h \
 	WorldFileObstacle.cxx \
 	WorldFileObstacle.h \
+	WorldGenerators.cxx \
+	WorldGenerators.h \
 	WorldInfo.cxx \
 	WorldInfo.h \
 	WorldWeapons.cxx \
