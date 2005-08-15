@@ -3450,7 +3450,7 @@ void parseServerCommand(const char *message, int t)
     for ( unsigned int i = 1; i < params.size(); i++)
       APIParams.push_back(params[i]);
 
-    if ( strlen(message) > params[0].size())
+    if ( strlen(message+1) > params[0].size())
       APIMessage = (message+params[0].size()+2);
 
     // see if we have a registerd custom command and call it
