@@ -10,18 +10,22 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include "MediaFile.h"
+// implementation header
+#include "CacheManager.h"
+
+// system headers
 #include <iostream>
 #include <string>
 #include <algorithm>
 
-#ifdef WIN32
+// common headers
+#include "MediaFile.h"
 
+#ifdef WIN32
 void ConvertPath(std::string &path)
 {
   std::replace(path.begin(), path.end(), '/', '\\');
 }
-
 #endif
 
 //
@@ -143,6 +147,10 @@ unsigned char*		MediaFile::readImage(
 				std::string filename,
 				int* width, int* height)
 {
+  // get the absolute filename for cache textures
+  if (CACHEMGR.isCacheFileType(filename)) {
+    filename = CACHEMGR.getLocalName(filename);
+  }
 #ifdef WIN32
   // cheat and make sure the file is a windows file path
   ConvertPath(filename);
