@@ -62,7 +62,8 @@ typedef enum
 	bz_eBanEvent,
 	bz_eHostBanEvent,
 	bz_eKickEvent,
-	bz_eKillEvent
+	bz_eKillEvent,
+	bz_eLastEvent    //this is never used as an event, just show it's the last one
 }bz_eEventType;
 
 #define BZ_ALL_USERS	-1
