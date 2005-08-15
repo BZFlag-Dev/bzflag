@@ -74,7 +74,7 @@ private:
 class WorldWeaponGlobalEventHandler : public bz_EventHandler
 {
 public:
-	WorldWeaponGlobalEventHandler(FlagType *type, const float *origin,float direction, float tilt);
+	WorldWeaponGlobalEventHandler(FlagType *type, const float *origin,float direction, float tilt,TeamColor teamColor );
 	virtual ~WorldWeaponGlobalEventHandler();
 
 	virtual void process ( bz_EventData *eventData );
@@ -84,6 +84,7 @@ protected:
 	float		origin[3];
 	float		direction;
 	float		tilt;
+	bz_eTeamType	team;
 };
 
 int fireWorldWep ( FlagType* type, float lifetime, PlayerId player, float *pos, float tilt, float direction, int shotID, float dt );

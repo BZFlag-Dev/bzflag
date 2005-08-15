@@ -113,7 +113,7 @@ void CustomWeapon::writeToWorld(WorldInfo* world) const
   if (triggerType == bz_eNullEvent)
     world->addWeapon(type, pos, rotation, tilt, initdelay, delay, sync);
   else
-    worldEventManager.addEvent(triggerType,new WorldWeaponGlobalEventHandler(type, pos, rotation, tilt));
+    worldEventManager.addEvent(triggerType,new WorldWeaponGlobalEventHandler(type, pos, rotation, tilt,(TeamColor)eventTeam));
 }
 
 

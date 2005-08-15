@@ -30,6 +30,10 @@
 
 extern WorldInfo *world;
 
+extern bz_eTeamType convertTeam ( TeamColor team );
+extern TeamColor convertTeam( bz_eTeamType team );
+
+
 char *getDirectMessageBuffer();
 void broadcastMessage(uint16_t code, int len, const void *msg);
 
@@ -192,7 +196,7 @@ int WorldWeapons::packSize(void) const
 WorldWeaponGlobalEventHandler::WorldWeaponGlobalEventHandler(FlagType *_type,
 							     const float *_origin, 
 							     float _direction, 
-							     float _tilt)
+							     float _tilt,TeamColor teamColor )
 {
   type = _type;
   if (_origin)
@@ -202,6 +206,7 @@ WorldWeaponGlobalEventHandler::WorldWeaponGlobalEventHandler(FlagType *_type,
 
   direction = _direction;
   tilt = _tilt;
+  team = convertTeam(teamColor);
 }
 
 WorldWeaponGlobalEventHandler::~WorldWeaponGlobalEventHandler()
@@ -210,8 +215,13 @@ WorldWeaponGlobalEventHandler::~WorldWeaponGlobalEventHandler()
 
 void WorldWeaponGlobalEventHandler::process (bz_EventData *eventData)
 {
-  if (eventData->eventType != bz_eCaptureEvent)
+  if (!eventData || eventData->eventType != bz_eCaptureEvent)
     return;
+
+  bz_CTFCaptureEventData *capEvent = (bz_CTFCaptureEventData*)eventData;
+
+  if ( capEvent->teamCaped != eNoTeam && capEvent->teamCaped != team )
+	  return;
 
   fireWorldWep( type,BZDB.eval(StateDatabase::BZDB_RELOADTIME),
   ServerPlayer,origin,tilt,direction,world->worldWeapons.getNewWorldShotID(),0);

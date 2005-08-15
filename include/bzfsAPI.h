@@ -30,7 +30,7 @@
 	#define BZF_PLUGIN_CALL extern "C"
 #endif
 
-#define BZ_API_VERSION	9
+#define BZ_API_VERSION	10
 
 #define BZ_GET_PLUGIN_VERSION BZF_PLUGIN_CALL int bz_GetVersion ( void ) { return BZ_API_VERSION;}
 
@@ -66,18 +66,22 @@ typedef enum
 	bz_eLastEvent    //this is never used as an event, just show it's the last one
 }bz_eEventType;
 
-#define BZ_ALL_USERS	-1
-#define BZ_RED_TEAM		1
-#define BZ_GREEN_TEAM	2
-#define BZ_BLUE_TEAM	3
-#define BZ_PURPLE_TEAM	4
-#define BZ_ROGUE_TEAM	0
-#define BZ_RABBIT_TEAM	5
-#define BZ_HUNTER_TEAM	6
-#define BZ_OBSERVERs	7
-#define BZ_ADMINCHANNEL -3
+typedef enum 
+{
+	eNoTeam = -1,
+	eRogueTeam = 0,
+	eRedTeam,
+	eGreenTeam,
+	eBlueTeam,
+	ePurpleTeam,
+	eRabbitTeam,
+	eHunterTeam,
+	eObservers,
+	eAdministrators
+}bz_eTeamType;
 
 #define BZ_SERVER		-2
+#define BZ_ALLUSERS		-1
 
 #define BZ_BZDBPERM_NA		0
 #define BZ_BZDBPERM_USER	1
@@ -215,14 +219,14 @@ public:
 	bz_CTFCaptureEventData()
 	{
 		eventType = bz_eCaptureEvent;
-		teamCaped = -1;
-		teamCaping = -1;
+		teamCaped = eNoTeam;
+		teamCaping = eNoTeam;
 		playerCaping = -1;
 	}
 	virtual ~bz_CTFCaptureEventData(){};
 
-	int teamCaped;
-	int	teamCaping;
+	bz_eTeamType teamCaped;
+	bz_eTeamType	teamCaping;
 	int playerCaping;
 
 	float pos[3];
@@ -237,9 +241,9 @@ public:
 	{
 		eventType = bz_ePlayerDieEvent;
 		playerID = -1;
-		teamID = -1;
+		team = eNoTeam;
 		killerID = -1;
-		killerTeamID = -1;
+		killerTeam = eNoTeam;
 
 		pos[0] = pos[1] = pos[2] = 0.0f;
 		rot = 0.0f;
@@ -248,9 +252,9 @@ public:
 	virtual ~bz_PlayerDieEventData(){};
 
 	int playerID;
-	int teamID;
+	bz_eTeamType team;
 	int killerID;
-	int killerTeamID;
+	bz_eTeamType killerTeam;
 	bzApiString flagKilledWith;
 
 	float pos[3];
@@ -265,7 +269,7 @@ public:
 	{
 		eventType = bz_ePlayerSpawnEvent;
 		playerID = -1;
-		teamID = -1;
+		teamID = eNoTeam;
 
 		pos[0] = pos[1] = pos[2] = 0.0f;
 		rot = 0.0f;
@@ -312,13 +316,13 @@ public:
 		eventType = bz_ePlayerJoinEvent;
 
 		playerID = -1;
-		teamID = -1;
+		team = eNoTeam;
 		time = 0.0;
 	}
 	virtual ~bz_PlayerJoinPartEventData(){};
 
 	int playerID;
-	int teamID;
+	bz_eTeamType team;
 
 	bzApiString callsign;
 	bzApiString reason;
@@ -354,7 +358,7 @@ public:
 	{
 		eventType = bz_eGetPlayerSpawnPosEvent;
 		playerID = -1;
-		teamID = -1;
+		team = eNoTeam;
 
 		handled = false;
 
@@ -366,7 +370,7 @@ public:
 	virtual ~bz_GetPlayerSpawnPosEventData(){};
 
 	int playerID;
-	int teamID;
+	bz_eTeamType team;
 
 	bool handled;
 
@@ -437,7 +441,7 @@ public:
 	{
 		eventType = bz_eGetPlayerInfoEvent;
 		playerID = -1;
-		team = -1;
+		team = eNoTeam;
 		admin = false;
 		verified = false;
 		registered = false;
@@ -449,7 +453,7 @@ public:
 	bzApiString callsign;
 	bzApiString ipAddress;
 
-	int team;
+	bz_eTeamType team;
 
 	bool admin;
 	bool verified;
@@ -463,7 +467,7 @@ public:
 	bz_GetAutoTeamEventData()
 	{
 		playeID = -1;
-		teamID = -1;
+		team = eNoTeam;
 		handled = false;
 	}
 
@@ -471,7 +475,7 @@ public:
 
 	int playeID;
 	bzApiString callsign;
-	int teamID;
+	bz_eTeamType team;
 
 	bool handled;
 };
@@ -483,7 +487,7 @@ public:
 	{
 		eventType = bz_eAllowSpawn;
 		playerID = -1;
-		teamID = -1;
+		team = eNoTeam;
 
 		handled = false;
 		allow = true;
@@ -494,7 +498,7 @@ public:
 	virtual ~bz_AllowSpawnData(){};
 
 	int playerID;
-	int teamID;
+	bz_eTeamType team;
 
 	bool handled;
 	bool allow;
@@ -616,7 +620,7 @@ public:
 	bz_PlayerRecord()
 	{
 		playerID = -1;
-		team = -1;
+		team = eNoTeam;
 
 		pos[0] = pos[1] = pos[2] = 0;
 		rot = 0;
@@ -638,7 +642,7 @@ public:
 	bzApiString callsign;
 	bzApiString email;
 
-	int team;
+	bz_eTeamType team;
 
 	float pos[3];
 	float rot;
@@ -666,6 +670,7 @@ BZF_API bool bz_resetPlayerScore(int playerId);
 
 // message API
 BZF_API bool bz_sendTextMessage (int from, int to, const char* message);
+BZF_API bool bz_sendTextMessage (int from, bz_eTeamType to, const char* message);
 BZF_API bool bz_sentFetchResMessage ( int playerID,  const char* URL );
 
 // world weapons
@@ -797,7 +802,7 @@ void bz_deleteMaterial ( bz_MaterialInfo *material );
 
 BZF_API bool bz_addWorldBox ( float *pos, float rot, float* scale, bz_WorldObjectOptions options );
 BZF_API bool bz_addWorldPyramid ( float *pos, float rot, float* scale, bool fliped, bz_WorldObjectOptions options );
-BZF_API bool bz_addWorldBase( float *pos, float rot, float* scale, int team, bz_WorldObjectOptions options );
+BZF_API bool bz_addWorldBase( float *pos, float rot, float* scale, bz_eTeamType team, bz_WorldObjectOptions options );
 BZF_API bool bz_addWorldTeleporter ( float *pos, float rot, float* scale, float border, bz_WorldObjectOptions options );
 BZF_API bool bz_addWorldWaterLevel( float level, bz_MaterialInfo *material );
 BZF_API bool bz_addWorldWeapon( const char* flagType, float *pos, float rot, float tilt, float initDelay, bzAPIFloatList &delays );
@@ -843,15 +848,15 @@ BZF_API bool bz_registerCustomPluginHandler ( const char* extension, bz_APIPlugi
 BZF_API bool bz_removeCustomPluginHandler ( const char* extension, bz_APIPluginHandler * handler );
 
 // team info
-BZF_API int bz_getTeamCount (int teamIndex );
-BZF_API int bz_getTeamScore (int teamIndex );
-BZF_API int bz_getTeamWins (int teamIndex );
-BZF_API int bz_getTeamLosses (int teamIndex );
+BZF_API int bz_getTeamCount (bz_eTeamType team );
+BZF_API int bz_getTeamScore (bz_eTeamType team );
+BZF_API int bz_getTeamWins (bz_eTeamType team );
+BZF_API int bz_getTeamLosses (bz_eTeamType team );
 
-BZF_API void bz_setTeamWins (int teamIndex, int wins );
-BZF_API void bz_setTeamLosses (int teamIndex, int losses );
+BZF_API void bz_setTeamWins (bz_eTeamType team, int wins );
+BZF_API void bz_setTeamLosses (bz_eTeamType team, int losses );
 
-BZF_API void bz_resetTeamScore (int teamIndex );
+BZF_API void bz_resetTeamScore (bz_eTeamType team );
 
 // list server 
 BZF_API void bz_updateListServer ( void );

@@ -64,6 +64,8 @@
 #include "bzfsPlugins.h"
 #endif
 
+extern bz_eTeamType convertTeam ( TeamColor team );
+extern TeamColor convertTeam( bz_eTeamType team );
 // pass through the SELECT loop
 static bool dontWait = true;
 
@@ -184,7 +186,6 @@ char *getDirectMessageBuffer()
 {
   return &sMsgBuf[2*sizeof(uint16_t)];
 }
-
 
 // FIXME? 4 bytes before msg must be valid memory, will get filled in with len+code
 // usually, the caller gets a buffer via getDirectMessageBuffer(), but for example
@@ -404,7 +405,7 @@ void sendPlayerInfo() {
       bz_GetPlayerInfoEventData playerInfoData;
       playerInfoData.playerID = i;
       playerInfoData.callsign = playerData->player.getCallSign();
-      playerInfoData.team = playerData->player.getTeam();
+      playerInfoData.team = convertTeam(playerData->player.getTeam());
       playerInfoData.verified = playerData->accessInfo.isVerified();
       playerInfoData.registered = playerData->accessInfo.isRegistered();
       playerInfoData.admin = playerData->accessInfo.showAsAdmin();
@@ -1400,12 +1401,12 @@ static void addPlayer(int playerIndex, GameKeeper::Player *playerData)
 
   bz_GetAutoTeamEventData autoTeamData;
   autoTeamData.playeID = playerIndex;
-  autoTeamData.teamID = t;
+  autoTeamData.team = convertTeam(t);
   autoTeamData.callsign = playerData->player.getCallSign();
 
   worldEventManager.callEvents(bz_eGetAutoTeamEvent,&autoTeamData);
 
-  playerData->player.setTeam((TeamColor)autoTeamData.teamID);
+  playerData->player.setTeam(convertTeam(autoTeamData.team));
   playerData->player.endShotCredit = 0;	// reset shotEndCredit
 
   // count current number of players and players+observers
@@ -1624,7 +1625,7 @@ static void addPlayer(int playerIndex, GameKeeper::Player *playerData)
   bz_PlayerJoinPartEventData	joinEventData;
   joinEventData.eventType = bz_ePlayerJoinEvent;
   joinEventData.playerID = playerIndex;
-  joinEventData.teamID = playerData->player.getTeam();
+  joinEventData.team = convertTeam(playerData->player.getTeam());
   joinEventData.callsign = playerData->player.getCallSign();
   joinEventData.time = TimeKeeper::getCurrent().getSeconds();
 
@@ -1845,7 +1846,7 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
   bz_PlayerJoinPartEventData partEventData;
   partEventData.eventType = bz_ePlayerPartEvent;
   partEventData.playerID = playerIndex;
-  partEventData.teamID = playerData->player.getTeam();
+  partEventData.team = convertTeam(playerData->player.getTeam());
   partEventData.callsign = playerData->player.getCallSign();
   partEventData.time = TimeKeeper::getCurrent().getSeconds();
   if (reason)
@@ -2126,7 +2127,7 @@ static void playerAlive(int playerIndex)
 
   bz_AllowSpawnData	spawnAllowData;
   spawnAllowData.playerID = playerIndex;
-  spawnAllowData.teamID = playerData->player.getTeam();
+  spawnAllowData.team = convertTeam(playerData->player.getTeam());
 
   if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::spawn)) {
     sendMessage(ServerPlayer, playerIndex, "You do not have permission to spawn on this server.");
@@ -2166,7 +2167,7 @@ static void playerAlive(int playerIndex)
 
   bz_GetPlayerSpawnPosEventData	spawnData;
   spawnData.playerID = playerIndex;
-  spawnData.teamID   = playerData->player.getTeam();
+  spawnData.team   = convertTeam(playerData->player.getTeam());
   spawnData.pos[0]   = spawnPosition.getX();
   spawnData.pos[1]   = spawnPosition.getY();
   spawnData.pos[2]   = spawnPosition.getZ();
@@ -2250,10 +2251,10 @@ void playerKilled(int victimIndex, int killerIndex, int reason,
   // call any events for a playerdeath
   bz_PlayerDieEventData	dieEvent;
   dieEvent.playerID = victimIndex;
-  dieEvent.teamID = victim->getTeam();
+  dieEvent.team = convertTeam(victim->getTeam());
   dieEvent.killerID = killerIndex;
   if (killer)
-    dieEvent.killerTeamID = killer->getTeam();
+    dieEvent.killerTeam = convertTeam(killer->getTeam());
   dieEvent.flagKilledWith = flagType->flagAbbv;
   victimData->getPlayerState(dieEvent.pos, dieEvent.rot);
 
@@ -2580,8 +2581,8 @@ static void captureFlag(int playerIndex, TeamColor teamCaptured)
 
   // find any events for capturing the flags on the caped team or events for ANY team
   bz_CTFCaptureEventData	eventData;
-  eventData.teamCaped = teamIndex;
-  eventData.teamCaping = teamCaptured;
+  eventData.teamCaped = convertTeam((TeamColor)teamIndex);
+  eventData.teamCaping = convertTeam(teamCaptured);
   eventData.playerCaping = playerIndex;
   playerData->getPlayerState(eventData.pos, eventData.rot);
   eventData.time = TimeKeeper::getCurrent().getSeconds();

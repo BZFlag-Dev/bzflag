@@ -84,6 +84,19 @@ void setBZMatFromAPIMat (BzMaterial &bzmat, bz_MaterialInfo* material )
 	}
 }
 
+bz_eTeamType convertTeam ( TeamColor team )
+{
+	return (bz_eTeamType)team;
+}
+
+TeamColor convertTeam( bz_eTeamType team )
+{
+	if (team > eObservers)
+		return NoTeam;
+
+	return (TeamColor)team;
+}
+
 void broadcastPlayerScoreUpdate ( int playerID )
 {
 	GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerID);
@@ -592,7 +605,7 @@ BZF_API bz_PlayerRecord * bz_getPlayerByIndex ( int index )
 	playerRecord->callsign = player->player.getCallSign();
 	playerRecord->email =  player->player.getEMail();
 	playerRecord->playerID = index;
-	playerRecord->team = player->player.getTeam();
+	playerRecord->team = convertTeam(player->player.getTeam());
 
 	playerRecord->spawned = player->player.isAlive();
 	playerRecord->verified = player->accessInfo.isVerified();
@@ -667,19 +680,9 @@ BZF_API bool bz_sendTextMessage(int from, int to, const char* message)
 		return false;
 
 	int playerIndex;
-	PlayerId dstPlayer;
-
-	switch(to)
-	{
-	case BZ_ADMINCHANNEL:
-		dstPlayer = AdminPlayers;
-		break;
-	case BZ_ALL_USERS:
-		dstPlayer = AllPlayers;
-		break;
-	default:
+	PlayerId dstPlayer = AllPlayers;
+	if ( to != BZ_ALLUSERS)
 		dstPlayer = (PlayerId)to;
-	}
 
 	if (from == BZ_SERVER)
 		playerIndex = ServerPlayer;
@@ -688,6 +691,29 @@ BZF_API bool bz_sendTextMessage(int from, int to, const char* message)
 
 	sendMessage(playerIndex, dstPlayer, message);
 	return true;
+}
+
+BZF_API bool bz_sendTextMessage(int from, bz_eTeamType to, const char* message)
+{
+	switch(to)
+	{
+	case eNoTeam:
+		return false;
+
+	default:
+	case eRogueTeam:
+	case eRedTeam:
+	case eGreenTeam:
+	case eBlueTeam:
+	case ePurpleTeam:
+	case eRabbitTeam:
+	case eHunterTeam:
+	case eObservers:
+		return bz_sendTextMessage(from,250-(int)to,message);
+
+	case eAdministrators:
+		return bz_sendTextMessage(from,AdminPlayers,message);
+	}
 }
 
 BZF_API bool bz_sentFetchResMessage ( int playerID,  const char* URL )
@@ -708,7 +734,7 @@ BZF_API bool bz_sentFetchResMessage ( int playerID,  const char* URL )
 	buf = nboPackUShort(buf, (unsigned short)strlen(URL));
 	buf = nboPackString(buf, URL,strlen(URL));
 
-	if (playerID == BZ_ALL_USERS)
+	if (playerID == BZ_ALLUSERS)
 		broadcastMessage(MsgFetchResources, (char*)buf - (char*)bufStart, bufStart);
 	else
 		directMessage(playerID,MsgFetchResources, (char*)buf - (char*)bufStart, bufStart);
@@ -1189,7 +1215,7 @@ BZF_API bool bz_sendPlayCustomLocalSound ( int playerID, const char* soundName )
 	buf = nboPackUShort(bufStart, LocalCustomSound);
 	buf = nboPackUShort(buf, (unsigned short)strlen(soundName));
 	buf = nboPackString(buf, soundName,strlen(soundName));
-	if (playerID == BZ_ALL_USERS)
+	if (playerID == BZ_ALLUSERS)
 		broadcastMessage(MsgCustomSound, (char*)buf - (char*)bufStart, bufStart);
 	else
 		directMessage(playerID,MsgCustomSound, (char*)buf - (char*)bufStart, bufStart);
@@ -1219,8 +1245,10 @@ BZF_API bool bz_removeCustomPluginHandler ( const char* extension, bz_APIPluginH
 }
 
 // team info
-BZF_API int bz_getTeamCount (int teamIndex )
+BZF_API int bz_getTeamCount ( bz_eTeamType _team )
 {
+	int teamIndex = (int)convertTeam(_team);
+
 	int count = 0;
 	if ( teamIndex < 0 || teamIndex >= NumTeams)
 		return 0;
@@ -1238,32 +1266,40 @@ BZF_API int bz_getTeamCount (int teamIndex )
 	return count;
 }
 
-BZF_API int bz_getTeamScore (int teamIndex )
+BZF_API int bz_getTeamScore ( bz_eTeamType _team )
 {
+	int teamIndex = (int)convertTeam(_team);
+
 	if ( teamIndex < 0 || teamIndex >= NumTeams)
 		return 0;
 
 	return team[teamIndex].team.won - team[teamIndex].team.lost;
 }
 
-BZF_API int bz_getTeamWins (int teamIndex )
+BZF_API int bz_getTeamWins ( bz_eTeamType _team )
 {
+	int teamIndex = (int)convertTeam(_team);
+
 	if ( teamIndex < 0 || teamIndex >= NumTeams)
 		return 0;
 
 	return team[teamIndex].team.won ;
 }
 
-BZF_API int bz_getTeamLosses (int teamIndex )
+BZF_API int bz_getTeamLosses ( bz_eTeamType _team )
 {
+	int teamIndex = (int)convertTeam(_team);
+
 	if ( teamIndex < 0 || teamIndex >= NumTeams)
 		return 0;
 
 	return team[teamIndex].team.lost;
 }
 
-BZF_API void bz_setTeamWins (int teamIndex, int wins )
+BZF_API void bz_setTeamWins (bz_eTeamType _team, int wins )
 {
+	int teamIndex = (int)convertTeam(_team);
+
 	if ( teamIndex < 0 || teamIndex >= NumTeams)
 		return ;
 
@@ -1271,8 +1307,10 @@ BZF_API void bz_setTeamWins (int teamIndex, int wins )
 	sendTeamUpdate(-1,teamIndex);
 }
 
-BZF_API void bz_setTeamLosses (int teamIndex, int losses )
+BZF_API void bz_setTeamLosses (bz_eTeamType _team, int losses )
 {
+	int teamIndex = (int)convertTeam(_team);
+
 	if ( teamIndex < 0 || teamIndex >= NumTeams)
 		return ;
 
@@ -1280,8 +1318,10 @@ BZF_API void bz_setTeamLosses (int teamIndex, int losses )
 	sendTeamUpdate(-1,teamIndex);
 }
 
-BZF_API void bz_resetTeamScore (int teamIndex )
+BZF_API void bz_resetTeamScore (bz_eTeamType _team )
 {
+	int teamIndex = (int)convertTeam(_team);
+
 	if ( teamIndex < 0 || teamIndex >= NumTeams)
 		return ;
 
