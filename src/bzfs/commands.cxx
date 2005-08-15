@@ -576,33 +576,29 @@ bool CmdList::operator() (const char*, GameKeeper::Player *playerData)
   }
   maxCmdLen += 2; // add some padding
 
-  // formatting parameters
-  const int cols = (maxLineLen / maxCmdLen);
-  const int rows = (cmdCount / cols);
-  const int extraCols = (cmdCount % cols);
-
   // message generation variables
   char buffer[MessageLen];
-  char* c = buffer;
+  char* cptr = buffer;
   char format[8];
   snprintf(format, 8, "%%-%is", maxCmdLen);
 
-  int row = 0;
-  for (i = 0; i < cmdCount; i++) {
-    const int col = (i % cols);
-    const int extra = (col < extraCols) ? col : extraCols;
-    const int index = ((col * rows) + row) + extra;
-    sprintf(c, format, commands[index]->c_str());
-    const int next = (i + 1);
-    if ((next == cmdCount) || ((next % cols) == 0)) {
-      sendMessage(ServerPlayer, playerId, buffer);
-      c = buffer;
-      row++;
-    } else {
-      c += maxCmdLen;
+  // formatting parameters
+  const int cols = (maxLineLen / maxCmdLen);
+  const int rows = ((cmdCount + (cols - 1)) / cols);
+  
+  for (int row = 0; row < rows; row++) {
+    cptr = buffer;
+    for (int col = 0; col < cols; col++) {
+      const int index = (col * rows) + row;
+      if (index >= cmdCount) {
+        break;
+      }
+      sprintf(cptr, format, commands[index]->c_str());
+      cptr += maxCmdLen;
     }
+    sendMessage(ServerPlayer, playerId, buffer);
   }
-
+  
   return true;
 }
 
