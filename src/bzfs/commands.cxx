@@ -626,11 +626,11 @@ MsgCommand::MsgCommand() 		 : ServerCommand("/msg",
 ServerQueryCommand::ServerQueryCommand() : ServerCommand("/serverquery",
   "/serverquery - show the server version") {}
 PartCommand::PartCommand()               : ServerCommand("/part",
-  "/part message - leave the game with a parthing message") {}
+  "/part message - leave the game with a parting message") {}
 QuitCommand::QuitCommand()               : ServerCommand("/quit",
-  "/quit - leaves the game") {}
+  "/quit - leave the game and close the client") {}
 UpTimeCommand::UpTimeCommand()           : ServerCommand("/uptime",
-  "/uptime - show the servers uptime") {}
+  "/uptime - show the server's uptime") {}
 PasswordCommand::PasswordCommand()       : ServerCommand("/password",
   "/password <passwd> - become an administrator with <passwd>") {}
 SetCommand::SetCommand()                 : ServerCommand("/set",
@@ -716,11 +716,11 @@ bool CmdList::operator() (const char*, GameKeeper::Player *playerData)
   it = commandMap.begin();
   while (it != commandMap.end()) {
     const std::string& cmd = it->first;
-    sprintf(c, format, cmd.c_str());
     it++;
     if (cmd[0] != '/') {
       continue; // ignore any fake entries (ex: CmdHelp)
     }
+    sprintf(c, format, cmd.c_str());
     column++;
     if ((column >= maxColumns) || (it == commandMap.end())) {
       sendMessage(ServerPlayer, t, buffer);
