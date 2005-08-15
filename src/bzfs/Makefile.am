@@ -15,6 +15,7 @@ bzfs_SOURCES = \
 	bzfsAPI.cxx	\
 	bzfsPlugins.h	\
 	bzfsPlugins.cxx	\
+	BanCommands.cxx		\
 	BZWError.cxx \
 	BZWError.h \
 	BZWReader.cxx \
