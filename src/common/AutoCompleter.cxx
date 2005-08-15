@@ -118,6 +118,7 @@ void DefaultCompleter::setDefaults() {
   registerWord("/reset");
   registerWord("/retexture");
   registerWord("/roampos ");
+  registerWord("/serverquery");
   registerWord("/set");
   registerWord("/setgroup ");
   registerWord("/setpass ");
