@@ -142,7 +142,7 @@ the current game state.</p>
                                       <p>int playerID;							// id of the player<br>
   bzApiString callsign; // callsign the player is using<br>
   bzApiString email; // email address of the player <br>
-                                          int team; // team </p>
+                                          bz_eTeamType team; // team </p>
                                       <p> float pos[3]; // last known position<br>
   float rot; // last known heading</p>
 <p> bzApiString ipAddress; // the network address for this connection<br>
@@ -273,19 +273,19 @@ Returns the public description the server is using, will return an empty string 
                     Forces the server to do a list server update. </p>
                   <p>&nbsp;</p>
                   <p><span class="style4 style7">Team Score Functions </span></p>                  
-                  <p><strong>BZF_API int bz_getTeamCount (int teamIndex );</strong><br>
+                  <p><strong>BZF_API int bz_getTeamCount (bz_eTeamType team);</strong><br>
   Returns the player count of the specified team.; </p>
-                  <p><strong>BZF_API int bz_getTeamScore (int teamIndex );</strong><br>
+                  <p><strong>BZF_API int bz_getTeamScore (bz_eTeamType team );</strong><br>
   Returns the team score for the specified team </p>
-                  <p><strong>BZF_API int bz_getTeamWins (int teamIndex );</strong><br>
+                  <p><strong>BZF_API int bz_getTeamWins (bz_eTeamType team );</strong><br>
   Returns the team wins for the speficied team </p>
-                  <p><strong>BZF_API int bz_getTeamLosses (int teamIndex );</strong><br>
+                  <p><strong>BZF_API int bz_getTeamLosses (bz_eTeamType team );</strong><br>
   Returns the team losses for the specified team </p>
-                  <p><strong>BZF_API void bz_setTeamWins (int teamIndex, int wins );</strong><br>
+                  <p><strong>BZF_API void bz_setTeamWins (bz_eTeamType team, int wins );</strong><br>
 Sets the team wins for the speficied team </p>                  
-                  <p><strong>BZF_API void bz_setTeamLosses (int teamIndex, int losses );</strong><br>
+                  <p><strong>BZF_API void bz_setTeamLosses (bz_eTeamType team, int losses );</strong><br>
   Sets the team losses for the specified team </p>
-                  <p><strong>BZF_API void bz_resetTeamScore (int teamIndex );</strong><br> 
+                  <p><strong>BZF_API void bz_resetTeamScore (bz_eTeamType team );</strong><br> 
                     Resets to Zero the score for the specified team </p>
                   <p>&nbsp;</p>                  
                   <p><span class="style4 style7">Recording Functions </span></p>

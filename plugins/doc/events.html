@@ -264,9 +264,9 @@ provides the following data </td>
                               <td><span class="Code">bz_CTFCaptureEventData<br>
 {<br>
                               </span>
-                              <blockquote class="Code"> int teamCaped;
+                              <blockquote class="Code"> bz_eTeamType teamCaped;
 // the team that had there flag captured<br>
-int teamCaping; // the team that did the capturing<br>
+bz_eTeamType teamCaping; // the team that did the capturing<br>
 int playerCaping; // the player ID who did the capture<br>
 float pos[3]; // the last known position of the player<br>
 float rot; // the last known angle of the player<br>
@@ -304,9 +304,9 @@ provides the following data</td>
                               </span>
                               <blockquote class="Code"> int playerID;
 // the ID of the player who died<br>
-int teamID; // the team of the player who died<br>
+bz_eTeamType team; // the team of the player who died<br>
 int killerID; // the ID of the player doing the killing<br>
-int killerTeamID; // the team of the killer<br>
+bz_eTeamType killerTeam; // the team of the killer<br>
 bzApiString flagKilledWith; // the flag the killer had when killing<br>
 float pos[3]; // the last known position of the victim<br>
 float rot; // the last known rotation of the victim<br>
@@ -343,7 +343,7 @@ provides the following data</td>
                               </span>
                               <blockquote class="Code"> int playerID //
 the ID of the player that has spawned;<br>
-int teamID; // the Team the player just spawned to<br>
+bz_eTeamType team; // the Team the player just spawned to<br>
 float pos[3]; // the position of the spawn<br>
 float rot; // the rotation of the spawn<br>
 double time; // the time of the spawn</blockquote>
@@ -383,7 +383,7 @@ following data</td>
                               </span>
                               <blockquote class="Code"> int playerID;
 // the ID of the user that has joined or parted<br>
-int teamID; // the team ID of the user<br>
+bz_eTeamType team; // the team ID of the user<br>
 bzApiString callsign; // the callsign used by the user<br>
 bzApiString reason; // if a part event, the reason for the part<br>
 double time; // the time of the event</blockquote>
@@ -504,7 +504,7 @@ provides the following data</td>
 {<br>
                               </span>
                               <blockquote class="Code"> int playeID;					// the player ID of who needs to be spawned<br>
-int teamID; // the players team<br>
+bz_eTeamType team; // the players team<br>
 bool handled; // if the action has been/will be handled <br>
 float pos[3]; // the proposed spawn position<br>
 float rot; // the proposed spawn rotation<br>
