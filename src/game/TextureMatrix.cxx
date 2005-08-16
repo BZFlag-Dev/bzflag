@@ -10,16 +10,16 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+/* interface header */
 #include "TextureMatrix.h"
-#include "common.h"
 
+/* system implementation headers */
 #include <math.h>
 #include <string.h>
-#include <vector>
 
+/* common implemnetation headers */
 #include "TimeKeeper.h"
 #include "Pack.h"
-
 
 
 //

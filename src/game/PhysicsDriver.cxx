@@ -10,15 +10,15 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+/* interface header */
 #include "PhysicsDriver.h"
-#include "common.h"
 
+/* system implementation headers */
 #include <math.h>
 #include <ctype.h>
 #include <string.h>
-#include <string>
-#include <vector>
 
+/* common implementation headers */
 #include "TimeKeeper.h"
 #include "Pack.h"
 

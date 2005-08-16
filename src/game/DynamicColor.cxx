@@ -10,13 +10,15 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+/* interface header */
 #include "DynamicColor.h"
-#include "common.h"
 
+/* system implementation headers */
 #include <math.h>
 #include <string.h>
 #include <vector>
 
+/* common implementation headers */
 #include "TimeKeeper.h"
 #include "Pack.h"
 
