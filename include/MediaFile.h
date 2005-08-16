@@ -14,8 +14,13 @@
 #define BZF_MEDIA_FILE_H
 
 #include "common.h"
+
+/* system interface headers */
 #include <string>
+
+/* common interface headers */
 #include "bzfio.h"
+
 
 // if HALF_RATE_AUDIO defined then use half the normal audio sample
 // rate (and downsample the audio files to match).  this reduces the
