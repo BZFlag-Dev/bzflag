@@ -15,11 +15,8 @@
 
 /* system implementation headers */
 #include <sys/types.h>
-#if !defined(_WIN32)
-#include <errno.h>
-#define STD_MIN std::min
-#else
-#define STD_MIN min
+#ifdef HAVE_ERRNO_H
+#  include <errno.h>
 #endif
 #include <vector>
 #include <string>
@@ -240,7 +237,7 @@ void ServerMenu::setSelected(int index)
             label->setColor(1.0f, 1.0f, 0.25f); // yellow
           }
           else {
-            const float shotScale = STD_MIN(1.0f, log10f(maxShots));
+            const float shotScale = std::min(1.0f, log10f(maxShots));
             const float rf = 1.0f;
             const float gf = 1.0f - 0.75f * shotScale;
             const float bf = 1.0f - 0.75f * shotScale;
@@ -249,7 +246,7 @@ void ServerMenu::setSelected(int index)
         }
         else {
           // colorize servers: many shots->red, jumping->green, CTF->blue
-          const float rf = STD_MIN(1.0f, logf(server.ping.maxShots) / logf(20.0f));
+          const float rf = std::min(1.0f, logf(server.ping.maxShots) / logf(20.0f));
           const float gf = gameStyle & JumpingGameStyle ? 1.0f : 0.0f;
           const float bf = gameStyle & TeamFlagGameStyle ? 1.0f : 0.0f;
           label->setColor(0.5f + rf * 0.5f, 0.5f + gf * 0.5f, 0.5f + bf * 0.5f);

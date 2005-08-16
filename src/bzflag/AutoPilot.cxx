@@ -10,12 +10,19 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+/* venerable common.h */
+#include "common.h"
+
+/* common headers */
 #include "TimeKeeper.h"
+#include "BZDBCache.h"
+
+
+/* local headers */
 #include "Roster.h"
 #include "TargetingUtils.h"
 #include "World.h"
 #include "WorldPlayer.h"
-#include "BZDBCache.h"
 #include "ServerLink.h"
 #include "playing.h"
 #include "Plan.h"
@@ -212,7 +219,7 @@ bool	avoidBullet(float &rotation, float &speed)
 
   if (((World::getWorld()->allowJumping() || (myTank->getFlag()) == Flags::Jumping
    || (myTank->getFlag()) == Flags::Wings))
-   && (minDistance < (std_max(dotProd,0.5f) * BZDBCache::tankLength * 2.25f))
+   && (minDistance < ( std::max(dotProd, 0.5f) * BZDBCache::tankLength * 2.25f))
    && (myTank->getFlag() != Flags::NoJumping)) {
     wantJump = true;
     return (myTank->getFlag() != Flags::Wings);

@@ -368,7 +368,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
 
     // below the ground: however I got there, creep up
     if (oldPosition[2] < groundLimit) {
-      newVelocity[2] = std_max(newVelocity[2], -oldPosition[2] / 2.0f + 0.5f);
+      newVelocity[2] = std::max(newVelocity[2], -oldPosition[2] / 2.0f + 0.5f);
     }
   }
 
@@ -574,7 +574,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
     newPos[1] = tmpPos[1] + (searchTime * newVelocity[1]);
     newPos[2] = tmpPos[2] + (searchTime * newVelocity[2]);
     if (oldPosition[2] < groundLimit) {
-      newVelocity[2] = std_max(newVelocity[2], -oldPosition[2] / 2.0f + 0.5f);
+      newVelocity[2] = std::max(newVelocity[2], -oldPosition[2] / 2.0f + 0.5f);
     }
 
 

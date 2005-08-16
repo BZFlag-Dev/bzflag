@@ -332,7 +332,7 @@ void			ControlPanel::render(SceneRenderer& _renderer)
     int lines = int(messages[messageMode].size());
     if (lines > 0) {
 
-      const float size = std_max(float(maxLines) / lines, 0.02f);
+      const float size = std::max(float(maxLines) / lines, 0.02f);
       const float offset = float(messagesOffset) / lines;
       const int maxTop = messageAreaPixels[1] + messageAreaPixels[3];
       int top = messageAreaPixels[1] + int((offset + size) * (float)messageAreaPixels[3]);
