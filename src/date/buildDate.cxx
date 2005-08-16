@@ -10,16 +10,18 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+#include "common.h"
+
+/* system headers */
 #include <sstream>
 #include <string>
-
 #include <stdio.h>
 #include <string.h>
-#include "config.h"
+
 
 // opaque version number increments on protocol incompatibility
 #ifndef BZ_PROTO_VERSION
-#define BZ_PROTO_VERSION	"0026"
+#  define BZ_PROTO_VERSION	"0026"
 #endif
 
 // version numbers - also update:
@@ -30,20 +32,20 @@
 //  tools/TextTool-W32/TextTool.rc
 //  win32/VC6/installer.dsp
 #ifndef BZ_MAJOR_VERSION
-#define BZ_MAJOR_VERSION	2
+#  define BZ_MAJOR_VERSION	2
 #endif
 
 #ifndef BZ_MINOR_VERSION
-#define BZ_MINOR_VERSION	0
+#  define BZ_MINOR_VERSION	0
 #endif
 
 #ifndef BZ_REV
-#define BZ_REV			3
+#  define BZ_REV			3
 #endif
 
 // DEVEL | STABLE | MAINT
 #ifndef BZ_BUILD_TYPE
-#define BZ_BUILD_TYPE		"DEVEL"
+#  define BZ_BUILD_TYPE		"DEVEL"
 #endif
 
 const char *bzfcopyright = "Copyright (c) 1993 - 2005 Tim Riker";
