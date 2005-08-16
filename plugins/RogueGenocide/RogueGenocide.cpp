@@ -4,7 +4,6 @@
 #include "bzfsAPI.h"
 #include <string>
 #include <map>
-#include "global.h"
 
 BZ_GET_PLUGIN_VERSION
 
@@ -19,18 +18,6 @@ public:
 
         virtual bool autoDelete ( void ) { return false;} // this will be used for more then one event
 protected:
-
-        typedef struct
-        {
-                int playerID;
-                bz_eTeamType team;
-                std::string callsign;
-                double startTime;
-                double lastUpdateTime;
-
-        }trRogueDeathHandler;
-
-        std::map<int, trRogueDeathHandler > rogueList;
 };
 
 RogueDeathHandler	deathHandler;
@@ -38,11 +25,7 @@ RogueDeathHandler	deathHandler;
 BZF_PLUGIN_CALL int bz_Load ( const char* commandLine )
 {
 	bz_debugMessage(4,"rogueGenocide plugin loaded");
-
 	bz_registerEvent(bz_ePlayerDieEvent,&deathHandler);
-	bz_registerEvent(bz_ePlayerPartEvent,&deathHandler);
-	bz_registerEvent(bz_ePlayerJoinEvent,&deathHandler);
-
 
 	return 0;
 }
@@ -50,9 +33,6 @@ BZF_PLUGIN_CALL int bz_Load ( const char* commandLine )
 BZF_PLUGIN_CALL int bz_Unload ( void )
 {
 	bz_removeEvent(bz_ePlayerDieEvent,&deathHandler);
-	bz_removeEvent(bz_ePlayerPartEvent,&deathHandler);
-	bz_removeEvent(bz_ePlayerJoinEvent,&deathHandler);
-
 	bz_debugMessage(4,"rogueGenocide plugin unloaded");
 	return 0;
 }
@@ -67,9 +47,7 @@ RogueDeathHandler::~RogueDeathHandler()
 }
 
 void RogueDeathHandler::process ( bz_EventData *eventData )
-{
-
-			
+{	
 	switch (eventData->eventType) 
 	{
 		default:
@@ -89,45 +67,29 @@ void RogueDeathHandler::process ( bz_EventData *eventData )
 			// if the tank killed was a rogue, and the killer was a rogue, kill the lousy tk'er
 			if (dieData->killerTeam == eRogueTeam ) 
 			{
-				bz_killPlayer ( dieData->killerID, 0, dieData->killerID, "G" );
+			//	bz_killPlayer ( dieData->killerID, 0, dieData->killerID, "G" );
 				bz_sendTextMessage(BZ_SERVER,dieData->killerID,"You should be more careful with Genocide");
+			}
 			// if the tank killed was a rogue, and the killer wasnt, kill all rogues.
 			// note the possible issue if the rogue tank being killed has not spawned
 			// and if all else fails, just kill all rogues.....nothing wrong with that
-			} else {
-				for ( std::map<int, trRogueDeathHandler >::iterator itr = rogueList.begin(); itr != rogueList.end(); itr++ )
-				{ 
-					bz_killPlayer( itr->first, 0, dieData->killerID, "G" );
-					// bz_sendTextMessage(BZ_SERVER,itr->first,"You were a victim of Rogue Genocide");
-				}
-			}
-		}
-		break;
-		
-		// remove from the rogueLIst if the rogue tank leaves
-		case  bz_ePlayerPartEvent:
-		{
-			std::map<int, trRogueDeathHandler >::iterator itr = rogueList.find( (( bz_PlayerJoinPartEventData*)eventData)->playerID );
-			if (itr != rogueList.end())
-				rogueList.erase(itr);
-        }                
-		break;
-		
-    	// add to the list of rogue tanks playing				
-		case bz_ePlayerJoinEvent: 
-		{
-			 trRogueDeathHandler   rogueRecord;
 
-			rogueRecord.playerID = (( bz_PlayerJoinPartEventData*)eventData)->playerID;
-			rogueRecord.team = (( bz_PlayerJoinPartEventData*)eventData)->team;
-			rogueRecord.callsign = (( bz_PlayerJoinPartEventData*)eventData)->callsign.c_str();
-			rogueRecord.lastUpdateTime = (( bz_PlayerJoinPartEventData*)eventData)->time;
-			rogueRecord.startTime = rogueRecord.lastUpdateTime;
+			bzAPIIntList	*playerList = bz_newIntList();
 
-			if (rogueRecord.team == eRogueTeam )
+			bz_getPlayerIndexList(playerList);
+
+			for ( unsigned int i = 0; i < playerList->size(); i++)
 			{
-				rogueList[(( bz_PlayerJoinPartEventData*)eventData)->playerID] = rogueRecord;
+				bz_PlayerRecord *playRec = bz_getPlayerByIndex ( i );
+
+				if ( playRec->spawned && playRec->team == eRogueTeam )
+				{
+					bz_killPlayer( i, false, dieData->killerID, "G" );
+					bz_sendTextMessage(BZ_SERVER,i,"You were a victim of Rogue Genocide");
+				}
+				bz_freePlayerRecord(playRec);
 			}
+			bz_deleteIntList(playerList);
 		}
 		break;
 		

@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="7.10"
 	Name="RogueGenocide"
-	ProjectGUID="{B629554E-D0E9-4400-909B-7130F116E15D}"
+	ProjectGUID="{1F43075E-8AF6-486F-AEDF-6B350A6CE141}"
 	Keyword="Win32Proj">
 	<Platforms>
 		<Platform
@@ -19,7 +19,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="../../include; ../../win32/vc71/"
+				AdditionalIncludeDirectories="../../include"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;RogueGenocide_EXPORTS"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
@@ -36,6 +36,7 @@
 				OutputFile="$(OutDir)/RogueGenocide.dll"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="../../src/bzfs/debug/"
+				ModuleDefinitionFile="RogueGenocide.def"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile="$(OutDir)/RogueGenocide.pdb"
 				SubSystem="2"
@@ -71,7 +72,7 @@
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="../../include; ../../win32/vc71/"
+				AdditionalIncludeDirectories="../../include"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;RogueGenocide_EXPORTS"
 				RuntimeLibrary="0"
 				UsePrecompiledHeader="0"
@@ -86,6 +87,7 @@
 				OutputFile="$(OutDir)/RogueGenocide.dll"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="../../src/bzfs/"
+				ModuleDefinitionFile="RogueGenocide.def"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile="Release/$(ProjectName).pdb"
 				SubSystem="2"
@@ -123,6 +125,21 @@
 			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx"
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}">
 			<File
+				RelativePath=".\Makefile">
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="TRUE">
+					<Tool
+						Name="VCCustomBuildTool"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="TRUE">
+					<Tool
+						Name="VCCustomBuildTool"/>
+				</FileConfiguration>
+			</File>
+			<File
 				RelativePath=".\RogueGenocide.cpp">
 			</File>
 			<File
@@ -133,6 +150,9 @@
 			Name="Header Files"
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}">
+			<File
+				RelativePath="..\..\include\bzfsAPI.h">
+			</File>
 		</Filter>
 		<Filter
 			Name="Resource Files"
