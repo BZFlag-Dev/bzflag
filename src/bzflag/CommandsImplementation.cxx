@@ -475,7 +475,7 @@ static void sendSaveWorldHelp()
 {
   addMessage(NULL, "/saveworld [-g] [-m] <filename>");
   addMessage(NULL, "  -g : save ungrouped");
-  addMessage(NULL, "  -m : save some primitves as meshes");
+  addMessage(NULL, "  -m : save some primitives as meshes");
   return;
 }
 
