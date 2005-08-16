@@ -776,6 +776,8 @@ BZF_API bool bz_setBZDBString( const char* variable, const char *val, int perms 
 BZF_API bool bz_setBZDBBool( const char* variable, bool val, int perms = 0, bool persistent = false  );
 BZF_API bool bz_setBZDBInt( const char* variable, int val, int perms = 0, bool persistent = false  );
 
+BZF_API int bz_getBZDBVarList( bzAPIStringList	*varList );
+
 
 // loging
 BZF_API void bz_debugMessage ( int debugLevel, const char* message );

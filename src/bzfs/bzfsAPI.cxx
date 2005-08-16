@@ -988,6 +988,23 @@ BZF_API bool bz_setBZDBInt( const char* variable, int val, int perms, bool persi
 	return !exists;
 }
 
+void bzdbIterator (const std::string& name, void* userData)
+{
+	bzAPIStringList	* varList = (bzAPIStringList*)userData;
+	varList->push_back(name);
+}
+
+BZF_API int bz_getBZDBVarList( bzAPIStringList	*varList )
+{
+	if (!varList)
+		return -1;
+
+	varList->clear();
+	BZDB.iterate(&bzdbIterator,varList);
+	return (int)varList->size();
+}
+
+
 // loging
 BZF_API void bz_debugMessage ( int _debugLevel, const char* message )
 {
