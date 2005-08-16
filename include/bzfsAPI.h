@@ -701,9 +701,9 @@ public:
 
 	void update ( void ){bz_updatePlayerData(this);}	// call to update with current data
 	
-	bool hasPerm ( const char* perm ){bz_hasPerm(this,perm);}	
-	bool grantPerm ( const char* perm ){bz_grantPerm(this,perm);}	
-	bool revokePerm ( const char* perm ){bz_revokePerm(this,perm);}	
+	bool hasPerm ( const char* perm ){return bz_hasPerm(this,perm);}	
+	bool grantPerm ( const char* perm ){return bz_grantPerm(this,perm);}	
+	bool revokePerm ( const char* perm ){return bz_revokePerm(this,perm);}	
 
 	int playerID;
 	bzApiString callsign;
