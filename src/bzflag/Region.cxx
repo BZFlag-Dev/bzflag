@@ -10,12 +10,12 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+/* interface header */
+#include "Region.h"
+
 /* system implementation headers */
 #include <math.h>
 #include <vector>
-
-/* interface header */
-#include "Region.h"
 
 
 RegionPoint::RegionPoint(float x, float y)
