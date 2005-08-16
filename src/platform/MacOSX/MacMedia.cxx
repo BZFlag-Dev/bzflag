@@ -1,5 +1,6 @@
-#include <QuickTime/QuickTime.h>
 #include "MacMedia.h"
+
+#include <QuickTime/QuickTime.h>
 
 static SndCallBackUPP gCarbonSndCallBackUPP = nil;
 static int queued_chunks = 0;

@@ -10,16 +10,16 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-// implementation header
-#include "CacheManager.h"
+/* interface header */
+#include "MediaFile.h"
 
-// system headers
+/* system implementation headers */
 #include <iostream>
 #include <string>
 #include <algorithm>
 
-// common headers
-#include "MediaFile.h"
+/* common implementation headers */
+#include "CacheManager.h"
 
 
 #ifdef WIN32

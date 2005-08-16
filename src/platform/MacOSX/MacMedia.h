@@ -13,9 +13,11 @@
 #ifndef BZF_MACMEDIA_H
 #define  BZF_MACMEDIA_H
 
+#include "BzfMedia.h"
+
 #include <Carbon/Carbon.h>
 #include <queue>
-#include "BzfMedia.h"
+
 
 using std::queue;
 
