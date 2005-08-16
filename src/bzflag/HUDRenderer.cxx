@@ -758,8 +758,11 @@ void			HUDRenderer::renderStatus(void)
 	break;
 
       case LocalPlayer::Loading:
-	statusColor = redColor;
-	sprintf(buffer, bdl->getLocalString("Reloaded in %.1f").c_str(), player->getReloadTime());
+    
+    if (World::getWorld()->getMaxShots() != 0) {
+	  statusColor = redColor;
+	  sprintf(buffer, bdl->getLocalString("Reloaded in %.1f").c_str(), player->getReloadTime());
+	}
 	break;
 
       case LocalPlayer::Sealed:
