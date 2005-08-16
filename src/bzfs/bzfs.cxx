@@ -3982,7 +3982,14 @@ int main(int argc, char **argv)
 //	loadPlugin(std::string("python"),std::string(""));
 
   for (unsigned int plugin = 0; plugin < clOptions->pluginList.size(); plugin++)
-    loadPlugin(clOptions->pluginList[plugin].plugin, clOptions->pluginList[plugin].command);
+  {
+    if (!loadPlugin(clOptions->pluginList[plugin].plugin, clOptions->pluginList[plugin].command))
+	{
+		std::string text = "WARNING: unable to load the plugin; ";
+		text += clOptions->pluginList[plugin].plugin + "\n";
+		DEBUG0(text.c_str());
+	}
+  }
 #endif
 
   // loading lag thresholds
