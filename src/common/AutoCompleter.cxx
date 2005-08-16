@@ -70,6 +70,7 @@ void DefaultCompleter::setDefaults() {
   registerWord("/clientquery");
   registerWord("/date");
   registerWord("/deregister");
+  registerWord("/dumpvars");
   registerWord("/flag ");
   registerWord("reset");
   registerWord("up");
@@ -118,12 +119,15 @@ void DefaultCompleter::setDefaults() {
   registerWord("/reset");
   registerWord("/retexture");
   registerWord("/roampos ");
+  registerWord("/saveworld");
   registerWord("/serverquery");
   registerWord("/set");
   registerWord("/setgroup ");
   registerWord("/setpass ");
   registerWord("/showgroup ");
   registerWord("/shutdownserver");
+  registerWord("/silence");
+  registerWord("/unsilence");
   registerWord("/superkill");
   registerWord("/time");
   registerWord("/unban ");

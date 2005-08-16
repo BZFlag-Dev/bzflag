@@ -34,7 +34,6 @@
 #include "ObstacleMgr.h"
 
 // local implementation headers
-#include "LocalCommand.h"
 #include "playing.h"
 
 //
@@ -1050,29 +1049,6 @@ void World::drawCollisionGrid() const
   return;
 }
 
-class SaveWorldCommand : LocalCommand {
-public:
-  SaveWorldCommand();
-
-  virtual bool operator() (const char *commandLine);
-};
-
-static SaveWorldCommand   saveWorldCommand;
-
-SaveWorldCommand::SaveWorldCommand() : LocalCommand("SAVEWORLD")
-{
-}
-
-bool SaveWorldCommand::operator() (const char *commandLine)
-{
-  std::string path = commandLine + 10;
-  if (World::getWorld()->writeWorld(path)) {
-    addMessage(NULL, "World Saved");
-  } else {
-    addMessage(NULL, "Invalid file name specified");
-  }
-  return true;
-}
 
 // Local Variables: ***
 // mode: C++ ***

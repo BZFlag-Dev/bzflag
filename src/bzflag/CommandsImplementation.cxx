@@ -26,6 +26,7 @@
 
 // local implementation headers
 #include "LocalCommand.h"
+#include "World.h"
 #include "Player.h"
 #include "Roster.h"
 #include "playing.h"
@@ -35,109 +36,88 @@ extern float roamPos[3], roamTheta, roamPhi, roamZoom;
 extern float roamDPos[3], roamDTheta, roamDPhi, roamDZoom;
 
 
-static float parseFloatExpr(const std::string& str, bool zeroNan)
-{
-  // BZDB.eval() can't take expressions directly
-  BZDB.set("tmp", str);
-  BZDB.setPersistent("tmp", false);
-  float value = BZDB.eval("tmp");
-  if (!zeroNan) {
-    return value;
-  } else {
-    if (value == value) {
-      return value;
-    } else {
-      return 0.0f;
-    }
-  }
-}
-
+// class definitions
 
 class CommandList : LocalCommand {
-public:
-  CommandList();
-
-  virtual bool operator() (const char *commandLine);
+  public:
+    CommandList();
+    bool operator() (const char *commandLine);
 };
 
 class SilenceCommand : LocalCommand {
-public:
-  SilenceCommand();
-
-  virtual bool operator() (const char *commandLine);
+  public:
+    SilenceCommand();
+    bool operator() (const char *commandLine);
 };
 
 class UnsilenceCommand : LocalCommand {
-public:
-  UnsilenceCommand();
-
-  virtual bool operator() (const char *commandLine);
+  public:
+    UnsilenceCommand();
+    bool operator() (const char *commandLine);
 };
 
 class DumpCommand : LocalCommand {
-public:
-  DumpCommand();
-
-  virtual bool operator() (const char *commandLine);
+  public:
+    DumpCommand();
+    bool operator() (const char *commandLine);
 };
 
 class ClientQueryCommand : LocalCommand {
-public:
-  ClientQueryCommand();
-
-  virtual bool operator() (const char *commandLine);
+  public:
+    ClientQueryCommand();
+    bool operator() (const char *commandLine);
 };
 
 class HighlightCommand : LocalCommand {
-public:
-  HighlightCommand();
-
-  virtual bool operator() (const char *commandLine);
+  public:
+    HighlightCommand();
+    bool operator() (const char *commandLine);
 };
 
 class SetCommand : LocalCommand {
-public:
-  SetCommand();
-
-  virtual bool operator() (const char *commandLine);
+  public:
+    SetCommand();
+    bool operator() (const char *commandLine);
 };
 
 class DiffCommand : LocalCommand {
-public:
-  DiffCommand();
-
-  virtual bool operator() (const char *commandLine);
+  public:
+    DiffCommand();
+    bool operator() (const char *commandLine);
 };
 
 class LocalSetCommand : LocalCommand {
-public:
-  LocalSetCommand();
-
-  virtual bool operator() (const char *commandLine);
+  public:
+    LocalSetCommand();
+    bool operator() (const char *commandLine);
 };
 
 class QuitCommand : LocalCommand {
-public:
-  QuitCommand();
-
-  virtual bool operator() (const char *commandLine);
+  public:
+    QuitCommand();
+    bool operator() (const char *commandLine);
 };
 
 class RoamPosCommand : LocalCommand {
-public:
-  RoamPosCommand();
-
-  virtual bool operator() (const char *commandLine);
+  public:
+    RoamPosCommand();
+    bool operator() (const char *commandLine);
 };
 
 class ReTextureCommand : LocalCommand {
-public:
-  ReTextureCommand();
+  public:
+    ReTextureCommand();
+    bool operator() (const char *commandLine);
+};
 
-  virtual bool operator() (const char *commandLine);
+class SaveWorldCommand : LocalCommand {
+  public:
+    SaveWorldCommand();
+    bool operator() (const char *commandLine);
 };
 
 
+// class instantiations
 static CommandList        commandList;
 static SilenceCommand     silenceCommand;
 static UnsilenceCommand   unsilenceCommand;
@@ -150,11 +130,26 @@ static LocalSetCommand    localSetCommand;
 static QuitCommand        quitCommand;
 static RoamPosCommand     roamPosCommand;
 static ReTextureCommand   reTextureCommand;
+static SaveWorldCommand   saveWorldCommand;
 
 
-CommandList::CommandList() : LocalCommand("/cmds")
-{
-}
+// class constructors
+CommandList::CommandList() :                LocalCommand("/cmds") {}
+DiffCommand::DiffCommand() :                LocalCommand("/diff") {}
+DumpCommand::DumpCommand() :                LocalCommand("/dumpvars") {}
+HighlightCommand::HighlightCommand() :      LocalCommand("/highlight") {}
+LocalSetCommand::LocalSetCommand() :        LocalCommand("/localset") {}
+QuitCommand::QuitCommand() :                LocalCommand("/quit") {}
+ReTextureCommand::ReTextureCommand() :      LocalCommand("/retexture") {}
+RoamPosCommand::RoamPosCommand() :          LocalCommand("/roampos") {}
+SaveWorldCommand::SaveWorldCommand() :      LocalCommand("/saveworld") {}
+SetCommand::SetCommand() :                  LocalCommand("/set") {}
+SilenceCommand::SilenceCommand() :          LocalCommand("/silence") {}
+UnsilenceCommand::UnsilenceCommand() :      LocalCommand("/unsilence") {}
+ClientQueryCommand::ClientQueryCommand() :  LocalCommand("CLIENTQUERY") {}
+
+
+// the meat of the matter
 
 bool CommandList::operator() (const char *)
 {
@@ -164,7 +159,7 @@ bool CommandList::operator() (const char *)
   // build a std::vector<> from the std::map<> of command names
   std::vector<const std::string*> cmds;
   MapOfCommands::iterator it;
-  MapOfCommands &commandMap = *mapOfCommands;
+  MapOfCommands& commandMap = *mapOfCommands;
   for (it = commandMap.begin(); it != commandMap.end(); it++) {
     const std::string& cmd = it->first;
     cmds.push_back(&cmd);
@@ -206,13 +201,9 @@ bool CommandList::operator() (const char *)
 }
 
 
-SilenceCommand::SilenceCommand() : LocalCommand("SILENCE")
-{
-}
-
 bool SilenceCommand::operator() (const char *commandLine)
 {
-  Player *loudmouth = getPlayerByName(commandLine + 8);
+  Player *loudmouth = getPlayerByName(commandLine + 9);
   if (loudmouth) {
     silencePlayers.push_back(commandLine + 8);
     std::string silenceMessage = "Silenced ";
@@ -223,13 +214,9 @@ bool SilenceCommand::operator() (const char *commandLine)
 }
 
 
-UnsilenceCommand::UnsilenceCommand() : LocalCommand("UNSILENCE")
-{
-}
-
 bool UnsilenceCommand::operator() (const char *commandLine)
 {
-  Player *loudmouth = getPlayerByName(commandLine + 10);
+  Player *loudmouth = getPlayerByName(commandLine + 11);
   if (loudmouth) {
     std::vector<std::string>::iterator it = silencePlayers.begin();
     for (; it != silencePlayers.end(); it++) {
@@ -251,20 +238,13 @@ static void printout(const std::string& name, void*)
   std::cout << name << " = " << BZDB.get(name) << std::endl;
 }
 
-DumpCommand::DumpCommand() : LocalCommand("DUMP")
-{
-}
-
 bool DumpCommand::operator() (const char *)
 {
   BZDB.iterate(printout, NULL);
+  addMessage(NULL, "Dumped all BZDB values to stdout");
   return true;
 }
 
-
-ClientQueryCommand::ClientQueryCommand() : LocalCommand("CLIENTQUERY")
-{
-}
 
 bool ClientQueryCommand::operator() (const char *commandLine)
 {
@@ -280,10 +260,6 @@ bool ClientQueryCommand::operator() (const char *commandLine)
 }
 
 
-HighlightCommand::HighlightCommand() : LocalCommand("/highlight")
-{
-}
-
 bool HighlightCommand::operator() (const char *commandLine)
 {
   const char* c = commandLine + 10;
@@ -292,7 +268,25 @@ bool HighlightCommand::operator() (const char *commandLine)
   return true;
 }
 
+
 static bool foundVarDiff = false;
+
+static float parseFloatExpr(const std::string& str, bool zeroNan)
+{
+  // BZDB.eval() can't take expressions directly
+  BZDB.set("tmp", str);
+  BZDB.setPersistent("tmp", false);
+  float value = BZDB.eval("tmp");
+  if (!zeroNan) {
+    return value;
+  } else {
+    if (value == value) {
+      return value;
+    } else {
+      return 0.0f;
+    }
+  }
+}
 
 static bool varIsEqual(const std::string& name)
 {
@@ -348,28 +342,22 @@ static void listSetVars(const std::string& name, void* boolPtr)
 }
 
 
-SetCommand::SetCommand() : LocalCommand("/set")
-{
-}
-
 bool SetCommand::operator() (const char *commandLine)
 {
-  if (strlen(commandLine) != 4)
+  if (strlen(commandLine) != 4) {
     return false;
+  }
   bool diff = false;
   BZDB.iterate(listSetVars, &diff);
   return true;
 }
 
 
-DiffCommand::DiffCommand() : LocalCommand("/diff")
-{
-}
-
 bool DiffCommand::operator() (const char *commandLine)
 {
-  if (strlen(commandLine) != 5)
+  if (strlen(commandLine) != 5) {
     return false;
+  }
   bool diff = true;
   foundVarDiff = false;
   BZDB.iterate(listSetVars, &diff);
@@ -380,13 +368,9 @@ bool DiffCommand::operator() (const char *commandLine)
 }
 
 
-LocalSetCommand::LocalSetCommand() : LocalCommand("/localset")
-{
-}
-
 bool LocalSetCommand::operator() (const char *commandLine)
 {
-  std::string params              = commandLine + 9;
+  std::string params = commandLine + 9;
   std::vector<std::string> tokens = TextUtils::tokenize(params, " ", 2);
   if (tokens.size() == 2) {
     if (!(BZDB.getPermission(tokens[0]) == StateDatabase::Server)) {
@@ -395,9 +379,8 @@ bool LocalSetCommand::operator() (const char *commandLine)
       std::string msg = "/localset " + tokens[0] + " " + tokens[1];
       addMessage(NULL, msg);
     } else {
-      addMessage
-	(NULL,
-	 "This is a server-defined variable.  Use /set instead of /localset.");
+      addMessage (NULL, "This is a server-defined variable. "
+                        "Use /set instead of /localset.");
     }
   } else {
     addMessage(NULL, "usage: /localset <variable> <value>");
@@ -405,10 +388,6 @@ bool LocalSetCommand::operator() (const char *commandLine)
   return true;
 }
 
-
-QuitCommand::QuitCommand() : LocalCommand("/quit")
-{
-}
 
 bool QuitCommand::operator() (const char *commandLine)
 {
@@ -421,10 +400,6 @@ bool QuitCommand::operator() (const char *commandLine)
   return true;
 }
 
-
-RoamPosCommand::RoamPosCommand() : LocalCommand("/roampos")
-{
-}
 
 bool RoamPosCommand::operator() (const char *commandLine)
 {
@@ -488,14 +463,67 @@ bool RoamPosCommand::operator() (const char *commandLine)
 }
 
 
-ReTextureCommand::ReTextureCommand() : LocalCommand("/retexture")
-{
-}
-
 bool ReTextureCommand::operator() (const char *)
 {
   TextureManager& tm = TextureManager::instance();
   tm.reloadTextures();
+  return true;
+}
+
+
+static void sendSaveWorldHelp()
+{
+  addMessage(NULL, "/saveworld [-g] [-m] <filename>");
+  addMessage(NULL, "  -g : save ungrouped");
+  addMessage(NULL, "  -m : save some primitves as meshes");
+  return;
+}
+
+bool SaveWorldCommand::operator() (const char *commandLine)
+{
+  bool meshprims = false;
+  bool ungrouped = false;
+  
+  std::string cmdLine = commandLine;
+  std::vector<std::string> args;
+  args = TextUtils::tokenize(commandLine, " ");
+  const int argCount = (int)args.size();
+
+  if (argCount <= 1) {
+    sendSaveWorldHelp();
+    return true;
+  }
+  
+  int pos = 1;
+  while (pos < (argCount - 1)) {
+    const std::string& arg = args[pos];
+    if (arg == "-m") {
+      meshprims = true;
+    } else if (arg == "-g") {
+      ungrouped = true;
+    } else {
+      break;
+    }
+    pos++;
+  }
+  if (pos != (argCount - 1)) {
+    sendSaveWorldHelp();
+    return true;
+  }
+  const std::string& filename = args[pos];
+
+  BZDB.set("saveAsMeshes", meshprims ? "1" : "0");
+  BZDB.set("saveFlatFile", ungrouped ? "1" : "0");
+  if (World::getWorld()->writeWorld(filename)) {
+    char buffer[128];
+    snprintf(buffer, 128, "World saved  (%s) %s%s", filename.c_str(),
+             meshprims ? " [meshprims]" : "",
+             ungrouped ? " [ungrouped]" : "");
+    addMessage(NULL, buffer);
+  } else {
+    addMessage(NULL, "Invalid file name specified");
+  }
+  
   return true;
 }
 
