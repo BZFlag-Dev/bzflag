@@ -13,8 +13,12 @@
 #ifndef STDINUI_H
 #define STDINUI_H
 
+#include "common.h"
+
+/* system interface headers */
 #include <string>
 
+/* common interface headers */
 #include "Address.h"
 #include "BZAdminUI.h"
 #include "global.h"

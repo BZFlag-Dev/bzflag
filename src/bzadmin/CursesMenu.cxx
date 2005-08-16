@@ -10,9 +10,14 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include <sstream>
-#include "BZAdminClient.h"
+/* interface header */
 #include "CursesMenu.h"
+
+/* system implementation headers */
+#include <sstream>
+
+/* common implementation headers */
+#include "BZAdminClient.h"
 #include "StateDatabase.h"
 #include "TextUtils.h"
 

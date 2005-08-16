@@ -14,11 +14,15 @@
 #pragma warning( 4: 4786)
 #endif
 
+#include "common.h"
+
+/* system headers */
 #include <stdio.h>
 #include <iostream>
 #include <map>
 #include <string>
 
+/* common headers */
 #include "BZAdminClient.h"
 #include "BZAdminUI.h"
 #include "OptionParser.h"

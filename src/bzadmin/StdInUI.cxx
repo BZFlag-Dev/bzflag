@@ -14,9 +14,11 @@
 #pragma warning( 4: 4786)
 #endif
 
-#include <iostream>
-
+/* interface header */
 #include "StdInUI.h"
+
+/* system implementation headers */
+#include <iostream>
 
 
 // add this UI to the map

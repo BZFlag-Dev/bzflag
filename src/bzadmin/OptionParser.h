@@ -13,12 +13,16 @@
 #ifndef OPTIONPARSER_H
 #define OPTIONPARSER_H
 
+#include "common.h"
+
+/* system interface headers */
 #include <iostream>
 #include <map>
 #include <sstream>
 #include <string>
 #include <vector>
 
+/* common interface headers */
 #include "TextUtils.h"
 
 /** This is an abstract base class for all different option parsers.
