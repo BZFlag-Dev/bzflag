@@ -156,7 +156,7 @@ const struct GlobalDBItem globalDBItems[] = {
   { "_wingsGravity",		"_gravity",			false, StateDatabase::Locked},
   { "_wingsJumpCount",		"1",				false, StateDatabase::Locked},
   { "_wingsJumpVelocity",	"_jumpVelocity",		false, StateDatabase::Locked},
-  { "_wingsSlideTime",		"1.0",				false, StateDatabase::Locked},
+  { "_wingsSlideTime",		"0.0",				false, StateDatabase::Locked},
   { "_worldSize",		"800.0",			false, StateDatabase::Locked}
 
 };
