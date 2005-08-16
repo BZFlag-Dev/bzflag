@@ -84,17 +84,17 @@ void setBZMatFromAPIMat (BzMaterial &bzmat, bz_MaterialInfo* material )
 	}
 }
 
-bz_eTeamType convertTeam ( TeamColor team )
+bz_eTeamType convertTeam ( TeamColor _team )
 {
-	return (bz_eTeamType)team;
+	return (bz_eTeamType)_team;
 }
 
-TeamColor convertTeam( bz_eTeamType team )
+TeamColor convertTeam( bz_eTeamType _team )
 {
-	if (team > eObservers)
+	if (_team > eObservers)
 		return NoTeam;
 
-	return (TeamColor)team;
+	return (TeamColor)_team;
 }
 
 void broadcastPlayerScoreUpdate ( int playerID )
