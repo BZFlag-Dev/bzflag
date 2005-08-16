@@ -18,16 +18,22 @@
 #ifndef	__HUDUITYPEIN_H__
 #define	__HUDUITYPEIN_H__
 
+#include "common.h"
+
+/* system interface headers */
 #include <string>
+
+/* common interface headers */
 #include "BzfEvent.h"
 #include "HUDuiControl.h"
+
 
 class HUDuiTypeIn : public HUDuiControl {
   public:
 			HUDuiTypeIn();
 			~HUDuiTypeIn();
 
-	void		setObfuscation(bool on);
+    void		setObfuscation(bool on);
     int			getMaxLength() const;
     std::string		getString() const;
 
@@ -45,7 +51,7 @@ class HUDuiTypeIn : public HUDuiControl {
     std::string		string;
     int			cursorPos;
     bool		allowEdit;
-	bool		obfuscate;
+    bool		obfuscate;
 };
 
 #endif // __HUDUITYPEIN_H__
