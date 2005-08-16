@@ -84,7 +84,7 @@ bool LastChatCommand::handle ( int playerID, bzApiString _command, bzApiString _
 		std::vector<std::string> params = TextUtils::tokenize(message,std::string(" "),1,false);
 		if ( params.size() <2)
 		{
-			bz_sendTextMessage(BZ_SERVER,playerID,"Usage: /list <NUMBER OF LINES> <CALLSIGN>");
+			bz_sendTextMessage(BZ_SERVER,playerID,"Usage: /last <NUMBER OF LINES> <CALLSIGN>");
 			return true;
 		}
 

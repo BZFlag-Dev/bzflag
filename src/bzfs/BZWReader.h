@@ -16,6 +16,8 @@
 // bzflag common header
 #include "common.h"
 
+#include "network.h"
+
 // system headers
 #include <iostream>
 #include <string>

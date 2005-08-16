@@ -17,9 +17,12 @@
 #ifndef __WIN32_H__
 #define	__WIN32_H__
 
-#ifdef __MINGW32__
+#define _WINSOCKAPI_
+#define NOMINMAX
+
+//#ifdef __MINGW32__
 #include <windows.h>
-#endif
+#//endif
 
 
 // missing constants

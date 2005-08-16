@@ -10,17 +10,9 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifdef _WIN32
-# if defined(_MSC_VER)
-#   pragma warning(disable: 4786)
-# endif
-# include <winsock2.h>
-# include <ws2tcpip.h>
-#endif
+#include "network.h"
 
 //Includes common to all platforms
-#include "common.h"
-#include "network.h"
 #include "ErrorHandler.h"
 #include "Address.h"
 #include <stdio.h>

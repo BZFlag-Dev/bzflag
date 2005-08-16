@@ -12,6 +12,8 @@
 
 #include "common.h"
 
+#include "network.h"
+
 // system includes
 #include <string.h>
 #include <vector>

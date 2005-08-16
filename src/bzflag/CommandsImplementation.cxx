@@ -151,7 +151,7 @@ ClientQueryCommand::ClientQueryCommand() :  LocalCommand("CLIENTQUERY") {}
 
 // the meat of the matter
 
-bool CommandList::operator() (const char */*cmdLine*/)
+bool CommandList::operator() (const char * /*cmdLine*/)
 {
   int i;
   const int maxLineLen = 64;

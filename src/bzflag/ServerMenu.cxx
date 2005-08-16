@@ -237,7 +237,7 @@ void ServerMenu::setSelected(int index)
             label->setColor(1.0f, 1.0f, 0.25f); // yellow
           }
           else {
-            const float shotScale = std::min(1.0f, log10f(maxShots));
+            const float shotScale = std::min(1.0f, log10f((float)maxShots));
             const float rf = 1.0f;
             const float gf = 1.0f - 0.75f * shotScale;
             const float bf = 1.0f - 0.75f * shotScale;

@@ -220,7 +220,7 @@ void WorldWeaponGlobalEventHandler::process (bz_EventData *eventData)
 
   bz_CTFCaptureEventData *capEvent = (bz_CTFCaptureEventData*)eventData;
 
-  if ( capEvent->teamCaped != eNoTeam && capEvent->teamCaped != team )
+  if ( capEvent->teamCaped != team )
 	  return;
 
   fireWorldWep( type,BZDB.eval(StateDatabase::BZDB_RELOADTIME),

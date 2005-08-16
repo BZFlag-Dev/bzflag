@@ -30,9 +30,10 @@
 #if defined(WATT32)
   #include <netinet/in.h>
   #include <tcp.h>
-#elif defined(WIN32)
-  #include <winsock.h>
-  #include <windows.h>
+#elif defined(_WIN32)
+#define _INC_WINDOWS
+ //#include <winsock2.h>
+ // #include <windows.h>
 #else
   #include <netinet/in.h>
 #endif

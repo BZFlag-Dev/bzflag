@@ -16,6 +16,9 @@
 // bzflag global header
 #include "global.h"
 
+/* common implementation headers */
+#include "network.h"
+
 extern "C" {
 #include "ares.h"
 }

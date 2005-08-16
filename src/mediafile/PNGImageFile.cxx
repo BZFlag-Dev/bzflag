@@ -18,8 +18,10 @@
 #include "../zlib/zconf.h"
 #include "../zlib/zlib.h"
 
-#ifndef WIN32
+#ifndef _WIN32
 #include <netinet/in.h>
+#else
+#include <WINSOCK2.H>
 #endif
 
 

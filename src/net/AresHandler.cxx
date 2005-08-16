@@ -16,8 +16,7 @@
 /* system implementation headers */
 #include <errno.h>
 
-/* common implementation headers */
-#include "network.h"
+
 
 AresHandler::AresHandler(int _index)
   : index(_index), hostname(NULL), status(None)

@@ -11,6 +11,7 @@
  */
 
 // class interface header
+
 #include "cURLManager.h"
 
 // common implementation headers

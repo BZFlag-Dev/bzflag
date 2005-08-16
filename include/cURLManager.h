@@ -13,14 +13,6 @@
 #ifndef CURL_MANAGER_H
 #define CURL_MANAGER_H
 
-// even if we don't have winsock2 already included, don't include it.
-// otherwise some systems have a fit.
-#ifndef _WINSOCK2API_
-#define _WINSOCK2API_
-#else
-#define _ALREADYHADWS2_
-#endif
-
 // bzflag common header
 #include "common.h"
 
@@ -31,9 +23,9 @@
 #include <vector>
 
 // revert _WINSOCK2API_ to its previous state
-#ifndef _ALREADYHADWS2_
-#undef _WINSOCK2API_
-#endif
+//#ifndef _ALREADYHADWS2_
+//#undef _WINSOCK2API_
+//#endif
 
 class cURLManager {
 public:
