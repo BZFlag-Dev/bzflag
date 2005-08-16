@@ -10,19 +10,18 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifdef _MSC_VER
-#pragma warning(4:4786)
-#endif
+/* interface header */
+#include "CommandManager.h"
 
-// system headers
+/* system implementation headers */
 #include <ctype.h>
 #include <stdio.h>
 #include <assert.h>
 #include <string>
 
-// class-specific headers
-#include "CommandManager.h"
+/* common implementation headers */
 #include "TextUtils.h"
+
 
 // initialize the singleton
 template <>

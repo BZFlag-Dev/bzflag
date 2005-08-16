@@ -30,11 +30,12 @@ documentation and/or software.
 
 */
 
-#include <string>
-#include <iostream>
-#include <stdio.h>
-#include "common.h"
+/* interface header */
 #include "md5.h"
+
+/* system implementation headers */
+#include <stdio.h>
+
 
 // Constants for MD5Transform routine.
 #define S11 7

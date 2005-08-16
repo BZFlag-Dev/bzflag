@@ -11,14 +11,17 @@
 * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 */
 
+/* interface header */
+#include "messages.h"
+
+/* system implementation headers */
 #include <sstream>
 #include <string>
 
 #include <stdio.h>
 #include <string.h>
-#include "config.h"
 
-#include "messages.h"
+/* common implementation headers */
 #include "Pack.h"
 
 
