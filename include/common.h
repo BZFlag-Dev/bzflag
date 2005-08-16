@@ -25,6 +25,7 @@
 #endif
 
 #ifdef _WIN32
+#  define NOMINMAX
 #  include "win32.h"
 #endif
 
@@ -191,10 +192,32 @@ typedef unsigned char	uint8_t;
 #endif
 #define countof(__x)   (sizeof(__x) / sizeof(__x[0]))
 
-#if defined(_WIN32) && defined(_MSC_VER)
-#define std_max(a,b) max(a,b)
-#else
-#define std_max(a,b) std::max(a,b)
+#ifndef HAVE_STD__MAX
+#  ifdef max
+#    undef max
+#  endif
+namespace std
+{
+  template<typename comparable>
+  inline const comparable& max(const comparable& a, const comparable& b) 
+  {
+    return  a < b ? b : a;
+  }
+}
+#endif
+
+#ifndef HAVE_STD__MIN
+#  ifdef min
+#    undef min
+#  endif
+namespace std
+{
+  template<typename comparable>
+  inline const comparable& min(const comparable& a, const comparable& b) 
+  {
+    return b < a ? b : a;
+  }
+}
 #endif
 
 #ifdef BUILD_REGEX
