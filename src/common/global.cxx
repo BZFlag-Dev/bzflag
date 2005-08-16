@@ -153,9 +153,9 @@ const struct GlobalDBItem globalDBItems[] = {
   { "_wallHeight",		"3.0*_tankHeight",		false, StateDatabase::Locked},
   { "_weapons",			"1",				false, StateDatabase::Locked},
   { "_wideAngleAng",		"1.745329",			false, StateDatabase::Locked},
-  { "_wingsGravity",		"0.5*_gravity",			false, StateDatabase::Locked},
+  { "_wingsGravity",		"_gravity",			false, StateDatabase::Locked},
   { "_wingsJumpCount",		"1",				false, StateDatabase::Locked},
-  { "_wingsJumpVelocity",	"0.5*_jumpVelocity",		false, StateDatabase::Locked},
+  { "_wingsJumpVelocity",	"_jumpVelocity",		false, StateDatabase::Locked},
   { "_wingsSlideTime",		"1.0",				false, StateDatabase::Locked},
   { "_worldSize",		"800.0",			false, StateDatabase::Locked}
 
