@@ -54,7 +54,7 @@
 //#define PRINTSCORE 1 //already defined in bzfs.h (10/26/2004)
 
 /* find a matching function for count() */
-#define HAVE_STD_COUNT 1
+#define HAVE_STD__COUNT 1
 
 /* all that floating point math nonsense; GCC already has all of this crap */
 #define HAVE_ASINF 1

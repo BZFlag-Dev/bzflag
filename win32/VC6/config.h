@@ -38,7 +38,7 @@
 /* undef HAVE_REGEX_H */
 
 /* Use modern template for std::count */
-#define HAVE_STD_COUNT 1
+#define HAVE_STD__COUNT 1
 
 /* We have float math functions */
 #define HAVE_ASINF 1
