@@ -13,6 +13,9 @@
 #ifndef __VOTINGBOOTH_H__
 #define __VOTINGBOOTH_H__
 
+#include "common.h"
+
+/* system interface headers */
 #include <ctype.h>
 #include <map>
 #include <vector>
