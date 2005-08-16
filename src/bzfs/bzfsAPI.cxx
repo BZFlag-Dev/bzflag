@@ -31,6 +31,8 @@
 
 #include "CustomWorld.h"
 
+#include "Permissions.h"
+
 TimeKeeper synct = TimeKeeper::getCurrent();
 
 extern void sendMessage(int playerIndex, PlayerId dstPlayer, const char *message);
@@ -575,6 +577,65 @@ BZF_API bool bz_updatePlayerData ( bz_PlayerRecord *playerRecord )
 	playerRecord->wins = player->score.getWins();
 	playerRecord->losses = player->score.getLosses();
 	playerRecord->teamKills = player->score.getTKs();
+	return true;
+}
+
+BZF_API bool bz_hasPerm ( bz_PlayerRecord *playerRecord, const char* perm )
+{
+	if (!playerRecord || !perm)
+		return false;
+
+	GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerRecord->playerID);
+
+	std::string permName = perm;
+
+	permName = TextUtils::toupper(permName);
+
+	PlayerAccessInfo::AccessPerm realPerm =  permFromName(permName);
+
+	if (realPerm != PlayerAccessInfo::lastPerm)
+		return player->accessInfo.hasPerm(realPerm);
+	else
+		return player->accessInfo.hasCustomPerm(permName.c_str());
+}
+
+BZF_API bool bz_grantPerm ( bz_PlayerRecord *playerRecord, const char* perm  )
+{
+	if (!playerRecord || !perm)
+		return false;
+
+	GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerRecord->playerID);
+
+	std::string permName = perm;
+
+	permName = TextUtils::toupper(permName);
+
+	PlayerAccessInfo::AccessPerm realPerm =  permFromName(permName);
+
+	if (realPerm == PlayerAccessInfo::lastPerm)
+		return false;
+
+	player->accessInfo.grantPerm(realPerm);
+	return true;
+}
+
+BZF_API bool bz_revokePerm ( bz_PlayerRecord *playerRecord, const char* perm  )
+{
+	if (!playerRecord || !perm)
+		return false;
+
+	GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerRecord->playerID);
+
+	std::string permName = perm;
+
+	permName = TextUtils::toupper(permName);
+
+	PlayerAccessInfo::AccessPerm realPerm =  permFromName(permName);
+
+	if (realPerm == PlayerAccessInfo::lastPerm)
+		return false;
+
+	player->accessInfo.revokePerm(realPerm);
 	return true;
 }
 

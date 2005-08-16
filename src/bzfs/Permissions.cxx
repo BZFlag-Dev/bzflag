@@ -256,6 +256,30 @@ void PlayerAccessInfo::revokePerm(PlayerAccessInfo::AccessPerm right)
   explicitDenys.set(right);
 }
 
+
+// custom perms are ONLY on groups
+bool	PlayerAccessInfo::hasCustomPerm(const char* right) const
+{
+	if (Admin)
+		return true;
+
+	std::string perm = TextUtils::toupper(std::string(right));
+
+	for (std::vector<std::string>::const_iterator itr=groups.begin(); itr!=groups.end(); ++itr) 
+	{
+		PlayerAccessMap::iterator group = groupAccess.find(*itr);
+		if (group != groupAccess.end())
+		{
+			for(unsigned int i = 0; i < group->second.customPerms.size(); i++)
+			{
+				if ( perm == TextUtils::toupper(group->second.customPerms[i]) )
+					return true;
+			}
+		} 
+	}
+	return false;
+}
+
 bool userExists(const std::string &nick)
 {
   std::string str = nick;
@@ -529,7 +553,8 @@ void parsePermissionString(const std::string &permissionString, PlayerAccessInfo
 	info.explicitAllows.set();  
 	info.explicitAllows[PlayerAccessInfo::lastPerm] = false;
       } else {
-	DEBUG1("groupdb: Cannot set unknown permission %s\n", word.c_str());
+	//DEBUG1("groupdb: Cannot set unknown permission %s\n", word.c_str());
+				info.customPerms.push_back(word);
       }
     }
   }

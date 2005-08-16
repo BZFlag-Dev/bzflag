@@ -170,8 +170,16 @@ the current game state.</p>
                         </table></td>
                       </tr>
                     </tbody>
-                  </table>                  <p><span class="style6">bz_PlayerRecord</span> also contains an <strong>update()</strong> method. This is used to update the data for the player<br>
-                    that may change, like groups, last known state, etc...</p>
+                  </table>                  
+                  <p><span class="style6">bz_PlayerRecord</span> also contains the folowing methods, for ease of use. They just call the existing player functuions described below</p>
+                  <p><strong>void update ( void );</strong><br> 
+                    Calls <strong>bz_updatePlayerData</strong> on this player. </p>
+                  <p><strong>bool hasPerm ( const char* perm );</strong><br>
+Calls <strong>bz_hasPerm</strong> on this player. </p>
+                  <p><strong>bool grantPerm ( const char* perm );</strong><br>
+Calls <strong>bz_</strong><strong>grantPerm</strong> on this player. </p>
+                  <p><strong>bool revokePerm ( const char* perm );</strong><br>
+Calls <strong>bz_revokePerm</strong> on this player. </p>
                   <p><strong>BZF_API bool bz_updatePlayerData ( bz_PlayerRecord *playerRecord );</strong><br>
                     Updates a playerRecord to it's current data. This is the same as callingupdate on the bz_PlayerRecord class.</p>
                   <p><strong>BZF_API bool bz_getPlayerIndexList ( std::vector&lt;int&gt; *playerList )</strong>;<br>
@@ -185,7 +193,15 @@ This command will set the number of losses(deaths) in the score for the specifie
                   <p><strong>BZF_API bool bz_setPlayerTKs(int playerId, int tks);</strong><br>
 This command will set the number of TKs(team killss) in the score for the specified player, and update all client scores. </p>
                   <p><strong>BZF_API bool bz_resetPlayerScore(int playerId);</strong><br>
-This command will reset to zero the score and TKs of the specified player and update all clients.</p>                  <p>&nbsp;</p><p><span class="style4 style7">Message Functions </span></p>                  <p><strong>BZF_API bool bz_sendTextMessage (int from, int to, const char* message);</strong><br>
+This command will reset to zero the score and TKs of the specified player and update all clients.</p>
+                  <p><strong>Permision functions </strong><br> 
+                    The permision functions all take permision names as input. These names are the same as the server uses in it's users and groups files. All the standard permision names have been defined in the bzfsAPI.h file using the <strong>bz_perm_XXXXXXXX </strong>set of defines. Groups can have custom permisions, so if you want to use a non standard permision in your plugin, you can also use that name in the &quot;hasPerm&quot; function. Custom permisions can only be read via the API, they can not be set. So the user will have to know to enter the permision name into his/her groups file.</p>
+                  <p><strong>BZF_API bool bz_hasPerm ( bz_PlayerRecord *playerRecord, const char* perm );</strong><br> 
+                    This function will return true if the user has the permision named in the perm paramater </p>
+                  <p><strong>BZF_API bool bz_grantPerm ( bz_PlayerRecord *playerRecord, const char* perm );</strong><br>
+This function will give the user the specified permision, and return true if the operation was sucsessfull.</p>                  <p><strong>BZF_API bool bz_revokePerm ( bz_PlayerRecord *playerRecord, const char* perm );</strong><br>
+This function will remove the specified permision from the user, and return true if the operation was sucsessfull.</p>
+<p>&nbsp;</p><p><span class="style4 style7">Message Functions </span></p>                  <p><strong>BZF_API bool bz_sendTextMessage (int from, int to, const char* message);</strong><br>
                     Sends a text message to the specifid user. <strong>BZ_SERVER</strong> should be used for messages from the server. If the message is sent to <strong>BZ_ALL_USERS</strong> it will send the message to all connected users. Likewise <strong>BZ_ADMIN_CHANNEL</strong></p>
 <p><strong>BZF_API bool bz_sentFetchResMessage ( int playerID, const char* URL );</strong><br>
 Sends an update message to the specified player telling them they must have the file specified in the URL. At present this is only used for sounds files. </p><p>&nbsp;</p>

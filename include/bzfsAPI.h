@@ -66,6 +66,66 @@ typedef enum
 	bz_eLastEvent    //this is never used as an event, just show it's the last one
 }bz_eEventType;
 
+// permision #defines
+#define bz_perm_actionMessage  "actionMessage"
+#define bz_perm_adminMessageReceive  "adminMessageReceive"
+#define bz_perm_adminMessageSend  "adminMessageSend"
+#define bz_perm_antiban   "antiban"
+#define bz_perm_antideregister   "antideregister"
+#define bz_perm_antikick   "antikick"
+#define bz_perm_antikill   "antikill"
+#define bz_perm_antipoll   "antipoll"
+#define bz_perm_antipollban   "antipollban"
+#define bz_perm_antipollkick   "antipollkick"
+#define bz_perm_antipollkill   "antipollkill"
+#define bz_perm_ban  "ban"
+#define bz_perm_banlist  "banlist"
+#define bz_perm_countdown  "countdown"
+#define bz_perm_date  "date"
+#define bz_perm_endGame  "endGame"
+#define bz_perm_flagHistory  "flagHistory"
+#define bz_perm_flagMod  "flagMod"
+#define bz_perm_hideAdmin  "hideAdmin"
+#define bz_perm_idleStats  "idleStats"
+#define bz_perm_info  "info"
+#define bz_perm_kick  "kick"
+#define bz_perm_kill  "kill"
+#define bz_perm_lagStats  "lagStats"
+#define bz_perm_lagwarn  "lagwarn"
+#define bz_perm_listPerms  "listPerms"
+#define bz_perm_masterBan  "masterban"
+#define bz_perm_mute  "mute"
+#define bz_perm_playerList  "playerList"
+#define bz_perm_poll  "poll"
+#define bz_perm_pollBan  "pollBan"
+#define bz_perm_pollKick  "pollKick"
+#define bz_perm_pollKill  "pollKill"
+#define bz_perm_pollSet  "pollSet"
+#define bz_perm_pollFlagReset  "pollFlagReset"
+#define bz_perm_privateMessage  "privateMessage"
+#define bz_perm_record  "record"
+#define bz_perm_rejoin  "rejoin"
+#define bz_perm_removePerms  "removePerms"
+#define bz_perm_replay  "replay"
+#define bz_perm_requireIdentify  "requireIdentify"
+#define bz_perm_say  "say"
+#define bz_perm_setAll  "setAll"
+#define bz_perm_setPassword  "setPassword"
+#define bz_perm_setPerms  "setPerms"
+#define bz_perm_setVar  "setVar"
+#define bz_perm_showOthers  "showOthers"
+#define bz_perm_shortBan  "shortBan"
+#define bz_perm_shutdownServer  "shutdownServer"
+#define bz_perm_spawn  "spawn"
+#define bz_perm_superKill  "superKill"
+#define bz_perm_talk  "talk"
+#define bz_perm_unban  "unban"
+#define bz_perm_unmute  "unmute"
+#define bz_perm_veto  "veto"
+#define bz_perm_viewReports  "viewReports"
+#define bz_perm_vote  "vote"
+
+
 typedef enum 
 {
 	eNoTeam = -1,
@@ -612,6 +672,9 @@ class bz_PlayerRecord;
 BZF_API bool bz_getPlayerIndexList ( bzAPIIntList *playerList );
 BZF_API bz_PlayerRecord *bz_getPlayerByIndex ( int index );
 BZF_API bool bz_updatePlayerData ( bz_PlayerRecord *playerRecord );
+BZF_API bool bz_hasPerm ( bz_PlayerRecord *playerRecord, const char* perm );
+BZF_API bool bz_grantPerm ( bz_PlayerRecord *playerRecord, const char* perm  );
+BZF_API bool bz_revokePerm ( bz_PlayerRecord *playerRecord, const char* perm  );
 BZF_API bool bz_freePlayerRecord ( bz_PlayerRecord *playerRecord );
 
 class bz_PlayerRecord
@@ -637,6 +700,10 @@ public:
 	~bz_PlayerRecord(){};
 
 	void update ( void ){bz_updatePlayerData(this);}	// call to update with current data
+	
+	bool hasPerm ( const char* perm ){bz_hasPerm(this,perm);}	
+	bool grantPerm ( const char* perm ){bz_grantPerm(this,perm);}	
+	bool revokePerm ( const char* perm ){bz_revokePerm(this,perm);}	
 
 	int playerID;
 	bzApiString callsign;

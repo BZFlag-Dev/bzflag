@@ -137,6 +137,8 @@ public:
   void	grantPerm(AccessPerm right);
   void	revokePerm(AccessPerm right);
 
+	bool	hasCustomPerm(const char* right) const;
+
   bool	isRegistered() const;
   bool	isIdentifyRequired();
   bool	isAllowedToEnter();
@@ -154,7 +156,7 @@ public:
   std::bitset<lastState>	groupState;
   std::vector<std::string>	groups;
   	
-	
+	std::vector<std::string> customPerms;
 private:
   bool				verified;
   TimeKeeper			loginTime;
