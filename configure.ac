@@ -668,20 +668,20 @@ AC_CHECK_FUNCS(\
 AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
 #include <algorithm>
 ]], [[
-int i = std::min(0, 1);
+int i = std::min(0, 1); i = i;
 ]])],[AC_DEFINE(HAVE_STD__MIN, 1, [Define to 1 if you have a conforming std::min])],[])
 
 AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
 #include <algorithm>
 ]], [[
-int i = std::max(0, 1);
+int i = std::max(0, 1); i = i;
 ]])],[AC_DEFINE(HAVE_STD__MAX, 1, [Define to 1 if you have a conforming std::max])],[])
 
 AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
 #include <algorithm>
 ]], [[
 char array[] = "test";
-int i = std::count(array, array + 5, 't');
+int i = std::count(array, array + 5, 't'); i = i;
 ]])],[AC_DEFINE(HAVE_STD__COUNT, 1, [Define to 1 if you have a conforming
 std::count, otherwise old version of count template is assumed])],[])
 
