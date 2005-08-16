@@ -9,9 +9,14 @@
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
+
+/* interface header */
+#include "multicast.h"
+
+/* system implementation headers */
 #ifdef _WIN32
-#include <winsock2.h>
-#include <ws2tcpip.h>
+#  include <winsock2.h>
+#  include <ws2tcpip.h>
 #endif
 
 #include <stdio.h>
@@ -19,9 +24,10 @@
 #include <errno.h>
 #include <vector>
 #include <string>
-#include "common.h"
-#include "multicast.h"
+
+/* common implementation headers */
 #include "ErrorHandler.h"
+
 
 int			openBroadcast(int port, const char* service,
 					struct sockaddr_in* addr)
