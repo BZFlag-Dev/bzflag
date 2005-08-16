@@ -13,7 +13,6 @@
 // implementation wrapers for all the bza_ API functions
 #include "bzfsAPI.h"
 
-#include "common.h"
 #include "bzfs.h"
 #include "WorldWeapons.h"
 #include "WorldEventManager.h"

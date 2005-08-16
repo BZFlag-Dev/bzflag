@@ -13,8 +13,11 @@
 #ifndef __BZWERROR_H__
 #define __BZWERROR_H__
 
-// implementation-specific system header
+#include "common.h"
+
+/* implementation-specific system headers */
 #include <string>
+
 
 class BZWError {
 

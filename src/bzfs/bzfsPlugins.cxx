@@ -10,17 +10,21 @@
 * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 */
 
+#include "common.h"
+
+/* system headers */
 #include <string>
 #include <vector>
 #include <map>
 
-#include "common.h"
+/* common headers */
 #include "bzfio.h"
 #include "version.h"
 #include "TextUtils.h"
 #include "commands.h"
 #include "bzfsAPI.h"
 #include "DirectoryNames.h"
+
 
 #ifdef _WIN32
 std::string extension = ".dll";
@@ -89,7 +93,8 @@ std::vector<trPluginRecord>	vPluginList;
 void unload1Plugin ( int iPluginID ); 
 
 #ifdef _WIN32
-#include <windows.h>
+#  define NOMINMAX
+#  include <windows.h>
 
 int getPluginVersion ( HINSTANCE hLib )
 {
@@ -161,7 +166,7 @@ void unload1Plugin ( int iPluginID )
 }
 #else
 
-#include <dlfcn.h>
+#  include <dlfcn.h>
 std::vector<void*>	vLibHandles;
 
 int getPluginVersion ( void* hLib )

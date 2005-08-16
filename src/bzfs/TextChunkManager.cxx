@@ -14,7 +14,15 @@
 #pragma warning( 4: 4786)
 #endif
 
+/* interface header */
 #include "TextChunkManager.h"
+
+/* system implementation headers */
+#include <fstream>
+
+/* common implementation headers */
+#include "global.h"
+
 
 bool TextChunkManager::parseFile(const std::string &fileName, const std::string &chunkName)
 {

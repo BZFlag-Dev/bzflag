@@ -13,12 +13,13 @@
 #ifndef __TEXTCHUNKMANAGER_H__
 #define __TEXTCHUNKMANAGER_H__
 
+#include "common.h"
+
+/* system interface headers */
 #include <vector>
 #include <map>
 #include <string>
-#include <fstream>
 
-#include "global.h"
 
 // maintains a list of lists of strings, more or less a bunch
 // of files that can be read into and managed by this class.

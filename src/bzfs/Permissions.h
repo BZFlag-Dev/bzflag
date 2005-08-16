@@ -13,6 +13,8 @@
 #ifndef __PERMISSIONS_H__
 #define __PERMISSIONS_H__
 
+#include "common.h"
+
 /* system interface headers */
 // work around an ugly STL bug in BeOS
 // FIXME someone test whether it is still needed

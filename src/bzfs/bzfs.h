@@ -22,6 +22,7 @@
 
 #define SERVERLOGINMSG true
 
+#include "common.h"
 
 // must be before network.h because that defines a close() macro which
 // messes up fstreams.	luckily, we don't need to call the close() method
