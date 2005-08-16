@@ -228,7 +228,7 @@ void ServerMenu::setSelected(int index)
           // colorize server descriptions by shot counts
           const int maxShots = server.ping.maxShots;
           if (maxShots <= 0) {
-            label->setColor(0.0f, 0.0f, 0.0f); // black
+            label->setColor(0.25f, 0.0f, 0.5); // purple
           }
           else if (maxShots == 1) {
             label->setColor(1.0f, 1.0f, 1.0f); // white
