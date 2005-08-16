@@ -19,6 +19,8 @@ ServerCommand::ServerCommand(std::string _commandName,
   : commandName(_commandName), oneLineHelp(_oneLineHelp)
 {
   (*getMapRef())[commandName] = this;
+  if (oneLineHelp == "")
+    oneLineHelp = commandName;
 }
 
 ServerCommand::~ServerCommand()
