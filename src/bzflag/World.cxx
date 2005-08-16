@@ -9,6 +9,8 @@
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
+ 
+#include "common.h" 
 
 /* interface header */
 #include "World.h"
@@ -18,6 +20,7 @@
 #include <time.h>
 #include <vector>
 #include <string>
+#include <string.h>
 #include <assert.h>
 
 /* common implementation headers */
@@ -32,6 +35,7 @@
 #include "MeshTransform.h"
 #include "FlagSceneNode.h"
 #include "ObstacleMgr.h"
+#include "DirectoryNames.h"
 
 // local implementation headers
 #include "playing.h"
@@ -825,13 +829,19 @@ static void writeBZDBvar (const std::string& name, void *userData)
 }
 
 
-bool			World::writeWorld(std::string filename)
+bool World::writeWorld(const std::string& filename, std::string& fullname)
 {
-  std::ostream *stream = FILEMGR.createDataOutStream(filename.c_str());
+  fullname = getWorldDirName();
+  fullname += filename;
+  if (strstr(fullname.c_str(), ".bzw") == NULL) {
+    fullname += ".bzw";
+  }
+
+  std::ostream *stream = FILEMGR.createDataOutStream(fullname.c_str());
   if (stream == NULL) {
     return false;
   }
-
+  
   // for notational convenience
   std::ostream& out = *stream;
 

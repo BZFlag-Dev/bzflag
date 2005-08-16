@@ -137,7 +137,8 @@ class World {
     void		loadCollisionManager();
     void		checkCollisionManager();
 
-    bool		writeWorld(std::string filename);
+    bool		writeWorld(const std::string& filename,
+                                   std::string& fullname);
 
     void		drawCollisionGrid() const;
 

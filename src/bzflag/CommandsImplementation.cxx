@@ -151,7 +151,7 @@ ClientQueryCommand::ClientQueryCommand() :  LocalCommand("CLIENTQUERY") {}
 
 // the meat of the matter
 
-bool CommandList::operator() (const char *)
+bool CommandList::operator() (const char */*cmdLine*/)
 {
   int i;
   const int maxLineLen = 64;
@@ -185,8 +185,17 @@ bool CommandList::operator() (const char *)
   const int cols = (maxLineLen / maxCmdLen);
   const int rows = ((cmdCount + (cols - 1)) / cols);
   
+  addMessage(NULL, ANSI_STR_UNDERLINE ANSI_STR_FG_BLACK
+                   "Client-side Commands");
+  
+  const char* prefix = ANSI_STR_FG_YELLOW ANSI_STR_PULSATING
+                       "[CLIENT->] " ANSI_STR_RESET;
+  const int prefixLen = strlen(prefix);
+  
   for (int row = 0; row < rows; row++) {
     cptr = buffer;
+    strncpy(buffer, prefix, MessageLen);
+    cptr += prefixLen;
     for (int col = 0; col < cols; col++) {
       const int index = (col * rows) + row;
       if (index >= cmdCount) {
@@ -197,6 +206,16 @@ bool CommandList::operator() (const char *)
     }
     addMessage(NULL, buffer);
   }
+  
+  addMessage(NULL, ANSI_STR_UNDERLINE ANSI_STR_FG_BLACK
+                   "Server-side Commands");
+
+  const char* msg = "/?";
+  const int msgLen = strlen(msg) + 1;
+  cptr = (char*) nboPackUByte(buffer, ServerPlayer);
+  nboPackString(cptr, msg, msgLen);
+  serverLink->send(MsgMessage, PlayerIdPLen + msgLen, buffer);
+  
   return true;
 }
 
@@ -514,15 +533,22 @@ bool SaveWorldCommand::operator() (const char *commandLine)
 
   BZDB.set("saveAsMeshes", meshprims ? "1" : "0");
   BZDB.set("saveFlatFile", ungrouped ? "1" : "0");
-  if (World::getWorld()->writeWorld(filename)) {
-    char buffer[128];
-    snprintf(buffer, 128, "World saved  (%s) %s%s", filename.c_str(),
+  
+  World* world = World::getWorld();
+  if (!world) {
+    return true;
+  }
+
+  char buffer[256];
+  std::string fullname;
+  if (World::getWorld()->writeWorld(filename, fullname)) {
+    snprintf(buffer, 256, "World saved:  %s %s%s", fullname.c_str(),
              meshprims ? " [meshprims]" : "",
              ungrouped ? " [ungrouped]" : "");
-    addMessage(NULL, buffer);
   } else {
-    addMessage(NULL, "Invalid file name specified");
+    snprintf(buffer, 256, "Error saving:  %s", fullname.c_str());
   }
+  addMessage(NULL, buffer);
   
   return true;
 }

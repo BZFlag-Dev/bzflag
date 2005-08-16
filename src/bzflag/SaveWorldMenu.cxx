@@ -22,7 +22,6 @@
 /* common implementation headers */
 #include "StateDatabase.h"
 #include "FontManager.h"
-#include "DirectoryNames.h"
 
 /* local implementation headers */
 #include "MenuDefaultKey.h"
@@ -77,13 +76,9 @@ void SaveWorldMenu::execute()
   if (pWorld == NULL) {
     status->setString("No world loaded to save");
   } else {
-    std::string fullname = getWorldDirName();
-    fullname += filename->getString();
-    if (strstr(fullname.c_str(), ".bzw") == NULL)
-	fullname += ".bzw";
-    bool success = World::getWorld()->writeWorld(fullname);
-    if (success) {
-      std::string newLabel = "File Saved: ";
+    std::string fullname;
+    if (World::getWorld()->writeWorld(filename->getString(), fullname)) {
+      std::string newLabel = "World Saved: ";
       newLabel += fullname;
       status->setString(newLabel);
     } else {
