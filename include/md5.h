@@ -33,8 +33,12 @@ documentation and/or software.
 #ifndef BZF_MD5_H
 #define BZF_MD5_H
 
+#include "common.h"
+
+/* system interface headers */
 #include <string>
 #include <iostream>
+
 
 // a small class for calculating MD5 hashes of strings or byte arrays
 // it is not meant to be fast or secure

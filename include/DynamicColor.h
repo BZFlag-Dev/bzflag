@@ -13,10 +13,13 @@
 #ifndef _DYNAMIC_COLOR_H_
 #define _DYNAMIC_COLOR_H_
 
+#include "common.h"
 
+/* system interface headers */
 #include <string>
 #include <vector>
 #include <iostream>
+
 
 typedef struct sequenceList {
   float period;

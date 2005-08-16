@@ -17,18 +17,18 @@
 #ifndef BZF_MYIO
 #define BZF_MYIO
 
+#include "common.h"
+
 void setDebugTimestamp (bool enable, bool doMicros);
 void formatDebug(const char* fmt, ...);
 
 /* egcs headers on linux define NULL as (void*)0.  that's a no no in C++. */
 #if defined(NULL)
-#undef NULL
+#  undef NULL
 #endif
 #define NULL 0
 
 /* insert any other broken OS conditionals here */
-#if !defined(_WIN32)
-#endif
 #include <iostream>
 
 #endif

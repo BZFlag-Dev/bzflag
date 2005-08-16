@@ -19,6 +19,10 @@
 
 #include "common.h"
 
+/* system interface headers */
+#include <string>
+
+
 #define _CallSignLen		32		// including terminating NUL
 #define _PasswordLen		32		// including terminating NUL
 #define _EmailLen				128		// including terminating NUL

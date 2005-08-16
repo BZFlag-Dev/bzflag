@@ -13,7 +13,9 @@
 #ifndef _TEXTURE_MATRIX_H_
 #define _TEXTURE_MATRIX_H_
 
+#include "common.h"
 
+/* system interface headers */
 #include <string>
 #include <vector>
 #include <iostream>

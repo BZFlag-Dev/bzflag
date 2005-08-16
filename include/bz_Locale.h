@@ -13,6 +13,8 @@
 #ifndef __LOCALE_H__
 #define __LOCALE_H__
 
+#include "common.h"
+
 // system interface headers
 #include <string>
 
