@@ -13,7 +13,11 @@
 #ifndef DOWNLOADS_H
 #define DOWNLOADS_H
 
+#include "common.h"
+
+/* system interface headers */
 #include <string>
+
 
 namespace Downloads {
   void startDownloads(bool doDownloads,
