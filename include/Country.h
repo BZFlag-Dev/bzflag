@@ -13,6 +13,8 @@
 #ifndef __COUNTRY_H__
 #define __COUNTRY_H__
 
+#include "common.h"
+
 // system interface headers
 #include <string>
 

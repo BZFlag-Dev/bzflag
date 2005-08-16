@@ -13,16 +13,16 @@
 #ifndef	BZF_BUNDLEMGR_H
 #define	BZF_BUNDLEMGR_H
 
-// system headers
+#include "common.h"
+
+/* system interface headers */
 #include <map>
 #include <string>
 #include <vector>
 #ifdef __APPLE__
-#include <CoreFoundation/CoreFoundation.h>
+#  include <CoreFoundation/CoreFoundation.h>
 #endif
 
-// local headers
-#include "common.h"
 
 class Bundle;
 

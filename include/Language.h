@@ -13,9 +13,12 @@
 #ifndef __LANGUAGE_H__
 #define __LANGUAGE_H__
 
+#include "common.h"
+
 // system interface headers
 #include <string>
 #include <vector>
+
 
 /** ISO 639 language representation */
 class Language
