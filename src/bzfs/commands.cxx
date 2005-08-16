@@ -616,6 +616,7 @@ bool CmdHelp::operator() (const char         *message,
     return false;
   std::string commandToken(message, i);
 
+  bool none = true;
   int t = playerData->getIndex();
   MapOfCommands::iterator it;
   MapOfCommands &commandMap = *getMapRef();
@@ -623,15 +624,13 @@ bool CmdHelp::operator() (const char         *message,
     std::string master = it->first;
     master.resize(i);
     if (master == commandToken) {
-      std::string helpLine = it->second->getHelp();
-      std::string text;
-      if (helpLine == "")
-	text = it->first;
-      else
-	text = helpLine;
-      sendMessage(ServerPlayer, t, text.c_str());
+      sendMessage(ServerPlayer, t, it->second->getHelp().c_str());
+      none = false;
     }
   }
+  if (none)
+    sendMessage(ServerPlayer, t,
+		("No command starting with " + commandToken).c_str());
   return true;
 }
 
