@@ -19,11 +19,13 @@
  */
 #include "CmdLineOptions.h"
 
+
 // implementation-specific bzflag headers
 #include "version.h"
 #include "Team.h"
 #include "TextUtils.h"
 #include "BZDBCache.h"
+#include "BzMaterial.h"
 
 /* FIXME implementation specific header for global that should eventually go
  * away */
@@ -80,6 +82,7 @@ const char *usageString =
 "[-filterChat] "
 "[-filterSimple] "
 "[-g] "
+"[-gndtex <texture name>] "
 "[-groupdb <group file>] "
 "[-h] "
 "[-handicap] "
@@ -172,6 +175,7 @@ const char *extraUsageString =
 "\t-filterChat: filter chat messages\n"
 "\t-filterSimple: perform simple exact matches with the bad word list\n"
 "\t-g: serve one game and then exit\n"
+"\t-gndtex: specify ground texture\n"
 "\t-groupdb: file to read for group permissions\n"
 "\t-h: use random building heights\n"
 "\t-handicap: give advantage based on relative playing ability\n"
@@ -714,6 +718,12 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       options.filterSimple = true;
     } else if (strcmp(argv[i], "-g") == 0) {
       options.oneGameOnly = true;
+    } else if (strcmp(argv[i], "-gndtex") == 0) {
+      checkArgc(1, i, argc, argv[i]);
+      BzMaterial material;
+      material.setName("GroundMaterial");
+      material.setTexture(argv[i]);
+      MATERIALMGR.addMaterial(&material);
     } else if (strcmp(argv[i], "-groupdb") == 0) {
       checkArgc(1, i, argc, argv[i]);
       groupsFile = argv[i];
