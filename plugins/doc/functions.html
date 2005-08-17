@@ -148,12 +148,12 @@ the current game state.</p>
 <p> bzApiString ipAddress; // the network address for this connection<br>
     <br>
   bzApiString currentFlag; // the flag the user presently has<br>
-  std::vector&lt;bzApiString&gt; flagHistory; // a list of all flags the user has had</p>
+  bzApiStrList flagHistory; // a list of all flags the user has had</p>
 <p> bool spawned; // true if the user is in game as a tank<br>
   bool verified; // true if the user has been authenticated ether global or local<br>
   bool globalUser; // true if the user was verified from the global login system<br>
   bool admin; // true if the user is an admin<br>
-  std::vector&lt;bzApiString&gt; groups; // a list of all the groups the user is a member of.<br>
+  bzApiStrList groups; // a list of all the groups the user is a member of.<br>
   <br>
   int wins; // kills the player has <br>
 	int losses; // deaths the player has <br>
