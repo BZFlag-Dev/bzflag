@@ -38,7 +38,7 @@ public:
   // a string with the output of the command (or the empty string if
   // there's no output).
   typedef std::vector<std::string> ArgList;
-  typedef std::string (*CommandFunction)(const std::string& name, const ArgList&);
+  typedef std::string (*CommandFunction)(const std::string& name, const ArgList&, bool* error);
   typedef void (*Callback)(const std::string& name, void* userData);
 
   // add/replace a command handler
@@ -52,10 +52,10 @@ public:
   std::string			getHelp(const std::string& name) const;
 
   // execute a command
-  std::string			run(const std::string& name, const ArgList&) const;
+  std::string			run(const std::string& name, const ArgList& args, bool *ret = NULL) const;
 
   // parse and execute a command
-  std::string			run(const std::string& cmd) const;
+  std::string			run(const std::string& cmd, bool *ret = NULL) const;
 
   // invoke the callback for each registered command
   void				iterate(Callback, void* userData) const;

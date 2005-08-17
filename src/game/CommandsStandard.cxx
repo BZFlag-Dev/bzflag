@@ -31,7 +31,7 @@ static bool			quitFlag = false;
 //
 
 static std::string		cmdQuit(const std::string&,
-					const CommandManager::ArgList&)
+					const CommandManager::ArgList&, bool*)
 {
   CommandsStandard::quit();
   return std::string();
@@ -46,7 +46,7 @@ static void			onHelpCB(const std::string& name,
 }
 
 static std::string		cmdHelp(const std::string&,
-					const CommandManager::ArgList& args)
+					const CommandManager::ArgList& args, bool*)
 {
   switch (args.size()) {
     case 0: {
@@ -64,7 +64,7 @@ static std::string		cmdHelp(const std::string&,
 }
 
 static std::string		cmdPrint(const std::string&,
-					 const CommandManager::ArgList& args)
+					 const CommandManager::ArgList& args, bool*)
 {
   // merge all arguments into one string
   std::string arg;
@@ -133,8 +133,9 @@ static void			onSetCB(const std::string& name,
 }
 
 static std::string		cmdSet(const std::string&,
-				       const CommandManager::ArgList& args)
+				       const CommandManager::ArgList& args, bool* error)
 {
+	if(error) *error = false;
   switch (args.size()) {
 
     case 0:
@@ -150,6 +151,7 @@ static std::string		cmdSet(const std::string&,
 	if (BZDB.isSet(args[0])) {
 	  return args[0] + " is " + BZDB.get(args[0]);
 	} else {
+	  if(error) *error = true;
 	  return "variable " + args[0] + " does not exist";
 	}
       }
@@ -161,13 +163,14 @@ static std::string		cmdSet(const std::string&,
       }
     default:
       {
+    if(error) *error = true;
 	return "usage: set <name> [<value>]";
       }
   }
 }
 
 static std::string		cmdUnset(const std::string&,
-					 const CommandManager::ArgList& args)
+					 const CommandManager::ArgList& args, bool*)
 {
   if (args.size() != 1)
     return "usage: unset <name>";
@@ -187,7 +190,7 @@ static void			onBindCB(const std::string& name, bool press,
 }
 
 static std::string		cmdBind(const std::string&,
-					const CommandManager::ArgList& args)
+					const CommandManager::ArgList& args, bool*)
 {
   if (args.size() == 0) {
     std::string result;
@@ -223,7 +226,7 @@ static std::string		cmdBind(const std::string&,
 }
 
 static std::string		cmdUnbind(const std::string&,
-					  const CommandManager::ArgList& args)
+					  const CommandManager::ArgList& args, bool*)
 {
   if (args.size() != 2)
     return "usage: unbind <button-name> {up|down}";
@@ -247,7 +250,7 @@ static std::string		cmdUnbind(const std::string&,
 }
 
 static std::string		cmdToggle(const std::string&,
-					  const CommandManager::ArgList& args)
+					  const CommandManager::ArgList& args, bool*)
 {
   if (args.size() != 1)
     return "usage: toggle <name>";
@@ -259,7 +262,7 @@ static std::string		cmdToggle(const std::string&,
   return std::string();
 }
 
-static std::string cmdMult(const std::string&, const CommandManager::ArgList& args)
+static std::string cmdMult(const std::string&, const CommandManager::ArgList& args, bool*)
 {
   if (args.size() != 2)
     return "usage: mult <name> <value>";

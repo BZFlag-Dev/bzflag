@@ -883,7 +883,20 @@ bool SetCommand::operator() (const char         *message,
   // we aren't case sensitive but CMDMGR is
   for (int i = 0; i < 3 /*"set"*/; ++i)
     command[i] = tolower(command[i]);
-  sendMessage(ServerPlayer, t, CMDMGR.run(command).c_str());
+
+  bool	cmdError = false;
+
+  std::string cmdReturn = CMDMGR.run(command,&cmdError);
+  if(!cmdError)
+  {
+	  std::string errMsg = "/set failed, reason: ";
+	  errMsg += cmdReturn;
+
+	  sendMessage(ServerPlayer, t, errMsg.c_str());
+	  return true;
+  }
+
+  sendMessage(ServerPlayer, t, cmdReturn.c_str());
   snprintf(message2, MessageLen, "Variable Modification Notice by %s of %s",
 	   playerData->player.getCallSign(), command.c_str());
   sendMessage(ServerPlayer, AllPlayers, message2);

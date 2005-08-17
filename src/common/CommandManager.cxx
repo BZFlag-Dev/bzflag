@@ -65,17 +65,23 @@ std::string			CommandManager::getHelp(const std::string& name) const
 }
 
 std::string			CommandManager::run(const std::string& name,
-							    const ArgList& args) const
+							    const ArgList& args, bool* ret) const
 {
   // look up command
   Commands::const_iterator index = commands.find(name);
   if (index == commands.end())
+  {
     return TextUtils::format("Command %s not found", name.c_str());
+	if (ret)
+		*ret = false;
+  }
+  if (ret)
+	  *ret = true;
   // run it
-  return (*index->second.func)(name, args);
+  return (*index->second.func)(name, args,ret);
 }
 
-std::string			CommandManager::run(const std::string& cmd) const
+std::string			CommandManager::run(const std::string& cmd,bool *ret) const
 {
   std::string result;
   const char* scan = cmd.c_str();
@@ -103,9 +109,13 @@ std::string			CommandManager::run(const std::string& cmd) const
 
     // run it or report error
     if (scan == NULL)
+	{
+		if (ret)
+			*ret = false;
       return std::string("Error parsing command");
+	}
     else if (name[0] != '#')
-      result = run(name, args);
+      result = run(name, args,ret);
 
     // discard ; and empty commands
     while (scan != NULL && *scan == ';') {

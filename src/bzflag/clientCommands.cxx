@@ -113,7 +113,7 @@ const struct CommandListItem commandList[] = {
 
 
 std::string cmdToggleFS(const std::string&,
-			const CommandManager::ArgList& args)
+			const CommandManager::ArgList& args, bool*)
 {
   if (args.size() != 0)
     return "usage: fullscreen";
@@ -122,7 +122,7 @@ std::string cmdToggleFS(const std::string&,
   return std::string();
 }
 
-std::string cmdIconify(const std::string&, const CommandManager::ArgList& args)
+std::string cmdIconify(const std::string&, const CommandManager::ArgList& args, bool*)
 {
   if (args.size() != 0)
     return "usage: iconify";
@@ -130,7 +130,7 @@ std::string cmdIconify(const std::string&, const CommandManager::ArgList& args)
   return std::string();
 }
 
-std::string cmdJump(const std::string&, const CommandManager::ArgList& args)
+std::string cmdJump(const std::string&, const CommandManager::ArgList& args, bool*)
 {
   if (args.size() != 0)
     return "usage: jump";
@@ -140,7 +140,7 @@ std::string cmdJump(const std::string&, const CommandManager::ArgList& args)
 }
 
 std::string cmdToggleFlags (const std::string&, const
-CommandManager::ArgList& args)
+CommandManager::ArgList& args, bool*)
 {
   if (args.size() != 1)
     return "usage: main|radar";
@@ -158,7 +158,7 @@ CommandManager::ArgList& args)
 }
 
 std::string cmdToggleRadar (const std::string&, const
-CommandManager::ArgList& args)
+CommandManager::ArgList& args, bool*)
 {
   if (args.size() != 0) {
     return "usage: toggleRadar";
@@ -172,7 +172,7 @@ CommandManager::ArgList& args)
 }
 
 std::string cmdToggleConsole (const std::string&, const
-CommandManager::ArgList& args)
+CommandManager::ArgList& args, bool*)
 {
   if (args.size() != 0) {
     return "usage: toggleConsole";
@@ -186,7 +186,7 @@ CommandManager::ArgList& args)
 }
 
 
-std::string cmdFire(const std::string&, const CommandManager::ArgList& args)
+std::string cmdFire(const std::string&, const CommandManager::ArgList& args, bool*)
 {
   if (args.size() != 0)
     return "usage: fire";
@@ -196,7 +196,7 @@ std::string cmdFire(const std::string&, const CommandManager::ArgList& args)
   return std::string();
 }
 
-std::string cmdDrop(const std::string&, const CommandManager::ArgList& args)
+std::string cmdDrop(const std::string&, const CommandManager::ArgList& args, bool*)
 {
   if (args.size() != 0)
     return "usage: drop";
@@ -215,7 +215,7 @@ std::string cmdDrop(const std::string&, const CommandManager::ArgList& args)
   return std::string();
 }
 
-std::string cmdIdentify(const std::string&, const CommandManager::ArgList& args)
+std::string cmdIdentify(const std::string&, const CommandManager::ArgList& args, bool*)
 {
   if (args.size() != 0)
     return "usage: identify";
@@ -225,7 +225,7 @@ std::string cmdIdentify(const std::string&, const CommandManager::ArgList& args)
   return std::string();
 }
 
-std::string cmdRestart(const std::string&, const CommandManager::ArgList& args)
+std::string cmdRestart(const std::string&, const CommandManager::ArgList& args, bool*)
 {
   if (args.size() != 0)
     return "usage: restart";
@@ -236,13 +236,13 @@ std::string cmdRestart(const std::string&, const CommandManager::ArgList& args)
 	  CommandManager::ArgList zoomArgs;
 	  std::string resetArg = "reset";
 	  zoomArgs.push_back(resetArg);
-	  cmdViewZoom("", zoomArgs);
+	  cmdViewZoom("", zoomArgs,NULL);
     }
 
   return std::string();
 }
 
-std::string cmdDestruct(const std::string&, const CommandManager::ArgList& args)
+std::string cmdDestruct(const std::string&, const CommandManager::ArgList& args, bool*)
 {
   if (args.size() != 0)
     return "usage: destruct";
@@ -260,7 +260,7 @@ std::string cmdDestruct(const std::string&, const CommandManager::ArgList& args)
   return std::string();
 }
 
-std::string cmdPause(const std::string&, const CommandManager::ArgList& args)
+std::string cmdPause(const std::string&, const CommandManager::ArgList& args, bool*)
 {
   if (args.size() != 0)
     return "usage: pause";
@@ -311,7 +311,7 @@ std::string cmdPause(const std::string&, const CommandManager::ArgList& args)
   return std::string();
 }
 
-std::string cmdAutoPilot(const std::string&, const CommandManager::ArgList& args)
+std::string cmdAutoPilot(const std::string&, const CommandManager::ArgList& args, bool*)
 {
   if (args.size() != 0)
     return "usage: autopilot";
@@ -356,7 +356,7 @@ std::string cmdAutoPilot(const std::string&, const CommandManager::ArgList& args
 }
 
 std::string cmdRadarZoom(const std::string&,
-			 const CommandManager::ArgList& args)
+			 const CommandManager::ArgList& args, bool*)
 {
   if (args.size() != 1)
     return "usage: radarZoom {in|out}";
@@ -381,7 +381,7 @@ std::string cmdRadarZoom(const std::string&,
 }
 
 std::string cmdViewZoom(const std::string&,
-			const CommandManager::ArgList& args)
+			const CommandManager::ArgList& args, bool*)
 {
   if (args.size() != 1)
     return "usage: viewZoom {in|out|toggle}";
@@ -415,7 +415,7 @@ std::string cmdViewZoom(const std::string&,
 }
 
 std::string cmdMessagePanel(const std::string&,
-			    const CommandManager::ArgList& args)
+			    const CommandManager::ArgList& args, bool*)
 {
   if (args.size() != 1)
     return "usage: messagepanel {all|chat|server|misc}";
@@ -440,7 +440,7 @@ std::string cmdMessagePanel(const std::string&,
   return std::string();
 }
 
-std::string cmdSend(const std::string&, const CommandManager::ArgList& args)
+std::string cmdSend(const std::string&, const CommandManager::ArgList& args, bool*)
 {
   static ComposeDefaultKey composeKeyHandler;
   if (args.size() != 1)
@@ -498,7 +498,7 @@ std::string cmdSend(const std::string&, const CommandManager::ArgList& args)
 }
 
 #ifdef SNAPPING
-std::string cmdScreenshot(const std::string&, const CommandManager::ArgList& args)
+std::string cmdScreenshot(const std::string&, const CommandManager::ArgList& args, bool*)
 {
   static int snap = 0;
   if (args.size() != 0)
@@ -634,7 +634,7 @@ std::string cmdScreenshot(const std::string&, const CommandManager::ArgList& arg
 }
 #endif
 
-std::string cmdTime(const std::string&, const CommandManager::ArgList& args)
+std::string cmdTime(const std::string&, const CommandManager::ArgList& args, bool*)
 {
   // FIXME - time should be moved into BZDB
   if (args.size() != 1)
@@ -649,7 +649,7 @@ std::string cmdTime(const std::string&, const CommandManager::ArgList& args)
   return std::string();
 }
 
-std::string cmdRoam(const std::string&, const CommandManager::ArgList& args)
+std::string cmdRoam(const std::string&, const CommandManager::ArgList& args, bool*)
 {
   if (args.size() == 0)
     return "usage: roam {zoom|cycle} <args>";
@@ -771,7 +771,7 @@ std::string cmdRoam(const std::string&, const CommandManager::ArgList& args)
   return std::string();
 }
 
-std::string cmdSilence(const std::string&, const CommandManager::ArgList& args)
+std::string cmdSilence(const std::string&, const CommandManager::ArgList& args, bool*)
 {
   static SilenceDefaultKey silenceKeyHandler;
   if (args.size() != 0)
@@ -782,7 +782,7 @@ std::string cmdSilence(const std::string&, const CommandManager::ArgList& args)
   return std::string();
 }
 
-std::string cmdServerCommand(const std::string&, const CommandManager::ArgList& args)
+std::string cmdServerCommand(const std::string&, const CommandManager::ArgList& args, bool*)
 {
   static ServerCommandKey serverCommandKeyHandler;
   if (args.size() != 0)
@@ -800,7 +800,7 @@ std::string cmdServerCommand(const std::string&, const CommandManager::ArgList& 
   return std::string();
 }
 
-std::string cmdScrollPanel(const std::string&, const CommandManager::ArgList& args)
+std::string cmdScrollPanel(const std::string&, const CommandManager::ArgList& args, bool*)
 {
   if (args.size() != 1)
     return "usage: scrollpanel {up|down}\n";
@@ -814,7 +814,7 @@ std::string cmdScrollPanel(const std::string&, const CommandManager::ArgList& ar
   return std::string();
 }
 
-std::string cmdHunt(const std::string&, const CommandManager::ArgList& args)
+std::string cmdHunt(const std::string&, const CommandManager::ArgList& args, bool*)
 {
   if (args.size() != 0)
     return "usage: hunt";
