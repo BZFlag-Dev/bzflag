@@ -256,7 +256,7 @@ void ServerMenu::setSelected(int index)
 
         std::string addr = stripAnsiCodes(server.description);
         std::string desc;
-        unsigned int pos = addr.find_first_of(';');
+        std::string::size_type pos = addr.find_first_of(';');
         if (pos != std::string::npos) {
           desc = addr.substr(pos > 0 ? pos+1 : pos);
           addr.resize(pos);
