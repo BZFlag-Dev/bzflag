@@ -89,13 +89,18 @@ void PlayHistoryTracker::process ( bz_EventData *eventData )
 
 	case bz_ePlayerDieEvent:
 		{
-			 bz_PlayerDieEventData	*deathRecord = ( bz_PlayerDieEventData*)eventData;
+			bz_PlayerDieEventData	*deathRecord = ( bz_PlayerDieEventData*)eventData;
 
-			 bz_PlayerRecord	*killerData;
+			std::string killerCallSign = "UNKNOWN";
 
-			 killerData = bz_getPlayerByIndex(deathRecord->killerID);
+			bz_PlayerRecord	*killerData;
 
-			 std::string soundToPlay;
+			killerData = bz_getPlayerByIndex(deathRecord->killerID);
+
+			if (killerData)
+				killerCallSign = killerData->callsign.c_str();
+
+			std::string soundToPlay;
 
 			// clear out the dude who got shot, since he won't be having any SPREEs
 			if (playerList.find(deathRecord->playerID) != playerList.end())
@@ -103,11 +108,11 @@ void PlayHistoryTracker::process ( bz_EventData *eventData )
 				trPlayerHistoryRecord	&record = playerList.find(deathRecord->playerID)->second;
 				std::string message;
 				if ( record.spreeTotal >= 5 && record.spreeTotal < 10 )
-					message = record.callsign + std::string("'s rampage was stoped by ") + killerData->callsign.c_str();
+					message = record.callsign + std::string("'s rampage was stoped by ") + killerCallSign;
 				if ( record.spreeTotal >= 10 && record.spreeTotal < 20 )
-					message = record.callsign + std::string("'s killing spree was halted by ") + killerData->callsign.c_str();
+					message = record.callsign + std::string("'s killing spree was halted by ") + killerCallSign;
 				if ( record.spreeTotal >= 20 )
-					message = std::string("The unstopable reign of ") + record.callsign + std::string(" was ended by ") + killerData->callsign.c_str();
+					message = std::string("The unstopable reign of ") + record.callsign + std::string(" was ended by ") + killerCallSign;
 
 				if (message.size())
 				{
