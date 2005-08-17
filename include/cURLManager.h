@@ -16,16 +16,14 @@
 // bzflag common header
 #include "common.h"
 
+#include "network.h"
+
 // system headers
 #include <curl/curl.h>
 #include <string>
 #include <map>
 #include <vector>
 
-// revert _WINSOCK2API_ to its previous state
-//#ifndef _ALREADYHADWS2_
-//#undef _WINSOCK2API_
-//#endif
 
 class cURLManager {
 public:
