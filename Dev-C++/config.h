@@ -14,6 +14,9 @@
 
 #ifndef _DEVCPP_CONFIG
 #define _DEVCPP_CONFIG
+
+#define NOMINMAX 1
+
 #if defined(WIN32) && !defined(_WIN32)
 #   define _WIN32
 #endif
@@ -72,6 +75,8 @@
 #define HAVE_SQRTF 1
 #define HAVE_TANF 1
 
+#define HAVE_STD__MIN 1
+#define HAVE_STD__MAX 1
 
 /* Define to 1 if you have regex stuff available */
 /* undef HAVE_REGEX_H */
