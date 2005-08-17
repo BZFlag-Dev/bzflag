@@ -225,10 +225,10 @@ void ServerMenu::setSelected(int index)
           // colorize server descriptions by shot counts
           const int maxShots = server.ping.maxShots;
           if (maxShots <= 0) {
-            label->setColor(0.25f, 0.0f, 0.5); // purple
+            label->setColor(0.4f, 0.0f, 0.6f); // purple
           }
           else if (maxShots == 1) {
-            label->setColor(1.0f, 1.0f, 1.0f); // white
+            label->setColor(0.25f, 0.25f, 1.0f); // blue
           }
           else if (maxShots == 2) {
             label->setColor(0.25f, 1.0f, 0.25f); // green
@@ -237,10 +237,12 @@ void ServerMenu::setSelected(int index)
             label->setColor(1.0f, 1.0f, 0.25f); // yellow
           }
           else {
-            const float shotScale = std::min(1.0f, log10f((float)maxShots));
+            // graded orange/red
+            const float shotScale =
+              std::min(1.0f, log10f((float)(maxShots - 3)));
             const float rf = 1.0f;
-            const float gf = 1.0f - 0.75f * shotScale;
-            const float bf = 1.0f - 0.75f * shotScale;
+            const float gf = 0.4f * (1.0f - shotScale);
+            const float bf = 0.25f * gf;
             label->setColor(rf, gf, bf);
           }
         }
