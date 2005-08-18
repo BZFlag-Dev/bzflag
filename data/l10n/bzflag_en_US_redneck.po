@@ -429,8 +429,8 @@ msgstr "Code Contributo's:"
 #msgid "Special Thanks:"
 #msgstr ""
 
-msgid "Send:"
-msgstr ""
+#msgid "Send:"
+#msgstr ""
 
 msgid "Servers"
 msgstr "Servahs"

@@ -219,8 +219,8 @@ msgstr "wejDIch boq"
 msgid "Purple Team"
 msgstr "loSDIch boq"
 
-msgid "Enter to quit, Esc to resume"
-msgstr ""
+#msgid "Enter to quit, Esc to resume"
+#msgstr ""
 
 msgid "Really quit?"
 msgstr "bupqang?"

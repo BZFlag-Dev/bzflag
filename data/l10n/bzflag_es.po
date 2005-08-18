@@ -45,8 +45,8 @@ msgstr "Salir"
 msgid "on"
 msgstr "activado"
 
-msgid "Dithering:"
-msgstr ""
+#msgid "Dithering:"
+#msgstr ""
 
 msgid "off"
 msgstr "desactivado"

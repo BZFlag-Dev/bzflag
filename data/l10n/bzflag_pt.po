@@ -321,8 +321,8 @@ msgstr "Controla rato:"
 msgid "fires shot"
 msgstr "da bandeira gotas"
 
-msgid "drops flag (if not bad)"
-msgstr ""
+#msgid "drops flag (if not bad)"
+#msgstr ""
 
 msgid "identifies player (locks on GM)"
 msgstr "identifica o jogador (fechamentos no GM)"
@@ -930,8 +930,8 @@ msgstr "teammates e ele não tem uma contagem da equipe."
 msgid "There are two styles of play, determined by the server configuration:  capture-"
 msgstr "lá é dois estilos do jogo, determinados pela configuração do usuário: captação - "
 
-msgid "the-flag and free-for-all.  In free-for-all the object is simply to get the"
-msgstr ""
+#msgid "the-flag and free-for-all.  In free-for-all the object is simply to get the"
+#msgstr ""
 
 msgid "highest score by shooting opponents.  The object in capture-the-flag is to"
 msgstr "a contagem a mais elevada disparando em oponentes. O objeto na captur-$$$-bandeira está a"
@@ -1745,8 +1745,8 @@ msgstr "você é agora um administrador!"
 msgid "Wrong Password!"
 msgstr "senha errada!"
 
-msgid "unknown command"
-msgstr ""
+#msgid "unknown command"
+#msgstr ""
 
 msgid "Countdown started."
 msgstr "comando desconhecido"
