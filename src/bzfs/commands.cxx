@@ -499,9 +499,9 @@ MsgCommand::MsgCommand() 		 : ServerCommand("/msg",
 ServerQueryCommand::ServerQueryCommand() : ServerCommand("/serverquery",
   "/serverquery - show the server version") {}
 PartCommand::PartCommand()               : ServerCommand("/part",
-  "/part message - leave the game with a parting message") {}
+  "/part [message] - leave the game with a parting message") {}
 QuitCommand::QuitCommand()               : ServerCommand("/quit",
-  "/quit - leave the game and close the client") {}
+  "/quit [message] - leave the game with a parting message, and close the client") {}
 UpTimeCommand::UpTimeCommand()           : ServerCommand("/uptime",
   "/uptime - show the server's uptime") {}
 PasswordCommand::PasswordCommand()       : ServerCommand("/password",
@@ -510,8 +510,8 @@ SetCommand::SetCommand()                 : ServerCommand("/set",
   "/set[ <var> <value>] - set BZDB variable to value, or display variables") {}
 ResetCommand::ResetCommand()             : ServerCommand("/reset",
   "/reset - reset the BZDB variables") {}
-ShutdownCommand::ShutdownCommand()       : ServerCommand("/shutdown",
-  "/shutdown - kill the server") {}
+ShutdownCommand::ShutdownCommand()       : ServerCommand("/shutdownserver",
+  "/shutdownserver - kill the server") {}
 SuperkillCommand::SuperkillCommand()     : ServerCommand("/superkill",
   "/superkill - kick all of the players") {}
 GameOverCommand::GameOverCommand()       : ServerCommand("/gameover") {}
@@ -556,7 +556,7 @@ bool CmdList::operator() (const char*, GameKeeper::Player *playerData)
   // build a std::vector<> from the std::map<> of command names
   std::vector<const std::string*> commands;
   MapOfCommands::iterator it;
-  MapOfCommands &commandMap = *getMapRef();
+  MapOfCommands& commandMap = *getMapRef();
   for (it = commandMap.begin(); it != commandMap.end(); it++) {
     const std::string& cmd = it->first;
     if (cmd[0] != '/') {
@@ -887,13 +887,12 @@ bool SetCommand::operator() (const char         *message,
   bool	cmdError = false;
 
   std::string cmdReturn = CMDMGR.run(command,&cmdError);
-  if(!cmdError)
-  {
-	  std::string errMsg = "/set failed, reason: ";
-	  errMsg += cmdReturn;
+  if(!cmdError) {
+    std::string errMsg = "/set failed, reason: ";
+    errMsg += cmdReturn;
 
-	  sendMessage(ServerPlayer, t, errMsg.c_str());
-	  return true;
+    sendMessage(ServerPlayer, t, errMsg.c_str());
+    return true;
   }
 
   sendMessage(ServerPlayer, t, cmdReturn.c_str());
