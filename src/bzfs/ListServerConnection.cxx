@@ -239,14 +239,14 @@ void ListServerLink::sendQueuedMessages()
   if (nextMessageType == ListServerLink::ADD) {
     DEBUG3("Queuing ADD message to list server\n");
 
-	bz_ListServerUpdateEvent	updateEvent;
-	updateEvent.address = publicizeAddress;
-	updateEvent.description = publicizeDescription;
-	updateEvent.groups = advertiseGroups;
+    bz_ListServerUpdateEvent	updateEvent;
+    updateEvent.address = publicizeAddress;
+    updateEvent.description = publicizeDescription;
+    updateEvent.groups = advertiseGroups;
 
-	worldEventManager.callEvents(bz_eListServerUpdateEvent,&updateEvent);
+    worldEventManager.callEvents(bz_eListServerUpdateEvent,&updateEvent);
 
-	addMe(getTeamCounts(), std::string(updateEvent.address.c_str()), std::string(updateEvent.description.c_str()), std::string(updateEvent.groups.c_str()));
+    addMe(getTeamCounts(), std::string(updateEvent.address.c_str()), std::string(updateEvent.description.c_str()), std::string(updateEvent.groups.c_str()));
     lastAddTime = TimeKeeper::getCurrent();
   } else if (nextMessageType == ListServerLink::REMOVE) {
     DEBUG3("Queuing REMOVE message to list server\n");
