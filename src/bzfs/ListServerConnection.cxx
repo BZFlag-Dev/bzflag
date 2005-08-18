@@ -314,9 +314,9 @@ void ListServerLink::addMe(PingPacket pingInfo,
   }
 
   msg += "&advertgroups=";
-  msg += _advertiseGroups;
+  msg += TextUtils::url_encode(_advertiseGroups);
   msg += "&title=";
-  msg += publicizedTitle;
+  msg += TextUtils::url_encode(publicizedTitle);
 
   setPostMode(msg);
   addHandle();
