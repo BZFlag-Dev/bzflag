@@ -46,7 +46,7 @@ const int ListServerLink::NotConnected = -1;
 ListServerLink::ListServerLink(std::string listServerURL,
 			       std::string publicizedAddress,
 			       std::string publicizedTitle,
-             std::string _advertiseGroups)
+			       std::string _advertiseGroups)
 {
 
   std::string bzfsUserAgent = "bzfs ";
@@ -258,7 +258,7 @@ void ListServerLink::sendQueuedMessages()
 void ListServerLink::addMe(PingPacket pingInfo,
 			   std::string publicizedAddress,
 			   std::string publicizedTitle,
-         std::string _advertiseGroups)
+			   std::string _advertiseGroups)
 {
   std::string msg;
   std::string hdr;
