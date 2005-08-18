@@ -143,139 +143,111 @@ std::string Bundle::getLocalString(const std::string &key) const
   }
 }
 
-void Bundle::ensureNormalText(std::string &msg)
-{
-// This is an ugly hack. If you don't like it fix it.
-// BZFlag's font bitmaps don't contain letters with accents, so strip them here
-// Would be nice if some kind sole added them.
+const char utf8bytes[256] = {
+  1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1, 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+  1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1, 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+  1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1, 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+  1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1, 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+  1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1, 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+  1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1, 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+  2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2, 2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,
+  3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3, 4,4,4,4,4,4,4,4,5,5,5,5,6,6,6,6
+};
 
-  for (std::string::size_type i = 0; i < msg.length(); i++) {
-    char c = msg.at(i);
+#if 0
+    // TODO: find the utf-8 values for these
     switch (c) {
-      case 'â':
-      case 'à':
-      case 'á':
-      case 'ã':
-      case 'Œ':
-      case 'Š':
+      case 'ÂŒ':
+      case 'ÂŠ':
 	msg[i] = 'a';
       break;
-      case 'å':
-	msg[i] = 'a';
-	i++;
-	msg.insert(i, 1, 'a');
-      break;
-      case 'ä':
-      case 'æ':
-	msg[i] = 'a';
-	i++;
-	msg.insert(i, 1, 'e');
-      break;
-      case 'Â':
-      case '':
-      case '€':
+      case 'Â':
+      case 'Â€':
 	msg[i] = 'A';
       break;
-      case 'Ä':
-      case 'Æ':
-	msg[i] = 'A';
-	i++;
-	msg.insert(i, 1, 'e');
-      break;
-      case 'Å':
-	msg[i] = 'A';
-	i++;
-	msg.insert(i, 1, 'a');
-      break;
-      case 'ç':
-	msg[i] = 'c';
-      break;
-      case 'é':
-      case 'è':
-      case 'ê':
-      case 'ë':
-	msg[i] = 'e';
-      break;
-      case 'î':
-      case 'ï':
-      case 'í':
-      case '†':
+      case 'Â†':
 	msg[i] = 'i';
       break;
-      case 'ô':
-      case 'ó':
-      case 'õ':
-      case 'š':
+      case 'Âš':
 	msg[i] = 'o';
       break;
-      case 'ö':
-      case 'ø':
-	msg[i] = 'o';
-	i++;
-	msg.insert(i, 1, 'e');
-      break;
-      case '…':
+      case 'Â…':
 	msg[i] = 'O';
       break;
-      case 'Ö':
-      case 'Ø':
-	msg[i] = 'O';
-	i++;
-	msg.insert(i, 1, 'e');
-      break;
-      case 'û':
-      case 'ù':
-      case 'ú':
-	msg[i] = 'u';
-      break;
-      case 'ü':
-	msg[i] = 'u';
-	i++;
-	msg.insert(i, 1, 'e');
-      break;
-      case 'Ü':
-	msg[i] = 'U';
-	i++;
-	msg.insert(i, 1, 'e');
-      break;
-      case 'ñ':
-	msg[i] = 'n';
-      break;
-      case 'Ÿ':
+      case 'ÂŸ':
 	msg[i] = 'Y';
       break;
-      case 'ß':
-	msg[i] = 's';
-	i++;
-	msg.insert(i, 1, 's');
-      break;
-      case '¿':
-      case '¡':
-	msg[i] = ' ';
-      break;
+    }
+#endif
 
-      default: // A temporary patch, to catch untranslated chars.. To be removed eventually
-	if (((c >= 'A') && (c <= 'Z'))
-	    || ((c >= 'a') && (c <= 'z'))
-	    || ((c >= '0') && (c <= '9'))
-	    || (c == '}') || (c == '{') || (c == ' ')
-	    || (c == ':') || (c == '/') || (c == '-')
-	    || (c == ',') || (c == '&') || (c == '?')
-	    || (c == '<') || (c == '>') || (c == '.')
-	    || (c == '(') || (c == ')') || (c == '%')
-	    || (c == '!') || (c == '+') || (c == '-')
-	    || (c == '$') || (c == ';') || (c == '@')
-	    || (c == '[') || (c == ']')
-	    || (c == '=') || (c == '\''))
-	;
-	else {
-		msg = std::string("unsupported char:") + c;
-		return;
+// TODO: sort this and bsearch it. perhaps divided by utf8 length
+const char *translationTable[][2] = {
+  {"Ã¢", "a"}, {"Ã ", "a"}, {"Ã¡", "a"}, {"Ã£", "a"},
+  {"Ã¥", "aa"},
+  {"Ã¤", "ae"}, {"Ã¦", "ae"},
+  {"Ã‚", "A"},
+  {"Ã„", "AE"}, {"Ã†", "AE"},
+  {"Ã…", "AA"},
+  {"Ã§", "c"},
+  {"Ã©", "e"}, {"Ã¨", "e"}, {"Ãª", "e"}, {"Ã«", "e"},
+  {"Ã®", "i"}, {"Ã¯", "i"}, {"Ã­", "i"},
+  {"Ã´", "o"}, {"Ã³", "o"}, {"Ãµ", "o"},
+  {"Ã¶", "oe"}, {"Ã¸", "oe"},
+  {"Ã–", "OE"}, {"Ã˜", "OE"},
+  {"Ã»", "u"}, {"Ã¹", "u"}, {"Ãº", "u"},
+  {"Ã¼", "ue"},
+  {"Ãœ", "UE"},
+  {"Ã±", "n"},
+  {"ÃŸ", "ss"},
+  {"Â¿", "?"},
+  {"Â¡", "!"},
+};
+
+void Bundle::ensureNormalText(std::string &msg)
+{
+  // BZFlag's font system only supports ascii
+  // convert msg to ascii
+  // If you don't like it fix it.
+
+  for (std::string::size_type i = 0; i < msg.length(); i++) {
+    unsigned char c = msg.at(i);
+    if (((c >= 'A') && (c <= 'Z'))
+	|| ((c >= 'a') && (c <= 'z'))
+	|| ((c >= '0') && (c <= '9'))
+	|| (c == '}') || (c == '{') || (c == ' ')
+	|| (c == ':') || (c == '/') || (c == '-')
+	|| (c == ',') || (c == '&') || (c == '?')
+	|| (c == '<') || (c == '>') || (c == '.')
+	|| (c == '(') || (c == ')') || (c == '%')
+	|| (c == '!') || (c == '+') || (c == '-')
+	|| (c == '$') || (c == ';') || (c == '@')
+	|| (c == '[') || (c == ']')
+	|| (c == '=') || (c == '\'')) {
+      ; // this char's ok by me
+    } else {
+      std::string replacement = "0x";
+      unsigned int trans;
+      // TODO: optimize this
+      for (trans = 0; trans < sizeof(translationTable) / sizeof (char *) / 2; trans++) {
+	if (!strncmp(translationTable[trans][0],&(msg.c_str()[i]),utf8bytes[(int)c])) {
+	  replacement = translationTable[trans][1];
+	  break;
 	}
-      break;
-
+      }
+      if (trans == sizeof(translationTable) / sizeof (char *) / 2) {
+	// didn't find a match
+	for (int j = 0; j < utf8bytes[(int)c]; j++) {
+	//for (int j = 0; j < 1; j++) {
+	  char hexchar[30];
+	  sprintf(hexchar, "%2X", (unsigned char)msg.at(i+j));
+	  replacement += hexchar;
+	}
+      }
+      msg.replace(i,utf8bytes[(int)c],replacement);
+      i += replacement.length() - 1;
     }
   }
+  //std::cout << "\"" + msg + "\"\n";
 }
 
 
