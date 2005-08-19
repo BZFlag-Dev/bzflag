@@ -11,8 +11,13 @@
  */
 
 #include "common.h"
+
+// system headers
 #include <string>
+
+// common headers
 #include "bzfio.h"
+#include "StateDatabase.h"
 #include "bzfgl.h"
 #include "OpenGLTexture.h"
 #include "OpenGLGState.h"
@@ -151,13 +156,19 @@ bool OpenGLTexture::setupImage(const GLubyte* pixels)
     scaledHeight <<= 1;
   }
 
-  // get minimum valid size for texture (boost to 2^m x 2^n)
+  // get maximum valid size for texture (boost to 2^m x 2^n)
   GLint maxTextureSize;
   glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTextureSize);
 
   // hard limit, some drivers have problems with sizes greater
   // then this (espeically if you are using glTexSubImage2D)
-  const GLint bzMaxTexSize = 512;
+  const GLint dbMaxTexSize = BZDB.evalInt("maxTextureSize");
+  GLint bzMaxTexSize = 1;
+  // align the max size to a power of two  (wasteful)
+  while (bzMaxTexSize < dbMaxTexSize) {
+    bzMaxTexSize <<= 1;
+  }
+  
   if ((maxTextureSize < 0) || (maxTextureSize > bzMaxTexSize)) {
     maxTextureSize = bzMaxTexSize;
   }
