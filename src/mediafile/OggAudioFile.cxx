@@ -48,10 +48,10 @@ std::string	OggAudioFile::getExtension()
   return ".ogg";
 }
 
-bool		OggAudioFile::read(void* buffer, int numFrames)
+bool		OggAudioFile::read(void* buffer, int frameCount)
 {
   int result;
-  long bytestotal = numFrames * info->channels * 2;
+  long bytestotal = frameCount * info->channels * 2;
   long filelength = bytestotal;
   while (bytestotal > 0) {
     long oldoff = ov_pcm_tell(&file) * info->channels * 2;
