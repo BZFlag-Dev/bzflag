@@ -317,7 +317,7 @@ void Octree::getExtents (SceneNode** list, int listSize)
     }
   }
 
-  extents.copy(tmpExts);
+  extents = tmpExts;
 
   // make it a cube, with Z on its minimum
   for (i = 0; i < 2; i++) {
@@ -383,9 +383,9 @@ OctreeNode::OctreeNode(unsigned char _depth, const Extents& exts,
   memcpy (list, _list, listBytes);
 
   // copy the extents, and make a slighty puffed up version
-  extents.copy(exts);
+  extents = exts;
   Extents testExts;
-  testExts.copy(exts);
+  testExts = exts;
   testExts.addMargin(testFudge);
 
   // find all of the intersecting nodes

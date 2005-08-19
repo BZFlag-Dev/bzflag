@@ -582,7 +582,7 @@ void CollisionManager::setExtents (ObsList *list)
     }
   }
 
-  gridExtents.copy(worldExtents);
+  gridExtents = worldExtents;
 
   // make it a cube, with Z on its minimum
   for (i = 0; i < 2; i++) {
@@ -631,9 +631,9 @@ ColDetNode::ColDetNode(unsigned char _depth,
   fullList.list = (Obstacle**) malloc (listBytes);
 
   // copy the extents, and make the testing extents with margin
-  extents.copy(exts);
+  extents = exts;
   Extents testExts;
-  testExts.copy(exts);
+  testExts = exts;
   testExts.addMargin(testFudge);
 
   // setup some test parameters

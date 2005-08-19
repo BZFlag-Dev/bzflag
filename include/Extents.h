@@ -28,7 +28,7 @@ class Extents {
 
     void reset();
 
-    void copy(const Extents& orig);
+    Extents& operator=(const Extents&);
     void set(const float mins[3], const float maxs[3]);
 
     void expandToBox(const Extents& box); // expand to contain the box
@@ -84,7 +84,7 @@ inline Extents::Extents(const float _mins[3], const float _maxs[3])
 }
 
 
-inline void Extents::copy(const Extents& orig)
+inline Extents& Extents::operator=(const Extents& orig)
 {
   mins[0] = orig.mins[0];
   mins[1] = orig.mins[1];
@@ -92,7 +92,7 @@ inline void Extents::copy(const Extents& orig)
   maxs[0] = orig.maxs[0];
   maxs[1] = orig.maxs[1];
   maxs[2] = orig.maxs[2];
-  return;
+  return *this;
 }
 
 
