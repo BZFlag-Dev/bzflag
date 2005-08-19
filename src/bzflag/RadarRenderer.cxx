@@ -377,7 +377,8 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
   const double yCenter = double(y) + 0.5 * double(h);
   const double xUnit = 2.0 * radarRange / double(w);
   const double yUnit = 2.0 * radarRange / double(h);
-  const double maxHeight = (double) COLLISIONMGR.getWorldExtents().maxs[2];
+  // NOTE: the visual extents include passable objects
+  const double maxHeight = (double) COLLISIONMGR.getVisualExtents().maxs[2];
   glOrtho(-xCenter * xUnit, (xSize - xCenter) * xUnit,
 	  -yCenter * yUnit, (ySize - yCenter) * yUnit,
 	  -(maxHeight + 10.0), (maxHeight + 10.0));
@@ -650,9 +651,11 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
     }
 
     // draw flags not on tanks.
+    // draw them in reverse order so that the team flags
+    // (which come first), are drawn on top of the normal flags.
     const int maxFlags = world->getMaxFlags();
     const bool drawNormalFlags = BZDB.isTrue("displayRadarFlags");
-    for (i = 0; i < maxFlags; i++) {
+    for (i = (maxFlags - 1); i >= 0; i--) {
       const Flag& flag = world->getFlag(i);
       // don't draw flags that don't exist or are on a tank
       if (flag.status == FlagNoExist || flag.status == FlagOnTank)
@@ -892,7 +895,7 @@ void RadarRenderer::renderBoxPyrMeshFast(float _range)
   glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 
   ViewFrustum radarClipper;
-  // it's also interesting to just use the viewing frustum
+  // NOTE: it's also interesting to just use the viewing frustum
   radarClipper.setOrthoPlanes(RENDERER.getViewFrustum(), _range, _range);
   RENDERER.getSceneDatabase()->renderRadarNodes(radarClipper);
 

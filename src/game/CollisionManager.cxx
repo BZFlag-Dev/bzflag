@@ -46,9 +46,9 @@ static int leafNodes = 0;
 static int totalNodes = 0;
 static int totalElements = 0;
 
-static ObsList	FullList;  // the complete list of obstacles
+static ObsList		FullList;  // the complete list of obstacles
 static SplitObsList	SplitList; // the complete split list of obstacles
-static ObsList	FullPad;   // for returning a full list of obstacles
+static ObsList		FullPad;   // for returning a full list of obstacles
 static SplitObsList	SplitPad;  // for returning a split list of obstacles
 
 static ColDetNodeList	RayList;   // for returning a list a ray hit nodes
@@ -470,35 +470,79 @@ void CollisionManager::load ()
 
   // do the type/height sort
   qsort(FullList.list, FullList.count, sizeof(Obstacle*), compareObstacles);
-
+  
   // generate the octree
   setExtents (&FullList);
   root = new ColDetNode (0, gridExtents, &FullList);
 
-
+  // tally the stats
   leafNodes = 0;
   totalNodes = 0;
   totalElements = 0;
   root->tallyStats();
 
+  // setup the ray list
+  RayList.list = new ColDetNode*[leafNodes];
+  RayList.count = 0;
+
+  // setup visual extents
+  visualExtents = worldExtents;
+  for (i = 0; i < boxCount; i++) {
+    const Obstacle* obs = boxes[i];
+    if (obs->isPassable()) {
+      visualExtents.expandToBox(obs->getExtents());
+    }
+  }
+  for (i = 0; i < pyrCount; i++) {
+    const Obstacle* obs = pyrs[i];
+    if (obs->isPassable()) {
+      visualExtents.expandToBox(obs->getExtents());
+    }
+  }
+  for (i = 0; i < baseCount; i++) {
+    const Obstacle* obs = bases[i];
+    if (obs->isPassable()) {
+      visualExtents.expandToBox(obs->getExtents());
+    }
+  }
+  for (i = 0; i < teleCount; i++) {
+    const Obstacle* obs = teles[i];
+    if (obs->isPassable()) {
+      visualExtents.expandToBox(obs->getExtents());
+    }
+  }
+  for (i = 0; i < meshCount; i++) {
+    const Obstacle* obs = meshes[i];
+    if (obs->isPassable()) {
+      visualExtents.expandToBox(obs->getExtents());
+    }
+  }
+
+  // print some statistics
   DEBUG2 ("ColDet Octree obstacles = %i\n", FullList.count);
   for (i = 0; i < 3; i++) {
     DEBUG2 ("  grid extent[%i] = %f, %f\n", i, gridExtents.mins[i],
 					       gridExtents.maxs[i]);
   }
   for (i = 0; i < 3; i++) {
-    DEBUG2 ("  world extent[%i] = %f, %f\n", i,
-	    worldExtents.mins[i], worldExtents.maxs[i]);
+    DEBUG2 ("  world extent[%i] = %f, %f\n", i, worldExtents.mins[i],
+                                                worldExtents.maxs[i]);
+  }
+  for (i = 0; i < 3; i++) {
+    DEBUG2 ("  visual extent[%i] = %f, %f\n", i, visualExtents.mins[i],
+                                                 visualExtents.maxs[i]);
   }
   DEBUG2 ("ColDet Octree leaf nodes  = %i\n", leafNodes);
   DEBUG2 ("ColDet Octree total nodes = %i\n", totalNodes);
   DEBUG2 ("ColDet Octree total elements = %i\n", totalElements);
 
-  // setup the ray list
-  RayList.list = new ColDetNode*[leafNodes];
-  RayList.count = 0;
+  // print the timing info
+  float elapsed = (float)(TimeKeeper::getCurrent() - startTime);
+  DEBUG2 ("Collision Octree processed in %.3f seconds.\n", elapsed);
 
-  // setup the split list  (currently unused/untested)
+
+  // setup the split list
+  // FIXME: currently unused, untested, and incorrect
   Obstacle** listPtr = FullList.list;
   SplitList.named.boxes.list = listPtr;
   SplitList.named.boxes.count = (int)boxes.size();
@@ -512,8 +556,6 @@ void CollisionManager::load ()
   SplitList.named.teles.list = listPtr;
   SplitList.named.teles.count = (int)teles.size();
 
-  float elapsed = (float)(TimeKeeper::getCurrent() - startTime);
-  DEBUG2 ("Collision Octree processed in %.3f seconds.\n", elapsed);
 
   return;
 }

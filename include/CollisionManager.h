@@ -72,6 +72,7 @@ class CollisionManager {
     bool needReload() const;	 // octree parameter has changed
     int getObstacleCount() const;    // total number of obstacles
     const Extents& getWorldExtents() const;
+    const Extents& getVisualExtents() const;
 
 
     // test against an axis aligned bounding box
@@ -109,6 +110,7 @@ class CollisionManager {
     float worldSize;
     Extents gridExtents;
     Extents worldExtents;
+    Extents visualExtents; // includes passable objects
 };
 
 extern CollisionManager COLLISIONMGR;
@@ -190,6 +192,11 @@ inline int CollisionManager::getObstacleCount() const
 inline const Extents& CollisionManager::getWorldExtents() const
 {
   return worldExtents;
+}
+
+inline const Extents& CollisionManager::getVisualExtents() const
+{
+  return visualExtents;
 }
 
 
