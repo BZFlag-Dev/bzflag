@@ -604,7 +604,7 @@ bool CmdList::operator() (const char*, GameKeeper::Player *playerData)
 
 
 bool CmdHelp::operator() (const char         *message,
-			     GameKeeper::Player *playerData)
+			  GameKeeper::Player *playerData)
 {
   
   int i;
@@ -612,11 +612,18 @@ bool CmdHelp::operator() (const char         *message,
   if (!i)
     return false;
   i--;
-  if (message[i] != '?')
+  bool listOnly;
+  if (message[i] == '?')
+    listOnly = true;
+  else if (message[i] == '*') 
+    listOnly = false;
+  else
     return false;
+
   std::string commandToken(message, i);
 
   bool none = true;
+  unsigned int matching = 0;
   int t = playerData->getIndex();
   MapOfCommands::iterator it;
   MapOfCommands &commandMap = *getMapRef();
@@ -624,13 +631,25 @@ bool CmdHelp::operator() (const char         *message,
     std::string master = it->first;
     master.resize(i);
     if (master == commandToken) {
-      sendMessage(ServerPlayer, t, it->second->getHelp().c_str());
+      matching++;
       none = false;
     }
   }
   if (none)
     sendMessage(ServerPlayer, t,
 		("No command starting with " + commandToken).c_str());
+  else
+    for (it = commandMap.begin(); it != commandMap.end(); it++) {
+      std::string master = it->first;
+      master.resize(i);
+      if (master == commandToken)
+	if (matching > 1 || listOnly) {
+	  sendMessage(ServerPlayer, t, it->second->getHelp().c_str());
+	} else {
+	  std::string commandLine = it->first + (message + i + 1);
+	  return (*(it->second))(commandLine.c_str(), playerData);
+	}
+    }
   return true;
 }
 

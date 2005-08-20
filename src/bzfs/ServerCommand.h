@@ -31,13 +31,14 @@ class ServerCommand {
 
   std::string getHelp();
 
+  virtual bool operator () (const char         *commandLine,
+			    GameKeeper::Player *playerData);
+
+
  protected:
 
   ServerCommand(std::string _commandName, std::string _oneLineHelp = "");
   virtual ~ServerCommand();
-
-  virtual bool operator () (const char         *commandLine,
-			    GameKeeper::Player *playerData);
 
   std::string commandName;
   std::string oneLineHelp;
