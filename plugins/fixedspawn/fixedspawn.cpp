@@ -56,7 +56,6 @@ bool SpawnObject::handle ( bzApiString object, bz_CustomMapObjectInfo *data )
 		std::string tag = nubs[0];
 		if ( nubs[0] == "position" )
 		{
-		//	std::vector<std::string> vals = TextUtils::tokenize(nubs[1]," ");
 			if ( nubs.size()>2)
 			{
 				trSpawnPos	pos;

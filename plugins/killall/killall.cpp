@@ -17,7 +17,7 @@ public:
 
 		if ( !player->admin )
 		{
-			bz_sendTextMessage(BZ_SERVER,playerID,"you do not have permisions to run /killall");
+			bz_sendTextMessage(BZ_SERVER,playerID,"You do not have permission to run /killall");
 			return true;
 		}
 

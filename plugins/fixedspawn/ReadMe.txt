@@ -2,8 +2,10 @@
     DYNAMIC LINK LIBRARY : fixedspawn Project Overview
 ========================================================================
 
-This is the fixedspawn. It makes a fixedspawn_DESCRIPTION
+This is the fixedspawn plugin. It lets maps use fixed spawn points.
 
-Replace everyone in every file in here the term fixedspawn with the name of your project
-open then .sln and .vcproj files in a text editor and do a search and replace
+To use a fixed spawnpoint in your map, add an object like this:
 
+spawn
+  position 0 0 10
+end

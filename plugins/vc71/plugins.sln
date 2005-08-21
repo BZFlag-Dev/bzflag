@@ -31,6 +31,14 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "scorereset", "..\scorereset
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "fixedspawn", "..\fixedspawn\fixedspawn.vcproj", "{1F43075E-8AF6-486F-AEDF-6B350A6CE141}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "killall", "..\killall\killall.vcproj", "{1F43075E-8AF6-486F-AEDF-6B350A6CE141}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfiguration) = preSolution
 		Debug = Debug
@@ -69,6 +77,14 @@ Global
 		{B629554E-D0E9-4400-909B-7130F116E15D}.Debug.Build.0 = Debug|Win32
 		{B629554E-D0E9-4400-909B-7130F116E15D}.Release.ActiveCfg = Release|Win32
 		{B629554E-D0E9-4400-909B-7130F116E15D}.Release.Build.0 = Release|Win32
+		{1F43075E-8AF6-486F-AEDF-6B350A6CE141}.Debug.ActiveCfg = Debug|Win32
+		{1F43075E-8AF6-486F-AEDF-6B350A6CE141}.Debug.Build.0 = Debug|Win32
+		{1F43075E-8AF6-486F-AEDF-6B350A6CE141}.Release.ActiveCfg = Release|Win32
+		{1F43075E-8AF6-486F-AEDF-6B350A6CE141}.Release.Build.0 = Release|Win32
+		{1F43075E-8AF6-486F-AEDF-6B350A6CE141}.Debug.ActiveCfg = Debug|Win32
+		{1F43075E-8AF6-486F-AEDF-6B350A6CE141}.Debug.Build.0 = Debug|Win32
+		{1F43075E-8AF6-486F-AEDF-6B350A6CE141}.Release.ActiveCfg = Release|Win32
+		{1F43075E-8AF6-486F-AEDF-6B350A6CE141}.Release.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 	EndGlobalSection
