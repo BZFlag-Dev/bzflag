@@ -73,13 +73,13 @@ void RobotPlayer::projectPosition(const Player *targ,const float t,float &x,floa
     double hisspeed = hypotf(hisvx, hisvy);
     double alfa = omega * t;
     double r = hisspeed / fabs(omega);
-    double dx = r * sin(alfa);
-    double dy2 = r * (1 - cos(alfa));
+    double dx = r * sinf(alfa);
+    double dy2 = r * (1 - cosf(alfa));
     double beta = atan2(dy2, dx) * (targ->getAngularVelocity() > 0 ? 1 : -1);
     double gamma = atan2(hisvy, hisvx);
     double rho = gamma+beta;
-    sx = hisspeed * t * cos(rho);
-    sy = hisspeed * t * sin(rho);
+    sx = hisspeed * t * cosf(rho);
+    sy = hisspeed * t * sinf(rho);
   }
   x=(float)hisx+(float)sx;
   y=(float)hisy+(float)sy;
@@ -253,7 +253,7 @@ void			RobotPlayer::doUpdateMotion(float dt)
 	if (dist < 150.0f) {
 	  const float *shotVel = shot->getVelocity();
 	  float shotAngle = atan2f(shotVel[1], shotVel[0]);
-	  float shotUnitVec[2] = {cos(shotAngle), sin(shotAngle)};
+	  float shotUnitVec[2] = {cosf(shotAngle), sinf(shotAngle)};
 
 	  float trueVec[2] = {(position[0]-shotPos[0])/dist,(position[1]-shotPos[1])/dist};
 	  float dotProd = trueVec[0]*shotUnitVec[0]+trueVec[1]*shotUnitVec[1];

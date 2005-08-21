@@ -90,8 +90,8 @@ float TargetingUtils::getTargetAngleDifference( const float *src, float srcAzimu
 
   getUnitVector(src, target, targetUnitVector);
 
-  srcUnitVector[0] = cos(srcAzimuth);
-  srcUnitVector[1] = sin(srcAzimuth);
+  srcUnitVector[0] = cosf(srcAzimuth);
+  srcUnitVector[1] = sinf(srcAzimuth);
   srcUnitVector[2] = 0.0f;
 
   return acos( targetUnitVector[0]*srcUnitVector[0] + targetUnitVector[1]*srcUnitVector[1] );

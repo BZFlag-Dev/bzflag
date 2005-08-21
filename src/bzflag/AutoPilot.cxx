@@ -113,7 +113,7 @@ ShotPath *findWorstBullet(float &minDistance)
       if (dist < minDistance) {
 	const float *shotVel = shot->getVelocity();
 	float shotAngle = atan2f(shotVel[1], shotVel[0]);
-	float shotUnitVec[2] = {cos(shotAngle), sin(shotAngle)};
+	float shotUnitVec[2] = {cosf(shotAngle), sinf(shotAngle)};
 
 	float trueVec[2] = { (pos[0] - shotPos[0]) / dist, (pos[1] - shotPos[1]) / dist };
 	float dotProd = trueVec[0] * shotUnitVec[0] + trueVec[1] * shotUnitVec[1];
@@ -146,7 +146,7 @@ ShotPath *findWorstBullet(float &minDistance)
     if (dist < minDistance) {
       const float *shotVel = shot->getVelocity();
       float shotAngle = atan2f(shotVel[1], shotVel[0]);
-      float shotUnitVec[2] = {cos(shotAngle), sin(shotAngle)};
+      float shotUnitVec[2] = {cosf(shotAngle), sinf(shotAngle)};
 
       float trueVec[2] = { (pos[0] - shotPos[0]) / dist, (pos[1] - shotPos[1]) / dist };
       float dotProd = trueVec[0] * shotUnitVec[0] + trueVec[1] * shotUnitVec[1];
@@ -212,7 +212,7 @@ bool	avoidBullet(float &rotation, float &speed)
   const float *shotPos = shot->getPosition();
   const float *shotVel = shot->getVelocity();
   float shotAngle = atan2f(shotVel[1],shotVel[0]);
-  float shotUnitVec[2] = {cos(shotAngle), sin(shotAngle)};
+  float shotUnitVec[2] = {cosf(shotAngle), sinf(shotAngle)};
 
   float trueVec[2] = {(pos[0]-shotPos[0])/minDistance,(pos[1]-shotPos[1])/minDistance};
   float dotProd = trueVec[0]*shotUnitVec[0]+trueVec[1]*shotUnitVec[1];
@@ -431,8 +431,8 @@ bool chasePlayer(float &rotation, float &speed)
   const Player *target = myTank->getTarget();
   if ((distance > (BZDB.eval(StateDatabase::BZDB_SHOTSPEED) /2.0f))
       ||  (myTank->getFiringStatus() != LocalPlayer::Ready)) {
-    float enemyUnitVec[2] = { cos(enemyAzimuth), sin(enemyAzimuth) };
-    float myUnitVec[2] = { cos(myAzimuth), sin(myAzimuth) };
+    float enemyUnitVec[2] = { cosf(enemyAzimuth), sinf(enemyAzimuth) };
+    float myUnitVec[2] = { cosf(myAzimuth), sinf(myAzimuth) };
     float dotProd = (myUnitVec[0] * enemyUnitVec[0] + myUnitVec[1] * enemyUnitVec[1]);
     if (dotProd < 0.866f) {
       //if target is more than 30 degrees away, turn as fast as you can

@@ -1226,8 +1226,8 @@ void StdShotTeleportEffect::draw(const SceneRenderer &)
 
 void RadialToCartesian ( float angle, float rad, float *pos )
 {
-	pos[0] = sin(angle*deg2Rad)*rad;
-	pos[1] = cos(angle*deg2Rad)*rad;
+	pos[0] = sinf(angle*deg2Rad)*rad;
+	pos[1] = cosf(angle*deg2Rad)*rad;
 }
 
 void drawRingXY ( float rad, float z, float topsideOffset, float bottomUV, float topUV, int segements )

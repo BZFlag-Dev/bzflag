@@ -162,7 +162,7 @@ bool Plan::avoidBullet(float &rotation, float &speed)
 	const float *shotPos = shot->getPosition();
 	const float *shotVel = shot->getVelocity();
 	float shotAngle = atan2f(shotVel[1],shotVel[0]);
-	float shotUnitVec[2] = {cos(shotAngle), sin(shotAngle)};
+	float shotUnitVec[2] = {cosf(shotAngle), sinf(shotAngle)};
 
 	float trueVec[2] = {(pos[0]-shotPos[0])/minDistance,(pos[1]-shotPos[1])/minDistance};
 	float dotProd = trueVec[0]*shotUnitVec[0]+trueVec[1]*shotUnitVec[1];
@@ -240,7 +240,7 @@ ShotPath *Plan::findWorstBullet(float &minDistance)
 			if (dist < minDistance) {
 				const float *shotVel = shot->getVelocity();
 				float shotAngle = atan2f(shotVel[1], shotVel[0]);
-				float shotUnitVec[2] = {cos(shotAngle), sin(shotAngle)};
+				float shotUnitVec[2] = {cosf(shotAngle), sinf(shotAngle)};
 
 				float trueVec[2] = { (pos[0] - shotPos[0]) / dist, (pos[1] - shotPos[1]) / dist };
 				float dotProd = trueVec[0] * shotUnitVec[0] + trueVec[1] * shotUnitVec[1];
@@ -274,7 +274,7 @@ ShotPath *Plan::findWorstBullet(float &minDistance)
 		if (dist < minDistance) {
 			const float *shotVel = shot->getVelocity();
 			float shotAngle = atan2f(shotVel[1], shotVel[0]);
-			float shotUnitVec[2] = {cos(shotAngle), sin(shotAngle)};
+			float shotUnitVec[2] = {cosf(shotAngle), sinf(shotAngle)};
 
 			float trueVec[2] = { (pos[0] - shotPos[0]) / dist, (pos[1] - shotPos[1]) / dist };
 			float dotProd = trueVec[0] * shotUnitVec[0] + trueVec[1] * shotUnitVec[1];
