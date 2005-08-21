@@ -105,6 +105,7 @@
 #include "ObstacleMgr.h"
 #include "AresHandler.h"
 #include "cURLManager.h"
+#include "ServerList.h"
 
 //#include "messages.h"
 #include "Downloads.h"
@@ -5763,6 +5764,25 @@ static void		playingLoop()
     if (joinRequested) {
       // if already connected to a game then first sign off
       if (myTank) leaveGame();
+
+      // get token if we need to (have a password but no token)
+      if ((startupInfo.token[0] == '\0')
+	  && (startupInfo.password[0] != '\0')) {
+	ServerList* serverList = new ServerList;
+	serverList->startServerPings(&startupInfo);
+	// wait no more than 10 seconds for a token
+	for (int j = 0; j < 40; j++) {
+	  serverList->checkEchos(getStartupInfo());
+	  cURLManager::perform();
+	  if (startupInfo.token[0] != '\0') break;
+	  TimeKeeper::sleep(0.25f);
+	}
+	delete serverList;
+      }
+      // don't let the bad token specifier slip through to the server,
+      // just erase it
+      if (strcmp(startupInfo.token, "badtoken") == 0)
+	startupInfo.token[0] = '\0';
 
       ares.queryHost(startupInfo.serverName);
       waitingDNS = true;

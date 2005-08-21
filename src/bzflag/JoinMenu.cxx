@@ -16,7 +16,6 @@
 /* common implementation headers */
 #include "FontManager.h"
 #include "Protocol.h"
-#include "ServerList.h"
 #include "StartupInfo.h"
 #include "TimeKeeper.h"
 #include "cURLManager.h"
@@ -231,26 +230,8 @@ void JoinMenu::execute()
       return;
     }
 
-    // get token if we need to (have a password but no token)
-    if ((info->token[0] == '\0') && (info->password[0] != '\0')) {
-      ServerList* serverList = new ServerList;
-      serverList->startServerPings(info);
-      // wait no more than 10 seconds for a token
-      for (int i = 0; i < 40; i++) {
-	serverList->checkEchos(getStartupInfo());
-	cURLManager::perform();
-	if (info->token[0] != '\0') break;
-	TimeKeeper::sleep(0.25f);
-      }
-      delete serverList;
-    }
-
     // let user know we're trying
     setStatus("Trying...");
-
-    // don't let the bad token specifier slip through to the server, just erase it
-    if (strcmp(info->token, "badtoken") == 0)
-      info->token[0] = '\0';
 
     // schedule attempt to join game
     joinGame();
