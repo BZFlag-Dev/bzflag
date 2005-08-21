@@ -195,10 +195,10 @@ This command will reset to zero the score and TKs of the specified player and up
                   <p><strong>Permission functions </strong><br> 
                     The permission functions all take permsision names as input. These names are the same as the server uses in its users and groups files. All the standard permission names have been defined in the bzfsAPI.h file using the <strong>bz_perm_XXXXXXXX </strong>set of defines. Groups can have custom permissions, so if you want to use a non standard permission in your plugin, you can also use that name in
 the &quot;hasPerm&quot; function. Custom permissions can only be read via the API, they can not be set. So the user will have to know to enter the permission name into his/her groups file.</p>
-                  <p><strong>BZF_API bool bz_hasPerm ( bz_PlayerRecord *playerRecord, const char* perm );</strong><br> 
+                  <p><strong>BZF_API bool bz_hasPerm ( int playerID, const char* perm );</strong><br> 
                     This function will return true if the user has the permission named in the perm paramater </p>
-                  <p><strong>BZF_API bool bz_grantPerm ( bz_PlayerRecord *playerRecord, const char* perm );</strong><br>
-This function will give the user the specified permission, and return true if the operation was successful.</p>                                    <p><strong>BZF_API bool bz_revokePerm ( bz_PlayerRecord *playerRecord, const char* perm );</strong><br>
+                  <p><strong>BZF_API bool bz_grantPerm ( int playerID, const char* perm );</strong><br>
+This function will give the user the specified permission, and return true if the operation was successful.</p>                                    <p><strong>BZF_API bool bz_revokePerm ( int playerID, const char* perm );</strong><br>
 This function will remove the specified permision from the user, and return true if the operation was successful.</p>
 <p>&nbsp;</p>
 <p><span class="style4 style7">Message Functions </span></p>

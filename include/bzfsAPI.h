@@ -32,7 +32,7 @@
 	#define BZF_PLUGIN_CALL extern "C"
 #endif
 
-#define BZ_API_VERSION	10
+#define BZ_API_VERSION	11
 
 #define BZ_GET_PLUGIN_VERSION BZF_PLUGIN_CALL int bz_GetVersion ( void ) { return BZ_API_VERSION;}
 
@@ -674,9 +674,9 @@ class bz_PlayerRecord;
 BZF_API bool bz_getPlayerIndexList ( bzAPIIntList *playerList );
 BZF_API bz_PlayerRecord *bz_getPlayerByIndex ( int index );
 BZF_API bool bz_updatePlayerData ( bz_PlayerRecord *playerRecord );
-BZF_API bool bz_hasPerm ( bz_PlayerRecord *playerRecord, const char* perm );
-BZF_API bool bz_grantPerm ( bz_PlayerRecord *playerRecord, const char* perm  );
-BZF_API bool bz_revokePerm ( bz_PlayerRecord *playerRecord, const char* perm  );
+BZF_API bool bz_hasPerm ( int playerID, const char* perm );
+BZF_API bool bz_grantPerm ( int playerID, const char* perm );
+BZF_API bool bz_revokePerm ( int playerID, const char* perm );
 BZF_API bool bz_freePlayerRecord ( bz_PlayerRecord *playerRecord );
 
 class bz_PlayerRecord
@@ -703,9 +703,9 @@ public:
 
 	void update ( void ){bz_updatePlayerData(this);}	// call to update with current data
 	
-	bool hasPerm ( const char* perm ){return bz_hasPerm(this,perm);}	
-	bool grantPerm ( const char* perm ){return bz_grantPerm(this,perm);}	
-	bool revokePerm ( const char* perm ){return bz_revokePerm(this,perm);}	
+	bool hasPerm ( const char* perm ){return bz_hasPerm(playerID,perm);}	
+	bool grantPerm ( const char* perm ){return bz_grantPerm(playerID,perm);}	
+	bool revokePerm ( const char* perm ){return bz_revokePerm(playerID,perm);}	
 
 	int playerID;
 	bzApiString callsign;
@@ -732,6 +732,7 @@ public:
 	int teamKills;
 };
 
+BZF_API bool bz_setPlayerAdmin (int playerId);
 BZF_API bool bz_setPlayerWins (int playerId, int wins);
 BZF_API bool bz_setPlayerLosses (int playerId, int losses);
 BZF_API bool bz_setPlayerTKs(int playerId, int tks);

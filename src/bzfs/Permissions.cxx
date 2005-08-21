@@ -231,7 +231,7 @@ bool PlayerAccessInfo::hasPerm(PlayerAccessInfo::AccessPerm right) const
     return true;
 	
   bool isAllowed = false;
-	for (std::vector<std::string>::const_iterator itr=groups.begin(); itr!=groups.end(); ++itr) {
+  for (std::vector<std::string>::const_iterator itr=groups.begin(); itr!=groups.end(); ++itr) {
     PlayerAccessMap::iterator group = groupAccess.find(*itr);
     if (group != groupAccess.end()){
       if (group->second.explicitDenys.test(right))

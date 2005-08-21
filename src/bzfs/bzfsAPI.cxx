@@ -579,12 +579,14 @@ BZF_API bool bz_updatePlayerData ( bz_PlayerRecord *playerRecord )
 	return true;
 }
 
-BZF_API bool bz_hasPerm ( bz_PlayerRecord *playerRecord, const char* perm )
+BZF_API bool bz_hasPerm ( int playerID, const char* perm )
 {
-	if (!playerRecord || !perm)
+	if (!perm)
 		return false;
 
-	GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerRecord->playerID);
+	GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerID);
+	if (!player)
+		return false;
 
 	std::string permName = perm;
 
@@ -598,12 +600,15 @@ BZF_API bool bz_hasPerm ( bz_PlayerRecord *playerRecord, const char* perm )
 		return player->accessInfo.hasCustomPerm(permName.c_str());
 }
 
-BZF_API bool bz_grantPerm ( bz_PlayerRecord *playerRecord, const char* perm  )
+BZF_API bool bz_grantPerm ( int playerID, const char* perm  )
 {
-	if (!playerRecord || !perm)
+	if (!perm)
 		return false;
 
-	GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerRecord->playerID);
+	GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerID);
+
+	if (!player)
+		return false;
 
 	std::string permName = perm;
 
@@ -618,12 +623,15 @@ BZF_API bool bz_grantPerm ( bz_PlayerRecord *playerRecord, const char* perm  )
 	return true;
 }
 
-BZF_API bool bz_revokePerm ( bz_PlayerRecord *playerRecord, const char* perm  )
+BZF_API bool bz_revokePerm ( int playerID, const char* perm  )
 {
-	if (!playerRecord || !perm)
+	if (!perm)
 		return false;
 
-	GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerRecord->playerID);
+	GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerID);
+
+	if (!player)
+		return false;
 
 	std::string permName = perm;
 
@@ -693,6 +701,17 @@ BZF_API bool bz_setPlayerWins (int playerId, int wins)
 
 	player->score.setWins(wins);
 	broadcastPlayerScoreUpdate(playerId);
+	return true;
+}
+
+BZF_API bool bz_setPlayerAdmin (int playerId)
+{
+	GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerId);
+
+	if (!player)
+		return false;
+
+	player->accessInfo.setAdmin();
 	return true;
 }
 
