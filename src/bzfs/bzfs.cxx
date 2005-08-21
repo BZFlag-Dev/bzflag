@@ -2579,11 +2579,11 @@ static void captureFlag(int playerIndex, TeamColor teamCaptured)
   buf = nboPackUShort(buf, uint16_t(teamCaptured));
   broadcastMessage(MsgCaptureFlag, (char*)buf-(char*)bufStart, bufStart);
 
-  // find any events for capturing the flags on the caped team or events for ANY team
+  // find any events for capturing the flags on the capped team or events for ANY team
   bz_CTFCaptureEventData	eventData;
-  eventData.teamCaped = convertTeam((TeamColor)teamIndex);
-  eventData.teamCaping = convertTeam(teamCaptured);
-  eventData.playerCaping = playerIndex;
+  eventData.teamCapped = convertTeam((TeamColor)teamIndex);
+  eventData.teamCapping = convertTeam(teamCaptured);
+  eventData.playerCapping = playerIndex;
   playerData->getPlayerState(eventData.pos, eventData.rot);
   eventData.time = TimeKeeper::getCurrent().getSeconds();
 

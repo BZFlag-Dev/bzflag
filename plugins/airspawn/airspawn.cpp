@@ -23,7 +23,7 @@ public:
 	float spawnRange;
 };
 
-airspawn	airspawnHandaler;
+airspawn	airspawnHandler;
 
 BZF_PLUGIN_CALL int bz_Load ( const char* commandLine )
 {
@@ -35,14 +35,14 @@ BZF_PLUGIN_CALL int bz_Load ( const char* commandLine )
 	if ( range < 0.001f )
 		range = 10.0f;
 	
-	airspawnHandaler.spawnRange = range;
-	bz_registerEvent(bz_eGetPlayerSpawnPosEvent,&airspawnHandaler);
+	airspawnHandler.spawnRange = range;
+	bz_registerEvent(bz_eGetPlayerSpawnPosEvent,&airspawnHandler);
 	return 0;
 }
 
 BZF_PLUGIN_CALL int bz_Unload ( void )
 {
-	bz_removeEvent(bz_eGetPlayerSpawnPosEvent,&airspawnHandaler);
+	bz_removeEvent(bz_eGetPlayerSpawnPosEvent,&airspawnHandler);
 	bz_debugMessage(4,"airspawn plugin unloaded");
 	return 0;
 }

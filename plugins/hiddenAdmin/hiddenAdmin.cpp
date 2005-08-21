@@ -41,18 +41,6 @@ BZF_PLUGIN_CALL int bz_Unload ( void )
 	return 0;
 }
 
-// ----------------- SpreeTracker-----------------
-
-/*typedef struct 
-{
-int playerID;
-std::string callsign;
-double		startTime;
-double		lastUpdateTime;
-int			spreeTotal;
-}trPlayerHistoryRecord;
-
-std::map<int, trPlayerHistoryRecord > playerList; */
 
 HiddenAdmin::HiddenAdmin()
 {

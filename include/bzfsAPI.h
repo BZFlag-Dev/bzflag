@@ -281,15 +281,15 @@ public:
 	bz_CTFCaptureEventData()
 	{
 		eventType = bz_eCaptureEvent;
-		teamCaped = eNoTeam;
-		teamCaping = eNoTeam;
-		playerCaping = -1;
+		teamCapped = eNoTeam;
+		teamCapping = eNoTeam;
+		playerCapping = -1;
 	}
 	virtual ~bz_CTFCaptureEventData(){};
 
-	bz_eTeamType teamCaped;
-	bz_eTeamType	teamCaping;
-	int playerCaping;
+	bz_eTeamType teamCapped;
+	bz_eTeamType teamCapping;
+	int playerCapping;
 
 	float pos[3];
 	float rot;
@@ -805,7 +805,7 @@ BZF_API bool bz_removeCustomSlashCommand ( const char* command );
 BZF_API bool bz_getStandardSpawn ( int playeID, float pos[3], float *rot );
 
 // dying
-BZF_API bool bz_killPlayer ( int playeID, bool spawnOnBasem, int killerID = -1, const char* flagID = NULL );
+BZF_API bool bz_killPlayer ( int playeID, bool spawnOnBase, int killerID = -1, const char* flagID = NULL );
 
 // flags
 BZF_API bool bz_removePlayerFlag ( int playeID );
@@ -946,11 +946,11 @@ BZF_API bool bz_addURLJob ( const char* URL, bz_URLHandler* handler = NULL, cons
 BZF_API bool bz_removeURLJob ( const char* URL );
 BZF_API bool bz_stopAllURLJobs ( void );
 
-// inter plugin comunication
+// inter plugin communication
 BZF_API bool bz_clipFieldExists ( const char *name );
 BZF_API const char* bz_getclipFieldString ( const char *name );
 BZF_API float bz_getclipFieldFloat ( const char *name );
-BZF_API int bz_getclipFieldint( const char *name );
+BZF_API int bz_getclipFieldInt( const char *name );
 
 BZF_API bool bz_setclipFieldString ( const char *name, const char* data );
 BZF_API bool bz_setclipFieldFloat ( const char *name, float data );

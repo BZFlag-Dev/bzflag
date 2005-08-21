@@ -10,7 +10,7 @@
 * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 */
 
-// implementation wrapers for all the bza_ API functions
+// implementation wrapers for all the bzf_ API functions
 #include "bzfsAPI.h"
 
 #include "bzfs.h"
@@ -1567,7 +1567,7 @@ BZF_API bool bz_stopAllURLJobs ( void )
 	return true;
 }
 
-// inter plugin comunication
+// inter plugin communication
 std::map<std::string,std::string>	globalPluginData;
 
 BZF_API bool bz_clipFieldExists ( const char *_name )
@@ -1601,7 +1601,7 @@ BZF_API float bz_getclipFieldFloat ( const char *_name )
 
 }
 
-BZF_API int bz_getclipFieldint( const char *_name )
+BZF_API int bz_getclipFieldInt( const char *_name )
 {
 	if (!bz_clipFieldExists(_name))
 		return 0;

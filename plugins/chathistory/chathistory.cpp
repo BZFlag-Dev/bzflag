@@ -30,7 +30,7 @@ ChatEvents chatEvents;
 
 typedef std::vector<std::string>	tvChatHistory;
 
-std::map<std::string,tvChatHistory>	chatHistorys;
+std::map<std::string,tvChatHistory>	chatHistories;
 
 unsigned int		maxChatLines;
 
@@ -42,7 +42,7 @@ BZF_PLUGIN_CALL int bz_Load ( const char* commandLine )
 	if (commandLine)
 	{
 		int realLines = atoi(commandLine);
-			maxChatLines  = realLines;
+		maxChatLines  = realLines;
 	}
 
 	bz_registerCustomSlashCommand("last",&lastChatCommand);
@@ -92,11 +92,11 @@ bool LastChatCommand::handle ( int playerID, bzApiString _command, bzApiString _
 		if ( numLines == 0 )
 			numLines = 5;
 
-		std::map<std::string,tvChatHistory>::iterator itr = chatHistorys.find(TextUtils::tolower(params[1]));
+		std::map<std::string,tvChatHistory>::iterator itr = chatHistories.find(TextUtils::tolower(params[1]));
 
-		if ( itr == chatHistorys.end() || !itr->second.size())
+		if ( itr == chatHistories.end() || !itr->second.size())
 		{
-			bz_sendTextMessage(BZ_SERVER,playerID,"That player has no chat history");
+			bz_sendTextMessage(BZ_SERVER,playerID,"That player has no chat history.");
 			return true;
 		}
 
@@ -118,7 +118,7 @@ bool LastChatCommand::handle ( int playerID, bzApiString _command, bzApiString _
 
 	if ( command == "flushchat")
 	{
-		chatHistorys.clear();
+		chatHistories.clear();
 		bz_sendTextMessage(BZ_SERVER,playerID,"Chat History has been flushed");
 		return true;
 	}
@@ -141,15 +141,16 @@ void ChatEvents::process ( bz_EventData *eventData )
 	{
 	default:
 		break;
+
 	case bz_eChatMessageEvent:
-		std::map<std::string,tvChatHistory>::iterator itr = chatHistorys.find(callsign);
-		if (itr == chatHistorys.end())
+		std::map<std::string,tvChatHistory>::iterator itr = chatHistories.find(callsign);
+		if (itr == chatHistories.end())
 		{
 			tvChatHistory h;
-			chatHistorys[callsign] = h;
+			chatHistories[callsign] = h;
 		}
 
-		tvChatHistory &history = chatHistorys[callsign];
+		tvChatHistory &history = chatHistories[callsign];
 
 		history.push_back(message);
 		if (history.size() > maxChatLines) 
