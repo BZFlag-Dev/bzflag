@@ -64,7 +64,7 @@ Info </a> </td>
                   <td align="center"> <strong>Reference </strong> </td>
                 </tr>
                 <tr>
-                  <td align="center"> <a href="entrys.html">Entrys</a>
+                  <td align="center"> <a href="entrys.html">Entries</a>
                   </td>
                 </tr>
                 <tr>
@@ -115,8 +115,8 @@ Info </a> </td>
                   <p class="style1 style2" align="center">Introduction</p>
                   <p><strong>* This document:</strong></p>
                   <p>This document is a description of the BZFlag
-plugin system and it's associated API. It will attempt to explain how
-to make a plugin, what you can do in a plugin and what the basic API
+plugin system and its associated API. It will attempt to explain how
+to make a plugin, what you can do in a plugin, and what the basic API
 features are.<br>
                   </p>
                   <p><span style="font-weight: bold;">* What is a
@@ -127,15 +127,15 @@ that is loadable at runtime by the BZFlag game server (bzfs) that can
 change the way that the server runs. Since plugins are compiled,
 plugins need to be built on the platform they are to be run with. This
 means that a plugin built for windows will not work on Linux, and
-vice/ versa. Plugins are written in C++ as Dynamic Libraries, ether as
+vice versa. Plugins are written in C++ as Dynamic Libraries, ether as
 a DLL on windows or a .so file on Linux or OS X.</p>
                   <p><strong>* What can a plugin do?</strong></p>
-                  <p>Plug ins can install event handlers for a number
+                  <p>Plugins can install event handlers for a number
 of events in bzfs. Events are actions that happen in the game, such as
 the capture of a team flag, or the death of a player. Plugins can then
 call API functions that can change the game state in response to the
 event, such as sending a text message, activating a world weapon, or
-kicking a player. All plugin actions are event driven. A plug in is
+kicking a player. All plugin actions are event driven. A plugin is
 always called first by the server in response to an action.</p>
                   <p><strong>* What do I need to make a plugin, and
 what do I need to know?</strong></p>
@@ -143,24 +143,24 @@ what do I need to know?</strong></p>
 C and should be familiar with the C++ language. Many of the API calls
 and structures will use C++, but they can be called in a C "style" if
 you wish. Since plugins are compiled code you will need a compiler for
-your OS and the knowledge of how to use it. The sample plug in has
+your OS and the knowledge of how to use it. The sample plugin has
 makefiles and Windows VC projects that you can use as a basis. If you
 are on windows, there is a free version of visual studio that you can
-use to build plug ins. You can download it for free from
+use to build plugins. You can download it for free from
 http://lab.msdn.microsoft.com/express/visualc/default.aspx . You will
 also need access to some of the source files from the BZFlag source
 distribution. If you are on windows, the required header and library
-files are included with the installer in the API folder. Other OSs can
+files are included with the installer in the API folder. Other OSes can
 get the full source tree from www.bzflag.org</p>
-                  <p><strong>* How do I start a new plug in project?</strong></p>
+                  <p><strong>* How do I start a new plugin project?</strong></p>
                   <p> If you are not familiar with making projects and
-using makefiles, the BZFlag source tree provides a template plug in in
-/plug ins/SAMPLE_PLUGIN/. This is an empty plug in project for most
+using makefiles, the BZFlag source tree provides a template plugin in
+/plugins/SAMPLE_PLUGIN/. This is an empty plugin project for most
 OSs. All you have to do is replace the term SAMPLE_PLUGIN with your
-plug in name. Do this to every file name that contains the term
+plugin name. Do this to every file name that contains the term
 SAMPLE_PLUGIN. Also open each file ( even the .sln and .vcprog, don't
 double click them yet) in a text editor ( notepad ) and do a search and
-replace. Replace SAMPLE_PLUGIN with your plug in name. The project will
+replace. Replace SAMPLE_PLUGIN with your plugin name. The project will
 then be ready to build. </p>
                   </td>
                 </tr>

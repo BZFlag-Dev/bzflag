@@ -55,7 +55,7 @@
                   <td align="center"><span class="style4"> Contents </span></td>
                 </tr>
                 <tr>
-                  <td align="center"> <strong>Overview </strong> </td>
+                  <td align="center"> <strong>Overview</strong> </td>
                 </tr>
                 <tr>
                   <td align="center"> <a href="index.html">Introduction
@@ -66,10 +66,10 @@
 Info </a> </td>
                 </tr>
                 <tr>
-                  <td align="center"> <strong>Reference </strong> </td>
+                  <td align="center"> <strong>Reference</strong> </td>
                 </tr>
                 <tr>
-                  <td align="center"> <a href="entrys.html">Entrys</a>
+                  <td align="center"> <a href="entrys.html">Entries</a>
                   </td>
                 </tr>
                 <tr>
@@ -91,7 +91,7 @@ Info </a> </td>
                 <tr>
                 </tr>
                 <tr>
-                  <td align="center"> <strong>Examples </strong> </td>
+                  <td align="center"> <strong>Examples</strong> </td>
                 </tr>
                 <tr>
                   <td align="center"> shockwaveDeath </td>
@@ -123,15 +123,14 @@ data. To handle this the API provides a number of functions that can be
 called directly. These functions will perform actions and return data about
 the current game state.</p>
                   <p>&nbsp;</p>
-                  <p>The functions are as follows;</p>
-                  <p><span class="style4 style7">Player Data  Functions </span></p>                  <p><strong>BZF_API bool bz_getPlayerByIndex ( int index, bz_PlayerRecord *playerRecord );</strong></p>
-                  <p>This function will take a player index, and will return a new player data object in the playerRecord paramater . The player data class contains the following data;</p>
+                  <p>The functions are as follows:</p>
+                  <p><span class="style4 style7">Player Data Functions </span></p>                  <p><strong>BZF_API bool bz_getPlayerByIndex ( int index, bz_PlayerRecord *playerRecord );</strong></p>
+                  <p>This function will take a player index, and will return a new player data object in the playerRecord paramater. The player data class contains the following data:</p>
                   <table bgcolor="#dddddd" border="1">
                     <tbody>
                       <tr>
                         <td align="left" valign="top">
-                          <table align="left" border="0" cellpadding="2"
- cellspacing="2">
+                          <table align="left" border="0" cellpadding="2" cellspacing="2">
                             <tbody>
                          
                               <tr>
@@ -139,25 +138,24 @@ the current game state.</p>
                 {<br>
                                   </span>
                                     <blockquote class="Code"> 
-                                      <p>int playerID;							// id of the player<br>
+                                      <p>
+  int playerID; // id of the player<br>
   bzApiString callsign; // callsign the player is using<br>
   bzApiString email; // email address of the player <br>
-                                          bz_eTeamType team; // team </p>
-                                      <p> float pos[3]; // last known position<br>
-  float rot; // last known heading</p>
-<p> bzApiString ipAddress; // the network address for this connection<br>
-    <br>
+  bz_eTeamType team; // team the player is on<br>
+  float pos[3]; // last known position<br>
+  float rot; // last known heading<br>
+  bzApiString ipAddress; // the network address for this connection<br>
   bzApiString currentFlag; // the flag the user presently has<br>
-  bzApiStrList flagHistory; // a list of all flags the user has had</p>
-<p> bool spawned; // true if the user is in game as a tank<br>
+  bzApiStrList flagHistory; // a list of all flags the user has had<br>
+  bool spawned; // true if the user is in game as a tank<br>
   bool verified; // true if the user has been authenticated ether global or local<br>
   bool globalUser; // true if the user was verified from the global login system<br>
   bool admin; // true if the user is an admin<br>
-  bzApiStrList groups; // a list of all the groups the user is a member of.<br>
-  <br>
-  int wins; // kills the player has <br>
-	int losses; // deaths the player has <br>
-	int teamKills; // number of times the user has killed a teammate<br>
+  bzApiStrList groups; // a list of all the groups the user is a member of<br>
+  int wins; // number of times this player has killed another<br>
+  int losses; // number of times this player has died<br>
+  int teamKills; // number of times the user has killed a teammate<br>
 	</p>
                                     </blockquote>
                                     <p class="Code">}</p></td>
@@ -177,38 +175,44 @@ the current game state.</p>
                   <p><strong>bool hasPerm ( const char* perm );</strong><br>
 Calls <strong>bz_hasPerm</strong> on this player. </p>
                   <p><strong>bool grantPerm ( const char* perm );</strong><br>
-Calls <strong>bz_</strong><strong>grantPerm</strong> on this player. </p>
+Calls <strong>bz_grantPerm</strong> on this player. </p>
                   <p><strong>bool revokePerm ( const char* perm );</strong><br>
 Calls <strong>bz_revokePerm</strong> on this player. </p>
                   <p><strong>BZF_API bool bz_updatePlayerData ( bz_PlayerRecord *playerRecord );</strong><br>
-                    Updates a playerRecord to it's current data. This is the same as callingupdate on the bz_PlayerRecord class.</p>
+                    Updates a playerRecord to its current data. This is the same as calling update on the bz_PlayerRecord class.</p>
                   <p><strong>BZF_API bool bz_getPlayerIndexList ( std::vector&lt;int&gt; *playerList )</strong>;<br>
-                    fills out the supplied list with a list of the IDs of all known users.</p>
+                    Fills out the supplied list with a list of the IDs of all known users.</p>
                   <p><strong>BZF_API bool bz_freePlayerRecord ( bz_PlayerRecord *playerRecord );</strong><br>
                     This command will free the memory used by a Player Record Object. It must be called when a plug-in is done using the player data returned from <strong>bz_getPlayerByIndex</strong></p>
                   <p><strong>BZF_API bool bz_setPlayerWins (int playerId, int wins);</strong><br> 
-                    This command will set the number of wins(kills) in the score for the specified player, and update all client scores. </p>
+                    This command will set the number of wins (kills) in the score for the specified player, and update all client scores. </p>
                   <p><strong>BZF_API bool bz_setPlayerLosses (int playerId, int losses);</strong><br>
 This command will set the number of losses(deaths) in the score for the specified player, and update all client scores. </p>
                   <p><strong>BZF_API bool bz_setPlayerTKs(int playerId, int tks);</strong><br>
-This command will set the number of TKs(team killss) in the score for the specified player, and update all client scores. </p>
+This command will set the number of TKs (teamkills) in the score for the specified player, and update all client scores. </p>
                   <p><strong>BZF_API bool bz_resetPlayerScore(int playerId);</strong><br>
 This command will reset to zero the score and TKs of the specified player and update all clients.</p>
-                  <p><strong>Permision functions </strong><br> 
-                    The permision functions all take permision names as input. These names are the same as the server uses in it's users and groups files. All the standard permision names have been defined in the bzfsAPI.h file using the <strong>bz_perm_XXXXXXXX </strong>set of defines. Groups can have custom permisions, so if you want to use a non standard permision in your plugin, you can also use that name in the &quot;hasPerm&quot; function. Custom permisions can only be read via the API, they can not be set. So the user will have to know to enter the permision name into his/her groups file.</p>
+                  <p><strong>Permission functions </strong><br> 
+                    The permission functions all take permsision names as input. These names are the same as the server uses in its users and groups files. All the standard permission names have been defined in the bzfsAPI.h file using the <strong>bz_perm_XXXXXXXX </strong>set of defines. Groups can have custom permissions, so if you want to use a non standard permission in your plugin, you can also use that name in
+the &quot;hasPerm&quot; function. Custom permissions can only be read via the API, they can not be set. So the user will have to know to enter the permission name into his/her groups file.</p>
                   <p><strong>BZF_API bool bz_hasPerm ( bz_PlayerRecord *playerRecord, const char* perm );</strong><br> 
-                    This function will return true if the user has the permision named in the perm paramater </p>
+                    This function will return true if the user has the permission named in the perm paramater </p>
                   <p><strong>BZF_API bool bz_grantPerm ( bz_PlayerRecord *playerRecord, const char* perm );</strong><br>
-This function will give the user the specified permision, and return true if the operation was sucsessfull.</p>                  <p><strong>BZF_API bool bz_revokePerm ( bz_PlayerRecord *playerRecord, const char* perm );</strong><br>
-This function will remove the specified permision from the user, and return true if the operation was sucsessfull.</p>
-<p>&nbsp;</p><p><span class="style4 style7">Message Functions </span></p>                  <p><strong>BZF_API bool bz_sendTextMessage (int from, int to, const char* message);</strong><br>
-                    Sends a text message to the specifid user. <strong>BZ_SERVER</strong> should be used for messages from the server. If the message is sent to <strong>BZ_ALL_USERS</strong> it will send the message to all connected users. Likewise <strong>BZ_ADMIN_CHANNEL</strong></p>
+This function will give the user the specified permission, and return true if the operation was successful.</p>                                    <p><strong>BZF_API bool bz_revokePerm ( bz_PlayerRecord *playerRecord, const char* perm );</strong><br>
+This function will remove the specified permision from the user, and return true if the operation was successful.</p>
+<p>&nbsp;</p>
+<p><span class="style4 style7">Message Functions </span></p>
+<p><strong>BZF_API bool bz_sendTextMessage (int from, int to, const char* message);</strong><br>
+                    Sends a text message to the specified user. <strong>BZ_SERVER</strong> should be used for messages from the server. If the message is sent to <strong>BZ_ALL_USERS</strong> it will send the message to all connected users. Likewise if it is set to<strong>BZ_ADMIN_CHANNEL</strong> it will be sent to all users with the ADMINMESSAGERECEIVE permission.</p>
 <p><strong>BZF_API bool bz_sentFetchResMessage ( int playerID, const char* URL );</strong><br>
 Sends an update message to the specified player telling them they must have the file specified in the URL. At present this is only used for sounds files. </p><p>&nbsp;</p>
-                  <p><span class="style4 style7">World Weapons Functions </span></p>                  <p><strong>BZF_API bool bz_fireWorldWep ( bzApiString flagType, float lifetime, int fromPlayer, float *pos, float tilt, float direction, int shotID , float dt )</strong><br>
-Adds a shot to the world of the specified type with the specified paramaters. <strong>BZ_SERVER</strong> should be used as the fromPlayer for normal world weapons.</p>
+                  <p><span class="style4 style7">World Weapons Functions </span></p>
+<p><strong>BZF_API bool bz_fireWorldWep ( bzApiString flagType, float lifetime, int fromPlayer, float *pos, float tilt, float direction, int shotID, float dt )</strong><br>
+Adds a shot  of the specified type and with the specified paramaters to the world.
+<strong>BZ_SERVER</strong> should be used as the fromPlayer for normal world weapons.</p>
                   <p>&nbsp;</p>
-                  <p class="style4 style7">Time Functions </p>                  <p><strong>BZF_API double bz_getCurrentTime ( void );</strong><br>
+                  <p class="style4 style7">Time Functions </p>
+<p><strong>BZF_API double bz_getCurrentTime ( void );</strong><br>
                     Returns the current server time in seconds ( time server has been alive ).</p>
                   <p><strong>BZF_API float bz_getMaxWaitTime ( void );</strong><br> 
                     Returns the maximum amount of time in seconds between <strong>bz_eTickEvent</strong> events </p>
@@ -227,7 +231,8 @@ Sets the maximum amount of time in seconds between <strong>bz_eTickEvent</strong
                                 <td><span class="Code">typedef struct <br>
                 {<br>
                                   </span>
-                                    <blockquote class="Code"> int year;<br>
+                                    <blockquote class="Code">
+int year;<br>
 int month;<br>
 int day;<br>
 int hour;<br>
@@ -240,14 +245,16 @@ bool daylightSavings;</blockquote>
                         </table></td>
                       </tr>
                     </tbody>
-                  </table>                  <p>&nbsp; </p>                  <p><span class="style4 style7">BZDB Functions </span></p>                  <p><strong>BZF_API double bz_getBZDBDouble ( const char* variable );</strong><br>
-                      Querys the BZDB database for the specified value and returns it as a double</p>
+                  </table>                  <p>&nbsp; </p>
+<p><span class="style4 style7">BZDB Functions </span></p>
+<p><strong>BZF_API double bz_getBZDBDouble ( const char* variable );</strong><br>
+                      Queries the BZDB database for the specified value and returns it as a double</p>
                   <p><strong>BZF_API bzApiString bz_getBZDBString( const char* variable );</strong><br>
-Querys the BZDB database for the specified value and returns it as a string</p>
+Queries the BZDB database for the specified value and returns it as a string</p>
                   <p><strong>BZF_API bool bz_getBZDBBool( const char* variable );</strong><br>
-Querys the BZDB database for the specified value and returns it as a boolean ( true if value is non zero)</p>
+Queries the BZDB database for the specified value and returns it as a boolean (true if value is non zero)</p>
                   <p><strong>BZF_API int bz_getBZDBInt( const char* variable );</strong><br>
-                      Querys the BZDB database for the specified value and returns it as an integer</p>
+Queries the BZDB database for the specified value and returns it as an integer</p>
                   <p><strong>BZF_API bool bz_setBZDBDouble ( const char* variable, double val );</strong><br>
 Sets the BZDB database item specified to the for the specified floating point value</p>
                   <p><strong>BZF_API bool bz_setBZDBString( const char* variable, const char *val );</strong><br>
@@ -257,7 +264,7 @@ Sets the BZDB database item specified to the for the specified boolean value</p>
                   <p><strong>BZF_API bool bz_setBZDBInt( const char* variable, int val );</strong><br>
 Sets the BZDB database item specified to the for the specified integer value</p>
                   <p>&nbsp;</p>
-                  <p><span class="style4 style7">Loging Functions </span></p>
+                  <p><span class="style4 style7">Logging Functions </span></p>
                   <p><strong>BZF_API void bz_debugMessage ( int debugLevel, const char* message );</strong><br>
 Outputs the specified message if the current debug level is at least the specified level.</p>
                   <p>&nbsp;</p>
@@ -274,9 +281,9 @@ Outputs the specified message if the current debug level is at least the specifi
                     Returns a normaly calculated spawn position for the specified user.</p>
                   <p>&nbsp;</p>                  <p><span class="style4 style7">Flag Functions </span></p>                  
                   <p><strong>BZF_API bool bz_removePlayerFlag ( int playeID );</strong><br>
-  Removes ( zaps) the flag caried by the specified player </p>
+  Removes (zaps) the flag caried by the specified player </p>
                   <p><strong>BZF_API void bz_resetFlags ( bool onlyUnused );</strong><br>
-Removes ( zaps) all flags on the map, exactly the same as the /flag reset command </p>
+  Removes (zaps) all flags on the map, exactly the same as the /flag reset command</p>
                   <p>&nbsp;</p>
                   <p><span class="style4 style7">Server Info  Functions </span></p>                  
                   <p><strong>BZF_API bool bz_getPublic( void );</strong><br>
@@ -284,13 +291,13 @@ Removes ( zaps) all flags on the map, exactly the same as the /flag reset comman
                   <p><strong>BZF_API bzApiString bz_getPublicAddr( void );</strong><br>
   Returns the public address the server is using, will return an empty string if the server is not public </p>
                   <p><strong>BZF_API bzApiString bz_getPublicDescription( void );</strong><br>
-Returns the public description the server is using, will return an empty string if the server is not public </p>
+  Returns the public description the server is using, will return an empty string if the server is not public </p>
                   <p><strong>BZF_API void bz_updateListServer ( void );</strong><br> 
                     Forces the server to do a list server update. </p>
                   <p>&nbsp;</p>
                   <p><span class="style4 style7">Team Score Functions </span></p>                  
                   <p><strong>BZF_API int bz_getTeamCount (bz_eTeamType team);</strong><br>
-  Returns the player count of the specified team.; </p>
+  Returns the player count of the specified team </p>
                   <p><strong>BZF_API int bz_getTeamScore (bz_eTeamType team );</strong><br>
   Returns the team score for the specified team </p>
                   <p><strong>BZF_API int bz_getTeamWins (bz_eTeamType team );</strong><br>
@@ -298,7 +305,7 @@ Returns the public description the server is using, will return an empty string 
                   <p><strong>BZF_API int bz_getTeamLosses (bz_eTeamType team );</strong><br>
   Returns the team losses for the specified team </p>
                   <p><strong>BZF_API void bz_setTeamWins (bz_eTeamType team, int wins );</strong><br>
-Sets the team wins for the speficied team </p>                  
+  Sets the team wins for the speficied team </p>                  
                   <p><strong>BZF_API void bz_setTeamLosses (bz_eTeamType team, int losses );</strong><br>
   Sets the team losses for the specified team </p>
                   <p><strong>BZF_API void bz_resetTeamScore (bz_eTeamType team );</strong><br> 
@@ -307,27 +314,26 @@ Sets the team wins for the speficied team </p>
                   <p><span class="style4 style7">Recording Functions </span></p>
                   <p><strong>BZF_API bool bz_saveRecBuf( const char * _filename, int seconds);</strong><br>
   If a record buffer it active this saves the last 'seconds' seconds of it into 
-the file '_filename'. if _filename contains characters other than alnum or '.'
+the file '_filename'. If _filename contains non-alphanumeric characters other than '.'
 these will be replaced by '_'. If seconds is not given the whole buffer is saved. </p>
                   <p>&nbsp;</p>
                   <p><span class="style4 style7">Custom Slash Command Functions </span></p>
-                  <p>A plug-in can register a special handler for a custom / command. This allows a plug-in to handle commands easyer then hooking into the UnknownSlashCommand Event.</p>
-                  <p>Similar to other events, custom slash commands provide a pointer to a handler class that the plugin overides using the function.</p>
+                  <p>A plug-in can register a special handler for a custom / command. This allows a plug-in to handle commands more easily than hooking into the UnknownSlashCommand Event.</p>
+                  <p>Similar to other events, custom slash commands provide a pointer to a handler class that the plugin overrides using the function.</p>
                   <p><strong>BZF_API bool bz_registerCustomSlashCommand ( const char* command, bz_CustomSlashCommandHandler *handler );</strong></p>
                   <p>This command will register a cutom slash command with the name provided in the command paramater. You do NOT need to provide the &quot;/&quot; character in the command name. The handler pointer is to a class that has been derived from <strong>bz_CustomSlashCommandHandler</strong></p>
                   <table bgcolor="#dddddd" border="1">
                     <tbody>
                       <tr>
                         <td align="left" valign="top">
-                          <table align="left" border="0" cellpadding="2"
- cellspacing="2">
+                          <table align="left" border="0" cellpadding="2" cellspacing="2">
                             <tbody>
                               <tr>
                                 <td><span class="Code">class bz_CustomSlashCommandHandler<br>
                 {<br>
                                   </span>                                    <blockquote class="Code"> public:<br>
 virtual ~bz_CustomSlashCommandHandler(){};<br>
-virtual bool handle ( int playerID, bzApiString command, bzApiString message, bzAPIStringList *params) = 0;</blockquote>
+virtual bool handle ( int playerID, bzApiString command, bzApiString message, bzAPIStringList *params ) = 0;</blockquote>
                                     <p class="Code">};</p></td>
                               </tr>
                             </tbody>
@@ -335,11 +341,10 @@ virtual bool handle ( int playerID, bzApiString command, bzApiString message, bz
                       </tr>
                     </tbody>
                   </table>
-                  <p>When a player issues the command, the handler will have it's handle method called and then it can then do what ever it needs. The Message Paramater to the handle function will contain all the text the user has entered, except the /command name itself. The Params item will contain a list of the text broken into a space delimited list. This is usefull for commands that take paramaters. </p>
+                  <p>When a player issues the command, the handler will have its handle method called and then it can then do whatever it needs to. The Message parameter to the handle function will contain all the text the user has entered, except the /command name itself. The Params item will contain a list of the text broken into a space delimited list. This is useful for commands that take paramaters. </p>
                   <p><strong>BZF_API bool bz_removeCustomSlashCommand ( const char* command );</strong><br> 
-                    This command will remove a custom slash command from BZFS. Only one custom slash command per name can be installed at a time. It is a good idea to make your command name unique.</p>                  <p><br>
-                    <br>
-                  </p></td>
+                    This command will remove a custom slash command from BZFS. Only one custom slash command per name can be installed at a time. It is a good idea to make your command name unique.</p
+		  </td>
                 </tr>
                 <tr>
                   <td>

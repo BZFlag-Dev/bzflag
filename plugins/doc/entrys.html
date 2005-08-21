@@ -47,10 +47,10 @@
  bordercolor="#000000" width="179">
               <tbody>
                 <tr>
-                  <td align="center"><span class="style4"> Contents </span></td>
+                  <td align="center"><span class="style4">Contents</span></td>
                 </tr>
                 <tr>
-                  <td align="center"> <strong>Overview </strong> </td>
+                  <td align="center"> <strong>Overview</strong> </td>
                 </tr>
                 <tr>
                   <td align="center"> <a href="index.html">Introduction
@@ -61,10 +61,10 @@
 Info </a> </td>
                 </tr>
                 <tr>
-                  <td align="center"> <strong>Reference </strong> </td>
+                  <td align="center"> <strong>Reference</strong> </td>
                 </tr>
                 <tr>
-                  <td align="center"> <a href="entrys.html">Entrys</a>
+                  <td align="center"> <a href="entrys.html">Entries</a>
                   </td>
                 </tr>
                 <tr>
@@ -86,7 +86,7 @@ Info </a> </td>
                 <tr>
                 </tr>
                 <tr>
-                  <td align="center"> <strong>Examples </strong> </td>
+                  <td align="center"> <strong>Examples</strong> </td>
                 </tr>
                 <tr>
                   <td align="center"> shockwaveDeath </td>
@@ -116,9 +116,9 @@ Info </a> </td>
 Points</p>
                   <p>There are 3 primary entry points into the plugin.
 These are the 3 core functions that the plugin must implement. The
-first 2 are the main functions used by the plugin, these are defined as
-such;</p>
-                  <p class="style3"> BZF_PLUGIN_CALL int bz_Load (
+first 2 are the main functions used by the plugin, these are defined as:
+</p>
+                  <p class="style3">BZF_PLUGIN_CALL int bz_Load (
 const char* command ); </p>
                   <p class="style3">BZF_PLUGIN_CALL int bz_Unload (
 void );</p>
@@ -129,7 +129,7 @@ data.</p>
                   <p>bz_Unload is called when a plugin is no longer
 needed and will be shut down. This is most commonly called when bzfs is
 quiting. A plugin should do any clean up in this callback.</p>
-                  <p>The last function is defined as; </p>
+                  <p>The last function is defined as: </p>
                   <p class="style3">BZF_PLUGIN_CALL int bz_GetVersion (
 void );</p>
                   <p>bz_GetVersion is called buy bzfs before any other
@@ -139,11 +139,11 @@ incompatible plugins.</p>
                   <p>There is a C++ MACRO defined to ease the
 implementation of this function. All a plugin must do is put the macro;</p>
                   <p class="style3"> BZ_GET_PLUGIN_VERSION </p>
-                  <p>somewhere in it's sources, and then export the
+                  <p>somewhere in its sources, and then export the
 function. This will automatically return the API version of the current
 API you are using. See the sample plugins for examples. These will be
-the only 3 functions called by bzfs for non event actions. </p>
-                  <p>All functions should be proceeded with the
+the only 3 functions called by bzfs for non-event actions. </p>
+                  <p>All functions should be preceded with the
 BZF_PLUGIN_CALL macro. This macro will tell your compiler to export
 these functions so bzfs can call them.</p>
                   </td>

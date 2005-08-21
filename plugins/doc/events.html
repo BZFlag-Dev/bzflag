@@ -54,7 +54,7 @@
                   <td align="center"><span class="SubHeader"> Contents </span></td>
                 </tr>
                 <tr>
-                  <td align="center"> <strong>Overview </strong> </td>
+                  <td align="center"> <strong>Overview</strong> </td>
                 </tr>
                 <tr>
                   <td align="center"> <a href="index.html">Introduction
@@ -65,10 +65,10 @@
 Info </a> </td>
                 </tr>
                 <tr>
-                  <td align="center"> <strong>Reference </strong> </td>
+                  <td align="center"> <strong>Reference</strong> </td>
                 </tr>
                 <tr>
-                  <td align="center"> <a href="entrys.html">Entrys</a>
+                  <td align="center"> <a href="entrys.html">Entries</a>
                   </td>
                 </tr>
                 <tr>
@@ -90,7 +90,7 @@ Info </a> </td>
                 <tr>
                 </tr>
                 <tr>
-                  <td align="center"> <strong>Examples </strong> </td>
+                  <td align="center"> <strong>Examples</strong> </td>
                 </tr>
                 <tr>
                   <td align="center"> shockwaveDeath </td>
@@ -122,7 +122,7 @@ Events</span></p>
                   <p>A plugin is basically useless if it can't react to
 events in game. To allow this a plugin needs to tell bzfs that it would
 like to listen for events. To do that the plugin will need to call the
-following function;</p>
+following function:</p>
                   <p class="Code"> bool bz_registerEvent (
 bz_teEventType eventType, bz_EventHandler* eventHandler );</p>
                   <p>where <span class="Code">eventType</span> is one
@@ -228,12 +228,12 @@ versions of the event handler class from bz_EventHandler and pass this
 pointer into the function. When the event happens the process function
 of the class will be called so that the plugin can perform any actions
 it desires. </p>
-                  <p>When the plugins unload function is called. The
-plugin must remove any events it has loaded by calling;</p>
+                  <p>When the plugin's unload function is called, the
+plugin must remove any events it has loaded by calling:</p>
                   <p> <span class="Code">bool bz_removeEvent (
 bz_teEventType eventType, bz_EventHandler* eventHandler );</span></p>
                   <p>Failure to do so may cause crashes if the plugin
-is manually unloaded at run time. </p>
+is manually unloaded at run time.</p>
                   <p><span class="SubHeader">Event Handlers</span></p>
                   <p>The event handler is a pure virtual class. It does
 not perform any logic or actions, but simply provides a framework for a
@@ -247,8 +247,8 @@ classes all derived from bz_EventData. The eventType member of the base
 class will tell you what type the data is. This allows for the same
 handler to be used for more then one type of event.</p>
                   <p> The event data for the various event types are as
-follows, along with there associated data items. Some events may share
-event data types</p>
+follows, along with their associated data items. Some events may share
+event data types.</p>
                   <table bgcolor="#dddddd" border="1">
                     <tbody>
                       <tr>
@@ -264,13 +264,13 @@ provides the following data </td>
                               <td><span class="Code">bz_CTFCaptureEventData<br>
 {<br>
                               </span>
-                              <blockquote class="Code"> bz_eTeamType teamCaped;
-// the team that had there flag captured<br>
-bz_eTeamType teamCaping; // the team that did the capturing<br>
-int playerCaping; // the player ID who did the capture<br>
+                              <blockquote class="Code">
+bz_eTeamType teamCapped; // the team that had there flag captured<br>
+bz_eTeamType teamCapping; // the team that did the capturing<br>
+int playerCapping; // the player ID who did the capture<br>
 float pos[3]; // the last known position of the player<br>
 float rot; // the last known angle of the player<br>
-double time; // the time in seconds of the even</blockquote>
+double time; // the time in seconds of the capture</blockquote>
                               <p class="Code">}</p>
                               </td>
                             </tr>
@@ -302,11 +302,11 @@ provides the following data</td>
                               <td><span class="Code">bz_PlayerDieEventData<br>
 {<br>
                               </span>
-                              <blockquote class="Code"> int playerID;
-// the ID of the player who died<br>
+                              <blockquote class="Code">
+int playerID; // the ID of the player who died<br>
 bz_eTeamType team; // the team of the player who died<br>
 int killerID; // the ID of the player doing the killing<br>
-bz_eTeamType killerTeam; // the team of the killer<br>
+bz_eTeamType killerTeam; // the team that the killer was on<br>
 bzApiString flagKilledWith; // the flag the killer had when killing<br>
 float pos[3]; // the last known position of the victim<br>
 float rot; // the last known rotation of the victim<br>
@@ -315,7 +315,7 @@ double time; // the time of the death</blockquote>
                               </td>
                             </tr>
                             <tr>
-                              <td>This even is called when ever a
+                              <td>This event is called whenever a
 player is killed.</td>
                             </tr>
                           </tbody>
@@ -341,9 +341,9 @@ provides the following data</td>
                               <td><span class="Code">bz_PlayerSpawnEventData<br>
 {<br>
                               </span>
-                              <blockquote class="Code"> int playerID //
-the ID of the player that has spawned;<br>
-bz_eTeamType team; // the Team the player just spawned to<br>
+                              <blockquote class="Code">
+int playerID // the ID of the player that has spawned;<br>
+bz_eTeamType team; // the team the spawning player is a member of<br>
 float pos[3]; // the position of the spawn<br>
 float rot; // the rotation of the spawn<br>
 double time; // the time of the spawn</blockquote>
@@ -354,8 +354,7 @@ double time; // the time of the spawn</blockquote>
                               <td>Track this event when you wish to
 know if someone has spawned, and where they have spawned at.
 This event does not let you set the spawn position, it is only called
-AFTER the spawn has been
-computed and sent to the players.</td>
+AFTER the spawn has been computed and sent to the players.</td>
                             </tr>
                           </tbody>
                         </table>
@@ -381,8 +380,8 @@ following data</td>
                               <td><span class="Code">bz_PlayerJoinPartEventData<br>
 {<br>
                               </span>
-                              <blockquote class="Code"> int playerID;
-// the ID of the user that has joined or parted<br>
+                              <blockquote class="Code">
+int playerID; // the ID of the user that has joined or parted<br>
 bz_eTeamType team; // the team ID of the user<br>
 bzApiString callsign; // the callsign used by the user<br>
 bzApiString reason; // if a part event, the reason for the part<br>
@@ -418,26 +417,22 @@ provides the following data</td>
                               <td><span class="Code">bz_ChatEventData<br>
 {<br>
                               </span>
-                              <blockquote class="Code"> int from; //
-the player ID of who the message is from<br>
+                              <blockquote class="Code">
+int from; // the player ID of who the message is from<br>
 int to; // the player ID of who the message is for<br>
-bzApiString message; // the message<br>
+bzApiString message; // the message itself<br>
 double time; // the time of the message</blockquote>
                               <p class="Code">}</p>
                               </td>
                             </tr>
                             <tr>
-                              <td>This event is called when ever the
+                              <td>This event is called whenever the
 server is asked to deliver a chat message. This
 includes private messages, team messages, and general chat. ANYTHING
-that is not a
-/ command goes in here. The plugin CAN change the chat message before
-it is sent.
-This can allow for a plugin to filter chat text or insert additional
-text. If the plugin
-clears the message text, then the chat message will not be sent. The
-text sent to this
-plugin may have been filtered by another plugin first.</td>
+that is not a / command goes in here. The plugin CAN change the chat message before
+it is sent. This can allow for a plugin to filter chat text or insert additional
+text. If the plugin clears the message text, then the chat message will not be sent. The
+text sent to this plugin may have been filtered by another plugin first.</td>
                             </tr>
                           </tbody>
                         </table>
@@ -462,13 +457,13 @@ provides the following data</td>
                               <td><span class="Code">bz_UnknownSlashCommandEventData<br>
 {<br>
                               </span>
-                              <blockquote class="Code"> int from; //
-the player ID of who the message is from<br>
+                              <blockquote class="Code">
+int from; // the ID of the player who sent the command<br>
 bool handled; // flag that tells if the command was handled.<br>
 // if the plugin handles this command it must<br>
 // set this value to true before it returns<br>
-bzApiString message; // the message<br>
-double time; // the time of the message</blockquote>
+bzApiString message; // the command itself<br>
+double time; // the time the command was issued</blockquote>
                               <p class="Code">}</p>
                               </td>
                             </tr>
@@ -476,9 +471,8 @@ double time; // the time of the message</blockquote>
                               <td>This event is called when a user
 attempts to use a / command that does not exist.
 It is not very useful for anything other then error reporting. If you
-wish to
-install your own custom / command then use the customSlashCommand
-functions.</td>
+wish to install your own custom / command then it's recommended that you
+use the customSlashCommand functions.</td>
                             </tr>
                           </tbody>
                         </table>
@@ -492,8 +486,7 @@ functions.</td>
                     <tbody>
                       <tr>
                         <td align="left" valign="top">
-                        <table border="0" cellpadding="2"
- cellspacing="2">
+                        <table border="0" cellpadding="2" cellspacing="2">
                           <tbody>
                             <tr>
                               <td><span class="Code">bz_eGetPlayerSpawnPosEvent</span> 
@@ -503,9 +496,9 @@ provides the following data</td>
                               <td><span class="Code">bz_GetPlayerSpawnPosEventData<br>
 {<br>
                               </span>
-                              <blockquote class="Code"> int playeID;					// the player ID of who needs to be spawned<br>
-bz_eTeamType team; // the players team<br>
-bool handled; // if the action has been/will be handled <br>
+                              <blockquote class="Code">
+int playerID; // the player ID of who needs to be spawned<br>
+bool handled; // if the action has been/will be handled<br>
 float pos[3]; // the proposed spawn position<br>
 float rot; // the proposed spawn rotation<br>
 double time; // the time of the request</blockquote>
@@ -514,10 +507,10 @@ double time; // the time of the request</blockquote>
                             <tr>
                               <td>This event is called when ever a player spawn position is needed. The standard
 spawn position will be set in the pos and rot fields. The plugin may modify or
-set new spawn data if it wishes to. This can allow a plugin to do it's own 
+set new spawn data if it wishes to. This can allow a plugin to do its own 
 spawn calculations. The position may have been modified by another plugin first
 if multiple plugins are handaling the event. If so the "handled" field should be true.
-If your plugin modifys the spawn data it too should set the "handled" bit to true. </td>
+If your plugin modifies the spawn data it too should set the "handled" bit to true. </td>
                             </tr>
                           </tbody>
                         </table>
@@ -531,8 +524,7 @@ If your plugin modifys the spawn data it too should set the "handled" bit to tru
                     <tbody>
                       <tr>
                         <td align="left" valign="top">
-                        <table border="0" cellpadding="2"
- cellspacing="2">
+                        <table border="0" cellpadding="2" cellspacing="2">
                           <tbody>
                             <tr>
                               <td><span class="Code">bz_eAllowPlayer</span>
@@ -542,16 +534,17 @@ provides the following data</td>
                               <td><span class="Code">bz_AllowPlayerEventData<br>
 {<br>
                               </span>
-                              <blockquote class="Code"> 	int playerID;				// the player ID of the joining player<br>
+                              <blockquote class="Code">
+int playerID; // the player ID of the joining player<br>
 bzApiString callsign; // the callsign of the player<br>
-bzApiString ipAddress; // the address of the player<br>
-bzApiString reason; // a reason string with the reason the player is to be disalowed to join<br>
+bzApiString ipAddress; // the IP address the player is connecting from<br>
+bzApiString reason; // a reason string with the reason the player is to be disallowed to join<br>
 bool allow; // flag to allow or disallow the player. <br>
 double time; // the time of the request</blockquote>
-                              <p class="Code">}</p>                              </td>
+                              <p class="Code">}</p> </td>
                             </tr>
                             <tr>
-                              <td>This event is called every time a user joins a server. The server will do it's normal 
+                              <td>This event is called every time a user joins a server. The server will do its normal 
 ban/disallow logic then pass the value to the plugin in the allow field. 
 The plugin can then chose to allow or disalow the player as it sees fit. If the player
 is to be disallowed, then please provide a reason. </td>
@@ -568,8 +561,7 @@ is to be disallowed, then please provide a reason. </td>
                     <tbody>
                       <tr>
                         <td align="left" valign="top">
-                        <table border="0" cellpadding="2"
- cellspacing="2">
+                        <table border="0" cellpadding="2" cellspacing="2">
                           <tbody>
                             <tr>
                               <td><span class="Code">bz_TickEvent</span> 
@@ -584,9 +576,9 @@ provides the following data</td>
                             </tr>
                             <tr>
                               <td>This event is not called due to any user or player interaction. This event is called
-automaticly by bzfs every time it has completed one of it's normal execution loops.
-This event is usefull when plugins need to perform update actions, periodic mentance,
-or other actions that are not direclty tied to a user event, like checking to see
+automatically by bzfs every time it has completed one of its normal execution loops.
+This event is useful when plugins need to perform update actions, periodic maintenance,
+or other actions that are not directly tied to a user event, like checking to see
 if it is time to start a match. A plugin can set the maximum allowable time between
 calls to this event using the function bz_setMaxWaitTime described below. </td>
                             </tr>
@@ -602,8 +594,7 @@ calls to this event using the function bz_setMaxWaitTime described below. </td>
                     <tbody>
                       <tr>
                         <td align="left" valign="top">
-                        <table border="0" cellpadding="2"
- cellspacing="2">
+                        <table border="0" cellpadding="2" cellspacing="2">
                           <tbody>
                             <tr>
                               <td><span class="Code">bz_GenerateWorldEvent</span> 
@@ -613,10 +604,11 @@ provides the following data</td>
                               <td><span class="Code">bz_GenerateWorldEventData <br>
 {<br>
                               </span>
-                              <blockquote class="Code"> bool handled;				// flag to set to true if the plugin has generated the world.<br>
+                              <blockquote class="Code">
+bool handled; // flag to set to true if the plugin has generated the world<br>
 bool ctf; // true if the world is a CTF world<br>
-double time; // the time of the request.</blockquote>
-                              <p class="Code">}</p>                              </td>
+double time; // the time of the request</blockquote>
+                              <p class="Code">}</p> </td>
                             </tr>
                             <tr>
                               <td>This event is called by bzfs when it begins to build or load the world. The event is called
