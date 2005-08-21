@@ -567,31 +567,31 @@ bool ServerLink::readEnter (std::string& reason,
   uint16_t len;
   char msg[MaxPacketLen];
 
-  if (this->read(code, len, msg, -1) < 0) {
-    reason = "Communication error joining game [No immediate respose].";
-    return false;
-  }
+  while (true) {
+    if (this->read(code, len, msg, -1) < 0) {
+      reason = "Communication error joining game [No immediate respose].";
+      return false;
+    }
 
-  if (code == MsgSuperKill) {
-    reason = "Server forced disconnection.";
-    return false;
-  }
-  else if (code == MsgReject) {
-    void *buf;
-    char buffer[MessageLen];
-    buf = nboUnpackUShort (msg, rejcode); // filler for now
-    buf = nboUnpackString (buf, buffer, MessageLen);
-    buffer[MessageLen - 1] = '\0';
-    reason = buffer;
-    return false;
-  }
-  else if (code != MsgAccept) {
-    char buf[10];
-    sprintf(buf, "%04x", code);
-    reason = "Communication error joining game [Wrong Code ";
-    reason += buf;
-    reason += "].";
-    return false;
+    if (code == MsgAccept) {
+      return true;
+    }
+    else if (code == MsgSuperKill) {
+      reason = "Server forced disconnection.";
+      return false;
+    }
+    else if (code == MsgReject) {
+      void *buf;
+      char buffer[MessageLen];
+      buf = nboUnpackUShort (msg, rejcode); // filler for now
+      buf = nboUnpackString (buf, buffer, MessageLen);
+      buffer[MessageLen - 1] = '\0';
+      reason = buffer;
+      return false;
+    }
+    // ignore other codes so that bzadmin doesn't choke
+    // on the MsgMessage's that the server can send before
+    // the MsgAccept (authorization holdoff, etc...)
   }
 
   return true;
