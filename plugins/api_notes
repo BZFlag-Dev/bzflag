@@ -1,4 +1,4 @@
-nots on yon API
+notes on yon API
 ==============================================================================
 
 * export directory stuff so plugins can make/open files
@@ -13,6 +13,5 @@ nots on yon API
 * add On Team Score Change hook
 * add on player score change hook
 * add api to add meshes
-* add api to register custom map objects
 * have maps be able to specifiy required plugins
 * add ability for a plugin to be unique ( load once ).
