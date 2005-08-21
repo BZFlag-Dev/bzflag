@@ -1023,7 +1023,7 @@ BZF_API int bz_getBZDBVarList( bzAPIStringList	*varList )
 }
 
 
-// loging
+// logging
 BZF_API void bz_debugMessage ( int _debugLevel, const char* message )
 {
 	if (!message)
@@ -1031,6 +1031,11 @@ BZF_API void bz_debugMessage ( int _debugLevel, const char* message )
 
 	if (debugLevel >= _debugLevel)
 		formatDebug("%s\n",message);
+}
+
+BZF_API int bz_getDebugLevel ( void )
+{
+	return debugLevel;
 }
 
 // admin

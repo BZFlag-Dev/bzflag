@@ -782,8 +782,9 @@ BZF_API bool bz_setBZDBInt( const char* variable, int val, int perms = 0, bool p
 BZF_API int bz_getBZDBVarList( bzAPIStringList	*varList );
 
 
-// loging
+// logging
 BZF_API void bz_debugMessage ( int debugLevel, const char* message );
+BZF_API int bz_getDebugLevel ( void );
 
 // admin
 BZF_API bool bz_kickUser ( int playerIndex, const char* reason, bool notify );
