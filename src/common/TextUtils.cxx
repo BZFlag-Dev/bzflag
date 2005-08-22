@@ -120,7 +120,7 @@ namespace TextUtils
 
 	if (delims.find(currentChar) != std::string::npos && !inQuote) { // currentChar is a delim
 	  pos ++;
-	  break; // breaks out of while look
+	  break; // breaks out of while loop
 	}
 
 	if (!useQuotes){

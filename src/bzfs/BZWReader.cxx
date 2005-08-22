@@ -240,18 +240,16 @@ bool BZWReader::readWorldStream(std::vector<WorldFileObject*>& wlist,
 	  } else {
 	    wlist.push_back(object);
 	  }
-	}else if (customObject.size())
-	{	
-		bz_CustomMapObjectInfo data;
-		data.name = bzApiString(customObject);
-		for(unsigned int i = 0; i < customLines.size(); i++)
-			data.data.push_back(customLines[i]);
-		customObjectMap[customObject]->handle(bzApiString(customObject),&data);
-		object = NULL;
+	} else if (customObject.size())	{	
+	  bz_CustomMapObjectInfo data;
+	  data.name = bzApiString(customObject);
+	  for (unsigned int i = 0; i < customLines.size(); i++)
+	    data.data.push_back(customLines[i]);
+	  customObjectMap[customObject]->handle(bzApiString(customObject),&data);
+	  object = NULL;
 	}
 	object = NULL;
-      } 
-			else {
+      } else {
 	errorHandler->fatalError(
 	  std::string("unexpected \"end\" token"), line);
 	return false;
@@ -354,38 +352,32 @@ bool BZWReader::readWorldStream(std::vector<WorldFileObject*>& wlist,
 	  // delete object;
 	  // return false;
 	}
+      } else if (customObject.size()) {
+	std::string thisline = buffer;
+	thisline += " ";
+
+	while (input->good() && input->peek() != '\n') {
+	  input->get(buffer, sizeof(buffer));
+	  thisline += buffer;
+	}
+
+	customLines.push_back(thisline);
       }
-	  else if (customObject.size())
-		{
-			std::string thisline = buffer;
-			thisline += " ";
-
-			while (input->good() && input->peek() != '\n')
-			{
-				input->get(buffer, sizeof(buffer));
-				thisline += buffer;
-			}
-
-		  customLines.push_back(thisline);
-		}
 
     } else { // filling the current object
       // unknown token
-		if (customObjectMap.find(TextUtils::toupper(std::string(buffer))) != customObjectMap.end() ) 
-		{
-			customObject = TextUtils::toupper(std::string(buffer));
-			object = fakeObject;
-			customLines.clear();
-		}
-		else
-		{
-      errorHandler->warning(
-	std::string("invalid object type \"") +
-	std::string(buffer) + std::string("\" - skipping"), line);
-      if (object != fakeObject)
-	delete object;
-		}
-     // return false;
+      if (customObjectMap.find(TextUtils::toupper(std::string(buffer))) != customObjectMap.end()) {
+	customObject = TextUtils::toupper(std::string(buffer));
+	object = fakeObject;
+	customLines.clear();
+      }	else {
+	errorHandler->warning(
+	  std::string("invalid object type \"") +
+	  std::string(buffer) + std::string("\" - skipping"), line);
+	if (object != fakeObject)
+	  delete object;
+      }
+      // return false;
     }
 
     // discard remainder of line
