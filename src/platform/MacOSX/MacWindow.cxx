@@ -418,7 +418,7 @@ MacWindow::MacWindow(const MacDisplay *display, MacVisual *visual) :
 			       &settings.blueMin, &settings.blueMax, &settings.blueGamma);
   settings.gamma = (settings.redGamma + settings.greenGamma + settings.blueGamma) / 3.0;
 
-#if DEBUG
+#ifdef DEBUG
   std::cout << "Initial gamma settings: " << settings.gamma << " for (" << settings.redGamma << "," << settings.greenGamma << "," <<settings.blueGamma << std::endl;
 #endif
 
@@ -437,7 +437,7 @@ MacWindow::~MacWindow() {
 
 bool MacWindow::isValid() const { return true; }
 
-void MacWindow::showWindow(bool show) { }
+void MacWindow::showWindow(bool) {}
 
 void MacWindow::getPosition(int &x, int &y) { x = 0, y = 0; }
 
@@ -449,8 +449,8 @@ void MacWindow::getSize(int &width, int &height) const {
   // width = settings.Window_Size.height;
 }
 
-void MacWindow::setTitle(const char *title) {}
-void MacWindow::setPosition(int x, int y) {}
+void MacWindow::setTitle(const char *) {}
+void MacWindow::setPosition(int, int) {}
 void MacWindow::setSize(int width, int height)
 {
   settings.Window_Size.width = width;
@@ -486,7 +486,7 @@ void MacWindow::setSize(int width, int height)
 
 }
 
-void MacWindow::setMinSize(int width, int height) {
+void MacWindow::setMinSize(int, int) {
 #ifndef USE_DSP
   if (window == NULL) return;
 
@@ -540,7 +540,7 @@ void MacWindow::setGamma(float value)
 
   settings.gamma = value;
 
-#if DEBUG
+#ifdef DEBUG
   std::cout << "Setting Gamma to " << value << std::endl;
 #endif
   err = CGSetDisplayTransferByFormula( kCGDirectMainDisplay,

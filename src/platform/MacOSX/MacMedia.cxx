@@ -5,9 +5,8 @@
 static SndCallBackUPP gCarbonSndCallBackUPP = nil;
 static int queued_chunks = 0;
 
-static pascal void callbackProc (SndChannelPtr theChannel, SndCommand * theCallBackCmd)
+static pascal void callbackProc(SndChannelPtr, SndCommand *)
 {
- //   dprintf("!");
   queued_chunks--;
 }
 
@@ -17,7 +16,7 @@ MacMedia::MacMedia() {
 
 MacMedia::~MacMedia() {}
 
-double MacMedia::stopwatch(bool start) { return 0; }
+double MacMedia::stopwatch(bool) { return 0; }
 
 // Audio
 
@@ -68,7 +67,8 @@ bool MacMedia::isAudioBrainDead() const {
   return false;
 }
 
-bool MacMedia::startAudioThread(void (*proc)(void*), void* data) {
+bool MacMedia::startAudioThread(void (*proc)(void*), void*)
+{
   audio_proc = proc;
 
   audio_proc(NULL);
@@ -171,8 +171,8 @@ int     MacMedia::getAudioBufferChunkSize() const {
   return CHUNK_SIZE;
 }
 
-void    MacMedia::audioSleep(bool checkLowWater, double maxTime) {
-
+void MacMedia::audioSleep(bool, double)
+{
 }
 
 // Local Variables: ***
