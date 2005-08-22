@@ -7,7 +7,7 @@
 ;
 
 !define VER_MAJOR 2.0
-!define VER_MINOR .3b15
+!define VER_MINOR .3b16
 
 ; Main Installer Options
 Name "BZFlag"
@@ -71,6 +71,7 @@ Section "BZFlag (required)"
 	SetOutPath $INSTDIR\data\l10n
 	File ..\..\..\data\l10n\*.*
 
+	; make the fonts dir
 	SetOutPath $INSTDIR\data\fonts
 	File ..\..\..\data\fonts\*.*
 
@@ -79,7 +80,10 @@ Section "BZFlag (required)"
 	File ..\..\..\doc\*.*
 	File ..\ReadMe.win32.html
 	File ..\..\..\COPYING
-	File ..\..\..\plugins\bzAPI.txt
+
+	; make the plugin docs dir
+	SetOutPath $INSTDIR\doc\plugin
+	File ..\..\..\plugins\doc\*.*
 
 	; Write the installation path into the registry
 	WriteRegStr HKLM SOFTWARE\BZFlag "Install_Dir" "$INSTDIR"
@@ -142,6 +146,7 @@ Section "Uninstall"
 	Delete $INSTDIR\bzflag.exe
 	Delete $INSTDIR\bzfs.exe
 	Delete $INSTDIR\bzadmin.exe
+	Delete $INSTDIR\doc\plugin\*.*
 	Delete $INSTDIR\doc\*.*
 	Delete $INSTDIR\data\fonts\*.*
 	Delete $INSTDIR\data\*.*
