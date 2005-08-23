@@ -187,8 +187,14 @@ void JoinMenu::loadInfo()
 {
   // load startup info with current settings
   StartupInfo* info = getStartupInfo();
-  strcpy(info->callsign, callsign->getString().c_str());
-  strcpy(info->password, password->getString().c_str());
+  if (strcmp(info->callsign, callsign->getString().c_str())) {
+    strcpy(info->callsign, callsign->getString().c_str());
+    info->token[0] = '\0';
+  }
+  if (strcmp(info->password, password->getString().c_str())) {
+    strcpy(info->password, password->getString().c_str());
+    info->token[0] = '\0';
+  }
   info->team = getTeam();
   strcpy(info->serverName, server->getString().c_str());
   info->serverPort = atoi(port->getString().c_str());
