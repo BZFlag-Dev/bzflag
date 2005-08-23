@@ -769,9 +769,9 @@ float RadarRenderer::transScale(const float z, const float h)
 
   // Scale color so that objects that are close to tank's level are opaque
   const float zTank = myTank->getPosition()[2];
-  if (zTank >= (z + h))
+  if (zTank > (z + h))
     scaleColor = 1.0f - (zTank - (z + h)) / colorFactor;
-  else if (zTank <= z)
+  else if (zTank < z)
     scaleColor = 1.0f - (z - zTank) / colorFactor;
   else
     scaleColor = 1.0f;
