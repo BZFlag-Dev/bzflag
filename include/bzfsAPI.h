@@ -32,7 +32,7 @@
 	#define BZF_PLUGIN_CALL extern "C"
 #endif
 
-#define BZ_API_VERSION	11
+#define BZ_API_VERSION	12
 
 #define BZ_GET_PLUGIN_VERSION BZF_PLUGIN_CALL int bz_GetVersion ( void ) { return BZ_API_VERSION;}
 
@@ -733,10 +733,6 @@ public:
 };
 
 BZF_API bool bz_setPlayerAdmin (int playerId);
-BZF_API bool bz_setPlayerWins (int playerId, int wins);
-BZF_API bool bz_setPlayerLosses (int playerId, int losses);
-BZF_API bool bz_setPlayerTKs(int playerId, int tks);
-BZF_API bool bz_resetPlayerScore(int playerId);
 
 // message API
 BZF_API bool bz_sendTextMessage (int from, int to, const char* message);

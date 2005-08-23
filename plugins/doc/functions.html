@@ -21,6 +21,12 @@
 }
 .style6 {font-weight: bold}
 .style7 {font-size: 24px}
+.style8 {color: #333333}
+.style9 {color: #CCCCCC}
+.style10 {
+	color: #FF0000;
+	font-weight: bold;
+}
 -->
   </style>
 </head>
@@ -184,13 +190,13 @@ Calls <strong>bz_revokePerm</strong> on this player. </p>
                     Fills out the supplied list with a list of the IDs of all known users.</p>
                   <p><strong>BZF_API bool bz_freePlayerRecord ( bz_PlayerRecord *playerRecord );</strong><br>
                     This command will free the memory used by a Player Record Object. It must be called when a plug-in is done using the player data returned from <strong>bz_getPlayerByIndex</strong></p>
-                  <p><strong>BZF_API bool bz_setPlayerWins (int playerId, int wins);</strong><br> 
-                    This command will set the number of wins (kills) in the score for the specified player, and update all client scores. </p>
-                  <p><strong>BZF_API bool bz_setPlayerLosses (int playerId, int losses);</strong><br>
+                  <p class="style10">The following score functions were removed untill they can work properly on all clients.s </p>
+                  <p><span class="style8"><span class="style9"><strong>BZF_API bool bz_setPlayerWins (int playerId, int wins);</strong><br> 
+                      This command will set the number of wins (kills) in the score for the specified player, and update all client scores. </span></span></p>                  <p class="style9"><strong>BZF_API bool bz_setPlayerLosses (int playerId, int losses);</strong><br>
 This command will set the number of losses(deaths) in the score for the specified player, and update all client scores. </p>
-                  <p><strong>BZF_API bool bz_setPlayerTKs(int playerId, int tks);</strong><br>
+                  <p class="style9"><strong>BZF_API bool bz_setPlayerTKs(int playerId, int tks);</strong><br>
 This command will set the number of TKs (teamkills) in the score for the specified player, and update all client scores. </p>
-                  <p><strong>BZF_API bool bz_resetPlayerScore(int playerId);</strong><br>
+                  <p class="style9"><strong>BZF_API bool bz_resetPlayerScore(int playerId);</strong><br>
 This command will reset to zero the score and TKs of the specified player and update all clients.</p>
                   <p><strong>Permission functions </strong><br> 
                     The permission functions all take permsision names as input. These names are the same as the server uses in its users and groups files. All the standard permission names have been defined in the bzfsAPI.h file using the <strong>bz_perm_XXXXXXXX </strong>set of defines. Groups can have custom permissions, so if you want to use a non standard permission in your plugin, you can also use that name in
@@ -346,7 +352,7 @@ virtual bool handle ( int playerID, bzApiString command, bzApiString message, bz
                   <p>When a player issues the command, the handler will have its handle method called and then it can then do whatever it needs to. The Message parameter to the handle function will contain all the text the user has entered, except the /command name itself. The Params item will contain a list of the text broken into a space delimited list. This is useful for commands that take paramaters. </p>
                   <p><strong>BZF_API bool bz_removeCustomSlashCommand ( const char* command );</strong><br> 
                     This command will remove a custom slash command from BZFS. Only one custom slash command per name can be installed at a time. It is a good idea to make your command name unique.</p
-		  </td>
+		  ></td>
                 </tr>
                 <tr>
                   <td>
