@@ -391,6 +391,7 @@ public:
 
 class DateTimeCommand : ServerCommand {
 public:
+	DateTimeCommand();
   virtual bool operator() (const char         *commandLine,
 			   GameKeeper::Player *playerData);
 protected:
@@ -572,8 +573,9 @@ ReplayCommand::ReplayCommand()           : ServerCommand("/replay",
   "/replay [list|load|play|skip +-seconds] - intereact with recorded files") {}
 SayCommand::SayCommand()                 : ServerCommand("/say",
   "/say [message] - generate a public message sent by the server") {}
-DateCommand::DateCommand()               : DateTimeCommand("/date") {}
-TimeCommand::TimeCommand()               : DateTimeCommand("/time") {}
+DateTimeCommand::DateTimeCommand() : ServerCommand("/datetime", "display current server time"){};
+DateCommand::DateCommand()               : DateTimeCommand("/date* - display current server time") {}
+TimeCommand::TimeCommand()               : DateTimeCommand("/time* diaplay current server time") {}
 
 
 bool CmdList::operator() (const char*, GameKeeper::Player *playerData)
