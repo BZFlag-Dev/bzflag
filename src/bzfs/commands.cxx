@@ -514,35 +514,64 @@ ShutdownCommand::ShutdownCommand()       : ServerCommand("/shutdownserver",
   "/shutdownserver - kill the server") {}
 SuperkillCommand::SuperkillCommand()     : ServerCommand("/superkill",
   "/superkill - kick all of the players") {}
-GameOverCommand::GameOverCommand()       : ServerCommand("/gameover") {}
-CountdownCommand::CountdownCommand()     : ServerCommand("/countdown") {}
-FlagCommand::FlagCommand()               : ServerCommand("/flag") {}
-LagWarnCommand::LagWarnCommand()         : ServerCommand("/lagwarn") {}
-LagStatCommand::LagStatCommand()         : ServerCommand("/lagstats") {}
-IdleStatCommand::IdleStatCommand()       : ServerCommand("/idlestats") {}
-FlagHistoryCommand::FlagHistoryCommand() : ServerCommand("/flaghistory") {}
-PlayerListCommand::PlayerListCommand()   : ServerCommand("/playerlist") {}
-ReportCommand::ReportCommand()           : ServerCommand("/report") {}
-HelpCommand::HelpCommand()               : ServerCommand("/help") {}
-IdentifyCommand::IdentifyCommand()       : ServerCommand("/identify") {}
-RegisterCommand::RegisterCommand()       : ServerCommand("/register") {}
-GhostCommand::GhostCommand()             : ServerCommand("/ghost") {}
-DeregisterCommand::DeregisterCommand()   : ServerCommand("/deregister") {}
-SetPassCommand::SetPassCommand()         : ServerCommand("/setpass") {}
-GroupListCommand::GroupListCommand()     : ServerCommand("/grouplist") {}
-ShowGroupCommand::ShowGroupCommand()     : ServerCommand("/showgroup") {}
-GroupPermsCommand::GroupPermsCommand()   : ServerCommand("/groupperms") {}
-SetGroupCommand::SetGroupCommand()       : ServerCommand("/setgroup") {}
-RemoveGroupCommand::RemoveGroupCommand() : ServerCommand("/removegroup") {}
-ReloadCommand::ReloadCommand()           : ServerCommand("/reload") {}
-PollCommand::PollCommand()               : ServerCommand("/poll") {}
-VoteCommand::VoteCommand()               : ServerCommand("/vote") {}
-VetoCommand::VetoCommand()               : ServerCommand("/veto") {}
-ViewReportCommand::ViewReportCommand()   : ServerCommand("/viewreports") {}
-ClientQueryCommand::ClientQueryCommand() : ServerCommand("/clientquery") {}
-RecordCommand::RecordCommand()           : ServerCommand("/record") {}
-ReplayCommand::ReplayCommand()           : ServerCommand("/replay") {}
-SayCommand::SayCommand()                 : ServerCommand("/say") {}
+GameOverCommand::GameOverCommand()       : ServerCommand("/gameover", 
+  "/gameover - end the current game") {}
+CountdownCommand::CountdownCommand()     : ServerCommand("/countdown",
+  "/countdown - start the countdown sequence for a timed game") {}
+FlagCommand::FlagCommand()               : ServerCommand("/flag", 
+  "/flag <reset|up|show> - reset, remove or show the flags") {}
+LagWarnCommand::LagWarnCommand()         : ServerCommand("/lagwarn", 
+  "/lagwarn <millisecons>- change the maximum allowed lag time") {}
+LagStatCommand::LagStatCommand()         : ServerCommand("/lagstats", 
+  "/lagstats - list network delays, jitter and number of lost resp. out of order packets by player") {}
+IdleStatCommand::IdleStatCommand()       : ServerCommand("/idlestats", 
+  "/idlestats - display the idle time in seconds for each player") {}
+FlagHistoryCommand::FlagHistoryCommand() : ServerCommand("/flaghistory", 
+  "/flaghistory - list what flags players have grabbed in the past") {}
+PlayerListCommand::PlayerListCommand()   : ServerCommand("/playerlist", 
+  "/playerlist - list player slots, names and IP addresses") {}
+ReportCommand::ReportCommand()           : ServerCommand("/report", 
+  "/report <message> - write a message to the server administrator") {}
+HelpCommand::HelpCommand()               : ServerCommand("/help", 
+  "/help <help page> - display the specified help page") {}
+IdentifyCommand::IdentifyCommand()       : ServerCommand("/identify", 
+  "/identify <password> - log in to a registered callsign") {}
+RegisterCommand::RegisterCommand()       : ServerCommand("/register",
+  "/register <password> - register your current callsign to the specified password") {}
+GhostCommand::GhostCommand()             : ServerCommand("/ghost",
+  "/ghost <callsign> <password> - kick off an impersonating player or ghost") {}
+DeregisterCommand::DeregisterCommand()   : ServerCommand("/deregister",
+  "/deregister [callsign] - deregister another user's callsign, or your if no callsign specified") {}
+SetPassCommand::SetPassCommand()         : ServerCommand("/setpass",
+  "/setpass <newpass> - change your password setting the new specified") {}
+GroupListCommand::GroupListCommand()     : ServerCommand("/grouplist",
+  "/grouplist - list the available user groups") {}
+ShowGroupCommand::ShowGroupCommand()     : ServerCommand("/showgroup",
+  "/showgroup [callsign] - list the groups that a registered user is a member of") {}
+GroupPermsCommand::GroupPermsCommand()   : ServerCommand("/groupperms",
+  "/groupperms - list the permissions for each group") {}
+SetGroupCommand::SetGroupCommand()       : ServerCommand("/setgroup", 
+  "/setgroup <callsign> <group> - add the user to the specified group") {}
+RemoveGroupCommand::RemoveGroupCommand() : ServerCommand("/removegroup",
+  "/removegroup <callsign> <group> - remove a user from a group") {}
+ReloadCommand::ReloadCommand()           : ServerCommand("/reload",
+  "/reload - reload the user, group, and password files") {}
+PollCommand::PollCommand()               : ServerCommand("/poll",
+  "/poll <ban|kick|vote|veto> <callsign> - nteract and make requests of the bzflag voting system") {}
+VoteCommand::VoteCommand()               : ServerCommand("/vote",
+  "/vote <yes|no> - place a vote in favor or in opposition to the poll") {}
+VetoCommand::VetoCommand()               : ServerCommand("/veto", 
+  "/veto - will cancel the poll if there is one active") {}
+ViewReportCommand::ViewReportCommand()   : ServerCommand("/viewreports",
+  "/viewreports - view the server's report file") {}
+ClientQueryCommand::ClientQueryCommand() : ServerCommand("/clientquery",
+  "/clientquery [callsign] - retrieve client version info from all users, or just CALLSIGN if given") {}
+RecordCommand::RecordCommand()           : ServerCommand("/record",
+  "/record [start|stop|size|list|rate..] - manage the bzflag record system") {}
+ReplayCommand::ReplayCommand()           : ServerCommand("/replay",
+  "/replay [list|load|play|skip +-seconds] - intereact with recorded files") {}
+SayCommand::SayCommand()                 : ServerCommand("/say",
+  "/say [message] - generate a public message sent by the server") {}
 DateCommand::DateCommand()               : DateTimeCommand("/date") {}
 TimeCommand::TimeCommand()               : DateTimeCommand("/time") {}
 
