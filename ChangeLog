@@ -4,6 +4,7 @@
 BZFlag 2.0.3
 ------------
 
+* Better progress info when downloading textures - Garrett Padera via Jeff Myers
 * Add Quake3 BSP import to modeltool - Jeff Myers
 * Exit BZFS if -g is used with -mts or -mps -  Joshua Rogers
 * Experimental server colorizing in server list - Frank Thilo

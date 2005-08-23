@@ -164,10 +164,25 @@ void CachedTexture::collectData(char* ptr, int len)
 {
   char buffer[128];
 
+  static int totalTex = 0;
+  static int currentTex = 0;
+  static int runs = 0;
+
+  if(runs == 0)
+	  totalTex = textureCounter;
+
   cURLManager::collectData(ptr, len);
   byteTransferred += len;
 
-  sprintf (buffer, "texture Downloading : %i byte", byteTransferred);
+  //Make it so it counts textures in reverse order (0 to max instead of max to 0)
+  currentTex = totalTex - textureCounter + 1;
+
+  //Turn bytes into kilobytes
+  byteTransferred = byteTransferred/1024;
+
+  sprintf (buffer, "Downloading texture (%i of %i): %i KB", currentTex, totalTex, byteTransferred);
+  runs++;
+
   HUDDialogStack::get()->setFailedMessage(buffer);
 }
 
