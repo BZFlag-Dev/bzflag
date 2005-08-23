@@ -16,11 +16,12 @@
 // Use only lower case command name
 ServerCommand::ServerCommand(std::string _commandName,
 			     std::string _oneLineHelp)
-  : commandName(_commandName), oneLineHelp(_oneLineHelp)
+  : commandName(_commandName)
 {
   (*getMapRef())[commandName] = this;
-  if (oneLineHelp == "")
-    oneLineHelp = commandName;
+  oneLineHelp = commandName;
+  if (_oneLineHelp != "")
+    oneLineHelp += " " + _oneLineHelp;
 }
 
 ServerCommand::~ServerCommand()

@@ -159,27 +159,27 @@ static UnmuteCommand      unmuteCommand;
 static MasterBanCommand   masterBanCommand;
 
 KickCommand::KickCommand()               : ServerCommand("/kick",
-  "/kick <#slot|PlayerName|\"Player Name\"> <reason> - kick the player off the server") {}
+  "<#slot|PlayerName|\"Player Name\"> <reason> - kick the player off the server") {}
 KillCommand::KillCommand()               : ServerCommand("/kill", 
-  "/kill <#slot|PlayerName|\"Player Name\"> [reason] - kill a player") {}
+  "<#slot|PlayerName|\"Player Name\"> [reason] - kill a player") {}
 BanListCommand::BanListCommand()         : ServerCommand("/banlist",
-  "/banlist - List all of the IPs currently banned from this server") {}
+  "- List all of the IPs currently banned from this server") {}
 HostbanListCommand::HostbanListCommand() : ServerCommand("/hostbanlist",
-  "/hostbanlist - List all of the host patterns currently banned from this server") {}
+  "- List all of the host patterns currently banned from this server") {}
 BanCommand::BanCommand()                 : ServerCommand("/ban", 
-  "/ban <#slot|PlayerName|\"Player Name\"|ip> <duration> <reason>  - ban a player, ip or ip range off the server") {}
+  "<#slot|PlayerName|\"Player Name\"|ip> <duration> <reason>  - ban a player, ip or ip range off the server") {}
 HostbanCommand::HostbanCommand()         : ServerCommand("/hostban", 
-  "/hostban <host pattern> [duration] [reason] - ban using host pattern off the server") {}
+  "<host pattern> [duration] [reason] - ban using host pattern off the server") {}
 UnbanCommand::UnbanCommand()             : ServerCommand("/unban", 
-  "/unban [ip] - remove a ip pattern from the ban list") {}
+  "[ip] - remove a ip pattern from the ban list") {}
 HostUnbanCommand::HostUnbanCommand()     : ServerCommand("/hostunban", 
-  "/hostunban <host pattern> - remove a host pattern from the host ban list") {}
+  "<host pattern> - remove a host pattern from the host ban list") {}
 MuteCommand::MuteCommand()               : ServerCommand("/mute", 
-  "/mute <#slot|PlayerName|\"Player Name\"> - remove the ability for a player to communicate with other players") {}
+  "<#slot|PlayerName|\"Player Name\"> - remove the ability for a player to communicate with other players") {}
 UnmuteCommand::UnmuteCommand()           : ServerCommand("/unmute", 
-  "/unmute <#slot|PlayerName|\"Player Name\"> - restore the TALK permission to a previously muted player") {}
+  "<#slot|PlayerName|\"Player Name\"> - restore the TALK permission to a previously muted player") {}
 MasterBanCommand::MasterBanCommand()     : ServerCommand("/masterban",
-  "/masterban <flush|reload|list> - manage the masterban list") {}
+  "<flush|reload|list> - manage the masterban list") {}
 
 bool MuteCommand::operator() (const char         *message,
 			      GameKeeper::Player *playerData)
