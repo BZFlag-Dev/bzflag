@@ -26,6 +26,8 @@ void parseServerCommand(const char *message, int dstPlayerId);
 
 typedef std::map<std::string, bz_CustomSlashCommandHandler*>	tmCustomSlashCommandMap;
 
+void registerDefaultCommands();
+
 void registerCustomSlashCommand ( std::string command, bz_CustomSlashCommandHandler* handler );
 void removeCustomSlashCommand ( std::string command );
 
