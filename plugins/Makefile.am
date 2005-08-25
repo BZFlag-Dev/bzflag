@@ -9,7 +9,6 @@ DIST_SUBDIRS = \
 	killall \
 	playHistoryTracker \
 	python \
-	scorereset \
 	shockwaveDeath \
 	vc71 \
 	vocaliser
