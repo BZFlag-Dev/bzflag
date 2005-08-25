@@ -422,6 +422,8 @@ AC_ARG_ENABLE(plugins, [  --enable-plugins        build with plugins enabled])
 if test x$enable_plugins != xno; then
    AC_DEFINE(_USE_BZ_API, 1, [Enable plugins])
 fi
+AM_CONDITIONAL(BUILD_PLUGINS, test "x$enable_plugins" != "xno")
+
 
 AC_CHECK_LIB(cares, ares_init, BUILDCARES=no, BUILDCARES=yes)
 AM_CONDITIONAL(BUILDCARES, test $BUILDCARES = yes)
@@ -743,6 +745,7 @@ AC_CONFIG_FILES(bzflag.info
 	package/irix/Makefile
 	package/win32/Makefile
 	package/win32/nsis/Makefile
+	plugins/Makefile
 	src/Makefile
 	src/bzadmin/Makefile
 	src/bzflag/Makefile
