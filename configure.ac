@@ -48,6 +48,13 @@ fi
 
 dnl FIXME: need to move the rest of the ARGs up here too
 
+
+# cannot override LD directly, so warn (configure will override it)
+if test "x$LD" != "x" ; then
+	AC_MSG_WARN([LD cannot be set directly yet it seems to be set ($LD)])
+fi
+
+
 #Checks for programs.
 AC_PROG_MAKE_SET
 AC_PROG_CC
