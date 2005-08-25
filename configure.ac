@@ -737,6 +737,8 @@ if test "x$with_kerberos" = "xyes" ; then
 fi
 AM_CONDITIONAL(HAVE_KRB5, test x$have_krb5 = xyes)
 
+LIBTOOL="$LIBTOOL \$(LIBTOOLFLAGS)"
+
 LIBDIR="\$(top_srcdir)/lib"
 AC_SUBST(LIBDIR)
 
