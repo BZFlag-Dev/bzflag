@@ -23,6 +23,11 @@ Bjorn's fixes included:
 
 --
 
+If you have a modern gcc and old Sun X headers, you may need to
+add -fpermissive to CFLAGS and CXXFLAGS in src/platform/Makefile.
+
+--
+
 Due to changes and the new usage of std::map, gcc 2.95.2 no longer
 builds bzflag on solaris. gcc 3.x works fine.
 
