@@ -1,4 +1,15 @@
-# Process this file with autoconf to produce a configure script.
+dnl                   C O N F I G U R E . A C
+dnl BZFlag
+dnl Copyright (c) 1993 - 2005 Tim Riker
+dnl
+dnl This package is free software;  you can redistribute it and/or
+dnl modify it under the terms of the license found in the file
+dnl named COPYING that should have accompanied this file.
+dnl
+dnl THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
+dnl IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
+dnl WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+dnl
 
 AC_INIT
 AC_CONFIG_SRCDIR(src/bzflag/bzflag.cxx)
