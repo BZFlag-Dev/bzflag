@@ -1,5 +1,7 @@
 # $Id$
 
+AUTOMAKE_OPTIONS = 1.6 dist-zip dist-bzip2
+
 traversal_dirs = \
 	data \
 	doc \
