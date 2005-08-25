@@ -16,6 +16,7 @@ EXTRA_DIST =				\
 	fountains.bzw			\
 	groups.conf			\
 	hix.bzw				\
+	libtool.m4			\
 	man2html.c			\
 	mrtg-bzflag.pl			\
 	multilingualSwearList.txt	\
