@@ -713,10 +713,10 @@ AC_SUBST(LIBDIR)
 
 
 AC_CONFIG_FILES(bzflag.info
-	bzflag.lsm
 	BZFlag.xcode/Makefile
 	Dev-C++/Makefile
 	Makefile
+	bzflag.lsm
 	bzflag.spec
 	data/Makefile
 	data/fonts/Makefile
@@ -724,28 +724,30 @@ AC_CONFIG_FILES(bzflag.info
 	debian/Makefile
 	doc/Makefile
 	doc/faq/Makefile
-	doc/guide/Makefile
 	doc/guide/Commands/Makefile
 	doc/guide/Flags/Makefile
 	doc/guide/Geometry/Makefile
 	doc/guide/Installation/Makefile
+	doc/guide/Makefile
 	doc/guide/Tactics/Makefile
 	doc/howto/Makefile
 	doc/man/Makefile
 	include/Makefile
-	misc/Makefile
+	m4/Makefile
 	man/Makefile
 	man/bzadmin.6
-	man/bzfs.6
 	man/bzflag.6
+	man/bzfs.6
 	man/bzw.5
+	misc/Makefile
 	package/Makefile
+	package/irix/Makefile
 	package/linux/Makefile
 	package/rpm/Makefile
-	package/irix/Makefile
 	package/win32/Makefile
 	package/win32/nsis/Makefile
 	plugins/Makefile
+	src/3D/Makefile
 	src/Makefile
 	src/bzadmin/Makefile
 	src/bzflag/Makefile
@@ -753,7 +755,6 @@ AC_CONFIG_FILES(bzflag.info
 	src/c-ares/Makefile
 	src/common/Makefile
 	src/date/Makefile
-	src/3D/Makefile
 	src/game/Makefile
 	src/geometry/Makefile
 	src/geometry/models/Makefile
@@ -762,9 +763,9 @@ AC_CONFIG_FILES(bzflag.info
 	src/net/Makefile
 	src/obstacle/Makefile
 	src/ogl/Makefile
-	src/platform/Makefile
 	src/platform/MacOSX/BZFlag-Info.plist
 	src/platform/MacOSX/Makefile
+	src/platform/Makefile
 	src/regex/Makefile
 	src/scene/Makefile
 	src/zlib/Makefile
