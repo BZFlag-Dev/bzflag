@@ -77,6 +77,14 @@ fi
 
 AC_PROG_LN_S
 AC_PROG_RANLIB
+
+# libtool shouldn't be generated until after LD is set.
+# AC_PROG_LIBTOOL goes poof in libtool 1.9, but that's not very
+# widespread at all.
+# LT_INIT
+AC_PROG_LIBTOOL
+
+
 AC_CHECK_PROG(HASPOD2MAN, pod2man, yes, no)
 if test $HASPOD2MAN = no; then
   AC_MSG_WARN([some man pages will not be generated])
