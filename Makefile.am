@@ -1,10 +1,32 @@
-SUBDIRS = data doc include man package src
-DIST_SUBDIRS = $(SUBDIRS) debian misc tools win32 Dev-C++ BZFlag.xcode
+# $Id$
 
-package: FORCE
-	cd package && $(MAKE) targets
+traversal_dirs = \
+	data \
+	doc \
+	include \
+	man \
+	package \
+	src
 
-FORCE:
+if BUILD_PLUGINS
+PLUGINS=plugins
+else
+PLUGINS=
+endif
+
+SUBDIRS = \
+	$(traversal_dirs) \
+	$(PLUGINS)
+
+DIST_SUBDIRS = \
+	$(traversal_dirs) \
+	plugins \
+	debian \
+	misc \
+	tools \
+	win32 \
+	Dev-C++ \
+	BZFlag.xcode
 
 EXTRA_DIST = \
 	autogen.sh \
@@ -40,6 +62,13 @@ MAINTAINERCLEANFILES = \
 	mkinstalldirs \
 	Makefile.in
 
+.PHONY: package FORCE debian-cvs debian-release
+
+package: FORCE
+	cd package && $(MAKE) targets
+
+FORCE:
+
 debian-cvs: dist
 	-rm -rf $(distdir)
 	GZIP=$(GZIP_ENV) $(AMTAR)$(TAR) zxf $(distdir).tar.gz
@@ -50,3 +79,4 @@ debian-release: debian/changelog dist
 	GZIP=$(GZIP_ENV) $(AMTAR)$(TAR) zxf $(distdir).tar.gz
 	cp debian/changelog $(distdir)/debian/
 	(cd $(distdir) && debian/buildsnap release)
+
