@@ -277,7 +277,7 @@ LDFLAGS="$LDFLAGS $X_LIBS"
 case $host_os in
   solaris*)
     GLIBS="-lresolv -laudio $GLIBS"
-    LIBS="-lsocket -lnsl -lresolv"
+    LIBS="$LIBS -lsocket -lnsl -lresolv"
     LDFLAGS="$LDFLAGS -L/usr/demo/SOUND/lib"
     ;;
   irix*)
@@ -312,11 +312,11 @@ AC_CHECK_LIB([m], [floorf], [AC_DEFINE([HAVE_FLOORF],[1],[libm includes floorf])
 AC_CHECK_LIB([m], [fmodf], [AC_DEFINE([HAVE_FMODF],[1],[libm includes fmodf])])
 AC_CHECK_LIB([m], [hypotf], [AC_DEFINE([HAVE_HYPOTF],[1],[libm includes hypotf])])
 AC_CHECK_LIB([m], [logf], [AC_DEFINE([HAVE_LOGF],[1],[libm includes logf])])
+AC_CHECK_LIB([m], [log10f], [AC_DEFINE([HAVE_LOG10F],[1],[libm includes log10f])])
 AC_CHECK_LIB([m], [powf], [AC_DEFINE([HAVE_POWF],[1],[libm includes powf])])
 AC_CHECK_LIB([m], [sinf], [AC_DEFINE([HAVE_SINF],[1],[libm includes sinf])])
 AC_CHECK_LIB([m], [sqrtf], [AC_DEFINE([HAVE_SQRTF],[1],[libm includes sqrtf])])
 AC_CHECK_LIB([m], [tanf], [AC_DEFINE([HAVE_TANF],[1],[libm includes tanf])])
-
 
 # avoid using X11 in BeOS and Mac OS X
 case $host_os in
@@ -592,6 +592,8 @@ case $host_os in
 	   CPPFLAGS="$CPPFLAGS -KPIC"
 	elif $sun_cc; then
 	   CPPFLAGS="$CPPFLAGS -fast"
+	elif $sun_gcc; then
+	   CPPFLAGS="$CPPFLAGS -fpermissive"
 	fi;;
      macos|darwin*)
 	CPPFLAGS="$CPPFLAGS -pipe -ansi -pedantic -fno-exceptions -W -Wall -Wundef -Wstrict-prototypes";

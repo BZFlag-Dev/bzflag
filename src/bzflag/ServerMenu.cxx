@@ -10,6 +10,9 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+/* BZFlag common header */
+#include "common.h"
+
 /* interface header */
 #include "ServerMenu.h"
 
@@ -20,7 +23,6 @@
 #endif
 #include <vector>
 #include <string>
-
 
 /* common implementation headers */
 #include "FontManager.h"

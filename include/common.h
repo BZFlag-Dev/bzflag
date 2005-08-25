@@ -106,6 +106,9 @@ extern int debugLevel;
 #ifndef HAVE_LOGF
 #  define	logf		(float)log
 #endif
+#ifndef HAVE_LOG10F
+#  define	log10f		(float)log10
+#endif
 #ifndef HAVE_POWF
 #  define	powf		(float)pow
 #endif
