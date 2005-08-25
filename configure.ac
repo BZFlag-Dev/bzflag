@@ -104,6 +104,7 @@ AC_PROG_RANLIB
 # widespread at all.
 # LT_INIT
 AC_PROG_LIBTOOL
+AC_SUBST(LIBTOOL_DEPS)
 
 
 AC_CHECK_PROG(HASPOD2MAN, pod2man, yes, no)
@@ -736,8 +737,6 @@ if test "x$with_kerberos" = "xyes" ; then
   fi
 fi
 AM_CONDITIONAL(HAVE_KRB5, test x$have_krb5 = xyes)
-
-LIBTOOL="$LIBTOOL \$(LIBTOOLFLAGS)"
 
 LIBDIR="\$(top_srcdir)/lib"
 AC_SUBST(LIBDIR)
