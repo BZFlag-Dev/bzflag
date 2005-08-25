@@ -9,11 +9,6 @@ MAINTAINERCLEANFILES = \
 #
 # tools
 #
-if MACOS
-ECHO	= /bin/echo
-else
-ECHO	= echo
-endif
 if WIN32
 MKDIR	= mkdir.exe
 RM	= del.exe /F /Q
