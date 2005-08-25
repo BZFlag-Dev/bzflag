@@ -37,9 +37,21 @@ bzflag.desktop: bzflag.desktop.in
 desktop_DATA = bzflag.desktop
 
 MAINTAINERCLEANFILES =	\
-	Makefile.in
+	COPYING.backup \
+	Makefile.in \
+	aclocal.m4 \
+	compile \
+	config.guess \
+	config.guess.backup \
+	config.sub \
+	config.sub.backup \
+	install-sh \
+	ltmain.sh \
+	ltmain.sh.backup \
+	missing \
+	mkinstalldirs
 
-rrlog:  rrlog.cxx
+Rrlog:  rrlog.cxx
 	$(CXX) $(CXXFLAGS)		\
 	  -o rrlog rrlog.cxx		\
 	  -I../include -I../src/bzfs	\
