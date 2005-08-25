@@ -1,8 +1,9 @@
-noinst_LIBRARIES = libregex.a
+noinst_LTLIBRARIES = libregex.la
 
 AM_CPPFLAGS = -I$(top_srcdir)/include
 
-libregex_a_SOURCES  =	\
+libregex_la_LDFLAGS = -static
+libregex_la_SOURCES  =	\
 	cclass.h	\
 	cname.h		\
 	regcomp.c	\

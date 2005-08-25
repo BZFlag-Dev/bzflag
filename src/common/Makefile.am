@@ -1,10 +1,11 @@
-noinst_LIBRARIES = libCommon.a
+noinst_LTLIBRARIES = libCommon.la
 
 AM_CFLAGS = -D_XOPEN_SOURCE
 
 AM_CPPFLAGS = -I$(top_srcdir)/include $(CURL_CFLAGS)
 
-libCommon_a_SOURCES  =			\
+libCommon_la_LDFLAGS = -static
+libCommon_la_SOURCES  =			\
 	AccessList.cxx			\
 	AutoCompleter.cxx		\
 	BZDBCache.cxx			\
@@ -36,7 +37,7 @@ libCommon_a_SOURCES  =			\
 	bzsignal.c			\
 	cURLManager.cxx			\
 	global.cxx			\
-	md5.cxx					\
+	md5.cxx				\
 	messages.cxx
 
 MAINTAINERCLEANFILES = \

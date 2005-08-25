@@ -119,25 +119,28 @@ bzfs_SOURCES = \
 
 if BUILD_REGEX
 REGEX = \
-	../regex/libregex.a
+	../regex/libregex.la
 endif
 
 if BUILDZLIB
-ZLIB = ../zlib/libz.a
+ZLIB = ../zlib/libz.la
 else
 ZLIB = -lz
 endif
 
 if BUILDCARES
-CARESLIB = ../c-ares/libcares.a
+CARESLIB = ../c-ares/libcares.la
 else
 CARESLIB = -lcares
 endif
 
 LDADD = \
-	../obstacle/libObstacle.a	\
-	../game/libGame.a	\
-	../net/libNet.a		\
-	../common/libCommon.a	\
-	$(CARESLIB)	\
-	$(REGEX) $(ZLIB) $(KRB5_LIBS) ../date/libDate.a
+	../obstacle/libObstacle.la	\
+	../game/libGame.la		\
+	../net/libNet.la		\
+	../common/libCommon.la		\
+	$(CARESLIB)			\
+	$(REGEX) 			\
+	$(ZLIB) 			\
+	$(KRB5_LIBS) 			\
+	../date/libDate.la

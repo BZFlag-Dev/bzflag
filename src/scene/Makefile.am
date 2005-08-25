@@ -1,5 +1,5 @@
 if CLIENT_INCLUDED
-noinst_LIBRARIES = libSceneDB.a
+noinst_LTLIBRARIES = libSceneDB.la
 endif
 
 MAINTAINERCLEANFILES = \
@@ -7,7 +7,8 @@ MAINTAINERCLEANFILES = \
 
 AM_CPPFLAGS = -I$(top_srcdir)/include
 
-libSceneDB_a_SOURCES =			\
+libSceneDB_la_LDFLAGS = -static
+libSceneDB_la_SOURCES =			\
 	Occluder.cxx			\
 	Occluder.h			\
 	Octree.cxx			\

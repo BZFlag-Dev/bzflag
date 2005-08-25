@@ -1,13 +1,15 @@
 
-noinst_LIBRARIES = libObstacle.a
+noinst_LTLIBRARIES = libObstacle.la
 
 MAINTAINERCLEANFILES =	\
 	Makefile.in
 
 AM_CPPFLAGS = -I$(top_srcdir)/include
 
+libObstacle_la_LDFLAGS = -static
+
 if CLIENT_INCLUDED
-libObstacle_a_SOURCES =			\
+libObstacle_la_SOURCES =		\
 	BaseSceneNodeGenerator.cxx	\
 	BoxSceneNodeGenerator.cxx	\
 	EmptySceneNodeGenerator.cxx	\
@@ -35,7 +37,7 @@ libObstacle_a_SOURCES =			\
 	ObstacleList.cxx		\
 	ObstacleMgr.cxx
 else
-libObstacle_a_SOURCES =			\
+libObstacle_la_SOURCES =		\
 	ArcObstacle.cxx			\
 	ConeObstacle.cxx		\
 	SphereObstacle.cxx		\

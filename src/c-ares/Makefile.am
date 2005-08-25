@@ -1,11 +1,13 @@
-noinst_LIBRARIES = libcares.a
+noinst_LTLIBRARIES = libcares.la
 
 MAINTAINERCLEANFILES = \
 	Makefile.in
 
 AM_CPPFLAGS = -I$(top_srcdir)/include
 
-libcares_a_SOURCES =		\
+
+libcares_la_LDFLAGS = -static
+libcares_la_SOURCES =		\
 	ares_cancel.c		\
 	ares__close_sockets.c	\
 	ares_destroy.c		\
@@ -34,10 +36,10 @@ libcares_a_SOURCES =		\
 	ares_version.h		\
 	setup.h
 
-EXTRA_libcares_a_SOURCES = windows_port.c
+EXTRA_libcares_la_SOURCES = windows_port.c
 
-libcares_a_LIBADD = @WINPORT@
-libcares_a_DEPENDENCIES = @WINPORT@
+libcares_la_LIBADD = @WINPORT@
+libcares_la_DEPENDENCIES = @WINPORT@
 
 EXTRA_DIST = \
 	ares.h			\

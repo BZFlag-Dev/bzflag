@@ -2,12 +2,13 @@ MAINTAINERCLEANFILES = \
 	Makefile.in
 
 if CLIENT_INCLUDED
-noinst_LIBRARIES =	libTank.a
+noinst_LTLIBRARIES =	libTank.la
 endif
 
 AM_CPPFLAGS = -I$(top_srcdir)/include
 
-libTank_a_SOURCES =	\
+libTank_la_LDFLAGS = -static
+libTank_la_SOURCES =	\
 	high_barrel.cxx		\
 	high_body.cxx		\
 	high_ltread.cxx		\

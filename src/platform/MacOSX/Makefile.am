@@ -1,4 +1,11 @@
-libMac_a_SOURCES =			\
+if MACOS
+if CLIENT_INCLUDED
+noinst_LTLIBRARIES = libMac.la
+endif
+endif
+
+libMac_la_LDFLAGS = -static
+libMac_la_SOURCES =			\
 	MacDisplay.cxx			\
 	MacDisplay.h			\
 	MacMedia.cxx			\
@@ -11,20 +18,14 @@ libMac_a_SOURCES =			\
 	MacWindow.h			\
 	SDLMain.h
 
-libMac_a_LIBADD = SDLMain.o
+libMac_la_LIBADD = SDLMain.lo
 
-all: SDLMain.o
+all: SDLMain.lo
 
-SDLMain.o:
-	$(COMPILE) -c -o $@ `test -f 'SDLMain.m' || echo '$(srcdir)/'`SDLMain.m
+SDLMain.lo:
+	$(LTCOMPILE) -c -o $@ `test -f 'SDLMain.m' || echo '$(srcdir)/'`SDLMain.m
 
 AM_CPPFLAGS = $(SDL_CFLAGS) -I$(top_srcdir)/src/platform
-
-if MACOS
-if CLIENT_INCLUDED
-noinst_LIBRARIES = libMac.a
-endif
-endif
 
 MAINTAINERCLEANFILES = Makefile.in
 

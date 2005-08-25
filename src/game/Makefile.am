@@ -1,11 +1,12 @@
-noinst_LIBRARIES = libGame.a
+noinst_LTLIBRARIES = libGame.la
 
 MAINTAINERCLEANFILES = \
 	Makefile.in
 
 AM_CPPFLAGS = -I$(top_srcdir)/include @CURL_CFLAGS@
 
-libGame_a_SOURCES =			\
+libGame_la_LDFLAGS = -static
+libGame_la_SOURCES =			\
 	BzMaterial.cxx			\
 	CacheManager.cxx		\
 	CollisionManager.cxx		\

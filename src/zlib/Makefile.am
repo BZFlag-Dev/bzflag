@@ -1,9 +1,10 @@
-noinst_LIBRARIES = libz.a
+noinst_LTLIBRARIES = libz.la
 
 MAINTAINERCLEANFILES = \
 	Makefile.in
 
-libz_a_SOURCES =	\
+libz_la_LDFLAGS = -static
+libz_la_SOURCES =	\
 	adler32.c	\
 	compress.c	\
 	crc32.c		\

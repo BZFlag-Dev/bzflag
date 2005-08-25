@@ -1,5 +1,5 @@
 if CLIENT_INCLUDED
-noinst_LIBRARIES = libMediaFile.a
+noinst_LTLIBRARIES = libMediaFile.la
 endif
 
 MAINTAINERCLEANFILES = \
@@ -7,7 +7,8 @@ MAINTAINERCLEANFILES = \
 
 AM_CPPFLAGS = -I$(top_srcdir)/include
 
-libMediaFile_a_SOURCES =	\
+libMediaFile_la_LDFLAGS = -static
+libMediaFile_la_SOURCES =	\
 	ImageFile.cxx		\
 	ImageFile.h		\
 	MediaFile.cxx		\

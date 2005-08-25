@@ -1,5 +1,5 @@
 if CLIENT_INCLUDED
-noinst_LIBRARIES = lib3D.a
+noinst_LTLIBRARIES = lib3D.la
 endif
 
 MAINTAINERCLEANFILES = \
@@ -7,7 +7,8 @@ MAINTAINERCLEANFILES = \
 
 AM_CPPFLAGS = -I$(top_srcdir)/include
 
-lib3D_a_SOURCES =		\
+lib3D_la_LDFLAGS = -static
+lib3D_la_SOURCES =		\
 	BitmapFont.cxx		\
 	FontManager.cxx		\
 	ImageFont.cxx		\

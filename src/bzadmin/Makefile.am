@@ -47,8 +47,8 @@ ServerLink.cxx: @top_srcdir@/src/bzflag/ServerLink.cxx
 	cp -pR @top_srcdir@/src/bzflag/ServerLink.cxx .
 
 LDADD = \
-	../date/libDate.a	\
+	../date/libDate.la	\
 	@CURSES_LIB@		\
-	../game/libGame.a	\
-	../net/libNet.a		\
-	../common/libCommon.a
+	../game/libGame.la	\
+	../net/libNet.la	\
+	../common/libCommon.la

@@ -193,39 +193,39 @@ RESOURCE =
 endif
 
 if BUILDZLIB
-ZLIB = ../zlib/libz.a
+ZLIB = ../zlib/libz.la
 else
 ZLIB = -lz
 endif
 
 if BUILDCARES
-CARESLIB = ../c-ares/libcares.a
+CARESLIB = ../c-ares/libcares.la
 else
 CARESLIB = -lcares
 endif
 
 if MACOS
-NACLIB =	\
-	../platform/MacOSX/libMac.a
+NACLIB = \
+	../platform/MacOSX/libMac.la
 endif
 
 if BUILD_REGEX
 REGEX = \
-	../regex/libregex.a
+	../regex/libregex.la
 endif
 
 LDADD =	\
-	../3D/lib3D.a			\
-	../game/libGame.a		\
-	../net/libNet.a			\
-	../obstacle/libObstacle.a	\
+	../3D/lib3D.la			\
+	../game/libGame.la		\
+	../net/libNet.la		\
+	../obstacle/libObstacle.la	\
 	$(NACLIB)			\
-	../platform/libPlatform.a	\
-	../ogl/libGLKit.a		\
-	../scene/libSceneDB.a		\
-	../geometry/libGeometry.a	\
-	../mediafile/libMediaFile.a	\
-	../common/libCommon.a		\
+	../platform/libPlatform.la	\
+	../ogl/libGLKit.la		\
+	../scene/libSceneDB.la		\
+	../geometry/libGeometry.la	\
+	../mediafile/libMediaFile.la	\
+	../common/libCommon.la		\
 	$(CARESLIB)			\
 	$(REGEX)			\
 	$(ZLIB)				\
@@ -233,7 +233,7 @@ LDADD =	\
 	$(RESOURCE)			\
 	$(SDL_LIBS)			\
 	$(GLIBS)			\
-	../date/libDate.a
+	../date/libDate.la
 # This is required to hook in ogg/vorbis libraries
 #	$(ALIBS)
 
