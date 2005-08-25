@@ -4006,9 +4006,6 @@ int main(int argc, char **argv)
   PlayerInfo::setFilterParameters(clOptions->filterCallsigns,
 				  clOptions->filter,
 				  clOptions->filterSimple);
-
-  registerDefaultCommands();
-
   // enable replay server mode
   if (clOptions->replayServer) {
 

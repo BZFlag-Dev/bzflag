@@ -448,54 +448,48 @@ public:
 			   GameKeeper::Player *playerData);
 };
 
-void registerDefaultCommands()
-{
-  static MsgCommand         msgCommand;
-  static ServerQueryCommand serverQueryCommand;
-  static PartCommand        partCommand;
-  static QuitCommand        quitCommand;
-  static UpTimeCommand      upTimeCommand;
-  static PasswordCommand    passwordCommand;
-  static SetCommand         setCommand;
-  if (!clOptions->replayServer) {
-    static ResetCommand       resetCommand;
-  }
-  static ShutdownCommand    shutdownCommand;
-  static SuperkillCommand   superkillCommand;
-  static GameOverCommand    gameOverCommand;
-  static CountdownCommand   countdownCommand;
-  static FlagCommand        flagCommand;
-  static LagWarnCommand     lagWarnCommand;
-  static LagStatCommand     lagStatCommand;
-  static IdleStatCommand    idleStatCommand;
-  static FlagHistoryCommand flagHistoryCommand;
-  static PlayerListCommand  playerListCommand;
-  static ReportCommand      ReportCommand;
-  static HelpCommand        helpCommand;
-  static IdentifyCommand    identifyCommand;
-  static RegisterCommand    registerCommand;
-  static GhostCommand       ghostCommand;
-  static DeregisterCommand  deregisterCommand;
-  static SetPassCommand     setPassCommand;
-  static GroupListCommand   groupListCommand;
-  static ShowGroupCommand   showGroupCommand;
-  static GroupPermsCommand  groupPermsCommand;
-  static SetGroupCommand    setGroupCommand;
-  static RemoveGroupCommand removeGroupCommand;
-  static ReloadCommand      reloadCommand;
-  static PollCommand        pollCommand;
-  static ViewReportCommand  viewReportCommand;
-  static ClientQueryCommand clientQueryCommand;
-  static DateCommand        dateCommand;
-  static TimeCommand        timeCommand;
-  static RecordCommand      recordCommand;
-  static ReplayCommand      replayCommand;
-  static SayCommand         sayCommand;
-  static CmdList            cmdList;
-}
-
+static MsgCommand         msgCommand;
+static ServerQueryCommand serverQueryCommand;
+static PartCommand        partCommand;
+static QuitCommand        quitCommand;
+static UpTimeCommand      upTimeCommand;
+static PasswordCommand    passwordCommand;
+static SetCommand         setCommand;
+static ResetCommand       resetCommand;
+static ShutdownCommand    shutdownCommand;
+static SuperkillCommand   superkillCommand;
+static GameOverCommand    gameOverCommand;
+static CountdownCommand   countdownCommand;
+static FlagCommand        flagCommand;
+static LagWarnCommand     lagWarnCommand;
+static LagStatCommand     lagStatCommand;
+static IdleStatCommand    idleStatCommand;
+static FlagHistoryCommand flagHistoryCommand;
+static PlayerListCommand  playerListCommand;
+static ReportCommand      ReportCommand;
+static HelpCommand        helpCommand;
+static IdentifyCommand    identifyCommand;
+static RegisterCommand    registerCommand;
+static GhostCommand       ghostCommand;
+static DeregisterCommand  deregisterCommand;
+static SetPassCommand     setPassCommand;
+static GroupListCommand   groupListCommand;
+static ShowGroupCommand   showGroupCommand;
+static GroupPermsCommand  groupPermsCommand;
+static SetGroupCommand    setGroupCommand;
+static RemoveGroupCommand removeGroupCommand;
+static ReloadCommand      reloadCommand;
+static PollCommand        pollCommand;
 static VoteCommand        voteCommand;
 static VetoCommand        vetoCommand;
+static ViewReportCommand  viewReportCommand;
+static ClientQueryCommand clientQueryCommand;
+static DateCommand        dateCommand;
+static TimeCommand        timeCommand;
+static RecordCommand      recordCommand;
+static ReplayCommand      replayCommand;
+static SayCommand         sayCommand;
+static CmdList            cmdList;
 static CmdHelp            cmdHelp;
 
 CmdHelp::CmdHelp()                       : ServerCommand("") {} // fake entry
@@ -967,12 +961,10 @@ bool ResetCommand::operator() (const char         *message,
     sendMessage(ServerPlayer, t, "You do not have permission to run the reset command");
     return true;
   }
-  // Reset command is no more in the list when in Replay Mode.
-  // Code is commented and will be remove if nobody strongly disagree
-  //   if (Replay::enabled()) {
-  //     sendMessage(ServerPlayer, t, "You can't /reset variables in replay mode");
-  //     return true;
-  //   }
+  if (Replay::enabled()) {
+    sendMessage(ServerPlayer, t, "You can't /reset variables in replay mode");
+    return true;
+  }
   std::string command = (message + 1);
   // we aren't case sensitive but CMDMGR is
   for (int i = 0; i < 5 /*"reset"*/; ++i)
