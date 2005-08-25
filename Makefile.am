@@ -23,12 +23,13 @@ SUBDIRS = \
 
 DIST_SUBDIRS = \
 	$(traversal_dirs) \
-	plugins \
+	Dev-C++ \
 	debian \
+	m4 \
 	misc \
+	plugins \
 	tools \
 	win32 \
-	Dev-C++ \
 	BZFlag.xcode
 
 EXTRA_DIST = \
