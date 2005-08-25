@@ -9,3 +9,6 @@ depcomp
 install-sh
 ltmain.sh
 missing
+config.guess.backup
+config.sub.backup
+ltmain.sh.backup
