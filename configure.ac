@@ -13,6 +13,9 @@ dnl
 
 AC_INIT
 AC_CONFIG_SRCDIR(src/bzflag/bzflag.cxx)
+AC_REVISION($Revision $)
+
+AC_CONFIG_AUX_DIR(misc)
 
 # sed magic to get version numbers from src/date/buildDate.cxx
 MAJOR_VERSION=`sed -e 's/#.*define.*BZ_MAJOR_VERSION[^0-9]*\(.*\)/\1/' -e t -e d < \$srcdir/src/date/buildDate.cxx`
