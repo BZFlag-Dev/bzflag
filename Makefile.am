@@ -53,16 +53,10 @@ EXTRA_DIST = \
 	RELNOTES
 
 MAINTAINERCLEANFILES = \
-	aclocal.m4 \
-	config.guess \
-	config.sub \
 	configure \
 	bzflag.info \
 	bzflag.spec \
 	INSTALL \
-	install-sh \
-	missing \
-	mkinstalldirs \
 	Makefile.in
 
 .PHONY: package FORCE debian-cvs debian-release
