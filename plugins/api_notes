@@ -15,3 +15,4 @@ notes on yon API
 * add api to add meshes
 * have maps be able to specifiy required plugins
 * add ability for a plugin to be unique ( load once ).
+* add hook for shot message, move message, teleport message, and "need TP destination"
