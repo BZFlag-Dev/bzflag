@@ -4,7 +4,6 @@ DIST_SUBDIRS = \
 	airspawn \
 	chathistory \
 	doc \
-	fixedspawn \
 	hiddenAdmin \
 	killall \
 	playHistoryTracker \
