@@ -380,8 +380,8 @@ bool Quake3Level::dumpToModel ( CModel &model )
 					if ( cObject.name != "light" && cObject.name != "misc_model" )
 						cObject.name = "spawn";
 
-					if (cObject.name  == "spawn" )
-						model.customObjects.push_back(cObject);
+					//if (cObject.name  == "spawn" )
+					//	model.customObjects.push_back(cObject);
 				}
 			}
 			else
