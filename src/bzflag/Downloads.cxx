@@ -31,10 +31,10 @@
 #include "HUDDialogStack.h"
 
 
-// stupid globals for stupid file tracker
-int totalTex = 0;
-int currentTex = 0;
-int runs = 0;
+// local variables for file tracker
+static int totalTex = 0;
+static int currentTex = 0;
+static int runs = 0;
 
 
 
