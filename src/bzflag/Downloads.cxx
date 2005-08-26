@@ -31,6 +31,13 @@
 #include "HUDDialogStack.h"
 
 
+// stupid globals for stupid file tracker
+int totalTex = 0;
+int currentTex = 0;
+int runs = 0;
+
+
+
 // FIXME - someone write a better explanation
 static const char DownloadContent[] =
   "#\n"
@@ -83,13 +90,13 @@ private:
   static bool               checkForCache;
   static long               httpTimeout;
   static int                textureCounter;
-  static int                byteTransferred;
+  static int				byteTransferred;
   bool                      timeRequest;
 };
 bool CachedTexture::checkForCache   = false;
 long CachedTexture::httpTimeout     = 0;
-int  CachedTexture::textureCounter;
-int  CachedTexture::byteTransferred;
+int CachedTexture::textureCounter = 0;
+int CachedTexture::byteTransferred = 0;
 
 CachedTexture::CachedTexture(const std::string &texUrl) : cURLManager()
 {
@@ -164,10 +171,6 @@ void CachedTexture::collectData(char* ptr, int len)
 {
   char buffer[128];
 
-  static int totalTex = 0;
-  static int currentTex = 0;
-  static int runs = 0;
-
   if(runs == 0)
 	  totalTex = textureCounter;
 
@@ -178,9 +181,7 @@ void CachedTexture::collectData(char* ptr, int len)
   currentTex = totalTex - textureCounter + 1;
 
   //Turn bytes into kilobytes
-  byteTransferred = byteTransferred/1024;
-
-  sprintf (buffer, "Downloading texture (%i of %i): %i KB", currentTex, totalTex, byteTransferred);
+  sprintf (buffer, "Downloading texture (%d of %d): %d KB", currentTex, totalTex, byteTransferred/1024);
   runs++;
 
   HUDDialogStack::get()->setFailedMessage(buffer);
@@ -191,6 +192,10 @@ std::vector<CachedTexture*> cachedTexVector;
 void Downloads::startDownloads(bool doDownloads, bool updateDownloads,
 			       bool referencing)
 {
+  totalTex = 0;
+  currentTex = 0;
+  runs = 0;
+
   CACHEMGR.loadIndex();
   CACHEMGR.limitCacheSize();
 
