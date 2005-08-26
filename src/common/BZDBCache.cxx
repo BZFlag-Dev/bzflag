@@ -51,6 +51,8 @@ float BZDBCache::flagPoleSize;
 float BZDBCache::flagPoleWidth;
 float BZDBCache::maxLOD;
 
+float BZDBCache::hudGUIBorderOpacityFactor;
+
 void BZDBCache::init()
 {
   BZDB.addCallback("displayMainFlags", clientCallback, NULL);
@@ -71,6 +73,7 @@ void BZDBCache::init()
   BZDB.addCallback("pulseDepth", clientCallback, NULL);
   BZDB.addCallback("showCollisionGrid", clientCallback, NULL);
   BZDB.addCallback("showCullingGrid", clientCallback, NULL);
+  BZDB.addCallback("hudGUIBorderOpacityFactor", clientCallback, NULL);
 
   BZDB.addCallback(StateDatabase::BZDB_MAXLOD, serverCallback, NULL);
   BZDB.addCallback(StateDatabase::BZDB_WORLDSIZE, serverCallback, NULL);
@@ -138,6 +141,8 @@ void BZDBCache::clientCallback(const std::string& name, void *)
     showCollisionGrid = BZDB.isTrue("showCollisionGrid");
   else if (name == "showCullingGrid")
     showCullingGrid = BZDB.isTrue("showCullingGrid");
+  else if (name == "hudGUIBorderOpacityFactor")
+	hudGUIBorderOpacityFactor = BZDB.eval("hudGUIBorderOpacityFactor");
 }
 
 void BZDBCache::serverCallback(const std::string& name, void *)

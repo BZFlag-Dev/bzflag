@@ -55,6 +55,8 @@ public:
 	static float flagPoleSize;
 	static float flagPoleWidth;
 
+	static float hudGUIBorderOpacityFactor;
+
 public:
   /** public method to update cached variable
       has to be called at best opportunity

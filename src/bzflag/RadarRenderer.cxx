@@ -278,7 +278,15 @@ void RadarRenderer::renderFrame(SceneRenderer& renderer)
   const float top = float(oy + y) - 0.5f;
   const float bottom = float(oy + y + h) + 0.5f;
 
-  glColor3fv(teamColor);
+  float outlineOpacity = RENDERER.getPanelOpacity();
+  float fudgeFactor = BZDBCache::hudGUIBorderOpacityFactor;	// bzdb cache this manybe?
+  if ( outlineOpacity < 1.0f )
+	  outlineOpacity = (outlineOpacity*fudgeFactor) + (1.0f - fudgeFactor);
+
+  if (BZDBCache::blend)
+	  glEnable(GL_BLEND);
+
+  glColor4f(teamColor[0],teamColor[1],teamColor[2],outlineOpacity);
 
   glBegin(GL_LINE_LOOP); {
     glVertex2f(left, top);
@@ -293,6 +301,11 @@ void RadarRenderer::renderFrame(SceneRenderer& renderer)
     glVertex2f(right, bottom);
     glVertex2f(left, bottom);
   } glEnd();
+
+  if (BZDBCache::blend)
+	  glDisable(GL_BLEND);
+
+  glColor4f(teamColor[0],teamColor[1],teamColor[2],1.0f);
 
   const float opacity = renderer.getPanelOpacity();
   if ((opacity < 1.0f) && (opacity > 0.0f)) {

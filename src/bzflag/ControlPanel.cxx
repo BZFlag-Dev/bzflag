@@ -493,8 +493,16 @@ void			ControlPanel::render(SceneRenderer& _renderer)
   long xpos;
   long ypos;
 
+  float outlineOpacity = RENDERER.getPanelOpacity();
+  float fudgeFactor = BZDBCache::hudGUIBorderOpacityFactor;	// bzdb cache this manybe?
+  if ( outlineOpacity < 1.0f )
+	outlineOpacity = (outlineOpacity*fudgeFactor) + (1.0f - fudgeFactor);
+
+  if (BZDBCache::blend)
+	 glEnable(GL_BLEND);
+
   // nice border
-  glColor3f(teamColor[0], teamColor[1], teamColor[2] );
+  glColor4f(teamColor[0], teamColor[1], teamColor[2],outlineOpacity );
   glBegin(GL_LINE_LOOP); {
     // bottom left
     xpos = x + messageAreaPixels[0] - 1;
@@ -571,6 +579,11 @@ void			ControlPanel::render(SceneRenderer& _renderer)
       tabPosition += long(tabTextWidth[tab]);
     }
   } glEnd();
+
+  if (BZDBCache::blend)
+	  glDisable(GL_BLEND);
+
+  glColor4f(teamColor[0], teamColor[1], teamColor[2],1.0f );
 
   glPopMatrix();
 

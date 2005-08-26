@@ -143,7 +143,10 @@ DefaultDBItem	defaultDBItems[] = {
   { "tpEffect",			"1",			true,	StateDatabase::ReadWrite,	NULL },
 
   // URL timeouts
-  { "httpTimeout",		"15",			true,	StateDatabase::ReadWrite,	NULL }
+  { "httpTimeout",		"15",			true,	StateDatabase::ReadWrite,	NULL },
+
+  // hud drawing
+  { "hudGUIBorderOpacityFactor","0.75",	true,	StateDatabase::ReadWrite,	NULL }
 };
 
 
