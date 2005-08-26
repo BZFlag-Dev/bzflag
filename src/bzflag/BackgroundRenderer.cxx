@@ -901,6 +901,9 @@ void BackgroundRenderer::drawGroundCentered()
 
   const GLubyte fan[6] = { 0, 1, 2, 3, 4, 1};
 
+  glNormal3f(0.0f, 0.0f, 1.0f);
+  glDisableClientState(GL_NORMAL_ARRAY); // safety
+
   glVertexPointer(2, GL_FLOAT, 0, vertices);
   glEnableClientState(GL_VERTEX_ARRAY);
   glTexCoordPointer(2, GL_FLOAT, 0, texcoords);
