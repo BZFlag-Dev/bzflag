@@ -492,7 +492,7 @@ bool BanCommand::operator() (const char         *message,
 	ip = playerBannedData->netHandler->getTargetIP();
     }
 
-	int reasonIndex = 3;
+    unsigned int reasonIndex = 3;
     // check the ban duration
     regex_t preg;
     int res = regcomp(&preg, "^([[:digit:]]+[hwd]?)+$",
