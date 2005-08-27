@@ -131,7 +131,7 @@ the current game state.</p>
                   <p>&nbsp;</p>
                   <p>The functions are as follows:</p>
                   <p><span class="style4 style7">Player Data Functions </span></p>                  <p><strong>BZF_API bool bz_getPlayerByIndex ( int index, bz_PlayerRecord *playerRecord );</strong></p>
-                  <p>This function will take a player index, and will return a new player data object in the playerRecord paramater. <b>WARNING:</b> this function CAN and WILL return NULL in certain situations.  <b>Always</b> check for NULL before dereferencing the result of this function.  The player data class contains the following data:</p>
+                  <p>This function will take a player index, and will return a new player data object in the playerRecord paramater. <b>WARNING:</b> this function CAN and WILL return NULL in certain situations.  <b>Always</b> check for NULL before dereferencing the result of this function, otherwise your plugin may crash the server.  The player data class contains the following data:</p>
                   <table bgcolor="#dddddd" border="1">
                     <tbody>
                       <tr>
