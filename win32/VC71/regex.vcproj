@@ -61,6 +61,8 @@
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
+				OptimizeForProcessor="2"
+				OptimizeForWindowsApplication="TRUE"
 				AdditionalIncludeDirectories="./;../;../../src/regex;../../include"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB"
 				RuntimeLibrary="0"
