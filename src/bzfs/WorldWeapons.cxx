@@ -44,7 +44,7 @@ int fireWorldWep(FlagType* type, float lifetime, PlayerId player, float *pos,
   void *buf, *bufStart = getDirectMessageBuffer();
 
   FiringInfo firingInfo;
-  firingInfo.timeSent = 0;
+  firingInfo.timeSent = (float)TimeKeeper::getCurrent().getSeconds();
   firingInfo.flagType = type;
   firingInfo.lifetime = lifetime;
   firingInfo.shot.player = player;
