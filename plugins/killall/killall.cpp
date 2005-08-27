@@ -52,3 +52,4 @@ BZF_PLUGIN_CALL int bz_Unload ( void )
 	bz_debugMessage(4,"killall plugin unloaded");
 	return 0;
 }
+
