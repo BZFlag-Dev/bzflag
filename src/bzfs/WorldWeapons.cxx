@@ -191,6 +191,14 @@ int WorldWeapons::packSize(void) const
   return fullSize;
 }
 
+int WorldWeapons::getNewWorldShotID ( void )
+{ 
+	if (worldShotId > _MAX_WORLD_SHOTS)
+		worldShotId = 0;
+
+	return worldShotId++;
+}
+
 //----------WorldWeaponGlobalEventHandler---------------------
 // where we do the world weapon handling for event based shots since they are not really done by the "world"
 WorldWeaponGlobalEventHandler::WorldWeaponGlobalEventHandler(FlagType *_type,

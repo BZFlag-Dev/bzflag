@@ -49,7 +49,7 @@ public:
   int packSize() const;
   void *pack(void *buf) const;
 
-  int getNewWorldShotID ( void ) { return worldShotId++;if (worldShotId > _MAX_WORLD_SHOTS) worldShotId = 0;}
+  int getNewWorldShotID ( void );
 
 private:
   struct Weapon
