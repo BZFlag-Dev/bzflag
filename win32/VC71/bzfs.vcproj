@@ -274,6 +274,9 @@ copy ..\..\src\bzfs\debug\*.exe ..\..\*.exe
 				RelativePath="..\..\src\bzfs\Authentication.cxx">
 			</File>
 			<File
+				RelativePath="..\..\src\bzfs\BanCommands.cxx">
+			</File>
+			<File
 				RelativePath="..\..\src\bzfs\bzfs.cxx">
 				<FileConfiguration
 					Name="Release|Win32">
