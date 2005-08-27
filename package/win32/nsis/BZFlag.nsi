@@ -7,7 +7,7 @@
 ;
 
 !define VER_MAJOR 2.0
-!define VER_MINOR .3b16
+!define VER_MINOR .3b17
 
 ; Main Installer Options
 Name "BZFlag"
@@ -48,6 +48,7 @@ Section "BZFlag (required)"
 	File ..\..\..\src\bzadmin\bzadmin.exe
 	File ..\..\..\src\bzfs\bzfs.exe
 	File ..\..\..\libcurl.dll
+	File ..\..\..\zlibwapi.dll
 	File ..\..\..\plugins\*.dll
 
 	; See http://msdn.microsoft.com/library/default.asp?url=/library/en-us/vclib/html/_crt_c_run.2d.time_libraries.asp
