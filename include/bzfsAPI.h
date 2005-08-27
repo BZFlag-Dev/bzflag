@@ -151,7 +151,7 @@ typedef enum
 #define BZ_BZDBPERM_CLIENT	3	
 
 //utility classes
- class BZF_API bzApiString
+class BZF_API bzApiString
 {
 public:
 	bzApiString();
@@ -173,9 +173,9 @@ public:
 	bool operator != ( const std::string& r );
 	bool operator != ( const char* r );
 
-	unsigned int size ( void );
+	unsigned int size ( void ) const;
 
-	const char* c_str(void);
+	const char* c_str(void) const;
 
 protected:
 	class dataBlob;

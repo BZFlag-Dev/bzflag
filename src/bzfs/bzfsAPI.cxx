@@ -201,12 +201,12 @@ bool bzApiString::operator != ( const char* r )
 	return data->str != r;
 }
 
-unsigned int bzApiString::size ( void )
+unsigned int bzApiString::size ( void ) const
 {
 	return data->str.size();
 }
 
-const char* bzApiString::c_str(void)
+const char* bzApiString::c_str(void) const
 {
 	return data->str.c_str();
 }
