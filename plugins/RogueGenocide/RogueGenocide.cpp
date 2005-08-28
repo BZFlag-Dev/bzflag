@@ -83,12 +83,12 @@ void RogueDeathHandler::process ( bz_EventData *eventData )
 				{
 					bz_killPlayer( targetID, false, dieData->killerID, "G" );
 					bz_sendTextMessage(BZ_SERVER, targetID, "You were a victim of Rogue Genocide");
-				}
 
-				// oops, I ended up killing myself (directly or indirectly) with Genocide!
-				if ( playRec->team == eRogueTeam && targetID == dieData->killerID )
-				{
-					bz_sendTextMessage(BZ_SERVER, targetID, "You should be more careful with Genocide!");
+                                	// oops, I ended up killing myself (directly or indirectly) with Genocide!
+                                	if ( targetID == dieData->killerID )
+                                	{
+                                        	bz_sendTextMessage(BZ_SERVER, targetID, "You should be more careful with Genocide!");
+                       		 	}
 				}
 
 				bz_freePlayerRecord(playRec);
