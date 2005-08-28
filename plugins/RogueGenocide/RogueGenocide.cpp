@@ -80,12 +80,14 @@ void RogueDeathHandler::process ( bz_EventData *eventData )
 
 			for ( unsigned int i = 0; i < playerList->size(); i++)
 			{
-				bz_PlayerRecord *playRec = bz_getPlayerByIndex ( i );
+				int targetID = (*playerList)[i];
+				bz_PlayerRecord *playRec = bz_getPlayerByIndex ( targetID );
+				if (!playRec) continue;
 
 				if ( playRec->spawned && playRec->team == eRogueTeam )
 				{
-					bz_killPlayer( i, false, dieData->killerID, "G" );
-					bz_sendTextMessage(BZ_SERVER,i,"You were a victim of Rogue Genocide");
+					bz_killPlayer( targetID, false, dieData->killerID, "G" );
+					bz_sendTextMessage(BZ_SERVER, targetID, "You were a victim of Rogue Genocide");
 				}
 				bz_freePlayerRecord(playRec);
 			}
