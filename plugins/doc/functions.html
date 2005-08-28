@@ -190,7 +190,7 @@ Calls <strong>bz_revokePerm</strong> on this player. </p>
                     Fills out the supplied list with a list of the IDs of all known users.</p>
                   <p><strong>BZF_API bool bz_freePlayerRecord ( bz_PlayerRecord *playerRecord );</strong><br>
                     This command will free the memory used by a Player Record Object. It must be called when a plug-in is done using the player data returned from <strong>bz_getPlayerByIndex</strong></p>
-                  <p class="style10">The following score functions were removed untill they can work properly on all clients.s </p>
+                  <p class="style10">The following score functions were removed until they can work properly on all clients.</p>
                   <p><span class="style8"><span class="style9"><strong>BZF_API bool bz_setPlayerWins (int playerId, int wins);</strong><br> 
                       This command will set the number of wins (kills) in the score for the specified player, and update all client scores. </span></span></p>                  <p class="style9"><strong>BZF_API bool bz_setPlayerLosses (int playerId, int losses);</strong><br>
 This command will set the number of losses(deaths) in the score for the specified player, and update all client scores. </p>
@@ -209,7 +209,7 @@ This function will remove the specified permision from the user, and return true
 <p>&nbsp;</p>
 <p><span class="style4 style7">Message Functions </span></p>
 <p><strong>BZF_API bool bz_sendTextMessage (int from, int to, const char* message);</strong><br>
-                    Sends a text message to the specified user. <strong>BZ_SERVER</strong> should be used for messages from the server. If the message is sent to <strong>BZ_ALL_USERS</strong> it will send the message to all connected users. Likewise if it is set to<strong>BZ_ADMIN_CHANNEL</strong> it will be sent to all users with the ADMINMESSAGERECEIVE permission.</p>
+                    Sends a text message to the specified user. <strong>BZ_SERVER</strong> should be used for messages from the server. If the message is sent to <strong>BZ_ALL_USERS</strong> it will send the message to all connected users. Likewise if it is set to <strong>BZ_ADMIN_CHANNEL</strong> it will be sent to all users with the ADMINMESSAGERECEIVE permission.</p>
 <p><strong>BZF_API bool bz_sentFetchResMessage ( int playerID, const char* URL );</strong><br>
 Sends an update message to the specified player telling them they must have the file specified in the URL. At present this is only used for sounds files. </p><p>&nbsp;</p>
                   <p><span class="style4 style7">World Weapons Functions </span></p>
