@@ -110,7 +110,7 @@ bool LastChatCommand::handle ( int playerID, bzApiString _command, bzApiString _
 		for ( unsigned int i = 0; i < numLines-1; i++ )
 		{
 			std::string chatItem = history[history.size()-i];
-			bz_sendTextMessage(BZ_SERVER,playerID,TextUtils::format("%d<%s> %s",i,params[1],chatItem.c_str()).c_str());
+			bz_sendTextMessage(BZ_SERVER,playerID,TextUtils::format("%d<%s> %s",i,params[1].c_str(),chatItem.c_str()).c_str());
 		}
 
 		return true;
@@ -158,5 +158,8 @@ void ChatEvents::process ( bz_EventData *eventData )
 		break;
 
 	}
+
+	bz_freePlayerRecord(fromPlayer);
+
 }
 
