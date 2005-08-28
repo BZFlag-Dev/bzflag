@@ -64,16 +64,8 @@ void RogueDeathHandler::process ( bz_EventData *eventData )
 			// if the tank killed was not a rogue, let the server/client do the normal killing
 			if (dieData->team != eRogueTeam )
 				break;
-			// if the tank killed was a rogue, and the killer was a rogue, kill the lousy tk'er
-			if (dieData->killerTeam == eRogueTeam ) 
-			{
-			//	bz_killPlayer ( dieData->killerID, 0, dieData->killerID, "G" );
-				bz_sendTextMessage(BZ_SERVER,dieData->killerID,"You should be more careful with Genocide");
-			}
-			// if the tank killed was a rogue, and the killer wasnt, kill all rogues.
-			// note the possible issue if the rogue tank being killed has not spawned
-			// and if all else fails, just kill all rogues.....nothing wrong with that
 
+			// if the tank killed was a rogue, kill all rogues.
 			bzAPIIntList	*playerList = bz_newIntList();
 
 			bz_getPlayerIndexList(playerList);
@@ -84,11 +76,21 @@ void RogueDeathHandler::process ( bz_EventData *eventData )
 				bz_PlayerRecord *playRec = bz_getPlayerByIndex ( targetID );
 				if (!playRec) continue;
 
+				// the sucker is a spawned rogue, kill him.  This generates another death event,
+				// so if you kill another rogue with geno while you are a rogue you end up dead too.
+				// and you get both messages (victim and be careful)
 				if ( playRec->spawned && playRec->team == eRogueTeam )
 				{
 					bz_killPlayer( targetID, false, dieData->killerID, "G" );
 					bz_sendTextMessage(BZ_SERVER, targetID, "You were a victim of Rogue Genocide");
 				}
+
+				// oops, I ended up killing myself (directly or indirectly) with Genocide!
+				if ( playRec->team == eRogueTeam && targetID == dieData->killerID )
+				{
+					bz_sendTextMessage(BZ_SERVER, targetID, "You should be more careful with Genocide!");
+				}
+
 				bz_freePlayerRecord(playRec);
 			}
 			bz_deleteIntList(playerList);
