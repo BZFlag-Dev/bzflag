@@ -4,6 +4,13 @@
 BZFlag 2.0.3
 ------------
 
+* Fixing authentication when changing callsign/password - Alfredo Tupone
+* Fixing authentication when joining from command-line - Alfredo Tupone
+* Executing abbreviated server command '*' terminated - Alfredo Tupone
+* Getting one-line-help on server command '?' terminated - Alfredo Tupone
+* Fixing bzflag use of system-wide regex (--without-regex) - Alfredo Tupone
+* Adding destination info to chat message log - Alfredo Tupone
+* Adding syntax check to duration parameter of ban cmds - Alfredo Tupone
 * Hud outlines go transparent with the hud panel - Jeff Myers, Daniel Mulford
 * Better progress info when downloading textures - Garrett Padera, Jeff Myers
 * Add Quake3 BSP import to modeltool - Jeff Myers
