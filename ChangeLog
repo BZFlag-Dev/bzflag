@@ -4,7 +4,7 @@
 BZFlag 2.0.3
 ------------
 
-* Make hud outlines go transpearnt with the hud pannel - Jeff Myers, Daniel Mulford
+* Hud outlines go transparent with the hud panel - Jeff Myers, Daniel Mulford
 * Better progress info when downloading textures - Garrett Padera, Jeff Myers
 * Add Quake3 BSP import to modeltool - Jeff Myers
 * Exit BZFS if -g is used with -mts or -mps -  Joshua Rogers
