@@ -18,6 +18,7 @@ public:
 		if ( !player->admin )
 		{
 			bz_sendTextMessage(BZ_SERVER,playerID,"You do not have permission to run /killall");
+			bz_freePlayerRecord(player);
 			return true;
 		}
 
@@ -32,6 +33,9 @@ public:
 
 		for ( unsigned int i = 0; i < playerList->size(); i++ )
 			bz_killPlayer(playerList->get(i),false);
+
+		bz_freePlayerRecord(player);
+		bz_deleteIntList(playerList);
 
 		return true;
 	}
