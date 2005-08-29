@@ -21,7 +21,7 @@
 #ifndef _WIN32
 #include <netinet/in.h>
 #else
-#include <WINSOCK2.H>
+#include <winsock2.h>
 #endif
 
 
