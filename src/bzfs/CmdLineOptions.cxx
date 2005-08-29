@@ -1160,10 +1160,6 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
     usage(argv[0]);
 
   // first disallow flags inconsistent with game style
-  if (options.gameStyle & InertiaGameStyle) {
-    options.flagCount[Flags::Momentum] = 0;
-    options.flagDisallowed[Flags::Momentum] = true;
-  }
   if (options.gameStyle & JumpingGameStyle) {
     options.flagCount[Flags::Jumping] = 0;
     options.flagDisallowed[Flags::Jumping] = true;
