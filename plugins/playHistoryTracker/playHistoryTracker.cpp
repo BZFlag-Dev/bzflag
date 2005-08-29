@@ -170,8 +170,8 @@ void PlayHistoryTracker::process ( bz_EventData *eventData )
 
 			bz_freePlayerRecord(killerData);
 
-			if (soundToPlay.size())
-				bz_sendPlayCustomLocalSound(BZ_ALLUSERS,soundToPlay.c_str());
+			//if (soundToPlay.size())
+			//	bz_sendPlayCustomLocalSound(BZ_ALLUSERS,soundToPlay.c_str());
 
 		}
 		break;
