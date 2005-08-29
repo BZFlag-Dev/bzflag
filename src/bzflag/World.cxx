@@ -874,10 +874,8 @@ bool World::writeWorld(const std::string& filename, std::string& fullname)
       out << "  +r" << std::endl;
     if (allowHandicap())
       out << "  -handicap" << std::endl;
-    if (allowInertia()) {
-      out << "  -a " << getLinearAcceleration() << " "
-		     << getAngularAcceleration() << std::endl;
-    }
+    out << "  -a " << getLinearAcceleration()
+	<< " " << getAngularAcceleration() << std::endl;
     if (allowAntidote()) {
       out << "  -sa" << std::endl;
       out << "  -st " << getFlagShakeTimeout() << std::endl;
