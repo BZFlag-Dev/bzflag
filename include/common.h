@@ -25,7 +25,8 @@
 #endif
 
 #ifdef _WIN32
-#  define NOMINMAX
+#  undef NOMINMAX
+#  define NOMINMAX 1
 #  include "win32.h"
 #endif
 

@@ -23,8 +23,6 @@
     #pragma warning(disable : 4786)  // Disable warning message
   #endif
   #define WIN32_LEAN_AND_MEAN    // Exclude rarely-used stuff from Windows headers
-#undef NOMINMAX
-#define NOMINMAX 1
   #include <windows.h>
   #include <io.h>
   #include <direct.h>

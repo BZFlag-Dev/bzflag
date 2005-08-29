@@ -18,7 +18,6 @@
 #define	__WIN32_H__
 
 #define _WINSOCKAPI_
-#define NOMINMAX
 
 //#ifdef __MINGW32__
 #include <windows.h>
