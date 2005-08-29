@@ -93,7 +93,6 @@ std::vector<trPluginRecord>	vPluginList;
 void unload1Plugin ( int iPluginID ); 
 
 #ifdef _WIN32
-#  define NOMINMAX
 #  include <windows.h>
 
 int getPluginVersion ( HINSTANCE hLib )
