@@ -14,7 +14,7 @@
 bzfs \- BZFlag game server
 .SH "SYNOPSIS"
 .B bzfs
-[\fB\-a \fIvelocity\fR \fIrotation\fR]
+[\fB\-a \fIlinear\fR \fIangular\fR]
 [\fB\-admsg \fImessage\fR]
 [\fB\-advertise \fIGROUPNAME,GROUPNAME,...\fR]
 [\fB\-autoTeam\fR]
@@ -108,11 +108,12 @@ Terminating the server terminates the game in progress.
 
 .SH "OPTIONS"
 .TP 15
-\fB\-a \fIvelocity rotation\fR
-Enables inertia and sets the maximum linear and angular accelerations.
+\fB\-a \fIlinear angular\fR
+Sets the maximum linear and angular accelerations.
 The units are somewhat arbitrary so you'll have to experiment to find
-suitable values.  The values must be non\-negative and higher values
-yield greater inertia.
+suitable values. Positive values will set limits to the acceleration
+and lower they are, greater is the inertia.
+Zero or negative values disable acceleration limits.
 .TP 15
 \fB\-admsg \fImessage\fR
 Define a message which will be broadcast to all players every 15 minutes.
