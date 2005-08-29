@@ -539,6 +539,10 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
   static bool allFlagsOut = false;
   static bool teamFlagsAdded = false;
 
+  // InertiaGameStyle maintained just for compatibility
+  // Same effect is achieved setting linear/angular Acceleration
+  options.gameStyle |= int(InertiaGameStyle);
+
   // parse command line
   int playerCountArg = 0,playerCountArg2 = 0;
   for (i = 1; i < argc; i++) {
@@ -551,7 +555,6 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
 	options.linearAcceleration = 0.0f;
       if (options.angularAcceleration < 0.0f)
 	options.angularAcceleration = 0.0f;
-      options.gameStyle |= int(InertiaGameStyle);
     } else if (strcmp(argv[i], "-admsg") == 0) {
       checkArgc(1, i, argc, argv[i]);
       if ((options.advertisemsg != "") || (strlen (argv[i]) == 0)) {
@@ -1298,8 +1301,6 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
     DEBUG1("  super flags allowed\n");
   if (options.gameStyle & int(JumpingGameStyle))
     DEBUG1("  jumping allowed\n");
-  if (options.gameStyle & int(InertiaGameStyle))
-    DEBUG1("  inertia: %f, %f\n", options.linearAcceleration, options.angularAcceleration);
   if (options.gameStyle & int(RicochetGameStyle))
     DEBUG1("  all shots ricochet\n");
   if (options.gameStyle & int(ShakableGameStyle))
