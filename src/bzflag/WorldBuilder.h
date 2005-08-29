@@ -45,7 +45,6 @@ class WorldBuilder {
     World*		peekWorld();	// doesn't give up ownership
 
     void		setGameStyle(short gameStyle);
-    void		setInertia(float linearAccel, float angularAccel);
     void		setMaxPlayers(int maxPlayers);
     void		setMaxShots(int maxSimultaneousShots);
     void		setMaxFlags(int maxFlags);

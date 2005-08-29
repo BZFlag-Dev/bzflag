@@ -224,11 +224,6 @@ void* WorldBuilder::unpackGameSettings(void* buf)
 
 void WorldBuilder::preGetWorld()
 {
-  // if no inertia gameStyle then make sure accelerations are zero (disabled)
-  if (!(world->gameStyle & short(InertiaGameStyle))) {
-    setInertia(0.0, 0.0);
-  }
-
   // prepare players array
   if (world->players) {
     delete[] world->players;
@@ -282,12 +277,6 @@ World* WorldBuilder::peekWorld()
 void WorldBuilder::setGameStyle(short gameStyle)
 {
   world->gameStyle = gameStyle;
-}
-
-void WorldBuilder::setInertia(float linearAccel,	float angularAccel)
-{
-  world->linearAcceleration = linearAccel;
-  world->angularAcceleration = angularAccel;
 }
 
 void WorldBuilder::setMaxPlayers(int maxPlayers)
