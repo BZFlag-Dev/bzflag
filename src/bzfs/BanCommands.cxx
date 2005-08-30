@@ -471,10 +471,7 @@ bool BanCommand::operator() (const char         *message,
     sendMessage(ServerPlayer, t,
 		"Syntax: /ban <#slot | PlayerName | \"Player Name\" | ip> "
 		"<duration> <reason>");
-	sendMessage(ServerPlayer, t,
-		"Duration examples:  30 1h  1d  1w  and mixing: 1w2d4h "
-		"1w2d1");
-	sendMessage(ServerPlayer, t,
+    sendMessage(ServerPlayer, t,
 		"	Please keep in mind that reason is displayed to the "
 		"user.");
   } else {
@@ -492,7 +489,6 @@ bool BanCommand::operator() (const char         *message,
 	ip = playerBannedData->netHandler->getTargetIP();
     }
 
-    unsigned int reasonIndex = 3;
     // check the ban duration
     regex_t preg;
     int res = regcomp(&preg, "^([[:digit:]]+[hwd]?)+$",
@@ -500,25 +496,26 @@ bool BanCommand::operator() (const char         *message,
     res = regexec(&preg,argv[2].c_str(), 0, NULL, 0);
     regfree(&preg);
     if (res == REG_NOMATCH) {
-      sendMessage(ServerPlayer, t, "Notice: No Ban Duration, using shortban max time");
-	  reasonIndex = 2;
-   //   return true;
+      sendMessage(ServerPlayer, t, "Error: invalid ban duration");
+      sendMessage(ServerPlayer, t,
+		  "Duration examples:  30 1h  1d  1w  and mixing: 1w2d4h "
+		  "1w2d1");
+      return true;
     }
 
-	if (reasonIndex != 2)
-	{
-		int specifiedDuration = TextUtils::parseDuration(argv[2]);
-		if ((durationInt > 0) && ((specifiedDuration > durationInt) || (specifiedDuration <= 0)) && !playerData->accessInfo.hasPerm(PlayerAccessInfo::ban)) {
-		sendMessage (ServerPlayer, t, "You only have SHORTBAN privileges,"
-			" using default ban time");
-		} else {
-		durationInt = specifiedDuration;
-		}
-	}
+    int specifiedDuration = TextUtils::parseDuration(argv[2]);
+    if ((durationInt > 0) &&
+	((specifiedDuration > durationInt) || (specifiedDuration <= 0)) &&
+	!playerData->accessInfo.hasPerm(PlayerAccessInfo::ban)) {
+      sendMessage (ServerPlayer, t, "You only have SHORTBAN privileges,"
+		   " using default ban time");
+    } else {
+      durationInt = specifiedDuration;
+    }
 
     // set the ban reason
-    if (argv.size() == reasonIndex+1) {
-      reason = argv[reasonIndex];
+    if (argv.size() == 4) {
+      reason = argv[3];
     }
 
     // call any plugin events registered for /ban
