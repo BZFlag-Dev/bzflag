@@ -474,9 +474,9 @@ bool BanCommand::operator() (const char         *message,
 	sendMessage(ServerPlayer, t,
 		"	<duration> can be 'short' or 'default' for the default ban time ");
 	sendMessage(ServerPlayer, t,
-		"	or 'forever' or 'max' for infanate bans ");
+		"	or 'forever' or 'max' for infinite bans ");
 	sendMessage(ServerPlayer, t,
-		"	or a time in the fomat <weeks>W<days>D<hours>H<minutes>M ");
+		"	or a time in the format <weeks>W<days>D<hours>H<minutes>M ");
 	sendMessage(ServerPlayer, t,
 		"	or just a number of minutes ");
 	sendMessage(ServerPlayer, t,
@@ -500,9 +500,9 @@ bool BanCommand::operator() (const char         *message,
 	int specifiedDuration = 0;
 
     // check the ban duration
-	if (strcasecmp(argv[2].c_str(),"short") == 0 || strcasecmp(argv[2].c_str(),"default")==0 )
+	if (strcasecmp(argv[2].c_str(),"short") == 0 || strcasecmp(argv[2].c_str(),"default") == 0)
 		specifiedDuration = durationInt;
-	else if (strcasecmp(argv[2].c_str(),"forever") == 0 || strcasecmp(argv[2].c_str(),"max")==0 )
+	else if (strcasecmp(argv[2].c_str(),"forever") == 0 || strcasecmp(argv[2].c_str(),"max") == 0)
 		specifiedDuration = 0;
 	else
 	{
