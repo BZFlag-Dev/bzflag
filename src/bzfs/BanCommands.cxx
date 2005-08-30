@@ -500,7 +500,7 @@ bool BanCommand::operator() (const char         *message,
     res = regexec(&preg,argv[2].c_str(), 0, NULL, 0);
     regfree(&preg);
     if (res == REG_NOMATCH) {
-      sendMessage(ServerPlayer, t, "Notice: No Ban Durration, using shortban max time");
+      sendMessage(ServerPlayer, t, "Notice: No Ban Duration, using shortban max time");
 	  reasonIndex = 2;
    //   return true;
     }
