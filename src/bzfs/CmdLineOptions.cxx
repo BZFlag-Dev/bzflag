@@ -161,7 +161,7 @@ const char *extraUsageString =
 "\t-ban ip{,ip}*: ban players based on ip address\n"
 "\t-banfile: specify a file to load and store the banlist in\n"
 "\t-c: capture-the-flag style game,\n"
-"\t-cache: url to get binary formatted world,\n"
+"\t-cache: url to get binary formatted world\n"
 "\t-cacheout: generate a binary cache file\n"
 "\t-conf: configuration file\n"
 "\t-cr: capture-the-flag style game with random world\n"
