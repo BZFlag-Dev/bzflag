@@ -218,6 +218,10 @@ namespace TextUtils
 	durationInt += (t * 10080);
 	t = 0;
       }
+	  else if(duration[i] == 'm' || duration[i] == 'M') {
+		  durationInt += (t);
+		  t = 0;
+	  }
     }
     durationInt += t;
     return durationInt;

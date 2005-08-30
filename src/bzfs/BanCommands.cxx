@@ -471,7 +471,15 @@ bool BanCommand::operator() (const char         *message,
     sendMessage(ServerPlayer, t,
 		"Syntax: /ban <#slot | PlayerName | \"Player Name\" | ip> "
 		"<duration> <reason>");
-    sendMessage(ServerPlayer, t,
+	sendMessage(ServerPlayer, t,
+		"	<duration> can be 'short' or 'default' for the default ban time ");
+	sendMessage(ServerPlayer, t,
+		"	or 'forever' or 'max' for infanate bans ");
+	sendMessage(ServerPlayer, t,
+		"	or a time in the fomat <weeks>W<days>D<hours>H<minutes>M ");
+	sendMessage(ServerPlayer, t,
+		"	or just a number of minutes ");
+	sendMessage(ServerPlayer, t,
 		"	Please keep in mind that reason is displayed to the "
 		"user.");
   } else {
@@ -489,21 +497,30 @@ bool BanCommand::operator() (const char         *message,
 	ip = playerBannedData->netHandler->getTargetIP();
     }
 
-    // check the ban duration
-    regex_t preg;
-    int res = regcomp(&preg, "^([[:digit:]]+[hwd]?)+$",
-		      REG_ICASE | REG_NOSUB | REG_EXTENDED);
-    res = regexec(&preg,argv[2].c_str(), 0, NULL, 0);
-    regfree(&preg);
-    if (res == REG_NOMATCH) {
-      sendMessage(ServerPlayer, t, "Error: invalid ban duration");
-      sendMessage(ServerPlayer, t,
-		  "Duration examples:  30 1h  1d  1w  and mixing: 1w2d4h "
-		  "1w2d1");
-      return true;
-    }
+	int specifiedDuration = 0;
 
-    int specifiedDuration = TextUtils::parseDuration(argv[2]);
+    // check the ban duration
+	if (stricmp(argv[2].c_str(),"short") == 0 || stricmp(argv[2].c_str(),"default")==0 )
+		specifiedDuration = durationInt;
+	else if (stricmp(argv[2].c_str(),"forever") == 0 || stricmp(argv[2].c_str(),"max")==0 )
+		specifiedDuration = 0;
+	else
+	{
+		regex_t preg;
+		int res = regcomp(&preg, "^([[:digit:]]+[hwdm]?)+$",
+			REG_ICASE | REG_NOSUB | REG_EXTENDED);
+		res = regexec(&preg,argv[2].c_str(), 0, NULL, 0);
+		regfree(&preg);
+		if (res == REG_NOMATCH) {
+			sendMessage(ServerPlayer, t, "Error: invalid ban duration");
+			sendMessage(ServerPlayer, t,
+				"Duration examples:  30m 1h  1d  1w  and mixing: 1w2d4h "
+				"1w2d1m");
+			return true;
+		}
+		specifiedDuration = TextUtils::parseDuration(argv[2]);
+	}
+
     if ((durationInt > 0) &&
 	((specifiedDuration > durationInt) || (specifiedDuration <= 0)) &&
 	!playerData->accessInfo.hasPerm(PlayerAccessInfo::ban)) {
