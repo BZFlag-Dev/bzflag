@@ -500,9 +500,9 @@ bool BanCommand::operator() (const char         *message,
 	int specifiedDuration = 0;
 
     // check the ban duration
-	if (stricmp(argv[2].c_str(),"short") == 0 || stricmp(argv[2].c_str(),"default")==0 )
+	if (strcasecmp(argv[2].c_str(),"short") == 0 || strcasecmp(argv[2].c_str(),"default")==0 )
 		specifiedDuration = durationInt;
-	else if (stricmp(argv[2].c_str(),"forever") == 0 || stricmp(argv[2].c_str(),"max")==0 )
+	else if (strcasecmp(argv[2].c_str(),"forever") == 0 || strcasecmp(argv[2].c_str(),"max")==0 )
 		specifiedDuration = 0;
 	else
 	{
