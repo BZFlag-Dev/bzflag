@@ -368,6 +368,70 @@ copy ..\..\src\bzfs\debug\*.exe ..\..\*.exe
 			<Tool
 				Name="VCAuxiliaryManagedWrapperGeneratorTool"/>
 		</Configuration>
+		<Configuration
+			Name="Release_pdcurses|Win32"
+			OutputDirectory="$(ConfigurationName)"
+			IntermediateDirectory="$(ConfigurationName)"
+			ConfigurationType="1"
+			UseOfMFC="0"
+			ATLMinimizesCRunTimeLibraryUsage="FALSE"
+			CharacterSet="2">
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="2"
+				InlineFunctionExpansion="1"
+				OptimizeForProcessor="2"
+				OptimizeForWindowsApplication="TRUE"
+				AdditionalIncludeDirectories="..\..\include,..\..\win32,.\"
+				PreprocessorDefinitions="_CONSOLE;WIN32;NDEBUG;INSIDE_BZ"
+				StringPooling="TRUE"
+				RuntimeLibrary="2"
+				EnableFunctionLevelLinking="TRUE"
+				PrecompiledHeaderFile=".\Release/bzfs.pch"
+				AssemblerListingLocation=".\Release/"
+				ObjectFile=".\Release/"
+				ProgramDataBaseFileName=".\Release/"
+				WarningLevel="3"
+				SuppressStartupBanner="TRUE"
+				CompileAs="0"/>
+			<Tool
+				Name="VCCustomBuildTool"/>
+			<Tool
+				Name="VCLinkerTool"
+				AdditionalDependencies="ws2_32.lib winmm.lib odbc32.lib odbccp32.lib libcurl.lib "
+				OutputFile=".\..\..\src\bzfs\bzfs.exe"
+				LinkIncremental="1"
+				SuppressStartupBanner="TRUE"
+				AdditionalLibraryDirectories="libcurl.lib"
+				ProgramDatabaseFile="../src/bzfs/bzfs.pdb"
+				SubSystem="1"
+				TargetMachine="1"/>
+			<Tool
+				Name="VCMIDLTool"
+				TypeLibraryName=".\..\bin/bzfs.tlb"
+				HeaderFileName=""/>
+			<Tool
+				Name="VCPostBuildEventTool"
+				CommandLine="copy ..\..\src\bzfs\*.exe ..\..\*.exe"/>
+			<Tool
+				Name="VCPreBuildEventTool"/>
+			<Tool
+				Name="VCPreLinkEventTool"/>
+			<Tool
+				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="NDEBUG"
+				Culture="1033"/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"/>
+			<Tool
+				Name="VCWebDeploymentTool"/>
+			<Tool
+				Name="VCManagedWrapperGeneratorTool"/>
+			<Tool
+				Name="VCAuxiliaryManagedWrapperGeneratorTool"/>
+		</Configuration>
 	</Configurations>
 	<References>
 	</References>
@@ -413,6 +477,14 @@ copy ..\..\src\bzfs\debug\*.exe ..\..\*.exe
 				</FileConfiguration>
 				<FileConfiguration
 					Name="release_modern_p3|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						Optimization="2"
+						AdditionalIncludeDirectories=""
+						PreprocessorDefinitions=""/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release_pdcurses|Win32">
 					<Tool
 						Name="VCCLCompilerTool"
 						Optimization="2"
@@ -470,6 +542,14 @@ copy ..\..\src\bzfs\debug\*.exe ..\..\*.exe
 						AdditionalIncludeDirectories=""
 						PreprocessorDefinitions=""/>
 				</FileConfiguration>
+				<FileConfiguration
+					Name="Release_pdcurses|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						Optimization="2"
+						AdditionalIncludeDirectories=""
+						PreprocessorDefinitions=""/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\..\src\bzfs\CmdLineOptions.cxx">
@@ -509,6 +589,14 @@ copy ..\..\src\bzfs\debug\*.exe ..\..\*.exe
 				</FileConfiguration>
 				<FileConfiguration
 					Name="release_modern_p3|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						Optimization="2"
+						AdditionalIncludeDirectories=""
+						PreprocessorDefinitions=""/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release_pdcurses|Win32">
 					<Tool
 						Name="VCCLCompilerTool"
 						Optimization="2"
@@ -560,6 +648,14 @@ copy ..\..\src\bzfs\debug\*.exe ..\..\*.exe
 						AdditionalIncludeDirectories=""
 						PreprocessorDefinitions=""/>
 				</FileConfiguration>
+				<FileConfiguration
+					Name="Release_pdcurses|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						Optimization="2"
+						AdditionalIncludeDirectories=""
+						PreprocessorDefinitions=""/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\..\src\bzfs\DropGeometry.cxx">
@@ -602,6 +698,14 @@ copy ..\..\src\bzfs\debug\*.exe ..\..\*.exe
 				</FileConfiguration>
 				<FileConfiguration
 					Name="release_modern_p3|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						Optimization="2"
+						AdditionalIncludeDirectories=""
+						PreprocessorDefinitions=""/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release_pdcurses|Win32">
 					<Tool
 						Name="VCCLCompilerTool"
 						Optimization="2"
@@ -659,6 +763,14 @@ copy ..\..\src\bzfs\debug\*.exe ..\..\*.exe
 						AdditionalIncludeDirectories=""
 						PreprocessorDefinitions=""/>
 				</FileConfiguration>
+				<FileConfiguration
+					Name="Release_pdcurses|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						Optimization="2"
+						AdditionalIncludeDirectories=""
+						PreprocessorDefinitions=""/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\..\src\bzfs\GameKeeper.cxx">
@@ -710,6 +822,14 @@ copy ..\..\src\bzfs\debug\*.exe ..\..\*.exe
 				</FileConfiguration>
 				<FileConfiguration
 					Name="release_modern_p3|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						Optimization="2"
+						AdditionalIncludeDirectories=""
+						PreprocessorDefinitions=""/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release_pdcurses|Win32">
 					<Tool
 						Name="VCCLCompilerTool"
 						Optimization="2"
@@ -779,6 +899,14 @@ copy ..\..\src\bzfs\debug\*.exe ..\..\*.exe
 						AdditionalIncludeDirectories=""
 						PreprocessorDefinitions=""/>
 				</FileConfiguration>
+				<FileConfiguration
+					Name="Release_pdcurses|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						Optimization="2"
+						AdditionalIncludeDirectories=""
+						PreprocessorDefinitions=""/>
+				</FileConfiguration>
 			</File>
 			<Filter
 				Name="world"
@@ -824,6 +952,14 @@ copy ..\..\src\bzfs\debug\*.exe ..\..\*.exe
 					</FileConfiguration>
 					<FileConfiguration
 						Name="release_modern_p3|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="2"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions=""/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release_pdcurses|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
 							Optimization="2"
@@ -878,6 +1014,14 @@ copy ..\..\src\bzfs\debug\*.exe ..\..\*.exe
 							AdditionalIncludeDirectories=""
 							PreprocessorDefinitions=""/>
 					</FileConfiguration>
+					<FileConfiguration
+						Name="Release_pdcurses|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="2"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions=""/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\..\src\bzfs\CustomBox.cxx">
@@ -917,6 +1061,14 @@ copy ..\..\src\bzfs\debug\*.exe ..\..\*.exe
 					</FileConfiguration>
 					<FileConfiguration
 						Name="release_modern_p3|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="2"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions=""/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release_pdcurses|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
 							Optimization="2"
@@ -974,6 +1126,14 @@ copy ..\..\src\bzfs\debug\*.exe ..\..\*.exe
 							AdditionalIncludeDirectories=""
 							PreprocessorDefinitions=""/>
 					</FileConfiguration>
+					<FileConfiguration
+						Name="Release_pdcurses|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="2"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions=""/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\..\src\bzfs\CustomGroup.cxx">
@@ -1016,6 +1176,14 @@ copy ..\..\src\bzfs\debug\*.exe ..\..\*.exe
 					</FileConfiguration>
 					<FileConfiguration
 						Name="release_modern_p3|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="2"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions=""/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release_pdcurses|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
 							Optimization="2"
@@ -1082,6 +1250,14 @@ copy ..\..\src\bzfs\debug\*.exe ..\..\*.exe
 							AdditionalIncludeDirectories=""
 							PreprocessorDefinitions=""/>
 					</FileConfiguration>
+					<FileConfiguration
+						Name="Release_pdcurses|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="2"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions=""/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\..\src\bzfs\CustomSphere.cxx">
@@ -1139,6 +1315,14 @@ copy ..\..\src\bzfs\debug\*.exe ..\..\*.exe
 							AdditionalIncludeDirectories=""
 							PreprocessorDefinitions=""/>
 					</FileConfiguration>
+					<FileConfiguration
+						Name="Release_pdcurses|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="2"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions=""/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\..\src\bzfs\CustomWorld.cxx">
@@ -1184,6 +1368,14 @@ copy ..\..\src\bzfs\debug\*.exe ..\..\*.exe
 							AdditionalIncludeDirectories=""
 							PreprocessorDefinitions=""/>
 					</FileConfiguration>
+					<FileConfiguration
+						Name="Release_pdcurses|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="2"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions=""/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\..\src\bzfs\CustomZone.cxx">
@@ -1223,6 +1415,14 @@ copy ..\..\src\bzfs\debug\*.exe ..\..\*.exe
 					</FileConfiguration>
 					<FileConfiguration
 						Name="release_modern_p3|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="2"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions=""/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release_pdcurses|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
 							Optimization="2"
@@ -1280,6 +1480,14 @@ copy ..\..\src\bzfs\debug\*.exe ..\..\*.exe
 							AdditionalIncludeDirectories=""
 							PreprocessorDefinitions=""/>
 					</FileConfiguration>
+					<FileConfiguration
+						Name="Release_pdcurses|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="2"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions=""/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\..\src\bzfs\WorldFileObstacle.cxx">
@@ -1319,6 +1527,14 @@ copy ..\..\src\bzfs\debug\*.exe ..\..\*.exe
 					</FileConfiguration>
 					<FileConfiguration
 						Name="release_modern_p3|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="2"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions=""/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release_pdcurses|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
 							Optimization="2"
@@ -1373,6 +1589,14 @@ copy ..\..\src\bzfs\debug\*.exe ..\..\*.exe
 							AdditionalIncludeDirectories=""
 							PreprocessorDefinitions=""/>
 					</FileConfiguration>
+					<FileConfiguration
+						Name="Release_pdcurses|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="2"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions=""/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\..\src\bzfs\WorldWeapons.cxx">
@@ -1412,6 +1636,14 @@ copy ..\..\src\bzfs\debug\*.exe ..\..\*.exe
 					</FileConfiguration>
 					<FileConfiguration
 						Name="release_modern_p3|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="2"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions=""/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release_pdcurses|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
 							Optimization="2"

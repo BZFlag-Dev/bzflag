@@ -48,6 +48,7 @@ Section "BZFlag (required)"
 	File ..\..\..\src\bzadmin\bzadmin.exe
 	File ..\..\..\src\bzfs\bzfs.exe
 	File ..\..\..\libcurl.dll
+	File ..\..\..\curses.dll
 	File ..\..\..\zlibwapi.dll
 	File ..\..\..\plugins\*.dll
 
