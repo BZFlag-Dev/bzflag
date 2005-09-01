@@ -545,7 +545,7 @@ static ServerLink*	lookupServer(const Player *_player)
   if (myTank->getId() == id) return serverLink;
 #ifdef ROBOT
   for (int i = 0; i < numRobots; i++)
-    if (robots[i]->getId() == id)
+    if (robots[i] && robots[i]->getId() == id)
       return robotServer[i];
 #endif
   return NULL;
@@ -1916,7 +1916,8 @@ static void		handleServerMessage(bool human, uint16_t code,
 	hud->setAlert(0, "Time Expired", 10.0f, true);
 #ifdef ROBOT
 	for (int i = 0; i < numRobots; i++)
-	  robots[i]->explodeTank();
+	  if (robots[i])
+	    robots[i]->explodeTank();
 #endif
       } else if (timeLeft < 0) {
 	hud->setAlert(0, "Game Paused", 10.0f, true);
@@ -1958,7 +1959,8 @@ static void		handleServerMessage(bool human, uint16_t code,
       hud->setAlert(0, msg2.c_str(), 10.0f, true);
 #ifdef ROBOT
       for (int i = 0; i < numRobots; i++)
-	robots[i]->explodeTank();
+	if (robots[i])
+	  robots[i]->explodeTank();
 #endif
       break;
     }
@@ -2041,7 +2043,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 	  hud->setAltitudeTape(World::getWorld()->allowJumping());
 	} else if (tank->getPlayerType() == ComputerPlayer) {
 	  for (int r = 0; r < numRobots; r++) {
-	    if (robots[r]->getId() == playerIndex) {
+	    if (robots[r] && robots[r]->getId() == playerIndex) {
 	      robots[r]->restart(pos,forward);
 	      setRobotTarget(robots[r]);
 	      break;
@@ -2282,7 +2284,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 	const ShotPath* shot = killerPlayer->getShot(int(shotId));
 	if (shot && shot->getFlag() == Flags::Genocide)
 	  for (int i = 0; i < numRobots; i++)
-	    if (victimPlayer != robots[i] &&
+	    if (robots[i] && victimPlayer != robots[i] &&
 		victimPlayer->getTeam() == robots[i]->getTeam() &&
 		robots[i]->getTeam() != RogueTeam)
 	      gotBlowedUp(robots[i], GenocideEffect, killerPlayer->getId());
@@ -2405,7 +2407,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 
       //kill all my robots if they are on the captured team
       for (int r = 0; r < numRobots; r++) {
-	if (robots[r]->getTeam() == capturedTeam) {
+	if (robots[r] && robots[r]->getTeam() == capturedTeam) {
 	  gotBlowedUp(robots[r], GotCaptured, robots[r]->getId());
 	}
       }
@@ -2474,10 +2476,11 @@ static void		handleServerMessage(bool human, uint16_t code,
 
 #ifdef ROBOT
       for (int r = 0; r < numRobots; r++)
-	if (robots[r]->getId() == id)
-	  robots[r]->changeTeam(RabbitTeam);
-	else
-	  robots[r]->changeTeam(RogueTeam);
+	if (robots[r])
+	  if (robots[r]->getId() == id)
+	    robots[r]->changeTeam(RabbitTeam);
+	  else
+	    robots[r]->changeTeam(RogueTeam);
 #endif
       break;
     }
@@ -3034,7 +3037,8 @@ static void		doMessages()
 
 #ifdef ROBOT
   for (int i = 0; i < numRobots; i++) {
-    while ((e = robotServer[i]->read(code, len, msg, 0)) == 1);
+    while (robotServer[i]
+	   && (e = robotServer[i]->read(code, len, msg, 0)) == 1);
     if (code == MsgKilled || code == MsgShotBegin || code == MsgShotEnd)
       handleServerMessage(false, code, len, msg);
   }
@@ -3942,24 +3946,26 @@ static void		updateRobots(float dt)
 
   // start dead robots
   for (i = 0; i < numRobots; i++) {
-    if (!gameOver && !robots[i]->isAlive() && !robots[i]->isExploding()
-	&& pickTarget) {
+    if (!gameOver && robots[i]
+	&& !robots[i]->isAlive() && !robots[i]->isExploding() && pickTarget) {
       robotServer[i]->sendAlive();
     }
   }
 
   // retarget robots
   for (i = 0; i < numRobots; i++) {
-    if (robots[i]->isAlive() && (pickTarget || !robots[i]->getTarget()
-				 || !robots[i]->getTarget()->isAlive())) {
+    if (robots[i] && robots[i]->isAlive()
+	&& (pickTarget || !robots[i]->getTarget()
+	    || !robots[i]->getTarget()->isAlive())) {
       setRobotTarget(robots[i]);
     }
   }
 
   // do updates
-  for (i = 0; i < numRobots; i++) {
-    robots[i]->update();
-  }
+  for (i = 0; i < numRobots; i++)
+    if (robots[i]) {
+      robots[i]->update();
+    }
 }
 
 
@@ -4066,13 +4072,14 @@ static void		checkEnvironment(RobotPlayer* tank)
 static void		checkEnvironmentForRobots()
 {
   for (int i = 0; i < numRobots; i++)
-    checkEnvironment(robots[i]);
+    if (robots[i])
+      checkEnvironment(robots[i]);
 }
 
 static void		sendRobotUpdates()
 {
   for (int i = 0; i < numRobots; i++)
-    if (robots[i]->isDeadReckoningWrong()) {
+    if (robots[i] && robotServer[i] && robots[i]->isDeadReckoningWrong()) {
       robotServer[i]->sendPlayerUpdate(robots[i]);
     }
 }
@@ -4083,18 +4090,20 @@ static void		addRobots()
   char msg[MaxPacketLen];
   char callsign[CallSignLen];
   int  j;
-  for (j = 0; j < numRobots; j++) {
-    snprintf(callsign, CallSignLen, "%s%2.2d", myTank->getCallSign(), j);
-    robots[j] = new RobotPlayer(robotServer[j]->getId(), callsign,
-				robotServer[j], myTank->getEmailAddress());
-    robots[j]->setTeam(AutomaticTeam);
-    robotServer[j]->sendEnter(ComputerPlayer, robots[j]->getTeam(),
-			      robots[j]->getCallSign(),
-			      robots[j]->getEmailAddress(), "");
-  }
+  for (j = 0; j < numRobots; j++)
+    if (robotServer[j]) {
+      snprintf(callsign, CallSignLen, "%s%2.2d", myTank->getCallSign(), j);
+      robots[j] = new RobotPlayer(robotServer[j]->getId(), callsign,
+				  robotServer[j], myTank->getEmailAddress());
+      robots[j]->setTeam(AutomaticTeam);
+      robotServer[j]->sendEnter(ComputerPlayer, robots[j]->getTeam(),
+				robots[j]->getCallSign(),
+				robots[j]->getEmailAddress(), "");
+    }
   for (j = 0; j < numRobots; j++) {
     // wait for response
-    if (robotServer[j]->read(code, len, msg, -1) < 0 || code != MsgAccept) {
+    if (robotServer[j]
+	&& robotServer[j]->read(code, len, msg, -1) < 0 || code != MsgAccept) {
       delete robots[j];
       delete robotServer[j];
       robots[j] = NULL;
@@ -4361,40 +4370,41 @@ static void sendFlagNegotiation()
 #if defined(FIXME) && defined(ROBOT)
 static void saveRobotInfo(Playerid id, void *msg)
 {
-  for (int i = 0; i < numRobots; i++) {
-    void *tmpbuf = msg;
-    uint16_t team, type, wins, losses, tks;
-    char callsign[CallSignLen];
-    char email[EmailLen];
-    tmpbuf = nboUnpackUShort(tmpbuf, type);
-    tmpbuf = nboUnpackUShort(tmpbuf, team);
-    tmpbuf = nboUnpackUShort(tmpbuf, wins);
-    tmpbuf = nboUnpackUShort(tmpbuf, losses);
-    tmpbuf = nboUnpackUShort(tmpbuf, tks);
-    tmpbuf = nboUnpackString(tmpbuf, callsign, CallSignLen);
-    tmpbuf = nboUnpackString(tmpbuf, email, EmailLen);
-    std::cerr << "id " << id.port << ':' <<
-      id.number << ':' <<
-      callsign << ' ' <<
-      robots[i]->getId().port << ':' <<
-      robots[i]->getId().number << ':' <<
-      robots[i]->getCallsign() << std::endl;
-    if (strncmp(robots[i]->getCallSign(), callsign, CallSignLen)) {
-      // check for real robot id
-      char buffer[100];
-      snprintf(buffer, 100, "id test %p %p %p %8.8x %8.8x\n",
-	       robots[i], tmpbuf, msg, *(int *)tmpbuf, *((int *)tmpbuf + 1));
-      std::cerr << buffer;
-      if (tmpbuf < (char *)msg + len) {
-	PlayerId id;
-	tmpbuf = nboUnpackUByte(tmpbuf, id);
-	robots[i]->id.serverHost = id.serverHost;
-	robots[i]->id.port = id.port;
-	robots[i]->id.number = id.number;
-	robots[i]->server->send(MsgIdAck, 0, NULL);
+  for (int i = 0; i < numRobots; i++)
+    if (robots[i]) {
+      void *tmpbuf = msg;
+      uint16_t team, type, wins, losses, tks;
+      char callsign[CallSignLen];
+      char email[EmailLen];
+      tmpbuf = nboUnpackUShort(tmpbuf, type);
+      tmpbuf = nboUnpackUShort(tmpbuf, team);
+      tmpbuf = nboUnpackUShort(tmpbuf, wins);
+      tmpbuf = nboUnpackUShort(tmpbuf, losses);
+      tmpbuf = nboUnpackUShort(tmpbuf, tks);
+      tmpbuf = nboUnpackString(tmpbuf, callsign, CallSignLen);
+      tmpbuf = nboUnpackString(tmpbuf, email, EmailLen);
+      std::cerr << "id " << id.port << ':' <<
+	id.number << ':' <<
+	callsign << ' ' <<
+	robots[i]->getId().port << ':' <<
+	robots[i]->getId().number << ':' <<
+	robots[i]->getCallsign() << std::endl;
+      if (strncmp(robots[i]->getCallSign(), callsign, CallSignLen)) {
+	// check for real robot id
+	char buffer[100];
+	snprintf(buffer, 100, "id test %p %p %p %8.8x %8.8x\n",
+		 robots[i], tmpbuf, msg, *(int *)tmpbuf, *((int *)tmpbuf + 1));
+	std::cerr << buffer;
+	if (tmpbuf < (char *)msg + len) {
+	  PlayerId id;
+	  tmpbuf = nboUnpackUByte(tmpbuf, id);
+	  robots[i]->id.serverHost = id.serverHost;
+	  robots[i]->id.port = id.port;
+	  robots[i]->id.number = id.number;
+	  robots[i]->server->send(MsgIdAck, 0, NULL);
+	}
       }
     }
-  }
 }
 #endif
 

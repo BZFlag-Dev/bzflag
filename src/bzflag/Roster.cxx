@@ -97,7 +97,7 @@ BaseLocalPlayer* getLocalPlayer(PlayerId id)
   if (myTank->getId() == id) return myTank;
 #ifdef ROBOT
   for (int i = 0; i < numRobots; i++)
-    if (robots[i]->getId() == id)
+    if (robots[i] && robots[i]->getId() == id)
       return robots[i];
 #endif
   return NULL;
