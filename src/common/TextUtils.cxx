@@ -7,7 +7,7 @@
  *
  * THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
- * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
 // BZFlag common header
@@ -196,35 +196,48 @@ namespace TextUtils
     return tokens;
   }
 
-  int parseDuration(const std::string &duration)
+  bool parseDuration(const char *duration, int &durationInt)
   {
-    int durationInt = 0;
-    int t = 0;
+    if (strcasecmp(duration,"short") == 0
+	|| strcasecmp(duration,"default") == 0) {
+      durationInt = -1;
+      return true;
+    }
+    if (strcasecmp(duration,"forever") == 0
+	|| strcasecmp(duration,"max") == 0) {
+      durationInt = 0;
+      return true;
+    }
 
-    int len = (int)duration.length();
-    for(int i=0; i < len; i++) {
+    regex_t preg;
+    int res = regcomp(&preg, "^([[:digit:]]+[hwdm]?)+$",
+		      REG_ICASE | REG_NOSUB | REG_EXTENDED);
+    res = regexec(&preg, duration, 0, NULL, 0);
+    regfree(&preg);
+    if (res == REG_NOMATCH)
+      return false;
+
+    int t = 0;
+    int len = strlen(duration);
+    for (int i = 0; i < len; i++) {
       if (isdigit(duration[i])) {
 	t = t * 10 + (duration[i] - '0');
-      }
-      else if(duration[i] == 'h' || duration[i] == 'H') {
+      } else if(duration[i] == 'h' || duration[i] == 'H') {
 	durationInt += (t * 60);
 	t = 0;
-      }
-      else if(duration[i] == 'd' || duration[i] == 'D') {
+      } else if(duration[i] == 'd' || duration[i] == 'D') {
 	durationInt += (t * 1440);
 	t = 0;
-      }
-      else if(duration[i] == 'w' || duration[i] == 'w') {
+      } else if(duration[i] == 'w' || duration[i] == 'W') {
 	durationInt += (t * 10080);
 	t = 0;
+      } else if(duration[i] == 'm' || duration[i] == 'M') {
+	durationInt += (t);
+	t = 0;
       }
-	  else if(duration[i] == 'm' || duration[i] == 'M') {
-		  durationInt += (t);
-		  t = 0;
-	  }
     }
     durationInt += t;
-    return durationInt;
+    return true;
   }
 
   std::string url_encode(const std::string &text)

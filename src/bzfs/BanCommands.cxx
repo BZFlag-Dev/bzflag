@@ -471,56 +471,48 @@ bool BanCommand::operator() (const char         *message,
     sendMessage(ServerPlayer, t,
 		"Syntax: /ban <#slot | PlayerName | \"Player Name\" | ip> "
 		"<duration> <reason>");
-	sendMessage(ServerPlayer, t,
-		"	<duration> can be 'short' or 'default' for the default ban time ");
-	sendMessage(ServerPlayer, t,
+    sendMessage(ServerPlayer, t,
+		"	<duration> can be 'short' or 'default' for the default"
+		" ban time ");
+    sendMessage(ServerPlayer, t,
 		"	or 'forever' or 'max' for infinite bans ");
-	sendMessage(ServerPlayer, t,
-		"	or a time in the format <weeks>W<days>D<hours>H<minutes>M ");
-	sendMessage(ServerPlayer, t,
+    sendMessage(ServerPlayer, t,
+		"	or a time in the format <weeks>W<days>D<hours>"
+		"H<minutes>M ");
+    sendMessage(ServerPlayer, t,
 		"	or just a number of minutes ");
-	sendMessage(ServerPlayer, t,
+    sendMessage(ServerPlayer, t,
 		"	Please keep in mind that reason is displayed to the "
 		"user.");
-  } else {
-    std::string ip = argv[1];
-    std::string reason;
-    int durationInt = clOptions->banTime;
+    return true;
+  }
 
-    int victim = getSlotNumber(argv[1]);
+  std::string ip = argv[1];
+  std::string reason;
+  int durationInt = clOptions->banTime;
 
-    if (victim >= 0) {
-      // valid slot or callsign
-      GameKeeper::Player *playerBannedData
-	= GameKeeper::Player::getPlayerByIndex(victim);
-      if (playerBannedData)
-	ip = playerBannedData->netHandler->getTargetIP();
-    }
+  int victim = getSlotNumber(argv[1]);
 
-	int specifiedDuration = 0;
+  if (victim >= 0) {
+    // valid slot or callsign
+    GameKeeper::Player *playerBannedData
+      = GameKeeper::Player::getPlayerByIndex(victim);
+    if (playerBannedData)
+      ip = playerBannedData->netHandler->getTargetIP();
+  }
 
-    // check the ban duration
-	if (strcasecmp(argv[2].c_str(),"short") == 0 || strcasecmp(argv[2].c_str(),"default") == 0)
-		specifiedDuration = durationInt;
-	else if (strcasecmp(argv[2].c_str(),"forever") == 0 || strcasecmp(argv[2].c_str(),"max") == 0)
-		specifiedDuration = 0;
-	else
-	{
-		regex_t preg;
-		int res = regcomp(&preg, "^([[:digit:]]+[hwdm]?)+$",
-			REG_ICASE | REG_NOSUB | REG_EXTENDED);
-		res = regexec(&preg,argv[2].c_str(), 0, NULL, 0);
-		regfree(&preg);
-		if (res == REG_NOMATCH) {
-			sendMessage(ServerPlayer, t, "Error: invalid ban duration");
-			sendMessage(ServerPlayer, t,
-				"Duration examples:  30m 1h  1d  1w  and mixing: 1w2d4h "
-				"1w2d1m");
-			return true;
-		}
-		specifiedDuration = TextUtils::parseDuration(argv[2]);
-	}
+  int specifiedDuration = 0;
 
+  // check the ban duration
+  if (!TextUtils::parseDuration(argv[2].c_str(), specifiedDuration)) {
+    sendMessage(ServerPlayer, t, "Error: invalid ban duration");
+    sendMessage(ServerPlayer, t,
+		"Duration examples:  30m 1h  1d  1w  and mixing: 1w2d4h "
+		"1w2d1m");
+    return true;
+  }
+
+  if (specifiedDuration >= 0)
     if ((durationInt > 0) &&
 	((specifiedDuration > durationInt) || (specifiedDuration <= 0)) &&
 	!playerData->accessInfo.hasPerm(PlayerAccessInfo::ban)) {
@@ -529,11 +521,9 @@ bool BanCommand::operator() (const char         *message,
     } else {
       durationInt = specifiedDuration;
     }
-
+  {
     // set the ban reason
-    if (argv.size() == 4) {
-      reason = argv[3];
-    }
+    reason = argv[3];
 
     // call any plugin events registered for /ban
     bz_BanEventData banEvent;
@@ -645,15 +635,24 @@ bool HostbanCommand::operator() (const char         *message,
 
     // set the ban time
     if (argv.size() >= 3) {
-      int specifiedDuration = TextUtils::parseDuration(argv[2]);
-      if ((durationInt > 0) &&
-	  ((specifiedDuration > durationInt) || (specifiedDuration <= 0)) &&
-	  !playerData->accessInfo.hasPerm(PlayerAccessInfo::ban)) {
-	sendMessage (ServerPlayer, t, "You only have SHORTBAN privileges,"
-		     " using default ban time");
-      } else {
-	durationInt = specifiedDuration;
+      int specifiedDuration;
+      // check the ban duration
+      if (!TextUtils::parseDuration(argv[2].c_str(), specifiedDuration)) {
+	sendMessage(ServerPlayer, t, "Error: invalid ban duration");
+	sendMessage(ServerPlayer, t,
+		    "Duration examples:  30m 1h  1d  1w  and mixing: 1w2d4h "
+		    "1w2d1m");
+	return true;
       }
+      if (specifiedDuration >= 0)
+	if ((durationInt > 0) &&
+	    ((specifiedDuration > durationInt) || (specifiedDuration <= 0)) &&
+	    !playerData->accessInfo.hasPerm(PlayerAccessInfo::ban)) {
+	  sendMessage (ServerPlayer, t, "You only have SHORTBAN privileges,"
+		       " using default ban time");
+	} else {
+	  durationInt = specifiedDuration;
+	}
     }
 
     // set the ban reason

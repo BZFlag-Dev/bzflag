@@ -81,10 +81,11 @@ namespace TextUtils {
    */
   std::vector<std::string> tokenize(const std::string& in, const std::string &delims, const int maxTokens = 0, const bool useQuotes = false);
 
-  /** convert a string represantation of some duration into minutes
+  /** convert a string representation of some duration into minutes
    *  example: "1d2h16m" -> 1500
+   *  return true if the string can be parsed
    */
-  int parseDuration(const std::string &duration);
+  bool parseDuration(const char *duration, int &durationInt);
 
   // C h a r a c t e r  c o m p a r i s o n
 
