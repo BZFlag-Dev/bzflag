@@ -18,6 +18,7 @@ BZFlag \- a tank battle game
 [\fB\-no3dfx\fR]
 [\fB\-anonymous\fR]
 [\fB\-config \fIfilename\fR]
+[\fB\-configdir \fIdirectoryname\fR]
 [\fB\-d | \-debug\fR]
 [\fB\-dir | \-directory \fIdirectory\fR]
 [\fB\-echo\fR]
@@ -119,6 +120,11 @@ in the default installation location \fI@INSTALL_DATA_DIR@\fR.
 .B \-config
 Specify the configuration file to load. The name is relative to the
 default configuration directory. This is usually only used by developers.
+.TP 
+.B \-configdir
+Specify the configuration directory to use. This will be the defualt config
+directory used by this instance of the game. This is realy only needed
+if you can not use the default directory.
 .TP 
 .B \-echo
 Copies all message window output to the shell.

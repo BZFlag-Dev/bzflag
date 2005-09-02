@@ -30,6 +30,13 @@
 #  include <CoreServices/CoreServices.h>
 #endif
 
+std::string customConfigDir;
+
+void setCustomConfgDir ( const char *dir )
+{
+	if (dir)
+		customConfigDir = dir;
+}
 
 // NOTE: terminate all strings with '/' or '\\'
 
@@ -43,6 +50,8 @@ static std::string		setupString(std::string dir)
 
 std::string		getConfigDirName( const char* versionName )
 {
+	if (customConfigDir.size())
+		return customConfigDir;
 #if defined(_WIN32)
   std::string name("C:");
   char dir[MAX_PATH];
@@ -125,7 +134,6 @@ extern std::string		getRecordDirName()
 {
   return setupString("recordings");
 }
-
 
 extern std::string		getScreenShotDirName()
 {

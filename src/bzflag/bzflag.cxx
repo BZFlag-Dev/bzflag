@@ -169,6 +169,7 @@ static void		usage()
 	" [-anonymous]"
 	" [-badwords <filterfile>]"
 	" [-config <configfile>]"
+	" [-configdir <config dir name>]"
 	" [-d | -debug]"
 	" [-date mm/dd/yyyy]"
 	" [{-dir | -directory} <data-directory>]"
@@ -464,6 +465,13 @@ static void		parse(int argc, char** argv)
 
 static void		parseConfigName(int argc, char** argv)
 {
+	for (int i = 1; i < argc; i++) {
+		if (strcmp(argv[i], "-configdir") == 0) {
+			checkArgc(i, argc, argv[i]);
+			setCustomConfgDir(argv[i]);
+			alternateConfig += argv[i];
+		}
+	}
   for (int i = 1; i < argc; i++) {
     if (strcmp(argv[i], "-config") == 0) {
       checkArgc(i, argc, argv[i]);
