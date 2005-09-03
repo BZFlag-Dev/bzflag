@@ -47,7 +47,11 @@ void DeathHandler::process ( bz_EventData *eventData )
 	if ( usePlayerForShot )
 		playerToUse = dieData->playerID;
 
+	float reloadTime = (float)bz_getBZDBDouble("_reloadTime");
+
+	if (bz_BZDBItemExists("_swDeathReloadFactor") && bz_getBZDBDouble("_swDeathReloadFactor") > 0)
+		reloadTime *= (float)bz_getBZDBDouble("_swDeathReloadFactor");
         
-	bz_fireWorldWep("SW",(float)bz_getBZDBDouble("_reloadTime"),playerToUse,dieData->pos,0,0,0,0.0f);
+	bz_fireWorldWep("SW",reloadTime,playerToUse,dieData->pos,0,0,0,0.0f);
 }
 
