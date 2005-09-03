@@ -4,6 +4,9 @@
 BZFlag 2.0.3
 ------------
 
+* /ban /hostban take time keywords (short ...) too - Jeff Myers, Alfredo Tupone
+* Inertia style indicatio no more used - Alfredo Tupone
+* No more restriction on M (Momentum) flag - Alfredo Tupone
 * Fixing authentication when changing callsign/password - Alfredo Tupone
 * Fixing authentication when joining from command-line - Alfredo Tupone
 * Executing abbreviated server command '*' terminated - Alfredo Tupone
