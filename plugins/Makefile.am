@@ -1,7 +1,9 @@
-DIST_SUBDIRS = \
+SUBDIRS = \
 	RogueGenocide \
+	airspawn
+
+DIST_SUBDIRS = \
 	SAMPLE_PLUGIN \
-	airspawn \
 	chathistory \
 	doc \
 	hiddenAdmin \

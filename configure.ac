@@ -779,6 +779,8 @@ AC_CONFIG_FILES(bzflag.info
 	package/win32/Makefile
 	package/win32/nsis/Makefile
 	plugins/Makefile
+	plugins/RogueGenocide/Makefile
+	plugins/airspawn/Makefile
 	src/3D/Makefile
 	src/Makefile
 	src/bzadmin/Makefile
