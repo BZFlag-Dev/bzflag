@@ -30,28 +30,32 @@
 #  include <CoreServices/CoreServices.h>
 #endif
 
-std::string customConfigDir;
-
-void setCustomConfgDir ( const char *dir )
-{
-	if (dir)
-		customConfigDir = dir;
-}
 
 // NOTE: terminate all strings with '/' or '\\'
 
-static std::string		setupString(std::string dir)
+std::string configDir(bool set, const char *str)
 {
-  std::string name = getConfigDirName();
-  name += dir;
-  name += DirectorySeparator;
-  return name;
+  static std::string customConfigDir = std::string("");
+  if (set) {
+    customConfigDir = std::string(str);
+  }
+  return customConfigDir;
 }
+
+
+void			setCustomConfigDir(const char *str)
+{
+  configDir(1, str);
+}
+
 
 std::string		getConfigDirName( const char* versionName )
 {
-	if (customConfigDir.size())
-		return customConfigDir;
+  std::string customConfigDir = configDir(0, NULL);
+
+  if (customConfigDir.size() > 0)
+    return customConfigDir;
+
 #if defined(_WIN32)
   std::string name("C:");
   char dir[MAX_PATH];
@@ -76,6 +80,7 @@ std::string		getConfigDirName( const char* versionName )
     name += versionName;
     name += "\\";
   }
+  customConfigDir = name;
   return name;
 
 #elif defined(__APPLE__)
@@ -95,6 +100,7 @@ std::string		getConfigDirName( const char* versionName )
      name = buff;
     }
   }
+  customConfigDir = name;
   return name;
 #else
   std::string name;
@@ -108,10 +114,18 @@ std::string		getConfigDirName( const char* versionName )
     name += versionName;
     name += "/";
   }
+  customConfigDir = name;
   return name;
 #endif
 }
 
+static std::string		setupString(std::string dir)
+{
+  std::string name = getConfigDirName();
+  name += dir;
+  name += DirectorySeparator;
+  return name;
+}
 
 extern std::string		getCacheDirName()
 {

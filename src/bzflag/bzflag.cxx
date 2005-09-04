@@ -468,7 +468,7 @@ static void		parseConfigName(int argc, char** argv)
 	for (int i = 1; i < argc; i++) {
 		if (strcmp(argv[i], "-configdir") == 0) {
 			checkArgc(i, argc, argv[i]);
-			setCustomConfgDir(argv[i]);
+			setCustomConfigDir(argv[i]);
 			alternateConfig += argv[i];
 		}
 	}

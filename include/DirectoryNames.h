@@ -32,7 +32,7 @@ extern std::string		getScreenShotDirName();
 extern std::string		getTempDirName();
 extern std::string		getWorldDirName();
 
-extern void setCustomConfgDir ( const char *dir );
+extern void setCustomConfigDir ( const char *dir );
 #endif  // __DIRECTORY_NAMES_H__
 
 
