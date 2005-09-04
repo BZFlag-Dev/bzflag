@@ -84,6 +84,7 @@ public:
       replay,
       requireIdentify,
       say,
+      sendHelp,
       setAll,
       setPassword,
       setPerms,

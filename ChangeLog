@@ -4,6 +4,7 @@
 BZFlag 2.0.3
 ------------
 
+* Added /sendhelp command - Mike Weisenborn, Mark Thomas
 * /ban /hostban take time keywords (short ...) too - Jeff Myers, Alfredo Tupone
 * Inertia style indicatio no more used - Alfredo Tupone
 * No more restriction on M (Momentum) flag - Alfredo Tupone

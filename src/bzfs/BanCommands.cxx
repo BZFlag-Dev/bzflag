@@ -37,26 +37,7 @@ public:
   bool operator() (char c) {return !isdigit(c);}
 };
 
-static int getSlotNumber(std::string player) {
-  int slot = -1; // invalid
-  if (player[0] == '#') {
-    // string player is a slot number
-    player[0] = '0';
-    if(find_if(player.begin(), player.end(), NoDigit()) == player.end()) {
-      // a valid number is in the string
-      slot = atoi(player.c_str());
-    }
-  } else {
-    // invalid number.. may be a player callsign
-    slot = GameKeeper::Player::getPlayerIDByName(player);
-  }
 
-  GameKeeper::Player *p = GameKeeper::Player::getPlayerByIndex(slot);
-  if (!p)
-    slot = -1; // not a player
-
-  return slot;
-}
 
 class KickCommand : ServerCommand {
 public:
@@ -199,7 +180,7 @@ bool MuteCommand::operator() (const char         *message,
     return true;
   }
 
-  int i = getSlotNumber(argv[1]);
+  int i = GameKeeper::Player::getPlayerIDByName(argv[1]);
 
   char msg[MessageLen];
 
@@ -243,7 +224,7 @@ bool UnmuteCommand::operator() (const char         *message,
     return true;
   }
 
-  int i = getSlotNumber(argv[1]);
+  int i = GameKeeper::Player::getPlayerIDByName(argv[1]);
 
   char msg[MessageLen];
 
@@ -291,7 +272,7 @@ bool KickCommand::operator() (const char         *message,
     return true;
   }
 
-  i = getSlotNumber(argv[1]);
+  i = GameKeeper::Player::getPlayerIDByName(argv[1]);
 
   if (i >= 0) {
 
@@ -371,7 +352,7 @@ bool KillCommand::operator() (const char         *message,
     return true;
   }
 
-  i = getSlotNumber(argv[1]);
+  i = GameKeeper::Player::getPlayerIDByName(argv[1]);
 
   if (i >= 0) {
     // call any plugin events registered for /kick
@@ -491,7 +472,7 @@ bool BanCommand::operator() (const char         *message,
   std::string reason;
   int durationInt = clOptions->banTime;
 
-  int victim = getSlotNumber(argv[1]);
+  int victim = GameKeeper::Player::getPlayerIDByName(argv[1]);
 
   if (victim >= 0) {
     // valid slot or callsign

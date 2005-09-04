@@ -234,15 +234,26 @@ void GameKeeper::Player::signingOn(bool ctf)
   lagInfo.reset();
 }
 
+
+// Attempt to retrive a slot number for a player specified as EITHER "callsign" or "#<slot>"
 int GameKeeper::Player::getPlayerIDByName(const std::string &name)
 {
   Player* playerData;
-  for (int i = 0; i < PlayerSlot; i++)
-    if ((playerData = playerList[i]) && !playerData->closed
-      && (TextUtils::compare_nocase(playerData->player.getCallSign(), name) == 0))
-      return i;
+  int slot = -1; // invalid
+
+  if (sscanf (name.c_str(), "#%d", &slot) == 1) {
+    if ( ! GameKeeper::Player::getPlayerByIndex(slot) )
+      return -1;
+    return slot;
+  } else {
+    for (int i = 0; i < PlayerSlot; i++)
+      if ((playerData = playerList[i]) && !playerData->closed
+        && (TextUtils::compare_nocase(playerData->player.getCallSign(), name) == 0))
+        return i;
+  }
   return -1;
 }
+
 
 void GameKeeper::Player::reloadAccessDatabase()
 {

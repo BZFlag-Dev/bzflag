@@ -261,6 +261,14 @@ public:
 			   GameKeeper::Player *playerData);
 };
 
+class SendHelpCommand : ServerCommand {
+public:
+  SendHelpCommand();
+
+  virtual bool operator() (const char         *commandLine,
+                          GameKeeper::Player *playerData);
+};
+
 class IdentifyCommand : ServerCommand {
 public:
   IdentifyCommand();
@@ -468,6 +476,7 @@ static FlagHistoryCommand flagHistoryCommand;
 static PlayerListCommand  playerListCommand;
 static ReportCommand      ReportCommand;
 static HelpCommand        helpCommand;
+static SendHelpCommand    sendHelpCommand;
 static IdentifyCommand    identifyCommand;
 static RegisterCommand    registerCommand;
 static GhostCommand       ghostCommand;
@@ -535,6 +544,8 @@ ReportCommand::ReportCommand()           : ServerCommand("/report",
   "<message> - write a message to the server administrator") {}
 HelpCommand::HelpCommand()               : ServerCommand("/help", 
   "<help page> - display the specified help page") {}
+SendHelpCommand::SendHelpCommand()       : ServerCommand("/sendhelp", 
+  "<#slot|PlayerName|\"Player Name\"> <help page> - send the specified help page to a user") {}
 IdentifyCommand::IdentifyCommand()       : ServerCommand("/identify", 
   "<password> - log in to a registered callsign") {}
 RegisterCommand::RegisterCommand()       : ServerCommand("/register",
@@ -575,6 +586,12 @@ SayCommand::SayCommand()                 : ServerCommand("/say",
   "[message] - generate a public message sent by the server") {}
 DateCommand::DateCommand()               : DateTimeCommand("/date") {}
 TimeCommand::TimeCommand()               : DateTimeCommand("/time") {}
+
+class NoDigit {
+public:
+  bool operator() (char c) {return !isdigit(c);}
+};
+
 
 
 bool CmdList::operator() (const char*, GameKeeper::Player *playerData)
@@ -1370,8 +1387,71 @@ bool ReportCommand::operator() (const char         *message,
 }
 
 
-bool HelpCommand::operator() (const char         *message,
-			      GameKeeper::Player *playerData)
+
+// return false if topic not found
+static bool sendHelpTopic (int sendSlot, const char *helpTopic)
+{
+  bool foundChunk = false;
+  const std::vector<std::string>& chunks = clOptions->textChunker.getChunkNames();
+
+  for (int i = 0; i < (int)chunks.size() && (!foundChunk); i++) {
+    if (chunks[i] == helpTopic){
+      const std::vector<std::string>* lines = clOptions->textChunker.getTextChunk(helpTopic);
+      if (lines != NULL) {
+        for (int j = 0; j < (int)lines->size(); j++) {
+          sendMessage(ServerPlayer, sendSlot, (*lines)[j].c_str());
+        }
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
+
+bool SendHelpCommand::operator() (const char *message, GameKeeper::Player *playerData)
+{
+  int sendFrom = playerData->getIndex();
+  if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::sendHelp)) {
+    sendMessage(ServerPlayer, sendFrom,
+               "You do not have permission to run the sendhelp command");
+    return true;
+  }
+
+  std::vector<std::string> argv = TextUtils::tokenize(message, " \t", 3, true);
+  if (argv.size() < 3) {
+    sendMessage(ServerPlayer, sendFrom,
+               "Syntax: /sendhelp <#slot | PlayerName | \"Player Name\"> <topic>");
+    return true;
+  }
+
+  int sendTo = GameKeeper::Player::getPlayerIDByName(argv[1]);
+  if ( sendTo < 0){
+    char errormessage[MessageLen];
+    snprintf(errormessage, MessageLen, "player \"%s\" not found", argv[1].c_str());
+    sendMessage(ServerPlayer, sendFrom, errormessage);
+    return true;  
+  }
+
+  if (sendHelpTopic (sendTo, argv[2].c_str())) {
+    char reply[MessageLen] = {0};
+    snprintf(reply, MessageLen, "This help (%s) was sent by %s (pgup/pgdn to scroll)", 
+             argv[2].c_str(), GameKeeper::Player::getPlayerByIndex(sendFrom)->player.getCallSign());
+    sendMessage(ServerPlayer, sendTo, reply);
+    snprintf(reply, MessageLen, "Help (%s) was sent to %s.", 
+             argv[2].c_str(), GameKeeper::Player::getPlayerByIndex(sendTo)->player.getCallSign());
+    sendMessage(ServerPlayer, sendFrom, reply);
+  } else {
+    char reply[MessageLen] = {0};
+    snprintf(reply, MessageLen, "Help command %s not found", argv[2].c_str());
+    sendMessage(ServerPlayer, sendFrom, reply);
+  }
+
+  return true;
+}
+
+
+bool HelpCommand::operator() (const char *message, GameKeeper::Player *playerData)
 {
   int t = playerData->getIndex();
   char reply[MessageLen] = {0};
@@ -1383,21 +1463,7 @@ bool HelpCommand::operator() (const char         *message,
       sendMessage(ServerPlayer, t, chunks[i].c_str());
     }
   } else {
-    bool foundChunk = false;
-    const std::vector<std::string>& chunks = clOptions->textChunker.getChunkNames();
-    for (int i = 0; i < (int)chunks.size() && (!foundChunk); i++) {
-      if (chunks[i] == (message +6)){
-	const std::vector<std::string>* lines = clOptions->textChunker.getTextChunk((message + 6));
-	if (lines != NULL) {
-	  for (int j = 0; j < (int)lines->size(); j++) {
-	    sendMessage(ServerPlayer, t, (*lines)[j].c_str());
-	  }
-	  foundChunk = true;
-	  break;
-	}
-      }
-    }
-    if (!foundChunk) {
+    if ( !  sendHelpTopic (t, message + 6) ){
       snprintf(reply, MessageLen, "Help command %s not found", message + 6);
       sendMessage(ServerPlayer, t, reply);
     }

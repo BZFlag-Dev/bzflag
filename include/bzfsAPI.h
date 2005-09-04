@@ -111,6 +111,7 @@ typedef enum
 #define bz_perm_replay  "replay"
 #define bz_perm_requireIdentify  "requireIdentify"
 #define bz_perm_say  "say"
+#define bz_perm_sendHelp  "sendHelp"
 #define bz_perm_setAll  "setAll"
 #define bz_perm_setPassword  "setPassword"
 #define bz_perm_setPerms  "setPerms"
