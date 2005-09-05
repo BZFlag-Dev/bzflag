@@ -238,8 +238,6 @@ THESE ARE LOWER PRIORITY
 
 * replace stipple shadows with blend shadows. See if there is any reason to keep stipple.
 
-* add type of shot (normal, gm, sw, etc) to killed message
-
 * radio chat:
    allow players to communicate via low-quality audio.
    already some support built into the server for this.
