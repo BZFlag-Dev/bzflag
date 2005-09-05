@@ -1,18 +1,18 @@
 SUBDIRS = \
 	RogueGenocide \
-	airspawn
-
-DIST_SUBDIRS = \
 	SAMPLE_PLUGIN \
+	airspawn \
 	chathistory \
-	doc \
 	hiddenAdmin \
 	killall \
 	playHistoryTracker \
-	python \
 	shockwaveDeath \
-	vc71 \
 	vocaliser
+
+DIST_SUBDIRS = \
+	doc \
+	python \
+	vc71
 
 EXTRA_DIST = \
 	api_notes \

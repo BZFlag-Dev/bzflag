@@ -780,7 +780,14 @@ AC_CONFIG_FILES(bzflag.info
 	package/win32/nsis/Makefile
 	plugins/Makefile
 	plugins/RogueGenocide/Makefile
+	plugins/SAMPLE_PLUGIN/Makefile
 	plugins/airspawn/Makefile
+	plugins/chathistory/Makefile
+	plugins/hiddenAdmin/Makefile
+	plugins/killall/Makefile
+	plugins/playHistoryTracker/Makefile
+	plugins/shockwaveDeath/Makefile
+	plugins/vocaliser/Makefile
 	src/3D/Makefile
 	src/Makefile
 	src/bzadmin/Makefile

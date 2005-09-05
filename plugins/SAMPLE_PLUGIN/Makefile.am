@@ -1,0 +1,13 @@
+lib_LTLIBRARIES = libSAMPLE_PLUGIN.la
+
+libSAMPLE_PLUGIN_la_SOURCES = SAMPLE_PLUGIN.cpp
+libSAMPLE_PLUGIN_la_CPPFLAGS = -I../../include
+
+EXTRA_DIST = \
+	ReadMe.txt \
+	SAMPLE_PLUGIN.def \
+	SAMPLE_PLUGIN.sln \
+	SAMPLE_PLUGIN.vcproj
+
+MAINTAINERCLEANFILES =	\
+	Makefile.in
