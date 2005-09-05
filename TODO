@@ -211,9 +211,6 @@ THESE ARE LOWER PRIORITY
 
 * update doc/guide/NetworkProtocol.xml all descriptors to new format
 
-* bzadmin should build without GL headers installed fails with:
-  ../../include/bzfgl.h:35: GL/gl.h: No such file or directory
-
 * build a prototype(4) for bsd, solaris
 
 * fix up irix idb
