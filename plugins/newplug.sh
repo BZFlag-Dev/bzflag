@@ -18,3 +18,5 @@ find $1 -type f -exec sed -i "s/$SAMPLE_NAME/$1/g" '{}' \;
 for file in $1/*$SAMPLE_NAME* ;do
  mv $file ${file//$SAMPLE_NAME/$1}
 done
+
+echo "Edit configure.ac and add a line for the plugins/$1/Makefile"
