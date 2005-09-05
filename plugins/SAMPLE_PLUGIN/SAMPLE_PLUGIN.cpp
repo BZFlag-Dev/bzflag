@@ -5,7 +5,7 @@
 
 BZ_GET_PLUGIN_VERSION
 
-BZF_PLUGIN_CALL int bz_Load ( const char* commandLine )
+BZF_PLUGIN_CALL int bz_Load ( const char* /*commandLine*/ )
 {
 	bz_debugMessage(4,"SAMPLE_PLUGIN plugin loaded");
 	return 0;

@@ -198,7 +198,7 @@ void clearPlayerVoiceRecord ( int playerID )
 		playerVoices.erase(playerVoices.find(playerID));
 }
 
-bool PlaysndCommand::handle ( int playerID, bzApiString _command, bzApiString _message, bzAPIStringList *_param )
+bool PlaysndCommand::handle ( int playerID, bzApiString _command, bzApiString _message, bzAPIStringList */*_param*/ )
 {
 	std::string command = _command.c_str();
 	std::string message = _message.c_str();
