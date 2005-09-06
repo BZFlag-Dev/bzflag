@@ -325,6 +325,15 @@ Returns BZFS' current debug level.  You can use this for more complicated debug 
 the file '_filename'. If _filename contains non-alphanumeric characters other than '.'
 these will be replaced by '_'. If seconds is not given the whole buffer is saved. </p>
                   <p>&nbsp;</p>
+                  <p><span class="style4 style7">Text Utility  Functions </span></p>
+                  <p>These funtions don't do anything in bzfs, they are just here to help out a plugin by leting them use some of BZFlags OS independent utilitys.</p>
+                  <p><strong>BZF_API const char *bz_format(const char* fmt, ...);</strong><br>
+  Just like sprintf, but returs the formated string. </p>
+                  <p><strong>BZF_API const char *bz_toupper(const char* val );;</strong><br> 
+                    Returns the input string all in upper case characters. </p>
+                  <p><strong>BZF_API const char *bz_tolower(const char* val );;</strong><br>
+Returns the input string all in lower case characters. </p>
+                  <p>&nbsp;</p>
                   <p><span class="style4 style7">Custom Slash Command Functions </span></p>
                   <p>A plug-in can register a special handler for a custom / command. This allows a plug-in to handle commands more easily than hooking into the UnknownSlashCommand Event.</p>
                   <p>Similar to other events, custom slash commands provide a pointer to a handler class that the plugin overrides using the function.</p>
