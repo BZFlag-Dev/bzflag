@@ -242,9 +242,6 @@
 			<File
 				RelativePath=".\chathistory.def">
 			</File>
-			<File
-				RelativePath="..\..\src\common\TextUtils.cxx">
-			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
