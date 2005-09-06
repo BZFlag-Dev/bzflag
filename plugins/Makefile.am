@@ -6,12 +6,12 @@ SUBDIRS = \
 	hiddenAdmin \
 	killall \
 	playHistoryTracker \
+	python \
 	shockwaveDeath \
 	vocaliser
 
 DIST_SUBDIRS = \
 	doc \
-	python \
 	vc71
 
 EXTRA_DIST = \
