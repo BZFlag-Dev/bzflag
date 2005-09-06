@@ -130,9 +130,6 @@ THESE ARE LOWER PRIORITY
   - see http://bzflag.org/wiki/DbServers
   - karma see http://bzflag.org/wiki/KarmaSystem
 
-* rewrite mac os x display/window code to support app switching,
-  resolution mode changes, screen captures, etc.
-
 * make it so keys can be bound to multiple actions, and provide a way
   to do global scoping on key actions
 
