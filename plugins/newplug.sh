@@ -1,22 +1,44 @@
 #!/bin/bash
-# Rename SAMPLE_PLUGIN here
-SAMPLE_NAME=SAMPLE_PLUGIN
-#
+SAMPLE_PLUGIN=SAMPLE_PLUGIN
+
+# make sure user gives a plugin name
 if [ $# -lt 1 ] ;then
  echo "syntax: $0 <new plugin name>"
   exit 1
 fi
-#
-# copy
-cp -a ./$SAMPLE_NAME ./$1
-rm -r $1/CVS # Don't copy junk
-#
-# replace $SAMPLE_NAME within files
-find $1 -type f -exec sed -i "s/$SAMPLE_NAME/$1/g" '{}' \;
-#
-# replace within filenames
-for file in $1/*$SAMPLE_NAME* ;do
- mv $file ${file//$SAMPLE_NAME/$1}
+
+# make sure it doesn't already exist
+if [ -d "./$1" ] ; then
+    echo "ERROR: $1 already exists"
+    exit 1
+fi
+
+# copy the template
+#echo cp -pR ./$SAMPLE_PLUGIN ./$1
+cp -pR ./$SAMPLE_PLUGIN ./$1
+
+# Don't copy junk
+if [ -d "$1/CVS" ] ; then
+    #echo "rm -r $1/CVS"
+    rm -rf $1/CVS
+fi
+
+# replace $SAMPLE_PLUGIN within files
+#echo "find $1 -type f -exec perl -pi -e \"s/$SAMPLE_PLUGIN/$1/g\" '{}' \;"
+find $1 -type f -exec perl -pi -e "s/$SAMPLE_PLUGIN/$1/g" '{}' \;
+
+# rename files
+for file in $1/*$SAMPLE_PLUGIN* ;do
+ mv $file ${file//$SAMPLE_PLUGIN/$1}
 done
 
-echo "Edit configure.ac and add a line for the plugins/$1/Makefile"
+echo "---"
+echo "New plug-in '$1' is ready."
+echo ""
+echo "To add $1 to the build system, you need to edit two files:"
+echo "  Edit plugins/Makefile.am and add a line for your plugin to the SUBDIRS list"
+echo "  Edit configure.ac and add a line for the plugins/$1/Makefile near the end"
+echo ""
+echo "You can then need to rerun autogen.sh and configure just once to enable your"
+echo "new plugin with the build system."
+echo ""
