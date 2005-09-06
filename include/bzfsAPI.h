@@ -178,6 +178,13 @@ public:
 
 	const char* c_str(void) const;
 
+	void format(const char* fmt, ...);
+
+	void replaceAll ( const char* target, const char* with );
+
+	void tolower ( void );
+	void toupper ( void );
+
 protected:
 	class dataBlob;
 
@@ -260,6 +267,7 @@ protected:
 	 unsigned int size ( void );
 	 void clear ( void );
 
+	 void tokenize ( const char* in, const char* delims, int maxTokens = 0, bool useQuotes = false);
  protected:
 	 class dataBlob;
 
@@ -960,6 +968,13 @@ BZF_API bzApiString bz_filterPath ( const char* path );
 
 // Record-Replay
 BZF_API bool bz_saveRecBuf( const char * _filename, int seconds);
+
+// cheap Text Utils
+BZF_API const char *bz_format(const char* fmt, ...);
+BZF_API const char *bz_toupper(const char* val );
+BZF_API const char *bz_tolower(const char* val );
+
+
 
 #endif //_BZFS_API_H_
 

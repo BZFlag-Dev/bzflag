@@ -211,6 +211,36 @@ const char* bzApiString::c_str(void) const
 	return data->str.c_str();
 }
 
+void bzApiString::format(const char* fmt, ...)
+{
+	va_list args;
+	va_start(args, fmt);
+	data->str = TextUtils::format(fmt, args);
+	va_end(args);
+}
+
+void bzApiString::replaceAll ( const char* target, const char* with )
+{
+	if (!target)
+		return;
+
+	std::string withMe;
+	if (with)
+		return;
+
+	data->str = TextUtils::replace_all(data->str,std::string(target),withMe);
+}
+
+void bzApiString::tolower ( void )
+{
+	data->str = TextUtils::tolower(data->str);
+}
+
+void bzApiString::toupper ( void )
+{
+	data->str = TextUtils::toupper(data->str);
+}
+
 //******************************bzAPIIntList********************************************
 class bzAPIIntList::dataBlob
 {
@@ -454,6 +484,19 @@ void bzAPIStringList::clear ( void )
 {
 	data->list.clear();
 }
+
+void bzAPIStringList::tokenize ( const char* in, const char* delims, int maxTokens, bool useQuotes)
+{
+	clear();
+	if (!in || !delims)
+		return;
+
+	std::vector<std::string> list = TextUtils::tokenize(std::string(in),std::string(delims),maxTokens,useQuotes);
+
+	for ( unsigned int i = 0; i < list.size(); i++)
+		data->list.push_back(bzApiString(list[i]));
+}
+
 
 //******************************bzApiTextreList********************************************
 
@@ -1704,6 +1747,33 @@ BZF_API bool bz_saveRecBuf( const char * _filename, int seconds = 0 )
 	
 	bool result = Record::saveBuffer( ServerPlayer, _filename, seconds);
 	return result;
+}
+
+BZF_API const char *bz_format(const char* fmt, ...)
+{
+	va_list args;
+	va_start(args, fmt);
+	static std::string result = TextUtils::format(fmt, args);
+	va_end(args);
+	return result.c_str();
+}
+
+BZF_API const char *bz_toupper(const char* val )
+{
+	if (!val)
+		return NULL;
+
+	static std::string temp	 =	TextUtils::toupper(std::string(val));
+	return temp.c_str();
+}
+
+BZF_API const char *bz_tolower(const char* val )
+{
+	if (!val)
+		return NULL;
+
+	static std::string temp	 =	TextUtils::tolower(std::string(val));
+	return temp.c_str();
 }
 
 // Local Variables: ***
