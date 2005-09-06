@@ -78,9 +78,9 @@ CaptureHandler::process (bz_EventData *eventData)
 	bz_CTFCaptureEventData *ced = (bz_CTFCaptureEventData *) eventData;
 
 	PyObject *arglist = Py_BuildValue ("(iii(fff)fd)",
-			ced->teamCaped,
-			ced->teamCaping,
-			ced->playerCaping,
+			ced->teamCapped,
+			ced->teamCapping,
+			ced->playerCapping,
 			ced->pos[0],
 			ced->pos[1],
 			ced->pos[2],
@@ -97,9 +97,9 @@ DieHandler::process (bz_EventData *eventData)
 
 	PyObject *arglist = Py_BuildValue ("(iiiis(fff)fd)",
 			pded->playerID,
-			pded->teamID,
+			pded->team,
 			pded->killerID,
-			pded->killerTeamID,
+			pded->killerTeam,
 			pded->flagKilledWith.c_str(),
 			pded->pos[0],
 			pded->pos[1],
@@ -147,7 +147,7 @@ JoinHandler::process (bz_EventData *eventData)
 
 	PyObject *arglist = Py_BuildValue ("(iissd)",
 			pjped->playerID,
-			pjped->teamID,
+			pjped->team,
 			pjped->callsign.c_str (),
 			pjped->reason.c_str (),
 			pjped->time);
@@ -164,7 +164,7 @@ PartHandler::process (bz_EventData *eventData)
 
 	PyObject *arglist = Py_BuildValue ("(iissd)",
 			pjped->playerID,
-			pjped->teamID,
+			pjped->team,
 			pjped->callsign.c_str (),
 			pjped->reason.c_str (),
 			pjped->time);
@@ -209,7 +209,7 @@ GetSpawnPosHandler::process (bz_EventData *eventData)
 	// FIXME - this probably has some way to return data to the main program
 	PyObject *arglist = Py_BuildValue ("(iio(fff)fd)",
 			gpsped->playerID,
-			gpsped->teamID,
+			gpsped->team,
 			gpsped->handled ? Py_True : Py_False,
 			gpsped->pos[0],
 			gpsped->pos[1],
@@ -291,7 +291,7 @@ AllowSpawnHandler::process (bz_EventData *eventData)
 	bz_AllowSpawnData *ased = (bz_AllowSpawnData*) eventData;
 	PyObject *arglist = Py_BuildValue ("(iiod)",
 			ased->playerID,
-			ased->teamID,
+			ased->team,
 			ased->handled ? Py_True : Py_False,
 			ased->time);
 	emit (arglist, bz_eAllowSpawn);

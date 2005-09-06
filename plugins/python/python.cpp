@@ -54,8 +54,8 @@ PluginHandler::handle (bzApiString plugin, bzApiString param)
 	char *buffer = ReadFile (filename);
 	code_buffer = buffer;
 
-	PyErr_Clear ();
-	PyCodeObject *code = (PyCodeObject *) Py_CompileString (buffer, plugin.c_str (), Py_file_input);
+	PyErr_Clear();
+	PyCodeObject *code = (PyCodeObject *) Py_CompileString (buffer, plugin.c_str(), Py_file_input);
 	if (PyErr_Occurred ()) {
 		PyErr_Print ();
 		return false;
