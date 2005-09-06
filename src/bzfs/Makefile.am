@@ -5,8 +5,6 @@ MAINTAINERCLEANFILES = \
 
 AM_CPPFLAGS = -I$(top_srcdir)/include $(CURL_CFLAGS) -DINSIDE_BZ
 
-bzfs_LDFLAGS = -rdynamic
-
 bzfs_SOURCES = \
 	AccessControlList.cxx \
 	AccessControlList.h \
