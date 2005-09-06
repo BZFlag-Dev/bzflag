@@ -320,5 +320,8 @@ THESE NEED TO WAIT FOR THE NEXT PROTOCOL BREAKAGE
   & position of shot start. This can fix unalignment in time between shot and
   shooting tank.
 
+* bzadmin should notify bzfs of being a bzadmin, so we could remove all the 
+  unneeded information like shot, tank position, world ...
+
 See the Task Tracker on Sourceforge (http://sourceforge.net/pm/?group_id=3248)
 for more todo items and future planning endeavors.
