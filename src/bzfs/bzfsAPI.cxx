@@ -224,11 +224,10 @@ void bzApiString::replaceAll ( const char* target, const char* with )
 	if (!target)
 		return;
 
-	std::string withMe;
-	if (with)
+	if (!with)
 		return;
 
-	data->str = TextUtils::replace_all(data->str,std::string(target),withMe);
+	data->str = TextUtils::replace_all(data->str,std::string(target),std::string(with));
 }
 
 void bzApiString::tolower ( void )
