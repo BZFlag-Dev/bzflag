@@ -1,5 +1,7 @@
 EXTRA_LTLIBRARIES = libPyBZFlag.la
 
+libPyBZFlag_la_LDFLAGS = -rpath ${libdir}
+
 libPyBZFlag_la_SOURCES = \
 	PyBZDB.cpp \
 	PyBZFlag.cpp \
