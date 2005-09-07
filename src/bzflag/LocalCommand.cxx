@@ -10,10 +10,17 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+#include "common.h"
+
 // interface header
 #include "LocalCommand.h"
 
+// system headers
+#include <ctype.h>
+
+
 LocalCommand::MapOfCommands *LocalCommand::mapOfCommands = NULL;
+
 
 LocalCommand::LocalCommand(std::string _commandName)
   : commandName(_commandName)
@@ -23,10 +30,12 @@ LocalCommand::LocalCommand(std::string _commandName)
   (*mapOfCommands)[commandName] = this;
 }
 
+
 LocalCommand::~LocalCommand()
 {
   (*mapOfCommands).erase(commandName);
 }
+
 
 bool LocalCommand::execute(const char *commandLine)
 {
@@ -43,10 +52,12 @@ bool LocalCommand::execute(const char *commandLine)
   return (*(it->second))(commandLine);
 }
 
+
 bool LocalCommand::operator() (const char *)
 {
   return true;
 }
+
 
 // Local Variables: ***
 // mode:C++ ***
