@@ -474,7 +474,6 @@ bool BanCommand::operator() (const char         *message,
     GameKeeper::Player *playerBannedData
       = GameKeeper::Player::getPlayerByIndex(victim);
     if (playerBannedData) {
-      // comprobar no es admin
       if (playerBannedData->accessInfo.hasPerm(PlayerAccessInfo::antiban)){
         snprintf(kickmessage, MessageLen, 
 		       "%s is protected from being banned (skipped).",
