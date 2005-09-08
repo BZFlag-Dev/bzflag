@@ -473,13 +473,23 @@ bool BanCommand::operator() (const char         *message,
   int durationInt = clOptions->banTime;
 
   int victim = GameKeeper::Player::getPlayerIDByName(argv[1]);
-
+  char kickmessage[MessageLen];
+  
   if (victim >= 0) {
     // valid slot or callsign
     GameKeeper::Player *playerBannedData
       = GameKeeper::Player::getPlayerByIndex(victim);
-    if (playerBannedData)
+    if (playerBannedData) {
+      // comprobar no es admin
+      if (playerBannedData->accessInfo.hasPerm(PlayerAccessInfo::antiban)){
+        snprintf(kickmessage, MessageLen, 
+		       "%s is protected from being banned (skipped).",
+		       playerBannedData->player.getCallSign());
+	      sendMessage(ServerPlayer, t, kickmessage);
+        return true;
+      }
       ip = playerBannedData->netHandler->getTargetIP();
+    }
   }
 
   int specifiedDuration = 0;
@@ -536,7 +546,6 @@ bool BanCommand::operator() (const char         *message,
 
       sendMessage(ServerPlayer, t, "IP pattern added to banlist");
 
-      char kickmessage[MessageLen];
       GameKeeper::Player *otherPlayer;
       for (int i = 0; i < curMaxPlayers; i++) {
 	otherPlayer = GameKeeper::Player::getPlayerByIndex(i);
