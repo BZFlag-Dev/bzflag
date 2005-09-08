@@ -32,12 +32,6 @@ extern void playerKilled(int victimIndex, int killerIndex, int reason,
 extern CmdLineOptions *clOptions;
 extern uint16_t curMaxPlayers;
 
-class NoDigit {
-public:
-  bool operator() (char c) {return !isdigit(c);}
-};
-
-
 
 class KickCommand : ServerCommand {
 public:
