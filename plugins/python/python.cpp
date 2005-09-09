@@ -11,6 +11,9 @@
  */
 
 #include <Python.h>
+#include <compile.h>
+#include <eval.h>
+
 #include "bzfsAPI.h"
 #include "PyBZFlag.h"
 
