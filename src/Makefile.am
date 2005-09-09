@@ -16,6 +16,12 @@ else
 REGEX_DIR =
 endif
 
+if CLIENT_INCLUDED
+BZFLAG_DIR = bzflag
+else
+BZFLAG_DIR =
+endif
+
 SUBDIRS = \
 	${CARES_DIR}	\
 	3D \
@@ -32,7 +38,7 @@ SUBDIRS = \
 	mediafile \
 	date \
 	bzfs \
-	bzflag \
+	${BZFLAG_DIR}	\
 	bzadmin
 
 MAINTAINERCLEANFILES = \
