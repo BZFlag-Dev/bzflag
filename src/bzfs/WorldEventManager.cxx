@@ -41,9 +41,9 @@ WorldEventManager::~WorldEventManager()
 	}
 }
 
-void WorldEventManager::addEvent ( bz_eEventType eventType, bz_EventHandler* theEvetnt )
+void WorldEventManager::addEvent ( bz_eEventType eventType, bz_EventHandler* theEvent )
 {
-	if (!theEvetnt)
+	if (!theEvent)
 		return;
 
 	if (eventList.find(eventType) == eventList.end())
@@ -52,12 +52,12 @@ void WorldEventManager::addEvent ( bz_eEventType eventType, bz_EventHandler* the
 		eventList[eventType] = newList;
 	}
 
-	eventList.find(eventType)->second.push_back(theEvetnt);
+	eventList.find(eventType)->second.push_back(theEvent);
 }
 
-void WorldEventManager::removeEvent ( bz_eEventType eventType, bz_EventHandler* theEvetnt )
+void WorldEventManager::removeEvent ( bz_eEventType eventType, bz_EventHandler* theEvent )
 {
-	if (!theEvetnt)
+	if (!theEvent)
 		return;
 
 	tmEventTypeList::iterator eventTypeItr = eventList.find(eventType);
@@ -67,7 +67,7 @@ void WorldEventManager::removeEvent ( bz_eEventType eventType, bz_EventHandler* 
 	tvEventList::iterator itr = eventTypeItr->second.begin();
 	while (itr != eventTypeItr->second.end())
 	{
-		if (*itr == theEvetnt)
+		if (*itr == theEvent)
 			itr = eventTypeItr->second.erase(itr);
 		else
 			itr++;

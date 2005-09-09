@@ -35,8 +35,8 @@ public:
 	WorldEventManager();
 	~WorldEventManager();
 
-	void addEvent ( bz_eEventType eventType, bz_EventHandler* theEvetnt );
-	void removeEvent ( bz_eEventType eventType, bz_EventHandler* theEvetnt );
+	void addEvent ( bz_eEventType eventType, bz_EventHandler* theEvent );
+	void removeEvent ( bz_eEventType eventType, bz_EventHandler* theEvent );
 	tvEventList getEventList ( bz_eEventType eventType);
 	void callEvents ( bz_eEventType eventType, bz_EventData	*eventData );
 
