@@ -1,7 +1,8 @@
-lib_LTLIBRARIES = libvocaliser.la
+lib_LTLIBRARIES = vocaliser.la
 
-libvocaliser_la_SOURCES = vocaliser.cpp
-libvocaliser_la_CPPFLAGS = -I../../include
+vocaliser_la_SOURCES = vocaliser.cpp
+vocaliser_la_CPPFLAGS = -I../../include
+vocaliser_la_LDFLAGS = -module -avoid-version ${top_builddir}/src/bzfs/libBZFSplugin.la
 
 EXTRA_DIST = \
 	vocaliser.def \

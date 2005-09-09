@@ -1,7 +1,8 @@
-lib_LTLIBRARIES = libchathistory.la
+lib_LTLIBRARIES = chathistory.la
 
-libchathistory_la_SOURCES = chathistory.cpp
-libchathistory_la_CPPFLAGS = -I../../include
+chathistory_la_SOURCES = chathistory.cpp
+chathistory_la_CPPFLAGS = -I../../include
+chathistory_la_LDFLAGS = -module -avoid-version ${top_builddir}/src/bzfs/libBZFSplugin.la
 
 EXTRA_DIST = \
 	chathistory.def \

@@ -1,7 +1,8 @@
-lib_LTLIBRARIES = libshockwaveDeath.la
+lib_LTLIBRARIES = shockwaveDeath.la
 
-libshockwaveDeath_la_SOURCES = shockwaveDeath.cpp
-libshockwaveDeath_la_CPPFLAGS = -I../../include
+shockwaveDeath_la_SOURCES = shockwaveDeath.cpp
+shockwaveDeath_la_CPPFLAGS = -I../../include
+shockwaveDeath_la_LDFLAGS = -module -avoid-version ${top_builddir}/src/bzfs/libBZFSplugin.la
 
 EXTRA_DIST = \
 	shockwaveDeath.def \

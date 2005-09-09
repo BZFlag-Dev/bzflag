@@ -1,7 +1,8 @@
-lib_LTLIBRARIES = libkillall.la
+lib_LTLIBRARIES = killall.la
 
-libkillall_la_SOURCES = killall.cpp
-libkillall_la_CPPFLAGS = -I../../include
+killall_la_SOURCES = killall.cpp
+killall_la_CPPFLAGS = -I../../include
+killall_la_LDFLAGS = -module -avoid-version ${top_builddir}/src/bzfs/libBZFSplugin.la
 
 EXTRA_DIST = \
 	killall.def \

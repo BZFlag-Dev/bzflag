@@ -1,7 +1,8 @@
-lib_LTLIBRARIES = libplayHistoryTracker.la
+lib_LTLIBRARIES = playHistoryTracker.la
 
-libplayHistoryTracker_la_SOURCES = playHistoryTracker.cpp
-libplayHistoryTracker_la_CPPFLAGS = -I../../include
+playHistoryTracker_la_SOURCES = playHistoryTracker.cpp
+playHistoryTracker_la_CPPFLAGS = -I../../include
+playHistoryTracker_la_LDFLAGS = -module -avoid-version ${top_builddir}/src/bzfs/libBZFSplugin.la
 
 EXTRA_DIST = \
 	playHistoryTracker.def \

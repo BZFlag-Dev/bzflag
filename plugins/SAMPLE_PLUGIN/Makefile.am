@@ -1,7 +1,8 @@
-lib_LTLIBRARIES = libSAMPLE_PLUGIN.la
+lib_LTLIBRARIES = SAMPLE_PLUGIN.la
 
-libSAMPLE_PLUGIN_la_SOURCES = SAMPLE_PLUGIN.cpp
-libSAMPLE_PLUGIN_la_CPPFLAGS = -I../../include
+SAMPLE_PLUGIN_la_SOURCES = SAMPLE_PLUGIN.cpp
+SAMPLE_PLUGIN_la_CPPFLAGS = -I../../include
+SAMPLE_PLUGIN_la_LDFLAGS = -module -avoid-version ${top_builddir}/src/bzfs/libBZFSplugin.la
 
 EXTRA_DIST = \
 	ReadMe.txt \
