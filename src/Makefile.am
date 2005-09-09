@@ -22,6 +22,12 @@ else
 BZFLAG_DIR =
 endif
 
+if BZADMIN_INCLUDED
+BZADMIN_DIR = bzadmin
+else
+BZADMIN_DIR =
+endif
+
 SUBDIRS = \
 	${CARES_DIR}	\
 	3D \
@@ -39,7 +45,7 @@ SUBDIRS = \
 	date \
 	bzfs \
 	${BZFLAG_DIR}	\
-	bzadmin
+	${BZADMIN_DIR}
 
 MAINTAINERCLEANFILES = \
 	Makefile.in

@@ -2,9 +2,7 @@ MAINTAINERCLEANFILES = \
 	ServerLink.cxx \
 	Makefile.in
 
-if BZADMIN_INCLUDED
 bin_PROGRAMS = bzadmin
-endif
 
 if HAVE_CURSES
 CURSES_SRC = CursesUI.h CursesUI.cxx CursesMenu.h CursesMenu.cxx

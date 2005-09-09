@@ -464,10 +464,10 @@ if test "x$BUILDCARES" = "xyes" ; then
 fi
 
 
+MP_WITH_CURSES
 # do we want bzadmin?
 AC_ARG_ENABLE(bzadmin, [  --disable-bzadmin       do not build text client])
 if test x$enable_bzadmin != xno; then
-    MP_WITH_CURSES
     if test "x$CURSES_LIB" = x; then
       AC_MSG_WARN([could not find a curses library, will build bzadmin without curses])
     fi
