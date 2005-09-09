@@ -8,45 +8,34 @@
 BZ_GET_PLUGIN_VERSION
 
 // event handler callback
-class RogueDeathHandler : public bz_EventHandler
+class RogueGenoHandler : public bz_EventHandler
 {
 public:
-        RogueDeathHandler();
-        virtual ~RogueDeathHandler();
-
         virtual void process ( bz_EventData *eventData );
 
         virtual bool autoDelete ( void ) { return false;} // this will be used for more then one event
 protected:
 };
 
-RogueDeathHandler	deathHandler;
+RogueGenoHandler	rogueGenoHandler;
 
 BZF_PLUGIN_CALL int bz_Load ( const char* /*commandLine*/ )
 {
 	bz_debugMessage(4,"rogueGenocide plugin loaded");
-	bz_registerEvent(bz_ePlayerDieEvent,&deathHandler);
+	bz_registerEvent(bz_ePlayerDieEvent,&rogueGenoHandler);
 
 	return 0;
 }
 
 BZF_PLUGIN_CALL int bz_Unload ( void )
 {
-	bz_removeEvent(bz_ePlayerDieEvent,&deathHandler);
+	bz_removeEvent(bz_ePlayerDieEvent,&rogueGenoHandler);
 	bz_debugMessage(4,"rogueGenocide plugin unloaded");
 	return 0;
 }
 
 
-RogueDeathHandler::RogueDeathHandler()
-{
-}
-
-RogueDeathHandler::~RogueDeathHandler()
-{
-}
-
-void RogueDeathHandler::process ( bz_EventData *eventData )
+void RogueGenoHandler::process ( bz_EventData *eventData )
 {	
 	switch (eventData->eventType) 
 	{

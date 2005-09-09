@@ -7,7 +7,7 @@
 BZ_GET_PLUGIN_VERSION
 
 // event handler callback
-class DeathHandler : public bz_EventHandler
+class SWDeathHandler : public bz_EventHandler
 {
 public:
 	virtual void process ( bz_EventData *eventData );
@@ -15,28 +15,28 @@ public:
 	bool	usePlayerForShot;
 };
 
-DeathHandler	deathHandler;
+SWDeathHandler	swDeathHandler;
 
 BZF_PLUGIN_CALL int bz_Load ( const char* commandLine )
 {
 	bz_debugMessage(4,"shockwaveDeath plugin loaded");
 
-	bz_registerEvent(bz_ePlayerDieEvent,&deathHandler);
+	bz_registerEvent(bz_ePlayerDieEvent,&swDeathHandler);
 
 	std::string param = commandLine;
 
-	deathHandler.usePlayerForShot = (param == "usevictim");
+	swDeathHandler.usePlayerForShot = (param == "usevictim");
 	return 0;
 }
 
 BZF_PLUGIN_CALL int bz_Unload ( void )
 {
-	bz_removeEvent(bz_ePlayerDieEvent,&deathHandler);
+	bz_removeEvent(bz_ePlayerDieEvent,&swDeathHandler);
 	bz_debugMessage(4,"shockwaveDeath plugin unloaded");
 	return 0;
 }
 
-void DeathHandler::process ( bz_EventData *eventData )
+void SWDeathHandler::process ( bz_EventData *eventData )
 {
 	if (eventData->eventType != bz_ePlayerDieEvent)
 		return;
