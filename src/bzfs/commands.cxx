@@ -1438,9 +1438,10 @@ bool SendHelpCommand::operator() (const char *message, GameKeeper::Player *playe
     snprintf(reply, MessageLen, "This help (%s) was sent by %s (pgup/pgdn to scroll)", 
              argv[2].c_str(), GameKeeper::Player::getPlayerByIndex(sendFrom)->player.getCallSign());
     sendMessage(ServerPlayer, sendTo, reply);
-    snprintf(reply, MessageLen, "Help (%s) was sent to %s.", 
-             argv[2].c_str(), GameKeeper::Player::getPlayerByIndex(sendTo)->player.getCallSign());
-    sendMessage(ServerPlayer, sendFrom, reply);
+    snprintf(reply, MessageLen, "Help topic %s was sent to %s by %s.", 
+             argv[2].c_str(), GameKeeper::Player::getPlayerByIndex(sendTo)->player.getCallSign(),
+             GameKeeper::Player::getPlayerByIndex(sendFrom)->player.getCallSign());
+    sendMessage(ServerPlayer, AdminPlayers, reply);
   } else {
     char reply[MessageLen] = {0};
     snprintf(reply, MessageLen, "Help command %s not found", argv[2].c_str());
