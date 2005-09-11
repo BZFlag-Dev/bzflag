@@ -1,6 +1,8 @@
 recent bugs
 ------------
 
+- CTF team flags spawn at random places - not on bases.
+
 - Zbuffer flickering with Narrow and Covered animated treads
 
 - ANSI codes can be used in the server -public messages
