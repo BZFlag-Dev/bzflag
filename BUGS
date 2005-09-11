@@ -1,7 +1,8 @@
 recent bugs
 ------------
 
-- CTF team flags spawn at random places - not on bases.
+- bzfs sometimes gets into a mode where CTF team flags spawn at random places,
+  not on bases.  Also, players spawn at random spots after flag cap.
 
 - Zbuffer flickering with Narrow and Covered animated treads
 
