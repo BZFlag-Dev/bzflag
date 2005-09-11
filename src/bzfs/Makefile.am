@@ -7,9 +7,11 @@ AM_CPPFLAGS = -I$(top_srcdir)/include $(CURL_CFLAGS) -DINSIDE_BZ
 
 lib_LTLIBRARIES = libBZFSplugin.la
 
+libBZFSplugin_la_LDFLAGS = -static
 libBZFSplugin_la_SOURCES = \
 	bzfsAPI.cxx
 
+bzfs_LDFLAGS = -static
 bzfs_SOURCES = \
 	AccessControlList.cxx \
 	AccessControlList.h \
