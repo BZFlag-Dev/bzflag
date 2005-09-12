@@ -2,7 +2,7 @@
 # lib_LTLIBRARIES = PyBZFlag.la
 EXTRA_LTLIBRARIES = PyBZFlag.la
 
-PyBZFlag_la_LDFLAGS = -module -avoid-version ${top_builddir}/src/bzfs/libBZFSplugin.la
+PyBZFlag_la_LDFLAGS = -module -avoid-version
 
 # for Mac OS X, uncomment these flags:
 # PyBZFlag_la_CPPFLAGS = -I/System/Library/Frameworks/Python.framework/Headers
