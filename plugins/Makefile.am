@@ -11,6 +11,7 @@ SUBDIRS = \
 	vocaliser
 
 DIST_SUBDIRS = \
+	$(SUBDIRS)	\
 	doc \
 	vc71
 
