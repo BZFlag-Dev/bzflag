@@ -1,7 +1,7 @@
 lib_LTLIBRARIES = SAMPLE_PLUGIN.la
 
 SAMPLE_PLUGIN_la_SOURCES = SAMPLE_PLUGIN.cpp
-SAMPLE_PLUGIN_la_CPPFLAGS = -I../../include
+SAMPLE_PLUGIN_la_CPPFLAGS = -I$(top_srcdir)/include
 SAMPLE_PLUGIN_la_LDFLAGS = -module -avoid-version
 
 EXTRA_DIST = \
