@@ -16,6 +16,11 @@ EXTRA_bzadmin_SOURCES = \
 	CursesUI.cxx
 endif
 
+if BUILD_REGEX
+REGEX = \
+	../regex/libregex.la
+endif
+
 AM_CPPFLAGS = -DBUILDING_BZADMIN -I$(top_srcdir)/include \
 -I$(top_srcdir)/src/bzflag @CURL_CFLAGS@
 
@@ -49,4 +54,5 @@ LDADD = \
 	@CURSES_LIB@		\
 	../game/libGame.la	\
 	../net/libNet.la	\
-	../common/libCommon.la
+	../common/libCommon.la	\
+	$(REGEX)
