@@ -103,6 +103,7 @@ AC_PROG_RANLIB
 # AC_PROG_LIBTOOL goes poof in libtool 1.9, but that's not very
 # widespread at all.
 # LT_INIT
+AC_LIBTOOL_DLOPEN
 AC_PROG_LIBTOOL
 AC_SUBST(LIBTOOL_DEPS)
 

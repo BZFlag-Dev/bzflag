@@ -5,18 +5,13 @@ MAINTAINERCLEANFILES = \
 
 AM_CPPFLAGS = -I$(top_srcdir)/include $(CURL_CFLAGS) -DINSIDE_BZ
 
-lib_LTLIBRARIES = libBZFSplugin.la
-
-libBZFSplugin_la_LDFLAGS = -static
-libBZFSplugin_la_SOURCES = \
-	bzfsAPI.cxx
-
-bzfs_LDFLAGS = -static
+bzfs_LDFLAGS = -export-dynamic
 bzfs_SOURCES = \
 	AccessControlList.cxx \
 	AccessControlList.h \
 	Authentication.cxx	\
 	Authentication.h	\
+	bzfsAPI.cxx		\
 	bzfsPlugins.h	\
 	bzfsPlugins.cxx	\
 	BanCommands.cxx		\
@@ -139,7 +134,6 @@ CARESLIB = -lcares
 endif
 
 LDADD = \
-	libBZFSplugin.la		\
 	../obstacle/libObstacle.la	\
 	../game/libGame.la		\
 	../net/libNet.la		\
