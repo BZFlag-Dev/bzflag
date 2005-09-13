@@ -760,8 +760,22 @@ You were kicked off the server by MrApathyCream
 /kick #1 Team killing
 Kick the player using slot 1 because Team Killing
 
-Note: Slots numbers are only displayed in admins clients. A reason is required
+Note: Slots numbers are only displayed in admins clients. 
+A reason is required
 .ft R
+
+.TP 
+.B /kill <"Player name" | playerName | #slot> [reason]>
+Kill a player just like when shooting.
+
+Example:
+.ft CW
+.nf 
+.ne 2
+/kill Gerbol
+kill the player named Gerbol
+/kill #4 teamkilling
+Kill the player using slot 4 because teamkilling
 
 .TP 
 .B /playerlist
@@ -778,7 +792,15 @@ List player names and IP addresses. Example:
 .TP 
 .B /ban <ip | ipList | #slot | "Player name" | playerName > <duration> <reason>
 
-Ban players using the specified IPs for certain length of time from using this server. Example:
+Ban players using the specified IPs for certain length of time
+from using this server. 
+<duration> can be:
+    'short' or 'default' for the default ban time 
+    'forever' or 'max' for infinite bans
+    a time in the format <weeks>W<days>D<hours>H<minutes>M
+    just a number of minutes
+
+Examples:
 .ft CW
 .nf 
 .ne 4
@@ -790,10 +812,11 @@ bans all ips in this range forever
 bans specific ip for 2.5 hours with given reason
 /ban #5 60m Rejoining
 bans player using slot 5 for 60 minutes with given reason
-/ban "Tanker" 0 cheating
+/ban "Tanker" max cheating
 bans the player Tanker forever because cheating
 
-Note: Slots numbers are only displayed in admins clients. Duration and reason are required.
+Note: Slots numbers are only displayed in admins clients.
+Duration and reason are required.
 .ft R
 
 .TP 
