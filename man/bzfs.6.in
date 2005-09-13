@@ -835,7 +835,8 @@ IP Ban List
 .TP 
 .B /hostban {hostpat} {duration} {reason}
 
-Ban players using the specified hostnames for a certain length of time from using this server.  Example:
+Ban players using the specified hostnames for a certain length of time from using this server. 
+Example:
 
 .ft CW
 .nf 
@@ -844,7 +845,8 @@ Ban players using the specified hostnames for a certain length of time from usin
 bans all players from foo.com for 2 minutes
 .ft R
 
-Note: Bzfs must be compiled to use the ADNS asynchronous resolver library in order for this feature to work.
+Note: Bzfs must be compiled to use the ADNS asynchronous resolver library in order for this 
+feature to work.
 
 .TP 
 .B /hostbanlist
@@ -857,6 +859,17 @@ Generate a public message sent by the server. Example:
 .nf 
 .ne 4
 /say This is a servermessage
+.ft R
+
+.TP 
+.B /sendhelp  <"Player name" | playerName | #slot>  <help page>
+Send the specified help page to a user
+
+.ft CW
+.nf 
+.ne 4
+/send register "Foo"
+Send the the help page 'register' to the player Foo
 .ft R
 
 .TP 
