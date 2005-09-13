@@ -77,6 +77,11 @@ inline int cr_waddstr(WINDOW* w, const char* str) {
 #  define HAVE_PROTO
 #endif
 
+// a complete and total hack, but its needed since windows.h ALSO has this
+#ifdef MOUSE_MOVED
+#undef MOUSE_MOVED
+#endif 
+
 #ifdef HAVE_XCURSES_H
 #  define XCURSES
 #  include <xcurses.h>

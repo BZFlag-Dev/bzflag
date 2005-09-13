@@ -99,7 +99,7 @@ copy debug\*.pdb ..\..\*.pdb
 				AdditionalIncludeDirectories="..\..\include,..\..\win32,.\"
 				PreprocessorDefinitions="_WINDOWS;WIN32;NDEBUG"
 				StringPooling="TRUE"
-				RuntimeLibrary="0"
+				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="TRUE"
 				RuntimeTypeInfo="TRUE"
 				PrecompiledHeaderFile=".\Release/bzflag.pch"
