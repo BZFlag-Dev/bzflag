@@ -728,19 +728,18 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
       drawTank(myPos, myTank);
     }
 
-    if (smooth) {
-
-      // darken the entire radar if we're dimmed
-      if (dimming > 0.0f) {
-	// we're drawing positively, so dimming is actually an opacity
-	glColor4f(0.0f, 0.0f, 0.0f, 1.0f - dimming);
-	glRectf((float)(x - xSize), (float)(y - ySize), (float)(x + xSize), (float)(y + ySize));
+    if (dimming > 0.0f) {
+      if (!smooth) {
+        glEnable(GL_BLEND);
       }
-
-      glDisable(GL_BLEND);
-      glDisable(GL_LINE_SMOOTH);
-      glDisable(GL_POINT_SMOOTH);
+      // darken the entire radar if we're dimmed
+      // we're drawing positively, so dimming is actually an opacity
+      glColor4f(0.0f, 0.0f, 0.0f, 1.0f - dimming);
+      glRectf(-radarRange, -radarRange, +radarRange, +radarRange);
     }
+    glDisable(GL_BLEND);
+    glDisable(GL_LINE_SMOOTH);
+    glDisable(GL_POINT_SMOOTH);
   }
 
   // restore GL state
@@ -898,8 +897,8 @@ void RadarRenderer::renderBoxPyrMeshFast(float _range)
   const float vfz = RENDERER.getViewFrustum().getEye()[2];
   const GLfloat plane[4] =
     { 0.0f, 0.0f, (1.0f / hf), (((hf * 0.5f) - vfz) / hf) };
-  glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_OBJECT_LINEAR);
-  glTexGenfv(GL_S, GL_OBJECT_PLANE, plane);
+  glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_EYE_LINEAR);
+  glTexGenfv(GL_S, GL_EYE_PLANE, plane);
 
   // setup texture generation
   glEnable(GL_TEXTURE_GEN_S);
@@ -907,8 +906,8 @@ void RadarRenderer::renderBoxPyrMeshFast(float _range)
   // set the color
   glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 
-  ViewFrustum radarClipper;
   // NOTE: it's also interesting to just use the viewing frustum
+  ViewFrustum radarClipper;
   radarClipper.setOrthoPlanes(RENDERER.getViewFrustum(), _range, _range);
   RENDERER.getSceneDatabase()->renderRadarNodes(radarClipper);
 
