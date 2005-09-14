@@ -44,6 +44,9 @@ enum RabbitSelection {
 typedef std::map<FlagType*, int> FlagNumberMap;
 typedef std::map<FlagType*,bool> FlagOptionMap;
 
+#define _DEFAULT_LIN_ACCEL 0.0f
+#define _DEFAULT_ANGLE_ACCELL 0.0f
+
 /** CmdLineOptions is a container for any of the bzfs options that may
  * be provided via the command line.
  */
@@ -62,7 +65,7 @@ struct CmdLineOptions
     numAllowedFlags(0), shakeWins(0), shakeTimeout(0),
     teamFlagTimeout(30), maxlagwarn(10000), lagwarnthresh(-1.0),
     idlekickthresh(-1.0), timeLimit(0.0f), timeElapsed(0.0f),
-    linearAcceleration(50.0f), angularAcceleration(38.0f), useGivenPort(false),
+    linearAcceleration(_DEFAULT_LIN_ACCEL), angularAcceleration(_DEFAULT_ANGLE_ACCELL), useGivenPort(false),
     useFallbackPort(false), requireUDP(false), randomBoxes(false),
     randomCTF(false), flagsOnBuildings(false), respawnOnBuildings(false),
     oneGameOnly(false), timeManualStart(false), randomHeights(false),
