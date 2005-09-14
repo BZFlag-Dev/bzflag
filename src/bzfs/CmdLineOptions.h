@@ -62,7 +62,7 @@ struct CmdLineOptions
     numAllowedFlags(0), shakeWins(0), shakeTimeout(0),
     teamFlagTimeout(30), maxlagwarn(10000), lagwarnthresh(-1.0),
     idlekickthresh(-1.0), timeLimit(0.0f), timeElapsed(0.0f),
-    linearAcceleration(45.0f), angularAcceleration(38.0f), useGivenPort(false),
+    linearAcceleration(50.0f), angularAcceleration(38.0f), useGivenPort(false),
     useFallbackPort(false), requireUDP(false), randomBoxes(false),
     randomCTF(false), flagsOnBuildings(false), respawnOnBuildings(false),
     oneGameOnly(false), timeManualStart(false), randomHeights(false),
