@@ -32,7 +32,7 @@
 	#define BZF_PLUGIN_CALL extern "C"
 #endif
 
-#define BZ_API_VERSION	12
+#define BZ_API_VERSION	13
 
 #define BZ_GET_PLUGIN_VERSION BZF_PLUGIN_CALL int bz_GetVersion ( void ) { return BZ_API_VERSION;}
 
@@ -340,7 +340,7 @@ public:
 	{
 		eventType = bz_ePlayerSpawnEvent;
 		playerID = -1;
-		teamID = eNoTeam;
+		team = eNoTeam;
 
 		pos[0] = pos[1] = pos[2] = 0.0f;
 		rot = 0.0f;
@@ -350,7 +350,7 @@ public:
 	virtual ~bz_PlayerSpawnEventData(){};
 
 	int playerID;
-	int teamID;
+	bz_eTeamType team;
 
 	float pos[3];
 	float rot;
@@ -367,13 +367,14 @@ public:
 		from = -1;
 		to = -1;
 		time = 0.0;
+		team = eNoTeam;
 	}
 
 	virtual ~bz_ChatEventData(){};
 
 	int from;
 	int to;
-
+	bz_eTeamType	team;
 	bzApiString message;
 
 	double time;

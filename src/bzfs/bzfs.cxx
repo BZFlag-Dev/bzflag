@@ -3261,11 +3261,18 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
       GameKeeper::Player *toData = GameKeeper::Player::getPlayerByIndex(dstPlayer);
       int toTeam = -1;
       if (toData)
-	toTeam = toData->player.getTeam();
+		toTeam = toData->player.getTeam();
 
       bz_ChatEventData chatData;
       chatData.from = t;
       chatData.to = dstPlayer;
+
+	  if (dstPlayer == 254)
+		chatData.to = BZ_ALLUSERS;\
+
+	  if (toData)
+		chatData.team =convertTeam(toTeam);
+
       chatData.message = message;
       chatData.time = TimeKeeper::getCurrent().getSeconds();
 
