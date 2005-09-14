@@ -2188,7 +2188,7 @@ static void playerAlive(int playerIndex)
   // call any events for a playerspawn
   bz_PlayerSpawnEventData	spawnEvent;
   spawnEvent.playerID = playerIndex;
-  spawnEvent.teamID = playerData->player.getTeam();
+  spawnEvent.team = convertTeam(playerData->player.getTeam());
 
   playerData->getPlayerState(spawnEvent.pos, spawnEvent.rot);
 
@@ -3271,7 +3271,7 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
 		chatData.to = BZ_ALLUSERS;\
 
 	  if (toData)
-		chatData.team =convertTeam(toTeam);
+		chatData.team =convertTeam(toData->player.getTeam());
 
       chatData.message = message;
       chatData.time = TimeKeeper::getCurrent().getSeconds();
