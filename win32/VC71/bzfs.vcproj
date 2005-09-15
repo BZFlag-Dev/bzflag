@@ -45,6 +45,7 @@
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="libcurl.lib"
+				IgnoreDefaultLibraryNames="LIBCMT"
 				ProgramDatabaseFile="../src/bzfs/bzfs.pdb"
 				SubSystem="1"
 				TargetMachine="1"/>
