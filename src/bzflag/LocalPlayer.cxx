@@ -1458,24 +1458,31 @@ void			LocalPlayer::doMomentum(float dt,
 						float& speed, float& angVel)
 {
   // get maximum linear and angular accelerations
-  const float linearAcc = (getFlag() == Flags::Momentum) ? BZDB.eval(StateDatabase::BZDB_MOMENTUMLINACC) :
+  float linearAcc = (getFlag() == Flags::Momentum) ? BZDB.eval(StateDatabase::BZDB_MOMENTUMLINACC) :
     World::getWorld()->getLinearAcceleration();
-  const float angularAcc = (getFlag() == Flags::Momentum) ? BZDB.eval(StateDatabase::BZDB_MOMENTUMANGACC) :
+  float angularAcc = (getFlag() == Flags::Momentum) ? BZDB.eval(StateDatabase::BZDB_MOMENTUMANGACC) :
     World::getWorld()->getAngularAcceleration();
 
   // limit linear acceleration
-  if (linearAcc > 0.0f) {
-    const float acc = (speed - lastSpeed) / dt;
-    if (acc > 20.0f * linearAcc) speed = lastSpeed + dt * 20.0f*linearAcc;
-    else if (acc < -20.0f * linearAcc) speed = lastSpeed - dt * 20.0f*linearAcc;
+  if (linearAcc <= 0.0f) {
+    // allow 0.05 seconds for "stop to full motion" speed 
+    // in the absence of any server directive.
+    // this is quite conservative, 0.05 sec is VERY fast.
+    //
+    // FIXME: server should send linear accel limit as a bzdb var
+    // so we don't need this hardcoded junk to compensate for tankSpeed
+    linearAcc = 20.0f * (BZDBCache::tankSpeed / 0.05f);
   }
+  const float acc = (speed - lastSpeed) / dt;
+  if (acc > 20.0f * linearAcc) speed = lastSpeed + dt * 20.0f*linearAcc;
+  else if (acc < -20.0f * linearAcc) speed = lastSpeed - dt * 20.0f*linearAcc;
 
   // limit angular acceleration
   if (angularAcc > 0.0f) {
     const float oldAngVel = getAngularVelocity();
-    const float acc = (angVel - oldAngVel) / dt;
-    if (acc > angularAcc) angVel = oldAngVel + dt * angularAcc;
-    else if (acc < -angularAcc) angVel = oldAngVel - dt * angularAcc;
+    const float angAcc = (angVel - oldAngVel) / dt;
+    if (angAcc > angularAcc) angVel = oldAngVel + dt * angularAcc;
+    else if (angAcc < -angularAcc) angVel = oldAngVel - dt * angularAcc;
   }
 }
 

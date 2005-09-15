@@ -218,7 +218,7 @@ namespace TextUtils
       return false;
 
     int t = 0;
-    int len = strlen(duration);
+    int len = (int)strlen(duration);
     for (int i = 0; i < len; i++) {
       if (isdigit(duration[i])) {
 	t = t * 10 + (duration[i] - '0');
