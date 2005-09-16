@@ -1319,7 +1319,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
 	   "configuration.  '-a 50 38' is recommended for standard-speed servers.\n"
 	   "Higher speed servers will need higher values for -a in order to not\n"
 	   "affect gameplay.  '-a 0 0' may be used to shut this message up without\n"
-	   "affecting any players, including those using \"mouse enhancements\".");
+	   "affecting any players, including those using \"mouse enhancements\".\n");
 }
 
 
