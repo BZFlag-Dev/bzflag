@@ -538,7 +538,11 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
   int i;
   static bool allFlagsOut = false;
   static bool teamFlagsAdded = false;
-  bool accLimitSet = false;
+  static bool accLimitSet = false;
+
+  // how deep in parse nesting are we?
+  static int count = 0;
+  count++;
 
   // InertiaGameStyle maintained just for compatibility
   // Same effect is achieved setting linear/angular Acceleration
@@ -1311,7 +1315,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
   if (options.gameStyle & int(AntidoteGameStyle))
     DEBUG1("  antidote flags\n");
 
-  if (!accLimitSet)
+  if ((count == 1) && !accLimitSet)
     printf("Note: no acceleration limit has been set.  Players using \"mouse\n"
 	   "enhancements\" may cause problems on this server due to very high\n"
 	   "acceleration rates which are not handled well by dead reckoning\n"
