@@ -1324,6 +1324,8 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
 	   "Higher speed servers will need higher values for -a in order to not\n"
 	   "affect gameplay.  '-a 0 0' may be used to shut this message up without\n"
 	   "affecting any players, including those using \"mouse enhancements\".\n");
+  else
+    count--;
 }
 
 
