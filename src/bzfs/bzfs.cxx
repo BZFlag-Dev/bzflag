@@ -3395,7 +3395,7 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
       if (state.order <= playerData->lastState.order)
 	break;
 
-      //Don't kick players up to 10 seconds after a world parm has changed,
+      // Don't kick players up to 10 seconds after a world parm has changed,
       TimeKeeper now = TimeKeeper::getCurrent();
 
       if (now - lastWorldParmChange > 10.0f) {
@@ -3539,31 +3539,6 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
 	      break;
 	    }
 	  }
-	}
-      }
-
-      const float dt = timestamp - playerData->stateTimeStamp;
-      if (dt < 0.0f) {
-	DEBUG1("Player %s [%d] negative update delta-time (%f).",
-	       playerData->player.getCallSign(), t, dt);
-      } else {
-        // clamp max linear acceleration
-	// note that we treat speed as a scalar, so full reverse->full forward will have a lower "acceleration" than full stop->full forward.
-	double curSpeed = sqrt(state.velocity[0]*state.velocity[0] + state.velocity[1]*state.velocity[1]);
-	double lastSpeed = sqrt(playerData->lastState.velocity[0]*playerData->lastState.velocity[0] + playerData->lastState.velocity[1]*playerData->lastState.velocity[1]);
-	const double acceleration = (curSpeed - lastSpeed) / dt;
-
-	// allow 0.05 seconds (with some fudge) for "stop to full motion" speed.
-	// this is quite conservative, 0.05 sec is VERY fast.
-	static const float accFudge = 1.5f;
-	const double maxAcceleration = (BZDBCache::tankSpeed / 0.05f) * accFudge;
-
-	if (acceleration > maxAcceleration) {
-	  DEBUG1("Player %s [%d] acceleration out of bounds [acc=%lf max=%lf dt=%lf]...dropping packet.",
-		 playerData->player.getCallSign(), t, acceleration, maxAcceleration, dt);
-	  sendMessage(ServerPlayer, t, "Your acceleration is out of bounds, update dropped. "
-		      "Please upgrade your client and/or set your mouse speed/acceleration to a sane value.");
-	  break;
 	}
       }
 

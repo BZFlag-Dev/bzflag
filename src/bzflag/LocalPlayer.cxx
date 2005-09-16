@@ -1464,18 +1464,11 @@ void			LocalPlayer::doMomentum(float dt,
     World::getWorld()->getAngularAcceleration();
 
   // limit linear acceleration
-  if (linearAcc <= 0.0f) {
-    // allow 0.05 seconds for "stop to full motion" speed 
-    // in the absence of any server directive.
-    // this is quite conservative, 0.05 sec is VERY fast.
-    //
-    // FIXME: server should send linear accel limit as a bzdb var
-    // so we don't need this hardcoded junk to compensate for tankSpeed
-    linearAcc = 20.0f * (BZDBCache::tankSpeed / 0.05f);
+  if (linearAcc > 0.0f) {
+    const float acc = (speed - lastSpeed) / dt;
+    if (acc > 20.0f * linearAcc) speed = lastSpeed + dt * 20.0f*linearAcc;
+    else if (acc < -20.0f * linearAcc) speed = lastSpeed - dt * 20.0f*linearAcc;
   }
-  const float acc = (speed - lastSpeed) / dt;
-  if (acc > 20.0f * linearAcc) speed = lastSpeed + dt * 20.0f*linearAcc;
-  else if (acc < -20.0f * linearAcc) speed = lastSpeed - dt * 20.0f*linearAcc;
 
   // limit angular acceleration
   if (angularAcc > 0.0f) {
