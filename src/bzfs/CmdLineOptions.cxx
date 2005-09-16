@@ -541,8 +541,8 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
   static bool accLimitSet = false;
 
   // how deep in parse nesting are we?
-  static int count = 0;
-  count++;
+  static int nestingCount = 0;
+  nestingCount++;
 
   // InertiaGameStyle maintained just for compatibility
   // Same effect is achieved setting linear/angular Acceleration
@@ -1315,7 +1315,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
   if (options.gameStyle & int(AntidoteGameStyle))
     DEBUG1("  antidote flags\n");
 
-  if ((count == 1) && !accLimitSet)
+  if ((nestingCount == 1) && !accLimitSet)
     printf("Note: no acceleration limit has been set.  Players using \"mouse\n"
 	   "enhancements\" may cause problems on this server due to very high\n"
 	   "acceleration rates which are not handled well by dead reckoning\n"
@@ -1326,7 +1326,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
 	   "affecting any players, including those using \"mouse enhancements\".\n");
 
   // this instance is done
-  count--;
+  nestingCount--;
 }
 
 
