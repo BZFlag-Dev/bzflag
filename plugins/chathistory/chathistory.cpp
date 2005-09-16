@@ -25,7 +25,7 @@ std::string format(const char* fmt, ...) {
 	va_list args;
 	va_start(args, fmt);
 	char	temp[2048];
-	sprintf(temp,fmt, args);
+	vsprintf(temp,fmt, args);
 	std::string result = temp;
 	va_end(args);
 	return result;
