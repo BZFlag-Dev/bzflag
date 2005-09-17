@@ -145,6 +145,7 @@ typedef enum
 
 #define BZ_SERVER		-2
 #define BZ_ALLUSERS		-1
+#define BZ_NULLUSER		-3
 
 #define BZ_BZDBPERM_NA		0
 #define BZ_BZDBPERM_USER	1
