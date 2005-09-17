@@ -399,6 +399,16 @@ BZF_API void bz_deleteFloatList( bzAPIFloatList * l )
 		delete(l);
 }
 
+BZF_API bzAPIStringList* bz_newStringList ( void )
+{
+	return new bzAPIStringList;
+}
+
+BZF_API void bz_deleteStringList( bzAPIStringList * l )
+{
+	if (l)
+		delete(l);
+}
 
 //******************************bzApiStringList********************************************
 class bzAPIStringList::dataBlob
@@ -794,6 +804,68 @@ BZF_API bool bz_resetPlayerScore(int playerId)
 	broadcastPlayerScoreUpdate(playerId);
 	return true;
 }
+
+BZF_API bzAPIStringList* bz_getGroupList ( void )
+{
+	bzAPIStringList *groupList = new bzAPIStringList;
+	
+	PlayerAccessMap::iterator itr = groupAccess.begin();
+	while (itr != groupAccess.end()) {
+		groupList->push_back(itr->first);
+		itr++;
+	}
+	return groupList;
+}
+
+BZF_API bzAPIStringList* bz_getGroupPerms ( const char* group )
+{
+	bzAPIStringList *permList = new bzAPIStringList;
+
+	std::string groupName = group;
+	groupName = TextUtils::toupper(groupName);
+	PlayerAccessMap::iterator itr = groupAccess.find(groupName);
+	if (itr == groupAccess.end())
+		return permList;
+	
+	for (int i = 0; i < PlayerAccessInfo::lastPerm; i++)
+	{
+		if (itr->second.explicitAllows.test(i) && !itr->second.explicitDenys.test(i) )
+			permList->push_back(nameFromPerm((PlayerAccessInfo::AccessPerm)i));
+	}
+
+	for(unsigned int c = 0; c < itr->second.customPerms.size(); c++)
+		permList->push_back(TextUtils::toupper(itr->second.customPerms[c]));
+
+	return permList;
+}
+
+BZF_API bool bz_groupAllowPerm ( const char* group, const char* perm )
+{
+	std::string permName = perm;
+	permName = TextUtils::toupper(permName);
+
+	PlayerAccessInfo::AccessPerm realPerm =  permFromName(permName);
+
+	// find the group
+	std::string groupName = group;
+	groupName = TextUtils::toupper(groupName);
+	PlayerAccessMap::iterator itr = groupAccess.find(groupName);
+	if (itr == groupAccess.end())
+		return false;
+
+	if (realPerm != PlayerAccessInfo::lastPerm)
+		return itr->second.explicitAllows.test(realPerm);
+	else
+	{
+		for(unsigned int i = 0; i < itr->second.customPerms.size(); i++)
+		{
+			if ( permName == TextUtils::toupper(itr->second.customPerms[i]) )
+				return true;
+		}
+	}
+	return false;
+}
+
 
 BZF_API bool bz_sendTextMessage(int from, int to, const char* message)
 {

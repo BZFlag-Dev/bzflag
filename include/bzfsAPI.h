@@ -275,6 +275,9 @@ protected:
 	 dataBlob *data;
  };
 
+ BZF_API bzAPIStringList* bz_newStringList ( void );
+ BZF_API void bz_deleteStringList( bzAPIStringList * l );
+
 // event data types
 class bz_EventData
 {
@@ -744,6 +747,11 @@ public:
 };
 
 BZF_API bool bz_setPlayerAdmin (int playerId);
+
+// groups API
+BZF_API bzAPIStringList* bz_getGroupList ( void );
+BZF_API bzAPIStringList* bz_getGroupPerms ( const char* group );
+BZF_API bool bz_groupAllowPerm ( const char* group, const char* perm );
 
 // message API
 BZF_API bool bz_sendTextMessage (int from, int to, const char* message);
