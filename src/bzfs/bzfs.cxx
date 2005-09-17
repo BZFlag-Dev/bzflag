@@ -3267,11 +3267,15 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
       chatData.from = t;
       chatData.to = dstPlayer;
 
-	  if (dstPlayer == 254)
-		chatData.to = BZ_ALLUSERS;\
-
-	  if (toData)
-		chatData.team =convertTeam(toData->player.getTeam());
+	  if (dstPlayer == AllPlayers)
+		chatData.to = BZ_ALLUSERS;
+	  else if ( dstPlayer == AdminPlayers )
+		  chatData.team = eAdministrators;
+	  else if ( dstPlayer > LastRealPlayer )
+	  {
+		chatData.to = -1;
+		chatData.team =convertTeam((TeamColor)(250-dstPlayer));
+	  }
 
       chatData.message = message;
       chatData.time = TimeKeeper::getCurrent().getSeconds();
