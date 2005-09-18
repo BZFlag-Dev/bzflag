@@ -929,6 +929,14 @@ static void		doMotion()
   const int noMotionSize = hud->getNoMotionSize();
   const int maxMotionSize = hud->getMaxMotionSize();
 
+  int keyboardRotation = myTank->getRotation();
+  int keyboardSpeed    = myTank->getSpeed();
+  /* see if controls are reversed */
+  if (myTank->getFlag() == Flags::ReverseControls) {
+    keyboardRotation = -keyboardRotation;
+    keyboardSpeed    = -keyboardSpeed;
+  }
+
   // mouse is default steering method; query mouse pos always, not doing so
   // can lead to stuttering movement with X and software rendering (uncertain why)
   int mx = 0, my = 0;
@@ -970,13 +978,8 @@ static void		doMotion()
     doAutoPilot(rotation, speed);
   } else if (myTank->getInputMethod() == LocalPlayer::Keyboard) {
 
-    rotation = (float)myTank->getRotation();
-    speed    = (float)myTank->getSpeed();
-    /* see if controls are reversed */
-    if (myTank->getFlag() == Flags::ReverseControls) {
-      rotation = -rotation;
-      speed    = -speed;
-    }
+    rotation = (float)keyboardRotation;
+    speed    = (float)keyboardSpeed;
     if (speed < 0.0f)
       speed /= 2.0;
 
@@ -987,27 +990,32 @@ static void		doMotion()
     }
   } else { // both mouse and joystick
 
-    rotation = 0.0f;
-
-    // calculate desired rotation
-    if (mx < -noMotionSize) {
+      // calculate desired rotation
+    if (keyboardRotation) {
+      rotation = float(keyboardRotation);
+    } else if (mx < -noMotionSize) {
       rotation = float(-mx - noMotionSize) / float(maxMotionSize);
-      if (rotation > 1.0f) rotation = 1.0f;
-    }
-    else if (mx > noMotionSize) {
+      if (rotation > 1.0f)
+	rotation = 1.0f;
+    } else if (mx > noMotionSize) {
       rotation = -float(mx - noMotionSize) / float(maxMotionSize);
-      if (rotation < -1.0f) rotation = -1.0f;
+      if (rotation < -1.0f)
+	rotation = -1.0f;
     }
 
     // calculate desired speed
-    speed = 0.0f;
-    if (my < -noMotionSize) {
+    if (keyboardSpeed) {
+      speed = float(keyboardSpeed);
+    } else if (my < -noMotionSize) {
       speed = float(-my - noMotionSize) / float(maxMotionSize);
-      if (speed > 1.0f) speed = 1.0f;
-    }
-    else if (my > noMotionSize) {
+      if (speed > 1.0f)
+	speed = 1.0f;
+    } else if (my > noMotionSize) {
       speed = -float(my - noMotionSize) / float(maxMotionSize);
-      if (speed < -0.5f) speed = -0.5f;
+      if (speed < -0.5f)
+	speed = -0.5f;
+    } else {
+      speed = 0.0f;
     }
   }
 
