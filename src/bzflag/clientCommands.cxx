@@ -399,11 +399,18 @@ std::string cmdViewZoom(const std::string&,
       fov = 15.0f;
     BZDB.setFloat("displayFOV", fov);
   } else if (args[0] == "toggle") {
-    if (fov < 15.5f)
+    if (fov < 15.5f) {
       fov = 60.0f;
-    else
+    } else {
       fov = 15.0f;
+    }
     BZDB.setFloat("displayFOV", fov);
+    // also toggle the observer fov
+    if (roamZoom != 60.0f) {
+      roamZoom = 60.0f;
+    } else {
+      roamZoom = 15.0f;
+    }
   } else if (args[0] == "reset") {
 	fov = 60.0f;
     BZDB.setFloat("displayFOV", fov);
