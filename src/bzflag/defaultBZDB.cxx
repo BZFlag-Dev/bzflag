@@ -38,6 +38,7 @@ DefaultDBItem	defaultDBItems[] = {
   { "panelopacity",		"0.3",			true,	StateDatabase::ReadWrite,	NULL },
   { "radarsize",		"4",			true,	StateDatabase::ReadWrite,	NULL },
   { "mouseboxsize",		"5",			true,	StateDatabase::ReadWrite,	NULL },
+  { "runAndShoot",              "1",                    true,	StateDatabase::ReadWrite,	NULL },
   { "cpanelfontsize",		"0",			true,	StateDatabase::ReadWrite,	NULL },
   { "scorefontsize",		"0",			true,	StateDatabase::ReadWrite,	NULL },
   { "colorful",			"1",			true,	StateDatabase::ReadWrite,	NULL },
