@@ -66,7 +66,6 @@ LocalPlayer::LocalPlayer(const PlayerId& _id,
   entryDrop(true),
   wantJump(false),
   jumpPressed(false),
-  runAndShootStatus(BZDB.isTrue("runAndShoot") ? Active : Disabled),
   deathPhyDrv(-1)
 {
   // initialize shots array to no shots fired
@@ -282,13 +281,6 @@ void			LocalPlayer::doUpdateMotion(float dt)
   if (getFlag() == Flags::Burrow)
     groundLimit = BZDB.eval(StateDatabase::BZDB_BURROWDEPTH);
 
-  if (runAndShootStatus == Run) {
-    setDesiredSpeed(1.0f);
-  } else if (runAndShootStatus == Shoot) {
-    fireShot();
-  }
-  // full control
-  float speed = desiredSpeed;
   // get linear and angular speed at start of time step
   if (!NEAR_ZERO(dt,ZERO_TOLERANCE)) {
     if (location == Dead || isPaused()) {
@@ -315,6 +307,9 @@ void			LocalPlayer::doUpdateMotion(float dt)
       newAngVel = 0.0f;	// or oldAngVel to spin while exploding
     } else if ((location == OnGround) || (location == OnBuilding) ||
 	       (location == InBuilding && oldPosition[2] == groundLimit)) {
+      // full control
+      float speed = desiredSpeed;
+
       // angular velocity
       newAngVel = getNewAngVel(oldAngVel, desiredAngVel);
 
@@ -344,6 +339,8 @@ void			LocalPlayer::doUpdateMotion(float dt)
     } else {
       // can't control motion in air unless have wings
       if (getFlag() == Flags::Wings) {
+	float speed = desiredSpeed;
+
 	// angular velocity
 	newAngVel = getNewAngVel(oldAngVel, desiredAngVel);
 
@@ -365,6 +362,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
       }
     }
 
+
     // now apply outside forces
     doForces(dt, newVelocity, newAngVel);
 
@@ -373,9 +371,6 @@ void			LocalPlayer::doUpdateMotion(float dt)
       newVelocity[2] = std::max(newVelocity[2], -oldPosition[2] / 2.0f + 0.5f);
     }
   }
-
-  if (runAndShootStatus == Run)
-    runAndShootStatus = Shoot;
 
   // jump here, we allow a little change in horizontal motion
   if (wantJump) {
@@ -1214,18 +1209,6 @@ bool			LocalPlayer::fireShot()
   if (!isAlive() || isPaused() ||
       ((location == InBuilding) && !isPhantomZoned())) {
     return false;
-  }
-
-  if (runAndShootStatus == Active) {
-    runAndShootStatus = Run;
-    return false;
-  } else if (runAndShootStatus == Shoot) {
-    if (BZDB.isTrue("runAndShoot"))
-      runAndShootStatus = Active;
-    else
-      runAndShootStatus = Disabled;
-  } else if (runAndShootStatus == Run) {
-    return false;    
   }
 
   // prepare shot

@@ -172,13 +172,6 @@ private:
   bool		entryDrop; // first drop since entering
   bool		wantJump;
   bool		jumpPressed;
-  enum RunAndShootStatus {
-    Disabled,
-    Active,
-    Run,
-    Shoot
-  } runAndShootStatus;
-
   int		deathPhyDrv;	// physics driver that caused death
   std::vector<const Obstacle*> insideBuildings;
 };
