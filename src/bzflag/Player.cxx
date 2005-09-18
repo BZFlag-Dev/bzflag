@@ -1305,52 +1305,10 @@ void Player::doDeadReckoning()
 const int   DRStateStable      = 100;
 const float maxToleratedJitter = 1.0f;
 
-void Player::setDeadReckoning(float timestamp)
+void Player::setDeadReckoning(float)
 {
-  // offset should be the time packet is earlier above average
-  offset = float(timestamp - (TimeKeeper::getTick() - TimeKeeper::getNullTime())
-    - deltaTime);
-
-  // at first stage, Delta time is computed as the average of the last
-  // differences in time (local & remote) the values is then updated
-  // with the new samples, smoothed with the old values
-  float alphaFactor = 1.0f / float(deadReckoningState + 1);
-//   if (deadReckoningState >= DRStateStable) {
-//     if (fabs(offset) > maxToleratedJitter) {
-//       // Put a threshold on untimed measurement
-//       offset = (offset > 0) ? maxToleratedJitter : -maxToleratedJitter;
-//     } else if (offset > 0) {
-//       // fast alignment to the packet that take less travel time
-//       // that's for trying to have less lag
-//       alphaFactor = 1.0f;
-//     }
-//   }
-  // alpha filtering
-  deltaTime = deltaTime + (offset * alphaFactor);
-  // when alphaFactor is 1, that really means we are
-  // re-initializing deltaTime so offset should be zero
-  if (alphaFactor == 1.0f) {
-    offset = 0.0f;
-  }
-  if (deadReckoningState < DRStateStable) {
-    deadReckoningState++;
-  }
-
   // set the current state
   setDeadReckoning();
-
-  // adjust for the time offset
-  if (deadReckoningState >= DRStateStable) {
-    // get predicted offset state
-    float predictedPos[3];
-    float predictedVel[3];
-    float predictedAzimuth;
-    getDeadReckoning(predictedPos, &predictedAzimuth, predictedVel, -offset);
-    move(predictedPos, predictedAzimuth);
-    setVelocity(predictedVel);
-    // set the current state, again
-    setDeadReckoning();
-  }
 
   setRelativeMotion();
 
