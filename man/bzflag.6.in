@@ -122,7 +122,7 @@ Specify the configuration file to load. The name is relative to the
 default configuration directory. This is usually only used by developers.
 .TP 
 .B \-configdir
-Specify the configuration directory to use. This will be the defualt config
+Specify the configuration directory to use. This will be the default config
 directory used by this instance of the game. This is realy only needed
 if you can not use the default directory.
 .TP 
