@@ -3,6 +3,7 @@
 
 BZFlag 2.0.3
 ------------
+* Put spawn params in BZDB to let server owners mod them as needed - Jeff Myers
 * Fixed ban admin bug - Julio Jimenez
 * Added /sendhelp command - Mike Weisenborn, Mark Thomas
 * /ban /hostban take time keywords (short ...) too - Jeff Myers, Alfredo Tupone

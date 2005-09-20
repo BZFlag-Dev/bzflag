@@ -53,9 +53,9 @@ SpawnPosition::SpawnPosition(int playerId, bool onGroundOnly, bool notNearEdges)
     playerData->player.setRestartOnBase(false);
   } else {
     const float tankRadius = BZDBCache::tankRadius;
-    safeSWRadius = (float)((BZDB.eval(StateDatabase::BZDB_SHOCKOUTRADIUS) + BZDBCache::tankRadius) * 1.5);
-    safeSRRadius = tankRadius * 3;
-    safeDistance = tankRadius * 20; // FIXME: is this a good value?
+    safeSWRadius = (float)((BZDB.eval(StateDatabase::BZDB_SHOCKOUTRADIUS) + BZDBCache::tankRadius) * BZDB.eval("_spawnSafeSWMod"));
+    safeSRRadius = tankRadius * BZDB.eval("_spawnSafeSRMod");
+    safeDistance = tankRadius * BZDB.eval("_spawnSafeRadMod");
     const float size = BZDBCache::worldSize;
     const float maxWorldHeight = world->getMaxWorldHeight();
 
@@ -63,7 +63,7 @@ SpawnPosition::SpawnPosition(int playerId, bool onGroundOnly, bool notNearEdges)
     TimeKeeper start = TimeKeeper::getCurrent();
 
     int tries = 0;
-    float minProximity = size / 3.0f;
+    float minProximity = size / BZDB.eval("_spawnSafeSRMod");
     float bestDist = -1.0f;
     bool foundspot = false;
     while (!foundspot) {
@@ -97,7 +97,7 @@ SpawnPosition::SpawnPosition(int playerId, bool onGroundOnly, bool notNearEdges)
       // check every now and then if we have already used up 10ms of time
       if (tries >= 50) {
 	tries = 0;
-	if (TimeKeeper::getCurrent() - start > 0.01f) {
+	if (TimeKeeper::getCurrent() - start > BZDB.eval("_spawnMaxCompTime")) {
 	  if (bestDist < 0.0f) { // haven't found a single spot
 	    //Just drop the sucka in, and pray
 	    pos[0] = testPos[0];
