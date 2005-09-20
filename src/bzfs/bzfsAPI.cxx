@@ -215,7 +215,7 @@ void bzApiString::format(const char* fmt, ...)
 {
 	va_list args;
 	va_start(args, fmt);
-	data->str = TextUtils::format(fmt, args);
+	data->str = TextUtils::vformat(fmt, args);
 	va_end(args);
 }
 
@@ -1824,7 +1824,7 @@ BZF_API const char *bz_format(const char* fmt, ...)
 {
 	va_list args;
 	va_start(args, fmt);
-	static std::string result = TextUtils::format(fmt, args);
+	static std::string result = TextUtils::vformat(fmt, args);
 	va_end(args);
 	return result.c_str();
 }
