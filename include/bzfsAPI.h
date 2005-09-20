@@ -65,6 +65,7 @@ typedef enum
 	bz_eHostBanEvent,
 	bz_eKickEvent,
 	bz_eKillEvent,
+	bz_ePlayerPausedEvent,
 	bz_eLastEvent    //this is never used as an event, just show it's the last one
 }bz_eEventType;
 
@@ -667,6 +668,19 @@ public:
 	int killerID;
 	int killedID;
 	bzApiString reason;
+};
+
+class bz_PlayerPausedEventData : public bz_EventData
+{
+public:
+	bz_PlayerPausedEventData()
+	{
+		eventType = bz_ePlayerPausedEvent;
+	}
+	virtual ~bz_PlayerPausedEventData(){};
+
+	int player;
+	double time;
 };
 
 // event handler callback

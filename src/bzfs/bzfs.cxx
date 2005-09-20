@@ -1792,6 +1792,12 @@ static void pausePlayer(int playerIndex, bool paused = true)
   buf = nboPackUByte(bufStart, playerIndex);
   buf = nboPackUByte(buf, paused);
   broadcastMessage(MsgPause, (char*)buf-(char*)bufStart, bufStart);
+
+  bz_PlayerPausedEventData	pauseEventData;
+  pauseEventData.player = playerIndex;
+  pauseEventData.time = TimeKeeper::getCurrent().getSeconds();
+
+  worldEventManager.callEvents(bz_ePlayerPausedEvent,&pauseEventData);
 }
 
 static void autopilotPlayer(int playerIndex, bool autopilot)
