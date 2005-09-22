@@ -168,7 +168,7 @@ GUIOptionsMenu::GUIOptionsMenu()
   option->setFontFace(fontFace);
   option->setLabel("Mouse Box Size:");
   option->setCallback(callback, (void*)"M");
-  option->createSlider(11);
+  option->createSlider(22);
   option->update();
   listHUD.push_back(option);
 
@@ -344,7 +344,7 @@ void			GUIOptionsMenu::resize(int _width, int _height)
 					 (BZDB.eval("sizedradarshots")));
     ((HUDuiList*)listHUD[i++])->setIndex(BZDBCache::leadingShotLine ? 1 : 0);
     ((HUDuiList*)listHUD[i++])->setIndex(renderer->getRadarSize());
-    ((HUDuiList*)listHUD[i++])->setIndex(renderer->getMaxMotionFactor());
+    ((HUDuiList*)listHUD[i++])->setIndex(renderer->getMaxMotionFactor() + 11);
     i++; // locale
     ((HUDuiList*)listHUD[i++])->setIndex(static_cast<int>(BZDB.eval
 							  ("showtabs")));
@@ -436,7 +436,7 @@ void			GUIOptionsMenu::callback(HUDuiControl* w, void* data)
 
     case 'M':
       {
-	sceneRenderer->setMaxMotionFactor(list->getIndex());
+	sceneRenderer->setMaxMotionFactor(list->getIndex() - 11);
 	break;
       }
 

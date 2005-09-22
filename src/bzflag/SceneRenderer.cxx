@@ -437,6 +437,8 @@ int SceneRenderer::getRadarSize() const
 
 void SceneRenderer::setMaxMotionFactor(int factor)
 {
+  if (factor < -11)
+    factor = -11;
   maxMotionFactor = factor;
   notifyStyleChange();
   if (window) {
