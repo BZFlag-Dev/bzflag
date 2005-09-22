@@ -288,7 +288,7 @@ static void extraUsage(const char *pname)
 
 static void checkArgc(int count, int& i, int argc, const char* option, const char *type = NULL)
 {
-  if ((i+count) == argc) {
+  if ((i+count) >= argc) {
     if (count > 1) {
       std::cerr << count << " argument(s) expected for " << option << '\n';
     } else if (type != NULL) {
