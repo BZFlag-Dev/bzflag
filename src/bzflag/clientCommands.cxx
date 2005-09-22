@@ -22,6 +22,7 @@
 /* common implementation headers */
 #include "global.h"
 #include "StateDatabase.h"
+#include "BZDBCache.h"
 #include "TextUtils.h"
 #include "FileManager.h"
 #include "DirectoryNames.h"
@@ -668,9 +669,9 @@ std::string cmdRoam(const std::string&, const CommandManager::ArgList& args, boo
     if (!roamButton || args[1] == "stop") {
       roamDZoom = 0.0f;
     } else if (args[1] == "out") {
-      roamDZoom = 50.0f;
+      roamDZoom = +2.0f * BZDBCache::tankSpeed;
     } else if (args[1] == "in") {
-      roamDZoom = -50.0f;
+      roamDZoom = -2.0f * BZDBCache::tankSpeed;
     } else if (args[1] == "normal") {
       roamZoom = 60.0f;
     } else {

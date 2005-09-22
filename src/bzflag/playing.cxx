@@ -991,7 +991,7 @@ static void		doMotion()
   } else { // both mouse and joystick
 
       // calculate desired rotation
-    if (keyboardRotation) {
+    if (keyboardRotation && !devDriving) {
       rotation = float(keyboardRotation);
     } else if (mx < -noMotionSize) {
       rotation = float(-mx - noMotionSize) / float(maxMotionSize);
@@ -1004,7 +1004,7 @@ static void		doMotion()
     }
 
     // calculate desired speed
-    if (keyboardSpeed) {
+    if (keyboardSpeed && !devDriving) {
       speed = float(keyboardSpeed);
     } else if (my < -noMotionSize) {
       speed = float(-my - noMotionSize) / float(maxMotionSize);
@@ -5547,7 +5547,17 @@ static void		setupRoamingCamera(float dt)
     float dx = roamPos[0] - trackPos[0];
     float dy = roamPos[1] - trackPos[1];
     float dist = sqrtf((dx * dx) + (dy * dy));
-    float newDist = dist - (dt * roamDPos[0]);
+
+    float nomDist = 4.0f * BZDBCache::tankSpeed;
+    if (nomDist == 0.0f) {
+      nomDist = 100.0f;
+    }
+    float distFactor =  (dist / nomDist);
+    if (distFactor < 0.25f) {
+      distFactor = 0.25f;
+    }
+    float newDist = dist - (dt * distFactor * roamDPos[0]);
+
     const float minDist = BZDBCache::tankLength * 0.5f;
     if (newDist < minDist) {
       if (dist >= minDist) {
@@ -6014,7 +6024,7 @@ static void		playingLoop()
 
     // update explosion animations
     updateExplosions(dt);
-
+  
     // prep the HUD
     prepareTheHUD();
 
