@@ -3748,7 +3748,8 @@ static void doStuffOnPlayer(GameKeeper::Player &playerData)
 
   // kick idle players
   if (clOptions->idlekickthresh > 0) {
-    if (playerData.player.isTooMuchIdling(clOptions->idlekickthresh)) {
+    if ((playerData.player.isTooMuchIdling(clOptions->idlekickthresh)) && 
+       (!playerData.accessInfo.hasPerm(PlayerAccessInfo::antikick))) {
       char message[MessageLen]
 	= "You were kicked because you were idle too long";
       sendMessage(ServerPlayer, p,  message);
