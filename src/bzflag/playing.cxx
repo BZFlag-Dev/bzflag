@@ -5591,6 +5591,7 @@ static void		setupRoamingCamera(float dt)
   float muzzleHeight = BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT);
   if (roamPos[2] < muzzleHeight) {
     roamPos[2] = muzzleHeight;
+    roamDPos[2] = 0.0f;
   }
 
   // adjust the angles
@@ -6024,7 +6025,7 @@ static void		playingLoop()
 
     // update explosion animations
     updateExplosions(dt);
-  
+
     // prep the HUD
     prepareTheHUD();
 
