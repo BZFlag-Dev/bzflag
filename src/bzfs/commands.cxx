@@ -2667,7 +2667,7 @@ bool ReplayCommand::operator() (const char         *message,
   }
   
   // everyone can use the replay stats command
-  if (strncasecmp (buf, "stats", 4) == 0) {
+  if (strncasecmp (buf, "stats", 5) == 0) {
     Replay::sendStats (t);
     return true;
   }
