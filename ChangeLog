@@ -3,8 +3,6 @@
 
 BZFlag 2.0.3
 ------------
-* Directional keys pressing works, even in joy/mouse mode - Tupone Alfredo
-* Jitter compensation removed. Too bad behaviour on ME players - Tupone Alfredo
 * Put spawn params in BZDB to let server owners mod them as needed - Jeff Myers
 * Fixed ban admin bug - Julio Jimenez
 * Added /sendhelp command - Mike Weisenborn, Mark Thomas
