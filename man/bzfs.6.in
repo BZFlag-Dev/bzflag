@@ -725,6 +725,9 @@ to the server rejoin  (to reload the map, etc...)
 If seconds is specified, then skip that amount of time in the recording.
 Otherwise, skip forwards until there is activity.
 .BR 
+.B /replay stats
+Show the current replay status (filename, position, etc...)
+.BR 
 
 .TP 
 .B /shutdownserver
