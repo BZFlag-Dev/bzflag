@@ -717,6 +717,10 @@ Load the specified recording file by name, or by index
 Start playing the recording. This will oftentimes require that all players connected
 to the server rejoin  (to reload the map, etc...)
 .TP 
+.B /replay loop
+Start looping the recording. This will oftentimes require that all players connected
+to the server rejoin  (to reload the map, etc...)
+.TP 
 .B /replay skip [+/\- seconds]
 If seconds is specified, then skip that amount of time in the recording.
 Otherwise, skip forwards until there is activity.
