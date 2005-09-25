@@ -728,7 +728,7 @@ static bool parseDrawLod(std::istream& input, DrawLod& lod)
         DEBUG0("Bad lengthPerPixel:\n");
       }
     }
-    else if (strcasecmp(cmd.c_str(), "material") == 0) {
+    else if (strcasecmp(cmd.c_str(), "matref") == 0) {
       std::string matName;
       if (parms >> matName) {
         DrawSet set;
@@ -1031,7 +1031,7 @@ void MeshDrawInfo::print(std::ostream& out, const std::string& indent) const
     out << indent << "    lengthPerPixel " << lod.lengthPerPixel << std::endl;
     for (int j = 0; j < lod.count; j++) {
       DrawSet& set = lod.sets[j];
-      out << indent << "    material ";
+      out << indent << "    matref ";
       MATERIALMGR.printReference(out, set.material);
       out << std::endl;
       if (set.wantList) {
