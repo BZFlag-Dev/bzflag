@@ -1822,28 +1822,31 @@ BZF_API bool bz_saveRecBuf( const char * _filename, int seconds = 0 )
 
 BZF_API const char *bz_format(const char* fmt, ...)
 {
+	static std::string result;
 	va_list args;
 	va_start(args, fmt);
-	static std::string result = TextUtils::vformat(fmt, args);
+	result = TextUtils::vformat(fmt, args);
 	va_end(args);
 	return result.c_str();
 }
 
 BZF_API const char *bz_toupper(const char* val )
 {
+	static std::string temp;
 	if (!val)
 		return NULL;
 
-	static std::string temp	 =	TextUtils::toupper(std::string(val));
+	temp	 =	TextUtils::toupper(std::string(val));
 	return temp.c_str();
 }
 
 BZF_API const char *bz_tolower(const char* val )
 {
+	static std::string temp;
 	if (!val)
 		return NULL;
 
-	static std::string temp	 =	TextUtils::tolower(std::string(val));
+	temp	 =	TextUtils::tolower(std::string(val));
 	return temp.c_str();
 }
 
