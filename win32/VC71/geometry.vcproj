@@ -848,10 +848,22 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath="..\..\src\geometry\MeshDrawMgr.cxx">
+			</File>
+			<File
 				RelativePath="..\..\src\geometry\MeshFragSceneNode.cxx">
 			</File>
 			<File
 				RelativePath="..\..\src\geometry\MeshPolySceneNode.cxx">
+			</File>
+			<File
+				RelativePath="..\..\src\geometry\MeshRenderNode.cxx">
+			</File>
+			<File
+				RelativePath="..\..\src\geometry\MeshSceneNode.cxx">
+			</File>
+			<File
+				RelativePath="..\..\src\geometry\OccluderSceneNode.cxx">
 			</File>
 			<File
 				RelativePath="..\..\src\geometry\PolyWallSceneNode.cxx">
@@ -1532,7 +1544,16 @@
 				RelativePath="..\..\include\LaserSceneNode.h">
 			</File>
 			<File
+				RelativePath="..\..\include\MeshDrawMgr.h">
+			</File>
+			<File
 				RelativePath="..\..\include\MeshFragSceneNode.h">
+			</File>
+			<File
+				RelativePath="..\..\src\geometry\MeshRenderNode.h">
+			</File>
+			<File
+				RelativePath="..\..\include\MeshSceneNode.h">
 			</File>
 			<File
 				RelativePath="..\..\include\OpenGLGState.h">

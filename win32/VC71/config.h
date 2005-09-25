@@ -63,6 +63,7 @@
 #ifndef BZ_BUILD_OS
   #ifdef _DEBUG
     #define DEBUG
+	#define DEBUG_RENDERING
     #define BZ_BUILD_OS			"W32VC71D"
   #else
     #define BZ_BUILD_OS			"W32VC71"

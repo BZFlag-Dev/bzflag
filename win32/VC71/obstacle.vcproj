@@ -478,6 +478,9 @@
 				RelativePath="..\..\src\obstacle\ConeObstacle.cxx">
 			</File>
 			<File
+				RelativePath="..\..\src\obstacle\MeshDrawInfo.cxx">
+			</File>
+			<File
 				RelativePath="..\..\src\obstacle\MeshFace.cxx">
 			</File>
 			<File
@@ -777,6 +780,9 @@
 			</File>
 			<File
 				RelativePath="..\..\include\EmptySceneNodeGenerator.h">
+			</File>
+			<File
+				RelativePath="..\..\include\MeshDrawInfo.h">
 			</File>
 			<File
 				RelativePath="..\..\include\MeshFace.h">

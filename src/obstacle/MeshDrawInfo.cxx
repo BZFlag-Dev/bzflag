@@ -36,10 +36,10 @@
 
 
 // local types
-typedef struct DrawCmdLabel {
+typedef struct  {
   const char* name;
   DrawCmd::DrawModes code;
-};
+}DrawCmdLabel;
 
 // local data
 static DrawCmdLabel drawLabels[] = {
@@ -503,7 +503,7 @@ void MeshDrawInfo::updateAnimation()
   if (animInfo != NULL) {
     const TimeKeeper nowTk = TimeKeeper::getCurrent();
     const TimeKeeper thenTk = TimeKeeper::getStartTime();
-    const float diffTime = nowTk - thenTk;
+    const float diffTime = float(nowTk - thenTk);
     animInfo->angle = fmodf(animInfo->angvel * diffTime, 360.0f);
   }
   return;  
@@ -959,7 +959,7 @@ bool MeshDrawInfo::parse(std::istream& input)
 
   if (debugLevel >= 4) {
     TimeKeeper end = TimeKeeper::getCurrent();
-    const float elapsed = end - start;
+    const float elapsed = float(end - start);
     DEBUG0("MeshDrawInfo::parse() processed in %f seconds.\n", elapsed);
   }
   
