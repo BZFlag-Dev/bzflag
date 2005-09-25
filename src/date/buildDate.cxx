@@ -40,7 +40,7 @@
 #endif
 
 #ifndef BZ_REV
-#  define BZ_REV			3
+#  define BZ_REV		3
 #endif
 
 // DEVEL | STABLE | MAINT
@@ -49,6 +49,22 @@
 #endif
 
 const char *bzfcopyright = "Copyright (c) 1993 - 2005 Tim Riker";
+
+
+//
+//  Although the ./configure process will generate
+//  -DBZ_BUILD_DATE for the build, here it's voided.
+//
+//  Could someone explain the reason for the
+//  inconience caused by the ./configure method? This
+//  way is simple, touch the *.cxx to get a new time
+//  stamp (no big recompiles). If this file is updated,
+//  you are also forced to get a new timestamp.
+//
+//  Using __DATE__ for all OSes is more consistent.
+//
+#undef BZ_BUILD_DATE
+
 
 #ifndef BZ_BUILD_DATE
 /* to get the version in the right format YYYYMMDD */
