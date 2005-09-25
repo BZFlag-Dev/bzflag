@@ -120,7 +120,7 @@ void			OpenGLMaterial::Rep::execute()
           // accurate specular highlighting  (more GPU intensive)
           glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, GL_TRUE);
         } else {
-          // speed up the lighting calcs be simplifying
+          // speed up the lighting calcs by simplifying
           glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, GL_FALSE);
         }
       }
