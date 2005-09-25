@@ -24,30 +24,14 @@
 
 GLuint MeshDrawMgr::unloadList = INVALID_GL_LIST_ID;
 
-static bool haveVBOs = false;
-static void (*bzGenBuffers)(GLsizei, GLuint*) = NULL;
-static void (*bzBufferData)(GLenum, GLsizeiptr, const GLvoid*, GLenum) = NULL;
-static void (*bzBindBuffer)(GLenum, GLuint) = NULL;
-static void (*bzDeleteBuffers)(GLsizei, const GLuint*) = NULL;
-
 
 void MeshDrawMgr::init()
 {
-  haveVBOs = false;
-  bzGenBuffers = NULL;
-  bzBufferData = NULL;
-  bzBindBuffer = NULL;
-  bzDeleteBuffers = NULL;
 }
 
 
 void MeshDrawMgr::kill()
 {
-  haveVBOs = false;
-  bzGenBuffers = NULL;
-  bzBufferData = NULL;
-  bzBindBuffer = NULL;
-  bzDeleteBuffers = NULL;
 }
 
 
