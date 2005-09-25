@@ -5,17 +5,20 @@ MAINTAINERCLEANFILES = \
 
 AM_CPPFLAGS = -I$(top_srcdir)/include
 
-EXTRA_DIST = \
-	README
+EXTRA_DIST = README
 
 libDate_la_LDFLAGS = -static
 libDate_la_SOURCES = \
 	buildDate.cxx
 
-buildDate.o: FORCE
 
-libDate.a: FORCE
+# reliably force the library to rebuild every time so that the
+# timestamp is updated in the resultant object file.
 
-libDate.la: FORCE
+.PHONY: force
+force:
+	$(LTCXXCOMPILE) -c -o buildDate.lo buildDate.cxx
 
-FORCE:
+buildDate.lo: force
+	$(LTCXXCOMPILE) -c -o $@ $<
+
