@@ -93,6 +93,9 @@ DefaultDBItem	defaultDBItems[] = {
   { "roamSmoothTime",		"0.5",			true,	StateDatabase::ReadWrite,	NULL },
   { "listIcons",		"1",			true,	StateDatabase::ReadWrite,	NULL },
   { "maxTextureSize",		"512",			true,	StateDatabase::ReadWrite,	NULL },
+  { "maxFPS",			"0.0",			true,	StateDatabase::ReadWrite,	NULL },
+  { "lodScale",			"1.0",			true,	StateDatabase::ReadWrite,	NULL },
+  { "radarLodScale",		"1.0",			true,	StateDatabase::ReadWrite,	NULL },
 
   // default texture names
   { "stdGroundTexture",		"std_ground",		true,	StateDatabase::ReadWrite,	NULL },

@@ -26,6 +26,9 @@
 #include "Intersect.h"
 
 
+// FIXME - do something about occluders vs. gridding
+
+
 static const int fullListBreak = 3; // FIXME
 static const float testFudge = 0.1f;
 
@@ -44,7 +47,8 @@ static const Frustum* CullFrustum = NULL;
 static int ShadowCount = 0;
 static const float (*ShadowPlanes)[4] = NULL;
 
-static OccluderManager OcclMgr;
+static OccluderManager OcclMgrs[2];
+static OccluderManager* OcclMgr = &OcclMgrs[0];
 
 
 #if (USE_REAL_INLINE)
@@ -91,6 +95,7 @@ Octree::Octree()
   CullFrustum = NULL;
   CullListSize = 0;
   CullListCount = 0;
+  OcclMgr = &OcclMgr[0];
   return;
 }
 
@@ -102,6 +107,17 @@ Octree::~Octree()
 }
 
 
+void Octree::setOccluderManager(int occlmgr)
+{
+  if (occlmgr == 1) {
+    OcclMgr = &OcclMgrs[1]; // mirror
+  } else {
+    OcclMgr = &OcclMgrs[0]; // normal 
+  }
+  return;
+}
+    
+
 void Octree::clear ()
 {
   delete root;
@@ -110,7 +126,8 @@ void Octree::clear ()
   CullFrustum = NULL;
   CullListSize = 0;
   CullListCount = 0;
-  OcclMgr.clear();
+  OcclMgrs[0].clear();
+  OcclMgrs[1].clear();
   return;
 }
 
@@ -173,13 +190,13 @@ int Octree::getFrustumList (SceneNode** list, int listSize,
   CullListCount = 0;
 
   // update the occluders before using them
-  OcclMgr.update(CullFrustum);
+  OcclMgr->update(CullFrustum);
 
   // get the nodes
   root->getFrustumList();
 
   // pick new occluders
-  OcclMgr.select(CullList, CullListCount);
+  OcclMgr->select(CullList, CullListCount);
 
   return CullListCount;
 }
@@ -287,7 +304,7 @@ int Octree::getShadowList (SceneNode** list, int listSize,
   ShadowPlanes = planes;
 
   // update the occluders before using them
-  // FIXME: use occluders later?  OcclMgr.update(CullFrustum);
+  // FIXME: use occluders later?  OcclMgr->update(CullFrustum);
 
   // get the nodes
   root->getShadowList();
@@ -348,8 +365,8 @@ void Octree::draw () const
   // It should still exist in SceneRender.cxx
   // when this function is called.
   root->draw ();
-  OcclMgr.update(CullFrustum);
-  OcclMgr.draw();
+  OcclMgr->update(CullFrustum);
+  OcclMgr->draw();
 
   if (usingTextures) {
     glEnable (GL_TEXTURE_2D);
@@ -518,21 +535,27 @@ void OctreeNode::getFrustumList () const
     return;
   }
 
-  if (OcclMgr.occlude (extents, count) == Contained) {
+  IntersectLevel occLevel = OcclMgr->occlude (extents, count);
+  if (occLevel == Contained) {
     return;
   }
 
-  if (level == Contained) {
+  if ((level == Contained) && (occLevel == Outside)) {
     getFullyVisible ();
-    return;
   }
 
   // this cell is only partially contained within
   // the frustum and is not being fully occluded
 
   if (childCount > 0) {
-    for (int i = 0; i < childCount; i++) {
-      children[i]->getFrustumList ();
+    if (occLevel == Outside) {
+      for (int i = 0; i < childCount; i++) {
+        children[i]->getFrustumList ();
+      }
+    } else {
+      for (int i = 0; i < childCount; i++) {
+        children[i]->getFullyVisibleOcclude ();
+      }
     }
   }
   else {
@@ -547,6 +570,44 @@ void OctreeNode::getFrustumList () const
 
   return;
 }
+/*
+  // FIXME - faster then the recursive version?
+
+  static struct NodeStack {
+    OctreeNode* node;
+    int child;
+  } nodeStack[OctreeNode::maxDepth];
+  static int level;
+  static int childNum;
+  static OctreeNode* working;
+
+  level = 0;
+  nodeStack[0].child = 0;
+  working = (OctreeNode*) this;
+
+  while (level >= 0) {
+    childNum = nodeStack[level].child;
+    if (working->getChildren() > childNum) {
+      nodeStack[level].node = working;
+      nodeStack[level].child++;
+      working = working->getChild(childNum);
+      level++;
+      nodeStack[level].child = 0;
+    } else {
+      static int i;
+      for (i = 0; i < working->getListSize(); i++) {
+	static SceneNode* node;
+	node = working->getList()[i];
+	if (node->octreeState == SceneNode::OctreeCulled) {
+	  addCullListNode (node);
+	}
+	node->octreeState = SceneNode::OctreeVisible;
+      }
+      level--;
+      working = nodeStack[level].node;
+    }
+  }
+*/
 
 
 void OctreeNode::getRadarList () const
@@ -603,44 +664,39 @@ void OctreeNode::getFullyVisible () const
   }
   return;
 }
-/*
-  // FIXME - faster then the recursive version?
 
-  static struct NodeStack {
-    OctreeNode* node;
-    int child;
-  } nodeStack[OctreeNode::maxDepth];
-  static int level;
-  static int childNum;
-  static OctreeNode* working;
 
-  level = 0;
-  nodeStack[0].child = 0;
-  working = (OctreeNode*) this;
+void OctreeNode::getFullyVisibleOcclude () const
+{
+  IntersectLevel occLevel = OcclMgr->occlude (extents, count);
+  if (occLevel == Contained) {
+    return;
+  }
 
-  while (level >= 0) {
-    childNum = nodeStack[level].child;
-    if (working->getChildren() > childNum) {
-      nodeStack[level].node = working;
-      nodeStack[level].child++;
-      working = working->getChild(childNum);
-      level++;
-      nodeStack[level].child = 0;
-    } else {
-      static int i;
-      for (i = 0; i < working->getListSize(); i++) {
-	static SceneNode* node;
-	node = working->getList()[i];
-	if (node->octreeState == SceneNode::OctreeCulled) {
-	  addCullListNode (node);
-	}
-	node->octreeState = SceneNode::OctreeVisible;
-      }
-      level--;
-      working = nodeStack[level].node;
+  if (occLevel == Outside) {
+    getFullyVisible ();
+  }
+
+  // this cell is only partially contained within
+  // the frustum and is not being fully occluded
+
+  if (childCount > 0) {
+    for (int i = 0; i < childCount; i++) {
+      children[i]->getFullyVisibleOcclude ();
     }
   }
-*/
+  else {
+    for (int i = 0; i < listSize; i++) {
+      SceneNode* node = list[i];
+      if (node->octreeState == SceneNode::OctreeCulled) {
+	addCullListNode (node);
+	node->octreeState = SceneNode::OctreePartial;
+      }
+    }
+  }
+
+  return;
+}
 
 
 void OctreeNode::getShadowList () const
@@ -737,7 +793,7 @@ void OctreeNode::draw ()
 
   if (CullFrustum != NULL) {
     frustumCull = testAxisBoxInFrustum (extents, CullFrustum);
-    occludeCull = OcclMgr.occludePeek (extents);
+    occludeCull = OcclMgr->occludePeek (extents);
   }
 
   // choose the color

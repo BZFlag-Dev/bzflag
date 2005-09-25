@@ -391,6 +391,23 @@ const GLfloat*	  QuadWallSceneNode::getVertex (int vertex) const
 }
 
 
+void QuadWallSceneNode::getRenderNodes(std::vector<RenderSet>& rnodes)
+{
+  RenderSet rs = { nodes[0], getWallGState() };
+  rnodes.push_back(rs);
+  return;
+}
+
+
+void QuadWallSceneNode::renderRadar()
+{
+  if (plane[2] > 0.0f) {
+    nodes[0]->renderRadar();
+  }
+  return;
+}
+
+
 // Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***

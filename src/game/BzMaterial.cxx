@@ -227,9 +227,13 @@ void BzMaterial::reset()
   memcpy (emission, defEmission, sizeof(emission));
   shininess = 0.0f;
   alphaThreshold = 0.0f;
+  occluder = false;
+  groupAlpha = false;
   noRadar = false;
+  noShadow = false;
   noCulling = false;
   noSorting = false;
+  noLighting = false;
 
   delete[] textures;
   textures = NULL;
@@ -286,9 +290,13 @@ BzMaterial& BzMaterial::operator=(const BzMaterial& m)
   memcpy (emission, m.emission, sizeof(emission));
   shininess = m.shininess;
   alphaThreshold = m.alphaThreshold;
+  occluder = m.occluder;
+  groupAlpha = m.groupAlpha;
   noRadar = m.noRadar;
+  noShadow = m.noShadow;
   noCulling = m.noCulling;
   noSorting = m.noSorting;
+  noLighting = m.noLighting;
 
   delete[] textures;
   textureCount = m.textureCount;
@@ -325,9 +333,11 @@ bool BzMaterial::operator==(const BzMaterial& m) const
       (memcmp (diffuse, m.diffuse, sizeof(float[4])) != 0) ||
       (memcmp (specular, m.specular, sizeof(float[4])) != 0) ||
       (memcmp (emission, m.emission, sizeof(float[4])) != 0) ||
-      (shininess != m.shininess) ||
-      (alphaThreshold != m.alphaThreshold) || (noRadar != m.noRadar) ||
-      (noCulling != m.noCulling) || (noSorting != m.noSorting)) {
+      (shininess != m.shininess) || (alphaThreshold != m.alphaThreshold) ||
+      (occluder != m.occluder) || (groupAlpha != m.groupAlpha) ||
+      (noRadar != m.noRadar) || (noShadow != m.noShadow) ||
+      (noCulling != m.noCulling) || (noSorting != m.noSorting) ||
+      (noLighting != m.noLighting)) {
     return false;
   }
 
@@ -385,9 +395,13 @@ void* BzMaterial::pack(void* buf) const
   buf = nboPackStdString(buf, name);
 
   uint8_t modeByte = 0;
-  if (noCulling) modeByte |= (1 << 0);
-  if (noSorting) modeByte |= (1 << 1);
-  if (noRadar) modeByte |= (1 << 2);
+  if (noCulling) 	modeByte |= (1 << 0);
+  if (noSorting) 	modeByte |= (1 << 1);
+  if (noRadar) 		modeByte |= (1 << 2);
+  if (noShadow)		modeByte |= (1 << 3);
+  if (occluder)         modeByte |= (1 << 4);
+  if (groupAlpha)       modeByte |= (1 << 5);
+  if (noLighting)       modeByte |= (1 << 6);
   buf = nboPackUByte(buf, modeByte);
 
   buf = nboPackInt(buf, dynamicColor);
@@ -436,9 +450,13 @@ void* BzMaterial::unpack(void* buf)
 
   uint8_t modeByte;
   buf = nboUnpackUByte(buf, modeByte);
-  noCulling = (modeByte & (1 << 0)) != 0;
-  noSorting = (modeByte & (1 << 1)) != 0;
-  noRadar = (modeByte & (1 << 2)) != 0;
+  noCulling 	= (modeByte & (1 << 0)) != 0;
+  noSorting 	= (modeByte & (1 << 1)) != 0;
+  noRadar   	= (modeByte & (1 << 2)) != 0;
+  noShadow  	= (modeByte & (1 << 3)) != 0;
+  occluder  	= (modeByte & (1 << 4)) != 0;
+  groupAlpha    = (modeByte & (1 << 5)) != 0;
+  noLighting    = (modeByte & (1 << 6)) != 0;
 
   buf = nboUnpackInt(buf, inTmp);
   dynamicColor = int(inTmp);
@@ -556,14 +574,26 @@ void BzMaterial::print(std::ostream& out, const std::string& /*indent*/) const
   if (alphaThreshold != defaultMaterial.alphaThreshold) {
     out << "  alphathresh " << alphaThreshold << std::endl;
   }
+  if (occluder) {
+    out << "  occluder" << std::endl;
+  }
+  if (groupAlpha) {
+    out << "  groupAlpha" << std::endl;
+  }
   if (noRadar) {
     out << "  noradar" << std::endl;
+  }
+  if (noShadow) {
+    out << "  noshadow" << std::endl;
   }
   if (noCulling) {
     out << "  noculling" << std::endl;
   }
   if (noSorting) {
     out << "  nosorting" << std::endl;
+  }
+  if (noLighting) {
+    out << "  nolighting" << std::endl;
   }
 
   for (i = 0; i < textureCount; i++) {
@@ -665,9 +695,27 @@ void BzMaterial::setAlphaThreshold(const float thresh)
   return;
 }
 
+void BzMaterial::setOccluder(bool value)
+{
+  occluder = value;
+  return;
+}
+
+void BzMaterial::setGroupAlpha(bool value)
+{
+  groupAlpha = value;
+  return;
+}
+
 void BzMaterial::setNoRadar(bool value)
 {
   noRadar = value;
+  return;
+}
+
+void BzMaterial::setNoShadow(bool value)
+{
+  noShadow = value;
   return;
 }
 
@@ -680,6 +728,12 @@ void BzMaterial::setNoCulling(bool value)
 void BzMaterial::setNoSorting(bool value)
 {
   noSorting = value;
+  return;
+}
+
+void BzMaterial::setNoLighting(bool value)
+{
+  noLighting = value;
   return;
 }
 
@@ -854,9 +908,24 @@ float BzMaterial::getAlphaThreshold() const
   return alphaThreshold;
 }
 
+bool BzMaterial::getOccluder() const
+{
+  return occluder;
+}
+
+bool BzMaterial::getGroupAlpha() const
+{
+  return groupAlpha;
+}
+
 bool BzMaterial::getNoRadar() const
 {
   return noRadar;
+}
+
+bool BzMaterial::getNoShadow() const
+{
+  return noShadow;
 }
 
 bool BzMaterial::getNoCulling() const
@@ -867,6 +936,11 @@ bool BzMaterial::getNoCulling() const
 bool BzMaterial::getNoSorting() const
 {
   return noSorting;
+}
+
+bool BzMaterial::getNoLighting() const
+{
+  return noLighting;
 }
 
 
@@ -951,6 +1025,17 @@ const std::string& BzMaterial::getShader(int shdid) const
   } else {
     return nullString;
   }
+}
+
+
+bool BzMaterial::isInvisible() const
+{
+  const DynamicColor* dyncol = DYNCOLORMGR.getColor(dynamicColor);
+  if ((diffuse[3] == 0.0f) && (dyncol == NULL) &&
+      !((textureCount > 0) && !textures[0].useColor)) {
+    return true;
+  }
+  return false;
 }
 
 

@@ -150,6 +150,15 @@ void ZSceneDatabase::updateNodeStyles()
 }
 
 
+void ZSceneDatabase::setOccluderManager(int occl)
+{
+  if (octree) {
+    octree->setOccluderManager(occl);
+  }
+  return;
+}
+
+
 void ZSceneDatabase::setupCullList()
 
 {
@@ -266,34 +275,19 @@ void ZSceneDatabase::renderRadarNodes(const ViewFrustum& vf)
     const Frustum* f = (const Frustum *) &vf;
     culledCount = octree->getRadarList (culledList, staticCount, f);
 
-    // FIXME: - this helps the look of things, but it takes too much time
-    //	* it may be reasonable now
+    // sort based on heights
     if (BZDBCache::radarStyle == 2) {
       qsort(culledList, culledCount, sizeof(SceneNode*), compareZExtents);
     }
   }
 
-  // if the node has a plane, see that it isn't downwards
+  // render through the sceneNodes
   for (int i = 0; i < culledCount; i++) {
     SceneNode* snode = culledList[i];
-    const float* plane = snode->getPlane();
-    if (plane != NULL) {
-      if (plane[2] > 0.0f) {
-	RenderNode* rnode = snode->getRenderNode(0);
-	if (rnode != NULL) {
-	  rnode->renderRadar();
-	}
-      }
-    } else {
-      RenderNode* rnode = snode->getRenderNode(0);
-      if (rnode != NULL) {
-	rnode->renderRadar();
-      }
-    }
-
-    // clear the state
-    snode->octreeState = SceneNode::OctreeCulled;
+    snode->renderRadar();
+    snode->octreeState = SceneNode::OctreeCulled; // clear the state
   }
+  
   return;
 }
 

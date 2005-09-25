@@ -302,6 +302,22 @@ const GLfloat*	  TriWallSceneNode::getVertex (int vertex) const
   return nodes[0]->getVertex(vertex);
 }
 
+void TriWallSceneNode::getRenderNodes(std::vector<RenderSet>& rnodes)
+{
+  RenderSet rs = { nodes[0], getWallGState() };
+  rnodes.push_back(rs);
+  return;
+}
+
+
+void TriWallSceneNode::renderRadar()
+{
+  if (plane[2] > 0.0f) {
+    nodes[0]->renderRadar();
+  }
+  return;
+}
+
 
 // Local Variables: ***
 // mode:C++ ***

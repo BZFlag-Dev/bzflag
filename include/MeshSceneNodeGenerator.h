@@ -43,10 +43,13 @@ class MeshSceneNodeGenerator {
     MeshSceneNodeGenerator(const MeshObstacle*);
 
   private:
+    void setupOccluders();
     void setupFacesAndFrags();
 
   private:
     int currentNode;
+    bool useDrawInfo;
+    bool returnOccluders;
     const MeshObstacle* mesh;
 
     typedef struct {
@@ -54,6 +57,7 @@ class MeshSceneNodeGenerator {
       std::vector<const MeshFace*> faces;
     } MeshNode;
     std::vector<MeshNode> nodes;
+    std::vector<SceneNode*> occluders;
 };
 
 #endif

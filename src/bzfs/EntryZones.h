@@ -16,42 +16,44 @@
 /* common header */
 #include "common.h"
 
-/* system headers */
-#include <vector>
-#include <string>
-#include <map>
-
 /* common interface headers */
 #include "Flag.h"
 
 // bzfs-specific headers
-#include "WorldFileLocation.h"
+#include "CustomZone.h"
 
-class CustomZone;
 
-typedef std::vector<WorldFileLocation> ZoneList;
+typedef std::vector<CustomZone> ZoneList;
 typedef std::vector<std::pair<int,float> > QPairList;
 typedef std::map<std::string, QPairList> QualifierMap;
 
+
 class EntryZones
 {
-public:
-  EntryZones();
-  void addZone( const CustomZone *zone );
-  void calculateQualifierLists();
-  bool getZonePoint( const std::string &qualifier, float *pt ) const;
-  bool getSafetyPoint( const std::string &qualifier, const float *pos, float *pt ) const;
-  static const char *getSafetyPrefix ();
-  int packSize() const;
-  void *pack(void *buf) const;
-private:
-  ZoneList zones;
-  QualifierMap qmap;
+  public:
+    EntryZones();
+    void addZone( const CustomZone *zone );
+    void calculateQualifierLists();
+    bool getZonePoint(const std::string &qualifier, float *pt) const;
+    bool getSafetyPoint(const std::string &qualifier,
+                        const float *pos, float *pt) const;
 
-  void makeSplitLists (int zone,
-		       std::vector<FlagType*> &flags,
-		       std::vector<TeamColor> &teams,
-		       std::vector<TeamColor> &safety) const;
+    const ZoneList& getZoneList() const;
+    
+    int packSize() const;
+    void *pack(void *buf) const;
+    
+  public:
+    static const char *getSafetyPrefix();
+    
+  private:
+    ZoneList zones;
+    QualifierMap qmap;
+
+    void makeSplitLists (int zone,
+  		         std::vector<FlagType*> &flags,
+  		         std::vector<TeamColor> &teams,
+  		         std::vector<TeamColor> &safety) const;
 };
 
 

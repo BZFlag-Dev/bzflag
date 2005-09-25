@@ -166,19 +166,19 @@ void LinkManager::doLinking()
   if (debugLevel >= 4) {
     for (i = 0; i < teles.size(); i++) {
       Teleporter* tele = (Teleporter*) teles[i];
-      printf ("TELE(%i): %s\n", i, tele->getName().c_str());
+      DEBUG0("TELE(%i): %s\n", i, tele->getName().c_str());
     }
     for (i = 0; i < linkNames.size(); i++) {
       LinkNameSet& link = linkNames[i];
-      printf ("LINKSRC: %-32sLINKDST: %s\n", link.src.c_str(), link.dst.c_str());
+      DEBUG0("LINKSRC: %-32sLINKDST: %s\n", link.src.c_str(), link.dst.c_str());
     }
     for (i = 0; i < linkNumbers.size(); i++) {
-      printf ("SRC %3i%c:  DSTS", (i / 2), ((i % 2) == 0) ? 'f' : 'b');
+      DEBUG0("SRC %3i%c:  DSTS", (i / 2), ((i % 2) == 0) ? 'f' : 'b');
       for (unsigned int j = 0; j < linkNumbers[i].dsts.size(); j++) {
 	int dst = linkNumbers[i].dsts[j];
-	printf (" %i%c", (dst / 2), ((dst % 2) == 0) ? 'f' : 'b');
+	DEBUG0(" %i%c", (dst / 2), ((dst % 2) == 0) ? 'f' : 'b');
       }
-      printf ("\n");
+      DEBUG0("\n");
     }
   }
 

@@ -136,6 +136,9 @@ void DefaultCompleter::setDefaults() {
   registerWord("/veto");
   registerWord("/viewreports");
   registerWord("/vote");
+  registerWord("/loadplugin");
+  registerWord("/listplugins");
+  registerWord("/unloadplugin");
 }
 
 // Local Variables: ***

@@ -44,12 +44,12 @@ class MeshFragSceneNode : public WallSceneNode {
     bool cull(const ViewFrustum&) const;
     void addShadowNodes(SceneRenderer&);
     void addRenderNodes(SceneRenderer&);
+    void renderRadar();
 
     // virtual functions from WallSceneNode
     bool inAxisBox(const Extents& exts) const;
 
-    int getRenderNodeCount() { return 1; }
-    RenderNode*	getRenderNode(int) { return &renderNode; }
+    void getRenderNodes(std::vector<RenderSet>& rnodes);
 
   protected:
     class Geometry : public RenderNode {
@@ -59,7 +59,6 @@ class MeshFragSceneNode : public WallSceneNode {
 
         void init();
 	void setStyle(int _style) { style = _style; }
-	void setNoRadar();
 	void render();
 	void renderRadar();
 	void renderShadow();
@@ -71,7 +70,6 @@ class MeshFragSceneNode : public WallSceneNode {
 	void drawVTN() const; // draw with texcoords and normals
       private:
 	int style;
-        bool drawRadar;
 	MeshFragSceneNode* sceneNode;
     };
 
@@ -81,6 +79,8 @@ class MeshFragSceneNode : public WallSceneNode {
     GLint faceCount;
     const MeshFace** faces;
 
+    bool noRadar;
+    bool noShadow;
     GLint arrayCount;
     GLfloat* vertices;
     GLfloat* normals;

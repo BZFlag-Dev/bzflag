@@ -31,7 +31,9 @@ EntryZones::EntryZones()
 void EntryZones::addZone(const CustomZone *zone)
 {
   //We're purposely slicing off part of the zone structure
-  zones.push_back( *((WorldFileLocation *)zone) );
+//  zones.push_back( *((WorldFileLocation *)zone) );
+
+  zones.push_back(*zone);
 
   QualifierList qualifiers = zone->getQualifiers();
   for (QualifierList::iterator it = qualifiers.begin(); it != qualifiers.end(); ++it) {

@@ -45,6 +45,7 @@
 #include "EntryZone.h"
 
 class FlagSceneNode;
+class MeshDrawInfo;
 
 /**
  * World:
@@ -116,7 +117,9 @@ class World {
 
     void		initFlag(int index);
     void		updateFlag(int index, float dt);
+    void		updateAnimations(float dt);
     void		addFlags(SceneDatabase*, bool seerView);
+    void		makeMeshDrawMgrs();
 
     static World*	getWorld();
     static void		setWorld(World*);
@@ -149,6 +152,7 @@ class World {
     World&		operator=(const World&);
 
     void		freeFlags();
+    void		freeMeshDrawMgrs();
 
 
   private:
@@ -178,6 +182,9 @@ class World {
     Flag*		flags;
     FlagSceneNode**	flagNodes;
     FlagWarpSceneNode**	flagWarpNodes;
+    
+    int			drawInfoCount;
+    MeshDrawInfo**	drawInfoArray;
 
     LinkManager		links;
 

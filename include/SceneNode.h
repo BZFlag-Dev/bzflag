@@ -33,6 +33,7 @@
 #include "OpenGLGState.h"
 #include "RenderNode.h"
 #include "Extents.h"
+#include <vector>
 
 #if !defined(_WIN32)
 // bonehead win32 cruft.  just make it go away on other platforms.
@@ -56,27 +57,35 @@ class SceneNode {
 			SceneNode();
     virtual		~SceneNode();
 
-    const GLfloat*	getSphere() const;
-    const Extents&	getExtents() const;
-    virtual bool	inAxisBox (const Extents& exts) const;
-    virtual int		getVertexCount () const;
-    virtual const GLfloat* getVertex (int vertex) const;
-    virtual bool	isTranslucent() const;
     virtual void	notifyStyleChange();
 
+    const GLfloat*	getSphere() const;
+    const Extents&	getExtents() const;
+    virtual int		getVertexCount () const;
+    virtual const GLfloat* getVertex (int vertex) const;
     const GLfloat*      getPlane() const;
     const GLfloat*      getPlaneRaw() const;
-    virtual GLfloat	getDistance(const GLfloat* eye) const;
+    virtual GLfloat	getDistance(const GLfloat* eye) const; // for BSP
+    
+    virtual bool	inAxisBox (const Extents& exts) const;
+
     virtual bool	cull(const ViewFrustum&) const;
+
+    bool		isOccluder() const;
+    void		setOccluder(bool value);
+    
     virtual void	addLight(SceneRenderer&);
     virtual int		split(const float* plane,
-				SceneNode*& front, SceneNode*& back) const;
+                              SceneNode*& front, SceneNode*& back) const;
     virtual void	addShadowNodes(SceneRenderer&);
     virtual void	addRenderNodes(SceneRenderer&);
+    virtual void	renderRadar();
 
-    virtual int getRenderNodeCount() { return 0; }
-    virtual RenderNode*	getRenderNode(int) { return NULL; }
-    virtual const OpenGLGState* getGState() const { return NULL; }
+    struct RenderSet {
+      RenderNode* node;
+      const OpenGLGState* gstate;
+    };
+    virtual void getRenderNodes(std::vector<RenderSet>& rnodes);
 
 
     static void		setColorOverride(bool = true);
@@ -144,6 +153,7 @@ class SceneNode {
   protected:
     GLfloat		plane[4];	// unit normal, distance to origin
     bool		noPlane;
+    bool		occluder;
     Extents		extents;
   private:
     GLfloat		sphere[4];
@@ -178,6 +188,16 @@ inline const GLfloat*	SceneNode::getSphere() const
 inline const Extents&	SceneNode::getExtents() const
 {
   return extents;
+}
+
+inline bool		SceneNode::isOccluder() const
+{
+  return occluder;
+}
+
+inline void		SceneNode::setOccluder(bool value)
+{
+  occluder = value;
 }
 
 

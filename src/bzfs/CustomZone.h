@@ -15,13 +15,24 @@
 /* interface header */
 #include "WorldFileLocation.h"
 
+/* system headers */
+#include <vector>
+#include <string>
+#include <map>
+
 /* local implementation headers */
-#include "WorldInfo.h"
-#include "EntryZones.h"
+//#include "WorldInfo.h"
+class WorldInfo;
+
+
+typedef std::vector<std::string> QualifierList;
+typedef std::map<std::string, int> ZoneFlagMap; // type, count
+
 
 class CustomZone : public WorldFileLocation {
   public:
     CustomZone();
+//    CustomZone(const CustomZone&);
 
     virtual bool read(const char *cmd, std::istream&);
     virtual void writeToWorld(WorldInfo*) const;
@@ -29,6 +40,8 @@ class CustomZone : public WorldFileLocation {
 
     // make a safety zone for all team flags (on the ground)
     void addFlagSafety(float x, float y, WorldInfo* worldInfo);
+    
+    void addZoneFlagCount(const char* flagAbbr, int count);
 
     const QualifierList &getQualifiers() const;
     float getArea() const;
@@ -36,13 +49,16 @@ class CustomZone : public WorldFileLocation {
     float getDistToPoint (const float *pos) const;
 
   protected:
+    ZoneFlagMap zoneFlagMap;
     QualifierList qualifiers;
 };
+
 
 inline const QualifierList& CustomZone::getQualifiers() const
 {
   return qualifiers;
 }
+
 
 inline float CustomZone::getArea() const
 {
@@ -60,6 +76,7 @@ inline float CustomZone::getArea() const
 
   return (x * y * z);
 }
+
 
 #endif  /* __CUSTOMZONE_H__ */
 

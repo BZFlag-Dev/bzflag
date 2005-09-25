@@ -206,11 +206,8 @@ SceneDatabaseBuilder::~SceneDatabaseBuilder()
 SceneDatabase* SceneDatabaseBuilder::make(const World* world)
 {
   // set LOD flags
-  wallLOD = BZDBCache::lighting && BZDBCache::zbuffer;
-  baseLOD = BZDBCache::lighting && BZDBCache::zbuffer;
-  boxLOD = BZDBCache::lighting && BZDBCache::zbuffer;
-  pyramidLOD = BZDBCache::lighting && BZDBCache::zbuffer;
-  teleporterLOD = BZDBCache::lighting && BZDBCache::zbuffer;
+  const bool doLODs = BZDBCache::lighting && BZDBCache::zbuffer;
+  wallLOD = baseLOD = boxLOD = pyramidLOD = teleporterLOD = doLODs;
 
   // pick type of database
   SceneDatabase* db;
@@ -226,7 +223,6 @@ SceneDatabase* SceneDatabaseBuilder::make(const World* world)
 
   // free any prior inside nodes
   world->freeInsideNodes();
-
 
 
   // add nodes to database
@@ -295,9 +291,10 @@ void SceneDatabaseBuilder::addWaterLevel(SceneDatabase* db,
   // get the material
   const BzMaterial* mat = world->getWaterMaterial();
   const bool noRadar = mat->getNoRadar();
+  const bool noShadow = mat->getNoShadow();
   
   MeshPolySceneNode* node =
-    new MeshPolySceneNode(plane, noRadar, v, n, t);
+    new MeshPolySceneNode(plane, noRadar, noShadow, v, n, t);
 
   // setup the material
   MeshSceneNodeGenerator::setupNodeMaterial(node, mat);

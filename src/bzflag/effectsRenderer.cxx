@@ -41,8 +41,10 @@ template <>
 EffectsRenderer* Singleton<EffectsRenderer>::_instance = (EffectsRenderer*)0;
 
 // utils for geo
-void drawRingYZ ( float rad, float z, float topsideOffset = 0, float bottomUV = 0, float ZOffset = 0, float topUV = 1.0f, int segments = 32);
-void drawRingXY ( float rad, float z, float topsideOffset = 0, float bottomUV = 0, float topUV = 1.0f, int segments = 32);
+void drawRingYZ ( float rad, float z, float topsideOffset = 0, float bottomUV = 0,
+                  float ZOffset = 0, float topUV = 1.0f, int segments = 32);
+void drawRingXY ( float rad, float z, float topsideOffset = 0, float bottomUV = 0,
+                  float topUV = 1.0f, int segments = 32);
 void RadialToCartesian ( float angle, float rad, float *pos );
 void getSpawnTeamColor ( int teamColor, float *color );
 
@@ -1230,13 +1232,14 @@ void RadialToCartesian ( float angle, float rad, float *pos )
 	pos[1] = cosf(angle*deg2Rad)*rad;
 }
 
-void drawRingXY ( float rad, float z, float topsideOffset, float bottomUV, float topUV, int segements )
+void drawRingXY ( float rad, float z, float topsideOffset, float bottomUV,
+                  float topUV, int segments )
 {
-	for ( int i = 0; i < segements; i ++)
+	for ( int i = 0; i < segments; i ++)
 	{
-		float thisAng = 360.0f/segements * i;
-		float nextAng = 360.0f/segements * (i+1);
-		if ( i+1 >= segements )
+		float thisAng = 360.0f/segments * i;
+		float nextAng = 360.0f/segments * (i+1);
+		if ( i+1 >= segments )
 			nextAng = 0;
 
 		float thispos[2];
@@ -1305,13 +1308,14 @@ float clampedZ ( float z, float offset )
 	return -offset;
 }
 
-void drawRingYZ ( float rad, float z, float topsideOffset, float bottomUV, float ZOffset, float topUV, int segements )
+void drawRingYZ ( float rad, float z, float topsideOffset, float bottomUV,
+                  float ZOffset, float topUV, int segments )
 {
-	for ( int i = 0; i < segements; i ++)
+	for ( int i = 0; i < segments; i ++)
 	{
-		float thisAng = 360.0f/segements * i;
-		float nextAng = 360.0f/segements * (i+1);
-		if ( i+1 >= segements )
+		float thisAng = 360.0f/segments * i;
+		float nextAng = 360.0f/segments * (i+1);
+		if ( i+1 >= segments )
 			nextAng = 0;
 
 		float thispos[2];

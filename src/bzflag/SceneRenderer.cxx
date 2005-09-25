@@ -39,6 +39,9 @@
 #include "ParseColor.h"
 #include "BZDBCache.h"
 #include "TankGeometryMgr.h"
+#include "MeshSceneNode.h"
+
+#include "ObstacleMgr.h"
 
 /* FIXME - local implementation dependancies */
 #include "BackgroundRenderer.h"
@@ -47,6 +50,7 @@
 #include "daylight.h"
 #include "World.h"
 #include "TrackMarks.h"
+
 
 
 #ifdef GL_ABGR_EXT
@@ -129,7 +133,7 @@ SceneRenderer::SceneRenderer() :
 
   // init the track mark manager
   TrackMarks::init();
-
+  
   return;
 }
 
@@ -488,7 +492,7 @@ void SceneRenderer::setSceneDatabase(SceneDatabase* db)
 
   // free the current database
   delete scene;
-
+  
   scene = db;
   if (scene) {
     inOrder = scene->isOrdered();
@@ -702,6 +706,7 @@ void SceneRenderer::render(bool _lastFrame, bool _sameFrame,
       background->notifyStyleChange();
     }
     TrackMarks::notifyStyleChange();
+    glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, GL_FALSE);
     needStyleUpdate = false;
   }
 
@@ -716,11 +721,15 @@ void SceneRenderer::render(bool _lastFrame, bool _sameFrame,
 
   // update the texture matrices
   TEXMATRIXMGR.update();
-
+  
   // make sure there is something to render on
   if (!window) {
     return;
   }
+
+  // setup the viewport LOD scale
+  MeshSceneNode::setLodScale(window->getWidth(), frustum.getFOVx(),
+                             window->getViewHeight(), frustum.getFOVy());
 
   // get the track mark sceneNodes (only for BSP)
   if (scene) {
@@ -743,13 +752,23 @@ void SceneRenderer::render(bool _lastFrame, bool _sameFrame,
 
   if (mirror) {
     drawGround = false;
-
+    
     // flip for the reflection drawing
     frustum.flipVertical();
     glFrontFace(GL_CW);
 
+    // different occluders for the mirror
+    if (scene) {
+      scene->setOccluderManager(1);
+    }
+
     // the reflected scene
     renderScene(_lastFrame, _sameFrame, fullWindow);
+
+    // different occluders for the mirror
+    if (scene) {
+      scene->setOccluderManager(0);
+    }
 
     // flip back
     frustum.flipVertical();

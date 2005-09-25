@@ -43,8 +43,6 @@ class SphereObstacle;
 class WorldFileLocation;
 class CustomZone;
 
-typedef std::vector<std::string> QualifierList;
-
 typedef enum {
   NOT_IN_BUILDING,
   IN_BASE,

@@ -6,7 +6,7 @@
 
 class Occluder {
   public:
-    Occluder(SceneNode *node);
+    Occluder(const SceneNode *node);
     ~Occluder();
     bool makePlanes(const Frustum* frustum);
     IntersectLevel doCullAxisBox(const Extents& exts);
@@ -15,12 +15,12 @@ class Occluder {
     void divScore();
     int getScore() const;
     int getVertexCount() const;
-    SceneNode* getSceneNode() const;
+    const SceneNode* getSceneNode() const;
     void draw() const;
     void print(const char* string) const; // for debugging
 
   private:
-    SceneNode* sceneNode;
+    const SceneNode* sceneNode;
     unsigned int cullScore;
     int planeCount;  // one more then the vertex count
     int vertexCount; // vertex count of the occluding plane
@@ -41,12 +41,12 @@ class OccluderManager {
 
     void clear();
     void update(const Frustum* frustum);
-    void select(SceneNode** list, int listCount);
+    void select(const SceneNode* const* list, int listCount);
 
     IntersectLevel occlude(const Extents& exts, unsigned int score);
     bool occludePeek(const Extents& exts);
 
-    int getOccluderCount () const;
+    int getOccluderCount() const;
 
     void draw() const;
 
@@ -79,7 +79,7 @@ inline int Occluder::getScore() const
   return cullScore;
 }
 
-inline SceneNode* Occluder::getSceneNode()const
+inline const SceneNode* Occluder::getSceneNode()const
 {
   return sceneNode;
 }

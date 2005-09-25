@@ -16,8 +16,11 @@
 #include "MeshObstacle.h"
 #include "MeshFace.h"
 #include "bzfgl.h"
+#include "MeshDrawInfo.h"
+#include "MeshSceneNode.h"
 #include "MeshPolySceneNode.h"
 #include "MeshFragSceneNode.h"
+#include "OccluderSceneNode.h"
 #include "DynamicColor.h"
 #include "TextureManager.h"
 #include "OpenGLMaterial.h"
@@ -33,7 +36,13 @@ MeshSceneNodeGenerator::MeshSceneNodeGenerator(const MeshObstacle* _mesh)
 {
   mesh = _mesh;
   currentNode = 0;
-  setupFacesAndFrags();
+  returnOccluders = false;
+  setupOccluders();
+  const MeshDrawInfo* drawInfo = mesh->getDrawInfo();
+  useDrawInfo = (drawInfo != NULL) && drawInfo->isValid();
+  if (!useDrawInfo) {
+    setupFacesAndFrags();
+  }
   return;
 }
 
@@ -45,15 +54,23 @@ MeshSceneNodeGenerator::~MeshSceneNodeGenerator()
 }
 
 
-static bool invisibleMaterial(const BzMaterial* mat)
+void MeshSceneNodeGenerator::setupOccluders()
 {
-  const DynamicColor* dyncol = DYNCOLORMGR.getColor(mat->getDynamicColor());
-  if ((mat->getDiffuse()[3] == 0.0f) && (dyncol == NULL) &&
-      !((mat->getTextureCount() > 0) && !mat->getUseColorOnTexture(0))) {
-    // face is invisible
-    return true;
+  // This is wasteful, only need separate
+  // occluders if the face is invisible or
+  // has been grouped into a mesh fragment.
+  // If this is done, don't forget to make
+  // the resulting combo sceneNode into an
+  // occluder.
+  const int faceCount = mesh->getFaceCount();
+  for (int i = 0; i < faceCount; i++) {
+    const MeshFace* face = mesh->getFace(i);
+    const BzMaterial* bzmat = face->getMaterial();
+    if (bzmat->getOccluder()) {
+      OccluderSceneNode* onode = new OccluderSceneNode(face);
+      occluders.push_back(onode);
+    }
   }
-  return false;
 }
 
 
@@ -144,7 +161,7 @@ void MeshSceneNodeGenerator::setupFacesAndFrags()
   //       MeshFragments. it would be good to rename all
   //       of the MeshFragment files and classes to match
   //       with the MeshCluster naming convention.
-
+  
   // only using regular MeshFaces?
   const bool noMeshClusters = BZDB.isTrue("noMeshClusters");
   if (mesh->noClusters() || noMeshClusters || !BZDBCache::zbuffer) {
@@ -154,8 +171,7 @@ void MeshSceneNodeGenerator::setupFacesAndFrags()
       mn.faces.push_back(mesh->getFace(i));
       nodes.push_back(mn);
     }
-
-    return;
+    return; // bail out
   }
 
   // build up a list of faces and fragments
@@ -180,7 +196,8 @@ void MeshSceneNodeGenerator::setupFacesAndFrags()
 
     // see if this face needs to be drawn individually
     if (firstFace->noClusters() ||
-	(translucentMaterial(firstMat) && !firstMat->getNoSorting())) {
+	(translucentMaterial(firstMat) &&
+	 !firstMat->getNoSorting() && !firstMat->getGroupAlpha())) {
       MeshNode mn;
       mn.isFace = true;
       mn.faces.push_back(firstFace);
@@ -229,13 +246,48 @@ WallSceneNode* MeshSceneNodeGenerator::getNextNode(bool /*lod*/)
   const MeshNode* mn;
   const MeshFace* face;
   const BzMaterial* mat;
+  
+  // divert for Occluders
+  if (returnOccluders) {
+    if (currentNode < (int)occluders.size()) {
+      currentNode++;
+      return (WallSceneNode*)occluders[currentNode - 1];
+    } else {
+      return NULL;
+    }
+  }
+  
+  // divert for the MeshSceneNode
+  const MeshDrawInfo* drawInfo = mesh->getDrawInfo();
+  if (useDrawInfo) {
+    if (drawInfo->isInvisible()) {
+      if (occluders.size() <= 0) {
+        return NULL;
+      } else {
+        currentNode = 1;
+        returnOccluders = true;
+        return (WallSceneNode*)occluders[0];
+      }
+    } else {
+      currentNode = 0;
+      returnOccluders = true;
+      return (WallSceneNode*)(new MeshSceneNode(mesh));
+    }
+  }
 
   // remove any faces or frags that will not be displayed
   // also, return NULL if we are at the end of the face list
   while (true) {
 
     if (currentNode >= (int)nodes.size()) {
-      return NULL;
+      // start sending out the occluders
+      returnOccluders = true;
+      if (occluders.size() > 0) {
+        currentNode = 1;
+        return (WallSceneNode*)occluders[0];
+      } else {
+        return NULL;
+      }
     }
 
     mn = &nodes[currentNode];
@@ -247,7 +299,7 @@ WallSceneNode* MeshSceneNodeGenerator::getNextNode(bool /*lod*/)
       mat = mn->faces[0]->getMaterial();
     }
 
-    if (invisibleMaterial(mat)) {
+    if (mat->isInvisible()) {
       currentNode++;
       continue;
     }
@@ -312,12 +364,14 @@ MeshPolySceneNode* MeshSceneNodeGenerator::getMeshPolySceneNode(const MeshFace* 
   }
 
   bool noRadar = false;
+  bool noShadow = false;
   const BzMaterial* bzmat = face->getMaterial();
   if (bzmat != NULL) {
     noRadar = bzmat->getNoRadar();
+    noShadow = bzmat->getNoShadow();
   }
   MeshPolySceneNode* node =
-    new MeshPolySceneNode(face->getPlane(), noRadar,
+    new MeshPolySceneNode(face->getPlane(), noRadar, noShadow,
                           vertices, normals, texcoords);
 
   return node;
@@ -350,6 +404,10 @@ void MeshSceneNodeGenerator::setupNodeMaterial(WallSceneNode* node,
     }
   }
 
+  if (!mat->getNoLighting()) {
+    node->setMaterial(oglMaterial);
+  }
+  
   // NOTE: the diffuse color is used, and not the ambient color
   //       could use the ambient color for non-lighted,and diffuse
   //       for lighted
@@ -363,7 +421,6 @@ void MeshSceneNodeGenerator::setupNodeMaterial(WallSceneNode* node,
   node->setModulateColor(mat->getDiffuse());
   node->setLightedColor(mat->getDiffuse());
   node->setLightedModulateColor(mat->getDiffuse());
-  node->setMaterial(oglMaterial);
   node->setTexture(faceTexture);
   if ((userTexture && mat->getUseColorOnTexture(0)) ||
       !gotSpecifiedTexture) {
@@ -383,7 +440,7 @@ void MeshSceneNodeGenerator::setupNodeMaterial(WallSceneNode* node,
   }
   node->setBlending(alpha);
   node->setSphereMap(mat->getUseSphereMap(0));
-
+  
   // the current color can also affect the blending.
   // if blending is disabled then the alpha value from
   // one of these colors is used to set the stipple value.

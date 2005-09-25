@@ -28,6 +28,7 @@ libObstacle_la_SOURCES =		\
 	MeshUtils.h			\
 	Triangulate.h			\
 	Triangulate.cxx			\
+	MeshDrawInfo.cxx		\
 	PyramidBuilding.cxx		\
 	Teleporter.cxx			\
 	TetraBuilding.cxx		\
@@ -48,6 +49,7 @@ libObstacle_la_SOURCES =		\
 	MeshUtils.h			\
 	Triangulate.h			\
 	Triangulate.cxx			\
+	MeshDrawInfo.cxx		\
 	PyramidBuilding.cxx		\
 	Teleporter.cxx			\
 	TetraBuilding.cxx		\

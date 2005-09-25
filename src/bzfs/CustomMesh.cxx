@@ -22,6 +22,7 @@
 /* common implementation headers */
 #include "PhysicsDriver.h"
 #include "ObstacleMgr.h"
+#include "MeshDrawInfo.h"
 
 
 CustomMesh::CustomMesh()
@@ -32,6 +33,7 @@ CustomMesh::CustomMesh()
   smoothBounce = false;
   driveThrough = false;
   shootThrough = false;
+  drawInfo = NULL;
   material.setTexture("mesh");
 
   return;
@@ -59,7 +61,15 @@ bool CustomMesh::read(const char *cmd, std::istream& input)
 {
   bool materror;
 
-  if (strcasecmp(cmd, "endface") == 0) {
+  if (strncasecmp(cmd, "lod", 3) == 0) {
+    std::string line, option;
+    std::getline(input, line);
+    input.putback('\n');
+    option = cmd + line;
+    std::cout << option << std::endl;
+    lodOptions.push_back(option);
+  }
+  else if (strcasecmp(cmd, "endface") == 0) {
     if (face == NULL) {
       std::cout << "extra 'endface' keyword found" << std::endl;
     } else {
@@ -133,6 +143,18 @@ bool CustomMesh::read(const char *cmd, std::istream& input)
   else if (strcasecmp(cmd, "noclusters") == 0) {
     noclusters = true;
   }
+  else if (strcasecmp(cmd, "drawInfo") == 0) {
+    if (drawInfo != NULL) {
+      std::cout << "WARNING: multiple drawInfo, using first" << std::endl;
+    } else {
+      drawInfo = new MeshDrawInfo();
+      if (!drawInfo->parse(input)) {
+        std::cout << "WARNING: invalid drawInfo" << std::endl;
+        delete drawInfo;
+        drawInfo = NULL;
+      }
+    }
+  }
   else if (parseMaterials(cmd, input, &material, 1, materror)) {
     if (materror) {
       return false;
@@ -168,14 +190,21 @@ void CustomMesh::writeToGroupDef(GroupDefinition *groupdef) const
     new MeshObstacle(xform, checkTypes, checkPoints,
 		     vertices, normals, texcoords, faces.size(),
 		     noclusters, smoothBounce, driveThrough, shootThrough);
+		     
+  mesh->setName(name);
 
   std::vector<CustomMeshFace*>::const_iterator face_it;
   for (face_it = faces.begin(); face_it != faces.end(); face_it++) {
-    const CustomMeshFace* _face = *face_it;
-    _face->write(mesh);
+    const CustomMeshFace* customFace = *face_it;
+    customFace->write(mesh);
   }
 
   mesh->finalize();
+
+  if (drawInfo && drawInfo->isValid()) {
+    ((MeshDrawInfo*)drawInfo)->serverSetup(mesh);
+  }
+  mesh->setDrawInfo(drawInfo);
 
   groupdef->addObstacle(mesh);
 

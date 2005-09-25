@@ -21,7 +21,15 @@
 #include <string>
 #include <vector>
 #include <set>
+#include <map>
 #include <iostream>
+
+
+
+class BzMaterial;
+typedef std::set<const BzMaterial*> MaterialSet;
+typedef std::map<const BzMaterial*,
+                 const BzMaterial*> MaterialMap;
 
 
 class BzMaterial {
@@ -52,7 +60,11 @@ class BzMaterial {
     void setEmission(const float[4]);
     void setShininess(const float);
 
+    void setOccluder(bool);
+    void setGroupAlpha(bool);
+    void setNoLighting(bool);
     void setNoRadar(bool);
+    void setNoShadow(bool);
     void setNoCulling(bool);
     void setNoSorting(bool);
     void setAlphaThreshold(const float);
@@ -85,9 +97,13 @@ class BzMaterial {
     const float* getEmission() const;
     float getShininess() const;
 
+    bool getOccluder() const;
+    bool getGroupAlpha() const;
     bool getNoRadar() const;
+    bool getNoShadow() const;
     bool getNoCulling() const;
     bool getNoSorting() const;
+    bool getNoLighting() const;
     float getAlphaThreshold() const;
 
     int getTextureCount() const;
@@ -105,6 +121,8 @@ class BzMaterial {
     //
     // Utilities
     //
+    
+    bool isInvisible() const;
 
     int packSize() const;
     void *pack(void *) const;
@@ -127,9 +145,13 @@ class BzMaterial {
     float emission[4];
     float shininess;
 
+    bool occluder;
+    bool groupAlpha;
     bool noRadar;
+    bool noShadow;
     bool noCulling;
     bool noSorting;
+    bool noLighting;
     float alphaThreshold;
 
     enum CombineModes {

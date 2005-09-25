@@ -104,6 +104,9 @@ const uint16_t		MsgTransferFlag = 0x7466;		// 'tf'
 const uint16_t		MsgTeamUpdate = 0x7475;			// 'tu'
 const uint16_t		MsgWantWHash = 0x7768;			// 'wh'
 const uint16_t		MsgWantSettings = 0x7773;		// 'ws'
+const uint16_t		MsgPortalAdd = 0x5061;			// 'Pa'
+const uint16_t		MsgPortalRemove = 0x5072;		// 'Pr'
+const uint16_t		MsgPortalUpdate = 0x5075;		// 'Pu'
 
 // world database codes
 const uint16_t		WorldCodeHeader = 0x6865;		// 'he'

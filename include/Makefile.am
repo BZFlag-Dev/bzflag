@@ -61,9 +61,12 @@ noinst_HEADERS =			\
 	MediaFile.h			\
 	MeshFace.h			\
 	MeshFragSceneNode.h		\
+	MeshDrawInfo.h			\
+	MeshDrawMgr.h			\
 	MeshObstacle.h			\
 	MeshPolySceneNode.h		\
 	MeshSceneNodeGenerator.h	\
+	MeshSceneNode.h			\
 	MeshTransform.h			\
 	MsgStrings.h			\
 	NetHandler.h			\

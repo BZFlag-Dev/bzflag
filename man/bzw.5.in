@@ -354,6 +354,12 @@ properties:
 .br 
 \fB  texture\fR filename     # set working texture
 .br 
+  # - non-interlaced PNG 
+.br 
+  # - http:// or ftp:// hyperlinks can be used  (no spaces)
+.br 
+  # - BZFlag default texture names can be used  (.png not required)
+.br 
 \fB  addtexture\fR filename  # add texture
 .br 
 \fB  notextures\fR           # specify that no textures are to be used
@@ -382,9 +388,11 @@ properties:
 .br 
 \fB  nosorting\fR            # do not do front-to-back alpha sorting
 .br 
+\fB  nolighting\fR           # disable lighting
+.br 
 \fB  alphathresh 0.0\fR      # alpha thresholding value
 .br 
-\fB  groupAlpha\fR           # sort translucent faces as a group
+\fB  groupalpha\fR           # sort translucent faces as a group
 .br 
 \fB  occluder\fR             # faces with this material will occlude
 .br 
@@ -451,8 +459,6 @@ properties:
 \fB  noclusters\fR            # render each mesh face individually
 .br 
 \fB  face\fR  # start a face   (\fBrepeatable\fR)
-.br 
-    # faces must be convex planar polygons
 .br 
     # the front-face winding is counter-clockwise
 .br 
@@ -933,9 +939,9 @@ material :=
 .br 
 	| "nosorting"
 .br 
-	| "alphathresh value"
+	| "alphathresh" <value>
 .br 
-	| "groupAlpha"
+	| "groupalpha"
 .br 
 	| "occluder"
 .br 

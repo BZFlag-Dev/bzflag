@@ -528,21 +528,14 @@ static char **parseWorldOptions (const char *file, int &ac)
 }
 
 
-/* protected */
-
-/* public: */
+static bool accLimitSet = false;
+static bool allFlagsOut = false;
+static bool teamFlagsAdded = false;
 
 void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
 {
   // prepare flag counts
   int i;
-  static bool allFlagsOut = false;
-  static bool teamFlagsAdded = false;
-  static bool accLimitSet = false;
-
-  // how deep in parse nesting are we?
-  static int nestingCount = 0;
-  nestingCount++;
 
   // InertiaGameStyle maintained just for compatibility
   // Same effect is achieved setting linear/angular Acceleration
@@ -1154,19 +1147,36 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       usage(argv[0]);
     }
   }
+  
+  // get player counts.  done after other arguments because we need
+  // to ignore counts for rogues if rogues aren't allowed.
+  if ((playerCountArg > 0) && !parsePlayerCount(argv[playerCountArg], options)) {
+    usage(argv[0]);
+  }
+  if ((playerCountArg2 > 0) 
+      && !parsePlayerCount(argv[playerCountArg2], options)) {
+    usage(argv[0]);
+  }
+  
+  return;
+}
 
+
+void finalizeParsing(int /*argc*/, char **argv, CmdLineOptions &options)
+{
   if (options.flagsOnBuildings && !(options.gameStyle & JumpingGameStyle)) {
     std::cerr << "flags on boxes requires jumping" << std::endl;
     usage(argv[0]);
   }
 
-  // get player counts.  done after other arguments because we need
-  // to ignore counts for rogues if rogues aren't allowed.
-  if ((playerCountArg > 0) && !parsePlayerCount(argv[playerCountArg], options))
-    usage(argv[0]);
-  if ((playerCountArg2 > 0)
-      && !parsePlayerCount(argv[playerCountArg2], options))
-    usage(argv[0]);
+  // do we have any team flags?
+  bool hasTeam = false;
+  for (int p = RedTeam; p <= PurpleTeam; p++) {
+    if (options.maxTeam[p] > 1) {
+      hasTeam = true;
+      break;
+    }
+  }
 
   // first disallow flags inconsistent with game style
   if (options.gameStyle & JumpingGameStyle) {
@@ -1184,13 +1194,6 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
     options.flagCount[Flags::PhantomZone] = 0;
     options.flagDisallowed[Flags::PhantomZone] = true;
   }
-  bool hasTeam = false;
-  for (int p = RedTeam; p <= PurpleTeam; p++) {
-    if (options.maxTeam[p] > 1) {
-      hasTeam = true;
-      break;
-    }
-  }
   if (!hasTeam) {
     options.flagCount[Flags::Genocide] = 0;
     options.flagDisallowed[Flags::Genocide] = true;
@@ -1199,7 +1202,6 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
     options.flagCount[Flags::Masquerade] = 0;
     options.flagDisallowed[Flags::Masquerade] = true;
   }
-
   if (options.gameStyle & int(RabbitChaseGameStyle)) {
     for (int j = RedTeam; j <= PurpleTeam; j++) {
       if (options.maxTeam[j] > 0
@@ -1214,9 +1216,11 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
   if (options.numExtraFlags > 0) {
     // now count how many aren't disallowed
     for (FlagTypeMap::iterator it = FlagType::getFlagMap().begin();
-	 it != FlagType::getFlagMap().end(); ++it)
-      if (!options.flagDisallowed[it->second])
+	 it != FlagType::getFlagMap().end(); ++it) {
+      if (!options.flagDisallowed[it->second]) {
 	options.numAllowedFlags++;
+      }
+    }
 
     // if none allowed then no extra flags either
     if (options.numAllowedFlags == 0) {
@@ -1280,8 +1284,9 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
   }
 
 
-  if (f < numFlags)
+  if (f < numFlags) {
     options.gameStyle |= int(SuperFlagGameStyle);
+  }    
   for (FlagTypeMap::iterator it2 = FlagType::getFlagMap().begin();
        it2 != FlagType::getFlagMap().end(); ++it2) {
     FlagType *fDesc = it2->second;
@@ -1315,7 +1320,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
   if (options.gameStyle & int(AntidoteGameStyle))
     DEBUG1("  antidote flags\n");
 
-  if ((nestingCount == 1) && !accLimitSet)
+  if (!accLimitSet) {
     printf("Note: no acceleration limit has been set.  Players using \"mouse\n"
 	   "enhancements\" may cause problems on this server due to very high\n"
 	   "acceleration rates which are not handled well by dead reckoning\n"
@@ -1324,11 +1329,10 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
 	   "Higher speed servers will need higher values for -a in order to not\n"
 	   "affect gameplay.  '-a 0 0' may be used to shut this message up without\n"
 	   "affecting any players, including those using \"mouse enhancements\".\n");
+  }
 
-  // this instance is done
-  nestingCount--;
+  return;
 }
-
 
 
 // simple syntax check of comma-seperated list of group names (returns true if error)

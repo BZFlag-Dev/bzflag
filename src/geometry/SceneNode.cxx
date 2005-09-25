@@ -22,6 +22,7 @@
 
 // common implementation headers
 #include "Extents.h"
+#include "RenderNode.h"
 #include "StateDatabase.h"
 
 // FIXME (SceneRenderer.cxx is in src/bzflag)
@@ -49,6 +50,7 @@ SceneNode::SceneNode()
   setRadius(0.0f);
 
   noPlane = true;
+  occluder = false;
   octreeState = OctreeCulled;
 
   return;
@@ -111,11 +113,6 @@ void			SceneNode::setColorOverride(bool on)
 #endif
     stipple  = &OpenGLGState::setStipple;
   }
-}
-
-bool			SceneNode::isTranslucent() const
-{
-  return false;
 }
 
 void			SceneNode::setRadius(GLfloat radiusSquared)
@@ -257,6 +254,18 @@ GLfloat3Array&		GLfloat3Array::operator=(const GLfloat3Array& a)
   return *this;
 }
 
+
+void SceneNode::getRenderNodes(std::vector<RenderSet>&)
+{
+  return; // do nothing
+}
+
+
+void SceneNode::renderRadar()
+{
+  printf ("SceneNode::renderRadar() called, implement in subclass\n");
+  return;
+}
 
 
 // Local Variables: ***

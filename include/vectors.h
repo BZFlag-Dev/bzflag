@@ -65,6 +65,13 @@ class cfvec4 {
 // FIXME - some these should go into a common file
 // Some handy geometry functions
 
+static inline void vec3add (float *result, const float* v1, const float* v2)
+{
+  result[0] = v1[0] + v2[0];
+  result[1] = v1[1] + v2[1];
+  result[2] = v1[2] + v2[2];
+  return;
+}
 static inline void vec3sub (float *result, const float* v1, const float* v2)
 {
   result[0] = v1[0] - v2[0];

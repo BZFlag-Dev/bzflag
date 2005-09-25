@@ -27,9 +27,26 @@
 
 // triangulation parameters
 static fvec3 Normal; // FIXME, uNormal, vNormal;
+//static fvec2* MVertsSpace = NULL;
 static const float* const *Verts = NULL;
 static int Count = 0;
 static int* WorkSet = NULL;
+
+
+static bool vec3norm(fvec3 v)
+{
+  const float len = sqrtf(vec3dot(v, v));
+  if (len < 1.0e-6f) {
+    v[0] = v[1] = v[2] = 0.0f;
+    return false;
+  } else {
+    const float scale = 1.0f / len;
+    v[0] *= scale;
+    v[1] *= scale;
+    v[2] *= scale;
+  }
+  return true;
+}
 
 
 static inline bool makeNormal()
@@ -45,18 +62,7 @@ static inline bool makeNormal()
   }
 
   // normalize
-  const float dotsqrt = sqrtf(vec3dot(Normal, Normal));
-  if (dotsqrt < 1.0e-6f) {
-    Normal[0] = Normal[1] = Normal[2] = 0.0f;
-    return false;
-  } else {
-    const float scale = 1.0f / dotsqrt;
-    Normal[0] *= scale;
-    Normal[1] *= scale;
-    Normal[2] *= scale;
-  }
-  
-  return true;
+  return vec3norm(Normal);
 }
 
 
@@ -123,6 +129,20 @@ static inline bool isFaceClear(int w0, int w1, int w2)
 }
 
 
+static inline float getDot(int w0, int w1, int w2)
+{
+  const int v0 = WorkSet[w0];
+  const int v1 = WorkSet[w1];
+  const int v2 = WorkSet[w2];
+  fvec3 e0, e1;
+  vec3sub(e0, Verts[v1], Verts[v0]);
+  vec3sub(e1, Verts[v2], Verts[v1]);
+  vec3norm(e0);
+  vec3norm(e1);
+  return vec3dot(e0, e1);
+}
+
+
 void triangulateFace(int count, const float* const* verts,
                      std::vector<TriIndices>& tris)
 {
@@ -138,6 +158,8 @@ void triangulateFace(int count, const float* const* verts,
   
   int best = 0;
   bool left = false;
+  bool first = true;
+  float score = 0.0f;
   
   while (Count >= 3) {
     bool convex = false;
@@ -168,8 +190,18 @@ void triangulateFace(int count, const float* const* verts,
       }
 
       const bool faceClear2 = isFaceClear(w0, w1, w2);
-      if ((faceClear && !faceClear2) && (!convex || convex2)) {
+      if ((faceClear && !faceClear2) && (convex || !convex2)) {
         continue;
+      }
+      
+      if (first) {
+        const float score2 = 2.0f - getDot(w0, w1, w2);
+        if ((score2 < score) &&
+            (convex || !convex2) && (faceClear || !faceClear2)) {
+          continue;
+        } else {
+          score = score2;
+        }
       }
       
       best = w0;
@@ -180,6 +212,8 @@ void triangulateFace(int count, const float* const* verts,
       faceClear = faceClear2;
     }
 
+    first = false;
+    
     // add the triangle
     TriIndices ti;
     ti.indices[0] = WorkSet[(best + 0) % Count];

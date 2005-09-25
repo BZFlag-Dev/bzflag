@@ -155,7 +155,6 @@ class TrackSceneNode : public SceneNode {
   public:
     TrackSceneNode(const TrackEntry*, TrackType, const OpenGLGState*);
     ~TrackSceneNode();
-    bool isTranslucent() const { return false; }
     void addRenderNodes(SceneRenderer&);
     void update(); // set the sphere properties
 

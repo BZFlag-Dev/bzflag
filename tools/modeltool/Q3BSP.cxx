@@ -589,7 +589,7 @@ void Quake3Level::dumpContents(void)
 void Quake3Level::extractLightmaps(void) const
 {
 	// Lightmaps are always 128x128x24 (RGB)
-	unsigned char* pLightmap = mLightmaps;
+//	unsigned char* pLightmap = mLightmaps;
 	for (int i = 0; i < mNumLightmaps; ++i)
 	{
 		char name[32];

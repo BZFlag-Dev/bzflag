@@ -20,6 +20,7 @@
 #include <string.h>
 #include <string>
 #include <vector>
+#include <map>
 #include <iostream>
 
 // common headers
@@ -29,6 +30,7 @@
 #include "StateDatabase.h"
 #include "PhysicsDriver.h"
 #include "BzMaterial.h"
+#include "MeshDrawInfo.h"
 
 // obstacle headers
 #include "Obstacle.h"
@@ -502,7 +504,8 @@ void GroupDefinition::makeGroups(const MeshTransform& xform,
   active = true;
 
   const bool isWorld = (this == OBSTACLEMGR.getWorld());
-  char groupDefBit = isWorld ? 0 : Obstacle::GroupDefSource;
+  char groupDefBit = isWorld ? Obstacle::WorldSource :
+                               Obstacle::GroupDefSource;
 
   for (int type = 0; type < ObstacleTypeCount; type++) {
     const ObstacleList& list = lists[type];
@@ -516,7 +519,7 @@ void GroupDefinition::makeGroups(const MeshTransform& xform,
 
       // the tele names are setup with default names if
       // they are not named (even for those in the world
-      // groupd def). also, invalid teles are named
+      // groupd def). invalid teleporters are also named
       if (type == teleType) {
 	makeTeleName(obs, i);
       }
@@ -524,11 +527,28 @@ void GroupDefinition::makeGroups(const MeshTransform& xform,
       if (obs->isValid()) {
 	if (!isWorld) {
 	  // add it to the world
+	  // (this will also add container obstacles into the world group)
 	  obs->setSource(Obstacle::GroupDefSource);
 	  obsMod.execute(obs);
 	  OBSTACLEMGR.addWorldObstacle(obs);
+	  // add a modified MeshDrawInfo to the new mesh, if applicable
+	  if (type == meshType) {
+            const MeshObstacle* source = (const MeshObstacle*) list[i];
+            const MeshDrawInfo* diSource = source->getDrawInfo();
+            if ((diSource != NULL) && 
+                (!diSource->isServerSide()) && diSource->isValid()) {
+              MaterialSet matSet;
+              MaterialMap matMap;
+              diSource->getMaterials(matSet);
+              obsMod.getMaterialMap(matSet, matMap);
+              MeshDrawInfo* diDest = new MeshDrawInfo(diSource, xform, matMap);
+              MeshObstacle* dest = (MeshObstacle*) obs;
+              dest->setDrawInfo(diDest);
+            }
+          }
 	}
 	// generate contained meshes
+	// (always get placed into the world group)
 	MeshObstacle* mesh = makeContainedMesh(type, obs);
 	if ((mesh != NULL) && mesh->isValid()) {
 	  mesh->setSource(Obstacle::ContainerSource | groupDefBit);
@@ -652,6 +672,40 @@ void GroupDefinition::deleteInvalidObstacles()
 }
 
 
+void GroupDefinition::getSourceMeshes(std::vector<MeshObstacle*>& meshes) const
+{
+  const bool isWorld = (this == OBSTACLEMGR.getWorld());
+
+  const ObstacleList& list = lists[meshType];
+  for (unsigned int i = 0; i < list.size(); i++) {
+    MeshObstacle* mesh = (MeshObstacle*)list[i];
+    if (!isWorld || mesh->isFromWorldFile()) {
+      const int listSize = (int)meshes.size(); 
+      int j;
+      for (j = 0; j < listSize; j++) {
+        if (meshes[j] == mesh) {
+          break;
+        }
+      }
+      if (j == listSize) {
+        meshes.push_back(mesh); // a new entry
+      }
+    }
+  }
+  
+  for (unsigned int i = 0; i < groups.size(); i++) {
+    const GroupInstance* group = groups[i];
+    const GroupDefinition* groupDef =
+      OBSTACLEMGR.findGroupDef(group->getGroupDef());
+    if (groupDef != NULL) {
+      groupDef->getSourceMeshes(meshes);
+    }
+  }
+
+  return;
+}
+
+    
 void* GroupDefinition::pack(void* buf) const
 {
   buf = nboPackStdString(buf, name);
@@ -944,6 +998,14 @@ GroupDefinition* GroupDefinitionMgr::findGroupDef(const std::string& name) const
 }
 
 
+void GroupDefinitionMgr::getSourceMeshes(std::vector<MeshObstacle*>& meshes) const
+{
+  meshes.clear();
+  world.getSourceMeshes(meshes);
+  return;
+}
+
+    
 void* GroupDefinitionMgr::pack(void* buf) const
 {
   buf = world.pack(buf);

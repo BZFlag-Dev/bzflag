@@ -24,7 +24,7 @@
 class MeshPolySceneNode : public WallSceneNode {
   public:
     MeshPolySceneNode(const float plane[4],
-                      bool noRadar,
+                      bool noRadar, bool noShadow,
 		      const GLfloat3Array& vertices,
 		      const GLfloat3Array& normals,
 		      const GLfloat2Array& texcoords);
@@ -40,9 +40,9 @@ class MeshPolySceneNode : public WallSceneNode {
 
     void addRenderNodes(SceneRenderer&);
     void addShadowNodes(SceneRenderer&);
+    void renderRadar();
 
-    int getRenderNodeCount() { return 1; }
-    RenderNode* getRenderNode(int) { return &node; }
+    void getRenderNodes(std::vector<RenderSet>& rnodes);
 
 
   protected:
@@ -73,6 +73,7 @@ class MeshPolySceneNode : public WallSceneNode {
 	MeshPolySceneNode* sceneNode;
 	int style;
 	bool drawRadar;
+	bool draw;
 	const GLfloat* normal;
       public:
 	GLfloat3Array vertices;
@@ -104,6 +105,8 @@ class MeshPolySceneNode : public WallSceneNode {
 		     GLfloat* p, GLfloat* uv) const;
 
     Geometry node;
+    bool noRadar;
+    bool noShadow;
 };
 
 inline const int MeshPolySceneNode::Geometry::getVertexCount() const

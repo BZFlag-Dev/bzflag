@@ -13,6 +13,7 @@
 #include "common.h"
 #include "OpenGLMaterial.h"
 #include "OpenGLGState.h"
+#include "SceneRenderer.h"
 
 //
 // OpenGLMaterial::Rep
@@ -112,6 +113,17 @@ void			OpenGLMaterial::Rep::execute()
       glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, specular);
       glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, emissive);
       glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, shininess);
+      if (RENDERER.useQuality() > 0) {
+        if  ((specular[0] > 0.0f) ||
+             (specular[1] > 0.0f) ||
+             (specular[2] > 0.0f)) {
+          // accurate specular highlighting  (more GPU intensive)
+          glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, GL_TRUE);
+        } else {
+          // speed up the lighting calcs be simplifying
+          glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, GL_FALSE);
+        }
+      }
     }
     glEndList();
   }

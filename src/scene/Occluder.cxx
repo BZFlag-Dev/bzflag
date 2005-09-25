@@ -159,7 +159,7 @@ static void print_scores (Occluder** olist, int count, const char* str)
 }
 
 
-void OccluderManager::select(SceneNode** list, int listCount)
+void OccluderManager::select(const SceneNode* const* list, int listCount)
 {
   int oc;
 
@@ -204,7 +204,7 @@ void OccluderManager::select(SceneNode** list, int listCount)
     target = listCount;
   }
   while (activeOccluders < target) {
-    SceneNode* sceneNode = list[rand() % listCount];
+    const SceneNode* sceneNode = list[rand() % listCount];
     occluders[activeOccluders] = new Occluder(sceneNode);
     if (occluders[activeOccluders]->getVertexCount() == 0) {
       delete occluders[activeOccluders];
@@ -273,7 +273,7 @@ const bool Occluder::DrawEdges = true;
 const bool Occluder::DrawNormals = false;
 const bool Occluder::DrawVertices = true;
 
-Occluder::Occluder(SceneNode* node)
+Occluder::Occluder(const SceneNode* node)
 {
   sceneNode = node;
   planes = NULL;
@@ -281,7 +281,7 @@ Occluder::Occluder(SceneNode* node)
   cullScore = 0;
 
   vertexCount = node->getVertexCount();
-  if ((vertexCount < 3) || (node->getPlane() == NULL)) {
+  if (!node->isOccluder()) {
     vertexCount = 0; // used to flag a bad occluder
     return;
   }
@@ -356,11 +356,6 @@ static bool makePlane (const float* p1, const float* p2, const float* pc,
 
 bool Occluder::makePlanes(const Frustum* frustum)
 {
-  // you can see through glass
-  if (sceneNode->isTranslucent()) {
-    return false;
-  }
-
   // occluders can't have their back towards the camera
   const float* eye = frustum->getEye();
   const float* p = sceneNode->getPlane();

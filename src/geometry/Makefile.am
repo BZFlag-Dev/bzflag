@@ -18,6 +18,10 @@ libGeometry_la_SOURCES  =		\
 	TriWallSceneNode.cxx		\
 	MeshFragSceneNode.cxx		\
 	MeshPolySceneNode.cxx		\
+	MeshSceneNode.cxx		\
+	MeshRenderNode.cxx		\
+	MeshDrawMgr.cxx			\
+	OccluderSceneNode.cxx		\
 	PolyWallSceneNode.cxx		\
 	EighthDimSceneNode.cxx		\
 	EighthDimShellNode.cxx		\

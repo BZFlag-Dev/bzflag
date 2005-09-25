@@ -13,10 +13,11 @@
 #ifndef	BZF_OBSTACLE_MODIFIER_H
 #define	BZF_OBSTACLE_MODIFIER_H
 
+// common headers
+#include "BzMaterial.h"
 
 class Obstacle;
 class GroupInstance;
-class BzMaterial;
 
 
 class ObstacleModifier {
@@ -29,6 +30,8 @@ class ObstacleModifier {
 
     void execute(Obstacle* obstacle) const;
 
+    void getMaterialMap(const MaterialSet& matSet, MaterialMap& matMap) const;
+    
   private:
     bool modifyTeam; // only for bases
     int team;

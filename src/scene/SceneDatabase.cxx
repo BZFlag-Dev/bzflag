@@ -31,6 +31,11 @@ SceneDatabase::~SceneDatabase()
   // do nothing
 }
 
+void SceneDatabase::setOccluderManager(int)
+{
+  // do nothing
+}
+
 
 // Local Variables: ***
 // mode:C++ ***

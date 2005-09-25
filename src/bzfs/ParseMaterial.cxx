@@ -146,6 +146,26 @@ bool parseMaterials(const char* cmd, std::istream& input,
       materials[i].setNoRadar(true);
     }
   }
+  else if (strcasecmp(cmd, "noshadow") == 0) {
+    for (i = 0; i < materialCount; i++) {
+      materials[i].setNoShadow(true);
+    }
+  }
+  else if (strcasecmp(cmd, "nolighting") == 0) {
+    for (i = 0; i < materialCount; i++) {
+      materials[i].setNoLighting(true);
+    }
+  }
+  else if (strcasecmp(cmd, "occluder") == 0) {
+    for (i = 0; i < materialCount; i++) {
+      materials[i].setOccluder(true);
+    }
+  }
+  else if (strcasecmp(cmd, "groupAlpha") == 0) {
+    for (i = 0; i < materialCount; i++) {
+      materials[i].setGroupAlpha(true);
+    }
+  }
   else if (strcasecmp(cmd, "texture") == 0) {
     std::string name;
     if (!(input >> name)) {

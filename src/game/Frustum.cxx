@@ -185,7 +185,7 @@ void			Frustum::setProjection(float fov, float _m_near,
   deepProjectionMatrix[14] = -20.0f * m_far * m_near / (10.0f * m_far - m_near);
 
   // get field of view in y direction
-  fovy = atanf(1.0f / projectionMatrix[5]);
+  fovy = 2.0f * atanf(1.0f / projectionMatrix[5]);
 
   // compute areaFactor
   areaFactor = 0.25f * s * float(height);

@@ -14,4 +14,8 @@ libDate_la_SOURCES = \
 
 buildDate.o: FORCE
 
+libDate.a: FORCE
+
+libDate.la: FORCE
+
 FORCE:

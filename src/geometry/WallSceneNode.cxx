@@ -293,11 +293,6 @@ void			WallSceneNode::setNoSorting(bool value)
   noSorting = value;
 }
 
-bool			WallSceneNode::isTranslucent() const
-{
-  return isBlended;
-}
-
 void			WallSceneNode::setMaterial(const OpenGLMaterial& mat)
 {
   OpenGLGStateBuilder builder(gstate);

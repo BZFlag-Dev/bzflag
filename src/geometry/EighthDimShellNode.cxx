@@ -24,48 +24,64 @@
 #include "OpenGLGState.h"
 #include "BZDBCache.h"
 
+
 EighthDimShellNode::EighthDimShellNode(SceneNode* node, bool _ownTheNode)
 {
   sceneNode = node;
   ownTheNode = _ownTheNode;
 
-  const OpenGLGState* gs = node->getGState();
-  if (gs == NULL) {
-    renderNodeCount = 0;
-    renderNodes = NULL;
-    return;
-  }
-
-  notifyStyleChange(); // setup the gstate
-
-  renderNodeCount = sceneNode->getRenderNodeCount();
-  if (renderNodeCount > 0) {
-    renderNodes = new ShellRenderNode*[renderNodeCount];
-    int count = 0;
-    for (int i = 0; i < renderNodeCount; i++) {
-      RenderNode* rnode = node->getRenderNode(i);
-      if (rnode != NULL) {
-	renderNodes[count] = new ShellRenderNode(rnode);
-	count++;
-      }
-    }
-    renderNodeCount = count;
-  } else {
-    renderNodes = NULL;
-  }
+  makeNodes();  
 
   return;
 }
+
 
 EighthDimShellNode::~EighthDimShellNode()
 {
   if (ownTheNode) {
     delete sceneNode;
   }
-  for (int i = 0; i < renderNodeCount; i++) {
-    delete renderNodes[i];
+  killNodes();
+  return;
+}
+
+void EighthDimShellNode::makeNodes()
+{
+  std::vector<RenderSet> rnodes;
+  sceneNode->getRenderNodes(rnodes);
+  
+  shellNodeCount = (int)rnodes.size();
+  if (shellNodeCount <= 0) {
+    shellNodeCount = 0;
+    shellNodes = NULL;
+    return;
   }
-  delete[] renderNodes;
+
+  shellNodes = new ShellRenderNode*[shellNodeCount];
+  for (int i = 0; i < shellNodeCount; i++) {
+    shellNodes[i] = new ShellRenderNode(rnodes[i].node, rnodes[i].gstate);
+  }
+
+  return;
+}
+
+
+void EighthDimShellNode::killNodes()
+{
+  for (int i = 0; i < shellNodeCount; i++) {
+    delete shellNodes[i];
+  }
+  delete[] shellNodes;
+  shellNodes = NULL;
+  shellNodeCount = 0;
+  return;
+}
+
+
+void EighthDimShellNode::notifyStyleChange()
+{
+  killNodes();
+  makeNodes();
   return;
 }
 
@@ -77,33 +93,10 @@ bool EighthDimShellNode::cull(const ViewFrustum&) const
 }
 
 
-void EighthDimShellNode::notifyStyleChange()
-{
-  const OpenGLGState* gs = sceneNode->getGState();
-  if (gs == NULL) { // safety
-    return;
-  }
-
-  OpenGLGStateBuilder gb = *gs;
-
-  if (BZDBCache::blend && (RENDERER.useQuality() >= 3)) {
-    gb.setBlending(GL_ONE, GL_ONE);
-  } else {
-    gb.resetBlending();
-  }
-
-  gb.setCulling(GL_FRONT); // invert the culling
-
-  gstate = gb.getState(); // get the modified gstate
-
-  return;
-}
-
-
 void EighthDimShellNode::addRenderNodes(SceneRenderer& renderer)
 {
-  for (int i = 0; i < renderNodeCount; i++) {
-    renderer.addRenderNode(renderNodes[i], &gstate);
+  for (int i = 0; i < shellNodeCount; i++) {
+    renderer.addRenderNode(shellNodes[i], shellNodes[i]->getGState());
   }
   return;
 }
@@ -113,9 +106,21 @@ void EighthDimShellNode::addRenderNodes(SceneRenderer& renderer)
 // EighthDimShellNode::ShellRenderNode
 //
 
-EighthDimShellNode::ShellRenderNode::ShellRenderNode(RenderNode *node)
+EighthDimShellNode::ShellRenderNode::ShellRenderNode(RenderNode *node,
+                                                     const OpenGLGState* gs)
+                                                     
 {
   renderNode = node;
+
+  OpenGLGStateBuilder gb = *gs;
+  if (BZDBCache::blend && (RENDERER.useQuality() >= 3)) {
+    gb.setBlending(GL_ONE, GL_ONE);
+  } else {
+    gb.resetBlending();
+  }
+  gb.setCulling(GL_FRONT); // invert the culling
+  gstate = gb.getState(); // get the modified gstate
+  
   return;
 }
 
@@ -126,6 +131,12 @@ EighthDimShellNode::ShellRenderNode::~ShellRenderNode()
 }
 
 
+const OpenGLGState* EighthDimShellNode::ShellRenderNode::getGState() const
+{
+  return &gstate;
+}
+  
+  
 void EighthDimShellNode::ShellRenderNode::render()
 {
 //  glLogicOp(GL_XOR);

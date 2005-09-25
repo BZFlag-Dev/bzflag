@@ -19,6 +19,7 @@
 #include <string.h>
 #include <string>
 #include <vector>
+#include <map>
 #include <iostream>
 
 // common headers
@@ -110,7 +111,7 @@ ObstacleModifier::ObstacleModifier(const ObstacleModifier& obsMod,
 
   driveThrough = grpinst.driveThrough || obsMod.driveThrough;
   shootThrough = grpinst.shootThrough || obsMod.shootThrough;
-
+  
   return;
 }
 
@@ -150,21 +151,17 @@ void ObstacleModifier::execute(Obstacle* obstacle) const
       base->team = team;
     }
   }
-  if (modifyMaterial) { // do this before tinting
+  if (modifyColor || modifyMaterial) {
     if (obstacle->getType() == MeshObstacle::getClassName()) {
       const MeshObstacle* mesh = (MeshObstacle*) obstacle;
       for (int i = 0; i < mesh->getFaceCount(); i++) {
 	MeshFace* face = (MeshFace*) mesh->getFace(i);
-	face->bzMaterial = material;
-      }
-    }
-  }
-  if (modifyColor) {
-    if (obstacle->getType() == MeshObstacle::getClassName()) {
-      const MeshObstacle* mesh = (MeshObstacle*) obstacle;
-      for (int i = 0; i < mesh->getFaceCount(); i++) {
-	MeshFace* face = (MeshFace*) mesh->getFace(i);
-	face->bzMaterial = getTintedMaterial(tint, face->bzMaterial);
+	if (modifyMaterial) {
+	  face->bzMaterial = material;
+        }
+        if (modifyColor) {
+	  face->bzMaterial = getTintedMaterial(tint, face->bzMaterial);
+        }
       }
     }
   }
@@ -201,6 +198,31 @@ void ObstacleModifier::execute(Obstacle* obstacle) const
     }
   }
 
+  return;
+}
+
+
+void ObstacleModifier::getMaterialMap(const MaterialSet& matSet,
+                                      MaterialMap& matMap) const
+{
+  matMap.clear();
+  
+  if (modifyColor || modifyMaterial) {
+    MaterialSet::const_iterator it;
+    for (it = matSet.begin(); it != matSet.end(); it++) {
+      const BzMaterial* origMat = *it;
+      const BzMaterial* convMat = *it;
+      if (modifyMaterial) {
+        convMat = material;
+      }
+      if (modifyColor) {
+        convMat = getTintedMaterial(tint, convMat);
+      }
+      if (convMat != origMat) {
+        matMap[origMat] = convMat;
+      }
+    }
+  }
   return;
 }
 

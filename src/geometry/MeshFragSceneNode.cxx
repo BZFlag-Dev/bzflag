@@ -44,7 +44,6 @@ static int minLightDisabling = 100;
 MeshFragSceneNode::Geometry::Geometry(MeshFragSceneNode* node)
 {
   style = 0;
-  drawRadar = true;
   sceneNode = node;
   return;
 }
@@ -55,6 +54,72 @@ MeshFragSceneNode::Geometry::~Geometry()
   // do nothing
   return;
 }
+
+
+inline void MeshFragSceneNode::Geometry::drawV() const
+{
+  glVertexPointer(3, GL_FLOAT, 0, sceneNode->vertices);
+  glEnableClientState(GL_VERTEX_ARRAY);
+
+  glDrawArrays(GL_TRIANGLES, 0, sceneNode->arrayCount * 3);
+
+  glDisableClientState(GL_VERTEX_ARRAY);
+
+  return;
+}
+
+
+inline void MeshFragSceneNode::Geometry::drawVT() const
+{
+  glVertexPointer(3, GL_FLOAT, 0, sceneNode->vertices);
+  glEnableClientState(GL_VERTEX_ARRAY);
+  glTexCoordPointer(2, GL_FLOAT, 0, sceneNode->texcoords);
+  glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+
+  glDrawArrays(GL_TRIANGLES, 0, sceneNode->arrayCount * 3);
+
+  glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+  glDisableClientState(GL_VERTEX_ARRAY);
+
+  return;
+}
+
+
+inline void MeshFragSceneNode::Geometry::drawVN() const
+{
+  glVertexPointer(3, GL_FLOAT, 0, sceneNode->vertices);
+  glEnableClientState(GL_VERTEX_ARRAY);
+  glNormalPointer(GL_FLOAT, 0, sceneNode->normals);
+  glEnableClientState(GL_NORMAL_ARRAY);
+
+  glDrawArrays(GL_TRIANGLES, 0, sceneNode->arrayCount * 3);
+
+  glDisableClientState(GL_NORMAL_ARRAY);
+  glDisableClientState(GL_VERTEX_ARRAY);
+
+  return;
+}
+
+
+inline void MeshFragSceneNode::Geometry::drawVTN() const
+{
+
+  glVertexPointer(3, GL_FLOAT, 0, sceneNode->vertices);
+  glEnableClientState(GL_VERTEX_ARRAY);
+  glNormalPointer(GL_FLOAT, 0, sceneNode->normals);
+  glEnableClientState(GL_NORMAL_ARRAY);
+  glTexCoordPointer(2, GL_FLOAT, 0, sceneNode->texcoords);
+  glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+
+  glDrawArrays(GL_TRIANGLES, 0, sceneNode->arrayCount * 3);
+
+  glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+  glDisableClientState(GL_NORMAL_ARRAY);
+  glDisableClientState(GL_VERTEX_ARRAY);
+
+  return;
+}
+
 
 void MeshFragSceneNode::Geometry::render()
 {
@@ -89,18 +154,9 @@ void MeshFragSceneNode::Geometry::render()
 }
 
 
-void MeshFragSceneNode::Geometry::setNoRadar()
-{
-  drawRadar = false;
-  return;
-}
-
-
 void MeshFragSceneNode::Geometry::renderRadar()
 {
-  if (drawRadar) {
-    drawV();
-  }
+  drawV();
   return;
 }
 
@@ -108,71 +164,6 @@ void MeshFragSceneNode::Geometry::renderRadar()
 void MeshFragSceneNode::Geometry::renderShadow()
 {
   drawV();
-  return;
-}
-
-
-void MeshFragSceneNode::Geometry::drawV() const
-{
-  glVertexPointer(3, GL_FLOAT, 0, sceneNode->vertices);
-  glEnableClientState(GL_VERTEX_ARRAY);
-
-  glDrawArrays(GL_TRIANGLES, 0, sceneNode->arrayCount * 3);
-
-  glDisableClientState(GL_VERTEX_ARRAY);
-
-  return;
-}
-
-
-void MeshFragSceneNode::Geometry::drawVT() const
-{
-  glVertexPointer(3, GL_FLOAT, 0, sceneNode->vertices);
-  glEnableClientState(GL_VERTEX_ARRAY);
-  glTexCoordPointer(2, GL_FLOAT, 0, sceneNode->texcoords);
-  glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-
-  glDrawArrays(GL_TRIANGLES, 0, sceneNode->arrayCount * 3);
-
-  glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-  glDisableClientState(GL_VERTEX_ARRAY);
-
-  return;
-}
-
-
-void MeshFragSceneNode::Geometry::drawVN() const
-{
-  glVertexPointer(3, GL_FLOAT, 0, sceneNode->vertices);
-  glEnableClientState(GL_VERTEX_ARRAY);
-  glNormalPointer(GL_FLOAT, 0, sceneNode->normals);
-  glEnableClientState(GL_NORMAL_ARRAY);
-
-  glDrawArrays(GL_TRIANGLES, 0, sceneNode->arrayCount * 3);
-
-  glDisableClientState(GL_NORMAL_ARRAY);
-  glDisableClientState(GL_VERTEX_ARRAY);
-
-  return;
-}
-
-
-void MeshFragSceneNode::Geometry::drawVTN() const
-{
-
-  glVertexPointer(3, GL_FLOAT, 0, sceneNode->vertices);
-  glEnableClientState(GL_VERTEX_ARRAY);
-  glNormalPointer(GL_FLOAT, 0, sceneNode->normals);
-  glEnableClientState(GL_NORMAL_ARRAY);
-  glTexCoordPointer(2, GL_FLOAT, 0, sceneNode->texcoords);
-  glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-
-  glDrawArrays(GL_TRIANGLES, 0, sceneNode->arrayCount * 3);
-
-  glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-  glDisableClientState(GL_NORMAL_ARRAY);
-  glDisableClientState(GL_VERTEX_ARRAY);
-
   return;
 }
 
@@ -197,11 +188,11 @@ MeshFragSceneNode::MeshFragSceneNode(int _faceCount, const MeshFace** _faces)
   static const float fakePlane[4] = {0.0f, 0.0f, 1.0f, 0.0f};
   setPlane(fakePlane);
   
-  // disable radar if required
   const BzMaterial* bzmat = faces[0]->getMaterial();
-  if (bzmat->getNoRadar()) {
-    renderNode.setNoRadar();
-  }
+
+  // disable radar and shadows if required
+  noRadar = bzmat->getNoRadar();
+  noShadow = bzmat->getNoShadow();
 
   // set lod info
   setNumLODs(0, NULL /* unused because LOD = 0 */);
@@ -358,10 +349,29 @@ void MeshFragSceneNode::addRenderNodes(SceneRenderer& renderer)
 
 void MeshFragSceneNode::addShadowNodes(SceneRenderer& renderer)
 {
-  const GLfloat* dyncol = getDynamicColor();
-  if ((dyncol == NULL) || (dyncol[3] != 0.0f)) {
-    renderer.addShadowNode(&renderNode);
+  if (!noShadow) {
+    const GLfloat* dyncol = getDynamicColor();
+    if ((dyncol == NULL) || (dyncol[3] != 0.0f)) {
+      renderer.addShadowNode(&renderNode);
+    }
   }
+  return;
+}
+
+
+void MeshFragSceneNode::renderRadar()
+{
+  if (!noRadar) {
+    renderNode.renderRadar();
+  }
+  return;
+}
+
+
+void MeshFragSceneNode::getRenderNodes(std::vector<RenderSet>& rnodes)
+{
+  RenderSet rs = { &renderNode, getWallGState() };
+  rnodes.push_back(rs);
   return;
 }
 

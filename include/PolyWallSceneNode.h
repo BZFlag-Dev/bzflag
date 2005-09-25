@@ -31,9 +31,9 @@ class PolyWallSceneNode : public WallSceneNode {
 
     void		addRenderNodes(SceneRenderer&);
     void		addShadowNodes(SceneRenderer&);
+    void		renderRadar();
 
-    RenderNode* getRenderNode(int) { return node; }
-    int		getRenderNodeCount() { return 1; }
+    void		getRenderNodes(std::vector<RenderSet>& rnodes);
 
   protected:
     class Geometry : public RenderNode {

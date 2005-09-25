@@ -206,6 +206,7 @@ struct CmdLineOptions
 
 
 void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile = false);
+void finalizeParsing(int argc, char **argv, CmdLineOptions &options);
 bool checkCommaList (const char *list, int maxlen);
 
 #else

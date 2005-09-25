@@ -35,6 +35,7 @@
 #include "PhysicsDriver.h"
 #include "ObstacleMgr.h"
 #include "CollisionManager.h"
+#include "MeshSceneNode.h"
 
 // local implementation headers
 #include "LocalPlayer.h"
@@ -488,6 +489,7 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
 
     // get size of pixel in model space (assumes radar is square)
     ps = 2.0f * (radarRange / GLfloat(w));
+    MeshSceneNode::setRadarLodScale(ps);
 
     float tankWidth = BZDBCache::tankWidth;
     float tankLength = BZDBCache::tankLength;
@@ -906,10 +908,13 @@ void RadarRenderer::renderBoxPyrMeshFast(float _range)
   // set the color
   glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 
-  // NOTE: it's also interesting to just use the viewing frustum
-  ViewFrustum radarClipper;
-  radarClipper.setOrthoPlanes(RENDERER.getViewFrustum(), _range, _range);
-  RENDERER.getSceneDatabase()->renderRadarNodes(radarClipper);
+//  if (!BZDB.isTrue("visualRadar")) {
+    ViewFrustum radarClipper;
+    radarClipper.setOrthoPlanes(RENDERER.getViewFrustum(), _range, _range);
+    RENDERER.getSceneDatabase()->renderRadarNodes(radarClipper);
+//  } else {
+//    RENDERER.getSceneDatabase()->renderRadarNodes(RENDERER.getViewFrustum());
+//  }
 
   // restore texture generation
   glDisable(GL_TEXTURE_GEN_S);

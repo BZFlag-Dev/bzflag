@@ -5136,6 +5136,7 @@ void drawFrame(const float dt)
 #if defined(DEBUG_RENDERING)
       // get an accurate measure of frame time (at expense of frame rate)
       glFinish();
+      
 #endif
       media->stopwatch(true);
     }
@@ -6025,6 +6026,11 @@ static void		playingLoop()
 
     // update explosion animations
     updateExplosions(dt);
+
+    // update mesh animations
+    if (world) {
+      world->updateAnimations(dt);
+    }
 
     // prep the HUD
     prepareTheHUD();

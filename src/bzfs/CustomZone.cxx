@@ -22,7 +22,8 @@
 #include <math.h>
 
 /* local implementation headers */
-#include "EntryZones.h"
+//#include "EntryZones.h"
+#include "WorldInfo.h"
 #include "Flag.h"
 #include "Team.h"
 
@@ -59,6 +60,20 @@ void CustomZone::addFlagSafety(float x, float y, WorldInfo* worldInfo)
 }
 
 
+void CustomZone::addZoneFlagCount(const char* flagAbbr, int count)
+{
+  ZoneFlagMap::iterator it = zoneFlagMap.find(flagAbbr);
+  if (it != zoneFlagMap.end()) {
+    count += it->second;
+  }
+  if (count < 0) {
+    count = 0;
+  }
+  zoneFlagMap[flagAbbr] = count;
+  return;
+}
+
+
 bool CustomZone::read(const char *cmd, std::istream& input) {
   if (strcmp(cmd, "flag") == 0) {
     std::string args, flag;
@@ -89,14 +104,54 @@ bool CustomZone::read(const char *cmd, std::istream& input) {
       }
       else {
 	type = Flag::getDescFromAbbreviation(flag.c_str());
-	if (type == Flags::Null)
+	if (type == Flags::Null) {
+          DEBUG1("WARNING: bad flag type: %s\n", flag.c_str());
 	  return false;
+        }
 	qualifiers.push_back(flag);
       }
     }
     input.putback('\n');
     if (qualifiers.size() == 0)
       return false;
+  }
+  else if (strcmp(cmd, "zoneflag") == 0) {
+    std::string flag;
+    int count;
+    if (!(input >> flag)) {
+      return false;
+    }
+    if (!(input >> count)) {
+      count = 1;
+    }
+
+    if (flag == "good") {
+      FlagSet &fs = Flag::getGoodFlags();
+      for (FlagSet::iterator it = fs.begin(); it != fs.end(); ++it) {
+        FlagType *f = *it;
+        if (f->endurance != FlagNormal) { // Null and Team flags
+          addZoneFlagCount(f->flagAbbv, count);
+        }
+      }
+    }
+    else if (flag == "bad") {
+      FlagSet &fs = Flag::getBadFlags();
+      for (FlagSet::iterator it = fs.begin(); it != fs.end(); ++it) {
+        FlagType *f = *it;
+        if (f->endurance != FlagNormal) { // Null and Team flags
+          addZoneFlagCount(f->flagAbbv, count);
+        }
+      }
+    }
+    else {
+      FlagType *f = Flag::getDescFromAbbreviation(flag.c_str());
+      if (f != Flags::Null) {
+        addZoneFlagCount(f->flagAbbv, count);
+      } else {
+        DEBUG1("WARNING: bad zoneflag type: %s\n", flag.c_str());
+        return false;
+      }
+    }
   }
   else if ((strcmp(cmd, "team") == 0) || (strcmp(cmd, "safety") == 0)) {
     std::string args;

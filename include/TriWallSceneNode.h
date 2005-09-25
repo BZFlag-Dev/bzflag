@@ -34,6 +34,7 @@ class TriWallSceneNode : public WallSceneNode {
 
     void		addRenderNodes(SceneRenderer&);
     void		addShadowNodes(SceneRenderer&);
+    void		renderRadar();
 
     bool		inAxisBox (const Extents& exts) const;
 
@@ -42,8 +43,7 @@ class TriWallSceneNode : public WallSceneNode {
 
     bool		cull(const ViewFrustum&) const;
 
-    RenderNode* getRenderNode(int) { return nodes[0]; }
-    int		getRenderNodeCount() { return 1; }
+    void 		getRenderNodes(std::vector<RenderSet>& rnodes);
 
   protected:
     class Geometry : public RenderNode {

@@ -40,7 +40,6 @@ MeshPolySceneNode::Geometry::Geometry(MeshPolySceneNode* node,
 {
   sceneNode = node;
   normal = _normal;
-  drawRadar = true;
   style = 0;
   return;
 }
@@ -51,6 +50,58 @@ MeshPolySceneNode::Geometry::~Geometry()
   // do nothing
   return;
 }
+
+inline void MeshPolySceneNode::Geometry::drawV() const
+{
+  const int count = vertices.getSize();
+  glBegin(GL_TRIANGLE_FAN);
+  for (int i = 0; i < count; i++) {
+    glVertex3fv(vertices[i]);
+  }
+  glEnd();
+  return;
+}
+
+
+inline void MeshPolySceneNode::Geometry::drawVT() const
+{
+  const int count = vertices.getSize();
+  glBegin(GL_TRIANGLE_FAN);
+  for (int i = 0; i < count; i++) {
+    glTexCoord2fv(texcoords[i]);
+    glVertex3fv(vertices[i]);
+  }
+  glEnd();
+  return;
+}
+
+
+inline void MeshPolySceneNode::Geometry::drawVN() const
+{
+  const int count = vertices.getSize();
+  glBegin(GL_TRIANGLE_FAN);
+  for (int i = 0; i < count; i++) {
+    glNormal3fv(normals[i]);
+    glVertex3fv(vertices[i]);
+  }
+  glEnd();
+  return;
+}
+
+
+inline void MeshPolySceneNode::Geometry::drawVTN() const
+{
+  const int count = vertices.getSize();
+  glBegin(GL_TRIANGLE_FAN);
+  for (int i = 0; i < count; i++) {
+    glTexCoord2fv(texcoords[i]);
+    glNormal3fv(normals[i]);
+    glVertex3fv(vertices[i]);
+  }
+  glEnd();
+  return;
+}
+
 
 void MeshPolySceneNode::Geometry::render()
 {
@@ -75,23 +126,9 @@ void MeshPolySceneNode::Geometry::render()
 }
 
 
-bool MeshPolySceneNode::Geometry::getNoRadar() const
-{
-  return drawRadar;
-}
-
-
-void MeshPolySceneNode::Geometry::setNoRadar()
-{
-  drawRadar = false;
-}
-
-
 void MeshPolySceneNode::Geometry::renderRadar()
 {
-  if (drawRadar) {
-    drawV();
-  }
+  drawV();
 }
 
 
@@ -101,63 +138,12 @@ void MeshPolySceneNode::Geometry::renderShadow()
 }
 
 
-void MeshPolySceneNode::Geometry::drawV() const
-{
-  const int count = vertices.getSize();
-  glBegin(GL_TRIANGLE_FAN);
-  for (int i = 0; i < count; i++) {
-    glVertex3fv(vertices[i]);
-  }
-  glEnd();
-  return;
-}
-
-
-void MeshPolySceneNode::Geometry::drawVT() const
-{
-  const int count = vertices.getSize();
-  glBegin(GL_TRIANGLE_FAN);
-  for (int i = 0; i < count; i++) {
-    glTexCoord2fv(texcoords[i]);
-    glVertex3fv(vertices[i]);
-  }
-  glEnd();
-  return;
-}
-
-
-void MeshPolySceneNode::Geometry::drawVN() const
-{
-  const int count = vertices.getSize();
-  glBegin(GL_TRIANGLE_FAN);
-  for (int i = 0; i < count; i++) {
-    glNormal3fv(normals[i]);
-    glVertex3fv(vertices[i]);
-  }
-  glEnd();
-  return;
-}
-
-
-void MeshPolySceneNode::Geometry::drawVTN() const
-{
-  const int count = vertices.getSize();
-  glBegin(GL_TRIANGLE_FAN);
-  for (int i = 0; i < count; i++) {
-    glTexCoord2fv(texcoords[i]);
-    glNormal3fv(normals[i]);
-    glVertex3fv(vertices[i]);
-  }
-  glEnd();
-  return;
-}
-
-
 //
 // MeshPolySceneNode
 //
 
-MeshPolySceneNode::MeshPolySceneNode(const float _plane[4], bool noRadar,
+MeshPolySceneNode::MeshPolySceneNode(const float _plane[4],
+                                     bool _noRadar, bool _noShadow,
 				     const GLfloat3Array& vertices,
 				     const GLfloat3Array& normals,
 				     const GLfloat2Array& texcoords) :
@@ -170,9 +156,8 @@ MeshPolySceneNode::MeshPolySceneNode(const float _plane[4], bool noRadar,
 
   setPlane(_plane);
   
-  if (noRadar) {
-    node.setNoRadar();
-  }
+  noRadar = _noRadar || (plane[2] <= 0.0f); // pre-cull if we can
+  noShadow = _noShadow;
 
   // choose axis to ignore (the one with the largest normal component)
   int ignoreAxis;
@@ -324,9 +309,20 @@ void MeshPolySceneNode::addRenderNodes(SceneRenderer& renderer)
 
 void MeshPolySceneNode::addShadowNodes(SceneRenderer& renderer)
 {
-  const GLfloat* dyncol = getDynamicColor();
-  if ((dyncol == NULL) || (dyncol[3] != 0.0f)) {
-    renderer.addShadowNode(&node);
+  if (!noShadow) {
+    const GLfloat* dyncol = getDynamicColor();
+    if ((dyncol == NULL) || (dyncol[3] != 0.0f)) {
+      renderer.addShadowNode(&node);
+    }
+  }
+  return;
+}
+
+
+void MeshPolySceneNode::renderRadar()
+{
+  if (!noRadar) {
+    node.renderRadar();
   }
   return;
 }
@@ -496,10 +492,9 @@ int MeshPolySceneNode::splitWallVTN(const GLfloat* splitPlane,
   }
 
   // make new nodes
-  const bool noRadar = node.getNoRadar();
-  front = new MeshPolySceneNode(getPlane(), noRadar,
+  front = new MeshPolySceneNode(getPlane(), noRadar, noShadow,
                                 vertexFront, normalFront, uvFront);
-  back = new MeshPolySceneNode(getPlane(), noRadar,
+  back = new MeshPolySceneNode(getPlane(), noRadar, noShadow,
                                vertexBack, normalBack, uvBack);
 
   // free the arrays, if required
@@ -706,10 +701,9 @@ int MeshPolySceneNode::splitWallVT(const GLfloat* splitPlane,
   }
 
   // make new nodes
-  const bool noRadar = node.getNoRadar();
-  front = new MeshPolySceneNode(getPlane(), noRadar,
+  front = new MeshPolySceneNode(getPlane(), noRadar, noShadow,
                                 vertexFront, normalFront, uvFront);
-  back = new MeshPolySceneNode(getPlane(), noRadar,
+  back = new MeshPolySceneNode(getPlane(), noRadar, noShadow,
                                vertexBack, normalBack, uvBack);
 
   // free the arrays, if required
@@ -742,6 +736,14 @@ void MeshPolySceneNode::splitEdgeVT(float d1, float d2,
   uv[0] = uv1[0] + (t1 * (uv2[0] - uv1[0]));
   uv[1] = uv1[1] + (t1 * (uv2[1] - uv1[1]));
 
+  return;
+}
+
+
+void MeshPolySceneNode::getRenderNodes(std::vector<RenderSet>& rnodes)
+{
+  RenderSet rs = { &node, getWallGState() };
+  rnodes.push_back(rs);
   return;
 }
 

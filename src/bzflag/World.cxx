@@ -35,6 +35,8 @@
 #include "MeshTransform.h"
 #include "FlagSceneNode.h"
 #include "ObstacleMgr.h"
+#include "MeshDrawInfo.h"
+#include "MeshDrawMgr.h"
 #include "DirectoryNames.h"
 
 // local implementation headers
@@ -67,6 +69,8 @@ World::World() :
   waterLevel = -1.0f;
   waterMaterial = NULL;
   linkMaterial = NULL;
+  drawInfoCount = 0;
+  drawInfoArray = NULL;
 }
 
 
@@ -75,6 +79,7 @@ World::~World()
   int i;
   freeFlags();
   freeInsideNodes();
+  freeMeshDrawMgrs();  
   for (i = 0; i < curMaxPlayers; i++)
     delete players[i];
   delete[] players;
@@ -529,6 +534,52 @@ void			World::freeFlags()
   flagWarpNodes = NULL;
 }
 
+void			World::makeMeshDrawMgrs()
+{
+  // make the display list managers for source meshes
+  std::vector<MeshObstacle*> sourceMeshes;
+  OBSTACLEMGR.getSourceMeshes(sourceMeshes);
+  unsigned int count = sourceMeshes.size();
+  drawInfoArray = new MeshDrawInfo*[count];
+  drawInfoCount = 0;
+  for (unsigned int i = 0; i < count; i++) {
+    MeshDrawInfo* di = (MeshDrawInfo*) sourceMeshes[i]->getDrawInfo();
+    if ((di != NULL) && !di->isCopy()) {
+      MeshDrawMgr* dm = new MeshDrawMgr(di);
+      di->setDrawMgr(dm);
+      drawInfoArray[drawInfoCount] = di;
+      drawInfoCount++;
+    }
+  }
+  return;
+}
+
+
+void			World::freeMeshDrawMgrs()
+{
+  for (int i = 0; i < drawInfoCount; i++) {
+    MeshDrawInfo* di = drawInfoArray[i];
+    MeshDrawMgr* dm = di->getDrawMgr();
+    delete dm;
+    di->setDrawMgr(NULL);
+  }
+  drawInfoCount = 0;
+  delete[] drawInfoArray;
+  drawInfoArray = NULL;
+  return;
+}
+
+
+void			World::updateAnimations(float /*dt*/)
+{
+  for (int i = 0; i < drawInfoCount; i++) {
+    MeshDrawInfo* di = drawInfoArray[i];
+    di->updateAnimation();
+  }
+  return;
+}
+
+
 void			World::freeInsideNodes() const
 {
   unsigned int i;
@@ -581,9 +632,9 @@ void		World::makeLinkMaterial()
   int dyncolId = DYNCOLORMGR.findColor(name);
   if (dyncolId < 0) {
     DynamicColor* dyncol = new DynamicColor;
-    dyncol->setLimits(0, 0.0f, 0.1f); // red
-    dyncol->setLimits(1, 0.0f, 0.1f); // green
-    dyncol->setLimits(2, 0.0f, 0.1f); // blue
+    dyncol->setLimits(0, 0.0f, 0.25f); // red
+    dyncol->setLimits(1, 0.0f, 0.25f); // green
+    dyncol->setLimits(2, 0.0f, 0.25f); // blue
     dyncol->setLimits(3, 0.75f, 0.75f); // alpha
     // period, offset, weight
     float params[3] = {2.0f, 0.0f, 1.0f};
@@ -613,6 +664,7 @@ void		World::makeLinkMaterial()
   mat.setDynamicColor(dyncolId);
   mat.setTexture("telelink");
   mat.setTextureMatrix(texmatId);
+  mat.setNoLighting(true);
   mat.setName(name);
   linkMaterial = MATERIALMGR.addMaterial(&mat);
 
@@ -874,12 +926,15 @@ bool World::writeWorld(const std::string& filename, std::string& fullname)
       out << "  +r" << std::endl;
     if (allowHandicap())
       out << "  -handicap" << std::endl;
-    out << "  -a " << getLinearAcceleration()
-	<< " " << getAngularAcceleration() << std::endl;
     if (allowAntidote()) {
       out << "  -sa" << std::endl;
       out << "  -st " << getFlagShakeTimeout() << std::endl;
       out << "  -sw " << getFlagShakeWins() << std::endl;
+    }
+    if ((getLinearAcceleration() != 0.0f) ||
+        (getAngularAcceleration() != 0.0f)) {
+      out << "  -a " << getLinearAcceleration() << " "
+                     << getAngularAcceleration() << std::endl;
     }
 
     out << "  -ms " << getMaxShots() << std::endl;

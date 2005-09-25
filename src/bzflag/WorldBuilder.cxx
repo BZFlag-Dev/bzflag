@@ -25,6 +25,7 @@
 #include "MeshTransform.h"
 #include "FlagSceneNode.h"
 #include "ObstacleMgr.h"
+#include "TimeKeeper.h"
 
 /* compression library header */
 #include "../zlib/zlib.h"
@@ -45,6 +46,8 @@ WorldBuilder::~WorldBuilder()
 
 void* WorldBuilder::unpack(void* buf)
 {
+  TimeKeeper start = TimeKeeper::getCurrent();
+  
   // unpack world database from network transfer
   // read style header
   uint16_t code, len;
@@ -184,10 +187,18 @@ void* WorldBuilder::unpack(void* buf)
   }
 
   world->makeLinkMaterial();
+  
+  world->makeMeshDrawMgrs();
 
   // NOTE: relying on checkCollisionManager() to do the first loading
   //       of ColiisionManager, because the BZDB variables come in later,
   //       and would cause a double loading if we did it now.
+  
+  if (debugLevel >= 3) {
+    TimeKeeper end = TimeKeeper::getCurrent();
+    const float elapsed = end - start;
+    DEBUG0("WorldBuilder::unpack() processed in %f seconds.\n", elapsed);
+  }
 
   return buf;
 }

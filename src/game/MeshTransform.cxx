@@ -237,14 +237,6 @@ static void spin(float m[4][4], const float radians, const float normal[3])
 
 MeshTransform::Tool::Tool(const MeshTransform& xform)
 {
-  if (xform.transforms.size() > 0) {
-    empty = false;
-  } else {
-    empty = true;
-    inverted = false;
-    return;
-  }
-
   // load the identity matrices
   int i, j;
   for (i = 0; i < 4; i++) {
@@ -264,6 +256,15 @@ MeshTransform::Tool::Tool(const MeshTransform& xform)
 	normalMatrix[i][j] = 0.0f;
       }
     }
+  }
+
+  skewed = false;
+  if (xform.transforms.size() > 0) {
+    empty = false;
+  } else {
+    empty = true;
+    inverted = false;
+    return;
   }
 
   // setup the matrices
@@ -320,10 +321,12 @@ void MeshTransform::Tool::processTransforms(
 	break;
       }
       case ScaleTransform: {
+        skewed = true;
 	scale(vertexMatrix, transform.data);
 	break;
       }
       case ShearTransform: {
+        skewed = true;
 	shear(vertexMatrix, transform.data);
 	break;
       }

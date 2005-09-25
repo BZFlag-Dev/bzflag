@@ -41,6 +41,7 @@ class ZSceneDatabase : public SceneDatabase {
     void		renderRadarNodes(const ViewFrustum&);
 
     void		drawCuller();
+    void		setOccluderManager(int);
 
   private:
     void		setupCullList();

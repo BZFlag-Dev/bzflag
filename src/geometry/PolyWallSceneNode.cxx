@@ -210,6 +210,24 @@ void			PolyWallSceneNode::addShadowNodes(
   renderer.addShadowNode(shadowNode);
 }
 
+
+void PolyWallSceneNode::getRenderNodes(std::vector<RenderSet>& rnodes)
+{
+  RenderSet rs = { node, getWallGState() };
+  rnodes.push_back(rs);
+  return;
+}
+
+
+void PolyWallSceneNode::renderRadar()
+{
+  if (plane[2] > 0.0f) {
+    node->renderRadar();
+  }
+  return;
+}
+
+
 // Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***

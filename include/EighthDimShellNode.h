@@ -26,7 +26,6 @@ class EighthDimShellNode : public SceneNode {
     EighthDimShellNode(SceneNode *sceneNode, bool ownTheNode);
     ~EighthDimShellNode();
 
-    bool isTranslucent() const { return true; }
     bool cull(const ViewFrustum&) const;
     void addRenderNodes(SceneRenderer&);
     void notifyStyleChange();
@@ -34,22 +33,29 @@ class EighthDimShellNode : public SceneNode {
   protected:
     class ShellRenderNode : public RenderNode {
       public:
-	ShellRenderNode(RenderNode *renderNode);
+	ShellRenderNode(RenderNode *renderNode,
+	                const OpenGLGState* gstate);
 	~ShellRenderNode();
 	void render();
 	void renderShadow() { return; }
 	const GLfloat* getPosition() const { return renderNode->getPosition(); }
+      public:
+	const OpenGLGState* getGState() const;
       private:
+	OpenGLGState gstate;
 	RenderNode* renderNode;
     };
 
   private:
+    void makeNodes();
+    void killNodes();
+  
+  private:
     bool ownTheNode;
     SceneNode* sceneNode;
 
-    int renderNodeCount;
-    ShellRenderNode** renderNodes;
-    OpenGLGState gstate;
+    int shellNodeCount;
+    ShellRenderNode** shellNodes;
 };
 
 #endif // BZF_EIGHTH_DIM_SHELL_NODE_H

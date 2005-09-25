@@ -28,6 +28,7 @@
 #include "BzMaterial.h"
 #include "PhysicsDriver.h"
 #include "MeshTransform.h"
+#include "MeshDrawInfo.h"
 #include "TimeKeeper.h"
 
 /* obstacle implementation headers */
@@ -415,8 +416,9 @@ void WorldInfo::finishWorld()
   if (maxHeight < 0.0f) {
     maxHeight = 0.0f;
   }
-
-	finished = true;
+  
+  finished = true;
+  
   return;
 }
 

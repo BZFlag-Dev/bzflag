@@ -109,7 +109,8 @@ class ControlPanel {
 
 inline void ControlPanel::setDimming(float newDimming)
 {
-  dimming = (1.0f - newDimming > 1.0f) ? 1.0f : (1.0f - newDimming < 0.0f) ? 0.0f : 1.0f - newDimming;
+  const float newDim = 1.0f - newDimming;
+  dimming = (newDim > 1.0f) ? 1.0f : (newDim < 0.0f) ? 0.0f : newDim;
 }
 
 

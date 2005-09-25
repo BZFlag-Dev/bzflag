@@ -73,16 +73,19 @@ class MeshTransform {
 	~Tool();
 
 	bool isInverted() const;
+	bool isSkewed() const; // scaled or sheared
 	void modifyVertex(float vertex[3]) const;
 	void modifyNormal(float normal[3]) const;
 	void modifyOldStyle(float pos[3], float size[3],
 			    float& angle, bool& flipz) const;
+        const float* getMatrix() const;
 
       private:
 	void processTransforms(const std::vector<TransformData>& transforms);
 
 	bool empty;
 	bool inverted;
+	bool skewed;
 	float vertexMatrix[4][4];
 	float normalMatrix[3][3];
     };
@@ -93,6 +96,16 @@ class MeshTransform {
 inline bool MeshTransform::Tool::isInverted() const
 {
   return inverted;
+}
+
+inline bool MeshTransform::Tool::isSkewed() const
+{
+  return skewed;
+}
+
+inline const float* MeshTransform::Tool::getMatrix() const
+{
+  return (const float*)vertexMatrix;
 }
 
 

@@ -1342,14 +1342,13 @@ static void addPlayer(int playerIndex, GameKeeper::Player *playerData)
       }
     }
 
-  if ( clOptions->filterCallsigns)
-  {
-	int filterIndex = 0;
-	Filter::Action filterAction = filter.check(*playerData, filterIndex);
-	if (filterAction == Filter::DROP) {
-		rejectPlayer(playerIndex, RejectBadCallsign, "Player has been banned");
-		return ;
-	}
+  if (clOptions->filterCallsigns) {
+    int filterIndex = 0;
+    Filter::Action filterAction = filter.check(*playerData, filterIndex);
+    if (filterAction == Filter::DROP) {
+      rejectPlayer(playerIndex, RejectBadCallsign, "Player has been banned");
+      return;
+    }
   }
 
   // check against ban lists
@@ -1358,29 +1357,28 @@ static void addPlayer(int playerIndex, GameKeeper::Player *playerData)
   in_addr playerIP = playerData->netHandler->getIPAddress();
   BanInfo info(playerIP);
   if (!clOptions->acl.validate(playerIP,&info) && !playerIsAntiBanned) {
+    std::string rejectionMessage;
 
-      std::string rejectionMessage;
+    rejectionMessage = BanRefusalString;
+    if (info.reason.size ())
+      rejectionMessage += info.reason;
+    else
+      rejectionMessage += "General Ban";
 
-      rejectionMessage = BanRefusalString;
-      if (info.reason.size())
-	rejectionMessage += info.reason;
-      else
-	rejectionMessage += "General Ban";
-
-      rejectionMessage += ColorStrings[WhiteColor];
-      if (info.bannedBy.size()) {
-	rejectionMessage += " by ";
-	rejectionMessage += ColorStrings[BlueColor];
-	rejectionMessage += info.bannedBy;
-      }
-
-      rejectionMessage += ColorStrings[GreenColor];
-      if (info.fromMaster)
-	rejectionMessage += " [you are on the master ban list]";
-
-      rejectPlayer(playerIndex, RejectIPBanned, rejectionMessage.c_str());
-      return;
+    rejectionMessage += ColorStrings[WhiteColor];
+    if (info.bannedBy.size ()) {
+      rejectionMessage += " by ";
+      rejectionMessage += ColorStrings[BlueColor];
+      rejectionMessage += info.bannedBy;
     }
+
+    rejectionMessage += ColorStrings[GreenColor];
+    if (info.fromMaster)
+      rejectionMessage += " [you are on the master ban list]";
+
+    rejectPlayer (playerIndex, RejectIPBanned, rejectionMessage.c_str ());
+    return;
+  }
 
   // see if any watchers don't want this guy
 
@@ -1610,10 +1608,13 @@ static void addPlayer(int playerIndex, GameKeeper::Player *playerData)
       && playerData->accessInfo.isRegistered()
       && playerData->_LSAState != GameKeeper::Player::verified) {
     // nick is in the DB send him a message to identify.
-    if (playerData->accessInfo.isIdentifyRequired())
-      sendMessage(ServerPlayer, playerIndex, "This callsign is registered.  You must identify yourself before playing.");
-    else
+    if (playerData->accessInfo.isIdentifyRequired()) {
+      sendMessage(ServerPlayer, playerIndex,
+                  "This callsign is registered.  "
+                  "You must identify yourself before playing.");
+    } else {
       sendMessage(ServerPlayer, playerIndex, "This callsign is registered.");
+    }
     sendMessage(ServerPlayer, playerIndex, "Identify with /identify <your password>");
   }
 
@@ -3984,6 +3985,7 @@ int main(int argc, char **argv)
 
   // parse arguments
   parse(argc, argv, *clOptions);
+  finalizeParsing(argc, argv, *clOptions);
 
   setDebugTimestamp (clOptions->timestampLog, clOptions->timestampMicros);
 
@@ -4001,17 +4003,17 @@ int main(int argc, char **argv)
 #ifdef _USE_BZ_API
   initPlugins();
 
-	// check for python by default
-//	loadPlugin(std::string("python"),std::string(""));
+  // check for python by default
+  //	loadPlugin(std::string("python"),std::string(""));
 
   for (unsigned int plugin = 0; plugin < clOptions->pluginList.size(); plugin++)
   {
-    if (!loadPlugin(clOptions->pluginList[plugin].plugin, clOptions->pluginList[plugin].command))
-	{
-		std::string text = "WARNING: unable to load the plugin; ";
-		text += clOptions->pluginList[plugin].plugin + "\n";
-		DEBUG0(text.c_str());
-	}
+    if (!loadPlugin(clOptions->pluginList[plugin].plugin,
+                    clOptions->pluginList[plugin].command)) {
+      std::string text = "WARNING: unable to load the plugin; ";
+      text += clOptions->pluginList[plugin].plugin + "\n";
+      DEBUG0(text.c_str());
+    }
   }
 #endif
 
@@ -4231,6 +4233,7 @@ int main(int argc, char **argv)
    * world weapons will increase the number of iterations
    * substantially (about x10)
    **/
+   
   GameKeeper::Player::passTCPMutex();
   int i;
   int readySetGo = -1; // match countdown timer
