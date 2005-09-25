@@ -345,7 +345,9 @@ void MeshSceneNode::notifyStyleChange()
           const DrawLod* drawLods = drawInfo->getDrawLods();
           fvec3 setPos;
           memcpy(setPos, drawLods[lod].sets[set].sphere, sizeof(fvec3));
-          xformTool->modifyVertex(setPos);
+          if (xformTool != NULL) {
+            xformTool->modifyVertex(setPos);
+          }
           setNode.node =
             new AlphaGroupRenderNode(drawMgr, xformList, normalize,
                                      color, lod, set, &extents, setPos);
@@ -417,20 +419,19 @@ void MeshSceneNode::updateMaterial(MeshSceneNode::MeshMaterial* mat)
   bool dyncolBlend = false;
   bool textureBlend = false;
 
-  bool gotSpecifiedTexture = false;
+  bool useDiffuseColor = true;
     
   // texturing  
   if (BZDBCache::texture) {
-    int userTexture = (bzmat->getTextureCount() > 0);
     int faceTexture = -1;
+    bool userTexture = (bzmat->getTextureCount() > 0);
     if (userTexture) {
       const std::string& texname = bzmat->getTextureLocal(0);
       if (texname.size() > 0) {
         faceTexture = tm.getTextureID(texname.c_str());
       }
       if (faceTexture >= 0) {
-        gotSpecifiedTexture = true;
-        // blending  :  FIXME
+        useDiffuseColor = bzmat->getUseColorOnTexture(0);
         if (bzmat->getUseTextureAlpha(0)) {
           const ImageInfo& imageInfo = tm.getInfo(faceTexture);
           textureBlend = imageInfo.alpha;
@@ -469,10 +470,16 @@ void MeshSceneNode::updateMaterial(MeshSceneNode::MeshMaterial* mat)
 			     bzmat->getShininess());
   if (lighting) {			     
     builder.setMaterial(oglMaterial);
-    builder.enableMaterial(BZDBCache::lighting);
   }
-  memcpy(color, bzmat->getDiffuse(), sizeof(float[4]));
-  colorBlend = (color[3] != 1.0f);
+  if (useDiffuseColor) {
+    memcpy(color, bzmat->getDiffuse(), sizeof(float[4]));
+    colorBlend = (color[3] != 1.0f);
+  } else {
+    // set it to white, this should only happen when
+    // we've gotten a user texture, and there's a
+    // request to not use the material's diffuse color.
+    color[0] = color[1] = color[2] = color[3] = 1.0f;
+  }
 
   // dynamic color  
   const DynamicColor* dyncol = DYNCOLORMGR.getColor(bzmat->getDynamicColor());
