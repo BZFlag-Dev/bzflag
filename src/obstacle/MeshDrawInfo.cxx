@@ -39,7 +39,7 @@
 typedef struct  {
   const char* name;
   DrawCmd::DrawModes code;
-}DrawCmdLabel;
+} DrawCmdLabel;
 
 // local data
 static DrawCmdLabel drawLabels[] = {
@@ -347,7 +347,7 @@ bool MeshDrawInfo::serverSetup(const MeshObstacle* mesh)
     sphere[3] = 0.25f * (dx*dx + dy*dy + dz*dz); // radius squared
   }
 
-  // calculate the DrawSet spheres? - FIXME
+  // calculate the DrawSet spheres?
   for (int lod = 0; lod < lodCount; lod++) {
     DrawLod& drawLod = lods[lod];
     for (int set = 0; set < drawLod.count; set++) {
@@ -503,7 +503,7 @@ void MeshDrawInfo::updateAnimation()
   if (animInfo != NULL) {
     const TimeKeeper nowTk = TimeKeeper::getCurrent();
     const TimeKeeper thenTk = TimeKeeper::getStartTime();
-    const float diffTime = float(nowTk - thenTk);
+    const float diffTime = (float)(nowTk - thenTk);
     animInfo->angle = fmodf(animInfo->angvel * diffTime, 360.0f);
   }
   return;  

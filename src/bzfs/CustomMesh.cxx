@@ -191,10 +191,15 @@ void CustomMesh::writeToGroupDef(GroupDefinition *groupdef) const
   xform.append(transform);
 
   // hack to invalidate decorative meshes on older clients
+  bool forcePassable = false;
   if (drawInfo) {
     cfvec3 vert;
     if (decorative) {
       vert[0] = vert[1] = vert[2] = (Obstacle::maxExtent * 2.0f);
+      if ((faces.size() > 0) && !(driveThrough && shootThrough)) {
+        DEBUG0("WARNING: mesh is supposed to be decorative, setting to passable\n");
+        forcePassable = true;
+      }
     } else {
       vert[0] = vert[1] = vert[2] = 0.0f;
     }
@@ -204,7 +209,9 @@ void CustomMesh::writeToGroupDef(GroupDefinition *groupdef) const
   MeshObstacle* mesh =
     new MeshObstacle(xform, checkTypes, checkPoints,
 		     vertices, normals, texcoords, faces.size(),
-		     noclusters, smoothBounce, driveThrough, shootThrough);
+		     noclusters, smoothBounce,
+                     driveThrough || forcePassable,
+                     shootThrough || forcePassable);
 		     
   mesh->setName(name);
 
