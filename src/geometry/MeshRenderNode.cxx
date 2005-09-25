@@ -54,7 +54,7 @@ void OpaqueRenderNode::render()
   }
 
   // set the color
-  SceneNode::myColor4fv(color);
+  myColor4fv(color);
 
   // do the transformation
   if (xformList != INVALID_GL_LIST_ID) {
@@ -195,8 +195,7 @@ void AlphaRenderNode::render()
   }
   
   // set the color
-  SceneNode::myColor4fv(color);
-//  sceneNode->setColor();
+  myColor4fv(color);
 
   if (BZDBCache::lighting) {
     if (BZDBCache::texture) {
