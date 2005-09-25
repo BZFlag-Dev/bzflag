@@ -33,6 +33,7 @@ CustomMesh::CustomMesh()
   smoothBounce = false;
   driveThrough = false;
   shootThrough = false;
+  decorative = false;
   drawInfo = NULL;
   material.setTexture("mesh");
 
@@ -143,6 +144,9 @@ bool CustomMesh::read(const char *cmd, std::istream& input)
   else if (strcasecmp(cmd, "noclusters") == 0) {
     noclusters = true;
   }
+  else if (strcasecmp(cmd, "decorative") == 0) {
+    decorative = true;
+  }
   else if (strcasecmp(cmd, "drawInfo") == 0) {
     if (drawInfo != NULL) {
       std::cout << "WARNING: multiple drawInfo, using first" << std::endl;
@@ -186,6 +190,17 @@ void CustomMesh::writeToGroupDef(GroupDefinition *groupdef) const
   }
   xform.append(transform);
 
+  // hack to invalidate decorative meshes on older clients
+  if (drawInfo) {
+    cfvec3 vert;
+    if (decorative) {
+      vert[0] = vert[1] = vert[2] = (Obstacle::maxExtent * 2.0f);
+    } else {
+      vert[0] = vert[1] = vert[2] = 0.0f;
+    }
+    ((std::vector<cfvec3>*)&vertices)->push_back(vert);
+  }
+
   MeshObstacle* mesh =
     new MeshObstacle(xform, checkTypes, checkPoints,
 		     vertices, normals, texcoords, faces.size(),
@@ -193,6 +208,7 @@ void CustomMesh::writeToGroupDef(GroupDefinition *groupdef) const
 		     
   mesh->setName(name);
 
+  // add the faces
   std::vector<CustomMeshFace*>::const_iterator face_it;
   for (face_it = faces.begin(); face_it != faces.end(); face_it++) {
     const CustomMeshFace* customFace = *face_it;
@@ -201,10 +217,14 @@ void CustomMesh::writeToGroupDef(GroupDefinition *groupdef) const
 
   mesh->finalize();
 
-  if (drawInfo && drawInfo->isValid()) {
+  if (drawInfo) {
     ((MeshDrawInfo*)drawInfo)->serverSetup(mesh);
+    if (drawInfo->isValid()) {
+      mesh->setDrawInfo(drawInfo);
+    } else {
+      delete ((MeshDrawInfo*)drawInfo);
+    }
   }
-  mesh->setDrawInfo(drawInfo);
 
   groupdef->addObstacle(mesh);
 

@@ -765,6 +765,11 @@ void *MeshObstacle::unpack(void *buf)
   smoothBounce  = (stateByte & (1 << 2)) != 0;
   noclusters    = (stateByte & (1 << 3)) != 0;
   drawInfoOwner = (stateByte & (1 << 4)) != 0;
+  
+  if (drawInfoOwner && (vertexCount >= 1)) {
+    // remove the extraneous vertex
+    vertexCount--;
+  }
 
   // unpack hidden drawInfo data as from extra texture coordinates
   if (drawInfoOwner &&  (texcoordCount >= 2)) {

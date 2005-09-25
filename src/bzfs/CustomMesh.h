@@ -50,6 +50,7 @@ class CustomMesh : public WorldFileObstacle {
     int phydrv;
     bool noclusters;
     bool smoothBounce;
+    bool decorative;
     
     std::vector<std::string> lodOptions;
     class MeshDrawInfo* drawInfo;
