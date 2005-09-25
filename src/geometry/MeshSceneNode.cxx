@@ -343,10 +343,12 @@ void MeshSceneNode::notifyStyleChange()
           // opaque nodes
 
           const DrawLod* drawLods = drawInfo->getDrawLods();
+          fvec3 setPos;
+          memcpy(setPos, drawLods[lod].sets[set].sphere, sizeof(fvec3));
+          xformTool->modifyVertex(setPos);
           setNode.node =
             new AlphaGroupRenderNode(drawMgr, xformList, normalize,
-                                     color, lod, set, &extents,
-                                     drawLods[lod].sets[set].sphere);
+                                     color, lod, set, &extents, setPos);
 //            new AlphaGroupRenderNode(drawMgr, xformList, normalize,
 //                                     color, lod, set, &extents, getSphere());
 
