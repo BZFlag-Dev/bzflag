@@ -134,22 +134,6 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
   option->update();
   listHUD.push_back(option);
 
-  option = new HUDuiList;
-  option->setFontFace(fontFace);
-  option->setLabel("Depth Buffer:");
-  option->setCallback(callback, (void*)"8");
-  options = &option->getList();
-  GLint value;
-  glGetIntegerv(GL_DEPTH_BITS, &value);
-  if (value == 0) {
-    options->push_back(std::string("Not available"));
-  } else {
-    options->push_back(std::string("Off  (SLOWER)"));
-    options->push_back(std::string("On"));
-  }
-  option->update();
-  listHUD.push_back(option);
-
 #if !defined(DEBUG_RENDERING)
   if (debugLevel > 0) {
 #endif
@@ -301,7 +285,6 @@ void			DisplayMenu::resize(int _width, int _height)
     ((HUDuiList*)listHUD[i++])->setIndex(tm.getMaxFilter());
     ((HUDuiList*)listHUD[i++])->setIndex(renderer->useQuality());
     ((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("shadows"));
-    ((HUDuiList*)listHUD[i++])->setIndex(BZDBCache::zbuffer);
 #if !defined(DEBUG_RENDERING)
     if (debugLevel > 0) {
 #endif
@@ -384,12 +367,6 @@ void			DisplayMenu::callback(HUDuiControl* w, void* data) {
     break;
   case '7':
     BZDB.set("shadows", list->getIndex() ? "1" : "0");
-    sceneRenderer->notifyStyleChange();
-    break;
-  case '8':
-    // FIXME - test for whether the z buffer will work
-    BZDB.set("zbuffer", list->getIndex() ? "1" : "0");
-    setSceneDatabase();
     sceneRenderer->notifyStyleChange();
     break;
   case 'a':
