@@ -196,7 +196,7 @@ void* WorldBuilder::unpack(void* buf)
   
   if (debugLevel >= 3) {
     TimeKeeper end = TimeKeeper::getCurrent();
-    const float elapsed = end - start;
+    const float elapsed = (float)(end - start);
     DEBUG0("WorldBuilder::unpack() processed in %f seconds.\n", elapsed);
   }
 
