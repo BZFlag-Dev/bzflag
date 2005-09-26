@@ -150,8 +150,8 @@ static void		setVisual(BzfVisual* visual)
   if (!BZDB.isSet("zbuffer") || BZDB.get("zbuffer") != "disable")
   {
 	int depthLevel = 16;
-	if ( BZDB.eval("maxQuality") > 2)
-		depthLevel = 32;
+	if ( BZDB.isSet("forceDepthBits") )
+		depthLevel = (int)BZDB.eval("forceDepthBits");
 
     visual->setDepth(depthLevel);
   }
