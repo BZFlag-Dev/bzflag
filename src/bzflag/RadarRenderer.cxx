@@ -392,7 +392,11 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
   const double xUnit = 2.0 * radarRange / double(w);
   const double yUnit = 2.0 * radarRange / double(h);
   // NOTE: the visual extents include passable objects
-  const double maxHeight = (double) COLLISIONMGR.getVisualExtents().maxs[2];
+  double maxHeight = 0.0;
+  const Extents* visExts = renderer.getVisualExtents();
+  if (visExts) {
+    maxHeight = (double)visExts->maxs[2];
+  }
   glOrtho(-xCenter * xUnit, (xSize - xCenter) * xUnit,
 	  -yCenter * yUnit, (ySize - yCenter) * yUnit,
 	  -(maxHeight + 10.0), (maxHeight + 10.0));
@@ -500,7 +504,7 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
     } else {
       useTankDimensions = false;
     }
-    if (useTankDimensions && (RENDERER.useQuality() >= 3)) {
+    if (useTankDimensions && (renderer.useQuality() >= 3)) {
       useTankModels = true;
     } else {
       useTankModels = false;
@@ -615,7 +619,7 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
 	glColor3fv(dimmedcolor);
       } else {
 	glColor3fv(Team::getRadarColor(myTank->getFlag() ==
-			     Flags::Colorblindness ? RogueTeam : player->getTeam(),rabbitMode));
+			     Flags::Colorblindness ? RogueTeam : player->getTeam(), rabbitMode));
       }
       // If this tank is hunted flash it on the radar
       if (player->isHunted() && myTank->getFlag() != Flags::Colorblindness) {

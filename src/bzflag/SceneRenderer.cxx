@@ -1263,6 +1263,16 @@ const GLfloat* SceneRenderer::getSunDirection() const
 }
 
 
+const Extents* SceneRenderer::getVisualExtents() const
+{
+  if (scene) {
+    return scene->getVisualExtents();
+  } else {
+    return NULL;
+  }
+}
+
+
 // Local Variables: ***
 // mode: C++ ***
 // tab-width: 8 ***

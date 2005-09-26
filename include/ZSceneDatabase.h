@@ -43,6 +43,8 @@ class ZSceneDatabase : public SceneDatabase {
     void		drawCuller();
     void		setOccluderManager(int);
 
+    const Extents*	getVisualExtents() const;
+    
   private:
     void		setupCullList();
     void		makeCuller();

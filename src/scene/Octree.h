@@ -42,15 +42,17 @@ class Octree {
     void setOccluderManager(int);
 
     void draw () const;
+    
+    const Extents* getVisualExtents() const;
 
 
   private: // methods
     void getExtents(SceneNode** list, int listSize);
 
   private: // data
-
-    Extents extents;
     OctreeNode* root;
+    Extents extents;
+    Extents visualExtents;
 };
 
 
@@ -124,6 +126,11 @@ inline int OctreeNode::getChildren() const
 inline OctreeNode* OctreeNode::getChild (int child)
 {
   return children[child];
+}
+
+inline const Extents* Octree::getVisualExtents() const
+{
+  return &visualExtents;
 }
 
 

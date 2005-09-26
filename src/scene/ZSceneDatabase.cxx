@@ -28,6 +28,7 @@
 #include "BZDBCache.h"
 #include "TimeKeeper.h"
 #include "Intersect.h"
+#include "Extents.h"
 
 // local headers
 #include "Octree.h"
@@ -141,6 +142,16 @@ bool ZSceneDatabase::isOrdered()
 }
 
 
+const Extents* ZSceneDatabase::getVisualExtents() const
+{
+  if (octree) {
+    return octree->getVisualExtents();
+  } else {
+    return NULL;
+  }
+}
+
+
 void ZSceneDatabase::updateNodeStyles()
 {
   for (int i = 0; i < staticCount; i++) {
@@ -160,7 +171,6 @@ void ZSceneDatabase::setOccluderManager(int occl)
 
 
 void ZSceneDatabase::setupCullList()
-
 {
   const int currentDepth = BZDB.evalInt(StateDatabase::BZDB_CULLDEPTH);
   const int currentElements = BZDB.evalInt(StateDatabase::BZDB_CULLELEMENTS);

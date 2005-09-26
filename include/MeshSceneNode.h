@@ -82,7 +82,7 @@ class MeshSceneNode : public SceneNode {
       const BzMaterial* bzmat;
       OpenGLGState gstate;
       GLfloat color[4];
-      const GLfloat* dyncol;
+      const GLfloat* colorPtr;
       bool drawRadar;
       bool drawShadow;
       bool useSplitNodes;

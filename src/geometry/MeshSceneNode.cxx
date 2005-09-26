@@ -58,16 +58,16 @@ MeshSceneNode::MeshSceneNode(const MeshObstacle* _mesh)
   lods = NULL;
 
   xformList = INVALID_GL_LIST_ID;
-  
+
   if (mesh == NULL) {
     return;
   }
-  
+
   drawInfo = mesh->getDrawInfo();
   if (drawInfo == NULL) {
     return;
   }
-  
+
   drawMgr = drawInfo->getDrawMgr();
   if (drawMgr == NULL) {
     return;
@@ -79,7 +79,6 @@ MeshSceneNode::MeshSceneNode(const MeshObstacle* _mesh)
 
   // setup the extents, sphere, and lengthPerPixel adjustment
   float lengthAdj = 1.0f;
-  extents = drawInfo->getExtents();
   const Extents& diExts = drawInfo->getExtents();
   const MeshTransform::Tool* xformTool = drawInfo->getTransformTool();
   if (xformTool == NULL) {
@@ -119,6 +118,7 @@ MeshSceneNode::MeshSceneNode(const MeshObstacle* _mesh)
     float mySphere[4];
     memcpy(mySphere, drawInfo->getSphere(), sizeof(float[4]));
     xformTool->modifyVertex(mySphere);
+    mySphere[3] *= (lengthAdj * lengthAdj);
     setSphere(mySphere);
   }
 
@@ -145,21 +145,21 @@ MeshSceneNode::MeshSceneNode(const MeshObstacle* _mesh)
       setNode.meshMat.bzmat = convertMaterial(drawSet.material);
     }
   }
-  
+
   // FIXME - use alternate radar LODs
   radarCount = lodCount;
   radarLengths = new float[lodCount];
   memcpy(radarLengths, lodLengths, radarCount * sizeof(float));
   radarLods = lods;
 
-  // build the transform display list  
+  // build the transform display list
   makeXFormList();
 
   // build gstates and render nodes
   notifyStyleChange();
-  
+
   return;
-} 
+}
 
 
 MeshSceneNode::~MeshSceneNode()
@@ -184,7 +184,7 @@ MeshSceneNode::~MeshSceneNode()
   freeXFormList();
 
   return;
-} 
+}
 
 
 inline int MeshSceneNode::calcNormalLod(const ViewFrustum& vf)
@@ -203,7 +203,7 @@ inline int MeshSceneNode::calcNormalLod(const ViewFrustum& vf)
   }
   return 0;
 }
-    
+
 
 inline int MeshSceneNode::calcShadowLod(const ViewFrustum& vf)
 {
@@ -222,7 +222,7 @@ inline int MeshSceneNode::calcShadowLod(const ViewFrustum& vf)
   }
   return 0;
 }
-    
+
 
 inline int MeshSceneNode::calcRadarLod()
 {
@@ -233,7 +233,7 @@ inline int MeshSceneNode::calcRadarLod()
   }
   return 0;
 }
-    
+
 
 void MeshSceneNode::addRenderNodes(SceneRenderer& renderer)
 {
@@ -242,21 +242,24 @@ void MeshSceneNode::addRenderNodes(SceneRenderer& renderer)
   LodNode& lod = lods[level];
   for (int i = 0; i < lod.count; i++) {
     SetNode& set = lod.sets[i];
-    renderer.addRenderNode(set.node, &set.meshMat.gstate);
+    if (set.meshMat.colorPtr[3] != 0.0f) {
+      renderer.addRenderNode(set.node, &set.meshMat.gstate);
+    }
   }
-// FIXME: split nodes  
+// FIXME: split nodes
   return;
 }
 
 
 void MeshSceneNode::addShadowNodes(SceneRenderer& renderer)
-{  
+{
   const ViewFrustum& vf = renderer.getViewFrustum();
   const int level = calcShadowLod(vf);
   LodNode& lod = lods[level];
   for (int i = 0; i < lod.count; i++) {
     SetNode& set = lod.sets[i];
-    if (set.meshMat.drawShadow) {
+    const MeshMaterial& mat = set.meshMat;
+    if (mat.drawShadow && (mat.colorPtr[3] != 0.0f)) {
       renderer.addShadowNode(set.shadowNode);
     }
   }
@@ -265,7 +268,7 @@ void MeshSceneNode::addShadowNodes(SceneRenderer& renderer)
 
 
 void MeshSceneNode::renderRadar()
-{  
+{
   const int level = calcRadarLod();
   LodNode& lod = radarLods[level];
   for (int i = 0; i < lod.count; i++) {
@@ -296,9 +299,9 @@ bool MeshSceneNode::cull(const ViewFrustum& frustum) const
 }
 
 
-bool MeshSceneNode::inAxisBox (const Extents& exts) const
+bool MeshSceneNode::inAxisBox(const Extents& exts) const
 {
-  // quick and dirty  
+  // quick and dirty
   return extents.touches(exts);
 }
 
@@ -323,34 +326,37 @@ void MeshSceneNode::notifyStyleChange()
         delete[] setNode.splitNodes;
         setNode.splitCount = 0;
         setNode.splitNodes = NULL;
-        
-        const GLfloat* color;
-        if (mat.dyncol != NULL) {
-          color = mat.dyncol;
-        } else {
-          color = mat.color;
-        }
-        
+
+        const GLfloat* color = mat.colorPtr;;
+
+
         // FIXME - only use &extents if we care about turning off the lights
-        
+
         bool normalize = false;
         const MeshTransform::Tool* xformTool = drawInfo->getTransformTool();
         if (xformTool != NULL) {
           normalize = xformTool->isSkewed();
         }
-        
+
 //        if (!mat.useSplitNodes) {
           // opaque nodes
 
           const DrawLod* drawLods = drawInfo->getDrawLods();
+          const DrawSet& drawSet = drawLods[lod].sets[set];
           fvec3 setPos;
-          memcpy(setPos, drawLods[lod].sets[set].sphere, sizeof(fvec3));
+          memcpy(setPos, drawSet.sphere, sizeof(fvec3));
           if (xformTool != NULL) {
             xformTool->modifyVertex(setPos);
           }
+
+          const Extents* extPtr = &extents;
+          if (drawSet.triangleCount < 100) {
+            extPtr = NULL;
+          }
+
           setNode.node =
             new AlphaGroupRenderNode(drawMgr, xformList, normalize,
-                                     color, lod, set, &extents, setPos);
+                                     color, lod, set, extPtr, setPos);
 //            new AlphaGroupRenderNode(drawMgr, xformList, normalize,
 //                                     color, lod, set, &extents, getSphere());
 
@@ -359,10 +365,10 @@ void MeshSceneNode::notifyStyleChange()
 //        }
           setNode.radarNode =
             new OpaqueRenderNode(drawMgr, xformList, normalize,
-                                 color, lod, set, &extents);
+                                 color, lod, set, extPtr);
           setNode.shadowNode =
             new OpaqueRenderNode(drawMgr, xformList, normalize,
-                                 color, lod, set, &extents);
+                                 color, lod, set, extPtr);
       }
     }
   }
@@ -385,7 +391,7 @@ const BzMaterial* MeshSceneNode::convertMaterial(const BzMaterial* bzmat)
   }
 }
 
-    
+
 void MeshSceneNode::updateMaterial(MeshSceneNode::MeshMaterial* mat)
 {
 // FIXME - deal with invisibility
@@ -394,34 +400,20 @@ void MeshSceneNode::updateMaterial(MeshSceneNode::MeshMaterial* mat)
   const BzMaterial*       bzmat = mat->bzmat;
   OpenGLGState&          gstate = mat->gstate;
   GLfloat*                color = mat->color;
-  const GLfloat*&  dynamicColor = mat->dyncol;
-  
+
   OpenGLGStateBuilder builder;
   TextureManager &tm = TextureManager::instance();
 
   // cheat a little
   ((BzMaterial*)bzmat)->setReference();
 
-  // radar and shadows
-  mat->drawRadar = !bzmat->getNoRadar();
-  mat->drawShadow = !bzmat->getNoShadow();
-
-  // culling and sorting
-  if (bzmat->getNoCulling()) {
-    builder.setCulling(GL_NONE);
-  }
-  if (bzmat->getNoSorting()) {
-    builder.setNeedsSorting(false);
-  }
-
   // ways of requiring blending
   bool colorBlend = false;
-  bool dyncolBlend = false;
   bool textureBlend = false;
 
   bool useDiffuseColor = true;
-    
-  // texturing  
+
+  // texturing
   if (BZDBCache::texture) {
     int faceTexture = -1;
     bool userTexture = (bzmat->getTextureCount() > 0);
@@ -457,20 +449,17 @@ void MeshSceneNode::updateMaterial(MeshSceneNode::MeshMaterial* mat)
   }
 
   // lighting
-  const bool lighting = BZDBCache::lighting && !bzmat->getNoLighting();
-  if (lighting) {
+  if (BZDBCache::lighting && !bzmat->getNoLighting()) {
+    OpenGLMaterial oglMaterial(bzmat->getSpecular(),
+                               bzmat->getEmission(),
+                               bzmat->getShininess());
+    builder.setMaterial(oglMaterial);
     builder.setShading(GL_SMOOTH);
   } else {
     builder.setShading(GL_FLAT);
   }
 
   // color
-  OpenGLMaterial oglMaterial(bzmat->getSpecular(),
-			     bzmat->getEmission(),
-			     bzmat->getShininess());
-  if (lighting) {			     
-    builder.setMaterial(oglMaterial);
-  }
   if (useDiffuseColor) {
     memcpy(color, bzmat->getDiffuse(), sizeof(float[4]));
     colorBlend = (color[3] != 1.0f);
@@ -481,18 +470,17 @@ void MeshSceneNode::updateMaterial(MeshSceneNode::MeshMaterial* mat)
     color[0] = color[1] = color[2] = color[3] = 1.0f;
   }
 
-  // dynamic color  
+  // dynamic color
   const DynamicColor* dyncol = DYNCOLORMGR.getColor(bzmat->getDynamicColor());
   if (dyncol != NULL) {
-    dynamicColor = dyncol->getColor();
-    dyncolBlend = dyncol->canHaveAlpha();
+    mat->colorPtr = dyncol->getColor();
+    colorBlend = dyncol->canHaveAlpha(); // override
   } else {
-    dynamicColor = NULL;
+    mat->colorPtr = color;
   }
-  
+
   // blending
-  const bool isBlended = BZDBCache::blend &&
-                         (colorBlend || dyncolBlend || textureBlend);
+  const bool isBlended = BZDBCache::blend && (colorBlend || textureBlend);
   if (isBlended) {
     builder.setBlending(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     builder.setStipple(1.0f);
@@ -500,20 +488,32 @@ void MeshSceneNode::updateMaterial(MeshSceneNode::MeshMaterial* mat)
     builder.resetBlending();
     builder.setStipple(color[3]);
   }
-  
+
   // alpha thresholding
   float alphaThreshold = bzmat->getAlphaThreshold();
   if (alphaThreshold != 0.0f) {
     builder.setAlphaFunc(GL_GEQUAL, alphaThreshold);
   }
-  
+
   // need to split for front-to-back sorting?
   if (isBlended && !bzmat->getNoSorting() && !bzmat->getGroupAlpha()) {
     mat->useSplitNodes = true;
   } else {
     mat->useSplitNodes = false;
   }
-  
+
+  // radar and shadows
+  mat->drawRadar = !bzmat->getNoRadar();
+  mat->drawShadow = !bzmat->getNoShadow();
+
+  // culling and sorting
+  if (bzmat->getNoCulling()) {
+    builder.setCulling(GL_NONE);
+  }
+  if (bzmat->getNoSorting()) {
+    builder.setNeedsSorting(false);
+  }
+
   // generate the gstate
   gstate = builder.getState();
 
@@ -542,14 +542,14 @@ void MeshSceneNode::makeXFormList()
         matrix[(i*4)+j] = xformTool->getMatrix()[(j*4)+i];
       }
     }
-    
+
     xformList = glGenLists(1);
     glNewList(xformList, GL_COMPILE);
     {
       glMultMatrixf(matrix);
     }
     glEndList();
-    
+
     if (glGetError() != GL_NO_ERROR) {
       xformList = INVALID_GL_LIST_ID;
     }
@@ -598,7 +598,7 @@ void MeshSceneNode::getRenderNodes(std::vector<RenderSet>& rnodes)
   }
   return;
 }
- 
+
 
 //////////////////////////
 // Static Class Members //

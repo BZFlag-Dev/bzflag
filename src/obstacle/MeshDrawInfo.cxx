@@ -441,8 +441,37 @@ bool MeshDrawInfo::clientSetup(const MeshObstacle* mesh)
     memcpy(texcoords[i], txcds[corner.texcoord], sizeof(fvec2));
   }
 
+  // tally the triangle counts
+  for (int lod = 0; lod < lodCount; lod++) {
+    DrawLod& drawLod = lods[lod];
+    for (int set = 0; set < drawLod.count; set++) {
+      DrawSet& drawSet = drawLod.sets[set];
+      int tris = 0;
+      for (int cmd = 0; cmd < drawSet.count; cmd++) {
+        DrawCmd& drawCmd = drawSet.cmds[cmd];
+        const int points = drawCmd.count;
+        switch(drawCmd.drawMode) {
+          // NOTE: points and lines are each counted as a triangle
+          case DrawCmd::DrawPoints:        tris += points;            break;
+          case DrawCmd::DrawLines:         tris += points / 2;        break;
+          case DrawCmd::DrawLineLoop:      tris += points;            break;
+          case DrawCmd::DrawLineStrip:     tris += points - 1;        break;
+          case DrawCmd::DrawTriangles:     tris += points / 3;        break;
+          case DrawCmd::DrawTriangleStrip: tris += points - 2;        break;
+          case DrawCmd::DrawTriangleFan:   tris += points - 2;        break;
+          case DrawCmd::DrawQuads:         tris += points / 2;        break;
+          case DrawCmd::DrawQuadStrip:     tris += (points - 2) / 2;  break;
+          case DrawCmd::DrawPolygon:       tris += points - 2;        break;
+          default: break;
+        }
+      }
+      drawSet.triangleCount = tris;
+    }
+  }
+
   // sort the lods
-  qsort(lods, lodCount, sizeof(DrawLod), compareLengthPerPixel);  
+  qsort(lods, lodCount, sizeof(DrawLod), compareLengthPerPixel);
+  
   
   return true;
 }  

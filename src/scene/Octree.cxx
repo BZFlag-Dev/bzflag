@@ -163,7 +163,12 @@ void Octree::addNodes (SceneNode** list, int listSize, int depth, int elements)
 
   DEBUG2 ("Octree scene nodes = %i\n", listSize);
   for (i = 0; i < 3; i++) {
-    DEBUG2 ("  extent[%i] = %f, %f\n", i, extents.mins[i], extents.maxs[i]);
+    DEBUG2 ("  grid extent[%i] = %f, %f\n", i, extents.mins[i],
+                                               extents.maxs[i]);
+  }
+  for (i = 0; i < 3; i++) {
+    DEBUG2 ("  visual extent[%i] = %f, %f\n", i, visualExtents.mins[i],
+                                                 visualExtents.maxs[i]);
   }
   DEBUG2 ("Octree leaf nodes  = %i\n", leafNodes);
   DEBUG2 ("Octree total nodes = %i\n", totalNodes);
@@ -324,6 +329,8 @@ void Octree::getExtents (SceneNode** list, int listSize)
     const Extents& exts = node->getExtents();
     tmpExts.expandToBox(exts);
   }
+  
+  visualExtents = tmpExts;
 
   // find the longest axis
   float width = -MAXFLOAT;

@@ -43,7 +43,7 @@ class SceneNode;
 class BackgroundRenderer;
 class HUDRenderer;
 class MainWindow;
-
+class Extents;
 
 class FlareLight {
 public:
@@ -128,6 +128,7 @@ public:
   void		enableSun(bool = true); // toggle light state
 
   void		setTimeOfDay(double julianDay);
+  
   const GLfloat*	getSunColor() const;
   const GLfloat*	getSunScaledColor() const;
   GLfloat		getSunBrightness() const;
@@ -135,10 +136,12 @@ public:
   const GLfloat*	getCelestialTransform() const;
 
   SceneDatabase*	getSceneDatabase() const;
-  void		setSceneDatabase(SceneDatabase*);
+  void			setSceneDatabase(SceneDatabase*);
+  
+  const Extents*	getVisualExtents() const;
 
   BackgroundRenderer*	getBackground();
-  void		setBackground(BackgroundRenderer*);
+  void			setBackground(BackgroundRenderer*);
 
   const RenderNodeList& getShadowList() const;
 

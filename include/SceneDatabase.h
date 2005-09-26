@@ -26,6 +26,7 @@ class ViewFrustum;
 class SceneNode;
 class SphereSceneNode;
 class SceneRenderer;
+class Extents;
 
 
 // NOTE -- SceneDatabase owns all static nodes added to it,
@@ -53,6 +54,8 @@ class SceneDatabase {
     virtual void	drawCuller() = 0;
     
     virtual void	setOccluderManager(int);
+
+    virtual const Extents* getVisualExtents() const { return NULL; }
 
   private:
 			SceneDatabase(const SceneDatabase&);
