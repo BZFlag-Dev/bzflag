@@ -69,6 +69,8 @@ class BSPSceneDatabase : public SceneDatabase {
     // returns true if the node would have been deleted
     bool		insertStatic(int, Node*, SceneNode*, bool dontFree);
     void		insertDynamic(int, Node*, SceneNode*);
+    void		insertNoPlane(int, Node*, SceneNode*);
+    void		insertNoPlaneNodes();
     void		removeDynamic(Node*);
     void		free(Node*);
     void		release(Node*);
@@ -81,6 +83,9 @@ class BSPSceneDatabase : public SceneDatabase {
     GLfloat		eye[3];
     SceneRenderer*	renderer;
     const ViewFrustum*	frustum;
+
+    bool needNoPlaneNodes;
+    std::vector<SceneNode*> noPlaneNodes;
 };
 
 
