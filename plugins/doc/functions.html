@@ -385,6 +385,15 @@
 															Forces the server to do a list server update.
 														</p>
 														<p>&nbsp;</p>
+														<p><span class="style4 style7">Server Game functions </span></p>                  
+														  <p><strong>BZ_API void bz_shutdown();</strong><br>
+													  		This command will terminate BZFS.</p>
+														  <p><strong>BZ_API void bz_superkill();</strong><br>
+													  		This command will perform a superkill; disconnecting all players.</p>
+														  <p><strong>BZ_API void bz_gameOver(int playerIndex, int teamIndex = -1);</strong><br>
+													  		Terminates current game and announces a winner. If teamIndex is -1, 
+															the player is announced as the winner, otherwise the team is.</p>
+														 <p>&nbsp;</p>
 														<p><span class="style4 style7">Team Score Functions </span></p>
 														<p><strong>BZF_API int bz_getTeamCount (bz_eTeamType team);</strong><br>
 															Returns the player count of the specified team

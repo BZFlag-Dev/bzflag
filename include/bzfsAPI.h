@@ -998,7 +998,10 @@ BZF_API const char *bz_format(const char* fmt, ...);
 BZF_API const char *bz_toupper(const char* val );
 BZF_API const char *bz_tolower(const char* val );
 
-
+// server control
+BZF_API void bz_shutdown();
+BZF_API void bz_superkill();
+BZF_API void bz_gameOver(int,int = -1);
 
 #endif //_BZFS_API_H_
 

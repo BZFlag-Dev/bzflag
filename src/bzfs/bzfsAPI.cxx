@@ -55,6 +55,11 @@ extern float pluginMaxWait;
 extern TeamInfo team[NumTeams];
 extern int numFlags;
 
+extern ShutdownCommand shutdownCommand;   // for bz_shutdown()
+extern SuperkillCommand superkillCommand; // for bz_superkill();
+extern bool gameOver;
+extern bool countdownActive;
+extern TimeKeeper  countdownPauseStart;
 
 // utility functions
 void setBZMatFromAPIMat (BzMaterial &bzmat, bz_MaterialInfo* material )
@@ -1849,6 +1854,37 @@ BZF_API const char *bz_tolower(const char* val )
 	temp	 =	TextUtils::tolower(std::string(val));
 	return temp.c_str();
 }
+
+// server control
+BZF_API void bz_shutdown()
+{
+	shutdownCommand(NULL,NULL);
+}
+
+BZF_API void bz_superkill()
+{
+  	superkillCommand(NULL,NULL);
+}
+
+BZF_API void bz_gameOver(int playerIdx, int teamIdx)
+{
+	void *buf, *bufStart = getDirectMessageBuffer();
+
+	buf = nboPackUByte(bufStart, playerIdx);
+	buf = nboPackUShort(buf, uint16_t( teamIdx == -1 ? NoTeam : teamIdx ));
+	broadcastMessage(MsgScoreOver, (char*)buf - (char*)bufStart, bufStart);
+
+	gameOver = true;
+
+	if (clOptions->timeManualStart)
+	{
+	  countdownActive = false;
+	  countdownPauseStart = TimeKeeper::getNullTime();
+	  clOptions->countdownPaused = false;
+	}
+}
+
+
 
 // Local Variables: ***
 // mode:C++ ***

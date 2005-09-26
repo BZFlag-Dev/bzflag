@@ -53,7 +53,6 @@
 #include "PackVars.h"
 #include "Permissions.h"
 #include "RecordReplay.h"
-#include "ServerCommand.h"
 
 
 #if defined(_WIN32)
@@ -160,22 +159,6 @@ public:
 class ResetCommand : ServerCommand {
 public:
   ResetCommand();
-
-  virtual bool operator() (const char         *commandLine,
-			   GameKeeper::Player *playerData);
-};
-
-class ShutdownCommand : ServerCommand {
-public:
-  ShutdownCommand();
-
-  virtual bool operator() (const char         *commandLine,
-			   GameKeeper::Player *playerData);
-};
-
-class SuperkillCommand : ServerCommand {
-public:
-  SuperkillCommand();
 
   virtual bool operator() (const char         *commandLine,
 			   GameKeeper::Player *playerData);
@@ -464,8 +447,8 @@ static UpTimeCommand      upTimeCommand;
 static PasswordCommand    passwordCommand;
 static SetCommand         setCommand;
 static ResetCommand       resetCommand;
-static ShutdownCommand    shutdownCommand;
-static SuperkillCommand   superkillCommand;
+ShutdownCommand			  shutdownCommand;	// used by the API
+SuperkillCommand		  superkillCommand;	// used by the API
 static GameOverCommand    gameOverCommand;
 static CountdownCommand   countdownCommand;
 static FlagCommand        flagCommand;
@@ -994,11 +977,14 @@ bool ResetCommand::operator() (const char         *message,
 bool ShutdownCommand::operator() (const char         *,
 				  GameKeeper::Player *playerData)
 {
-  int t = playerData->getIndex();
-  if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::shutdownServer)) {
-    sendMessage(ServerPlayer, t, "You do not have permission to run the shutdown command");
-    return true;
-  }
+	// If no playerData - dont perfom permission check, since it is probably the API
+	if (playerData){
+		int t = playerData->getIndex();
+		if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::shutdownServer)) {
+			sendMessage(ServerPlayer, t, "You do not have permission to run the shutdown command");
+			return true;
+		}
+	}
   done = true;
   return true;
 }
@@ -1007,11 +993,14 @@ bool ShutdownCommand::operator() (const char         *,
 bool SuperkillCommand::operator() (const char         *,
 				   GameKeeper::Player *playerData)
 {
-  int t = playerData->getIndex();
-  if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::superKill)) {
-    sendMessage(ServerPlayer, t, "You do not have permission to run the superkill command");
-    return true;
-  }
+	// If no playerData - dont perfom permission check, since it is probably the API
+	if (playerData){
+		int t = playerData->getIndex();
+		if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::superKill)) {
+			sendMessage(ServerPlayer, t, "You do not have permission to run the superkill command");
+			return true;
+		}
+	}
   for (int i = 0; i < curMaxPlayers; i++)
     removePlayer(i, "/superkill");
   gameOver = true;

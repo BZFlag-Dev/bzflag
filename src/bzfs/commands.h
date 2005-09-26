@@ -20,6 +20,25 @@
 #include <string>
 #include <map>
 #include "bzfsAPI.h"
+#include "ServerCommand.h"
+
+
+// command classes used by the API
+class ShutdownCommand : ServerCommand {
+public:
+	ShutdownCommand();
+
+	virtual bool operator() (const char         *commandLine,
+		GameKeeper::Player *playerData);
+};
+
+class SuperkillCommand : ServerCommand {
+public:
+	SuperkillCommand();
+
+	virtual bool operator() (const char         *commandLine,
+		GameKeeper::Player *playerData);
+};
 
 // parser for the server commands
 void parseServerCommand(const char *message, int dstPlayerId);
