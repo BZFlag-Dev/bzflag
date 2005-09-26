@@ -96,22 +96,12 @@ OptionsMenu::OptionsMenu() : guiOptionsMenu(NULL), effectsMenu(NULL),
   option->update();
   listHUD.push_back(option);
 
-  option = new HUDuiList;
-  option->setFontFace(fontFace);
-  option->setLabel("UDP network connection:");
-  option->setCallback(callback, (void*)"U");
-  options = &option->getList();
-  options->push_back(std::string("Off"));
-  options->push_back(std::string("On"));
-  option->update();
-  listHUD.push_back(option);
-
   saveWorld = label = new HUDuiLabel;
   label->setFontFace(fontFace);
   label->setLabel("Save World");
   listHUD.push_back(label);
 
-  initNavigation(listHUD, 1,listHUD.size()-1);
+  initNavigation(listHUD, 1, listHUD.size()-1);
 }
 
 OptionsMenu::~OptionsMenu()
@@ -181,7 +171,7 @@ void OptionsMenu::resize(int _width, int _height)
     HUDuiControl *ctl = listHUD[i];
     ctl->setFontSize(fontSize);
     ctl->setPosition(x, y);
-    if ((i == 6) || (i == 8)) {
+    if ((i == 6) || (i == 7)) {
       y -= 1.75f * h;
     } else {
       y -= 1.0f * h;
@@ -191,11 +181,7 @@ void OptionsMenu::resize(int _width, int _height)
   // load current settings
   i = 7;
 
-    ((HUDuiList*)listHUD[i++])->setIndex((int)BZDB.eval("saveIdentity"));
-
-    // mind the ++i !
-    const StartupInfo* info = getStartupInfo();
-    ((HUDuiList*)listHUD[i++])->setIndex(info->useUDPconnection ? 1 : 0);
+  ((HUDuiList*)listHUD[i++])->setIndex((int)BZDB.eval("saveIdentity"));
 }
 
 void OptionsMenu::callback(HUDuiControl* w, void* data)
@@ -203,11 +189,6 @@ void OptionsMenu::callback(HUDuiControl* w, void* data)
   HUDuiList* listHUD = (HUDuiList*)w;
 
   switch (((const char*)data)[0]) {
-    case 'U': {
-      StartupInfo* info = getStartupInfo();
-      info->useUDPconnection = (listHUD->getIndex() != 0);
-      break;
-    }
     case 'i': { // save identity
 	BZDB.setInt("saveIdentity", listHUD->getIndex());
 	break;
