@@ -6091,7 +6091,7 @@ static void		playingLoop()
 static float		timeConfiguration(bool useZBuffer)
 {
   // prepare depth buffer if requested
-  BZDB.set("zbuffer", useZBuffer ? "1" : "0");
+  BZDB.set("zbuffer","1" );
   if (useZBuffer) {
     glEnable(GL_DEPTH_TEST);
     glClear(GL_DEPTH_BUFFER_BIT);
@@ -6145,18 +6145,18 @@ static void		timeConfigurations()
 	timeNoBlendNoZ < timeBlendNoZ &&
 	timeNoBlendNoZ < timeBlendZ) {
       // no depth, no blending definitely fastest
-      BZDB.set("zbuffer", "0");
-      BZDB.set("blend", "0");
+      BZDB.set("zbuffer", "1");
+      BZDB.set("blend", "1");
     }
     if (timeNoBlendZ < timeBlendNoZ &&
 	timeNoBlendZ < timeBlendZ) {
       // no blending faster than blending
-      BZDB.set("zbuffer", "0");
-      BZDB.set("blend", "0");
+      BZDB.set("zbuffer", "1");
+      BZDB.set("blend", "1");
     }
     if (timeBlendNoZ < timeBlendZ) {
       // blending faster than depth
-      BZDB.set("zbuffer", "0");
+      BZDB.set("zbuffer", "1");
       BZDB.set("blend", "1");
     }
     // blending and depth faster than without either

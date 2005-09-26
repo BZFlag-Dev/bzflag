@@ -145,8 +145,8 @@ void SceneRenderer::setWindow(MainWindow* _window) {
   window->getWindow()->makeCurrent();
   GLint bits;
   if (!BZDB.isSet("zbuffer")) {
-    glGetIntegerv(GL_DEPTH_BITS, &bits);
-    BZDB.set("zbuffer", (bits > 0) ? "1" : "0");
+//	  glGetIntegerv(GL_DEPTH_BITS, &bits);
+    BZDB.set("zbuffer", "1");
   }
   glGetIntegerv(GL_STENCIL_BITS, &bits);
   useStencilOn = (bits > 0);

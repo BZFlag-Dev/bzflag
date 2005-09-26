@@ -148,7 +148,13 @@ static void		setVisual(BzfVisual* visual)
   // ask for a zbuffer if not disabled.  we might choose not to use it
   // if we do ask for it.
   if (!BZDB.isSet("zbuffer") || BZDB.get("zbuffer") != "disable")
-    visual->setDepth(16);
+  {
+	int depthLevel = 16;
+	if ( BZDB.eval("maxQuality") > 2)
+		depthLevel = 32;
+
+    visual->setDepth(depthLevel);
+  }
 
   // optional
 #if defined(DEBUG_RENDERING)
@@ -514,11 +520,7 @@ void			dumpResources(BzfDisplay *currentDisplay,
   if (isSoundOpen()) {
     BZDB.set("volume", TextUtils::format("%d", getSoundVolume()));
   }
-  GLint value;
-  glGetIntegerv(GL_DEPTH_BITS, &value);
-  if (value == 0) {
-    BZDB.set("zbuffer", "0");
-  }
+  BZDB.set("zbuffer", "1");
 
   if (renderer.getWindow().getWindow()->hasGammaControl()) {
     BZDB.set("gamma", TextUtils::format("%f", renderer.getWindow().getWindow()->getGamma()));
