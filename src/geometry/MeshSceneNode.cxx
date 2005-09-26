@@ -329,9 +329,6 @@ void MeshSceneNode::notifyStyleChange()
 
         const GLfloat* color = mat.colorPtr;;
 
-
-        // FIXME - only use &extents if we care about turning off the lights
-
         bool normalize = false;
         const MeshTransform::Tool* xformTool = drawInfo->getTransformTool();
         if (xformTool != NULL) {

@@ -27,6 +27,7 @@
 #include "Intersect.h"
 #include "MeshDrawInfo.h"
 #include "MeshTransform.h"
+#include "StateDatabase.h"
 
 // local headers
 #include "Triangulate.h"
@@ -778,10 +779,12 @@ void *MeshObstacle::unpack(void *buf)
       void* drawInfoSize = (char*)texcoordEnd - sizeof(fvec2);
       int32_t rewindLen;
       nboUnpackInt(drawInfoSize, rewindLen);
+      
+      const bool useDrawInfo = BZDB.isTrue("useDrawInfo");
 
       if (rewindLen <= (int)(texcoordCount * sizeof(fvec2))) {
         // unpack the drawInfo
-        if (BZDB.isTrue("useDrawInfo")) {
+        if (useDrawInfo) {
           void* drawInfoData = (char*)texcoordEnd - rewindLen;
           drawInfo = new MeshDrawInfo();
           drawInfo->unpack(drawInfoData);
@@ -798,7 +801,7 @@ void *MeshObstacle::unpack(void *buf)
         texcoords = tmpTxcds;
         
         // setup the drawInfo arrays
-        if (BZDB.isTrue("useDrawInfo")) {
+        if (useDrawInfo) {
           drawInfo->clientSetup(this);
           if (!drawInfo->isValid()) {
             delete drawInfo;

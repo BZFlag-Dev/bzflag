@@ -6296,6 +6296,7 @@ static void		findFastConfiguration()
   node->setTexture(HUDuiControl::getArrow());
   node->setMaterial(OpenGLMaterial(color, color));
   timingScene->addStaticNode(node, false);
+  timingScene->finalizeStatics();
   sceneRenderer->setSceneDatabase(timingScene);
   sceneRenderer->setDim(false);
 

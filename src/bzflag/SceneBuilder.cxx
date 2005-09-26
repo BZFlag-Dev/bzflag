@@ -260,6 +260,8 @@ SceneDatabase* SceneDatabaseBuilder::make(const World* world)
 
   // add the water level node
   addWaterLevel(db, world);
+  
+  db->finalizeStatics();
 
   return db;
 }

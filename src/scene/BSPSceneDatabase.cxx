@@ -64,6 +64,15 @@ BSPSceneDatabase::~BSPSceneDatabase()
 }
 
 
+void BSPSceneDatabase::finalizeStatics()
+{
+  if (needNoPlaneNodes) {
+    insertNoPlaneNodes();
+  }
+  return;
+}
+
+
 bool BSPSceneDatabase::addStaticNode(SceneNode* node, bool dontFree)
 {
   // store for later insertion if the node has no plane
@@ -161,10 +170,10 @@ void BSPSceneDatabase::release(Node* node)
 bool BSPSceneDatabase::insertStatic(int level, Node* _root,
 				    SceneNode* node, bool dontFree)
 {
-  bool wouldFree = false;
-
   // dynamic nodes should only be inserted after all static nodes
   assert(_root->dynamic == false);
+
+  bool wouldFree = false;
 
   // split against root's plane
   SceneNode* front = NULL, *back = NULL;
@@ -230,7 +239,7 @@ void BSPSceneDatabase::insertDynamic(int level, Node* _root,
     d = _root->node->getDistance(eye) - node->getDistance(eye);
   }
 
-  if (d >= 0.0) {
+  if (d >= 0.0f) {
     if (_root->front) {
       insertDynamic(level + 1, _root->front, node);
     } else {
@@ -251,16 +260,20 @@ void BSPSceneDatabase::insertDynamic(int level, Node* _root,
 void BSPSceneDatabase::insertNoPlane(int level, Node* _root,
 				     SceneNode* node)
 {
+  // dynamic nodes should only be inserted after all static nodes
+  assert(_root->dynamic == false);
+
   GLfloat d;
-  if (!_root->dynamic && _root->node->getPlane()) {
+  if (_root->node->getPlane()) {
     const GLfloat* plane = _root->node->getPlane();
     const GLfloat* pos = node->getSphere();
     d = pos[0] * plane[0] + pos[1] * plane[1] + pos[2] * plane[2] + plane[3];
   } else {
-    d = _root->node->getDistance(eye) - node->getDistance(eye);
+    // it's a crap shoot  (draw smaller items first)
+    d = node->getSphere()[3] - _root->node->getSphere()[3];
   }
 
-  if (d >= 0.0) {
+  if (d >= 0.0f) {
     if (_root->front) {
       insertNoPlane(level + 1, _root->front, node);
     } else {
@@ -355,9 +368,6 @@ void BSPSceneDatabase::addLights(SceneRenderer& _renderer)
 
 void BSPSceneDatabase::addShadowNodes(SceneRenderer& _renderer)
 {
-  if (needNoPlaneNodes) {
-    insertNoPlaneNodes();
-  }
   if (root) {
     renderer = &_renderer;
     nodeAddShadowNodes(root);
@@ -368,9 +378,6 @@ void BSPSceneDatabase::addShadowNodes(SceneRenderer& _renderer)
 
 void BSPSceneDatabase::addRenderNodes(SceneRenderer& _renderer)
 {
-  if (needNoPlaneNodes) {
-    insertNoPlaneNodes();
-  }
   if (root) {
     renderer = &_renderer;
     frustum = &renderer->getViewFrustum();
