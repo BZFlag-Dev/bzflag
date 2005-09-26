@@ -5135,8 +5135,9 @@ void drawFrame(const float dt)
     if (showDrawTime) {
 #if defined(DEBUG_RENDERING)
       // get an accurate measure of frame time (at expense of frame rate)
-      glFinish();
-      
+      if (BZDB.isTrue("glFinish")) {
+        glFinish();
+      }
 #endif
       media->stopwatch(true);
     }
@@ -5408,7 +5409,9 @@ void drawFrame(const float dt)
     if (showDrawTime) {
 #if defined(DEBUG_RENDERING)
       // get an accurate measure of frame time (at expense of frame rate)
-      glFinish();
+      if (BZDB.isTrue("glFinish")) {
+        glFinish();
+      }
 #endif
       hud->setDrawTime((float)media->stopwatch(false));
     }
