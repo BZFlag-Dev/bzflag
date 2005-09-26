@@ -22,7 +22,7 @@ WinVisual::WinVisual(const WinDisplay* _display) :
   pfd.nVersion		= 1;
   pfd.dwFlags		= PFD_DRAW_TO_WINDOW |
 			  PFD_SUPPORT_OPENGL |
-			  PFD_DEPTH_DONTCARE;
+			  PFD_DEPTH_DONTCARE | PFD_SWAP_EXCHANGE;
   pfd.iPixelType	= PFD_TYPE_RGBA;
   pfd.cColorBits	= 0;
   pfd.cRedBits		= 0;
