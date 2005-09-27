@@ -5688,6 +5688,10 @@ static void		updatePauseCountdown(float dt)
 	// catch-all message when trying to pause when you should not
 	hud->setAlert(1, "Unable to pause right now", 1.0f, false);
 
+      } else if (myTank->isPhantomZoned()) {
+	// custom message when trying to pause while zoned
+	hud->setAlert(1, "Can't pause when you are in the phantom zone", 1.0f, false);
+
       } else {
 	// okay, now we pause.  first drop any team flag we may have.
 	const FlagType* flagd = myTank->getFlag();
