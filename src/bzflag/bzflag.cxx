@@ -145,14 +145,13 @@ static void		setVisual(BzfVisual* visual)
   visual->setDoubleBuffer(true);
   visual->setRGBA(1, 1, 1, 0);
 
-  // ask for a zbuffer if not disabled.  we might choose not to use it
-  // if we do ask for it.
-  if (!BZDB.isSet("zbuffer") || BZDB.get("zbuffer") != "disable")
-  {
-	int depthLevel = 16;
-	if ( BZDB.isSet("forceDepthBits") )
-		depthLevel = (int)BZDB.eval("forceDepthBits");
-
+  // ask for a zbuffer if not disabled.  we might
+  // choose not to use it if we do ask for it.
+  if (!BZDB.isSet("zbuffer") || (BZDB.get("zbuffer") != "disable")) {
+    int depthLevel = 16;
+    if (BZDB.isSet("forceDepthBits")) {
+      depthLevel = BZDB.evalInt("forceDepthBits");
+    }
     visual->setDepth(depthLevel);
   }
 
@@ -1139,7 +1138,10 @@ int			main(int argc, char** argv)
     exit(1);
 
   } else {
-    DEBUG3("Using the following GL_RENDERER: %s\n", glRenderer);
+    DEBUG1("Using the following GL_RENDERER: %s\n", glRenderer);
+    GLint zDepth;
+    glGetIntegerv(GL_DEPTH_BITS, &zDepth);
+    DEBUG1("Depth Buffer has %i bitplanes\n", zDepth);
   }
 
   // add the zbuffer callback here, after the OpenGL context is initialized
