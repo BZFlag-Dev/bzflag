@@ -666,12 +666,17 @@ void			ScoreboardRenderer::drawPlayerScore(const Player* player,
                   huntStr.c_str());
   } else if (huntCursor && !huntAddMode) {
     std::string huntStr = ColorStrings[WhiteColor];
+    huntStr += ColorStrings[PulsatingColor];
     huntStr += "->";
     fm.drawString(xs - huntArrowWidth, y, 0, minorFontFace, minorFontSize,
                   huntStr.c_str());
   } 
   if (huntCursor && huntAddMode) {
-    fm.drawString(xs - huntPlusesWidth, y, 0, minorFontFace, minorFontSize, "@>");
+    std::string huntStr = ColorStrings[WhiteColor];
+    huntStr += ColorStrings[PulsatingColor];
+    huntStr += "@>";
+    fm.drawString(xs - huntPlusesWidth, y, 0, minorFontFace, minorFontSize,
+                  huntStr.c_str());
   }
 }
 
