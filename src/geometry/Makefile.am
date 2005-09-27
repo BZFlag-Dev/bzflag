@@ -9,6 +9,9 @@ endif
 
 AM_CPPFLAGS = -I$(top_srcdir)/include
 
+noinst_HEADERS =                        \
+	MeshRenderNode.h
+	
 libGeometry_la_LDFLAGS = -static
 libGeometry_la_SOURCES  =		\
 	ViewFrustum.cxx			\
