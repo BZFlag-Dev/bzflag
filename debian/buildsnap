@@ -1,6 +1,6 @@
 #!/bin/sh
 # build release or cvs snapshop debian packages
-if [ -z "$1" -o ! -r configure.in ] ; then
+if [ -z "$1" -o ! -r configure.ac ] ; then
  echo "$0 { cvs | release } - must be run in the project home directory"
  exit 1
 fi
