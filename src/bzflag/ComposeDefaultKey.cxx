@@ -170,6 +170,12 @@ bool			ComposeDefaultKey::keyRelease(const BzfKeyEvent& key)
       hud->setComposeString(line2);
     }
   }
+  
+  if ((key.ascii == 4) || // ^D
+      (key.ascii == 13)) { // return
+    return true;
+  }
+  
   return keyPress(key);
 }
 
