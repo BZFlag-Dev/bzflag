@@ -34,6 +34,7 @@ libcares_la_SOURCES =		\
 	ares_timeout.c		\
 	ares_version.c		\
 	ares_version.h		\
+	nameser.h		\
 	setup.h
 
 EXTRA_libcares_la_SOURCES = windows_port.c

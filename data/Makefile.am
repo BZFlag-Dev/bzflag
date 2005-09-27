@@ -94,6 +94,10 @@ EXTRA_DIST =			\
 	rogue_tank.png		\
 	shock.wav		\
 	snowflake.png		\
+	spree1.wav		\
+	spree2.wav		\
+	spree3.wav		\
+	spree4.wav		\
 	std_ground.png		\
 	steamroller.wav		\
 	teamgrab.wav		\

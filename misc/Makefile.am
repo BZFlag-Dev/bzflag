@@ -2,7 +2,9 @@ EXTRA_DIST =				\
 	3ds2bzw.c			\
 	bzbz.pl				\
 	bzflag.desktop.in		\
+	bzfquery.php			\
 	bzfquery.pl			\
+	bzfquery_example.php		\
 	bzfs.conf			\
 	bzfs_conf.html			\
 	bzfsd				\
@@ -11,6 +13,7 @@ EXTRA_DIST =				\
 	bzlist.php			\
 	bzwcvt.pl			\
 	checkam				\
+	checkToken.php			\
 	doxyfile			\
 	filter.txt			\
 	fountains.bzw			\
@@ -27,6 +30,8 @@ EXTRA_DIST =				\
 	simpleSwearList.txt		\
 	snap.sh				\
 	tar				\
+	Template.cxx			\
+	Template.h			\
 	touchcopyright			\
 	touchversion			\
 	vars.txt			\
