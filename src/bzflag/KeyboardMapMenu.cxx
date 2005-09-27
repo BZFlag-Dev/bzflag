@@ -105,6 +105,7 @@ KeyboardMapMenu::KeyboardMapMenu() : defaultKey(this), editing(-1), quickKeysMen
   controls.push_back(createLabel(NULL, "Silence/UnSilence Key:"));
   controls.push_back(createLabel(NULL, "Server Command Key:"));
   controls.push_back(createLabel(NULL, "Hunt Key:"));
+  controls.push_back(createLabel(NULL, "Add/Modify Hunt Key:"));
   controls.push_back(createLabel(NULL, "AutoPilot Key: "));
   controls.push_back(createLabel(NULL, "Main Message Tab: "));
   controls.push_back(createLabel(NULL, "Chat Message Tab: "));
@@ -153,6 +154,7 @@ KeyboardMapMenu::KeyboardMapMenu() : defaultKey(this), editing(-1), quickKeysMen
   initkeymap("silence", ++i);
   initkeymap("servercommand", ++i);
   initkeymap("hunt", ++i);
+  initkeymap("addhunt", ++i);
   initkeymap("autopilot", ++i);
   initkeymap("messagepanel all", ++i);
   initkeymap("messagepanel chat", ++i);

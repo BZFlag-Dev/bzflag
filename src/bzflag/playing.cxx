@@ -1494,6 +1494,8 @@ static bool removePlayer (PlayerId id)
     myTank->setNemesis(0);
     
   completer.unregisterWord(p->getCallSign());
+  if ( p->isHunted() )
+    scoreboard->huntedPlayerLeaving();
 
   delete player[playerIndex];
   player[playerIndex] = NULL;

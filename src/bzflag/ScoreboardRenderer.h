@@ -44,11 +44,15 @@ public:
   static const int HUNT_ENABLED = 2;
   void	  setHuntState(int _state);
   int		  getHuntState() const;
+  void	  setHuntAddMode (bool _addMode);
+  bool	  getHuntAddMode() const;
   void		setHuntNextEvent ();    // invoked when 'down' button pressed
   void		setHuntPrevEvent ();    // invoked when 'up' button pressed
   void		setHuntSelectEvent ();  // invoked when 'fire' button pressed
-  void    clearHuntedTank ();
-  
+  void    clearHuntedTanks ();
+  void    huntedPlayerLeaving (void);
+  int     getNumHunted(void);
+    
   static void    setAlwaysTeamScore (bool onoff);
   static bool    getAlwaysTeamScore ();
     
@@ -102,6 +106,7 @@ private:
   float		teamScoreLabelWidth;
   float		teamCountLabelWidth;
   float		huntArrowWidth;
+  float		huntPlusesWidth;
   float		huntedArrowWidth;
   float		tkWarnRatio;
 
@@ -117,6 +122,8 @@ private:
   bool		huntSelectEvent;
   int 		huntPositionEvent;
   int     huntState;  
+  bool    huntAddMode;
+  int     numHunted;
 };
 
 

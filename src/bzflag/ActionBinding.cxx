@@ -82,6 +82,7 @@ ActionBinding::ActionBinding() {
   wayToBindActions.insert(std::make_pair(std::string("set displayRadarRange 1.0"), press));
   wayToBindActions.insert(std::make_pair(std::string("toggle slowKeyboard"), press));
   wayToBindActions.insert(std::make_pair(std::string("hunt"), press));
+  wayToBindActions.insert(std::make_pair(std::string("addhunt"), press));
   wayToBindActions.insert(std::make_pair(std::string("restart"), release));
   wayToBindActions.insert(std::make_pair(std::string("autopilot"), press));
 
@@ -157,6 +158,7 @@ ActionBinding::ActionBinding() {
   defaultBinding.insert(BindingTable::value_type("5", "radarZoom out"));
   defaultBinding.insert(BindingTable::value_type("A", "toggle slowKeyboard"));
   defaultBinding.insert(BindingTable::value_type("U", "hunt"));
+  defaultBinding.insert(BindingTable::value_type("7", "addhunt"));
   defaultBinding.insert(BindingTable::value_type("Right Mouse", "restart"));
   defaultBinding.insert(BindingTable::value_type("I", "restart"));
   defaultBinding.insert(BindingTable::value_type("9", "autopilot"));

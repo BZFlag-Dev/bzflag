@@ -100,6 +100,7 @@ const struct CommandListItem commandList[] = {
   { "servercommand",	&cmdServerCommand,	"servercommand:  quick admin" },
   { "scrollpanel",	&cmdScrollPanel,	"scrollpanel {up|down}:  scroll message panel" },
   { "hunt",	&cmdHunt,	"hunt:  hunt a specific player" },
+  { "addhunt",	&cmdAddHunt,	"addhunt:  add/modify hunted player(s)" },
   { "iconify",  &cmdIconify,	"iconify: iconify & pause bzflag" },
   { "fullscreen", &cmdToggleFS, "fullscreen: toggle fullscreen mode" },
   { "autopilot",&cmdAutoPilot,	"autopilot:  set/unset autopilot bot code" },
@@ -822,24 +823,48 @@ std::string cmdScrollPanel(const std::string&, const CommandManager::ArgList& ar
   return std::string();
 }
 
-std::string cmdHunt(const std::string&, const CommandManager::ArgList& args, bool*)
+
+
+void commonHunt (bool isAdd)
 {
-  if (args.size() != 0)
-    return "usage: hunt";
   ScoreboardRenderer *scoreboard = hud->getScoreboard();
 
   if (scoreboard->getHuntState() == ScoreboardRenderer::HUNT_ENABLED){
     playLocalSound(SFX_HUNT_SELECT);
-    scoreboard->setHuntState(ScoreboardRenderer::HUNT_NONE);
+    if (isAdd)
+      scoreboard->setHuntState(ScoreboardRenderer::HUNT_SELECTING);
+    else
+      scoreboard->setHuntState(ScoreboardRenderer::HUNT_NONE);
+    scoreboard->setHuntAddMode(isAdd);
   } else if (scoreboard->getHuntState() == ScoreboardRenderer::HUNT_SELECTING){
     playLocalSound(SFX_HUNT);
-    scoreboard->setHuntState(ScoreboardRenderer::HUNT_NONE);
-  } else {
+    if (scoreboard->getNumHunted() > 0)
+      scoreboard->setHuntState(ScoreboardRenderer::HUNT_ENABLED);
+    else
+      scoreboard->setHuntState(ScoreboardRenderer::HUNT_NONE);
+  } else if (!scoreboard->getHuntAddMode()){
     playLocalSound(SFX_HUNT);
     scoreboard->setHuntState(ScoreboardRenderer::HUNT_SELECTING);
+    scoreboard->setHuntAddMode(isAdd);
     if (!BZDB.isTrue("displayScore"))
       BZDB.set("displayScore", "1");
   }
+}
+
+
+std::string cmdHunt(const std::string&, const CommandManager::ArgList& args, bool*)
+{
+  if (args.size() != 0)
+    return "usage: hunt";
+  commonHunt (false);
+  return std::string();
+}
+
+std::string cmdAddHunt(const std::string&, const CommandManager::ArgList& args, bool*)
+{
+  if (args.size() != 0)
+    return "usage: addhunt";
+  commonHunt (true);
   return std::string();
 }
 

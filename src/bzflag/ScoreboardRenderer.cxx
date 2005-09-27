@@ -56,7 +56,9 @@ ScoreboardRenderer::ScoreboardRenderer() :
 				huntPosition(0),
 				huntSelectEvent(false),
 				huntPositionEvent(0),
-				huntState(HUNT_NONE)
+				huntState(HUNT_NONE),
+        huntAddMode(false),
+        numHunted(0)
 {
   // initialize message color (white)
   messageColor[0] = 1.0f;
@@ -141,7 +143,8 @@ void		ScoreboardRenderer::setMinorFontSize(float height)
     break;
   }
 
-  huntArrowWidth = fm.getStrLength(minorFontFace, minorFontSize, "-> ");
+  huntArrowWidth = fm.getStrLength(minorFontFace, minorFontSize, "->");
+  huntPlusesWidth = fm.getStrLength(minorFontFace, minorFontSize, "@>");
   huntedArrowWidth = fm.getStrLength(minorFontFace, minorFontSize, "Hunt->");
   scoreLabelWidth = fm.getStrLength(minorFontFace, minorFontSize, scoreSpacingLabel);
   killsLabelWidth = fm.getStrLength(minorFontFace, minorFontSize, killSpacingLabel);
@@ -232,16 +235,40 @@ void		ScoreboardRenderer::setHuntState (int _huntState)
   if (huntState == _huntState)
     return;
   huntState = _huntState;
+  if (_huntState != HUNT_SELECTING)
+    huntAddMode = false;
   if (huntState==HUNT_NONE){
-    clearHuntedTank();
-  } else if (huntState == HUNT_SELECTING) {
+    clearHuntedTanks();
+  } else if (huntState==HUNT_SELECTING) {
     huntPosition = 0;
   }
 }
 
+void      ScoreboardRenderer::huntedPlayerLeaving ()
+{
+  if (--numHunted == 0)
+    huntState = HUNT_NONE;
+}
+
+int     ScoreboardRenderer::getNumHunted()
+{
+  return numHunted;
+}
+
+
 int			ScoreboardRenderer::getHuntState() const
 {
   return huntState;
+}
+
+void		ScoreboardRenderer::setHuntAddMode (bool _yesno)
+{
+  huntAddMode = _yesno;
+}
+
+bool		ScoreboardRenderer::getHuntAddMode() const
+{
+  return huntAddMode;
 }
 
 
@@ -309,7 +336,7 @@ void			ScoreboardRenderer::renderCtfFlags (){
       FlagType* flagd = player->getFlag();
       TeamColor teamIndex = player->getTeam();
       if (flagd!=Flags::Null && flagd->flagTeam != NoTeam) {   // if player has team flag ...
-	std::string playerInfo = ColorStrings[flagd->flagTeam];
+	      std::string playerInfo = ColorStrings[flagd->flagTeam];
         sprintf (flagColor, "%-12s", flagd->flagName);
         playerInfo += flagColor;
         playerInfo += ColorStrings[teamIndex];
@@ -324,7 +351,7 @@ void			ScoreboardRenderer::renderCtfFlags (){
 }
 
 
-void     ScoreboardRenderer::clearHuntedTank ()
+void     ScoreboardRenderer::clearHuntedTanks ()
 {
   World *world = World::getWorld();
   if (!world)
@@ -335,6 +362,7 @@ void     ScoreboardRenderer::clearHuntedTank ()
     if ((p = world->getPlayer(i)))
       p->setHunted (false);
   }
+  numHunted = 0;
 }
 
 
@@ -393,12 +421,23 @@ void			ScoreboardRenderer::renderScoreboard(void)
       if (huntPosition<0)
         huntPosition = numPlayers-1;
       if (huntSelectEvent){             // if 'fire' was pressed ... 
+        if (!huntAddMode)
+          clearHuntedTanks ();
+        if (huntAddMode && players[huntPosition]->isHunted()) {
+  	      players[huntPosition]->setHunted(false);
+          if (--numHunted == 0){
+            huntState = HUNT_NONE;
+            huntAddMode = false;
+          }
+        } else {
+  	      players[huntPosition]->setHunted(true);
+          ++numHunted;
+        }          
         huntState = HUNT_ENABLED;
-        clearHuntedTank ();
-	players[huntPosition]->setHunted(true);
       }
     }
   }
+
   huntSelectEvent = false;
   huntPositionEvent = 0;
   
@@ -585,8 +624,11 @@ void			ScoreboardRenderer::drawPlayerScore(const Player* player,
   // draw huntEnabled status
   if (player->isHunted()) {
     fm.drawString(xs - huntedArrowWidth, y, 0, minorFontFace, minorFontSize, "Hunt->");
-  } else if (huntCursor) {
+  } else if (huntCursor && !huntAddMode) {
     fm.drawString(xs - huntArrowWidth, y, 0, minorFontFace, minorFontSize, "->");
+  } 
+  if (huntCursor && huntAddMode) {
+    fm.drawString(xs - huntPlusesWidth, y, 0, minorFontFace, minorFontSize, "@>");
   }
 }
 
