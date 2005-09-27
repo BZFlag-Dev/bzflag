@@ -724,7 +724,6 @@ static bool		doKeyCommon(const BzfKeyEvent& key, bool pressed)
     } else if (KEYMGR.get(key, true) == "fire") {
       if (pressed) {
       	scoreboard->setHuntSelectEvent();
-      	playLocalSound(SFX_HUNT_SELECT);
       }
       return true;
     }

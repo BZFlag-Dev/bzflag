@@ -49,6 +49,7 @@ public:
   void		setHuntNextEvent ();    // invoked when 'down' button pressed
   void		setHuntPrevEvent ();    // invoked when 'up' button pressed
   void		setHuntSelectEvent ();  // invoked when 'fire' button pressed
+  void    huntKeyEvent (bool isAdd);
   void    clearHuntedTanks ();
   void    huntedPlayerLeaving (void);
   int     getNumHunted(void);

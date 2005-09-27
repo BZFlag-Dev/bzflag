@@ -32,6 +32,7 @@
 #include "LocalPlayer.h"
 #include "World.h"
 #include "RemotePlayer.h"
+#include "sound.h"
 
 #define DEBUG_SHOWRATIOS 1
 
@@ -223,10 +224,39 @@ void		ScoreboardRenderer::setHuntNextEvent()
   ++huntPosition;
 }
 
-
 void			ScoreboardRenderer::setHuntSelectEvent ()
 {
   huntSelectEvent = true;
+}
+
+
+void			ScoreboardRenderer::huntKeyEvent (bool isAdd)
+{
+  if (getHuntState() == HUNT_ENABLED) {
+    if (isAdd) {
+      setHuntState(HUNT_SELECTING);
+      playLocalSound(SFX_HUNT_SELECT);
+    } else {
+      setHuntState(HUNT_NONE);
+      playLocalSound(SFX_HUNT);
+    }
+    setHuntAddMode(isAdd);
+
+  } else if (getHuntState() == HUNT_SELECTING) {
+    playLocalSound(SFX_HUNT_SELECT);
+    if (getNumHunted() > 0) {
+      setHuntState(HUNT_ENABLED);
+    } else {
+      setHuntState(HUNT_NONE);
+    }
+    
+  } else if (!getHuntAddMode()) {
+    setHuntState(HUNT_SELECTING);
+    playLocalSound(SFX_HUNT_SELECT);
+    setHuntAddMode(isAdd);
+    if (!BZDB.isTrue("displayScore"))
+      BZDB.set("displayScore", "1");
+  }
 }
 
 
@@ -234,20 +264,22 @@ void		ScoreboardRenderer::setHuntState (int _huntState)
 {
   if (huntState == _huntState)
     return;
-  huntState = _huntState;
   if (_huntState != HUNT_SELECTING)
     huntAddMode = false;
-  if (huntState==HUNT_NONE){
+  if (_huntState==HUNT_NONE){
     clearHuntedTanks();
-  } else if (huntState==HUNT_SELECTING) {
+  } else if (_huntState==HUNT_SELECTING) {
     huntPosition = 0;
   }
+  huntState = _huntState;
 }
 
 void      ScoreboardRenderer::huntedPlayerLeaving ()
 {
-  if (--numHunted == 0)
-    huntState = HUNT_NONE;
+  if (--numHunted == 0){
+    setHuntState (HUNT_NONE);
+    playLocalSound(SFX_HUNT);
+  }
 }
 
 int     ScoreboardRenderer::getNumHunted()
@@ -428,10 +460,15 @@ void			ScoreboardRenderer::renderScoreboard(void)
           if (--numHunted == 0){
             huntState = HUNT_NONE;
             huntAddMode = false;
-          }
+           	playLocalSound(SFX_HUNT);
+          } else
+           	playLocalSound(SFX_HUNT_SELECT);
         } else {
   	      players[huntPosition]->setHunted(true);
-          ++numHunted;
+          if (++numHunted == 1)
+           	playLocalSound(SFX_HUNT);
+          else
+           	playLocalSound(SFX_HUNT_SELECT);
         }          
         huntState = HUNT_ENABLED;
       }

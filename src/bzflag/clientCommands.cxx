@@ -824,39 +824,11 @@ std::string cmdScrollPanel(const std::string&, const CommandManager::ArgList& ar
 }
 
 
-
-void commonHunt (bool isAdd)
-{
-  ScoreboardRenderer *scoreboard = hud->getScoreboard();
-
-  if (scoreboard->getHuntState() == ScoreboardRenderer::HUNT_ENABLED){
-    playLocalSound(SFX_HUNT_SELECT);
-    if (isAdd)
-      scoreboard->setHuntState(ScoreboardRenderer::HUNT_SELECTING);
-    else
-      scoreboard->setHuntState(ScoreboardRenderer::HUNT_NONE);
-    scoreboard->setHuntAddMode(isAdd);
-  } else if (scoreboard->getHuntState() == ScoreboardRenderer::HUNT_SELECTING){
-    playLocalSound(SFX_HUNT);
-    if (scoreboard->getNumHunted() > 0)
-      scoreboard->setHuntState(ScoreboardRenderer::HUNT_ENABLED);
-    else
-      scoreboard->setHuntState(ScoreboardRenderer::HUNT_NONE);
-  } else if (!scoreboard->getHuntAddMode()){
-    playLocalSound(SFX_HUNT);
-    scoreboard->setHuntState(ScoreboardRenderer::HUNT_SELECTING);
-    scoreboard->setHuntAddMode(isAdd);
-    if (!BZDB.isTrue("displayScore"))
-      BZDB.set("displayScore", "1");
-  }
-}
-
-
 std::string cmdHunt(const std::string&, const CommandManager::ArgList& args, bool*)
 {
   if (args.size() != 0)
     return "usage: hunt";
-  commonHunt (false);
+   hud->getScoreboard()->huntKeyEvent (false);
   return std::string();
 }
 
@@ -864,7 +836,7 @@ std::string cmdAddHunt(const std::string&, const CommandManager::ArgList& args, 
 {
   if (args.size() != 0)
     return "usage: addhunt";
-  commonHunt (true);
+   hud->getScoreboard()->huntKeyEvent (true);
   return std::string();
 }
 
