@@ -9,9 +9,6 @@ endif
 
 AM_CPPFLAGS = -I$(top_srcdir)/include
 
-noinst_HEADERS =                        \
-	MeshRenderNode.h
-	
 libGeometry_la_LDFLAGS = -static
 libGeometry_la_SOURCES  =		\
 	ViewFrustum.cxx			\
@@ -23,6 +20,7 @@ libGeometry_la_SOURCES  =		\
 	MeshPolySceneNode.cxx		\
 	MeshSceneNode.cxx		\
 	MeshRenderNode.cxx		\
+	MeshRenderNode.h		\
 	MeshDrawMgr.cxx			\
 	OccluderSceneNode.cxx		\
 	PolyWallSceneNode.cxx		\
