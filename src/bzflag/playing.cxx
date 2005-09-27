@@ -6570,12 +6570,23 @@ void			startPlaying(BzfDisplay* _display,
   // print version
   {
     char bombMessage[80];
-    sprintf(bombMessage, "BZFlag version %s", getAppVersion());
+    sprintf(bombMessage, "BZFlag version:  %s", getAppVersion());
     controlPanel->addMessage("");
     DEBUG1("%s\n", bombMessage);
+
+    // Send to the console
     tmpString = ColorStrings[RedColor];
     tmpString += (const char *) bombMessage;
     controlPanel->addMessage(tmpString);
+    
+    // GL Renderer
+    const char* const glRenderer = (const char*)glGetString(GL_RENDERER);
+    DEBUG1("GL Renderer:     %s\n", glRenderer);
+    
+    // Depth Buffer bitplanes
+    GLint zDepth;
+    glGetIntegerv(GL_DEPTH_BITS, &zDepth);
+    DEBUG1("Depth Buffer:    %i bitplanes\n", zDepth);
   }
 
   // windows version can be very helpful in debug logs

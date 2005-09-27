@@ -1137,11 +1137,6 @@ int			main(int argc, char** argv)
 	bail(1);
     exit(1);
 
-  } else {
-    DEBUG1("Using the following GL_RENDERER: %s\n", glRenderer);
-    GLint zDepth;
-    glGetIntegerv(GL_DEPTH_BITS, &zDepth);
-    DEBUG1("Depth Buffer has %i bitplanes\n", zDepth);
   }
 
   // add the zbuffer callback here, after the OpenGL context is initialized

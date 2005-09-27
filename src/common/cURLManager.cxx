@@ -86,7 +86,7 @@ void cURLManager::setup()
 {
   CURLcode result;
 
-  DEBUG1("LIBCURL: %s\n", curl_version());
+  DEBUG1("LIBCURL:         %s\n", curl_version());
   if ((result = curl_global_init(CURL_GLOBAL_NOTHING)))
     DEBUG1("cURL Global init Error: %d\n", result);
   multiHandle = curl_multi_init();
