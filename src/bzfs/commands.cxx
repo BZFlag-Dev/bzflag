@@ -1199,6 +1199,7 @@ bool LagWarnCommand::operator() (const char         *message,
   } else {
     snprintf(reply, MessageLen, "lagwarn is set to %d ms", int(clOptions->lagwarnthresh * 1000 + 0.5));
   }
+  LagInfo::setThreshold(clOptions->lagwarnthresh,(float)clOptions->maxlagwarn);
   sendMessage(ServerPlayer, t, reply);
   return true;
 }
