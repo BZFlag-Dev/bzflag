@@ -660,9 +660,15 @@ void			ScoreboardRenderer::drawPlayerScore(const Player* player,
 
   // draw huntEnabled status
   if (player->isHunted()) {
-    fm.drawString(xs - huntedArrowWidth, y, 0, minorFontFace, minorFontSize, "Hunt->");
+    std::string huntStr = ColorStrings[WhiteColor];
+    huntStr += "Hunt->";
+    fm.drawString(xs - huntedArrowWidth, y, 0, minorFontFace, minorFontSize,
+                  huntStr.c_str());
   } else if (huntCursor && !huntAddMode) {
-    fm.drawString(xs - huntArrowWidth, y, 0, minorFontFace, minorFontSize, "->");
+    std::string huntStr = ColorStrings[WhiteColor];
+    huntStr += "->";
+    fm.drawString(xs - huntArrowWidth, y, 0, minorFontFace, minorFontSize,
+                  huntStr.c_str());
   } 
   if (huntCursor && huntAddMode) {
     fm.drawString(xs - huntPlusesWidth, y, 0, minorFontFace, minorFontSize, "@>");
