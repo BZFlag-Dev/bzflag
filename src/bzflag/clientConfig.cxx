@@ -250,6 +250,11 @@ void updateConfigFile(void)
 		  KEYMGR.bind(key, false, "jump");
 
   case 2: // 2.0
+	  if (KEYMGR.stringToKeyEvent("7", key)
+		  && (KEYMGR.get(key, true) == ""))
+		  KEYMGR.bind(key, true, "addhunt");
+
+  case 3: // 2.0.4
 	  break; // no action, current version
 
   default: // hm, we don't know about this one...

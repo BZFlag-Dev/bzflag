@@ -29,7 +29,7 @@ extern int getBuildDate();
 #endif
 
 #ifndef BZ_CONFIG_FILE_VERSION
-#define BZ_CONFIG_FILE_VERSION	2
+#define BZ_CONFIG_FILE_VERSION	3
 #endif
 
 extern const char *bzfcopyright;
