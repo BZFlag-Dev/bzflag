@@ -5,7 +5,7 @@ RogueGenocide_la_CPPFLAGS = -I$(top_srcdir)/include
 RogueGenocide_la_LDFLAGS = -module -avoid-version
 
 EXTRA_DIST = \
-	ReadMe.txt \
+	README.txt \
 	RogueGenocide.def \
 	RogueGenocide.sln \
 	RogueGenocide.vcproj

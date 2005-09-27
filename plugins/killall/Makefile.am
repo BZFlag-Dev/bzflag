@@ -7,7 +7,8 @@ killall_la_LDFLAGS = -module -avoid-version
 EXTRA_DIST = \
 	killall.def \
 	killall.sln \
-	killall.vcproj
+	killall.vcproj \
+	README.txt
 
 MAINTAINERCLEANFILES =	\
 	Makefile.in

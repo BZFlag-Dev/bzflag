@@ -5,7 +5,7 @@ SAMPLE_PLUGIN_la_CPPFLAGS = -I$(top_srcdir)/include
 SAMPLE_PLUGIN_la_LDFLAGS = -module -avoid-version
 
 EXTRA_DIST = \
-	ReadMe.txt \
+	README.txt \
 	SAMPLE_PLUGIN.def \
 	SAMPLE_PLUGIN.sln \
 	SAMPLE_PLUGIN.vcproj
