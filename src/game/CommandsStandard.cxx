@@ -40,7 +40,7 @@ static std::string		cmdQuit(const std::string&,
 static void			onHelpCB(const std::string& name,
 					 void* userData)
 {
-  std::string& result = *reinterpret_cast<std::string*>(userData);
+  std::string& result = *static_cast<std::string*>(userData);
   result += name;
   result += "\n";
 }
@@ -123,7 +123,7 @@ static void			onSetCB(const std::string& name,
 					void* userData)
 {
   // don't show names starting with _
-  std::string& result = *reinterpret_cast<std::string*>(userData);
+  std::string& result = *static_cast<std::string*>(userData);
   if (!name.empty() && name.c_str()[0] != '_') {
     result += name;
     result += " = ";
@@ -182,7 +182,7 @@ static std::string		cmdUnset(const std::string&,
 static void			onBindCB(const std::string& name, bool press,
 					 const std::string& cmd, void* userData)
 {
-  std::string& result = *reinterpret_cast<std::string*>(userData);
+  std::string& result = *static_cast<std::string*>(userData);
   result += name;
   result += (press ? " down " : " up ");
   result += cmd;

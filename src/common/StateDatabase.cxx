@@ -500,14 +500,14 @@ StateDatabase::Map::iterator
 void			StateDatabase::notify(Map::iterator index)
 {
   evalCache.erase(index->first);
-  index->second.callbacks.iterate(&onCallback, const_cast<void*>(reinterpret_cast<const void*>(&index->first)));
+  index->second.callbacks.iterate(&onCallback, const_cast<void*>(static_cast<const void*>(&index->first)));
 }
 
 bool			StateDatabase::onCallback(Callback callback,
 						  void* userData,
 						  void* iterateData)
 {
-  callback(*reinterpret_cast<std::string*>(iterateData), userData);
+  callback(*static_cast<std::string*>(iterateData), userData);
   return true;
 }
 

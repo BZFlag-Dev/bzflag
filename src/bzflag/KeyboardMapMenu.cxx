@@ -331,7 +331,7 @@ void KeyboardMapMenu::onScan(const std::string& name, bool press,
 void KeyboardMapMenu::onScanCB(const std::string& name, bool press,
 			       const std::string& cmd, void* userData)
 {
-  reinterpret_cast<KeyboardMapMenu*>(userData)->onScan(name, press, cmd);
+  static_cast<KeyboardMapMenu*>(userData)->onScan(name, press, cmd);
 }
 
 HUDuiLabel* KeyboardMapMenu::createLabel(const char* str, const char* _label)

@@ -1127,7 +1127,7 @@ BZF_API bool bz_setBZDBInt( const char* variable, int val, int perms, bool persi
 
 void bzdbIterator (const std::string& name, void* userData)
 {
-	bzAPIStringList	* varList = (bzAPIStringList*)userData;
+	bzAPIStringList	* varList = static_cast<bzAPIStringList*>(userData);
 	varList->push_back(name);
 }
 

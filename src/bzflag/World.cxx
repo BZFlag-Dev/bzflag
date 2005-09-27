@@ -866,7 +866,7 @@ void			World::addFlags(SceneDatabase* scene, bool seerView)
 
 static void writeBZDBvar (const std::string& name, void *userData)
 {
-  std::ofstream *out = (std::ofstream *)userData;
+  std::ofstream *out = static_cast<std::ofstream*>(userData);
   if ((BZDB.getPermission(name) == StateDatabase::Server)
       && (BZDB.get(name) != BZDB.getDefault(name))
       && (name != "poll")) {

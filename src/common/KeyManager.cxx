@@ -332,7 +332,7 @@ bool			KeyManager::onCallback(
 				void* userData,
 				void* vinfo)
 {
-  CallbackInfo* info = reinterpret_cast<CallbackInfo*>(vinfo);
+  CallbackInfo* info = static_cast<CallbackInfo*>(vinfo);
   callback(info->name, info->press, info->cmd, userData);
   return true;
 }

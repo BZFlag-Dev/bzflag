@@ -43,7 +43,7 @@
 
 void bzdbCallBack(const std::string& /* name */ , void *userData)
 {
-  ((WeatherRenderer*)userData)->set();
+  static_cast<WeatherRenderer*>(userData)->set();
 }
 
 

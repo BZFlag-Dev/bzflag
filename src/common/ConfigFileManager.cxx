@@ -25,7 +25,7 @@ ConfigFileManager* Singleton<ConfigFileManager>::_instance = (ConfigFileManager*
 
 void writeBZDB(const std::string& name, void *stream)
 {
-  std::ostream& s = *reinterpret_cast<std::ostream*>(stream);
+  std::ostream& s = *static_cast<std::ostream*>(stream);
   std::string value = BZDB.get(name);
   std::string defaultVal = BZDB.getDefault(name);
   std::string newkey;
@@ -47,7 +47,7 @@ void writeBZDB(const std::string& name, void *stream)
 
 void writeKEYMGR(const std::string& name, bool press, const std::string& command, void* stream)
 {
-  std::ostream& s = *reinterpret_cast<std::ostream*>(stream);
+  std::ostream& s = *static_cast<std::ostream*>(stream);
   // quotify anything with a space
   std::string value = name;
   if (value.find(' ') != value.npos)

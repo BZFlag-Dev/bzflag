@@ -242,7 +242,7 @@ void Help1Menu::onScan(const std::string& name, bool press,
 void Help1Menu::onScanCB(const std::string& name, bool press,
 			 const std::string& cmd, void* userData)
 {
-  reinterpret_cast<Help1Menu*>(userData)->onScan(name, press, cmd);
+  static_cast<Help1Menu*>(userData)->onScan(name, press, cmd);
 }
 
 void Help1Menu::initKeymap(const std::string& name, int index)
