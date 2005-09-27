@@ -5195,16 +5195,12 @@ void drawFrame(const float dt)
       // back to center channel
       mainWindow->setQuadrant(MainWindow::UpperRight);
     } else if (viewType == SceneRenderer::Stacked) {
-      static float EyeDisplacement = 0.25f * BZDBCache::tankWidth;
-      static float FocalPlane = BZDB.eval(StateDatabase::BZDB_BOXBASE);
-      static bool init = false;
-      if (!init) {
-	init = true;
-	if (BZDB.isSet("eyesep"))
-	  EyeDisplacement = BZDB.eval("eyesep");
-	if (BZDB.isSet("focal"))
-	  FocalPlane = BZDB.eval("focal");
-      }
+      float EyeDisplacement = 0.25f * BZDBCache::tankWidth;
+      float FocalPlane = BZDB.eval(StateDatabase::BZDB_BOXBASE);
+      if (BZDB.isSet("eyesep"))
+        EyeDisplacement = BZDB.eval("eyesep");
+      if (BZDB.isSet("focal"))
+        FocalPlane = BZDB.eval("focal");
 
       // setup view for left eye
       sceneRenderer->getViewFrustum().setOffset(EyeDisplacement, FocalPlane);
@@ -5226,16 +5222,12 @@ void drawFrame(const float dt)
       // back to left channel
       mainWindow->setQuadrant(MainWindow::LowerHalf);
     } else if (viewType == SceneRenderer::Stereo) {
-      static float EyeDisplacement = 0.25f * BZDBCache::tankWidth;
-      static float FocalPlane = BZDB.eval(StateDatabase::BZDB_BOXBASE);
-      static bool init = false;
-      if (!init) {
-	init = true;
-	if (BZDB.isSet("eyesep"))
-	  EyeDisplacement = BZDB.eval("eyesep");
-	if (BZDB.isSet("focal"))
-	  FocalPlane = BZDB.eval("focal");
-      }
+      float EyeDisplacement = 0.25f * BZDBCache::tankWidth;
+      float FocalPlane = BZDB.eval(StateDatabase::BZDB_BOXBASE);
+      if (BZDB.isSet("eyesep"))
+        EyeDisplacement = BZDB.eval("eyesep");
+      if (BZDB.isSet("focal"))
+        FocalPlane = BZDB.eval("focal");
 
       // setup view for left eye
 #ifdef USE_GL_STEREO
@@ -5274,16 +5266,12 @@ void drawFrame(const float dt)
       mainWindow->setQuadrant(MainWindow::UpperRight);
 #endif
     } else if (viewType == SceneRenderer::Anaglyph) {
-      static float EyeDisplacement = 0.25f * BZDBCache::tankWidth;
-      static float FocalPlane = BZDB.eval(StateDatabase::BZDB_BOXBASE);
-      static bool init = false;
-      if (!init) {
-	init = true;
-	if (BZDB.isSet("eyesep"))
-	  EyeDisplacement = BZDB.eval("eyesep");
-	if (BZDB.isSet("focal"))
-	  FocalPlane = BZDB.eval("focal");
-      }
+      float EyeDisplacement = 0.25f * BZDBCache::tankWidth;
+      float FocalPlane = BZDB.eval(StateDatabase::BZDB_BOXBASE);
+      if (BZDB.isSet("eyesep"))
+        EyeDisplacement = BZDB.eval("eyesep");
+      if (BZDB.isSet("focal"))
+        FocalPlane = BZDB.eval("focal");
 
       // setup view for left eye
       glColorMask(GL_TRUE, GL_FALSE, GL_FALSE, GL_TRUE);
@@ -5303,18 +5291,14 @@ void drawFrame(const float dt)
       sceneRenderer->render(true, true);
       drawUI();
     } else if (viewType == SceneRenderer::Interlaced) {
-      static float EyeDisplacement = 0.25f * BZDBCache::tankWidth;
-      static float FocalPlane = BZDB.eval(StateDatabase::BZDB_BOXBASE);
-      static bool init = false;
+      float EyeDisplacement = 0.25f * BZDBCache::tankWidth;
+      float FocalPlane = BZDB.eval(StateDatabase::BZDB_BOXBASE);
       const int width = mainWindow->getWidth();
       const int height = mainWindow->getHeight();
-      if (!init) {
-	init = true;
-	if (BZDB.isSet("eyesep"))
-	  EyeDisplacement = BZDB.eval("eyesep");
-	if (BZDB.isSet("focal"))
-	  FocalPlane = BZDB.eval("focal");
-      }
+      if (BZDB.isSet("eyesep"))
+        EyeDisplacement = BZDB.eval("eyesep");
+      if (BZDB.isSet("focal"))
+        FocalPlane = BZDB.eval("focal");
 
       OpenGLGState::resetState();
       // enable stencil test
@@ -6583,9 +6567,10 @@ void			startPlaying(BzfDisplay* _display,
     tmpString += (const char *) bombMessage;
     controlPanel->addMessage(tmpString);
     
-    // GL Renderer
-    const char* const glRenderer = (const char*)glGetString(GL_RENDERER);
-    DEBUG1("GL Renderer:     %s\n", glRenderer);
+    // OpenGL Driver Information
+    DEBUG1("OpenGL vendor:   %s\n", (const char*)glGetString(GL_VENDOR));
+    DEBUG1("OpenGL version:  %s\n", (const char*)glGetString(GL_VERSION));
+    DEBUG1("OpenGL renderer: %s\n", (const char*)glGetString(GL_RENDERER));
     
     // Depth Buffer bitplanes
     GLint zDepth;
