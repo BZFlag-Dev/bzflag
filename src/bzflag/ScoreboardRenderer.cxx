@@ -424,7 +424,7 @@ void			ScoreboardRenderer::renderScoreboard(void)
   if (huntState == HUNT_SELECTING){
     std::string huntStr = ColorStrings[YellowColor];
     huntStr += ColorStrings[PulsatingColor];
-    huntStr += "*SEL*";
+    huntStr += " *SEL*";
     fm.drawString(xs - huntedArrowWidth, y0, 0, minorFontFace, minorFontSize, huntStr);
   }
 
