@@ -1590,6 +1590,8 @@ static void loadCachedWorld()
   // lookup the cached world
   std::istream *cachedWorld = FILEMGR.createDataInStream(worldCachePath, true);
   if (!cachedWorld) {
+    HUDDialogStack::get()->setFailedMessage("World cache files disappeared.  Join canceled");
+    drawFrame(0.0f);
     remove(worldCachePath.c_str());
     joiningGame = false;
     return;
@@ -1608,6 +1610,8 @@ static void loadCachedWorld()
   cachedWorld->seekg(0);
   char *localWorldDatabase = new char[charSize];
   if (!localWorldDatabase) {
+    HUDDialogStack::get()->setFailedMessage("Error loading cached world.  Join canceled");
+    drawFrame(0.0f);
     remove(worldCachePath.c_str());
     joiningGame = false;
     return;
@@ -1627,8 +1631,7 @@ static void loadCachedWorld()
       delete worldBuilder;
     worldBuilder = NULL;
     delete[] localWorldDatabase;
-    HUDDialogStack::get()->setFailedMessage
-      ("Error on md5. Removing offending file.");
+    HUDDialogStack::get()->setFailedMessage("Error on md5. Removing offending file.");
     remove(worldCachePath.c_str());
     joiningGame = false;
     return;
@@ -1643,7 +1646,7 @@ static void loadCachedWorld()
       delete worldBuilder;
     worldBuilder = NULL;
     delete[] localWorldDatabase;
-    HUDDialogStack::get()->setFailedMessage("Error unpacking world database.");
+    HUDDialogStack::get()->setFailedMessage("Error unpacking world database. Join canceled.");
     joiningGame = false;
     return;
   }
