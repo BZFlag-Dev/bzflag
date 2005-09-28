@@ -4427,7 +4427,7 @@ int main(int argc, char **argv)
     if (!gameOver && countdownActive && clOptions->timeLimit > 0.0f) {
       float newTimeElapsed = (float)(tm - gameStartTime);
       float timeLeft = clOptions->timeLimit - newTimeElapsed;
-      if (timeLeft <= 0.0f) {
+      if (timeLeft <= 0.0f && !clOptions->countdownPaused) {
 	timeLeft = 0.0f;
 	gameOver = true;
 	countdownActive = false;
