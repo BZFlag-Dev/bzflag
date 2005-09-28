@@ -49,7 +49,7 @@ OccluderSceneNode::OccluderSceneNode(const MeshFace* face)
   }
 
   // record sphere info
-  GLfloat mySphere[4] = {0};
+  GLfloat mySphere[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
   for (i = 0; i < vertexCount; i++) {
     const float* v = vertices[i];
     mySphere[0] += v[0];

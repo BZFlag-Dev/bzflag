@@ -25,6 +25,7 @@ public:
 	static bool  blend;
 	static bool  texture;
 	static bool  shadows;
+	static bool  stencilShadows;
 	static bool  zbuffer;
 	static bool  tesselation;
 	static bool  lighting;

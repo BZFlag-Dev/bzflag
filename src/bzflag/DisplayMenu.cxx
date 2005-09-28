@@ -130,7 +130,8 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
   option->setCallback(callback, (void*)"7");
   options = &option->getList();
   options->push_back(std::string("Off"));
-  options->push_back(std::string("On"));
+  options->push_back(std::string("Stipple"));
+  options->push_back(std::string("Stencil"));
   option->update();
   listHUD.push_back(option);
 
@@ -284,7 +285,14 @@ void			DisplayMenu::resize(int _width, int _height)
     }
     ((HUDuiList*)listHUD[i++])->setIndex(tm.getMaxFilter());
     ((HUDuiList*)listHUD[i++])->setIndex(renderer->useQuality());
-    ((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("shadows"));
+    int shadowVal = 0;
+    if (BZDBCache::shadows) {
+      shadowVal++;
+      if (BZDBCache::stencilShadows) {
+        shadowVal++;
+      }
+    }
+    ((HUDuiList*)listHUD[i++])->setIndex(shadowVal);
 #if !defined(DEBUG_RENDERING)
     if (debugLevel > 0) {
 #endif
@@ -365,10 +373,13 @@ void			DisplayMenu::callback(HUDuiControl* w, void* data) {
     BZDB.setPersistent("texturereplace", false);
     sceneRenderer->notifyStyleChange();
     break;
-  case '7':
-    BZDB.set("shadows", list->getIndex() ? "1" : "0");
+  case '7': {
+    const int shadowVal = list->getIndex();
+    BZDB.set("shadows", shadowVal > 0 ? "1" : "0");
+    BZDB.set("stencilShadows", shadowVal > 1 ? "1" : "0");
     sceneRenderer->notifyStyleChange();
     break;
+  }
   case 'a':
     sceneRenderer->setHiddenLine(list->getIndex() != 0);
     break;

@@ -972,9 +972,39 @@ void			BackgroundRenderer::drawGroundShadows(
   // disable color updates
   SceneNode::setColorOverride(true);
 
-  sunShadowsGState.setState();
-  glColor3f(0.0f, 0.0f, 0.0f);
+  if (BZDBCache::stencilShadows) {
+    OpenGLGState::resetState();
+    const float shadowAlpha = BZDB.eval("shadowAlpha");
+    glColor4f(0.0f, 0.0f, 0.0f, shadowAlpha);
+    if (shadowAlpha < 1.0f) {
+      // use the stencil to avoid overlapping shadows
+      glClearStencil(0);
+      glClear(GL_STENCIL_BUFFER_BIT);
+      glStencilFunc(GL_NOTEQUAL, 1, 1);
+      glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+      glEnable(GL_STENCIL_TEST);
+      
+      // turn on blending, and kill culling
+      glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+      glEnable(GL_BLEND);
+      glDisable(GL_CULL_FACE);
+    }
+  } else {
+    // use stippling to avoid overlapping shadows
+    sunShadowsGState.setState();
+    glColor3f(0.0f, 0.0f, 0.0f);
+  }
+
+  // render those nodes
   renderer.getShadowList().render();
+
+  // revert to OpenGLGState defaults
+  if (BZDBCache::stencilShadows) {
+    glEnable(GL_CULL_FACE);
+    glDisable(GL_BLEND);
+    glDisable(GL_STENCIL_TEST);
+    glBlendFunc(GL_ONE, GL_ZERO);
+  }
 
   // enable color updates
   SceneNode::setColorOverride(false);

@@ -381,7 +381,7 @@ void			WallSceneNode::copyStyle(WallSceneNode* node)
 void			WallSceneNode::setColor()
 {
   if (BZDBCache::texture && useColorTexture) {
-    glColor4f(1,1,1,1);
+    myColor4f(1,1,1,1);
   }
   else if (dynamicColor != NULL) {
     myColor4fv(dynamicColor);

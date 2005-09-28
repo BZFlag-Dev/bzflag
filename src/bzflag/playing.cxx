@@ -908,11 +908,12 @@ static void doKey(const BzfKeyEvent& key, bool pressed) {
     }
   }
 
-  if (HUDui::getFocus())
+  if (HUDui::getFocus()) {
     if ((pressed && HUDui::keyPress(key)) ||
 	(!pressed && HUDui::keyRelease(key))) {
       return;
     }
+  }
 
   bool haveBinding = doKeyCommon(key, pressed);
 
