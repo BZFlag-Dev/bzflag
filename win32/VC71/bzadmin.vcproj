@@ -88,7 +88,7 @@
 				OptimizeForProcessor="2"
 				OptimizeForWindowsApplication="TRUE"
 				AdditionalIncludeDirectories="..\..\win32,..\..\include,..\..\src\bzflag,.\"
-				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
+				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE; _HAVE_CURSES_H"
 				StringPooling="TRUE"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="TRUE"
@@ -575,11 +575,6 @@
 					<Tool
 						Name="VCCLCompilerTool"/>
 				</FileConfiguration>
-				<FileConfiguration
-					Name="Release_pdcurses|Win32">
-					<Tool
-						Name="VCCLCompilerTool"/>
-				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\..\src\bzadmin\CursesUI.cxx">
@@ -616,11 +611,6 @@
 				<FileConfiguration
 					Name="release_modern_p3|Win32"
 					ExcludedFromBuild="TRUE">
-					<Tool
-						Name="VCCLCompilerTool"/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release_pdcurses|Win32">
 					<Tool
 						Name="VCCLCompilerTool"/>
 				</FileConfiguration>
