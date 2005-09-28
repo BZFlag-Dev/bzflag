@@ -307,19 +307,19 @@ Instantiates a group, and possibly modifies subobjects
 .br 
 \fB  name\fR example_texmat
 .br 
-\fB  scale\fR 0.0 0.0       # u/v freqs, u/v scales
+\fB  scale\fR 0.0 0.0 1.0 1.0  # u/v freqs, u/v scales
 .br 
-\fB  spin\fR 0.0            # rotation freq 
+\fB  spin\fR 0.0               # rotation freq 
 .br 
-\fB  shift\fR 0.0 0.0       # u/v freqs
+\fB  shift\fR 0.0 0.0          # u/v freqs
 .br 
-\fB  center\fR 0.5 0.5	    # dynamic u/v center (for spin and scale)
+\fB  center\fR 0.5 0.5         # dynamic u/v center (for spin and scale)
 .br 
-\fB  fixedscale\fR 0.0 0.0  # time invariant u/v scale
+\fB  fixedscale\fR 0.0 0.0     # time invariant u/v scale
 .br 
-\fB  fixedspin\fR 0.0       # time invariant rotation
+\fB  fixedspin\fR 0.0          # time invariant rotation
 .br 
-\fB  fixedshift\fR 0.0 0.0  # time invariant u/v shift
+\fB  fixedshift\fR 0.0 0.0     # time invariant u/v shift
 .br 
 \fBend\fR
 .br 
