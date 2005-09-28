@@ -378,7 +378,7 @@ cannot proceed.  A checklist of items to be completed follows:
 
 - Build platform-specific binaries from the source tarball.
 
-- Post the source tarball and platform-specific binaries to
+- Post the source tarball, zip and platform-specific binaries to
   SourceForge.
 
 - Increment and commit the version number in the CVS source
