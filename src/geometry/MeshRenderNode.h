@@ -54,6 +54,7 @@ class AlphaGroupRenderNode : public OpaqueRenderNode {
 			 const GLfloat* color, int lod, int set,
 			 const Extents* exts, const float pos[3]);
     const GLfloat* getPosition() const { return pos; }
+    void setPosition(const GLfloat* pos);
   private:
     float pos[3];
 };

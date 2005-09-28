@@ -50,13 +50,12 @@
 //
 //   This type of SceneNode does not support
 //   tesselation or splitting of translucent
-//   nodes for improved front-to-ack sorting.
+//   nodes for improved back-to-front sorting.
 //
 
 
 float MeshSceneNode::LodScale = 1.0f;
 float MeshSceneNode::RadarLodScale = 1.0f;
-
 
 MeshSceneNode::MeshSceneNode(const MeshObstacle* _mesh)
 {
@@ -240,12 +239,36 @@ void MeshSceneNode::addRenderNodes(SceneRenderer& renderer)
   const ViewFrustum& vf = renderer.getViewFrustum();
   const int level = calcNormalLod(vf);
   LodNode& lod = lods[level];
+
+  if (animRepos) {
+    const MeshTransform::Tool* xformTool = drawInfo->getTransformTool();
+    const DrawLod* drawLods = drawInfo->getDrawLods();
+    const AnimationInfo* animInfo = drawInfo->getAnimationInfo();
+    const float& cos_val = animInfo->cos_val;
+    const float& sin_val = animInfo->sin_val;
+    for (int i = 0; i < lod.count; i++) {
+      SetNode& set = lod.sets[i];
+      if (set.meshMat.animRepos) {
+        const float* s = drawLods[level].sets[i].sphere;
+        fvec3 pos;
+        pos[0] = (cos_val * s[0]) - (sin_val * s[1]);
+        pos[1] = (sin_val * s[0]) + (cos_val * s[1]);
+        pos[2] = s[2];
+        if (xformTool != NULL) {
+          xformTool->modifyVertex(pos);
+        }
+        ((AlphaGroupRenderNode*)set.node)->setPosition(pos);
+      }
+    }
+  }
+  
   for (int i = 0; i < lod.count; i++) {
     SetNode& set = lod.sets[i];
     if (set.meshMat.colorPtr[3] != 0.0f) {
       renderer.addRenderNode(set.node, &set.meshMat.gstate);
     }
   }
+  
   return;
 }
 
@@ -309,6 +332,8 @@ void MeshSceneNode::notifyStyleChange()
 {
   const DrawLod* drawLods = drawInfo->getDrawLods();
   
+  animRepos = false;
+  
   for (int lod = 0; lod < lodCount; lod++) {
     LodNode& lodNode = lods[lod];
     for (int set = 0; set < lodNode.count; set++) {
@@ -338,6 +363,7 @@ void MeshSceneNode::notifyStyleChange()
         setNode.node =
           new OpaqueRenderNode(drawMgr, xformList, normalize,
                                mat.colorPtr, lod, set, extPtr);
+        mat.animRepos = false;
       } else {
         fvec3 setPos;
         memcpy(setPos, drawSet.sphere, sizeof(fvec3));
@@ -347,6 +373,14 @@ void MeshSceneNode::notifyStyleChange()
         setNode.node =
           new AlphaGroupRenderNode(drawMgr, xformList, normalize,
                                    mat.colorPtr, lod, set, extPtr, setPos);
+        if ((fabsf(drawSet.sphere[0]) > 0.001f) &&
+            (fabsf(drawSet.sphere[1]) > 0.001f) &&
+            (mat.color[3] != 0.0f)) {
+          animRepos = true;
+          mat.animRepos = true;
+        } else {
+          mat.animRepos = false;
+        }
       }
 
       setNode.radarNode =
@@ -469,7 +503,11 @@ void MeshSceneNode::updateMaterial(MeshSceneNode::MeshMaterial* mat)
       builder.setStipple(1.0f);
     } else {
       builder.resetBlending();
-      builder.setStipple(color[3]);
+      if (dyncol != NULL) {
+        builder.setStipple(0.5f);
+      } else {
+        builder.setStipple(color[3]);
+      }
     }
   }
 

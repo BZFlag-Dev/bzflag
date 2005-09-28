@@ -128,6 +128,13 @@ AlphaGroupRenderNode::AlphaGroupRenderNode(MeshDrawMgr* _drawMgr,
 }
 
 
+void AlphaGroupRenderNode::setPosition(const GLfloat* _pos)
+{
+  memcpy(pos, _pos, sizeof(GLfloat[3]));
+  return;
+}
+
+
 /******************************************************************************/
 
 

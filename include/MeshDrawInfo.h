@@ -320,9 +320,11 @@ class AnimationInfo {
     void *pack(void*) const;
     void *unpack(void*);
   public:
-    float angle;
     float angvel;
     std::string dummy;
+    float angle;
+    float cos_val;
+    float sin_val;
 };
 
 

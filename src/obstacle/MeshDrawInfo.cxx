@@ -533,7 +533,11 @@ void MeshDrawInfo::updateAnimation()
     const TimeKeeper nowTk = TimeKeeper::getCurrent();
     const TimeKeeper thenTk = TimeKeeper::getStartTime();
     const float diffTime = (float)(nowTk - thenTk);
-    animInfo->angle = fmodf(animInfo->angvel * diffTime, 360.0f);
+    const float angle = fmodf(animInfo->angvel * diffTime, 360.0f);
+    const float radians = angle * (float)(M_PI / 180.0);
+    animInfo->angle = angle;
+    animInfo->cos_val = cosf(radians);
+    animInfo->sin_val = sinf(radians);
   }
   return;
 }
