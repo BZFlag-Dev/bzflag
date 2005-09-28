@@ -839,6 +839,8 @@ allObjects :=
 .br 
 	| "link"
 .br 
+	| "teleporter"
+.br 
 	| "mesh"
 .br 
 	| "arc"
