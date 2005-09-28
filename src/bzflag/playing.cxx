@@ -1581,17 +1581,41 @@ int curlProgressFunc(void* /*clientp*/,
 
 static void loadCachedWorld()
 {
+  // can't get a cache from nothing
+  if (worldCachePath == std::string("")) {
+    joiningGame = false;
+    return;
+  }
+  
+  // lookup the cached world
   std::istream *cachedWorld = FILEMGR.createDataInStream(worldCachePath, true);
+  if (!cachedWorld) {
+    remove(worldCachePath.c_str());
+    joiningGame = false;
+    return;
+  }
+
+  // status update
   HUDDialogStack::get()->setFailedMessage("Loading world into memory...");
   drawFrame(0.0f);
+
+  // get the world size
   cachedWorld->seekg(0, std::ios::end);
   std::streampos size = cachedWorld->tellg();
   unsigned long charSize = std::streamoff(size);
+
+  // load the cached world
   cachedWorld->seekg(0);
   char *localWorldDatabase = new char[charSize];
+  if (!localWorldDatabase) {
+    remove(worldCachePath.c_str());
+    joiningGame = false;
+    return;
+  }
   cachedWorld->read(localWorldDatabase, charSize);
   delete cachedWorld;
 
+  // verify
   HUDDialogStack::get()->setFailedMessage("Verifying world integrity...");
   drawFrame(0.0f);
   MD5 md5;
