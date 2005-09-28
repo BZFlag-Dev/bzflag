@@ -1241,6 +1241,86 @@ link :=
 	| object
 .br 
 .TP 
+.B (MeshDrawInfo.cxx/MeshDrawInfo::parseDrawCmd)
+.br 
+.TP 
+drawInfoCmd :=
+.br 
+	  "points"    <integer>{1..*}
+.br 
+	| "lines"     <integer>{2..*}
+.br 
+	| "lineloop"  <integer>{2..*}
+.br 
+	| "linestrip" <integer>{2..*}
+.br 
+	| "tris"      <integer>{3..*}
+.br 
+	| "tristrip"  <integer>{3..*}
+.br 
+	| "trifan"    <integer>{3..*}
+.br 
+	| "quads"     <integer>{4..*}
+.br 
+	| "quadstrip" <integer>{4..*}
+.br 
+	| "polygon"   <integer>{3..*}
+.br 
+.TP 
+.B (MeshDrawInfo.cxx/MeshDrawInfo::parseDrawSet)
+.br 
+.TP 
+drawInfoSet :=
+.br 
+	  "matref" <material_name>
+.br 
+	| "dlist"
+.br 
+	| "sphere" 3dpoint <float>
+.br 
+	| drawInfoCmd
+.br 
+.TP 
+.B (MeshDrawInfo.cxx/MeshDrawInfo::parseDrawLod)
+.br 
+.TP 
+drawInfoLod :=
+.br 
+	  "lod"
+.br 
+	| "lengthPerPixel" <float>
+.br 
+	| drawInfoSet
+.br 
+.TP 
+.B (MeshDrawInfo.cxx/MeshDrawInfo::parse)
+.br 
+.TP 
+drawInfo :=
+.br 
+	  "drawInfo"
+.br 
+	| "dlist"
+.br 
+	| "decorative"
+.br 
+	| "angvel" <float>
+.br 
+	| "extents" 3dpoint 3dpoint
+.br 
+	| "sphere" 3dpoint <float>
+.br 
+	| "corner" <integer> <integer> <integer>
+.br 
+	| "vertex" 3dpoint
+.br 
+	| "normal" 3dpoint
+.br 
+	| "texcoord" <float> <float>
+.br 
+	| drawInfoLod
+.br 
+.TP 
 .B (CustomMesh.cxx/CustomMesh::read)
 .br 
 .TP 
@@ -1267,6 +1347,8 @@ mesh :=
 	| "smoothbounce"
 .br 
 	| "noclusters"
+.br 
+	| drawInfo
 .br 
 	| material
 .br 
