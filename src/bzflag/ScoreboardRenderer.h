@@ -44,16 +44,13 @@ public:
   static const int HUNT_ENABLED = 2;
   void	  setHuntState(int _state);
   int		  getHuntState() const;
-  void	  setHuntAddMode (bool _addMode);
-  bool	  getHuntAddMode() const;
-  void		setHuntNextEvent ();    // invoked when 'down' button pressed
-  void		setHuntPrevEvent ();    // invoked when 'up' button pressed
-  void		setHuntSelectEvent ();  // invoked when 'fire' button pressed
-  void    huntKeyEvent (bool isAdd);
+  void		setHuntNextEvent ();        // invoked when 'down' button pressed
+  void		setHuntPrevEvent ();        // invoked when 'up' button pressed
+  void		setHuntSelectEvent ();      // invoked when 'fire' button pressed
+  void    huntKeyEvent (bool isAdd);  // invoked when '7' or 'U' is pressed
   void    clearHuntedTanks ();
-  void    huntedPlayerLeaving (void);
-  int     getNumHunted(void);
-
+  void    huntReset ();               // invoked when joining a server
+     
   static void    setAlwaysTeamScore (bool onoff);
   static bool    getAlwaysTeamScore ();
 
@@ -121,9 +118,9 @@ private:
   bool		huntIndicator;
   int			huntPosition;
   bool		huntSelectEvent;
-  int		huntPositionEvent;
-  int     huntState;
-  bool    huntAddMode;
+  int 		huntPositionEvent;
+  int     huntState;  
+  bool    huntAddMode;    // valid only if state == SELECTING
   int     numHunted;
 };
 

@@ -212,24 +212,27 @@ int ScoreboardRenderer::teamScoreCompare(const void* _c, const void* _d)
   return (d->won-d->lost) - (c->won-c->lost);
 }
 
+// invoked by playing.cxx when 'prev' is pressed
 void		ScoreboardRenderer::setHuntPrevEvent()
 {
   huntPositionEvent = -1;
   --huntPosition;
 }
 
+// invoked by playing.cxx when 'next' is pressed
 void		ScoreboardRenderer::setHuntNextEvent()
 {
   huntPositionEvent = 1;
   ++huntPosition;
 }
 
+// invoked by playing.cxx when select (fire) is pressed
 void			ScoreboardRenderer::setHuntSelectEvent ()
 {
   huntSelectEvent = true;
 }
 
-
+// invoked by clientCommands.cxx when '7' or 'U' is pressed
 void			ScoreboardRenderer::huntKeyEvent (bool isAdd)
 {
   if (getHuntState() == HUNT_ENABLED) {
@@ -240,20 +243,20 @@ void			ScoreboardRenderer::huntKeyEvent (bool isAdd)
       setHuntState(HUNT_NONE);
       playLocalSound(SFX_HUNT);
     }
-    setHuntAddMode(isAdd);
+    huntAddMode = isAdd;
 
   } else if (getHuntState() == HUNT_SELECTING) {
     playLocalSound(SFX_HUNT_SELECT);
-    if (getNumHunted() > 0) {
+    if (numHunted > 0) {
       setHuntState(HUNT_ENABLED);
     } else {
       setHuntState(HUNT_NONE);
     }
-
-  } else if (!getHuntAddMode()) {
+    
+  } else {
     setHuntState(HUNT_SELECTING);
     playLocalSound(SFX_HUNT_SELECT);
-    setHuntAddMode(isAdd);
+    huntAddMode = isAdd;
     if (!BZDB.isTrue("displayScore"))
       BZDB.set("displayScore", "1");
   }
@@ -274,35 +277,19 @@ void		ScoreboardRenderer::setHuntState (int _huntState)
   huntState = _huntState;
 }
 
-void      ScoreboardRenderer::huntedPlayerLeaving ()
-{
-  if (--numHunted == 0){
-    setHuntState (HUNT_NONE);
-    playLocalSound(SFX_HUNT);
-  }
-}
-
-int     ScoreboardRenderer::getNumHunted()
-{
-  return numHunted;
-}
-
 
 int			ScoreboardRenderer::getHuntState() const
 {
   return huntState;
 }
 
-void		ScoreboardRenderer::setHuntAddMode (bool _yesno)
-{
-  huntAddMode = _yesno;
-}
 
-bool		ScoreboardRenderer::getHuntAddMode() const
+// invoked when joining a server
+void ScoreboardRenderer::huntReset()
 {
-  return huntAddMode;
+    huntState = HUNT_NONE; 
+    numHunted = 0;
 }
-
 
 void			ScoreboardRenderer::renderTeamScores (float x, float y, float dy){
   // print teams sorted by score
@@ -402,7 +389,6 @@ void     ScoreboardRenderer::clearHuntedTanks ()
 void			ScoreboardRenderer::renderScoreboard(void)
 {
   int i=0;
-  bool huntPlayerFound = false;
   int numPlayers;
   Player** players;
   Player*  player;
@@ -435,6 +421,13 @@ void			ScoreboardRenderer::renderScoreboard(void)
   // make room for the status marker
   const float xs = x3 - fm.getStrLength(minorFontFace, minorFontSize, "+|");
 
+  if (huntState == HUNT_SELECTING){
+    std::string huntStr = ColorStrings[YellowColor];
+    huntStr += ColorStrings[PulsatingColor];
+    huntStr += "*SEL*";
+    fm.drawString(xs - huntedArrowWidth, y0, 0, minorFontFace, minorFontSize, huntStr);
+  }
+
   // grab the tk warning ratio
   tkWarnRatio = BZDB.eval("tkwarnratio");
 
@@ -451,36 +444,33 @@ void			ScoreboardRenderer::renderScoreboard(void)
       if (huntPosition>=numPlayers)
 	huntPosition = 0;
       if (huntPosition<0)
-	huntPosition = numPlayers-1;
-      if (huntSelectEvent){	     // if 'fire' was pressed ...
-	if (!huntAddMode)
-	  clearHuntedTanks ();
-	if (huntAddMode && players[huntPosition]->isHunted()) {
-	      players[huntPosition]->setHunted(false);
-	  if (--numHunted == 0){
-	    huntState = HUNT_NONE;
-	    huntAddMode = false;
-		playLocalSound(SFX_HUNT);
-	  } else
-		playLocalSound(SFX_HUNT_SELECT);
-	} else {
-	      players[huntPosition]->setHunted(true);
-	  if (++numHunted == 1)
-		playLocalSound(SFX_HUNT);
-	  else
-		playLocalSound(SFX_HUNT_SELECT);
-	}
-	huntState = HUNT_ENABLED;
+        huntPosition = numPlayers-1;
+      if (huntSelectEvent){             // if 'fire' was pressed ... 
+        if (!huntAddMode)
+          clearHuntedTanks ();
+        if (huntAddMode && players[huntPosition]->isHunted()) {   // UNselect
+  	      players[huntPosition]->setHunted(false);
+          if (--numHunted != 0)
+           	playLocalSound(SFX_HUNT_SELECT);
+        } else {                                                  // else select
+  	      players[huntPosition]->setHunted(true);
+          if (++numHunted == 1)
+           	playLocalSound(SFX_HUNT);
+          else
+           	playLocalSound(SFX_HUNT_SELECT);
+        }          
+        huntState = HUNT_ENABLED;
       }
     }
   }
 
   huntSelectEvent = false;
   huntPositionEvent = 0;
+  numHunted = 0;
 
   while ( (player = players[i]) != NULL){
-    if (huntState==HUNT_ENABLED && player->isHunted())
-      huntPlayerFound = true;
+    if (player->isHunted())
+      ++numHunted;
     if (player->getTeam()==ObserverTeam && !haveObs){
       y -= dy;
       haveObs = true;
@@ -493,9 +483,12 @@ void			ScoreboardRenderer::renderScoreboard(void)
     ++i;
   }
 
-  if (huntState==HUNT_ENABLED && !huntPlayerFound)
-    huntState = HUNT_NONE;	// hunted player must have left the game
-
+  if (huntState==HUNT_ENABLED && !numHunted) {
+    huntState = HUNT_NONE;        // last hunted player must have left the game
+    huntAddMode = false;
+    playLocalSound(SFX_HUNT);
+  }
+  
   delete[] players;
   renderTeamScores(winWidth, y0, dy);
 }
