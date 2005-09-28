@@ -45,6 +45,7 @@ extern void sendTeamUpdate(int playerIndex = -1, int teamIndex1 = -1, int teamIn
 extern void sendDrop(FlagInfo &flag);
 extern void resetFlag(FlagInfo &flag);
 extern void publicize();
+extern TeamColor whoseBase(float x, float y, float z);
 
 extern CmdLineOptions *clOptions;
 extern uint16_t curMaxPlayers;
@@ -1884,6 +1885,10 @@ BZF_API void bz_gameOver(int playerIdx, int teamIdx)
 	}
 }
 
+BZF_API bz_eTeamType bz_checkBaseAtPoint ( float pos[3] )
+{
+	return convertTeam(whoseBase(pos[0],pos[1],pos[2]));
+}
 
 
 // Local Variables: ***

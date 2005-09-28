@@ -788,7 +788,7 @@ static bool saveWorldCache()
   return true;
 }
 
-static TeamColor whoseBase(float x, float y, float z)
+TeamColor whoseBase(float x, float y, float z)
 {
   if (!(clOptions->gameStyle & TeamFlagGameStyle))
     return NoTeam;

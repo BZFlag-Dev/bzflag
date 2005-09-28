@@ -1003,6 +1003,9 @@ BZF_API void bz_shutdown();
 BZF_API void bz_superkill();
 BZF_API void bz_gameOver(int,int = -1);
 
+// info about the world
+BZF_API bz_eTeamType bz_checkBaseAtPoint ( float pos[3] );
+
 #endif //_BZFS_API_H_
 
 // Local Variables: ***
