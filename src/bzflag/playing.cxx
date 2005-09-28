@@ -5301,6 +5301,11 @@ void drawFrame(const float dt)
 	EyeDisplacement = BZDB.eval("eyesep");
       if (BZDB.isSet("focal"))
 	FocalPlane = BZDB.eval("focal");
+	
+      if (BZDBCache::stencilShadows) {
+        BZDB.set("stencilShadows", "0");
+        addMessage(NULL, "Disabled stencilShadows for interlaced mode");
+      }
 
       OpenGLGState::resetState();
       // enable stencil test

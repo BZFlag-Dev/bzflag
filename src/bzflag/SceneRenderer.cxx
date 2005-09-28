@@ -857,6 +857,9 @@ void SceneRenderer::renderScene(bool /*_lastFrame*/, bool /*_sameFrame*/,
       window->getWidth(), window->getViewHeight());
 
   if (useDepthComplexityOn) {
+    if (BZDBCache::stencilShadows) {
+      BZDB.set("stencilShadows", "0");
+    }
     glEnable(GL_STENCIL_TEST);
     if (!mirror || (clearZbuffer)) {
       glClear(GL_STENCIL_BUFFER_BIT);
