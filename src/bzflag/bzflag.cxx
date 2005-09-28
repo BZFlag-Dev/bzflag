@@ -519,7 +519,6 @@ void			dumpResources(BzfDisplay *currentDisplay,
   if (isSoundOpen()) {
     BZDB.set("volume", TextUtils::format("%d", getSoundVolume()));
   }
-  BZDB.set("zbuffer", "1");
 
   if (renderer.getWindow().getWindow()->hasGammaControl()) {
     BZDB.set("gamma", TextUtils::format("%f", renderer.getWindow().getWindow()->getGamma()));

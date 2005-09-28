@@ -65,16 +65,7 @@ void CustomMaterial::writeToManager() const
   }
 
   const BzMaterial* matref = MATERIALMGR.addMaterial(&material);
-  const std::string& refname = matref->getName();
-
-  if ((name.size() > 0) && (refname.size() > 0)) {
-    if (name != refname) {
-      std::cout << "warning: matching named materials"
-		<< " (" << refname << " vs. " << name << ")" << std::endl;
-      std::cout << "	 the first name will be used" << std::endl;
-    }
-  }
-
+  
   int index = MATERIALMGR.getIndex(matref);
   if (index < 0) {
     std::cout << "CustomMaterial::write: material didn't register" << std::endl;

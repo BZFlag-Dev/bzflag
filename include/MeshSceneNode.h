@@ -85,7 +85,7 @@ class MeshSceneNode : public SceneNode {
       const GLfloat* colorPtr;
       bool drawRadar;
       bool drawShadow;
-      bool useSplitNodes;
+      bool needsSorting;
     };
 
     struct SetNode {
@@ -94,10 +94,6 @@ class MeshSceneNode : public SceneNode {
       // basic render nodes
       RenderNode* node;
       RenderNode* radarNode;
-      RenderNode* shadowNode;
-      // split render nodes (for translucent back-to-front sorting)
-      int splitCount;
-      RenderNode** splitNodes;
     };
 
     struct LodNode {
@@ -121,7 +117,6 @@ class MeshSceneNode : public SceneNode {
   private:
     void updateMaterial(MeshMaterial* mat);
     const BzMaterial* convertMaterial(const BzMaterial* bzmat);
-//    void splitAlphaRenderNodes(MeshMaterial* mat);
     int calcNormalLod(const ViewFrustum&);
     int calcShadowLod(const ViewFrustum&);
     int calcRadarLod();

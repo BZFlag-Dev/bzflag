@@ -45,6 +45,14 @@
 #include "StateDatabase.h"
 #include "BZDBCache.h"
 
+//
+// NOTE
+//
+//   This type of SceneNode does not support
+//   tesselation or splitting of translucent
+//   nodes for improved front-to-ack sorting.
+//
+
 
 float MeshSceneNode::LodScale = 1.0f;
 float MeshSceneNode::RadarLodScale = 1.0f;
@@ -139,9 +147,6 @@ MeshSceneNode::MeshSceneNode(const MeshObstacle* _mesh)
       SetNode& setNode = lodNode.sets[set];
       setNode.node = NULL;
       setNode.radarNode = NULL;
-      setNode.shadowNode = NULL;
-      setNode.splitNodes = NULL;
-      setNode.splitCount = 0;
       setNode.meshMat.bzmat = convertMaterial(drawSet.material);
     }
   }
@@ -171,11 +176,6 @@ MeshSceneNode::~MeshSceneNode()
       SetNode& set = lod.sets[j];
       delete set.node;
       delete set.radarNode;
-      delete set.shadowNode;
-      for (int k = 0; k < set.splitCount; k++) {
-	delete set.splitNodes[k];
-      }
-      delete[] set.splitNodes;
     }
     delete[] lod.sets;
   }
@@ -246,7 +246,6 @@ void MeshSceneNode::addRenderNodes(SceneRenderer& renderer)
       renderer.addRenderNode(set.node, &set.meshMat.gstate);
     }
   }
-// FIXME: split nodes
   return;
 }
 
@@ -260,7 +259,7 @@ void MeshSceneNode::addShadowNodes(SceneRenderer& renderer)
     SetNode& set = lod.sets[i];
     const MeshMaterial& mat = set.meshMat;
     if (mat.drawShadow && (mat.colorPtr[3] != 0.0f)) {
-      renderer.addShadowNode(set.shadowNode);
+      renderer.addShadowNode(set.node);
     }
   }
   return;
@@ -308,65 +307,51 @@ bool MeshSceneNode::inAxisBox(const Extents& exts) const
 
 void MeshSceneNode::notifyStyleChange()
 {
+  const DrawLod* drawLods = drawInfo->getDrawLods();
+  
   for (int lod = 0; lod < lodCount; lod++) {
     LodNode& lodNode = lods[lod];
     for (int set = 0; set < lodNode.count; set++) {
       SetNode& setNode = lodNode.sets[set];
       MeshMaterial& mat = setNode.meshMat;
+      const DrawSet& drawSet = drawLods[lod].sets[set];
 
-      bool oldSplitNodes = mat.useSplitNodes;
+      delete setNode.node;
+      delete setNode.radarNode;
 
       updateMaterial(&mat);
 
-      if ((setNode.node == NULL) || (oldSplitNodes != mat.useSplitNodes)) {
-	// first delete the old split nodes
-	for (int sn = 0; sn < setNode.splitCount; sn++) {
-	  delete setNode.splitNodes[sn];
-	}
-	delete[] setNode.splitNodes;
-	setNode.splitCount = 0;
-	setNode.splitNodes = NULL;
-
-	const GLfloat* color = mat.colorPtr;;
-
-	bool normalize = false;
-	const MeshTransform::Tool* xformTool = drawInfo->getTransformTool();
-	if (xformTool != NULL) {
-	  normalize = xformTool->isSkewed();
-	}
-
-//	if (!mat.useSplitNodes) {
-	  // opaque nodes
-
-	  const DrawLod* drawLods = drawInfo->getDrawLods();
-	  const DrawSet& drawSet = drawLods[lod].sets[set];
-	  fvec3 setPos;
-	  memcpy(setPos, drawSet.sphere, sizeof(fvec3));
-	  if (xformTool != NULL) {
-	    xformTool->modifyVertex(setPos);
-	  }
-
-	  const Extents* extPtr = &extents;
-	  if (drawSet.triangleCount < 100) {
-	    extPtr = NULL;
-	  }
-
-	  setNode.node =
-	    new AlphaGroupRenderNode(drawMgr, xformList, normalize,
-				     color, lod, set, extPtr, setPos);
-//	    new AlphaGroupRenderNode(drawMgr, xformList, normalize,
-//				     color, lod, set, &extents, getSphere());
-
-//	} else {
-	  // alpha nodes
-//	}
-	  setNode.radarNode =
-	    new OpaqueRenderNode(drawMgr, xformList, normalize,
-				 color, lod, set, extPtr);
-	  setNode.shadowNode =
-	    new OpaqueRenderNode(drawMgr, xformList, normalize,
-				 color, lod, set, extPtr);
+      // how shall we normalize?
+      bool normalize = false;
+      const MeshTransform::Tool* xformTool = drawInfo->getTransformTool();
+      if (xformTool != NULL) {
+        normalize = xformTool->isSkewed();
       }
+
+      // enough elements to warrant disabling lights?
+      const Extents* extPtr = &extents;
+      if (drawSet.triangleCount < 100) {
+        extPtr = NULL;
+      }
+
+      if (!mat.needsSorting) {
+        setNode.node =
+          new OpaqueRenderNode(drawMgr, xformList, normalize,
+                               mat.colorPtr, lod, set, extPtr);
+      } else {
+        fvec3 setPos;
+        memcpy(setPos, drawSet.sphere, sizeof(fvec3));
+        if (xformTool != NULL) {
+          xformTool->modifyVertex(setPos);
+        }
+        setNode.node =
+          new AlphaGroupRenderNode(drawMgr, xformList, normalize,
+                                   mat.colorPtr, lod, set, extPtr, setPos);
+      }
+
+      setNode.radarNode =
+        new OpaqueRenderNode(drawMgr, xformList, normalize,
+                             mat.colorPtr, lod, set, extPtr);
     }
   }
   return;
@@ -405,8 +390,8 @@ void MeshSceneNode::updateMaterial(MeshSceneNode::MeshMaterial* mat)
   ((BzMaterial*)bzmat)->setReference();
 
   // ways of requiring blending
-  bool colorBlend = false;
-  bool textureBlend = false;
+  bool colorAlpha = false;
+  bool textureAlpha = false;
 
   bool useDiffuseColor = true;
 
@@ -423,7 +408,7 @@ void MeshSceneNode::updateMaterial(MeshSceneNode::MeshMaterial* mat)
 	useDiffuseColor = bzmat->getUseColorOnTexture(0);
 	if (bzmat->getUseTextureAlpha(0)) {
 	  const ImageInfo& imageInfo = tm.getInfo(faceTexture);
-	  textureBlend = imageInfo.alpha;
+	  textureAlpha = imageInfo.alpha;
 	}
       } else {
 	faceTexture = tm.getTextureID("mesh", false /* no failure reports */);
@@ -459,7 +444,7 @@ void MeshSceneNode::updateMaterial(MeshSceneNode::MeshMaterial* mat)
   // color
   if (useDiffuseColor) {
     memcpy(color, bzmat->getDiffuse(), sizeof(float[4]));
-    colorBlend = (color[3] != 1.0f);
+    colorAlpha = (color[3] != 1.0f);
   } else {
     // set it to white, this should only happen when
     // we've gotten a user texture, and there's a
@@ -471,20 +456,30 @@ void MeshSceneNode::updateMaterial(MeshSceneNode::MeshMaterial* mat)
   const DynamicColor* dyncol = DYNCOLORMGR.getColor(bzmat->getDynamicColor());
   if (dyncol != NULL) {
     mat->colorPtr = dyncol->getColor();
-    colorBlend = dyncol->canHaveAlpha(); // override
+    colorAlpha = dyncol->canHaveAlpha(); // override
   } else {
     mat->colorPtr = color;
   }
 
   // blending
-  const bool isBlended = BZDBCache::blend && (colorBlend || textureBlend);
-  if (isBlended) {
-    builder.setBlending(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    builder.setStipple(1.0f);
-  } else {
-    builder.resetBlending();
-    builder.setStipple(color[3]);
+  const bool isAlpha = (colorAlpha || textureAlpha);
+  if (isAlpha) {
+    if (BZDBCache::blend) {
+      builder.setBlending(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+      builder.setStipple(1.0f);
+    } else {
+      builder.resetBlending();
+      builder.setStipple(color[3]);
+    }
   }
+
+  // sorting  (do this after using setBlending())
+  //
+  // NOTE:  getGroupAlpha() isn't used because all MeshSceneNode
+  //        elements are sorted as groups rather then individually
+  //
+  mat->needsSorting = (isAlpha && !bzmat->getNoSorting());
+  builder.setNeedsSorting(mat->needsSorting);
 
   // alpha thresholding
   float alphaThreshold = bzmat->getAlphaThreshold();
@@ -492,23 +487,13 @@ void MeshSceneNode::updateMaterial(MeshSceneNode::MeshMaterial* mat)
     builder.setAlphaFunc(GL_GEQUAL, alphaThreshold);
   }
 
-  // need to split for front-to-back sorting?
-  if (isBlended && !bzmat->getNoSorting() && !bzmat->getGroupAlpha()) {
-    mat->useSplitNodes = true;
-  } else {
-    mat->useSplitNodes = false;
-  }
-
   // radar and shadows
   mat->drawRadar = !bzmat->getNoRadar();
   mat->drawShadow = !bzmat->getNoShadow();
 
-  // culling and sorting
+  // culling
   if (bzmat->getNoCulling()) {
     builder.setCulling(GL_NONE);
-  }
-  if (bzmat->getNoSorting()) {
-    builder.setNeedsSorting(false);
   }
 
   // generate the gstate

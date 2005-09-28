@@ -53,6 +53,10 @@ const BzMaterial* BzMaterialManager::addMaterial(const BzMaterial* material)
 {
   for (unsigned int i = 0; i < materials.size(); i++) {
     if (*material == *(materials[i])) {
+      const std::string& name = material->getName();
+      if (name.size() > 0) {
+        materials[i]->addAlias(name);
+      }
       return materials[i];
     }
   }
@@ -80,8 +84,17 @@ const BzMaterial* BzMaterialManager::findMaterial(const std::string& target) con
   }
   else {
     for (unsigned int i = 0; i < materials.size(); i++) {
-      if (target == materials[i]->getName()) {
-	return materials[i];
+      const BzMaterial* mat = materials[i];
+      // check the base name
+      if (target == mat->getName()) {
+	return mat;
+      }
+      // check the aliases
+      const std::vector<std::string>& aliases = mat->getAliases();
+      for (unsigned int j = 0; j < aliases.size(); j++) {
+        if (target == aliases[j]) {
+          return mat;
+        }
       }
     }
     return NULL;
@@ -282,6 +295,7 @@ BzMaterial& BzMaterial::operator=(const BzMaterial& m)
   referenced = false;
 
   name = m.name;
+  aliases = m.aliases;
 
   dynamicColor = m.dynamicColor;
   memcpy (ambient, m.ambient, sizeof(ambient));
@@ -653,6 +667,22 @@ bool BzMaterial::setName(const std::string& matname)
   return true;
 }
 
+bool BzMaterial::addAlias(const std::string& alias)
+{
+  if (alias.size() <= 0) {
+    name = "";
+    return false;
+  }
+  else if ((alias[0] >= '0') && (alias[0] <= '9')) {
+    name = "";
+    return false;
+  }
+  else {
+    aliases.push_back(alias);
+  }
+  return true;
+}
+
 void BzMaterial::setDynamicColor(int dyncol)
 {
   dynamicColor = dyncol;
@@ -871,6 +901,11 @@ void BzMaterial::clearShaders()
 const std::string& BzMaterial::getName() const
 {
   return name;
+}
+
+const std::vector<std::string>& BzMaterial::getAliases() const
+{
+  return aliases;
 }
 
 int BzMaterial::getDynamicColor() const

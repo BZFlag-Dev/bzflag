@@ -59,31 +59,6 @@ class AlphaGroupRenderNode : public OpaqueRenderNode {
 };
 
 
-class AlphaRenderNode : public RenderNode {
-  public:
-    AlphaRenderNode(MeshDrawMgr* drawMgr, GLuint xformList,
-		    const GLfloat* color, const GLfloat* pos,
-		    GLenum indexType, void* indices);
-    ~AlphaRenderNode();
-    void render();
-    void renderRadar();
-    void renderShadow();
-    const GLfloat* getPosition() const { return pos; }
-  private:
-    void drawV() const;
-    void drawVN() const;
-    void drawVT() const;
-    void drawVTN() const;
-  private:
-    MeshDrawMgr* drawMgr;
-    GLuint xformList;
-    float pos[3];
-    const GLfloat* color;
-    GLenum indexType;
-    void* indices; // sadly, all are triangles
-};
-
-
 #endif // _MESH_RENDER_NODE_H
 
 

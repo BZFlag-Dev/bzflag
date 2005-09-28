@@ -613,7 +613,7 @@ static void setupDrawModeMap()
   drawModeMap["trifan"] =    DrawCmd::DrawTriangleFan;
   drawModeMap["quads"] =     DrawCmd::DrawQuads;
   drawModeMap["quadstrip"] = DrawCmd::DrawQuadStrip;
-  drawModeMap["polys"] =     DrawCmd::DrawPolygon;
+  drawModeMap["polygon"] =   DrawCmd::DrawPolygon;
   return;
 }
 

@@ -754,7 +754,7 @@ static bool defineWorld()
   const float waterLevel = world->getWaterLevel();
   if (!clOptions->flagsOnBuildings && (waterLevel > 0.0f)) {
     clOptions->flagsOnBuildings = true;
-    DEBUG1("WARNING: enabling flags on buildings\n");
+    DEBUG1("WARNING: enabling flags on buildings due to waterLevel\n");
   }
 
   // reset other stuff

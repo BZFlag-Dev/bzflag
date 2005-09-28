@@ -52,6 +52,7 @@ class BzMaterial {
     //
 
     bool setName(const std::string&);
+    bool addAlias(const std::string&);
 
     void setDynamicColor(int);
     void setAmbient(const float[4]);
@@ -89,6 +90,7 @@ class BzMaterial {
     //
 
     const std::string& getName() const;
+    const std::vector<std::string>& getAliases() const;
 
     int getDynamicColor() const;
     const float* getAmbient() const;
@@ -135,6 +137,7 @@ class BzMaterial {
     // data
   private:
     std::string name;
+    std::vector<std::string> aliases;
 
     bool referenced;
 

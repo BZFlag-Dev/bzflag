@@ -472,7 +472,73 @@ properties:
 .br 
 \fB  endface\fR  # end the face
 .br 
-\fBend\fR
+  #
+.br 
+  #  This next element can be added to increase the rendering speed
+.br 
+  #  of the mesh object. If the client is capable of using this data,
+.br 
+  #  then it is used to draw the mesh instead of the face information.
+.br 
+  #
+.br 
+\fB  drawInfo\fR
+.br 
+\fB    dlist\fR                      # display list for all material sets
+.br 
+\fB    decorative\fR                 # older clients with not see this mesh
+.br 
+\fB    angvel\fR <degrees/sec>       # rotation about initial Z axis
+.br 
+\fB    extents\fR <minX> <minY> <minZ> <maxX> <maxY> <maxZ>
+.br 
+\fB    sphere\fR <x> <y> <z> <radiusSquared>
+.br 
+\fB    corner\fR <v> <n> <t>         (\fBrepeatable\fR)
+.br 
+\fB    vertex\fR 0.0 0.0 0.0         (\fBrepeatable\fR)
+.br 
+\fB    normal\fR 0.0 0.0 0.0         (\fBrepeatable\fR)
+.br 
+\fB    texcoord\fR 0.0 0.0           (\fBrepeatable\fR)
+.br 
+\fB    lod\fR                        (\fBrepeatable\fR)
+.br 
+\fB      lengthPerPixel\fR <value>
+.br 
+\fB      matref\fR <name>            (\fBrepeatable\fR)
+.br 
+\fB        dlist\fR                  # display list for this material set
+.br 
+\fB        sphere\fR <x> <y> <z> <radiusSquared>
+.br 
+\fB        points\fR    0            (\fBrepeatable\fR)
+.br 
+\fB        lines\fR     0 1          (\fBrepeatable\fR)
+.br 
+\fB        lineloop\fR  0 1          (\fBrepeatable\fR)
+.br 
+\fB        linestrip\fR 0 1          (\fBrepeatable\fR)
+.br 
+\fB        tris\fR      0 1 2        (\fBrepeatable\fR)
+.br 
+\fB        tristrip\fR  0 1 2        (\fBrepeatable\fR)
+.br 
+\fB        trifan\fR    0 1 2        (\fBrepeatable\fR)
+.br 
+\fB        quads\fR     0 1 2 3      (\fBrepeatable\fR)
+.br 
+\fB        quadstrip\fR 0 1 2 3      (\fBrepeatable\fR)
+.br 
+\fB        polygon\fR   0 1 2        (\fBrepeatable\fR)
+.br 
+\fB      end\fR  # matref
+.br 
+\fB    end\fR    # lod
+.br 
+\fB  end\fR      # drawInfo
+.br 
+\fBend\fR        # mesh
 .br 
 
 
