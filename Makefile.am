@@ -60,12 +60,10 @@ MAINTAINERCLEANFILES = \
 	INSTALL \
 	Makefile.in
 
-.PHONY: package FORCE debian-cvs debian-release
+.PHONY: package debian-cvs debian-release
 
-package: FORCE
+package:
 	cd package && $(MAKE) targets
-
-FORCE:
 
 debian-cvs: dist
 	-rm -rf $(distdir)
