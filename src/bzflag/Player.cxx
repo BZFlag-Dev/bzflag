@@ -168,8 +168,8 @@ float Player::getNormalizedScore() const
 
 float Player::getLocalNormalizedScore() const
 {
-  return ((float)localWins - localLosses) 
-        / ((localWins+localLosses>5) ? localWins+localLosses : 5);
+  return ((float)localWins - localLosses)
+	/ ((localWins+localLosses>5) ? localWins+localLosses : 5);
 }
 
 short Player::getRabbitScore() const
@@ -1275,15 +1275,15 @@ void Player::doDeadReckoning()
     // play jumping type sounds, and then clear them
     if (state.sounds != PlayerState::NoSounds) {
       if (BZDB.isTrue("remoteSounds")) {
-        if ((state.sounds & PlayerState::JumpSound) != 0) {
-          playWorldSound(SFX_JUMP, state.pos, remoteImportant);
-        }
-        if ((state.sounds & PlayerState::WingsSound) != 0) {
-          playWorldSound(SFX_FLAP, state.pos, remoteImportant);
-        }
-        if ((state.sounds & PlayerState::BounceSound) != 0) {
-          playWorldSound(SFX_BOUNCE, state.pos, remoteImportant);
-        }
+	if ((state.sounds & PlayerState::JumpSound) != 0) {
+	  playWorldSound(SFX_JUMP, state.pos, remoteImportant);
+	}
+	if ((state.sounds & PlayerState::WingsSound) != 0) {
+	  playWorldSound(SFX_FLAP, state.pos, remoteImportant);
+	}
+	if ((state.sounds & PlayerState::BounceSound) != 0) {
+	  playWorldSound(SFX_BOUNCE, state.pos, remoteImportant);
+	}
       }
       state.sounds = PlayerState::NoSounds;
     }

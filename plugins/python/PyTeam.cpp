@@ -18,25 +18,34 @@ namespace Python
 
 Team::Team ()
 {
-	module = Py_InitModule3 ("BZFlag.Team", NULL, NULL);
+  module = Py_InitModule3 ("BZFlag.Team", NULL, NULL);
 
-	// This module just contains team IDs
-	PyModule_AddIntConstant (module, "Server",   BZ_SERVER);
-	PyModule_AddIntConstant (module, "All",      BZ_ALLUSERS);
-	/*PyModule_AddIntConstant (module, "Red",      BZ_RED_TEAM);
-	PyModule_AddIntConstant (module, "Green",    BZ_GREEN_TEAM);
-	PyModule_AddIntConstant (module, "Blue",     BZ_BLUE_TEAM);
-	PyModule_AddIntConstant (module, "Purple",   BZ_PURPLE_TEAM);
-	PyModule_AddIntConstant (module, "Rogue",    BZ_ROGUE_TEAM);
-	PyModule_AddIntConstant (module, "Rabbit",   BZ_RABBIT_TEAM);
-	PyModule_AddIntConstant (module, "Hunter",   BZ_HUNTER_TEAM);
-	PyModule_AddIntConstant (module, "Observer", BZ_OBSERVERs); */
+  // This module just contains team IDs
+  PyModule_AddIntConstant (module, "Server",   BZ_SERVER);
+  PyModule_AddIntConstant (module, "All",      BZ_ALLUSERS);
+  /*PyModule_AddIntConstant (module, "Red",      BZ_RED_TEAM);
+  PyModule_AddIntConstant (module, "Green",    BZ_GREEN_TEAM);
+  PyModule_AddIntConstant (module, "Blue",     BZ_BLUE_TEAM);
+  PyModule_AddIntConstant (module, "Purple",   BZ_PURPLE_TEAM);
+  PyModule_AddIntConstant (module, "Rogue",    BZ_ROGUE_TEAM);
+  PyModule_AddIntConstant (module, "Rabbit",   BZ_RABBIT_TEAM);
+  PyModule_AddIntConstant (module, "Hunter",   BZ_HUNTER_TEAM);
+  PyModule_AddIntConstant (module, "Observer", BZ_OBSERVERs); */
 }
 
 PyObject *
 Team::GetSubModule ()
 {
-	return module;
+  return module;
 }
 
 }
+
+// Local Variables: ***
+// mode:C++ ***
+// tab-width: 8 ***
+// c-basic-offset: 2 ***
+// indent-tabs-mode: t ***
+// End: ***
+// ex: shiftwidth=2 tabstop=8
+

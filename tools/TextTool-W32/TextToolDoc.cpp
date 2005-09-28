@@ -30,10 +30,10 @@ static char THIS_FILE[] = __FILE__;
 IMPLEMENT_DYNCREATE(CTextToolDoc, CDocument)
 
 BEGIN_MESSAGE_MAP(CTextToolDoc, CDocument)
-	//{{AFX_MSG_MAP(CTextToolDoc)
-		// NOTE - the ClassWizard will add and remove mapping macros here.
-		//    DO NOT EDIT what you see in these blocks of generated code!
-	//}}AFX_MSG_MAP
+  //{{AFX_MSG_MAP(CTextToolDoc)
+    // NOTE - the ClassWizard will add and remove mapping macros here.
+    //    DO NOT EDIT what you see in these blocks of generated code!
+  //}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -41,8 +41,7 @@ END_MESSAGE_MAP()
 
 CTextToolDoc::CTextToolDoc()
 {
-	// TODO: add one-time construction code here
-
+  // TODO: add one-time construction code here
 }
 
 CTextToolDoc::~CTextToolDoc()
@@ -51,13 +50,13 @@ CTextToolDoc::~CTextToolDoc()
 
 BOOL CTextToolDoc::OnNewDocument()
 {
-	if (!CDocument::OnNewDocument())
-		return FALSE;
+  if (!CDocument::OnNewDocument())
+    return FALSE;
 
-	// TODO: add reinitialization code here
-	// (SDI documents will reuse this document)
+  // TODO: add reinitialization code here
+  // (SDI documents will reuse this document)
 
-	return TRUE;
+  return TRUE;
 }
 
 
@@ -67,14 +66,14 @@ BOOL CTextToolDoc::OnNewDocument()
 
 void CTextToolDoc::Serialize(CArchive& ar)
 {
-	if (ar.IsStoring())
-	{
-		// TODO: add storing code here
-	}
-	else
-	{
-		// TODO: add loading code here
-	}
+  if (ar.IsStoring())
+  {
+    // TODO: add storing code here
+  }
+  else
+  {
+    // TODO: add loading code here
+  }
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -83,14 +82,23 @@ void CTextToolDoc::Serialize(CArchive& ar)
 #ifdef _DEBUG
 void CTextToolDoc::AssertValid() const
 {
-	CDocument::AssertValid();
+  CDocument::AssertValid();
 }
 
 void CTextToolDoc::Dump(CDumpContext& dc) const
 {
-	CDocument::Dump(dc);
+  CDocument::Dump(dc);
 }
 #endif //_DEBUG
 
 /////////////////////////////////////////////////////////////////////////////
 // CTextToolDoc commands
+
+// Local Variables: ***
+// mode:C++ ***
+// tab-width: 8 ***
+// c-basic-offset: 2 ***
+// indent-tabs-mode: t ***
+// End: ***
+// ex: shiftwidth=2 tabstop=8
+

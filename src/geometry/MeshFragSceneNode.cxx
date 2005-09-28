@@ -182,12 +182,12 @@ MeshFragSceneNode::MeshFragSceneNode(int _faceCount, const MeshFace** _faces)
   // set the count
   faces = _faces;
   faceCount = _faceCount;
-  
+
   // disable the plane
   noPlane = true;
   static const float fakePlane[4] = {0.0f, 0.0f, 1.0f, 0.0f};
   setPlane(fakePlane);
-  
+
   const BzMaterial* bzmat = faces[0]->getMaterial();
 
   // disable radar and shadows if required

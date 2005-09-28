@@ -23,9 +23,9 @@
 WordFilter PlayerInfo::serverSpoofingFilter;
 TimeKeeper PlayerInfo::now = TimeKeeper::getCurrent();
 
-bool        PlayerInfo::callSignFiltering = false;
-WordFilter *PlayerInfo::filterData        = NULL;
-bool        PlayerInfo::simpleFiltering   = true;
+bool	PlayerInfo::callSignFiltering = false;
+WordFilter *PlayerInfo::filterData	= NULL;
+bool	PlayerInfo::simpleFiltering   = true;
 
 PlayerInfo::PlayerInfo(int _playerIndex) :
   playerIndex(_playerIndex), state(PlayerInLimbo), flag(-1),
@@ -39,12 +39,12 @@ PlayerInfo::PlayerInfo(int _playerIndex) :
   memset(clientVersion, 0, VersionLen);
 }
 
-void PlayerInfo::setFilterParameters(bool        _callSignFiltering,
+void PlayerInfo::setFilterParameters(bool	_callSignFiltering,
 				     WordFilter &_filterData,
-				     bool        _simpleFiltering)
+				     bool	_simpleFiltering)
 {
   callSignFiltering = _callSignFiltering;
-  filterData        = &_filterData;
+  filterData	= &_filterData;
   simpleFiltering   = _simpleFiltering;
 }
 
@@ -140,7 +140,7 @@ bool PlayerInfo::unpackEnter(void *buf, uint16_t &rejectCode, char *rejectMsg)
   // make sure the callsign is not obscene/filtered
   if (callSignFiltering) {
     DEBUG2("checking callsign: %s\n",callSign);
-    
+
     char cs[CallSignLen];
     memcpy(cs, callSign, sizeof(char) * CallSignLen);
     if (filterData->filter(cs, simpleFiltering)) {
@@ -162,7 +162,7 @@ bool PlayerInfo::unpackEnter(void *buf, uint16_t &rejectCode, char *rejectMsg)
       return false;
     }
   }
-  
+
   return true;
 }
 

@@ -9,7 +9,7 @@
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
- 
+
 #ifndef _MESH_RENDER_NODE_H
 #define _MESH_RENDER_NODE_H
 
@@ -26,9 +26,9 @@ class MeshDrawMgr;
 class OpaqueRenderNode : public RenderNode {
   public:
     OpaqueRenderNode(MeshDrawMgr* drawMgr,
-                     GLuint xformList, bool normalize,
-                     const GLfloat* color, int lod, int set,
-                     const Extents* exts);
+		     GLuint xformList, bool normalize,
+		     const GLfloat* color, int lod, int set,
+		     const Extents* exts);
     void render();
     void renderRadar();
     void renderShadow();
@@ -51,8 +51,8 @@ class OpaqueRenderNode : public RenderNode {
 class AlphaGroupRenderNode : public OpaqueRenderNode {
   public:
     AlphaGroupRenderNode(MeshDrawMgr* drawMgr, GLuint xformList, bool normalize,
-                         const GLfloat* color, int lod, int set,
-                         const Extents* exts, const float pos[3]);
+			 const GLfloat* color, int lod, int set,
+			 const Extents* exts, const float pos[3]);
     const GLfloat* getPosition() const { return pos; }
   private:
     float pos[3];
@@ -62,8 +62,8 @@ class AlphaGroupRenderNode : public OpaqueRenderNode {
 class AlphaRenderNode : public RenderNode {
   public:
     AlphaRenderNode(MeshDrawMgr* drawMgr, GLuint xformList,
-                    const GLfloat* color, const GLfloat* pos,
-                    GLenum indexType, void* indices);
+		    const GLfloat* color, const GLfloat* pos,
+		    GLenum indexType, void* indices);
     ~AlphaRenderNode();
     void render();
     void renderRadar();

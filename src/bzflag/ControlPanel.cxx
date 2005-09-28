@@ -405,32 +405,32 @@ void			ControlPanel::render(SceneRenderer& _renderer)
     if (i < 0)
       i = 0;
   }
-  
+
   const std::string highlightPattern = BZDB.get("highlightPattern");
   bool useHighlight = (highlightPattern.size() > 0);
-  regex_t re;          
+  regex_t re;
   if (useHighlight) {
     if (regcomp(&re, highlightPattern.c_str(), REG_EXTENDED | REG_ICASE) != 0) {
       useHighlight = false; // bad regex
     }
   }
-  
+
   for (j = 0; i >= 0 && j < maxLines; i--) {
     // draw each line of text
     int numLines = messages[messageMode][i].numlines;
     int numStrings = messages[messageMode][i].lines.size();
     int msgy = numLines - 1;
     int msgx = 0;
-    
+
     // see if this message need to be highlighted (check each line)
     bool highlight = false;
     if (useHighlight) {
       for (int l = 0; l < numStrings; l++)  {
-        const std::string &msg = messages[messageMode][i].lines[l];
-        std::string raw = stripAnsiCodes(msg);
-        if (regexec(&re, raw.c_str(), 0, NULL, 0) == 0) {
-          highlight = true;
-        }
+	const std::string &msg = messages[messageMode][i].lines[l];
+	std::string raw = stripAnsiCodes(msg);
+	if (regexec(&re, raw.c_str(), 0, NULL, 0) == 0) {
+	  highlight = true;
+	}
       }
     }
 
@@ -456,19 +456,19 @@ void			ControlPanel::render(SceneRenderer& _renderer)
       }
 
       assert(msgy >= 0);
-      
+
       // only draw message if inside message area
       if (j + msgy < maxLines) {
-        if (!highlight) {
+	if (!highlight) {
 	  fm.drawString(fx + msgx, fy + msgy * lineHeight, 0, fontFace, fontSize, msg);
-        } else {
-          // highlight this line
-          std::string newMsg = ANSI_STR_PULSATING;
-          newMsg += ANSI_STR_UNDERLINE;
-          newMsg += ANSI_STR_FG_CYAN;
-          newMsg += stripAnsiCodes(msg);
+	} else {
+	  // highlight this line
+	  std::string newMsg = ANSI_STR_PULSATING;
+	  newMsg += ANSI_STR_UNDERLINE;
+	  newMsg += ANSI_STR_FG_CYAN;
+	  newMsg += stripAnsiCodes(msg);
 	  fm.drawString(fx + msgx, fy + msgy * lineHeight, 0, fontFace, fontSize, newMsg);
-        }
+	}
       }
 
       // next line
@@ -477,12 +477,12 @@ void			ControlPanel::render(SceneRenderer& _renderer)
     j += numLines;
     fy += int(lineHeight * numLines);
   }
-  
+
   // free the regex memory
   if (useHighlight) {
     regfree(&re);
   }
-  
+
   glScissor(x + messageAreaPixels[0] - 2,
 	    y + messageAreaPixels[1] - 2,
 	    messageAreaPixels[2] + 3,

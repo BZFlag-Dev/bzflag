@@ -28,7 +28,7 @@ class ShutdownCommand : ServerCommand {
 public:
 	ShutdownCommand();
 
-	virtual bool operator() (const char         *commandLine,
+	virtual bool operator() (const char	 *commandLine,
 		GameKeeper::Player *playerData);
 };
 
@@ -36,7 +36,7 @@ class SuperkillCommand : ServerCommand {
 public:
 	SuperkillCommand();
 
-	virtual bool operator() (const char         *commandLine,
+	virtual bool operator() (const char	 *commandLine,
 		GameKeeper::Player *playerData);
 };
 

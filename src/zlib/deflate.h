@@ -57,12 +57,12 @@
 /* Data structure describing a single value and its code string. */
 typedef struct ct_data_s {
     union {
-        ush  freq;       /* frequency count */
-        ush  code;       /* bit string */
+	ush  freq;       /* frequency count */
+	ush  code;       /* bit string */
     } fc;
     union {
-        ush  dad;        /* father node in Huffman tree */
-        ush  len;        /* length of bit string */
+	ush  dad;	/* father node in Huffman tree */
+	ush  len;	/* length of bit string */
     } dl;
 } FAR ct_data;
 
@@ -74,8 +74,8 @@ typedef struct ct_data_s {
 typedef struct static_tree_desc_s  static_tree_desc;
 
 typedef struct tree_desc_s {
-    ct_data *dyn_tree;           /* the dynamic tree */
-    int     max_code;            /* largest code with non zero frequency */
+    ct_data *dyn_tree;	   /* the dynamic tree */
+    int     max_code;	    /* largest code with non zero frequency */
     static_tree_desc *stat_desc; /* the corresponding static tree */
 } FAR tree_desc;
 
@@ -89,20 +89,20 @@ typedef unsigned IPos;
 
 typedef struct internal_state {
     z_streamp strm;      /* pointer back to this zlib stream */
-    int   status;        /* as the name implies */
+    int   status;	/* as the name implies */
     Bytef *pending_buf;  /* output still pending */
     ulg   pending_buf_size; /* size of pending_buf */
     Bytef *pending_out;  /* next pending byte to output to the stream */
     int   pending;       /* nb of bytes in the pending buffer */
-    int   wrap;          /* bit 0 true for zlib, bit 1 true for gzip */
-    Byte  method;        /* STORED (for zip only) or DEFLATED */
+    int   wrap;	  /* bit 0 true for zlib, bit 1 true for gzip */
+    Byte  method;	/* STORED (for zip only) or DEFLATED */
     int   last_flush;    /* value of flush param for previous deflate call */
 
-                /* used by deflate.c: */
+		/* used by deflate.c: */
 
-    uInt  w_size;        /* LZ77 window size (32K by default) */
-    uInt  w_bits;        /* log2(w_size)  (8..16) */
-    uInt  w_mask;        /* w_size - 1 */
+    uInt  w_size;	/* LZ77 window size (32K by default) */
+    uInt  w_bits;	/* log2(w_size)  (8..16) */
+    uInt  w_mask;	/* w_size - 1 */
 
     Bytef *window;
     /* Sliding window. Input bytes are read into the second half of the window,
@@ -127,7 +127,7 @@ typedef struct internal_state {
 
     Posf *head; /* Heads of the hash chains or NIL. */
 
-    uInt  ins_h;          /* hash index of string to be inserted */
+    uInt  ins_h;	  /* hash index of string to be inserted */
     uInt  hash_size;      /* number of elements in hash table */
     uInt  hash_bits;      /* log2(hash_size) */
     uInt  hash_mask;      /* hash_size-1 */
@@ -144,12 +144,12 @@ typedef struct internal_state {
      * negative when the window is moved backwards.
      */
 
-    uInt match_length;           /* length of best match */
-    IPos prev_match;             /* previous match */
-    int match_available;         /* set if previous match exists */
-    uInt strstart;               /* start of string to insert */
-    uInt match_start;            /* start of matching string */
-    uInt lookahead;              /* number of valid bytes ahead in window */
+    uInt match_length;	   /* length of best match */
+    IPos prev_match;	     /* previous match */
+    int match_available;	 /* set if previous match exists */
+    uInt strstart;	       /* start of string to insert */
+    uInt match_start;	    /* start of matching string */
+    uInt lookahead;	      /* number of valid bytes ahead in window */
 
     uInt prev_length;
     /* Length of the best match at previous step. Matches not greater than this
@@ -181,22 +181,22 @@ typedef struct internal_state {
 
     int nice_match; /* Stop searching when current match exceeds this */
 
-                /* used by trees.c: */
+		/* used by trees.c: */
     /* Didn't use ct_data typedef below to supress compiler warning */
     struct ct_data_s dyn_ltree[HEAP_SIZE];   /* literal and length tree */
     struct ct_data_s dyn_dtree[2*D_CODES+1]; /* distance tree */
     struct ct_data_s bl_tree[2*BL_CODES+1];  /* Huffman tree for bit lengths */
 
-    struct tree_desc_s l_desc;               /* desc. for literal tree */
-    struct tree_desc_s d_desc;               /* desc. for distance tree */
-    struct tree_desc_s bl_desc;              /* desc. for bit length tree */
+    struct tree_desc_s l_desc;	       /* desc. for literal tree */
+    struct tree_desc_s d_desc;	       /* desc. for distance tree */
+    struct tree_desc_s bl_desc;	      /* desc. for bit length tree */
 
     ush bl_count[MAX_BITS+1];
     /* number of codes at each bit length for an optimal tree */
 
     int heap[2*L_CODES+1];      /* heap used to build the Huffman trees */
-    int heap_len;               /* number of elements in the heap */
-    int heap_max;               /* element of largest frequency */
+    int heap_len;	       /* number of elements in the heap */
+    int heap_max;	       /* element of largest frequency */
     /* The sons of heap[n] are heap[2*n] and heap[2*n+1]. heap[0] is not used.
      * The same heap array is used to build all trees.
      */
@@ -205,7 +205,7 @@ typedef struct internal_state {
     /* Depth of each subtree used as tie breaker for trees of equal frequency
      */
 
-    uchf *l_buf;          /* buffer for literals or lengths */
+    uchf *l_buf;	  /* buffer for literals or lengths */
 
     uInt  lit_bufsize;
     /* Size of match buffer for literals/lengths.  There are 4 reasons for
@@ -235,7 +235,7 @@ typedef struct internal_state {
      * array would be necessary.
      */
 
-    ulg opt_len;        /* bit length of current block with optimal trees */
+    ulg opt_len;	/* bit length of current block with optimal trees */
     ulg static_len;     /* bit length of current block with static trees */
     uInt matches;       /* number of string matches in current block */
     int last_eob_len;   /* bit length of EOB code for last block */
@@ -272,14 +272,14 @@ typedef struct internal_state {
  * distances are limited to MAX_DIST instead of WSIZE.
  */
 
-        /* in trees.c */
-void _tr_init         OF((deflate_state *s));
-int  _tr_tally        OF((deflate_state *s, unsigned dist, unsigned lc));
+	/* in trees.c */
+void _tr_init	 OF((deflate_state *s));
+int  _tr_tally	OF((deflate_state *s, unsigned dist, unsigned lc));
 void _tr_flush_block  OF((deflate_state *s, charf *buf, ulg stored_len,
-                          int eof));
-void _tr_align        OF((deflate_state *s));
+			  int eof));
+void _tr_align	OF((deflate_state *s));
 void _tr_stored_block OF((deflate_state *s, charf *buf, ulg stored_len,
-                          int eof));
+			  int eof));
 
 #define d_code(dist) \
    ((dist) < 256 ? _dist_code[dist] : _dist_code[256+((dist)>>7)])
@@ -319,7 +319,7 @@ void _tr_stored_block OF((deflate_state *s, charf *buf, ulg stored_len,
 #else
 # define _tr_tally_lit(s, c, flush) flush = _tr_tally(s, 0, c)
 # define _tr_tally_dist(s, distance, length, flush) \
-              flush = _tr_tally(s, distance, length)
+	      flush = _tr_tally(s, distance, length)
 #endif
 
 #endif /* DEFLATE_H */

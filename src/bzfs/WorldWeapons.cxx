@@ -38,7 +38,7 @@ char *getDirectMessageBuffer();
 void broadcastMessage(uint16_t code, int len, const void *msg);
 
 
-int fireWorldWep(FlagType* type, float lifetime, PlayerId player, float *pos, 
+int fireWorldWep(FlagType* type, float lifetime, PlayerId player, float *pos,
 		 float tilt, float direction, int shotID, float dt)
 {
   void *buf, *bufStart = getDirectMessageBuffer();
@@ -128,7 +128,7 @@ void WorldWeapons::fire()
 
 
 void WorldWeapons::add(const FlagType *type, const float *origin,
-                       float direction, float tilt,
+		       float direction, float tilt,
 		       float initdelay, const std::vector<float> &delay,
 		       TimeKeeper &sync)
 {
@@ -193,7 +193,7 @@ int WorldWeapons::packSize(void) const
 }
 
 int WorldWeapons::getNewWorldShotID ( void )
-{ 
+{
 	if (worldShotId > _MAX_WORLD_SHOTS)
 		worldShotId = 0;
 
@@ -203,8 +203,8 @@ int WorldWeapons::getNewWorldShotID ( void )
 //----------WorldWeaponGlobalEventHandler---------------------
 // where we do the world weapon handling for event based shots since they are not really done by the "world"
 WorldWeaponGlobalEventHandler::WorldWeaponGlobalEventHandler(FlagType *_type,
-							     const float *_origin, 
-							     float _direction, 
+							     const float *_origin,
+							     float _direction,
 							     float _tilt,TeamColor teamColor )
 {
   type = _type;

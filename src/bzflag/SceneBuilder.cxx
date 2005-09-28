@@ -260,7 +260,7 @@ SceneDatabase* SceneDatabaseBuilder::make(const World* world)
 
   // add the water level node
   addWaterLevel(db, world);
-  
+
   db->finalizeStatics();
 
   return db;
@@ -294,7 +294,7 @@ void SceneDatabaseBuilder::addWaterLevel(SceneDatabase* db,
   const BzMaterial* mat = world->getWaterMaterial();
   const bool noRadar = mat->getNoRadar();
   const bool noShadow = mat->getNoShadow();
-  
+
   MeshPolySceneNode* node =
     new MeshPolySceneNode(plane, noRadar, noShadow, v, n, t);
 

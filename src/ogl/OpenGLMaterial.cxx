@@ -114,15 +114,15 @@ void			OpenGLMaterial::Rep::execute()
       glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, emissive);
       glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, shininess);
       if (RENDERER.useQuality() > 0) {
-        if  ((specular[0] > 0.0f) ||
-             (specular[1] > 0.0f) ||
-             (specular[2] > 0.0f)) {
-          // accurate specular highlighting  (more GPU intensive)
-          glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, GL_TRUE);
-        } else {
-          // speed up the lighting calcs by simplifying
-          glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, GL_FALSE);
-        }
+	if  ((specular[0] > 0.0f) ||
+	     (specular[1] > 0.0f) ||
+	     (specular[2] > 0.0f)) {
+	  // accurate specular highlighting  (more GPU intensive)
+	  glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, GL_TRUE);
+	} else {
+	  // speed up the lighting calcs by simplifying
+	  glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, GL_FALSE);
+	}
       }
     }
     glEndList();

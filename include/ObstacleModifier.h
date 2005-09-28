@@ -31,7 +31,7 @@ class ObstacleModifier {
     void execute(Obstacle* obstacle) const;
 
     void getMaterialMap(const MaterialSet& matSet, MaterialMap& matMap) const;
-    
+
   private:
     bool modifyTeam; // only for bases
     int team;

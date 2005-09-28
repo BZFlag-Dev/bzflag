@@ -287,9 +287,9 @@ static void		parse(int argc, char** argv)
     } else if (strcmp(argv[i], "-motd") == 0) {
       checkArgc(i, argc, argv[i]);
       if (strcmp(argv[i], "default") == 0) {
-        BZDB.set("motdServer", BZDB.getDefault("motdServer"));
+	BZDB.set("motdServer", BZDB.getDefault("motdServer"));
       } else {
-        BZDB.set("motdServer", argv[i]);
+	BZDB.set("motdServer", argv[i]);
       }
       BZDB.unset("disableMOTD");
     } else if (strcmp(argv[i], "-nomotd") == 0) {

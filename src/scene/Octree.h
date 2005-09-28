@@ -38,11 +38,11 @@ class Octree {
 		       const Frustum* frustum, const float* sunDir) const;
     int getRadarList (SceneNode** list, int listSize,
 		      const Frustum* frustum) const;
-		      
+
     void setOccluderManager(int);
 
     void draw () const;
-    
+
     const Extents* getVisualExtents() const;
 
 

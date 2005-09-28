@@ -102,10 +102,10 @@ public:
       vote,
       // just so we know how many rights there
       // are this dosn't do anything really, just
-      // make sure it's the last real right 
+      // make sure it's the last real right
       lastPerm
     };
-	
+
   enum GroupStates
 	{
 	  isGroup,  // we can check if this is a group or a player
@@ -158,7 +158,7 @@ public:
   std::bitset<lastPerm>		explicitDenys;
   std::bitset<lastState>	groupState;
   std::vector<std::string>	groups;
-  	
+
 	std::vector<std::string> customPerms;
 private:
   bool				verified;

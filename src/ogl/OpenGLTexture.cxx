@@ -168,7 +168,7 @@ bool OpenGLTexture::setupImage(const GLubyte* pixels)
   while (bzMaxTexSize < dbMaxTexSize) {
     bzMaxTexSize <<= 1;
   }
-  
+
   if ((maxTextureSize < 0) || (maxTextureSize > bzMaxTexSize)) {
     maxTextureSize = bzMaxTexSize;
   }

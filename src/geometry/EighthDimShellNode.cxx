@@ -30,7 +30,7 @@ EighthDimShellNode::EighthDimShellNode(SceneNode* node, bool _ownTheNode)
   sceneNode = node;
   ownTheNode = _ownTheNode;
 
-  makeNodes();  
+  makeNodes();
 
   return;
 }
@@ -49,7 +49,7 @@ void EighthDimShellNode::makeNodes()
 {
   std::vector<RenderSet> rnodes;
   sceneNode->getRenderNodes(rnodes);
-  
+
   shellNodeCount = (int)rnodes.size();
   if (shellNodeCount <= 0) {
     shellNodeCount = 0;
@@ -107,8 +107,8 @@ void EighthDimShellNode::addRenderNodes(SceneRenderer& renderer)
 //
 
 EighthDimShellNode::ShellRenderNode::ShellRenderNode(RenderNode *node,
-                                                     const OpenGLGState* gs)
-                                                     
+						     const OpenGLGState* gs)
+
 {
   renderNode = node;
 
@@ -120,7 +120,7 @@ EighthDimShellNode::ShellRenderNode::ShellRenderNode(RenderNode *node,
   }
   gb.setCulling(GL_FRONT); // invert the culling
   gstate = gb.getState(); // get the modified gstate
-  
+
   return;
 }
 
@@ -135,8 +135,8 @@ const OpenGLGState* EighthDimShellNode::ShellRenderNode::getGState() const
 {
   return &gstate;
 }
-  
-  
+
+
 void EighthDimShellNode::ShellRenderNode::render()
 {
 //  glLogicOp(GL_XOR);

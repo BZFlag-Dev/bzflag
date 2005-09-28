@@ -36,7 +36,7 @@ public:
   std::string	getAgeString() const; // nifty formated age string
   time_t	getNow() const; // current time
   bool		operator<(const ServerItem &right);
-private:  
+private:
   unsigned int	getSortFactor() const;
 public:
   std::string	name;

@@ -10,7 +10,7 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-// 
+//
 // WorldGenerators
 //   Routines to build Random and Team worlds
 //
@@ -26,13 +26,13 @@
 // common headers
 #include "WorldInfo.h"
 #include "ObstacleMgr.h"
-#include "StateDatabase.h" 
-#include "BZDBCache.h" 
+#include "StateDatabase.h"
+#include "BZDBCache.h"
 
 // local headers
-#include "TeamBases.h" 
-#include "CustomZone.h" 
-#include "CmdLineOptions.h" 
+#include "TeamBases.h"
+#include "CustomZone.h"
+#include "CmdLineOptions.h"
 
 // externs
 extern CmdLineOptions *clOptions;

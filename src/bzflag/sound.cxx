@@ -69,14 +69,14 @@ public:
 
 AudioSamples::AudioSamples()
 {
-	length = 0;	
-	mlength = 0;	
+	length = 0;
+	mlength = 0;
 	rmlength = 0;
-	dmlength = 0;		
-	data = NULL;		
-	mono = NULL;		
-	monoRaw = NULL;	
-	duration = 0;		
+	dmlength = 0;
+	data = NULL;
+	mono = NULL;
+	monoRaw = NULL;
+	duration = 0;
 }
 
 AudioSamples::~AudioSamples()
@@ -96,33 +96,33 @@ AudioSamples& AudioSamples::operator = ( const AudioSamples& r)
 	if (monoRaw)
 		delete[] monoRaw;
 
-	length = r.length;	
-	mlength = r.mlength;		
-	dmlength = r.dmlength;	
+	length = r.length;
+	mlength = r.mlength;
+	dmlength = r.dmlength;
 	rmlength = r.rmlength;
-	data = new float[length];		
+	data = new float[length];
 	memcpy(data,r.data,sizeof(float)*length);
-	monoRaw = new float[rmlength];	
+	monoRaw = new float[rmlength];
 	memcpy(monoRaw,r.monoRaw,sizeof(float)*rmlength);
 	duration = r.duration;
 
-	mono = monoRaw + (r.mono-r.monoRaw);		
+	mono = monoRaw + (r.mono-r.monoRaw);
 	return *this;
 }
 
 AudioSamples::AudioSamples ( const AudioSamples& r)
 {
-	length = r.length;	
-	mlength = r.mlength;		
-	dmlength = r.dmlength;	
+	length = r.length;
+	mlength = r.mlength;
+	dmlength = r.dmlength;
 	rmlength = r.rmlength;
-	data = new float[length];		
+	data = new float[length];
 	memcpy(data,r.data,sizeof(float)*length);
-	mono = new float[mlength];		
+	mono = new float[mlength];
 	memcpy(mono,r.mono,sizeof(float)*mlength);
-	monoRaw = new float[rmlength];	
+	monoRaw = new float[rmlength];
 	memcpy(monoRaw,r.monoRaw,sizeof(float)*rmlength);
-	duration = r.duration;		
+	duration = r.duration;
 }
 
 /*

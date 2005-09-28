@@ -498,7 +498,7 @@ void			GUIOptionsMenu::callback(HUDuiControl* w, void* data)
 	BZDB.set("displayReloadTimer", list->getIndex() ? "1" : "0");
 	break;
       }
-      
+
     case 'p':
       ScoreboardRenderer::setSort(list->getIndex());
       break;

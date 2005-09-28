@@ -11,7 +11,7 @@
  */
 
 
-// top dog 
+// top dog
 #include "common.h"
 
 // implementation header
@@ -96,7 +96,7 @@ static inline bool isFaceClear(int w0, int w1, int w2)
   vec3sub(edges[0], Verts[v1], Verts[v0]);
   vec3sub(edges[1], Verts[v2], Verts[v1]);
   vec3sub(edges[2], Verts[v0], Verts[v2]);
-  
+
   // get the triangle normal
   fvec3 normal;
   vec3cross(normal, edges[0], edges[1]);
@@ -109,7 +109,7 @@ static inline bool isFaceClear(int w0, int w1, int w2)
   planes[0][3] = -vec3dot(planes[0], Verts[v0]);
   planes[1][3] = -vec3dot(planes[1], Verts[v1]);
   planes[2][3] = -vec3dot(planes[2], Verts[v2]);
-  
+
   for (int w = 0; w < Count; w++) {
     if ((w == w0) || (w == w1) || (w == w2)) {
       continue; // FIXME: lazy
@@ -118,7 +118,7 @@ static inline bool isFaceClear(int w0, int w1, int w2)
     for (i = 0; i < 3; i++) {
       const float dist = vec3dot(planes[i], Verts[v]) + planes[i][3];
       if (dist > 0.0f) {
-        break; // this point is clear
+	break; // this point is clear
       }
     }
     if (i == 3) {
@@ -144,10 +144,10 @@ static inline float getDot(int w0, int w1, int w2)
 
 
 void triangulateFace(int count, const float* const* verts,
-                     std::vector<TriIndices>& tris)
+		     std::vector<TriIndices>& tris)
 {
   tris.clear();
-  
+
   Verts = verts;
   Count = count;
   WorkSet = new int[Count];
@@ -155,16 +155,16 @@ void triangulateFace(int count, const float* const* verts,
     WorkSet[i] = i;
   }
   makeNormal();
-  
+
   int best = 0;
   bool left = false;
   bool first = true;
   float score = 0.0f;
-  
+
   while (Count >= 3) {
     bool convex = false;
     bool faceClear = false;
-    
+
     int offset;
     if (best == Count) {
       offset = Count - 1;
@@ -186,49 +186,49 @@ void triangulateFace(int count, const float* const* verts,
 
       const bool convex2 = isConvex(w0, w1, w2);
       if (convex && !convex2) {
-        continue;
+	continue;
       }
 
       const bool faceClear2 = isFaceClear(w0, w1, w2);
       if ((faceClear && !faceClear2) && (convex || !convex2)) {
-        continue;
+	continue;
       }
-      
+
       if (first) {
-        const float score2 = 2.0f - getDot(w0, w1, w2);
-        if ((score2 < score) &&
-            (convex || !convex2) && (faceClear || !faceClear2)) {
-          continue;
-        } else {
-          score = score2;
-        }
+	const float score2 = 2.0f - getDot(w0, w1, w2);
+	if ((score2 < score) &&
+	    (convex || !convex2) && (faceClear || !faceClear2)) {
+	  continue;
+	} else {
+	  score = score2;
+	}
       }
-      
+
       best = w0;
       if (convex && faceClear) {
-        break;
+	break;
       }
       convex = convex2;
       faceClear = faceClear2;
     }
 
     first = false;
-    
+
     // add the triangle
     TriIndices ti;
     ti.indices[0] = WorkSet[(best + 0) % Count];
     ti.indices[1] = WorkSet[(best + 1) % Count];
     ti.indices[2] = WorkSet[(best + 2) % Count];
     tris.push_back(ti);
-    
+
     // remove the middle vertex
     const int m = (best + 1) % Count;
     memmove(WorkSet + m, WorkSet + m + 1, (Count - m - 1) * sizeof(int));
     Count--;
   }
-  
+
   delete[] WorkSet;
-  
+
   return;
 }
 

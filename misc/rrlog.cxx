@@ -196,14 +196,14 @@ int main(int argc, char** argv)
   } else {
     startTime = endTime = 0;
   }
-    
+
   printf("magic:     0x%04X\n", header.magic);
   printf("replay:    version %i\n", header.version);
   printf("offset:    %i\n", header.offset);
   printf("length:    %-i days, %i hours, %i minutes, %i seconds, %i usecs\n",
 	  days, hours, minutes, secs, usecs);
-  printf("start:     %s", ctime(&startTime)); 
-  printf("end:       %s", ctime(&endTime)); 
+  printf("start:     %s", ctime(&startTime));
+  printf("end:       %s", ctime(&endTime));
   printf("author:    %s  (%s)\n", header.callSign, header.email);
   printf("bzfs:      bzfs-%s\n", header.appVersion);
   printf("protocol:  %.8s\n", header.serverVersion);

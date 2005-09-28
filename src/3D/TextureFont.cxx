@@ -135,7 +135,7 @@ void TextureFont::filter(bool dofilter)
   TextureManager &tm = TextureManager::instance();
   if (textureID >= 0) {
     const OpenGLTexture::Filter type = dofilter ? OpenGLTexture::Max
-                                                : OpenGLTexture::Nearest;
+						: OpenGLTexture::Nearest;
     tm.setTextureFilter(textureID, type);
   }
 }

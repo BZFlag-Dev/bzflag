@@ -26,12 +26,12 @@
 class ServerCommand {
  public:
 
-  static bool execute(const char         *commandToken,
+  static bool execute(const char	 *commandToken,
 		      GameKeeper::Player *playerData);
 
   std::string getHelp();
 
-  virtual bool operator () (const char         *commandLine,
+  virtual bool operator () (const char	 *commandLine,
 			    GameKeeper::Player *playerData);
 
 

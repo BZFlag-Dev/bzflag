@@ -47,7 +47,7 @@ WorldBuilder::~WorldBuilder()
 void* WorldBuilder::unpack(void* buf)
 {
   TimeKeeper start = TimeKeeper::getCurrent();
-  
+
   // unpack world database from network transfer
   // read style header
   uint16_t code, len;
@@ -187,13 +187,13 @@ void* WorldBuilder::unpack(void* buf)
   }
 
   world->makeLinkMaterial();
-  
+
   world->makeMeshDrawMgrs();
 
   // NOTE: relying on checkCollisionManager() to do the first loading
   //       of ColiisionManager, because the BZDB variables come in later,
   //       and would cause a double loading if we did it now.
-  
+
   if (debugLevel >= 3) {
     TimeKeeper end = TimeKeeper::getCurrent();
     const float elapsed = (float)(end - start);

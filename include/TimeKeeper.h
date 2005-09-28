@@ -42,8 +42,8 @@ public:
   ~TimeKeeper();
   TimeKeeper&		operator=(const TimeKeeper&);
 
-  double	        operator-(const TimeKeeper&) const;
-  bool                  operator<=(const TimeKeeper&) const;
+  double		operator-(const TimeKeeper&) const;
+  bool			operator<=(const TimeKeeper&) const;
   TimeKeeper&		operator+=(double);
   TimeKeeper&		operator+=(const TimeKeeper&);
 
@@ -56,7 +56,7 @@ public:
 		else
 			return NULL;
 	}
-	
+
   /** returns how many seconds have elapsed since epoch, Jan 1, 1970 */
   double       getSeconds(void) const;
 

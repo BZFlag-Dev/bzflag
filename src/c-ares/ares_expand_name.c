@@ -29,7 +29,7 @@
 #include "ares_private.h" /* for the memdebug */
 
 static int name_length(const unsigned char *encoded, const unsigned char *abuf,
-                       int alen);
+		       int alen);
 
 /* Expand an RFC1035-encoded domain name given by encoded.  The
  * containing message is given by abuf and alen.  The result given by
@@ -56,7 +56,7 @@ static int name_length(const unsigned char *encoded, const unsigned char *abuf,
  */
 
 int ares_expand_name(const unsigned char *encoded, const unsigned char *abuf,
-                     int alen, char **s, long *enclen)
+		     int alen, char **s, long *enclen)
 {
   int len, indir = 0;
   char *q;
@@ -76,27 +76,27 @@ int ares_expand_name(const unsigned char *encoded, const unsigned char *abuf,
   while (*p)
     {
       if ((*p & INDIR_MASK) == INDIR_MASK)
-        {
-          if (!indir)
-            {
-              *enclen = (long)(p + 2 - encoded);
-              indir = 1;
-            }
-          p = abuf + ((*p & ~INDIR_MASK) << 8 | *(p + 1));
-        }
+	{
+	  if (!indir)
+	    {
+	      *enclen = (long)(p + 2 - encoded);
+	      indir = 1;
+	    }
+	  p = abuf + ((*p & ~INDIR_MASK) << 8 | *(p + 1));
+	}
       else
-        {
-          len = *p;
-          p++;
-          while (len--)
-            {
-              if (*p == '.' || *p == '\\')
-                *q++ = '\\';
-              *q++ = *p;
-              p++;
-            }
-          *q++ = '.';
-        }
+	{
+	  len = *p;
+	  p++;
+	  while (len--)
+	    {
+	      if (*p == '.' || *p == '\\')
+		*q++ = '\\';
+	      *q++ = *p;
+	      p++;
+	    }
+	  *q++ = '.';
+	}
     }
   if (!indir)
     *enclen = (long)(p + 1 - encoded);
@@ -112,7 +112,7 @@ int ares_expand_name(const unsigned char *encoded, const unsigned char *abuf,
  * -1 if the encoding is invalid.
  */
 static int name_length(const unsigned char *encoded, const unsigned char *abuf,
-                       int alen)
+		       int alen)
 {
   int n = 0, offset, indir = 0;
 
@@ -123,34 +123,34 @@ static int name_length(const unsigned char *encoded, const unsigned char *abuf,
   while (*encoded)
     {
       if ((*encoded & INDIR_MASK) == INDIR_MASK)
-        {
-          /* Check the offset and go there. */
-          if (encoded + 1 >= abuf + alen)
-            return -1;
-          offset = (*encoded & ~INDIR_MASK) << 8 | *(encoded + 1);
-          if (offset >= alen)
-            return -1;
-          encoded = abuf + offset;
+	{
+	  /* Check the offset and go there. */
+	  if (encoded + 1 >= abuf + alen)
+	    return -1;
+	  offset = (*encoded & ~INDIR_MASK) << 8 | *(encoded + 1);
+	  if (offset >= alen)
+	    return -1;
+	  encoded = abuf + offset;
 
-          /* If we've seen more indirects than the message length,
-           * then there's a loop.
-           */
-          if (++indir > alen)
-            return -1;
-        }
+	  /* If we've seen more indirects than the message length,
+	   * then there's a loop.
+	   */
+	  if (++indir > alen)
+	    return -1;
+	}
       else
-        {
-          offset = *encoded;
-          if (encoded + offset + 1 >= abuf + alen)
-            return -1;
-          encoded++;
-          while (offset--)
-            {
-              n += (*encoded == '.' || *encoded == '\\') ? 2 : 1;
-              encoded++;
-            }
-          n++;
-        }
+	{
+	  offset = *encoded;
+	  if (encoded + offset + 1 >= abuf + alen)
+	    return -1;
+	  encoded++;
+	  while (offset--)
+	    {
+	      n += (*encoded == '.' || *encoded == '\\') ? 2 : 1;
+	      encoded++;
+	    }
+	  n++;
+	}
     }
 
   /* If there were any labels at all, then the number of dots is one

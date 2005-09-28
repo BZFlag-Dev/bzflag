@@ -43,7 +43,7 @@ class TriWallSceneNode : public WallSceneNode {
 
     bool		cull(const ViewFrustum&) const;
 
-    void 		getRenderNodes(std::vector<RenderSet>& rnodes);
+    void		getRenderNodes(std::vector<RenderSet>& rnodes);
 
   protected:
     class Geometry : public RenderNode {

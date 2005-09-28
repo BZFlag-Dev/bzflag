@@ -45,21 +45,21 @@ private:
 
 	PyObject *module;
 
-	CaptureHandler       capture_handler;
-	DieHandler           die_handler;
-	SpawnHandler         spawn_handler;
-	ZoneEntryHandler     zone_entry_handler;
-	ZoneExitHandler      zone_exit_handler;
-	JoinHandler          join_handler;
-	PartHandler          part_handler;
-	ChatHandler          chat_handler;
-	UnknownSlashHandler  unknownslash_handler;
-	GetSpawnPosHandler   getspawnpos_handler;
-	GetAutoTeamHandler   getautoteam_handler;
-	AllowPlayerHandler   allowplayer_handler;
-	TickHandler          tick_handler;
-	GenerateWorldHandler generateworld_handler;
-	GetPlayerInfoHandler getplayerinfo_handler;
+	CaptureHandler		capture_handler;
+	DieHandler		die_handler;
+	SpawnHandler		spawn_handler;
+	ZoneEntryHandler	zone_entry_handler;
+	ZoneExitHandler		zone_exit_handler;
+	JoinHandler		join_handler;
+	PartHandler		part_handler;
+	ChatHandler		chat_handler;
+	UnknownSlashHandler	unknownslash_handler;
+	GetSpawnPosHandler	getspawnpos_handler;
+	GetAutoTeamHandler	getautoteam_handler;
+	AllowPlayerHandler	allowplayer_handler;
+	TickHandler		tick_handler;
+	GenerateWorldHandler	generateworld_handler;
+	GetPlayerInfoHandler	getplayerinfo_handler;
 };
 
 };

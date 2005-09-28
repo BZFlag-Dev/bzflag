@@ -184,7 +184,7 @@ bool MeshObstacle::addFace(const std::vector<int>& _vertices,
   bounce = bounce || smoothBounce;
   drive = drive || driveThrough;
   shoot = shoot || shootThrough;
-  
+
   // override the triangulation setting depending on count
   triangulate = triangulate && (count > 3);
 
@@ -195,11 +195,11 @@ bool MeshObstacle::addFace(const std::vector<int>& _vertices,
     int tmpDebugLevel = debugLevel;
     debugLevel = 0;
     face = new MeshFace(this, count, v, n, t, _material, phydrv,
-                        _noclusters, bounce, drive, shoot);
+			_noclusters, bounce, drive, shoot);
     debugLevel = tmpDebugLevel;
   } else {
     face = new MeshFace(this, count, v, n, t, _material, phydrv,
-                        _noclusters, bounce, drive, shoot);
+			_noclusters, bounce, drive, shoot);
   }
 
   // check its validity
@@ -225,26 +225,26 @@ bool MeshObstacle::addFace(const std::vector<int>& _vertices,
       faceSize += extra;
       // add the triangles
       for (i = 0; i < triSize; i++) {
-        std::vector<int> triV, triN, triT;
-        for (int j = 0; j < 3; j++) {
-          const int index = triIndices[i].indices[j];
-          triV.push_back(_vertices[index]);
-          if (_normals.size() > 0) {
-            triN.push_back(_normals[index]);
-          }
-          if (_texcoords.size() > 0) {
-            triT.push_back(_texcoords[index]);
-          }
-        }
-        makeFacePointers(triV, triN, triT, v, n, t);
-        face = new MeshFace(this, 3, v, n, t, _material, phydrv,
-                            _noclusters, bounce, drive, shoot);
-        if (face->isValid()) {
-          faces[faceCount] = face;
-          faceCount++;
-        } else {
-          delete face;
-        }
+	std::vector<int> triV, triN, triT;
+	for (int j = 0; j < 3; j++) {
+	  const int index = triIndices[i].indices[j];
+	  triV.push_back(_vertices[index]);
+	  if (_normals.size() > 0) {
+	    triN.push_back(_normals[index]);
+	  }
+	  if (_texcoords.size() > 0) {
+	    triT.push_back(_texcoords[index]);
+	  }
+	}
+	makeFacePointers(triV, triN, triT, v, n, t);
+	face = new MeshFace(this, 3, v, n, t, _material, phydrv,
+			    _noclusters, bounce, drive, shoot);
+	if (face->isValid()) {
+	  faces[faceCount] = face;
+	  faceCount++;
+	} else {
+	  delete face;
+	}
       }
     }
   }
@@ -258,25 +258,25 @@ bool MeshObstacle::addFace(const std::vector<int>& _vertices,
 }
 
 
-void MeshObstacle::makeFacePointers(const std::vector<int>& _vertices,  
-                                    const std::vector<int>& _normals,     
-                                    const std::vector<int>& _texcoords,
-                                    float**& v, float**& n, float**& t)
+void MeshObstacle::makeFacePointers(const std::vector<int>& _vertices,
+				    const std::vector<int>& _normals,
+				    const std::vector<int>& _texcoords,
+				    float**& v, float**& n, float**& t)
 {
   const int count = _vertices.size();
-  
+
   // use the indices to makes lists of pointers
   v = new float*[count];
   n = NULL;
   t = NULL;
-  
+
   if (_normals.size() > 0) {
     n = new float*[count];
   }
   if (_texcoords.size() > 0) {
     t = new float*[count];
   }
-  
+
   for (int i = 0; i < count; i++) {
     // invert the vertices if required
     int index = (inverted ? ((count - 1) - i) : i);
@@ -319,12 +319,12 @@ Obstacle* MeshObstacle::copyWithTransform(const MeshTransform& xform) const
   std::vector<cfvec2> tlist;
 
   // empty arrays for copies of pure visual meshes
-  if ((drawInfo != NULL) && 
+  if ((drawInfo != NULL) &&
       ((faceCount <= 0) || (driveThrough && shootThrough))) {
     // load blanks for pure visual meshes
     copy = new MeshObstacle(xform, ctlist, clist,
-                            vlist, nlist, tlist, 0, noclusters,
-                            smoothBounce, driveThrough, shootThrough);
+			    vlist, nlist, tlist, 0, noclusters,
+			    smoothBounce, driveThrough, shootThrough);
   } else {
     for (i = 0; i < checkCount; i++) {
       ctlist.push_back(checkTypes[i]);
@@ -337,8 +337,8 @@ Obstacle* MeshObstacle::copyWithTransform(const MeshTransform& xform) const
     }
 
     copy = new MeshObstacle(xform, ctlist, clist,
-                            vlist, nlist, tlist, faceCount, noclusters,
-                            smoothBounce, driveThrough, shootThrough);
+			    vlist, nlist, tlist, faceCount, noclusters,
+			    smoothBounce, driveThrough, shootThrough);
 
     for (i = 0; i < faceCount; i++) {
       copyFace(i, copy);
@@ -620,9 +620,9 @@ int MeshObstacle::packSize() const
 
     if (debugLevel >= 4) {
       DEBUG0("DrawInfo packSize = %i, align = %i, full = %i\n",
-             drawInfoPackSize,
-             align * ((drawInfoPackSize + (align - 1)) / align),
-             align * ((drawInfoPackSize + (align - 1)) / align) + sizeof(fvec2));
+	     drawInfoPackSize,
+	     align * ((drawInfoPackSize + (align - 1)) / align),
+	     align * ((drawInfoPackSize + (align - 1)) / align) + sizeof(fvec2));
     }
   }
   for (int f = 0; f < faceCount; f++) {
@@ -683,9 +683,9 @@ void *MeshObstacle::pack(void *buf) const
 
     DEBUG4("DrawInfo packing: length = %i, missing = %i\n", length, missing);
     DEBUG4("  texcoordCount = %i, fakeTxcdCount = %i, rewindLen = %i\n",
-           texcoordCount, fakeTxcdCount, fullLength + sizeof(fvec2));
+	   texcoordCount, fakeTxcdCount, fullLength + sizeof(fvec2));
   }
-  
+
   buf = nboPackInt(buf, faceCount);
   for (i = 0; i < faceCount; i++) {
     buf = faces[i]->pack(buf);
@@ -766,7 +766,7 @@ void *MeshObstacle::unpack(void *buf)
   smoothBounce  = (stateByte & (1 << 2)) != 0;
   noclusters    = (stateByte & (1 << 3)) != 0;
   drawInfoOwner = (stateByte & (1 << 4)) != 0;
-  
+
   if (drawInfoOwner && (vertexCount >= 1)) {
     // remove the extraneous vertex
     vertexCount--;
@@ -779,49 +779,49 @@ void *MeshObstacle::unpack(void *buf)
       void* drawInfoSize = (char*)texcoordEnd - sizeof(fvec2);
       int32_t rewindLen;
       nboUnpackInt(drawInfoSize, rewindLen);
-      
+
       const bool useDrawInfo = BZDB.isTrue("useDrawInfo");
 
       if (rewindLen <= (int)(texcoordCount * sizeof(fvec2))) {
-        // unpack the drawInfo
-        if (useDrawInfo) {
-          void* drawInfoData = (char*)texcoordEnd - rewindLen;
-          drawInfo = new MeshDrawInfo();
-          drawInfo->unpack(drawInfoData);
-          name = drawInfo->getName(); // get the proxied name
-        }
+	// unpack the drawInfo
+	if (useDrawInfo) {
+	  void* drawInfoData = (char*)texcoordEnd - rewindLen;
+	  drawInfo = new MeshDrawInfo();
+	  drawInfo->unpack(drawInfoData);
+	  name = drawInfo->getName(); // get the proxied name
+	}
 
-        // free the bogus texcoords
-        const int fakeTxcds = rewindLen / sizeof(fvec2);
-        texcoordCount = texcoordCount - fakeTxcds;
-        fvec2* tmpTxcds = new fvec2[texcoordCount];
-        memcpy(tmpTxcds, texcoords, texcoordCount * sizeof(fvec2));
-        delete[] texcoords;
-        int ptrDiff = (char*)tmpTxcds - (char*)texcoords;
-        texcoords = tmpTxcds;
-        
-        // setup the drawInfo arrays
-        if (useDrawInfo) {
-          drawInfo->clientSetup(this);
-          if (!drawInfo->isValid()) {
-            delete drawInfo;
-            drawInfo = NULL;
-          }
-        }
+	// free the bogus texcoords
+	const int fakeTxcds = rewindLen / sizeof(fvec2);
+	texcoordCount = texcoordCount - fakeTxcds;
+	fvec2* tmpTxcds = new fvec2[texcoordCount];
+	memcpy(tmpTxcds, texcoords, texcoordCount * sizeof(fvec2));
+	delete[] texcoords;
+	int ptrDiff = (char*)tmpTxcds - (char*)texcoords;
+	texcoords = tmpTxcds;
 
-        // remap the texcoord pointers in the faces
-        for (i = 0; i < faceCount; i++) {
-          MeshFace* face = faces[i];
-          if (face->useTexcoords()) {
-            for (int v = 0; v < face->getVertexCount(); v++) {
-              face->texcoords[v] = 
-                (float*)((char*)face->texcoords[v] + ptrDiff);
-            }
-          }
-        }
+	// setup the drawInfo arrays
+	if (useDrawInfo) {
+	  drawInfo->clientSetup(this);
+	  if (!drawInfo->isValid()) {
+	    delete drawInfo;
+	    drawInfo = NULL;
+	  }
+	}
 
-        DEBUG4("DrawInfo unpacking: fakeTxcds = %i, realTxcds = %i\n",
-               fakeTxcds, texcoordCount);
+	// remap the texcoord pointers in the faces
+	for (i = 0; i < faceCount; i++) {
+	  MeshFace* face = faces[i];
+	  if (face->useTexcoords()) {
+	    for (int v = 0; v < face->getVertexCount(); v++) {
+	      face->texcoords[v] =
+		(float*)((char*)face->texcoords[v] + ptrDiff);
+	    }
+	  }
+	}
+
+	DEBUG4("DrawInfo unpacking: fakeTxcds = %i, realTxcds = %i\n",
+	       fakeTxcds, texcoordCount);
       }
     }
     nboUseErrorChecking(true);
@@ -845,7 +845,7 @@ static void outputFloat(std::ostream& out, float value)
 void MeshObstacle::print(std::ostream& out, const std::string& indent) const
 {
   out << indent << "mesh" << std::endl;
-  
+
   out << indent << "# faces = " << faceCount << std::endl;
   out << indent << "# checks = " << checkCount << std::endl;
   out << indent << "# vertices = " << vertexCount << std::endl;
@@ -917,12 +917,12 @@ void MeshObstacle::print(std::ostream& out, const std::string& indent) const
     faces[f]->print(out, indent);
   }
 
-  // MeshDrawInfo 
+  // MeshDrawInfo
   if ((drawInfo != NULL) && !drawInfo->isCopy()) {
     std::string indent2 = indent + "  ";
     drawInfo->print(out, indent2);
   }
-  
+
   out << indent << "end" << std::endl;
 
   return;

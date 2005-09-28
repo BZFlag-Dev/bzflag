@@ -128,7 +128,7 @@ public:
   void		enableSun(bool = true); // toggle light state
 
   void		setTimeOfDay(double julianDay);
-  
+
   const GLfloat*	getSunColor() const;
   const GLfloat*	getSunScaledColor() const;
   GLfloat		getSunBrightness() const;
@@ -137,7 +137,7 @@ public:
 
   SceneDatabase*	getSceneDatabase() const;
   void			setSceneDatabase(SceneDatabase*);
-  
+
   const Extents*	getVisualExtents() const;
 
   BackgroundRenderer*	getBackground();

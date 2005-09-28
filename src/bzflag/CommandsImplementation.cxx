@@ -118,35 +118,35 @@ class SaveWorldCommand : LocalCommand {
 
 
 // class instantiations
-static CommandList        commandList;
+static CommandList	  commandList;
 static SilenceCommand     silenceCommand;
 static UnsilenceCommand   unsilenceCommand;
-static DumpCommand        dumpCommand;
+static DumpCommand	  dumpCommand;
 static ClientQueryCommand clientQueryCommand;
 static HighlightCommand   highlightCommand;
-static SetCommand         setCommand;
-static DiffCommand        diffCommand;
+static SetCommand	  setCommand;
+static DiffCommand	  diffCommand;
 static LocalSetCommand    localSetCommand;
-static QuitCommand        quitCommand;
+static QuitCommand	  quitCommand;
 static RoamPosCommand     roamPosCommand;
 static ReTextureCommand   reTextureCommand;
 static SaveWorldCommand   saveWorldCommand;
 
 
 // class constructors
-CommandList::CommandList() :                LocalCommand("/cmds") {}
-DiffCommand::DiffCommand() :                LocalCommand("/diff") {}
-DumpCommand::DumpCommand() :                LocalCommand("/dumpvars") {}
-HighlightCommand::HighlightCommand() :      LocalCommand("/highlight") {}
-LocalSetCommand::LocalSetCommand() :        LocalCommand("/localset") {}
-QuitCommand::QuitCommand() :                LocalCommand("/quit") {}
-ReTextureCommand::ReTextureCommand() :      LocalCommand("/retexture") {}
-RoamPosCommand::RoamPosCommand() :          LocalCommand("/roampos") {}
-SaveWorldCommand::SaveWorldCommand() :      LocalCommand("/saveworld") {}
-SetCommand::SetCommand() :                  LocalCommand("/set") {}
-SilenceCommand::SilenceCommand() :          LocalCommand("/silence") {}
-UnsilenceCommand::UnsilenceCommand() :      LocalCommand("/unsilence") {}
-ClientQueryCommand::ClientQueryCommand() :  LocalCommand("CLIENTQUERY") {}
+CommandList::CommandList() :		LocalCommand("/cmds") {}
+DiffCommand::DiffCommand() :		LocalCommand("/diff") {}
+DumpCommand::DumpCommand() :		LocalCommand("/dumpvars") {}
+HighlightCommand::HighlightCommand() :	LocalCommand("/highlight") {}
+LocalSetCommand::LocalSetCommand() :	LocalCommand("/localset") {}
+QuitCommand::QuitCommand() :		LocalCommand("/quit") {}
+ReTextureCommand::ReTextureCommand() :	LocalCommand("/retexture") {}
+RoamPosCommand::RoamPosCommand() :	LocalCommand("/roampos") {}
+SaveWorldCommand::SaveWorldCommand() :	LocalCommand("/saveworld") {}
+SetCommand::SetCommand() :		LocalCommand("/set") {}
+SilenceCommand::SilenceCommand() :	LocalCommand("/silence") {}
+UnsilenceCommand::UnsilenceCommand() :	LocalCommand("/unsilence") {}
+ClientQueryCommand::ClientQueryCommand() : LocalCommand("CLIENTQUERY") {}
 
 
 // the meat of the matter
@@ -184,14 +184,14 @@ bool CommandList::operator() (const char * /*cmdLine*/)
   // formatting parameters
   const int cols = (maxLineLen / maxCmdLen);
   const int rows = ((cmdCount + (cols - 1)) / cols);
-  
+
   addMessage(NULL, ANSI_STR_UNDERLINE ANSI_STR_FG_BLACK
-                   "Client-side Commands");
-  
+		   "Client-side Commands");
+
   const char* prefix = ANSI_STR_FG_YELLOW ANSI_STR_PULSATING
-                       "[CLIENT->] " ANSI_STR_RESET;
+		       "[CLIENT->] " ANSI_STR_RESET;
   const int prefixLen = strlen(prefix);
-  
+
   for (int row = 0; row < rows; row++) {
     cptr = buffer;
     strncpy(buffer, prefix, MessageLen);
@@ -199,23 +199,23 @@ bool CommandList::operator() (const char * /*cmdLine*/)
     for (int col = 0; col < cols; col++) {
       const int index = (col * rows) + row;
       if (index >= cmdCount) {
-        break;
+	break;
       }
       sprintf(cptr, format, cmds[index]->c_str());
       cptr += maxCmdLen;
     }
     addMessage(NULL, buffer);
   }
-  
+
   addMessage(NULL, ANSI_STR_UNDERLINE ANSI_STR_FG_BLACK
-                   "Server-side Commands");
+		   "Server-side Commands");
 
   const char* msg = "/?";
   const int msgLen = strlen(msg) + 1;
   cptr = (char*) nboPackUByte(buffer, ServerPlayer);
   nboPackString(cptr, msg, msgLen);
   serverLink->send(MsgMessage, PlayerIdPLen + msgLen, buffer);
-  
+
   return true;
 }
 
@@ -399,7 +399,7 @@ bool LocalSetCommand::operator() (const char *commandLine)
       addMessage(NULL, msg);
     } else {
       addMessage (NULL, "This is a server-defined variable. "
-                        "Use /set instead of /localset.");
+			"Use /set instead of /localset.");
     }
   } else {
     addMessage(NULL, "usage: /localset <variable> <value>");
@@ -425,7 +425,7 @@ bool RoamPosCommand::operator() (const char *commandLine)
   // change the observer position and orientation
   std::string params = commandLine + 8;
   std::vector<std::string> tokens = TextUtils::tokenize(params, " ");
-  
+
   if (tokens.size() == 1) {
     if (TextUtils::tolower(tokens[0]) == "reset") {
       roamPos[0] = 0.0f;
@@ -469,15 +469,15 @@ bool RoamPosCommand::operator() (const char *commandLine)
   else {
     addMessage(NULL,
       "/roampos  [ \"reset\" | degrees | {x y z [theta [phi [ zoom ]]] } ]");
-      
+
     char buffer[MessageLen];
     snprintf(buffer, MessageLen,
-             "  <%.3f, %.3f, %.3f> theta = %.3f, phi = %.3f, zoom = %.3f",
-             roamPos[0], roamPos[1], roamPos[2],
-             roamTheta, roamPhi, roamZoom);
+	     "  <%.3f, %.3f, %.3f> theta = %.3f, phi = %.3f, zoom = %.3f",
+	     roamPos[0], roamPos[1], roamPos[2],
+	     roamTheta, roamPhi, roamZoom);
     addMessage(NULL, buffer);
   }
-  
+
   return true;
 }
 
@@ -502,7 +502,7 @@ bool SaveWorldCommand::operator() (const char *commandLine)
 {
   bool meshprims = false;
   bool ungrouped = false;
-  
+
   std::string cmdLine = commandLine;
   std::vector<std::string> args;
   args = TextUtils::tokenize(commandLine, " ");
@@ -512,7 +512,7 @@ bool SaveWorldCommand::operator() (const char *commandLine)
     sendSaveWorldHelp();
     return true;
   }
-  
+
   int pos = 1;
   while (pos < (argCount - 1)) {
     const std::string& arg = args[pos];
@@ -533,7 +533,7 @@ bool SaveWorldCommand::operator() (const char *commandLine)
 
   BZDB.set("saveAsMeshes", meshprims ? "1" : "0");
   BZDB.set("saveFlatFile", ungrouped ? "1" : "0");
-  
+
   World* world = World::getWorld();
   if (!world) {
     return true;
@@ -543,13 +543,13 @@ bool SaveWorldCommand::operator() (const char *commandLine)
   std::string fullname;
   if (World::getWorld()->writeWorld(filename, fullname)) {
     snprintf(buffer, 256, "World saved:  %s %s%s", fullname.c_str(),
-             meshprims ? " [meshprims]" : "",
-             ungrouped ? " [ungrouped]" : "");
+	     meshprims ? " [meshprims]" : "",
+	     ungrouped ? " [ungrouped]" : "");
   } else {
     snprintf(buffer, 256, "Error saving:  %s", fullname.c_str());
   }
   addMessage(NULL, buffer);
-  
+
   return true;
 }
 

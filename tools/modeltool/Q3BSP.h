@@ -28,7 +28,7 @@
 #define BSP_BRUSHSIDES_LUMP (9)
 #define BSP_VERTICES_LUMP   (10)
 #define BSP_ELEMENTS_LUMP   (11)
-#define BSP_FOG_LUMP        (12)
+#define BSP_FOG_LUMP	(12)
 #define BSP_FACES_LUMP      (13)
 #define BSP_LIGHTMAPS_LUMP  (14)
 #define BSP_LIGHTVOLS_LUMP  (15)
@@ -37,58 +37,58 @@
 #define BSP_LIGHTMAP_BANKSIZE   (128*128*3)
 
 
-#define    CONTENTS_SOLID            1        // an eye is never valid in a solid
-#define    CONTENTS_LAVA            8
-#define    CONTENTS_SLIME            16
-#define    CONTENTS_WATER            32
-#define    CONTENTS_FOG            64
+#define    CONTENTS_SOLID	    1	// an eye is never valid in a solid
+#define    CONTENTS_LAVA	    8
+#define    CONTENTS_SLIME	    16
+#define    CONTENTS_WATER	    32
+#define    CONTENTS_FOG	    64
 
-#define    CONTENTS_AREAPORTAL        0x8000
+#define    CONTENTS_AREAPORTAL	0x8000
 
-#define    CONTENTS_PLAYERCLIP        0x10000
+#define    CONTENTS_PLAYERCLIP	0x10000
 #define    CONTENTS_MONSTERCLIP    0x20000
 //bot specific contents types
-#define    CONTENTS_TELEPORTER        0x40000
-#define    CONTENTS_JUMPPAD        0x80000
+#define    CONTENTS_TELEPORTER	0x40000
+#define    CONTENTS_JUMPPAD	0x80000
 #define CONTENTS_CLUSTERPORTAL    0x100000
-#define CONTENTS_DONOTENTER        0x200000
+#define CONTENTS_DONOTENTER	0x200000
 
-#define    CONTENTS_ORIGIN            0x1000000    // removed before bsping an entity
+#define    CONTENTS_ORIGIN	    0x1000000    // removed before bsping an entity
 
-#define    CONTENTS_BODY            0x2000000    // should never be on a brush, only in game
-#define    CONTENTS_CORPSE            0x4000000
-#define    CONTENTS_DETAIL            0x8000000    // brushes not used for the bsp
-#define    CONTENTS_STRUCTURAL        0x10000000    // brushes used for the bsp
+#define    CONTENTS_BODY	    0x2000000    // should never be on a brush, only in game
+#define    CONTENTS_CORPSE	    0x4000000
+#define    CONTENTS_DETAIL	    0x8000000    // brushes not used for the bsp
+#define    CONTENTS_STRUCTURAL	0x10000000    // brushes used for the bsp
 #define    CONTENTS_TRANSLUCENT    0x20000000    // don't consume surface fragments inside
-#define    CONTENTS_TRIGGER        0x40000000
-#define    CONTENTS_NODROP            0x80000000    // don't leave bodies or items (death fog, lava)
+#define    CONTENTS_TRIGGER	0x40000000
+#define    CONTENTS_NODROP	    0x80000000    // don't leave bodies or items (death fog, lava)
 
-#define    SURF_NODAMAGE            0x1        // never give falling damage
-#define    SURF_SLICK                0x2        // effects game physics
-#define    SURF_SKY                0x4        // lighting from environment map
-#define    SURF_LADDER                0x8
-#define    SURF_NOIMPACT            0x10    // don't make missile explosions
-#define    SURF_NOMARKS            0x20    // don't leave missile marks
-#define    SURF_FLESH                0x40    // make flesh sounds and effects
-#define    SURF_NODRAW                0x80    // don't generate a drawsurface at all
-#define    SURF_HINT                0x100    // make a primary bsp splitter
-#define    SURF_SKIP                0x200    // completely ignore, allowing non-closed brushes
-#define    SURF_NOLIGHTMAP            0x400    // surface doesn't need a lightmap
-#define    SURF_POINTLIGHT            0x800    // generate lighting info at vertexes
-#define    SURF_METALSTEPS            0x1000    // clanking footsteps
-#define    SURF_NOSTEPS            0x2000    // no footstep sounds
-#define    SURF_NONSOLID            0x4000    // don't collide against curves with this set
-#define SURF_LIGHTFILTER        0x8000    // act as a light filter during q3map -light
-#define    SURF_ALPHASHADOW        0x10000    // do per-pixel light shadow casting in q3map
-#define    SURF_NODLIGHT            0x20000    // don't dlight even if solid (solid lava, skies)
+#define    SURF_NODAMAGE	    0x1	// never give falling damage
+#define    SURF_SLICK		0x2	// effects game physics
+#define    SURF_SKY		0x4	// lighting from environment map
+#define    SURF_LADDER		0x8
+#define    SURF_NOIMPACT	    0x10    // don't make missile explosions
+#define    SURF_NOMARKS	    0x20    // don't leave missile marks
+#define    SURF_FLESH		0x40    // make flesh sounds and effects
+#define    SURF_NODRAW		0x80    // don't generate a drawsurface at all
+#define    SURF_HINT		0x100    // make a primary bsp splitter
+#define    SURF_SKIP		0x200    // completely ignore, allowing non-closed brushes
+#define    SURF_NOLIGHTMAP	    0x400    // surface doesn't need a lightmap
+#define    SURF_POINTLIGHT	    0x800    // generate lighting info at vertexes
+#define    SURF_METALSTEPS	    0x1000    // clanking footsteps
+#define    SURF_NOSTEPS	    0x2000    // no footstep sounds
+#define    SURF_NONSOLID	    0x4000    // don't collide against curves with this set
+#define SURF_LIGHTFILTER	0x8000    // act as a light filter during q3map -light
+#define    SURF_ALPHASHADOW	0x10000    // do per-pixel light shadow casting in q3map
+#define    SURF_NODLIGHT	    0x20000    // don't dlight even if solid (solid lava, skies)
 
 /* Shader flags */
 enum
 {
-	SHADER_NOCULL        = 1 << 0,
+	SHADER_NOCULL	= 1 << 0,
 	SHADER_TRANSPARENT   = 1 << 1,
 	SHADER_DEPTHWRITE    = 1 << 2,
-	SHADER_SKY           = 1 << 3,
+	SHADER_SKY	   = 1 << 3,
 	SHADER_NOMIPMAPS     = 1 << 4,
 	SHADER_NEEDCOLOURS   = 1 << 5,
 	SHADER_DEFORMVERTS   = 1 << 6
@@ -108,11 +108,11 @@ enum
 /* Transform functions */
 enum WaveType
 {
-	SHADER_FUNC_NONE            = 0,
-	SHADER_FUNC_SIN             = 1,
-	SHADER_FUNC_TRIANGLE        = 2,
-	SHADER_FUNC_SQUARE          = 3,
-	SHADER_FUNC_SAWTOOTH        = 4,
+	SHADER_FUNC_NONE	    = 0,
+	SHADER_FUNC_SIN	     = 1,
+	SHADER_FUNC_TRIANGLE	= 2,
+	SHADER_FUNC_SQUARE	  = 3,
+	SHADER_FUNC_SAWTOOTH	= 4,
 	SHADER_FUNC_INVERSESAWTOOTH = 5
 };
 
@@ -126,7 +126,7 @@ enum GenFunc
 
 enum TexGen
 {
-	TEXGEN_BASE = 0,        // Coord set 0
+	TEXGEN_BASE = 0,	// Coord set 0
 	TEXGEN_LIGHTMAP = 1,    // Coord set 1
 	TEXGEN_ENVIRONMENT = 2  // Neither, generated
 };
@@ -161,7 +161,7 @@ struct bsp_model_t {
 };
 
 struct bsp_node_t {
-	int plane;          // dividing plane
+	int plane;	  // dividing plane
 	//int children[2];    // left and right nodes,
 	// negative are leaves
 	int front;
@@ -185,9 +185,9 @@ struct bsp_leaf_t {
 #define BSP_FACETYPE_FLARE  (4)
 
 struct bsp_face_t {
-	int shader;         // shader ref
+	int shader;	 // shader ref
 	int unknown;
-	int type;           // face type
+	int type;	   // face type
 	int vert_start;
 	int vert_count;
 	int elem_start;

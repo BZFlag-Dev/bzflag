@@ -244,7 +244,7 @@ void MacDisplay::getKey (BzfKeyEvent &bzf_key, char char_code, ::UInt32 keycode)
     kF12KeyCode	 = 0x6F,
     kF13KeyCode	 = 0x69,	// Print Screen
     kF14KeyCode	 = 0x6B,	// Scroll Lock
-    kF15KeyCode	 = 0x71 	// Pause
+    kF15KeyCode	 = 0x71	// Pause
   };
   bzf_key.ascii = 0;
   bzf_key.button = BzfKeyEvent::NoButton;

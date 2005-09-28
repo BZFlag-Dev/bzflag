@@ -363,18 +363,18 @@ void EffectsMenu::callback(HUDuiControl* w, void* data)
     }
     case 'a': {
       switch (list->getIndex()) {
-        case 1:
-          BZDB.set("animatedTreads", "1");
-          BZDB.set("treadStyle", "0");
-          break;
-        case 2:
-          BZDB.set("animatedTreads", "1");
-          BZDB.set("treadStyle", "1");
-          break;
-        default:
-          BZDB.set("animatedTreads", "0");
-          BZDB.set("treadStyle", "0");
-          break;
+	case 1:
+	  BZDB.set("animatedTreads", "1");
+	  BZDB.set("treadStyle", "0");
+	  break;
+	case 2:
+	  BZDB.set("animatedTreads", "1");
+	  BZDB.set("treadStyle", "1");
+	  break;
+	default:
+	  BZDB.set("animatedTreads", "0");
+	  BZDB.set("treadStyle", "0");
+	  break;
       }
       RENDERER.setRebuildTanks();
       break;

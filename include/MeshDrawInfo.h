@@ -9,7 +9,7 @@
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
- 
+
 #ifndef _MESH_DRAW_INFO_H_
 #define _MESH_DRAW_INFO_H_
 
@@ -46,30 +46,30 @@ class MeshDrawInfo {
     // - the vertex data belongs to the source
     // - the BzMaterials are regenerated from the map
     MeshDrawInfo(const MeshDrawInfo* drawInfo,
-                 const MeshTransform& xform,
-                 const std::map<const BzMaterial*, const BzMaterial*>&);
+		 const MeshTransform& xform,
+		 const std::map<const BzMaterial*, const BzMaterial*>&);
 
     ~MeshDrawInfo();
-    
+
     bool parse(std::istream& in);
-    
+
     bool isValid() const;
 
     bool clientSetup(const MeshObstacle* mesh);
     bool serverSetup(const MeshObstacle* mesh);
-    
+
     bool isServerSide() const;
-    
+
     bool isCopy() const;
     const MeshDrawInfo* getSource() const;
-    
+
     bool isInvisible() const;
 
     void getMaterials(MaterialSet& matSet) const;
-    
+
     MeshDrawMgr* getDrawMgr() const;
     void setDrawMgr(MeshDrawMgr*);
-    
+
     void setName(const std::string&);
     const std::string& getName() const;
 
@@ -78,26 +78,26 @@ class MeshDrawInfo {
 
     int getLodCount() const;
     const DrawLod* getDrawLods() const;
-    
+
     const fvec3* getVertices() const;
     const fvec3* getNormals() const;
     const fvec2* getTexcoords() const;
-    
+
     int getRadarCount() const;
     const DrawLod* getRadarLods() const;
-    
+
     const MeshTransform::Tool* getTransformTool() const;
     const MaterialMap* getMaterialMap() const;
 
     void updateAnimation();
     const AnimationInfo* getAnimationInfo() const;
-    
+
     int packSize() const;
     void *pack(void*) const;
     void *unpack(void*);
 
     void print(std::ostream& out, const std::string& indent) const;
-    
+
   private:
     void init();
     void clear();
@@ -106,15 +106,15 @@ class MeshDrawInfo {
   private:
     const MeshDrawInfo* source; // copy source, or NULL
 
-    bool valid;    
+    bool valid;
     bool serverSide;
-    
+
     std::string name;
 
     std::vector<std::string> lodOptions;
-    
+
     MeshDrawMgr* drawMgr;
-    
+
     Extents extents;
     float sphere[4];
 
@@ -134,13 +134,13 @@ class MeshDrawInfo {
     fvec3* rawNorms;
     int rawTxcdCount;
     fvec2* rawTxcds;
-    
+
     int lodCount;
     DrawLod* lods;
-    
+
     int radarCount;
     DrawLod* radarLods;
-    
+
     AnimationInfo* animInfo;
 };
 
@@ -246,15 +246,15 @@ class DrawCmd {
     void *unpack(void*);
 
   public:
-    enum DrawModes {              // OpenGL
-      DrawPoints        = 0x0000, // 0x0000
-      DrawLines         = 0x0001, // 0x0001
+    enum DrawModes {		  // OpenGL
+      DrawPoints	= 0x0000, // 0x0000
+      DrawLines		= 0x0001, // 0x0001
       DrawLineLoop      = 0x0002, // 0x0002
       DrawLineStrip     = 0x0003, // 0x0003
       DrawTriangles     = 0x0004, // 0x0004
       DrawTriangleStrip = 0x0005, // 0x0005
       DrawTriangleFan   = 0x0006, // 0x0006
-      DrawQuads         = 0x0007, // 0x0007
+      DrawQuads		= 0x0007, // 0x0007
       DrawQuadStrip     = 0x0008, // 0x0008
       DrawPolygon       = 0x0009, // 0x0009
       DrawModeCount

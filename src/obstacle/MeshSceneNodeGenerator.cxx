@@ -161,7 +161,7 @@ void MeshSceneNodeGenerator::setupFacesAndFrags()
   //       MeshFragments. it would be good to rename all
   //       of the MeshFragment files and classes to match
   //       with the MeshCluster naming convention.
-  
+
   // only using regular MeshFaces?
   const bool noMeshClusters = BZDB.isTrue("noMeshClusters");
   if (mesh->noClusters() || noMeshClusters || !BZDBCache::zbuffer) {
@@ -246,7 +246,7 @@ WallSceneNode* MeshSceneNodeGenerator::getNextNode(bool /*lod*/)
   const MeshNode* mn;
   const MeshFace* face;
   const BzMaterial* mat;
-  
+
   // divert for Occluders
   if (returnOccluders) {
     if (currentNode < (int)occluders.size()) {
@@ -256,17 +256,17 @@ WallSceneNode* MeshSceneNodeGenerator::getNextNode(bool /*lod*/)
       return NULL;
     }
   }
-  
+
   // divert for the MeshSceneNode
   const MeshDrawInfo* drawInfo = mesh->getDrawInfo();
   if (useDrawInfo) {
     if (drawInfo->isInvisible()) {
       if (occluders.size() <= 0) {
-        return NULL;
+	return NULL;
       } else {
-        currentNode = 1;
-        returnOccluders = true;
-        return (WallSceneNode*)occluders[0];
+	currentNode = 1;
+	returnOccluders = true;
+	return (WallSceneNode*)occluders[0];
       }
     } else {
       currentNode = 0;
@@ -283,10 +283,10 @@ WallSceneNode* MeshSceneNodeGenerator::getNextNode(bool /*lod*/)
       // start sending out the occluders
       returnOccluders = true;
       if (occluders.size() > 0) {
-        currentNode = 1;
-        return (WallSceneNode*)occluders[0];
+	currentNode = 1;
+	return (WallSceneNode*)occluders[0];
       } else {
-        return NULL;
+	return NULL;
       }
     }
 
@@ -372,7 +372,7 @@ MeshPolySceneNode* MeshSceneNodeGenerator::getMeshPolySceneNode(const MeshFace* 
   }
   MeshPolySceneNode* node =
     new MeshPolySceneNode(face->getPlane(), noRadar, noShadow,
-                          vertices, normals, texcoords);
+			  vertices, normals, texcoords);
 
   return node;
 }
@@ -407,7 +407,7 @@ void MeshSceneNodeGenerator::setupNodeMaterial(WallSceneNode* node,
   if (!mat->getNoLighting()) {
     node->setMaterial(oglMaterial);
   }
-  
+
   // NOTE: the diffuse color is used, and not the ambient color
   //       could use the ambient color for non-lighted,and diffuse
   //       for lighted
@@ -440,7 +440,7 @@ void MeshSceneNodeGenerator::setupNodeMaterial(WallSceneNode* node,
   }
   node->setBlending(alpha);
   node->setSphereMap(mat->getUseSphereMap(0));
-  
+
   // the current color can also affect the blending.
   // if blending is disabled then the alpha value from
   // one of these colors is used to set the stipple value.

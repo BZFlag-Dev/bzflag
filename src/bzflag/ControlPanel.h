@@ -91,7 +91,7 @@ class ControlPanel {
     int			fontFace;
     float		fontSize;
 
-    float	      	dimming;
+    float		dimming;
     float		du, dv;
     int			radarAreaPixels[4];
     int			messageAreaPixels[4];

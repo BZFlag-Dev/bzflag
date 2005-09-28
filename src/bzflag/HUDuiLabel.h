@@ -43,7 +43,7 @@ class HUDuiLabel : public HUDuiControl {
   private:
     std::string		string;
     std::vector<std::string> *params;
-    bool	       	darker;
+    bool		darker;
     GLfloat		color[3];
 };
 

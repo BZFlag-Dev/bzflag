@@ -194,7 +194,7 @@ static void writeBZW  ( CModel &model, std::string file )
 			fprintf (fp, "  %s\n", model.customObjects[i].params[j].c_str());
 		fprintf (fp, "end\n\n");
 	}
-	
+
 	fclose(fp);
 }
 
@@ -205,17 +205,17 @@ static int  dumpUsage ( char *exeName, const char* reason )
 	printf("usage: %s <input_file_name> [options]\n\n", exeName);
 	printf("       -g <name>  : use group definition\n");
 	printf("       -tx <dir>  : set texture prefix\n");
-	printf("       -sm        : use the smoothbounce property\n");
-	printf("       -yz        : flip y and z coordinates\n");
-	printf("       -n         : disable normals\n");
-	printf("       -t         : disable texture coordinates\n");
-	printf("       -m         : disable materials\n");
-	printf("       -a         : disable ambient coloring\n");
-	printf("       -d         : disable diffuse coloring\n");
-	printf("       -s         : disable specular coloring\n");
-	printf("       -sh        : disable shininess\n");
+	printf("       -sm	: use the smoothbounce property\n");
+	printf("       -yz	: flip y and z coordinates\n");
+	printf("       -n	 : disable normals\n");
+	printf("       -t	 : disable texture coordinates\n");
+	printf("       -m	 : disable materials\n");
+	printf("       -a	 : disable ambient coloring\n");
+	printf("       -d	 : disable diffuse coloring\n");
+	printf("       -s	 : disable specular coloring\n");
+	printf("       -sh	: disable shininess\n");
 	printf("       -sf <val>  : shine multiplier\n");
-	printf("       -e         : disable emission coloring\n\n");
+	printf("       -e	 : disable emission coloring\n\n");
 	printf("       -gx <val>  : scale the model by this factor\n\n");
 	printf("       -gsx <val> : shift the map by this value in X\n\n");
 	printf("       -gsy <val> : shift the map by this value in Y\n\n");

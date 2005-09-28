@@ -59,13 +59,13 @@ BzfDisplay *WinPlatformFactory::createDisplay(const char* name,
   BzfDisplay *display;
   if (useNative) {
     WinDisplay* winDisplay = new WinDisplay(name, videoFormat);
-    display                = winDisplay;
+    display		= winDisplay;
   } else {
 #ifdef HAVE_SDL
     SDLDisplay* sdlDisplay = new SDLDisplay();
-    display                = sdlDisplay;
+    display		= sdlDisplay;
 #else
-    display                = NULL;
+    display		= NULL;
 #endif
   }
   if (!display || !display->isValid()) {

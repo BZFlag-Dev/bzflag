@@ -44,16 +44,16 @@ static char THIS_FILE[] = __FILE__;
 IMPLEMENT_DYNCREATE(CTextToolView, CView)
 
 BEGIN_MESSAGE_MAP(CTextToolView, CView)
-	//{{AFX_MSG_MAP(CTextToolView)
-	ON_WM_ERASEBKGND()
-	ON_COMMAND(ID_FONT_SETFONT, OnFontSetfont)
-	ON_COMMAND(ID_FONT_SAVEFONTFILES, OnFontSavefontfiles)
-	ON_COMMAND(ID_FILE_BATCHPROCESSING, OnBatchProcessing)
-	//}}AFX_MSG_MAP
-	// Standard printing commands
-	ON_COMMAND(ID_FILE_PRINT, CView::OnFilePrint)
-	ON_COMMAND(ID_FILE_PRINT_DIRECT, CView::OnFilePrint)
-	ON_COMMAND(ID_FILE_PRINT_PREVIEW, CView::OnFilePrintPreview)
+  //{{AFX_MSG_MAP(CTextToolView)
+  ON_WM_ERASEBKGND()
+  ON_COMMAND(ID_FONT_SETFONT, OnFontSetfont)
+  ON_COMMAND(ID_FONT_SAVEFONTFILES, OnFontSavefontfiles)
+  ON_COMMAND(ID_FILE_BATCHPROCESSING, OnBatchProcessing)
+  //}}AFX_MSG_MAP
+  // Standard printing commands
+  ON_COMMAND(ID_FILE_PRINT, CView::OnFilePrint)
+  ON_COMMAND(ID_FILE_PRINT_DIRECT, CView::OnFilePrint)
+  ON_COMMAND(ID_FILE_PRINT_PREVIEW, CView::OnFilePrintPreview)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -599,3 +599,12 @@ void CTextToolView::OnInitialUpdate()
   Invalidate(true);
   UpdateWindow();
 }
+
+// Local Variables: ***
+// mode:C++ ***
+// tab-width: 8 ***
+// c-basic-offset: 2 ***
+// indent-tabs-mode: t ***
+// End: ***
+// ex: shiftwidth=2 tabstop=8
+

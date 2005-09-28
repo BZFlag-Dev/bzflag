@@ -32,12 +32,12 @@ std::string globalPluginDir = ".\\plugins\\";
 #else
 std::string extension = ".so";
 std::string globalPluginDir = "$(prefix)/lib/bzflag/";
-#endif 
+#endif
 
 typedef std::map<std::string, bz_APIPluginHandler*> tmCustomPluginMap;
 tmCustomPluginMap customPluginMap;
 
-typedef struct 
+typedef struct
 {
 	std::string plugin;
 
@@ -45,7 +45,7 @@ typedef struct
 	HINSTANCE	handle;
 #else
 	void*		handle;
-#endif 
+#endif
 }trPluginRecord;
 
 std::string findPlugin ( std::string pluginName )
@@ -90,7 +90,7 @@ std::string findPlugin ( std::string pluginName )
 
 std::vector<trPluginRecord>	vPluginList;
 
-void unload1Plugin ( int iPluginID ); 
+void unload1Plugin ( int iPluginID );
 
 #ifdef _WIN32
 #  include <windows.h>
@@ -100,7 +100,7 @@ int getPluginVersion ( HINSTANCE hLib )
 	int (*lpProc)(void);
 	lpProc = (int (__cdecl *)(void))GetProcAddress(hLib, "bz_GetVersion");
 	if (lpProc)
-		return lpProc(); 
+		return lpProc();
 	return 0;
 }
 
@@ -124,7 +124,7 @@ bool load1Plugin ( std::string plugin, std::string config )
 			lpProc = (int (__cdecl *)(const char*))GetProcAddress(hLib, "bz_Load");
 			if (lpProc)
 			{
-				lpProc(config.c_str()); 
+				lpProc(config.c_str());
 				DEBUG1("Plugin:%s loaded\n",plugin.c_str());
 
 				trPluginRecord pluginRecord;
@@ -156,7 +156,7 @@ void unload1Plugin ( int iPluginID )
 
 	lpProc = (int (__cdecl *)(void))GetProcAddress(plugin.handle, "bz_Unload");
 	if (lpProc)
-		lpProc(); 
+		lpProc();
 	else
 		DEBUG1("Plugin does not contain bz_UnLoad method\n");
 
@@ -173,7 +173,7 @@ int getPluginVersion ( void* hLib )
 	int (*lpProc)(void);
 	*(void**) &lpProc = dlsym(hLib,"bz_GetVersion");
 	if (lpProc)
-		return (*lpProc)(); 
+		return (*lpProc)();
 	return 0;
 }
 
@@ -231,14 +231,14 @@ void unload1Plugin ( int iPluginID )
 
 	*(void**) &lpProc = dlsym(plugin.handle, "bz_Unload");
 	if (lpProc)
-		(*lpProc)(); 
+		(*lpProc)();
 	else
 		DEBUG1("Plugin does not contain bz_UnLoad method, error %s\n",dlerror());
 
 	dlclose(plugin.handle);
 	plugin.handle = NULL;
 }
-#endif 
+#endif
 
 
 bool loadPlugin ( std::string plugin, std::string config )
@@ -272,7 +272,7 @@ bool unloadPlugin ( std::string plugin )
 			return true;
 		}
 	}
-        return false;
+	return false;
 }
 
 void unloadPlugins ( void )

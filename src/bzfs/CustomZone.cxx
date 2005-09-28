@@ -105,9 +105,9 @@ bool CustomZone::read(const char *cmd, std::istream& input) {
       else {
 	type = Flag::getDescFromAbbreviation(flag.c_str());
 	if (type == Flags::Null) {
-          DEBUG1("WARNING: bad flag type: %s\n", flag.c_str());
+	  DEBUG1("WARNING: bad flag type: %s\n", flag.c_str());
 	  return false;
-        }
+	}
 	qualifiers.push_back(flag);
       }
     }
@@ -128,28 +128,28 @@ bool CustomZone::read(const char *cmd, std::istream& input) {
     if (flag == "good") {
       FlagSet &fs = Flag::getGoodFlags();
       for (FlagSet::iterator it = fs.begin(); it != fs.end(); ++it) {
-        FlagType *f = *it;
-        if (f->endurance != FlagNormal) { // Null and Team flags
-          addZoneFlagCount(f->flagAbbv, count);
-        }
+	FlagType *f = *it;
+	if (f->endurance != FlagNormal) { // Null and Team flags
+	  addZoneFlagCount(f->flagAbbv, count);
+	}
       }
     }
     else if (flag == "bad") {
       FlagSet &fs = Flag::getBadFlags();
       for (FlagSet::iterator it = fs.begin(); it != fs.end(); ++it) {
-        FlagType *f = *it;
-        if (f->endurance != FlagNormal) { // Null and Team flags
-          addZoneFlagCount(f->flagAbbv, count);
-        }
+	FlagType *f = *it;
+	if (f->endurance != FlagNormal) { // Null and Team flags
+	  addZoneFlagCount(f->flagAbbv, count);
+	}
       }
     }
     else {
       FlagType *f = Flag::getDescFromAbbreviation(flag.c_str());
       if (f != Flags::Null) {
-        addZoneFlagCount(f->flagAbbv, count);
+	addZoneFlagCount(f->flagAbbv, count);
       } else {
-        DEBUG1("WARNING: bad zoneflag type: %s\n", flag.c_str());
-        return false;
+	DEBUG1("WARNING: bad zoneflag type: %s\n", flag.c_str());
+	return false;
       }
     }
   }

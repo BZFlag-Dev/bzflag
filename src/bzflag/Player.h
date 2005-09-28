@@ -109,7 +109,7 @@ public:
 
   bool		getIpAddress(Address&);
   void		setIpAddress(const Address& addr);
-  
+
   virtual void	addShots(SceneDatabase*, bool colorblind) const;
   void		setLandingSpeed(float velocity);
   void		spawnEffect();

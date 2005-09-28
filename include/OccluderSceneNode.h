@@ -41,7 +41,7 @@ class OccluderSceneNode : public SceneNode {
       { return vertexCount; }
     const GLfloat* getVertex (int vertex) const
       { return vertices[vertex]; }
-    
+
   private:
     int vertexCount;
     GLfloat3* vertices;

@@ -13,46 +13,46 @@
  * compile with -DZ_PREFIX. The "standard" zlib should be compiled without it.
  */
 #ifdef Z_PREFIX
-#  define deflateInit_          z_deflateInit_
-#  define deflate               z_deflate
-#  define deflateEnd            z_deflateEnd
-#  define inflateInit_          z_inflateInit_
-#  define inflate               z_inflate
-#  define inflateEnd            z_inflateEnd
-#  define deflateInit2_         z_deflateInit2_
+#  define deflateInit_	  z_deflateInit_
+#  define deflate	       z_deflate
+#  define deflateEnd	    z_deflateEnd
+#  define inflateInit_	  z_inflateInit_
+#  define inflate	       z_inflate
+#  define inflateEnd	    z_inflateEnd
+#  define deflateInit2_	 z_deflateInit2_
 #  define deflateSetDictionary  z_deflateSetDictionary
-#  define deflateCopy           z_deflateCopy
-#  define deflateReset          z_deflateReset
-#  define deflateParams         z_deflateParams
-#  define deflateBound          z_deflateBound
-#  define deflatePrime          z_deflatePrime
-#  define inflateInit2_         z_inflateInit2_
+#  define deflateCopy	   z_deflateCopy
+#  define deflateReset	  z_deflateReset
+#  define deflateParams	 z_deflateParams
+#  define deflateBound	  z_deflateBound
+#  define deflatePrime	  z_deflatePrime
+#  define inflateInit2_	 z_inflateInit2_
 #  define inflateSetDictionary  z_inflateSetDictionary
-#  define inflateSync           z_inflateSync
+#  define inflateSync	   z_inflateSync
 #  define inflateSyncPoint      z_inflateSyncPoint
-#  define inflateCopy           z_inflateCopy
-#  define inflateReset          z_inflateReset
-#  define inflateBack           z_inflateBack
-#  define inflateBackEnd        z_inflateBackEnd
-#  define compress              z_compress
-#  define compress2             z_compress2
-#  define compressBound         z_compressBound
-#  define uncompress            z_uncompress
-#  define adler32               z_adler32
-#  define crc32                 z_crc32
-#  define get_crc_table         z_get_crc_table
-#  define zError                z_zError
+#  define inflateCopy	   z_inflateCopy
+#  define inflateReset	  z_inflateReset
+#  define inflateBack	   z_inflateBack
+#  define inflateBackEnd	z_inflateBackEnd
+#  define compress	      z_compress
+#  define compress2	     z_compress2
+#  define compressBound	 z_compressBound
+#  define uncompress	    z_uncompress
+#  define adler32	       z_adler32
+#  define crc32		 z_crc32
+#  define get_crc_table	 z_get_crc_table
+#  define zError		z_zError
 
-#  define Byte                  z_Byte
-#  define uInt                  z_uInt
-#  define uLong                 z_uLong
-#  define Bytef                 z_Bytef
-#  define charf                 z_charf
-#  define intf                  z_intf
-#  define uIntf                 z_uIntf
-#  define uLongf                z_uLongf
-#  define voidpf                z_voidpf
-#  define voidp                 z_voidp
+#  define Byte		  z_Byte
+#  define uInt		  z_uInt
+#  define uLong		 z_uLong
+#  define Bytef		 z_Bytef
+#  define charf		 z_charf
+#  define intf		  z_intf
+#  define uIntf		 z_uIntf
+#  define uLongf		z_uLongf
+#  define voidpf		z_voidpf
+#  define voidp		 z_voidp
 #endif
 
 #if defined(__MSDOS__) && !defined(MSDOS)
@@ -143,7 +143,7 @@
 #endif
 
 /* The memory requirements for deflate are (in bytes):
-            (1 << (windowBits+2)) +  (1 << (memLevel+9))
+	    (1 << (windowBits+2)) +  (1 << (memLevel+9))
  that is: 128K for windowBits=15  +  128K for memLevel = 8  (default values)
  plus a few kilobytes for small objects. For example, if you want to reduce
  the default memory requirements from 256K to 128K, compile with
@@ -155,7 +155,7 @@
  for small objects.
 */
 
-                        /* Type declarations */
+			/* Type declarations */
 
 #ifndef OF /* function prototypes */
 #  ifdef STDC
@@ -199,9 +199,9 @@
 #  ifdef ZLIB_DLL
 #    if defined(WIN32) && (!defined(__BORLANDC__) || (__BORLANDC__ >= 0x500))
 #      ifdef ZLIB_INTERNAL
-#        define ZEXTERN extern __declspec(dllexport)
+#	define ZEXTERN extern __declspec(dllexport)
 #      else
-#        define ZEXTERN extern __declspec(dllimport)
+#	define ZEXTERN extern __declspec(dllimport)
 #      endif
 #    endif
 #  endif  /* ZLIB_DLL */
@@ -278,7 +278,7 @@ typedef uLong FAR uLongf;
    typedef Byte       *voidp;
 #endif
 
-#if 0           /* HAVE_UNISTD_H -- this line is updated by ./configure */
+#if 0	   /* HAVE_UNISTD_H -- this line is updated by ./configure */
 #  include <sys/types.h> /* for off_t */
 #  include <unistd.h>    /* for SEEK_* and off_t */
 #  ifdef VMS
@@ -287,9 +287,9 @@ typedef uLong FAR uLongf;
 #  define z_off_t off_t
 #endif
 #ifndef SEEK_SET
-#  define SEEK_SET        0       /* Seek from beginning of file.  */
-#  define SEEK_CUR        1       /* Seek from current position.  */
-#  define SEEK_END        2       /* Set file pointer to EOF plus "offset" */
+#  define SEEK_SET	0       /* Seek from beginning of file.  */
+#  define SEEK_CUR	1       /* Seek from current position.  */
+#  define SEEK_END	2       /* Set file pointer to EOF plus "offset" */
 #endif
 #ifndef z_off_t
 #  define z_off_t long

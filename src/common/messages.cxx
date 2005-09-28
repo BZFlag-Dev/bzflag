@@ -93,7 +93,7 @@ void*  PlayerAddMessage::pack ( void* buf )
 	buf = nboPackString(buf, _email, _EmailLen);
 
 	return buf;
-}								
+}
 
 
 

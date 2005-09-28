@@ -583,7 +583,7 @@ BZF_API bool bz_registerEvent ( bz_eEventType eventType, bz_EventHandler* eventH
 {
 	if (!eventHandler)
 		return false;
-	
+
 	worldEventManager.addEvent(eventType,eventHandler);
 	return true;
 }
@@ -813,7 +813,7 @@ BZF_API bool bz_resetPlayerScore(int playerId)
 BZF_API bzAPIStringList* bz_getGroupList ( void )
 {
 	bzAPIStringList *groupList = new bzAPIStringList;
-	
+
 	PlayerAccessMap::iterator itr = groupAccess.begin();
 	while (itr != groupAccess.end()) {
 		groupList->push_back(itr->first);
@@ -831,7 +831,7 @@ BZF_API bzAPIStringList* bz_getGroupPerms ( const char* group )
 	PlayerAccessMap::iterator itr = groupAccess.find(groupName);
 	if (itr == groupAccess.end())
 		return permList;
-	
+
 	for (int i = 0; i < PlayerAccessInfo::lastPerm; i++)
 	{
 		if (itr->second.explicitAllows.test(i) && !itr->second.explicitDenys.test(i) )
@@ -1044,7 +1044,7 @@ BZF_API bool bz_getBZDBItemPesistent( const char* variable )
 {
 	if (!bz_BZDBItemExists(variable))
 		return false;
-	
+
 	return BZDB.isPersistent(std::string(variable));
 }
 
@@ -1567,7 +1567,7 @@ BZF_API void bz_updateListServer ( void )
 	publicize();
 }
 
-typedef struct 
+typedef struct
 {
 	std::string url;
 	bz_URLHandler	*handler;
@@ -1637,7 +1637,7 @@ public:
 			return;	// we are suposed to be done
 
 		// this is who we are suposed to be geting
-		trURLJob job = jobs[0]; 
+		trURLJob job = jobs[0];
 		jobs.erase(jobs.begin());
 		if (good && job.handler)
 			job.handler->done(job.url.c_str(),data,length,good);
@@ -1655,7 +1655,7 @@ protected:
 			doingStuff = false;
 		else
 		{
-			trURLJob job = jobs[0]; 
+			trURLJob job = jobs[0];
 			doingStuff = true;
 			setURL(job.url);
 
@@ -1805,7 +1805,7 @@ BZF_API bzApiString bz_filterPath ( const char* path )
 
 	char * buf = temp;
 	while (*buf != '\0')
-	{ 
+	{
 		if ( !isalnum(*buf) ||  *buf != '.' )
 			*buf = '_';
 
@@ -1820,7 +1820,7 @@ BZF_API bool bz_saveRecBuf( const char * _filename, int seconds = 0 )
 {
 	if (!Record::enabled() || !_filename)
 		return false;
-	
+
 	bool result = Record::saveBuffer( ServerPlayer, _filename, seconds);
 	return result;
 }
@@ -1863,7 +1863,7 @@ BZF_API void bz_shutdown()
 
 BZF_API void bz_superkill()
 {
-  	superkillCommand(NULL,NULL);
+	superkillCommand(NULL,NULL);
 }
 
 BZF_API void bz_gameOver(int playerIdx, int teamIdx)

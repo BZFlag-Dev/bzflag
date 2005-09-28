@@ -97,7 +97,7 @@ void WorldInfo::addZone(const CustomZone *zone)
 }
 
 void WorldInfo::addWeapon(const FlagType *type, const float *origin,
-                          float direction, float tilt,
+			  float direction, float tilt,
 			  float initdelay, const std::vector<float> &delay, TimeKeeper &sync)
 {
   worldWeapons.add(type, origin, direction, tilt, initdelay, delay, sync);
@@ -416,9 +416,9 @@ void WorldInfo::finishWorld()
   if (maxHeight < 0.0f) {
     maxHeight = 0.0f;
   }
-  
+
   finished = true;
-  
+
   return;
 }
 

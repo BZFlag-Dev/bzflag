@@ -57,7 +57,7 @@ class MeshObstacle : public Obstacle {
 
     void setName(const std::string& name);
     const std::string&	getName() const;
-    
+
     enum CheckType {
       CheckInside =  0,
       CheckOutside = 1,
@@ -115,13 +115,13 @@ class MeshObstacle : public Obstacle {
 
   private:
     void makeFacePointers(const std::vector<int>& _vertices,
-                          const std::vector<int>& _normals,
-                          const std::vector<int>& _texcoords,
-                          float**& v, float**& n, float**& t);
-  
+			  const std::vector<int>& _normals,
+			  const std::vector<int>& _texcoords,
+			  float**& v, float**& n, float**& t);
+
   private:
     static const char* typeName;
-    
+
     std::string name;
 
     int checkCount;

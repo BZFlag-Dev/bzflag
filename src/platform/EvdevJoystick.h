@@ -70,27 +70,27 @@ class EvdevJoystick : public BzfJoystick {
     unsigned long getJoyButtons();
     void	getJoyDevices(std::vector<std::string> &list) const;
 
-    void        getJoyDeviceAxes(std::vector<std::string> &list) const;
-    void        setXAxis(const std::string axis);
-    void        setYAxis(const std::string axis);
+    void	getJoyDeviceAxes(std::vector<std::string> &list) const;
+    void	setXAxis(const std::string axis);
+    void	setYAxis(const std::string axis);
 
     bool	ffHasRumble() const;
     void	ffRumble(int count,
 			 float delay, float duration,
 			 float strong_motor, float weak_motor=0.0f);
 
-    bool        ffHasDirectional() const;
-    void        ffDirectionalConstant(int count,
-                                      float delay, float duration,
-                                      float x_direction, float y_direction,
-                                      float strength);
-    void        ffDirectionalPeriodic(int count,
-                                      float delay, float duration,
-                                      float x_direction, float y_direction,
-                                      float amplitude, float period,
-                                      PeriodicType type);
-    void        ffDirectionalResistance(float time, float coefficient,
-                                        float saturation, ResistanceType type);
+    bool	ffHasDirectional() const;
+    void	ffDirectionalConstant(int count,
+				      float delay, float duration,
+				      float x_direction, float y_direction,
+				      float strength);
+    void	ffDirectionalPeriodic(int count,
+				      float delay, float duration,
+				      float x_direction, float y_direction,
+				      float amplitude, float period,
+				      PeriodicType type);
+    void	ffDirectionalResistance(float time, float coefficient,
+					float saturation, ResistanceType type);
 
     /* Test whether this driver should be used without actually
      * loading it. Will return false if no event devices can be

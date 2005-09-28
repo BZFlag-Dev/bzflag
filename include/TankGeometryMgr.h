@@ -102,7 +102,7 @@ namespace TankGeometryUtils {
   float getTreadScale();
   // texcoords
   float getTreadTexLen();
-  
+
   // help to scale vertices and normals
   void doVertex3f(GLfloat x, GLfloat y, GLfloat z);
   void doNormal3f(GLfloat x, GLfloat y, GLfloat z);

@@ -80,7 +80,7 @@ inline int cr_waddstr(WINDOW* w, const char* str) {
 // a complete and total hack, but its needed since windows.h ALSO has this
 #ifdef MOUSE_MOVED
 #undef MOUSE_MOVED
-#endif 
+#endif
 
 #ifdef HAVE_XCURSES_H
 #  define XCURSES

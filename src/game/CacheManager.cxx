@@ -215,7 +215,7 @@ bool CacheManager::saveIndex()
   if (file == NULL) {
     return false;
   }
-  
+
   const time_t nowTime = time(NULL);
   fprintf(file, "#\n");
   fprintf(file, "# BZFlag Cache Index - %s", ctime(&nowTime));

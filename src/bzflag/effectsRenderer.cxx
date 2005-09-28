@@ -42,9 +42,9 @@ EffectsRenderer* Singleton<EffectsRenderer>::_instance = (EffectsRenderer*)0;
 
 // utils for geo
 void drawRingYZ ( float rad, float z, float topsideOffset = 0, float bottomUV = 0,
-                  float ZOffset = 0, float topUV = 1.0f, int segments = 32);
+		  float ZOffset = 0, float topUV = 1.0f, int segments = 32);
 void drawRingXY ( float rad, float z, float topsideOffset = 0, float bottomUV = 0,
-                  float topUV = 1.0f, int segments = 32);
+		  float topUV = 1.0f, int segments = 32);
 void RadialToCartesian ( float angle, float rad, float *pos );
 void getSpawnTeamColor ( int teamColor, float *color );
 
@@ -115,7 +115,7 @@ void EffectsRenderer::addSpawnEffect ( int team, const float* pos )
 		return;
 
 	int flashType = static_cast<int>(BZDB.eval("spawnEffect"));
-	
+
 	if (flashType == 0)
 		return;
 
@@ -163,7 +163,7 @@ void EffectsRenderer::addShotEffect ( int team, const float* pos, float rot, con
 	int flashType = _type;
 	if (flashType < 0)
 		flashType = static_cast<int>(BZDB.eval("shotEffect"));
-	
+
 	if (flashType == 0)
 		return;
 
@@ -541,7 +541,7 @@ void StdSpawnEffect::draw(const SceneRenderer &)
 	float color[3] = {0};
 
 	getSpawnTeamColor(teamColor,color);
-	
+
 	float ageParam = age/lifetime;
 
 	glColor4f(color[0],color[1],color[2],1.0f-(age/lifetime));
@@ -588,7 +588,7 @@ void ConeSpawnEffect::draw(const SceneRenderer &)
 	glDepthMask(0);
 
 	drawRingXY(radius*0.5f,1.25f);
-	
+
 	glTranslatef(0,0,2);
 	drawRingXY(radius*0.6f,1.5f);
 
@@ -665,7 +665,7 @@ void RingSpawnEffect::drawRing(int n, float color[3], float coreAlpha)
 	if (age > (ringRange * (n-1)))	// this ring in?
 	{
 		if ( age < ringRange * n) // the ring is still coming in
-		{ 
+		{
 			posZ = maxZ - ((age - ringRange * (n-1)) / ringRange) * (maxZ - n * 2.5f);
 			alpha = (age - ringRange) / (ringRange * n);
 		}
@@ -1233,7 +1233,7 @@ void RadialToCartesian ( float angle, float rad, float *pos )
 }
 
 void drawRingXY ( float rad, float z, float topsideOffset, float bottomUV,
-                  float topUV, int segments )
+		  float topUV, int segments )
 {
 	for ( int i = 0; i < segments; i ++)
 	{
@@ -1309,7 +1309,7 @@ float clampedZ ( float z, float offset )
 }
 
 void drawRingYZ ( float rad, float z, float topsideOffset, float bottomUV,
-                  float ZOffset, float topUV, int segments )
+		  float ZOffset, float topUV, int segments )
 {
 	for ( int i = 0; i < segments; i ++)
 	{

@@ -38,7 +38,7 @@ public:
   void    setWindowSize (float x, float y, float width, float height);
   void		render(bool forceDisplay);
   Player* getLeader(std::string *label=NULL);
-  
+
   static const int HUNT_NONE = 0;
   static const int HUNT_SELECTING = 1;
   static const int HUNT_ENABLED = 2;
@@ -53,12 +53,12 @@ public:
   void    clearHuntedTanks ();
   void    huntedPlayerLeaving (void);
   int     getNumHunted(void);
-    
+
   static void    setAlwaysTeamScore (bool onoff);
   static bool    getAlwaysTeamScore ();
-    
+
   static void    setSort (int _sortby);
-  static int     getSort (); 
+  static int     getSort ();
   static const char **getSortLabels();
   static const int SORT_SCORE = 0;
   static const int SORT_NORMALIZED = 1;
@@ -121,8 +121,8 @@ private:
   bool		huntIndicator;
   int			huntPosition;
   bool		huntSelectEvent;
-  int 		huntPositionEvent;
-  int     huntState;  
+  int		huntPositionEvent;
+  int     huntState;
   bool    huntAddMode;
   int     numHunted;
 };

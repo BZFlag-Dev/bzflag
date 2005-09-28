@@ -33,8 +33,8 @@
 #define writev(s,v,c)     writev_s(s,v,c)
 #endif
 
-#define DEFAULT_TIMEOUT         5
-#define DEFAULT_TRIES           4
+#define DEFAULT_TIMEOUT	 5
+#define DEFAULT_TRIES	   4
 #ifndef INADDR_NONE
 #define INADDR_NONE 0xffffffff
 #endif
@@ -56,15 +56,15 @@
 #elif defined(NETWARE)
 
 #define PATH_RESOLV_CONF "sys:/etc/resolv.cfg"
-#define PATH_HOSTS              "sys:/etc/hosts"
+#define PATH_HOSTS	      "sys:/etc/hosts"
 
 #else
 
-#define PATH_RESOLV_CONF        "/etc/resolv.conf"
+#define PATH_RESOLV_CONF	"/etc/resolv.conf"
 #ifdef ETC_INET
-#define PATH_HOSTS              "/etc/inet/hosts"
+#define PATH_HOSTS	      "/etc/inet/hosts"
 #else
-#define PATH_HOSTS              "/etc/hosts"
+#define PATH_HOSTS	      "/etc/hosts"
 #endif
 
 #endif

@@ -29,7 +29,7 @@
 class BzMaterial;
 typedef std::set<const BzMaterial*> MaterialSet;
 typedef std::map<const BzMaterial*,
-                 const BzMaterial*> MaterialMap;
+		 const BzMaterial*> MaterialMap;
 
 
 class BzMaterial {
@@ -121,7 +121,7 @@ class BzMaterial {
     //
     // Utilities
     //
-    
+
     bool isInvisible() const;
 
     int packSize() const;

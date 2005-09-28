@@ -195,7 +195,7 @@ struct CmdLineOptions
   std::string	   cacheOut;
 
   // plugins
-  typedef struct 
+  typedef struct
   {
 	  std::string plugin;
 	  std::string command;

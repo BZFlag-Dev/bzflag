@@ -565,7 +565,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       if (checkCommaList (argv[i], 2048))
 	      std::cerr << "Invalid group list for -advertise" << std::endl;
       else
-        options.advertiseGroups = argv[i];
+	options.advertiseGroups = argv[i];
     } else if (strcmp(argv[i], "-autoTeam") == 0) {
       options.autoTeam = true;
     } else if (strcmp(argv[i], "-b") == 0) {
@@ -762,11 +762,11 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       std::vector<std::string> a = TextUtils::tokenize(argv[i],std::string(","), 2);
       CmdLineOptions::pluginDef	pDef;
       if (a.size() >= 1)
-        pDef.plugin = a[0];
+	pDef.plugin = a[0];
       if (a.size() >= 2)
-        pDef.command = a[1];
+	pDef.command = a[1];
       if (pDef.plugin.size())
-        options.pluginList.push_back(pDef);
+	options.pluginList.push_back(pDef);
     } else if (strcmp(argv[i], "-maxidle") == 0) {
       checkArgc(1, i, argc, argv[i]);
       options.idlekickthresh = (float) atoi(argv[i]);
@@ -1107,10 +1107,10 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       options.timestampLog = true;
       // if there is an argument following, see if it is 'micros'
       if (i+1 != argc) {
-        if (strcasecmp(argv[i+1], "micros") == 0) {
-          options.timestampMicros = true;
-          i++;
-        }
+	if (strcasecmp(argv[i+1], "micros") == 0) {
+	  options.timestampMicros = true;
+	  i++;
+	}
       }
     } else if (strcmp(argv[i], "-userdb") == 0) {
       checkArgc(1, i, argc, argv[i]);
@@ -1147,17 +1147,17 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       usage(argv[0]);
     }
   }
-  
+
   // get player counts.  done after other arguments because we need
   // to ignore counts for rogues if rogues aren't allowed.
   if ((playerCountArg > 0) && !parsePlayerCount(argv[playerCountArg], options)) {
     usage(argv[0]);
   }
-  if ((playerCountArg2 > 0) 
+  if ((playerCountArg2 > 0)
       && !parsePlayerCount(argv[playerCountArg2], options)) {
     usage(argv[0]);
   }
-  
+
   return;
 }
 
@@ -1286,7 +1286,7 @@ void finalizeParsing(int /*argc*/, char **argv, CmdLineOptions &options)
 
   if (f < numFlags) {
     options.gameStyle |= int(SuperFlagGameStyle);
-  }    
+  }
   for (FlagTypeMap::iterator it2 = FlagType::getFlagMap().begin();
        it2 != FlagType::getFlagMap().end(); ++it2) {
     FlagType *fDesc = it2->second;
@@ -1343,7 +1343,7 @@ bool checkCommaList (const char *list, int maxlen){
     return true;
   if (*list==',' || list[x-1]==',')
     return true;
-  while ((c=*list++) != '\0') 
+  while ((c=*list++) != '\0')
     if (c<' ' || c>'z' ||  c=='\'' || c=='"')
       return true;
   return false;

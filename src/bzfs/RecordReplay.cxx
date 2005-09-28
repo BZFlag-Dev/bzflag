@@ -406,7 +406,7 @@ bool Record::sendStats(int playerIndex)
     RRtime diff = getRRtime() - RecordStartTime;
     saveTime = (float)diff / 1000000.0f;
     snprintf(buffer, MessageLen,
-              "Filename:  %s", RecordFilename.c_str());
+	      "Filename:  %s", RecordFilename.c_str());
     sendMessage(ServerPlayer, playerIndex, buffer);
     snprintf(buffer, MessageLen,
 	      "   saved:  %i bytes / %i packets / %.1f seconds",
@@ -431,7 +431,7 @@ bool Record::saveFile(int playerIndex, const char *filename)
 
   if (!allowFileRecords) {
     sendMessage(ServerPlayer, playerIndex,
-                "This server does not allow recording straight to a file");
+		"This server does not allow recording straight to a file");
     return false;
   }
 
@@ -471,7 +471,7 @@ bool Record::saveFile(int playerIndex, const char *filename)
 
   snprintf(buffer, MessageLen, "Recording to file: %s", name.c_str());
   sendMessage(ServerPlayer, playerIndex, buffer);
-  
+
   RecordFilename = name.c_str();
 
   return true;
@@ -675,8 +675,8 @@ static bool checkReplayMode(int playerIndex)
 {
   if (!ReplayMode) {
     sendMessage(ServerPlayer, playerIndex,
-                "Server is not in replay mode. "
-                "Restart server with '-replay' option to enable playback.");
+		"Server is not in replay mode. "
+		"Restart server with '-replay' option to enable playback.");
     return false;
   }
   return true;
@@ -756,7 +756,7 @@ bool Replay::loadFile(int playerIndex, const char *filename)
   if (!checkReplayMode(playerIndex)) {
     return false;
   }
-  
+
   std::string indexname;
   if (filename[0] == '#') {
     std::vector<FileEntry> entries;
@@ -775,7 +775,7 @@ bool Replay::loadFile(int playerIndex, const char *filename)
   else {
     if (badFilename(filename)) {
       sendMessage(ServerPlayer, playerIndex,
-                  "Files must be in the recordings directory");
+		  "Files must be in the recordings directory");
       return false;
     }
   }
@@ -785,7 +785,7 @@ bool Replay::loadFile(int playerIndex, const char *filename)
   char buffer[MessageLen];
   std::string name = RecordDir;
   name += filename;
-  
+
   replayReset();
   resetStates();
 
@@ -836,14 +836,14 @@ bool Replay::loadFile(int playerIndex, const char *filename)
 
   if (!preloadVariables()) {
     snprintf(buffer, MessageLen, "Could not preload variables: %s",
-             name.c_str());
+	     name.c_str());
     sendMessage(ServerPlayer, playerIndex, buffer);
     replayReset();
     return false;
   }
-  
+
   ReplayFilename = filename;
-  
+
   snprintf(buffer, MessageLen, "Loaded file:  %s", name.c_str());
   sendMessage(ServerPlayer, playerIndex, buffer);
   snprintf(buffer, MessageLen, "  author:     %s (%s)",
@@ -863,7 +863,7 @@ bool Replay::loadFile(int playerIndex, const char *filename)
 
   time_t endTime =
     (time_t)((header.filetime + ReplayPos->timestamp) / 1000000);
-  snprintf(buffer, MessageLen, "  end:        %s", ctime(&endTime));
+  snprintf(buffer, MessageLen, "  end:	%s", ctime(&endTime));
   sendMessage(ServerPlayer, playerIndex, buffer);
 
   return true;
@@ -921,11 +921,11 @@ static bool getFileList(int playerIndex, std::vector<FileEntry>& entries)
     if (file != NULL) {
       RRtime filetime;
       if (loadFileTime(&filetime, file)) {
-        FileEntry entry;
-        entry.file = de->d_name;
-        entry.time = (float)filetime / 1000000.0f;
-        entry.entryNum = entNum++;
-      	entries.push_back(entry);
+	FileEntry entry;
+	entry.file = de->d_name;
+	entry.time = (float)filetime / 1000000.0f;
+	entry.entryNum = entNum++;
+	entries.push_back(entry);
       }
       fclose(file);
     }
@@ -951,11 +951,11 @@ static bool getFileList(int playerIndex, std::vector<FileEntry>& entries)
       if (file != NULL) {
 	RRtime filetime;
 	if (loadFileTime(&filetime, file)) {
-          FileEntry entry;
-          entry.file = findData.cFileName;
-          entry.time = (float)filetime / 1000000.0f;
-          entry.entryNum = entNum++;
-	        entries.push_back(entry);
+	  FileEntry entry;
+	  entry.file = findData.cFileName;
+	  entry.time = (float)filetime / 1000000.0f;
+	  entry.entryNum = entNum++;
+		entries.push_back(entry);
 	}
 	fclose(file);
       }
@@ -991,15 +991,15 @@ bool Replay::sendFileList(int playerIndex, ReplayListSort sortBy)
   sendMessage(ServerPlayer, playerIndex, buffer);
 
   if (sortBy == SortByTime) {
-    std::sort (entries.begin(), entries.end(), sortFileTime);  
+    std::sort (entries.begin(), entries.end(), sortFileTime);
   } else if (sortBy == SortByName) {
-    std::sort (entries.begin(), entries.end(), sortFileName);  
+    std::sort (entries.begin(), entries.end(), sortFileName);
   }
-    
+
   for (unsigned int i = 0; i < entries.size(); i++) {
     const FileEntry& entry = entries[i];
     snprintf(buffer, MessageLen, "#%02i:  %-30s  [%9.1f seconds]", entry.entryNum + 1,
-             entry.file.c_str(), entry.time);
+	     entry.file.c_str(), entry.time);
     sendMessage(ServerPlayer, playerIndex, buffer);
   }
 
@@ -1089,7 +1089,7 @@ bool Replay::sendStats(int playerIndex)
 
   char buffer[MessageLen];
   snprintf(buffer, MessageLen,
-           "Replay File:  %s", ReplayFilename.c_str());
+	   "Replay File:  %s", ReplayFilename.c_str());
   sendMessage(ServerPlayer, playerIndex, buffer);
 
   time_t replayTime = (time_t)(ReplayPos->timestamp / 1000000);
@@ -1097,8 +1097,8 @@ bool Replay::sendStats(int playerIndex)
   float usedTime =(float)(ReplayPos->timestamp - ReplayStartTime) / 1000000.0f;
   float percent = 100.0f * (usedTime / fullTime);
   snprintf(buffer, MessageLen,
-           "Replay Date:  %s [%.2f %%]  (%.1f secs / %.1f secs)",
-           ctime(&replayTime), percent, usedTime, fullTime);
+	   "Replay Date:  %s [%.2f %%]  (%.1f secs / %.1f secs)",
+	   ctime(&replayTime), percent, usedTime, fullTime);
   sendMessage(ServerPlayer, playerIndex, buffer);
 
   return true;
@@ -1327,7 +1327,7 @@ static void rewind()
   do {
     p = prevStatePacket();
   } while (p != NULL);
-  
+
   // setup the new time offset
   ReplayOffset = getRRtime() - ReplayPos->timestamp;
 }

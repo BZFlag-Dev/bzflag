@@ -420,8 +420,8 @@ void CollisionManager::load ()
     MeshObstacle* mesh = (MeshObstacle*) meshes[i];
     if (!mesh->isPassable()) {
       for (int f = 0; f < mesh->getFaceCount(); f++) {
-        MeshFace* face = (MeshFace*) mesh->getFace(f);
-        if (!face->isPassable()) fullCount++;
+	MeshFace* face = (MeshFace*) mesh->getFace(f);
+	if (!face->isPassable()) fullCount++;
       }
       fullCount++; // one for the mesh itself
     }
@@ -459,8 +459,8 @@ void CollisionManager::load ()
     if (!mesh->isPassable()) {
       const int meshFaceCount = mesh->getFaceCount();
       for (int f = 0; f < meshFaceCount; f++) {
-        MeshFace* face = (MeshFace*) mesh->getFace(f);
-        if (!face->isPassable()) addToFullList((Obstacle*) face);
+	MeshFace* face = (MeshFace*) mesh->getFace(f);
+	if (!face->isPassable()) addToFullList((Obstacle*) face);
       }
     }
   }
@@ -470,7 +470,7 @@ void CollisionManager::load ()
 
   // do the type/height sort
   qsort(FullList.list, FullList.count, sizeof(Obstacle*), compareObstacles);
-  
+
   // generate the octree
   setExtents (&FullList);
   root = new ColDetNode (0, gridExtents, &FullList);
@@ -526,11 +526,11 @@ void CollisionManager::load ()
   }
   for (i = 0; i < 3; i++) {
     DEBUG2 ("  world extent[%i] = %f, %f\n", i, worldExtents.mins[i],
-                                                worldExtents.maxs[i]);
+						worldExtents.maxs[i]);
   }
   for (i = 0; i < 3; i++) {
     DEBUG2 ("  visual extent[%i] = %f, %f\n", i, visualExtents.mins[i],
-                                                 visualExtents.maxs[i]);
+						 visualExtents.maxs[i]);
   }
   DEBUG2 ("ColDet Octree leaf nodes  = %i\n", leafNodes);
   DEBUG2 ("ColDet Octree total nodes = %i\n", totalNodes);

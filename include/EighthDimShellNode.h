@@ -34,7 +34,7 @@ class EighthDimShellNode : public SceneNode {
     class ShellRenderNode : public RenderNode {
       public:
 	ShellRenderNode(RenderNode *renderNode,
-	                const OpenGLGState* gstate);
+			const OpenGLGState* gstate);
 	~ShellRenderNode();
 	void render();
 	void renderShadow() { return; }
@@ -49,7 +49,7 @@ class EighthDimShellNode : public SceneNode {
   private:
     void makeNodes();
     void killNodes();
-  
+
   private:
     bool ownTheNode;
     SceneNode* sceneNode;

@@ -35,10 +35,10 @@
  * terminated.
  */
 int ares_expand_string(const unsigned char *encoded,
-                       const unsigned char *abuf,
-                       int alen,
-                       unsigned char **s,
-                       long *enclen)
+		       const unsigned char *abuf,
+		       int alen,
+		       unsigned char **s,
+		       long *enclen)
 {
   unsigned char *q;
   long len;
@@ -54,13 +54,13 @@ int ares_expand_string(const unsigned char *encoded,
   *s = malloc(len+1);
   if (*s == NULL)
     return ARES_ENOMEM;
-  q = *s; 
+  q = *s;
   strncpy((char *)q, (char *)encoded, len);
   q[len] = '\0';
 
   *s = q;
 
-  *enclen = len+1; 
+  *enclen = len+1;
 
   return ARES_SUCCESS;
 }

@@ -299,7 +299,7 @@ void JoinMenu::updateTeamTexture()
   // put it at the end of the text
   Bundle *bdl = BundleMgr::getCurrentBundle();
   const float x = team->getX() + fm.getStrLength(team->getFontFace(),
-	  team->getFontSize(), 
+	  team->getFontSize(),
 	  bdl->getLocalString(team->getList()[team->getIndex()]) + "x");
   teamIcon->setPosition(x, team->getY());
 }
@@ -338,7 +338,7 @@ void JoinMenu::resize(int _width, int _height)
       y -= 1.0f * h;
     if (i <= 2 || i == 9) y -= 0.5f * h;
   }
-  
+
   updateTeamTexture();
 }
 

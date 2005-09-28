@@ -98,7 +98,7 @@ namespace ForceFeedback {
       getJoystick()->ffDirectionalPeriodic(1, 0.0f, 1.0f, 0.0f, -1.0f, 0.5f, 0.1f, BzfJoystick::FF_Sine);
   }
 
-  /* Burrowed, oscillating, etc, tanks get a special resistance force 
+  /* Burrowed, oscillating, etc, tanks get a special resistance force
    * when moving through solid matter.  We use half-second increments
    * of force-on time.
    */

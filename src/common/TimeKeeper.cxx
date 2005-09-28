@@ -30,9 +30,9 @@ static struct timeval	lastTime = { 0, 0 };
 #  include <mmsystem.h>
 static unsigned long int	lastTime = 0;
 static LARGE_INTEGER	qpcLastTime;
-static LONGLONG	        qpcFrequency = 0;
-static LONGLONG         qpcLastCalibration;
-static DWORD            timeLastCalibration;
+static LONGLONG		qpcFrequency = 0;
+static LONGLONG	 qpcLastCalibration;
+static DWORD	    timeLastCalibration;
 #endif /* !defined(_WIN32) */
 
 /* common implementation headers */
@@ -73,13 +73,13 @@ const TimeKeeper&	TimeKeeper::getCurrent(void)
 
     if (clkSpent > qpcFrequency) {
       // Recalibrate Frequency
-      DWORD tgt           = timeGetTime();
+      DWORD tgt	   = timeGetTime();
       DWORD deltaTgt      = tgt - timeLastCalibration;
       timeLastCalibration = tgt;
       qpcLastCalibration  = now.QuadPart;
       if (deltaTgt > 0) {
 	LONGLONG oldqpcfreq = qpcFrequency;
-	qpcFrequency        = (clkSpent * 1000) / deltaTgt;
+	qpcFrequency	= (clkSpent * 1000) / deltaTgt;
 	if (qpcFrequency != oldqpcfreq)
 	  DEBUG4("Recalibrated QPC frequency.  Old: %f ; New: %f\n",
 		 (double)oldqpcfreq, (double)qpcFrequency);
@@ -111,13 +111,13 @@ const TimeKeeper&	TimeKeeper::getCurrent(void)
     LARGE_INTEGER freq;
     if (QueryPerformanceFrequency(&freq)) {
       QueryPerformanceCounter(&qpcLastTime);
-      qpcFrequency        = freq.QuadPart;
+      qpcFrequency	= freq.QuadPart;
       DEBUG4("Actual reported QPC Frequency: %f\n", (double)qpcFrequency);
       qpcLastCalibration  = qpcLastTime.QuadPart;
       timeLastCalibration = timeGetTime();
     } else {
       DEBUG1("QueryPerformanceFrequency failed with error %d\n", GetLastError());
-      
+
       // make sure we're at our best timer resolution possible
       timeBeginPeriod(1);
 

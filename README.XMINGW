@@ -36,7 +36,7 @@ Go to this brand new directory and type:
 make
 make install
 
-Last operation require /opt/xmingw being writeable 
+Last operation require /opt/xmingw being writeable
 
 ------ curl
 Get curl source, untar them and create a directory where to build the curl.
@@ -73,7 +73,7 @@ apply the patch to /opt/xmingw/bin/curl-config:
          fi
                 ;;
 
-Last operations require /opt/xmingw being writeable 
+Last operations require /opt/xmingw being writeable
 
 ------ libSDL
 Get libSDL source, untar them and create a directory where to build it.

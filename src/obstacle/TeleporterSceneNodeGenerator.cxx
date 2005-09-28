@@ -50,7 +50,7 @@ WallSceneNode*		TeleporterSceneNodeGenerator::getNextNode(
 	{{ 0.0f, 0.0f }, { 5.0f, 0.0f }, { 5.0f, 0.5f }, { 0.0f, 0.5f }},
 	{{ 0.0f, 0.5f }, { 5.0f, 0.5f }, { 5.0f, 1.0f }, { 0.0f, 1.0f }}
   };
-  
+
   if (fabsf(teleporter->getBorder()) < 1.0e-6f) {
     return NULL;
   }

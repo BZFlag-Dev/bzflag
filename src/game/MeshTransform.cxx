@@ -321,12 +321,12 @@ void MeshTransform::Tool::processTransforms(
 	break;
       }
       case ScaleTransform: {
-        skewed = true;
+	skewed = true;
 	scale(vertexMatrix, transform.data);
 	break;
       }
       case ShearTransform: {
-        skewed = true;
+	skewed = true;
 	shear(vertexMatrix, transform.data);
 	break;
       }

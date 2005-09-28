@@ -248,8 +248,8 @@ int GameKeeper::Player::getPlayerIDByName(const std::string &name)
   } else {
     for (int i = 0; i < PlayerSlot; i++)
       if ((playerData = playerList[i]) && !playerData->closed
-        && (TextUtils::compare_nocase(playerData->player.getCallSign(), name) == 0))
-        return i;
+	&& (TextUtils::compare_nocase(playerData->player.getCallSign(), name) == 0))
+	return i;
   }
   return -1;
 }

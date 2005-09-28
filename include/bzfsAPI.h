@@ -26,9 +26,9 @@
 	#else
 		#define BZF_API __declspec( dllimport )
 	#endif
-	#define BZF_PLUGIN_CALL	
+	#define BZF_PLUGIN_CALL
 #else
-	#define BZF_API 
+	#define BZF_API
 	#define BZF_PLUGIN_CALL extern "C"
 #endif
 
@@ -130,7 +130,7 @@ typedef enum
 #define bz_perm_vote  "vote"
 
 
-typedef enum 
+typedef enum
 {
 	eNoTeam = -1,
 	eRogueTeam = 0,
@@ -151,7 +151,7 @@ typedef enum
 #define BZ_BZDBPERM_NA		0
 #define BZ_BZDBPERM_USER	1
 #define BZ_BZDBPERM_SERVER	2
-#define BZ_BZDBPERM_CLIENT	3	
+#define BZ_BZDBPERM_CLIENT	3
 
 //utility classes
 class BZF_API bzApiString
@@ -466,7 +466,7 @@ public:
 		allow = true;
 		time = 0.0;
 	}
-	
+
 	virtual ~bz_AllowPlayerEventData(){};
 
 	int playerID;
@@ -730,10 +730,10 @@ public:
 	~bz_PlayerRecord(){};
 
 	void update ( void ){bz_updatePlayerData(this);}	// call to update with current data
-	
-	bool hasPerm ( const char* perm ){return bz_hasPerm(playerID,perm);}	
-	bool grantPerm ( const char* perm ){return bz_grantPerm(playerID,perm);}	
-	bool revokePerm ( const char* perm ){return bz_revokePerm(playerID,perm);}	
+
+	bool hasPerm ( const char* perm ){return bz_hasPerm(playerID,perm);}
+	bool grantPerm ( const char* perm ){return bz_grantPerm(playerID,perm);}
+	bool revokePerm ( const char* perm ){return bz_revokePerm(playerID,perm);}
 
 	int playerID;
 	bzApiString callsign;
@@ -780,7 +780,7 @@ BZF_API double bz_getCurrentTime ( void );
 BZF_API float bz_getMaxWaitTime ( void );
 BZF_API void bz_setMaxWaitTime ( float time );
 
-typedef struct 
+typedef struct
 {
 	int year;
 	int month;
@@ -843,13 +843,13 @@ BZF_API bool bz_removePlayerFlag ( int playeID );
 BZF_API void bz_resetFlags ( bool onlyUnused );
 
 // world
-typedef struct 
+typedef struct
 {
 	bool	driveThru;
 	bool	shootThru;
 }bz_WorldObjectOptions;
 
-typedef struct 
+typedef struct
 {
 	bzApiString		texture;
 	bool		useAlpha;
@@ -960,7 +960,7 @@ BZF_API void bz_setTeamLosses (bz_eTeamType team, int losses );
 
 BZF_API void bz_resetTeamScore (bz_eTeamType team );
 
-// list server 
+// list server
 BZF_API void bz_updateListServer ( void );
 
 // url API

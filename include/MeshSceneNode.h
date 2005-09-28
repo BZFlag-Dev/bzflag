@@ -60,21 +60,21 @@ class MeshSceneNode : public SceneNode {
 
     void getRenderNodes(std::vector<RenderSet>& rnodes);
 
-    void makeXFormList();    
-    void freeXFormList();    
+    void makeXFormList();
+    void freeXFormList();
     static void initContext(void* data);
     static void freeContext(void* data);
 
     static void setLodScale(int pixelsX, float fovx,
-                            int pixelsY, float fovy);
+			    int pixelsY, float fovy);
     static void setRadarLodScale(float lengthPerPixel);
-    
+
   private:
     const MeshObstacle* mesh;
 
     MeshDrawMgr* drawMgr;
     const MeshDrawInfo* drawInfo;
-    
+
     // transform display list
     GLuint xformList;
 
@@ -99,25 +99,25 @@ class MeshSceneNode : public SceneNode {
       int splitCount;
       RenderNode** splitNodes;
     };
-    
+
     struct LodNode {
       int count;
       SetNode* sets;
     };
-    
+
     // Level Of Detail (LOD) information
     int lodCount;
     LodNode* lods;
     float* lodLengths;
 
-    // Radar LODs    
+    // Radar LODs
     int radarCount;
     LodNode* radarLods;
     float* radarLengths;
 
     static float LodScale;
     static float RadarLodScale;
-    
+
   private:
     void updateMaterial(MeshMaterial* mat);
     const BzMaterial* convertMaterial(const BzMaterial* bzmat);
@@ -125,7 +125,7 @@ class MeshSceneNode : public SceneNode {
     int calcNormalLod(const ViewFrustum&);
     int calcShadowLod(const ViewFrustum&);
     int calcRadarLod();
-    
+
   friend class MeshSceneNodeMgr;
 };
 

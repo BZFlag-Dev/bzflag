@@ -26,7 +26,7 @@ class MessageOfTheDay : cURLManager {
 public:
 
   virtual void finalization(char *data, unsigned int length, bool good);
-  void         getURL(const std::string URL);
+  void	 getURL(const std::string URL);
 };
 
 #endif //__MOTD_H__

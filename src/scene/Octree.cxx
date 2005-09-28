@@ -112,11 +112,11 @@ void Octree::setOccluderManager(int occlmgr)
   if (occlmgr == 1) {
     OcclMgr = &OcclMgrs[1]; // mirror
   } else {
-    OcclMgr = &OcclMgrs[0]; // normal 
+    OcclMgr = &OcclMgrs[0]; // normal
   }
   return;
 }
-    
+
 
 void Octree::clear ()
 {
@@ -164,11 +164,11 @@ void Octree::addNodes (SceneNode** list, int listSize, int depth, int elements)
   DEBUG2 ("Octree scene nodes = %i\n", listSize);
   for (i = 0; i < 3; i++) {
     DEBUG2 ("  grid extent[%i] = %f, %f\n", i, extents.mins[i],
-                                               extents.maxs[i]);
+					       extents.maxs[i]);
   }
   for (i = 0; i < 3; i++) {
     DEBUG2 ("  visual extent[%i] = %f, %f\n", i, visualExtents.mins[i],
-                                                 visualExtents.maxs[i]);
+						 visualExtents.maxs[i]);
   }
   DEBUG2 ("Octree leaf nodes  = %i\n", leafNodes);
   DEBUG2 ("Octree total nodes = %i\n", totalNodes);
@@ -329,7 +329,7 @@ void Octree::getExtents (SceneNode** list, int listSize)
     const Extents& exts = node->getExtents();
     tmpExts.expandToBox(exts);
   }
-  
+
   visualExtents = tmpExts;
 
   // find the longest axis
@@ -557,11 +557,11 @@ void OctreeNode::getFrustumList () const
   if (childCount > 0) {
     if (occLevel == Outside) {
       for (int i = 0; i < childCount; i++) {
-        children[i]->getFrustumList ();
+	children[i]->getFrustumList ();
       }
     } else {
       for (int i = 0; i < childCount; i++) {
-        children[i]->getFullyVisibleOcclude ();
+	children[i]->getFullyVisibleOcclude ();
       }
     }
   }

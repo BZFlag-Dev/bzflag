@@ -24,7 +24,7 @@
 class MeshPolySceneNode : public WallSceneNode {
   public:
     MeshPolySceneNode(const float plane[4],
-                      bool noRadar, bool noShadow,
+		      bool noRadar, bool noShadow,
 		      const GLfloat3Array& vertices,
 		      const GLfloat3Array& normals,
 		      const GLfloat2Array& texcoords);

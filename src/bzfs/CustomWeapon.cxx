@@ -36,7 +36,7 @@ CustomWeapon::CustomWeapon()
   initdelay = 10.0f;
   delay.push_back(10.0f);
   type = Flags::Null;
-  
+
   triggerType = bz_eNullEvent;
   eventTeam = -1;
 }

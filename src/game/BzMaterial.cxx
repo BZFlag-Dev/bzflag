@@ -395,11 +395,11 @@ void* BzMaterial::pack(void* buf) const
   buf = nboPackStdString(buf, name);
 
   uint8_t modeByte = 0;
-  if (noCulling) 	modeByte |= (1 << 0);
-  if (noSorting) 	modeByte |= (1 << 1);
-  if (noRadar) 		modeByte |= (1 << 2);
+  if (noCulling)	modeByte |= (1 << 0);
+  if (noSorting)	modeByte |= (1 << 1);
+  if (noRadar)		modeByte |= (1 << 2);
   if (noShadow)		modeByte |= (1 << 3);
-  if (occluder)         modeByte |= (1 << 4);
+  if (occluder)	 modeByte |= (1 << 4);
   if (groupAlpha)       modeByte |= (1 << 5);
   if (noLighting)       modeByte |= (1 << 6);
   buf = nboPackUByte(buf, modeByte);
@@ -450,11 +450,11 @@ void* BzMaterial::unpack(void* buf)
 
   uint8_t modeByte;
   buf = nboUnpackUByte(buf, modeByte);
-  noCulling 	= (modeByte & (1 << 0)) != 0;
-  noSorting 	= (modeByte & (1 << 1)) != 0;
-  noRadar   	= (modeByte & (1 << 2)) != 0;
-  noShadow  	= (modeByte & (1 << 3)) != 0;
-  occluder  	= (modeByte & (1 << 4)) != 0;
+  noCulling	= (modeByte & (1 << 0)) != 0;
+  noSorting	= (modeByte & (1 << 1)) != 0;
+  noRadar	= (modeByte & (1 << 2)) != 0;
+  noShadow	= (modeByte & (1 << 3)) != 0;
+  occluder	= (modeByte & (1 << 4)) != 0;
   groupAlpha    = (modeByte & (1 << 5)) != 0;
   noLighting    = (modeByte & (1 << 6)) != 0;
 

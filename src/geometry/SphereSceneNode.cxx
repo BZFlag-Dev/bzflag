@@ -153,7 +153,7 @@ void			SphereSceneNode::addRenderNodes(
 }
 
 void			SphereSceneNode::addShadowNodes(
-                                SceneRenderer& /*renderer*/)
+				SceneRenderer& /*renderer*/)
 {
   return;
 /*

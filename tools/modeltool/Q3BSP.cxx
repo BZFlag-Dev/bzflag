@@ -157,7 +157,7 @@ bool Quake3Level::dumpToModel ( CModel &model )
 
 				if (mFaces[i].type == 1)
 				{
-					
+
 					if (0)
 					{
 						if (mFaces[i].vert_count > 2)
@@ -515,7 +515,7 @@ void Quake3Level::initialise(void)
 	for (i=0; i < mNumShaders; ++i) {
 		SwapFourBytes(&mShaders[i].surface_flags);
 		SwapFourBytes(&mShaders[i].content_flags);
-	}   
+	}
 	SwapFourBytes(&mVis->cluster_count);
 	SwapFourBytes(&mVis->row_size);
 	SwapFourBytesGrup ((unsigned long*)mVertices, mNumVertices*sizeof(bsp_vertex_t));
@@ -554,13 +554,13 @@ void Quake3Level::dumpContents(void)
 	of << "Quake3 level statistics" << std::endl;
 	of << "-----------------------" << std::endl;
 	of << "Entities     : " << mNumEntities << std::endl;
-	of << "Faces        : " << mNumFaces << std::endl;
+	of << "Faces	: " << mNumFaces << std::endl;
 	of << "Leaf Faces   : " << mNumLeafFaces << std::endl;
 	of << "Leaves       : " << mNumLeaves << std::endl;
 	of << "Lightmaps    : " << mNumLightmaps << std::endl;
 	of << "Elements     : " << mNumElements << std::endl;
 	of << "Models       : " << mNumModels << std::endl;
-	of << "Nodes        : " << mNumNodes << std::endl;
+	of << "Nodes	: " << mNumNodes << std::endl;
 	of << "Planes       : " << mNumPlanes << std::endl;
 	of << "Shaders      : " << mNumShaders << std::endl;
 	of << "Vertices     : " << mNumVertices << std::endl;

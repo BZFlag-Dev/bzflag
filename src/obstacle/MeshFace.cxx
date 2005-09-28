@@ -107,7 +107,7 @@ void MeshFace::finalize()
     if ((debugLevel >= 3) && (mesh != NULL)) {
       DEBUG0(":");
       for (i = 0; i < vertexCount; i++) {
-        DEBUG0(" %i", (int)((fvec3*)vertices[i] - mesh->getVertices()));
+	DEBUG0(" %i", (int)((fvec3*)vertices[i] - mesh->getVertices()));
       }
       print(std::cerr, "");
     }
@@ -137,10 +137,10 @@ void MeshFace::finalize()
 
       DEBUG1("non-convex mesh face (%f)", d);
       if ((debugLevel >= 3) && (mesh != NULL)) {
-        DEBUG0(":");
-        for (i = 0; i < vertexCount; i++) {
-          DEBUG0(" %i", (int)((fvec3*)vertices[i] - mesh->getVertices()));
-        }
+	DEBUG0(":");
+	for (i = 0; i < vertexCount; i++) {
+	  DEBUG0(" %i", (int)((fvec3*)vertices[i] - mesh->getVertices()));
+	}
 	print(std::cerr, "");
       }
       DEBUG1("\n");
@@ -156,10 +156,10 @@ void MeshFace::finalize()
     if (fabsf(cross + plane[3]) > 1.0e-3) {
       DEBUG1("non-planar mesh face (%f)", cross + plane[3]);
       if ((debugLevel >= 3) && (mesh != NULL)) {
-        DEBUG0(":");
-        for (i = 0; i < vertexCount; i++) {
-          DEBUG0(" %i", (int)((fvec3*)vertices[i] - mesh->getVertices()));
-        }
+	DEBUG0(":");
+	for (i = 0; i < vertexCount; i++) {
+	  DEBUG0(" %i", (int)((fvec3*)vertices[i] - mesh->getVertices()));
+	}
 	print(std::cerr, "");
       }
       DEBUG1("\n");
@@ -758,7 +758,7 @@ void MeshFace::print(std::ostream& out, const std::string& indent) const
   if ((driveThrough && shootThrough) &&
       !(mesh->isDriveThrough() && mesh->isShootThrough())) {
     out << indent << "    passable" << std::endl;
-  } else {    
+  } else {
     if (driveThrough && !mesh->isDriveThrough()) {
       out << indent << "    driveThrough" << std::endl;
     }

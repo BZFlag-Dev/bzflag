@@ -108,10 +108,10 @@ MeshSceneNode::MeshSceneNode(const MeshObstacle* _mesh)
       const float d[3] = {s[0] - e[0], s[1] - e[1], s[2] - e[2]};
       const float newWidth = sqrtf(d[0]*d[0] + d[1]*d[1] + d[2]*d[2]);
       if (oldWidth > 0.0f) {
-        const float scale = (newWidth / oldWidth);
-        if (scale < lengthAdj) {
-          lengthAdj = scale;
-        }
+	const float scale = (newWidth / oldWidth);
+	if (scale < lengthAdj) {
+	  lengthAdj = scale;
+	}
       }
     }
     // adjust the sphere
@@ -173,7 +173,7 @@ MeshSceneNode::~MeshSceneNode()
       delete set.radarNode;
       delete set.shadowNode;
       for (int k = 0; k < set.splitCount; k++) {
-        delete set.splitNodes[k];
+	delete set.splitNodes[k];
       }
       delete[] set.splitNodes;
     }
@@ -193,8 +193,8 @@ inline int MeshSceneNode::calcNormalLod(const ViewFrustum& vf)
   const float* s = getSphere();
   const float* d = vf.getDirection();
   const float dist = (d[0] * (s[0] - e[0])) +
-                     (d[1] * (s[1] - e[1])) +
-                     (d[2] * (s[2] - e[2]));
+		     (d[1] * (s[1] - e[1])) +
+		     (d[2] * (s[2] - e[2]));
   const float lengthPerPixel = dist * LodScale;
   for (int i = (lodCount - 1); i > 0; i--) {
     if (lengthPerPixel > lodLengths[i]) {
@@ -212,8 +212,8 @@ inline int MeshSceneNode::calcShadowLod(const ViewFrustum& vf)
   const float* s = getSphere();
   const float* d = vf.getDirection();
   const float dist = (d[0] * (s[0] - e[0])) +
-                     (d[1] * (s[1] - e[1])) +
-                     (d[2] * (s[2] - e[2]));
+		     (d[1] * (s[1] - e[1])) +
+		     (d[2] * (s[2] - e[2]));
   const float lengthPerPixel = dist * LodScale;
   for (int i = (lodCount - 1); i > 0; i--) {
     if (lengthPerPixel > lodLengths[i]) {
@@ -319,53 +319,53 @@ void MeshSceneNode::notifyStyleChange()
       updateMaterial(&mat);
 
       if ((setNode.node == NULL) || (oldSplitNodes != mat.useSplitNodes)) {
-        // first delete the old split nodes
-        for (int sn = 0; sn < setNode.splitCount; sn++) {
-          delete setNode.splitNodes[sn];
-        }
-        delete[] setNode.splitNodes;
-        setNode.splitCount = 0;
-        setNode.splitNodes = NULL;
+	// first delete the old split nodes
+	for (int sn = 0; sn < setNode.splitCount; sn++) {
+	  delete setNode.splitNodes[sn];
+	}
+	delete[] setNode.splitNodes;
+	setNode.splitCount = 0;
+	setNode.splitNodes = NULL;
 
-        const GLfloat* color = mat.colorPtr;;
+	const GLfloat* color = mat.colorPtr;;
 
-        bool normalize = false;
-        const MeshTransform::Tool* xformTool = drawInfo->getTransformTool();
-        if (xformTool != NULL) {
-          normalize = xformTool->isSkewed();
-        }
+	bool normalize = false;
+	const MeshTransform::Tool* xformTool = drawInfo->getTransformTool();
+	if (xformTool != NULL) {
+	  normalize = xformTool->isSkewed();
+	}
 
-//        if (!mat.useSplitNodes) {
-          // opaque nodes
+//	if (!mat.useSplitNodes) {
+	  // opaque nodes
 
-          const DrawLod* drawLods = drawInfo->getDrawLods();
-          const DrawSet& drawSet = drawLods[lod].sets[set];
-          fvec3 setPos;
-          memcpy(setPos, drawSet.sphere, sizeof(fvec3));
-          if (xformTool != NULL) {
-            xformTool->modifyVertex(setPos);
-          }
+	  const DrawLod* drawLods = drawInfo->getDrawLods();
+	  const DrawSet& drawSet = drawLods[lod].sets[set];
+	  fvec3 setPos;
+	  memcpy(setPos, drawSet.sphere, sizeof(fvec3));
+	  if (xformTool != NULL) {
+	    xformTool->modifyVertex(setPos);
+	  }
 
-          const Extents* extPtr = &extents;
-          if (drawSet.triangleCount < 100) {
-            extPtr = NULL;
-          }
+	  const Extents* extPtr = &extents;
+	  if (drawSet.triangleCount < 100) {
+	    extPtr = NULL;
+	  }
 
-          setNode.node =
-            new AlphaGroupRenderNode(drawMgr, xformList, normalize,
-                                     color, lod, set, extPtr, setPos);
-//            new AlphaGroupRenderNode(drawMgr, xformList, normalize,
-//                                     color, lod, set, &extents, getSphere());
+	  setNode.node =
+	    new AlphaGroupRenderNode(drawMgr, xformList, normalize,
+				     color, lod, set, extPtr, setPos);
+//	    new AlphaGroupRenderNode(drawMgr, xformList, normalize,
+//				     color, lod, set, &extents, getSphere());
 
-//        } else {
-          // alpha nodes
-//        }
-          setNode.radarNode =
-            new OpaqueRenderNode(drawMgr, xformList, normalize,
-                                 color, lod, set, extPtr);
-          setNode.shadowNode =
-            new OpaqueRenderNode(drawMgr, xformList, normalize,
-                                 color, lod, set, extPtr);
+//	} else {
+	  // alpha nodes
+//	}
+	  setNode.radarNode =
+	    new OpaqueRenderNode(drawMgr, xformList, normalize,
+				 color, lod, set, extPtr);
+	  setNode.shadowNode =
+	    new OpaqueRenderNode(drawMgr, xformList, normalize,
+				 color, lod, set, extPtr);
       }
     }
   }
@@ -395,8 +395,8 @@ void MeshSceneNode::updateMaterial(MeshSceneNode::MeshMaterial* mat)
 
   // get the references
   const BzMaterial*       bzmat = mat->bzmat;
-  OpenGLGState&          gstate = mat->gstate;
-  GLfloat*                color = mat->color;
+  OpenGLGState&	  gstate = mat->gstate;
+  GLfloat*		color = mat->color;
 
   OpenGLGStateBuilder builder;
   TextureManager &tm = TextureManager::instance();
@@ -417,28 +417,28 @@ void MeshSceneNode::updateMaterial(MeshSceneNode::MeshMaterial* mat)
     if (userTexture) {
       const std::string& texname = bzmat->getTextureLocal(0);
       if (texname.size() > 0) {
-        faceTexture = tm.getTextureID(texname.c_str());
+	faceTexture = tm.getTextureID(texname.c_str());
       }
       if (faceTexture >= 0) {
-        useDiffuseColor = bzmat->getUseColorOnTexture(0);
-        if (bzmat->getUseTextureAlpha(0)) {
-          const ImageInfo& imageInfo = tm.getInfo(faceTexture);
-          textureBlend = imageInfo.alpha;
-        }
+	useDiffuseColor = bzmat->getUseColorOnTexture(0);
+	if (bzmat->getUseTextureAlpha(0)) {
+	  const ImageInfo& imageInfo = tm.getInfo(faceTexture);
+	  textureBlend = imageInfo.alpha;
+	}
       } else {
-        faceTexture = tm.getTextureID("mesh", false /* no failure reports */);
+	faceTexture = tm.getTextureID("mesh", false /* no failure reports */);
       }
       if (faceTexture >= 0) {
-        // texture matrix
-        int texmat = bzmat->getTextureMatrix(0);
-        if (texmat >= 0) {
-          builder.setTextureMatrix(texmat);
-          builder.enableTextureMatrix(true);
-        }
-        // sphere mapping
-        if (bzmat->getUseSphereMap(0)) {
-          builder.enableSphereMap(true);
-        }
+	// texture matrix
+	int texmat = bzmat->getTextureMatrix(0);
+	if (texmat >= 0) {
+	  builder.setTextureMatrix(texmat);
+	  builder.enableTextureMatrix(true);
+	}
+	// sphere mapping
+	if (bzmat->getUseSphereMap(0)) {
+	  builder.enableSphereMap(true);
+	}
       }
       builder.setTexture(faceTexture);
       builder.enableTexture(true);
@@ -448,8 +448,8 @@ void MeshSceneNode::updateMaterial(MeshSceneNode::MeshMaterial* mat)
   // lighting
   if (BZDBCache::lighting && !bzmat->getNoLighting()) {
     OpenGLMaterial oglMaterial(bzmat->getSpecular(),
-                               bzmat->getEmission(),
-                               bzmat->getShininess());
+			       bzmat->getEmission(),
+			       bzmat->getShininess());
     builder.setMaterial(oglMaterial);
     builder.setShading(GL_SMOOTH);
   } else {
@@ -527,8 +527,8 @@ void MeshSceneNode::makeXFormList()
     while (glGetError() != GL_NO_ERROR) {
       errCount++; // avoid a possible spin-lock?
       if (errCount > 666) {
-        DEBUG0("ERROR: MeshSceneNode::makeXFormList() failed\n");
-        return; // don't make the list, something is borked
+	DEBUG0("ERROR: MeshSceneNode::makeXFormList() failed\n");
+	return; // don't make the list, something is borked
       }
     };
 
@@ -536,7 +536,7 @@ void MeshSceneNode::makeXFormList()
     GLfloat matrix[16];
     for (int i = 0; i < 4; i++) {
       for (int j = 0; j < 4; j++) {
-        matrix[(i*4)+j] = xformTool->getMatrix()[(j*4)+i];
+	matrix[(i*4)+j] = xformTool->getMatrix()[(j*4)+i];
       }
     }
 
@@ -602,7 +602,7 @@ void MeshSceneNode::getRenderNodes(std::vector<RenderSet>& rnodes)
 //////////////////////////
 
 void MeshSceneNode::setLodScale(int pixelsX, float fovx,
-                                int pixelsY, float fovy)
+				int pixelsY, float fovy)
 {
   const float lppx = 2.0f * sinf(fovx * 0.5f) / (float)pixelsX;
   const float lppy = 2.0f * sinf(fovy * 0.5f) / (float)pixelsY;

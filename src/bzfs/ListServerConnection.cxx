@@ -50,7 +50,7 @@ ListServerLink::ListServerLink(std::string listServerURL,
 {
 
   std::string bzfsUserAgent = "bzfs ";
-  bzfsUserAgent            += getAppVersion();
+  bzfsUserAgent	    += getAppVersion();
 
   setURL(listServerURL);
   setUserAgent(bzfsUserAgent);
@@ -66,7 +66,7 @@ ListServerLink::ListServerLink(std::string listServerURL,
 
   //if this c'tor is called, it's safe to publicize
   publicizeServer      = true;
-  queuedRequest        = false;
+  queuedRequest	= false;
   // schedule initial ADD message
   queueMessage(ListServerLink::ADD);
 }
@@ -145,14 +145,14 @@ void ListServerLink::finalization(char *data, unsigned int length, bool good)
 	  // of the same name and the local account is not marked as
 	  // being the same as the global account
 	  if (!playerData->accessInfo.hasRealPassword()
-              || playerData->accessInfo.getUserInfo(callsign)
+	      || playerData->accessInfo.getUserInfo(callsign)
 	      .hasGroup("LOCAL.GLOBAL")) {
 	    playerData->_LSAState = GameKeeper::Player::verified;
 	    if (!playerData->accessInfo.isRegistered())
 	      playerData->accessInfo.storeInfo(NULL);
 	    playerData->accessInfo.setPermissionRights();
 	    while (*group) {
-              char *nextgroup = group;
+	      char *nextgroup = group;
 	      while (*nextgroup && (*nextgroup != ':')) nextgroup++;
 	      while (*nextgroup && (*nextgroup == ':')) *nextgroup++ = 0;
 	      playerData->accessInfo.addGroup(group);
@@ -163,7 +163,7 @@ void ListServerLink::finalization(char *data, unsigned int length, bool good)
 	  } else {
 	    playerData->_LSAState = GameKeeper::Player::failed;
 	    sendMessage(ServerPlayer, playerIndex, "Global login rejected. "
-	                "This callsign is registered locally on this "
+			"This callsign is registered locally on this "
 			"server.");
 	    sendMessage(ServerPlayer, playerIndex,
 			"If the local account is yours, "
@@ -325,7 +325,7 @@ void ListServerLink::addMe(PingPacket pingInfo,
 void ListServerLink::removeMe(std::string publicizedAddress)
 {
   std::string msg;
-  
+
   msg  = "action=REMOVE&nameport=";
   msg += publicizedAddress;
 

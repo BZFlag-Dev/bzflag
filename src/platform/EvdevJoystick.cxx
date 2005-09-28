@@ -216,7 +216,7 @@ void			EvdevJoystick::initJoystick(const char* joystickName)
       currentJoystick = info;
       currentJoystick->readonly = true;
       printError("No write access to joystick device, force feedback disabled.");
-    } else { 
+    } else {
       printError("Error opening the selected joystick.");
     }
   }
@@ -351,7 +351,7 @@ void		    EvdevJoystick::getJoyDevices(std::vector<std::string>
 
 static const std::string anames[9] = { "X", "Y", "Z", "Rx", "Ry", "Rz", "Throttle", "Rudder", "Wheel" };
 
-void                EvdevJoystick::getJoyDeviceAxes(std::vector<std::string>
+void		EvdevJoystick::getJoyDeviceAxes(std::vector<std::string>
 						    &list) const
 {
   list.clear();
@@ -368,7 +368,7 @@ void		    EvdevJoystick::setXAxis(const std::string axis)
 {
   for (int i = 0; i < 9; ++i)
     if (anames[i] == axis)
-      useaxis[0] = ABS_X + i; 
+      useaxis[0] = ABS_X + i;
 }
 
 void		    EvdevJoystick::setYAxis(const std::string axis)
@@ -469,9 +469,9 @@ bool EvdevJoystick::ffHasDirectional() const
     return false;
   else
     return test_bit(EV_FF, currentJoystick->evbit) &&
-           test_bit(FF_PERIODIC, currentJoystick->ffbit) &&
-	   test_bit(FF_CONSTANT, currentJoystick->ffbit) &&	
-           !currentJoystick->readonly;
+	   test_bit(FF_PERIODIC, currentJoystick->ffbit) &&
+	   test_bit(FF_CONSTANT, currentJoystick->ffbit) &&
+	   !currentJoystick->readonly;
 #else
   return false;
 #endif
@@ -479,8 +479,8 @@ bool EvdevJoystick::ffHasDirectional() const
 
 #ifdef HAVE_FF_EFFECT_DIRECTIONAL
 void EvdevJoystick::ffDirectionalConstant(int count, float delay, float duration,
-                                          float x_direction, float y_direction,
-                                          float strength)
+					  float x_direction, float y_direction,
+					  float strength)
 {
   if (!ffHasDirectional())
     return;
@@ -489,7 +489,7 @@ void EvdevJoystick::ffDirectionalConstant(int count, float delay, float duration
    * this could be avoided by tracking the slot numbers and only
    * using one for each type.
    * When we don't switch types we still must stop the previous
-   * effect we were playing, if any. 
+   * effect we were playing, if any.
    */
   if (ff_rumble->type != FF_CONSTANT) {
     ffResetEffect();
@@ -506,7 +506,7 @@ void EvdevJoystick::ffDirectionalConstant(int count, float delay, float duration
     ff_rumble->type = FF_CONSTANT;
     ff_rumble->u.constant.level = (int) (0x7FFF * strength + 0.5f);
     ff_rumble->direction = (int) (0xFFFF * (1.0 / (2.0 * M_PI)) *
-	        	          atan2(x_direction, -y_direction) + 0.5);
+				  atan2(x_direction, -y_direction) + 0.5);
     ff_rumble->u.constant.envelope.attack_length = FF_NOMINAL_MIN;
     ff_rumble->u.constant.envelope.fade_length = FF_NOMINAL_MIN;
     ff_rumble->u.constant.envelope.attack_level = ff_rumble->u.constant.level;
@@ -532,8 +532,8 @@ void EvdevJoystick::ffDirectionalConstant(int, float, float, float, float, float
 
 #ifdef HAVE_FF_EFFECT_DIRECTIONAL
 void EvdevJoystick::ffDirectionalPeriodic(int count, float delay, float duration,
-                                          float x_direction, float y_direction,
-                                          float amplitude, float period,
+					  float x_direction, float y_direction,
+					  float amplitude, float period,
 					  PeriodicType type)
 {
   if (!ffHasDirectional())
@@ -567,12 +567,12 @@ void EvdevJoystick::ffDirectionalPeriodic(int count, float delay, float duration
       case FF_SawtoothDown: wave = FF_SAW_DOWN; break;
       default: printError("Unknown periodic force feedback waveform."); return;
     }
-    ff_rumble->u.periodic.waveform = wave; 
+    ff_rumble->u.periodic.waveform = wave;
     ff_rumble->u.periodic.magnitude = (int) (0x7FFF * amplitude + 0.5f);
     ff_rumble->u.periodic.period = (int) (period * 1000 + 0.5f);
     ff_rumble->u.periodic.offset = ff_rumble->u.periodic.phase = 0;
     ff_rumble->direction = (int) (0xFFFF * (1.0 / (2.0 * M_PI)) *
-                                  atan2(x_direction, -y_direction) + 0.5);
+				  atan2(x_direction, -y_direction) + 0.5);
     ff_rumble->u.periodic.envelope.attack_length = FF_NOMINAL_MIN;
     ff_rumble->u.periodic.envelope.fade_length = FF_NOMINAL_MIN;
     ff_rumble->u.periodic.envelope.attack_level = ff_rumble->u.periodic.magnitude;
@@ -599,7 +599,7 @@ void EvdevJoystick::ffDirectionalPeriodic(int, float, float, float, float, float
 
 #ifdef HAVE_FF_EFFECT_DIRECTIONAL
 void EvdevJoystick::ffDirectionalResistance(float time, float coefficient,
-                                            float saturation, ResistanceType type)
+					    float saturation, ResistanceType type)
 {
   if (!ffHasDirectional())
     return;

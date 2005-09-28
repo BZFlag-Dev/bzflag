@@ -360,7 +360,7 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
 
   smooth = !multiSampled && BZDBCache::smooth;
   const bool fastRadar = ((BZDBCache::radarStyle == 1) ||
-                          (BZDBCache::radarStyle == 2)) && BZDBCache::zbuffer;
+			  (BZDBCache::radarStyle == 2)) && BZDBCache::zbuffer;
   const LocalPlayer *myTank = LocalPlayer::getMyTank();
 
   // setup the radar range
@@ -407,7 +407,7 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
   glLoadIdentity();
 
   OpenGLGState::resetState();
-  
+
 
   // if jammed then draw white noise.  occasionally draw a good frame.
   if (jammed && (bzfrand() > decay)) {
@@ -607,10 +607,10 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
 
 	const float *color;
 	if (myTank->getFlag() == Flags::Colorblindness) {
-          color = Team::getRadarColor(RogueTeam,rabbitMode);
-        } else {
-          color = Team::getRadarColor(player->getTeam(),rabbitMode);
-        }
+	  color = Team::getRadarColor(RogueTeam,rabbitMode);
+	} else {
+	  color = Team::getRadarColor(player->getTeam(),rabbitMode);
+	}
 
 	float dimmedcolor[3];
 	dimmedcolor[0] = color[0] * dimfactor;
@@ -736,7 +736,7 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
 
     if (dimming > 0.0f) {
       if (!smooth) {
-        glEnable(GL_BLEND);
+	glEnable(GL_BLEND);
       }
       // darken the entire radar if we're dimmed
       // we're drawing positively, so dimming is actually an opacity
@@ -1016,13 +1016,13 @@ void RadarRenderer::renderBoxPyrMesh()
     for (int f = 0; f < faces; f++) {
       const MeshFace* face = mesh->getFace(f);
       if (enhanced) {
-        if (face->getPlane()[2] <= 0.0f) {
-          continue;
-        }
-        const BzMaterial* bzmat = face->getMaterial();
-        if ((bzmat != NULL) && bzmat->getNoRadar()) {
-          continue;
-        }
+	if (face->getPlane()[2] <= 0.0f) {
+	  continue;
+	}
+	const BzMaterial* bzmat = face->getMaterial();
+	if ((bzmat != NULL) && bzmat->getNoRadar()) {
+	  continue;
+	}
       }
       const float z = face->getPosition()[2];
       const float bh = face->getHeight();

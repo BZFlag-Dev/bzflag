@@ -43,14 +43,14 @@ class QuadWallSceneNode : public WallSceneNode {
     void		addRenderNodes(SceneRenderer&);
     void		addShadowNodes(SceneRenderer&);
     void		renderRadar();
-    
+
 
     bool		inAxisBox (const Extents& exts) const;
 
     int			getVertexCount () const;
     const		GLfloat* getVertex (int vertex) const;
 
-    virtual void 	getRenderNodes(std::vector<RenderSet>& rnodes);
+    virtual void	getRenderNodes(std::vector<RenderSet>& rnodes);
 
   private:
     void		init(const GLfloat base[3],

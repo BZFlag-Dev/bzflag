@@ -303,7 +303,7 @@ void ZSceneDatabase::renderRadarNodes(const ViewFrustum& vf)
     snode->renderRadar();
     snode->octreeState = SceneNode::OctreeCulled; // clear the state
   }
-  
+
   return;
 }
 

@@ -36,24 +36,24 @@ class EntryZones
     void calculateQualifierLists();
     bool getZonePoint(const std::string &qualifier, float *pt) const;
     bool getSafetyPoint(const std::string &qualifier,
-                        const float *pos, float *pt) const;
+			const float *pos, float *pt) const;
 
     const ZoneList& getZoneList() const;
-    
+
     int packSize() const;
     void *pack(void *buf) const;
-    
+
   public:
     static const char *getSafetyPrefix();
-    
+
   private:
     ZoneList zones;
     QualifierMap qmap;
 
     void makeSplitLists (int zone,
-  		         std::vector<FlagType*> &flags,
-  		         std::vector<TeamColor> &teams,
-  		         std::vector<TeamColor> &safety) const;
+			 std::vector<FlagType*> &flags,
+			 std::vector<TeamColor> &teams,
+			 std::vector<TeamColor> &safety) const;
 };
 
 

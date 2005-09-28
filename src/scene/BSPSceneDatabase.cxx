@@ -307,13 +307,13 @@ void BSPSceneDatabase::insertNoPlaneNodes()
       return;
     }
   }
-  
+
   for (; i < count; i++) {
     SceneNode* node = noPlaneNodes[i];
     node->notifyStyleChange();
     insertNoPlane(1, root, node);
   }
-  
+
   noPlaneNodes.clear();
 
   return;

@@ -198,7 +198,7 @@ unsigned int ServerItem::getSortFactor() const
   if (&ping != 0) {
     // real players are worth a 1000
     value = ping.rogueCount + ping.redCount + ping.greenCount +
-            ping.blueCount + ping.purpleCount;
+	    ping.blueCount + ping.purpleCount;
     value *= 1000;
     // include the lowly observers, 1 point each
     value += ping.observerCount;

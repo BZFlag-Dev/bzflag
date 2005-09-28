@@ -59,7 +59,7 @@ private:
     std::string publicizeAddress;
     std::string publicizeDescription;
     std::string advertiseGroups;
-    
+
     virtual void finalization(char *data, unsigned int length, bool good);
 
     // messages to send, used by sendQueuedMessages

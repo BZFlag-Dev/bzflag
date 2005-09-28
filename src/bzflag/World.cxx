@@ -9,8 +9,8 @@
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
- 
-#include "common.h" 
+
+#include "common.h"
 
 /* interface header */
 #include "World.h"
@@ -79,7 +79,7 @@ World::~World()
   int i;
   freeFlags();
   freeInsideNodes();
-  freeMeshDrawMgrs();  
+  freeMeshDrawMgrs();
   for (i = 0; i < curMaxPlayers; i++)
     delete players[i];
   delete[] players;
@@ -893,7 +893,7 @@ bool World::writeWorld(const std::string& filename, std::string& fullname)
   if (stream == NULL) {
     return false;
   }
-  
+
   // for notational convenience
   std::ostream& out = *stream;
 
@@ -932,9 +932,9 @@ bool World::writeWorld(const std::string& filename, std::string& fullname)
       out << "  -sw " << getFlagShakeWins() << std::endl;
     }
     if ((getLinearAcceleration() != 0.0f) ||
-        (getAngularAcceleration() != 0.0f)) {
+	(getAngularAcceleration() != 0.0f)) {
       out << "  -a " << getLinearAcceleration() << " "
-                     << getAngularAcceleration() << std::endl;
+		     << getAngularAcceleration() << std::endl;
     }
 
     out << "  -ms " << getMaxShots() << std::endl;

@@ -11,7 +11,7 @@
  */
 
 #include "common.h"
- 
+
 // implementation header
 #include "MeshRenderNode.h"
 
@@ -31,10 +31,10 @@
 
 
 OpaqueRenderNode::OpaqueRenderNode(MeshDrawMgr* _drawMgr,
-                                   GLuint _xformList, bool _normalize,
-                                   const GLfloat* _color,
-                                   int _lod, int _set,
-                                   const Extents* _exts)
+				   GLuint _xformList, bool _normalize,
+				   const GLfloat* _color,
+				   int _lod, int _set,
+				   const Extents* _exts)
 {
   drawMgr = _drawMgr;
   xformList = _xformList;
@@ -64,7 +64,7 @@ void OpaqueRenderNode::render()
   if (normalize) {
     glEnable(GL_NORMALIZE);
   }
-  
+
   // draw the elements
   drawMgr->executeSet(lod, set, BZDBCache::lighting, BZDBCache::texture);
 
@@ -114,14 +114,14 @@ void OpaqueRenderNode::renderShadow()
 /******************************************************************************/
 
 AlphaGroupRenderNode::AlphaGroupRenderNode(MeshDrawMgr* _drawMgr,
-                                           GLuint _xformList,
-                                           bool _normalize,
-                                           const GLfloat* _color,
-                                           int _lod, int _set,
-                                           const Extents* _exts,
-                                           const GLfloat _pos[3]) :
+					   GLuint _xformList,
+					   bool _normalize,
+					   const GLfloat* _color,
+					   int _lod, int _set,
+					   const Extents* _exts,
+					   const GLfloat _pos[3]) :
     OpaqueRenderNode(_drawMgr, _xformList, _normalize,
-                     _color, _lod, _set, _exts)
+		     _color, _lod, _set, _exts)
 {
   memcpy(pos, _pos, sizeof(GLfloat[3]));
   return;
@@ -131,10 +131,10 @@ AlphaGroupRenderNode::AlphaGroupRenderNode(MeshDrawMgr* _drawMgr,
 /******************************************************************************/
 
 AlphaRenderNode::AlphaRenderNode(MeshDrawMgr* _drawMgr,
-                                 GLuint _xformList,
-                                 const GLfloat* _color,
-                                 const GLfloat* _pos,
-                                 GLenum _indexType, void* _indices)
+				 GLuint _xformList,
+				 const GLfloat* _color,
+				 const GLfloat* _pos,
+				 GLenum _indexType, void* _indices)
 {
   drawMgr = _drawMgr;
   xformList = _xformList;
@@ -142,7 +142,7 @@ AlphaRenderNode::AlphaRenderNode(MeshDrawMgr* _drawMgr,
   memcpy (pos, _pos, sizeof(GLfloat[3]));
   indexType = _indexType;
   indices = _indices;
-}                                 
+}
 
 AlphaRenderNode::~AlphaRenderNode()
 {
@@ -193,7 +193,7 @@ void AlphaRenderNode::render()
     glPushMatrix();
     glCallList(xformList);
   }
-  
+
   // set the color
   myColor4fv(color);
 

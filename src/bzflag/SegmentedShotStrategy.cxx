@@ -116,7 +116,7 @@ void			SegmentedShotStrategy::update(float dt)
 	      const float horiz = sqrtf((dir[0]*dir[0]) + (dir[1]*dir[1]));
 	      rots[0] = atan2f(dir[1], dir[0]);
 	      rots[1] = atan2f(dir[2], horiz);
-  	    
+
 	      EffectsRenderer::instance().addRicoEffect(0, pos, rots);
 	      break;
 	    }
@@ -135,7 +135,7 @@ void			SegmentedShotStrategy::update(float dt)
 	      rots[0] = atan2f(dir[1], dir[0]);
 	      rots[1] = atan2f(dir[2], horiz);
 
-              const float* pos = segments[segment].ray.getOrigin();
+	      const float* pos = segments[segment].ray.getOrigin();
 	      EffectsRenderer::instance().addShotTeleportEffect(0, pos, rots);
 	    }
 	    break;
@@ -370,10 +370,10 @@ void			SegmentedShotStrategy::makeSegments(ObstacleEffect e)
   // compute segments of shot until total length of segments exceeds the
   // lifetime of the shot.
   const ShotPath &shotPath  = getPath();
-  const float    *v         = shotPath.getVelocity();
+  const float    *v	 = shotPath.getVelocity();
   TimeKeeper      startTime = shotPath.getStartTime();
-  float timeLeft            = shotPath.getLifetime();
-  float           minTime   = BZDB.eval(StateDatabase::BZDB_MUZZLEFRONT)
+  float timeLeft	    = shotPath.getLifetime();
+  float	   minTime   = BZDB.eval(StateDatabase::BZDB_MUZZLEFRONT)
     / hypotf(v[0], hypotf(v[1], v[2]));
 
   // if all shots ricochet and obstacle effect is stop, then make it ricochet

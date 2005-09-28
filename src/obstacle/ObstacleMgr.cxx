@@ -505,7 +505,7 @@ void GroupDefinition::makeGroups(const MeshTransform& xform,
 
   const bool isWorld = (this == OBSTACLEMGR.getWorld());
   char groupDefBit = isWorld ? Obstacle::WorldSource :
-                               Obstacle::GroupDefSource;
+			       Obstacle::GroupDefSource;
 
   for (int type = 0; type < ObstacleTypeCount; type++) {
     const ObstacleList& list = lists[type];
@@ -533,19 +533,19 @@ void GroupDefinition::makeGroups(const MeshTransform& xform,
 	  OBSTACLEMGR.addWorldObstacle(obs);
 	  // add a modified MeshDrawInfo to the new mesh, if applicable
 	  if (type == meshType) {
-            const MeshObstacle* source = (const MeshObstacle*) list[i];
-            const MeshDrawInfo* diSource = source->getDrawInfo();
-            if ((diSource != NULL) && 
-                (!diSource->isServerSide()) && diSource->isValid()) {
-              MaterialSet matSet;
-              MaterialMap matMap;
-              diSource->getMaterials(matSet);
-              obsMod.getMaterialMap(matSet, matMap);
-              MeshDrawInfo* diDest = new MeshDrawInfo(diSource, xform, matMap);
-              MeshObstacle* dest = (MeshObstacle*) obs;
-              dest->setDrawInfo(diDest);
-            }
-          }
+	    const MeshObstacle* source = (const MeshObstacle*) list[i];
+	    const MeshDrawInfo* diSource = source->getDrawInfo();
+	    if ((diSource != NULL) &&
+		(!diSource->isServerSide()) && diSource->isValid()) {
+	      MaterialSet matSet;
+	      MaterialMap matMap;
+	      diSource->getMaterials(matSet);
+	      obsMod.getMaterialMap(matSet, matMap);
+	      MeshDrawInfo* diDest = new MeshDrawInfo(diSource, xform, matMap);
+	      MeshObstacle* dest = (MeshObstacle*) obs;
+	      dest->setDrawInfo(diDest);
+	    }
+	  }
 	}
 	// generate contained meshes
 	// (always get placed into the world group)
@@ -680,19 +680,19 @@ void GroupDefinition::getSourceMeshes(std::vector<MeshObstacle*>& meshes) const
   for (unsigned int i = 0; i < list.size(); i++) {
     MeshObstacle* mesh = (MeshObstacle*)list[i];
     if (!isWorld || mesh->isFromWorldFile()) {
-      const int listSize = (int)meshes.size(); 
+      const int listSize = (int)meshes.size();
       int j;
       for (j = 0; j < listSize; j++) {
-        if (meshes[j] == mesh) {
-          break;
-        }
+	if (meshes[j] == mesh) {
+	  break;
+	}
       }
       if (j == listSize) {
-        meshes.push_back(mesh); // a new entry
+	meshes.push_back(mesh); // a new entry
       }
     }
   }
-  
+
   for (unsigned int i = 0; i < groups.size(); i++) {
     const GroupInstance* group = groups[i];
     const GroupDefinition* groupDef =
@@ -705,7 +705,7 @@ void GroupDefinition::getSourceMeshes(std::vector<MeshObstacle*>& meshes) const
   return;
 }
 
-    
+
 void* GroupDefinition::pack(void* buf) const
 {
   buf = nboPackStdString(buf, name);
@@ -1005,7 +1005,7 @@ void GroupDefinitionMgr::getSourceMeshes(std::vector<MeshObstacle*>& meshes) con
   return;
 }
 
-    
+
 void* GroupDefinitionMgr::pack(void* buf) const
 {
   buf = world.pack(buf);

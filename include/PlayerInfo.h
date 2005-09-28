@@ -110,9 +110,9 @@ public:
   void	updateIdleTime();
   PlayerReplayState getReplayState();
   static void setCurrentTime(TimeKeeper tm);
-  static void setFilterParameters(bool        callSignFiltering,
+  static void setFilterParameters(bool	callSignFiltering,
 				  WordFilter &filterData,
-				  bool        simpleFiltering);
+				  bool	simpleFiltering);
 
   void setTrackerID(unsigned short int t);
   unsigned short int trackerID();
@@ -185,9 +185,9 @@ private:
   // just need one of these for
   static WordFilter serverSpoofingFilter;
 
-  static bool        callSignFiltering;
+  static bool	callSignFiltering;
   static WordFilter *filterData;
-  static bool        simpleFiltering;
+  static bool	simpleFiltering;
 };
 
 inline bool PlayerInfo::isPlaying() const {

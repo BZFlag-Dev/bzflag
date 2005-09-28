@@ -764,7 +764,7 @@ bool WeatherRenderer::updateDrop(std::vector<rain>::iterator& drop,
 	newDrop.pos[1] = (((float) bzfrand() * 2.0f - 1.0f) * rainSpread);
 	if (cullRoofTops) {
 	  newDrop.roofTop =
-	    RoofTops::getTopHeight (newDrop.pos[0], newDrop.pos[1], newDrop.pos[2]);	
+	    RoofTops::getTopHeight (newDrop.pos[0], newDrop.pos[1], newDrop.pos[2]);
 	  // clamp the rain to the valid rain range.
 	  if ( rainSpeed > 0)
 	  {

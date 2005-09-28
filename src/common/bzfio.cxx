@@ -34,8 +34,8 @@
 static bool doTimestamp = false;
 static bool doMicros = false;
 
-void setDebugTimestamp (bool enable, bool micros) 
-{ 
+void setDebugTimestamp (bool enable, bool micros)
+{
 #ifdef _WIN32
   micros = false;
 #endif
@@ -53,14 +53,14 @@ static char *timestamp (char *buf, bool micros)
     tm = localtime((const time_t *)&tv.tv_sec);
     sprintf (buf, "%04d-%02d-%02d %02d:%02d:%02ld.%06ld: ", tm->tm_year+1900,
 	     tm->tm_mon+1,
-             tm->tm_mday, tm->tm_hour, tm->tm_min, (long)tm->tm_sec, (long)tv.tv_usec );
+	     tm->tm_mday, tm->tm_hour, tm->tm_min, (long)tm->tm_sec, (long)tv.tv_usec );
 #endif
   } else {
     time_t tt;
     time (&tt);
     tm = localtime (&tt);
     sprintf (buf, "%04d-%02d-%02d %02d:%02d:%02d: ", tm->tm_year+1900, tm->tm_mon+1,
-             tm->tm_mday, tm->tm_hour, tm->tm_min, tm->tm_sec );
+	     tm->tm_mday, tm->tm_hour, tm->tm_min, tm->tm_sec );
   }
   return buf;
 }
@@ -76,12 +76,12 @@ void formatDebug(const char* fmt, ...)
     vsnprintf(buffer, 8192, fmt, args);
     va_end(args);
     #if defined(_MSC_VER)
-      if (doTimestamp) 
-        W32_DEBUG_TRACE(timestamp (tsbuf, false));
+      if (doTimestamp)
+	W32_DEBUG_TRACE(timestamp (tsbuf, false));
       W32_DEBUG_TRACE(buffer);
     #else
       if (doTimestamp)
-        std::cout << timestamp (tsbuf, doMicros);
+	std::cout << timestamp (tsbuf, doMicros);
       std::cout << buffer;
     #endif
   }

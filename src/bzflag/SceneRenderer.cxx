@@ -133,7 +133,7 @@ SceneRenderer::SceneRenderer() :
 
   // init the track mark manager
   TrackMarks::init();
-  
+
   return;
 }
 
@@ -315,7 +315,7 @@ void SceneRenderer::setQuality(int value)
     glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, GL_TRUE);
   else
     glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, GL_FALSE);
-    
+
   // this setting helps keep those specular highlights
   // highlighting when applied to a dark textured surface.
   // It was mainlined in OpenGL Version 1.2
@@ -329,13 +329,13 @@ void SceneRenderer::setQuality(int value)
 #  ifdef GL_LIGHT_MODEL_COLOR_CONTROL_EXT
   if (useQualityValue >= 2)
     glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL_EXT,
-                  GL_SEPARATE_SPECULAR_COLOR_EXT);
+		  GL_SEPARATE_SPECULAR_COLOR_EXT);
   else
     glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL_EXT,
-                  GL_SINGLE_COLOR_EXT);
+		  GL_SINGLE_COLOR_EXT);
 #  endif
 #endif
-    
+
 
   BZDB.set("useQuality", TextUtils::format("%d", value));
 }
@@ -492,7 +492,7 @@ void SceneRenderer::setSceneDatabase(SceneDatabase* db)
 
   // free the current database
   delete scene;
-  
+
   scene = db;
   if (scene) {
     inOrder = scene->isOrdered();
@@ -721,7 +721,7 @@ void SceneRenderer::render(bool _lastFrame, bool _sameFrame,
 
   // update the texture matrices
   TEXMATRIXMGR.update();
-  
+
   // make sure there is something to render on
   if (!window) {
     return;
@@ -729,7 +729,7 @@ void SceneRenderer::render(bool _lastFrame, bool _sameFrame,
 
   // setup the viewport LOD scale
   MeshSceneNode::setLodScale(window->getWidth(), frustum.getFOVx(),
-                             window->getViewHeight(), frustum.getFOVy());
+			     window->getViewHeight(), frustum.getFOVy());
 
   // get the track mark sceneNodes (only for BSP)
   if (scene) {
@@ -752,7 +752,7 @@ void SceneRenderer::render(bool _lastFrame, bool _sameFrame,
 
   if (mirror) {
     drawGround = false;
-    
+
     // flip for the reflection drawing
     frustum.flipVertical();
     glFrontFace(GL_CW);

@@ -143,7 +143,7 @@ void MeshPolySceneNode::Geometry::renderShadow()
 //
 
 MeshPolySceneNode::MeshPolySceneNode(const float _plane[4],
-                                     bool _noRadar, bool _noShadow,
+				     bool _noRadar, bool _noShadow,
 				     const GLfloat3Array& vertices,
 				     const GLfloat3Array& normals,
 				     const GLfloat2Array& texcoords) :
@@ -155,7 +155,7 @@ MeshPolySceneNode::MeshPolySceneNode(const float _plane[4],
   assert((normals.getSize() == 0) || (normals.getSize() == count));
 
   setPlane(_plane);
-  
+
   noRadar = _noRadar || (plane[2] <= 0.0f); // pre-cull if we can
   noShadow = _noShadow;
 
@@ -493,9 +493,9 @@ int MeshPolySceneNode::splitWallVTN(const GLfloat* splitPlane,
 
   // make new nodes
   front = new MeshPolySceneNode(getPlane(), noRadar, noShadow,
-                                vertexFront, normalFront, uvFront);
+				vertexFront, normalFront, uvFront);
   back = new MeshPolySceneNode(getPlane(), noRadar, noShadow,
-                               vertexBack, normalBack, uvBack);
+			       vertexBack, normalBack, uvBack);
 
   // free the arrays, if required
   if (count > staticSize) {
@@ -702,9 +702,9 @@ int MeshPolySceneNode::splitWallVT(const GLfloat* splitPlane,
 
   // make new nodes
   front = new MeshPolySceneNode(getPlane(), noRadar, noShadow,
-                                vertexFront, normalFront, uvFront);
+				vertexFront, normalFront, uvFront);
   back = new MeshPolySceneNode(getPlane(), noRadar, noShadow,
-                               vertexBack, normalBack, uvBack);
+			       vertexBack, normalBack, uvBack);
 
   // free the arrays, if required
   if (count > staticSize) {

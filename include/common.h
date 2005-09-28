@@ -203,7 +203,7 @@ typedef unsigned char	uint8_t;
 namespace std
 {
   template<typename comparable>
-  inline const comparable& max(const comparable& a, const comparable& b) 
+  inline const comparable& max(const comparable& a, const comparable& b)
   {
     return  a < b ? b : a;
   }
@@ -217,7 +217,7 @@ namespace std
 namespace std
 {
   template<typename comparable>
-  inline const comparable& min(const comparable& a, const comparable& b) 
+  inline const comparable& min(const comparable& a, const comparable& b)
   {
     return b < a ? b : a;
   }

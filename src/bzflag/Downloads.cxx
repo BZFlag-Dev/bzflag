@@ -86,12 +86,12 @@ private:
 
   virtual void collectData(char* ptr, int len);
 
-  std::string               url;
-  static bool               checkForCache;
-  static long               httpTimeout;
-  static int                textureCounter;
+  std::string	       url;
+  static bool	       checkForCache;
+  static long	       httpTimeout;
+  static int		textureCounter;
   static int				byteTransferred;
-  bool                      timeRequest;
+  bool		      timeRequest;
 };
 bool CachedTexture::checkForCache   = false;
 long CachedTexture::httpTimeout     = 0;
@@ -103,7 +103,7 @@ CachedTexture::CachedTexture(const std::string &texUrl) : cURLManager()
   CacheManager::CacheRecord oldrec;
 
   setURL(texUrl);
-  url         = texUrl;
+  url	 = texUrl;
 
   // use the cache?
   bool cached = CACHEMGR.findURL(texUrl, oldrec);
@@ -117,7 +117,7 @@ CachedTexture::CachedTexture(const std::string &texUrl) : cURLManager()
     setRequestFileTime(true);
     timeRequest = cached;
     std::string msg = ColorStrings[GreyColor];
-    msg            += "downloading: " + url;
+    msg	    += "downloading: " + url;
     addMessage(NULL, msg);
     if (cached) {
       // use the cached file -- just in case
@@ -344,14 +344,14 @@ static bool checkAuthorizations(BzMaterialManager::TextureSet& set)
   if (DownloadAccessList.alwaysAuthorized()) {
     return false;
   }
-  
+
   bool hostFailed = false;
-  
+
   BzMaterialManager::TextureSet::iterator set_it;
-  
+
   std::map<std::string, bool> hostAccess;
   std::map<std::string, bool>::iterator host_it;
-  
+
   // get the list of hosts to check
   for (set_it = set.begin(); set_it != set.end(); set_it++) {
     const std::string& url = *set_it;
@@ -360,13 +360,13 @@ static bool checkAuthorizations(BzMaterialManager::TextureSet& set)
       hostAccess[hostname] = true;
     }
   }
-  
+
   // check the hosts
   for (host_it = hostAccess.begin(); host_it != hostAccess.end(); host_it++) {
     const std::string& host = host_it->first;
     host_it->second = authorizedServer(host);
   }
-  
+
   // clear any unauthorized urls
   set_it = set.begin();
   while (set_it != set.end()) {
@@ -389,7 +389,7 @@ static bool checkAuthorizations(BzMaterialManager::TextureSet& set)
     set_it = next_it;
   }
 
-  return hostFailed;  
+  return hostFailed;
 }
 
 

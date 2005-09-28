@@ -57,7 +57,7 @@ class MeshFragSceneNode : public WallSceneNode {
 	Geometry(MeshFragSceneNode* node);
 	~Geometry();
 
-        void init();
+	void init();
 	void setStyle(int _style) { style = _style; }
 	void render();
 	void renderRadar();

@@ -21,23 +21,23 @@
 #ifdef NO_DIVIDE
 #  define MOD(a) \
     do { \
-        if (a >= (BASE << 16)) a -= (BASE << 16); \
-        if (a >= (BASE << 15)) a -= (BASE << 15); \
-        if (a >= (BASE << 14)) a -= (BASE << 14); \
-        if (a >= (BASE << 13)) a -= (BASE << 13); \
-        if (a >= (BASE << 12)) a -= (BASE << 12); \
-        if (a >= (BASE << 11)) a -= (BASE << 11); \
-        if (a >= (BASE << 10)) a -= (BASE << 10); \
-        if (a >= (BASE << 9)) a -= (BASE << 9); \
-        if (a >= (BASE << 8)) a -= (BASE << 8); \
-        if (a >= (BASE << 7)) a -= (BASE << 7); \
-        if (a >= (BASE << 6)) a -= (BASE << 6); \
-        if (a >= (BASE << 5)) a -= (BASE << 5); \
-        if (a >= (BASE << 4)) a -= (BASE << 4); \
-        if (a >= (BASE << 3)) a -= (BASE << 3); \
-        if (a >= (BASE << 2)) a -= (BASE << 2); \
-        if (a >= (BASE << 1)) a -= (BASE << 1); \
-        if (a >= BASE) a -= BASE; \
+	if (a >= (BASE << 16)) a -= (BASE << 16); \
+	if (a >= (BASE << 15)) a -= (BASE << 15); \
+	if (a >= (BASE << 14)) a -= (BASE << 14); \
+	if (a >= (BASE << 13)) a -= (BASE << 13); \
+	if (a >= (BASE << 12)) a -= (BASE << 12); \
+	if (a >= (BASE << 11)) a -= (BASE << 11); \
+	if (a >= (BASE << 10)) a -= (BASE << 10); \
+	if (a >= (BASE << 9)) a -= (BASE << 9); \
+	if (a >= (BASE << 8)) a -= (BASE << 8); \
+	if (a >= (BASE << 7)) a -= (BASE << 7); \
+	if (a >= (BASE << 6)) a -= (BASE << 6); \
+	if (a >= (BASE << 5)) a -= (BASE << 5); \
+	if (a >= (BASE << 4)) a -= (BASE << 4); \
+	if (a >= (BASE << 3)) a -= (BASE << 3); \
+	if (a >= (BASE << 2)) a -= (BASE << 2); \
+	if (a >= (BASE << 1)) a -= (BASE << 1); \
+	if (a >= BASE) a -= BASE; \
     } while (0)
 #else
 #  define MOD(a) a %= BASE
@@ -56,19 +56,19 @@ uLong ZEXPORT adler32(adler, buf, len)
     if (buf == Z_NULL) return 1L;
 
     while (len > 0) {
-        k = len < NMAX ? (int)len : NMAX;
-        len -= k;
-        while (k >= 16) {
-            DO16(buf);
-            buf += 16;
-            k -= 16;
-        }
-        if (k != 0) do {
-            s1 += *buf++;
-            s2 += s1;
-        } while (--k);
-        MOD(s1);
-        MOD(s2);
+	k = len < NMAX ? (int)len : NMAX;
+	len -= k;
+	while (k >= 16) {
+	    DO16(buf);
+	    buf += 16;
+	    k -= 16;
+	}
+	if (k != 0) do {
+	    s1 += *buf++;
+	    s2 += s1;
+	} while (--k);
+	MOD(s1);
+	MOD(s2);
     }
     return (s2 << 16) | s1;
 }

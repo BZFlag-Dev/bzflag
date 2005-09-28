@@ -23,7 +23,7 @@ typedef struct {
 } TriIndices;
 
 extern void triangulateFace(int count, const float* const* verts,
-                            std::vector<TriIndices>& tris);
+			    std::vector<TriIndices>& tris);
 
 
 #endif  /* __TRIANGULATE_H__ */

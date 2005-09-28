@@ -268,15 +268,15 @@ void			ServerList::checkEchos(StartupInfo *info)
 
   // lookup server list in phase 0
   if (phase == 0) {
-    
+
     std::string url = info->listServerURL;
 
     std::string msg = "action=LIST&version=";
-    msg            += getServerVersion();
-    msg            += "&callsign=";
-    msg            += TextUtils::url_encode(info->callsign);
-    msg            += "&password=";
-    msg            += TextUtils::url_encode(info->password);
+    msg	    += getServerVersion();
+    msg	    += "&callsign=";
+    msg	    += TextUtils::url_encode(info->callsign);
+    msg	    += "&password=";
+    msg	    += TextUtils::url_encode(info->password);
     setPostMode(msg);
     setURL(url);
     addHandle();

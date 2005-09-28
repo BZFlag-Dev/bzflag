@@ -58,23 +58,23 @@ public:
   virtual void collectData(char *ptr, int len);
   virtual void finalization(char *data, unsigned int length, bool good);
 
-  static int fdset(fd_set &read, fd_set &write);
-  static bool perform();
-  void       performWait();
+  static int	fdset(fd_set &read, fd_set &write);
+  static bool	perform();
+  void		performWait();
 
 protected:
-  void         *theData;
+  void	       *theData;
   unsigned int  theLen;
 private:
 
-  void          infoComplete(CURLcode result);
+  void		infoComplete(CURLcode result);
 
   static bool   inited;
   static bool   justCalled;
-  CURL         *easyHandle;
+  CURL	       *easyHandle;
   static CURLM *multiHandle;
   static char   errorBuffer[CURL_ERROR_SIZE];
-  bool          added;
+  bool		added;
   std::string   usedUrl;
   std::string   interfaceIP;
   std::string   userAgent;
@@ -101,7 +101,7 @@ typedef enum
 	eUnknown
 }teResourceType;
 
-typedef struct 
+typedef struct
 {
 	teResourceType	resType;
 	std::string		URL;

@@ -53,7 +53,7 @@ class SceneDatabase {
     virtual void	renderRadarNodes(const ViewFrustum&) = 0;
 
     virtual void	drawCuller() = 0;
-    
+
     virtual void	setOccluderManager(int);
 
     virtual const Extents* getVisualExtents() const { return NULL; }

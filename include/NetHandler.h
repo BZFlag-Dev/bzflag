@@ -129,7 +129,7 @@ public:
   static int	whoIsAtIP(const std::string& IP);
   in_addr	getIPAddress();
   const char*	getHostname();
-  bool          reverseDNSDone();
+  bool	  reverseDNSDone();
 
   /// Notify that the channel is going to be close.
   /// In the meantime any pwrite call will do nothing.
@@ -146,7 +146,7 @@ private:
   void	countMessage(uint16_t code, int len, int direction);
   void	dumpMessageStats();
 #endif
-  AresHandler           ares;
+  AresHandler	   ares;
 
   /// On win32, a socket is typedef UINT_PTR SOCKET;
   /// Hopefully int will be ok

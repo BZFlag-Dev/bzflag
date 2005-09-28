@@ -240,7 +240,7 @@ bool BZWReader::readWorldStream(std::vector<WorldFileObject*>& wlist,
 	  } else {
 	    wlist.push_back(object);
 	  }
-	} else if (customObject.size())	{	
+	} else if (customObject.size())	{
 	  bz_CustomMapObjectInfo data;
 	  data.name = bzApiString(customObject);
 	  for (unsigned int i = 0; i < customLines.size(); i++)

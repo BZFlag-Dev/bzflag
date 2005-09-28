@@ -34,7 +34,7 @@ enum ReplayListSort {
 namespace Record {
   extern bool init ();
   extern bool kill ();
-  
+
   extern bool setDirectory (const char *dirname);
   extern const char* getDirectory ();
 

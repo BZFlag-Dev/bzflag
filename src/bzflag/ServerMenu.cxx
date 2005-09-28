@@ -190,83 +190,83 @@ void ServerMenu::setSelected(int index)
       HUDuiLabel* label = (HUDuiLabel*)listHUD[i + NumReadouts];
       if (base + i < (int)serverList.size()) {
 	const ServerItem &server = serverList.getServers()[base + i];
-        const short gameStyle = server.ping.gameStyle;
+	const short gameStyle = server.ping.gameStyle;
 	std::string fullLabel;
 	if (BZDB.isTrue("listIcons")) {
-          // game mode
-          if ((server.ping.observerMax == 16) &&
-              (server.ping.maxPlayers == 200)) {
-            fullLabel += ANSI_STR_FG_CYAN "*  "; // replay
-          } else if (gameStyle & TeamFlagGameStyle) {
-            fullLabel += ANSI_STR_FG_RED "*  "; // ctf
-          } else if (gameStyle & RabbitChaseGameStyle) {
-            fullLabel += ANSI_STR_FG_WHITE "*  "; // white rabbit
-          } else {
-            fullLabel += ANSI_STR_FG_YELLOW "*  "; // free-for-all
-          }
-          // jumping?
-          if (gameStyle & JumpingGameStyle) {
-            fullLabel += ANSI_STR_BRIGHT ANSI_STR_FG_MAGENTA "J ";
-          } else {
-            fullLabel += ANSI_STR_DIM ANSI_STR_FG_WHITE "J ";
-          }
-          // superflags ?
-          if (gameStyle & SuperFlagGameStyle) {
-            fullLabel += ANSI_STR_BRIGHT ANSI_STR_FG_BLUE "F ";
-          } else {
-            fullLabel += ANSI_STR_DIM ANSI_STR_FG_WHITE "F ";
-          }
-          // ricochet?
-          if (gameStyle & RicochetGameStyle) {
-            fullLabel += ANSI_STR_BRIGHT ANSI_STR_FG_GREEN "R";
-          } else {
-            fullLabel += ANSI_STR_DIM ANSI_STR_FG_WHITE "R";
-          }
+	  // game mode
+	  if ((server.ping.observerMax == 16) &&
+	      (server.ping.maxPlayers == 200)) {
+	    fullLabel += ANSI_STR_FG_CYAN "*  "; // replay
+	  } else if (gameStyle & TeamFlagGameStyle) {
+	    fullLabel += ANSI_STR_FG_RED "*  "; // ctf
+	  } else if (gameStyle & RabbitChaseGameStyle) {
+	    fullLabel += ANSI_STR_FG_WHITE "*  "; // white rabbit
+	  } else {
+	    fullLabel += ANSI_STR_FG_YELLOW "*  "; // free-for-all
+	  }
+	  // jumping?
+	  if (gameStyle & JumpingGameStyle) {
+	    fullLabel += ANSI_STR_BRIGHT ANSI_STR_FG_MAGENTA "J ";
+	  } else {
+	    fullLabel += ANSI_STR_DIM ANSI_STR_FG_WHITE "J ";
+	  }
+	  // superflags ?
+	  if (gameStyle & SuperFlagGameStyle) {
+	    fullLabel += ANSI_STR_BRIGHT ANSI_STR_FG_BLUE "F ";
+	  } else {
+	    fullLabel += ANSI_STR_DIM ANSI_STR_FG_WHITE "F ";
+	  }
+	  // ricochet?
+	  if (gameStyle & RicochetGameStyle) {
+	    fullLabel += ANSI_STR_BRIGHT ANSI_STR_FG_GREEN "R";
+	  } else {
+	    fullLabel += ANSI_STR_DIM ANSI_STR_FG_WHITE "R";
+	  }
 	  fullLabel += ANSI_STR_RESET "   ";
 
-          // colorize server descriptions by shot counts
-          const int maxShots = server.ping.maxShots;
-          if (maxShots <= 0) {
-            label->setColor(0.4f, 0.0f, 0.6f); // purple
-          }
-          else if (maxShots == 1) {
-            label->setColor(0.25f, 0.25f, 1.0f); // blue
-          }
-          else if (maxShots == 2) {
-            label->setColor(0.25f, 1.0f, 0.25f); // green
-          }
-          else if (maxShots == 3) {
-            label->setColor(1.0f, 1.0f, 0.25f); // yellow
-          }
-          else {
-            // graded orange/red
-            const float shotScale =
-              std::min(1.0f, log10f((float)(maxShots - 3)));
-            const float rf = 1.0f;
-            const float gf = 0.4f * (1.0f - shotScale);
-            const float bf = 0.25f * gf;
-            label->setColor(rf, gf, bf);
-          }
-        }
-        else {
-          // colorize servers: many shots->red, jumping->green, CTF->blue
-          const float rf = std::min(1.0f, logf(server.ping.maxShots) / logf(20.0f));
-          const float gf = gameStyle & JumpingGameStyle ? 1.0f : 0.0f;
-          const float bf = gameStyle & TeamFlagGameStyle ? 1.0f : 0.0f;
-          label->setColor(0.5f + rf * 0.5f, 0.5f + gf * 0.5f, 0.5f + bf * 0.5f);
-        }
+	  // colorize server descriptions by shot counts
+	  const int maxShots = server.ping.maxShots;
+	  if (maxShots <= 0) {
+	    label->setColor(0.4f, 0.0f, 0.6f); // purple
+	  }
+	  else if (maxShots == 1) {
+	    label->setColor(0.25f, 0.25f, 1.0f); // blue
+	  }
+	  else if (maxShots == 2) {
+	    label->setColor(0.25f, 1.0f, 0.25f); // green
+	  }
+	  else if (maxShots == 3) {
+	    label->setColor(1.0f, 1.0f, 0.25f); // yellow
+	  }
+	  else {
+	    // graded orange/red
+	    const float shotScale =
+	      std::min(1.0f, log10f((float)(maxShots - 3)));
+	    const float rf = 1.0f;
+	    const float gf = 0.4f * (1.0f - shotScale);
+	    const float bf = 0.25f * gf;
+	    label->setColor(rf, gf, bf);
+	  }
+	}
+	else {
+	  // colorize servers: many shots->red, jumping->green, CTF->blue
+	  const float rf = std::min(1.0f, logf(server.ping.maxShots) / logf(20.0f));
+	  const float gf = gameStyle & JumpingGameStyle ? 1.0f : 0.0f;
+	  const float bf = gameStyle & TeamFlagGameStyle ? 1.0f : 0.0f;
+	  label->setColor(0.5f + rf * 0.5f, 0.5f + gf * 0.5f, 0.5f + bf * 0.5f);
+	}
 
-        std::string addr = stripAnsiCodes(server.description);
-        std::string desc;
-        std::string::size_type pos = addr.find_first_of(';');
-        if (pos != std::string::npos) {
-          desc = addr.substr(pos > 0 ? pos+1 : pos);
-          addr.resize(pos);
-        }
-        fullLabel += ANSI_STR_FG_WHITE;
-        fullLabel += addr;
-        fullLabel += ANSI_STR_RESET " ";
-        fullLabel += desc;
+	std::string addr = stripAnsiCodes(server.description);
+	std::string desc;
+	std::string::size_type pos = addr.find_first_of(';');
+	if (pos != std::string::npos) {
+	  desc = addr.substr(pos > 0 ? pos+1 : pos);
+	  addr.resize(pos);
+	}
+	fullLabel += ANSI_STR_FG_WHITE;
+	fullLabel += addr;
+	fullLabel += ANSI_STR_RESET " ";
+	fullLabel += desc;
 	label->setString(fullLabel);
 	label->setDarker(server.cached);
       }

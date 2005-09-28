@@ -29,14 +29,14 @@ ServerCommand::~ServerCommand()
   (*getMapRef()).erase(commandName);
 }
 
-bool ServerCommand::execute(const char         *commandLine,
+bool ServerCommand::execute(const char	 *commandLine,
 			    GameKeeper::Player *playerData)
 {
   MapOfCommands &commandMap = *getMapRef();
   int i;
   for (i = 0; commandLine[i] && !isspace(commandLine[i]); i++);
   std::string commandToken(commandLine, i);
-  
+
   MapOfCommands::iterator it
     = commandMap.find(TextUtils::tolower(commandToken));
   if (it == commandMap.end())

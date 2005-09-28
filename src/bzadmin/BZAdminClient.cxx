@@ -271,33 +271,33 @@ BZAdminClient::ServerCode BZAdminClient::checkMessage() {
       uint8_t numIPs;
       uint8_t tmp;
       vbuf = nboUnpackUByte(vbuf, numIPs);
-      if(numIPs > 1){      	
-        for (i = 0; i < numIPs; ++i) {
-          vbuf = nboUnpackUByte(vbuf, tmp);
-          vbuf = nboUnpackUByte(vbuf, p);
-          vbuf = a.unpack(vbuf);
-          players[p].ip = a.getDotNotation();
-          if (messageMask[MsgAdminInfo]){
-            ui->outputMessage("*** IPINFO: " + players[p].name + " from "  +
-              players[p].ip, Default);
-          }
-        }
+      if(numIPs > 1){
+	for (i = 0; i < numIPs; ++i) {
+	  vbuf = nboUnpackUByte(vbuf, tmp);
+	  vbuf = nboUnpackUByte(vbuf, p);
+	  vbuf = a.unpack(vbuf);
+	  players[p].ip = a.getDotNotation();
+	  if (messageMask[MsgAdminInfo]){
+	    ui->outputMessage("*** IPINFO: " + players[p].name + " from "  +
+	      players[p].ip, Default);
+	  }
+	}
       }
       //Alternative to the MsgAddPlayer message
       else if(numIPs == 1){
-        vbuf = nboUnpackUByte(vbuf, tmp);
-        vbuf = nboUnpackUByte(vbuf, p);
-        vbuf = a.unpack(vbuf);
-        players[p].ip = a.getDotNotation();
-        Team temp;
-        if (messageMask[MsgAdminInfo]){
-          std::string joinMsg = std::string("*** \'") + callsign + "\' joined the game as " +
-            temp.getName(players[p].team) + " from " + players[p].ip + ".";
-          lastMessage.first = joinMsg;
-        }
+	vbuf = nboUnpackUByte(vbuf, tmp);
+	vbuf = nboUnpackUByte(vbuf, p);
+	vbuf = a.unpack(vbuf);
+	players[p].ip = a.getDotNotation();
+	Team temp;
+	if (messageMask[MsgAdminInfo]){
+	  std::string joinMsg = std::string("*** \'") + callsign + "\' joined the game as " +
+	    temp.getName(players[p].team) + " from " + players[p].ip + ".";
+	  lastMessage.first = joinMsg;
+	}
       }
       break;
-      
+
     case MsgScoreOver:
       if (messageMask[MsgScoreOver]) {
 	PlayerId id;

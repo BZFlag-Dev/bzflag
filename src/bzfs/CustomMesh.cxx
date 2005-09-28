@@ -153,9 +153,9 @@ bool CustomMesh::read(const char *cmd, std::istream& input)
     } else {
       drawInfo = new MeshDrawInfo();
       if (!drawInfo->parse(input)) {
-        std::cout << "WARNING: invalid drawInfo" << std::endl;
-        delete drawInfo;
-        drawInfo = NULL;
+	std::cout << "WARNING: invalid drawInfo" << std::endl;
+	delete drawInfo;
+	drawInfo = NULL;
       }
     }
   }
@@ -197,8 +197,8 @@ void CustomMesh::writeToGroupDef(GroupDefinition *groupdef) const
     if (decorative) {
       vert[0] = vert[1] = vert[2] = (Obstacle::maxExtent * 2.0f);
       if ((faces.size() > 0) && !(driveThrough && shootThrough)) {
-        DEBUG0("WARNING: mesh is supposed to be decorative, setting to passable\n");
-        forcePassable = true;
+	DEBUG0("WARNING: mesh is supposed to be decorative, setting to passable\n");
+	forcePassable = true;
       }
     } else {
       vert[0] = vert[1] = vert[2] = 0.0f;
@@ -210,9 +210,9 @@ void CustomMesh::writeToGroupDef(GroupDefinition *groupdef) const
     new MeshObstacle(xform, checkTypes, checkPoints,
 		     vertices, normals, texcoords, faces.size(),
 		     noclusters, smoothBounce,
-                     driveThrough || forcePassable,
-                     shootThrough || forcePassable);
-		     
+		     driveThrough || forcePassable,
+		     shootThrough || forcePassable);
+
   mesh->setName(name);
 
   // add the faces

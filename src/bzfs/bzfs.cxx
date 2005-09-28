@@ -443,7 +443,7 @@ void sendIPUpdate(int targetPlayer = -1, int playerIndex = -1) {
     }
     if (Record::enabled()) {
       Record::addPacket(MsgAdminInfo,
-		        (char*)buf - (char*)bufStart, bufStart, HiddenPacket);
+			(char*)buf - (char*)bufStart, bufStart, HiddenPacket);
     }
   } else {
     int i, numPlayers = 0;
@@ -507,8 +507,8 @@ void publicize()
   if (clOptions->publicizeServer) {
     // list server initialization
     for (std::vector<std::string>::const_iterator i = clOptions->listServerURL.begin(); i < clOptions->listServerURL.end(); i++) {
-      listServerLink = new ListServerLink(i->c_str(), 
-            clOptions->publicizedAddress, clOptions->publicizedTitle, clOptions->advertiseGroups);
+      listServerLink = new ListServerLink(i->c_str(),
+	    clOptions->publicizedAddress, clOptions->publicizedTitle, clOptions->advertiseGroups);
       listServerLinksCount++;
     }
   } else {
@@ -952,7 +952,7 @@ void sendPlayerMessage(GameKeeper::Player *playerData, PlayerId dstPlayer,
     }
 
     // format and send it
-    std::string actionMsg = TextUtils::format("* %s %s\t*", 
+    std::string actionMsg = TextUtils::format("* %s %s\t*",
 				playerData->player.getCallSign(), message + 4);
     message = actionMsg.c_str();
   }
@@ -1249,55 +1249,55 @@ static std::string evaluateString(const std::string &raw)
     } else {
       char next = raw[i+1];
       switch (next) {
-        case '\\' : {
-          eval += '\\';
-          i++;
-          break;
-        }
-        case 'n' : {
-          eval += "\\n";
-          i++;
-          break;
-        }
-        case '{' : {
-          unsigned int start = (i + 2);
+	case '\\' : {
+	  eval += '\\';
+	  i++;
+	  break;
+	}
+	case 'n' : {
+	  eval += "\\n";
+	  i++;
+	  break;
+	}
+	case '{' : {
+	  unsigned int start = (i + 2);
 	  std::string::size_type end = raw.find_first_of('}', start);
-          if (end == std::string::npos) {
-            i = rawLen; // unterminated, ignore the rest of the string
-          } else {
-            const std::string var = raw.substr(start, end - start);
-            i += (end - start) + 2;
-            if (BZDB.isSet(var)) {
-              eval += BZDB.get(var);
-            } else {
-              eval += "*BADBZDB*";
-            }
-          }
-          break;
-        }
-        case '(' : {
-          unsigned int start = (i + 2);
+	  if (end == std::string::npos) {
+	    i = rawLen; // unterminated, ignore the rest of the string
+	  } else {
+	    const std::string var = raw.substr(start, end - start);
+	    i += (end - start) + 2;
+	    if (BZDB.isSet(var)) {
+	      eval += BZDB.get(var);
+	    } else {
+	      eval += "*BADBZDB*";
+	    }
+	  }
+	  break;
+	}
+	case '(' : {
+	  unsigned int start = (i + 2);
 	  std::string::size_type end = raw.find_first_of(')', start);
-          if (end == std::string::npos) {
-            i = rawLen; // unterminated, ignore the rest of the string
-          } else {
-            const std::string var = raw.substr(start, end - start);
-            i += (end - start) + 2;
-            if (var == "uptime") {
-              char buffer[16];
-              const float uptime = (float)(TimeKeeper::getCurrent() - TimeKeeper::getStartTime());
-              snprintf(buffer, 16, "%i", (int)uptime);
-              eval += buffer;
-            }
-            else {
-              eval += "*BADVAR*";
-            }
-          }
-          break;
-        }
-        default: {
-          break;
-        }
+	  if (end == std::string::npos) {
+	    i = rawLen; // unterminated, ignore the rest of the string
+	  } else {
+	    const std::string var = raw.substr(start, end - start);
+	    i += (end - start) + 2;
+	    if (var == "uptime") {
+	      char buffer[16];
+	      const float uptime = (float)(TimeKeeper::getCurrent() - TimeKeeper::getStartTime());
+	      snprintf(buffer, 16, "%i", (int)uptime);
+	      eval += buffer;
+	    }
+	    else {
+	      eval += "*BADVAR*";
+	    }
+	  }
+	  break;
+	}
+	default: {
+	  break;
+	}
       }
     }
   }
@@ -1318,7 +1318,7 @@ static void addPlayer(int playerIndex, GameKeeper::Player *playerData)
     rejectPlayer(playerIndex, rejectCode, rejectMsg);
     return;
   }
-  
+
   if (!resultEnter)
     // Find the user already logged on and kick
     // them if someone else is trying to log on
@@ -1610,8 +1610,8 @@ static void addPlayer(int playerIndex, GameKeeper::Player *playerData)
     // nick is in the DB send him a message to identify.
     if (playerData->accessInfo.isIdentifyRequired()) {
       sendMessage(ServerPlayer, playerIndex,
-                  "This callsign is registered.  "
-                  "You must identify yourself before playing.");
+		  "This callsign is registered.  "
+		  "You must identify yourself before playing.");
     } else {
       sendMessage(ServerPlayer, playerIndex, "This callsign is registered.");
     }
@@ -2155,7 +2155,7 @@ static void playerAlive(int playerIndex)
   worldEventManager.callEvents(bz_eAllowSpawn,&spawnAllowData);
 
   if(!spawnAllowData.allow)
-  {  
+  {
     // client won't send another enter so kick em =(
 	removePlayer(playerIndex, "Not allowed to spawn");
 	return;
@@ -2802,7 +2802,7 @@ static void shotFired(int playerIndex, void *buf, int len)
 
   if (firingInfo.flagType == Flags::GuidedMissile)
     playerData->player.endShotCredit--;
-  
+
   broadcastMessage(MsgShotBegin, len, buf);
 
 }
@@ -2852,8 +2852,8 @@ static void lagKick(int playerIndex)
 {
   char message[MessageLen];
   sprintf(message,
-          "You have been kicked due to excessive lag (you have been warned %d times).",
-          clOptions->maxlagwarn);
+	  "You have been kicked due to excessive lag (you have been warned %d times).",
+	  clOptions->maxlagwarn);
   sendMessage(ServerPlayer, playerIndex, message);
   GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(playerIndex);
   snprintf(message, MessageLen,"Lagkick: %s", playerData->player.getCallSign());
@@ -2926,7 +2926,7 @@ bool checkSpam(char* message, GameKeeper::Player* playerData, int t)
 	  || clOptions->spamWarnMax == 0) {
 	sendMessage(ServerPlayer, t, "You were kicked because of spamming.");
 	DEBUG2("Kicking player %s [%d] for spamming too much: "
-               "2 messages sent within %fs after %d warnings",
+	       "2 messages sent within %fs after %d warnings",
 	       player.getCallSign(), t, dt, player.getSpamWarns());
 	removePlayer(t, "spam");
 	return true;
@@ -2970,7 +2970,7 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
       break;
     default:
       DEBUG1("Player [%d] sent packet type (%x) via udp, "
-             "possible attack from %s\n",
+	     "possible attack from %s\n",
 	     t, code, handler->getTargetIP());
       return;
     }
@@ -3186,29 +3186,29 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
     case MsgShotEnd: {
       if (playerData->player.isObserver())
 	break;
-	  
+
       // endShot anti-cheat
       playerData->player.endShotCredit++;
-  
+
       int pFlag = playerData->player.getFlag();
       if (pFlag >= 0) {
-        FlagInfo &flag = *FlagInfo::get(pFlag);
-        if (flag.flag.type == Flags::Shield) {
-          //sendMessage(ServerPlayer, AdminPlayers, "has Shield");
-          playerData->player.endShotCredit--;
-        }
+	FlagInfo &flag = *FlagInfo::get(pFlag);
+	if (flag.flag.type == Flags::Shield) {
+	  //sendMessage(ServerPlayer, AdminPlayers, "has Shield");
+	  playerData->player.endShotCredit--;
+	}
       }
       const int endShotLimit =  (int) BZDB.eval(StateDatabase::BZDB_ENDSHOTDETECTION);
       if ((endShotLimit > 0) && (playerData->player.endShotCredit > endShotLimit)) {  // default endShotLimit 2
-        char testmessage[MessageLen];
-        sprintf(testmessage, "Kicking Player %s EndShot credit: %d \n", playerData->player.getCallSign(), playerData->player.endShotCredit );
-        DEBUG1("endShot Detection: %s\n", testmessage);
-        sendMessage(ServerPlayer, AdminPlayers, testmessage);
-        sendMessage(ServerPlayer, t, "Autokick: wrong end shots detected.");
-        removePlayer(t, "EndShot");
+	char testmessage[MessageLen];
+	sprintf(testmessage, "Kicking Player %s EndShot credit: %d \n", playerData->player.getCallSign(), playerData->player.endShotCredit );
+	DEBUG1("endShot Detection: %s\n", testmessage);
+	sendMessage(ServerPlayer, AdminPlayers, testmessage);
+	sendMessage(ServerPlayer, t, "Autokick: wrong end shots detected.");
+	removePlayer(t, "EndShot");
       }
-      // endShotDetection finished  
-	  
+      // endShotDetection finished
+
       // data: shooter id, shot number, reason
       PlayerId sourcePlayer;
       int16_t shot;
@@ -3252,14 +3252,14 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
 	DEBUG1("Player %s [%d] -> Team: %s\n",
 	       playerData->player.getCallSign(), t, message);
       } else {
-        GameKeeper::Player *p = GameKeeper::Player::getPlayerByIndex(dstPlayer);
-        if (p != NULL) {
-          DEBUG1("Player %s [%d] -> Player %s [%d]: %s\n",
+	GameKeeper::Player *p = GameKeeper::Player::getPlayerByIndex(dstPlayer);
+	if (p != NULL) {
+	  DEBUG1("Player %s [%d] -> Player %s [%d]: %s\n",
 	       playerData->player.getCallSign(), t, p->player.getCallSign(), dstPlayer, message);
-        } else {
+	} else {
 	      DEBUG1("Player %s [%d] -> Player Unknown [%d]: %s\n",
 	       playerData->player.getCallSign(), t, dstPlayer, message);
-        }
+	}
       }
       // check for spamming
       if (checkSpam(message, playerData, t))
@@ -3385,8 +3385,8 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
 	sprintf(message,"*** Server Warning: your lag is too high (%d ms) ***",
 		lag);
 	sendMessage(ServerPlayer, t, message);
-        if (kick)
-          lagKick(t);
+	if (kick)
+	  lagKick(t);
       }
       break;
     }
@@ -3749,7 +3749,7 @@ static void doStuffOnPlayer(GameKeeper::Player &playerData)
 
   // kick idle players
   if (clOptions->idlekickthresh > 0) {
-    if ((playerData.player.isTooMuchIdling(clOptions->idlekickthresh)) && 
+    if ((playerData.player.isTooMuchIdling(clOptions->idlekickthresh)) &&
        (!playerData.accessInfo.hasPerm(PlayerAccessInfo::antikick))) {
       char message[MessageLen]
 	= "You were kicked because you were idle too long";
@@ -3845,7 +3845,7 @@ static void doStuffOnPlayer(GameKeeper::Player &playerData)
       if (!GameKeeper::Player::getPlayerByIndex(p))
 	return;
       if (kick) {
-        lagKick(p);
+	lagKick(p);
 	return;
       }
     }
@@ -3877,7 +3877,7 @@ void initGroups()
   info.groupState[PlayerAccessInfo::isGroup] = true;
   info.groupState[PlayerAccessInfo::isDefault] = true;
   groupAccess["EVERYONE"] = info;
-  
+
   // VERIFIED
   info.explicitAllows.reset();
   info.groupState.reset();
@@ -3900,7 +3900,7 @@ void initGroups()
   info.groupState[PlayerAccessInfo::isDefault] = true;
   info.explicitAllows[PlayerAccessInfo::hideAdmin] = false;
   groupAccess["LOCAL.ADMIN"] = info;
-  
+
   // load databases
   if (groupsFile.size())
     PlayerAccessInfo::readGroupsFile(groupsFile);
@@ -4009,7 +4009,7 @@ int main(int argc, char **argv)
   for (unsigned int plugin = 0; plugin < clOptions->pluginList.size(); plugin++)
   {
     if (!loadPlugin(clOptions->pluginList[plugin].plugin,
-                    clOptions->pluginList[plugin].command)) {
+		    clOptions->pluginList[plugin].command)) {
       std::string text = "WARNING: unable to load the plugin; ";
       text += clOptions->pluginList[plugin].plugin + "\n";
       DEBUG0(text.c_str());
@@ -4233,7 +4233,7 @@ int main(int argc, char **argv)
    * world weapons will increase the number of iterations
    * substantially (about x10)
    **/
-   
+
   GameKeeper::Player::passTCPMutex();
   int i;
   int readySetGo = -1; // match countdown timer
@@ -4428,43 +4428,43 @@ int main(int argc, char **argv)
       float newTimeElapsed = (float)(tm - gameStartTime);
       float timeLeft = clOptions->timeLimit - newTimeElapsed;
       if (timeLeft <= 0.0f) {
-        timeLeft = 0.0f;
-        gameOver = true;
-        countdownActive = false;
-        countdownPauseStart = TimeKeeper::getNullTime ();
-        clOptions->countdownPaused = false;
+	timeLeft = 0.0f;
+	gameOver = true;
+	countdownActive = false;
+	countdownPauseStart = TimeKeeper::getNullTime ();
+	clOptions->countdownPaused = false;
       }
 
       if (countdownActive && clOptions->countdownPaused && !countdownPauseStart) {
-        // we have a new pause
-        countdownPauseStart = tm;
-        void *buf, *bufStart = getDirectMessageBuffer ();
-        buf = nboPackInt (bufStart, -1);
-        broadcastMessage (MsgTimeUpdate, (char *) buf - (char *) bufStart, bufStart);
+	// we have a new pause
+	countdownPauseStart = tm;
+	void *buf, *bufStart = getDirectMessageBuffer ();
+	buf = nboPackInt (bufStart, -1);
+	broadcastMessage (MsgTimeUpdate, (char *) buf - (char *) bufStart, bufStart);
       }
 
       if (countdownActive && !clOptions->countdownPaused && countdownPauseStart) {
-        // resumed
-        gameStartTime += (tm - countdownPauseStart);
-        countdownPauseStart = TimeKeeper::getNullTime ();
-        newTimeElapsed = (float)(tm - gameStartTime);
-        timeLeft = clOptions->timeLimit - newTimeElapsed;
-        void *buf, *bufStart = getDirectMessageBuffer ();
-        buf = nboPackInt (bufStart, (int32_t) timeLeft);
-        broadcastMessage (MsgTimeUpdate, (char *) buf - (char *) bufStart, bufStart);
+	// resumed
+	gameStartTime += (tm - countdownPauseStart);
+	countdownPauseStart = TimeKeeper::getNullTime ();
+	newTimeElapsed = (float)(tm - gameStartTime);
+	timeLeft = clOptions->timeLimit - newTimeElapsed;
+	void *buf, *bufStart = getDirectMessageBuffer ();
+	buf = nboPackInt (bufStart, (int32_t) timeLeft);
+	broadcastMessage (MsgTimeUpdate, (char *) buf - (char *) bufStart, bufStart);
       }
 
       if ((timeLeft == 0.0f || newTimeElapsed - clOptions->timeElapsed >= 30.0f)
-          && !clOptions->countdownPaused) {
-        // send update every 30 seconds
-        void *buf, *bufStart = getDirectMessageBuffer ();
-        buf = nboPackInt (bufStart, (int32_t) timeLeft);
-        broadcastMessage (MsgTimeUpdate, (char *) buf - (char *) bufStart, bufStart);
-        clOptions->timeElapsed = newTimeElapsed;
-        if (clOptions->oneGameOnly && timeLeft == 0.0f) {
-          done = true;
-          exitCode = 0;
-        }
+	  && !clOptions->countdownPaused) {
+	// send update every 30 seconds
+	void *buf, *bufStart = getDirectMessageBuffer ();
+	buf = nboPackInt (bufStart, (int32_t) timeLeft);
+	broadcastMessage (MsgTimeUpdate, (char *) buf - (char *) bufStart, bufStart);
+	clOptions->timeElapsed = newTimeElapsed;
+	if (clOptions->oneGameOnly && timeLeft == 0.0f) {
+	  done = true;
+	  exitCode = 0;
+	}
       }
     }
 

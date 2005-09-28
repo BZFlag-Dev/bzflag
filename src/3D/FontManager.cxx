@@ -73,7 +73,7 @@ void FontManager::callback(const std::string &, void *)
   }
 }
 
-FontManager::FontManager() : Singleton<FontManager>(), 
+FontManager::FontManager() : Singleton<FontManager>(),
 			     opacity(1.0f),
 			     dimFactor(0.2f),
 			     darkness(1.0f)
@@ -302,7 +302,7 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
   underlineColor[3] = opacity;
 
   // FIXME - this should not be necessary, but the bitmap font renderer needs it
-  //  OpenGLGState::resetState(); 
+  //  OpenGLGState::resetState();
 
   /*
    * ANSI code interpretation is somewhat limited, we only accept values
@@ -338,11 +338,11 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
       glDepthMask(0);
       pFont->drawString(scale, color, &tmpText[startSend], len);
       if (underline) {
-        if (canScale) {
-          glDisable(GL_TEXTURE_2D);
-        }
+	if (canScale) {
+	  glDisable(GL_TEXTURE_2D);
+	}
 	glEnable(GL_BLEND);
-        if (bright && underlineColor[0] >= 0) {
+	if (bright && underlineColor[0] >= 0) {
 	  glColor4fv(underlineColor);
 	} else if (underlineColor[0] >= 0) {
 	  glColor4fv(dimUnderlineColor);
@@ -357,7 +357,7 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
 	glEnd();
 	if (canScale) {
 	  glEnable(GL_TEXTURE_2D);
-        }
+	}
       }
       glDepthMask(depthMask);
       glPopMatrix();

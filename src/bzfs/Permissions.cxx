@@ -229,7 +229,7 @@ bool PlayerAccessInfo::hasPerm(PlayerAccessInfo::AccessPerm right) const
     return false;
   if (explicitAllows.test(right))
     return true;
-	
+
   bool isAllowed = false;
   for (std::vector<std::string>::const_iterator itr=groups.begin(); itr!=groups.end(); ++itr) {
     PlayerAccessMap::iterator group = groupAccess.find(*itr);
@@ -237,20 +237,20 @@ bool PlayerAccessInfo::hasPerm(PlayerAccessInfo::AccessPerm right) const
       if (group->second.explicitDenys.test(right))
       return false;
       else if (group->second.explicitAllows.test(right))
-        isAllowed = true;
-    } 
+	isAllowed = true;
+    }
   }
   return isAllowed;
 }
 
 // grant and revoke perms used with /mute and /unmute
-void PlayerAccessInfo::grantPerm(PlayerAccessInfo::AccessPerm right) 
+void PlayerAccessInfo::grantPerm(PlayerAccessInfo::AccessPerm right)
 {
   explicitAllows.set(right);
   explicitDenys.reset(right);
 }
 
-void PlayerAccessInfo::revokePerm(PlayerAccessInfo::AccessPerm right) 
+void PlayerAccessInfo::revokePerm(PlayerAccessInfo::AccessPerm right)
 {
   explicitAllows.reset(right);
   explicitDenys.set(right);
@@ -265,7 +265,7 @@ bool	PlayerAccessInfo::hasCustomPerm(const char* right) const
 
 	std::string perm = TextUtils::toupper(std::string(right));
 
-	for (std::vector<std::string>::const_iterator itr=groups.begin(); itr!=groups.end(); ++itr) 
+	for (std::vector<std::string>::const_iterator itr=groups.begin(); itr!=groups.end(); ++itr)
 	{
 		PlayerAccessMap::iterator group = groupAccess.find(*itr);
 		if (group != groupAccess.end())
@@ -275,7 +275,7 @@ bool	PlayerAccessInfo::hasCustomPerm(const char* right) const
 				if ( perm == TextUtils::toupper(group->second.customPerms[i]) )
 					return true;
 			}
-		} 
+		}
 	}
 	return false;
 }
@@ -478,7 +478,7 @@ void parsePermissionString(const std::string &permissionString, PlayerAccessInfo
 
   while (permStream >> word) {
     makeupper(word);
- 	
+
     // do we have an operator? check for a leading, non alphabetic character
     char first = NULL;
     if (!TextUtils::isAlphabetic(word[0])) {
@@ -510,12 +510,12 @@ void parsePermissionString(const std::string &permissionString, PlayerAccessInfo
 	  }
 
 	  continue;
-	} 
-            
+	}
+
       case '!': {
 	// forbid a permission
 	PlayerAccessInfo::AccessPerm perm = permFromName(word);
-	if (perm != PlayerAccessInfo::lastPerm) 
+	if (perm != PlayerAccessInfo::lastPerm)
 	  info.explicitDenys.set(perm);
 	else
 	  DEBUG1("groupdb: Cannot forbid unknown permission %s\n", word.c_str());
@@ -537,10 +537,10 @@ void parsePermissionString(const std::string &permissionString, PlayerAccessInfo
 
 	continue;
       }
-            
+
       // + is like no operator, just let it pass trough
       case '+': break;
-            
+
       default:
 	DEBUG1("groupdb: ignoring unknown operator type %c\n", first);
       }
@@ -552,7 +552,7 @@ void parsePermissionString(const std::string &permissionString, PlayerAccessInfo
       info.explicitAllows.set(perm);
     } else {
       if (word == "ALL") {
-	info.explicitAllows.set();  
+	info.explicitAllows.set();
 	info.explicitAllows[PlayerAccessInfo::lastPerm] = false;
       } else {
 	//DEBUG1("groupdb: Cannot set unknown permission %s\n", word.c_str());
@@ -625,14 +625,14 @@ bool PlayerAccessInfo::readGroupsFile(const std::string &filename)
       }
     }
     if (skip) continue;
-	
+
     makeupper(line);
 
     std::string::size_type colonpos = line.find(':');
     if (colonpos != std::string::npos) {
       std::string name = line.substr(0, colonpos);
       std::string perm = line.substr(colonpos + 1);
-	  
+
       // check if we already have this group, else make a new
       PlayerAccessInfo info;
       PlayerAccessMap::iterator oldgroup = groupAccess.find(name);
@@ -641,7 +641,7 @@ bool PlayerAccessInfo::readGroupsFile(const std::string &filename)
       else
 	info.groupState[PlayerAccessInfo::isGroup] = true;
 
-      // don't allow changing permissions for a group 
+      // don't allow changing permissions for a group
       // that was used as a reference before
       if (info.groupState.test(isReferenced)) {
 	DEBUG1("groupdb: skipping groupdb line (%i), group was used as reference before\n", linenum);

@@ -115,7 +115,7 @@ HUDRenderer::HUDRenderer(const BzfDisplay* _display,
 
   // create scoreboard renderer
   scoreboard = new ScoreboardRenderer();
-  
+
   // initialize fonts
   resize(true);
 }
@@ -173,8 +173,8 @@ void			HUDRenderer::resize(bool firstTime)
 
   // set scoreboard window size & location
   const float sby = window.getViewHeight() - majorFontHeight - alertFontHeight * 2.0f;
-  scoreboard->setWindowSize (0.01f * window.getWidth(), sby, 
-        0.98f * window.getWidth(), sby);
+  scoreboard->setWindowSize (0.01f * window.getWidth(), sby,
+	0.98f * window.getWidth(), sby);
 }
 
 int			HUDRenderer::getNoMotionSize() const
@@ -758,7 +758,7 @@ void			HUDRenderer::renderStatus(void)
 	break;
 
       case LocalPlayer::Loading:
-    
+
     if (World::getWorld()->getMaxShots() != 0) {
 	  statusColor = redColor;
 	  sprintf(buffer, bdl->getLocalString("Reloaded in %.1f").c_str(), player->getReloadTime());
@@ -1401,7 +1401,7 @@ void			HUDRenderer::renderShots()
   const int indicatorSpace = indicatorHeight / 10 + 2;
   const int indicatorLeft = centerx + maxMotionSize + indicatorWidth + 16;
   const int indicatorTop = centery - (int)(0.5f * (indicatorHeight + indicatorSpace) * myTank->getMaxShots());
-  
+
   const int maxShots = myTank->getMaxShots();
 
   float* factors = new float[maxShots];
@@ -1418,7 +1418,7 @@ void			HUDRenderer::renderShots()
       if (factors[i] > 1.0f) factors[i] = 1.0f;
     }
   }
-  
+
   // sort the reload values
   qsort(factors, maxShots, sizeof(float), compare_float);
 
@@ -1432,18 +1432,18 @@ void			HUDRenderer::renderShots()
       glRecti(indicatorLeft, myTop, indicatorLeft + myWidth, myTop + indicatorHeight);
       hudColor4f(1.0f, 0.0f, 0.0f, 0.5f); // red
       glRecti(indicatorLeft + myWidth + 1, myTop, indicatorLeft + indicatorWidth,
-              myTop + indicatorHeight);
+	      myTop + indicatorHeight);
     } else {
       hudColor4f(1.0f, 1.0f, 1.0f, 0.5f); // white
       glRecti(indicatorLeft, myTop, indicatorLeft + myWidth, myTop + indicatorHeight);
     }
   }
   glDisable(GL_BLEND);
-  
+
   delete[] factors;
 }
 
-  
+
 // Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***

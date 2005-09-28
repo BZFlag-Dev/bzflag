@@ -90,9 +90,9 @@ public:
     bool	   needsHostbanChecked();
 
     // To handle player State
-    void           setPlayerState(float pos[3], float azimuth);
-    void           getPlayerState(float pos[3], float &azimuth);
-    void           setPlayerState(PlayerState state, float timestamp);
+    void	   setPlayerState(float pos[3], float azimuth);
+    void	   getPlayerState(float pos[3], float &azimuth);
+    void	   setPlayerState(PlayerState state, float timestamp);
 
     enum LSAState
       {
@@ -117,7 +117,7 @@ public:
     PlayerAccessInfo  accessInfo;
     // Last known position, vel, etc
     PlayerState       lastState;
-    float             stateTimeStamp;
+    float	     stateTimeStamp;
     // FlagHistory
     FlagHistory       flagHistory;
     // Score
@@ -136,7 +136,7 @@ public:
     bool	      needThisHostbanChecked;
     // In case you want recheck all condition on all players
     static bool       allNeedHostbanChecked;
-	  
+
   };
   class Flag {
   };

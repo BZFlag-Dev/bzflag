@@ -30,20 +30,20 @@
 #include "ares_dns.h"
 
 /* Header format, from RFC 1035:
- *                                  1  1  1  1  1  1
+ *				  1  1  1  1  1  1
  *    0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5
  *  +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
- *  |                      ID                       |
+ *  |		      ID		       |
  *  +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
  *  |QR|   Opcode  |AA|TC|RD|RA|   Z    |   RCODE   |
  *  +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
- *  |                    QDCOUNT                    |
+ *  |		    QDCOUNT		    |
  *  +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
- *  |                    ANCOUNT                    |
+ *  |		    ANCOUNT		    |
  *  +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
- *  |                    NSCOUNT                    |
+ *  |		    NSCOUNT		    |
  *  +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
- *  |                    ARCOUNT                    |
+ *  |		    ARCOUNT		    |
  *  +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
  *
  * AA, TC, RA, and RCODE are only set in responses.  Brief description
@@ -59,16 +59,16 @@
  *      ARCOUNT Number of additional records
  *
  * Question format, from RFC 1035:
- *                                  1  1  1  1  1  1
+ *				  1  1  1  1  1  1
  *    0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5
  *  +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
- *  |                                               |
- *  /                     QNAME                     /
- *  /                                               /
+ *  |					       |
+ *  /		     QNAME		     /
+ *  /					       /
  *  +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
- *  |                     QTYPE                     |
+ *  |		     QTYPE		     |
  *  +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
- *  |                     QCLASS                    |
+ *  |		     QCLASS		    |
  *  +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
  *
  * The query name is encoded as a series of labels, each represented
@@ -78,7 +78,7 @@
  */
 
 int ares_mkquery(const char *name, int dnsclass, int type, unsigned short id,
-                 int rd, unsigned char **buf, int *buflen)
+		 int rd, unsigned char **buf, int *buflen)
 {
   int len;
   unsigned char *q;
@@ -90,7 +90,7 @@ int ares_mkquery(const char *name, int dnsclass, int type, unsigned short id,
   for (p = name; *p; p++)
     {
       if (*p == '\\' && *(p + 1) != 0)
-        p++;
+	p++;
       len++;
     }
   /* If there are n periods in the name, there are n + 1 labels, and
@@ -122,31 +122,31 @@ int ares_mkquery(const char *name, int dnsclass, int type, unsigned short id,
   while (*name)
     {
       if (*name == '.')
-        return ARES_EBADNAME;
+	return ARES_EBADNAME;
 
       /* Count the number of bytes in this label. */
       len = 0;
       for (p = name; *p && *p != '.'; p++)
-        {
-          if (*p == '\\' && *(p + 1) != 0)
-            p++;
-          len++;
-        }
+	{
+	  if (*p == '\\' && *(p + 1) != 0)
+	    p++;
+	  len++;
+	}
       if (len > MAXLABEL)
-        return ARES_EBADNAME;
+	return ARES_EBADNAME;
 
       /* Encode the length and copy the data. */
       *q++ = len;
       for (p = name; *p && *p != '.'; p++)
-        {
-          if (*p == '\\' && *(p + 1) != 0)
-            p++;
-          *q++ = *p;
-        }
+	{
+	  if (*p == '\\' && *(p + 1) != 0)
+	    p++;
+	  *q++ = *p;
+	}
 
       /* Go to the next label and repeat, unless we hit the end. */
       if (!*p)
-        break;
+	break;
       name = p + 1;
     }
 

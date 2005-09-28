@@ -17,12 +17,12 @@
 // common implementation headers
 #include "bzfio.h"
 
-bool                    cURLManager::inited      = false;
-bool                    cURLManager::justCalled;
-CURLM                  *cURLManager::multiHandle = NULL;
+bool		    cURLManager::inited      = false;
+bool		    cURLManager::justCalled;
+CURLM		  *cURLManager::multiHandle = NULL;
 std::map<CURL*,
 	 cURLManager*>  cURLManager::cURLMap;
-char                    cURLManager::errorBuffer[CURL_ERROR_SIZE];
+char		    cURLManager::errorBuffer[CURL_ERROR_SIZE];
 
 cURLManager::cURLManager()
 {
@@ -86,7 +86,7 @@ void cURLManager::setup()
 {
   CURLcode result;
 
-  DEBUG1("LIBCURL:         %s\n", curl_version());
+  DEBUG1("LIBCURL:	 %s\n", curl_version());
   if ((result = curl_global_init(CURL_GLOBAL_NOTHING)))
     DEBUG1("cURL Global init Error: %d\n", result);
   multiHandle = curl_multi_init();
@@ -291,7 +291,7 @@ bool cURLManager::perform()
       if (!pendingMsg)
 	break;
 
-      easy        = pendingMsg->easy_handle;
+      easy	= pendingMsg->easy_handle;
 
       if (cURLMap.count(easy))
 	cURLMap[easy]->infoComplete(pendingMsg->data.result);
@@ -395,11 +395,11 @@ void cURLManager::setUserAgent(const std::string _userAgent)
 void cURLManager::addFormData(const char *key, const char *value)
 {
   CURLFORMcode result;
-  result = curl_formadd(&formPost, &formLast, 
+  result = curl_formadd(&formPost, &formLast,
 			CURLFORM_COPYNAME, key,
 			CURLFORM_COPYCONTENTS, value,
 			CURLFORM_CONTENTSLENGTH, strlen(value),
-			CURLFORM_END); 
+			CURLFORM_END);
   if (result != CURL_FORMADD_OK)
     DEBUG1("addFormData error %d : %s\n", result, errorBuffer);
 }
@@ -448,7 +448,7 @@ void ResourceGetter::finalization(char *data, unsigned int length, bool good)
 		return;	// we are suposed to be done
 
 	// this is who we are suposed to be geting
-	trResourceItem item = resources[0]; 
+	trResourceItem item = resources[0];
 	resources.erase(resources.begin());
 	if (good)
 	{
@@ -462,7 +462,7 @@ void ResourceGetter::finalization(char *data, unsigned int length, bool good)
 
 		// maybe send a message here saying we did it?
 	}
-	
+
 	// do the next one if we must
 	getResource();
 }
@@ -488,7 +488,7 @@ void ResourceGetter::getResource ( void )
 		doingStuff = false;
 	else
 	{
-		trResourceItem item = resources[0]; 
+		trResourceItem item = resources[0];
 
 		doingStuff = true;
 		setURL(item.URL);

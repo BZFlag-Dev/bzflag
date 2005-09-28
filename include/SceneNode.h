@@ -66,17 +66,17 @@ class SceneNode {
     const GLfloat*      getPlane() const;
     const GLfloat*      getPlaneRaw() const;
     virtual GLfloat	getDistance(const GLfloat* eye) const; // for BSP
-    
+
     virtual bool	inAxisBox (const Extents& exts) const;
 
     virtual bool	cull(const ViewFrustum&) const;
 
     bool		isOccluder() const;
     void		setOccluder(bool value);
-    
+
     virtual void	addLight(SceneRenderer&);
     virtual int		split(const float* plane,
-                              SceneNode*& front, SceneNode*& back) const;
+			      SceneNode*& front, SceneNode*& back) const;
     virtual void	addShadowNodes(SceneRenderer&);
     virtual void	addRenderNodes(SceneRenderer&);
     virtual void	renderRadar();

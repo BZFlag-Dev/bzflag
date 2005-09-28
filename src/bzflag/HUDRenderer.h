@@ -91,7 +91,7 @@ public:
 
   void		render(SceneRenderer&);
   ScoreboardRenderer *getScoreboard();
-  
+
 protected:
   void		hudColor3f(GLfloat, GLfloat, GLfloat);
   void		hudColor4f(GLfloat, GLfloat, GLfloat, GLfloat);

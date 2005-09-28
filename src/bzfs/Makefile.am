@@ -139,7 +139,7 @@ LDADD = \
 	../net/libNet.la		\
 	../common/libCommon.la		\
 	$(CARESLIB)			\
-	$(REGEX) 			\
-	$(ZLIB) 			\
-	$(KRB5_LIBS) 			\
+	$(REGEX)			\
+	$(ZLIB)			\
+	$(KRB5_LIBS)			\
 	../date/libDate.la

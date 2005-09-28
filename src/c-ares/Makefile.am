@@ -50,12 +50,12 @@ EXTRA_DIST = \
 	README			\
 	README.cares		\
 	vc/adig/adig.dep	\
-        vc/adig/adig.dsp	\
-        vc/adig/adig.mak	\
-        vc/ahost/ahost.dep	\
-        vc/ahost/ahost.dsp	\
-        vc/ahost/ahost.mak	\
-        vc/areslib/areslib.dep	\
-        vc/areslib/areslib.dsp	\
-        vc/areslib/areslib.mak	\
-        vc/vc.dsw
+	vc/adig/adig.dsp	\
+	vc/adig/adig.mak	\
+	vc/ahost/ahost.dep	\
+	vc/ahost/ahost.dsp	\
+	vc/ahost/ahost.mak	\
+	vc/areslib/areslib.dep	\
+	vc/areslib/areslib.dsp	\
+	vc/areslib/areslib.mak	\
+	vc/vc.dsw

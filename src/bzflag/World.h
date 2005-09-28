@@ -140,7 +140,7 @@ class World {
     void		checkCollisionManager();
 
     bool		writeWorld(const std::string& filename,
-                                   std::string& fullname);
+				   std::string& fullname);
 
     void		drawCollisionGrid() const;
 
@@ -182,7 +182,7 @@ class World {
     Flag*		flags;
     FlagSceneNode**	flagNodes;
     FlagWarpSceneNode**	flagWarpNodes;
-    
+
     int			drawInfoCount;
     MeshDrawInfo**	drawInfoArray;
 

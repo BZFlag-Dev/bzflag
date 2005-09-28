@@ -111,7 +111,7 @@ ObstacleModifier::ObstacleModifier(const ObstacleModifier& obsMod,
 
   driveThrough = grpinst.driveThrough || obsMod.driveThrough;
   shootThrough = grpinst.shootThrough || obsMod.shootThrough;
-  
+
   return;
 }
 
@@ -158,10 +158,10 @@ void ObstacleModifier::execute(Obstacle* obstacle) const
 	MeshFace* face = (MeshFace*) mesh->getFace(i);
 	if (modifyMaterial) {
 	  face->bzMaterial = material;
-        }
-        if (modifyColor) {
+	}
+	if (modifyColor) {
 	  face->bzMaterial = getTintedMaterial(tint, face->bzMaterial);
-        }
+	}
       }
     }
   }
@@ -203,23 +203,23 @@ void ObstacleModifier::execute(Obstacle* obstacle) const
 
 
 void ObstacleModifier::getMaterialMap(const MaterialSet& matSet,
-                                      MaterialMap& matMap) const
+				      MaterialMap& matMap) const
 {
   matMap.clear();
-  
+
   if (modifyColor || modifyMaterial) {
     MaterialSet::const_iterator it;
     for (it = matSet.begin(); it != matSet.end(); it++) {
       const BzMaterial* origMat = *it;
       const BzMaterial* convMat = *it;
       if (modifyMaterial) {
-        convMat = material;
+	convMat = material;
       }
       if (modifyColor) {
-        convMat = getTintedMaterial(tint, convMat);
+	convMat = getTintedMaterial(tint, convMat);
       }
       if (convMat != origMat) {
-        matMap[origMat] = convMat;
+	matMap[origMat] = convMat;
       }
     }
   }

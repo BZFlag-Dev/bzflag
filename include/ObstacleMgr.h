@@ -138,7 +138,7 @@ class GroupDefinition {
     // This includes the meshes in group definitions, even if
     // they have never been instantiated.
     void getSourceMeshes(std::vector<MeshObstacle*>& meshes) const;
-    
+
     int packSize() const;
     void *pack(void*) const;
     void *unpack(void*);
@@ -199,7 +199,7 @@ class GroupDefinitionMgr {
     void addGroupDef(GroupDefinition* groupdef);
 
     GroupDefinition* findGroupDef(const std::string& name) const;
-    
+
     // Get the list of meshes that came from the world file.
     // This includes the meshes in group definitions, even if
     // they have never been instantiated.

@@ -58,8 +58,8 @@ ScoreboardRenderer::ScoreboardRenderer() :
 				huntSelectEvent(false),
 				huntPositionEvent(0),
 				huntState(HUNT_NONE),
-        huntAddMode(false),
-        numHunted(0)
+	huntAddMode(false),
+	numHunted(0)
 {
   // initialize message color (white)
   messageColor[0] = 1.0f;
@@ -106,19 +106,19 @@ void		ScoreboardRenderer::setSort (int _sortby)
 int			ScoreboardRenderer::getSort ()
 {
   return sortMode;
-}  
+}
 
 void    ScoreboardRenderer::setAlwaysTeamScore (bool _onoff)
 {
   alwaysShowTeamScore = _onoff;
   BZDB.set ("alwaysShowTeamScores", _onoff ? "1" : "0");
 }
-  
+
 bool    ScoreboardRenderer::getAlwaysTeamScore ()
 {
   return alwaysShowTeamScore;
 }
-  
+
 void		ScoreboardRenderer::setMinorFontSize(float height)
 {
   FontManager &fm = FontManager::instance();
@@ -189,14 +189,14 @@ void			ScoreboardRenderer::render(bool forceDisplay)
   if (dim) {
     fm.setOpacity(dimFactor);
   }
-  
+
   if (BZDB.isTrue("displayScore") || forceDisplay){
     OpenGLGState::resetState();
-    renderScoreboard();   
+    renderScoreboard();
   } else if (BZDB.isTrue("alwaysShowTeamScores")){
     OpenGLGState::resetState();
     renderTeamScores(winWidth, winY,
-          FontManager::instance().getStrHeight(minorFontFace, minorFontSize, " "));
+	  FontManager::instance().getStrHeight(minorFontFace, minorFontSize, " "));
   }
 
   if (dim) {
@@ -249,7 +249,7 @@ void			ScoreboardRenderer::huntKeyEvent (bool isAdd)
     } else {
       setHuntState(HUNT_NONE);
     }
-    
+
   } else if (!getHuntAddMode()) {
     setHuntState(HUNT_SELECTING);
     playLocalSound(SFX_HUNT_SELECT);
@@ -362,20 +362,20 @@ void			ScoreboardRenderer::renderCtfFlags (){
   fm.drawString(x, y, 0, minorFontFace, minorFontSize, "Team Flags");
 
   fm.setDimFactor(dimFactor);
-  
+
   for (i=0; i < curMaxPlayers; i++) {
     if ((player = World::getWorld()->getPlayer(i))) {
       FlagType* flagd = player->getFlag();
       TeamColor teamIndex = player->getTeam();
       if (flagd!=Flags::Null && flagd->flagTeam != NoTeam) {   // if player has team flag ...
 	      std::string playerInfo = ColorStrings[flagd->flagTeam];
-        sprintf (flagColor, "%-12s", flagd->flagName);
-        playerInfo += flagColor;
-        playerInfo += ColorStrings[teamIndex];
-        playerInfo += player->getCallSign();
+	sprintf (flagColor, "%-12s", flagd->flagName);
+	playerInfo += flagColor;
+	playerInfo += ColorStrings[teamIndex];
+	playerInfo += player->getCallSign();
 
-        fm.drawString(x, y0, 0, minorFontFace, minorFontSize, playerInfo);
-        y0 -= dy;
+	fm.drawString(x, y0, 0, minorFontFace, minorFontSize, playerInfo);
+	y0 -= dy;
       }
     }
   }
@@ -407,7 +407,7 @@ void			ScoreboardRenderer::renderScoreboard(void)
   Player** players;
   Player*  player;
   bool haveObs = false;
-  
+
   if ( (players = newSortedList (sortMode, true, &numPlayers)) == NULL)
     return;
 
@@ -443,41 +443,41 @@ void			ScoreboardRenderer::renderScoreboard(void)
       setHuntState (HUNT_NONE);
     } else {
       if (players[huntPosition] == myTank){
-        if (huntPositionEvent < 0)
-          --huntPosition;
-        else
-          ++huntPosition;
+	if (huntPositionEvent < 0)
+	  --huntPosition;
+	else
+	  ++huntPosition;
       }
       if (huntPosition>=numPlayers)
-        huntPosition = 0;
+	huntPosition = 0;
       if (huntPosition<0)
-        huntPosition = numPlayers-1;
-      if (huntSelectEvent){             // if 'fire' was pressed ... 
-        if (!huntAddMode)
-          clearHuntedTanks ();
-        if (huntAddMode && players[huntPosition]->isHunted()) {
-  	      players[huntPosition]->setHunted(false);
-          if (--numHunted == 0){
-            huntState = HUNT_NONE;
-            huntAddMode = false;
-           	playLocalSound(SFX_HUNT);
-          } else
-           	playLocalSound(SFX_HUNT_SELECT);
-        } else {
-  	      players[huntPosition]->setHunted(true);
-          if (++numHunted == 1)
-           	playLocalSound(SFX_HUNT);
-          else
-           	playLocalSound(SFX_HUNT_SELECT);
-        }          
-        huntState = HUNT_ENABLED;
+	huntPosition = numPlayers-1;
+      if (huntSelectEvent){	     // if 'fire' was pressed ...
+	if (!huntAddMode)
+	  clearHuntedTanks ();
+	if (huntAddMode && players[huntPosition]->isHunted()) {
+	      players[huntPosition]->setHunted(false);
+	  if (--numHunted == 0){
+	    huntState = HUNT_NONE;
+	    huntAddMode = false;
+		playLocalSound(SFX_HUNT);
+	  } else
+		playLocalSound(SFX_HUNT_SELECT);
+	} else {
+	      players[huntPosition]->setHunted(true);
+	  if (++numHunted == 1)
+		playLocalSound(SFX_HUNT);
+	  else
+		playLocalSound(SFX_HUNT_SELECT);
+	}
+	huntState = HUNT_ENABLED;
       }
     }
   }
 
   huntSelectEvent = false;
   huntPositionEvent = 0;
-  
+
   while ( (player = players[i]) != NULL){
     if (huntState==HUNT_ENABLED && player->isHunted())
       huntPlayerFound = true;
@@ -494,7 +494,7 @@ void			ScoreboardRenderer::renderScoreboard(void)
   }
 
   if (huntState==HUNT_ENABLED && !huntPlayerFound)
-    huntState = HUNT_NONE;        // hunted player must have left the game
+    huntState = HUNT_NONE;	// hunted player must have left the game
 
   delete[] players;
   renderTeamScores(winWidth, y0, dy);
@@ -519,7 +519,7 @@ void			ScoreboardRenderer::drawPlayerScore(const Player* player,
   bool highlightTKratio = false;
   if (tkWarnRatio > 0.0) {
     if (((player->getWins() > 0) && (player->getTKRatio() > tkWarnRatio)) ||
-        ((player->getWins() == 0) && (player->getTeamKills() >= 3))) {
+	((player->getWins() == 0) && (player->getTeamKills() >= 3))) {
       highlightTKratio = true;
     }
   }
@@ -535,7 +535,7 @@ void			ScoreboardRenderer::drawPlayerScore(const Player* player,
 	    highlightTKratio ? ColorStrings[CyanColor].c_str() : "",
 	    player->getTeamKills());
   }
-  
+
   // kills
   if (LocalPlayer::getMyTank() != player) {
     sprintf(kills, "%3d~%-3d", player->getLocalWins(), player->getLocalLosses());
@@ -611,8 +611,8 @@ void			ScoreboardRenderer::drawPlayerScore(const Player* player,
       ||  (flagd == Flags::GuidedMissile)) {
 	      playerInfo += ColorStrings[WhiteColor];
       } else if (flagd->flagTeam != NoTeam) {
-      	// use team color for team flags
-      	playerInfo += ColorStrings[flagd->flagTeam];
+	// use team color for team flags
+	playerInfo += ColorStrings[flagd->flagTeam];
       }
       coloredFlag = true;
     }
@@ -663,20 +663,20 @@ void			ScoreboardRenderer::drawPlayerScore(const Player* player,
     std::string huntStr = ColorStrings[WhiteColor];
     huntStr += "Hunt->";
     fm.drawString(xs - huntedArrowWidth, y, 0, minorFontFace, minorFontSize,
-                  huntStr.c_str());
+		  huntStr.c_str());
   } else if (huntCursor && !huntAddMode) {
     std::string huntStr = ColorStrings[WhiteColor];
     huntStr += ColorStrings[PulsatingColor];
     huntStr += "->";
     fm.drawString(xs - huntArrowWidth, y, 0, minorFontFace, minorFontSize,
-                  huntStr.c_str());
-  } 
+		  huntStr.c_str());
+  }
   if (huntCursor && huntAddMode) {
     std::string huntStr = ColorStrings[WhiteColor];
     huntStr += ColorStrings[PulsatingColor];
     huntStr += "@>";
     fm.drawString(xs - huntPlusesWidth, y, 0, minorFontFace, minorFontSize,
-                  huntStr.c_str());
+		  huntStr.c_str());
   }
 }
 
@@ -686,7 +686,7 @@ Player*   ScoreboardRenderer::getLeader(std::string *label){
   int sortType=sortMode;
 
   if (sortMode==SORT_CALLSIGN || sortMode==SORT_MYRATIO || sortMode==SORT_TEAM){
-    sortType = SORT_SCORE;  
+    sortType = SORT_SCORE;
   }
   if (label != NULL){
     if (sortMode==SORT_TKS)
@@ -699,7 +699,7 @@ Player*   ScoreboardRenderer::getLeader(std::string *label){
   Player** list = newSortedList (sortType, true);
   Player* top = list[0];
   delete[] list;
-  
+
   if (top==NULL || top->getTeam()==ObserverTeam)
     return NULL;
   return top;
@@ -739,7 +739,7 @@ Player **  ScoreboardRenderer::newSortedList (int sortType, bool obsLast, int *_
 {
   LocalPlayer *myTank = LocalPlayer::getMyTank();
   World *world = World::getWorld();
-  
+
   if (!myTank || !world)
     return NULL;
 
@@ -754,9 +754,9 @@ Player **  ScoreboardRenderer::newSortedList (int sortType, bool obsLast, int *_
   for (i=0; i<curMaxPlayers-1; i++) {
     if ((p = world->getPlayer(i))){
       if (obsLast && p->getTeam()==ObserverTeam)
-        sorter[curMaxPlayers - (++numObs)].player = p;
+	sorter[curMaxPlayers - (++numObs)].player = p;
       else
-        sorter[numPlayers++].player = p;
+	sorter[numPlayers++].player = p;
     }
   }
   // add my tank
@@ -770,46 +770,46 @@ Player **  ScoreboardRenderer::newSortedList (int sortType, bool obsLast, int *_
     for (i=0; i<numPlayers; i++){
       p = sorter[i].player;
       switch (sortType){
-        case SORT_TKS:
-          sorter[i].i1 = p->getTeamKills();
-          sorter[i].i2 = 0 - (int)(p->getNormalizedScore() * 100000);
-          break;
-        case SORT_TKRATIO:
-          sorter[i].i1 = (int)(p->getTKRatio() * 1000);
-          sorter[i].i2 = 0 - (int)(p->getNormalizedScore() * 100000);
-          break;
-        case SORT_TEAM: 
-          sorter[i].i1 = p->getTeam();
-          sorter[i].i2 = (int)(p->getNormalizedScore() * 100000);
-          break;
-        case SORT_MYRATIO:
-          if (p == myTank)
-            sorter[i].i1 = -100001;
-          else
-            sorter[i].i1 = 0 - (int)(p->getLocalNormalizedScore() * 100000);
-          sorter[i].i2 = (int)(p->getNormalizedScore() * 100000);
-          break;
-        case SORT_NORMALIZED:
-          sorter[i].i1 = (int)(p->getNormalizedScore() * 100000);
-          sorter[i].i2 = 0;
-          break;
-        case SORT_CALLSIGN:
-          sorter[i].cp = p->getCallSign();
-          break;
-        default:
-          if (world->allowRabbit())
-            sorter[i].i1 = p->getRabbitScore();
-          else
-            sorter[i].i1 = p->getScore();
-          sorter[i].i2 = 0;
-      }    
+	case SORT_TKS:
+	  sorter[i].i1 = p->getTeamKills();
+	  sorter[i].i2 = 0 - (int)(p->getNormalizedScore() * 100000);
+	  break;
+	case SORT_TKRATIO:
+	  sorter[i].i1 = (int)(p->getTKRatio() * 1000);
+	  sorter[i].i2 = 0 - (int)(p->getNormalizedScore() * 100000);
+	  break;
+	case SORT_TEAM:
+	  sorter[i].i1 = p->getTeam();
+	  sorter[i].i2 = (int)(p->getNormalizedScore() * 100000);
+	  break;
+	case SORT_MYRATIO:
+	  if (p == myTank)
+	    sorter[i].i1 = -100001;
+	  else
+	    sorter[i].i1 = 0 - (int)(p->getLocalNormalizedScore() * 100000);
+	  sorter[i].i2 = (int)(p->getNormalizedScore() * 100000);
+	  break;
+	case SORT_NORMALIZED:
+	  sorter[i].i1 = (int)(p->getNormalizedScore() * 100000);
+	  sorter[i].i2 = 0;
+	  break;
+	case SORT_CALLSIGN:
+	  sorter[i].cp = p->getCallSign();
+	  break;
+	default:
+	  if (world->allowRabbit())
+	    sorter[i].i1 = p->getRabbitScore();
+	  else
+	    sorter[i].i1 = p->getScore();
+	  sorter[i].i2 = 0;
+      }
     }
     if (sortType == SORT_CALLSIGN)
       qsort (sorter, numPlayers, sizeof(sortEntry), sortCompareCp);
     else
       qsort (sorter, numPlayers, sizeof(sortEntry), sortCompareI2);
   }
-  
+
   // TODO: Sort obs here (by time joined, when that info is available)
 
   Player** players = new Player *[numPlayers + numObs + 1];
@@ -821,12 +821,12 @@ Player **  ScoreboardRenderer::newSortedList (int sortType, bool obsLast, int *_
 
   if (_numPlayers != NULL)
     *_numPlayers = numPlayers;
-    
+
   delete[] sorter;
   return players;
 }
 
-  
+
 // Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***
