@@ -24,11 +24,11 @@ class BZFlag;
 class Handler : public bz_EventHandler
 {
 public:
-	virtual void process (bz_EventData *eventData) = 0;
-	BZFlag *parent;
+  virtual void process (bz_EventData *eventData) = 0;
+  BZFlag *parent;
 
 protected:
-	void emit (PyObject *arglist, int event);
+  void emit (PyObject *arglist, int event);
 };
 
 #define PY_HANDLER(x) class x : public Handler { public: virtual void process (bz_EventData *eventData); };
@@ -54,3 +54,12 @@ PY_HANDLER(ListServerUpdateHandler)
 };
 
 #endif
+
+// Local Variables: ***
+// mode:C++ ***
+// tab-width: 8 ***
+// c-basic-offset: 2 ***
+// indent-tabs-mode: t ***
+// End: ***
+// ex: shiftwidth=2 tabstop=8
+

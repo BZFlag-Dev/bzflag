@@ -26,3 +26,11 @@ protected:
 };
 #endif //__MASTER_BAN_LIST_H__
 
+// Local Variables: ***
+// mode:C++ ***
+// tab-width: 8 ***
+// c-basic-offset: 2 ***
+// indent-tabs-mode: t ***
+// End: ***
+// ex: shiftwidth=2 tabstop=8
+

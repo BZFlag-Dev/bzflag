@@ -23,13 +23,13 @@ namespace World
 
 typedef struct
 {
-	PyObject_HEAD
+  PyObject_HEAD
 
-	float pos[3];
-	float rot;
-	float scale[3];
-	bool drive_through;
-	bool shoot_through;
+  float pos[3];
+  float rot;
+  float scale[3];
+  bool drive_through;
+  bool shoot_through;
 } Box;
 
 PyObject *CreateBox ();
@@ -38,3 +38,12 @@ PyObject *CreateBox ();
 };
 
 #endif
+
+// Local Variables: ***
+// mode:C++ ***
+// tab-width: 8 ***
+// c-basic-offset: 2 ***
+// indent-tabs-mode: t ***
+// End: ***
+// ex: shiftwidth=2 tabstop=8
+

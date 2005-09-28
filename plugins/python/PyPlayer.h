@@ -21,9 +21,9 @@ namespace Python
 
 typedef struct
 {
-	PyObject_HEAD
+  PyObject_HEAD
 
-	bz_PlayerRecord *record;
+  bz_PlayerRecord *record;
 } Player;
 
 PyObject *CreatePlayer (int id);
@@ -31,3 +31,12 @@ PyObject *CreatePlayer (int id);
 };
 
 #endif
+
+// Local Variables: ***
+// mode:C++ ***
+// tab-width: 8 ***
+// c-basic-offset: 2 ***
+// indent-tabs-mode: t ***
+// End: ***
+// ex: shiftwidth=2 tabstop=8
+

@@ -21,12 +21,21 @@ namespace Python
 class Event
 {
 public:
-	Event ();
-	PyObject *GetSubModule ();
+  Event ();
+  PyObject *GetSubModule ();
 private:
-	PyObject *module;
+  PyObject *module;
 };
 
 };
 
 #endif
+
+// Local Variables: ***
+// mode:C++ ***
+// tab-width: 8 ***
+// c-basic-offset: 2 ***
+// indent-tabs-mode: t ***
+// End: ***
+// ex: shiftwidth=2 tabstop=8
+
