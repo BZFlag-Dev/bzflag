@@ -60,9 +60,6 @@ EXTRA_DIST =			\
 	mountain1.png		\
 	mountain2.png		\
 	mountain3.png		\
-	mountain4.png		\
-	mountain5.png		\
-	mountain6.png		\
 	observer_icon.png	\
 	phantom.wav		\
 	pop.wav			\
