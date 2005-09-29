@@ -425,8 +425,8 @@ void TextureMatrix::update (double t)
   const float uscl = 1.0f + (uratio * (uScale - 1.0f));
   const float vscl = 1.0f + (vratio * (vScale - 1.0f));
   // the shift params
-  const float ushf = fmodf(t * uShiftFreq, 1.0f);
-  const float vshf = fmodf(t * vShiftFreq, 1.0f);
+  const float ushf = (float)fmod(t * (double)uShiftFreq, 1.0);
+  const float vshf = (float)fmod(t * (double)vShiftFreq, 1.0);
 
   shift(partial, -(ushf + uCenter), -(vshf + vCenter));
   spin(partial, -radians);

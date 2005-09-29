@@ -550,7 +550,7 @@ void MeshSceneNode::makeXFormList()
     while (glGetError() != GL_NO_ERROR) {
       errCount++; // avoid a possible spin-lock?
       if (errCount > 666) {
-	DEBUG0("ERROR: MeshSceneNode::makeXFormList() failed\n");
+	DEBUG0("ERROR: MeshSceneNode::makeXFormList() failed1\n");
 	return; // don't make the list, something is borked
       }
     };
@@ -571,6 +571,7 @@ void MeshSceneNode::makeXFormList()
     glEndList();
 
     if (glGetError() != GL_NO_ERROR) {
+      DEBUG0("ERROR: MeshSceneNode::makeXFormList() failed2\n");
       xformList = INVALID_GL_LIST_ID;
     }
   }
