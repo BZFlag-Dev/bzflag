@@ -75,23 +75,15 @@ static s64 getRawTime()
 
 #else //_WIN32
 
-  // FIXME - use QPC if available? (10ms[pat] good enough?)
-  //       - during rollovers, check time() against the
-  //	 current value to see if a rollover was missed?
+  FILETIME ft;
+  LARGE_INTEGER li;
 
-  static s64 offset = ((s64)time(NULL) * (s64)1000000) -
-                      ((s64)timeGetTime() * (s64)1000);
-  static u32 lasttime = (u32)timeGetTime();
+  GetSystemTimeAsFileTime(&ft);
+  li.LowPart  = ft.dwLowDateTime;
+  li.HighPart = ft.dwHighDateTime;
 
-  u32 nowtime = (u32)timeGetTime();
-
-  // we've got 49.71 days to catch the rollovers
-  if (nowtime < lasttime) {
-    // add the rollover value
-    offset += ((s64)(1 << 32));
-  }
-  lasttime = nowtime;
-  return offset + ((s64)nowtime * (s64)1000);
+  /* QuadPart is in 100-nanosecond intervals */
+  return (li.QuadPart / 10);
 
 #endif //_WIN32
 }
