@@ -173,7 +173,7 @@ void GameTime::update()
     calcAvgRate();
     const TimeRecord& tr = *timeRecs.begin();
     const s64 diffTime = stepTime - tr.netTime;
-    if ((llabs(diffTime) > maxTime) ||
+    if ((diffTime < -maxTime) || (diffTime > +maxTime) ||
         (avgRate < minRate) || (avgRate > maxRate)) {
       DEBUG4("GameTime: discontinuity: usecs = %lli, rate = %f\n",
              diffTime, avgRate);
