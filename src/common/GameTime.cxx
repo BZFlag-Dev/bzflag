@@ -197,7 +197,7 @@ void GameTime::setStepTime()
     stepTime = thisStep;
   } else {
     // long term prediction
-    const double diffLocal = thisStep - avgPoint.localTime;
+    const double diffLocal = (double)(thisStep - avgPoint.localTime);
     const double longPred = (double)avgPoint.netTime + (diffLocal * avgRate);
     // short term prediction
     const double skipTime = (double)(thisStep - lastStep);
