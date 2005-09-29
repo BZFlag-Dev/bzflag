@@ -3,6 +3,7 @@
 
 BZFlag 2.0.3
 ------------
+* Automatic team icon - Sean Morrison, Harry Keller
 * Fixed server join bug when cached worlds disappear - Sean Morrison
 * Prevent phantom zoned players from pausing - Sean Morrison
 * Implemented multiple player hunt - Mark Thomas
