@@ -158,6 +158,7 @@ MeshSceneNode::MeshSceneNode(const MeshObstacle* _mesh)
 
   // build the transform display list
   makeXFormList();
+  OpenGLGState::registerContextInitializer(freeContext, initContext, this);
 
   // build gstates and render nodes
   notifyStyleChange();
@@ -180,6 +181,7 @@ MeshSceneNode::~MeshSceneNode()
   }
   delete[] lods;
 
+  OpenGLGState::unregisterContextInitializer(freeContext, initContext, this);
   freeXFormList();
 
   return;
