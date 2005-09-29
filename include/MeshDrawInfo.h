@@ -89,7 +89,7 @@ class MeshDrawInfo {
     const MeshTransform::Tool* getTransformTool() const;
     const MaterialMap* getMaterialMap() const;
 
-    void updateAnimation();
+    void updateAnimation(double time);
     const AnimationInfo* getAnimationInfo() const;
 
     int packSize() const;

@@ -58,6 +58,7 @@
 #include "ObstacleMgr.h"
 #include "BaseBuilding.h"
 #include "AnsiCodes.h"
+#include "GameTime.h"
 
 // only include this if we are going to use plugins and export the API
 #ifdef _USE_BZ_API
@@ -224,7 +225,7 @@ void broadcastMessage(uint16_t code, int len, const void *msg)
 
   // record the packet
   if (Record::enabled()) {
-    Record::addPacket (code, len, msg);
+    Record::addPacket(code, len, msg);
   }
 
   return;
@@ -294,6 +295,55 @@ void sendFlagUpdate(FlagInfo &flag)
   buf = flag.pack(buf, hide);
   broadcastMessage(MsgFlagUpdate, (char*)buf - (char*)bufStart, bufStart);
 }
+
+
+static TimeKeeper lastGameTime = TimeKeeper::getCurrent();
+
+static float nextGameTime()
+{
+  if (Replay::enabled()) {
+    return +MAXFLOAT;
+  }
+  const float elapsed = TimeKeeper::getCurrent() - lastGameTime;
+  return (GameTime::updateRate - elapsed);
+}
+
+static int makeGameTime(void* bufStart)
+{
+  void *buf = bufStart;
+  buf = GameTime::pack(buf);
+  buf = nboPackUInt(buf, 0);
+  buf = nboPackUInt(buf, 0);
+  return ((char*)buf - (char*)bufStart);
+}
+
+static void sendGameTime(int playerIndex)
+{
+  if (Replay::enabled()) {
+    return;
+  }
+  void* buf = getDirectMessageBuffer();
+  const int length = makeGameTime(buf);
+  directMessage(playerIndex, MsgGameTime, length, buf);
+  return;
+}
+
+static void broadcastGameTime()
+{
+  if (Replay::enabled()) {
+    return;
+  }
+  void* buf = getDirectMessageBuffer();
+  const int length = makeGameTime(buf);
+  broadcastMessage(MsgGameTime, length, buf);
+  lastGameTime = TimeKeeper::getCurrent();
+  // record the packet
+  if (Record::enabled()) {
+    Record::addPacket(MsgGameTime, length, buf);
+  }
+  return;
+}
+
 
 // Update the player "playerIndex" with all the flags status
 static void sendFlagUpdate(int playerIndex)
@@ -630,7 +680,7 @@ static void serverStop()
 static void relayPlayerPacket(int index, uint16_t len, const void *rawbuf, uint16_t code)
 {
   if (Record::enabled()) {
-    Record::addPacket (code, len, (char*)rawbuf + 4);
+    Record::addPacket(code, len, (char*)rawbuf + 4);
   }
 
   // relay packet to all players except origin
@@ -892,6 +942,9 @@ static void acceptClient()
   // FIXME add new client server welcome packet here when client code is ready
   new GameKeeper::Player(playerIndex, clientAddr, fd, handleTcp);
 
+  // send the GameTime
+  sendGameTime(playerIndex);
+
   // if game was over and this is the first player then game is on
   if (gameOver) {
     int count = GameKeeper::Player::count();
@@ -1087,7 +1140,7 @@ void sendMessage(int playerIndex, PlayerId dstPlayer, const char *message)
   }
 
   if (Record::enabled() && !broadcast) { // don't record twice
-    Record::addPacket (MsgMessage, len, bufStart, HiddenPacket);
+    Record::addPacket(MsgMessage, len, bufStart, HiddenPacket);
   }
 }
 
@@ -1544,7 +1597,7 @@ static void addPlayer(int playerIndex, GameKeeper::Player *playerData)
     if (result == -1)
       return;
   }
-
+  
   // if first player on team add team's flag
   if (team[teamIndex].team.size == 1
       && Team::isColorTeam((TeamColor)teamIndex)) {
@@ -4307,8 +4360,14 @@ int main(int argc, char **argv)
       if (nextTime < waitTime) {
 	waitTime = nextTime;
       }
+    } else {
+      // game time updates
+      const float nextGT = nextGameTime();
+      if (nextGT < waitTime) {
+        waitTime = nextGT;
+      }
     }
-
+    
     // minmal waitTime
     if (waitTime < 0.0f) {
       waitTime = 0.0f;
@@ -4351,6 +4410,13 @@ int main(int argc, char **argv)
       Replay::sendPackets ();
     }
 
+    // game time updates
+    if (!Replay::enabled()) {
+      if (nextGameTime() < 0.0f) {
+        broadcastGameTime();
+      }
+    }
+    
     // Synchronize PlayerInfo
     tm = TimeKeeper::getCurrent();
     PlayerInfo::setCurrentTime(tm);

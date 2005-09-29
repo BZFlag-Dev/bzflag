@@ -81,6 +81,7 @@ static MsgStringList handleMsgDropFlag(PacketInfo *pi);
 static MsgStringList handleMsgEnter(PacketInfo *pi);
 static MsgStringList handleMsgExit(PacketInfo *pi);
 static MsgStringList handleMsgFlagUpdate(PacketInfo *pi);
+static MsgStringList handleMsgGameTime(PacketInfo *pi);
 static MsgStringList handleMsgGrabFlag(PacketInfo *pi);
 static MsgStringList handleMsgGMUpdate(PacketInfo *pi);
 static MsgStringList handleMsgGetWorld(PacketInfo *pi);
@@ -133,6 +134,7 @@ static PacketListEntry PacketList[] = {
   PACKET_LIST_ENTRY (MsgEnter),
   PACKET_LIST_ENTRY (MsgExit),
   PACKET_LIST_ENTRY (MsgFlagUpdate),
+  PACKET_LIST_ENTRY (MsgGameTime),
   PACKET_LIST_ENTRY (MsgGrabFlag),
   PACKET_LIST_ENTRY (MsgGMUpdate),
   PACKET_LIST_ENTRY (MsgGetWorld),
@@ -1082,6 +1084,15 @@ static MsgStringList handleMsgLagPing (PacketInfo *pi)
   MsgStringList list = listMsgBasics (pi);
   return list;
 }
+
+
+static MsgStringList handleMsgGameTime (PacketInfo *pi)
+{
+  // not recorded
+  MsgStringList list = listMsgBasics (pi);
+  return list;
+}
+
 
 /******************************************************************************/
 

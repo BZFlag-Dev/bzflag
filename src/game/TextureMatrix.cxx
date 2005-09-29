@@ -18,7 +18,7 @@
 #include <string.h>
 
 /* common implemnetation headers */
-#include "TimeKeeper.h"
+#include "GameTime.h"
 #include "Pack.h"
 
 
@@ -55,11 +55,11 @@ void TextureMatrixManager::clear()
 
 void TextureMatrixManager::update()
 {
-  float t = (float)(TimeKeeper::getCurrent() - TimeKeeper::getStartTime());
+  const double gameTime = GameTime::getStepTime();
   std::vector<TextureMatrix*>::iterator it;
   for (it = matrices.begin(); it != matrices.end(); it++) {
     TextureMatrix* texmat = *it;
-    texmat->update(t);
+    texmat->update(gameTime);
   }
   return;
 }
@@ -401,7 +401,7 @@ void TextureMatrix::setDynamicCenter (float u, float v)
 }
 
 
-void TextureMatrix::update (float t)
+void TextureMatrix::update (double t)
 {
   if (!useDynamic) {
     // the matrix has already been setup with the
@@ -416,10 +416,10 @@ void TextureMatrix::update (float t)
   memcpy(partial, partialIdentity, sizeof(float[3][2]));
 
   // the spin params
-  const float radians = fmodf(t * spinFreq, 1.0f) * (float)(M_PI * 2.0);
+  const float radians = (float)(fmod(t * (double)spinFreq, 1.0) * (M_PI * 2.0));
   // the scale params
-  const float urad = fmodf(t * uScaleFreq, 1.0f) * (float)(M_PI * 2.0);
-  const float vrad = fmodf(t * vScaleFreq, 1.0f) * (float)(M_PI * 2.0);
+  const float urad = (float)(fmod(t * (double)uScaleFreq, 1.0) * (M_PI * 2.0));
+  const float vrad = (float)(fmod(t * (double)vScaleFreq, 1.0) * (M_PI * 2.0));
   const float uratio = 0.5f + (0.5f * cosf(urad));
   const float vratio = 0.5f + (0.5f * sinf(vrad));
   const float uscl = 1.0f + (uratio * (uScale - 1.0f));

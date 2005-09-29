@@ -17,6 +17,7 @@ libCommon_la_SOURCES  =			\
 	ErrorHandler.cxx		\
 	FileManager.cxx			\
 	Flag.cxx			\
+	GameTime.cxx			\
 	KeyManager.cxx			\
 	Language.cxx			\
 	OSFile.cxx			\

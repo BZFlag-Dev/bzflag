@@ -19,7 +19,7 @@
 #include <vector>
 
 /* common implementation headers */
-#include "TimeKeeper.h"
+#include "GameTime.h"
 #include "Pack.h"
 
 
@@ -60,11 +60,11 @@ void DynamicColorManager::clear()
 
 void DynamicColorManager::update()
 {
-  float t = (float)(TimeKeeper::getCurrent() - TimeKeeper::getStartTime());
+  const double gameTime = GameTime::getStepTime();
   std::vector<DynamicColor*>::iterator it;
   for (it = colors.begin(); it != colors.end(); it++) {
     DynamicColor* color = *it;
-    color->update(t);
+    color->update(gameTime);
   }
   return;
 }
@@ -358,7 +358,7 @@ void DynamicColor::addClampDown(int channel, const float clampDown[3])
 }
 
 
-void DynamicColor::update (float t)
+void DynamicColor::update (double t)
 {
   for (int c = 0; c < 4; c++) {
     const ChannelParams& channel = channels[c];
@@ -370,13 +370,14 @@ void DynamicColor::update (float t)
     // sequence rules over the clamps
     const sequenceParams& seq = channel.sequence;
     if (seq.count > 0) {
-      const float fullPeriod = (float)seq.count * seq.period;
-      float indexTime = (t - seq.offset);
-      if (indexTime < 0.0f) {
-	indexTime -= fullPeriod * floorf(indexTime / fullPeriod);
+      const double seqPeriod = (double)seq.period;
+      const double fullPeriod = (double)seq.count * seqPeriod;
+      double indexTime = (t - (double)seq.offset);
+      if (indexTime < 0.0) {
+	indexTime -= fullPeriod * floor(indexTime / fullPeriod);
       }
-      indexTime = fmodf (indexTime, fullPeriod);
-      const unsigned int index = (unsigned int)(indexTime / seq.period);
+      indexTime = fmod (indexTime, fullPeriod);
+      const unsigned int index = (unsigned int)(indexTime / seqPeriod);
       if (seq.list[index] == colorMin) {
 	clampDown = true;
       }
@@ -388,12 +389,13 @@ void DynamicColor::update (float t)
       // check for active clampUp
       for (i = 0; i < channel.clampUps.size(); i++) {
 	const clampParams& clamp = channel.clampUps[i];
-	float upTime = (t - clamp.offset);
-	if (upTime < 0.0f) {
-	  upTime -= clamp.period * floorf(upTime / clamp.period);
+	double upTime = (t - (double)clamp.offset);
+	const double clampPeriod = (double)clamp.period;
+	if (upTime < 0.0) {
+	  upTime -= (double)clamp.period * floor(upTime / clampPeriod);
 	}
-	upTime = fmodf (upTime, clamp.period);
-	if (upTime < clamp.width) {
+	upTime = fmod (upTime, clampPeriod);
+	if (upTime < (double)clamp.width) {
 	  clampUp = true;
 	  break;
 	}
@@ -402,12 +404,13 @@ void DynamicColor::update (float t)
       // check for active clampDown
       for (i = 0; i < channel.clampDowns.size(); i++) {
 	const clampParams& clamp = channel.clampDowns[i];
-	float downTime = (t - clamp.offset);
-	if (downTime < 0.0f) {
-	  downTime -= clamp.period * floorf(downTime / clamp.period);
+	double downTime = (t - (double)clamp.offset);
+	const double clampPeriod = (double)clamp.period;
+	if (downTime < 0.0) {
+	  downTime -= clampPeriod * floor(downTime / clampPeriod);
 	}
-	downTime = fmodf (downTime, clamp.period);
-	if (downTime < clamp.width) {
+	downTime = fmod (downTime, clampPeriod);
+	if (downTime < (double)clamp.width) {
 	  clampDown = true;
 	  break;
 	}
@@ -432,7 +435,9 @@ void DynamicColor::update (float t)
       float value = 0.0f;
       for (i = 0; i < channel.sinusoids.size(); i++) {
 	const sinusoidParams& s = channel.sinusoids[i];
-	value += s.weight * cosf (((t - s.offset) / s.period) * (float)(M_PI * 2.0));
+	const double phase = ((t - (double)s.offset) / (double)s.period);
+	const double clampedPhase = fmod(phase, 1.0);
+	value += s.weight * (float)cos(clampedPhase * (M_PI * 2.0));
       }
       // center the factor
       factor = 0.5f + (0.5f * value);

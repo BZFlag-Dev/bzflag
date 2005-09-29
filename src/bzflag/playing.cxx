@@ -106,6 +106,7 @@
 #include "AresHandler.h"
 #include "cURLManager.h"
 #include "ServerList.h"
+#include "GameTime.h"
 
 //#include "messages.h"
 #include "Downloads.h"
@@ -1940,6 +1941,12 @@ static void		handleServerMessage(bool human, uint16_t code,
       break;
     }
 
+    case MsgGameTime: {
+      GameTime::unpack(msg);
+      GameTime::update();
+      break;
+    }
+
     case MsgTimeUpdate: {
       int32_t timeLeft;
       msg = nboUnpackInt(msg, timeLeft);
@@ -3042,7 +3049,7 @@ static void		handlePlayerMessage(uint16_t code, uint16_t,
       break;
     }
 
-      // just echo lag ping message
+    // just echo lag ping message
     case MsgLagPing:
       serverLink->send(MsgLagPing,2,msg);
       break;
@@ -4700,6 +4707,7 @@ static void joinInternetGame(const struct in_addr *inAddress)
   sendFlagNegotiation();
   joiningGame = true;
   scoreboard->huntReset();
+  GameTime::reset();
 }
 
 
@@ -5794,6 +5802,9 @@ static void		playingLoop()
   while (!CommandsStandard::isQuit()) {
 
     BZDBCache::update();
+
+    // set this step game time
+    GameTime::setStepTime();
 
     // get delta time
     TimeKeeper prevTime = TimeKeeper::getTick();

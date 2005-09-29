@@ -472,7 +472,6 @@ bool MeshDrawInfo::clientSetup(const MeshObstacle* mesh)
   // sort the lods
   qsort(lods, lodCount, sizeof(DrawLod), compareLengthPerPixel);
 
-
   return true;
 }
 
@@ -527,13 +526,10 @@ bool MeshDrawInfo::isInvisible() const
 
 /******************************************************************************/
 
-void MeshDrawInfo::updateAnimation()
+void MeshDrawInfo::updateAnimation(double time)
 {
   if (animInfo != NULL) {
-    const TimeKeeper nowTk = TimeKeeper::getCurrent();
-    const TimeKeeper thenTk = TimeKeeper::getStartTime();
-    const float diffTime = (float)(nowTk - thenTk);
-    const float angle = fmodf(animInfo->angvel * diffTime, 360.0f);
+    const float angle = (float)fmod((double)animInfo->angvel * time, 360.0);
     const float radians = angle * (float)(M_PI / 180.0);
     animInfo->angle = angle;
     animInfo->cos_val = cosf(radians);
@@ -645,7 +641,6 @@ static bool parseCorner(std::istream& input, Corner& corner)
 
 static bool parseDrawCmd(std::istream& input, const std::string& mode,
 			 DrawCmd& cmd)
-
 {
   // parse the draw mode
   std::map<std::string, unsigned int>::const_iterator it;

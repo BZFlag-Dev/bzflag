@@ -890,7 +890,6 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       options.printScore = true;
 #endif
     } else if (strcmp(argv[i], "-public") == 0) {
-      checkFromWorldFile(argv[i], fromWorldFile);
       checkArgc(1, i, argc, argv[i]);
       options.publicizeServer = true;
       options.publicizedTitle = argv[i];

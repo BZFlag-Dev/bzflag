@@ -60,7 +60,7 @@ class DynamicColor {
     void addClampDown(int channel, const float clampDown[3]);
 
     void finalize();
-    void update(float time);
+    void update(double time);
 
     bool canHaveAlpha() const;
     const float* getColor() const;

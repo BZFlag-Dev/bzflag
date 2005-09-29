@@ -38,6 +38,7 @@
 #include "MeshDrawInfo.h"
 #include "MeshDrawMgr.h"
 #include "DirectoryNames.h"
+#include "GameTime.h"
 
 // local implementation headers
 #include "playing.h"
@@ -572,9 +573,10 @@ void			World::freeMeshDrawMgrs()
 
 void			World::updateAnimations(float /*dt*/)
 {
+  const double gameTime = GameTime::getStepTime();
   for (int i = 0; i < drawInfoCount; i++) {
     MeshDrawInfo* di = drawInfoArray[i];
-    di->updateAnimation();
+    di->updateAnimation(gameTime);
   }
   return;
 }

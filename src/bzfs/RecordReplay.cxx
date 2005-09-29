@@ -47,6 +47,7 @@ typedef __int64 s64;
 // common headers
 #include "global.h"
 #include "Pack.h"
+#include "GameTime.h"
 #include "StateDatabase.h"
 #include "DirectoryNames.h"
 #include "NetHandler.h"
@@ -175,6 +176,7 @@ static bool saveFlagsState();
 static bool saveRabbitState();
 static bool savePlayersState();
 static bool saveVariablesState();
+static bool saveGameTimeState();
 static bool resetStates();
 
 static bool setVariables(void *data);
@@ -1493,7 +1495,8 @@ static bool saveStates()
   saveFlagsState();
   savePlayersState();
   saveRabbitState();
-
+  saveGameTimeState();
+  
   RecordUpdateTime = getRRtime();
 
   return true;
@@ -1692,6 +1695,16 @@ static bool saveVariablesState()
     nboPackUShort(pvd.bufStart, pvd.count);
     routePacket(MsgSetVar, pvd.len, pvd.bufStart, StatePacket);
   }
+  return true;
+}
+
+
+static bool saveGameTimeState()
+{
+  char buffer[MaxPacketLen];
+  void* buf = GameTime::pack(buffer);
+  int length = (char*)buf - buffer;
+  routePacket(MsgGameTime, length, buffer, StatePacket);
   return true;
 }
 
