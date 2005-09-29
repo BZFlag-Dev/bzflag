@@ -156,12 +156,17 @@ void MeshDrawMgr::disableArrays()
 
 void MeshDrawMgr::makeLists()
 {
+  GLenum error;
   int errCount = 0;
   // reset the error state
-  while (glGetError() != GL_NO_ERROR) {
+  while (true) {
+    error = glGetError();
+    if (error == GL_NO_ERROR) {
+      break;
+    }
     errCount++; // avoid a possible spin-lock?
     if (errCount > 666) {
-      DEBUG1("MeshDrawMgr::makeLists() glError\n");
+      DEBUG1("MeshDrawMgr::makeLists() glError: %i\n", error);
       return; // don't make the lists, something is borked
     }
   };
@@ -173,8 +178,9 @@ void MeshDrawMgr::makeLists()
       disableArrays();
     }
     glEndList();
-    if (glGetError() != GL_NO_ERROR) {
-      DEBUG1("MeshDrawMgr::makeLists() glError\n");
+    error = glGetError();
+    if (error != GL_NO_ERROR) {
+      DEBUG1("MeshDrawMgr::makeLists() unloadList: %i\n", error);
       unloadList = INVALID_GL_LIST_ID;
     }
   }
@@ -199,8 +205,10 @@ void MeshDrawMgr::makeLists()
 	}
 	glEndList();
 
-	if (glGetError() != GL_NO_ERROR) {
-	  DEBUG1("MeshDrawMgr::makeLists() %i/%i glError\n", lod, set);
+        error = glGetError();
+	if (error != GL_NO_ERROR) {
+	  DEBUG1("MeshDrawMgr::makeLists() %i/%i glError: %i\n",
+                 lod, set, error);
 	  lodLists[lod].setLists[set] = INVALID_GL_LIST_ID;
 	} else {
 	  DEBUG3("MeshDrawMgr::makeLists() %i/%i created\n", lod, set);

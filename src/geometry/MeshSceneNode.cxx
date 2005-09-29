@@ -543,14 +543,19 @@ void MeshSceneNode::updateMaterial(MeshSceneNode::MeshMaterial* mat)
 
 void MeshSceneNode::makeXFormList()
 {
+  GLenum error;
   const MeshTransform::Tool* xformTool = drawInfo->getTransformTool();
   if (xformTool != NULL) {
     int errCount = 0;
     // reset the error state
-    while (glGetError() != GL_NO_ERROR) {
+    while (true) {
+      error = glGetError();
+      if (error == GL_NO_ERROR) {
+        break;
+      }
       errCount++; // avoid a possible spin-lock?
       if (errCount > 666) {
-	DEBUG0("ERROR: MeshSceneNode::makeXFormList() failed1\n");
+	DEBUG0("ERROR: MeshSceneNode::makeXFormList() glError: %i\n", error);
 	return; // don't make the list, something is borked
       }
     };
@@ -570,8 +575,9 @@ void MeshSceneNode::makeXFormList()
     }
     glEndList();
 
-    if (glGetError() != GL_NO_ERROR) {
-      DEBUG0("ERROR: MeshSceneNode::makeXFormList() failed2\n");
+    error = glGetError();
+    if (error != GL_NO_ERROR) {
+      DEBUG0("ERROR: MeshSceneNode::makeXFormList() failed: %i\n", error);
       xformList = INVALID_GL_LIST_ID;
     }
   }
