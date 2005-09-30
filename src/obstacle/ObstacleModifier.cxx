@@ -121,7 +121,7 @@ ObstacleModifier::ObstacleModifier(const ObstacleModifier& obsMod,
         MaterialMap::const_iterator find_it;
         find_it = obsMod.matMap.find(it->second);
         if (find_it != obsMod.matMap.end()) {
-          matMap[find_it->first] = it->second;
+          matMap[it->first] = find_it->second;
         } else {
           matMap[it->first] = it->second;
         }
