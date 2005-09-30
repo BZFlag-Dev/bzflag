@@ -289,6 +289,25 @@ void*			nboUnpackStdString(void* b, std::string& str)
   return b;
 }
 
+void*			nboUnpackStdStringRaw(void* b, std::string& str)
+{
+  uint32_t strSize;
+  b = nboUnpackUInt(b, strSize);
+  char* buffer = new char[strSize + 1];
+  b = nboUnpackString(b, buffer, strSize);
+  buffer[strSize] = 0;
+  str.resize(strSize);
+  for (uint32_t i = 0; i < strSize; i++) {
+    str[i] = buffer[i];
+  }
+  delete[] buffer;
+  if (ErrorChecking && Error) {
+    str = "";
+    return b;
+  }
+  return b;
+}
+
 
 //
 // Utilities

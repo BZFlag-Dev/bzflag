@@ -23,6 +23,7 @@
 // common headers
 #include "ObstacleList.h"
 #include "MeshTransform.h"
+#include "BzMaterial.h"
 
 // avoid nasty dependencies
 class Obstacle;
@@ -36,7 +37,6 @@ class ConeObstacle;
 class SphereObstacle;
 class TetraBuilding;
 class ObstacleModifier;
-class BzMaterial;
 
 
 //
@@ -62,6 +62,8 @@ class GroupInstance {
     void setMaterial(const BzMaterial*);
     void setDriveThrough();
     void setShootThrough();
+    void addMaterialSwap(const BzMaterial* src,
+                         const BzMaterial* dst);
 
     const std::string& getName() const;
 
@@ -89,6 +91,7 @@ class GroupInstance {
     const BzMaterial* material;
     bool driveThrough;
     bool shootThrough;
+    MaterialMap matMap;
 };
 
 

@@ -157,6 +157,14 @@ void GroupInstance::setShootThrough()
 }
 
 
+void GroupInstance::addMaterialSwap(const BzMaterial* srcMat,
+                                    const BzMaterial* dstMat)
+{
+  matMap[srcMat] = dstMat;
+  return;
+}                                    
+
+
 const std::string& GroupInstance::getGroupDef() const
 {
   return groupdef;
@@ -172,7 +180,34 @@ const MeshTransform& GroupInstance::getTransform() const
 void* GroupInstance::pack(void* buf)
 {
   buf = nboPackStdString(buf, groupdef);
-  buf = nboPackStdString(buf, name);
+
+  if (matMap.size() <= 0) {
+    buf = nboPackStdString(buf, name);
+  } else {
+    // hack to stuff in material map data
+    std::string fakeString = name;
+    const unsigned int origSize = fakeString.size();
+    const unsigned int fakeSize = 
+      (1 + sizeof(int32_t) + (matMap.size() * 2 * sizeof(int32_t)));
+    fakeString.resize(origSize + fakeSize);
+    char buffer[fakeSize];
+    void* p;
+    int count = matMap.size();
+    p = nboPackUByte(buffer, 0); // terminate
+    p = nboPackInt(p, count);
+    MaterialMap::const_iterator it;
+    for (it = matMap.begin(); it != matMap.end(); it++) {
+      int srcIndex = MATERIALMGR.getIndex(it->first);
+      int dstIndex = MATERIALMGR.getIndex(it->second);
+      p = nboPackInt(p, srcIndex);
+      p = nboPackInt(p, dstIndex);
+    }
+    for (unsigned int i = 0; i < fakeSize; i++) {
+      fakeString[origSize + i] = buffer[i];
+    }
+    buf = nboPackStdString(buf, fakeString);
+  }
+
   buf = transform.pack(buf);
 
   uint8_t bits = 0;
@@ -206,7 +241,28 @@ void* GroupInstance::pack(void* buf)
 void* GroupInstance::unpack(void* buf)
 {
   buf = nboUnpackStdString(buf, groupdef);
-  buf = nboUnpackStdString(buf, name);
+
+  buf = nboUnpackStdStringRaw(buf, name);
+  if (strlen(name.c_str()) != name.size()) {
+    // hack to extract material map data
+    void* p = (void*)(name.c_str() + strlen(name.c_str()) + 1);
+    nboUseErrorChecking(false);
+    {
+      int32_t count;
+      p = nboUnpackInt(p, count);
+      for (int i = 0; i < count; i++) {
+        int32_t srcIndex, dstIndex;
+        p = nboUnpackInt(p, srcIndex);
+        p = nboUnpackInt(p, dstIndex);
+        const BzMaterial* srcMat = MATERIALMGR.getMaterial(srcIndex);
+        const BzMaterial* dstMat = MATERIALMGR.getMaterial(dstIndex);
+        matMap[srcMat] = dstMat;
+      }
+    }
+    nboUseErrorChecking(true);
+    name.resize(strlen(name.c_str())); // clean up the name
+  }
+
   buf = transform.unpack(buf);
 
   uint8_t bits;
@@ -246,7 +302,14 @@ int GroupInstance::packSize()
 {
   int fullSize = 0;
   fullSize += nboStdStringPackSize(groupdef);
+
   fullSize += nboStdStringPackSize(name);
+  if (matMap.size() > 0) {
+    fullSize += 1; // terminator
+    fullSize += sizeof(int32_t); // count;
+    fullSize += matMap.size() * 2 * sizeof(int32_t);
+  }
+
   fullSize += transform.packSize();
   fullSize += sizeof(uint8_t);
   if (modifyTeam) {
@@ -299,6 +362,17 @@ void GroupInstance::print(std::ostream& out, const std::string& indent) const
     MATERIALMGR.printReference(out, material);
     out << std::endl;
   }
+  else if (matMap.size() > 0) {
+    MaterialMap::const_iterator it;
+    for (it = matMap.begin(); it != matMap.end(); it++) {
+      out << indent << "  matswap ";
+      MATERIALMGR.printReference(out, it->first);
+      out << " ";
+      MATERIALMGR.printReference(out, it->second);
+      out << std::endl;
+    }
+  }
+  
   if (driveThrough) {
     out << indent << "  driveThrough " << phydrv << std::endl;
   }

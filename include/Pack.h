@@ -45,6 +45,7 @@ extern void* nboUnpackFloat(void*, float&);
 extern void* nboUnpackVector(void*, float*);
 extern void* nboUnpackString(void*, void*, int len);
 extern void* nboUnpackStdString(void*, std::string& str);
+extern void* nboUnpackStdStringRaw(void*, std::string& str);
 
 extern unsigned int nboStdStringPackSize(const std::string& str);
 

@@ -41,6 +41,7 @@ class ObstacleModifier {
     int phydrv;
     bool modifyMaterial; // swaps the whole thing
     const BzMaterial* material;
+    MaterialMap matMap;
 
     bool driveThrough;
     bool shootThrough;

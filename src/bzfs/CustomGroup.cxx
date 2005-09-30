@@ -88,6 +88,37 @@ bool CustomGroup::read(const char *cmd, std::istream& input) {
       group->setMaterial(matref);
     }
   }
+  else if (strcasecmp(cmd, "matref") == 0) {
+    std::string materialName;
+    if (!(input >> materialName)) {
+      std::cout << "missing matref parameter" << std::endl;
+    }
+    const BzMaterial* matref = MATERIALMGR.findMaterial(materialName);
+    if ((matref == NULL) && (materialName != "-1")) {
+      std::cout << "couldn't find reference material: " << materialName
+		<< std::endl;
+    } else {
+      group->setMaterial(matref);
+    }
+  }
+  else if (strcasecmp(cmd, "matswap") == 0) {
+    std::string srcName;
+    std::string dstName;
+    if (!(input >> srcName) || !(input >> dstName)) {
+      std::cout << "missing matswap parameter" << std::endl;
+    }
+    const BzMaterial* srcMat = MATERIALMGR.findMaterial(srcName);
+    const BzMaterial* dstMat = MATERIALMGR.findMaterial(dstName);
+    if (srcMat == NULL) {
+      std::cout << "couldn't find matswap source: " << srcName
+		<< std::endl;
+    } else if (dstMat == NULL) {
+      std::cout << "couldn't find matswap destination: " << dstName
+		<< std::endl;
+    } else {
+      group->addMaterialSwap(srcMat, dstMat);
+    }
+  }
   else if (!WorldFileObstacle::read(cmd, input)) {
     return false;
   }
