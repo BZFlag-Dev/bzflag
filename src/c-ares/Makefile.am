@@ -38,9 +38,6 @@ libcares_la_SOURCES =		\
 	setup.h 		\
 	windows_port.c
 
-libcares_la_LIBADD = @WINPORT@
-libcares_la_DEPENDENCIES = @WINPORT@
-
 EXTRA_DIST = \
 	ares.h			\
 	CHANGES			\
