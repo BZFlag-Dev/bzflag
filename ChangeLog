@@ -2,7 +2,8 @@
 			     ====================
 
 BZFlag 2.0.4  "Shiny" (2005-09-30)
-------------
+----------------------------------
+
 * Automatic team icon - Sean Morrison, Harry Keller
 * Fixed server join bug when cached worlds disappear - Sean Morrison
 * Prevent phantom zoned players from pausing - Sean Morrison
