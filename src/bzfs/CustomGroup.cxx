@@ -88,19 +88,6 @@ bool CustomGroup::read(const char *cmd, std::istream& input) {
       group->setMaterial(matref);
     }
   }
-  else if (strcasecmp(cmd, "matref") == 0) {
-    std::string materialName;
-    if (!(input >> materialName)) {
-      std::cout << "missing matref parameter" << std::endl;
-    }
-    const BzMaterial* matref = MATERIALMGR.findMaterial(materialName);
-    if ((matref == NULL) && (materialName != "-1")) {
-      std::cout << "couldn't find reference material: " << materialName
-		<< std::endl;
-    } else {
-      group->setMaterial(matref);
-    }
-  }
   else if (strcasecmp(cmd, "matswap") == 0) {
     std::string srcName;
     std::string dstName;
