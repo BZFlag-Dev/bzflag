@@ -40,7 +40,7 @@
 #endif
 
 #ifndef BZ_REV
-#  define BZ_REV		3
+#  define BZ_REV		4
 #endif
 
 // DEVEL | STABLE | MAINT
