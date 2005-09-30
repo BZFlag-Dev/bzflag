@@ -1398,17 +1398,21 @@ static Player*		addPlayer(PlayerId id, void* msg, int showMessage)
   // permission.  if * we do, MsgAdminInfo should arrive
   // with more info.
   if (showMessage && !myTank->hasPlayerList ()) {
-    std::string message ("joining as a");
-    switch (PlayerType (type)) {
-      case TankPlayer:
-	message += " tank";
-	break;
-      case ComputerPlayer:
-	message += " robot tank";
-	break;
-      default:
-	message += "n unknown type";
-	break;
+    std::string message ("joining as ");
+    if (team == ObserverTeam) {
+      message += "an observer";
+    } else {
+      switch (PlayerType (type)) {
+        case TankPlayer:
+          message += "a tank";
+          break;
+        case ComputerPlayer:
+          message += "a robot tank";
+          break;
+        default:
+          message += "an unknown type";
+          break;
+      }
     }
     if (!player[i]) {
       std::string name (callsign);
@@ -2916,17 +2920,21 @@ static void		handleServerMessage(bool human, uint16_t code,
 	}
 
 	std::string name(tank->getCallSign());
-	std::string message("joining as a");
-	switch (tank->getPlayerType()) {
-	  case TankPlayer:
-	    message += " tank";
-	    break;
-	  case ComputerPlayer:
-	    message += " robot tank";
-	    break;
-	  default:
-	    message += "n unknown type";
-	    break;
+	std::string message("joining as ");
+	if (tank->getTeam() == ObserverTeam) {
+	  message += "an observer";
+	} else {
+          switch (tank->getPlayerType()) {
+            case TankPlayer:
+              message += "a tank";
+              break;
+            case ComputerPlayer:
+              message += "a robot tank";
+              break;
+            default:
+              message += "an unknown type";
+              break;
+          }
 	}
 	message += " from " + ip.getDotNotation();
 
