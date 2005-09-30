@@ -363,7 +363,7 @@ void MeshSceneNode::notifyStyleChange()
 
       if (!mat.needsSorting) {
         setNode.node =
-          new OpaqueRenderNode(drawMgr, xformList, normalize,
+          new OpaqueRenderNode(drawMgr, &xformList, normalize,
                                mat.colorPtr, lod, set, extPtr);
         mat.animRepos = false;
       } else {
@@ -373,7 +373,7 @@ void MeshSceneNode::notifyStyleChange()
           xformTool->modifyVertex(setPos);
         }
         setNode.node =
-          new AlphaGroupRenderNode(drawMgr, xformList, normalize,
+          new AlphaGroupRenderNode(drawMgr, &xformList, normalize,
                                    mat.colorPtr, lod, set, extPtr, setPos);
         if ((fabsf(drawSet.sphere[0]) > 0.001f) &&
             (fabsf(drawSet.sphere[1]) > 0.001f) &&
@@ -386,7 +386,7 @@ void MeshSceneNode::notifyStyleChange()
       }
 
       setNode.radarNode =
-        new OpaqueRenderNode(drawMgr, xformList, normalize,
+        new OpaqueRenderNode(drawMgr, &xformList, normalize,
                              mat.colorPtr, lod, set, extPtr);
     }
   }

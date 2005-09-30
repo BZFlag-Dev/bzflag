@@ -31,7 +31,7 @@
 
 
 OpaqueRenderNode::OpaqueRenderNode(MeshDrawMgr* _drawMgr,
-				   GLuint _xformList, bool _normalize,
+				   GLuint* _xformList, bool _normalize,
 				   const GLfloat* _color,
 				   int _lod, int _set,
 				   const Extents* _exts)
@@ -57,9 +57,9 @@ void OpaqueRenderNode::render()
   myColor4fv(color);
 
   // do the transformation
-  if (xformList != INVALID_GL_LIST_ID) {
+  if (*xformList != INVALID_GL_LIST_ID) {
     glPushMatrix();
-    glCallList(xformList);
+    glCallList(*xformList);
   }
   if (normalize) {
     glEnable(GL_NORMALIZE);
@@ -72,7 +72,7 @@ void OpaqueRenderNode::render()
   if (normalize) {
     glDisable(GL_NORMALIZE);
   }
-  if (xformList != INVALID_GL_LIST_ID) {
+  if (*xformList != INVALID_GL_LIST_ID) {
     glPopMatrix();
   }
 
@@ -85,12 +85,12 @@ void OpaqueRenderNode::render()
 
 void OpaqueRenderNode::renderRadar()
 {
-  if (xformList != INVALID_GL_LIST_ID) {
+  if (*xformList != INVALID_GL_LIST_ID) {
     glPushMatrix();
-    glCallList(xformList);
+    glCallList(*xformList);
   }
   drawMgr->executeSet(lod, set, false, false);
-  if (xformList != INVALID_GL_LIST_ID) {
+  if (*xformList != INVALID_GL_LIST_ID) {
     glPopMatrix();
   }
   return;
@@ -99,12 +99,12 @@ void OpaqueRenderNode::renderRadar()
 
 void OpaqueRenderNode::renderShadow()
 {
-  if (xformList != INVALID_GL_LIST_ID) {
+  if (*xformList != INVALID_GL_LIST_ID) {
     glPushMatrix();
-    glCallList(xformList);
+    glCallList(*xformList);
   }
   drawMgr->executeSet(lod, set, false, false);
-  if (xformList != INVALID_GL_LIST_ID) {
+  if (*xformList != INVALID_GL_LIST_ID) {
     glPopMatrix();
   }
   return;
@@ -114,7 +114,7 @@ void OpaqueRenderNode::renderShadow()
 /******************************************************************************/
 
 AlphaGroupRenderNode::AlphaGroupRenderNode(MeshDrawMgr* _drawMgr,
-					   GLuint _xformList,
+					   GLuint* _xformList,
 					   bool _normalize,
 					   const GLfloat* _color,
 					   int _lod, int _set,
