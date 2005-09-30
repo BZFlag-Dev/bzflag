@@ -318,8 +318,6 @@ static int makeGameTime(void* bufStart, float lag)
 {
   void *buf = bufStart;
   buf = GameTime::pack(buf, lag);
-  buf = nboPackUInt(buf, 0);
-  buf = nboPackUInt(buf, 0);
   return ((char*)buf - (char*)bufStart);
 }
 
