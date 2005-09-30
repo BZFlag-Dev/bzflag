@@ -190,7 +190,7 @@ void* GroupInstance::pack(void* buf)
     const unsigned int fakeSize = 
       (1 + sizeof(int32_t) + (matMap.size() * 2 * sizeof(int32_t)));
     fakeString.resize(origSize + fakeSize);
-    char buffer[fakeSize];
+    char* buffer = new char[fakeSize];
     void* p;
     int count = matMap.size();
     p = nboPackUByte(buffer, 0); // terminate
@@ -205,6 +205,7 @@ void* GroupInstance::pack(void* buf)
     for (unsigned int i = 0; i < fakeSize; i++) {
       fakeString[origSize + i] = buffer[i];
     }
+    delete[] buffer;
     buf = nboPackStdString(buf, fakeString);
   }
 
