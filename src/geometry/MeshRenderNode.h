@@ -50,8 +50,8 @@ class OpaqueRenderNode : public RenderNode {
 
 class AlphaGroupRenderNode : public OpaqueRenderNode {
   public:
-    AlphaGroupRenderNode(MeshDrawMgr* drawMgr, GLuint* xformList,
-                         bool normalize,
+    AlphaGroupRenderNode(MeshDrawMgr* drawMgr,
+                         GLuint* xformList, bool normalize,
 			 const GLfloat* color, int lod, int set,
 			 const Extents* exts, const float pos[3]);
     const GLfloat* getPosition() const { return pos; }
