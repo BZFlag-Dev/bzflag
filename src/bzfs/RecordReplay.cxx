@@ -1701,10 +1701,17 @@ static bool saveVariablesState()
 
 static bool saveGameTimeState()
 {
+  // FIXME: the packets that are sent out during replay will not
+  //        be properly lag compensated for the connections over
+  //        which they are sent.
+  //        - provide GameTime with an offset capability
+  //        - allow resetting of players' next GameTime update
+  //          (and do so during a replay state update)
+  //        - send GameTime packets out regardless of replay state
   char buffer[MaxPacketLen];
-  void* buf = GameTime::pack(buffer);
+  void* buf = GameTime::pack(buffer, 0.150f);
   int length = (char*)buf - buffer;
-  routePacket(MsgGameTime, length, buffer, StatePacket);
+  routePacket(MsgGameTime, length, buffer, RealPacket);
   return true;
 }
 

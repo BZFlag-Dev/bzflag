@@ -297,49 +297,56 @@ void sendFlagUpdate(FlagInfo &flag)
 }
 
 
-static TimeKeeper lastGameTime = TimeKeeper::getCurrent();
-
 static float nextGameTime()
 {
-  if (Replay::enabled()) {
-    return +MAXFLOAT;
+  float nextTime = +MAXFLOAT;
+  const TimeKeeper nowTime = TimeKeeper::getCurrent();
+  for (int i = 0; i < curMaxPlayers; i++) {
+    GameKeeper::Player *gkPlayer = GameKeeper::Player::getPlayerByIndex(i);
+    if (gkPlayer != NULL) {
+      const TimeKeeper& pTime = gkPlayer->getNextGameTime();
+      const float pNextTime = pTime - nowTime;
+      if (pNextTime < nextTime) {
+        nextTime = pNextTime;
+      }
+    }
   }
-  const float elapsed = TimeKeeper::getCurrent() - lastGameTime;
-  return (GameTime::updateRate - elapsed);
+  return nextTime;
 }
 
-static int makeGameTime(void* bufStart)
+static int makeGameTime(void* bufStart, float lag)
 {
   void *buf = bufStart;
-  buf = GameTime::pack(buf);
+  buf = GameTime::pack(buf, lag);
   buf = nboPackUInt(buf, 0);
   buf = nboPackUInt(buf, 0);
   return ((char*)buf - (char*)bufStart);
 }
 
-static void sendGameTime(int playerIndex)
+static void sendGameTime(GameKeeper::Player* gkPlayer)
 {
   if (Replay::enabled()) {
     return;
   }
-  void* buf = getDirectMessageBuffer();
-  const int length = makeGameTime(buf);
-  directMessage(playerIndex, MsgGameTime, length, buf);
+  if (gkPlayer != NULL) {
+    void* buf = getDirectMessageBuffer();
+    const float lag = gkPlayer->lagInfo.getLagAvg();
+    const int length = makeGameTime(buf, lag);
+    directMessage(*gkPlayer, MsgGameTime, length, buf);
+    gkPlayer->updateNextGameTime();
+  }
   return;
 }
 
-static void broadcastGameTime()
+static void sendPendingGameTime()
 {
-  if (Replay::enabled()) {
-    return;
-  }
-  void* buf = getDirectMessageBuffer();
-  const int length = makeGameTime(buf);
-  broadcastMessage(MsgGameTime, length, buf);
-  lastGameTime = TimeKeeper::getCurrent();
-  // record the packet
-  if (Record::enabled()) {
-    Record::addPacket(MsgGameTime, length, buf);
+  const TimeKeeper nowTime = TimeKeeper::getCurrent();
+  for (int i = 0; i < curMaxPlayers; i++) {
+    GameKeeper::Player *gkPlayer = GameKeeper::Player::getPlayerByIndex(i);
+    if ((gkPlayer != NULL) &&
+        (gkPlayer->getNextGameTime() - nowTime) < 0.0f) {
+      sendGameTime(gkPlayer);
+    }
   }
   return;
 }
@@ -943,7 +950,11 @@ static void acceptClient()
   new GameKeeper::Player(playerIndex, clientAddr, fd, handleTcp);
 
   // send the GameTime
-  sendGameTime(playerIndex);
+  GameKeeper::Player* gkPlayer =
+    GameKeeper::Player::getPlayerByIndex(playerIndex);
+  if (gkPlayer != NULL) {
+    sendGameTime(gkPlayer);
+  }
 
   // if game was over and this is the first player then game is on
   if (gameOver) {
@@ -4412,9 +4423,7 @@ int main(int argc, char **argv)
 
     // game time updates
     if (!Replay::enabled()) {
-      if (nextGameTime() < 0.0f) {
-        broadcastGameTime();
-      }
+      sendPendingGameTime();
     }
     
     // Synchronize PlayerInfo

@@ -397,6 +397,7 @@ int NetHandler::pwrite(const void *b, int l) {
     case MsgPlayerUpdateSmall:
     case MsgGMUpdate:
     case MsgLagPing:
+    case MsgGameTime:
       udpSend(b, l);
       return 0;
     }

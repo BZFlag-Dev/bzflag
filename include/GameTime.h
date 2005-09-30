@@ -30,10 +30,11 @@ namespace GameTime {
   double getStepTime();
 
   int packSize();
-  void* pack(void *);
+  void* pack(void *, float lag);
   void* unpack(void *);
   
-  const float updateRate = 10.0f;
+  const float startRate = 1.0f;
+  const float finalRate = 10.0f;
 }
 
 

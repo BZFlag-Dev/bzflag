@@ -27,9 +27,12 @@ public:
   /** Resetting lag value
   */
   void	reset();
-  /** Getting lag value
+  /** Getting lag value (in milliseconds)
   */
   int	getLag() const;
+  /** Get the floating point value of the lag (in seconds)
+  */
+  float	getLagAvg() const;
   /** Get a printable version of lag statistics
   */
   void	getLagStats(char* msg) const;

@@ -34,6 +34,11 @@ int LagInfo::getLag() const
   return int(lagavg * 1000);
 }
 
+float LagInfo::getLagAvg() const
+{
+  return lagavg;
+}
+
 void LagInfo::getLagStats(char* msg) const
 {
   msg[0] = 0;

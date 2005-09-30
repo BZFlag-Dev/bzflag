@@ -221,10 +221,16 @@ int GameTime::packSize()
 }
 
 
-void* GameTime::pack(void *buf)
+void* GameTime::pack(void *buf, float lag)
 {
-  const s64 nowTime = getRawTime();
-//  const s64 nowTime = getRawTime() + (s64)((bzfrand() - 0.5) * 2.0e6);
+  double halfLag;
+  if ((lag <= 0.0f) || (lag > 10.0f)) {
+    // assume a 150ms delay
+    halfLag = 0.075;
+  } else {
+    halfLag = (double)(lag * 0.5f);
+  }
+  const s64 nowTime = getRawTime() + (s64)(halfLag * 1e6);
   buf = nboPackUInt(buf, (u32)(nowTime >> 32));		// msb's
   buf = nboPackUInt(buf, (u32)(nowTime & 0xFFFFFFFF));	// lsb's
   return buf;

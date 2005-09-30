@@ -17,8 +17,12 @@
 #include <vector>
 #include <string>
 
+/* common headers */
+#include "GameTime.h"
+
 // players list FIXME should be resized based on maxPlayers
 extern PlayerState      lastState[PlayerSlot];
+
 
 GameKeeper::Player *GameKeeper::Player::playerList[PlayerSlot] = {NULL};
 bool		GameKeeper::Player::allNeedHostbanChecked  = false;
@@ -53,6 +57,8 @@ GameKeeper::Player::Player(int _playerIndex,
   lastState.order  = 0;
   // Timestamp 0.0 -> not yet available
   stateTimeStamp   = 0.0f;
+  gameTimeRate = GameTime::startRate;
+  gameTimeNext = TimeKeeper::getCurrent();
   netHandler       = new NetHandler(&player, clientAddr, playerIndex, fd);
 #if defined(USE_THREADS)
   int result = pthread_create(&thread, NULL, tcpRx, (void *)this);
@@ -149,6 +155,20 @@ int GameKeeper::Player::anointRabbit(int oldRabbit)
 	}
       }
   return rabbitIndex;
+}
+
+void GameKeeper::Player::updateNextGameTime()
+{
+  if (gameTimeRate < GameTime::startRate) {
+    gameTimeRate = GameTime::startRate;
+  } else if (gameTimeRate < GameTime::finalRate) {
+    gameTimeRate = gameTimeRate * 1.25f;
+  } else {
+    gameTimeRate = GameTime::finalRate;
+  }
+  gameTimeNext = TimeKeeper::getCurrent();
+  gameTimeNext += gameTimeRate;
+  return;   
 }
 
 void *GameKeeper::Player::packAdminInfo(void *buf)

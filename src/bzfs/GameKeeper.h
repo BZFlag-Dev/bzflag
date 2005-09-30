@@ -26,6 +26,7 @@
 // common interface headers
 #include "PlayerInfo.h"
 #include "PlayerState.h"
+#include "TimeKeeper.h"
 
 // implementation-specific bzfs-specific headers
 #include "CmdLineOptions.h"
@@ -94,6 +95,10 @@ public:
     void	   getPlayerState(float pos[3], float &azimuth);
     void	   setPlayerState(PlayerState state, float timestamp);
 
+    // When is the player's next GameTime?
+    const TimeKeeper&	getNextGameTime() const;
+    void		updateNextGameTime();
+    
     enum LSAState
       {
 	start,
@@ -108,30 +113,33 @@ public:
       } _LSAState;
 
     // players
-    PlayerInfo	player;
+    PlayerInfo	      player;
     // Net Handler
     NetHandler       *netHandler;
     // player lag info
-    LagInfo	   lagInfo;
+    LagInfo	      lagInfo;
     // player access
     PlayerAccessInfo  accessInfo;
     // Last known position, vel, etc
     PlayerState       lastState;
-    float	     stateTimeStamp;
+    float	      stateTimeStamp;
+    // GameTime update
+    float	      gameTimeRate;
+    TimeKeeper	      gameTimeNext;
     // FlagHistory
     FlagHistory       flagHistory;
     // Score
-    Score	     score;
+    Score	      score;
     Authentication    authentication;
   private:
     static Player    *playerList[PlayerSlot];
-    int	       playerIndex;
+    int		      playerIndex;
     bool	      closed;
     tcpCallback       clientCallback;
 #if defined(USE_THREADS)
-    pthread_t	 thread;
+    pthread_t		   thread;
     static pthread_mutex_t mutex;
-    int	       refCount;
+    int			   refCount;
 #endif
     bool	      needThisHostbanChecked;
     // In case you want recheck all condition on all players
@@ -197,6 +205,11 @@ inline void GameKeeper::Player::setNeedThisHostbanChecked(bool set)
 inline bool GameKeeper::Player::needsHostbanChecked()
 {
   return (allNeedHostbanChecked || needThisHostbanChecked);
+}
+
+inline const TimeKeeper& GameKeeper::Player::getNextGameTime() const
+{
+  return gameTimeNext;
 }
 
 #endif
