@@ -136,7 +136,7 @@ BZFlag 2.0.0  "Falcor's Despair" (2005-01-17)
 * Observer counts and match times added to game queries - David Vuorio
 * Central authentication - Tim Riker
 * Avoid transfer flag cheat - Alfredo Tupone
-* Cheat client flag obfusca'ion and hiding - Alfredo Tupone
+* Cheat client flag obfuscation and hiding - Alfredo Tupone
 * Added strong authentication via Kerberos - Alfredo Tupone
 * BZFlag renders frames and accepts commands during joining - Alfredo Tupone
 * Lag is computed only after entering game - Alfredo Tupone
@@ -197,7 +197,7 @@ BZFlag 2.0.0  "Falcor's Despair" (2005-01-17)
 * Faster startup times by making the SceneDatabase on the fly - Anonymous
 * Autocompletion for commands & callsigns (ala bzadmin) - Ian Agar, Frank Thilo
 * /clientquery can now be requested on single individuals - Ian Agar
-* Added support for irc-like /me actions and /msg messages - Sean'Morrison
+* Added support for irc-like /me actions and /msg messages - Sean Morrison
 * Seer flag now can see Invisible Bullets - Anonymous
 * Added admin message sounds - Cameron Mandrake, Sean Morrison
 * Better shot reflections for non-square pyramids - Anonymous
@@ -268,7 +268,7 @@ BZFlag 1.10.6  "the little hop" (2004-05-14)
 * Fixed issue of players add/removing others from groups - Alfredo Tupone
 * Fixed false positive filter matches involving apostrophes - Sean Morrison
 * Curing ghost/duplicated/ungetable flag - Alfredo Tupone
-* Fixed 0 height flag, 'o more flags inside buildings - Alfredo Tupone
+* Fixed 0 height flag, no more flags inside buildings - Alfredo Tupone
 * Observers see Masquerade tank with their true color - Alfredo Tupone
 * Password file now supports callsigns with non alphanumerics  - Alfredo Tupone
 * Support for building BZAdmin with PDCurses on Windows - Daniel Remenak
@@ -331,7 +331,7 @@ BZFlag 1.10.4  "not a smurf" (2004-01-24)
 * Menu uses its own image for the arrow, menu_arrow.png - Jeff Myers
 * Rename team based datafiles to have the team in the name - Jeff Myers
 * Map objects search for colored textures and use them if found - Jeff Myers
-* Bases search for colored team textures and use them if found - 'eff Myers
+* Bases search for colored team textures and use them if found - Jeff Myers
 * Added object-specified texture support for tanks & maps - Jeff Myers
 * Menu Arrow supports animations - Jeff Myers
 * Base wall and top textures - Jeff Myers
@@ -411,7 +411,7 @@ BZFlag 1.10.0  "Break the world" (2003-12-09 was 1.9.x)
 * bzfs uses 1 port instead of 2 - Alfredo Tupone
 * bzflag is officially assigned port 5154 as default - IANA, Tim Riker
 * bots (-solo) game is by far more playable - Alfredo Tupone
-* Added clien'-side chat filtering - Sean Morrison
+* Added client-side chat filtering - Sean Morrison
 * Configuration files and cache is stored in ~/.bzf/ on *IX - Lars Luthman
 * Added team ID to shots for TK reasons (1.9.2) - Jeff Myers
 * Changed version numbers to be xx.xx.xx and display the build OS & Date
@@ -576,7 +576,7 @@ BZFlag 1.7e6  "Armoured Smashing Fist" (2002-06-19 was 1.7e5)
 * -pr for reconnect port (two port tcp) - Tim Riker
 
 
-BZFlag 1.7e4 (2001-11-27 was '.7e3)
+BZFlag 1.7e4 (2001-11-27 was 1.7e3)
 -----------------------------------
 
 * ::memset() instead of bzero() - Björn Augustsson
