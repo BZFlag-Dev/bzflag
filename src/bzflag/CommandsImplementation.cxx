@@ -391,7 +391,19 @@ bool LocalSetCommand::operator() (const char *commandLine)
 {
   std::string params = commandLine + 9;
   std::vector<std::string> tokens = TextUtils::tokenize(params, " ", 2);
-  if (tokens.size() == 2) {
+  if (tokens.size() == 1) {
+    const std::string name = tokens[0];
+    char message[MessageLen];
+    if (!BZDB.isSet(name)) {
+      sprintf(message, "/localset %s: not defined", name.c_str());
+    } else {
+      sprintf(message, "/localset %s%s %s%f %s%s",
+              ColorStrings[RedColor].c_str(), name.c_str(),
+              ColorStrings[GreenColor].c_str(), BZDB.eval(name),
+              ColorStrings[BlueColor].c_str(), BZDB.get(name).c_str());
+    }
+    addMessage(LocalPlayer::getMyTank(), message, 2);
+  } else if (tokens.size() == 2) {
     if (!(BZDB.getPermission(tokens[0]) == StateDatabase::Server)) {
       BZDB.setPersistent(tokens[0], BZDB.isPersistent(tokens[0]));
       BZDB.set(tokens[0], tokens[1]);
