@@ -5,16 +5,21 @@ MAINTAINERCLEANFILES = \
 
 AM_CPPFLAGS = -I$(top_srcdir)/include $(CURL_CFLAGS) -DINSIDE_BZ
 
+if BUILD_PLUGINS
+plugin_files = bzfsPlugins.h bzfsPlugins.cxx
+else
+plugin_files =
+endif
+
 bzfs_LDFLAGS = -export-dynamic
 bzfs_SOURCES = \
+	${plugin_files}	\
 	AccessControlList.cxx \
 	AccessControlList.h \
-	Authentication.cxx	\
-	Authentication.h	\
-	bzfsAPI.cxx		\
-	bzfsPlugins.h	\
-	bzfsPlugins.cxx	\
-	BanCommands.cxx		\
+	Authentication.cxx \
+	Authentication.h \
+	BanCommands.cxx \
+	bzfsAPI.cxx \
 	BZWError.cxx \
 	BZWError.h \
 	BZWReader.cxx \

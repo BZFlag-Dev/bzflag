@@ -1452,7 +1452,12 @@ BZF_API bool bz_registerCustomPluginHandler ( const char* extension, bz_APIPlugi
 
 	std::string ext = extension;
 
+#ifdef _USE_BZ_API
 	return registerCustomPluginHandler( ext,handler);
+#else
+	std::cerr << "This BZFlag server does not support plugins." << std::endl;
+	return false;
+#endif
 }
 
 BZF_API bool bz_removeCustomPluginHandler ( const char* extension, bz_APIPluginHandler *handler )
@@ -1462,7 +1467,12 @@ BZF_API bool bz_removeCustomPluginHandler ( const char* extension, bz_APIPluginH
 
 	std::string ext = extension;
 
+#ifdef _USE_BZ_API
 	return removeCustomPluginHandler( ext,handler);
+#else
+	std::cerr << "This BZFlag server does not support plugins." << std::endl;
+	return false;
+#endif
 }
 
 // team info
