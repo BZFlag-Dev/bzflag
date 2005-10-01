@@ -30,6 +30,7 @@
 #include "Player.h"
 #include "Roster.h"
 #include "playing.h"
+#include "bzglob.h"
 
 // externs for RoamPos command
 extern float roamPos[3], roamTheta, roamPhi, roamZoom;
@@ -288,7 +289,22 @@ bool HighlightCommand::operator() (const char *commandLine)
 }
 
 
-static bool foundVarDiff = false;
+static bool foundVar = false;
+
+class VarDispInfo {
+  public:
+    VarDispInfo(const std::string& _prefix)
+    { 
+      prefix = _prefix;
+      pattern = "";
+      diff = client = server = false;
+    }
+    std::string prefix;
+    std::string pattern;
+    bool diff;
+    bool client;
+    bool server;
+};
 
 static float parseFloatExpr(const std::string& str, bool zeroNan)
 {
@@ -333,27 +349,32 @@ static bool varIsEqual(const std::string& name)
   }
 }
 
-static void listSetVars(const std::string& name, void* boolPtr)
+static void listSetVars(const std::string& name, void* varDispPtr)
 {
-  bool& diff = *((bool*)boolPtr);
-
-  if (diff) {
-    if (varIsEqual(name)) {
-      return;
-    } else {
-      foundVarDiff = true;
-    }
+  const VarDispInfo* varDisp = (VarDispInfo*)varDispPtr;
+  const bool diff = varDisp->diff;
+  
+  if (!glob_match(varDisp->pattern.c_str(), name)) {
+    return;
   }
 
+  if (diff && varIsEqual(name)) {
+    return;
+  }
+
+  foundVar = true;
+  
+  const bool serverVar = (BZDB.getPermission(name) == StateDatabase::Locked);
+
   char message[MessageLen];
-  if (BZDB.getPermission(name) == StateDatabase::Locked) {
+  if ((serverVar && varDisp->server) || (!serverVar && varDisp->client)) {
     if (BZDBCache::colorful) {
-      sprintf(message, "/set %s%s %s%f %s%s",
+      sprintf(message, "%s %s%s %s%f %s%s", varDisp->prefix.c_str(),
 	      ColorStrings[RedColor].c_str(), name.c_str(),
 	      ColorStrings[GreenColor].c_str(), BZDB.eval(name),
 	      ColorStrings[BlueColor].c_str(), BZDB.get(name).c_str());
     } else {
-      sprintf(message, "/set %s <%f> %s", name.c_str(),
+      sprintf(message, "%s %s <%f> %s", name.c_str(), varDisp->prefix.c_str(),
 	      BZDB.eval(name), BZDB.get(name).c_str());
     }
     addMessage(LocalPlayer::getMyTank(), message, 2);
@@ -363,25 +384,61 @@ static void listSetVars(const std::string& name, void* boolPtr)
 
 bool SetCommand::operator() (const char *commandLine)
 {
-  if (strlen(commandLine) != 4) {
+  std::string params = commandLine + 4;
+  std::vector<std::string> tokens = TextUtils::tokenize(params, " ", 2);
+  if (tokens.size() > 1) {
     return false;
   }
-  bool diff = false;
-  BZDB.iterate(listSetVars, &diff);
+  
+  std::string pattern = (tokens.size() == 1) ? tokens[0] : "_*";
+  if (pattern[0] != '_') {
+    pattern = '_' + pattern;
+  }
+  
+  const std::string header = "/set " + pattern;
+  addMessage(LocalPlayer::getMyTank(), header, 2);
+
+  VarDispInfo varDisp(commandName);
+  varDisp.server = true;
+  varDisp.pattern = pattern;
+  
+  foundVar = false;
+  BZDB.iterate(listSetVars, &varDisp);
+  if (!foundVar) {
+    addMessage(LocalPlayer::getMyTank(), "no matching variables", 2);
+  }
   return true;
 }
 
 
 bool DiffCommand::operator() (const char *commandLine)
 {
-  if (strlen(commandLine) != 5) {
-    return false;
+  std::string params = commandLine + 5;
+  std::vector<std::string> tokens = TextUtils::tokenize(params, " ", 2);
+
+  std::string pattern = (tokens.size() == 1) ? tokens[0] : "_*";
+  if (pattern[0] != '_') {
+    pattern = '_' + pattern;
   }
-  bool diff = true;
-  foundVarDiff = false;
-  BZDB.iterate(listSetVars, &diff);
-  if (!foundVarDiff) {
-    addMessage(LocalPlayer::getMyTank(), "all variables are at defaults", 2);
+
+  const std::string header = "/diff " + pattern;
+  addMessage(LocalPlayer::getMyTank(), header, 2);
+
+  VarDispInfo varDisp(commandName);
+  varDisp.diff = true;
+  varDisp.server = true;
+  varDisp.pattern = pattern;
+
+  foundVar = false;
+  BZDB.iterate(listSetVars, &varDisp);
+  if (!foundVar) {
+    if (pattern == "_*") {
+      addMessage(LocalPlayer::getMyTank(),
+        "all variables are at defaults", 2);
+    } else {
+      addMessage(LocalPlayer::getMyTank(),
+        "no differing variables with that pattern", 2);
+    }
   }
   return true;
 }
@@ -391,19 +448,47 @@ bool LocalSetCommand::operator() (const char *commandLine)
 {
   std::string params = commandLine + 9;
   std::vector<std::string> tokens = TextUtils::tokenize(params, " ", 2);
-  if (tokens.size() == 1) {
-    const std::string name = tokens[0];
-    char message[MessageLen];
-    if (!BZDB.isSet(name)) {
-      sprintf(message, "/localset %s: not defined", name.c_str());
+#ifdef DEBUG  
+  const bool debug = true;
+#else
+  const bool debug = false;
+#endif
+
+  if (tokens.size() == 0) {
+    if (debug) {
+      addMessage(NULL, "usage: /localset <pattern> [value]");
     } else {
-      sprintf(message, "/localset %s%s %s%f %s%s",
-              ColorStrings[RedColor].c_str(), name.c_str(),
-              ColorStrings[GreenColor].c_str(), BZDB.eval(name),
-              ColorStrings[BlueColor].c_str(), BZDB.get(name).c_str());
+      addMessage(NULL, "usage: /localset <variable> [value]");
     }
-    addMessage(LocalPlayer::getMyTank(), message, 2);
-  } else if (tokens.size() == 2) {
+  }
+  else if (tokens.size() == 1) {
+    const std::string header = "/localset " + tokens[0];
+    addMessage(LocalPlayer::getMyTank(), header, 2);
+
+    if (!debug &&
+        ((strstr(tokens[0].c_str(), "*") != NULL) ||
+         (strstr(tokens[0].c_str(), "?") != NULL))) {
+      addMessage(LocalPlayer::getMyTank(), "undefined client variable", 2);
+      return true;
+    }
+
+    VarDispInfo varDisp(commandName);
+    varDisp.client = true;
+    varDisp.pattern = tokens[0];
+
+    foundVar = false;
+    BZDB.iterate(listSetVars, &varDisp);
+    if (!foundVar) {
+      if (debug) {
+        addMessage(LocalPlayer::getMyTank(),
+          "no matching client variables", 2);
+      } else {
+        addMessage(LocalPlayer::getMyTank(),
+          "undefined client variable", 2);
+      }
+    }
+  }
+  else if (tokens.size() == 2) {
     if (!(BZDB.getPermission(tokens[0]) == StateDatabase::Server)) {
       BZDB.setPersistent(tokens[0], BZDB.isPersistent(tokens[0]));
       BZDB.set(tokens[0], tokens[1]);
@@ -413,8 +498,6 @@ bool LocalSetCommand::operator() (const char *commandLine)
       addMessage (NULL, "This is a server-defined variable. "
 			"Use /set instead of /localset.");
     }
-  } else {
-    addMessage(NULL, "usage: /localset <variable> <value>");
   }
   return true;
 }

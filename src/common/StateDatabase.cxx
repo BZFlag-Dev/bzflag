@@ -831,8 +831,10 @@ std::string& operator >> (std::string& src, StateDatabase::Expression& dst)
     while (src[0] == ' ' || src[0] == '\t') {
       src = src.substr(1);
     }
-    src >> temp;
-    dst.push_back(temp);
+    if (src.length() != 0) {
+      src >> temp;
+      dst.push_back(temp);
+    }
   }
   return src;
 }
