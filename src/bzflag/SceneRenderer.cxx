@@ -52,6 +52,8 @@
 #include "TrackMarks.h"
 
 
+static bool setupMapFog();
+
 
 #ifdef GL_ABGR_EXT
 static int		strrncmp(const char* s1, const char* s2, int num)
@@ -743,6 +745,13 @@ void SceneRenderer::render(bool _lastFrame, bool _sameFrame,
     teleporterProximity = LocalPlayer::getMyTank()->getTeleporterProximity();
   }
 
+  // fog setup
+  const bool mapFog = setupMapFog();
+  const bool reallyUseFogHack = !mapFog && useFogHack &&
+                                (useQualityValue >= 2);
+  if (reallyUseFogHack) {
+    renderPreDimming();
+  }
 
   mirror = (BZDB.get(StateDatabase::BZDB_MIRROR) != "none")
 	   && BZDB.isTrue("userMirror");
@@ -774,12 +783,6 @@ void SceneRenderer::render(bool _lastFrame, bool _sameFrame,
     frustum.flipVertical();
     glFrontFace(GL_CCW);
 
-    // darken the reflection
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
-
     float mirrorColor[4];
     if (!parseColorString(BZDB.get(StateDatabase::BZDB_MIRROR), mirrorColor)) {
       mirrorColor[0] = mirrorColor[1] = mirrorColor[2] = 0.0f;
@@ -794,19 +797,51 @@ void SceneRenderer::render(bool _lastFrame, bool _sameFrame,
       mirrorColor[3] = 0.2f;
     }
 
-    // if low quality then use stipple -- it's probably much faster
-    if (BZDBCache::blend && (useQualityValue >= 2)) {
-      glColor4fv(mirrorColor);
-      glEnable(GL_BLEND);
-      glRectf(-1.0f, -1.0f, +1.0f, +1.0f);
-      glDisable(GL_BLEND);
+    // darken the reflection
+    if (!mapFog) {
+      glMatrixMode(GL_PROJECTION);
+      glLoadIdentity();
+      glMatrixMode(GL_MODELVIEW);
+      glLoadIdentity();
+      // if low quality then use stipple -- it's probably much faster
+      if (BZDBCache::blend && (useQualityValue >= 2)) {
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glEnable(GL_BLEND);
+        glColor4fv(mirrorColor);
+        glRectf(-1.0f, -1.0f, +1.0f, +1.0f);
+        glDisable(GL_BLEND);
+      } else {
+        float stipple = mirrorColor[3];
+        glColor3fv(mirrorColor);
+        OpenGLGState::setStipple(stipple);
+        glEnable(GL_POLYGON_STIPPLE);
+        glRectf(-1.0f, -1.0f, +1.0f, +1.0f);
+        glDisable(GL_POLYGON_STIPPLE);
+      }
     } else {
-      float stipple = mirrorColor[3];
-      glColor3fv(mirrorColor);
-      OpenGLGState::setStipple(stipple);
-      glEnable(GL_POLYGON_STIPPLE);
-      glRectf(-1.0f, -1.0f, +1.0f, +1.0f);
-      glDisable(GL_POLYGON_STIPPLE);
+      // need the proper matrices for fog generation
+      // if low quality then use stipple -- it's probably much faster
+      frustum.executeView();
+      frustum.executeProjection();
+      const float extent = BZDBCache::worldSize * 10.0f;
+      if (BZDBCache::blend && (useQualityValue >= 2)) {
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glEnable(GL_BLEND);
+        glColor4fv(mirrorColor);
+        glRectf(-extent, -extent, +extent, +extent);
+        glDisable(GL_BLEND);
+      } else {
+        float stipple = mirrorColor[3];
+        glColor3fv(mirrorColor);
+        OpenGLGState::setStipple(stipple);
+        glEnable(GL_POLYGON_STIPPLE);
+        glRectf(-extent, -extent, +extent, +extent);
+        glDisable(GL_POLYGON_STIPPLE);
+      }
+      glMatrixMode(GL_PROJECTION);
+      glLoadIdentity();
+      glMatrixMode(GL_MODELVIEW);
+      glLoadIdentity();
     }
 
     clearZbuffer = false;
@@ -814,6 +849,18 @@ void SceneRenderer::render(bool _lastFrame, bool _sameFrame,
 
   // the real scene
   renderScene(_lastFrame, _sameFrame, fullWindow);
+  
+  // finalize dimming
+  if (mapFog) {
+    glDisable(GL_FOG);
+  }
+  if (reallyUseFogHack) {
+    if ((teleporterProximity > 0.0f) || useDimming) {
+      glDisable(GL_FOG);
+    }
+  } else {
+    renderPostDimming();
+  }
 
   return;
 }
@@ -845,14 +892,7 @@ void SceneRenderer::renderScene(bool /*_lastFrame*/, bool /*_sameFrame*/,
     theSun.enableLight(SunLight, true);
   }
 
-  bool reallyUseFogHack = useFogHack && (useQualityValue >= 2);
-
-  if (reallyUseFogHack) {
-    renderPreDimming();
-  }
-
   // set scissor
-
   glScissor(window->getOriginX(), window->getOriginY() + window->getHeight() - window->getViewHeight(),
       window->getWidth(), window->getViewHeight());
 
@@ -998,15 +1038,6 @@ void SceneRenderer::renderScene(bool /*_lastFrame*/, bool /*_sameFrame*/,
   }
   glPopMatrix();
 
-  // finalize dimming
-  if (reallyUseFogHack) {
-    if ((teleporterProximity > 0.0f) || useDimming) {
-      glDisable(GL_FOG);
-    }
-  } else {
-    renderPostDimming();
-  }
-
   // do depth complexity
   if (useDepthComplexityOn) {
     renderDepthComplexity();
@@ -1061,8 +1092,9 @@ void SceneRenderer::renderPreDimming()
     glFogf(GL_FOG_END, (1.0f - density) * 1000.0f * worldSize);
     glFogfv(GL_FOG_COLOR, dimnessColor);
     glEnable(GL_FOG);
+    glHint(GL_FOG_HINT, GL_FASTEST);
   }
-  else if (teleporterProximity > 0.0f && useFogHack) {
+  else if (teleporterProximity > 0.0f) {
     const float density = (teleporterProximity > 0.75f) ? 1.0f
 			  : (teleporterProximity / 0.75f);
     glFogi(GL_FOG_MODE, GL_LINEAR);
@@ -1070,8 +1102,62 @@ void SceneRenderer::renderPreDimming()
     glFogf(GL_FOG_END, (1.0f - density) * 1000.0f * worldSize);
     glFogfv(GL_FOG_COLOR, blindnessColor);
     glEnable(GL_FOG);
+    glHint(GL_FOG_HINT, GL_FASTEST);
   }
+
   return;
+}
+
+
+static bool setupMapFog()
+{
+  std::string fogModeStr;
+  if ((BZDB.get(StateDatabase::BZDB_FOGMODE) == "none") ||
+      !BZDB.isTrue("fogEffect")) {
+    glDisable(GL_FOG);
+    glHint(GL_FOG_HINT, GL_FASTEST);
+    return false;
+  }
+  
+  GLenum fogMode = GL_EXP;
+  GLfloat fogDensity = 0.001f;
+  GLfloat fogStart = 0.5f * BZDBCache::worldSize;
+  GLfloat fogEnd = BZDBCache::worldSize;
+  GLfloat fogColor[4] = {0.25f, 0.25f, 0.25f, 0.25f};
+
+  // parse the values;
+  const std::string modeStr = BZDB.get("_fogMode");
+  if (modeStr == "linear") {
+    fogMode = GL_LINEAR;
+  } else if (modeStr == "exp") {
+    fogMode = GL_EXP;
+  } else if (modeStr == "exp2") {
+    fogMode = GL_EXP2;
+  } else {
+    fogMode = GL_EXP;
+  }
+  fogDensity = BZDB.eval(StateDatabase::BZDB_FOGDENSITY);
+  fogStart = BZDB.eval(StateDatabase::BZDB_FOGSTART);
+  fogEnd = BZDB.eval(StateDatabase::BZDB_FOGEND);
+  if (!parseColorString(BZDB.get(StateDatabase::BZDB_FOGCOLOR), fogColor)) {
+    fogColor[0] = fogColor[1] = fogColor[2] = 0.1f;
+    fogColor[3] = 0.0f; // has no effect
+  }
+  if (BZDB.isTrue("fogFast")) {
+    glHint(GL_FOG_HINT, GL_FASTEST);
+  } else {
+    glHint(GL_FOG_HINT, GL_NICEST);
+  }
+  
+  // setup GL fog
+  glFogi(GL_FOG_MODE, fogMode);
+  glFogf(GL_FOG_DENSITY, fogDensity);
+  glFogf(GL_FOG_START, fogStart);
+  glFogf(GL_FOG_END, fogEnd);
+  glFogfv(GL_FOG_COLOR, fogColor);
+  glEnable(GL_FOG);
+
+  return true;
 }
 
 

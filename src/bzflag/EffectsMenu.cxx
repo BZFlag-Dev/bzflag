@@ -75,6 +75,17 @@ EffectsMenu::EffectsMenu()
   option->update();
   listHUD.push_back(option);
 
+  // Fog Effect
+  option = new HUDuiList;
+  option->setFontFace(fontFace);
+  option->setLabel("Fog:");
+  option->setCallback(callback, (void*)"F");
+  options = &option->getList();
+  options->push_back(std::string("Off"));
+  options->push_back(std::string("On"));
+  option->update();
+  listHUD.push_back(option);
+
   // Display Treads
   option = new HUDuiList;
   option->setFontFace(fontFace);
@@ -297,7 +308,7 @@ void EffectsMenu::resize(int _width, int _height)
   for (i = 1; i < count; i++) {
     listHUD[i]->setFontSize(fontSize);
     listHUD[i]->setPosition(x, y);
-    if ((i == 2) || (i == 4) || (i == 6)) {
+    if ((i == 3) || (i == 5) || (i == 7)) {
       y -= 1.75f * h;
     } else {
       y -= 1.0f * h;
@@ -309,6 +320,7 @@ void EffectsMenu::resize(int _width, int _height)
   ((HUDuiList*)listHUD[i++])->setIndex(int((BZDB.eval("userRainScale")
 					    * 10.0f) + 0.5f));
   ((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("userMirror") ? 1 : 0);
+  ((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("fogEffect") ? 1 : 0);
   ((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("showTreads") ? 1 : 0);
   int treadIndex = 0;
   if (BZDB.isTrue("animatedTreads")) {
@@ -355,6 +367,10 @@ void EffectsMenu::callback(HUDuiControl* w, void* data)
     }
     case 'm': {
       BZDB.set("userMirror", list->getIndex() ? "1" : "0");
+      break;
+    }
+    case 'F': {
+      BZDB.set("fogEffect", list->getIndex() ? "1" : "0");
       break;
     }
     case 'T': {

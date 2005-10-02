@@ -223,6 +223,11 @@ public:
   static const std::string	BZDB_FLAGPOLEWIDTH;
   static const std::string	BZDB_FLAGPOLESIZE;
   static const std::string	BZDB_FLAGRADIUS;
+  static const std::string	BZDB_FOGMODE;
+  static const std::string	BZDB_FOGDENSITY;
+  static const std::string	BZDB_FOGSTART;
+  static const std::string	BZDB_FOGEND;
+  static const std::string	BZDB_FOGCOLOR;
   static const std::string	BZDB_GMACTIVATIONTIME;
   static const std::string	BZDB_GMADLIFE;
   static const std::string	BZDB_GMTURNANGLE;

@@ -146,6 +146,7 @@ DefaultDBItem	defaultDBItems[] = {
   { "gmPuffTime",		"1/8",			true,	StateDatabase::ReadWrite,	NULL },
   { "ricoEffect",		"1",			true,	StateDatabase::ReadWrite,	NULL },
   { "tpEffect",			"1",			true,	StateDatabase::ReadWrite,	NULL },
+  { "fogEffect",		"1",			true,	StateDatabase::ReadWrite,	NULL },
 
   // URL timeouts
   { "httpTimeout",		"15",			true,	StateDatabase::ReadWrite,	NULL },

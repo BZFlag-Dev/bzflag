@@ -447,21 +447,14 @@ bool DiffCommand::operator() (const char *commandLine)
 bool LocalSetCommand::operator() (const char *commandLine)
 {
   std::string params = commandLine + 9;
-  std::vector<std::string> tokens = TextUtils::tokenize(params, " ", 2);
+  std::vector<std::string> tokens = TextUtils::tokenize(params, " ", 0, true);
 #ifdef DEBUG  
   const bool debug = true;
 #else
   const bool debug = false;
 #endif
 
-  if (tokens.size() == 0) {
-    if (debug) {
-      addMessage(NULL, "usage: /localset <pattern> [value]");
-    } else {
-      addMessage(NULL, "usage: /localset <variable> [value]");
-    }
-  }
-  else if (tokens.size() == 1) {
+  if (tokens.size() == 1) {
     const std::string header = "/localset " + tokens[0];
     addMessage(LocalPlayer::getMyTank(), header, 2);
 
@@ -497,6 +490,13 @@ bool LocalSetCommand::operator() (const char *commandLine)
     } else {
       addMessage (NULL, "This is a server-defined variable. "
 			"Use /set instead of /localset.");
+    }
+  }
+  else {
+    if (debug) {
+      addMessage(NULL, "usage: /localset <pattern> [value]");
+    } else {
+      addMessage(NULL, "usage: /localset <variable> [value]");
     }
   }
   return true;

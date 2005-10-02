@@ -130,7 +130,7 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
     // gstates
     gstate.reset();
     gstate.setShading();
-    gstate.setBlending((GLenum)GL_ONE, (GLenum)GL_ONE);
+    gstate.setBlending((GLenum)GL_SRC_ALPHA, (GLenum)GL_ONE);
     receiverGState = gstate.getState();
   }
 
@@ -1041,6 +1041,7 @@ void BackgroundRenderer::drawGroundReceivers(SceneRenderer& renderer)
   const float B = 1.0f - (0.6f * renderer.getSunBrightness());
 
   receiverGState.setState();
+
   glPushMatrix();
   int i, j;
   for (int k = 0; k < count; k++) {
@@ -1065,34 +1066,23 @@ void BackgroundRenderer::drawGroundReceivers(SceneRenderer& renderer)
     // move to the light's position
     glTranslatef(pos[0], pos[1], 0.0f);
 
-    // modulate light color by ground color
-    float color[3];
-    if (invert) {
-      color[0] = receiverColorInv[0] * lightColor[0];
-      color[1] = receiverColorInv[1] * lightColor[1];
-      color[2] = receiverColorInv[2] * lightColor[2];
-    } else {
-      color[0] = receiverColor[0] * lightColor[0];
-      color[1] = receiverColor[1] * lightColor[1];
-      color[2] = receiverColor[2] * lightColor[2];
-    }
+    // set the main lighting color
+    float color[4];
+    memcpy(color, lightColor, 3 * sizeof(GLfloat));
 
     // draw ground receiver, computing lighting at each vertex ourselves
     glBegin(GL_TRIANGLE_FAN);
     {
-      glColor3f(I * color[0] > 1.0f ? 1.0f : I * color[0],
-		I * color[1] > 1.0f ? 1.0f : I * color[1],
-		I * color[2] > 1.0f ? 1.0f : I * color[2]);
+      glColor4f(color[0], color[1], color[1], I);
       glVertex2f(0.0f, 0.0f);
 
       // inner ring
       d = receiverRingSize + pos[2];
       I = B / (atten[0] + d * (atten[1] + d * atten[2]));
       I *= pos[2] / hypotf(receiverRingSize, pos[2]);
-      glColor3f(I * color[0] > 1.0f ? 1.0f : I * color[0],
-		I * color[1] > 1.0f ? 1.0f : I * color[1],
-		I * color[2] > 1.0f ? 1.0f : I * color[2]);
+      color[3] = I;
       for (j = 0; j <= receiverSlices; j++) {
+        glColor4fv(color);
 	glVertex2f(receiverRingSize * angle[j][0],
 		   receiverRingSize * angle[j][1]);
       }
@@ -1107,13 +1097,7 @@ void BackgroundRenderer::drawGroundReceivers(SceneRenderer& renderer)
       float dis = innerSize + pos[2];
       float Int = B / (atten[0] + dis * (atten[1] + dis * atten[2]));
       Int *= pos[2] / hypotf(innerSize, pos[2]);
-      float innerColor[3];
-      innerColor[0] = Int * color[0];
-      innerColor[1] = Int * color[1];
-      innerColor[2] = Int * color[2];
-      if (innerColor[0] > 1.0f) innerColor[0] = 1.0f;
-      if (innerColor[1] > 1.0f) innerColor[1] = 1.0f;
-      if (innerColor[2] > 1.0f) innerColor[2] = 1.0f;
+      float innerAlpha = Int;
 
       if (i + 1 == receiverRings) {
 	Int = 0.0f;
@@ -1122,26 +1106,21 @@ void BackgroundRenderer::drawGroundReceivers(SceneRenderer& renderer)
 	Int = B / (atten[0] + dis * (atten[1] + dis * atten[2]));
 	Int *= pos[2] / hypotf(outerSize, pos[2]);
       }
-      float outerColor[3];
-      outerColor[0] = Int * color[0];
-      outerColor[1] = Int * color[1];
-      outerColor[2] = Int * color[2];
-      if (outerColor[0] > 1.0f) outerColor[0] = 1.0f;
-      if (outerColor[1] > 1.0f) outerColor[1] = 1.0f;
-      if (outerColor[2] > 1.0f) outerColor[2] = 1.0f;
+      float outerAlpha = Int;
 
       glBegin(GL_QUAD_STRIP);
       {
 	for (j = 0; j <= receiverSlices; j++) {
-	  glColor3fv(innerColor);
+	  color[3] = innerAlpha;
+	  glColor4fv(color);
 	  glVertex2f(angle[j][0] * innerSize, angle[j][1] * innerSize);
-	  glColor3fv(outerColor);
+	  color[3] = outerAlpha;
+	  glColor4fv(color);
 	  glVertex2f(angle[j][0] * outerSize, angle[j][1] * outerSize);
 	}
       }
       glEnd();
     }
-
     glTranslatef(-pos[0], -pos[1], 0.0f);
   }
   glPopMatrix();
