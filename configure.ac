@@ -27,7 +27,7 @@ BZFLAG_DATE=`date -u +%Y-%m-%d`
 BZFLAG_VERSION="$MAJOR_VERSION.$MINOR_VERSION.$REV"
 echo "BZFlag-$BZFLAG_VERSION.$CONF_DATE"
 AC_CANONICAL_TARGET
-AM_INIT_AUTOMAKE(bzflag, $BZFLAG_VERSION.$CONF_DATE)
+AM_INIT_AUTOMAKE(bzflag, $BZFLAG_VERSION)
 AM_CONFIG_HEADER(include/config.h)
 
 AC_SUBST(MAJOR_VERSION)
@@ -611,8 +611,8 @@ case $host_os in
 	;;
 esac
 
-
-CXXFLAGS="$CXXFLAGS -DBZ_BUILD_DATE=$CONF_DATE"
+# We use buildDate.cxx's compilation date instead
+# CXXFLAGS="$CXXFLAGS -DBZ_BUILD_DATE=$CONF_DATE"
 
 if test x$enable_debug = xyes; then
    CFLAGS="$CFLAGS -O0";
