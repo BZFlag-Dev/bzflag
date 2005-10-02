@@ -1687,6 +1687,7 @@ void WorldDownLoader::start(char * hexDigest)
     setProgressFunction(curlProgressFunc, (char*)worldUrl.c_str());
     setURL(worldUrl);
     addHandle();
+    worldUrl = ""; // clear the state
   } else {
     askToBZFS();
   }
@@ -6712,10 +6713,9 @@ void			startPlaying(BzfDisplay* _display,
   // start game loop
   playingLoop();
 
+  // clean up
   if (resourceDownloader)
     delete resourceDownloader;
-  // clean up
-  cleanWorldCache();
   delete motd;
   for (unsigned int ext = 0; ext < prototypeExplosions.size(); ext++)
     delete prototypeExplosions[ext];
@@ -6732,6 +6732,7 @@ void			startPlaying(BzfDisplay* _display,
   mainWindow = NULL;
   sceneRenderer = NULL;
   display = NULL;
+  cleanWorldCache();
 }
 
 // Local Variables: ***
