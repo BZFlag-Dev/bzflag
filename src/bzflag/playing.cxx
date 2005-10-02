@@ -1705,9 +1705,8 @@ void WorldDownLoader::finalization(char *data, unsigned int length, bool good)
       HUDDialogStack::get()->setFailedMessage("Download from URL failed");
       askToBZFS();
     } else {
-      cleanWorldCache();
-      std::ostream* cache = FILEMGR.createDataOutStream(worldCachePath, true,
-							true);
+      std::ostream* cache =
+        FILEMGR.createDataOutStream(worldCachePath, true, true);
       if (cache != NULL) {
 	cache->write(worldDatabase, length);
 	delete cache;
@@ -4292,42 +4291,42 @@ static void enteringServer(void *buf)
 
 static void cleanWorldCache()
 {
-  char buffer[10];
-  int cacheLimit = 100L * 1024L;
+  // setup the world cache limit
+  int cacheLimit = (10 * 1024 * 1024);
   if (BZDB.isSet("worldCacheLimit")) {
-    cacheLimit = atoi(BZDB.get("worldCacheLimit").c_str());
+    const int dbCacheLimit = BZDB.evalInt("worldCacheLimit");
+    // the old limit was 100 Kbytes, too small
+    if (dbCacheLimit == (100 * 1024)) {
+      BZDB.setInt("worldCacheLimit", cacheLimit);
+    } else {
+      cacheLimit = dbCacheLimit;
+    }
   } else {
-    snprintf(buffer, 10, "%d", cacheLimit);
-    BZDB.set("worldCacheLimit", buffer);
+    BZDB.setInt("worldCacheLimit", cacheLimit);
   }
 
-  std::string worldPath = getCacheDirName();
+  const std::string worldPath = getCacheDirName();
 
-  char *oldestFile = NULL;
-  int oldestSize = 0;
-  int totalSize = 0;
+  while (true) {
+    char *oldestFile = NULL;
+    int oldestSize = 0;
+    int totalSize = 0;
 
-  do {
-    oldestFile = NULL;
-    totalSize = 0;
 #ifdef _WIN32
-    std::string pattern = worldPath + "/*.bwc";
-
+    std::string pattern = worldPath + "*.bwc";
     WIN32_FIND_DATA findData;
     HANDLE h = FindFirstFile(pattern.c_str(), &findData);
     if (h != INVALID_HANDLE_VALUE) {
-      FILETIME oldestTime = findData.ftLastAccessTime;
-      oldestFile = strdup(findData.cFileName);
-      oldestSize = findData.nFileSizeLow;
-      totalSize = findData.nFileSizeLow;
-
+      FILETIME oldestTime;
       while (FindNextFile(h, &findData)) {
-	if (CompareFileTime(&oldestTime, &findData.ftLastAccessTime) > 0) {
-	  oldestTime = findData.ftLastAccessTime;
-	  if (oldestFile)
+	if ((oldestFile == NULL) ||
+	    (CompareFileTime(&oldestTime, &findData.ftLastAccessTime) > 0)) {
+	  if (oldestFile) {
 	    free(oldestFile);
+          }
 	  oldestFile = strdup(findData.cFileName);
 	  oldestSize = findData.nFileSizeLow;
+	  oldestTime = findData.ftLastAccessTime;
 	}
 	totalSize += findData.nFileSizeLow;
       }
@@ -4338,24 +4337,34 @@ static void cleanWorldCache()
     if (directory) {
       struct dirent* contents;
       struct stat statbuf;
-      time_t oldestTime = time(NULL);
+      time_t oldestTime;
       while ((contents = readdir(directory))) {
 	const std::string filename = contents->d_name;
-	stat((worldPath + "/" + filename).c_str(), &statbuf);
-	if ((filename.size() > 4) &&
-	    (filename.substr(filename.size() - 4) == ".bwc") &&
-	    S_ISREG(statbuf.st_mode) && (statbuf.st_atime < oldestTime)) {
-	  if (oldestFile)
-	    free(oldestFile);
-	  oldestFile = strdup(contents->d_name);
-	  oldestSize = statbuf.st_size;
-	  totalSize += oldestSize;
+	const std::string fullname = worldPath + filename;
+	stat(fullname.c_str(), &statbuf);
+	if (S_ISREG(statbuf.st_mode) && (filename.size() > 4) && 
+	    (filename.substr(filename.size() - 4) == ".bwc")) {
+          if ((oldestFile == NULL) || (statbuf.st_atime < oldestTime)) {
+	    if (oldestFile) {
+	      free(oldestFile);
+            }
+            oldestFile = strdup(contents->d_name);
+            oldestSize = statbuf.st_size;
+            oldestTime = statbuf.st_atime;
+          }
+	  totalSize += statbuf.st_size;
 	}
       }
       closedir(directory);
     }
 #endif
 
+    // any valid cache files?
+    if (oldestFile == NULL) {
+      return;
+    }
+    
+    // is the cache small enough?
     if (totalSize < cacheLimit) {
       if (oldestFile != NULL) {
 	free(oldestFile);
@@ -4364,14 +4373,12 @@ static void cleanWorldCache()
       return;
     }
 
-    if (oldestFile != NULL) {
-      remove((worldPath + "/" + oldestFile).c_str());
-      free(oldestFile);
-    }
-
+    // remove the oldest file
+    DEBUG1("cleanWorldCache: removed %s\n", oldestFile);
+    remove((worldPath + oldestFile).c_str());
+    free(oldestFile);
     totalSize -= oldestSize;
-
-  } while (oldestFile && (totalSize > cacheLimit));
+  }
 }
 
 
@@ -4379,7 +4386,9 @@ static void markOld(std::string &fileName)
 {
 #ifdef _WIN32
   FILETIME ft;
-  HANDLE h = CreateFile(fileName.c_str(), FILE_WRITE_ATTRIBUTES|FILE_WRITE_EA, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+  HANDLE h = CreateFile(fileName.c_str(),
+                        FILE_WRITE_ATTRIBUTES | FILE_WRITE_EA, 0, NULL,
+                        OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
   if (h != INVALID_HANDLE_VALUE) {
     SYSTEMTIME st;
     memset(&st, 0, sizeof(st));
@@ -6706,6 +6715,7 @@ void			startPlaying(BzfDisplay* _display,
   if (resourceDownloader)
     delete resourceDownloader;
   // clean up
+  cleanWorldCache();
   delete motd;
   for (unsigned int ext = 0; ext < prototypeExplosions.size(); ext++)
     delete prototypeExplosions[ext];
