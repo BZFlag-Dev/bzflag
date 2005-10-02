@@ -75,8 +75,15 @@ die "rejected by server" if ($id == 255);
 # send game request
 print S pack("n2", 0, 0x7167);
 
-# get reply
-die $! unless sysread(S, $buffer, 46) == 46;
+my $nbytes = sysread(S, $buffer, 46);
+if ($nbytes == 12) {  # if MsgGameTime rxed ... ignore it
+  my ($len, $code) = unpack("n2", $buffer);
+  $nbytes = sysread(S, $buffer, 46);
+}
+if ($nbytes != 46) {
+  die "Error: $nbytes bytes, expecting 46: $^E\n";
+}
+
 ($len,$code,$style,$maxPlayers,$maxShots,
 	$rogueSize,$redSize,$greenSize,$blueSize,$purpleSize,$obsSize,
 	$rogueMax,$redMax,$greenMax,$blueMax,$purpleMax,$obsMax,
