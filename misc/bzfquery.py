@@ -1,9 +1,9 @@
 #!/usr/bin/python
-# -*- coding: iso-8859-1 -*-
+# -*- coding: utf-8 -*-
 #
 # Inspired from misc/bzfquery.pl
 #
-# Author: Frédéric Jolliton [aka FredCods]
+# Author: FrÃ©dÃ©ric Jolliton [aka FredCods]
 #         <fj@tuxee.net>
 #         <fred@jolliton.com>
 #
@@ -32,6 +32,8 @@ import cgi
 import os
 import struct
 import socket
+import time
+import select
 
 #
 # If true, display detailled HTML output when exception occur
@@ -49,6 +51,20 @@ allowCgiParameters = True
 #
 defaultHostname = 'localhost'
 defaultPort = 5154
+
+#
+# Default timeout is seconds.
+#
+# Set to None for no timeout (not a good idea)
+#
+defaultTimeout = 10.
+
+#
+# Throw an exception if timeout occur.
+#
+hardTimeout = True
+
+class Error( Exception ) : pass
 
 def s2n( s ) :
 
@@ -90,35 +106,78 @@ def decodeStyle( n ) :
 			flags.append( style )
 	return flags
 
+def receive( sock , size , timeout = None ) :
+
+	'''Receive up to 'size' byte from socket 'sock'. If timeout is not
+	None, wait up to 'timeout' seconds for some answer, returning
+	None if nothing was available in the meantime or throwing an
+	exception according to hardTimeout global setting.'''
+
+	if timeout is not None :
+		#
+		# First wait that something is available on socket 'sock'
+		#
+		timeLimit = time.time() + timeout
+		while 1 :
+			t = timeLimit - time.time()
+			if t <= 0 :
+				if hardTimeout :
+					raise Error( 'Timeout' )
+				else :
+					return
+			r , w , x = select.select( [ sock ] , [] , [] , t )
+			if sock in r :
+				break
+	return sock.recv( size )
+
 class Server :
 
 	def __init__( self , host = '127.0.0.1' , port = 5154 ) :
 
 		self.sock = socket.socket( socket.AF_INET , socket.SOCK_STREAM )
 		self.sock.connect( ( host , port ) )
-		header = self.sock.recv( 9 )
+		header = receive( self.sock , 9 , defaultTimeout )
 		magic , self.protocol , self.id = \
 			struct.unpack( '4s4sb' , header )
 		if magic != 'BZFS' :
-			raise Exception( 'Not a bzflag server.' )
+			raise Error( 'Not a bzflag server.' )
 		if self.protocol not in [ '0026' ] :
-			raise Exception( 'Not compatible with server.' )
+			raise Error( 'Not compatible with server.' )
 
 	def cmd( self , command ) :
 
 		if len( command ) != 2 :
-			raise Exception( 'Command must be 2 characters long.' )
+			raise Error( 'Command must be 2 characters long.' )
 		self.sock.sendall( struct.pack( '>2H' , 0 , s2n( command ) ) )
-		return self.getResponse()
+		return self.getResponse( command )
 
-	def getResponse( self , expectedCode = None ) :
+	def _getPacket( self ) :
 
-		size , code = struct.unpack( '>2H' , self.sock.recv( 4 ) )
-		data = ''
-		while len( data ) != size :
-			data += self.sock.recv( size - len( data ) )
-		if expectedCode != None and code != expectedCode :
-			raise Exception( 'Got wrong response code' )
+		size , code = struct.unpack( '>H2s' , receive( self.sock , 4 , defaultTimeout ) )
+		data = receive( self.sock , size , defaultTimeout )
+		return code , data
+
+	#
+	# If expectedCode is none, we return the first packet that is
+	# not a msgGameTime packet.
+	#
+	# If expectedCode is not none, we return the first packet that
+	# match this code, discarding all other packets.
+	#
+	def getResponse( self , expectedCode ) :
+
+		timeLimit = time.time() + defaultTimeout
+		code = None
+		while time.time() < timeLimit :
+			code , data = self._getPacket()
+			if code == expectedCode :
+				break
+		else :
+			if code is not None :
+				raise Error( 'Got wrong response code (got %r, expected %r)' \
+					     % ( code , expectedCode ) )
+			else :
+				raise Error( 'No answer' )
 		return data
 
 	def queryGame( self ) :
@@ -159,10 +218,10 @@ class Server :
 		data = self.cmd( 'qp' )
 		data = struct.unpack( '>2H' , data )
 		numTeams_ , numPlayers = data
-		data = self.getResponse()
+		data = self.getResponse( 'tu' )
 		numTeams , data = ord( data[ 0 ] ) , data[ 1 : ]
 		#if numTeams != numTeams_ :
-		#	raise Exception( 'Inconsistency in numTeams (got %d and %d)' \
+		#	raise Error( 'Inconsistency in numTeams (got %d and %d)' \
 		#		% ( numTeams_ , numTeams ) )
 		teamsInfo = {}
 		for i in range( numTeams ) :
@@ -177,7 +236,7 @@ class Server :
 			}
 		playersInfo = []
 		for i in range( numPlayers ) :
-			data = self.getResponse( s2n( 'ap'  ) )
+			data = self.getResponse( 'ap'  )
 			pId , type , team , won , lost , tks , sign , email = \
 				struct.unpack( '>b5H32s128s' , data )
 			playerInfo = {
@@ -213,8 +272,8 @@ def getAndPrintStat( hostname , port ) :
 	print '-' * 20
 	for team in teamsName :
 		t = game[ 'teams' ].get( team )
-		if t == None : continue
-		print '%-8s %5d %5d' % ( team , t[ 0 ] , t[ 1 ] )
+		if t is not None :
+			print '%-8s %5d %5d' % ( team , t[ 0 ] , t[ 1 ] )
 	shaking = game.get( 'shake' )
 	if shaking :
 		print
@@ -233,9 +292,9 @@ def getAndPrintStat( hostname , port ) :
 	print '-' * 32
 	for team in teamsName :
 		t = teams.get( team )
-		if t == None : continue
-		print '%-8s %5d %5d %5d %5d' \
-			% ( team , t[ 'size' ] , t[ 'score' ] , t[ 'won' ] , t[ 'lost' ] )
+		if t is not None :
+			print '%-8s %5d %5d %5d %5d' \
+				% ( team , t[ 'size' ] , t[ 'score' ] , t[ 'won' ] , t[ 'lost' ] )
 
 	print
 	print '--[ PLAYERS ]' + '-' * 37
