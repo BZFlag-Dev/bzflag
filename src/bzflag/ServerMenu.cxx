@@ -220,7 +220,7 @@ void ServerMenu::setFind(bool mode)
       filter = search->getString();
     }
     // select the first item in the list
-    ((HUDuiLabel*)getControls()[NumReadouts])->setFocus();
+    setSelected(0);
   }
   findMode = mode;
 }
