@@ -40,6 +40,7 @@ class ShockWaveStrategy : public ShotStrategy {
     SphereSceneNode*	shockNode;
     float		radius;
     float		radius2;
+    TeamColor		team;
 };
 
 
