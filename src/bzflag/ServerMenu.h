@@ -30,6 +30,7 @@
 /* local interface headers */
 #include "HUDuiDefaultKey.h"
 #include "HUDuiLabel.h"
+#include "HUDuiTypeIn.h"
 #include "MenuDefaultKey.h"
 
 class ServerMenu;
@@ -62,15 +63,20 @@ public:
   static void playingCB(void*);
   void updateStatus();
 
+  bool getFind() const;
+  void setFind(bool mode);
+
   static const int NumItems;
 
 private:
   void addLabel(const char* str, const char* label);
   void setStatus(const char*, const std::vector<std::string> *parms = NULL);
   void pick();
+
   ServerItem& serversAt(int index);
 
 private:
+  ServerList realServerList;
   ServerList serverList;
   ServerMenuDefaultKey	defaultKey;
   HUDuiLabel* status;
@@ -78,6 +84,12 @@ private:
   HUDuiLabel* pageLabel;
   int selectedIndex;
   unsigned int serversFound;
+  unsigned int realServersFound;
+
+  HUDuiTypeIn* search;
+  bool findMode;
+  std::string filter;
+  std::string lastFilter;
 
   static const int NumReadouts;
 };

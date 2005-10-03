@@ -46,12 +46,14 @@ public:
   void collectData(char *ptr, int len);
   void finalization(char *data, unsigned int length, bool good);
 
+public:
+  void addToList(ServerItem&, bool doCache=false);
+  void clear();
+
 private:
   void readServerList();
-  void addToList(ServerItem&, bool doCache=false);
   void addToListWithLookup(ServerItem&);
   void addCacheToList();
-  void clear();
   void _shutDown();
 
 private:

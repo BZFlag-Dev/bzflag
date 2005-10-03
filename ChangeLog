@@ -3,8 +3,9 @@
 
 BZFlag 2.0.5
 ------------
-* Fix misc/bzfquery.pl to handle MsgGameTime - Tegan, Mark Thomas
 
+* Fix misc/bzfquery.pl to handle MsgGameTime - Tegan, Mark Thomas
+* Simple server list searching - Daniel Remenak
 
 BZFlag 2.0.4  "Shiny" (2005-09-30)
 ----------------------------------

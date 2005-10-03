@@ -34,6 +34,7 @@
 #include "TimeKeeper.h"
 #include "bzsignal.h"
 #include "version.h"
+#include "bzglob.h"
 
 /* local implementation headers */
 #include "MainMenu.h"
@@ -42,6 +43,7 @@
 #include "HUDui.h"
 #include "HUDuiControl.h"
 #include "HUDuiLabel.h"
+#include "HUDuiTypeIn.h"
 
 /* from playing.h */
 StartupInfo* getStartupInfo();
@@ -58,27 +60,40 @@ bool ServerMenuDefaultKey::keyPress(const BzfKeyEvent& key)
   if (key.ascii == 0) switch (key.button) {
     case BzfKeyEvent::Up:
       if (HUDui::getFocus()) {
-	menu->setSelected(menu->getSelected() - 1);
+	if (!menu->getFind())
+	  menu->setSelected(menu->getSelected() - 1);
+	else
+	  menu->setFind(false);
       }
       return true;
 
     case BzfKeyEvent::Down:
       if (HUDui::getFocus()) {
-	menu->setSelected(menu->getSelected() + 1);
+	if (!menu->getFind())
+	  menu->setSelected(menu->getSelected() + 1);
+	else
+	  menu->setFind(false);
       }
       return true;
 
     case BzfKeyEvent::PageUp:
       if (HUDui::getFocus()) {
-	menu->setSelected(menu->getSelected() - ServerMenu::NumItems);
+	if (!menu->getFind())
+	  menu->setSelected(menu->getSelected() - ServerMenu::NumItems);
+	else
+	  menu->setFind(false);
       }
       return true;
 
     case BzfKeyEvent::PageDown:
       if (HUDui::getFocus()) {
-	menu->setSelected(menu->getSelected() + ServerMenu::NumItems);
+	if (!menu->getFind())
+	  menu->setSelected(menu->getSelected() + ServerMenu::NumItems);
+	else
+	  menu->setFind(false);
       }
       return true;
+
   }
 
   else if (key.ascii == '\t') {
@@ -86,6 +101,24 @@ bool ServerMenuDefaultKey::keyPress(const BzfKeyEvent& key)
       menu->setSelected(menu->getSelected() + 1);
     }
     return true;
+  }
+
+  else if (key.ascii == '/') {
+    if (HUDui::getFocus()) {
+      menu->setFind(true);
+    }
+    return true;
+  }
+
+  else if (key.ascii == 27) {
+    if (HUDui::getFocus()) {
+      // escape drops out of find mode
+      // note that this is handled by MenuDefaultKey if we're not in find mode
+      if (menu->getFind()) {
+	menu->setFind(false);
+	return true;
+      }
+    }
   }
 
   return MenuDefaultKey::keyPress(key);
@@ -110,7 +143,10 @@ bool ServerMenuDefaultKey::keyRelease(const BzfKeyEvent& key)
 
 ServerMenu::ServerMenu() : defaultKey(this),
 				selectedIndex(0),
-				serversFound(0)
+				serversFound(0),
+				findMode(false),
+				filter("*"),
+				lastFilter("*")
 {
   // add controls
   addLabel("Servers", "");
@@ -144,6 +180,13 @@ ServerMenu::ServerMenu() : defaultKey(this),
   for (int i = 0; i < NumItems; ++i)
     addLabel("", "");
 
+  // find server
+  search = new HUDuiTypeIn;
+  search->setFontFace(MainMenu::getFontFace());
+  search->setMaxLength(30);
+  getControls().push_back(search);
+  setFind(false);
+
   // set initial focus
   setFocus(status);
 }
@@ -157,6 +200,34 @@ void ServerMenu::addLabel(const char* msg, const char* _label)
   label->setString(msg);
   label->setLabel(_label);
   getControls().push_back(label);
+}
+
+void ServerMenu::setFind(bool mode)
+{
+  if (mode) {
+    search->setLabel("Find Servers:");
+    search->setFocus();
+  } else {
+    if (search->getString() == "" || search->getString() == "*") {
+      search->setLabel("Press '/' to search");
+      search->setString("");
+      filter = "*";
+    } else {
+      if (search->getString().find("*") == std::string::npos
+	&& search->getString().find("?") == std::string::npos)
+	search->setString("*" + search->getString() + "*");
+      search->setLabel("Using filter:");
+      filter = search->getString();
+    }
+    // select the first item in the list
+    ((HUDuiLabel*)getControls()[NumReadouts])->setFocus();
+  }
+  findMode = mode;
+}
+
+bool ServerMenu::getFind() const
+{
+  return findMode;
 }
 
 int ServerMenu::getSelected() const
@@ -515,7 +586,7 @@ void			ServerMenu::show()
   // add cache items w/o re-caching them
   serversFound = 0;
   int numItemsAdded;
-  numItemsAdded = serverList.updateFromCache();
+  numItemsAdded = realServerList.updateFromCache();
 
   // update the status
   updateStatus();
@@ -526,12 +597,17 @@ void			ServerMenu::show()
   // *** NOTE *** start ping here
   // listen for echos
   addPlayingCallback(&playingCB, this);
-  serverList.startServerPings(getStartupInfo());
+  realServerList.startServerPings(getStartupInfo());
 
 }
 
 void			ServerMenu::execute()
 {
+  if (findMode) {
+    setFind(false);
+    return;
+  }
+
   if (selectedIndex < 0 || selectedIndex >= (int)serverList.size())
     return;
 
@@ -558,7 +634,6 @@ void			ServerMenu::resize(int _width, int _height)
   // remember size
   HUDDialog::resize(_width, _height);
 
-  // get number of serverList.getServers()
   std::vector<HUDuiControl*>& listHUD = getControls();
 
   // use a big font for title, smaller font for the rest
@@ -607,6 +682,16 @@ void			ServerMenu::resize(int _width, int _height)
     status->setPosition(x, y);
   }
 
+  // reposition find server input
+  {
+    fontSize = (float)_height / 36.0f;
+    float fontHt = fm.getStrHeight(MainMenu::getFontFace(), fontSize, " ");
+    search->setFontSize(fontSize);
+    const float searchWidth = fm.getStrLength(search->getFontFace(), fontSize, search->getString());
+    x = 0.5f * ((float)_width - searchWidth);
+    search->setPosition(x, fontHt * 2 /* near bottom of screen */);
+  }
+
   // position page readout and server item list
   fontSize = (float)_height / 54.0f;
   fontHeight = fm.getStrHeight(MainMenu::getFontFace(), fontSize, " ");
@@ -634,26 +719,54 @@ void			ServerMenu::setStatus(const char* msg, const std::vector<std::string> *pa
 }
 
 void			ServerMenu::updateStatus() {
-  if (!serverList.serverFound()) {
+  // nothing here to see
+  if (!realServerList.serverFound()) {
     setStatus("Searching");
-  } else if (serversFound < serverList.size()) {
+    return;
+  }
+
+  // don't run unnecessarily
+  if (realServersFound == realServerList.size() &&
+      filter == lastFilter)
+    return;
+
+  // do filtering
+  serverList.clear();
+  for (unsigned int i = 0; i < realServerList.size(); ++i) {
+    const ServerItem* item = &(realServerList.getServers()[i]);
+    if (glob_match(filter, item->description)
+     || glob_match(filter, item->name)) {
+      // FIXME constness idiocy
+      ServerItem copy = *item;
+      serverList.addToList(copy);
+    }
+  }
+  lastFilter = filter;
+
+  // update the status label
+  if (serversFound != serverList.size() ||
+      realServersFound != realServerList.size()) {
     std::vector<std::string> args;
     char buffer [80];
     sprintf(buffer, "%d", (unsigned int)serverList.size());
     args.push_back(buffer);
-    setStatus("Servers found: {1}", &args);
+    sprintf(buffer, "%d", (unsigned int)realServerList.size());
+    args.push_back(buffer);
+    setStatus("Servers found: {1}/{2}", &args);
     pageLabel->setString("");
     selectedIndex = -1;
     setSelected(0);
 
     serversFound = serverList.size();
   }
+
+  realServersFound = realServerList.size();
 }
 
 
 void			ServerMenu::playingCB(void* _self)
 {
-  ((ServerMenu*)_self)->serverList.checkEchos(getStartupInfo());
+  ((ServerMenu*)_self)->realServerList.checkEchos(getStartupInfo());
 
   ((ServerMenu*)_self)->updateStatus();
 }

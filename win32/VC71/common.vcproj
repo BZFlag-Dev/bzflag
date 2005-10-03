@@ -1493,6 +1493,9 @@
 				RelativePath="..\..\include\bzfio.h">
 			</File>
 			<File
+				RelativePath="..\..\include\bzglob.h">
+			</File>
+			<File
 				RelativePath="..\..\include\bzsignal.h">
 			</File>
 			<File
