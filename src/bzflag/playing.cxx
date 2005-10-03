@@ -2804,7 +2804,12 @@ static void		handleServerMessage(bool human, uint16_t code,
 		myTank->setRecipient(srcPlayer);
 
 	      // play a sound on a private message not from self or server
-	      if (!fromServer) {
+
+		  bool playSound = !fromServer;
+		  if (BZDB.IsSet("beepOnServerMsg") && BZDB.IsTrue("beepOnServerMsg"))
+			  playSound = true;
+
+	      if (playSound) {
 		static TimeKeeper lastMsg = TimeKeeper::getSunGenesisTime();
 		if (TimeKeeper::getTick() - lastMsg > 2.0f)
 		  playLocalSound( SFX_MESSAGE_PRIVATE );
