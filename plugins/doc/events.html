@@ -235,7 +235,43 @@ Events</span></p>
 																	<td><span class="Code">bz_eListServerUpdateEvent</span>
 																	</td>
 																	<td>
-																		The server is about to update the list server with new information</td>
+																		The game server is about to send a list server update</td>
+																</tr>
+																<tr>
+																	<td><span class="Code">bz_eBanEvent</span>
+																	</td>
+																	<td>
+																		A user was baned</td>
+																</tr>
+																<tr>
+																	<td><span class="Code">bz_eHostBanEvent</span>
+																	</td>
+																	<td>
+																		A user was hostbaned /td>
+																</tr>
+																<tr>
+																	<td><span class="Code">bz_eKickEvent</span>
+																	</td>
+																	<td>
+																		A user was kicked from the server</td>
+																</tr>
+																<tr>
+																	<td><span class="Code">bz_eKillEvent</span>
+																	</td>
+																	<td>
+																		The /kill command was called</td>
+																</tr>
+																<tr>
+																	<td><span class="Code">bz_ePlayerPausedEvent</span>
+																	</td>
+																	<td>
+																		A player has requested a pause</td>
+																</tr>
+																<tr>
+																	<td><span class="Code">bz_eMessagFilteredEvent</span>
+																	</td>
+																	<td>
+																		A chat message was filtered and changed by the chat filter</td>
 																</tr>
 															</tbody>
 														</table>
@@ -582,7 +618,7 @@ bz_teEventType eventType, bz_EventHandler* eventHandler );</span></p>
 																		<table border="0" cellpadding="2" cellspacing="2">
 																			<tbody>
 																				<tr>
-																					<td><span class="Code">bz_TickEvent</span>
+																					<td><span class="Code">bz_eTickEvent</span>
 																						provides the following data</td>
 																				</tr>
 																				<tr>
@@ -618,7 +654,7 @@ bz_teEventType eventType, bz_EventHandler* eventHandler );</span></p>
 																		<table border="0" cellpadding="2" cellspacing="2">
 																			<tbody>
 																				<tr>
-																					<td><span class="Code">bz_GenerateWorldEvent</span>
+																					<td><span class="Code">bz_eGenerateWorldEvent</span>
 																						provides the following data</td>
 																				</tr>
 																				<tr>
@@ -647,6 +683,240 @@ bz_teEventType eventType, bz_EventHandler* eventHandler );</span></p>
 															</tbody>
 														</table>
 														<br>
+														
+														<br>
+														<table bgcolor="#dddddd" border="1">
+															<tbody>
+																<tr>
+																	<td align="left" valign="top">
+																		<table border="0" cellpadding="2" cellspacing="2">
+																			<tbody>
+																				<tr>
+																					<td><span class="Code">bz_eListServerUpdateEvent</span>
+																						provides the following data</td>
+																				</tr>
+																				<tr>
+																					<td><span class="Code">bz_ListServerUpdateEvent <br>
+{<br>
+                              </span>
+																						<blockquote class="Code"> bzApiString		address; // the address to be used for the server <br>
+bzApiString description; // the description to be used for the server <br>
+bzApiString groups; // the groups to be used for the &quot;advertise&quot;
+<p> bool handled; // set to true if a plugin has allready handled it, set this to true if THIS plugin has handled it <br>
+  double time; // the time of the request </p>
+																						</blockquote>
+																						<p class="Code">}</p>
+																					</td>
+																				</tr>
+																				<tr>
+																					<td>This event is called by bzfs when it is about to do a list server update. The plugin can change any of the strings and the modified version will be used before the send. This is most usefull for making your server &quot;unlist&quot; when you wish to go into private or match mode. Or for updating the description based on changing data. </td>
+																				</tr>
+																			</tbody>
+																		</table>
+																	</td>
+																</tr>
+															</tbody>
+														</table>
+														<br>
+														
+														<br>
+														<table bgcolor="#dddddd" border="1">
+															<tbody>
+																<tr>
+																	<td align="left" valign="top">
+																		<table border="0" cellpadding="2" cellspacing="2">
+																			<tbody>
+																				<tr>
+																					<td><span class="Code">bz_eBanEvent</span>
+																						provides the following data</td>
+																				</tr>
+																				<tr>
+																					<td><span class="Code">bz_BanEventData <br>
+{<br>
+                              </span>
+																						<blockquote class="Code"> int bannerID; // the ID of the player doing the ban <br>
+int banneeID; // the ID of the player who is about to be banned <br>
+int duration; // the durration of the ban ( in seconds ) <br>
+bzApiString ipAddress; // the baned users IP address or range <br>
+bzApiString reason; // the reason given for the ban </blockquote>
+																						<p class="Code">}</p>
+																					</td>
+																				</tr>
+																				<tr>
+																					<td>This event is called by bzfs when an admin bans a user. </td>
+																				</tr>
+																			</tbody>
+																		</table>
+																	</td>
+																</tr>
+															</tbody>
+														</table>
+														<br>
+														
+														<br>
+														<table bgcolor="#dddddd" border="1">
+															<tbody>
+																<tr>
+																	<td align="left" valign="top">
+																		<table border="0" cellpadding="2" cellspacing="2">
+																			<tbody>
+																				<tr>
+																					<td><span class="Code">bz_eHostBanEvent</span>
+																						provides the following data</td>
+																				</tr>
+																				<tr>
+																					<td><span class="Code">bz_HostBanEventData <br>
+{<br>
+                              </span>
+																						<blockquote class="Code"> int bannerID; // the person doing the ban <br>
+int duration; // the duration of the ban <br>
+bzApiString hostPattern; // the mask that was baned <br>
+bzApiString reason; // the reason given for the ban </blockquote>
+																						<p class="Code">}</p>
+																					</td>
+																				</tr>
+																				<tr>
+																					<td>This event is called by bzfs when an admin hostbans a user. </td>
+																				</tr>
+																			</tbody>
+																		</table>
+																	</td>
+																</tr>
+															</tbody>
+														</table>
+														<br>
+														
+														<br>
+														<table bgcolor="#dddddd" border="1">
+															<tbody>
+																<tr>
+																	<td align="left" valign="top">
+																		<table border="0" cellpadding="2" cellspacing="2">
+																			<tbody>
+																				<tr>
+																					<td><span class="Code">bz_eKickEvent</span>
+																						provides the following data</td>
+																				</tr>
+																				<tr>
+																					<td><span class="Code">bz_KickEventData <br>
+{<br>
+                              </span>
+																						<blockquote class="Code"> int kickerID; // the person doing the kick <br>
+int kickedID; // the person being kicked <br>
+bzApiString reason; // the reason given for the kick</blockquote>
+																						<p class="Code">}</p>
+																					</td>
+																				</tr>
+																				<tr>
+																					<td>This event is called by bzfs when an admin kicks a user from the server. </td>
+																				</tr>
+																			</tbody>
+																		</table>
+																	</td>
+																</tr>
+															</tbody>
+														</table>
+														<br>
+														
+														<br>
+														<table bgcolor="#dddddd" border="1">
+															<tbody>
+																<tr>
+																	<td align="left" valign="top">
+																		<table border="0" cellpadding="2" cellspacing="2">
+																			<tbody>
+																				<tr>
+																					<td><span class="Code">bz_eKillEvent</span>
+																						provides the following data</td>
+																				</tr>
+																				<tr>
+																					<td><span class="Code">bz_KillEventData <br>
+{<br>
+                              </span>
+																						<blockquote class="Code"> int killerID; // the person doing the kill command <br>
+int killedID; // the person being killed <br>
+bzApiString reason; // the reason given for the kill </blockquote>
+																						<p class="Code">}</p>
+																					</td>
+																				</tr>
+																				<tr>
+																					<td>This event is called by bzfs when an admin uses the /kill command. </td>
+																				</tr>
+																			</tbody>
+																		</table>
+																	</td>
+																</tr>
+															</tbody>
+														</table>
+														<br>
+														
+														
+														<br>
+														<table bgcolor="#dddddd" border="1">
+															<tbody>
+																<tr>
+																	<td align="left" valign="top">
+																		<table border="0" cellpadding="2" cellspacing="2">
+																			<tbody>
+																				<tr>
+																					<td><span class="Code">bz_ePlayerPausedEvent</span>
+																						provides the following data</td>
+																				</tr>
+																				<tr>
+																					<td><span class="Code">bz_PlayerPausedEventData <br>
+{<br>
+                              </span>
+																						<blockquote class="Code"> int player; // the player pausing<br>
+double time; // the time of the event </blockquote>
+																						<p class="Code">}</p>
+																					</td>
+																				</tr>
+																				<tr>
+																					<td>This event is called when a user uses the pause function on the client and notifys the server </td>
+																				</tr>
+																			</tbody>
+																		</table>
+																	</td>
+																</tr>
+															</tbody>
+														</table>
+														<br>
+														
+														
+														<br>
+														<table bgcolor="#dddddd" border="1">
+															<tbody>
+																<tr>
+																	<td align="left" valign="top">
+																		<table border="0" cellpadding="2" cellspacing="2">
+																			<tbody>
+																				<tr>
+																					<td><span class="Code">bz_eMessagFilteredEvent</span>
+																						provides the following data</td>
+																				</tr>
+																				<tr>
+																					<td><span class="Code">bz_MessageFilteredEventData <br>
+{<br>
+                              </span>
+																						<blockquote class="Code"> int player; // the player who sent the message <br>
+double time; // the time the message was sent <br>
+<br>
+bzApiString rawMessage; // the unfiltered message <br>
+bzApiString filteredMessage; // the filtered message </blockquote>
+																						<p class="Code">}</p>
+																					</td>
+																				</tr>
+																				<tr>
+																					<td>This event is called when a user sends a chat message that gets changed in the chat filter.</td>
+																				</tr>
+																			</tbody>
+																		</table>
+																	</td>
+																</tr>
+															</tbody>
+														</table>
+														<br>
+														
 													</td>
 												</tr>
 												<tr>

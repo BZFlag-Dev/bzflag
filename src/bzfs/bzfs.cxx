@@ -305,7 +305,7 @@ static float nextGameTime()
     GameKeeper::Player *gkPlayer = GameKeeper::Player::getPlayerByIndex(i);
     if (gkPlayer != NULL) {
       const TimeKeeper& pTime = gkPlayer->getNextGameTime();
-      const float pNextTime = pTime - nowTime;
+      const float pNextTime = (float)(pTime - nowTime);
       if (pNextTime < nextTime) {
         nextTime = pNextTime;
       }
@@ -1068,6 +1068,18 @@ void sendFilteredMessage(int sendingPlayer, PlayerId recipientPlayer, const char
       clOptions->filter.filter(filtered, false);
     }
     msg = filtered;
+
+	if (strcmp(message,filtered) != 0)	// the filter did do something so barf a message
+	{
+		bz_MessageFilteredEventData	eventData;
+
+		eventData.player = sendingPlayer;
+		eventData.time = TimeKeeper::getCurrent().getSeconds();
+		eventData.rawMessage = message;
+		eventData.filteredMessage = filtered;
+
+		worldEventManager.callEvents(bz_eMessagFilteredEvent,&eventData);
+	}
   }
 
   // check that the player has the talk permission
