@@ -2806,7 +2806,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 	      // play a sound on a private message not from self or server
 
 		  bool playSound = !fromServer;
-		  if (BZDB.IsSet("beepOnServerMsg") && BZDB.IsTrue("beepOnServerMsg"))
+		  if (BZDB.isSet("beepOnServerMsg") && BZDB.isTrue("beepOnServerMsg"))
 			  playSound = true;
 
 	      if (playSound) {
