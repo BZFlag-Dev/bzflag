@@ -20,16 +20,16 @@ float			Team::tankColor[NumTeams][3] = {
 				{ 0.0f, 1.0f, 0.0f },   // green
 				{ 0.2f, 0.2f, 1.0f },   // blue
 				{ 1.0f, 0.0f, 1.0f },   // purple
-				{ 0.0f, 0.0f, 0.0f },   // observer
+				{ 0.0f, 1.0f, 1.0f },   // observer
 				{ 1.0f, 1.0f, 1.0f }    // rabbit
 			};
 float			Team::radarColor[NumTeams][3] = {
 				{ 1.0f, 1.0f, 0.0f },	// rogue
 				{ 1.0f, 0.15f, 0.15f }, // red
 				{ 0.2f, 0.9f, 0.2f },	// green
-				{ 0.08f, 0.25, 1.0f },	// blue
+				{ 0.08f, 0.25, 1.0f},	// blue
 				{ 1.0f, 0.4f, 1.0f },	// purple
-				{ 0.0f, 0.0f, 0.0f },	// observer
+				{ 0.0f, 1.0f, 1.0f },	// observer
 				{ 1.0f, 1.0f, 1.0f }    // rabbit
 			};
 
@@ -114,8 +114,9 @@ const float*		Team::getTankColor(TeamColor team) // const
 
 const float*		Team::getRadarColor(TeamColor team, bool rabbitMode) // const
 {
-  if (rabbitMode && team == RogueTeam)
-	  return hunterRadarColor;
+  if (rabbitMode && team == RogueTeam) {
+    return hunterRadarColor;
+  }
   if (int(team) < 0) {
     return radarColor[0];
   }
