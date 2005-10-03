@@ -217,7 +217,8 @@ void ServerMenu::setFind(bool mode)
 	&& search->getString().find("?") == std::string::npos)
 	search->setString("*" + search->getString() + "*");
       search->setLabel("Using filter:");
-      filter = search->getString();
+      // filter is set in lower case
+      filter = TextUtils::tolower(search->getString());
     }
     // select the first item in the list
     setSelected(0);
@@ -735,8 +736,9 @@ void			ServerMenu::updateStatus() {
   serverList.clear();
   for (unsigned int i = 0; i < realServerList.size(); ++i) {
     const ServerItem* item = &(realServerList.getServers()[i]);
-    if (glob_match(filter, item->description)
-     || glob_match(filter, item->name)) {
+    // filter is already lower case.  do case insensitive matching.
+    if (glob_match(filter, TextUtils::tolower(item->description))
+     || glob_match(filter, TextUtils::tolower(item->name))) {
       // FIXME constness idiocy
       ServerItem copy = *item;
       serverList.addToList(copy);
