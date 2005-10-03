@@ -603,7 +603,8 @@ void			ServerMenu::show()
 
 void			ServerMenu::execute()
 {
-  if (findMode) {
+  HUDuiControl* _focus = HUDui::getFocus();
+  if (_focus == search) {
     setFind(false);
     return;
   }
