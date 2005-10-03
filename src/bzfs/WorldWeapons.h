@@ -40,7 +40,7 @@ public:
   ~WorldWeapons();
   void fire();
   void add(const FlagType *type, const float *origin,
-	   float direction, float tilt,
+	   float direction, float tilt, TeamColor teamColor,
 	   float initdelay, const std::vector<float> &delay,
 	   TimeKeeper &sync);
   float nextTime();
@@ -55,6 +55,7 @@ private:
   struct Weapon
   {
     const FlagType	*type;
+    TeamColor		teamColor;
     float		origin[3];
     float		direction;
     float		tilt;

@@ -1376,7 +1376,7 @@ BZF_API bool bz_addWorldWeapon( const char* _flagType, float *pos, float rot, fl
 	for(unsigned int i = 0; i < delays.size(); i++)
 		realDelays.push_back(delays.get(i));
 
-	world->addWeapon(flag, pos, rot, tilt, initDelay, realDelays, synct);
+	world->addWeapon(flag, pos, rot, tilt, RogueTeam, initDelay, realDelays, synct);
 	return true;
 }
 

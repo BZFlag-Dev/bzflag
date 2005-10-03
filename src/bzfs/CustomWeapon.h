@@ -39,14 +39,19 @@ class CustomWeapon : public WorldFileLocation {
     static const float minWeaponDelay;
 
   protected:
+
+    FlagType *type;
+    
     float initdelay;
     std::vector<float> delay;
-    FlagType *type;
-    float tilt;
-    static TimeKeeper sync;
 
-	bz_eEventType		triggerType;
-	int				eventTeam;
+    float tilt;
+    TeamColor teamColor;
+    
+    int eventTeam;
+    bz_eEventType triggerType;
+
+    static TimeKeeper sync;
 };
 
 #endif  /* __CUSTOMWEAPON_H__ */

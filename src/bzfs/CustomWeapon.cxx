@@ -36,6 +36,7 @@ CustomWeapon::CustomWeapon()
   initdelay = 10.0f;
   delay.push_back(10.0f);
   type = Flags::Null;
+  teamColor = RogueTeam;
 
   triggerType = bz_eNullEvent;
   eventTeam = -1;
@@ -71,6 +72,14 @@ bool CustomWeapon::read(const char *cmd, std::istream& input) {
     type = Flag::getDescFromAbbreviation(abbv.c_str());
     if (type == NULL)
       return false;
+  }
+  else if (strcmp(cmd, "color") == 0) {
+    int team;
+    if (!(input >> team)) {
+      std::cout << "weapon color requires a team number" << std::endl;
+    } else {
+      teamColor = (TeamColor)team;
+    }
   }
   else if (strcmp(cmd, "tilt") == 0) {
     if (!(input >> tilt)) {
@@ -110,10 +119,15 @@ bool CustomWeapon::read(const char *cmd, std::istream& input) {
 
 void CustomWeapon::writeToWorld(WorldInfo* world) const
 {
-  if (triggerType == bz_eNullEvent)
-    world->addWeapon(type, pos, rotation, tilt, initdelay, delay, sync);
-  else
-    worldEventManager.addEvent(triggerType,new WorldWeaponGlobalEventHandler(type, pos, rotation, tilt,(TeamColor)eventTeam));
+  if (triggerType == bz_eNullEvent) {
+    world->addWeapon(type, pos, rotation, tilt,
+                     teamColor, initdelay, delay, sync);
+  } else {
+    WorldWeaponGlobalEventHandler* eventHandler = 
+      new WorldWeaponGlobalEventHandler(type, pos, rotation, tilt,
+                                        (TeamColor)eventTeam);
+    worldEventManager.addEvent(triggerType, eventHandler);
+  }
 }
 
 

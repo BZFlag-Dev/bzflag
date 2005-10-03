@@ -50,8 +50,14 @@ SegmentedShotStrategy::SegmentedShotStrategy(ShotPath* _path, bool useSuperTextu
   lastSegment = segment = 0;
 
   // get team
-  Player* p = lookupPlayer(_path->getPlayer());
-  team = p ? p->getTeam() : RogueTeam;
+  if (_path->getPlayer() == ServerPlayer) {
+    TeamColor tmpTeam = _path->getFiringInfo().shot.team;
+    team = (tmpTeam < RogueTeam) ? RogueTeam :
+           (tmpTeam > RabbitTeam) ? RogueTeam : tmpTeam;
+  } else {
+    Player* p = lookupPlayer(_path->getPlayer());
+    team = p ? p->getTeam() : RogueTeam;
+  }
 
   // initialize scene nodes
   boltSceneNode = new BoltSceneNode(_path->getPosition());

@@ -37,8 +37,18 @@ ShockWaveStrategy::ShockWaveStrategy(ShotPath *_path) :
 
   // make scene node
   shockNode = new SphereSceneNode(_path->getPosition(), radius);
-  Player* p = lookupPlayer(_path->getPlayer());
-  TeamColor team = p ? p->getTeam() : RogueTeam;
+
+  // get team
+  TeamColor team;
+  if (_path->getPlayer() == ServerPlayer) {
+    TeamColor tmpTeam = _path->getFiringInfo().shot.team;
+    team = (tmpTeam < RogueTeam) ? RogueTeam :
+           (tmpTeam > RabbitTeam) ? RogueTeam : tmpTeam;
+  } else {
+    Player* p = lookupPlayer(_path->getPlayer());
+    team = p ? p->getTeam() : RogueTeam;
+  }
+
   bool rabbitMode = World::getWorld()->allowRabbit();
   const float* c = Team::getRadarColor(team,rabbitMode);
   shockNode->setColor(c[0], c[1], c[2], 0.75f);
