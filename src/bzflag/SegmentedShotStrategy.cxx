@@ -64,10 +64,10 @@ SegmentedShotStrategy::SegmentedShotStrategy(ShotPath* _path, bool useSuperTextu
 
   bool rabbitMode = World::getWorld()->allowRabbit();
 
-  const float* c = Team::getRadarColor(team,rabbitMode);
-  if (faint){
-    boltSceneNode->setColor(c[0], c[1], c[2],0.2f);
-    boltSceneNode->setTextureColor(1.0f,1.0f,1.0f,0.3f);
+  const float* c = Team::getRadarColor(team, rabbitMode);
+  if (faint) {
+    boltSceneNode->setColor(c[0], c[1], c[2], 0.2f);
+    boltSceneNode->setTextureColor(1.0f, 1.0f, 1.0f, 0.3f);
   } else {
     boltSceneNode->setColor(c[0], c[1], c[2], 1.0f);
   }
@@ -304,12 +304,14 @@ void			SegmentedShotStrategy::addShot(
   boltSceneNode->move(shotPath.getPosition(), shotPath.getVelocity());
   if (boltSceneNode->getColorblind() != colorblind) {
     boltSceneNode->setColorblind(colorblind);
-    TeamColor tmpTeam = colorblind ? RogueTeam : team;
-	bool rabbitMode = World::getWorld()->allowRabbit();
-    const float* c = Team::getRadarColor(tmpTeam,rabbitMode);
+    TeamColor currentTeam = colorblind ? RogueTeam : team;
+
+    bool rabbitMode = World::getWorld()->allowRabbit();
+    const float* c = Team::getRadarColor(currentTeam, rabbitMode);
     boltSceneNode->setColor(c[0], c[1], c[2]);
+
     TextureManager &tm = TextureManager::instance();
-    std::string imageName = Team::getImagePrefix(team);
+    std::string imageName = Team::getImagePrefix(currentTeam);
     imageName += BZDB.get("boltTexture");
     int texture = tm.getTextureID(imageName.c_str());
     if (texture >= 0)

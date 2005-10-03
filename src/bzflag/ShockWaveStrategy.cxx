@@ -39,7 +39,6 @@ ShockWaveStrategy::ShockWaveStrategy(ShotPath *_path) :
   shockNode = new SphereSceneNode(_path->getPosition(), radius);
 
   // get team
-  TeamColor team;
   if (_path->getPlayer() == ServerPlayer) {
     TeamColor tmpTeam = _path->getFiringInfo().shot.team;
     team = (tmpTeam < RogueTeam) ? RogueTeam :
@@ -50,7 +49,7 @@ ShockWaveStrategy::ShockWaveStrategy(ShotPath *_path) :
   }
 
   bool rabbitMode = World::getWorld()->allowRabbit();
-  const float* c = Team::getRadarColor(team,rabbitMode);
+  const float* c = Team::getRadarColor(team, rabbitMode);
   shockNode->setColor(c[0], c[1], c[2], 0.75f);
 }
 
@@ -68,11 +67,18 @@ void ShockWaveStrategy::update(float dt)
   const GLfloat frac = (radius - BZDB.eval(StateDatabase::BZDB_SHOCKINRADIUS)) /
     (BZDB.eval(StateDatabase::BZDB_SHOCKOUTRADIUS) - BZDB.eval(StateDatabase::BZDB_SHOCKINRADIUS));
   shockNode->move(getPath().getPosition(), radius);
-  Player* p = lookupPlayer(getPath().getPlayer());
+
+  // team color
   const LocalPlayer* myTank = LocalPlayer::getMyTank();
-  TeamColor team = p && !(myTank->getFlag() == Flags::Colorblindness) ? p->getTeam() : RogueTeam;
+  TeamColor currentTeam;
+  if (myTank->getFlag() == Flags::Colorblindness) {
+    currentTeam = RogueTeam;
+  } else {
+    currentTeam = team;
+  }
+
   bool rabbitMode = World::getWorld()->allowRabbit();
-  const float* c = Team::getRadarColor(team,rabbitMode);
+  const float* c = Team::getRadarColor(currentTeam, rabbitMode);
   shockNode->setColor(c[0], c[1], c[2], 0.75f - 0.5f * frac);
 
   // expire when full size
