@@ -4788,6 +4788,7 @@ static void joinInternetGame2()
 			myTank->getCallSign(),
 			myTank->getEmailAddress(),
 			startupInfo.token);
+  startupInfo.token[0] = '\0';
 
   // hopefully it worked!  pop all the menus.
   HUDDialogStack* stack = HUDDialogStack::get();
