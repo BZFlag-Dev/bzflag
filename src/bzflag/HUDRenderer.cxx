@@ -625,7 +625,9 @@ void			HUDRenderer::render(SceneRenderer& renderer)
     }
   }
   else {
-    if (showCompose) {
+    const bool showTimes = (fps > 0.0f) || (drawTime > 0.0f);
+
+    if (showCompose || showTimes) {
       // get view metrics
       const int width = window.getWidth();
       const int height = window.getHeight();
@@ -641,7 +643,12 @@ void			HUDRenderer::render(SceneRenderer& renderer)
       glPushMatrix();
       glLoadIdentity();
     
-      renderCompose(renderer);
+      if (showCompose) {
+        renderCompose(renderer);
+      }
+      if (showTimes) {
+        renderTimes();
+      }
 
       glPopMatrix();
     }
