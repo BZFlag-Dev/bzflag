@@ -87,19 +87,19 @@ extern Roaming ROAM;
 
 inline bool Roaming::isRoaming(void) const {
   return (view > roamViewDisabled);
-};
+}
 
 inline Roaming::RoamingView Roaming::getMode(void) const {
   return view;
-};
+}
 
 inline float Roaming::getZoom() const {
   return camera.zoom;
-};
+}
 
 inline void Roaming::setZoom(float newZoom) {
   camera.zoom = newZoom;
-};
+}
 
 inline std::string Roaming::getRoamingLabel(void) const {
   return roamingLabel;
