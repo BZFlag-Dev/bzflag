@@ -649,8 +649,8 @@ void			HUDRenderer::renderAlerts(void)
 
 void			HUDRenderer::renderStatus(void)
 {
-  LocalPlayer* player = LocalPlayer::getMyTank();
-  if (!player || !World::getWorld()) return;
+  LocalPlayer* myTank = LocalPlayer::getMyTank();
+  if (!myTank || !World::getWorld()) return;
 
   Bundle *bdl = BundleMgr::getCurrentBundle();
 
@@ -660,12 +660,12 @@ void			HUDRenderer::renderStatus(void)
   const float h = fm.getStrHeight(majorFontFace, majorFontSize, " ");
   float x = 0.25f * h;
   float y = (float)window.getViewHeight() - h;
-  TeamColor teamIndex = player->getTeam();
-  FlagType* flag = player->getFlag();
+  TeamColor teamIndex = myTank->getTeam();
+  FlagType* flag = myTank->getFlag();
 
   // print player name and score in upper left corner in team (radar) color
   if (!roaming && (!playerHasHighScore || scoreClock.isOn())) {
-    sprintf(buffer, "%s: %d", player->getCallSign(), player->getScore());
+    sprintf(buffer, "%s: %d", myTank->getCallSign(), myTank->getScore());
     hudColor3fv(Team::getRadarColor(teamIndex, World::getWorld()->allowRabbit()));
     fm.drawString(x, y, 0, majorFontFace, majorFontSize, buffer);
   }
@@ -708,8 +708,8 @@ void			HUDRenderer::renderStatus(void)
   // print current position of tank
   if (BZDB.isTrue("showCoordinates")) {
     y -= float(1.5*h);
-    sprintf(buffer, "[%d %d %d]", (int)player->getPosition()[0],
-	    (int)player->getPosition()[1], (int)player->getPosition()[2]);
+    sprintf(buffer, "[%d %d %d]", (int)myTank->getPosition()[0],
+	    (int)myTank->getPosition()[1], (int)myTank->getPosition()[2]);
     x = (float)window.getWidth() - 0.25f * h - fm.getStrLength(majorFontFace, majorFontSize, buffer);
     fm.drawString(x, y, 0, majorFontFace, majorFontSize, buffer);
     y += float(1.5*h);
@@ -735,7 +735,7 @@ void			HUDRenderer::renderStatus(void)
       sprintf(buffer, "0:%02d   ", t);
   }
   if (!roaming) {
-    switch (player->getFiringStatus()) {
+    switch (myTank->getFiringStatus()) {
       case LocalPlayer::Deceased:
 	strcat(buffer, bdl->getLocalString("Dead").c_str());
 	break;
@@ -745,7 +745,7 @@ void			HUDRenderer::renderStatus(void)
 	    World::getWorld()->allowShakeTimeout()) {
 	  /* have a bad flag -- show time left 'til we shake it */
 	  statusColor = yellowColor;
-	  sprintf(buffer, bdl->getLocalString("%.1f").c_str(), player->getFlagShakingTime());
+	  sprintf(buffer, bdl->getLocalString("%.1f").c_str(), myTank->getFlagShakingTime());
 	} else {
 	  statusColor = greenColor;
 	  strcat(buffer, bdl->getLocalString("Ready").c_str());
@@ -756,7 +756,7 @@ void			HUDRenderer::renderStatus(void)
 
     if (World::getWorld()->getMaxShots() != 0) {
 	  statusColor = redColor;
-	  sprintf(buffer, bdl->getLocalString("Reloaded in %.1f").c_str(), player->getReloadTime());
+	  sprintf(buffer, bdl->getLocalString("Reloaded in %.1f").c_str(), myTank->getReloadTime());
 	}
 	break;
 
@@ -805,7 +805,6 @@ void			HUDRenderer::renderTankLabels(SceneRenderer& renderer)
   if (!World::getWorld()) return;
 
   int offset = window.getViewHeight() - window.getHeight();
-  const int curMaxPlayers = World::getWorld()->getCurMaxPlayers();
 
   GLint view[] = {window.getOriginX(), window.getOriginY(),
 		 window.getWidth(), window.getHeight()};

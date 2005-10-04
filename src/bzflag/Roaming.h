@@ -77,8 +77,8 @@ private:
   RoamingView view;
   RoamingCamera camera;
   int targetManual;
-  int targetFlag;
   int targetWinner;
+  int targetFlag;
   std::string roamingLabel;
 };
 
