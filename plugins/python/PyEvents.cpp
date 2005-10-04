@@ -38,6 +38,8 @@ event_to_name (int event)
   case bz_eGetPlayerInfoEvent:	return "GetPlayerInfo";
   case bz_eAllowSpawn:		return "AllowSpawn";
   case bz_eListServerUpdateEvent: return "ListServerUpdate";
+  case bz_eBanEvent: return "Ban";
+  case bz_eHostBanEvent: return "HostBan";
   }
   return NULL;
 }
@@ -117,7 +119,7 @@ SpawnHandler::process (bz_EventData *eventData)
 
   PyObject *arglist = Py_BuildValue ("(ii(fff)fd)",
       psed->playerID,
-      psed->teamID,
+      psed->team,
       psed->pos[0],
       psed->pos[1],
       psed->pos[2],
@@ -285,6 +287,7 @@ TickHandler::process (bz_EventData *eventData)
   Py_DECREF (arglist);
 }
 
+
 void
 AllowSpawnHandler::process (bz_EventData *eventData)
 {
@@ -303,6 +306,35 @@ void
 ListServerUpdateHandler::process (bz_EventData *eventData)
 {
   bz_ListServerUpdateEvent *lsued = (bz_ListServerUpdateEvent*) eventData;
+}
+
+void
+BanEventHandler::process (bz_EventData *eventData)
+{
+	bz_BanEventData  *bed = (bz_BanEventData*) eventData;
+	
+	PyObject *arglist = Py_BuildValue ("(iiiss)",
+      bed->bannerID,
+      bed->banneeID,
+      bed->duration,
+      bed->ipAddress.c_str (),
+      bed->reason.c_str ());
+	emit (arglist, bz_eBanEvent);
+	Py_DECREF (arglist);
+}
+
+void
+HostBanEventHandler::process (bz_EventData *eventData)
+{
+	bz_HostBanEventData  *hbed = (bz_HostBanEventData*) eventData;
+	
+	PyObject *arglist = Py_BuildValue ("(iiss)",
+      hbed->bannerID,
+      hbed->duration,
+      hbed->hostPattern.c_str (),
+      hbed->reason.c_str ());
+	emit (arglist, bz_eHostBanEvent);
+	Py_DECREF (arglist);
 }
 
 };

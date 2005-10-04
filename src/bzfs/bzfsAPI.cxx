@@ -93,7 +93,27 @@ void setBZMatFromAPIMat (BzMaterial &bzmat, bz_MaterialInfo* material )
 
 bz_eTeamType convertTeam ( TeamColor _team )
 {
-	return (bz_eTeamType)_team;
+	switch (_team)
+	{
+	default:
+		return eNoTeam;
+	case RogueTeam:
+		if (clOptions->gameStyle == RabbitChaseGameStyle)
+			return eHunterTeam;
+		return eRogueTeam;
+	case RedTeam:
+		return eRedTeam;
+	case GreenTeam:
+		return eGreenTeam;
+	case BlueTeam:
+		return eBlueTeam;
+	case PurpleTeam:
+		return ePurpleTeam;
+	case ObserverTeam:
+		return eObservers;
+	case RabbitTeam:
+		return eRabbitTeam;
+	}
 }
 
 TeamColor convertTeam( bz_eTeamType _team )
@@ -101,6 +121,26 @@ TeamColor convertTeam( bz_eTeamType _team )
 	if (_team > eObservers)
 		return NoTeam;
 
+	switch (_team)
+	{
+	default:
+		return NoTeam;
+	case eRogueTeam:
+	case eHunterTeam:
+		return RogueTeam;
+	case eRedTeam:
+		return RedTeam;
+	case eGreenTeam:
+		return GreenTeam;
+	case eBlueTeam:
+		return BlueTeam;
+	case ePurpleTeam:
+		return PurpleTeam;
+	case eObservers:
+		return ObserverTeam;
+	case eRabbitTeam:
+		return RabbitTeam;
+	}
 	return (TeamColor)_team;
 }
 
