@@ -70,7 +70,6 @@ public:
   float getZoom(void) const;
 
 private:
-  Player* getCurrentRabbit(void);
   void findWinner(void);
   void buildRoamingLabel(void);
 
