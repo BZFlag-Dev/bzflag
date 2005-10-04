@@ -85,6 +85,8 @@ world types consists of:
 .B dynamicColor
 .br 
 .B textureMatrix
+.br
+.B transform
 .br 
 .B material
 .br 
