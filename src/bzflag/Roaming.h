@@ -17,6 +17,7 @@
 #include <string>
 
 /* common headers */
+#include "Singleton.h"
 #include "Player.h"
 #include "Flag.h"
 
@@ -24,7 +25,9 @@
 #include "World.h"
 #include "Roster.h"
 
-class Roaming {
+#define ROAM (Roaming::instance())
+
+class Roaming : public Singleton<Roaming> {
 public:
   Roaming(); // c'tor
 
@@ -69,6 +72,9 @@ public:
   void setZoom(float newZoom);
   float getZoom(void) const;
 
+protected:
+  friend class Singleton<Roaming>;
+
 private:
   void findWinner(void);
   void buildRoamingLabel(void);
@@ -81,8 +87,6 @@ private:
   int targetFlag;
   std::string roamingLabel;
 };
-
-extern Roaming ROAM;
 
 inline bool Roaming::isRoaming(void) const {
   return (view > roamViewDisabled);

@@ -35,7 +35,9 @@
 /* Someone needs to look at this to see if it can be cleaned up */
 extern const bool devDriving;
 
-Roaming ROAM;
+// initialize the singleton
+template <>
+Roaming* Singleton<Roaming>::_instance = (Roaming*)0;
 
 Roaming::Roaming() : view(roamViewDisabled),
 		     targetManual(-1),

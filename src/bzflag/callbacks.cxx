@@ -17,18 +17,15 @@
 #include "LocalPlayer.h"
 #include "HUDRenderer.h"
 
-
-
-extern LocalPlayer*	myTank;
 extern HUDRenderer*	hud;
 
 void setFlagHelp(const std::string& name, void*)
 {
-  if (myTank == NULL)
+  if (LocalPlayer::getMyTank() == NULL)
     return;
   static const float FlagHelpDuration = 60.0f;
   if (BZDB.isTrue(name))
-    hud->setFlagHelp(myTank->getFlag(), FlagHelpDuration);
+    hud->setFlagHelp(LocalPlayer::getMyTank()->getFlag(), FlagHelpDuration);
   else
     hud->setFlagHelp(Flags::Null, 0.0);
 }
