@@ -1214,7 +1214,7 @@ bool			LocalPlayer::fireShot()
   // prepare shot
   FiringInfo firingInfo(*this, i + getSalt());
   // FIXME team coloring of shot is never used; it was meant to be used
-  // for rabbit mode to correctly calculcate team kills when rabbit changes
+  // for rabbit mode to correctly calculate team kills when rabbit changes
   firingInfo.shot.team = getTeam();
   if (firingInfo.flagType == Flags::ShockWave) {
     // move shot origin under tank and make it stationary

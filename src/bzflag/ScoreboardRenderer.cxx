@@ -675,7 +675,7 @@ void			ScoreboardRenderer::drawPlayerScore(const Player* player,
 
 
 // get current 'leader' (NULL if no player)
-Player*   ScoreboardRenderer::getLeader(std::string *label){
+Player*   ScoreboardRenderer::getLeader(std::string *label) {
   int sortType=sortMode;
 
   if (sortMode==SORT_CALLSIGN || sortMode==SORT_MYRATIO || sortMode==SORT_TEAM){

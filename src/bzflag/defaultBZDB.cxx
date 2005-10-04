@@ -46,7 +46,7 @@ DefaultDBItem	defaultDBItems[] = {
   { "underlineColor",		"cyan",			true,	StateDatabase::ReadWrite,	NULL },
   { "zbuffer",			"1",			true,	StateDatabase::ReadWrite,	NULL },
   { "highlightPattern",		"",			true,	StateDatabase::ReadWrite,	NULL },
-  { "killerhighlight",		"2",			true,	StateDatabase::ReadWrite,	NULL },
+  { "killerhighlight",		"1",			true,	StateDatabase::ReadWrite,	NULL },
   { "serverCacheAge",		"0",			true,	StateDatabase::ReadWrite,	NULL },
   { "slowKeyboard",		"0",			false,	StateDatabase::ReadWrite,	NULL },
   { "displayRadarFlags",	"1",			false,	StateDatabase::ReadWrite,	NULL },

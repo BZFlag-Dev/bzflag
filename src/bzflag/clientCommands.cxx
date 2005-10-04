@@ -35,6 +35,7 @@
 #include "Roster.h"
 #include "SilenceDefaultKey.h"
 #include "ServerCommandKey.h"
+#include "Roaming.h"
 
 /* FIXME -- from playing.cxx */
 extern LocalPlayer* myTank;
@@ -58,24 +59,10 @@ extern float pauseCountdown;
 #include "Address.h"
 extern char messageMessage[PlayerIdPLen + MessageLen];
 extern float clockAdjust;
-extern bool roaming;
-extern enum roamingView {
-  roamViewFree = 0,
-  roamViewTrack,
-  roamViewFollow,
-  roamViewFP,
-  roamViewFlag,
-  roamViewCount
-} roamView;
-extern int roamTrackTank, roamTrackWinner, roamTrackFlag;
-extern float roamPos[3], roamDPos[3];
-extern float roamTheta, roamDTheta;
-extern float roamPhi, roamDPhi;
-extern float roamZoom, roamDZoom;
+extern float roamDZoom;
 extern bool roamButton;
 #include "World.h"
 extern World* world;
-void setRoamingLabel();
 extern void warnAboutMainFlags();
 extern void warnAboutRadarFlags();
 extern void warnAboutRadar();
@@ -235,10 +222,10 @@ std::string cmdRestart(const std::string&, const CommandManager::ArgList& args, 
     if (!gameOver && !myTank->isSpawning() && (myTank->getTeam() != ObserverTeam) && !myTank->isAlive() && !myTank->isExploding()) {
       serverLink->sendAlive();
       myTank->setSpawning(true);
-	  CommandManager::ArgList zoomArgs;
-	  std::string resetArg = "reset";
-	  zoomArgs.push_back(resetArg);
-	  cmdViewZoom("", zoomArgs,NULL);
+      CommandManager::ArgList zoomArgs;
+      std::string resetArg = "reset";
+      zoomArgs.push_back(resetArg);
+      cmdViewZoom("", zoomArgs,NULL);
     }
 
   return std::string();
@@ -408,13 +395,14 @@ std::string cmdViewZoom(const std::string&,
     }
     BZDB.setFloat("displayFOV", fov);
     // also toggle the observer fov
-    if (roamZoom != 60.0f) {
-      roamZoom = 60.0f;
+    if (ROAM.getZoom() != 60.0f) {
+      ROAM.setZoom(60.0f);
     } else {
-      roamZoom = 15.0f;
+      ROAM.setZoom(15.0f);
     }
   } else if (args[0] == "reset") {
-	fov = 60.0f;
+    fov = 60.0f;
+    ROAM.setZoom(60.0f);
     BZDB.setFloat("displayFOV", fov);
   } else {
     return "usage: viewZoom {in|out|toggle|reset}";
@@ -662,7 +650,7 @@ std::string cmdRoam(const std::string&, const CommandManager::ArgList& args, boo
 {
   if (args.size() == 0)
     return "usage: roam {zoom|cycle} <args>";
-  if (!roaming)
+  if (!ROAM.isRoaming())
     return std::string();
   if (args[0] == "zoom") {
     if (args.size() != 2)
@@ -674,7 +662,7 @@ std::string cmdRoam(const std::string&, const CommandManager::ArgList& args, boo
     } else if (args[1] == "in") {
       roamDZoom = -2.0f * BZDBCache::tankSpeed;
     } else if (args[1] == "normal") {
-      roamZoom = 60.0f;
+      ROAM.setZoom(60.0f);
     } else {
       return "usage: roam zoom {in|out|normal|stop}";
     }
@@ -683,91 +671,19 @@ std::string cmdRoam(const std::string&, const CommandManager::ArgList& args, boo
       return "usage: roam cycle {type|subject} {forward|backward}";
     if (args[1] == "type") {
       if (args[2] == "forward") {
-	roamView = roamingView((roamView + 1) % roamViewCount);
-	if (roamView == roamViewFlag) {
-	  const int maxFlags = world->getMaxFlags();
-	  bool found = false;
-	  for (int i = 0; i < maxFlags; i++) {
-	    const Flag& flag = world->getFlag(i);
-	    if (flag.type->flagTeam != NoTeam) {
-	      roamTrackFlag = i;
-	      found = true;
-	      break;
-	    }
-	  }
-	  if (!found)
-	    roamView = roamViewFree;
-	} else if ((roamTrackTank != -1) && (roamView == roamViewTrack || roamView == roamViewFollow || roamView == roamViewFP)) {
-	  if ((player[roamTrackTank] != NULL) && (!player[roamTrackTank]->isAlive())) {
-	    bool found = false;
-	    for (int i = 0; i < curMaxPlayers; i++) {
-	      if (player[i] && player[i]->isAlive()) {
-		roamTrackTank = roamTrackWinner = i;
-		found = true;
-		break;
-	      }
-	    }
-	    if (!found)
-	      roamTrackTank = -1;
-	  }
-	}
-	setRoamingLabel();
+	ROAM.setMode(Roaming::RoamingView((ROAM.getMode() + 1) % Roaming::roamViewCount));
       } else if (args[2] == "backward") {
-	// FIXME
+	int setto = (ROAM.getMode() - 1) % Roaming::roamViewCount;
+	if (setto < 0) setto += Roaming::roamViewCount;
+	ROAM.setMode(Roaming::RoamingView(setto));
       } else {
 	return "usage: roam cycle {type|subject} {forward|backward}";
       }
     } else if (args[1] == "subject") {
       if (args[2] == "forward") {
-	if (roamView == roamViewFree) {
-	  // do nothing
-	} else if (roamView == roamViewFlag) {
-	  const int maxFlags = world->getMaxFlags();
-	  for (int i = 1; i < maxFlags; i++) {
-	    int j = (roamTrackFlag + i) % maxFlags;
-	    const Flag& flag = world->getFlag(j);
-	    if (flag.type->flagTeam != NoTeam) {
-	      roamTrackFlag = j;
-	      break;
-	    }
-	  }
-	} else {
-	  int i, j;
-	  for (i = 0; i < curMaxPlayers; i++) {
-	    j = (roamTrackTank + i + 2) % (curMaxPlayers + 1) - 1;
-	    if ((j == -1)
-		|| (player[j] && player[j]->getTeam() != ObserverTeam)) {
-	      roamTrackTank = roamTrackWinner = j;
-	      break;
-	    }
-	  }
-	}
-	setRoamingLabel();
+	ROAM.changeTarget(Roaming::next);
       } else if (args[2] == "backward") {
-	if (roamView == roamViewFree) {
-	  // do nothing
-	} else if (roamView == roamViewFlag) {
-	  const int maxFlags = world->getMaxFlags();
-	  for (int i = 1; i < maxFlags; i++) {
-	    int j = (roamTrackFlag - i + maxFlags) % maxFlags;
-	    const Flag& flag = world->getFlag(j);
-	    if (flag.type->flagTeam != NoTeam) {
-	      roamTrackFlag = j;
-	      break;
-	    }
-	  }
-	} else {
-	  for (int i = 0; i < curMaxPlayers; i++) {
-	    int j = (roamTrackTank - i + curMaxPlayers + 1)
-	      % (curMaxPlayers + 1) - 1;
-	    if ((j == -1)
-		|| (player[j] && player[j]->getTeam() != ObserverTeam)) {
-	      roamTrackTank = roamTrackWinner = j;
-	      break;
-	    }
-	  }
-	}
-	setRoamingLabel();
+	ROAM.changeTarget(Roaming::previous);
       } else {
 	return "usage: roam cycle {type|subject} {forward|backward}";
       }

@@ -107,6 +107,7 @@
 #include "cURLManager.h"
 #include "ServerList.h"
 #include "GameTime.h"
+#include "Roaming.h"
 
 //#include "messages.h"
 #include "Downloads.h"
@@ -165,6 +166,8 @@ static bool		grabMouseAlways = false;
 FlashClock		pulse;
 static bool		wasRabbit = false;
 static bool		justJoined = false;
+
+float			roamDZoom = 0.0f;
 
 MessageOfTheDay		*motd = NULL;
 DefaultCompleter	completer;
@@ -562,142 +565,11 @@ static ServerLink*	lookupServer(const Player *_player)
 #if defined(FREEZING)
 static bool		motionFreeze = false;
 #endif
-bool roaming = false;
-enum roamingView {
-  roamViewFree = 0,
-  roamViewTrack,
-  roamViewFollow,
-  roamViewFP,
-  roamViewFlag,
-  roamViewCount
-} roamView = roamViewFP;
 #ifdef DEBUG
-static const bool devDriving = false;
+extern const bool devDriving = false;
 #else
-static const bool devDriving = false;
+extern const bool devDriving = false;
 #endif
-
-int roamTrackTank = -1, roamTrackWinner = -1, roamTrackFlag = 0;
-float roamPos[3] = {0.0f, 0.0f, 1.57f};  /* MuzzleHeight */
-float roamDPos[3] = {0.0f, 0.0f, 0.0f};
-float roamTheta = 0.0f, roamDTheta = 0.0f;
-float roamPhi = 0.0f, roamDPhi = 0.0f;
-float roamZoom = 60.0f, roamDZoom = 0.0f;
-
-
-static Player* getCurrentRabbit()
-{
-  if (player == NULL) {
-    return NULL;
-  }
-  for (int i = 0; i < curMaxPlayers; i++) {
-    Player* p = player[i];
-    if (p && p->isAlive() && (p->getTeam() == RabbitTeam)) {
-      return p;
-    }
-  }
-  return NULL;
-}
-
-
-void setRoamingLabel()
-{
-  if (!player) {
-    return;
-  }
-
-  std::string playerString = "";
-
-  // follow the important tank
-  if (roamTrackTank == -1) {
-    Player* top = NULL;
-    if (world && world->allowRabbit()) {
-      // follow the white rabbit
-      top = getCurrentRabbit();
-      if (top != NULL) {
-	playerString = "Rabbit ";
-	roamTrackWinner = top->getId();
-      }
-    }
-    if (top == NULL) {
-      // find the leader
-      top = scoreboard->getLeader(&playerString);
-      if (top == NULL) {
-	roamTrackWinner = 0;
-      } else {
-	roamTrackWinner = top->getId();
-      }
-    }
-  }
-
-  Player* tracked;
-  if (!devDriving) {
-    tracked = player[roamTrackWinner];
-  } else {
-    tracked = myTank;
-  }
-
-  if (tracked) {
-    if (BZDBCache::colorful) {
-      int color = tracked->getTeam();
-      if (World::getWorld()->allowRabbit() && (color == RogueTeam)) {
-	// hunters are orange (hack)
-	color = OrangeColor;
-      } else if (color < 0 || color > 4) {
-	// non-teamed, rabbit are white (same as observer)
-	color = WhiteColor;
-      }
-      playerString += ColorStrings[color];
-    }
-    playerString += tracked->getCallSign();
-
-    const FlagType* flag = tracked->getFlag();
-    if (flag != Flags::Null) {
-      if (BZDBCache::colorful) {
-	playerString += ColorStrings[CyanColor] + " / ";
-	if (flag->flagTeam != NoTeam) {
-	  playerString += ColorStrings[flag->flagTeam];
-	} else {
-	  playerString += ColorStrings[WhiteColor];
-	}
-      } else {
-	playerString += " / ";
-      }
-      if (flag->endurance == FlagNormal) {
-	playerString += flag->flagName;
-      } else {
-	playerString += flag->flagAbbv;
-      }
-    }
-
-    switch (roamView) {
-      case roamViewTrack: {
-	hud->setRoamingLabel(std::string("Tracking ") + playerString);
-	break;
-      }
-      case roamViewFollow: {
-	hud->setRoamingLabel(std::string("Following ") + playerString);
-	break;
-      }
-      case roamViewFP: {
-	hud->setRoamingLabel(std::string("Driving with ") + playerString);
-	break;
-      }
-      case roamViewFlag: {
-	hud->setRoamingLabel(std::string("Tracking ") +
-			     world->getFlag(roamTrackFlag).type->flagName +
-			     " Flag");
-	break;
-      }
-      default: {
-	hud->setRoamingLabel(std::string("Roaming"));
-	break;
-      }
-    }
-  } else {
-    hud->setRoamingLabel("Roaming");
-  }
-}
 
 static enum {None, Left, Right, Up, Down} keyboardMovement;
 static int shiftKeyStatus;
@@ -2098,7 +1970,10 @@ static void		handleServerMessage(bool human, uint16_t code,
 	}
 
 	if (SceneRenderer::instance().useQuality() >= 2)
-	  if ((tank != myTank) || BZDB.isTrue("enableLocalSpawnEffect"))
+	  if (((tank != myTank) 
+	       && ((ROAM.getMode() != Roaming::roamViewFP)
+	           || (tank != ROAM.getTargetTank())))
+	      || BZDB.isTrue("enableLocalSpawnEffect"))
 	    EffectsRenderer::instance().addSpawnEffect(tank->getTeam(),pos);
 
 	tank->setStatus(PlayerState::Alive);
@@ -2537,23 +2412,27 @@ static void		handleServerMessage(bool human, uint16_t code,
 
       const int shooterid = firingInfo.shot.player;
       if (shooterid != ServerPlayer) {
-	if (player[shooterid] && player[shooterid]->getId() == shooterid)
-	{
+	if (player[shooterid] && player[shooterid]->getId() == shooterid) {
 	  player[shooterid]->addShot(firingInfo);
 
-	  if (SceneRenderer::instance().useQuality() >= 2)
-	  {
-		  float	shotPos[3];
-		  player[shooterid]->getMuzzle(shotPos);
+	  if (SceneRenderer::instance().useQuality() >= 2) {
+	    float shotPos[3];
+	    player[shooterid]->getMuzzle(shotPos);
 
-		  EffectsRenderer::instance().addShotEffect(player[shooterid]->getTeam(),shotPos,player[shooterid]->getAngle(),player[shooterid]->getVelocity());
+	    // if you are driving with a tank in observer mode
+	    // and do not want local shot effects,
+	    // disable shot effects for that specific tank
+	    if ((ROAM.getMode() != Roaming::roamViewFP)
+	        || (shooterid != ROAM.getTargetTank()->getId())
+		|| BZDB.isTrue("enableLocalShotEffect"))
+	      EffectsRenderer::instance().addShotEffect(player[shooterid]->getTeam(),shotPos,player[shooterid]->getAngle(),player[shooterid]->getVelocity());
 	  }
-	}
-	else
+	} else {
 	  break;
-      }
-      else
+	}
+      } else {
 	World::getWorld()->getWorldWeapons()->addShot(firingInfo);
+      }
 
       if (human) {
 	const float* pos = firingInfo.shot.pos;
@@ -4247,7 +4126,12 @@ static void enteringServer(void *buf)
 
   controlPanel->setControlColor(Team::getRadarColor(myTank->getTeam(),rabbitMode));
   radar->setControlColor(Team::getRadarColor(myTank->getTeam(),rabbitMode));
-  roaming = (myTank->getTeam() == ObserverTeam) || devDriving;
+
+  if ((myTank->getTeam() == ObserverTeam) || devDriving) {
+    ROAM.setMode(Roaming::roamViewFP);
+  } else {
+    ROAM.setMode(Roaming::roamViewDisabled);
+  }
 
   setTankFlags();
 
@@ -4883,12 +4767,12 @@ void setupNearPlane()
   }
 
   const Player* tank = myTank;
-  if (roaming) {
-    if (roamView != roamViewFP) {
+  if (ROAM.isRoaming()) {
+    if (ROAM.getMode() != Roaming::roamViewFP) {
       return;
     }
     if (!devDriving) {
-      tank = getPlayerByIndex(roamTrackWinner);
+      tank = ROAM.getTargetTank();
     }
   }
   if (tank == NULL) {
@@ -4970,31 +4854,31 @@ void drawFrame(const float dt)
     targetPoint[1] = eyePoint[1] + myTankDir[1];
     targetPoint[2] = eyePoint[2] + myTankDir[2];
 
-    if (roaming) {
+    if (devDriving || ROAM.isRoaming()) {
       hud->setAltitude(-1.0f);
       float roamViewAngle;
-      setRoamingLabel();
-      if ((roamView != roamViewFree) &&
-	  ((player && player[roamTrackWinner]) || (devDriving && myTank))) {
+      const Roaming::RoamingCamera* roam = ROAM.getCamera();
+      if (!(ROAM.getMode() == Roaming::roamViewFree) &&
+	  (ROAM.getTargetTank() || (devDriving && myTank))) {
 	Player *target;
 	if (!devDriving) {
-	  target = player[roamTrackWinner];
+	  target = ROAM.getTargetTank();
 	} else {
 	  target = myTank;
 	}
 	const float *targetTankDir = target->getForward();
 	// fixed camera tracking target
-	if (roamView == roamViewTrack) {
-	  eyePoint[0] = roamPos[0];
-	  eyePoint[1] = roamPos[1];
-	  eyePoint[2] = roamPos[2];
+	if (ROAM.getMode() == Roaming::roamViewTrack) {
+	  eyePoint[0] = roam->pos[0];
+	  eyePoint[1] = roam->pos[1];
+	  eyePoint[2] = roam->pos[2];
 	  targetPoint[0] = target->getPosition()[0];
 	  targetPoint[1] = target->getPosition()[1];
 	  targetPoint[2] = target->getPosition()[2] +
 			   target->getMuzzleHeight();;
 	}
 	// camera following target
-	else if (roamView == roamViewFollow) {
+	else if (ROAM.getMode() == Roaming::roamViewFollow) {
 	  eyePoint[0] = target->getPosition()[0] - targetTankDir[0] * 40;
 	  eyePoint[1] = target->getPosition()[1] - targetTankDir[1] * 40;
 	  eyePoint[2] = target->getPosition()[2] + muzzleHeight * 6;
@@ -5003,7 +4887,7 @@ void drawFrame(const float dt)
 	  targetPoint[2] = target->getPosition()[2];
 	}
 	// target's view
-	else if (roamView == roamViewFP) {
+	else if (ROAM.getMode() == Roaming::roamViewFP) {
 	  eyePoint[0] = target->getPosition()[0];
 	  eyePoint[1] = target->getPosition()[1];
 	  eyePoint[2] = target->getPosition()[2] + target->getMuzzleHeight();
@@ -5013,15 +4897,15 @@ void drawFrame(const float dt)
 	  hud->setAltitude(target->getPosition()[2]);
 	}
 	// track team flag
-	else if (roamView == roamViewFlag) {
-	  Flag &targetFlag = world->getFlag(roamTrackFlag);
-	  eyePoint[0] = roamPos[0];
-	  eyePoint[1] = roamPos[1];
-	  eyePoint[2] = roamPos[2];
-	  targetPoint[0] = targetFlag.position[0];
-	  targetPoint[1] = targetFlag.position[1];
-	  targetPoint[2] = targetFlag.position[2];
-	  if (targetFlag.status != FlagOnTank) {
+	else if (ROAM.getMode() == Roaming::roamViewFlag) {
+	  Flag* targetFlag = ROAM.getTargetFlag();
+	  eyePoint[0] = roam->pos[0];
+	  eyePoint[1] = roam->pos[1];
+	  eyePoint[2] = roam->pos[2];
+	  targetPoint[0] = targetFlag->position[0];
+	  targetPoint[1] = targetFlag->position[1];
+	  targetPoint[2] = targetFlag->position[2];
+	  if (targetFlag->status != FlagOnTank) {
 	    targetPoint[2] += muzzleHeight;
 	  } else {
 	    targetPoint[2] -= (BZDBCache::tankHeight - muzzleHeight);
@@ -5033,24 +4917,24 @@ void drawFrame(const float dt)
       // free Roaming
       else {
 	float dir[3];
-	dir[0] = cosf((float)(roamPhi * M_PI / 180.0)) * cosf((float)(roamTheta * M_PI / 180.0));
-	dir[1] = cosf((float)(roamPhi * M_PI / 180.0)) * sinf((float)(roamTheta * M_PI / 180.0));
-	dir[2] = sinf((float)(roamPhi * M_PI / 180.0));
-	eyePoint[0] = roamPos[0];
-	eyePoint[1] = roamPos[1];
-	eyePoint[2] = roamPos[2];
+	dir[0] = cosf((float)(roam->phi * M_PI / 180.0)) * cosf((float)(roam->theta * M_PI / 180.0));
+	dir[1] = cosf((float)(roam->phi * M_PI / 180.0)) * sinf((float)(roam->theta * M_PI / 180.0));
+	dir[2] = sinf((float)(roam->phi * M_PI / 180.0));
+	eyePoint[0] = roam->pos[0];
+	eyePoint[1] = roam->pos[1];
+	eyePoint[2] = roam->pos[2];
 	targetPoint[0] = eyePoint[0] + dir[0];
 	targetPoint[1] = eyePoint[1] + dir[1];
 	targetPoint[2] = eyePoint[2] + dir[2];
-	roamViewAngle = roamTheta;
+	roamViewAngle = roam->theta;
       }
       if (!devDriving) {
-	float virtPos[]={eyePoint[0], eyePoint[1], 0};
+	float virtPos[] = {eyePoint[0], eyePoint[1], 0};
 	if (myTank) {
 	  myTank->move(virtPos, (float)(roamViewAngle * M_PI / 180.0));
 	}
       }
-      fov = (float)(roamZoom * M_PI / 180.0);
+      fov = (float)(roam->zoom * M_PI / 180.0);
       moveSoundReceiver(eyePoint[0], eyePoint[1], eyePoint[2], 0.0, false);
     }
 
@@ -5075,9 +4959,9 @@ void drawFrame(const float dt)
       const bool showTreads = BZDB.isTrue("showTreads");
 
       // add my tank if required
-      const bool inCockpit = (!devDriving || (roamView == roamViewFP));
+      const bool inCockpit = (!devDriving || (ROAM.getMode() == Roaming::roamViewFP));
       const bool showMyTreads = showTreads ||
-				(devDriving && (roamView != roamViewFP));
+				(devDriving && (ROAM.getMode() != Roaming::roamViewFP));
       myTank->addToScene(scene, myTank->getTeam(),
 			 inCockpit, seerView,
 			 showMyTreads, showMyTreads /*showIDL*/);
@@ -5115,9 +4999,10 @@ void drawFrame(const float dt)
 	    }
 	  }
 
-	  const bool inCockpt  = roaming && !devDriving &&
-				 (roamView == roamViewFP) &&
-				 (roamTrackWinner == i);
+	  const bool inCockpt  = ROAM.isRoaming() && !devDriving &&
+				 (ROAM.getMode() == Roaming::roamViewFP) &&
+				 ROAM.getTargetTank() && 
+				 (ROAM.getTargetTank()->getId() == i);
 	  const bool showPlayer = !inCockpt || showTreads;
 
 	  // add player tank if required
@@ -5165,8 +5050,8 @@ void drawFrame(const float dt)
       }
     }
     sceneRenderer->setDim(HUDDialogStack::get()->isActive() || insideDim ||
-			  (myTank && !roaming && !myTank->isAlive() &&
-			   !myTank->isExploding()));
+			  (myTank && !ROAM.isRoaming() && !devDriving) &&
+			   !myTank->isAlive() && !myTank->isExploding());
 
     // turn on panel dimming when showing the menu (both radar and chat)
     if (HUDDialogStack::get()->isActive()) {
@@ -5188,7 +5073,7 @@ void drawFrame(const float dt)
     // set hud state
     hud->setDim(HUDDialogStack::get()->isActive());
     hud->setPlaying(myTank && (myTank->isAlive() && !myTank->isPaused()));
-    hud->setRoaming(roaming);
+    hud->setRoaming(ROAM.isRoaming());
     hud->setCracks(myTank && !firstLife && !justJoined && !myTank->isAlive());
 
     // get frame start time
@@ -5203,11 +5088,11 @@ void drawFrame(const float dt)
     }
 
     // so observers can have enhanced radar
-    if (roaming && myTank && !devDriving) {
-      if (roamView == roamViewFP && player[roamTrackWinner])
-	myTank->setZpos(player[roamTrackWinner]->getPosition()[2]);
+    if (ROAM.isRoaming() && myTank && !devDriving) {
+      if (ROAM.getMode() == Roaming::roamViewFP && ROAM.getTargetTank())
+	myTank->setZpos(ROAM.getTargetTank()->getPosition()[2]);
       else
-	myTank->setZpos(roamPos[2]);
+	myTank->setZpos(ROAM.getCamera()->pos[2]);
     }
 
     // draw frame
@@ -5515,9 +5400,16 @@ void drawFrame(const float dt)
 
 static void		setupRoamingCamera(float dt)
 {
-  static float prevDTheta = 0.0f;
-  static float prevDPhi = 0.0f;
-  static float prevDPos[3] = {0.0f, 0.0f, 0.0f};
+  static Roaming::RoamingCamera prevDeltaCamera;
+  static bool inited = false;
+
+  if (!inited) {
+    memset(&prevDeltaCamera, 0, sizeof(Roaming::RoamingCamera));
+    inited = true;
+  }
+
+  Roaming::RoamingCamera deltaCamera;
+  memset(&deltaCamera, 0, sizeof(Roaming::RoamingCamera));
 
   // move roaming camera
   if (myTank) {
@@ -5527,24 +5419,19 @@ static void		setupRoamingCamera(float dt)
     if (display->hasGetKeyMode()) {
       display->getModState (shift, control, alt);
     }
-    roamDPos[0] = 0.0;
-    roamDPos[1] = 0.0;
-    roamDPos[2] = 0.0;
-    roamDTheta  = 0.0;
-    roamDPhi    = 0.0;
     if (!control && !shift) {
-      roamDPos[0] = (float)(4 * myTank->getSpeed()) * BZDBCache::tankSpeed;
+      deltaCamera.pos[0] = (float)(4 * myTank->getSpeed()) * BZDBCache::tankSpeed;
     }
     if (alt) {
-      roamDPos[1] = (float)(4 * myTank->getRotation()) * BZDBCache::tankSpeed;
+      deltaCamera.pos[1] = (float)(4 * myTank->getRotation()) * BZDBCache::tankSpeed;
     } else {
-      roamDTheta  = roamZoom * (float)myTank->getRotation();
+      deltaCamera.theta  = ROAM.getZoom() * (float)myTank->getRotation();
     }
     if (control) {
-      roamDPhi    = -2.0f * roamZoom / 3.0f * (float)myTank->getSpeed();
+      deltaCamera.phi    = -2.0f * ROAM.getZoom() / 3.0f * (float)myTank->getSpeed();
     }
     if (shift) {
-      roamDPos[2] = (float)(-4 * myTank->getSpeed()) * BZDBCache::tankSpeed;
+      deltaCamera.pos[2] = (float)(-4 * myTank->getSpeed()) * BZDBCache::tankSpeed;
     }
   }
 
@@ -5556,114 +5443,19 @@ static void		setupRoamingCamera(float dt)
     }
     const float at = (dt / st);
     const float bt = 1.0f - at;
-    roamDPos[0] = (at * roamDPos[0]) + (bt * prevDPos[0]);
-    roamDPos[1] = (at * roamDPos[1]) + (bt * prevDPos[1]);
-    roamDPos[2] = (at * roamDPos[2]) + (bt * prevDPos[2]);
-    roamDTheta  = (at * roamDTheta) + (bt * prevDTheta);
-    roamDPhi    = (at * roamDPhi) + (bt * prevDPhi);
+    deltaCamera.pos[0] = (at * deltaCamera.pos[0]) + (bt * prevDeltaCamera.pos[0]);
+    deltaCamera.pos[1] = (at * deltaCamera.pos[1]) + (bt * prevDeltaCamera.pos[1]);
+    deltaCamera.pos[2] = (at * deltaCamera.pos[2]) + (bt * prevDeltaCamera.pos[2]);
+    deltaCamera.theta  = (at * deltaCamera.theta) + (bt * prevDeltaCamera.theta);
+    deltaCamera.phi    = (at * deltaCamera.phi) + (bt * prevDeltaCamera.phi);
   }
 
-  // are we tracking?
-  bool tracking = false;
-  const float* trackPos;
-  if (roamView == roamViewTrack) {
-    Player *target;
-    if (!devDriving) {
-      if ((player != NULL) && (roamTrackWinner < curMaxPlayers)) {
-	target = player[roamTrackWinner];
-      } else {
-	target = NULL;
-      }
-    } else {
-      target = myTank;
-    }
-    if (target != NULL) {
-      trackPos = target->getPosition();
-      tracking = true;
-    }
-  }
-  else if (roamView == roamViewFlag) {
-    if ((world != NULL) && (roamTrackFlag < world->getMaxFlags())) {
-      Flag &flag = world->getFlag(roamTrackFlag);
-      trackPos = flag.position;
-      tracking = true;
-    }
-  }
+  deltaCamera.zoom = roamDZoom;
 
-  // modify X and Y coords
-  if (!tracking) {
-    const float c = cosf(roamTheta * (float)(M_PI / 180.0f));
-    const float s = sinf(roamTheta * (float)(M_PI / 180.0f));
-    roamPos[0] += dt * (c * roamDPos[0] - s * roamDPos[1]);
-    roamPos[1] += dt * (c * roamDPos[1] + s * roamDPos[0]);
-  } else {
-    float dx = roamPos[0] - trackPos[0];
-    float dy = roamPos[1] - trackPos[1];
-    float dist = sqrtf((dx * dx) + (dy * dy));
-
-    float nomDist = 4.0f * BZDBCache::tankSpeed;
-    if (nomDist == 0.0f) {
-      nomDist = 100.0f;
-    }
-    float distFactor =  (dist / nomDist);
-    if (distFactor < 0.25f) {
-      distFactor = 0.25f;
-    }
-    float newDist = dist - (dt * distFactor * roamDPos[0]);
-
-    const float minDist = BZDBCache::tankLength * 0.5f;
-    if (newDist < minDist) {
-      if (dist >= minDist) {
-	newDist = minDist;
-      } else {
-	newDist = dist;
-      }
-    }
-    float scale = 0.0f;
-    if (dist > 0.0f) {
-      scale = newDist / dist;
-    }
-    dx = dx * scale;
-    dy = dy * scale;
-    if (fabsf(dx) < 0.001f) dx = 0.001f;
-    if (fabsf(dy) < 0.001f) dy = 0.001f;
-    const float dtheta = -(dt * roamDTheta * (float)(M_PI / 180.0f));
-    const float c = cosf(dtheta);
-    const float s = sinf(dtheta);
-    roamPos[0] = trackPos[0] + ((c * dx) - (s * dy));
-    roamPos[1] = trackPos[1] + ((c * dy) + (s * dx));
-    // setup so that free roam stays in the last state
-    roamTheta = atan2f(trackPos[1] - roamPos[1], trackPos[0] - roamPos[0]);
-    roamTheta *= (float)(180.0f / M_PI);
-    roamPhi = atan2f(trackPos[2] - roamPos[2], newDist);
-    roamPhi *= (float)(180.0f / M_PI);
-  }
-
-  // modify Z coordinate
-  roamPos[2] += dt * roamDPos[2];
-  float muzzleHeight = BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT);
-  if (roamPos[2] < muzzleHeight) {
-    roamPos[2] = muzzleHeight;
-    roamDPos[2] = 0.0f;
-  }
-
-  // adjust the angles
-  if (!tracking) {
-    roamTheta  += dt * roamDTheta;
-    roamPhi    += dt * roamDPhi;
-  }
-  roamZoom += dt * roamDZoom;
-  if (roamZoom < BZDB.eval("roamZoomMin")) {
-    roamZoom = BZDB.eval("roamZoomMin");
-  }
-  else if (roamZoom > BZDB.eval("roamZoomMax")) {
-    roamZoom = BZDB.eval("roamZoomMax");
-  }
+  ROAM.updatePosition(&deltaCamera, dt);
 
   // copy the old delta values
-  prevDTheta = roamDTheta;
-  prevDPhi = roamDPhi;
-  memcpy(prevDPos, roamDPos, sizeof(float[3]));
+  memcpy(&prevDeltaCamera, &deltaCamera, sizeof(Roaming::RoamingCamera));
 
   return;
 }
@@ -5982,10 +5774,9 @@ static void		playingLoop()
     }
 
     // move roaming camera
-    if (roaming) {
+    if (ROAM.isRoaming()) {
       setupRoamingCamera(dt);
     }
-    setRoamingLabel();
 
     // update test video format timer
     if (testVideoFormatTimer > 0.0f) {

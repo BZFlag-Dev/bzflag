@@ -86,6 +86,7 @@ class World {
     Team&		getTeam(int index);
     RemotePlayer**	getPlayers() const;
     RemotePlayer*&	getPlayer(int index) const;
+    RemotePlayer*	getCurrentRabbit() const;
     WorldPlayer*	getWorldWeapons() const;
     Flag&		getFlag(int index) const;
     const float*	getBase(int, int=0) const;

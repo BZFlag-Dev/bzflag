@@ -76,7 +76,6 @@ public:
   void		setCracks(bool showCracks);
   void		addMarker(float heading, const float *color);
   void		setRestartKeyLabel(const std::string&);
-  void		setRoamingLabel(const std::string&);
   void		setTimeLeft(uint32_t timeLeftInSeconds);
 
   void		setDim(bool);
@@ -109,7 +108,7 @@ protected:
   void		renderNotPlaying(SceneRenderer&);
   void		renderRoaming(SceneRenderer&);
   void		renderTimes(void);
-  void		renderShots(void);
+  void		renderShots(const Player*);
 
   void		makeCrack(float crackpattern[HUDNumCracks][(1 << HUDCrackLevels) + 1][2], int n, int l, float a);
   std::string	makeHelpString(const char* help) const;
@@ -183,7 +182,6 @@ private:
   float		huntedArrowWidth;
   float		tkWarnRatio;
   std::string	restartLabel;
-  std::string	roamingLabel;
 
   FlashClock		globalClock;
   FlashClock		scoreClock;

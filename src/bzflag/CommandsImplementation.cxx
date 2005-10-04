@@ -31,11 +31,7 @@
 #include "Roster.h"
 #include "playing.h"
 #include "bzglob.h"
-
-// externs for RoamPos command
-extern float roamPos[3], roamTheta, roamPhi, roamZoom;
-extern float roamDPos[3], roamDTheta, roamDPhi, roamDZoom;
-
+#include "Roaming.h"
 
 // class definitions
 
@@ -129,7 +125,7 @@ static SetCommand	  setCommand;
 static DiffCommand	  diffCommand;
 static LocalSetCommand    localSetCommand;
 static QuitCommand	  quitCommand;
-static RoamPosCommand     roamPosCommand;
+static RoamPosCommand     RoamPosCommand;
 static ReTextureCommand   reTextureCommand;
 static SaveWorldCommand   saveWorldCommand;
 
@@ -142,7 +138,7 @@ HighlightCommand::HighlightCommand() :	LocalCommand("/highlight") {}
 LocalSetCommand::LocalSetCommand() :	LocalCommand("/localset") {}
 QuitCommand::QuitCommand() :		LocalCommand("/quit") {}
 ReTextureCommand::ReTextureCommand() :	LocalCommand("/retexture") {}
-RoamPosCommand::RoamPosCommand() :	LocalCommand("/roampos") {}
+RoamPosCommand::RoamPosCommand() :	LocalCommand("/RoamPos") {}
 SaveWorldCommand::SaveWorldCommand() :	LocalCommand("/saveworld") {}
 SetCommand::SetCommand() :		LocalCommand("/set") {}
 SilenceCommand::SilenceCommand() :	LocalCommand("/silence") {}
@@ -522,54 +518,51 @@ bool RoamPosCommand::operator() (const char *commandLine)
   std::vector<std::string> tokens = TextUtils::tokenize(params, " ");
 
   if (tokens.size() == 1) {
+    Roaming::RoamingCamera cam;
     if (TextUtils::tolower(tokens[0]) == "reset") {
-      roamPos[0] = 0.0f;
-      roamPos[1] = 0.0f;
-      roamPos[2] = BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT);
-      roamTheta = 0.0f;
-      roamZoom = 60.0f;
-      roamPhi = -0.0f;
-      roamDPos[0] = 0.0f;
-      roamDPos[1] = 0.0f;
-      roamDPos[2] = 0.0f;
-      roamDTheta = 0.0f;
-      roamDZoom = 0.0f;
-      roamDPhi = 0.0f;
+      cam.pos[0] = 0.0f;
+      cam.pos[1] = 0.0f;
+      cam.pos[2] = BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT);
+      cam.theta = 0.0f;
+      cam.zoom = 60.0f;
+      cam.phi = -0.0f;
     } else {
       const float degrees = parseFloatExpr(tokens[0], true);
       const float ws = BZDB.eval(StateDatabase::BZDB_WORLDSIZE);
       const float radians = degrees * ((float)M_PI/180.0f);
-      roamPos[0] = cosf(radians)* 0.5f * ws * (float)M_SQRT2;
-      roamPos[1] = sinf(radians)* 0.5f * ws * (float)M_SQRT2;
-      roamPos[2] = +0.25f * ws;
-      roamTheta = degrees + 180.0f;
-      roamPhi = -30.0f;
-      roamZoom = 60.0f;
+      cam.pos[0] = cosf(radians)* 0.5f * ws * (float)M_SQRT2;
+      cam.pos[1] = sinf(radians)* 0.5f * ws * (float)M_SQRT2;
+      cam.pos[2] = +0.25f * ws;
+      cam.theta = degrees + 180.0f;
+      cam.phi = -30.0f;
+      cam.zoom = 60.0f;
     }
   }
   else if (tokens.size() >= 3) {
-    roamPos[0] = parseFloatExpr(tokens[0], true);
-    roamPos[1] = parseFloatExpr(tokens[1], true);
-    roamPos[2] = parseFloatExpr(tokens[2], true);
+    Roaming::RoamingCamera cam;
+    cam.pos[0] = parseFloatExpr(tokens[0], true);
+    cam.pos[1] = parseFloatExpr(tokens[1], true);
+    cam.pos[2] = parseFloatExpr(tokens[2], true);
     if (tokens.size() >= 4) {
-      roamTheta = parseFloatExpr(tokens[3], true);
+      cam.theta = parseFloatExpr(tokens[3], true);
     }
     if (tokens.size() >= 5) {
-      roamPhi = parseFloatExpr(tokens[4], true);
+      cam.phi = parseFloatExpr(tokens[4], true);
     }
     if (tokens.size() == 6) {
-      roamZoom = parseFloatExpr(tokens[5], true);
+      cam.zoom = parseFloatExpr(tokens[5], true);
     }
   }
   else {
     addMessage(NULL,
       "/roampos  [ \"reset\" | degrees | {x y z [theta [phi [ zoom ]]] } ]");
 
+    const Roaming::RoamingCamera* cam = ROAM.getCamera();
     char buffer[MessageLen];
     snprintf(buffer, MessageLen,
 	     "  <%.3f, %.3f, %.3f> theta = %.3f, phi = %.3f, zoom = %.3f",
-	     roamPos[0], roamPos[1], roamPos[2],
-	     roamTheta, roamPhi, roamZoom);
+	     cam->pos[0], cam->pos[1], cam->pos[2],
+	     cam->theta, cam->phi, cam->zoom);
     addMessage(NULL, buffer);
   }
 

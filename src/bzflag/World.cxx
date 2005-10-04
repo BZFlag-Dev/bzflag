@@ -1114,6 +1114,21 @@ void World::drawCollisionGrid() const
   return;
 }
 
+RemotePlayer* World::getCurrentRabbit() const
+{
+  if (players == NULL) {
+    return NULL;
+  }
+  for (int i = 0; i < curMaxPlayers; i++) {
+    RemotePlayer* p = players[i];
+    if (p && p->isAlive() && (p->getTeam() == RabbitTeam)) {
+      return p;
+    }
+  }
+  return NULL;
+}
+
+
 
 // Local Variables: ***
 // mode: C++ ***

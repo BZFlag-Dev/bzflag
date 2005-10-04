@@ -115,6 +115,8 @@ bzflag_SOURCES =			\
 	RegionPriorityQueue.h		\
 	RemotePlayer.cxx		\
 	RemotePlayer.h			\
+	Roaming.cxx			\
+	Roaming.h			\
 	RobotPlayer.cxx			\
 	RobotPlayer.h			\
 	RoofTops.cxx			\

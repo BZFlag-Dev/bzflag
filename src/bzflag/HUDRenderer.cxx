@@ -33,6 +33,7 @@
 #include "RemotePlayer.h"
 #include "HUDui.h"
 #include "HUDuiTypeIn.h"
+#include "Roaming.h"
 
 
 //
@@ -68,7 +69,6 @@ HUDRenderer::HUDRenderer(const BzfDisplay* _display,
 				fps(-1.0),
 				drawTime(-1.0),
 				restartLabel(restartLabelFormat),
-				roamingLabel("observing"),
 				showCompose(false),
 				showCracks(true),
 				dater(false),
@@ -477,11 +477,6 @@ void			HUDRenderer::setRestartKeyLabel(const std::string& label)
   restartLabelWidth = fm.getStrLength(bigFontFace, bigFontSize, restartLabel);
 }
 
-void			HUDRenderer::setRoamingLabel(const std::string& label)
-{
-  roamingLabel = label;
-}
-
 void			HUDRenderer::setTimeLeft(uint32_t _timeLeft)
 {
   timeLeft = _timeLeft;
@@ -778,7 +773,7 @@ void			HUDRenderer::renderStatus(void)
   if (roaming) {
     statusColor = messageColor;
     if (dim) strcat(buffer, ColorStrings[DimColor].c_str());
-    strcat(buffer, roamingLabel.c_str());
+    strcat(buffer, ROAM.getRoamingLabel().c_str());
   }
 
   x = 0.5f * ((float)window.getWidth() - fm.getStrLength(majorFontFace, majorFontSize, buffer));
@@ -798,7 +793,6 @@ int HUDRenderer::tankScoreCompare(const void* _a, const void* _b)
 
 int HUDRenderer::teamScoreCompare(const void* _c, const void* _d)
 {
-
   Team* c = World::getWorld()->getTeams()+*(int*)_c;
   Team* d = World::getWorld()->getTeams()+*(int*)_d;
 
@@ -813,8 +807,8 @@ void			HUDRenderer::renderTankLabels(SceneRenderer& renderer)
   int offset = window.getViewHeight() - window.getHeight();
   const int curMaxPlayers = World::getWorld()->getCurMaxPlayers();
 
-  GLint view[]={window.getOriginX(), window.getOriginY(),
-		window.getWidth(), window.getHeight()};
+  GLint view[] = {window.getOriginX(), window.getOriginY(),
+		 window.getWidth(), window.getHeight()};
   const GLfloat *projf = renderer.getViewFrustum().getProjectionMatrix();
   const GLfloat *modelf = renderer.getViewFrustum().getViewMatrix();
 
@@ -1174,15 +1168,16 @@ void			HUDRenderer::renderPlaying(SceneRenderer& renderer)
   glLoadIdentity();
 
   // cover the lower portion of the screen when burrowed
-  LocalPlayer *myTank = LocalPlayer::getMyTank();
+  const LocalPlayer *myTank = LocalPlayer::getMyTank();
   if (myTank && myTank->getPosition()[2] < 0.0f) {
     glColor4f(0.02f, 0.01f, 0.01f, 1.0);
     glRectf(0, 0, (float)width, (myTank->getPosition()[2]/(BZDB.eval(StateDatabase::BZDB_BURROWDEPTH)-0.1f)) * ((float)viewHeight/2.0f));
   }
 
   // draw shot reload status
-  if (BZDB.isTrue("displayReloadTimer"))
-    renderShots();
+  if (BZDB.isTrue("displayReloadTimer")) {
+    renderShots(myTank);
+  }
 
   // draw cracks
   if (showCracks)
@@ -1328,10 +1323,16 @@ void			HUDRenderer::renderRoaming(SceneRenderer& renderer)
   glPushMatrix();
   glLoadIdentity();
 
+  // black out the underground if we're driving with a tank with BU
   LocalPlayer *myTank = LocalPlayer::getMyTank();
   if (myTank && myTank->getPosition()[2] < 0.0f) {
     glColor4f(0.02f, 0.01f, 0.01f, 1.0);
     glRectf(0, 0, (float)width, (myTank->getPosition()[2]/(BZDB.eval(StateDatabase::BZDB_BURROWDEPTH)-0.1f)) * ((float)viewHeight/2.0f));
+  }
+
+  // draw shot reload status
+  if ((ROAM.getMode() == Roaming::roamViewFP) && BZDB.isTrue("displayReloadTimer")) {
+    renderShots(ROAM.getTargetTank());
   }
 
   // draw alert messages
@@ -1383,11 +1384,10 @@ static int compare_float (const void* a, const void* b)
   }
 }
 
-void			HUDRenderer::renderShots()
+void			HUDRenderer::renderShots(const Player* target)
 {
-  // get my tank
-  const LocalPlayer* myTank = LocalPlayer::getMyTank();
-  if (!myTank) return;
+  // get the target tank
+  if (!target) return;
 
   // get view metrics
   const int width = window.getWidth();
@@ -1400,15 +1400,15 @@ void			HUDRenderer::renderShots()
   const int indicatorHeight = height / 80;
   const int indicatorSpace = indicatorHeight / 10 + 2;
   const int indicatorLeft = centerx + maxMotionSize + indicatorWidth + 16;
-  const int indicatorTop = centery - (int)(0.5f * (indicatorHeight + indicatorSpace) * myTank->getMaxShots());
+  const int indicatorTop = centery - (int)(0.5f * (indicatorHeight + indicatorSpace) * target->getMaxShots());
 
-  const int maxShots = myTank->getMaxShots();
+  const int maxShots = target->getMaxShots();
 
   float* factors = new float[maxShots];
 
   // tally the reload values
   for (int i = 0; i < maxShots; ++i) {
-    const ShotPath* shot = myTank->getShot(i);
+    const ShotPath* shot = target->getShot(i);
     factors[i] = 1.0f;
     if (shot) {
       const TimeKeeper currentTime = shot->getCurrentTime();
