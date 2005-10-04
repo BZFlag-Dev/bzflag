@@ -2146,10 +2146,11 @@ static void		handleServerMessage(bool human, uint16_t code,
 	}
 	else {
 	  std::string playerStr;
-	  if (killerPlayer->getTeam() == victimPlayer->getTeam() &&
-	      killerPlayer->getTeam() != RogueTeam)
+	  if ((killerPlayer->getTeam() == victimPlayer->getTeam()) &&
+	      (killerPlayer->getTeam() != RogueTeam) &&
+	      (killerPlayer->getTeam() != ObserverTeam)) {
 	    playerStr += "teammate ";
-
+          }
 	  if (victimPlayer == myTank) {
 	    if (BZDB.get("killerhighlight") == "1")
 	      playerStr += ColorStrings[PulsatingColor];
@@ -3335,7 +3336,8 @@ static bool		gotBlowedUp(BaseLocalPlayer* tank,
 	  TeamColor team = killerPlayer->getTeam();
 	  if (hit)
 	    team = hit->getTeam();
-	  if (myTank->getTeam() == team && team != RogueTeam) {
+	  if ((myTank->getTeam() == team) &&
+	      (team != RogueTeam) && (team != ObserverTeam)) {
 	    blowedUpNotice += "teammate " ;
 	    blowedUpNotice += killerPlayer->getCallSign();
 	  } else {
@@ -4124,8 +4126,17 @@ static void enteringServer(void *buf)
   }
   bool rabbitMode = World::getWorld()->allowRabbit();
 
-  controlPanel->setControlColor(Team::getRadarColor(myTank->getTeam(),rabbitMode));
-  radar->setControlColor(Team::getRadarColor(myTank->getTeam(),rabbitMode));
+  // observer colors are actually cyan, make them black
+  const bool observer = (myTank->getTeam() == ObserverTeam);
+  const GLfloat* borderColor;
+  if (observer) {
+    static const GLfloat black[4] = {0.0f, 0.0f, 0.0f, 1.0f};
+    borderColor = black;
+  } else {
+    borderColor = Team::getRadarColor(myTank->getTeam(), rabbitMode);
+  }
+  controlPanel->setControlColor(borderColor);
+  radar->setControlColor(borderColor);
 
   if ((myTank->getTeam() == ObserverTeam) || devDriving) {
     ROAM.setMode(Roaming::roamViewFP);
