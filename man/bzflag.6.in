@@ -411,7 +411,7 @@ beams which are line segments and shock waves which are circles).
 The tank always appears in the center of the radar and the radar
 display rotates with the tank so that forward is always up.  There's
 a small tick mark indicating forward.  The left and right extremes
-of the current view are represented by a yellow V who's tip is at
+of the current view are represented by a yellow V whose tip is at
 the center of the radar.  North is indicated by the letter N.
 .SS Heads Up Display
 The heads\-up\-display, or HUD, has several displays.  First, there are
@@ -674,7 +674,7 @@ and
 to choose which flag to track. One special option that can be used with \fIfollow\fR, \fItracking\fR,
 and \fIfirst person\fR modes is that you can choose to do it with the winning tank.
 This is selected by cycling through the tanks until you see the \fRwinner\fR option. In this mode,
-you will always be engaged with whomever has the best score (and is alive).
+you will always be engaged with whoever has the best score (and is alive).
 The default is \fIdrive with winner\fR mode.
 .SH "User Commands"
 The following commands can be executed by sending a message to all and using these strings as the message
