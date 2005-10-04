@@ -613,12 +613,39 @@ void			HUDRenderer::render(SceneRenderer& renderer)
   }
 
   OpenGLGState::resetState();
-  if (playing)
-    renderPlaying(renderer);
-  else if (roaming)
-    renderRoaming(renderer);
-  else
-    renderNotPlaying(renderer);
+  if (!BZDB.isTrue("noGUI")) {
+    if (playing) {
+      renderPlaying(renderer);
+    }
+    else if (roaming) {
+      renderRoaming(renderer);
+    }
+    else {
+      renderNotPlaying(renderer);
+    }
+  }
+  else {
+    if (showCompose) {
+      // get view metrics
+      const int width = window.getWidth();
+      const int height = window.getHeight();
+      const int viewHeight = window.getViewHeight();
+      const int ox = window.getOriginX();
+      const int oy = window.getOriginY();
+      // use one-to-one pixel projection
+      glScissor(ox, oy + height - viewHeight, width, viewHeight);
+      glMatrixMode(GL_PROJECTION);
+      glLoadIdentity();
+      glOrtho(0.0, width, viewHeight - height, viewHeight, -1.0, 1.0);
+      glMatrixMode(GL_MODELVIEW);
+      glPushMatrix();
+      glLoadIdentity();
+    
+      renderCompose(renderer);
+
+      glPopMatrix();
+    }
+  }
 }
 
 void			HUDRenderer::renderAlerts(void)
