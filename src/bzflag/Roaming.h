@@ -65,6 +65,8 @@ public:
     float phi;
     float zoom;
   };
+  void setCamera(RoamingCamera* newCam);
+  void resetCamera(void);
   /* note that dc is a camera structure of *changes* (thus dc)
      not new values */
   void updatePosition(RoamingCamera* dc, float dt);

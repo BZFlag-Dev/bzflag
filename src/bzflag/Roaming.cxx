@@ -19,6 +19,7 @@
 /* system headers */
 #include <string>
 #include <math.h>
+#include <string.h>
 
 /* common headers */
 #include "Flag.h"
@@ -43,15 +44,20 @@ Roaming::Roaming() : view(roamViewDisabled),
 		     targetManual(-1),
 		     targetWinner(-1),
 		     targetFlag(-1) {
+  resetCamera();
+}
+
+void Roaming::resetCamera(void) {
   camera.pos[0] = 0.0f;
   camera.pos[1] = 0.0f;
-  // this will be bumped to MuzzleHeight later
-  // we can't do it here because BZDB might not be inited yet.
-  camera.pos[2] = 0.0f; 
-
+  camera.pos[2] = BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT); 
   camera.theta = 0.0f;
   camera.zoom = 60.0f;
   camera.phi = -0.0f;
+}
+
+void Roaming::setCamera(RoamingCamera* newCam) {
+  memcpy(&camera, newCam, sizeof(RoamingCamera));
 }
 
 void Roaming::setMode(RoamingView newView) {

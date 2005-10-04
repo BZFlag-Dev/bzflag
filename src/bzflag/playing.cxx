@@ -4129,6 +4129,7 @@ static void enteringServer(void *buf)
 
   if ((myTank->getTeam() == ObserverTeam) || devDriving) {
     ROAM.setMode(Roaming::roamViewFP);
+    ROAM.resetCamera();
   } else {
     ROAM.setMode(Roaming::roamViewDisabled);
   }

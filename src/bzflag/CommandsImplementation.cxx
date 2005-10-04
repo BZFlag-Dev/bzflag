@@ -520,12 +520,7 @@ bool RoamPosCommand::operator() (const char *commandLine)
   if (tokens.size() == 1) {
     Roaming::RoamingCamera cam;
     if (TextUtils::tolower(tokens[0]) == "reset") {
-      cam.pos[0] = 0.0f;
-      cam.pos[1] = 0.0f;
-      cam.pos[2] = BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT);
-      cam.theta = 0.0f;
-      cam.zoom = 60.0f;
-      cam.phi = -0.0f;
+      ROAM.resetCamera();
     } else {
       const float degrees = parseFloatExpr(tokens[0], true);
       const float ws = BZDB.eval(StateDatabase::BZDB_WORLDSIZE);
@@ -536,6 +531,7 @@ bool RoamPosCommand::operator() (const char *commandLine)
       cam.theta = degrees + 180.0f;
       cam.phi = -30.0f;
       cam.zoom = 60.0f;
+      ROAM.setCamera(&cam);
     }
   }
   else if (tokens.size() >= 3) {
@@ -545,13 +541,20 @@ bool RoamPosCommand::operator() (const char *commandLine)
     cam.pos[2] = parseFloatExpr(tokens[2], true);
     if (tokens.size() >= 4) {
       cam.theta = parseFloatExpr(tokens[3], true);
+    } else {
+      cam.theta = ROAM.getCamera()->theta;
     }
     if (tokens.size() >= 5) {
       cam.phi = parseFloatExpr(tokens[4], true);
+    } else {
+      cam.phi = ROAM.getCamera()->phi;
     }
     if (tokens.size() == 6) {
       cam.zoom = parseFloatExpr(tokens[5], true);
+    } else {
+      cam.zoom = ROAM.getCamera()->zoom;
     }
+    ROAM.setCamera(&cam);
   }
   else {
     addMessage(NULL,
