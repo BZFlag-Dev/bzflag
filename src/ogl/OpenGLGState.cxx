@@ -1473,6 +1473,7 @@ void bzDeleteTextures(GLsizei count, const GLuint *textures)
 
 static GLenum matrixMode = GL_MODELVIEW;
 static int matrixDepth[3] = {0, 0, 0};
+static const int maxMatrixDepth[3] = {32, 2, 2}; // guaranteed
 
 static inline int getMatrixSlot(GLenum mode)
 {
@@ -1496,6 +1497,11 @@ void bzPushMatrix()
     return;
   }
   matrixDepth[slot]++;
+  if (matrixDepth[slot] > maxMatrixDepth[slot]) {
+    printf ("bzPushMatrix(): overflow (mode %i, depth %i)\n",
+            matrixMode, matrixDepth[slot]);
+    return;
+  }
   glPushMatrix();
 }
 
@@ -1509,7 +1515,8 @@ void bzPopMatrix()
   }
   matrixDepth[slot]--;
   if (matrixDepth[slot] < 0) {
-    printf ("bzPopMatrix(): underflow: %i\n", matrixDepth[slot]);
+    printf ("bzPopMatrix(): underflow (mode %i, depth %i)\n",
+            matrixMode, matrixDepth[slot]);
     return;
   }
   glPopMatrix();
