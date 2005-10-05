@@ -68,7 +68,6 @@ if test "x$LD" != "x" ; then
 	AC_MSG_WARN([LD cannot be set directly yet it seems to be set ($LD)])
 fi
 
-
 #Checks for programs.
 AC_PROG_MAKE_SET
 AC_PROG_CC
@@ -98,6 +97,10 @@ fi
 
 AC_PROG_LN_S
 AC_PROG_RANLIB
+
+# disabled shared libraries in order to prevent double-compilation
+# FIXME: necessary until the flags are used properly.
+AC_DISABLE_SHARED
 
 # libtool shouldn't be generated until after LD is set.
 # AC_PROG_LIBTOOL goes poof in libtool 1.9, but that's not very
