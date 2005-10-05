@@ -869,50 +869,64 @@ void BackgroundRenderer::drawGround()
   }
 }
 
-
 void BackgroundRenderer::drawGroundCentered()
 {
-  const float InnerHalfWidth = 64.0f;
-  const float groundSize = 10.0f * BZDBCache::worldSize;
-
   const ViewFrustum& frustum = RENDERER.getViewFrustum();
   const float* center = frustum.getEye();
 
+  const float groundSize = 10.0f * BZDBCache::worldSize;
   const float repeat = BZDB.eval("groundHighResTexRepeat");
 
   // vertices
-  const float viXmin = center[0] - InnerHalfWidth;
-  const float viXmax = center[0] + InnerHalfWidth;
-  const float viYmin = center[1] - InnerHalfWidth;
-  const float viYmax = center[1] + InnerHalfWidth;
-  const float voXmin = -groundSize;
-  const float voXmax = +groundSize;
-  const float voYmin = -groundSize;
-  const float voYmax = +groundSize;
-  const GLfloat vertices[8][2] = {
-    {viXmin, viYmin}, {viXmax, viYmin}, {viXmin, viYmax}, {viXmax, viYmax},
-    {voXmin, voYmin}, {voXmax, voYmin}, {voXmin, voYmax}, {voXmax, voYmax}
- };
-
-   // texcoords
-  const float toffX = center[0] * repeat;
-  const float toffY = center[1] * repeat;
-  const float tdist = InnerHalfWidth * repeat;
-  const float tiXmin = toffX - tdist;
-  const float tiXmax = toffX + tdist;
-  const float tiYmin = toffY - tdist;
-  const float tiYmax = toffY + tdist;
-  const float toXmin = -groundSize * repeat;
-  const float toXmax = +groundSize * repeat;
-  const float toYmin = -groundSize * repeat;
-  const float toYmax = +groundSize * repeat;
-  const GLfloat texcoords[8][2] = {
-    {tiXmin, tiYmin}, {tiXmax, tiYmin}, {tiXmin, tiYmax}, {tiXmax, tiYmax},
-    {toXmin, toYmin}, {toXmax, toYmin}, {toXmin, toYmax}, {toXmax, toYmax}
+  const float vXmin = -groundSize;
+  const float vXmax = +groundSize;
+  const float vYmin = -groundSize;
+  const float vYmax = +groundSize;
+  const GLfloat vertices[5][2] = {
+    {center[0], center[1]},
+    {vXmin, vYmin}, {vXmax, vYmin}, {vXmax, vYmax}, {vXmin, vYmax}
   };
 
-  GLubyte inside[] = { 0, 1, 2, 3 };
-  GLubyte outside[] = { 0, 4, 1, 5, 3, 7, 2, 6, 0, 4 };
+  // texcoords
+  const float tcenterX = center[0] * repeat;
+  const float tcenterY = center[1] * repeat;
+  const float tXmin = -groundSize * repeat;
+  const float tXmax = +groundSize * repeat;
+  const float tYmin = -groundSize * repeat;
+  const float tYmax = +groundSize * repeat;
+  const GLfloat texcoords[5][2] = {
+    {tcenterX, tcenterY},
+    {tXmin, tYmin}, {tXmax, tYmin}, {tXmax, tYmax}, {tXmin, tYmax}
+  };
+
+  const GLubyte fan[6] = { 0, 1, 2, 3, 4, 1};
+  
+  if (BZDBCache::lighting) {
+
+    glDisable(GL_LIGHTING);
+
+    const float* sunDir = RENDERER.getSunDirection();
+    const float* sunColor = RENDERER.getSunColor();
+    
+    float angleFactor = 0.0f;
+    if ((sunDir != NULL) && (sunDir[2] > 0.0f)) {
+      const float dist = sqrtf((sunDir[0] * sunDir[0]) +
+                               (sunDir[1] * sunDir[1]) +
+                               (sunDir[2] * sunDir[2]));
+      if (dist > 0.0f) {
+        angleFactor = sunDir[2] / dist;
+      }
+    }
+
+    float ambient[4];
+    glGetFloatv(GL_LIGHT_MODEL_AMBIENT, ambient);
+    
+    float color[3];
+    color[0] = ambient[0] + (angleFactor * sunColor[0]);
+    color[1] = ambient[1] + (angleFactor * sunColor[1]);
+    color[2] = ambient[2] + (angleFactor * sunColor[2]);
+    glColor3fv(color);
+  }
 
   glNormal3f(0.0f, 0.0f, 1.0f);
   glDisableClientState(GL_NORMAL_ARRAY); // safety
@@ -922,11 +936,14 @@ void BackgroundRenderer::drawGroundCentered()
   glTexCoordPointer(2, GL_FLOAT, 0, texcoords);
   glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
-  glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_BYTE, inside);
-  glDrawElements(GL_TRIANGLE_STRIP, 10, GL_UNSIGNED_BYTE, outside);
+  glDrawElements(GL_TRIANGLE_FAN, 6, GL_UNSIGNED_BYTE, fan);
 
   glDisableClientState(GL_TEXTURE_COORD_ARRAY);
   glDisableClientState(GL_VERTEX_ARRAY);
+
+  if (BZDBCache::lighting) {
+    glEnable(GL_LIGHTING);
+  }
 
   return;
 }
