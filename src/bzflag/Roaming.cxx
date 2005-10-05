@@ -71,6 +71,8 @@ void Roaming::setMode(RoamingView newView) {
     // don't allow roaming for non-observers
     if (newView != roamViewDisabled)
       view = roamViewDisabled;
+    else
+      view = newView;
   }
   // make sure we have a valid target
   changeTarget(next);
