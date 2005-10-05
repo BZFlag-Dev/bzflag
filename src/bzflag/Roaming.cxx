@@ -334,11 +334,11 @@ void Roaming::updatePosition(RoamingCamera* dc, float dt) {
 
   // adjust zoom
   camera.zoom += dt * dc->zoom;
-  if (camera.zoom < BZDB.eval("camera.zoomMin")) {
-    camera.zoom = BZDB.eval("camera.zoomMin");
+  if (camera.zoom < BZDB.eval("roamZoomMin")) {
+    camera.zoom = BZDB.eval("roamZoomMin");
   }
-  else if (camera.zoom > BZDB.eval("camera.zoomMax")) {
-    camera.zoom = BZDB.eval("camera.zoomMax");
+  else if (camera.zoom > BZDB.eval("roamZoomMax")) {
+    camera.zoom = BZDB.eval("roamZoomMax");
   }
 }
 
