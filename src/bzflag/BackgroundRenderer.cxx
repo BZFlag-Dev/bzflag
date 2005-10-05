@@ -899,51 +899,21 @@ void BackgroundRenderer::drawGroundCentered()
     {tXmin, tYmin}, {tXmax, tYmin}, {tXmax, tYmax}, {tXmin, tYmax}
   };
 
-  const GLubyte fan[6] = { 0, 1, 2, 3, 4, 1};
+//  const GLubyte fan[6] = { 0, 1, 2, 3, 4, 1};
   
-  if (BZDBCache::lighting) {
-
-    glDisable(GL_LIGHTING);
-
-    const float* sunDir = RENDERER.getSunDirection();
-    const float* sunColor = RENDERER.getSunColor();
-    
-    float angleFactor = 0.0f;
-    if ((sunDir != NULL) && (sunDir[2] > 0.0f)) {
-      const float dist = sqrtf((sunDir[0] * sunDir[0]) +
-                               (sunDir[1] * sunDir[1]) +
-                               (sunDir[2] * sunDir[2]));
-      if (dist > 0.0f) {
-        angleFactor = sunDir[2] / dist;
-      }
-    }
-
-    float ambient[4];
-    glGetFloatv(GL_LIGHT_MODEL_AMBIENT, ambient);
-    
-    float color[3];
-    color[0] = ambient[0] + (angleFactor * sunColor[0]);
-    color[1] = ambient[1] + (angleFactor * sunColor[1]);
-    color[2] = ambient[2] + (angleFactor * sunColor[2]);
-    glColor3fv(color);
-  }
-
   glNormal3f(0.0f, 0.0f, 1.0f);
   glDisableClientState(GL_NORMAL_ARRAY); // safety
-
-  glVertexPointer(2, GL_FLOAT, 0, vertices);
-  glEnableClientState(GL_VERTEX_ARRAY);
-  glTexCoordPointer(2, GL_FLOAT, 0, texcoords);
-  glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-
-  glDrawElements(GL_TRIANGLE_FAN, 6, GL_UNSIGNED_BYTE, fan);
-
-  glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-  glDisableClientState(GL_VERTEX_ARRAY);
-
-  if (BZDBCache::lighting) {
-    glEnable(GL_LIGHTING);
+  
+  glBegin(GL_TRIANGLE_FAN);
+  {
+    for (int i = 0; i < 5; i++) {
+      glTexCoord2fv(texcoords[i]);
+      glVertex2fv(vertices[i]);
+    }
+    glTexCoord2fv(texcoords[1]);
+    glVertex2fv(vertices[1]);
   }
+  glEnd();
 
   return;
 }
