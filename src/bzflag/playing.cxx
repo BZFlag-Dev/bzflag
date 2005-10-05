@@ -2424,6 +2424,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 	    // and do not want local shot effects,
 	    // disable shot effects for that specific tank
 	    if ((ROAM.getMode() != Roaming::roamViewFP)
+		|| (!ROAM.getTargetTank())
 	        || (shooterid != ROAM.getTargetTank()->getId())
 		|| BZDB.isTrue("enableLocalShotEffect"))
 	      EffectsRenderer::instance().addShotEffect(player[shooterid]->getTeam(),shotPos,player[shooterid]->getAngle(),player[shooterid]->getVelocity());
