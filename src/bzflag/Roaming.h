@@ -115,7 +115,11 @@ inline Player* Roaming::getTargetTank() const {
 }
 
 inline Flag* Roaming::getTargetFlag() const {
-  return &(World::getWorld()->getFlag(targetFlag));
+  World* world = World::getWorld();
+  if (!world)
+    return NULL;
+  else
+    return &(world->getFlag(targetFlag));
 }
 
 inline const Roaming::RoamingCamera* const Roaming::getCamera() const {
