@@ -230,10 +230,9 @@ void Player::move(const float* _pos, float _azimuth)
   }
 
   // update forward vector (always in horizontal plane)
-	forward[0] = cosf(state.azimuth);
-	forward[1] = sinf(state.azimuth);
-	forward[2] = 0.0f;
-
+  forward[0] = cosf(state.azimuth);
+  forward[1] = sinf(state.azimuth);
+  forward[2] = 0.0f;
 
   // compute teleporter proximity
   if (World::getWorld()) {

@@ -84,7 +84,9 @@ void Roaming::changeTarget(Roaming::RoamingTarget target, int explicitIndex) {
 
   World* world = World::getWorld();
   if (!world) {
-    printf("Roaming::changeTarget() no world\n");
+    DEBUG4("Roaming::changeTarget() no world, switching to free roaming\n");
+    view = roamViewFree;
+    buildRoamingLabel();
     return;
   }
 
@@ -146,10 +148,6 @@ void Roaming::buildRoamingLabel(void) {
   std::string playerString = "";
 
   World* world = World::getWorld();
-  if (!world) {
-    printf("Roaming::buildRoamingLabel() no world\n");
-    return;
-  }
 
   // follow the important tank
   if (targetManual == -1) {
@@ -173,17 +171,19 @@ void Roaming::buildRoamingLabel(void) {
     }
   }
 
-  Player* tracked;
+  Player* tracked = NULL;
   if (!devDriving) {
-    tracked = world->getPlayer(targetWinner);
+    if (world) {
+      tracked = world->getPlayer(targetWinner);
+    }
   } else {
     tracked = LocalPlayer::getMyTank();
   }
 
-  if (tracked) {
+  if (world && tracked) {
     if (BZDBCache::colorful) {
       int color = tracked->getTeam();
-      if (World::getWorld()->allowRabbit() && (color == RogueTeam)) {
+      if (world->allowRabbit() && (color == RogueTeam)) {
 	// hunters are orange (hack)
 	color = OrangeColor;
       } else if (color < 0 || color > 4) {
@@ -242,12 +242,7 @@ void Roaming::buildRoamingLabel(void) {
 }
 
 void Roaming::updatePosition(RoamingCamera* dc, float dt) {
-
   World* world = World::getWorld();
-  if (!world) {
-    printf("Roaming::updatePosition() no world\n");
-    return;
-  }
 
   // are we tracking?
   bool tracking = false;
@@ -255,7 +250,7 @@ void Roaming::updatePosition(RoamingCamera* dc, float dt) {
   if (view == roamViewTrack) {
     Player *target;
     if (!devDriving) {
-      if (targetWinner < world->getCurMaxPlayers()) {
+      if (world && (targetWinner < world->getCurMaxPlayers())) {
 	target = world->getPlayer(targetWinner);
       } else {
 	target = NULL;
@@ -282,6 +277,8 @@ void Roaming::updatePosition(RoamingCamera* dc, float dt) {
     const float s = sinf(camera.theta * (float)(M_PI / 180.0f));
     camera.pos[0] += dt * (c * dc->pos[0] - s * dc->pos[1]);
     camera.pos[1] += dt * (c * dc->pos[1] + s * dc->pos[0]);
+    camera.theta  += dt * dc->theta;
+    camera.phi    += dt * dc->phi;
   } else {
     float dx = camera.pos[0] - trackPos[0];
     float dy = camera.pos[1] - trackPos[1];
@@ -333,11 +330,7 @@ void Roaming::updatePosition(RoamingCamera* dc, float dt) {
     dc->pos[2] = 0.0f;
   }
 
-  // adjust the angles
-  if (!tracking) {
-    camera.theta  += dt * dc->theta;
-    camera.phi    += dt * dc->phi;
-  }
+  // adjust zoom
   camera.zoom += dt * dc->zoom;
   if (camera.zoom < BZDB.eval("camera.zoomMin")) {
     camera.zoom = BZDB.eval("camera.zoomMin");
