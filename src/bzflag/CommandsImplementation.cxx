@@ -138,7 +138,7 @@ HighlightCommand::HighlightCommand() :	LocalCommand("/highlight") {}
 LocalSetCommand::LocalSetCommand() :	LocalCommand("/localset") {}
 QuitCommand::QuitCommand() :		LocalCommand("/quit") {}
 ReTextureCommand::ReTextureCommand() :	LocalCommand("/retexture") {}
-RoamPosCommand::RoamPosCommand() :	LocalCommand("/RoamPos") {}
+RoamPosCommand::RoamPosCommand() :	LocalCommand("/roampos") {}
 SaveWorldCommand::SaveWorldCommand() :	LocalCommand("/saveworld") {}
 SetCommand::SetCommand() :		LocalCommand("/set") {}
 SilenceCommand::SilenceCommand() :	LocalCommand("/silence") {}
