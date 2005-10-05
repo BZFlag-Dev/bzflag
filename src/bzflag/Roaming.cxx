@@ -83,6 +83,10 @@ void Roaming::changeTarget(Roaming::RoamingTarget target, int explicitIndex) {
   bool found = false;
 
   World* world = World::getWorld();
+  if (!world) {
+    printf("Roaming::changeTarget() no world\n");
+    return;
+  }
 
   if (view == roamViewFree || view == roamViewDisabled) {
     // do nothing
@@ -142,6 +146,10 @@ void Roaming::buildRoamingLabel(void) {
   std::string playerString = "";
 
   World* world = World::getWorld();
+  if (!world) {
+    printf("Roaming::buildRoamingLabel() no world\n");
+    return;
+  }
 
   // follow the important tank
   if (targetManual == -1) {
@@ -234,7 +242,12 @@ void Roaming::buildRoamingLabel(void) {
 }
 
 void Roaming::updatePosition(RoamingCamera* dc, float dt) {
+
   World* world = World::getWorld();
+  if (!world) {
+    printf("Roaming::updatePosition() no world\n");
+    return;
+  }
 
   // are we tracking?
   bool tracking = false;
