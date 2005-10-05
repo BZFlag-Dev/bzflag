@@ -61,7 +61,9 @@ void Roaming::setCamera(RoamingCamera* newCam) {
 }
 
 void Roaming::setMode(RoamingView newView) {
-  if (LocalPlayer::getMyTank()->getTeam() == ObserverTeam || devDriving) {
+  if (!(LocalPlayer::getMyTank() || devDriving)) {
+    view = newView;
+  } else if (LocalPlayer::getMyTank()->getTeam() == ObserverTeam) {
     // disallow disabling roaming in observer mode
     if ((newView == roamViewDisabled) && !devDriving)
       view = (RoamingView)(roamViewDisabled + 1);
