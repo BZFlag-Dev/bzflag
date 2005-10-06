@@ -260,6 +260,11 @@
 															be used for messages from the server. If the message is sent to <strong>BZ_ALL_USERS</strong>
 															it will send the message to all connected users. Likewise if it is set to <strong>BZ_ADMIN_CHANNEL</strong>
 															it will be sent to all users with the ADMINMESSAGERECEIVE permission.</p>
+														<p><strong>BZF_API bool bz_sendTextMessage (int from, bz_eTeamType to, const char* message);</strong><br>
+															Sends a text message to the specified team. <strong>BZ_SERVER</strong> should 
+															be used for messages from the server.</p>
+														<p><strong>BZF_API bool bz_sendTextMessagef (int from, bz_eTeamType|int to, const char* fmt, ...);</strong><br>
+															Same as the bz_sendTextMessage counterparts, but uses printf-style formatting.</p>
 														<p><strong>BZF_API bool bz_sentFetchResMessage ( int playerID, const char* URL );</strong><br>
 															Sends an update message to the specified player telling them they must have the 
 															file specified in the URL. At present this is only used for sounds files.
@@ -340,6 +345,8 @@
 														<p><strong>BZF_API void bz_debugMessage ( int debugLevel, const char* message );</strong><br>
 															Outputs the specified message if the current debug level is at least the 
 															specified level.</p>
+														<p><strong>BZF_API void bz_debugMessagef ( int debugLevel, const char* fmt, ... );</strong><br>
+															Smae as above, but use printf-style formatting.</p>
 														<p><strong>BZF_API int bz_getDebugLevel ( void );</strong><br>
 															Returns BZFS' current debug level. You can use this for more complicated debug 
 															calculations or output.</p>

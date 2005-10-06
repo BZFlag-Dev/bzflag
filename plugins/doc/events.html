@@ -273,6 +273,18 @@ Events</span></p>
 																	<td>
 																		A chat message was filtered and changed by the chat filter</td>
 																</tr>
+																<tr>
+																	<td><span class="Code">bz_eGameStartEvent</span>
+																	</td>
+																	<td>
+																		A game timer is started</td>
+																</tr>
+																<tr>
+																	<td><span class="Code">bz_eGameEndEvent</span>
+																	</td>
+																	<td>
+																		A game timer ends</td>
+																</tr>
 															</tbody>
 														</table>
 														<p>
@@ -908,6 +920,38 @@ bzApiString filteredMessage; // the filtered message </blockquote>
 																				</tr>
 																				<tr>
 																					<td>This event is called when a user sends a chat message that gets changed in the chat filter.</td>
+																				</tr>
+																			</tbody>
+																		</table>
+																	</td>
+																</tr>
+															</tbody>
+														</table>
+														<br>
+														
+														
+														<br>
+														<table bgcolor="#dddddd" border="1">
+															<tbody>
+																<tr>
+																	<td align="left" valign="top">
+																		<table border="0" cellpadding="2" cellspacing="2">
+																			<tbody>
+																				<tr>
+																					<td><span class="Code">bz_eGameStartEvent AND bz_eGameEndEvent</span>
+																						provide the following data</td>
+																				</tr>
+																				<tr>
+																					<td><span class="Code">bz_GameStartEndEventData <br>
+{<br>
+                              </span>
+																						<blockquote class="Code"> double startTime; // the current server time <br>
+double duration; // the duration of the game timer <br> </blockquote>
+																						<p class="Code">}</p>
+																					</td>
+																				</tr>
+																				<tr>
+																					<td>These events are called when a game timer starts or ends.</td>
 																				</tr>
 																			</tbody>
 																		</table>
