@@ -712,12 +712,12 @@ public:
 	bz_GameStartEndEventData()
 	{
 		eventType = bz_eGameStartEvent;
-		startTime = 0.0;
+		time = 0.0;
 		duration = 0.0;
 	}
 	virtual ~bz_GameStartEndEventData(){};
 
-	double startTime;
+	double time;
 	double duration;
 };
 

@@ -4502,7 +4502,7 @@ int main(int argc, char **argv)
           // fire off a game start event
           bz_GameStartEndEventData	gameData;
           gameData.eventType = bz_eGameStartEvent;
-          gameData.startTime = TimeKeeper::getCurrent().getSeconds();
+          gameData.time = TimeKeeper::getCurrent().getSeconds();
           gameData.duration = clOptions->timeLimit;
           worldEventManager.callEvents(bz_eGameStartEvent,&gameData);
 
@@ -4530,7 +4530,7 @@ int main(int argc, char **argv)
         // fire off a game end event
         bz_GameStartEndEventData	gameData;
         gameData.eventType = bz_eGameEndEvent;
-        gameData.startTime = TimeKeeper::getCurrent().getSeconds();
+        gameData.time = TimeKeeper::getCurrent().getSeconds();
         gameData.duration = clOptions->timeLimit;
         worldEventManager.callEvents(bz_eGameEndEvent,&gameData);
       }
