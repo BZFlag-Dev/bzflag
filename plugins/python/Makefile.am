@@ -10,21 +10,19 @@ PyBZFlag_la_LDFLAGS = -module -avoid-version
 
 PyBZFlag_la_SOURCES = \
 	PyBZDB.cpp \
-	PyBZFlag.cpp \
-	PyEvent.cpp \
-	PyEvents.cpp \
-	PyPlayer.cpp \
-	PyTeam.cpp \
-	PyWorldBox.cpp \
-	python.cpp
-
-include_HEADERS = \
 	PyBZDB.h \
+	PyBZFlag.cpp \
 	PyBZFlag.h \
+	PyEvent.cpp \
 	PyEvent.h \
+	PyEvents.cpp \
 	PyEvents.h \
+	PyPlayer.cpp \
 	PyPlayer.h \
+	PyTeam.cpp \
 	PyTeam.h \
+	python.cpp \
+	PyWorldBox.cpp \
 	PyWorldBox.h
 
 EXTRA_SCRIPTS = \
