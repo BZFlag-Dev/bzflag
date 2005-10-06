@@ -1933,8 +1933,8 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
   if (reason)
     partEventData.reason = reason;
 
-  if ((TeamColor)partEventData.team != NoTeam)	// don't give events if we don't have a real player slot
-	worldEventManager.callEvents(bz_ePlayerPartEvent,&partEventData);
+  if (partEventData.team != eNoTeam)	// don't give events if we don't have a real player slot
+    worldEventManager.callEvents(bz_ePlayerPartEvent,&partEventData);
 
   if (notify) {
     // send a super kill to be polite
