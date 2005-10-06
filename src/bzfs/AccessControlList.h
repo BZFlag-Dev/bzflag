@@ -165,6 +165,9 @@ public:
       @returns @c true if the hostname is valid, @c false if it isn't. */
   bool hostValidate(const char *hostname, HostBanInfo *info = NULL);
 
+  /** This function sends a textual list of the given IP ban to a player. */
+  void sendBan(PlayerId id, const BanInfo&);
+
   /** This function sends a textual list of all IP bans to a player. */
   void sendBans(PlayerId id);
 

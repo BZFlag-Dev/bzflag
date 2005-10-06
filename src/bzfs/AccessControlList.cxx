@@ -23,6 +23,7 @@
 #include <algorithm>
 #include <iostream>
 #include <sstream>
+#include <iomanip>
 
 /* common interface headers */
 #include "global.h"
@@ -186,54 +187,53 @@ bool AccessControlList::hostValidate(const char *hostname, HostBanInfo *info) {
   return true;
 }
 
+void AccessControlList::sendBan(PlayerId id, const BanInfo &baninfo)
+{
+  in_addr mask = baninfo.addr;
+
+  std::ostringstream os;
+
+  os << (ntohl(mask.s_addr) >> 24) << '.';
+  if ((ntohl(mask.s_addr) & 0x00ffffff) == 0x00ffffff) {
+    os << "*.*.*";
+  } else {
+    os << ((ntohl(mask.s_addr) >> 16) & 0xff) << '.';
+    if ((ntohl(mask.s_addr) & 0x0000ffff) == 0x0000ffff) {
+      os << "*.*";
+    } else {
+      os << ((ntohl(mask.s_addr) >> 8) & 0xff) << '.';
+      if ((ntohl(mask.s_addr) & 0x000000ff) == 0x000000ff)
+        os << "*";
+      else
+        os << (ntohl(mask.s_addr) & 0xff);
+    }
+  }
+  // print duration when < 1 year
+  double duration = baninfo.banEnd - TimeKeeper::getCurrent();
+  if (duration < 365.0f * 24 * 3600)
+    os << std::fixed << std::setprecision(1) << " (" << duration/60 << " minutes)";
+  if( baninfo.fromMaster )
+    os << " (m)";
+  if (baninfo.bannedBy.length())
+    os << " banned by: " << baninfo.bannedBy;
+  sendMessage(ServerPlayer, id, os.str().c_str());
+
+  // add reason, if any
+  if (baninfo.reason.size()) {
+    std::ostringstream os;
+    os << "   reason: " << baninfo.reason;
+    sendMessage(ServerPlayer, id, os.str().c_str());
+  }
+}
+
 void AccessControlList::sendBans(PlayerId id)
 {
   expire();
 
-  char banlistmessage[MessageLen];
   sendMessage(ServerPlayer, id, "IP Ban List");
   sendMessage(ServerPlayer, id, "-----------");
-  for (banList_t::iterator it = banList.begin(); it != banList.end(); ++it) {
-    char *pMsg = banlistmessage;
-    in_addr mask = it->addr;
-
-    sprintf( pMsg, "%d.", ((unsigned char)(ntohl(mask.s_addr) >> 24)));
-    pMsg+=strlen(pMsg);
-
-    if ((ntohl(mask.s_addr) & 0x00ffffff) == 0x00ffffff) {
-      strcat( pMsg, "*.*.*" );
-    } else {
-      sprintf( pMsg, "%d.", ((unsigned char)(ntohl(mask.s_addr) >> 16)));
-      pMsg+=strlen(pMsg);
-      if ((ntohl(mask.s_addr) & 0x0000ffff) == 0x0000ffff) {
-	strcat( pMsg, "*.*" );
-      } else {
-	sprintf( pMsg, "%d.", ((unsigned char)(ntohl(mask.s_addr) >> 8)));
-	pMsg+=strlen(pMsg);
-	if ((ntohl(mask.s_addr) & 0x000000ff) == 0x000000ff)
-	  strcat( pMsg, "*" );
-	else
-	  sprintf( pMsg, "%d", ((unsigned char)ntohl(mask.s_addr)));
-      }
-    }
-    // print duration when < 1 year
-    double duration = it->banEnd - TimeKeeper::getCurrent();
-    if (duration < 365.0f * 24 * 3600)
-      sprintf(pMsg + strlen(pMsg)," (%.1f minutes)", duration / 60);
-    if( it->fromMaster )
-      sprintf(pMsg + strlen(pMsg), " (m)");
-    if (it->bannedBy.length())
-      sprintf(pMsg + strlen(pMsg), " banned by: %s", it->bannedBy.c_str());
-
-    sendMessage(ServerPlayer, id, banlistmessage);
-
-    // add reason, if any
-    if (it->reason.size()) {
-      pMsg = banlistmessage;
-      sprintf(pMsg, "   reason: %s", it->reason.c_str() );
-      sendMessage(ServerPlayer, id, banlistmessage);
-    }
-  }
+  for (banList_t::iterator it = banList.begin(); it != banList.end(); ++it)
+    sendBan(id, *it);
 }
 
 void AccessControlList::sendHostBans(PlayerId id)
