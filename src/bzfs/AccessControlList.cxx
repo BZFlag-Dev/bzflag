@@ -220,9 +220,9 @@ void AccessControlList::sendBan(PlayerId id, const BanInfo &baninfo)
 
   // add reason, if any
   if (baninfo.reason.size()) {
-    std::ostringstream os;
-    os << "   reason: " << baninfo.reason;
-    sendMessage(ServerPlayer, id, os.str().c_str());
+    std::ostringstream ost;
+    ost << "   reason: " << baninfo.reason;
+    sendMessage(ServerPlayer, id, ost.str().c_str());
   }
 }
 
