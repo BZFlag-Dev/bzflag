@@ -955,6 +955,28 @@ BZF_API bool bz_sendTextMessage(int from, bz_eTeamType to, const char* message)
 	}
 }
 
+
+BZF_API bool bz_sendTextMessagef (int from, bz_eTeamType to, const char* fmt, ...)
+{
+  char buffer[1024];
+  va_list args;
+  va_start(args, fmt);
+  vsnprintf(buffer, 1024, fmt, args);
+  va_end(args);
+  return bz_sendTextMessage (from, to, buffer);
+}
+
+BZF_API bool bz_sendTextMessagef (int from, int to, const char* fmt, ...)
+{
+  char buffer[1024];
+  va_list args;
+  va_start(args, fmt);
+  vsnprintf(buffer, 1024, fmt, args);
+  va_end(args);
+  return bz_sendTextMessage (from, to, buffer);
+}
+
+
 BZF_API bool bz_sentFetchResMessage ( int playerID,  const char* URL )
 {
 	if (playerID == BZ_SERVER || !URL)
@@ -1191,6 +1213,16 @@ BZF_API void bz_debugMessage ( int _debugLevel, const char* message )
 
 	if (debugLevel >= _debugLevel)
 		formatDebug("%s\n",message);
+}
+
+BZF_API void bz_debugMessagef ( int _debugLevel, const char* fmt, ... )
+{
+  char buffer[4096];
+  va_list args;
+  va_start(args, fmt);
+  vsnprintf(buffer, 4096, fmt, args);
+  va_end(args);
+  bz_debugMessage (_debugLevel, buffer); 
 }
 
 BZF_API int bz_getDebugLevel ( void )

@@ -67,6 +67,8 @@ typedef enum
 	bz_eKillEvent,
 	bz_ePlayerPausedEvent,
 	bz_eMessagFilteredEvent,
+	bz_eGameStartEvent,
+	bz_eGameEndEvent,
 	bz_eLastEvent    //this is never used as an event, just show it's the last one
 }bz_eEventType;
 
@@ -704,6 +706,22 @@ public:
 	bzApiString		filteredMessage;
 };
 
+class bz_GameStartEndEventData : public bz_EventData
+{
+public:
+	bz_GameStartEndEventData()
+	{
+		eventType = bz_eGameStartEvent;
+		startTime = 0.0;
+		duration = 0.0;
+	}
+	virtual ~bz_GameStartEndEventData(){};
+
+	double startTime;
+	double duration;
+};
+
+
 // event handler callback
 class bz_EventHandler
 {
@@ -791,6 +809,8 @@ BZF_API bool bz_groupAllowPerm ( const char* group, const char* perm );
 // message API
 BZF_API bool bz_sendTextMessage (int from, int to, const char* message);
 BZF_API bool bz_sendTextMessage (int from, bz_eTeamType to, const char* message);
+BZF_API bool bz_sendTextMessagef(int from, int to, const char* fmt, ...);
+BZF_API bool bz_sendTextMessagef(int from, bz_eTeamType to, const char* fmt, ...);
 BZF_API bool bz_sentFetchResMessage ( int playerID,  const char* URL );
 
 // world weapons
@@ -834,6 +854,7 @@ BZF_API int bz_getBZDBVarList( bzAPIStringList	*varList );
 
 // logging
 BZF_API void bz_debugMessage ( int debugLevel, const char* message );
+BZF_API void bz_debugMessagef( int debugLevel, const char* fmt, ... );
 BZF_API int bz_getDebugLevel ( void );
 
 // admin

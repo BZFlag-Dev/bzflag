@@ -4499,6 +4499,13 @@ int main(int argc, char **argv)
 	    zapFlag(*FlagInfo::get(j));
 	  }
 
+          // fire off a game start event
+          bz_GameStartEndEventData	gameData;
+          gameData.eventType = bz_eGameStartEvent;
+          gameData.startTime = TimeKeeper::getCurrent().getSeconds();
+          gameData.duration = clOptions->timeLimit;
+          worldEventManager.callEvents(bz_eGameStartEvent,&gameData);
+
 	} else {
 	  if ((readySetGo == countdownDelay) && (countdownDelay > 0))
 	    sendMessage(ServerPlayer, AllPlayers, "Start your engines!......");
@@ -4519,6 +4526,13 @@ int main(int argc, char **argv)
 	countdownActive = false;
 	countdownPauseStart = TimeKeeper::getNullTime ();
 	clOptions->countdownPaused = false;
+       
+        // fire off a game end event
+        bz_GameStartEndEventData	gameData;
+        gameData.eventType = bz_eGameEndEvent;
+        gameData.startTime = TimeKeeper::getCurrent().getSeconds();
+        gameData.duration = clOptions->timeLimit;
+        worldEventManager.callEvents(bz_eGameEndEvent,&gameData);
       }
 
       if (countdownActive && clOptions->countdownPaused && !countdownPauseStart) {
