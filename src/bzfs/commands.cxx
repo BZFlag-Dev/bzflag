@@ -2073,7 +2073,7 @@ bool VoteCommand::operator() (const char	 *message,
     return true;
   }
 
-  if (arbiter->hasVoted(callsign)) {
+  if (arbiter->hasVoted(callsign) && cast == false) {
     /* player already voted */
     snprintf(reply, MessageLen, "%s, you have already voted on the poll to %s %s", callsign.c_str(), arbiter->getPollAction().c_str(), arbiter->getPollTarget().c_str());
     sendMessage(ServerPlayer, t, reply);
