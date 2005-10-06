@@ -835,8 +835,23 @@ List all of the IPs currently banned from this server. Example:
 /banlist
 IP Ban List
 \-\-\-\-\-\-\-\-\-\-\-\-
-35.23.43.66
-47.23.17.*
+35.23.43.66 (2 minutes) banned by Tankmaster 
+    reason: Cheaters
+47.23.17.* banned by Tankslave
+.ft R
+
+.TP 
+.B /checkip <ip>
+Check whether the IP is banned and print the corresponding rule. This does not
+cover hostbans. Example:
+
+.ft CW
+.nf 
+.ne 5
+/checkip 35.23.43.66
+35.23.43.66 is banned:
+35.23.43.66 banned by Tankmaster
+    reason: Cheaters
 .ft R
 
 .TP 

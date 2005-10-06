@@ -57,6 +57,14 @@ public:
 			   GameKeeper::Player *playerData);
 };
 
+class CheckIPCommand : ServerCommand {
+public:
+  CheckIPCommand();
+
+  virtual bool operator() (const char	 *commandLine,
+			   GameKeeper::Player *playerData);
+};
+
 class HostbanListCommand : ServerCommand {
 public:
   HostbanListCommand();
@@ -121,16 +129,17 @@ public:
 			   GameKeeper::Player *playerData);
 };
 
-static KickCommand	kickCommand;
-static KillCommand	killCommand;
-static BanListCommand     banListCommand;
+static KickCommand	  kickCommand;
+static KillCommand	  killCommand;
+static BanListCommand	  banListCommand;
+static CheckIPCommand	  checkIPCommand;
 static HostbanListCommand hostbanListCommand;
-static BanCommand	 banCommand;
-static HostbanCommand     hostbanCommand;
-static UnbanCommand       unbanCommand;
+static BanCommand	  banCommand;
+static HostbanCommand	  hostbanCommand;
+static UnbanCommand	  unbanCommand;
 static HostUnbanCommand   hostUnbanCommand;
-static MuteCommand	muteCommand;
-static UnmuteCommand      unmuteCommand;
+static MuteCommand	  muteCommand;
+static UnmuteCommand	  unmuteCommand;
 static MasterBanCommand   masterBanCommand;
 
 KickCommand::KickCommand()	       : ServerCommand("/kick",
@@ -139,6 +148,8 @@ KillCommand::KillCommand()	       : ServerCommand("/kill",
   "<#slot|PlayerName|\"Player Name\"> [reason] - kill a player") {}
 BanListCommand::BanListCommand()	 : ServerCommand("/banlist",
   "- List all of the IPs currently banned from this server") {}
+CheckIPCommand::CheckIPCommand()	 : ServerCommand("/checkip",
+  "<ip> - check if IP is banned and print corresponding ban info") {}
 HostbanListCommand::HostbanListCommand() : ServerCommand("/hostbanlist",
   "- List all of the host patterns currently banned from this server") {}
 BanCommand::BanCommand()		 : ServerCommand("/ban",
@@ -410,6 +421,39 @@ bool BanListCommand::operator() (const char	 *,
     return true;
   }
   clOptions->acl.sendBans(t);
+  return true;
+}
+
+
+bool CheckIPCommand::operator() (const char *message,
+				 GameKeeper::Player *playerData)
+{
+  int t = playerData->getIndex();
+  if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::banlist)) {
+    sendMessage(ServerPlayer, t,
+		"You do not have permission to run the banlist command");
+    return true;
+  }
+
+  std::vector<std::string> argv = TextUtils::tokenize(message, " \t");
+  if (argv.size() != 2) {
+    sendMessage(ServerPlayer, t, "Syntax: /isban <ip>");
+    return true;
+  }
+
+  in_addr ip = Address(argv[1]);
+  BanInfo baninfo(ip);
+  const bool banned = !clOptions->acl.validate(ip, &baninfo);
+
+  if (banned) {
+    std::string bannedmsg = argv[1] + " is banned:";
+    sendMessage(ServerPlayer, t, bannedmsg.c_str());
+    clOptions->acl.sendBan(t, baninfo);
+  } else {
+    std::string notbannedmsg = argv[1] + " is not banned.";
+    sendMessage(ServerPlayer, t, notbannedmsg.c_str());
+  }
+
   return true;
 }
 
