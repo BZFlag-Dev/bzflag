@@ -211,7 +211,7 @@ void AccessControlList::sendBan(PlayerId id, const BanInfo &baninfo)
   // print duration when < 1 year
   double duration = baninfo.banEnd - TimeKeeper::getCurrent();
   if (duration < 365.0f * 24 * 3600)
-    os << std::fixed << std::setprecision(1) << " (" << duration/60 << " minutes)";
+    os << std::setiosflags(std::ios::fixed) << std::setprecision(1) << " (" << duration/60 << " minutes)";
   if( baninfo.fromMaster )
     os << " (m)";
   if (baninfo.bannedBy.length())
