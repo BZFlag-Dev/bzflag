@@ -279,7 +279,7 @@ Instantiates a group, and possibly modifies subobjects
 .br 
   #   0 \- equivalent to an active clampDown
 .br 
-  #   1 \- equivalent to active clampUp and clampDown
+  #   1 \- equivalent to no clamps
 .br 
   #   2 \- equivalent to an active clampUp
 .br 
@@ -297,7 +297,7 @@ Instantiates a group, and possibly modifies subobjects
 .br 
 \fB  alpha clampDown\fR 0.2 0.5 0.5  # period, offset, width
 .br 
-\fB  red sequence\fR 0.0 0.0 0 2 1 1 2 0 ... # period, offset, list of states
+\fB  red sequence\fR 0.0 0.0 2 0 1 1 2 0 ... # period, offset, list of states
 .br 
 \fBend\fR
 .br 
