@@ -1691,7 +1691,8 @@ static void addPlayer(int playerIndex, GameKeeper::Player *playerData)
     } else {
       sendMessage(ServerPlayer, playerIndex, "This callsign is registered.");
     }
-    sendMessage(ServerPlayer, playerIndex, "Identify with /identify <your password>");
+    if (playerData->accessInfo.hasRealPassword())
+      sendMessage(ServerPlayer, playerIndex, "Identify with /identify <your password>");
   }
 
   dropAssignedFlag(playerIndex);

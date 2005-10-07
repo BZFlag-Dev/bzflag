@@ -217,10 +217,10 @@ void ListServerLink::finalization(char *data, unsigned int length, bool good)
 	DEBUG3("Got: [%d] %s\n", playerIndex, base);
 	if (playerIndex < curMaxPlayers) {
 	  playerData->_LSAState = GameKeeper::Player::notRequired;
-	  sendMessage(ServerPlayer, playerIndex, "Login approved. "
-		      "This callsign is unregistered.");
 	  sendMessage(ServerPlayer, playerIndex,
-		      "You can register yourself at http://bzbb.bzflag.org");
+                      "This callsign is not registered.");
+	  sendMessage(ServerPlayer, playerIndex,
+		      "You can register it at http://my.bzflag.org/bb/");
 	  playerData->player.clearToken();
 	}
       }
