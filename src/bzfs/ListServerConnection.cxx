@@ -111,6 +111,7 @@ void ListServerLink::finalization(char *data, unsigned int length, bool good)
     char* base = buf;
     static char *tokGoodIdentifier = "TOKGOOD: ";
     static char *tokBadIdentifier = "TOKBAD: ";
+    static char *unknownPlayer = "UNK: ";
     // walks entire reply including HTTP headers
     while (*base) {
       // find next newline
@@ -196,6 +197,30 @@ void ListServerLink::finalization(char *data, unsigned int length, bool good)
 	  playerData->_LSAState = GameKeeper::Player::failed;
 	  sendMessage(ServerPlayer, playerIndex,
 		      "Global login rejected, bad token.");
+	  playerData->player.clearToken();
+	}
+      } else if (!strncmp(base, unknownPlayer, strlen(unknownPlayer))) {
+	char *callsign;
+	callsign = base + strlen(unknownPlayer);
+	int playerIndex;
+	GameKeeper::Player *playerData = NULL;
+	for (playerIndex = 0; playerIndex < curMaxPlayers; playerIndex++) {
+	  playerData = GameKeeper::Player::getPlayerByIndex(playerIndex);
+	  if (!playerData)
+	    continue;
+	  if (playerData->_LSAState != GameKeeper::Player::checking)
+	    continue;
+	  if (!TextUtils::compare_nocase(playerData->player.getCallSign(),
+					 callsign))
+	    break;
+	}
+	DEBUG3("Got: [%d] %s\n", playerIndex, base);
+	if (playerIndex < curMaxPlayers) {
+	  playerData->_LSAState = GameKeeper::Player::notRequired;
+	  sendMessage(ServerPlayer, playerIndex, "Login approved. "
+		      "This callsign is unregistered.");
+	  sendMessage(ServerPlayer, playerIndex,
+		      "You can register yourself at http://bzbb.bzflag.org");
 	  playerData->player.clearToken();
 	}
       }

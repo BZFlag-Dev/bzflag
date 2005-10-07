@@ -1386,17 +1386,19 @@ static void addPlayer(int playerIndex, GameKeeper::Player *playerData)
 {
   uint16_t rejectCode;
   char rejectMsg[MessageLen];
+  // check for a name clash
   bool resultEnter = playerData->loadEnterData(rejectCode, rejectMsg);
 
+  // Name clash ... if the new player is not verified, reject it
+  // We cannot have 2 players with same nick
   if (!resultEnter && playerData->_LSAState != GameKeeper::Player::verified) {
     rejectPlayer(playerIndex, rejectCode, rejectMsg);
     return;
   }
 
   if (!resultEnter)
-    // Find the user already logged on and kick
-    // them if someone else is trying to log on
-    // and has globally authenticated.
+    // Find the user already logged on and kick it. The new player
+    // has been globally authenticated.
     for (int i = 0; i < curMaxPlayers; i++) {
       // don't kick _us_, kick the other guy
       if (playerIndex == i)
@@ -3067,8 +3069,7 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
 	     t, handler->getTargetIP(), timeStamp.c_str(),
 	     playerData->player.getToken());
 
-      const char *token = playerData->player.getToken();
-      if (token[0] == '\0' || !clOptions->publicizeServer) {
+      if (!clOptions->publicizeServer) {
 	playerData->_LSAState = GameKeeper::Player::notRequired;
       } else if (strlen(playerData->player.getCallSign())) {
 	playerData->_LSAState = GameKeeper::Player::required;
