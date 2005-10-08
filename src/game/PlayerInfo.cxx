@@ -163,7 +163,7 @@ bool PlayerInfo::unpackEnter(void *buf, uint16_t &rejectCode, char *rejectMsg)
     }
   }
 
-  if (strlen(token) {
+  if (strlen(token)) {
     strcpy(token, "NONE");
   }
 
