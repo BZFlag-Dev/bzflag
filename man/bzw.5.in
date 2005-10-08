@@ -1260,7 +1260,7 @@ drawInfoCmd :=
 .br 
 	| "tris"      <integer>{3..*}
 .br 
-	| "tristrip"  <integer>{3..*}
+	| "tristrip"  <integer>{1..*}
 .br 
 	| "trifan"    <integer>{3..*}
 .br 
