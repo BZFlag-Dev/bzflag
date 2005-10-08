@@ -194,9 +194,31 @@ void ListServerLink::finalization(char *data, unsigned int length, bool good)
 	}
 	DEBUG3("Got: [%d] %s\n", playerIndex, base);
 	if (playerIndex < curMaxPlayers) {
-	  playerData->_LSAState = GameKeeper::Player::failed;
-	  sendMessage(ServerPlayer, playerIndex,
-		      "Global login rejected, bad token.");
+	  // don't accept the global auth if there's a local account
+	  // of the same name and the local account is not marked as
+	  // being the same as the global account
+	  if (!playerData->accessInfo.hasRealPassword()
+	      || playerData->accessInfo.getUserInfo(callsign)
+	      .hasGroup("LOCAL.GLOBAL")) {
+	    playerData->_LSAState = GameKeeper::Player::failed;
+	    if (!playerData->accessInfo.isRegistered())
+	      playerData->accessInfo.storeInfo(NULL);
+	    sendMessage(ServerPlayer, playerIndex,
+			"Global login rejected, bad token.");
+	  } else {
+	    playerData->_LSAState = GameKeeper::Player::failed;
+	    sendMessage(ServerPlayer, playerIndex, "Global login rejected. "
+			"This callsign is registered locally on this "
+			"server.");
+	    sendMessage(ServerPlayer, playerIndex,
+			"If the local account is yours, "
+			"/identify, /deregister and reconnnect, "
+			"or ask an admin for the LOCAL.GLOBAL group.");
+	    sendMessage(ServerPlayer, playerIndex,
+			"If it is not yours, please ask an admin "
+			"to deregister it so that you may use your global "
+			"callsign.");
+	  }
 	  playerData->player.clearToken();
 	}
       } else if (!strncmp(base, unknownPlayer, strlen(unknownPlayer))) {
