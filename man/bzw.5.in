@@ -1250,25 +1250,25 @@ link :=
 .TP 
 drawInfoCmd :=
 .br 
-	  "points"    <integer>+
+	  "points"    <integer>{1..*}
 .br 
-	| "lines"     <integer> <integer> <integer>{2}*
+	| "lines"     <integer>{2..*}
 .br 
-	| "lineloop"  <integer> <integer>+
+	| "lineloop"  <integer>{2..*}
 .br 
-	| "linestrip" <integer> <integer> <integer{2}*
+	| "linestrip" <integer>{2..*}
 .br 
-	| "tris"      <integer> <integer> <integer> <integer>{3}*
+	| "tris"      <integer>{3..*}
 .br 
-	| "tristrip"  <integer> <integer> <integer>+
+	| "tristrip"  <integer>{3..*}
 .br 
-	| "trifan"    <integer> <integer> <integer>+
+	| "trifan"    <integer>{3..*}
 .br 
-	| "quads"     <integer> <integer> <integer> <integer> <integer>{4}*
+	| "quads"     <integer>{4..*}
 .br 
-	| "quadstrip" <integer> <integer> <integer>{2}+
+	| "quadstrip" <integer>{4..*}
 .br 
-	| "polygon"   <integer> <integer> <integer> <integer>{3}*
+	| "polygon"   <integer>{3..*}
 .br 
 .TP 
 .B (MeshDrawInfo.cxx/MeshDrawInfo::parseDrawSet)
