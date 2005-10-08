@@ -122,110 +122,38 @@ void ListServerLink::finalization(char *data, unsigned int length, bool good)
       while (*scan && (*scan == '\r' || *scan == '\n')) *scan++ = '\0';
       DEBUG4("Got line: \"%s\"\n", base);
       // TODO don't do this if we don't want central logins
+
+      // is player globally registered ?
+      bool  registered = false;
+      // is player authenticated ?
+      bool  verified   = false;
+      // this is a reply to an authentication request ?
+      bool  authReply  = false;
+      char *callsign;
       if (strncmp(base, tokGoodIdentifier, strlen(tokGoodIdentifier)) == 0) {
-	char *callsign, *group;
 	callsign = base + strlen(tokGoodIdentifier);
-	DEBUG3("Got: %s\n", base);
-	group = callsign;
-	while (*group && (*group != ':')) group++;
-	while (*group && (*group == ':')) *group++ = 0;
-	int playerIndex;
-	GameKeeper::Player *playerData = NULL;
-	for (playerIndex = 0; playerIndex < curMaxPlayers; playerIndex++) {
-	  playerData = GameKeeper::Player::getPlayerByIndex(playerIndex);
-	  if (!playerData)
-	    continue;
-	  if (playerData->_LSAState != GameKeeper::Player::checking)
-	    continue;
-	  if (!TextUtils::compare_nocase(playerData->player.getCallSign(),
-					 callsign))
-	    break;
-	}
-	if (playerIndex < curMaxPlayers) {
-	  // don't accept the global auth if there's a local account
-	  // of the same name and the local account is not marked as
-	  // being the same as the global account
-	  if (!playerData->accessInfo.hasRealPassword()
-	      || playerData->accessInfo.getUserInfo(callsign)
-	      .hasGroup("LOCAL.GLOBAL")) {
-	    playerData->_LSAState = GameKeeper::Player::verified;
-	    if (!playerData->accessInfo.isRegistered())
-	      playerData->accessInfo.storeInfo(NULL);
-	    playerData->accessInfo.setPermissionRights();
-	    while (*group) {
-	      char *nextgroup = group;
-	      while (*nextgroup && (*nextgroup != ':')) nextgroup++;
-	      while (*nextgroup && (*nextgroup == ':')) *nextgroup++ = 0;
-	      playerData->accessInfo.addGroup(group);
-	      group = nextgroup;
-	    }
-	    playerData->authentication.global(true);
-	    sendMessage(ServerPlayer, playerIndex, "Global login approved!");
-	  } else {
-	    playerData->_LSAState = GameKeeper::Player::failed;
-	    sendMessage(ServerPlayer, playerIndex, "Global login rejected. "
-			"This callsign is registered locally on this "
-			"server.");
-	    sendMessage(ServerPlayer, playerIndex,
-			"If the local account is yours, "
-			"/identify, /deregister and reconnnect, "
-			"or ask an admin for the LOCAL.GLOBAL group.");
-	    sendMessage(ServerPlayer, playerIndex,
-			"If it is not yours, please ask an admin "
-			"to deregister it so that you may use your global "
-			"callsign.");
-	  }
-	  playerData->player.clearToken();
-	}
+	registered = true;
+	verified   = true;
+	authReply  = true;
       } else if (!strncmp(base, tokBadIdentifier, strlen(tokBadIdentifier))) {
-	char *callsign;
 	callsign = base + strlen(tokBadIdentifier);
-	int playerIndex;
-	GameKeeper::Player *playerData = NULL;
-	for (playerIndex = 0; playerIndex < curMaxPlayers; playerIndex++) {
-	  playerData = GameKeeper::Player::getPlayerByIndex(playerIndex);
-	  if (!playerData)
-	    continue;
-	  if (playerData->_LSAState != GameKeeper::Player::checking)
-	    continue;
-	  if (!TextUtils::compare_nocase(playerData->player.getCallSign(),
-					 callsign))
-	    break;
-	}
-	DEBUG3("Got: [%d] %s\n", playerIndex, base);
-	if (playerIndex < curMaxPlayers) {
-	  // don't accept the global auth if there's a local account
-	  // of the same name and the local account is not marked as
-	  // being the same as the global account
-	  if (!playerData->accessInfo.hasRealPassword()
-	      || playerData->accessInfo.getUserInfo(callsign)
-	      .hasGroup("LOCAL.GLOBAL")) {
-	    playerData->_LSAState = GameKeeper::Player::failed;
-	    if (!playerData->accessInfo.isRegistered())
-	      playerData->accessInfo.storeInfo(NULL);
-	    sendMessage(ServerPlayer, playerIndex,
-			"Global login rejected, bad token.");
-	  } else {
-	    playerData->_LSAState = GameKeeper::Player::failed;
-	    sendMessage(ServerPlayer, playerIndex, "Global login rejected. "
-			"This callsign is registered locally on this "
-			"server.");
-	    sendMessage(ServerPlayer, playerIndex,
-			"If the local account is yours, "
-			"/identify, /deregister and reconnnect, "
-			"or ask an admin for the LOCAL.GLOBAL group.");
-	    sendMessage(ServerPlayer, playerIndex,
-			"If it is not yours, please ask an admin "
-			"to deregister it so that you may use your global "
-			"callsign.");
-	  }
-	  playerData->player.clearToken();
-	}
+	registered = true;
+	authReply  = true;
       } else if (!strncmp(base, unknownPlayer, strlen(unknownPlayer))) {
-	char *callsign;
 	callsign = base + strlen(unknownPlayer);
-	int playerIndex;
+	authReply  = true;
+      }
+      if (authReply) {
+	DEBUG3("Got: %s", base);
+	char *group;
+	// Isolate callsign from groups
+	if (verified) {
+	  group = callsign;
+	  while (*group && (*group != ':')) group++;
+	  while (*group && (*group == ':')) *group++ = 0;
+	}
 	GameKeeper::Player *playerData = NULL;
+	int playerIndex;
 	for (playerIndex = 0; playerIndex < curMaxPlayers; playerIndex++) {
 	  playerData = GameKeeper::Player::getPlayerByIndex(playerIndex);
 	  if (!playerData)
@@ -236,13 +164,60 @@ void ListServerLink::finalization(char *data, unsigned int length, bool good)
 					 callsign))
 	    break;
 	}
-	DEBUG3("Got: [%d] %s\n", playerIndex, base);
+	DEBUG3("[%d]\n", playerIndex);
+
 	if (playerIndex < curMaxPlayers) {
-	  playerData->_LSAState = GameKeeper::Player::notRequired;
-	  sendMessage(ServerPlayer, playerIndex,
-                      "This callsign is not registered.");
-	  sendMessage(ServerPlayer, playerIndex,
-		      "You can register it at http://my.bzflag.org/bb/");
+	  if (registered) {
+	    // don't accept the global auth if there's a local account
+	    // of the same name and the local account is not marked as
+	    // being the same as the global account
+	    if (!playerData->accessInfo.hasRealPassword()
+		|| playerData->accessInfo.getUserInfo(callsign)
+		.hasGroup("LOCAL.GLOBAL")) {
+	      if (!playerData->accessInfo.isRegistered())
+		// Create an entry on the user database even if
+		// authentication wenk ko. Make the "isRegistered"
+		// things work
+		playerData->accessInfo.storeInfo(NULL);
+	      if (verified) {
+		playerData->_LSAState = GameKeeper::Player::verified;
+		playerData->accessInfo.setPermissionRights();
+		while (*group) {
+		  char *nextgroup = group;
+		  while (*nextgroup && (*nextgroup != ':')) nextgroup++;
+		  while (*nextgroup && (*nextgroup == ':')) *nextgroup++ = 0;
+		  playerData->accessInfo.addGroup(group);
+		  group = nextgroup;
+		}
+		playerData->authentication.global(true);
+		sendMessage(ServerPlayer, playerIndex,
+			    "Global login approved!");
+	      } else {
+		playerData->_LSAState = GameKeeper::Player::failed;
+		sendMessage(ServerPlayer, playerIndex,
+			    "Global login rejected, bad token.");
+	      }
+	    } else {
+	      playerData->_LSAState = GameKeeper::Player::failed;
+	      sendMessage(ServerPlayer, playerIndex, "Global login rejected. "
+			  "This callsign is registered locally on this "
+			  "server.");
+	      sendMessage(ServerPlayer, playerIndex,
+			  "If the local account is yours, "
+			  "/identify, /deregister and reconnnect, "
+			  "or ask an admin for the LOCAL.GLOBAL group.");
+	      sendMessage(ServerPlayer, playerIndex,
+			  "If it is not yours, please ask an admin "
+			  "to deregister it so that you may use your global "
+			  "callsign.");
+	    }
+	  } else {
+	    playerData->_LSAState = GameKeeper::Player::notRequired;
+	    sendMessage(ServerPlayer, playerIndex,
+			"This callsign is not registered.");
+	    sendMessage(ServerPlayer, playerIndex,
+			"You can register it at http://my.bzflag.org/bb/");
+	  }
 	  playerData->player.clearToken();
 	}
       }
