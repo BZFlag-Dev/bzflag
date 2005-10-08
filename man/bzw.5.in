@@ -1308,8 +1308,6 @@ drawInfo :=
 .br 
 	| "decorative" 
 .br 
-	| "purevisual" 
-.br 
 	| "angvel" <float>
 .br 
 	| "extents" 3dpoint 3dpoint
