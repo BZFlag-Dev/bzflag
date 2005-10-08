@@ -689,8 +689,15 @@ Player*   ScoreboardRenderer::getLeader(std::string *label) {
     else
       *label = "Leader ";
   }
+
   Player** list = newSortedList (sortType, true);
-  Player* top = list[0];
+
+  Player* top;
+  if (!list)
+    top = NULL;
+  else
+    top = list[0];
+
   delete[] list;
 
   if (top==NULL || top->getTeam()==ObserverTeam)
