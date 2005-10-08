@@ -5961,11 +5961,11 @@ static float		timeConfiguration(bool useZBuffer)
   }
 
   // use glFinish() to get accurate timings
-  glFinish();
+  //glFinish();
   TimeKeeper startTime = TimeKeeper::getCurrent();
   sceneRenderer->setExposed();
   sceneRenderer->render();
-  glFinish();
+ // glFinish();
   TimeKeeper endTime = TimeKeeper::getCurrent();
 
   // turn off depth buffer
