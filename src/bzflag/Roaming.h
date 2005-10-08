@@ -57,6 +57,7 @@ public:
   Player* getTargetTank(void) const;
   Flag*   getTargetFlag(void) const;
 
+  void buildRoamingLabel(void);
   std::string getRoamingLabel(void) const;
 
   struct RoamingCamera {
@@ -76,10 +77,6 @@ public:
 
 protected:
   friend class Singleton<Roaming>;
-
-private:
-  void findWinner(void);
-  void buildRoamingLabel(void);
 
 private:
   RoamingView view;

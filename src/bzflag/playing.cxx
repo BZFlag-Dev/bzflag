@@ -5789,6 +5789,7 @@ static void		playingLoop()
     // move roaming camera
     if (ROAM.isRoaming()) {
       setupRoamingCamera(dt);
+      ROAM.buildRoamingLabel();
     }
 
     // update test video format timer
