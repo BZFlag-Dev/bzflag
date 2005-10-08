@@ -1306,7 +1306,9 @@ drawInfo :=
 .br 
 	| "dlist"
 .br 
-	| "decorative"
+	| "decorative" 
+.br 
+	| "purevisual" 
 .br 
 	| "angvel" <float>
 .br 
