@@ -437,7 +437,7 @@ bool CheckIPCommand::operator() (const char *message,
 
   std::vector<std::string> argv = TextUtils::tokenize(message, " \t");
   if (argv.size() != 2) {
-    sendMessage(ServerPlayer, t, "Syntax: /isban <ip>");
+    sendMessage(ServerPlayer, t, "Syntax: /checkip <ip>");
     return true;
   }
 
