@@ -1011,6 +1011,8 @@ material :=
 .br 
 	| "nosorting"
 .br 
+	| "nolighting"
+.br 
 	| "alphathresh" <value>
 .br 
 	| "groupalpha"
