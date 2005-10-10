@@ -34,9 +34,14 @@
 #include "HUDuiControl.h"
 #include "HUDuiLabel.h"
 #include "HUDuiTextureLabel.h"
+#include "ConfigFileManager.h"
+#include "clientConfig.h"
 
 /* from playing.cxx */
 void leaveGame();
+
+extern void		dumpResources();
+extern std::string	alternateConfig;
 
 MainMenu::MainMenu() : HUDDialog(), joinMenu(NULL),
 #ifdef HAVE_KRB5
@@ -92,6 +97,9 @@ void	  MainMenu::createControls()
   } else {
     leave = NULL;
   }
+
+  save = createLabel("Save Settings");
+  listHUD.push_back(save);
 
   quit = createLabel("Quit");
   listHUD.push_back(quit);
@@ -160,6 +168,13 @@ void			MainMenu::execute()
     leaveGame();
     // myTank should be NULL now, recreate menu
     createControls();
+  } else if (_focus == save) {
+    // save resources
+    dumpResources();
+    if (alternateConfig == "")
+      CFGMGR.write(getCurrentConfigFileName());
+    else
+      CFGMGR.write(alternateConfig);
   } else if (_focus == quit) {
     if (!quitMenu) quitMenu = new QuitMenu;
     HUDDialogStack::get()->push(quitMenu);

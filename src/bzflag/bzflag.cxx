@@ -92,7 +92,7 @@ extern std::vector<std::string>& getSilenceList();
 const char*		argv0;
 static bool		anonymous = false;
 static std::string	anonymousName("anonymous");
-static std::string	alternateConfig;
+std::string	        alternateConfig;
 static bool		noAudio = false;
 struct tm		userTime;
 bool			echoToConsole = false;
@@ -492,8 +492,7 @@ static void		parseConfigName(int argc, char** argv)
 // (so user won't have to wait through performance testing again).
 //
 
-void			dumpResources(BzfDisplay *currentDisplay,
-				SceneRenderer& renderer)
+void			dumpResources()
 {
   // collect new configuration
 
@@ -520,23 +519,23 @@ void			dumpResources(BzfDisplay *currentDisplay,
     BZDB.set("volume", TextUtils::format("%d", getSoundVolume()));
   }
 
-  if (renderer.getWindow().getWindow()->hasGammaControl()) {
-    BZDB.set("gamma", TextUtils::format("%f", renderer.getWindow().getWindow()->getGamma()));
+  if (RENDERER.getWindow().getWindow()->hasGammaControl()) {
+    BZDB.set("gamma",
+	     TextUtils::format("%f", RENDERER.getWindow().getWindow()->getGamma()));
   }
 
-  BZDB.set("quality", configQualityValues[renderer.useQuality()]);
-  if (!BZDB.isSet("_window") && currentDisplay->getResolution() != -1 &&
-      currentDisplay->getResolution(currentDisplay->getResolution())) {
-    BZDB.set("resolution", currentDisplay->getResolution
-	     (currentDisplay->getResolution())->name);
+  BZDB.set("quality", configQualityValues[RENDERER.useQuality()]);
+  if (!BZDB.isSet("_window") && display->getResolution() != -1 &&
+      display->getResolution(display->getResolution())) {
+    BZDB.set("resolution", display->getResolution(display->getResolution())->name);
   }
   BZDB.set("startcode", ServerStartMenu::getSettings());
 
-  BZDB.set("panelopacity", TextUtils::format("%f", renderer.getPanelOpacity()));
+  BZDB.set("panelopacity", TextUtils::format("%f", RENDERER.getPanelOpacity()));
 
-  BZDB.set("radarsize", TextUtils::format("%d", renderer.getRadarSize()));
+  BZDB.set("radarsize", TextUtils::format("%d", RENDERER.getRadarSize()));
 
-  BZDB.set("mouseboxsize", TextUtils::format("%d", renderer.getMaxMotionFactor()));
+  BZDB.set("mouseboxsize", TextUtils::format("%d", RENDERER.getMaxMotionFactor()));
 
   // don't save these configurations
   BZDB.setPersistent("_window", false);
@@ -1267,12 +1266,6 @@ int			main(int argc, char** argv)
   // start playing
   startPlaying(display, RENDERER);
 
-  // save resources
-  dumpResources(display, RENDERER);
-  if (alternateConfig == "")
-    CFGMGR.write(getCurrentConfigFileName());
-  else
-    CFGMGR.write(alternateConfig);
 
   // shut down
   if (filter != NULL)

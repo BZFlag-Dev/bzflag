@@ -187,7 +187,7 @@ static void		cleanWorldCache();
 static void		markOld(std::string &fileName);
 void			leaveGame();
 void			drawFrame(const float dt);
-extern void		dumpResources(BzfDisplay*, SceneRenderer&);
+extern void		dumpResources();
 static void		setRobotTarget(RobotPlayer* robot);
 extern void		doAutoPilot(float &rotation, float &speed);
 extern void		teachAutoPilot( FlagType *, int );
@@ -6384,7 +6384,7 @@ void			startPlaying(BzfDisplay* _display,
   if (!startupInfo.hasConfiguration) {
     printError("testing performance;  please wait...");
     findFastConfiguration();
-    dumpResources(display, renderer);
+    dumpResources();
   }
 
   static const GLfloat	zero[3] = { 0.0f, 0.0f, 0.0f };
