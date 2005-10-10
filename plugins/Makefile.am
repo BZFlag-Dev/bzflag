@@ -8,6 +8,7 @@ SUBDIRS = \
 	playHistoryTracker \
 	python \
 	shockwaveDeath \
+	HoldTheFlag \
 	vocaliser
 
 DIST_SUBDIRS = \

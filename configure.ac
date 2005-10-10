@@ -801,6 +801,7 @@ AC_CONFIG_FILES(bzflag.info
 	plugins/python/Makefile
 	plugins/shockwaveDeath/Makefile
 	plugins/vocaliser/Makefile
+	plugins/HoldTheFlag/Makefile
 	plugins/doc/Makefile
 	plugins/vc71/Makefile
 	src/3D/Makefile
