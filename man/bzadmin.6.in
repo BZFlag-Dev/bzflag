@@ -15,10 +15,10 @@ bzadmin \- a text based client for BZFlag
 .SH "SYNOPSIS"
 .B bzadmin
 [\fB\-help\fR]
-[\fB\-hide \fR\fImsgtype\fR{\fI,msgtype\fR}*\fR]
-[\fB\-show \fR\fImsgtype\fR{\fI,msgtype\fR}*\fR]
+[\fB\-hide \fR\fImsgtype\fR[\fI,msgtype\fR]...\fR]
+[\fB\-show \fR\fImsgtype\fR[\fI,msgtype\fR]...\fR]
 [\fB\-ui \fR{\fIcurses\fR | \fIstdboth\fR | \fIstdin\fR | \fIstdout\fR}]
-\fIcallsign@hostname\fR:[\fIport\fR] [\fIcommand\fR] [\fIcommand\fR] ...
+\fIcallsign\fR[\fI:password\fR]\fI@hostname\fR[\fI:port\fR] [\fIcommand\fR] [\fIcommand\fR] ...
 .SH "DESCRIPTION"
 .B bzadmin
 is a textbased client for the game BZFlag. It can't be used for
@@ -63,14 +63,14 @@ go away.
 .B \-help
 Show a simple help text.
 .TP 
-\fB\-hide \fR\fImsgtype\fR{\fI,msgtype\fR}*
+\fB\-hide \fR\fImsgtype\fR[\fI,msgtype\fR]...
 Tell bzadmin not to show these message types. The available message types are
 chat, join, kill, leave, pause, ping, rabbit, spawn, time, and over. By default
 chat, join, kill, leave, pause, and rabbit are shown. You can also change this
 while bzadmin is running with the commands \fB/show <msgtype>\fR and
 \fB/hide <msgtype>\fR, and from the curses menu.
 .TP 
-\fB\-show \fR\fImsgtype\fR{\fI,msgtype\fR}*
+\fB\-show \fR\fImsgtype\fR[\fI,msgtype\fR]...
 Tell bzadmin to show these message types. See \fB\-hide\fR for a list of
 available message types. If a message type is listed both in \fB\-show\fR
 and \fB\-hide\fR it will not be shown.
@@ -89,7 +89,7 @@ The stdboth interface is a combination of stdin and stdout \- it prints
 server output to the standard out stream, and reads user commands from
 the standard in stream.
 .TP 
-\fIcallsign@hostname\fR[\fI:port\fR]
+\fIcallsign\fR[\fI:password\fR]\fI@hostname\fR[\fI:port\fR]
 Specifies the callsign that you want your client to use, and the
 hostname where the BZFlag server is. The port number is optional,
 and the default value is 5154.

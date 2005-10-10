@@ -197,7 +197,7 @@ static void		usage()
 	" [-view {normal|stereo|stacked|three|anaglyph|interlaced}]"
 	" [-window]"
 	" [-zoom <zoom-factor>]"
-	" [callsign@]server[:port]\n\nExiting.", argv0);
+	" [callsign[:password]@]server[:port]\n\nExiting.", argv0);
   if (display != NULL) {
     delete display;
     display=NULL;

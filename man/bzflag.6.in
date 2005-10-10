@@ -37,7 +37,7 @@ BZFlag \- a tank battle game
 [\fB\-view \fR{\fInormal\fR | \fIstereo\fR | \fIstacked\fR | \fIthree\fR | \fIanaglyph\fR}]
 [\fB\-window\fR]
 [\fB\-zbuffer \fR{\fIon\fR | \fIoff\fR}]
-[[\fIcallsign@\fR]\fIserver\fR[\fI:port\fR]]
+[[\fIcallsign\fR[\fI:password\fR]\fI@\fR]\fIserver\fR[\fI:port\fR]]
 .SH "DESCRIPTION"
 .B BZFlag
 is a 3D multi\-player tank battle game that allows users
@@ -202,7 +202,7 @@ depth (z) buffer and will use a different rendering technique for
 hidden surface removal.  Some systems may be capable of using a
 higher screen resolution if a depth buffer isn't allocated.
 .TP 
-[\fIcallsign@\fR]\fIserver\fR[\fI:port\fR]
+[\fIcallsign\fR[\fI:password\fR]\fI@\fR]\fIserver\fR[\fI:port\fR]
 Specifies the callsign you want, and the host running the \fBbzfs\fR
 server. Multiple independent games can be run on a single network, or
 even on different ports on a single computer. Which server and port you
