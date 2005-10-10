@@ -16,11 +16,10 @@ bzfs \- BZFlag game server
 .B bzfs
 [\fB\-a \fIlinear\fR \fIangular\fR]
 [\fB\-admsg \fImessage\fR]
-[\fB\-advertise \fIGROUPNAME,GROUPNAME,...\fR]
+[\fB\-advertise \fIgroupname\fR[\fI,groupname\fR]...]
 [\fB\-autoTeam\fR]
 [\fB\-b\fR]
 [\fB\-badwords \fIbadwordfile\fR]
-[\fB\-ban \fIip\fR{,ip}*]
 [\fB\-ban \fIip\fR[\fI,ip\fR]...]
 [\fB\-banfile \fIfilename\fR]
 [\fB\-c\fR]
@@ -46,13 +45,13 @@ bzfs \- BZFlag game server
 [\fB\-i \fIinterface\fR]
 [\fB\-j\fR]
 [\fB\-lagdrop \fIwarn\-count\fR]
-[\fB\-lagwarn \fR\fItime/ms\fR]
-[\fB\-masterBanURL \fR\URL/s\fR]
-[\fB\-maxidle \fR\fItime/s\fR]
+[\fB\-lagwarn \fR\fImilliseconds\fR]
+[\fB\-masterBanURL \fR\URL\fR]
+[\fB\-maxidle \fR\fIseconds\fR]
 [\fB\-mp \fR{\fIcount\fR|[\fIrogue\-count\fR]\fB,\fR[\fIred\-count\fR]\fB,\fR[\fIgreen\-count\fR]\fB,\fR[\fIblue\-count\fR]\fB,\fR[\fIpurple\-count\fR],\fR[\fIobserver\-count\fR]}]
-[\fB\-mps \fR{\fImax\-score\fR}]
+[\fB\-mps \fR\fImax\-score\fR]
 [\fB\-ms \fIshots\fR]
-[\fB\-mts \fR{\fImax\-score\fR}]
+[\fB\-mts \fR\fImax\-score\fR]
 [\fB\-noMasterBanlist\fR]
 [\fB\-p \fIport\fR]
 [\fB\-passdb \fIfile\fR]
@@ -93,7 +92,7 @@ bzfs \- BZFlag game server
 [\fB\-tk\fR]
 [\fB\-tkkr \fIpercent\fR]
 [\fB\-trackplayhistory\fR]
-[\fB\-ts \fI[micros]\fR]
+[\fB\-ts [\fImicros\fR]]
 [\fB\-userdb \fIfile\fR]
 [\fB\-vars \fIfile\fR]
 [\fB\-version\fR]
@@ -141,7 +140,7 @@ When \fB\-c\fR is supplied, this option randomly rotates the buildings.
 Specify a file that contains bad words that will be used when either
 \fB\-filterCallsigns\fR or \fB\-filterChat\fR is enabled.
 .TP 
-.B \-ban \fIip\fR{,ip}*
+.B \-ban \fIip\fR[,\fIip\fR]...
 Prohibits connections from the listed IP addresses. Trailing 255 bytes are
 treated as mask bytes.
 .TP 
@@ -252,15 +251,15 @@ Allows jumping.
 \fB\-lagdrop \fIwarn\-count\fR
 Kicks players after \fIwarn\-count\fR lag warnings.
 .TP 
-\fB\-lagwarn \fItime/ms\fR
-Send warnings to players that lag more than \fItime\fR.
+\fB\-lagwarn \fImilliseconds\fR
+Send warnings to players that lag more than \fImilliseconds\fR.
 .TP 
-\fB\-masterBanURL \fIURL/s\fR
+\fB\-masterBanURL \fIURL\fR
 Specify alternate URLs for the master ban file to be pulled from.
 This argument may be provided multiple times.
 .TP 
-\fB\-maxidle \fItime/s\fR
-Kick players that did not play longer than time seconds. Pausing players are
+\fB\-maxidle \fIseconds\fR
+Kick players that did not play longer than \fIseconds\fR. Pausing players are
 not kicked. If a player uttered a word recently, he will be kicked after
 thrice the given time.
 .TP 
@@ -423,7 +422,7 @@ Set BZDB variable \fIname\fR to \fIvalue\fR
 Restrict flag \fIid\fR to \fInum\fR shots.
 .TP 
 \fB\-spamtime \fItime\fR
-Minimum <time> between player chat messages that are alike.  
+Minimum time between player chat messages that are alike.  
 .TP 
 \fB\-spamwarn \fIwarnLimit\fR
 Number of warnings a player/spammer gets, who  violates \-spamtime.
@@ -554,31 +553,34 @@ are guaranteed to get all messages sent via TCP.  But the UDP
 packets may be discarded.  If other players can see your tank in the game but
 it never appears to move and shots go through it, chances are high that your
 UDP connection is not working.
+.SS "Worlds"
+BZFlag worlds come in two varieties, randomly generated ones, and
+human designed ones. By default, bzfs uses randomly generated world
+unless you specify the \-world command line or configuration file
+option. The world file specified by the \-world option is a text based
+file that contains a list of world objects. This file can be created
+using programs found on sourceforge.net through cvs, or can be hand
+edited.  See the bzw(5) manual page for more details.
+
 
 .SH "GENERAL SERVER COMMANDS"
 .TP 
-.br 
-.B /lagstats
-Lists network delays, jitter and number of lost resp. out of order packets by player. Example:
+.B /clientquery [\fIcallsign\fR]
+Retrieve client version info from all users, or just CALLSIGN if given. Example:
 .ft CW
 .nf 
-.ne 3
-MrApathyCream 335 +\- 10ms
-Gerbol 210 +\- 3ms
-captain_macgyver 155 +\- 0ms  12% lost/ooo
+.ne 2
+/clientquery MrApathyCream
+MrApathyCream: Version: BZFlag 1.11.6\-20040729\-gnu\-linux\-SDL
 .ft R
 
 .TP 
-.B /idlestats
-Displays the idle time in seconds for each player. A player is idle when
-he is dead and has not respawned yet.
-
+.B /date, /time
+Responds with the current server local time. /date and /time are exactly the same. Example:
 .ft CW
 .nf 
-.ne 3
-MrApathyCream: 0s
-Gerbol: 80s
-captain_macgyver: 13s
+.ne 1
+Tuesday September 08 06:45:54 2004
 .ft R
 
 .TP 
@@ -593,21 +595,54 @@ captain_macgyver: (SB) (SW)
 .ft R
 
 .TP 
-.B /time, /date
-Responds with the current server local time. /date and /time are the exact same. Example:
+.B /idlestats
+Displays the idle time in seconds for each player. A player is idle when
+he is dead and has not respawned yet. Example:
 .ft CW
 .nf 
-.ne 1
-Tuesday September 08 06:45:54 2004
+.ne 3
+MrApathyCream: 0s
+Gerbol: 80s
+captain_macgyver: 13s
 .ft R
 
 .TP 
-.B /uptime
-Prints server's current running time in days, hours, mins and secs.
+.B /lagstats
+Lists network delays, jitter and number of lost resp. out of order packets by player. Example:
+.ft CW
+.nf 
+.ne 3
+MrApathyCream 335 +\- 10ms
+Gerbol 210 +\- 3ms
+captain_macgyver 155 +\- 0ms  12% lost/ooo
 .ft R
 
 .TP 
-.B /password {password}
+.B /me \fIaction\fR
+
+This command displays an "action" that is conveyed to another player.  It allows
+for a little more expressivity in the game.  For example: "/me is hunting wabbits"
+turns into a message like "TimRiker is hunting wabbits" that gets displayed
+differently to other players.
+
+.TP 
+.B /msg \fI"callsign"\fR \fImessage\fR
+
+This command allows a player to send a message to another player.  Similar to using
+the "," and "." message keys in the game and then selecting your recipient, this
+will send some message to particular player.  The quotes are optional.
+
+.TP 
+.B /part [\fImessage\fR]
+Leave the server with a goodbye message (similar to IRC's /part)
+.ft CW
+.nf 
+.ne 2
+/part Gotta go! bye everyone!
+.ft R
+
+.TP 
+.B /password \fIpassword\fR
 Attempt to gain administrator status Example:
 .ft CW
 .nf 
@@ -617,35 +652,16 @@ You are now an administrator!
 .ft R
 
 .TP 
-.B /clientquery [callsign]
-Retrieve client version info from all users, or just CALLSIGN if given Example:
-.ft CW
-.nf 
-.ne 2
-/clientquery MrApathyCream
-MrApathyCream: Version: BZFlag 1.11.6\-20040729\-gnu\-linux\-SDL
-.ft R
+.B /poll {{ban|kick} \fIcallsign\fR|vote {yes|no}|veto}
+Interact and make requests of the bzflag voting system via the /poll command.
+The ban and kick subcommands request a vote to respectively ban or kick some
+player.  The playername is expected as the next argument.  The vote and veto
+commands behave identical to the /vote and /veto command counterparts,
+expecting the same arguments in following.  By default, you must be registered
+to request or vote on a poll, and an admin to veto.
 
 .TP 
-.B /report {message}
-Write a message to the server administrator. Example:
-.ft CW
-.nf 
-.ne 1
-/report I like this map!
-.ft R
-
-.TP 
-.B /part {message}
-Leave the server with a goodbye message (similar to IRC's /part)
-.ft CW
-.nf 
-.ne 2
-/part Gotta go! bye everyone!
-.ft R
-
-.TP 
-.B /quit {message}
+.B /quit [\fImessage\fR]
 Quit the game with a goodbye message (similar to IRC's /quit)
 .ft CW
 .nf 
@@ -654,150 +670,30 @@ Quit the game with a goodbye message (similar to IRC's /quit)
 .ft R
 
 .TP 
-.B /me
-
-This command displays an "action" that is conveyed to another player.  It allows
-for a little more expressivity in the game.  For example: "/me is hunting wabbits"
-turns into a message like "TimRiker is hunting wabbits" that gets displayed
-differently to other players.
+.B /report \fImessage\fR
+Write a message to the server administrator. Example:
+.ft CW
+.nf 
+.ne 2
+/report I like this map!
+.ft R
 
 .TP 
-.B /msg "some player" some message
+.B /uptime
+Prints server's current running time in days, hours, mins and secs.
 
-This command allows a player to send a message to another player.  Similar to using
-the "," and "." message keys in the game and then selecting your recipient, this
-will send some message to particular player.  The quotes are optional.
+.TP 
+.B /vote {yes|no}
+If there is a poll active, this command will place a vote in favor or in
+opposition to the poll.  Multiple languages are supported as a vote argument
+in addition to "yes" and "no".  By default, you must be registered to vote on
+a poll.
 
 
 .SH "SERVER ADMINISTRATIVE COMMANDS"
 .BR 
 .TP 
-.B /viewreports
-View the server's report file.
-.BR 
-
-.TP 
-.B /record list
-List all files in the recordings directory
-.TP 
-.B /record start
-Start recording into the memory buffer
-.TP 
-.B /record stop
-Stop recording into the memory buffer
-.TP 
-.B /record size <megabytes>
-Set the size of the recording memory buffer
-.TP 
-.B /record rate <seconds>
-Set the time between game state updates stored in the recording. This will affect
-the granularity of the 'skips' you can do while replaying a file. It will also
-make the recording files bigger if it is set to a faster update rate.
-.TP 
-.B /record stats
-Display the statistics for the current recording (file or buffered)
-.TP 
-.B /record file <filename>
-Start recording directly to a file
-.TP 
-.B /record save <filename> [seconds]
-Save the recording buffer into a file. If seconds is specified, then only save
-that many previous seconds into the file.
-.BR 
-
-.TP 
-.B /replay list
-List all files in the recordings directory
-.TP 
-.B /replay load <filename|#index>
-Load the specified recording file by name, or by index
-(same indices as produced by the 'replay list' command)
-.TP 
-.B /replay play
-Start playing the recording. This will oftentimes require that all players connected
-to the server rejoin  (to reload the map, etc...)
-.TP 
-.B /replay loop
-Start looping the recording. This will oftentimes require that all players connected
-to the server rejoin  (to reload the map, etc...)
-.TP 
-.B /replay skip [+/\- seconds]
-If seconds is specified, then skip that amount of time in the recording.
-Otherwise, skip forwards until there is activity.
-.BR 
-.B /replay stats
-Show the current replay status (filename, position, etc...)
-.BR 
-
-.TP 
-.B /shutdownserver
-Stop serving BZFlag on this server
-.TP 
-.B /superkill
-Kick all players off the server
-.TP 
-.B /gameover
-Ends the current game
-.TP 
-.B /flag reset {unused}
-Repositions flags. If unused is specified, flags carried by tanks are not affected.
-.TP 
-.B /flag up
-Removes all flags from the game
-.TP 
-.B /flag show
-Shows all flags with information. Example:
-.ft CW
-.nf 
-.ne 2
-0: p:\-1 r:1 g:1 1:V s:1 p:159.1x43.2x0.0
-1: p:2 r:1 g:1 1:SW s:1 p:209.1x143.2x10.0
-2: p:\-1 r:1 g:3 1:L s:1 p:\-29.1x301.2x0.0
-
-.BR 
-.TP 
-.B /kick <"Player name" | playerName | #slot> <reason>
-Kick a named player off the server. Example:
-.ft CW
-.nf 
-.ne 2
-/kick Gerbol
-You were kicked off the server by MrApathyCream
-
-/kick #1 Team killing
-Kick the player using slot 1 because Team Killing
-
-Note: Slots numbers are only displayed in admins clients. 
-A reason is required
-.ft R
-
-.TP 
-.B /kill <"Player name" | playerName | #slot> [reason]>
-Kill a player just like when shooting.
-
-Example:
-.ft CW
-.nf 
-.ne 2
-/kill Gerbol
-kill the player named Gerbol
-/kill #4 teamkilling
-Kill the player using slot 4 because teamkilling
-
-.TP 
-.B /playerlist
-List player names and IP addresses. Example:
-.ft CW
-.nf 
-.ne 4
-/playerlist
-[0]MrApathyCream: 35.23.65.44:4808 udp id
-[1]Gerbol: 130.123.1.55:4909 udp id
-[2]captain_macgyver: 15.32.122.51:3201 udp id
-.ft R
-
-.TP 
-.B /ban <ip | ipList | #slot | "Player name" | playerName > <duration> <reason>
+.B /ban {\fIip\fR|\fIipList\fR|\fI#slot\fR|\fI"Player Name"\fR|\fIplayerName\fR} \fIduration\fR \fIreason\fR
 
 Ban players using the specified IPs for certain length of time
 from using this server. 
@@ -841,10 +737,9 @@ IP Ban List
 .ft R
 
 .TP 
-.B /checkip <ip>
+.B /checkip \fIip\fR
 Check whether the IP is banned and print the corresponding rule. This does not
 cover hostbans. Example:
-
 .ft CW
 .nf 
 .ne 5
@@ -855,11 +750,43 @@ cover hostbans. Example:
 .ft R
 
 .TP 
-.B /hostban {hostpat} {duration} {reason}
+.B /countdown [\fIseconds\fR]
+Starts the countdown sequence for a timed game.  The countdown
+sequence length can optionally be specified in seconds.  Examples:
+.ft CW
+.nf 
+.ne 2
+/countdown
+/countdown 3
+.ft R
 
+.TP 
+.B /flag reset [unused]
+Repositions flags. If unused is specified, flags carried by tanks are not affected.
+
+.TP 
+.B /flag show
+Shows all flags with information. Example:
+.ft CW
+.nf 
+.ne 2
+0: p:\-1 r:1 g:1 1:V s:1 p:159.1x43.2x0.0
+1: p:2 r:1 g:1 1:SW s:1 p:209.1x143.2x10.0
+2: p:\-1 r:1 g:3 1:L s:1 p:\-29.1x301.2x0.0
+.ft R
+
+.TP
+.B /flag up
+Removes all flags from the game
+
+.TP 
+.B /gameover
+Ends the current game
+
+.TP 
+.B /hostban \fIhostpattern\fR \fIduration\fR \fIreason\fR
 Ban players using the specified hostnames for a certain length of time from using this server. 
 Example:
-
 .ft CW
 .nf 
 .ne 4
@@ -867,16 +794,134 @@ Example:
 bans all players from foo.com for 2 minutes
 .ft R
 
-Note: Bzfs must be compiled to use the ADNS asynchronous resolver library in order for this 
-feature to work.
-
 .TP 
 .B /hostbanlist
 List all of the host patterns currently banned from this server.
-.TP 
-.B /say {message}
-Generate a public message sent by the server. Example:
 
+.TP 
+.B /kick {\fI"Player Name"\fR|\fIplayerName\fR|\fI#slot\fR} \fIreason\fR
+Kick a player off the server. Example:
+.ft CW
+.nf 
+.ne 2
+/kick Gerbol
+You were kicked off the server by MrApathyCream
+
+/kick #1 Team killing
+Kick the player using slot 1 because Team Killing
+
+Note: Slots numbers are only displayed in admins clients. 
+A reason is required
+.ft R
+
+.TP 
+.B /kill {\fi"Player Name"\fR|\fIplayerName\fR|\fI#slot\fR} [\fIreason\fR]
+Kill a player just like when shooting. Example:
+.ft CW
+.nf 
+.ne 2
+/kill Gerbol
+kill the player named Gerbol
+
+/kill #4 teamkilling
+Kill the player using slot 4 because teamkilling
+.ft R
+
+.TP 
+.B /lagwarn [\fItime\fR]
+Dynamic change the maximum allowed lag time. Example:
+.ft CW
+.nf
+.ne 2
+/lagwarn 300
+.ft R
+
+.TP
+.B /mute {\fI#slot\fR|\fIcallsign\fR}
+Allows a server admin to remove the ability for a player to communicate with
+other players. Once muted the player may only talk to admins on the server.
+This command removes the TALK permission that is enabled by default for all 
+players. (disabling TALK by default would let you run a "silent" server)
+
+.TP 
+.B /playerlist
+List player names and IP addresses. Example:
+.ft CW
+.nf 
+.ne 4
+/playerlist
+[0]MrApathyCream: 35.23.65.44:4808 udp id
+[1]Gerbol: 130.123.1.55:4909 udp id
+[2]captain_macgyver: 15.32.122.51:3201 udp id
+.ft R
+
+.TP 
+.B /record file \fIfilename\fR
+Start recording directly to a file
+
+.TP 
+.B /record list
+List all files in the recordings directory
+
+.TP 
+.B /record rate \fIseconds\fR
+Set the time between game state updates stored in the recording. This will affect
+the granularity of the 'skips' you can do while replaying a file. It will also
+make the recording files bigger if it is set to a faster update rate.
+
+.TP 
+.B /record save \fIfilename\fR [\fIseconds\fR]
+Save the recording buffer into a file. If seconds is specified, then only save
+that many previous seconds into the file.
+
+.TP 
+.B /record size \fImegabytes\fR
+Set the size of the recording memory buffer
+
+.TP 
+.B /record start
+Start recording into the memory buffer
+
+.TP 
+.B /record stats
+Display the statistics for the current recording (file or buffered)
+
+.TP 
+.B /record stop
+Stop recording into the memory buffer
+
+.TP 
+.B /replay list
+List all files in the recordings directory
+
+.TP 
+.B /replay load {\fIfilename\fR|\fI#index\fR}
+Load the specified recording file by name, or by index
+(same indices as produced by the 'replay list' command)
+
+.TP 
+.B /replay loop
+Start looping the recording. This will oftentimes require that all players connected
+to the server rejoin  (to reload the map, etc...)
+
+.TP 
+.B /replay play
+Start playing the recording. This will oftentimes require that all players connected
+to the server rejoin  (to reload the map, etc...)
+
+.TP 
+.B /replay skip [{\fI+\fR|\fI\-\fR} \fIseconds\fR]
+If seconds is specified, then skip that amount of time in the recording.
+Otherwise, skip forwards until there is activity.
+
+.TP
+.B /replay stats
+Show the current replay status (filename, position, etc...)
+.BR 
+
+.TP 
+.B /say \fImessage\fR
+Generate a public message sent by the server. Example:
 .ft CW
 .nf 
 .ne 4
@@ -884,30 +929,38 @@ Generate a public message sent by the server. Example:
 .ft R
 
 .TP 
-.B /sendhelp  <"Player name" | playerName | #slot>  <help page>
+.B /sendhelp  {\fI"Player name"\fR|\fIplayerName\fR|\fI#slot\fR}  \fIhelp page\fR
 Send the specified help page to a user
-
 .ft CW
 .nf 
 .ne 4
-/send register "Foo"
+/sendhelp register "Foo"
 Send the the help page 'register' to the player Foo
 .ft R
 
 .TP 
-.B /countdown [seconds]
-Starts the countdown sequence for a timed game.  The countdown
-sequence length can optionally be specified in seconds.  Examples:
-
-/countdown
-/countdown 3
+.B /shutdownserver
+Stop serving BZFlag on this server
 
 .TP 
-.B /lagwarn
+.B /superkill
+Kick all players off the server
 
-Dynamic change the maximum allowed lag time. Example:
+.TP
+.B /unmute {\fI#slot\fR|\fIcallsign\fR}
+Allows a server admin to restore the TALK permission to a previously muted
+player. 
 
-/lagwarn 300
+.TP 
+.B /veto
+If there is a poll active, this will cancel the poll.  By default, you must be
+an admin to veto a poll.
+
+.TP 
+.B /viewreports
+View the server's report file.
+.BR 
+
 
 .SH "USER MANAGEMENT"
 Generally, you start with empty files for the user and password
@@ -1008,7 +1061,7 @@ ADMINMESSAGERECEIVE	player receives messages sent to admin channel
 .br 
 ADMINMESSAGESEND	player may send messages on the admin channel
 .br 
-ALL _all_ permissions available
+ALL	\fBall\fR permissions available
 .br
 BAN	/ban /hostban
 .br 
@@ -1074,7 +1127,7 @@ SPAWN	join game as a player. observers don't need this flag.
 .br 
 SUPERKILL	/superkill
 .br
-TALK    allows all players to send messages
+TALK	allows all players to send messages
 .br 
 UNBAN	/unban /hostunban
 .br
@@ -1085,119 +1138,59 @@ VETO	/veto
 VOTE	/vote
 
 .TP 
-.B /register {password}
+.B /identify \fIpassword\fR
+Log in to a registered callsign
 
+.TP 
+.B /deregister [\fIcallsign\fR]
+With an argument, it deregisters another user's callsign. Without, it
+removes your own registration.
+
+.TP 
+.B /ghost \fIcallsign\fR \fIpassword\fR
+Kicks off an impersonating player or ghost
+
+.TP 
+.B /grouplist
+Lists the available user groups
+
+.TP 
+.B /groupperms
+Lists the permissions for each group
+
+.TP 
+.B /masterban {flush|reload}
+Forces the server to flush any bans from the master server. If reload is specified
+instead of flush, also reloads bans from the the internet. Local bans are unaffected.
+This command requires the UNBAN permision.
+
+.TP 
+.B /register \fIpassword\fR
 Register your current callsign to the specified password. Passwords
 must be at least 3 characters long, and the callsign may not contain
 quotes or other non\-alphanumeric/space characters
 
 .TP 
-.B /identify {password}
-
-Log in to a registered callsign
-
-.TP 
-.B /setpass {password}
-
-Changes your password
-
-.TP 
-.B /ghost {callsign} {password}
-
-Kicks off an impersonating player or ghost
-
-.TP 
-.B /grouplist
-
-Lists the available user groups
-
-.TP 
-.B /groupperms
-
-Lists the permissions for each group
-
-.TP 
-.B /showgroup {callsign}
-
-Lists the groups that a registered user is a member of
-
-.TP 
-.B /setgroup {callsign} {group}
-
-Add a user to a group
-
-.TP 
-.B /removegroup {callsign} {group}
-
-Remove a user from a group
-
-.TP 
 .B /reload
-
 Reloads the user, group, and password files (for synchronization between
 multiple servers on the same machine)
 
 .TP 
-.B /deregister [callsign]
-
-With an argument, it deregisters another user's callsign. Without, it
-removes your own registration.
+.B /removegroup \fIcallsign\fR \fIgroup\fR
+Remove a user from a group
 
 .TP 
-.B /poll ban|kick|vote|veto [...]
-
-Interact and make requests of the bzflag voting system via the /poll command.
-The ban and kick subcommands request a vote to respectively ban or kick some
-player.  The playername is expected as the next argument.  The vote and veto
-commands behave identical to the /vote and /veto command counterparts,
-expecting the same arguments in following.  By default, you must be registered
-to request and vote on a poll.
+.B /setgroup \fIcallsign\fR \fIgroup\fR
+Add a user to a group
 
 .TP 
-.B /vote yes|no
-
-If there is a poll active, this command will place a vote in favor or in
-opposition to the poll.  Multiple languages are supported as a vote argument
-in addition to "yes" and "no".  By default, you must be registered to vote on
-a poll.
+.B /setpass \fIpassword\fR
+Changes your password
 
 .TP 
-.B /veto
+.B /showgroup \fIcallsign\fR
+Lists the groups that a registered user is a member of
 
-If there is a poll active, this will cancel the poll.  By default, you must be
-an admin to veto a poll.
-
-.TP 
-.B /masterban flush|reload
-
-Forces the server to flush any bans from the master server. If reload is specified
-instead of flush, also reloads bans from the the internet. Local bans are unaffected.
-This command requires the UNBAN permision.
-
-.TP
-.B /mute 
-
-Allows a server admin to remove the ability for a player to communicate with
-other players. Once muted the player may only talk to admins on the server.
-usage: /mute <#slot> | <playername>
-This command removes the TALK permission that is enabled by default for all 
-players. (disabling TALK by default would let you run a "silent" server)
-
-.TP
-.B /unmute
-
-Allows a server admin to restore the TALK permission to a previously muted
-player. 
-usage: /unmute <#slot> | <playername>
-
-.SH "Worlds"
-BZFlag worlds come in two varieties, randomly generated ones, and
-human designed ones. By default, bzfs uses randomly generated world
-unless you specify the \-world command line or configuration file
-option. The world file specified by the \-world option is a text based
-file that contains a list of world objects. This file can be created
-using programs found on sourceforge.net through cvs, or can be hand
-edited.  See the bzw(5) manual page for more details.
 
 .SH "SEE ALSO"
 bzflag(6), bzadmin(6), bzw(5)
