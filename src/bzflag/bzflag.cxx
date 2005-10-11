@@ -340,7 +340,7 @@ static void		parse(int argc, char** argv)
 		getAppVersion(),
 		getProtocolVersion(),
 		bzfcopyright);
-	  bail(0);
+      bail(0);
       exit(0);
     } else if (strcmp(argv[i], "-window") == 0) {
       BZDB.set("_window", "1");
@@ -1266,6 +1266,15 @@ int			main(int argc, char** argv)
   // start playing
   startPlaying(display, RENDERER);
 
+  // save resources
+  if (BZDB.isTrue("saveSettings")) {
+    dumpResources();
+    if (alternateConfig == "") {
+      CFGMGR.write(getCurrentConfigFileName());
+    } else {
+      CFGMGR.write(alternateConfig);
+    }
+  }
 
   // shut down
   if (filter != NULL)
