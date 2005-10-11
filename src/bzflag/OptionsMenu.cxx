@@ -191,6 +191,7 @@ void OptionsMenu::resize(int _width, int _height)
   // load current settings
   i = 7;
 
+  ((HUDuiList*)listHUD[i++])->setIndex((int)BZDB.eval("saveSettings"));
   ((HUDuiList*)listHUD[i++])->setIndex((int)BZDB.eval("saveIdentity"));
 }
 
