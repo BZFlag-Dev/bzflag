@@ -1746,13 +1746,21 @@ void resetFlag(FlagInfo &flag)
       maxZ = 0.0f;
     }
     float worldSize = BZDBCache::worldSize;
-    do {
-      if (!world->getZonePoint(std::string(flag.flag.type->flagAbbv), flagPos)) {
+    int i;
+    for (i = 0; i < 10000; i++) {
+      bool gotZonedFlag
+	= world->getZonePoint(std::string(flag.flag.type->flagAbbv), flagPos);
+      if (!gotZonedFlag) {
 	flagPos[0] = (worldSize - baseSize) * ((float)bzfrand() - 0.5f);
 	flagPos[1] = (worldSize - baseSize) * ((float)bzfrand() - 0.5f);
 	flagPos[2] = world->getMaxWorldHeight() * (float)bzfrand();
       }
-    } while (!DropGeometry::dropFlag(flagPos, minZ, maxZ));
+      if (DropGeometry::dropFlag(flagPos, minZ, maxZ))
+	break;
+    }
+    if (i == 10000) {
+      std::cerr << "Unable to position flags on this world.\n";
+    }
   }
 
   bool teamIsEmpty = true;
