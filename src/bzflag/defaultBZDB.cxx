@@ -21,6 +21,7 @@
 #include "callbacks.h"
 
 DefaultDBItem	defaultDBItems[] = {
+  { "saveSettings",		"1",			true,	StateDatabase::ReadWrite,	NULL },
   { "udpnet",			"1",			true,	StateDatabase::ReadWrite,	NULL },
   { "timedate",			"0",			true,	StateDatabase::ReadWrite,	NULL },
   { "email",			"default",		true,	StateDatabase::ReadWrite,	NULL },
