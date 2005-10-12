@@ -398,10 +398,12 @@ static int compareLengthPerPixel(const void* a, const void* b)
 {
   const DrawLod* lodA = (const DrawLod*)a;
   const DrawLod* lodB = (const DrawLod*)b;
+  const float lenA = lodA->lengthPerPixel;
+  const float lenB = lodB->lengthPerPixel;
   // higher resolution meshes for smaller lengths per pixel
-  if (lodA < lodB) {
+  if (lenA < lenB) {
     return -1;
-  } else if (lodA > lodB) {
+  } else if (lenA > lenB) {
     return +1;
   } else {
     return 0;
