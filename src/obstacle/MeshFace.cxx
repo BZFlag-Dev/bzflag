@@ -736,7 +736,7 @@ void MeshFace::print(std::ostream& out, const std::string& indent) const
 
   out << indent << "    matref ";
   MATERIALMGR.printReference(out, bzMaterial);
-  out  << std::endl;
+  out << std::endl;
 
   const PhysicsDriver* driver = PHYDRVMGR.getDriver(phydrv);
   if (driver != NULL) {

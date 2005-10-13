@@ -923,6 +923,7 @@ void GroupDefinition::printGrouped(std::ostream& out,
 void GroupDefinition::printFlatFile(std::ostream& out,
 				    const std::string& indent) const
 {
+  const bool saveAsOBJ = BZDB.isTrue("saveAsOBJ");
   const bool saveAsMeshes = BZDB.isTrue("saveAsMeshes");
 
   // print the obstacles
@@ -936,7 +937,7 @@ void GroupDefinition::printFlatFile(std::ostream& out,
 	  obs->print(out, indent);
 	}
       } else {
-	if (!isContainer(type)) {
+	if (!isContainer(type) && ((type == meshType) || !saveAsOBJ)) {
 	  obs->print(out, indent);
 	}
       }
@@ -1122,9 +1123,15 @@ int GroupDefinitionMgr::packSize() const
 void GroupDefinitionMgr::print(std::ostream& out,
 			       const std::string& indent) const
 {
+  const bool saveAsOBJ = BZDB.isTrue("saveAsOBJ");
   const bool saveFlatFile = BZDB.isTrue("saveFlatFile");
+  const bool saveAsMeshes = BZDB.isTrue("saveAsMeshes");
+  if (saveAsOBJ) {
+    BZDB.set("saveAsMeshes", "1");
+    BZDB.set("saveFlatFile", "1");
+  }
 
-  if (!saveFlatFile) {
+  if (!(saveFlatFile || saveAsOBJ)) {
     // print the group definitions
     for (unsigned int i = 0; i < list.size(); i++) {
       list[i]->printGrouped(out, indent);
@@ -1135,6 +1142,11 @@ void GroupDefinitionMgr::print(std::ostream& out,
   else {
     // print the world
     world.printFlatFile(out, indent);
+  }
+  
+  if (saveAsOBJ) {
+    BZDB.set("saveAsMeshes", saveAsMeshes ? "1" : "0");
+    BZDB.set("saveFlatFile", saveFlatFile ? "1" : "0");
   }
 
   return;
