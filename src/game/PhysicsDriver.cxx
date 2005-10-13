@@ -333,41 +333,41 @@ int PhysicsDriver::packSize() const
 }
 
 
-void PhysicsDriver::print(std::ostream& out,
-			  const std::string& /*indent*/) const
+void PhysicsDriver::print(std::ostream& out, const std::string& indent) const
 {
-  out << "physics" << std::endl;
+  out << indent << "physics" << std::endl;
 
   if (name.size() > 0) {
-    out << "  name " << name << std::endl;
+    out << indent << "  name " << name << std::endl;
   }
 
   const float* v = linear;
   if ((v[0] != 0.0f) || (v[1] != 0.0f) || (v[2] != 0.0f)) {
-    out << "  linear " << v[0] << " " << v[1] << " " << v[2] << std::endl;
+    out << indent << "  linear "
+                  << v[0] << " " << v[1] << " " << v[2] << std::endl;
   }
 
   if (angularVel != 0.0f) {
     const float* ap = angularPos;
-    out << "  angular " << (angularVel / (M_PI * 2.0f)) << " "
-			<< ap[0] << " " << ap[1] << std::endl;
+    out << indent << "  angular " << (angularVel / (M_PI * 2.0f)) << " "
+			          << ap[0] << " " << ap[1] << std::endl;
   }
 
   if (radialVel != 0.0f) {
     const float* rp = radialPos;
-    out << "  radial " << radialVel << " "
-		       << rp[0] << " " << rp[1] << std::endl;
+    out << indent << "  radial "
+                  << radialVel << " " << rp[0] << " " << rp[1] << std::endl;
   }
 
   if (slide) {
-    out << "  slide " << slideTime << std::endl;
+    out << indent << "  slide " << slideTime << std::endl;
   }
 
   if (death) {
-    out << "  death " << deathMsg << std::endl;
+    out << indent << "  death " << deathMsg << std::endl;
   }
 
-  out << "end" << std::endl << std::endl;
+  out << indent << "end" << std::endl << std::endl;
 
   return;
 }

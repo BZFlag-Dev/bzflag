@@ -558,18 +558,53 @@ static void printColor(std::ostream& out, const char *name,
 }
 
 
-void BzMaterial::print(std::ostream& out, const std::string& /*indent*/) const
+void BzMaterial::print(std::ostream& out, const std::string& indent) const
 {
+  const bool saveAsOBJ = (indent == "# ");
+
+  if (saveAsOBJ) {
+    out << "newmtl ";
+    if (name.size() > 0) {
+      out << name << std::endl;
+    } else {
+      out << MATERIALMGR.getIndex(this) << std::endl;
+    }
+    if (noLighting) {
+      out << "illum 0" << std::endl;
+    } else {
+      out << "illum 2" << std::endl;
+    }
+    out << "d " << diffuse[3] << std::endl;
+    const float* c;
+    c = ambient; // not really used
+    out << "#Ka " << c[0] << " " << c[1] << " " << c[2] << std::endl;
+    c = diffuse;
+    out << "Kd " << c[0] << " " << c[1] << " " << c[2] << std::endl;
+    c = emission;
+    out << "Ke " << c[0] << " " << c[1] << " " << c[2] << std::endl;
+    c = specular;
+    out << "Ks " << c[0] << " " << c[1] << " " << c[2] << std::endl;
+    out << "Ns " << (1000.0f * (shininess / 128.0f));
+    if (textureCount > 0) {
+      const TextureInfo* ti = &textures[0];
+      if (ti->name.size() > 0) {
+        out << "map_Kd " << ti->name << std::endl;
+      }
+    }
+    out << std::endl;
+    return;
+  }
+
   int i;
 
-  out << "material" << std::endl;
+  out << indent << "material" << std::endl;
 
   if (name.size() > 0) {
-    out << "  name " << name << std::endl;
+    out << indent << "  name " << name << std::endl;
   }
 
   if (dynamicColor != defaultMaterial.dynamicColor) {
-    out << "  dyncol ";
+    out << indent << "  dyncol ";
     const DynamicColor* dyncol = DYNCOLORMGR.getColor(dynamicColor);
     if ((dyncol != NULL) && (dyncol->getName().size() > 0)) {
       out << dyncol->getName();
@@ -583,38 +618,38 @@ void BzMaterial::print(std::ostream& out, const std::string& /*indent*/) const
   printColor(out, "  specular ", specular, defaultMaterial.specular);
   printColor(out, "  emission ", emission, defaultMaterial.emission);
   if (shininess != defaultMaterial.shininess) {
-    out << "  shininess " << shininess << std::endl;
+    out << indent << "  shininess " << shininess << std::endl;
   }
   if (alphaThreshold != defaultMaterial.alphaThreshold) {
-    out << "  alphathresh " << alphaThreshold << std::endl;
+    out << indent << "  alphathresh " << alphaThreshold << std::endl;
   }
   if (occluder) {
-    out << "  occluder" << std::endl;
+    out << indent << "  occluder" << std::endl;
   }
   if (groupAlpha) {
-    out << "  groupAlpha" << std::endl;
+    out << indent << "  groupAlpha" << std::endl;
   }
   if (noRadar) {
-    out << "  noradar" << std::endl;
+    out << indent << "  noradar" << std::endl;
   }
   if (noShadow) {
-    out << "  noshadow" << std::endl;
+    out << indent << "  noshadow" << std::endl;
   }
   if (noCulling) {
-    out << "  noculling" << std::endl;
+    out << indent << "  noculling" << std::endl;
   }
   if (noSorting) {
-    out << "  nosorting" << std::endl;
+    out << indent << "  nosorting" << std::endl;
   }
   if (noLighting) {
-    out << "  nolighting" << std::endl;
+    out << indent << "  nolighting" << std::endl;
   }
 
   for (i = 0; i < textureCount; i++) {
     const TextureInfo* texinfo = &textures[i];
-    out << "  addtexture " << texinfo->name << std::endl;
+    out << indent << "  addtexture " << texinfo->name << std::endl;
     if (texinfo->matrix != -1) {
-      out << "    texmat ";
+      out << indent << "    texmat ";
       const TextureMatrix* texmat = TEXMATRIXMGR.getMatrix(texinfo->matrix);
       if ((texmat != NULL) && (texmat->getName().size() > 0)) {
 	out << texmat->getName();
@@ -625,22 +660,22 @@ void BzMaterial::print(std::ostream& out, const std::string& /*indent*/) const
     }
 
     if (!texinfo->useAlpha) {
-      out << "    notexalpha" << std::endl;
+      out << indent << "    notexalpha" << std::endl;
     }
     if (!texinfo->useColor) {
-      out << "    notexcolor" << std::endl;
+      out << indent << "    notexcolor" << std::endl;
     }
     if (texinfo->useSphereMap) {
-      out << "    spheremap" << std::endl;
+      out << indent << "    spheremap" << std::endl;
     }
   }
 
   for (i = 0; i < shaderCount; i++) {
     const ShaderInfo* shdinfo = &shaders[i];
-    out << "  addshader " << shdinfo->name << std::endl;
+    out << indent << "  addshader " << shdinfo->name << std::endl;
   }
 
-  out << "end" << std::endl << std::endl;
+  out << indent << "end" << std::endl << std::endl;
 
   return;
 }

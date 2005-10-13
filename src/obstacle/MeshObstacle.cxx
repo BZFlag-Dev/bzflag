@@ -1004,7 +1004,7 @@ void MeshObstacle::print(std::ostream& out, const std::string& indent) const
       out << std::endl;
     }
 
-    out << "# OBJ - end" << std::endl;
+    out << "# OBJ - end" << std::endl << std::endl;
   }
   
   return;

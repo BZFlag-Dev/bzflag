@@ -587,26 +587,26 @@ int DynamicColor::packSize() const
 }
 
 
-void DynamicColor::print(std::ostream& out, const std::string& /*indent*/) const
+void DynamicColor::print(std::ostream& out, const std::string& indent) const
 {
   const char *colorStrings[4] = { "red", "green", "blue", "alpha" };
 
-  out << "dynamicColor" << std::endl;
+  out << indent << "dynamicColor" << std::endl;
 
   if (name.size() > 0) {
-    out << "  name " << name << std::endl;
+    out << indent << "  name " << name << std::endl;
   }
 
   for (int c = 0; c < 4; c++) {
     const char *colorStr = colorStrings[c];
     const ChannelParams& p = channels[c];
     if ((p.minValue != 0.0f) || (p.maxValue != 1.0f)) {
-      out << "  " << colorStr << " limits "
+      out << indent << "  " << colorStr << " limits "
 	  << p.minValue << " " << p.maxValue << std::endl;
     }
     unsigned int i;
     if (p.sequence.count > 0) {
-      out << "  " << colorStr << " sequence " << p.sequence.period << " "
+      out << indent << "  " << colorStr << " sequence " << p.sequence.period << " "
 					      << p.sequence.offset;
       for (i = 0; i < p.sequence.count; i++) {
 	out << " " << (int)p.sequence.list[i];
@@ -615,22 +615,22 @@ void DynamicColor::print(std::ostream& out, const std::string& /*indent*/) const
     }
     for (i = 0; i < p.sinusoids.size(); i++) {
       const sinusoidParams& f = p.sinusoids[i];
-      out << "  " << colorStr << " sinusoid "
+      out << indent << "  " << colorStr << " sinusoid "
 	  << f.period << " " << f.offset << " " << f.weight << std::endl;
     }
     for (i = 0; i < p.clampUps.size(); i++) {
       const clampParams& f = p.clampUps[i];
-      out << "  " << colorStr << " clampup "
+      out << indent << "  " << colorStr << " clampup "
 	  << f.period << " " << f.offset << " " << f.width << std::endl;
     }
     for (i = 0; i < p.clampDowns.size(); i++) {
       const clampParams& f = p.clampDowns[i];
-      out << "  " << colorStr << " clampdown "
+      out << indent << "  " << colorStr << " clampdown "
 	  << f.period << " " << f.offset << " " << f.width << std::endl;
     }
   }
 
-  out << "end" << std::endl << std::endl;
+  out << indent << "end" << std::endl << std::endl;
 
   return;
 }

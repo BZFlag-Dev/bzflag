@@ -866,9 +866,12 @@ void			World::addFlags(SceneDatabase* scene, bool seerView)
 }
 
 
+static std::string indent = "";
+
+
 static void writeBZDBvar (const std::string& name, void *userData)
 {
-  std::ofstream *out = static_cast<std::ofstream*>(userData);
+  std::ofstream& out = *((std::ofstream*)userData);
   if ((BZDB.getPermission(name) == StateDatabase::Server)
       && (BZDB.get(name) != BZDB.getDefault(name))
       && (name != "poll")) {
@@ -876,8 +879,8 @@ static void writeBZDBvar (const std::string& name, void *userData)
     if (BZDB.get(name).find(' ') != std::string::npos) {
       qmark = '"';
     }
-    (*out) << "  -set " << name << " "
-			<< qmark << BZDB.get(name) << qmark << std::endl;
+    out << indent << "  -set " << name << " "
+                  << qmark << BZDB.get(name) << qmark << std::endl;
   }
   return;
 }
@@ -885,10 +888,23 @@ static void writeBZDBvar (const std::string& name, void *userData)
 
 bool World::writeWorld(const std::string& filename, std::string& fullname)
 {
+  const bool saveAsOBJ = BZDB.isTrue("saveAsOBJ");
+  if (saveAsOBJ) {
+    indent = "# ";
+  } else {
+    indent = "";
+  }
+
   fullname = getWorldDirName();
   fullname += filename;
-  if (strstr(fullname.c_str(), ".bzw") == NULL) {
-    fullname += ".bzw";
+  if (saveAsOBJ) {
+    if (strstr(fullname.c_str(), ".obj") == NULL) {
+      fullname += ".obj";
+    }
+  } else {
+    if (strstr(fullname.c_str(), ".bzw") == NULL) {
+      fullname += ".bzw";
+    }
   }
 
   std::ostream *stream = FILEMGR.createDataOutStream(fullname.c_str());
@@ -904,14 +920,14 @@ bool World::writeWorld(const std::string& filename, std::string& fullname)
 
   // Write the Server Options
   {
-    out << "options" << std::endl;
+    out << indent << "options" << std::endl;
 
     // FIXME - would be nice to get a few other thing
     //	 -fb, -sb, rabbit style, a real -mp, etc... (also, flags?)
 
     if (allowTeamFlags()) {
-      out << "  -c" << std::endl;
-      out << "  -mp 2,";
+      out << indent << "  -c" << std::endl;
+      out << indent << "  -mp 2,";
       for (int t = RedTeam; t <= PurpleTeam; t++) {
 	if (getBase(t, 0) != NULL)
 	  out << "2,";
@@ -921,30 +937,30 @@ bool World::writeWorld(const std::string& filename, std::string& fullname)
       out << "2" << std::endl;
     }
     if (allowRabbit())
-      out << "  -rabbit" << std::endl;
+      out << indent << "  -rabbit" << std::endl;
     if (allowJumping())
-      out << "  -j" << std::endl;
+      out << indent << "  -j" << std::endl;
     if (allShotsRicochet())
-      out << "  +r" << std::endl;
+      out << indent << "  +r" << std::endl;
     if (allowHandicap())
-      out << "  -handicap" << std::endl;
+      out << indent << "  -handicap" << std::endl;
     if (allowAntidote()) {
-      out << "  -sa" << std::endl;
-      out << "  -st " << getFlagShakeTimeout() << std::endl;
-      out << "  -sw " << getFlagShakeWins() << std::endl;
+      out << indent << "  -sa" << std::endl;
+      out << indent << "  -st " << getFlagShakeTimeout() << std::endl;
+      out << indent << "  -sw " << getFlagShakeWins() << std::endl;
     }
     if ((getLinearAcceleration() != 0.0f) ||
 	(getAngularAcceleration() != 0.0f)) {
-      out << "  -a " << getLinearAcceleration() << " "
+      out << indent << "  -a " << getLinearAcceleration() << " "
 		     << getAngularAcceleration() << std::endl;
     }
 
-    out << "  -ms " << getMaxShots() << std::endl;
+    out << indent << "  -ms " << getMaxShots() << std::endl;
 
     // Write BZDB server variables that aren't defaults
     BZDB.iterate (writeBZDBvar, &out);
 
-    out << "end" << std::endl << std::endl;
+    out << indent << "end" << std::endl << std::endl;
   }
 
   // Write World object
@@ -954,52 +970,63 @@ bool World::writeWorld(const std::string& filename, std::string& fullname)
     if ((worldSize != atof(BZDB.getDefault(StateDatabase::BZDB_WORLDSIZE).c_str()))
     ||  (flagHeight != atof(BZDB.getDefault(StateDatabase::BZDB_FLAGHEIGHT).c_str())))
     {
-      out << "world" << std::endl;
+      out << indent << "world" << std::endl;
       if (worldSize != atof(BZDB.getDefault(StateDatabase::BZDB_WORLDSIZE).c_str())) {
-	out << "  size " << worldSize / 2.0f << std::endl;
+	out << indent << "  size " << worldSize / 2.0f << std::endl;
       }
       if (flagHeight != atof(BZDB.getDefault(StateDatabase::BZDB_FLAGHEIGHT).c_str())) {
-	out << "  flagHeight " << flagHeight << std::endl;
+	out << indent << "  flagHeight " << flagHeight << std::endl;
       }
-      out << "end" << std::endl << std::endl;
+      out << indent << "end" << std::endl << std::endl;
     }
   }
 
   // Write dynamic colors
-  DYNCOLORMGR.print(out, "");
+  DYNCOLORMGR.print(out, indent);
 
   // Write texture matrices
-  TEXMATRIXMGR.print(out, "");
+  TEXMATRIXMGR.print(out, indent);
 
   // Write materials
-  MATERIALMGR.print(out, "");
+  if (!saveAsOBJ) {
+    MATERIALMGR.print(out, indent);
+  } else {
+    const std::string mtlname = filename + ".mtl";
+    const std::string mtlfile = getWorldDirName() + mtlname;
+    std::ostream* mtlstream = FILEMGR.createDataOutStream(mtlfile.c_str());
+    if (mtlstream != NULL) {
+      out << "mtllib " << mtlname << std::endl; // index the mtl file
+      MATERIALMGR.print(*mtlstream, indent); // indent "# " is used as a tag
+    }
+    delete mtlstream;
+  }
 
   // Write physics drivers
-  PHYDRVMGR.print(out, "");
+  PHYDRVMGR.print(out, indent);
 
   // Write obstacle transforms
-  TRANSFORMMGR.print(out, "");
+  TRANSFORMMGR.print(out, indent);
 
   // Write water level
   {
     if (waterLevel >= 0.0f) {
-      out << "waterLevel" << std::endl;
-      out << "  height " << waterLevel << std::endl;
-      out << "  matref ";
+      out << indent << "waterLevel" << std::endl;
+      out << indent << "  height " << waterLevel << std::endl;
+      out << indent << "  matref ";
       MATERIALMGR.printReference(out, waterMaterial);
       out << std::endl;
-      out << "end" << std::endl << std::endl;
+      out << indent << "end" << std::endl << std::endl;
     }
   }
 
   // Write the world obstacles
   {
-    OBSTACLEMGR.print(out, "");
+    OBSTACLEMGR.print(out, indent);
   }
 
   // Write links
   {
-    links.print(out, "");
+    links.print(out, indent);
   }
 
   // Write weapons
@@ -1007,23 +1034,23 @@ bool World::writeWorld(const std::string& filename, std::string& fullname)
     for (std::vector<Weapon>::iterator it = weapons.begin();
 	 it != weapons.end(); ++it) {
       Weapon weapon = *it;
-      out << "weapon" << std::endl;
+      out << indent << "weapon" << std::endl;
       if (weapon.type != Flags::Null) {
-	out << "\ttype " << weapon.type->flagAbbv << std::endl;
+	out << indent << "  type " << weapon.type->flagAbbv << std::endl;
       }
-      out << "\tposition " << weapon.pos[0] << " " << weapon.pos[1] << " "
+      out << indent << "  position " << weapon.pos[0] << " " << weapon.pos[1] << " "
 			   << weapon.pos[2] << std::endl;
-      out << "\trotation " << ((weapon.dir * 180.0) / M_PI) << std::endl;
-      out << "\tinitdelay " << weapon.initDelay << std::endl;
+      out << indent << "  rotation " << ((weapon.dir * 180.0) / M_PI) << std::endl;
+      out << indent << "  initdelay " << weapon.initDelay << std::endl;
       if (weapon.delay.size() > 0) {
-	out << "\tdelay";
+	out << indent << "  delay";
 	for (std::vector<float>::iterator dit = weapon.delay.begin();
 	     dit != weapon.delay.end(); ++dit) {
 	  out << " " << (float)*dit;
 	}
 	out << std::endl;
       }
-      out << "end" << std::endl << std::endl;
+      out << indent << "end" << std::endl << std::endl;
     }
   }
 
@@ -1032,14 +1059,14 @@ bool World::writeWorld(const std::string& filename, std::string& fullname)
     for (std::vector<EntryZone>::iterator it = entryZones.begin();
 	 it != entryZones.end(); ++it) {
       EntryZone zone = *it;
-      out << "zone" << std::endl;
-      out << "\tposition " << zone.pos[0] << " " << zone.pos[1] << " "
+      out << indent << "zone" << std::endl;
+      out << indent << "  position " << zone.pos[0] << " " << zone.pos[1] << " "
 			   << zone.pos[2] << std::endl;
-      out << "\tsize " << zone.size[0] << " " << zone.size[1] << " "
+      out << indent << "  size " << zone.size[0] << " " << zone.size[1] << " "
 		       << zone.size[2] << std::endl;
-      out << "\trotation " << ((zone.rot * 180.0) / M_PI) << std::endl;
+      out << indent << "  rotation " << ((zone.rot * 180.0) / M_PI) << std::endl;
       if (zone.flags.size() > 0) {
-	out << "\tflag";
+	out << indent << "  flag";
 	std::vector<FlagType*>::iterator fit;
 	for (fit = zone.flags.begin(); fit != zone.flags.end(); ++fit) {
 	  out << " " << (*fit)->flagAbbv;
@@ -1047,7 +1074,7 @@ bool World::writeWorld(const std::string& filename, std::string& fullname)
 	out << std::endl;
       }
       if (zone.teams.size() > 0) {
-	out << "\tteam";
+	out << indent << "  team";
 	std::vector<TeamColor>::iterator tit;
 	for (tit = zone.teams.begin(); tit != zone.teams.end(); ++tit) {
 	  out << " " << (*tit);
@@ -1055,14 +1082,14 @@ bool World::writeWorld(const std::string& filename, std::string& fullname)
 	out << std::endl;
       }
       if (zone.safety.size() > 0) {
-	out << "\tsafety";
+	out << indent << "  safety";
 	std::vector<TeamColor>::iterator sit;
 	for (sit = zone.safety.begin(); sit != zone.safety.end(); ++sit) {
 	  out << " " << (*sit);
 	}
 	out << std::endl;
       }
-      out << "end" << std::endl << std::endl;
+      out << indent << "end" << std::endl << std::endl;
     }
   }
 

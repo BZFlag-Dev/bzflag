@@ -678,15 +678,15 @@ int MeshTransform::packSize() const
 
 void MeshTransform::print(std::ostream& out, const std::string& indent) const
 {
-  out << "transform" << std::endl;
+  out << indent << "transform" << std::endl;
 
   if (name.size() > 0) {
-    out << "  name " << name << std::endl;
+    out << indent << "  name " << name << std::endl;
   }
 
   printTransforms(out, indent);
 
-  out << "end" << std::endl << std::endl;
+  out << indent << "end" << std::endl << std::endl;
 
   return;
 }

@@ -530,47 +530,47 @@ int TextureMatrix::packSize() const
 }
 
 
-void TextureMatrix::print(std::ostream& out, const std::string& /*indent*/) const
+void TextureMatrix::print(std::ostream& out, const std::string& indent) const
 {
-  out << "textureMatrix" << std::endl;
+  out << indent << "textureMatrix" << std::endl;
 
   if (name.size() > 0) {
-    out << "  name " << name << std::endl;
+    out << indent << "  name " << name << std::endl;
   }
 
   if (useStatic) {
     if (rotation != 0.0f) {
-      out << "  fixedspin " << rotation << std::endl;
+      out << indent << "  fixedspin " << rotation << std::endl;
     }
     if ((uFixedShift != 0.0f) || (vFixedShift != 0.0f)) {
-      out << "  fixedshift " << uFixedShift << " " << vFixedShift << std::endl;
+      out << indent << "  fixedshift " << uFixedShift << " " << vFixedShift << std::endl;
     }
     if ((uFixedScale != 1.0f) || (vFixedScale != 1.0f)) {
-      out << "  fixedscale " << uFixedScale << " " << vFixedScale << std::endl;
+      out << indent << "  fixedscale " << uFixedScale << " " << vFixedScale << std::endl;
     }
     if ((uFixedCenter != 0.5f) || (vFixedCenter != 0.5f)) {
-      out << "  fixedcenter " << uFixedCenter << " " << vFixedCenter << std::endl;
+      out << indent << "  fixedcenter " << uFixedCenter << " " << vFixedCenter << std::endl;
     }
   }
 
   if (useDynamic) {
     if (spinFreq != 0.0f) {
-      out << "  spin " << spinFreq << std::endl;
+      out << indent << "  spin " << spinFreq << std::endl;
     }
     if ((uShiftFreq != 0.0f) || (vShiftFreq != 0.0f)) {
-      out << "  shift " << uShiftFreq << " " << vShiftFreq << std::endl;
+      out << indent << "  shift " << uShiftFreq << " " << vShiftFreq << std::endl;
     }
     if ((uScaleFreq != 0.0f) || (vScaleFreq != 0.0f) ||
 	(uScale != 1.0f) || (vScale != 1.0f)) {
-      out << "  scale " << uScaleFreq << " " << vScaleFreq << " "
+      out << indent << "  scale " << uScaleFreq << " " << vScaleFreq << " "
 			<< uScale << " " << vScale << std::endl;
     }
     if ((uCenter != 0.5f) || (uCenter != 0.5f)) {
-      out << "  center " << uCenter << " " << vCenter << std::endl;
+      out << indent << "  center " << uCenter << " " << vCenter << std::endl;
     }
   }
 
-  out << "end" << std::endl << std::endl;
+  out << indent << "end" << std::endl << std::endl;
 
   return;
 }
