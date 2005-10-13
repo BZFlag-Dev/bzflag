@@ -583,9 +583,10 @@ bool ReTextureCommand::operator() (const char *)
 
 static void sendSaveWorldHelp()
 {
-  addMessage(NULL, "/saveworld [-g] [-m] <filename>");
+  addMessage(NULL, "/saveworld [-g] [-m] [-o] <filename>");
   addMessage(NULL, "  -g : save ungrouped");
   addMessage(NULL, "  -m : save some primitives as meshes");
+  addMessage(NULL, "  -o : save meshes into WaveFront OBJ files");
   return;
 }
 
@@ -593,6 +594,7 @@ bool SaveWorldCommand::operator() (const char *commandLine)
 {
   bool meshprims = false;
   bool ungrouped = false;
+  bool wavefront = false;
 
   std::string cmdLine = commandLine;
   std::vector<std::string> args;
@@ -611,6 +613,10 @@ bool SaveWorldCommand::operator() (const char *commandLine)
       meshprims = true;
     } else if (arg == "-g") {
       ungrouped = true;
+    } else if (arg == "-o") {
+      wavefront = true;
+      meshprims = true;
+      ungrouped = true;
     } else {
       break;
     }
@@ -624,6 +630,7 @@ bool SaveWorldCommand::operator() (const char *commandLine)
 
   BZDB.set("saveAsMeshes", meshprims ? "1" : "0");
   BZDB.set("saveFlatFile", ungrouped ? "1" : "0");
+  BZDB.set("saveAsOBJ",    wavefront ? "1" : "0");
 
   World* world = World::getWorld();
   if (!world) {
@@ -633,9 +640,10 @@ bool SaveWorldCommand::operator() (const char *commandLine)
   char buffer[256];
   std::string fullname;
   if (World::getWorld()->writeWorld(filename, fullname)) {
-    snprintf(buffer, 256, "World saved:  %s %s%s", fullname.c_str(),
+    snprintf(buffer, 256, "World saved:  %s %s%s%s", fullname.c_str(),
 	     meshprims ? " [meshprims]" : "",
-	     ungrouped ? " [ungrouped]" : "");
+	     ungrouped ? " [ungrouped]" : "",
+	     wavefront ? " [wavefront]" : "");
   } else {
     snprintf(buffer, 256, "Error saving:  %s", fullname.c_str());
   }
