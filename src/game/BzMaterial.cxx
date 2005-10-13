@@ -584,7 +584,7 @@ void BzMaterial::print(std::ostream& out, const std::string& indent) const
     out << "Ke " << c[0] << " " << c[1] << " " << c[2] << std::endl;
     c = specular;
     out << "Ks " << c[0] << " " << c[1] << " " << c[2] << std::endl;
-    out << "Ns " << (1000.0f * (shininess / 128.0f));
+    out << "Ns " << (1000.0f * (shininess / 128.0f)) << std::endl;
     if (textureCount > 0) {
       const TextureInfo* ti = &textures[0];
       if (ti->name.size() > 0) {

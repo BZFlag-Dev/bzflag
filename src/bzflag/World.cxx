@@ -996,9 +996,11 @@ bool World::writeWorld(const std::string& filename, std::string& fullname)
     std::ostream* mtlstream = FILEMGR.createDataOutStream(mtlfile.c_str());
     if (mtlstream != NULL) {
       out << "mtllib " << mtlname << std::endl; // index the mtl file
+      *mtlstream << "# BZFlag client: saved world on " << ctime(&nowTime);
+      *mtlstream << std::endl;
       MATERIALMGR.print(*mtlstream, indent); // indent "# " is used as a tag
+      delete mtlstream;
     }
-    delete mtlstream;
   }
 
   // Write physics drivers
