@@ -931,13 +931,14 @@ void MeshObstacle::print(std::ostream& out, const std::string& indent) const
     int i;
 
     out << "# OBJ - start" << std::endl;
-
     if (name.size() > 0) {
       out << "o " << name << std::endl;
+    } else {
+      unsigned int pNum = (unsigned int)this;
+      out << "o unnamed_" << pNum << std::endl;
     }
 
     out << "# faces = " << faceCount << std::endl;
-    out << "# checks = " << checkCount << std::endl;
     out << "# vertices = " << vertexCount << std::endl;
     out << "# normals = " << normalCount << std::endl;
     out << "# texcoords = " << texcoordCount << std::endl;
