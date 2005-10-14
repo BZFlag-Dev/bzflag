@@ -207,23 +207,37 @@ void			FlagSceneNode::notifyStyleChange()
   texturing = BZDBCache::texture && BZDBCache::blend;
   OpenGLGStateBuilder builder(gstate);
   builder.enableTexture(texturing);
-  if (BZDBCache::blend && (transparent || texturing)) {
-    builder.setBlending(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    builder.setStipple(1.0f);
-  } else if (transparent) {
-    builder.resetBlending();
-    builder.setStipple(0.5f);
+  
+  if (transparent) {
+    if (BZDBCache::blend) {
+      builder.setBlending(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+      builder.setStipple(1.0f);
+    } else if (transparent) {
+      builder.resetBlending();
+      builder.setStipple(0.5f);
+    }
+    builder.resetAlphaFunc();
   } else {
     builder.resetBlending();
     builder.setStipple(1.0f);
+    if (texturing) {
+      builder.setAlphaFunc(GL_GEQUAL, 0.9f);
+    } else {
+      builder.resetAlphaFunc();
+    }
   }
-  if (billboard) builder.setCulling(GL_BACK);
-  else builder.setCulling(GL_NONE);
+
+  if (billboard) {
+    builder.setCulling(GL_BACK);
+  } else {
+    builder.setCulling(GL_NONE);
+  }
   gstate = builder.getState();
 
   flagChunks = BZDBCache::flagChunks;
-  if (flagChunks >= maxChunks)
+  if (flagChunks >= maxChunks) {
     flagChunks = maxChunks - 1;
+  }
   geoPole = RENDERER.useQuality() > 2;
 }
 
