@@ -9,6 +9,7 @@
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
+#define _WIN32_WINDOWS 0x0500
 
 #include "WinDisplay.h"
 #include "WinWindow.h"
@@ -294,6 +295,27 @@ bool WinDisplay::windowsEventToBZFEvent ( MSG &msg, BzfEvent& event ) const
 	case WM_RBUTTONUP:	event.keyUp.button = BzfKeyEvent::RightMouse; break;
 	default:		return false;
 		}
+		break;
+
+	case WM_MOUSEWHEEL:{
+		
+		event.type = BzfEvent::KeyDown;
+		event.keyDown.ascii = 0;
+		event.keyDown.shift = 0;
+
+		if (LOWORD(msg.wParam) == MK_SHIFT)
+			event.keyDown.shift |= BzfKeyEvent::ShiftKey;
+		if (LOWORD(msg.wParam) == MK_CONTROL)
+			event.keyDown.shift |= BzfKeyEvent::ControlKey;
+		if (LOWORD(msg.wParam) == MK_ALT)
+			event.keyDown.shift |= BzfKeyEvent::AltKey;
+
+		short field = HIWORD(msg.wParam);
+		if (field > 0)
+			event.keyDown.button  = BzfKeyEvent::WheelUp;
+		else
+			event.keyDown.button  = BzfKeyEvent::WheelDown;
+		 }
 		break;
 
 	case WM_KEYDOWN:
