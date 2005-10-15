@@ -85,7 +85,8 @@ private:
   static int  sortCompareCp(const void* _a, const void* _b);
   static int  sortCompareI2(const void* _a, const void* _b);
   static Player** newSortedList (int sortType, bool obsLast, int *_numPlayers=NULL);
-
+  void          exitSelectState (void);
+  
 private:
   float winX;
   float winY;

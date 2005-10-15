@@ -183,7 +183,21 @@ void			ScoreboardRenderer::hudColor3fv(const GLfloat* c)
 }
 
 
-void			ScoreboardRenderer::render(bool forceDisplay)
+
+
+void    ScoreboardRenderer::exitSelectState (void){
+  playLocalSound(SFX_HUNT_SELECT);
+  if (numHunted > 0) {
+    setHuntState(HUNT_ENABLED);
+  } else {
+    setHuntState(HUNT_NONE);
+  }
+}
+
+
+
+
+void	ScoreboardRenderer::render(bool forceDisplay)
 {
   FontManager &fm = FontManager::instance();
   if (dim) {
@@ -193,12 +207,17 @@ void			ScoreboardRenderer::render(bool forceDisplay)
   if (BZDB.isTrue("displayScore") || forceDisplay){
     OpenGLGState::resetState();
     renderScoreboard();
-  } else if (BZDB.isTrue("alwaysShowTeamScores")){
-    OpenGLGState::resetState();
-    renderTeamScores(winWidth, winY,
-	  FontManager::instance().getStrHeight(minorFontFace, minorFontSize, " "));
+  } else {
+    if (getHuntState() == HUNT_SELECTING){      // 'S' pressed while selecting ...
+      exitSelectState ();
+    }
+    if (BZDB.isTrue("alwaysShowTeamScores")){
+      OpenGLGState::resetState();
+      renderTeamScores(winWidth, winY,
+	    FontManager::instance().getStrHeight(minorFontFace, minorFontSize, " "));
+    }
   }
-
+  
   if (dim) {
     fm.setOpacity(1.0f);
   }
@@ -246,12 +265,7 @@ void			ScoreboardRenderer::huntKeyEvent (bool isAdd)
     huntAddMode = isAdd;
 
   } else if (getHuntState() == HUNT_SELECTING) {
-    playLocalSound(SFX_HUNT_SELECT);
-    if (numHunted > 0) {
-      setHuntState(HUNT_ENABLED);
-    } else {
-      setHuntState(HUNT_NONE);
-    }
+    exitSelectState ();
     
   } else {
     setHuntState(HUNT_SELECTING);
