@@ -127,7 +127,9 @@ static void writeBZW  ( CModel &model, std::string file )
 		vertItr = mesh.normals.begin();
 		while ( vertItr != mesh.normals.end() )
 		{
-			fprintf (fp,"  normal %f %f %f\n", vertItr->x,vertItr->y,vertItr->z);
+			// normalise all normals before writing them
+			float dist = sqrt(vertItr->x*vertItr->x+vertItr->y*vertItr->y+vertItr->z*vertItr->z);
+			fprintf (fp,"  normal %f %f %f\n", vertItr->x/dist,vertItr->y/dist,vertItr->z/dist);
 			vertItr++;
 		}
 
