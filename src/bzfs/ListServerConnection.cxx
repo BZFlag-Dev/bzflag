@@ -33,12 +33,11 @@
 
 /* local implementation headers */
 #include "CmdLineOptions.h"
+#include "bzfs.h"
 
 // FIXME remove externs!
 extern PingPacket getTeamCounts();
 extern uint16_t curMaxPlayers;
-extern void sendMessage(int playerIndex, PlayerId targetPlayer,
-			const char *message);
 extern CmdLineOptions *clOptions;
 
 const int ListServerLink::NotConnected = -1;

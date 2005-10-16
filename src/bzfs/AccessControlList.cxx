@@ -32,8 +32,8 @@
 #include "TimeKeeper.h"
 #include "TextUtils.h"
 
-/* FIXME - needs to come from a public header */
-extern void sendMessage(int playerIndex, PlayerId targetPlayer, const char *message);
+// bzfs specific headers
+#include "bzfs.h"
 
 void AccessControlList::ban(in_addr &ipAddr, const char *bannedBy, int period, const char *reason, bool fromMaster) {
   BanInfo toban(ipAddr, bannedBy, period,fromMaster);

@@ -53,6 +53,7 @@
 #include "PackVars.h"
 #include "Permissions.h"
 #include "RecordReplay.h"
+#include "bzfs.h"
 
 
 #if defined(_WIN32)
@@ -66,7 +67,6 @@
 extern void initGroups();
 
 // externs that poll, veto, vote, and clientquery require
-extern void sendMessage(int playerIndex, PlayerId dstPlayer, const char *message);
 extern void sendPlayerMessage(GameKeeper::Player *playerData, PlayerId dstPlayer,
 			      const char *message);
 extern CmdLineOptions *clOptions;

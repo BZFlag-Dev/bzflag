@@ -32,6 +32,13 @@
 // must be before windows.h
 #include "network.h"
 
+// common interface headers
+#include "Address.h"
+
+extern void sendMessage(int         playerIndex,
+			PlayerId    dstPlayer,
+			const char *message);
+
 #endif
 
 // Local Variables: ***

@@ -19,9 +19,7 @@
 // local implementation headers
 #include "ServerCommand.h"
 #include "MasterBanList.h"
-
-extern void sendMessage(int playerIndex, PlayerId dstPlayer,
-			const char *message);
+#include "bzfs.h"
 
 // externs that ghost needs
 extern void removePlayer(int playerIndex, const char *reason,

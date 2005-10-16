@@ -152,7 +152,6 @@ static TimeKeeper lastWorldParmChange;
 static bool       isIdentifyFlagIn = false;
 static bool       playerHadWorld   = false;
 
-void sendMessage(int playerIndex, PlayerId dstPlayer, const char *message);
 void sendFilteredMessage(int playerIndex, PlayerId dstPlayer, const char *message);
 void sendPlayerMessage(GameKeeper::Player* playerData, PlayerId dstPlayer,
 		       const char *message);

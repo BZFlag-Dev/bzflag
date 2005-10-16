@@ -34,7 +34,6 @@
 
 TimeKeeper synct = TimeKeeper::getCurrent();
 
-extern void sendMessage(int playerIndex, PlayerId dstPlayer, const char *message);
 extern void removePlayer(int playerIndex, const char *reason, bool notify=true);
 extern void zapFlagByPlayer(int playerIndex);
 extern void broadcastMessage(uint16_t code, int len, const void *msg);
