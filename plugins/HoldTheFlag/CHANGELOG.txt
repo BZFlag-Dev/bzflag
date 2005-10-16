@@ -1,0 +1,5 @@
+*)
+
+
+*) 1.00.01  (2005-10-16):
+  fix callsigns when plugin is loaded while players are on.

@@ -1,4 +1,4 @@
-// HoldTheFlag.cpp : Defines the entry point for the DLL application.
+// HoldTheFlag.cpp : bzfs plugin for Hold-The-flag game mode
 //
 // $Id$
 
@@ -9,7 +9,7 @@
 
 BZ_GET_PLUGIN_VERSION
 
-#define HOLDTHEFLAG_VER "1.00.00"
+#define HOLDTHEFLAG_VER "1.00.01"
 
 #define MAX_PLAYERID 255
 
@@ -63,7 +63,6 @@ bz_eTeamType HTFscore::colorNameToDef (const char *color)
     return eObservers;
   return eNoTeam;
 }
-
 
 const char *HTFscore::colorDefToName (bz_eTeamType team)
 {
@@ -148,7 +147,7 @@ void dispScores (int who)
   }
   qsort (sortList, NumPlayers, sizeof(int), sort_compare);
   if (x != NumPlayers)
-    bz_debugMessage(1, "+++++++++++++++++++++++++++++++++++++++ HTF INTERNAL ERROR: player count mismatch!");
+    bz_debugMessage(1, "++++++++++++++++++++++++ HTF INTERNAL ERROR: player count mismatch!");
   for (int i=0; i<NumPlayers; i++){
     x = sortList[i];
     bz_sendTextMessagef(BZ_SERVER, who, "%20.20s :%3d %c", Players[x].callsign, Players[x].score,
@@ -318,7 +317,7 @@ bool HTFscore::handle ( int playerID, bzApiString cmd, bzApiString, bzAPIStringL
 
 
 bool commandLineHelp (void){
-  char *help[] = {
+  const char *help[] = {
     "Command line args:  PLUGINNAME,[TEAM=color]",
     NULL
   };
@@ -344,15 +343,20 @@ bool parseCommandLine (const char *cmdLine)
 
 BZF_PLUGIN_CALL int bz_Load (const char* cmdLine)
 {
-  if (parseCommandLine (cmdLine)){
+  bz_PlayerRecord *playerRecord;
+
+  if (parseCommandLine (cmdLine))
     return -1;
-  }
 
   // get current list of player indices ...
   bzAPIIntList *playerList = bz_newIntList();
   bz_getPlayerIndexList (playerList);
-  for (unsigned int i = 0; i < playerList->size(); i++)
-    listAdd (playerList->get(i), "CALLSIGN HERE");
+  for (unsigned int i = 0; i < playerList->size(); i++){
+    if ((playerRecord = bz_getPlayerByIndex (playerList->get(i))) != NULL){
+      listAdd (playerList->get(i), playerRecord->callsign.c_str());
+      bz_freePlayerRecord (playerRecord);
+    }
+  }
   bz_deleteIntList (playerList);
 
   bz_registerCustomSlashCommand ("htf", &htfScore);
