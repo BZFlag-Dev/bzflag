@@ -30,13 +30,12 @@
 #include "BZDBCache.h"
 
 // local headers
-#include "TeamBases.h"
 #include "CustomZone.h"
 #include "CmdLineOptions.h"
+#include "bzfs.h"
 
 // externs
 extern CmdLineOptions *clOptions;
-extern BasesList bases;
 
 
 WorldInfo *defineRandomWorld()

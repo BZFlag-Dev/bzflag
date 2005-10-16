@@ -40,7 +40,6 @@
 #include "GameKeeper.h"
 #include "ListServerConnection.h"
 #include "WorldInfo.h"
-#include "TeamBases.h"
 #include "WorldWeapons.h"
 #include "BZWReader.h"
 #include "PackVars.h"

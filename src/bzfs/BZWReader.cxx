@@ -49,8 +49,8 @@
 #include "BaseBuilding.h"
 #include "TextUtils.h"
 
-// FIXME - external dependancies (from bzfs.cxx)
-extern BasesList bases;
+// bzfs specific headers
+#include "bzfs.h"
 
 
 BZWReader::BZWReader(std::string filename) : cURLManager(), location(filename),

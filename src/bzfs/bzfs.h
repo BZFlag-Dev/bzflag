@@ -35,9 +35,14 @@
 // common interface headers
 #include "Address.h"
 
+// bzfs specific headers
+#include "TeamBases.h"
+
 extern void sendMessage(int         playerIndex,
 			PlayerId    dstPlayer,
 			const char *message);
+
+extern BasesList bases;
 
 #endif
 
