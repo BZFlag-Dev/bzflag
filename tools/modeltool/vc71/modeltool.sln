@@ -1,18 +1,52 @@
 Microsoft Visual Studio Solution File, Format Version 8.00
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "modeltool", "modeltool.vcproj", "{75BC8894-499A-441C-B21B-875CA252507A}"
 	ProjectSection(ProjectDependencies) = postProject
+		{6DD493F8-31E1-4958-A240-D157AFFCB07E} = {6DD493F8-31E1-4958-A240-D157AFFCB07E}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "regex", "..\..\..\win32\VC71\regex.vcproj", "{6DD493F8-31E1-4958-A240-D157AFFCB07E}"
+	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfiguration) = preSolution
 		Debug = Debug
+		KRB5 Debug = KRB5 Debug
+		KRB5 Release = KRB5 Release
 		Release = Release
+		release_modern = release_modern
+		release_modern_p3 = release_modern_p3
+		Release_pdcurses = Release_pdcurses
 	EndGlobalSection
 	GlobalSection(ProjectConfiguration) = postSolution
 		{75BC8894-499A-441C-B21B-875CA252507A}.Debug.ActiveCfg = Debug|Win32
 		{75BC8894-499A-441C-B21B-875CA252507A}.Debug.Build.0 = Debug|Win32
+		{75BC8894-499A-441C-B21B-875CA252507A}.KRB5 Debug.ActiveCfg = Debug|Win32
+		{75BC8894-499A-441C-B21B-875CA252507A}.KRB5 Debug.Build.0 = Debug|Win32
+		{75BC8894-499A-441C-B21B-875CA252507A}.KRB5 Release.ActiveCfg = Release|Win32
+		{75BC8894-499A-441C-B21B-875CA252507A}.KRB5 Release.Build.0 = Release|Win32
 		{75BC8894-499A-441C-B21B-875CA252507A}.Release.ActiveCfg = Release|Win32
 		{75BC8894-499A-441C-B21B-875CA252507A}.Release.Build.0 = Release|Win32
+		{75BC8894-499A-441C-B21B-875CA252507A}.release_modern.ActiveCfg = Release|Win32
+		{75BC8894-499A-441C-B21B-875CA252507A}.release_modern.Build.0 = Release|Win32
+		{75BC8894-499A-441C-B21B-875CA252507A}.release_modern_p3.ActiveCfg = Release|Win32
+		{75BC8894-499A-441C-B21B-875CA252507A}.release_modern_p3.Build.0 = Release|Win32
+		{75BC8894-499A-441C-B21B-875CA252507A}.Release_pdcurses.ActiveCfg = Release|Win32
+		{75BC8894-499A-441C-B21B-875CA252507A}.Release_pdcurses.Build.0 = Release|Win32
+		{6DD493F8-31E1-4958-A240-D157AFFCB07E}.Debug.ActiveCfg = Debug|Win32
+		{6DD493F8-31E1-4958-A240-D157AFFCB07E}.Debug.Build.0 = Debug|Win32
+		{6DD493F8-31E1-4958-A240-D157AFFCB07E}.KRB5 Debug.ActiveCfg = KRB5 Debug|Win32
+		{6DD493F8-31E1-4958-A240-D157AFFCB07E}.KRB5 Debug.Build.0 = KRB5 Debug|Win32
+		{6DD493F8-31E1-4958-A240-D157AFFCB07E}.KRB5 Release.ActiveCfg = KRB5 Release|Win32
+		{6DD493F8-31E1-4958-A240-D157AFFCB07E}.KRB5 Release.Build.0 = KRB5 Release|Win32
+		{6DD493F8-31E1-4958-A240-D157AFFCB07E}.Release.ActiveCfg = Release|Win32
+		{6DD493F8-31E1-4958-A240-D157AFFCB07E}.Release.Build.0 = Release|Win32
+		{6DD493F8-31E1-4958-A240-D157AFFCB07E}.release_modern.ActiveCfg = release_modern|Win32
+		{6DD493F8-31E1-4958-A240-D157AFFCB07E}.release_modern.Build.0 = release_modern|Win32
+		{6DD493F8-31E1-4958-A240-D157AFFCB07E}.release_modern_p3.ActiveCfg = release_modern_p3|Win32
+		{6DD493F8-31E1-4958-A240-D157AFFCB07E}.release_modern_p3.Build.0 = release_modern_p3|Win32
+		{6DD493F8-31E1-4958-A240-D157AFFCB07E}.Release_pdcurses.ActiveCfg = Release_pdcurses|Win32
+		{6DD493F8-31E1-4958-A240-D157AFFCB07E}.Release_pdcurses.Build.0 = Release_pdcurses|Win32
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 	EndGlobalSection
