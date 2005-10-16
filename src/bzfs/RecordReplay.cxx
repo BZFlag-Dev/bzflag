@@ -238,13 +238,11 @@ static const char *msgString(u16 code);
 
 extern char hexDigest[50];
 extern int numFlags;
-extern u16 curMaxPlayers;
 extern TeamInfo team[NumTeams];
 extern char *worldDatabase;
 extern u32 worldDatabaseSize;
 extern char worldSettings[4 + WorldSettingsSize];
 extern uint8_t rabbitIndex;
-extern CmdLineOptions *clOptions;
 
 extern char *getDirectMessageBuffer(void);
 extern void directMessage(int playerIndex, u16 code,

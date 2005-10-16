@@ -154,8 +154,6 @@ static bool       playerHadWorld   = false;
 void sendFilteredMessage(int playerIndex, PlayerId dstPlayer, const char *message);
 void sendPlayerMessage(GameKeeper::Player* playerData, PlayerId dstPlayer,
 		       const char *message);
-void playerKilled(int victimIndex, int killerIndex, int reason, int16_t shotIndex, const FlagType* flagType, int phydrv, bool respawnOnBase = false);
-void removePlayer(int playerIndex, const char *reason, bool notify=true);
 void resetFlag(FlagInfo &flag);
 static void dropFlag(GameKeeper::Player &playerData, float pos[3]);
 static void dropAssignedFlag(int playerIndex);

@@ -21,16 +21,6 @@
 #include "MasterBanList.h"
 #include "bzfs.h"
 
-// externs that ghost needs
-extern void removePlayer(int playerIndex, const char *reason,
-			 bool notify=true);
-extern void playerKilled(int victimIndex, int killerIndex, int reason,
-			 int16_t shotIndex, const FlagType* flagType,
-			 int phydrv, bool respawnOnBase = false);
-extern CmdLineOptions *clOptions;
-extern uint16_t curMaxPlayers;
-
-
 class KickCommand : ServerCommand {
 public:
   KickCommand();

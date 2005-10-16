@@ -34,10 +34,6 @@
 #include "CmdLineOptions.h"
 #include "bzfs.h"
 
-// externs
-extern CmdLineOptions *clOptions;
-
-
 WorldInfo *defineRandomWorld()
 {
   WorldInfo* world = new WorldInfo();

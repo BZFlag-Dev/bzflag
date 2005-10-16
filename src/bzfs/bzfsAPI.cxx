@@ -34,20 +34,16 @@
 
 TimeKeeper synct = TimeKeeper::getCurrent();
 
-extern void removePlayer(int playerIndex, const char *reason, bool notify=true);
 extern void zapFlagByPlayer(int playerIndex);
 extern void broadcastMessage(uint16_t code, int len, const void *msg);
 extern void directMessage(int playerIndex, uint16_t code, int len, const void *msg);
 extern char *getDirectMessageBuffer();
-extern void playerKilled(int victimIndex, int killerIndex, int reason, int16_t shotIndex, const FlagType* flagType, int phydrv, bool respawnOnBase = false);
 extern void sendTeamUpdate(int playerIndex = -1, int teamIndex1 = -1, int teamIndex2 = -1);
 extern void sendDrop(FlagInfo &flag);
 extern void resetFlag(FlagInfo &flag);
 extern void publicize();
 extern TeamColor whoseBase(float x, float y, float z);
 
-extern CmdLineOptions *clOptions;
-extern uint16_t curMaxPlayers;
 extern WorldInfo *world;
 extern float pluginWorldSize;
 extern float pluginWorldHeight;

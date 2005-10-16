@@ -32,13 +32,10 @@
 #include "WorldEventManager.h"
 
 /* local implementation headers */
-#include "CmdLineOptions.h"
 #include "bzfs.h"
 
 // FIXME remove externs!
 extern PingPacket getTeamCounts();
-extern uint16_t curMaxPlayers;
-extern CmdLineOptions *clOptions;
 
 const int ListServerLink::NotConnected = -1;
 

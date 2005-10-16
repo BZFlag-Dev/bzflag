@@ -34,15 +34,29 @@
 
 // common interface headers
 #include "Address.h"
+#include "Flag.h"
 
 // bzfs specific headers
 #include "TeamBases.h"
+#include "CmdLineOptions.h"
 
 extern void sendMessage(int         playerIndex,
 			PlayerId    dstPlayer,
 			const char *message);
+extern void removePlayer(int         playerIndex, 
+			 const char *reason,
+			 bool        notify = true);
+extern void playerKilled(int             victimIndex,
+			 int             killerIndex,
+			 int             reason,
+			 int16_t         shotIndex,
+			 const FlagType *flagType,
+			 int             phydrv,
+			 bool            respawnOnBase = false);
 
 extern BasesList bases;
+extern CmdLineOptions *clOptions;
+extern uint16_t        curMaxPlayers;
 
 #endif
 

@@ -69,11 +69,7 @@ extern void initGroups();
 // externs that poll, veto, vote, and clientquery require
 extern void sendPlayerMessage(GameKeeper::Player *playerData, PlayerId dstPlayer,
 			      const char *message);
-extern CmdLineOptions *clOptions;
-extern uint16_t curMaxPlayers;
 
-// externs that ghost needs
-extern void removePlayer(int playerIndex, const char *reason, bool notify=true);
 // externs that shutdownserver requires
 extern bool done;
 
