@@ -3,6 +3,24 @@ bzflag (@VERSION@) unstable; urgency=medium
   * CVS Build
  -- Tim Riker <Tim@Rikers.org>  @DATE@
 
+bzflag (2.0.4.20051017) unstable; urgency=medium
+
+  * upstream release - see ChangeLog
+  * Previous NMU had network trouble. (Closes: #324276)
+  * .de locale fix (Closes: #314144)
+  * Closes: #301950, #169156, #320268, #323815, #324170
+ -- Tim Riker <Tim@Rikers.org>  Mon, 17 Oct 2005 16:34:32 +0000
+
+bzflag (2.0.2.20050318-0.1) unstable; urgency=high
+
+  * Non-maintainer upload.
+  * High-urgency upload for RC bugfix.
+  * Forward-declare class SortedGState for compatibility with g++-4.0's
+    increased strictness; thanks to Matt Kraai for the patch
+    (closes: #320268).
+
+ -- Steve Langasek <vorlon@debian.org>  Sat, 13 Aug 2005 01:08:56 -0700
+
 bzflag (2.0.2.20050318) unstable; urgency=medium
 
   * upstream release - many big fixes - see ChangeLog
