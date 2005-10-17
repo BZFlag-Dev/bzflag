@@ -4114,6 +4114,7 @@ int main(int argc, char **argv)
 
     // we don't send flags to a client that isn't expecting them
     numFlags = 0;
+    clOptions->numExtraFlags = 0;
 
     // disable the BZDB callbacks
     for (unsigned int gi = 0; gi < numGlobalDBItems; ++gi) {
