@@ -18,6 +18,11 @@
 // - improve skipping
 
 
+// OOPS, get rid of these during the next protocol change
+static const int PACKET_SIZE_STUFFING = 8;
+static const int HEADER_SIZE_STUFFING = 0;
+
+
 // interface header
 #include "RecordReplay.h"
 
@@ -85,8 +90,11 @@ typedef struct RRpacket {
   RRtime timestamp;
   char *data;
 } RRpacket;
+//static const unsigned int RRpacketHdrSize =
+//  sizeof(RRpacket) - (2 * sizeof(RRpacket*) - sizeof(char*));
 static const unsigned int RRpacketHdrSize =
-  sizeof(RRpacket) - (2 * sizeof(RRpacket*) - sizeof(char*));
+  PACKET_SIZE_STUFFING +
+  (2 * sizeof(u16)) + (3 * sizeof(u32)) + sizeof(RRtime);
 
 typedef struct {
   u32 byteCount;
@@ -113,8 +121,12 @@ typedef struct {
   char *flags;		  // a list of the flags types
   char *world;		  // the world
 } ReplayHeader;
+//static const unsigned int ReplayHeaderSize =
+//  sizeof(ReplayHeader) - (2 * sizeof(char*));
 static const unsigned int ReplayHeaderSize =
-  sizeof(ReplayHeader) - (2 * sizeof(char*));
+  HEADER_SIZE_STUFFING +
+  (sizeof(u32) * 6) + sizeof(RRtime) +
+  CallSignLen + EmailLen + 8 + MessageLen + 64 + 4 + WorldSettingsSize;
 
 typedef struct {
   std::string file;
