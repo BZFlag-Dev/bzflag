@@ -37,7 +37,6 @@
 
 // implementation-specific bzfs-specific headers
 #include "RejoinList.h"
-#include "GameKeeper.h"
 #include "ListServerConnection.h"
 #include "WorldInfo.h"
 #include "WorldWeapons.h"
@@ -46,7 +45,6 @@
 #include "SpawnPosition.h"
 #include "DropGeometry.h"
 #include "commands.h"
-#include "FlagInfo.h"
 #include "MasterBanList.h"
 #include "Filter.h"
 #include "WorldEventManager.h"
@@ -152,8 +150,6 @@ static bool       isIdentifyFlagIn = false;
 static bool       playerHadWorld   = false;
 
 void sendFilteredMessage(int playerIndex, PlayerId dstPlayer, const char *message);
-void sendPlayerMessage(GameKeeper::Player* playerData, PlayerId dstPlayer,
-		       const char *message);
 void resetFlag(FlagInfo &flag);
 static void dropFlag(GameKeeper::Player &playerData, float pos[3]);
 static void dropAssignedFlag(int playerIndex);
@@ -393,7 +389,7 @@ static void sendFlagUpdate(int playerIndex)
 }
 
 
-void sendTeamUpdate(int playerIndex = -1, int teamIndex1 = -1, int teamIndex2 = -1)
+void sendTeamUpdate(int playerIndex, int teamIndex1, int teamIndex2)
 {
   // If teamIndex1 is -1, send all teams
   // If teamIndex2 is -1, just send teamIndex1 team
@@ -469,7 +465,7 @@ void sendPlayerInfo() {
   broadcastMessage(MsgPlayerInfo, (char*)buf - (char*)bufStart, bufStart);
 }
 
-void sendIPUpdate(int targetPlayer = -1, int playerIndex = -1) {
+void sendIPUpdate(int targetPlayer, int playerIndex) {
   // targetPlayer = -1: send to all players with the PLAYERLIST permission
   // playerIndex = -1: send info about all players
 

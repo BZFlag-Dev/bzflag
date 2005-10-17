@@ -39,6 +39,8 @@
 // bzfs specific headers
 #include "TeamBases.h"
 #include "CmdLineOptions.h"
+#include "GameKeeper.h"
+#include "FlagInfo.h"
 
 extern void sendMessage(int         playerIndex,
 			PlayerId    dstPlayer,
@@ -53,10 +55,32 @@ extern void playerKilled(int             victimIndex,
 			 const FlagType *flagType,
 			 int             phydrv,
 			 bool            respawnOnBase = false);
+extern void sendPlayerMessage(GameKeeper::Player *playerData,
+			      PlayerId dstPlayer,
+			      const char *message);
+extern char *getDirectMessageBuffer();
+extern void  broadcastMessage(uint16_t code, int len, const void *msg);
+extern void  sendTeamUpdate(int playerIndex = -1,
+			    int teamIndex1 = -1,
+			    int teamIndex2 = -1);
+extern void  sendFlagUpdate(FlagInfo &flag);
+extern void  sendDrop(FlagInfo &flag);
+extern void  sendIPUpdate(int targetPlayer = -1, int playerIndex = -1);
+extern void  sendPlayerInfo(void);
+
+// initialize permission groups
+extern void initGroups();
 
 extern BasesList bases;
 extern CmdLineOptions *clOptions;
 extern uint16_t        curMaxPlayers;
+extern bool            done;
+extern bool            gameOver;
+extern TeamInfo        team[NumTeams];
+extern int             numFlags;
+extern bool            countdownActive;
+extern int             countdownDelay;
+extern TimeKeeper      countdownPauseStart;
 
 #endif
 

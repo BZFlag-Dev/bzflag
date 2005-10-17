@@ -36,7 +36,6 @@
 #include <time.h>
 
 // common implementation headers
-#include "Address.h"
 #include "CommandManager.h"
 #include "LagInfo.h"
 #include "NetHandler.h"
@@ -47,9 +46,7 @@
 #include "version.h"
 
 // local implementation headers
-#include "CmdLineOptions.h"
 #include "FlagHistory.h"
-#include "FlagInfo.h"
 #include "PackVars.h"
 #include "Permissions.h"
 #include "RecordReplay.h"
@@ -61,38 +58,7 @@
 #define pclose _pclose
 #endif
 
-// FIXME -- need to pull communication out of bzfs.cxx...
-
-// extern to initialize permission groups
-extern void initGroups();
-
-// externs that poll, veto, vote, and clientquery require
-extern void sendPlayerMessage(GameKeeper::Player *playerData, PlayerId dstPlayer,
-			      const char *message);
-
-// externs that shutdownserver requires
-extern bool done;
-
-// externs that superkill and gameover requires
-extern bool gameOver;
-extern char *getDirectMessageBuffer();
-extern void broadcastMessage(uint16_t code, int len, const void *msg);
-
 #include "PlayerInfo.h"
-extern TeamInfo team[NumTeams];
-extern void sendTeamUpdate(int playerIndex = -1, int teamIndex1 = -1, int teamIndex2 = -1);
-extern int numFlags;
-extern void sendFlagUpdate(FlagInfo &flag);
-extern void sendDrop(FlagInfo &flag);
-
-// externs that countdown requires
-extern bool countdownActive;
-extern int countdownDelay;
-extern TimeKeeper countdownPauseStart;
-
-// externs that identify and password requires
-extern void sendIPUpdate(int targetPlayer, int playerIndex);
-extern void sendPlayerInfo(void);
 
 tmCustomSlashCommandMap	customCommands;
 

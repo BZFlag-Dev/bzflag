@@ -35,11 +35,7 @@
 TimeKeeper synct = TimeKeeper::getCurrent();
 
 extern void zapFlagByPlayer(int playerIndex);
-extern void broadcastMessage(uint16_t code, int len, const void *msg);
 extern void directMessage(int playerIndex, uint16_t code, int len, const void *msg);
-extern char *getDirectMessageBuffer();
-extern void sendTeamUpdate(int playerIndex = -1, int teamIndex1 = -1, int teamIndex2 = -1);
-extern void sendDrop(FlagInfo &flag);
 extern void resetFlag(FlagInfo &flag);
 extern void publicize();
 extern TeamColor whoseBase(float x, float y, float z);
@@ -48,14 +44,9 @@ extern WorldInfo *world;
 extern float pluginWorldSize;
 extern float pluginWorldHeight;
 extern float pluginMaxWait;
-extern TeamInfo team[NumTeams];
-extern int numFlags;
 
 extern ShutdownCommand shutdownCommand;   // for bz_shutdown()
 extern SuperkillCommand superkillCommand; // for bz_superkill();
-extern bool gameOver;
-extern bool countdownActive;
-extern TimeKeeper  countdownPauseStart;
 
 // utility functions
 void setBZMatFromAPIMat (BzMaterial &bzmat, bz_MaterialInfo* material )

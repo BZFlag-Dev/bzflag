@@ -42,7 +42,6 @@
 // implementation-specific bzfs-specific headers
 #include "RecordReplay.h"
 #include "bzfs.h"
-#include "FlagInfo.h"
 #include "BZWError.h"
 
 // import from TextUtils for convenience
@@ -51,7 +50,6 @@ using TextUtils::compare_nocase;
 /* data nasties */
 extern float speedTolerance;
 extern bool handlePings;
-extern int numFlags;
 extern std::string passFile;
 extern std::string groupsFile;
 extern std::string userDatabaseFile;

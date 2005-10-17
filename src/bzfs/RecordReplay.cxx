@@ -61,9 +61,6 @@ typedef __int64 s64;
 #include "version.h"
 
 // bzfs specific headers
-#include "CmdLineOptions.h"
-#include "GameKeeper.h"
-#include "FlagInfo.h"
 #include "bzfs.h"
 
 
@@ -249,14 +246,11 @@ static const char *msgString(u16 code);
 // ---------------------
 
 extern char hexDigest[50];
-extern int numFlags;
-extern TeamInfo team[NumTeams];
 extern char *worldDatabase;
 extern u32 worldDatabaseSize;
 extern char worldSettings[4 + WorldSettingsSize];
 extern uint8_t rabbitIndex;
 
-extern char *getDirectMessageBuffer(void);
 extern void directMessage(int playerIndex, u16 code,
 			  int len, const void *msg);
 
