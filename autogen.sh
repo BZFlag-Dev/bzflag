@@ -11,7 +11,7 @@
 # 1. Redistributions of source code must retain the above copyright
 # notice, this list of conditions and the following disclaimer.
 #
-# 2. Redistributions in binary form must reproduce the above 
+# 2. Redistributions in binary form must reproduce the above
 # copyright notice, this list of conditions and the following
 # disclaimer in the documentation and/or other materials provided
 # with the distribution.
@@ -157,7 +157,7 @@ else
 	_min_version="`echo $_version_line | sed 's/.* [0-9]\.\([0-9][0-9]\).*/\1/'`"
 	_min_version="`echo $_min_version | sed 's/.*[A-Z].*//'`"
 	[ "x$_min_version" = "x" ] && _min_version=0
-	
+
 	if [ $_maj_version -lt $AUTOCONF_MAJOR_VERSION ] ; then
 	    _report_error=yes
 	elif [ $_maj_version -eq $AUTOCONF_MAJOR_VERSION ] ; then
@@ -165,7 +165,7 @@ else
 		_report_error=yes
 	    fi
 	fi
-	
+
 	$ECHO "Found GNU Autoconf version $_maj_version.$_min_version"
     fi
 fi
@@ -173,7 +173,7 @@ if [ "x$_report_error" = "xyes" ] ; then
     $ECHO
     $ECHO "ERROR:  To prepare the ${SUITE} build system from scratch,"
     $ECHO "        at least version $AUTOCONF_MAJOR_VERSION.$AUTOCONF_MINOR_VERSION.$AUTOCONF_PATCH_VERSION of GNU Autoconf must be installed."
-    $ECHO 
+    $ECHO
     $ECHO "$PATH_TO_AUTOGEN/autogen.sh does not need to be run on the same machine that will"
     $ECHO "run configure or make.  Either the GNU Autotools will need to be installed"
     $ECHO "or upgraded on this system, or $PATH_TO_AUTOGEN/autogen.sh must be run on the source"
@@ -212,7 +212,7 @@ else
 	_pat_version="`echo $_version_line | sed 's/.* [0-9]\.[0-9][\.-]p*\([0-9]*\).*/\1/'`"
 	_pat_version="`echo $_pat_version | sed 's/.*[A-Z].*//'`"
 	[ "x$_pat_version" = "x" ] && _pat_version=0
-	
+
 	if [ $_maj_version -lt $AUTOMAKE_MAJOR_VERSION ] ; then
 	    _report_error=yes
 	elif [ $_maj_version -eq $AUTOMAKE_MAJOR_VERSION ] ; then
@@ -224,7 +224,7 @@ else
 		fi
 	    fi
 	fi
-	
+
 	$ECHO "Found GNU Automake version $_maj_version.$_min_version.$_pat_version"
     fi
 fi
@@ -232,7 +232,7 @@ if [ "x$_report_error" = "xyes" ] ; then
     $ECHO
     $ECHO "ERROR:  To prepare the ${SUITE} build system from scratch,"
     $ECHO "        at least version $AUTOMAKE_MAJOR_VERSION.$AUTOMAKE_MINOR_VERSION.$AUTOMAKE_PATCH_VERSION of GNU Automake must be installed."
-    $ECHO 
+    $ECHO
     $ECHO "$PATH_TO_AUTOGEN/autogen.sh does not need to be run on the same machine that will"
     $ECHO "run configure or make.  Either the GNU Autotools will need to be installed"
     $ECHO "or upgraded on this system, or $PATH_TO_AUTOGEN/autogen.sh must be run on the source"
@@ -272,7 +272,7 @@ if [ ! $? = 0 ] ; then
 	$ECHO "Warning:  libtoolize does not appear to be available.  This means that"
 	$ECHO "autoreconf cannot be used."
     fi
-    
+
     # look for some alternates
     for tool in glibtoolize libtoolize15 libtoolize13 ; do
 	$VERBOSE_ECHO "Checking libtoolize alternate: $tool --version"
@@ -280,7 +280,7 @@ if [ ! $? = 0 ] ; then
 	if [ $? = 0 ] ; then
 	    HAVE_ALTLIBTOOLIZE=yes
 	    LIBTOOLIZE="$tool"
-	    $ECHO 
+	    $ECHO
 	    $ECHO "Fortunately, $tool was found which means that your system may simply"
 	    $ECHO "have a non-standard or incomplete GNU Autotools install.  If you have"
 	    $ECHO "sufficient system access, it may be possible to quell this warning by"
@@ -294,7 +294,7 @@ if [ ! $? = 0 ] ; then
 		$ECHO
 	    else
 		$ECHO "   ln -s $glti $_gltidir/libtoolize"
-		$ECHO 
+		$ECHO
 		$ECHO "Run that as root or with proper permissions to the $_gltidir directory"
 		$ECHO
 	    fi
@@ -323,7 +323,7 @@ else
 	_pat_version="`echo $_version_line | sed 's/.* [0-9]\.[0-9][\.-]p*\([0-9]*\).*/\1/'`"
 	_pat_version="`echo $_pat_version | sed 's/.*[A-Z].*//'`"
 	[ "x$_pat_version" = "x" ] && _pat_version=0
-	
+
 	if [ $_maj_version -lt $LIBTOOL_MAJOR_VERSION ] ; then
 	    _report_error=yes
 	elif [ $_maj_version -eq $LIBTOOL_MAJOR_VERSION ] ; then
@@ -335,16 +335,16 @@ else
 		fi
 	    fi
 	fi
-	
+
 	$ECHO "Found GNU Libtool version $_maj_version.$_min_version.$_pat_version"
-	
+
     fi
 fi
 if [ "x$_report_error" = "xyes" ] ; then
     $ECHO
     $ECHO "ERROR:  To prepare the ${SUITE} build system from scratch,"
     $ECHO "        at least version $LIBTOOL_MAJOR_VERSION.$LIBTOOL_MINOR_VERSION.$LIBTOOL_PATCH_VERSION of GNU Libtool must be installed."
-    $ECHO 
+    $ECHO
     $ECHO "$PATH_TO_AUTOGEN/autogen.sh does not need to be run on the same machine that will"
     $ECHO "run configure or make.  Either the GNU Autotools will need to be installed"
     $ECHO "or upgraded on this system, or $PATH_TO_AUTOGEN/autogen.sh must be run on the source"
@@ -467,7 +467,7 @@ reconfigure_manually=no
 if [ "x$HAVE_AUTORECONF" = "xyes" ] && [ "x$HAVE_LIBTOOLIZE" = "xyes" ] ; then
     $ECHO
     $ECHO $ECHO_N "Automatically preparing build ... $ECHO_C"
-    
+
     if [ "x$VERBOSE" = "xyes" ] ; then
 	$VERBOSE_ECHO "$AUTORECONF $SEARCH_DIRS -i -f"
 	$AUTORECONF $SEARCH_DIRS -i -f
@@ -476,11 +476,11 @@ if [ "x$HAVE_AUTORECONF" = "xyes" ] && [ "x$HAVE_LIBTOOLIZE" = "xyes" ] ; then
     fi
     if [ ! $? = 0 ] ; then
 	$ECHO "Warning: $AUTORECONF failed"
-	
+
 	if test -f ltmain.sh ; then
 	    $ECHO "libtoolize being run by autoreconf is not creating ltmain.sh in the auxillary directory like it should"
 	fi
-	
+
 	$ECHO "Attempting to run the configuration steps individually"
 	reconfigure_manually=yes
     fi
@@ -500,12 +500,12 @@ fi
 if [ "x$reconfigure_manually" = "xyes" ] ; then
     $ECHO
     $ECHO $ECHO_N "Preparing build ... $ECHO_C"
-    
+
     $VERBOSE_ECHO "$ACLOCAL $SEARCH_DIRS"
     $ACLOCAL $SEARCH_DIRS
-    
+
     if [ ! $? = 0 ] ; then $ECHO "ERROR: $ACLOCAL failed" && exit 2 ; fi
-    if [ "x$HAVE_LIBTOOLIZE" = "xyes" ] ; then 
+    if [ "x$HAVE_LIBTOOLIZE" = "xyes" ] ; then
 	$VERBOSE_ECHO "$LIBTOOLIZE --automake -c -f"
 	$LIBTOOLIZE --automake -c -f
 	if [ ! $? = 0 ] ; then $ECHO "ERROR: $LIBTOOLIZE failed" && exit 2 ; fi
@@ -516,7 +516,7 @@ if [ "x$reconfigure_manually" = "xyes" ] ; then
 	    if [ ! $? = 0 ] ; then $ECHO "ERROR: $LIBTOOLIZE failed" && exit 2 ; fi
 	fi
     fi
-    
+
     # re-run again as instructed by libtoolize
     $VERBOSE_ECHO "$ACLOCAL $SEARCH_DIRS"
     $ACLOCAL $SEARCH_DIRS
@@ -535,7 +535,7 @@ if [ "x$reconfigure_manually" = "xyes" ] ; then
 	    $ECHO $ECHO_N "Continuing build preparation ... $ECHO_C"
 	fi
     fi
-    
+
     $VERBOSE_ECHO
     $VERBOSE_ECHO "$AUTOCONF -f"
     autoconf_output=`$AUTOCONF -f 2>&1`
@@ -556,10 +556,10 @@ if [ "x$reconfigure_manually" = "xyes" ] ; then
 		    fi
 		    $VERBOSE_ECHO cat "$LIBTOOL_M4" >> acinclude.m4
 		    cat "$LIBTOOL_M4" >> acinclude.m4
-		    
+
 		    $ECHO
 		    $ECHO "Restarting the configuration steps with a local libtool.m4"
-		    
+
 		    $VERBOSE_ECHO sh $0 "$1" "$2" "$3" "$4" "$5" "$6" "$7" "$8" "$9"
 		    sh "$0" "$1" "$2" "$3" "$4" "$5" "$6" "$7" "$8" "$9"
 		    exit $?
@@ -576,7 +576,7 @@ EOF
     $VERBOSE_ECHO "$AUTOHEADER"
     $AUTOHEADER
     if [ ! $? = 0 ] ; then $ECHO "ERROR: $AUTOHEADER failed" && exit 2 ; fi
-    
+
     $VERBOSE_ECHO "$AUTOMAKE -a -c -f"
     $AUTOMAKE -a -c -f
     if [ ! $? = 0 ] ; then $ECHO "ERROR: $AUTOMAKE failed" && exit 2 ; fi
@@ -611,7 +611,7 @@ if test "x$HAVE_SED" = "xyes" ; then
 	    if test "x$backup_rev" = "x" ; then
 		backup_rev=0
 	    fi
-	    if test "$current_rev" -lt "$backup_rev" ; then
+	    #if test "$current_rev" -lt "$backup_rev" ; then
 		if test "x$spacer" = "xno" ; then
 		    $VERBOSE_ECHO
 		    spacer=yes
@@ -620,7 +620,8 @@ if test "x$HAVE_SED" = "xyes" ; then
 		$VERBOSE_ECHO "Need to restore $file from backup (automake -f clobbered it)"
 		$VERBOSE_ECHO "cp -pf \"$back\" \"${curr}\""
 		cp -pf "$back" "$curr"
-	    fi
+		rm "$back"
+	    #fi
 	fi
     done
 fi

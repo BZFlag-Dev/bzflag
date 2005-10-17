@@ -42,7 +42,6 @@ bzflag.desktop: bzflag.desktop.in
 desktop_DATA = bzflag.desktop
 
 MAINTAINERCLEANFILES =	\
-	COPYING.backup \
 	Makefile.in \
 	aclocal.m4 \
 	compile \
