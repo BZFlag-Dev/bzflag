@@ -11,3 +11,4 @@ missing
 config.guess.backup
 config.sub.backup
 ltmain.sh.backup
+mkinstalldirs
