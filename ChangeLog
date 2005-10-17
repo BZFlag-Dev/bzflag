@@ -4,7 +4,7 @@
 BZFlag 2.0.5
 ------------
 
-* Send andmin channel a warning if someone fails on a /password - Garrett Padera, Jeff Myers
+* Send admin channel warning if /password fails - Garrett Padera, Jeff Myers
 * Known players not authenticated are detected - Tupone Alfredo
 * Added /checkip command - Frank Thilo
 * "Enable Local Shot/Spawn Effects" affects "Driving with" - Daniel Remenak
