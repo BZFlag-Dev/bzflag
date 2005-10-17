@@ -67,6 +67,8 @@ extern void  sendFlagUpdate(FlagInfo &flag);
 extern void  sendDrop(FlagInfo &flag);
 extern void  sendIPUpdate(int targetPlayer = -1, int playerIndex = -1);
 extern void  sendPlayerInfo(void);
+extern void  directMessage(int playerIndex, uint16_t code,
+			   int len, const void *msg);
 
 // initialize permission groups
 extern void initGroups();
@@ -81,6 +83,11 @@ extern int             numFlags;
 extern bool            countdownActive;
 extern int             countdownDelay;
 extern TimeKeeper      countdownPauseStart;
+extern char            hexDigest[50];
+extern char           *worldDatabase;
+extern uint32_t        worldDatabaseSize;
+extern char            worldSettings[4 + WorldSettingsSize];
+extern uint8_t         rabbitIndex;
 
 #endif
 

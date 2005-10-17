@@ -242,19 +242,6 @@ static bool checkReplayMode(int playerIndex);
 static const char *msgString(u16 code);
 
 
-// External Dependencies   (from bzfs.cxx)
-// ---------------------
-
-extern char hexDigest[50];
-extern char *worldDatabase;
-extern u32 worldDatabaseSize;
-extern char worldSettings[4 + WorldSettingsSize];
-extern uint8_t rabbitIndex;
-
-extern void directMessage(int playerIndex, u16 code,
-			  int len, const void *msg);
-
-
 /******************************************************************************/
 
 // Record Functions

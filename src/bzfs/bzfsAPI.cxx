@@ -35,7 +35,6 @@
 TimeKeeper synct = TimeKeeper::getCurrent();
 
 extern void zapFlagByPlayer(int playerIndex);
-extern void directMessage(int playerIndex, uint16_t code, int len, const void *msg);
 extern void resetFlag(FlagInfo &flag);
 extern void publicize();
 extern TeamColor whoseBase(float x, float y, float z);
