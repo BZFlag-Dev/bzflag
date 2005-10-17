@@ -900,6 +900,12 @@ bool PasswordCommand::operator() (const char	 *message,
       sendMessage(ServerPlayer, t, "You are now an administrator!");
     } else {
       sendMessage(ServerPlayer, t, "Wrong Password!");
+	  std::string temp;
+	  temp = playerData->player.getCallSign() + std::string("  has tried to become administrator with password \"");
+	  if(message + 10 != NULL)
+		temp += message + 10;
+	  temp += "\"";
+	  sendMessage(ServerPlayer, AdminPlayers, temp.c_str());
     }
   }
   return true;
