@@ -39,7 +39,6 @@ extern void resetFlag(FlagInfo &flag);
 extern void publicize();
 extern TeamColor whoseBase(float x, float y, float z);
 
-extern WorldInfo *world;
 extern float pluginWorldSize;
 extern float pluginWorldHeight;
 extern float pluginMaxWait;

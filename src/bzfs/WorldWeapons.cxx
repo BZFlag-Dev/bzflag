@@ -27,12 +27,10 @@
 #include "Protocol.h"
 #include "Address.h"
 #include "StateDatabase.h"
+#include "bzfsAPI.h"
 
-extern WorldInfo *world;
-
-extern bz_eTeamType convertTeam ( TeamColor team );
-extern TeamColor convertTeam( bz_eTeamType team );
-
+// bzfs specific headers
+#include "bzfs.h"
 
 char *getDirectMessageBuffer();
 void broadcastMessage(uint16_t code, int len, const void *msg);
