@@ -56,14 +56,13 @@
 #include "BaseBuilding.h"
 #include "AnsiCodes.h"
 #include "GameTime.h"
+#include "bzfsAPI.h"
 
 // only include this if we are going to use plugins and export the API
 #ifdef _USE_BZ_API
 #include "bzfsPlugins.h"
 #endif
 
-extern bz_eTeamType convertTeam ( TeamColor team );
-extern TeamColor convertTeam( bz_eTeamType team );
 // pass through the SELECT loop
 static bool dontWait = true;
 
