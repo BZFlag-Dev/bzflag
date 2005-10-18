@@ -111,7 +111,6 @@ const std::string StateDatabase::BZDB_FOGDENSITY	= std::string("_fogDensity");
 const std::string StateDatabase::BZDB_FOGSTART		= std::string("_fogStart");
 const std::string StateDatabase::BZDB_FOGEND		= std::string("_fogEnd");
 const std::string StateDatabase::BZDB_FOGCOLOR		= std::string("_fogColor");
-const std::string StateDatabase::BZDB_FPSLIMIT		= std::string("_fpsLimit");
 const std::string StateDatabase::BZDB_FRICTION		= std::string("_friction");
 const std::string StateDatabase::BZDB_GMACTIVATIONTIME	= std::string("_gmActivationTime");
 const std::string StateDatabase::BZDB_GMADLIFE		= std::string("_gmAdLife");
