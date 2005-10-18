@@ -27,15 +27,11 @@
 #include "version.h"
 #include "TextUtils.h"
 #include "Protocol.h"
-#include "GameKeeper.h"
 #include "bzfsAPI.h"
 #include "WorldEventManager.h"
 
 /* local implementation headers */
 #include "bzfs.h"
-
-// FIXME remove externs!
-extern PingPacket getTeamCounts();
 
 const int ListServerLink::NotConnected = -1;
 

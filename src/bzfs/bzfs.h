@@ -35,6 +35,7 @@
 // common interface headers
 #include "Address.h"
 #include "Flag.h"
+#include "Ping.h"
 
 // bzfs specific headers
 #include "TeamBases.h"
@@ -72,6 +73,7 @@ extern void  directMessage(int playerIndex, uint16_t code,
 			   int len, const void *msg);
 extern int   getCurMaxPlayers();
 extern bool  areFoes(TeamColor team1, TeamColor team2);
+extern PingPacket getTeamCounts();
 
 // initialize permission groups
 extern void initGroups();
