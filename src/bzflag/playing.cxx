@@ -5932,9 +5932,9 @@ static void		playingLoop()
     }
 
     // limit the fps to save battery life by minimizing cpu usage
-    int saveEnergy = (int)BZDB.eval("saveEnergy");
+    bool saveEnergy = BZDB.isTrue("saveEnergy");
     if (saveEnergy) {
-      const int FPS_LIMIT = (int)BZDB.eval(StateDatabase::BZDB_FPSLIMIT);
+      const int FPS_LIMIT = BZDB.evalInt("fpsLimit");
       const double fps_delay = 1.0 / (double)FPS_LIMIT;
 
       if (fps_delay - dt > 0.0001) {
