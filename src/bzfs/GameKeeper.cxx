@@ -20,10 +20,6 @@
 /* common headers */
 #include "GameTime.h"
 
-// players list FIXME should be resized based on maxPlayers
-extern PlayerState      lastState[PlayerSlot];
-
-
 GameKeeper::Player *GameKeeper::Player::playerList[PlayerSlot] = {NULL};
 bool		GameKeeper::Player::allNeedHostbanChecked  = false;
 
