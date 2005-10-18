@@ -902,8 +902,6 @@ void BackgroundRenderer::drawGroundCentered()
 //  const GLubyte fan[6] = { 0, 1, 2, 3, 4, 1};
   
   glNormal3f(0.0f, 0.0f, 1.0f);
-  glDisableClientState(GL_NORMAL_ARRAY); // safety
-  
   glBegin(GL_TRIANGLE_FAN);
   {
     for (int i = 0; i < 5; i++) {
@@ -973,6 +971,10 @@ void			BackgroundRenderer::drawGroundShadows(
   // disable color updates
   SceneNode::setColorOverride(true);
 
+  // disable the unused arrays
+  glDisableClientState(GL_NORMAL_ARRAY);
+  glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+  
   if (BZDBCache::stencilShadows) {
     OpenGLGState::resetState();
     const float shadowAlpha = BZDB.eval("shadowAlpha");
@@ -1011,6 +1013,10 @@ void			BackgroundRenderer::drawGroundShadows(
   SceneNode::setColorOverride(false);
 
   OpenGLGState::resetState();
+  
+  // re-enable the arrays
+  glEnableClientState(GL_NORMAL_ARRAY);
+  glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
   glPopMatrix();
 }

@@ -485,39 +485,6 @@ void CollisionManager::load ()
   RayList.list = new ColDetNode*[leafNodes];
   RayList.count = 0;
 
-  // setup visual extents
-  visualExtents = worldExtents;
-  for (i = 0; i < boxCount; i++) {
-    const Obstacle* obs = boxes[i];
-    if (obs->isPassable()) {
-      visualExtents.expandToBox(obs->getExtents());
-    }
-  }
-  for (i = 0; i < pyrCount; i++) {
-    const Obstacle* obs = pyrs[i];
-    if (obs->isPassable()) {
-      visualExtents.expandToBox(obs->getExtents());
-    }
-  }
-  for (i = 0; i < baseCount; i++) {
-    const Obstacle* obs = bases[i];
-    if (obs->isPassable()) {
-      visualExtents.expandToBox(obs->getExtents());
-    }
-  }
-  for (i = 0; i < teleCount; i++) {
-    const Obstacle* obs = teles[i];
-    if (obs->isPassable()) {
-      visualExtents.expandToBox(obs->getExtents());
-    }
-  }
-  for (i = 0; i < meshCount; i++) {
-    const Obstacle* obs = meshes[i];
-    if (obs->isPassable()) {
-      visualExtents.expandToBox(obs->getExtents());
-    }
-  }
-
   // print some statistics
   DEBUG2 ("ColDet Octree obstacles = %i\n", FullList.count);
   for (i = 0; i < 3; i++) {
@@ -527,10 +494,6 @@ void CollisionManager::load ()
   for (i = 0; i < 3; i++) {
     DEBUG2 ("  world extent[%i] = %f, %f\n", i, worldExtents.mins[i],
 						worldExtents.maxs[i]);
-  }
-  for (i = 0; i < 3; i++) {
-    DEBUG2 ("  visual extent[%i] = %f, %f\n", i, visualExtents.mins[i],
-						 visualExtents.maxs[i]);
   }
   DEBUG2 ("ColDet Octree leaf nodes  = %i\n", leafNodes);
   DEBUG2 ("ColDet Octree total nodes = %i\n", totalNodes);

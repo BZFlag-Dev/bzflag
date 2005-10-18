@@ -20,6 +20,7 @@
 // common interface headers
 #include "TankSceneNode.h"
 #include "SceneDatabase.h"
+#include "SceneRenderer.h"
 #include "SphereSceneNode.h"
 #include "OpenGLMaterial.h"
 #include "BZDBCache.h"
@@ -101,7 +102,12 @@ Player::Player(const PlayerId& _id, TeamColor _team,
     tankNode = new TankSceneNode(state.pos, forward);
     tankIDLNode = new TankIDLSceneNode(tankNode);
     changeTeam(team);
-    pausedSphere = new SphereSceneNode(state.pos, 1.5f * BZDBCache::tankRadius);
+    const float sphereRad = (1.5f * BZDBCache::tankRadius);
+    if (RENDERER.useQuality() >= 3) {
+      pausedSphere = new SphereLodSceneNode(state.pos, sphereRad);
+    } else {
+      pausedSphere = new SphereBspSceneNode(state.pos, sphereRad);
+    }
     pausedSphere->setColor(0.0f, 0.0f, 0.0f, 0.5f);
   }
 
@@ -124,6 +130,8 @@ Player::Player(const PlayerId& _id, TeamColor _team,
 
   haveIpAddr = false; // no IP address yet
   lastTrackDraw = TimeKeeper::getCurrent();
+
+  spawnTime = TimeKeeper::getCurrent();
 
   return;
 }
@@ -978,6 +986,7 @@ void Player::spawnEffect()
       dimensionsScale[i] = 0.01f;
     }
   }
+  spawnTime = TimeKeeper::getCurrent();
   return;
 }
 

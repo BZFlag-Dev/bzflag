@@ -41,6 +41,7 @@ typedef struct  {
   DrawCmd::DrawModes code;
 } DrawCmdLabel;
 
+
 // local data
 static DrawCmdLabel drawLabels[] = {
   {"points",    DrawCmd::DrawPoints},
@@ -56,6 +57,10 @@ static DrawCmdLabel drawLabels[] = {
 };
 
 static const int MaxUShort = 0xFFFF;
+
+
+// local function prototypes
+static int compareLengthPerPixel(const void* a, const void* b);
 
 
 /******************************************************************************/
@@ -266,6 +271,23 @@ bool MeshDrawInfo::validate(const MeshObstacle* mesh) const
 }
 
 
+static int compareLengthPerPixel(const void* a, const void* b)
+{
+  const DrawLod* lodA = (const DrawLod*)a;
+  const DrawLod* lodB = (const DrawLod*)b;
+  const float lenA = lodA->lengthPerPixel;
+  const float lenB = lodB->lengthPerPixel;
+  // higher resolution meshes for smaller lengths per pixel
+  if (lenA < lenB) {
+    return -1;
+  } else if (lenA > lenB) {
+    return +1;
+  } else {
+    return 0;
+  }
+}
+
+
 bool MeshDrawInfo::serverSetup(const MeshObstacle* mesh)
 {
   valid = validate(mesh);
@@ -390,25 +412,12 @@ bool MeshDrawInfo::serverSetup(const MeshObstacle* mesh)
     }
   }
 
+  // sort the lods
+  qsort(lods, lodCount, sizeof(DrawLod), compareLengthPerPixel);
+  
   return true;
 }
 
-
-static int compareLengthPerPixel(const void* a, const void* b)
-{
-  const DrawLod* lodA = (const DrawLod*)a;
-  const DrawLod* lodB = (const DrawLod*)b;
-  const float lenA = lodA->lengthPerPixel;
-  const float lenB = lodB->lengthPerPixel;
-  // higher resolution meshes for smaller lengths per pixel
-  if (lenA < lenB) {
-    return -1;
-  } else if (lenA > lenB) {
-    return +1;
-  } else {
-    return 0;
-  }
-}
 
 bool MeshDrawInfo::clientSetup(const MeshObstacle* mesh)
 {
@@ -792,6 +801,7 @@ bool MeshDrawInfo::parse(std::istream& input)
   TimeKeeper start = TimeKeeper::getCurrent();
 
   bool success = true;
+  bool allVBO = false;
   bool allDList = false;
 
   int i;
@@ -820,6 +830,9 @@ bool MeshDrawInfo::parse(std::istream& input)
     }
     else if (strcasecmp(cmd.c_str(), "end") == 0) {
       break;
+    }
+    else if (strcasecmp(cmd.c_str(), "vbo") == 0) {
+      allVBO = true;
     }
     else if (strcasecmp(cmd.c_str(), "dlist") == 0) {
       allDList = true;

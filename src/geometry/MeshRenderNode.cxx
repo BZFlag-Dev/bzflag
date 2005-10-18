@@ -89,7 +89,7 @@ void OpaqueRenderNode::renderRadar()
     glPushMatrix();
     glCallList(*xformList);
   }
-  drawMgr->executeSet(lod, set, false, false);
+  drawMgr->executeSetGeometry(lod, set);
   if (*xformList != INVALID_GL_LIST_ID) {
     glPopMatrix();
   }
@@ -103,7 +103,7 @@ void OpaqueRenderNode::renderShadow()
     glPushMatrix();
     glCallList(*xformList);
   }
-  drawMgr->executeSet(lod, set, false, false);
+  drawMgr->executeSetGeometry(lod, set);
   if (*xformList != INVALID_GL_LIST_ID) {
     glPopMatrix();
   }

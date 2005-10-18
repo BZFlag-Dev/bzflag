@@ -58,28 +58,28 @@ MeshFragSceneNode::Geometry::~Geometry()
 
 inline void MeshFragSceneNode::Geometry::drawV() const
 {
-  glVertexPointer(3, GL_FLOAT, 0, sceneNode->vertices);
-  glEnableClientState(GL_VERTEX_ARRAY);
+  glDisableClientState(GL_NORMAL_ARRAY);
+  glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
+  glVertexPointer(3, GL_FLOAT, 0, sceneNode->vertices);
   glDrawArrays(GL_TRIANGLES, 0, sceneNode->arrayCount * 3);
 
-  glDisableClientState(GL_VERTEX_ARRAY);
-
+  glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+  glEnableClientState(GL_NORMAL_ARRAY);
+  
   return;
 }
 
 
 inline void MeshFragSceneNode::Geometry::drawVT() const
 {
+  glDisableClientState(GL_NORMAL_ARRAY);
+  
   glVertexPointer(3, GL_FLOAT, 0, sceneNode->vertices);
-  glEnableClientState(GL_VERTEX_ARRAY);
   glTexCoordPointer(2, GL_FLOAT, 0, sceneNode->texcoords);
-  glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-
   glDrawArrays(GL_TRIANGLES, 0, sceneNode->arrayCount * 3);
 
-  glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-  glDisableClientState(GL_VERTEX_ARRAY);
+  glEnableClientState(GL_NORMAL_ARRAY);
 
   return;
 }
@@ -87,15 +87,13 @@ inline void MeshFragSceneNode::Geometry::drawVT() const
 
 inline void MeshFragSceneNode::Geometry::drawVN() const
 {
+  glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+  
   glVertexPointer(3, GL_FLOAT, 0, sceneNode->vertices);
-  glEnableClientState(GL_VERTEX_ARRAY);
   glNormalPointer(GL_FLOAT, 0, sceneNode->normals);
-  glEnableClientState(GL_NORMAL_ARRAY);
-
   glDrawArrays(GL_TRIANGLES, 0, sceneNode->arrayCount * 3);
 
-  glDisableClientState(GL_NORMAL_ARRAY);
-  glDisableClientState(GL_VERTEX_ARRAY);
+  glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
   return;
 }
@@ -103,19 +101,10 @@ inline void MeshFragSceneNode::Geometry::drawVN() const
 
 inline void MeshFragSceneNode::Geometry::drawVTN() const
 {
-
   glVertexPointer(3, GL_FLOAT, 0, sceneNode->vertices);
-  glEnableClientState(GL_VERTEX_ARRAY);
   glNormalPointer(GL_FLOAT, 0, sceneNode->normals);
-  glEnableClientState(GL_NORMAL_ARRAY);
   glTexCoordPointer(2, GL_FLOAT, 0, sceneNode->texcoords);
-  glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-
   glDrawArrays(GL_TRIANGLES, 0, sceneNode->arrayCount * 3);
-
-  glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-  glDisableClientState(GL_NORMAL_ARRAY);
-  glDisableClientState(GL_VERTEX_ARRAY);
 
   return;
 }
@@ -156,14 +145,16 @@ void MeshFragSceneNode::Geometry::render()
 
 void MeshFragSceneNode::Geometry::renderRadar()
 {
-  drawV();
+  glVertexPointer(3, GL_FLOAT, 0, sceneNode->vertices);
+  glDrawArrays(GL_TRIANGLES, 0, sceneNode->arrayCount * 3);
   return;
 }
 
 
 void MeshFragSceneNode::Geometry::renderShadow()
 {
-  drawV();
+  glVertexPointer(3, GL_FLOAT, 0, sceneNode->vertices);
+  glDrawArrays(GL_TRIANGLES, 0, sceneNode->arrayCount * 3);
   return;
 }
 

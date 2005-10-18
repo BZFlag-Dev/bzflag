@@ -118,9 +118,9 @@ class TankSceneNode : public SceneNode {
 	void		setTankSize(TankGeometryEnums::TankSize);
 	void		sortOrder(bool above, bool towards, bool left);
 	void		setNarrowWithDepth(bool narrow);
-	void		render();
 	const GLfloat*	getPosition() const { return sceneNode->getSphere(); }
 
+	void		render();
 	void		renderPart(TankGeometryEnums::TankPart part);
 	void		renderParts();
 	void		renderTopParts();
@@ -162,6 +162,7 @@ class TankSceneNode : public SceneNode {
     bool		useOverride;
     bool		onlyShadows;
     bool		transparent, sort;
+    float		spawnFraction;
     float		explodeFraction;
     bool		clip;
     bool		inTheCockpit;

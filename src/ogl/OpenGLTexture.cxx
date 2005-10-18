@@ -374,6 +374,57 @@ int OpenGLTexture::getBestFormat(int _width, int _height, const GLvoid* pixels)
 }
 
 
+bool OpenGLTexture::getColorAverages(float rgba[4], bool factorAlpha) const
+{
+  if ((image == NULL) || (scaledWidth <= 0) || (scaledHeight <= 0)) {
+    return false;
+  }
+
+  factorAlpha = (factorAlpha && alpha);
+  const int channelCount = alpha ? 4 : 3;
+  
+  // tally the values
+  unsigned long long int rgbaTally[4] = {0, 0, 0, 0};
+  for (int x = 0; x < scaledWidth; x++) {
+    for (int y = 0; y < scaledHeight; y++) {
+      for (int c = 0; c < channelCount; c++) {
+        const int pixelBase = 4 * (x + (y * scaledWidth));
+        if (factorAlpha) {
+          const GLubyte alphaVal = image[pixelBase + 3];
+          if (c == 3) {
+            rgbaTally[3] += alphaVal;
+          } else {
+            rgbaTally[c] += image[pixelBase + c] * alphaVal;
+          }
+        } else {
+          rgbaTally[c] += image[pixelBase + c];
+        }
+      }
+    }
+  }
+
+  // calculate the alpha average
+  float maxTally = 255.0f * (scaledWidth * scaledHeight);
+  if (channelCount == 3) {
+    rgba[3] = 1.0f;
+  } else {
+    rgba[3] = (float)rgbaTally[3] / maxTally;
+  }
+
+  // adjust the maxTally for alpha weighting
+  if (factorAlpha) {
+    maxTally = maxTally * 255.0f;
+  }
+  
+  // calcualte the color averages
+  for (int c = 0; c < 3; c++) {
+    rgba[c] = (float)rgbaTally[c] / maxTally;
+  }
+    
+  return true;
+}
+    
+
 // Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***

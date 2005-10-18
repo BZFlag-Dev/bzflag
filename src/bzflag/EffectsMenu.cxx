@@ -82,7 +82,8 @@ EffectsMenu::EffectsMenu()
   option->setCallback(callback, (void*)"F");
   options = &option->getList();
   options->push_back(std::string("Off"));
-  options->push_back(std::string("On"));
+  options->push_back(std::string("Fast"));
+  options->push_back(std::string("Nice"));
   option->update();
   listHUD.push_back(option);
 
@@ -320,7 +321,7 @@ void EffectsMenu::resize(int _width, int _height)
   ((HUDuiList*)listHUD[i++])->setIndex(int((BZDB.eval("userRainScale")
 					    * 10.0f) + 0.5f));
   ((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("userMirror") ? 1 : 0);
-  ((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("fogEffect") ? 1 : 0);
+  ((HUDuiList*)listHUD[i++])->setIndex(BZDB.evalInt("fogEffect"));
   ((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("showTreads") ? 1 : 0);
   int treadIndex = 0;
   if (BZDB.isTrue("animatedTreads")) {
@@ -341,17 +342,17 @@ void EffectsMenu::resize(int _width, int _height)
     ((HUDuiList*)listHUD[i++])->setIndex(2);
   }
   ((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("useFancyEffects") ? 1 : 0);
-  ((HUDuiList*)listHUD[i++])->setIndex(static_cast<int>(BZDB.eval("spawnEffect")));
+  ((HUDuiList*)listHUD[i++])->setIndex(BZDB.evalInt("spawnEffect"));
   ((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("enableLocalSpawnEffect") ? 1 : 0);
-  ((HUDuiList*)listHUD[i++])->setIndex(static_cast<int>(BZDB.eval("deathEffect")));
-  ((HUDuiList*)listHUD[i++])->setIndex(static_cast<int>(BZDB.eval("shotEffect")));
+  ((HUDuiList*)listHUD[i++])->setIndex(BZDB.evalInt("deathEffect"));
+  ((HUDuiList*)listHUD[i++])->setIndex(BZDB.evalInt("shotEffect"));
   ((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("enableLocalShotEffect") ? 1 : 0);
   ((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("useVelOnShotEffects") ? 1 : 0);
-  ((HUDuiList*)listHUD[i++])->setIndex(static_cast<int>(BZDB.eval("landEffect")));
-  ((HUDuiList*)listHUD[i++])->setIndex(static_cast<int>(BZDB.eval("gmPuffEffect")));
+  ((HUDuiList*)listHUD[i++])->setIndex(BZDB.evalInt("landEffect"));
+  ((HUDuiList*)listHUD[i++])->setIndex(BZDB.evalInt("gmPuffEffect"));
   ((HUDuiList*)listHUD[i++])->setIndex(static_cast<int>(1 / BZDB.eval("gmPuffTime") - 3));
-  ((HUDuiList*)listHUD[i++])->setIndex(static_cast<int>(BZDB.eval("ricoEffect")));
-  ((HUDuiList*)listHUD[i++])->setIndex(static_cast<int>(BZDB.eval("tpEffect")));
+  ((HUDuiList*)listHUD[i++])->setIndex(BZDB.evalInt("ricoEffect"));
+  ((HUDuiList*)listHUD[i++])->setIndex(BZDB.evalInt("tpEffect"));
 }
 
 
@@ -370,7 +371,7 @@ void EffectsMenu::callback(HUDuiControl* w, void* data)
       break;
     }
     case 'F': {
-      BZDB.set("fogEffect", list->getIndex() ? "1" : "0");
+      BZDB.setInt("fogEffect", list->getIndex());
       break;
     }
     case 'T': {

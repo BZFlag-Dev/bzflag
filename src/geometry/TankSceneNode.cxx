@@ -288,15 +288,15 @@ void TankSceneNode::addLight(SceneRenderer& renderer)
 {
   if (jumpJetsOn) {
     // the real light
-    jumpJetsRealLight.setColor(jumpJetsScale * 1.0f,
-			       jumpJetsScale * 0.7f,
-			       jumpJetsScale * 0.3f);
+    jumpJetsRealLight.setColor(jumpJetsScale * 1.5f,
+			       jumpJetsScale * 1.0f,
+			       jumpJetsScale * 0.5f);
     renderer.addLight(jumpJetsRealLight);
     // the ground lights
     for (int i = 0; i < 4; i++) {
-      jumpJetsGroundLights[i].setColor(jumpJetsLengths[i] * 1.0f * 0.25f,
-				       jumpJetsLengths[i] * 0.7f * 0.25f,
-				       jumpJetsLengths[i] * 0.3f * 0.25f);
+      jumpJetsGroundLights[i].setColor(jumpJetsLengths[i] * 1.5f * 0.25f,
+				       jumpJetsLengths[i] * 1.0f * 0.25f,
+				       jumpJetsLengths[i] * 0.5f * 0.25f);
       renderer.addLight(jumpJetsGroundLights[i]);
     }
   }
@@ -963,7 +963,6 @@ void TankSceneNode::TankRenderNode::render()
       glEnable(GL_CULL_FACE);
     }
   }
-
 
   // re-enable the dynamic lights
   if (switchLights) {

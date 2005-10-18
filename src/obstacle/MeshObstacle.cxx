@@ -931,10 +931,10 @@ void MeshObstacle::print(std::ostream& out, const std::string& indent) const
     int i;
 
     out << "# OBJ - start" << std::endl;
+    unsigned int pNum = (unsigned int)this;
     if (name.size() > 0) {
-      out << "o " << name << std::endl;
+      out << "o " << name << "_" << pNum << std::endl;
     } else {
-      unsigned int pNum = (unsigned int)this;
       out << "o unnamed_" << pNum << std::endl;
     }
 

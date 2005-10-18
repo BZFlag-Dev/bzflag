@@ -377,7 +377,8 @@ void MeshSceneNode::notifyStyleChange()
                                    mat.colorPtr, lod, set, extPtr, setPos);
         if ((fabsf(drawSet.sphere[0]) > 0.001f) &&
             (fabsf(drawSet.sphere[1]) > 0.001f) &&
-            (mat.color[3] != 0.0f)) {
+            (mat.color[3] != 0.0f) &&
+            (drawInfo->getAnimationInfo() != NULL)) {
           animRepos = true;
           mat.animRepos = true;
         } else {

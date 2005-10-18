@@ -97,6 +97,7 @@
 #include "TextureManager.h"
 #include "ForceFeedback.h"
 #include "TankGeometryMgr.h"
+#include "SphereSceneNode.h"
 #include "motd.h"
 #include "TrackMarks.h"
 #include "md5.h"
@@ -855,14 +856,18 @@ static void		doMotion()
 
     rotation *= BZDB.eval("displayFOV") / 60.0f;
     if (BZDB.isTrue("slowKeyboard")) {
-      rotation /= 2.0f;
-      speed /= 2.0f;
+      rotation *= 0.5f;
+      speed *= 0.5f;
     }
   } else { // both mouse and joystick
 
       // calculate desired rotation
     if (keyboardRotation && !devDriving) {
       rotation = float(keyboardRotation);
+      rotation *= BZDB.eval("displayFOV") / 60.0f;
+      if (BZDB.isTrue("slowKeyboard")) {
+        rotation *= 0.5f;
+      }
     } else if (mx < -noMotionSize) {
       rotation = float(-mx - noMotionSize) / float(maxMotionSize);
       if (rotation > 1.0f)
@@ -876,6 +881,12 @@ static void		doMotion()
     // calculate desired speed
     if (keyboardSpeed && !devDriving) {
       speed = float(keyboardSpeed);
+      if (speed < 0.0f) {
+        speed *= 0.5f;
+      }
+      if (BZDB.isTrue("slowKeyboard")) {
+        speed *= 0.5f;
+      }
     } else if (my < -noMotionSize) {
       speed = float(-my - noMotionSize) / float(maxMotionSize);
       if (speed > 1.0f)
@@ -4138,7 +4149,7 @@ static void enteringServer(void *buf)
 
   if ((myTank->getTeam() == ObserverTeam) || devDriving) {
     ROAM.setMode(Roaming::roamViewFP);
-    ROAM.resetCamera();
+//    ROAM.resetCamera();
   } else {
     ROAM.setMode(Roaming::roamViewDisabled);
   }
@@ -4918,7 +4929,8 @@ void drawFrame(const float dt)
 	  if (targetFlag->status != FlagOnTank) {
 	    targetPoint[2] += muzzleHeight;
 	  } else {
-	    targetPoint[2] -= (BZDBCache::tankHeight - muzzleHeight);
+	    targetPoint[2] -= (BZDBCache::tankHeight -
+                               BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT));
 	  }
 	}
 	roamViewAngle = (float) (atan2(targetPoint[1]-eyePoint[1],
@@ -5626,7 +5638,7 @@ static void		playingLoop()
 
   // main loop
   while (!CommandsStandard::isQuit()) {
-
+  
     BZDBCache::update();
 
     // set this step game time
@@ -5934,23 +5946,20 @@ static void		playingLoop()
     // limit the fps to save battery life by minimizing cpu usage
     bool saveEnergy = BZDB.isTrue("saveEnergy");
     if (saveEnergy) {
-      const int FPS_LIMIT = BZDB.evalInt("fpsLimit");
-      const double fps_delay = 1.0 / (double)FPS_LIMIT;
-
-      if (fps_delay - dt > 0.0001) {
-#ifdef DEBUG
-	// print debug once per second
-	static int blah = FPS_LIMIT;
-	if (blah-- == 0) {
-	  blah=FPS_LIMIT;
-	  DEBUG2("Sleeping for %f  (%f - %f)\n", fps_delay - dt, fps_delay, dt);
-	}
-#endif
-	// sleep the time remaining to maintain the fps
-	TimeKeeper::sleep(fps_delay - dt);
-      }
+      static TimeKeeper lastTime = TimeKeeper::getCurrent();
+      const float fpsLimit = BZDB.eval("fpsLimit");
+      if ((fpsLimit == fpsLimit) && (fpsLimit > 0.0f)) {
+        const float period = (1.0f / fpsLimit);
+        while (true) {
+          const float diff = TimeKeeper::getCurrent() - lastTime;
+          if (diff > period) {
+            break;
+          }
+          TimeKeeper::sleep(period - diff);
+        }
+        lastTime = TimeKeeper::getCurrent();
+      } // end valid fpsLimit
     } // end energy saver check
-
   } // end main client loop
 
   delete worldDownLoader;
@@ -6220,6 +6229,7 @@ void			startPlaying(BzfDisplay* _display,
   // initialize the tank display lists
   // (do this before calling SceneRenderer::render())
   TankGeometryMgr::init();
+  SphereLodSceneNode::init();
 
   // make control panel
   ControlPanel _controlPanel(*mainWindow, *sceneRenderer);
@@ -6543,6 +6553,8 @@ void			startPlaying(BzfDisplay* _display,
   playingLoop();
 
   // clean up
+  TankGeometryMgr::kill();
+  SphereLodSceneNode::kill();
   if (resourceDownloader)
     delete resourceDownloader;
   delete motd;

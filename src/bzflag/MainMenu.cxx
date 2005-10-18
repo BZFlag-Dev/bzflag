@@ -87,6 +87,9 @@ void	  MainMenu::createControls()
   options = createLabel("Options");
   listHUD.push_back(options);
 
+  save = createLabel("Save Settings");
+  listHUD.push_back(save);
+
   help = createLabel("Help");
   listHUD.push_back(help);
 
@@ -97,9 +100,6 @@ void	  MainMenu::createControls()
   } else {
     leave = NULL;
   }
-
-  save = createLabel("Save Settings");
-  listHUD.push_back(save);
 
   quit = createLabel("Quit");
   listHUD.push_back(quit);

@@ -139,6 +139,7 @@ public:
   void			setSceneDatabase(SceneDatabase*);
 
   const Extents*	getVisualExtents() const;
+  const float		getLengthPerPixel() const;
 
   BackgroundRenderer*	getBackground();
   void			setBackground(BackgroundRenderer*);
@@ -177,20 +178,21 @@ private:
   void		renderPostDimming();
 
   MainWindow*		window;
-  bool		blank;
-  bool		invert;
-  bool		mirror;
-  bool		drawGround;
-  bool		clearZbuffer;
+  bool			blank;
+  bool			invert;
+  bool			mirror;
+  bool			drawGround;
+  bool			clearZbuffer;
   ViewFrustum		frustum;
-  GLint		maxLights;
-  GLint		reservedLights;
-  GLint		dynamicLights;
-  int		lightsSize;
-  int		lightsCount;
-  OpenGLLight**	lights;
+  float			lengthPerPixel;
+  GLint			maxLights;
+  GLint			reservedLights;
+  GLint			dynamicLights;
+  int			lightsSize;
+  int			lightsCount;
+  OpenGLLight**		lights;
   OpenGLLight		theSun;
-  bool		sunOrMoonUp;
+  bool			sunOrMoonUp;
   GLfloat		sunDirection[3];	// or moon
   GLfloat		sunColor[3];
   GLfloat		sunScaledColor[3];
@@ -271,6 +273,11 @@ inline const ViewFrustum&	SceneRenderer::getViewFrustum() const
 inline ViewFrustum&		SceneRenderer::getViewFrustum()
 {
   return frustum;
+}
+
+inline const float		SceneRenderer::getLengthPerPixel() const
+{
+  return lengthPerPixel;
 }
 
 inline const OpenGLLight&	SceneRenderer::getLight(int index) const

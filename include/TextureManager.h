@@ -67,6 +67,8 @@ public:
   const ImageInfo& getInfo ( int id );
   const ImageInfo& getInfo ( const char* name );
 
+  bool getColorAverages(int texId, float rgba[4], bool factorAlpha) const;
+
   OpenGLTexture::Filter getMaxFilter ( void );
   std::string getMaxFilterName ( void );
   void setMaxFilter ( OpenGLTexture::Filter filter );
@@ -96,6 +98,7 @@ private:
   TextureIDMap   textureIDs;
   TextureNameMap textureNames;
 };
+
 
 #endif //_TEXTURE_MANAGER_H
 

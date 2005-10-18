@@ -111,19 +111,55 @@ void MeshDrawMgr::executeSet(int lod, int set, bool _normals, bool _texcoords)
   const GLuint list = lodLists[lod].setLists[set];
   if (list != INVALID_GL_LIST_ID) {
     glCallList(list);
-  } else {
+  } 
+  else {
     glVertexPointer(3, GL_FLOAT, 0, vertices);
-    glEnableClientState(GL_VERTEX_ARRAY);
+
     if (_normals) {
       glNormalPointer(GL_FLOAT, 0, normals);
-      glEnableClientState(GL_NORMAL_ARRAY);
+    } else {
+      glDisableClientState(GL_NORMAL_ARRAY);
     }
     if (_texcoords) {
       glTexCoordPointer(2, GL_FLOAT, 0, texcoords);
+    } else {
+      glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+    }
+
+    rawExecuteCommands(lod, set);
+
+    if (!_normals) {
+      glEnableClientState(GL_NORMAL_ARRAY);
+    }
+    if (!_texcoords) {
       glEnableClientState(GL_TEXTURE_COORD_ARRAY);
     }
+  }
+
+  if (animInfo != NULL) {
+    glPopMatrix();
+  }
+
+  return;
+}
+
+
+void MeshDrawMgr::executeSetGeometry(int lod, int set)
+{
+  // FIXME
+  const AnimationInfo* animInfo = drawInfo->getAnimationInfo();
+  if (animInfo != NULL) {
+    glPushMatrix();
+    glRotatef(animInfo->angle, 0.0f, 0.0f, 1.0f);
+  }
+
+  const GLuint list = lodLists[lod].setLists[set];
+  if (list != INVALID_GL_LIST_ID) {
+    glCallList(list);
+  } 
+  else {
+    glVertexPointer(3, GL_FLOAT, 0, vertices);
     rawExecuteCommands(lod, set);
-    disableArrays();
   }
 
   if (animInfo != NULL) {
@@ -192,6 +228,7 @@ void MeshDrawMgr::makeLists()
   glTexCoordPointer(2, GL_FLOAT, 0, texcoords);
   glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
+
   for (int lod = 0; lod < lodCount; lod++) {
     const DrawLod& drawLod = drawLods[lod];
     for (int set = 0; set < drawLod.count; set++) {
@@ -216,8 +253,6 @@ void MeshDrawMgr::makeLists()
       }
     }
   }
-
-  disableArrays();
 
   return;
 }
@@ -256,6 +291,8 @@ void MeshDrawMgr::freeContext(void* data)
   return;
 }
 
+
+/******************************************************************************/
 
 // Local Variables: ***
 // mode:C++ ***

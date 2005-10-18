@@ -313,10 +313,13 @@ void SceneRenderer::setQuality(int value)
   else
     BZDB.set("moonSegments","12");
 
-  if (useQualityValue > 0)
+  if (useQualityValue > 0) {
+    // this can be modified by OpenGLMaterial
     glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, GL_TRUE);
-  else
+  } else {
+    // OpenGLMaterial will not modify if (quality <= 0)
     glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, GL_FALSE);
+  }
 
   // this setting helps keep those specular highlights
   // highlighting when applied to a dark textured surface.
@@ -337,7 +340,6 @@ void SceneRenderer::setQuality(int value)
 		  GL_SINGLE_COLOR_EXT);
 #  endif
 #endif
-
 
   BZDB.set("useQuality", TextUtils::format("%d", value));
 }
@@ -698,7 +700,7 @@ void SceneRenderer::render(bool _lastFrame, bool _sameFrame,
 {
   lastFrame = _lastFrame;
   sameFrame = _sameFrame;
-
+  
   // update the SceneNode, Background, and TrackMark styles
   if (needStyleUpdate) {
     if (scene) {
@@ -708,7 +710,6 @@ void SceneRenderer::render(bool _lastFrame, bool _sameFrame,
       background->notifyStyleChange();
     }
     TrackMarks::notifyStyleChange();
-    glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, GL_FALSE);
     needStyleUpdate = false;
   }
 
@@ -732,7 +733,17 @@ void SceneRenderer::render(bool _lastFrame, bool _sameFrame,
   // setup the viewport LOD scale
   MeshSceneNode::setLodScale(window->getWidth(), frustum.getFOVx(),
 			     window->getViewHeight(), frustum.getFOVy());
-
+  {
+    const int pixelsX = window->getWidth();
+    const int pixelsY = window->getViewHeight();
+    const float fovx = frustum.getFOVx();
+    const float fovy = frustum.getFOVy();
+    const float lppx = 2.0f * sinf(fovx * 0.5f) / (float)pixelsX;
+    const float lppy = 2.0f * sinf(fovy * 0.5f) / (float)pixelsY;
+    const float lpp = (lppx < lppy) ? lppx : lppy;
+    lengthPerPixel = lpp * BZDB.eval("lodScale");
+  }
+        
   // get the track mark sceneNodes (only for BSP)
   if (scene) {
     TrackMarks::addSceneNodes(scene);
@@ -1143,10 +1154,10 @@ static bool setupMapFog()
     fogColor[0] = fogColor[1] = fogColor[2] = 0.1f;
     fogColor[3] = 0.0f; // has no effect
   }
-  if (BZDB.isTrue("fogFast")) {
-    glHint(GL_FOG_HINT, GL_FASTEST);
-  } else {
+  if (BZDB.evalInt("fogEffect") >= 2) {
     glHint(GL_FOG_HINT, GL_NICEST);
+  } else {
+    glHint(GL_FOG_HINT, GL_FASTEST);
   }
   
   // setup GL fog

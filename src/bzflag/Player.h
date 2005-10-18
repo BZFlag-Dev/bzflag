@@ -249,6 +249,7 @@ private:
   float			alpha;			// current tank translucency
   float			alphaRate;		// current tank translucency
   float			alphaTarget;		// current tank translucency
+  TimeKeeper		spawnTime;		// time I started spawning
   TimeKeeper		explodeTime;		// time I started exploding
   TimeKeeper		teleportTime;		// time I started teleporting
   short			fromTeleporter;		// teleporter I entered

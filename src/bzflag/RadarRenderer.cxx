@@ -890,6 +890,10 @@ void RadarRenderer::renderBoxPyrMeshFast(float _range)
   OpenGLGState gs = gb.getState();
   gs.setState();
 
+  // disable the unused arrays
+  glDisableClientState(GL_NORMAL_ARRAY);
+  glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+  
   // now that the texture is bound, setup the clamp mode
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
 
@@ -924,6 +928,10 @@ void RadarRenderer::renderBoxPyrMeshFast(float _range)
   glDisable(GL_TEXTURE_GEN_S);
 
   OpenGLGState::resetState();
+
+  // re-enable the arrays
+  glEnableClientState(GL_NORMAL_ARRAY);
+  glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
   // do this after the GState setting
   if (smooth) {

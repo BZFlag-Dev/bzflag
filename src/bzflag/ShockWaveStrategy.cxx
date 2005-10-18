@@ -14,6 +14,7 @@
 #include "ShockWaveStrategy.h"
 
 /* common implementation headers */
+#include "SceneRenderer.h"
 #include "StateDatabase.h"
 #include "Team.h"
 
@@ -36,7 +37,13 @@ ShockWaveStrategy::ShockWaveStrategy(ShotPath *_path) :
   f.lifetime *= BZDB.eval(StateDatabase::BZDB_SHOCKADLIFE);
 
   // make scene node
-  shockNode = new SphereSceneNode(_path->getPosition(), radius);
+  const float* pos = _path->getPosition();
+  if (RENDERER.useQuality() >= 3) {
+    shockNode = new SphereLodSceneNode(pos, radius);
+    shockNode->setShockWave(true);
+  } else {
+    shockNode = new SphereBspSceneNode(pos, radius);
+  } 
 
   // get team
   if (_path->getPlayer() == ServerPlayer) {
@@ -50,13 +57,19 @@ ShockWaveStrategy::ShockWaveStrategy(ShotPath *_path) :
 
   bool rabbitMode = World::getWorld()->allowRabbit();
   const float* c = Team::getRadarColor(team, rabbitMode);
-  shockNode->setColor(c[0], c[1], c[2], 0.75f);
+  if (RENDERER.useQuality() >= 3) {
+    shockNode->setColor(c[0], c[1], c[2], 0.5f);
+  } else {
+    shockNode->setColor(c[0], c[1], c[2], 0.75f);
+  }
 }
+
 
 ShockWaveStrategy::~ShockWaveStrategy()
 {
   delete shockNode;
 }
+
 
 void ShockWaveStrategy::update(float dt)
 {
@@ -64,8 +77,6 @@ void ShockWaveStrategy::update(float dt)
   radius2 = radius * radius;
 
   // update shock wave scene node
-  const GLfloat frac = (radius - BZDB.eval(StateDatabase::BZDB_SHOCKINRADIUS)) /
-    (BZDB.eval(StateDatabase::BZDB_SHOCKOUTRADIUS) - BZDB.eval(StateDatabase::BZDB_SHOCKINRADIUS));
   shockNode->move(getPath().getPosition(), radius);
 
   // team color
@@ -80,11 +91,21 @@ void ShockWaveStrategy::update(float dt)
 
   bool rabbitMode = World::getWorld()->allowRabbit();
   const float* c = Team::getRadarColor(currentTeam, rabbitMode);
-  shockNode->setColor(c[0], c[1], c[2], 0.75f - 0.5f * frac);
+
+  // fade old-style shockwaves
+  if (RENDERER.useQuality() >= 3) {
+    shockNode->setColor(c[0], c[1], c[2], 0.5f);
+  } else {
+    const float shockIn = BZDB.eval(StateDatabase::BZDB_SHOCKINRADIUS);
+    const float shockOut = BZDB.eval(StateDatabase::BZDB_SHOCKOUTRADIUS);
+    const GLfloat frac = (radius - shockIn) / (shockOut - shockIn);
+    shockNode->setColor(c[0], c[1], c[2], 0.75f - (0.5f * frac));
+  }
 
   // expire when full size
   if (radius >= BZDB.eval(StateDatabase::BZDB_SHOCKOUTRADIUS)) setExpired();
 }
+
 
 float ShockWaveStrategy::checkHit(const BaseLocalPlayer* tank, float position[3]) const
 {

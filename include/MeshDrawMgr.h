@@ -22,6 +22,7 @@ class MeshDrawMgr {
     ~MeshDrawMgr();
 
     void executeSet(int lod, int set, bool normals, bool texcoords);
+    void executeSetGeometry(int lod, int set);
 
     static void disableArrays();
     static void init();
