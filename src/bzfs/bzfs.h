@@ -41,6 +41,7 @@
 #include "CmdLineOptions.h"
 #include "GameKeeper.h"
 #include "FlagInfo.h"
+#include "WorldInfo.h"
 
 extern void sendMessage(int         playerIndex,
 			PlayerId    dstPlayer,
@@ -69,6 +70,8 @@ extern void  sendIPUpdate(int targetPlayer = -1, int playerIndex = -1);
 extern void  sendPlayerInfo(void);
 extern void  directMessage(int playerIndex, uint16_t code,
 			   int len, const void *msg);
+extern int   getCurMaxPlayers();
+extern bool  areFoes(TeamColor team1, TeamColor team2);
 
 // initialize permission groups
 extern void initGroups();
@@ -84,6 +87,7 @@ extern bool            countdownActive;
 extern int             countdownDelay;
 extern TimeKeeper      countdownPauseStart;
 extern char            hexDigest[50];
+extern WorldInfo      *world;
 extern char           *worldDatabase;
 extern uint32_t        worldDatabaseSize;
 extern char            worldSettings[4 + WorldSettingsSize];

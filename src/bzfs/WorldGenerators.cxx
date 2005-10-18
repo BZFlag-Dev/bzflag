@@ -36,17 +36,21 @@
 
 WorldInfo *defineRandomWorld()
 {
-  WorldInfo* world = new WorldInfo();
-  if (!world)
+  WorldInfo* myWorld = new WorldInfo();
+  if (!myWorld)
     return NULL;
 
   // make walls
   float worldSize = BZDBCache::worldSize;
   float wallHeight = BZDB.eval(StateDatabase::BZDB_WALLHEIGHT);
-  world->addWall(0.0f, 0.5f * worldSize, 0.0f, (float)(1.5 * M_PI), 0.5f * worldSize, wallHeight);
-  world->addWall(0.5f * worldSize, 0.0f, 0.0f, (float)M_PI, 0.5f * worldSize, wallHeight);
-  world->addWall(0.0f, -0.5f * worldSize, 0.0f, (float)(0.5 * M_PI), 0.5f * worldSize, wallHeight);
-  world->addWall(-0.5f * worldSize, 0.0f, 0.0f, 0.0f, 0.5f * worldSize, wallHeight);
+  myWorld->addWall(0.0f, 0.5f * worldSize, 0.0f, (float)(1.5 * M_PI),
+		   0.5f * worldSize, wallHeight);
+  myWorld->addWall(0.5f * worldSize, 0.0f, 0.0f, (float)M_PI, 0.5f * worldSize,
+		   wallHeight);
+  myWorld->addWall(0.0f, -0.5f * worldSize, 0.0f, (float)(0.5 * M_PI),
+		   0.5f * worldSize, wallHeight);
+  myWorld->addWall(-0.5f * worldSize, 0.0f, 0.0f, 0.0f, 0.5f * worldSize,
+		   wallHeight);
 
   float worldfactor = worldSize / (float)DEFAULT_WORLD;
   int actCitySize = int(clOptions->citySize * worldfactor + 0.5f);
@@ -60,7 +64,7 @@ WorldInfo *defineRandomWorld()
   for (i = 0; i < numBoxes; i++) {
     if (clOptions->randomHeights)
       h = boxHeight * ( 2.0f * (float)bzfrand() + 0.5f);
-    world->addBox(worldSize * ((float)bzfrand() - 0.5f),
+    myWorld->addBox(worldSize * ((float)bzfrand() - 0.5f),
 	worldSize * ((float)bzfrand() - 0.5f),
 	0.0f, (float)(2.0 * M_PI * bzfrand()),
 	boxBase, boxBase, h);
@@ -74,7 +78,7 @@ WorldInfo *defineRandomWorld()
   for (i = 0; i < numPyrs; i++) {
     if (clOptions->randomHeights)
       h = pyrHeight * ( 2.0f * (float)bzfrand() + 0.5f);
-    world->addPyramid(worldSize * ((float)bzfrand() - 0.5f),
+    myWorld->addPyramid(worldSize * ((float)bzfrand() - 0.5f),
 	worldSize * ((float)bzfrand() - 0.5f),
 	0.0f, (float)(2.0 * M_PI * bzfrand()),
 	pyrBase, pyrBase, h);
@@ -93,11 +97,11 @@ WorldInfo *defineRandomWorld()
 
       // if too close to building then try again
 	  Obstacle* obs;
-      if (NOT_IN_BUILDING != world->inCylinderNoOctree(&obs, x, y, 0,
+      if (NOT_IN_BUILDING != myWorld->inCylinderNoOctree(&obs, x, y, 0,
 					       1.75f * teleBreadth, 1.0f))
 	continue;
 
-      world->addTeleporter(x, y, 0.0f, rotation,
+      myWorld->addTeleporter(x, y, 0.0f, rotation,
 	  0.5f*teleWidth, teleBreadth, 2.0f*teleHeight, teleWidth, false);
       linked[i][0] = linked[i][1] = 0;
       i++;
@@ -115,11 +119,11 @@ WorldInfo *defineRandomWorld()
 	    if (linked[i2][j2])
 	      continue;
 	    if (k++ == a) {
-	      world->addLink(2 * i + j, 2 * i2 + j2);
+	      myWorld->addLink(2 * i + j, 2 * i2 + j2);
 	      linked[i][j] = 1;
 	      numUnlinked--;
 	      if (i != i2 || j != j2) {
-		world->addLink(2 * i2 + j2, 2 * i + j);
+		myWorld->addLink(2 * i2 + j2, 2 * i + j);
 		linked[i2][j2] = 1;
 		numUnlinked--;
 	      }
@@ -130,16 +134,16 @@ WorldInfo *defineRandomWorld()
   }
 
   OBSTACLEMGR.makeWorld();
-  world->finishWorld();
+  myWorld->finishWorld();
 
-  return world;
+  return myWorld;
 }
 
 
 WorldInfo *defineTeamWorld()
 {
-  WorldInfo* world = new WorldInfo();
-  if (!world)
+  WorldInfo *myWorld = new WorldInfo();
+  if (!myWorld)
     return NULL;
 
   const float worldSize = BZDBCache::worldSize;
@@ -159,10 +163,14 @@ WorldInfo *defineTeamWorld()
 
   // make walls
   const float wallHeight = BZDB.eval(StateDatabase::BZDB_WALLHEIGHT);
-  world->addWall(0.0f, 0.5f * worldSize, 0.0f, (float)(1.5 * M_PI), 0.5f * worldSize, wallHeight);
-  world->addWall(0.5f * worldSize, 0.0f, 0.0f, (float)M_PI, 0.5f * worldSize, wallHeight);
-  world->addWall(0.0f, -0.5f * worldSize, 0.0f, (float)(0.5 * M_PI), 0.5f * worldSize, wallHeight);
-  world->addWall(-0.5f * worldSize, 0.0f, 0.0f, 0.0f, 0.5f * worldSize, wallHeight);
+  myWorld->addWall(0.0f, 0.5f * worldSize, 0.0f, (float)(1.5 * M_PI),
+		   0.5f * worldSize, wallHeight);
+  myWorld->addWall(0.5f * worldSize, 0.0f, 0.0f, (float)M_PI, 0.5f * worldSize,
+		   wallHeight);
+  myWorld->addWall(0.0f, -0.5f * worldSize, 0.0f, (float)(0.5 * M_PI),
+		   0.5f * worldSize, wallHeight);
+  myWorld->addWall(-0.5f * worldSize, 0.0f, 0.0f, 0.0f, 0.5f * worldSize,
+		   wallHeight);
 
   const float pyrHeight = BZDB.eval(StateDatabase::BZDB_PYRHEIGHT);
   const float baseSize = BZDB.eval(StateDatabase::BZDB_BASESIZE);
@@ -170,19 +178,19 @@ WorldInfo *defineTeamWorld()
   if (haveRed) {
     // around red base
     const float *pos = bases[RedTeam].getBasePosition(0);
-    world->addPyramid(
+    myWorld->addPyramid(
 	pos[0] + 0.5f * baseSize - pyrBase,
 	pos[1] - 0.5f * baseSize - pyrBase, 0.0f, 0.0f,
 	pyrBase, pyrBase, pyrHeight);
-    world->addPyramid(
+    myWorld->addPyramid(
 	pos[0] + 0.5f * baseSize + pyrBase,
 	pos[1] - 0.5f * baseSize + pyrBase, 0.0f, 0.0f,
 	pyrBase, pyrBase, pyrHeight);
-    world->addPyramid(
+    myWorld->addPyramid(
 	pos[0] + 0.5f * baseSize + pyrBase,
 	pos[1] + 0.5f * baseSize - pyrBase, 0.0f, 0.0f,
 	pyrBase, pyrBase, pyrHeight);
-    world->addPyramid(
+    myWorld->addPyramid(
 	pos[0] + 0.5f * baseSize - pyrBase,
 	pos[1] + 0.5f * baseSize + pyrBase, 0.0f, 0.0f,
 	pyrBase, pyrBase, pyrHeight);
@@ -191,19 +199,19 @@ WorldInfo *defineTeamWorld()
   if (haveGreen) {
     // around green base
     const float *pos = bases[GreenTeam].getBasePosition(0);
-    world->addPyramid(
+    myWorld->addPyramid(
 	pos[0] - 0.5f * baseSize + pyrBase,
 	pos[1] - 0.5f * baseSize - pyrBase, 0.0f, 0.0f,
 	pyrBase, pyrBase, pyrHeight);
-    world->addPyramid(
+    myWorld->addPyramid(
 	pos[0] - 0.5f * baseSize - pyrBase,
 	pos[1] - 0.5f * baseSize + pyrBase, 0.0f, 0.0f,
 	pyrBase, pyrBase, pyrHeight);
-    world->addPyramid(
+    myWorld->addPyramid(
 	pos[0] - 0.5f * baseSize - pyrBase,
 	pos[1] + 0.5f * baseSize - pyrBase, 0.0f, 0.0f,
 	pyrBase, pyrBase, pyrHeight);
-    world->addPyramid(
+    myWorld->addPyramid(
 	pos[0] - 0.5f * baseSize + pyrBase,
 	pos[1] + 0.5f * baseSize + pyrBase, 0.0f, 0.0f,
 	pyrBase, pyrBase, pyrHeight);
@@ -212,19 +220,19 @@ WorldInfo *defineTeamWorld()
   if (haveBlue) {
     // around blue base
     const float *pos = bases[BlueTeam].getBasePosition(0);
-    world->addPyramid(
+    myWorld->addPyramid(
 	pos[0] - 0.5f * baseSize - pyrBase,
 	pos[1] + 0.5f * baseSize - pyrBase, 0.0f, 0.0f,
 	pyrBase, pyrBase, pyrHeight);
-    world->addPyramid(
+    myWorld->addPyramid(
 	pos[0] - 0.5f * baseSize + pyrBase,
 	pos[1] + 0.5f * baseSize + pyrBase, 0.0f, 0.0f,
 	pyrBase, pyrBase, pyrHeight);
-    world->addPyramid(
+    myWorld->addPyramid(
 	pos[0] + 0.5f * baseSize - pyrBase,
 	pos[1] + 0.5f * baseSize + pyrBase, 0.0f, 0.0f,
 	pyrBase, pyrBase, pyrHeight);
-    world->addPyramid(
+    myWorld->addPyramid(
 	pos[0] + 0.5f * baseSize + pyrBase,
 	pos[1] + 0.5f * baseSize - pyrBase, 0.0f, 0.0f,
 	pyrBase, pyrBase, pyrHeight);
@@ -233,19 +241,19 @@ WorldInfo *defineTeamWorld()
   if (havePurple) {
     // around purple base
     const float *pos = bases[PurpleTeam].getBasePosition(0);
-    world->addPyramid(
+    myWorld->addPyramid(
 	pos[0] - 0.5f * baseSize - pyrBase,
 	pos[1] - 0.5f * baseSize + pyrBase, 0.0f, 0.0f,
 	pyrBase, pyrBase, pyrHeight);
-    world->addPyramid(
+    myWorld->addPyramid(
 	pos[0] - 0.5f * baseSize + pyrBase,
 	pos[1] - 0.5f * baseSize - pyrBase, 0.0f, 0.0f,
 	pyrBase, pyrBase, pyrHeight);
-    world->addPyramid(
+    myWorld->addPyramid(
 	pos[0] + 0.5f * baseSize - pyrBase,
 	pos[1] - 0.5f * baseSize - pyrBase, 0.0f, 0.0f,
 	pyrBase, pyrBase, pyrHeight);
-    world->addPyramid(
+    myWorld->addPyramid(
 	pos[0] + 0.5f * baseSize + pyrBase,
 	pos[1] - 0.5f * baseSize + pyrBase, 0.0f, 0.0f,
 	pyrBase, pyrBase, pyrHeight);
@@ -300,13 +308,13 @@ WorldInfo *defineTeamWorld()
 
       float angle = (float)(2.0 * M_PI * bzfrand());
       if (redGreen) {
-	world->addBox(x, y, 0.0f, angle, boxBase, boxBase, h);
-	world->addBox(-x, -y, 0.0f, angle, boxBase, boxBase, h);
+	myWorld->addBox(x, y, 0.0f, angle, boxBase, boxBase, h);
+	myWorld->addBox(-x, -y, 0.0f, angle, boxBase, boxBase, h);
 	i += 2;
       }
       if (bluePurple) {
-	world->addBox(y, -x, 0.0f, angle, boxBase, boxBase, h);
-	world->addBox(-y, x, 0.0f, angle, boxBase, boxBase, h);
+	myWorld->addBox(y, -x, 0.0f, angle, boxBase, boxBase, h);
+	myWorld->addBox(-y, x, 0.0f, angle, boxBase, boxBase, h);
 	i += 2;
       }
     }
@@ -344,13 +352,13 @@ WorldInfo *defineTeamWorld()
 
       float angle = (float)(2.0 * M_PI * bzfrand());
       if (redGreen) {
-	world->addPyramid(x, y, 0.0f, angle,pyrBase, pyrBase, h);
-	world->addPyramid(-x, -y, 0.0f, angle,pyrBase, pyrBase, h);
+	myWorld->addPyramid( x,  y, 0.0f, angle,pyrBase, pyrBase, h);
+	myWorld->addPyramid(-x, -y, 0.0f, angle,pyrBase, pyrBase, h);
 	i += 2;
       }
       if (bluePurple) {
-	world->addPyramid(y, -x,0.0f, angle, pyrBase, pyrBase, h);
-	world->addPyramid(-y, x,0.0f, angle, pyrBase, pyrBase, h);
+	myWorld->addPyramid( y, -x, 0.0f, angle, pyrBase, pyrBase, h);
+	myWorld->addPyramid(-y,  x, 0.0f, angle, pyrBase, pyrBase, h);
 	i += 2;
       }
     }
@@ -371,8 +379,9 @@ WorldInfo *defineTeamWorld()
 
 	// if too close to building then try again
 	Obstacle* obs;
-	if (NOT_IN_BUILDING != world->inCylinderNoOctree(&obs, x, y, 0,
-						 1.75f * teleBreadth, 1.0f))
+	if (NOT_IN_BUILDING != myWorld->inCylinderNoOctree(&obs, x, y, 0,
+							   1.75f * teleBreadth,
+							   1.0f))
 	  continue;
 	// if to close to a base then try again
 	if ((redGreen &&
@@ -389,19 +398,24 @@ WorldInfo *defineTeamWorld()
 
 	linked[i / teamFactor][0] = linked[i / teamFactor][1] = 0;
 	if (redGreen) {
-	  world->addTeleporter(x, y, 0.0f, rotation, 0.5f * teleWidth,
-	      teleBreadth, 2.0f * teleHeight, teleWidth, false);
-	  world->addTeleporter(-x, -y, 0.0f, (float)(rotation + M_PI), 0.5f * teleWidth,
-	      teleBreadth, 2.0f * teleHeight, teleWidth, false);
+	  myWorld->addTeleporter(x,   y, 0.0f, rotation, 0.5f * teleWidth,
+				 teleBreadth, 2.0f * teleHeight, teleWidth,
+				 false);
+	  myWorld->addTeleporter(-x, -y, 0.0f, (float)(rotation + M_PI),
+				 0.5f * teleWidth, teleBreadth,
+				 2.0f * teleHeight, teleWidth, false);
 	  i += 2;
 	}
 	if (bluePurple) {
-	  world->addTeleporter(y, -x, 0.0f, (float)(rotation + M_PI / 2.0),
-			       0.5f * teleWidth, teleBreadth, 2.0f * teleWidth,
-			       teleWidth, false);
-	  world->addTeleporter(-y, x, 0.0f, (float)(rotation + M_PI * 3.0 / 2.0),
-			       0.5f * teleWidth, teleBreadth, 2.0f * teleWidth,
-			       teleWidth, false);
+	  myWorld->addTeleporter(y, -x, 0.0f, (float)(rotation + M_PI / 2.0),
+				 0.5f * teleWidth, teleBreadth,
+				 2.0f * teleWidth,
+				 teleWidth, false);
+	  myWorld->addTeleporter(-y, x, 0.0f,
+				 (float)(rotation + M_PI * 3.0 / 2.0),
+				 0.5f * teleWidth, teleBreadth,
+				 2.0f * teleWidth,
+				 teleWidth, false);
 	  i += 2;
 	}
       }
@@ -418,20 +432,28 @@ WorldInfo *defineTeamWorld()
 	      if (linked[i2][j2])
 		continue;
 	      if (k++ == a) {
-		world->addLink((2 * i + j) * teamFactor, (2 * i2 + j2) * teamFactor);
-		world->addLink((2 * i + j) * teamFactor + 1, (2 * i2 + j2) * teamFactor + 1);
+		myWorld->addLink((2 * i + j) * teamFactor,
+				 (2 * i2 + j2) * teamFactor);
+		myWorld->addLink((2 * i + j) * teamFactor + 1,
+				 (2 * i2 + j2) * teamFactor + 1);
 		if (redGreen && bluePurple) {
-		  world->addLink((2 * i + j) * teamFactor + 2, (2 * i2 + j2) * teamFactor + 2);
-		  world->addLink((2 * i + j) * teamFactor + 3, (2 * i2 + j2) * teamFactor + 3);
+		  myWorld->addLink((2 * i + j) * teamFactor + 2,
+				   (2 * i2 + j2) * teamFactor + 2);
+		  myWorld->addLink((2 * i + j) * teamFactor + 3,
+				   (2 * i2 + j2) * teamFactor + 3);
 		}
 		linked[i][j] = 1;
 		numUnlinked--;
 		if (i != i2 || j != j2) {
-		  world->addLink((2 * i2 + j2) * teamFactor, (2 * i + j) * teamFactor);
-		  world->addLink((2 * i2 + j2) * teamFactor + 1, (2 * i + j) * teamFactor + 1);
+		  myWorld->addLink((2 * i2 + j2) * teamFactor,
+				   (2 * i + j) * teamFactor);
+		  myWorld->addLink((2 * i2 + j2) * teamFactor + 1,
+				   (2 * i + j) * teamFactor + 1);
 		  if (redGreen && bluePurple) {
-		    world->addLink((2 * i2 + j2) * teamFactor + 2, (2 * i + j) * teamFactor + 2);
-		    world->addLink((2 * i2 + j2) * teamFactor + 3, (2 * i + j) * teamFactor + 3);
+		    myWorld->addLink((2 * i2 + j2) * teamFactor + 2,
+				     (2 * i + j) * teamFactor + 2);
+		    myWorld->addLink((2 * i2 + j2) * teamFactor + 3,
+				     (2 * i + j) * teamFactor + 3);
 		  }
 		  linked[i2][j2] = 1;
 		  numUnlinked--;
@@ -448,40 +470,40 @@ WorldInfo *defineTeamWorld()
     float boxBase = BZDB.eval(StateDatabase::BZDB_BOXBASE);
     float avenueSize = BZDB.eval(StateDatabase::BZDB_AVENUESIZE);
     // pyramids in center
-    world->addPyramid(
+    myWorld->addPyramid(
 	-(boxBase + 0.25f * avenueSize),
 	-(boxBase + 0.25f * avenueSize), 0.0f, 0.0f,
 	pyrBase, pyrBase, pyrHeight);
-    world->addPyramid(
+    myWorld->addPyramid(
 	(boxBase + 0.25f * avenueSize),
 	-(boxBase + 0.25f * avenueSize), 0.0f, 0.0f,
 	pyrBase, pyrBase, pyrHeight);
-    world->addPyramid(
+    myWorld->addPyramid(
 	-(boxBase + 0.25f * avenueSize),
 	(boxBase + 0.25f * avenueSize), 0.0f, 0.0f,
 	pyrBase, pyrBase, pyrHeight);
-    world->addPyramid(
+    myWorld->addPyramid(
 	(boxBase + 0.25f * avenueSize),
 	(boxBase + 0.25f * avenueSize), 0.0f, 0.0f,
 	pyrBase, pyrBase, pyrHeight);
-    world->addPyramid(0.0f, -(boxBase + 0.5f * avenueSize), 0.0f, 0.0f,
+    myWorld->addPyramid(0.0f, -(boxBase + 0.5f * avenueSize), 0.0f, 0.0f,
 	pyrBase, pyrBase, pyrHeight);
-    world->addPyramid(0.0f,  (boxBase + 0.5f * avenueSize), 0.0f, 0.0f,
+    myWorld->addPyramid(0.0f,  (boxBase + 0.5f * avenueSize), 0.0f, 0.0f,
 	pyrBase, pyrBase, pyrHeight);
-    world->addPyramid(-(boxBase + 0.5f * avenueSize), 0.0f, 0.0f, 0.0f,
+    myWorld->addPyramid(-(boxBase + 0.5f * avenueSize), 0.0f, 0.0f, 0.0f,
 	pyrBase, pyrBase, pyrHeight);
-    world->addPyramid( (boxBase + 0.5f * avenueSize), 0.0f, 0.0f, 0.0f,
+    myWorld->addPyramid( (boxBase + 0.5f * avenueSize), 0.0f, 0.0f, 0.0f,
 	pyrBase, pyrBase, pyrHeight);
 
     // halfway out from city center
-    world->addPyramid(0.0f, -(3.0f * boxBase + 1.5f * avenueSize), 0.0f, 0.0f,
-	pyrBase, pyrBase, pyrHeight);
-    world->addPyramid(0.0f,  (3.0f * boxBase + 1.5f * avenueSize), 0.0f, 0.0f,
-	pyrBase, pyrBase, pyrHeight);
-    world->addPyramid(-(3.0f * boxBase + 1.5f * avenueSize), 0.0f, 0.0f, 0.0f,
-	pyrBase, pyrBase, pyrHeight);
-    world->addPyramid( (3.0f * boxBase + 1.5f * avenueSize), 0.0f, 0.0f, 0.0f,
-	pyrBase, pyrBase, pyrHeight);
+    myWorld->addPyramid(0.0f, -(3.0f * boxBase + 1.5f * avenueSize), 0.0f,
+			0.0f, pyrBase, pyrBase, pyrHeight);
+    myWorld->addPyramid(0.0f,  (3.0f * boxBase + 1.5f * avenueSize), 0.0f,
+			0.0f, pyrBase, pyrBase, pyrHeight);
+    myWorld->addPyramid(-(3.0f * boxBase + 1.5f * avenueSize), 0.0f, 0.0f,
+			0.0f, pyrBase, pyrBase, pyrHeight);
+    myWorld->addPyramid( (3.0f * boxBase + 1.5f * avenueSize), 0.0f, 0.0f,
+			 0.0f, pyrBase, pyrBase, pyrHeight);
     // add boxes, four at once with same height so no team has an advantage
     const float xmin = -0.5f * ((2.0f * boxBase + avenueSize) * (actCitySize - 1));
     const float ymin = -0.5f * ((2.0f * boxBase + avenueSize) * (actCitySize - 1));
@@ -492,22 +514,22 @@ WorldInfo *defineTeamWorld()
 	  float h = boxHeight;
 	  if (clOptions->randomHeights)
 	    h *= 2.0f * (float)bzfrand() + 0.5f;
-	  world->addBox(
+	  myWorld->addBox(
 	      xmin + float(i) * (2.0f * boxBase + avenueSize),
 	      ymin + float(j) * (2.0f * boxBase + avenueSize), 0.0f,
 	      clOptions->randomBoxes ? (float)(0.5 * M_PI * (bzfrand() - 0.5)) : 0.0f,
 	      boxBase, boxBase, h);
-	  world->addBox(
+	  myWorld->addBox(
 	      -1.0f * (xmin + float(i) * (2.0f * boxBase + avenueSize)),
 	      -1.0f * (ymin + float(j) * (2.0f * boxBase + avenueSize)), 0.0f,
 	      clOptions->randomBoxes ? (float)(0.5 * M_PI * (bzfrand() - 0.5)) : 0.0f,
 	      boxBase, boxBase, h);
-	  world->addBox(
+	  myWorld->addBox(
 	      -1.0f * (ymin + float(j) * (2.0f * boxBase + avenueSize)),
 	      xmin + float(i) * (2.0f * boxBase + avenueSize), 0.0f,
 	      clOptions->randomBoxes ? (float)(0.5 * M_PI * (bzfrand() - 0.5)) : 0.0f,
 	      boxBase, boxBase, h);
-	  world->addBox(
+	  myWorld->addBox(
 	      ymin + float(j) * (2.0f * boxBase + avenueSize),
 	      -1.0f * (xmin + float(i) * (2.0f * boxBase + avenueSize)), 0.0f,
 	      clOptions->randomBoxes ? (float)(0.5 * M_PI * (bzfrand() - 0.5)) : 0.0f,
@@ -522,39 +544,49 @@ WorldInfo *defineTeamWorld()
       float teleHeight = BZDB.eval(StateDatabase::BZDB_TELEHEIGHT);
       const float xoff = boxBase + 0.5f * avenueSize;
       const float yoff = boxBase + 0.5f * avenueSize;
-      world->addTeleporter( xmin - xoff,  ymin - yoff, 0.0f, (float)(1.25 * M_PI),
-			   0.5f * teleWidth, teleBreadth, 2.0f * teleHeight, teleWidth, false);
-      world->addTeleporter( xmin - xoff, -ymin + yoff, 0.0f, (float)(0.75 * M_PI),
-			   0.5f * teleWidth, teleBreadth, 2.0f * teleHeight, teleWidth, false);
-      world->addTeleporter(-xmin + xoff,  ymin - yoff, 0.0f, (float)(1.75 * M_PI),
-			   0.5f * teleWidth, teleBreadth, 2.0f * teleHeight, teleWidth, false);
-      world->addTeleporter(-xmin + xoff, -ymin + yoff, 0.0f, (float)(0.25 * M_PI),
-			   0.5f * teleWidth, teleBreadth, 2.0f * teleHeight, teleWidth, false);
-      world->addTeleporter(-3.5f * teleBreadth, -3.5f * teleBreadth, 0.0f, (float)(1.25 * M_PI),
-			   0.5f * teleWidth, teleBreadth, 2.0f * teleHeight, teleWidth, false);
-      world->addTeleporter(-3.5f * teleBreadth,  3.5f * teleBreadth, 0.0f, (float)(0.75 * M_PI),
-			   0.5f * teleWidth, teleBreadth, 2.0f * teleHeight, teleWidth, false);
-      world->addTeleporter( 3.5f * teleBreadth, -3.5f * teleBreadth, 0.0f, (float)(1.75 * M_PI),
-			   0.5f * teleWidth, teleBreadth, 2.0f * teleHeight, teleWidth, false);
-      world->addTeleporter( 3.5f * teleBreadth,  3.5f * teleBreadth, 0.0f, (float)(0.25 * M_PI),
-			   0.5f * teleWidth, teleBreadth, 2.0f * teleHeight, teleWidth, false);
 
-      world->addLink(0, 14);
-      world->addLink(1, 7);
-      world->addLink(2, 12);
-      world->addLink(3, 5);
-      world->addLink(4, 10);
-      world->addLink(5, 3);
-      world->addLink(6, 8);
-      world->addLink(7, 1);
-      world->addLink(8, 6);
-      world->addLink(9, 0);
-      world->addLink(10, 4);
-      world->addLink(11, 2);
-      world->addLink(12, 2);
-      world->addLink(13, 4);
-      world->addLink(14, 0);
-      world->addLink(15, 6);
+      myWorld->addTeleporter( xmin-xoff,  ymin-yoff, 0.0f, (float)(1.25*M_PI),
+			     0.5f*teleWidth, teleBreadth, 2.0f*teleHeight,
+			     teleWidth, false);
+      myWorld->addTeleporter( xmin-xoff, -ymin+yoff, 0.0f, (float)(0.75*M_PI),
+			     0.5f*teleWidth, teleBreadth, 2.0f*teleHeight,
+			     teleWidth, false);
+      myWorld->addTeleporter(-xmin+xoff,  ymin-yoff, 0.0f, (float)(1.75*M_PI),
+			     0.5f*teleWidth, teleBreadth, 2.0f*teleHeight,
+			     teleWidth, false);
+      myWorld->addTeleporter(-xmin+xoff, -ymin+yoff, 0.0f, (float)(0.25*M_PI),
+			     0.5f*teleWidth, teleBreadth, 2.0f*teleHeight,
+			     teleWidth, false);
+
+      myWorld->addTeleporter(-3.5f*teleBreadth, -3.5f*teleBreadth, 0.0f,
+			     (float)(1.25*M_PI), 0.5f*teleWidth, teleBreadth,
+			     2.0f*teleHeight, teleWidth, false);
+      myWorld->addTeleporter(-3.5f*teleBreadth,  3.5f*teleBreadth, 0.0f,
+			     (float)(0.75*M_PI), 0.5f*teleWidth, teleBreadth,
+			     2.0f*teleHeight, teleWidth, false);
+      myWorld->addTeleporter( 3.5f*teleBreadth, -3.5f*teleBreadth, 0.0f,
+			     (float)(1.75*M_PI), 0.5f*teleWidth, teleBreadth,
+			     2.0f*teleHeight, teleWidth, false);
+      myWorld->addTeleporter( 3.5f*teleBreadth,  3.5f*teleBreadth, 0.0f,
+			     (float)(0.25*M_PI), 0.5f*teleWidth, teleBreadth,
+			     2.0f*teleHeight, teleWidth, false);
+
+      myWorld->addLink(0, 14);
+      myWorld->addLink(1, 7);
+      myWorld->addLink(2, 12);
+      myWorld->addLink(3, 5);
+      myWorld->addLink(4, 10);
+      myWorld->addLink(5, 3);
+      myWorld->addLink(6, 8);
+      myWorld->addLink(7, 1);
+      myWorld->addLink(8, 6);
+      myWorld->addLink(9, 0);
+      myWorld->addLink(10, 4);
+      myWorld->addLink(11, 2);
+      myWorld->addLink(12, 2);
+      myWorld->addLink(13, 4);
+      myWorld->addLink(14, 0);
+      myWorld->addLink(15, 6);
     }
   }
 
@@ -571,33 +603,33 @@ WorldInfo *defineTeamWorld()
 	case RedTeam: {
 	  p[0] = (-worldSize + baseSize) / 2.0f;
 	  p[1] = 0.0f;
-	  world->addBase(p, 0.0f, size, t, false, false);
-	  zone.addFlagSafety(p[0] + safeOff, p[1] - safeOff, world);
-	  zone.addFlagSafety(p[0] + safeOff, p[1] + safeOff, world);
+	  myWorld->addBase(p, 0.0f, size, t, false, false);
+	  zone.addFlagSafety(p[0] + safeOff, p[1] - safeOff, myWorld);
+	  zone.addFlagSafety(p[0] + safeOff, p[1] + safeOff, myWorld);
 	  break;
 	}
 	case GreenTeam: {
 	  p[0] = (worldSize - baseSize) / 2.0f;
 	  p[1] = 0.0f;
-	  world->addBase(p, 0.0f, size, t, false, false);
-	  zone.addFlagSafety(p[0] - safeOff, p[1] - safeOff, world);
-	  zone.addFlagSafety(p[0] - safeOff, p[1] + safeOff, world);
+	  myWorld->addBase(p, 0.0f, size, t, false, false);
+	  zone.addFlagSafety(p[0] - safeOff, p[1] - safeOff, myWorld);
+	  zone.addFlagSafety(p[0] - safeOff, p[1] + safeOff, myWorld);
 	  break;
 	}
 	case BlueTeam: {
 	  p[0] = 0.0f;
 	  p[1] = (-worldSize + baseSize) / 2.0f;
-	  world->addBase(p, 0.0f, size, t, false, false);
-	  zone.addFlagSafety(p[0] - safeOff, p[1] + safeOff, world);
-	  zone.addFlagSafety(p[0] + safeOff, p[1] + safeOff, world);
+	  myWorld->addBase(p, 0.0f, size, t, false, false);
+	  zone.addFlagSafety(p[0] - safeOff, p[1] + safeOff, myWorld);
+	  zone.addFlagSafety(p[0] + safeOff, p[1] + safeOff, myWorld);
 	  break;
 	}
 	case PurpleTeam: {
 	  p[0] = 0.0f;
 	  p[1] = (worldSize - baseSize) / 2.0f;
-	  world->addBase(p, 0.0f, size, t, false, false);
-	  zone.addFlagSafety(p[0] - safeOff, p[1] - safeOff, world);
-	  zone.addFlagSafety(p[0] + safeOff, p[1] - safeOff, world);
+	  myWorld->addBase(p, 0.0f, size, t, false, false);
+	  zone.addFlagSafety(p[0] - safeOff, p[1] - safeOff, myWorld);
+	  zone.addFlagSafety(p[0] + safeOff, p[1] - safeOff, myWorld);
 	  break;
 	}
       }
@@ -605,9 +637,9 @@ WorldInfo *defineTeamWorld()
   }
 
   OBSTACLEMGR.makeWorld();
-  world->finishWorld();
+  myWorld->finishWorld();
 
-  return world;
+  return myWorld;
 }
 
 

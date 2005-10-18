@@ -409,8 +409,8 @@ bool BZWReader::readWorldStream(std::vector<WorldFileObject*>& wlist,
 WorldInfo* BZWReader::defineWorldFromFile()
 {
   // create world object
-  WorldInfo *world = new WorldInfo;
-  if (!world) {
+  WorldInfo *myWorld = new WorldInfo;
+  if (!myWorld) {
     errorHandler->fatalError(std::string("WorldInfo failed to initialize"), 0);
     return NULL;
   }
@@ -421,17 +421,21 @@ WorldInfo* BZWReader::defineWorldFromFile()
   if (!readWorldStream(list, worldDef)) {
     emptyWorldFileObjectList(list);
     errorHandler->fatalError(std::string("world file failed to load."), 0);
-    delete world;
+    delete myWorld;
     return NULL;
   }
 
   // make walls
   float wallHeight = BZDB.eval(StateDatabase::BZDB_WALLHEIGHT);
   float worldSize = BZDBCache::worldSize;
-  world->addWall(0.0f, 0.5f * worldSize, 0.0f, (float)(1.5 * M_PI), 0.5f * worldSize, wallHeight);
-  world->addWall(0.5f * worldSize, 0.0f, 0.0f, (float)M_PI, 0.5f * worldSize, wallHeight);
-  world->addWall(0.0f, -0.5f * worldSize, 0.0f, (float)(0.5 * M_PI), 0.5f * worldSize, wallHeight);
-  world->addWall(-0.5f * worldSize, 0.0f, 0.0f, 0.0f, 0.5f * worldSize, wallHeight);
+  myWorld->addWall(0.0f, 0.5f * worldSize, 0.0f, (float)(1.5 * M_PI),
+		   0.5f * worldSize, wallHeight);
+  myWorld->addWall(0.5f * worldSize, 0.0f, 0.0f, (float)M_PI, 0.5f * worldSize,
+		   wallHeight);
+  myWorld->addWall(0.0f, -0.5f * worldSize, 0.0f, (float)(0.5 * M_PI),
+		   0.5f * worldSize, wallHeight);
+  myWorld->addWall(-0.5f * worldSize, 0.0f, 0.0f, 0.0f, 0.5f * worldSize,
+		   wallHeight);
 
   // generate group instances
   OBSTACLEMGR.makeWorld();
@@ -452,14 +456,14 @@ WorldInfo* BZWReader::defineWorldFromFile()
   // add objects
   const unsigned int n = list.size();
   for (i = 0; i < n; ++i) {
-    list[i]->writeToWorld(world);
+    list[i]->writeToWorld(myWorld);
   }
 
   // clean up
   emptyWorldFileObjectList(list);
-  world->finishWorld();
+  myWorld->finishWorld();
 
-  return world;
+  return myWorld;
 }
 
 

@@ -19,20 +19,12 @@
 #include "SpawnPosition.h"
 #include "DropGeometry.h"
 #include "Obstacle.h"
-#include "FlagInfo.h"
-#include "WorldInfo.h"
 #include "PlayerInfo.h"
 #include "PlayerState.h"
-#include "GameKeeper.h"
 #include "BZDBCache.h"
 
 // bzfs specific headers
 #include "bzfs.h"
-
-// FIXME: from bzfs.cxx
-extern int getCurMaxPlayers();
-extern bool areFoes(TeamColor team1, TeamColor team2);
-extern WorldInfo *world;
 
 SpawnPosition::SpawnPosition(int playerId, bool onGroundOnly, bool notNearEdges) :
 		curMaxPlayers(getCurMaxPlayers())
