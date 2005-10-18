@@ -565,11 +565,8 @@ static ServerLink*	lookupServer(const Player *_player)
 #if defined(FREEZING)
 static bool		motionFreeze = false;
 #endif
-#ifdef DEBUG
+
 extern const bool devDriving = false;
-#else
-extern const bool devDriving = false;
-#endif
 
 static enum {None, Left, Right, Up, Down} keyboardMovement;
 static int shiftKeyStatus;
@@ -4829,7 +4826,7 @@ void drawFrame(const float dt)
     cumTime += float(dt);
     if (cumTime >= 2.0) {
       if (showFPS) hud->setFPS(float(frameCount) / cumTime);
-      cumTime = 0.0;
+      cumTime = 0.00000001;
       frameCount = 0;
     }
 
