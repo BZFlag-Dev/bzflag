@@ -149,7 +149,6 @@ static bool       isIdentifyFlagIn = false;
 static bool       playerHadWorld   = false;
 
 void sendFilteredMessage(int playerIndex, PlayerId dstPlayer, const char *message);
-void resetFlag(FlagInfo &flag);
 static void dropFlag(GameKeeper::Player &playerData, float pos[3]);
 static void dropAssignedFlag(int playerIndex);
 static std::string evaluateString(const std::string&);

@@ -74,6 +74,10 @@ extern void  directMessage(int playerIndex, uint16_t code,
 extern int   getCurMaxPlayers();
 extern bool  areFoes(TeamColor team1, TeamColor team2);
 extern PingPacket getTeamCounts();
+extern void       zapFlagByPlayer(int playerIndex);
+extern void       resetFlag(FlagInfo &flag);
+extern void       publicize();
+extern TeamColor  whoseBase(float x, float y, float z);
 
 // initialize permission groups
 extern void initGroups();
@@ -98,6 +102,9 @@ extern float           speedTolerance;
 extern bool            handlePings;
 extern uint16_t        maxPlayers;
 extern uint16_t        maxRealPlayers;
+extern float           pluginWorldSize;
+extern float           pluginWorldHeight;
+extern float           pluginMaxWait;
 
 #endif
 

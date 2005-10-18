@@ -48,6 +48,9 @@ typedef std::map<std::string, bz_CustomSlashCommandHandler*>	tmCustomSlashComman
 void registerCustomSlashCommand ( std::string command, bz_CustomSlashCommandHandler* handler );
 void removeCustomSlashCommand ( std::string command );
 
+extern ShutdownCommand shutdownCommand;
+extern SuperkillCommand superkillCommand;
+
 #endif
 
 // Local Variables: ***

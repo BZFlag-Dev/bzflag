@@ -34,18 +34,6 @@
 
 TimeKeeper synct = TimeKeeper::getCurrent();
 
-extern void zapFlagByPlayer(int playerIndex);
-extern void resetFlag(FlagInfo &flag);
-extern void publicize();
-extern TeamColor whoseBase(float x, float y, float z);
-
-extern float pluginWorldSize;
-extern float pluginWorldHeight;
-extern float pluginMaxWait;
-
-extern ShutdownCommand shutdownCommand;   // for bz_shutdown()
-extern SuperkillCommand superkillCommand; // for bz_superkill();
-
 // utility functions
 void setBZMatFromAPIMat (BzMaterial &bzmat, bz_MaterialInfo* material )
 {
