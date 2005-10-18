@@ -43,18 +43,10 @@
 #include "RecordReplay.h"
 #include "bzfs.h"
 #include "BZWError.h"
+#include "Permissions.h"
 
 // import from TextUtils for convenience
 using TextUtils::compare_nocase;
-
-/* data nasties */
-extern float speedTolerance;
-extern bool handlePings;
-extern std::string passFile;
-extern std::string groupsFile;
-extern std::string userDatabaseFile;
-extern uint16_t maxPlayers;
-extern uint16_t maxRealPlayers;
 
 const char *usageString =
 "[-a <vel> <rot>] "

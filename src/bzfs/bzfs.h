@@ -92,6 +92,10 @@ extern char           *worldDatabase;
 extern uint32_t        worldDatabaseSize;
 extern char            worldSettings[4 + WorldSettingsSize];
 extern uint8_t         rabbitIndex;
+extern float           speedTolerance;
+extern bool            handlePings;
+extern uint16_t        maxPlayers;
+extern uint16_t        maxRealPlayers;
 
 #endif
 
