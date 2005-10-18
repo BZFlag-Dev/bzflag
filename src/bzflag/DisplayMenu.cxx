@@ -205,6 +205,16 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
   option->update();
   listHUD.push_back(option);
 
+  option = new HUDuiList;
+  option->setFontFace(fontFace);
+  option->setLabel("Energy Saver:");
+  option->setCallback(callback, (void*)"s");
+  options = &option->getList();
+  options->push_back(std::string("Off"));
+  options->push_back(std::string("On"));
+  option->update();
+  listHUD.push_back(option);
+
   BzfDisplay* display = getDisplay();
   int numFormats = display->getNumResolutions();
   if (numFormats < 2) {
@@ -314,6 +324,8 @@ void			DisplayMenu::resize(int _width, int _height)
     ((HUDuiList*)listHUD[i])->setIndex(gammaToIndex(window->getGamma()));
   i++;
 
+  // energy saver
+  ((HUDuiList*)listHUD[i])->setIndex((int)BZDB.eval("saveEnergy"));
 }
 
 int DisplayMenu::gammaToIndex(float gamma)
@@ -394,6 +406,9 @@ void			DisplayMenu::callback(HUDuiControl* w, void* data) {
     break;
   case 'e':
     BZDB.setBool("showCollisionGrid", list->getIndex() != 0);
+    break;
+  case 's':
+    BZDB.setBool("saveEnergy", list->getIndex());
     break;
   case 'g':
     BzfWindow* window = getMainWindow()->getWindow();
