@@ -567,13 +567,13 @@ case $host_os in
 	     pc)
 	       if expr `$CC -dumpversion` \>= "3.4" > /dev/null ; then
 	         # silly hack, should be a proper configure compiler option test
-	         if [ "x$host_cpu" = "xx86_64" ] ; then
+	         if test x$host_cpu = xx86_64; then
 		   CPPFLAGS="$CPPFLAGS -mtune=k8";
 		 fi		    
 	         CPPFLAGS="$CPPFLAGS -mtune=$host_cpu";
 	       else
 	         # silly hack, should be a proper configure compiler option test
-	         if [ "x$host_cpu" = "xx86_64" ] ; then
+	         if test x$host_cpu = xx86_64; then
 		   CPPFLAGS="$CPPFLAGS -mcpu=k8";
 		 fi		    
 	         CPPFLAGS="$CPPFLAGS -mcpu=$host_cpu";
