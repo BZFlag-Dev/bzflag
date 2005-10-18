@@ -5609,6 +5609,22 @@ static void		updateDestructCountdown(float dt)
 }
 
 
+static void idleSleep(float seconds)
+{
+  static TimeKeeper idleTime = TimeKeeper::getCurrent();
+  float dtime= idleTime - TimeKeeper::getCurrent();
+  if ((dtime < -1)||(dtime > 1)) {
+    idleTime= TimeKeeper::getCurrent();
+    idleTime += -0.5;
+    // allow for some extra frames to catch up
+    return;
+  }
+  if (dtime > 0) {
+    TimeKeeper::sleep(dtime);
+  }
+  idleTime += seconds;
+}
+
 //
 // main playing loop
 //
@@ -5933,7 +5949,28 @@ static void		playingLoop()
 	setSceneDatabase();
       }
     }
-  }
+
+    // limit the fps to save battery life by minimizing cpu usage
+    int saveEnergy = (int)BZDB.eval("saveEnergy");
+    if (saveEnergy) {
+      const int FPS_LIMIT = (int)BZDB.eval(StateDatabase::BZDB_FPSLIMIT);
+      const double fps_delay = 1.0 / (double)FPS_LIMIT;
+
+      if (fps_delay - dt > 0.0001) {
+#ifdef DEBUG
+	// print debug once per second
+	static int blah = FPS_LIMIT;
+	if (blah-- == 0) {
+	  blah=FPS_LIMIT;
+	  DEBUG2("Sleeping for %f  (%f - %f)\n", fps_delay - dt, fps_delay, dt);
+	}
+#endif
+	// sleep the time remaining to maintain the fps
+	TimeKeeper::sleep(fps_delay - dt);
+      }
+    } // end energy saver check
+
+  } // end main client loop
 
   delete worldDownLoader;
   // restore the sound.  if we don't do this then we'll save the
