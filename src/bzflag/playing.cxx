@@ -5606,22 +5606,6 @@ static void		updateDestructCountdown(float dt)
 }
 
 
-static void idleSleep(float seconds)
-{
-  static TimeKeeper idleTime = TimeKeeper::getCurrent();
-  float dtime= idleTime - TimeKeeper::getCurrent();
-  if ((dtime < -1)||(dtime > 1)) {
-    idleTime= TimeKeeper::getCurrent();
-    idleTime += -0.5;
-    // allow for some extra frames to catch up
-    return;
-  }
-  if (dtime > 0) {
-    TimeKeeper::sleep(dtime);
-  }
-  idleTime += seconds;
-}
-
 //
 // main playing loop
 //
