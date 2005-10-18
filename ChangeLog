@@ -4,7 +4,7 @@
 BZFlag 2.0.5
 ------------
 
-* FPS limit energy saver option for laptops- Sean Morrison, Karsten Behrmann
+* FPS limit energy saver option for laptops - Sean Morrison, Karsten Behrmann
 * Send admin channel warning if /password fails - Garrett Padera, Jeff Myers
 * Known players not authenticated are detected - Tupone Alfredo
 * Added /checkip command - Frank Thilo
