@@ -34,6 +34,7 @@
 #include "HUDui.h"
 #include "HUDuiTypeIn.h"
 #include "Roaming.h"
+#include "playing.h"
 
 
 //
@@ -1267,8 +1268,6 @@ void			HUDRenderer::renderPlaying(SceneRenderer& renderer)
 
 void			HUDRenderer::renderNotPlaying(SceneRenderer& renderer)
 {
-  extern bool gameOver;
-
   // get view metrics
   const int width = window.getWidth();
   const int height = window.getHeight();
@@ -1336,8 +1335,6 @@ void			HUDRenderer::renderNotPlaying(SceneRenderer& renderer)
 
 void			HUDRenderer::renderRoaming(SceneRenderer& renderer)
 {
-  extern bool gameOver;
-
   // get view metrics
   const int width = window.getWidth();
   const int height = window.getHeight();

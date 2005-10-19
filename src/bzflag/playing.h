@@ -98,6 +98,7 @@ extern ServerLink*	serverLink;
 extern int		numFlags;
 extern StartupInfo	startupInfo;
 extern DefaultCompleter completer;
+extern bool             gameOver;
 
 #endif // BZF_PLAYING_H
 

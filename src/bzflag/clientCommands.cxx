@@ -36,6 +36,7 @@
 #include "SilenceDefaultKey.h"
 #include "ServerCommandKey.h"
 #include "Roaming.h"
+#include "playing.h"
 
 /* FIXME -- from playing.cxx */
 extern LocalPlayer* myTank;
@@ -44,7 +45,6 @@ extern bool fireButton;
 extern ServerLink* serverLink;
 void handleFlagDropped(Player* tank);
 void setTarget();
-extern bool gameOver;
 extern float destructCountdown;
 #include "HUDRenderer.h"
 extern HUDRenderer* hud;
