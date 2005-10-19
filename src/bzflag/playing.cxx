@@ -130,7 +130,7 @@ static const float	FlagHelpDuration = 60.0f;
 StartupInfo	startupInfo;
 static MainMenu*	mainMenu;
 ServerLink*		serverLink = NULL;
-World*			world = NULL;
+static World           *world = NULL;
 static LocalPlayer     *myTank = NULL;
 static BzfDisplay*	display = NULL;
 MainWindow*		mainWindow = NULL;

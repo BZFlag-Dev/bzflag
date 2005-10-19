@@ -37,34 +37,7 @@
 #include "ServerCommandKey.h"
 #include "Roaming.h"
 #include "playing.h"
-
-/* FIXME -- from playing.cxx */
-extern bool fireButton;
-#include "ServerLink.h"
-extern ServerLink* serverLink;
-void handleFlagDropped(Player* tank);
-void setTarget();
-extern float destructCountdown;
 #include "HUDRenderer.h"
-extern HUDRenderer* hud;
-extern bool pausedByUnmap;
-extern int savedVolume;
-bool shouldGrabMouse();
-#include "MainWindow.h"
-extern MainWindow* mainWindow;
-extern float pauseCountdown;
-#include "Address.h"
-extern char messageMessage[PlayerIdPLen + MessageLen];
-extern float clockAdjust;
-extern float roamDZoom;
-extern bool roamButton;
-#include "World.h"
-extern World* world;
-extern void warnAboutMainFlags();
-extern void warnAboutRadarFlags();
-extern void warnAboutRadar();
-extern void warnAboutConsole();
-
 
 const struct CommandListItem commandList[] = {
   { "fire",	&cmdFire,	"fire:  fire a shot" },

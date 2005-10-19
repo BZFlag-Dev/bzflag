@@ -69,6 +69,8 @@ void			addShotExplosion(const float* pos);
 void			addShotPuff(const float* pos, float azimuth, float elevation);
 void			warnAboutMainFlags();
 void			warnAboutRadarFlags();
+void                    warnAboutRadar();
+void                    warnAboutConsole();
 void			addPlayingCallback(PlayingCallback, void* data);
 void			removePlayingCallback(PlayingCallback, void* data);
 
@@ -103,6 +105,15 @@ extern StartupInfo	startupInfo;
 extern DefaultCompleter completer;
 extern bool             gameOver;
 extern ControlPanel    *controlPanel;
+extern bool             fireButton;
+extern float            destructCountdown;
+extern bool             pausedByUnmap;
+extern int              savedVolume;
+extern MainWindow      *mainWindow;
+extern float            pauseCountdown;
+extern float            clockAdjust;
+extern float            roamDZoom;
+extern bool             roamButton;
 
 #endif // BZF_PLAYING_H
 

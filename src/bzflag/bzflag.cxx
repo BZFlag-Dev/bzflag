@@ -1022,8 +1022,7 @@ int			main(int argc, char** argv)
   // now make the main window wrapper.  this'll cause the OpenGL context
   // to be bound for the first time.
   MainWindow* pmainWindow = new MainWindow(window, joystick);
-  MainWindow& mainWindow = *pmainWindow;
-  if (mainWindow.isInFault()) {
+  if (pmainWindow->isInFault()) {
     printFatalError("Error creating window - Exiting");
     return bail(1);
   }
@@ -1042,7 +1041,7 @@ int			main(int argc, char** argv)
   // set fullscreen again so MainWindow object knows it's full screen
   if (useFullscreen)
     // this will also call window create
-    mainWindow.setFullscreen();
+    pmainWindow->setFullscreen();
   else
     window->create();
 
@@ -1056,10 +1055,10 @@ int			main(int argc, char** argv)
 
   // set main window's minimum size (arbitrary but should be big enough
   // to see stuff in control panel)
-  mainWindow.setMinSize(256, 192);
+  pmainWindow->setMinSize(256, 192);
 
   // initialize graphics state
-  mainWindow.getWindow()->makeCurrent();
+  pmainWindow->getWindow()->makeCurrent();
   glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
   glClearDepth(1.0);
   glClearStencil(0);
@@ -1149,8 +1148,9 @@ int			main(int argc, char** argv)
 
   // set gamma if set in resources and we have gamma control
   if (BZDB.isSet("gamma")) {
-    if (mainWindow.getWindow()->hasGammaControl())
-      mainWindow.getWindow()->setGamma((float)atof(BZDB.get("gamma").c_str()));
+    if (pmainWindow->getWindow()->hasGammaControl())
+      pmainWindow->getWindow()->setGamma
+	((float)atof(BZDB.get("gamma").c_str()));
   }
 
   // set the scene renderer's window
@@ -1204,20 +1204,20 @@ int			main(int argc, char** argv)
 
   // grab the mouse only if allowed
   if (BZDB.isSet("mousegrab") && !BZDB.isTrue("mousegrab")) {
-    mainWindow.setNoMouseGrab();
-    mainWindow.enableGrabMouse(false);
+    pmainWindow->setNoMouseGrab();
+    pmainWindow->enableGrabMouse(false);
   } else {
-    mainWindow.enableGrabMouse(true);
+    pmainWindow->enableGrabMouse(true);
   }
 
   // set window quadrant
   if (RENDERER.getViewType() == SceneRenderer::ThreeChannel)
-    mainWindow.setQuadrant(MainWindow::UpperRight);
+    pmainWindow->setQuadrant(MainWindow::UpperRight);
   else if (RENDERER.getViewType() == SceneRenderer::Stacked)
-    mainWindow.setQuadrant(MainWindow::LowerHalf);
+    pmainWindow->setQuadrant(MainWindow::LowerHalf);
 #ifndef USE_GL_STEREO
   else if (RENDERER.getViewType() == SceneRenderer::Stereo)
-    mainWindow.setQuadrant(MainWindow::UpperRight);
+    pmainWindow->setQuadrant(MainWindow::UpperRight);
 #endif
 
   // clear the grid graphics if they are not accessible
