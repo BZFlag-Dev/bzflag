@@ -39,7 +39,6 @@
 #include "playing.h"
 
 /* FIXME -- from playing.cxx */
-extern LocalPlayer* myTank;
 extern bool fireButton;
 #include "ServerLink.h"
 extern ServerLink* serverLink;
@@ -121,6 +120,7 @@ std::string cmdJump(const std::string&, const CommandManager::ArgList& args, boo
 {
   if (args.size() != 0)
     return "usage: jump";
+  LocalPlayer *myTank = LocalPlayer::getMyTank();
   if (myTank != NULL)
     myTank->setJump();
   return std::string();
@@ -177,6 +177,7 @@ std::string cmdFire(const std::string&, const CommandManager::ArgList& args, boo
 {
   if (args.size() != 0)
     return "usage: fire";
+  LocalPlayer *myTank = LocalPlayer::getMyTank();
   if (fireButton && myTank != NULL && myTank->isAlive()
       && myTank->getTeam() != ObserverTeam)
     myTank->fireShot();
@@ -187,6 +188,7 @@ std::string cmdDrop(const std::string&, const CommandManager::ArgList& args, boo
 {
   if (args.size() != 0)
     return "usage: drop";
+  LocalPlayer *myTank = LocalPlayer::getMyTank();
   if (myTank != NULL) {
     FlagType* flag = myTank->getFlag();
     if ((flag != Flags::Null) && !myTank->isPaused() &&
@@ -206,6 +208,7 @@ std::string cmdIdentify(const std::string&, const CommandManager::ArgList& args,
 {
   if (args.size() != 0)
     return "usage: identify";
+  LocalPlayer *myTank = LocalPlayer::getMyTank();
   if (myTank != NULL)
     if (myTank->isAlive() && !myTank->isPaused())
       setTarget();
@@ -216,6 +219,7 @@ std::string cmdRestart(const std::string&, const CommandManager::ArgList& args, 
 {
   if (args.size() != 0)
     return "usage: restart";
+  LocalPlayer *myTank = LocalPlayer::getMyTank();
   if (myTank != NULL)
     if (!gameOver && !myTank->isSpawning() && (myTank->getTeam() != ObserverTeam) && !myTank->isAlive() && !myTank->isExploding()) {
       serverLink->sendAlive();
@@ -233,6 +237,7 @@ std::string cmdDestruct(const std::string&, const CommandManager::ArgList& args,
 {
   if (args.size() != 0)
     return "usage: destruct";
+  LocalPlayer *myTank = LocalPlayer::getMyTank();
   if (myTank != NULL) {
     if (destructCountdown > 0.0f) {
       destructCountdown = 0.0f;
@@ -252,6 +257,7 @@ std::string cmdPause(const std::string&, const CommandManager::ArgList& args, bo
   if (args.size() != 0)
     return "usage: pause";
 
+  LocalPlayer *myTank = LocalPlayer::getMyTank();
   if (!pausedByUnmap && myTank && myTank->isAlive() && !myTank->isAutoPilot()) {
     if (myTank->isPaused()) {
       // already paused, so unpause
@@ -308,6 +314,7 @@ std::string cmdAutoPilot(const std::string&, const CommandManager::ArgList& args
     return std::string();
   }
 
+  LocalPlayer *myTank = LocalPlayer::getMyTank();
   if (myTank != NULL && myTank->getTeam() != ObserverTeam) {
     if (myTank->isAutoPilot()) {
 
@@ -440,6 +447,7 @@ std::string cmdSend(const std::string&, const CommandManager::ArgList& args, boo
   static ComposeDefaultKey composeKeyHandler;
   if (args.size() != 1)
     return "usage: send {all|team|nemesis|recipient|admin}";
+  LocalPlayer *myTank = LocalPlayer::getMyTank();
   if (!myTank)
     return "use send only when connected";
   std::string composePrompt;
@@ -710,6 +718,7 @@ std::string cmdServerCommand(const std::string&, const CommandManager::ArgList& 
   static ServerCommandKey serverCommandKeyHandler;
   if (args.size() != 0)
     return "usage: servercommand";
+  LocalPlayer *myTank = LocalPlayer::getMyTank();
   if (!myTank)
     return "use only when connected";
   static bool prevAdmin = myTank->isAdmin();

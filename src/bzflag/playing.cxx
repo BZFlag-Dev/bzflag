@@ -131,7 +131,7 @@ StartupInfo	startupInfo;
 static MainMenu*	mainMenu;
 ServerLink*		serverLink = NULL;
 World*			world = NULL;
-LocalPlayer*		myTank = NULL;
+static LocalPlayer     *myTank = NULL;
 static BzfDisplay*	display = NULL;
 MainWindow*		mainWindow = NULL;
 static SceneRenderer*	sceneRenderer = NULL;
