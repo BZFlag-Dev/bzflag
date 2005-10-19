@@ -5944,23 +5944,28 @@ static void		playingLoop()
     }
 
     // limit the fps to save battery life by minimizing cpu usage
-    bool saveEnergy = BZDB.isTrue("saveEnergy");
+    const bool saveEnergy = BZDB.isTrue("saveEnergy");
     if (saveEnergy) {
       static TimeKeeper lastTime = TimeKeeper::getCurrent();
       const float fpsLimit = BZDB.eval("fpsLimit");
-      if ((fpsLimit == fpsLimit) && (fpsLimit > 0.0f)) {
+      const bool fpsIsNaN = (fpsLimit != fpsLimit);
+      if ((fpsLimit > 0.0f) && !fpsIsNaN) {
         const float period = (1.0f / fpsLimit);
         while (true) {
-          const float diff = TimeKeeper::getCurrent() - lastTime;
-          if (diff > period) {
+          const float diff = (TimeKeeper::getCurrent() - lastTime);
+          const float remaining = (period - diff);
+          if (remaining <= 1.0e-5f) {
             break;
           }
-          TimeKeeper::sleep(period - diff);
+          TimeKeeper::sleep(remaining);
         }
         lastTime = TimeKeeper::getCurrent();
       } // end valid fpsLimit
     } // end energy saver check
+
+
   } // end main client loop
+
 
   delete worldDownLoader;
   // restore the sound.  if we don't do this then we'll save the
@@ -5974,6 +5979,7 @@ static void		playingLoop()
   // hide window
   mainWindow->showWindow(false);
 }
+
 
 //
 // game initialization
