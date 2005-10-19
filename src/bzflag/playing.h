@@ -28,6 +28,7 @@
 #include "Player.h"
 #include "SceneRenderer.h"
 #include "StartupInfo.h"
+#include "AutoCompleter.h"
 
 /* local headers */
 #include "MainWindow.h"
@@ -96,7 +97,7 @@ extern char		messageMessage[PlayerIdPLen + MessageLen];
 extern ServerLink*	serverLink;
 extern int		numFlags;
 extern StartupInfo	startupInfo;
-
+extern DefaultCompleter completer;
 
 #endif // BZF_PLAYING_H
 

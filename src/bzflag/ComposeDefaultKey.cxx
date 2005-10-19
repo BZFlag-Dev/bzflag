@@ -16,23 +16,15 @@
 /* common implementation headers */
 #include "BzfEvent.h"
 #include "KeyManager.h"
-#include "AutoCompleter.h"
 
 /* local implementation headers */
 #include "LocalPlayer.h"
 #include "HUDRenderer.h"
 #include "LocalCommand.h"
+#include "playing.h"
 
 
-/* FIXME -- pulled from player.h */
-void addMessage(const Player* player, const std::string& msg, int mode = 3,
-		bool highlight=false, const char* oldColor=NULL);
-extern char messageMessage[PlayerIdPLen + MessageLen];
 #define MAX_MESSAGE_HISTORY (20)
-extern HUDRenderer *hud;
-extern ServerLink*	serverLink;
-extern DefaultCompleter completer;
-void selectNextRecipient (bool forward, bool robotIn);
 
 MessageQueue	messageHistory;
 unsigned int	messageHistoryIndex = 0;
