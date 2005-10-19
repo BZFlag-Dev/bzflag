@@ -94,11 +94,6 @@ LocalPlayer::~LocalPlayer()
   delete antidoteFlag;
 }
 
-LocalPlayer*		LocalPlayer::getMyTank()
-{
-  return mainPlayer;
-}
-
 void			LocalPlayer::setMyTank(LocalPlayer* player)
 {
   mainPlayer = player;

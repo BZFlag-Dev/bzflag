@@ -267,6 +267,11 @@ inline int LocalPlayer::getSpeed() {
     return 0;
 }
 
+inline LocalPlayer* LocalPlayer::getMyTank()
+{
+  return mainPlayer;
+}
+
 #endif /* __LOCALPLAYER_H__ */
 
 // Local Variables: ***
