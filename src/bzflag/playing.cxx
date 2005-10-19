@@ -5948,7 +5948,7 @@ static void		playingLoop()
       static TimeKeeper lastTime = TimeKeeper::getCurrent();
       const float fpsLimit = BZDB.eval("fpsLimit");
       const bool fpsIsNaN = (fpsLimit != fpsLimit);
-      if ((fpsLimit > 0.0f) && !fpsIsNaN) {
+      if ((fpsLimit >= 1.0f) && !fpsIsNaN) {
         const float elapsed = (TimeKeeper::getCurrent() - lastTime);
         if (elapsed > 0.0f) {
           const float period = (1.0f / fpsLimit);
