@@ -49,8 +49,6 @@ extern float destructCountdown;
 #include "HUDRenderer.h"
 extern HUDRenderer* hud;
 extern bool pausedByUnmap;
-#include "ControlPanel.h"
-extern ControlPanel* controlPanel;
 extern int savedVolume;
 bool shouldGrabMouse();
 #include "MainWindow.h"

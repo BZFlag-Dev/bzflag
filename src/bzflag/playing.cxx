@@ -119,6 +119,9 @@
 // get our interface
 #include "playing.h"
 
+/* local implementation headers */
+#include "bzflag.h"
+
 #ifdef HAVE_KRB5
 #include "ClientAuthentication.h"
 #endif
@@ -186,9 +189,7 @@ static void		enteringServer(void *buf);
 static void		joinInternetGame2();
 static void		cleanWorldCache();
 static void		markOld(std::string &fileName);
-void			leaveGame();
 void			drawFrame(const float dt);
-extern void		dumpResources();
 static void		setRobotTarget(RobotPlayer* robot);
 extern void		doAutoPilot(float &rotation, float &speed);
 extern void		teachAutoPilot( FlagType *, int );

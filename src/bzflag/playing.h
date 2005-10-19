@@ -32,7 +32,7 @@
 
 /* local headers */
 #include "MainWindow.h"
-
+#include "ControlPanel.h"
 
 #define MAX_MESSAGE_HISTORY (20)
 
@@ -73,6 +73,7 @@ void			addPlayingCallback(PlayingCallback, void* data);
 void			removePlayingCallback(PlayingCallback, void* data);
 
 void			joinGame(JoinGameCallback, void* userData);
+void                    leaveGame();
 std::vector<std::string>& getSilenceList();
 void			updateEvents();
 void			addMessage(const Player* player,
@@ -101,6 +102,7 @@ extern int		numFlags;
 extern StartupInfo	startupInfo;
 extern DefaultCompleter completer;
 extern bool             gameOver;
+extern ControlPanel    *controlPanel;
 
 #endif // BZF_PLAYING_H
 

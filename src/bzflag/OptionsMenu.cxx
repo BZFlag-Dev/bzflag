@@ -26,16 +26,11 @@
 /* local implementation headers */
 #include "MainMenu.h"
 #include "HUDDialogStack.h"
-#include "ControlPanel.h"
 #include "ServerListCache.h"
 #include "HUDuiControl.h"
 #include "HUDuiLabel.h"
 #include "HUDuiList.h"
 #include "playing.h"
-
-/* FIXME - from playing.h */
-extern ControlPanel* controlPanel;
-
 
 OptionsMenu::OptionsMenu() : guiOptionsMenu(NULL), effectsMenu(NULL),
 			     cacheMenu(NULL), saveWorldMenu(NULL),

@@ -26,9 +26,7 @@
 #include "version.h"
 
 // local implementation headers
-#include "ControlPanel.h"
-
-extern ControlPanel* controlPanel;
+#include "playing.h"
 
 typedef struct {
   std::string title;

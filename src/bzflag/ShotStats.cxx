@@ -33,12 +33,8 @@
 #include "HUDuiLabel.h"
 #include "ShotStatistics.h"
 #include "Player.h"
-#include "RemotePlayer.h"
 #include "LocalPlayer.h"
-
-/* FIXME */
-extern RemotePlayer** player;
-extern int curMaxPlayers;
+#include "Roster.h"
 
 ShotStats::ShotStats() : HUDDialog()
 {

@@ -36,12 +36,8 @@
 #include "HUDuiTextureLabel.h"
 #include "ConfigFileManager.h"
 #include "clientConfig.h"
-
-/* from playing.cxx */
-void leaveGame();
-
-extern void		dumpResources();
-extern std::string	alternateConfig;
+#include "bzflag.h"
+#include "playing.h"
 
 MainMenu::MainMenu() : HUDDialog(), joinMenu(NULL),
 #ifdef HAVE_KRB5

@@ -20,11 +20,9 @@
 /* common implementation headers */
 #include "StateDatabase.h"
 #include "FontManager.h"
-#include "SceneRenderer.h"
 
 /* local implementation headers */
 #include "MainMenu.h"
-#include "MainWindow.h"
 #include "Downloads.h"
 #include "CacheManager.h"
 #include "ControlPanel.h"
@@ -33,12 +31,9 @@
 #include "HUDuiControl.h"
 #include "HUDuiList.h"
 #include "HUDuiLabel.h"
+#include "playing.h"
 
-
-/* FIXME - from playing.h */
-extern ControlPanel* controlPanel;
 extern void setSceneDatabase();
-
 
 CacheMenu::CacheMenu()
 {

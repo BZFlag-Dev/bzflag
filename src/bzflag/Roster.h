@@ -49,6 +49,8 @@ BaseLocalPlayer*	getLocalPlayer(PlayerId id);
 TeamColor		PlayerIdToTeam(PlayerId id);
 PlayerId		TeamToPlayerId(TeamColor team);
 
+extern RemotePlayer**   player;
+extern int              curMaxPlayers;
 
 #endif /* __ROSTER_H__ */
 

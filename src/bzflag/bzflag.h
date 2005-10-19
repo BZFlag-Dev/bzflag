@@ -15,8 +15,15 @@
 
 #include "common.h"
 
+// system includes
+#include <string>
+
+extern void dumpResources();
+
 extern bool echoToConsole;
 extern bool echoAnsi;
+extern std::string alternateConfig;
+extern const char *argv0;
 
 #endif // BZF_BZFLAG_H
 

@@ -39,7 +39,6 @@
 #include "Address.h"
 #include "BZDBCache.h"
 #include "BundleMgr.h"
-#include "BzfDisplay.h"
 #include "BzfMedia.h"
 #include "BzfVisual.h"
 #include "BzfWindow.h"
@@ -57,7 +56,6 @@
 #include "ParseColor.h"
 #include "PlatformFactory.h"
 #include "Protocol.h"
-#include "SceneRenderer.h"
 #include "ServerListCache.h"
 #include "StateDatabase.h"
 #include "Team.h"
@@ -72,11 +70,11 @@
 
 /* local headers */
 #include "ActionBinding.h"
-#include "MainWindow.h"
 #include "ServerStartMenu.h"
 #include "callbacks.h"
 #include "playing.h"
 #include "sound.h"
+#include "playing.h"
 
 // invoke incessant rebuilding for build versioning
 #include "version.h"
@@ -89,7 +87,6 @@
 
 int beginendCount = 0;
 
-extern std::vector<std::string>& getSilenceList();
 const char*		argv0;
 static bool		anonymous = false;
 static std::string	anonymousName("anonymous");

@@ -14,10 +14,10 @@
 
 #include <string>
 
+/* local headers */
 #include "LocalPlayer.h"
 #include "HUDRenderer.h"
-
-extern HUDRenderer*	hud;
+#include "playing.h"
 
 void setFlagHelp(const std::string& name, void*)
 {

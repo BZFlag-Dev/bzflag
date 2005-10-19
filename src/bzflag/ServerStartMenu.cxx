@@ -47,6 +47,7 @@
 #include "HUDuiLabel.h"
 #include "HUDuiList.h"
 #include "playing.h"
+#include "bzflag.h"
 
 char ServerStartMenu::settings[] = "bfaaaaabaaaaa";
 
@@ -366,7 +367,6 @@ void ServerStartMenu::execute()
     // other options as they were set
 
     // get path to server from path to client
-    extern const char* argv0;			// from bzflag.cxx
     // add 256 for flags room
     char serverCmd[PATH_MAX + 256];
     strcpy(serverCmd, argv0);
