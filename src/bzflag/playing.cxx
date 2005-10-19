@@ -5944,23 +5944,21 @@ static void		playingLoop()
     }
 
     // limit the fps to save battery life by minimizing cpu usage
-    const bool saveEnergy = BZDB.isTrue("saveEnergy");
-    if (saveEnergy) {
+    if (BZDB.isTrue("saveEnergy")) {
       static TimeKeeper lastTime = TimeKeeper::getCurrent();
       const float fpsLimit = BZDB.eval("fpsLimit");
       const bool fpsIsNaN = (fpsLimit != fpsLimit);
       if ((fpsLimit > 0.0f) && !fpsIsNaN) {
-        const float period = (1.0f / fpsLimit);
-        while (true) {
-          const float diff = (TimeKeeper::getCurrent() - lastTime);
-          const float remaining = (period - diff);
-          if (remaining <= 1.0e-5f) {
-            break;
+        const float elapsed = (TimeKeeper::getCurrent() - lastTime);
+        if (elapsed > 0.0f) {
+          const float period = (1.0f / fpsLimit);
+          const float remaining = (period - elapsed);
+          if (remaining > 0.0f) {
+            TimeKeeper::sleep(remaining);
           }
-          TimeKeeper::sleep(remaining);
         }
-        lastTime = TimeKeeper::getCurrent();
-      } // end valid fpsLimit
+      } 
+      lastTime = TimeKeeper::getCurrent();
     } // end energy saver check
 
 
