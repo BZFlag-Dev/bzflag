@@ -22,6 +22,13 @@
 #include "OpenGLTexture.h"
 #include "OpenGLGState.h"
 
+#ifndef _WIN32     
+typedef int64_t s64;   
+#else
+typedef __int64 s64; 
+#endif
+
+
 //
 // OpenGLTexture::Rep
 //
@@ -384,7 +391,7 @@ bool OpenGLTexture::getColorAverages(float rgba[4], bool factorAlpha) const
   const int channelCount = alpha ? 4 : 3;
   
   // tally the values
-  unsigned long long int rgbaTally[4] = {0, 0, 0, 0};
+  s64 rgbaTally[4] = {0, 0, 0, 0};
   for (int x = 0; x < scaledWidth; x++) {
     for (int y = 0; y < scaledHeight; y++) {
       for (int c = 0; c < channelCount; c++) {
