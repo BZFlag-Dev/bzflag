@@ -39,6 +39,7 @@
 #include "SceneRenderer.h"
 #include "MainWindow.h"
 #include "RadarRenderer.h"
+#include "bzflag.h"
 
 void			printFatalError(const char* fmt, ...);
 
@@ -204,8 +205,6 @@ ControlPanel::~ControlPanel()
   BZDB.removeCallback("displayRadar", bzdbCallback, this);
   BZDB.removeCallback(StateDatabase::BZDB_RADARLIMIT, bzdbCallback, this);
 
-  extern bool echoToConsole;
-  extern bool echoAnsi;
   if (echoToConsole && echoAnsi) {
     std::cout << ColorStrings[FinalResetColor] << std::flush;
   }
@@ -789,8 +788,6 @@ void			ControlPanel::addMessage(const std::string& line,
   }
 
   // this stuff has no effect on win32 (there's no console)
-  extern bool echoToConsole;
-  extern bool echoAnsi;
   if (echoToConsole) {
     if (echoAnsi) {
       std::cout << line << ColorStrings[ResetColor] << std::endl;

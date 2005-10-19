@@ -171,6 +171,7 @@ bzflag_SOURCES =			\
 	WorldPlayer.cxx			\
 	WorldPlayer.h			\
 	bzflag.cxx			\
+	bzflag.h			\
 	callbacks.cxx			\
 	callbacks.h			\
 	clientCommands.cxx		\
