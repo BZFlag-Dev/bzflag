@@ -31,9 +31,9 @@
 #include "HUDuiControl.h"
 #include "HUDuiLabel.h"
 #include "HUDuiList.h"
+#include "playing.h"
 
 /* FIXME - from playing.h */
-StartupInfo* getStartupInfo();
 extern ControlPanel* controlPanel;
 
 

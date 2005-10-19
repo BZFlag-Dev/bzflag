@@ -29,7 +29,6 @@
 #include "Ping.h"
 #include "Protocol.h"
 #include "ServerListCache.h"
-#include "StartupInfo.h"
 #include "TextUtils.h"
 #include "TimeKeeper.h"
 #include "bzsignal.h"
@@ -44,9 +43,9 @@
 #include "HUDuiControl.h"
 #include "HUDuiLabel.h"
 #include "HUDuiTypeIn.h"
+#include "playing.h"
 
 /* from playing.h */
-StartupInfo* getStartupInfo();
 typedef void (*PlayingCallback)(void*);
 void addPlayingCallback(PlayingCallback, void* data);
 void removePlayingCallback(PlayingCallback, void* data);

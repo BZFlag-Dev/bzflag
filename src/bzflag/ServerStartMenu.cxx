@@ -38,7 +38,6 @@
 /* common implementation headers */
 #include "DirectoryNames.h"
 #include "FontManager.h"
-#include "StartupInfo.h"
 #include "TextUtils.h"
 
 /* local implementation headers */
@@ -47,9 +46,7 @@
 #include "HUDuiControl.h"
 #include "HUDuiLabel.h"
 #include "HUDuiList.h"
-
-/* from playing.h */
-StartupInfo* getStartupInfo();
+#include "playing.h"
 
 char ServerStartMenu::settings[] = "bfaaaaabaaaaa";
 
@@ -452,8 +449,8 @@ void ServerStartMenu::execute()
       args[arg++] = "+s";
 
       // max superflags
-      static const char* numFlags[] = { "10", "20", "30", "40" };
-      args[arg++] = numFlags[((HUDuiList*)listHUD[9])->getIndex()];
+      static const char* numFlagsList[] = { "10", "20", "30", "40" };
+      args[arg++] = numFlagsList[((HUDuiList*)listHUD[9])->getIndex()];
     }
 
     // shaking

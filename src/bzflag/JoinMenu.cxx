@@ -16,7 +16,6 @@
 /* common implementation headers */
 #include "FontManager.h"
 #include "Protocol.h"
-#include "StartupInfo.h"
 #include "TimeKeeper.h"
 #include "cURLManager.h"
 #include "StateDatabase.h"
@@ -30,10 +29,7 @@
 #include "ServerMenu.h"
 #include "ServerStartMenu.h"
 #include "TextureManager.h"
-
-/* from playing.h */
-extern StartupInfo* getStartupInfo();
-extern void joinGame();
+#include "playing.h"
 
 JoinMenu* JoinMenu::activeMenu = NULL;
 

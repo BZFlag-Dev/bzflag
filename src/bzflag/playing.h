@@ -92,6 +92,8 @@ bool shouldGrabMouse();
 void setRoamingLabel();
 void drawFrame(const float dt);
 
+extern void joinGame();
+
 extern HUDRenderer	*hud;
 extern char		messageMessage[PlayerIdPLen + MessageLen];
 extern ServerLink*	serverLink;
