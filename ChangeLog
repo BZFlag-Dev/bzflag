@@ -4,6 +4,7 @@
 BZFlag 2.0.5
 ------------
 
+* Show slot numbers in lagstats (if admin) - Mark Thomas, Mike Weisenborn
 * FPS limit energy saver option for laptops - Sean Morrison, Karsten Behrmann
 * Send admin channel warning if /password fails - Garrett Padera, Jeff Myers
 * Known players not authenticated are detected - Tupone Alfredo
