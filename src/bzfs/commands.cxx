@@ -1202,7 +1202,7 @@ bool LagStatCommand::operator() (const char	 *,
   char reply[MessageLen];
   for (i = 0; i < j; i++) {
     GameKeeper::Player *p = sortedPlayer[i];
-    p->lagInfo.getLagStats(reply);
+    p->lagInfo.getLagStats(reply, playerData->accessInfo.isAdmin());
     if (reply[0])
       sendMessage(ServerPlayer, t, reply);
   }

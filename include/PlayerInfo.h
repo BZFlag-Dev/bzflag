@@ -59,6 +59,7 @@ class PlayerInfo {
 public:
   PlayerInfo(int _playerIndex);
 
+  int   getPlayerIndex( void ) {return playerIndex;}
   void	setLastMsg(std::string msg);
   const std::string& getLastMsg() const;
   TimeKeeper  getLastMsgTime() const;
@@ -119,7 +120,7 @@ public:
   static TimeKeeper now;
   int endShotCredit;
 
-	PlayerType getType( void ) {return type;}
+  PlayerType getType( void ) {return type;}
 
 private:
 

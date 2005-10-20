@@ -35,7 +35,7 @@ public:
   float	getLagAvg() const;
   /** Get a printable version of lag statistics
   */
-  void	getLagStats(char* msg) const;
+  void	getLagStats(char* msg, bool isAdmin) const;
   /** functions to be called whenever a playerUpdate or ping message arrives
    */
   int	updatePingLag(void *buf, bool &warn, bool &kick);

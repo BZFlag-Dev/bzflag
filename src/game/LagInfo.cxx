@@ -39,7 +39,7 @@ float LagInfo::getLagAvg() const
   return lagavg;
 }
 
-void LagInfo::getLagStats(char* msg) const
+void LagInfo::getLagStats(char* msg, bool isAdmin) const
 {
   msg[0] = 0;
   if (!info->isPlaying() || !info->isHuman())
@@ -53,7 +53,13 @@ void LagInfo::getLagStats(char* msg) const
     if (lastLag > lag)
       lag = lastLag;
   }
-  int numchars = sprintf(msg, "%s\t: %3d", info->getCallSign(), lag);
+
+  int numchars;
+  if (isAdmin)
+    numchars = sprintf(msg, "[%3d] %s\t: %3d", info->getPlayerIndex(), info->getCallSign(), lag);
+  else
+    numchars = sprintf(msg, "%s\t: %3d", info->getCallSign(), lag);
+
   if (info->isObserver()) {
     sprintf(msg+numchars, "ms");
   } else {
