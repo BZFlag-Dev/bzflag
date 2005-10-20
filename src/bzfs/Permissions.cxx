@@ -102,7 +102,7 @@ bool PlayerAccessInfo::isOperator() const {
 }
 
 bool PlayerAccessInfo::isAdmin() const {
-  return serverop || hasPerm(ban) || hasPerm(shortBan);
+  return isOperator() || hasPerm(ban) || hasPerm(shortBan);
 }
 
 bool PlayerAccessInfo::showAsAdmin() const {
