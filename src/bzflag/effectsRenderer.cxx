@@ -10,43 +10,27 @@
 * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 */
 
-// bzflag global common header
-#include "common.h"
-#include "global.h"
-
 // interface header
 #include "effectsRenderer.h"
 
-// system headers
-#include <string>
-#include <vector>
-
 // common impl headers
-#include "bzfgl.h"
-#include "OpenGLGState.h"
-#include "OpenGLMaterial.h"
 #include "TextureManager.h"
 #include "StateDatabase.h"
-#include "BZDBCache.h"
 #include "TimeKeeper.h"
-#include "TextUtils.h"
-#include "ParseColor.h"
-
-// local impl headers
-#include "SceneRenderer.h"
-#include "Intersect.h"
-#include "RoofTops.h"
+#include "Flag.h"
 
 template <>
 EffectsRenderer* Singleton<EffectsRenderer>::_instance = (EffectsRenderer*)0;
 
 // utils for geo
-void drawRingYZ ( float rad, float z, float topsideOffset = 0, float bottomUV = 0,
-		  float ZOffset = 0, float topUV = 1.0f, int segments = 32);
-void drawRingXY ( float rad, float z, float topsideOffset = 0, float bottomUV = 0,
-		  float topUV = 1.0f, int segments = 32);
-void RadialToCartesian ( float angle, float rad, float *pos );
-void getSpawnTeamColor ( int teamColor, float *color );
+static void drawRingYZ(float rad, float z, float topsideOffset = 0,
+		       float bottomUV = 0, float ZOffset = 0,
+		       float topUV = 1.0f, int segments = 32);
+static void drawRingXY(float rad, float z, float topsideOffset = 0,
+		       float bottomUV = 0, float topUV = 1.0f,
+		       int segments = 32);
+static void RadialToCartesian(float angle, float rad, float *pos);
+static void getSpawnTeamColor(int teamColor, float *color);
 
 #define deg2Rad 0.017453292519943295769236907684886f
 
@@ -1226,14 +1210,14 @@ void StdShotTeleportEffect::draw(const SceneRenderer &)
 
 //******************************** geo utiliys********************************
 
-void RadialToCartesian ( float angle, float rad, float *pos )
+static void RadialToCartesian(float angle, float rad, float *pos)
 {
 	pos[0] = sinf(angle*deg2Rad)*rad;
 	pos[1] = cosf(angle*deg2Rad)*rad;
 }
 
-void drawRingXY ( float rad, float z, float topsideOffset, float bottomUV,
-		  float topUV, int segments )
+static void drawRingXY(float rad, float z, float topsideOffset, float bottomUV,
+		       float topUV, int segments )
 {
 	for ( int i = 0; i < segments; i ++)
 	{
@@ -1301,15 +1285,15 @@ void drawRingXY ( float rad, float z, float topsideOffset, float bottomUV,
 	}
 }
 
-float clampedZ ( float z, float offset )
+static float clampedZ(float z, float offset)
 {
 	if ( z +offset > 0.0f)
 		return z;
 	return -offset;
 }
 
-void drawRingYZ ( float rad, float z, float topsideOffset, float bottomUV,
-		  float ZOffset, float topUV, int segments )
+static void drawRingYZ(float rad, float z, float topsideOffset, float bottomUV,
+		       float ZOffset, float topUV, int segments)
 {
 	for ( int i = 0; i < segments; i ++)
 	{
@@ -1376,7 +1360,7 @@ void drawRingYZ ( float rad, float z, float topsideOffset, float bottomUV,
 	}
 }
 
-void getSpawnTeamColor ( int teamColor, float *color )
+static void getSpawnTeamColor(int teamColor, float *color)
 {
 	switch(teamColor)
 	{

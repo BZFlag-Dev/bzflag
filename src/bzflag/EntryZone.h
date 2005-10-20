@@ -13,6 +13,9 @@
 #ifndef __ENTRYZONE_H__
 #define __ENTRYZONE_H__
 
+// common should be the 1st one
+#include "common.h"
+
 #include <vector>
 #include "Flag.h"
 #include "Team.h"

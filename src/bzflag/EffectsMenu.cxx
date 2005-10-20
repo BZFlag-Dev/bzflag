@@ -13,23 +13,14 @@
 /* interface header */
 #include "EffectsMenu.h"
 
-/* system implementation headers */
-#include <string>
-#include <vector>
-
 /* common implementation headers */
-#include "BundleMgr.h"
-#include "BZDBCache.h"
 #include "TextUtils.h"
 #include "FontManager.h"
-#include "SceneRenderer.h"
+#include "StateDatabase.h"
 
 /* local implementation headers */
 #include "MainMenu.h"
-#include "MainWindow.h"
 #include "TrackMarks.h"
-#include "HUDDialogStack.h"
-#include "HUDuiControl.h"
 #include "HUDuiList.h"
 #include "HUDuiLabel.h"
 #include "effectsRenderer.h"
