@@ -123,6 +123,7 @@ inline const Roaming::RoamingCamera* const Roaming::getCamera() const {
   return &camera;
 }
 
+const bool devDriving = false;
 
 // Local Variables: ***
 // mode: C++ ***

@@ -61,7 +61,6 @@
 #include "Team.h"
 #include "FileManager.h"
 #include "AutoCompleter.h"
-#include "Flag.h"
 #include "LocalPlayer.h"
 #include "RemotePlayer.h"
 #include "WorldPlayer.h"
@@ -109,6 +108,7 @@
 #include "ServerList.h"
 #include "GameTime.h"
 #include "Roaming.h"
+#include "AutoPilot.h"
 
 //#include "messages.h"
 #include "Downloads.h"
@@ -178,21 +178,16 @@ DefaultCompleter	completer;
 
 char			messageMessage[PlayerIdPLen + MessageLen];
 
-void			setTarget();
 static void		setHuntTarget();
 static void		setTankFlags();
 static void*		handleMsgSetVars(void *msg);
-void			handleFlagDropped(Player* tank);
 static void		handlePlayerMessage(uint16_t, uint16_t, void*);
 static void		handleFlagTransferred(Player* fromTank, Player* toTank, int flagIndex);
 static void		enteringServer(void *buf);
 static void		joinInternetGame2();
 static void		cleanWorldCache();
 static void		markOld(std::string &fileName);
-void			drawFrame(const float dt);
 static void		setRobotTarget(RobotPlayer* robot);
-extern void		doAutoPilot(float &rotation, float &speed);
-extern void		teachAutoPilot( FlagType *, int );
 
 ResourceGetter	*resourceDownloader = NULL;
 
@@ -234,7 +229,6 @@ static void		handleMyTankKilled(int reason);
 static ServerLink*	robotServer[MAX_ROBOTS];
 #endif
 
-extern struct tm	userTime;
 static double		userTimeEpochOffset;
 
 static bool		entered = false;
@@ -567,8 +561,6 @@ static ServerLink*	lookupServer(const Player *_player)
 #if defined(FREEZING)
 static bool		motionFreeze = false;
 #endif
-
-extern const bool devDriving = false;
 
 static enum {None, Left, Right, Up, Down} keyboardMovement;
 static int shiftKeyStatus;
@@ -4537,7 +4529,6 @@ static void joinInternetGame(const struct in_addr *inAddress)
 					   startupInfo.serverPort);
 
 #if defined(ROBOT)
-  extern int numRobotTanks;
   int i, j;
   for (i = 0, j = 0; i < numRobotTanks; i++) {
     robotServer[j] = new ServerLink(serverAddress, startupInfo.serverPort);

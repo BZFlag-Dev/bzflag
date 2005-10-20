@@ -10,27 +10,18 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef	BZF_BZFLAG_H
-#define	BZF_BZFLAG_H
+#ifndef	BZF_AUTOPILOT_H
+#define	BZF_AUTOPILOT_H
 
 #include "common.h"
 
-// system includes
-#include <string>
+// common headers
+#include "Flag.h"
 
-extern void dumpResources();
+void doAutoPilot(float &rotation, float &speed);
+void teachAutoPilot(FlagType *, int);
 
-extern bool echoToConsole;
-extern bool echoAnsi;
-extern std::string alternateConfig;
-extern const char *argv0;
-extern struct tm   userTime;
-
-#ifdef ROBOT
-extern int numRobotTanks;
-#endif
-
-#endif // BZF_BZFLAG_H
+#endif // BZF_AUTOPILOT_H
 
 // Local Variables: ***
 // mode:C++ ***

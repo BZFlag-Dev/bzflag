@@ -33,9 +33,6 @@
 #include "World.h"
 #include "ScoreboardRenderer.h"
 
-/* Someone needs to look at this to see if it can be cleaned up */
-extern const bool devDriving;
-
 // initialize the singleton
 template <>
 Roaming* Singleton<Roaming>::_instance = (Roaming*)0;

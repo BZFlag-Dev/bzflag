@@ -10,8 +10,8 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-/* venerable common.h */
-#include "common.h"
+// get our interface
+#include "AutoPilot.h"
 
 /* common headers */
 #include "TimeKeeper.h"

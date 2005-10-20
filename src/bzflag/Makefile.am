@@ -22,6 +22,7 @@ bzflag_SOURCES =			\
 	AudioMenu.cxx			\
 	AudioMenu.h			\
 	AutoPilot.cxx			\
+	AutoPilot.h			\
 	BackgroundRenderer.cxx		\
 	BackgroundRenderer.h		\
 	BaseLocalPlayer.cxx		\
