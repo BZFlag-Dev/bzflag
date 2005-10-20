@@ -43,6 +43,7 @@ private:
   static float	indexToGamma(int);
 };
 
+extern void setSceneDatabase();
 
 #endif /* __DISPLAYMENU_H__ */
 

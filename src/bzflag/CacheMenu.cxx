@@ -32,8 +32,7 @@
 #include "HUDuiList.h"
 #include "HUDuiLabel.h"
 #include "playing.h"
-
-extern void setSceneDatabase();
+#include "DisplayMenu.h"
 
 CacheMenu::CacheMenu()
 {

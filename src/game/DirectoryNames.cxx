@@ -127,7 +127,7 @@ static std::string		setupString(std::string dir)
   return name;
 }
 
-extern std::string		getCacheDirName()
+std::string getCacheDirName()
 {
   std::string name = getConfigDirName();
   name += "cache";
@@ -144,17 +144,17 @@ extern std::string		getCacheDirName()
 }
 
 
-extern std::string		getRecordDirName()
+std::string getRecordDirName()
 {
   return setupString("recordings");
 }
 
-extern std::string		getScreenShotDirName()
+std::string getScreenShotDirName()
 {
   return setupString("screenshots");
 }
 
-extern std::string		getTempDirName()
+std::string getTempDirName()
 {
 // FIXME: needs something for Windows and maybe other platforms
 #if defined(_WIN32)
@@ -172,7 +172,7 @@ extern std::string		getTempDirName()
   return name;
 }
 
-extern std::string		getWorldDirName()
+std::string getWorldDirName()
 {
   return setupString("worlds");
 }
