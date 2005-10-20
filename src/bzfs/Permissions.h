@@ -126,6 +126,7 @@ public:
   void	setPasswd(const std::string& pwd);
   void	setAdmin();
   bool	isAdmin() const;
+  bool  isPseudoAdmin() const;
   bool	showAsAdmin() const;
 
   void	setPermissionRights();

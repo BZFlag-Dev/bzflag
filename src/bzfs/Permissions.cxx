@@ -101,13 +101,15 @@ bool PlayerAccessInfo::isAdmin() const {
   return Admin;
 }
 
+bool PlayerAccessInfo::isPseudoAdmin() const {
+  return Admin || hasPerm(ban) || hasPerm(shortBan);
+}
+
 bool PlayerAccessInfo::showAsAdmin() const {
   if (hasPerm(hideAdmin))
     return false;
-  else if (Admin || hasPerm(ban) || hasPerm(shortBan))
-    return true;
-  else
-    return false;
+  else 
+    return isPseudoAdmin();
 }
 
 bool PlayerAccessInfo::passwordAttemptsMax() {
