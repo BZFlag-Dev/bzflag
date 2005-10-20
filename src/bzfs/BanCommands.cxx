@@ -289,8 +289,8 @@ bool KickCommand::operator() (const char	 *message,
     GameKeeper::Player *p
       = GameKeeper::Player::getPlayerByIndex(kickEvent.kickedID);
 
-    // admins can override antiperms
-    if (!playerData->accessInfo.isAdmin()) {
+    // operators can override antiperms
+    if (!playerData->accessInfo.isOperator()) {
       // otherwise make sure the player is not protected with an antiperm
       if ((p != NULL) && (p->accessInfo.hasPerm(PlayerAccessInfo::antikick))) {
 	snprintf(kickmessage, MessageLen,
@@ -366,8 +366,8 @@ bool KillCommand::operator() (const char	 *message,
 
     char killmessage[MessageLen];
 
-    // admins can override antiperms
-    if (!playerData->accessInfo.isAdmin()) {
+    // operators can override antiperms
+    if (!playerData->accessInfo.isOperator()) {
       // otherwise make sure the player is not protected with an antiperm
       GameKeeper::Player *p
 	= GameKeeper::Player::getPlayerByIndex(killEvent.killedID);
@@ -577,8 +577,8 @@ bool BanCommand::operator() (const char	 *message,
 	if (otherPlayer && !clOptions->acl.validate
 	    (otherPlayer->netHandler->getIPAddress())) {
 
-	  // admins can override antiperms
-	  if (!playerData->accessInfo.isAdmin()) {
+	  // operators can override antiperms
+	  if (!playerData->accessInfo.isOperator()) {
 	    // make sure this player isn't protected
 	    GameKeeper::Player *p = GameKeeper::Player::getPlayerByIndex(i);
 	    if ((p != NULL)

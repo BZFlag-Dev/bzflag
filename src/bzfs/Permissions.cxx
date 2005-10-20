@@ -50,7 +50,7 @@ void setUserPassword(const std::string &nick, const std::string &pass);
 
 PlayerAccessInfo::PlayerAccessInfo()
   : verified(false), loginTime(TimeKeeper::getCurrent()), loginAttempts (0),
-    Admin(false), passwordAttempts(0)
+    serverop(false), passwordAttempts(0)
 {
   groups.push_back("EVERYONE");
 }
@@ -92,24 +92,24 @@ void PlayerAccessInfo::reloadInfo() {
   }
 }
 
-void PlayerAccessInfo::setAdmin() {
+void PlayerAccessInfo::setOperator() {
   passwordAttempts = 0;
-  Admin = true;
+  serverop = true;
+}
+
+bool PlayerAccessInfo::isOperator() const {
+  return serverop;
 }
 
 bool PlayerAccessInfo::isAdmin() const {
-  return Admin;
-}
-
-bool PlayerAccessInfo::isPseudoAdmin() const {
-  return Admin || hasPerm(ban) || hasPerm(shortBan);
+  return serverop || hasPerm(ban) || hasPerm(shortBan);
 }
 
 bool PlayerAccessInfo::showAsAdmin() const {
   if (hasPerm(hideAdmin))
     return false;
   else 
-    return isPseudoAdmin();
+    return isAdmin();
 }
 
 bool PlayerAccessInfo::passwordAttemptsMax() {
@@ -225,7 +225,7 @@ bool PlayerAccessInfo::canSet(const std::string& group)
 
 bool PlayerAccessInfo::hasPerm(PlayerAccessInfo::AccessPerm right) const
 {
-  if (Admin && (right != hideAdmin))
+  if (serverop && (right != hideAdmin))
     return true;
   if (explicitDenys.test(right))
     return false;
@@ -262,7 +262,7 @@ void PlayerAccessInfo::revokePerm(PlayerAccessInfo::AccessPerm right)
 // custom perms are ONLY on groups
 bool	PlayerAccessInfo::hasCustomPerm(const char* right) const
 {
-	if (Admin)
+	if (serverop)
 		return true;
 
 	std::string perm = TextUtils::toupper(std::string(right));

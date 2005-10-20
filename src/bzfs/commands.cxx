@@ -861,7 +861,7 @@ bool PasswordCommand::operator() (const char	 *message,
     sendMessage(ServerPlayer, t, "Too many attempts");
   } else {
     if ((clOptions->password != "") && strncmp(message + 10, clOptions->password.c_str(), clOptions->password.size()) == 0 && clOptions->password.length() == strlen(message + 10)) {
-      playerData->accessInfo.setAdmin();
+      playerData->accessInfo.setOperator();
       sendPlayerInfo();
       sendMessage(ServerPlayer, t, "You are now an administrator!");
     } else {
@@ -1202,7 +1202,7 @@ bool LagStatCommand::operator() (const char	 *,
   char reply[MessageLen];
   for (i = 0; i < j; i++) {
     GameKeeper::Player *p = sortedPlayer[i];
-    p->lagInfo.getLagStats(reply, playerData->accessInfo.isPseudoAdmin());
+    p->lagInfo.getLagStats(reply, playerData->accessInfo.isAdmin());
     if (reply[0])
       sendMessage(ServerPlayer, t, reply);
   }
@@ -1571,8 +1571,8 @@ bool DeregisterCommand::operator() (const char	 *message,
     makeupper(name);
     if (userExists(name)) {
 
-      // admins can override antiperms
-      if (!playerData->accessInfo.isAdmin()) {
+      // operators can override antiperms
+      if (!playerData->accessInfo.isOperator()) {
 	// make sure this player isn't protected
 	int v = GameKeeper::Player::getPlayerIDByName(name);
 	GameKeeper::Player *p = GameKeeper::Player::getPlayerByIndex(v);
@@ -1900,8 +1900,8 @@ bool ReloadCommand::operator() (const char	 *,
     GameKeeper::Player *otherPlayer = GameKeeper::Player::getPlayerByIndex(i);
     if (otherPlayer && !clOptions->acl.validate
 	(otherPlayer->netHandler->getIPAddress())) {
-      // admins can override antiperms
-      if (!playerData->accessInfo.isAdmin()) {
+      // operators can override antiperms
+      if (!playerData->accessInfo.isOperator()) {
 	// make sure this player isn't protected
 	GameKeeper::Player *p = GameKeeper::Player::getPlayerByIndex(i);
 	if ((p != NULL)
@@ -2314,8 +2314,8 @@ bool PollCommand::operator() (const char	 *message,
       }
       targetIP = targetData->netHandler->getTargetIP();
 
-      // admins can override antiperms
-      if (!playerData->accessInfo.isAdmin()) {
+      // operators can override antiperms
+      if (!playerData->accessInfo.isOperator()) {
 	// otherwise make sure the player is not protected with an antiperm
 	GameKeeper::Player *p = GameKeeper::Player::getPlayerByIndex(v);
 	if (p != NULL) {

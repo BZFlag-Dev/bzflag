@@ -1084,7 +1084,7 @@ void sendFilteredMessage(int sendingPlayer, PlayerId recipientPlayer, const char
     GameKeeper::Player *recipientData = GameKeeper::Player::getPlayerByIndex(recipientPlayer);
 
     // don't care if they're real, just care if they're an admin
-    if (recipientData && recipientData->accessInfo.isAdmin()) {
+    if (recipientData && recipientData->accessInfo.isOperator()) {
       sendMessage(sendingPlayer, recipientPlayer, msg);
       return;
     } else if (recipientPlayer == AdminPlayers) {

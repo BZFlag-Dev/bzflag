@@ -124,9 +124,15 @@ public:
   bool	isPasswordMatching(const char* pwd);
   bool	hasRealPassword();
   void	setPasswd(const std::string& pwd);
-  void	setAdmin();
+
+  /** have successfully provided server password */
+  void  setOperator();	
+  bool	isOperator() const;
+
+  /** have ability to ban */
   bool	isAdmin() const;
-  bool  isPseudoAdmin() const;
+
+  /** are not marked as hidden admins */
   bool	showAsAdmin() const;
 
   void	setPermissionRights();
@@ -165,7 +171,9 @@ private:
   bool				verified;
   TimeKeeper			loginTime;
   int				loginAttempts;
-  bool			  Admin;
+
+  /** server operator that has provided the server password */
+  bool			  	serverop;
 
   // number of times they have tried to /password
   int passwordAttempts;

@@ -640,7 +640,7 @@ BZF_API bool bz_updatePlayerData ( bz_PlayerRecord *playerRecord )
 	playerRecord->groups.clear();
 	playerRecord->groups = player->accessInfo.groups;
 
-	playerRecord->admin = player->accessInfo.isAdmin();
+	playerRecord->admin = player->accessInfo.isOperator();
 	playerRecord->verified = player->accessInfo.isVerified();
 
 	playerRecord->wins = player->score.getWins();
@@ -781,7 +781,7 @@ BZF_API bool bz_setPlayerAdmin (int playerId)
 	if (!player)
 		return false;
 
-	player->accessInfo.setAdmin();
+	player->accessInfo.setOperator();
 	return true;
 }
 
