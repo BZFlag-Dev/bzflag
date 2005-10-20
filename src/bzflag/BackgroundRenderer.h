@@ -26,6 +26,7 @@
 #include <string>
 
 /* common interface headers */
+#include "global.h"
 #include "bzfgl.h"
 #include "OpenGLGState.h"
 #include "SceneRenderer.h"

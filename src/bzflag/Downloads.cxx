@@ -13,12 +13,7 @@
 /* interface header */
 #include "Downloads.h"
 
-/* system headers */
-#include <map>
-#include <vector>
-
 /* common implementation headers */
-#include "network.h"
 #include "AccessList.h"
 #include "CacheManager.h"
 #include "BzMaterial.h"
@@ -187,7 +182,7 @@ void CachedTexture::collectData(char* ptr, int len)
   HUDDialogStack::get()->setFailedMessage(buffer);
 }
 
-std::vector<CachedTexture*> cachedTexVector;
+static std::vector<CachedTexture*> cachedTexVector;
 
 void Downloads::startDownloads(bool doDownloads, bool updateDownloads,
 			       bool referencing)

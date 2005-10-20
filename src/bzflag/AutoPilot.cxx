@@ -14,16 +14,13 @@
 #include "AutoPilot.h"
 
 /* common headers */
-#include "TimeKeeper.h"
 #include "BZDBCache.h"
-
 
 /* local headers */
 #include "Roster.h"
 #include "TargetingUtils.h"
 #include "World.h"
 #include "WorldPlayer.h"
-#include "ServerLink.h"
 #include "playing.h"
 #include "Plan.h"
 
@@ -53,7 +50,7 @@ void teachAutoPilot(FlagType *type, int adjust)
   totalCnt++;
 }
 
-bool isFlagUseful(FlagType *type)
+static bool isFlagUseful(FlagType *type)
 {
   if (type == Flags::Null)
     return false;
@@ -78,7 +75,7 @@ bool isFlagUseful(FlagType *type)
   return ((float)flagValue) >= avg;
 }
 
-ShotPath *findWorstBullet(float &minDistance)
+static ShotPath *findWorstBullet(float &minDistance)
 {
   LocalPlayer *myTank = LocalPlayer::getMyTank();
   const float *pos = myTank->getPosition();
@@ -163,7 +160,7 @@ ShotPath *findWorstBullet(float &minDistance)
   return minPath;
 }
 
-bool	avoidDeathFall(float &/*rotation*/, float &speed)
+static bool avoidDeathFall(float &/*rotation*/, float &speed)
 {
   LocalPlayer *myTank = LocalPlayer::getMyTank();
   float pos1[3], pos2[3];
@@ -195,7 +192,7 @@ bool	avoidDeathFall(float &/*rotation*/, float &speed)
   return false;
 }
 
-bool	avoidBullet(float &rotation, float &speed)
+static bool avoidBullet(float &rotation, float &speed)
 {
   LocalPlayer *myTank = LocalPlayer::getMyTank();
   const float *pos = myTank->getPosition();
@@ -254,7 +251,7 @@ bool	avoidBullet(float &rotation, float &speed)
   return false;
 }
 
-bool	stuckOnWall(float &rotation, float &speed)
+static bool stuckOnWall(float &rotation, float &speed)
 {
   static TimeKeeper lastStuckTime;
   static float stuckRot = 0.0f, stuckSpeed = 0.0f;
@@ -299,7 +296,7 @@ bool	stuckOnWall(float &rotation, float &speed)
   return false;
 }
 
-RemotePlayer *findBestTarget()
+static RemotePlayer *findBestTarget()
 {
   RemotePlayer *target = NULL;
   LocalPlayer *myTank = LocalPlayer::getMyTank();
@@ -354,7 +351,7 @@ RemotePlayer *findBestTarget()
   return target;
 }
 
-bool chasePlayer(float &rotation, float &speed)
+static bool chasePlayer(float &rotation, float &speed)
 {
   LocalPlayer *myTank = LocalPlayer::getMyTank();
   const float *pos = myTank->getPosition();
@@ -454,7 +451,7 @@ bool chasePlayer(float &rotation, float &speed)
   return true;
 }
 
-bool lookForFlag(float &rotation, float &speed)
+static bool lookForFlag(float &rotation, float &speed)
 {
   LocalPlayer *myTank = LocalPlayer::getMyTank();
   float pos[3];
@@ -513,7 +510,7 @@ bool lookForFlag(float &rotation, float &speed)
   return false;
 }
 
-bool navigate(float &rotation, float &speed)
+static bool navigate(float &rotation, float &speed)
 {
   static TimeKeeper lastNavChange;
   static float navRot = 0.0f, navSpeed = 0.0f;
@@ -577,7 +574,7 @@ bool navigate(float &rotation, float &speed)
   return true;
 }
 
-bool fireAtTank()
+static bool fireAtTank()
 {
   static TimeKeeper lastShot;
   float pos[3];
@@ -686,7 +683,7 @@ bool fireAtTank()
   return false;
 }
 
-void    dropHardFlags()
+static void dropHardFlags()
 {
   LocalPlayer *myTank = LocalPlayer::getMyTank();
   FlagType *type = myTank->getFlag();

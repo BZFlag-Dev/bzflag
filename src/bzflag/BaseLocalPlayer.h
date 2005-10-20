@@ -13,14 +13,15 @@
 #ifndef __BASELOCALPLAYER_H__
 #define __BASELOCALPLAYER_H__
 
-/* interface header */
-#include "Player.h"
+// common - 1st one
+#include "common.h"
 
 /* common interface headers */
 #include "Ray.h"
 #include "TimeKeeper.h"
 
 /* local interface headers */
+#include "Player.h"
 #include "ShotPath.h"
 
 

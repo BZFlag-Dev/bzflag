@@ -10,24 +10,12 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-// bzflag common headers
-#include "common.h"
-#include "global.h"
-
 // interface header
 #include "BackgroundRenderer.h"
 
-// system headers
-#include <stdio.h>
-#include <math.h>
-#include <string>
-
 // common headers
-#include "bzfgl.h"
-#include "OpenGLGState.h"
 #include "OpenGLMaterial.h"
 #include "TextureManager.h"
-#include "StateDatabase.h"
 #include "BZDBCache.h"
 #include "BzMaterial.h"
 #include "ParseColor.h"
@@ -37,10 +25,6 @@
 #include "stars.h"
 #include "MainWindow.h"
 #include "SceneNode.h"
-#include "SceneRenderer.h"
-#include "WeatherRenderer.h"
-
-//static     bool	 useMoonTexture = false;
 
 static const GLfloat	squareShape[4][2] =
 				{ {  1.0f,  1.0f }, { -1.0f,  1.0f },

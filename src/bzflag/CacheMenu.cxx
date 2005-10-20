@@ -13,26 +13,16 @@
 /* interface header */
 #include "CacheMenu.h"
 
-/* system implementation headers */
-#include <string>
-#include <vector>
-
 /* common implementation headers */
-#include "StateDatabase.h"
 #include "FontManager.h"
 
 /* local implementation headers */
 #include "MainMenu.h"
 #include "Downloads.h"
 #include "CacheManager.h"
-#include "ControlPanel.h"
 #include "ServerListCache.h"
-#include "HUDDialogStack.h"
-#include "HUDuiControl.h"
 #include "HUDuiList.h"
-#include "HUDuiLabel.h"
 #include "playing.h"
-#include "DisplayMenu.h"
 
 CacheMenu::CacheMenu()
 {

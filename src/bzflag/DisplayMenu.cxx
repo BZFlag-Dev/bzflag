@@ -12,34 +12,17 @@
 
 /* interface header */
 #include "DisplayMenu.h"
-#include "TextureManager.h"
-
-/* system implementation headers */
-#include <string>
-#include <vector>
-#include <math.h>
 
 /* common implementation headers */
-#include "BzfDisplay.h"
-#include "SceneRenderer.h"
 #include "FontManager.h"
-#include "OpenGLTexture.h"
-#include "StateDatabase.h"
 #include "BZDBCache.h"
+#include "TextureManager.h"
 
 /* local implementation headers */
 #include "MainMenu.h"
 #include "HUDDialogStack.h"
-#include "HUDuiControl.h"
 #include "HUDuiList.h"
-#include "HUDuiLabel.h"
-#include "MainWindow.h"
-
-/* FIXME - from playing.h */
-BzfDisplay* getDisplay();
-MainWindow* getMainWindow();
-SceneRenderer* getSceneRenderer();
-void setSceneDatabase();
+#include "playing.h"
 
 DisplayMenu::DisplayMenu() : formatMenu(NULL)
 {

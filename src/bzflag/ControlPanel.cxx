@@ -16,32 +16,16 @@
 /* interface header */
 #include "ControlPanel.h"
 
-/* system headers */
-#include <assert.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
 /* common implementation headers */
-#include "bzfgl.h"
-#include "global.h"
-#include "BzfWindow.h"
-#include "ErrorHandler.h"
-#include "Team.h"
-#include "OpenGLGState.h"
-#include "StateDatabase.h"
 #include "BZDBCache.h"
-#include "AnsiCodes.h"
 #include "FontManager.h"
 #include "TextUtils.h"
+#include "ErrorHandler.h"
 
 /* local implementation headers */
 #include "SceneRenderer.h"
-#include "MainWindow.h"
 #include "RadarRenderer.h"
 #include "bzflag.h"
-
-void			printFatalError(const char* fmt, ...);
 
 //
 // ControlPanelMessage

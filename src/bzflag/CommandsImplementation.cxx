@@ -21,17 +21,15 @@
 #include "AnsiCodes.h"
 #include "TextUtils.h"
 #include "CommandsStandard.h"
-#include "StateDatabase.h"
 #include "TextureManager.h"
 
 // local implementation headers
 #include "LocalCommand.h"
-#include "World.h"
-#include "Player.h"
 #include "Roster.h"
 #include "playing.h"
 #include "bzglob.h"
 #include "Roaming.h"
+#include "ServerLink.h"
 
 // class definitions
 
