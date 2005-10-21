@@ -650,7 +650,9 @@ static bool		doKeyCommon(const BzfKeyEvent& key, bool pressed)
 	// toggle frames-per-second display
 	if (pressed) {
 	  showFPS = !showFPS;
-	  if (!showFPS) hud->setFPS(-1.0);
+	  if (!showFPS) {
+	    hud->setFPS(-1.0);
+          }
 	}
 	return true;
 
@@ -659,7 +661,9 @@ static bool		doKeyCommon(const BzfKeyEvent& key, bool pressed)
 	// toggle milliseconds for drawing
 	if (pressed) {
 	  showDrawTime = !showDrawTime;
-	  if (!showDrawTime) hud->setDrawTime(-1.0);
+	  if (!showDrawTime) {
+	    hud->setDrawTime(-1.0);
+          }
 	}
 	return true;
 
@@ -4742,6 +4746,20 @@ static int		getZoomFactor()
 
 static void drawUI()
 {
+  // setup the triangle counts  (FIXME: hackish)
+  if (showFPS && showDrawTime) {
+    hud->setFrameTriangleCount(sceneRenderer->getFrameTriangleCount());
+    // NOTE:  the radar triangle count is actually from the previous frame
+    if (radar) {
+      hud->setFrameRadarTriangleCount(radar->getFrameTriangleCount());
+    } else {
+      hud->setFrameRadarTriangleCount(0);
+    }
+  } else {
+    hud->setFrameTriangleCount(0);
+    hud->setFrameRadarTriangleCount(0);
+  }
+  
   // update the HUD (player list, alerts)
   if (hud) {
     hud->render(*sceneRenderer);

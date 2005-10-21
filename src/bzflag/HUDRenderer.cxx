@@ -73,7 +73,9 @@ HUDRenderer::HUDRenderer(const BzfDisplay* _display,
 				showCompose(false),
 				showCracks(true),
 				dater(false),
-				lastTimeChange(time(NULL))
+				lastTimeChange(time(NULL)),
+				triangleCount(0),
+				radarTriangleCount(0)
 {
   if (BZDB.eval("timedate") == 0) //we just want the time
     dater = false;
@@ -341,6 +343,16 @@ void			HUDRenderer::setFPS(float _fps)
 void			HUDRenderer::setDrawTime(float drawTimeInseconds)
 {
   drawTime = drawTimeInseconds;
+}
+
+void			HUDRenderer::setFrameTriangleCount(int tpf)
+{
+  triangleCount = tpf;
+}
+
+void			HUDRenderer::setFrameRadarTriangleCount(int rtpf)
+{
+  radarTriangleCount = rtpf;
 }
 
 void			HUDRenderer::setAlert(int index, const char* string,
@@ -626,7 +638,8 @@ void			HUDRenderer::render(SceneRenderer& renderer)
     }
   }
   else {
-    const bool showTimes = (fps > 0.0f) || (drawTime > 0.0f);
+    const bool showTimes = (fps > 0.0f) || (drawTime > 0.0f) ||
+                           (triangleCount > 0) || (radarTriangleCount > 0);
 
     if (showCompose || showTimes) {
       // get view metrics
@@ -932,6 +945,24 @@ void			HUDRenderer::renderTimes(void)
     hudColor3f(1.0f, 1.0f, 1.0f);
     fm.drawString((float)(centerx - maxMotionSize), (float)centery + (float)maxMotionSize +
 		3.0f * fm.getStrHeight(headingFontFace, headingFontSize, "0"), 0,
+		headingFontFace, headingFontSize, buf);
+  }
+  float triCountYOffset = 4.5f;
+  if (radarTriangleCount > 0) {
+    char buf[20];
+    sprintf(buf, "rtris: %i", radarTriangleCount);
+    hudColor3f(1.0f, 1.0f, 1.0f);
+    fm.drawString((float)(centerx - maxMotionSize), (float)centery + (float)maxMotionSize +
+		triCountYOffset * fm.getStrHeight(headingFontFace, headingFontSize, "0"), 0,
+		headingFontFace, headingFontSize, buf);
+    triCountYOffset += 1.5f;
+  }
+  if (triangleCount > 0) {
+    char buf[20];
+    sprintf(buf, "tris: %i", triangleCount);
+    hudColor3f(1.0f, 1.0f, 1.0f);
+    fm.drawString((float)(centerx - maxMotionSize), (float)centery + (float)maxMotionSize +
+		triCountYOffset * fm.getStrHeight(headingFontFace, headingFontSize, "0"), 0,
 		headingFontFace, headingFontSize, buf);
   }
   if (drawTime > 0.0f) {

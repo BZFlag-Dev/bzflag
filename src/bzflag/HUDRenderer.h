@@ -69,6 +69,8 @@ public:
   void		setAltitudeTape(bool = true);
   void		setFPS(float fps);
   void		setDrawTime(float drawTimeInseconds);
+  void		setFrameTriangleCount(int tpf);
+  void		setFrameRadarTriangleCount(int rtpf);
   void		setAlert(int num, const char* string, float duration,
 			 bool warning = false);
   void		setFlagHelp(FlagType* desc, float duration);
@@ -215,8 +217,10 @@ private:
   static std::string	cancelDestructLabel;
   static std::string	gameOverLabel;
   static std::string	autoPilotLabel;
-  bool    dater;
-  unsigned int lastTimeChange;
+  bool			dater;
+  unsigned int		lastTimeChange;
+  int 			triangleCount;
+  int 			radarTriangleCount;
 };
 
 

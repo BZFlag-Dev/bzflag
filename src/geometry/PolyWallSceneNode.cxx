@@ -53,6 +53,7 @@ void			PolyWallSceneNode::Geometry::render()
   } else {
     drawV();
   }
+  addTriangleCount(vertex.getSize() - 2);
   return;
 }
 

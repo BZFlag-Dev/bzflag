@@ -112,7 +112,8 @@ inline void MeshFragSceneNode::Geometry::drawVTN() const
 
 void MeshFragSceneNode::Geometry::render()
 {
-  const bool switchLights = (sceneNode->arrayCount >= minLightDisabling)
+  const int triangles = sceneNode->arrayCount;
+  const bool switchLights = (triangles >= minLightDisabling)
 			    && BZDBCache::lighting;
   if (switchLights) {
     RENDERER.disableLights(sceneNode->extents.mins, sceneNode->extents.maxs);
@@ -138,6 +139,8 @@ void MeshFragSceneNode::Geometry::render()
   if (switchLights) {
     RENDERER.reenableLights();
   }
+  
+  addTriangleCount(triangles);
 
   return;
 }
@@ -145,16 +148,20 @@ void MeshFragSceneNode::Geometry::render()
 
 void MeshFragSceneNode::Geometry::renderRadar()
 {
+  const int triangles = sceneNode->arrayCount;
   glVertexPointer(3, GL_FLOAT, 0, sceneNode->vertices);
-  glDrawArrays(GL_TRIANGLES, 0, sceneNode->arrayCount * 3);
+  glDrawArrays(GL_TRIANGLES, 0, triangles * 3);
+  addTriangleCount(triangles);
   return;
 }
 
 
 void MeshFragSceneNode::Geometry::renderShadow()
 {
+  const int triangles = sceneNode->arrayCount;
   glVertexPointer(3, GL_FLOAT, 0, sceneNode->vertices);
-  glDrawArrays(GL_TRIANGLES, 0, sceneNode->arrayCount * 3);
+  glDrawArrays(GL_TRIANGLES, 0, triangles * 3);
+  addTriangleCount(triangles);
   return;
 }
 

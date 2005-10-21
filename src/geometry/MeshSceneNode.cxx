@@ -364,7 +364,8 @@ void MeshSceneNode::notifyStyleChange()
       if (!mat.needsSorting) {
         setNode.node =
           new OpaqueRenderNode(drawMgr, &xformList, normalize,
-                               mat.colorPtr, lod, set, extPtr);
+                               mat.colorPtr, lod, set, extPtr,
+                               drawSet.triangleCount);
         mat.animRepos = false;
       } else {
         fvec3 setPos;
@@ -374,7 +375,8 @@ void MeshSceneNode::notifyStyleChange()
         }
         setNode.node =
           new AlphaGroupRenderNode(drawMgr, &xformList, normalize,
-                                   mat.colorPtr, lod, set, extPtr, setPos);
+                                   mat.colorPtr, lod, set, extPtr, setPos,
+                                   drawSet.triangleCount);
         if ((fabsf(drawSet.sphere[0]) > 0.001f) &&
             (fabsf(drawSet.sphere[1]) > 0.001f) &&
             (mat.color[3] != 0.0f) &&
@@ -388,7 +390,8 @@ void MeshSceneNode::notifyStyleChange()
 
       setNode.radarNode =
         new OpaqueRenderNode(drawMgr, &xformList, normalize,
-                             mat.colorPtr, lod, set, extPtr);
+                             mat.colorPtr, lod, set, extPtr,
+                             drawSet.triangleCount);
     }
   }
   return;

@@ -28,7 +28,7 @@ class OpaqueRenderNode : public RenderNode {
     OpaqueRenderNode(MeshDrawMgr* drawMgr,
 		     GLuint* xformList, bool normalize,
 		     const GLfloat* color, int lod, int set,
-		     const Extents* exts);
+		     const Extents* exts, int triangles);
     void render();
     void renderRadar();
     void renderShadow();
@@ -45,6 +45,7 @@ class OpaqueRenderNode : public RenderNode {
     int lod, set;
     const GLfloat* color;
     const Extents* exts;
+    int triangles;
 };
 
 
@@ -53,7 +54,8 @@ class AlphaGroupRenderNode : public OpaqueRenderNode {
     AlphaGroupRenderNode(MeshDrawMgr* drawMgr,
                          GLuint* xformList, bool normalize,
 			 const GLfloat* color, int lod, int set,
-			 const Extents* exts, const float pos[3]);
+			 const Extents* exts, const float pos[3],
+			 int triangles);
     const GLfloat* getPosition() const { return pos; }
     void setPosition(const GLfloat* pos);
   private:

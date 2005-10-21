@@ -15,12 +15,32 @@
 #include "common.h"
 #include "RenderNode.h"
 
+
+//
+// RenderNode
+//
+
+int RenderNode::triangleCount = 0;
+
+
+int RenderNode::getTriangleCount()
+{
+  return triangleCount;
+}
+
+
+void RenderNode::resetTriangleCount()
+{
+  triangleCount = 0;
+  return;
+}
+        
+
 //
 // RenderNodeList
 //
 
-static const int	initialSize = 31;
-
+static const int initialSize = 31;
 
 RenderNodeList::RenderNodeList() : count(0), size(0), list(NULL)
 {

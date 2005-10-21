@@ -72,6 +72,7 @@ class TriWallSceneNode : public WallSceneNode {
       public:
 	GLfloat3Array	vertex;
 	GLfloat2Array	uv;
+	int             triangles;
     };
 
   private:

@@ -701,6 +701,9 @@ void SceneRenderer::render(bool _lastFrame, bool _sameFrame,
   lastFrame = _lastFrame;
   sameFrame = _sameFrame;
   
+  triangleCount = 0;
+  RenderNode::resetTriangleCount();
+  
   // update the SceneNode, Background, and TrackMark styles
   if (needStyleUpdate) {
     if (scene) {
@@ -872,6 +875,8 @@ void SceneRenderer::render(bool _lastFrame, bool _sameFrame,
   } else {
     renderPostDimming();
   }
+
+  triangleCount = RenderNode::getTriangleCount();
 
   return;
 }
@@ -1370,6 +1375,12 @@ const Extents* SceneRenderer::getVisualExtents() const
   } else {
     return NULL;
   }
+}
+
+
+int SceneRenderer::getFrameTriangleCount() const
+{
+  return triangleCount;
 }
 
 

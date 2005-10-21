@@ -34,7 +34,7 @@ OpaqueRenderNode::OpaqueRenderNode(MeshDrawMgr* _drawMgr,
 				   GLuint* _xformList, bool _normalize,
 				   const GLfloat* _color,
 				   int _lod, int _set,
-				   const Extents* _exts)
+				   const Extents* _exts, int tris)
 {
   drawMgr = _drawMgr;
   xformList = _xformList;
@@ -43,6 +43,7 @@ OpaqueRenderNode::OpaqueRenderNode(MeshDrawMgr* _drawMgr,
   set = _set;
   color = _color;
   exts = _exts;
+  triangles = tris;
 }
 
 
@@ -79,6 +80,9 @@ void OpaqueRenderNode::render()
   if (switchLights) {
     RENDERER.reenableLights();
   }
+
+  addTriangleCount(triangles);
+
   return;
 }
 
@@ -93,6 +97,9 @@ void OpaqueRenderNode::renderRadar()
   if (*xformList != INVALID_GL_LIST_ID) {
     glPopMatrix();
   }
+
+  addTriangleCount(triangles);
+
   return;
 }
 
@@ -107,6 +114,9 @@ void OpaqueRenderNode::renderShadow()
   if (*xformList != INVALID_GL_LIST_ID) {
     glPopMatrix();
   }
+
+  addTriangleCount(triangles);
+
   return;
 }
 
@@ -119,9 +129,10 @@ AlphaGroupRenderNode::AlphaGroupRenderNode(MeshDrawMgr* _drawMgr,
 					   const GLfloat* _color,
 					   int _lod, int _set,
 					   const Extents* _exts,
-					   const GLfloat _pos[3]) :
+					   const GLfloat _pos[3],
+					   int _triangles) :
     OpaqueRenderNode(_drawMgr, _xformList, _normalize,
-		     _color, _lod, _set, _exts)
+		     _color, _lod, _set, _exts, _triangles)
 {
   memcpy(pos, _pos, sizeof(GLfloat[3]));
   return;

@@ -340,8 +340,11 @@ void RadarRenderer::renderFrame(SceneRenderer& renderer)
 
 void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
 {
+  RenderNode::resetTriangleCount();
+
   const float radarLimit = BZDBCache::radarLimit;
   if (!BZDB.isTrue("displayRadar") || (radarLimit <= 0.0f)) {
+    triangleCount = 0;
     return;
   }
 
@@ -750,6 +753,8 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
 
   // restore GL state
   glPopMatrix();
+
+  triangleCount = RenderNode::getTriangleCount();
 }
 
 
@@ -1197,6 +1202,12 @@ void RadarRenderer::renderBasesAndTeles()
   glEnd();
 
   return;
+}
+
+
+int RadarRenderer::getFrameTriangleCount() const
+{
+  return triangleCount;
 }
 
 

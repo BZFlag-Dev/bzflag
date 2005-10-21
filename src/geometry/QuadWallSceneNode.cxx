@@ -61,6 +61,7 @@ QuadWallSceneNode::Geometry::Geometry(QuadWallSceneNode* _wall,
       uv[n][1] = vOffset + t * vRepeats;
     }
   }
+  triangles = 2 * (uCount * vCount);
 }
 
 QuadWallSceneNode::Geometry::~Geometry()
@@ -117,7 +118,7 @@ void			QuadWallSceneNode::Geometry::render()
   } else {
     drawV();
   }
-
+  addTriangleCount(triangles);
   return;
 }
 
@@ -130,6 +131,7 @@ void			QuadWallSceneNode::Geometry::renderShadow()
   glVertex3fv(vertex[last + ds]);
   glVertex3fv(vertex[ds]);
   glEnd();
+  addTriangleCount(2);
 }
 
 void			QuadWallSceneNode::Geometry::drawV() const

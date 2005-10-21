@@ -24,6 +24,7 @@
 #include "common.h"
 #include "OpenGLGState.h"
 
+
 class RenderNode {
   public:
 			RenderNode() { }
@@ -33,7 +34,29 @@ class RenderNode {
     virtual void	renderShadow() { render(); }
     virtual void	renderRadar() { renderShadow(); }
     virtual const GLfloat* getPosition() const = 0;
+    
+    static int		getTriangleCount();
+    static void		resetTriangleCount();
+
+  protected:
+    static void		addTriangleCount(int triCount);
+
+  private:
+    static int		triangleCount;
 };
+
+
+inline void RenderNode::addTriangleCount(int count)
+{
+  triangleCount += count;
+  return;
+}
+
+// do not tally unless debugging (for now)
+#ifndef DEBUG_RENDERING
+#  define addTriangleCount(x)
+#endif
+
 
 class RenderNodeList {
   public:
@@ -64,7 +87,6 @@ inline void RenderNodeList::append(RenderNode* node)
   }
   list[count++] = node;
 }
-
 
 
 class RenderNodeGStateList {

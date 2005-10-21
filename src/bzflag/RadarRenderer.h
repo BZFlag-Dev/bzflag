@@ -53,6 +53,8 @@ class RadarRenderer {
     void		renderBoxPyrMesh();
     void		renderBoxPyrMeshFast(float range);
     void		renderBasesAndTeles();
+    
+    int			getFrameTriangleCount() const;
 
   private:
     // no copying
@@ -83,6 +85,7 @@ class RadarRenderer {
     bool		multiSampled;
     bool		useTankModels;
     bool		useTankDimensions;
+    int			triangleCount;
     static const float	colorFactor;
 };
 

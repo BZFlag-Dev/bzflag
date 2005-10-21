@@ -49,6 +49,7 @@ TriWallSceneNode::Geometry::Geometry(TriWallSceneNode* _wall, int eCount,
       uv[n][1] = 0.0f + t * vRepeats;
     }
   }
+  triangles = (eCount * eCount);
 }
 
 
@@ -82,6 +83,7 @@ void			TriWallSceneNode::Geometry::render()
   } else {
     drawV();
   }
+  addTriangleCount(triangles);
   return;
 }
 
@@ -92,6 +94,7 @@ void			TriWallSceneNode::Geometry::renderShadow()
   glVertex3fv(vertex[0]);
   glVertex3fv(vertex[de]);
   glEnd();
+  addTriangleCount(1);
 }
 
 

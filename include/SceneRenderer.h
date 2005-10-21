@@ -140,6 +140,8 @@ public:
 
   const Extents*	getVisualExtents() const;
   const float		getLengthPerPixel() const;
+  
+  int			getFrameTriangleCount() const;
 
   BackgroundRenderer*	getBackground();
   void			setBackground(BackgroundRenderer*);
@@ -200,6 +202,7 @@ private:
   GLfloat		sunBrightness;
   SceneDatabase*	scene;
   BackgroundRenderer*	background;
+  int			triangleCount;
   static const GLint	SunLight;
 
   static const float dimDensity;
