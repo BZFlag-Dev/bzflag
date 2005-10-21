@@ -1364,6 +1364,7 @@ static bool removePlayer (PlayerId id)
   } else {
     msg += " from ";
     msg += addr.getDotNotation();
+    p->setIpAddress(addr);
     addMessage(p, msg);
     if (BZDB.evalInt("showips") > 1) {
       printIpInfo (p, addr, "(leave)");
@@ -2828,7 +2829,7 @@ static void		handleServerMessage(bool human, uint16_t code,
           }
 	}
 	message += " from " + ip.getDotNotation();
-
+        tank->setIpAddress(ip);
 	addMessage(tank, message);
       }
 
