@@ -42,6 +42,10 @@ using namespace TankGeometryUtils;
 static GLuint displayLists[LastTankShadow][LastTankLOD]
 			  [LastTankSize][LastTankPart];
 
+// triangle counds
+static int partTriangles[LastTankShadow][LastTankLOD]
+			[LastTankSize][LastTankPart];
+
 // the scaling factors
 static GLfloat scaleFactors[LastTankSize][3] = {
   {1.0f, 1.0f, 1.0f},   // Normal
@@ -57,7 +61,7 @@ static const float* currentScaleFactor = scaleFactors[Normal];
 static TankShadow shadowMode = ShadowOn;
 
 // arrays of functions to avoid large switch statements
-typedef void (*partFunction)(void);
+typedef int (*partFunction)(void);
 static const partFunction partFunctions[LastTankLOD][BasicTankParts] = {
   { buildLowBody,
     buildLowBarrel,
@@ -103,6 +107,7 @@ void TankGeometryMgr::init()
       for (int size = 0; size < LastTankSize; size++) {
 	for (int part = 0; part < LastTankPart; part++) {
 	  displayLists[shadow][lod][size][part] = INVALID_GL_LIST_ID;
+	  partTriangles[shadow][lod][size][part] = 0;
 	}
       }
     }
@@ -201,8 +206,10 @@ void TankGeometryMgr::buildLists()
 
 	for (int part = 0; part < lastPart; part++) {
 
-	  // get a new OpenGL display list
 	  GLuint& list = displayLists[shadow][lod][size][part];
+	  int& count = partTriangles[shadow][lod][size][part];
+
+	  // get a new OpenGL display list
 	  list = glGenLists(1);
 	  glNewList(list, GL_COMPILE);
 
@@ -211,28 +218,30 @@ void TankGeometryMgr::buildLists()
 
 	  if ((part <= Turret) || (!animated)) {
 	    // the basic parts
-	    partFunctions[lod][part]();
+	    count = partFunctions[lod][part]();
 	  } else {
 	    // the animated parts
 	    if (part == LeftCasing) {
-	      buildHighLCasingAnim();
+	      count = buildHighLCasingAnim();
 	    }
 	    else if (part == RightCasing) {
-	      buildHighRCasingAnim();
+	      count = buildHighRCasingAnim();
 	    }
 	    else if (part == LeftTread) {
-	      buildHighLTread(treadDivs);
+	      count = buildHighLTread(treadDivs);
 	    }
 	    else if (part == RightTread) {
-	      buildHighRTread(treadDivs);
+	      count = buildHighRTread(treadDivs);
 	    }
 	    else if ((part >= LeftWheel0) && (part <= LeftWheel3)) {
 	      int wheel = part - LeftWheel0;
-	      buildHighLWheel(wheel, (float)wheel * (float)(M_PI / 2.0), wheelDivs);
+	      count = buildHighLWheel(wheel, (float)wheel * (float)(M_PI / 2.0),
+                                      wheelDivs);
 	    }
 	    else if ((part >= RightWheel0) && (part <= RightWheel3)) {
 	      int wheel = part - RightWheel0;
-	      buildHighRWheel(wheel, (float)wheel * (float)(M_PI / 2.0), wheelDivs);
+	      count = buildHighRWheel(wheel, (float)wheel * (float)(M_PI / 2.0),
+	                              wheelDivs);
 	    }
 	  }
 
@@ -254,6 +263,15 @@ GLuint TankGeometryMgr::getPartList(TankGeometryEnums::TankShadow shadow,
 				    TankGeometryEnums::TankLOD lod)
 {
   return displayLists[shadow][lod][size][part];
+}
+
+
+int TankGeometryMgr::getPartTriangleCount(TankGeometryEnums::TankShadow sh,
+                                          TankGeometryEnums::TankPart part,
+				          TankGeometryEnums::TankSize size,
+				          TankGeometryEnums::TankLOD lod)
+{
+  return partTriangles[sh][lod][size][part];
 }
 
 

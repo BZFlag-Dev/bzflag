@@ -35,6 +35,7 @@
 static const int	waveLists = 8;		// GL list count
 static int		flagChunks = 8;		// draw flag as 8 quads
 static bool		geoPole = false;	// draw the pole as quads
+static int		triCount = 0;		// number of rendered triangles
 
 static const GLfloat	Unit = 0.8f;		// meters
 const GLfloat		FlagSceneNode::Width = 1.5f * Unit;
@@ -116,6 +117,7 @@ void WaveGeometry::waveFlag(float dt)
   }
   glEnd();
   glEndList();
+  triCount = flagChunks * 2;
 }
 
 void WaveGeometry::freeFlag()
@@ -290,6 +292,7 @@ void			FlagSceneNode::FlagRenderNode::render()
     if (sceneNode->billboard) {
       RENDERER.getViewFrustum().executeBillboard();
       glCallList(allWaves[waveReference].glList);
+      addTriangleCount(triCount);
     } else {
       glRotatef(sceneNode->angle + 180.0f, 0.0f, 0.0f, 1.0f);
       glRotatef(90.0f, 1.0f, 0.0f, 0.0f);
@@ -303,6 +306,7 @@ void			FlagSceneNode::FlagRenderNode::render()
 	glTexCoord2f(0.0f, 1.0f);
 	glVertex3f(0.0f, base + Height, 0.0f);
       glEnd();
+      addTriangleCount(2);
     }
 
     myColor4f(0.0f, 0.0f, 0.0f, sceneNode->color[3]);
@@ -315,11 +319,13 @@ void			FlagSceneNode::FlagRenderNode::render()
 	glVertex3f(poleWidth, base + Height, 0.0f);
 	glVertex3f(-poleWidth, base + Height, 0.0f);
       glEnd();
+      addTriangleCount(2);
     } else {
       glBegin(GL_LINE_STRIP);
 	glVertex3f(0.0f, 0.0f, 0.0f);
 	glVertex3f(0.0f, base + Height, 0.0f);
       glEnd();
+      addTriangleCount(1);
     }
     if (sceneNode->texturing) glEnable(GL_TEXTURE_2D);
 

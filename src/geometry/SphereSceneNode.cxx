@@ -119,6 +119,7 @@ void SphereSceneNode::notifyStyleChange()
 bool SphereLodSceneNode::initialized = false;
 GLuint SphereLodSceneNode::lodLists[sphereLods];
 float SphereLodSceneNode::lodPixelsSqr[sphereLods];
+int SphereLodSceneNode::listTriangleCount[sphereLods];
 
 
 static GLuint buildSphereList(GLdouble radius, GLint slices, GLint stacks)
@@ -156,24 +157,36 @@ void SphereLodSceneNode::freeContext(void *)
 }
 
 
+static int calcTriCount(int slices, int stacks)
+{
+  const int trifans = 2 * slices;
+  const int quads = 2 * (slices * (stacks - 2));
+  return (trifans + quads);
+}
+
 void SphereLodSceneNode::initContext(void *)
 {
   initialized = true;
 
   lodLists[0] = buildSphereList(1.0, 32, 32);
   lodPixelsSqr[0] = 80.0f * 80.0f;
+  listTriangleCount[0] = calcTriCount(32, 32);
 
   lodLists[1] = buildSphereList(1.0, 16, 16);
   lodPixelsSqr[1] = 40.0f * 40.0f;
+  listTriangleCount[1] = calcTriCount(16, 16);
 
-  lodLists[2] = buildSphereList(1.0,  8,  8);
+  lodLists[2] = buildSphereList(1.0,  8, 8);
   lodPixelsSqr[2] = 20.0f * 20.0f;
+  listTriangleCount[2] = calcTriCount(8, 8);
 
-  lodLists[3] = buildSphereList(1.0,  6,  6);
+  lodLists[3] = buildSphereList(1.0,  6, 6);
   lodPixelsSqr[3] = 10.0f * 10.0f;
+  listTriangleCount[3] = calcTriCount(6, 6);
 
-  lodLists[4] = buildSphereList(1.0,  4,  4);
+  lodLists[4] = buildSphereList(1.0,  4, 4);
   lodPixelsSqr[4] = 5.0f * 5.0f;
+  listTriangleCount[4] = calcTriCount(4, 4);
   
   return;
 }
@@ -213,7 +226,7 @@ SphereLodSceneNode::SphereLodSceneNode(const GLfloat pos[3], GLfloat _radius) :
   inside = false;
   shockWave = false;
   
-  renderNode.setDisplayList(&lodLists[0]);
+  renderNode.setLod(0);
 
   // adjust the gstate for this type of sphere
   OpenGLGStateBuilder builder(gstate);
@@ -277,7 +290,7 @@ void SphereLodSceneNode::addRenderNodes(SceneRenderer& renderer)
       break;
     }
   }
-  renderNode.setDisplayList(&lodLists[lod]);
+  renderNode.setLod(lod);
 
   inside = (distSqr < s[3]);
 
@@ -311,9 +324,9 @@ SphereLodSceneNode::SphereLodRenderNode::~SphereLodRenderNode()
 }
 
 
-void SphereLodSceneNode::SphereLodRenderNode::setDisplayList(const GLuint* _list)
+void SphereLodSceneNode::SphereLodRenderNode::setLod(int _lod)
 {
-  list = _list;
+  lod = _lod;
   return;
 }
 
@@ -353,6 +366,8 @@ void SphereLodSceneNode::SphereLodRenderNode::render()
   const bool transparent = sceneNode->transparent;
   const bool stippled = transparent && !BZDBCache::blend;
   
+  const GLuint list = SphereLodSceneNode::lodLists[lod];
+  
   glPushMatrix();
   {
     glTranslatef(sphere[0], sphere[1], sphere[2]);
@@ -373,12 +388,15 @@ void SphereLodSceneNode::SphereLodRenderNode::render()
       glEnable(GL_COLOR_LOGIC_OP);
       {
         glCullFace(GL_FRONT);
-        glCallList(*list);
+        glCallList(list);
+        addTriangleCount(listTriangleCount[lod]);
         glCullFace(GL_BACK);
         if (!sceneNode->inside) {
-          glCallList(*list);
+          glCallList(list);
+          addTriangleCount(listTriangleCount[lod]);
         } else {
           drawFullScreenRect();
+          addTriangleCount(2);
         }
       }
       glDisable(GL_COLOR_LOGIC_OP);
@@ -400,15 +418,18 @@ void SphereLodSceneNode::SphereLodRenderNode::render()
     }
     if (!stippled) {
       glCullFace(GL_FRONT);
-      glCallList(*list);
+      glCallList(list);
+      addTriangleCount(listTriangleCount[lod]);
     }
     glCullFace(GL_BACK);
     if (!sceneNode->inside) {
-      glCallList(*list);
+      glCallList(list);
+      addTriangleCount(listTriangleCount[lod]);
     } else {
       glDisable(GL_LIGHTING);
       drawFullScreenRect();
       glEnable(GL_LIGHTING);
+      addTriangleCount(2);
     }
     if (stippled) {
       myStipple(0.5f);
@@ -614,6 +635,7 @@ void			SphereBspSceneNode::SphereBspRenderNode::render()
 	  }
 	  glEnd();
 	}
+	addTriangleCount(SphereRes * NumSlices * 2);
       }
       else {
 	for (i = 0; i < SphereLowRes; i++) {
@@ -632,6 +654,7 @@ void			SphereBspSceneNode::SphereBspRenderNode::render()
 	  }
 	  glEnd();
 	}
+	addTriangleCount(SphereLowRes * SphereLowRes * 2);
       }
 #ifdef GL_VERSION_1_2
       glDisable(GL_RESCALE_NORMAL);
@@ -654,6 +677,7 @@ void			SphereBspSceneNode::SphereBspRenderNode::render()
 	  }
 	  glEnd();
 	}
+	addTriangleCount(SphereRes * NumSlices * 2);
       }
       else {
 	for (i = 0; i < SphereLowRes; i++) {
@@ -668,6 +692,7 @@ void			SphereBspSceneNode::SphereBspRenderNode::render()
 	  }
 	  glEnd();
 	}
+	addTriangleCount(SphereLowRes * SphereLowRes * 2);
       }
     }
 
@@ -763,6 +788,7 @@ void			SphereFragmentSceneNode::FragmentRenderNode::render()
   const GLfloat* pSphere = sceneNode->getSphere();
 
   glPushMatrix();
+  {
     glTranslatef(pSphere[0], pSphere[1], pSphere[2]);
     glScalef(pRadius, pRadius, pRadius);
 
@@ -770,6 +796,7 @@ void			SphereFragmentSceneNode::FragmentRenderNode::render()
     if (!BZDBCache::blend && sceneNode->transparent)
       myStipple(sceneNode->color[3]);
     glBegin(GL_QUADS);
+    {
       if (BZDBCache::lighting) {
 	glNormal3fv(SphereBspSceneNode::SphereBspRenderNode::lgeom[SphereLowRes * phi + theta]);
 	glVertex3fv(SphereBspSceneNode::SphereBspRenderNode::lgeom[SphereLowRes * phi + theta]);
@@ -779,16 +806,20 @@ void			SphereFragmentSceneNode::FragmentRenderNode::render()
 	glVertex3fv(SphereBspSceneNode::SphereBspRenderNode::lgeom[SphereLowRes * phi2 + theta2]);
 	glNormal3fv(SphereBspSceneNode::SphereBspRenderNode::lgeom[SphereLowRes * phi + theta2]);
 	glVertex3fv(SphereBspSceneNode::SphereBspRenderNode::lgeom[SphereLowRes * phi + theta2]);
-      }
-      else {
+        addTriangleCount(2);
+      } else {
 	glVertex3fv(SphereBspSceneNode::SphereBspRenderNode::lgeom[SphereLowRes * phi + theta]);
 	glVertex3fv(SphereBspSceneNode::SphereBspRenderNode::lgeom[SphereLowRes * phi2 + theta]);
 	glVertex3fv(SphereBspSceneNode::SphereBspRenderNode::lgeom[SphereLowRes * phi2 + theta2]);
 	glVertex3fv(SphereBspSceneNode::SphereBspRenderNode::lgeom[SphereLowRes * phi + theta2]);
+        addTriangleCount(2);
       }
-    glEnd();
-
+    }
+    glEnd(); // 4 verts -> 2 tris
+  }
   glPopMatrix();
+  
+  return;
 }
 
 

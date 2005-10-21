@@ -303,6 +303,8 @@ void			BoltSceneNode::BoltRenderNode::render()
       }
       glEnd();
       if (sceneNode->texturing) glEnable(GL_TEXTURE_2D);
+
+      addTriangleCount(numFlares * 2);
     }
 
     if (sceneNode->texturing) {
@@ -318,6 +320,7 @@ void			BoltSceneNode::BoltRenderNode::render()
       glTexCoord2f(   u0, dv+v0);
       glVertex2f  (-1.0f,  1.0f);
       glEnd();
+      addTriangleCount(2);
     }
 
     else if (BZDBCache::blend) {
@@ -359,7 +362,7 @@ void			BoltSceneNode::BoltRenderNode::render()
       glVertex2fv(core[1]);
       myColor4fv(outerColor);
       glVertex2fv(corona[0]);
-      glEnd();
+      glEnd(); // 18 verts -> 16 tris
 
       // draw core
       glBegin(GL_TRIANGLE_FAN);
@@ -375,7 +378,9 @@ void			BoltSceneNode::BoltRenderNode::render()
       glVertex2fv(core[7]);
       glVertex2fv(core[8]);
       glVertex2fv(core[1]);
-      glEnd();
+      glEnd(); // 10 verts -> 8 tris
+
+      addTriangleCount(24);
     }
 
     else {
@@ -401,7 +406,7 @@ void			BoltSceneNode::BoltRenderNode::render()
       glVertex2fv(corona[7]);
       glVertex2fv(core[1]);
       glVertex2fv(corona[0]);
-      glEnd();
+      glEnd(); // 18 verts -> 16 tris
 
       // draw core
       myStipple(1.0f);
@@ -418,9 +423,11 @@ void			BoltSceneNode::BoltRenderNode::render()
       glVertex2fv(core[7]);
       glVertex2fv(core[8]);
       glVertex2fv(core[1]);
-      glEnd();
+      glEnd(); // 10 verts -> 8 tris
 
       myStipple(0.5f);
+
+      addTriangleCount(24);
     }
 
   glPopMatrix();

@@ -12,35 +12,38 @@
 #include "TankGeometryMgr.h"
 using namespace TankGeometryUtils;
 
-void TankGeometryUtils::buildMedBarrel ( void )
+int TankGeometryUtils::buildMedBarrel ( void )
 {
-      glShadeModel(GL_SMOOTH);
-      glBegin(GL_TRIANGLE_STRIP);
-	doNormal3f(0.0f, -1.0f, 0.0f);
-	doVertex3f(1.570f, -0.18f, 1.530f);
-	doVertex3f(4.940f, -0.126f, 1.530f);
-	doNormal3f(0.0f, 0.0f, 1.0f);
-	doVertex3f(1.570f, 0.0f, 1.710f);
-	doVertex3f(4.940f, 0.0f, 1.660f);
-	doNormal3f(0.0f, 1.0f, 0.0f);
-	doVertex3f(1.570f, 0.18f, 1.530f);
-	doVertex3f(4.940f, 0.126f, 1.530f);
-	doNormal3f(0.0f, 0.0f, -1.0f);
-	doVertex3f(1.570f, 0.0f, 1.350f);
-	doVertex3f(4.940f, 0.0f, 1.410f);
-	doNormal3f(0.0f, -1.0f, 0.0f);
-	doVertex3f(1.570f, -0.18f, 1.530f);
-	doVertex3f(4.940f, -0.126f, 1.530f);
-      glEnd();
-      glShadeModel(GL_FLAT);
-      glBegin(GL_TRIANGLE_FAN);
-	doNormal3f(1.000000f, 0.000000f, 0.000000f);
-	doVertex3f(4.940f, 0.0f, 1.410f);
-	doVertex3f(4.940f, 0.126f, 1.530f);
-	doVertex3f(4.940f, 0.0f, 1.660f);
-	doVertex3f(4.940f, -0.126f, 1.530f);
-      glEnd();
+  glShadeModel(GL_SMOOTH);
+  glBegin(GL_TRIANGLE_STRIP);
+    doNormal3f(0.0f, -1.0f, 0.0f);
+    doVertex3f(1.570f, -0.18f, 1.530f);
+    doVertex3f(4.940f, -0.126f, 1.530f);
+    doNormal3f(0.0f, 0.0f, 1.0f);
+    doVertex3f(1.570f, 0.0f, 1.710f);
+    doVertex3f(4.940f, 0.0f, 1.660f);
+    doNormal3f(0.0f, 1.0f, 0.0f);
+    doVertex3f(1.570f, 0.18f, 1.530f);
+    doVertex3f(4.940f, 0.126f, 1.530f);
+    doNormal3f(0.0f, 0.0f, -1.0f);
+    doVertex3f(1.570f, 0.0f, 1.350f);
+    doVertex3f(4.940f, 0.0f, 1.410f);
+    doNormal3f(0.0f, -1.0f, 0.0f);
+    doVertex3f(1.570f, -0.18f, 1.530f);
+    doVertex3f(4.940f, -0.126f, 1.530f);
+  glEnd(); // 8 tris
+  glShadeModel(GL_FLAT);
+  glBegin(GL_TRIANGLE_FAN);
+    doNormal3f(1.000000f, 0.000000f, 0.000000f);
+    doVertex3f(4.940f, 0.0f, 1.410f);
+    doVertex3f(4.940f, 0.126f, 1.530f);
+    doVertex3f(4.940f, 0.0f, 1.660f);
+    doVertex3f(4.940f, -0.126f, 1.530f);
+  glEnd(); // 2 tris
+  
+  return 10;
 }
+
 /*
  * Local Variables: ***
  * mode:C ***

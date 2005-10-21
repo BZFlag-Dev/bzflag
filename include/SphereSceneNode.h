@@ -80,15 +80,14 @@ class SphereLodSceneNode : public SphereSceneNode {
       public:
         SphereLodRenderNode(const SphereLodSceneNode*);
 	~SphereLodRenderNode();
-	void setDisplayList(const GLuint* list);
+	void setLod(int lod);
 	void render();
 	const GLfloat* getPosition() const { return sceneNode->getSphere(); }
 
       private:
 	const SphereLodSceneNode* sceneNode;
-	const GLuint* list;
+	int lod;
     };
-    friend class SphereLodRenderNode;
 
   private:
     SphereLodRenderNode	renderNode;
@@ -98,6 +97,9 @@ class SphereLodSceneNode : public SphereSceneNode {
     static bool initialized;    
     static GLuint lodLists[sphereLods];
     static float lodPixelsSqr[sphereLods];
+    static int listTriangleCount[sphereLods];
+
+    friend class SphereLodSceneNode::SphereLodRenderNode;
 };
 
 

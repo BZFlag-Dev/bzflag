@@ -146,7 +146,8 @@ void			FlagWarpSceneNode::FlagWarpRenderNode::render()
 	glVertex2f(s * geom[2][0], s * geom[2][1]);
 	glVertex2f(s * geom[1][0], s * geom[1][1]);
 	glVertex2f(s * geom[0][0], s * geom[0][1]);
-	glEnd();
+	glEnd(); // 14 verts -> 12 tris
+        addTriangleCount(12);
 	glTranslatef(0.0f, 0.0f, -0.01f);
       }
     }
@@ -170,7 +171,8 @@ void			FlagWarpSceneNode::FlagWarpRenderNode::render()
 	glVertex2f(s * geom[10][0], s * geom[10][1]);
 	glVertex2f(s * geom[11][0], s * geom[11][1]);
 	glVertex2f(s * geom[0][0], s * geom[0][1]);
-	glEnd();
+	glEnd(); // 14 verts -> 12 tris
+        addTriangleCount(12);
 	glTranslatef(0.0f, 0.0f, 0.01f);
       }
     }

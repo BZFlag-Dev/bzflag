@@ -1173,6 +1173,10 @@ void TankSceneNode::TankRenderNode::renderPart(TankPart part)
   // draw the part
   glCallList(list);
 
+  // add to the triangle count
+  addTriangleCount(TankGeometryMgr::getPartTriangleCount(
+                                      shadow, part, drawSize, drawLOD));
+
   // draw the lights on the turret
   if ((part == Turret) && !isExploding && !isShadow) {
     renderLights();
@@ -1331,6 +1335,8 @@ void TankSceneNode::TankRenderNode::renderLights()
   glPointSize(1.0f);
   sceneNode->gstate.setState();
 
+  addTriangleCount(4);
+  
   return;
 }
 
@@ -1391,6 +1397,8 @@ void TankSceneNode::TankRenderNode::renderJumpJets()
   sceneNode->gstate.setState();
 
   glDisable(GL_CLIP_PLANE1);
+  
+  addTriangleCount(4);
 
   return;
 }

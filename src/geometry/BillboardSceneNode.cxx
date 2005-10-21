@@ -366,6 +366,7 @@ void			BillboardSceneNode::BillboardRenderNode::render()
   d = sceneNode->width / hypotf(dir[0], hypotf(dir[1], dir[2]));
 
   glPushMatrix();
+  {
     glTranslatef(sphere[0] + d * dir[0],
 		 sphere[1] + d * dir[1],
 		 sphere[2] + d * dir[2]);
@@ -384,8 +385,10 @@ void			BillboardSceneNode::BillboardRenderNode::render()
     glTexCoord2f(   u, dv+v);
     glVertex2f  (-sceneNode->width,  sceneNode->height);
     glEnd();
-
+  }
   glPopMatrix();
+  
+  addTriangleCount(2);
 
   glDisable(GL_CLIP_PLANE0);
 }

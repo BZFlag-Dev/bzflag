@@ -84,6 +84,11 @@ namespace TankGeometryMgr {
 		     TankGeometryEnums::TankSize size,
 		     TankGeometryEnums::TankLOD lod);
 
+  int getPartTriangleCount(TankGeometryEnums::TankShadow shadow,
+                           TankGeometryEnums::TankPart part,
+		           TankGeometryEnums::TankSize size,
+		           TankGeometryEnums::TankLOD lod);
+
   const float* getScaleFactor(TankGeometryEnums::TankSize size);
 }
 
@@ -107,35 +112,39 @@ namespace TankGeometryUtils {
   void doVertex3f(GLfloat x, GLfloat y, GLfloat z);
   void doNormal3f(GLfloat x, GLfloat y, GLfloat z);
   void doTexCoord2f(GLfloat x, GLfloat y);
+  
+  //
+  // NOTE:  these all return their triangle count
+  //
 
   // lowtank geometry builder
-  void buildLowBody (void);
-  void buildLowTurret (void);
-  void buildLowLCasing (void);
-  void buildLowRCasing (void);
-  void buildLowBarrel (void);
+  int buildLowBody (void);
+  int buildLowTurret (void);
+  int buildLowLCasing (void);
+  int buildLowRCasing (void);
+  int buildLowBarrel (void);
 
   // medtank geometry builder
-  void buildMedBody (void);
-  void buildMedTurret (void);
-  void buildMedLCasing (void);
-  void buildMedRCasing (void);
-  void buildMedBarrel (void);
+  int buildMedBody (void);
+  int buildMedTurret (void);
+  int buildMedLCasing (void);
+  int buildMedRCasing (void);
+  int buildMedBarrel (void);
 
   // hightank geometry builder
-  void buildHighBody (void);
-  void buildHighBarrel (void);
-  void buildHighTurret (void);
-  void buildHighLCasing (void);
-  void buildHighRCasing (void);
+  int buildHighBody (void);
+  int buildHighBarrel (void);
+  int buildHighTurret (void);
+  int buildHighLCasing (void);
+  int buildHighRCasing (void);
 
   // animated geometry builder
-  void buildHighLCasingAnim (void);
-  void buildHighRCasingAnim (void);
-  void buildHighLTread (int divs);
-  void buildHighRTread (int divs);
-  void buildHighLWheel (int wheel, float angle, int divs);
-  void buildHighRWheel (int wheel, float angle, int divs);
+  int buildHighLCasingAnim (void);
+  int buildHighRCasingAnim (void);
+  int buildHighLTread (int divs);
+  int buildHighRTread (int divs);
+  int buildHighLWheel (int wheel, float angle, int divs);
+  int buildHighRWheel (int wheel, float angle, int divs);
 }
 
 

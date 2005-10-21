@@ -134,7 +134,7 @@ void			LaserSceneNode::LaserRenderNode::render()
 	glVertex3f(  0.0f,  0.0f, -1.0f);
 	glVertex3f(  0.0f, -1.0f,  0.0f);
 	glVertex3f(  0.0f,  0.0f,  1.0f);
-      glEnd();
+      glEnd(); // 6 verts -> 4 tris
 
       glBegin(GL_QUADS);
 	glTexCoord2f(0.0f,  0.0f);
@@ -154,13 +154,16 @@ void			LaserSceneNode::LaserRenderNode::render()
 	glVertex3f(length, -1.0f,  0.0f);
 	glTexCoord2f(1.0f,  0.0f);
 	glVertex3f(  0.0f, -1.0f,  0.0f);
-      glEnd();
+      glEnd(); // 8 verts -> 4 tris
+
+      addTriangleCount(8);
     }
 
     else {
       // draw beam
       myColor4f(1.0f, 0.25f, 0.0f, 0.85f);
       glBegin(GL_QUAD_STRIP);
+      {
 	glVertex3f(  0.0f, geom[0][0], geom[0][1]);
 	glVertex3f(length, geom[0][0], geom[0][1]);
 	glVertex3f(  0.0f, geom[1][0], geom[1][1]);
@@ -175,15 +178,20 @@ void			LaserSceneNode::LaserRenderNode::render()
 	glVertex3f(length, geom[5][0], geom[5][1]);
 	glVertex3f(  0.0f, geom[0][0], geom[0][1]);
 	glVertex3f(length, geom[0][0], geom[0][1]);
-      glEnd();
+      }
+      glEnd(); // 14 verts -> 12 tris
 
       // also draw a line down the middle (so the beam is visible even
       // if very far away).  this will also give the beam an extra bright
       // center.
       glBegin(GL_LINES);
+      {
 	glVertex3f(  0.0f, 0.0f, 0.0f);
 	glVertex3f(length, 0.0f, 0.0f);
-      glEnd();
+      }
+      glEnd(); // count 1 line as 1 tri
+      
+      addTriangleCount(13);
     }
 
   glPopMatrix();
