@@ -620,7 +620,7 @@ void	DXJoystick::ffDirectionalResistance(float time, float coefficient,
   HRESULT success = DI_OK;
 
   // Generate a string to identify a specific resistance effect,
-  // based on the paramaters of the effect
+  // based on the parameters of the effect
   std::string effectType = TextUtils::format("F%d|%d|%d|%d", time, coefficient, saturation, type);
 
   // Check if we need to create the effect

@@ -108,6 +108,7 @@
 				OutputFile=".\..\..\src\bzadmin/bzadmin.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
+				IgnoreDefaultLibraryNames="libcmt"
 				ProgramDatabaseFile=".\..\..\src\bzadmin/bzadmin.pdb"
 				SubSystem="1"
 				TargetMachine="1"/>

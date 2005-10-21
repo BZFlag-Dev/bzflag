@@ -391,7 +391,7 @@ void			DisplayMenu::callback(HUDuiControl* w, void* data) {
     BZDB.setBool("showCollisionGrid", list->getIndex() != 0);
     break;
   case 's':
-    BZDB.setBool("saveEnergy", list->getIndex());
+    BZDB.setBool("saveEnergy", list->getIndex() != 0);
     break;
   case 'g':
     BzfWindow* window = getMainWindow()->getWindow();

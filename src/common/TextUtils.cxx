@@ -23,7 +23,6 @@
 #include <stdarg.h>
 #include <vector>
 #include <stdio.h>
-#include <assert.h>
 
 namespace TextUtils
 {

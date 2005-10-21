@@ -14,7 +14,6 @@
 // BZFlag common header
 #include "common.h"
 
-#include <assert.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 

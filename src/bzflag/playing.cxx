@@ -4829,7 +4829,7 @@ void drawFrame(const float dt)
     cumTime += float(dt);
     if (cumTime >= 2.0) {
       if (showFPS) hud->setFPS(float(frameCount) / cumTime);
-      cumTime = 0.00000001;
+      cumTime = 0.00000001f;
       frameCount = 0;
     }
 
@@ -5941,7 +5941,7 @@ static void		playingLoop()
       const float fpsLimit = BZDB.eval("fpsLimit");
       const bool fpsIsNaN = (fpsLimit != fpsLimit);
       if ((fpsLimit >= 1.0f) && !fpsIsNaN) {
-        const float elapsed = (TimeKeeper::getCurrent() - lastTime);
+        const float elapsed = float(TimeKeeper::getCurrent() - lastTime);
         if (elapsed > 0.0f) {
           const float period = (1.0f / fpsLimit);
           const float remaining = (period - elapsed);

@@ -18,7 +18,6 @@
 #include "OccluderSceneNode.h"
 
 // system headers
-#include <assert.h>
 #include <math.h>
 #include <string.h>
 

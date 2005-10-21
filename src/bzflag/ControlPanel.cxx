@@ -16,6 +16,9 @@
 /* interface header */
 #include "ControlPanel.h"
 
+/* system headers */
+#include <assert.h>
+
 /* common implementation headers */
 #include "BZDBCache.h"
 #include "FontManager.h"
