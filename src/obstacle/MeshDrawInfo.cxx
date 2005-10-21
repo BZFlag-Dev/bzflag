@@ -463,16 +463,16 @@ bool MeshDrawInfo::clientSetup(const MeshObstacle* mesh)
 	const int points = drawCmd.count;
 	switch(drawCmd.drawMode) {
 	  // NOTE: points and lines are each counted as a triangle
-	  case DrawCmd::DrawPoints:	   tris += points;	      break;
-	  case DrawCmd::DrawLines:	   tris += points / 2;	      break;
-	  case DrawCmd::DrawLineLoop:      tris += points;	      break;
-	  case DrawCmd::DrawLineStrip:     tris += points - 1;	      break;
-	  case DrawCmd::DrawTriangles:     tris += points / 3;	      break;
-	  case DrawCmd::DrawTriangleStrip: tris += points - 2;	      break;
-	  case DrawCmd::DrawTriangleFan:   tris += points - 2;	      break;
-	  case DrawCmd::DrawQuads:	   tris += points / 2;	      break;
-	  case DrawCmd::DrawQuadStrip:     tris += (points - 2) / 2;  break;
-	  case DrawCmd::DrawPolygon:       tris += points - 2;	      break;
+	  case DrawCmd::DrawPoints:	   tris += points;	break;
+	  case DrawCmd::DrawLines:	   tris += points / 2;	break;
+	  case DrawCmd::DrawLineLoop:      tris += points;	break;
+	  case DrawCmd::DrawLineStrip:     tris += points - 1;	break;
+	  case DrawCmd::DrawTriangles:     tris += points / 3;	break;
+	  case DrawCmd::DrawTriangleStrip: tris += points - 2;	break;
+	  case DrawCmd::DrawTriangleFan:   tris += points - 2;	break;
+	  case DrawCmd::DrawQuads:	   tris += points / 2;	break;
+	  case DrawCmd::DrawQuadStrip:     tris += points - 2;	break;
+	  case DrawCmd::DrawPolygon:       tris += points - 2;	break;
 	  default: break;
 	}
       }
