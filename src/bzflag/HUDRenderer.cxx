@@ -13,6 +13,9 @@
 /* interface header */
 #include "HUDRenderer.h"
 
+// system headers
+#include <time.h>
+
 /* common implementation headers */
 #include "BundleMgr.h"
 #include "Bundle.h"
