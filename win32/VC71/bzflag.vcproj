@@ -2568,9 +2568,6 @@ copy debug\*.pdb ..\..\*.pdb
 				RelativePath="..\..\src\bzflag\RemotePlayer.h">
 			</File>
 			<File
-				RelativePath="..\..\src\bzflag\Roaming.h">
-			</File>
-			<File
 				RelativePath="..\..\src\bzflag\RobotPlayer.h">
 			</File>
 			<File
