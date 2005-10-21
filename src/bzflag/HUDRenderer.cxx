@@ -13,26 +13,16 @@
 /* interface header */
 #include "HUDRenderer.h"
 
-/* system implementation headers */
-#include <time.h>
-#include <math.h>
-#include <stdlib.h>
-#include <string>
-
 /* common implementation headers */
-#include "StateDatabase.h"
 #include "BundleMgr.h"
 #include "Bundle.h"
-#include "Team.h"
 #include "FontManager.h"
 #include "BZDBCache.h"
 
 /* local implementation headers */
 #include "LocalPlayer.h"
 #include "World.h"
-#include "RemotePlayer.h"
 #include "HUDui.h"
-#include "HUDuiTypeIn.h"
 #include "Roaming.h"
 #include "playing.h"
 

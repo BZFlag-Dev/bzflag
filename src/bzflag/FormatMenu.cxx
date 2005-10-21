@@ -13,25 +13,14 @@
 /* interface header */
 #include "FormatMenu.h"
 
-/* system implementation headers */
-#include <vector>
-#include <string>
-
 /* common implementation headers */
-#include "BzfWindow.h"
 #include "BzfDisplay.h"
-#include "BzfEvent.h"
 #include "ErrorHandler.h"
 #include "FontManager.h"
 
 /* local implementation headers */
 #include "MainMenu.h"
-#include "HUDuiLabel.h"
-
-/* from playing.h */
-BzfDisplay*		getDisplay();
-bool			setVideoFormat(int, bool test);
-
+#include "playing.h"
 
 const int		FormatMenu::NumReadouts = 4;
 const int		FormatMenu::NumItems = 30;

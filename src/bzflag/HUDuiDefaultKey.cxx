@@ -13,9 +13,6 @@
 // interface header
 #include "HUDuiDefaultKey.h"
 
-// common implementation headers
-#include "BzfEvent.h"
-
 //
 // HUDuiDefaultKey
 //

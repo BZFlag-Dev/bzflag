@@ -15,10 +15,8 @@
 
 /* common interface headers */
 #include "BzfJoystick.h"
-#include "StateDatabase.h"
 
 /* local implementation headers */
-#include "MainMenu.h"
 #include "LocalPlayer.h"
 #include "playing.h"
 

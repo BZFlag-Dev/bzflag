@@ -13,11 +13,6 @@
 /* interface header */
 #include "KeyboardMapMenu.h"
 
-/* system implementation headers */
-#include <vector>
-#include <string>
-#include <ctype.h>
-
 /* common implementation headers */
 #include "KeyManager.h"
 #include "FontManager.h"
@@ -26,12 +21,7 @@
 #include "ActionBinding.h"
 #include "HUDDialogStack.h"
 #include "MainMenu.h"
-#include "HUDuiControl.h"
-#include "HUDuiLabel.h"
-
-/* FIXME -- from playing.h */
-void notifyBzfKeyMapChanged();
-
+#include "playing.h"
 
 KeyboardMapMenuDefaultKey::KeyboardMapMenuDefaultKey(KeyboardMapMenu* _menu) :
   menu(_menu)

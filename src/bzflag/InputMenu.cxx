@@ -13,26 +13,15 @@
 /* interface header */
 #include "InputMenu.h"
 
-/* system implementation headers */
-#include <string>
-#include <vector>
-
 /* common implementation headers */
-#include "BzfWindow.h"
 #include "StateDatabase.h"
 #include "FontManager.h"
 
 /* local implementation headers */
-#include "MainWindow.h"
 #include "MainMenu.h"
 #include "HUDDialogStack.h"
 #include "LocalPlayer.h"
-#include "HUDuiControl.h"
-#include "HUDuiLabel.h"
-#include "HUDuiList.h"
-
-/* FIXME - from playing.h */
-MainWindow*    getMainWindow();
+#include "playing.h"
 
 InputMenu::InputMenu() : keyboardMapMenu(NULL)
 {

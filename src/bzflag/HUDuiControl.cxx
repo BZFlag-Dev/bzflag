@@ -15,14 +15,8 @@
 
 // system headers
 #include <iostream>
-#include <math.h>
-#include <string>
 
 // common implementation headers
-#include "common.h"
-#include "bzfgl.h"
-#include "OpenGLGState.h"
-#include "TimeKeeper.h"
 #include "BundleMgr.h"
 #include "Bundle.h"
 #include "TextureManager.h"

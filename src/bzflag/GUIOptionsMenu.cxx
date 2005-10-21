@@ -13,10 +13,6 @@
 /* interface header */
 #include "GUIOptionsMenu.h"
 
-/* system implementation headers */
-#include <string>
-#include <vector>
-
 /* common implementation headers */
 #include "BundleMgr.h"
 #include "BZDBCache.h"
@@ -25,19 +21,12 @@
 
 /* local implementation headers */
 #include "MainMenu.h"
-#include "MainWindow.h"
 #include "World.h"
-#include "SceneRenderer.h"
 #include "HUDDialogStack.h"
-#include "HUDuiControl.h"
 #include "HUDuiList.h"
 #include "HUDuiLabel.h"
 #include "ScoreboardRenderer.h"
-
-/* FIXME - from playing.h */
-SceneRenderer* getSceneRenderer();
-MainWindow* getMainWindow();
-
+#include "playing.h"
 
 GUIOptionsMenu::GUIOptionsMenu()
 {

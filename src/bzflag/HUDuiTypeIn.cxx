@@ -12,19 +12,8 @@
 
 // interface headers
 #include "HUDuiTypeIn.h"
-#include "HUDuiControl.h"
-
-// system headers
-#include <math.h>
-#include <ctype.h>
-#include <string>
 
 // common implementation headers
-#include "common.h"
-#include "bzfgl.h"
-#include "BzfEvent.h"
-#include "BundleMgr.h"
-#include "Bundle.h"
 #include "FontManager.h"
 
 // local implementation headers

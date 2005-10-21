@@ -13,10 +13,6 @@
 /* interface header */
 #include "HUDDialog.h"
 
-/* system headers */
-#include <vector>
-
-
 HUDDialog::HUDDialog() : focus(NULL)
 {
   height = width = 0;

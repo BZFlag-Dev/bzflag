@@ -13,21 +13,13 @@
 /* interface header */
 #include "HelpMenu.h"
 
-/* system implementation headers */
-#include <vector>
-#include <string>
-
 /* common implementation headers */
 #include "KeyManager.h"
 #include "Flag.h"
 #include "FontManager.h"
-#include "BzfEvent.h"
 
 /* local implementation headers */
-#include "HUDui.h"
-#include "HUDDialog.h"
 #include "HUDDialogStack.h"
-#include "HUDuiControl.h"
 #include "HUDuiLabel.h"
 #include "MainMenu.h"
 

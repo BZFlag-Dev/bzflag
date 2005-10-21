@@ -13,19 +13,8 @@
 /* interface header */
 #include "HUDDialogStack.h"
 
-/* system implementation headers */
-#include <vector>
-
-/* common implementation headers */
-#include "BzfWindow.h"
-
 /* local implementation headers */
-#include "HUDui.h"
-#include "MainWindow.h"
-
-/* from playing.cxx */
-MainWindow*		getMainWindow();
-
+#include "playing.h"
 
 HUDDialogStack HUDDialogStack::globalStack;
 

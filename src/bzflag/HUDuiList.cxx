@@ -11,16 +11,9 @@
  */
 
 // interface headers
-#include "HUDuiControl.h"
 #include "HUDuiList.h"
 
-// system headers
-#include <string>
-#include <vector>
-
 // common implementation headers
-#include "common.h"
-#include "bzfgl.h"
 #include "BundleMgr.h"
 #include "Bundle.h"
 #include "FontManager.h"

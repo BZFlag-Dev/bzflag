@@ -13,13 +13,6 @@
 // interface header
 #include "HUDui.h"
 
-// common implementation headers
-#include "BzfEvent.h"
-
-// local implementation headers
-#include "HUDuiControl.h"
-#include "HUDuiDefaultKey.h"
-
 //
 // HUDui
 //

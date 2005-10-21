@@ -11,29 +11,20 @@
  */
 
 /* interface header */
-#include "common.h"
 #include "LocalPlayer.h"
-
-/* system headers */
-#include <string>
 
 /* common implementation headers */
 #include "CommandManager.h"
-#include "WallObstacle.h"
 #include "BZDBCache.h"
 #include "FlagSceneNode.h"
 #include "CollisionManager.h"
 #include "PhysicsDriver.h"
-#include "ObstacleMgr.h"
 
 /* local implementation headers */
 #include "World.h"
 #include "sound.h"
-#include "RemotePlayer.h"
 #include "ForceFeedback.h"
-
-#include "SceneRenderer.h"
-#include "BackgroundRenderer.h"
+#include "effectsRenderer.h"
 
 LocalPlayer*		LocalPlayer::mainPlayer = NULL;
 

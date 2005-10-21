@@ -11,18 +11,13 @@
  */
 
 // interface headers
-#include "HUDuiControl.h"
-#include "HUDuiLabel.h"
 #include "HUDuiTextureLabel.h"
 
 // system headers
 #include <iostream>
 
 // common implementation headers
-#include "common.h"
-#include "bzfgl.h"
 #include "TextureManager.h"
-#include "OpenGLGState.h"
 #include "OpenGLTexture.h"
 
 //

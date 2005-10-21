@@ -14,21 +14,14 @@
 #include "GuidedMissleStrategy.h"
 
 /* common implementation headers */
-#include "StateDatabase.h"
 #include "BZDBCache.h"
 #include "TextureManager.h"
 #include "Intersect.h"
-#include "ObstacleMgr.h"
 
 /* local implementation headers */
 #include "LocalPlayer.h"
 #include "World.h"
-
-/* FIXME - from player.h */
-void addShotExplosion(const float* pos);
-Player* lookupPlayer(PlayerId id);
-void addShotPuff(const float* pos, float azimuth, float elevation);
-
+#include "playing.h"
 
 static float limitAngle(float a)
 {
