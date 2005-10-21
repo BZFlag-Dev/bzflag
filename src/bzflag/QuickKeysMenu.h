@@ -13,6 +13,9 @@
 #ifndef	__QUICKKEYSMENU_H__
 #define __QUICKKEYSMENU_H__
 
+// common - 1st one
+#include "common.h"
+
 /* system interface headers */
 #include <string>
 

@@ -10,18 +10,8 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-// BZFlag common header
-#include "common.h"
-
-// System headers
-#include <vector>
-#include <utility>
-
 // Interface header
 #include "ShotStatistics.h"
-
-// Common implementation headers
-#include "Flag.h"
 
 ShotStatistics::ShotStatistics() :
       normalFired(0), normalHit(0),

@@ -10,27 +10,14 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-/* bzflag common header */
-#include "common.h"
-
 /* interface header */
 #include "Roaming.h"
 
-/* system headers */
-#include <string>
-#include <math.h>
-#include <string.h>
-
 /* common headers */
-#include "Flag.h"
-#include "StateDatabase.h"
 #include "BZDBCache.h"
 #include "AnsiCodes.h"
 
 /* local headers */
-#include "Player.h"
-#include "LocalPlayer.h"
-#include "World.h"
 #include "ScoreboardRenderer.h"
 
 // initialize the singleton

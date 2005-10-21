@@ -10,46 +10,19 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-/* BZFlag common header */
-#include "common.h"
-
 /* interface header */
 #include "ServerMenu.h"
 
-/* system implementation headers */
-#include <sys/types.h>
-#ifdef HAVE_ERRNO_H
-#  include <errno.h>
-#endif
-#include <vector>
-#include <string>
-
 /* common implementation headers */
 #include "FontManager.h"
-#include "Ping.h"
-#include "Protocol.h"
-#include "ServerListCache.h"
 #include "TextUtils.h"
-#include "TimeKeeper.h"
-#include "bzsignal.h"
-#include "version.h"
 #include "bzglob.h"
+#include "AnsiCodes.h"
 
 /* local implementation headers */
 #include "MainMenu.h"
 #include "HUDDialogStack.h"
-#include "ErrorHandler.h"
-#include "HUDui.h"
-#include "HUDuiControl.h"
-#include "HUDuiLabel.h"
-#include "HUDuiTypeIn.h"
 #include "playing.h"
-
-/* from playing.h */
-typedef void (*PlayingCallback)(void*);
-void addPlayingCallback(PlayingCallback, void* data);
-void removePlayingCallback(PlayingCallback, void* data);
-
 
 const int ServerMenu::NumReadouts = 24;
 const int ServerMenu::NumItems = 10;

@@ -10,32 +10,24 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-// bzflag global header
-#include "common.h"
-
-// system headers
-#include <string.h>
-#include <string>
+/* interface header */
+#include "Player.h"
 
 // common interface headers
 #include "TankSceneNode.h"
-#include "SceneDatabase.h"
 #include "SceneRenderer.h"
 #include "SphereSceneNode.h"
 #include "OpenGLMaterial.h"
 #include "BZDBCache.h"
 #include "TextureManager.h"
 #include "CollisionManager.h"
-#include "Obstacle.h"
 #include "ObstacleMgr.h"
 #include "PhysicsDriver.h"
+#include "ObstacleList.h"
 
 // implementation-specific bzfs-specific headers
 #include "playing.h"
-#include "Player.h"
 #include "World.h"
-#include "ShotPath.h"
-#include "ShotStatistics.h"
 #include "TrackMarks.h"
 #include "sound.h"
 #include "effectsRenderer.h"

@@ -11,22 +11,12 @@
  */
 
 
-/* BZFlag common header */
-#include "common.h"
-
 /* interface headers */
 #include "MainWindow.h"
-#include "BzfWindow.h"
-
-/* system headers */
-#include <string>
 
 /* common implementation headers */
 #include "global.h"
 #include "SceneRenderer.h"
-#include "bzfgl.h"
-#include "BzfJoystick.h"
-#include "OpenGLGState.h"
 
 //
 // MainWindow

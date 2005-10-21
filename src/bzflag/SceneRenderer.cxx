@@ -16,36 +16,23 @@
  * may be moved elsewhere.
  */
 
-#include "common.h"
-
-/* system implementation headers */
-#include <stdlib.h>
-#include <string.h>
+// interface header
+#include "SceneRenderer.h"
 
 /* common implementation headers */
-#include "bzfgl.h"
-#include "SceneRenderer.h"
 #include "SceneDatabase.h"
-#include "SceneNode.h"
 #include "MainWindow.h"
-#include "OpenGLGState.h"
-#include "RenderNode.h"
 #include "DynamicColor.h"
 #include "TextureMatrix.h"
-#include "BzfWindow.h"
 #include "TankSceneNode.h"
 #include "StateDatabase.h"
 #include "TextUtils.h"
 #include "ParseColor.h"
 #include "BZDBCache.h"
-#include "TankGeometryMgr.h"
 #include "MeshSceneNode.h"
-
-#include "ObstacleMgr.h"
 
 /* FIXME - local implementation dependancies */
 #include "BackgroundRenderer.h"
-#include "HUDRenderer.h"
 #include "LocalPlayer.h"
 #include "daylight.h"
 #include "World.h"

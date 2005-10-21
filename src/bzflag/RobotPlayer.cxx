@@ -14,27 +14,16 @@
  *
  */
 
-//#define SHOOTING_FIX
-
-// bzflag common header
-#include "common.h"
-
-// system headers
-#include <stdlib.h>
-#include <math.h>
-#include <vector>
+// interface header
+#include "RobotPlayer.h"
 
 // common implementation headers
 #include "BZDBCache.h"
 
 // local implementation headers
 #include "World.h"
-#include "RobotPlayer.h"
-#include "RemotePlayer.h"
 #include "Intersect.h"
-#include "ShotStrategy.h" // need this for rayAtDistanceFromOrigin
 #include "TargetingUtils.h"
-#include "ServerLink.h"
 
 std::vector<BzfRegion*>* RobotPlayer::obstacleList = NULL;
 

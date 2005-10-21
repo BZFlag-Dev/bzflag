@@ -13,6 +13,8 @@
 #ifndef BZF_ROOF_TOPS_H
 #define BZF_ROOF_TOPS_H
 
+// common header
+#include "common.h"
 
 namespace RoofTops {
 

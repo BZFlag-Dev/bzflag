@@ -13,31 +13,17 @@
 /* interface header */
 #include "SegmentedShotStrategy.h"
 
-/* system implementation headers */
-#include <assert.h>
-#include <string>
-#include <vector>
-
 /* common implementation headers */
 #include "TextureManager.h"
-#include "BZDBCache.h"
-#include "LaserSceneNode.h"
 #include "Intersect.h"
-#include "Team.h"
-#include "WallObstacle.h"
 #include "BZDBCache.h"
-#include "ObstacleMgr.h"
 
 /* local implementation headers */
 #include "sound.h"
 #include "LocalPlayer.h"
 #include "World.h"
 #include "effectsRenderer.h"
-
-/* FIXME -- declarations from player.h */
-Player* lookupPlayer(PlayerId id);
-void addShotExplosion(const float* pos);
-
+#include "playing.h"
 
 SegmentedShotStrategy::SegmentedShotStrategy(ShotPath* _path, bool useSuperTexture, bool faint) :
 				ShotStrategy(_path)

@@ -37,14 +37,13 @@
 
 /* common implementation headers */
 #include "DirectoryNames.h"
+#include "StateDatabase.h"
 #include "FontManager.h"
 #include "TextUtils.h"
 
 /* local implementation headers */
 #include "MenuDefaultKey.h"
 #include "MainMenu.h"
-#include "HUDuiControl.h"
-#include "HUDuiLabel.h"
 #include "HUDuiList.h"
 #include "playing.h"
 #include "bzflag.h"

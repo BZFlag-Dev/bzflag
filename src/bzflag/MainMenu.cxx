@@ -13,10 +13,6 @@
 /* interface header */
 #include "MainMenu.h"
 
-/* system implementationheaders */
-#include <string>
-#include <vector>
-
 /* common implementation headers */
 #include "TextureManager.h"
 #include "FontManager.h"
@@ -31,8 +27,6 @@
 #endif
 #include "OptionsMenu.h"
 #include "QuitMenu.h"
-#include "HUDuiControl.h"
-#include "HUDuiLabel.h"
 #include "HUDuiTextureLabel.h"
 #include "ConfigFileManager.h"
 #include "clientConfig.h"

@@ -13,6 +13,9 @@
 #ifndef	__MAINWINDOW_H__
 #define	__MAINWINDOW_H__
 
+/* BZFlag common header */
+#include "common.h"
+
 /* system interface headers */
 #include <vector>
 #include <string>

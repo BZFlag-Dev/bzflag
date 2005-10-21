@@ -34,19 +34,13 @@
 #include <stdlib.h>
 
 // common implementation headers
-#include "network.h"
-#include "Pack.h"
 #include "ErrorHandler.h"
 // invoke persistent rebuilding for current version dates
 #include "version.h"
-#include "bzsignal.h"
 #if defined(NETWORK_STATS)
 #include "bzfio.h"
 #endif
 #include "TimeKeeper.h"
-
-// local implementation headers
-#include "LocalPlayer.h"
 
 #define UDEBUG if (UDEBUGMSG) printf
 #define UDEBUGMSG false

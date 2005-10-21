@@ -13,39 +13,25 @@
 // interface header
 #include "RadarRenderer.h"
 
-// bzflag common header
-#include "common.h"
-
-// system headers
-#include <stdlib.h>
-#include <string.h>
-#include <vector>
-
 // common implementation headers
-#include "bzfgl.h"
-#include "global.h"
 #include "SceneRenderer.h"
 #include "MainWindow.h"
-#include "Team.h"
-#include "Flag.h"
 #include "OpenGLGState.h"
-#include "StateDatabase.h"
 #include "BZDBCache.h"
 #include "TextureManager.h"
 #include "PhysicsDriver.h"
 #include "ObstacleMgr.h"
-#include "CollisionManager.h"
 #include "MeshSceneNode.h"
+#include "ObstacleList.h"
 
 // local implementation headers
 #include "LocalPlayer.h"
-#include "RemotePlayer.h"
-#include "WorldPlayer.h"
 #include "World.h"
-#include "HUDRenderer.h"
+#include "FlashClock.h"
+#include "ShotPath.h"
 
 
-FlashClock flashTank;
+static FlashClock flashTank;
 static bool toggleTank = false;
 
 const float RadarRenderer::colorFactor = 40.0f;

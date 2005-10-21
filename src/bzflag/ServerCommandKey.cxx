@@ -10,18 +10,14 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include "common.h"
-#include <string>
-#include <vector>
-
+/* interface header */
 #include "ServerCommandKey.h"
-#include "Player.h"
+
 #include "LocalPlayer.h"
 #include "HUDRenderer.h"
 #include "TextUtils.h"
 #include "KeyManager.h"
-
-#include "playing.h" // THIS IS TEMPORARY...TO BE REMOVED...BABY STEPS
+#include "playing.h"
 
 
 const ServerCommandKey::Mode ServerCommandKey::nonAdminModes [8] = {LagStats, IdleStats, FlagHistory, Report, Password, Register, Identify, ClientQuery};

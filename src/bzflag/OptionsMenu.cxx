@@ -13,24 +13,13 @@
 /* interface header */
 #include "OptionsMenu.h"
 
-/* system implementation headers */
-#include <vector>
-#include <string>
-
 /* common implementation headers */
 #include "FontManager.h"
-#include "StartupInfo.h"
 #include "StateDatabase.h"
-#include "TextUtils.h"
 
 /* local implementation headers */
 #include "MainMenu.h"
 #include "HUDDialogStack.h"
-#include "ServerListCache.h"
-#include "HUDuiControl.h"
-#include "HUDuiLabel.h"
-#include "HUDuiList.h"
-#include "playing.h"
 
 OptionsMenu::OptionsMenu() : guiOptionsMenu(NULL), effectsMenu(NULL),
 			     cacheMenu(NULL), saveWorldMenu(NULL),

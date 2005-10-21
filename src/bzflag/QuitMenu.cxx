@@ -13,16 +13,11 @@
 /* interface header */
 #include "QuitMenu.h"
 
-/* system implementation headers */
-#include <vector>
-
 /* common implementation headers */
 #include "FontManager.h"
 
 /* local implementation headers */
 #include "MainMenu.h"
-#include "HUDDialog.h"
-#include "HUDuiControl.h"
 #include "HUDuiLabel.h"
 
 

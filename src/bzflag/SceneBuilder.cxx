@@ -10,24 +10,15 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-// bzflag common header
-#include "common.h"
-
-// system headers
-#include <stdio.h>
-#include <string>
-#include <vector>
+// interface header
+#include "SceneBuilder.h"
 
 // local implemenation headers
-#include "SceneBuilder.h"
-#include "SceneRenderer.h"
-#include "SceneDatabase.h"
 #include "ZSceneDatabase.h"
 #include "BSPSceneDatabase.h"
 #include "World.h"
 
 // scene node implemenation headers
-#include "WallSceneNode.h"
 #include "MeshPolySceneNode.h"
 #include "TankSceneNode.h"
 #include "BoxSceneNodeGenerator.h"
@@ -44,10 +35,10 @@
 
 // common implementation headers
 #include "StateDatabase.h"
+#include "SceneRenderer.h"
 #include "BZDBCache.h"
 #include "TextureManager.h"
-#include "BzMaterial.h"
-#include "DynamicColor.h"
+#include "ObstacleList.h"
 #include "ObstacleMgr.h"
 
 

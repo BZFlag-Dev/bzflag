@@ -11,12 +11,10 @@
  */
 
 /* interface header */
-#include "common.h"
 #include "Roster.h"
 
 /* local implementation headers */
 #include "World.h"
-#include "WorldPlayer.h"
 
 
 NameList silencePlayers;

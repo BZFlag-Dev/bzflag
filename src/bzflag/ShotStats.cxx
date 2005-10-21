@@ -12,27 +12,15 @@
 
 /* interface headers */
 #include "ShotStats.h"
-#include "HUDDialog.h"
-
-/* system implementation headers */
-#include <string>
-#include <vector>
-#include <math.h>
-#include <stdio.h>
 
 /* common implementation headers */
 #include "FontManager.h"
-#include "StateDatabase.h"
 #include "TextUtils.h"
 
 /* local implementation headers */
 #include "ShotStatsDefaultKey.h"
-#include "HUDDialog.h"
 #include "HUDDialogStack.h"
-#include "HUDuiControl.h"
 #include "HUDuiLabel.h"
-#include "ShotStatistics.h"
-#include "Player.h"
 #include "LocalPlayer.h"
 #include "Roster.h"
 

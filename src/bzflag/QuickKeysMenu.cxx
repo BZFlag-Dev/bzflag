@@ -10,14 +10,8 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include "common.h"
-
 /* interface header */
 #include "QuickKeysMenu.h"
-
-/* system headers */
-#include <string>
-#include <vector>
 
 /* common implementation headers */
 #include "TextUtils.h"
@@ -27,9 +21,6 @@
 /* local implementation headers */
 #include "MenuDefaultKey.h"
 #include "MainMenu.h"
-#include "HUDuiControl.h"
-#include "HUDuiLabel.h"
-#include "HUDuiTypeIn.h"
 
 
 QuickKeysMenu::QuickKeysMenu()

@@ -10,20 +10,10 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include "common.h"
-
-/* system headers */
-#include <assert.h>
-
-/* common implementation headers */
-#include "Protocol.h"
-#include "Flag.h"
+// interface header
+#include "ShotPath.h"
 
 /* local implementation headers */
-#include "playing.h"
-#include "ShotPath.h"
-#include "ShotStrategy.h"
-#include "LocalPlayer.h"
 #include "SegmentedShotStrategy.h"
 #include "GuidedMissleStrategy.h"
 #include "ShockWaveStrategy.h"

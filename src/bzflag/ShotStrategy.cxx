@@ -13,24 +13,12 @@
 /* interface header */
 #include "ShotStrategy.h"
 
-/* system implementation headers */
-#include <vector>
-
 /* common implementation headers */
-#include "StateDatabase.h"
 #include "CollisionManager.h"
-#include "Intersect.h"
 #include "Obstacle.h"
+#include "ObstacleList.h"
 #include "WallObstacle.h"
-#include "BoxBuilding.h"
 #include "ObstacleMgr.h"
-
-/* local implementation headers */
-#include "World.h"
-
-
-/* local implementation headers */
-
 
 ShotStrategy::ShotStrategy(ShotPath* _path) :
   path(_path)

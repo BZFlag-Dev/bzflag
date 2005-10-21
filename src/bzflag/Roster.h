@@ -13,6 +13,9 @@
 #ifndef __ROSTER_H__
 #define __ROSTER_H__
 
+// common - 1st
+#include "common.h"
+
 /* system interface headers */
 #include <vector>
 #include <string>
@@ -48,9 +51,6 @@ Player*			getPlayerByName(const char* name);
 BaseLocalPlayer*	getLocalPlayer(PlayerId id);
 TeamColor		PlayerIdToTeam(PlayerId id);
 PlayerId		TeamToPlayerId(TeamColor team);
-
-extern RemotePlayer**   player;
-extern int              curMaxPlayers;
 
 #endif /* __ROSTER_H__ */
 

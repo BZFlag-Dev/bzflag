@@ -10,28 +10,16 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include "common.h"
-
 /* interface header */
 #include "SaveWorldMenu.h"
 
-/* system implementation headers */
-#include <vector>
-#include <string>
-
 /* common implementation headers */
-#include "StateDatabase.h"
 #include "FontManager.h"
 
 /* local implementation headers */
 #include "MenuDefaultKey.h"
 #include "World.h"
-#include "ServerListCache.h"
 #include "MainMenu.h"
-#include "HUDDialog.h"
-#include "HUDuiControl.h"
-#include "HUDuiLabel.h"
-#include "HUDuiTypeIn.h"
 
 
 SaveWorldMenu::SaveWorldMenu()

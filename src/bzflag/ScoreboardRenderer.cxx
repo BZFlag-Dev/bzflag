@@ -16,22 +16,16 @@
 /* interface header */
 #include "ScoreboardRenderer.h"
 
-/* system implementation headers */
-#include <stdlib.h>
-
 /* common implementation headers */
-#include "StateDatabase.h"
-#include "BundleMgr.h"
 #include "Bundle.h"
 #include "Team.h"
 #include "FontManager.h"
 #include "BZDBCache.h"
-#include "AnsiCodes.h"
+#include "OpenGLGState.h"
 
 /* local implementation headers */
 #include "LocalPlayer.h"
 #include "World.h"
-#include "RemotePlayer.h"
 #include "sound.h"
 
 #define DEBUG_SHOWRATIOS 1

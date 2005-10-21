@@ -18,7 +18,6 @@
 #include "CommandManager.h"
 
 /* local implementation headers */
-#include "HUDDialog.h"
 #include "HUDDialogStack.h"
 
 

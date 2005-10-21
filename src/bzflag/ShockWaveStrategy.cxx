@@ -15,16 +15,11 @@
 
 /* common implementation headers */
 #include "SceneRenderer.h"
-#include "StateDatabase.h"
-#include "Team.h"
 
 /* local implementation headers */
 #include "LocalPlayer.h"
-
+#include "playing.h"
 #include "World.h"
-
-/* FIXME - from playing.h */
-Player* lookupPlayer(PlayerId id);
 
 
 ShockWaveStrategy::ShockWaveStrategy(ShotPath *_path) :

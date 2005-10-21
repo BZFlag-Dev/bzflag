@@ -11,26 +11,14 @@
  */
 
 
-// common header
-#include "common.h"
-
 // interface header
 #include "RoofTops.h"
 
-// system headers
-#include <math.h>
-#include <vector>
-
-// common interface headers
-#include "StateDatabase.h"
-#include "BZDBCache.h"
-#include "vectors.h"
-
 // local interface headers
-#include "World.h"
 #include "Obstacle.h"
 #include "Ray.h"
 #include "CollisionManager.h"
+#include "Teleporter.h"
 
 
 /****************************************************************************/

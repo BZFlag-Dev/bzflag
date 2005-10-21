@@ -13,6 +13,9 @@
 #ifndef	__SAVEWORLDMENU_H__
 #define	__SAVEWORLDMENU_H__
 
+// common - 1st
+#include "common.h"
+
 /* local interface headers */
 #include "HUDDialog.h"
 #include "HUDuiDefaultKey.h"

@@ -19,7 +19,6 @@
 
 /* local implementation headers */
 #include "sound.h"
-#include "HUDDialog.h"
 #include "HUDDialogStack.h"
 
 
