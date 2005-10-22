@@ -5,7 +5,9 @@
     Feel free to customize this file to suit your needs
 */
 
-#define inline
+#include "common.h"
+
+#include <SDL/SDL.h>
 #include <Cocoa/Cocoa.h>
 
 @interface SDLMain : NSObject
