@@ -15,7 +15,16 @@
 
 /* system headers */
 #include <assert.h>
+#include <ctype.h>
+#include <fstream>
+#include <stdarg.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <string>
+#include <sys/types.h>
 #include <time.h>
+#include <vector>
 #if defined(_WIN32)
 #  include <shlobj.h>
 #  include <sys/types.h>
@@ -27,10 +36,13 @@
 #endif /* defined(_WIN32) */
 
 /* common headers */
+#include "Address.h"
 #include "BZDBCache.h"
 #include "BundleMgr.h"
 #include "BzfMedia.h"
 #include "BzfVisual.h"
+#include "BzfWindow.h"
+#include "CommandManager.h"
 #include "CommandsStandard.h"
 #include "ConfigFileManager.h"
 #include "DirectoryNames.h"
@@ -38,7 +50,9 @@
 #include "FileManager.h"
 #include "FontManager.h"
 #include "GUIOptionsMenu.h"
+#include "KeyManager.h"
 #include "OSFile.h"
+#include "OpenGLGState.h"
 #include "ParseColor.h"
 #include "PlatformFactory.h"
 #include "Protocol.h"
@@ -50,8 +64,9 @@
 #include "TimeBomb.h"
 #include "WordFilter.h"
 #include "World.h"
-#include "BzfDisplay.h"
-#include "global.h"
+#include "bzfSDL.h"
+#include "bzfgl.h"
+#include "bzfio.h"
 
 /* local headers */
 #include "ActionBinding.h"
@@ -59,6 +74,7 @@
 #include "callbacks.h"
 #include "playing.h"
 #include "sound.h"
+#include "playing.h"
 
 // invoke incessant rebuilding for build versioning
 #include "version.h"
@@ -69,6 +85,8 @@
 // client prefrences
 #include "clientConfig.h"
 
+int beginendCount = 0;
+
 const char*		argv0;
 static bool		anonymous = false;
 static std::string	anonymousName("anonymous");
@@ -77,8 +95,6 @@ static bool		noAudio = false;
 struct tm		userTime;
 bool			echoToConsole = false;
 bool			echoAnsi = false;
-
-// Setting a common.h value: used both in bzflag, bzfs and bzadmin
 int			debugLevel = 0;
 
 static BzfDisplay*	display = NULL;
@@ -96,7 +112,7 @@ int numRobotTanks = 0;
 //
 
 // so that Windows can kill the wsa stuff if needed
-static int bail ( int returnCode )
+int bail ( int returnCode )
 {
 #ifdef _WIN32
 	WSACleanup();
