@@ -35,9 +35,6 @@ recent bugs
 - do all Riva128 systems require "noMeshClusers"? Is there a 
   workaround to make vertex array work on those cards?
 
-- Mac/SDL client will not process keyboard input if started on the
-  command-line with -window instead of going through the Finder.
-
 - Mac OS X client sometimes (50/50) seems to now start to a black
   screen (only the console tab tabs render).  must be recent..
 
