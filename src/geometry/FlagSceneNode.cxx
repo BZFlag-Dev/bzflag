@@ -189,9 +189,8 @@ void			FlagSceneNode::setAngle(GLfloat _angle)
 
 void			FlagSceneNode::setWind(const GLfloat wind[3], float dt)
 {
-  const float degrees = atan2f(wind[1], wind[0]) * (float)(180.0 / M_PI);
   if (!realFlag) {
-    angle = degrees;
+    angle = atan2f(wind[1], wind[0]) * (float)(180.0 / M_PI);
     tilt = 0.0f;
     hscl = 0.0f;
   } else {
