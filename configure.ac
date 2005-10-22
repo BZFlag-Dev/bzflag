@@ -608,8 +608,8 @@ case $host_os in
 	   CPPFLAGS="$CPPFLAGS -fpermissive"
 	fi;;
      macos|darwin*)
-	CPPFLAGS="$CPPFLAGS -pipe -ansi -pedantic -fno-exceptions -W -Wall -Wundef -Wstrict-prototypes";
-	CFLAGS="$CFLAGS -pipe -pedantic -fno-exceptions -W -Wall -Wundef -Wstrict-prototypes";;
+	CPPFLAGS="$CPPFLAGS -pipe -pedantic -fno-exceptions -W -Wall -Wundef -Wno-import";
+	CFLAGS="$CFLAGS -pipe -pedantic -fno-exceptions -W -Wall -Wundef -Wno-import";;
      irix)
 	CPPFLAGS="$CPPFLAGS -Wall";
 	if test x$host_cpu = xmips64; then
