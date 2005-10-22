@@ -259,7 +259,7 @@ done
 # check for libtoolize #
 ########################
 HAVE_LIBTOOLIZE=yes
-HAVE_ALTLIBTOOLIZE=no
+HAVE_ALT_LIBTOOLIZE=no
 LIBTOOLIZE=libtoolize
 _ltfound=no
 $VERBOSE_ECHO "Checking libtoolize version: $LIBTOOLIZE --version"
@@ -299,7 +299,7 @@ if [ ! $? = 0 ] ; then
 	    fi
 	    HAVE_ALT_LIBTOOLIZE=yes
 	    LIBTOOLIZE="$tool"
-	    $ECHO 
+	    $ECHO
 	    $ECHO "Fortunately, $tool was found which means that your system may simply"
 	    $ECHO "have a non-standard or incomplete GNU Autotools install.  If you have"
 	    $ECHO "sufficient system access, it may be possible to quell this warning by"
@@ -311,7 +311,7 @@ if [ ! $? = 0 ] ; then
 		$ECHO
 	    else
 		$ECHO "   ln -s $_glti $_gltidir/libtoolize"
-		$ECHO 
+		$ECHO
 		$ECHO "Run that as root or with proper permissions to the $_gltidir directory"
 		$ECHO
 	    fi
@@ -527,7 +527,7 @@ if [ "x$reconfigure_manually" = "xyes" ] ; then
 	$LIBTOOLIZE --automake -c -f
 	if [ ! $? = 0 ] ; then $ECHO "ERROR: $LIBTOOLIZE failed" && exit 2 ; fi
     else
-	if [ "x$HAVE_ALTLIBTOOLIZE" = "xyes" ] ; then
+	if [ "x$HAVE_ALT_LIBTOOLIZE" = "xyes" ] ; then
 	    $VERBOSE_ECHO "$LIBTOOLIZE --automake --copy --force"
 	    $LIBTOOLIZE --automake --copy --force
 	    if [ ! $? = 0 ] ; then $ECHO "ERROR: $LIBTOOLIZE failed" && exit 2 ; fi
@@ -557,16 +557,67 @@ if [ "x$reconfigure_manually" = "xyes" ] ; then
     $VERBOSE_ECHO "$AUTOCONF -f"
     autoconf_output=`$AUTOCONF -f 2>&1`
     if [ ! $? = 0 ] ; then
-	# retry without the -f
+	# retry without the -f and with backwards support for missing macros
+	configure_ac_changed="no"
+	if test "x$HAVE_SED" = "xyes" ; then
+	    if test ! -f configure.ac.backup ; then
+		$VERBOSE_ECHO cp $_configure_file configure.ac.backup
+		cp $_configure_file configure.ac.backup
+	    fi
+
+	    ac2_59_macros="AC_C_RESTRICT AC_INCLUDES_DEFAULT AC_LANG_ASSERT AC_LANG_WERROR AS_SET_CATFILE"
+	    ac2_55_macros="AC_COMPILER_IFELSE AC_FUNC_MBRTOWC AC_HEADER_STDBOOL AC_LANG_CONFTEST AC_LANG_SOURCE AC_LANG_PROGRAM AC_LANG_CALL AC_LANG_FUNC_TRY_LINK AC_MSG_FAILURE AC_PREPROC_IFELSE"
+	    ac2_54_macros="AC_C_BACKSLASH_A AC_CONFIG_LIBOBJ_DIR AC_GNU_SOURCE AC_PROG_EGREP AC_PROG_FGREP AC_REPLACE_FNMATCH AC_FUNC_FNMATCH_GNU AC_FUNC_REALLOC AC_TYPE_MBSTATE_T"
+
+	    macros_to_search=""
+	    if [ $AUTOCONF_MAJOR_VERSION -lt 2 ] ; then
+		macros_to_search="$ac2_59_macros $ac2_55_macros $ac2_54_macros"
+	    else
+		if [ $AUTOCONF_MINOR_VERSION -lt 54 ] ; then
+		    macros_to_search="$ac2_59_macros $ac2_55_macros $ac2_54_macros"
+		elif [ $AUTOCONF_MINOR_VERSION -lt 55 ] ; then
+		    macros_to_search="$ac2_59_macros $ac2_55_macros"
+		elif [ $AUTOCONF_MINOR_VERSION -lt 59 ] ; then
+		    macros_to_search="$ac2_59_macros"
+		fi
+	    fi
+
+	    if [ -w $_configure_file ] ; then
+		for feature in $macros_to_search ; do
+		    $VERBOSE_ECHO "Searching for $feature in $_configure_file with sed"
+		    sed "s/^\($feature.*\)$/dnl \1/g" < $_configure_file > configure.ac.sed
+		    if [ ! "x`cat $_configure_file`" = "x`cat configure.ac.sed`" ] ; then
+			$VERBOSE_ECHO cp configure.ac.sed $_configure_file
+			cp configure.ac.sed $_configure_file
+			if [ "x$configure_ac_changed" = "xno" ] ; then
+			    configure_ac_changed="$feature"
+			else
+			    configure_ac_changed="$feature $configure_ac_changed"
+			fi
+		    fi
+		    rm -f configure.ac.sed
+		done
+	    else
+		$VERBOSE_ECHO "$_configure_file is not writable so not attempting to edit"
+	    fi
+	fi
 	$VERBOSE_ECHO
 	$VERBOSE_ECHO "$AUTOCONF"
 	autoconf_output=`$AUTOCONF 2>&1`
 	if [ ! $? = 0 ] ; then
+
+	    # failed so restore the backup
+	    if test -f configure.ac.backup ; then
+		$VERBOSE_ECHO cp configure.ac.bacukp $_configure_file
+		cp configure.ac.backup $_configure_file
+	    fi
+
+	    # test if libtool is busted
 	    if test -f "$LIBTOOL_M4" ; then
 		found_libtool="`$ECHO $autoconf_output | grep AC_PROG_LIBTOOL`"
-		if ! test "x$found_libtool" = "x" ; then
+		if test ! "x$found_libtool" = "x" ; then
 		    if test -f acinclude.m4 ; then
-			if ! test -f acinclude.m4.backup ; then
+			if test ! -f acinclude.m4.backup ; then
 			    $VERBOSE_ECHO cp acinclude.m4 acinclude.m4.backup
 			    cp acinclude.m4 acinclude.m4.backup
 			fi
@@ -587,6 +638,25 @@ $autoconf_output
 EOF
 	    $ECHO "ERROR: $AUTOCONF failed"
 	    exit 2
+
+	else
+	    # autoconf sans -f and possibly sans unsupported options succeeded so warn verbosely
+
+	    if [ ! "x$configure_ac_changed" = "xno" ] ; then
+		$ECHO
+		$ECHO "Warning:  Unsupported macros were found and removed from $_configure_file"
+		$ECHO
+		$ECHO "The $_configure_file file was edited in an attempt to successfully run"
+		$ECHO "autoconf by commenting out the unsupported macros.  Since you are"
+		$ECHO "reading this, autoconf succeeded after the edits were made.  The"
+		$ECHO "original $_configure_file is saved as configure.ac.backup but you should"
+		$ECHO "consider either increasing the minimum version of autoconf required"
+		$ECHO "by this script or removing the following macros from $_configure_file:"
+		$ECHO
+		$ECHO "$configure_ac_changed"
+		$ECHO
+		$ECHO $ECHO_N "Continuing build preparation ... $ECHO_C"
+	    fi
 	fi
     fi
 
@@ -595,8 +665,40 @@ EOF
     if [ ! $? = 0 ] ; then $ECHO "ERROR: $AUTOHEADER failed" && exit 2 ; fi
 
     $VERBOSE_ECHO "$AUTOMAKE -a -c -f"
-    $AUTOMAKE -a -c -f
-    if [ ! $? = 0 ] ; then $ECHO "ERROR: $AUTOMAKE failed" && exit 2 ; fi
+    automake_output=`$AUTOMAKE -a -c -f 2>&1`
+    if [ ! $? = 0 ] ; then
+	# retry without the -f
+	$VERBOSE_ECHO
+	$VERBOSE_ECHO "$AUTOMAKE -a -c"
+	automake_output=`$AUTOMAKE -a -c 2>&1`
+	if [ ! $? = 0 ] ; then
+	    if test -f "$LIBTOOL_M4" ; then
+		found_libtool="`$ECHO $automake_output | grep AC_PROG_LIBTOOL`"
+		if test ! "x$found_libtool" = "x" ; then
+		    if test -f acinclude.m4 ; then
+			if test ! -f acinclude.m4.backup ; then
+			    $VERBOSE_ECHO cp acinclude.m4 acinclude.m4.backup
+			    cp acinclude.m4 acinclude.m4.backup
+			fi
+		    fi
+		    $VERBOSE_ECHO cat "$LIBTOOL_M4" >> acinclude.m4
+		    cat "$LIBTOOL_M4" >> acinclude.m4
+
+		    $ECHO
+		    $ECHO "Restarting the configuration steps with a local libtool.m4"
+
+		    $VERBOSE_ECHO sh $0 "$1" "$2" "$3" "$4" "$5" "$6" "$7" "$8" "$9"
+		    sh "$0" "$1" "$2" "$3" "$4" "$5" "$6" "$7" "$8" "$9"
+		    exit $?
+		fi
+	    fi
+	    cat <<EOF
+$automake_output
+EOF
+	fi
+	$ECHO "ERROR: $AUTOMAKE failed"
+	exit 2
+    fi
 fi
 
 
@@ -628,7 +730,7 @@ if test "x$HAVE_SED" = "xyes" ; then
 	    if test "x$backup_rev" = "x" ; then
 		backup_rev=0
 	    fi
-	    #if test "$current_rev" -lt "$backup_rev" ; then
+	    # if test "$current_rev" -lt "$backup_rev" ; then
 		if test "x$spacer" = "xno" ; then
 		    $VERBOSE_ECHO
 		    spacer=yes
