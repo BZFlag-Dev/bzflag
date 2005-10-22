@@ -1842,7 +1842,7 @@ static void		handleServerMessage(bool human, uint16_t code,
       msg2 += " won the game";
 
       gameOver = true;
-      hud->setTimeLeft(~0);
+      hud->setTimeLeft((uint32_t)~0);
       myTank->explodeTank();
       controlPanel->addMessage(msg2);
       hud->setAlert(0, msg2.c_str(), 10.0f, true);
@@ -4151,7 +4151,7 @@ static void enteringServer(void *buf)
   updateHighScores();
   hud->setHeading(myTank->getAngle());
   hud->setAltitude(myTank->getPosition()[2]);
-  hud->setTimeLeft(~0);
+  hud->setTimeLeft((uint32_t)~0);
   fireButton = false;
   firstLife = true;
 
