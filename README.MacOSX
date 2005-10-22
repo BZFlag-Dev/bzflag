@@ -10,4 +10,9 @@ Unix following ./autogen.sh && ./configure && make, or using the XCode
 project in the top-level directory to end up with a double-clickable
 BZFlag.app build.
 
+BZFlag cannot be run on the command line with the -window option when
+using SDL as key events are not currently passed on to application.
+Run bzflag in full screen mode and you will be able to switch to
+windowed using F1.
+
 See the generic install instructions in README for more details.
