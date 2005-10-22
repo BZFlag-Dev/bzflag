@@ -51,7 +51,7 @@ class OpenGLGStateState {
     void		enableSphereMap(bool);
     void		enableMaterial(bool);
     void		setTexture(const int tex);
-    void		setTextureMatrix(const int texmatrix);
+    void		setTextureMatrix(const GLfloat* matrix);
     void		setMaterial(const OpenGLMaterial&);
     void		setBlending(GLenum sFactor, GLenum dFactor);
     void		setStipple(float alpha);
@@ -96,7 +96,7 @@ class OpenGLGStateState {
 	bool	hasSphereMap;
 	bool		hasMaterial;
 	int		texture;
-	int	textureMatrix;
+	const GLfloat*	textureMatrix;
 	OpenGLMaterial	material;
     };
 
@@ -183,7 +183,7 @@ OpenGLGStateState::Sorted::Sorted() :
 				hasSphereMap(false),
 				hasMaterial(false),
 				texture(-1),
-				textureMatrix(-1),
+				textureMatrix(NULL),
 				material(OpenGLMaterial())
 {
   // do nothing
@@ -202,7 +202,7 @@ void			OpenGLGStateState::Sorted::reset()
   hasSphereMap = false;
   hasMaterial = false;
   texture = -1;
-  textureMatrix = -1;
+  textureMatrix = NULL;
   material = OpenGLMaterial();
 }
 
@@ -319,7 +319,7 @@ void			OpenGLGStateState::enableTextureReplace(bool)
 void			OpenGLGStateState::enableTextureMatrix(bool on)
 {
   if (on)
-    sorted.hasTextureMatrix = sorted.textureMatrix >= 0;
+    sorted.hasTextureMatrix = (sorted.textureMatrix != NULL);
   else
     sorted.hasTexture = false;
 }
@@ -343,9 +343,9 @@ void			OpenGLGStateState::setTexture(
 }
 
 void			OpenGLGStateState::setTextureMatrix(
-					const int _textureMatrix)
+					const GLfloat* _textureMatrix)
 {
-  sorted.hasTextureMatrix = _textureMatrix>=0;
+  sorted.hasTextureMatrix = (_textureMatrix != NULL);
   sorted.textureMatrix = _textureMatrix;
 }
 
@@ -479,7 +479,7 @@ void			OpenGLGStateState::setOpenGLState(
     if (sorted.hasTextureMatrix) {
       if (sorted.textureMatrix != oldState->sorted.textureMatrix) {
 	glMatrixMode(GL_TEXTURE);
-	glLoadMatrixf(TEXMATRIXMGR.getMatrix(sorted.textureMatrix)->getMatrix());
+	glLoadMatrixf(sorted.textureMatrix);
 	glMatrixMode(GL_MODELVIEW);
       }
     }
@@ -635,7 +635,7 @@ void			OpenGLGStateState::setOpenGLState(
     // texture transformation matrix
     if (sorted.hasTextureMatrix) {
       glMatrixMode(GL_TEXTURE);
-      glLoadMatrixf(TEXMATRIXMGR.getMatrix(sorted.textureMatrix)->getMatrix());
+      glLoadMatrixf(sorted.textureMatrix);
       glMatrixMode(GL_MODELVIEW);
     }
     else {
@@ -1342,7 +1342,7 @@ void			OpenGLGStateBuilder::setTexture(
 }
 
 void			OpenGLGStateBuilder::setTextureMatrix(
-					const int textureMatrix)
+					const GLfloat* textureMatrix)
 {
   state->setTextureMatrix(textureMatrix);
 }

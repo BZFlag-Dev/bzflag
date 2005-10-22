@@ -5806,6 +5806,11 @@ static void		playingLoop()
       lastEpochOffset = epochOffset;
     }
 
+    // update the wind
+    if (world) {
+      world->updateWind(dt);
+    }
+  
     // move roaming camera
     if (ROAM.isRoaming()) {
       setupRoamingCamera(dt);

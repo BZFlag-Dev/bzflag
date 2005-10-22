@@ -455,11 +455,15 @@ void MeshSceneNode::updateMaterial(MeshSceneNode::MeshMaterial* mat)
       }
       if (faceTexture >= 0) {
 	// texture matrix
-	int texmat = bzmat->getTextureMatrix(0);
-	if (texmat >= 0) {
-	  builder.setTextureMatrix(texmat);
-	  builder.enableTextureMatrix(true);
-	}
+	const int texMatId = bzmat->getTextureMatrix(0);
+	const TextureMatrix* texmat = TEXMATRIXMGR.getMatrix(texMatId);
+	if (texmat != NULL) {
+	  const GLfloat* matrix = texmat->getMatrix();
+	  if (matrix != NULL) {
+	    builder.setTextureMatrix(matrix);
+	    builder.enableTextureMatrix(true);
+	  }
+        }
 	// sphere mapping
 	if (bzmat->getUseSphereMap(0)) {
 	  builder.enableSphereMap(true);

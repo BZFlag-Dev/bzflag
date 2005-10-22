@@ -29,7 +29,8 @@ class FlagSceneNode : public SceneNode {
     static void		waveFlag(float dt);
     static void		freeFlag();
     void		move(const GLfloat pos[3]);
-    void		turn(GLfloat angle);
+    void		setAngle(GLfloat angle);
+    void		setWind(const GLfloat wind[3], float dt);
     void		setBillboard(bool billboard);
 
     const GLfloat*	getColor() const { return color; }
@@ -58,6 +59,8 @@ class FlagSceneNode : public SceneNode {
   private:
     bool		billboard;
     GLfloat		angle;
+    GLfloat		tilt;
+    GLfloat		hscl;
     GLfloat		color[4];
     bool		transparent;
     bool		texturing;

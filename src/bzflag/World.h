@@ -120,6 +120,9 @@ class World {
     void		updateFlag(int index, float dt);
     void		updateAnimations(float dt);
     void		addFlags(SceneDatabase*, bool seerView);
+    void		updateWind(float dt);
+    void		getWind(float wind[3], const float pos[3]) const;
+    
     void		makeMeshDrawMgrs();
 
     static World*	getWorld();
@@ -186,6 +189,8 @@ class World {
 
     int			drawInfoCount;
     MeshDrawInfo**	drawInfoArray;
+    
+    float		wind[3];
 
     LinkManager		links;
 
@@ -389,6 +394,14 @@ inline void		World::setLocale(const std::string& _locale)
   locale = _locale;
 }
 
+inline void		World::getWind(float w[3], const float[3]) const
+{
+  // homogeneous, for now
+  w[0] = wind[0];
+  w[1] = wind[1];
+  w[2] = wind[2];
+  return;
+}
 
 #endif /* __WORLD_H__ */
 

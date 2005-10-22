@@ -97,6 +97,7 @@ class OctreeNode {
     Extents extents;
     unsigned char childCount;
     OctreeNode* children[8];
+    OctreeNode* squeezed[8];
     int count;  // number of nodes in this and subnodes
     int listSize;
     SceneNode** list;

@@ -307,7 +307,7 @@ void			WallSceneNode::setTexture(const int tex)
   gstate = builder.getState();
 }
 
-void			WallSceneNode::setTextureMatrix(const int texmat)
+void			WallSceneNode::setTextureMatrix(const GLfloat* texmat)
 {
   OpenGLGStateBuilder builder(gstate);
   builder.setTextureMatrix(texmat);

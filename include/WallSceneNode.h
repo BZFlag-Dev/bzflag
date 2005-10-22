@@ -54,7 +54,7 @@ class WallSceneNode : public SceneNode {
     void		setLightedModulateColor(const GLfloat* rgba);
     void		setMaterial(const OpenGLMaterial&);
     void		setTexture(const int);
-    void		setTextureMatrix(const int);
+    void		setTextureMatrix(const GLfloat* texmat);
     void		setDynamicColor(const float* color);
     void		setBlending(bool);
     void		setSphereMap(bool);

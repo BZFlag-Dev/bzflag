@@ -22,6 +22,7 @@
 #include "MeshFragSceneNode.h"
 #include "OccluderSceneNode.h"
 #include "DynamicColor.h"
+#include "TextureMatrix.h"
 #include "TextureManager.h"
 #include "OpenGLMaterial.h"
 #include "StateDatabase.h"
@@ -430,8 +431,15 @@ void MeshSceneNodeGenerator::setupNodeMaterial(WallSceneNode* node,
   } else {
     node->setUseColorTexture(true);
   }
-  node->setTextureMatrix(mat->getTextureMatrix(0));
-
+  const int texMatId = mat->getTextureMatrix(0);
+  const TextureMatrix* texmat = TEXMATRIXMGR.getMatrix(texMatId); 
+  if (texmat != NULL) {                                
+    const GLfloat* matrix = texmat->getMatrix();
+    if (matrix != NULL) {
+      node->setTextureMatrix(matrix);
+    }                                   
+  } 
+                                            
   // deal with the blending setting for textures
   bool alpha = false;
   if ((faceTexture >= 0) && (userTexture && mat->getUseTextureAlpha(0))) {

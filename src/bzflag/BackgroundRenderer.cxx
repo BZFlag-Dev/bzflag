@@ -18,6 +18,7 @@
 #include "TextureManager.h"
 #include "BZDBCache.h"
 #include "BzMaterial.h"
+#include "TextureMatrix.h"
 #include "ParseColor.h"
 
 // local headers
@@ -274,7 +275,7 @@ void BackgroundRenderer::setupGroundMaterials()
   const BzMaterial* bzmat = MATERIALMGR.findMaterial("GroundMaterial");
 
   int groundTextureID = -1;
-  int groundTextureMatrixID = -1;
+  const GLfloat* groundTextureMatrix = NULL;
 
   if (bzmat == NULL) {
     // default ground material
@@ -295,7 +296,11 @@ void BackgroundRenderer::setupGroundMaterials()
 	groundTextureID = tm.getTextureID(BZDB.get("stdGroundTexture").c_str(), true);
       } else {
 	// only apply the texture matrix if the texture is valid
-	groundTextureMatrixID = bzmat->getTextureMatrix(0);
+        const int texMatId = bzmat->getTextureMatrix(0);
+        const TextureMatrix* texmat = TEXMATRIXMGR.getMatrix(texMatId);
+        if (texmat != NULL) {
+          groundTextureMatrix = texmat->getMatrix();
+        }
       }
     }
   }
@@ -313,12 +318,12 @@ void BackgroundRenderer::setupGroundMaterials()
   groundGState[1] = gb.getState();
   gb.reset();
   gb.setTexture(groundTextureID);
-  gb.setTextureMatrix(groundTextureMatrixID);
+  gb.setTextureMatrix(groundTextureMatrix);
   groundGState[2] = gb.getState();
   gb.reset();
   gb.setMaterial(defaultMaterial);
   gb.setTexture(groundTextureID);
-  gb.setTextureMatrix(groundTextureMatrixID);
+  gb.setTextureMatrix(groundTextureMatrix);
   groundGState[3] = gb.getState();
 
 

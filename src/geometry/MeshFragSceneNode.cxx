@@ -139,7 +139,7 @@ void MeshFragSceneNode::Geometry::render()
   if (switchLights) {
     RENDERER.reenableLights();
   }
-  
+
   addTriangleCount(triangles);
 
   return;

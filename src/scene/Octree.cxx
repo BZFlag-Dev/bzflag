@@ -25,6 +25,9 @@
 #include "Extents.h"
 #include "Intersect.h"
 
+#include "StateDatabase.h"
+static bool F2BSORT = true;//FIXME
+
 
 // FIXME - do something about occluders vs. gridding
 
@@ -184,6 +187,7 @@ int Octree::getFrustumList (SceneNode** list, int listSize,
   if (!root) {
     return 0;
   }
+  F2BSORT = BZDB.isTrue("f2bsort");
 
   if (listSize > CullListSize) {
     printf ("Octree::getFrustumList() internal error!\n");
@@ -265,7 +269,7 @@ int Octree::getShadowList (SceneNode** list, int listSize,
   //	top points towards Z. Also, this should be split
   //	into a setupShadowVolume() function
 
-  if (frustum->getUp()[2] > 0.999999) {
+  if (frustum->getUp()[2] > 0.999999f) {
     planeCount = 2;
     float edge[2];
     // left edge
@@ -398,6 +402,7 @@ OctreeNode::OctreeNode(unsigned char _depth, const Extents& exts,
 
   for (i = 0; i < 8; i++) {
     children[i] = NULL;
+    squeezed[i] = NULL;
   }
   childCount = 0;
 
@@ -441,7 +446,7 @@ OctreeNode::OctreeNode(unsigned char _depth, const Extents& exts,
   makeChildren();
 
   // non NULLs first
-  squeezeChildren (children);
+  squeezeChildren (squeezed);
 
   // resize this branch cell
   resizeCell();
@@ -453,7 +458,7 @@ OctreeNode::OctreeNode(unsigned char _depth, const Extents& exts,
     list = NULL;
   }
 
-  //DEBUG4 ("BRANCH NODE: depth = %d, children = %i\n", depth, childCount);
+  //DEBUG4 ("BRANCH NODE: depth = %d, squeezed = %i\n", depth, childCount);
 
   return;
 }
@@ -485,15 +490,16 @@ void OctreeNode::makeChildren ()
 
 	int kid = side[0] + (2 * side[1]) + (4 * side[2]);
 
-	children[kid] = new OctreeNode (depth, exts, list, count);
+	squeezed[kid] = new OctreeNode (depth, exts, list, count);
 
-	if (children[kid]->getCount() == 0) {
-	  delete children[kid];
-	  children[kid] = NULL;
+	if (squeezed[kid]->getCount() == 0) {
+	  delete squeezed[kid];
+	  squeezed[kid] = NULL;
 	}
 	else {
 	  childCount++;
 	}
+	children[kid] = squeezed[kid];;
       }
     }
   }
@@ -527,7 +533,7 @@ void OctreeNode::resizeCell()
 OctreeNode::~OctreeNode()
 {
   for (int i = 0; i < 8; i++) {
-    delete children[i];
+    delete squeezed[i];
   }
   free (list);
   return;
@@ -554,14 +560,72 @@ void OctreeNode::getFrustumList () const
   // this cell is only partially contained within
   // the frustum and is not being fully occluded
 
+  // is the viewer in this node?
+  // add the closest nodes first
+  
   if (childCount > 0) {
+    if (F2BSORT) {  
+      const float* dir = CullFrustum->getDirection();
+      unsigned char dirbits = 0;
+      if (dir[0] < 0.0f) dirbits |= (1 << 0);
+      if (dir[1] < 0.0f) dirbits |= (1 << 1);
+      if (dir[2] < 0.0f) dirbits |= (1 << 2);
+      const OctreeNode* onode;
+      
+  #define GET_NODE(x) 		\
+    onode = children[(x)];	\
+    if (onode != NULL) {	\
+      onode->getFrustumList ();	\
+    }
+
+  #define GET_FULL_NODE(x) 		\
+    onode = children[(x)];		\
+    if (onode != NULL) {		\
+      onode->getFullyVisibleOcclude ();	\
+    }
+    
     if (occLevel == Outside) {
-      for (int i = 0; i < childCount; i++) {
-	children[i]->getFrustumList ();
+        GET_NODE(dirbits);				// 0:  0,0,0
+        dirbits ^= (1 << 0);
+        GET_NODE(dirbits);				// 1:  1,0,0
+        dirbits ^= (1 << 0) | (1 << 1);
+        GET_NODE(dirbits);				// 2:  0,1,0
+        dirbits ^= (1 << 1) | (1 << 2);
+        GET_NODE(dirbits);				// 3:  0,0,1
+        dirbits ^= (1 << 0) | (1 << 1) | (1 << 2);
+        GET_NODE(dirbits);				// 4:  1,1,0
+        dirbits ^= (1 << 1) | (1 << 2);
+        GET_NODE(dirbits);				// 5:  1,0,1
+        dirbits ^= (1 << 0) | (1 << 1);
+        GET_NODE(dirbits);				// 6:  0,1,1
+        dirbits ^= (1 << 0);
+        GET_NODE(dirbits);				// 7:  1,1,1
+      } else {
+        GET_FULL_NODE(dirbits);				// 0:  0,0,0
+        dirbits ^= (1 << 0);
+        GET_FULL_NODE(dirbits);				// 1:  1,0,0
+        dirbits ^= (1 << 0) | (1 << 1);
+        GET_FULL_NODE(dirbits);				// 2:  0,1,0
+        dirbits ^= (1 << 1) | (1 << 2);
+        GET_FULL_NODE(dirbits);				// 3:  0,0,1
+        dirbits ^= (1 << 0) | (1 << 1) | (1 << 2);
+        GET_FULL_NODE(dirbits);				// 4:  1,1,0
+        dirbits ^= (1 << 1) | (1 << 2);
+        GET_FULL_NODE(dirbits);				// 5:  1,0,1
+        dirbits ^= (1 << 0) | (1 << 1);
+        GET_FULL_NODE(dirbits);				// 6:  0,1,1
+        dirbits ^= (1 << 0);
+        GET_FULL_NODE(dirbits);				// 7:  1,1,1
       }
-    } else {
-      for (int i = 0; i < childCount; i++) {
-	children[i]->getFullyVisibleOcclude ();
+    } else {    
+      if (occLevel == Outside) {
+        for (int i = 0; i < childCount; i++) {
+          squeezed[i]->getFrustumList ();
+        }
+      } else {
+        for (int i = 0; i < childCount; i++) {
+          squeezed[i]->getFullyVisibleOcclude ();
+        }
       }
     }
   }
@@ -635,7 +699,7 @@ void OctreeNode::getRadarList () const
 
   if (childCount > 0) {
     for (int i = 0; i < childCount; i++) {
-      children[i]->getRadarList ();
+      squeezed[i]->getRadarList ();
     }
   }
   else {
@@ -656,7 +720,7 @@ void OctreeNode::getFullyVisible () const
 {
   if ((childCount > 0) && (listSize == 0)) {
     for (int i = 0; i < childCount; i++) {
-      children[i]->getFullyVisible ();
+      squeezed[i]->getFullyVisible ();
     }
   }
   else {
@@ -689,7 +753,7 @@ void OctreeNode::getFullyVisibleOcclude () const
 
   if (childCount > 0) {
     for (int i = 0; i < childCount; i++) {
-      children[i]->getFullyVisibleOcclude ();
+      squeezed[i]->getFullyVisibleOcclude ();
     }
   }
   else {
@@ -724,7 +788,7 @@ void OctreeNode::getShadowList () const
 
   if (childCount > 0) {
     for (int i = 0; i < childCount; i++) {
-      children[i]->getShadowList ();
+      squeezed[i]->getShadowList ();
     }
   }
   else {
@@ -745,7 +809,7 @@ void OctreeNode::getFullyShadow () const
 {
   if ((childCount > 0) && (listSize == 0)) {
     for (int i = 0; i < childCount; i++) {
-      children[i]->getFullyShadow ();
+      squeezed[i]->getFullyShadow ();
     }
   }
   else {
@@ -775,7 +839,7 @@ void OctreeNode::tallyStats()
 
   if (childCount > 0) {
     for (int i = 0; i < childCount; i++) {
-      children[i]->tallyStats();
+      squeezed[i]->tallyStats();
     }
   } else {
     leafNodes++;
@@ -861,7 +925,7 @@ void OctreeNode::draw ()
 
   // draw the kids
   for (c = 0; c < childCount; c++) {
-    children[c]->draw ();
+    squeezed[c]->draw ();
   }
 
   return;
