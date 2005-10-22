@@ -352,10 +352,12 @@ void			FlagSceneNode::FlagRenderNode::render()
       glRotatef(sceneNode->angle + 180.0f, 0.0f, 0.0f, 1.0f);
       const float tilt = sceneNode->tilt;
       const float hscl = sceneNode->hscl;
-      const GLfloat shear[16] = {hscl, 0.0f, tilt, 0.0f,
-                                 0.0f, hscl, 0.0f, 0.0f,
-                                 0.0f, 0.0f, 1.0f, 0.0f,
-                                 0.0f, 0.0f, 0.0f, 1.0f};
+      static GLfloat shear[16] = {hscl, 0.0f, tilt, 0.0f,
+                                  0.0f, 1.0f, 0.0f, 0.0f,
+                                  0.0f, 0.0f, 1.0f, 0.0f,
+                                  0.0f, 0.0f, 0.0f, 1.0f};
+      shear[0] = hscl; // maintains the flag length
+      shear[2] = tilt; // pulls the flag up or down
       glPushMatrix();
       glMultMatrixf(shear);
       glCallList(allWaves[waveReference].glList);
