@@ -13,6 +13,9 @@
 #ifndef __WEAPON_H__
 #define __WEAPON_H__
 
+// BZFlag common header
+#include "common.h"
+
 #include <vector>
 #include "Flag.h"
 

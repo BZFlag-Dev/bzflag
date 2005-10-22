@@ -10,9 +10,10 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include "common.h"
-#include <math.h>
+// interface header
 #include "daylight.h"
+
+// common headers
 #include "StateDatabase.h"
 #include "ParseColor.h"
 

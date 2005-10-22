@@ -10,14 +10,8 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include "common.h"
-
 // implementation header
 #include "Weapon.h"
-
-// common headers
-#include "Pack.h"
-
 
 Weapon::Weapon()
 {

@@ -14,18 +14,13 @@
 #include "WorldBuilder.h"
 
 /* common implementation headers */
-#include "StateDatabase.h"
-#include "Pack.h"
 #include "TextUtils.h"
 #include "Protocol.h"
 #include "DynamicColor.h"
 #include "TextureMatrix.h"
-#include "BzMaterial.h"
 #include "PhysicsDriver.h"
-#include "MeshTransform.h"
 #include "FlagSceneNode.h"
 #include "ObstacleMgr.h"
-#include "TimeKeeper.h"
 
 /* compression library header */
 #include "../zlib/zlib.h"

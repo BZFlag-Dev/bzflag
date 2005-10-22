@@ -10,17 +10,10 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include "common.h"
-
-#include "network.h"
+// interface header
+#include "playing.h"
 
 // system includes
-#include <string.h>
-#include <vector>
-#include <string>
-#include <ctype.h>
-#include <sys/types.h>
-#include <time.h>
 #ifdef _WIN32
 #include <shlobj.h>
 #include <sys/types.h>
@@ -33,94 +26,66 @@
 #include <dirent.h>
 #include <utime.h>
 #endif
-#include "../zlib/zconf.h"
-#include "../zlib/zlib.h"
 
-// yikes! that's a lotsa includes!
-#include "global.h"
-#include "bzsignal.h"
+// common headers
 #include "AccessList.h"
-#include "Address.h"
-#include "BzfEvent.h"
-#include "BzfWindow.h"
-#include "BzfMedia.h"
-#include "Downloads.h"
-#include "PlatformFactory.h"
-#include "Protocol.h"
-#include "Pack.h"
-#include "ServerLink.h"
-#include "SceneBuilder.h"
-#include "SceneDatabase.h"
+#include "AnsiCodes.h"
+#include "AresHandler.h"
 #include "BackgroundRenderer.h"
-#include "RadarRenderer.h"
+#include "BillboardSceneNode.h"
+#include "BZDBCache.h"
+#include "BzfMedia.h"
+#include "bzsignal.h"
+#include "CommandsStandard.h"
+#include "DirectoryNames.h"
+#include "ErrorHandler.h"
+#include "FileManager.h"
+#include "FlagSceneNode.h"
+#include "GameTime.h"
+#include "KeyManager.h"
+#include "md5.h"
+#include "ObstacleList.h"
+#include "ObstacleMgr.h"
+#include "PhysicsDriver.h"
+#include "PlatformFactory.h"
+#include "QuadWallSceneNode.h"
+#include "ServerList.h"
+#include "SphereSceneNode.h"
+#include "TankGeometryMgr.h"
+#include "TextureManager.h"
+#include "TextUtils.h"
+#include "TimeBomb.h"
+#include "version.h"
+#include "WordFilter.h"
+#include "ZSceneDatabase.h"
+
+// local implementation headers
+#include "AutoPilot.h"
+#include "bzflag.h"
+#include "commands.h"
+#include "daylight.h"
+#include "Downloads.h"
+#include "effectsRenderer.h"
+#include "FlashClock.h"
+#include "ForceFeedback.h"
+#include "LocalPlayer.h"
+#include "HUDDialogStack.h"
 #include "HUDRenderer.h"
+#include "MainMenu.h"
+#include "motd.h"
+#include "RadarRenderer.h"
+#include "Roaming.h"
+#include "RobotPlayer.h"
+#include "Roster.h"
+#include "SceneBuilder.h"
 #include "ScoreboardRenderer.h"
-#include "HUDui.h"
+#include "sound.h"
+#include "ShotStats.h"
+#include "TrackMarks.h"
 #include "World.h"
 #include "WorldBuilder.h"
-#include "Team.h"
-#include "FileManager.h"
-#include "AutoCompleter.h"
-#include "LocalPlayer.h"
-#include "RemotePlayer.h"
-#include "WorldPlayer.h"
-#include "RobotPlayer.h"
-#include "ControlPanel.h"
-#include "ShotStrategy.h"
-#include "StateDatabase.h"
-#include "KeyManager.h"
-#include "CommandManager.h"
-#include "daylight.h"
-#include "sound.h"
-#include "TimeBomb.h"
-#include "HUDDialogStack.h"
-#include "ErrorHandler.h"
-#include "ZSceneDatabase.h"
-#include "QuadWallSceneNode.h"
-#include "BillboardSceneNode.h"
-#include "Intersect.h"
-#include "BZDBCache.h"
-#include "WordFilter.h"
-#include "TextUtils.h"
-#include "TargetingUtils.h"
-#include "MainMenu.h"
-#include "ShotStats.h"
-#include "ComposeDefaultKey.h"
-#include "SilenceDefaultKey.h"
-#include "Roster.h"
-#include "FlashClock.h"
-#include "CommandsStandard.h"
-#include "commands.h"
-#include "DirectoryNames.h"
-#include "AnsiCodes.h"
-#include "TextureManager.h"
-#include "ForceFeedback.h"
-#include "TankGeometryMgr.h"
-#include "SphereSceneNode.h"
-#include "motd.h"
-#include "TrackMarks.h"
-#include "md5.h"
-#include "PhysicsDriver.h"
-#include "FlagSceneNode.h"
-#include "ObstacleMgr.h"
-#include "AresHandler.h"
-#include "cURLManager.h"
-#include "ServerList.h"
-#include "GameTime.h"
-#include "Roaming.h"
-#include "AutoPilot.h"
 
 //#include "messages.h"
-#include "Downloads.h"
-
-// versioning that makes us recompile every time
-#include "version.h"
-
-// get our interface
-#include "playing.h"
-
-/* local implementation headers */
-#include "bzflag.h"
 
 #ifdef HAVE_KRB5
 #include "ClientAuthentication.h"
@@ -138,7 +103,7 @@ static SceneRenderer*	sceneRenderer = NULL;
 ControlPanel*		controlPanel = NULL;
 static RadarRenderer*	radar = NULL;
 HUDRenderer*		hud = NULL;
-ScoreboardRenderer*		scoreboard = NULL;
+static ScoreboardRenderer*		scoreboard = NULL;
 static SceneDatabaseBuilder* sceneBuilder = NULL;
 static Team*		teams = NULL;
 int			numFlags = 0;
@@ -167,13 +132,13 @@ static std::vector<BillboardSceneNode*> explosions;
 static std::vector<BillboardSceneNode*> prototypeExplosions;
 int			savedVolume = -1;
 static bool		grabMouseAlways = false;
-FlashClock		pulse;
+static FlashClock		pulse;
 static bool		wasRabbit = false;
 static bool		justJoined = false;
 
 float			roamDZoom = 0.0f;
 
-MessageOfTheDay		*motd = NULL;
+static MessageOfTheDay		*motd = NULL;
 DefaultCompleter	completer;
 
 char			messageMessage[PlayerIdPLen + MessageLen];
@@ -189,7 +154,7 @@ static void		cleanWorldCache();
 static void		markOld(std::string &fileName);
 static void		setRobotTarget(RobotPlayer* robot);
 
-ResourceGetter	*resourceDownloader = NULL;
+static ResourceGetter	*resourceDownloader = NULL;
 
 // Far and Near Frustum clipping planes
 static const float NearPlaneNormal = 1.0f;
@@ -4789,7 +4754,7 @@ static void drawUI()
 // stuff to draw a frame
 //
 
-void setupNearPlane()
+static void setupNearPlane()
 {
   NearPlane = NearPlaneNormal;
 

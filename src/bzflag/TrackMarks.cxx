@@ -11,12 +11,6 @@
  */
 
 
-// BZFlag common header
-#include "common.h"
-
-// System headers
-#include <math.h>
-
 // Interface header
 #include "TrackMarks.h"
 
@@ -27,13 +21,10 @@
 #include "CollisionManager.h"
 #include "PhysicsDriver.h"
 #include "Ray.h"
-#include "bzfgl.h"
 #include "TextureManager.h"
 #include "SceneDatabase.h"
 #include "SceneRenderer.h"
 #include "SceneNode.h"
-#include "OpenGLGState.h"
-#include "OpenGLMaterial.h"
 
 
 using namespace TrackMarks;

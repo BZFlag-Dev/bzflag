@@ -10,38 +10,26 @@
 * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 */
 
-// bzflag global common header
-#include "common.h"
-#include "global.h"
-
 // interface header
 #include "WeatherRenderer.h"
 
-// system headers
-#include <string>
-#include <vector>
-
 // common impl headers
-#include "bzfgl.h"
-#include "OpenGLGState.h"
-#include "OpenGLMaterial.h"
 #include "TextureManager.h"
 #include "StateDatabase.h"
 #include "BZDBCache.h"
 #include "TimeKeeper.h"
 #include "TextUtils.h"
 #include "ParseColor.h"
+#include "Intersect.h"
 
 // local impl headers
-#include "SceneRenderer.h"
-#include "Intersect.h"
 #include "RoofTops.h"
 
 // for debug
 #define _CULLING_RAIN false
 
 
-void bzdbCallBack(const std::string& /* name */ , void *userData)
+static void bzdbCallBack(const std::string& /* name */ , void *userData)
 {
   static_cast<WeatherRenderer*>(userData)->set();
 }

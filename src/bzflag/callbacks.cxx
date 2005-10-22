@@ -10,9 +10,8 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include "common.h"
-
-#include <string>
+// interface header
+#include "callbacks.h"
 
 /* local headers */
 #include "LocalPlayer.h"

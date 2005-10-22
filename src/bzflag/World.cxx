@@ -10,18 +10,12 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include "common.h"
-
 /* interface header */
 #include "World.h"
 
 /* system implementation headers */
 #include <fstream>
 #include <time.h>
-#include <vector>
-#include <string>
-#include <string.h>
-#include <assert.h>
 
 /* common implementation headers */
 #include "BZDBCache.h"
@@ -30,18 +24,13 @@
 #include "CollisionManager.h"
 #include "DynamicColor.h"
 #include "TextureMatrix.h"
-#include "BzMaterial.h"
 #include "PhysicsDriver.h"
-#include "MeshTransform.h"
 #include "FlagSceneNode.h"
 #include "ObstacleMgr.h"
 #include "MeshDrawInfo.h"
 #include "MeshDrawMgr.h"
 #include "DirectoryNames.h"
 #include "GameTime.h"
-
-// local implementation headers
-#include "playing.h"
 
 //
 // World

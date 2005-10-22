@@ -13,6 +13,8 @@
 #ifndef BZF_TRACKS_H
 #define BZF_TRACKS_H
 
+// BZFlag common header
+#include "common.h"
 
 class SceneDatabase;
 

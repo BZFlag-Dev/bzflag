@@ -9,11 +9,18 @@
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
-#include "common.h"
-#include <math.h>
+
+// interface header
 #include "TargetingUtils.h"
-#include "ShotStrategy.h"
+
+// system headers
+#include <math.h>
+
+// common headers
 #include "Ray.h"
+
+// local headers
+#include "ShotStrategy.h"
 
 // These routines are 2 dimensional
 

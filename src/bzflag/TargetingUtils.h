@@ -14,6 +14,9 @@
 #ifndef _TARGETINGUTILS__H_
 #define _TARGETINGUTILS__H_
 
+// common - 1st
+#include "common.h"
+
 class TargetingUtils
 {
 public:

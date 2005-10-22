@@ -10,20 +10,23 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include "common.h"
-#include <math.h>
+// interface header
 #include "sound.h"
-#include "global.h"
-#include "TimeKeeper.h"
-#include "PlatformFactory.h"
-#include "BzfMedia.h"
-#include "BZDBCache.h"
-#include "TextUtils.h"
+
+// system headers
+#include <vector>
 #include <map>
 
-const float		SpeedOfSound = 343.0f;			// meters/sec
-const int		MaxEvents = 30;
-const float		InterAuralDistance = 0.1f;		// meters
+// common headers
+#include "BzfMedia.h"
+#include "TimeKeeper.h"
+#include "PlatformFactory.h"
+#include "BZDBCache.h"
+#include "TextUtils.h"
+
+static const float SpeedOfSound = 343.0f;		// meters/sec
+static const int   MaxEvents = 30;
+static const float InterAuralDistance = 0.1f;		// meters
 
 /*
  * producer/consumer shared data types and defines
@@ -182,9 +185,9 @@ static const char*	soundFiles[] = {
  * producer/consumer shared arena
  */
 
-std::vector<AudioSamples>	soundSamples;
+static std::vector<AudioSamples>	soundSamples;
 
-std::map<std::string, int> customSamples;
+static std::map<std::string, int> customSamples;
 
 static long		audioBufferSize;
 static int		soundLevel;

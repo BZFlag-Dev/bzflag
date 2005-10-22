@@ -10,8 +10,10 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include "StateDatabase.h"
+// common - 1st
+#include "common.h"
 
+// system headers
 #include <string>
 
 void setFlagHelp(const std::string& name, void*);
