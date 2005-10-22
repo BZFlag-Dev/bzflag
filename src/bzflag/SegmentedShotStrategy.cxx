@@ -13,6 +13,9 @@
 /* interface header */
 #include "SegmentedShotStrategy.h"
 
+/* system implementation headers */
+#include <assert.h>
+
 /* common implementation headers */
 #include "TextureManager.h"
 #include "Intersect.h"

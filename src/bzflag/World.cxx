@@ -16,6 +16,7 @@
 /* system implementation headers */
 #include <fstream>
 #include <time.h>
+#include <assert.h>
 
 /* common implementation headers */
 #include "BZDBCache.h"

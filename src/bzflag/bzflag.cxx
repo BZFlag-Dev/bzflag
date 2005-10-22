@@ -14,6 +14,7 @@
 #include "bzflag.h"
 
 /* system headers */
+#include <assert.h>
 #include <time.h>
 #if defined(_WIN32)
 #  include <shlobj.h>
