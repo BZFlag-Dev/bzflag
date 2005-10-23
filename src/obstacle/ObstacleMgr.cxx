@@ -1131,6 +1131,9 @@ void GroupDefinitionMgr::print(std::ostream& out,
     BZDB.set("saveFlatFile", "1");
   }
 
+  // for unique OBJ mesh ids
+  MeshObstacle::resetCounter();
+  
   if (!(saveFlatFile || saveAsOBJ)) {
     // print the group definitions
     for (unsigned int i = 0; i < list.size(); i++) {

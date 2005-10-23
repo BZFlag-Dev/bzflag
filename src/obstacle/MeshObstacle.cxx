@@ -33,7 +33,8 @@
 #include "Triangulate.h"
 
 
-const char* MeshObstacle::typeName = "MeshObstacle";
+int		MeshObstacle::counter = 0;
+const char*	MeshObstacle::typeName = "MeshObstacle";
 
 
 MeshObstacle::MeshObstacle()
@@ -926,16 +927,16 @@ void MeshObstacle::print(std::ostream& out, const std::string& indent) const
 
     out << indent << "end" << std::endl;
 
-  } else {
+  }
+  else {
     // save as OBJ
     int i;
 
     out << "# OBJ - start" << std::endl;
-    unsigned int pNum = (unsigned int)this;
     if (name.size() > 0) {
-      out << "o " << name << "_" << pNum << std::endl;
+      out << "o " << name << "_" << counter << std::endl;
     } else {
-      out << "o unnamed_" << pNum << std::endl;
+      out << "o unnamed_" << counter << std::endl;
     }
 
     out << "# faces = " << faceCount << std::endl;
@@ -1006,6 +1007,8 @@ void MeshObstacle::print(std::ostream& out, const std::string& indent) const
     }
 
     out << "# OBJ - end" << std::endl << std::endl;
+    
+    counter++;
   }
   
   return;
