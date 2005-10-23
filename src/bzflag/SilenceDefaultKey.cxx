@@ -22,6 +22,7 @@
 // local implementation headers
 #include "LocalPlayer.h"
 #include "HUDRenderer.h"
+#include "HUDui.h"
 #include "Roster.h"
 #include "playing.h" // THIS IS TEMPORARY..TO BE REMOVED..BABY STEPS
 

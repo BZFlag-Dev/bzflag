@@ -14,7 +14,7 @@
 #ifndef __SILENCEDEFAULTKEY_H__
 #define __SILENCEDEFAULTKEY_H__
 
-#include "HUDui.h"
+#include "HUDuiDefaultKey.h"
 
 
 class SilenceDefaultKey : public HUDuiDefaultKey {

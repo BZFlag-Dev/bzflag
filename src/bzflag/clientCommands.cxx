@@ -33,6 +33,7 @@
 #include "Roaming.h"
 #include "playing.h"
 #include "HUDRenderer.h"
+#include "HUDui.h"
 
 /** jump
  */

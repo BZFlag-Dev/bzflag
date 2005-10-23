@@ -18,6 +18,7 @@
 #include "TextUtils.h"
 #include "KeyManager.h"
 #include "playing.h"
+#include "HUDui.h"
 
 
 const ServerCommandKey::Mode ServerCommandKey::nonAdminModes [8] = {LagStats, IdleStats, FlagHistory, Report, Password, Register, Identify, ClientQuery};

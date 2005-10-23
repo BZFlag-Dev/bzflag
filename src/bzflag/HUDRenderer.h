@@ -20,7 +20,6 @@
 #include <string>
 
 /* common interface headers */
-#include "global.h"
 #include "TimeKeeper.h"
 #include "HUDuiTypeIn.h"
 #include "Flag.h"

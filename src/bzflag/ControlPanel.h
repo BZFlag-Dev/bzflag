@@ -17,13 +17,19 @@
   #pragma warning(disable: 4786)
 #endif
 
+// common - 1st
 #include "common.h"
-#include "MainWindow.h"
-#include "global.h"
-#include "OpenGLGState.h"
+
+// system headers
 #include <string>
 #include <vector>
 #include <deque>
+
+//common headers
+#include "bzfgl.h"
+
+// local headers
+#include "MainWindow.h"
 
 class RadarRenderer;
 class SceneRenderer;

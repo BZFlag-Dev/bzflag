@@ -17,6 +17,7 @@
 #include "FontManager.h"
 #include "Protocol.h"
 #include "BundleMgr.h"
+#include "Bundle.h"
 
 /* local implementation headers */
 #include "HUDDialogStack.h"

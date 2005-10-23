@@ -20,8 +20,7 @@
 #include <string>
 
 /* common interface headers */
-#include "ErrorHandler.h"
-#include "Team.h"
+#include "global.h"
 
 /* local interface headers */
 #include "HUDDialog.h"

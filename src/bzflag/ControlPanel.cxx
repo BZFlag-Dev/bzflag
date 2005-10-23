@@ -24,6 +24,7 @@
 #include "FontManager.h"
 #include "TextUtils.h"
 #include "ErrorHandler.h"
+#include "global.h"
 
 /* local implementation headers */
 #include "SceneRenderer.h"

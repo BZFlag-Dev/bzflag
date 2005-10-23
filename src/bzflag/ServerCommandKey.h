@@ -13,12 +13,10 @@
 #ifndef __SERVERCOMMANDKEY_H__
 #define __SERVERCOMMANDKEY_H__
 
-// common - 1st
-#include "common.h"
-
+// Ancestor class
+#include "HUDuiDefaultKey.h"
 
 #include <string>
-#include "HUDui.h"
 #include "Address.h"
 
 class ServerCommandKey : public HUDuiDefaultKey {

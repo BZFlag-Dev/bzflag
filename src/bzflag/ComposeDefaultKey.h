@@ -17,11 +17,10 @@
 
 /* system interface headers */
 #include <deque>
-#include <string>
 
 /* common interface headers */
-#include "HUDui.h"
 #include "BzfEvent.h"
+#include "HUDuiDefaultKey.h"
 
 
 typedef std::deque<std::string> MessageQueue;

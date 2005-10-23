@@ -22,6 +22,7 @@
 #include "HUDRenderer.h"
 #include "LocalCommand.h"
 #include "playing.h"
+#include "HUDui.h"
 
 
 #define MAX_MESSAGE_HISTORY (20)

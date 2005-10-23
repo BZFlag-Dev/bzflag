@@ -13,7 +13,9 @@
 #ifndef __SERVERMENU_H__
 #define __SERVERMENU_H__
 
-#include "common.h"
+// ancestor classes
+#include "MenuDefaultKey.h"
+#include "HUDDialog.h"
 
 /* system interface headers */
 #include <string>
@@ -21,17 +23,13 @@
 
 /* common interface headers */
 #include "BzfEvent.h"
-#include "HUDDialog.h"
-#include "ListServer.h"
 #include "ServerItem.h"
 #include "ServerList.h"
-#include "ServerListCache.h"
 
 /* local interface headers */
 #include "HUDuiDefaultKey.h"
 #include "HUDuiLabel.h"
 #include "HUDuiTypeIn.h"
-#include "MenuDefaultKey.h"
 
 class ServerMenu;
 
