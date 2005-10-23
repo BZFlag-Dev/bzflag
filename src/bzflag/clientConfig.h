@@ -18,6 +18,9 @@
 #ifndef	__CLIENT_CONFIG_H__
 #define	__CLIENT_CONFIG_H__
 
+// common - 1st
+#include "common.h"
+
 #include <vector>
 #include <string>
 

@@ -13,10 +13,8 @@
 #ifndef __COMMANDS_H__
 #define __COMMANDS_H__
 
+// common - 1st
 #include "common.h"
-
-/* system interface headers */
-#include <string>
 
 /* common interface headers */
 #include "CommandManager.h"

@@ -16,7 +16,6 @@
 // bzflag global header
 #include "common.h"
 
-#include <vector>
 #include <stack>
 #include "TimeKeeper.h"
 
