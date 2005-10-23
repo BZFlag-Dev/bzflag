@@ -112,9 +112,7 @@ class MeshObstacle : public Obstacle {
     void *unpack(void*);
 
     void print(std::ostream& out, const std::string& indent) const;
-
-  public:    
-    static void resetCounter();
+    void printOBJ(std::ostream& out, const std::string& indent) const;
 
   private:
     void makeFacePointers(const std::vector<int>& _vertices,
@@ -145,9 +143,6 @@ class MeshObstacle : public Obstacle {
 		   // ray-vs-face tests and parity counts.
 
     MeshDrawInfo* drawInfo; // hidden data stored in extra texcoords
-
-  private:
-    static int counter;
 };
 
 inline const char *MeshObstacle::getCheckTypes() const
@@ -223,12 +218,6 @@ inline const std::string& MeshObstacle::getName() const
 inline void MeshObstacle::setName(const std::string& str)
 {
   name = str;
-  return;
-}
-
-inline void MeshObstacle::resetCounter()
-{
-  counter = 0;
   return;
 }
 

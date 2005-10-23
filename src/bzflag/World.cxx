@@ -905,6 +905,42 @@ void			World::addFlags(SceneDatabase* scene, bool seerView)
 static std::string indent = "";
 
 
+static void writeDefaultOBJMaterials(std::ostream& out)
+{
+  typedef struct {
+    const char* name;
+    const char* texture;
+    float color[4];
+  } MatProps;
+  const MatProps defaultMats[] = {
+    {"boxtop",		"roof.png",		{1.0f, 1.0f, 0.9f, 1.0f}},
+    {"boxwall",		"boxwall.png",		{1.0f, 0.9f, 0.8f, 1.0f}},
+    {"pyrwall",		"pyrwall.png",		{0.8f, 0.8f, 1.0f, 1.0f}},
+    {"telefront",	"mesh.png",		{1.0f, 0.0f, 0.0f, 0.5f}},
+    {"teleback",	"mesh.png",		{0.0f, 1.0f, 0.0f, 0.5f}},
+    {"telerim",		"mesh.png",		{1.0f, 1.0f, 0.0f, 0.5f}},
+    {"basetop_team1",	"red_basetop.png",	{1.0f, 0.8f, 0.8f, 1.0f}},
+    {"basewall_team1",	"red_basewall.png",	{1.0f, 0.8f, 0.8f, 1.0f}},
+    {"basetop_team2",	"green_basetop.png",	{0.8f, 1.0f, 0.8f, 1.0f}},
+    {"basewall_team2",	"green_basewall.png",	{0.8f, 1.0f, 0.8f, 1.0f}},
+    {"basetop_team3",	"blue_basetop.png",	{0.8f, 0.8f, 1.0f, 1.0f}},
+    {"basewall_team3",	"blue_basewall.png",	{0.8f, 0.8f, 1.0f, 1.0f}},
+    {"basetop_team4",	"purple_basetop.png",	{1.0f, 0.8f, 1.0f, 1.0f}},
+    {"basewall_team4",	"purple_basewall.png",	{1.0f, 0.8f, 1.0f, 1.0f}}
+  };
+  const int count = sizeof(defaultMats) / sizeof(defaultMats[0]);
+  BzMaterial mat;
+  for (int i = 0; i < count; i++) {
+    const MatProps& mp = defaultMats[i];
+    mat.setName(mp.name);
+    mat.setTexture(mp.texture);
+    mat.setDiffuse(mp.color);
+    mat.print(out, indent);
+  }
+  return;
+}
+
+
 static void writeBZDBvar (const std::string& name, void *userData)
 {
   std::ofstream& out = *((std::ofstream*)userData);
@@ -1029,13 +1065,15 @@ bool World::writeWorld(const std::string& filename, std::string& fullname)
   } else {
     const std::string mtlname = filename + ".mtl";
     const std::string mtlfile = getWorldDirName() + mtlname;
-    std::ostream* mtlstream = FILEMGR.createDataOutStream(mtlfile.c_str());
-    if (mtlstream != NULL) {
+    std::ostream* mtlStream = FILEMGR.createDataOutStream(mtlfile.c_str());
+    if (mtlStream != NULL) {
+      out << std::endl;
       out << "mtllib " << mtlname << std::endl; // index the mtl file
-      *mtlstream << "# BZFlag client: saved world on " << ctime(&nowTime);
-      *mtlstream << std::endl;
-      MATERIALMGR.print(*mtlstream, indent); // indent "# " is used as a tag
-      delete mtlstream;
+      *mtlStream << "# BZFlag client: saved world on " << ctime(&nowTime);
+      *mtlStream << std::endl;
+      writeDefaultOBJMaterials(*mtlStream);
+      MATERIALMGR.print(*mtlStream, indent); // indent "# " is used as a tag
+      delete mtlStream;
     }
   }
 

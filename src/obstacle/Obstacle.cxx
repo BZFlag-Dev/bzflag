@@ -22,6 +22,9 @@
 // limits the maximum extent of any obstacle
 const float Obstacle::maxExtent = 1.0e30f;
 
+// for counting OBJ file objects
+int Obstacle::objCounter = 0;
+
 
 Obstacle::Obstacle()
 {

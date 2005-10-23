@@ -304,6 +304,90 @@ void BaseBuilding::print(std::ostream& out, const std::string& indent) const
 }
 
 
+static void outputFloat(std::ostream& out, float value)
+{
+  char buffer[32];
+  snprintf(buffer, 30, " %.8f", value);
+  out << buffer;
+  return;
+}
+
+void BaseBuilding::printOBJ(std::ostream& out, const std::string& /*indent*/) const
+{
+  int i;
+  float verts[8][3] = {
+    {-1.0f, -1.0f, 0.0f},
+    {+1.0f, -1.0f, 0.0f},
+    {+1.0f, +1.0f, 0.0f},
+    {-1.0f, +1.0f, 0.0f},
+    {-1.0f, -1.0f, 1.0f},
+    {+1.0f, -1.0f, 1.0f},
+    {+1.0f, +1.0f, 1.0f},
+    {-1.0f, +1.0f, 1.0f}
+  };
+  float norms[6][3] = {
+    {0.0f, -1.0f, 0.0f}, {+1.0f, 0.0f, 0.0f},
+    {0.0f, +1.0f, 0.0f}, {-1.0f, 0.0f, 0.0f},
+    {0.0f, 0.0f, -1.0f}, {0.0f, 0.0f, +1.0f}
+  };
+  float txcds[4][2] = {
+    {0.0f, 0.0f}, {1.0f, 0.0f}, {1.0f, 1.0f}, {0.0f, 1.0f}
+  };
+  MeshTransform xform;
+  const float degrees = getRotation() * (float)(180.0 / M_PI);
+  const float zAxis[3] = {0.0f, 0.0f, +1.0f};
+  xform.addScale(getSize());
+  xform.addSpin(degrees, zAxis);
+  xform.addShift(getPosition());
+  xform.finalize();
+  MeshTransform::Tool xtool(xform);
+  for (i = 0; i < 8; i++) {
+    xtool.modifyVertex(verts[i]);
+  }
+  for (i = 0; i < 6; i++) {
+    xtool.modifyNormal(norms[i]);
+  }
+
+  out << "# OBJ - start base" << std::endl;
+  out << "o bzbase_team" << team << "_" << getObjCounter() << std::endl;
+
+  for (i = 0; i < 8; i++) {
+    out << "v";
+    outputFloat(out, verts[i][0]);
+    outputFloat(out, verts[i][1]);
+    outputFloat(out, verts[i][2]);
+    out << std::endl;
+  }
+  for (i = 0; i < 4; i++) {
+    out << "vt";
+    outputFloat(out, txcds[i][0]);
+    outputFloat(out, txcds[i][1]);
+    out << std::endl;
+  }
+  for (i = 0; i < 6; i++) {
+    out << "vn";
+    outputFloat(out, norms[i][0]);
+    outputFloat(out, norms[i][1]);
+    outputFloat(out, norms[i][2]);
+    out << std::endl;
+  }
+  out << "usemtl basetop_team" << team << std::endl;
+  out << "f -5/-4/-2 -6/-3/-2 -7/-2/-2 -8/-1/-2" << std::endl;
+  out << "f -4/-4/-1 -3/-3/-1 -2/-2/-1 -1/-1/-1" << std::endl;
+  out << "usemtl basewall_team" << team << std::endl;
+  out << "f -8/-4/-6 -7/-3/-6 -3/-2/-6 -4/-1/-6" << std::endl;
+  out << "f -7/-4/-5 -6/-3/-5 -2/-2/-5 -3/-1/-5" << std::endl;
+  out << "f -6/-4/-4 -5/-3/-4 -1/-2/-4 -2/-1/-4" << std::endl;
+  out << "f -5/-4/-3 -8/-3/-3 -4/-2/-3 -1/-1/-3" << std::endl;
+
+  out << std::endl;
+  
+  incObjCounter();
+  
+  return;
+}
+
+
 // Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***

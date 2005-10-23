@@ -239,7 +239,7 @@ inline int MeshSceneNode::calcRadarLod()
 void MeshSceneNode::addRenderNodes(SceneRenderer& renderer)
 {
   const ViewFrustum& vf = renderer.getViewFrustum();
-  const int level = calcNormalLod(vf);
+  const int level = (lodCount == 1) ? 0 : calcNormalLod(vf);
   LodNode& lod = lods[level];
 
   if (animRepos) {
@@ -278,7 +278,7 @@ void MeshSceneNode::addRenderNodes(SceneRenderer& renderer)
 void MeshSceneNode::addShadowNodes(SceneRenderer& renderer)
 {
   const ViewFrustum& vf = renderer.getViewFrustum();
-  const int level = calcShadowLod(vf);
+  const int level = (lodCount == 1) ? 0 : calcShadowLod(vf);
   LodNode& lod = lods[level];
   for (int i = 0; i < lod.count; i++) {
     SetNode& set = lod.sets[i];
@@ -293,7 +293,7 @@ void MeshSceneNode::addShadowNodes(SceneRenderer& renderer)
 
 void MeshSceneNode::renderRadar()
 {
-  const int level = calcRadarLod();
+  const int level = (lodCount == 1) ? 0 : calcRadarLod();
   LodNode& lod = radarLods[level];
   for (int i = 0; i < lod.count; i++) {
     SetNode& set = lod.sets[i];

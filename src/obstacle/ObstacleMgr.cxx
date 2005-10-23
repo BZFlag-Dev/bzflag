@@ -937,8 +937,12 @@ void GroupDefinition::printFlatFile(std::ostream& out,
 	  obs->print(out, indent);
 	}
       } else {
-	if (!isContainer(type) && ((type == meshType) || !saveAsOBJ)) {
-	  obs->print(out, indent);
+	if (!isContainer(type)) {
+	  if (!saveAsOBJ) {
+	    obs->print(out, indent);
+          } else {
+	    obs->printOBJ(out, indent);
+          }
 	}
       }
     }
@@ -1132,7 +1136,7 @@ void GroupDefinitionMgr::print(std::ostream& out,
   }
 
   // for unique OBJ mesh ids
-  MeshObstacle::resetCounter();
+  Obstacle::resetObjCounter();
   
   if (!(saveFlatFile || saveAsOBJ)) {
     // print the group definitions

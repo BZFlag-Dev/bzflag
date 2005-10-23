@@ -97,6 +97,9 @@ class Obstacle {
   /** This function prints the obstacle to the stream */
   virtual void print(std::ostream& out, const std::string& indent) const = 0;
 
+  /** This function prints the obstacle in Alias Wavefront format to the stream */
+  virtual void printOBJ(std::ostream&, const std::string&) const { return; }
+
   /** This function returns the position of this obstacle. */
   const Extents& getExtents() const;
 
@@ -212,6 +215,9 @@ class Obstacle {
   bool isFromGroupDef() const;
   bool isFromContainer() const;
 
+  /** This function resets the object ID counter for printing OBJ files */
+  static void resetObjCounter();
+  
   // inside sceneNodes
   void addInsideSceneNode(SceneNode* node);
   void freeInsideSceneNodeList();
@@ -226,6 +232,7 @@ class Obstacle {
   /** The maximum extent of any object parameter
    */
   static const float maxExtent;
+
 
 
  protected:
@@ -257,6 +264,10 @@ class Obstacle {
 		     float* normal) const;
 
   protected:
+    static int getObjCounter();
+    static void incObjCounter();
+ 
+  protected:
     Extents extents;
     float pos[3];
     float size[3]; // width, breadth, height
@@ -269,7 +280,9 @@ class Obstacle {
   private:
     int insideNodeCount;
     SceneNode** insideNodes;
-
+  
+  private:
+    static int objCounter;
 };
 
 //
@@ -357,6 +370,18 @@ inline bool Obstacle::isFromContainer() const
   return ((source & ContainerSource) != 0);
 }
 
+inline int Obstacle::getObjCounter()
+{
+  return objCounter;
+}
+inline void Obstacle::incObjCounter()
+{
+  objCounter++;
+}
+inline void Obstacle::resetObjCounter()
+{
+  objCounter = 0;
+}
 
 #endif // BZF_OBSTACLE_H
 

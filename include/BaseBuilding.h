@@ -65,6 +65,7 @@ class BaseBuilding : public Obstacle {
     void *unpack(void*);
 
     void print(std::ostream& out, const std::string& indent) const;
+    void printOBJ(std::ostream& out, const std::string& indent) const;
 
     std::string		userTextures[2];
 

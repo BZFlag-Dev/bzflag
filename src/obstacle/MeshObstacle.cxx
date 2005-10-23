@@ -33,7 +33,6 @@
 #include "Triangulate.h"
 
 
-int		MeshObstacle::counter = 0;
 const char*	MeshObstacle::typeName = "MeshObstacle";
 
 
@@ -845,171 +844,173 @@ static void outputFloat(std::ostream& out, float value)
 
 void MeshObstacle::print(std::ostream& out, const std::string& indent) const
 {
-  if (!BZDB.isTrue("saveAsOBJ")) {
-    out << indent << "mesh" << std::endl;
+  out << indent << "mesh" << std::endl;
 
-    out << indent << "# faces = " << faceCount << std::endl;
-    out << indent << "# checks = " << checkCount << std::endl;
-    out << indent << "# vertices = " << vertexCount << std::endl;
-    out << indent << "# normals = " << normalCount << std::endl;
-    out << indent << "# texcoords = " << texcoordCount << std::endl;
-    out << indent << "# mins = " << extents.mins[0] << " "
-                                 << extents.mins[1] << " "
-                                 << extents.mins[2] << std::endl;
-    out << indent << "# maxs = " << extents.maxs[0] << " "
-                                 << extents.maxs[1] << " "
-                                 << extents.maxs[2] << std::endl;
+  out << indent << "# faces = " << faceCount << std::endl;
+  out << indent << "# checks = " << checkCount << std::endl;
+  out << indent << "# vertices = " << vertexCount << std::endl;
+  out << indent << "# normals = " << normalCount << std::endl;
+  out << indent << "# texcoords = " << texcoordCount << std::endl;
+  out << indent << "# mins = " << extents.mins[0] << " "
+                               << extents.mins[1] << " "
+                               << extents.mins[2] << std::endl;
+  out << indent << "# maxs = " << extents.maxs[0] << " "
+                               << extents.maxs[1] << " "
+                               << extents.maxs[2] << std::endl;
 
-    if (name.size() > 0) {
-      out << indent << "  name " << name << std::endl;
-    }
-
-    if (noclusters) {
-      out << indent << "  noclusters" << std::endl;
-    }
-    if (smoothBounce) {
-      out << indent << "  smoothBounce" << std::endl;
-    }
-    if (driveThrough && shootThrough) {
-        out << indent << "  passable" << std::endl;
-    } else {
-      if (driveThrough) {
-        out << indent << "  driveThrough" << std::endl;
-      }
-      if (shootThrough) {
-        out << indent << "  shootThrough" << std::endl;
-      }
-    }
-
-    int i, j;
-    for (i = 0; i < checkCount; i++) {
-      if (checkTypes[i] == CheckInside) {
-        out << indent << "  inside";
-      } else {
-        out << indent << "  outside";
-      }
-      for (j = 0; j < 3; j++) {
-        outputFloat(out, checkPoints[i][j]);
-      }
-      out << std::endl;
-    }
-    for (i = 0; i < vertexCount; i++) {
-      out << indent << "  vertex";
-      for (j = 0; j < 3; j++) {
-        outputFloat(out, vertices[i][j]);
-      }
-      out << std::endl;
-    }
-    for (i = 0; i < normalCount; i++) {
-      out << indent << "  normal";
-      for (j = 0; j < 3; j++) {
-        outputFloat(out, normals[i][j]);
-      }
-      out << std::endl;
-    }
-    for (i = 0; i < texcoordCount; i++) {
-      out << indent << "  texcoord";
-      for (j = 0; j < 2; j++) {
-        outputFloat(out, texcoords[i][j]);
-      }
-      out << std::endl;
-    }
-
-    for (int f = 0; f < faceCount; f++) {
-      faces[f]->print(out, indent);
-    }
-
-    // MeshDrawInfo
-    if ((drawInfo != NULL) && !drawInfo->isCopy()) {
-      std::string indent2 = indent + "  ";
-      drawInfo->print(out, indent2);
-    }
-
-    out << indent << "end" << std::endl;
-
+  if (name.size() > 0) {
+    out << indent << "  name " << name << std::endl;
   }
-  else {
-    // save as OBJ
-    int i;
 
-    out << "# OBJ - start" << std::endl;
-    if (name.size() > 0) {
-      out << "o " << name << "_" << counter << std::endl;
-    } else {
-      out << "o unnamed_" << counter << std::endl;
-    }
-
-    out << "# faces = " << faceCount << std::endl;
-    out << "# vertices = " << vertexCount << std::endl;
-    out << "# normals = " << normalCount << std::endl;
-    out << "# texcoords = " << texcoordCount << std::endl;
-
-    const float* tmp;
-    tmp = extents.mins;
-    out << "# mins = " << tmp[0] << " " << tmp[1] << " " << tmp[2] << std::endl;
-    tmp = extents.maxs;
-    out << "# maxs = " << tmp[0] << " " << tmp[1] << " " << tmp[2] << std::endl;
-
-
-    for (i = 0; i < vertexCount; i++) {
-      out << "v";
-      outputFloat(out, vertices[i][0]);
-      outputFloat(out, vertices[i][1]);
-      outputFloat(out, vertices[i][2]);
-      out << std::endl;
-    }
-    for (i = 0; i < normalCount; i++) {
-      out << "vn";
-      outputFloat(out, normals[i][0]);
-      outputFloat(out, normals[i][1]);
-      outputFloat(out, normals[i][2]);
-      out << std::endl;
-    }
-    for (i = 0; i < texcoordCount; i++) {
-      out << "vt";
-      outputFloat(out, texcoords[i][0]);
-      outputFloat(out, texcoords[i][1]);
-      out << std::endl;
-    }
-    const BzMaterial* bzmat = NULL;
-    for (int f = 0; f < faceCount; f++) {
-      const MeshFace* face = faces[f];
-      const BzMaterial* nextMat = face->getMaterial();
-      if (bzmat != nextMat) {
-        bzmat = nextMat;
-        out << "usemtl ";
-        MATERIALMGR.printReference(out, bzmat);
-        out << std::endl;
-      }
-      const int vCount = face->getVertexCount();
-      const bool useNormals = face->useNormals();
-      const bool useTexcoords = face->useTexcoords();
-      out << "f";
-      for (i = 0; i < vCount; i++) {
-        int vIndex = (fvec3*)face->getVertex(i) - vertices;
-        vIndex = vIndex - vertexCount;
-        out << " " << vIndex;
-        if (useTexcoords) {
-          int tIndex = (fvec2*)face->getTexcoord(i) - texcoords;
-          tIndex = tIndex - texcoordCount;
-          out << "/" << tIndex;
-        }
-        if (useNormals) {
-          if (!useTexcoords) {
-            out << "/";
-          }
-          int nIndex = (fvec3*)face->getNormal(i) - normals;
-          nIndex = nIndex - normalCount;
-          out << "/" << nIndex;
-        }
-      }
-      out << std::endl;
-    }
-
-    out << "# OBJ - end" << std::endl << std::endl;
-    
-    counter++;
+  if (noclusters) {
+    out << indent << "  noclusters" << std::endl;
   }
+  if (smoothBounce) {
+    out << indent << "  smoothBounce" << std::endl;
+  }
+  if (driveThrough && shootThrough) {
+      out << indent << "  passable" << std::endl;
+  } else {
+    if (driveThrough) {
+      out << indent << "  driveThrough" << std::endl;
+    }
+    if (shootThrough) {
+      out << indent << "  shootThrough" << std::endl;
+    }
+  }
+
+  int i, j;
+  for (i = 0; i < checkCount; i++) {
+    if (checkTypes[i] == CheckInside) {
+      out << indent << "  inside";
+    } else {
+      out << indent << "  outside";
+    }
+    for (j = 0; j < 3; j++) {
+      outputFloat(out, checkPoints[i][j]);
+    }
+    out << std::endl;
+  }
+  for (i = 0; i < vertexCount; i++) {
+    out << indent << "  vertex";
+    for (j = 0; j < 3; j++) {
+      outputFloat(out, vertices[i][j]);
+    }
+    out << std::endl;
+  }
+  for (i = 0; i < normalCount; i++) {
+    out << indent << "  normal";
+    for (j = 0; j < 3; j++) {
+      outputFloat(out, normals[i][j]);
+    }
+    out << std::endl;
+  }
+  for (i = 0; i < texcoordCount; i++) {
+    out << indent << "  texcoord";
+    for (j = 0; j < 2; j++) {
+      outputFloat(out, texcoords[i][j]);
+    }
+    out << std::endl;
+  }
+
+  for (int f = 0; f < faceCount; f++) {
+    faces[f]->print(out, indent);
+  }
+
+  // MeshDrawInfo
+  if ((drawInfo != NULL) && !drawInfo->isCopy()) {
+    std::string indent2 = indent + "  ";
+    drawInfo->print(out, indent2);
+  }
+
+  out << indent << "end" << std::endl;
+  
+  return;
+}
+
+
+void MeshObstacle::printOBJ(std::ostream& out, const std::string& /*indent*/) const
+{
+  // save as OBJ
+  int i;
+
+  out << "# OBJ - start" << std::endl;
+  if (name.size() > 0) {
+    out << "o " << name << "_" << getObjCounter() << std::endl;
+  } else {
+    out << "o unnamed_" << getObjCounter() << std::endl;
+  }
+
+  out << "# faces = " << faceCount << std::endl;
+  out << "# vertices = " << vertexCount << std::endl;
+  out << "# normals = " << normalCount << std::endl;
+  out << "# texcoords = " << texcoordCount << std::endl;
+
+  const float* tmp;
+  tmp = extents.mins;
+  out << "# mins = " << tmp[0] << " " << tmp[1] << " " << tmp[2] << std::endl;
+  tmp = extents.maxs;
+  out << "# maxs = " << tmp[0] << " " << tmp[1] << " " << tmp[2] << std::endl;
+
+
+  for (i = 0; i < vertexCount; i++) {
+    out << "v";
+    outputFloat(out, vertices[i][0]);
+    outputFloat(out, vertices[i][1]);
+    outputFloat(out, vertices[i][2]);
+    out << std::endl;
+  }
+  for (i = 0; i < normalCount; i++) {
+    out << "vn";
+    outputFloat(out, normals[i][0]);
+    outputFloat(out, normals[i][1]);
+    outputFloat(out, normals[i][2]);
+    out << std::endl;
+  }
+  for (i = 0; i < texcoordCount; i++) {
+    out << "vt";
+    outputFloat(out, texcoords[i][0]);
+    outputFloat(out, texcoords[i][1]);
+    out << std::endl;
+  }
+  const BzMaterial* bzmat = NULL;
+  for (int f = 0; f < faceCount; f++) {
+    const MeshFace* face = faces[f];
+    const BzMaterial* nextMat = face->getMaterial();
+    if (bzmat != nextMat) {
+      bzmat = nextMat;
+      out << "usemtl ";
+      MATERIALMGR.printReference(out, bzmat);
+      out << std::endl;
+    }
+    const int vCount = face->getVertexCount();
+    const bool useNormals = face->useNormals();
+    const bool useTexcoords = face->useTexcoords();
+    out << "f";
+    for (i = 0; i < vCount; i++) {
+      int vIndex = (fvec3*)face->getVertex(i) - vertices;
+      vIndex = vIndex - vertexCount;
+      out << " " << vIndex;
+      if (useTexcoords) {
+        int tIndex = (fvec2*)face->getTexcoord(i) - texcoords;
+        tIndex = tIndex - texcoordCount;
+        out << "/" << tIndex;
+      }
+      if (useNormals) {
+        if (!useTexcoords) {
+          out << "/";
+        }
+        int nIndex = (fvec3*)face->getNormal(i) - normals;
+        nIndex = nIndex - normalCount;
+        out << "/" << nIndex;
+      }
+    }
+    out << std::endl;
+  }
+
+  out << "# OBJ - end" << std::endl << std::endl;
+  
+  incObjCounter();
   
   return;
 }
