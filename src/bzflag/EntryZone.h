@@ -16,9 +16,12 @@
 // common should be the 1st one
 #include "common.h"
 
+// system headers
 #include <vector>
+
+// common headers
 #include "Flag.h"
-#include "Team.h"
+#include "global.h"
 
 class EntryZone {
   public:

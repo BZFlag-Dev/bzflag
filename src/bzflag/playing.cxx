@@ -32,6 +32,7 @@
 #include "AnsiCodes.h"
 #include "AresHandler.h"
 #include "BackgroundRenderer.h"
+#include "BaseBuilding.h"
 #include "BillboardSceneNode.h"
 #include "BZDBCache.h"
 #include "BzfMedia.h"

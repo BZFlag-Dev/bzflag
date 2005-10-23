@@ -28,7 +28,6 @@
 
 /* common interface headers */
 #include "bzfgl.h"
-#include "Extents.h"
 #include "OpenGLGState.h"
 #include "SceneRenderer.h"
 

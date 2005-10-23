@@ -23,7 +23,6 @@
 /* common interface headers */
 #include "Obstacle.h"
 #include "TimeKeeper.h"
-#include "BzfEvent.h"
 
 /* local interface headers */
 #include "Player.h"

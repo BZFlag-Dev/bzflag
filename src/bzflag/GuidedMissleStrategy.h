@@ -23,7 +23,6 @@
 #include "SceneDatabase.h"
 #include "TimeKeeper.h"
 #include "BoltSceneNode.h"
-#include "Address.h"
 
 /* local interface headers */
 #include "BaseLocalPlayer.h"

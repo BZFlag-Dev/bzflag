@@ -28,16 +28,12 @@
 #include "common.h"
 
 /* common interface headers */
-#include "global.h"
 #include "TimeKeeper.h"
-#include "Pack.h"
-#include "Address.h"
 #include "Flag.h"
 #include "ShotUpdate.h"
 
 /* local interface headers */
 #include "BaseLocalPlayer.h"
-#include "Player.h"
 #include "ShotStrategy.h"
 #include "SceneDatabase.h"
 

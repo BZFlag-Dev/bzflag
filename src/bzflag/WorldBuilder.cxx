@@ -21,6 +21,7 @@
 #include "PhysicsDriver.h"
 #include "FlagSceneNode.h"
 #include "ObstacleMgr.h"
+#include "BaseBuilding.h"
 
 /* compression library header */
 #include "../zlib/zlib.h"

@@ -21,6 +21,7 @@
 #include "TextUtils.h"
 #include "ParseColor.h"
 #include "Intersect.h"
+#include "Extents.h"
 
 // local impl headers
 #include "RoofTops.h"

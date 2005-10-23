@@ -24,15 +24,13 @@
 #include <vector>
 
 /* common headers */
-#include "BzfDisplay.h"
-#include "Player.h"
-#include "SceneRenderer.h"
 #include "StartupInfo.h"
 #include "AutoCompleter.h"
 
 /* local headers */
 #include "MainWindow.h"
 #include "ControlPanel.h"
+#include "HUDRenderer.h"
 
 #define MAX_MESSAGE_HISTORY (20)
 
