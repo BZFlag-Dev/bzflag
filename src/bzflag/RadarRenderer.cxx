@@ -23,6 +23,10 @@
 #include "ObstacleMgr.h"
 #include "MeshSceneNode.h"
 #include "ObstacleList.h"
+#include "WallObstacle.h"
+#include "BoxBuilding.h"
+#include "PyramidBuilding.h"
+#include "MeshObstacle.h"
 
 // local implementation headers
 #include "LocalPlayer.h"

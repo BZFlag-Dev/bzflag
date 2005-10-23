@@ -21,21 +21,8 @@
 
 /* common interface headers */
 #include "Team.h"
-#include "WallObstacle.h"
-#include "MeshObstacle.h"
-#include "BoxBuilding.h"
-#include "PyramidBuilding.h"
-#include "BaseBuilding.h"
-#include "TetraBuilding.h"
-#include "Teleporter.h"
-#include "EighthDimSceneNode.h"
 #include "FlagWarpSceneNode.h"
-#include "ArcObstacle.h"
-#include "ConeObstacle.h"
-#include "SphereObstacle.h"
-#include "Obstacle.h"
 #include "BundleMgr.h"
-#include "BzMaterial.h"
 #include "LinkManager.h"
 
 /* local interface headers */

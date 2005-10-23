@@ -32,6 +32,8 @@
 #include "MeshDrawMgr.h"
 #include "DirectoryNames.h"
 #include "GameTime.h"
+#include "WallObstacle.h"
+#include "MeshObstacle.h"
 
 //
 // World

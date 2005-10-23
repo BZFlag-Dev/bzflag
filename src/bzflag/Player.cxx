@@ -24,6 +24,7 @@
 #include "ObstacleMgr.h"
 #include "PhysicsDriver.h"
 #include "ObstacleList.h"
+#include "WallObstacle.h"
 
 // implementation-specific bzfs-specific headers
 #include "playing.h"

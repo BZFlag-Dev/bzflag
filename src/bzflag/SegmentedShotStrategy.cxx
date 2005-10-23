@@ -20,6 +20,7 @@
 #include "TextureManager.h"
 #include "Intersect.h"
 #include "BZDBCache.h"
+#include "WallObstacle.h"
 
 /* local implementation headers */
 #include "sound.h"

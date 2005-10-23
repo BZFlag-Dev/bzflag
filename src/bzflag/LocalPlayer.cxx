@@ -19,6 +19,9 @@
 #include "FlagSceneNode.h"
 #include "CollisionManager.h"
 #include "PhysicsDriver.h"
+#include "BzfEvent.h"
+#include "WallObstacle.h"
+#include "MeshObstacle.h"
 
 /* local implementation headers */
 #include "World.h"

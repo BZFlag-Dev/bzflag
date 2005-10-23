@@ -15,6 +15,7 @@
 
 /* common headers */
 #include "BZDBCache.h"
+#include "BoxBuilding.h"
 
 /* local headers */
 #include "Roster.h"
