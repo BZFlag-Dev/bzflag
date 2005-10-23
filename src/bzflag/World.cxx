@@ -913,6 +913,7 @@ static void writeDefaultOBJMaterials(std::ostream& out)
     float color[4];
   } MatProps;
   const MatProps defaultMats[] = {
+    {"std_ground",	"std_ground.png",	{0.5f, 0.5f, 0.5f, 1.0f}},
     {"boxtop",		"roof.png",		{1.0f, 1.0f, 0.9f, 1.0f}},
     {"boxwall",		"boxwall.png",		{1.0f, 0.9f, 0.8f, 1.0f}},
     {"pyrwall",		"pyrwall.png",		{0.8f, 0.8f, 1.0f, 1.0f}},
@@ -937,6 +938,27 @@ static void writeDefaultOBJMaterials(std::ostream& out)
     mat.setDiffuse(mp.color);
     mat.print(out, indent);
   }
+  return;
+}
+
+
+static void writeOBJGround(std::ostream& out)
+{
+  const float ws = BZDBCache::worldSize / 2.0f;
+  const float ts = BZDBCache::worldSize / 16.0f;
+  out << "o bzground" << std::endl;
+  out << "v " << -ws << " " << -ws << " 0" << std::endl;
+  out << "v " << +ws << " " << -ws << " 0" << std::endl;
+  out << "v " << +ws << " " << +ws << " 0" << std::endl;
+  out << "v " << -ws << " " << +ws << " 0" << std::endl;
+  out << "vt " << -ts << " " << -ts << std::endl;
+  out << "vt " << +ts << " " << -ts << std::endl;
+  out << "vt " << +ts << " " << +ts << std::endl;
+  out << "vt " << -ts << " " << +ts << std::endl;
+  out << "vn 0 0 1" << std::endl;
+  out << "usemtl std_ground" << std::endl;
+  out << "f -4/-4/-1 -3/-3/-1 -2/-2/-1 -1/-1/-1" << std::endl;
+  out << std::endl;
   return;
 }
 
@@ -1067,8 +1089,8 @@ bool World::writeWorld(const std::string& filename, std::string& fullname)
     const std::string mtlfile = getWorldDirName() + mtlname;
     std::ostream* mtlStream = FILEMGR.createDataOutStream(mtlfile.c_str());
     if (mtlStream != NULL) {
-      out << std::endl;
       out << "mtllib " << mtlname << std::endl; // index the mtl file
+      out << std::endl;
       *mtlStream << "# BZFlag client: saved world on " << ctime(&nowTime);
       *mtlStream << std::endl;
       writeDefaultOBJMaterials(*mtlStream);
@@ -1097,6 +1119,9 @@ bool World::writeWorld(const std::string& filename, std::string& fullname)
 
   // Write the world obstacles
   {
+    if (saveAsOBJ) {
+      writeOBJGround(out);
+    }
     OBSTACLEMGR.print(out, indent);
   }
 
