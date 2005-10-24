@@ -20,6 +20,7 @@
 #if !defined(_WIN32)
 #include <errno.h>
 #endif
+#include <ctype.h>
 
 /* common implementation headers */
 #include "version.h"

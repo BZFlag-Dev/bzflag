@@ -13,6 +13,9 @@
 // interface header
 #include "ServerCommand.h"
 
+// system headers
+#include <ctype.h>
+
 // Use only lower case command name
 ServerCommand::ServerCommand(std::string _commandName,
 			     std::string _oneLineHelp)

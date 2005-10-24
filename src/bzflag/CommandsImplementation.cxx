@@ -15,6 +15,7 @@
 
 // system implementation headers
 #include <math.h>
+#include <ctype.h>
 
 // common implementation headers
 #include "BZDBCache.h"

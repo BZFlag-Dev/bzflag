@@ -34,6 +34,7 @@
 #include <string.h>
 #endif
 #include <time.h>
+#include <ctype.h>
 
 // common implementation headers
 #include "CommandManager.h"

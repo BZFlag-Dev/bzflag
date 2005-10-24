@@ -16,6 +16,7 @@
 // implementation-specific system headers
 #include <fstream>
 #include <sstream>
+#include <ctype.h>
 
 // implementation-specific bzflag headers
 #include "BZDBCache.h"

@@ -13,8 +13,11 @@
 // this classes interface
 #include "WordFilter.h"
 
-// implementation-specific headers
+// system headers
+#include <ctype.h>
 #include <string>
+
+// implementation-specific headers
 #ifdef DEBUG
 #  include "TimeKeeper.h"
 #endif

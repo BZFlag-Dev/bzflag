@@ -13,6 +13,9 @@
 /* interface header */
 #include "KeyboardMapMenu.h"
 
+// System headers
+#include <ctype.h>
+
 /* common implementation headers */
 #include "KeyManager.h"
 #include "FontManager.h"

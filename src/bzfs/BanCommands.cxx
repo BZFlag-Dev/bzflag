@@ -13,6 +13,9 @@
 // interface header
 #include "commands.h"
 
+// system headers
+#include <ctype.h>
+
 // common implementation headers
 #include "WorldEventManager.h"
 
