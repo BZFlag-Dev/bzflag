@@ -16,6 +16,7 @@
 /* local implementation headers */
 #include "playing.h"
 #include "HUDui.h"
+#include "HUDDialog.h"
 
 HUDDialogStack HUDDialogStack::globalStack;
 

@@ -19,6 +19,7 @@
 
 /* local implementation headers */
 #include "HUDDialogStack.h"
+#include "HUDDialog.h"
 
 
 ShotStatsDefaultKey ShotStatsDefaultKey::instance;

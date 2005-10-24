@@ -20,8 +20,7 @@
 #include <vector>
 
 /* local interface headers */
-#include "HUDDialog.h"
-
+class HUDDialog;
 
 /** general utility class for the HUDDialog
  */

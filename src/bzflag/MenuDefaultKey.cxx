@@ -20,6 +20,7 @@
 /* local implementation headers */
 #include "sound.h"
 #include "HUDDialogStack.h"
+#include "HUDDialog.h"
 
 
 MenuDefaultKey MenuDefaultKey::instance;
