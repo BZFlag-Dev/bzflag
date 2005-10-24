@@ -19,10 +19,12 @@
 #ifndef	__HUDUILIST_H__
 #define	__HUDUILIST_H__
 
+// ancestor class
+#include "HUDuiControl.h"
+
 #include <string>
 #include <vector>
 
-#include "HUDuiControl.h"
 #include "BzfEvent.h"
 
 class HUDuiList : public HUDuiControl {

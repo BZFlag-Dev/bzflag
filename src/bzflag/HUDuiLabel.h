@@ -18,10 +18,12 @@
 #ifndef	__HUDUILABEL_H__
 #define	__HUDUILABEL_H__
 
+// ancestor class
+#include "HUDuiControl.h"
+
 #include <string>
 #include <vector>
 
-#include "HUDuiControl.h"
 #include "BzfEvent.h"
 
 class HUDuiLabel : public HUDuiControl {
