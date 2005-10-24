@@ -166,6 +166,15 @@ void BzMaterialManager::print(std::ostream& out, const std::string& indent) cons
 }
 
 
+void BzMaterialManager::printMTL(std::ostream& out, const std::string& indent) const
+{
+  for (unsigned int i = 0; i < materials.size(); i++) {
+    materials[i]->printMTL(out, indent);
+  }
+  return;
+}
+
+
 void BzMaterialManager::printReference(std::ostream& out,
 				       const BzMaterial* mat) const
 {
@@ -560,47 +569,6 @@ static void printColor(std::ostream& out, const char *name,
 
 void BzMaterial::print(std::ostream& out, const std::string& indent) const
 {
-  const bool saveAsOBJ = (indent == "# ");
-
-  if (saveAsOBJ) {
-    out << "newmtl ";
-    if (name.size() > 0) {
-      out << name << std::endl;
-    } else {
-      out << MATERIALMGR.getIndex(this) << std::endl;
-    }
-    if (noLighting) {
-      out << "illum 0" << std::endl;
-    } else {
-      out << "illum 2" << std::endl;
-    }
-    out << "d " << diffuse[3] << std::endl;
-    const float* c;
-    c = ambient; // not really used
-    out << "#Ka " << c[0] << " " << c[1] << " " << c[2] << std::endl;
-    c = diffuse;
-    out << "Kd " << c[0] << " " << c[1] << " " << c[2] << std::endl;
-    c = emission;
-    out << "Ke " << c[0] << " " << c[1] << " " << c[2] << std::endl;
-    c = specular;
-    out << "Ks " << c[0] << " " << c[1] << " " << c[2] << std::endl;
-    out << "Ns " << (1000.0f * (shininess / 128.0f)) << std::endl;
-    if (textureCount > 0) {
-      const TextureInfo* ti = &textures[0];
-      const unsigned int nlen = (unsigned int)ti->name.size();
-      if (nlen > 0) {
-        std::string texname = ti->name;
-        const char* cname = texname.c_str();
-        if ((nlen < 4) || (strcasecmp(cname + (nlen - 4), ".png") != 0)) {
-          texname += ".png";
-        }
-        out << "map_Kd " << texname << std::endl;
-      }
-    }
-    out << std::endl;
-    return;
-  }
-
   int i;
 
   out << indent << "material" << std::endl;
@@ -683,6 +651,47 @@ void BzMaterial::print(std::ostream& out, const std::string& indent) const
 
   out << indent << "end" << std::endl << std::endl;
 
+  return;
+}
+
+
+void BzMaterial::printMTL(std::ostream& out, const std::string& /*indent*/) const
+{
+  out << "newmtl ";
+  if (name.size() > 0) {
+    out << name << std::endl;
+  } else {
+    out << MATERIALMGR.getIndex(this) << std::endl;
+  }
+  if (noLighting) {
+    out << "illum 0" << std::endl;
+  } else {
+    out << "illum 2" << std::endl;
+  }
+  out << "d " << diffuse[3] << std::endl;
+  const float* c;
+  c = ambient; // not really used
+  out << "#Ka " << c[0] << " " << c[1] << " " << c[2] << std::endl;
+  c = diffuse;
+  out << "Kd " << c[0] << " " << c[1] << " " << c[2] << std::endl;
+  c = emission;
+  out << "Ke " << c[0] << " " << c[1] << " " << c[2] << std::endl;
+  c = specular;
+  out << "Ks " << c[0] << " " << c[1] << " " << c[2] << std::endl;
+  out << "Ns " << (1000.0f * (shininess / 128.0f)) << std::endl;
+  if (textureCount > 0) {
+    const TextureInfo* ti = &textures[0];
+    const unsigned int nlen = (unsigned int)ti->name.size();
+    if (nlen > 0) {
+      std::string texname = ti->name;
+      const char* cname = texname.c_str();
+      if ((nlen < 4) || (strcasecmp(cname + (nlen - 4), ".png") != 0)) {
+        texname += ".png";
+      }
+      out << "map_Kd " << texname << std::endl;
+    }
+  }
+  out << std::endl;
   return;
 }
 

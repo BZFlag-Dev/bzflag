@@ -936,7 +936,7 @@ static void writeDefaultOBJMaterials(std::ostream& out)
     mat.setName(mp.name);
     mat.setTexture(mp.texture);
     mat.setDiffuse(mp.color);
-    mat.print(out, indent);
+    mat.printMTL(out, "");
   }
   return;
 }
@@ -1094,7 +1094,7 @@ bool World::writeWorld(const std::string& filename, std::string& fullname)
       *mtlStream << "# BZFlag client: saved world on " << ctime(&nowTime);
       *mtlStream << std::endl;
       writeDefaultOBJMaterials(*mtlStream);
-      MATERIALMGR.print(*mtlStream, indent); // indent "# " is used as a tag
+      MATERIALMGR.printMTL(*mtlStream, "");
       delete mtlStream;
     }
   }
