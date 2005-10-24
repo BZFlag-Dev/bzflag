@@ -23,6 +23,7 @@
 #include "ServerListCache.h"
 #include "HUDuiList.h"
 #include "playing.h"
+#include "HUDui.h"
 
 CacheMenu::CacheMenu()
 {

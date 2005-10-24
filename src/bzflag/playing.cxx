@@ -85,6 +85,7 @@
 #include "TrackMarks.h"
 #include "World.h"
 #include "WorldBuilder.h"
+#include "HUDui.h"
 
 //#include "messages.h"
 

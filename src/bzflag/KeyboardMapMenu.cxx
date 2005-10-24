@@ -25,6 +25,7 @@
 #include "HUDDialogStack.h"
 #include "MainMenu.h"
 #include "playing.h"
+#include "HUDui.h"
 
 KeyboardMapMenuDefaultKey::KeyboardMapMenuDefaultKey(KeyboardMapMenu* _menu) :
   menu(_menu)

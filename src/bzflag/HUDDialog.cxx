@@ -13,6 +13,9 @@
 /* interface header */
 #include "HUDDialog.h"
 
+// local interface headers
+#include "HUDuiControl.h"
+
 HUDDialog::HUDDialog() : focus(NULL)
 {
   height = width = 0;

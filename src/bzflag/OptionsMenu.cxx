@@ -20,6 +20,7 @@
 /* local implementation headers */
 #include "MainMenu.h"
 #include "HUDDialogStack.h"
+#include "HUDui.h"
 
 OptionsMenu::OptionsMenu() : guiOptionsMenu(NULL), effectsMenu(NULL),
 			     cacheMenu(NULL), saveWorldMenu(NULL),

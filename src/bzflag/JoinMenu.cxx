@@ -26,6 +26,7 @@
 #include "ServerStartMenu.h"
 #include "TextureManager.h"
 #include "playing.h"
+#include "HUDui.h"
 
 JoinMenu* JoinMenu::activeMenu = NULL;
 

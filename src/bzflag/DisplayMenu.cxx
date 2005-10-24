@@ -23,6 +23,7 @@
 #include "HUDDialogStack.h"
 #include "HUDuiList.h"
 #include "playing.h"
+#include "HUDui.h"
 
 DisplayMenu::DisplayMenu() : formatMenu(NULL)
 {

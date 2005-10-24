@@ -24,9 +24,8 @@
 #include <vector>
 
 /* local interface headers */
-#include "HUDui.h"
-#include "HUDuiControl.h"
-
+class HUDuiControl;
+class HUDuiDefaultKey;
 
 /**
  * HUDDialog:

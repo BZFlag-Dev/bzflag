@@ -23,6 +23,7 @@
 #include "MainMenu.h"
 #include "HUDDialogStack.h"
 #include "playing.h"
+#include "HUDui.h"
 
 const int ServerMenu::NumReadouts = 24;
 const int ServerMenu::NumItems = 10;

@@ -47,6 +47,7 @@
 #include "HUDuiList.h"
 #include "playing.h"
 #include "bzflag.h"
+#include "HUDui.h"
 
 char ServerStartMenu::settings[] = "bfaaaaabaaaaa";
 

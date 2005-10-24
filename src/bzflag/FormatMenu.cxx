@@ -21,6 +21,7 @@
 /* local implementation headers */
 #include "MainMenu.h"
 #include "playing.h"
+#include "HUDui.h"
 
 const int		FormatMenu::NumReadouts = 4;
 const int		FormatMenu::NumItems = 30;

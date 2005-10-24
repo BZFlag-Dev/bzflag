@@ -32,6 +32,7 @@
 #include "clientConfig.h"
 #include "bzflag.h"
 #include "playing.h"
+#include "HUDui.h"
 
 MainMenu::MainMenu() : HUDDialog(), joinMenu(NULL),
 #ifdef HAVE_KRB5

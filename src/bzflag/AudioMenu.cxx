@@ -28,6 +28,7 @@
 #include "HUDuiControl.h"
 #include "HUDuiLabel.h"
 #include "HUDuiList.h"
+#include "HUDui.h"
 
 AudioMenu::AudioMenu()
 {
