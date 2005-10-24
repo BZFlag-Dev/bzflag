@@ -13,6 +13,9 @@
 // interface headers
 #include "HUDuiTypeIn.h"
 
+// system implementation headers
+#include <ctype.h>
+
 // common implementation headers
 #include "FontManager.h"
 
@@ -26,7 +29,7 @@
 HUDuiTypeIn::HUDuiTypeIn()
 : HUDuiControl(), maxLength(0), cursorPos(0)
 {
-  allowEdit = true; //by default allow editing
+  allowEdit = true; // allow editing by default
   obfuscate = false;
 }
 
@@ -36,7 +39,7 @@ HUDuiTypeIn::~HUDuiTypeIn()
 
 void		HUDuiTypeIn::setObfuscation(bool on)
 {
-	obfuscate = on;
+  obfuscate = on;
 }
 
 int			HUDuiTypeIn::getMaxLength() const
@@ -113,9 +116,9 @@ bool			HUDuiTypeIn::doKeyPress(const BzfKeyEvent& key)
       if (cursorPos < (int)string.length()) {
 	cursorPos++;
 	c = backspace;
-      }
-      else
+      } else {
 	return true;
+      }
       break;
 
     default:
@@ -169,10 +172,10 @@ void			HUDuiTypeIn::doRender()
   FontManager &fm = FontManager::instance();
   std::string renderStr;
   if (obfuscate) {
-	renderStr.append(string.size(), '*');
-  }
-  else
+    renderStr.append(string.size(), '*');
+  } else {
     renderStr = string;
+  }
   fm.drawString(getX(), getY(), 0, getFontFace(), getFontSize(), renderStr);
 
   // find the position of where to draw the input cursor
