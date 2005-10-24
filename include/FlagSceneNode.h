@@ -66,8 +66,6 @@ class FlagSceneNode : public SceneNode {
     bool		texturing;
     OpenGLGState	gstate;
     FlagRenderNode	renderNode;
-    static const GLfloat Width;
-    static const GLfloat Height;
 };
 
 #endif // BZF_FLAG_SCENE_NODE_H
