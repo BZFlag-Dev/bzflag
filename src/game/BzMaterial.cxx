@@ -587,8 +587,14 @@ void BzMaterial::print(std::ostream& out, const std::string& indent) const
     out << "Ns " << (1000.0f * (shininess / 128.0f)) << std::endl;
     if (textureCount > 0) {
       const TextureInfo* ti = &textures[0];
-      if (ti->name.size() > 0) {
-        out << "map_Kd " << ti->name << std::endl;
+      const unsigned int nlen = ti->name.size();
+      if (nlen > 0) {
+        std::string texname = ti->name;
+        const char* cname = texname.c_str();
+        if ((nlen < 4) || (strcasecmp(cname + (nlen - 4), ".png") != 0)) {
+          texname += ".png";
+        }
+        out << "map_Kd " << texname << std::endl;
       }
     }
     out << std::endl;

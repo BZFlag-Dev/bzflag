@@ -514,8 +514,12 @@ void PyramidBuilding::printOBJ(std::ostream& out, const std::string& /*indent*/)
     {0.0f, +sqrt1_2, +sqrt1_2}, {-sqrt1_2, 0.0f, +sqrt1_2},
     {0.0f, 0.0f, -1.0f}
   };
-  float txcds[5][2] = {
-    {0.0f, 0.0f}, {1.0f, 0.0f}, {1.0f, 1.0f}, {0.0f, 1.0f}, {0.5f, 0.5f}
+  const float* s = getSize();
+  const float k = 1.0f / 8.0f;
+  float txcds[7][2] = {
+    {0.0f, 0.0f}, {k*s[0], 0.0f}, {k*s[0], k*s[1]}, {0.0f, k*s[1]},
+    {0.5f*k*s[0], k*sqrtf(s[0]*s[0]+s[2]*s[2])},
+    {k*s[1], 0.0f}, {0.5f*k*s[1], k*sqrtf(s[1]*s[1]+s[2]*s[2])}
   };
   MeshTransform xform;
   const float degrees = getRotation() * (float)(180.0 / M_PI);
@@ -542,7 +546,7 @@ void PyramidBuilding::printOBJ(std::ostream& out, const std::string& /*indent*/)
     outputFloat(out, verts[i][2]);
     out << std::endl;
   }
-  for (i = 0; i < 5; i++) {
+  for (i = 0; i < 7; i++) {
     out << "vt";
     outputFloat(out, txcds[i][0]);
     outputFloat(out, txcds[i][1]);
@@ -556,11 +560,11 @@ void PyramidBuilding::printOBJ(std::ostream& out, const std::string& /*indent*/)
     out << std::endl;
   }
   out << "usemtl pyrwall" << std::endl;
-  out << "f -1/-1/-5 -5/-5/-5 -4/-4/-5" << std::endl;
-  out << "f -1/-1/-4 -4/-4/-4 -3/-3/-4" << std::endl;
-  out << "f -1/-1/-3 -3/-3/-3 -2/-2/-3" << std::endl;
-  out << "f -1/-1/-2 -2/-2/-2 -5/-5/-2" << std::endl;
-  out << "f -2/-5/-1 -3/-4/-1 -4/-3/-1 -5/-2/-1" << std::endl;
+  out << "f -1/-1/-5 -5/-7/-5 -4/-6/-5" << std::endl;
+  out << "f -1/-3/-4 -4/-7/-4 -3/-2/-4" << std::endl;
+  out << "f -1/-1/-3 -3/-7/-3 -2/-6/-3" << std::endl;
+  out << "f -1/-3/-2 -2/-7/-2 -5/-2/-2" << std::endl;
+  out << "f -2/-7/-1 -3/-6/-1 -4/-5/-1 -5/-4/-1" << std::endl;
 
   out << std::endl;
   

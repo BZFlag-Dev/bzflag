@@ -314,13 +314,16 @@ void BoxBuilding::printOBJ(std::ostream& out, const std::string& /*indent*/) con
     {0.0f, +1.0f, 0.0f}, {-1.0f, 0.0f, 0.0f},
     {0.0f, 0.0f, -1.0f}, {0.0f, 0.0f, +1.0f}
   };
-  float txcds[4][2] = {
-    {0.0f, 0.0f}, {1.0f, 0.0f}, {1.0f, 1.0f}, {0.0f, 1.0f}
+  const float* s = getSize();
+  const float k = 1.0f / 8.0f;
+  float txcds[8][2] = {
+    {0.0f, 0.0f}, {k*s[0], 0.0f}, {k*s[0], k*s[2]}, {0.0f, k*s[2]},
+    {k*s[1], 0.0f}, {k*s[1], k*s[2]}, {k*s[0], k*s[1]}, {0.0f, k*s[1]}
   };
   MeshTransform xform;
   const float degrees = getRotation() * (float)(180.0 / M_PI);
   const float zAxis[3] = {0.0f, 0.0f, +1.0f};
-  xform.addScale(getSize());
+  xform.addScale(s);
   xform.addSpin(degrees, zAxis);
   xform.addShift(getPosition());
   xform.finalize();
@@ -342,7 +345,7 @@ void BoxBuilding::printOBJ(std::ostream& out, const std::string& /*indent*/) con
     outputFloat(out, verts[i][2]);
     out << std::endl;
   }
-  for (i = 0; i < 4; i++) {
+  for (i = 0; i < 8; i++) {
     out << "vt";
     outputFloat(out, txcds[i][0]);
     outputFloat(out, txcds[i][1]);
@@ -356,13 +359,13 @@ void BoxBuilding::printOBJ(std::ostream& out, const std::string& /*indent*/) con
     out << std::endl;
   }
   out << "usemtl boxtop" << std::endl;
-  out << "f -5/-4/-2 -6/-3/-2 -7/-2/-2 -8/-1/-2" << std::endl;
-  out << "f -4/-4/-1 -3/-3/-1 -2/-2/-1 -1/-1/-1" << std::endl;
+  out << "f -5/-8/-2 -6/-7/-2 -7/-2/-2 -8/-1/-2" << std::endl;
+  out << "f -4/-8/-1 -3/-7/-1 -2/-2/-1 -1/-1/-1" << std::endl;
   out << "usemtl boxwall" << std::endl;
-  out << "f -8/-4/-6 -7/-3/-6 -3/-2/-6 -4/-1/-6" << std::endl;
-  out << "f -7/-4/-5 -6/-3/-5 -2/-2/-5 -3/-1/-5" << std::endl;
-  out << "f -6/-4/-4 -5/-3/-4 -1/-2/-4 -2/-1/-4" << std::endl;
-  out << "f -5/-4/-3 -8/-3/-3 -4/-2/-3 -1/-1/-3" << std::endl;
+  out << "f -8/-8/-6 -7/-7/-6 -3/-6/-6 -4/-5/-6" << std::endl;
+  out << "f -7/-8/-5 -6/-4/-5 -2/-3/-5 -3/-5/-5" << std::endl;
+  out << "f -6/-8/-4 -5/-7/-4 -1/-6/-4 -2/-5/-4" << std::endl;
+  out << "f -5/-8/-3 -8/-4/-3 -4/-3/-3 -1/-5/-3" << std::endl;
 
   out << std::endl;
   

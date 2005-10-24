@@ -945,7 +945,7 @@ static void writeDefaultOBJMaterials(std::ostream& out)
 static void writeOBJGround(std::ostream& out)
 {
   const float ws = BZDBCache::worldSize / 2.0f;
-  const float ts = BZDBCache::worldSize / 16.0f;
+  const float ts = BZDBCache::worldSize / 100.0f;
   out << "o bzground" << std::endl;
   out << "v " << -ws << " " << -ws << " 0" << std::endl;
   out << "v " << +ws << " " << -ws << " 0" << std::endl;
