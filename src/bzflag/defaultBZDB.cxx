@@ -21,7 +21,7 @@
 #include "callbacks.h"
 
 DefaultDBItem	defaultDBItems[] = {
-  { "fpsLimit",			"30",			true,	StateDatabase::ReadWrite,	NULL },
+  { "fpsLimit",			"50",			true,	StateDatabase::ReadWrite,	NULL },
   { "saveEnergy",		"0",			true,	StateDatabase::ReadWrite,	NULL },
   { "saveSettings",		"1",			true,	StateDatabase::ReadWrite,	NULL },
   { "udpnet",			"1",			true,	StateDatabase::ReadWrite,	NULL },
