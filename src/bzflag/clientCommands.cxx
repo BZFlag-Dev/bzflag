@@ -158,6 +158,11 @@ static std::string cmdAddHunt(const std::string&,
 static std::string cmdIconify(const std::string&,
 			      const CommandManager::ArgList& args, bool*);
 
+/** toggle mouse capture
+ */
+static std::string cmdMouseGrab(const std::string&,
+                                const CommandManager::ArgList& args, bool*);
+
 /** toggle Full Screen
  */
 static std::string cmdToggleFS(const std::string&,
@@ -183,6 +188,7 @@ const struct CommandListItem commandList[] = {
   { "hunt",	&cmdHunt,	"hunt:  hunt a specific player" },
   { "addhunt",	&cmdAddHunt,	"addhunt:  add/modify hunted player(s)" },
   { "iconify",  &cmdIconify,	"iconify: iconify & pause bzflag" },
+  { "mousegrab", &cmdMouseGrab, "mousegrab: toggle exclusive mouse mode" },
   { "fullscreen", &cmdToggleFS, "fullscreen: toggle fullscreen mode" },
   { "autopilot",&cmdAutoPilot,	"autopilot:  set/unset autopilot bot code" },
   { "radarZoom", &cmdRadarZoom, "radarZoom {in/out}: change maxRadar range"},
@@ -202,6 +208,17 @@ static std::string cmdToggleFS(const std::string&,
     return "usage: fullscreen";
   mainWindow->toggleFullscreen();
   mainWindow->getWindow()->callResizeCallbacks();
+  return std::string();
+}
+
+static std::string cmdMouseGrab(const std::string&,
+                                const CommandManager::ArgList& args, bool*)
+{
+  if (args.size() != 0)
+    return "usage: mousegrab";
+  const bool grabbing = !(BZDB.isTrue("mousegrab"));
+  BZDB.set("mousegrab", grabbing ? "true" : "false");
+  mainWindow->enableGrabMouse(grabbing);
   return std::string();
 }
 
