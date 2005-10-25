@@ -305,8 +305,6 @@ THESE NEED TO WAIT FOR THE NEXT PROTOCOL BREAKAGE
 * break rendering system into separate lib and allow different renderers that are targeted
   to hardware or software..
 
-* inertia acceleration setting should be transformed in BZDB variable
-
 * client should not send endshot, unless is the shot originator. When killed,
   tank should send an "I am hit by <killer> <shot Number>" and server kill the
   sending tank and send and endShot broadcast.

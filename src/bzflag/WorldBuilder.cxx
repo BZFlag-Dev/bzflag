@@ -216,8 +216,6 @@ void* WorldBuilder::unpackGameSettings(void* buf)
   setMaxShots(int(maxShots));
   buf = nboUnpackUShort(buf, maxFlags);
   setMaxFlags(int(maxFlags));
-  buf = nboUnpackFloat(buf, world->linearAcceleration);
-  buf = nboUnpackFloat(buf, world->angularAcceleration);
   uint16_t shakeTimeout = 0, shakeWins;
   buf = nboUnpackUShort(buf, shakeTimeout);
   setShakeTimeout(0.1f * float(shakeTimeout));

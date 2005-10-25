@@ -65,7 +65,7 @@ struct CmdLineOptions
     numAllowedFlags(0), shakeWins(0), shakeTimeout(0),
     teamFlagTimeout(30), maxlagwarn(10000), lagwarnthresh(-1.0),
     idlekickthresh(-1.0), timeLimit(0.0f), timeElapsed(0.0f),
-    linearAcceleration(_DEFAULT_LIN_ACCEL), angularAcceleration(_DEFAULT_ANGLE_ACCELL), useGivenPort(false),
+    useGivenPort(false),
     useFallbackPort(false), requireUDP(false), randomBoxes(false),
     randomCTF(false), flagsOnBuildings(false), respawnOnBuildings(false),
     oneGameOnly(false), timeManualStart(false), randomHeights(false),
@@ -133,8 +133,6 @@ struct CmdLineOptions
   float			idlekickthresh;
   float			timeLimit;
   float			timeElapsed;
-  float			linearAcceleration;
-  float			angularAcceleration;
 
   bool			useGivenPort;
   bool			useFallbackPort;

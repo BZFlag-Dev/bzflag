@@ -2094,8 +2094,6 @@ static void makeGameSettings()
   buf = nboPackUShort (buf, PlayerSlot);
   buf = nboPackUShort (buf, clOptions->maxShots);
   buf = nboPackUShort (buf, numFlags);
-  buf = nboPackFloat  (buf, clOptions->linearAcceleration);
-  buf = nboPackFloat  (buf, clOptions->angularAcceleration);
   buf = nboPackUShort (buf, clOptions->shakeTimeout);
   buf = nboPackUShort (buf, clOptions->shakeWins);
   buf = nboPackUInt   (buf, 0); // FIXME - used to be sync time
@@ -3563,7 +3561,7 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
 	  int pFlag = playerData->player.getFlag();
 
 	  // check for highspeed cheat; if inertia is enabled, skip test for now
-	  if (clOptions->linearAcceleration == 0.0f) {
+	  if (BZDB.eval(StateDatabase::BZDB_INERTIALINEAR) == 0.0f) {
 	    // Doesn't account for going fast backwards, or jumping/falling
 	    float curPlanarSpeedSqr = state.velocity[0]*state.velocity[0] +
 				      state.velocity[1]*state.velocity[1];

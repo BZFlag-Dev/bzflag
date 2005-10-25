@@ -1447,10 +1447,12 @@ void			LocalPlayer::doMomentum(float dt,
 						float& speed, float& angVel)
 {
   // get maximum linear and angular accelerations
-  float linearAcc = (getFlag() == Flags::Momentum) ? BZDB.eval(StateDatabase::BZDB_MOMENTUMLINACC) :
-    World::getWorld()->getLinearAcceleration();
-  float angularAcc = (getFlag() == Flags::Momentum) ? BZDB.eval(StateDatabase::BZDB_MOMENTUMANGACC) :
-    World::getWorld()->getAngularAcceleration();
+  float linearAcc = (getFlag() == Flags::Momentum)
+    ? BZDB.eval(StateDatabase::BZDB_MOMENTUMLINACC)
+    : BZDB.eval(StateDatabase::BZDB_INERTIALINEAR);
+  float angularAcc = (getFlag() == Flags::Momentum)
+    ? BZDB.eval(StateDatabase::BZDB_MOMENTUMANGACC)
+    : BZDB.eval(StateDatabase::BZDB_INERTIAANGULAR);
 
   // limit linear acceleration
   if (linearAcc > 0.0f) {

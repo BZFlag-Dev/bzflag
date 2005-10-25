@@ -49,7 +49,6 @@
 using TextUtils::compare_nocase;
 
 const char *usageString =
-"[-a <vel> <rot>] "
 "[-admsg <text>] "
 "[-advertise <group,group...>]"
 "[-autoTeam] "
@@ -142,7 +141,6 @@ const char *extraUsageString =
 "\n"
 "BZFS Option Descriptions\n"
 "\n"
-"\t-a: maximum acceleration settings\n"
 "\t-admsg: specify a <msg> which will be broadcast every 15 minutes\n"
 "\t-advertise: specify which groups to advertise to (list server)\n"
 "\t-autoTeam: automatically assign players to teams when they join\n"
@@ -518,7 +516,6 @@ static char **parseWorldOptions (const char *file, int &ac)
 }
 
 
-static bool accLimitSet = false;
 static bool allFlagsOut = false;
 static bool teamFlagsAdded = false;
 
@@ -534,17 +531,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
   // parse command line
   int playerCountArg = 0,playerCountArg2 = 0;
   for (i = 1; i < argc; i++) {
-    if (strcmp(argv[i], "-a") == 0) {
-      // momentum settings
-      accLimitSet = true;
-      checkArgc(2, i, argc, argv[i]);
-      options.linearAcceleration = (float)atof(argv[i]);
-      options.angularAcceleration = (float)atof(argv[++i]);
-      if (options.linearAcceleration < 0.0f)
-	options.linearAcceleration = 0.0f;
-      if (options.angularAcceleration < 0.0f)
-	options.angularAcceleration = 0.0f;
-    } else if (strcmp(argv[i], "-admsg") == 0) {
+    if (strcmp(argv[i], "-admsg") == 0) {
       checkArgc(1, i, argc, argv[i]);
       if ((options.advertisemsg != "") || (strlen (argv[i]) == 0)) {
 	options.advertisemsg += "\\n";
@@ -1308,17 +1295,6 @@ void finalizeParsing(int /*argc*/, char **argv, CmdLineOptions &options)
 	   0.1f * float(options.shakeTimeout), options.shakeWins);
   if (options.gameStyle & int(AntidoteGameStyle))
     DEBUG1("  antidote flags\n");
-
-  if (!accLimitSet) {
-    printf("Note: no acceleration limit has been set.  Players using \"mouse\n"
-	   "enhancements\" may cause problems on this server due to very high\n"
-	   "acceleration rates which are not handled well by dead reckoning\n"
-	   "algorithms.  To eliminate this warning, set the -a switch in your\n"
-	   "configuration.  '-a 50 38' is recommended for standard-speed servers.\n"
-	   "Higher speed servers will need higher values for -a in order to not\n"
-	   "affect gameplay.  '-a 0 0' may be used to shut this message up without\n"
-	   "affecting any players, including those using \"mouse enhancements\".\n");
-  }
 
   return;
 }
