@@ -311,17 +311,6 @@ int Octree::getShadowList (SceneNode** list, int listSize,
     exit (1);
   }
 
-  // we project the frustum onto the ground plane, and then
-  // use those lines to generate planes in the direction of
-  // the sun's light. that is the potential shadow volume.
-
-  // The frustum planes are as follows:
-  // 0: front
-  // 1: left
-  // 2: right
-  // 3: bottom
-  // 4: top
-
   setupShadowPlanes(frustum, sunDir, ShadowCount, ShadowPlanes);
 
   CullList = list;
