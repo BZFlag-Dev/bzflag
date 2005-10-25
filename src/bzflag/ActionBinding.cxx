@@ -43,6 +43,7 @@ ActionBinding::ActionBinding() {
   wayToBindActions.insert(std::make_pair(std::string("viewZoom out"), press));
   wayToBindActions.insert(std::make_pair(std::string("pause"), press));
   wayToBindActions.insert(std::make_pair(std::string("fullscreen"), press));
+  wayToBindActions.insert(std::make_pair(std::string("mousegrab"), press));
   wayToBindActions.insert(std::make_pair(std::string("iconify"), press));
 #ifdef SNAPPING
   wayToBindActions.insert(std::make_pair(std::string("screenshot"), press));
