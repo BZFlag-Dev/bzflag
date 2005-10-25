@@ -17,6 +17,7 @@
 #include "FontManager.h"
 
 /* local implementation headers */
+#include "HUDui.h"
 #include "MainMenu.h"
 #include "MenuDefaultKey.h"
 #include "ClientAuthentication.h"
