@@ -162,13 +162,14 @@
 																								bool spawned; // true if the user is in game as a tank<br>
 																								bool verified; // true if the user has been authenticated ether global or local<br>
 																								bool globalUser; // true if the user was verified from the global login system<br>
-																								bool admin; // true if the user is an admin<br>
-																								bzApiStrList groups; // a list of all the groups the user is a member of<br>
-																								int wins; // number of times this player has killed another<br>
-																								int losses; // number of times this player has died<br>
-																								int teamKills; // number of times the user has killed a teammate<br>
-																							</p>
-																						</blockquote>
+																								bool admin; // true if the user is an admin ( has the @ in his name, aka has ban perm)<br>
+																								bool op; // true if the user is an server operator ( has given the server /passord)<br>
+																							    bzApiStrList groups; // a list of all the groups the user is a member of<br>
+																							    int wins; // number of times this player has killed another<br>
+																							    int losses; // number of times this player has died<br>
+																							    int teamKills; // number of times the user has killed a teammate<br>
+																						  </p>
+																					  </blockquote>
 																						<p class="Code">}</p>
 																					</td>
 																				</tr>

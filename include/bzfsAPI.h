@@ -34,7 +34,7 @@
 	#define BZF_PLUGIN_CALL extern "C"
 #endif
 
-#define BZ_API_VERSION	13
+#define BZ_API_VERSION	14
 
 #define BZ_GET_PLUGIN_VERSION BZF_PLUGIN_CALL int bz_GetVersion ( void ) { return BZ_API_VERSION;}
 
@@ -763,6 +763,7 @@ public:
 		verified = false;
 		globalUser = false;
 		admin = false;
+		op=false;
 
 		wins = 0;
 		losses = 0;
@@ -794,6 +795,7 @@ public:
 	bool verified;
 	bool globalUser;
 	bool admin;
+	bool op;
 	bzAPIStringList groups;
 
 	int wins;
@@ -801,7 +803,7 @@ public:
 	int teamKills;
 };
 
-BZF_API bool bz_setPlayerAdmin (int playerId);
+BZF_API bool bz_setPlayerOperator (int playerId);
 
 // groups API
 BZF_API bzAPIStringList* bz_getGroupList ( void );
