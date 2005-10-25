@@ -242,10 +242,73 @@ void ZSceneDatabase::addLights(SceneRenderer& renderer)
 }
 
 
+static void setupShadowPlanes(const Frustum* frustum, const float* sunDir,
+                              int& planeCount, float planes[4][4])
+{                             
+  // FIXME: As a first cut, we'll assume that
+  //	    the frustum top points towards Z.
+
+  const float* eye = frustum->getEye();
+  if (frustum->getUp()[2] < 0.999f) {
+    planeCount = 0;
+    return;
+  }
+  
+  // we project the frustum onto the ground plane, and then
+  // use those lines to generate planes in the direction of
+  // the sun's light. that is the potential shadow volume.
+
+  // The frustum planes are as follows:
+  // 0: front
+  // 1: left
+  // 2: right
+  // 3: bottom
+  // 4: top
+
+  planeCount = 2;
+  float edge[2];
+  // left edge
+  edge[0] = -frustum->getSide(1)[1];
+  edge[1] = +frustum->getSide(1)[0];
+  planes[0][0] =  (edge[1] * sunDir[2]);
+  planes[0][1] = -(edge[0] * sunDir[2]);
+  planes[0][2] =  (edge[0] * sunDir[1]) - (edge[1] * sunDir[0]);
+  planes[0][3] = -((planes[0][0] * eye[0]) + (planes[0][1] * eye[1]));
+  // right edge
+  edge[0] = -frustum->getSide(2)[1];
+  edge[1] = +frustum->getSide(2)[0];
+  planes[1][0] =  (edge[1] * sunDir[2]);
+  planes[1][1] = -(edge[0] * sunDir[2]);
+  planes[1][2] =  (edge[0] * sunDir[1]) - (edge[1] * sunDir[0]);
+  planes[1][3] = -((planes[1][0] * eye[0]) + (planes[1][1] * eye[1]));
+  // only use the bottom edge if we have some height (about one jump's worth)
+  if (eye[2] > 20.0f) {
+    // bottom edge
+    edge[0] = -frustum->getSide(3)[1];
+    edge[1] = +frustum->getSide(3)[0];
+    planes[2][0] =  (edge[1] * sunDir[2]);
+    planes[2][1] = -(edge[0] * sunDir[2]);
+    planes[2][2] =  (edge[0] * sunDir[1]) - (edge[1] * sunDir[0]);
+    const float hlen = sqrtf ((frustum->getSide(3)[0] * frustum->getSide(3)[0]) +
+                              (frustum->getSide(3)[1] * frustum->getSide(3)[1]));
+    const float slope = frustum->getSide(3)[2] / hlen;
+    float point[2];
+    point[0] = eye[0] + (eye[2] * frustum->getSide(3)[0] * slope);
+    point[1] = eye[1] + (eye[2] * frustum->getSide(3)[1] * slope);
+    planes[2][3] = -((planes[2][0] * point[0]) + (planes[2][1] * point[1]));
+    planeCount++;
+  }
+  
+  return;
+}
+
+
 void ZSceneDatabase::addShadowNodes(SceneRenderer& renderer)
 {
   int i;
   const float* sunDir = renderer.getSunDirection();
+  const ViewFrustum& vf = renderer.getViewFrustum();
+  const Frustum* frustum = (const Frustum*) &vf;
 
   if (sunDir == NULL) {
     // no sun = no shadows, simple
@@ -255,12 +318,15 @@ void ZSceneDatabase::addShadowNodes(SceneRenderer& renderer)
   // see if we need an octree, or if it needs to be rebuilt
   setupCullList();
 
+  // setup the shadow clipping planes
+  int planeCount = 0;
+  float planes[4][4];
+  setupShadowPlanes(frustum, sunDir, planeCount, planes);
+
   // cull if we're supposed to
   if (octree) {
-    const ViewFrustum& vf = renderer.getViewFrustum();
-    const Frustum* frustum = (const Frustum*) &vf;
     culledCount = octree->getShadowList (culledList, staticCount,
-					 frustum, sunDir);
+					 planeCount, planes);
   }
 
   // add the static nodes
@@ -274,7 +340,10 @@ void ZSceneDatabase::addShadowNodes(SceneRenderer& renderer)
 
   // add the dynamic nodes
   for (i = 0; i < dynamicCount; i++) {
-    dynamicList[i]->addShadowNodes(renderer);
+    SceneNode* node = dynamicList[i];
+    if (!node->cullShadow(planeCount, planes)) {
+      node->addShadowNodes(renderer);
+    }
   }
 
   return;

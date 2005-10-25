@@ -80,13 +80,6 @@ class TankSceneNode : public SceneNode {
     void		setTexture(const int);
     void		setJumpJetsTexture(const int);
 
-    void		notifyStyleChange();
-    void		addRenderNodes(SceneRenderer&);
-    void		addShadowNodes(SceneRenderer&);
-    void		addLight(SceneRenderer&);
-
-    void		renderRadar();
-
     void		setNormal();
     void		setObese();
     void		setTiny();
@@ -103,6 +96,17 @@ class TankSceneNode : public SceneNode {
 
     void		rebuildExplosion();
     void		addTreadOffsets(float left, float right);
+    
+    void		notifyStyleChange();
+    void		addRenderNodes(SceneRenderer&);
+    void		addShadowNodes(SceneRenderer&);
+
+    bool		cullShadow(int planeCount,
+                                   const float (*planes)[4]) const;
+
+    void		addLight(SceneRenderer&);
+    
+    void		renderRadar();
 
     static void		setMaxLOD(int maxLevel);
 

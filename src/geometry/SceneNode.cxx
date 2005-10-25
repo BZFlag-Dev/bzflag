@@ -190,6 +190,15 @@ bool			SceneNode::cull(const ViewFrustum& view) const
   return false;
 }
 
+
+bool SceneNode::cullShadow(int, const float (*)[4]) const
+{
+  // currently only used for dynamic nodes by ZSceneDatabase
+  // we let the octree deal with the static nodes
+  return true;
+}                                              
+
+    
 bool SceneNode::inAxisBox (const Extents& exts) const
 {
   if (!extents.touches(exts)) {

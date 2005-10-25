@@ -35,7 +35,7 @@ class Octree {
     int getFrustumList (SceneNode** list, int listSize,
 			const Frustum* frustum) const;
     int getShadowList (SceneNode** list, int listSize,
-		       const Frustum* frustum, const float* sunDir) const;
+		       int planeCount, const float (*planes)[4]) const;
     int getRadarList (SceneNode** list, int listSize,
 		      const Frustum* frustum) const;
 

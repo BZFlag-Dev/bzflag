@@ -514,6 +514,20 @@ void TankSceneNode::renderRadar()
 }
 
 
+bool TankSceneNode::cullShadow(int planeCount, const float (*planes)[4]) const
+{
+  const float* s = getSphere();
+  for (int i = 0; i < planeCount; i++) {
+    const float* p = planes[i];
+    const float d = (p[0] * s[0]) + (p[1] * s[1]) + (p[2] * s[2]) + p[3];
+    if ((d < 0.0f) && ((d * d) > s[3])) {
+      return true;
+    }
+  }
+  return false;
+}
+
+
 //
 // TankIDLSceneNode
 //
