@@ -6441,29 +6441,23 @@ void			startPlaying(BzfDisplay* _display,
   // normal error callback (doesn't force a redraw)
   setErrorCallback(defaultErrorCallback);
 
-  std::string tmpString;
-
-  // print version
+  // print debugging info
   {
-    char bombMessage[80];
-    sprintf(bombMessage, "BZFlag version:  %s", getAppVersion());
-    controlPanel->addMessage("");
-    DEBUG1("%s\n", bombMessage);
+    // Application version
+    DEBUG1("BZFlag version:   %s\n", getAppVersion());
 
-    // Send to the console
-    tmpString = ColorStrings[RedColor];
-    tmpString += (const char *) bombMessage;
-    controlPanel->addMessage(tmpString);
+    // Protocol version
+    DEBUG1("BZFlag protocol:  %s\n", getProtocolVersion());
 
     // OpenGL Driver Information
-    DEBUG1("OpenGL vendor:   %s\n", (const char*)glGetString(GL_VENDOR));
-    DEBUG1("OpenGL version:  %s\n", (const char*)glGetString(GL_VERSION));
-    DEBUG1("OpenGL renderer: %s\n", (const char*)glGetString(GL_RENDERER));
+    DEBUG1("OpenGL vendor:    %s\n", (const char*)glGetString(GL_VENDOR));
+    DEBUG1("OpenGL version:   %s\n", (const char*)glGetString(GL_VERSION));
+    DEBUG1("OpenGL renderer:  %s\n", (const char*)glGetString(GL_RENDERER));
 
     // Depth Buffer bitplanes
     GLint zDepth;
     glGetIntegerv(GL_DEPTH_BITS, &zDepth);
-    DEBUG1("Depth Buffer:    %i bitplanes\n", zDepth);
+    DEBUG1("Depth Buffer:     %i bitplanes\n", zDepth);
   }
 
   // windows version can be very helpful in debug logs
@@ -6488,26 +6482,45 @@ void			startPlaying(BzfDisplay* _display,
     controlPanel->addMessage(bombMessage);
   }
 
-  // print copyright
-  tmpString = ColorStrings[RogueColor] + bzfcopyright;
-  controlPanel->addMessage(tmpString);
-  // print author
-  tmpString = ColorStrings[GreenColor] + "Author: Chris Schoeneman <crs23@bigfoot.com>";
-  controlPanel->addMessage(tmpString);
-  // print maintainer
-  tmpString = ColorStrings[CyanColor] + "Maintainer: Tim Riker <Tim@Rikers.org>";
-  controlPanel->addMessage(tmpString);
-  // print GL renderer
-  tmpString = ColorStrings[BlueColor];
-  tmpString += (const char*)glGetString(GL_RENDERER);
-  controlPanel->addMessage(tmpString);
-  // print audio driver
-  PlatformFactory::getMedia()->audioDriver(tmpString);
-  if (tmpString != "") {
-    tmpString = ColorStrings[PurpleColor] + "Audio Driver : " + tmpString;
+  // send informative header to the console
+  {
+    std::string tmpString;
+
+    controlPanel->addMessage("");
+    // print app version
+    tmpString = ColorStrings[RedColor];
+    tmpString += "BZFlag version: ";
+    tmpString += getAppVersion();
+    tmpString += " (";
+    tmpString += getProtocolVersion();
+    tmpString += ")";
+    controlPanel->addMessage(tmpString);
+    // print copyright
+    tmpString = ColorStrings[YellowColor];
+    tmpString += bzfcopyright;
+    controlPanel->addMessage(tmpString);
+    // print author
+    tmpString = ColorStrings[GreenColor];
+    tmpString += "Author:          Chris Schoeneman  <crs23@bigfoot.com>";
+    controlPanel->addMessage(tmpString);
+    // print maintainer
+    tmpString = ColorStrings[CyanColor];
+    tmpString += "Maintainer:      Tim Riker         <Tim@Rikers.org>";
+    controlPanel->addMessage(tmpString);
+    // print audio driver
+    std::string audioStr;
+    PlatformFactory::getMedia()->audioDriver(audioStr);
+    if (tmpString != "") {
+      tmpString = ColorStrings[BlueColor];
+      tmpString += "Audio Driver:    " + audioStr;
+      controlPanel->addMessage(tmpString);
+    }
+    // print GL renderer
+    tmpString = ColorStrings[PurpleColor];
+    tmpString += "OpenGL Driver:   ";
+    tmpString += (const char*)glGetString(GL_RENDERER);
     controlPanel->addMessage(tmpString);
   }
-
 
   // get current MOTD
   if (!BZDB.isTrue("disableMOTD")) {
