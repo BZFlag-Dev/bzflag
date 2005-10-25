@@ -48,7 +48,7 @@ static int CullListCount = 0;
 static SceneNode** CullList = NULL;
 static const Frustum* CullFrustum = NULL;
 static int ShadowCount = 0;
-static const float (*ShadowPlanes)[4] = NULL;
+static float ShadowPlanes[4][4];
 
 static OccluderManager OcclMgrs[2];
 static OccluderManager* OcclMgr = &OcclMgrs[0];
@@ -238,6 +238,67 @@ int Octree::getRadarList (SceneNode** list, int listSize,
 }
 
 
+static void setupShadowPlanes(const Frustum* frustum, const float* sunDir,
+                              int& planeCount, float planes[4][4])
+{                             
+  // FIXME: As a first cut, we'll assume that
+  //	    the frustum top points towards Z.
+
+  const float* eye = frustum->getEye();
+  if (frustum->getUp()[2] < 0.999f) {
+    planeCount = 0;
+    return;
+  }
+  
+  // we project the frustum onto the ground plane, and then
+  // use those lines to generate planes in the direction of
+  // the sun's light. that is the potential shadow volume.
+
+  // The frustum planes are as follows:
+  // 0: front
+  // 1: left
+  // 2: right
+  // 3: bottom
+  // 4: top
+
+  planeCount = 2;
+  float edge[2];
+  // left edge
+  edge[0] = -frustum->getSide(1)[1];
+  edge[1] = +frustum->getSide(1)[0];
+  planes[0][0] =  (edge[1] * sunDir[2]);
+  planes[0][1] = -(edge[0] * sunDir[2]);
+  planes[0][2] =  (edge[0] * sunDir[1]) - (edge[1] * sunDir[0]);
+  planes[0][3] = -((planes[0][0] * eye[0]) + (planes[0][1] * eye[1]));
+  // right edge
+  edge[0] = -frustum->getSide(2)[1];
+  edge[1] = +frustum->getSide(2)[0];
+  planes[1][0] =  (edge[1] * sunDir[2]);
+  planes[1][1] = -(edge[0] * sunDir[2]);
+  planes[1][2] =  (edge[0] * sunDir[1]) - (edge[1] * sunDir[0]);
+  planes[1][3] = -((planes[1][0] * eye[0]) + (planes[1][1] * eye[1]));
+  // only use the bottom edge if we have some height (about one jump's worth)
+  if (eye[2] > 20.0f) {
+    // bottom edge
+    edge[0] = -frustum->getSide(3)[1];
+    edge[1] = +frustum->getSide(3)[0];
+    planes[2][0] =  (edge[1] * sunDir[2]);
+    planes[2][1] = -(edge[0] * sunDir[2]);
+    planes[2][2] =  (edge[0] * sunDir[1]) - (edge[1] * sunDir[0]);
+    const float hlen = sqrtf ((frustum->getSide(3)[0] * frustum->getSide(3)[0]) +
+                              (frustum->getSide(3)[1] * frustum->getSide(3)[1]));
+    const float slope = frustum->getSide(3)[2] / hlen;
+    float point[2];
+    point[0] = eye[0] + (eye[2] * frustum->getSide(3)[0] * slope);
+    point[1] = eye[1] + (eye[2] * frustum->getSide(3)[1] * slope);
+    planes[2][3] = -((planes[2][0] * point[0]) + (planes[2][1] * point[1]));
+    planeCount++;
+  }
+  
+  return;
+}
+
+
 int Octree::getShadowList (SceneNode** list, int listSize,
 			   const Frustum* frustum, const float* sunDir) const
 {
@@ -261,56 +322,10 @@ int Octree::getShadowList (SceneNode** list, int listSize,
   // 3: bottom
   // 4: top
 
-  int planeCount = 0;
-  float planes[4][4];
-  const float* eye = frustum->getEye();
-
-  // FIXME: As a first cut, i'll be assuming that the frustum
-  //	top points towards Z. Also, this should be split
-  //	into a setupShadowVolume() function
-
-  if (frustum->getUp()[2] > 0.999999f) {
-    planeCount = 2;
-    float edge[2];
-    // left edge
-    edge[0] = -frustum->getSide(1)[1];
-    edge[1] = +frustum->getSide(1)[0];
-    planes[0][0] =  (edge[1] * sunDir[2]);
-    planes[0][1] = -(edge[0] * sunDir[2]);
-    planes[0][2] =  (edge[0] * sunDir[1]) - (edge[1] * sunDir[0]);
-    planes[0][3] = -((planes[0][0] * eye[0]) + (planes[0][1] * eye[1]));
-    // right edge
-    edge[0] = -frustum->getSide(2)[1];
-    edge[1] = +frustum->getSide(2)[0];
-    planes[1][0] =  (edge[1] * sunDir[2]);
-    planes[1][1] = -(edge[0] * sunDir[2]);
-    planes[1][2] =  (edge[0] * sunDir[1]) - (edge[1] * sunDir[0]);
-    planes[1][3] = -((planes[1][0] * eye[0]) + (planes[1][1] * eye[1]));
-    // only use the bottom edge if we have some height (about one jump's worth)
-    if (eye[2] > 20.0f) {
-      // bottom edge
-      edge[0] = -frustum->getSide(3)[1];
-      edge[1] = +frustum->getSide(3)[0];
-      planes[2][0] =  (edge[1] * sunDir[2]);
-      planes[2][1] = -(edge[0] * sunDir[2]);
-      planes[2][2] =  (edge[0] * sunDir[1]) - (edge[1] * sunDir[0]);
-      const float hlen = sqrtf ((frustum->getSide(3)[0] * frustum->getSide(3)[0]) +
-				(frustum->getSide(3)[1] * frustum->getSide(3)[1]));
-      const float slope = frustum->getSide(3)[2] / hlen;
-      float point[2];
-      point[0] = eye[0] + (eye[2] * frustum->getSide(3)[0] * slope);
-      point[1] = eye[1] + (eye[2] * frustum->getSide(3)[1] * slope);
-      planes[2][3] = -((planes[2][0] * point[0]) + (planes[2][1] * point[1]));
-      planeCount++;
-    }
-  } else {
-    planeCount = 0;
-  }
+  setupShadowPlanes(frustum, sunDir, ShadowCount, ShadowPlanes);
 
   CullList = list;
   CullListCount = 0;
-  ShadowCount = planeCount;
-  ShadowPlanes = planes;
 
   // update the occluders before using them
   // FIXME: use occluders later?  OcclMgr->update(CullFrustum);

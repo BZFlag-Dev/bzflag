@@ -49,7 +49,7 @@ OpaqueRenderNode::OpaqueRenderNode(MeshDrawMgr* _drawMgr,
 
 void OpaqueRenderNode::render()
 {
-  const bool switchLights = ((exts != NULL) && BZDBCache::lighting);
+  const bool switchLights = (exts != NULL);
   if (switchLights) {
     RENDERER.disableLights(exts->mins, exts->maxs);
   }

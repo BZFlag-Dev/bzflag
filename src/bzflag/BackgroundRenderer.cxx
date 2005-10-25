@@ -661,7 +661,8 @@ void BackgroundRenderer::renderGroundEffects(SceneRenderer& renderer,
     // the ground gets illuminated).  this is necessary because lighting is
     // performed only at a vertex, and the ground's vertices are a few
     // kilometers away.
-    if (BZDBCache::blend && BZDBCache::lighting && !drawingMirror) {
+    if (BZDBCache::blend && BZDBCache::lighting &&
+        !drawingMirror && BZDB.isTrue("_drawGround")) {
       drawGroundReceivers(renderer);
     }
 
@@ -1018,6 +1019,7 @@ void BackgroundRenderer::drawGroundReceivers(SceneRenderer& renderer)
   static const int receiverSlices = 8;
   static const float receiverRingSize = 1.2f;	// meters
   static float angle[receiverSlices + 1][2];
+
   static bool init = false;
 
   if (!init) {

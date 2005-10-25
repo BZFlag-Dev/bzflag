@@ -300,6 +300,10 @@ void SceneDatabaseBuilder::addWaterLevel(SceneDatabase* db,
 
 void SceneDatabaseBuilder::addWall(SceneDatabase* db, const WallObstacle& o)
 {
+  if (o.getHeight() <= 0.0f) {
+    return;
+  }
+  
   int part = 0;
   WallSceneNode* node;
   ObstacleSceneNodeGenerator* nodeGen = new WallSceneNodeGenerator (&o);

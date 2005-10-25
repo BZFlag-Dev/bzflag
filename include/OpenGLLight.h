@@ -55,10 +55,10 @@ class OpenGLLight {
     void		setOnlyGround(bool value);
     bool		getOnlyGround() const;
 
-    void		execute(int index) const;
+    void		execute(int index, bool useList) const;
 
     static GLint	getMaxLights();
-    static void		enableLight(int index, bool = true); // const
+    static void		enableLight(int index, bool on); // const
 
   protected:
     void		makeLists();

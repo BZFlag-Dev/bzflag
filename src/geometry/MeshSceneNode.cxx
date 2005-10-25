@@ -357,7 +357,8 @@ void MeshSceneNode::notifyStyleChange()
 
       // enough elements to warrant disabling lights?
       const Extents* extPtr = &extents;
-      if (drawSet.triangleCount < 100) {
+      if ((drawSet.triangleCount < 100) ||
+          !BZDBCache::lighting || mat.bzmat->getNoLighting()) {
         extPtr = NULL;
       }
 
