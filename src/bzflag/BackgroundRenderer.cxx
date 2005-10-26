@@ -20,6 +20,7 @@
 #include "BzMaterial.h"
 #include "TextureMatrix.h"
 #include "ParseColor.h"
+#include "BZDBCache.h"
 
 // local headers
 #include "daylight.h"
@@ -662,7 +663,7 @@ void BackgroundRenderer::renderGroundEffects(SceneRenderer& renderer,
     // performed only at a vertex, and the ground's vertices are a few
     // kilometers away.
     if (BZDBCache::blend && BZDBCache::lighting &&
-        !drawingMirror && BZDB.isTrue("_drawGround")) {
+        !drawingMirror && BZDBCache::drawGroundLights) {
       drawGroundReceivers(renderer);
     }
 
@@ -670,12 +671,12 @@ void BackgroundRenderer::renderGroundEffects(SceneRenderer& renderer,
       // light the mountains (so that they get dark when the sun goes down).
       // don't do zbuffer test since they occlude all drawn before them and
       // are occluded by all drawn after.
-      if (mountainsVisible && BZDB.isTrue("_drawMountains")) {
+      if (mountainsVisible && BZDBCache::drawMountains) {
 	drawMountains();
       }
 
       // draw clouds
-      if (cloudsVisible && BZDB.isTrue("_drawClouds")) {
+      if (cloudsVisible && BZDBCache::drawClouds) {
 	cloudsGState.setState();
 	glMatrixMode(GL_TEXTURE);
 	glPushMatrix();
@@ -722,7 +723,7 @@ void BackgroundRenderer::drawSky(SceneRenderer& renderer, bool mirror)
 {
   glPushMatrix();
 
-  if (BZDB.isTrue("_drawSky")) {
+  if (BZDBCache::drawSky) {
     // rotate sky so that horizon-point-toward-sun-color is actually
     // toward the sun
     glRotatef((GLfloat)((atan2f(sunDirection[1], sunDirection[0]) * 180.0 + 135.0) / M_PI),
@@ -797,7 +798,7 @@ void BackgroundRenderer::drawSky(SceneRenderer& renderer, bool mirror)
   glLoadIdentity();
   renderer.getViewFrustum().executeOrientation();
 
-  if (BZDB.isTrue("_drawCelestial")) {
+  if (BZDBCache::drawCelestial) {
     if (mirror) {
       glEnable(GL_CLIP_PLANE0);
       const GLdouble plane[4] = {0.0, 0.0, +1.0, 0.0};
@@ -834,7 +835,7 @@ void BackgroundRenderer::drawSky(SceneRenderer& renderer, bool mirror)
 
 void BackgroundRenderer::drawGround()
 {
-  if (BZDB.isTrue("_drawGround")) {
+  if (BZDBCache::drawGround) {
     // draw ground
     glNormal3f(0.0f, 0.0f, 1.0f);
     if (invert) {

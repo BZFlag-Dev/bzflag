@@ -2400,7 +2400,9 @@ static void		handleServerMessage(bool human, uint16_t code,
 		|| (!ROAM.getTargetTank())
 	        || (shooterid != ROAM.getTargetTank()->getId())
 		|| BZDB.isTrue("enableLocalShotEffect"))
-	      EffectsRenderer::instance().addShotEffect(player[shooterid]->getTeam(),shotPos,player[shooterid]->getAngle(),player[shooterid]->getVelocity());
+	      EffectsRenderer::instance().addShotEffect(player[shooterid]->getTeam(),
+	                                                shotPos,player[shooterid]->getAngle(),
+	                                                player[shooterid]->getVelocity());
 	  }
 	} else {
 	  break;

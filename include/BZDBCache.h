@@ -42,6 +42,13 @@ public:
 	static float pulseDepth;
 	static bool  showCollisionGrid;
 	static bool  showCullingGrid;
+	
+	static bool drawCelestial;
+	static bool drawClouds;
+	static bool drawGround;
+	static bool drawGroundLights;
+	static bool drawMountains;
+	static bool drawSky;
 
 	static float maxLOD;
 	static float worldSize;

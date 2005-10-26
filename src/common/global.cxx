@@ -39,6 +39,7 @@ const struct GlobalDBItem globalDBItems[] = {
   { "_drawCelestial",		"1",				false, StateDatabase::Locked},
   { "_drawClouds",		"1",				false, StateDatabase::Locked},
   { "_drawGround",		"1",				false, StateDatabase::Locked},
+  { "_drawGroundLights",	"1",				false, StateDatabase::Locked},
   { "_drawMountains",		"1",				false, StateDatabase::Locked},
   { "_drawSky",			"1",				false, StateDatabase::Locked},
   { "_endShotDetection",	"5",				false, StateDatabase::Locked},

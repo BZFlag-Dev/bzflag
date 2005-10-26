@@ -215,6 +215,12 @@ public:
   static const std::string	BZDB_CULLELEMENTS;
   static const std::string	BZDB_CULLOCCLUDERS;
   static const std::string	BZDB_DISABLEBOTS;
+  static const std::string	BZDB_DRAWCELESTIAL;
+  static const std::string	BZDB_DRAWCLOUDS;
+  static const std::string	BZDB_DRAWGROUND;
+  static const std::string	BZDB_DRAWGROUNDLIGHTS;
+  static const std::string	BZDB_DRAWMOUNTAINS;
+  static const std::string	BZDB_DRAWSKY;
   static const std::string	BZDB_ENDSHOTDETECTION;
   static const std::string	BZDB_EXPLODETIME;
   static const std::string	BZDB_FLAGALTITUDE;
