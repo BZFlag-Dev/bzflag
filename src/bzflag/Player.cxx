@@ -1266,7 +1266,7 @@ void Player::doDeadReckoning()
       setLandingSpeed(oldZSpeed);
 
       // make it "land"
-      EffectsRenderer::instance().addLandEffect(getTeam(),state.pos,state.azimuth);
+      EFFECTS.addLandEffect(getTeam(),state.pos,state.azimuth);
 
       // setup the sound
       if (BZDB.isTrue("remoteSounds")) {

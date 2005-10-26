@@ -31,6 +31,10 @@
 
 #include "Singleton.h"
 
+
+#define EFFECTS (EffectsRenderer::instance())
+
+
 class BasicEffect
 {
 public:

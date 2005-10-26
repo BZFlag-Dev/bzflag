@@ -1952,13 +1952,14 @@ static void		handleServerMessage(bool human, uint16_t code,
 	  }
 	}
 
-	if (SceneRenderer::instance().useQuality() >= 2)
-	  if (((tank != myTank) 
+	if (SceneRenderer::instance().useQuality() >= 2) {
+	  if (((tank != myTank)
 	       && ((ROAM.getMode() != Roaming::roamViewFP)
 	           || (tank != ROAM.getTargetTank())))
-	      || BZDB.isTrue("enableLocalSpawnEffect"))
-	    EffectsRenderer::instance().addSpawnEffect(tank->getTeam(),pos);
-
+	      || BZDB.isTrue("enableLocalSpawnEffect")) {
+	    EFFECTS.addSpawnEffect(tank->getTeam(),pos);
+          }
+        }
 	tank->setStatus(PlayerState::Alive);
 	tank->move(pos, forward);
 	tank->setVelocity(zero);
@@ -2024,18 +2025,20 @@ static void		handleServerMessage(bool human, uint16_t code,
       else if (victimPlayer) {
 	victimPlayer->setExplode(TimeKeeper::getTick());
 	const float* pos = victimPlayer->getPosition();
-	if (reason == GotRunOver)
-	  playWorldSound(SFX_RUNOVER, pos, killerLocal == myTank);
-	else
-	  playWorldSound(SFX_EXPLOSION, pos, killerLocal == myTank);
+	const bool localView = isViewTank(victimPlayer);
+	if (reason == GotRunOver) {
+	  playSound(SFX_RUNOVER, pos, killerLocal == myTank, localView);
+	} else {
+	  playSound(SFX_EXPLOSION, pos, killerLocal == myTank, localView);
+        }
 	float explodePos[3];
 	explodePos[0] = pos[0];
 	explodePos[1] = pos[1];
 	explodePos[2] = pos[2] + victimPlayer->getMuzzleHeight();
 	addTankExplosion(explodePos);
 
-	EffectsRenderer::instance().addDeathEffect(victimPlayer->getTeam(),pos,victimPlayer->getAngle());
-
+	EFFECTS.addDeathEffect(victimPlayer->getTeam(), pos,
+                               victimPlayer->getAngle());
       }
 
       if (killerLocal) {
@@ -2336,8 +2339,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 	  explodePos[2] = pos[2] + player[i]->getMuzzleHeight();
 	  addTankExplosion(explodePos);
 
-		EffectsRenderer::instance().addDeathEffect(player[i]->getTeam(),pos,player[i]->getAngle());
-
+          EFFECTS.addDeathEffect(player[i]->getTeam(), pos, player[i]->getAngle());
 	}
       }
 
@@ -2413,10 +2415,11 @@ static void		handleServerMessage(bool human, uint16_t code,
 	    if ((ROAM.getMode() != Roaming::roamViewFP)
 		|| (!ROAM.getTargetTank())
 	        || (shooterid != ROAM.getTargetTank()->getId())
-		|| BZDB.isTrue("enableLocalShotEffect"))
-	      EffectsRenderer::instance().addShotEffect(shooter->getTeam(), shotPos,
-	                                                shooter->getAngle(),
-	                                                shooter->getVelocity());
+		|| BZDB.isTrue("enableLocalShotEffect")) {
+	      EFFECTS.addShotEffect(shooter->getTeam(), shotPos,
+                                    shooter->getAngle(),
+	                            shooter->getVelocity());
+            }
 	  }
 	} else {
 	  break;
@@ -3071,20 +3074,19 @@ void			addShotExplosion(const float* pos)
 
 void			addShotPuff(const float* pos, float azimuth, float elevation)
 {
-	bool useClasicPuff  = false;
+  bool useClasicPuff  = false;
 
-	if (BZDB.evalInt("gmPuffEffect") == 1)
-		useClasicPuff = true;
+  if (BZDB.evalInt("gmPuffEffect") == 1) {
+    useClasicPuff = true;
+  }
 
-	if (useClasicPuff)
-	{
-		addExplosion(pos, 0.3f * BZDBCache::tankLength, 0.8f, true);
-		return;
-	}
+  if (useClasicPuff) {
+    addExplosion(pos, 0.3f * BZDBCache::tankLength, 0.8f, true);
+    return;
+  }
 
-	float rots[2] = {azimuth,elevation};
-	EffectsRenderer::instance().addGMPuffEffect(0,pos,rots,NULL);
-
+  float rots[2] = {azimuth,elevation};
+  EFFECTS.addGMPuffEffect(0, pos, rots, NULL);
 }
 
 // update events from outside if they should be checked
@@ -3260,30 +3262,34 @@ static bool		gotBlowedUp(BaseLocalPlayer* tank,
   if (reason != GotShot || flag != Flags::Shield) {
     // blow me up
     tank->explodeTank();
-		EffectsRenderer::instance().addDeathEffect(tank->getTeam(),tank->getPosition(),tank->getAngle());
-   if (tank == myTank) {
-      if (reason == GotRunOver)
+    EFFECTS.addDeathEffect(tank->getTeam(), tank->getPosition(), tank->getAngle());
+
+   if (isViewTank(tank)) {
+      if (reason == GotRunOver) {
 	playLocalSound(SFX_RUNOVER);
-      else
+      } else {
 	playLocalSound(SFX_DIE);
+      }
       ForceFeedback::death();
     } else {
       const float* pos = tank->getPosition();
-      if (reason == GotRunOver)
-	playWorldSound(SFX_RUNOVER, pos,
-		       getLocalPlayer(killer) == myTank);
-      else
-	playWorldSound(SFX_EXPLOSION, pos,
-		       getLocalPlayer(killer) == myTank);
+      if (reason == GotRunOver) {
+        playWorldSound(SFX_RUNOVER, pos,
+                       getLocalPlayer(killer) == myTank);
+      } else {
+        playWorldSound(SFX_EXPLOSION, pos,
+                       getLocalPlayer(killer) == myTank);
+      }
+    }
 
+    if (tank != myTank) {
+      const float* pos = tank->getPosition();
       float explodePos[3];
       explodePos[0] = pos[0];
       explodePos[1] = pos[1];
       explodePos[2] = pos[2] + tank->getMuzzleHeight();
       addTankExplosion(explodePos);
-
-   }
-
+    }
 
     // i lose a point
     if (reason != GotCaptured)
