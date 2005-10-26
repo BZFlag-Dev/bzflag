@@ -253,7 +253,8 @@ void selectNextRecipient (bool forward, bool robotIn)
     }
     if (i == rindex)
       break;
-    if (player[i] && (robotIn || player[i]->getPlayerType() == TankPlayer)) {
+    if (player[i]
+	&& (robotIn || player[i]->getPlayerType() != ComputerPlayer)) {
       my->setRecipient(player[i]);
       break;
     }
@@ -1222,7 +1223,9 @@ static Player*		addPlayer(PlayerId id, void* msg, int showMessage)
   }
 
   // add player
-  if (PlayerType (type) == TankPlayer || PlayerType (type) == ComputerPlayer) {
+  if (PlayerType (type) == TankPlayer
+      || PlayerType (type) == ComputerPlayer
+      || PlayerType (type) == ChatPlayer) {
     player[i] = new RemotePlayer (id, TeamColor (team), callsign, email,
 				  PlayerType (type));
     player[i]->changeScore (short (wins), short (losses), short (tks));

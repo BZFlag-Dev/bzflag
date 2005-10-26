@@ -1500,7 +1500,9 @@ static void addPlayer(int playerIndex, GameKeeper::Player *playerData)
 
   // reject player if asks for bogus team or rogue and rogues aren't allowed
   // or if the team is full or if the server is full
-  if (!playerData->player.isHuman() && !playerData->player.isBot()) {
+  if (!playerData->player.isHuman()
+      && !playerData->player.isBot()
+      && !playerData->player.isChat()) {
     rejectPlayer(playerIndex, RejectBadType,
 		 "Communication error joining game [Rejected].");
     return;
@@ -1555,9 +1557,11 @@ static void addPlayer(int playerIndex, GameKeeper::Player *playerData)
   // send new player updates on each player, all existing flags, and all teams.
   // don't send robots any game info.  watch out for connection being closed
   // because of an error.
-  if (!playerData->player.isBot()) {
+  if (playerData->player.isHuman()) {
     sendTeamUpdate(playerIndex);
     sendFlagUpdate(playerIndex);
+  }
+  if (!playerData->player.isBot()) {
     GameKeeper::Player *otherData;
     for (int i = 0; i < curMaxPlayers
 	   && GameKeeper::Player::getPlayerByIndex(playerIndex); i++)

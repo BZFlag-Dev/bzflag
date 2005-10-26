@@ -77,6 +77,7 @@ public:
   bool	isAutoPilot() const;
   bool	isBot() const;
   bool	isHuman() const;
+  bool  isChat() const;
   void  *packUpdate(void *buf);
   void  *packId(void *buf);
   bool	unpackEnter(void *buf, uint16_t &rejectCode, char *rejectMsg);
@@ -242,6 +243,10 @@ inline bool PlayerInfo::isAutoPilot() const {
 
 inline bool PlayerInfo::isBot() const {
   return type == ComputerPlayer;
+}
+
+inline bool PlayerInfo::isChat() const {
+  return type == ChatPlayer;
 }
 
 inline bool PlayerInfo::isARabbitKill(PlayerInfo &victim) const {
