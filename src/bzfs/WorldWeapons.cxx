@@ -32,10 +32,6 @@
 // bzfs specific headers
 #include "bzfs.h"
 
-char *getDirectMessageBuffer();
-void broadcastMessage(uint16_t code, int len, const void *msg);
-
-
 static int fireWorldWepReal(FlagType* type, float lifetime, PlayerId player,
                             TeamColor teamColor, float *pos, float tilt, float dir,
                             int shotID, float dt)

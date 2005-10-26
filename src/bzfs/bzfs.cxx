@@ -204,11 +204,15 @@ void directMessage(int playerIndex, uint16_t code, int len, const void *msg)
 }
 
 
-void broadcastMessage(uint16_t code, int len, const void *msg)
+void broadcastMessage(uint16_t code, int len, const void *msg, bool alsoTty)
 {
   // send message to everyone
   for (int i = 0; i < curMaxPlayers; i++) {
-    if (realPlayer(i)) {
+    GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(i);
+    if (!playerData)
+      continue;
+    if (playerData->player.isPlaying()
+	&& (alsoTty || !playerData->player.isChat())) {
       directMessage(i, code, len, msg);
     }
   }
@@ -283,7 +287,8 @@ void sendFlagUpdate(FlagInfo &flag)
     && !isIdentifyFlagIn
     && (flag.player == -1);
   buf = flag.pack(buf, hide);
-  broadcastMessage(MsgFlagUpdate, (char*)buf - (char*)bufStart, bufStart);
+  broadcastMessage(MsgFlagUpdate, (char*)buf - (char*)bufStart, bufStart,
+		   false);
 }
 
 
@@ -413,25 +418,27 @@ void sendTeamUpdate(int playerIndex, int teamIndex1, int teamIndex2)
   }
 
   if (playerIndex == -1)
-    broadcastMessage(MsgTeamUpdate, (char*)buf - (char*)bufStart, bufStart);
+    broadcastMessage(MsgTeamUpdate, (char*)buf - (char*)bufStart, bufStart,
+		     false);
   else
     directMessage(playerIndex, MsgTeamUpdate, (char*)buf - (char*)bufStart, bufStart);
 }
 
 static void sendPlayerUpdate(GameKeeper::Player *playerData, int index)
 {
-	if (!playerData->player.isPlaying())
-		return;
+  if (!playerData->player.isPlaying())
+    return;
 
-	void *bufStart = getDirectMessageBuffer();
-	void *buf      = playerData->packPlayerUpdate(bufStart);
+  void *bufStart = getDirectMessageBuffer();
+  void *buf      = playerData->packPlayerUpdate(bufStart);
 
-	if (playerData->getIndex() == index) {
-		// send all players info about player[playerIndex]
-		broadcastMessage(MsgAddPlayer, (char*)buf - (char*)bufStart, bufStart);
-	} else {
-		directMessage(index, MsgAddPlayer, (char*)buf - (char*)bufStart, bufStart);
-	}
+  if (playerData->getIndex() == index) {
+    // send all players info about player[playerIndex]
+    broadcastMessage(MsgAddPlayer, (char*)buf - (char*)bufStart, bufStart,
+		     false);
+  } else {
+    directMessage(index, MsgAddPlayer, (char*)buf - (char*)bufStart, bufStart);
+  }
 }
 
 void sendPlayerInfo() {
@@ -2662,7 +2669,8 @@ static void captureFlag(int playerIndex, TeamColor teamCaptured)
   buf = nboPackUByte(bufStart, playerIndex);
   buf = nboPackUShort(buf, uint16_t(flagIndex));
   buf = nboPackUShort(buf, uint16_t(teamCaptured));
-  broadcastMessage(MsgCaptureFlag, (char*)buf-(char*)bufStart, bufStart);
+  broadcastMessage(MsgCaptureFlag, (char*)buf-(char*)bufStart, bufStart,
+		   false);
 
   // find any events for capturing the flags on the capped team or events for ANY team
   bz_CTFCaptureEventData	eventData;
@@ -2881,7 +2889,7 @@ static void shotFired(int playerIndex, void *buf, int len)
   if (firingInfo.flagType == Flags::GuidedMissile)
     playerData->player.endShotCredit--;
 
-  broadcastMessage(MsgShotBegin, len, buf);
+  broadcastMessage(MsgShotBegin, len, buf, false);
 
 }
 
@@ -2892,7 +2900,7 @@ static void shotEnded(const PlayerId& id, int16_t shotIndex, uint16_t reason)
   buf = nboPackUByte(bufStart, id);
   buf = nboPackShort(buf, shotIndex);
   buf = nboPackUShort(buf, reason);
-  broadcastMessage(MsgShotEnd, (char*)buf-(char*)bufStart, bufStart);
+  broadcastMessage(MsgShotEnd, (char*)buf-(char*)bufStart, bufStart, false);
 }
 
 static void sendTeleport(int playerIndex, uint16_t from, uint16_t to)
@@ -2901,7 +2909,7 @@ static void sendTeleport(int playerIndex, uint16_t from, uint16_t to)
   buf = nboPackUByte(bufStart, playerIndex);
   buf = nboPackUShort(buf, from);
   buf = nboPackUShort(buf, to);
-  broadcastMessage(MsgTeleport, (char*)buf-(char*)bufStart, bufStart);
+  broadcastMessage(MsgTeleport, (char*)buf-(char*)bufStart, bufStart, false);
 }
 
 
