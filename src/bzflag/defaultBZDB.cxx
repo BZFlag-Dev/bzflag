@@ -92,7 +92,6 @@ DefaultDBItem	defaultDBItems[] = {
   { "maxCacheMB",		"32",			true,	StateDatabase::ReadWrite,	NULL },
   { "doDownloads",		"1",			true,	StateDatabase::ReadWrite,	NULL },
   { "updateDownloads",		"0",			true,	StateDatabase::ReadWrite,	NULL },
-  { "useDrawInfo",		"1",			true,	StateDatabase::ReadWrite,	NULL },
   { "roamSmoothTime",		"0.5",			true,	StateDatabase::ReadWrite,	NULL },
   { "listIcons",		"1",			true,	StateDatabase::ReadWrite,	NULL },
   { "maxTextureSize",		"512",			true,	StateDatabase::ReadWrite,	NULL },
@@ -100,6 +99,14 @@ DefaultDBItem	defaultDBItems[] = {
   { "radarLodScale",		"1.0",			true,	StateDatabase::ReadWrite,	NULL },
   { "stencilShadows",		"0",			true,	StateDatabase::ReadWrite,	NULL },
   { "shadowAlpha",		"0.5",			true,	StateDatabase::ReadWrite,	NULL },
+
+  // hidden graphics rendering params
+  { "useDrawInfo",		"1",			true,	StateDatabase::ReadWrite,	NULL },
+  { "f2bsort",			"1",			true,	StateDatabase::ReadWrite,	NULL },
+  { "meshLists",		"1",			true,	StateDatabase::ReadWrite,	NULL },
+  { "flagLists",		"0",			true,	StateDatabase::ReadWrite,	NULL },
+  { "lightLists",		"0",			true,	StateDatabase::ReadWrite,	NULL },
+  { "noMeshClusters",		"0",			true,	StateDatabase::ReadWrite,	NULL },
 
   // default texture names
   { "stdGroundTexture",		"std_ground",		true,	StateDatabase::ReadWrite,	NULL },

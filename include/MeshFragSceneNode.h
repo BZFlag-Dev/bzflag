@@ -63,13 +63,21 @@ class MeshFragSceneNode : public WallSceneNode {
 	void renderRadar();
 	void renderShadow();
 	const GLfloat* getPosition() const { return sceneNode->getSphere(); }
+
       private:
 	void drawV() const; // draw with just vertices
 	void drawVT() const; // draw with texcoords
 	void drawVN() const; // draw with normals
 	void drawVTN() const; // draw with texcoords and normals
+
+        void initDisplayList();
+        void freeDisplayList();
+        static void initContext(void *data);
+        static void freeContext(void *data);
+
       private:
 	int style;
+	GLuint list;
 	MeshFragSceneNode* sceneNode;
     };
 
