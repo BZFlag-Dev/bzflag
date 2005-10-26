@@ -102,7 +102,7 @@ AC_PROG_RANLIB
 # FIXME: necessary until the flags are used properly.
 AC_DISABLE_SHARED
 
-if test x$enable_shared !=xno ; then
+if test x$enable_shared != xno ; then
    AC_DEFINE(_USE_BZ_API, 1, [Enable plugins])
 fi
 AM_CONDITIONAL(BUILD_PLUGINS, test "x$enable_shared" != "xno")
