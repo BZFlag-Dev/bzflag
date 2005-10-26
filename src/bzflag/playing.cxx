@@ -3174,6 +3174,9 @@ void handleFlagDropped(Player* tank)
     playLocalSound(SFX_DROP_FLAG);
     updateFlag(Flags::Null);
   }
+  else if (isViewTank(tank)) {
+    playLocalSound(SFX_DROP_FLAG);
+  }
 
   // add message
   std::string message("dropped ");
