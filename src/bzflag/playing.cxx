@@ -2385,13 +2385,15 @@ static void		handleServerMessage(bool human, uint16_t code,
       msg = firingInfo.unpack(msg);
 
       const int shooterid = firingInfo.shot.player;
+      RemotePlayer* shooter = player[shooterid];
+      
       if (shooterid != ServerPlayer) {
-	if (player[shooterid] && player[shooterid]->getId() == shooterid) {
-	  player[shooterid]->addShot(firingInfo);
+	if (shooter && player[shooterid]->getId() == shooterid) {
+	  shooter->addShot(firingInfo);
 
 	  if (SceneRenderer::instance().useQuality() >= 2) {
 	    float shotPos[3];
-	    player[shooterid]->getMuzzle(shotPos);
+	    shooter->getMuzzle(shotPos);
 
 	    // if you are driving with a tank in observer mode
 	    // and do not want local shot effects,
@@ -2400,9 +2402,9 @@ static void		handleServerMessage(bool human, uint16_t code,
 		|| (!ROAM.getTargetTank())
 	        || (shooterid != ROAM.getTargetTank()->getId())
 		|| BZDB.isTrue("enableLocalShotEffect"))
-	      EffectsRenderer::instance().addShotEffect(player[shooterid]->getTeam(),
-	                                                shotPos,player[shooterid]->getAngle(),
-	                                                player[shooterid]->getVelocity());
+	      EffectsRenderer::instance().addShotEffect(shooter->getTeam(), shotPos,
+	                                                shooter->getAngle(),
+	                                                shooter->getVelocity());
 	  }
 	} else {
 	  break;
@@ -2413,16 +2415,21 @@ static void		handleServerMessage(bool human, uint16_t code,
 
       if (human) {
 	const float* pos = firingInfo.shot.pos;
-	if (firingInfo.flagType == Flags::ShockWave)
-	  playWorldSound(SFX_SHOCK, pos);
-	else if (firingInfo.flagType == Flags::Laser)
-	  playWorldSound(SFX_LASER, pos);
-	else if (firingInfo.flagType == Flags::GuidedMissile)
-	  playWorldSound(SFX_MISSILE, pos);
-	else if (firingInfo.flagType == Flags::Thief)
-	  playWorldSound(SFX_THIEF, pos);
-	else
-	  playWorldSound(SFX_FIRE, pos);
+        const bool importance = false;
+        const bool localSound = (shooter && ROAM.isRoaming()
+                                 && (ROAM.getMode() == Roaming::roamViewFP)
+                                 && (ROAM.getTargetTank() == shooter));
+	if (firingInfo.flagType == Flags::ShockWave) {
+	  playSound(SFX_SHOCK, pos, importance, localSound);
+	} else if (firingInfo.flagType == Flags::Laser) {
+	  playSound(SFX_LASER, pos, importance, localSound);
+	} else if (firingInfo.flagType == Flags::GuidedMissile) {
+	  playSound(SFX_MISSILE, pos, importance, localSound);
+	} else if (firingInfo.flagType == Flags::Thief) {
+	  playSound(SFX_THIEF, pos, importance, localSound);
+	} else {
+	  playSound(SFX_FIRE, pos, importance, localSound);
+        }
       }
       break;
     }
