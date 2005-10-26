@@ -279,7 +279,7 @@ bool		shouldGrabMouse()
 // some simple global functions
 //
 
-void	warnAboutMainFlags()
+void warnAboutMainFlags()
 {
   // warning message for hidden flags
   if (!BZDBCache::displayMainFlags){
@@ -298,7 +298,7 @@ void	warnAboutMainFlags()
   }
 }
 
-void	warnAboutRadarFlags()
+void warnAboutRadarFlags()
 {
   if (!BZDB.isTrue("displayRadarFlags")){
     std::string showFlagsMsg = ColorStrings[YellowColor];
@@ -316,7 +316,7 @@ void	warnAboutRadarFlags()
   }
 }
 
-void	warnAboutRadar()
+void warnAboutRadar()
 {
   if (!BZDB.isTrue("displayRadar")) {
     std::string message = ColorStrings[YellowColor];
@@ -335,7 +335,7 @@ void	warnAboutRadar()
   }
 }
 
-void	warnAboutConsole()
+void warnAboutConsole()
 {
   if (!BZDB.isTrue("displayConsole")) {
     std::string message = ColorStrings[YellowColor];
@@ -353,6 +353,16 @@ void	warnAboutConsole()
     // can't use a console message for this one
     hud->setAlert(3, message.c_str(), 2.0f, true);
   }
+}
+
+
+inline bool isViewTank(Player* tank)
+{
+  return ((tank != NULL) &&
+          (tank == LocalPlayer::getMyTank()) ||
+           (ROAM.isRoaming()
+            && (ROAM.getMode() == Roaming::roamViewFP)
+            && (ROAM.getTargetTank() == tank)));
 }
 
 
@@ -1956,11 +1966,9 @@ static void		handleServerMessage(bool human, uint16_t code,
 	tank->setDeadReckoning();
 	tank->spawnEffect();
 	if (tank == myTank) {
-	  playLocalSound(SFX_POP);
 	  myTank->setSpawning(false);
-	} else {
-	  playWorldSound(SFX_POP, pos, true);
 	}
+	playSound(SFX_POP, pos, true, isViewTank(tank));
       }
 
       break;
@@ -2208,6 +2216,10 @@ static void		handleServerMessage(bool human, uint16_t code,
 		       SFX_GRAB_FLAG : SFX_GRAB_BAD);
 	updateFlag(myTank->getFlag());
       }
+      else if (isViewTank(tank)) {
+	playLocalSound(tank->getFlag()->endurance != FlagSticky ?
+		       SFX_GRAB_FLAG : SFX_GRAB_BAD);
+      }
       else if (myTank->getTeam() != RabbitTeam && tank &&
 	       tank->getTeam() != myTank->getTeam() &&
 	       world->getFlag(flagIndex).type->flagTeam == myTank->getTeam()) {
@@ -2416,9 +2428,7 @@ static void		handleServerMessage(bool human, uint16_t code,
       if (human) {
 	const float* pos = firingInfo.shot.pos;
         const bool importance = false;
-        const bool localSound = (shooter && ROAM.isRoaming()
-                                 && (ROAM.getMode() == Roaming::roamViewFP)
-                                 && (ROAM.getTargetTank() == shooter));
+        const bool localSound = isViewTank(shooter);
 	if (firingInfo.flagType == Flags::ShockWave) {
 	  playSound(SFX_SHOCK, pos, importance, localSound);
 	} else if (firingInfo.flagType == Flags::Laser) {
