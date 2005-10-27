@@ -49,8 +49,8 @@ static GLfloat BrightColors[9][3] = {
   {1.0f,0.0f,1.0f}, // purple
   {1.0f,1.0f,1.0f}, // white
   {0.5f,0.5f,0.5f}, // grey
-  {0.0f,1.0f,1.0f}, // cyan
-  {1.0f,0.5f,0.0f}  // orange (nonstandard)
+  {1.0f,0.5f,0.0f}, // orange (nonstandard)
+  {0.0f,1.0f,1.0f}  // cyan
 };
 
 GLfloat FontManager::underlineColor[4];
