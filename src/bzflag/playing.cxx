@@ -2045,38 +2045,32 @@ static void		handleServerMessage(bool human, uint16_t code,
 	  killerLocal->endShot(shotId, true);
 	}
 	if (victimPlayer && killerLocal != victimPlayer) {
-	  if (killerPlayer == myTank && wasRabbit) {
-	    // enemy
-	    killerLocal->changeScore(1, 0, 0);
-	  } else {
-	    if ((victimPlayer->getTeam() == killerLocal->getTeam()) &&
-		(killerLocal->getTeam() != RogueTeam)) {
-	      if (killerPlayer == myTank) {
-		hud->setAlert(1, "Don't kill teammates!!!", 3.0f, true);
-		playLocalSound( SFX_KILL_TEAM );
-		if (myTank->isAutoPilot()) {
-		  char meaculpa[MessageLen];
-		  memset(meaculpa, 0, MessageLen);
-		  strncpy(meaculpa,
-			  "sorry, i'm just a silly machine",
-			  MessageLen);
-		  char *buf = messageMessage;
-		  buf = (char*)nboPackUByte(buf, victimPlayer->getId());
-		  nboPackString(buf, meaculpa, MessageLen-1);
-		  serverLink->send(MsgMessage, sizeof(messageMessage), messageMessage);
-		}
-	      }
-	      // teammate
-	      killerLocal->changeScore(0, 1, 1);
-	    } else {
-	      // enemy
-	      killerLocal->changeScore(1, 0, 0);
+	  if ((victimPlayer->getTeam() == killerLocal->getTeam()) &&
+	      (killerLocal->getTeam() != RogueTeam) &&
+              !(killerPlayer == myTank && wasRabbit)) {
+            // teamkill
+	    if (killerPlayer == myTank) {
+	      hud->setAlert(1, "Don't kill teammates!!!", 3.0f, true);
+	      playLocalSound(SFX_KILL_TEAM);
 	      if (myTank->isAutoPilot()) {
-		if (killerPlayer) {
-		  const ShotPath* shot = killerPlayer->getShot(int(shotId));
-		  if (shot != NULL)
-		    teachAutoPilot( shot->getFlag(), 1 );
-		}
+		char meaculpa[MessageLen];
+		memset(meaculpa, 0, MessageLen);
+		strncpy(meaculpa,
+			"sorry, i'm just a silly machine",
+			MessageLen);
+		char *buf = messageMessage;
+		buf = (char*)nboPackUByte(buf, victimPlayer->getId());
+		nboPackString(buf, meaculpa, MessageLen-1);
+		serverLink->send(MsgMessage, sizeof(messageMessage), messageMessage);
+	      }
+	    }
+	  } else {
+	    // enemy
+	    if (myTank->isAutoPilot()) {
+	      if (killerPlayer) {
+		const ShotPath* shot = killerPlayer->getShot(int(shotId));
+		if (shot != NULL)
+		  teachAutoPilot(shot->getFlag(), 1);
 	      }
 	    }
 	  }
@@ -2090,8 +2084,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 	  if (victimPlayer)
 	    victimPlayer->changeLocalScore(1, 0, 0);
 	  myTank->setNemesis(victimPlayer);
-	}
-	else {
+	} else {
 	  if (killerPlayer)
 	    killerPlayer->changeLocalScore(0, 1, killerPlayer->getTeam() == victimPlayer->getTeam() ? 1 : 0);
 	  myTank->setNemesis(killerPlayer);
@@ -2470,11 +2463,19 @@ static void		handleServerMessage(bool human, uint16_t code,
 	msg = nboUnpackUShort(msg, losses);
 	msg = nboUnpackUShort(msg, tks);
 
-	int i = lookupPlayerIndex(id);
-	if (i >= 0)
-	  player[i]->changeScore(wins - player[i]->getWins(),
-				 losses - player[i]->getLosses(),
-				 tks - player[i]->getTeamKills());
+        if (id == myTank->getId()) {
+          myTank->changeScore(wins - myTank->getWins(),
+			      losses - myTank->getLosses(),
+			      tks - myTank->getTeamKills());
+        } else {
+          int i = lookupPlayerIndex(id);
+	  if (i >= 0)
+	    player[i]->changeScore(wins - player[i]->getWins(),
+				  losses - player[i]->getLosses(),
+				  tks - player[i]->getTeamKills());
+          else
+            DEBUG1("Recieved score update for unknown player!\n");
+        }
       }
       break;
     }
@@ -3278,10 +3279,6 @@ static bool		gotBlowedUp(BaseLocalPlayer* tank,
       explodePos[2] = pos[2] + tank->getMuzzleHeight();
       addTankExplosion(explodePos);
     }
-
-    // i lose a point
-    if (reason != GotCaptured)
-      tank->changeScore(0, 1, 0);
 
     // tell server I'm dead in case it doesn't already know
     if (reason == GotShot || reason == GotRunOver ||
