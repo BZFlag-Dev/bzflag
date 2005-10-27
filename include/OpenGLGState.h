@@ -40,7 +40,6 @@ class OpenGLGState {
     bool		getNeedsSorting() const;
     bool		isBlended() const;
     bool		isTextured() const;
-    bool		isTextureReplace() const;
     bool		isTextureMatrix() const;
     bool		isSphereMap() const;
     bool		isLighted() const;
@@ -152,7 +151,6 @@ class OpenGLGStateBuilder {
 
     void		reset();
     void		enableTexture(bool = true);
-    void		enableTextureReplace(bool = true);
     void		enableTextureMatrix(bool = true);
     void		enableSphereMap(bool = true);
     void		enableMaterial(bool = true);
@@ -161,6 +159,7 @@ class OpenGLGStateBuilder {
     void		resetAlphaFunc();
     void		setTexture(const int texture);
     void		setTextureMatrix(const GLfloat* matrix);
+    void		setTextureEnvMode(GLenum mode = GL_MODULATE);
     void		setMaterial(const OpenGLMaterial& material);
     void		setBlending(GLenum sFactor = GL_SRC_ALPHA,
 				    GLenum dFactor = GL_ONE_MINUS_SRC_ALPHA);

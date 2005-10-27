@@ -109,7 +109,6 @@ void BitmapFont::build(void)
   builder.enableTexture(false);
   builder.setBlending();
   builder.setAlphaFunc();
-  builder.enableTextureReplace(false);
   gstate = builder.getState();
 }
 

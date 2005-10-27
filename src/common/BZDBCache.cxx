@@ -39,6 +39,13 @@ float BZDBCache::pulseDepth;
 bool  BZDBCache::showCollisionGrid;
 bool  BZDBCache::showCullingGrid;
 
+bool BZDBCache::drawCelestial;
+bool BZDBCache::drawClouds;
+bool BZDBCache::drawGround;
+bool BZDBCache::drawGroundLights;
+bool BZDBCache::drawMountains;
+bool BZDBCache::drawSky;
+
 float BZDBCache::worldSize;
 float BZDBCache::radarLimit;
 float BZDBCache::gravity;
@@ -56,6 +63,7 @@ float BZDBCache::hudGUIBorderOpacityFactor;
 
 void BZDBCache::init()
 {
+  // Client-side variables
   BZDB.addCallback("displayMainFlags", clientCallback, NULL);
   BZDB.addCallback("radarStyle", clientCallback, NULL);
   BZDB.addCallback("radarTankPixels", clientCallback, NULL);
@@ -77,6 +85,13 @@ void BZDBCache::init()
   BZDB.addCallback("showCullingGrid", clientCallback, NULL);
   BZDB.addCallback("hudGUIBorderOpacityFactor", clientCallback, NULL);
 
+  // Server-side variables
+  BZDB.addCallback(StateDatabase::BZDB_DRAWCELESTIAL, serverCallback, NULL);
+  BZDB.addCallback(StateDatabase::BZDB_DRAWCLOUDS, serverCallback, NULL);
+  BZDB.addCallback(StateDatabase::BZDB_DRAWGROUND, serverCallback, NULL);
+  BZDB.addCallback(StateDatabase::BZDB_DRAWGROUNDLIGHTS, serverCallback, NULL);
+  BZDB.addCallback(StateDatabase::BZDB_DRAWMOUNTAINS, serverCallback, NULL);
+  BZDB.addCallback(StateDatabase::BZDB_DRAWSKY, serverCallback, NULL);
   BZDB.addCallback(StateDatabase::BZDB_MAXLOD, serverCallback, NULL);
   BZDB.addCallback(StateDatabase::BZDB_WORLDSIZE, serverCallback, NULL);
   BZDB.addCallback(StateDatabase::BZDB_RADARLIMIT, serverCallback, NULL);
@@ -88,6 +103,13 @@ void BZDBCache::init()
   BZDB.addCallback(StateDatabase::BZDB_FLAGRADIUS, serverCallback, NULL);
   BZDB.addCallback(StateDatabase::BZDB_FLAGPOLESIZE, serverCallback, NULL);
   BZDB.addCallback(StateDatabase::BZDB_FLAGPOLEWIDTH, serverCallback, NULL);
+
+  drawCelestial = BZDB.isTrue(StateDatabase::BZDB_DRAWCELESTIAL);
+  drawClouds = BZDB.isTrue(StateDatabase::BZDB_DRAWCLOUDS);
+  drawGround = BZDB.isTrue(StateDatabase::BZDB_DRAWGROUND);
+  drawGroundLights = BZDB.isTrue(StateDatabase::BZDB_DRAWGROUNDLIGHTS);
+  drawMountains = BZDB.isTrue(StateDatabase::BZDB_DRAWMOUNTAINS);
+  drawSky = BZDB.isTrue(StateDatabase::BZDB_DRAWSKY);
 
   maxLOD = BZDB.eval(StateDatabase::BZDB_MAXLOD);
   worldSize = BZDB.eval(StateDatabase::BZDB_WORLDSIZE);
@@ -151,16 +173,34 @@ void BZDBCache::clientCallback(const std::string& name, void *)
 
 void BZDBCache::serverCallback(const std::string& name, void *)
 {
-  if (name == StateDatabase::BZDB_MAXLOD) {
+  if (name == StateDatabase::BZDB_DRAWCELESTIAL) {
+    drawCelestial = BZDB.isTrue(StateDatabase::BZDB_DRAWCELESTIAL);
+  }
+  else if (name == StateDatabase::BZDB_DRAWCLOUDS) {
+    drawClouds = BZDB.isTrue(StateDatabase::BZDB_DRAWCLOUDS);
+  }
+  else if (name == StateDatabase::BZDB_DRAWGROUND) {
+    drawGround = BZDB.isTrue(StateDatabase::BZDB_DRAWGROUND);
+  }
+  else if (name == StateDatabase::BZDB_DRAWGROUNDLIGHTS) {
+    drawGroundLights = BZDB.isTrue(StateDatabase::BZDB_DRAWGROUNDLIGHTS);
+  }
+  else if (name == StateDatabase::BZDB_DRAWMOUNTAINS) {
+    drawMountains = BZDB.isTrue(StateDatabase::BZDB_DRAWMOUNTAINS);
+  }
+  else if (name == StateDatabase::BZDB_DRAWSKY) {
+    drawSky = BZDB.isTrue(StateDatabase::BZDB_DRAWSKY);
+  }
+  else if (name == StateDatabase::BZDB_MAXLOD) {
     maxLOD = BZDB.eval(StateDatabase::BZDB_MAXLOD);
   }
-  if (name == StateDatabase::BZDB_WORLDSIZE) {
+  else if (name == StateDatabase::BZDB_WORLDSIZE) {
     worldSize = BZDB.eval(StateDatabase::BZDB_WORLDSIZE);
   }
-  if (name == StateDatabase::BZDB_RADARLIMIT) {
+  else if (name == StateDatabase::BZDB_RADARLIMIT) {
     radarLimit = BZDB.eval(StateDatabase::BZDB_RADARLIMIT);
   }
-  if (name == StateDatabase::BZDB_GRAVITY) {
+  else if (name == StateDatabase::BZDB_GRAVITY) {
     gravity = BZDB.eval(StateDatabase::BZDB_GRAVITY);
   }
   else if (name == StateDatabase::BZDB_TANKWIDTH) {

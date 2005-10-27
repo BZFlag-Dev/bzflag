@@ -120,7 +120,6 @@ void TextureFont::preLoadLists()
   builder.setTexture(textureID);
   builder.setBlending();
   builder.setAlphaFunc();
-  builder.enableTextureReplace(false);
   gstate = builder.getState();
 }
 

@@ -443,6 +443,17 @@ void			speedSoundReceiver(float vx, float vy, float vz)
   sendSound(&s);
 }
 
+void			playSound(int soundCode, const float pos[3],
+                                  bool important, bool localSound)
+{
+  if (localSound) {
+    playLocalSound(soundCode);
+  } else {
+    playWorldSound(soundCode, pos, important);
+  }
+  return;
+}
+
 void			playWorldSound(int soundCode, const float pos[3],
 				       bool important)
 {

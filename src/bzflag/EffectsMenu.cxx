@@ -143,7 +143,7 @@ EffectsMenu::EffectsMenu()
   option->setLabel("Spawn Effect:");
   option->setCallback(callback, (void*)"s");
   options = &option->getList();
-  optbuf = EffectsRenderer::instance().getSpawnEffectTypes();
+  optbuf = EFFECTS.getSpawnEffectTypes();
   options->assign(optbuf.begin(), optbuf.end());
   option->update();
   listHUD.push_back(option);
@@ -165,7 +165,7 @@ EffectsMenu::EffectsMenu()
   option->setLabel("Death Effect:");
   option->setCallback(callback, (void*)"d");
   options = &option->getList();
-  optbuf = EffectsRenderer::instance().getDeathEffectTypes();
+  optbuf = EFFECTS.getDeathEffectTypes();
   options->assign(optbuf.begin(), optbuf.end());
   option->update();
   listHUD.push_back(option);
@@ -176,7 +176,7 @@ EffectsMenu::EffectsMenu()
   option->setLabel("Shot Fired Effect:");
   option->setCallback(callback, (void*)"S");
   options = &option->getList();
-  optbuf = EffectsRenderer::instance().getShotEffectTypes();
+  optbuf = EFFECTS.getShotEffectTypes();
   options->assign(optbuf.begin(), optbuf.end());
   option->update();
   listHUD.push_back(option);
@@ -209,7 +209,7 @@ EffectsMenu::EffectsMenu()
   option->setLabel("Landing Effect:");
   option->setCallback(callback, (void*)"b");
   options = &option->getList();
-  optbuf = EffectsRenderer::instance().getLandEffectTypes();
+  optbuf = EFFECTS.getLandEffectTypes();
   options->assign(optbuf.begin(), optbuf.end());
   option->update();
   listHUD.push_back(option);
@@ -220,7 +220,7 @@ EffectsMenu::EffectsMenu()
   option->setLabel("GM Smoke Effect:");
   option->setCallback(callback, (void*)"G");
   options = &option->getList();
-  optbuf = EffectsRenderer::instance().getGMPuffEffectTypes();
+  optbuf = EFFECTS.getGMPuffEffectTypes();
   options->assign(optbuf.begin(), optbuf.end());
   option->update();
   listHUD.push_back(option);
@@ -240,7 +240,7 @@ EffectsMenu::EffectsMenu()
   option->setLabel("  Ricocet Effect:");
   option->setCallback(callback, (void*)"R");
   options = &option->getList();
-  optbuf = EffectsRenderer::instance().getRicoEffectTypes();
+  optbuf = EFFECTS.getRicoEffectTypes();
   options->assign(optbuf.begin(), optbuf.end());
   option->update();
   listHUD.push_back(option);
@@ -251,7 +251,7 @@ EffectsMenu::EffectsMenu()
   option->setLabel("  Teleport Shot Effect:");
   option->setCallback(callback, (void*)"7");
   options = &option->getList();
-  optbuf = EffectsRenderer::instance().getShotTeleportEffectTypes();
+  optbuf = EFFECTS.getShotTeleportEffectTypes();
   options->assign(optbuf.begin(), optbuf.end());
   option->update();
   listHUD.push_back(option);

@@ -26,12 +26,13 @@
 #include "ObstacleList.h"
 #include "WallObstacle.h"
 
-// implementation-specific bzfs-specific headers
+// local implementation headers
 #include "playing.h"
 #include "World.h"
 #include "TrackMarks.h"
 #include "sound.h"
 #include "effectsRenderer.h"
+#include "Roaming.h"
 
 // for dead reckoning
 static const float	MaxUpdateTime = 1.0f;		// seconds
@@ -1253,22 +1254,27 @@ void Player::doDeadReckoning()
   // setup remote players' landing sounds and graphics, and jumping sounds
   if (isAlive()) {
     // the importance level of the remote sounds
-    const bool remoteImportant = false;
+    const bool soundImportance = false;
+    const bool localSound = (ROAM.isRoaming()
+                             && (ROAM.getMode() == Roaming::roamViewFP)
+                             && (ROAM.getTargetTank() == this));
 
     // check for a landing
     if (((oldStatus & PlayerState::Falling) != 0) &&
 	((inputStatus & PlayerState::Falling) == 0)) {
       // setup the squish effect
       setLandingSpeed(oldZSpeed);
-			// make it "land"
-			EffectsRenderer::instance().addLandEffect(getTeam(),state.pos,state.azimuth);
+
+      // make it "land"
+      EFFECTS.addLandEffect(getTeam(),state.pos,state.azimuth);
+
       // setup the sound
       if (BZDB.isTrue("remoteSounds")) {
 	if ((getFlag() != Flags::Burrow) || (predictedPos[2] > 0.0f)) {
-	  playWorldSound(SFX_LAND, state.pos, remoteImportant);
+	  playSound(SFX_LAND, state.pos, soundImportance, localSound);
 	} else  {
 	  // probably never gets played
-	  playWorldSound(SFX_BURROW,  state.pos, remoteImportant);
+	  playSound(SFX_BURROW, state.pos, soundImportance, localSound);
 	}
       }
     }
@@ -1277,13 +1283,13 @@ void Player::doDeadReckoning()
     if (state.sounds != PlayerState::NoSounds) {
       if (BZDB.isTrue("remoteSounds")) {
 	if ((state.sounds & PlayerState::JumpSound) != 0) {
-	  playWorldSound(SFX_JUMP, state.pos, remoteImportant);
+	  playSound(SFX_JUMP, state.pos, soundImportance, localSound);
 	}
 	if ((state.sounds & PlayerState::WingsSound) != 0) {
-	  playWorldSound(SFX_FLAP, state.pos, remoteImportant);
+	  playSound(SFX_FLAP, state.pos, soundImportance, localSound);
 	}
 	if ((state.sounds & PlayerState::BounceSound) != 0) {
-	  playWorldSound(SFX_BOUNCE, state.pos, remoteImportant);
+	  playSound(SFX_BOUNCE, state.pos, soundImportance, localSound);
 	}
       }
       state.sounds = PlayerState::NoSounds;

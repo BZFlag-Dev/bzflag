@@ -40,7 +40,7 @@ BoltSceneNode::BoltSceneNode(const GLfloat pos[3]) :
   OpenGLGStateBuilder builder(gstate);
   builder.setBlending();
   builder.setAlphaFunc();
-  builder.enableTextureReplace();
+  //builder.setTextureEnvMode(GL_DECAL);
   gstate = builder.getState();
 
   // prepare light

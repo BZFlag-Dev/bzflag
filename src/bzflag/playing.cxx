@@ -280,7 +280,7 @@ bool		shouldGrabMouse()
 // some simple global functions
 //
 
-void	warnAboutMainFlags()
+void warnAboutMainFlags()
 {
   // warning message for hidden flags
   if (!BZDBCache::displayMainFlags){
@@ -299,7 +299,7 @@ void	warnAboutMainFlags()
   }
 }
 
-void	warnAboutRadarFlags()
+void warnAboutRadarFlags()
 {
   if (!BZDB.isTrue("displayRadarFlags")){
     std::string showFlagsMsg = ColorStrings[YellowColor];
@@ -317,7 +317,7 @@ void	warnAboutRadarFlags()
   }
 }
 
-void	warnAboutRadar()
+void warnAboutRadar()
 {
   if (!BZDB.isTrue("displayRadar")) {
     std::string message = ColorStrings[YellowColor];
@@ -336,7 +336,7 @@ void	warnAboutRadar()
   }
 }
 
-void	warnAboutConsole()
+void warnAboutConsole()
 {
   if (!BZDB.isTrue("displayConsole")) {
     std::string message = ColorStrings[YellowColor];
@@ -354,6 +354,16 @@ void	warnAboutConsole()
     // can't use a console message for this one
     hud->setAlert(3, message.c_str(), 2.0f, true);
   }
+}
+
+
+inline bool isViewTank(Player* tank)
+{
+  return ((tank != NULL) &&
+          (tank == LocalPlayer::getMyTank()) ||
+           (ROAM.isRoaming()
+            && (ROAM.getMode() == Roaming::roamViewFP)
+            && (ROAM.getTargetTank() == tank)));
 }
 
 
@@ -1945,13 +1955,14 @@ static void		handleServerMessage(bool human, uint16_t code,
 	  }
 	}
 
-	if (SceneRenderer::instance().useQuality() >= 2)
-	  if (((tank != myTank) 
+	if (SceneRenderer::instance().useQuality() >= 2) {
+	  if (((tank != myTank)
 	       && ((ROAM.getMode() != Roaming::roamViewFP)
 	           || (tank != ROAM.getTargetTank())))
-	      || BZDB.isTrue("enableLocalSpawnEffect"))
-	    EffectsRenderer::instance().addSpawnEffect(tank->getTeam(),pos);
-
+	      || BZDB.isTrue("enableLocalSpawnEffect")) {
+	    EFFECTS.addSpawnEffect(tank->getTeam(),pos);
+          }
+        }
 	tank->setStatus(PlayerState::Alive);
 	tank->move(pos, forward);
 	tank->setVelocity(zero);
@@ -1959,11 +1970,9 @@ static void		handleServerMessage(bool human, uint16_t code,
 	tank->setDeadReckoning();
 	tank->spawnEffect();
 	if (tank == myTank) {
-	  playLocalSound(SFX_POP);
 	  myTank->setSpawning(false);
-	} else {
-	  playWorldSound(SFX_POP, pos, true);
 	}
+	playSound(SFX_POP, pos, true, isViewTank(tank));
       }
 
       break;
@@ -2019,18 +2028,20 @@ static void		handleServerMessage(bool human, uint16_t code,
       else if (victimPlayer) {
 	victimPlayer->setExplode(TimeKeeper::getTick());
 	const float* pos = victimPlayer->getPosition();
-	if (reason == GotRunOver)
-	  playWorldSound(SFX_RUNOVER, pos, killerLocal == myTank);
-	else
-	  playWorldSound(SFX_EXPLOSION, pos, killerLocal == myTank);
+	const bool localView = isViewTank(victimPlayer);
+	if (reason == GotRunOver) {
+	  playSound(SFX_RUNOVER, pos, killerLocal == myTank, localView);
+	} else {
+	  playSound(SFX_EXPLOSION, pos, killerLocal == myTank, localView);
+        }
 	float explodePos[3];
 	explodePos[0] = pos[0];
 	explodePos[1] = pos[1];
 	explodePos[2] = pos[2] + victimPlayer->getMuzzleHeight();
 	addTankExplosion(explodePos);
 
-	EffectsRenderer::instance().addDeathEffect(victimPlayer->getTeam(),pos,victimPlayer->getAngle());
-
+	EFFECTS.addDeathEffect(victimPlayer->getTeam(), pos,
+                               victimPlayer->getAngle());
       }
 
       if (killerLocal) {
@@ -2211,6 +2222,10 @@ static void		handleServerMessage(bool human, uint16_t code,
 		       SFX_GRAB_FLAG : SFX_GRAB_BAD);
 	updateFlag(myTank->getFlag());
       }
+      else if (isViewTank(tank)) {
+	playLocalSound(tank->getFlag()->endurance != FlagSticky ?
+		       SFX_GRAB_FLAG : SFX_GRAB_BAD);
+      }
       else if (myTank->getTeam() != RabbitTeam && tank &&
 	       tank->getTeam() != myTank->getTeam() &&
 	       world->getFlag(flagIndex).type->flagTeam == myTank->getTeam()) {
@@ -2327,8 +2342,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 	  explodePos[2] = pos[2] + player[i]->getMuzzleHeight();
 	  addTankExplosion(explodePos);
 
-		EffectsRenderer::instance().addDeathEffect(player[i]->getTeam(),pos,player[i]->getAngle());
-
+          EFFECTS.addDeathEffect(player[i]->getTeam(), pos, player[i]->getAngle());
 	}
       }
 
@@ -2388,13 +2402,15 @@ static void		handleServerMessage(bool human, uint16_t code,
       msg = firingInfo.unpack(msg);
 
       const int shooterid = firingInfo.shot.player;
+      RemotePlayer* shooter = player[shooterid];
+      
       if (shooterid != ServerPlayer) {
-	if (player[shooterid] && player[shooterid]->getId() == shooterid) {
-	  player[shooterid]->addShot(firingInfo);
+	if (shooter && player[shooterid]->getId() == shooterid) {
+	  shooter->addShot(firingInfo);
 
 	  if (SceneRenderer::instance().useQuality() >= 2) {
 	    float shotPos[3];
-	    player[shooterid]->getMuzzle(shotPos);
+	    shooter->getMuzzle(shotPos);
 
 	    // if you are driving with a tank in observer mode
 	    // and do not want local shot effects,
@@ -2402,8 +2418,11 @@ static void		handleServerMessage(bool human, uint16_t code,
 	    if ((ROAM.getMode() != Roaming::roamViewFP)
 		|| (!ROAM.getTargetTank())
 	        || (shooterid != ROAM.getTargetTank()->getId())
-		|| BZDB.isTrue("enableLocalShotEffect"))
-	      EffectsRenderer::instance().addShotEffect(player[shooterid]->getTeam(),shotPos,player[shooterid]->getAngle(),player[shooterid]->getVelocity());
+		|| BZDB.isTrue("enableLocalShotEffect")) {
+	      EFFECTS.addShotEffect(shooter->getTeam(), shotPos,
+                                    shooter->getAngle(),
+	                            shooter->getVelocity());
+            }
 	  }
 	} else {
 	  break;
@@ -2414,16 +2433,19 @@ static void		handleServerMessage(bool human, uint16_t code,
 
       if (human) {
 	const float* pos = firingInfo.shot.pos;
-	if (firingInfo.flagType == Flags::ShockWave)
-	  playWorldSound(SFX_SHOCK, pos);
-	else if (firingInfo.flagType == Flags::Laser)
-	  playWorldSound(SFX_LASER, pos);
-	else if (firingInfo.flagType == Flags::GuidedMissile)
-	  playWorldSound(SFX_MISSILE, pos);
-	else if (firingInfo.flagType == Flags::Thief)
-	  playWorldSound(SFX_THIEF, pos);
-	else
-	  playWorldSound(SFX_FIRE, pos);
+        const bool importance = false;
+        const bool localSound = isViewTank(shooter);
+	if (firingInfo.flagType == Flags::ShockWave) {
+	  playSound(SFX_SHOCK, pos, importance, localSound);
+	} else if (firingInfo.flagType == Flags::Laser) {
+	  playSound(SFX_LASER, pos, importance, localSound);
+	} else if (firingInfo.flagType == Flags::GuidedMissile) {
+	  playSound(SFX_MISSILE, pos, importance, localSound);
+	} else if (firingInfo.flagType == Flags::Thief) {
+	  playSound(SFX_THIEF, pos, importance, localSound);
+	} else {
+	  playSound(SFX_FIRE, pos, importance, localSound);
+        }
       }
       break;
     }
@@ -3055,20 +3077,19 @@ void			addShotExplosion(const float* pos)
 
 void			addShotPuff(const float* pos, float azimuth, float elevation)
 {
-	bool useClasicPuff  = false;
+  bool useClasicPuff  = false;
 
-	if (BZDB.evalInt("gmPuffEffect") == 1)
-		useClasicPuff = true;
+  if (BZDB.evalInt("gmPuffEffect") == 1) {
+    useClasicPuff = true;
+  }
 
-	if (useClasicPuff)
-	{
-		addExplosion(pos, 0.3f * BZDBCache::tankLength, 0.8f, true);
-		return;
-	}
+  if (useClasicPuff) {
+    addExplosion(pos, 0.3f * BZDBCache::tankLength, 0.8f, true);
+    return;
+  }
 
-	float rots[2] = {azimuth,elevation};
-	EffectsRenderer::instance().addGMPuffEffect(0,pos,rots,NULL);
-
+  float rots[2] = {azimuth,elevation};
+  EFFECTS.addGMPuffEffect(0, pos, rots, NULL);
 }
 
 // update events from outside if they should be checked
@@ -3158,6 +3179,9 @@ void handleFlagDropped(Player* tank)
     playLocalSound(SFX_DROP_FLAG);
     updateFlag(Flags::Null);
   }
+  else if (isViewTank(tank)) {
+    playLocalSound(SFX_DROP_FLAG);
+  }
 
   // add message
   std::string message("dropped ");
@@ -3241,30 +3265,34 @@ static bool		gotBlowedUp(BaseLocalPlayer* tank,
   if (reason != GotShot || flag != Flags::Shield) {
     // blow me up
     tank->explodeTank();
-		EffectsRenderer::instance().addDeathEffect(tank->getTeam(),tank->getPosition(),tank->getAngle());
-   if (tank == myTank) {
-      if (reason == GotRunOver)
+    EFFECTS.addDeathEffect(tank->getTeam(), tank->getPosition(), tank->getAngle());
+
+   if (isViewTank(tank)) {
+      if (reason == GotRunOver) {
 	playLocalSound(SFX_RUNOVER);
-      else
+      } else {
 	playLocalSound(SFX_DIE);
+      }
       ForceFeedback::death();
     } else {
       const float* pos = tank->getPosition();
-      if (reason == GotRunOver)
-	playWorldSound(SFX_RUNOVER, pos,
-		       getLocalPlayer(killer) == myTank);
-      else
-	playWorldSound(SFX_EXPLOSION, pos,
-		       getLocalPlayer(killer) == myTank);
+      if (reason == GotRunOver) {
+        playWorldSound(SFX_RUNOVER, pos,
+                       getLocalPlayer(killer) == myTank);
+      } else {
+        playWorldSound(SFX_EXPLOSION, pos,
+                       getLocalPlayer(killer) == myTank);
+      }
+    }
 
+    if (tank != myTank) {
+      const float* pos = tank->getPosition();
       float explodePos[3];
       explodePos[0] = pos[0];
       explodePos[1] = pos[1];
       explodePos[2] = pos[2] + tank->getMuzzleHeight();
       addTankExplosion(explodePos);
-
-   }
-
+    }
 
     // i lose a point
     if (reason != GotCaptured)
@@ -6444,29 +6472,23 @@ void			startPlaying(BzfDisplay* _display,
   // normal error callback (doesn't force a redraw)
   setErrorCallback(defaultErrorCallback);
 
-  std::string tmpString;
-
-  // print version
+  // print debugging info
   {
-    char bombMessage[80];
-    sprintf(bombMessage, "BZFlag version:  %s", getAppVersion());
-    controlPanel->addMessage("");
-    DEBUG1("%s\n", bombMessage);
+    // Application version
+    DEBUG1("BZFlag version:   %s\n", getAppVersion());
 
-    // Send to the console
-    tmpString = ColorStrings[RedColor];
-    tmpString += (const char *) bombMessage;
-    controlPanel->addMessage(tmpString);
+    // Protocol version
+    DEBUG1("BZFlag protocol:  %s\n", getProtocolVersion());
 
     // OpenGL Driver Information
-    DEBUG1("OpenGL vendor:   %s\n", (const char*)glGetString(GL_VENDOR));
-    DEBUG1("OpenGL version:  %s\n", (const char*)glGetString(GL_VERSION));
-    DEBUG1("OpenGL renderer: %s\n", (const char*)glGetString(GL_RENDERER));
+    DEBUG1("OpenGL vendor:    %s\n", (const char*)glGetString(GL_VENDOR));
+    DEBUG1("OpenGL version:   %s\n", (const char*)glGetString(GL_VERSION));
+    DEBUG1("OpenGL renderer:  %s\n", (const char*)glGetString(GL_RENDERER));
 
     // Depth Buffer bitplanes
     GLint zDepth;
     glGetIntegerv(GL_DEPTH_BITS, &zDepth);
-    DEBUG1("Depth Buffer:    %i bitplanes\n", zDepth);
+    DEBUG1("Depth Buffer:     %i bitplanes\n", zDepth);
   }
 
   // windows version can be very helpful in debug logs
@@ -6491,26 +6513,45 @@ void			startPlaying(BzfDisplay* _display,
     controlPanel->addMessage(bombMessage);
   }
 
-  // print copyright
-  tmpString = ColorStrings[RogueColor] + bzfcopyright;
-  controlPanel->addMessage(tmpString);
-  // print author
-  tmpString = ColorStrings[GreenColor] + "Author: Chris Schoeneman <crs23@bigfoot.com>";
-  controlPanel->addMessage(tmpString);
-  // print maintainer
-  tmpString = ColorStrings[CyanColor] + "Maintainer: Tim Riker <Tim@Rikers.org>";
-  controlPanel->addMessage(tmpString);
-  // print GL renderer
-  tmpString = ColorStrings[BlueColor];
-  tmpString += (const char*)glGetString(GL_RENDERER);
-  controlPanel->addMessage(tmpString);
-  // print audio driver
-  PlatformFactory::getMedia()->audioDriver(tmpString);
-  if (tmpString != "") {
-    tmpString = ColorStrings[PurpleColor] + "Audio Driver : " + tmpString;
+  // send informative header to the console
+  {
+    std::string tmpString;
+
+    controlPanel->addMessage("");
+    // print app version
+    tmpString = ColorStrings[RedColor];
+    tmpString += "BZFlag version: ";
+    tmpString += getAppVersion();
+    tmpString += " (";
+    tmpString += getProtocolVersion();
+    tmpString += ")";
+    controlPanel->addMessage(tmpString);
+    // print copyright
+    tmpString = ColorStrings[YellowColor];
+    tmpString += bzfcopyright;
+    controlPanel->addMessage(tmpString);
+    // print author
+    tmpString = ColorStrings[GreenColor];
+    tmpString += "Author:          Chris Schoeneman  <crs23@bigfoot.com>";
+    controlPanel->addMessage(tmpString);
+    // print maintainer
+    tmpString = ColorStrings[CyanColor];
+    tmpString += "Maintainer:      Tim Riker         <Tim@Rikers.org>";
+    controlPanel->addMessage(tmpString);
+    // print audio driver
+    std::string audioStr;
+    PlatformFactory::getMedia()->audioDriver(audioStr);
+    if (tmpString != "") {
+      tmpString = ColorStrings[BlueColor];
+      tmpString += "Audio Driver:    " + audioStr;
+      controlPanel->addMessage(tmpString);
+    }
+    // print GL renderer
+    tmpString = ColorStrings[PurpleColor];
+    tmpString += "OpenGL Driver:   ";
+    tmpString += (const char*)glGetString(GL_RENDERER);
     controlPanel->addMessage(tmpString);
   }
-
 
   // get current MOTD
   if (!BZDB.isTrue("disableMOTD")) {
