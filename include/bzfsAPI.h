@@ -805,6 +805,13 @@ public:
 
 BZF_API bool bz_setPlayerOperator (int playerId);
 
+// player score
+BZF_API bool bz_setPlayerWins (int playerId, int wins);
+BZF_API bool bz_setPlayerLosses (int playerId, int losses);
+BZF_API bool bz_setPlayerTKs (int playerId, int tks);
+
+BZF_API bool bz_resetPlayerScore(int playerId);
+
 // groups API
 BZF_API bzAPIStringList* bz_getGroupList ( void );
 BZF_API bzAPIStringList* bz_getGroupPerms ( const char* group );

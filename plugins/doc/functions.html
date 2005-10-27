@@ -205,21 +205,19 @@
 														<p><strong>BZF_API bool bz_freePlayerRecord ( bz_PlayerRecord *playerRecord );</strong><br>
 															This command will free the memory used by a Player Record Object. It must be 
 															called when a plug-in is done using the player data returned from <strong>bz_getPlayerByIndex</strong></p>
-														<p class="style10">The following score functions were removed until they can work 
-															properly on all clients.</p>
-														<p><span class="style8"><span class="style9"><strong>BZF_API bool bz_setPlayerWins (int 
+
+														<p><strong>BZF_API bool bz_setPlayerWins (int 
 																		playerId, int wins);</strong><br> 
-                      This command will set the number of wins (kills) in the score for the specified player, and update all client scores. </span>
-															</span></p>
-														<p class="style9"><strong>BZF_API bool bz_setPlayerLosses (int playerId, int losses);</strong><br>
+                      This command will set the number of wins (kills) in the score for the specified player, and update all client scores. </p>
+														<p><strong>BZF_API bool bz_setPlayerLosses (int playerId, int losses);</strong><br>
 															This command will set the number of losses(deaths) in the score for the 
 															specified player, and update all client scores.
 														</p>
-														<p class="style9"><strong>BZF_API bool bz_setPlayerTKs(int playerId, int tks);</strong><br>
+														<p><strong>BZF_API bool bz_setPlayerTKs(int playerId, int tks);</strong><br>
 															This command will set the number of TKs (teamkills) in the score for the 
 															specified player, and update all client scores.
 														</p>
-														<p class="style9"><strong>BZF_API bool bz_resetPlayerScore(int playerId);</strong><br>
+														<p><strong>BZF_API bool bz_resetPlayerScore(int playerId);</strong><br>
 															This command will reset to zero the score and TKs of the specified player and 
 															update all clients.</p>
 														<p><strong>Permission functions </strong>
