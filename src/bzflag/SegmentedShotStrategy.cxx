@@ -52,9 +52,7 @@ SegmentedShotStrategy::SegmentedShotStrategy(ShotPath* _path, bool useSuperTextu
   // initialize scene nodes
   boltSceneNode = new BoltSceneNode(_path->getPosition());
 
-  bool rabbitMode = World::getWorld()->allowRabbit();
-
-  const float* c = Team::getRadarColor(team, rabbitMode);
+  const float* c = Team::getRadarColor(team);
   if (faint) {
     boltSceneNode->setColor(c[0], c[1], c[2], 0.2f);
     boltSceneNode->setTextureColor(1.0f, 1.0f, 1.0f, 0.3f);
@@ -296,8 +294,7 @@ void			SegmentedShotStrategy::addShot(
     boltSceneNode->setColorblind(colorblind);
     TeamColor currentTeam = colorblind ? RogueTeam : team;
 
-    bool rabbitMode = World::getWorld()->allowRabbit();
-    const float* c = Team::getRadarColor(currentTeam, rabbitMode);
+    const float* c = Team::getRadarColor(currentTeam);
     boltSceneNode->setColor(c[0], c[1], c[2]);
 
     TextureManager &tm = TextureManager::instance();

@@ -1178,14 +1178,14 @@ static void rejectPlayer(int playerIndex, uint16_t code, const char *reason)
 // Team Size is wrong at some time
 static void fixTeamCount() {
   int playerIndex, teamNum;
-  for (teamNum = RogueTeam; teamNum < RabbitTeam; teamNum++)
+  for (teamNum = RogueTeam; teamNum < HunterTeam; teamNum++)
     team[teamNum].team.size = 0;
   for (playerIndex = 0; playerIndex < curMaxPlayers; playerIndex++) {
     GameKeeper::Player *p = GameKeeper::Player::getPlayerByIndex(playerIndex);
     if (p && p->player.isPlaying()) {
       teamNum = p->player.getTeam();
       if (teamNum == RabbitTeam)
-	teamNum = RogueTeam;
+	teamNum = HunterTeam;
       team[teamNum].team.size++;
     }
   }
@@ -2064,8 +2064,7 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
 // are the two teams foes with the current game style?
 bool areFoes(TeamColor team1, TeamColor team2)
 {
-  return team1!=team2 ||
-	 (team1==RogueTeam && !(clOptions->gameStyle & int(RabbitChaseGameStyle)));
+  return team1!=team2 || (team1==RogueTeam);
 }
 
 
@@ -2081,8 +2080,8 @@ static void sendWorld(int playerIndex, uint32_t ptr)
     size = 0;
     left = 0;
   } else if (ptr + size >= worldDatabaseSize) {
-      size = worldDatabaseSize - ptr;
-      left = 0;
+    size = worldDatabaseSize - ptr;
+    left = 0;
   }
   buf = nboPackUInt(bufStart, uint32_t(left));
   buf = nboPackString(buf, (char*)worldDatabase + ptr, size);

@@ -707,7 +707,7 @@ void			HUDRenderer::renderStatus(void)
   // print player name and score in upper left corner in team (radar) color
   if (!roaming && (!playerHasHighScore || scoreClock.isOn())) {
     sprintf(buffer, "%s: %d", myTank->getCallSign(), myTank->getScore());
-    hudColor3fv(Team::getRadarColor(teamIndex, World::getWorld()->allowRabbit()));
+    hudColor3fv(Team::getRadarColor(teamIndex));
     fm.drawString(x, y, 0, majorFontFace, majorFontSize, buffer);
   }
 
@@ -864,7 +864,7 @@ void			HUDRenderer::renderTankLabels(SceneRenderer& renderer)
     if (pl && pl->isAlive()) {
       const char *name = pl->getCallSign();
       double x, y, z;
-      hudSColor3fv(Team::getRadarColor(pl->getTeam(), World::getWorld()->allowRabbit()));
+      hudSColor3fv(Team::getRadarColor(pl->getTeam()));
       gluProject(pl->getPosition()[0], pl->getPosition()[1],
 		 pl->getPosition()[2], model, proj, view, &x, &y, &z);
       if (z >= 0.0 && z <= 1.0) {

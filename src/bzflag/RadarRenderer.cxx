@@ -349,8 +349,6 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
     return;
   }
 
-  bool rabbitMode = World::getWorld()->allowRabbit();
-
   smooth = !multiSampled && BZDBCache::smooth;
   const bool fastRadar = ((BZDBCache::radarStyle == 1) ||
 			  (BZDBCache::radarStyle == 2)) && BZDBCache::zbuffer;
@@ -600,9 +598,9 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
 
 	const float *color;
 	if (myTank->getFlag() == Flags::Colorblindness) {
-	  color = Team::getRadarColor(RogueTeam,rabbitMode);
+	  color = Team::getRadarColor(RogueTeam);
 	} else {
-	  color = Team::getRadarColor(player->getTeam(),rabbitMode);
+	  color = Team::getRadarColor(player->getTeam());
 	}
 
 	float dimmedcolor[3];
@@ -612,7 +610,7 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
 	glColor3fv(dimmedcolor);
       } else {
 	glColor3fv(Team::getRadarColor(myTank->getFlag() ==
-			     Flags::Colorblindness ? RogueTeam : player->getTeam(), rabbitMode));
+			     Flags::Colorblindness ? RogueTeam : player->getTeam()));
       }
       // If this tank is hunted flash it on the radar
       if (player->isHunted() && myTank->getFlag() != Flags::Colorblindness) {
@@ -649,9 +647,9 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
 	  const float *shotcolor;
 	  if (coloredShot) {
 	    if (myTank->getFlag() == Flags::Colorblindness)
-	      shotcolor = Team::getRadarColor(RogueTeam,rabbitMode);
+	      shotcolor = Team::getRadarColor(RogueTeam);
 	    else
-	      shotcolor = Team::getRadarColor(player->getTeam(),rabbitMode);
+	      shotcolor = Team::getRadarColor(player->getTeam());
 	    const float cs = colorScale(shot->getPosition()[2], muzzleHeight);
 	    glColor3f(shotcolor[0] * cs, shotcolor[1] * cs, shotcolor[2] * cs);
 	  } else {

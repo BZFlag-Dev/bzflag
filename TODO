@@ -11,9 +11,6 @@ THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
 
 THESE ARE LOWER PRIORITY
 
-* Hunters should be a separate team (not rogue).  Remove all the ugly
-  hunter-color and hunter-teamkill hacks.  Needs protocol breakage.
-
 * Send world weapon 'tilt' info over the wire for saving maps
 
 * look closely at how local and global logins / groups interact:

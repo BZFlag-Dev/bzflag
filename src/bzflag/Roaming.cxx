@@ -169,10 +169,7 @@ void Roaming::buildRoamingLabel(void) {
   if (world && tracked) {
     if (BZDBCache::colorful) {
       int color = tracked->getTeam();
-      if (world->allowRabbit() && (color == RogueTeam)) {
-	// hunters are orange (hack)
-	color = OrangeColor;
-      } else if (color < 0 || color > 4) {
+      if (color == RabbitTeam || color < 0 || color > LastColor) {
 	// non-teamed, rabbit are white (same as observer)
 	color = WhiteColor;
       }

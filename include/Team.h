@@ -35,10 +35,10 @@ struct Team {
     static const char*	getName(TeamColor); // const
     static const TeamColor	getTeam(const std::string name); // const
     static const float*	getTankColor(TeamColor); // const
-    static const float*	getRadarColor(TeamColor team, bool rabbitMode = false); // const
+    static const float*	getRadarColor(TeamColor team); // const
     static bool	isColorTeam(TeamColor); // const
 
-  static void		setColors(TeamColor,
+    static void		setColors(TeamColor,
 				const float* tank,
 				const float* radar);
 
@@ -50,7 +50,6 @@ struct Team {
     static float	tankColor[NumTeams][3];
     static float	radarColor[NumTeams][3];
 
-	static float	hunterRadarColor[3];
 };
 
 #endif // BZF_TEAM_H

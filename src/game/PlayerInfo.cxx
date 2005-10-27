@@ -305,7 +305,7 @@ void PlayerInfo::setTeam(TeamColor _team) {
 }
 
 void PlayerInfo::wasARabbit() {
-  team = RogueTeam;
+  team = HunterTeam;
   wasRabbit = true;
 }
 

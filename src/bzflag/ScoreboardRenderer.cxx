@@ -327,13 +327,11 @@ void			ScoreboardRenderer::renderTeamScores (float x, float y, float dy){
   qsort(teams, teamCount, sizeof(int), teamScoreCompare);
   y -= dy;
 
-  bool rabbitMode = World::getWorld()->allowRabbit();
-
   char score[44];
   for (i = 0 ; i < teamCount; i++){
     Team& team = World::getWorld()->getTeam(teams[i]);
     sprintf(score, "%3d (%3d-%-3d) %3d", team.won - team.lost, team.won, team.lost, team.size);
-    hudColor3fv(Team::getRadarColor((TeamColor)teams[i],rabbitMode));
+    hudColor3fv(Team::getRadarColor((TeamColor)teams[i]));
     fm.drawString(xn, y, 0, minorFontFace, minorFontSize, score);
     y -= dy;
   }
@@ -546,20 +544,13 @@ void			ScoreboardRenderer::drawPlayerScore(const Player* player,
 
 
   // team color
-  bool rabbitMode = World::getWorld()->allowRabbit();
   TeamColor teamIndex = player->getTeam();
   if (teamIndex < RogueTeam) {
     teamIndex = RogueTeam;
   }
   std::string teamColor;
   if (player->getId() < 200) {
-    if (rabbitMode && (teamIndex == RogueTeam)) {
-      // hunters get orange (hack)
-      teamColor = ColorStrings[OrangeColor];
-    } else {
-      // ordinary players
-      teamColor = ColorStrings[teamIndex];
-    }
+    teamColor = ColorStrings[teamIndex];
   } else {
     teamColor = ColorStrings[CyanColor]; // replay observers
   }
@@ -646,9 +637,9 @@ void			ScoreboardRenderer::drawPlayerScore(const Player* player,
 
   // draw
   if (player->getTeam() != ObserverTeam) {
-    hudColor3fv(Team::getRadarColor(teamIndex,rabbitMode));
+    hudColor3fv(Team::getRadarColor(teamIndex));
     fm.drawString(x1, y, 0, minorFontFace, minorFontSize, score);
-    hudColor3fv(Team::getRadarColor(teamIndex,rabbitMode));
+    hudColor3fv(Team::getRadarColor(teamIndex));
     fm.drawString(x2, y, 0, minorFontFace, minorFontSize, kills);
   }
   fm.drawString(x3, y, 0, minorFontFace, minorFontSize, playerInfo);
