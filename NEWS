@@ -3,6 +3,8 @@
 
 BZFlag 2.1.0
 ------------
+
+* bzadmin require less network bandwidth - Alfredo Tupone
 * Inertia setting are bzdb vars now - Alfredo Tupone
 
 BZFlag 2.0.5
