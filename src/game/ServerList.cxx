@@ -74,6 +74,7 @@ void ServerList::readServerList()
     static char *tokenIdentifier = "TOKEN: ";
     static char *noTokenIdentifier = "NOTOK: ";
     static char *errorIdentifier = "ERROR: ";
+    static char *noticeIdentifier = "NOTICE: ";
     // walks entire reply including HTTP headers
     while (base < endS) {
       // find next newline
@@ -110,6 +111,10 @@ void ServerList::readServerList()
 	strcpy(startupInfo->token, "badtoken\0");
 	base = scan;
 	continue;
+      } else if (!strncmp(base, noticeIdentifier, strlen(noticeIdentifier))) {
+        printError(base);
+        base = scan;
+        continue;
       }
       // parse server info
       char *scan2, *name, *version, *infoServer, *address, *title;
