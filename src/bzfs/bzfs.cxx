@@ -357,8 +357,9 @@ static void sendPendingGameTime()
   const TimeKeeper nowTime = TimeKeeper::getCurrent();
   for (int i = 0; i < curMaxPlayers; i++) {
     GameKeeper::Player *gkPlayer = GameKeeper::Player::getPlayerByIndex(i);
-    if ((gkPlayer != NULL) &&
-        (gkPlayer->getNextGameTime() - nowTime) < 0.0f) {
+    if ((gkPlayer != NULL)
+	&& gkPlayer->player.isHuman()
+	&& (gkPlayer->getNextGameTime() - nowTime) < 0.0f) {
       sendGameTime(gkPlayer);
     }
   }
@@ -967,7 +968,8 @@ static void acceptClient()
   // send the GameTime
   GameKeeper::Player* gkPlayer =
     GameKeeper::Player::getPlayerByIndex(playerIndex);
-  if (gkPlayer != NULL) {
+  if (gkPlayer != NULL
+      && gkPlayer->player.isHuman()) {
     sendGameTime(gkPlayer);
   }
 
@@ -1151,9 +1153,13 @@ void sendMessage(int playerIndex, PlayerId dstPlayer, const char *message)
   bool broadcast = false;
 
   if (dstPlayer <= LastRealPlayer) {
-    directMessage(dstPlayer, MsgMessage, len, bufStart);
-    if (playerIndex <= LastRealPlayer && dstPlayer != playerIndex)
-      directMessage(playerIndex, MsgMessage, len, bufStart);
+    GameKeeper::Player *playerData
+      = GameKeeper::Player::getPlayerByIndex(dstPlayer);
+    if (playerData && !playerData->player.isBot()) {
+      directMessage(dstPlayer, MsgMessage, len, bufStart);
+      if (playerIndex <= LastRealPlayer && dstPlayer != playerIndex)
+	directMessage(playerIndex, MsgMessage, len, bufStart);
+    }
   }
   // FIXME this teamcolor <-> player id conversion is in several files now
   else if (dstPlayer >= 244 && dstPlayer <= 250) {
