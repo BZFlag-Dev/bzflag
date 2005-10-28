@@ -812,7 +812,7 @@ void BackgroundRenderer::drawSkybox()
   glDisable(GL_CULL_FACE);
 
   if (!BZDBCache::drawGround) {
-    tm.bind(skyboxTexID[5]); // down
+    tm.bind(skyboxTexID[5]); // bottom
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, skyboxWrapMode);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, skyboxWrapMode);
     glBegin(GL_QUADS);
@@ -825,7 +825,7 @@ void BackgroundRenderer::drawSkybox()
     glEnd();
   }
 
-  tm.bind(skyboxTexID[4]); // up
+  tm.bind(skyboxTexID[4]); // top
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, skyboxWrapMode);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, skyboxWrapMode);
   glBegin(GL_QUADS);
