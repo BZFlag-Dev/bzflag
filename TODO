@@ -308,5 +308,7 @@ THESE NEED TO WAIT FOR THE NEXT PROTOCOL BREAKAGE
   & position of shot start. This can fix unalignment in time between shot and
   shooting tank.
 
+* Bot should share the TCP connection with the normal tank player, and should be allowed to increase / decrease number of it run-time
+
 See the Task Tracker on Sourceforge (http://sourceforge.net/pm/?group_id=3248)
 for more todo items and future planning endeavors.
