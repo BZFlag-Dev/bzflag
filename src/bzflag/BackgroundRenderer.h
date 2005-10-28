@@ -37,6 +37,7 @@ class BackgroundRenderer {
 			~BackgroundRenderer();
 
     void		setupGroundMaterials();
+    void		setupSkybox();
 
     void		renderSky(SceneRenderer&, bool fullWindow, bool mirror);
     void		renderGround(SceneRenderer&, bool fullWindow);
@@ -61,6 +62,7 @@ class BackgroundRenderer {
     std::string		userTextures[2];
   protected:
     void		drawSky(SceneRenderer&, bool mirror);
+    void		drawSkybox();
     void		drawGround(void);
     void		drawGroundCentered(void);
     void		drawGroundGrid(SceneRenderer&);
@@ -128,6 +130,9 @@ class BackgroundRenderer {
     OpenGLGState	sunShadowsGState;
 
     // celestial stuff
+    bool		doSkybox;
+    GLenum		skyboxWrapMode;
+    int			skyboxTexID[6];
     bool		doStars;
     bool		doSunset;
     GLfloat		skyZenithColor[3];

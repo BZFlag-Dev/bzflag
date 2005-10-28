@@ -358,6 +358,7 @@ void SceneRenderer::setRebuildTanks()
 void SceneRenderer::setupBackgroundMaterials()
 {
   if (background) {
+    background->setupSkybox();
     background->setupGroundMaterials();
   }
   return;

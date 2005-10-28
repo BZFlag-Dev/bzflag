@@ -75,7 +75,7 @@ class OpenGLTexture {
 
     Filter		getFilter();
     void		setFilter(Filter);
-    
+
     bool		getColorAverages(float rgbaRaw[4],
                                          bool factorAlpha) const;
 
