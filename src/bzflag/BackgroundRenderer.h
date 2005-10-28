@@ -130,7 +130,7 @@ class BackgroundRenderer {
     OpenGLGState	sunShadowsGState;
 
     // celestial stuff
-    bool		doSkybox;
+    bool		haveSkybox;
     GLenum		skyboxWrapMode;
     int			skyboxTexID[6];
     GLfloat		skyboxColor[8][4];

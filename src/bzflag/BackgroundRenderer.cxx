@@ -728,7 +728,7 @@ void BackgroundRenderer::resizeSky() {
 
 void BackgroundRenderer::setupSkybox()
 {
-  doSkybox = false;
+  haveSkybox = false;
 
   int i;
   const char *(skyboxNames[6]) = {
@@ -795,7 +795,7 @@ void BackgroundRenderer::setupSkybox()
     }
   }
   
-  doSkybox = true;
+  haveSkybox = true;
   
   return;
 }
@@ -907,6 +907,8 @@ void BackgroundRenderer::drawSkybox()
 void BackgroundRenderer::drawSky(SceneRenderer& renderer, bool mirror)
 {
   glPushMatrix();
+  
+  const bool doSkybox = haveSkybox && (renderer.useQuality() >= 2);
 
   if (!doSkybox) {
     // rotate sky so that horizon-point-toward-sun-color is actually
