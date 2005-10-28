@@ -1424,7 +1424,11 @@ static void addPlayer(int playerIndex, GameKeeper::Player *playerData)
     const int minRevision = 5;
     int major, minor, rev;
     playerData->player.getClientVersionNumbers(major, minor, rev);
-    if ((major < minMajor) || (minor < minMinor) || (rev < minRevision)) {
+    if ((major < minMajor) ||
+        ((major == minMajor) &&
+         ((minor < minMinor) ||
+          ((minor == minMinor) &&
+           (rev < minRevision))))) {
       char buffer[256];
       snprintf(buffer, 256,
                "Client does not support the required graphics capabilities\n"
