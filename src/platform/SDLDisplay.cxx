@@ -80,6 +80,8 @@ SDLDisplay::SDLDisplay() : fullScreen(false), base_width(640),
   } else {
     // if no modes then make default
     _resolutions[0] = new ResInfo ("default", 640, 480, 0);
+    defaultWidth = 640;
+    defaultHeight = 480;
   }
 
   // limit us to the main display
