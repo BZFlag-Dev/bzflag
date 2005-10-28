@@ -42,8 +42,10 @@
 #endif
 #include "TimeKeeper.h"
 
+#ifndef BUILDING_BZADMIN
 // bzflag local implementation headers
 #include "playing.h"
+#endif
 
 #define UDEBUG if (UDEBUGMSG) printf
 #define UDEBUGMSG false
