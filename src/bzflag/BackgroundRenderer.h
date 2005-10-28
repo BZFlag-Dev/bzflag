@@ -133,7 +133,7 @@ class BackgroundRenderer {
     bool		doSkybox;
     GLenum		skyboxWrapMode;
     int			skyboxTexID[6];
-    GLfloat		skyboxColor[6][4];
+    GLfloat		skyboxColor[8][4];
     bool		doStars;
     bool		doSunset;
     GLfloat		skyZenithColor[3];
