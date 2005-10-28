@@ -15,6 +15,7 @@
 
 /* system implementation headers */
 #include <errno.h>
+#include <stdio.h>
 #include <string>
 #include <ctype.h>
 
@@ -38,6 +39,9 @@ PlayerInfo::PlayerInfo(int _playerIndex) :
   memset(callSign, 0, CallSignLen);
   memset(token, 0, TokenLen);
   memset(clientVersion, 0, VersionLen);
+  clientVersionMajor = -1;
+  clientVersionMinor = -1;
+  clientVersionRevision = -1;
 }
 
 void PlayerInfo::setFilterParameters(bool	_callSignFiltering,
@@ -109,10 +113,24 @@ bool PlayerInfo::unpackEnter(void *buf, uint16_t &rejectCode, char *rejectMsg)
   buf = nboUnpackString(buf, email, EmailLen);
   buf = nboUnpackString(buf, token, TokenLen);
   buf = nboUnpackString(buf, clientVersion, VersionLen);
+  
+  // terminate the strings
+  callSign[CallSignLen - 1] = '\0';
+  email[EmailLen - 1] = '\0';
+  token[TokenLen - 1] = '\0';
+  clientVersion[VersionLen - 1] = '\0';
   cleanEMail();
-
+  
   DEBUG2("Player %s [%d] sent version string: %s\n",
 	 callSign, playerIndex, clientVersion);
+  int major, minor, rev;
+  if (sscanf(clientVersion, "%d.%d.%d", &major, &minor, &rev) == 3) {
+    clientVersionMajor = major;
+    clientVersionMinor = minor;
+    clientVersionRevision = rev;
+  }
+  DEBUG4("Player %s version code parsed as:  %i.%i.%i\n", callSign,
+         clientVersionMajor, clientVersionMinor, clientVersionRevision);
 
   // spoof filter holds "SERVER" for robust name comparisons
   if (serverSpoofingFilter.wordCount() == 0) {
@@ -328,6 +346,14 @@ bool PlayerInfo::isFlagTransitSafe() {
 
 const char *PlayerInfo::getClientVersion() {
   return clientVersion;
+}
+
+void PlayerInfo::getClientVersionNumbers(int& major, int& minor, int& rev)
+{
+  major = clientVersionMajor;
+  minor = clientVersionMinor;
+  rev = clientVersionRevision;
+  return;
 }
 
 std::string PlayerInfo::getIdleStat() {

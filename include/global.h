@@ -87,7 +87,7 @@ enum GameStyle {
 	AntidoteGameStyle =		0x0080,	// anti-bad flags
 	HandicapGameStyle =		0x0100,	// handicap players based on score (eek! was TimeSyncGameStyle)
 	RabbitChaseGameStyle =		0x0200,	// rabbit chase
-	AdvancedGraphics =		0x0400,	// force the use of fancy gfx  (currently drawInfo and fog)
+	RequireGraphics =		0x0400	// force the use of fancy gfx  (currently drawInfo and fog)
 	// add here before reusing old ones above
 };
 

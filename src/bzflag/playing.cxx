@@ -5646,6 +5646,10 @@ static void		playingLoop()
   while (!CommandsStandard::isQuit()) {
   
     BZDBCache::update();
+    if (world) {
+      // make sure there are no adjustments
+      world->enforceRequiredGraphics();
+    }
 
     // set this step game time
     GameTime::setStepTime();

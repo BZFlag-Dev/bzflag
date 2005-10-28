@@ -98,6 +98,7 @@ public:
   void	setFlag(int flag);
   bool	isFlagTransitSafe();
   const char *getClientVersion();
+  void getClientVersionNumbers(int& major, int& major, int& revision);
   std::string getIdleStat();
   bool	canBeRabbit(bool relaxing = false);
   void	setPaused(bool paused);
@@ -144,6 +145,9 @@ private:
   char email[EmailLen];
   // version information from client
   char clientVersion[VersionLen];
+  int clientVersionMajor;
+  int clientVersionMinor;
+  int clientVersionRevision;
 
   // player's team
   TeamColor team;
