@@ -558,6 +558,18 @@ void SDLDisplay::getWindowSize(int& width, int& height) {
     width  = base_width;
     height = base_height;
   }
+  
+  /* sanity checks */
+  if (width <= 0) {
+    modeIndex = -1;
+    width = defaultWidth;
+    printf("ERROR: Non-positive window width encountered (%d)\n", width);
+  }
+  if (height <= 0) {
+    modeIndex = -1;
+    height = defaultHeight;
+    printf("ERROR: Non-positive window height encountered (%d)\n", height);
+  }
 }
 
 void SDLDisplay::enableGrabMouse(bool on) {
