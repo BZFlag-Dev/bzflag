@@ -740,14 +740,15 @@ void BackgroundRenderer::setupSkybox()
     "BottomSkyboxMaterial"
   };
   TextureManager& tm = TextureManager::instance();
-
+  const BzMaterial* bzmats[6] = {NULL, NULL, NULL, NULL, NULL, NULL};
+  
   // try to load the textures  
   for (i = 0; i < 6; i++) {
-    const BzMaterial* bzmat = MATERIALMGR.findMaterial(skyboxNames[i]);
-    if ((bzmat == NULL) || (bzmat->getTextureCount() <= 0)) {
+    bzmats[i] = MATERIALMGR.findMaterial(skyboxNames[i]);
+    if ((bzmats[i] == NULL) || (bzmats[i]->getTextureCount() <= 0)) {
       break;
     }
-    skyboxTexID[i] = tm.getTextureID(bzmat->getTextureLocal(0).c_str());
+    skyboxTexID[i] = tm.getTextureID(bzmats[i]->getTextureLocal(0).c_str());
     if (skyboxTexID[i] < 0) {
       break;
     }
@@ -756,10 +757,9 @@ void BackgroundRenderer::setupSkybox()
   // unload textures if they were not all successful  
   if (i != 6) {
     while (i >= 0) {
-      const BzMaterial* bzmat = MATERIALMGR.findMaterial(skyboxNames[i]);
-      if ((bzmat != NULL) && (bzmat->getTextureCount() > 0)) {
+      if ((bzmats[i] != NULL) && (bzmats[i]->getTextureCount() > 0)) {
         // NOTE: this could delete textures the might be used elsewhere
-        tm.removeTexture(bzmat->getTextureLocal(0).c_str());
+        tm.removeTexture(bzmats[i]->getTextureLocal(0).c_str());
       }
       i--;
     }
@@ -768,10 +768,7 @@ void BackgroundRenderer::setupSkybox()
 
   // reference map specified materials
   for (i = 0; i < 6; i++) {
-    const BzMaterial* bzmat = MATERIALMGR.findMaterial(skyboxNames[i]);
-    if ((bzmat != NULL) && (bzmat->getTextureCount() > 0)) {
-      ((BzMaterial*)bzmat)->setReference();
-    }
+    ((BzMaterial*)bzmats[i])->setReference();
   }
 
   // setup the wrap mode
@@ -782,6 +779,21 @@ void BackgroundRenderer::setupSkybox()
     skyboxWrapMode = GL_CLAMP_TO_EDGE;
   }
 #endif
+
+  // setup the corner colors
+  const int cornerIndices[8][3] = {
+    {5, 0, 1}, {5, 1, 2}, {5, 2, 3}, {5, 3, 0},
+    {4, 0, 1}, {4, 1, 2}, {4, 2, 3}, {4, 3, 0}
+  };
+  for (i = 0; i < 8; i++) {
+    for (int c = 0; c < 4; c++) {
+      skyboxColor[i][c] = 0.0f;
+      for (int f = 0; f < 3; f++) {
+        skyboxColor[i][c] += bzmats[cornerIndices[i][f]]->getDiffuse()[c];
+      }
+      skyboxColor[i][c] /= 3.0f;
+    }
+  }
   
   doSkybox = true;
   
@@ -806,10 +818,11 @@ void BackgroundRenderer::drawSkybox()
   
   OpenGLGState::resetState();
 
-  glColor3f(1.0f, 1.0f, 1.0f);
+  const GLfloat (*colrs)[4] = skyboxColor;
 
   glEnable(GL_TEXTURE_2D);
   glDisable(GL_CULL_FACE);
+  glShadeModel(GL_SMOOTH);
 
   if (!BZDBCache::drawGround) {
     tm.bind(skyboxTexID[5]); // bottom
@@ -817,10 +830,10 @@ void BackgroundRenderer::drawSkybox()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, skyboxWrapMode);
     glBegin(GL_QUADS);
     {
-      glTexCoord2fv(txcds[0]); glVertex3fv(verts[2]);
-      glTexCoord2fv(txcds[1]); glVertex3fv(verts[3]);
-      glTexCoord2fv(txcds[2]); glVertex3fv(verts[0]);
-      glTexCoord2fv(txcds[3]); glVertex3fv(verts[1]);
+      glTexCoord2fv(txcds[0]); glColor3fv(colrs[2]); glVertex3fv(verts[2]);
+      glTexCoord2fv(txcds[1]); glColor3fv(colrs[3]); glVertex3fv(verts[3]);
+      glTexCoord2fv(txcds[2]); glColor3fv(colrs[0]); glVertex3fv(verts[0]);
+      glTexCoord2fv(txcds[3]); glColor3fv(colrs[1]); glVertex3fv(verts[1]);
     }
     glEnd();
   }
@@ -830,10 +843,10 @@ void BackgroundRenderer::drawSkybox()
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, skyboxWrapMode);
   glBegin(GL_QUADS);
   {
-    glTexCoord2fv(txcds[0]); glVertex3fv(verts[5]);
-    glTexCoord2fv(txcds[1]); glVertex3fv(verts[4]);
-    glTexCoord2fv(txcds[2]); glVertex3fv(verts[7]);
-    glTexCoord2fv(txcds[3]); glVertex3fv(verts[6]);
+    glTexCoord2fv(txcds[0]); glColor3fv(colrs[5]); glVertex3fv(verts[5]);
+    glTexCoord2fv(txcds[1]); glColor3fv(colrs[4]); glVertex3fv(verts[4]);
+    glTexCoord2fv(txcds[2]); glColor3fv(colrs[7]); glVertex3fv(verts[7]);
+    glTexCoord2fv(txcds[3]); glColor3fv(colrs[6]); glVertex3fv(verts[6]);
   }
   glEnd();
 
@@ -842,10 +855,10 @@ void BackgroundRenderer::drawSkybox()
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, skyboxWrapMode);
   glBegin(GL_QUADS);
   {
-    glTexCoord2fv(txcds[0]); glVertex3fv(verts[0]); 
-    glTexCoord2fv(txcds[1]); glVertex3fv(verts[3]);
-    glTexCoord2fv(txcds[2]); glVertex3fv(verts[7]);
-    glTexCoord2fv(txcds[3]); glVertex3fv(verts[4]);
+    glTexCoord2fv(txcds[0]); glColor3fv(colrs[0]); glVertex3fv(verts[0]); 
+    glTexCoord2fv(txcds[1]); glColor3fv(colrs[3]); glVertex3fv(verts[3]);
+    glTexCoord2fv(txcds[2]); glColor3fv(colrs[7]); glVertex3fv(verts[7]);
+    glTexCoord2fv(txcds[3]); glColor3fv(colrs[4]); glVertex3fv(verts[4]);
   }
   glEnd();
 
@@ -854,10 +867,10 @@ void BackgroundRenderer::drawSkybox()
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, skyboxWrapMode);
   glBegin(GL_QUADS);
   {
-    glTexCoord2fv(txcds[0]); glVertex3fv(verts[1]);
-    glTexCoord2fv(txcds[1]); glVertex3fv(verts[0]);
-    glTexCoord2fv(txcds[2]); glVertex3fv(verts[4]);
-    glTexCoord2fv(txcds[3]); glVertex3fv(verts[5]);
+    glTexCoord2fv(txcds[0]); glColor3fv(colrs[1]); glVertex3fv(verts[1]);
+    glTexCoord2fv(txcds[1]); glColor3fv(colrs[0]); glVertex3fv(verts[0]);
+    glTexCoord2fv(txcds[2]); glColor3fv(colrs[4]); glVertex3fv(verts[4]);
+    glTexCoord2fv(txcds[3]); glColor3fv(colrs[5]); glVertex3fv(verts[5]);
   }
   glEnd();
 
@@ -866,10 +879,10 @@ void BackgroundRenderer::drawSkybox()
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, skyboxWrapMode);
   glBegin(GL_QUADS);
   {
-    glTexCoord2fv(txcds[0]); glVertex3fv(verts[2]);
-    glTexCoord2fv(txcds[1]); glVertex3fv(verts[1]);
-    glTexCoord2fv(txcds[2]); glVertex3fv(verts[5]);
-    glTexCoord2fv(txcds[3]); glVertex3fv(verts[6]);
+    glTexCoord2fv(txcds[0]); glColor3fv(colrs[2]); glVertex3fv(verts[2]);
+    glTexCoord2fv(txcds[1]); glColor3fv(colrs[1]); glVertex3fv(verts[1]);
+    glTexCoord2fv(txcds[2]); glColor3fv(colrs[5]); glVertex3fv(verts[5]);
+    glTexCoord2fv(txcds[3]); glColor3fv(colrs[6]); glVertex3fv(verts[6]);
   }
   glEnd();
 
@@ -878,13 +891,14 @@ void BackgroundRenderer::drawSkybox()
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, skyboxWrapMode);
   glBegin(GL_QUADS);
   {
-    glTexCoord2fv(txcds[0]); glVertex3fv(verts[3]);
-    glTexCoord2fv(txcds[1]); glVertex3fv(verts[2]);
-    glTexCoord2fv(txcds[2]); glVertex3fv(verts[6]);
-    glTexCoord2fv(txcds[3]); glVertex3fv(verts[7]);
+    glTexCoord2fv(txcds[0]); glColor3fv(colrs[3]); glVertex3fv(verts[3]);
+    glTexCoord2fv(txcds[1]); glColor3fv(colrs[2]); glVertex3fv(verts[2]);
+    glTexCoord2fv(txcds[2]); glColor3fv(colrs[6]); glVertex3fv(verts[6]);
+    glTexCoord2fv(txcds[3]); glColor3fv(colrs[7]); glVertex3fv(verts[7]);
   }
   glEnd();
 
+  glShadeModel(GL_FLAT);
   glEnable(GL_CULL_FACE);
   glDisable(GL_TEXTURE_2D);
 }
