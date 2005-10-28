@@ -225,6 +225,27 @@ void broadcastMessage(uint16_t code, int len, const void *msg, bool alsoTty)
   return;
 }
 
+// relay message only for human. Bots will get message locally.
+static void relayMessage(uint16_t code, int len, const void *msg)
+{
+  // send message to everyone
+  for (int i = 0; i < curMaxPlayers; i++) {
+    GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(i);
+    if (!playerData)
+      continue;
+    if (playerData->player.isPlaying() && playerData->player.isHuman()) {
+      directMessage(i, code, len, msg);
+    }
+  }
+
+  // record the packet
+  if (Record::enabled()) {
+    Record::addPacket(code, len, msg);
+  }
+
+  return;
+}
+
 
 //
 // global variable callback
@@ -434,8 +455,7 @@ static void sendPlayerUpdate(GameKeeper::Player *playerData, int index)
 
   if (playerData->getIndex() == index) {
     // send all players info about player[playerIndex]
-    broadcastMessage(MsgAddPlayer, (char*)buf - (char*)bufStart, bufStart,
-		     false);
+    relayMessage(MsgAddPlayer, (char*)buf - (char*)bufStart, bufStart);
   } else {
     directMessage(index, MsgAddPlayer, (char*)buf - (char*)bufStart, bufStart);
   }
@@ -2888,7 +2908,7 @@ static void shotFired(int playerIndex, void *buf, int len)
   if (firingInfo.flagType == Flags::GuidedMissile)
     playerData->player.endShotCredit--;
 
-  broadcastMessage(MsgShotBegin, len, buf, false);
+  relayMessage(MsgShotBegin, len, buf);
 
 }
 
@@ -2899,7 +2919,7 @@ static void shotEnded(const PlayerId& id, int16_t shotIndex, uint16_t reason)
   buf = nboPackUByte(bufStart, id);
   buf = nboPackShort(buf, shotIndex);
   buf = nboPackUShort(buf, reason);
-  broadcastMessage(MsgShotEnd, (char*)buf-(char*)bufStart, bufStart, false);
+  relayMessage(MsgShotEnd, (char*)buf-(char*)bufStart, bufStart);
 }
 
 static void sendTeleport(int playerIndex, uint16_t from, uint16_t to)

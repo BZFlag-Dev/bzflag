@@ -92,6 +92,7 @@ void setTarget();
 bool shouldGrabMouse();
 void setRoamingLabel();
 void drawFrame(const float dt);
+void injectMessages(uint16_t code, uint16_t len, void *msg);
 
 extern void joinGame();
 

@@ -86,8 +86,8 @@ class ServerLink {
   //	  It should be changed to something cleaner.
 #ifndef BUILDING_BZADMIN
     void		sendPlayerUpdate(Player*);
-#endif
     void		sendBeginShot(const FiringInfo&);
+#endif
     void		sendEndShot(const PlayerId&, int shotId, int reason);
     void		sendAlive();
     void		sendTeleport(int from, int to);

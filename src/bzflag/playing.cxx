@@ -2965,6 +2965,14 @@ static void		doMessages()
 #endif
 }
 
+void injectMessages(uint16_t code, uint16_t len, void *msg) {
+#ifdef ROBOT
+  for (int i = 0; i < numRobots; i++)
+    if (code == MsgKilled || code == MsgShotBegin || code == MsgShotEnd)
+      handleServerMessage(false, code, len, msg);
+#endif
+}
+
 static void		updateFlags(float dt)
 {
   for (int i = 0; i < numFlags; i++) {
