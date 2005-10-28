@@ -2959,7 +2959,7 @@ static void		doMessages()
   for (int i = 0; i < numRobots; i++) {
     while (robotServer[i]
 	   && (e = robotServer[i]->read(code, len, msg, 0)) == 1);
-    if (code == MsgKilled || code == MsgShotBegin || code == MsgShotEnd)
+    if (code == MsgKilled)
       handleServerMessage(false, code, len, msg);
   }
 #endif
@@ -2968,8 +2968,7 @@ static void		doMessages()
 void injectMessages(uint16_t code, uint16_t len, void *msg) {
 #ifdef ROBOT
   for (int i = 0; i < numRobots; i++)
-    if (code == MsgKilled || code == MsgShotBegin || code == MsgShotEnd)
-      handleServerMessage(false, code, len, msg);
+    handleServerMessage(false, code, len, msg);
 #endif
 }
 
