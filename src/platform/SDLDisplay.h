@@ -55,6 +55,9 @@ class SDLDisplay : public BzfDisplay {
   bool oldFullScreen;
   int  oldWidth;
   int  oldHeight;
+
+  int  defaultWidth;
+  int  defaultHeight;
 };
 
 class SDLVisual : public BzfVisual {

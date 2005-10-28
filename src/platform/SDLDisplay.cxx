@@ -58,8 +58,8 @@ SDLDisplay::SDLDisplay() : fullScreen(false), base_width(640),
     defaultResolutionIndex = 0;
 #ifdef WIN32
     HDC hDC = GetDC(GetDesktopWindow());
-    int defaultWidth = GetDeviceCaps(hDC, HORZRES);
-    int defaultHeight = GetDeviceCaps(hDC, VERTRES);
+    defaultWidth = GetDeviceCaps(hDC, HORZRES);
+    defaultHeight = GetDeviceCaps(hDC, VERTRES);
     ReleaseDC(GetDesktopWindow(), hDC);
 #endif
     for (int i = 0; modeList[i]; i++) {
