@@ -4,6 +4,7 @@
 BZFlag 2.1.0
 ------------
 
+* All scores are controlled completely by the server - Daniel Remenak
 * bzadmin require less network bandwidth - Alfredo Tupone
 * Inertia setting are bzdb vars now - Alfredo Tupone
 
