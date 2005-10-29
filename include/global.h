@@ -25,7 +25,7 @@
 /* common headers */
 #include "StateDatabase.h"
 
-
+#include "bzfsAPI.h"
 
 // values affecting struct and class layout
 const int		CallSignLen = 32;	// including terminating NUL
@@ -107,6 +107,9 @@ struct GlobalDBItem {
 };
 extern const unsigned int numGlobalDBItems;
 extern const struct GlobalDBItem globalDBItems[];
+
+bz_eTeamType convertTeam ( TeamColor team );
+TeamColor convertTeam( bz_eTeamType team );
 
 #endif // BZF_GLOBAL_H
 

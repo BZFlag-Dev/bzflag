@@ -32,6 +32,9 @@
 
 #include "Permissions.h"
 
+// common-interface headers
+#include "global.h"
+
 TimeKeeper synct = TimeKeeper::getCurrent();
 
 // utility functions
