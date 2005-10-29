@@ -2342,7 +2342,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 	  player[i]->setHunted(false);
 	if (i != id && player[i] && player[i]->getTeam() != RogueTeam
 	    && player[i]->getTeam() != ObserverTeam) {
-	  player[i]->changeTeam(RogueTeam);
+	  player[i]->changeTeam(HunterTeam);
 	}
       }
 
@@ -2358,7 +2358,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 	  }
 	  scoreboard->setHuntState(ScoreboardRenderer::HUNT_NONE);
 	} else if (myTank->getTeam() != ObserverTeam) {
-	  myTank->changeTeam(RogueTeam);
+	  myTank->changeTeam(HunterTeam);
 	  if (myTank->isPaused() || myTank->isAlive())
 	    wasRabbit = false;
 	  rabbit->setHunted(true);
@@ -2374,7 +2374,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 	  if (robots[r]->getId() == id)
 	    robots[r]->changeTeam(RabbitTeam);
 	  else
-	    robots[r]->changeTeam(RogueTeam);
+	    robots[r]->changeTeam(HunterTeam);
 #endif
       break;
     }
