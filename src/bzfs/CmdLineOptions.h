@@ -152,7 +152,7 @@ struct CmdLineOptions
   bool			startRecording;
   bool			timestampLog;
   bool			timestampMicros;
-	bool			countdownPaused;
+  bool			countdownPaused;
 
   uint16_t		maxTeam[NumTeams];
   FlagNumberMap		flagCount;

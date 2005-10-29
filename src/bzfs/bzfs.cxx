@@ -1262,18 +1262,24 @@ static TeamColor autoTeamSelect(TeamColor t)
   // Asking for Observer gives observer
   if (t == ObserverTeam)
     return ObserverTeam;
+
   // When replaying, joining tank can only be observer
   if (Replay::enabled())
     return ObserverTeam;
 
   // count current number of players
   int numplayers = 0, i = 0;
-  for (i = 0; i < int(ObserverTeam); i++)
-    numplayers += team[i].team.size;
+  for (i = 0; i < int(NumTeams); i++)
+    if (i != int(ObserverTeam))
+      numplayers += team[i].team.size;
 
   // if no player are available, join as Observer
   if (numplayers == maxRealPlayers)
     return ObserverTeam;
+
+  // if we're running rabbit chase, all non-observers start as hunters
+  if (clOptions->gameStyle & int(RabbitChaseGameStyle))
+    return HunterTeam;
 
   // If tank ask for rogues, and rogues are allowed, give it
   if ((t == RogueTeam)
@@ -2432,12 +2438,10 @@ void playerKilled(int victimIndex, int killerIndex, int reason,
 	  killerData->score.kill();
 	}
       }
-
       buf = nboPackUByte(bufStart, 2);
       buf = nboPackUByte(buf, killerIndex);
       buf = killerData->score.pack(buf);
-    }
-    else {
+    } else {
       buf = nboPackUByte(bufStart, 1);
     }
 
@@ -2455,10 +2459,10 @@ void playerKilled(int victimIndex, int killerIndex, int reason,
       buf = nboPackUShort(buf, uint16_t(NoTeam));
       broadcastMessage(MsgScoreOver, (char*)buf-(char*)bufStart, bufStart);
       gameOver = true;
-	  if (clOptions->oneGameOnly) {
-		  done = true;
-		  exitCode = 0;
-	  }
+      if (clOptions->oneGameOnly) {
+        done = true;
+        exitCode = 0;
+      }
     }
   }
 

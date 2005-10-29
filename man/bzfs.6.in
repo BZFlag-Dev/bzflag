@@ -260,7 +260,8 @@ Sets the maximum number of players, total or per team.  A single value sets
 the total number of players allowed.  Five comma separated values set the
 maximum for each team.  If a count is left blank then no limit is set for
 that team, except for the limit on the total number of players.  Both forms
-may be provided.
+may be provided.  For rabbit hunt, the "rogue" value sets the total number
+of non-observer player, and all other values must be zero.
 .TP 
 \fB\-mps \fImax\-score\fR
 Sets a maximum score for individual players.  The first player to reach
