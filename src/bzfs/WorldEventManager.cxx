@@ -18,6 +18,12 @@
 
 #include "WorldEventManager.h"
 
+#include "global.h"
+#include "bzfsAPI.h"
+
+extern bz_eTeamType convertTeam ( TeamColor team );
+extern TeamColor convertTeam( bz_eTeamType team );
+
 //-------------------WorldEventManager--------------------
 WorldEventManager::WorldEventManager()
 {

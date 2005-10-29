@@ -32,6 +32,8 @@
 
 #include "Permissions.h"
 
+#include "global.h"
+
 TimeKeeper synct = TimeKeeper::getCurrent();
 
 // utility functions

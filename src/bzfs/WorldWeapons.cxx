@@ -32,6 +32,9 @@
 // bzfs specific headers
 #include "bzfs.h"
 
+extern bz_eTeamType convertTeam ( TeamColor team );
+extern TeamColor convertTeam( bz_eTeamType team );
+
 static int fireWorldWepReal(FlagType* type, float lifetime, PlayerId player,
                             TeamColor teamColor, float *pos, float tilt, float dir,
                             int shotID, float dt)

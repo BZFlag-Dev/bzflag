@@ -33,6 +33,9 @@
 /* local implementation headers */
 #include "bzfs.h"
 
+extern bz_eTeamType convertTeam ( TeamColor team );
+extern TeamColor convertTeam( bz_eTeamType team );
+
 const int ListServerLink::NotConnected = -1;
 
 ListServerLink::ListServerLink(std::string listServerURL,

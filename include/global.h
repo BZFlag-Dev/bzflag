@@ -25,7 +25,7 @@
 /* common headers */
 #include "StateDatabase.h"
 
-
+#include "bzfsAPI.h"
 
 // values affecting struct and class layout
 const int		CallSignLen = 32;	// including terminating NUL
@@ -37,25 +37,25 @@ const int		MessageLen = 128;	// including terminating NUL
 
 // types of things we can be
 enum PlayerType {
-			TankPlayer,
-			ComputerPlayer,
-			ChatPlayer
+	TankPlayer,
+	ComputerPlayer,
+	ChatPlayer
 };
 
 // team info
 const int		NumTeams = 8;
 const int		CtfTeams = 5;
 enum TeamColor {
-			AutomaticTeam = -2,
-			NoTeam = -1,
-			RogueTeam = 0,
-			RedTeam = 1,
-			GreenTeam = 2,
-			BlueTeam = 3,
-			PurpleTeam = 4,
-			ObserverTeam = 5,
-			RabbitTeam = 6,
-                        HunterTeam = 7
+	AutomaticTeam = -2,
+	NoTeam = -1,
+	RogueTeam = 0,
+	RedTeam = 1,
+	GreenTeam = 2,
+	BlueTeam = 3,
+	PurpleTeam = 4,
+	ObserverTeam = 5,
+	RabbitTeam = 6,
+	HunterTeam = 7
 };
 
 #ifdef ROBOT
@@ -100,14 +100,18 @@ enum GameStyle {
 const int mapVersion = 1;
 
 struct GlobalDBItem {
-  public:
-    const char*			name;
-    const char*			value;
-    bool			persistent;
-    StateDatabase::Permission	permission;
+public:
+	const char*			name;
+	const char*			value;
+	bool			persistent;
+	StateDatabase::Permission	permission;
 };
 extern const unsigned int numGlobalDBItems;
 extern const struct GlobalDBItem globalDBItems[];
+
+bz_eTeamType convertTeam ( TeamColor team );
+TeamColor convertTeam( bz_eTeamType team );
+
 
 #endif // BZF_GLOBAL_H
 
