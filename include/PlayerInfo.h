@@ -98,7 +98,7 @@ public:
   void	setFlag(int flag);
   bool	isFlagTransitSafe();
   const char *getClientVersion();
-  void getClientVersionNumbers(int& major, int& major, int& revision);
+  void getClientVersionNumbers(int& major, int& minor, int& revision);
   std::string getIdleStat();
   bool	canBeRabbit(bool relaxing = false);
   void	setPaused(bool paused);
