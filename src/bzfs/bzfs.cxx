@@ -465,7 +465,7 @@ static void sendPlayerUpdate(GameKeeper::Player *playerData, int index)
 void sendPlayerInfo() {
   void *buf, *bufStart = getDirectMessageBuffer();
   int i, numPlayers = 0;
-  for (i = 0; i <= int(ObserverTeam); i++)
+  for (i = 0; i < int(NumTeams); i++)
     numPlayers += team[i].team.size;
   buf = nboPackUByte(bufStart, numPlayers);
   for (i = 0; i < curMaxPlayers; ++i) {
@@ -519,11 +519,8 @@ void sendIPUpdate(int targetPlayer, int playerIndex) {
 			(char*)buf - (char*)bufStart, bufStart, HiddenPacket);
     }
   } else {
-    int i, numPlayers = 0;
-    for (i = 0; i <= int(ObserverTeam); i++)
-      numPlayers += team[i].team.size;
     int ipsPerPackage = (MaxPacketLen - 3) / (PlayerIdPLen + 7);
-    int c = 0;
+    int i, c = 0;
     buf = nboPackUByte(bufStart, 0); // will be overwritten later
     for (i = 0; i < curMaxPlayers; ++i) {
       playerData = GameKeeper::Player::getPlayerByIndex(i);
@@ -1204,7 +1201,7 @@ static void rejectPlayer(int playerIndex, uint16_t code, const char *reason)
 // Team Size is wrong at some time
 static void fixTeamCount() {
   int playerIndex, teamNum;
-  for (teamNum = RogueTeam; teamNum < HunterTeam; teamNum++)
+  for (teamNum = RogueTeam; teamNum < NumTeams; teamNum++)
     team[teamNum].team.size = 0;
   for (playerIndex = 0; playerIndex < curMaxPlayers; playerIndex++) {
     GameKeeper::Player *p = GameKeeper::Player::getPlayerByIndex(playerIndex);
