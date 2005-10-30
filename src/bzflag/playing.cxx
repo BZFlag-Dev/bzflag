@@ -5949,6 +5949,13 @@ static void		playingLoop()
       lastTime = TimeKeeper::getCurrent();
     } // end energy saver check
 
+    if (serverLink)
+      serverLink->flush();
+#ifdef ROBOT
+    for (i = 0; i < numRobots; i++)
+      if (robotServer[i])
+	robotServer[i]->flush();
+#endif
 
   } // end main client loop
 

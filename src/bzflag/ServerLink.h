@@ -102,6 +102,8 @@ class ServerLink {
     void		enableOutboundUDP();
     void		confirmIncomingUDP();
 
+  void flush();
+
   private:
     State		state;
     int			fd;
@@ -121,6 +123,11 @@ class ServerLink {
     int		 udpLength;
     char	       *udpBufferPtr;
     char		ubuf[MaxPacketLen];
+
+  bool oldNeedForSpeed;
+  int  previousFill;
+  char txbuf[MaxPacketLen];
+  
 };
 
 #define SEND 1
