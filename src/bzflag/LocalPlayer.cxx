@@ -1239,6 +1239,10 @@ bool			LocalPlayer::fireShot()
   const float timeStamp = float(TimeKeeper::getCurrent() - TimeKeeper::getNullTime());
   firingInfo.timeSent = timeStamp;
 
+  // always send a player-update message. To synchronize movement and
+  // shot start. They should generally travel on the same frame, when
+  // flushing the output queues.
+  server->sendPlayerUpdate(this);
   server->sendBeginShot(firingInfo);
 
   if (BZDB.isTrue("enableLocalShotEffect") && SceneRenderer::instance().useQuality() >= 2)
