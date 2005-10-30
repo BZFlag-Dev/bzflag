@@ -170,6 +170,12 @@ private:
   char tcpmsg[MaxPacketLen];
   /// bytes read in current msg
   int tcplen;
+  /// current UDP msg
+  static char               udpmsg[MaxPacketLen];
+  static int                udpLen;
+  /// bytes read in current msg
+  static int                udpRead;
+  static struct sockaddr_in lastUDPRxaddr;
 
   /// Closing flag
   bool closed;
