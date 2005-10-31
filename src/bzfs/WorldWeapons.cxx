@@ -60,7 +60,7 @@ static int fireWorldWepReal(FlagType* type, float lifetime, PlayerId player,
   buf = firingInfo.pack(bufStart);
 
   if (BZDB.isTrue(StateDatabase::BZDB_WEAPONS)) {
-    broadcastMessage(MsgShotBegin, (char *)buf - (char *)bufStart, bufStart);
+    broadcastMessage(MsgWShotBegin, (char *)buf - (char *)bufStart, bufStart);
   }
   return shotID;
 }

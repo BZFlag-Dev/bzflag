@@ -2386,31 +2386,26 @@ static void		handleServerMessage(bool human, uint16_t code,
       const int shooterid = firingInfo.shot.player;
       RemotePlayer* shooter = player[shooterid];
       
-      if (shooterid != ServerPlayer) {
-	if (shooter && player[shooterid]->getId() == shooterid) {
-	  shooter->addShot(firingInfo);
+      if (!shooter || player[shooterid]->getId() != shooterid)
+	break;
 
-	  if (SceneRenderer::instance().useQuality() >= 2) {
-	    float shotPos[3];
-	    shooter->getMuzzle(shotPos);
+      shooter->addShot(firingInfo);
 
-	    // if you are driving with a tank in observer mode
-	    // and do not want local shot effects,
-	    // disable shot effects for that specific tank
-	    if ((ROAM.getMode() != Roaming::roamViewFP)
-		|| (!ROAM.getTargetTank())
-	        || (shooterid != ROAM.getTargetTank()->getId())
-		|| BZDB.isTrue("enableLocalShotEffect")) {
-	      EFFECTS.addShotEffect(shooter->getTeam(), shotPos,
-                                    shooter->getAngle(),
-	                            shooter->getVelocity());
-            }
-	  }
-	} else {
-	  break;
+      if (SceneRenderer::instance().useQuality() >= 2) {
+	float shotPos[3];
+	shooter->getMuzzle(shotPos);
+
+	// if you are driving with a tank in observer mode
+	// and do not want local shot effects,
+	// disable shot effects for that specific tank
+	if ((ROAM.getMode() != Roaming::roamViewFP)
+	    || (!ROAM.getTargetTank())
+	    || (shooterid != ROAM.getTargetTank()->getId())
+	    || BZDB.isTrue("enableLocalShotEffect")) {
+	  EFFECTS.addShotEffect(shooter->getTeam(), shotPos,
+				shooter->getAngle(),
+				shooter->getVelocity());
 	}
-      } else {
-	World::getWorld()->getWorldWeapons()->addShot(firingInfo);
       }
 
       if (human) {

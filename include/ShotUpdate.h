@@ -57,6 +57,7 @@ struct FiringInfo {
 
     void*		pack(void*) const;
     void*		unpack(void*);
+    void*               unpackW(void*);
 
   public:
     float	       timeSent;
