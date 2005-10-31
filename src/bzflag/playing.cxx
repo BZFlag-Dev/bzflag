@@ -4015,6 +4015,7 @@ static void		addRobots()
       robotServer[j]->sendEnter(ComputerPlayer, robots[j]->getTeam(),
 				robots[j]->getCallSign(),
 				robots[j]->getEmailAddress(), "");
+      robotServer[j]->flush();
     }
   for (j = 0; j < numRobots; j++) {
     // wait for response
