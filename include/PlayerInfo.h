@@ -135,6 +135,8 @@ private:
 
   // current state of player
   ClientState state;
+  // Need to know if entered is already done
+  bool       hasDoneEntering;
   // type of player
   PlayerType type;
   // player's pseudonym
@@ -197,7 +199,7 @@ inline bool PlayerInfo::isPlaying() const {
 }
 
 inline bool PlayerInfo::isHuman() const {
-  return type == TankPlayer;
+  return (type == TankPlayer) && hasDoneEntering;
 }
 
 inline bool PlayerInfo::haveFlag() const {
