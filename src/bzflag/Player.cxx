@@ -132,6 +132,12 @@ Player::Player(const PlayerId& _id, TeamColor _team,
 
 Player::~Player()
 {
+  // free shots
+  const int numShots = getMaxShots();
+  for (int i = 0; i < numShots; i++)
+    if (shots[i])
+      delete shots[i];
+
   if (id != ServerPlayer) {
     delete tankIDLNode;
     delete tankNode;
@@ -971,12 +977,6 @@ void Player::spawnEffect()
 }
 
 
-int Player::getMaxShots() const
-{
-  return World::getWorld()->getMaxShots();
-}
-
-
 void Player::addShots(SceneDatabase* scene, bool colorblind) const
 {
   const int count = getMaxShots();
@@ -1371,6 +1371,30 @@ void Player::setIpAddress(const Address& addr)
   haveIpAddr = true;
 }
 
+ShotPath* Player::getShot(int index) const
+{
+  index &= 0x00FF;
+  if (index >= (int)shots.size())
+    return NULL;
+  return shots[index];
+}
+
+void Player::prepareShotInfo(FiringInfo &/*firingInfo*/)
+{
+}
+
+void Player::addShot(ShotPath *shot, const FiringInfo &info)
+{
+  int shotNum = int(shot->getShotId() & 255);
+
+  if (shotNum >= (int)shots.size())
+    shots.resize(shotNum+1);
+  else if (shots[shotNum] != NULL)
+    delete shots[shotNum];
+
+  shots[shotNum] = shot;
+  shotStatistics.recordFire(info.flagType);
+}
 
 // Local Variables: ***
 // mode:C++ ***

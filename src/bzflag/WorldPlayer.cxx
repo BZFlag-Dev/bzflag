@@ -20,32 +20,11 @@ WorldPlayer::WorldPlayer() :
 
 WorldPlayer::~WorldPlayer()
 {
-  for (std::vector<RemoteShotPath*>::iterator it = shots.begin(); it != shots.end(); ++it) {
-    RemoteShotPath *shot = *it;
-    delete shot;
-  }
-
-  shots.clear();
 }
 
 void			WorldPlayer::addShot(const FiringInfo& info)
 {
-  RemoteShotPath* newShot = new RemoteShotPath(info);
-  int shotNum = int(newShot->getShotId() & 255);
-  if (shotNum >= (int)shots.size()) {
-    shots.resize(shotNum+1);
-  }
-  else {
-    if (shots[shotNum] != NULL)
-      delete shots[shotNum];
-  }
-  shots[shotNum] = newShot;
-}
-
-ShotPath*		WorldPlayer::getShot(int index) const
-{
-  if ((index & 255) >= (int)shots.size()) return NULL;
-  return shots[index & 255];
+  Player::addShot(new RemoteShotPath(info), info);
 }
 
 bool			WorldPlayer::doEndShot(

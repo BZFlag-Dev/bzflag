@@ -23,56 +23,19 @@ RemotePlayer::RemotePlayer(const PlayerId& _id, TeamColor _team,
   Player(_id, _team, _name, _email, _type)
 {
   numShots = World::getWorld()->getMaxShots();
-  shots = new RemoteShotPath*[numShots];
+  shots.resize(numShots);
   for (int i = 0; i < numShots; i++)
     shots[i] = NULL;
 }
 
 RemotePlayer::~RemotePlayer()
 {
-  for (int i = 0; i < numShots; i++)
-    delete shots[i];
-  delete[] shots;
 }
 
-void			RemotePlayer::addShot(const FiringInfo& info)
+void			RemotePlayer::addShot(FiringInfo& info)
 {
-  float newpos[3];
-  const float *f = getForward();
-  RemoteShotPath* newShot = new RemoteShotPath(info);
-  int shotNum = int(newShot->getShotId() & 255);
-  if (shots[shotNum]) delete shots[shotNum];
-  shots[shotNum] = newShot;
-  // Update tanks position and set dead reckoning for better lag handling
-  // shot origin is center of tank for shockwave
-  if (info.flagType == Flags::ShockWave) {
-    newpos[0] = info.shot.pos[0];
-    newpos[1] = info.shot.pos[1];
-    newpos[2] = info.shot.pos[2];
-  }
-  // shot origin is muzzle for other shots
-  else {
-    float front = BZDB.eval(StateDatabase::BZDB_MUZZLEFRONT);
-    if (info.flagType == Flags::Obesity) front *= BZDB.eval(StateDatabase::BZDB_OBESEFACTOR);
-    else if (info.flagType == Flags::Tiny) front *= BZDB.eval(StateDatabase::BZDB_TINYFACTOR);
-    else if (info.flagType == Flags::Thief) front *= BZDB.eval(StateDatabase::BZDB_THIEFTINYFACTOR);
-    newpos[0] = info.shot.pos[0] - (front * f[0]);
-    newpos[1] = info.shot.pos[1] - (front * f[1]);
-    newpos[2] = info.shot.pos[2] - BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT);
-  }
-  shotStatistics.recordFire(info.flagType);
-  // FIXME - with dynamic dimensions, this may not be a good idea
-  //	 (flag each shot with a 'default dimensions' state?)
-  move(newpos, getAngle());
-  setDeadReckoning(info.timeSent);
-}
-
-ShotPath*		RemotePlayer::getShot(int index) const
-{
-  index &= 0x00FF;
-  if ((index < 0) || (index >= World::getWorld()->getMaxShots()))
-    return NULL;
-  return shots[index];
+  prepareShotInfo(info);
+  Player::addShot(new RemoteShotPath(info), info);
 }
 
 bool			RemotePlayer::doEndShot(
@@ -86,7 +49,7 @@ bool			RemotePlayer::doEndShot(
     return false;
 
   // ignore bogus shots (those with a bad index or for shots that don't exist)
-  if (index < 0 || index >= World::getWorld()->getMaxShots() || !shots[index])
+  if (index < 0 || index >= numShots || !shots[index])
     return false;
 
   // ignore shots that already ending

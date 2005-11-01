@@ -63,7 +63,6 @@ public:
   float		getFlagShakingTime() const;
   int		getFlagShakingWins() const;
   const float*	getAntidoteLocation() const;
-  ShotPath*	getShot(int index) const;
   const Player*	getTarget() const;
   int		getDeathPhysicsDriver() const;
   const std::vector<const Obstacle*>& getInsideBuildings() const;
@@ -129,7 +128,6 @@ protected:
   void		doForces(float dt, float* velocity, float& angVel);
   float		updateHandicap();
   virtual int   getHandicapScoreBase() const;
-  LocalShotPath**	shots;
   bool	  gettingSound;
   ServerLink*	server;
 

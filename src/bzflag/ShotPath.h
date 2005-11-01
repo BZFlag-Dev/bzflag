@@ -67,6 +67,9 @@ class ShotPath {
     void		radarRender() const;
     FiringInfo&		getFiringInfo();
     TeamColor		getTeam() const;
+
+  virtual void          update(float) {};
+
   protected:
 			ShotPath(const FiringInfo&);
     void		updateShot(float dt);

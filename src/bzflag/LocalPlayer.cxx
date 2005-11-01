@@ -64,7 +64,7 @@ LocalPlayer::LocalPlayer(const PlayerId& _id,
 {
   // initialize shots array to no shots fired
   const int numShots = World::getWorld()->getMaxShots();
-  shots = new LocalShotPath*[numShots];
+  shots.resize(numShots);
   for (int i = 0; i < numShots; i++)
     shots[i] = NULL;
   // set input method
@@ -77,13 +77,6 @@ LocalPlayer::LocalPlayer(const PlayerId& _id,
 
 LocalPlayer::~LocalPlayer()
 {
-  // free shots
-  const int numShots = World::getWorld()->getMaxShots();
-  for (int i = 0; i < numShots; i++)
-    if (shots[i])
-      delete shots[i];
-  delete[] shots;
-
   // free antidote flag
   delete antidoteFlag;
 }
@@ -96,7 +89,7 @@ void			LocalPlayer::setMyTank(LocalPlayer* player)
 void			LocalPlayer::doUpdate(float dt)
 {
   const bool hadShotActive = anyShotActive;
-  const int numShots = World::getWorld()->getMaxShots();
+  const int numShots = getMaxShots();
   static TimeKeeper pauseTime = TimeKeeper::getNullTime();
   static bool wasPaused = false;
 
@@ -975,7 +968,7 @@ float			LocalPlayer::getReloadTime() const
     return time;
 
     // look for an empty slot
-  const int numShots = World::getWorld()->getMaxShots();
+  const int numShots = getMaxShots();
   int i;
   for (i = 0; i < numShots; i++)
     if (!shots[i])
@@ -1009,14 +1002,6 @@ const GLfloat*		LocalPlayer::getAntidoteLocation() const
   return (const GLfloat*)(antidoteFlag ? antidoteFlag->getSphere() : NULL);
 }
 
-ShotPath*		LocalPlayer::getShot(int index) const
-{
-  index &= 0x00FF;
-  if ((index < 0) || (index >= World::getWorld()->getMaxShots()))
-    return NULL;
-  return shots[index];
-}
-
 void			LocalPlayer::restart(const float* pos, float _azimuth)
 {
   // put me in limbo
@@ -1026,7 +1011,7 @@ void			LocalPlayer::restart(const float* pos, float _azimuth)
   setFlag(Flags::Null);
 
   // get rid of existing shots
-  const int numShots = World::getWorld()->getMaxShots();
+  const int numShots = getMaxShots();
   // get rid of existing shots
   for (int i = 0; i < numShots; i++)
     if (shots[i]) {
@@ -1187,7 +1172,7 @@ bool			LocalPlayer::fireShot()
     return false;
 
   // find an empty slot
-  const int numShots = World::getWorld()->getMaxShots();
+  const int numShots = getMaxShots();
   int i;
   for (i = 0; i < numShots; i++)
     if (!shots[i])
@@ -1232,8 +1217,9 @@ bool			LocalPlayer::fireShot()
     if (!BZDB.isTrue(StateDatabase::BZDB_SHOTSKEEPVERTICALV)) firingInfo.shot.vel[2] = 0.0f;
   }
 
+  prepareShotInfo(firingInfo);
   // make shot and put it in the table
-  shots[i] = new LocalShotPath(firingInfo);
+  addShot(new LocalShotPath(firingInfo), firingInfo);
 
   // Insert timestamp, useful for dead reckoning jitter fixing
   const float timeStamp = float(TimeKeeper::getCurrent() - TimeKeeper::getNullTime());
@@ -1271,8 +1257,6 @@ bool			LocalPlayer::fireShot()
     }
   }
 
-  shotStatistics.recordFire(firingInfo.flagType);
-
   if (getFlag() == Flags::TriggerHappy) {
     // make sure all the shots don't go off at once
     forceReload(BZDB.eval(StateDatabase::BZDB_RELOADTIME) / numShots);
@@ -1298,7 +1282,7 @@ bool LocalPlayer::doEndShot(int ident, bool isHit, float* pos)
     return false;
 
   // ignore bogus shots (those with a bad index or for shots that don't exist)
-  if (index < 0 || index >= World::getWorld()->getMaxShots() || !shots[index])
+  if (index < 0 || index >= getMaxShots() || !shots[index])
     return false;
 
   // ignore shots that already ending
