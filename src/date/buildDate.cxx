@@ -21,7 +21,7 @@
 
 // opaque version number increments on protocol incompatibility
 #ifndef BZ_PROTO_VERSION
-#define BZ_PROTO_VERSION	"0030"
+#define BZ_PROTO_VERSION	"0031"
 #endif
 
 // version numbers - also update:
@@ -40,7 +40,7 @@
 #endif
 
 #ifndef BZ_REV
-#  define BZ_REV		2
+#  define BZ_REV		3
 #endif
 
 // DEVEL | STABLE | MAINT
