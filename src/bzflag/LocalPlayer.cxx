@@ -52,7 +52,6 @@ LocalPlayer::LocalPlayer(const PlayerId& _id,
   stuckFrameCount(0),
   spawning(false),
   wingsFlapCount(0),
-  handicap(0.0f),
   left(false),
   right(false),
   up(false),
@@ -1042,7 +1041,6 @@ void			LocalPlayer::restart(const float* pos, float _azimuth)
   down  = false;
   wantJump = false;
   doUpdateMotion(0.0f);
-  updateHandicap();
   entryDrop = true;
 
   // make me alive now
@@ -1594,51 +1592,6 @@ void			LocalPlayer::changeScore(short deltaWins,
       server->sendDropFlag(getPosition());
     }
   }
-}
-
-// calculate overall relative score to other players
-int			 LocalPlayer::getHandicapScoreBase() const
-{
-  int winners = 0;
-  int loosers = 0;
-  const int maxplayers = World::getWorld()->getMaxPlayers();
-
-  // compute overall wins and losses in relation to other players
-  for (int i = 0; i < maxplayers; i++) {
-    RemotePlayer *player = World::getWorld()->getPlayer(i);
-    if ((player == NULL) || (player->getId() == LocalPlayer::getMyTank()->getId())) {
-      continue;
-    }
-    winners += player->getLocalWins();
-    loosers += player->getLocalLosses();
-  }
-  return loosers - winners;
-}
-
-float			LocalPlayer::updateHandicap()
-{
-  /* compute and return the handicap */
-
-  if (World::getWorld()->allowHandicap()) {
-    // a relative score of -50 points will provide maximum handicap
-    handicap = float(getHandicapScoreBase()) / BZDB.eval(StateDatabase::BZDB_HANDICAPSCOREDIFF);
-
-    /* limit how much of a handicap is afforded, and only provide
-     * handicap advantages instead of disadvantages.
-     */
-    if (handicap > 1.0f) {
-      // advantage
-      handicap = 1.0f;
-    } else if (handicap < 0.0f) {
-      // disadvantage
-      handicap = 0.0f;
-    }
-
-    return handicap;
-  }
-
-  // no handicap gameplay
-  return 0.0f;
 }
 
 void			LocalPlayer::addAntidote(SceneDatabase* scene)

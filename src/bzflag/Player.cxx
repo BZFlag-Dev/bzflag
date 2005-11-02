@@ -46,6 +46,7 @@ int		Player::tankTexture = -1;
 Player::Player(const PlayerId& _id, TeamColor _team,
 	       const char* name, const char* _email, const PlayerType _type) :
   lastObstacle(NULL),
+  handicap(0.0f),
   notResponding(false),
   hunted(false),
   id(_id),
@@ -1394,6 +1395,11 @@ void Player::addShot(ShotPath *shot, const FiringInfo &info)
 
   shots[shotNum] = shot;
   shotStatistics.recordFire(info.flagType);
+}
+
+void Player::setHandicap(float _handicap)
+{
+    handicap = _handicap;
 }
 
 // Local Variables: ***

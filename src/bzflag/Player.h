@@ -160,6 +160,7 @@ public:
   virtual void	setFlag(FlagType*);
   virtual void	changeScore(short deltaWins, short deltaLosses, short deltaTeamKills);
   void		changeLocalScore(short deltaWins, short deltaLosses, short deltaTeamKills);
+  void          setHandicap(float handicap);
   void		setStatus(short);
   void		setExplode(const TimeKeeper&);
   void		setTeleport(const TimeKeeper&, short from, short to);
@@ -190,6 +191,7 @@ protected:
   const Obstacle* lastObstacle; // last obstacle touched
 
   std::vector<ShotPath*> shots;
+  float                  handicap;
 
 private:
   // return true if the shot had to be terminated or false if it

@@ -2450,6 +2450,7 @@ static void		handleServerMessage(bool human, uint16_t code,
       uint8_t numScores;
       PlayerId id;
       uint16_t wins, losses, tks;
+      int16_t  handicap;
       msg = nboUnpackUByte(msg, numScores);
 
       for (uint8_t s = 0; s < numScores; s++) {
@@ -2457,19 +2458,39 @@ static void		handleServerMessage(bool human, uint16_t code,
 	msg = nboUnpackUShort(msg, wins);
 	msg = nboUnpackUShort(msg, losses);
 	msg = nboUnpackUShort(msg, tks);
+	msg = nboUnpackShort(msg, handicap);
 
+	Player *sPlayer = NULL;
         if (id == myTank->getId()) {
-          myTank->changeScore(wins - myTank->getWins(),
-			      losses - myTank->getLosses(),
-			      tks - myTank->getTeamKills());
+	  sPlayer = myTank;
         } else {
           int i = lookupPlayerIndex(id);
 	  if (i >= 0)
-	    player[i]->changeScore(wins - player[i]->getWins(),
-				  losses - player[i]->getLosses(),
-				  tks - player[i]->getTeamKills());
-          else
+	    sPlayer = player[i];
+	  else
             DEBUG1("Recieved score update for unknown player!\n");
+        }
+	if (sPlayer) {
+          sPlayer->changeScore(wins - myTank->getWins(),
+			       losses - myTank->getLosses(),
+			       tks - myTank->getTeamKills());
+	  if (World::getWorld()->allowHandicap()) {
+	    // a relative score of -50 points will provide maximum handicap
+	    float normalizedHandicap = float(handicap)
+	      / BZDB.eval(StateDatabase::BZDB_HANDICAPSCOREDIFF);
+
+	    /* limit how much of a handicap is afforded, and only provide
+	     * handicap advantages instead of disadvantages.
+	     */
+	    if (normalizedHandicap > 1.0f)
+	      // advantage
+	      normalizedHandicap  = 1.0f;
+	    else if (normalizedHandicap < 0.0f)
+	      // disadvantage
+	      normalizedHandicap  = 0.0f;
+
+	    sPlayer->setHandicap(normalizedHandicap);
+	  }
         }
       }
       break;

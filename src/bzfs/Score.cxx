@@ -63,6 +63,7 @@ void *Score::pack(void *buf) {
   buf = nboPackUShort(buf, wins);
   buf = nboPackUShort(buf, losses);
   buf = nboPackUShort(buf, tks);
+  buf = nboPackShort(buf, losses - wins);
   return buf;
 }
 

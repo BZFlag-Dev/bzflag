@@ -126,8 +126,6 @@ protected:
   void		doMomentum(float dt, float& speed, float& angVel);
   void		doFriction(float dt, const float *oldVelocity, float *newVelocity);
   void		doForces(float dt, float* velocity, float& angVel);
-  float		updateHandicap();
-  virtual int   getHandicapScoreBase() const;
   bool	  gettingSound;
   ServerLink*	server;
 
@@ -161,7 +159,6 @@ private:
   int		stuckFrameCount;
   bool		spawning;
   int		wingsFlapCount;
-  float		handicap;
   bool		left;
   bool		right;
   bool		up;
