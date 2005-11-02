@@ -103,7 +103,6 @@ struct sockaddr_in NetHandler::lastUDPRxaddr;
 int NetHandler::udpReceive(char *buffer, struct sockaddr_in *uaddr,
 			   bool &udpLinkRequest) {
   AddrLen recvlen = sizeof(*uaddr);
-  int n;
   int id;
   uint16_t len;
   uint16_t code;
@@ -196,7 +195,7 @@ than %s:%d\n",
     DEBUG4("Player %s [%d] uread() %s:%d len %d from %s:%d on %i\n",
 	   netPlayer[id]->info->getCallSign(), id,
 	   inet_ntoa(netPlayer[id]->uaddr.sin_addr),
-	   ntohs(netPlayer[id]->uaddr.sin_port), n,
+	   ntohs(netPlayer[id]->uaddr.sin_port), len + 4,
 	   inet_ntoa(uaddr->sin_addr), ntohs(uaddr->sin_port),
 	   udpSocket);
 #ifdef NETWORK_STATS
