@@ -180,7 +180,8 @@ bool			SceneNode::cull(const ViewFrustum& view) const
 {
   // if center of object is outside view frustum and distance is
   // greater than radius of object then cull.
-  for (int i = 0; i < 5; i++) {
+  const int planeCount = view.getPlaneCount();
+  for (int i = 0; i < planeCount; i++) {
     const GLfloat* norm = view.getSide(i);
     const GLfloat d = (sphere[0] * norm[0]) +
 		      (sphere[1] * norm[1]) +

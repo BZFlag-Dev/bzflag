@@ -799,7 +799,9 @@ IntersectLevel testAxisBoxInFrustum(const Extents& extents,
   // FIXME - 0 is the near clip plane, not that useful really?
   //	 OpenGL should easily clip the few items sneak in
 
-  for (s = 1 /* NOTE: not 0 */; s < 5; s++) {
+  const int planeCount = frustum->getPlaneCount();
+
+  for (s = 1 /* NOTE: not 0 */; s < planeCount; s++) {
 
     p = frustum->getSide(s);
 

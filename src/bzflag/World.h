@@ -135,6 +135,8 @@ class World {
 
     void		freeInsideNodes() const;
 
+    void		enforceRequiredGraphics();
+
   private:
     // disallow copy and assignment
 			World(const World&);
@@ -143,6 +145,8 @@ class World {
     void		freeFlags();
     void		freeMeshDrawMgrs();
 
+    void		setupRequiredGraphics();
+    void		restoreRequiredGraphics();
 
   private:
     short		gameStyle;
@@ -176,6 +180,10 @@ class World {
     float		wind[3];
 
     LinkManager		links;
+    
+    // required graphics settings
+    int			oldFogEffect;
+    bool		oldUseDrawInfo;
 
     static World*	playingField;
     static BundleMgr	*bundleMgr;

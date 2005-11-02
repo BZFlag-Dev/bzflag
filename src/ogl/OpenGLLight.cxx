@@ -214,10 +214,10 @@ void OpenGLLight::calculateImportance(const ViewFrustum& frustum)
 		   (p[2] * pos[2]) + p[3];
 
   // cull against the frustum planes
-  // (right, left, up, and down)
   if (fd > 0.0f) {
     sphereCull = false; // don't need a sphere cull
-    for (int i = 1; i < 5; i++) {
+    const int planeCount = frustum.getPlaneCount();
+    for (int i = 1; i < planeCount; i++) {
       const float* plane = frustum.getSide(i);
       const float len = (plane[0] * pos[0]) +
 			(plane[1] * pos[1]) +

@@ -13,6 +13,9 @@
 // interface header
 #include "BackgroundRenderer.h"
 
+// system headers
+#include <string.h>
+
 // common headers
 #include "OpenGLMaterial.h"
 #include "TextureManager.h"
@@ -102,6 +105,7 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
   memcpy(moonDirection, up, sizeof(float[3]));
 
   // make ground materials
+  setupSkybox();
   setupGroundMaterials();
 
   TextureManager &tm = TextureManager::instance();
@@ -548,6 +552,9 @@ void BackgroundRenderer::addCloudDrift(GLfloat uDrift, GLfloat vDrift)
 void BackgroundRenderer::renderSky(SceneRenderer& renderer, bool fullWindow,
 				   bool mirror)
 {
+  if (!BZDBCache::drawSky) {
+    return;
+  }
   if (renderer.useQuality() > 0) {
     drawSky(renderer, mirror);
   } else {
@@ -719,34 +726,213 @@ void BackgroundRenderer::resizeSky() {
 }
 
 
+void BackgroundRenderer::setupSkybox()
+{
+  haveSkybox = false;
+
+  int i;
+  const char *(skyboxNames[6]) = {
+    "LeftSkyboxMaterial",
+    "FrontSkyboxMaterial",
+    "RightSkyboxMaterial",
+    "BackSkyboxMaterial",
+    "TopSkyboxMaterial",
+    "BottomSkyboxMaterial"
+  };
+  TextureManager& tm = TextureManager::instance();
+  const BzMaterial* bzmats[6] = {NULL, NULL, NULL, NULL, NULL, NULL};
+  
+  // try to load the textures  
+  for (i = 0; i < 6; i++) {
+    bzmats[i] = MATERIALMGR.findMaterial(skyboxNames[i]);
+    if ((bzmats[i] == NULL) || (bzmats[i]->getTextureCount() <= 0)) {
+      break;
+    }
+    skyboxTexID[i] = tm.getTextureID(bzmats[i]->getTextureLocal(0).c_str());
+    if (skyboxTexID[i] < 0) {
+      break;
+    }
+  }
+
+  // unload textures if they were not all successful  
+  if (i != 6) {
+    while (i >= 0) {
+      if ((bzmats[i] != NULL) && (bzmats[i]->getTextureCount() > 0)) {
+        // NOTE: this could delete textures the might be used elsewhere
+        tm.removeTexture(bzmats[i]->getTextureLocal(0).c_str());
+      }
+      i--;
+    }
+    return;
+  }
+
+  // reference map specified materials
+  for (i = 0; i < 6; i++) {
+    ((BzMaterial*)bzmats[i])->setReference();
+  }
+
+  // setup the wrap mode
+  skyboxWrapMode = GL_CLAMP;
+#ifdef GL_VERSION_1_2  
+  const char* extStr = (const char*) glGetString(GL_EXTENSIONS);
+  if (strstr(extStr, "GL_EXT_texture_edge_clamp") != NULL) {
+    skyboxWrapMode = GL_CLAMP_TO_EDGE;
+  }
+#endif
+
+  // setup the corner colors
+  const int cornerFaces[8][3] = {
+    {5, 0, 1}, {5, 1, 2}, {5, 2, 3}, {5, 3, 0},
+    {4, 0, 1}, {4, 1, 2}, {4, 2, 3}, {4, 3, 0}
+  };
+  for (i = 0; i < 8; i++) {
+    for (int c = 0; c < 4; c++) {
+      skyboxColor[i][c] = 0.0f;
+      for (int f = 0; f < 3; f++) {
+        skyboxColor[i][c] += bzmats[cornerFaces[i][f]]->getDiffuse()[c];
+      }
+      skyboxColor[i][c] /= 3.0f;
+    }
+  }
+  
+  haveSkybox = true;
+  
+  return;
+}
+
+  
+void BackgroundRenderer::drawSkybox()
+{
+  // must fit within the clipping planes
+  const float d = 8.0f * BZDBCache::worldSize;
+  const GLfloat verts[8][3] = {
+    {-d, -d, -d}, {+d, -d, -d}, {+d, +d, -d}, {-d, +d, -d},
+    {-d, -d, +d}, {+d, -d, +d}, {+d, +d, +d}, {-d, +d, +d}
+  };
+  const GLfloat txcds[4][2] = {
+    {1.0f, 0.0f}, {0.0f, 0.0f},
+    {0.0f, 1.0f}, {1.0f, 1.0f}
+  };
+  
+  TextureManager& tm = TextureManager::instance();
+  
+  OpenGLGState::resetState();
+
+  const GLfloat (*color)[4] = skyboxColor;
+
+  glEnable(GL_TEXTURE_2D);
+  glDisable(GL_CULL_FACE);
+  glShadeModel(GL_SMOOTH);
+
+  if (!BZDBCache::drawGround) {
+    tm.bind(skyboxTexID[5]); // bottom
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, skyboxWrapMode);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, skyboxWrapMode);
+    glBegin(GL_QUADS);
+    {
+      glTexCoord2fv(txcds[0]); glColor3fv(color[2]); glVertex3fv(verts[2]);
+      glTexCoord2fv(txcds[1]); glColor3fv(color[3]); glVertex3fv(verts[3]);
+      glTexCoord2fv(txcds[2]); glColor3fv(color[0]); glVertex3fv(verts[0]);
+      glTexCoord2fv(txcds[3]); glColor3fv(color[1]); glVertex3fv(verts[1]);
+    }
+    glEnd();
+  }
+
+  tm.bind(skyboxTexID[4]); // top
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, skyboxWrapMode);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, skyboxWrapMode);
+  glBegin(GL_QUADS);
+  {
+    glTexCoord2fv(txcds[0]); glColor3fv(color[5]); glVertex3fv(verts[5]);
+    glTexCoord2fv(txcds[1]); glColor3fv(color[4]); glVertex3fv(verts[4]);
+    glTexCoord2fv(txcds[2]); glColor3fv(color[7]); glVertex3fv(verts[7]);
+    glTexCoord2fv(txcds[3]); glColor3fv(color[6]); glVertex3fv(verts[6]);
+  }
+  glEnd();
+
+  tm.bind(skyboxTexID[0]); // left
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, skyboxWrapMode);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, skyboxWrapMode);
+  glBegin(GL_QUADS);
+  {
+    glTexCoord2fv(txcds[0]); glColor3fv(color[0]); glVertex3fv(verts[0]); 
+    glTexCoord2fv(txcds[1]); glColor3fv(color[3]); glVertex3fv(verts[3]);
+    glTexCoord2fv(txcds[2]); glColor3fv(color[7]); glVertex3fv(verts[7]);
+    glTexCoord2fv(txcds[3]); glColor3fv(color[4]); glVertex3fv(verts[4]);
+  }
+  glEnd();
+
+  tm.bind(skyboxTexID[1]); // front
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, skyboxWrapMode);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, skyboxWrapMode);
+  glBegin(GL_QUADS);
+  {
+    glTexCoord2fv(txcds[0]); glColor3fv(color[1]); glVertex3fv(verts[1]);
+    glTexCoord2fv(txcds[1]); glColor3fv(color[0]); glVertex3fv(verts[0]);
+    glTexCoord2fv(txcds[2]); glColor3fv(color[4]); glVertex3fv(verts[4]);
+    glTexCoord2fv(txcds[3]); glColor3fv(color[5]); glVertex3fv(verts[5]);
+  }
+  glEnd();
+
+  tm.bind(skyboxTexID[2]); // right
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, skyboxWrapMode);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, skyboxWrapMode);
+  glBegin(GL_QUADS);
+  {
+    glTexCoord2fv(txcds[0]); glColor3fv(color[2]); glVertex3fv(verts[2]);
+    glTexCoord2fv(txcds[1]); glColor3fv(color[1]); glVertex3fv(verts[1]);
+    glTexCoord2fv(txcds[2]); glColor3fv(color[5]); glVertex3fv(verts[5]);
+    glTexCoord2fv(txcds[3]); glColor3fv(color[6]); glVertex3fv(verts[6]);
+  }
+  glEnd();
+
+  tm.bind(skyboxTexID[3]); // back
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, skyboxWrapMode);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, skyboxWrapMode);
+  glBegin(GL_QUADS);
+  {
+    glTexCoord2fv(txcds[0]); glColor3fv(color[3]); glVertex3fv(verts[3]);
+    glTexCoord2fv(txcds[1]); glColor3fv(color[2]); glVertex3fv(verts[2]);
+    glTexCoord2fv(txcds[2]); glColor3fv(color[6]); glVertex3fv(verts[6]);
+    glTexCoord2fv(txcds[3]); glColor3fv(color[7]); glVertex3fv(verts[7]);
+  }
+  glEnd();
+
+  glShadeModel(GL_FLAT);
+  glEnable(GL_CULL_FACE);
+  glDisable(GL_TEXTURE_2D);
+}
+
+
 void BackgroundRenderer::drawSky(SceneRenderer& renderer, bool mirror)
 {
   glPushMatrix();
+  
+  const bool doSkybox = haveSkybox && (renderer.useQuality() >= 2);
 
-  if (BZDBCache::drawSky) {
+  if (!doSkybox) {
     // rotate sky so that horizon-point-toward-sun-color is actually
     // toward the sun
     glRotatef((GLfloat)((atan2f(sunDirection[1], sunDirection[0]) * 180.0 + 135.0) / M_PI),
-	      0.0f, 0.0f, 1.0f);
-
+              0.0f, 0.0f, 1.0f);
 
     // draw sky
     skyGState.setState();
     if (!doSunset) {
       // just a pyramid
       glBegin(GL_TRIANGLE_FAN);
-	glColor3fv(skyZenithColor);
-	glVertex3fv(skyPyramid[4]);
-	glColor3fv(skyCrossSunDirColor);
-	glVertex3fv(skyPyramid[0]);
-	glColor3fv(skySunDirColor);
-	glVertex3fv(skyPyramid[3]);
-	glColor3fv(skyCrossSunDirColor);
-	glVertex3fv(skyPyramid[2]);
-	glColor3fv(skyAntiSunDirColor);
-	glVertex3fv(skyPyramid[1]);
-	glColor3fv(skyCrossSunDirColor);
-	glVertex3fv(skyPyramid[0]);
+        glColor3fv(skyZenithColor);
+        glVertex3fv(skyPyramid[4]);
+        glColor3fv(skyCrossSunDirColor);
+        glVertex3fv(skyPyramid[0]);
+        glColor3fv(skySunDirColor);
+        glVertex3fv(skyPyramid[3]);
+        glColor3fv(skyCrossSunDirColor);
+        glVertex3fv(skyPyramid[2]);
+        glColor3fv(skyAntiSunDirColor);
+        glVertex3fv(skyPyramid[1]);
+        glColor3fv(skyCrossSunDirColor);
+        glVertex3fv(skyPyramid[0]);
       glEnd();
     }
     else {
@@ -754,14 +940,14 @@ void BackgroundRenderer::drawSky(SceneRenderer& renderer, bool mirror)
       // triangles each.  the top triangle is all zenith color,
       // the bottom goes from zenith to sun-dir color.
       glBegin(GL_TRIANGLE_FAN);
-	glColor3fv(skyZenithColor);
-	glVertex3fv(skyPyramid[4]);
-	glColor3fv(skyCrossSunDirColor);
-	glVertex3fv(skyPyramid[2]);
-	glColor3fv(skyAntiSunDirColor);
-	glVertex3fv(skyPyramid[1]);
-	glColor3fv(skyCrossSunDirColor);
-	glVertex3fv(skyPyramid[0]);
+        glColor3fv(skyZenithColor);
+        glVertex3fv(skyPyramid[4]);
+        glColor3fv(skyCrossSunDirColor);
+        glVertex3fv(skyPyramid[2]);
+        glColor3fv(skyAntiSunDirColor);
+        glVertex3fv(skyPyramid[1]);
+        glColor3fv(skyCrossSunDirColor);
+        glVertex3fv(skyPyramid[0]);
       glEnd();
 
       GLfloat sunsetTopPoint[3];
@@ -769,42 +955,48 @@ void BackgroundRenderer::drawSky(SceneRenderer& renderer, bool mirror)
       sunsetTopPoint[1] = skyPyramid[3][1] * (1.0f - sunsetTop);
       sunsetTopPoint[2] = skyPyramid[4][2] * sunsetTop;
       glBegin(GL_TRIANGLES);
-	glColor3fv(skyZenithColor);
-	glVertex3fv(skyPyramid[4]);
-	glColor3fv(skyCrossSunDirColor);
-	glVertex3fv(skyPyramid[0]);
-	glColor3fv(skyZenithColor);
-	glVertex3fv(sunsetTopPoint);
-	glVertex3fv(skyPyramid[4]);
-	glVertex3fv(sunsetTopPoint);
-	glColor3fv(skyCrossSunDirColor);
-	glVertex3fv(skyPyramid[2]);
-	glColor3fv(skyZenithColor);
-	glVertex3fv(sunsetTopPoint);
-	glColor3fv(skyCrossSunDirColor);
-	glVertex3fv(skyPyramid[0]);
-	glColor3fv(skySunDirColor);
-	glVertex3fv(skyPyramid[3]);
-	glColor3fv(skyCrossSunDirColor);
-	glVertex3fv(skyPyramid[2]);
-	glColor3fv(skyZenithColor);
-	glVertex3fv(sunsetTopPoint);
-	glColor3fv(skySunDirColor);
-	glVertex3fv(skyPyramid[3]);
+        glColor3fv(skyZenithColor);
+        glVertex3fv(skyPyramid[4]);
+        glColor3fv(skyCrossSunDirColor);
+        glVertex3fv(skyPyramid[0]);
+        glColor3fv(skyZenithColor);
+        glVertex3fv(sunsetTopPoint);
+        glVertex3fv(skyPyramid[4]);
+        glVertex3fv(sunsetTopPoint);
+        glColor3fv(skyCrossSunDirColor);
+        glVertex3fv(skyPyramid[2]);
+        glColor3fv(skyZenithColor);
+        glVertex3fv(sunsetTopPoint);
+        glColor3fv(skyCrossSunDirColor);
+        glVertex3fv(skyPyramid[0]);
+        glColor3fv(skySunDirColor);
+        glVertex3fv(skyPyramid[3]);
+        glColor3fv(skyCrossSunDirColor);
+        glVertex3fv(skyPyramid[2]);
+        glColor3fv(skyZenithColor);
+        glVertex3fv(sunsetTopPoint);
+        glColor3fv(skySunDirColor);
+        glVertex3fv(skyPyramid[3]);
       glEnd();
     }
   }
 
   glLoadIdentity();
   renderer.getViewFrustum().executeOrientation();
+  
+  const bool useClipPlane = (mirror && (doSkybox || BZDBCache::drawCelestial));
+  
+  if (useClipPlane) {
+    glEnable(GL_CLIP_PLANE0);
+    const GLdouble plane[4] = {0.0, 0.0, +1.0, 0.0};
+    glClipPlane(GL_CLIP_PLANE0, plane);
+  }
+
+  if (doSkybox) {
+    drawSkybox();
+  }
 
   if (BZDBCache::drawCelestial) {
-    if (mirror) {
-      glEnable(GL_CLIP_PLANE0);
-      const GLdouble plane[4] = {0.0, 0.0, +1.0, 0.0};
-      glClipPlane(GL_CLIP_PLANE0, plane);
-    }
-
     if (sunDirection[2] > -0.009f) {
       sunGState.setState();
       glColor3fv(renderer.getSunScaledColor());
@@ -824,11 +1016,12 @@ void BackgroundRenderer::drawSky(SceneRenderer& renderer, bool mirror)
       glCallList(moonList);
     }
 
-    if (mirror) {
-      glDisable(GL_CLIP_PLANE0);
-    }
   }
 
+  if (useClipPlane) {
+    glDisable(GL_CLIP_PLANE0);
+  }
+  
   glPopMatrix();
 }
 

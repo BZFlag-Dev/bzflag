@@ -70,6 +70,7 @@ const char *usageString =
 "[-filterCallsigns] "
 "[-filterChat] "
 "[-filterSimple] "
+"[-forcegfx] "
 "[-g] "
 "[-gndtex <texture name>] "
 "[-groupdb <group file>] "
@@ -162,6 +163,7 @@ const char *extraUsageString =
 "\t-filterCallsigns: filter callsigns to disallow inappropriate user names\n"
 "\t-filterChat: filter chat messages\n"
 "\t-filterSimple: perform simple exact matches with the bad word list\n"
+"\t-forcegfx: required that the clients use advanced graphics mode\n"
 "\t-g: serve one game and then exit\n"
 "\t-gndtex: specify ground texture\n"
 "\t-groupdb: file to read for group permissions\n"
@@ -695,6 +697,8 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       options.filterChat = true;
     } else if (strcmp(argv[i], "-filterSimple") == 0) {
       options.filterSimple = true;
+    } else if (strcmp(argv[i], "-forcegfx") == 0) {
+      options.gameStyle |= int(RequireGraphics);
     } else if (strcmp(argv[i], "-g") == 0) {
       options.oneGameOnly = true;
     } else if (strcmp(argv[i], "-gndtex") == 0) {

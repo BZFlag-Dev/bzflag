@@ -19,8 +19,6 @@
 #include <string>
 #include <vector>
 
-// common-interface headers
-
 #ifdef _WIN32
 	#ifdef INSIDE_BZ
 		#define BZF_API __declspec( dllexport )

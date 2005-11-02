@@ -89,44 +89,59 @@ bool			WallSceneNode::cull(const ViewFrustum& frustum) const
 {
   // cull if eye is behind (or on) plane
   const GLfloat* eye = frustum.getEye();
-  if (((eye[0] * plane[0]) + (eye[1] * plane[1]) + (eye[2] * plane[2]) +
-       plane[3]) <= 0.0f) {
+  const float eyedot = (eye[0] * plane[0]) +
+                       (eye[1] * plane[1]) +
+                       (eye[2] * plane[2]) + plane[3];
+  if (eyedot <= 0.0f) {
     return true;
   }
 
   // if the Visibility culler tells us that we're
   // fully visible, then skip the rest of these tests
-  if (octreeState == OctreeVisible)
+  if (octreeState == OctreeVisible) {
     return false;
+  }
 
   // get signed distance of wall center to each frustum side.
   // if more than radius outside then cull
+  const int planeCount = frustum.getPlaneCount();
   int i;
-  float d[5], d2[5];
+  float d[6], d2[6];
   const GLfloat* mySphere = getSphere();
-  for (i = 0; i < 5; i++) {
+  bool inside = true;
+  for (i = 0; i < planeCount; i++) {
     const GLfloat* norm = frustum.getSide(i);
-    d[i] = mySphere[0] * norm[0] + mySphere[1] * norm[1] +
-		mySphere[2] * norm[2] + norm[3];
-    if (d[i] < 0.0f && (d2[i] = d[i]*d[i]) > mySphere[3])
-      return true;
+    d[i] = (mySphere[0] * norm[0]) +
+           (mySphere[1] * norm[1]) +
+           (mySphere[2] * norm[2]) + norm[3];
+    if (d[i] < 0.0f) {
+      d2[i] = d[i] * d[i];
+      if (d2[i] > mySphere[3]) {
+        return true;
+      }
+      inside = false;
+    }
   }
 
   // see if center of wall is inside each frustum side
-  if (d[0] >= 0.0f && d[1] >= 0.0f && d[2] >= 0.0f &&
-      d[3] >= 0.0f && d[4] >= 0.0f)
+  if (inside) {
     return false;
+  }
 
   // most complicated test:  for sides sphere is behind, see if
   // center is beyond radius times the sine of the angle between
   // the normals, or equivalently:
   //	distance^2 > radius^2 * (1 - cos^2)
   // if so the wall is outside the view frustum
-  for (i = 0; i < 5; i++) {
-    if (d[i] >= 0.0f) continue;
+  for (i = 0; i < planeCount; i++) {
+    if (d[i] >= 0.0f) {
+      continue;
+    }
     const GLfloat* norm = frustum.getSide(i);
     const GLfloat c = norm[0]*plane[0] + norm[1]*plane[1] + norm[2]*plane[2];
-    if (d2[i] > mySphere[3] * (1.0f - c*c)) return true;
+    if (d2[i] > mySphere[3] * (1.0f - c*c)) {
+      return true;
+    }
   }
 
   // probably visible

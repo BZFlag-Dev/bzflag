@@ -88,7 +88,8 @@ enum GameStyle {
 	ShakableGameStyle =		0x0040,	// can drop bad flags
 	AntidoteGameStyle =		0x0080,	// anti-bad flags
 	HandicapGameStyle =		0x0100,	// handicap players based on score (eek! was TimeSyncGameStyle)
-	RabbitChaseGameStyle =		0x0200	// rabbit chase
+	RabbitChaseGameStyle =		0x0200,	// rabbit chase
+	RequireGraphics =		0x0400	// force the use of fancy gfx  (currently drawInfo and fog)
 	// add here before reusing old ones above
 };
 
@@ -109,9 +110,8 @@ public:
 extern const unsigned int numGlobalDBItems;
 extern const struct GlobalDBItem globalDBItems[];
 
-bz_eTeamType convertTeam ( TeamColor team );
-TeamColor convertTeam( bz_eTeamType team );
-
+bz_eTeamType convertTeam(TeamColor team);
+TeamColor convertTeam(bz_eTeamType team);
 
 #endif // BZF_GLOBAL_H
 

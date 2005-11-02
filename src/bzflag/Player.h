@@ -36,7 +36,7 @@ class TankSceneNode;
 class TankIDLSceneNode;
 class SphereSceneNode;
 class Obstacle;
-class FiringInfo;
+struct FiringInfo;
 
 // 54 bytes
 const int PlayerUpdatePLenMax =

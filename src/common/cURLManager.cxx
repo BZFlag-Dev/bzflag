@@ -108,9 +108,18 @@ void cURLManager::setTimeout(long timeout)
 {
   CURLcode result;
 
-  result = curl_easy_setopt(easyHandle, CURLOPT_TIMEOUT, timeout);
+  result = curl_easy_setopt(easyHandle, CURLOPT_CONNECTTIMEOUT, timeout);
   if (result != CURLE_OK) {
-    DEBUG1("CURLOPT_TIMEOUT error %d : %s\n", result, errorBuffer);
+    DEBUG1("CURLOPT_CONNECTTIMEOUT error %d : %s\n", result, errorBuffer);
+  }
+  // anything under 1Kbyte/sec is junk
+  result = curl_easy_setopt(easyHandle, CURLOPT_LOW_SPEED_LIMIT, 1024);
+  if (result != CURLE_OK) {
+    DEBUG1("CURLOPT_LOW_SPEED_LIMIT error %d : %s\n", result, errorBuffer);
+  }
+  result = curl_easy_setopt(easyHandle, CURLOPT_LOW_SPEED_TIME, timeout);
+  if (result != CURLE_OK) {
+    DEBUG1("CURLOPT_LOW_SPEED_TIME error %d : %s\n", result, errorBuffer);
   }
 }
 
