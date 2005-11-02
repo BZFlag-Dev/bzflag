@@ -754,6 +754,37 @@ void SceneRenderer::render(bool _lastFrame, bool _sameFrame,
   if (reallyUseFogHack) {
     renderPreDimming();
   }
+  
+  // far culling plane
+  if (mapFog && (BZDB.get("_cullDist") == "fog")) {
+    const float fogMargin = 1.01f;
+    const std::string& fogMode = BZDB.get("_fogMode");
+    if (fogMode == "linear") {
+      frustum.setFarCullDistance(fogMargin * BZDB.eval("_fogEnd"));
+    } else {
+      const float density = BZDB.eval("_fogDensity");
+      if (density > 0.0f) {
+        const float fogFactor = 0.01f;
+        if (fogMode == "exp2") {
+          const float dist = fogMargin * sqrtf(-logf(fogFactor)) / density;
+          frustum.setFarCullDistance(dist);
+        } else { // default to 'exp'
+          const float dist = fogMargin * -logf(fogFactor) / density;
+          frustum.setFarCullDistance(dist);
+        }
+      } else {
+        frustum.setFarCullDistance(-1.0f); // disable
+      }
+    }
+  } else {
+    const float dist = BZDB.eval("_cullDist");
+    if (dist == dist) {// NaN protection
+      frustum.setFarCullDistance(dist);
+    } else {
+      frustum.setFarCullDistance(-1.0f); // disable
+    }
+  }
+    
 
   mirror = (BZDB.get(StateDatabase::BZDB_MIRROR) != "none")
 	   && BZDB.isTrue("userMirror");

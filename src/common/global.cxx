@@ -33,6 +33,7 @@ const struct GlobalDBItem globalDBItems[] = {
   { "_coldetDepth",		"6",				false, StateDatabase::Locked},
   { "_coldetElements",		"4",				false, StateDatabase::Locked},
   { "_cullDepth",		"6",				false, StateDatabase::Locked},
+  { "_cullDist",		"fog",				false, StateDatabase::Locked},
   { "_cullElements",		"16",				false, StateDatabase::Locked},
   { "_cullOccluders",		"0",				false, StateDatabase::Locked},
   { "_disableBots",		"0",				false, StateDatabase::Locked},

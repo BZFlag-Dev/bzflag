@@ -144,6 +144,8 @@ void			Frustum::setView(const float* _eye,
   makePlane(edge[1], edge[0], 3);
   makePlane(edge[3], edge[2], 4);
 
+  planeCount = 5; // do not use the far clipping plane unless specified
+  
   // make far corners
   for (int i = 0; i < 4; i++) {
     farCorner[i][0] = eye[0] + m_far * edge[i][0];
@@ -151,6 +153,22 @@ void			Frustum::setView(const float* _eye,
     farCorner[i][2] = eye[2] + m_far * edge[i][2];
   }
 }
+
+
+void			Frustum::setFarCullDistance(float dist)
+{
+  // far clip plane
+  if (dist <= 0.0f) {
+    planeCount = 5;
+  } else {
+    plane[5][0] = -plane[0][0];
+    plane[5][1] = -plane[0][1];
+    plane[5][2] = -plane[0][2];
+    plane[5][3] = -plane[0][3] + dist;
+    planeCount = 6;
+  }
+}
+
 
 void			Frustum::setProjection(float fov, float _m_near,
 						float _m_far, int width,
@@ -290,6 +308,7 @@ void Frustum::setOrthoPlanes(const Frustum& view, float width, float breadth)
   plane[5][0] = plane[0][1] = 0.0f;
   plane[5][2] = 1.0f;
   plane[5][3] = -1.0e6;
+  planeCount = 5;
 
   return;
 }

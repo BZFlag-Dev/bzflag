@@ -1431,8 +1431,7 @@ static void addPlayer(int playerIndex, GameKeeper::Player *playerData)
            (rev < minRevision))))) {
       char buffer[256];
       snprintf(buffer, 256,
-               "Client does not support the required graphics capabilities\n"
-               " (require client version %i.%i.%i or higher)",
+               "This server requires a client version %i.%i.%i or higher.",
                minMajor, minMinor, minRevision);
       rejectPlayer(playerIndex, RejectBadRequest, buffer);
       return;
