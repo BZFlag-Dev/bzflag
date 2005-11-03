@@ -42,6 +42,8 @@ class Score {
   static void setTeamKillRatio(int _tkKickRatio);
   static void setWinLimit(int _score);
   static void setRandomRanking();
+
+  int   getHandicap();
  private:
   // player's score
   int wins, losses, tks;

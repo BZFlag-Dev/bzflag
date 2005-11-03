@@ -63,7 +63,6 @@ void *Score::pack(void *buf) {
   buf = nboPackUShort(buf, wins);
   buf = nboPackUShort(buf, losses);
   buf = nboPackUShort(buf, tks);
-  buf = nboPackShort(buf, losses - wins);
   return buf;
 }
 
@@ -81,6 +80,10 @@ void Score::setWinLimit(int _score) {
 
 void Score::setRandomRanking() {
   randomRanking = true;
+}
+
+int Score::getHandicap() {
+  return losses - wins;
 }
 
 // Local Variables: ***

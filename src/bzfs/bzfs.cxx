@@ -1606,6 +1606,26 @@ static void addPlayer(int playerIndex, GameKeeper::Player *playerData)
 	if (otherData)
 	  sendPlayerUpdate(otherData, playerIndex);
       }
+    
+    if (clOptions->gameStyle & HandicapGameStyle) {
+      int numHandicaps = 0;
+
+      // Send handicap for all players
+      bufStart = getDirectMessageBuffer();
+      buf = nboPackUByte(bufStart, numHandicaps);
+      for (int i = 0; i < curMaxPlayers
+	     && GameKeeper::Player::getPlayerByIndex(playerIndex); i++)
+	if (i != playerIndex) {
+	  otherData = GameKeeper::Player::getPlayerByIndex(i);
+	  if (otherData) {
+	    numHandicaps++;
+	    buf = nboPackUByte(buf, i);
+	    buf = nboPackShort(buf, otherData->score.getHandicap());
+	  }
+	}
+      nboPackUByte(bufStart, numHandicaps);
+      broadcastMessage(MsgHandicap, (char*)buf-(char*)bufStart, bufStart);
+    }
   }
 
   // if new player connection was closed (because of an error) then stop here
@@ -2445,6 +2465,20 @@ void playerKilled(int victimIndex, int killerIndex, int reason,
     buf = nboPackUByte(buf, victimIndex);
     buf = victimData->score.pack(buf);
     broadcastMessage(MsgScore, (char*)buf-(char*)bufStart, bufStart);
+
+    if (clOptions->gameStyle & HandicapGameStyle) {
+      bufStart = getDirectMessageBuffer();
+      if (killer) {
+	buf = nboPackUByte(bufStart, 2);
+	buf = nboPackUByte(buf, killerIndex);
+	buf = nboPackShort(buf, killerData->score.getHandicap());
+      } else {
+	buf = nboPackUByte(bufStart, 1);
+      }
+      buf = nboPackUByte(buf, victimIndex);
+      buf = nboPackShort(buf, victimData->score.getHandicap());
+      broadcastMessage(MsgHandicap, (char*)buf-(char*)bufStart, bufStart);
+    }
 
     // see if the player reached the score limit
     if (clOptions->maxPlayerScore != 0
