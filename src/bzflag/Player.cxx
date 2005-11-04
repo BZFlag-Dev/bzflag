@@ -622,11 +622,13 @@ void Player::updateTreads(float dt)
 }
 
 
-void Player::changeScore(short deltaWins, short deltaLosses, short deltaTeamKills)
+void Player::changeScore(short deltaWins,
+			 short deltaLosses,
+			 short deltaTeamKills)
 {
-  wins += deltaWins;
-  losses += deltaLosses;
-  tks += deltaTeamKills;
+  wins   = deltaWins;
+  losses = deltaLosses;
+  tks    = deltaTeamKills;
 }
 
 

@@ -2506,9 +2506,7 @@ static void		handleServerMessage(bool human, uint16_t code,
             DEBUG1("Recieved score update for unknown player!\n");
         }
 	if (sPlayer)
-          sPlayer->changeScore(wins - myTank->getWins(),
-			       losses - myTank->getLosses(),
-			       tks - myTank->getTeamKills());
+          sPlayer->changeScore(wins, losses, tks);
       }
       break;
     }
