@@ -319,7 +319,7 @@ static float nextGameTime()
   const TimeKeeper nowTime = TimeKeeper::getCurrent();
   for (int i = 0; i < curMaxPlayers; i++) {
     GameKeeper::Player *gkPlayer = GameKeeper::Player::getPlayerByIndex(i);
-    if (gkPlayer != NULL) {
+    if ((gkPlayer != NULL) && gkPlayer->player.isHuman()) {
       const TimeKeeper& pTime = gkPlayer->getNextGameTime();
       const float pNextTime = (float)(pTime - nowTime);
       if (pNextTime < nextTime) {
