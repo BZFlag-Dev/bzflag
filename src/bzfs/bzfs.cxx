@@ -2776,7 +2776,6 @@ static void shotFired(int playerIndex, void *buf, int len)
   if (!playerData)
     return;
 
-  bool repack = false;
   const PlayerInfo &shooter = playerData->player;
   if (!shooter.isAlive() || shooter.isObserver())
     return;
@@ -2791,42 +2790,7 @@ static void shotFired(int playerIndex, void *buf, int len)
     return;
   }
 
-  // make sure the shooter flag is a valid index to prevent segfaulting later
-  if (!shooter.haveFlag()) {
-    firingInfo.flagType = Flags::Null;
-    repack = true;
-  }
-
-  float shotSpeed = BZDB.eval(StateDatabase::BZDB_SHOTSPEED);
   FlagInfo &fInfo = *FlagInfo::get(shooter.getFlag());
-  // verify player flag
-  if ((firingInfo.flagType != Flags::Null)
-      && (firingInfo.flagType != fInfo.flag.type)) {
-    std::string fireFlag = "unknown";
-    std::string holdFlag = "unknown";
-    if (firingInfo.flagType) {
-      fireFlag = firingInfo.flagType->flagAbbv;
-    }
-    if (fInfo.flag.type) {
-      if (fInfo.flag.type == Flags::Null) {
-	holdFlag = "none";
-      } else {
-	holdFlag = fInfo.flag.type->flagAbbv;
-      }
-    }
-
-    // probably a cheater using wrong shots.. exception for thief since they steal someone elses
-    if (firingInfo.flagType != Flags::Thief) {
-      // bye bye supposed cheater
-      DEBUG1("Kicking Player %s [%d] Player using wrong shots\n", shooter.getCallSign(), playerIndex);
-      sendMessage(ServerPlayer, playerIndex, "Autokick: Your shots do not to match the expected shot type.");
-      removePlayer(playerIndex, "Player shot mismatch");
-    }
-
-    DEBUG2("Player %s [%d] shot flag mismatch %s %s\n", shooter.getCallSign(),
-	   playerIndex, fireFlag.c_str(), holdFlag.c_str());
-    return;
-  }
 
   // verify shot number
   if ((shot.id & 0xff) > clOptions->maxShots - 1) {
@@ -2835,80 +2799,6 @@ static void shotFired(int playerIndex, void *buf, int len)
 	   playerIndex,	shot.id & 0xff, clOptions->maxShots);
     return;
   }
-
-  const float maxTankSpeed  = BZDBCache::tankSpeed;
-  const float tankSpeedMult = BZDB.eval(StateDatabase::BZDB_VELOCITYAD);
-  float tankSpeed	   = maxTankSpeed;
-  float lifetime = BZDB.eval(StateDatabase::BZDB_RELOADTIME);
-  if (clOptions->gameStyle & HandicapGameStyle) {
-    tankSpeed *= BZDB.eval(StateDatabase::BZDB_HANDICAPVELAD);
-    shotSpeed *= BZDB.eval(StateDatabase::BZDB_HANDICAPSHOTAD);
-  }
-  if (firingInfo.flagType == Flags::ShockWave) {
-    shotSpeed = 0.0f;
-    tankSpeed = 0.0f;
-  } else if (firingInfo.flagType == Flags::Velocity) {
-    tankSpeed *= tankSpeedMult;
-  } else if (firingInfo.flagType == Flags::Thief) {
-    tankSpeed *= BZDB.eval(StateDatabase::BZDB_THIEFVELAD);
-  } else if ((firingInfo.flagType == Flags::Burrow) && (firingInfo.shot.pos[2] < BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT))) {
-    tankSpeed *= BZDB.eval(StateDatabase::BZDB_BURROWSPEEDAD);
-  } else if (firingInfo.flagType == Flags::Agility) {
-    tankSpeed *= BZDB.eval(StateDatabase::BZDB_AGILITYADVEL);
-  } else {
-    //If shot is different height than player, can't be sure they didn't drop V in air
-    if (playerData->lastState.pos[2]
-	!= (shot.pos[2]-BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT))) {
-      tankSpeed *= tankSpeedMult;
-    }
-  }
-
-  // FIXME, we should look at the actual TankSpeed ;-)
-  shotSpeed += tankSpeed;
-
-  // verify lifetime
-  if (fabs(firingInfo.lifetime - lifetime) > Epsilon) {
-    DEBUG2("Player %s [%d] shot lifetime mismatch %f %f\n",
-	   shooter.getCallSign(),
-	   playerIndex, firingInfo.lifetime, lifetime);
-    return;
-  }
-
-  // verify velocity
-  if (hypotf(shot.vel[0], hypotf(shot.vel[1], shot.vel[2])) > shotSpeed * 1.01f) {
-    DEBUG2("Player %s [%d] shot over speed %f %f\n", shooter.getCallSign(),
-	   playerIndex, hypotf(shot.vel[0], hypotf(shot.vel[1], shot.vel[2])),
-	   shotSpeed);
-    return;
-  }
-
-  // verify position
-  float muzzleFront = BZDB.eval(StateDatabase::BZDB_MUZZLEFRONT);
-  float muzzleHeight = BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT);
-  if (firingInfo.flagType == Flags::Obesity)
-    muzzleFront *= BZDB.eval(StateDatabase::BZDB_OBESEFACTOR);
-  const PlayerState &last = playerData->lastState;
-  float dx = last.pos[0] - shot.pos[0];
-  float dy = last.pos[1] - shot.pos[1];
-  float dz = last.pos[2] + muzzleHeight - shot.pos[2];
-
-  // ignore z error for falling tanks
-  if (last.status & PlayerState::Falling)
-    dz = 0.0f;
-  float delta = dx*dx + dy*dy + dz*dz;
-  if (delta > (maxTankSpeed * tankSpeedMult + 2.0f * muzzleFront) *
-	      (maxTankSpeed * tankSpeedMult + 2.0f * muzzleFront)) {
-    DEBUG2("Player %s [%d] shot origination %f %f %f too far from tank %f %f %f: distance=%f\n",
-	    shooter.getCallSign(), playerIndex,
-	    shot.pos[0], shot.pos[1], shot.pos[2],
-	    last.pos[0], last.pos[1], last.pos[2], sqrt(delta));
-    return;
-  }
-
-  // repack if changed
-  if (repack)
-    firingInfo.pack(buf);
-
 
   // if shooter has a flag
 
