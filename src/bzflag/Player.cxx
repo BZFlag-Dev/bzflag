@@ -1382,8 +1382,55 @@ ShotPath* Player::getShot(int index) const
   return shots[index];
 }
 
-void Player::prepareShotInfo(FiringInfo &/*firingInfo*/)
+void Player::prepareShotInfo(FiringInfo &firingInfo)
 {
+  firingInfo.shot.dt = 0.0f;
+  firingInfo.lifetime = BZDB.eval(StateDatabase::BZDB_RELOADTIME);
+
+  firingInfo.flagType = getFlag();
+  // wee bit o hack -- if phantom flag but not phantomized
+  // the shot flag is normal -- otherwise FiringInfo will have
+  // to be changed to add a real bitwise status variable
+  if (getFlag() == Flags::PhantomZone && !isFlagActive())
+    firingInfo.flagType = Flags::Null;
+
+  // FIXME team coloring of shot is never used; it was meant to be used
+  // for rabbit mode to correctly calculate team kills when rabbit changes
+  firingInfo.shot.team = getTeam();
+
+  if (firingInfo.flagType == Flags::ShockWave) {
+    // move shot origin under tank and make it stationary
+    const float* pos = getPosition();
+    firingInfo.shot.pos[0] = pos[0];
+    firingInfo.shot.pos[1] = pos[1];
+    firingInfo.shot.pos[2] = pos[2];
+    firingInfo.shot.vel[0] = 0.0f;
+    firingInfo.shot.vel[1] = 0.0f;
+    firingInfo.shot.vel[2] = 0.0f;
+  } else {
+    getMuzzle(firingInfo.shot.pos);
+
+    const float* dir     = getForward();
+    const float* tankVel = getVelocity();
+    float shotSpeed      = BZDB.eval(StateDatabase::BZDB_SHOTSPEED);
+
+    if (handicap > 0.0f) {
+      // apply any handicap advantage to shot speed
+      const float speedAd = 1.0f
+	+ (handicap * (BZDB.eval(StateDatabase::BZDB_HANDICAPSHOTAD) - 1.0f));
+      shotSpeed *= speedAd;
+    }
+
+    firingInfo.shot.vel[0] = tankVel[0] + shotSpeed * dir[0];
+    firingInfo.shot.vel[1] = tankVel[1] + shotSpeed * dir[1];
+    firingInfo.shot.vel[2] = tankVel[2] + shotSpeed * dir[2];
+
+    // Set _shotsKeepVerticalVelocity on the server if you want shots
+    // to have the same vertical velocity as the tank when fired.
+    // keeping shots moving horizontally makes the game more playable.
+    if (!BZDB.isTrue(StateDatabase::BZDB_SHOTSKEEPVERTICALV))
+      firingInfo.shot.vel[2] = 0.0f;
+  }
 }
 
 void Player::addShot(ShotPath *shot, const FiringInfo &info)

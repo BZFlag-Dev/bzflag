@@ -1184,37 +1184,9 @@ bool			LocalPlayer::fireShot()
   }
 
   // prepare shot
-  FiringInfo firingInfo(*this, i + getSalt());
-  // FIXME team coloring of shot is never used; it was meant to be used
-  // for rabbit mode to correctly calculate team kills when rabbit changes
-  firingInfo.shot.team = getTeam();
-  if (firingInfo.flagType == Flags::ShockWave) {
-    // move shot origin under tank and make it stationary
-    const float* pos = getPosition();
-    firingInfo.shot.pos[0] = pos[0];
-    firingInfo.shot.pos[1] = pos[1];
-    firingInfo.shot.pos[2] = pos[2];
-    firingInfo.shot.vel[0] = 0.0f;
-    firingInfo.shot.vel[1] = 0.0f;
-    firingInfo.shot.vel[2] = 0.0f;
-  }
-  else {
-    // apply any handicap advantage to shot speed
-    if (handicap > 0.0f) {
-      const float speedAd = 1.0f + (handicap * (BZDB.eval(StateDatabase::BZDB_HANDICAPSHOTAD) - 1.0f));
-      const float* dir = getForward();
-      const float* tankVel = getVelocity();
-      const float shotSpeed = speedAd * BZDB.eval(StateDatabase::BZDB_SHOTSPEED);
-      firingInfo.shot.vel[0] = tankVel[0] + shotSpeed * dir[0];
-      firingInfo.shot.vel[1] = tankVel[1] + shotSpeed * dir[1];
-      firingInfo.shot.vel[2] = tankVel[2] + shotSpeed * dir[2];
-    }
-    // Set _shotsKeepVerticalVelocity on the server if you want shots
-    // to have the same vertical velocity as the tank when fired.
-    // keeping shots moving horizontally makes the game more playable.
-    if (!BZDB.isTrue(StateDatabase::BZDB_SHOTSKEEPVERTICALV)) firingInfo.shot.vel[2] = 0.0f;
-  }
-
+  FiringInfo firingInfo;
+  firingInfo.shot.player = getId();
+  firingInfo.shot.id     = uint16_t(i + getSalt());
   prepareShotInfo(firingInfo);
   // make shot and put it in the table
   addShot(new LocalShotPath(firingInfo), firingInfo);

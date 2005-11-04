@@ -53,7 +53,6 @@ struct ShotUpdate {
 struct FiringInfo {
   public:
 			FiringInfo();
-			FiringInfo(const BaseLocalPlayer&, int id);
 
     void*		pack(void*) const;
     void*		unpack(void*);
