@@ -40,12 +40,12 @@ static DWORD	    timeLastCalibration;
 #include "bzfio.h"
 
 
-TimeKeeper TimeKeeper::currentTime;
-TimeKeeper TimeKeeper::tickTime;
-TimeKeeper TimeKeeper::sunExplodeTime;
-TimeKeeper TimeKeeper::sunGenesisTime;
-TimeKeeper TimeKeeper::nullTime;
-TimeKeeper TimeKeeper::startTime = TimeKeeper::getCurrent();
+static TimeKeeper	currentTime;
+static TimeKeeper	tickTime;
+static TimeKeeper	sunExplodeTime;
+static TimeKeeper	sunGenesisTime;
+static TimeKeeper	nullTime;
+static TimeKeeper	startTime = TimeKeeper::getCurrent();
 
 const TimeKeeper&	TimeKeeper::getCurrent(void)
 {

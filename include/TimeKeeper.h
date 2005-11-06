@@ -100,12 +100,6 @@ public:
 
 private:
   double		seconds;
-  static TimeKeeper	currentTime;
-  static TimeKeeper	tickTime;
-  static TimeKeeper	sunExplodeTime;
-  static TimeKeeper	sunGenesisTime;
-  static TimeKeeper	nullTime;
-  static TimeKeeper	startTime;
 };
 
 //
