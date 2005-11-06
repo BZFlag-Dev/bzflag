@@ -2792,13 +2792,8 @@ static void shotFired(int playerIndex, void *buf, int len)
 
   FlagInfo &fInfo = *FlagInfo::get(shooter.getFlag());
 
-  // verify shot number
-  if ((shot.id & 0xff) > clOptions->maxShots - 1) {
-    DEBUG2("Player %s [%d] shot id out of range %d %d\n",
-	   shooter.getCallSign(),
-	   playerIndex,	shot.id & 0xff, clOptions->maxShots);
+  if (!playerData->addShot(shot.id & 0xff, shot.id >> 8, firingInfo))
     return;
-  }
 
   // if shooter has a flag
 
@@ -2845,6 +2840,13 @@ static void shotFired(int playerIndex, void *buf, int len)
 
 static void shotEnded(const PlayerId& id, int16_t shotIndex, uint16_t reason)
 {
+  GameKeeper::Player *playerData
+    = GameKeeper::Player::getPlayerByIndex(id);
+  if (!playerData)
+    return;
+
+  playerData->removeShot(shotIndex & 0xff, shotIndex >> 8);
+
   // shot has ended prematurely -- send MsgShotEnd
   void *buf, *bufStart = getDirectMessageBuffer();
   buf = nboPackUByte(bufStart, id);
@@ -4061,6 +4063,8 @@ int main(int argc, char **argv)
   PlayerInfo::setFilterParameters(clOptions->filterCallsigns,
 				  clOptions->filter,
 				  clOptions->filterSimple);
+  GameKeeper::Player::setMaxShots(clOptions->maxShots);
+
   // enable replay server mode
   if (clOptions->replayServer) {
 

@@ -38,6 +38,20 @@
 #include "NetHandler.h"
 #include "Authentication.h"
 #include "messages.h"
+#include "ShotUpdate.h"
+
+class FiringInfo;
+class ShotInfo {
+public:
+  ShotInfo() : present(false) {};
+
+  FiringInfo firingInfo;
+  int        salt;
+  float      expireTime;
+  bool       present;
+  bool       running;
+};
+
 
 const int PlayerSlot = MaxPlayers + ReplayObservers;
 
@@ -98,6 +112,11 @@ public:
     // When is the player's next GameTime?
     const TimeKeeper&	getNextGameTime() const;
     void		updateNextGameTime();
+
+    // To handle shot
+    static void    setMaxShots(int _maxShots);
+    bool           addShot(int id, int salt, FiringInfo &firingInfo);
+    bool           removeShot(int id, int salt);
     
     enum LSAState
       {
@@ -144,6 +163,9 @@ public:
     bool	      needThisHostbanChecked;
     // In case you want recheck all condition on all players
     static bool       allNeedHostbanChecked;
+
+    static int             maxShots;
+    std::vector<ShotInfo> shotsInfo;
 
   };
   class Flag {
