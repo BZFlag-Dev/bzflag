@@ -2769,6 +2769,34 @@ static void captureFlag(int playerIndex, TeamColor teamCaptured)
     checkTeamScore(playerIndex, winningTeam);
 }
 
+static void shotUpdate(int playerIndex, void *buf, int len)
+{
+  GameKeeper::Player *playerData
+    = GameKeeper::Player::getPlayerByIndex(playerIndex);
+  if (!playerData)
+    return;
+
+  const PlayerInfo &shooter = playerData->player;
+  if (!shooter.isAlive() || shooter.isObserver())
+    return;
+
+  ShotUpdate shot;
+  shot.unpack(buf);
+
+  // verify playerId
+  if (shot.player != playerIndex) {
+    DEBUG2("Player %s [%d] shot playerid mismatch\n", shooter.getCallSign(),
+	   playerIndex);
+    return;
+  }
+
+  if (!playerData->updateShot(shot.id & 0xff, shot.id >> 8))
+    return;
+
+  relayMessage(MsgGMUpdate, len, buf);
+
+}
+
 static void shotFired(int playerIndex, void *buf, int len)
 {
   GameKeeper::Player *playerData
@@ -2791,6 +2819,11 @@ static void shotFired(int playerIndex, void *buf, int len)
   }
 
   FlagInfo &fInfo = *FlagInfo::get(shooter.getFlag());
+
+  if (shooter.haveFlag())
+    firingInfo.flagType = fInfo.flag.type;
+  else
+    firingInfo.flagType = Flags::Null;
 
   if (!playerData->addShot(shot.id & 0xff, shot.id >> 8, firingInfo))
     return;
@@ -3597,15 +3630,19 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
       if (!playerData->player.isAlive()
 	  && (state.status & short(PlayerState::Alive)))
 	break;
+      // observer shouldn't send bulk messages anymore, they used to
+      // when it was a server-only hack; but the check does not hurt,
+      // either
+      if (playerData->player.isObserver())
+ 	break;
+      relayPlayerPacket(t, len, rawbuf, code);
+      break;
     }
 
-    //Fall thru
     case MsgGMUpdate:
-      // observer shouldn't send bulk messages anymore, they used to when it was
-      // a server-only hack; but the check does not hurt, either
-      if (playerData->player.isObserver())
-	break;
-      relayPlayerPacket(t, len, rawbuf, code);
+
+      shotUpdate(t, buf, int(len));
+      
       break;
 
     // FIXME handled inside uread, but not discarded

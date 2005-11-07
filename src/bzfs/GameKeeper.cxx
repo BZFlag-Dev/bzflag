@@ -436,6 +436,31 @@ bool GameKeeper::Player::removeShot(int id, int salt)
   return true;  
 }
 
+bool GameKeeper::Player::updateShot(int id, int salt)
+{
+  float now = TimeKeeper::getCurrent().getSeconds();
+  if (id >= (int)shotsInfo.size() || !shotsInfo[id].present
+      || now >= shotsInfo[id].expireTime) {
+    DEBUG2("Player %s [%d] trying to update an unexistent shot id %d\n",
+	   player.getCallSign(), playerIndex, id);
+    return false;
+  }
+  if (shotsInfo[id].salt != salt) {
+    DEBUG2("Player %s [%d] trying to update a mismatched shot id %d\n",
+	   player.getCallSign(), playerIndex, id);
+    return false;
+  }
+  if (!shotsInfo[id].running)
+    return false;
+  // only GM can be updated
+  if (shotsInfo[id].firingInfo.flagType != Flags::GuidedMissile) {
+    DEBUG2("Player %s [%d] trying to update a non GM shot id %d\n",
+	   player.getCallSign(), playerIndex, id);
+    return false;
+  }
+  return true;
+}
+
 // Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***
