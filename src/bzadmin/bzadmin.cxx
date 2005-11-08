@@ -18,15 +18,21 @@
 
 /* system headers */
 #include <stdio.h>
+#include <stdlib.h>
+#include <strings.h>
 #include <iostream>
 #include <map>
 #include <string>
 
 /* common headers */
+#include "TimeKeeper.h"
+
+/* local headers */
 #include "BZAdminClient.h"
 #include "BZAdminUI.h"
 #include "OptionParser.h"
 #include "UIMap.h"
+
 
 // causes persistent rebuilding to obtain build versioning
 #include "version.h"
@@ -165,23 +171,35 @@ int main(int argc, char** argv) {
   for (i = 0; i < invisibleMsgs.size(); ++i)
     client.ignoreMessageType(invisibleMsgs[i]);
 
-  // if we got commands as arguments, send them and exit
+  
+  // if we got commands as arguments, send them
   if (op.getParameters().size() > 1) {
     // if we have a token wait a bit for global login
     // FIXME: should "know" when we are logged in (or fail) and only wait that long.
     if (startupInfo.token[0] != 0)
       TimeKeeper::sleep(5.0);
     for (unsigned int j = 1; j < op.getParameters().size(); ++j) {
-      if (op.getParameters()[j] == "/quit") {
+      const std::string& cmd = op.getParameters()[j];
+      if (cmd == "/quit") {
 	client.waitForServer();
 	return 0;
+      } 
+      else if (strncasecmp(cmd.c_str(), "/sleep", 6) == 0) {
+        const char* start = cmd.c_str() + 6;
+        char* endptr;
+        double sleepTime = strtod(start, &endptr);
+        if (endptr != start) {
+          TimeKeeper::sleep(sleepTime);
+        }
       }
-      client.sendMessage(op.getParameters()[j], AllPlayers);
+      else {
+        client.sendMessage(cmd, AllPlayers);
+      }
     }
   }
 
   // create UI and run the main loop
-  BZAdminUI*  ui = uiIter->second(client);
+  BZAdminUI* ui = uiIter->second(client);
   client.setUI(ui);
   client.runLoop();
   delete ui;

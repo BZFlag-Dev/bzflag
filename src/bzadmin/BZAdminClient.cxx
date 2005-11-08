@@ -277,9 +277,9 @@ BZAdminClient::ServerCode BZAdminClient::checkMessage() {
 	  vbuf = nboUnpackUByte(vbuf, p);
 	  vbuf = a.unpack(vbuf);
 	  players[p].ip = a.getDotNotation();
-	  if (messageMask[MsgAdminInfo]){
-	    ui->outputMessage("*** IPINFO: " + players[p].name + " from "  +
-	      players[p].ip, Default);
+	  if ((ui != NULL) && messageMask[MsgAdminInfo]){
+            ui->outputMessage("*** IPINFO: " + players[p].name + " from "  +
+              players[p].ip, Default);
 	  }
 	}
       }
