@@ -19,9 +19,7 @@
 /* system headers */
 #include <stdio.h>
 #include <stdlib.h>
-#ifdef HAVE_STRINGS_H
-#  include <strings.h>
-#endif
+#include <string.h>
 #include <iostream>
 #include <map>
 #include <string>
@@ -173,7 +171,6 @@ int main(int argc, char** argv) {
   for (i = 0; i < invisibleMsgs.size(); ++i)
     client.ignoreMessageType(invisibleMsgs[i]);
 
-  
   // if we got commands as arguments, send them
   if (op.getParameters().size() > 1) {
     // if we have a token wait a bit for global login
