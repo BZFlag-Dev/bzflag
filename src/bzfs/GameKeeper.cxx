@@ -375,7 +375,7 @@ void GameKeeper::Player::setMaxShots(int _maxShots)
 
 bool GameKeeper::Player::addShot(int id, int salt, FiringInfo &firingInfo)
 {
-  float now = TimeKeeper::getCurrent().getSeconds();
+  float now = (float)TimeKeeper::getCurrent().getSeconds();
   if (id < (int)shotsInfo.size() && shotsInfo[id].present
       && now < shotsInfo[id].expireTime) {
     DEBUG2("Player %s [%d] shot id %d duplicated\n",
@@ -418,7 +418,7 @@ bool GameKeeper::Player::addShot(int id, int salt, FiringInfo &firingInfo)
 
 bool GameKeeper::Player::removeShot(int id, int salt)
 {
-  float now = TimeKeeper::getCurrent().getSeconds();
+  float now = (float)TimeKeeper::getCurrent().getSeconds();
   if (id >= (int)shotsInfo.size() || !shotsInfo[id].present
       || now >= shotsInfo[id].expireTime) {
     DEBUG2("Player %s [%d] trying to stop the unexistent shot id %d\n",
@@ -438,7 +438,7 @@ bool GameKeeper::Player::removeShot(int id, int salt)
 
 bool GameKeeper::Player::updateShot(int id, int salt)
 {
-  float now = TimeKeeper::getCurrent().getSeconds();
+  float now = (float)TimeKeeper::getCurrent().getSeconds();
   if (id >= (int)shotsInfo.size() || !shotsInfo[id].present
       || now >= shotsInfo[id].expireTime) {
     DEBUG2("Player %s [%d] trying to update an unexistent shot id %d\n",
