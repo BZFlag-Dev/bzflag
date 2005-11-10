@@ -772,7 +772,7 @@ msgstr "Opponent's team flag: take it t'yer base t'cappure it! Fry mah hide!"
 #msgid "Guided Missile (GM):  Shots track a target.  Lock on with right button.  Can lock on or retarget after firing."
 #msgstr ""
 
-#msgid "Laser (L):  Shoots a laser.  Infinite speed and range but long reload time."
+#msgid "Laser (L):  Shoots a laser.  Infinite speed, long range, but long reload time."
 #msgstr ""
 
 #msgid "Ricochet (R):  Shots bounce off walls.  Don't shoot yourself!"
@@ -838,7 +838,7 @@ msgstr "Machine Gun (+MG): Mighty fast reload an' mighty sho't range."
 msgid "Guided Missile (+GM):  Shots track a target.  Lock on with right button.  Can lock on or retarget after firing."
 msgstr "Guided Missile (+GM): Shots track a targit. Lock on wif right button, as enny fool kin plainly see. Kin lock on o' retargit af'er firin'."
 
-msgid "Laser (+L):  Shoots a laser.  Infinite speed and range but long reload time."
+msgid "Laser (+L):  Shoots a laser.  Infinite speed, long range, but long reload time."
 msgstr "Laser (+L): Shoots a laser. Infinite speed an' range but long reload time."
 
 msgid "Ricochet (+R):  Shots bounce off walls.  Don't shoot yourself!"

@@ -71,7 +71,7 @@ const struct GlobalDBItem globalDBItems[] = {
   { "_jumpVelocity",		"19.0",				false, StateDatabase::Locked},
   { "_laserAdLife",		"0.1",				false, StateDatabase::Locked},
   { "_laserAdRate",		"0.5",				false, StateDatabase::Locked},
-  { "_laserAdVel",		"1000.0",			false, StateDatabase::Locked},
+  { "_laserAdVel",		"13.0",				false, StateDatabase::Locked},
   { "_latitude",		"37.5",				false, StateDatabase::Locked},
   { "_lockOnAngle",		"0.15",				false, StateDatabase::Locked},
   { "_longitude",		"122",				false, StateDatabase::Locked},

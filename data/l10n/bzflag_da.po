@@ -772,7 +772,7 @@ msgstr "Maskinegevær (MG):  Hurtig ladning men meget kort rækkevidde."
 msgid "Guided Missile (GM):  Shots track a target.  Lock on with right button.  Can lock on or retarget after firing."
 msgstr "Varmesøgende missler (+GM): Lås med højre knap og missilet vil følge målet. Man kan også skyde før man låser missilet på et mål."
 
-msgid "Laser (L):  Shoots a laser.  Infinite speed and range but long reload time."
+msgid "Laser (+L):  Shoots a laser.  Infinite speed, long range, but long reload time."
 msgstr "Laser (L):  Skyd med laser. Uendelig hurtig og rækkevidde, men lang ladetid."
 
 msgid "Ricochet (R):  Shots bounce off walls.  Don't shoot yourself!"
@@ -835,7 +835,7 @@ msgstr "Maskingevær (+MG):  Meget hurtig til at lade og meget kort rækkevidde.
 msgid "Guided Missile (+GM):  Shots track a target.  Lock on with right button.  Can lock on or retarget after firing."
 msgstr "Varmesøgende missler (+GM): Lås med højre knap og missilet vil følge målet. Man kan også skyde før man låser missilet på et mål."
 
-msgid "Laser (+L):  Shoots a laser.  Infinite speed and range but long reload time."
+msgid "Laser (+L):  Shoots a laser.  Infinite speed, long range, but long reload time."
 msgstr "Laser (+L): Skyd med laser. Uendelig hurtig og rækkevidde - men lang tid om at lade igen."
 
 msgid "Ricochet (+R):  Shots bounce off walls.  Don't shoot yourself!"

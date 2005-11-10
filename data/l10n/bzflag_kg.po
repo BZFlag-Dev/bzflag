@@ -772,7 +772,7 @@ msgstr "nIH neH"
 #msgid "Guided Missile (GM):  Shots track a target.  Lock on with right button.  Can lock on or retarget after firing."
 #msgstr ""
 
-#msgid "Laser (L):  Shoots a laser.  Infinite speed and range but long reload time."
+#msgid "Laser (L):  Shoots a laser.  Infinite speed, long range, but long reload time."
 #msgstr ""
 
 #msgid "Ricochet (R):  Shots bounce off walls.  Don't shoot yourself!"
@@ -838,7 +838,7 @@ msgstr "nIH neH"
 #msgid "Guided Missile (+GM):  Shots track a target.  Lock on with right button.  Can lock on or retarget after firing."
 #msgstr ""
 
-#msgid "Laser (+L):  Shoots a laser.  Infinite speed and range but long reload time."
+#msgid "Laser (+L):  Shoots a laser.  Infinite speed, long range, but long reload time."
 #msgstr ""
 
 #msgid "Ricochet (+R):  Shots bounce off walls.  Don't shoot yourself!"

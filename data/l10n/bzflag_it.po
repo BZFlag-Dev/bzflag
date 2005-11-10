@@ -773,7 +773,7 @@ msgstr "Mitragliatrice (MG):  Si ricarica molto velocemente, ma ha un raggio cor
 msgid "Guided Missile (GM):  Shots track a target.  Lock on with right button.  Can lock on or retarget after firing."
 msgstr "Missile Guidato (GM):  Il colpo segue il bersaglio, che scegli con il pulsante destro.  Puoi agganciarlo anche dopo aver sparato."
 
-msgid "Laser (L):  Shoots a laser.  Infinite speed and range but long reload time."
+msgid "Laser (L):  Shoots a laser.  Infinite speed, long range, but long reload time."
 msgstr "Laser (L):  Spara un laser.  Velocita' e distanza infinita ma si ricarica con lentezza."
 
 msgid "Ricochet (R):  Shots bounce off walls.  Don't shoot yourself!"
@@ -839,7 +839,7 @@ msgstr "Machine Gun (Mitragliatrice) (+MG):  Ricarica molto veloce e gittata mol
 msgid "Guided Missile (+GM):  Shots track a target.  Lock on with right button.  Can lock on or retarget after firing."
 msgstr "Missile Guidato (+GM): I colpi seguono l'obiettivo. Fai il lock con il tasto destro. Puoi fare il lock o cambiare obiettivo anche dopo aver sparato."
 
-msgid "Laser (+L):  Shoots a laser.  Infinite speed and range but long reload time."
+msgid "Laser (+L):  Shoots a laser.  Infinite speed, long range, but long reload time."
 msgstr "Raggio Laser (+L): Spara un raggio Laser. Ha velocita infinita ma lunghi tempi di ricarica."
 
 msgid "Ricochet (+R):  Shots bounce off walls.  Don't shoot yourself!"

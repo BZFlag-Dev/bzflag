@@ -500,7 +500,7 @@ any time during its flight (with the right mouse button).  This allows
 the player some control over the missile's steering.
 .TP 
 .B Laser (L)
-Shoots a laser, with effectively infinite speed and range.  Just point
+Shoots a laser, with effectively infinite speed and long range.  Just point
 and shoot.  The binoculars are handy for lining up distant targets.
 The downside (you knew it was coming) is that the reload time is doubled.
 .TP 

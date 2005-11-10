@@ -106,7 +106,7 @@ namespace Flags {
     GuidedMissile	= new FlagType( "Guided Missile", "GM", FlagUnstable, SpecialShot, FlagGood, NoTeam,
 					    "Shots track a target.  Lock on with right button.  Can lock on or retarget after firing." );
     Laser	= new FlagType( "Laser", "L", FlagUnstable, SpecialShot, FlagGood, NoTeam,
-					    "Shoots a laser.  Infinite speed and range but long reload time.");
+					    "Shoots a laser.  Infinite speed, long range, but long reload time.");
     Ricochet	= new FlagType( "Ricochet", "R", FlagUnstable, SpecialShot, FlagGood, NoTeam,
 					    "Shots bounce off walls.  Don't shoot yourself!" );
     SuperBullet	= new FlagType( "Super Bullet", "SB", FlagUnstable, SpecialShot, FlagGood, NoTeam,
