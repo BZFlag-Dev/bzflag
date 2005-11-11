@@ -27,9 +27,9 @@
 #include "BZDBCache.h"
 #include "BzMaterial.h"
 
-/* FIXME implementation specific header for global that should eventually go
- * away */
+/* FIXME implementation specific header for global that should eventually go away */
 #include <vector>
+#include <set>
 
 // for -pidfile option
 #ifdef _WIN32
@@ -40,10 +40,12 @@
 #endif
 
 // implementation-specific bzfs-specific headers
-#include "RecordReplay.h"
 #include "bzfs.h"
+#include "RecordReplay.h"
 #include "BZWError.h"
 #include "Permissions.h"
+#include "EntryZones.h"
+
 
 // import from TextUtils for convenience
 using TextUtils::compare_nocase;
@@ -522,7 +524,6 @@ static char **parseWorldOptions (const char *file, int &ac)
 
 static bool accLimitSet = false;
 static bool allFlagsOut = false;
-static bool teamFlagsAdded = false;
 
 void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
 {
@@ -584,11 +585,6 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
 	std::cerr << "Capture the flag incompatible with Rabbit Chase" << std::endl;
 	std::cerr << "Capture the flag assumed" << std::endl;
       }
-      if (!teamFlagsAdded) {
-	for (int t = RedTeam; t <= PurpleTeam; t++)
-	  options.numTeamFlags[t] += 1;
-	teamFlagsAdded = true;
-      }
     } else if (strcmp(argv[i], "-cache") == 0) {
       checkArgc(1, i, argc, argv[i]);
       options.cacheURL = argv[i];
@@ -620,11 +616,6 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
 	options.gameStyle &= ~int(RabbitChaseGameStyle);
 	std::cerr << "Capture the flag incompatible with Rabbit Chase" << std::endl;
 	std::cerr << "Capture the flag assumed" << std::endl;
-      }
-      if (!teamFlagsAdded) {
-	for (int t = RedTeam; t <= PurpleTeam; t++)
-	  options.numTeamFlags[t] += 1;
-	teamFlagsAdded = true;
       }
     } else if (strcmp(argv[i], "-density") ==0) {
       if (i+1 != argc && isdigit(*argv[i+1])) {
@@ -1155,46 +1146,62 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
 }
 
 
-void finalizeParsing(int /*argc*/, char **argv, CmdLineOptions &options)
+static int getZoneTeamFlagCount(FlagType* flagType, EntryZones& entryZones,
+                                 const std::set<FlagType*>& forbidden)
+{
+  if (forbidden.find(flagType) != forbidden.end()) {
+    return 0;
+  }
+  // tally zone team flags
+  int count = 0;
+  const ZoneList& zl = entryZones.getZoneList();
+  for (int z = 0; z < (int)zl.size(); z++) {
+    const ZoneFlagMap& zfm = zl[z].getZoneFlagMap();
+    ZoneFlagMap::const_iterator zfmIt;
+    for (zfmIt = zfm.begin(); zfmIt != zfm.end(); zfmIt++) {
+      if (zfmIt->first == flagType) {
+        count += zfmIt->second;
+      }
+    }
+  }
+  return count;
+}
+
+
+static int addZoneTeamFlags(int startIndex,
+                            FlagType* flagType, EntryZones& entryZones,
+                            const std::set<FlagType*>& forbidden)
+{
+  if (forbidden.find(flagType) != forbidden.end()) {
+    return startIndex;
+  }
+  // add zone team flags
+  const ZoneList& zl = entryZones.getZoneList();
+  for (int z = 0; z < (int)zl.size(); z++) {
+    const ZoneFlagMap& zfm = zl[z].getZoneFlagMap();
+    ZoneFlagMap::const_iterator zfmIt;
+    for (zfmIt = zfm.begin(); zfmIt != zfm.end(); zfmIt++) {
+      if (zfmIt->first == flagType) {
+        const int count = zfmIt->second;
+        for (int c = 0; c < count; c++) {
+	  entryZones.addZoneFlag(z, startIndex);
+	  FlagInfo::get(startIndex++)->setRequiredFlag(flagType);
+        }
+      }
+    }
+  }
+  return startIndex;
+}
+
+
+void finalizeParsing(int /*argc*/, char **argv,
+                     CmdLineOptions &options, EntryZones& entryZones)
 {
   if (options.flagsOnBuildings && !(options.gameStyle & JumpingGameStyle)) {
     std::cerr << "flags on boxes requires jumping" << std::endl;
     usage(argv[0]);
   }
 
-  // do we have any team flags?
-  bool hasTeam = false;
-  for (int p = RedTeam; p <= PurpleTeam; p++) {
-    if (options.maxTeam[p] > 1) {
-      hasTeam = true;
-      break;
-    }
-  }
-
-  // first disallow flags inconsistent with game style
-  if (options.gameStyle & JumpingGameStyle) {
-    options.flagCount[Flags::Jumping] = 0;
-    options.flagDisallowed[Flags::Jumping] = true;
-  } else {
-    options.flagCount[Flags::NoJumping] = 0;
-    options.flagDisallowed[Flags::NoJumping] = true;
-  }
-  if (options.gameStyle & RicochetGameStyle) {
-    options.flagCount[Flags::Ricochet] = 0;
-    options.flagDisallowed[Flags::Ricochet] = true;
-  }
-  if (!options.useTeleporters && (options.worldFile == "")) {
-    options.flagCount[Flags::PhantomZone] = 0;
-    options.flagDisallowed[Flags::PhantomZone] = true;
-  }
-  if (!hasTeam) {
-    options.flagCount[Flags::Genocide] = 0;
-    options.flagDisallowed[Flags::Genocide] = true;
-    options.flagCount[Flags::Colorblindness] = 0;
-    options.flagDisallowed[Flags::Colorblindness] = true;
-    options.flagCount[Flags::Masquerade] = 0;
-    options.flagDisallowed[Flags::Masquerade] = true;
-  }
   if (options.gameStyle & int(RabbitChaseGameStyle)) {
     for (int j = RedTeam; j <= PurpleTeam; j++) {
       if (options.maxTeam[j] > 0
@@ -1205,6 +1212,93 @@ void finalizeParsing(int /*argc*/, char **argv, CmdLineOptions &options)
     }
   }
 
+  if (!accLimitSet) {
+    printf("Note: no acceleration limit has been set.  Players using \"mouse\n"
+	   "enhancements\" may cause problems on this server due to very high\n"
+	   "acceleration rates which are not handled well by dead reckoning\n"
+	   "algorithms.  To eliminate this warning, set the -a switch in your\n"
+	   "configuration.  '-a 50 38' is recommended for standard-speed servers.\n"
+	   "Higher speed servers will need higher values for -a in order to not\n"
+	   "affect gameplay.  '-a 0 0' may be used to shut this message up without\n"
+	   "affecting any players, including those using \"mouse enhancements\".\n");
+  }
+
+
+  // do we have any team flags?
+  bool hasTeam = false;
+  for (int p = RedTeam; p <= PurpleTeam; p++) {
+    if (options.maxTeam[p] > 1) {
+      hasTeam = true;
+      break;
+    }
+  }
+
+  std::set<FlagType*> forbidden;
+
+  // first disallow flags inconsistent with game style
+  if (options.gameStyle & JumpingGameStyle) {
+    forbidden.insert(Flags::Jumping);
+  } else {
+    forbidden.insert(Flags::NoJumping);
+  }
+  if (options.gameStyle & RicochetGameStyle) {
+    forbidden.insert(Flags::Ricochet);
+  }
+  if (!options.useTeleporters && (options.worldFile == "")) {
+    forbidden.insert(Flags::PhantomZone);
+  }
+  if (!hasTeam) {
+    forbidden.insert(Flags::Genocide);
+    forbidden.insert(Flags::Colorblindness);
+    forbidden.insert(Flags::Masquerade);
+  }
+  if ((options.gameStyle & TeamFlagGameStyle) == 0) {
+    forbidden.insert(Flags::RedTeam);
+    forbidden.insert(Flags::GreenTeam);
+    forbidden.insert(Flags::BlueTeam);
+    forbidden.insert(Flags::PurpleTeam);
+  }
+  if (options.maxTeam[RedTeam] <= 0) {
+    forbidden.insert(Flags::RedTeam);
+  }
+  if (options.maxTeam[GreenTeam] <= 0) {
+    forbidden.insert(Flags::GreenTeam);
+  }
+  if (options.maxTeam[BlueTeam] <= 0) {
+    forbidden.insert(Flags::BlueTeam);
+  }
+  if (options.maxTeam[PurpleTeam] <= 0) {
+    forbidden.insert(Flags::PurpleTeam);
+  }
+
+  // void the forbidden flags
+  std::set<FlagType*>::const_iterator sit;
+  for (sit = forbidden.begin(); sit != forbidden.end(); sit++) {
+    FlagType* ft = *sit;
+    options.flagCount[ft] = 0;
+    options.flagDisallowed[ft] = true;
+  }
+  
+  // zone team flag counts
+  const int zoneTeamFlagCounts[5] = {
+    0, // rogue
+    getZoneTeamFlagCount(Flags::RedTeam, entryZones, forbidden),
+    getZoneTeamFlagCount(Flags::GreenTeam, entryZones, forbidden),
+    getZoneTeamFlagCount(Flags::BlueTeam, entryZones, forbidden),
+    getZoneTeamFlagCount(Flags::PurpleTeam, entryZones, forbidden)
+  };
+  
+  // make sure there is at least one team flag for each active team
+  if (options.gameStyle & TeamFlagGameStyle) {
+    for (int col = RedTeam; col <= PurpleTeam; col++) {
+      if ((options.maxTeam[col] > 0) &&
+          (options.numTeamFlags[col] <= 0) &&
+          (zoneTeamFlagCounts[col] <= 0)) {
+	options.numTeamFlags[col] += 1;
+      }
+    }
+  }
+  
   // make table of allowed extra flags
   if (options.numExtraFlags > 0) {
     // now count how many aren't disallowed
@@ -1214,14 +1308,10 @@ void finalizeParsing(int /*argc*/, char **argv, CmdLineOptions &options)
 	options.numAllowedFlags++;
       }
     }
-
     // if none allowed then no extra flags either
     if (options.numAllowedFlags == 0) {
       options.numExtraFlags = 0;
-    }
-
-    // otherwise make table of allowed flags
-    else {
+    } else {
       // types of extra flags allowed
       std::vector<FlagType*> allowedFlags;
       allowedFlags.clear();
@@ -1238,48 +1328,72 @@ void finalizeParsing(int /*argc*/, char **argv, CmdLineOptions &options)
     }
   }
 
-  // allocate space for flags
+  const ZoneList& zl = entryZones.getZoneList();
+
+  // allocate space for extra flags
   numFlags = options.numExtraFlags;
+  // allocate space for team flags
   if (options.gameStyle & TeamFlagGameStyle) {
-    for (int col = RedTeam; col <= PurpleTeam; col++)
-      if (options.maxTeam[col] > 0)
+    for (int col = RedTeam; col <= PurpleTeam; col++) {
+      if (options.maxTeam[col] > 0) {
 	numFlags += options.numTeamFlags[col];
+      }
+    }
   }
+  // allocate space for normal flags
   for (FlagTypeMap::iterator it = FlagType::getFlagMap().begin();
        it != FlagType::getFlagMap().end(); ++it) {
     numFlags += options.flagCount[it->second];
   }
+  // allocate space for zone flags (including teams flags)
+  for (int z = 0; z < (int)zl.size(); z++) {
+    const CustomZone& zone = zl[z];
+    const ZoneFlagMap& zfm = zone.getZoneFlagMap();
+    ZoneFlagMap::const_iterator zfmIt;
+    for (zfmIt = zfm.begin(); zfmIt != zfm.end(); zfmIt++) {
+      if (forbidden.find(zfmIt->first) == forbidden.end()) {
+        numFlags += zfmIt->second;
+      }
+    }
+  }
 
   FlagInfo::setSize(numFlags);
 
+  // add team flags (ordered)
   int f = 0;
   if (options.gameStyle & TeamFlagGameStyle) {
     if (options.maxTeam[RedTeam] > 0) {
+      f = addZoneTeamFlags(f, Flags::RedTeam, entryZones, forbidden);
       for (int n = 0; n < options.numTeamFlags[RedTeam]; n++) {
 	FlagInfo::get(f++)->setRequiredFlag(Flags::RedTeam);
       }
     }
     if (options.maxTeam[GreenTeam] > 0) {
+      f = addZoneTeamFlags(f, Flags::GreenTeam, entryZones, forbidden);
       for (int n = 0; n < options.numTeamFlags[GreenTeam]; n++) {
 	FlagInfo::get(f++)->setRequiredFlag(Flags::GreenTeam);
       }
     }
     if (options.maxTeam[BlueTeam] > 0) {
+      f = addZoneTeamFlags(f, Flags::BlueTeam, entryZones, forbidden);
       for (int n = 0; n < options.numTeamFlags[BlueTeam]; n++) {
 	FlagInfo::get(f++)->setRequiredFlag(Flags::BlueTeam);
       }
     }
     if (options.maxTeam[PurpleTeam] > 0) {
+      f = addZoneTeamFlags(f, Flags::PurpleTeam, entryZones, forbidden);
       for (int n = 0; n < options.numTeamFlags[PurpleTeam]; n++) {
 	FlagInfo::get(f++)->setRequiredFlag(Flags::PurpleTeam);
       }
     }
   }
 
-
+  // super flags?
   if (f < numFlags) {
     options.gameStyle |= int(SuperFlagGameStyle);
   }
+  
+  // add normal flags
   for (FlagTypeMap::iterator it2 = FlagType::getFlagMap().begin();
        it2 != FlagType::getFlagMap().end(); ++it2) {
     FlagType *fDesc = it2->second;
@@ -1290,12 +1404,37 @@ void finalizeParsing(int /*argc*/, char **argv, CmdLineOptions &options)
       }
     }
   }
+  // add zone flags
+  for (int z = 0; z < (int)zl.size(); z++) {
+    const CustomZone& zone = zl[z];
+    const ZoneFlagMap& zfm = zone.getZoneFlagMap();
+    ZoneFlagMap::const_iterator zfmIt;
+    for (zfmIt = zfm.begin(); zfmIt != zfm.end(); zfmIt++) {
+      FlagType* ft = zfmIt->first;
+      if ((ft->flagTeam == ::NoTeam) && // no team flags here
+          (forbidden.find(ft) == forbidden.end())) {
+        const int count = zfmIt->second;
+        for (int c = 0; c < count; c++) {
+	  entryZones.addZoneFlag(z, f);
+	  FlagInfo::get(f++)->setRequiredFlag(ft);
+        }
+      }
+    }
+  }
+  // add extra flags
   for (; f < numFlags; f++) {
     FlagInfo::get(f)->required = allFlagsOut;
   }
 
+  // sum the sources of team flags
+  if (options.gameStyle & TeamFlagGameStyle) {
+    for (int col = RedTeam; col <= PurpleTeam; col++) {
+      options.numTeamFlags[col] += zoneTeamFlagCounts[col];
+    }
+  }
+  
+
   // debugging
-  // print style
   DEBUG1("style: %x\n", options.gameStyle);
   if (options.gameStyle & int(TeamFlagGameStyle))
     DEBUG1("  capture the flag\n");
@@ -1312,17 +1451,6 @@ void finalizeParsing(int /*argc*/, char **argv, CmdLineOptions &options)
 	   0.1f * float(options.shakeTimeout), options.shakeWins);
   if (options.gameStyle & int(AntidoteGameStyle))
     DEBUG1("  antidote flags\n");
-
-  if (!accLimitSet) {
-    printf("Note: no acceleration limit has been set.  Players using \"mouse\n"
-	   "enhancements\" may cause problems on this server due to very high\n"
-	   "acceleration rates which are not handled well by dead reckoning\n"
-	   "algorithms.  To eliminate this warning, set the -a switch in your\n"
-	   "configuration.  '-a 50 38' is recommended for standard-speed servers.\n"
-	   "Higher speed servers will need higher values for -a in order to not\n"
-	   "affect gameplay.  '-a 0 0' may be used to shut this message up without\n"
-	   "affecting any players, including those using \"mouse enhancements\".\n");
-  }
 
   return;
 }

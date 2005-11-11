@@ -34,7 +34,8 @@ SpawnPosition::SpawnPosition(int playerId, bool onGroundOnly, bool notNearEdges)
   if (!playerData)
     return;
 
-  team = playerData->player.getTeam();
+  const PlayerInfo& pi = playerData->player;
+  team = pi.getTeam();
   azimuth = (float)(bzfrand() * 2.0 * M_PI);
 
   if (playerData->player.shouldRestartAtBase() &&
@@ -60,7 +61,7 @@ SpawnPosition::SpawnPosition(int playerId, bool onGroundOnly, bool notNearEdges)
     float bestDist = -1.0f;
     bool foundspot = false;
     while (!foundspot) {
-      if (!world->getZonePoint(std::string(Team::getName(team)), testPos)) {
+      if (!world->getPlayerSpawnPoint(&pi, testPos)) {
 	if (notNearEdges) {
 	  // don't spawn close to map edges in CTF mode
 	  testPos[0] = ((float)bzfrand() - 0.5f) * size * 0.6f;

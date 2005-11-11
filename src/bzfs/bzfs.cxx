@@ -33,7 +33,6 @@
 #include "TimeBomb.h"
 #include "ConfigFileManager.h"
 #include "bzsignal.h"
-#include "CustomZone.h"
 
 // implementation-specific bzfs-specific headers
 #include "RejoinList.h"
@@ -149,7 +148,7 @@ static bool       isIdentifyFlagIn = false;
 static bool       playerHadWorld   = false;
 
 void sendFilteredMessage(int playerIndex, PlayerId dstPlayer, const char *message);
-static void dropFlag(GameKeeper::Player &playerData, float pos[3]);
+static void dropFlag(GameKeeper::Player &playerData, const float dropPos[3]);
 static void dropAssignedFlag(int playerIndex);
 static std::string evaluateString(const std::string&);
 
@@ -799,7 +798,8 @@ static bool defineWorld()
   const float waterLevel = world->getWaterLevel();
   if (!clOptions->flagsOnBuildings && (waterLevel > 0.0f)) {
     clOptions->flagsOnBuildings = true;
-    DEBUG1("WARNING: enabling flags on buildings due to waterLevel\n");
+    clOptions->respawnOnBuildings = true;
+    DEBUG1("WARNING: enabling flag and tank spawns on buildings due to waterLevel\n");
   }
 
   // reset other stuff
@@ -1738,14 +1738,15 @@ void resetFlag(FlagInfo &flag)
   int teamIndex = flag.teamIndex();
   if ((teamIndex >= ::RedTeam) &&  (teamIndex <= ::PurpleTeam)
       && (bases.find(teamIndex) != bases.end())) {
-    // return the flag to the center of the top of one of the team
-    // bases.. we assume it'll fit.
-    TeamBases &teamBases = bases[teamIndex];
-    const TeamBase &base = teamBases.getRandomBase(flag.getIndex());
-    flagPos[0] = base.position[0];
-    flagPos[1] = base.position[1];
-    flagPos[2] = base.position[2] + base.size[2];
-
+    if (!world->getFlagSpawnPoint(&flag, flagPos)) {
+      // return the flag to the center of the top of one of the team
+      // bases.. we assume it'll fit.
+      TeamBases &teamBases = bases[teamIndex];
+      const TeamBase &base = teamBases.getRandomBase(flag.getIndex());
+      flagPos[0] = base.position[0];
+      flagPos[1] = base.position[1];
+      flagPos[2] = base.position[2] + base.size[2];
+    }
   } else {
     // random position (not in a building)
     const float waterLevel = world->getWaterLevel();
@@ -1760,15 +1761,14 @@ void resetFlag(FlagInfo &flag)
     float worldSize = BZDBCache::worldSize;
     int i;
     for (i = 0; i < 10000; i++) {
-      bool gotZonedFlag
-	= world->getZonePoint(std::string(flag.flag.type->flagAbbv), flagPos);
-      if (!gotZonedFlag) {
+      if (!world->getFlagSpawnPoint(&flag, flagPos)) {
 	flagPos[0] = (worldSize - baseSize) * ((float)bzfrand() - 0.5f);
 	flagPos[1] = (worldSize - baseSize) * ((float)bzfrand() - 0.5f);
 	flagPos[2] = world->getMaxWorldHeight() * (float)bzfrand();
       }
-      if (DropGeometry::dropFlag(flagPos, minZ, maxZ))
+      if (DropGeometry::dropFlag(flagPos, minZ, maxZ)) {
 	break;
+      }
     }
     if (i == 10000) {
       std::cerr << "Unable to position flags on this world.\n";
@@ -2269,7 +2269,6 @@ static void playerAlive(int playerIndex)
      clOptions->gameStyle & TeamFlagGameStyle);
 
   // see if there is anyone to handle the spawn event, and if they want to change it.
-
   bz_GetPlayerSpawnPosEventData	spawnData;
   spawnData.playerID = playerIndex;
   spawnData.team   = convertTeam(playerData->player.getTeam());
@@ -2529,17 +2528,15 @@ static void grabFlag(int playerIndex, FlagInfo &flag)
   playerData->flagHistory.add(flag.flag.type);
 }
 
-static void dropFlag(GameKeeper::Player &playerData, float pos[3])
+static void dropFlag(GameKeeper::Player &playerData, const float dropPos[3])
 {
   assert(world != NULL);
 
   const float size = BZDBCache::worldSize;
-  if (pos[0] < -size || pos[0] > size)
-    pos[0] = 0.0;
-  if (pos[1] < -size || pos[1] > size)
-    pos[1] = 0.0;
-  if (pos[2] > maxWorldHeight)
-    pos[2] = maxWorldHeight;
+  float pos[3];
+  pos[0] = ((dropPos[0] < -size) || (dropPos[0] > size)) ? 0.0f : dropPos[0];
+  pos[1] = ((dropPos[1] < -size) || (dropPos[1] > size)) ? 0.0f : dropPos[1];
+  pos[2] = (dropPos[2] > maxWorldHeight) ? maxWorldHeight : dropPos[2];
 
   // player wants to drop flag.  we trust that the client won't tell
   // us to drop a sticky flag until the requirements are satisfied.
@@ -2588,7 +2585,7 @@ static void dropFlag(GameKeeper::Player &playerData, float pos[3])
     // figure out landing spot -- if flag in a Bad Place
     // when dropped, move to safety position or make it going
     std::string teamName = Team::getName((TeamColor) flagTeam);
-    if (!world->getSafetyPoint(teamName, pos, landing)) {
+    if (!world->getFlagDropPoint(&drpFlag, pos, landing)) {
       // try the center
       landing[0] = landing[1] = landing[2] = 0.0f;
       safelyDropped =
@@ -2816,7 +2813,7 @@ static void shotFired(int playerIndex, void *buf, int len)
   }
 
   // FIXME, we should look at the actual TankSpeed ;-)
-  shotSpeed += tankSpeed;
+  shotSpeed += (tankSpeed * speedTolerance);
 
   // verify lifetime
   if (fabs(firingInfo.lifetime - lifetime) > Epsilon) {
@@ -4080,10 +4077,8 @@ int main(int argc, char **argv)
 
   BZDBCache::init();
 
-  // parse arguments
+  // parse arguments  (finalized later)
   parse(argc, argv, *clOptions);
-  finalizeParsing(argc, argv, *clOptions);
-
   setDebugTimestamp (clOptions->timestampLog, clOptions->timestampMicros);
 
   if (clOptions->bzdbVars.length() > 0) {
@@ -4096,13 +4091,11 @@ int main(int argc, char **argv)
     }
   }
 
-  // see if we are going to load any plugins
 #ifdef _USE_BZ_API
+  // see if we are going to load any plugins
   initPlugins();
-
   // check for python by default
   //	loadPlugin(std::string("python"),std::string(""));
-
   for (unsigned int plugin = 0; plugin < clOptions->pluginList.size(); plugin++)
   {
     if (!loadPlugin(clOptions->pluginList[plugin].plugin,
@@ -4114,15 +4107,42 @@ int main(int argc, char **argv)
   }
 #endif
 
-  // loading lag thresholds
-  LagInfo::setThreshold(clOptions->lagwarnthresh,(float)clOptions->maxlagwarn);
+  // start listening and prepare world database
+  if (!defineWorld()) {
+#if defined(_WIN32)
+    WSACleanup();
+#endif /* defined(_WIN32) */
+    std::cerr << "ERROR: A world was not specified" << std::endl;
+    return 1;
+  } else if (clOptions->cacheOut != "") {
+    if (!saveWorldCache()) {
+      std::cerr << "ERROR: could not save world cache file: "
+		<< clOptions->cacheOut << std::endl;
+    }
+    done = true;
+  }
+
+  // make flags, check sanity, etc...
+  // (do this after the world has been loaded)
+  finalizeParsing(argc, argv, *clOptions, world->getEntryZones());
+  {
+    FlagInfo::setNoFlagInAir();
+    for (int i = 0; i < numFlags; i++) {
+      resetFlag(*FlagInfo::get(i));
+    }
+  }
 
   // loading extra flag number
   FlagInfo::setExtra(clOptions->numExtraFlags);
 
+  // loading lag thresholds
+  LagInfo::setThreshold(clOptions->lagwarnthresh,(float)clOptions->maxlagwarn);
+
+  // loading player callsign/email filters
   PlayerInfo::setFilterParameters(clOptions->filterCallsigns,
 				  clOptions->filter,
 				  clOptions->filterSimple);
+
   // enable replay server mode
   if (clOptions->replayServer) {
 
@@ -4171,22 +4191,24 @@ int main(int argc, char **argv)
     }
   }
 
+  // loading authentication parameters
   Authentication::init(clOptions->publicizedAddress.c_str(),
 		       clOptions->wksPort,
 		       clOptions->password.c_str());
 
   /* initialize the poll arbiter for voting if necessary */
   if (clOptions->voteTime > 0) {
-    votingarbiter = new VotingArbiter(clOptions->voteTime, clOptions->vetoTime, clOptions->votesRequired, clOptions->votePercentage, clOptions->voteRepeatTime);
-    DEBUG1("There is a voting arbiter with the following settings:\n"
-	   "\tvote time is %d seconds\n"
-	   "\tveto time is %d seconds\n"
-	   "\tvotes required are %d\n"
-	   "\tvote percentage necessary is %f\n"
-	   "\tvote repeat time is %d seconds\n"
-	   "\tavailable voters is initially set to %d\n",
-	   clOptions->voteTime, clOptions->vetoTime, clOptions->votesRequired, clOptions->votePercentage, clOptions->voteRepeatTime,
-	   maxPlayers);
+    votingarbiter =
+      new VotingArbiter(clOptions->voteTime, clOptions->vetoTime,
+                        clOptions->votesRequired, clOptions->votePercentage,
+                        clOptions->voteRepeatTime);
+    DEBUG1("There is a voting arbiter with the following settings:\n");
+    DEBUG1("\tvote time is %d seconds\n", clOptions->voteTime);
+    DEBUG1("\tveto time is %d seconds\n", clOptions->vetoTime);
+    DEBUG1("\tvotes required are %d\n", clOptions->votesRequired);
+    DEBUG1("\tvote percentage necessary is %f\n", clOptions->votePercentage);
+    DEBUG1("\tvote repeat time is %d seconds\n", clOptions->voteRepeatTime);
+    DEBUG1("\tavailable voters is initially set to %d\n", maxPlayers);
 
     // override the default voter count to the max number of players possible
     votingarbiter->setAvailableVoters(maxPlayers);
@@ -4197,10 +4219,6 @@ int main(int argc, char **argv)
   if (clOptions->pingInterface != "") {
     serverAddress = Address::getHostAddress(clOptions->pingInterface);
   }
-
-// TimR use 0.0.0.0 by default to listen on all interfaces
-//  if (!pingInterface)
-//    pingInterface = serverAddress.getHostName();
 
   // my address to publish.  allow arguments to override (useful for
   // firewalls).  use my official hostname if it appears to be
@@ -4224,9 +4242,11 @@ int main(int argc, char **argv)
   // get the master ban list
   if (clOptions->publicizeServer && !clOptions->suppressMasterBanList){
     MasterBanList banList;
-    for (std::vector<std::string>::const_iterator i = clOptions->masterBanListURL.begin(); i != clOptions->masterBanListURL.end(); i++) {
-      clOptions->acl.merge(banList.get(i->c_str()));
-      DEBUG1("Loaded master ban list from %s\n", i->c_str());
+    std::vector<std::string>::const_iterator it;
+    for (it = clOptions->masterBanListURL.begin();
+         it != clOptions->masterBanListURL.end(); it++) {
+      clOptions->acl.merge(banList.get(it->c_str()));
+      DEBUG1("Loaded master ban list from %s\n", it->c_str());
     }
   }
 
@@ -4258,22 +4278,7 @@ int main(int argc, char **argv)
   pingReply.maxPlayerScore = clOptions->maxPlayerScore;
   pingReply.maxTeamScore = clOptions->maxTeamScore;
 
-  // start listening and prepare world database
-  if (!defineWorld()) {
-#if defined(_WIN32)
-    WSACleanup();
-#endif /* defined(_WIN32) */
-    std::cerr << "ERROR: A world was not specified" << std::endl;
-    return 1;
-  } else if (clOptions->cacheOut != "") {
-    if (!saveWorldCache()) {
-      std::cerr << "ERROR: could not save world cache file: "
-		<< clOptions->cacheOut << std::endl;
-    }
-    done = true;
-  }
-
-  // adjust speed and height checking if required
+  // adjust speed and height checking as required
   adjustTolerances();
 
   // setup the game settings
@@ -4294,16 +4299,18 @@ int main(int argc, char **argv)
   if (userDatabaseFile.size())
     PlayerAccessInfo::readPermsFile(userDatabaseFile);
 
-  /* See if an ID flag is in the game. If not we could hide type info for all
-     flags */
-  if (clOptions->flagCount[Flags::Identify] > 0)
+  // See if an ID flag is in the game.
+  // If not, we could hide type info for all flags
+  if (clOptions->flagCount[Flags::Identify] > 0) {
     isIdentifyFlagIn = true;
+  }
   if ((clOptions->numExtraFlags > 0)
-      && !clOptions->flagDisallowed[Flags::Identify])
+      && !clOptions->flagDisallowed[Flags::Identify]) {
     isIdentifyFlagIn = true;
+  }
 
   if (clOptions->startRecording) {
-    Record::start (ServerPlayer);
+    Record::start(ServerPlayer);
   }
 
   // trap some signals
@@ -4460,7 +4467,7 @@ int main(int argc, char **argv)
       sendPendingGameTime();
     }
     
-    // Synchronize PlayerInfo
+    // synchronize PlayerInfo
     tm = TimeKeeper::getCurrent();
     PlayerInfo::setCurrentTime(tm);
 

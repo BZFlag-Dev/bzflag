@@ -221,12 +221,12 @@ void FlagInfo::grab(int playerIndex)
   numShots    = 0;
 }
 
-int FlagInfo::teamIndex()
+int FlagInfo::teamIndex() const
 {
   return flag.type->flagTeam;
 }
 
-int FlagInfo::getIndex()
+int FlagInfo::getIndex() const
 {
   return flagIndex;
 }

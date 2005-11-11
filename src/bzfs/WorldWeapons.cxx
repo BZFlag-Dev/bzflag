@@ -244,7 +244,7 @@ void WorldWeaponGlobalEventHandler::process (bz_EventData *eventData)
 
   fireWorldWepReal(type, BZDB.eval(StateDatabase::BZDB_RELOADTIME),
                    ServerPlayer, RogueTeam, origin, tilt, direction,
-                   world->worldWeapons.getNewWorldShotID(),0);
+                   world->getWorldWeapons().getNewWorldShotID(),0);
 }
 
 

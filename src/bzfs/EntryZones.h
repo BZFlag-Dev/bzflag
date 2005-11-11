@@ -32,19 +32,24 @@ class EntryZones
 {
   public:
     EntryZones();
+
     void addZone( const CustomZone *zone );
+    void addZoneFlag(int zone, int flagId);
+
     void calculateQualifierLists();
+    
     bool getZonePoint(const std::string &qualifier, float *pt) const;
     bool getSafetyPoint(const std::string &qualifier,
 			const float *pos, float *pt) const;
+
+    bool getRandomPoint(const std::string &qual, float *pt) const;
+    bool getClosePoint(const std::string &qual, const float pos[3],
+                       float *pt) const;
 
     const ZoneList& getZoneList() const;
 
     int packSize() const;
     void *pack(void *buf) const;
-
-  public:
-    static const char *getSafetyPrefix();
 
   private:
     ZoneList zones;
