@@ -51,7 +51,9 @@ void CustomZone::addFlagSafety(float x, float y, WorldInfo* worldInfo)
   // add the qualifiers
   for (int team = 0; team < CtfTeams; team++) {
     std::string qual = getFlagSafetyQualifier(team);
-    qualifiers.push_back(qual);
+    if (qual.size() > 0) {
+      qualifiers.push_back(qual);
+    }
   }
 
   worldInfo->addZone(this);
