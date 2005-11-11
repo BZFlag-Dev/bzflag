@@ -76,7 +76,8 @@ void CustomZone::addZoneFlagCount(FlagType* flagType, int count)
 }
 
 
-bool CustomZone::read(const char *cmd, std::istream& input) {
+bool CustomZone::read(const char *cmd, std::istream& input)
+{
   if (strcmp(cmd, "flag") == 0) {
     std::string args, flag;
 
@@ -89,7 +90,10 @@ bool CustomZone::read(const char *cmd, std::istream& input) {
 	for (FlagSet::iterator it = fs.begin(); it != fs.end(); ++it) {
 	  FlagType *f = *it;
 	  if (f->endurance != FlagNormal) { // Null and Team flags
-	    qualifiers.push_back(getFlagTypeQualifier(f));
+	    const std::string& qual = getFlagTypeQualifier(f);
+	    if (qual.size() > 0) {
+	      qualifiers.push_back(qual);
+            }
 	  }
 	}
       }
@@ -98,7 +102,10 @@ bool CustomZone::read(const char *cmd, std::istream& input) {
 	for (FlagSet::iterator it = fs.begin(); it != fs.end(); ++it) {
 	  FlagType *f = *it;
 	  if (f->endurance != FlagNormal) { // Null and Team flags
-	    qualifiers.push_back(getFlagTypeQualifier(f));
+	    const std::string& qual = getFlagTypeQualifier(f);
+	    if (qual.size() > 0) {
+	      qualifiers.push_back(qual);
+            }
 	  }
 	}
       }
@@ -114,7 +121,10 @@ bool CustomZone::read(const char *cmd, std::istream& input) {
           input.putback('\n');
 	  return false;
 	}
-	qualifiers.push_back(getFlagTypeQualifier(f));
+        const std::string& qual = getFlagTypeQualifier(f);
+	if (qual.size() > 0) {
+	  qualifiers.push_back(qual);
+        }
       }
     }
 
