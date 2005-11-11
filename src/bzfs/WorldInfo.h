@@ -95,7 +95,6 @@ public:
   float getWaterLevel() const;
   float getMaxWorldHeight() const;
 
-  // if (pos != NULL), use the closest zone to pos
   bool getFlagDropPoint(const FlagInfo* fi, const float* pos, float* pt) const;
   bool getFlagSpawnPoint(const FlagInfo* fi, float* pt) const;
   bool getPlayerSpawnPoint(const PlayerInfo* pi, float* pt) const;
