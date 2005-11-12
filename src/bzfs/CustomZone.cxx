@@ -116,7 +116,7 @@ bool CustomZone::read(const char *cmd, std::istream& input)
           input.putback('\n');
 	  return false;
 	}
-	if (f->endurance != FlagNormal) {
+	if (f->endurance == FlagNormal) {
 	  DEBUG1("WARNING: you probably want a safety: %s\n", flag.c_str());
           input.putback('\n');
 	  return false;
