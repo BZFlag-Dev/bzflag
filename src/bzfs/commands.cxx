@@ -1120,10 +1120,23 @@ bool FlagCommand::operator() (const char	 *message,
     sendMessage(ServerPlayer, t, "You do not have permission to run the flag command");
     return true;
   }
-  if (strncasecmp(message + 6, "reset", 5) == 0) {
-    bool onlyUnused = strncasecmp(message + 11, " unused", 7) == 0;
-    bz_resetFlags(onlyUnused);
-  } else if (strncasecmp(message + 6, "up", 2) == 0) {
+
+  const char* msg = message + 6;
+  while ((*msg != '\0') && isspace(*msg)) msg++; // eat whitespace
+  
+  if (strncasecmp(msg, "reset", 5) == 0) {
+    msg += 5;
+    while ((*msg != '\0') && isspace(*msg)) msg++; // eat whitespace
+    
+    if (strncasecmp(msg, "all", 3) == 0) {
+      bz_resetFlags(false);
+    } else if (strncasecmp(msg, "unused", 6) == 0) {
+      bz_resetFlags(true);
+    } else {
+      sendMessage(ServerPlayer, t, "/flag <up | show | reset all | reset unused>");
+    }
+  }
+  else if (strncasecmp(msg, "up", 2) == 0) {
     for (int i = 0; i < numFlags; i++) {
       FlagInfo &flag = *FlagInfo::get(i);
       if (flag.flag.type->flagTeam == ::NoTeam) {
@@ -1134,15 +1147,15 @@ bool FlagCommand::operator() (const char	 *message,
 	sendFlagUpdate(flag);
       }
     }
-
-  } else if (strncasecmp(message + 6, "show", 4) == 0) {
+  }
+  else if (strncasecmp(msg, "show", 4) == 0) {
     for (int i = 0; i < numFlags; i++) {
       char showMessage[MessageLen];
       FlagInfo::get(i)->getTextualInfo(showMessage);
       sendMessage(ServerPlayer, t, showMessage);
     }
   } else {
-    sendMessage(ServerPlayer, t, "reset|show|up");
+    sendMessage(ServerPlayer, t, "/flag <up | show | reset all | reset unused>");
   }
   return true;
 }
