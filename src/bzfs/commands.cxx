@@ -1114,8 +1114,10 @@ bool CountdownCommand::operator() (const char	 * message,
 
 static void flagCommandHelp(int t)
 {
-  sendMessage(ServerPlayer, t, "/flag <up|show|reset all|reset unused>");
-  sendMessage(ServerPlayer, t, "/flag drop <#slot|PlayerName|\"PlayerName\"|FlagAbbv>");
+  sendMessage(ServerPlayer, t, "/flag up");
+  sendMessage(ServerPlayer, t, "/flag show");
+  sendMessage(ServerPlayer, t, "/flag reset <all|unused|#flagId|FlagAbbv>");
+  sendMessage(ServerPlayer, t, "/flag take <#slot|PlayerName|\"PlayerName\">");
   sendMessage(ServerPlayer, t,
               "/flag give <#slot|PlayerName|\"PlayerName\"> <#flagId|FlagAbbr> [force]");
   return;
@@ -1134,20 +1136,7 @@ bool FlagCommand::operator() (const char	 *message,
   const char* msg = message + 6;
   while ((*msg != '\0') && isspace(*msg)) msg++; // eat whitespace
   
-  if (strncasecmp(msg, "reset", 5) == 0) {
-    msg += 5;
-    while ((*msg != '\0') && isspace(*msg)) msg++; // eat whitespace
-    
-    if (strncasecmp(msg, "all", 3) == 0) {
-      bz_resetFlags(false);
-    } else if (strncasecmp(msg, "unused", 6) == 0) {
-      bz_resetFlags(true);
-    } else {
-      flagCommandHelp(t);
-      return true;
-    }
-  }
-  else if (strncasecmp(msg, "up", 2) == 0) {
+  if (strncasecmp(msg, "up", 2) == 0) {
     for (int i = 0; i < numFlags; i++) {
       FlagInfo &flag = *FlagInfo::get(i);
       if (flag.flag.type->flagTeam == ::NoTeam) {
@@ -1167,84 +1156,106 @@ bool FlagCommand::operator() (const char	 *message,
       sendMessage(ServerPlayer, t, showMessage);
     }
   }
-  else if (strncasecmp(msg, "drop", 4) == 0) {
-    msg += 4;
+  else if (strncasecmp(msg, "reset", 5) == 0) {
+    msg += 5;
     while ((*msg != '\0') && isspace(*msg)) msg++; // eat whitespace
-    
+
     FlagType* ft = Flag::getDescFromAbbreviation(msg);
     
     if (*msg == '\0') {
       flagCommandHelp(t);
       return true;
     }
+    
+    if (strncasecmp(msg, "all", 3) == 0) {
+      bz_resetFlags(false);
+    }
+    else if (strncasecmp(msg, "unused", 6) == 0) {
+      bz_resetFlags(true);
+    }
+    else if (msg[0] == '#') {
+      int fIndex = atoi(msg + 1);
+      FlagInfo* fi = FlagInfo::get(fIndex);
+      if (fi != NULL) {
+        const int playerIndex = fi->player;
+        if (playerIndex != -1) {
+          sendDrop(*fi);
+        }
+        resetFlag(*fi);
+      }
+    }
     else if (ft != Flags::Null) {
       // by flag abbreviation
       for (int i = 0; i < numFlags; i++) {
         FlagInfo* fi = FlagInfo::get(i);
-        if (fi->flag.type == ft) {
+        if ((fi != NULL) && (fi->flag.type == ft)) {
           const int playerIndex = fi->player;
           if (playerIndex != -1) {
-            GameKeeper::Player* gtkPlayer =
-              GameKeeper::Player::getPlayerByIndex(playerIndex);
-            if (gtkPlayer != NULL) {
-              sendDrop(*fi);
-              resetFlag(*fi);
-              char buffer[MessageLen];
-              snprintf(buffer, MessageLen, "%s took flag %s/%i from %s",
-                       playerData->player.getCallSign(),
-                       fi->flag.type->flagAbbv, fi->getIndex(),
-                       gtkPlayer->player.getCallSign());
-              sendMessage(ServerPlayer, t, buffer);
-              sendMessage(ServerPlayer, AdminPlayers, buffer);
-            }
+            sendDrop(*fi);
           }
+          resetFlag(*fi);
         }
       }
     }
     else {
-      // by player slot or name
-      std::vector<std::string> argv = TextUtils::tokenize(msg, " \t", 1, true);
-      int pIndex = GameKeeper::Player::getPlayerIDByName(argv[0]);
-      GameKeeper::Player* gtkPlayer = GameKeeper::Player::getPlayerByIndex(pIndex);
-      if (gtkPlayer != NULL) {
-        FlagInfo* fi = FlagInfo::get(gtkPlayer->player.getFlag());
-        if (fi != NULL) {
-          sendDrop(*fi);
-          resetFlag(*fi);
-          char buffer[MessageLen];
-          snprintf(buffer, MessageLen, "%s took flag %s/%i from %s",
-                   playerData->player.getCallSign(),
-                   fi->flag.type->flagAbbv, fi->getIndex(),
-                   gtkPlayer->player.getCallSign());
-          sendMessage(ServerPlayer, t, buffer);
-          sendMessage(ServerPlayer, AdminPlayers, buffer);
-        } else {
-          char buffer[MessageLen];
-          snprintf(buffer, MessageLen,
-                   "/flag drop: player (%s) does not have a flag",
-                   gtkPlayer->player.getCallSign());
-          sendMessage(ServerPlayer, t, buffer);
-        }
-      } else {
-        char buffer[MessageLen];
-        snprintf(buffer, MessageLen,
-                 "/flag drop: could not find player (%s)", msg);
-        sendMessage(ServerPlayer, t, buffer);
-      }
+      flagCommandHelp(t);
+      return true;
+    }
+  }
+  else if (strncasecmp(msg, "take", 4) == 0) {
+    msg += 4;
+    while ((*msg != '\0') && isspace(*msg)) msg++; // eat whitespace
+    
+    std::vector<std::string> argv = TextUtils::tokenize(msg, " \t", 0, true);
+    if (argv.size() < 1) {
+      flagCommandHelp(t);
+      return true;
+    }
+    
+    int pIndex = GameKeeper::Player::getPlayerIDByName(argv[0]);
+    GameKeeper::Player* gtkPlayer = GameKeeper::Player::getPlayerByIndex(pIndex);
+
+    if (gtkPlayer == NULL) {
+      char buffer[MessageLen];
+      snprintf(buffer, MessageLen,
+               "/flag drop: could not find player (%s)", msg);
+      sendMessage(ServerPlayer, t, buffer);
+      return true;
+    }
+
+    FlagInfo* fi = FlagInfo::get(gtkPlayer->player.getFlag());
+    if (fi != NULL) {
+      sendDrop(*fi);
+      resetFlag(*fi);
+      char buffer[MessageLen];
+      snprintf(buffer, MessageLen, "%s took flag %s/%i from %s",
+               playerData->player.getCallSign(),
+               fi->flag.type->flagAbbv, fi->getIndex(),
+               gtkPlayer->player.getCallSign());
+      sendMessage(ServerPlayer, t, buffer);
+      sendMessage(ServerPlayer, AdminPlayers, buffer);
+    } else {
+      char buffer[MessageLen];
+      snprintf(buffer, MessageLen,
+               "/flag drop: player (%s) does not have a flag",
+               gtkPlayer->player.getCallSign());
+      sendMessage(ServerPlayer, t, buffer);
     }
   }
   else if (strncasecmp(msg, "give", 4) == 0) {
     msg += 4;
     while ((*msg != '\0') && isspace(*msg)) msg++; // eat whitespace
 
-    std::vector<std::string> argv = TextUtils::tokenize(msg, " \t", 3, true);
+    std::vector<std::string> argv = TextUtils::tokenize(msg, " \t", 0, true);
     if (argv.size() < 2) {
       flagCommandHelp(t);
       return true;
     }
+    
+    FlagInfo* fi = NULL;
     int pIndex = GameKeeper::Player::getPlayerIDByName(argv[0]);
     GameKeeper::Player* gtkPlayer = GameKeeper::Player::getPlayerByIndex(pIndex);
-    FlagInfo* fi = NULL;
+    
     if (gtkPlayer != NULL) {
       const bool force = ((argv.size() > 2) &&
                           strncasecmp(argv[2].c_str(), "force", 5) == 0);
@@ -1274,8 +1285,13 @@ bool FlagCommand::operator() (const char	 *message,
           // see if we need to force it
           if (unused != NULL) {
             fi = unused;
-          } else if ((forced != NULL) && force) {
-            fi = forced;
+          } else if (forced != NULL) {
+            if (force) {
+              fi = forced;
+            } else {
+              sendMessage(ServerPlayer, t, "you may need to use the force");
+              return true;
+            }
           } else {
             sendMessage(ServerPlayer, t, "flag type not found");
             return true;
