@@ -1121,6 +1121,7 @@ bool FlagCommand::operator() (const char	 *message,
     return true;
   }
 
+  bool sendHelp = false;
   const char* msg = message + 6;
   while ((*msg != '\0') && isspace(*msg)) msg++; // eat whitespace
   
@@ -1133,7 +1134,54 @@ bool FlagCommand::operator() (const char	 *message,
     } else if (strncasecmp(msg, "unused", 6) == 0) {
       bz_resetFlags(true);
     } else {
-      sendMessage(ServerPlayer, t, "/flag <up | show | reset all | reset unused>");
+      sendHelp = true;
+    }
+  }
+  else if (strncasecmp(msg, "drop", 4) == 0) {
+    msg += 4;
+    while ((*msg != '\0') && isspace(*msg)) msg++; // eat whitespace
+    
+    FlagType* ft = Flag::getDescFromAbbreviation(msg);
+    
+    if (*msg == '\0') {
+      sendHelp = true;
+    }
+    else if (ft != Flags::Null) {
+      // by flag abbreviation
+      for (int i = 0; i < numFlags; i++) {
+        FlagInfo* fi = FlagInfo::get(i);
+        if (fi->flag.type == ft) {
+          const int playerIndex = fi->player;
+          if (playerIndex != -1) {
+            sendDrop(*fi);
+            resetFlag(*fi);
+          }
+        }
+      }
+    }
+    else {
+      // by player slot or name
+      std::vector<std::string> argv = TextUtils::tokenize(msg, " \t", 1, true);
+      int pIndex = GameKeeper::Player::getPlayerIDByName(argv[0]);
+      GameKeeper::Player* gtkPlayer = GameKeeper::Player::getPlayerByIndex(pIndex);
+      if (gtkPlayer != NULL) {
+        FlagInfo* fi = FlagInfo::get(gtkPlayer->player.getFlag());
+        if (fi != NULL) {
+          sendDrop(*fi);
+          resetFlag(*fi);
+        } else {
+          char buffer[MessageLen];
+          snprintf(buffer, MessageLen,
+                   "/flag drop: player (%s) does not have a flag",
+                   gtkPlayer->player.getCallSign());
+          sendMessage(ServerPlayer, t, buffer);
+        }
+      } else {
+        char buffer[MessageLen];
+        snprintf(buffer, MessageLen,
+                 "/flag drop: could not find player (%s)", msg);
+        sendMessage(ServerPlayer, t, buffer);
+      }
     }
   }
   else if (strncasecmp(msg, "up", 2) == 0) {
@@ -1155,8 +1203,14 @@ bool FlagCommand::operator() (const char	 *message,
       sendMessage(ServerPlayer, t, showMessage);
     }
   } else {
-    sendMessage(ServerPlayer, t, "/flag <up | show | reset all | reset unused>");
+    sendHelp = true;
   }
+
+  if (sendHelp) {
+    sendMessage(ServerPlayer, t, "/flag <up|show|reset all|reset unused>");
+    sendMessage(ServerPlayer, t, "/flag drop <#slot|PlayerName|\"PlayerName\"|FlagAbbv>");
+  }
+
   return true;
 }
 
