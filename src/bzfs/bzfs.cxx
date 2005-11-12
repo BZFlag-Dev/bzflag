@@ -76,6 +76,7 @@ static const float FlagHalfLife = 10.0f;
 static const int InvalidPlayer = -1;
 
 float speedTolerance = 1.125f;
+static bool doSpeedChecks = true;
 
 // Command Line Options
 CmdLineOptions *clOptions;
@@ -2824,7 +2825,7 @@ static void shotFired(int playerIndex, void *buf, int len)
   }
 
   // FIXME, we should look at the actual TankSpeed ;-)
-  shotSpeed += (tankSpeed * speedTolerance);
+  shotSpeed += tankSpeed;
 
   // verify lifetime
   if (fabs(firingInfo.lifetime - lifetime) > Epsilon) {
@@ -2834,35 +2835,37 @@ static void shotFired(int playerIndex, void *buf, int len)
     return;
   }
 
-  // verify velocity
-  if (hypotf(shot.vel[0], hypotf(shot.vel[1], shot.vel[2])) > shotSpeed * 1.01f) {
-    DEBUG2("Player %s [%d] shot over speed %f %f\n", shooter.getCallSign(),
-	   playerIndex, hypotf(shot.vel[0], hypotf(shot.vel[1], shot.vel[2])),
-	   shotSpeed);
-    return;
-  }
+  if (doSpeedChecks) {
+    // verify velocity
+    if (hypotf(shot.vel[0], hypotf(shot.vel[1], shot.vel[2])) > shotSpeed * 1.01f) {
+      DEBUG2("Player %s [%d] shot over speed %f %f\n", shooter.getCallSign(),
+             playerIndex, hypotf(shot.vel[0], hypotf(shot.vel[1], shot.vel[2])),
+             shotSpeed);
+      return;
+    }
 
-  // verify position
-  float muzzleFront = BZDB.eval(StateDatabase::BZDB_MUZZLEFRONT);
-  float muzzleHeight = BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT);
-  if (firingInfo.flagType == Flags::Obesity)
-    muzzleFront *= BZDB.eval(StateDatabase::BZDB_OBESEFACTOR);
-  const PlayerState &last = playerData->lastState;
-  float dx = last.pos[0] - shot.pos[0];
-  float dy = last.pos[1] - shot.pos[1];
-  float dz = last.pos[2] + muzzleHeight - shot.pos[2];
+    // verify position
+    float muzzleFront = BZDB.eval(StateDatabase::BZDB_MUZZLEFRONT);
+    float muzzleHeight = BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT);
+    if (firingInfo.flagType == Flags::Obesity)
+      muzzleFront *= BZDB.eval(StateDatabase::BZDB_OBESEFACTOR);
+    const PlayerState &last = playerData->lastState;
+    float dx = last.pos[0] - shot.pos[0];
+    float dy = last.pos[1] - shot.pos[1];
+    float dz = last.pos[2] + muzzleHeight - shot.pos[2];
 
-  // ignore z error for falling tanks
-  if (last.status & PlayerState::Falling)
-    dz = 0.0f;
-  float delta = dx*dx + dy*dy + dz*dz;
-  if (delta > (maxTankSpeed * tankSpeedMult + 2.0f * muzzleFront) *
-	      (maxTankSpeed * tankSpeedMult + 2.0f * muzzleFront)) {
-    DEBUG2("Player %s [%d] shot origination %f %f %f too far from tank %f %f %f: distance=%f\n",
-	    shooter.getCallSign(), playerIndex,
-	    shot.pos[0], shot.pos[1], shot.pos[2],
-	    last.pos[0], last.pos[1], last.pos[2], sqrt(delta));
-    return;
+    // ignore z error for falling tanks
+    if (last.status & PlayerState::Falling)
+      dz = 0.0f;
+    float delta = dx*dx + dy*dy + dz*dz;
+    if (delta > (maxTankSpeed * tankSpeedMult + 2.0f * muzzleFront) *
+                (maxTankSpeed * tankSpeedMult + 2.0f * muzzleFront)) {
+      DEBUG2("Player %s [%d] shot origination %f %f %f too far from tank %f %f %f: distance=%f\n",
+              shooter.getCallSign(), playerIndex,
+              shot.pos[0], shot.pos[1], shot.pos[2],
+              last.pos[0], last.pos[1], last.pos[2], sqrt(delta));
+      return;
+    }
   }
 
   // repack if changed
@@ -2998,6 +3001,7 @@ static void adjustTolerances()
   }
 
   if (disableSpeedChecks) {
+    doSpeedChecks = false;
     speedTolerance = MAXFLOAT;
     DEBUG1("Warning: disabling speed checking due to physics drivers\n");
   }
@@ -3636,24 +3640,26 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
 	    }
 
 	    // allow a 10% tolerance level for speed if -speedtol is not sane
-	    float realtol = 1.1f;
-	    if (speedTolerance > 1.0f)
-	      realtol = speedTolerance;
-	    maxPlanarSpeedSqr *= realtol;
-	    if (curPlanarSpeedSqr > maxPlanarSpeedSqr) {
-	      if (logOnly) {
-		DEBUG1("Logging Player %s [%d] tank too fast (tank: %f, allowed: %f){Dead or v[z] != 0}\n",
-		playerData->player.getCallSign(), t,
-		sqrt(curPlanarSpeedSqr), sqrt(maxPlanarSpeedSqr));
-	      } else {
-		DEBUG1("Kicking Player %s [%d] tank too fast (tank: %f, allowed: %f)\n",
-		       playerData->player.getCallSign(), t,
-		       sqrt(curPlanarSpeedSqr), sqrt(maxPlanarSpeedSqr));
-		sendMessage(ServerPlayer, t, "Autokick: Player tank is moving too fast.");
-		removePlayer(t, "too fast");
-	      }
-	      break;
-	    }
+	    if (doSpeedChecks) {
+              float realtol = 1.1f;
+              if (speedTolerance > 1.0f)
+                realtol = speedTolerance;
+              maxPlanarSpeedSqr *= realtol;
+              if (curPlanarSpeedSqr > maxPlanarSpeedSqr) {
+                if (logOnly) {
+                  DEBUG1("Logging Player %s [%d] tank too fast (tank: %f, allowed: %f){Dead or v[z] != 0}\n",
+                  playerData->player.getCallSign(), t,
+                  sqrt(curPlanarSpeedSqr), sqrt(maxPlanarSpeedSqr));
+                } else {
+                  DEBUG1("Kicking Player %s [%d] tank too fast (tank: %f, allowed: %f)\n",
+                         playerData->player.getCallSign(), t,
+                         sqrt(curPlanarSpeedSqr), sqrt(maxPlanarSpeedSqr));
+                  sendMessage(ServerPlayer, t, "Autokick: Player tank is moving too fast.");
+                  removePlayer(t, "too fast");
+                }
+                break;
+              }
+            }
 	  }
 	}
       }
