@@ -1160,12 +1160,12 @@ bool FlagCommand::operator() (const char	 *message,
     msg += 5;
     while ((*msg != '\0') && isspace(*msg)) msg++; // eat whitespace
 
-    FlagType* ft = Flag::getDescFromAbbreviation(msg);
-    
     if (*msg == '\0') {
       flagCommandHelp(t);
       return true;
     }
+
+    FlagType* ft = Flag::getDescFromAbbreviation(msg);
     
     if (strncasecmp(msg, "all", 3) == 0) {
       bz_resetFlags(false);

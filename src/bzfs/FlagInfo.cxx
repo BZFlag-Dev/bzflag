@@ -41,24 +41,25 @@ int		    FlagInfo::numFlagsInAir;
 FlagInfo::FlagInfo()
 {
   // prep flag
-  flag.type	       = Flags::Null;
-  flag.status	     = FlagNoExist;
+  flag.type		  = Flags::Null;
+  flag.status		  = FlagNoExist;
   flag.endurance	  = FlagNormal;
-  flag.owner	      = NoPlayer;
-  flag.position[0]	= 0.0f;
-  flag.position[1]	= 0.0f;
-  flag.position[2]	= 0.0f;
+  flag.owner		  = NoPlayer;
+  flag.position[0]	  = 0.0f;
+  flag.position[1]	  = 0.0f;
+  flag.position[2]	  = 0.0f;
   flag.launchPosition[0]  = 0.0f;
   flag.launchPosition[1]  = 0.0f;
   flag.launchPosition[2]  = 0.0f;
   flag.landingPosition[0] = 0.0f;
   flag.landingPosition[1] = 0.0f;
   flag.landingPosition[2] = 0.0f;
-  flag.flightTime	 = 0.0f;
+  flag.flightTime	  = 0.0f;
   flag.flightEnd	  = 0.0f;
   flag.initialVelocity    = 0.0f;
   player		  = -1;
-  grabs		   = 0;
+  grabs			  = 0;
+  required		  = false;
 }
 
 void FlagInfo::setSize(int _numFlags)
@@ -277,8 +278,10 @@ void FlagInfo::setNoFlagInAir()
 
 void FlagInfo::getTextualInfo(char *message)
 {
-  sprintf(message, "%d p:%d r:%d g:%d i:%s s:%d p:%3.1fx%3.1fx%3.1f",
-	  flagIndex, player, required, grabs, flag.type->flagAbbv, flag.status,
+  sprintf(message, "#%-3d i:%-3s p:%-3d r:%-2d g:%-2d s:%-2d "
+                   "p:{%.1f, %.1f, %.1f}",
+	  flagIndex, flag.type->flagAbbv, player,
+	  required ? 1 : 0, grabs, flag.status,
 	  flag.position[0], flag.position[1], flag.position[2]);
 }
 

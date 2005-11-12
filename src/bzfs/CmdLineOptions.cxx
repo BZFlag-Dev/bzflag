@@ -1234,7 +1234,8 @@ void finalizeParsing(int /*argc*/, char **argv,
   }
 
   std::set<FlagType*> forbidden;
-
+  forbidden.insert(Flags::Null);
+  
   // first disallow flags inconsistent with game style
   if (options.gameStyle & JumpingGameStyle) {
     forbidden.insert(Flags::Jumping);
