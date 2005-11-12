@@ -1294,7 +1294,7 @@ void finalizeParsing(int /*argc*/, char **argv,
       if ((options.maxTeam[col] > 0) &&
           (options.numTeamFlags[col] <= 0) &&
           (zoneTeamFlagCounts[col] <= 0)) {
-	options.numTeamFlags[col] += 1;
+	options.numTeamFlags[col] = 1;
       }
     }
   }

@@ -1112,6 +1112,16 @@ bool CountdownCommand::operator() (const char	 * message,
 }
 
 
+static void flagCommandHelp(int t)
+{
+  sendMessage(ServerPlayer, t, "/flag <up|show|reset all|reset unused>");
+  sendMessage(ServerPlayer, t, "/flag drop <#slot|PlayerName|\"PlayerName\"|FlagAbbv>");
+  sendMessage(ServerPlayer, t,
+              "/flag give <#slot|PlayerName|\"PlayerName\"> <#flagId|FlagAbbr> [force]");
+  return;
+}
+
+
 bool FlagCommand::operator() (const char	 *message,
 			      GameKeeper::Player *playerData)
 {
@@ -1121,7 +1131,6 @@ bool FlagCommand::operator() (const char	 *message,
     return true;
   }
 
-  bool sendHelp = false;
   const char* msg = message + 6;
   while ((*msg != '\0') && isspace(*msg)) msg++; // eat whitespace
   
@@ -1134,7 +1143,28 @@ bool FlagCommand::operator() (const char	 *message,
     } else if (strncasecmp(msg, "unused", 6) == 0) {
       bz_resetFlags(true);
     } else {
-      sendHelp = true;
+      flagCommandHelp(t);
+      return true;
+    }
+  }
+  else if (strncasecmp(msg, "up", 2) == 0) {
+    for (int i = 0; i < numFlags; i++) {
+      FlagInfo &flag = *FlagInfo::get(i);
+      if (flag.flag.type->flagTeam == ::NoTeam) {
+	sendDrop(flag);
+	flag.flag.status = FlagGoing;
+	if (!flag.required) {
+	  flag.flag.type = Flags::Null;
+        }
+	sendFlagUpdate(flag);
+      }
+    }
+  }
+  else if (strncasecmp(msg, "show", 4) == 0) {
+    for (int i = 0; i < numFlags; i++) {
+      char showMessage[MessageLen];
+      FlagInfo::get(i)->getTextualInfo(showMessage);
+      sendMessage(ServerPlayer, t, showMessage);
     }
   }
   else if (strncasecmp(msg, "drop", 4) == 0) {
@@ -1144,7 +1174,8 @@ bool FlagCommand::operator() (const char	 *message,
     FlagType* ft = Flag::getDescFromAbbreviation(msg);
     
     if (*msg == '\0') {
-      sendHelp = true;
+      flagCommandHelp(t);
+      return true;
     }
     else if (ft != Flags::Null) {
       // by flag abbreviation
@@ -1184,31 +1215,85 @@ bool FlagCommand::operator() (const char	 *message,
       }
     }
   }
-  else if (strncasecmp(msg, "up", 2) == 0) {
-    for (int i = 0; i < numFlags; i++) {
-      FlagInfo &flag = *FlagInfo::get(i);
-      if (flag.flag.type->flagTeam == ::NoTeam) {
-	sendDrop(flag);
-	flag.flag.status = FlagGoing;
-	if (!flag.required)
-	  flag.flag.type = Flags::Null;
-	sendFlagUpdate(flag);
+  else if (strncasecmp(msg, "give", 4) == 0) {
+    msg += 4;
+    while ((*msg != '\0') && isspace(*msg)) msg++; // eat whitespace
+
+    std::vector<std::string> argv = TextUtils::tokenize(msg, " \t", 3, true);
+    if (argv.size() < 2) {
+      flagCommandHelp(t);
+      return true;
+    }
+    int pIndex = GameKeeper::Player::getPlayerIDByName(argv[0]);
+    GameKeeper::Player* gtkPlayer = GameKeeper::Player::getPlayerByIndex(pIndex);
+    FlagInfo* fi = NULL;
+    if (gtkPlayer != NULL) {
+      const bool force = ((argv.size() > 2) &&
+                          strncasecmp(argv[2].c_str(), "force", 5) == 0);
+      if (argv[1][0] == '#') {
+        int fIndex = atoi(argv[1].c_str() + 1);
+        fi = FlagInfo::get(fIndex);
+        if ((fi != NULL) && ((fi->player >= 0) && !force)) {
+          fi = NULL;
+        }
+      }
+      else {
+        FlagType* ft = Flag::getDescFromAbbreviation(argv[1].c_str());
+        if (ft != Flags::Null) {
+          // find unused and forced candidates
+          FlagInfo* unused = NULL;
+          FlagInfo* forced = NULL;
+          for (int i = 0; i < numFlags; i++) {
+            FlagInfo* fi2 = FlagInfo::get(i);
+            if ((fi2 != NULL) && (fi2->flag.type == ft)) {
+              forced = fi2;
+              if (fi2->player < 0) {
+                unused = fi2;
+                break;
+              }
+            }
+          }
+          // see if we need to force it
+          if (unused != NULL) {
+            fi = unused;
+          } else if ((forced != NULL) && force) {
+            fi = forced;
+          } else {
+            sendMessage(ServerPlayer, t, "flag type not found");
+            return true;
+          }
+        }
+        else {
+          sendMessage(ServerPlayer, t, "bad flag type");
+          return true;
+        }
       }
     }
-  }
-  else if (strncasecmp(msg, "show", 4) == 0) {
-    for (int i = 0; i < numFlags; i++) {
-      char showMessage[MessageLen];
-      FlagInfo::get(i)->getTextualInfo(showMessage);
-      sendMessage(ServerPlayer, t, showMessage);
+    else {
+      char buffer[MessageLen];
+      snprintf(buffer, MessageLen,
+               "/flag give: could not find player (%s)", argv[0].c_str());
+      sendMessage(ServerPlayer, t, buffer);
+      return true;
     }
-  } else {
-    sendHelp = true;
+    
+    if (gtkPlayer && fi) {
+      const int flagLimit = clOptions->flagLimit[fi->flag.type];
+      clOptions->flagLimit[fi->flag.type] = -1;
+      fi->flag.status = FlagOnTank;
+      fi->grabs = 2;
+      dropFlag(*fi, gtkPlayer->lastState.pos);
+      clOptions->flagLimit[fi->flag.type] = flagLimit;
+        
+      char buffer[MessageLen];
+      snprintf(buffer, MessageLen, "giving flag %s/%i to %s",
+               fi->flag.type->flagAbbv, fi->getIndex(),
+               gtkPlayer->player.getCallSign());
+      sendMessage(ServerPlayer, t, buffer);
+    }
   }
-
-  if (sendHelp) {
-    sendMessage(ServerPlayer, t, "/flag <up|show|reset all|reset unused>");
-    sendMessage(ServerPlayer, t, "/flag drop <#slot|PlayerName|\"PlayerName\"|FlagAbbv>");
+  else {
+    flagCommandHelp(t);
   }
 
   return true;

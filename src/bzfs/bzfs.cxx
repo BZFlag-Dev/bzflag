@@ -148,7 +148,7 @@ static bool       isIdentifyFlagIn = false;
 static bool       playerHadWorld   = false;
 
 void sendFilteredMessage(int playerIndex, PlayerId dstPlayer, const char *message);
-static void dropFlag(GameKeeper::Player &playerData, const float dropPos[3]);
+static void dropPlayerFlag(GameKeeper::Player &playerData, const float dropPos[3]);
 static void dropAssignedFlag(int playerIndex);
 static std::string evaluateString(const std::string&);
 
@@ -1928,7 +1928,7 @@ void zapFlagByPlayer(int playerIndex)
   // do not simply zap team flag
   Flag &carriedflag = flag.flag;
   if (carriedflag.type->flagTeam != ::NoTeam) {
-    dropFlag(*playerData, playerData->lastState.pos);
+    dropPlayerFlag(*playerData, playerData->lastState.pos);
   } else {
     zapFlag(flag);
   }
@@ -2528,7 +2528,8 @@ static void grabFlag(int playerIndex, FlagInfo &flag)
   playerData->flagHistory.add(flag.flag.type);
 }
 
-static void dropFlag(GameKeeper::Player &playerData, const float dropPos[3])
+
+void dropFlag(FlagInfo& drpFlag, const float dropPos[3])
 {
   assert(world != NULL);
 
@@ -2540,12 +2541,10 @@ static void dropFlag(GameKeeper::Player &playerData, const float dropPos[3])
 
   // player wants to drop flag.  we trust that the client won't tell
   // us to drop a sticky flag until the requirements are satisfied.
-  const int flagIndex = playerData.player.getFlag();
-  if (flagIndex < 0)
+  const int flagIndex = drpFlag.getIndex();
+  if (drpFlag.flag.status != FlagOnTank) {
     return;
-  FlagInfo &drpFlag = *FlagInfo::get(flagIndex);
-  if (drpFlag.flag.status != FlagOnTank)
-    return;
+  }
   int flagTeam = drpFlag.flag.type->flagTeam;
   bool isTeamFlag = (flagTeam != ::NoTeam);
 
@@ -2619,6 +2618,18 @@ static void dropFlag(GameKeeper::Player &playerData, const float dropPos[3])
   sendFlagUpdate(drpFlag);
 
 }
+
+
+static void dropPlayerFlag(GameKeeper::Player &playerData, const float dropPos[3])
+{
+  const int flagIndex = playerData.player.getFlag();
+  if (flagIndex < 0) {
+    return;
+  }
+  dropFlag(*FlagInfo::get(flagIndex), dropPos);
+  return;
+}
+
 
 static void captureFlag(int playerIndex, TeamColor teamCaptured)
 {
@@ -2887,7 +2898,7 @@ static void shotFired(int playerIndex, void *buf, int len)
 	    lastPos[i] = playerData->lastState.pos[i];
 	  }
 	  fInfo.grabs = 0; // recycle this flag now
-	  dropFlag(*playerData, lastPos);
+	  dropPlayerFlag(*playerData, lastPos);
 	} else { // more shots fired than allowed
 	  // do nothing for now -- could return and not allow shot
 	}
@@ -3249,7 +3260,7 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
       // data: position of drop
       float pos[3];
       buf = nboUnpackVector(buf, pos);
-      dropFlag(*playerData, pos);
+      dropPlayerFlag(*playerData, pos);
       break;
     }
 
@@ -3913,7 +3924,7 @@ static void doStuffOnPlayer(GameKeeper::Player &playerData)
     // if player is holding a flag, drop it
     for (int j = 0; j < numFlags; j++)
       if (FlagInfo::get(j)->player == p) {
-	dropFlag(playerData, playerData.lastState.pos);
+	dropPlayerFlag(playerData, playerData.lastState.pos);
 	// Should recheck if player is still available
 	if (!GameKeeper::Player::getPlayerByIndex(p))
 	  return;

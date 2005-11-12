@@ -76,6 +76,7 @@ extern bool  areFoes(TeamColor team1, TeamColor team2);
 extern PingPacket getTeamCounts();
 extern void       zapFlagByPlayer(int playerIndex);
 extern void       resetFlag(FlagInfo &flag);
+extern void       dropFlag(FlagInfo& flag, const float dropPos[3]);
 extern void       publicize();
 extern TeamColor  whoseBase(float x, float y, float z);
 
