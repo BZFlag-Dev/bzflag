@@ -1184,8 +1184,19 @@ bool FlagCommand::operator() (const char	 *message,
         if (fi->flag.type == ft) {
           const int playerIndex = fi->player;
           if (playerIndex != -1) {
-            sendDrop(*fi);
-            resetFlag(*fi);
+            GameKeeper::Player* gtkPlayer =
+              GameKeeper::Player::getPlayerByIndex(playerIndex);
+            if (gtkPlayer != NULL) {
+              sendDrop(*fi);
+              resetFlag(*fi);
+              char buffer[MessageLen];
+              snprintf(buffer, MessageLen, "%s took flag %s/%i from %s",
+                       playerData->player.getCallSign(),
+                       fi->flag.type->flagAbbv, fi->getIndex(),
+                       gtkPlayer->player.getCallSign());
+              sendMessage(ServerPlayer, t, buffer);
+              sendMessage(ServerPlayer, AdminPlayers, buffer);
+            }
           }
         }
       }
@@ -1200,6 +1211,13 @@ bool FlagCommand::operator() (const char	 *message,
         if (fi != NULL) {
           sendDrop(*fi);
           resetFlag(*fi);
+          char buffer[MessageLen];
+          snprintf(buffer, MessageLen, "%s took flag %s/%i from %s",
+                   playerData->player.getCallSign(),
+                   fi->flag.type->flagAbbv, fi->getIndex(),
+                   gtkPlayer->player.getCallSign());
+          sendMessage(ServerPlayer, t, buffer);
+          sendMessage(ServerPlayer, AdminPlayers, buffer);
         } else {
           char buffer[MessageLen];
           snprintf(buffer, MessageLen,
@@ -1286,10 +1304,12 @@ bool FlagCommand::operator() (const char	 *message,
       clOptions->flagLimit[fi->flag.type] = flagLimit;
         
       char buffer[MessageLen];
-      snprintf(buffer, MessageLen, "giving flag %s/%i to %s",
+      snprintf(buffer, MessageLen, "%s gave flag %s/%i to %s",
+               playerData->player.getCallSign(),
                fi->flag.type->flagAbbv, fi->getIndex(),
                gtkPlayer->player.getCallSign());
       sendMessage(ServerPlayer, t, buffer);
+      sendMessage(ServerPlayer, AdminPlayers, buffer);
     }
   }
   else {
