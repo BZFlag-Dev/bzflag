@@ -694,6 +694,17 @@ void			ServerLink::sendEndShot(const PlayerId& source,
   send(MsgShotEnd, sizeof(msg), msg);
   injectMessages(MsgShotEnd, sizeof(msg), msg);
 }
+
+void ServerLink::sendHit(const PlayerId &source, const PlayerId &shooter,
+			 int shotId)
+{
+  char msg[80];
+  void* buf = msg;
+  buf = nboPackUByte(buf, source);
+  buf = nboPackUByte(buf, shooter);
+  buf = nboPackShort(buf, int16_t(shotId));
+  send(MsgHit, sizeof(msg), msg);
+}
 #endif
 
 void			ServerLink::sendAlive()

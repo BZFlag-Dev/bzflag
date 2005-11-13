@@ -89,6 +89,9 @@ class ServerLink {
     void		sendBeginShot(const FiringInfo&);
 #endif
     void		sendEndShot(const PlayerId&, int shotId, int reason);
+
+  void sendHit(const PlayerId &source, const PlayerId &shooter, int shotId);
+
     void		sendAlive();
     void		sendTeleport(int from, int to);
     void		sendTransferFlag(const PlayerId&, const PlayerId&);
