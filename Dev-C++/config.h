@@ -26,9 +26,9 @@
 #endif
 
 /* Currently builds with SDL */
-#ifndef BZFLAG_CXX
-# define HAVE_SDL 1
-#endif
+//#ifndef BZFLAG_CXX
+#define HAVE_SDL 1
+//#endif
 
 #define _USE_BZ_API 1
 
