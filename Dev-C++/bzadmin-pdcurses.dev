@@ -10,8 +10,8 @@ Libs=
 PrivateResource=
 ResourceIncludes=
 MakeIncludes=
-Compiler=-D_DEVCPP=1 -Wall -W_@@_
-CppCompiler=-D_DEVCPP=1 -Wall -W_@@_
+Compiler=-D_DEVCPP=1 -Wall -W -DBUILDING_BZADMIN=1_@@_
+CppCompiler=-D_DEVCPP=1 -Wall -W -DBUILDING_BZADMIN=1_@@_
 Linker=-lstdc++ -lcurses -lwsock32 -lwinmm -lcurl -lcurldll -lregex_@@_
 IsCpp=1
 Icon=
