@@ -116,7 +116,7 @@ public:
     // To handle shot
     static void    setMaxShots(int _maxShots);
     bool           addShot(int id, int salt, FiringInfo &firingInfo);
-    bool           removeShot(int id, int salt);
+    bool           removeShot(int id, int salt, FiringInfo &firingInfo);
     bool           updateShot(int id, int salt);
     
     enum LSAState

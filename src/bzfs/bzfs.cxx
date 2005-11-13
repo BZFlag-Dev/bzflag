@@ -2878,7 +2878,8 @@ static void shotEnded(const PlayerId& id, int16_t shotIndex, uint16_t reason)
   if (!playerData)
     return;
 
-  playerData->removeShot(shotIndex & 0xff, shotIndex >> 8);
+  FiringInfo firingInfo;
+  playerData->removeShot(shotIndex & 0xff, shotIndex >> 8, firingInfo);
 
   // shot has ended prematurely -- send MsgShotEnd
   void *buf, *bufStart = getDirectMessageBuffer();

@@ -416,7 +416,7 @@ bool GameKeeper::Player::addShot(int id, int salt, FiringInfo &firingInfo)
   return true;
 }
 
-bool GameKeeper::Player::removeShot(int id, int salt)
+bool GameKeeper::Player::removeShot(int id, int salt, FiringInfo &firingInfo)
 {
   float now = (float)TimeKeeper::getCurrent().getSeconds();
   if (id >= (int)shotsInfo.size() || !shotsInfo[id].present
@@ -433,6 +433,7 @@ bool GameKeeper::Player::removeShot(int id, int salt)
   if (!shotsInfo[id].running)
     return false;
   shotsInfo[id].running = false;
+  firingInfo = shotsInfo[id].firingInfo;
   return true;  
 }
 
