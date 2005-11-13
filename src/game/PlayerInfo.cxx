@@ -302,7 +302,7 @@ bool PlayerInfo::isObserver() const {
   return team == ObserverTeam;
 }
 
-TeamColor PlayerInfo::getTeam() {
+TeamColor PlayerInfo::getTeam() const {
   return team;
 }
 

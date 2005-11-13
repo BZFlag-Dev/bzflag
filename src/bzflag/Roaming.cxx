@@ -112,10 +112,8 @@ void Roaming::changeTarget(Roaming::RoamingTarget target, int explicitIndex) {
 	} else if (target == previous) {
 	  j = (targetManual - i + world->getCurMaxPlayers() + 1) % (world->getCurMaxPlayers() + 1) - 1;
 	}
-	if ((j == -1)
-	    || (world->getPlayer(j)
-		&& (world->getPlayer(j)->getTeam() != ObserverTeam)
-		&& world->getPlayer(j)->isAlive())) {
+	if ((j == -1) ||
+	    (world->getPlayer(j) && (world->getPlayer(j)->getTeam() != ObserverTeam))) {
 	  targetManual = targetWinner = j;
 	  found = true;
 	  break;

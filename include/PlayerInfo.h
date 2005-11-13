@@ -59,7 +59,7 @@ class PlayerInfo {
 public:
   PlayerInfo(int _playerIndex);
 
-  int   getPlayerIndex( void ) {return playerIndex;}
+  int   getPlayerIndex( void ) const { return playerIndex; } 
   void	setLastMsg(std::string msg);
   const std::string& getLastMsg() const;
   TimeKeeper  getLastMsgTime() const;
@@ -88,7 +88,7 @@ public:
   void       *packVirtualFlagCapture(void *buf);
   bool	isTeam(TeamColor team) const;
   bool	isObserver() const;
-  TeamColor   getTeam();
+  TeamColor   getTeam() const;
   void	setTeam(TeamColor team);
   void	wasARabbit();
   void	wasNotARabbit();

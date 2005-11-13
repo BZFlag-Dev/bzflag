@@ -45,6 +45,11 @@
 #include "ConeObstacle.h"
 #include "SphereObstacle.h"
 
+/* local implementation headers */
+#include "FlagInfo.h"
+#include "PlayerInfo.h"
+#include "CustomZone.h"
+
 /* compression library header */
 #include "../zlib/zlib.h"
 
@@ -169,6 +174,8 @@ void WorldInfo::makeWaterMaterial()
   material.setUseTextureAlpha(true); // make sure that alpha is enabled
   material.setUseColorOnTexture(false); // only use the color as a backup
   material.setUseSphereMap(false);
+  material.setNoRadar(true);
+  material.setNoShadow(true);
   waterMatRef = MATERIALMGR.addMaterial(&material);
 
   return;
@@ -188,6 +195,12 @@ WorldWeapons& WorldInfo::getWorldWeapons()
 {
   return worldWeapons;
 }
+
+EntryZones& WorldInfo::getEntryZones()
+{
+  return entryZones;
+}
+
 
 void		    WorldInfo::loadCollisionManager()
 {
@@ -381,24 +394,66 @@ InBuildingType WorldInfo::classifyHit (const Obstacle* obstacle) const
 }
 
 
-bool WorldInfo::getZonePoint(const std::string &qualifier, float *pt) const
+bool WorldInfo::getFlagDropPoint(const FlagInfo* fi, const float* pos, 
+                                float* pt) const
 {
-  if (!entryZones.getZonePoint(qualifier, pt)) {
-    return false;
-  }
+  FlagType* flagType = fi->flag.type;
+  const int team = (int)flagType->flagTeam;
+  const bool teamFlag = (team != NoTeam);
 
-  return true;
+  if (teamFlag) {
+    const std::string& safetyQual =
+      CustomZone::getFlagSafetyQualifier(team);
+    if (entryZones.getClosePoint(safetyQual, pos, pt)) {
+      return true;
+    }
+  } else {
+    const std::string& idQual =
+      CustomZone::getFlagIdQualifier(fi->getIndex());
+    if (entryZones.getClosePoint(idQual, pos, pt)) {
+      return true;
+    }
+    const std::string& typeQual =
+      CustomZone::getFlagTypeQualifier(flagType);
+    if (entryZones.getClosePoint(typeQual, pos, pt)) {
+      return true;
+    }
+  }
+  return false;
 }
 
 
-bool WorldInfo::getSafetyPoint(const std::string &qualifier,
-			       const float *pos, float *pt) const
+bool WorldInfo::getFlagSpawnPoint(const FlagInfo* fi, float* pt) const
 {
-  if (!entryZones.getSafetyPoint(qualifier, pos, pt)) {
-    return false;
+  FlagType* flagType = fi->flag.type;
+  const int team = (int)flagType->flagTeam;
+  const bool teamFlag = (team != NoTeam);
+
+  const std::string& idQual =
+    CustomZone::getFlagIdQualifier(fi->getIndex());
+  if (entryZones.getRandomPoint(idQual, pt)) {
+    return true;
   }
 
-  return true;
+  if (!teamFlag) {
+    const std::string& typeQual =
+      CustomZone::getFlagTypeQualifier(flagType);
+    if (entryZones.getRandomPoint(typeQual, pt)) {
+      return true;
+    }
+  }
+  return false;
+}
+
+
+bool WorldInfo::getPlayerSpawnPoint(const PlayerInfo* pi, float* pt) const
+{
+  const std::string& teamQual =
+    CustomZone::getPlayerTeamQualifier((int)pi->getTeam());
+  if (entryZones.getRandomPoint(teamQual, pt)) {
+    return true;
+  }
+  return false;
 }
 
 
@@ -528,6 +583,7 @@ int WorldInfo::getUncompressedSize() const
 {
   return uncompressedSize;
 }
+
 
 // Local Variables: ***
 // mode: C++ ***

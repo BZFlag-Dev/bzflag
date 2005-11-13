@@ -40,7 +40,7 @@
 #include "messages.h"
 #include "ShotUpdate.h"
 
-class FiringInfo;
+struct FiringInfo;
 class ShotInfo {
 public:
   ShotInfo() : present(false) {};

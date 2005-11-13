@@ -30,6 +30,9 @@
 #include "AccessControlList.h"
 #include "TextChunkManager.h"
 
+// avoid dependencies
+class EntryZones;
+
 /* constants provided for general consumption */
 const int MaxPlayers = 200;
 const int MaxShots = 20;
@@ -204,7 +207,7 @@ struct CmdLineOptions
 
 
 void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile = false);
-void finalizeParsing(int argc, char **argv, CmdLineOptions &options);
+void finalizeParsing(int argc, char **argv, CmdLineOptions &options, EntryZones& ez);
 bool checkCommaList (const char *list, int maxlen);
 
 #else

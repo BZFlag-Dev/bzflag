@@ -23,16 +23,16 @@
 /* local implementation headers */
 //#include "WorldInfo.h"
 class WorldInfo;
+class FlagType;
 
 
 typedef std::vector<std::string> QualifierList;
-typedef std::map<std::string, int> ZoneFlagMap; // type, count
+typedef std::map<FlagType*, int> ZoneFlagMap; // type, count
 
 
 class CustomZone : public WorldFileLocation {
   public:
     CustomZone();
-//    CustomZone(const CustomZone&);
 
     virtual bool read(const char *cmd, std::istream&);
     virtual void writeToWorld(WorldInfo*) const;
@@ -41,14 +41,30 @@ class CustomZone : public WorldFileLocation {
     // make a safety zone for all team flags (on the ground)
     void addFlagSafety(float x, float y, WorldInfo* worldInfo);
 
-    void addZoneFlagCount(const char* flagAbbr, int count);
-
     const QualifierList &getQualifiers() const;
+    const ZoneFlagMap& getZoneFlagMap() const;
+
     float getArea() const;
     void getRandomPoint(float *pt) const;
     float getDistToPoint (const float *pos) const;
 
-  protected:
+  public:
+    static const std::string& getFlagIdQualifier(int flagId);
+    static int getFlagIdFromQualifier(const std::string&);
+
+    static const std::string& getFlagTypeQualifier(FlagType* flagType);
+    static FlagType* getFlagTypeFromQualifier(const std::string&);
+
+    static const std::string& getFlagSafetyQualifier(int team);
+    static int getFlagSafetyFromQualifier(const std::string&);
+    
+    static const std::string& getPlayerTeamQualifier(int team);
+    static int getPlayerTeamFromQualifier(const std::string&);
+
+  private:
+    void addZoneFlagCount(FlagType* flagType, int count);
+    
+  private:
     ZoneFlagMap zoneFlagMap;
     QualifierList qualifiers;
 };
@@ -60,20 +76,17 @@ inline const QualifierList& CustomZone::getQualifiers() const
 }
 
 
+inline const ZoneFlagMap& CustomZone::getZoneFlagMap() const
+{
+  return zoneFlagMap;
+}
+
+
 inline float CustomZone::getArea() const
 {
-  float x = 1.0f, y = 1.0f, z = 1.0f;
-
-  if (size[0] > 1.0f) {
-    x = size[0];
-  }
-  if (size[1] > 1.0f) {
-    y = size[1];
-  }
-  if (size[2] > 1.0f) {
-    z = size[2];
-  }
-
+  float x = (size[0] >= 1.0f) ? size[0] : 1.0f;
+  float y = (size[1] >= 1.0f) ? size[1] : 1.0f;
+  float z = (size[2] >= 1.0f) ? size[2] : 1.0f;
   return (x * y * z);
 }
 

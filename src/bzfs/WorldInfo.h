@@ -43,6 +43,10 @@ class SphereObstacle;
 class WorldFileLocation;
 class CustomZone;
 
+class FlagType;
+class FlagInfo;
+class PlayerInfo;
+
 typedef enum {
   NOT_IN_BUILDING,
   IN_BASE,
@@ -71,7 +75,6 @@ public:
   void addLink(const std::string& from, const std::string& to);
 
   void addZone(const CustomZone *zone);
-  void addEntryZone( QualifierList &qualifiers, WorldFileLocation *zone );
   void addWeapon(const FlagType *type, const float *origin,
 		 float direction, float tilt, TeamColor teamColor,
 		 float initdelay, const std::vector<float> &delay, TimeKeeper &sync);
@@ -91,12 +94,17 @@ public:
 
   float getWaterLevel() const;
   float getMaxWorldHeight() const;
-  bool getZonePoint(const std::string &qualifier, float *pt) const;
-  bool getSafetyPoint(const std::string &qualifier, const float *pos, float *pt) const;
+
+  bool getFlagDropPoint(const FlagInfo* fi, const float* pos, float* pt) const;
+  bool getFlagSpawnPoint(const FlagInfo* fi, float* pt) const;
+  bool getPlayerSpawnPoint(const PlayerInfo* pi, float* pt) const;
+
   void *getDatabase() const;
   int getDatabaseSize() const;
   int getUncompressedSize() const;
+
   WorldWeapons& getWorldWeapons();
+  EntryZones& getEntryZones();
 
   void finishWorld();
   int packDatabase();
@@ -159,18 +167,17 @@ public:
   bool inRect(const float *p1, float angle, const float *size,
 			 float x, float y, float r) const;
 
-  WorldWeapons	worldWeapons;
-
 private:
 
   float size[2];
   float gravity;
   float maxHeight;
   float waterLevel;
-  const BzMaterial*	waterMatRef;
+  const BzMaterial* waterMatRef;
 
-  LinkManager	links;
-  EntryZones	entryZones;
+  EntryZones entryZones;
+  LinkManager links;
+  WorldWeapons worldWeapons;
 
   char *database;
   int databaseSize;
