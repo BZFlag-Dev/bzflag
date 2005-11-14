@@ -101,7 +101,6 @@ void CursesUI::handleNewPacket(uint16_t code) {
 bool CursesUI::checkCommand(std::string& str) {
   wrefresh(cmdWin);
   str = "";
-  int i;
 
   // get a character and do checks that are always needed
   int c = wgetch(cmdWin);
@@ -260,8 +259,7 @@ bool CursesUI::checkCommand(std::string& str) {
 
     // tab - autocomplete
   case '\t':
-    i = cmd.find_last_of(" \t");
-    cmd = cmd.substr(0, i+1) + comp.complete(cmd.substr(i+1));
+    cmd = comp.complete(cmd);
     updateCmdWin();
     return false;
 

@@ -16,53 +16,137 @@
 
 #include "common.h"
 
-#include <algorithm>
-
+// implementation header
 #include "AutoCompleter.h"
 
+// system headers
+#include <ctype.h>
+#include <algorithm>
 
-void AutoCompleter::registerWord(const std::string& str) {
-  words.insert(std::lower_bound(words.begin(), words.end(), str), str);
+
+AutoCompleter::WordRecord::WordRecord(const std::string& w, bool q)
+{
+  word = w;
+  quoteString = q;
+}
+
+bool AutoCompleter::WordRecord::operator<(const WordRecord& w) const
+{
+  return (word < w.word);
+}
+
+bool AutoCompleter::WordRecord::operator==(const WordRecord& w) const
+{
+  return (word == w.word);
+}
+
+bool AutoCompleter::WordRecord::operator!=(const WordRecord& w) const
+{
+  return (word != w.word);
 }
 
 
-void AutoCompleter::unregisterWord(const std::string& str) {
-  std::vector<std::string>::iterator iter = std::lower_bound(words.begin(), words.end(), str);
-  if (iter != words.end() && *iter == str)
-    words.erase(iter);
+void AutoCompleter::registerWord(const std::string& str, bool quoteString)
+{
+  // only use 'quoteString' if it applies
+  if (quoteString) {
+    quoteString = false;
+    for (int i = 0; i < (int)str.size(); i++) {
+      if (isspace(str[i])) {
+        quoteString = true;
+        break;
+      }
+    }
+  }
+  WordRecord rec(str, quoteString);
+  words.insert(std::lower_bound(words.begin(), words.end(), rec), rec);
 }
 
 
-std::string AutoCompleter::complete(const std::string& str) {
+void AutoCompleter::unregisterWord(const std::string& str)
+{
+  WordRecord rec(str, false);
+  while (true) {
+    std::vector<WordRecord>::iterator iter =
+      std::lower_bound(words.begin(), words.end(), rec);
+    if (iter != words.end() && *iter == rec) {
+      words.erase(iter);
+    } else {
+      return;
+    }
+  }
+}
 
-  if (str.size() == 0)
+
+std::string AutoCompleter::complete(const std::string& str, std::string* matches)
+{
+  if (str.size() == 0) {
     return str;
+  }
 
+  // from the last space  
+  const int lastSpace = str.find_last_of(" \t");
+  const std::string tail = str.substr(lastSpace + 1);
+  if (tail.size() == 0) {
+    return str;
+  }
+  const std::string head = str.substr(0, lastSpace + 1);
+                        
   // find the first and last word with the prefix str
-  std::vector<std::string>::iterator first, last;
-  first = std::lower_bound(words.begin(), words.end(), str);
-  if (first == words.end() || first->substr(0, str.size()) != str)
-    return str;
-  std::string tmp = str;
+  std::vector<WordRecord>::iterator first, last;
+  WordRecord rec(tail, false);
+  first = std::lower_bound(words.begin(), words.end(), rec);
+  if ((first == words.end()) ||
+      (first->word.substr(0, tail.size()) != tail)) {
+    return str; // no match
+  }
+  std::string tmp = tail;
   tmp[tmp.size() - 1]++;
-  last = std::lower_bound(first, words.end(), tmp) - 1;
+  last = std::lower_bound(first, words.end(), WordRecord(tmp, false)) - 1;
+
+  // get a list of matches
+  if (matches != NULL) {
+    matches->clear();
+    if (first != last) {
+      std::vector<WordRecord>::iterator it = first;
+      for (it = first; it != (last + 1); it++) {
+        if (it->quoteString) {
+          *matches += "\"" + it->word + "\" ";
+        } else {
+          *matches += it->word + " ";
+        }
+      }
+    }
+  }
 
   // return the largest common prefix
-  unsigned int i;
-  for (i = 0; i < first->size() && i < last->size(); ++i)
-    if ((*first)[i] != (*last)[i])
+  const int minLen = first->word.size() < last->word.size() ?
+                     first->word.size() : last->word.size();
+  int i;
+  for (i = 0; i < minLen; ++i) {
+    if (first->word[i] != last->word[i]) {
       break;
-  return first->substr(0, i);
+    }
+  }
+
+  if (first->quoteString) {
+    std::string quoted = "\"" + first->word + "\"";
+    return (head + quoted);
+  } else {
+    return (head + first->word.substr(0, i));
+  }
 }
 
 
 
 
-DefaultCompleter::DefaultCompleter() {
+DefaultCompleter::DefaultCompleter()
+{
   setDefaults();
 }
 
-void DefaultCompleter::setDefaults() {
+void DefaultCompleter::setDefaults()
+{
   words.clear();
   registerWord("/ban ");
   registerWord("/banlist");
