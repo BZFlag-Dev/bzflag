@@ -63,7 +63,7 @@ bool			ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
     std::string matches;
     hud->setComposeString(completer.complete(hud->getComposeString(), &matches));
     if (matches.size() > 0) {
-      controlPanel->addMessage(matches, 0);
+      controlPanel->addMessage(matches, -1);
     }
     return true;
   }

@@ -74,10 +74,12 @@ class ControlPanel {
     static void		bzdbCallback(const std::string& name, void* data);
 
     enum MessageModes {
-      MessageAll = 0,
-      MessageChat = 1,
-      MessageServer = 2,
-      MessageMisc = 3,
+      MessageAllTabs = -2,
+      MessageCurrent = -1,
+      MessageAll     = 0,
+      MessageChat    = 1,
+      MessageServer  = 2,
+      MessageMisc    = 3,
       MessageModeCount
     };
     bool tabsOnRight;
