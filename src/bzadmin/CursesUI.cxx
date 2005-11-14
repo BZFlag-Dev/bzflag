@@ -258,11 +258,16 @@ bool CursesUI::checkCommand(std::string& str) {
     return false;
 
     // tab - autocomplete
-  case '\t':
-    cmd = comp.complete(cmd);
+  case '\t': {
+    std::string matches;
+    cmd = comp.complete(cmd, &matches);
     updateCmdWin();
+    if (matches.size() > 0) {
+      outputMessage(matches, White);
+      updateTargetWin();
+    }
     return false;
-
+  }
   default:
     if (c < 32 || c > 127 || cmd.size() >= CMDLENGTH)
       return false;
