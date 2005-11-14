@@ -21,6 +21,7 @@
 
 // system headers
 #include <ctype.h>
+#include <string.h>
 #include <algorithm>
 
 
@@ -126,17 +127,25 @@ std::string AutoCompleter::complete(const std::string& str, std::string* matches
     }
   }
 
+  // FIXME: hack to allow the auto-completion to work with old /clientquery
+  const char* hackCmd = "/clientquery";
+  const unsigned int hackLen = strlen(hackCmd);
+  const bool hack = (head.size() > hackLen) &&
+                    (strncasecmp(head.c_str(), hackCmd, hackLen) == 0);
+                    
   // return the largest common prefix without any spaces
   const int minLen = first->word.size() < last->word.size() ?
                      first->word.size() : last->word.size();
   int i;
   for (i = 0; i < minLen; ++i) {
-    if (isspace(first->word[i]) || (first->word[i] != last->word[i])) {
+    if ((!hack && isspace(first->word[i])) ||
+        (first->word[i] != last->word[i])) {
       break;
     }
   }
-  if (first->quoteString && (first == last)) {
-    std::string quoted = "\"" + first->word + "\"";
+
+  if (!hack && first->quoteString && (first == last)) {
+    const std::string quoted = "\"" + first->word + "\"";
     return (head + quoted);
   } else {
     return (head + first->word.substr(0, i));
