@@ -130,7 +130,8 @@ std::string AutoCompleter::complete(const std::string& str, std::string* matches
   // FIXME: hack to allow the auto-completion to work with old /clientquery
   const char* hackCmd = "/clientquery";
   const unsigned int hackLen = strlen(hackCmd);
-  const bool hack = (strncasecmp(head.c_str(), hackCmd, hackLen) == 0);
+  const bool hack = (lastSpace == -1) || // hack on hack  :)
+                    (strncasecmp(head.c_str(), hackCmd, hackLen) == 0);
                     
   // return the largest common prefix without any spaces
   const int minLen = first->word.size() < last->word.size() ?
