@@ -2654,6 +2654,10 @@ bool ClientQueryCommand::operator() (const char	 *message,
       name.erase(name.begin());
     GameKeeper::Player *target;
     int i;
+    if ((name.size() >= 2) &&
+        (name[0] == '"') && (name[name.size()-1] == '"')) {
+      name = name.substr(1, name.size() - 2); // remove the quotes
+    }
     for (i = 0; i < curMaxPlayers;i++) {
       target = GameKeeper::Player::getPlayerByIndex(i);
       if (target && strcmp(target->player.getCallSign(), name.c_str()) == 0) {
