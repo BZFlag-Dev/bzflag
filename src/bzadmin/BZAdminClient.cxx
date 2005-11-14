@@ -74,11 +74,11 @@ BZAdminClient::BZAdminClient(BZAdminUI* bzInterface)
   }
   sLink.sendEnter(ChatPlayer, myTeam, startupInfo.callsign, "bzadmin",
 		  startupInfo.token);
+  sLink.flush();
   if (sLink.getState() != ServerLink::Okay) {
     std::cerr << "Rejected." << std::endl;
     return;
   }
-
   std::string reason;
   uint16_t code, rejcode;
   if (sLink.readEnter (reason, code, rejcode)) {
@@ -140,6 +140,7 @@ BZAdminClient::ServerCode BZAdminClient::checkMessage() {
   int i = 0;
   PlayerIdMap::iterator iter;
 
+  sLink.flush();
   // read until we have a package, or until we have waited 100 ms
   if (sLink.read(code, len, inbuf, 100) == 1) {
     lastMessage.first = "";
