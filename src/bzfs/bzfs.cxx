@@ -2876,6 +2876,16 @@ static void shotFired(int playerIndex, void *buf, int len)
 
 }
 
+static void sendShotEnd(const PlayerId& id, int16_t shotIndex, uint16_t reason)
+{
+  // shot has ended prematurely -- send MsgShotEnd
+  void *buf, *bufStart = getDirectMessageBuffer();
+  buf = nboPackUByte(bufStart, id);
+  buf = nboPackShort(buf,      shotIndex);
+  buf = nboPackUShort(buf,     reason);
+  relayMessage(MsgShotEnd, (char*)buf-(char*)bufStart, bufStart);
+}
+
 static void shotEnded(const PlayerId& id, int16_t shotIndex, uint16_t reason)
 {
   GameKeeper::Player *playerData
@@ -3264,28 +3274,6 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
       if (playerData->player.isObserver())
 	break;
 
-      // endShot anti-cheat
-      playerData->player.endShotCredit++;
-
-      int pFlag = playerData->player.getFlag();
-      if (pFlag >= 0) {
-	FlagInfo &flag = *FlagInfo::get(pFlag);
-	if (flag.flag.type == Flags::Shield) {
-	  //sendMessage(ServerPlayer, AdminPlayers, "has Shield");
-	  playerData->player.endShotCredit--;
-	}
-      }
-      const int endShotLimit =  (int) BZDB.eval(StateDatabase::BZDB_ENDSHOTDETECTION);
-      if ((endShotLimit > 0) && (playerData->player.endShotCredit > endShotLimit)) {  // default endShotLimit 2
-	char testmessage[MessageLen];
-	sprintf(testmessage, "Kicking Player %s EndShot credit: %d \n", playerData->player.getCallSign(), playerData->player.endShotCredit );
-	DEBUG1("endShot Detection: %s\n", testmessage);
-	sendMessage(ServerPlayer, AdminPlayers, testmessage);
-	sendMessage(ServerPlayer, t, "Autokick: wrong end shots detected.");
-	removePlayer(t, "EndShot");
-      }
-      // endShotDetection finished
-
       // data: shooter id, shot number, reason
       PlayerId sourcePlayer;
       int16_t shot;
@@ -3293,7 +3281,48 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
       buf = nboUnpackUByte(buf, sourcePlayer);
       buf = nboUnpackShort(buf, shot);
       buf = nboUnpackUShort(buf, reason);
+      // It should not happen anymore, but check for a cheat
+      if (t != sourcePlayer)
+	break;
+
       shotEnded(sourcePlayer, shot, reason);
+      break;
+    }
+
+    // tank is being hit
+    case MsgHit: {
+      if (playerData->player.isObserver())
+	break;
+      if (!playerData->player.isAlive())
+	break;
+
+      PlayerId hitPlayer;
+      PlayerId shooterPlayer;
+      FiringInfo firingInfo;
+      int16_t shot;
+      buf = nboUnpackUByte(buf, hitPlayer);
+      buf = nboUnpackUByte(buf, shooterPlayer);
+      buf = nboUnpackShort(buf, shot);
+      // It should not happen, but check for a cheat
+      if (t != hitPlayer)
+	break;
+      GameKeeper::Player *shooterData
+	= GameKeeper::Player::getPlayerByIndex(shooterPlayer);
+      if (!shooterData)
+	break;
+      if (shooterData->removeShot(shot & 0xff, shot >> 8, firingInfo)) {
+	sendShotEnd(shooterPlayer, shot, 1);
+	const int flagIndex = playerData->player.getFlag();
+	FlagInfo *flagInfo  = NULL;
+	if (flagIndex >= 0) {
+	  flagInfo = FlagInfo::get(flagIndex);
+	  sendDrop(*flagInfo);
+	}
+
+	if (!flagInfo || flagInfo->flag.type != Flags::Shield)
+	  playerKilled(hitPlayer, shooterPlayer, 1, shot,
+		       firingInfo.flagType, false, false);
+      }
       break;
     }
 

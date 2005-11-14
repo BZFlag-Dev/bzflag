@@ -3476,7 +3476,7 @@ static void		checkEnvironment()
     // this is to ensure that we don't get shot again by the same shot
     // after dropping our shield flag.
     if (hit->isStoppedByHit())
-      serverLink->sendEndShot(hit->getPlayer(), hit->getShotId(), 1);
+      serverLink->sendHit(myTank->getId(), hit->getPlayer(), hit->getShotId());
 
     FlagType* killerFlag = hit->getFlag();
     bool stopShot;
@@ -3943,7 +3943,8 @@ static void		checkEnvironment(RobotPlayer* tank)
     // this is to ensure that we don't get shot again by the same shot
     // after dropping our shield flag.
     if (hit->isStoppedByHit())
-      lookupServer(tank)->sendEndShot(hit->getPlayer(), hit->getShotId(), 1);
+      lookupServer(tank)->sendHit(tank->getId(), hit->getPlayer(),
+				  hit->getShotId());
 
     FlagType* killerFlag = hit->getFlag();
     bool stopShot;

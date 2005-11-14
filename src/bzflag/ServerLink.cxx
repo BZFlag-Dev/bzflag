@@ -376,6 +376,7 @@ void			ServerLink::send(uint16_t code, uint16_t len,
     switch (code) {
       case MsgShotBegin:
       case MsgShotEnd:
+      case MsgHit:
       case MsgPlayerUpdate:
       case MsgPlayerUpdateSmall:
       case MsgGMUpdate:
