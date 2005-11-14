@@ -83,7 +83,7 @@ std::string AutoCompleter::complete(const std::string& str, std::string* matches
   if (str.size() == 0) {
     return str;
   }
-
+  
   // from the last space  
   const int lastSpace = str.find_last_of(" \t");
   const std::string tail = str.substr(lastSpace + 1);
@@ -110,26 +110,32 @@ std::string AutoCompleter::complete(const std::string& str, std::string* matches
     if (first != last) {
       std::vector<WordRecord>::iterator it = first;
       for (it = first; it != (last + 1); it++) {
-        if (it->quoteString) {
-          *matches += "\"" + it->word + "\" ";
-        } else {
-          *matches += it->word + " ";
+        std::string tmp2 = it->word;
+        // strip the trailing whitespace
+        while ((tmp2.size() > 0) && isspace(tmp2[tmp2.size() - 1])) {
+          tmp2.resize(tmp2.size() - 1);
+        }
+        if (tmp2.size() > 0) {
+          if (it->quoteString) {
+            *matches += "\"" + tmp2 + "\" ";
+          } else {
+            *matches += tmp2 + " ";
+          }
         }
       }
     }
   }
 
-  // return the largest common prefix
+  // return the largest common prefix without any spaces
   const int minLen = first->word.size() < last->word.size() ?
                      first->word.size() : last->word.size();
   int i;
   for (i = 0; i < minLen; ++i) {
-    if (first->word[i] != last->word[i]) {
+    if (isspace(first->word[i]) || (first->word[i] != last->word[i])) {
       break;
     }
   }
-
-  if (first->quoteString) {
+  if (first->quoteString && (first == last)) {
     std::string quoted = "\"" + first->word + "\"";
     return (head + quoted);
   } else {
