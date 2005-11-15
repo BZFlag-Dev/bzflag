@@ -458,24 +458,24 @@ static SayCommand	  sayCommand;
 static CmdList		  cmdList;
 static CmdHelp		  cmdHelp;
 
-CmdHelp::CmdHelp()		       : ServerCommand("") {} // fake entry
-CmdList::CmdList()		       : ServerCommand("/?",
+CmdHelp::CmdHelp()			 : ServerCommand("") {} // fake entry
+CmdList::CmdList()			 : ServerCommand("/?",
   "- display the list of server-side commands") {}
 MsgCommand::MsgCommand()		 : ServerCommand("/msg",
   "<nick> text - Send text message to nick") {}
 ServerQueryCommand::ServerQueryCommand() : ServerCommand("/serverquery",
   "- show the server version") {}
-PartCommand::PartCommand()	       : ServerCommand("/part",
+PartCommand::PartCommand()		 : ServerCommand("/part",
   "[message] - leave the game with a parting message") {}
-QuitCommand::QuitCommand()	       : ServerCommand("/quit",
+QuitCommand::QuitCommand()		 : ServerCommand("/quit",
   "[message] - leave the game with a parting message, and close the client") {}
-UpTimeCommand::UpTimeCommand()	   : ServerCommand("/uptime",
+UpTimeCommand::UpTimeCommand()		 : ServerCommand("/uptime",
   "- show the server's uptime") {}
 PasswordCommand::PasswordCommand()       : ServerCommand("/password",
   "<passwd> - become an administrator with <passwd>") {}
 SetCommand::SetCommand()		 : ServerCommand("/set",
-  "[<var> <value>] - set BZDB variable to value, or display variables") {}
-ResetCommand::ResetCommand()	     : ServerCommand("/reset",
+  "[ var [ value ] ] - set BZDB variable to value, or display variables") {}
+ResetCommand::ResetCommand()		 : ServerCommand("/reset",
   "- reset the BZDB variables") {}
 ShutdownCommand::ShutdownCommand()       : ServerCommand("/shutdownserver",
   "- kill the server") {}
@@ -485,23 +485,23 @@ GameOverCommand::GameOverCommand()       : ServerCommand("/gameover",
   "- end the current game") {}
 CountdownCommand::CountdownCommand()     : ServerCommand("/countdown",
   "- start the countdown sequence for a timed game") {}
-FlagCommand::FlagCommand()	       : ServerCommand("/flag",
+FlagCommand::FlagCommand()		 : ServerCommand("/flag",
   "<reset|up|show> - reset, remove or show the flags") {}
 LagWarnCommand::LagWarnCommand()	 : ServerCommand("/lagwarn",
-  "<millisecons>- change the maximum allowed lag time") {}
+  "<milliseconds> - change the maximum allowed lag time") {}
 LagStatCommand::LagStatCommand()	 : ServerCommand("/lagstats",
   "- list network delays, jitter and number of lost resp. out of order packets by player") {}
 IdleStatCommand::IdleStatCommand()       : ServerCommand("/idlestats",
   "- display the idle time in seconds for each player") {}
 FlagHistoryCommand::FlagHistoryCommand() : ServerCommand("/flaghistory",
   "- list what flags players have grabbed in the past") {}
-IdListCommand::IdListCommand()   : ServerCommand("/idlist",
+IdListCommand::IdListCommand()		 : ServerCommand("/idlist",
   "- list player BZIDs") {}
 PlayerListCommand::PlayerListCommand()   : ServerCommand("/playerlist",
   "- list player slots, names and IP addresses") {}
-ReportCommand::ReportCommand()	   : ServerCommand("/report",
+ReportCommand::ReportCommand()		 : ServerCommand("/report",
   "<message> - write a message to the server administrator") {}
-HelpCommand::HelpCommand()	       : ServerCommand("/help",
+HelpCommand::HelpCommand()		 : ServerCommand("/help",
   "<help page> - display the specified help page") {}
 SendHelpCommand::SendHelpCommand()       : ServerCommand("/sendhelp",
   "<#slot|PlayerName|\"Player Name\"> <help page> - send the specified help page to a user") {}
@@ -525,26 +525,26 @@ SetGroupCommand::SetGroupCommand()       : ServerCommand("/setgroup",
   "<callsign> <group> - add the user to the specified group") {}
 RemoveGroupCommand::RemoveGroupCommand() : ServerCommand("/removegroup",
   "<callsign> <group> - remove a user from a group") {}
-ReloadCommand::ReloadCommand()	   : ServerCommand("/reload",
+ReloadCommand::ReloadCommand()		 : ServerCommand("/reload",
   "- reload the user, group, and password files") {}
-PollCommand::PollCommand()	       : ServerCommand("/poll",
-  "<ban|kick|vote|veto> <callsign> - nteract and make requests of the bzflag voting system") {}
-VoteCommand::VoteCommand()	       : ServerCommand("/vote",
+PollCommand::PollCommand()		 : ServerCommand("/poll",
+  "<ban|kick|vote|veto> <callsign> - interact and make requests of the bzflag voting system") {}
+VoteCommand::VoteCommand()		 : ServerCommand("/vote",
   "<yes|no> - place a vote in favor or in opposition to the poll") {}
-VetoCommand::VetoCommand()	       : ServerCommand("/veto",
+VetoCommand::VetoCommand()		 : ServerCommand("/veto",
   "- will cancel the poll if there is one active") {}
 ViewReportCommand::ViewReportCommand()   : ServerCommand("/viewreports",
   "[pattern] - view the server's report file") {}
 ClientQueryCommand::ClientQueryCommand() : ServerCommand("/clientquery",
   "[callsign] - retrieve client version info from all users, or just CALLSIGN if given") {}
-RecordCommand::RecordCommand()	   : ServerCommand("/record",
+RecordCommand::RecordCommand()		 : ServerCommand("/record",
   "[start|stop|size|list|rate..] - manage the bzflag record system") {}
-ReplayCommand::ReplayCommand()	   : ServerCommand("/replay",
+ReplayCommand::ReplayCommand()		 : ServerCommand("/replay",
   "[list|load|play|skip +-seconds] - intereact with recorded files") {}
 SayCommand::SayCommand()		 : ServerCommand("/say",
   "[message] - generate a public message sent by the server") {}
-DateCommand::DateCommand()	       : DateTimeCommand("/date") {}
-TimeCommand::TimeCommand()	       : DateTimeCommand("/time") {}
+DateCommand::DateCommand()		 : DateTimeCommand("/date") {}
+TimeCommand::TimeCommand()		 : DateTimeCommand("/time") {}
 
 class NoDigit {
 public:
@@ -1137,12 +1137,34 @@ static void flagCommandHelp(int t)
 }
 
 
+static bool checkFlagMod(GameKeeper::Player* playerData)
+{
+  if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::flagMod) &&
+      !playerData->accessInfo.hasPerm(PlayerAccessInfo::flagMaster)) {
+    sendMessage(ServerPlayer, playerData->getIndex(),
+                "You do not have the FlagMod permission");
+    return false;
+  }
+  return true;
+}
+
+
+static bool checkFlagMaster(GameKeeper::Player* playerData)
+{
+  if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::flagMaster)) {
+    sendMessage(ServerPlayer, playerData->getIndex(),
+                "You do not have the FlagMaster permission");
+    return false;
+  }
+  return true;
+}
+
+
 bool FlagCommand::operator() (const char	 *message,
 			      GameKeeper::Player *playerData)
 {
   int t = playerData->getIndex();
-  if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::flagMod)) {
-    sendMessage(ServerPlayer, t, "You do not have permission to run the flag command");
+  if (!checkFlagMod(playerData)) {
     return true;
   }
 
@@ -1187,6 +1209,9 @@ bool FlagCommand::operator() (const char	 *message,
       bz_resetFlags(true);
     }
     else if (msg[0] == '#') {
+      if (!checkFlagMaster(playerData)) {
+        return true;
+      }
       int fIndex = atoi(msg + 1);
       FlagInfo* fi = FlagInfo::get(fIndex);
       if (fi != NULL) {
@@ -1198,6 +1223,9 @@ bool FlagCommand::operator() (const char	 *message,
       }
     }
     else if (ft != Flags::Null) {
+      if (!checkFlagMaster(playerData)) {
+        return true;
+      }
       // by flag abbreviation
       for (int i = 0; i < numFlags; i++) {
         FlagInfo* fi = FlagInfo::get(i);
@@ -1216,6 +1244,10 @@ bool FlagCommand::operator() (const char	 *message,
     }
   }
   else if (strncasecmp(msg, "take", 4) == 0) {
+    if (!checkFlagMaster(playerData)) {
+      return true;
+    }
+    
     msg += 4;
     while ((*msg != '\0') && isspace(*msg)) msg++; // eat whitespace
     
@@ -1256,6 +1288,10 @@ bool FlagCommand::operator() (const char	 *message,
     }
   }
   else if (strncasecmp(msg, "give", 4) == 0) {
+    if (!checkFlagMaster(playerData)) {
+      return true;
+    }
+    
     msg += 4;
     while ((*msg != '\0') && isspace(*msg)) msg++; // eat whitespace
 

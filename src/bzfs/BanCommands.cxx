@@ -168,7 +168,7 @@ KickCommand::KickCommand()		 : ServerCommand("/kick",
 KillCommand::KillCommand()		 : ServerCommand("/kill",
   "<#slot|PlayerName|\"Player Name\"> [reason] - kill a player") {}
 BanListCommand::BanListCommand()	 : ServerCommand("/banlist",
-  "[pattern] - List all of the IPs currently banned from this server") {}
+  "[pattern] - List the IPs currently banned from this server") {}
 CheckIPCommand::CheckIPCommand()	 : ServerCommand("/checkip",
   "<ip> - check if IP is banned and print corresponding ban info") {}
 BanCommand::BanCommand()		 : ServerCommand("/ban",
@@ -180,13 +180,13 @@ HostbanCommand::HostbanCommand()	 : ServerCommand("/hostban",
 HostUnbanCommand::HostUnbanCommand()     : ServerCommand("/hostunban",
   "<host pattern> - remove a host pattern from the host ban list") {}
 HostbanListCommand::HostbanListCommand() : ServerCommand("/hostbanlist",
-  "[pattern] - List all of the host patterns currently banned from this server") {}
+  "[pattern] - List the host patterns currently banned from this server") {}
 IdBanCommand::IdBanCommand()		 : ServerCommand("/idban",
   "<#slot|+id|PlayerName|\"Player Name\"> <duration> <reason> - ban using BZID") {}
 IdUnbanCommand::IdUnbanCommand()	 : ServerCommand("/idunban",
   "<id> - remove a BZID from the ban list") {}
 IdBanListCommand::IdBanListCommand():	 ServerCommand("/idbanlist",
-  "[pattern] - List all of the BZIDs currently banned from this server") {}
+  "[pattern] - List the BZIDs currently banned from this server") {}
 MuteCommand::MuteCommand()		 : ServerCommand("/mute",
   "<#slot|PlayerName|\"Player Name\"> - remove the ability for a player to communicate with other players") {}
 UnmuteCommand::UnmuteCommand()		 : ServerCommand("/unmute",
