@@ -586,20 +586,20 @@ case $host_os in
 	#AC_DEFINE(XIJOYSTICK, 1, [XInput Joystick Handling])
 	#fi
 	#CPPFLAGS="$CPPFLAGS -Wall -W -Wfloat-equal -Wundef -Wshadow -Wpointer-arith -Wcast-qual -Wwrite-strings -Wconversion -Wredundant-decls"
-	CPPFLAGS="$CPPFLAGS -Wall -W -Wshadow"
+	CPPFLAGS="$CPPFLAGS -Wall -W -Wundef -Wshadow"
 	case $host_vendor in
 	     pc)
 	       if expr `$CC -dumpversion` \>= "3.4" > /dev/null ; then
 	         # silly hack, should be a proper configure compiler option test
 	         if test x$host_cpu = xx86_64; then
 		   CPPFLAGS="$CPPFLAGS -mtune=k8";
-		 fi		    
+		 fi
 	         CPPFLAGS="$CPPFLAGS -mtune=$host_cpu";
 	       else
 	         # silly hack, should be a proper configure compiler option test
 	         if test x$host_cpu = xx86_64; then
 		   CPPFLAGS="$CPPFLAGS -mcpu=k8";
-		 fi		    
+		 fi
 	         CPPFLAGS="$CPPFLAGS -mcpu=$host_cpu";
 	       fi;;
 	     ppc) CPPFLAGS="$CPPFLAGS -mcpu=$host_cpu";;
