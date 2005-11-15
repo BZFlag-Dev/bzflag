@@ -37,6 +37,8 @@
 #include <ctype.h>
 
 // common implementation headers
+#include "bzglob.h"
+#include "TextUtils.h"
 #include "CommandManager.h"
 #include "LagInfo.h"
 #include "NetHandler.h"
@@ -532,7 +534,7 @@ VoteCommand::VoteCommand()	       : ServerCommand("/vote",
 VetoCommand::VetoCommand()	       : ServerCommand("/veto",
   "- will cancel the poll if there is one active") {}
 ViewReportCommand::ViewReportCommand()   : ServerCommand("/viewreports",
-  "- view the server's report file") {}
+  "[pattern] - view the server's report file") {}
 ClientQueryCommand::ClientQueryCommand() : ServerCommand("/clientquery",
   "[callsign] - retrieve client version info from all users, or just CALLSIGN if given") {}
 RecordCommand::RecordCommand()	   : ServerCommand("/record",
@@ -2654,26 +2656,66 @@ bool PollCommand::operator() (const char	 *message,
 }
 
 
-bool ViewReportCommand::operator() (const char	 *,
-				    GameKeeper::Player *playerData)
+bool ViewReportCommand::operator() (const char* message,
+				    GameKeeper::Player* playerData)
 {
   int t = playerData->getIndex();
-  std::string line;
   if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::viewReports)) {
     sendMessage(ServerPlayer, t, "You do not have permission to run the viewreports command");
     return true;
   }
   if (clOptions->reportFile.size() == 0 && clOptions->reportPipe.size() == 0) {
-    line = "The /report command is disabled on this server or there are no reports filed.";
-    sendMessage(ServerPlayer, t, line.c_str());
+    sendMessage(ServerPlayer, t,
+                "The /report command is disabled on this"
+                " server or there are no reports filed.");
   }
   std::ifstream ifs(clOptions->reportFile.c_str(), std::ios::in);
   if (ifs.fail()) {
     sendMessage(ServerPlayer, t, "Error reading from report file.");
     return true;
   }
-  while (std::getline(ifs, line))
-    sendMessage(ServerPlayer, t, line.c_str());
+
+  // setup the glob pattern
+  std::string pattern = "*";
+  message += commandName.size();
+  while ((*message != '\0') && isspace(*message)) message++;
+  if (*message != '\0') {
+    pattern = message;
+    pattern = TextUtils::toupper(pattern);
+    if (pattern.find('*') == std::string::npos) {
+      pattern = "*" + pattern + "*";
+    }
+  }
+
+  // assumes that empty lines separate the reports
+  std::string line;
+  std::vector<std::string> buffers;
+  bool matched = false;
+  while (std::getline(ifs, line)) {
+    buffers.push_back(line);
+    if (line.size() <= 0) {
+      // blank line
+      if (matched) {
+        for (int i = 0; i < (int)buffers.size(); i++) {
+          sendMessage(ServerPlayer, t, buffers[i].c_str());
+        }
+      }
+      buffers.clear();
+      matched = false;
+    } else {
+      // non-blank line
+      if (glob_match(pattern, TextUtils::toupper(line))) {
+        matched = true;
+      }
+    }
+  }
+  // in case the file doesn't end with a blank line
+  if (matched) {
+    for (int i = 0; i < (int)buffers.size(); i++) {
+      sendMessage(ServerPlayer, t, buffers[i].c_str());
+    }
+  }
+  
   return true;
 }
 

@@ -18,6 +18,7 @@
 #include <string.h>
 
 // common implementation headers
+#include "TextUtils.h"
 #include "WorldEventManager.h"
 
 // local implementation headers
@@ -167,7 +168,7 @@ KickCommand::KickCommand()		 : ServerCommand("/kick",
 KillCommand::KillCommand()		 : ServerCommand("/kill",
   "<#slot|PlayerName|\"Player Name\"> [reason] - kill a player") {}
 BanListCommand::BanListCommand()	 : ServerCommand("/banlist",
-  "- List all of the IPs currently banned from this server") {}
+  "[pattern] - List all of the IPs currently banned from this server") {}
 CheckIPCommand::CheckIPCommand()	 : ServerCommand("/checkip",
   "<ip> - check if IP is banned and print corresponding ban info") {}
 BanCommand::BanCommand()		 : ServerCommand("/ban",
@@ -179,13 +180,13 @@ HostbanCommand::HostbanCommand()	 : ServerCommand("/hostban",
 HostUnbanCommand::HostUnbanCommand()     : ServerCommand("/hostunban",
   "<host pattern> - remove a host pattern from the host ban list") {}
 HostbanListCommand::HostbanListCommand() : ServerCommand("/hostbanlist",
-  "- List all of the host patterns currently banned from this server") {}
+  "[pattern] - List all of the host patterns currently banned from this server") {}
 IdBanCommand::IdBanCommand()		 : ServerCommand("/idban",
   "<#slot|+id|PlayerName|\"Player Name\"> <duration> <reason> - ban using BZID") {}
 IdUnbanCommand::IdUnbanCommand()	 : ServerCommand("/idunban",
   "<id> - remove a BZID from the ban list") {}
 IdBanListCommand::IdBanListCommand():	 ServerCommand("/idbanlist",
-  "- List all of the BZIDs currently banned from this server") {}
+  "[pattern] - List all of the BZIDs currently banned from this server") {}
 MuteCommand::MuteCommand()		 : ServerCommand("/mute",
   "<#slot|PlayerName|\"Player Name\"> - remove the ability for a player to communicate with other players") {}
 UnmuteCommand::UnmuteCommand()		 : ServerCommand("/unmute",
@@ -471,8 +472,8 @@ bool CheckIPCommand::operator() (const char *message,
 }
 
 
-bool BanListCommand::operator() (const char	 *,
-				 GameKeeper::Player *playerData)
+bool BanListCommand::operator() (const char* message,
+				 GameKeeper::Player* playerData)
 {
   int t = playerData->getIndex();
   if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::banlist)) {
@@ -480,13 +481,13 @@ bool BanListCommand::operator() (const char	 *,
 		"You do not have permission to run the banlist command");
     return true;
   }
-  clOptions->acl.sendBans(t);
+  clOptions->acl.sendBans(t, message + commandName.size());
   return true;
 }
 
 
-bool HostbanListCommand::operator() (const char	 *,
-				     GameKeeper::Player *playerData)
+bool HostbanListCommand::operator() (const char* message,
+				     GameKeeper::Player* playerData)
 {
   int t = playerData->getIndex();
   if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::banlist)) {
@@ -494,13 +495,13 @@ bool HostbanListCommand::operator() (const char	 *,
 		"You do not have permission to run the banlist command");
     return true;
   }
-  clOptions->acl.sendHostBans(t);
+  clOptions->acl.sendHostBans(t, message + commandName.size());
   return true;
 }
 
 
-bool IdBanListCommand::operator() (const char *,
-			           GameKeeper::Player *playerData)
+bool IdBanListCommand::operator() (const char* message,
+			           GameKeeper::Player* playerData)
 {
   int t = playerData->getIndex();
   if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::banlist)) {
@@ -508,7 +509,7 @@ bool IdBanListCommand::operator() (const char *,
 		"You do not have permission to run the banlist command");
     return true;
   }
-  clOptions->acl.sendIdBans(t);
+  clOptions->acl.sendIdBans(t, message + commandName.size());
   return true;
 }
 

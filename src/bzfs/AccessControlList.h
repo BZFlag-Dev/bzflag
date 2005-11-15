@@ -229,13 +229,13 @@ public:
   void sendBan(PlayerId id, const BanInfo&);
 
   /** This function sends a textual list of all IP bans to a player. */
-  void sendBans(PlayerId id);
+  void sendBans(PlayerId id, const char* pattern);
 
   /** This function sends a textual list of all host bans to a player. */
-  void sendHostBans(PlayerId id);
+  void sendHostBans(PlayerId id, const char* pattern);
 
   /** This function sends a textual list of all id bans to a player. */
-  void sendIdBans(PlayerId id);
+  void sendIdBans(PlayerId id, const char* pattern);
 
   /** This function tells this object where to save the banlist, and where
       to load it from. */

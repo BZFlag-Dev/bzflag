@@ -17,6 +17,7 @@
 
 /* system interface headers */
 #include <time.h>
+#include <ctype.h>
 #include <fstream>
 #include <vector>
 #include <string>
@@ -27,6 +28,7 @@
 
 /* common interface headers */
 #include "global.h"
+#include "bzglob.h"
 #include "network.h"
 #include "Address.h"
 #include "TimeKeeper.h"
@@ -257,12 +259,28 @@ bool AccessControlList::idValidate(const char *id, IdBanInfo *info)
 }
 
 
-void AccessControlList::sendBan(PlayerId id, const BanInfo &baninfo)
+static std::string makeGlobPattern(const char* str)
 {
-  in_addr mask = baninfo.addr;
+  if (str == NULL) {
+    return "*";
+  }
+  while ((*str != '\0') && isspace(*str)) str++;
+  if (*str == '\0') {
+    return "*";
+  }
+  std::string pattern = str;
+  pattern = TextUtils::toupper(pattern);
+  if (pattern.find('*') == std::string::npos) {
+    pattern = "*" + pattern + "*";
+  }
+  printf ("PATTERN = \"%s\"\n", pattern.c_str());
+  return pattern;
+}
 
+
+static std::string getBanMaskString(in_addr mask)
+{
   std::ostringstream os;
-
   os << (ntohl(mask.s_addr) >> 24) << '.';
   if ((ntohl(mask.s_addr) & 0x00ffffff) == 0x00ffffff) {
     os << "*.*.*";
@@ -278,6 +296,15 @@ void AccessControlList::sendBan(PlayerId id, const BanInfo &baninfo)
         os << (ntohl(mask.s_addr) & 0xff);
     }
   }
+  return os.str();
+}
+
+
+void AccessControlList::sendBan(PlayerId id, const BanInfo &baninfo)
+{
+  std::ostringstream os;
+  os << getBanMaskString(baninfo.addr);
+
   // print duration when < 1 year
   double duration = baninfo.banEnd - TimeKeeper::getCurrent();
   if (duration < 365.0f * 24 * 3600)
@@ -298,82 +325,110 @@ void AccessControlList::sendBan(PlayerId id, const BanInfo &baninfo)
 }
 
 
-void AccessControlList::sendBans(PlayerId id)
+void AccessControlList::sendBans(PlayerId id, const char* pattern)
 {
   expire();
-
   sendMessage(ServerPlayer, id, "IP Ban List");
   sendMessage(ServerPlayer, id, "-----------");
-  for (banList_t::iterator it = banList.begin(); it != banList.end(); ++it)
+  
+  const std::string glob = makeGlobPattern(pattern);
+  
+  for (banList_t::iterator it = banList.begin(); it != banList.end(); ++it) {
+    const BanInfo& bi = *it;
+    if (!glob_match(glob, getBanMaskString(bi.addr)) &&
+        !glob_match(glob, TextUtils::toupper(bi.reason)) &&
+        !glob_match(glob, TextUtils::toupper(bi.bannedBy))) {
+      continue;
+    }
     sendBan(id, *it);
+  }
 }
 
 
-void AccessControlList::sendHostBans(PlayerId id)
+void AccessControlList::sendHostBans(PlayerId id, const char* pattern)
 {
-  char banlistmessage[MessageLen];
   expire();
-
   sendMessage(ServerPlayer, id, "Host Ban List");
   sendMessage(ServerPlayer, id, "-------------");
-  for (hostBanList_t::iterator it = hostBanList.begin(); it != hostBanList.end(); ++it) {
-    char *pMsg = banlistmessage;
 
-    sprintf(pMsg, "%s", it->hostpat.c_str());
+  const std::string glob = makeGlobPattern(pattern);
+
+  char banlistmessage[MessageLen];
+  for (hostBanList_t::iterator it = hostBanList.begin(); it != hostBanList.end(); ++it) {
+
+    const HostBanInfo& bi = *it;
+    if (!glob_match(glob, TextUtils::toupper(bi.hostpat)) &&
+        !glob_match(glob, TextUtils::toupper(bi.reason)) &&
+        !glob_match(glob, TextUtils::toupper(bi.bannedBy))) {
+      continue;
+    }
+    
+    char *pMsg = banlistmessage;
+    sprintf(pMsg, "%s", bi.hostpat.c_str());
 
     // print duration when < 1 year
-    double duration = it->banEnd - TimeKeeper::getCurrent();
+    double duration = bi.banEnd - TimeKeeper::getCurrent();
     if (duration < 365.0f * 24 * 3600)
       sprintf(pMsg + strlen(pMsg)," (%.1f minutes)", duration / 60);
-    if (it->bannedBy.length())
-      sprintf(pMsg + strlen(pMsg), " banned by: %s", it->bannedBy.c_str());
-    if (it->fromMaster)
+    if (bi.bannedBy.length())
+      sprintf(pMsg + strlen(pMsg), " banned by: %s", bi.bannedBy.c_str());
+    if (bi.fromMaster)
       sprintf(pMsg + strlen(pMsg), "(m)");
 
     sendMessage(ServerPlayer, id, banlistmessage);
 
     // add reason, if any
-    if (it->reason.size()) {
+    if (bi.reason.size()) {
       pMsg = banlistmessage;
-      sprintf(pMsg, "   reason: %s", it->reason.c_str());
+      sprintf(pMsg, "   reason: %s", bi.reason.c_str());
       sendMessage(ServerPlayer, id, banlistmessage);
     }
   }
 }
 
 
-void AccessControlList::sendIdBans(PlayerId id)
+void AccessControlList::sendIdBans(PlayerId id, const char* pattern)
 {
-  char banlistmessage[MessageLen];
   expire();
-
   sendMessage(ServerPlayer, id, "BZID Ban List");
   sendMessage(ServerPlayer, id, "-------------");
-  for (idBanList_t::iterator it = idBanList.begin(); it != idBanList.end(); ++it) {
-    char *pMsg = banlistmessage;
 
-    bool useQuotes = (it->idpat.find_first_of(" \t") != std::string::npos);
+  const std::string glob = makeGlobPattern(pattern);
+
+  char banlistmessage[MessageLen];
+  for (idBanList_t::iterator it = idBanList.begin(); it != idBanList.end(); ++it) {
+
+    const IdBanInfo& bi = *it;
+    if (!glob_match(glob, TextUtils::toupper(bi.idpat)) &&
+        !glob_match(glob, TextUtils::toupper(bi.reason)) &&
+        !glob_match(glob, TextUtils::toupper(bi.bannedBy))) {
+      continue;
+    }
+    
+    char *pMsg = banlistmessage;
+    
+    bool useQuotes = (bi.idpat.find_first_of(" \t") != std::string::npos);
     if (useQuotes) {
-      sprintf(pMsg, "\"%s\"", it->idpat.c_str());
+      sprintf(pMsg, "\"%s\"", bi.idpat.c_str());
     } else {
-      sprintf(pMsg, "%s", it->idpat.c_str());
+      sprintf(pMsg, "%s", bi.idpat.c_str());
     }
 
     // print duration when < 1 year
-    double duration = it->banEnd - TimeKeeper::getCurrent();
+    double duration = bi.banEnd - TimeKeeper::getCurrent();
     if (duration < 365.0f * 24 * 3600)
       sprintf(pMsg + strlen(pMsg)," (%.1f minutes)", duration / 60);
-    if (it->bannedBy.length())
-      sprintf(pMsg + strlen(pMsg), " banned by: %s", it->bannedBy.c_str());
-    if (it->fromMaster)
+    if (bi.bannedBy.length())
+      sprintf(pMsg + strlen(pMsg), " banned by: %s", bi.bannedBy.c_str());
+    if (bi.fromMaster)
       sprintf(pMsg + strlen(pMsg), "(m)");
 
     sendMessage(ServerPlayer, id, banlistmessage);
 
     // add reason, if any
-    if (it->reason.size()) {
+    if (bi.reason.size()) {
       pMsg = banlistmessage;
-      sprintf(pMsg, "   reason: %s", it->reason.c_str());
+      sprintf(pMsg, "   reason: %s", bi.reason.c_str());
       sendMessage(ServerPlayer, id, banlistmessage);
     }
   }
