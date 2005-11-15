@@ -96,7 +96,6 @@ int main() { return 0; }
 fi
 
 AC_PROG_LN_S
-AC_PROG_RANLIB
 
 # disabled shared libraries in order to prevent double-compilation
 # FIXME: necessary until the flags are used properly.
