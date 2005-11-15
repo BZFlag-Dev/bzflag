@@ -54,7 +54,7 @@ static OccluderManager OcclMgrs[2];
 static OccluderManager* OcclMgr = &OcclMgrs[0];
 
 
-#if (USE_REAL_INLINE)
+#ifdef USE_REAL_INLINE
 inline static void addCullListNode (SceneNode* node)
 {
   CullList[CullListCount] = node;
