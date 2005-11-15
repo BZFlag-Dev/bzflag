@@ -1387,7 +1387,7 @@ static void addPlayer(int playerIndex, GameKeeper::Player *playerData)
     return;
   }
 
-  if (!resultEnter)
+  if (!resultEnter) {
     // Find the user already logged on and kick it. The new player
     // has been globally authenticated.
     for (int i = 0; i < curMaxPlayers; i++) {
@@ -1408,6 +1408,7 @@ static void addPlayer(int playerIndex, GameKeeper::Player *playerData)
 	break;
       }
     }
+  }
 
   if (clOptions->filterCallsigns) {
     int filterIndex = 0;
@@ -1418,12 +1419,13 @@ static void addPlayer(int playerIndex, GameKeeper::Player *playerData)
     }
   }
 
-  // check against ban lists
-  playerData->setNeedThisHostbanChecked(true);
-  bool playerIsAntiBanned = playerData->accessInfo.hasPerm(PlayerAccessInfo::antiban);
+  const bool playerIsAntiBanned =
+    playerData->accessInfo.hasPerm(PlayerAccessInfo::antiban);
+
+  // check against the ip ban list
   in_addr playerIP = playerData->netHandler->getIPAddress();
   BanInfo info(playerIP);
-  if (!clOptions->acl.validate(playerIP,&info) && !playerIsAntiBanned) {
+  if (!playerIsAntiBanned && !clOptions->acl.validate(playerIP,&info)) {
     std::string rejectionMessage;
 
     rejectionMessage = BanRefusalString;
@@ -1447,8 +1449,38 @@ static void addPlayer(int playerIndex, GameKeeper::Player *playerData)
     return;
   }
 
-  // see if any watchers don't want this guy
+  // check against the id ban list
+  const std::string& bzid = playerData->getBzIdentifier();
+  IdBanInfo idInfo("");
+  if (!playerIsAntiBanned && !clOptions->acl.idValidate(bzid.c_str(), &idInfo)) {
+    std::string rejectionMessage;
+    
+    rejectionMessage = BanRefusalString;
+    if (idInfo.reason.size()) {
+      rejectionMessage += idInfo.reason;
+    } else {
+      rejectionMessage += "General Ban";
+    }
 
+    rejectionMessage += ColorStrings[WhiteColor];
+    if (idInfo.bannedBy.size()) {
+      rejectionMessage += " by ";
+      rejectionMessage += ColorStrings[BlueColor];
+      rejectionMessage += idInfo.bannedBy;
+    }
+
+    rejectionMessage += ColorStrings[GreenColor];
+    if (idInfo.fromMaster) {
+      rejectionMessage += " [from the master server]";
+    }
+    rejectPlayer(playerIndex, RejectIDBanned, rejectionMessage.c_str());
+    return;
+  }
+  
+  // check against id and hostname ban lists (on the next cycle)
+  playerData->setNeedThisHostbanChecked(true);
+
+  // see if any watchers don't want this guy
   bz_AllowPlayerEventData allowData;
   allowData.callsign = playerData->player.getCallSign();
   allowData.ipAddress = playerData->netHandler->getTargetIP();
@@ -3875,16 +3907,10 @@ static void doStuffOnPlayer(GameKeeper::Player &playerData)
      requestAuthentication = true;
      playerData._LSAState = GameKeeper::Player::requesting;
   } else if (playerData.netHandler->reverseDNSDone()) {
-    if (playerData._LSAState == GameKeeper::Player::verified) {
-      addPlayer(p, &playerData);
-      playerData._LSAState = GameKeeper::Player::done;
-    } else if (playerData._LSAState == GameKeeper::Player::timed) {
-      addPlayer(p, &playerData);
-      playerData._LSAState = GameKeeper::Player::done;
-    } else if (playerData._LSAState == GameKeeper::Player::failed) {
-      addPlayer(p, &playerData);
-      playerData._LSAState = GameKeeper::Player::done;
-    } else if (playerData._LSAState == GameKeeper::Player::notRequired) {
+    if ((playerData._LSAState == GameKeeper::Player::verified)	||
+        (playerData._LSAState == GameKeeper::Player::timedOut)	||
+        (playerData._LSAState == GameKeeper::Player::failed)	||
+        (playerData._LSAState == GameKeeper::Player::notRequired)) {
       addPlayer(p, &playerData);
       playerData._LSAState = GameKeeper::Player::done;
     }
@@ -3892,12 +3918,11 @@ static void doStuffOnPlayer(GameKeeper::Player &playerData)
 
   // Check host bans
   const char *hostname = playerData.netHandler->getHostname();
-
   if (hostname && playerData.needsHostbanChecked()) {
     if (!playerData.accessInfo.hasPerm(PlayerAccessInfo::antiban)) {
       HostBanInfo hostInfo("*");
       if (!clOptions->acl.hostValidate(hostname, &hostInfo)) {
-	std::string reason = "bannedhost for: ";
+	std::string reason = "banned host for: ";
 	if (hostInfo.reason.size())
 	  reason += hostInfo.reason;
 	else
@@ -3928,13 +3953,14 @@ static void doStuffOnPlayer(GameKeeper::Player &playerData)
 	return;
     }
     // if player is holding a flag, drop it
-    for (int j = 0; j < numFlags; j++)
+    for (int j = 0; j < numFlags; j++) {
       if (FlagInfo::get(j)->player == p) {
 	dropPlayerFlag(playerData, playerData.lastState.pos);
 	// Should recheck if player is still available
 	if (!GameKeeper::Player::getPlayerByIndex(p))
 	  return;
       }
+    }
   }
 
   // send lag pings
@@ -3968,8 +3994,8 @@ static void doStuffOnPlayer(GameKeeper::Player &playerData)
     removePlayer(p, reasonToKick.c_str(), false);
     return;
   }
-
 }
+
 
 void initGroups()
 {

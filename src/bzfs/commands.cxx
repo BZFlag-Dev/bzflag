@@ -183,6 +183,14 @@ public:
 			   GameKeeper::Player *playerData);
 };
 
+class IdListCommand : ServerCommand {
+public:
+  IdListCommand();
+
+  virtual bool operator() (const char	 *commandLine,
+			   GameKeeper::Player *playerData);
+};
+
 class PlayerListCommand : ServerCommand {
 public:
   PlayerListCommand();
@@ -402,26 +410,27 @@ public:
 			   GameKeeper::Player *playerData);
 };
 
-static MsgCommand	 msgCommand;
+static MsgCommand	  msgCommand;
 static ServerQueryCommand serverQueryCommand;
-static PartCommand	partCommand;
-static QuitCommand	quitCommand;
+static PartCommand	  partCommand;
+static QuitCommand	  quitCommand;
 static UpTimeCommand      upTimeCommand;
 static PasswordCommand    passwordCommand;
-static SetCommand	 setCommand;
+static SetCommand	  setCommand;
 static ResetCommand       resetCommand;
-ShutdownCommand			  shutdownCommand;	// used by the API
-SuperkillCommand		  superkillCommand;	// used by the API
+ShutdownCommand		  shutdownCommand;	// used by the API
+SuperkillCommand	  superkillCommand;	// used by the API
 static GameOverCommand    gameOverCommand;
 static CountdownCommand   countdownCommand;
-static FlagCommand	flagCommand;
+static FlagCommand	  flagCommand;
 static LagWarnCommand     lagWarnCommand;
 static LagStatCommand     lagStatCommand;
 static IdleStatCommand    idleStatCommand;
 static FlagHistoryCommand flagHistoryCommand;
+static IdListCommand      idListCommand;
 static PlayerListCommand  playerListCommand;
 static ReportCommand      ReportCommand;
-static HelpCommand	helpCommand;
+static HelpCommand	  helpCommand;
 static SendHelpCommand    sendHelpCommand;
 static IdentifyCommand    identifyCommand;
 static RegisterCommand    registerCommand;
@@ -434,18 +443,18 @@ static GroupPermsCommand  groupPermsCommand;
 static SetGroupCommand    setGroupCommand;
 static RemoveGroupCommand removeGroupCommand;
 static ReloadCommand      reloadCommand;
-static PollCommand	pollCommand;
-static VoteCommand	voteCommand;
-static VetoCommand	vetoCommand;
+static PollCommand	  pollCommand;
+static VoteCommand	  voteCommand;
+static VetoCommand	  vetoCommand;
 static ViewReportCommand  viewReportCommand;
 static ClientQueryCommand clientQueryCommand;
-static DateCommand	dateCommand;
-static TimeCommand	timeCommand;
+static DateCommand	  dateCommand;
+static TimeCommand	  timeCommand;
 static RecordCommand      recordCommand;
 static ReplayCommand      replayCommand;
-static SayCommand	 sayCommand;
-static CmdList	    cmdList;
-static CmdHelp	    cmdHelp;
+static SayCommand	  sayCommand;
+static CmdList		  cmdList;
+static CmdHelp		  cmdHelp;
 
 CmdHelp::CmdHelp()		       : ServerCommand("") {} // fake entry
 CmdList::CmdList()		       : ServerCommand("/?",
@@ -484,6 +493,8 @@ IdleStatCommand::IdleStatCommand()       : ServerCommand("/idlestats",
   "- display the idle time in seconds for each player") {}
 FlagHistoryCommand::FlagHistoryCommand() : ServerCommand("/flaghistory",
   "- list what flags players have grabbed in the past") {}
+IdListCommand::IdListCommand()   : ServerCommand("/idlist",
+  "- list player BZIDs") {}
 PlayerListCommand::PlayerListCommand()   : ServerCommand("/playerlist",
   "- list player slots, names and IP addresses") {}
 ReportCommand::ReportCommand()	   : ServerCommand("/report",
@@ -1445,12 +1456,37 @@ bool FlagHistoryCommand::operator() (const char	 *,
 }
 
 
+bool IdListCommand::operator() (const char*, GameKeeper::Player *playerData)
+{
+  int t = playerData->getIndex();
+  if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::playerList)) {
+    sendMessage(ServerPlayer, t,
+                "You do not have permission to run the /idlist command");
+    return true;
+  }
+
+  GameKeeper::Player *gtkPlayer;
+  char buffer[MessageLen];
+  for (int i = 0; i < curMaxPlayers; i++) {
+    gtkPlayer = GameKeeper::Player::getPlayerByIndex(i);
+    if (gtkPlayer && gtkPlayer->player.isPlaying()) {
+      snprintf(buffer, MessageLen, "%-20s : %s",
+               gtkPlayer->player.getCallSign(),
+               gtkPlayer->getBzIdentifier().c_str());
+      sendMessage(ServerPlayer, t, buffer);
+    }
+  }
+  return true;
+}
+
+
 bool PlayerListCommand::operator() (const char	 *,
 				    GameKeeper::Player *playerData)
 {
   int t = playerData->getIndex();
   if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::playerList)) {
-    sendMessage(ServerPlayer, t, "You do not have permission to run the playerlist command");
+    sendMessage(ServerPlayer, t,
+                "You do not have permission to run the playerlist command");
     return true;
   }
 

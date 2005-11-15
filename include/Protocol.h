@@ -81,6 +81,7 @@ const uint16_t		MsgGameTime = 0x6774;			// 'gt'
 const uint16_t		MsgKilled = 0x6b6c;			// 'kl'
 const uint16_t		MsgKrbPrincipal = 0x6b70;		// 'kp'
 const uint16_t		MsgKrbTicket    = 0x6b74;		// 'kt'
+const uint16_t		MsgLagState = 0x6c73;			// 'ls'
 const uint16_t		MsgMessage = 0x6d67;			// 'mg'
 const uint16_t		MsgNewRabbit = 0x6e52;			// 'nR'
 const uint16_t		MsgNegotiateFlags = 0x6e66;		// 'nf'
@@ -163,6 +164,7 @@ const uint16_t		RejectRepeatCallsign = 0x0007;
 const uint16_t		RejectRejoinWaitTime = 0x0008;
 const uint16_t		RejectIPBanned = 0x0009;
 const uint16_t		RejectHostBanned = 0x000A;
+const uint16_t		RejectIDBanned = 0x000B;
 
 // sound type codes
 const uint16_t		LocalCustomSound = 0x0001;
