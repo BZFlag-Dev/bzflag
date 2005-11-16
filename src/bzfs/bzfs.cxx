@@ -3543,9 +3543,17 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
       buf = nboUnpackUByte(buf, id);
       buf = state.unpack(buf, code);
 
-      // silently drop old packet
-      if (state.order <= playerData->lastState.order)
+      // observer updates are not relayed 
+      if (playerData->player.isObserver()) {
+        // skip all of the checks
+        playerData->setPlayerState(state, timestamp);
 	break;
+      }
+      
+      // silently drop old packet
+      if (state.order <= playerData->lastState.order) {
+	break;
+      }
 
       // Don't kick players up to 10 seconds after a world parm has changed,
       TimeKeeper now = TimeKeeper::getCurrent();
@@ -3700,17 +3708,21 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
 
       // Player might already be dead and did not know it yet (e.g. teamkill)
       // do not propogate
-      if (!playerData->player.isAlive()
-	  && (state.status & short(PlayerState::Alive)))
+      if (!playerData->player.isAlive() &&
+	  (state.status & short(PlayerState::Alive))) {
 	break;
+      }
+
+      relayPlayerPacket(t, len, rawbuf, code);
+      break;
     }
 
-    //Fall thru
     case MsgGMUpdate:
       // observer shouldn't send bulk messages anymore, they used to when it was
       // a server-only hack; but the check does not hurt, either
-      if (playerData->player.isObserver())
+      if (playerData->player.isObserver()) {
 	break;
+      }
       relayPlayerPacket(t, len, rawbuf, code);
       break;
 
