@@ -14,7 +14,7 @@
 #include "common.h"
 
 // system implementation headers
-#include <math.h>
+#include <cmath>
 #include <ctype.h>
 
 // common implementation headers
@@ -311,7 +311,7 @@ static float parseFloatExpr(const std::string& str, bool zeroNan)
   if (!zeroNan) {
     return value;
   } else {
-    if (!isnan(value)) {
+    if (!std::isnan(value)) {
       return value;
     } else {
       return 0.0f;
@@ -331,8 +331,8 @@ static bool varIsEqual(const std::string& name)
   const std::string defexp = BZDB.getDefault(name);
   const float val = BZDB.eval(name);
   const float defval = parseFloatExpr(defexp, false);
-  const bool valNaN = isnan(val);
-  const bool defNaN = isnan(defval);
+  const bool valNaN = std::isnan(val);
+  const bool defNaN = std::isnan(defval);
 
   if (valNaN != defNaN) {
     return false;
