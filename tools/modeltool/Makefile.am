@@ -2,6 +2,9 @@ SUBDIRS = vc71
 
 bin_PROGRAMS = modeltool
 
+AM_CPPFLAGS = @CONF_CPPFLAGS@
+AM_CXXFLAGS = @CONF_CXXFLAGS@
+
 modeltool_SOURCES =	\
 	model.h		\
 	modeltool.cxx	\

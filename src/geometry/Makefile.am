@@ -7,7 +7,8 @@ if CLIENT_INCLUDED
 noinst_LTLIBRARIES = libGeometry.la
 endif
 
-AM_CPPFLAGS = -I$(top_srcdir)/include
+AM_CPPFLAGS = -I$(top_srcdir)/include @CONF_CPPFLAGS@
+AM_CXXFLAGS = @CONF_CXXFLAGS@
 
 libGeometry_la_LDFLAGS = -static
 libGeometry_la_SOURCES  =		\

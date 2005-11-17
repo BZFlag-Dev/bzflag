@@ -22,7 +22,8 @@ REGEX = \
 endif
 
 AM_CPPFLAGS = -DBUILDING_BZADMIN -I$(top_srcdir)/include \
--I$(top_srcdir)/src/bzflag @CURL_CFLAGS@
+-I$(top_srcdir)/src/bzflag @CURL_CFLAGS@ @CONF_CPPFLAGS@
+AM_CXXFLAGS = @CONF_CXXFLAGS@
 
 bzadmin_SOURCES = \
 	BZAdminClient.h \

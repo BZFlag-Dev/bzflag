@@ -8,6 +8,9 @@ PyBZFlag_la_LDFLAGS = -module -avoid-version
 # PyBZFlag_la_CPPFLAGS = -I/System/Library/Frameworks/Python.framework/Headers
 # PyBZFlag_la_LDFLAGS += -framework Python
 
+PyBZFlag_la_CPPFLAGS = @CONF_CPPFLAGS@
+PyBZFlag_la_CXXFLAGS = @CONF_CXXFLAGS@
+
 PyBZFlag_la_SOURCES = \
 	PyBZDB.cpp \
 	PyBZDB.h \

@@ -3,6 +3,9 @@ noinst_LTLIBRARIES = libz.la
 MAINTAINERCLEANFILES = \
 	Makefile.in
 
+AM_CPPFLAGS = @CONF_CPPFLAGS@
+AM_CFLAGS = @CONF_CFLAGS@
+
 libz_la_LDFLAGS = -static
 libz_la_SOURCES =	\
 	adler32.c	\

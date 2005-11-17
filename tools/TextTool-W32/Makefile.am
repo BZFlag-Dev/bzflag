@@ -2,6 +2,9 @@ SUBDIRS = res
 
 bin_PROGRAMS = TextTool
 
+AM_CPPFLAGS = @CONF_CPPFLAGS@
+AM_CXXFLAGS = @CONF_CXXFLAGS@
+
 TextTool_SOURCES = \
 	MainFrm.cpp \
 	MainFrm.h \

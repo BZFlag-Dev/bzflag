@@ -252,7 +252,8 @@ EXTRA_libPlatform_la_SOURCES =		\
 	wave.cxx			\
 	wave.h
 
-AM_CPPFLAGS = -I$(top_srcdir)/include $(SDL_CFLAGS)
+AM_CPPFLAGS = -I$(top_srcdir)/include $(SDL_CFLAGS) @CONF_CPPFLAGS@
+AM_CXXFLAGS = @CONF_CXXFLAGS@
 
 
 EXTRA_DIST = \
