@@ -1,5 +1,4 @@
 ;NSIS Modern User Interface version 1.69
-;BZFlag Low Res Script
 ;Original templates by Joost Verburg
 ;Redesigned for BZFlag by blast007
 
@@ -50,6 +49,7 @@
   ;Icons
   !define MUI_ICON ..\..\..\win32\bzflag.ico
   !define MUI_UNICON uninstall.ico
+
   ;Bitmaps
   !define MUI_WELCOMEFINISHPAGE_BITMAP "side.bmp"
   !define MUI_UNWELCOMEFINISHPAGE_BITMAP "side.bmp"
@@ -58,9 +58,10 @@
   !define MUI_HEADERIMAGE_BITMAP "${NSISDIR}\Contrib\Graphics\Header\win.bmp"
   !define MUI_COMPONENTSPAGE_CHECKBITMAP "${NSISDIR}\Contrib\Graphics\Checks\simple-round2.bmp"
 
+  !define MUI_COMPONENTSPAGE_SMALLDESC
+
   ;Show a warning before aborting install
   !define MUI_ABORTWARNING
-
 
 ;--------------------------------
 ;Pages
@@ -200,51 +201,57 @@ Section "BZAdmin" BZAdmin
   !insertmacro MUI_STARTMENU_WRITE_END
 SectionEnd
 
-Section "BZFlag Server" BZFlagServer
-  ; Set output path to the installation directory.
-  SetOutPath $INSTDIR
-  ; Put file there
-  File ..\..\..\src\bzfs\bzfs.exe
+SectionGroup "BZFlag Server" BZFlagServer
+  Section "Server Application" BZFlagServer_Application
+    ; Set output path to the installation directory.
+    SetOutPath $INSTDIR
+    ; Put file there
+    File ..\..\..\src\bzfs\bzfs.exe
 
-  ; Include the plugins
-  SetOutPath $INSTDIR
-  File ..\..\..\plugins\*.dll
-
-  ; Add the API library and header
-  SetOutPath $INSTDIR\API
-  File ..\..\..\src\bzfs\bzfs.lib
-  File ..\..\..\include\bzfsAPI.h
-
-  ; add to the data dir
-  SetOutPath $INSTDIR\data
-  File ..\..\..\misc\hix.bzw
-  File ..\..\..\misc\bzfs.conf
-  File ..\..\..\misc\bzfs_conf.html
-
-  ; Add to the doc dir
-  SetOutPath $INSTDIR\doc
-  File ..\..\..\man\bzfs.html
-  File ..\..\..\man\bzw.html
-
-  !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
-    
-    ;Main start menu shortcuts
+    ; add to the data dir
     SetOutPath $INSTDIR\data
-    CreateDirectory "$SMPROGRAMS\$STARTMENU_FOLDER\Server"
-    CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Server\Start Server (Simple Jump Teleport 1 shot).lnk" "$INSTDIR\bzfs.exe" "-p 5154 -j -t -s 32 +s 16 -h" "$INSTDIR\bzflag.exe" 0
-    CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Server\Start Server (Simple Jump Teleport 3 shots).lnk" "$INSTDIR\bzfs.exe" "-p 5155 -j -t -ms 3 -s 32 +s 16 -h" "$INSTDIR\bzflag.exe" 0
-    CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Server\Start Server (HIX [Public] FFA).lnk" "$INSTDIR\bzfs.exe" '-p 5156 -j -tkkr 80 -fb -ms 3 -s 32 +s 16 -world HIX.bzw -public "My HIX FFA Server"' "$INSTDIR\bzflag.exe" 0
-    CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Server\Start Server (HIX [Public] CTF).lnk" "$INSTDIR\bzfs.exe" '-p 5157 -c -j -fb -world HIX.bzw -public "My HIX CTF Server"' "$INSTDIR\bzflag.exe" 0
-    CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Server\Data Folder.lnk" "$INSTDIR\data" "" "" 0
-    CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Server\BZFS Configuration Builder.lnk" "$INSTDIR\data\bzfs_conf.html" "" "" 0
+    File ..\..\..\misc\hix.bzw
+    File ..\..\..\misc\bzfs.conf
+    File ..\..\..\misc\bzfs_conf.html
 
+    ; Add to the doc dir
     SetOutPath $INSTDIR\doc
-    CreateDirectory "$SMPROGRAMS\$STARTMENU_FOLDER\Doc"
-    CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Doc\bzfs [server] Manual Pages (HTML).lnk" "$INSTDIR\doc\bzfs.html" "" "" 0
-    CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Doc\bzw [maps] Manual Pages (HTML).lnk" "$INSTDIR\doc\bzw.html" "" "" 0
+    File ..\..\..\man\bzfs.html
+    File ..\..\..\man\bzw.html
+
+    !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
+    
+      ;Main start menu shortcuts
+      SetOutPath $INSTDIR\data
+      CreateDirectory "$SMPROGRAMS\$STARTMENU_FOLDER\Server"
+      CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Server\Start Server (Simple Jump Teleport 1 shot).lnk" "$INSTDIR\bzfs.exe" "-p 5154 -j -t -s 32 +s 16 -h" "$INSTDIR\bzflag.exe" 0
+      CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Server\Start Server (Simple Jump Teleport 3 shots).lnk" "$INSTDIR\bzfs.exe" "-p 5155 -j -t -ms 3 -s 32 +s 16 -h" "$INSTDIR\bzflag.exe" 0
+      CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Server\Start Server (HIX [Public] FFA).lnk" "$INSTDIR\bzfs.exe" '-p 5156 -j -tkkr 80 -fb -ms 3 -s 32 +s 16 -world HIX.bzw -public "My HIX FFA Server"' "$INSTDIR\bzflag.exe" 0
+      CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Server\Start Server (HIX [Public] CTF).lnk" "$INSTDIR\bzfs.exe" '-p 5157 -c -j -fb -world HIX.bzw -public "My HIX CTF Server"' "$INSTDIR\bzflag.exe" 0
+      CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Server\Data Folder.lnk" "$INSTDIR\data" "" "" 0
+      CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Server\BZFS Configuration Builder.lnk" "$INSTDIR\data\bzfs_conf.html" "" "" 0
+
+      SetOutPath $INSTDIR\doc
+      CreateDirectory "$SMPROGRAMS\$STARTMENU_FOLDER\Doc"
+      CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Doc\bzfs [server] Manual Pages (HTML).lnk" "$INSTDIR\doc\bzfs.html" "" "" 0
+      CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Doc\bzw [maps] Manual Pages (HTML).lnk" "$INSTDIR\doc\bzw.html" "" "" 0
   
-  !insertmacro MUI_STARTMENU_WRITE_END
-SectionEnd
+    !insertmacro MUI_STARTMENU_WRITE_END
+  SectionEnd
+
+  Section "Plugins" BZFlagServer_Plugins
+    ; Include the plugins
+    SetOutPath $INSTDIR
+    File ..\..\..\plugins\*.dll
+  SectionEnd
+
+  Section "Plugin API" BZFlagServer_PluginAPI
+    ; Add the API library and header
+    SetOutPath $INSTDIR\API
+    File ..\..\..\src\bzfs\bzfs.lib
+    File ..\..\..\include\bzfsAPI.h
+  SectionEnd
+SectionGroupEnd
 
 Section "Quick Launch Shortcuts" QuickLaunch
   ;shortcut in the "quick launch bar"
@@ -262,9 +269,12 @@ SectionEnd
 ;Descriptions
 
   ;Language strings
-  LangString DESC_BZFlag ${LANG_ENGLISH} "Installs the program and data files."
+  LangString DESC_BZFlag ${LANG_ENGLISH} "Installs the main 3D application and the associated data files."
   LangString DESC_BZAdmin ${LANG_ENGLISH} "Installs the command line administration tool."
-  LangString DESC_BZFlagServer ${LANG_ENGLISH} "Installs the server application, associated plugins, and the plugin API."
+  LangString DESC_BZFlagServer ${LANG_ENGLISH} "Installs the server application, associated plugins, and/or the plugin API."
+  LangString DESC_BZFlagServer_Application ${LANG_ENGLISH} "This can be used to run private and public servers, but is not required to play the game."
+  LangString DESC_BZFlagServer_Plugins ${LANG_ENGLISH} "Plugins can be used to modify the way a bzflag server runs, and add functionality."
+  LangString DESC_BZFlagServer_PluginAPI ${LANG_ENGLISH} "The plugin API is used to compile plugins, and is only need for plugin developers."
   LangString DESC_QuickLaunch ${LANG_ENGLISH} "Adds a shortcut in the Quick Launch toolbar."
   LangString DESC_Desktop ${LANG_ENGLISH} "Adds a shortcut on the desktop."
 
@@ -273,6 +283,9 @@ SectionEnd
     !insertmacro MUI_DESCRIPTION_TEXT ${BZFlag} $(DESC_BZFlag)
     !insertmacro MUI_DESCRIPTION_TEXT ${BZAdmin} $(DESC_BZAdmin)
     !insertmacro MUI_DESCRIPTION_TEXT ${BZFlagServer} $(DESC_BZFlagServer)
+    !insertmacro MUI_DESCRIPTION_TEXT ${BZFlagServer_Application} $(DESC_BZFlagServer_Application)
+    !insertmacro MUI_DESCRIPTION_TEXT ${BZFlagServer_Plugins} $(DESC_BZFlagServer_Plugins)
+    !insertmacro MUI_DESCRIPTION_TEXT ${BZFlagServer_PluginAPI} $(DESC_BZFlagServer_PluginAPI)
     !insertmacro MUI_DESCRIPTION_TEXT ${QuickLaunch} $(DESC_QuickLaunch)
     !insertmacro MUI_DESCRIPTION_TEXT ${Desktop} $(DESC_Desktop)
   !insertmacro MUI_FUNCTION_DESCRIPTION_END
