@@ -272,10 +272,12 @@ void ListServerLink::finalization(char *data, unsigned int length, bool good)
 	    }
 	  } else {
 	    playerData->_LSAState = GameKeeper::Player::notRequired;
-	    sendMessage(ServerPlayer, playerIndex,
-			"This callsign is not registered.");
-	    sendMessage(ServerPlayer, playerIndex,
-			"You can register it at http://my.bzflag.org/bb/");
+	    if (!playerData->player.isBot()) {
+	      sendMessage(ServerPlayer, playerIndex,
+			  "This callsign is not registered.");
+	      sendMessage(ServerPlayer, playerIndex,
+			  "You can register it at http://my.bzflag.org/bb/");
+	    }
 	  }
 	  playerData->player.clearToken();
 	}
