@@ -55,7 +55,7 @@
   !define MUI_UNWELCOMEFINISHPAGE_BITMAP "side.bmp"
 
   !define MUI_HEADERIMAGE
-  !define MUI_HEADERIMAGE_BITMAP "${NSISDIR}\Contrib\Graphics\Header\win.bmp"
+  !define MUI_HEADERIMAGE_BITMAP "header.bmp"
   !define MUI_COMPONENTSPAGE_CHECKBITMAP "${NSISDIR}\Contrib\Graphics\Checks\simple-round2.bmp"
 
   !define MUI_COMPONENTSPAGE_SMALLDESC
