@@ -178,6 +178,7 @@ void DefaultCompleter::setDefaults()
   registerWord("/flaghistory");
   registerWord("/gameover");
   registerWord("/ghost ");
+  registerWord("/grouplist");
   registerWord("/groupperms");
   registerWord("/help");
   registerWord("/highlight ");
@@ -232,6 +233,7 @@ void DefaultCompleter::setDefaults()
   registerWord("/setgroup ");
   registerWord("/setpass ");
   registerWord("/showgroup ");
+  registerWord("/showperms ");
   registerWord("/shutdownserver");
   registerWord("/silence ");
   registerWord("/unsilence ");

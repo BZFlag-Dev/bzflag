@@ -686,7 +686,7 @@ bool BanCommand::operator() (const char	 *message,
       clOptions->acl.idBan(bzid, playerData->player.getCallSign(),
                            banEvent.duration, banEvent.reason.c_str());
       clOptions->acl.save();
-      sendMessage(ServerPlayer, t, "Player added to the BZID ban list");
+      sendMessage(ServerPlayer, t, "Pattern added to the BZID banlist");
     }
   }
 
@@ -700,7 +700,7 @@ bool BanCommand::operator() (const char	 *message,
                          banEvent.reason.c_str())) {
     clOptions->acl.save();
 
-    sendMessage(ServerPlayer, t, "IP pattern added to banlist");
+    sendMessage(ServerPlayer, t, "Pattern added to the IP banlist");
 
     for (int i = 0; i < curMaxPlayers; i++) {
       GameKeeper::Player *tmpVictim = GameKeeper::Player::getPlayerByIndex(i);
@@ -803,7 +803,7 @@ bool HostbanCommand::operator() (const char* message,
 
   GameKeeper::Player::setAllNeedHostbanChecked(true);
 
-  sendMessage(ServerPlayer, t, "Host pattern added to banlist");
+  sendMessage(ServerPlayer, t, "Pattern added to the HOSTNAME banlist");
 
   return true;
 }
@@ -920,7 +920,7 @@ bool IdBanCommand::operator() (const char* message,
                        durationInt, reason.c_str());
   clOptions->acl.save();
 
-  sendMessage(ServerPlayer, t, "BZID added to banlist");
+  sendMessage(ServerPlayer, t, "Pattern added to the BZID banlist");
   
   return true;
 }

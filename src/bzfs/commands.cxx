@@ -281,6 +281,14 @@ public:
 			   GameKeeper::Player *playerData);
 };
 
+class ShowPermsCommand : ServerCommand {
+public:
+  ShowPermsCommand();
+
+  virtual bool operator() (const char	 *commandLine,
+			   GameKeeper::Player *playerData);
+};
+
 class GroupPermsCommand : ServerCommand {
 public:
   GroupPermsCommand();
@@ -441,6 +449,7 @@ static DeregisterCommand  deregisterCommand;
 static SetPassCommand     setPassCommand;
 static GroupListCommand   groupListCommand;
 static ShowGroupCommand   showGroupCommand;
+static ShowPermsCommand   showPermsCommand;
 static GroupPermsCommand  groupPermsCommand;
 static SetGroupCommand    setGroupCommand;
 static RemoveGroupCommand removeGroupCommand;
@@ -519,6 +528,8 @@ GroupListCommand::GroupListCommand()     : ServerCommand("/grouplist",
   "- list the available user groups") {}
 ShowGroupCommand::ShowGroupCommand()     : ServerCommand("/showgroup",
   "[callsign] - list the groups that a registered user is a member of") {}
+ShowPermsCommand::ShowPermsCommand()     : ServerCommand("/showperms",
+  "[callsign] - list the permissions that a user has been granted") {}
 GroupPermsCommand::GroupPermsCommand()   : ServerCommand("/groupperms",
   "- list the permissions for each group") {}
 SetGroupCommand::SetGroupCommand()       : ServerCommand("/setgroup",
@@ -1258,9 +1269,9 @@ bool FlagCommand::operator() (const char	 *message,
     }
     
     int pIndex = GameKeeper::Player::getPlayerIDByName(argv[0]);
-    GameKeeper::Player* gtkPlayer = GameKeeper::Player::getPlayerByIndex(pIndex);
+    GameKeeper::Player* gkPlayer = GameKeeper::Player::getPlayerByIndex(pIndex);
 
-    if (gtkPlayer == NULL) {
+    if (gkPlayer == NULL) {
       char buffer[MessageLen];
       snprintf(buffer, MessageLen,
                "/flag drop: could not find player (%s)", msg);
@@ -1268,7 +1279,7 @@ bool FlagCommand::operator() (const char	 *message,
       return true;
     }
 
-    FlagInfo* fi = FlagInfo::get(gtkPlayer->player.getFlag());
+    FlagInfo* fi = FlagInfo::get(gkPlayer->player.getFlag());
     if (fi != NULL) {
       sendDrop(*fi);
       resetFlag(*fi);
@@ -1276,14 +1287,14 @@ bool FlagCommand::operator() (const char	 *message,
       snprintf(buffer, MessageLen, "%s took flag %s/%i from %s",
                playerData->player.getCallSign(),
                fi->flag.type->flagAbbv, fi->getIndex(),
-               gtkPlayer->player.getCallSign());
+               gkPlayer->player.getCallSign());
       sendMessage(ServerPlayer, t, buffer);
       sendMessage(ServerPlayer, AdminPlayers, buffer);
     } else {
       char buffer[MessageLen];
       snprintf(buffer, MessageLen,
                "/flag drop: player (%s) does not have a flag",
-               gtkPlayer->player.getCallSign());
+               gkPlayer->player.getCallSign());
       sendMessage(ServerPlayer, t, buffer);
     }
   }
@@ -1303,9 +1314,9 @@ bool FlagCommand::operator() (const char	 *message,
     
     FlagInfo* fi = NULL;
     int pIndex = GameKeeper::Player::getPlayerIDByName(argv[0]);
-    GameKeeper::Player* gtkPlayer = GameKeeper::Player::getPlayerByIndex(pIndex);
+    GameKeeper::Player* gkPlayer = GameKeeper::Player::getPlayerByIndex(pIndex);
     
-    if (gtkPlayer != NULL) {
+    if (gkPlayer != NULL) {
       const bool force = ((argv.size() > 2) &&
                           strncasecmp(argv[2].c_str(), "force", 5) == 0);
       if (argv[1][0] == '#') {
@@ -1360,19 +1371,19 @@ bool FlagCommand::operator() (const char	 *message,
       return true;
     }
     
-    if (gtkPlayer && fi) {
+    if (gkPlayer && fi) {
       const int flagLimit = clOptions->flagLimit[fi->flag.type];
       clOptions->flagLimit[fi->flag.type] = -1;
       fi->flag.status = FlagOnTank;
       fi->grabs = 2;
-      dropFlag(*fi, gtkPlayer->lastState.pos);
+      dropFlag(*fi, gkPlayer->lastState.pos);
       clOptions->flagLimit[fi->flag.type] = flagLimit;
         
       char buffer[MessageLen];
       snprintf(buffer, MessageLen, "%s gave flag %s/%i to %s",
                playerData->player.getCallSign(),
                fi->flag.type->flagAbbv, fi->getIndex(),
-               gtkPlayer->player.getCallSign());
+               gkPlayer->player.getCallSign());
       sendMessage(ServerPlayer, t, buffer);
       sendMessage(ServerPlayer, AdminPlayers, buffer);
     }
@@ -1503,14 +1514,14 @@ bool IdListCommand::operator() (const char*, GameKeeper::Player *playerData)
     return true;
   }
 
-  GameKeeper::Player *gtkPlayer;
+  GameKeeper::Player *gkPlayer;
   char buffer[MessageLen];
   for (int i = 0; i < curMaxPlayers; i++) {
-    gtkPlayer = GameKeeper::Player::getPlayerByIndex(i);
-    if (gtkPlayer && gtkPlayer->player.isPlaying()) {
+    gkPlayer = GameKeeper::Player::getPlayerByIndex(i);
+    if (gkPlayer && gkPlayer->player.isPlaying()) {
       snprintf(buffer, MessageLen, "%-20s : %s",
-               gtkPlayer->player.getCallSign(),
-               gtkPlayer->getBzIdentifier().c_str());
+               gkPlayer->player.getCallSign(),
+               gkPlayer->getBzIdentifier().c_str());
       sendMessage(ServerPlayer, t, buffer);
     }
   }
@@ -1899,102 +1910,141 @@ bool GroupListCommand::operator() (const char	 *,
 {
   int t = playerData->getIndex();
   sendMessage(ServerPlayer, t, "Group List:");
-  PlayerAccessMap::iterator itr = groupAccess.begin();
-  while (itr != groupAccess.end()) {
+  PlayerAccessMap::iterator itr;
+  for (itr = groupAccess.begin(); itr != groupAccess.end(); itr++) {
     sendMessage(ServerPlayer, t, itr->first.c_str());
-    itr++;
   }
   return true;
 }
 
 
-bool ShowGroupCommand::operator() (const char	 *message,
-				   GameKeeper::Player *playerData)
+bool ShowGroupCommand::operator() (const char* msg,
+				   GameKeeper::Player* playerData)
 {
   int t = playerData->getIndex();
-  std::string settie;
 
-  if (strlen(message) == 10) {	 // show own groups
-    if (playerData->accessInfo.isVerified()) {
-      settie = playerData->accessInfo.getName();
-    } else {
+  std::string queryName = "";
+  GameKeeper::Player* query = playerData;
+  
+  msg += commandName.size();
+  std::vector<std::string> argv = TextUtils::tokenize(msg, " \t", 0, true);
+  if (argv.size() > 0) {
+    if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::showOthers)) {
+      sendMessage(ServerPlayer, t, "No permission!");
+      return true;
+    }
+    queryName = TextUtils::toupper(argv[0]);
+
+    // get the active player if possible
+    int pIndex = GameKeeper::Player::getPlayerIDByName(queryName);
+    query = GameKeeper::Player::getPlayerByIndex(pIndex);
+  }
+  else {
+    if (!playerData->accessInfo.isVerified()) {
       sendMessage(ServerPlayer, t, "You are not identified");
-    }
-  } else if (playerData->accessInfo.hasPerm(PlayerAccessInfo::showOthers)) {
-    // show groups for other player
-    char *p1 = (char*) strchr(message + 1, '\"');
-    char *p2 = 0;
-    if (p1) p2 = strchr(p1 + 1, '\"');
-    if (p2) {
-      settie = std::string(p1 + 1, p2 - p1 - 1);
-      makeupper(settie);
+      return true;
     } else {
-      sendMessage(ServerPlayer, t, "wrong format, usage"
-		  " /showgroup  or  /showgroup \"CALLSIGN\"");
+      queryName = TextUtils::toupper(playerData->accessInfo.getName());
     }
+  }
+
+  // once for global groups
+  if (query) {
+    PlayerAccessInfo &info = query->accessInfo;
+    // FIXME remove local groups from this list. better yet unify the two.
+    std::string line = "Global Groups (only extras) for ";
+    line += queryName;
+    line += ": ";
+    std::vector<std::string>::iterator itr = info.groups.begin();
+    while (itr != info.groups.end()) {
+      line += *itr;
+      line += " ";
+      itr++;
+    }
+    while (line.size() > (unsigned int)MessageLen) {
+      sendMessage(ServerPlayer, t, line.substr(0, MessageLen).c_str());
+      line.erase(line.begin(), line.begin() + (MessageLen - 1));
+    }
+    sendMessage(ServerPlayer, t, line.c_str());
+  }
+
+  // once for local groups
+  if (userExists(queryName)) {
+    PlayerAccessInfo &info = PlayerAccessInfo::getUserInfo(queryName);
+
+    std::string line = "Local groups for ";
+    line += queryName;
+    line += ": ";
+    std::vector<std::string>::iterator itr = info.groups.begin();
+    while (itr != info.groups.end()) {
+      line += *itr;
+      line += " ";
+      itr++;
+    }
+    while (line.size() > (unsigned int)MessageLen) {
+      sendMessage(ServerPlayer, t, line.substr(0, MessageLen).c_str());
+      line.erase(line.begin(), line.begin() + (MessageLen - 1));
+    }
+    sendMessage(ServerPlayer, t, line.c_str());
   } else {
-    sendMessage(ServerPlayer, t, "No permission!");
+    sendMessage(ServerPlayer, t, "There is no user by that name");
   }
 
-  // something is wrong
-  if (settie != "") {
-    int playerIndex = GameKeeper::Player::getPlayerIDByName(settie);
-    // once for global groups
-    if (playerIndex < curMaxPlayers) {
-      GameKeeper::Player* target = GameKeeper::Player::getPlayerByIndex(playerIndex);
-      if (target != NULL) {
-	PlayerAccessInfo &info = target->accessInfo;
-	// FIXME remove local groups from this list. better yet unify the two.
-	std::string line = "Global Groups (only extras) for ";
-	line += settie;
-	line += ": ";
-	std::vector<std::string>::iterator itr = info.groups.begin();
-	while (itr != info.groups.end()) {
-	  line += *itr;
-	  line += " ";
-	  itr++;
-	}
-	while (line.size() > (unsigned int)MessageLen) {
-	  sendMessage(ServerPlayer, t, line.substr(0, MessageLen).c_str());
-	  line.erase(line.begin(), line.begin() + (MessageLen - 1));
-	}
-	sendMessage(ServerPlayer, t, line.c_str());
-      }
-    }
-    // once for local groups
-    if (userExists(settie)) {
-      PlayerAccessInfo &info = PlayerAccessInfo::getUserInfo(settie);
-
-      std::string line = "Local groups for ";
-      line += settie;
-      line += ": ";
-      std::vector<std::string>::iterator itr = info.groups.begin();
-      while (itr != info.groups.end()) {
-	line += *itr;
-	line += " ";
-	itr++;
-      }
-      while (line.size() > (unsigned int)MessageLen) {
-	sendMessage(ServerPlayer, t, line.substr(0, MessageLen).c_str());
-	line.erase(line.begin(), line.begin() + (MessageLen - 1));
-      }
-      sendMessage(ServerPlayer, t, line.c_str());
-    } else {
-      sendMessage(ServerPlayer, t, "There is no user by that name");
-    }
-  }
   return true;
 }
 
 
-bool GroupPermsCommand::operator() (const char	 *,
+bool ShowPermsCommand::operator() (const char* msg,
+				   GameKeeper::Player* playerData)
+{
+  int t = playerData->getIndex();
+  
+  msg += commandName.size();
+  GameKeeper::Player* query = playerData; // the asking player by default
+  std::vector<std::string> argv = TextUtils::tokenize(msg, " \t", 0, true);
+  if (argv.size() > 0) {
+    if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::showOthers)) {
+      sendMessage(ServerPlayer, t, "No permission!");
+      return true;
+    }
+    int pIndex = GameKeeper::Player::getPlayerIDByName(argv[0]);
+    query = GameKeeper::Player::getPlayerByIndex(pIndex);
+    if (query == NULL) {
+      std::string warning = "Could not find player: ";
+      warning += argv[0];
+      sendMessage(ServerPlayer, t, warning.c_str());
+      return true;
+    }
+  }
+  else if (!playerData->accessInfo.isVerified()) {
+    sendMessage(ServerPlayer, t, "You are not identified");
+    return true;
+  }
+
+  std::string header = "Permissions for: ";
+  header += query->player.getCallSign();
+  sendMessage(ServerPlayer, t, header.c_str());
+  
+  for (int p = 0; p < PlayerAccessInfo::lastPerm; p++) {
+    PlayerAccessInfo::AccessPerm perm = (PlayerAccessInfo::AccessPerm)p;
+    if (query->accessInfo.hasPerm(perm)) {
+      const std::string& permName = nameFromPerm(perm);
+      sendMessage(ServerPlayer, t, permName.c_str());
+    }
+  }
+
+  return true;
+}
+
+
+bool GroupPermsCommand::operator() (const char*,
 				    GameKeeper::Player *playerData)
 {
   int t = playerData->getIndex();
   sendMessage(ServerPlayer, t, "Group List:");
-  PlayerAccessMap::iterator itr = groupAccess.begin();
-  std::string line;
-  while (itr != groupAccess.end()) {
+  PlayerAccessMap::iterator itr;
+  for (itr = groupAccess.begin(); itr != groupAccess.end(); itr++) {
+    std::string line;
     line = itr->first + ":   ";
     sendMessage(ServerPlayer, t, line.c_str());
 
@@ -2021,107 +2071,109 @@ bool GroupPermsCommand::operator() (const char	 *,
 	}
       }
     }
-
-    itr++;
   }
   return true;
 }
 
 
-bool SetGroupCommand::operator() (const char	 *message,
-				  GameKeeper::Player *playerData)
+bool SetGroupCommand::operator() (const char* msg,
+				  GameKeeper::Player* playerData)
 {
   int t = playerData->getIndex();
+
   if (!userDatabaseFile.size()) {
     sendMessage(ServerPlayer, t, "/setgroup command disabled");
     return true;
   }
-  char *p1 = (char*)strchr(message + 1, '\"');
-  char *p2 = 0;
-  if (p1) p2 = strchr(p1 + 1, '\"');
-  if (!p2) {
-    sendMessage(ServerPlayer, t, "not enough parameters, usage /setgroup \"CALLSIGN\" GROUP");
-  } else {
-    std::string settie(p1 + 1, p2 - p1 - 1);
-    std::string group = p2 + 2;
 
-    makeupper(settie);
-    makeupper(group);
-
-    if (userExists(settie)) {
-      if (!playerData->accessInfo.canSet(group)) {
-	sendMessage(ServerPlayer, t, "You do not have permission to set this group");
-      } else {
-	PlayerAccessInfo &info = PlayerAccessInfo::getUserInfo(settie);
-
-	if (info.addGroup(group)) {
-	  sendMessage(ServerPlayer, t, "Group Add successful");
-	  int getID = GameKeeper::Player::getPlayerIDByName(settie);
-	  if (getID != -1) {
-	    char temp[MessageLen];
-	    snprintf(temp, MessageLen, "you have been added to the %s group, by %s",
-		    group.c_str(), playerData->player.getCallSign());
-	    sendMessage(ServerPlayer, getID, temp);
-	    GameKeeper::Player::getPlayerByIndex(getID)->accessInfo.
-	      addGroup(group);
-	  }
-	  PlayerAccessInfo::updateDatabases();
-	} else {
-	  sendMessage(ServerPlayer, t, "Group Add failed (user may already be in that group)");
-	}
-      }
-    } else {
-      sendMessage(ServerPlayer, t, "There is no user by that name");
-    }
+  msg += commandName.size();
+  std::vector<std::string> argv = TextUtils::tokenize(msg, " \t", 0, true);
+  if (argv.size() != 2) {
+    sendMessage(ServerPlayer, t,
+                "Incorrect parameters, usage: /setgroup <player> <group>");
+    return true;
   }
+  std::string target = TextUtils::toupper(argv[0]);
+  std::string group = TextUtils::toupper(argv[1]);
+  
+  if (!playerData->accessInfo.canSet(group)) {
+    sendMessage(ServerPlayer, t, "You do not have permission to set this group");
+    return true;
+  }
+
+  if (!userExists(target)) {
+    std::string warning = "Player is not listed: " + target;
+    sendMessage(ServerPlayer, t, warning.c_str());
+    return true;
+  }
+  
+  PlayerAccessInfo &info = PlayerAccessInfo::getUserInfo(target);
+  if (info.addGroup(group)) {
+    sendMessage(ServerPlayer, t, "Group Add successful");
+    int getID = GameKeeper::Player::getPlayerIDByName(target);
+    if (getID != -1) {
+      char temp[MessageLen];
+      snprintf(temp, MessageLen, "you have been added to the %s group, by %s",
+               group.c_str(), playerData->player.getCallSign());
+      sendMessage(ServerPlayer, getID, temp);
+      GameKeeper::Player::getPlayerByIndex(getID)->accessInfo.addGroup(group);
+    }
+    PlayerAccessInfo::updateDatabases();
+  } else {
+    sendMessage(ServerPlayer, t, "Group Add failed (user may already be in that group)");
+  }
+  
   return true;
 }
 
 
-bool RemoveGroupCommand::operator() (const char	 *message,
-				     GameKeeper::Player *playerData)
+bool RemoveGroupCommand::operator() (const char* msg,
+				     GameKeeper::Player* playerData)
 {
   int t = playerData->getIndex();
+  
   if (!userDatabaseFile.size()) {
     sendMessage(ServerPlayer, t, "/removegroup command disabled");
     return true;
   }
-  char *p1 = (char*)strchr(message + 1, '\"');
-  char *p2 = 0;
-  if (p1) p2 = strchr(p1 + 1, '\"');
-  if (!p2) {
-    sendMessage(ServerPlayer, t, "not enough parameters, usage /removegroup \"CALLSIGN\" GROUP");
-  } else {
-    std::string settie(p1 + 1, p2 - p1 - 1);
-    std::string group = p2 + 2;
 
-    makeupper(settie);
-    makeupper(group);
-    if (userExists(settie)) {
-      if (!playerData->accessInfo.canSet(group)) {
-	sendMessage(ServerPlayer, t, "You do not have permission to remove this group");
-      } else {
-	PlayerAccessInfo &info = PlayerAccessInfo::getUserInfo(settie);
-	if (info.removeGroup(group)) {
-	  sendMessage(ServerPlayer, t, "Group Remove successful");
-	  int getID = GameKeeper::Player::getPlayerIDByName(settie);
-	  if (getID != -1) {
-	    char temp[MessageLen];
-	    snprintf(temp, MessageLen, "You have been removed from the %s group, by %s",
-		    group.c_str(), playerData->player.getCallSign());
-	    sendMessage(ServerPlayer, getID, temp);
-	    GameKeeper::Player::getPlayerByIndex(getID)->accessInfo.
-	      removeGroup(group);
-	  }
-	  PlayerAccessInfo::updateDatabases();
-	} else {
-	  sendMessage(ServerPlayer, t, "Group Remove failed (user may not have been in group)");
-	}
-      }
-    } else {
-      sendMessage(ServerPlayer, t, "There is no user by that name");
-    }
+  msg += commandName.size();
+  std::vector<std::string> argv = TextUtils::tokenize(msg, " \t", 0, true);
+  if (argv.size() != 2) {
+    sendMessage(ServerPlayer, t,
+                "Incorrect parameters, usage: /removegroup <player> <group>");
+    return true;
   }
+  std::string target = TextUtils::toupper(argv[0]);
+  std::string group = TextUtils::toupper(argv[1]);
+
+  if (!playerData->accessInfo.canSet(group)) {
+    sendMessage(ServerPlayer, t, "You do not have permission to set this group");
+    return true;
+  }
+  
+  if (!userExists(target)) {
+    std::string warning = "Player is not listed: " + target;
+    sendMessage(ServerPlayer, t, warning.c_str());
+    return true;
+  }
+
+  PlayerAccessInfo &info = PlayerAccessInfo::getUserInfo(target);
+  if (info.removeGroup(group)) {
+    sendMessage(ServerPlayer, t, "Group Remove successful");
+    int getID = GameKeeper::Player::getPlayerIDByName(target);
+    if (getID != -1) {
+      char temp[MessageLen];
+      snprintf(temp, MessageLen, "You have been removed from the %s group, by %s",
+               group.c_str(), playerData->player.getCallSign());
+      sendMessage(ServerPlayer, getID, temp);
+      GameKeeper::Player::getPlayerByIndex(getID)->accessInfo.removeGroup(group);
+    }
+    PlayerAccessInfo::updateDatabases();
+  } else {
+    sendMessage(ServerPlayer, t, "Group Remove failed (user may not have been in group)");
+  }
+  
   return true;
 }
 
