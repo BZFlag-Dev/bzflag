@@ -339,19 +339,11 @@ void			GUIOptionsMenu::resize(int _width, int _height)
 							  ("showtabs")));
     ((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("colorful") ? 1 : 0);
 
-    // underline color - does this HAVE to be so complicated?
-    std::vector<std::string>* options = &((HUDuiList*)listHUD[i])->getList();
+    // underline color - find index of mode string in options
+    const std::vector<std::string> &opts = ((HUDuiList*)listHUD[i])->getList();
     std::string uColor = BZDB.get("underlineColor");
-    std::vector<std::string>::iterator itr;
-    int j = 0;
-    for (itr = options->begin(); itr != options->end(); itr++) {
-      if (uColor == (*itr)) {
-	((HUDuiList*)listHUD[i])->setIndex(j);
-	break;
-      }
-      j++;
-    }
-    i++;
+    ((HUDuiList*)listHUD[i++])->setIndex(std::find(opts.begin(), opts.end(), uColor) -
+                                         opts.begin());
 
     ((HUDuiList*)listHUD[i++])->setIndex(static_cast<int>
 					 (BZDB.eval("killerhighlight")));
