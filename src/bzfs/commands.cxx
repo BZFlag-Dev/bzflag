@@ -3113,6 +3113,14 @@ void parseServerCommand(const char *message, int t)
   if (!playerData)
     return;
 
+  // Notify plugins of slash command execution request
+  bz_SlashCommandEventData commandData;
+  commandData.from = t;
+  commandData.message = message;
+  commandData.time = TimeKeeper::getCurrent().getSeconds();
+
+  worldEventManager.callEvents(bz_eSlashCommandEvent, &commandData);
+
   if (ServerCommand::execute(message, playerData))
     return;
 
