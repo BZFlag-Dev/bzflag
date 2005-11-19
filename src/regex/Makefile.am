@@ -1,6 +1,6 @@
 noinst_LTLIBRARIES = libregex.la
 
-AM_CPPFLAGS = -I$(top_srcdir)/include @CONF_CPPFLAGS
+AM_CPPFLAGS = -I$(top_srcdir)/include @CONF_CPPFLAGS@
 AM_CFLAGS = @CONF_CFLAGS@
 
 libregex_la_LDFLAGS = -static
