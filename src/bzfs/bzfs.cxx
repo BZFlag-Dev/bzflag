@@ -1754,7 +1754,8 @@ static void addPlayer(int playerIndex, GameKeeper::Player *playerData)
   joinEventData.callsign = playerData->player.getCallSign();
   joinEventData.time = TimeKeeper::getCurrent().getSeconds();
 
-  worldEventManager.callEvents(bz_ePlayerJoinEvent,&joinEventData);
+  if (joinEventData.team != eNoTeam)	// don't give events if we don't have a real player slot
+    worldEventManager.callEvents(bz_ePlayerJoinEvent,&joinEventData);
   if (spawnSoon)
     playerAlive(playerIndex);
 }
