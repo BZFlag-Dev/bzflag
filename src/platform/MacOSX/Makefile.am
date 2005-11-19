@@ -26,7 +26,7 @@ SDLMain.lo:
 	$(LTCOMPILE) -c -o $@ `test -f 'SDLMain.m' || echo '$(srcdir)/'`SDLMain.m
 
 AM_CPPFLAGS = $(SDL_CFLAGS) -I$(top_srcdir)/src/platform @CONF_CPPFLAGS@
-AM_CXXFLAGS = @CONF_CXFLAGS@
+AM_CXXFLAGS = @CONF_CXXFLAGS@
 
 MAINTAINERCLEANFILES = Makefile.in
 
