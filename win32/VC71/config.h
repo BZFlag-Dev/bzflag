@@ -51,6 +51,7 @@
 #define HAVE_SINF 1
 #define HAVE_SQRTF 1
 #define HAVE_TANF 1
+#define HAVE_LOG10F 1
 
 /* but we don't have this one */
 /* #undef HAVE_HYPOTF */
