@@ -3156,13 +3156,13 @@ void parseServerCommand(const char *message, int t)
     }
 
     // lets see if anyone wants to handle the unhandled event
-    bz_UnknownSlashCommandEventData commandData;
-    commandData.from = t;
-    commandData.message = message;
-    commandData.time = TimeKeeper::getCurrent().getSeconds();
+    bz_UnknownSlashCommandEventData commandData1;
+    commandData1.from = t;
+    commandData1.message = message;
+    commandData1.time = TimeKeeper::getCurrent().getSeconds();
 
-    worldEventManager.callEvents(bz_eUnknownSlashCommand, &commandData);
-    if (commandData.handled) // did anyone do it?
+    worldEventManager.callEvents(bz_eUnknownSlashCommand, &commandData1);
+    if (commandData1.handled) // did anyone do it?
       return;
 
     char reply[MessageLen];
