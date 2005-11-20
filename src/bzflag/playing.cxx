@@ -2266,6 +2266,11 @@ static void		handleServerMessage(bool human, uint16_t code,
       msg = nboUnpackUShort(msg, flagIndex);
       msg = nboUnpackUShort(msg, team);
       Player* capturer = lookupPlayer(id);
+      if (flagIndex >= world->getMaxFlags())
+	break;
+      Flag capturedFlag = world->getFlag(int(flagIndex));
+      if (capturedFlag.type == Flags::Null)
+	break;
       int capturedTeam = world->getFlag(int(flagIndex)).type->flagTeam;
 
       // player no longer has flag
