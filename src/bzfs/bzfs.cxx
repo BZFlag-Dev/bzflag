@@ -4529,8 +4529,12 @@ int main(int argc, char **argv)
 
 	      // curMaxPlayers should never exceed 255, so this should
 	      // be a safe cast
+	      TeamColor vteam = player->player.getTeam();
+
 	      buf = nboPackUByte(bufStart, (uint8_t)curMaxPlayers);
-	      buf = player->player.packVirtualFlagCapture(buf);
+	      buf = nboPackUShort
+		(buf, uint16_t(FlagInfo::lookupFirstTeamFlag(vteam)));
+	      buf = nboPackUShort(buf, uint16_t(1 + (int(vteam) % 4)));
 	      directMessage(j, MsgCaptureFlag, (char*)buf - (char*)bufStart,
 			    bufStart);
 
