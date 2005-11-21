@@ -857,17 +857,21 @@ Specifies a certain range in the world, and what attributes that range has.
 .br 
 \fB  rotation\fR 0.0
 .br 
-# where flag may spawn
-.br 
-\fB  flag\fR GM SW good bad
-.br 
 # where players may spawn
 .br 
 \fB  team\fR 0 1 2 3 4
 .br 
+# where flag may spawn
+.br 
+\fB  flag\fR GM SW good bad
+.br 
 # dropped team flags will fly to the closest safety zone
 .br 
 \fB  safety\fR 1 2 3 4
+.br 
+# attach a flag to this zone (always spawn in this zone)
+.br 
+\fB  zoneflag\fR GM 3  # type, count (type can be a team flag, ex: R*)
 .br 
 \fBend\fR
 .br 
@@ -1547,11 +1551,13 @@ world :=
 .TP 
 zone :=
 .br 
+	  "team" <integer>{1..*}
+.br 
 	  "flag" ("good" | "bad" | <flag_short_name>){1..*}
 .br 
-	| "team" <integer>{1..*}
-.br 
 	| "safety" <integer>{1..*}
+.br 
+	| "zoneflag" <flag_short_name> <integer>?
 .br 
 	| location
 .br 
