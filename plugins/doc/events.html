@@ -291,6 +291,12 @@ Events</span></p>
 																	<td>
 																		A server command was issued</td>
 																</tr>
+																<tr>
+																	<td><span class="Code">bz_ePlayerAuthEvent</span>
+																	</td>
+																	<td>
+																		Player authentication status change</td>
+																</tr>
 															</tbody>
 														</table>
 														<p>
@@ -997,7 +1003,35 @@ double duration; // the duration of the game timer <br> </blockquote>
 															</tbody>
 														</table>
 														<br>
-														
+														<br>
+														<table bgcolor="#dddddd" border="1">
+															<tbody>
+																<tr>
+																	<td align="left" valign="top">
+																		<table border="0" cellpadding="2" cellspacing="2">
+																			<tbody>
+																				<tr>
+																					<td><span class="Code">bz_ePlayerAuthEvent</span>
+																						provides the following data</td>
+																				</tr>
+																				<tr>
+																					<td><span class="Code">bz_PlayerAuthEventData<br>
+{<br>
+                              </span>
+																						<blockquote class="Code"> int playerID; // the ID of the player whose authentication status changed</blockquote>
+																						<p class="Code">}</p>
+																					</td>
+																				</tr>
+																				<tr>
+																					<td>This event is called when a player manually identifies to the server or issues the server password.</td>
+																				</tr>
+																			</tbody>
+																		</table>
+																	</td>
+																</tr>
+															</tbody>
+														</table>
+														<br>
 													</td>
 												</tr>
 												<tr>

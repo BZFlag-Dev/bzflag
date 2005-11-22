@@ -889,6 +889,10 @@ bool PasswordCommand::operator() (const char	 *message,
       playerData->accessInfo.setOperator();
       sendPlayerInfo();
       sendMessage(ServerPlayer, t, "You are now an administrator!");
+      // Notify plugins of player authentication change
+      bz_PlayerAuthEventData commandData;
+      commandData.playerID = t;
+      worldEventManager.callEvents(bz_ePlayerAuthEvent, &commandData);
     } else {
       sendMessage(ServerPlayer, t, "Wrong Password!");
       std::string temp;
@@ -1732,6 +1736,11 @@ bool IdentifyCommand::operator() (const char	 *message,
 	// if they have the PLAYERLIST permission, send the IP list
 	sendIPUpdate(t, -1);
 	sendPlayerInfo();
+	// Notify plugins of player authentication change
+	bz_PlayerAuthEventData commandData;
+	commandData.playerID = t;
+	worldEventManager.callEvents(bz_ePlayerAuthEvent, &commandData);
+
       } else {
 	playerData->accessInfo.setLoginFail();
 	sendMessage(ServerPlayer, t, "Identify Failed, please make sure"
