@@ -19,14 +19,12 @@
 
 #define _WINSOCKAPI_
 
-//#ifdef __MINGW32__
 #include <windows.h>
-#//endif
-
+#include <float.h>
 
 // missing constants
 #ifndef MAXFLOAT
-#define	MAXFLOAT	3.402823466e+38f
+#define	MAXFLOAT	FLT_MAX
 #endif
 
 #if (_MSC_VER > 1200) // VC7 or higher
@@ -73,6 +71,11 @@ typedef unsigned int	uint32_t;
 #  define snprintf	_snprintf
 
 #  define PATH_MAX	MAX_PATH
+
+  namespace std {
+    template<typename _Tp>
+    int isnan(_Tp __f) { return _isnan((double)__f); }
+  }
 
 #endif // _MSC_VER
 #endif // __WIN32_H__
