@@ -18,8 +18,7 @@
 
 
 
-AresHandler::AresHandler(int _index)
-  : index(_index), hostname(NULL), status(None)
+AresHandler::AresHandler() : hostname(NULL), status(None)
 {
   // clear the host address
   memset(&hostAddress, 0, sizeof(hostAddress));
@@ -53,11 +52,14 @@ void AresHandler::queryHostname(struct sockaddr *clientAddr)
 {
   if (aresFailed)
     return;
+  memcpy(&requestedAddress, &((sockaddr_in *)clientAddr)->sin_addr,
+	 sizeof(requestedAddress));
+  DEBUG2("Submitted reverse resolve query for %s\n",
+	 inet_ntoa(requestedAddress));
   status = HbAPending;
   // launch the asynchronous query to look up this hostname
-  ares_gethostbyaddr(aresChannel, &((sockaddr_in *)clientAddr)->sin_addr,
+  ares_gethostbyaddr(aresChannel, &requestedAddress,
 		     sizeof(in_addr), AF_INET, staticCallback, (void *)this);
-  DEBUG2("Player [%d] submitted reverse resolve query\n", index);
 }
 
 void AresHandler::queryHost(char *hostName)
@@ -100,15 +102,16 @@ void AresHandler::callback(int callbackStatus, struct hostent *hostent)
   if (callbackStatus == ARES_EDESTRUCTION)
     return;
   if (callbackStatus != ARES_SUCCESS) {
-      DEBUG1("Player [%d] failed to resolve: error %d\n", index,
-	     callbackStatus);
-      status = Failed;
+    if (status == HbAPending)
+      DEBUG1("Address %s failed to resolve\n", inet_ntoa(requestedAddress));
+    status = Failed;
   } else if (status == HbAPending) {
     if (hostname)
       free(hostname); // shouldn't happen, but just in case
     hostname = strdup(hostent->h_name);
     status = HbASucceeded;
-    DEBUG2("Player [%d] resolved to %s\n", index, hostname);
+    DEBUG2("Address %s resolved to %s\n", inet_ntoa(requestedAddress),
+	   hostname);
   } else if (status == HbNPending) {
     memcpy(&hostAddress, hostent->h_addr_list[0], sizeof(hostAddress));
     status = HbNSucceeded;

@@ -25,7 +25,7 @@ extern "C" {
 
 class AresHandler {
  public:
-  AresHandler(int index);
+  AresHandler();
   ~AresHandler();
 
   enum ResolutionStatus {
@@ -48,13 +48,14 @@ class AresHandler {
   static void	staticCallback(void *arg, int statusCallback,
 			     struct hostent *hostent);
   void		callback(int status, struct hostent *hostent);
-  int		index;
   // peer's network hostname (malloc/free'd)
   char	       *hostname;
   in_addr	hostAddress;
   ares_channel	aresChannel;
   ResolutionStatus status;
   bool		aresFailed;
+
+  struct in_addr requestedAddress;
 };
 
 #endif

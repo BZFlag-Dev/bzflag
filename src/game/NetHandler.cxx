@@ -230,8 +230,7 @@ NetHandler *NetHandler::netPlayer[maxHandlers] = {NULL};
 
 NetHandler::NetHandler(PlayerInfo* _info, const struct sockaddr_in &clientAddr,
 		       int _playerIndex, int _fd)
-  : ares(_playerIndex), info(_info), playerIndex(_playerIndex), fd(_fd),
-    tcplen(0), closed(false),
+  : info(_info), playerIndex(_playerIndex), fd(_fd), tcplen(0), closed(false),
     outmsgOffset(0), outmsgSize(0), outmsgCapacity(0), outmsg(NULL),
     udpOutputLen(0), udpin(false), udpout(false), toBeKicked(false) {
   // store address information for player

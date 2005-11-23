@@ -210,7 +210,7 @@ static bool		isCacheTemp;
 static std::ostream	*cacheOut = NULL;
 static bool	     downloadingInitialTexture = false;
 
-static AresHandler      ares(0);
+static AresHandler      ares;
 
 static AccessList	ServerAccessList("ServerAccess.txt", NULL);
 
