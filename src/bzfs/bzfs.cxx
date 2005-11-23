@@ -167,8 +167,13 @@ static bool realPlayer(const PlayerId& id)
 static int pwrite(GameKeeper::Player &playerData, const void *b, int l)
 {
   int result = playerData.netHandler->pwrite(b, l);
-  if (result == -1)
+  if (result == -1) {
     removePlayer(playerData.getIndex(), "ECONNRESET/EPIPE", false);
+  } else if (result == -2) {
+    DEBUG2("Player %s [%d] drop, unresponsive\n",
+	   playerData.player.getCallSign(), playerData.getIndex());
+    removePlayer(playerData.getIndex(), "send queue too big", false);
+  }
   return result;
 }
 
@@ -3490,6 +3495,8 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
     }
 
     case MsgUDPLinkEstablished:
+      DEBUG2("Player %s [%d] outbound UDP up\n",
+	     playerData->player.getCallSign(), t);
       break;
 
     case MsgNewRabbit: {
@@ -3761,6 +3768,7 @@ static void handleTcp(NetHandler &netPlayer, int i, const RxStatus e)
       // disconnected
       removePlayer(i, "Disconnected", false);
     } else if (e == ReadHuge) {
+      DEBUG1("Player [%d] sent huge packet length, possible attack\n", i);
       removePlayer(i, "large packet recvd", false);
     }
     return;

@@ -139,7 +139,14 @@ public:
 private:
   int  send(const void *buffer, size_t length);
   void udpSend(const void *b, size_t l);
+
+  /// Send data for transmission on the tcp channel.
+  ///   in case channel is not ready to accept other data, it just buffer it
+  /// Return 0 if all went ok
+  ///       -1 if got an error
+  ///       -2 if tcp buffer is going to be too much big
   int  bufferedSend(const void *buffer, size_t length);
+
   bool isMyUdpAddrPort(struct sockaddr_in uaddr);
   RxStatus    receive(size_t length);
 #ifdef NETWORK_STATS

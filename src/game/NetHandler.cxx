@@ -351,11 +351,7 @@ int NetHandler::bufferedSend(const void *buffer, size_t length) {
       // are the network is down or too unreliable to that player.
       // FIXME -- is 20kB too big?  too small?
       if (newCapacity >= 20 * 1024) {
-	DEBUG2("Player %s [%d] drop, unresponsive with %d bytes queued\n",
-	       info->getCallSign(), playerIndex, outmsgSize + length);
-	toBeKicked = true;
-	toBeKickedReason = "send queue too big";
-	return 0;
+	return -2;
       }
 
       // allocate memory
@@ -461,8 +457,6 @@ RxStatus NetHandler::tcpReceive() {
   buf = nboUnpackUShort(buf, len);
   buf = nboUnpackUShort(buf, code);
   if (len > MaxPacketLen) {
-    DEBUG1("Player [%d] sent huge packet length (len=%d), possible attack\n",
-	   playerIndex, len);
     return ReadHuge;
   }
   e = receive(4 + (int) len);
@@ -477,8 +471,6 @@ RxStatus NetHandler::tcpReceive() {
 #endif
   if (code == MsgUDPLinkEstablished) {
     udpout = true;
-    DEBUG2("Player %s [%d] outbound UDP up\n", info->getCallSign(),
-	   playerIndex);
   }
   return ReadAll;
 }
