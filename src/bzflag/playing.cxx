@@ -1275,7 +1275,7 @@ static Player*		addPlayer(PlayerId id, void* msg, int showMessage)
     }
     addMessage (player[i], message);
   }
-  completer.registerWord (callsign);
+  completer.registerWord(callsign, true /* quote spaces */);
 
   return player[i];
 }

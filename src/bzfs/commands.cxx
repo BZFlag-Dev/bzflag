@@ -37,6 +37,8 @@
 #include <ctype.h>
 
 // common implementation headers
+#include "bzglob.h"
+#include "TextUtils.h"
 #include "CommandManager.h"
 #include "LagInfo.h"
 #include "NetHandler.h"
@@ -183,6 +185,14 @@ public:
 			   GameKeeper::Player *playerData);
 };
 
+class IdListCommand : ServerCommand {
+public:
+  IdListCommand();
+
+  virtual bool operator() (const char	 *commandLine,
+			   GameKeeper::Player *playerData);
+};
+
 class PlayerListCommand : ServerCommand {
 public:
   PlayerListCommand();
@@ -266,6 +276,14 @@ public:
 class ShowGroupCommand : ServerCommand {
 public:
   ShowGroupCommand();
+
+  virtual bool operator() (const char	 *commandLine,
+			   GameKeeper::Player *playerData);
+};
+
+class ShowPermsCommand : ServerCommand {
+public:
+  ShowPermsCommand();
 
   virtual bool operator() (const char	 *commandLine,
 			   GameKeeper::Player *playerData);
@@ -402,26 +420,27 @@ public:
 			   GameKeeper::Player *playerData);
 };
 
-static MsgCommand	 msgCommand;
+static MsgCommand	  msgCommand;
 static ServerQueryCommand serverQueryCommand;
-static PartCommand	partCommand;
-static QuitCommand	quitCommand;
+static PartCommand	  partCommand;
+static QuitCommand	  quitCommand;
 static UpTimeCommand      upTimeCommand;
 static PasswordCommand    passwordCommand;
-static SetCommand	 setCommand;
+static SetCommand	  setCommand;
 static ResetCommand       resetCommand;
-ShutdownCommand			  shutdownCommand;	// used by the API
-SuperkillCommand		  superkillCommand;	// used by the API
+ShutdownCommand		  shutdownCommand;	// used by the API
+SuperkillCommand	  superkillCommand;	// used by the API
 static GameOverCommand    gameOverCommand;
 static CountdownCommand   countdownCommand;
-static FlagCommand	flagCommand;
+static FlagCommand	  flagCommand;
 static LagWarnCommand     lagWarnCommand;
 static LagStatCommand     lagStatCommand;
 static IdleStatCommand    idleStatCommand;
 static FlagHistoryCommand flagHistoryCommand;
+static IdListCommand      idListCommand;
 static PlayerListCommand  playerListCommand;
 static ReportCommand      ReportCommand;
-static HelpCommand	helpCommand;
+static HelpCommand	  helpCommand;
 static SendHelpCommand    sendHelpCommand;
 static IdentifyCommand    identifyCommand;
 static RegisterCommand    registerCommand;
@@ -430,41 +449,42 @@ static DeregisterCommand  deregisterCommand;
 static SetPassCommand     setPassCommand;
 static GroupListCommand   groupListCommand;
 static ShowGroupCommand   showGroupCommand;
+static ShowPermsCommand   showPermsCommand;
 static GroupPermsCommand  groupPermsCommand;
 static SetGroupCommand    setGroupCommand;
 static RemoveGroupCommand removeGroupCommand;
 static ReloadCommand      reloadCommand;
-static PollCommand	pollCommand;
-static VoteCommand	voteCommand;
-static VetoCommand	vetoCommand;
+static PollCommand	  pollCommand;
+static VoteCommand	  voteCommand;
+static VetoCommand	  vetoCommand;
 static ViewReportCommand  viewReportCommand;
 static ClientQueryCommand clientQueryCommand;
-static DateCommand	dateCommand;
-static TimeCommand	timeCommand;
+static DateCommand	  dateCommand;
+static TimeCommand	  timeCommand;
 static RecordCommand      recordCommand;
 static ReplayCommand      replayCommand;
-static SayCommand	 sayCommand;
-static CmdList	    cmdList;
-static CmdHelp	    cmdHelp;
+static SayCommand	  sayCommand;
+static CmdList		  cmdList;
+static CmdHelp		  cmdHelp;
 
-CmdHelp::CmdHelp()		       : ServerCommand("") {} // fake entry
-CmdList::CmdList()		       : ServerCommand("/?",
+CmdHelp::CmdHelp()			 : ServerCommand("") {} // fake entry
+CmdList::CmdList()			 : ServerCommand("/?",
   "- display the list of server-side commands") {}
 MsgCommand::MsgCommand()		 : ServerCommand("/msg",
   "<nick> text - Send text message to nick") {}
 ServerQueryCommand::ServerQueryCommand() : ServerCommand("/serverquery",
   "- show the server version") {}
-PartCommand::PartCommand()	       : ServerCommand("/part",
+PartCommand::PartCommand()		 : ServerCommand("/part",
   "[message] - leave the game with a parting message") {}
-QuitCommand::QuitCommand()	       : ServerCommand("/quit",
+QuitCommand::QuitCommand()		 : ServerCommand("/quit",
   "[message] - leave the game with a parting message, and close the client") {}
-UpTimeCommand::UpTimeCommand()	   : ServerCommand("/uptime",
+UpTimeCommand::UpTimeCommand()		 : ServerCommand("/uptime",
   "- show the server's uptime") {}
 PasswordCommand::PasswordCommand()       : ServerCommand("/password",
   "<passwd> - become an administrator with <passwd>") {}
 SetCommand::SetCommand()		 : ServerCommand("/set",
-  "[<var> <value>] - set BZDB variable to value, or display variables") {}
-ResetCommand::ResetCommand()	     : ServerCommand("/reset",
+  "[ var [ value ] ] - set BZDB variable to value, or display variables") {}
+ResetCommand::ResetCommand()		 : ServerCommand("/reset",
   "- reset the BZDB variables") {}
 ShutdownCommand::ShutdownCommand()       : ServerCommand("/shutdownserver",
   "- kill the server") {}
@@ -474,21 +494,23 @@ GameOverCommand::GameOverCommand()       : ServerCommand("/gameover",
   "- end the current game") {}
 CountdownCommand::CountdownCommand()     : ServerCommand("/countdown",
   "- start the countdown sequence for a timed game") {}
-FlagCommand::FlagCommand()	       : ServerCommand("/flag",
+FlagCommand::FlagCommand()		 : ServerCommand("/flag",
   "<reset|up|show> - reset, remove or show the flags") {}
 LagWarnCommand::LagWarnCommand()	 : ServerCommand("/lagwarn",
-  "<millisecons>- change the maximum allowed lag time") {}
+  "<milliseconds> - change the maximum allowed lag time") {}
 LagStatCommand::LagStatCommand()	 : ServerCommand("/lagstats",
   "- list network delays, jitter and number of lost resp. out of order packets by player") {}
 IdleStatCommand::IdleStatCommand()       : ServerCommand("/idlestats",
   "- display the idle time in seconds for each player") {}
 FlagHistoryCommand::FlagHistoryCommand() : ServerCommand("/flaghistory",
   "- list what flags players have grabbed in the past") {}
+IdListCommand::IdListCommand()		 : ServerCommand("/idlist",
+  "- list player BZIDs") {}
 PlayerListCommand::PlayerListCommand()   : ServerCommand("/playerlist",
   "- list player slots, names and IP addresses") {}
-ReportCommand::ReportCommand()	   : ServerCommand("/report",
+ReportCommand::ReportCommand()		 : ServerCommand("/report",
   "<message> - write a message to the server administrator") {}
-HelpCommand::HelpCommand()	       : ServerCommand("/help",
+HelpCommand::HelpCommand()		 : ServerCommand("/help",
   "<help page> - display the specified help page") {}
 SendHelpCommand::SendHelpCommand()       : ServerCommand("/sendhelp",
   "<#slot|PlayerName|\"Player Name\"> <help page> - send the specified help page to a user") {}
@@ -506,32 +528,34 @@ GroupListCommand::GroupListCommand()     : ServerCommand("/grouplist",
   "- list the available user groups") {}
 ShowGroupCommand::ShowGroupCommand()     : ServerCommand("/showgroup",
   "[callsign] - list the groups that a registered user is a member of") {}
+ShowPermsCommand::ShowPermsCommand()     : ServerCommand("/showperms",
+  "[callsign] - list the permissions that a user has been granted") {}
 GroupPermsCommand::GroupPermsCommand()   : ServerCommand("/groupperms",
   "- list the permissions for each group") {}
 SetGroupCommand::SetGroupCommand()       : ServerCommand("/setgroup",
   "<callsign> <group> - add the user to the specified group") {}
 RemoveGroupCommand::RemoveGroupCommand() : ServerCommand("/removegroup",
   "<callsign> <group> - remove a user from a group") {}
-ReloadCommand::ReloadCommand()	   : ServerCommand("/reload",
+ReloadCommand::ReloadCommand()		 : ServerCommand("/reload",
   "- reload the user, group, and password files") {}
-PollCommand::PollCommand()	       : ServerCommand("/poll",
-  "<ban|kick|vote|veto> <callsign> - nteract and make requests of the bzflag voting system") {}
-VoteCommand::VoteCommand()	       : ServerCommand("/vote",
+PollCommand::PollCommand()		 : ServerCommand("/poll",
+  "<ban|kick|vote|veto> <callsign> - interact and make requests of the bzflag voting system") {}
+VoteCommand::VoteCommand()		 : ServerCommand("/vote",
   "<yes|no> - place a vote in favor or in opposition to the poll") {}
-VetoCommand::VetoCommand()	       : ServerCommand("/veto",
+VetoCommand::VetoCommand()		 : ServerCommand("/veto",
   "- will cancel the poll if there is one active") {}
 ViewReportCommand::ViewReportCommand()   : ServerCommand("/viewreports",
-  "- view the server's report file") {}
+  "[pattern] - view the server's report file") {}
 ClientQueryCommand::ClientQueryCommand() : ServerCommand("/clientquery",
   "[callsign] - retrieve client version info from all users, or just CALLSIGN if given") {}
-RecordCommand::RecordCommand()	   : ServerCommand("/record",
+RecordCommand::RecordCommand()		 : ServerCommand("/record",
   "[start|stop|size|list|rate..] - manage the bzflag record system") {}
-ReplayCommand::ReplayCommand()	   : ServerCommand("/replay",
+ReplayCommand::ReplayCommand()		 : ServerCommand("/replay",
   "[list|load|play|skip +-seconds] - intereact with recorded files") {}
 SayCommand::SayCommand()		 : ServerCommand("/say",
   "[message] - generate a public message sent by the server") {}
-DateCommand::DateCommand()	       : DateTimeCommand("/date") {}
-TimeCommand::TimeCommand()	       : DateTimeCommand("/time") {}
+DateCommand::DateCommand()		 : DateTimeCommand("/date") {}
+TimeCommand::TimeCommand()		 : DateTimeCommand("/time") {}
 
 class NoDigit {
 public:
@@ -865,6 +889,10 @@ bool PasswordCommand::operator() (const char	 *message,
       playerData->accessInfo.setOperator();
       sendPlayerInfo();
       sendMessage(ServerPlayer, t, "You are now an administrator!");
+      // Notify plugins of player authentication change
+      bz_PlayerAuthEventData commandData;
+      commandData.playerID = t;
+      worldEventManager.callEvents(bz_ePlayerAuthEvent, &commandData);
     } else {
       sendMessage(ServerPlayer, t, "Wrong Password!");
       std::string temp;
@@ -1124,12 +1152,34 @@ static void flagCommandHelp(int t)
 }
 
 
+static bool checkFlagMod(GameKeeper::Player* playerData)
+{
+  if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::flagMod) &&
+      !playerData->accessInfo.hasPerm(PlayerAccessInfo::flagMaster)) {
+    sendMessage(ServerPlayer, playerData->getIndex(),
+                "You do not have the FlagMod permission");
+    return false;
+  }
+  return true;
+}
+
+
+static bool checkFlagMaster(GameKeeper::Player* playerData)
+{
+  if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::flagMaster)) {
+    sendMessage(ServerPlayer, playerData->getIndex(),
+                "You do not have the FlagMaster permission");
+    return false;
+  }
+  return true;
+}
+
+
 bool FlagCommand::operator() (const char	 *message,
 			      GameKeeper::Player *playerData)
 {
   int t = playerData->getIndex();
-  if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::flagMod)) {
-    sendMessage(ServerPlayer, t, "You do not have permission to run the flag command");
+  if (!checkFlagMod(playerData)) {
     return true;
   }
 
@@ -1174,6 +1224,9 @@ bool FlagCommand::operator() (const char	 *message,
       bz_resetFlags(true);
     }
     else if (msg[0] == '#') {
+      if (!checkFlagMaster(playerData)) {
+        return true;
+      }
       int fIndex = atoi(msg + 1);
       FlagInfo* fi = FlagInfo::get(fIndex);
       if (fi != NULL) {
@@ -1185,6 +1238,9 @@ bool FlagCommand::operator() (const char	 *message,
       }
     }
     else if (ft != Flags::Null) {
+      if (!checkFlagMaster(playerData)) {
+        return true;
+      }
       // by flag abbreviation
       for (int i = 0; i < numFlags; i++) {
         FlagInfo* fi = FlagInfo::get(i);
@@ -1203,6 +1259,10 @@ bool FlagCommand::operator() (const char	 *message,
     }
   }
   else if (strncasecmp(msg, "take", 4) == 0) {
+    if (!checkFlagMaster(playerData)) {
+      return true;
+    }
+    
     msg += 4;
     while ((*msg != '\0') && isspace(*msg)) msg++; // eat whitespace
     
@@ -1213,9 +1273,9 @@ bool FlagCommand::operator() (const char	 *message,
     }
     
     int pIndex = GameKeeper::Player::getPlayerIDByName(argv[0]);
-    GameKeeper::Player* gtkPlayer = GameKeeper::Player::getPlayerByIndex(pIndex);
+    GameKeeper::Player* gkPlayer = GameKeeper::Player::getPlayerByIndex(pIndex);
 
-    if (gtkPlayer == NULL) {
+    if (gkPlayer == NULL) {
       char buffer[MessageLen];
       snprintf(buffer, MessageLen,
                "/flag drop: could not find player (%s)", msg);
@@ -1223,7 +1283,7 @@ bool FlagCommand::operator() (const char	 *message,
       return true;
     }
 
-    FlagInfo* fi = FlagInfo::get(gtkPlayer->player.getFlag());
+    FlagInfo* fi = FlagInfo::get(gkPlayer->player.getFlag());
     if (fi != NULL) {
       sendDrop(*fi);
       resetFlag(*fi);
@@ -1231,18 +1291,22 @@ bool FlagCommand::operator() (const char	 *message,
       snprintf(buffer, MessageLen, "%s took flag %s/%i from %s",
                playerData->player.getCallSign(),
                fi->flag.type->flagAbbv, fi->getIndex(),
-               gtkPlayer->player.getCallSign());
+               gkPlayer->player.getCallSign());
       sendMessage(ServerPlayer, t, buffer);
       sendMessage(ServerPlayer, AdminPlayers, buffer);
     } else {
       char buffer[MessageLen];
       snprintf(buffer, MessageLen,
                "/flag drop: player (%s) does not have a flag",
-               gtkPlayer->player.getCallSign());
+               gkPlayer->player.getCallSign());
       sendMessage(ServerPlayer, t, buffer);
     }
   }
   else if (strncasecmp(msg, "give", 4) == 0) {
+    if (!checkFlagMaster(playerData)) {
+      return true;
+    }
+    
     msg += 4;
     while ((*msg != '\0') && isspace(*msg)) msg++; // eat whitespace
 
@@ -1254,9 +1318,9 @@ bool FlagCommand::operator() (const char	 *message,
     
     FlagInfo* fi = NULL;
     int pIndex = GameKeeper::Player::getPlayerIDByName(argv[0]);
-    GameKeeper::Player* gtkPlayer = GameKeeper::Player::getPlayerByIndex(pIndex);
+    GameKeeper::Player* gkPlayer = GameKeeper::Player::getPlayerByIndex(pIndex);
     
-    if (gtkPlayer != NULL) {
+    if (gkPlayer != NULL) {
       const bool force = ((argv.size() > 2) &&
                           strncasecmp(argv[2].c_str(), "force", 5) == 0);
       if (argv[1][0] == '#') {
@@ -1311,19 +1375,19 @@ bool FlagCommand::operator() (const char	 *message,
       return true;
     }
     
-    if (gtkPlayer && fi) {
+    if (gkPlayer && fi) {
       const int flagLimit = clOptions->flagLimit[fi->flag.type];
       clOptions->flagLimit[fi->flag.type] = -1;
       fi->flag.status = FlagOnTank;
       fi->grabs = 2;
-      dropFlag(*fi, gtkPlayer->lastState.pos);
+      dropFlag(*fi, gkPlayer->lastState.pos);
       clOptions->flagLimit[fi->flag.type] = flagLimit;
         
       char buffer[MessageLen];
       snprintf(buffer, MessageLen, "%s gave flag %s/%i to %s",
                playerData->player.getCallSign(),
                fi->flag.type->flagAbbv, fi->getIndex(),
-               gtkPlayer->player.getCallSign());
+               gkPlayer->player.getCallSign());
       sendMessage(ServerPlayer, t, buffer);
       sendMessage(ServerPlayer, AdminPlayers, buffer);
     }
@@ -1445,12 +1509,37 @@ bool FlagHistoryCommand::operator() (const char	 *,
 }
 
 
+bool IdListCommand::operator() (const char*, GameKeeper::Player *playerData)
+{
+  int t = playerData->getIndex();
+  if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::playerList)) {
+    sendMessage(ServerPlayer, t,
+                "You do not have permission to run the /idlist command");
+    return true;
+  }
+
+  GameKeeper::Player *gkPlayer;
+  char buffer[MessageLen];
+  for (int i = 0; i < curMaxPlayers; i++) {
+    gkPlayer = GameKeeper::Player::getPlayerByIndex(i);
+    if (gkPlayer && gkPlayer->player.isPlaying()) {
+      snprintf(buffer, MessageLen, "%-20s : %s",
+               gkPlayer->player.getCallSign(),
+               gkPlayer->getBzIdentifier().c_str());
+      sendMessage(ServerPlayer, t, buffer);
+    }
+  }
+  return true;
+}
+
+
 bool PlayerListCommand::operator() (const char	 *,
 				    GameKeeper::Player *playerData)
 {
   int t = playerData->getIndex();
   if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::playerList)) {
-    sendMessage(ServerPlayer, t, "You do not have permission to run the playerlist command");
+    sendMessage(ServerPlayer, t,
+                "You do not have permission to run the playerlist command");
     return true;
   }
 
@@ -1647,6 +1736,11 @@ bool IdentifyCommand::operator() (const char	 *message,
 	// if they have the PLAYERLIST permission, send the IP list
 	sendIPUpdate(t, -1);
 	sendPlayerInfo();
+	// Notify plugins of player authentication change
+	bz_PlayerAuthEventData commandData;
+	commandData.playerID = t;
+	worldEventManager.callEvents(bz_ePlayerAuthEvent, &commandData);
+
       } else {
 	playerData->accessInfo.setLoginFail();
 	sendMessage(ServerPlayer, t, "Identify Failed, please make sure"
@@ -1825,102 +1919,141 @@ bool GroupListCommand::operator() (const char	 *,
 {
   int t = playerData->getIndex();
   sendMessage(ServerPlayer, t, "Group List:");
-  PlayerAccessMap::iterator itr = groupAccess.begin();
-  while (itr != groupAccess.end()) {
+  PlayerAccessMap::iterator itr;
+  for (itr = groupAccess.begin(); itr != groupAccess.end(); itr++) {
     sendMessage(ServerPlayer, t, itr->first.c_str());
-    itr++;
   }
   return true;
 }
 
 
-bool ShowGroupCommand::operator() (const char	 *message,
-				   GameKeeper::Player *playerData)
+bool ShowGroupCommand::operator() (const char* msg,
+				   GameKeeper::Player* playerData)
 {
   int t = playerData->getIndex();
-  std::string settie;
 
-  if (strlen(message) == 10) {	 // show own groups
-    if (playerData->accessInfo.isVerified()) {
-      settie = playerData->accessInfo.getName();
-    } else {
+  std::string queryName = "";
+  GameKeeper::Player* query = playerData;
+  
+  msg += commandName.size();
+  std::vector<std::string> argv = TextUtils::tokenize(msg, " \t", 0, true);
+  if (argv.size() > 0) {
+    if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::showOthers)) {
+      sendMessage(ServerPlayer, t, "No permission!");
+      return true;
+    }
+    queryName = TextUtils::toupper(argv[0]);
+
+    // get the active player if possible
+    int pIndex = GameKeeper::Player::getPlayerIDByName(queryName);
+    query = GameKeeper::Player::getPlayerByIndex(pIndex);
+  }
+  else {
+    if (!playerData->accessInfo.isVerified()) {
       sendMessage(ServerPlayer, t, "You are not identified");
-    }
-  } else if (playerData->accessInfo.hasPerm(PlayerAccessInfo::showOthers)) {
-    // show groups for other player
-    char *p1 = (char*) strchr(message + 1, '\"');
-    char *p2 = 0;
-    if (p1) p2 = strchr(p1 + 1, '\"');
-    if (p2) {
-      settie = std::string(p1 + 1, p2 - p1 - 1);
-      makeupper(settie);
+      return true;
     } else {
-      sendMessage(ServerPlayer, t, "wrong format, usage"
-		  " /showgroup  or  /showgroup \"CALLSIGN\"");
+      queryName = TextUtils::toupper(playerData->accessInfo.getName());
     }
+  }
+
+  // once for global groups
+  if (query) {
+    PlayerAccessInfo &info = query->accessInfo;
+    // FIXME remove local groups from this list. better yet unify the two.
+    std::string line = "Global Groups (only extras) for ";
+    line += queryName;
+    line += ": ";
+    std::vector<std::string>::iterator itr = info.groups.begin();
+    while (itr != info.groups.end()) {
+      line += *itr;
+      line += " ";
+      itr++;
+    }
+    while (line.size() > (unsigned int)MessageLen) {
+      sendMessage(ServerPlayer, t, line.substr(0, MessageLen).c_str());
+      line.erase(line.begin(), line.begin() + (MessageLen - 1));
+    }
+    sendMessage(ServerPlayer, t, line.c_str());
+  }
+
+  // once for local groups
+  if (userExists(queryName)) {
+    PlayerAccessInfo &info = PlayerAccessInfo::getUserInfo(queryName);
+
+    std::string line = "Local groups for ";
+    line += queryName;
+    line += ": ";
+    std::vector<std::string>::iterator itr = info.groups.begin();
+    while (itr != info.groups.end()) {
+      line += *itr;
+      line += " ";
+      itr++;
+    }
+    while (line.size() > (unsigned int)MessageLen) {
+      sendMessage(ServerPlayer, t, line.substr(0, MessageLen).c_str());
+      line.erase(line.begin(), line.begin() + (MessageLen - 1));
+    }
+    sendMessage(ServerPlayer, t, line.c_str());
   } else {
-    sendMessage(ServerPlayer, t, "No permission!");
+    sendMessage(ServerPlayer, t, "There is no user by that name");
   }
 
-  // something is wrong
-  if (settie != "") {
-    int playerIndex = GameKeeper::Player::getPlayerIDByName(settie);
-    // once for global groups
-    if (playerIndex < curMaxPlayers) {
-      GameKeeper::Player* target = GameKeeper::Player::getPlayerByIndex(playerIndex);
-      if (target != NULL) {
-	PlayerAccessInfo &info = target->accessInfo;
-	// FIXME remove local groups from this list. better yet unify the two.
-	std::string line = "Global Groups (only extras) for ";
-	line += settie;
-	line += ": ";
-	std::vector<std::string>::iterator itr = info.groups.begin();
-	while (itr != info.groups.end()) {
-	  line += *itr;
-	  line += " ";
-	  itr++;
-	}
-	while (line.size() > (unsigned int)MessageLen) {
-	  sendMessage(ServerPlayer, t, line.substr(0, MessageLen).c_str());
-	  line.erase(line.begin(), line.begin() + (MessageLen - 1));
-	}
-	sendMessage(ServerPlayer, t, line.c_str());
-      }
-    }
-    // once for local groups
-    if (userExists(settie)) {
-      PlayerAccessInfo &info = PlayerAccessInfo::getUserInfo(settie);
-
-      std::string line = "Local groups for ";
-      line += settie;
-      line += ": ";
-      std::vector<std::string>::iterator itr = info.groups.begin();
-      while (itr != info.groups.end()) {
-	line += *itr;
-	line += " ";
-	itr++;
-      }
-      while (line.size() > (unsigned int)MessageLen) {
-	sendMessage(ServerPlayer, t, line.substr(0, MessageLen).c_str());
-	line.erase(line.begin(), line.begin() + (MessageLen - 1));
-      }
-      sendMessage(ServerPlayer, t, line.c_str());
-    } else {
-      sendMessage(ServerPlayer, t, "There is no user by that name");
-    }
-  }
   return true;
 }
 
 
-bool GroupPermsCommand::operator() (const char	 *,
+bool ShowPermsCommand::operator() (const char* msg,
+				   GameKeeper::Player* playerData)
+{
+  int t = playerData->getIndex();
+  
+  msg += commandName.size();
+  GameKeeper::Player* query = playerData; // the asking player by default
+  std::vector<std::string> argv = TextUtils::tokenize(msg, " \t", 0, true);
+  if (argv.size() > 0) {
+    if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::showOthers)) {
+      sendMessage(ServerPlayer, t, "No permission!");
+      return true;
+    }
+    int pIndex = GameKeeper::Player::getPlayerIDByName(argv[0]);
+    query = GameKeeper::Player::getPlayerByIndex(pIndex);
+    if (query == NULL) {
+      std::string warning = "Could not find player: ";
+      warning += argv[0];
+      sendMessage(ServerPlayer, t, warning.c_str());
+      return true;
+    }
+  }
+  else if (!playerData->accessInfo.isVerified()) {
+    sendMessage(ServerPlayer, t, "You are not identified");
+    return true;
+  }
+
+  std::string header = "Permissions for: ";
+  header += query->player.getCallSign();
+  sendMessage(ServerPlayer, t, header.c_str());
+  
+  for (int p = 0; p < PlayerAccessInfo::lastPerm; p++) {
+    PlayerAccessInfo::AccessPerm perm = (PlayerAccessInfo::AccessPerm)p;
+    if (query->accessInfo.hasPerm(perm)) {
+      const std::string& permName = nameFromPerm(perm);
+      sendMessage(ServerPlayer, t, permName.c_str());
+    }
+  }
+
+  return true;
+}
+
+
+bool GroupPermsCommand::operator() (const char*,
 				    GameKeeper::Player *playerData)
 {
   int t = playerData->getIndex();
   sendMessage(ServerPlayer, t, "Group List:");
-  PlayerAccessMap::iterator itr = groupAccess.begin();
-  std::string line;
-  while (itr != groupAccess.end()) {
+  PlayerAccessMap::iterator itr;
+  for (itr = groupAccess.begin(); itr != groupAccess.end(); itr++) {
+    std::string line;
     line = itr->first + ":   ";
     sendMessage(ServerPlayer, t, line.c_str());
 
@@ -1947,107 +2080,109 @@ bool GroupPermsCommand::operator() (const char	 *,
 	}
       }
     }
-
-    itr++;
   }
   return true;
 }
 
 
-bool SetGroupCommand::operator() (const char	 *message,
-				  GameKeeper::Player *playerData)
+bool SetGroupCommand::operator() (const char* msg,
+				  GameKeeper::Player* playerData)
 {
   int t = playerData->getIndex();
+
   if (!userDatabaseFile.size()) {
     sendMessage(ServerPlayer, t, "/setgroup command disabled");
     return true;
   }
-  char *p1 = (char*)strchr(message + 1, '\"');
-  char *p2 = 0;
-  if (p1) p2 = strchr(p1 + 1, '\"');
-  if (!p2) {
-    sendMessage(ServerPlayer, t, "not enough parameters, usage /setgroup \"CALLSIGN\" GROUP");
-  } else {
-    std::string settie(p1 + 1, p2 - p1 - 1);
-    std::string group = p2 + 2;
 
-    makeupper(settie);
-    makeupper(group);
-
-    if (userExists(settie)) {
-      if (!playerData->accessInfo.canSet(group)) {
-	sendMessage(ServerPlayer, t, "You do not have permission to set this group");
-      } else {
-	PlayerAccessInfo &info = PlayerAccessInfo::getUserInfo(settie);
-
-	if (info.addGroup(group)) {
-	  sendMessage(ServerPlayer, t, "Group Add successful");
-	  int getID = GameKeeper::Player::getPlayerIDByName(settie);
-	  if (getID != -1) {
-	    char temp[MessageLen];
-	    snprintf(temp, MessageLen, "you have been added to the %s group, by %s",
-		    group.c_str(), playerData->player.getCallSign());
-	    sendMessage(ServerPlayer, getID, temp);
-	    GameKeeper::Player::getPlayerByIndex(getID)->accessInfo.
-	      addGroup(group);
-	  }
-	  PlayerAccessInfo::updateDatabases();
-	} else {
-	  sendMessage(ServerPlayer, t, "Group Add failed (user may already be in that group)");
-	}
-      }
-    } else {
-      sendMessage(ServerPlayer, t, "There is no user by that name");
-    }
+  msg += commandName.size();
+  std::vector<std::string> argv = TextUtils::tokenize(msg, " \t", 0, true);
+  if (argv.size() != 2) {
+    sendMessage(ServerPlayer, t,
+                "Incorrect parameters, usage: /setgroup <player> <group>");
+    return true;
   }
+  std::string target = TextUtils::toupper(argv[0]);
+  std::string group = TextUtils::toupper(argv[1]);
+  
+  if (!playerData->accessInfo.canSet(group)) {
+    sendMessage(ServerPlayer, t, "You do not have permission to set this group");
+    return true;
+  }
+
+  if (!userExists(target)) {
+    std::string warning = "Player is not listed: " + target;
+    sendMessage(ServerPlayer, t, warning.c_str());
+    return true;
+  }
+  
+  PlayerAccessInfo &info = PlayerAccessInfo::getUserInfo(target);
+  if (info.addGroup(group)) {
+    sendMessage(ServerPlayer, t, "Group Add successful");
+    int getID = GameKeeper::Player::getPlayerIDByName(target);
+    if (getID != -1) {
+      char temp[MessageLen];
+      snprintf(temp, MessageLen, "you have been added to the %s group, by %s",
+               group.c_str(), playerData->player.getCallSign());
+      sendMessage(ServerPlayer, getID, temp);
+      GameKeeper::Player::getPlayerByIndex(getID)->accessInfo.addGroup(group);
+    }
+    PlayerAccessInfo::updateDatabases();
+  } else {
+    sendMessage(ServerPlayer, t, "Group Add failed (user may already be in that group)");
+  }
+  
   return true;
 }
 
 
-bool RemoveGroupCommand::operator() (const char	 *message,
-				     GameKeeper::Player *playerData)
+bool RemoveGroupCommand::operator() (const char* msg,
+				     GameKeeper::Player* playerData)
 {
   int t = playerData->getIndex();
+  
   if (!userDatabaseFile.size()) {
     sendMessage(ServerPlayer, t, "/removegroup command disabled");
     return true;
   }
-  char *p1 = (char*)strchr(message + 1, '\"');
-  char *p2 = 0;
-  if (p1) p2 = strchr(p1 + 1, '\"');
-  if (!p2) {
-    sendMessage(ServerPlayer, t, "not enough parameters, usage /removegroup \"CALLSIGN\" GROUP");
-  } else {
-    std::string settie(p1 + 1, p2 - p1 - 1);
-    std::string group = p2 + 2;
 
-    makeupper(settie);
-    makeupper(group);
-    if (userExists(settie)) {
-      if (!playerData->accessInfo.canSet(group)) {
-	sendMessage(ServerPlayer, t, "You do not have permission to remove this group");
-      } else {
-	PlayerAccessInfo &info = PlayerAccessInfo::getUserInfo(settie);
-	if (info.removeGroup(group)) {
-	  sendMessage(ServerPlayer, t, "Group Remove successful");
-	  int getID = GameKeeper::Player::getPlayerIDByName(settie);
-	  if (getID != -1) {
-	    char temp[MessageLen];
-	    snprintf(temp, MessageLen, "You have been removed from the %s group, by %s",
-		    group.c_str(), playerData->player.getCallSign());
-	    sendMessage(ServerPlayer, getID, temp);
-	    GameKeeper::Player::getPlayerByIndex(getID)->accessInfo.
-	      removeGroup(group);
-	  }
-	  PlayerAccessInfo::updateDatabases();
-	} else {
-	  sendMessage(ServerPlayer, t, "Group Remove failed (user may not have been in group)");
-	}
-      }
-    } else {
-      sendMessage(ServerPlayer, t, "There is no user by that name");
-    }
+  msg += commandName.size();
+  std::vector<std::string> argv = TextUtils::tokenize(msg, " \t", 0, true);
+  if (argv.size() != 2) {
+    sendMessage(ServerPlayer, t,
+                "Incorrect parameters, usage: /removegroup <player> <group>");
+    return true;
   }
+  std::string target = TextUtils::toupper(argv[0]);
+  std::string group = TextUtils::toupper(argv[1]);
+
+  if (!playerData->accessInfo.canSet(group)) {
+    sendMessage(ServerPlayer, t, "You do not have permission to set this group");
+    return true;
+  }
+  
+  if (!userExists(target)) {
+    std::string warning = "Player is not listed: " + target;
+    sendMessage(ServerPlayer, t, warning.c_str());
+    return true;
+  }
+
+  PlayerAccessInfo &info = PlayerAccessInfo::getUserInfo(target);
+  if (info.removeGroup(group)) {
+    sendMessage(ServerPlayer, t, "Group Remove successful");
+    int getID = GameKeeper::Player::getPlayerIDByName(target);
+    if (getID != -1) {
+      char temp[MessageLen];
+      snprintf(temp, MessageLen, "You have been removed from the %s group, by %s",
+               group.c_str(), playerData->player.getCallSign());
+      sendMessage(ServerPlayer, getID, temp);
+      GameKeeper::Player::getPlayerByIndex(getID)->accessInfo.removeGroup(group);
+    }
+    PlayerAccessInfo::updateDatabases();
+  } else {
+    sendMessage(ServerPlayer, t, "Group Remove failed (user may not have been in group)");
+  }
+  
   return true;
 }
 
@@ -2618,26 +2753,66 @@ bool PollCommand::operator() (const char	 *message,
 }
 
 
-bool ViewReportCommand::operator() (const char	 *,
-				    GameKeeper::Player *playerData)
+bool ViewReportCommand::operator() (const char* message,
+				    GameKeeper::Player* playerData)
 {
   int t = playerData->getIndex();
-  std::string line;
   if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::viewReports)) {
     sendMessage(ServerPlayer, t, "You do not have permission to run the viewreports command");
     return true;
   }
   if (clOptions->reportFile.size() == 0 && clOptions->reportPipe.size() == 0) {
-    line = "The /report command is disabled on this server or there are no reports filed.";
-    sendMessage(ServerPlayer, t, line.c_str());
+    sendMessage(ServerPlayer, t,
+                "The /report command is disabled on this"
+                " server or there are no reports filed.");
   }
   std::ifstream ifs(clOptions->reportFile.c_str(), std::ios::in);
   if (ifs.fail()) {
     sendMessage(ServerPlayer, t, "Error reading from report file.");
     return true;
   }
-  while (std::getline(ifs, line))
-    sendMessage(ServerPlayer, t, line.c_str());
+
+  // setup the glob pattern
+  std::string pattern = "*";
+  message += commandName.size();
+  while ((*message != '\0') && isspace(*message)) message++;
+  if (*message != '\0') {
+    pattern = message;
+    pattern = TextUtils::toupper(pattern);
+    if (pattern.find('*') == std::string::npos) {
+      pattern = "*" + pattern + "*";
+    }
+  }
+
+  // assumes that empty lines separate the reports
+  std::string line;
+  std::vector<std::string> buffers;
+  bool matched = false;
+  while (std::getline(ifs, line)) {
+    buffers.push_back(line);
+    if (line.size() <= 0) {
+      // blank line
+      if (matched) {
+        for (int i = 0; i < (int)buffers.size(); i++) {
+          sendMessage(ServerPlayer, t, buffers[i].c_str());
+        }
+      }
+      buffers.clear();
+      matched = false;
+    } else {
+      // non-blank line
+      if (glob_match(pattern, TextUtils::toupper(line))) {
+        matched = true;
+      }
+    }
+  }
+  // in case the file doesn't end with a blank line
+  if (matched) {
+    for (int i = 0; i < (int)buffers.size(); i++) {
+      sendMessage(ServerPlayer, t, buffers[i].c_str());
+    }
+  }
+  
   return true;
 }
 
@@ -2654,6 +2829,10 @@ bool ClientQueryCommand::operator() (const char	 *message,
       name.erase(name.begin());
     GameKeeper::Player *target;
     int i;
+    if ((name.size() >= 2) &&
+        (name[0] == '"') && (name[name.size()-1] == '"')) {
+      name = name.substr(1, name.size() - 2); // remove the quotes
+    }
     for (i = 0; i < curMaxPlayers;i++) {
       target = GameKeeper::Player::getPlayerByIndex(i);
       if (target && strcmp(target->player.getCallSign(), name.c_str()) == 0) {
@@ -2943,6 +3122,14 @@ void parseServerCommand(const char *message, int t)
   if (!playerData)
     return;
 
+  // Notify plugins of slash command execution request
+  bz_SlashCommandEventData commandData;
+  commandData.from = t;
+  commandData.message = message;
+  commandData.time = TimeKeeper::getCurrent().getSeconds();
+
+  worldEventManager.callEvents(bz_eSlashCommandEvent, &commandData);
+
   if (ServerCommand::execute(message, playerData))
     return;
 
@@ -2978,13 +3165,13 @@ void parseServerCommand(const char *message, int t)
     }
 
     // lets see if anyone wants to handle the unhandled event
-    bz_UnknownSlashCommandEventData commandData;
-    commandData.from = t;
-    commandData.message = message;
-    commandData.time = TimeKeeper::getCurrent().getSeconds();
+    bz_UnknownSlashCommandEventData commandData1;
+    commandData1.from = t;
+    commandData1.message = message;
+    commandData1.time = TimeKeeper::getCurrent().getSeconds();
 
-    worldEventManager.callEvents(bz_eUnknownSlashCommand, &commandData);
-    if (commandData.handled) // did anyone do it?
+    worldEventManager.callEvents(bz_eUnknownSlashCommand, &commandData1);
+    if (commandData1.handled) // did anyone do it?
       return;
 
     char reply[MessageLen];

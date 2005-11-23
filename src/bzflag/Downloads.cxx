@@ -153,7 +153,12 @@ void CachedTexture::finalization(char *data, unsigned int length, bool good)
       MATERIALMGR.setTextureLocal(url, localname);
     }
   } else {
-    MATERIALMGR.setTextureLocal(url, "");
+    CacheManager::CacheRecord rec;
+    if (CACHEMGR.findURL(url, rec)) {
+      MATERIALMGR.setTextureLocal(url, rec.name);
+    } else {
+      MATERIALMGR.setTextureLocal(url, "");
+    }
   }
 }
 

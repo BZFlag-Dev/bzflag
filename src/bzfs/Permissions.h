@@ -59,6 +59,7 @@ public:
       date,
       endGame,
       flagHistory,
+      flagMaster,
       flagMod,
       hideAdmin,
       idleStats,

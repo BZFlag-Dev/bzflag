@@ -72,7 +72,6 @@ const char *usageString =
 "[-filterCallsigns] "
 "[-filterChat] "
 "[-filterSimple] "
-"[-forcegfx] "
 "[-g] "
 "[-gndtex <texture name>] "
 "[-groupdb <group file>] "
@@ -113,6 +112,8 @@ const char *usageString =
 "[-reportfile <filename>] "
 "[-reportpipe <filename>] "
 "[-requireudp] "
+"[-reqgfx] "
+"[-reqreg] "
 "[+s <flag-count>] "
 "[-s <flag-count>] "
 "[-sa] "
@@ -165,7 +166,6 @@ const char *extraUsageString =
 "\t-filterCallsigns: filter callsigns to disallow inappropriate user names\n"
 "\t-filterChat: filter chat messages\n"
 "\t-filterSimple: perform simple exact matches with the bad word list\n"
-"\t-forcegfx: required that the clients use advanced graphics mode\n"
 "\t-g: serve one game and then exit\n"
 "\t-gndtex: specify ground texture\n"
 "\t-groupdb: file to read for group permissions\n"
@@ -206,6 +206,8 @@ const char *extraUsageString =
 "\t-reportfile <filename>: the file to store reports in\n"
 "\t-reportpipe <filename>: the program to pipe reports through\n"
 "\t-requireudp: require clients to use udp\n"
+"\t-reqgfx: required that the clients use advanced graphics mode\n"
+"\t-reqreg: required that the clients are registered to spawn and talk"
 "\t+s: always have <num> super flags (default=16)\n"
 "\t-s: allow up to <num> super flags (default=16)\n"
 "\t-sa: insert antidote superflags\n"
@@ -688,8 +690,6 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       options.filterChat = true;
     } else if (strcmp(argv[i], "-filterSimple") == 0) {
       options.filterSimple = true;
-    } else if (strcmp(argv[i], "-forcegfx") == 0) {
-      options.gameStyle |= int(RequireGraphics);
     } else if (strcmp(argv[i], "-g") == 0) {
       options.oneGameOnly = true;
     } else if (strcmp(argv[i], "-gndtex") == 0) {
@@ -934,6 +934,10 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
     } else if (strcmp(argv[i], "-reportpipe") == 0) {
       checkArgc(1, i, argc, argv[i]);
       options.reportPipe = argv[i];
+    } else if (strcmp(argv[i], "-reqgfx") == 0) {
+      options.gameStyle |= int(RequireGraphics);
+    } else if (strcmp(argv[i], "-reqreg") == 0) {
+      options.gameStyle |= int(RequireRegistration);
     } else if (strcmp(argv[i], "-requireudp") == 0) {
       std::cerr << "require UDP clients!" << std::endl;
       options.requireUDP = true;

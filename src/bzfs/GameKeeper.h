@@ -108,6 +108,9 @@ public:
     void	   setPlayerState(float pos[3], float azimuth);
     void	   getPlayerState(float pos[3], float &azimuth);
     void	   setPlayerState(PlayerState state, float timestamp);
+    
+    void	   setBzIdentifier(const std::string& id);
+    const std::string& getBzIdentifier() const;
 
     // When is the player's next GameTime?
     const TimeKeeper&	getNextGameTime() const;
@@ -126,7 +129,7 @@ public:
 	required,
 	requesting,
 	checking,
-	timed,
+	timedOut,
 	failed,
 	verified,
 	done
@@ -150,12 +153,15 @@ public:
     FlagHistory       flagHistory;
     // Score
     Score	      score;
+    // Authentication
     Authentication    authentication;
+
   private:
     static Player    *playerList[PlayerSlot];
     int		      playerIndex;
     bool	      closed;
     tcpCallback       clientCallback;
+    std::string	      bzIdentifier;
 #if defined(USE_THREADS)
     pthread_t		   thread;
     static pthread_mutex_t mutex;
@@ -164,11 +170,10 @@ public:
     bool	      needThisHostbanChecked;
     // In case you want recheck all condition on all players
     static bool       allNeedHostbanChecked;
-
     static int             maxShots;
     std::vector<ShotInfo> shotsInfo;
-
   };
+
   class Flag {
   };
 };
@@ -230,10 +235,23 @@ inline bool GameKeeper::Player::needsHostbanChecked()
   return (allNeedHostbanChecked || needThisHostbanChecked);
 }
 
+
+inline void GameKeeper::Player::setBzIdentifier(const std::string& id)
+{
+  bzIdentifier = id;
+}
+
+inline const std::string& GameKeeper::Player::getBzIdentifier() const
+{
+  return bzIdentifier;
+}
+
+
 inline const TimeKeeper& GameKeeper::Player::getNextGameTime() const
 {
   return gameTimeNext;
 }
+
 
 #endif
 

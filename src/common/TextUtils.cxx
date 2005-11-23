@@ -216,6 +216,7 @@ namespace TextUtils
     if (res == REG_NOMATCH)
       return false;
 
+    durationInt = 0;
     int t = 0;
     int len = (int)strlen(duration);
     for (int i = 0; i < len; i++) {

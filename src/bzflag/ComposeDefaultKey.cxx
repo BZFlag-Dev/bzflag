@@ -31,6 +31,17 @@ MessageQueue	messageHistory;
 unsigned int	messageHistoryIndex = 0;
 
 
+static bool isWordCompletion(const BzfKeyEvent& key)
+{
+  if ((key.ascii == 6) || // ^F
+      (key.ascii == 9) || // <TAB>
+      ((key.shift == 0) && (key.button == BzfKeyEvent::F2))) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
 
 bool			ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
 {
@@ -42,10 +53,19 @@ bool			ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
     return false;
   }
 
-  if (!myTank || myTank->getInputMethod() != LocalPlayer::Keyboard) {
+  if (!myTank || (myTank->getInputMethod() != LocalPlayer::Keyboard)) {
     if ((key.button == BzfKeyEvent::Up) ||
 	(key.button == BzfKeyEvent::Down))
       return true;
+  }
+
+  if (isWordCompletion(key)) {
+    std::string matches;
+    hud->setComposeString(completer.complete(hud->getComposeString(), &matches));
+    if (matches.size() > 0) {
+      controlPanel->addMessage(matches, -1);
+    }
+    return true;
   }
 
   switch (key.ascii) {
@@ -58,16 +78,6 @@ bool			ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
     case 13: {	// return
       sendIt = true;
       break;
-    }
-    case 6:     // ^F
-    case 9: {	// <tab>
-      // auto completion
-      std::string line1 = hud->getComposeString();
-      int lastSpace = line1.find_last_of(" \t");
-      std::string line2 = line1.substr(0, lastSpace+1);
-      line2 += completer.complete(line1.substr(lastSpace+1));
-      hud->setComposeString(line2);
-      return true;
     }
     default: {
       return false;
@@ -154,18 +164,12 @@ bool			ComposeDefaultKey::keyRelease(const BzfKeyEvent& key)
       }
       return false;
     }
-    else if ((key.shift == 0) && (key.button == BzfKeyEvent::F2)) {
-      // auto completion  (F2)
-      std::string line1 = hud->getComposeString();
-      int lastSpace = line1.find_last_of(" \t");
-      std::string line2 = line1.substr(0, lastSpace+1);
-      line2 += completer.complete(line1.substr(lastSpace+1));
-      hud->setComposeString(line2);
-    }
   }
 
   if ((key.ascii == 4) || // ^D
-      (key.ascii == 13)) { // return
+      (key.ascii == 6) || // ^F
+      (key.ascii == 13) || // return
+      isWordCompletion(key)) {
     return true;
   }
 

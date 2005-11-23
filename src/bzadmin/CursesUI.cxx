@@ -101,7 +101,6 @@ void CursesUI::handleNewPacket(uint16_t code) {
 bool CursesUI::checkCommand(std::string& str) {
   wrefresh(cmdWin);
   str = "";
-  int i;
 
   // get a character and do checks that are always needed
   int c = wgetch(cmdWin);
@@ -259,12 +258,16 @@ bool CursesUI::checkCommand(std::string& str) {
     return false;
 
     // tab - autocomplete
-  case '\t':
-    i = cmd.find_last_of(" \t");
-    cmd = cmd.substr(0, i+1) + comp.complete(cmd.substr(i+1));
+  case '\t': {
+    std::string matches;
+    cmd = comp.complete(cmd, &matches);
     updateCmdWin();
+    if (matches.size() > 0) {
+      outputMessage(matches, White);
+      updateTargetWin();
+    }
     return false;
-
+  }
   default:
     if (c < 32 || c > 127 || cmd.size() >= CMDLENGTH)
       return false;
@@ -277,7 +280,7 @@ bool CursesUI::checkCommand(std::string& str) {
 
 void CursesUI::addedPlayer(PlayerId p) {
   PlayerIdMap::const_iterator iter = players.find(p);
-  comp.registerWord(iter->second.name);
+  comp.registerWord(iter->second.name, true /* quote spaces */);
   if (p == me)
     targetIter = iter;
 }

@@ -362,6 +362,7 @@ std::string nameFromPerm(PlayerAccessInfo::AccessPerm perm)
     case PlayerAccessInfo::date: return "date";
     case PlayerAccessInfo::endGame: return "endGame";
     case PlayerAccessInfo::flagHistory: return "flagHistory";
+    case PlayerAccessInfo::flagMaster: return "flagMaster";
     case PlayerAccessInfo::flagMod: return "flagMod";
     case PlayerAccessInfo::hideAdmin: return "hideAdmin";
     case PlayerAccessInfo::idleStats: return "idleStats";
@@ -426,6 +427,7 @@ PlayerAccessInfo::AccessPerm permFromName(const std::string &name)
   if (name == "DATE") return PlayerAccessInfo::date;
   if (name == "ENDGAME") return PlayerAccessInfo::endGame;
   if (name == "FLAGHISTORY") return PlayerAccessInfo::flagHistory;
+  if (name == "FLAGMASTER") return PlayerAccessInfo::flagMaster;
   if (name == "FLAGMOD") return PlayerAccessInfo::flagMod;
   if (name == "HIDEADMIN") return PlayerAccessInfo::hideAdmin;
   if (name == "IDLESTATS") return PlayerAccessInfo::idleStats;

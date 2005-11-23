@@ -68,6 +68,8 @@ typedef enum
 	bz_eMessagFilteredEvent,
 	bz_eGameStartEvent,
 	bz_eGameEndEvent,
+	bz_eSlashCommandEvent,
+	bz_ePlayerAuthEvent,
 	bz_eLastEvent    //this is never used as an event, just show it's the last one
 }bz_eEventType;
 
@@ -718,6 +720,40 @@ public:
 
 	double time;
 	double duration;
+};
+
+class bz_SlashCommandEventData : public bz_EventData
+{
+public:
+	bz_SlashCommandEventData()
+	{
+		eventType = bz_eSlashCommandEvent;
+		from = -1;
+		time = 0;
+	}
+
+	virtual ~bz_SlashCommandEventData(){};
+
+	int from;
+
+	bzApiString message;
+
+	double time;
+};
+
+
+class bz_PlayerAuthEventData : public bz_EventData
+{
+public:
+	bz_PlayerAuthEventData()
+	{
+		eventType = bz_ePlayerAuthEvent;
+		playerID = -1;
+	}
+
+	virtual ~bz_PlayerAuthEventData(){};
+
+	int playerID;
 };
 
 

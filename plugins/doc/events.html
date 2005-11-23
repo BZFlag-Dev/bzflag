@@ -285,6 +285,18 @@ Events</span></p>
 																	<td>
 																		A game timer ends</td>
 																</tr>
+																<tr>
+																	<td><span class="Code">bz_eSlashCommandEvent</span>
+																	</td>
+																	<td>
+																		A server command was issued</td>
+																</tr>
+																<tr>
+																	<td><span class="Code">bz_ePlayerAuthEvent</span>
+																	</td>
+																	<td>
+																		Player authentication status change</td>
+																</tr>
 															</tbody>
 														</table>
 														<p>
@@ -960,7 +972,66 @@ double duration; // the duration of the game timer <br> </blockquote>
 															</tbody>
 														</table>
 														<br>
-														
+														<br>
+														<table bgcolor="#dddddd" border="1">
+															<tbody>
+																<tr>
+																	<td align="left" valign="top">
+																		<table border="0" cellpadding="2" cellspacing="2">
+																			<tbody>
+																				<tr>
+																					<td><span class="Code">bz_eSlashCommandEvent</span>
+																						provides the following data</td>
+																				</tr>
+																				<tr>
+																					<td><span class="Code">bz_SlashCommandEventData<br>
+{<br>
+                              </span>
+																						<blockquote class="Code"> int from; // the ID of the player who sent the command<br>
+																							bzApiString message; // the command itself<br>
+																							double time; // the time the command was issued</blockquote>
+																						<p class="Code">}</p>
+																					</td>
+																				</tr>
+																				<tr>
+																					<td>This event is called for any user entered server command.  The command text is unprocessed and not checked as a valid command when this event occurs.</td>
+																				</tr>
+																			</tbody>
+																		</table>
+																	</td>
+																</tr>
+															</tbody>
+														</table>
+														<br>
+														<br>
+														<table bgcolor="#dddddd" border="1">
+															<tbody>
+																<tr>
+																	<td align="left" valign="top">
+																		<table border="0" cellpadding="2" cellspacing="2">
+																			<tbody>
+																				<tr>
+																					<td><span class="Code">bz_ePlayerAuthEvent</span>
+																						provides the following data</td>
+																				</tr>
+																				<tr>
+																					<td><span class="Code">bz_PlayerAuthEventData<br>
+{<br>
+                              </span>
+																						<blockquote class="Code"> int playerID; // the ID of the player whose authentication status changed</blockquote>
+																						<p class="Code">}</p>
+																					</td>
+																				</tr>
+																				<tr>
+																					<td>This event is called when a player manually identifies to the server or issues the server password.</td>
+																				</tr>
+																			</tbody>
+																		</table>
+																	</td>
+																</tr>
+															</tbody>
+														</table>
+														<br>
 													</td>
 												</tr>
 												<tr>

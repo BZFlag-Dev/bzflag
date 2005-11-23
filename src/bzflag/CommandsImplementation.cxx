@@ -14,7 +14,7 @@
 #include "common.h"
 
 // system implementation headers
-#include <math.h>
+#include <cmath>
 #include <ctype.h>
 
 // common implementation headers
@@ -31,6 +31,7 @@
 #include "bzglob.h"
 #include "Roaming.h"
 #include "ServerLink.h"
+#include "LocalPlayer.h"
 
 // class definitions
 
@@ -310,7 +311,7 @@ static float parseFloatExpr(const std::string& str, bool zeroNan)
   if (!zeroNan) {
     return value;
   } else {
-    if (value == value) {
+    if (!std::isnan(value)) {
       return value;
     } else {
       return 0.0f;
@@ -330,8 +331,8 @@ static bool varIsEqual(const std::string& name)
   const std::string defexp = BZDB.getDefault(name);
   const float val = BZDB.eval(name);
   const float defval = parseFloatExpr(defexp, false);
-  const bool valNaN = !(val == val);
-  const bool defNaN = !(defval == defval);
+  const bool valNaN = (std::isnan(val) != 0);
+  const bool defNaN = (std::isnan(defval) != 0);
 
   if (valNaN != defNaN) {
     return false;
@@ -520,6 +521,15 @@ bool RoamPosCommand::operator() (const char *commandLine)
     Roaming::RoamingCamera cam;
     if (TextUtils::tolower(tokens[0]) == "reset") {
       ROAM.resetCamera();
+    } else if (TextUtils::tolower(tokens[0]) == "send") {
+      LocalPlayer* myTank = LocalPlayer::getMyTank();
+      if (myTank != NULL) {
+        const Roaming::RoamingCamera* camPtr = ROAM.getCamera();
+        float fakeVel[3] = { camPtr->theta, camPtr->phi, camPtr->zoom };
+        myTank->move(camPtr->pos, camPtr->theta);
+        myTank->setVelocity(fakeVel);
+        serverLink->sendPlayerUpdate(myTank);
+      }
     } else {
       const float degrees = parseFloatExpr(tokens[0], true);
       const float ws = BZDB.eval(StateDatabase::BZDB_WORLDSIZE);
@@ -557,7 +567,8 @@ bool RoamPosCommand::operator() (const char *commandLine)
   }
   else {
     addMessage(NULL,
-      "/roampos  [ \"reset\" | degrees | {x y z [theta [phi [ zoom ]]] } ]");
+      "/roampos  "
+      "[ \"reset\" | degrees | {x y z [theta [phi [ zoom ]]] } | \"send\" ]");
 
     const Roaming::RoamingCamera* cam = ROAM.getCamera();
     char buffer[MessageLen];

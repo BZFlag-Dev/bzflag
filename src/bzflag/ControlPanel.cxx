@@ -737,7 +737,7 @@ void			ControlPanel::setMessagesMode(int _messageMode)
 }
 
 void			ControlPanel::addMessage(const std::string& line,
-						 const int mode)
+						 const int realmode)
 {
   ControlPanelMessage item(line);
   item.breakLines(messageAreaPixels[2] - 2 * margin, fontFace, fontSize);
@@ -747,34 +747,42 @@ void			ControlPanel::addMessage(const std::string& line,
     _maxScrollPages = atoi(BZDB.getDefault("scrollPages").c_str());
     BZDB.setInt("scrollPages", _maxScrollPages);
   }
+  
+  // the effective tab
+  const int tabmode = (realmode == MessageCurrent) ? messageMode : realmode;
 
-  // Add to "All" tab
-  if ((int)messages[MessageAll].size() < maxLines * _maxScrollPages) {
-    // not full yet so just append it
-    messages[MessageAll].push_back(item);
-  } else {
-    // rotate list and replace oldest (in newest position after rotate)
-    messages[MessageAll].pop_front();
-    messages[MessageAll].push_back(item);
-  }
+  // add to the appropriate tabs
+  for (int tab = MessageAll; tab < MessageModeCount; tab++) {
 
-  // Add to other tab
-  if (mode >= MessageChat && mode < MessageModeCount) {
-    if ((int)messages[mode].size() < maxLines * _maxScrollPages) {
-      // not full yet so just append it
-      messages[mode].push_back(item);
-    } else {
-      // rotate list and replace oldest (in newest position after rotate)
-      messages[mode].pop_front();
-      messages[mode].push_back(item);
+    if ((tab == tabmode) // add to its own mode
+        // add to the All tab, unless using Current mode
+        || ((tab == MessageAll) && (realmode != MessageCurrent))
+        // always add to all tabs
+        || (realmode == MessageAllTabs)) {
+      
+      // insert the message into the tab
+      if ((int)messages[tab].size() < maxLines * _maxScrollPages) {
+        // not full yet so just append it
+        messages[tab].push_back(item);
+      } else {
+        // rotate list and replace oldest (in newest position after rotate)
+        messages[tab].pop_front();
+        messages[tab].push_back(item);
+      }
+      
+      // visible changes, force a console refresh
+      if (messageMode == tab) {
+        invalidate();
+      }
+      
+      // mark the tab as unread (if viewing tabs)
+      const bool showTabs = (BZDB.evalInt("showtabs") > 0);
+      if (showTabs && (messageMode != tab) && (messageMode != MessageAll)) {
+        unRead[tab] = true;
+      }
     }
-    if (messageMode != MessageAll && messageMode != mode) {
-      if (!unRead[mode] && (int)BZDB.eval("showtabs") > 0)
-	invalidate();
-      unRead[mode] = true;
-    }
-  }
-
+  } 
+  
   // this stuff has no effect on win32 (there's no console)
   if (echoToConsole) {
     if (echoAnsi) {
@@ -784,10 +792,6 @@ void			ControlPanel::addMessage(const std::string& line,
     }
     fflush(stdout);
   }
-
-  // need to refresh console if new msg is visible on current tab
-  if (messageMode == MessageAll || messageMode == mode)
-    invalidate();
 }
 
 
