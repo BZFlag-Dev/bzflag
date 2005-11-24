@@ -4533,6 +4533,7 @@ int main(int argc, char **argv)
     // synchronize PlayerInfo
     tm = TimeKeeper::getCurrent();
     PlayerInfo::setCurrentTime(tm);
+    NetHandler::setCurrentTime(tm);
 
     // players see a countdown
     if (countdownDelay >= 0) {

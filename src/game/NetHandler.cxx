@@ -19,6 +19,8 @@
 const int udpBufSize = 128000;
 
 bool NetHandler::pendingUDP = false;
+TimeKeeper NetHandler::now = TimeKeeper::getCurrent();
+
 bool NetHandler::initHandlers(struct sockaddr_in addr) {
   // udp socket
   int n;
@@ -163,16 +165,13 @@ int NetHandler::udpReceive(char *buffer, struct sockaddr_in *uaddr,
 	  netPlayer[index]->uaddr.sin_port = uaddr->sin_port;
 	netPlayer[index]->udpin = true;
 	udpLinkRequest = true;
-	DEBUG2("Player %s [%d] inbound UDP up %s:%d actual %d\n",
-	       netPlayer[index]->info->getCallSign(), index,
+	DEBUG2("Inbound UDP up %s:%d actual %d\n",
 	       inet_ntoa(uaddr->sin_addr),
 	       ntohs(netPlayer[index]->uaddr.sin_port),
 	       ntohs(uaddr->sin_port));
       } else {
 	DEBUG2
-	  ("Player %s [%d] inbound UDP rejected %s:%d different IP \
-than %s:%d\n",
-	   netPlayer[index]->info->getCallSign(), index,
+	  ("Inbound UDP rejected %s:%d different IP than %s:%d\n",
 	   inet_ntoa(netPlayer[index]->uaddr.sin_addr),
 	   ntohs(netPlayer[index]->uaddr.sin_port),
 	   inet_ntoa(uaddr->sin_addr), ntohs(uaddr->sin_port));
@@ -192,8 +191,7 @@ than %s:%d\n",
     }
     DEBUG2("\n");
   } else {
-    DEBUG4("Player %s [%d] uread() %s:%d len %d from %s:%d on %i\n",
-	   netPlayer[id]->info->getCallSign(), id,
+    DEBUG4("uread() %s:%d len %d from %s:%d on %i\n",
 	   inet_ntoa(netPlayer[id]->uaddr.sin_addr),
 	   ntohs(netPlayer[id]->uaddr.sin_port), len + 4,
 	   inet_ntoa(uaddr->sin_addr), ntohs(uaddr->sin_port),
@@ -203,8 +201,6 @@ than %s:%d\n",
 #endif
     if (code == MsgUDPLinkEstablished) {
       netPlayer[id]->udpout = true;
-      DEBUG2("Player %s [%d] outbound UDP up\n",
-	     netPlayer[id]->info->getCallSign(), id);
     }
   }
   return id;
@@ -228,9 +224,9 @@ void NetHandler::checkDNS(fd_set *read_set, fd_set *write_set) {
 int NetHandler::udpSocket = -1;
 NetHandler *NetHandler::netPlayer[maxHandlers] = {NULL};
 
-NetHandler::NetHandler(PlayerInfo* _info, const struct sockaddr_in &clientAddr,
+NetHandler::NetHandler(const struct sockaddr_in &clientAddr,
 		       int _playerIndex, int _fd)
-  : info(_info), playerIndex(_playerIndex), fd(_fd), tcplen(0), closed(false),
+  : playerIndex(_playerIndex), fd(_fd), tcplen(0), closed(false),
     outmsgOffset(0), outmsgSize(0), outmsgCapacity(0), outmsg(NULL),
     udpOutputLen(0), udpin(false), udpout(false), toBeKicked(false) {
   // store address information for player
@@ -238,9 +234,12 @@ NetHandler::NetHandler(PlayerInfo* _info, const struct sockaddr_in &clientAddr,
   memcpy(&uaddr, &clientAddr, addr_len);
   peer = Address(uaddr);
 
-  // update player state
-  time = info->now;
 #ifdef NETWORK_STATS
+
+  messageExchanged = false;
+
+  // update player state
+  time = now;
 
   // initialize the inbound/outbound counters to zero
   msgBytes[0] = 0;
@@ -265,8 +264,7 @@ NetHandler::NetHandler(PlayerInfo* _info, const struct sockaddr_in &clientAddr,
 
 NetHandler::~NetHandler() {
 #ifdef NETWORK_STATS
-  if (info->isPlaying())
-    dumpMessageStats();
+  dumpMessageStats();
 #endif
   // shutdown TCP socket
   shutdown(fd, 2);
@@ -538,6 +536,9 @@ std::string NetHandler::reasonToKick() {
 
 #ifdef NETWORK_STATS
 void NetHandler::countMessage(uint16_t code, int len, int direction) {
+
+  messageExchanged = true;
+
   // add length of type and length
   len += 4;
 
@@ -562,11 +563,11 @@ void NetHandler::countMessage(uint16_t code, int len, int direction) {
     }
   }
 
-  if (info->now - perSecondTime[direction] < 1.0f) {
+  if (now - perSecondTime[direction] < 1.0f) {
     perSecondCurrentMsg[direction]++;
     perSecondCurrentBytes[direction] += len;
   } else {
-    perSecondTime[direction] = info->now;
+    perSecondTime[direction] = now;
     if (perSecondMaxMsg[direction] < perSecondCurrentMsg[direction])
       perSecondMaxMsg[direction] = perSecondCurrentMsg[direction];
     if (perSecondMaxBytes[direction] < perSecondCurrentBytes[direction])
@@ -580,7 +581,10 @@ void NetHandler::dumpMessageStats() {
   int total;
   int direction;
 
-  DEBUG1("Player connect time: %f\n", info->now - time);
+  if (!messageExchanged)
+    return;
+
+  DEBUG1("Player connect time: %f\n", now - time);
 
   for (direction = 0; direction <= 1; direction++) {
     total = 0;
@@ -645,7 +649,7 @@ bool NetHandler::isMyUdpAddrPort(struct sockaddr_in _uaddr) {
 }
 
 void NetHandler::getPlayerList(char *list) {
-  sprintf(list, "[%d]%-16s: %s%s%s%s%s%s", playerIndex, info->getCallSign(),
+  sprintf(list, "%s%s%s%s%s%s",
 	  peer.getDotNotation().c_str(),
 	  getHostname() ? " (" : "",
 	  getHostname() ? getHostname() : "",
@@ -703,6 +707,11 @@ bool NetHandler::reverseDNSDone()
   AresHandler::ResolutionStatus status = ares.getStatus();
   return (status == AresHandler::Failed)
     || (status == AresHandler::HbASucceeded);
+}
+
+void NetHandler::setCurrentTime(TimeKeeper tm)
+{
+  now = tm;
 }
 
 // Local Variables: ***

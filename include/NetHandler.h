@@ -52,12 +52,12 @@ struct MessageCount {
 class NetHandler {
 public:
   /** A default constructor.
-      It needs a pointer to the Player basic Info,
+      It needs:
       a socket address to address subsequent message at user,
       a player Index, a unique pointer to a player
       the file descriptor for the TCP connection with the user.
   */
-  NetHandler(PlayerInfo *_info, const struct sockaddr_in &_clientAddr,
+  NetHandler(const struct sockaddr_in &_clientAddr,
 	     int _playerIndex, int _fd);
   /** The default destructor
       free all internal resources, and close the tcp connection
@@ -136,6 +136,8 @@ public:
   /// Cannot be undone.
   void		closing();
 
+  static void setCurrentTime(TimeKeeper tm);
+
 private:
   int  send(const void *buffer, size_t length);
   void udpSend(const void *b, size_t l);
@@ -159,7 +161,6 @@ private:
   /// Hopefully int will be ok
   static int		udpSocket;
   static NetHandler*	netPlayer[maxHandlers];
-  PlayerInfo*		info;
   struct sockaddr_in	uaddr;
   int			playerIndex;
   /// socket file descriptor
@@ -206,7 +207,11 @@ private:
 
   // time accepted
   TimeKeeper time;
+  static TimeKeeper now;
+
 #ifdef NETWORK_STATS
+
+  bool     messageExchanged;
   // message stats bloat
   TimeKeeper perSecondTime[2];
   uint32_t perSecondCurrentBytes[2];

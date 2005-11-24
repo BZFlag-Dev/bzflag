@@ -1545,11 +1545,14 @@ bool PlayerListCommand::operator() (const char	 *,
 
   GameKeeper::Player *otherData;
   char reply[MessageLen] = {0};
+  char hostInfo[MessageLen] = {0};
 
   for (int i = 0; i < curMaxPlayers; i++) {
     otherData = GameKeeper::Player::getPlayerByIndex(i);
     if (otherData && otherData->player.isPlaying()) {
-      otherData->netHandler->getPlayerList(reply);
+      otherData->netHandler->getPlayerList(hostInfo);
+      sprintf(reply, "[%d]%-16s: %s",
+	      i, otherData->player.getCallSign(), hostInfo);
       sendMessage(ServerPlayer, t, reply);
     }
   }
