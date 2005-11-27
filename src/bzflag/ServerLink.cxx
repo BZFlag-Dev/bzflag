@@ -559,18 +559,18 @@ void			ServerLink::sendEnter(PlayerType type,
 						const char* token)
 {
   if (state != Okay) return;
-  char msg[PlayerIdPLen + 4 + CallSignLen + EmailLen + TokenLen + VersionLen];
-  ::memset(msg, 0, sizeof(msg));
+  char msg[PlayerIdPLen + 4 + CallSignLen + EmailLen + TokenLen + VersionLen] = {0};
   void* buf = msg;
+  
   buf = nboPackUShort(buf, uint16_t(type));
   buf = nboPackUShort(buf, uint16_t(team));
-  ::memcpy(buf, name, ::strlen(name));
+  ::strncpy((char*)buf, name, CallSignLen - 1);
   buf = (void*)((char*)buf + CallSignLen);
-  ::memcpy(buf, email, ::strlen(email));
+  ::strncpy((char*)buf, email, EmailLen - 1);
   buf = (void*)((char*)buf + EmailLen);
-  ::memcpy(buf, token, ::strlen(token));
+  ::strncpy((char*)buf, token, TokenLen - 1);
   buf = (void*)((char*)buf + TokenLen);
-  ::memcpy(buf, getAppVersion(), ::strlen(getAppVersion()) + 1);
+  ::strncpy((char*)buf, getAppVersion(), VersionLen - 1);
   buf = (void*)((char*)buf + VersionLen);
   send(MsgEnter, sizeof(msg), msg);
 }
