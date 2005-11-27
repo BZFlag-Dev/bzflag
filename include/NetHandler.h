@@ -19,6 +19,7 @@
 /* system headers */
 #include <string>
 #include <map>
+#include <list>
 
 /* common interface headers */
 #include "PlayerInfo.h"
@@ -64,13 +65,12 @@ public:
   */
   ~NetHandler();
 
-  /** Class-Wide initialization and destruction
+  /** Class-Wide initialization
       Should be called before any other operation on any clas instance
       InitHandlers needs the addr structure filled to point to the local port
       needed for udp communications
   */
   static bool initHandlers(struct sockaddr_in addr);
-  static void destroyHandlers();
 
   /// General function to support the select statement
   static void setFd(fd_set *read_set, fd_set *write_set, int &maxFile);
@@ -92,11 +92,9 @@ public:
       buffer is the received message
 
       uaddr is the identifier of the remote address
-
-      udpLinkRequest report if the received message is a valid udpLinkRequest
   */
   static int  udpReceive(char *buffer, struct sockaddr_in *uaddr,
-			 bool &udpLinkRequest);
+			 NetHandler **netHandler);
 
   /**
      tcpReceive try to get a message from the tcp connection
@@ -126,7 +124,7 @@ public:
   const char*	getTargetIP();
   int		sizeOfIP();
   void*		packAdminInfo(void *buf);
-  static int	whoIsAtIP(const std::string& IP);
+  static NetHandler *whoIsAtIP(const std::string& IP);
   in_addr	getIPAddress();
   const char*	getHostname();
   bool	  reverseDNSDone();
@@ -136,7 +134,11 @@ public:
   /// Cannot be undone.
   void		closing();
 
+  void          setUDPin(struct sockaddr_in *uaddr);
+
   static void setCurrentTime(TimeKeeper tm);
+
+  bool isMyUdpAddrPort(struct sockaddr_in uaddr, bool checkPort);
 
 private:
   int  send(const void *buffer, size_t length);
@@ -149,7 +151,6 @@ private:
   ///       -2 if tcp buffer is going to be too much big
   int  bufferedSend(const void *buffer, size_t length);
 
-  bool isMyUdpAddrPort(struct sockaddr_in uaddr);
   RxStatus    receive(size_t length);
 #ifdef NETWORK_STATS
   void	countMessage(uint16_t code, int len, int direction);
@@ -160,7 +161,7 @@ private:
   /// On win32, a socket is typedef UINT_PTR SOCKET;
   /// Hopefully int will be ok
   static int		udpSocket;
-  static NetHandler*	netPlayer[maxHandlers];
+  static std::list<NetHandler*> netConnections;
   struct sockaddr_in	uaddr;
   int			playerIndex;
   /// socket file descriptor

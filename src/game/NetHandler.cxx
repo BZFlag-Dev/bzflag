@@ -20,6 +20,7 @@ const int udpBufSize = 128000;
 
 bool NetHandler::pendingUDP = false;
 TimeKeeper NetHandler::now = TimeKeeper::getCurrent();
+std::list<NetHandler*> NetHandler::netConnections;
 
 bool NetHandler::initHandlers(struct sockaddr_in addr) {
   // udp socket
@@ -56,17 +57,11 @@ bool NetHandler::initHandlers(struct sockaddr_in addr) {
   return true;
 }
 
-void NetHandler::destroyHandlers() {
-  for (int i = 0; i < maxHandlers; i++) {
-    if (netPlayer[i])
-      delete netPlayer[i];
-  }
-}
-
 void NetHandler::setFd(fd_set *read_set, fd_set *write_set, int &maxFile) {
-  for (int i = 0; i < maxHandlers; i++) {
-    NetHandler *player = netPlayer[i];
-    if (player && !player->closed) {
+  std::list<NetHandler*>::const_iterator it;
+  for (it = netConnections.begin(); it != netConnections.end(); it++) {
+    NetHandler *player = *it;
+    if (!player->closed) {
 #if !defined(USE_THREADS) || !defined(HAVE_SDL)
       FD_SET((unsigned int)player->fd, read_set);
 #endif
@@ -84,11 +79,9 @@ void NetHandler::setFd(fd_set *read_set, fd_set *write_set, int &maxFile) {
     maxFile = udpSocket;
   }
 
-  for (int i = 0; i < maxHandlers; i++) {
-    NetHandler *player = netPlayer[i];
-    if (player) {
-      player->ares.setFd(read_set, write_set, maxFile);
-    }
+  for (it = netConnections.begin(); it != netConnections.end(); it++) {
+    NetHandler *player = *it;
+    player->ares.setFd(read_set, write_set, maxFile);
   }
 }
 
@@ -103,11 +96,13 @@ int  NetHandler::udpRead = 0;
 struct sockaddr_in NetHandler::lastUDPRxaddr;
 
 int NetHandler::udpReceive(char *buffer, struct sockaddr_in *uaddr,
-			   bool &udpLinkRequest) {
+			   NetHandler **netHandler) {
   AddrLen recvlen = sizeof(*uaddr);
-  int id;
   uint16_t len;
   uint16_t code;
+
+  *netHandler = NULL;
+
   if (udpLen == udpRead) {
     udpRead = 0;
     udpLen  = recvfrom(udpSocket, udpmsg, MaxPacketLen, 0,
@@ -115,6 +110,11 @@ int NetHandler::udpReceive(char *buffer, struct sockaddr_in *uaddr,
     // Error receiving data (or no data)
     if (udpLen < 0)
       return -1;
+    DEBUG4("uread() len %d from %s:%d on %i\n",
+	   udpLen,
+	   inet_ntoa(lastUDPRxaddr.sin_addr),
+	   ntohs(lastUDPRxaddr.sin_port),
+	   udpSocket);
   }
   if ((udpLen - udpRead) < 4) {
     // No space for header :-( 
@@ -141,69 +141,40 @@ int NetHandler::udpReceive(char *buffer, struct sockaddr_in *uaddr,
 
   if (len == 2 && code == MsgPingCodeRequest)
     // Ping code request
-    return -2;
+    return 0;
 
-  id = -1;
-  int pi;
-  udpLinkRequest = false;
-  for (pi = 0; pi < maxHandlers; pi++)
-    if (netPlayer[pi] && !netPlayer[pi]->closed
-	&& netPlayer[pi]->isMyUdpAddrPort(*uaddr)) {
-      id = pi;
+  std::list<NetHandler*>::const_iterator it;
+
+  for (it = netConnections.begin(); it != netConnections.end(); it++)
+    if (!(*it)->closed && (*it)->isMyUdpAddrPort(*uaddr, true)) {
+      *netHandler = *it;
       break;
     }
-  if (id == -1 && (len == 1) && (code == MsgUDPLinkRequest)) {
-    // It is a UDP lInk Request ... try to match it
-    uint8_t index;
-    buf = nboUnpackUByte(buf, index);
-    if ((index < maxHandlers) && netPlayer[index] && !netPlayer[index]->closed
-	&& !netPlayer[index]->udpin)
-      if (!memcmp(&netPlayer[index]->uaddr.sin_addr, &uaddr->sin_addr,
-		  sizeof(uaddr->sin_addr))) {
-	id = index;
-	if (uaddr->sin_port)
-	  netPlayer[index]->uaddr.sin_port = uaddr->sin_port;
-	netPlayer[index]->udpin = true;
-	udpLinkRequest = true;
-	DEBUG2("Inbound UDP up %s:%d actual %d\n",
-	       inet_ntoa(uaddr->sin_addr),
-	       ntohs(netPlayer[index]->uaddr.sin_port),
-	       ntohs(uaddr->sin_port));
-      } else {
-	DEBUG2
-	  ("Inbound UDP rejected %s:%d different IP than %s:%d\n",
-	   inet_ntoa(netPlayer[index]->uaddr.sin_addr),
-	   ntohs(netPlayer[index]->uaddr.sin_port),
-	   inet_ntoa(uaddr->sin_addr), ntohs(uaddr->sin_port));
-      }
-  }
 
-  if (id == -1) {
+  if (!*netHandler) {
+    if ((len == 1) && (code == MsgUDPLinkRequest)) {
+      return 0;
+    } 
     // no match, discard packet
     DEBUG2("uread() discard packet! %s:%d choices p(l) h:p",
 	   inet_ntoa(uaddr->sin_addr), ntohs(uaddr->sin_port));
-    for (pi = 0; pi < maxHandlers; pi++) {
-      if (netPlayer[pi] && !netPlayer[pi]->closed)
-	DEBUG3(" %d(%d-%d) %s:%d", pi, netPlayer[pi]->udpin,
-	       netPlayer[pi]->udpout,
-	       inet_ntoa(netPlayer[pi]->uaddr.sin_addr),
-	       ntohs(netPlayer[pi]->uaddr.sin_port));
+    for (it = netConnections.begin(); it != netConnections.end(); it++)
+      if (!(*it)->closed) {
+	DEBUG3("(%d-%d) %s:%d", (*it)->udpin,
+	       (*it)->udpout,
+	       inet_ntoa((*it)->uaddr.sin_addr),
+	       ntohs((*it)->uaddr.sin_port));
     }
     DEBUG2("\n");
-  } else {
-    DEBUG4("uread() %s:%d len %d from %s:%d on %i\n",
-	   inet_ntoa(netPlayer[id]->uaddr.sin_addr),
-	   ntohs(netPlayer[id]->uaddr.sin_port), len + 4,
-	   inet_ntoa(uaddr->sin_addr), ntohs(uaddr->sin_port),
-	   udpSocket);
-#ifdef NETWORK_STATS
-    netPlayer[id]->countMessage(code, len, 0);
-#endif
-    if (code == MsgUDPLinkEstablished) {
-      netPlayer[id]->udpout = true;
-    }
+    return -1;
   }
-  return id;
+#ifdef NETWORK_STATS
+  (*netHandler)->countMessage(code, len, 0);
+#endif
+  if (code == MsgUDPLinkEstablished) {
+    (*netHandler)->udpout = true;
+  }
+  return 0;
 }
 
 bool NetHandler::isUdpFdSet(fd_set *read_set) {
@@ -214,15 +185,12 @@ bool NetHandler::isUdpFdSet(fd_set *read_set) {
 }
 
 void NetHandler::checkDNS(fd_set *read_set, fd_set *write_set) {
-  for (int i = 0; i < maxHandlers; i++) {
-    NetHandler *player = netPlayer[i];
-    if (player)
-      player->ares.process(read_set, write_set);
-  }
+  std::list<NetHandler*>::const_iterator it;
+  for (it = netConnections.begin(); it != netConnections.end(); it++)
+    (*it)->ares.process(read_set, write_set);
 }
 
 int NetHandler::udpSocket = -1;
-NetHandler *NetHandler::netPlayer[maxHandlers] = {NULL};
 
 NetHandler::NetHandler(const struct sockaddr_in &clientAddr,
 		       int _playerIndex, int _fd)
@@ -257,8 +225,7 @@ NetHandler::NetHandler(const struct sockaddr_in &clientAddr,
   perSecondMaxBytes[1] = 0;
 
 #endif
-  if (!netPlayer[playerIndex])
-    netPlayer[playerIndex] = this;
+  netConnections.push_back(this);
   ares.queryHostname((struct sockaddr *) &clientAddr);
 }
 
@@ -272,8 +239,7 @@ NetHandler::~NetHandler() {
 
   delete[] outmsg;
 
-  if (netPlayer[playerIndex] == this)
-    netPlayer[playerIndex] = NULL;
+  netConnections.remove(this);
 }
 
 bool NetHandler::isFdSet(fd_set *set) {
@@ -518,10 +484,10 @@ void NetHandler::flushUDP()
 }
 
 void NetHandler::flushAllUDP() {
-  for (int i = 0; i < maxHandlers; i++) {
-    if (netPlayer[i] && !netPlayer[i]->closed)
-      netPlayer[i]->flushUDP();
-  }
+  std::list<NetHandler*>::const_iterator it;
+  for (it = netConnections.begin(); it != netConnections.end(); it++)
+    if (!(*it)->closed)
+      (*it)->flushUDP();
   pendingUDP = false;
 }
 
@@ -643,9 +609,18 @@ void NetHandler::udpSend(const void *b, size_t l) {
     pendingUDP = true;
 }
 
-bool NetHandler::isMyUdpAddrPort(struct sockaddr_in _uaddr) {
-  return udpin && (uaddr.sin_port == _uaddr.sin_port) &&
-    (memcmp(&uaddr.sin_addr, &_uaddr.sin_addr, sizeof(uaddr.sin_addr)) == 0);
+bool NetHandler::isMyUdpAddrPort(struct sockaddr_in _uaddr,
+				 bool checkPort) {
+  if (closed)
+    return false;
+
+  if (memcmp(&uaddr.sin_addr, &_uaddr.sin_addr, sizeof(uaddr.sin_addr)))
+    return false;
+
+  if (checkPort && (uaddr.sin_port != _uaddr.sin_port))
+    return false;
+
+  return checkPort != udpin;
 }
 
 void NetHandler::getPlayerList(char *list) {
@@ -678,20 +653,19 @@ void *NetHandler::packAdminInfo(void *buf) {
   return buf;
 }
 
-int NetHandler::whoIsAtIP(const std::string& IP) {
-  int position = -1;
-  NetHandler *player;
-  for (int v = 0; v < maxHandlers; v++) {
-    player = netPlayer[v];
+NetHandler *NetHandler::whoIsAtIP(const std::string& IP) {
+  NetHandler *player = NULL;
+  std::list<NetHandler*>::const_iterator it;
+
+  for (it = netConnections.begin(); it != netConnections.end(); it++)
     // FIXME: this is broken for IPv6
     // there can be multiple ascii formats for the same address
-    if (player && !player->closed
-	&& !strcmp(player->peer.getDotNotation().c_str(), IP.c_str())) {
-      position = v;
+    if ((*it)->closed
+	&& !strcmp((*it)->peer.getDotNotation().c_str(), IP.c_str())) {
+      player = *it;
       break;
     }
-  }
-  return position;
+  return player;
 }
 
 in_addr NetHandler::getIPAddress() {
@@ -712,6 +686,13 @@ bool NetHandler::reverseDNSDone()
 void NetHandler::setCurrentTime(TimeKeeper tm)
 {
   now = tm;
+}
+
+void NetHandler::setUDPin(struct sockaddr_in *_uaddr)
+{
+  if (_uaddr->sin_port)
+    uaddr.sin_port = _uaddr->sin_port;
+  udpin = true;
 }
 
 // Local Variables: ***

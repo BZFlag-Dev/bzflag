@@ -694,9 +694,6 @@ static void serverStop()
   for (int i = 0; i < curMaxPlayers; i++)
     directMessage(i, MsgSuperKill, 0, getDirectMessageBuffer());
 
-  // close connections
-  NetHandler::destroyHandlers();
-
   // clean up Kerberos
   Authentication::cleanUp();
 }
@@ -3066,17 +3063,27 @@ bool checkSpam(char* message, GameKeeper::Player* playerData, int t)
 }
 
 
-static void handleCommand(int t, const void *rawbuf, bool udp)
+static void handleCommand(const void *rawbuf, bool udp, NetHandler* handler)
 {
   if (!rawbuf) {
     std::cerr << "WARNING: handleCommand got a null rawbuf?!" << std::endl;
     return;
   }
 
-  GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(t);
-  if (!playerData)
+  int t;
+  GameKeeper::Player *playerData;
+
+  for (int i = 0; i < curMaxPlayers; i++) {
+    playerData = GameKeeper::Player::getPlayerByIndex(i);
+    if (!playerData)
+      continue;
+    if (playerData->netHandler == handler) {
+      t = i;
+      break;
+    }
+  }
+  if (t >= curMaxPlayers)
     return;
-  NetHandler *handler = playerData->netHandler;
 
   uint16_t len, code;
   void *buf = (char *)rawbuf;
@@ -3829,7 +3836,7 @@ static void handleTcp(NetHandler &netPlayer, int i, const RxStatus e)
   }
 
   // handle the command
-  handleCommand(t, netPlayer.getTcpBuffer(), false);
+  handleCommand(netPlayer.getTcpBuffer(), false, &netPlayer);
 }
 
 static void terminateServer(int /*sig*/)
@@ -4815,8 +4822,15 @@ int main(int argc, char **argv)
 		// show the delinquent no mercy; make sure he is kicked even if he changed
 		// his callsign by finding a corresponding IP and matching it to the saved one
 		if (!foundPlayer) {
-		  v = NetHandler::whoIsAtIP(realIP);
-		  foundPlayer = (v >= 0);
+		  NetHandler *player = NetHandler::whoIsAtIP(realIP);
+		  for (v = 0; v < curMaxPlayers; v++) {
+		    GameKeeper::Player *otherData
+		      = GameKeeper::Player::getPlayerByIndex(v);
+		    if (otherData && (otherData->netHandler == player)) {
+		      foundPlayer = true;
+		      break;
+		    }
+		  }
 		}
 		if (foundPlayer) {
 		  // notify the player
@@ -4972,13 +4986,22 @@ int main(int argc, char **argv)
 	while (true) {
 	  struct sockaddr_in uaddr;
 	  unsigned char ubuf[MaxPacketLen];
-	  bool     udpLinkRequest;
+
+	  NetHandler* netHandler;
+
 	  // interface to the UDP Receive routines
-	  int id = NetHandler::udpReceive((char *) ubuf, &uaddr,
-					  udpLinkRequest);
-	  if (id == -1) {
+	  int id = NetHandler::udpReceive((char *) ubuf, &uaddr, &netHandler);
+	  if (id == -1)
 	    break;
-	  } else if (id == -2) {
+
+	  uint16_t len, code;
+	  void *buf = (char *)ubuf;
+	  buf = nboUnpackUShort(buf, len);
+	  buf = nboUnpackUShort(buf, code);
+
+	  if (code == MsgPingCodeRequest) {
+	    if (len != 2)
+	      continue;
 	    // if I'm ignoring pings
 	    // then ignore the ping.
 	    if (handlePings) {
@@ -4986,19 +5009,38 @@ int main(int argc, char **argv)
 	      pingReply.write(NetHandler::getUdpSocket(), &uaddr);
 	    }
 	    continue;
-	  } else {
-	    if (udpLinkRequest)
-	      // send client the message that we are ready for him
-	      sendUDPupdate(id);
+	  }
+	  if (!netHandler && (len == 1) && (code == MsgUDPLinkRequest)) {
+	    // It is a UDP Link Request ... try to match it
+	    uint8_t index;
+	    buf = nboUnpackUByte(buf, index);
+	    GameKeeper::Player *playerData
+	      = GameKeeper::Player::getPlayerByIndex(index);
+	    if (playerData) {
+	      netHandler = playerData->netHandler;
+	      if (netHandler->isMyUdpAddrPort(uaddr, false)) {
+		netHandler->setUDPin(&uaddr);
 
-	    // handle the command for UDP
-	    handleCommand(id, ubuf, true);
+		// send client the message that we are ready for him
+		sendUDPupdate(index);
 
-	    // don't spend more than 250ms receiving udp
-	    if (TimeKeeper::getCurrent() - receiveTime > 0.25f) {
-	      DEBUG2("Too much UDP traffic, will hope to catch up later\n");
-	      break;
+		DEBUG2("Inbound UDP up %s:%d\n",
+		       inet_ntoa(uaddr.sin_addr), ntohs(uaddr.sin_port));
+	      } else {
+		DEBUG2
+		  ("Inbound UDP rejected %s:%d different IP than original\n",
+		   inet_ntoa(uaddr.sin_addr), ntohs(uaddr.sin_port));
+	      }
+	      continue;
 	    }
+	  }
+	  // handle the command for UDP
+	  handleCommand(ubuf, true, netHandler);
+
+	  // don't spend more than 250ms receiving udp
+	  if (TimeKeeper::getCurrent() - receiveTime > 0.25f) {
+	    DEBUG2("Too much UDP traffic, will hope to catch up later\n");
+	    break;
 	  }
 	}
       }
