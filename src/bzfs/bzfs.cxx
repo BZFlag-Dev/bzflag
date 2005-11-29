@@ -3433,7 +3433,7 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
 
       // send any events that want to watch the chat
       // everyone
-      if ((strlen(message) < 2) || not((message[0] == '/') and (message[1] != '/')))
+      if ((strlen(message) < 2) || !((message[0] == '/') && (message[1] != '/')))
 	worldEventManager.callEvents(bz_eChatMessageEvent,&chatData);
 
       // send the actual Message after all the callbacks have done there magic to it.
