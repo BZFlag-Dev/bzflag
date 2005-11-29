@@ -107,7 +107,7 @@ std::string AutoCompleter::complete(const std::string& str, std::string* matches
 
   // get a list of partial matches
   if (matches != NULL) {
-    matches->clear();
+    *matches = "";
     if (first != last) {
       std::vector<WordRecord>::iterator it = first;
       for (it = first; it != (last + 1); it++) {
