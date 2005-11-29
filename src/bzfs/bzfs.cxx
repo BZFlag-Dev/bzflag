@@ -1754,7 +1754,7 @@ static void addPlayer(int playerIndex, GameKeeper::Player *playerData)
   joinEventData.callsign = playerData->player.getCallSign();
   joinEventData.time = TimeKeeper::getCurrent().getSeconds();
 
-  if (joinEventData.team != eNoTeam)	// don't give events if we don't have a real player slot
+  if ((joinEventData.team != eNoTeam) && (joinEventData.callsign.size() != 0))	// don't give events if we don't have a real player slot
     worldEventManager.callEvents(bz_ePlayerJoinEvent,&joinEventData);
   if (spawnSoon)
     playerAlive(playerIndex);
@@ -1992,7 +1992,7 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
   if (reason)
     partEventData.reason = reason;
 
-  if (partEventData.team != eNoTeam)	// don't give events if we don't have a real player slot
+  if ((partEventData.team != eNoTeam) && (partEventData.callsign.size() != 0))	// don't give events if we don't have a real player slot
     worldEventManager.callEvents(bz_ePlayerPartEvent,&partEventData);
 
   if (notify) {
