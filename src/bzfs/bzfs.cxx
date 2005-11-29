@@ -1196,7 +1196,7 @@ static void rejectPlayer(int playerIndex, uint16_t code, const char *reason)
   directMessage(playerIndex, MsgReject, sizeof (uint16_t) + MessageLen, bufStart);
   // Fixing security hole, because a client can ignore the reject message
   // then he can avoid a ban, hostban...
-  removePlayer(playerIndex, "/rejected");
+  removePlayer(playerIndex, "/rejected", true);
   return;
 }
 
@@ -1442,7 +1442,7 @@ static void addPlayer(int playerIndex, GameKeeper::Player *playerData)
 		    "Another client has demonstrated ownership of your "
 		    "callsign with the correct password.  You have been "
 		    "ghosted.");
-	removePlayer(i, "Ghost");
+	removePlayer(i, "Ghost", true);
 	break;
       }
     }
@@ -1564,8 +1564,6 @@ static void addPlayer(int playerIndex, GameKeeper::Player *playerData)
 	      playerData->player.getCallSign(), playerIndex, waitTime);
       snprintf (buffer, MessageLen, "You are unable to begin playing for %.1f seconds.", waitTime);
       sendMessage(ServerPlayer, playerIndex, buffer);
-      //      removePlayer(playerIndex, "rejoining too quickly");
-      //      return ;
     }
   }
 
@@ -2297,7 +2295,7 @@ static void playerAlive(int playerIndex)
   if (!playerData->accessInfo.isAllowedToEnter()) {
     sendMessage(ServerPlayer, playerIndex, "This callsign is registered.  You must identify yourself");
     sendMessage(ServerPlayer, playerIndex, "before playing or use a different callsign.");
-    removePlayer(playerIndex, "unidentified");
+    removePlayer(playerIndex, "unidentified", true);
     return;
   }
 
@@ -2316,7 +2314,7 @@ static void playerAlive(int playerIndex)
   if (playerData->player.isBot()
       && BZDB.isTrue(StateDatabase::BZDB_DISABLEBOTS)) {
     sendMessage(ServerPlayer, playerIndex, "I'm sorry, we do not allow bots on this server.");
-    removePlayer(playerIndex, "ComputerPlayer");
+    removePlayer(playerIndex, "ComputerPlayer", true);
     return;
   }
 
@@ -2326,8 +2324,8 @@ static void playerAlive(int playerIndex)
   if(!spawnAllowData.allow)
   {
     // client won't send another enter so kick em =(
-	removePlayer(playerIndex, "Not allowed to spawn");
-	return;
+    removePlayer(playerIndex, "Not allowed to spawn", true);
+    return;
   }
 
   // player is coming alive.
@@ -2464,7 +2462,7 @@ void playerKilled(int victimIndex, int killerIndex, int reason,
       sendMessage(ServerPlayer, killerIndex, message);
       snprintf(message, MessageLen, "Player %s removed: team killing", killerData->player.getCallSign());
       sendMessage(ServerPlayer, AdminPlayers, message);
-      removePlayer(killerIndex, "teamkilling");
+      removePlayer(killerIndex, "teamkilling", true);
     }
   }
 
@@ -2756,11 +2754,6 @@ static void captureFlag(int playerIndex, TeamColor teamCaptured)
 	     Team::getName((TeamColor)teamIndex),
 	     playerData->lastState.pos[0], playerData->lastState.pos[1],
 	     playerData->lastState.pos[2]);
-      //char message[MessageLen];
-      //strcpy(message, "Autokick: Tried to capture opponent flag without landing on your base");
-      //sendMessage(ServerPlayer, playerIndex, message);
-      //removePlayer(playerIndex, "capturecheat"); //FIXME: kicks honest players at times
-      //return;
     }
   }
 
@@ -2960,7 +2953,7 @@ static bool invalidPlayerAction(PlayerInfo &p, int t, const char *action) {
       snprintf(buffer, MessageLen, "Autokick: Looks like you tried to %s while paused.", action);
       sendMessage(ServerPlayer, t, buffer);
       snprintf(buffer, MessageLen, "Invalid attempt to %s while paused", action);
-      removePlayer(t, buffer);
+      removePlayer(t, buffer, true);
     } else {
       DEBUG1("Player %s tried to %s as an observer\n", p.getCallSign(), action);
     }
@@ -2980,7 +2973,7 @@ static void lagKick(int playerIndex)
   GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(playerIndex);
   snprintf(message, MessageLen,"Lagkick: %s", playerData->player.getCallSign());
   sendMessage(ServerPlayer, AdminPlayers, message);
-  removePlayer(playerIndex, "lag");
+  removePlayer(playerIndex, "lag", true);
 }
 
 
@@ -3051,7 +3044,7 @@ bool checkSpam(char* message, GameKeeper::Player* playerData, int t)
 	DEBUG2("Kicking player %s [%d] for spamming too much: "
 	       "2 messages sent within %fs after %d warnings",
 	       player.getCallSign(), t, dt, player.getSpamWarns());
-	removePlayer(t, "spam");
+	removePlayer(t, "spam", true);
 	return true;
       }
     }
@@ -3446,7 +3439,7 @@ static void handleCommand(const void *rawbuf, bool udp, NetHandler* handler)
       if (from != t) {
 	DEBUG1("Kicking Player %s [%d] Player trying to transfer flag\n",
 	       playerData->player.getCallSign(), t);
-	removePlayer(t, "Player shot mismatch");
+	removePlayer(t, "Player shot mismatch", true);
 	break;
       }
       buf = nboUnpackUByte(buf, to);
@@ -3595,7 +3588,7 @@ static void handleCommand(const void *rawbuf, bool udp, NetHandler* handler)
 	      DEBUG1("Kicking Player %s [%d] jumped too high [max: %f height: %f]\n",
 		     playerData->player.getCallSign(), t, maxHeight, state.pos[2]);
 	      sendMessage(ServerPlayer, t, "Autokick: Player location was too high.");
-	      removePlayer(t, "too high");
+	      removePlayer(t, "too high", true);
 	      break;
 	    }
 	  }
@@ -3627,7 +3620,7 @@ static void handleCommand(const void *rawbuf, bool udp, NetHandler* handler)
 		 playerData->player.getCallSign(), t,
 		 state.pos[0], state.pos[1], state.pos[2]);
 	  sendMessage(ServerPlayer, t, "Autokick: Player location was outside the playing area.");
-	  removePlayer(t, "Out of map bounds");
+	  removePlayer(t, "Out of map bounds", true);
 	}
 
 	// Speed problems occur around flag drops, so don't check for
@@ -3697,7 +3690,7 @@ static void handleCommand(const void *rawbuf, bool udp, NetHandler* handler)
                          playerData->player.getCallSign(), t,
                          sqrt(curPlanarSpeedSqr), sqrt(maxPlanarSpeedSqr));
                   sendMessage(ServerPlayer, t, "Autokick: Player tank is moving too fast.");
-                  removePlayer(t, "too fast");
+                  removePlayer(t, "too fast", true);
                 }
                 break;
               }
@@ -3820,7 +3813,7 @@ static void handleTcp(NetHandler &netPlayer, int i, const RxStatus e)
 
       sprintf(message,"Try another server, Bye!");
       sendMessage(ServerPlayer, i, message);
-      removePlayer(i, "no UDP");
+      removePlayer(i, "no UDP", true);
       return;
     }
   }
@@ -3912,7 +3905,7 @@ static void doStuffOnPlayer(GameKeeper::Player &playerData)
       char message[MessageLen]
 	= "You were kicked because you were idle too long";
       sendMessage(ServerPlayer, p,  message);
-      removePlayer(p, "idling");
+      removePlayer(p, "idling", true);
       return;
     }
   }
@@ -4827,7 +4820,7 @@ int main(int argc, char **argv)
 		  snprintf(message, MessageLen, "You have been %s due to sufficient votes to have you removed", action == "ban" ? "temporarily banned" : "kicked");
 		  sendMessage(ServerPlayer, v, message);
 		  snprintf(message,  MessageLen, "/poll %s", action.c_str());
-		  removePlayer(v, message);
+		  removePlayer(v, message, true);
 		}
 	      } else if (action == "set") {
 		std::vector<std::string> args = TextUtils::tokenize(target.c_str(), " ", 2, true);
