@@ -463,6 +463,14 @@ bool GameKeeper::Player::updateShot(int id, int salt)
   return true;
 }
 
+GameKeeper::Player *GameKeeper::Player::getFirstPlayer(NetHandler *_netHandler)
+{
+  for (int i = 0; i < PlayerSlot; i++)
+    if (playerList[i] && playerList[i]->netHandler == _netHandler)
+      return playerList[i];
+  return NULL;
+}
+
 // Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***

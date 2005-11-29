@@ -3070,21 +3070,6 @@ static void handleCommand(const void *rawbuf, bool udp, NetHandler* handler)
     return;
   }
 
-  int t;
-  GameKeeper::Player *playerData;
-
-  for (int i = 0; i < curMaxPlayers; i++) {
-    playerData = GameKeeper::Player::getPlayerByIndex(i);
-    if (!playerData)
-      continue;
-    if (playerData->netHandler == handler) {
-      t = i;
-      break;
-    }
-  }
-  if (t >= curMaxPlayers)
-    return;
-
   uint16_t len, code;
   void *buf = (char *)rawbuf;
   buf = nboUnpackUShort(buf, len);
@@ -3102,12 +3087,17 @@ static void handleCommand(const void *rawbuf, bool udp, NetHandler* handler)
     case MsgUDPLinkEstablished:
       break;
     default:
-      DEBUG1("Player [%d] sent packet type (%x) via udp, "
-	     "possible attack from %s\n",
-	     t, code, handler->getTargetIP());
+      DEBUG1("Received packet type (%x) via udp, possible attack from %s\n",
+	     code, handler->getTargetIP());
       return;
     }
   }
+
+  GameKeeper::Player *playerData = GameKeeper::Player::getFirstPlayer(handler);
+  if (!playerData)
+    return;
+
+  int t = playerData->getIndex();
 
   switch (code) {
     // player joining

@@ -72,6 +72,7 @@ public:
     int	    getIndex();
     static int     getFreeIndex(int min, int max);
     static Player *getPlayerByIndex(int _playerIndex);
+    static Player *getFirstPlayer(NetHandler *_netHandler);
     static int     count();
     static void    updateLatency(float &waitTime);
     static void    dumpScore();
