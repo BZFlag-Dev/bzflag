@@ -29,7 +29,7 @@
 
   ;General
   Name "BZFlag ${VER_MAJOR}${VER_MINOR}"
-  OutFile "..\..\..\dist\bzflag${VER_MAJOR}${VER_MINOR}.exe"
+  OutFile "..\..\..\dist\bzflag-${VER_MAJOR}${VER_MINOR}.exe"
 
   ;Default installation folder
   InstallDir "$PROGRAMFILES\BZFlag${VER_MAJOR}${VER_MINOR}"
@@ -180,8 +180,8 @@ Section "BZAdmin" BZAdmin
   File ..\..\..\src\bzadmin\bzadmin.exe
 
   ; Add some DLL files
-  SetOutPath $INSTDIR
-  File ..\..\..\curses.dll
+  ;SetOutPath $INSTDIR
+  ;File ..\..\..\curses.dll
 
   ; Add to the doc dir
   SetOutPath $INSTDIR\doc
