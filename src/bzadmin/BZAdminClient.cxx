@@ -293,7 +293,7 @@ BZAdminClient::ServerCode BZAdminClient::checkMessage() {
 	players[p].ip = a.getDotNotation();
 	Team temp;
 	if (messageMask[MsgAdminInfo]){
-	  std::string joinMsg = std::string("*** \'") + callsign + "\' joined the game as " +
+	  std::string joinMsg = std::string("*** \'") + players[p].name + "\' joined the game as " +
 	    temp.getName(players[p].team) + " from " + players[p].ip + ".";
 	  lastMessage.first = joinMsg;
 	}
