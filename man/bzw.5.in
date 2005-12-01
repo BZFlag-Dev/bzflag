@@ -787,7 +787,7 @@ Adds a route to teleport a tank between two teleporters.
 .B The Base object
 .br 
 Creates a team base where the corresponding team's flag is stored.
-The oncap option will fire a world weapon of the specified type when the team flag for this based is captured.
+The oncap option will fire a world weapon of the specified type when the team flag for this base is captured.
 
 \fBbase\fR
 .br 
@@ -809,14 +809,14 @@ The oncap option will fire a world weapon of the specified type when the team fl
 
 .B The Weapon object
 .br 
-Creates a world weapon, or a weapon fired automatically by the world. The weapon can ether be timed or be event driven.
+Creates a world weapon, or a weapon fired automatically by the world. The weapon can either be timed or be event driven.
 Timed weapons should use the initdelay and delay fields.
 Event driven weapons need to use the trigger option to define what the trigger event is.
 Valid trigger events are;
 OnCap, for flag capture events.
 OnSpawn, for player spawn events.
 OnDie, for player death events.
-If the weapon is to be triggered only for a specific team then the eventteam option should be used with a team number ( 1 to 4 ).
+If the weapon is to be triggered only for a specific team then the eventteam option should be used with a team number (1 to 4).
 A eventteam value of -1 will trigger this weapon for any team. -1 is the default eventteam value.
 
 \fBweapon\fR
@@ -879,9 +879,9 @@ Specifies a certain range in the world, and what attributes that range has.
 
 .SH "FILE SYNTAX"
 .PP 
-The symbol '?' mean that the item is optionnal.
+The symbol '?' means that the item is optional.
 .PP 
-The notation {a..b} mean that the number of times the item can be present must
+The notation {a..b} means that the number of times the item can be present must
 be between 'a' and 'b', where '*' mean infinity. ('?' is equivalent to {0..1})
 .TP 
 angle := <float>
@@ -946,7 +946,7 @@ allObjects :=
 .TP 
 .B (BZWReader.cxx/BZWReader::readWorldStream)
 .br 
-Note: Blank line and line starting with # are discarded.
+Note: Blank lines and lines starting with # are discarded.
 .br 
 .TP 
 worldStream :=
