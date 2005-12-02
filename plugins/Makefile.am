@@ -5,6 +5,7 @@ SUBDIRS = \
 	chathistory \
 	hiddenAdmin \
 	killall \
+	logDetail \
 	playHistoryTracker \
 	python \
 	shockwaveDeath \

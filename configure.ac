@@ -795,6 +795,7 @@ AC_CONFIG_FILES(bzflag.info
 	plugins/chathistory/Makefile
 	plugins/hiddenAdmin/Makefile
 	plugins/killall/Makefile
+	plugins/logDetail/Makefile
 	plugins/playHistoryTracker/Makefile
 	plugins/python/Makefile
 	plugins/shockwaveDeath/Makefile
