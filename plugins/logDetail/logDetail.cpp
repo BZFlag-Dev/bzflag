@@ -8,11 +8,11 @@ BZ_GET_PLUGIN_VERSION
 
 using namespace std;
 
-class slashCommand : public bz_EventHandler 
+class logDetail : public bz_EventHandler 
 {
 public:
-  slashCommand() {};
-  virtual ~slashCommand() {};
+  logDetail() {};
+  virtual ~logDetail() {};
   virtual void process( bz_EventData *eventData );
 private:
   void displayPlayerPrivs( int playerID );
@@ -21,33 +21,33 @@ private:
   void displayTeam( bz_eTeamType team );
 };
 
-slashCommand slashCommandHandler;
+logDetail logDetailHandler;
 
 BZF_PLUGIN_CALL int bz_Load ( const char* /*commandLine*/ )
 {
-  bz_registerEvent(bz_eSlashCommandEvent, &slashCommandHandler);
-  bz_registerEvent(bz_eChatMessageEvent, &slashCommandHandler);
-  bz_registerEvent(bz_eServerMsgEvent, &slashCommandHandler);
-  bz_registerEvent(bz_ePlayerJoinEvent, &slashCommandHandler);
-  bz_registerEvent(bz_ePlayerPartEvent, &slashCommandHandler);
-  bz_registerEvent(bz_ePlayerAuthEvent, &slashCommandHandler);
+  bz_registerEvent(bz_eSlashCommandEvent, &logDetailHandler);
+  bz_registerEvent(bz_eChatMessageEvent, &logDetailHandler);
+  bz_registerEvent(bz_eServerMsgEvent, &logDetailHandler);
+  bz_registerEvent(bz_ePlayerJoinEvent, &logDetailHandler);
+  bz_registerEvent(bz_ePlayerPartEvent, &logDetailHandler);
+  bz_registerEvent(bz_ePlayerAuthEvent, &logDetailHandler);
   bz_debugMessage(4, "logDetail plugin loaded");
   return 0;
 }
 
 BZF_PLUGIN_CALL int bz_Unload ( void )
 {
-  bz_removeEvent(bz_eSlashCommandEvent, &slashCommandHandler);
-  bz_removeEvent(bz_eChatMessageEvent, &slashCommandHandler);
-  bz_removeEvent(bz_eServerMsgEvent, &slashCommandHandler);
-  bz_removeEvent(bz_ePlayerJoinEvent, &slashCommandHandler);
-  bz_removeEvent(bz_ePlayerPartEvent, &slashCommandHandler);
-  bz_removeEvent(bz_ePlayerAuthEvent, &slashCommandHandler);
+  bz_removeEvent(bz_eSlashCommandEvent, &logDetailHandler);
+  bz_removeEvent(bz_eChatMessageEvent, &logDetailHandler);
+  bz_removeEvent(bz_eServerMsgEvent, &logDetailHandler);
+  bz_removeEvent(bz_ePlayerJoinEvent, &logDetailHandler);
+  bz_removeEvent(bz_ePlayerPartEvent, &logDetailHandler);
+  bz_removeEvent(bz_ePlayerAuthEvent, &logDetailHandler);
   bz_debugMessage(4, "logDetail plugin unloaded");
   return 0;
 }
 
-void slashCommand::process( bz_EventData *eventData ) 
+void logDetail::process( bz_EventData *eventData ) 
 {
   bz_ChatEventData *chatData = (bz_ChatEventData *) eventData;
   bz_ServerMsgEventData *serverMsgData = (bz_ServerMsgEventData *) eventData;
@@ -146,7 +146,7 @@ void slashCommand::process( bz_EventData *eventData )
   }
 }
 
-void slashCommand::displayPlayerPrivs( int playerID )
+void logDetail::displayPlayerPrivs( int playerID )
 {
   bz_PlayerRecord *player = bz_getPlayerByIndex( playerID );
   if (player) {
@@ -158,13 +158,13 @@ void slashCommand::displayPlayerPrivs( int playerID )
   }
 }
 
-void slashCommand::displayCallsign( bzApiString callsign )
+void logDetail::displayCallsign( bzApiString callsign )
 {
   cout << strlen( callsign.c_str() ) << ":";
   cout << callsign.c_str();
 }
 
-void slashCommand::displayCallsign( int playerID )
+void logDetail::displayCallsign( int playerID )
 {
   bz_PlayerRecord *player = bz_getPlayerByIndex( playerID );
   if (player) {
@@ -174,7 +174,7 @@ void slashCommand::displayCallsign( int playerID )
 }
 
 
-void slashCommand::displayTeam( bz_eTeamType team )
+void logDetail::displayTeam( bz_eTeamType team )
 {
   // Display the player team
   switch ( team ) {
