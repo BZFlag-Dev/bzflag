@@ -1669,41 +1669,34 @@ zhopa                   # ru - an asshole or an ass
 
 
 # Serbian
-bog te jebo!            # sr - may god fuck you!
-bog te yebo             # sr - may god fuck you!
-crko dabogda stoko seljacka! 	# sr - may you drop dead, you redneck ox!
-crko dubogda stocko selyachka 	# sr - may you drop dead, you redneck ox!
-govedo!                 # sr - jerk.
+govedo                  # sr - jerk
 govno yedno             # sr - you piece of shit.
 isisas mi kurcu seme    # sr - you are sucking out my sperm readily.
-jebem te u oko.         # sr - i am fucking you in the eye. you say this when somebody can't see something, or if somebody can see too much.
-jebem te usta.          # sr - i am fuckung you in the mouth. very nice expresion.
-jebem ti dete musavo.   # sr - i fuck your dirty child, with meaning you are that one.
-jebem ti mater u picku! # sr - i fuck your mother in her pussy!
-jebem ti sunce          # sr - i fuck your sunshine.
-jebo te papa.           # sr - the pope fucks you.
-jebo te sveti ilija.    # sr - the saint ilija fucks you.
-jebo ti pas mater!      # sr - may a dog fuck your mother!
-moi te kara is ormara.  # sr - my dick is fucking you from an closet.
-peechka                 # sr - pussy.
-peecko smrdlyeeva       # sr - you smelly pussy.
-picka ti se ogadila.    # sr - i beg the god that pussy will not exist for you anymore. very important to say to somebody who can't live without pussy.
-popoosheesh me quratz krusnee 		# sr - suck my lovely dick!
-popusis mi kurac krasni # sr - suck my lovely dick!
-sisadzijo.              # sr - cock sucker.
-some!                   # sr - you stupid ass.
-sranje!                 # sr - ohhh, shit!
-yebachu te!             # sr - i'll fuck you. (have two meanings. 1. if you want to fight with someone. 2. when you are about to fuck a chick.
-yebem tee mutter oo peetchqu # sr - i fuck your mother in her pussy!
-yebo tee puss mutter    # sr - may a dog fuck your mother!
+jebem                   # sr - fucking
+jebo                    # sr - fuck
+krasni                  # sr - dick
+krusnee                 # sr - dick
+peechka                 # sr - pussy
+peecko                  # sr - pussy
+peetchqu                # sr - pussy
+seljacka                # sr - redneck
+selyacka                # sr - redneck
+sisadzijo               # sr - cock sucker
+# some                    # sr - stupid ass
+sranje                  # sr - shit
+yebachu                 # sr - fuck
+yebem                   # sr - fuck (phonetic)
+yebo                    # sr - fuck (phonetic)
+
 
 # Slovenian
 drek                    # sl - shit
 kurac                   # sl -  penis
 peder                   # sl - faggot
-pejt u pizdu mater!     # sl - go to (in) your mothers vagina
+pejt u pizdu            # sl - your mothers vagina
 #pizda                   # sl - vagina
-preklet vosu!           # sl - cursed donkey (literally "bloody fool")
+#pizdu                   # sl - vagina
+preklet vosu            # sl - cursed donkey (literally "bloody fool")
 
 
 # Spanish
