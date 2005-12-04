@@ -186,9 +186,9 @@ bool PlayerInfo::isCallSignReadable() {
   // keep a count of alpha-numerics
 
   int callsignlen = (int)strlen(callSign);
-  // reject less than 3 characters
-  if (callsignlen < 3) {
-    errorString = "Callsigns must be at least 3 characters.";
+  // reject less than 2 characters
+  if (callsignlen < 2) {
+    errorString = "Callsigns must be at least 2 characters.";
     return false;
   }
 
