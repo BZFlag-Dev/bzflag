@@ -94,17 +94,34 @@ done
 # force locale setting to C so things like date output as expected
 LC_ALL=C
 
+# commands that this script expects
+for __cmd in echo head tail ; do
+    echo "test" | $__cmd > /dev/null 2>&1
+    if [ $? != 0 ] ; then
+	echo "ERROR: '${__cmd}' command is required"
+	exit 2
+    fi
+done
+
+# determine the behavior of echo
 case `echo "testing\c"; echo 1,2,3`,`echo -n testing; echo 1,2,3` in
     *c*,-n*) ECHO_N= ECHO_C='
 ' ECHO_T='	' ;;
     *c*,*  ) ECHO_N=-n ECHO_C= ECHO_T= ;;
     *)       ECHO_N= ECHO_C='\c' ECHO_T= ;;
 esac
-TAIL_N=""
-echo "test" | tail -n 1 2>/dev/null 1>&2
-if [ $? = 0 ] ; then
-    TAIL_N="n "
-fi
+
+# determine the behavior of head
+case "x`echo 'head' | head -n 1 2>&1`" in
+    *xhead*) HEAD_N="n " ;;
+    *) HEAD_N="" ;;
+esac
+
+# determine the behavior of tail
+case "x`echo 'tail' | tail -n 1 2>&1`" in
+    *xtail*) TAIL_N="n " ;;
+    *) TAIL_N="" ;;
+esac
 
 VERBOSE_ECHO=:
 ECHO=:
@@ -149,7 +166,7 @@ if [ ! "x$_acfound" = "xyes" ] ; then
     $ECHO "ERROR:  Unable to locate GNU Autoconf."
     _report_error=yes
 else
-    _version_line="`$AUTOCONF --version | head -${TAIL_N}1`"
+    _version_line="`$AUTOCONF --version | head -${HEAD_N}1`"
     if [ "x$HAVE_SED" = "xyes" ] ; then
 	_maj_version="`echo $_version_line | sed 's/.* \([0-9]\)\.[0-9][0-9].*/\1/'`"
 	_maj_version="`echo $_maj_version | sed 's/.*[A-Z].*//'`"
@@ -201,7 +218,7 @@ if [ ! "x$_amfound" = "xyes" ] ; then
     $ECHO "ERROR: Unable to locate GNU Automake."
     _report_error=yes
 else
-    _version_line="`$AUTOMAKE --version | head -${TAIL_N}1`"
+    _version_line="`$AUTOMAKE --version | head -${HEAD_N}1`"
     if [ "x$HAVE_SED" = "xyes" ] ; then
 	_maj_version="`echo $_version_line | sed 's/.* \([0-9]\)\.[0-9].*/\1/'`"
 	_maj_version="`echo $_maj_version | sed 's/.*[A-Z].*//'`"
@@ -329,7 +346,7 @@ if [ ! "x$_ltfound" = "xyes" ] ; then
     $ECHO "ERROR: Unable to locate GNU Libtool."
     _report_error=yes
 else
-    _version_line="`$LIBTOOLIZE --version | head -${TAIL_N}1`"
+    _version_line="`$LIBTOOLIZE --version | head -${HEAD_N}1`"
     if [ "x$HAVE_SED" = "xyes" ] ; then
 	_maj_version="`echo $_version_line | sed 's/.* \([0-9]\)\.[0-9].*/\1/'`"
 	_maj_version="`echo $_maj_version | sed 's/.*[A-Z].*//'`"
@@ -413,18 +430,21 @@ cd "$PATH_TO_AUTOGEN"
 #####################
 # detect an aux dir #
 #####################
-_aux_dir=.
 _configure_file=/dev/null
 if test -f configure.ac ; then
     _configure_file=configure.ac
 elif test -f configure.in ; then
     _configure_file=configure.in
 fi
-_aux_dir="`cat $_configure_file | grep AC_CONFIG_AUX_DIR | tail -${TAIL_N}1 | sed 's/^[ ]*AC_CONFIG_AUX_DIR(\(.*\)).*/\1/'`"
-if test ! -d "$_aux_dir" ; then
-    _aux_dir=.
-else
-    $VERBOSE_ECHO "Detected auxillary directory: $_aux_dir"
+
+_aux_dir=.
+if test "x$HAVE_SED" = "xyes" ; then
+    _aux_dir="`cat $_configure_file | grep AC_CONFIG_AUX_DIR | tail -${TAIL_N}1 | sed 's/^[ ]*AC_CONFIG_AUX_DIR(\(.*\)).*/\1/'`"
+    if test ! -d "$_aux_dir" ; then
+	_aux_dir=.
+    else
+	$VERBOSE_ECHO "Detected auxillary directory: $_aux_dir"
+    fi
 fi
 
 
@@ -440,18 +460,16 @@ for file in AUTHORS COPYING ChangeLog INSTALL NEWS README ; do
 done
 
 
-############################################
-# protect COPYING & INSTALL from overwrite #
-############################################
-if test -d "${_aux_dir}" ; then
-    for file in COPYING INSTALL ; do
-	if test ! -f $file ; then
-	    continue
-	fi
-	$VERBOSE_ECHO "cp -pf ${file} \"${_aux_dir}/${file}.backup\""
-	cp -pf ${file} "${_aux_dir}/${file}.backup"
-    done
-fi
+########################################################
+# protect COPYING & INSTALL from overwrite by automake #
+########################################################
+for file in COPYING INSTALL ; do
+    if test ! -f $file ; then
+	continue
+    fi
+    $VERBOSE_ECHO "cp -pf ${file} \"${_aux_dir}/${file}.backup\""
+    cp -pf ${file} "${_aux_dir}/${file}.backup"
+done
 
 
 ##################################################
@@ -477,6 +495,16 @@ for dir in m4 ; do
 done
 
 
+#######################################
+# remove the autom4te.cache directory #
+#######################################
+if test -d autom4te.cache ; then
+    $VERBOSE_ECHO "Found an autom4te.cache directory, deleting it"
+    $VERBOSE_ECHO "rm -f autom4te.cache"
+    rm -rf autom4te.cache
+fi
+
+
 ############################################
 # prepare build via autoreconf or manually #
 ############################################
@@ -485,13 +513,12 @@ if [ "x$HAVE_AUTORECONF" = "xyes" ] && [ "x$HAVE_LIBTOOLIZE" = "xyes" ] ; then
     $ECHO
     $ECHO $ECHO_N "Automatically preparing build ... $ECHO_C"
 
-    if [ "x$VERBOSE" = "xyes" ] ; then
-	$VERBOSE_ECHO "$AUTORECONF $SEARCH_DIRS -i -f"
-	$AUTORECONF $SEARCH_DIRS -i -f
-    else
-	$AUTORECONF $SEARCH_DIRS -i -f > /dev/null 2>&1
-    fi
-    if [ ! $? = 0 ] ; then
+    $VERBOSE_ECHO "$AUTORECONF $SEARCH_DIRS -i -f"
+    autoreconf_output="`$AUTORECONF $SEARCH_DIRS -i -f 2>&1`"
+    ret=$?
+    $VERBOSE_ECHO "$autoreconf_output"
+
+    if [ ! $ret = 0 ] ; then
 	$ECHO "Warning: $AUTORECONF failed"
 
 	if test -f ltmain.sh ; then
@@ -519,24 +546,34 @@ if [ "x$reconfigure_manually" = "xyes" ] ; then
     $ECHO $ECHO_N "Preparing build ... $ECHO_C"
 
     $VERBOSE_ECHO "$ACLOCAL $SEARCH_DIRS"
-    $ACLOCAL $SEARCH_DIRS
+    aclocal_output="`$ACLOCAL $SEARCH_DIRS 2>&1`"
+    ret=$?
+    $VERBOSE_ECHO "$aclocal_output"
 
-    if [ ! $? = 0 ] ; then $ECHO "ERROR: $ACLOCAL failed" && exit 2 ; fi
+    if [ ! $ret = 0 ] ; then $ECHO "ERROR: $ACLOCAL failed" && exit 2 ; fi
     if [ "x$HAVE_LIBTOOLIZE" = "xyes" ] ; then
 	$VERBOSE_ECHO "$LIBTOOLIZE --automake -c -f"
-	$LIBTOOLIZE --automake -c -f
-	if [ ! $? = 0 ] ; then $ECHO "ERROR: $LIBTOOLIZE failed" && exit 2 ; fi
+	libtoolize_output="`$LIBTOOLIZE --automake -c -f 2>&1`"
+	ret=$?
+	$VERBOSE_ECHO "$libtoolize_output"
+
+	if [ ! $ret = 0 ] ; then $ECHO "ERROR: $LIBTOOLIZE failed" && exit 2 ; fi
     else
 	if [ "x$HAVE_ALT_LIBTOOLIZE" = "xyes" ] ; then
 	    $VERBOSE_ECHO "$LIBTOOLIZE --automake --copy --force"
-	    $LIBTOOLIZE --automake --copy --force
-	    if [ ! $? = 0 ] ; then $ECHO "ERROR: $LIBTOOLIZE failed" && exit 2 ; fi
+	    libtoolize_output="`$LIBTOOLIZE --automake --copy --force 2>&1`"
+	    ret=$?
+	    $VERBOSE_ECHO "$libtoolize_output"
+
+	    if [ ! $ret = 0 ] ; then $ECHO "ERROR: $LIBTOOLIZE failed" && exit 2 ; fi
 	fi
     fi
 
     # re-run again as instructed by libtoolize
     $VERBOSE_ECHO "$ACLOCAL $SEARCH_DIRS"
-    $ACLOCAL $SEARCH_DIRS
+    aclocal_output="`$ACLOCAL $SEARCH_DIRS 2>&1`"
+    ret=$?
+    $VERBOSE_ECHO "$aclocal_output"
 
     # libtoolize might put ltmain.sh in the wrong place
     if test -f ltmain.sh ; then
@@ -555,8 +592,11 @@ if [ "x$reconfigure_manually" = "xyes" ] ; then
 
     $VERBOSE_ECHO
     $VERBOSE_ECHO "$AUTOCONF -f"
-    autoconf_output=`$AUTOCONF -f 2>&1`
-    if [ ! $? = 0 ] ; then
+    autoconf_output="`$AUTOCONF -f 2>&1`"
+    ret=$?
+    $VERBOSE_ECHO "$autoconf_output"
+
+    if [ ! $ret = 0 ] ; then
 	# retry without the -f and with backwards support for missing macros
 	configure_ac_changed="no"
 	if test "x$HAVE_SED" = "xyes" ; then
@@ -603,8 +643,11 @@ if [ "x$reconfigure_manually" = "xyes" ] ; then
 	fi
 	$VERBOSE_ECHO
 	$VERBOSE_ECHO "$AUTOCONF"
-	autoconf_output=`$AUTOCONF 2>&1`
-	if [ ! $? = 0 ] ; then
+	autoconf_output="`$AUTOCONF 2>&1`"
+	ret=$?
+	$VERBOSE_ECHO "$autoconf_output"
+
+	if [ ! $ret = 0 ] ; then
 
 	    # failed so restore the backup
 	    if test -f configure.ac.backup ; then
@@ -661,17 +704,26 @@ EOF
     fi
 
     $VERBOSE_ECHO "$AUTOHEADER"
-    $AUTOHEADER
-    if [ ! $? = 0 ] ; then $ECHO "ERROR: $AUTOHEADER failed" && exit 2 ; fi
+    autoheader_output="`$AUTOHEADER 2>&1`"
+    ret=$?
+    $VERBOSE_ECHO "$autoheader_output"
+
+    if [ ! $ret = 0 ] ; then $ECHO "ERROR: $AUTOHEADER failed" && exit 2 ; fi
 
     $VERBOSE_ECHO "$AUTOMAKE -a -c -f"
-    automake_output=`$AUTOMAKE -a -c -f 2>&1`
-    if [ ! $? = 0 ] ; then
+    automake_output="`$AUTOMAKE -a -c -f 2>&1`"
+    ret=$?
+    $VERBOSE_ECHO "$automake_output"
+
+    if [ ! $ret = 0 ] ; then
 	# retry without the -f
 	$VERBOSE_ECHO
 	$VERBOSE_ECHO "$AUTOMAKE -a -c"
-	automake_output=`$AUTOMAKE -a -c 2>&1`
-	if [ ! $? = 0 ] ; then
+	automake_output="`$AUTOMAKE -a -c 2>&1`"
+	ret=$?
+	$VERBOSE_ECHO "$automake_output"
+
+	if [ ! $ret = 0 ] ; then
 	    if test -f "$LIBTOOL_M4" ; then
 		found_libtool="`$ECHO $automake_output | grep AC_PROG_LIBTOOL`"
 		if test ! "x$found_libtool" = "x" ; then
@@ -706,44 +758,30 @@ fi
 # restore COPYING & INSTALL from backup #
 #########################################
 spacer=no
-if test "x$HAVE_SED" = "xyes" ; then
-    for file in COPYING INSTALL ; do
-	curr="$file"
-	if test ! -f "$curr" ; then
-	    continue
-	fi
-	back="${_aux_dir}/${file}.backup"
-	if test ! -f "$back" ; then
-	    continue
-	fi
+for file in COPYING INSTALL ; do
+    curr="$file"
+    if test ! -f "$curr" ; then
+	continue
+    fi
+    back="${_aux_dir}/${file}.backup"
+    if test ! -f "$back" ; then
+	continue
+    fi
 
-	current="`cat $curr`"
-	backup="`cat $back`"
-	if test "x$current" != "x$backup" ; then
-	    current_rev=`grep '$Revision' "$curr" | sed 's/.*[^0-9]\([0-9][0-9]*\.[0-9][0-9]*\)[^0-9].*/\1/' | sed 's/\.//g'`
-	    $VERBOSE_ECHO "Revision of $curr is \"${current_rev}\""
-	    if test "x$current_rev" = "x" ; then
-		current_rev=0
-	    fi
-	    backup_rev=`grep '$Revision' "$back" | sed 's/.*[^0-9]\([0-9][0-9]*\.[0-9][0-9]*\)[^0-9].*/\1/' | sed 's/\.//g'`
-	    $VERBOSE_ECHO "Revision of $back is \"${backup_rev}\""
-	    if test "x$backup_rev" = "x" ; then
-		backup_rev=0
-	    fi
-	    # if test "$current_rev" -lt "$backup_rev" ; then
-		if test "x$spacer" = "xno" ; then
-		    $VERBOSE_ECHO
-		    spacer=yes
-		fi
-		# restore the backup
-		$VERBOSE_ECHO "Need to restore $file from backup (automake -f clobbered it)"
-		$VERBOSE_ECHO "cp -pf \"$back\" \"${curr}\""
-		cp -pf "$back" "$curr"
-		rm "$back"
-	    #fi
+    # full contents for comparison
+    current="`cat $curr`"
+    backup="`cat $back`"
+    if test "x$current" != "x$backup" ; then
+	if test "x$spacer" = "xno" ; then
+	    $VERBOSE_ECHO
+	    spacer=yes
 	fi
-    done
-fi
+	# restore the backup
+	$VERBOSE_ECHO "Restoring $file from backup (automake -f likely clobbered it)"
+	$VERBOSE_ECHO "cp -pf \"$back\" \"${curr}\""
+	cp -pf "$back" "$curr"
+    fi
+done
 
 
 ################
