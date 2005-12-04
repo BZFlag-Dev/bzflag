@@ -34,6 +34,8 @@ class Frustum {
     const float*	getSide(int index) const;
     int			getPlaneCount() const;
     const float*	getFarCorner(int index) const;
+    float		getTilt() const; // degrees
+    float		getRotation() const; // degrees
     float		getNear() const;
     float		getFar() const;
     const float*	getViewMatrix() const;
@@ -44,10 +46,11 @@ class Frustum {
     float		getAreaFactor() const;
 
     void		setView(const float* eye, const float* target);
-    void		setProjection(float fov, float m_near, float m_far,
-				      int width, int height, int viewHeight);
+    void		setProjection(float fov,
+                                      float m_near, float m_far, float m_deep_far,
+                                      int width, int height, int viewHeight);
     void		setOffset(float eyeOffset, float focalPlane);
-    void		setFarCullDistance(float dist);
+    void		setFarPlaneCull(bool useCulling);
     void		flipVertical();
     void		flipHorizontal();
 
@@ -65,6 +68,8 @@ class Frustum {
     float		plane[6][4];		// pointing in
     int			planeCount;
     float		farCorner[4][3];
+    float		tilt;
+    float		rotation;
     float		viewMatrix[16];
     float		billboardMatrix[16];
     float		m_near, m_far;
@@ -101,6 +106,16 @@ inline int		Frustum::getPlaneCount() const
 inline const float*	Frustum::getFarCorner(int index) const
 {
   return farCorner[index];
+}
+
+inline float		Frustum::getTilt() const
+{
+  return tilt;
+}
+
+inline float		Frustum::getRotation() const
+{
+  return rotation;
 }
 
 inline const float*	Frustum::getUp() const

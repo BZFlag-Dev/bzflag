@@ -68,6 +68,7 @@ class BackgroundRenderer {
     void		drawGroundGrid(SceneRenderer&);
     void		drawGroundShadows(SceneRenderer&);
     void		drawGroundReceivers(SceneRenderer&);
+    void		drawAdvancedGroundReceivers(SceneRenderer&);
     void		drawMountains(void);
 
 
@@ -97,7 +98,9 @@ class BackgroundRenderer {
     OpenGLGState	groundGState[4];
     OpenGLGState	invGroundGState[4];
     GLuint		simpleGroundList[4];
-
+    int			groundTextureID;
+    const GLfloat*	groundTextureMatrix;
+    
     // stuff for grid
     GLfloat		gridSpacing;
     GLfloat		gridCount;
@@ -158,6 +161,8 @@ class BackgroundRenderer {
     static GLfloat		skyPyramid[5][3];
     static const GLfloat	cloudRepeats;
 
+    static GLfloat		rcvrGroundColor[4][4];
+    static GLfloat		rcvrGroundInvColor[4][4];
     static GLfloat		groundColor[4][4];
     static GLfloat		groundColorInv[4][4];
     static const GLfloat	defaultGroundColor[4][4];

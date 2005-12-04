@@ -15,6 +15,7 @@
 #include <string.h>
 #include "Frustum.h"
 
+
 Frustum::Frustum()
 {
   static float defaultEye[3] = { 0.0, 0.0, 0.0 };
@@ -30,23 +31,25 @@ Frustum::Frustum()
   ::memcpy(projectionMatrix, identity, sizeof(projectionMatrix));
   ::memcpy(deepProjectionMatrix, identity, sizeof(deepProjectionMatrix));
 
-  setProjection((float)(M_PI/4.0), 1.0f, 100.0f, 1, 1, 1);
+  setProjection((float)(M_PI/4.0), 1.0f, 100.0f, 1000.0f, 1, 1, 1);
   setView(defaultEye, defaultTarget);
 }
+
 
 Frustum::~Frustum()
 {
   // do nothing
 }
 
-float			Frustum::getEyeDepth(const float* p) const
+
+float Frustum::getEyeDepth(const float* p) const
 {
   return viewMatrix[2] * p[0] + viewMatrix[6] * p[1] +
 	viewMatrix[10] * p[2] + viewMatrix[14];
 }
 
-void			Frustum::setView(const float* _eye,
-					 const float* _target)
+
+void Frustum::setView(const float* _eye, const float* _target)
 {
   // set eye and target points
   eye[0] = _eye[0];
@@ -144,40 +147,47 @@ void			Frustum::setView(const float* _eye,
   makePlane(edge[1], edge[0], 3);
   makePlane(edge[3], edge[2], 4);
 
-  planeCount = 5; // do not use the far clipping plane unless specified
-  
+  plane[5][0] = -plane[0][0];
+  plane[5][1] = -plane[0][1];
+  plane[5][2] = -plane[0][2];
+  plane[5][3] = -plane[0][3] + m_far;
+
   // make far corners
   for (int i = 0; i < 4; i++) {
     farCorner[i][0] = eye[0] + m_far * edge[i][0];
     farCorner[i][1] = eye[1] + m_far * edge[i][1];
     farCorner[i][2] = eye[2] + m_far * edge[i][2];
   }
+  
+  // setup tilt and angle
+  const float* dir = plane[0];
+  tilt = (float)((180.0 / M_PI) * atan2((double)dir[2], 1.0));
+  rotation = (float)((180.0 / M_PI) * atan2((double)dir[1], (double)dir[2]));
 }
 
 
-void			Frustum::setFarCullDistance(float dist)
+void Frustum::setFarPlaneCull(bool useCulling)
 {
   // far clip plane
-  if (dist <= 0.0f) {
-    planeCount = 5;
-  } else {
-    plane[5][0] = -plane[0][0];
-    plane[5][1] = -plane[0][1];
-    plane[5][2] = -plane[0][2];
-    plane[5][3] = -plane[0][3] + dist;
+  if (useCulling) {
     planeCount = 6;
+  } else {
+    planeCount = 5;
   }
 }
 
 
-void			Frustum::setProjection(float fov, float _m_near,
-						float _m_far, int width,
-						int height, int viewHeight)
+void Frustum::setProjection(float fov,
+                            float _m_near, float _m_far, float m_deep_far,
+                            int width, int height, int viewHeight)
 {
   // do easy stuff
   m_near = _m_near;
   m_far = _m_far;
   fovx = fov;
+
+  // clear the far plane culling here
+  planeCount = 5;
 
   // compute projectionMatrix
   const float s = 1.0f / tanf(fov / 2.0f);
@@ -199,8 +209,8 @@ void			Frustum::setProjection(float fov, float _m_near,
   deepProjectionMatrix[11] = projectionMatrix[11];
   deepProjectionMatrix[12] = projectionMatrix[12];
   deepProjectionMatrix[15] = projectionMatrix[15];
-  deepProjectionMatrix[10] = -(10.0f * m_far + m_near) / (10.0f * m_far - m_near);
-  deepProjectionMatrix[14] = -20.0f * m_far * m_near / (10.0f * m_far - m_near);
+  deepProjectionMatrix[10] = -(m_deep_far + m_near) / (m_deep_far - m_near);
+  deepProjectionMatrix[14] = -2.0f * m_deep_far * m_near / (m_deep_far - m_near);
 
   // get field of view in y direction
   fovy = 2.0f * atanf(1.0f / projectionMatrix[5]);
@@ -210,8 +220,8 @@ void			Frustum::setProjection(float fov, float _m_near,
   areaFactor = (float)(M_PI * areaFactor * areaFactor);
 }
 
-void			Frustum::setOffset(
-				float eyeOffset, float focalPlane)
+
+void Frustum::setOffset(float eyeOffset, float focalPlane)
 {
   projectionMatrix[12] = 0.5f * eyeOffset * projectionMatrix[0];
   projectionMatrix[8] = projectionMatrix[12] / focalPlane;
@@ -219,8 +229,8 @@ void			Frustum::setOffset(
   deepProjectionMatrix[12] = projectionMatrix[12];
 }
 
-void			Frustum::makePlane(const float* v1,
-						const float* v2, int index)
+
+void Frustum::makePlane(const float* v1, const float* v2, int index)
 {
   // get normal by crossing v1 and v2 and normalizing
   float n[3];
@@ -235,9 +245,10 @@ void			Frustum::makePlane(const float* v1,
 						eye[2] * plane[index][2]);
 }
 
+
 // these next two functions should be more generic
 // flipX, flipY, flipZ, all with and offset along the axis
-void			Frustum::flipVertical()
+void Frustum::flipVertical()
 {
   eye[2] = -eye[2];
   target[2] = -target[2];
@@ -248,7 +259,8 @@ void			Frustum::flipVertical()
   return;
 }
 
-void			Frustum::flipHorizontal()
+
+void Frustum::flipHorizontal()
 {
   eye[0] = -eye[0];
   target[0] = -target[0];
@@ -308,11 +320,11 @@ void Frustum::setOrthoPlanes(const Frustum& view, float width, float breadth)
   plane[5][0] = plane[0][1] = 0.0f;
   plane[5][2] = 1.0f;
   plane[5][3] = -1.0e6;
+
   planeCount = 5;
 
   return;
 }
-
 
 
 // Local Variables: ***
