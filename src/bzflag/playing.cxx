@@ -4902,7 +4902,8 @@ static void setupFarPlane()
 
   float farDist = FarPlane;
 
-  if (mapFog && (BZDB.get("_cullDist") == "fog")) {
+  if (mapFog &&
+      (BZDB.get("_cullDist") == "fog") && !BZDB.isTrue("_fogNoSky")) {
     const float fogMargin = 1.01f;
     const std::string& fogMode = BZDB.get("_fogMode");
     if (fogMode == "linear") {
