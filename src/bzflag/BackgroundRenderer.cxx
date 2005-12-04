@@ -1296,6 +1296,7 @@ void BackgroundRenderer::drawGroundReceivers(SceneRenderer& renderer)
       }
     }
     glEnd();
+    triangleCount += receiverSlices;
 
     for (i = 1; i < receiverRings; i++) {
       const GLfloat innerSize = receiverRingSize * GLfloat(i * i);
@@ -1329,6 +1330,8 @@ void BackgroundRenderer::drawGroundReceivers(SceneRenderer& renderer)
       }
       glEnd();
     }
+    triangleCount += (receiverSlices * receiverRings * 2);
+    
     glTranslatef(-pos[0], -pos[1], 0.0f);
   }
   glPopMatrix();
@@ -1338,7 +1341,6 @@ void BackgroundRenderer::drawGroundReceivers(SceneRenderer& renderer)
 void BackgroundRenderer::drawAdvancedGroundReceivers(SceneRenderer& renderer)
 {
   const float minLuminance = 0.02f;
-  //static const int receiverRings = 10;
   static const int receiverSlices = 32;
   static const float receiverRingSize = 0.5f;	// meters
   static float angle[receiverSlices + 1][2];
@@ -1464,22 +1466,22 @@ void BackgroundRenderer::drawAdvancedGroundReceivers(SceneRenderer& renderer)
       }
     }
     glEnd();
+    triangleCount += receiverSlices;
 
     bool moreRings = true;
-
-    for (i = 0; moreRings; i++) {    
+    for (i = 2; moreRings; i++) {    
       // inner ring
       innerSize = outerSize;
       memcpy(innerColor, outerColor, sizeof(float[3]));
 
       // outer ring
-      outerSize = receiverRingSize * GLfloat((i + 1) * (i + 1));
+      outerSize = receiverRingSize * GLfloat(i * i);
       d = hypotf(outerSize, pos[2]);
       I = 1.0f / (atten[0] + d * (atten[1] + d * atten[2]));
       I *= pos[2] / d; // diffuse angle factor
       if ((I * maxVal) < minLuminance) {
         I = 0.0f;
-        moreRings = false; // bail
+        moreRings = false; // bail after this ring
       }
       outerColor[0] = I * baseColor[0];
       outerColor[1] = I * baseColor[1];
@@ -1496,6 +1498,7 @@ void BackgroundRenderer::drawAdvancedGroundReceivers(SceneRenderer& renderer)
       }
       glEnd();
     }
+    triangleCount += (receiverSlices * 2 * (i - 1));
     
     glTranslatef(-pos[0], -pos[1], 0.0f);
   }

@@ -691,6 +691,9 @@ void SceneRenderer::render(bool _lastFrame, bool _sameFrame,
   
   triangleCount = 0;
   RenderNode::resetTriangleCount();
+  if (background) {
+    background->resetTriangleCount();
+  }
   
   // update the SceneNode, Background, and TrackMark styles
   if (needStyleUpdate) {
@@ -866,6 +869,9 @@ void SceneRenderer::render(bool _lastFrame, bool _sameFrame,
   }
 
   triangleCount = RenderNode::getTriangleCount();
+  if (background) {
+    triangleCount += background->getTriangleCount();
+  }
 
   return;
 }
