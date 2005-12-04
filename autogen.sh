@@ -94,17 +94,34 @@ done
 # force locale setting to C so things like date output as expected
 LC_ALL=C
 
+# commands that this script expects
+for __cmd in echo head tail ; do
+    echo "test" | $__cmd > /dev/null 2>&1
+    if [ $? != 0 ] ; then
+	echo "ERROR: '${__cmd}' command is required"
+	exit 2
+    fi
+done
+
+# determine the behavior of echo
 case `echo "testing\c"; echo 1,2,3`,`echo -n testing; echo 1,2,3` in
     *c*,-n*) ECHO_N= ECHO_C='
 ' ECHO_T='	' ;;
     *c*,*  ) ECHO_N=-n ECHO_C= ECHO_T= ;;
     *)       ECHO_N= ECHO_C='\c' ECHO_T= ;;
 esac
-TAIL_N=""
-echo "test" | tail -n 1 2>/dev/null 1>&2
-if [ $? = 0 ] ; then
-    TAIL_N="n "
-fi
+
+# determine the behavior of head
+case "x`echo 'head' | head -n 1 2>&1`" in
+    *xhead*) HEAD_N="n " ;;
+    *) HEAD_N="" ;;
+esac
+
+# determine the behavior of tail
+case "x`echo 'tail' | tail -n 1 2>&1`" in
+    *xtail*) TAIL_N="n " ;;
+    *) TAIL_N="" ;;
+esac
 
 VERBOSE_ECHO=:
 ECHO=:
@@ -149,7 +166,7 @@ if [ ! "x$_acfound" = "xyes" ] ; then
     $ECHO "ERROR:  Unable to locate GNU Autoconf."
     _report_error=yes
 else
-    _version_line="`$AUTOCONF --version | head -${TAIL_N}1`"
+    _version_line="`$AUTOCONF --version | head -${HEAD_N}1`"
     if [ "x$HAVE_SED" = "xyes" ] ; then
 	_maj_version="`echo $_version_line | sed 's/.* \([0-9]\)\.[0-9][0-9].*/\1/'`"
 	_maj_version="`echo $_maj_version | sed 's/.*[A-Z].*//'`"
@@ -201,7 +218,7 @@ if [ ! "x$_amfound" = "xyes" ] ; then
     $ECHO "ERROR: Unable to locate GNU Automake."
     _report_error=yes
 else
-    _version_line="`$AUTOMAKE --version | head -${TAIL_N}1`"
+    _version_line="`$AUTOMAKE --version | head -${HEAD_N}1`"
     if [ "x$HAVE_SED" = "xyes" ] ; then
 	_maj_version="`echo $_version_line | sed 's/.* \([0-9]\)\.[0-9].*/\1/'`"
 	_maj_version="`echo $_maj_version | sed 's/.*[A-Z].*//'`"
@@ -329,7 +346,7 @@ if [ ! "x$_ltfound" = "xyes" ] ; then
     $ECHO "ERROR: Unable to locate GNU Libtool."
     _report_error=yes
 else
-    _version_line="`$LIBTOOLIZE --version | head -${TAIL_N}1`"
+    _version_line="`$LIBTOOLIZE --version | head -${HEAD_N}1`"
     if [ "x$HAVE_SED" = "xyes" ] ; then
 	_maj_version="`echo $_version_line | sed 's/.* \([0-9]\)\.[0-9].*/\1/'`"
 	_maj_version="`echo $_maj_version | sed 's/.*[A-Z].*//'`"
@@ -419,11 +436,15 @@ if test -f configure.ac ; then
 elif test -f configure.in ; then
     _configure_file=configure.in
 fi
-_aux_dir="`cat $_configure_file | grep AC_CONFIG_AUX_DIR | tail -${TAIL_N}1 | sed 's/^[ ]*AC_CONFIG_AUX_DIR(\(.*\)).*/\1/'`"
-if test ! -d "$_aux_dir" ; then
-    _aux_dir=.
-else
-    $VERBOSE_ECHO "Detected auxillary directory: $_aux_dir"
+
+_aux_dir=.
+if test "x$HAVE_SED" = "xyes" ; then
+    _aux_dir="`cat $_configure_file | grep AC_CONFIG_AUX_DIR | tail -${TAIL_N}1 | sed 's/^[ ]*AC_CONFIG_AUX_DIR(\(.*\)).*/\1/'`"
+    if test ! -d "$_aux_dir" ; then
+	_aux_dir=.
+    else
+	$VERBOSE_ECHO "Detected auxillary directory: $_aux_dir"
+    fi
 fi
 
 
@@ -474,6 +495,16 @@ for dir in m4 ; do
 done
 
 
+#######################################
+# remove the autom4te.cache directory #
+#######################################
+if test -d autom4te.cache ; then
+    $VERBOSE_ECHO "Found an autom4te.cache directory, deleting it"
+    $VERBOSE_ECHO "rm -f autom4te.cache"
+    rm -rf autom4te.cache
+fi
+
+
 ############################################
 # prepare build via autoreconf or manually #
 ############################################
@@ -518,41 +549,6 @@ if [ "x$reconfigure_manually" = "xyes" ] ; then
     aclocal_output="`$ACLOCAL $SEARCH_DIRS 2>&1`"
     ret=$?
     $VERBOSE_ECHO "$aclocal_output"
-
-    if [ ! $ret = 0 ] ; then
-	if [ ! "x`echo $aclocal_output | grep cache`" = "x" ] ; then
-	    # retry without an autom4te.cache directory if it exists
-
-	    if test -d autom4te.cache ; then
-		if test -d autom4te.cache.backup ; then
-		    $ECHO "ERROR: $ACLOCAL failed"
-		    $VERBOSE_ECHO
-		    $VERBOSE_ECHO "Unable to retry aclocal without autom4te.cache"
-		    $VERBOSE_ECHO "There is an autom4te.cache.backup directory in the way"
-		    $VERBOSE_ECHO "Suggest running: rm -rf *cache*"
-		    exit 2
-		else
-		    $VERBOSE_ECHO "mv autom4te.cache autom4te.cache.backup"
-		    mv autom4te.cache autom4te.cache.backup
-		fi
-		$VERBOSE_ECHO "Retrying aclocal without the autom4te.cache directory"
-		$VERBOSE_ECHO "$ACLOCAL $SEARCH_DIRS"
-		aclocal_output="`$ACLOCAL $SEARCH_DIRS 2>&1`"
-		ret=$?
-		$VERBOSE_ECHO "$aclocal_output"
-
-		if [ ! $ret = 0 ] ; then
-		    # still did not work after we removed the backup, so restore it
-		    $VERBOSE_ECHO "mv autom4te.cache.backup autom4te.cache"
-		    mv autom4te.cache.backup autom4te.cache
-		else
-		    # worked after we removed the backup, so remove the backup
-		    $VERBOSE_ECHO "rm -rf autom4te.cache.backup"
-		    rm -rf autom4te.cache.backup
-		fi
-	    fi
-	fi
-    fi
 
     if [ ! $ret = 0 ] ; then $ECHO "ERROR: $ACLOCAL failed" && exit 2 ; fi
     if [ "x$HAVE_LIBTOOLIZE" = "xyes" ] ; then
@@ -599,40 +595,6 @@ if [ "x$reconfigure_manually" = "xyes" ] ; then
     autoconf_output="`$AUTOCONF -f 2>&1`"
     ret=$?
     $VERBOSE_ECHO "$autoconf_output"
-
-    if [ ! $ret = 0 ] ; then
- 	# retry without an autom4te.cache directory if it exists
-	if [ ! "x`echo $autoconf_output | grep autom4te`" = "x" ] ; then
-	    if test -d autom4te.cache ; then
-		if test -d autom4te.cache.backup ; then
-		    $ECHO "ERROR: $AUTOCONF failed"
-		    $VERBOSE_ECHO
-		    $VERBOSE_ECHO "Unable to retry autoconf without autom4te.cache"
-		    $VERBOSE_ECHO "There is an autom4te.cache.backup directory in the way"
-		    $VERBOSE_ECHO "Suggest running: rm -rf *cache*"
-		    exit 2
-		else
-		    $VERBOSE_ECHO "mv autom4te.cache autom4te.cache.backup"
-		    mv autom4te.cache autom4te.cache.backup
-		fi
-		$VERBOSE_ECHO "Retrying autoconf without the autom4te.cache directory"
-		$VERBOSE_ECHO "$AUTOCONF -f"
-		autoconf_output="`$AUTOCONF -f 2>&1`"
-		ret=$?
-		$VERBOSE_ECHO "$autoconf_output"
-
-		if [ ! $ret = 0 ] ; then
-		    # still did not work after we removed the backup, so restore it
-		    $VERBOSE_ECHO "mv autom4te.cache.backup autom4te.cache"
-		    mv autom4te.cache.backup autom4te.cache
-		else
-		    # worked after we removed the backup, so remove the backup
-		    $VERBOSE_ECHO "rm -rf autom4te.cache.backup"
-		    rm -rf autom4te.cache.backup
-		fi
-	    fi
-	fi
-    fi
 
     if [ ! $ret = 0 ] ; then
 	# retry without the -f and with backwards support for missing macros
