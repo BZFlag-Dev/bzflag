@@ -1498,7 +1498,7 @@ void BackgroundRenderer::drawAdvancedGroundReceivers(SceneRenderer& renderer)
       }
       glEnd();
     }
-    triangleCount += (receiverSlices * 2 * (i - 1));
+    triangleCount += (receiverSlices * 2 * (i - 2));
     
     glTranslatef(-pos[0], -pos[1], 0.0f);
   }
