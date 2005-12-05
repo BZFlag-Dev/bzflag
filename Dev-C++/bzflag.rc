@@ -25,7 +25,7 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 // Icon
 //
 
-IDI_BZICON              ICON    DISCARDABLE     "bzflag.ico"
+IDI_BZICON              ICON    DISCARDABLE     "../win32/bzflag.ico"
 
 #endif    // English (U.S.) resources
 
