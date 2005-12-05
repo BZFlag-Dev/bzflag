@@ -9,7 +9,7 @@ CppCompiler=-DINSIDE_BZ=1 -D_DEVCPP=1 -D__GNUWIN32__ -D_CONSOLE -DWIN32 -D_MBCS 
 Includes=..\Dev-C++;..\include;..\Dev-C++
 Linker=-lstdc++ -lws2_32 -lwinmm -lkernel32 -luser32 -lgdi32 -lwinspool -lcomdlg32 -ladvapi32 -lshell32 -lole32 -loleaut32 -luuid -lcurl -lcurldll_@@_
 Libs=
-UnitCount=241
+UnitCount=242
 Folders="Header Files","Header Files/bzfs","Header Files/common","Header Files/game","Header Files/net","Header Files/regex","Resource Files","Source Files","Source Files/bzfs","Source Files/c-ares","Source Files/common","Source Files/date","Source Files/game","Source Files/net","Source Files/obstacle","Source Files/regex","Source Files/zlib"
 ObjFiles=
 PrivateResource=
@@ -2451,6 +2451,16 @@ BuildCmd=
 FileName=..\src\obstacle\MeshDrawInfo.cxx
 CompileCpp=1
 Folder=Source Files/obstacle
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit242]
+FileName=..\src\bzfs\BanCommands.cxx
+CompileCpp=1
+Folder=Source Files/bzfs
 Compile=1
 Link=1
 Priority=1000
