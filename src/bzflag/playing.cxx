@@ -1965,7 +1965,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 	       && ((ROAM.getMode() != Roaming::roamViewFP)
 	           || (tank != ROAM.getTargetTank())))
 	      || BZDB.isTrue("enableLocalSpawnEffect")) {
-            if (myTank->getFlag() == Flags::Colorblindness) {
+            if (myTank->getFlag() != Flags::Colorblindness) {
 	      EFFECTS.addSpawnEffect(tank->getTeam(), pos);
             } else {
 	      EFFECTS.addSpawnEffect((int)RogueTeam, pos);
