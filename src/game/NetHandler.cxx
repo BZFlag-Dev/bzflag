@@ -146,7 +146,7 @@ int NetHandler::udpReceive(char *buffer, struct sockaddr_in *uaddr,
   std::list<NetHandler*>::const_iterator it;
 
   for (it = netConnections.begin(); it != netConnections.end(); it++)
-    if (!(*it)->closed && (*it)->isMyUdpAddrPort(*uaddr, true)) {
+    if ((*it)->isMyUdpAddrPort(*uaddr, true)) {
       *netHandler = *it;
       break;
     }
@@ -614,13 +614,19 @@ bool NetHandler::isMyUdpAddrPort(struct sockaddr_in _uaddr,
   if (closed)
     return false;
 
+  if (checkPort != udpin)
+    return false;
+
   if (memcmp(&uaddr.sin_addr, &_uaddr.sin_addr, sizeof(uaddr.sin_addr)))
     return false;
 
-  if (checkPort && (uaddr.sin_port != _uaddr.sin_port))
-    return false;
+  if (!checkPort)
+    return true;
 
-  return checkPort != udpin;
+  if (uaddr.sin_port == _uaddr.sin_port)
+    return true;
+
+  return false;
 }
 
 void NetHandler::getPlayerList(char *list) {
