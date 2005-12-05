@@ -30,18 +30,19 @@ is quite easy.
 6. The binary should be in each project's corresponding main source
    directory, such as src/bzflag/ for BZFlag client.
 
-Project files were maintained using Dev-C++ 4.9.9.2 (preview version)
+Project files were maintained using Dev-C++ 4.9.9.2
 
 The latest version of Dev-C++ (at this time) has been used to create and maintain these project
 files, so older versions may not necessarily work (but they may, but it is best just
 to get the latest or the above version). The version of MinGW32 that Dev-C++
 uses should not matter as long as it is reasonably up to date (at this time, 3.2.x is
-a good minimum for best performance let alone errorless compilation).
+a good minimum for best performance let alone errorless compilation). MinGW32 is distributed
+with Dev-C++.
 
-The default build is no Kerberos library or libCURL, but to enable these, all you do is
-uncomment their #define's in the config.h file in the /Dev-C++/ directory.
+The default build is no Kerberos library, but to enable it, all you do is
+uncomment the #define in the config.h file in the /Dev-C++/ directory.
 
-All of the project files instruct the compiler to optimize to a mild extent, so
+Some of the project files instruct the compiler to optimize to a mild extent, so
 compilation might be a small bit slower than normal compilation, but it is worth it and not
 very noticeable or annoying.
 
