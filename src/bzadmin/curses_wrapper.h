@@ -82,12 +82,33 @@ inline int cr_waddstr(WINDOW* w, const char* str) {
 #undef MOUSE_MOVED
 #endif
 
+// protect from curses.h defining a min/max macro
+#ifndef min
+#  define no_min_def
+#endif
+#ifndef max
+#  define no_max_def
+#endif
+
 #ifdef HAVE_XCURSES_H
 #  define XCURSES
 #  include <xcurses.h>
 #else
 #  include <curses.h>
 #endif
+
+// protect from curses.h defining a min/max macro
+#ifdef no_min_def
+#  ifdef min
+#    undef min
+#  endif
+#endif
+#ifdef no_max_def
+#  ifdef max
+#    undef max
+#  endif
+#endif
+
 
 #define COLOR_BGDEFAULT COLOR_BLACK
 #define COLOR_FGDEFAULT COLOR_WHITE
