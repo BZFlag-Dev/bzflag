@@ -406,7 +406,7 @@ LIBS=$GLEWLIBS
 AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <GL/glew.h>]],
                                 [[glewInit()]])],
                [glew_check="yes"], [glew_check="no"])
-if test glew_check != "no"; then
+if test $glew_check = "yes"; then
   AC_DEFINE(HAVE_GLEW, 1, [GLEW library is available])
 else
   GLEWLIBS=""
