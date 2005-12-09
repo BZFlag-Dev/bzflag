@@ -155,6 +155,8 @@ void logDetail::displayPlayerPrivs( int playerID )
     if (player->globalUser ) cout << " GLOBALUSER";
     if (player->admin ) cout << " ADMIN";
     if (player->op ) cout << " OPERATOR";
+  } else {
+    cout << " IP:0.0.0.0";
   }
 }
 
@@ -170,6 +172,8 @@ void logDetail::displayCallsign( int playerID )
   if (player) {
     cout << strlen( player->callsign.c_str() ) << ":";
     cout << player->callsign.c_str();
+  } else {
+    cout << "7:UNKNOWN";
   }
 }
 
