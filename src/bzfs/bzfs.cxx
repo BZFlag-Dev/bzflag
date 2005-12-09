@@ -2806,26 +2806,21 @@ static void captureFlag(int playerIndex, TeamColor teamCaptured)
     checkTeamScore(playerIndex, winningTeam);
 }
 
-static void shotUpdate(int playerIndex, void *buf, int len)
+static void shotUpdate(void *buf, int len, NetHandler *handler)
 {
+  ShotUpdate shot;
+  shot.unpack(buf);
+
   GameKeeper::Player *playerData
-    = GameKeeper::Player::getPlayerByIndex(playerIndex);
+    = GameKeeper::Player::getPlayerByIndex(shot.player);
   if (!playerData)
+    return;
+  if (playerData->netHandler != handler)
     return;
 
   const PlayerInfo &shooter = playerData->player;
   if (!shooter.isAlive() || shooter.isObserver())
     return;
-
-  ShotUpdate shot;
-  shot.unpack(buf);
-
-  // verify playerId
-  if (shot.player != playerIndex) {
-    DEBUG2("Player %s [%d] shot playerid mismatch\n", shooter.getCallSign(),
-	   playerIndex);
-    return;
-  }
 
   if (!playerData->updateShot(shot.id & 0xff, shot.id >> 8))
     return;
@@ -2834,26 +2829,27 @@ static void shotUpdate(int playerIndex, void *buf, int len)
 
 }
 
-static void shotFired(int playerIndex, void *buf, int len)
+static void shotFired(void *buf, int len, NetHandler *handler)
 {
+  FiringInfo firingInfo;
+  firingInfo.unpack(buf);
+
+  const ShotUpdate &shot = firingInfo.shot;
+
+  int playerIndex = shot.player;
+
+  // verify playerId
   GameKeeper::Player *playerData
     = GameKeeper::Player::getPlayerByIndex(playerIndex);
   if (!playerData)
     return;
 
+  if (playerData->netHandler != handler)
+    return;
+
   const PlayerInfo &shooter = playerData->player;
   if (!shooter.isAlive() || shooter.isObserver())
     return;
-  FiringInfo firingInfo;
-  firingInfo.unpack(buf);
-  const ShotUpdate &shot = firingInfo.shot;
-
-  // verify playerId
-  if (shot.player != playerIndex) {
-    DEBUG2("Player %s [%d] shot playerid mismatch\n", shooter.getCallSign(),
-	   playerIndex);
-    return;
-  }
 
   FlagInfo &fInfo = *FlagInfo::get(shooter.getFlag());
 
@@ -3056,7 +3052,7 @@ bool checkSpam(char* message, GameKeeper::Player* playerData, int t)
 }
 
 
-static void handleCommand(const void *rawbuf, bool udp, NetHandler* handler)
+static void handleCommand(const void *rawbuf, bool udp, NetHandler *handler)
 {
   if (!rawbuf) {
     std::cerr << "WARNING: handleCommand got a null rawbuf?!" << std::endl;
@@ -3086,11 +3082,47 @@ static void handleCommand(const void *rawbuf, bool udp, NetHandler* handler)
     }
   }
 
-  GameKeeper::Player *playerData = GameKeeper::Player::getFirstPlayer(handler);
-  if (!playerData)
-    return;
+  GameKeeper::Player *playerData;
 
-  int t = playerData->getIndex();
+  int t;
+  switch (code) {
+  case MsgEnter:
+  case MsgExit:
+  case MsgAlive:
+  case MsgKilled:
+  case MsgGrabFlag:
+  case MsgDropFlag:
+  case MsgCaptureFlag:
+  case MsgShotEnd:
+  case MsgHit:
+  case MsgTeleport:
+  case MsgMessage:
+  case MsgTransferFlag:
+  case MsgPause:
+  case MsgAutoPilot:
+  case MsgLagPing:
+  case MsgKrbPrincipal:
+  case MsgKrbTicket:
+    uint8_t playerId;
+    buf        = nboUnpackUByte(buf, playerId);
+    playerData = GameKeeper::Player::getPlayerByIndex(playerId);
+    if (!playerData)
+      return;
+    if (playerData->netHandler != handler)
+      return;
+    t = playerId;
+    break;
+  case MsgShotBegin:
+  case MsgPlayerUpdate:
+  case MsgPlayerUpdateSmall:
+  case MsgGMUpdate:
+    break;
+  default:
+    playerData = GameKeeper::Player::getFirstPlayer(handler);
+    if (!playerData)
+      return;
+    t = playerData->getIndex();
+  }
 
   switch (code) {
     // player joining
@@ -3289,12 +3321,9 @@ static void handleCommand(const void *rawbuf, bool udp, NetHandler* handler)
 
     // shot fired
     case MsgShotBegin:
-      if (invalidPlayerAction(playerData->player, t, "shoot"))
-	break;
-
       // Sanity check
       if (len == FiringInfoPLen)
-	shotFired(t, buf, int(len));
+	shotFired(buf, int(len), handler);
       break;
 
     // shot ended prematurely
@@ -3303,16 +3332,11 @@ static void handleCommand(const void *rawbuf, bool udp, NetHandler* handler)
 	break;
 
       // data: shooter id, shot number, reason
-      PlayerId sourcePlayer;
+      PlayerId sourcePlayer = t;
       int16_t shot;
       uint16_t reason;
-      buf = nboUnpackUByte(buf, sourcePlayer);
       buf = nboUnpackShort(buf, shot);
       buf = nboUnpackUShort(buf, reason);
-      // It should not happen anymore, but check for a cheat
-      if (t != sourcePlayer)
-	break;
-
       shotEnded(sourcePlayer, shot, reason);
       break;
     }
@@ -3324,16 +3348,12 @@ static void handleCommand(const void *rawbuf, bool udp, NetHandler* handler)
       if (!playerData->player.isAlive())
 	break;
 
-      PlayerId hitPlayer;
+      PlayerId hitPlayer = t;
       PlayerId shooterPlayer;
       FiringInfo firingInfo;
       int16_t shot;
-      buf = nboUnpackUByte(buf, hitPlayer);
       buf = nboUnpackUByte(buf, shooterPlayer);
       buf = nboUnpackShort(buf, shot);
-      // It should not happen, but check for a cheat
-      if (t != hitPlayer)
-	break;
       GameKeeper::Player *shooterData
 	= GameKeeper::Player::getPlayerByIndex(shooterPlayer);
       if (!shooterData)
@@ -3436,13 +3456,8 @@ static void handleCommand(const void *rawbuf, bool udp, NetHandler* handler)
     case MsgTransferFlag: {
       PlayerId from, to;
 
-      buf = nboUnpackUByte(buf, from);
-      if (from != t) {
-	DEBUG1("Kicking Player %s [%d] Player trying to transfer flag\n",
-	       playerData->player.getCallSign(), t);
-	removePlayer(t, "Player shot mismatch", true);
-	break;
-      }
+      from = t;
+
       buf = nboUnpackUByte(buf, to);
 
       GameKeeper::Player *fromData = playerData;
@@ -3486,8 +3501,7 @@ static void handleCommand(const void *rawbuf, bool udp, NetHandler* handler)
     }
 
     case MsgUDPLinkEstablished:
-      DEBUG2("Player %s [%d] outbound UDP up\n",
-	     playerData->player.getCallSign(), t);
+      DEBUG2("Connection at %s outbound UDP up\n", handler->getTargetIP());
       break;
 
     case MsgNewRabbit: {
@@ -3537,6 +3551,14 @@ static void handleCommand(const void *rawbuf, bool udp, NetHandler* handler)
 
       buf = nboUnpackFloat(buf, timestamp);
       buf = nboUnpackUByte(buf, id);
+
+      playerData = GameKeeper::Player::getPlayerByIndex(id);
+      if (!playerData)
+	return;
+      if (playerData->netHandler != handler)
+	return;
+      t = id;
+
       buf = state.unpack(buf, code);
 
       // observer updates are not relayed 
@@ -3719,7 +3741,7 @@ static void handleCommand(const void *rawbuf, bool udp, NetHandler* handler)
     }
 
     case MsgGMUpdate:
-      shotUpdate(t, buf, int(len));
+      shotUpdate(buf, int(len), handler);
       break;
 
     // FIXME handled inside uread, but not discarded
@@ -3741,8 +3763,8 @@ static void handleCommand(const void *rawbuf, bool udp, NetHandler* handler)
 
     // unknown msg type
     default:
-      DEBUG1("Player [%d] sent unknown packet type (%x), possible attack from %s\n",
-	     t, code, handler->getTargetIP());
+      DEBUG1("Received an unknown packet type (%x), possible attack from %s\n",
+	     code, handler->getTargetIP());
   }
 }
 

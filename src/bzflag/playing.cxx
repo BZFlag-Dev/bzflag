@@ -143,7 +143,7 @@ float			roamDZoom = 0.0f;
 static MessageOfTheDay		*motd = NULL;
 DefaultCompleter	completer;
 
-char			messageMessage[PlayerIdPLen + MessageLen];
+PlayerId                msgDestination;
 
 static void		setHuntTarget();
 static void		setTankFlags();
@@ -718,13 +718,13 @@ static void doKeyPlaying(const BzfKeyEvent& key, bool pressed, bool haveBinding)
     if (pressed) {
       char name[32];
       int msgno = (key.button - BzfKeyEvent::F1) + 1;
-      void* buf = messageMessage;
+      PlayerId  to;
       if (key.shift == BzfKeyEvent::ControlKey) {
 	sprintf(name, "quickTeamMessage%d", msgno);
-	buf = nboPackUByte(buf, TeamToPlayerId(myTank->getTeam()));
+	to = myTank->getTeam();
       } else {
 	sprintf(name, "quickMessage%d", msgno);
-	buf = nboPackUByte(buf, AllPlayers);
+	to = AllPlayers;
       }
       if (BZDB.isSet(name)) {
 	char messageBuffer[MessageLen];
@@ -732,8 +732,7 @@ static void doKeyPlaying(const BzfKeyEvent& key, bool pressed, bool haveBinding)
 	strncpy(messageBuffer,
 		BZDB.get(name).c_str(),
 		MessageLen);
-	nboPackString(buf, messageBuffer, MessageLen);
-	serverLink->send(MsgMessage, sizeof(messageMessage), messageMessage);
+	serverLink->sendMessage(to, messageBuffer);
       }
     }
   } else if (myTank->isAlive()) {
@@ -2058,10 +2057,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 		strncpy(meaculpa,
 			"sorry, i'm just a silly machine",
 			MessageLen);
-		char *buf = messageMessage;
-		buf = (char*)nboPackUByte(buf, victimPlayer->getId());
-		nboPackString(buf, meaculpa, MessageLen-1);
-		serverLink->send(MsgMessage, sizeof(messageMessage), messageMessage);
+		serverLink->sendMessage(victimPlayer->getId(), meaculpa);
 	      }
 	    }
 	  } else {
@@ -2278,10 +2274,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 	      char meaculpa[MessageLen];
 	      memset(meaculpa, 0, MessageLen);
 	      strncpy(meaculpa, "sorry, i'm just a silly machine", MessageLen);
-	      char *buf = messageMessage;
-	      buf = (char*)nboPackUShort(buf, myTank->getTeam());
-	      nboPackString(buf, meaculpa, MessageLen-1);
-	      serverLink->send(MsgMessage, sizeof(messageMessage), messageMessage);
+	      serverLink->sendMessage(myTank->getTeam(), meaculpa);
 	    }
 	  }
 	} else {
@@ -2618,14 +2611,16 @@ static void		handleServerMessage(bool human, uint16_t code,
 
 	  for (size_t j = 0; j < countof(passwdKeys); j++) {
 	    if (BZDB.isSet(passwdKeys[j])) {
+	      char messageBuffer[MessageLen];
+	      memset(messageBuffer, 0, MessageLen);
 	      std::string passwdResponse = "/identify "
 		+ BZDB.get(passwdKeys[j]);
 	      addMessage(0, ("Autoidentifying with password stored for "
 			     + passwdKeys[j]).c_str(), 2, false);
-	      void *buf = messageMessage;
-	      buf = nboPackUByte(buf, ServerPlayer);
-	      nboPackString(buf, (void*) passwdResponse.c_str(), MessageLen);
-	      serverLink->send(MsgMessage, sizeof(messageMessage), messageMessage);
+	      strncpy(messageBuffer,
+		      passwdResponse.c_str(),
+		      MessageLen);
+	      serverLink->sendMessage(ServerPlayer, messageBuffer);
 	      break;
 	    }
 	  }
@@ -2965,7 +2960,7 @@ static void		handlePlayerMessage(uint16_t code, uint16_t,
 
     // just echo lag ping message
     case MsgLagPing:
-      serverLink->send(MsgLagPing,2,msg);
+      serverLink->sendLagPing((char *)msg);
       break;
   }
 }
@@ -4414,7 +4409,7 @@ void		leaveGame()
   int i;
   for (i = 0; i < numRobots; i++) {
     if (robots[i] && robotServer[i])
-      robotServer[i]->send(MsgExit, 0, NULL);
+      robotServer[i]->sendExit();
     delete robots[i];
     delete robotServer[i];
     robots[i] = NULL;
@@ -4476,7 +4471,7 @@ void		leaveGame()
   hud->setAltitudeTape(false);
 
   // shut down server connection
-  if (sayGoodbye) serverLink->send(MsgExit, 0, NULL);
+  if (sayGoodbye) serverLink->sendExit();
   ServerLink::setServer(NULL);
   delete serverLink;
   serverLink = NULL;

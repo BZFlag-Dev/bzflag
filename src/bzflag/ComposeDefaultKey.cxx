@@ -94,9 +94,7 @@ bool			ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
 	char messageBuffer[MessageLen];
 	memset(messageBuffer, 0, MessageLen);
 	strncpy(messageBuffer, message.c_str(), MessageLen);
-	nboPackString(messageMessage + PlayerIdPLen, messageBuffer,
-		      MessageLen);
-	serverLink->send(MsgMessage, sizeof(messageMessage), messageMessage);
+	serverLink->sendMessage(msgDestination, messageBuffer);
       }
 
       // record message in history
@@ -155,8 +153,7 @@ bool			ComposeDefaultKey::keyRelease(const BzfKeyEvent& key)
       selectNextRecipient(key.button != BzfKeyEvent::Left, false);
       const Player *recipient = myTank->getRecipient();
       if (recipient) {
-	void* buf = messageMessage;
-	buf = nboPackUByte(buf, recipient->getId());
+	msgDestination = recipient->getId();
 	std::string composePrompt = "Send to ";
 	composePrompt += recipient->getCallSign();
 	composePrompt += ": ";

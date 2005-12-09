@@ -559,9 +559,11 @@ void			ServerLink::sendEnter(PlayerType type,
 						const char* token)
 {
   if (state != Okay) return;
-  char msg[PlayerIdPLen + 4 + CallSignLen + EmailLen + TokenLen + VersionLen] = {0};
+  char msg[MaxPacketLen] = {0};
   void* buf = msg;
-  
+
+  buf = nboPackUByte(buf, uint8_t(getId()));
+
   buf = nboPackUShort(buf, uint16_t(type));
   buf = nboPackUShort(buf, uint16_t(team));
   ::strncpy((char*)buf, name, CallSignLen - 1);
@@ -572,7 +574,7 @@ void			ServerLink::sendEnter(PlayerType type,
   buf = (void*)((char*)buf + TokenLen);
   ::strncpy((char*)buf, getAppVersion(), VersionLen - 1);
   buf = (void*)((char*)buf + VersionLen);
-  send(MsgEnter, sizeof(msg), msg);
+  send(MsgEnter, (char*)buf - msg, msg);
 }
 
 bool ServerLink::readEnter (std::string& reason,
@@ -615,22 +617,27 @@ bool ServerLink::readEnter (std::string& reason,
 #ifndef BUILDING_BZADMIN
 void			ServerLink::sendCaptureFlag(TeamColor team)
 {
-  char msg[2];
-  nboPackUShort(msg, uint16_t(team));
+  char msg[3];
+  void* buf = msg;
+  buf = nboPackUByte(buf, uint8_t(getId()));
+  nboPackUShort(buf, uint16_t(team));
   send(MsgCaptureFlag, sizeof(msg), msg);
 }
 
 void			ServerLink::sendGrabFlag(int flagIndex)
 {
-  char msg[2];
-  nboPackUShort(msg, uint16_t(flagIndex));
+  char msg[3];
+  void* buf = msg;
+  buf = nboPackUByte(buf, uint8_t(getId()));
+  nboPackUShort(buf, uint16_t(flagIndex));
   send(MsgGrabFlag, sizeof(msg), msg);
 }
 
 void			ServerLink::sendDropFlag(const float* position)
 {
-  char msg[12];
+  char msg[13];
   void* buf = msg;
+  buf = nboPackUByte(buf, uint8_t(getId()));
   buf = nboPackVector(buf, position);
   send(MsgDropFlag, sizeof(msg), msg);
 }
@@ -640,9 +647,10 @@ void			ServerLink::sendKilled(const PlayerId& killer,
 					       const FlagType* flagType,
 					       int phydrv)
 {
-  char msg[PlayerIdPLen + 2 + 2 + FlagPackSize + 4];
+  char msg[6 + FlagPackSize + 4];
   void* buf = msg;
 
+  buf = nboPackUByte(buf, getId());
   buf = nboPackUByte(buf, killer);
   buf = nboPackUShort(buf, int16_t(reason));
   buf = nboPackShort(buf, int16_t(shotId));
@@ -710,13 +718,18 @@ void ServerLink::sendHit(const PlayerId &source, const PlayerId &shooter,
 
 void			ServerLink::sendAlive()
 {
-  send(MsgAlive, 0, NULL);
+  char msg[1];
+
+  msg[0] = getId();
+
+  send(MsgAlive, sizeof(msg), msg);
 }
 
 void			ServerLink::sendTeleport(int from, int to)
 {
-  char msg[4];
+  char msg[5];
   void* buf = msg;
+  buf = nboPackUByte(buf, uint8_t(getId()));
   buf = nboPackUShort(buf, uint16_t(from));
   buf = nboPackUShort(buf, uint16_t(to));
   send(MsgTeleport, sizeof(msg), msg);
@@ -738,14 +751,52 @@ void			ServerLink::sendNewRabbit()
 
 void			ServerLink::sendPaused(bool paused)
 {
-  uint8_t p = paused;
-  send(MsgPause, 1, &p);
+  char msg[2];
+  void* buf = msg;
+  buf = nboPackUByte(buf, uint8_t(getId()));
+  buf = nboPackUByte(buf, uint8_t(paused));
+  send(MsgPause, sizeof(msg), msg);
+}
+
+void ServerLink::sendExit()
+{
+  char msg[1];
+
+  msg[0] = getId();
+
+  send(MsgExit, sizeof(msg), msg);
 }
 
 void			ServerLink::sendAutoPilot(bool autopilot)
 {
-  uint8_t p = autopilot;
-  send(MsgAutoPilot, 1, &p);
+  char msg[2];
+  void* buf = msg;
+  buf = nboPackUByte(buf, uint8_t(getId()));
+  buf = nboPackUByte(buf, uint8_t(autopilot));
+  send(MsgAutoPilot, sizeof(msg), msg);
+}
+
+void ServerLink::sendMessage(const PlayerId& to, char message[MessageLen])
+{
+  char msg[MaxPacketLen];
+  void* buf = msg;
+
+  buf = nboPackUByte(buf, uint8_t(getId()));
+  buf = nboPackUByte(buf, uint8_t(to));
+  buf = nboPackString(buf, message, MessageLen);
+
+  send(MsgMessage, (char *)buf - msg, msg);
+}
+
+void ServerLink::sendLagPing(char pingRequest[2])
+{
+  char msg[3];
+  void* buf = msg;
+
+  buf = nboPackUByte(buf, uint8_t(getId()));
+  buf = nboPackString(buf, pingRequest, sizeof(pingRequest));
+
+  send(MsgLagPing, sizeof(msg), msg);
 }
 
 void			ServerLink::sendUDPlinkRequest()
@@ -829,9 +880,19 @@ void			ServerLink::confirmIncomingUDP()
 void ServerLink::sendKerberosTicket(const char      *principal,
 				    const krb5_data *ticket)
 {
+  char msg[MaxPacketLen];
+  void* buf = msg;
+
   DEBUG3("Sent authentication ticket to server : \n");
-  send(MsgKrbPrincipal, strlen(principal), principal);
-  send(MsgKrbTicket, ticket->length, ticket->data);
+
+  buf = nboPackUByte(buf, uint8_t(getId()));
+  buf = nboPackString(buf, principal,  strlen(principal));
+  send(MsgKrbPrincipal, (char *)buf - msg, msg);
+
+  buf = msg;
+  buf = nboPackUByte(buf, uint8_t(getId()));
+  buf = nboPackString(buf, ticket->data, ticket->length);
+  send(MsgKrbTicket, (char *)buf - msg, msg);
 }
 #endif
 

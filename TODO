@@ -11,6 +11,12 @@ THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
 
 THESE ARE LOWER PRIORITY
 
+* New Rabbit Message from client, to restart the election of a new rabbit, in 
+  case the player is paused, need more info and check to be trusted
+
+* Autopilot message should be send at player joining, otherwise we loose
+  autopilot status for all the players, until they change their setting
+
 * Send world weapon 'tilt' info over the wire for saving maps
 
 * look closely at how local and global logins / groups interact:

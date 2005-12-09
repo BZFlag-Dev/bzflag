@@ -208,11 +208,8 @@ bool CommandList::operator() (const char * /*cmdLine*/)
 		   "Server-side Commands");
 
   const char* msg = "/?";
-  const int msgLen = strlen(msg) + 1;
-  cptr = (char*) nboPackUByte(buffer, ServerPlayer);
-  nboPackString(cptr, msg, msgLen);
-  serverLink->send(MsgMessage, PlayerIdPLen + msgLen, buffer);
-
+  strncpy(buffer, msg, MessageLen);
+  serverLink->sendMessage(ServerPlayer, buffer);
   return true;
 }
 
@@ -269,9 +266,7 @@ bool ClientQueryCommand::operator() (const char *commandLine)
   char messageBuffer[MessageLen];
   memset(messageBuffer, 0, MessageLen);
   strncpy(messageBuffer, "/clientquery", MessageLen);
-  nboPackString(messageMessage + PlayerIdPLen, messageBuffer, MessageLen);
-  serverLink->send(MsgMessage, sizeof(messageMessage), messageMessage);
-
+  serverLink->sendMessage(msgDestination, messageBuffer);
   return true;
 }
 
@@ -504,8 +499,7 @@ bool QuitCommand::operator() (const char *commandLine)
   char messageBuffer[MessageLen]; // send message
   memset(messageBuffer, 0, MessageLen);
   strncpy(messageBuffer, commandLine, MessageLen);
-  nboPackString(messageMessage + PlayerIdPLen, messageBuffer, MessageLen);
-  serverLink->send(MsgMessage, sizeof(messageMessage), messageMessage);
+  serverLink->sendMessage(msgDestination, messageBuffer);
   CommandsStandard::quit(); // kill client
   return true;
 }

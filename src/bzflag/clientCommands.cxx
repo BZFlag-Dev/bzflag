@@ -576,19 +576,16 @@ static std::string cmdSend(const std::string&,
     return "use send only when connected";
   std::string composePrompt;
   if (args[0] == "all") {
-    void* buf = messageMessage;
-    buf = nboPackUByte(buf, AllPlayers);
+    msgDestination = AllPlayers;
     composePrompt = "Send to all: ";
   } else if (args[0] == "team") {
-    void* buf = messageMessage;
-    buf = nboPackUByte(buf, TeamToPlayerId(myTank->getTeam()));
+    msgDestination = myTank->getTeam();
     composePrompt = "Send to teammates: ";
   } else if (args[0] == "nemesis") {
     const Player* nemesis = myTank->getNemesis();
-    if (!nemesis) return std::string();
-
-    void* buf = messageMessage;
-    buf = nboPackUByte(buf, nemesis->getId());
+    if (!nemesis)
+      return std::string();
+    msgDestination = nemesis->getId();
     composePrompt = "Send to ";
     composePrompt += nemesis->getCallSign();
     composePrompt += ": ";
@@ -604,17 +601,14 @@ static std::string cmdSend(const std::string&,
     }
     recipient = myTank->getRecipient();
     if (recipient) {
-      void* buf = messageMessage;
-      buf = nboPackUByte(buf, recipient->getId());
+      msgDestination = recipient->getId();
       composePrompt = "Send to ";
       composePrompt += recipient->getCallSign();
       composePrompt += ": ";
     }
   } else if (args[0] == "admin") {
-    void* buf = messageMessage;
-    buf = nboPackUByte(buf, AdminPlayers);
+    msgDestination = AdminPlayers;
     composePrompt = "Send to Admin : ";
-
   } else {
     return "usage: send {all|team|nemesis|recipient|admin}";
   }

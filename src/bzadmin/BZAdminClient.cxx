@@ -546,14 +546,9 @@ void BZAdminClient::sendMessage(const std::string& msg,
   }
 
   char buffer[MessageLen];
-  char buffer2[1 + MessageLen];
-  void* buf = buffer2;
-
-  buf = nboPackUByte(buf, target);
   memset(buffer, 0, MessageLen);
   strncpy(buffer, msg.c_str(), MessageLen - 1);
-  nboPackString(buffer2 + 1, buffer, MessageLen);
-  sLink.send(MsgMessage, sizeof(buffer2), buffer2);
+  sLink.sendMessage(target, buffer);
 }
 
 

@@ -352,19 +352,14 @@ bool			ServerCommandKey::keyPress(const BzfKeyEvent& key)
       if (sendMsg.find("/password", 0) == std::string::npos)
 	addMessage(NULL, displayMsg, 2);
 
-      void* buf = messageMessage;
-      buf = nboPackUByte(buf, ServerPlayer);
-
       char messageBuffer[MessageLen];
       memset(messageBuffer, 0, MessageLen);
       strncpy(messageBuffer, sendMsg.c_str(), MessageLen);
-      buf = nboPackString(buf, messageBuffer, MessageLen);
-      serverLink->send(MsgMessage, sizeof(messageMessage), messageMessage);
+      serverLink->sendMessage(ServerPlayer, messageBuffer);
     }
   }
 
   hud->setComposing(std::string());
-  //myTank->setRecipient(NULL);
   HUDui::setDefaultKey(NULL);
   return true;
 }
