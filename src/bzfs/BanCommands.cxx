@@ -200,7 +200,7 @@ bool MuteCommand::operator() (const char	 *message,
   int t = playerData->getIndex();
   if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::mute)) {
     sendMessage(ServerPlayer, t,
-		"You do not have permission to run the unmute command");
+		"You do not have permission to run the mute command");
     return true;
   }
 
