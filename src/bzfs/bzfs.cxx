@@ -3082,9 +3082,9 @@ static void handleCommand(const void *rawbuf, bool udp, NetHandler *handler)
     }
   }
 
-  GameKeeper::Player *playerData;
+  GameKeeper::Player *playerData = NULL;
 
-  int t;
+  int t = NULL;
   switch (code) {
   case MsgEnter:
   case MsgExit:
