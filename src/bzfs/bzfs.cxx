@@ -164,15 +164,26 @@ static bool realPlayer(const PlayerId& id)
   return playerData && playerData->player.isPlaying();
 }
 
-static int pwrite(GameKeeper::Player &playerData, const void *b, int l)
+static void dropHandler(NetHandler *handler, const char *reason)
 {
-  int result = playerData.netHandler->pwrite(b, l);
+  for (int i = 0; i < curMaxPlayers; i++) {
+    GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(i);
+    if (!playerData)
+      continue;
+    if (playerData->netHandler != handler)
+      continue;
+    removePlayer(i, reason, false);
+  }
+  delete handler;
+}
+
+static int pwrite(NetHandler *handler, const void *b, int l)
+{
+  int result = handler->pwrite(b, l);
   if (result == -1) {
-    removePlayer(playerData.getIndex(), "ECONNRESET/EPIPE", false);
+    dropHandler(handler, "ECONNRESET/EPIPE");
   } else if (result == -2) {
-    DEBUG2("Player %s [%d] drop, unresponsive\n",
-	   playerData.player.getCallSign(), playerData.getIndex());
-    removePlayer(playerData.getIndex(), "send queue too big", false);
+    dropHandler(handler, "send queue too big");
   }
   return result;
 }
@@ -186,7 +197,7 @@ char *getDirectMessageBuffer()
 // FIXME? 4 bytes before msg must be valid memory, will get filled in with len+code
 // usually, the caller gets a buffer via getDirectMessageBuffer(), but for example
 // for MsgShotBegin the receiving buffer gets used directly
-static int directMessage(GameKeeper::Player &playerData,
+static int directMessage(NetHandler *handler,
 			 uint16_t code, int len, const void *msg)
 {
   // send message to one player
@@ -195,7 +206,7 @@ static int directMessage(GameKeeper::Player &playerData,
   void *buf = bufStart;
   buf = nboPackUShort(buf, uint16_t(len));
   buf = nboPackUShort(buf, code);
-  return pwrite(playerData, bufStart, len + 4);
+  return pwrite(handler, bufStart, len + 4);
 }
 
 void directMessage(int playerIndex, uint16_t code, int len, const void *msg)
@@ -204,8 +215,10 @@ void directMessage(int playerIndex, uint16_t code, int len, const void *msg)
     = GameKeeper::Player::getPlayerByIndex(playerIndex);
   if (!playerData)
     return;
+  if (!playerData->netHandler)
+    return;
 
-  directMessage(*playerData, code, len, msg);
+  directMessage(playerData->netHandler, code, len, msg);
 }
 
 
@@ -351,7 +364,7 @@ static void sendGameTime(GameKeeper::Player* gkPlayer)
     void* buf = getDirectMessageBuffer();
     const float lag = gkPlayer->lagInfo.getLagAvg();
     const int length = makeGameTime(buf, lag);
-    directMessage(*gkPlayer, MsgGameTime, length, buf);
+    directMessage(gkPlayer->netHandler, MsgGameTime, length, buf);
     gkPlayer->updateNextGameTime();
   }
   return;
@@ -392,7 +405,7 @@ static void sendFlagUpdate(int playerIndex)
       if ((length + sizeof(uint16_t) + FlagPLen)
 	  > MaxPacketLen - 2*sizeof(uint16_t)) {
 	nboPackUShort(bufStart, cnt);
-	result = directMessage(*playerData, MsgFlagUpdate,
+	result = directMessage(playerData->netHandler, MsgFlagUpdate,
 			       (char*)buf - (char*)bufStart, bufStart);
 	if (result == -1)
 	  return;
@@ -413,7 +426,7 @@ static void sendFlagUpdate(int playerIndex)
 
   if (cnt > 0) {
     nboPackUShort(bufStart, cnt);
-    result = directMessage(*playerData, MsgFlagUpdate,
+    result = directMessage(playerData->netHandler, MsgFlagUpdate,
 			   (char*)buf - (char*)bufStart, bufStart);
   }
 }
@@ -451,7 +464,20 @@ void sendTeamUpdate(int playerIndex, int teamIndex1, int teamIndex2)
     directMessage(playerIndex, MsgTeamUpdate, (char*)buf - (char*)bufStart, bufStart);
 }
 
-static void sendPlayerUpdate(GameKeeper::Player *playerData, int index)
+static int sendTeamUpdateD(NetHandler *handler)
+{
+  // send all teams
+  void *buf, *bufStart = getDirectMessageBuffer();
+  buf = nboPackUByte(bufStart, CtfTeams);
+  for (int t = 0; t < CtfTeams; t++) {
+    buf = nboPackUShort(buf, t);
+    buf = team[t].team.pack(buf);
+  }
+  return directMessage(handler, MsgTeamUpdate,
+		       (char*)buf - (char*)bufStart, bufStart);
+}
+
+static void sendPlayerUpdateB(GameKeeper::Player *playerData)
 {
   if (!playerData->player.isPlaying())
     return;
@@ -459,12 +485,21 @@ static void sendPlayerUpdate(GameKeeper::Player *playerData, int index)
   void *bufStart = getDirectMessageBuffer();
   void *buf      = playerData->packPlayerUpdate(bufStart);
 
-  if (playerData->getIndex() == index) {
-    // send all players info about player[playerIndex]
-    relayMessage(MsgAddPlayer, (char*)buf - (char*)bufStart, bufStart);
-  } else {
-    directMessage(index, MsgAddPlayer, (char*)buf - (char*)bufStart, bufStart);
-  }
+  // send all players info about player[playerIndex]
+  relayMessage(MsgAddPlayer, (char*)buf - (char*)bufStart, bufStart);
+}
+
+static int sendPlayerUpdateD(NetHandler *handler,
+			     GameKeeper::Player *otherData)
+{
+  if (!otherData->player.isPlaying())
+    return 0;
+
+  void *bufStart = getDirectMessageBuffer();
+  void *buf      = otherData->packPlayerUpdate(bufStart);
+
+  return directMessage(handler, MsgAddPlayer,
+		       (char*)buf - (char*)bufStart, bufStart);
 }
 
 void sendPlayerInfo() {
@@ -713,7 +748,7 @@ static void relayPlayerPacket(int index, uint16_t len, const void *rawbuf, uint1
     PlayerInfo& pi = playerData->player;
 
     if (i != index && pi.isPlaying()) {
-      pwrite(*playerData, rawbuf, len + 4);
+      pwrite(playerData->netHandler, rawbuf, len + 4);
     }
   }
 }
@@ -1596,9 +1631,9 @@ static void addPlayer(int playerIndex, GameKeeper::Player *playerData)
   // accept player
   void *buf, *bufStart = getDirectMessageBuffer();
   buf = nboPackUByte(bufStart, playerIndex);
-  int result = directMessage(*playerData, MsgAccept,
+  int result = directMessage(playerData->netHandler, MsgAccept,
 			     (char*)buf-(char*)bufStart, bufStart);
-  if (result == -1)
+  if (result < 0)
     return;
 
   //send SetVars
@@ -1632,13 +1667,16 @@ static void addPlayer(int playerIndex, GameKeeper::Player *playerData)
   }
   if (!playerData->player.isBot()) {
     GameKeeper::Player *otherData;
-    for (int i = 0; i < curMaxPlayers
-	   && GameKeeper::Player::getPlayerByIndex(playerIndex); i++)
-      if (i != playerIndex) {
-	otherData = GameKeeper::Player::getPlayerByIndex(i);
-	if (otherData)
-	  sendPlayerUpdate(otherData, playerIndex);
-      }
+    for (int i = 0; i < curMaxPlayers; i++) {
+      if (i == playerIndex)
+	continue;
+      otherData = GameKeeper::Player::getPlayerByIndex(i);
+      if (!otherData)
+	continue;
+      result = sendPlayerUpdateD(playerData->netHandler, otherData);
+      if (result < 0)
+	break;
+    }
     
     if (clOptions->gameStyle & HandicapGameStyle) {
       int numHandicaps = 0;
@@ -1667,7 +1705,7 @@ static void addPlayer(int playerIndex, GameKeeper::Player *playerData)
 
   // send MsgAddPlayer to everybody -- this concludes MsgEnter response
   // to joining player
-  sendPlayerUpdate(playerData, playerIndex);
+  sendPlayerUpdateB(playerData);
 
   // send update of info for team just joined
   sendTeamUpdate(-1, teamIndex);
@@ -1698,7 +1736,7 @@ static void addPlayer(int playerIndex, GameKeeper::Player *playerData)
 
     bufStart = getDirectMessageBuffer();
     buf = nboPackInt(bufStart, (int32_t)timeLeft);
-    result = directMessage(*playerData, MsgTimeUpdate,
+    result = directMessage(playerData->netHandler, MsgTimeUpdate,
 			   (char*)buf-(char*)bufStart, bufStart);
     if (result == -1)
       return;
@@ -2151,7 +2189,7 @@ bool areFoes(TeamColor team1, TeamColor team2)
 }
 
 
-static void sendWorld(int playerIndex, uint32_t ptr)
+static void sendWorld(NetHandler *handler, uint32_t ptr)
 {
   playerHadWorld = true;
   // send another small chunk of the world database
@@ -2168,7 +2206,7 @@ static void sendWorld(int playerIndex, uint32_t ptr)
   }
   buf = nboPackUInt(bufStart, uint32_t(left));
   buf = nboPackString(buf, (char*)worldDatabase + ptr, size);
-  directMessage(playerIndex, MsgGetWorld, (char*)buf - (char*)bufStart, bufStart);
+  directMessage(handler, MsgGetWorld, (char*)buf - (char*)bufStart, bufStart);
 }
 
 
@@ -2195,21 +2233,7 @@ static void makeGameSettings()
 }
 
 
-static void sendGameSettings(int playerIndex)
-{
-  GameKeeper::Player *playerData;
-  playerData = GameKeeper::Player::getPlayerByIndex(playerIndex);
-  if (playerData == NULL) {
-    return;
-  }
-
-  pwrite (*playerData, worldSettings, 4 + WorldSettingsSize);
-
-  return;
-}
-
-
-static void sendQueryGame(int playerIndex)
+static void sendQueryGame(NetHandler *handler)
 {
   // much like a ping packet but leave out useless stuff (like
   // the server address, which must already be known, and the
@@ -2239,16 +2263,12 @@ static void sendQueryGame(int playerIndex)
   buf = nboPackUShort(buf, (uint16_t)clOptions->timeElapsed);
 
   // send it
-  directMessage(playerIndex, MsgQueryGame, (char*)buf-(char*)bufStart, bufStart);
+  directMessage(handler, MsgQueryGame, (char*)buf-(char*)bufStart, bufStart);
 }
 
-static void sendQueryPlayers(int playerIndex)
+static void sendQueryPlayers(NetHandler *handler)
 {
-  GameKeeper::Player *playerData
-    = GameKeeper::Player::getPlayerByIndex(playerIndex);
-  if (!playerData)
-    return;
-
+  int result;
   // count the number of active players
   int numPlayers = GameKeeper::Player::count();
 
@@ -2256,21 +2276,23 @@ static void sendQueryPlayers(int playerIndex)
   void *buf, *bufStart = getDirectMessageBuffer();
   buf = nboPackUShort(bufStart, NumTeams);
   buf = nboPackUShort(buf, numPlayers);
-  int result = directMessage(*playerData, MsgQueryPlayers,
-			     (char*)buf-(char*)bufStart, bufStart);
-  if (result == -1)
+  result = directMessage(handler, MsgQueryPlayers,
+			 (char*)buf-(char*)bufStart, bufStart);
+  if (result < 0)
     return;
 
   // now send the teams and players
-  sendTeamUpdate(playerIndex);
+  result = sendTeamUpdateD(handler);
+  if (result < 0)
+    return;
   GameKeeper::Player *otherData;
-  for (int i = 0; i < curMaxPlayers
-	 && GameKeeper::Player::getPlayerByIndex(playerIndex); i++) {
-    if (i == playerIndex)
-      continue;
+  for (int i = 0; i < curMaxPlayers; i++) {
     otherData = GameKeeper::Player::getPlayerByIndex(i);
-    if (otherData)
-      sendPlayerUpdate(otherData, playerIndex);
+    if (!otherData)
+      continue;
+    result = sendPlayerUpdateD(handler, otherData);
+    if (result < 0)
+      return;
   }
 }
 
@@ -3084,7 +3106,7 @@ static void handleCommand(const void *rawbuf, bool udp, NetHandler *handler)
 
   GameKeeper::Player *playerData = NULL;
 
-  int t = NULL;
+  int t = 0;
   switch (code) {
   case MsgEnter:
   case MsgExit:
@@ -3103,6 +3125,7 @@ static void handleCommand(const void *rawbuf, bool udp, NetHandler *handler)
   case MsgLagPing:
   case MsgKrbPrincipal:
   case MsgKrbTicket:
+  case MsgNewRabbit:
     uint8_t playerId;
     buf        = nboUnpackUByte(buf, playerId);
     playerData = GameKeeper::Player::getPlayerByIndex(playerId);
@@ -3116,6 +3139,12 @@ static void handleCommand(const void *rawbuf, bool udp, NetHandler *handler)
   case MsgPlayerUpdate:
   case MsgPlayerUpdateSmall:
   case MsgGMUpdate:
+  case MsgNegotiateFlags:
+  case MsgGetWorld:
+  case MsgWantSettings:
+  case MsgWantWHash:
+  case MsgQueryGame:
+  case MsgQueryPlayers:
     break;
   default:
     playerData = GameKeeper::Player::getFirstPlayer(handler);
@@ -3188,7 +3217,8 @@ static void handleCommand(const void *rawbuf, bool udp, NetHandler *handler)
 	if ((*m_it) != Flags::Null)
 	  buf = (*m_it)->pack(buf);
       }
-      directMessage(t, MsgNegotiateFlags, (char*)buf-(char*)bufStart, bufStart);
+      directMessage(handler, MsgNegotiateFlags, (char*)buf-(char*)bufStart,
+		    bufStart);
       break;
     }
 
@@ -3199,12 +3229,12 @@ static void handleCommand(const void *rawbuf, bool udp, NetHandler *handler)
       // data: count (bytes read so far)
       uint32_t ptr;
       buf = nboUnpackUInt(buf, ptr);
-      sendWorld(t, ptr);
+      sendWorld(handler, ptr);
       break;
     }
 
     case MsgWantSettings: {
-      sendGameSettings(t);
+      pwrite(handler, worldSettings, 4 + WorldSettingsSize);
       break;
     }
 
@@ -3213,19 +3243,21 @@ static void handleCommand(const void *rawbuf, bool udp, NetHandler *handler)
       if (clOptions->cacheURL.size() > 0) {
 	obuf = nboPackString(obufStart, clOptions->cacheURL.c_str(),
 			    clOptions->cacheURL.size() + 1);
-	directMessage(t, MsgCacheURL, (char*)obuf-(char*)obufStart, obufStart);
+	directMessage(handler, MsgCacheURL, (char*)obuf-(char*)obufStart,
+		      obufStart);
       }
       obuf = nboPackString(obufStart, hexDigest, strlen(hexDigest)+1);
-      directMessage(t, MsgWantWHash, (char*)obuf-(char*)obufStart, obufStart);
+      directMessage(handler, MsgWantWHash, (char*)obuf-(char*)obufStart,
+		    obufStart);
       break;
     }
 
     case MsgQueryGame:
-      sendQueryGame(t);
+      sendQueryGame(handler);
       break;
 
     case MsgQueryPlayers:
-      sendQueryPlayers(t);
+      sendQueryPlayers(handler);
       break;
 
     // player is coming alive
@@ -4001,7 +4033,7 @@ static void doStuffOnPlayer(GameKeeper::Player &playerData)
   if (nextPingSeqno > 0) {
     void *buf, *bufStart = getDirectMessageBuffer();
     buf = nboPackUShort(bufStart, nextPingSeqno);
-    int result = directMessage(playerData, MsgLagPing,
+    int result = directMessage(playerData.netHandler, MsgLagPing,
 			       (char*)buf - (char*)bufStart, bufStart);
     if (result == -1)
       return;

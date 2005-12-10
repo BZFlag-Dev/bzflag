@@ -746,7 +746,10 @@ void			ServerLink::sendTransferFlag(const PlayerId& from, const PlayerId& to)
 
 void			ServerLink::sendNewRabbit()
 {
-  send(MsgNewRabbit, 0, NULL);
+  char msg[1];
+  void* buf = msg;
+  buf = nboPackUByte(buf, uint8_t(getId()));
+  send(MsgNewRabbit, sizeof(msg), msg);
 }
 
 void			ServerLink::sendPaused(bool paused)
