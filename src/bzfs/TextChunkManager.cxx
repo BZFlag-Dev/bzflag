@@ -24,37 +24,122 @@
 #include "global.h"
 
 
-bool TextChunkManager::parseFile(const std::string &fileName, const std::string &chunkName)
+/******************************************************************************/
+
+TextChunk::TextChunk()
 {
+  // for the <map>[] operator
+}
+
+
+TextChunk::TextChunk(const std::string& _fileName)
+{
+  fileName = _fileName;
+  theVector = parse();
+  return;
+}
+
+
+TextChunk::TextChunk(const TextChunk& tc)
+{
+  fileName = tc.fileName;
+  theVector = tc.theVector;
+  return;
+}
+
+
+StringVector TextChunk::parse()
+{
+  StringVector strings;
   char buffer[MessageLen];
   std::ifstream in(fileName.c_str());
-  if (!in) return false;
-
-  StringVector strings;
-  for(int i = 0; i < 20 && in.good(); i++) {
-    in.getline(buffer,MessageLen);
-    if(!in.fail()){ // really read something
-      strings.push_back(buffer);
+  if (in) {
+    for(int i = 0; (i < 20) && in.good(); i++) {
+      in.getline(buffer, MessageLen);
+      if(!in.fail()){ // really read something
+        strings.push_back(buffer);
+      }
     }
   }
+  return strings;
+}
 
-  if (strings.size() != 0) {
-    theChunks.insert(StringChunkMap::value_type(chunkName,strings));
+
+bool TextChunk::reload()
+{
+  StringVector newVec = parse();
+  if (newVec.size() > 0) {
+    theVector = newVec;
+  }
+  return (theVector.size() > 0);
+}
+
+
+size_t TextChunk::size() const
+{
+  return theVector.size();
+}
+
+
+const StringVector& TextChunk::getVector() const
+{
+  return theVector;
+}
+
+
+/******************************************************************************/
+
+bool TextChunkManager::parseFile(const std::string &fileName,
+                                 const std::string &chunkName)
+{
+  TextChunk textChunk(fileName);
+
+  if (textChunk.size() <= 0) {
+    return false;
+  }
+
+  // add a new chunk name if it isn't already listed
+  if (theChunks.find(chunkName) == theChunks.end()) {
     chunkNames.push_back(chunkName);
   }
+
+  // add or replace the chunk
+  theChunks[chunkName] = textChunk;
+  
   return true;
 }
 
-const std::vector<std::string>* TextChunkManager::getTextChunk(const std::string &chunkName) const
+
+const StringVector* TextChunkManager::getTextChunk(const std::string &chunkName) const
 {
-  StringChunkMap::const_iterator it;
-  it =theChunks.find(chunkName);
+  TextChunkMap::const_iterator it;
+  it = theChunks.find(chunkName);
   if (it != theChunks.end()){
     return &it->second.getVector();
   } else {
     return NULL;
   }
 }
+
+
+const StringVector& TextChunkManager::getChunkNames() const
+{
+  return chunkNames;
+}
+
+
+void TextChunkManager::reload()
+{
+  TextChunkMap::iterator it;
+  for (it = theChunks.begin(); it != theChunks.end(); it++) {
+    it->second.reload();
+  }
+  return;
+}
+
+
+/******************************************************************************/
+
 
 // Local Variables: ***
 // mode:C++ ***

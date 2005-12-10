@@ -36,6 +36,7 @@ static const GLfloat	squareShape[4][2] =
 				{ {  1.0f,  1.0f }, { -1.0f,  1.0f },
 				  { -1.0f, -1.0f }, {  1.0f, -1.0f } };
 
+
 GLfloat			BackgroundRenderer::skyPyramid[5][3];
 const GLfloat		BackgroundRenderer::cloudRepeats = 3.0f;
 static const int	NumMountainFaces = 16;
@@ -117,13 +118,10 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
   gridGState = gstate.getState();
 
   // make receiver stuff
-  {
-    // gstates
-    gstate.reset();
-    gstate.setShading();
-    gstate.setBlending((GLenum)GL_SRC_ALPHA, (GLenum)GL_ONE);
-    receiverGState = gstate.getState();
-  }
+  gstate.reset();
+  gstate.setShading();
+  gstate.setBlending((GLenum)GL_SRC_ALPHA, (GLenum)GL_ONE);
+  receiverGState = gstate.getState();
 
   // sun shadow stuff
   gstate.reset();
@@ -280,8 +278,8 @@ void BackgroundRenderer::setupGroundMaterials()
   // see if we have a map specified material
   const BzMaterial* bzmat = MATERIALMGR.findMaterial("GroundMaterial");
 
-  int groundTextureID = -1;
-  const GLfloat* groundTextureMatrix = NULL;
+  groundTextureID = -1;
+  groundTextureMatrix = NULL;
 
   if (bzmat == NULL) {
     // default ground material
@@ -310,7 +308,7 @@ void BackgroundRenderer::setupGroundMaterials()
       }
     }
   }
-
+  
   static const GLfloat	black[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
   OpenGLMaterial defaultMaterial(black, black, 0.0f);
 
@@ -671,7 +669,15 @@ void BackgroundRenderer::renderGroundEffects(SceneRenderer& renderer,
     // kilometers away.
     if (BZDBCache::blend && BZDBCache::lighting &&
         !drawingMirror && BZDBCache::drawGroundLights) {
-      drawGroundReceivers(renderer);
+      if (BZDBCache::tesselation && (renderer.useQuality() >= 3)) {
+//          (BZDB.get(StateDatabase::BZDB_FOGMODE) == "none")) {
+        // not really tesselation, but it is tied to the "Best" lighting,
+        // avoid on foggy maps, because the blending function accumulates
+        // too much brightness.
+        drawAdvancedGroundReceivers(renderer);
+      } else {
+        drawGroundReceivers(renderer);
+      }
     }
 
     if (renderer.useQuality() > 1) {
@@ -803,8 +809,9 @@ void BackgroundRenderer::setupSkybox()
   
 void BackgroundRenderer::drawSkybox()
 {
-  // must fit within the clipping planes
-  const float d = 8.0f * BZDBCache::worldSize;
+  // sky box must fit inside far clipping plane
+  // (adjusted for the deepProjection matrix)
+  const float d = 3.0f * BZDBCache::worldSize;
   const GLfloat verts[8][3] = {
     {-d, -d, -d}, {+d, -d, -d}, {+d, +d, -d}, {-d, +d, -d},
     {-d, -d, +d}, {+d, -d, +d}, {+d, +d, +d}, {-d, +d, +d}
@@ -1035,12 +1042,11 @@ void BackgroundRenderer::drawGround()
       glColor4fv(groundColorInv[styleIndex]);
       invGroundGState[styleIndex].setState();
     } else {
-      if (BZDB.isSet("GroundOverideColor")) {
-	float color[4];
-	parseColorString(BZDB.get("GroundOverideColor"), color);
+      float color[4];
+      if (BZDB.isSet("GroundOverideColor") &&
+	  parseColorString(BZDB.get("GroundOverideColor"), color)) {
 	glColor4fv(color);
-      }
-      else {
+      } else {
 	glColor4fv(groundColor[styleIndex]);
       }
       groundGState[styleIndex].setState();
@@ -1215,7 +1221,6 @@ void BackgroundRenderer::drawGroundReceivers(SceneRenderer& renderer)
   static float angle[receiverSlices + 1][2];
 
   static bool init = false;
-
   if (!init) {
     init = true;
     const float receiverSliceAngle = (float)(2.0 * M_PI / double(receiverSlices));
@@ -1251,8 +1256,15 @@ void BackgroundRenderer::drawGroundReceivers(SceneRenderer& renderer)
     float d = pos[2];
     float I = B / (atten[0] + d * (atten[1] + d * atten[2]));
 
-    // if I is too low, don't bother drawing anything
-    if (I < 0.02f) {
+    // maximum value
+    const float maxVal = (lightColor[0] > lightColor[1]) ?
+                         ((lightColor[0] > lightColor[2]) ?
+                          lightColor[0] : lightColor[2]) :
+                         ((lightColor[1] > lightColor[2]) ?
+                          lightColor[1] : lightColor[2]);
+
+    // if I is too attenuated, don't bother drawing anything
+    if ((I * maxVal) < 0.02f) {
       continue;
     }
 
@@ -1261,45 +1273,49 @@ void BackgroundRenderer::drawGroundReceivers(SceneRenderer& renderer)
 
     // set the main lighting color
     float color[4];
-    memcpy(color, lightColor, 3 * sizeof(GLfloat));
+    color[0] = lightColor[0];
+    color[1] = lightColor[1];
+    color[2] = lightColor[2];
+    color[3] = I;
 
     // draw ground receiver, computing lighting at each vertex ourselves
     glBegin(GL_TRIANGLE_FAN);
     {
-      glColor4f(color[0], color[1], color[1], I);
+      glColor4fv(color);
       glVertex2f(0.0f, 0.0f);
 
       // inner ring
-      d = receiverRingSize + pos[2];
+      d = hypotf(receiverRingSize, pos[2]);
       I = B / (atten[0] + d * (atten[1] + d * atten[2]));
-      I *= pos[2] / hypotf(receiverRingSize, pos[2]);
+      I *= pos[2] / d;
       color[3] = I;
+      glColor4fv(color);
       for (j = 0; j <= receiverSlices; j++) {
-        glColor4fv(color);
 	glVertex2f(receiverRingSize * angle[j][0],
 		   receiverRingSize * angle[j][1]);
       }
     }
     glEnd();
+    triangleCount += receiverSlices;
 
     for (i = 1; i < receiverRings; i++) {
       const GLfloat innerSize = receiverRingSize * GLfloat(i * i);
       const GLfloat outerSize = receiverRingSize * GLfloat((i + 1) * (i + 1));
 
       // compute inner and outer lit colors
-      float dis = innerSize + pos[2];
-      float Int = B / (atten[0] + dis * (atten[1] + dis * atten[2]));
-      Int *= pos[2] / hypotf(innerSize, pos[2]);
-      float innerAlpha = Int;
+      d = hypotf(innerSize, pos[2]);
+      I = B / (atten[0] + d * (atten[1] + d * atten[2]));
+      I *= pos[2] / d;
+      float innerAlpha = I;
 
       if (i + 1 == receiverRings) {
-	Int = 0.0f;
+	I = 0.0f;
       } else {
-	dis = outerSize + pos[2];
-	Int = B / (atten[0] + dis * (atten[1] + dis * atten[2]));
-	Int *= pos[2] / hypotf(outerSize, pos[2]);
+	d = hypotf(outerSize, pos[2]);
+	I = B / (atten[0] + d * (atten[1] + d * atten[2]));
+	I *= pos[2] / d;
       }
-      float outerAlpha = Int;
+      float outerAlpha = I;
 
       glBegin(GL_QUAD_STRIP);
       {
@@ -1314,9 +1330,184 @@ void BackgroundRenderer::drawGroundReceivers(SceneRenderer& renderer)
       }
       glEnd();
     }
+    triangleCount += (receiverSlices * receiverRings * 2);
+    
     glTranslatef(-pos[0], -pos[1], 0.0f);
   }
   glPopMatrix();
+}
+
+
+void BackgroundRenderer::drawAdvancedGroundReceivers(SceneRenderer& renderer)
+{
+  const float minLuminance = 0.02f;
+  static const int receiverSlices = 32;
+  static const float receiverRingSize = 0.5f;	// meters
+  static float angle[receiverSlices + 1][2];
+
+  static bool init = false;
+  if (!init) {
+    init = true;
+    const float receiverSliceAngle = (float)(2.0 * M_PI / double(receiverSlices));
+    for (int i = 0; i <= receiverSlices; i++) {
+      angle[i][0] = cosf((float)i * receiverSliceAngle);
+      angle[i][1] = sinf((float)i * receiverSliceAngle);
+    }
+  }
+
+  const int count = renderer.getNumAllLights();
+  if (count == 0) {
+    return;
+  }
+
+  // setup the ground tint
+  const GLfloat* gndColor = groundColor[styleIndex];
+  GLfloat overrideColor[4];
+  if (BZDB.isSet("GroundOverideColor") &&
+      parseColorString(BZDB.get("GroundOverideColor"), overrideColor)) {
+    gndColor = overrideColor;
+  }
+    
+  const bool useTexture = BZDBCache::texture && (groundTextureID >= 0);
+  OpenGLGState advGState;
+  OpenGLGStateBuilder builder;
+  builder.setShading(GL_SMOOTH);
+  builder.setBlending((GLenum)GL_ONE, (GLenum)GL_ONE);
+  if (useTexture) {
+    builder.setTexture(groundTextureID);
+    builder.setTextureMatrix(groundTextureMatrix);
+  }
+  advGState = builder.getState();
+  advGState.setState();
+
+  // lazy way to get texcoords
+  if (useTexture) {
+    const float repeat = BZDB.eval("groundHighResTexRepeat");
+    const float sPlane[4] = { repeat, 0.0f, 0.0f, 0.0f };
+    const float tPlane[4] = { 0.0f, repeat, 0.0f, 0.0f };
+    glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_EYE_LINEAR);
+    glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_EYE_LINEAR);
+    glTexGenfv(GL_S, GL_EYE_PLANE, sPlane);
+    glTexGenfv(GL_T, GL_EYE_PLANE, tPlane);
+    glEnable(GL_TEXTURE_GEN_S);
+    glEnable(GL_TEXTURE_GEN_T);
+  }
+
+  glPushMatrix();
+  int i, j;
+  for (int k = 0; k < count; k++) {
+    const OpenGLLight& light = renderer.getLight(k);
+    if (light.getOnlyReal()) {
+      continue;
+    }
+
+    // get the light parameters
+    const GLfloat* pos = light.getPosition();
+    const GLfloat* lightColor = light.getColor();
+    const GLfloat* atten = light.getAttenuation();
+
+    // point under light
+    float d = pos[2];
+    float I = 1.0f / (atten[0] + d * (atten[1] + d * atten[2]));
+    
+    // set the main lighting color
+    float baseColor[3];
+    baseColor[0] = gndColor[0] * lightColor[0];
+    baseColor[1] = gndColor[1] * lightColor[1];
+    baseColor[2] = gndColor[2] * lightColor[2];
+    if (invert) { // beats me, should just color logic op the static nodes
+      baseColor[0] = 1.0f - baseColor[0];
+      baseColor[1] = 1.0f - baseColor[1];
+      baseColor[2] = 1.0f - baseColor[2];
+    }
+    
+    // maximum value
+    const float maxVal = (baseColor[0] > baseColor[1]) ?
+                         ((baseColor[0] > baseColor[2]) ?
+                          baseColor[0] : baseColor[2]) :
+                         ((baseColor[1] > baseColor[2]) ?
+                          baseColor[1] : baseColor[2]);
+
+    // if I is too attenuated, don't bother drawing anything
+    if ((I * maxVal) < minLuminance) {
+      continue;
+    }
+
+    // move to the light's position
+    glTranslatef(pos[0], pos[1], 0.0f);
+
+    float innerSize;
+    float innerColor[3];
+    float outerSize;
+    float outerColor[3];
+    
+    // draw ground receiver, computing lighting at each vertex ourselves
+    glBegin(GL_TRIANGLE_FAN);
+    {
+      // center point
+      innerColor[0] = I * baseColor[0];
+      innerColor[1] = I * baseColor[1];
+      innerColor[2] = I * baseColor[2];
+      glColor3fv(innerColor);
+      glVertex2f(0.0f, 0.0f);
+
+      // inner ring
+      d = hypotf(receiverRingSize, pos[2]);
+      I = 1.0f / (atten[0] + d * (atten[1] + d * atten[2]));
+      I *= pos[2] / d; // diffuse angle factor
+      outerColor[0] = I * baseColor[0];
+      outerColor[1] = I * baseColor[1];
+      outerColor[2] = I * baseColor[2];
+      glColor3fv(outerColor);
+      outerSize = receiverRingSize;
+      for (j = 0; j <= receiverSlices; j++) {
+	glVertex2f(outerSize * angle[j][0],
+		   outerSize * angle[j][1]);
+      }
+    }
+    glEnd();
+    triangleCount += receiverSlices;
+
+    bool moreRings = true;
+    for (i = 2; moreRings; i++) {    
+      // inner ring
+      innerSize = outerSize;
+      memcpy(innerColor, outerColor, sizeof(float[3]));
+
+      // outer ring
+      outerSize = receiverRingSize * GLfloat(i * i);
+      d = hypotf(outerSize, pos[2]);
+      I = 1.0f / (atten[0] + d * (atten[1] + d * atten[2]));
+      I *= pos[2] / d; // diffuse angle factor
+      if ((I * maxVal) < minLuminance) {
+        I = 0.0f;
+        moreRings = false; // bail after this ring
+      }
+      outerColor[0] = I * baseColor[0];
+      outerColor[1] = I * baseColor[1];
+      outerColor[2] = I * baseColor[2];
+
+      glBegin(GL_QUAD_STRIP);
+      {
+	for (j = 0; j <= receiverSlices; j++) {
+          glColor3fv(innerColor);
+	  glVertex2f(angle[j][0] * innerSize, angle[j][1] * innerSize);
+          glColor3fv(outerColor);
+	  glVertex2f(angle[j][0] * outerSize, angle[j][1] * outerSize);
+	}
+      }
+      glEnd();
+    }
+    triangleCount += (receiverSlices * 2 * (i - 2));
+    
+    glTranslatef(-pos[0], -pos[1], 0.0f);
+  }
+  glPopMatrix();
+
+  if (useTexture) {
+    glDisable(GL_TEXTURE_GEN_S);
+    glDisable(GL_TEXTURE_GEN_T);
+  }
 }
 
 
@@ -1683,7 +1874,7 @@ void BackgroundRenderer::doInitDisplayLists()
 	    glTexCoord2f(frac, 0.99f);
 	    glVertex3f(2.25f * worldSize * cosf(angle),
 			 2.25f * worldSize * sinf(angle),
-			 0.45f * worldSize*hightScale);
+			 0.45f * worldSize * hightScale);
 	  }
 	glEnd();
 	glBegin(GL_TRIANGLE_STRIP);

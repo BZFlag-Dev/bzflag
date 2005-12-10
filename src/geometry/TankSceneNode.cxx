@@ -204,7 +204,7 @@ void TankSceneNode::notifyStyleChange()
 
   OpenGLGStateBuilder builder3(jumpJetsGState);
   builder3.setCulling(GL_NONE);
-  builder3.setBlending(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  builder3.setBlending(GL_SRC_ALPHA, GL_ONE);
   jumpJetsGState = builder3.getState();
 }
 
@@ -288,15 +288,15 @@ void TankSceneNode::addLight(SceneRenderer& renderer)
 {
   if (jumpJetsOn) {
     // the real light
-    jumpJetsRealLight.setColor(jumpJetsScale * 1.5f,
-			       jumpJetsScale * 1.0f,
-			       jumpJetsScale * 0.5f);
+    jumpJetsRealLight.setColor(jumpJetsScale * 1.5f * 2.0f,
+			       jumpJetsScale * 1.0f * 2.0f,
+			       jumpJetsScale * 0.5f * 2.0f);
     renderer.addLight(jumpJetsRealLight);
     // the ground lights
     for (int i = 0; i < 4; i++) {
-      jumpJetsGroundLights[i].setColor(jumpJetsLengths[i] * 1.5f * 0.25f,
-				       jumpJetsLengths[i] * 1.0f * 0.25f,
-				       jumpJetsLengths[i] * 0.5f * 0.25f);
+      jumpJetsGroundLights[i].setColor(jumpJetsLengths[i] * 1.5f * 0.5f,
+				       jumpJetsLengths[i] * 1.0f * 0.5f,
+				       jumpJetsLengths[i] * 0.5f * 0.5f);
       renderer.addLight(jumpJetsGroundLights[i]);
     }
   }

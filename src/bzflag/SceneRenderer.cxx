@@ -39,6 +39,7 @@
 #include "TrackMarks.h"
 
 
+static bool mapFog;
 static bool setupMapFog();
 
 
@@ -622,7 +623,6 @@ void SceneRenderer::setTimeOfDay(double julianDay)
   }
 
   // set sun and ambient colors
-  GLfloat ambientColor[4];
   ::getSunColor(sunDir, sunColor, ambientColor, sunBrightness);
   theSun.setColor(sunColor);
   GLfloat maxComponent = sunColor[0];
@@ -691,6 +691,9 @@ void SceneRenderer::render(bool _lastFrame, bool _sameFrame,
   
   triangleCount = 0;
   RenderNode::resetTriangleCount();
+  if (background) {
+    background->resetTriangleCount();
+  }
   
   // update the SceneNode, Background, and TrackMark styles
   if (needStyleUpdate) {
@@ -720,7 +723,7 @@ void SceneRenderer::render(bool _lastFrame, bool _sameFrame,
   if (!window) {
     return;
   }
-
+  
   // setup the viewport LOD scale
   MeshSceneNode::setLodScale(window->getWidth(), frustum.getFOVx(),
 			     window->getViewHeight(), frustum.getFOVy());
@@ -748,50 +751,20 @@ void SceneRenderer::render(bool _lastFrame, bool _sameFrame,
   }
 
   // fog setup
-  const bool mapFog = setupMapFog();
+  mapFog = setupMapFog();
   const bool reallyUseFogHack = !mapFog && useFogHack &&
                                 (useQualityValue >= 2);
   if (reallyUseFogHack) {
     renderPreDimming();
   }
   
-  // far culling plane
-  if (mapFog && (BZDB.get("_cullDist") == "fog")) {
-    const float fogMargin = 1.01f;
-    const std::string& fogMode = BZDB.get("_fogMode");
-    if (fogMode == "linear") {
-      frustum.setFarCullDistance(fogMargin * BZDB.eval("_fogEnd"));
-    } else {
-      const float density = BZDB.eval("_fogDensity");
-      if (density > 0.0f) {
-        const float fogFactor = 0.01f;
-        if (fogMode == "exp2") {
-          const float dist = fogMargin * sqrtf(-logf(fogFactor)) / density;
-          frustum.setFarCullDistance(dist);
-        } else { // default to 'exp'
-          const float dist = fogMargin * -logf(fogFactor) / density;
-          frustum.setFarCullDistance(dist);
-        }
-      } else {
-        frustum.setFarCullDistance(-1.0f); // disable
-      }
-    }
-  } else {
-    const float dist = BZDB.eval("_cullDist");
-    if (dist == dist) {// NaN protection
-      frustum.setFarCullDistance(dist);
-    } else {
-      frustum.setFarCullDistance(-1.0f); // disable
-    }
-  }
-    
 
   mirror = (BZDB.get(StateDatabase::BZDB_MIRROR) != "none")
 	   && BZDB.isTrue("userMirror");
 
   clearZbuffer = true;
   drawGround = true;
-
+  
   if (mirror) {
     drawGround = false;
 
@@ -896,6 +869,9 @@ void SceneRenderer::render(bool _lastFrame, bool _sameFrame,
   }
 
   triangleCount = RenderNode::getTriangleCount();
+  if (background) {
+    triangleCount += background->getTriangleCount();
+  }
 
   return;
 }
@@ -986,7 +962,16 @@ void SceneRenderer::renderScene(bool /*_lastFrame*/, bool /*_sameFrame*/,
   if (background) {
     background->setBlank(blank);
     background->setInvert(invert);
-    background->renderSky(*this, fullWindow, mirror);
+
+    const bool avoidSkyFog = (mapFog && BZDB.isTrue("_fogNoSky"));
+    if (avoidSkyFog) {
+      glDisable(GL_FOG);
+      background->renderSky(*this, fullWindow, mirror);
+      glEnable(GL_FOG);
+    } else {
+      background->renderSky(*this, fullWindow, mirror);
+    }
+
     if (drawGround) {
       background->renderGround(*this, fullWindow);
     }

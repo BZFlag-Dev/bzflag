@@ -284,7 +284,7 @@ void			BillboardSceneNode::setAngle(GLfloat _angle)
 void			BillboardSceneNode::addLight(
 				SceneRenderer& renderer)
 {
-  if (show) { /* && !groundLight) { FIXME - will disable puff ground lights */
+  if (show && lightSource) {
     renderer.addLight(light);
   }
 }

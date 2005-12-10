@@ -633,8 +633,9 @@ void			HUDRenderer::render(SceneRenderer& renderer)
   else {
     const bool showTimes = (fps > 0.0f) || (drawTime > 0.0f) ||
                            (triangleCount > 0) || (radarTriangleCount > 0);
+    const bool showTankLabels = BZDB.isTrue("displayLabels");                           
 
-    if (showCompose || showTimes) {
+    if (showCompose || showTimes || showTankLabels) {
       // get view metrics
       const int width = window.getWidth();
       const int height = window.getHeight();
@@ -655,6 +656,9 @@ void			HUDRenderer::render(SceneRenderer& renderer)
       }
       if (showTimes) {
         renderTimes();
+      }
+      if (showTankLabels) {
+        renderTankLabels(renderer);
       }
 
       glPopMatrix();

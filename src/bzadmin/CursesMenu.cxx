@@ -10,7 +10,7 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-/* Dev-C++ builds succesfully if this is included before CursesMenu.h */
+/* Dev-C++ builds successfully if sstream is included before CursesMenu.h */ 
 #ifdef _DEVCPP
 #	include <sstream>
 #endif

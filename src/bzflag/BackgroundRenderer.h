@@ -58,6 +58,9 @@ class BackgroundRenderer {
 				     const float moonDirection[3]);
     void		addCloudDrift(GLfloat uDrift, GLfloat vDrift);
     void		notifyStyleChange();
+    
+    int			getTriangleCount() const;
+    void		resetTriangleCount();
 
     std::string		userTextures[2];
   protected:
@@ -68,6 +71,7 @@ class BackgroundRenderer {
     void		drawGroundGrid(SceneRenderer&);
     void		drawGroundShadows(SceneRenderer&);
     void		drawGroundReceivers(SceneRenderer&);
+    void		drawAdvancedGroundReceivers(SceneRenderer&);
     void		drawMountains(void);
 
 
@@ -97,7 +101,9 @@ class BackgroundRenderer {
     OpenGLGState	groundGState[4];
     OpenGLGState	invGroundGState[4];
     GLuint		simpleGroundList[4];
-
+    int			groundTextureID;
+    const GLfloat*	groundTextureMatrix;
+    
     // stuff for grid
     GLfloat		gridSpacing;
     GLfloat		gridCount;
@@ -158,12 +164,16 @@ class BackgroundRenderer {
     static GLfloat		skyPyramid[5][3];
     static const GLfloat	cloudRepeats;
 
+    static GLfloat		rcvrGroundColor[4][4];
+    static GLfloat		rcvrGroundInvColor[4][4];
     static GLfloat		groundColor[4][4];
     static GLfloat		groundColorInv[4][4];
     static const GLfloat	defaultGroundColor[4][4];
     static const GLfloat	defaultGroundColorInv[4][4];
     static const GLfloat	receiverColor[3];
     static const GLfloat	receiverColorInv[3];
+    
+    int			triangleCount;
 };
 
 //
@@ -198,6 +208,16 @@ inline bool		BackgroundRenderer::getSimpleGround() const
 inline void		BackgroundRenderer::setSimpleGround(bool _simple)
 {
   simpleGround = _simple;
+}
+
+inline int		BackgroundRenderer::getTriangleCount() const
+{
+  return triangleCount;
+}
+
+inline void		BackgroundRenderer::resetTriangleCount()
+{
+  triangleCount = 0;
 }
 
 

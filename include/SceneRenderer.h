@@ -133,6 +133,7 @@ public:
   const GLfloat*	getSunScaledColor() const;
   GLfloat		getSunBrightness() const;
   const GLfloat*	getSunDirection() const;
+  const GLfloat*	getAmbientColor() const;
   const GLfloat*	getCelestialTransform() const;
 
   SceneDatabase*	getSceneDatabase() const;
@@ -196,10 +197,11 @@ private:
   OpenGLLight		theSun;
   bool			sunOrMoonUp;
   GLfloat		sunDirection[3];	// or moon
-  GLfloat		sunColor[3];
-  GLfloat		sunScaledColor[3];
+  GLfloat		sunColor[4];
+  GLfloat		sunScaledColor[4];
   GLfloat		celestialTransform[16];
   GLfloat		sunBrightness;
+  GLfloat		ambientColor[4];
   SceneDatabase*	scene;
   BackgroundRenderer*	background;
   int			triangleCount;
@@ -301,6 +303,11 @@ inline const GLfloat*		SceneRenderer::getSunScaledColor() const
 inline GLfloat			SceneRenderer::getSunBrightness() const
 {
   return sunBrightness;
+}
+
+inline const GLfloat* SceneRenderer::getAmbientColor() const
+{
+  return ambientColor;
 }
 
 inline const GLfloat*		SceneRenderer::getCelestialTransform() const

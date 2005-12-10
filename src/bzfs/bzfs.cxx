@@ -1208,12 +1208,34 @@ void sendMessage(int playerIndex, PlayerId dstPlayer, const char *message)
 	directMessage(i, MsgMessage, len, bufStart);
   } else if (dstPlayer == AdminPlayers){
     // admin messages
+
+    // Notify any plugins
+    if (playerIndex == ServerPlayer) {
+      bz_ServerMsgEventData serverMsgData;
+      serverMsgData.to = BZ_NULLUSER;
+      serverMsgData.team = eAdministrators;
+      serverMsgData.message = message;
+      serverMsgData.time = TimeKeeper::getCurrent().getSeconds();
+      worldEventManager.callEvents(bz_eServerMsgEvent, &serverMsgData);
+    }
+
     std::vector<int> admins
       = GameKeeper::Player::allowed(PlayerAccessInfo::adminMessageReceive);
     for (unsigned int i = 0; i < admins.size(); ++i)
       directMessage(admins[i], MsgMessage, len, bufStart);
+
   } else {
     // message to all players
+
+    // Notify any plugins
+    if (playerIndex == ServerPlayer) {
+      bz_ServerMsgEventData serverMsgData;
+      serverMsgData.to = BZ_ALLUSERS;
+      serverMsgData.message = message;
+      serverMsgData.time = TimeKeeper::getCurrent().getSeconds();
+      worldEventManager.callEvents(bz_eServerMsgEvent, &serverMsgData);
+    }
+
     broadcastMessage(MsgMessage, len, bufStart);
     broadcast = true;
   }

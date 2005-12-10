@@ -297,6 +297,12 @@ Events</span></p>
 																	<td>
 																		Player authentication status change</td>
 																</tr>
+																<tr>
+																	<td><span class="Code">bz_eServerMsgEvent</span>
+																	</td>
+																	<td>
+																		A server message was sent</td>
+																</tr>
 															</tbody>
 														</table>
 														<p>
@@ -1024,6 +1030,45 @@ double duration; // the duration of the game timer <br> </blockquote>
 																				</tr>
 																				<tr>
 																					<td>This event is called when a player manually identifies to the server or issues the server password.</td>
+																				</tr>
+																			</tbody>
+																		</table>
+																	</td>
+																</tr>
+															</tbody>
+														</table>
+														<br>
+														<br>
+														<table bgcolor="#dddddd" border="1">
+															<tbody>
+																<tr>
+																	<td align="left" valign="top">
+																		<table border="0" cellpadding="2" cellspacing="2">
+																			<tbody>
+																				<tr>
+																					<td><span class="Code">bz_eServerMsgEvent</span>
+																						provides the following data</td>
+																				</tr>
+																				<tr>
+																					<td><span class="Code">bz_ServerMsgEventData<br>
+{<br>
+                              </span>
+																						<blockquote class="Code"> int to; // the player ID the message is sent to<br>
+																							bz_eTeamType team; // The team the message is to, if a team message<br>
+																							bzApiString message; // the text of the message<br>
+																							double time; // the time of the message</blockquote>
+																						<p class="Code">}</p>
+																					</td>
+																				</tr>
+																				<tr>
+																					<td>This event is called whenever the server issues a message.  
+																						The message can be to a specific player, team, or a general broadcast.
+																						If the server message is to all players to will be set to the 
+																						define BZ_ALLUSERS and the team field will be set to eNoTeam, If the server message is to 
+																						the admin channel or a team then the to field will be set to BZ_NULLUSER and 
+																						the team will be set to the appropriate team ( admin channel is a fake team )
+																						The plugin cannot change the contents of the message.  
+																						This event is mainly useful for logging.</td>
 																				</tr>
 																			</tbody>
 																		</table>

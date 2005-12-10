@@ -70,6 +70,7 @@ typedef enum
 	bz_eGameEndEvent,
 	bz_eSlashCommandEvent,
 	bz_ePlayerAuthEvent,
+	bz_eServerMsgEvent,
 	bz_eLastEvent    //this is never used as an event, just show it's the last one
 }bz_eEventType;
 
@@ -754,6 +755,27 @@ public:
 	virtual ~bz_PlayerAuthEventData(){};
 
 	int playerID;
+};
+
+class bz_ServerMsgEventData : public bz_EventData
+{
+public:
+	bz_ServerMsgEventData()
+	{
+		eventType = bz_eServerMsgEvent;
+
+		to = -1;
+		time = 0.0;
+		team = eNoTeam;
+	}
+
+	virtual ~bz_ServerMsgEventData(){};
+
+	int to;
+	bz_eTeamType team;
+	bzApiString message;
+
+	double time;
 };
 
 

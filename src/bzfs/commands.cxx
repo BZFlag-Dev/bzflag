@@ -2199,6 +2199,9 @@ bool ReloadCommand::operator() (const char	 *,
 		"You do not have permission to run the reload command");
     return true;
   }
+  
+  // reload the text chunks
+  clOptions->textChunker.reload();
 
   // reload the banlist
   clOptions->acl.load();
