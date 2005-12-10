@@ -780,6 +780,18 @@ int			main(int argc, char** argv)
   // parse arguments
   parse(argc, argv);
 
+#ifdef _WIN32
+  // this is cheap but it will work on windows
+  // clear out the stdout file
+  if (echoToConsole){
+	  FILE	*fp = fopen ("stdout.txt","w");
+	  if (fp) {
+		  fprintf(fp,"stdout started\r\n" );
+		  fclose(fp);
+	  }
+  }
+#endif
+
   if (BZDB.isSet("directory")) {
     //Convert to unix paths so that escaping isn't an issue
     std::string directory = BZDB.get("directory");

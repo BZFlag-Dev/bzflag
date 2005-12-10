@@ -784,13 +784,23 @@ void			ControlPanel::addMessage(const std::string& line,
   } 
   
   // this stuff has no effect on win32 (there's no console)
-  if (echoToConsole) {
+  if (echoToConsole){
+#ifdef _WIN32
+	// this is cheap but it will work on windows
+	  FILE	*fp = fopen ("stdout.txt","a+");
+	  if (fp){
+		  fprintf(fp,"%s\n", stripAnsiCodes(line).c_str());
+		  fclose(fp);
+	  }
+#else
     if (echoAnsi) {
       std::cout << line << ColorStrings[ResetColor] << std::endl;
     } else {
       std::cout << stripAnsiCodes(line) << std::endl;
     }
     fflush(stdout);
+ 
+#endif 
   }
 }
 

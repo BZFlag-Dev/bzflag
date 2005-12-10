@@ -127,11 +127,12 @@ directory used by this instance of the game. This is realy only needed
 if you can not use the default directory.
 .TP 
 .B \-echo
-Copies all message window output to the shell.
+Copies all message window output to the shell on *nux and OSX, to 
+stdout.txt on windows
 .TP 
 .B \-echoAnsi
-Copies all message window output to the shell preserving the ANSI
-color coding.
+Copies all message window output like -echo preserving the ANSI
+color coding on *nix, same as -echo on windows.
 .TP 
 \fB\-geometry\fI width\fR\fBx\fR\fIheight\fR[{\fB+\fR|\fB\-\fR}x{\fB+\fR|\fB\-\fR}y]
 This specifies the size and, optionally, the position of the window. It
