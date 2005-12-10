@@ -49,6 +49,7 @@ directory:
   TODO		- incomplete list of things to do
   data/		- data files (sounds, images, etc.)
   debian/	- debian apt files
+  Dev-C++/ - Dev-C++ project files
   doc/		- partial documentation in doxygen format
   include/	- include headers for libraries
   man/		- man pages
