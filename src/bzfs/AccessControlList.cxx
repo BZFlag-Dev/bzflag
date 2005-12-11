@@ -332,15 +332,27 @@ void AccessControlList::sendBans(PlayerId id, const char* pattern)
   sendMessage(ServerPlayer, id, "-----------");
   
   const std::string glob = makeGlobPattern(pattern);
-  
+
+  // masterbans first
   for (banList_t::iterator it = banList.begin(); it != banList.end(); ++it) {
     const BanInfo& bi = *it;
-    if (!glob_match(glob, getBanMaskString(bi.addr)) &&
-        !glob_match(glob, TextUtils::toupper(bi.reason)) &&
-        !glob_match(glob, TextUtils::toupper(bi.bannedBy))) {
-      continue;
+    if (bi.fromMaster &&
+        (glob_match(glob, getBanMaskString(bi.addr)) ||
+         glob_match(glob, TextUtils::toupper(bi.reason)) ||
+         glob_match(glob, TextUtils::toupper(bi.bannedBy)))) {
+      sendBan(id, *it);
     }
-    sendBan(id, *it);
+  }
+
+  // normal bans last
+  for (banList_t::iterator it = banList.begin(); it != banList.end(); ++it) {
+    const BanInfo& bi = *it;
+    if (!bi.fromMaster &&
+        (glob_match(glob, getBanMaskString(bi.addr)) ||
+         glob_match(glob, TextUtils::toupper(bi.reason)) ||
+         glob_match(glob, TextUtils::toupper(bi.bannedBy)))) {
+      sendBan(id, *it);
+    }
   }
 }
 
