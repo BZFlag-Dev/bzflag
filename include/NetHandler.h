@@ -55,11 +55,9 @@ public:
   /** A default constructor.
       It needs:
       a socket address to address subsequent message at user,
-      a player Index, a unique pointer to a player
       the file descriptor for the TCP connection with the user.
   */
-  NetHandler(const struct sockaddr_in &_clientAddr,
-	     int _playerIndex, int _fd);
+  NetHandler(const struct sockaddr_in &_clientAddr, int _fd);
   /** The default destructor
       free all internal resources, and close the tcp connection
   */
@@ -163,7 +161,6 @@ private:
   static int		udpSocket;
   static std::list<NetHandler*> netConnections;
   struct sockaddr_in	uaddr;
-  int			playerIndex;
   /// socket file descriptor
   int			fd;
 

@@ -55,7 +55,7 @@ GameKeeper::Player::Player(int _playerIndex,
   stateTimeStamp   = 0.0f;
   gameTimeRate = GameTime::startRate;
   gameTimeNext = TimeKeeper::getCurrent();
-  netHandler       = new NetHandler(clientAddr, playerIndex, fd);
+  netHandler       = new NetHandler(clientAddr, fd);
 #if defined(USE_THREADS)
   int result = pthread_create(&thread, NULL, tcpRx, (void *)this);
   if (result)
