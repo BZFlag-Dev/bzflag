@@ -63,8 +63,7 @@ extern void sendPlayerMessage(GameKeeper::Player *playerData,
 extern char *getDirectMessageBuffer();
 extern void  broadcastMessage(uint16_t code, int len, const void *msg,
 			      bool alsoTty = true);
-extern void  sendTeamUpdate(int playerIndex = -1,
-			    int teamIndex1 = -1,
+extern void  sendTeamUpdate(int teamIndex1 = -1,
 			    int teamIndex2 = -1);
 extern void  sendFlagUpdate(FlagInfo &flag);
 extern void  sendDrop(FlagInfo &flag);

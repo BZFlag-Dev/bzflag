@@ -443,8 +443,7 @@ static void sendFlagUpdate(int playerIndex)
   }
 }
 
-
-void sendTeamUpdate(int playerIndex, int teamIndex1, int teamIndex2)
+void sendTeamUpdate(int teamIndex1, int teamIndex2)
 {
   // If teamIndex1 is -1, send all teams
   // If teamIndex2 is -1, just send teamIndex1 team
@@ -469,11 +468,8 @@ void sendTeamUpdate(int playerIndex, int teamIndex1, int teamIndex2)
     buf = team[teamIndex2].team.pack(buf);
   }
 
-  if (playerIndex == -1)
-    broadcastMessage(MsgTeamUpdate, (char*)buf - (char*)bufStart, bufStart,
-		     false);
-  else
-    directMessage(playerIndex, MsgTeamUpdate, (char*)buf - (char*)bufStart, bufStart);
+  broadcastMessage(MsgTeamUpdate, (char*)buf - (char*)bufStart, bufStart,
+		   false);
 }
 
 static int sendTeamUpdateD(NetHandler *handler)
@@ -1662,10 +1658,12 @@ static void addPlayer(int playerIndex, GameKeeper::Player *playerData)
 		 "This team is full.  Try another team.");
     return ;
   }
+  NetHandler *netHandler = playerData->netHandler;
+
   // accept player
   void *buf, *bufStart = getDirectMessageBuffer();
   buf = nboPackUByte(bufStart, playerIndex);
-  int result = directMessage(playerData->netHandler, MsgAccept,
+  int result = directMessage(netHandler, MsgAccept,
 			     (char*)buf-(char*)bufStart, bufStart);
   if (result < 0)
     return;
@@ -1696,7 +1694,9 @@ static void addPlayer(int playerIndex, GameKeeper::Player *playerData)
   // don't send robots any game info.  watch out for connection being closed
   // because of an error.
   if (playerData->player.isHuman()) {
-    sendTeamUpdate(playerIndex);
+    result = sendTeamUpdateD(netHandler);
+    if (result < 0)
+      return;
     sendFlagUpdate(playerIndex);
   }
   if (!playerData->player.isBot()) {
@@ -1742,7 +1742,7 @@ static void addPlayer(int playerIndex, GameKeeper::Player *playerData)
   sendPlayerUpdateB(playerData);
 
   // send update of info for team just joined
-  sendTeamUpdate(-1, teamIndex);
+  sendTeamUpdate(teamIndex);
 
   // send IP update to everyone with PLAYERLIST permission
   sendIPUpdate(-1, playerIndex);
@@ -2170,7 +2170,7 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
     }
 
     // send team update
-    sendTeamUpdate(-1, teamNum);
+    sendTeamUpdate(teamNum);
   }
 
   playerData->close();
@@ -2613,7 +2613,7 @@ void playerKilled(int victimIndex, int killerIndex, int reason,
 	if (killer)
 	  killerTeam = killer->getTeam();
       }
-      sendTeamUpdate(-1,int(victim->getTeam()), killerTeam);
+      sendTeamUpdate(int(victim->getTeam()), killerTeam);
     }
 #ifdef PRINTSCORE
     dumpScore();
@@ -2854,7 +2854,7 @@ static void captureFlag(int playerIndex, TeamColor teamCaptured)
     team[winningTeam].team.won++;
   }
   team[teamIndex].team.lost++;
-  sendTeamUpdate(-1, winningTeam, teamIndex);
+  sendTeamUpdate(winningTeam, teamIndex);
 #ifdef PRINTSCORE
   dumpScore();
 #endif
