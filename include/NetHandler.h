@@ -127,6 +127,13 @@ public:
   const char*	getHostname();
   bool	  reverseDNSDone();
 
+  static const int     clientNone    = 0;
+  static const int     clientBZAdmin = 1;
+  static const int     clientBZFlag  = 2;
+  static const int     clientBZBot   = 4;
+  void          setClientKind(int kind);
+  int           getClientKind();
+
   /// Notify that the channel is going to be close.
   /// In the meantime any pwrite call will do nothing.
   /// Cannot be undone.
@@ -138,6 +145,7 @@ public:
 
   bool isMyUdpAddrPort(struct sockaddr_in uaddr, bool checkPort);
 
+  static std::list<NetHandler*> netConnections;
 private:
   int  send(const void *buffer, size_t length);
   void udpSend(const void *b, size_t l);
@@ -159,10 +167,11 @@ private:
   /// On win32, a socket is typedef UINT_PTR SOCKET;
   /// Hopefully int will be ok
   static int		udpSocket;
-  static std::list<NetHandler*> netConnections;
   struct sockaddr_in	uaddr;
   /// socket file descriptor
   int			fd;
+
+  int clientType;
 
   /// peer's network address
   Address peer;

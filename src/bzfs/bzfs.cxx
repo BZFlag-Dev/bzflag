@@ -188,6 +188,26 @@ static int pwrite(NetHandler *handler, const void *b, int l)
   return result;
 }
 
+static void pwriteBroadcast(const void *b, int l, int mask)
+{
+  int result;
+  std::list<NetHandler*>::const_iterator it;
+  // send message to everyone
+  for (it = NetHandler::netConnections.begin();
+       it != NetHandler::netConnections.end();
+       it++) {
+    NetHandler *handler = *it;
+    if (handler->getClientKind() & mask) {
+      result = handler->pwrite(b, l);
+      if (result == -1) {
+	dropHandler(handler, "ECONNRESET/EPIPE");
+      } else if (result == -2) {
+	dropHandler(handler, "send queue too big");
+      }
+    }
+  }
+}
+
 static char sMsgBuf[MaxPacketLen];
 char *getDirectMessageBuffer()
 {
@@ -224,44 +244,36 @@ void directMessage(int playerIndex, uint16_t code, int len, const void *msg)
 
 void broadcastMessage(uint16_t code, int len, const void *msg, bool alsoTty)
 {
+  void *bufStart = (char *)msg - 2*sizeof(uint16_t);
+  void *buf = nboPackUShort(bufStart, uint16_t(len));
+  nboPackUShort(buf, code);
+
   // send message to everyone
-  for (int i = 0; i < curMaxPlayers; i++) {
-    GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(i);
-    if (!playerData)
-      continue;
-    if (playerData->player.isPlaying()
-	&& (alsoTty || !playerData->player.isChat())) {
-      directMessage(i, code, len, msg);
-    }
-  }
+  int mask = NetHandler::clientBZFlag | NetHandler::clientBZBot;
+  if (alsoTty)
+    mask |= NetHandler::clientBZAdmin;
+  pwriteBroadcast(bufStart, len + 4, mask);
 
   // record the packet
   if (Record::enabled()) {
     Record::addPacket(code, len, msg);
   }
-
-  return;
 }
 
 // relay message only for human. Bots will get message locally.
 static void relayMessage(uint16_t code, int len, const void *msg)
 {
-  // send message to everyone
-  for (int i = 0; i < curMaxPlayers; i++) {
-    GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(i);
-    if (!playerData)
-      continue;
-    if (playerData->player.isPlaying() && playerData->player.isHuman()) {
-      directMessage(i, code, len, msg);
-    }
-  }
+  void *bufStart = (char *)msg - 2*sizeof(uint16_t);
+  void *buf = nboPackUShort(bufStart, uint16_t(len));
+  nboPackUShort(buf, code);
+
+  // send message to human kind
+  pwriteBroadcast(bufStart, len + 4, NetHandler::clientBZFlag);
 
   // record the packet
   if (Record::enabled()) {
     Record::addPacket(code, len, msg);
   }
-
-  return;
 }
 
 
@@ -284,12 +296,12 @@ static void onGlobalChanged(const std::string& name, void*)
 }
 
 
-static void sendUDPupdate(int playerIndex)
+static void sendUDPupdate(NetHandler *handler)
 {
   // confirm inbound UDP with a TCP message
-  directMessage(playerIndex, MsgUDPLinkEstablished, 0, getDirectMessageBuffer());
+  directMessage(handler, MsgUDPLinkEstablished, 0, getDirectMessageBuffer());
   // request/test outbound UDP with a UDP back to where we got client's packet
-  directMessage(playerIndex, MsgUDPLinkRequest, 0, getDirectMessageBuffer());
+  directMessage(handler, MsgUDPLinkRequest, 0, getDirectMessageBuffer());
 }
 
 static int lookupPlayer(const PlayerId& id)
@@ -5068,7 +5080,7 @@ int main(int argc, char **argv)
 		netHandler->setUDPin(&uaddr);
 
 		// send client the message that we are ready for him
-		sendUDPupdate(index);
+		sendUDPupdate(netHandler);
 
 		DEBUG2("Inbound UDP up %s:%d\n",
 		       inet_ntoa(uaddr.sin_addr), ntohs(uaddr.sin_port));

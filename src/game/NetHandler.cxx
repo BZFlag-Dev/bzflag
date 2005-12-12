@@ -193,7 +193,7 @@ void NetHandler::checkDNS(fd_set *read_set, fd_set *write_set) {
 int NetHandler::udpSocket = -1;
 
 NetHandler::NetHandler(const struct sockaddr_in &clientAddr, int _fd)
-  : fd(_fd), tcplen(0), closed(false),
+  : fd(_fd), clientType(clientNone), tcplen(0), closed(false),
     outmsgOffset(0), outmsgSize(0), outmsgCapacity(0), outmsg(NULL),
     udpOutputLen(0), udpin(false), udpout(false), toBeKicked(false) {
   // store address information for player
@@ -686,6 +686,16 @@ bool NetHandler::reverseDNSDone()
   AresHandler::ResolutionStatus status = ares.getStatus();
   return (status == AresHandler::Failed)
     || (status == AresHandler::HbASucceeded);
+}
+
+void NetHandler::setClientKind(int kind)
+{
+  clientType = kind;
+}
+
+int NetHandler::getClientKind()
+{
+  return clientType;
 }
 
 void NetHandler::setCurrentTime(TimeKeeper tm)
