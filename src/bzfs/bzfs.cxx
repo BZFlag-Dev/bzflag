@@ -3157,22 +3157,8 @@ static void handleCommand(const void *rawbuf, bool udp, NetHandler *handler)
       return;
     t = playerId;
     break;
-  case MsgShotBegin:
-  case MsgPlayerUpdate:
-  case MsgPlayerUpdateSmall:
-  case MsgGMUpdate:
-  case MsgNegotiateFlags:
-  case MsgGetWorld:
-  case MsgWantSettings:
-  case MsgWantWHash:
-  case MsgQueryGame:
-  case MsgQueryPlayers:
-    break;
   default:
-    playerData = GameKeeper::Player::getFirstPlayer(handler);
-    if (!playerData)
-      return;
-    t = playerData->getIndex();
+    break;
   }
 
   switch (code) {
