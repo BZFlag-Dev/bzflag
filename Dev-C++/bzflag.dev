@@ -8,16 +8,16 @@ Compiler=-D_DEVCPP=1 -D__GNUWIN32__ -D_WINDOWS -DWIN32 -D_MBCS_@@_
 CppCompiler=-D_DEVCPP=1 -D__GNUWIN32__ -D_WINDOWS -DWIN32 -D_MBCS_@@_ -Wall -W_@@_
 Includes=..\Dev-C++;..\include;..\Dev-C++
 Linker=-lmingw32 -lstdc++ -lsdl -lws2_32 -ldsound -lwinmm -lglu32 -lopengl32 -lkernel32 -luser32 -lgdi32 -lwinspool -lcomdlg32 -ladvapi32 -lshell32 -lole32 -loleaut32 -luuid -lodbc32 -lodbccp32 -lcurl -lcurldll_@@_
-Libs=
-UnitCount=471
-Folders="Header Files","Header Files/3d","Header Files/bzflag","Header Files/bzflag/menus","Header Files/common","Header Files/game","Header Files/geometry","Header Files/mediafile","Header Files/net","Header Files/obstacle","Header Files/ogl","Header Files/platform","Header Files/regex","Header Files/scene","Header Files/zlib","Resource Files","Source Files","Source Files/3d","Source Files/bzflag","Source Files/bzflag/menus","Source Files/c-ares","Source Files/common","Source Files/game","Source Files/geometry","Source Files/mediafile","Source Files/models","Source Files/net","Source Files/obstacle","Source Files/ogl","Source Files/platform","Source Files/regex","Source Files/scene","Source Files/zlib"
+Libs=..\Dev-C++
+UnitCount=447
+Folders="Header Files","Header Files/3d","Header Files/bzflag","Header Files/bzflag/menus","Header Files/common","Header Files/game","Header Files/geometry","Header Files/mediafile","Header Files/net","Header Files/obstacle","Header Files/ogl","Header Files/platform","Header Files/regex","Header Files/scene","Header Files/zlib","Resource Files","Source Files","Source Files/3d","Source Files/bzflag","Source Files/bzflag/menus","Source Files/common","Source Files/game","Source Files/geometry","Source Files/mediafile","Source Files/models","Source Files/net","Source Files/obstacle","Source Files/ogl","Source Files/platform","Source Files/regex","Source Files/scene","Source Files/zlib"
 ObjFiles=
 PrivateResource=bzflag_private.rc
 ResourceIncludes=
 MakeIncludes=
 Icon=
 ExeOutput=..\src\bzflag
-ObjectOutput=..\Dev-C++
+ObjectOutput=..\src\bzflag
 OverrideOutput=0
 OverrideOutputName=bzflag.exe
 HostApplication=
@@ -4357,20 +4357,10 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit432]
-FileName=..\src\c-ares\ares_init.c
-CompileCpp=0
-Folder=Source Files/c-ares
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
 [Unit433]
-FileName=..\src\c-ares\ares_mkquery.c
-CompileCpp=0
-Folder=Source Files/c-ares
+FileName=..\src\common\cURLManager.cxx
+CompileCpp=1
+Folder=Source Files/bzflag
 Compile=1
 Link=1
 Priority=1000
@@ -4378,9 +4368,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit434]
-FileName=..\src\c-ares\ares_parse_a_reply.c
-CompileCpp=0
-Folder=Source Files/c-ares
+FileName=..\src\game\MsgStrings.cxx
+CompileCpp=1
+Folder=Source Files/game
 Compile=1
 Link=1
 Priority=1000
@@ -4388,9 +4378,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit435]
-FileName=..\src\c-ares\ares_parse_ptr_reply.c
-CompileCpp=0
-Folder=Source Files/c-ares
+FileName=..\src\bzflag\ScoreboardRenderer.cxx
+CompileCpp=1
+Folder=Source Files/bzflag
 Compile=1
 Link=1
 Priority=1000
@@ -4398,9 +4388,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit436]
-FileName=..\src\c-ares\ares_query.c
-CompileCpp=0
-Folder=Source Files/c-ares
+FileName=..\src\bzflag\effectsRenderer.cxx
+CompileCpp=1
+Folder=Source Files/bzflag
 Compile=1
 Link=1
 Priority=1000
@@ -4408,9 +4398,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit437]
-FileName=..\src\c-ares\ares_search.c
-CompileCpp=0
-Folder=Source Files/c-ares
+FileName=..\src\bzflag\LocalCommand.cxx
+CompileCpp=1
+Folder=Source Files/bzflag
 Compile=1
 Link=1
 Priority=1000
@@ -4418,9 +4408,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit438]
-FileName=..\src\c-ares\ares_send.c
-CompileCpp=0
-Folder=Source Files/c-ares
+FileName=..\src\bzflag\clientConfig.cxx
+CompileCpp=1
+Folder=Source Files/bzflag
 Compile=1
 Link=1
 Priority=1000
@@ -4428,9 +4418,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit439]
-FileName=..\src\c-ares\ares_strerror.c
-CompileCpp=0
-Folder=Source Files/c-ares
+FileName=..\src\obstacle\Triangulate.cxx
+CompileCpp=1
+Folder=Source Files/obstacle
 Compile=1
 Link=1
 Priority=1000
@@ -4438,39 +4428,19 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit441]
-FileName=..\src\c-ares\ares_version.c
-CompileCpp=0
-Folder=Source Files/c-ares
+FileName=..\src\common\GameTime.cxx
+CompileCpp=1
+Folder=Source Files/common
 Compile=1
 Link=1
 Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
-
-[Unit442]
-FileName=..\src\c-ares\windows_port.c
-CompileCpp=0
-Folder=Source Files/c-ares
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit443]
-FileName=..\src\c-ares\ares__close_sockets.c
-CompileCpp=0
-Folder=Source Files/c-ares
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=$(CC) -c ../src/bzflag/ares__close_sockets.c -o ../src/bzflag/ares_CS.o $(CFLAGS)
 
 [Unit444]
-FileName=..\src\c-ares\ares__get_hostent.c
-CompileCpp=0
-Folder=Source Files/c-ares
+FileName=..\src\geometry\MeshRenderNode.cxx
+CompileCpp=1
+Folder=Source Files/geometry
 Compile=1
 Link=1
 Priority=1000
@@ -4478,9 +4448,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit445]
-FileName=..\src\c-ares\ares__read_line.c
-CompileCpp=0
-Folder=Source Files/c-ares
+FileName=..\src\geometry\OccluderSceneNode.cxx
+CompileCpp=1
+Folder=Source Files/geometry
 Compile=1
 Link=1
 Priority=1000
@@ -4488,9 +4458,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit446]
-FileName=..\src\c-ares\ares_cancel.c
-CompileCpp=0
-Folder=Source Files/c-ares
+FileName=..\src\bzflag\defaultBZDB.cxx
+CompileCpp=1
+Folder=Source Files/bzflag
 Compile=1
 Link=1
 Priority=1000
@@ -4498,9 +4468,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit447]
-FileName=..\src\c-ares\ares_destroy.c
-CompileCpp=0
-Folder=Source Files/c-ares
+FileName=..\src\bzflag\Roaming.cxx
+CompileCpp=1
+Folder=Source Files/bzflag
 Compile=1
 Link=1
 Priority=1000
@@ -4658,9 +4628,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit440]
-FileName=..\src\c-ares\ares_timeout.c
-CompileCpp=0
-Folder=Source Files/c-ares
+FileName=..\src\obstacle\MeshDrawInfo.cxx
+CompileCpp=1
+Folder=Source Files/obstacle
 Compile=1
 Link=1
 Priority=1000
@@ -4751,6 +4721,36 @@ BuildCmd=
 FileName=..\src\bzflag\Roaming.cxx
 CompileCpp=1
 Folder=Source Files/bzflag
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit432]
+FileName=..\src\net\AresHandler.cxx
+CompileCpp=1
+Folder=Source Files/bzflag
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit442]
+FileName=..\src\geometry\MeshSceneNode.cxx
+CompileCpp=1
+Folder=Source Files/geometry
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit443]
+FileName=..\src\geometry\MeshDrawMgr.cxx
+CompileCpp=1
+Folder=Source Files/geometry
 Compile=1
 Link=1
 Priority=1000

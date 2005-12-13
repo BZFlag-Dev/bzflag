@@ -21,14 +21,18 @@ is quite easy.
 
    Installation is roughly the same as the SDL instructions below.
 
-4. Open up the corresponding project files, included in the "Dev-C++"
+4. Build libares.dev FIRST by opening up the project file named such.
+
+5. Open up the corresponding project files (only build on at a time), included in the "Dev-C++"
    directory. Note that each project uses an individual project file,
    so no two can be combined.
 
-5. Let the opened project compile (this may take several minutes, depending on your computer).
+6. Let the opened project compile (this may take several minutes, depending on your computer).
 
-6. The binary should be in each project's corresponding main source
-   directory, such as src/bzflag/ for BZFlag client.
+7. The binary and object files should be in each project's corresponding main source
+   directory, such as src/bzflag/ for BZFlag client. libares.a (built from libares.dev)
+   is in /Dev-C++/, and is recommended that it be moved to the /lib/ folder of your copy
+   of Dev-C++ IDE.
 
 Project files were maintained using Dev-C++ 4.9.9.2
 
