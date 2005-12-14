@@ -2920,16 +2920,8 @@ bool RecordCommand::operator() (const char	 *message,
     Record::sendStats(t);
   }
   else if (strncasecmp (buf, "list", 4) == 0) {
-    buf = buf + 4;
-    while ((*buf != '\0') && isspace (*buf)) buf++; // eat whitespace
-
-    if (*buf == '\0') {
-      Replay::sendFileList (t, SortNone);   // stolen from '/replay'
-    } else if (strncasecmp (buf, "-t", 2) == 0) {
-      Replay::sendFileList (t, SortByTime);
-    } else if (strncasecmp (buf, "-n", 2) == 0) {
-      Replay::sendFileList (t, SortByName);
-    } else {
+    const char* options = buf + 4;
+    if (!Replay::sendFileList (t, options)) {
       Record::sendHelp (t);
     }
   }
@@ -3005,17 +2997,9 @@ bool ReplayCommand::operator() (const char	 *message,
   }
 
   if (strncasecmp (buf, "list", 4) == 0) {
-    buf = buf + 4;
-    while ((*buf != '\0') && isspace (*buf)) buf++; // eat whitespace
-
-    if (*buf == '\0') {
-      Replay::sendFileList (t, SortNone);
-    } else if (strncasecmp (buf, "-t", 2) == 0) {
-      Replay::sendFileList (t, SortByTime);
-    } else if (strncasecmp (buf, "-n", 2) == 0) {
-      Replay::sendFileList (t, SortByName);
-    } else {
-      Replay::sendHelp (t);
+    const char* options = buf + 4;
+    if (!Replay::sendFileList (t, options)) {
+      Record::sendHelp (t);
     }
   }
   else if (strncasecmp (buf, "load", 4) == 0) {
