@@ -1006,7 +1006,8 @@ static void acceptClient()
   send(fd, (const char*)buffer, sizeof(buffer), 0);
 
   // FIXME add new client server welcome packet here when client code is ready
-  new GameKeeper::Player(playerIndex, clientAddr, fd, handleTcp);
+  NetHandler *netHandler = new NetHandler(clientAddr, fd);
+  new GameKeeper::Player(playerIndex, netHandler, handleTcp);
 
   // if game was over and this is the first player then game is on
   if (gameOver) {

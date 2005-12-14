@@ -65,7 +65,7 @@ class GameKeeper {
 public:
   class Player {
   public:
-    Player(int _playerIndex, const struct sockaddr_in &clientAddr, int fd,
+    Player(int _playerIndex, NetHandler *_netHandler,
 	   tcpCallback _clientCallback);
     ~Player();
 

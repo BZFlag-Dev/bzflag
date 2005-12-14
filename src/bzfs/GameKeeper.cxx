@@ -42,9 +42,9 @@ void *PackPlayerInfo(void *buf, int playerIndex, uint8_t properties )
 }
 
 GameKeeper::Player::Player(int _playerIndex,
-			   const struct sockaddr_in &clientAddr, int fd,
+			   NetHandler *_netHandler,
 			   tcpCallback _clientCallback):
-  player(_playerIndex), lagInfo(&player),
+  player(_playerIndex), netHandler(_netHandler), lagInfo(&player),
   playerIndex(_playerIndex), closed(false), clientCallback(_clientCallback),
   needThisHostbanChecked(false)
 {
@@ -55,7 +55,6 @@ GameKeeper::Player::Player(int _playerIndex,
   stateTimeStamp   = 0.0f;
   gameTimeRate = GameTime::startRate;
   gameTimeNext = TimeKeeper::getCurrent();
-  netHandler       = new NetHandler(clientAddr, fd);
 #if defined(USE_THREADS)
   int result = pthread_create(&thread, NULL, tcpRx, (void *)this);
   if (result)
