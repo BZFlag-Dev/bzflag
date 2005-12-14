@@ -1008,14 +1008,6 @@ static void acceptClient()
   // FIXME add new client server welcome packet here when client code is ready
   new GameKeeper::Player(playerIndex, clientAddr, fd, handleTcp);
 
-  // send the GameTime
-  GameKeeper::Player* gkPlayer =
-    GameKeeper::Player::getPlayerByIndex(playerIndex);
-  if (gkPlayer != NULL
-      && gkPlayer->player.isHuman()) {
-    sendGameTime(gkPlayer);
-  }
-
   // if game was over and this is the first player then game is on
   if (gameOver) {
     int count = GameKeeper::Player::count();
