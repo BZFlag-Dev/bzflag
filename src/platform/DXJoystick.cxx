@@ -67,7 +67,7 @@ DXJoystick::~DXJoystick()
 void	      DXJoystick::initJoystick(const char* joystickName)
 {
   // turn it off
-  if (!joystickName || strcasecmp(joystickName, "off") == 0) {
+  if (!joystickName || (strcasecmp(joystickName, "off") == 0) || (strcmp(joystickName, "") == 0)) {
     device = NULL;
     return;
   }

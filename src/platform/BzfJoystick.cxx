@@ -31,8 +31,8 @@ BzfJoystick::~BzfJoystick()
 
 void			BzfJoystick::initJoystick(const char* joystickName)
 {
-  /* if the name is null, 'off', or unset, don't init. */
-  if (!joystickName || (strcmp(joystickName, "off") == 0) || (strcmp(joystickName, "") == 0)) {
+  /* if the name is null, 'off', or unset, don't init */
+  if (!joystickName || (strcasecmp(joystickName, "off") == 0) || (strcmp(joystickName, "") == 0)) {
     return;
   }
 
