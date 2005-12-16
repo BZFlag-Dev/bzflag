@@ -947,6 +947,51 @@ static void dumpScore()
 
 static void handleTcp(NetHandler &netPlayer, int i, const RxStatus e);
 
+static PlayerId getNewPlayer(NetHandler *netHandler)
+{
+  PlayerId playerIndex;
+
+  // find open slot in players list
+  PlayerId minPlayerId = 0, maxPlayerId = (PlayerId)MaxPlayers;
+  if (Replay::enabled()) {
+    minPlayerId = MaxPlayers;
+    maxPlayerId = MaxPlayers + ReplayObservers;
+  }
+  playerIndex = GameKeeper::Player::getFreeIndex(minPlayerId, maxPlayerId);
+
+  if (playerIndex >= maxPlayerId)
+    return 0xff;
+
+  if (playerIndex >= curMaxPlayers)
+    curMaxPlayers = playerIndex + 1;
+
+  new GameKeeper::Player(playerIndex, netHandler, handleTcp);
+
+  // if game was over and this is the first player then game is on
+  if (gameOver) {
+    int count = GameKeeper::Player::count();
+    if (count == 0) {
+      gameOver = false;
+      gameStartTime = TimeKeeper::getCurrent();
+      if (clOptions->timeLimit > 0.0f && !clOptions->timeManualStart) {
+	clOptions->timeElapsed = 0.0f;
+	countdownActive = true;
+      }
+    }
+  }
+  return playerIndex;
+}
+
+static void sendNewPlayer(NetHandler *handler)
+{
+  PlayerId id = getNewPlayer(handler);
+  if (id == 0xff)
+    return;
+  void *buf, *bufStart = getDirectMessageBuffer();
+  buf = nboUnpackUByte(bufStart, id);
+  directMessage(handler, MsgNewPlayer, (char*)buf - (char*)bufStart, bufStart);
+}
+
 static void acceptClient()
 {
   // client (not a player yet) is requesting service.
@@ -975,52 +1020,27 @@ static void acceptClient()
     nerror("couldn't set keepalive");
   }
 
-  PlayerId playerIndex;
+  NetHandler *netHandler = new NetHandler(clientAddr, fd);
 
-  // find open slot in players list
-  PlayerId minPlayerId = 0, maxPlayerId = (PlayerId)MaxPlayers;
-  if (Replay::enabled()) {
-     minPlayerId = MaxPlayers;
-     maxPlayerId = MaxPlayers + ReplayObservers;
-  }
-  playerIndex = GameKeeper::Player::getFreeIndex(minPlayerId, maxPlayerId);
+  PlayerId playerIndex = getNewPlayer(netHandler);
 
-  if (playerIndex < maxPlayerId) {
+  if (playerIndex < 0xff) {
     DEBUG1("Player [%d] accept() from %s:%d on %i\n", playerIndex,
 	inet_ntoa(clientAddr.sin_addr), ntohs(clientAddr.sin_port), fd);
-
-    if (playerIndex >= curMaxPlayers)
-      curMaxPlayers = playerIndex+1;
   } else { // full? reject by closing socket
     DEBUG1("all slots occupied, rejecting accept() from %s:%d on %i\n",
 	   inet_ntoa(clientAddr.sin_addr), ntohs(clientAddr.sin_port), fd);
 
     // send back 0xff before closing
     send(fd, (const char*)buffer, sizeof(buffer), 0);
-
     close(fd);
+    delete netHandler;
     return;
   }
 
   buffer[8] = (uint8_t)playerIndex;
   send(fd, (const char*)buffer, sizeof(buffer), 0);
 
-  // FIXME add new client server welcome packet here when client code is ready
-  NetHandler *netHandler = new NetHandler(clientAddr, fd);
-  new GameKeeper::Player(playerIndex, netHandler, handleTcp);
-
-  // if game was over and this is the first player then game is on
-  if (gameOver) {
-    int count = GameKeeper::Player::count();
-    if (count == 0) {
-      gameOver = false;
-      gameStartTime = TimeKeeper::getCurrent();
-      if (clOptions->timeLimit > 0.0f && !clOptions->timeManualStart) {
-	clOptions->timeElapsed = 0.0f;
-	countdownActive = true;
-      }
-    }
-  }
 }
 
 
@@ -3586,6 +3606,11 @@ static void handleCommand(const void *rawbuf, bool udp, NetHandler *handler)
       }
       break;
     }
+
+  case MsgNewPlayer: {
+    sendNewPlayer(handler);
+    break;
+  }
 
     // player is sending his position/speed (bulk data)
     case MsgPlayerUpdate:
