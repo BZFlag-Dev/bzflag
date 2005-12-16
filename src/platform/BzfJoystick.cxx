@@ -31,7 +31,7 @@ BzfJoystick::~BzfJoystick()
 
 void			BzfJoystick::initJoystick(const char* joystickName)
 {
-  if (strcmp(joystickName, "off") || strcmp(joystickName, "")) {
+  if ((strcmp(joystickName, "off") == 0) || (strcmp(joystickName, "") == 0)) {
     std::vector<std::string> args;
     args.push_back(joystickName);
     printError("Joystick '{1}' not supported...", &args);
