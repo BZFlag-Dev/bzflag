@@ -1144,7 +1144,7 @@ static void flagCommandHelp(int t)
 {
   sendMessage(ServerPlayer, t, "/flag up");
   sendMessage(ServerPlayer, t, "/flag show");
-  sendMessage(ServerPlayer, t, "/flag reset <all|unused|#flagId|FlagAbbv>");
+  sendMessage(ServerPlayer, t, "/flag reset <all|unused|team|#flagId|FlagAbbv>");
   sendMessage(ServerPlayer, t, "/flag take <#slot|PlayerName|\"PlayerName\">");
   sendMessage(ServerPlayer, t,
               "/flag give <#slot|PlayerName|\"PlayerName\"> <#flagId|FlagAbbr> [force]");
@@ -1222,6 +1222,19 @@ bool FlagCommand::operator() (const char	 *message,
     }
     else if (strncasecmp(msg, "unused", 6) == 0) {
       bz_resetFlags(true);
+    }
+    else if (strncasecmp(msg, "team", 4) == 0) {
+      // team flags
+      for (int i = 0; i < numFlags; i++) {
+        FlagInfo* fi = FlagInfo::get(i);
+        if ((fi != NULL) && (fi->flag.type->flagTeam != NoTeam)) {
+          const int playerIndex = fi->player;
+          if (playerIndex != -1) {
+            sendDrop(*fi);
+          }
+          resetFlag(*fi);
+        }
+      }
     }
     else if (msg[0] == '#') {
       if (!checkFlagMaster(playerData)) {
