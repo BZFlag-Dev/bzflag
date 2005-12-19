@@ -68,7 +68,6 @@ GameKeeper::Player::Player(int _playerIndex,
 GameKeeper::Player::~Player()
 {
   flagHistory.clear();
-  delete netHandler;
 #if defined(USE_THREADS)
   int result = pthread_join(thread, NULL);
   if (result)

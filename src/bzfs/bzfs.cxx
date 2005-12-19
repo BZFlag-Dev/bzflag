@@ -3842,17 +3842,17 @@ static void handleTcp(NetHandler &netPlayer, int i, const RxStatus e)
 {
   if (e != ReadAll) {
     if (e == ReadReset) {
-      removePlayer(i, "ECONNRESET/EPIPE", false);
+      dropHandler(&netPlayer, "ECONNRESET/EPIPE");
     } else if (e == ReadError) {
       // dump other errors and remove the player
       nerror("error on read");
-      removePlayer(i, "Read error", false);
+      dropHandler(&netPlayer, "Read error");
     } else if (e == ReadDiscon) {
       // disconnected
-      removePlayer(i, "Disconnected", false);
+      dropHandler(&netPlayer, "Disconnected");
     } else if (e == ReadHuge) {
       DEBUG1("Player [%d] sent huge packet length, possible attack\n", i);
-      removePlayer(i, "large packet recvd", false);
+      dropHandler(&netPlayer, "large packet recvd");
     }
     return;
   }
