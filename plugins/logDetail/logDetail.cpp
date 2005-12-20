@@ -117,14 +117,16 @@ void logDetail::process( bz_EventData *eventData )
 	}
 	break;
       case bz_ePlayerJoinEvent:
-	bz_PlayerRecord *player = bz_getPlayerByIndex( joinPartData->playerID );
-	if (player) {
-	  cout << "PLAYER-JOIN ";
-	  displayCallsign( player->callsign );
-	  cout << " #" << joinPartData->playerID;
-	  displayTeam( joinPartData->team );
-	  displayPlayerPrivs( joinPartData->playerID );
-	  cout << endl;
+	{
+	  bz_PlayerRecord *player = bz_getPlayerByIndex( joinPartData->playerID );
+	  if (player) {
+	    cout << "PLAYER-JOIN ";
+	    displayCallsign( player->callsign );
+	    cout << " #" << joinPartData->playerID;
+	    displayTeam( joinPartData->team );
+	    displayPlayerPrivs( joinPartData->playerID );
+	    cout << endl;
+	  }
 	}
 	break;
       case bz_ePlayerPartEvent:
