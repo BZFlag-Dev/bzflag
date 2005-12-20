@@ -7,7 +7,7 @@ Type=2
 Compiler=-D__GNUWIN32__ -W -DWIN32 -DNDEBUG -D_MBCS -D_LIB_@@_
 CppCompiler=-D__GNUWIN32__ -W -DWIN32 -DNDEBUG -D_MBCS -D_LIB_@@_
 Includes=..\..
-Linker=
+Linker=_@@_
 Libs=
 UnitCount=30
 Folders="Header Files","Source Files"
@@ -27,7 +27,7 @@ CustomMakefile=
 IncludeVersionInfo=0
 SupportXPThemes=0
 CompilerSet=0
-CompilerSettings=0000000001100000001100
+CompilerSettings=0000000001010000001100
 
 [Unit1]
 FileName=..\src\c-ares\ares_parse_a_reply.c
