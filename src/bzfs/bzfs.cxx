@@ -988,7 +988,7 @@ static void sendNewPlayer(NetHandler *handler)
   if (id == 0xff)
     return;
   void *buf, *bufStart = getDirectMessageBuffer();
-  buf = nboUnpackUByte(bufStart, id);
+  buf = nboPackUByte(bufStart, id);
   directMessage(handler, MsgNewPlayer, (char*)buf - (char*)bufStart, bufStart);
 }
 
