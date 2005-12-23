@@ -815,7 +815,7 @@ void ControlPanel::saveMessages(const std::string& filename,
   const time_t nowTime = time (NULL);
   fprintf(file, "----------------------------------------"
                 "----------------------------------------\n");
-  fprintf(file, "Messages saved: %s\n", ctime(&nowTime));
+  fprintf(file, "Messages saved: %s", ctime(&nowTime));
   fprintf(file, "----------------------------------------"
                 "----------------------------------------\n\n");
 
