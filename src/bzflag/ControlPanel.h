@@ -63,6 +63,9 @@ class ControlPanel {
     void		setRadarRenderer(RadarRenderer*);
 
     void		setDimming(float dimming);
+    
+    void		saveMessages(const std::string& filename,
+                                     bool stripAnsi) const;
 
   private:
     // no copying!

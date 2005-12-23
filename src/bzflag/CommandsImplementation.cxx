@@ -23,6 +23,7 @@
 #include "TextUtils.h"
 #include "CommandsStandard.h"
 #include "TextureManager.h"
+#include "DirectoryNames.h"
 
 // local implementation headers
 #include "LocalCommand.h"
@@ -107,6 +108,12 @@ class ReTextureCommand : LocalCommand {
     bool operator() (const char *commandLine);
 };
 
+class SaveMsgsCommand : LocalCommand {
+  public:
+    SaveMsgsCommand();
+    bool operator() (const char *commandLine);
+};
+
 class SaveWorldCommand : LocalCommand {
   public:
     SaveWorldCommand();
@@ -127,6 +134,7 @@ static LocalSetCommand    localSetCommand;
 static QuitCommand	  quitCommand;
 static RoamPosCommand     RoamPosCommand;
 static ReTextureCommand   reTextureCommand;
+static SaveMsgsCommand	  saveMsgsCommand;
 static SaveWorldCommand   saveWorldCommand;
 
 
@@ -139,6 +147,7 @@ LocalSetCommand::LocalSetCommand() :	LocalCommand("/localset") {}
 QuitCommand::QuitCommand() :		LocalCommand("/quit") {}
 ReTextureCommand::ReTextureCommand() :	LocalCommand("/retexture") {}
 RoamPosCommand::RoamPosCommand() :	LocalCommand("/roampos") {}
+SaveMsgsCommand::SaveMsgsCommand() :	LocalCommand("/savemsgs") {}
 SaveWorldCommand::SaveWorldCommand() :	LocalCommand("/saveworld") {}
 SetCommand::SetCommand() :		LocalCommand("/set") {}
 SilenceCommand::SilenceCommand() :	LocalCommand("/silence") {}
@@ -587,6 +596,32 @@ bool ReTextureCommand::operator() (const char *)
 {
   TextureManager& tm = TextureManager::instance();
   tm.reloadTextures();
+  return true;
+}
+
+
+bool SaveMsgsCommand::operator() (const char *commandLine)
+{
+  if (controlPanel == NULL) {
+    return true;
+  }
+  
+  std::vector<std::string> args;
+  args = TextUtils::tokenize(commandLine, " ");
+  const int argCount = (int)args.size();
+
+  bool stripAnsi = false;
+  if ((argCount > 1) && (args[1] == "-s")) {
+    stripAnsi = true;
+  }
+  
+  std::string filename = getConfigDirName() + "msglog.txt";
+  
+  controlPanel->saveMessages(filename, stripAnsi);
+  
+  std::string msg = "Saved messages to: " + filename;
+  addMessage(NULL, msg);
+  
   return true;
 }
 
