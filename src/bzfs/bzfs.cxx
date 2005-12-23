@@ -734,8 +734,9 @@ static void serverStop()
   close(wksSocket);
 
   // tell players to quit
-  for (int i = 0; i < curMaxPlayers; i++)
-    directMessage(i, MsgSuperKill, 0, getDirectMessageBuffer());
+  void *bufStart = getDirectMessageBuffer();
+  void *buf = nboPackUByte(bufStart, 0xff);
+  broadcastMessage(MsgSuperKill, (char*)buf - (char*)bufStart, bufStart, true);
 
   // clean up Kerberos
   Authentication::cleanUp();
@@ -2121,9 +2122,10 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
     // send message to one player
     // do not use directMessage as he can remove player
     void *buf  = sMsgBuf;
-    buf	= nboPackUShort(buf, 0);
+    buf	= nboPackUShort(buf, 1);
     buf	= nboPackUShort(buf, MsgSuperKill);
-    playerData->netHandler->pwrite(sMsgBuf, 4);
+    buf	= nboPackUByte(buf, uint8_t(playerIndex));
+    playerData->netHandler->pwrite(sMsgBuf, 5);
   }
 
 
@@ -2139,7 +2141,6 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
 	 playerData->player.getCallSign(),
 	 playerIndex, timeStamp.c_str(), reason);
   bool wasPlaying = playerData->player.isPlaying();
-  playerData->netHandler->closing();
 
   zapFlagByPlayer(playerIndex);
 
