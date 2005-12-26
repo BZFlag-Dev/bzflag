@@ -200,7 +200,6 @@ static bool		gotBlowedUp(BaseLocalPlayer* tank,
 
 #ifdef ROBOT
 static void		handleMyTankKilled(int reason);
-static ServerLink*	robotServer[MAX_ROBOTS];
 #endif
 
 static double		userTimeEpochOffset;
@@ -522,18 +521,6 @@ static void		hangup(int sig)
   bzSignal(sig, SIG_PF(hangup));
   serverDied = true;
   serverError = true;
-}
-
-static ServerLink*	lookupServer(const Player *_player)
-{
-  PlayerId id = _player->getId();
-  if (myTank->getId() == id) return serverLink;
-#ifdef ROBOT
-  for (int i = 0; i < numRobots; i++)
-    if (robots[i] && robots[i]->getId() == id)
-      return robotServer[i];
-#endif
-  return NULL;
 }
 
 //
@@ -1633,6 +1620,10 @@ static bool processWorldChunk(void *buf, uint16_t len, int bytesLeft)
   return bytesLeft == 0;
 }
 
+#ifdef ROBOT
+static void makeObstacleList();
+static std::vector<BzfRegion*>	obstacleList;  // for robots
+#endif
 
 static void		handleServerMessage(bool human, uint16_t code,
 					    uint16_t len, void* msg)
@@ -1721,10 +1712,27 @@ static void		handleServerMessage(bool human, uint16_t code,
       serverLink->confirmIncomingUDP();
       break;
 
-    case MsgSuperKill:
-      printError("Server forced a disconnect");
-      serverError = true;
+    case MsgSuperKill: {
+      uint8_t id;
+      nboUnpackUByte(msg, id);
+      if (!myTank || myTank->getId() == id || id == 0xff) {
+	serverError = true;
+	printError("Server forced a disconnect");
+#ifdef ROBOT
+      } else {
+	int i;
+	for (i = 0; i < MAX_ROBOTS; i++)
+	  if (robots[i] && robots[i]->getId() == id)
+	    break;
+	if (i >= MAX_ROBOTS)
+	  break;
+	delete robots[i];
+	robots[i] = NULL;
+	numRobots--;
+#endif
+      }
       break;
+    }
 
     case MsgAccept:
       break;
@@ -1734,12 +1742,12 @@ static void		handleServerMessage(bool human, uint16_t code,
       char buffer[MessageLen];
       uint16_t rejcode;
       std::string reason;
-      buf = nboUnpackUShort (msg, rejcode); // filler for now
+
+      buf = nboUnpackUShort (buf, rejcode); // filler for now
       buf = nboUnpackString (buf, buffer, MessageLen);
       buffer[MessageLen - 1] = '\0';
       reason = buffer;
       printError(reason);
-      serverError = true;
       break;
     }
 
@@ -2894,6 +2902,34 @@ static void		handleServerMessage(bool human, uint16_t code,
       break;
     }
 
+  case MsgNewPlayer:
+    uint8_t id;
+    msg = nboUnpackUByte(msg, id);
+#ifdef ROBOT
+    int i;
+    for (i = 0; i < MAX_ROBOTS; i++)
+      if (!robots[i])
+	break;
+    if (i >= MAX_ROBOTS) {
+      DEBUG1("Too much bots requested\n");
+      break;
+    }
+    char callsign[CallSignLen];
+    snprintf(callsign, CallSignLen, "%s%2.2d", myTank->getCallSign(), i);
+    robots[i] = new RobotPlayer(id, callsign, serverLink,
+				myTank->getEmailAddress());
+    robots[i]->setTeam(AutomaticTeam);
+    serverLink->sendEnter(id, ComputerPlayer, robots[i]->getTeam(),
+			  robots[i]->getCallSign(),
+			  robots[i]->getEmailAddress(), "");
+    if (!numRobots) {
+      makeObstacleList();
+      RobotPlayer::setObstacleList(&obstacleList);
+    }
+    numRobots++;
+#endif
+    break;
+
       // inter-player relayed message
     case MsgPlayerUpdate:
     case MsgPlayerUpdateSmall:
@@ -2996,15 +3032,6 @@ static void		doMessages()
       return;
     }
   }
-
-#ifdef ROBOT
-  for (int i = 0; i < numRobots; i++) {
-    while (robotServer[i]
-	   && (e = robotServer[i]->read(code, len, msg, 0)) == 1);
-    if (code == MsgKilled)
-      handleServerMessage(false, code, len, msg);
-  }
-#endif
 }
 
 void injectMessages(uint16_t code, uint16_t len, void *msg) {
@@ -3285,7 +3312,7 @@ static bool		gotBlowedUp(BaseLocalPlayer* tank,
       teachAutoPilot( myTank->getFlag(), -1 );
 
     // tell other players I've dropped my flag
-    lookupServer(tank)->sendDropFlag(tank->getPosition());
+    serverLink->sendDropFlag(tank->getPosition());
 
     // drop it
     handleFlagDropped(tank);
@@ -3341,7 +3368,7 @@ static bool		gotBlowedUp(BaseLocalPlayer* tank,
     if (reason == GotShot || reason == GotRunOver ||
 	reason == GenocideEffect || reason == SelfDestruct ||
 	reason == WaterDeath || reason == DeathTouch)
-      lookupServer(tank)->sendKilled(tank->getId(), killer, reason, shotId, flagType,
+      serverLink->sendKilled(tank->getId(), killer, reason, shotId, flagType,
 			     phydrv);
   }
 
@@ -3744,8 +3771,6 @@ static void		updateDaylight(double offset, SceneRenderer& renderer)
 // some robot stuff
 //
 
-static std::vector<BzfRegion*>	obstacleList;  // for robots
-
 static void		addObstacle(std::vector<BzfRegion*>& rgnList, const Obstacle& obstacle)
 {
   float p[4][2];
@@ -3915,7 +3940,7 @@ static void		updateRobots(float dt)
   for (i = 0; i < numRobots; i++) {
     if (!gameOver && robots[i]
 	&& !robots[i]->isAlive() && !robots[i]->isExploding() && pickTarget) {
-      robotServer[i]->sendAlive(robots[i]->getId());
+      serverLink->sendAlive(robots[i]->getId());
     }
   }
 
@@ -3963,8 +3988,7 @@ static void		checkEnvironment(RobotPlayer* tank)
     // this is to ensure that we don't get shot again by the same shot
     // after dropping our shield flag.
     if (hit->isStoppedByHit())
-      lookupServer(tank)->sendHit(tank->getId(), hit->getPlayer(),
-				  hit->getShotId());
+      serverLink->sendHit(tank->getId(), hit->getPlayer(), hit->getShotId());
 
     FlagType* killerFlag = hit->getFlag();
     bool stopShot;
@@ -4047,56 +4071,16 @@ static void		checkEnvironmentForRobots()
 static void		sendRobotUpdates()
 {
   for (int i = 0; i < numRobots; i++)
-    if (robots[i] && robotServer[i] && robots[i]->isDeadReckoningWrong()) {
-      robotServer[i]->sendPlayerUpdate(robots[i]);
+    if (robots[i] && robots[i]->isDeadReckoningWrong()) {
+      serverLink->sendPlayerUpdate(robots[i]);
     }
 }
 
 static void		addRobots()
 {
-  uint16_t code, len;
-  char msg[MaxPacketLen];
-  char callsign[CallSignLen];
   int  j;
-  for (j = 0; j < numRobots; j++)
-    if (robotServer[j]) {
-      snprintf(callsign, CallSignLen, "%s%2.2d", myTank->getCallSign(), j);
-      robots[j] = new RobotPlayer(robotServer[j]->getId(), callsign,
-				  robotServer[j], myTank->getEmailAddress());
-      robots[j]->setTeam(AutomaticTeam);
-      robotServer[j]->sendEnter(robots[j]->getId(),
-				ComputerPlayer, robots[j]->getTeam(),
-				robots[j]->getCallSign(),
-				robots[j]->getEmailAddress(), "");
-      robotServer[j]->flush();
-    }
-  for (j = 0; j < numRobots; j++) {
-    // wait for response
-    if (robotServer[j]
-	&& robotServer[j]->read(code, len, msg, -1) < 0 || code != MsgAccept) {
-      delete robots[j];
-      delete robotServer[j];
-      robots[j] = NULL;
-      robotServer[j] = NULL;
-    }
-  }
-
-  int k;
-  // packing
-  for (k = 0, j = 0; j < numRobots; j++) {
-    if (k != j) {
-      robotServer[k] = robotServer[j];
-      robots[k]      = robots[j];
-    }
-    if (robotServer[j])
-      k++;
-  }
-  numRobots = k;
-
-  if (numRobots > 0) {
-    makeObstacleList();
-    RobotPlayer::setObstacleList(&obstacleList);
-  }
+  for (j = 0; j < MAX_ROBOTS; j++)
+    robots[j] = NULL;
 }
 
 #endif
@@ -4123,6 +4107,12 @@ static void setTankFlags()
 
 static void enteringServer(void *buf)
 {
+#if defined(ROBOT)
+  int i;
+  for (i = 0; i < numRobotTanks; i++)
+    serverLink->sendNewPlayer();
+  numRobots = 0;
+#endif
   // the server sends back the team the player was joined to
   void *tmpbuf = buf;
   uint16_t team, type;
@@ -4429,12 +4419,10 @@ void		leaveGame()
   // shut down robot connections
   int i;
   for (i = 0; i < numRobots; i++) {
-    if (robots[i] && robotServer[i])
-      robotServer[i]->sendExit();
+    if (robots[i])
+      serverLink->sendExit();
     delete robots[i];
-    delete robotServer[i];
     robots[i] = NULL;
-    robotServer[i] = NULL;
   }
   numRobots = 0;
 
@@ -4558,19 +4546,6 @@ static void joinInternetGame(const struct in_addr *inAddress)
   // open server
   ServerLink* _serverLink = new ServerLink(serverAddress,
 					   startupInfo.serverPort);
-
-#if defined(ROBOT)
-  int i, j;
-  for (i = 0, j = 0; i < numRobotTanks; i++) {
-    robotServer[j] = new ServerLink(serverAddress, startupInfo.serverPort);
-    if (!robotServer[j] || robotServer[j]->getState() != ServerLink::Okay) {
-      delete robotServer[j];
-      continue;
-    }
-    j++;
-  }
-  numRobots = j;
-#endif
 
   serverLink = _serverLink;
 
@@ -6112,12 +6087,6 @@ static void		playingLoop()
 
     if (serverLink)
       serverLink->flush();
-#ifdef ROBOT
-    for (i = 0; i < numRobots; i++)
-      if (robotServer[i])
-	robotServer[i]->flush();
-#endif
-
   } // end main client loop
 
 
