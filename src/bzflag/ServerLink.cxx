@@ -552,17 +552,15 @@ if (packetStream) {
   return 1;
 }
 
-void			ServerLink::sendEnter(PlayerType type,
-						TeamColor team,
-						const char* name,
-						const char* email,
-						const char* token)
+void ServerLink::sendEnter(PlayerId _id, PlayerType type, TeamColor team,
+			   const char* name, const char* email,
+			   const char* token)
 {
   if (state != Okay) return;
   char msg[MaxPacketLen] = {0};
   void* buf = msg;
 
-  buf = nboPackUByte(buf, uint8_t(getId()));
+  buf = nboPackUByte(buf, uint8_t(_id));
 
   buf = nboPackUShort(buf, uint16_t(type));
   buf = nboPackUShort(buf, uint16_t(team));
@@ -642,7 +640,8 @@ void			ServerLink::sendDropFlag(const float* position)
   send(MsgDropFlag, sizeof(msg), msg);
 }
 
-void			ServerLink::sendKilled(const PlayerId& killer,
+void			ServerLink::sendKilled(const PlayerId victim,
+					       const PlayerId killer,
 					       int reason, int shotId,
 					       const FlagType* flagType,
 					       int phydrv)
@@ -650,7 +649,7 @@ void			ServerLink::sendKilled(const PlayerId& killer,
   char msg[6 + FlagPackSize + 4];
   void* buf = msg;
 
-  buf = nboPackUByte(buf, getId());
+  buf = nboPackUByte(buf, uint8_t(victim));
   buf = nboPackUByte(buf, killer);
   buf = nboPackUShort(buf, int16_t(reason));
   buf = nboPackShort(buf, int16_t(shotId));
@@ -716,11 +715,12 @@ void ServerLink::sendHit(const PlayerId &source, const PlayerId &shooter,
 }
 #endif
 
-void			ServerLink::sendAlive()
+void			ServerLink::sendAlive(const PlayerId playerId)
 {
   char msg[1];
 
-  msg[0] = getId();
+  void* buf = msg;
+  buf = nboPackUByte(buf, uint8_t(playerId));
 
   send(MsgAlive, sizeof(msg), msg);
 }
@@ -759,6 +759,11 @@ void			ServerLink::sendPaused(bool paused)
   buf = nboPackUByte(buf, uint8_t(getId()));
   buf = nboPackUByte(buf, uint8_t(paused));
   send(MsgPause, sizeof(msg), msg);
+}
+
+void ServerLink::sendNewPlayer()
+{
+  send(MsgNewPlayer, 0, NULL);
 }
 
 void ServerLink::sendExit()

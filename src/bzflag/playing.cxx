@@ -1,4 +1,3 @@
-
 /* bzflag
  * Copyright (c) 1993 - 2005 Tim Riker
  *
@@ -3342,7 +3341,8 @@ static bool		gotBlowedUp(BaseLocalPlayer* tank,
     if (reason == GotShot || reason == GotRunOver ||
 	reason == GenocideEffect || reason == SelfDestruct ||
 	reason == WaterDeath || reason == DeathTouch)
-      lookupServer(tank)->sendKilled(killer, reason, shotId, flagType, phydrv);
+      lookupServer(tank)->sendKilled(tank->getId(), killer, reason, shotId, flagType,
+			     phydrv);
   }
 
   // print reason if it's my tank
@@ -3915,7 +3915,7 @@ static void		updateRobots(float dt)
   for (i = 0; i < numRobots; i++) {
     if (!gameOver && robots[i]
 	&& !robots[i]->isAlive() && !robots[i]->isExploding() && pickTarget) {
-      robotServer[i]->sendAlive();
+      robotServer[i]->sendAlive(robots[i]->getId());
     }
   }
 
@@ -4064,7 +4064,8 @@ static void		addRobots()
       robots[j] = new RobotPlayer(robotServer[j]->getId(), callsign,
 				  robotServer[j], myTank->getEmailAddress());
       robots[j]->setTeam(AutomaticTeam);
-      robotServer[j]->sendEnter(ComputerPlayer, robots[j]->getTeam(),
+      robotServer[j]->sendEnter(robots[j]->getId(),
+				ComputerPlayer, robots[j]->getTeam(),
 				robots[j]->getCallSign(),
 				robots[j]->getEmailAddress(), "");
       robotServer[j]->flush();
@@ -4716,7 +4717,7 @@ static void joinInternetGame2()
     myTank->setTeam(HunterTeam);
 
   // tell server we want to join
-  serverLink->sendEnter(TankPlayer, myTank->getTeam(),
+  serverLink->sendEnter(myTank->getId(), TankPlayer, myTank->getTeam(),
 			myTank->getCallSign(),
 			myTank->getEmailAddress(),
 			startupInfo.token);

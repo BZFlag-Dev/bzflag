@@ -68,7 +68,7 @@ class ServerLink {
     int			read(uint16_t& code, uint16_t& len, void* msg,
 						int millisecondsToBlock = 0);
 
-    void		sendEnter(PlayerType, TeamColor,
+    void		sendEnter(PlayerId, PlayerType, TeamColor,
 				  const char* name, const char* email, const char* token);
     bool		readEnter(std::string& reason,
 				  uint16_t& code, uint16_t& rejcode);
@@ -80,8 +80,10 @@ class ServerLink {
     void		sendKerberosTicket(const char      *principal,
 					   const krb5_data *ticket);
 #endif
-    void		sendKilled(const PlayerId&, int reason,
-				   int shotId, const FlagType* flag, int phydrv);
+    void		sendKilled(const PlayerId victim,
+				   const PlayerId shooter,
+				   int reason, int shotId,
+				   const FlagType* flag, int phydrv);
   // FIXME -- This is very ugly, but required to build bzadmin with gcc 2.9.5.
   //	  It should be changed to something cleaner.
 #ifndef BUILDING_BZADMIN
@@ -92,11 +94,13 @@ class ServerLink {
 
   void sendHit(const PlayerId &source, const PlayerId &shooter, int shotId);
 
-    void		sendAlive();
+    void		sendAlive(const PlayerId playerId);
     void		sendTeleport(int from, int to);
     void		sendTransferFlag(const PlayerId&, const PlayerId&);
     void		sendNewRabbit();
     void		sendPaused(bool paused);
+    void                sendNewPlayer();
+
     void		sendExit();
     void		sendAutoPilot(bool autopilot);
     void                sendMessage(const PlayerId& to,

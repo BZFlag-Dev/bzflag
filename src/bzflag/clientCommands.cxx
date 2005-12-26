@@ -342,7 +342,7 @@ static std::string cmdRestart(const std::string&,
   LocalPlayer *myTank = LocalPlayer::getMyTank();
   if (myTank != NULL)
     if (!gameOver && !myTank->isSpawning() && (myTank->getTeam() != ObserverTeam) && !myTank->isAlive() && !myTank->isExploding()) {
-      serverLink->sendAlive();
+      serverLink->sendAlive(myTank->getId());
       myTank->setSpawning(true);
       CommandManager::ArgList zoomArgs;
       std::string resetArg = "reset";
