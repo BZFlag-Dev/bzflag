@@ -690,7 +690,8 @@ bool NetHandler::reverseDNSDone()
 
 void NetHandler::setClientKind(int kind)
 {
-  clientType = kind;
+  if (clientType == clientNone)
+    clientType = kind;
 }
 
 int NetHandler::getClientKind()
