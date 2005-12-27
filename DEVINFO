@@ -346,7 +346,9 @@ cannot proceed.  A checklist of items to be completed follows:
 
 - All code is committed to CVS
 
-- ChangeLog includes a comment for all items added since the previous
+- misc/cvs2cl.pl should be run to update the ChangeLog.
+
+- NEWS includes a comment for all items added since the previous
   release, preferably denoting who made what changes.
 
 - Man files, bzfs_conf.html, and bzfs.conf files are updated with
