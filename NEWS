@@ -4,6 +4,16 @@
 BZFlag 2.1.0
 ------------
 
+* Bots share connection with main player - Alfredo Tupone
+* Player List command works at least to show his own status - Thomas Stauer
+* Bug fixed on countdown virtual capture - Alfredo Tupone
+* Removing applauds when capturing its own flag - Alfredo Tupone
+* End shot is sent by server on behalf of player - Alfredo Tupone
+* GM update is checked for being applicable - Alfredo Tupone
+* Shot attribute added from server / receiver - Alfredo Tupone
+* Handicap computed server side - Alfredo Tupone
+* Shot message are synchronized with position - Alfredo Tupone
+* Fixes for Bot on public server - Alfredo Tupone
 * All scores are controlled completely by the server - Daniel Remenak
 * bzadmin require less network bandwidth - Alfredo Tupone
 * Inertia setting are bzdb vars now - Alfredo Tupone
@@ -11,6 +21,7 @@ BZFlag 2.1.0
 BZFlag 2.0.5
 ------------
 
+* Fixes for Bot on public server - Alfredo Tupone
 * Support for -window on Mac command line executions - Sean Morrison
 * Show slot numbers in lagstats (if admin) - Mark Thomas, Mike Weisenborn
 * FPS limit energy saver option for laptops - Karsten Behrmann, Sean Morrison
