@@ -51,7 +51,7 @@ function bzfquery ($hostport) {
     echo "$errstr ($errno)\n";
     return $server;
   }
-  $buffer=fread($fp, 9);
+  $buffer=sockRead($fp, 9);
   //var_dump($buffer);
   # parse reply
   $server += unpack("a4magic/a4protocol/Cid", $buffer);
@@ -112,37 +112,39 @@ function bzfquery1910 ($server,$fp) {
   return $server;
 }
 
+
 function bzfquery0026 ($server,$fp) {
   # MsgQueryGame + MsgQueryPlayers
   $request = pack("n2", 0, 0x7167);
   $request .= pack("n2", 0, 0x7170);
   //var_dump($request);
   fwrite($fp, $request);
-  $buffer=fread($fp, 46);
-  //var_dump($buffer);
+
+  $buffer = sockRead($fp, 12);
+  $x = unpack ('nlen/ncode', $buffer);
+  if ($x['code'] == 26484)			// if MsgGameTime
+    $buffer = sockRead($fp, 46);
+  else
+    $buffer .= sockRead($fp, 34);
+
   $server += unpack("nlen/ncode/nstyle/nmaxPlayers/nmaxShots/nrogueSize/nredSize/ngreenSize/nblueSize/npurpleSize/nobserverSize/nrogueMax/nredMax/ngreenMax/nblueMax/npurpleMax/nobserverMax/nshakeWins/nshakeTimeout/nmaxPlayerScore/nmaxTeamScore/nmaxTime/ntimeElapsed", $buffer);
 
   # MsgQueryPlayers reply
-  $buffer=fread($fp, 8);
+  $buffer=sockRead($fp, 8);
   //var_dump(unpack("c8", $buffer));
   $server += unpack("nlen/ncode/nnumTotalTeams/nnumPlayers", $buffer);
 
-  $buffer=fread($fp, 5);
+  $buffer=sockRead($fp, 5);
   $server += unpack("nlen/ncode/CnumTeams", $buffer);
   //var_dump(unpack("c5", $buffer));
 
   for ( $team = 0; $team < $server['numTeams']; $team++ ) {
-    $buffer=fread($fp, 8);
+    $buffer=sockRead($fp, 8);
     $server['team'][$team] = unpack("nnum/nsize/nwon/nlost", $buffer);
   }
 
   for ( $player = 0; $player < $server['numPlayers']; $player++ ) {
-    $buffer='';
-    # handle packet fragmentation - untested
-    while(strlen($buffer) < 175) {
-      $buffer .= fread($fp, 175 - strlen($buffer));
-      //echo strlen($buffer) . "\n";
-    }
+	$buffer = sockRead  ($fp, 175);
     $server['player'][$player] = unpack("nlen/ncode/Cid/ntype/nteam/nwon/nlost/ntks/a32sign/a128email", $buffer);
   }
   fclose($fp);
@@ -254,6 +256,18 @@ function bzfdump ($server) {
   //var_dump($server);
   return;
 }
+
+
+function sockRead ($fd, $num ){
+	$rem = $num;
+	$ret = '';
+	while ( !feof ($fd) && $rem > 0){
+		$ret .= fread ($fd, $rem);
+		$rem = $num - strlen ($ret);
+	}
+	return $ret;
+}
+
 
 # Local Variables: ***
 # mode:php ***
