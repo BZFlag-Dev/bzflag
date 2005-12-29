@@ -102,24 +102,26 @@ namespace TextUtils
 
     std::ostringstream currentToken;
 
+    const std::string::size_type len = in.size();
     std::string::size_type pos = in.find_first_not_of(delims);
+
     int currentChar  = (pos == std::string::npos) ? -1 : in[pos];
     bool enoughTokens = (maxTokens && (numTokens >= (maxTokens-1)));
 
-    while (pos != std::string::npos && !enoughTokens) {
+    while (pos < len && pos != std::string::npos && !enoughTokens) {
 
       // get next token
       bool tokenDone = false;
       bool foundSlash = false;
 
-      currentChar = (pos < in.size()) ? in[pos] : -1;
+      currentChar = (pos < len) ? in[pos] : -1;
       while ((currentChar != -1) && !tokenDone){
 
 	tokenDone = false;
 
 	if (delims.find(currentChar) != std::string::npos && !inQuote) { // currentChar is a delim
 	  pos ++;
-	  break; // breaks out of while loop
+	  break; // breaks out of inner while loop
 	}
 
 	if (!useQuotes){
@@ -145,7 +147,7 @@ namespace TextUtils
 		  tokenDone = true;
 		  inQuote = false;
 		  //slurp off one additional delimeter if possible
-		  if (pos+1 < in.size() &&
+		  if (pos+1 < len &&
 		      delims.find(in[pos+1]) != std::string::npos) {
 		    pos++;
 		  }
@@ -168,7 +170,7 @@ namespace TextUtils
 	}
 
 	pos++;
-	currentChar = (pos < in.size()) ? in[pos] : -1;
+	currentChar = (pos < len) ? in[pos] : -1;
       } // end of getting a Token
 
       if (currentToken.str().size() > 0){ // if the token is something add to list
@@ -178,9 +180,7 @@ namespace TextUtils
       }
 
       enoughTokens = (maxTokens && (numTokens >= (maxTokens-1)));
-      if (enoughTokens){
-	break;
-      } else{
+      if ((pos < len) && (pos != std::string::npos)) {
 	pos = in.find_first_not_of(delims,pos);
       }
 
