@@ -4,6 +4,7 @@
 BZFlag 2.1.0
 ------------
 
+* Do not inform hunters of stealthy prey - Ian Agar
 * Bots share connection with main player - Alfredo Tupone
 * Player List command works at least to show his own status - Thomas Stauer
 * Bug fixed on countdown virtual capture - Alfredo Tupone
