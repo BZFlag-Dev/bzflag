@@ -406,7 +406,7 @@ static std::string cmdPause(const std::string&,
       // (could get stuck on un-pause if flag is taken)
       hud->setAlert(1, "Can't pause while inside a building", 1.0f, false);
 
-    } else if (myTank->getLocation() == LocalPlayer::InAir) {
+    } else if (myTank->getLocation() == LocalPlayer::InAir || myTank->isFalling()) {
       // custom message when trying to pause when jumping/falling
       hud->setAlert(1, "Can't pause when you are in the air", 1.0f, false);
 
