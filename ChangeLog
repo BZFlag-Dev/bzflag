@@ -4,7 +4,7 @@
 BZFlag 2.0.5
 ------------
 
-* Fixed issue with Denial-of-service message attacks - Sean Morrison
+* Fixed issue with denial-of-service message attacks - Sean Morrison
 * Support for -window on Mac command line executions - Sean Morrison
 * Show slot numbers in lagstats (if admin) - Mark Thomas, Mike Weisenborn
 * FPS limit energy saver option for laptops - Karsten Behrmann, Sean Morrison
