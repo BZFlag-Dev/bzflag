@@ -4,6 +4,8 @@
 BZFlag 2.1.0
 ------------
 
+* Prevent bzfs denial-of-service infinite loop - Sean Morrison
+* Minimize attempts to crash servers with malformed messages - Sean Morrison
 * Do not inform hunters of stealthy prey - Ian Agar
 * Bots share connection with main player - Alfredo Tupone
 * Player List command works at least to show his own status - Thomas Stauer
@@ -22,6 +24,7 @@ BZFlag 2.1.0
 BZFlag 2.0.5
 ------------
 
+* Fixed issue with denial-of-service message attacks - Sean Morrison
 * Fixes for Bot on public server - Alfredo Tupone
 * Support for -window on Mac command line executions - Sean Morrison
 * Show slot numbers in lagstats (if admin) - Mark Thomas, Mike Weisenborn
