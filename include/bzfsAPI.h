@@ -802,7 +802,6 @@ BZF_API bool bz_hasPerm ( int playerID, const char* perm );
 BZF_API bool bz_grantPerm ( int playerID, const char* perm );
 BZF_API bool bz_revokePerm ( int playerID, const char* perm );
 BZF_API bool bz_freePlayerRecord ( bz_PlayerRecord *playerRecord );
-BZF_API bool bz_setPlayerAdmin ( int playerID, int wins );
 
 class bz_PlayerRecord
 {
