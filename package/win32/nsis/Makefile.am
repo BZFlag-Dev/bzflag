@@ -1,8 +1,11 @@
 EXTRA_DIST =	\
 	BZFlag.nsi	\
+	copying.rtf		\
 	DisableCheck.bmp	\
 	EnableCheck.bmp		\
-	SDL_BZFlag.nsi
+	header.bmp		\
+	side.bmp		\
+	uninstall.ico
 
 MAINTAINERCLEANFILES = \
 	Makefile.in
