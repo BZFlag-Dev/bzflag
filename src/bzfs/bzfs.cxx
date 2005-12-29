@@ -985,7 +985,7 @@ void sendPlayerMessage(GameKeeper::Player *playerData, PlayerId dstPlayer,
   if (strncasecmp(message, "/me", 3) == 0) {
 
     // don't bother with empty messages
-    if (message[3] == '\0' || (message[3] == ' ' && message[4] == '\0')) {
+    if (message[3] == '\0' || (isspace(message[3]) && message[4] == '\0')) {
       char reply[MessageLen] = {0};
       sprintf(reply, "%s, the /me command requires an argument", playerData->player.getCallSign());
       sendMessage(ServerPlayer, srcPlayer, reply);
@@ -993,7 +993,7 @@ void sendPlayerMessage(GameKeeper::Player *playerData, PlayerId dstPlayer,
     }
 
     // don't intercept other messages beginning with /me...
-    if (message[3] != ' ') {
+    if (!isspace(message[3])) {
       parseServerCommand(message, srcPlayer);
       return;
     }
