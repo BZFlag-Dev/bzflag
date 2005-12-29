@@ -3135,7 +3135,6 @@ bool checkSpam(char* message, GameKeeper::Player* playerData, int t)
 bool checkGarbage(char* message, GameKeeper::Player* playerData, int t)
 {
   PlayerInfo &player = playerData->player;
-  const std::string &oldMsg = player.getLastMsg();
   static const int tooLong = MaxPacketLen / 2;
   const int totalChars = strlen(message);
 
