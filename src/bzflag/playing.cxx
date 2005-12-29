@@ -3735,7 +3735,8 @@ static void		setHuntTarget()
 
 
   if (bestTarget->isHunted() && myTank->getFlag() != Flags::Blindness &&
-      myTank->getFlag() != Flags::Colorblindness) {
+      myTank->getFlag() != Flags::Colorblindness &&
+			bestTarget->getFlag() != Flags::Stealth) {
     if (myTank->getTarget() == NULL) { // Don't interfere with GM lock display
       std::string msg("SPOTTED: ");
       msg += bestTarget->getCallSign();
