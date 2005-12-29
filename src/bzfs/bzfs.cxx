@@ -1013,7 +1013,7 @@ void sendPlayerMessage(GameKeeper::Player *playerData, PlayerId dstPlayer,
   }
 
   // check for a server command
-  else if ((message[0] == '/') && (isalpha(message[1]))) {
+  else if ((message[0] == '/') && (isalpha(message[1]) || message[1] == '?')) {
     // record server commands
     if (Record::enabled()) {
       void *buf, *bufStart = getDirectMessageBuffer();
