@@ -3107,6 +3107,56 @@ bool checkSpam(char* message, GameKeeper::Player* playerData, int t)
 }
 
 
+/** check the message being sent for invalid characters.  long
+ *  unreadable messages are indicative of denial-of-service and crash
+ *  attempts.  remove the player immediately, only modified clients
+ *  should be sending such garbage messages.
+ *
+ *  that said, more than one badChar should be allowed since there
+ *  might be two "magic byte" characters being used for backwards
+ *  compatibility client-side message processing (as was used for the
+ *  /me command at one point).
+ */
+bool checkGarbage(char* message, GameKeeper::Player* playerData, int t)
+{
+  PlayerInfo &player = playerData->player;
+  const std::string &oldMsg = player.getLastMsg();
+  static const int tooLong = MaxPacketLen / 2;
+  const int totalChars = strlen(message);
+
+  /* if the message is very long and looks like junk, give the user
+   * the boot.
+   */
+  if (totalChars > tooLong) {
+    int badChars = 0;
+    int i;
+
+    /* tally up the junk */
+    for (i=0; i < totalChars; i++) {
+      if (!TextUtils::isPrintable(message[i])) {
+	badChars++;
+      }
+    }
+
+    /* even once is once too many since they may be attempting to
+     * cause a crash, but allow a few anyways.
+     */
+    if (badChars > 5) {
+      sendMessage(ServerPlayer, t, "You were kicked because of a garbage message.");
+      DEBUG2("Kicking player %s [%d] for sending a garbage message: %d of %d non-printable chars", 
+	     player.getCallSign(), t, badChars, totalChars);
+      removePlayer(t, "garbage");
+
+      // they're only happy when it rains
+      return true;
+    }
+  }
+
+  // the world is not enough
+  return false;
+}
+
+
 static void handleCommand(int t, const void *rawbuf, bool udp)
 {
   if (!rawbuf) {
@@ -3431,6 +3481,10 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
       if (checkSpam(message, playerData, t))
 	break;
 
+      // check for garbage
+      if (checkGarbage(message, playerData, t))
+	break;
+
       GameKeeper::Player *toData = GameKeeper::Player::getPlayerByIndex(dstPlayer);
       int toTeam = -1;
       if (toData)
@@ -3460,7 +3514,7 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
 
       // send the actual Message after all the callbacks have done there magic to it.
       if (chatData.message.size())
-	sendPlayerMessage (playerData, dstPlayer, chatData.message.c_str());
+	sendPlayerMessage(playerData, dstPlayer, chatData.message.c_str());
       break;
     }
 
