@@ -150,37 +150,32 @@ BZAdminClient::ServerCode BZAdminClient::checkMessage() {
     PlayerIdMap::const_iterator it;
     std::string victimName, killerName;
     Address a;
-
-    switch (code) {
+		if (((*(messageMask.find(code))).second) || (code == MsgSetVar ||
+				code == MsgRemovePlayer || code == MsgAddPlayer || code == MsgAdminInfo ||
+				code == MsgPlayerInfo))
+    	switch (code) {
 
     case MsgNewRabbit:
-      if (messageMask[MsgNewRabbit]) {
 	vbuf = nboUnpackUByte(vbuf, p);
 	lastMessage.first = std::string("*** '") + players[p].name +
 	  "' is now the rabbit.";
-      }
       break;
 
     case MsgPause:
-      if (messageMask[MsgPause]) {
 	uint8_t paused;
 	vbuf = nboUnpackUByte(vbuf, p);
 	vbuf = nboUnpackUByte(vbuf, paused);
 	lastMessage.first = std::string("*** '") + players[p].name + "': " +
 	  (paused ? "paused" : "resumed") + ".";
-      }
       break;
 
     case MsgAlive:
-      if (messageMask[MsgAlive]) {
 	vbuf = nboUnpackUByte(vbuf, p);
 	lastMessage.first = std::string("*** '") + players[p].name +
 	  "' has respawned.";
-      }
       break;
 
     case MsgLagPing:
-      if (messageMask[MsgLagPing])
 	lastMessage.first = "*** Received lag ping from server.";
       break;
 
@@ -301,7 +296,6 @@ BZAdminClient::ServerCode BZAdminClient::checkMessage() {
       break;
 
     case MsgScoreOver:
-      if (messageMask[MsgScoreOver]) {
 	PlayerId id;
 	uint16_t _team;
 	vbuf = nboUnpackUByte(vbuf, id);
@@ -313,11 +307,9 @@ BZAdminClient::ServerCode BZAdminClient::checkMessage() {
 	  victimName = temp.getName((TeamColor)_team);
 	}
 	lastMessage.first = std::string("*** \'") + victimName + "\' won the game.";
-      }
       break;
 
     case MsgTimeUpdate:
-      if (messageMask[MsgTimeUpdate]) {
 	uint32_t timeLeft;
 	vbuf = nboUnpackUInt(vbuf, timeLeft);
 	if (timeLeft == 0)
@@ -327,11 +319,9 @@ BZAdminClient::ServerCode BZAdminClient::checkMessage() {
 	else
 	    lastMessage.first = std::string("*** ") +
 	      TextUtils::format("%u", timeLeft) + " seconds remaining.";
-      }
       break;
 
     case MsgKilled:
-      if (messageMask[MsgKilled]) {
 	PlayerId victim, killer;
 	FlagType* flagType;
 	int16_t shotId, reason;
@@ -360,7 +350,6 @@ BZAdminClient::ServerCode BZAdminClient::checkMessage() {
 	  lastMessage.first = lastMessage.first + "destroyed by '" +
 	    killerName + "'.";
 	}
-      }
       break;
 
     case MsgSuperKill:
@@ -401,13 +390,11 @@ BZAdminClient::ServerCode BZAdminClient::checkMessage() {
       // format the message depending on src and dst
       TeamColor dstTeam = (dst >= 244 && dst <= 250 ?
 			   TeamColor(250 - dst) : NoTeam);
-      if (messageMask[MsgMessage]) {
 	lastMessage.first = formatMessage((char*)vbuf, src, dst,dstTeam, me);
 	PlayerIdMap::const_iterator iterator = players.find(src);
 	lastMessage.second = (iterator == players.end() ?
 			      colorMap[NoTeam] :
 			      colorMap[iterator->second.team]);
-      }
       break;
     }
     if (ui != NULL)
