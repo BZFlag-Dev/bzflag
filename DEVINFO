@@ -346,7 +346,7 @@ cannot proceed.  A checklist of items to be completed follows:
 
 - All code is committed to CVS
 
-- misc/cvs2cl.pl should be run to update the ChangeLog.
+- misc/cvs2cl.pl -b -T should be run to update the ChangeLog.
 
 - NEWS includes a comment for all items added since the previous
   release, preferably denoting who made what changes.
