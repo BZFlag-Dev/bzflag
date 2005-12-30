@@ -283,6 +283,7 @@ int NetHandler::bufferedSend(const void *buffer, size_t length) {
   if (outmsgSize != 0) {
     const int n = send(outmsg + outmsgOffset, outmsgSize);
     if (n == -1) {
+      netConnections.remove(this);
       return -1;
     }
     if (n > 0) {
@@ -294,6 +295,7 @@ int NetHandler::bufferedSend(const void *buffer, size_t length) {
   if ((outmsgSize == 0) && length > 0) {
     const int n = send(buffer, length);
     if (n == -1) {
+      netConnections.remove(this);
       return -1;
     }
     if (n > 0) {
@@ -314,6 +316,7 @@ int NetHandler::bufferedSend(const void *buffer, size_t length) {
       // are the network is down or too unreliable to that player.
       // FIXME -- is 20kB too big?  too small?
       if (newCapacity >= 20 * 1024) {
+	netConnections.remove(this);
 	return -2;
       }
 
@@ -420,6 +423,7 @@ RxStatus NetHandler::tcpReceive() {
   buf = nboUnpackUShort(buf, len);
   buf = nboUnpackUShort(buf, code);
   if (len > MaxPacketLen) {
+    netConnections.remove(this);
     return ReadHuge;
   }
   e = receive(4 + (int) len);
@@ -459,11 +463,14 @@ RxStatus NetHandler::receive(size_t length) {
       returnValue = ReadPart;
     else if (err == ECONNRESET || err == EPIPE) {
       // if socket is closed then give up
+      netConnections.remove(this);
       returnValue = ReadReset;
     } else {
+      netConnections.remove(this);
       returnValue = ReadError;
     }
   } else { // if (size == 0)
+    netConnections.remove(this);
     returnValue = ReadDiscon;
   }
   return returnValue;
