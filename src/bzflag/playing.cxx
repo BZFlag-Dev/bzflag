@@ -3034,13 +3034,6 @@ static void		doMessages()
   }
 }
 
-void injectMessages(uint16_t code, uint16_t len, void *msg) {
-#ifdef ROBOT
-  for (int i = 0; i < numRobots; i++)
-    handleServerMessage(false, code, len, msg);
-#endif
-}
-
 static void		updateFlags(float dt)
 {
   for (int i = 0; i < numFlags; i++) {
