@@ -3193,6 +3193,7 @@ static void handleCommand(const void *rawbuf, bool udp, NetHandler *handler)
     case MsgGMUpdate:
     case MsgUDPLinkRequest:
     case MsgUDPLinkEstablished:
+    case MsgHit:
       break;
     default:
       DEBUG1("Received packet type (%x) via udp, possible attack from %s\n",
