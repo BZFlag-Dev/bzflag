@@ -1,6 +1,9 @@
 recent bugs
 ------------
 
+- someone broke the key-driving rotational acceleration dampening,
+  feels like 1.7 driving again.
+
 - bzfs sometimes gets into a mode where CTF team flags spawn at random places,
   not on bases.  Also, players spawn at random spots after flag cap.
 
