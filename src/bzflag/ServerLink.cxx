@@ -489,6 +489,9 @@ int			ServerLink::read(uint16_t& code, uint16_t& len,
 
   int rlen = 0;
   rlen = recv(fd, (char*)headerBuffer, 4, 0);
+  if (!rlen)
+    // Socket shutdown Server side
+    return -2;
 
   int tlen = rlen;
   while (rlen >= 1 && tlen < 4) {
@@ -499,9 +502,15 @@ int			ServerLink::read(uint16_t& code, uint16_t& len,
     if (nfound == 0) continue;
     if (nfound < 0) return -1;
     rlen = recv(fd, (char*)headerBuffer + tlen, 4 - tlen, 0);
-    if (rlen >= 0) tlen += rlen;
+    if (rlen > 0)
+      tlen += rlen;
+    else if (rlen == 0)
+      // Socket shutdown Server side
+      return -2;
   }
-  if (tlen < 4) return -1;
+  if (tlen < 4) {
+    return -1;
+  }
 #if defined(NETWORK_STATS)
   bytesReceived += 4;
   packetsReceived++;
@@ -515,10 +524,14 @@ int			ServerLink::read(uint16_t& code, uint16_t& len,
   //printError("Code is %02x",code);
   if (len > MaxPacketLen)
     return -1;
-  if (len > 0)
+  if (len > 0) {
     rlen = recv(fd, (char*)msg, int(len), 0);
-  else
+    if (!rlen)
+      // Socket shutdown Server side
+      return -2;
+  } else {
     rlen = 0;
+  }
 #if defined(NETWORK_STATS)
   if (rlen >= 0) bytesReceived += rlen;
 #endif
@@ -533,7 +546,11 @@ int			ServerLink::read(uint16_t& code, uint16_t& len,
     if (nfound == 0) continue;
     if (nfound < 0) return -1;
     rlen = recv(fd, (char*)msg + tlen, int(len) - tlen, 0);
-    if (rlen >= 0) tlen += rlen;
+    if (rlen > 0)
+      tlen += rlen;
+    else if (rlen == 0)
+      // Socket shutdown Server side
+      return -2;
 #if defined(NETWORK_STATS)
   if (rlen >= 0) bytesReceived += rlen;
 #endif
