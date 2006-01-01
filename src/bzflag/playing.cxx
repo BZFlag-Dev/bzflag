@@ -1743,7 +1743,7 @@ static void		handleServerMessage(bool human, uint16_t code,
       uint16_t rejcode;
       std::string reason;
 
-      buf = nboUnpackUShort (buf, rejcode); // filler for now
+      buf = nboUnpackUShort (msg, rejcode); // filler for now
       buf = nboUnpackString (buf, buffer, MessageLen);
       buffer[MessageLen - 1] = '\0';
       reason = buffer;
