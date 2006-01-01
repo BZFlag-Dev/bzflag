@@ -1042,6 +1042,12 @@ static void acceptClient()
   buffer[8] = (uint8_t)playerIndex;
   send(fd, (const char*)buffer, sizeof(buffer), 0);
 
+  void *bufStart = getDirectMessageBuffer();
+  //send SetVars
+  { // scoping is mandatory
+    PackVars pv(bufStart, playerIndex);
+    BZDB.iterate(PackVars::packIt, &pv);
+  }
 }
 
 
@@ -1681,12 +1687,6 @@ static void addPlayer(int playerIndex, GameKeeper::Player *playerData)
 			     (char*)buf-(char*)bufStart, bufStart);
   if (result < 0)
     return;
-
-  //send SetVars
-  { // scoping is mandatory
-     PackVars pv(bufStart, playerIndex);
-     BZDB.iterate(PackVars::packIt, &pv);
-  }
 
   // abort if we hung up on the client
   if (!GameKeeper::Player::getPlayerByIndex(playerIndex))
