@@ -1283,6 +1283,13 @@ void World::enforceRequiredGraphics()
   return;
 }
 
+void World::setPlayersSize(int _playersSize)
+{
+  playersSize = _playersSize;
+  players     = new RemotePlayer*[playersSize];
+  for (int i = 0; i < maxPlayers; i++)
+    players[i] = NULL;
+}
 
 // Local Variables: ***
 // mode: C++ ***

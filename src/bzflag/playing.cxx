@@ -2401,6 +2401,10 @@ static void		handleServerMessage(bool human, uint16_t code,
       msg = firingInfo.unpack(msg);
 
       const int shooterid = firingInfo.shot.player;
+
+      if (shooterid >= playerSize)
+	break;
+
       RemotePlayer* shooter = player[shooterid];
       
       if (!shooter || player[shooterid]->getId() != shooterid)
@@ -4657,6 +4661,7 @@ static void joinInternetGame2()
   // prep players
   curMaxPlayers = 0;
   player = world->getPlayers();
+  playerSize = world->getPlayersSize();
 
   // reset the autocompleter
   completer.setDefaults();

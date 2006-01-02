@@ -71,6 +71,8 @@ class World {
     Team&		getTeam(int index);
     RemotePlayer**	getPlayers() const;
     RemotePlayer*&	getPlayer(int index) const;
+    void                setPlayersSize(int _playersSize);
+    int                 getPlayersSize();
     RemotePlayer*	getCurrentRabbit() const;
     WorldPlayer*	getWorldWeapons() const;
     Flag&		getFlag(int index) const;
@@ -169,6 +171,7 @@ class World {
     std::vector<EntryZone> entryZones;
 
     RemotePlayer**	players;
+    int                 playersSize;
     WorldPlayer*	worldWeapons;
     Flag*		flags;
     FlagSceneNode**	flagNodes;
@@ -319,6 +322,11 @@ inline const Team&	World::getTeam(int index) const
 inline Team&		World::getTeam(int index)
 {
   return team[index];
+}
+
+inline int              World::getPlayersSize()
+{
+  return playersSize;
 }
 
 inline RemotePlayer**	World::getPlayers() const
