@@ -701,9 +701,12 @@ void			ServerLink::sendPlayerUpdate(Player* player)
 
 void			ServerLink::sendBeginShot(const FiringInfo& info)
 {
-  char msg[FiringInfoPLen];
+  char msg[3];
   void* buf = msg;
-  buf = info.pack(buf);
+
+  buf = nboPackUByte(buf, info.shot.player);
+  buf = nboPackUShort(buf, info.shot.id);
+
   send(MsgShotBegin, sizeof(msg), msg);
 }
 

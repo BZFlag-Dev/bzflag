@@ -2902,11 +2902,18 @@ static void shotUpdate(void *buf, int len, NetHandler *handler)
 static void shotFired(void *buf, int len, NetHandler *handler)
 {
   FiringInfo firingInfo;
-  firingInfo.unpack(buf);
 
-  const ShotUpdate &shot = firingInfo.shot;
+  PlayerId		player;
+  uint16_t		id;
+  void                 *bufTmp;
 
-  int playerIndex = shot.player;
+  bufTmp = nboUnpackUByte(buf, player);
+  bufTmp = nboUnpackUShort(bufTmp, id);
+
+  firingInfo.shot.player = player;
+  firingInfo.shot.id     = id;
+
+  int playerIndex = player;
 
   // verify playerId
   GameKeeper::Player *playerData
@@ -2928,7 +2935,7 @@ static void shotFired(void *buf, int len, NetHandler *handler)
   else
     firingInfo.flagType = Flags::Null;
 
-  if (!playerData->addShot(shot.id & 0xff, shot.id >> 8, firingInfo))
+  if (!playerData->addShot(id & 0xff, id >> 8, firingInfo))
     return;
 
   char message[MessageLen];
@@ -2962,9 +2969,6 @@ static void shotFired(void *buf, int len, NetHandler *handler)
       } // end no shots left
     } // end is limit
   } // end of player has flag
-
-  if (firingInfo.flagType == Flags::GuidedMissile)
-    playerData->player.endShotCredit--;
 
   relayMessage(MsgShotBegin, len, buf);
 
@@ -3438,7 +3442,7 @@ static void handleCommand(const void *rawbuf, bool udp, NetHandler *handler)
     // shot fired
     case MsgShotBegin:
       // Sanity check
-      if (len == FiringInfoPLen)
+      if (len == 3)
 	shotFired(buf, int(len), handler);
       break;
 

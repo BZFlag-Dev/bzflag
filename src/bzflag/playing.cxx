@@ -2398,9 +2398,15 @@ static void		handleServerMessage(bool human, uint16_t code,
 
     case MsgShotBegin: {
       FiringInfo firingInfo;
-      msg = firingInfo.unpack(msg);
 
-      const int shooterid = firingInfo.shot.player;
+      PlayerId		shooterid;
+      uint16_t		id;
+
+      msg = nboUnpackUByte(msg, shooterid);
+      msg = nboUnpackUShort(msg, id);
+
+      firingInfo.shot.player = shooterid;
+      firingInfo.shot.id     = id;
 
       if (shooterid >= playerSize)
 	break;
