@@ -81,7 +81,8 @@ Compiling and Installation
 ==========================
 
 To compile a playable BZFlag, the following steps should get you up
-and running quickly:
+and running quickly if everything external to BZFlag is properly
+installed:
 
 ./autogen.sh
 ./configure --enable-optimized
@@ -95,10 +96,9 @@ make install" or otherwise become a privileged user and install the
 game properly for your system.
 
 If you're building on a platform that has a README.* file, you should
-consult that file as they usually contain addition compilation
-instructions for building on that platform.  There are often
-additional hints for common problems specific to those platforms as
-well.
+consult that file as they usually contain additional instructions or
+details specific for building on that platform.  There are often hints
+for common problems specific to those platforms as well.
 
 The Longer Version:
 
