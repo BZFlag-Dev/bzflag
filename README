@@ -4,18 +4,20 @@
 			Copyright (c) 1993 - 2005 Tim Riker
 
 Maintainer
-=========
+==========
 
 Tim Riker <Tim@Rikers.org>
 http://rikers.org/
 
-Author
-======
+Original Author
+===============
 
 Chris Schoeneman
 475 Hawthorne Av
 Palo Alto, CA 94301
 crs23@bigfoot.com
+
+See the AUTHORS file for more authorship details.
 
 
 Introduction
@@ -23,7 +25,8 @@ Introduction
 
 This is the readme file for the BZFlag source tree.  It includes a
 manifest, simple build instructions, and other information for BZFlag
-development.
+development.  See the "Compiling and Installation" steps below to get
+started.
 
 
 Getting BZFlag
@@ -33,23 +36,23 @@ The home page provides access to the primary BZFlag download site.
 This web site includes pages for downloading the compiled and source
 code versions.  Compiled versions are distributed as installable
 packages.  Source code is archived in various formats.  After
-unpacking you should have the following files in the new bzflag
-directory:
+unpacking a source distribution, you should have the following files
+in the new 'bzflag' directory:
 
   README	- this file
   README.*	- platform specific details
   BUGS		- a list of known bugs
   BZFlag.xcode  - Mac OS X XCode project
-  ChangeLog	- history of changes
+  ChangeLog	- source code changes since previous release
   COPYING	- the license for BZFlag
-  NEWS		- placeholder - see ChangeLog
+  NEWS		- history of visible changes for each release
   DEVINFO       - information for developers
   PORTING	- a guide for porting BZFlag
-  RELNOTES	- placeholder - see ChangeLog
+  RELNOTES	- placeholder - see NEWS
   TODO		- incomplete list of things to do
   data/		- data files (sounds, images, etc.)
   debian/	- debian apt files
-  Dev-C++/ - Dev-C++ project files
+  Dev-C++/	- Dev-C++ project files
   doc/		- partial documentation in doxygen format
   include/	- include headers for libraries
   man/		- man pages
@@ -67,71 +70,131 @@ directory:
     obstacle/	  - collision detection stuff
     ogl/	  - OpenGL utility classes
     platform/	  - platform dependent code
-      MacOSX/       - Mac OS X specific files, including PB project
+      MacOSX/       - Mac OS X specific files
     scene/	  - high level rendering algorithms
     zlib/	  - compression library
   tools/	- various helper utilities
-  win32/	- extra stuff for building on win32 platforms
+  win32/	- extra stuff for building on the Windows platform
 
 
 Compiling and Installation
 ==========================
 
+To compile a playable BZFlag, the following steps should get you up
+and running quickly:
+
+./autogen.sh
+./configure --enable-optimized
+make
+src/bzflag/bzflag
+
+If configure detected everything it needed to build the BZFlag client,
+after make the client will be sitting in src/bzflag as 'bzflag'.  The
+game can be run from there, though you will probably want to "sudo
+make install" or otherwise become a privileged user and install the
+game properly for your system.
+
+If you're building on a platform that has a README.* file, you should
+consult that file as they usually contain addition compilation
+instructions for building on that platform.  There are often
+additional hints for common problems specific to those platforms as
+well.
+
+The Longer Version:
+
 To build sources checked out directly from CVS you need to create a
-configure script. You can skip this step if you grab an archive that
-already has a ./configure script in it. Create the ./configure script
-by running these commands inside the CVS directory:
-
-  % aclocal
-  % autoheader
-  % automake --add-missing
-  % autoconf
-
-These commands are in the autogen.sh file, so you can just run that
-script.  (again this is only required to create the configure script
-which might already be present)
+configure script. You can skip this step if you grab an distribution
+of BZFlag that already has a ./configure script in it, such as from a
+source distribution tarball.  To generate the configure script, you
+run the provided autogen.sh script:
 
   % sh autogen.sh
 
-Now that you have a configure script, create a work directory parallel
-to the one you just downloaded and autoconfigured:
+The script will report whether sufficient versions of the GNU Build
+System tools (i.e. autoconf, automake, and libtool) that were detected
+and if successful, a configure script will be generated.  If the
+script fails, submit a report to the developers containing the output
+of "sh autogen.sh -v" to rerun autogen.sh run in verbose mode.  One of
+the most common failures is having insufficient versions or mismatched
+combinations of the GNU Build System tools, make sure your tools are
+recent.
 
-  % mkdir ../work
+Now that you have a configure script and presuming the previous step
+was successful, you can configure BZFlag:
 
-Go in this new directory and build:
+  % ./configure --help
 
-  % cd ../work
-  % ../bzflag/configure
-  % make
+There are a variety of options possible when configuring BZFlag.  Most
+notably, you'll probably want to use the --enable-optimized option for
+performance and the --enable-shared option if you are building server
+plugins.
 
-bzflag looks for data files in a compiled in path or in ./data/
-only. This means that to test in a working directory you need to tell
-bzflag where to find these files.  This can be done with a symlink:
+  % ./configure --enable-optimized --enable-shared
 
-  % ln -s ../bzflag/data .
+You may want to create a 'work' directory and configure from there to
+have all the build products and binary executables get placed in a
+directory separate from the sources.  To do this, simply create a
+directory then run configure and make from there instead.
 
-After testing you can install BZFlag by:
+After configure completes, it will report whether all the requisite
+packages were found that it needs in order to build the client and the
+server.  The client is reliant upon the following external
+dependencies that should be installed before running configure:
 
-  % make install
+  OpenGL 1.0+
+  libSDL 1.2+
+  libCURL 7+
 
-You should have BZFlag in the system directory ready to run.
+If you're on an operating sytem that uses a packaging system
+(e.g. apt, portage, ports, etc), be sure to install the development
+kit versions of each of those (e.g. xlibmesa-gl-dev package) so that
+headers are made available.
 
-If you have not admin privileges on your platform, you can install files in a
-directory that you own; for this to work, you have to append to the configure
-command the prefix option.
-E.g.:
-../bzflag/configure --prefix=YourHomeDirectoryHere
-At "make install" all bzflag exe files will be installed in the subdir bin of
-the specified path.
-If your exe is too big to you, and you don't need debugger information, run
-make install-strip
-instead of just make install; this will remove any debug information from the
-binaries, and make those shorter.
+The final summary at the end of running configure will report whether
+the client will be built or not.  Once configure has been run, you may
+compile by simply running 'make'.  If you have GNU Make and are on a
+multiprocessor system, you can build in parallel with the -j option:
+
+  % make -j4
+
+If compilation was successful, the client will be in src/bzflag and
+the server will be in src/bzfs as 'bzflag' and 'bzfs' respectively.
+You can run the client or the server directly from those locations
+with or without installing:
+
+  % src/bzflag/bzflag
+
+BZFlag looks for data files in a compiled in path or in ./data/
+ or in the previously specified data path only.  This means that to
+test in a working directory you need to tell bzflag where to find
+these files if there is not a 'data' directory in your current
+directory.  This can be done with a symlink:
+
+  % ln -s ./path/to/bzflag/data
+
+After testing you can install BZFlag by running 'make install' with
+sufficient system installation privileges.  Use 'sudo', 'su', or
+similar methods to elevate your privileges when installing BZFlag
+system-wide:
+
+  % sudo make install
+
+You should now have BZFlag in the system directory ready to run.
+
+If you have not admin privileges on your platform, you can install
+files in a directory that you own; for this to work, you have to
+append to the configure command the prefix option.
+
+  % ./configure --prefix=YourHomeDirectoryHere
+
+You will then be able to perform a "make install" without needing to
+elevate your privileges, and all bzflag executable files will be
+installed in the subdir bin of the specified path.
 
 For additional information on installing, see INSTALL file.
 
-Some platforms may be different.  See the README file appropriate to
-your system for more information:
+Again, some platforms may be different.  See the README file
+appropriate to your system for more information:
 
   Platform			README file
   --------			-----------
