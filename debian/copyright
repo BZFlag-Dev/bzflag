@@ -4,7 +4,7 @@ It may be downloaded from http://download.sourceforge.net/bzflag/
 
 Upstream Author: Tim Riker <Tim@Rikers.org>
 
-Copyright: Copyright (c) 1993 - 2005 Tim Riker
+Copyright: Copyright (c) 1993 - 2006 Tim Riker
 
 The sources may be redistributed under the terms of the GNU LGPL, Version 2.1
 found in the file '/usr/share/common-licenses/LGPL-2.1' on Debian systems.
@@ -15,7 +15,7 @@ GNU General Public License (version 2 or newer) can be found in
 `/usr/share/common-licenses/GPL'.
 
     bzflag - a multiplayer 3D tank battle game
-    Copyright (c) 1993 - 2005 Tim Riker
+    Copyright (c) 1993 - 2006 Tim Riker
 
     This package is free software;  you can redistribute it and/or
     modify it under the terms of the license found in the file

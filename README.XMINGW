@@ -59,8 +59,8 @@ make install
 
 apply the patch to /opt/xmingw/bin/curl-config:
 
---- curl-config.orig    2005-05-22 22:52:16.000000000 +0200
-+++ curl-config 2005-05-22 22:54:56.000000000 +0200
+--- curl-config.orig    2006-05-22 22:52:16.000000000 +0200
++++ curl-config 2006-05-22 22:54:56.000000000 +0200
 @@ -120,9 +120,9 @@
 
      --cflags)

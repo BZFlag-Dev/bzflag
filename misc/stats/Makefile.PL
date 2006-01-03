@@ -1,6 +1,6 @@
 # Makefile.PL
 #
-# Copyright (c) 2003 - 2005 Tucker McLean, Tim Riker.
+# Copyright (c) 2003 - 2006 Tucker McLean, Tim Riker.
 #
 # This package is free software;  you can redistribute it and/or
 # modify it under the terms of the license found in the file
