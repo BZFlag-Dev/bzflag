@@ -1,7 +1,7 @@
 
 			    BZFlag 2.0.5
 			 http://BZFlag.org/
-		Copyright (c) 1993 - 2005 Tim Riker
+		Copyright (c) 1993 - 2006 Tim Riker
 
 Maintainer
 ==========
@@ -57,9 +57,9 @@ IRC channel on irc.freenode.net or to the bzflag-dev mailing list as
 to where the current development activity resides.  If you're familiar
 enough, anonymous CVS access is provided:
 
-cvs -d:pserver:anonymous@cvs.sf.net:/cvsroot/bzflag login
+    cvs -d:pserver:anonymous@cvs.sf.net:/cvsroot/bzflag login
 [ press return for no password ]
-cvs -z3 -d:pserver:anonymous@cvs.sf.net co -P bzflag
+    cvs -z3 -d:pserver:anonymous@cvs.sf.net co -P bzflag
 
 
 Compiling and Installation
@@ -69,10 +69,10 @@ To compile a playable BZFlag, the following steps should get you up
 and running quickly if everything external to BZFlag is properly
 installed:
 
-./autogen.sh
-./configure --enable-optimized
-make
-src/bzflag/bzflag
+    ./autogen.sh
+    ./configure --enable-optimized
+    make
+    ./src/bzflag/bzflag
 
 If configure detected everything it needed to build the BZFlag client,
 after make the client will be sitting in src/bzflag as 'bzflag'.  The
@@ -99,7 +99,7 @@ The script will report whether sufficient versions of the GNU Build
 System tools (i.e. autoconf, automake, and libtool) that were detected
 and if successful, a configure script will be generated.  If the
 script fails, submit a report to the developers containing the output
-of "sh autogen.sh -v" to rerun autogen.sh run in verbose mode.  One of
+of "sh autogen.sh -v". This will run autogen.sh in verbose mode.  One of
 the most common failures is having insufficient versions or mismatched
 combinations of the GNU Build System tools, make sure your tools are
 recent.
@@ -149,10 +149,11 @@ with or without installing:
 
   % src/bzflag/bzflag
 
-BZFlag looks for data files in a compiled in path or in ./data/
- or in the previously specified data path only.  This means that to
-test in a working directory you need to tell bzflag where to find
-these files if there is not a 'data' directory in your current
+BZFlag looks for data files in a path defined during compile, in ./data/ ,
+or in the previously specified data path only.  As part of the tarball/cvs 
+checkout, the base data library is located in <installed-locale>/bzflag/data. 
+This means that to test in a working directory you need to tell bzflag 
+where to find these files if there is not a 'data' directory in your current
 directory.  This can be done with a symlink:
 
   % ln -s ./path/to/bzflag/data
@@ -166,9 +167,9 @@ system-wide:
 
 You should now have BZFlag in the system directory ready to run.
 
-If you have not admin privileges on your platform, you can install
+If you do not have admin privileges on your platform, you can install
 files in a directory that you own; for this to work, you have to
-append to the configure command the prefix option.
+append to the configure command the prefix option:
 
   % ./configure --prefix=YourHomeDirectoryHere
 
@@ -372,7 +373,7 @@ files in the new 'bzflag' directory:
     scene/	  - high level rendering algorithms
     zlib/	  - compression library
   tools/	- various helper utilities
-  win32/	- extra stuff for building on the Windows platform
+  win32/	- stuff for building on the Windows platform
 
 Note that include/ does not have all the include files.  If a header
 is used entirely within a library (i.e. it doesn't directly provide
@@ -392,7 +393,7 @@ UDP added by Frank Siegert, frank@this.net, frank@bzflag.de
 BZFlag implements UDP unicast relay networking. This provides much
 better timing and stability compared to just TCP.
 
-UDP does not work, why?
+One of the more frequent questions, UDP does not work, why?
 
 - When I connect to a newer server with this client others report they
   can see me but I get 'black caps' after a few seconds for all other
@@ -404,8 +405,7 @@ a) you are behind a NAT router that is not forwarding UDP traffic to
    your system. Try reconfiguring the router to do NAT on UDP packets.
 
 b) you are behind a firewall or a desktop firewall (e.g. ZoneAlarm)
-   that is blocking incoming UDP traffic. Please reconfigure the
-   firewall or disable ZoneAlert for the game, for more intelligent
-   desktop firewalls set them up to let UDP port 17200 to 17220
-   through.
+   that is blocking incoming UDP traffic. Please reconfigure or disable
+   your firewall(extreme solution) for the game, for more intelligent 
+   desktop firewalls set them up to let UDP port 17200 to 17220 through.
 
