@@ -1,7 +1,7 @@
 
-				    BZFlag 2.0.5
-				 http://BZFlag.org/
-			Copyright (c) 1993 - 2005 Tim Riker
+			    BZFlag 2.0.5
+			 http://BZFlag.org/
+		Copyright (c) 1993 - 2005 Tim Riker
 
 Maintainer
 ==========
@@ -23,58 +23,43 @@ See the AUTHORS file for more authorship details.
 Introduction
 ============
 
-This is the readme file for the BZFlag source tree.  It includes a
-manifest, simple build instructions, and other information for BZFlag
-development.  See the "Compiling and Installation" steps below to get
-started.
+BZFlag is an Open Source OpenGL multiplayer multiplatform Battle Zone
+capture the Flag game.  At its heart, the game is a 3D first person
+tank simulation where opposing teams battle for dominance.  The game
+was originally written for SGI computers running Irix, but now runs
+and is actively maintained on Windows, Linux, Mac OS X, BSD, Solaris,
+and other platforms.  The game is distributed under the LGPL license.
+
+This is the BZFlag README file.  It includes simple build
+instructions, user community references, other information for BZFlag
+development, and a manifest of the source code layout.
 
 
-Getting BZFlag
-==============
+Obtaining BZFlag
+================
 
-The home page provides access to the primary BZFlag download site.
-This web site includes pages for downloading the compiled and source
-code versions.  Compiled versions are distributed as installable
-packages.  Source code is archived in various formats.  After
-unpacking a source distribution, you should have the following files
-in the new 'bzflag' directory:
+Main BZFlag Website:  http://BZFlag.org
+BZFlag Project Site:  http://sf.net/projects/bzflag
 
-  README	- this file
-  README.*	- platform specific details
-  BUGS		- a list of known bugs
-  BZFlag.xcode  - Mac OS X XCode project
-  ChangeLog	- source code changes since previous release
-  COPYING	- the license for BZFlag
-  NEWS		- history of visible changes for each release
-  DEVINFO       - information for developers
-  PORTING	- a guide for porting BZFlag
-  RELNOTES	- placeholder - see NEWS
-  TODO		- incomplete list of things to do
-  data/		- data files (sounds, images, etc.)
-  debian/	- debian apt files
-  Dev-C++/	- Dev-C++ project files
-  doc/		- partial documentation in doxygen format
-  include/	- include headers for libraries
-  man/		- man pages
-  misc/		- miscellaneous goo
-  package/	- stuff to build installable packages
-  src/		- bzflag, bzfs, etc. source code
-    3D/		  - 3D code including texture manager
-    bzadmin/      - bzadmin app source code (text admin/chat client)
-    bzflag/	  - bzflag app source code (game client)
-    bzfs/	  - bzfs app source code (game server)
-    common/	  - general purpose classes
-    geometry/	  - geometry rendering classes
-    mediafile/	  - classes for reading resources
-    net/	  - networking classes and functions
-    obstacle/	  - collision detection stuff
-    ogl/	  - OpenGL utility classes
-    platform/	  - platform dependent code
-      MacOSX/       - Mac OS X specific files
-    scene/	  - high level rendering algorithms
-    zlib/	  - compression library
-  tools/	- various helper utilities
-  win32/	- extra stuff for building on the Windows platform
+The main BZFlag website provides access to most all of the resources
+available for the game.  The binary and source distributions of BZFlag
+are, however, provided on the Sourceforge project site.  Compiled
+versions are distributed as installable packages, disk images, and
+more, with details varying depending on the platform.  Source code
+distributions are provided and archived in various formats as well.
+See the project site for the download links.
+
+BZFlag is also available directly from CVS.  To obtain BZflag from
+CVS, a bit more familiarity with software development is expected.
+Sometimes active BZFlag development is on CVS HEAD, sometimes it is on
+a branch, sometimes it's in multiple places.  Inquire on the #bzflag
+IRC channel on irc.freenode.net or to the bzflag-dev mailing list as
+to where the current development activity resides.  If you're familiar
+enough, anonymous CVS access is provided:
+
+cvs -d:pserver:anonymous@cvs.sf.net:/cvsroot/bzflag login
+[ press return for no password ]
+cvs -z3 -d:pserver:anonymous@cvs.sf.net co -P bzflag
 
 
 Compiling and Installation
@@ -232,9 +217,26 @@ The ./configure script has a number of build options that you may find
 interesting.
 
 
-Mailing Lists
+Communication
 =============
 
+The BZFlag project has several resources set up for communicating both
+with other developers and with the community.  There is an IRC
+channel, several mailing lists, bulletin boards, and a wiki.
+
+Internet Relay Chat
+-------------------
+Most of the BZFlag development activity and discussions occur over
+IRC.  Join the #bzflag IRC channel on the Freenode network
+(irc.freenode.net, port 6667) to get involved.
+
+See http://irc.bzflag.org for a web based interface for first-time
+users.  Individuals that intend to stay in the channel are expected to
+get a non-web-based IRC client.  See http://irchelp.org or search the
+web for IRC clients for your operating system.
+
+Mailing Lists
+-------------
 There are several BZFlag mailing lists, but the two of particular
 interest to most are the user's list and the main developer's list.
 The former is for general BZFlag discussion and announcements.  The
@@ -246,39 +248,131 @@ To join a mailing list, go to the Sourceforge mailing list page on the
 project site: http://sourceforge.net/mail/?group_id=3248 and follow
 the links for joining the respective mailing lists that interest you.
 
+Bulletin Boards
+---------------
+There are extensive and active bulletin boards used by players, server
+operators, administrators, and others available here:
+
+http://my.bzflag.org/bb/
+
+Registering an account on the bulletin board presently also registers
+your callsign for use inside of BZFlag.  Some servers require
+registration in order to play.  See the board FAQ and Getting Started
+pages for new users.
+
+In addition to the main bulletin boards, there are forums on the
+Sourceforge project site available here:
+
+http://sourceforge.net/forum/?group_id=3248
+
+The main bulletin boards are considerably higher volume for day-to-day
+player discussions.  The forums are often used for informally
+resolving issues with new users.
+
+Wiki
+----
+The main BZFlag website contains a wiki that may be edited by the
+community available at: http://BZFlag.org/wiki
+
+The wiki does require a simple registration in order to make
+modifications as a means to minimize abuse, but serves as a
+communication forum and ongoing discussion arena for the game's
+development.
+
+
 Contributions
 =============
 
-Patches should be entered into the patch tracking system on
-http://sourceforge.net/projects/bzflag/ If you like you may also send
-mail to either the BZFlag development mailing list, or Tim@Rikers.org
-(the development mailing list is preferred) to discuss contributions to
-the official BZFlag source code.  Small changes can be attached to the
-mail in 'cvs diff -u' unified diff format.
+Patches should be entered into the BZFlag patch tracking system at:
+
+http://sourceforge.net/tracker/?group_id=3248&atid=303248
+
+Patches are preferred in the unified diff format.  From a CVS
+checkout, a unified diff patch file may be created as follows:
+
+  % cvs diff -u > patch.diff
+
+If you like, you may also send mail to either the BZFlag development
+mailing list or to Tim@Rikers.org (the development mailing list is
+preferred) to discuss contributions to the official BZFlag source
+code.  Contributions are gladly accepted for modifications that do not
+affect the core gameplay.  Interacting with the other developers in
+the IRC channel is recommended for any changes which will affect
+gameplay.
 
 
-Bug Reports
-===========
+Bug Reports and Support
+=======================
 
-For bug reports please go to bug tracking system on
-http://sourceforge.net/projects/bzflag/ Alternatively, you can email
-bug reports to Tim@Rikers.org but the web based method is preferred.
+For reporting bugs and unexpected behavior, please go to BZFlag bug
+tracking system at:
 
+http://sourceforge.net/tracker/?group_id=3248&atid=103248
 
-Known Bugs
-==========
+Alternatively, you can email bug reports to the development mailing
+list or to Tim@Rikers.org but the web based method is preferred.  See
+the BUGS file in the source distribution for other known issues.
 
-See BUGS.
+If you require assistance with some issue, please visit BZFlag support
+tracking system at:
+
+http://sourceforge.net/tracker/?group_id=3248&atid=203248
+
+Alternatively, the IRC channel, discussion forums, and mailing lists
+are also viable avenues for resolving issues.
 
 
 Contributors
 ============
 
-see AUTHORS
+BZFlag has a long history of development and considerable community
+involvement since it became an Open Source project.  See the AUTHORS
+file for more details.
 
 
 Source Tree Organization
 ========================
+
+After unpacking a source distribution, you should have the following
+files in the new 'bzflag' directory:
+
+  README	- this file
+  README.*	- platform specific details
+  BUGS		- a list of known bugs
+  BZFlag.xcode  - Mac OS X XCode project
+  ChangeLog	- source code changes since previous release
+  COPYING	- the license for BZFlag
+  NEWS		- history of visible changes for each release
+  DEVINFO       - information for developers
+  PORTING	- a guide for porting BZFlag
+  RELNOTES	- placeholder - see NEWS
+  TODO		- incomplete list of things to do
+  data/		- data files (sounds, images, etc.)
+  debian/	- debian apt files
+  Dev-C++/	- Dev-C++ project files
+  doc/		- partial documentation in doxygen format
+  include/	- include headers for libraries
+  man/		- man pages
+  misc/		- miscellaneous goo
+  package/	- stuff to build installable packages
+  src/		- bzflag, bzfs, etc. source code
+    3D/		  - 3D code including texture manager
+    bzadmin/      - bzadmin app source code (text admin/chat client)
+    bzflag/	  - bzflag app source code (game client)
+    bzfs/	  - bzfs app source code (game server)
+    common/	  - general purpose classes
+    game/	  - game library used by both the server and client(s)
+    geometry/	  - geometry rendering classes
+    mediafile/	  - classes for reading resources
+    net/	  - networking classes and functions
+    obstacle/	  - collision detection stuff
+    ogl/	  - OpenGL utility classes
+    platform/	  - platform dependent code
+      MacOSX/       - Mac OS X specific files
+    scene/	  - high level rendering algorithms
+    zlib/	  - compression library
+  tools/	- various helper utilities
+  win32/	- extra stuff for building on the Windows platform
 
 Note that include/ does not have all the include files.  If a header
 is used entirely within a library (i.e. it doesn't directly provide
@@ -289,6 +383,9 @@ While this complicates locating a header file (it can be in one of two
 places instead of just one place), you can instantly tell if a header
 file is (can be) used by clients of the library.
 
+
+Miscellaneous
+=============
 
 UDP added by Frank Siegert, frank@this.net, frank@bzflag.de
 
