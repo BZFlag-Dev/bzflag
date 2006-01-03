@@ -133,7 +133,7 @@
 														<p><span class="style4 style7">Player Data Functions </span></p>
 														<p><strong>BZF_API bz_PlayerRecord *playerRecord bz_getPlayerByIndex ( int index );</strong></p>
 														<p>This function will take a player index, and will return a new player data object 
-															in the playerRecord paramater. <b>WARNING:</b> this function CAN and WILL 
+															in the playerRecord parameter. <b>WARNING:</b> this function CAN and WILL 
 															return NULL in certain situations. <b>Always</b> check for NULL before 
 															dereferencing the result of this function, otherwise your plugin may crash the 
 															server. The player data class contains the following data:</p>
@@ -163,7 +163,7 @@
 																								bool verified; // true if the user has been authenticated ether global or local<br>
 																								bool globalUser; // true if the user was verified from the global login system<br>
 																								bool admin; // true if the user is an admin ( has the @ in his name, aka has ban perm)<br>
-																								bool op; // true if the user is an server operator ( has given the server /passord)<br>
+																								bool op; // true if the user is an server operator ( has given the server /password)<br>
 																							    bzApiStrList groups; // a list of all the groups the user is a member of<br>
 																							    int wins; // number of times this player has killed another<br>
 																							    int losses; // number of times this player has died<br>
@@ -183,8 +183,8 @@
 															</tbody>
 														</table>
 														<p><span class="style6">bz_PlayerRecord</span>
-															also contains the folowing methods, for ease of use. They just call the 
-															existing player functuions described below</p>
+															also contains the following methods, for ease of use. They just call the 
+															existing player functions described below</p>
 														<p><strong>void update ( void );</strong><br>
 															Calls <strong>bz_updatePlayerData</strong> on this player.
 														</p>
@@ -224,7 +224,7 @@
 															update all clients.</p>
 														<p><strong>Permission functions </strong>
 															<br>
-															The permission functions all take permsision names as input. These names are 
+															The permission functions all take permission names as input. These names are 
 															the same as the server uses in its users and groups files. All the standard 
 															permission names have been defined in the bzfsAPI.h file using the <strong>bz_perm_XXXXXXXX
 															</strong>set of defines. Groups can have custom permissions, so if you want to 
@@ -234,13 +234,13 @@
 															his/her groups file.</p>
 														<p><strong>BZF_API bool bz_hasPerm ( int playerID, const char* perm );</strong><br>
 															This function will return true if the user has the permission named in the perm 
-															paramater
+															parameter
 														</p>
 														<p><strong>BZF_API bool bz_grantPerm ( int playerID, const char* perm );</strong><br>
 															This function will give the user the specified permission, and return true if 
 															the operation was successful.</p>
 														<p><strong>BZF_API bool bz_revokePerm ( int playerID, const char* perm );</strong><br>
-															This function will remove the specified permision from the user, and return 
+															This function will remove the specified permission from the user, and return 
 															true if the operation was successful.</p>
 														<P><SPAN class="style4 style7">Group&nbsp;Functions 
 </SPAN></P>
@@ -249,11 +249,11 @@
 															names in the bzfs group database. Be sure to use <STRONG>bz_deleteStringList </STRONG>
 															to free the list when you are done with the list.</P>
 														<P><STRONG>BZF_API&nbsp; bzAPIStringList* bz_getGroupPerms ( const char* group);</STRONG><BR>
-															Returns a new string list that contains the permision names that the specified 
+															Returns a new string list that contains the permission names that the specified 
 															group has rights to. Be sure to use <STRONG>bz_deleteStringList </STRONG>to 
 															free the list when you are done with the list.</P>
 														<P><STRONG>BZF_API&nbsp; bool bz_groupAllowPerm ( const char* group, const char* perm);</STRONG><BR>
-															Returns true if the specified group will allow the specified permision.</P>
+															Returns true if the specified group will allow the specified permission.</P>
 														<p><span class="style4 style7">Message Functions </span></p>
 														<p><strong>BZF_API bool bz_sendTextMessage (int from, int to, const char* message);</strong><br>
 															Sends a text message to the specified user. <strong>BZ_SERVER</strong> should 
@@ -273,7 +273,7 @@
 														<p><span class="style4 style7">World Weapons Functions </span></p>
 														<p><strong>BZF_API bool bz_fireWorldWep ( bzApiString flagType, float lifetime, int 
 																fromPlayer, float *pos, float tilt, float direction, int shotID, float dt )</strong><br>
-															Adds a shot of the specified type and with the specified paramaters to the 
+															Adds a shot of the specified type and with the specified parameters to the 
 															world. <strong>BZ_SERVER</strong> should be used as the fromPlayer for normal 
 															world weapons.</p>
 														<p>&nbsp;</p>
@@ -287,7 +287,7 @@
 														</p>
 														<p><strong>BZF_API void bz_setMaxWaitTime ( float time );</strong><br>
 															Sets the maximum amount of time in seconds between <strong>bz_eTickEvent</strong>
-															events. If another plugin or the base system has a lower maxium the lowest max 
+															events. If another plugin or the base system has a lower maximum the lowest max 
 															will be used.
 														</p>
 														<p><strong>BZF_API void bz_getLocaltime ( bz_localTime *ts );</strong><br>
@@ -355,7 +355,7 @@
 														<p><strong>BZF_API bool bz_kickUser ( int playerIndex, const char* reason, bool notify 
 																);</strong><br>
 															Removes the specified user from the server. If notify is true, the user and 
-															adminisrators will be notified using the reason.
+															administrators will be notified using the reason.
 														</p>
 														<p><strong>BZF_API bool bz_IPBanUser ( int playerIndex, const char* ip, int time, const 
 																char* reason )</strong><br>
@@ -366,11 +366,11 @@
 														<p>&nbsp;</p>
 														<p><span class="style4 style7">Spawn Functions </span></p>
 														<p><strong>BZF_API bool bz_getStandardSpawn ( int playeID, float pos[3], float *rot );</strong><br>
-															Returns a normaly calculated spawn position for the specified user.</p>
+															Returns a normally calculated spawn position for the specified user.</p>
 														<p>&nbsp;</p>
 														<p><span class="style4 style7">Flag Functions </span></p>
 														<p><strong>BZF_API bool bz_removePlayerFlag ( int playeID );</strong><br>
-															Removes (zaps) the flag caried by the specified player
+															Removes (zaps) the flag carried by the specified player
 														</p>
 														<p><strong>BZF_API void bz_resetFlags ( bool onlyUnused );</strong><br>
 															Removes (zaps) all flags on the map, exactly the same as the /flag reset 
@@ -409,13 +409,13 @@
 															Returns the team score for the specified team
 														</p>
 														<p><strong>BZF_API int bz_getTeamWins (bz_eTeamType team );</strong><br>
-															Returns the team wins for the speficied team
+															Returns the team wins for the specified team
 														</p>
 														<p><strong>BZF_API int bz_getTeamLosses (bz_eTeamType team );</strong><br>
 															Returns the team losses for the specified team
 														</p>
 														<p><strong>BZF_API void bz_setTeamWins (bz_eTeamType team, int wins );</strong><br>
-															Sets the team wins for the speficied team
+															Sets the team wins for the specified team
 														</p>
 														<p><strong>BZF_API void bz_setTeamLosses (bz_eTeamType team, int losses );</strong><br>
 															Sets the team losses for the specified team
@@ -433,10 +433,10 @@
 														</p>
 														<p>&nbsp;</p>
 														<p><span class="style4 style7">Text Utility  Functions </span></p>
-														<p>These funtions don't do anything in bzfs, they are just here to help out a 
-															plugin by leting them use some of BZFlags OS independent utilitys.</p>
+														<p>These functions don't do anything in bzfs, they are just here to help out a 
+															plugin by letting them use some of BZFlags OS independent utilities.</p>
 														<p><strong>BZF_API const char *bz_format(const char* fmt, ...);</strong><br>
-															Just like sprintf, but returs the formated string.
+															Just like sprintf, but returns the formated string.
 														</p>
 														<p><strong>BZF_API const char *bz_toupper(const char* val );;</strong><br>
 															Returns the input string all in upper case characters.
@@ -446,9 +446,9 @@
 														</p>
 														<p>&nbsp;</p>
 														<p><span class="style4 style7">World Info  Functions </span></p>
-														<p>These funtions are used to give infomation about the world ( map ).</p>
+														<p>These functions are used to give information about the world ( map ).</p>
 														<p><strong>BZF_API bz_eTeamType bz_checkBaseAtPoint ( float pos[3] );</strong><br>
-  This function will return the team that owns the base that is at the requested point. If there is no base at that point then the &quot;NoTeam&quot; team will be returned. This is usefull for knowing where people are at a caputre event. </p>
+  This function will return the team that owns the base that is at the requested point. If there is no base at that point then the &quot;NoTeam&quot; team will be returned. This is useful for knowing where people are at a capture event. </p>
 														<p>&nbsp;</p>
 														<p><span class="style4 style7">Custom Slash Command Functions </span></p>
 														<p>A plug-in can register a special handler for a custom / command. This allows a 
@@ -458,8 +458,8 @@
 															class that the plugin overrides using the function.</p>
 														<p><strong>BZF_API bool bz_registerCustomSlashCommand ( const char* command, 
 																bz_CustomSlashCommandHandler *handler );</strong></p>
-														<p>This command will register a cutom slash command with the name provided in the 
-															command paramater. You do NOT need to provide the "/" character in the command 
+														<p>This command will register a custom slash command with the name provided in the 
+															command parameter. You do NOT need to provide the "/" character in the command 
 															name. The handler pointer is to a class that has been derived from <strong>bz_CustomSlashCommandHandler</strong></p>
 														<table bgcolor="#dddddd" border="1">
 															<tbody>
@@ -488,7 +488,7 @@
 															and then it can then do whatever it needs to. The Message parameter to the 
 															handle function will contain all the text the user has entered, except the 
 															/command name itself. The Params item will contain a list of the text broken 
-															into a space delimited list. This is useful for commands that take paramaters.
+															into a space delimited list. This is useful for commands that take parameters.
 														</p>
 														<p><strong>BZF_API bool bz_removeCustomSlashCommand ( const char* command );</strong><br>
 															This command will remove a custom slash command from BZFS. Only one custom 
