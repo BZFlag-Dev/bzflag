@@ -1,136 +1,186 @@
 
-				    BZFlag 2.0.5
-				 http://BZFlag.org/
-			Copyright (c) 1993 - 2005 Tim Riker
+			    BZFlag 2.0.5
+			 http://BZFlag.org/
+		Copyright (c) 1993 - 2006 Tim Riker
 
 Maintainer
-=========
+==========
 
 Tim Riker <Tim@Rikers.org>
 http://rikers.org/
 
-Author
-======
+Original Author
+===============
 
 Chris Schoeneman
 475 Hawthorne Av
 Palo Alto, CA 94301
 crs23@bigfoot.com
 
+See the AUTHORS file for more authorship details.
+
 
 Introduction
 ============
 
-This is the readme file for the BZFlag source tree.  It includes a
-manifest, simple build instructions, and other information for BZFlag
-development.
+BZFlag is an Open Source OpenGL multiplayer multiplatform Battle Zone
+capture the Flag game.  At its heart, the game is a 3D first person
+tank simulation where opposing teams battle for dominance.  The game
+was originally written for SGI computers running Irix, but now runs
+and is actively maintained on Windows, Linux, Mac OS X, BSD, Solaris,
+and other platforms.  The game is distributed under the LGPL license.
+
+This is the BZFlag README file.  It includes simple build
+instructions, user community references, other information for BZFlag
+development, and a manifest of the source code layout.
 
 
-Getting BZFlag
-==============
+Obtaining BZFlag
+================
 
-The home page provides access to the primary BZFlag download site.
-This web site includes pages for downloading the compiled and source
-code versions.  Compiled versions are distributed as installable
-packages.  Source code is archived in various formats.  After
-unpacking you should have the following files in the new bzflag
-directory:
+Main BZFlag Website:  http://BZFlag.org
+BZFlag Project Site:  http://sf.net/projects/bzflag
 
-  README	- this file
-  README.*	- platform specific details
-  BUGS		- a list of known bugs
-  BZFlag.xcode  - Mac OS X XCode project
-  ChangeLog	- history of changes
-  COPYING	- the license for BZFlag
-  NEWS		- placeholder - see ChangeLog
-  DEVINFO       - information for developers
-  PORTING	- a guide for porting BZFlag
-  RELNOTES	- placeholder - see ChangeLog
-  TODO		- incomplete list of things to do
-  data/		- data files (sounds, images, etc.)
-  debian/	- debian apt files
-  doc/		- partial documentation in doxygen format
-  include/	- include headers for libraries
-  man/		- man pages
-  misc/		- miscellaneous goo
-  package/	- stuff to build installable packages
-  src/		- bzflag, bzfs, etc. source code
-    3D/		  - 3D code including texture manager
-    bzadmin/      - bzadmin app source code (text admin/chat client)
-    bzflag/	  - bzflag app source code (game client)
-    bzfs/	  - bzfs app source code (game server)
-    common/	  - general purpose classes
-    geometry/	  - geometry rendering classes
-    mediafile/	  - classes for reading resources
-    net/	  - networking classes and functions
-    obstacle/	  - collision detection stuff
-    ogl/	  - OpenGL utility classes
-    platform/	  - platform dependent code
-      MacOSX/       - Mac OS X specific files, including PB project
-    scene/	  - high level rendering algorithms
-    zlib/	  - compression library
-  tools/	- various helper utilities
-  win32/	- extra stuff for building on win32 platforms
+The main BZFlag website provides access to most all of the resources
+available for the game.  The binary and source distributions of BZFlag
+are, however, provided on the Sourceforge project site.  Compiled
+versions are distributed as installable packages, disk images, and
+more, with details varying depending on the platform.  Source code
+distributions are provided and archived in various formats as well.
+See the project site for the download links.
+
+BZFlag is also available directly from CVS.  To obtain BZflag from
+CVS, a bit more familiarity with software development is expected.
+Sometimes active BZFlag development is on CVS HEAD, sometimes it is on
+a branch, sometimes it's in multiple places.  Inquire on the #bzflag
+IRC channel on irc.freenode.net or to the bzflag-dev mailing list as
+to where the current development activity resides.  If you're familiar
+enough, anonymous CVS access is provided:
+
+    cvs -d:pserver:anonymous@cvs.sf.net:/cvsroot/bzflag login
+[ press return for no password ]
+    cvs -z3 -d:pserver:anonymous@cvs.sf.net co -P bzflag
 
 
 Compiling and Installation
 ==========================
 
+To compile a playable BZFlag, the following steps should get you up
+and running quickly if everything external to BZFlag is properly
+installed:
+
+    ./autogen.sh
+    ./configure --enable-optimized
+    make
+    ./src/bzflag/bzflag
+
+If configure detected everything it needed to build the BZFlag client,
+after make the client will be sitting in src/bzflag as 'bzflag'.  The
+game can be run from there, though you will probably want to "sudo
+make install" or otherwise become a privileged user and install the
+game properly for your system.
+
+If you're building on a platform that has a README.* file, you should
+consult that file as they usually contain additional instructions or
+details specific for building on that platform.  There are often hints
+for common problems specific to those platforms as well.
+
+The Longer Version:
+
 To build sources checked out directly from CVS you need to create a
-configure script. You can skip this step if you grab an archive that
-already has a ./configure script in it. Create the ./configure script
-by running these commands inside the CVS directory:
-
-  % aclocal
-  % autoheader
-  % automake --add-missing
-  % autoconf
-
-These commands are in the autogen.sh file, so you can just run that
-script.  (again this is only required to create the configure script
-which might already be present)
+configure script. You can skip this step if you grab an distribution
+of BZFlag that already has a ./configure script in it, such as from a
+source distribution tarball.  To generate the configure script, you
+run the provided autogen.sh script:
 
   % sh autogen.sh
 
-Now that you have a configure script, create a work directory parallel
-to the one you just downloaded and autoconfigured:
+The script will report whether sufficient versions of the GNU Build
+System tools (i.e. autoconf, automake, and libtool) that were detected
+and if successful, a configure script will be generated.  If the
+script fails, submit a report to the developers containing the output
+of "sh autogen.sh -v". This will run autogen.sh in verbose mode.  One of
+the most common failures is having insufficient versions or mismatched
+combinations of the GNU Build System tools, make sure your tools are
+recent.
 
-  % mkdir ../work
+Now that you have a configure script and presuming the previous step
+was successful, you can configure BZFlag:
 
-Go in this new directory and build:
+  % ./configure --help
 
-  % cd ../work
-  % ../bzflag/configure
-  % make
+There are a variety of options possible when configuring BZFlag.  Most
+notably, you'll probably want to use the --enable-optimized option for
+performance and the --enable-shared option if you are building server
+plugins.
 
-bzflag looks for data files in a compiled in path or in ./data/
-only. This means that to test in a working directory you need to tell
-bzflag where to find these files.  This can be done with a symlink:
+  % ./configure --enable-optimized --enable-shared
 
-  % ln -s ../bzflag/data .
+You may want to create a 'work' directory and configure from there to
+have all the build products and binary executables get placed in a
+directory separate from the sources.  To do this, simply create a
+directory then run configure and make from there instead.
 
-After testing you can install BZFlag by:
+After configure completes, it will report whether all the requisite
+packages were found that it needs in order to build the client and the
+server.  The client is reliant upon the following external
+dependencies that should be installed before running configure:
 
-  % make install
+  OpenGL 1.0+
+  libSDL 1.2+
+  libCURL 7+
 
-You should have BZFlag in the system directory ready to run.
+If you're on an operating sytem that uses a packaging system
+(e.g. apt, portage, ports, etc), be sure to install the development
+kit versions of each of those (e.g. xlibmesa-gl-dev package) so that
+headers are made available.
 
-If you have not admin privileges on your platform, you can install files in a
-directory that you own; for this to work, you have to append to the configure
-command the prefix option.
-E.g.:
-../bzflag/configure --prefix=YourHomeDirectoryHere
-At "make install" all bzflag exe files will be installed in the subdir bin of
-the specified path.
-If your exe is too big to you, and you don't need debugger information, run
-make install-strip
-instead of just make install; this will remove any debug information from the
-binaries, and make those shorter.
+The final summary at the end of running configure will report whether
+the client will be built or not.  Once configure has been run, you may
+compile by simply running 'make'.  If you have GNU Make and are on a
+multiprocessor system, you can build in parallel with the -j option:
+
+  % make -j4
+
+If compilation was successful, the client will be in src/bzflag and
+the server will be in src/bzfs as 'bzflag' and 'bzfs' respectively.
+You can run the client or the server directly from those locations
+with or without installing:
+
+  % src/bzflag/bzflag
+
+BZFlag looks for data files in a path defined during compile, in ./data/ ,
+or in the previously specified data path only.  As part of the tarball/cvs 
+checkout, the base data library is located in <installed-locale>/bzflag/data. 
+This means that to test in a working directory you need to tell bzflag 
+where to find these files if there is not a 'data' directory in your current
+directory.  This can be done with a symlink:
+
+  % ln -s ./path/to/bzflag/data
+
+After testing you can install BZFlag by running 'make install' with
+sufficient system installation privileges.  Use 'sudo', 'su', or
+similar methods to elevate your privileges when installing BZFlag
+system-wide:
+
+  % sudo make install
+
+You should now have BZFlag in the system directory ready to run.
+
+If you do not have admin privileges on your platform, you can install
+files in a directory that you own; for this to work, you have to
+append to the configure command the prefix option:
+
+  % ./configure --prefix=YourHomeDirectoryHere
+
+You will then be able to perform a "make install" without needing to
+elevate your privileges, and all bzflag executable files will be
+installed in the subdir bin of the specified path.
 
 For additional information on installing, see INSTALL file.
 
-Some platforms may be different.  See the README file appropriate to
-your system for more information:
+Again, some platforms may be different.  See the README file
+appropriate to your system for more information:
 
   Platform			README file
   --------			-----------
@@ -168,49 +218,162 @@ The ./configure script has a number of build options that you may find
 interesting.
 
 
-Mailing Lists
+Communication
 =============
 
-There are two BZFlag mailing lists, a user list and a developer's
-list.  The former is for general BZFlag discussion and announcements.
-The latter is for coding and development discussion only.
+The BZFlag project has several resources set up for communicating both
+with other developers and with the community.  There is an IRC
+channel, several mailing lists, bulletin boards, and a wiki.
 
-To join a mailing list, go to http://BZFlag.org/email-list.html/ and
-follow the info there.
+Internet Relay Chat
+-------------------
+Most of the BZFlag development activity and discussions occur over
+IRC.  Join the #bzflag IRC channel on the Freenode network
+(irc.freenode.net, port 6667) to get involved.
+
+See http://irc.bzflag.org for a web based interface for first-time
+users.  Individuals that intend to stay in the channel are expected to
+get a non-web-based IRC client.  See http://irchelp.org or search the
+web for IRC clients for your operating system.
+
+Mailing Lists
+-------------
+There are several BZFlag mailing lists, but the two of particular
+interest to most are the user's list and the main developer's list.
+The former is for general BZFlag discussion and announcements.  The
+latter is for coding and development discussion only.  There are also
+lists dedicated to CVS activity, league discussions, and server
+administration.
+
+To join a mailing list, go to the Sourceforge mailing list page on the
+project site: http://sourceforge.net/mail/?group_id=3248 and follow
+the links for joining the respective mailing lists that interest you.
+
+Bulletin Boards
+---------------
+There are extensive and active bulletin boards used by players, server
+operators, administrators, and others available here:
+
+http://my.bzflag.org/bb/
+
+Registering an account on the bulletin board presently also registers
+your callsign for use inside of BZFlag.  Some servers require
+registration in order to play.  See the board FAQ and Getting Started
+pages for new users.
+
+In addition to the main bulletin boards, there are forums on the
+Sourceforge project site available here:
+
+http://sourceforge.net/forum/?group_id=3248
+
+The main bulletin boards are considerably higher volume for day-to-day
+player discussions.  The forums are often used for informally
+resolving issues with new users.
+
+Wiki
+----
+The main BZFlag website contains a wiki that may be edited by the
+community available at: http://BZFlag.org/wiki
+
+The wiki does require a simple registration in order to make
+modifications as a means to minimize abuse, but serves as a
+communication forum and ongoing discussion arena for the game's
+development.
+
 
 Contributions
 =============
 
-Patches should be entered into the patch tracking system on
-http://sourceforge.net/projects/bzflag/ If you like you may also send
-mail to either the BZFlag development mailing list, or Tim@Rikers.org
-(the development mailing list is preferred) to discuss contributions to
-the official BZFlag source code.  Small changes can be attached to the
-mail in 'cvs diff -u' unified diff format.
+Patches should be entered into the BZFlag patch tracking system at:
+
+http://sourceforge.net/tracker/?group_id=3248&atid=303248
+
+Patches are preferred in the unified diff format.  From a CVS
+checkout, a unified diff patch file may be created as follows:
+
+  % cvs diff -u > patch.diff
+
+If you like, you may also send mail to either the BZFlag development
+mailing list or to Tim@Rikers.org (the development mailing list is
+preferred) to discuss contributions to the official BZFlag source
+code.  Contributions are gladly accepted for modifications that do not
+affect the core gameplay.  Interacting with the other developers in
+the IRC channel is recommended for any changes which will affect
+gameplay.
 
 
-Bug Reports
-===========
+Bug Reports and Support
+=======================
 
-For bug reports please go to bug tracking system on
-http://sourceforge.net/projects/bzflag/ Alternatively, you can email
-bug reports to Tim@Rikers.org but the web based method is preferred.
+For reporting bugs and unexpected behavior, please go to BZFlag bug
+tracking system at:
 
+http://sourceforge.net/tracker/?group_id=3248&atid=103248
 
-Known Bugs
-==========
+Alternatively, you can email bug reports to the development mailing
+list or to Tim@Rikers.org but the web based method is preferred.  See
+the BUGS file in the source distribution for other known issues.
 
-See BUGS.
+If you require assistance with some issue, please visit BZFlag support
+tracking system at:
+
+http://sourceforge.net/tracker/?group_id=3248&atid=203248
+
+Alternatively, the IRC channel, discussion forums, and mailing lists
+are also viable avenues for resolving issues.
 
 
 Contributors
 ============
 
-see AUTHORS
+BZFlag has a long history of development and considerable community
+involvement since it became an Open Source project.  See the AUTHORS
+file for more details.
 
 
 Source Tree Organization
 ========================
+
+After unpacking a source distribution, you should have the following
+files in the new 'bzflag' directory:
+
+  README	- this file
+  README.*	- platform specific details
+  BUGS		- a list of known bugs
+  BZFlag.xcode  - Mac OS X XCode project
+  ChangeLog	- source code changes since previous release
+  COPYING	- the license for BZFlag
+  NEWS		- history of visible changes for each release
+  DEVINFO       - information for developers
+  PORTING	- a guide for porting BZFlag
+  RELNOTES	- placeholder - see NEWS
+  TODO		- incomplete list of things to do
+  data/		- data files (sounds, images, etc.)
+  debian/	- debian apt files
+  Dev-C++/	- Dev-C++ project files
+  doc/		- partial documentation in doxygen format
+  include/	- include headers for libraries
+  man/		- man pages
+  misc/		- miscellaneous goo
+  package/	- stuff to build installable packages
+  src/		- bzflag, bzfs, etc. source code
+    3D/		  - 3D code including texture manager
+    bzadmin/      - bzadmin app source code (text admin/chat client)
+    bzflag/	  - bzflag app source code (game client)
+    bzfs/	  - bzfs app source code (game server)
+    common/	  - general purpose classes
+    game/	  - game library used by both the server and client(s)
+    geometry/	  - geometry rendering classes
+    mediafile/	  - classes for reading resources
+    net/	  - networking classes and functions
+    obstacle/	  - collision detection stuff
+    ogl/	  - OpenGL utility classes
+    platform/	  - platform dependent code
+      MacOSX/       - Mac OS X specific files
+    scene/	  - high level rendering algorithms
+    zlib/	  - compression library
+  tools/	- various helper utilities
+  win32/	- stuff for building on the Windows platform
 
 Note that include/ does not have all the include files.  If a header
 is used entirely within a library (i.e. it doesn't directly provide
@@ -222,12 +385,15 @@ places instead of just one place), you can instantly tell if a header
 file is (can be) used by clients of the library.
 
 
+Miscellaneous
+=============
+
 UDP added by Frank Siegert, frank@this.net, frank@bzflag.de
 
 BZFlag implements UDP unicast relay networking. This provides much
 better timing and stability compared to just TCP.
 
-UDP does not work, why?
+One of the more frequent questions, UDP does not work, why?
 
 - When I connect to a newer server with this client others report they
   can see me but I get 'black caps' after a few seconds for all other
@@ -239,8 +405,7 @@ a) you are behind a NAT router that is not forwarding UDP traffic to
    your system. Try reconfiguring the router to do NAT on UDP packets.
 
 b) you are behind a firewall or a desktop firewall (e.g. ZoneAlarm)
-   that is blocking incoming UDP traffic. Please reconfigure the
-   firewall or disable ZoneAlert for the game, for more intelligent
-   desktop firewalls set them up to let UDP port 17200 to 17220
-   through.
+   that is blocking incoming UDP traffic. Please reconfigure or disable
+   your firewall(extreme solution) for the game, for more intelligent 
+   desktop firewalls set them up to let UDP port 17200 to 17220 through.
 
