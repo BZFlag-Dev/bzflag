@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2005 Tim Riker
+ * Copyright (c) 1993 - 2006 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -14,7 +14,7 @@
 using namespace TankGeometryUtils;
 
 int TankGeometryUtils::buildMedBody ( void )
-{     
+{
   glShadeModel(GL_FLAT);
   glBegin(GL_TRIANGLE_STRIP);
     doNormal3f(0.997647f, 0.000000f, 0.068567f);
@@ -57,7 +57,7 @@ int TankGeometryUtils::buildMedBody ( void )
     doTexCoord2f(0.700f, 1.970f);
     doVertex3f(2.610f, 0.877f, 0.408f);
   glEnd();
-  
+
   return 14;
 }
 

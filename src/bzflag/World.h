@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2005 Tim Riker
+ * Copyright (c) 1993 - 2006 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -109,7 +109,7 @@ class World {
     void		addFlags(SceneDatabase*, bool seerView);
     void		updateWind(float dt);
     void		getWind(float wind[3], const float pos[3]) const;
-    
+
     void		makeMeshDrawMgrs();
 
     static World*	getWorld();
@@ -180,11 +180,11 @@ class World {
 
     int			drawInfoCount;
     MeshDrawInfo**	drawInfoArray;
-    
+
     float		wind[3];
 
     LinkManager		links;
-    
+
     // required graphics settings
     int			oldFogEffect;
     bool		oldUseDrawInfo;

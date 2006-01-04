@@ -35,7 +35,7 @@ libcares_la_SOURCES =		\
 	ares_version.c		\
 	ares_version.h		\
 	nameser.h		\
-	setup.h 		\
+	setup.h		\
 	windows_port.c
 
 EXTRA_DIST = \

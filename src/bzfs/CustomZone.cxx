@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2005 Tim Riker
+ * Copyright (c) 1993 - 2006 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -93,7 +93,7 @@ bool CustomZone::read(const char *cmd, std::istream& input)
 	    const std::string& qual = getFlagTypeQualifier(f);
 	    if (qual.size() > 0) {
 	      qualifiers.push_back(qual);
-            }
+	    }
 	  }
 	}
       }
@@ -105,7 +105,7 @@ bool CustomZone::read(const char *cmd, std::istream& input)
 	    const std::string& qual = getFlagTypeQualifier(f);
 	    if (qual.size() > 0) {
 	      qualifiers.push_back(qual);
-            }
+	    }
 	  }
 	}
       }
@@ -113,18 +113,18 @@ bool CustomZone::read(const char *cmd, std::istream& input)
 	FlagType* f = Flag::getDescFromAbbreviation(flag.c_str());
 	if (f == Flags::Null) {
 	  DEBUG1("WARNING: bad flag type: %s\n", flag.c_str());
-          input.putback('\n');
+	  input.putback('\n');
 	  return false;
 	}
 	if (f->endurance == FlagNormal) {
 	  DEBUG1("WARNING: you probably want a safety: %s\n", flag.c_str());
-          input.putback('\n');
+	  input.putback('\n');
 	  return false;
 	}
-        const std::string& qual = getFlagTypeQualifier(f);
+	const std::string& qual = getFlagTypeQualifier(f);
 	if (qual.size() > 0) {
 	  qualifiers.push_back(qual);
-        }
+	}
       }
     }
 
@@ -171,7 +171,7 @@ bool CustomZone::read(const char *cmd, std::istream& input)
       }
       else {
 	DEBUG1("WARNING: bad zoneflag type: %s\n", flag.c_str());
-        input.putback('\n');
+	input.putback('\n');
 	return false;
       }
     }
@@ -184,20 +184,20 @@ bool CustomZone::read(const char *cmd, std::istream& input)
 
     int color;
     const bool safety = (strcmp(cmd, "safety") == 0);
-    
+
     while (parms >> color) {
       if ((color < 0) || (color >= CtfTeams)) {
-        input.putback('\n');
+	input.putback('\n');
 	return false;
       }
       std::string qual;
       if (safety) {
-        qual = getFlagSafetyQualifier(color);
+	qual = getFlagSafetyQualifier(color);
       } else {
-        qual = getPlayerTeamQualifier(color);
+	qual = getPlayerTeamQualifier(color);
       }
       if (qual.size() > 0) {
-        qualifiers.push_back(qual);
+	qualifiers.push_back(qual);
       }
     }
     input.putback('\n');

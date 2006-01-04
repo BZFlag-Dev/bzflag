@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2005 Tim Riker
+ * Copyright (c) 1993 - 2006 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -147,7 +147,7 @@ void			FlagWarpSceneNode::FlagWarpRenderNode::render()
 	glVertex2f(s * geom[1][0], s * geom[1][1]);
 	glVertex2f(s * geom[0][0], s * geom[0][1]);
 	glEnd(); // 14 verts -> 12 tris
-        addTriangleCount(12);
+	addTriangleCount(12);
 	glTranslatef(0.0f, 0.0f, -0.01f);
       }
     }
@@ -172,7 +172,7 @@ void			FlagWarpSceneNode::FlagWarpRenderNode::render()
 	glVertex2f(s * geom[11][0], s * geom[11][1]);
 	glVertex2f(s * geom[0][0], s * geom[0][1]);
 	glEnd(); // 14 verts -> 12 tris
-        addTriangleCount(12);
+	addTriangleCount(12);
 	glTranslatef(0.0f, 0.0f, 0.01f);
       }
     }

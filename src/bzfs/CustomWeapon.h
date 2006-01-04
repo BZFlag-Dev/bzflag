@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2005 Tim Riker
+ * Copyright (c) 1993 - 2006 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -41,13 +41,13 @@ class CustomWeapon : public WorldFileLocation {
   protected:
 
     FlagType *type;
-    
+
     float initdelay;
     std::vector<float> delay;
 
     float tilt;
     TeamColor teamColor;
-    
+
     int eventTeam;
     bz_eEventType triggerType;
 

@@ -1,6 +1,6 @@
 
 /* bzflag
- * Copyright (c) 1993 - 2005 Tim Riker
+ * Copyright (c) 1993 - 2006 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -99,7 +99,7 @@ static const float	FlagHelpDuration = 60.0f;
 StartupInfo	startupInfo;
 static MainMenu*	mainMenu;
 ServerLink*		serverLink = NULL;
-static World           *world = NULL;
+static World	   *world = NULL;
 static LocalPlayer     *myTank = NULL;
 static BzfDisplay*	display = NULL;
 MainWindow*		mainWindow = NULL;
@@ -367,10 +367,10 @@ void warnAboutConsole()
 inline bool isViewTank(Player* tank)
 {
   return ((tank != NULL) &&
-          (tank == LocalPlayer::getMyTank()) ||
-           (ROAM.isRoaming()
-            && (ROAM.getMode() == Roaming::roamViewFP)
-            && (ROAM.getTargetTank() == tank)));
+	  (tank == LocalPlayer::getMyTank()) ||
+	   (ROAM.isRoaming()
+	    && (ROAM.getMode() == Roaming::roamViewFP)
+	    && (ROAM.getTargetTank() == tank)));
 }
 
 
@@ -637,7 +637,7 @@ static bool		doKeyCommon(const BzfKeyEvent& key, bool pressed)
 	  showFPS = !showFPS;
 	  if (!showFPS) {
 	    hud->setFPS(-1.0);
-          }
+	  }
 	}
 	return true;
 
@@ -648,7 +648,7 @@ static bool		doKeyCommon(const BzfKeyEvent& key, bool pressed)
 	  showDrawTime = !showDrawTime;
 	  if (!showDrawTime) {
 	    hud->setDrawTime(-1.0);
-          }
+	  }
 	}
 	return true;
 
@@ -848,7 +848,7 @@ static void		doMotion()
       rotation = float(keyboardRotation);
       rotation *= BZDB.eval("displayFOV") / 60.0f;
       if (BZDB.isTrue("slowKeyboard")) {
-        rotation *= 0.5f;
+	rotation *= 0.5f;
       }
     } else if (mx < -noMotionSize) {
       rotation = float(-mx - noMotionSize) / float(maxMotionSize);
@@ -864,10 +864,10 @@ static void		doMotion()
     if (keyboardSpeed && !devDriving) {
       speed = float(keyboardSpeed);
       if (speed < 0.0f) {
-        speed *= 0.5f;
+	speed *= 0.5f;
       }
       if (BZDB.isTrue("slowKeyboard")) {
-        speed *= 0.5f;
+	speed *= 0.5f;
       }
     } else if (my < -noMotionSize) {
       speed = float(-my - noMotionSize) / float(maxMotionSize);
@@ -1265,15 +1265,15 @@ static Player*		addPlayer(PlayerId id, void* msg, int showMessage)
       message += "an observer";
     } else {
       switch (PlayerType (type)) {
-        case TankPlayer:
-          message += "a tank";
-          break;
-        case ComputerPlayer:
-          message += "a robot tank";
-          break;
-        default:
-          message += "an unknown type";
-          break;
+	case TankPlayer:
+	  message += "a tank";
+	  break;
+	case ComputerPlayer:
+	  message += "a robot tank";
+	  break;
+	default:
+	  message += "an unknown type";
+	  break;
       }
     }
     if (!player[i]) {
@@ -1452,7 +1452,7 @@ static void loadCachedWorld()
     joiningGame = false;
     return;
   }
-  
+
   // lookup the cached world
   std::istream *cachedWorld = FILEMGR.createDataInStream(worldCachePath, true);
   if (!cachedWorld) {
@@ -1570,7 +1570,7 @@ void WorldDownLoader::finalization(char *data, unsigned int length, bool good)
       askToBZFS();
     } else {
       std::ostream* cache =
-        FILEMGR.createDataOutStream(worldCachePath, true, true);
+	FILEMGR.createDataOutStream(worldCachePath, true, true);
       if (cache != NULL) {
 	cache->write(worldDatabase, length);
 	delete cache;
@@ -1963,15 +1963,15 @@ static void		handleServerMessage(bool human, uint16_t code,
 	if (SceneRenderer::instance().useQuality() >= 2) {
 	  if (((tank != myTank)
 	       && ((ROAM.getMode() != Roaming::roamViewFP)
-	           || (tank != ROAM.getTargetTank())))
+		   || (tank != ROAM.getTargetTank())))
 	      || BZDB.isTrue("enableLocalSpawnEffect")) {
-            if (myTank->getFlag() != Flags::Colorblindness) {
+	    if (myTank->getFlag() != Flags::Colorblindness) {
 	      EFFECTS.addSpawnEffect(tank->getTeam(), pos);
-            } else {
+	    } else {
 	      EFFECTS.addSpawnEffect((int)RogueTeam, pos);
-            }
-          }
-        }
+	    }
+	  }
+	}
 	tank->setStatus(PlayerState::Alive);
 	tank->move(pos, forward);
 	tank->setVelocity(zero);
@@ -2042,7 +2042,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 	  playSound(SFX_RUNOVER, pos, killerLocal == myTank, localView);
 	} else {
 	  playSound(SFX_EXPLOSION, pos, killerLocal == myTank, localView);
-        }
+	}
 	float explodePos[3];
 	explodePos[0] = pos[0];
 	explodePos[1] = pos[1];
@@ -2050,7 +2050,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 	addTankExplosion(explodePos);
 
 	EFFECTS.addDeathEffect(victimPlayer->getTeam(), pos,
-                               victimPlayer->getAngle());
+			       victimPlayer->getAngle());
       }
 
       if (killerLocal) {
@@ -2146,7 +2146,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 	      (killerPlayer->getTeam() != RogueTeam) &&
 	      (killerPlayer->getTeam() != ObserverTeam)) {
 	    playerStr += "teammate ";
-          }
+	  }
 	  if (victimPlayer == myTank) {
 	    if (BZDB.get("killerhighlight") == "1")
 	      playerStr += ColorStrings[PulsatingColor];
@@ -2356,7 +2356,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 	  explodePos[2] = pos[2] + player[i]->getMuzzleHeight();
 	  addTankExplosion(explodePos);
 
-          EFFECTS.addDeathEffect(player[i]->getTeam(), pos, player[i]->getAngle());
+	  EFFECTS.addDeathEffect(player[i]->getTeam(), pos, player[i]->getAngle());
 	}
       }
 
@@ -2417,7 +2417,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 
       const int shooterid = firingInfo.shot.player;
       RemotePlayer* shooter = player[shooterid];
-      
+
       if (shooterid != ServerPlayer) {
 	if (shooter && player[shooterid]->getId() == shooterid) {
 	  shooter->addShot(firingInfo);
@@ -2431,12 +2431,12 @@ static void		handleServerMessage(bool human, uint16_t code,
 	    // disable shot effects for that specific tank
 	    if ((ROAM.getMode() != Roaming::roamViewFP)
 		|| (!ROAM.getTargetTank())
-	        || (shooterid != ROAM.getTargetTank()->getId())
+		|| (shooterid != ROAM.getTargetTank()->getId())
 		|| BZDB.isTrue("enableLocalShotEffect")) {
 	      EFFECTS.addShotEffect(shooter->getTeam(), shotPos,
-                                    shooter->getAngle(),
-	                            shooter->getVelocity());
-            }
+				    shooter->getAngle(),
+				    shooter->getVelocity());
+	    }
 	  }
 	} else {
 	  break;
@@ -2447,8 +2447,8 @@ static void		handleServerMessage(bool human, uint16_t code,
 
       if (human) {
 	const float* pos = firingInfo.shot.pos;
-        const bool importance = false;
-        const bool localSound = isViewTank(shooter);
+	const bool importance = false;
+	const bool localSound = isViewTank(shooter);
 	if (firingInfo.flagType == Flags::ShockWave) {
 	  playSound(SFX_SHOCK, pos, importance, localSound);
 	} else if (firingInfo.flagType == Flags::Laser) {
@@ -2459,7 +2459,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 	  playSound(SFX_THIEF, pos, importance, localSound);
 	} else {
 	  playSound(SFX_FIRE, pos, importance, localSound);
-        }
+	}
       }
       break;
     }
@@ -2619,7 +2619,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 	  }
 	}
       }
-      
+
       // if filtering is turned on, filter away the goo
       if (wordfilter != NULL) {
 	wordfilter->filter((char *)msg);
@@ -2822,20 +2822,20 @@ static void		handleServerMessage(bool human, uint16_t code,
 	if (tank->getTeam() == ObserverTeam) {
 	  message += "an observer";
 	} else {
-          switch (tank->getPlayerType()) {
-            case TankPlayer:
-              message += "a tank";
-              break;
-            case ComputerPlayer:
-              message += "a robot tank";
-              break;
-            default:
-              message += "an unknown type";
-              break;
-          }
+	  switch (tank->getPlayerType()) {
+	    case TankPlayer:
+	      message += "a tank";
+	      break;
+	    case ComputerPlayer:
+	      message += "a robot tank";
+	      break;
+	    default:
+	      message += "an unknown type";
+	      break;
+	  }
 	}
 	message += " from " + ip.getDotNotation();
-        tank->setIpAddress(ip);
+	tank->setIpAddress(ip);
 	addMessage(tank, message);
       }
 
@@ -3049,7 +3049,7 @@ bool			addExplosion(const float* _pos,
 
   // add copy to list of current explosions
   explosions.push_back(newExplosion);
-  
+
   // the rest of the stuff is for tank explosions
   if (size < (3.0f * BZDBCache::tankLength)) {
     return true;
@@ -3058,11 +3058,11 @@ bool			addExplosion(const float* _pos,
   // bring on the noise, a tank blew up
   int boom = (int) (bzfrand() * 8.0) + 3;
   const float lightGain = (float)boom + 1.0f;
-  
+
   // turn up the volume
   newExplosion->setLightColor(1.0f * lightGain,
-                              0.8f * lightGain,
-                              0.5f * lightGain);
+			      0.8f * lightGain,
+			      0.5f * lightGain);
   while (boom--) {
     // pick a random prototype explosion
     const int idx = (int)(bzfrand() * (float)prototypeExplosions.size());
@@ -3299,11 +3299,11 @@ static bool		gotBlowedUp(BaseLocalPlayer* tank,
     } else {
       const float* pos = tank->getPosition();
       if (reason == GotRunOver) {
-        playWorldSound(SFX_RUNOVER, pos,
-                       getLocalPlayer(killer) == myTank);
+	playWorldSound(SFX_RUNOVER, pos,
+		       getLocalPlayer(killer) == myTank);
       } else {
-        playWorldSound(SFX_EXPLOSION, pos,
-                       getLocalPlayer(killer) == myTank);
+	playWorldSound(SFX_EXPLOSION, pos,
+		       getLocalPlayer(killer) == myTank);
       }
     }
 
@@ -4252,7 +4252,7 @@ static void cleanWorldCache()
 	    (CompareFileTime(&oldestTime, &findData.ftLastAccessTime) > 0)) {
 	  if (oldestFile) {
 	    free(oldestFile);
-          }
+	  }
 	  oldestFile = strdup(findData.cFileName);
 	  oldestSize = findData.nFileSizeLow;
 	  oldestTime = findData.ftLastAccessTime;
@@ -4271,16 +4271,16 @@ static void cleanWorldCache()
 	const std::string filename = contents->d_name;
 	const std::string fullname = worldPath + filename;
 	stat(fullname.c_str(), &statbuf);
-	if (S_ISREG(statbuf.st_mode) && (filename.size() > 4) && 
+	if (S_ISREG(statbuf.st_mode) && (filename.size() > 4) &&
 	    (filename.substr(filename.size() - 4) == ".bwc")) {
-          if ((oldestFile == NULL) || (statbuf.st_atime < oldestTime)) {
+	  if ((oldestFile == NULL) || (statbuf.st_atime < oldestTime)) {
 	    if (oldestFile) {
 	      free(oldestFile);
-            }
-            oldestFile = strdup(contents->d_name);
-            oldestSize = statbuf.st_size;
-            oldestTime = statbuf.st_atime;
-          }
+	    }
+	    oldestFile = strdup(contents->d_name);
+	    oldestSize = statbuf.st_size;
+	    oldestTime = statbuf.st_atime;
+	  }
 	  totalSize += statbuf.st_size;
 	}
       }
@@ -4292,7 +4292,7 @@ static void cleanWorldCache()
     if (oldestFile == NULL) {
       return;
     }
-    
+
     // is the cache small enough?
     if (totalSize < cacheLimit) {
       if (oldestFile != NULL) {
@@ -4316,8 +4316,8 @@ static void markOld(std::string &fileName)
 #ifdef _WIN32
   FILETIME ft;
   HANDLE h = CreateFile(fileName.c_str(),
-                        FILE_WRITE_ATTRIBUTES | FILE_WRITE_EA, 0, NULL,
-                        OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+			FILE_WRITE_ATTRIBUTES | FILE_WRITE_EA, 0, NULL,
+			OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
   if (h != INVALID_HANDLE_VALUE) {
     SYSTEMTIME st;
     memset(&st, 0, sizeof(st));
@@ -4780,7 +4780,7 @@ static void drawUI()
     hud->setFrameTriangleCount(0);
     hud->setFrameRadarTriangleCount(0);
   }
-  
+
   // update the HUD (player list, alerts)
   if (hud) {
     hud->render(*sceneRenderer);
@@ -4810,7 +4810,7 @@ static void drawUI()
 //
 
 static bool trackPlayerShot(Player* target,
-                            float* eyePoint, float* targetPoint)
+			    float* eyePoint, float* targetPoint)
 {
   // follow the first shot
   if (BZDB.isTrue("trackShots")) {
@@ -4821,12 +4821,12 @@ static bool trackPlayerShot(Player* target,
     for (int s = 0; s < maxShots; s++) {
       const ShotPath* spTmp = target->getShot(s);
       if (spTmp != NULL) {
-        const float t = float(spTmp->getReloadTime() -
-          (spTmp->getCurrentTime() - spTmp->getStartTime()));
-        if ((t > 0.0f) && (t < remaining)) {
-          sp = spTmp;
-          remaining = t;
-        }
+	const float t = float(spTmp->getReloadTime() -
+	  (spTmp->getCurrentTime() - spTmp->getStartTime()));
+	if ((t > 0.0f) && (t < remaining)) {
+	  sp = spTmp;
+	  remaining = t;
+	}
       }
     }
     if (sp != NULL) {
@@ -4834,30 +4834,30 @@ static bool trackPlayerShot(Player* target,
       const float* vel = sp->getVelocity();
       const float speed = sqrtf(vel[0]*vel[0] + vel[1]*vel[1] + vel[2]*vel[2]);
       if (speed > 0.0f) {
-        const float ilen = 1.0f / speed;
-        const float dir[3] = {ilen * vel[0], ilen * vel[1], ilen * vel[2]};
-        float topDir[3] = {1.0f, 0.0f, 0.0f};
-        const float hlen = sqrtf(dir[0]*dir[0] + dir[1]*dir[1]);
-        if (hlen > 0.0f) {
-          topDir[2] = hlen;
-          const float hfactor = -fabsf(dir[2] / hlen);
-          topDir[0] = hfactor * dir[0];
-          topDir[1] = hfactor * dir[1];
-        }
-        const float offset = -10.0f;
-        const float tOffset = +2.0f;
-        eyePoint[0] = pos[0] + (offset * dir[0]) + (tOffset * topDir[0]);
-        eyePoint[1] = pos[1] + (offset * dir[1]) + (tOffset * topDir[1]);
-        eyePoint[2] = pos[2] + (offset * dir[2]) + (tOffset * topDir[2]);
-        targetPoint[0] = eyePoint[0] + dir[0];
-        targetPoint[1] = eyePoint[1] + dir[1];
-        targetPoint[2] = eyePoint[2] + dir[2];
-        return true;
+	const float ilen = 1.0f / speed;
+	const float dir[3] = {ilen * vel[0], ilen * vel[1], ilen * vel[2]};
+	float topDir[3] = {1.0f, 0.0f, 0.0f};
+	const float hlen = sqrtf(dir[0]*dir[0] + dir[1]*dir[1]);
+	if (hlen > 0.0f) {
+	  topDir[2] = hlen;
+	  const float hfactor = -fabsf(dir[2] / hlen);
+	  topDir[0] = hfactor * dir[0];
+	  topDir[1] = hfactor * dir[1];
+	}
+	const float offset = -10.0f;
+	const float tOffset = +2.0f;
+	eyePoint[0] = pos[0] + (offset * dir[0]) + (tOffset * topDir[0]);
+	eyePoint[1] = pos[1] + (offset * dir[1]) + (tOffset * topDir[1]);
+	eyePoint[2] = pos[2] + (offset * dir[2]) + (tOffset * topDir[2]);
+	targetPoint[0] = eyePoint[0] + dir[0];
+	targetPoint[1] = eyePoint[1] + dir[1];
+	targetPoint[2] = eyePoint[2] + dir[2];
+	return true;
       }
     }
   }
   return false;
-}	  
+}
 
 static void setupNearPlane()
 {
@@ -4898,7 +4898,7 @@ static void setupFarPlane()
   FarDeepPlane = FarPlane * FarDeepPlaneScale;
 
   const bool mapFog = (BZDB.get(StateDatabase::BZDB_FOGMODE) != "none") &&
-                      BZDB.isTrue("fogEffect");
+		      BZDB.isTrue("fogEffect");
 
   float farDist = FarPlane;
 
@@ -4911,14 +4911,14 @@ static void setupFarPlane()
     } else {
       const float density = BZDB.eval("_fogDensity");
       if (density > 0.0f) {
-        const float fogFactor = 0.01f;
-        if (fogMode == "exp2") {
-          farDist = fogMargin * sqrtf(-logf(fogFactor)) / density;
-        } else { // default to 'exp'
-          farDist = fogMargin * -logf(fogFactor) / density;
-        }
+	const float fogFactor = 0.01f;
+	if (fogMode == "exp2") {
+	  farDist = fogMargin * sqrtf(-logf(fogFactor)) / density;
+	} else { // default to 'exp'
+	  farDist = fogMargin * -logf(fogFactor) / density;
+	}
       } else {
-        // default far plane
+	// default far plane
       }
     }
   } else {
@@ -4929,7 +4929,7 @@ static void setupFarPlane()
       // default far plane
     }
   }
-  
+
   if (farDist < FarPlane) {
     FarPlane = farDist;
     FarPlaneCull = true;
@@ -5019,36 +5019,36 @@ void drawFrame(const float dt)
 	const float *targetTankDir = target->getForward();
 	// fixed camera tracking target
 	if (ROAM.getMode() == Roaming::roamViewTrack) {
-          eyePoint[0] = roam->pos[0];
-          eyePoint[1] = roam->pos[1];
-          eyePoint[2] = roam->pos[2];
-          targetPoint[0] = target->getPosition()[0];
-          targetPoint[1] = target->getPosition()[1];
-          targetPoint[2] = target->getPosition()[2] +
-                           target->getMuzzleHeight();
+	  eyePoint[0] = roam->pos[0];
+	  eyePoint[1] = roam->pos[1];
+	  eyePoint[2] = roam->pos[2];
+	  targetPoint[0] = target->getPosition()[0];
+	  targetPoint[1] = target->getPosition()[1];
+	  targetPoint[2] = target->getPosition()[2] +
+			   target->getMuzzleHeight();
 	}
 	// camera following target
 	else if (ROAM.getMode() == Roaming::roamViewFollow) {
-          if (!trackPlayerShot(target, eyePoint, targetPoint)) {
-            eyePoint[0] = target->getPosition()[0] - targetTankDir[0] * 40;
-            eyePoint[1] = target->getPosition()[1] - targetTankDir[1] * 40;
-            eyePoint[2] = target->getPosition()[2] + muzzleHeight * 6;
-            targetPoint[0] = target->getPosition()[0];
-            targetPoint[1] = target->getPosition()[1];
-            targetPoint[2] = target->getPosition()[2];
-          }
+	  if (!trackPlayerShot(target, eyePoint, targetPoint)) {
+	    eyePoint[0] = target->getPosition()[0] - targetTankDir[0] * 40;
+	    eyePoint[1] = target->getPosition()[1] - targetTankDir[1] * 40;
+	    eyePoint[2] = target->getPosition()[2] + muzzleHeight * 6;
+	    targetPoint[0] = target->getPosition()[0];
+	    targetPoint[1] = target->getPosition()[1];
+	    targetPoint[2] = target->getPosition()[2];
+	  }
 	}
 	// target's view
 	else if (ROAM.getMode() == Roaming::roamViewFP) {
-          if (!trackPlayerShot(target, eyePoint, targetPoint)) {
-            eyePoint[0] = target->getPosition()[0];
-            eyePoint[1] = target->getPosition()[1];
-            eyePoint[2] = target->getPosition()[2] + target->getMuzzleHeight();
-            targetPoint[0] = eyePoint[0] + targetTankDir[0];
-            targetPoint[1] = eyePoint[1] + targetTankDir[1];
-            targetPoint[2] = eyePoint[2] + targetTankDir[2];
-            hud->setAltitude(target->getPosition()[2]);
-          }
+	  if (!trackPlayerShot(target, eyePoint, targetPoint)) {
+	    eyePoint[0] = target->getPosition()[0];
+	    eyePoint[1] = target->getPosition()[1];
+	    eyePoint[2] = target->getPosition()[2] + target->getMuzzleHeight();
+	    targetPoint[0] = eyePoint[0] + targetTankDir[0];
+	    targetPoint[1] = eyePoint[1] + targetTankDir[1];
+	    targetPoint[2] = eyePoint[2] + targetTankDir[2];
+	    hud->setAltitude(target->getPosition()[2]);
+	  }
 	}
 	// track team flag
 	else if (ROAM.getMode() == Roaming::roamViewFlag) {
@@ -5063,7 +5063,7 @@ void drawFrame(const float dt)
 	    targetPoint[2] += muzzleHeight;
 	  } else {
 	    targetPoint[2] -= (BZDBCache::tankHeight -
-                               BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT));
+			       BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT));
 	  }
 	}
 	roamViewAngle = (float) (atan2(targetPoint[1]-eyePoint[1],
@@ -5096,16 +5096,16 @@ void drawFrame(const float dt)
     // only use a close plane for drawing in the
     // cockpit, and even then only for odd sized tanks
     setupNearPlane();
-    
+
     // based on fog and _cullDist
     setupFarPlane();
-    
+
     ViewFrustum& viewFrustum = sceneRenderer->getViewFrustum();
 
     viewFrustum.setProjection(fov, NearPlane, FarPlane, FarDeepPlane,
-                              mainWindow->getWidth(),
-                              mainWindow->getHeight(),
-                              mainWindow->getViewHeight());
+			      mainWindow->getWidth(),
+			      mainWindow->getHeight(),
+			      mainWindow->getViewHeight());
     viewFrustum.setFarPlaneCull(FarPlaneCull);
 
     viewFrustum.setView(eyePoint, targetPoint);
@@ -5160,7 +5160,7 @@ void drawFrame(const float dt)
 
 	  const bool inCockpt  = ROAM.isRoaming() && !devDriving &&
 				 (ROAM.getMode() == Roaming::roamViewFP) &&
-				 ROAM.getTargetTank() && 
+				 ROAM.getTargetTank() &&
 				 (ROAM.getTargetTank()->getId() == i);
 	  const bool showPlayer = !inCockpt || showTreads;
 
@@ -5403,10 +5403,10 @@ void drawFrame(const float dt)
 	EyeDisplacement = BZDB.eval("eyesep");
       if (BZDB.isSet("focal"))
 	FocalPlane = BZDB.eval("focal");
-	
+
       if (BZDBCache::stencilShadows) {
-        BZDB.set("stencilShadows", "0");
-        addMessage(NULL, "Disabled stencilShadows for interlaced mode");
+	BZDB.set("stencilShadows", "0");
+	addMessage(NULL, "Disabled stencilShadows for interlaced mode");
       }
 
       OpenGLGState::resetState();
@@ -5773,7 +5773,7 @@ static void		playingLoop()
 
   // main loop
   while (!CommandsStandard::isQuit()) {
-  
+
     BZDBCache::update();
     if (world) {
       // make sure there are no adjustments
@@ -5938,7 +5938,7 @@ static void		playingLoop()
     if (world) {
       world->updateWind(dt);
     }
-  
+
     // move roaming camera
     if (ROAM.isRoaming()) {
       setupRoamingCamera(dt);
@@ -6092,15 +6092,15 @@ static void		playingLoop()
       static TimeKeeper lastTime = TimeKeeper::getCurrent();
       const float fpsLimit = BZDB.eval("fpsLimit");
       if ((fpsLimit >= 1.0f) && !std::isnan(fpsLimit)) {
-        const float elapsed = float(TimeKeeper::getCurrent() - lastTime);
-        if (elapsed > 0.0f) {
-          const float period = (1.0f / fpsLimit);
-          const float remaining = (period - elapsed);
-          if (remaining > 0.0f) {
-            TimeKeeper::sleep(remaining);
-          }
-        }
-      } 
+	const float elapsed = float(TimeKeeper::getCurrent() - lastTime);
+	if (elapsed > 0.0f) {
+	  const float period = (1.0f / fpsLimit);
+	  const float remaining = (period - elapsed);
+	  if (remaining > 0.0f) {
+	    TimeKeeper::sleep(remaining);
+	  }
+	}
+      }
       lastTime = TimeKeeper::getCurrent();
     } // end energy saver check
 
@@ -6658,11 +6658,11 @@ void			startPlaying(BzfDisplay* _display,
     controlPanel->addMessage(tmpString);
     // print author
     tmpString = ColorStrings[GreenColor];
-    tmpString += "Author:          Chris Schoeneman  <crs23@bigfoot.com>";
+    tmpString += "Author:	  Chris Schoeneman  <crs23@bigfoot.com>";
     controlPanel->addMessage(tmpString);
     // print maintainer
     tmpString = ColorStrings[CyanColor];
-    tmpString += "Maintainer:      Tim Riker         <Tim@Rikers.org>";
+    tmpString += "Maintainer:      Tim Riker	 <Tim@Rikers.org>";
     controlPanel->addMessage(tmpString);
     // print audio driver
     std::string audioStr;

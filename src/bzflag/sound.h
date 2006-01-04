@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2005 Tim Riker
+ * Copyright (c) 1993 - 2006 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -66,7 +66,7 @@ void			speedSoundReceiver(float vx, float vy, float vz);
 
 /* sound effect event at given position in world, or possible locally */
 void			playSound(int soundCode, const float pos[3],
-                                  bool important, bool localSound);
+				  bool important, bool localSound);
 
 /* sound effect event at given position in world */
 void			playWorldSound(int soundCode, const float pos[3],

@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2005 Tim Riker
+ * Copyright (c) 1993 - 2006 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -64,7 +64,7 @@ int TankGeometryUtils::buildLowTurret( void )
     doTexCoord2f(0.617f, -0.559f);
     doVertex3f(1.480f, 0.516f, 1.040f);
   glEnd(); // 2 tris
-  
+
   return 10;
 }
 

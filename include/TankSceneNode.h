@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2005 Tim Riker
+ * Copyright (c) 1993 - 2006 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -96,16 +96,16 @@ class TankSceneNode : public SceneNode {
 
     void		rebuildExplosion();
     void		addTreadOffsets(float left, float right);
-    
+
     void		notifyStyleChange();
     void		addRenderNodes(SceneRenderer&);
     void		addShadowNodes(SceneRenderer&);
 
     bool		cullShadow(int planeCount,
-                                   const float (*planes)[4]) const;
+				   const float (*planes)[4]) const;
 
     void		addLight(SceneRenderer&);
-    
+
     void		renderRadar();
 
     static void		setMaxLOD(int maxLevel);

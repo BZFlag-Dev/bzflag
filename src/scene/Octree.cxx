@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2005 Tim Riker
+ * Copyright (c) 1993 - 2006 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -252,7 +252,7 @@ int Octree::getShadowList (SceneNode** list, int listSize,
 
   ShadowCount = planeCount;
   ShadowPlanes = planes;
-  
+
   CullList = list;
   CullListCount = 0;
 
@@ -506,70 +506,70 @@ void OctreeNode::getFrustumList () const
 
   // is the viewer in this node?
   // add the closest nodes first
-  
+
   if (childCount > 0) {
-    if (F2BSORT) {  
+    if (F2BSORT) {
       const float* dir = CullFrustum->getDirection();
       unsigned char dirbits = 0;
       if (dir[0] < 0.0f) dirbits |= (1 << 0);
       if (dir[1] < 0.0f) dirbits |= (1 << 1);
       if (dir[2] < 0.0f) dirbits |= (1 << 2);
       const OctreeNode* onode;
-      
-  #define GET_NODE(x) 		\
+
+  #define GET_NODE(x)		\
     onode = children[(x)];	\
     if (onode != NULL) {	\
       onode->getFrustumList ();	\
     }
 
-  #define GET_FULL_NODE(x) 		\
+  #define GET_FULL_NODE(x)		\
     onode = children[(x)];		\
     if (onode != NULL) {		\
       onode->getFullyVisibleOcclude ();	\
     }
-    
+
     if (occLevel == Outside) {
-        GET_NODE(dirbits);				// 0:  0,0,0
-        dirbits ^= (1 << 0);
-        GET_NODE(dirbits);				// 1:  1,0,0
-        dirbits ^= (1 << 0) | (1 << 1);
-        GET_NODE(dirbits);				// 2:  0,1,0
-        dirbits ^= (1 << 1) | (1 << 2);
-        GET_NODE(dirbits);				// 3:  0,0,1
-        dirbits ^= (1 << 0) | (1 << 1) | (1 << 2);
-        GET_NODE(dirbits);				// 4:  1,1,0
-        dirbits ^= (1 << 1) | (1 << 2);
-        GET_NODE(dirbits);				// 5:  1,0,1
-        dirbits ^= (1 << 0) | (1 << 1);
-        GET_NODE(dirbits);				// 6:  0,1,1
-        dirbits ^= (1 << 0);
-        GET_NODE(dirbits);				// 7:  1,1,1
+	GET_NODE(dirbits);				// 0:  0,0,0
+	dirbits ^= (1 << 0);
+	GET_NODE(dirbits);				// 1:  1,0,0
+	dirbits ^= (1 << 0) | (1 << 1);
+	GET_NODE(dirbits);				// 2:  0,1,0
+	dirbits ^= (1 << 1) | (1 << 2);
+	GET_NODE(dirbits);				// 3:  0,0,1
+	dirbits ^= (1 << 0) | (1 << 1) | (1 << 2);
+	GET_NODE(dirbits);				// 4:  1,1,0
+	dirbits ^= (1 << 1) | (1 << 2);
+	GET_NODE(dirbits);				// 5:  1,0,1
+	dirbits ^= (1 << 0) | (1 << 1);
+	GET_NODE(dirbits);				// 6:  0,1,1
+	dirbits ^= (1 << 0);
+	GET_NODE(dirbits);				// 7:  1,1,1
       } else {
-        GET_FULL_NODE(dirbits);				// 0:  0,0,0
-        dirbits ^= (1 << 0);
-        GET_FULL_NODE(dirbits);				// 1:  1,0,0
-        dirbits ^= (1 << 0) | (1 << 1);
-        GET_FULL_NODE(dirbits);				// 2:  0,1,0
-        dirbits ^= (1 << 1) | (1 << 2);
-        GET_FULL_NODE(dirbits);				// 3:  0,0,1
-        dirbits ^= (1 << 0) | (1 << 1) | (1 << 2);
-        GET_FULL_NODE(dirbits);				// 4:  1,1,0
-        dirbits ^= (1 << 1) | (1 << 2);
-        GET_FULL_NODE(dirbits);				// 5:  1,0,1
-        dirbits ^= (1 << 0) | (1 << 1);
-        GET_FULL_NODE(dirbits);				// 6:  0,1,1
-        dirbits ^= (1 << 0);
-        GET_FULL_NODE(dirbits);				// 7:  1,1,1
+	GET_FULL_NODE(dirbits);				// 0:  0,0,0
+	dirbits ^= (1 << 0);
+	GET_FULL_NODE(dirbits);				// 1:  1,0,0
+	dirbits ^= (1 << 0) | (1 << 1);
+	GET_FULL_NODE(dirbits);				// 2:  0,1,0
+	dirbits ^= (1 << 1) | (1 << 2);
+	GET_FULL_NODE(dirbits);				// 3:  0,0,1
+	dirbits ^= (1 << 0) | (1 << 1) | (1 << 2);
+	GET_FULL_NODE(dirbits);				// 4:  1,1,0
+	dirbits ^= (1 << 1) | (1 << 2);
+	GET_FULL_NODE(dirbits);				// 5:  1,0,1
+	dirbits ^= (1 << 0) | (1 << 1);
+	GET_FULL_NODE(dirbits);				// 6:  0,1,1
+	dirbits ^= (1 << 0);
+	GET_FULL_NODE(dirbits);				// 7:  1,1,1
       }
-    } else {    
+    } else {
       if (occLevel == Outside) {
-        for (int i = 0; i < childCount; i++) {
-          squeezed[i]->getFrustumList ();
-        }
+	for (int i = 0; i < childCount; i++) {
+	  squeezed[i]->getFrustumList ();
+	}
       } else {
-        for (int i = 0; i < childCount; i++) {
-          squeezed[i]->getFullyVisibleOcclude ();
-        }
+	for (int i = 0; i < childCount; i++) {
+	  squeezed[i]->getFullyVisibleOcclude ();
+	}
       }
     }
   }

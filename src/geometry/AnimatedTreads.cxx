@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2005 Tim Riker
+ * Copyright (c) 1993 - 2006 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -472,7 +472,7 @@ static int buildWheel(const float pos[3], float angle, int divisions)
 int TankGeometryUtils::buildHighLCasingAnim()
 {
   int tris = 0;
-  
+
   tris += buildCasing(+treadYCenter);
 
   if (treadStyle == TankGeometryUtils::Covered) {
@@ -661,7 +661,7 @@ int TankGeometryUtils::buildHighLCasingAnim()
     }
     glShadeModel(GL_SMOOTH);
   }
-  
+
   return tris;
 }
 
@@ -857,7 +857,7 @@ int TankGeometryUtils::buildHighRCasingAnim()
     }
     glShadeModel(GL_SMOOTH);
   }
-  
+
   return tris;
 }
 

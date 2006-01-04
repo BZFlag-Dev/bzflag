@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2005 Tim Riker
+ * Copyright (c) 1993 - 2006 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -307,7 +307,7 @@ const ImageInfo& TextureManager::getInfo ( const char* name )
 
 
 bool TextureManager::getColorAverages(int texId, float rgba[4],
-                                      bool factorAlpha) const
+				      bool factorAlpha) const
 {
   TextureIDMap::const_iterator it = textureIDs.find(texId);
   if (it == textureIDs.end()) {
@@ -363,7 +363,7 @@ OpenGLTexture* TextureManager::loadTexture(FileTextureInit &init, bool reportFai
 
   OpenGLTexture *texture =
     new OpenGLTexture(width, height, image, init.filter, true);
-    
+
   delete[] image;
 
   return texture;

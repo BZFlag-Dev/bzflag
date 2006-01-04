@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2005 Tim Riker
+ * Copyright (c) 1993 - 2006 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -31,7 +31,7 @@ int TankGeometryUtils::buildHighTurret ( void )
     doVertex3f(-1.450f, 0.764f, 1.560f);
   glEnd();
   tris += 2;
-  
+
   glBegin(GL_TRIANGLE_STRIP);
     doNormal3f(-0.002288f, -0.999997f, 0.000374f);
     doTexCoord2f(0.866f, 0.402f);
@@ -45,7 +45,7 @@ int TankGeometryUtils::buildHighTurret ( void )
     doVertex3f(-0.964f, -0.765f, 1.510f);
   glEnd();
   tris += 2;
-  
+
   glBegin(GL_TRIANGLE_STRIP);
     doNormal3f(-1.000000f, 0.000000f, 0.000000f);
     doTexCoord2f(0.996f, -0.132f);
@@ -63,7 +63,7 @@ int TankGeometryUtils::buildHighTurret ( void )
     doVertex3f(-0.964f, -0.765f, 1.510f);
   glEnd();
   tris += 4;
-  
+
   glBegin(GL_TRIANGLE_STRIP);
     doNormal3f(1.000000f, 0.000000f, 0.000000f);
     doTexCoord2f(0.107f, -0.009f);
@@ -106,7 +106,7 @@ int TankGeometryUtils::buildHighTurret ( void )
     doVertex3f(-0.946f, 0.762f, 1.970f);
   glEnd();
   tris += 14;
-  
+
   glBegin(GL_TRIANGLE_STRIP);
     doNormal3f(-1.000000f, 0.000000f, 0.000000f);
     doTexCoord2f(0.890f, 0.022f);
@@ -119,7 +119,7 @@ int TankGeometryUtils::buildHighTurret ( void )
     doVertex3f(-0.548f, -0.599f, 1.920f);
   glEnd();
   tris += 2;
-  
+
   glBegin(GL_TRIANGLE_STRIP);
     doNormal3f(0.000000f, 0.000000f, 1.000000f);
     doTexCoord2f(0.606f, 0.158f);
@@ -148,7 +148,7 @@ int TankGeometryUtils::buildHighTurret ( void )
     doVertex3f(0.108f, 0.757f, 2.080f);
   glEnd();
   tris += 10;
-  
+
   glShadeModel(GL_SMOOTH);
   glBegin(GL_TRIANGLE_STRIP);
     doNormal3f(-0.542880f, -0.839586f, 0.019418f);
@@ -185,7 +185,7 @@ int TankGeometryUtils::buildHighTurret ( void )
     doVertex3f(1.770f, -0.434f, 1.540f);
   glEnd();
   tris += 9;
-  
+
   glBegin(GL_TRIANGLE_STRIP);
     doNormal3f(0.174171f, 0.976300f, 0.128465f);
     doTexCoord2f(0.473f, -0.529f);
@@ -221,7 +221,7 @@ int TankGeometryUtils::buildHighTurret ( void )
     doVertex3f(-0.946f, 0.762f, 1.970f);
   glEnd();
   tris += 9;
-  
+
   glBegin(GL_TRIANGLE_STRIP);
     doNormal3f(-0.928088f, 0.340137f, 0.151525f);
     doTexCoord2f(1.080f, 0.169f);
@@ -251,7 +251,7 @@ int TankGeometryUtils::buildHighTurret ( void )
     doVertex3f(-1.450f, -0.765f, 1.560f);
   glEnd();
   tris += 8;
-  
+
   glBegin(GL_TRIANGLE_STRIP);
     doNormal3f(-0.084890f, -0.996390f, 0.000000f);
     doTexCoord2f(0.583f, 0.312f);
@@ -275,7 +275,7 @@ int TankGeometryUtils::buildHighTurret ( void )
     doVertex3f(1.480f, -0.516f, 1.040f);
   glEnd();
   tris += 6;
-  
+
   glBegin(GL_TRIANGLE_STRIP);
     doNormal3f(0.379521f, 0.925183f, 0.000000f);
     doTexCoord2f(0.581f, -0.519f);
@@ -299,7 +299,7 @@ int TankGeometryUtils::buildHighTurret ( void )
     doVertex3f(-0.456f, 1.080f, 1.040f);
   glEnd();
   tris += 6;
-  
+
   glBegin(GL_TRIANGLE_STRIP);
     doNormal3f(-0.628337f, -0.777941f, 0.000000f);
     doTexCoord2f(0.706f, 0.220f);
@@ -363,7 +363,7 @@ int TankGeometryUtils::buildHighTurret ( void )
     doVertex3f(-0.548f, 0.599f, 1.920f);
   glEnd();
   tris += 22;
-  
+
   glBegin(GL_TRIANGLE_FAN);
     doNormal3f(-0.085837f, 0.008268f, -0.996275f);
     doTexCoord2f(1.060f, 0.015f);
@@ -387,7 +387,7 @@ int TankGeometryUtils::buildHighTurret ( void )
     doVertex3f(-1.450f, 0.764f, 1.560f);
   glEnd();
   tris += 5;
-  
+
   glBegin(GL_TRIANGLE_FAN);
     doNormal3f(0.158932f, -0.015248f, 0.987172f);
     doTexCoord2f(0.999f, 0.075f);
@@ -412,7 +412,7 @@ int TankGeometryUtils::buildHighTurret ( void )
   glEnd();
   tris += 5;
 
-  return tris;  
+  return tris;
 }
 /*
  * Local Variables: ***

@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2005 Tim Riker
+ * Copyright (c) 1993 - 2006 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -278,8 +278,8 @@ BZAdminClient::ServerCode BZAdminClient::checkMessage() {
 	  vbuf = a.unpack(vbuf);
 	  players[p].ip = a.getDotNotation();
 	  if ((ui != NULL) && messageMask[MsgAdminInfo]){
-            ui->outputMessage("*** IPINFO: " + players[p].name + " from "  +
-              players[p].ip, Default);
+	    ui->outputMessage("*** IPINFO: " + players[p].name + " from "  +
+	      players[p].ip, Default);
 	  }
 	}
       }

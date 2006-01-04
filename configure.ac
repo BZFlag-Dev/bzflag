@@ -1,6 +1,6 @@
 dnl                   C O N F I G U R E . A C
 dnl BZFlag
-dnl Copyright (c) 1993 - 2005 Tim Riker
+dnl Copyright (c) 1993 - 2006 Tim Riker
 dnl
 dnl This package is free software;  you can redistribute it and/or
 dnl modify it under the terms of the license found in the file

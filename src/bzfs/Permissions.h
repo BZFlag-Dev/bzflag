@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2005 Tim Riker
+ * Copyright (c) 1993 - 2006 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -127,7 +127,7 @@ public:
   void	setPasswd(const std::string& pwd);
 
   /** have successfully provided server password */
-  void  setOperator();	
+  void  setOperator();
   bool	isOperator() const;
 
   /** have ability to ban */
@@ -174,7 +174,7 @@ private:
   int				loginAttempts;
 
   /** server operator that has provided the server password */
-  bool			  	serverop;
+  bool				serverop;
 
   // number of times they have tried to /password
   int passwordAttempts;

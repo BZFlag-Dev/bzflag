@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2005 Tim Riker
+ * Copyright (c) 1993 - 2006 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -748,7 +748,7 @@ void			ControlPanel::addMessage(const std::string& line,
     _maxScrollPages = atoi(BZDB.getDefault("scrollPages").c_str());
     BZDB.setInt("scrollPages", _maxScrollPages);
   }
-  
+
   // the effective tab
   const int tabmode = (realmode == MessageCurrent) ? messageMode : realmode;
 
@@ -756,34 +756,34 @@ void			ControlPanel::addMessage(const std::string& line,
   for (int tab = MessageAll; tab < MessageModeCount; tab++) {
 
     if ((tab == tabmode) // add to its own mode
-        // add to the All tab, unless using Current mode
-        || ((tab == MessageAll) && (realmode != MessageCurrent))
-        // always add to all tabs
-        || (realmode == MessageAllTabs)) {
-      
+	// add to the All tab, unless using Current mode
+	|| ((tab == MessageAll) && (realmode != MessageCurrent))
+	// always add to all tabs
+	|| (realmode == MessageAllTabs)) {
+
       // insert the message into the tab
       if ((int)messages[tab].size() < maxLines * _maxScrollPages) {
-        // not full yet so just append it
-        messages[tab].push_back(item);
+	// not full yet so just append it
+	messages[tab].push_back(item);
       } else {
-        // rotate list and replace oldest (in newest position after rotate)
-        messages[tab].pop_front();
-        messages[tab].push_back(item);
+	// rotate list and replace oldest (in newest position after rotate)
+	messages[tab].pop_front();
+	messages[tab].push_back(item);
       }
-      
+
       // visible changes, force a console refresh
       if (messageMode == tab) {
-        invalidate();
+	invalidate();
       }
-      
+
       // mark the tab as unread (if viewing tabs)
       const bool showTabs = (BZDB.evalInt("showtabs") > 0);
       if (showTabs && (messageMode != tab) && (messageMode != MessageAll)) {
-        unRead[tab] = true;
+	unRead[tab] = true;
       }
     }
-  } 
-  
+  }
+
   if (echoToConsole){
 #ifdef _WIN32
     // this is cheap but it will work on windows
@@ -799,26 +799,26 @@ void			ControlPanel::addMessage(const std::string& line,
       std::cout << stripAnsiCodes(line) << std::endl;
     }
     fflush(stdout);
-#endif 
+#endif
   }
 }
 
 
 void ControlPanel::saveMessages(const std::string& filename,
-                                bool stripAnsi) const
+				bool stripAnsi) const
 {
   FILE* file = fopen(filename.c_str(), "a+");
   if (!file) {
     return;
   }
-  
+
   const time_t nowTime = time (NULL);
   fprintf(file, "\n");
   fprintf(file, "----------------------------------------"
-                "----------------------------------------\n");
+		"----------------------------------------\n");
   fprintf(file, "Messages saved: %s", ctime(&nowTime));
   fprintf(file, "----------------------------------------"
-                "----------------------------------------\n\n");
+		"----------------------------------------\n\n");
 
 
   // add to the appropriate tabs
@@ -833,7 +833,7 @@ void ControlPanel::saveMessages(const std::string& filename,
   }
 
   fclose(file);
-  
+
   return;
 }
 

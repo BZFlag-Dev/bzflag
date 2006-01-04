@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2005 Tim Riker
+ * Copyright (c) 1993 - 2006 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -37,14 +37,14 @@ class EntryZones
     void addZoneFlag(int zone, int flagId);
 
     void calculateQualifierLists();
-    
+
     bool getZonePoint(const std::string &qualifier, float *pt) const;
     bool getSafetyPoint(const std::string &qualifier,
 			const float *pos, float *pt) const;
 
     bool getRandomPoint(const std::string &qual, float *pt) const;
     bool getClosePoint(const std::string &qual, const float pos[3],
-                       float *pt) const;
+		       float *pt) const;
 
     const ZoneList& getZoneList() const;
 

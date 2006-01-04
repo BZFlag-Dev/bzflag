@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2005 Tim Riker
+ * Copyright (c) 1993 - 2006 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -121,11 +121,11 @@ void CustomWeapon::writeToWorld(WorldInfo* world) const
 {
   if (triggerType == bz_eNullEvent) {
     world->addWeapon(type, pos, rotation, tilt,
-                     teamColor, initdelay, delay, sync);
+		     teamColor, initdelay, delay, sync);
   } else {
-    WorldWeaponGlobalEventHandler* eventHandler = 
+    WorldWeaponGlobalEventHandler* eventHandler =
       new WorldWeaponGlobalEventHandler(type, pos, rotation, tilt,
-                                        (TeamColor)eventTeam);
+					(TeamColor)eventTeam);
     worldEventManager.addEvent(triggerType, eventHandler);
   }
 }

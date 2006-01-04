@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2005 Tim Riker
+ * Copyright (c) 1993 - 2006 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -300,15 +300,15 @@ void BackgroundRenderer::setupGroundMaterials()
 	groundTextureID = tm.getTextureID(BZDB.get("stdGroundTexture").c_str(), true);
       } else {
 	// only apply the texture matrix if the texture is valid
-        const int texMatId = bzmat->getTextureMatrix(0);
-        const TextureMatrix* texmat = TEXMATRIXMGR.getMatrix(texMatId);
-        if (texmat != NULL) {
-          groundTextureMatrix = texmat->getMatrix();
-        }
+	const int texMatId = bzmat->getTextureMatrix(0);
+	const TextureMatrix* texmat = TEXMATRIXMGR.getMatrix(texMatId);
+	if (texmat != NULL) {
+	  groundTextureMatrix = texmat->getMatrix();
+	}
       }
     }
   }
-  
+
   static const GLfloat	black[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
   OpenGLMaterial defaultMaterial(black, black, 0.0f);
 
@@ -668,15 +668,15 @@ void BackgroundRenderer::renderGroundEffects(SceneRenderer& renderer,
     // performed only at a vertex, and the ground's vertices are a few
     // kilometers away.
     if (BZDBCache::blend && BZDBCache::lighting &&
-        !drawingMirror && BZDBCache::drawGroundLights) {
+	!drawingMirror && BZDBCache::drawGroundLights) {
       if (BZDBCache::tesselation && (renderer.useQuality() >= 3)) {
-//          (BZDB.get(StateDatabase::BZDB_FOGMODE) == "none")) {
-        // not really tesselation, but it is tied to the "Best" lighting,
-        // avoid on foggy maps, because the blending function accumulates
-        // too much brightness.
-        drawAdvancedGroundReceivers(renderer);
+//	  (BZDB.get(StateDatabase::BZDB_FOGMODE) == "none")) {
+	// not really tesselation, but it is tied to the "Best" lighting,
+	// avoid on foggy maps, because the blending function accumulates
+	// too much brightness.
+	drawAdvancedGroundReceivers(renderer);
       } else {
-        drawGroundReceivers(renderer);
+	drawGroundReceivers(renderer);
       }
     }
 
@@ -747,8 +747,8 @@ void BackgroundRenderer::setupSkybox()
   };
   TextureManager& tm = TextureManager::instance();
   const BzMaterial* bzmats[6] = {NULL, NULL, NULL, NULL, NULL, NULL};
-  
-  // try to load the textures  
+
+  // try to load the textures
   for (i = 0; i < 6; i++) {
     bzmats[i] = MATERIALMGR.findMaterial(skyboxNames[i]);
     if ((bzmats[i] == NULL) || (bzmats[i]->getTextureCount() <= 0)) {
@@ -760,12 +760,12 @@ void BackgroundRenderer::setupSkybox()
     }
   }
 
-  // unload textures if they were not all successful  
+  // unload textures if they were not all successful
   if (i != 6) {
     while (i >= 0) {
       if ((bzmats[i] != NULL) && (bzmats[i]->getTextureCount() > 0)) {
-        // NOTE: this could delete textures the might be used elsewhere
-        tm.removeTexture(bzmats[i]->getTextureLocal(0).c_str());
+	// NOTE: this could delete textures the might be used elsewhere
+	tm.removeTexture(bzmats[i]->getTextureLocal(0).c_str());
       }
       i--;
     }
@@ -779,7 +779,7 @@ void BackgroundRenderer::setupSkybox()
 
   // setup the wrap mode
   skyboxWrapMode = GL_CLAMP;
-#ifdef GL_VERSION_1_2  
+#ifdef GL_VERSION_1_2
   const char* extStr = (const char*) glGetString(GL_EXTENSIONS);
   if (strstr(extStr, "GL_EXT_texture_edge_clamp") != NULL) {
     skyboxWrapMode = GL_CLAMP_TO_EDGE;
@@ -795,18 +795,18 @@ void BackgroundRenderer::setupSkybox()
     for (int c = 0; c < 4; c++) {
       skyboxColor[i][c] = 0.0f;
       for (int f = 0; f < 3; f++) {
-        skyboxColor[i][c] += bzmats[cornerFaces[i][f]]->getDiffuse()[c];
+	skyboxColor[i][c] += bzmats[cornerFaces[i][f]]->getDiffuse()[c];
       }
       skyboxColor[i][c] /= 3.0f;
     }
   }
-  
+
   haveSkybox = true;
-  
+
   return;
 }
 
-  
+
 void BackgroundRenderer::drawSkybox()
 {
   // sky box must fit inside far clipping plane
@@ -820,9 +820,9 @@ void BackgroundRenderer::drawSkybox()
     {1.0f, 0.0f}, {0.0f, 0.0f},
     {0.0f, 1.0f}, {1.0f, 1.0f}
   };
-  
+
   TextureManager& tm = TextureManager::instance();
-  
+
   OpenGLGState::resetState();
 
   const GLfloat (*color)[4] = skyboxColor;
@@ -862,7 +862,7 @@ void BackgroundRenderer::drawSkybox()
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, skyboxWrapMode);
   glBegin(GL_QUADS);
   {
-    glTexCoord2fv(txcds[0]); glColor3fv(color[0]); glVertex3fv(verts[0]); 
+    glTexCoord2fv(txcds[0]); glColor3fv(color[0]); glVertex3fv(verts[0]);
     glTexCoord2fv(txcds[1]); glColor3fv(color[3]); glVertex3fv(verts[3]);
     glTexCoord2fv(txcds[2]); glColor3fv(color[7]); glVertex3fv(verts[7]);
     glTexCoord2fv(txcds[3]); glColor3fv(color[4]); glVertex3fv(verts[4]);
@@ -914,32 +914,32 @@ void BackgroundRenderer::drawSkybox()
 void BackgroundRenderer::drawSky(SceneRenderer& renderer, bool mirror)
 {
   glPushMatrix();
-  
+
   const bool doSkybox = haveSkybox && (renderer.useQuality() >= 2);
 
   if (!doSkybox) {
     // rotate sky so that horizon-point-toward-sun-color is actually
     // toward the sun
     glRotatef((GLfloat)((atan2f(sunDirection[1], sunDirection[0]) * 180.0 + 135.0) / M_PI),
-              0.0f, 0.0f, 1.0f);
+	      0.0f, 0.0f, 1.0f);
 
     // draw sky
     skyGState.setState();
     if (!doSunset) {
       // just a pyramid
       glBegin(GL_TRIANGLE_FAN);
-        glColor3fv(skyZenithColor);
-        glVertex3fv(skyPyramid[4]);
-        glColor3fv(skyCrossSunDirColor);
-        glVertex3fv(skyPyramid[0]);
-        glColor3fv(skySunDirColor);
-        glVertex3fv(skyPyramid[3]);
-        glColor3fv(skyCrossSunDirColor);
-        glVertex3fv(skyPyramid[2]);
-        glColor3fv(skyAntiSunDirColor);
-        glVertex3fv(skyPyramid[1]);
-        glColor3fv(skyCrossSunDirColor);
-        glVertex3fv(skyPyramid[0]);
+	glColor3fv(skyZenithColor);
+	glVertex3fv(skyPyramid[4]);
+	glColor3fv(skyCrossSunDirColor);
+	glVertex3fv(skyPyramid[0]);
+	glColor3fv(skySunDirColor);
+	glVertex3fv(skyPyramid[3]);
+	glColor3fv(skyCrossSunDirColor);
+	glVertex3fv(skyPyramid[2]);
+	glColor3fv(skyAntiSunDirColor);
+	glVertex3fv(skyPyramid[1]);
+	glColor3fv(skyCrossSunDirColor);
+	glVertex3fv(skyPyramid[0]);
       glEnd();
     }
     else {
@@ -947,14 +947,14 @@ void BackgroundRenderer::drawSky(SceneRenderer& renderer, bool mirror)
       // triangles each.  the top triangle is all zenith color,
       // the bottom goes from zenith to sun-dir color.
       glBegin(GL_TRIANGLE_FAN);
-        glColor3fv(skyZenithColor);
-        glVertex3fv(skyPyramid[4]);
-        glColor3fv(skyCrossSunDirColor);
-        glVertex3fv(skyPyramid[2]);
-        glColor3fv(skyAntiSunDirColor);
-        glVertex3fv(skyPyramid[1]);
-        glColor3fv(skyCrossSunDirColor);
-        glVertex3fv(skyPyramid[0]);
+	glColor3fv(skyZenithColor);
+	glVertex3fv(skyPyramid[4]);
+	glColor3fv(skyCrossSunDirColor);
+	glVertex3fv(skyPyramid[2]);
+	glColor3fv(skyAntiSunDirColor);
+	glVertex3fv(skyPyramid[1]);
+	glColor3fv(skyCrossSunDirColor);
+	glVertex3fv(skyPyramid[0]);
       glEnd();
 
       GLfloat sunsetTopPoint[3];
@@ -962,37 +962,37 @@ void BackgroundRenderer::drawSky(SceneRenderer& renderer, bool mirror)
       sunsetTopPoint[1] = skyPyramid[3][1] * (1.0f - sunsetTop);
       sunsetTopPoint[2] = skyPyramid[4][2] * sunsetTop;
       glBegin(GL_TRIANGLES);
-        glColor3fv(skyZenithColor);
-        glVertex3fv(skyPyramid[4]);
-        glColor3fv(skyCrossSunDirColor);
-        glVertex3fv(skyPyramid[0]);
-        glColor3fv(skyZenithColor);
-        glVertex3fv(sunsetTopPoint);
-        glVertex3fv(skyPyramid[4]);
-        glVertex3fv(sunsetTopPoint);
-        glColor3fv(skyCrossSunDirColor);
-        glVertex3fv(skyPyramid[2]);
-        glColor3fv(skyZenithColor);
-        glVertex3fv(sunsetTopPoint);
-        glColor3fv(skyCrossSunDirColor);
-        glVertex3fv(skyPyramid[0]);
-        glColor3fv(skySunDirColor);
-        glVertex3fv(skyPyramid[3]);
-        glColor3fv(skyCrossSunDirColor);
-        glVertex3fv(skyPyramid[2]);
-        glColor3fv(skyZenithColor);
-        glVertex3fv(sunsetTopPoint);
-        glColor3fv(skySunDirColor);
-        glVertex3fv(skyPyramid[3]);
+	glColor3fv(skyZenithColor);
+	glVertex3fv(skyPyramid[4]);
+	glColor3fv(skyCrossSunDirColor);
+	glVertex3fv(skyPyramid[0]);
+	glColor3fv(skyZenithColor);
+	glVertex3fv(sunsetTopPoint);
+	glVertex3fv(skyPyramid[4]);
+	glVertex3fv(sunsetTopPoint);
+	glColor3fv(skyCrossSunDirColor);
+	glVertex3fv(skyPyramid[2]);
+	glColor3fv(skyZenithColor);
+	glVertex3fv(sunsetTopPoint);
+	glColor3fv(skyCrossSunDirColor);
+	glVertex3fv(skyPyramid[0]);
+	glColor3fv(skySunDirColor);
+	glVertex3fv(skyPyramid[3]);
+	glColor3fv(skyCrossSunDirColor);
+	glVertex3fv(skyPyramid[2]);
+	glColor3fv(skyZenithColor);
+	glVertex3fv(sunsetTopPoint);
+	glColor3fv(skySunDirColor);
+	glVertex3fv(skyPyramid[3]);
       glEnd();
     }
   }
 
   glLoadIdentity();
   renderer.getViewFrustum().executeOrientation();
-  
+
   const bool useClipPlane = (mirror && (doSkybox || BZDBCache::drawCelestial));
-  
+
   if (useClipPlane) {
     glEnable(GL_CLIP_PLANE0);
     const GLdouble plane[4] = {0.0, 0.0, +1.0, 0.0};
@@ -1028,7 +1028,7 @@ void BackgroundRenderer::drawSky(SceneRenderer& renderer, bool mirror)
   if (useClipPlane) {
     glDisable(GL_CLIP_PLANE0);
   }
-  
+
   glPopMatrix();
 }
 
@@ -1091,7 +1091,7 @@ void BackgroundRenderer::drawGroundCentered()
   };
 
 //  const GLubyte fan[6] = { 0, 1, 2, 3, 4, 1};
-  
+
   glNormal3f(0.0f, 0.0f, 1.0f);
   glBegin(GL_TRIANGLE_FAN);
   {
@@ -1165,7 +1165,7 @@ void			BackgroundRenderer::drawGroundShadows(
   // disable the unused arrays
   glDisableClientState(GL_NORMAL_ARRAY);
   glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-  
+
   if (BZDBCache::stencilShadows) {
     OpenGLGState::resetState();
     const float shadowAlpha = BZDB.eval("shadowAlpha");
@@ -1177,7 +1177,7 @@ void			BackgroundRenderer::drawGroundShadows(
       glStencilFunc(GL_NOTEQUAL, 1, 1);
       glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
       glEnable(GL_STENCIL_TEST);
-      
+
       // turn on blending, and kill culling
       glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
       glEnable(GL_BLEND);
@@ -1204,7 +1204,7 @@ void			BackgroundRenderer::drawGroundShadows(
   SceneNode::setColorOverride(false);
 
   OpenGLGState::resetState();
-  
+
   // re-enable the arrays
   glEnableClientState(GL_NORMAL_ARRAY);
   glEnableClientState(GL_TEXTURE_COORD_ARRAY);
@@ -1258,10 +1258,10 @@ void BackgroundRenderer::drawGroundReceivers(SceneRenderer& renderer)
 
     // maximum value
     const float maxVal = (lightColor[0] > lightColor[1]) ?
-                         ((lightColor[0] > lightColor[2]) ?
-                          lightColor[0] : lightColor[2]) :
-                         ((lightColor[1] > lightColor[2]) ?
-                          lightColor[1] : lightColor[2]);
+			 ((lightColor[0] > lightColor[2]) ?
+			  lightColor[0] : lightColor[2]) :
+			 ((lightColor[1] > lightColor[2]) ?
+			  lightColor[1] : lightColor[2]);
 
     // if I is too attenuated, don't bother drawing anything
     if ((I * maxVal) < 0.02f) {
@@ -1331,7 +1331,7 @@ void BackgroundRenderer::drawGroundReceivers(SceneRenderer& renderer)
       glEnd();
     }
     triangleCount += (receiverSlices * receiverRings * 2);
-    
+
     glTranslatef(-pos[0], -pos[1], 0.0f);
   }
   glPopMatrix();
@@ -1367,7 +1367,7 @@ void BackgroundRenderer::drawAdvancedGroundReceivers(SceneRenderer& renderer)
       parseColorString(BZDB.get("GroundOverideColor"), overrideColor)) {
     gndColor = overrideColor;
   }
-    
+
   const bool useTexture = BZDBCache::texture && (groundTextureID >= 0);
   OpenGLGState advGState;
   OpenGLGStateBuilder builder;
@@ -1409,7 +1409,7 @@ void BackgroundRenderer::drawAdvancedGroundReceivers(SceneRenderer& renderer)
     // point under light
     float d = pos[2];
     float I = 1.0f / (atten[0] + d * (atten[1] + d * atten[2]));
-    
+
     // set the main lighting color
     float baseColor[3];
     baseColor[0] = gndColor[0] * lightColor[0];
@@ -1420,13 +1420,13 @@ void BackgroundRenderer::drawAdvancedGroundReceivers(SceneRenderer& renderer)
       baseColor[1] = 1.0f - baseColor[1];
       baseColor[2] = 1.0f - baseColor[2];
     }
-    
+
     // maximum value
     const float maxVal = (baseColor[0] > baseColor[1]) ?
-                         ((baseColor[0] > baseColor[2]) ?
-                          baseColor[0] : baseColor[2]) :
-                         ((baseColor[1] > baseColor[2]) ?
-                          baseColor[1] : baseColor[2]);
+			 ((baseColor[0] > baseColor[2]) ?
+			  baseColor[0] : baseColor[2]) :
+			 ((baseColor[1] > baseColor[2]) ?
+			  baseColor[1] : baseColor[2]);
 
     // if I is too attenuated, don't bother drawing anything
     if ((I * maxVal) < minLuminance) {
@@ -1440,7 +1440,7 @@ void BackgroundRenderer::drawAdvancedGroundReceivers(SceneRenderer& renderer)
     float innerColor[3];
     float outerSize;
     float outerColor[3];
-    
+
     // draw ground receiver, computing lighting at each vertex ourselves
     glBegin(GL_TRIANGLE_FAN);
     {
@@ -1469,7 +1469,7 @@ void BackgroundRenderer::drawAdvancedGroundReceivers(SceneRenderer& renderer)
     triangleCount += receiverSlices;
 
     bool moreRings = true;
-    for (i = 2; moreRings; i++) {    
+    for (i = 2; moreRings; i++) {
       // inner ring
       innerSize = outerSize;
       memcpy(innerColor, outerColor, sizeof(float[3]));
@@ -1480,8 +1480,8 @@ void BackgroundRenderer::drawAdvancedGroundReceivers(SceneRenderer& renderer)
       I = 1.0f / (atten[0] + d * (atten[1] + d * atten[2]));
       I *= pos[2] / d; // diffuse angle factor
       if ((I * maxVal) < minLuminance) {
-        I = 0.0f;
-        moreRings = false; // bail after this ring
+	I = 0.0f;
+	moreRings = false; // bail after this ring
       }
       outerColor[0] = I * baseColor[0];
       outerColor[1] = I * baseColor[1];
@@ -1490,16 +1490,16 @@ void BackgroundRenderer::drawAdvancedGroundReceivers(SceneRenderer& renderer)
       glBegin(GL_QUAD_STRIP);
       {
 	for (j = 0; j <= receiverSlices; j++) {
-          glColor3fv(innerColor);
+	  glColor3fv(innerColor);
 	  glVertex2f(angle[j][0] * innerSize, angle[j][1] * innerSize);
-          glColor3fv(outerColor);
+	  glColor3fv(outerColor);
 	  glVertex2f(angle[j][0] * outerSize, angle[j][1] * outerSize);
 	}
       }
       glEnd();
     }
     triangleCount += (receiverSlices * 2 * (i - 2));
-    
+
     glTranslatef(-pos[0], -pos[1], 0.0f);
   }
   glPopMatrix();

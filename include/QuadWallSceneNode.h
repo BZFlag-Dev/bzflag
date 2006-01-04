@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2005 Tim Riker
+ * Copyright (c) 1993 - 2006 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -91,7 +91,7 @@ class QuadWallSceneNode : public WallSceneNode {
       public:
 	GLfloat3Array	vertex;
 	GLfloat2Array	uv;
-	int             triangles;
+	int	     triangles;
     };
 
   private:

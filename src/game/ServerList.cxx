@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2005 Tim Riker
+ * Copyright (c) 1993 - 2006 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -112,9 +112,9 @@ void ServerList::readServerList()
 	base = scan;
 	continue;
       } else if (!strncmp(base, noticeIdentifier, strlen(noticeIdentifier))) {
-        printError(base);
-        base = scan;
-        continue;
+	printError(base);
+	base = scan;
+	continue;
       }
       // parse server info
       char *scan2, *name, *version, *infoServer, *address, *title;

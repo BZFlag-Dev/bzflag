@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2005 Tim Riker
+ * Copyright (c) 1993 - 2006 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -57,7 +57,7 @@ StringVector TextChunk::parse()
     for(int i = 0; (i < 20) && in.good(); i++) {
       in.getline(buffer, MessageLen);
       if(!in.fail()){ // really read something
-        strings.push_back(buffer);
+	strings.push_back(buffer);
       }
     }
   }
@@ -90,7 +90,7 @@ const StringVector& TextChunk::getVector() const
 /******************************************************************************/
 
 bool TextChunkManager::parseFile(const std::string &fileName,
-                                 const std::string &chunkName)
+				 const std::string &chunkName)
 {
   TextChunk textChunk(fileName);
 
@@ -105,7 +105,7 @@ bool TextChunkManager::parseFile(const std::string &fileName,
 
   // add or replace the chunk
   theChunks[chunkName] = textChunk;
-  
+
   return true;
 }
 

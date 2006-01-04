@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2005 Tim Riker
+ * Copyright (c) 1993 - 2006 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -197,9 +197,9 @@ bool SceneNode::cullShadow(int, const float (*)[4]) const
   // currently only used for dynamic nodes by ZSceneDatabase
   // we let the octree deal with the static nodes
   return true;
-}                                              
+}
 
-    
+
 bool SceneNode::inAxisBox (const Extents& exts) const
 {
   if (!extents.touches(exts)) {

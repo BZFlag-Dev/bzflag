@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2005 Tim Riker
+ * Copyright (c) 1993 - 2006 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -37,8 +37,8 @@ void broadcastMessage(uint16_t code, int len, const void *msg);
 
 
 static int fireWorldWepReal(FlagType* type, float lifetime, PlayerId player,
-                            TeamColor teamColor, float *pos, float tilt, float dir,
-                            int shotID, float dt)
+			    TeamColor teamColor, float *pos, float tilt, float dir,
+			    int shotID, float dt)
 {
   void *buf, *bufStart = getDirectMessageBuffer();
 
@@ -243,18 +243,18 @@ void WorldWeaponGlobalEventHandler::process (bz_EventData *eventData)
 	  return;
 
   fireWorldWepReal(type, BZDB.eval(StateDatabase::BZDB_RELOADTIME),
-                   ServerPlayer, RogueTeam, origin, tilt, direction,
-                   world->getWorldWeapons().getNewWorldShotID(),0);
+		   ServerPlayer, RogueTeam, origin, tilt, direction,
+		   world->getWorldWeapons().getNewWorldShotID(),0);
 }
 
 
 // for bzfsAPI: it needs to be global
 int fireWorldWep(FlagType* type, float lifetime, PlayerId player,
-                        float *pos, float tilt, float direction,
-                        int shotID, float dt)
+			float *pos, float tilt, float direction,
+			int shotID, float dt)
 {
   return fireWorldWepReal(type, lifetime, player, RogueTeam,
-                          pos, tilt, direction, shotID, dt);
+			  pos, tilt, direction, shotID, dt);
 }
 
 

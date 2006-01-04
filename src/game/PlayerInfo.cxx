@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2005 Tim Riker
+ * Copyright (c) 1993 - 2006 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -113,14 +113,14 @@ bool PlayerInfo::unpackEnter(void *buf, uint16_t &rejectCode, char *rejectMsg)
   buf = nboUnpackString(buf, email, EmailLen);
   buf = nboUnpackString(buf, token, TokenLen);
   buf = nboUnpackString(buf, clientVersion, VersionLen);
-  
+
   // terminate the strings
   callSign[CallSignLen - 1] = '\0';
   email[EmailLen - 1] = '\0';
   token[TokenLen - 1] = '\0';
   clientVersion[VersionLen - 1] = '\0';
   cleanEMail();
-  
+
   DEBUG2("Player %s [%d] sent version string: %s\n",
 	 callSign, playerIndex, clientVersion);
   int major, minor, rev;
@@ -130,7 +130,7 @@ bool PlayerInfo::unpackEnter(void *buf, uint16_t &rejectCode, char *rejectMsg)
     clientVersionRevision = rev;
   }
   DEBUG4("Player %s version code parsed as:  %i.%i.%i\n", callSign,
-         clientVersionMajor, clientVersionMinor, clientVersionRevision);
+	 clientVersionMajor, clientVersionMinor, clientVersionRevision);
 
   // spoof filter holds "SERVER" for robust name comparisons
   if (serverSpoofingFilter.wordCount() == 0) {

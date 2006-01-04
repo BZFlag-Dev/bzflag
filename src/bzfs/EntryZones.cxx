@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2005 Tim Riker
+ * Copyright (c) 1993 - 2006 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -70,7 +70,7 @@ void EntryZones::calculateQualifierLists()
     }
   }
 
-  // calculate the qualifier weights  
+  // calculate the qualifier weights
   for (QualifierMap::iterator mit = qmap.begin(); mit != qmap.end(); ++mit) {
     QPairList &qPairList = mit->second;
     float total = 0.0f;
@@ -111,13 +111,13 @@ bool EntryZones::getRandomPoint(const std::string &qual, float *pt) const
   }
 
   zones[vit->first].getRandomPoint(pt);
-  
+
   return true;
 }
 
 
 bool EntryZones::getClosePoint(const std::string &qual, const float pos[3],
-                               float *pt) const
+			       float *pt) const
 {
   QualifierMap::const_iterator mit = qmap.find(qual);
   if (mit == qmap.end())
@@ -169,7 +169,7 @@ bool EntryZones::getZonePoint(const std::string &qualifier, float *pt) const
   }
 
   zones[vit->first].getRandomPoint(pt);
-  
+
   return true;
 }
 

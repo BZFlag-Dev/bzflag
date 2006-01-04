@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2005 Tim Riker
+ * Copyright (c) 1993 - 2006 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -381,9 +381,9 @@ void BaseBuilding::printOBJ(std::ostream& out, const std::string& /*indent*/) co
   out << "f -5/-4/-3 -8/-3/-3 -4/-2/-3 -1/-1/-3" << std::endl;
 
   out << std::endl;
-  
+
   incObjCounter();
-  
+
   return;
 }
 

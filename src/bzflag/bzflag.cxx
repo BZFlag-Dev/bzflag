@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2005 Tim Riker
+ * Copyright (c) 1993 - 2006 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -90,7 +90,7 @@ int beginendCount = 0;
 const char*		argv0;
 static bool		anonymous = false;
 static std::string	anonymousName("anonymous");
-std::string	        alternateConfig;
+std::string		alternateConfig;
 static bool		noAudio = false;
 struct tm		userTime;
 bool			echoToConsole = false;

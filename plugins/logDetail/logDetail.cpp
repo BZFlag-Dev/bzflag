@@ -8,7 +8,7 @@ BZ_GET_PLUGIN_VERSION
 
 using namespace std;
 
-class logDetail : public bz_EventHandler 
+class logDetail : public bz_EventHandler
 {
 public:
   logDetail() {};
@@ -47,7 +47,7 @@ BZF_PLUGIN_CALL int bz_Unload ( void )
   return 0;
 }
 
-void logDetail::process( bz_EventData *eventData ) 
+void logDetail::process( bz_EventData *eventData )
 {
   bz_ChatEventData *chatData = (bz_ChatEventData *) eventData;
   bz_ServerMsgEventData *serverMsgData = (bz_ServerMsgEventData *) eventData;
@@ -57,7 +57,7 @@ void logDetail::process( bz_EventData *eventData )
 
   if (eventData) {
     switch (eventData->eventType) {
-      case bz_eSlashCommandEvent: 
+      case bz_eSlashCommandEvent:
 	// Slash commands are case insensitive
 	// Tokenize the stream and check the first word
 	// /report -> MSG-REPORT
@@ -142,7 +142,7 @@ void logDetail::process( bz_EventData *eventData )
 	displayPlayerPrivs( authData->playerID );
 	cout << endl;
 	break;
-      default : 
+      default :
 	break;
     }
   }

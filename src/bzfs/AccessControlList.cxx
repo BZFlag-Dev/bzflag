@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2005 Tim Riker
+ * Copyright (c) 1993 - 2006 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -39,7 +39,7 @@
 
 
 void AccessControlList::ban(in_addr &ipAddr, const char *bannedBy, int period,
-                            const char *reason, bool fromMaster)
+			    const char *reason, bool fromMaster)
 {
   BanInfo toban(ipAddr, bannedBy, period,fromMaster);
   if (reason) toban.reason = reason;
@@ -52,14 +52,14 @@ void AccessControlList::ban(in_addr &ipAddr, const char *bannedBy, int period,
 
 
 bool AccessControlList::ban(std::string &ipList, const char *bannedBy, int period,
-                            const char *reason, bool fromMaster)
+			    const char *reason, bool fromMaster)
 {
   return ban(ipList.c_str(), bannedBy, period, reason,fromMaster);
 }
 
 
 bool AccessControlList::ban(const char *ipList, const char *bannedBy, int period,
-                            const char *reason, bool fromMaster)
+			    const char *reason, bool fromMaster)
 {
   char *buf = strdup(ipList);
   char *pStart = buf;
@@ -86,7 +86,7 @@ bool AccessControlList::ban(const char *ipList, const char *bannedBy, int period
 
 
 void AccessControlList::hostBan(std::string hostpat, const char *bannedBy, int period,
-                                const char *reason, bool fromMaster)
+				const char *reason, bool fromMaster)
 {
   HostBanInfo toban(hostpat, bannedBy, period,fromMaster);
   if (reason) toban.reason = reason;
@@ -100,7 +100,7 @@ void AccessControlList::hostBan(std::string hostpat, const char *bannedBy, int p
 
 
 void AccessControlList::idBan(std::string idpat, const char *bannedBy, int period,
-                              const char *reason, bool fromMaster)
+			      const char *reason, bool fromMaster)
 {
   IdBanInfo toban(idpat, bannedBy, period, fromMaster);
   if (reason) toban.reason = reason;
@@ -291,9 +291,9 @@ static std::string getBanMaskString(in_addr mask)
     } else {
       os << ((ntohl(mask.s_addr) >> 8) & 0xff) << '.';
       if ((ntohl(mask.s_addr) & 0x000000ff) == 0x000000ff)
-        os << "*";
+	os << "*";
       else
-        os << (ntohl(mask.s_addr) & 0xff);
+	os << (ntohl(mask.s_addr) & 0xff);
     }
   }
   return os.str();
@@ -330,16 +330,16 @@ void AccessControlList::sendBans(PlayerId id, const char* pattern)
   expire();
   sendMessage(ServerPlayer, id, "IP Ban List");
   sendMessage(ServerPlayer, id, "-----------");
-  
+
   const std::string glob = makeGlobPattern(pattern);
 
   // masterbans first
   for (banList_t::iterator it = banList.begin(); it != banList.end(); ++it) {
     const BanInfo& bi = *it;
     if (bi.fromMaster &&
-        (glob_match(glob, getBanMaskString(bi.addr)) ||
-         glob_match(glob, TextUtils::toupper(bi.reason)) ||
-         glob_match(glob, TextUtils::toupper(bi.bannedBy)))) {
+	(glob_match(glob, getBanMaskString(bi.addr)) ||
+	 glob_match(glob, TextUtils::toupper(bi.reason)) ||
+	 glob_match(glob, TextUtils::toupper(bi.bannedBy)))) {
       sendBan(id, *it);
     }
   }
@@ -348,9 +348,9 @@ void AccessControlList::sendBans(PlayerId id, const char* pattern)
   for (banList_t::iterator it = banList.begin(); it != banList.end(); ++it) {
     const BanInfo& bi = *it;
     if (!bi.fromMaster &&
-        (glob_match(glob, getBanMaskString(bi.addr)) ||
-         glob_match(glob, TextUtils::toupper(bi.reason)) ||
-         glob_match(glob, TextUtils::toupper(bi.bannedBy)))) {
+	(glob_match(glob, getBanMaskString(bi.addr)) ||
+	 glob_match(glob, TextUtils::toupper(bi.reason)) ||
+	 glob_match(glob, TextUtils::toupper(bi.bannedBy)))) {
       sendBan(id, *it);
     }
   }
@@ -370,11 +370,11 @@ void AccessControlList::sendHostBans(PlayerId id, const char* pattern)
 
     const HostBanInfo& bi = *it;
     if (!glob_match(glob, TextUtils::toupper(bi.hostpat)) &&
-        !glob_match(glob, TextUtils::toupper(bi.reason)) &&
-        !glob_match(glob, TextUtils::toupper(bi.bannedBy))) {
+	!glob_match(glob, TextUtils::toupper(bi.reason)) &&
+	!glob_match(glob, TextUtils::toupper(bi.bannedBy))) {
       continue;
     }
-    
+
     char *pMsg = banlistmessage;
     sprintf(pMsg, "%s", bi.hostpat.c_str());
 
@@ -412,13 +412,13 @@ void AccessControlList::sendIdBans(PlayerId id, const char* pattern)
 
     const IdBanInfo& bi = *it;
     if (!glob_match(glob, TextUtils::toupper(bi.idpat)) &&
-        !glob_match(glob, TextUtils::toupper(bi.reason)) &&
-        !glob_match(glob, TextUtils::toupper(bi.bannedBy))) {
+	!glob_match(glob, TextUtils::toupper(bi.reason)) &&
+	!glob_match(glob, TextUtils::toupper(bi.bannedBy))) {
       continue;
     }
-    
+
     char *pMsg = banlistmessage;
-    
+
     bool useQuotes = (bi.idpat.find_first_of(" \t") != std::string::npos);
     if (useQuotes) {
       sprintf(pMsg, "\"%s\"", bi.idpat.c_str());
@@ -504,10 +504,10 @@ bool AccessControlList::load() {
     if (banEnd < 0) continue;
     if (ipAddress == "host:") {
       hostBan(hostpat, (bannedBy.size() ? bannedBy.c_str(): NULL), banEnd,
-              (reason.size() > 0 ? reason.c_str() : NULL));
+	      (reason.size() > 0 ? reason.c_str() : NULL));
     } else if (ipAddress == "bzid:") {
       idBan(bzId, (bannedBy.size() ? bannedBy.c_str(): NULL), banEnd,
-            (reason.size() > 0 ? reason.c_str() : NULL));
+	    (reason.size() > 0 ? reason.c_str() : NULL));
     } else {
       std::string::size_type n;
       while ((n = ipAddress.find('*')) != std::string::npos) {
@@ -515,7 +515,7 @@ bool AccessControlList::load() {
       }
       if (!ban(ipAddress, (bannedBy.size() ? bannedBy.c_str(): NULL), banEnd,
 	       (reason.size() > 0 ? reason.c_str() : NULL))) {
-        DEBUG3("Banfile: bad ban\n");
+	DEBUG3("Banfile: bad ban\n");
 	return false;
       }
     }
@@ -578,7 +578,7 @@ int AccessControlList::merge(const std::string& banData) {
       bansAdded++;
     } else if (ipAddress == "bzid:") {
       idBan(bzId, (bannedBy.size() ? bannedBy.c_str(): NULL), banEnd,
-            (reason.size() > 0 ? reason.c_str() : NULL));
+	    (reason.size() > 0 ? reason.c_str() : NULL));
     } else {
       std::string::size_type n;
       while ((n = ipAddress.find('*')) != std::string::npos) {
@@ -586,7 +586,7 @@ int AccessControlList::merge(const std::string& banData) {
       }
       if (!ban(ipAddress, (bannedBy.size() ? bannedBy.c_str(): NULL), banEnd,
 	  (reason.size() > 0 ? reason.c_str() : NULL),true)) {
-        DEBUG3("Banfile: bad ban\n");
+	DEBUG3("Banfile: bad ban\n");
 	return bansAdded;
       }
       bansAdded++;
@@ -709,9 +709,9 @@ std::vector<std::pair<std::string, std::string> > AccessControlList::listMasterB
   for (bItr = banList.begin(); bItr != banList.end(); bItr++) {
     if (bItr->fromMaster) {
       explain = TextUtils::format("%s (banned by %s)",
-                                  bItr->reason.c_str(), bItr->bannedBy.c_str());
+				  bItr->reason.c_str(), bItr->bannedBy.c_str());
       const std::pair<std::string, std::string>
-        baninfo = std::make_pair(std::string(inet_ntoa(bItr->addr)), explain);
+	baninfo = std::make_pair(std::string(inet_ntoa(bItr->addr)), explain);
       bans.push_back(baninfo);
     }
   }
@@ -719,9 +719,9 @@ std::vector<std::pair<std::string, std::string> > AccessControlList::listMasterB
   for (hItr = hostBanList.begin(); hItr != hostBanList.end(); hItr++) {
     if (hItr->fromMaster) {
       explain = TextUtils::format("%s (banned by %s)",
-                                  hItr->reason.c_str(), hItr->bannedBy.c_str());
+				  hItr->reason.c_str(), hItr->bannedBy.c_str());
       const std::pair<std::string, std::string>
-        baninfo = std::make_pair(hItr->hostpat, explain);
+	baninfo = std::make_pair(hItr->hostpat, explain);
       bans.push_back(baninfo);
     }
   }
@@ -729,9 +729,9 @@ std::vector<std::pair<std::string, std::string> > AccessControlList::listMasterB
   for (iItr = idBanList.begin(); iItr != idBanList.end(); iItr++) {
     if (iItr->fromMaster) {
       explain = TextUtils::format("%s (banned by %s)",
-                                  iItr->reason.c_str(), iItr->bannedBy.c_str());
+				  iItr->reason.c_str(), iItr->bannedBy.c_str());
       const std::pair<std::string, std::string>
-        baninfo = std::make_pair(iItr->idpat, explain);
+	baninfo = std::make_pair(iItr->idpat, explain);
       bans.push_back(baninfo);
     }
   }

@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2005 Tim Riker
+ * Copyright (c) 1993 - 2006 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -34,7 +34,7 @@ class SphereSceneNode : public SceneNode {
     void notifyStyleChange();
 
     virtual void setShockWave(bool) { return; };
-    
+
     virtual SceneNode** getParts(int& numParts) = 0;
 
     virtual void addRenderNodes(SceneRenderer&) = 0;
@@ -62,13 +62,13 @@ class SphereLodSceneNode : public SphereSceneNode {
     void move(const GLfloat pos[3], GLfloat radius);
 
     void setShockWave(bool value);
-    
+
     // this node just won't split
     SceneNode** getParts(int&) { return NULL; }
 
     void addRenderNodes(SceneRenderer&);
     void addShadowNodes(SceneRenderer&);
-    
+
     static void init();
     static void kill();
     static void initContext(void*);
@@ -78,7 +78,7 @@ class SphereLodSceneNode : public SphereSceneNode {
     class SphereLodRenderNode : public RenderNode {
       friend class SphereLodSceneNode;
       public:
-        SphereLodRenderNode(const SphereLodSceneNode*);
+	SphereLodRenderNode(const SphereLodSceneNode*);
 	~SphereLodRenderNode();
 	void setLod(int lod);
 	void render();
@@ -94,7 +94,7 @@ class SphereLodSceneNode : public SphereSceneNode {
     bool shockWave;
     bool inside;
 
-    static bool initialized;    
+    static bool initialized;
     static GLuint lodLists[sphereLods];
     static float lodPixelsSqr[sphereLods];
     static int listTriangleCount[sphereLods];

@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2005 Tim Riker
+ * Copyright (c) 1993 - 2006 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -39,19 +39,19 @@
 SphereSceneNode::SphereSceneNode(const GLfloat pos[3], GLfloat _radius)
 {
   transparent = false;
-  
+
   OpenGLGStateBuilder builder(gstate);
   builder.setCulling(GL_NONE);
   gstate = builder.getState();
-  
+
   setColor(1.0f, 1.0f, 1.0f, 1.0f);
 
   // position sphere
   move(pos, _radius);
-  
+
   return;
-}				
-				       
+}
+
 
 SphereSceneNode::~SphereSceneNode()
 {
@@ -138,9 +138,9 @@ static GLuint buildSphereList(GLdouble radius, GLint slices, GLint stacks)
     gluSphere(quad, radius, slices, stacks);
   }
   glEndList();
-  
+
   gluDeleteQuadric(quad);
-  
+
   return list;
 }
 
@@ -187,7 +187,7 @@ void SphereLodSceneNode::initContext(void *)
   lodLists[4] = buildSphereList(1.0,  4, 4);
   lodPixelsSqr[4] = 5.0f * 5.0f;
   listTriangleCount[4] = calcTriCount(4, 4);
-  
+
   return;
 }
 
@@ -214,7 +214,7 @@ void SphereLodSceneNode::kill()
 
 
 SphereLodSceneNode::SphereLodSceneNode(const GLfloat pos[3], GLfloat _radius) :
-                                       SphereSceneNode(pos, _radius),
+				       SphereSceneNode(pos, _radius),
 				       renderNode(this)
 {
   if (!initialized) {
@@ -222,10 +222,10 @@ SphereLodSceneNode::SphereLodSceneNode(const GLfloat pos[3], GLfloat _radius) :
     initContext(NULL);
     OpenGLGState::registerContextInitializer(freeContext, initContext, NULL);
   }
-  
+
   inside = false;
   shockWave = false;
-  
+
   renderNode.setLod(0);
 
   // adjust the gstate for this type of sphere
@@ -295,7 +295,7 @@ void SphereLodSceneNode::addRenderNodes(SceneRenderer& renderer)
   inside = (distSqr < s[3]);
 
   renderer.addRenderNode(&renderNode, &gstate);
-  
+
   return;
 }
 
@@ -359,54 +359,54 @@ void SphereLodSceneNode::SphereLodRenderNode::render()
 
 #ifdef GL_VERSION_1_2
   glEnable(GL_RESCALE_NORMAL);
-#else  
+#else
   glEnable(GL_NORMALIZE);
 #endif
 
   const bool transparent = sceneNode->transparent;
   const bool stippled = transparent && !BZDBCache::blend;
-  
+
   const GLuint list = SphereLodSceneNode::lodLists[lod];
-  
+
   glPushMatrix();
   {
     glTranslatef(sphere[0], sphere[1], sphere[2]);
     glScalef(radius, radius, radius);
-    
+
     // invert the color within contained volume
     if (sceneNode->shockWave) {
       if (transparent) {
-        if (BZDBCache::blend) {
-          glDisable(GL_BLEND);
-        } else {
-          myStipple(1.0f);
-        }
+	if (BZDBCache::blend) {
+	  glDisable(GL_BLEND);
+	} else {
+	  myStipple(1.0f);
+	}
       }
       glDisable(GL_LIGHTING);
 
       glLogicOp(GL_INVERT);
       glEnable(GL_COLOR_LOGIC_OP);
       {
-        glCullFace(GL_FRONT);
-        glCallList(list);
-        addTriangleCount(listTriangleCount[lod]);
-        glCullFace(GL_BACK);
-        if (!sceneNode->inside) {
-          glCallList(list);
-          addTriangleCount(listTriangleCount[lod]);
-        } else {
-          drawFullScreenRect();
-          addTriangleCount(2);
-        }
+	glCullFace(GL_FRONT);
+	glCallList(list);
+	addTriangleCount(listTriangleCount[lod]);
+	glCullFace(GL_BACK);
+	if (!sceneNode->inside) {
+	  glCallList(list);
+	  addTriangleCount(listTriangleCount[lod]);
+	} else {
+	  drawFullScreenRect();
+	  addTriangleCount(2);
+	}
       }
       glDisable(GL_COLOR_LOGIC_OP);
 
       if (transparent) {
-        if (BZDBCache::blend) {
-          glEnable(GL_BLEND);
-        } else {
-          myStipple(0.5f);
-        }
+	if (BZDBCache::blend) {
+	  glEnable(GL_BLEND);
+	} else {
+	  myStipple(0.5f);
+	}
       }
       glEnable(GL_LIGHTING);
     }
@@ -441,8 +441,8 @@ void SphereLodSceneNode::SphereLodRenderNode::render()
   glDisable(GL_RESCALE_NORMAL);
 #else
   glDisable(GL_NORMALIZE);
-#endif  
-  
+#endif
+
   glDisable(GL_CLIP_PLANE0);
 
   return;
@@ -459,7 +459,7 @@ const int		NumSlices = 2 * SphereRes;
 const int		NumParts = SphereLowRes * SphereLowRes;
 
 SphereBspSceneNode::SphereBspSceneNode(const GLfloat pos[3], GLfloat _radius) :
-                                       SphereSceneNode(pos, _radius),
+				       SphereSceneNode(pos, _radius),
 				       renderNode(this),
 				       parts(NULL)
 {
@@ -613,7 +613,7 @@ void			SphereBspSceneNode::SphereBspRenderNode::render()
     if (BZDBCache::lighting) {
 #ifdef GL_VERSION_1_2
       glEnable(GL_RESCALE_NORMAL);
-#else  
+#else
       glEnable(GL_NORMALIZE);
 #endif
       // draw with normals (normal is same as vertex!
@@ -658,7 +658,7 @@ void			SphereBspSceneNode::SphereBspRenderNode::render()
       }
 #ifdef GL_VERSION_1_2
       glDisable(GL_RESCALE_NORMAL);
-#else  
+#else
       glDisable(GL_NORMALIZE);
 #endif
     }
@@ -806,19 +806,19 @@ void			SphereFragmentSceneNode::FragmentRenderNode::render()
 	glVertex3fv(SphereBspSceneNode::SphereBspRenderNode::lgeom[SphereLowRes * phi2 + theta2]);
 	glNormal3fv(SphereBspSceneNode::SphereBspRenderNode::lgeom[SphereLowRes * phi + theta2]);
 	glVertex3fv(SphereBspSceneNode::SphereBspRenderNode::lgeom[SphereLowRes * phi + theta2]);
-        addTriangleCount(2);
+	addTriangleCount(2);
       } else {
 	glVertex3fv(SphereBspSceneNode::SphereBspRenderNode::lgeom[SphereLowRes * phi + theta]);
 	glVertex3fv(SphereBspSceneNode::SphereBspRenderNode::lgeom[SphereLowRes * phi2 + theta]);
 	glVertex3fv(SphereBspSceneNode::SphereBspRenderNode::lgeom[SphereLowRes * phi2 + theta2]);
 	glVertex3fv(SphereBspSceneNode::SphereBspRenderNode::lgeom[SphereLowRes * phi + theta2]);
-        addTriangleCount(2);
+	addTriangleCount(2);
       }
     }
     glEnd(); // 4 verts -> 2 tris
   }
   glPopMatrix();
-  
+
   return;
 }
 

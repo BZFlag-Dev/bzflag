@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2005 Tim Riker
+ * Copyright (c) 1993 - 2006 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -70,10 +70,10 @@ class MeshFragSceneNode : public WallSceneNode {
 	void drawVN() const; // draw with normals
 	void drawVTN() const; // draw with texcoords and normals
 
-        void initDisplayList();
-        void freeDisplayList();
-        static void initContext(void *data);
-        static void freeContext(void *data);
+	void initDisplayList();
+	void freeDisplayList();
+	static void initContext(void *data);
+	static void freeContext(void *data);
 
       private:
 	int style;

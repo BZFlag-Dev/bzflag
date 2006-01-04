@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2005 Tim Riker
+ * Copyright (c) 1993 - 2006 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -297,7 +297,7 @@ static float nextGameTime()
       const TimeKeeper& pTime = gkPlayer->getNextGameTime();
       const float pNextTime = (float)(pTime - nowTime);
       if (pNextTime < nextTime) {
-        nextTime = pNextTime;
+	nextTime = pNextTime;
       }
     }
   }
@@ -1478,7 +1478,7 @@ static void addPlayer(int playerIndex, GameKeeper::Player *playerData)
   IdBanInfo idInfo("");
   if (!playerIsAntiBanned && !clOptions->acl.idValidate(bzid.c_str(), &idInfo)) {
     std::string rejectionMessage;
-    
+
     rejectionMessage = BanRefusalString;
     if (idInfo.reason.size()) {
       rejectionMessage += idInfo.reason;
@@ -1500,7 +1500,7 @@ static void addPlayer(int playerIndex, GameKeeper::Player *playerData)
     rejectPlayer(playerIndex, RejectIDBanned, rejectionMessage.c_str());
     return;
   }
-  
+
   // check against id and hostname ban lists (on the next cycle)
   playerData->setNeedThisHostbanChecked(true);
 
@@ -1564,14 +1564,14 @@ static void addPlayer(int playerIndex, GameKeeper::Player *playerData)
     int major, minor, rev;
     playerData->player.getClientVersionNumbers(major, minor, rev);
     if ((major < minMajor) ||
-        ((major == minMajor) &&
-         ((minor < minMinor) ||
-          ((minor == minMinor) &&
-           (rev < minRevision))))) {
+	((major == minMajor) &&
+	 ((minor < minMinor) ||
+	  ((minor == minMinor) &&
+	   (rev < minRevision))))) {
       char buffer[256];
       snprintf(buffer, 256,
-               "This server requires a client version %i.%i.%i or higher.",
-               minMajor, minMinor, minRevision);
+	       "This server requires a client version %i.%i.%i or higher.",
+	       minMajor, minMinor, minRevision);
       rejectPlayer(playerIndex, RejectBadRequest, buffer);
       return;
     }
@@ -1689,7 +1689,7 @@ static void addPlayer(int playerIndex, GameKeeper::Player *playerData)
     if (result == -1)
       return;
   }
-  
+
   // if first player on team add team's flag
   if (team[teamIndex].team.size == 1
       && Team::isColorTeam((TeamColor)teamIndex)) {
@@ -2896,8 +2896,8 @@ static void shotFired(int playerIndex, void *buf, int len)
     // verify velocity
     if (hypotf(shot.vel[0], hypotf(shot.vel[1], shot.vel[2])) > shotSpeed * 1.01f) {
       DEBUG2("Player %s [%d] shot over speed %f %f\n", shooter.getCallSign(),
-             playerIndex, hypotf(shot.vel[0], hypotf(shot.vel[1], shot.vel[2])),
-             shotSpeed);
+	     playerIndex, hypotf(shot.vel[0], hypotf(shot.vel[1], shot.vel[2])),
+	     shotSpeed);
       return;
     }
 
@@ -2916,11 +2916,11 @@ static void shotFired(int playerIndex, void *buf, int len)
       dz = 0.0f;
     float delta = dx*dx + dy*dy + dz*dz;
     if (delta > (maxTankSpeed * tankSpeedMult + 2.0f * muzzleFront) *
-                (maxTankSpeed * tankSpeedMult + 2.0f * muzzleFront)) {
+		(maxTankSpeed * tankSpeedMult + 2.0f * muzzleFront)) {
       DEBUG2("Player %s [%d] shot origination %f %f %f too far from tank %f %f %f: distance=%f\n",
-              shooter.getCallSign(), playerIndex,
-              shot.pos[0], shot.pos[1], shot.pos[2],
-              last.pos[0], last.pos[1], last.pos[2], sqrt(delta));
+	      shooter.getCallSign(), playerIndex,
+	      shot.pos[0], shot.pos[1], shot.pos[2],
+	      last.pos[0], last.pos[1], last.pos[2], sqrt(delta));
       return;
     }
   }
@@ -3143,7 +3143,7 @@ bool checkGarbage(char* message, GameKeeper::Player* playerData, int t)
      */
     if (badChars > 5) {
       sendMessage(ServerPlayer, t, "You were kicked because of a garbage message.");
-      DEBUG2("Kicking player %s [%d] for sending a garbage message: %d of %d non-printable chars", 
+      DEBUG2("Kicking player %s [%d] for sending a garbage message: %d of %d non-printable chars",
 	     player.getCallSign(), t, badChars, totalChars);
       removePlayer(t, "garbage");
 
@@ -3623,13 +3623,13 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
       buf = nboUnpackUByte(buf, id);
       buf = state.unpack(buf, code);
 
-      // observer updates are not relayed 
+      // observer updates are not relayed
       if (playerData->player.isObserver()) {
-        // skip all of the checks
-        playerData->setPlayerState(state, timestamp);
+	// skip all of the checks
+	playerData->setPlayerState(state, timestamp);
 	break;
       }
-      
+
       // silently drop old packet
       if (state.order <= playerData->lastState.order) {
 	break;
@@ -3761,25 +3761,25 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
 
 	    // allow a 10% tolerance level for speed if -speedtol is not sane
 	    if (doSpeedChecks) {
-              float realtol = 1.1f;
-              if (speedTolerance > 1.0f)
-                realtol = speedTolerance;
-              maxPlanarSpeedSqr *= realtol;
-              if (curPlanarSpeedSqr > maxPlanarSpeedSqr) {
-                if (logOnly) {
-                  DEBUG1("Logging Player %s [%d] tank too fast (tank: %f, allowed: %f){Dead or v[z] != 0}\n",
-                  playerData->player.getCallSign(), t,
-                  sqrt(curPlanarSpeedSqr), sqrt(maxPlanarSpeedSqr));
-                } else {
-                  DEBUG1("Kicking Player %s [%d] tank too fast (tank: %f, allowed: %f)\n",
-                         playerData->player.getCallSign(), t,
-                         sqrt(curPlanarSpeedSqr), sqrt(maxPlanarSpeedSqr));
-                  sendMessage(ServerPlayer, t, "Autokick: Player tank is moving too fast.");
-                  removePlayer(t, "too fast");
-                }
-                break;
-              }
-            }
+	      float realtol = 1.1f;
+	      if (speedTolerance > 1.0f)
+		realtol = speedTolerance;
+	      maxPlanarSpeedSqr *= realtol;
+	      if (curPlanarSpeedSqr > maxPlanarSpeedSqr) {
+		if (logOnly) {
+		  DEBUG1("Logging Player %s [%d] tank too fast (tank: %f, allowed: %f){Dead or v[z] != 0}\n",
+		  playerData->player.getCallSign(), t,
+		  sqrt(curPlanarSpeedSqr), sqrt(maxPlanarSpeedSqr));
+		} else {
+		  DEBUG1("Kicking Player %s [%d] tank too fast (tank: %f, allowed: %f)\n",
+			 playerData->player.getCallSign(), t,
+			 sqrt(curPlanarSpeedSqr), sqrt(maxPlanarSpeedSqr));
+		  sendMessage(ServerPlayer, t, "Autokick: Player tank is moving too fast.");
+		  removePlayer(t, "too fast");
+		}
+		break;
+	      }
+	    }
 	  }
 	}
       }
@@ -4000,9 +4000,9 @@ static void doStuffOnPlayer(GameKeeper::Player &playerData)
      playerData._LSAState = GameKeeper::Player::requesting;
   } else if (playerData.netHandler->reverseDNSDone()) {
     if ((playerData._LSAState == GameKeeper::Player::verified)	||
-        (playerData._LSAState == GameKeeper::Player::timedOut)	||
-        (playerData._LSAState == GameKeeper::Player::failed)	||
-        (playerData._LSAState == GameKeeper::Player::notRequired)) {
+	(playerData._LSAState == GameKeeper::Player::timedOut)	||
+	(playerData._LSAState == GameKeeper::Player::failed)	||
+	(playerData._LSAState == GameKeeper::Player::notRequired)) {
       addPlayer(p, &playerData);
       playerData._LSAState = GameKeeper::Player::done;
     }
@@ -4335,8 +4335,8 @@ int main(int argc, char **argv)
   if (clOptions->voteTime > 0) {
     votingarbiter =
       new VotingArbiter(clOptions->voteTime, clOptions->vetoTime,
-                        clOptions->votesRequired, clOptions->votePercentage,
-                        clOptions->voteRepeatTime);
+			clOptions->votesRequired, clOptions->votePercentage,
+			clOptions->voteRepeatTime);
     DEBUG1("There is a voting arbiter with the following settings:\n");
     DEBUG1("\tvote time is %d seconds\n", clOptions->voteTime);
     DEBUG1("\tveto time is %d seconds\n", clOptions->vetoTime);
@@ -4379,7 +4379,7 @@ int main(int argc, char **argv)
     MasterBanList banList;
     std::vector<std::string>::const_iterator it;
     for (it = clOptions->masterBanListURL.begin();
-         it != clOptions->masterBanListURL.end(); it++) {
+	 it != clOptions->masterBanListURL.end(); it++) {
       clOptions->acl.merge(banList.get(it->c_str()));
       DEBUG1("Loaded master ban list from %s\n", it->c_str());
     }
@@ -4551,10 +4551,10 @@ int main(int argc, char **argv)
       // game time updates
       const float nextGT = nextGameTime();
       if (nextGT < waitTime) {
-        waitTime = nextGT;
+	waitTime = nextGT;
       }
     }
-    
+
     // minmal waitTime
     if (waitTime < 0.0f) {
       waitTime = 0.0f;
@@ -4601,7 +4601,7 @@ int main(int argc, char **argv)
     if (!Replay::enabled()) {
       sendPendingGameTime();
     }
-    
+
     // synchronize PlayerInfo
     tm = TimeKeeper::getCurrent();
     PlayerInfo::setCurrentTime(tm);
@@ -4648,7 +4648,7 @@ int main(int argc, char **argv)
 
 	      buf = nboPackUByte(bufStart, (uint8_t)curMaxPlayers);
 	      buf = nboPackUShort
-	  	(buf, uint16_t(FlagInfo::lookupFirstTeamFlag(vteam)));
+		(buf, uint16_t(FlagInfo::lookupFirstTeamFlag(vteam)));
 	      buf = nboPackUShort(buf, uint16_t(1 + (int(vteam) % 4)));
 	      directMessage(j, MsgCaptureFlag, (char*)buf - (char*)bufStart,
 			    bufStart);
@@ -4668,12 +4668,12 @@ int main(int argc, char **argv)
 	    zapFlag(*FlagInfo::get(j));
 	  }
 
-          // fire off a game start event
-          bz_GameStartEndEventData	gameData;
-          gameData.eventType = bz_eGameStartEvent;
-          gameData.time = TimeKeeper::getCurrent().getSeconds();
-          gameData.duration = clOptions->timeLimit;
-          worldEventManager.callEvents(bz_eGameStartEvent,&gameData);
+	  // fire off a game start event
+	  bz_GameStartEndEventData	gameData;
+	  gameData.eventType = bz_eGameStartEvent;
+	  gameData.time = TimeKeeper::getCurrent().getSeconds();
+	  gameData.duration = clOptions->timeLimit;
+	  worldEventManager.callEvents(bz_eGameStartEvent,&gameData);
 
 	} else {
 	  if ((readySetGo == countdownDelay) && (countdownDelay > 0))
@@ -4695,13 +4695,13 @@ int main(int argc, char **argv)
 	countdownActive = false;
 	countdownPauseStart = TimeKeeper::getNullTime ();
 	clOptions->countdownPaused = false;
-       
-        // fire off a game end event
-        bz_GameStartEndEventData	gameData;
-        gameData.eventType = bz_eGameEndEvent;
-        gameData.time = TimeKeeper::getCurrent().getSeconds();
-        gameData.duration = clOptions->timeLimit;
-        worldEventManager.callEvents(bz_eGameEndEvent,&gameData);
+
+	// fire off a game end event
+	bz_GameStartEndEventData	gameData;
+	gameData.eventType = bz_eGameEndEvent;
+	gameData.time = TimeKeeper::getCurrent().getSeconds();
+	gameData.duration = clOptions->timeLimit;
+	worldEventManager.callEvents(bz_eGameEndEvent,&gameData);
       }
 
       if (countdownActive && clOptions->countdownPaused && !countdownPauseStart) {

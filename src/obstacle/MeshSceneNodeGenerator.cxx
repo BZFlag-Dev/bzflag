@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2005 Tim Riker
+ * Copyright (c) 1993 - 2006 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -432,14 +432,14 @@ void MeshSceneNodeGenerator::setupNodeMaterial(WallSceneNode* node,
     node->setUseColorTexture(true);
   }
   const int texMatId = mat->getTextureMatrix(0);
-  const TextureMatrix* texmat = TEXMATRIXMGR.getMatrix(texMatId); 
-  if (texmat != NULL) {                                
+  const TextureMatrix* texmat = TEXMATRIXMGR.getMatrix(texMatId);
+  if (texmat != NULL) {
     const GLfloat* matrix = texmat->getMatrix();
     if (matrix != NULL) {
       node->setTextureMatrix(matrix);
-    }                                   
-  } 
-                                            
+    }
+  }
+
   // deal with the blending setting for textures
   bool alpha = false;
   if ((faceTexture >= 0) && (userTexture && mat->getUseTextureAlpha(0))) {

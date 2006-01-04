@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2005 Tim Riker
+ * Copyright (c) 1993 - 2006 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -122,7 +122,7 @@ void ListServerLink::finalization(char *data, unsigned int length, bool good)
       bool  verified   = false;
       // this is a reply to an authentication request ?
       bool  authReply  = false;
-      
+
       char *callsign;
       if (strncmp(base, tokGoodIdentifier, strlen(tokGoodIdentifier)) == 0) {
 	callsign = base + strlen(tokGoodIdentifier);
@@ -137,71 +137,71 @@ void ListServerLink::finalization(char *data, unsigned int length, bool good)
 	callsign = base + strlen(unknownPlayer);
 	authReply  = true;
       } else if (!strncmp(base, bzIdentifier, strlen(bzIdentifier))) {
-        std::string line = base;
-        std::vector<std::string> args = TextUtils::tokenize(line, " \t", 3, true);
-        if (args.size() < 3) {
-          DEBUG3("Bad BZID string: %s\n", line.c_str());
-        } else {
-          const std::string& bzId = args[1];
-          const std::string& nick = args[2];
+	std::string line = base;
+	std::vector<std::string> args = TextUtils::tokenize(line, " \t", 3, true);
+	if (args.size() < 3) {
+	  DEBUG3("Bad BZID string: %s\n", line.c_str());
+	} else {
+	  const std::string& bzId = args[1];
+	  const std::string& nick = args[2];
 	  DEBUG4("Got BZID: \"%s\" || \"%s\"\n", bzId.c_str(), nick.c_str());
-          for (int i = 0; i < curMaxPlayers; i++) {
-            GameKeeper::Player* gkp = GameKeeper::Player::getPlayerByIndex(i);
-            if ((gkp != NULL) && 
-                (strcasecmp(gkp->player.getCallSign(), nick.c_str()) == 0)) {
-              gkp->setBzIdentifier(bzId);
-              DEBUG3("Set player (%s [%i]) bzId to (%s)\n",
-                     nick.c_str(), i, bzId.c_str());
-              break;
-            }
-          }
-        }
+	  for (int i = 0; i < curMaxPlayers; i++) {
+	    GameKeeper::Player* gkp = GameKeeper::Player::getPlayerByIndex(i);
+	    if ((gkp != NULL) &&
+		(strcasecmp(gkp->player.getCallSign(), nick.c_str()) == 0)) {
+	      gkp->setBzIdentifier(bzId);
+	      DEBUG3("Set player (%s [%i]) bzId to (%s)\n",
+		     nick.c_str(), i, bzId.c_str());
+	      break;
+	    }
+	  }
+	}
       }
-/*        
-        char* start = base + strlen(bzIdentifier);
-        // skip leading white
-        while ((*start != '\0') && isspace(*start)) start++;
-        const bool useQuotes = (*start == '"');
-        if (useQuotes) start++; // ditch the '"'
-        char* end = start;
-        // skip until the end of the id
-        if (useQuotes) {
-          while ((*end != '\0') && (*end != '"')) end++;
-        } else {
-          while ((*end != '\0') && !isspace(*end)) end++;
-        }
-        if ((*end != '\0') && (useQuotes && (*end != '"'))) {
-          if (useQuotes) {
-            callsign = end + 1;
-            end--; // ditch the '"'
-          } else {
-            callsign = end;
-          }
-          // skip leading white
-          while ((*callsign != '\0') && isspace(*callsign)) callsign++;
-          if (*callsign != '\0') {
-            bzId = start;
-            bzId = bzId.substr(end - start);
-            if ((bzId.size() > 0) && (strlen(callsign) > 0)) {
-              bzIdInfo = true;
-            }
-          }
-        }
+/*
+	char* start = base + strlen(bzIdentifier);
+	// skip leading white
+	while ((*start != '\0') && isspace(*start)) start++;
+	const bool useQuotes = (*start == '"');
+	if (useQuotes) start++; // ditch the '"'
+	char* end = start;
+	// skip until the end of the id
+	if (useQuotes) {
+	  while ((*end != '\0') && (*end != '"')) end++;
+	} else {
+	  while ((*end != '\0') && !isspace(*end)) end++;
+	}
+	if ((*end != '\0') && (useQuotes && (*end != '"'))) {
+	  if (useQuotes) {
+	    callsign = end + 1;
+	    end--; // ditch the '"'
+	  } else {
+	    callsign = end;
+	  }
+	  // skip leading white
+	  while ((*callsign != '\0') && isspace(*callsign)) callsign++;
+	  if (*callsign != '\0') {
+	    bzId = start;
+	    bzId = bzId.substr(end - start);
+	    if ((bzId.size() > 0) && (strlen(callsign) > 0)) {
+	      bzIdInfo = true;
+	    }
+	  }
+	}
       }
 
       if (bzIdInfo == true) {
 	DEBUG3("Got BZID: %s", base);
 	for (int i = 0; i < curMaxPlayers; i++) {
 	  GameKeeper::Player* gkp = GameKeeper::Player::getPlayerByIndex(i);
-	  if ((gkp != NULL) && 
+	  if ((gkp != NULL) &&
 	      (strcasecmp(gkp->player.getCallSign(), callsign) == 0)) {
 	    gkp->setBzIdentifier(bzId);
 	    DEBUG3("Set player (%s [%i]) bzId to (%s)\n", callsign, i, bzId.c_str());
 	    break;
-          }
+	  }
 	}
       }
-*/      
+*/
       if (authReply) {
 	DEBUG3("Got: %s", base);
 	char *group;

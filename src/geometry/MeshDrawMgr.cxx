@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2005 Tim Riker
+ * Copyright (c) 1993 - 2006 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -111,7 +111,7 @@ void MeshDrawMgr::executeSet(int lod, int set, bool _normals, bool _texcoords)
   const GLuint list = lodLists[lod].setLists[set];
   if (list != INVALID_GL_LIST_ID) {
     glCallList(list);
-  } 
+  }
   else {
     glVertexPointer(3, GL_FLOAT, 0, vertices);
 
@@ -139,7 +139,7 @@ void MeshDrawMgr::executeSet(int lod, int set, bool _normals, bool _texcoords)
   if (animInfo != NULL) {
     glPopMatrix();
   }
-  
+
   return;
 }
 
@@ -156,7 +156,7 @@ void MeshDrawMgr::executeSetGeometry(int lod, int set)
   const GLuint list = lodLists[lod].setLists[set];
   if (list != INVALID_GL_LIST_ID) {
     glCallList(list);
-  } 
+  }
   else {
     glVertexPointer(3, GL_FLOAT, 0, vertices);
     rawExecuteCommands(lod, set);
@@ -242,10 +242,10 @@ void MeshDrawMgr::makeLists()
 	}
 	glEndList();
 
-        error = glGetError();
+	error = glGetError();
 	if (error != GL_NO_ERROR) {
 	  DEBUG1("MeshDrawMgr::makeLists() %i/%i glError: %i\n",
-                 lod, set, error);
+		 lod, set, error);
 	  lodLists[lod].setLists[set] = INVALID_GL_LIST_ID;
 	} else {
 	  DEBUG3("MeshDrawMgr::makeLists() %i/%i created\n", lod, set);

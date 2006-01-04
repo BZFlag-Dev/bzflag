@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2005 Tim Riker
+ * Copyright (c) 1993 - 2006 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -1189,7 +1189,7 @@ void TankSceneNode::TankRenderNode::renderPart(TankPart part)
 
   // add to the triangle count
   addTriangleCount(TankGeometryMgr::getPartTriangleCount(
-                                      shadow, part, drawSize, drawLOD));
+				      shadow, part, drawSize, drawLOD));
 
   // draw the lights on the turret
   if ((part == Turret) && !isExploding && !isShadow) {
@@ -1350,7 +1350,7 @@ void TankSceneNode::TankRenderNode::renderLights()
   sceneNode->gstate.setState();
 
   addTriangleCount(4);
-  
+
   return;
 }
 
@@ -1411,7 +1411,7 @@ void TankSceneNode::TankRenderNode::renderJumpJets()
   sceneNode->gstate.setState();
 
   glDisable(GL_CLIP_PLANE1);
-  
+
   addTriangleCount(4);
 
   return;

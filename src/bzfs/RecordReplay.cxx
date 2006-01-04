@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2005 Tim Riker
+ * Copyright (c) 1993 - 2006 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -974,12 +974,12 @@ static bool sortFileName (const FileEntry& a, const FileEntry& b) {
 
 
 static bool parseListOptions(const char* opts,
-                             int& sortMode, std::string& pattern)
+			     int& sortMode, std::string& pattern)
 {
   // defaults
   pattern = "*";
   sortMode = Replay::SortNone;
-  
+
   // parse the opts
   while (opts[0] != '\0') {
     while ((opts[0] != '\0') && isspace(opts[0])) {
@@ -987,29 +987,29 @@ static bool parseListOptions(const char* opts,
     }
     if (opts[0] == '-') {
       if (opts[1] == '-') {
-        opts += 2;
-        break; // end of options
+	opts += 2;
+	break; // end of options
       }
       else if (opts[1] == 't') {
-        sortMode = Replay::SortByTime;
-        opts += 2;
+	sortMode = Replay::SortByTime;
+	opts += 2;
       }
       else if (opts[1] == 'n') {
-        sortMode = Replay::SortByName;
-        opts += 2;
+	sortMode = Replay::SortByName;
+	opts += 2;
       }
       else {
-        return false; // unknown option
+	return false; // unknown option
       }
     } else {
       break;
     }
   }
-  
+
   while ((opts[0] != '\0') && isspace(opts[0])) {
     opts++; // eat whitespace
   }
-  
+
   // setup the globbing pattern
   if (opts[0] != '\0') {
     pattern = opts;
@@ -1017,7 +1017,7 @@ static bool parseListOptions(const char* opts,
       pattern = "*" + pattern + "*";
     }
   }
-  
+
   return true;
 }
 
@@ -1028,8 +1028,8 @@ bool Replay::sendFileList(int playerIndex, const char* options)
   std::string pattern;
   if (!parseListOptions(options, sortMode, pattern)) {
     return false;
-  }  
-  
+  }
+
   std::vector<FileEntry> entries;
   if (!getFileList(playerIndex, entries)) {
     return false;
@@ -1051,13 +1051,13 @@ bool Replay::sendFileList(int playerIndex, const char* options)
     if (glob_match(pattern, entry.file)) {
       entriesSent++;
       snprintf(buffer, MessageLen, "#%02i:  %-30s  [%9.1f seconds]",
-               entry.entryNum + 1, entry.file.c_str(), entry.time);
+	       entry.entryNum + 1, entry.file.c_str(), entry.time);
       sendMessage(ServerPlayer, playerIndex, buffer);
       if (entriesSent >= MaxListOutput) {
-        snprintf(buffer, MessageLen, "Not listing more then %i entries, "
-                                     "try using pattern matching.", MaxListOutput);
-        sendMessage(ServerPlayer, playerIndex, buffer);
-        break;
+	snprintf(buffer, MessageLen, "Not listing more then %i entries, "
+				     "try using pattern matching.", MaxListOutput);
+	sendMessage(ServerPlayer, playerIndex, buffer);
+	break;
       }
     }
   }
@@ -1553,7 +1553,7 @@ static bool saveStates()
   savePlayersState();
   saveRabbitState();
   saveGameTimeState();
-  
+
   RecordUpdateTime = getRRtime();
 
   return true;
@@ -1759,12 +1759,12 @@ static bool saveVariablesState()
 static bool saveGameTimeState()
 {
   // FIXME: the packets that are sent out during replay will not
-  //        be properly lag compensated for the connections over
-  //        which they are sent.
-  //        - provide GameTime with an offset capability
-  //        - allow resetting of players' next GameTime update
-  //          (and do so during a replay state update)
-  //        - send GameTime packets out regardless of replay state
+  //	be properly lag compensated for the connections over
+  //	which they are sent.
+  //	- provide GameTime with an offset capability
+  //	- allow resetting of players' next GameTime update
+  //	  (and do so during a replay state update)
+  //	- send GameTime packets out regardless of replay state
   char buffer[MaxPacketLen];
   void* buf = GameTime::pack(buffer, 0.150f);
   int length = (char*)buf - buffer;

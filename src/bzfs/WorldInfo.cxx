@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2005 Tim Riker
+ * Copyright (c) 1993 - 2006 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -107,7 +107,7 @@ void WorldInfo::addWeapon(const FlagType *type, const float *origin,
 			  TimeKeeper &sync)
 {
   worldWeapons.add(type, origin, direction, tilt,
-                   teamColor, initdelay, delay, sync);
+		   teamColor, initdelay, delay, sync);
 }
 
 void WorldInfo::addWaterLevel (float level, const BzMaterial* matref)
@@ -394,8 +394,8 @@ InBuildingType WorldInfo::classifyHit (const Obstacle* obstacle) const
 }
 
 
-bool WorldInfo::getFlagDropPoint(const FlagInfo* fi, const float* pos, 
-                                float* pt) const
+bool WorldInfo::getFlagDropPoint(const FlagInfo* fi, const float* pos,
+				float* pt) const
 {
   FlagType* flagType = fi->flag.type;
   const int team = (int)flagType->flagTeam;

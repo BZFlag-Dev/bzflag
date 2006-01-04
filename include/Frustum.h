@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2005 Tim Riker
+ * Copyright (c) 1993 - 2006 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -47,8 +47,8 @@ class Frustum {
 
     void		setView(const float* eye, const float* target);
     void		setProjection(float fov,
-                                      float m_near, float m_far, float m_deep_far,
-                                      int width, int height, int viewHeight);
+				      float m_near, float m_far, float m_deep_far,
+				      int width, int height, int viewHeight);
     void		setOffset(float eyeOffset, float focalPlane);
     void		setFarPlaneCull(bool useCulling);
     void		flipVertical();

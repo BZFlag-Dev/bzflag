@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2005 Tim Riker
+ * Copyright (c) 1993 - 2006 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -58,7 +58,7 @@ class BackgroundRenderer {
 				     const float moonDirection[3]);
     void		addCloudDrift(GLfloat uDrift, GLfloat vDrift);
     void		notifyStyleChange();
-    
+
     int			getTriangleCount() const;
     void		resetTriangleCount();
 
@@ -103,7 +103,7 @@ class BackgroundRenderer {
     GLuint		simpleGroundList[4];
     int			groundTextureID;
     const GLfloat*	groundTextureMatrix;
-    
+
     // stuff for grid
     GLfloat		gridSpacing;
     GLfloat		gridCount;
@@ -172,7 +172,7 @@ class BackgroundRenderer {
     static const GLfloat	defaultGroundColorInv[4][4];
     static const GLfloat	receiverColor[3];
     static const GLfloat	receiverColorInv[3];
-    
+
     int			triangleCount;
 };
 

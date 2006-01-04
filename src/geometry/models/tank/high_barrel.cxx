@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2005 Tim Riker
+ * Copyright (c) 1993 - 2006 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -61,7 +61,7 @@ int TankGeometryUtils::buildHighBarrel ( void )
     doVertex3f(1.570f, -0.18f, 1.530f);
     doVertex3f(4.940f, -0.126f, 1.530f);
   glEnd(); // 18 verts -> 16 tris
-  
+
   return 22;
 }
 /*

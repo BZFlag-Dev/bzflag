@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2005 Tim Riker
+ * Copyright (c) 1993 - 2006 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -303,7 +303,7 @@ void SceneDatabaseBuilder::addWall(SceneDatabase* db, const WallObstacle& o)
   if (o.getHeight() <= 0.0f) {
     return;
   }
-  
+
   int part = 0;
   WallSceneNode* node;
   ObstacleSceneNodeGenerator* nodeGen = new WallSceneNodeGenerator (&o);

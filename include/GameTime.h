@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2005 Tim Riker
+ * Copyright (c) 1993 - 2006 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -32,7 +32,7 @@ namespace GameTime {
   int packSize();
   void* pack(void *, float lag);
   void* unpack(void *);
-  
+
   const float startRate = 1.0f;
   const float finalRate = 10.0f;
 }

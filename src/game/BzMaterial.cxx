@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2005 Tim Riker
+ * Copyright (c) 1993 - 2006 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -55,7 +55,7 @@ const BzMaterial* BzMaterialManager::addMaterial(const BzMaterial* material)
     if (*material == *(materials[i])) {
       const std::string& name = material->getName();
       if (name.size() > 0) {
-        materials[i]->addAlias(name);
+	materials[i]->addAlias(name);
       }
       return materials[i];
     }
@@ -92,9 +92,9 @@ const BzMaterial* BzMaterialManager::findMaterial(const std::string& target) con
       // check the aliases
       const std::vector<std::string>& aliases = mat->getAliases();
       for (unsigned int j = 0; j < aliases.size(); j++) {
-        if (target == aliases[j]) {
-          return mat;
-        }
+	if (target == aliases[j]) {
+	  return mat;
+	}
       }
     }
     return NULL;
@@ -686,7 +686,7 @@ void BzMaterial::printMTL(std::ostream& out, const std::string& /*indent*/) cons
       std::string texname = ti->name;
       const char* cname = texname.c_str();
       if ((nlen < 4) || (strcasecmp(cname + (nlen - 4), ".png") != 0)) {
-        texname += ".png";
+	texname += ".png";
       }
       out << "map_Kd " << texname << std::endl;
     }

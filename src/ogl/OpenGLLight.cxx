@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2005 Tim Riker
+ * Copyright (c) 1993 - 2006 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -272,8 +272,8 @@ void OpenGLLight::execute(int index, bool useList) const
   if (!useList) {
     genLight((GLenum)(GL_LIGHT0 + index));
     return;
-  } 
-  
+  }
+
   // setup the light parameters (buffered in
   // a display list), but do not turn it on.
   if (lists[index] != INVALID_GL_LIST_ID) {

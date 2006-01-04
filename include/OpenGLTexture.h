@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2005 Tim Riker
+ * Copyright (c) 1993 - 2006 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -77,11 +77,11 @@ class OpenGLTexture {
     void		setFilter(Filter);
 
     bool		getColorAverages(float rgbaRaw[4],
-                                         bool factorAlpha) const;
+					 bool factorAlpha) const;
 
     void		freeContext();
     void		initContext();
-    
+
 
     static int		getFilterCount();
     static const char*	getFilterName(Filter id);
@@ -89,7 +89,7 @@ class OpenGLTexture {
 
     static Filter	getMaxFilter();
     static void		setMaxFilter(Filter);
-    
+
   private:
 			OpenGLTexture(const OpenGLTexture&);
     OpenGLTexture&	operator=(const OpenGLTexture&);

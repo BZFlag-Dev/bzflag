@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2005 Tim Riker
+ * Copyright (c) 1993 - 2006 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -34,7 +34,7 @@ Roaming::Roaming() : view(roamViewDisabled),
 void Roaming::resetCamera(void) {
   camera.pos[0] = 0.0f;
   camera.pos[1] = 0.0f;
-  camera.pos[2] = BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT); 
+  camera.pos[2] = BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT);
   camera.theta = 0.0f;
   camera.zoom = 60.0f;
   camera.phi = -0.0f;

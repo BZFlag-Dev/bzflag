@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2005 Tim Riker
+ * Copyright (c) 1993 - 2006 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -974,7 +974,7 @@ float			LocalPlayer::getReloadTime() const
   if (numShots <= 0) {
     return 0.0f;
   }
-  
+
   float time = float(jamTime - TimeKeeper::getCurrent());
   if (time > 0.0f) {
     return time;
@@ -1002,7 +1002,7 @@ float			LocalPlayer::getReloadTime() const
   if (minTime < 0.0f) {
     minTime = 0.0f;
   }
-  
+
   return minTime;
 }
 

@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2005 Tim Riker
+ * Copyright (c) 1993 - 2006 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -52,7 +52,7 @@ class OpaqueRenderNode : public RenderNode {
 class AlphaGroupRenderNode : public OpaqueRenderNode {
   public:
     AlphaGroupRenderNode(MeshDrawMgr* drawMgr,
-                         GLuint* xformList, bool normalize,
+			 GLuint* xformList, bool normalize,
 			 const GLfloat* color, int lod, int set,
 			 const Extents* exts, const float pos[3],
 			 int triangles);

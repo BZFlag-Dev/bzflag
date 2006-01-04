@@ -1,5 +1,5 @@
 /* bzflag
-* Copyright (c) 1993 - 2005 Tim Riker
+* Copyright (c) 1993 - 2006 Tim Riker
 *
 * This package is free software;  you can redistribute it and/or
 * modify it under the terms of the license found in the file
@@ -1199,7 +1199,7 @@ BZF_API void bz_debugMessagef ( int _debugLevel, const char* fmt, ... )
   va_start(args, fmt);
   vsnprintf(buffer, 4096, fmt, args);
   va_end(args);
-  bz_debugMessage (_debugLevel, buffer); 
+  bz_debugMessage (_debugLevel, buffer);
 }
 
 BZF_API int bz_getDebugLevel ( void )

@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2005 Tim Riker
+ * Copyright (c) 1993 - 2006 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -64,7 +64,7 @@ int TankGeometryUtils::buildLowRCasing ( void )
     doTexCoord2f(0.332f, -0.209f);
     doVertex3f(2.597f, -0.875f, 0.000f);
   glEnd(); // 2 tris
-  
+
   return 12;
 }
 

@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2005 Tim Riker
+ * Copyright (c) 1993 - 2006 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -432,13 +432,13 @@ WorldInfo* BZWReader::defineWorldFromFile()
     float wallHeight = BZDB.eval(StateDatabase::BZDB_WALLHEIGHT);
     float worldSize = BZDBCache::worldSize;
     myWorld->addWall(0.0f, 0.5f * worldSize, 0.0f, (float)(1.5 * M_PI),
-                     0.5f * worldSize, wallHeight);
+		     0.5f * worldSize, wallHeight);
     myWorld->addWall(0.5f * worldSize, 0.0f, 0.0f, (float)M_PI, 0.5f * worldSize,
-                     wallHeight);
+		     wallHeight);
     myWorld->addWall(0.0f, -0.5f * worldSize, 0.0f, (float)(0.5 * M_PI),
-                     0.5f * worldSize, wallHeight);
+		     0.5f * worldSize, wallHeight);
     myWorld->addWall(-0.5f * worldSize, 0.0f, 0.0f, 0.0f, 0.5f * worldSize,
-                     wallHeight);
+		     wallHeight);
   }
 
   // generate group instances

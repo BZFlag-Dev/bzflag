@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2005 Tim Riker
+ * Copyright (c) 1993 - 2006 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -312,7 +312,7 @@ void
 BanEventHandler::process (bz_EventData *eventData)
 {
 	bz_BanEventData  *bed = (bz_BanEventData*) eventData;
-	
+
 	PyObject *arglist = Py_BuildValue ("(iiiss)",
       bed->bannerID,
       bed->banneeID,
@@ -327,7 +327,7 @@ void
 HostBanEventHandler::process (bz_EventData *eventData)
 {
 	bz_HostBanEventData  *hbed = (bz_HostBanEventData*) eventData;
-	
+
 	PyObject *arglist = Py_BuildValue ("(iiss)",
       hbed->bannerID,
       hbed->duration,

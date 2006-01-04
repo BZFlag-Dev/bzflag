@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2005 Tim Riker
+ * Copyright (c) 1993 - 2006 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -38,13 +38,13 @@ ShockWaveStrategy::ShockWaveStrategy(ShotPath *_path) :
     shockNode->setShockWave(true);
   } else {
     shockNode = new SphereBspSceneNode(pos, radius);
-  } 
+  }
 
   // get team
   if (_path->getPlayer() == ServerPlayer) {
     TeamColor tmpTeam = _path->getFiringInfo().shot.team;
     team = (tmpTeam < RogueTeam) ? RogueTeam :
-           (tmpTeam > RabbitTeam) ? RogueTeam : tmpTeam;
+	   (tmpTeam > RabbitTeam) ? RogueTeam : tmpTeam;
   } else {
     Player* p = lookupPlayer(_path->getPlayer());
     team = p ? p->getTeam() : RogueTeam;

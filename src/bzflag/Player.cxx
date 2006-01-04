@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2005 Tim Riker
+ * Copyright (c) 1993 - 2006 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -1256,8 +1256,8 @@ void Player::doDeadReckoning()
     // the importance level of the remote sounds
     const bool soundImportance = false;
     const bool localSound = (ROAM.isRoaming()
-                             && (ROAM.getMode() == Roaming::roamViewFP)
-                             && (ROAM.getTargetTank() == this));
+			     && (ROAM.getMode() == Roaming::roamViewFP)
+			     && (ROAM.getTargetTank() == this));
 
     // check for a landing
     if (((oldStatus & PlayerState::Falling) != 0) &&

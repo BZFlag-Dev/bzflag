@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2005 Tim Riker
+ * Copyright (c) 1993 - 2006 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -474,10 +474,10 @@ void			OpenGLGStateState::setOpenGLState(
       if (oldState->sorted.hasTexture) {
 	if (sorted.texture != oldState->sorted.texture) {
 	  tm.bind(sorted.texture);
-        }
-        if (oldState->sorted.textureEnvMode != sorted.textureEnvMode) {
+	}
+	if (oldState->sorted.textureEnvMode != sorted.textureEnvMode) {
 	  glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, sorted.textureEnvMode);
-        }
+	}
       }
       else {
 	tm.bind(sorted.texture);
@@ -1517,7 +1517,7 @@ void bzPushMatrix()
   matrixDepth[slot]++;
   if (matrixDepth[slot] > maxMatrixDepth[slot]) {
     printf ("bzPushMatrix(): overflow (mode %i, depth %i)\n",
-            matrixMode, matrixDepth[slot]);
+	    matrixMode, matrixDepth[slot]);
     return;
   }
   glPushMatrix();
@@ -1534,7 +1534,7 @@ void bzPopMatrix()
   matrixDepth[slot]--;
   if (matrixDepth[slot] < 0) {
     printf ("bzPopMatrix(): underflow (mode %i, depth %i)\n",
-            matrixMode, matrixDepth[slot]);
+	    matrixMode, matrixDepth[slot]);
     return;
   }
   glPopMatrix();

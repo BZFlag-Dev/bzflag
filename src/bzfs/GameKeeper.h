@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2005 Tim Riker
+ * Copyright (c) 1993 - 2006 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -94,14 +94,14 @@ public:
     void	   setPlayerState(float pos[3], float azimuth);
     void	   getPlayerState(float pos[3], float &azimuth);
     void	   setPlayerState(PlayerState state, float timestamp);
-    
+
     void	   setBzIdentifier(const std::string& id);
     const std::string& getBzIdentifier() const;
 
     // When is the player's next GameTime?
     const TimeKeeper&	getNextGameTime() const;
     void		updateNextGameTime();
-    
+
     enum LSAState
       {
 	start,

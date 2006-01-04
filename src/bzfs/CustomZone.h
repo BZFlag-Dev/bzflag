@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2005 Tim Riker
+ * Copyright (c) 1993 - 2006 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -57,13 +57,13 @@ class CustomZone : public WorldFileLocation {
 
     static const std::string& getFlagSafetyQualifier(int team);
     static int getFlagSafetyFromQualifier(const std::string&);
-    
+
     static const std::string& getPlayerTeamQualifier(int team);
     static int getPlayerTeamFromQualifier(const std::string&);
 
   private:
     void addZoneFlagCount(FlagType* flagType, int count);
-    
+
   private:
     ZoneFlagMap zoneFlagMap;
     QualifierList qualifiers;
