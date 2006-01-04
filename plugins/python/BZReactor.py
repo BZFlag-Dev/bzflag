@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Copyright (C) 2005-2006 David Trowbridge
+# Copyright (C) 1993-2006 Tim Riker
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
