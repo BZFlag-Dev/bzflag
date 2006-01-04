@@ -16,12 +16,12 @@ BZ_GET_PLUGIN_VERSION
 
 typedef struct {
   bool isValid;
-  int  score;  
+  int  score;
   char callsign[22];
   double  joinTime;
 } HtfPlayer;
 
-HtfPlayer Players[MAX_PLAYERID+1];  
+HtfPlayer Players[MAX_PLAYERID+1];
 std::map<std::string, HtfPlayer> leftDuringMatch;
 bool matchActive = false;
 bool htfEnabled = true;
@@ -37,7 +37,7 @@ public:
   virtual bool handle ( int playerID, bzApiString, bzApiString, bzAPIStringList*);
   bz_eTeamType colorNameToDef (const char *color);
   const char *colorDefToName (bz_eTeamType team);
-      
+
 protected:
 
 private:
@@ -86,7 +86,7 @@ const char *HTFscore::colorDefToName (bz_eTeamType team)
     case eAdministrators:
       return ("Administrators");
     default:
-      return ("No Team");  
+      return ("No Team");
   }
 }
 
@@ -123,7 +123,7 @@ int sort_compare (const void *_p1, const void *_p2){
     return -1;
   if (p2 == PlayerLastCapped)
     return 1;
-  return 0;  
+  return 0;
 }
 
 
@@ -131,9 +131,9 @@ int sort_compare (const void *_p1, const void *_p2){
 // SORT !!!
 void dispScores (int who)
 {
-  int sortList[MAX_PLAYERID+1];         // do HtfPlayer *   !!
+  int sortList[MAX_PLAYERID+1];	 // do HtfPlayer *   !!
   int x = 0;
-    
+
   if (!htfEnabled)
     return;
   bz_sendTextMessage(BZ_SERVER, who, "**** HTF  Scoreboard ****");
@@ -151,7 +151,7 @@ void dispScores (int who)
   for (int i=0; i<NumPlayers; i++){
     x = sortList[i];
     bz_sendTextMessagef(BZ_SERVER, who, "%20.20s :%3d %c", Players[x].callsign, Players[x].score,
-                        x == PlayerLastCapped ? '*' : ' ');
+			x == PlayerLastCapped ? '*' : ' ');
   }
   Leader = sortList[0];
 }
@@ -165,7 +165,7 @@ void resetScores (void)
 
 
 void htfCapture (int who)
-{  
+{
   if (!htfEnabled)
     return;
   bz_sendTextMessagef (BZ_SERVER, BZ_ALLUSERS, "HTF FLAG CAPTURED by %s", Players[who].callsign);
@@ -192,7 +192,7 @@ void htfEndGame (void)
   bz_sendTextMessage(BZ_SERVER, BZ_ALLUSERS, "HTF MATCH has ended.");
   if (Leader >= 0)
     bz_sendTextMessagef(BZ_SERVER, BZ_ALLUSERS, "%s is the WINNER !", Players[Leader].callsign);
-  
+
 }
 
 void sendHelp (int who)
@@ -242,7 +242,7 @@ bz_debugMessagef(3, "++++++ HTFscore: Player JOINED (ID:%d, TEAM:%d, CALLSIGN:%s
     if (htfTeam!=eNoTeam && joinData->team!=htfTeam && joinData->team != eObservers){
       sprintf (msg, "HTF mode enabled, you must join the %s team to play", htfScore.colorDefToName(htfTeam));
       bz_kickUser (joinData->playerID, msg, true);
-      return;  
+      return;
     }
     if (joinData->team == htfTeam)
       listAdd (joinData->playerID, joinData->callsign.c_str());
@@ -265,7 +265,7 @@ bz_debugMessagef(3, "++++++ HTFscore: Player PARTED (ID:%d, TEAM:%d, CALLSIGN:%s
     bz_GameStartEndEventData *msgData = (bz_GameStartEndEventData*)eventData;
 bz_debugMessagef(2, "++++++ HTFscore: Game START (%f, %f)", msgData->time, msgData->duration); fflush (stdout);
     htfStartGame ();
-    
+
   // game END
   } else if (eventData->eventType == bz_eGameEndEvent) {
     bz_GameStartEndEventData *msgData = (bz_GameStartEndEventData*)eventData;
@@ -281,7 +281,7 @@ bool checkPerms (int playerID, char *htfCmd, const char *permName)
   if (bz_hasPerm (playerID, permName))
     return true;
   bz_sendTextMessagef (BZ_SERVER, BZ_ALLUSERS, "you need \"%s\" permission to do /htf %s", permName, htfCmd);
-  return false;  
+  return false;
 }
 
 
@@ -299,7 +299,7 @@ bool HTFscore::handle ( int playerID, bzApiString cmd, bzApiString, bzAPIStringL
 
   strncpy (subCmd, cmdParams->get(0).c_str(), 5);
   subCmd[4] = '\0';
-  if (strcasecmp (subCmd, "rese") == 0){ 
+  if (strcasecmp (subCmd, "rese") == 0){
     if (checkPerms (playerID, "reset", "COUNTDOWN"))
       htfReset (playerID);
   } else if (strcasecmp (subCmd, "off") == 0){
@@ -310,7 +310,7 @@ bool HTFscore::handle ( int playerID, bzApiString cmd, bzApiString, bzAPIStringL
       htfEnable (true, playerID);
   } else if (strcasecmp (subCmd, "stat") == 0)
     htfStats (playerID);
-  else 
+  else
     sendHelp (playerID);
   return true;
 }
@@ -333,7 +333,7 @@ bool parseCommandLine (const char *cmdLine)
   if (cmdLine==NULL || *cmdLine=='\0')
     return false;
   if (strncasecmp (cmdLine, "TEAM=", 5) == 0){
-    if ((htfTeam = htfScore.colorNameToDef(cmdLine+5)) == eNoTeam)  
+    if ((htfTeam = htfScore.colorNameToDef(cmdLine+5)) == eNoTeam)
       return commandLineHelp ();
   } else
     return commandLineHelp ();

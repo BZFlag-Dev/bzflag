@@ -632,8 +632,8 @@ void			HUDRenderer::render(SceneRenderer& renderer)
   }
   else {
     const bool showTimes = (fps > 0.0f) || (drawTime > 0.0f) ||
-                           (triangleCount > 0) || (radarTriangleCount > 0);
-    const bool showTankLabels = BZDB.isTrue("displayLabels");                           
+			   (triangleCount > 0) || (radarTriangleCount > 0);
+    const bool showTankLabels = BZDB.isTrue("displayLabels");
 
     if (showCompose || showTimes || showTankLabels) {
       // get view metrics
@@ -650,15 +650,15 @@ void			HUDRenderer::render(SceneRenderer& renderer)
       glMatrixMode(GL_MODELVIEW);
       glPushMatrix();
       glLoadIdentity();
-    
+
       if (showCompose) {
-        renderCompose(renderer);
+	renderCompose(renderer);
       }
       if (showTimes) {
-        renderTimes();
+	renderTimes();
       }
       if (showTankLabels) {
-        renderTankLabels(renderer);
+	renderTankLabels(renderer);
       }
 
       glPopMatrix();

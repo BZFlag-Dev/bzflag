@@ -852,11 +852,11 @@ void MeshObstacle::print(std::ostream& out, const std::string& indent) const
   out << indent << "# normals = " << normalCount << std::endl;
   out << indent << "# texcoords = " << texcoordCount << std::endl;
   out << indent << "# mins = " << extents.mins[0] << " "
-                               << extents.mins[1] << " "
-                               << extents.mins[2] << std::endl;
+			       << extents.mins[1] << " "
+			       << extents.mins[2] << std::endl;
   out << indent << "# maxs = " << extents.maxs[0] << " "
-                               << extents.maxs[1] << " "
-                               << extents.maxs[2] << std::endl;
+			       << extents.maxs[1] << " "
+			       << extents.maxs[2] << std::endl;
 
   if (name.size() > 0) {
     out << indent << "  name " << name << std::endl;
@@ -924,7 +924,7 @@ void MeshObstacle::print(std::ostream& out, const std::string& indent) const
   }
 
   out << indent << "end" << std::endl;
-  
+
   return;
 }
 
@@ -992,26 +992,26 @@ void MeshObstacle::printOBJ(std::ostream& out, const std::string& /*indent*/) co
       vIndex = vIndex - vertexCount;
       out << " " << vIndex;
       if (useTexcoords) {
-        int tIndex = (fvec2*)face->getTexcoord(i) - texcoords;
-        tIndex = tIndex - texcoordCount;
-        out << "/" << tIndex;
+	int tIndex = (fvec2*)face->getTexcoord(i) - texcoords;
+	tIndex = tIndex - texcoordCount;
+	out << "/" << tIndex;
       }
       if (useNormals) {
-        if (!useTexcoords) {
-          out << "/";
-        }
-        int nIndex = (fvec3*)face->getNormal(i) - normals;
-        nIndex = nIndex - normalCount;
-        out << "/" << nIndex;
+	if (!useTexcoords) {
+	  out << "/";
+	}
+	int nIndex = (fvec3*)face->getNormal(i) - normals;
+	nIndex = nIndex - normalCount;
+	out << "/" << nIndex;
       }
     }
     out << std::endl;
   }
 
   out << "# OBJ - end" << std::endl << std::endl;
-  
+
   incObjCounter();
-  
+
   return;
 }
 

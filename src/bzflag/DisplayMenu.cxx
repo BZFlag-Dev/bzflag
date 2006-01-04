@@ -283,7 +283,7 @@ void			DisplayMenu::resize(int _width, int _height)
     if (BZDBCache::shadows) {
       shadowVal++;
       if (BZDBCache::stencilShadows) {
-        shadowVal++;
+	shadowVal++;
       }
     }
     ((HUDuiList*)listHUD[i++])->setIndex(shadowVal);

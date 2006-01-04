@@ -158,11 +158,11 @@ void GroupInstance::setShootThrough()
 
 
 void GroupInstance::addMaterialSwap(const BzMaterial* srcMat,
-                                    const BzMaterial* dstMat)
+				    const BzMaterial* dstMat)
 {
   matMap[srcMat] = dstMat;
   return;
-}                                    
+}
 
 
 const std::string& GroupInstance::getGroupDef() const
@@ -187,7 +187,7 @@ void* GroupInstance::pack(void* buf)
     // hack to stuff in material map data
     std::string fakeString = name;
     const unsigned int origSize = fakeString.size();
-    const unsigned int fakeSize = 
+    const unsigned int fakeSize =
       (1 + sizeof(int32_t) + (matMap.size() * 2 * sizeof(int32_t)));
     fakeString.resize(origSize + fakeSize);
     char* buffer = new char[fakeSize];
@@ -252,12 +252,12 @@ void* GroupInstance::unpack(void* buf)
       int32_t count;
       p = nboUnpackInt(p, count);
       for (int i = 0; i < count; i++) {
-        int32_t srcIndex, dstIndex;
-        p = nboUnpackInt(p, srcIndex);
-        p = nboUnpackInt(p, dstIndex);
-        const BzMaterial* srcMat = MATERIALMGR.getMaterial(srcIndex);
-        const BzMaterial* dstMat = MATERIALMGR.getMaterial(dstIndex);
-        matMap[srcMat] = dstMat;
+	int32_t srcIndex, dstIndex;
+	p = nboUnpackInt(p, srcIndex);
+	p = nboUnpackInt(p, dstIndex);
+	const BzMaterial* srcMat = MATERIALMGR.getMaterial(srcIndex);
+	const BzMaterial* dstMat = MATERIALMGR.getMaterial(dstIndex);
+	matMap[srcMat] = dstMat;
       }
     }
     nboUseErrorChecking(true);
@@ -373,7 +373,7 @@ void GroupInstance::print(std::ostream& out, const std::string& indent) const
       out << std::endl;
     }
   }
-  
+
   if (driveThrough) {
     out << indent << "  driveThrough " << phydrv << std::endl;
   }
@@ -940,9 +940,9 @@ void GroupDefinition::printFlatFile(std::ostream& out,
 	if (!isContainer(type)) {
 	  if (!saveAsOBJ) {
 	    obs->print(out, indent);
-          } else {
+	  } else {
 	    obs->printOBJ(out, indent);
-          }
+	  }
 	}
       }
     }
@@ -1137,7 +1137,7 @@ void GroupDefinitionMgr::print(std::ostream& out,
 
   // for unique OBJ mesh ids
   Obstacle::resetObjCounter();
-  
+
   if (!(saveFlatFile || saveAsOBJ)) {
     // print the group definitions
     for (unsigned int i = 0; i < list.size(); i++) {
@@ -1150,7 +1150,7 @@ void GroupDefinitionMgr::print(std::ostream& out,
     // print the world
     world.printFlatFile(out, indent);
   }
-  
+
   if (saveAsOBJ) {
     BZDB.set("saveAsMeshes", saveAsMeshes ? "1" : "0");
     BZDB.set("saveFlatFile", saveFlatFile ? "1" : "0");

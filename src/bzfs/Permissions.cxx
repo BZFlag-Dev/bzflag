@@ -108,7 +108,7 @@ bool PlayerAccessInfo::isAdmin() const {
 bool PlayerAccessInfo::showAsAdmin() const {
   if (hasPerm(hideAdmin))
     return false;
-  else 
+  else
     return isAdmin();
 }
 

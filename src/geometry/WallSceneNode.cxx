@@ -90,8 +90,8 @@ bool			WallSceneNode::cull(const ViewFrustum& frustum) const
   // cull if eye is behind (or on) plane
   const GLfloat* eye = frustum.getEye();
   const float eyedot = (eye[0] * plane[0]) +
-                       (eye[1] * plane[1]) +
-                       (eye[2] * plane[2]) + plane[3];
+		       (eye[1] * plane[1]) +
+		       (eye[2] * plane[2]) + plane[3];
   if (eyedot <= 0.0f) {
     return true;
   }
@@ -112,12 +112,12 @@ bool			WallSceneNode::cull(const ViewFrustum& frustum) const
   for (i = 0; i < planeCount; i++) {
     const GLfloat* norm = frustum.getSide(i);
     d[i] = (mySphere[0] * norm[0]) +
-           (mySphere[1] * norm[1]) +
-           (mySphere[2] * norm[2]) + norm[3];
+	   (mySphere[1] * norm[1]) +
+	   (mySphere[2] * norm[2]) + norm[3];
     if (d[i] < 0.0f) {
       d2[i] = d[i] * d[i];
       if (d2[i] > mySphere[3]) {
-        return true;
+	return true;
       }
       inside = false;
     }

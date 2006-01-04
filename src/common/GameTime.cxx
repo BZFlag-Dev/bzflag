@@ -166,15 +166,15 @@ void GameTime::update()
     const TimeRecord& tr = *timeRecs.begin();
     const s64 diffTime = stepTime - tr.netTime;
     if ((diffTime < -maxTime) || (diffTime > +maxTime) ||
-        (avgRate < minRate) || (avgRate > maxRate)) {
+	(avgRate < minRate) || (avgRate > maxRate)) {
       DEBUG4("GameTime: discontinuity: usecs = %lli, rate = %f\n",
-             diffTime, avgRate);
+	     diffTime, avgRate);
       resetToRecord(tr);
     }
   }
-  
+
   DEBUG4("GameTime: count = %i, rate = %f\n", timeRecs.size(), avgRate);
-  
+
   return;
 }
 
@@ -202,7 +202,7 @@ void GameTime::setStepTime()
   }
   stepSecs = (double)stepTime * 1.0e-6;
   lastStep = thisStep;
-  
+
   return;
 }
 
@@ -243,28 +243,28 @@ void* GameTime::unpack(void *buf)
   buf = nboUnpackUInt(buf, msb);
   buf = nboUnpackUInt(buf, lsb);
   const s64 netTime = ((s64)msb << 32) + (s64)lsb;
-  
-  // store the value 
+
+  // store the value
   const TimeRecord tr = { netTime, getRawTime() };
   timeRecs.push_front(tr);
-  
+
   // clear oversize entries
   while (timeRecs.size() > maxRecords) {
     timeRecs.pop_back();
   }
 
   // clear the aged entries
-  if (timeRecs.size() > 0) {  
+  if (timeRecs.size() > 0) {
     s64 nowTime = getRawTime();
     while (timeRecs.size() > 0) {
       TimeRecord back = *timeRecs.rbegin();
       if ((nowTime - back.localTime) < maxRecordAge) {
-        break;
+	break;
       }
       timeRecs.pop_back();
     }
   }
-  
+
   return buf;
 }
 

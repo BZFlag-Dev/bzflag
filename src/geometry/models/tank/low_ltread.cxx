@@ -65,7 +65,7 @@ int TankGeometryUtils::buildLowLCasing ( void )
     doTexCoord2f(0.268f, 0.233f);
     doVertex3f(2.597f, 1.400f, 0.000f);
   glEnd(); // 2 tris
-  
+
   return 12;
 }
 /*

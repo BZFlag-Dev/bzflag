@@ -163,7 +163,7 @@ void GameKeeper::Player::updateNextGameTime()
   }
   gameTimeNext = TimeKeeper::getCurrent();
   gameTimeNext += gameTimeRate;
-  return;   
+  return;
 }
 
 void *GameKeeper::Player::packAdminInfo(void *buf)

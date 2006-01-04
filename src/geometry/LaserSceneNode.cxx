@@ -190,7 +190,7 @@ void			LaserSceneNode::LaserRenderNode::render()
 	glVertex3f(length, 0.0f, 0.0f);
       }
       glEnd(); // count 1 line as 1 tri
-      
+
       addTriangleCount(13);
     }
 

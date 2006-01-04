@@ -23,6 +23,7 @@
 #include "TextUtils.h"
 #include "CommandsStandard.h"
 #include "TextureManager.h"
+#include "DirectoryNames.h"
 
 // local implementation headers
 #include "LocalCommand.h"
@@ -107,6 +108,12 @@ class ReTextureCommand : LocalCommand {
     bool operator() (const char *commandLine);
 };
 
+class SaveMsgsCommand : LocalCommand {
+  public:
+    SaveMsgsCommand();
+    bool operator() (const char *commandLine);
+};
+
 class SaveWorldCommand : LocalCommand {
   public:
     SaveWorldCommand();
@@ -127,6 +134,7 @@ static LocalSetCommand    localSetCommand;
 static QuitCommand	  quitCommand;
 static RoamPosCommand     RoamPosCommand;
 static ReTextureCommand   reTextureCommand;
+static SaveMsgsCommand	  saveMsgsCommand;
 static SaveWorldCommand   saveWorldCommand;
 
 
@@ -139,6 +147,7 @@ LocalSetCommand::LocalSetCommand() :	LocalCommand("/localset") {}
 QuitCommand::QuitCommand() :		LocalCommand("/quit") {}
 ReTextureCommand::ReTextureCommand() :	LocalCommand("/retexture") {}
 RoamPosCommand::RoamPosCommand() :	LocalCommand("/roampos") {}
+SaveMsgsCommand::SaveMsgsCommand() :	LocalCommand("/savemsgs") {}
 SaveWorldCommand::SaveWorldCommand() :	LocalCommand("/saveworld") {}
 SetCommand::SetCommand() :		LocalCommand("/set") {}
 SilenceCommand::SilenceCommand() :	LocalCommand("/silence") {}
@@ -285,7 +294,7 @@ static bool foundVar = false;
 class VarDispInfo {
   public:
     VarDispInfo(const std::string& _prefix)
-    { 
+    {
       prefix = _prefix;
       pattern = "";
       diff = client = server = false;
@@ -344,7 +353,7 @@ static void listSetVars(const std::string& name, void* varDispPtr)
 {
   const VarDispInfo* varDisp = (VarDispInfo*)varDispPtr;
   const bool diff = varDisp->diff;
-  
+
   if (!glob_match(varDisp->pattern.c_str(), name)) {
     return;
   }
@@ -354,7 +363,7 @@ static void listSetVars(const std::string& name, void* varDispPtr)
   }
 
   foundVar = true;
-  
+
   const bool serverVar = (BZDB.getPermission(name) == StateDatabase::Locked);
 
   char message[MessageLen];
@@ -380,19 +389,19 @@ bool SetCommand::operator() (const char *commandLine)
   if (tokens.size() > 1) {
     return false;
   }
-  
+
   std::string pattern = (tokens.size() == 1) ? tokens[0] : "_*";
   if (pattern[0] != '_') {
     pattern = '_' + pattern;
   }
-  
+
   const std::string header = "/set " + pattern;
   addMessage(LocalPlayer::getMyTank(), header, 2);
 
   VarDispInfo varDisp(commandName);
   varDisp.server = true;
   varDisp.pattern = pattern;
-  
+
   foundVar = false;
   BZDB.iterate(listSetVars, &varDisp);
   if (!foundVar) {
@@ -425,10 +434,10 @@ bool DiffCommand::operator() (const char *commandLine)
   if (!foundVar) {
     if (pattern == "_*") {
       addMessage(LocalPlayer::getMyTank(),
-        "all variables are at defaults", 2);
+	"all variables are at defaults", 2);
     } else {
       addMessage(LocalPlayer::getMyTank(),
-        "no differing variables with that pattern", 2);
+	"no differing variables with that pattern", 2);
     }
   }
   return true;
@@ -439,7 +448,7 @@ bool LocalSetCommand::operator() (const char *commandLine)
 {
   std::string params = commandLine + 9;
   std::vector<std::string> tokens = TextUtils::tokenize(params, " ", 0, true);
-#ifdef DEBUG  
+#ifdef DEBUG
   const bool debug = true;
 #else
   const bool debug = false;
@@ -450,8 +459,8 @@ bool LocalSetCommand::operator() (const char *commandLine)
     addMessage(LocalPlayer::getMyTank(), header, 2);
 
     if (!debug &&
-        ((strstr(tokens[0].c_str(), "*") != NULL) ||
-         (strstr(tokens[0].c_str(), "?") != NULL))) {
+	((strstr(tokens[0].c_str(), "*") != NULL) ||
+	 (strstr(tokens[0].c_str(), "?") != NULL))) {
       addMessage(LocalPlayer::getMyTank(), "undefined client variable", 2);
       return true;
     }
@@ -464,11 +473,11 @@ bool LocalSetCommand::operator() (const char *commandLine)
     BZDB.iterate(listSetVars, &varDisp);
     if (!foundVar) {
       if (debug) {
-        addMessage(LocalPlayer::getMyTank(),
-          "no matching client variables", 2);
+	addMessage(LocalPlayer::getMyTank(),
+	  "no matching client variables", 2);
       } else {
-        addMessage(LocalPlayer::getMyTank(),
-          "undefined client variable", 2);
+	addMessage(LocalPlayer::getMyTank(),
+	  "undefined client variable", 2);
       }
     }
   }
@@ -518,11 +527,11 @@ bool RoamPosCommand::operator() (const char *commandLine)
     } else if (TextUtils::tolower(tokens[0]) == "send") {
       LocalPlayer* myTank = LocalPlayer::getMyTank();
       if (myTank != NULL) {
-        const Roaming::RoamingCamera* camPtr = ROAM.getCamera();
-        float fakeVel[3] = { camPtr->theta, camPtr->phi, camPtr->zoom };
-        myTank->move(camPtr->pos, camPtr->theta);
-        myTank->setVelocity(fakeVel);
-        serverLink->sendPlayerUpdate(myTank);
+	const Roaming::RoamingCamera* camPtr = ROAM.getCamera();
+	float fakeVel[3] = { camPtr->theta, camPtr->phi, camPtr->zoom };
+	myTank->move(camPtr->pos, camPtr->theta);
+	myTank->setVelocity(fakeVel);
+	serverLink->sendPlayerUpdate(myTank);
       }
     } else {
       const float degrees = parseFloatExpr(tokens[0], true);
@@ -581,6 +590,32 @@ bool ReTextureCommand::operator() (const char *)
 {
   TextureManager& tm = TextureManager::instance();
   tm.reloadTextures();
+  return true;
+}
+
+
+bool SaveMsgsCommand::operator() (const char *commandLine)
+{
+  if (controlPanel == NULL) {
+    return true;
+  }
+
+  std::vector<std::string> args;
+  args = TextUtils::tokenize(commandLine, " ");
+  const int argCount = (int)args.size();
+
+  bool stripAnsi = false;
+  if ((argCount > 1) && (args[1] == "-s")) {
+    stripAnsi = true;
+  }
+
+  std::string filename = getConfigDirName() + "msglog.txt";
+
+  controlPanel->saveMessages(filename, stripAnsi);
+
+  std::string msg = "Saved messages to: " + filename;
+  addMessage(NULL, msg);
+
   return true;
 }
 

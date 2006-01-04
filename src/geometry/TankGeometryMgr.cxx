@@ -236,12 +236,12 @@ void TankGeometryMgr::buildLists()
 	    else if ((part >= LeftWheel0) && (part <= LeftWheel3)) {
 	      int wheel = part - LeftWheel0;
 	      count = buildHighLWheel(wheel, (float)wheel * (float)(M_PI / 2.0),
-                                      wheelDivs);
+				      wheelDivs);
 	    }
 	    else if ((part >= RightWheel0) && (part <= RightWheel3)) {
 	      int wheel = part - RightWheel0;
 	      count = buildHighRWheel(wheel, (float)wheel * (float)(M_PI / 2.0),
-	                              wheelDivs);
+				      wheelDivs);
 	    }
 	  }
 
@@ -267,9 +267,9 @@ GLuint TankGeometryMgr::getPartList(TankGeometryEnums::TankShadow shadow,
 
 
 int TankGeometryMgr::getPartTriangleCount(TankGeometryEnums::TankShadow sh,
-                                          TankGeometryEnums::TankPart part,
-				          TankGeometryEnums::TankSize size,
-				          TankGeometryEnums::TankLOD lod)
+					  TankGeometryEnums::TankPart part,
+					  TankGeometryEnums::TankSize size,
+					  TankGeometryEnums::TankLOD lod)
 {
   return partTriangles[sh][lod][size][part];
 }

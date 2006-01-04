@@ -2,15 +2,15 @@
     DYNAMIC LINK LIBRARY : logDetail Project Overview
 ========================================================================
 
-This is the logDetail plugin. It displays information about server events 
+This is the logDetail plugin. It displays information about server events
 and chat to the standard output server log.
 
 The log detail plugin displays:
- * unprocessed user commands (slash commands before they are processed - valid 
- 	or not)
+ * unprocessed user commands (slash commands before they are processed - valid
+	or not)
  * player reports
- * chat messages (broadcasts, team messages, admin channel messages, and 
- 	private messages)
+ * chat messages (broadcasts, team messages, admin channel messages, and
+	private messages)
  * server messages
  * players joining (ip, auth status, team, etc)
  * player authentication changes (via /password or /identify)

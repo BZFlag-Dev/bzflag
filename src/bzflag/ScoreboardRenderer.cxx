@@ -8,8 +8,6 @@
  * THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
- *
- * $Id$
  */
 
 
@@ -211,7 +209,7 @@ void	ScoreboardRenderer::render(bool forceDisplay)
 	    FontManager::instance().getStrHeight(minorFontFace, minorFontSize, " "));
     }
   }
-  
+
   if (dim) {
     fm.setOpacity(1.0f);
   }
@@ -260,7 +258,7 @@ void			ScoreboardRenderer::huntKeyEvent (bool isAdd)
 
   } else if (getHuntState() == HUNT_SELECTING) {
     exitSelectState ();
-    
+
   } else {
     setHuntState(HUNT_SELECTING);
     playLocalSound(SFX_HUNT_SELECT);
@@ -295,7 +293,7 @@ int			ScoreboardRenderer::getHuntState() const
 // invoked when joining a server
 void ScoreboardRenderer::huntReset()
 {
-    huntState = HUNT_NONE; 
+    huntState = HUNT_NONE;
     numHunted = 0;
 }
 
@@ -450,22 +448,22 @@ void			ScoreboardRenderer::renderScoreboard(void)
       if (huntPosition>=numPlayers)
 	huntPosition = 0;
       if (huntPosition<0)
-        huntPosition = numPlayers-1;
-      if (huntSelectEvent){             // if 'fire' was pressed ... 
-        if (!huntAddMode)
-          clearHuntedTanks ();
-        if (huntAddMode && players[huntPosition]->isHunted()) {   // UNselect
-  	      players[huntPosition]->setHunted(false);
-          if (--numHunted != 0)
-           	playLocalSound(SFX_HUNT_SELECT);
-        } else {                                                  // else select
-  	      players[huntPosition]->setHunted(true);
-          if (++numHunted == 1)
-           	playLocalSound(SFX_HUNT);
-          else
-           	playLocalSound(SFX_HUNT_SELECT);
-        }          
-        huntState = HUNT_ENABLED;
+	huntPosition = numPlayers-1;
+      if (huntSelectEvent){	     // if 'fire' was pressed ...
+	if (!huntAddMode)
+	  clearHuntedTanks ();
+	if (huntAddMode && players[huntPosition]->isHunted()) {   // UNselect
+	      players[huntPosition]->setHunted(false);
+	  if (--numHunted != 0)
+		playLocalSound(SFX_HUNT_SELECT);
+	} else {						  // else select
+	      players[huntPosition]->setHunted(true);
+	  if (++numHunted == 1)
+		playLocalSound(SFX_HUNT);
+	  else
+		playLocalSound(SFX_HUNT_SELECT);
+	}
+	huntState = HUNT_ENABLED;
       }
     }
   }
@@ -490,11 +488,11 @@ void			ScoreboardRenderer::renderScoreboard(void)
   }
 
   if (huntState==HUNT_ENABLED && !numHunted) {
-    huntState = HUNT_NONE;        // last hunted player must have left the game
+    huntState = HUNT_NONE;	// last hunted player must have left the game
     huntAddMode = false;
     playLocalSound(SFX_HUNT);
   }
-  
+
   delete[] players;
   renderTeamScores(winWidth, y0, dy);
 }

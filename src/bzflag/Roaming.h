@@ -50,7 +50,7 @@ public:
     explicitSet
   };
   void changeTarget(RoamingTarget target, int explicitIndex = 0);
-  /* if view is in any mode in which they are not valid, 
+  /* if view is in any mode in which they are not valid,
      getTargetTank and getTargetFlag will return NULL.  Otherwise
      they return the index of the object that you're
      tracking/following/driving with */

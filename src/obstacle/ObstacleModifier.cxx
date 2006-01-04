@@ -103,28 +103,28 @@ ObstacleModifier::ObstacleModifier(const ObstacleModifier& obsMod,
   if (obsMod.modifyMaterial) {
     modifyMaterial = true;
     material = obsMod.material;
-  } 
+  }
   else if (obsMod.matMap.size() > 0) {
     if (grpinst.modifyMaterial) {
       modifyMaterial = true;
       MaterialMap::const_iterator find;
       find = obsMod.matMap.find(grpinst.material);
       if (find != obsMod.matMap.end()) {
-        material = find->second;
+	material = find->second;
       } else {
-        material = grpinst.material;
+	material = grpinst.material;
       }
     } else {
       matMap = obsMod.matMap;
       MaterialMap::const_iterator it;
       for (it = grpinst.matMap.begin(); it != grpinst.matMap.end(); it++) {
-        MaterialMap::const_iterator find_it;
-        find_it = obsMod.matMap.find(it->second);
-        if (find_it != obsMod.matMap.end()) {
-          matMap[it->first] = find_it->second;
-        } else {
-          matMap[it->first] = it->second;
-        }
+	MaterialMap::const_iterator find_it;
+	find_it = obsMod.matMap.find(it->second);
+	if (find_it != obsMod.matMap.end()) {
+	  matMap[it->first] = find_it->second;
+	} else {
+	  matMap[it->first] = it->second;
+	}
       }
     }
   }
@@ -135,7 +135,7 @@ ObstacleModifier::ObstacleModifier(const ObstacleModifier& obsMod,
   else if (grpinst.matMap.size() > 0) {
     matMap = grpinst.matMap;
   }
-        
+
   driveThrough = grpinst.driveThrough || obsMod.driveThrough;
   shootThrough = grpinst.shootThrough || obsMod.shootThrough;
 
@@ -186,10 +186,10 @@ void ObstacleModifier::execute(Obstacle* obstacle) const
 	if (modifyMaterial) {
 	  face->bzMaterial = material;
 	} else if (matMap.size() > 0) {
-          MaterialMap::const_iterator it = matMap.find(face->bzMaterial);
-          if (it != matMap.end()) {
-            face->bzMaterial = it->second;
-          }
+	  MaterialMap::const_iterator it = matMap.find(face->bzMaterial);
+	  if (it != matMap.end()) {
+	    face->bzMaterial = it->second;
+	  }
 	}
 	if (modifyColor) {
 	  face->bzMaterial = getTintedMaterial(tint, face->bzMaterial);
@@ -247,10 +247,10 @@ void ObstacleModifier::getMaterialMap(const MaterialSet& matSet,
       if (modifyMaterial) {
 	convMat = material;
       } else if (matMap.size() > 0) {
-        MaterialMap::const_iterator swap_it = matMap.find(origMat);
-        if (swap_it != matMap.end()) {
-          convMat = swap_it->second;
-        }
+	MaterialMap::const_iterator swap_it = matMap.find(origMat);
+	if (swap_it != matMap.end()) {
+	  convMat = swap_it->second;
+	}
       }
       if (modifyColor) {
 	convMat = getTintedMaterial(tint, convMat);

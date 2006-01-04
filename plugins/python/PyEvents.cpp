@@ -312,7 +312,7 @@ void
 BanEventHandler::process (bz_EventData *eventData)
 {
 	bz_BanEventData  *bed = (bz_BanEventData*) eventData;
-	
+
 	PyObject *arglist = Py_BuildValue ("(iiiss)",
       bed->bannerID,
       bed->banneeID,
@@ -327,7 +327,7 @@ void
 HostBanEventHandler::process (bz_EventData *eventData)
 {
 	bz_HostBanEventData  *hbed = (bz_HostBanEventData*) eventData;
-	
+
 	PyObject *arglist = Py_BuildValue ("(iiss)",
       hbed->bannerID,
       hbed->duration,

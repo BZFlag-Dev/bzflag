@@ -17,35 +17,35 @@
 #include <vector>
 
 
-  
+
 /** This class will try to complete strings to registered words. */
 class AutoCompleter {
   public:
     /** Use this function to register a new word that strings should be
-        checked against and possibly completed to. Empty strings will not
-        be registered. */
+	checked against and possibly completed to. Empty strings will not
+	be registered. */
     void registerWord(const std::string& str, bool quoteString = false);
 
     /** Use this function to unregister a word. If the word hasn't been
-        registered previously nothing will happen. */
+	registered previously nothing will happen. */
     void unregisterWord(const std::string& str);
 
     /** This function will search the list of registered words and see if
-        the given string can be completed to any of those words. If the string
-        can be completed to several words, their largest common prefix will
-        be returned. */
+	the given string can be completed to any of those words. If the string
+	can be completed to several words, their largest common prefix will
+	be returned. */
     std::string complete(const std::string& str, std::string* matches = NULL);
 
   protected:
     class WordRecord {
       public:
-        WordRecord(const std::string& str, bool quoteString);
-        bool operator<(const WordRecord&) const;
-        bool operator==(const WordRecord&) const;
-        bool operator!=(const WordRecord&) const;
+	WordRecord(const std::string& str, bool quoteString);
+	bool operator<(const WordRecord&) const;
+	bool operator==(const WordRecord&) const;
+	bool operator!=(const WordRecord&) const;
       public:
-        std::string word;
-        bool quoteString;
+	std::string word;
+	bool quoteString;
     };
     std::vector<WordRecord> words;
 };
@@ -59,7 +59,7 @@ class DefaultCompleter : public AutoCompleter {
     DefaultCompleter();
 
     /** This function sets the list of registered words to a default which
-        consists of some /-commands; possible other words are removed */
+	consists of some /-commands; possible other words are removed */
     void setDefaults();
 };
 

@@ -182,17 +182,17 @@ int main(int argc, char** argv) {
       if (cmd == "/quit") {
 	client.waitForServer();
 	return 0;
-      } 
+      }
       else if (strncasecmp(cmd.c_str(), "/sleep", 6) == 0) {
-        const char* start = cmd.c_str() + 6;
-        char* endptr;
-        double sleepTime = strtod(start, &endptr);
-        if (endptr != start) {
-          TimeKeeper::sleep(sleepTime);
-        }
+	const char* start = cmd.c_str() + 6;
+	char* endptr;
+	double sleepTime = strtod(start, &endptr);
+	if (endptr != start) {
+	  TimeKeeper::sleep(sleepTime);
+	}
       }
       else {
-        client.sendMessage(cmd, AllPlayers);
+	client.sendMessage(cmd, AllPlayers);
       }
     }
   }

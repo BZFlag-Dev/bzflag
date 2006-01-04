@@ -415,7 +415,7 @@ bool MeshDrawInfo::serverSetup(const MeshObstacle* mesh)
 
   // sort the lods
   qsort(lods, lodCount, sizeof(DrawLod), compareLengthPerPixel);
-  
+
   return true;
 }
 

@@ -66,7 +66,7 @@ void			speedSoundReceiver(float vx, float vy, float vz);
 
 /* sound effect event at given position in world, or possible locally */
 void			playSound(int soundCode, const float pos[3],
-                                  bool important, bool localSound);
+				  bool important, bool localSound);
 
 /* sound effect event at given position in world */
 void			playWorldSound(int soundCode, const float pos[3],

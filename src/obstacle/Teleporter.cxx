@@ -683,9 +683,9 @@ void Teleporter::printOBJ(std::ostream& out, const std::string& /*indent*/) cons
   out << "f -6/-4/-4 -5/-3/-4 -1/-2/-4 -2/-1/-4" << std::endl;
 
   out << std::endl;
-  
+
   incObjCounter();
-  
+
   return;
 }
 

@@ -21,6 +21,7 @@
 #include "Obstacle.h"
 #include "PlayerInfo.h"
 #include "PlayerState.h"
+#include "StateDatabase.h"
 #include "BZDBCache.h"
 
 // bzfs specific headers
@@ -38,7 +39,8 @@ SpawnPosition::SpawnPosition(int playerId, bool onGroundOnly, bool notNearEdges)
   team = pi.getTeam();
   azimuth = (float)(bzfrand() * 2.0 * M_PI);
 
-  if (playerData->player.shouldRestartAtBase() &&
+  if (!BZDB.isTrue("freeCtfSpawns") &&
+      playerData->player.shouldRestartAtBase() &&
       (team >= RedTeam) && (team <= PurpleTeam) &&
       (bases.find(team) != bases.end())) {
     TeamBases &teamBases = bases[team];

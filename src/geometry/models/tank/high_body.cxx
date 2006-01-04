@@ -65,8 +65,8 @@ float sideNormals[][3] ={{-0.006338f, 0.999979f, -0.001652f},
 
 
 static void DrawOBJIndexFace (int v1, int t1, int n1,
-                              int v2, int t2, int n2,
-                              int v3, int t3, int n3)
+			      int v2, int t2, int n2,
+			      int v3, int t3, int n3)
 {
   doNormal3f(sideNormals[n1-1][0], sideNormals[n1-1][1],sideNormals[n1-1][2]);
   doTexCoord2f(sideUVs[t1-1][0],sideUVs[t1-1][1]);

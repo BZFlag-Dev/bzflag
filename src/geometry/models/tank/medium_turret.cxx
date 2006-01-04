@@ -86,7 +86,7 @@ int TankGeometryUtils::buildMedTurret ( void )
     doTexCoord2f(0.617f, -0.559f);
     doVertex3f(1.480f, 0.516f, 1.040f);
   glEnd(); // 3 tris
-  
+
   return 16;
 }
 

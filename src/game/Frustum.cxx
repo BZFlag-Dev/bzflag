@@ -158,7 +158,7 @@ void Frustum::setView(const float* _eye, const float* _target)
     farCorner[i][1] = eye[1] + m_far * edge[i][1];
     farCorner[i][2] = eye[2] + m_far * edge[i][2];
   }
-  
+
   // setup tilt and angle
   const float* dir = plane[0];
   tilt = (float)((180.0 / M_PI) * atan2((double)dir[2], 1.0));
@@ -178,8 +178,8 @@ void Frustum::setFarPlaneCull(bool useCulling)
 
 
 void Frustum::setProjection(float fov,
-                            float _m_near, float _m_far, float m_deep_far,
-                            int width, int height, int viewHeight)
+			    float _m_near, float _m_far, float m_deep_far,
+			    int width, int height, int viewHeight)
 {
   // do easy stuff
   m_near = _m_near;

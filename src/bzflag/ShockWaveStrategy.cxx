@@ -38,7 +38,7 @@ ShockWaveStrategy::ShockWaveStrategy(ShotPath *_path) :
     shockNode->setShockWave(true);
   } else {
     shockNode = new SphereBspSceneNode(pos, radius);
-  } 
+  }
 
   // get team
   if (_path->getPlayer() == ServerPlayer) {

@@ -343,7 +343,7 @@ void			GUIOptionsMenu::resize(int _width, int _height)
     const std::vector<std::string> &opts = ((HUDuiList*)listHUD[i])->getList();
     std::string uColor = BZDB.get("underlineColor");
     ((HUDuiList*)listHUD[i++])->setIndex(std::find(opts.begin(), opts.end(), uColor) -
-                                         opts.begin());
+					 opts.begin());
 
     ((HUDuiList*)listHUD[i++])->setIndex(static_cast<int>
 					 (BZDB.eval("killerhighlight")));

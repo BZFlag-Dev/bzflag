@@ -1144,10 +1144,10 @@ static void flagCommandHelp(int t)
 {
   sendMessage(ServerPlayer, t, "/flag up");
   sendMessage(ServerPlayer, t, "/flag show");
-  sendMessage(ServerPlayer, t, "/flag reset <all|unused|#flagId|FlagAbbv>");
+  sendMessage(ServerPlayer, t, "/flag reset <all|unused|team|#flagId|FlagAbbv>");
   sendMessage(ServerPlayer, t, "/flag take <#slot|PlayerName|\"PlayerName\">");
   sendMessage(ServerPlayer, t,
-              "/flag give <#slot|PlayerName|\"PlayerName\"> <#flagId|FlagAbbr> [force]");
+	      "/flag give <#slot|PlayerName|\"PlayerName\"> <#flagId|FlagAbbr> [force]");
   return;
 }
 
@@ -1157,7 +1157,7 @@ static bool checkFlagMod(GameKeeper::Player* playerData)
   if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::flagMod) &&
       !playerData->accessInfo.hasPerm(PlayerAccessInfo::flagMaster)) {
     sendMessage(ServerPlayer, playerData->getIndex(),
-                "You do not have the FlagMod permission");
+		"You do not have the FlagMod permission");
     return false;
   }
   return true;
@@ -1168,7 +1168,7 @@ static bool checkFlagMaster(GameKeeper::Player* playerData)
 {
   if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::flagMaster)) {
     sendMessage(ServerPlayer, playerData->getIndex(),
-                "You do not have the FlagMaster permission");
+		"You do not have the FlagMaster permission");
     return false;
   }
   return true;
@@ -1185,7 +1185,7 @@ bool FlagCommand::operator() (const char	 *message,
 
   const char* msg = message + 6;
   while ((*msg != '\0') && isspace(*msg)) msg++; // eat whitespace
-  
+
   if (strncasecmp(msg, "up", 2) == 0) {
     for (int i = 0; i < numFlags; i++) {
       FlagInfo &flag = *FlagInfo::get(i);
@@ -1194,7 +1194,7 @@ bool FlagCommand::operator() (const char	 *message,
 	flag.flag.status = FlagGoing;
 	if (!flag.required) {
 	  flag.flag.type = Flags::Null;
-        }
+	}
 	sendFlagUpdate(flag);
       }
     }
@@ -1216,41 +1216,54 @@ bool FlagCommand::operator() (const char	 *message,
     }
 
     FlagType* ft = Flag::getDescFromAbbreviation(msg);
-    
+
     if (strncasecmp(msg, "all", 3) == 0) {
       bz_resetFlags(false);
     }
     else if (strncasecmp(msg, "unused", 6) == 0) {
       bz_resetFlags(true);
     }
+    else if (strncasecmp(msg, "team", 4) == 0) {
+      // team flags
+      for (int i = 0; i < numFlags; i++) {
+	FlagInfo* fi = FlagInfo::get(i);
+	if ((fi != NULL) && (fi->flag.type->flagTeam != NoTeam)) {
+	  const int playerIndex = fi->player;
+	  if (playerIndex != -1) {
+	    sendDrop(*fi);
+	  }
+	  resetFlag(*fi);
+	}
+      }
+    }
     else if (msg[0] == '#') {
       if (!checkFlagMaster(playerData)) {
-        return true;
+	return true;
       }
       int fIndex = atoi(msg + 1);
       FlagInfo* fi = FlagInfo::get(fIndex);
       if (fi != NULL) {
-        const int playerIndex = fi->player;
-        if (playerIndex != -1) {
-          sendDrop(*fi);
-        }
-        resetFlag(*fi);
+	const int playerIndex = fi->player;
+	if (playerIndex != -1) {
+	  sendDrop(*fi);
+	}
+	resetFlag(*fi);
       }
     }
     else if (ft != Flags::Null) {
       if (!checkFlagMaster(playerData)) {
-        return true;
+	return true;
       }
       // by flag abbreviation
       for (int i = 0; i < numFlags; i++) {
-        FlagInfo* fi = FlagInfo::get(i);
-        if ((fi != NULL) && (fi->flag.type == ft)) {
-          const int playerIndex = fi->player;
-          if (playerIndex != -1) {
-            sendDrop(*fi);
-          }
-          resetFlag(*fi);
-        }
+	FlagInfo* fi = FlagInfo::get(i);
+	if ((fi != NULL) && (fi->flag.type == ft)) {
+	  const int playerIndex = fi->player;
+	  if (playerIndex != -1) {
+	    sendDrop(*fi);
+	  }
+	  resetFlag(*fi);
+	}
       }
     }
     else {
@@ -1262,23 +1275,23 @@ bool FlagCommand::operator() (const char	 *message,
     if (!checkFlagMaster(playerData)) {
       return true;
     }
-    
+
     msg += 4;
     while ((*msg != '\0') && isspace(*msg)) msg++; // eat whitespace
-    
+
     std::vector<std::string> argv = TextUtils::tokenize(msg, " \t", 0, true);
     if (argv.size() < 1) {
       flagCommandHelp(t);
       return true;
     }
-    
+
     int pIndex = GameKeeper::Player::getPlayerIDByName(argv[0]);
     GameKeeper::Player* gkPlayer = GameKeeper::Player::getPlayerByIndex(pIndex);
 
     if (gkPlayer == NULL) {
       char buffer[MessageLen];
       snprintf(buffer, MessageLen,
-               "/flag drop: could not find player (%s)", msg);
+	       "/flag drop: could not find player (%s)", msg);
       sendMessage(ServerPlayer, t, buffer);
       return true;
     }
@@ -1289,16 +1302,16 @@ bool FlagCommand::operator() (const char	 *message,
       resetFlag(*fi);
       char buffer[MessageLen];
       snprintf(buffer, MessageLen, "%s took flag %s/%i from %s",
-               playerData->player.getCallSign(),
-               fi->flag.type->flagAbbv, fi->getIndex(),
-               gkPlayer->player.getCallSign());
+	       playerData->player.getCallSign(),
+	       fi->flag.type->flagAbbv, fi->getIndex(),
+	       gkPlayer->player.getCallSign());
       sendMessage(ServerPlayer, t, buffer);
       sendMessage(ServerPlayer, AdminPlayers, buffer);
     } else {
       char buffer[MessageLen];
       snprintf(buffer, MessageLen,
-               "/flag drop: player (%s) does not have a flag",
-               gkPlayer->player.getCallSign());
+	       "/flag drop: player (%s) does not have a flag",
+	       gkPlayer->player.getCallSign());
       sendMessage(ServerPlayer, t, buffer);
     }
   }
@@ -1306,7 +1319,7 @@ bool FlagCommand::operator() (const char	 *message,
     if (!checkFlagMaster(playerData)) {
       return true;
     }
-    
+
     msg += 4;
     while ((*msg != '\0') && isspace(*msg)) msg++; // eat whitespace
 
@@ -1315,66 +1328,66 @@ bool FlagCommand::operator() (const char	 *message,
       flagCommandHelp(t);
       return true;
     }
-    
+
     FlagInfo* fi = NULL;
     int pIndex = GameKeeper::Player::getPlayerIDByName(argv[0]);
     GameKeeper::Player* gkPlayer = GameKeeper::Player::getPlayerByIndex(pIndex);
-    
+
     if (gkPlayer != NULL) {
       const bool force = ((argv.size() > 2) &&
-                          strncasecmp(argv[2].c_str(), "force", 5) == 0);
+			  strncasecmp(argv[2].c_str(), "force", 5) == 0);
       if (argv[1][0] == '#') {
-        int fIndex = atoi(argv[1].c_str() + 1);
-        fi = FlagInfo::get(fIndex);
-        if ((fi != NULL) && ((fi->player >= 0) && !force)) {
-          fi = NULL;
-        }
+	int fIndex = atoi(argv[1].c_str() + 1);
+	fi = FlagInfo::get(fIndex);
+	if ((fi != NULL) && ((fi->player >= 0) && !force)) {
+	  fi = NULL;
+	}
       }
       else {
-        FlagType* ft = Flag::getDescFromAbbreviation(argv[1].c_str());
-        if (ft != Flags::Null) {
-          // find unused and forced candidates
-          FlagInfo* unused = NULL;
-          FlagInfo* forced = NULL;
-          for (int i = 0; i < numFlags; i++) {
-            FlagInfo* fi2 = FlagInfo::get(i);
-            if ((fi2 != NULL) && (fi2->flag.type == ft)) {
-              forced = fi2;
-              if (fi2->player < 0) {
-                unused = fi2;
-                break;
-              }
-            }
-          }
-          // see if we need to force it
-          if (unused != NULL) {
-            fi = unused;
-          } else if (forced != NULL) {
-            if (force) {
-              fi = forced;
-            } else {
-              sendMessage(ServerPlayer, t, "you may need to use the force");
-              return true;
-            }
-          } else {
-            sendMessage(ServerPlayer, t, "flag type not found");
-            return true;
-          }
-        }
-        else {
-          sendMessage(ServerPlayer, t, "bad flag type");
-          return true;
-        }
+	FlagType* ft = Flag::getDescFromAbbreviation(argv[1].c_str());
+	if (ft != Flags::Null) {
+	  // find unused and forced candidates
+	  FlagInfo* unused = NULL;
+	  FlagInfo* forced = NULL;
+	  for (int i = 0; i < numFlags; i++) {
+	    FlagInfo* fi2 = FlagInfo::get(i);
+	    if ((fi2 != NULL) && (fi2->flag.type == ft)) {
+	      forced = fi2;
+	      if (fi2->player < 0) {
+		unused = fi2;
+		break;
+	      }
+	    }
+	  }
+	  // see if we need to force it
+	  if (unused != NULL) {
+	    fi = unused;
+	  } else if (forced != NULL) {
+	    if (force) {
+	      fi = forced;
+	    } else {
+	      sendMessage(ServerPlayer, t, "you may need to use the force");
+	      return true;
+	    }
+	  } else {
+	    sendMessage(ServerPlayer, t, "flag type not found");
+	    return true;
+	  }
+	}
+	else {
+	  sendMessage(ServerPlayer, t, "bad flag type");
+	  return true;
+	}
       }
     }
     else {
       char buffer[MessageLen];
       snprintf(buffer, MessageLen,
-               "/flag give: could not find player (%s)", argv[0].c_str());
+	       "/flag give: could not find player (%s)", argv[0].c_str());
       sendMessage(ServerPlayer, t, buffer);
       return true;
     }
-    
+
     if (gkPlayer && fi) {
       const int flagLimit = clOptions->flagLimit[fi->flag.type];
       clOptions->flagLimit[fi->flag.type] = -1;
@@ -1382,12 +1395,12 @@ bool FlagCommand::operator() (const char	 *message,
       fi->grabs = 2;
       dropFlag(*fi, gkPlayer->lastState.pos);
       clOptions->flagLimit[fi->flag.type] = flagLimit;
-        
+
       char buffer[MessageLen];
       snprintf(buffer, MessageLen, "%s gave flag %s/%i to %s",
-               playerData->player.getCallSign(),
-               fi->flag.type->flagAbbv, fi->getIndex(),
-               gkPlayer->player.getCallSign());
+	       playerData->player.getCallSign(),
+	       fi->flag.type->flagAbbv, fi->getIndex(),
+	       gkPlayer->player.getCallSign());
       sendMessage(ServerPlayer, t, buffer);
       sendMessage(ServerPlayer, AdminPlayers, buffer);
     }
@@ -1514,7 +1527,7 @@ bool IdListCommand::operator() (const char*, GameKeeper::Player *playerData)
   int t = playerData->getIndex();
   if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::playerList)) {
     sendMessage(ServerPlayer, t,
-                "You do not have permission to run the /idlist command");
+		"You do not have permission to run the /idlist command");
     return true;
   }
 
@@ -1524,8 +1537,8 @@ bool IdListCommand::operator() (const char*, GameKeeper::Player *playerData)
     gkPlayer = GameKeeper::Player::getPlayerByIndex(i);
     if (gkPlayer && gkPlayer->player.isPlaying()) {
       snprintf(buffer, MessageLen, "%-20s : %s",
-               gkPlayer->player.getCallSign(),
-               gkPlayer->getBzIdentifier().c_str());
+	       gkPlayer->player.getCallSign(),
+	       gkPlayer->getBzIdentifier().c_str());
       sendMessage(ServerPlayer, t, buffer);
     }
   }
@@ -1942,7 +1955,7 @@ bool ShowGroupCommand::operator() (const char* msg,
 
   std::string queryName = "";
   GameKeeper::Player* query = playerData;
-  
+
   msg += commandName.size();
   std::vector<std::string> argv = TextUtils::tokenize(msg, " \t", 0, true);
   if (argv.size() > 0) {
@@ -2015,7 +2028,7 @@ bool ShowPermsCommand::operator() (const char* msg,
 				   GameKeeper::Player* playerData)
 {
   int t = playerData->getIndex();
-  
+
   msg += commandName.size();
   GameKeeper::Player* query = playerData; // the asking player by default
   std::vector<std::string> argv = TextUtils::tokenize(msg, " \t", 0, true);
@@ -2041,7 +2054,7 @@ bool ShowPermsCommand::operator() (const char* msg,
   std::string header = "Permissions for: ";
   header += query->player.getCallSign();
   sendMessage(ServerPlayer, t, header.c_str());
-  
+
   for (int p = 0; p < PlayerAccessInfo::lastPerm; p++) {
     PlayerAccessInfo::AccessPerm perm = (PlayerAccessInfo::AccessPerm)p;
     if (query->accessInfo.hasPerm(perm)) {
@@ -2107,12 +2120,12 @@ bool SetGroupCommand::operator() (const char* msg,
   std::vector<std::string> argv = TextUtils::tokenize(msg, " \t", 0, true);
   if (argv.size() != 2) {
     sendMessage(ServerPlayer, t,
-                "Incorrect parameters, usage: /setgroup <player> <group>");
+		"Incorrect parameters, usage: /setgroup <player> <group>");
     return true;
   }
   std::string target = TextUtils::toupper(argv[0]);
   std::string group = TextUtils::toupper(argv[1]);
-  
+
   if (!playerData->accessInfo.canSet(group)) {
     sendMessage(ServerPlayer, t, "You do not have permission to set this group");
     return true;
@@ -2123,7 +2136,7 @@ bool SetGroupCommand::operator() (const char* msg,
     sendMessage(ServerPlayer, t, warning.c_str());
     return true;
   }
-  
+
   PlayerAccessInfo &info = PlayerAccessInfo::getUserInfo(target);
   if (info.addGroup(group)) {
     sendMessage(ServerPlayer, t, "Group Add successful");
@@ -2131,7 +2144,7 @@ bool SetGroupCommand::operator() (const char* msg,
     if (getID != -1) {
       char temp[MessageLen];
       snprintf(temp, MessageLen, "you have been added to the %s group, by %s",
-               group.c_str(), playerData->player.getCallSign());
+	       group.c_str(), playerData->player.getCallSign());
       sendMessage(ServerPlayer, getID, temp);
       GameKeeper::Player::getPlayerByIndex(getID)->accessInfo.addGroup(group);
     }
@@ -2139,7 +2152,7 @@ bool SetGroupCommand::operator() (const char* msg,
   } else {
     sendMessage(ServerPlayer, t, "Group Add failed (user may already be in that group)");
   }
-  
+
   return true;
 }
 
@@ -2148,7 +2161,7 @@ bool RemoveGroupCommand::operator() (const char* msg,
 				     GameKeeper::Player* playerData)
 {
   int t = playerData->getIndex();
-  
+
   if (!userDatabaseFile.size()) {
     sendMessage(ServerPlayer, t, "/removegroup command disabled");
     return true;
@@ -2158,7 +2171,7 @@ bool RemoveGroupCommand::operator() (const char* msg,
   std::vector<std::string> argv = TextUtils::tokenize(msg, " \t", 0, true);
   if (argv.size() != 2) {
     sendMessage(ServerPlayer, t,
-                "Incorrect parameters, usage: /removegroup <player> <group>");
+		"Incorrect parameters, usage: /removegroup <player> <group>");
     return true;
   }
   std::string target = TextUtils::toupper(argv[0]);
@@ -2168,7 +2181,7 @@ bool RemoveGroupCommand::operator() (const char* msg,
     sendMessage(ServerPlayer, t, "You do not have permission to set this group");
     return true;
   }
-  
+
   if (!userExists(target)) {
     std::string warning = "Player is not listed: " + target;
     sendMessage(ServerPlayer, t, warning.c_str());
@@ -2182,7 +2195,7 @@ bool RemoveGroupCommand::operator() (const char* msg,
     if (getID != -1) {
       char temp[MessageLen];
       snprintf(temp, MessageLen, "You have been removed from the %s group, by %s",
-               group.c_str(), playerData->player.getCallSign());
+	       group.c_str(), playerData->player.getCallSign());
       sendMessage(ServerPlayer, getID, temp);
       GameKeeper::Player::getPlayerByIndex(getID)->accessInfo.removeGroup(group);
     }
@@ -2190,7 +2203,7 @@ bool RemoveGroupCommand::operator() (const char* msg,
   } else {
     sendMessage(ServerPlayer, t, "Group Remove failed (user may not have been in group)");
   }
-  
+
   return true;
 }
 
@@ -2204,7 +2217,7 @@ bool ReloadCommand::operator() (const char	 *,
 		"You do not have permission to run the reload command");
     return true;
   }
-  
+
   // reload the text chunks
   clOptions->textChunker.reload();
 
@@ -2774,8 +2787,8 @@ bool ViewReportCommand::operator() (const char* message,
   }
   if (clOptions->reportFile.size() == 0 && clOptions->reportPipe.size() == 0) {
     sendMessage(ServerPlayer, t,
-                "The /report command is disabled on this"
-                " server or there are no reports filed.");
+		"The /report command is disabled on this"
+		" server or there are no reports filed.");
   }
   std::ifstream ifs(clOptions->reportFile.c_str(), std::ios::in);
   if (ifs.fail()) {
@@ -2804,16 +2817,16 @@ bool ViewReportCommand::operator() (const char* message,
     if (line.size() <= 0) {
       // blank line
       if (matched) {
-        for (int i = 0; i < (int)buffers.size(); i++) {
-          sendMessage(ServerPlayer, t, buffers[i].c_str());
-        }
+	for (int i = 0; i < (int)buffers.size(); i++) {
+	  sendMessage(ServerPlayer, t, buffers[i].c_str());
+	}
       }
       buffers.clear();
       matched = false;
     } else {
       // non-blank line
       if (glob_match(pattern, TextUtils::toupper(line))) {
-        matched = true;
+	matched = true;
       }
     }
   }
@@ -2823,7 +2836,7 @@ bool ViewReportCommand::operator() (const char* message,
       sendMessage(ServerPlayer, t, buffers[i].c_str());
     }
   }
-  
+
   return true;
 }
 
@@ -2841,7 +2854,7 @@ bool ClientQueryCommand::operator() (const char	 *message,
     GameKeeper::Player *target;
     int i;
     if ((name.size() >= 2) &&
-        (name[0] == '"') && (name[name.size()-1] == '"')) {
+	(name[0] == '"') && (name[name.size()-1] == '"')) {
       name = name.substr(1, name.size() - 2); // remove the quotes
     }
     for (i = 0; i < curMaxPlayers;i++) {
@@ -2928,16 +2941,8 @@ bool RecordCommand::operator() (const char	 *message,
     Record::sendStats(t);
   }
   else if (strncasecmp (buf, "list", 4) == 0) {
-    buf = buf + 4;
-    while ((*buf != '\0') && isspace (*buf)) buf++; // eat whitespace
-
-    if (*buf == '\0') {
-      Replay::sendFileList (t, SortNone);   // stolen from '/replay'
-    } else if (strncasecmp (buf, "-t", 2) == 0) {
-      Replay::sendFileList (t, SortByTime);
-    } else if (strncasecmp (buf, "-n", 2) == 0) {
-      Replay::sendFileList (t, SortByName);
-    } else {
+    const char* options = buf + 4;
+    if (!Replay::sendFileList (t, options)) {
       Record::sendHelp (t);
     }
   }
@@ -3013,17 +3018,9 @@ bool ReplayCommand::operator() (const char	 *message,
   }
 
   if (strncasecmp (buf, "list", 4) == 0) {
-    buf = buf + 4;
-    while ((*buf != '\0') && isspace (*buf)) buf++; // eat whitespace
-
-    if (*buf == '\0') {
-      Replay::sendFileList (t, SortNone);
-    } else if (strncasecmp (buf, "-t", 2) == 0) {
-      Replay::sendFileList (t, SortByTime);
-    } else if (strncasecmp (buf, "-n", 2) == 0) {
-      Replay::sendFileList (t, SortByName);
-    } else {
-      Replay::sendHelp (t);
+    const char* options = buf + 4;
+    if (!Replay::sendFileList (t, options)) {
+      Record::sendHelp (t);
     }
   }
   else if (strncasecmp (buf, "load", 4) == 0) {

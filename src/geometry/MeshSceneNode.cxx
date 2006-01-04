@@ -251,26 +251,26 @@ void MeshSceneNode::addRenderNodes(SceneRenderer& renderer)
     for (int i = 0; i < lod.count; i++) {
       SetNode& set = lod.sets[i];
       if (set.meshMat.animRepos) {
-        const float* s = drawLods[level].sets[i].sphere;
-        fvec3 pos;
-        pos[0] = (cos_val * s[0]) - (sin_val * s[1]);
-        pos[1] = (sin_val * s[0]) + (cos_val * s[1]);
-        pos[2] = s[2];
-        if (xformTool != NULL) {
-          xformTool->modifyVertex(pos);
-        }
-        ((AlphaGroupRenderNode*)set.node)->setPosition(pos);
+	const float* s = drawLods[level].sets[i].sphere;
+	fvec3 pos;
+	pos[0] = (cos_val * s[0]) - (sin_val * s[1]);
+	pos[1] = (sin_val * s[0]) + (cos_val * s[1]);
+	pos[2] = s[2];
+	if (xformTool != NULL) {
+	  xformTool->modifyVertex(pos);
+	}
+	((AlphaGroupRenderNode*)set.node)->setPosition(pos);
       }
     }
   }
-  
+
   for (int i = 0; i < lod.count; i++) {
     SetNode& set = lod.sets[i];
     if (set.meshMat.colorPtr[3] != 0.0f) {
       renderer.addRenderNode(set.node, &set.meshMat.gstate);
     }
   }
-  
+
   return;
 }
 
@@ -333,9 +333,9 @@ bool MeshSceneNode::inAxisBox(const Extents& exts) const
 void MeshSceneNode::notifyStyleChange()
 {
   const DrawLod* drawLods = drawInfo->getDrawLods();
-  
+
   animRepos = false;
-  
+
   for (int lod = 0; lod < lodCount; lod++) {
     LodNode& lodNode = lods[lod];
     for (int set = 0; set < lodNode.count; set++) {
@@ -352,47 +352,47 @@ void MeshSceneNode::notifyStyleChange()
       bool normalize = false;
       const MeshTransform::Tool* xformTool = drawInfo->getTransformTool();
       if (xformTool != NULL) {
-        normalize = xformTool->isSkewed();
+	normalize = xformTool->isSkewed();
       }
 
       // enough elements to warrant disabling lights?
       const Extents* extPtr = &extents;
       if ((drawSet.triangleCount < 100) ||
-          !BZDBCache::lighting || mat.bzmat->getNoLighting()) {
-        extPtr = NULL;
+	  !BZDBCache::lighting || mat.bzmat->getNoLighting()) {
+	extPtr = NULL;
       }
 
       if (!mat.needsSorting) {
-        setNode.node =
-          new OpaqueRenderNode(drawMgr, &xformList, normalize,
-                               mat.colorPtr, lod, set, extPtr,
-                               drawSet.triangleCount);
-        mat.animRepos = false;
+	setNode.node =
+	  new OpaqueRenderNode(drawMgr, &xformList, normalize,
+			       mat.colorPtr, lod, set, extPtr,
+			       drawSet.triangleCount);
+	mat.animRepos = false;
       } else {
-        fvec3 setPos;
-        memcpy(setPos, drawSet.sphere, sizeof(fvec3));
-        if (xformTool != NULL) {
-          xformTool->modifyVertex(setPos);
-        }
-        setNode.node =
-          new AlphaGroupRenderNode(drawMgr, &xformList, normalize,
-                                   mat.colorPtr, lod, set, extPtr, setPos,
-                                   drawSet.triangleCount);
-        if ((fabsf(drawSet.sphere[0]) > 0.001f) &&
-            (fabsf(drawSet.sphere[1]) > 0.001f) &&
-            (mat.color[3] != 0.0f) &&
-            (drawInfo->getAnimationInfo() != NULL)) {
-          animRepos = true;
-          mat.animRepos = true;
-        } else {
-          mat.animRepos = false;
-        }
+	fvec3 setPos;
+	memcpy(setPos, drawSet.sphere, sizeof(fvec3));
+	if (xformTool != NULL) {
+	  xformTool->modifyVertex(setPos);
+	}
+	setNode.node =
+	  new AlphaGroupRenderNode(drawMgr, &xformList, normalize,
+				   mat.colorPtr, lod, set, extPtr, setPos,
+				   drawSet.triangleCount);
+	if ((fabsf(drawSet.sphere[0]) > 0.001f) &&
+	    (fabsf(drawSet.sphere[1]) > 0.001f) &&
+	    (mat.color[3] != 0.0f) &&
+	    (drawInfo->getAnimationInfo() != NULL)) {
+	  animRepos = true;
+	  mat.animRepos = true;
+	} else {
+	  mat.animRepos = false;
+	}
       }
 
       setNode.radarNode =
-        new OpaqueRenderNode(drawMgr, &xformList, normalize,
-                             mat.colorPtr, lod, set, extPtr,
-                             drawSet.triangleCount);
+	new OpaqueRenderNode(drawMgr, &xformList, normalize,
+			     mat.colorPtr, lod, set, extPtr,
+			     drawSet.triangleCount);
     }
   }
   return;
@@ -464,7 +464,7 @@ void MeshSceneNode::updateMaterial(MeshSceneNode::MeshMaterial* mat)
 	    builder.setTextureMatrix(matrix);
 	    builder.enableTextureMatrix(true);
 	  }
-        }
+	}
 	// sphere mapping
 	if (bzmat->getUseSphereMap(0)) {
 	  builder.enableSphereMap(true);
@@ -515,9 +515,9 @@ void MeshSceneNode::updateMaterial(MeshSceneNode::MeshMaterial* mat)
     } else {
       builder.resetBlending();
       if (dyncol != NULL) {
-        builder.setStipple(0.5f);
+	builder.setStipple(0.5f);
       } else {
-        builder.setStipple(color[3]);
+	builder.setStipple(color[3]);
       }
     }
   }
@@ -525,7 +525,7 @@ void MeshSceneNode::updateMaterial(MeshSceneNode::MeshMaterial* mat)
   // sorting  (do this after using setBlending())
   //
   // NOTE:  getGroupAlpha() isn't used because all MeshSceneNode
-  //        elements are sorted as groups rather then individually
+  //	elements are sorted as groups rather then individually
   //
   mat->needsSorting = (isAlpha && !bzmat->getNoSorting());
   builder.setNeedsSorting(mat->needsSorting);
@@ -562,7 +562,7 @@ void MeshSceneNode::makeXFormList()
     while (true) {
       error = glGetError();
       if (error == GL_NO_ERROR) {
-        break;
+	break;
       }
       errCount++; // avoid a possible spin-lock?
       if (errCount > 666) {

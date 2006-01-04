@@ -381,9 +381,9 @@ void BaseBuilding::printOBJ(std::ostream& out, const std::string& /*indent*/) co
   out << "f -5/-4/-3 -8/-3/-3 -4/-2/-3 -1/-1/-3" << std::endl;
 
   out << std::endl;
-  
+
   incObjCounter();
-  
+
   return;
 }
 

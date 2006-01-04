@@ -34,7 +34,7 @@ class RenderNode {
     virtual void	renderShadow() { render(); }
     virtual void	renderRadar() { renderShadow(); }
     virtual const GLfloat* getPosition() const = 0;
-    
+
     static int		getTriangleCount();
     static void		resetTriangleCount();
 

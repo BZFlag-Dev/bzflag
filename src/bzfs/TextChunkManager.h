@@ -35,7 +35,7 @@ class TextChunk {
     const StringVector& getVector() const;
     bool reload();
 
-  private:    
+  private:
     StringVector parse();
 
   private:

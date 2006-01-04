@@ -688,13 +688,13 @@ void SceneRenderer::render(bool _lastFrame, bool _sameFrame,
 {
   lastFrame = _lastFrame;
   sameFrame = _sameFrame;
-  
+
   triangleCount = 0;
   RenderNode::resetTriangleCount();
   if (background) {
     background->resetTriangleCount();
   }
-  
+
   // update the SceneNode, Background, and TrackMark styles
   if (needStyleUpdate) {
     if (scene) {
@@ -723,7 +723,7 @@ void SceneRenderer::render(bool _lastFrame, bool _sameFrame,
   if (!window) {
     return;
   }
-  
+
   // setup the viewport LOD scale
   MeshSceneNode::setLodScale(window->getWidth(), frustum.getFOVx(),
 			     window->getViewHeight(), frustum.getFOVy());
@@ -737,7 +737,7 @@ void SceneRenderer::render(bool _lastFrame, bool _sameFrame,
     const float lpp = (lppx < lppy) ? lppx : lppy;
     lengthPerPixel = lpp * BZDB.eval("lodScale");
   }
-        
+
   // get the track mark sceneNodes (only for BSP)
   if (scene) {
     TrackMarks::addSceneNodes(scene);
@@ -753,18 +753,18 @@ void SceneRenderer::render(bool _lastFrame, bool _sameFrame,
   // fog setup
   mapFog = setupMapFog();
   const bool reallyUseFogHack = !mapFog && useFogHack &&
-                                (useQualityValue >= 2);
+				(useQualityValue >= 2);
   if (reallyUseFogHack) {
     renderPreDimming();
   }
-  
+
 
   mirror = (BZDB.get(StateDatabase::BZDB_MIRROR) != "none")
 	   && BZDB.isTrue("userMirror");
 
   clearZbuffer = true;
   drawGround = true;
-  
+
   if (mirror) {
     drawGround = false;
 
@@ -811,18 +811,18 @@ void SceneRenderer::render(bool _lastFrame, bool _sameFrame,
       glLoadIdentity();
       // if low quality then use stipple -- it's probably much faster
       if (BZDBCache::blend && (useQualityValue >= 2)) {
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        glEnable(GL_BLEND);
-        glColor4fv(mirrorColor);
-        glRectf(-1.0f, -1.0f, +1.0f, +1.0f);
-        glDisable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glEnable(GL_BLEND);
+	glColor4fv(mirrorColor);
+	glRectf(-1.0f, -1.0f, +1.0f, +1.0f);
+	glDisable(GL_BLEND);
       } else {
-        float stipple = mirrorColor[3];
-        glColor3fv(mirrorColor);
-        OpenGLGState::setStipple(stipple);
-        glEnable(GL_POLYGON_STIPPLE);
-        glRectf(-1.0f, -1.0f, +1.0f, +1.0f);
-        glDisable(GL_POLYGON_STIPPLE);
+	float stipple = mirrorColor[3];
+	glColor3fv(mirrorColor);
+	OpenGLGState::setStipple(stipple);
+	glEnable(GL_POLYGON_STIPPLE);
+	glRectf(-1.0f, -1.0f, +1.0f, +1.0f);
+	glDisable(GL_POLYGON_STIPPLE);
       }
     } else {
       // need the proper matrices for fog generation
@@ -831,18 +831,18 @@ void SceneRenderer::render(bool _lastFrame, bool _sameFrame,
       frustum.executeProjection();
       const float extent = BZDBCache::worldSize * 10.0f;
       if (BZDBCache::blend && (useQualityValue >= 2)) {
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        glEnable(GL_BLEND);
-        glColor4fv(mirrorColor);
-        glRectf(-extent, -extent, +extent, +extent);
-        glDisable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glEnable(GL_BLEND);
+	glColor4fv(mirrorColor);
+	glRectf(-extent, -extent, +extent, +extent);
+	glDisable(GL_BLEND);
       } else {
-        float stipple = mirrorColor[3];
-        glColor3fv(mirrorColor);
-        OpenGLGState::setStipple(stipple);
-        glEnable(GL_POLYGON_STIPPLE);
-        glRectf(-extent, -extent, +extent, +extent);
-        glDisable(GL_POLYGON_STIPPLE);
+	float stipple = mirrorColor[3];
+	glColor3fv(mirrorColor);
+	OpenGLGState::setStipple(stipple);
+	glEnable(GL_POLYGON_STIPPLE);
+	glRectf(-extent, -extent, +extent, +extent);
+	glDisable(GL_POLYGON_STIPPLE);
       }
       glMatrixMode(GL_PROJECTION);
       glLoadIdentity();
@@ -855,7 +855,7 @@ void SceneRenderer::render(bool _lastFrame, bool _sameFrame,
 
   // the real scene
   renderScene(_lastFrame, _sameFrame, fullWindow);
-  
+
   // finalize dimming
   if (mapFog) {
     glDisable(GL_FOG);
@@ -1139,7 +1139,7 @@ static bool setupMapFog()
     glHint(GL_FOG_HINT, GL_FASTEST);
     return false;
   }
-  
+
   GLenum fogMode = GL_EXP;
   GLfloat fogDensity = 0.001f;
   GLfloat fogStart = 0.5f * BZDBCache::worldSize;
@@ -1169,7 +1169,7 @@ static bool setupMapFog()
   } else {
     glHint(GL_FOG_HINT, GL_FASTEST);
   }
-  
+
   // setup GL fog
   glFogi(GL_FOG_MODE, fogMode);
   glFogf(GL_FOG_DENSITY, fogDensity);

@@ -344,19 +344,19 @@ void PhysicsDriver::print(std::ostream& out, const std::string& indent) const
   const float* v = linear;
   if ((v[0] != 0.0f) || (v[1] != 0.0f) || (v[2] != 0.0f)) {
     out << indent << "  linear "
-                  << v[0] << " " << v[1] << " " << v[2] << std::endl;
+		  << v[0] << " " << v[1] << " " << v[2] << std::endl;
   }
 
   if (angularVel != 0.0f) {
     const float* ap = angularPos;
     out << indent << "  angular " << (angularVel / (M_PI * 2.0f)) << " "
-			          << ap[0] << " " << ap[1] << std::endl;
+				  << ap[0] << " " << ap[1] << std::endl;
   }
 
   if (radialVel != 0.0f) {
     const float* rp = radialPos;
     out << indent << "  radial "
-                  << radialVel << " " << rp[0] << " " << rp[1] << std::endl;
+		  << radialVel << " " << rp[0] << " " << rp[1] << std::endl;
   }
 
   if (slide) {

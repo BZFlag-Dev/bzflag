@@ -1245,8 +1245,8 @@ void Player::doDeadReckoning()
     // the importance level of the remote sounds
     const bool soundImportance = false;
     const bool localSound = (ROAM.isRoaming()
-                             && (ROAM.getMode() == Roaming::roamViewFP)
-                             && (ROAM.getTargetTank() == this));
+			     && (ROAM.getMode() == Roaming::roamViewFP)
+			     && (ROAM.getTargetTank() == this));
 
     // check for a landing
     if (((oldStatus & PlayerState::Falling) != 0) &&

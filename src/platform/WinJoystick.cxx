@@ -246,7 +246,6 @@ void	      WinJoystick::setXAxis(const std::string axis)
       }
     }
   }
-
 }
 
 void	      WinJoystick::setYAxis(const std::string axis)
@@ -262,7 +261,6 @@ void	      WinJoystick::setYAxis(const std::string axis)
       }
     }
   }
-
 }
 
 

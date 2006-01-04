@@ -60,7 +60,7 @@ class WaveGeometry {
 
     void waveFlag(float dt);
     void freeFlag();
-    
+
     void execute() const;
     void executeNoList() const;
 
@@ -68,11 +68,11 @@ class WaveGeometry {
     int refCount;
     float ripple1;
     float ripple2;
-    
+
     GLuint glList;
     GLfloat verts[(maxChunks + 1) * 2][3];
     GLfloat txcds[(maxChunks + 1) * 2][2];
-    
+
     static const float RippleSpeed1;
     static const float RippleSpeed2;
 };
@@ -263,7 +263,7 @@ void			FlagSceneNode::setWind(const GLfloat wind[3], float dt)
     const float it = -0.75f; // idle tilt
     const float tf = +5.00f; // tilt factor
     const float desired = (wind[2] / (horiz + tf)) +
-                          (it * (1.0f - horiz / (horiz + tf)));
+			  (it * (1.0f - horiz / (horiz + tf)));
 
     const float tt = dt * 5.0f;
     tilt = (tilt * (1.0f - tt)) + (desired * tt);
@@ -317,11 +317,11 @@ void			FlagSceneNode::notifyStyleChange()
   const int quality = RENDERER.useQuality();
   geoPole = (quality >= 1);
   realFlag = (quality >= 3);
-  
+
   texturing = BZDBCache::texture && BZDBCache::blend;
   OpenGLGStateBuilder builder(gstate);
   builder.enableTexture(texturing);
-  
+
   if (transparent) {
     if (BZDBCache::blend) {
       builder.setBlending(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -410,7 +410,7 @@ void			FlagSceneNode::FlagRenderNode::render()
   const bool texturing = sceneNode->texturing;
   const bool billboard = sceneNode->billboard;
   const bool transparent = sceneNode->transparent;
-  
+
   const GLfloat* sphere = sceneNode->getSphere();
 
   myColor4fv(sceneNode->color);
@@ -422,16 +422,16 @@ void			FlagSceneNode::FlagRenderNode::render()
   glPushMatrix();
   {
     glTranslatef(sphere[0], sphere[1], sphere[2]);
-    
+
     if (billboard && realFlag) {
       // the pole
       glRotatef(sceneNode->angle + 180.0f, 0.0f, 0.0f, 1.0f);
       const float tilt = sceneNode->tilt;
       const float hscl = sceneNode->hscl;
       static GLfloat shear[16] = {hscl, 0.0f, tilt, 0.0f,
-                                  0.0f, 1.0f, 0.0f, 0.0f,
-                                  0.0f, 0.0f, 1.0f, 0.0f,
-                                  0.0f, 0.0f, 0.0f, 1.0f};
+				  0.0f, 1.0f, 0.0f, 0.0f,
+				  0.0f, 0.0f, 1.0f, 0.0f,
+				  0.0f, 0.0f, 0.0f, 1.0f};
       shear[0] = hscl; // maintains the flag length
       shear[2] = tilt; // pulls the flag up or down
       glPushMatrix();
@@ -439,76 +439,76 @@ void			FlagSceneNode::FlagRenderNode::render()
       allWaves[waveReference].execute();
       addTriangleCount(triCount);
       glPopMatrix();
-      
+
       myColor4f(0.0f, 0.0f, 0.0f, sceneNode->color[3]);
 
       if (texturing) {
-        glDisable(GL_TEXTURE_2D);
+	glDisable(GL_TEXTURE_2D);
       }
 
       // the pole
       const float topHeight = base + Height;
       glBegin(GL_QUAD_STRIP);
       {
-        glVertex3f(-poleWidth, 0.0f, 0.0f);
-        glVertex3f(-poleWidth, 0.0f, topHeight);
-        glVertex3f(0.0f, -poleWidth, 0.0f);
-        glVertex3f(0.0f, -poleWidth, topHeight);
-        glVertex3f(+poleWidth, 0.0f, 0.0f);
-        glVertex3f(+poleWidth, 0.0f, topHeight);
-        glVertex3f(0.0f, +poleWidth, 0.0f);
-        glVertex3f(0.0f, +poleWidth, topHeight);
-        glVertex3f(-poleWidth, 0.0f, 0.0f);
-        glVertex3f(-poleWidth, 0.0f, topHeight);
+	glVertex3f(-poleWidth, 0.0f, 0.0f);
+	glVertex3f(-poleWidth, 0.0f, topHeight);
+	glVertex3f(0.0f, -poleWidth, 0.0f);
+	glVertex3f(0.0f, -poleWidth, topHeight);
+	glVertex3f(+poleWidth, 0.0f, 0.0f);
+	glVertex3f(+poleWidth, 0.0f, topHeight);
+	glVertex3f(0.0f, +poleWidth, 0.0f);
+	glVertex3f(0.0f, +poleWidth, topHeight);
+	glVertex3f(-poleWidth, 0.0f, 0.0f);
+	glVertex3f(-poleWidth, 0.0f, topHeight);
       }
       glEnd();
       addTriangleCount(8);
     }
     else {
       if (billboard) {
-        RENDERER.getViewFrustum().executeBillboard();
-        allWaves[waveReference].execute();
-        addTriangleCount(triCount);
+	RENDERER.getViewFrustum().executeBillboard();
+	allWaves[waveReference].execute();
+	addTriangleCount(triCount);
       } else {
-        glRotatef(sceneNode->angle + 180.0f, 0.0f, 0.0f, 1.0f);
-        glRotatef(90.0f, 1.0f, 0.0f, 0.0f);
-        glBegin(GL_QUADS);
-          glTexCoord2f(0.0f, 0.0f);
-          glVertex3f(0.0f, base, 0.0f);
-          glTexCoord2f(1.0f, 0.0f);
-          glVertex3f(Width, base, 0.0f);
-          glTexCoord2f(1.0f, 1.0f);
-          glVertex3f(Width, base + Height, 0.0f);
-          glTexCoord2f(0.0f, 1.0f);
-          glVertex3f(0.0f, base + Height, 0.0f);
-        glEnd();
-        addTriangleCount(2);
+	glRotatef(sceneNode->angle + 180.0f, 0.0f, 0.0f, 1.0f);
+	glRotatef(90.0f, 1.0f, 0.0f, 0.0f);
+	glBegin(GL_QUADS);
+	  glTexCoord2f(0.0f, 0.0f);
+	  glVertex3f(0.0f, base, 0.0f);
+	  glTexCoord2f(1.0f, 0.0f);
+	  glVertex3f(Width, base, 0.0f);
+	  glTexCoord2f(1.0f, 1.0f);
+	  glVertex3f(Width, base + Height, 0.0f);
+	  glTexCoord2f(0.0f, 1.0f);
+	  glVertex3f(0.0f, base + Height, 0.0f);
+	glEnd();
+	addTriangleCount(2);
       }
 
       myColor4f(0.0f, 0.0f, 0.0f, sceneNode->color[3]);
 
       if (texturing) {
-        glDisable(GL_TEXTURE_2D);
+	glDisable(GL_TEXTURE_2D);
       }
 
       if (geoPole) {
-        glBegin(GL_QUADS);
-        {
-          glVertex3f(-poleWidth, 0.0f, 0.0f);
-          glVertex3f(+poleWidth, 0.0f, 0.0f);
-          glVertex3f(+poleWidth, base + Height, 0.0f);
-          glVertex3f(-poleWidth, base + Height, 0.0f);
-        }
-        glEnd();
-        addTriangleCount(2);
+	glBegin(GL_QUADS);
+	{
+	  glVertex3f(-poleWidth, 0.0f, 0.0f);
+	  glVertex3f(+poleWidth, 0.0f, 0.0f);
+	  glVertex3f(+poleWidth, base + Height, 0.0f);
+	  glVertex3f(-poleWidth, base + Height, 0.0f);
+	}
+	glEnd();
+	addTriangleCount(2);
       } else {
-        glBegin(GL_LINE_STRIP);
-        {
-          glVertex3f(0.0f, 0.0f, 0.0f);
-          glVertex3f(0.0f, base + Height, 0.0f);
-        }
-        glEnd();
-        addTriangleCount(1);
+	glBegin(GL_LINE_STRIP);
+	{
+	  glVertex3f(0.0f, 0.0f, 0.0f);
+	  glVertex3f(0.0f, base + Height, 0.0f);
+	}
+	glEnd();
+	addTriangleCount(1);
       }
     }
   }

@@ -298,7 +298,7 @@ bool WinDisplay::windowsEventToBZFEvent ( MSG &msg, BzfEvent& event ) const
 		break;
 
 	case WM_MOUSEWHEEL:{
-		
+
 		event.type = BzfEvent::KeyDown;
 		event.keyDown.ascii = 0;
 		event.keyDown.shift = 0;

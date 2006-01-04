@@ -444,7 +444,7 @@ void			speedSoundReceiver(float vx, float vy, float vz)
 }
 
 void			playSound(int soundCode, const float pos[3],
-                                  bool important, bool localSound)
+				  bool important, bool localSound)
 {
   if (localSound) {
     playLocalSound(soundCode);

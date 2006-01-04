@@ -90,7 +90,7 @@ int beginendCount = 0;
 const char*		argv0;
 static bool		anonymous = false;
 static std::string	anonymousName("anonymous");
-std::string	        alternateConfig;
+std::string		alternateConfig;
 static bool		noAudio = false;
 struct tm		userTime;
 bool			echoToConsole = false;

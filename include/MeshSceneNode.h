@@ -74,7 +74,7 @@ class MeshSceneNode : public SceneNode {
 
     MeshDrawMgr* drawMgr;
     const MeshDrawInfo* drawInfo;
-    
+
     bool animRepos;
 
     // transform display list

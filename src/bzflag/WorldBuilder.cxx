@@ -225,7 +225,7 @@ void* WorldBuilder::unpackGameSettings(void* buf)
   setShakeWins(shakeWins);
   uint32_t UsedToBeSyncTime; // FIXME
   buf = nboUnpackUInt(buf, UsedToBeSyncTime);
-  
+
   world->setupRequiredGraphics();
 
   return buf;

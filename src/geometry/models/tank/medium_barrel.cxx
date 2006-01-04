@@ -40,7 +40,7 @@ int TankGeometryUtils::buildMedBarrel ( void )
     doVertex3f(4.940f, 0.0f, 1.660f);
     doVertex3f(4.940f, -0.126f, 1.530f);
   glEnd(); // 2 tris
-  
+
   return 10;
 }
 

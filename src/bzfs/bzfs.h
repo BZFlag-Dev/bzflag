@@ -44,19 +44,19 @@
 #include "FlagInfo.h"
 #include "WorldInfo.h"
 
-extern void sendMessage(int         playerIndex,
+extern void sendMessage(int	 playerIndex,
 			PlayerId    dstPlayer,
 			const char *message);
-extern void removePlayer(int         playerIndex, 
+extern void removePlayer(int	 playerIndex,
 			 const char *reason,
-			 bool        notify = true);
-extern void playerKilled(int             victimIndex,
-			 int             killerIndex,
-			 int             reason,
-			 int16_t         shotIndex,
+			 bool	notify = true);
+extern void playerKilled(int	     victimIndex,
+			 int	     killerIndex,
+			 int	     reason,
+			 int16_t	 shotIndex,
 			 const FlagType *flagType,
-			 int             phydrv,
-			 bool            respawnOnBase = false);
+			 int	     phydrv,
+			 bool	    respawnOnBase = false);
 extern void sendPlayerMessage(GameKeeper::Player *playerData,
 			      PlayerId dstPlayer,
 			      const char *message);
@@ -85,27 +85,27 @@ extern void initGroups();
 
 extern BasesList bases;
 extern CmdLineOptions *clOptions;
-extern uint16_t        curMaxPlayers;
-extern bool            done;
-extern bool            gameOver;
-extern TeamInfo        team[NumTeams];
-extern int             numFlags;
-extern bool            countdownActive;
-extern int             countdownDelay;
+extern uint16_t	curMaxPlayers;
+extern bool	    done;
+extern bool	    gameOver;
+extern TeamInfo	team[NumTeams];
+extern int	     numFlags;
+extern bool	    countdownActive;
+extern int	     countdownDelay;
 extern TimeKeeper      countdownPauseStart;
-extern char            hexDigest[50];
+extern char	    hexDigest[50];
 extern WorldInfo      *world;
-extern char           *worldDatabase;
-extern uint32_t        worldDatabaseSize;
-extern char            worldSettings[4 + WorldSettingsSize];
-extern uint8_t         rabbitIndex;
-extern float           speedTolerance;
-extern bool            handlePings;
-extern uint16_t        maxPlayers;
-extern uint16_t        maxRealPlayers;
-extern float           pluginWorldSize;
-extern float           pluginWorldHeight;
-extern float           pluginMaxWait;
+extern char	   *worldDatabase;
+extern uint32_t	worldDatabaseSize;
+extern char	    worldSettings[4 + WorldSettingsSize];
+extern uint8_t	 rabbitIndex;
+extern float	   speedTolerance;
+extern bool	    handlePings;
+extern uint16_t	maxPlayers;
+extern uint16_t	maxRealPlayers;
+extern float	   pluginWorldSize;
+extern float	   pluginWorldHeight;
+extern float	   pluginMaxWait;
 
 #endif
 

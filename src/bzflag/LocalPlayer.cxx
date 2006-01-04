@@ -966,7 +966,7 @@ float			LocalPlayer::getReloadTime() const
   if (numShots <= 0) {
     return 0.0f;
   }
-  
+
   float time = float(jamTime - TimeKeeper::getCurrent());
   if (time > 0.0f) {
     return time;
@@ -994,7 +994,7 @@ float			LocalPlayer::getReloadTime() const
   if (minTime < 0.0f) {
     minTime = 0.0f;
   }
-  
+
   return minTime;
 }
 

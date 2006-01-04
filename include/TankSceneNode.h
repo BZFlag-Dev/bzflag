@@ -96,16 +96,16 @@ class TankSceneNode : public SceneNode {
 
     void		rebuildExplosion();
     void		addTreadOffsets(float left, float right);
-    
+
     void		notifyStyleChange();
     void		addRenderNodes(SceneRenderer&);
     void		addShadowNodes(SceneRenderer&);
 
     bool		cullShadow(int planeCount,
-                                   const float (*planes)[4]) const;
+				   const float (*planes)[4]) const;
 
     void		addLight(SceneRenderer&);
-    
+
     void		renderRadar();
 
     static void		setMaxLOD(int maxLevel);

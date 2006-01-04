@@ -107,7 +107,7 @@ void WorldInfo::addWeapon(const FlagType *type, const float *origin,
 			  TimeKeeper &sync)
 {
   worldWeapons.add(type, origin, direction, tilt,
-                   teamColor, initdelay, delay, sync);
+		   teamColor, initdelay, delay, sync);
 }
 
 void WorldInfo::addWaterLevel (float level, const BzMaterial* matref)
@@ -394,8 +394,8 @@ InBuildingType WorldInfo::classifyHit (const Obstacle* obstacle) const
 }
 
 
-bool WorldInfo::getFlagDropPoint(const FlagInfo* fi, const float* pos, 
-                                float* pt) const
+bool WorldInfo::getFlagDropPoint(const FlagInfo* fi, const float* pos,
+				float* pt) const
 {
   FlagType* flagType = fi->flag.type;
   const int team = (int)flagType->flagTeam;

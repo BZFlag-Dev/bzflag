@@ -61,7 +61,7 @@ int TankGeometryUtils::buildHighBarrel ( void )
     doVertex3f(1.570f, -0.18f, 1.530f);
     doVertex3f(4.940f, -0.126f, 1.530f);
   glEnd(); // 18 verts -> 16 tris
-  
+
   return 22;
 }
 /*

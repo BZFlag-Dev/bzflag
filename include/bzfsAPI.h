@@ -703,7 +703,7 @@ public:
 
 	int player;
 	double time;
-	
+
 	bzApiString		rawMessage;
 	bzApiString		filteredMessage;
 };

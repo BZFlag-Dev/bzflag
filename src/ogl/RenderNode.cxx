@@ -34,7 +34,7 @@ void RenderNode::resetTriangleCount()
   triangleCount = 0;
   return;
 }
-        
+
 
 //
 // RenderNodeList

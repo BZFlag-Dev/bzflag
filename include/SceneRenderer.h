@@ -141,7 +141,7 @@ public:
 
   const Extents*	getVisualExtents() const;
   const float		getLengthPerPixel() const;
-  
+
   int			getFrameTriangleCount() const;
 
   BackgroundRenderer*	getBackground();

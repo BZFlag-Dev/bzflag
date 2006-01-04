@@ -53,7 +53,7 @@ class RadarRenderer {
     void		renderBoxPyrMesh();
     void		renderBoxPyrMeshFast(float range);
     void		renderBasesAndTeles();
-    
+
     int			getFrameTriangleCount() const;
 
   private:

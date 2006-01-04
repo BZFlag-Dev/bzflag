@@ -1138,7 +1138,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
 
 
 static int getZoneTeamFlagCount(FlagType* flagType, EntryZones& entryZones,
-                                 const std::set<FlagType*>& forbidden)
+				 const std::set<FlagType*>& forbidden)
 {
   if (forbidden.find(flagType) != forbidden.end()) {
     return 0;
@@ -1151,7 +1151,7 @@ static int getZoneTeamFlagCount(FlagType* flagType, EntryZones& entryZones,
     ZoneFlagMap::const_iterator zfmIt;
     for (zfmIt = zfm.begin(); zfmIt != zfm.end(); zfmIt++) {
       if (zfmIt->first == flagType) {
-        count += zfmIt->second;
+	count += zfmIt->second;
       }
     }
   }
@@ -1160,8 +1160,8 @@ static int getZoneTeamFlagCount(FlagType* flagType, EntryZones& entryZones,
 
 
 static int addZoneTeamFlags(int startIndex,
-                            FlagType* flagType, EntryZones& entryZones,
-                            const std::set<FlagType*>& forbidden)
+			    FlagType* flagType, EntryZones& entryZones,
+			    const std::set<FlagType*>& forbidden)
 {
   if (forbidden.find(flagType) != forbidden.end()) {
     return startIndex;
@@ -1173,11 +1173,11 @@ static int addZoneTeamFlags(int startIndex,
     ZoneFlagMap::const_iterator zfmIt;
     for (zfmIt = zfm.begin(); zfmIt != zfm.end(); zfmIt++) {
       if (zfmIt->first == flagType) {
-        const int count = zfmIt->second;
-        for (int c = 0; c < count; c++) {
+	const int count = zfmIt->second;
+	for (int c = 0; c < count; c++) {
 	  entryZones.addZoneFlag(z, startIndex);
 	  FlagInfo::get(startIndex++)->setRequiredFlag(flagType);
-        }
+	}
       }
     }
   }
@@ -1186,7 +1186,7 @@ static int addZoneTeamFlags(int startIndex,
 
 
 void finalizeParsing(int /*argc*/, char **argv,
-                     CmdLineOptions &options, EntryZones& entryZones)
+		     CmdLineOptions &options, EntryZones& entryZones)
 {
   if (options.flagsOnBuildings && !(options.gameStyle & JumpingGameStyle)) {
     std::cerr << "flags on boxes requires jumping" << std::endl;
@@ -1214,7 +1214,7 @@ void finalizeParsing(int /*argc*/, char **argv,
 
   std::set<FlagType*> forbidden;
   forbidden.insert(Flags::Null);
-  
+
   // first disallow flags inconsistent with game style
   if (options.gameStyle & JumpingGameStyle) {
     forbidden.insert(Flags::Jumping);
@@ -1258,7 +1258,7 @@ void finalizeParsing(int /*argc*/, char **argv,
     options.flagCount[ft] = 0;
     options.flagDisallowed[ft] = true;
   }
-  
+
   // zone team flag counts
   const int zoneTeamFlagCounts[5] = {
     0, // rogue
@@ -1267,18 +1267,18 @@ void finalizeParsing(int /*argc*/, char **argv,
     getZoneTeamFlagCount(Flags::BlueTeam, entryZones, forbidden),
     getZoneTeamFlagCount(Flags::PurpleTeam, entryZones, forbidden)
   };
-  
+
   // make sure there is at least one team flag for each active team
   if (options.gameStyle & TeamFlagGameStyle) {
     for (int col = RedTeam; col <= PurpleTeam; col++) {
       if ((options.maxTeam[col] > 0) &&
-          (options.numTeamFlags[col] <= 0) &&
-          (zoneTeamFlagCounts[col] <= 0)) {
+	  (options.numTeamFlags[col] <= 0) &&
+	  (zoneTeamFlagCounts[col] <= 0)) {
 	options.numTeamFlags[col] = 1;
       }
     }
   }
-  
+
   // make table of allowed extra flags
   if (options.numExtraFlags > 0) {
     // now count how many aren't disallowed
@@ -1332,7 +1332,7 @@ void finalizeParsing(int /*argc*/, char **argv,
     ZoneFlagMap::const_iterator zfmIt;
     for (zfmIt = zfm.begin(); zfmIt != zfm.end(); zfmIt++) {
       if (forbidden.find(zfmIt->first) == forbidden.end()) {
-        numFlags += zfmIt->second;
+	numFlags += zfmIt->second;
       }
     }
   }
@@ -1372,7 +1372,7 @@ void finalizeParsing(int /*argc*/, char **argv,
   if (f < numFlags) {
     options.gameStyle |= int(SuperFlagGameStyle);
   }
-  
+
   // add normal flags
   for (FlagTypeMap::iterator it2 = FlagType::getFlagMap().begin();
        it2 != FlagType::getFlagMap().end(); ++it2) {
@@ -1392,12 +1392,12 @@ void finalizeParsing(int /*argc*/, char **argv,
     for (zfmIt = zfm.begin(); zfmIt != zfm.end(); zfmIt++) {
       FlagType* ft = zfmIt->first;
       if ((ft->flagTeam == ::NoTeam) && // no team flags here
-          (forbidden.find(ft) == forbidden.end())) {
-        const int count = zfmIt->second;
-        for (int c = 0; c < count; c++) {
+	  (forbidden.find(ft) == forbidden.end())) {
+	const int count = zfmIt->second;
+	for (int c = 0; c < count; c++) {
 	  entryZones.addZoneFlag(z, f);
 	  FlagInfo::get(f++)->setRequiredFlag(ft);
-        }
+	}
       }
     }
   }
@@ -1412,7 +1412,7 @@ void finalizeParsing(int /*argc*/, char **argv,
       options.numTeamFlags[col] += zoneTeamFlagCounts[col];
     }
   }
-  
+
 
   // debugging
   DEBUG1("style: %x\n", options.gameStyle);

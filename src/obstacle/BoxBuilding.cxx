@@ -368,9 +368,9 @@ void BoxBuilding::printOBJ(std::ostream& out, const std::string& /*indent*/) con
   out << "f -5/-8/-3 -8/-4/-3 -4/-3/-3 -1/-5/-3" << std::endl;
 
   out << std::endl;
-  
+
   incObjCounter();
-  
+
   return;
 }
 

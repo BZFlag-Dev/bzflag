@@ -90,7 +90,7 @@ int TankGeometryUtils::buildMedLCasing ( void )
     doTexCoord2f(0.813f, 0.970f);
     doVertex3f(-2.970f, 1.400f, 1.410f);
   glEnd(); // 5 tris
-  
+
   return 24;
 }
 

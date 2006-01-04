@@ -63,7 +63,7 @@ class GroupInstance {
     void setDriveThrough();
     void setShootThrough();
     void addMaterialSwap(const BzMaterial* src,
-                         const BzMaterial* dst);
+			 const BzMaterial* dst);
 
     const std::string& getName() const;
 

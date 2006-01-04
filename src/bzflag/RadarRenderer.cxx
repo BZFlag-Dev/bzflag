@@ -886,7 +886,7 @@ void RadarRenderer::renderBoxPyrMeshFast(float _range)
   // disable the unused arrays
   glDisableClientState(GL_NORMAL_ARRAY);
   glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-  
+
   // now that the texture is bound, setup the clamp mode
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
 

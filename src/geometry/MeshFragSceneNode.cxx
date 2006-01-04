@@ -63,8 +63,8 @@ void MeshFragSceneNode::Geometry::init()
   initDisplayList();
   return;
 }
- 
- 
+
+
 void MeshFragSceneNode::Geometry::initDisplayList()
 {
   if (list != INVALID_GL_LIST_ID) {
@@ -79,8 +79,8 @@ void MeshFragSceneNode::Geometry::initDisplayList()
   }
   return;
 }
- 
- 
+
+
 void MeshFragSceneNode::Geometry::freeDisplayList()
 {
   if (list != INVALID_GL_LIST_ID) {
@@ -89,22 +89,22 @@ void MeshFragSceneNode::Geometry::freeDisplayList()
   list = INVALID_GL_LIST_ID;
   return;
 }
- 
- 
+
+
 void MeshFragSceneNode::Geometry::freeContext(void *data)
 {
   ((MeshFragSceneNode::Geometry*)data)->freeDisplayList();
   return;
 }
- 
+
 
 void MeshFragSceneNode::Geometry::initContext(void *data)
 {
   ((MeshFragSceneNode::Geometry*)data)->initDisplayList();
   return;
 }
- 
- 
+
+
 inline void MeshFragSceneNode::Geometry::drawV() const
 {
   glDisableClientState(GL_NORMAL_ARRAY);
@@ -115,7 +115,7 @@ inline void MeshFragSceneNode::Geometry::drawV() const
 
   glEnableClientState(GL_TEXTURE_COORD_ARRAY);
   glEnableClientState(GL_NORMAL_ARRAY);
-  
+
   return;
 }
 
@@ -123,7 +123,7 @@ inline void MeshFragSceneNode::Geometry::drawV() const
 inline void MeshFragSceneNode::Geometry::drawVT() const
 {
   glDisableClientState(GL_NORMAL_ARRAY);
-  
+
   glVertexPointer(3, GL_FLOAT, 0, sceneNode->vertices);
   glTexCoordPointer(2, GL_FLOAT, 0, sceneNode->texcoords);
   glDrawArrays(GL_TRIANGLES, 0, sceneNode->arrayCount * 3);
@@ -137,7 +137,7 @@ inline void MeshFragSceneNode::Geometry::drawVT() const
 inline void MeshFragSceneNode::Geometry::drawVN() const
 {
   glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-  
+
   glVertexPointer(3, GL_FLOAT, 0, sceneNode->vertices);
   glNormalPointer(GL_FLOAT, 0, sceneNode->normals);
   glDrawArrays(GL_TRIANGLES, 0, sceneNode->arrayCount * 3);
@@ -177,15 +177,15 @@ void MeshFragSceneNode::Geometry::render()
   else {
     if (BZDBCache::lighting) {
       if (BZDBCache::texture) {
-        drawVTN();
+	drawVTN();
       } else {
-        drawVN();
+	drawVN();
       }
     } else {
       if (BZDBCache::texture) {
-        drawVT();
+	drawVT();
       } else {
-        drawV();
+	drawV();
       }
     }
   }

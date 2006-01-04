@@ -57,13 +57,13 @@ class CustomZone : public WorldFileLocation {
 
     static const std::string& getFlagSafetyQualifier(int team);
     static int getFlagSafetyFromQualifier(const std::string&);
-    
+
     static const std::string& getPlayerTeamQualifier(int team);
     static int getPlayerTeamFromQualifier(const std::string&);
 
   private:
     void addZoneFlagCount(FlagType* flagType, int count);
-    
+
   private:
     ZoneFlagMap zoneFlagMap;
     QualifierList qualifiers;

@@ -161,7 +161,7 @@ static std::string cmdIconify(const std::string&,
 /** toggle mouse capture
  */
 static std::string cmdMouseGrab(const std::string&,
-                                const CommandManager::ArgList& args, bool*);
+				const CommandManager::ArgList& args, bool*);
 
 /** toggle Full Screen
  */
@@ -212,7 +212,7 @@ static std::string cmdToggleFS(const std::string&,
 }
 
 static std::string cmdMouseGrab(const std::string&,
-                                const CommandManager::ArgList& args, bool*)
+				const CommandManager::ArgList& args, bool*)
 {
   if (args.size() != 0)
     return "usage: mousegrab";

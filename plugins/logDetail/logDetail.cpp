@@ -1,4 +1,16 @@
-// logDetail.cpp : Defines the entry point for the DLL application.
+/* bzflag
+ * Copyright (c) 1993 - 2006 Tim Riker
+ *
+ * This package is free software;  you can redistribute it and/or
+ * modify it under the terms of the license found in the file
+ * named COPYING that should have accompanied this file.
+ *
+ * THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
+ * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ */
+
+// logDetail.cpp : Plugin module for logging server events to stdout
 //
 
 #include <iostream>
@@ -8,7 +20,7 @@ BZ_GET_PLUGIN_VERSION
 
 using namespace std;
 
-class logDetail : public bz_EventHandler 
+class logDetail : public bz_EventHandler
 {
 public:
   logDetail() {};
@@ -47,7 +59,7 @@ BZF_PLUGIN_CALL int bz_Unload ( void )
   return 0;
 }
 
-void logDetail::process( bz_EventData *eventData ) 
+void logDetail::process( bz_EventData *eventData )
 {
   bz_ChatEventData *chatData = (bz_ChatEventData *) eventData;
   bz_ServerMsgEventData *serverMsgData = (bz_ServerMsgEventData *) eventData;
@@ -57,7 +69,7 @@ void logDetail::process( bz_EventData *eventData )
 
   if (eventData) {
     switch (eventData->eventType) {
-      case bz_eSlashCommandEvent: 
+      case bz_eSlashCommandEvent:
 	// Slash commands are case insensitive
 	// Tokenize the stream and check the first word
 	// /report -> MSG-REPORT
@@ -117,14 +129,16 @@ void logDetail::process( bz_EventData *eventData )
 	}
 	break;
       case bz_ePlayerJoinEvent:
-	bz_PlayerRecord *player = bz_getPlayerByIndex( joinPartData->playerID );
-	if (player) {
-	  cout << "PLAYER-JOIN ";
-	  displayCallsign( player->callsign );
-	  cout << " #" << joinPartData->playerID;
-	  displayTeam( joinPartData->team );
-	  displayPlayerPrivs( joinPartData->playerID );
-	  cout << endl;
+	{
+	  bz_PlayerRecord *player = bz_getPlayerByIndex( joinPartData->playerID );
+	  if (player) {
+	    cout << "PLAYER-JOIN ";
+	    displayCallsign( player->callsign );
+	    cout << " #" << joinPartData->playerID;
+	    displayTeam( joinPartData->team );
+	    displayPlayerPrivs( joinPartData->playerID );
+	    cout << endl;
+	  }
 	}
 	break;
       case bz_ePlayerPartEvent:
@@ -140,7 +154,7 @@ void logDetail::process( bz_EventData *eventData )
 	displayPlayerPrivs( authData->playerID );
 	cout << endl;
 	break;
-      default : 
+      default :
 	break;
     }
   }

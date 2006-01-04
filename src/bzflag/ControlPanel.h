@@ -64,6 +64,9 @@ class ControlPanel {
 
     void		setDimming(float dimming);
 
+    void		saveMessages(const std::string& filename,
+				     bool stripAnsi) const;
+
   private:
     // no copying!
 			ControlPanel(const ControlPanel&);

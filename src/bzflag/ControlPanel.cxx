@@ -18,6 +18,7 @@
 
 /* system headers */
 #include <assert.h>
+#include <time.h>
 
 /* common implementation headers */
 #include "BZDBCache.h"
@@ -747,7 +748,7 @@ void			ControlPanel::addMessage(const std::string& line,
     _maxScrollPages = atoi(BZDB.getDefault("scrollPages").c_str());
     BZDB.setInt("scrollPages", _maxScrollPages);
   }
-  
+
   // the effective tab
   const int tabmode = (realmode == MessageCurrent) ? messageMode : realmode;
 
@@ -755,43 +756,42 @@ void			ControlPanel::addMessage(const std::string& line,
   for (int tab = MessageAll; tab < MessageModeCount; tab++) {
 
     if ((tab == tabmode) // add to its own mode
-        // add to the All tab, unless using Current mode
-        || ((tab == MessageAll) && (realmode != MessageCurrent))
-        // always add to all tabs
-        || (realmode == MessageAllTabs)) {
-      
+	// add to the All tab, unless using Current mode
+	|| ((tab == MessageAll) && (realmode != MessageCurrent))
+	// always add to all tabs
+	|| (realmode == MessageAllTabs)) {
+
       // insert the message into the tab
       if ((int)messages[tab].size() < maxLines * _maxScrollPages) {
-        // not full yet so just append it
-        messages[tab].push_back(item);
+	// not full yet so just append it
+	messages[tab].push_back(item);
       } else {
-        // rotate list and replace oldest (in newest position after rotate)
-        messages[tab].pop_front();
-        messages[tab].push_back(item);
+	// rotate list and replace oldest (in newest position after rotate)
+	messages[tab].pop_front();
+	messages[tab].push_back(item);
       }
-      
+
       // visible changes, force a console refresh
       if (messageMode == tab) {
-        invalidate();
+	invalidate();
       }
-      
+
       // mark the tab as unread (if viewing tabs)
       const bool showTabs = (BZDB.evalInt("showtabs") > 0);
       if (showTabs && (messageMode != tab) && (messageMode != MessageAll)) {
-        unRead[tab] = true;
+	unRead[tab] = true;
       }
     }
-  } 
-  
-  // this stuff has no effect on win32 (there's no console)
+  }
+
   if (echoToConsole){
 #ifdef _WIN32
-	// this is cheap but it will work on windows
-	  FILE	*fp = fopen ("stdout.txt","a+");
-	  if (fp){
-		  fprintf(fp,"%s\n", stripAnsiCodes(line).c_str());
-		  fclose(fp);
-	  }
+    // this is cheap but it will work on windows
+    FILE *fp = fopen ("stdout.txt","a+");
+    if (fp){
+      fprintf(fp,"%s\n", stripAnsiCodes(line).c_str());
+      fclose(fp);
+    }
 #else
     if (echoAnsi) {
       std::cout << line << ColorStrings[ResetColor] << std::endl;
@@ -799,13 +799,46 @@ void			ControlPanel::addMessage(const std::string& line,
       std::cout << stripAnsiCodes(line) << std::endl;
     }
     fflush(stdout);
- 
-#endif 
+#endif
   }
 }
 
 
-void			ControlPanel::setRadarRenderer(RadarRenderer* rr)
+void ControlPanel::saveMessages(const std::string& filename,
+				bool stripAnsi) const
+{
+  FILE* file = fopen(filename.c_str(), "a+");
+  if (!file) {
+    return;
+  }
+
+  const time_t nowTime = time (NULL);
+  fprintf(file, "\n");
+  fprintf(file, "----------------------------------------"
+		"----------------------------------------\n");
+  fprintf(file, "Messages saved: %s", ctime(&nowTime));
+  fprintf(file, "----------------------------------------"
+		"----------------------------------------\n\n");
+
+
+  // add to the appropriate tabs
+  const int msgCount = messages[MessageAll].size();
+  for (int i = 0; i < msgCount; i++) {
+    const std::string& line = messages[MessageAll][i].string;
+    if (stripAnsi) {
+      fprintf(file, "%s\n", stripAnsiCodes(line).c_str());
+    } else {
+      fprintf(file, "%s%s\n", line.c_str(), ColorStrings[ResetColor].c_str());
+    }
+  }
+
+  fclose(file);
+
+  return;
+}
+
+
+void ControlPanel::setRadarRenderer(RadarRenderer* rr)
 {
   radarRenderer = rr;
 }

@@ -41,13 +41,13 @@ class CustomWeapon : public WorldFileLocation {
   protected:
 
     FlagType *type;
-    
+
     float initdelay;
     std::vector<float> delay;
 
     float tilt;
     TeamColor teamColor;
-    
+
     int eventTeam;
     bz_eEventType triggerType;
 

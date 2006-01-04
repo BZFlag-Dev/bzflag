@@ -1199,7 +1199,7 @@ BZF_API void bz_debugMessagef ( int _debugLevel, const char* fmt, ... )
   va_start(args, fmt);
   vsnprintf(buffer, 4096, fmt, args);
   va_end(args);
-  bz_debugMessage (_debugLevel, buffer); 
+  bz_debugMessage (_debugLevel, buffer);
 }
 
 BZF_API int bz_getDebugLevel ( void )

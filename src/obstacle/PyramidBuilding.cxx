@@ -474,7 +474,7 @@ void PyramidBuilding::print(std::ostream& out, const std::string& indent) const
   if (getZFlip()) {
     out << indent << "  flipz" << std::endl;
   }
-  
+
   if (isPassable()) {
     out << indent << "  passable" << std::endl;
   } else {
@@ -572,9 +572,9 @@ void PyramidBuilding::printOBJ(std::ostream& out, const std::string& /*indent*/)
   out << "f -2/-7/-1 -3/-6/-1 -4/-5/-1 -5/-4/-1" << std::endl;
 
   out << std::endl;
-  
+
   incObjCounter();
-  
+
   return;
 }
 

@@ -67,13 +67,13 @@ void			addShotExplosion(const float* pos);
 void			addShotPuff(const float* pos, float azimuth, float elevation);
 void			warnAboutMainFlags();
 void			warnAboutRadarFlags();
-void                    warnAboutRadar();
-void                    warnAboutConsole();
+void		    warnAboutRadar();
+void		    warnAboutConsole();
 void			addPlayingCallback(PlayingCallback, void* data);
 void			removePlayingCallback(PlayingCallback, void* data);
 
 void			joinGame(JoinGameCallback, void* userData);
-void                    leaveGame();
+void		    leaveGame();
 std::vector<std::string>& getSilenceList();
 void			updateEvents();
 void			addMessage(const Player* player,
@@ -102,17 +102,17 @@ extern ServerLink*	serverLink;
 extern int		numFlags;
 extern StartupInfo	startupInfo;
 extern DefaultCompleter completer;
-extern bool             gameOver;
+extern bool	     gameOver;
 extern ControlPanel    *controlPanel;
-extern bool             fireButton;
-extern float            destructCountdown;
-extern bool             pausedByUnmap;
-extern int              savedVolume;
+extern bool	     fireButton;
+extern float	    destructCountdown;
+extern bool	     pausedByUnmap;
+extern int	      savedVolume;
 extern MainWindow      *mainWindow;
-extern float            pauseCountdown;
-extern float            clockAdjust;
-extern float            roamDZoom;
-extern bool             roamButton;
+extern float	    pauseCountdown;
+extern float	    clockAdjust;
+extern float	    roamDZoom;
+extern bool	     roamButton;
 
 #endif // BZF_PLAYING_H
 

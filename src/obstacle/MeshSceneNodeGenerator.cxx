@@ -432,14 +432,14 @@ void MeshSceneNodeGenerator::setupNodeMaterial(WallSceneNode* node,
     node->setUseColorTexture(true);
   }
   const int texMatId = mat->getTextureMatrix(0);
-  const TextureMatrix* texmat = TEXMATRIXMGR.getMatrix(texMatId); 
-  if (texmat != NULL) {                                
+  const TextureMatrix* texmat = TEXMATRIXMGR.getMatrix(texMatId);
+  if (texmat != NULL) {
     const GLfloat* matrix = texmat->getMatrix();
     if (matrix != NULL) {
       node->setTextureMatrix(matrix);
-    }                                   
-  } 
-                                            
+    }
+  }
+
   // deal with the blending setting for textures
   bool alpha = false;
   if ((faceTexture >= 0) && (userTexture && mat->getUseTextureAlpha(0))) {

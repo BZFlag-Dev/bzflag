@@ -296,7 +296,11 @@ void			BillboardSceneNode::notifyStyleChange()
   if (show) {
     OpenGLGStateBuilder builder(gstate);
     if (hasAlpha) {
-      builder.setBlending(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+      if (RENDERER.useQuality() >= 3) {
+	builder.setBlending(GL_SRC_ALPHA, GL_ONE);
+      } else {
+	builder.setBlending(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+      }
       builder.setAlphaFunc();
     }
     else {
@@ -387,7 +391,7 @@ void			BillboardSceneNode::BillboardRenderNode::render()
     glEnd();
   }
   glPopMatrix();
-  
+
   addTriangleCount(2);
 
   glDisable(GL_CLIP_PLANE0);

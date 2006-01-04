@@ -275,8 +275,8 @@ BZAdminClient::ServerCode BZAdminClient::checkMessage() {
 	  vbuf = a.unpack(vbuf);
 	  players[p].ip = a.getDotNotation();
 	  if ((ui != NULL) && messageMask[MsgAdminInfo]){
-            ui->outputMessage("*** IPINFO: " + players[p].name + " from "  +
-              players[p].ip, Default);
+	    ui->outputMessage("*** IPINFO: " + players[p].name + " from "  +
+	      players[p].ip, Default);
 	  }
 	}
       }
@@ -616,12 +616,13 @@ void BZAdminClient::waitForServer() {
   if (sLink.getState() == ServerLink::Okay) {
     sendMessage("bzadminping", me);
     std::string expected = formatMessage("bzadminping", me, me, NoTeam, me);
+    std::string noTalk = formatMessage("We're sorry, you are not allowed to talk!", ServerPlayer, me, NoTeam, me);
     std::string str;
     BZAdminUI* tmpUI = ui;
     ui = NULL;
     do {
       checkMessage();
-    } while (lastMessage.first != expected);
+    } while (lastMessage.first != expected && lastMessage.first != noTalk);
     ui = tmpUI;
   }
   messageMask[MsgMessage] = tmp;

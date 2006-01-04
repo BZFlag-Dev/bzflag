@@ -109,7 +109,7 @@ public:
     void	   setPlayerState(float pos[3], float azimuth);
     void	   getPlayerState(float pos[3], float &azimuth);
     void	   setPlayerState(PlayerState state, float timestamp);
-    
+
     void	   setBzIdentifier(const std::string& id);
     const std::string& getBzIdentifier() const;
 

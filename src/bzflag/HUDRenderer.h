@@ -218,8 +218,8 @@ private:
   static std::string	autoPilotLabel;
   bool			dater;
   unsigned int		lastTimeChange;
-  int 			triangleCount;
-  int 			radarTriangleCount;
+  int			triangleCount;
+  int			radarTriangleCount;
 };
 
 

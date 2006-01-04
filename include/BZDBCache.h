@@ -42,7 +42,7 @@ public:
 	static float pulseDepth;
 	static bool  showCollisionGrid;
 	static bool  showCullingGrid;
-	
+
 	static bool drawCelestial;
 	static bool drawClouds;
 	static bool drawGround;

@@ -109,7 +109,7 @@ class World {
     void		addFlags(SceneDatabase*, bool seerView);
     void		updateWind(float dt);
     void		getWind(float wind[3], const float pos[3]) const;
-    
+
     void		makeMeshDrawMgrs();
 
     static World*	getWorld();
@@ -179,11 +179,11 @@ class World {
 
     int			drawInfoCount;
     MeshDrawInfo**	drawInfoArray;
-    
+
     float		wind[3];
 
     LinkManager		links;
-    
+
     // required graphics settings
     int			oldFogEffect;
     bool		oldUseDrawInfo;

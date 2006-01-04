@@ -28,7 +28,7 @@ class FlagSceneNode : public SceneNode {
 
     static void		waveFlag(float dt);
     static void		freeFlag();
-    
+
     void		move(const GLfloat pos[3]);
     void		setAngle(GLfloat angle);
     void		setWind(const GLfloat wind[3], float dt);
@@ -45,7 +45,7 @@ class FlagSceneNode : public SceneNode {
     void		addShadowNodes(SceneRenderer&);
 
     bool		cullShadow(int planeCount,
-                                   const float (*planes)[4]) const;
+				   const float (*planes)[4]) const;
   protected:
     class FlagRenderNode : public RenderNode {
       public:

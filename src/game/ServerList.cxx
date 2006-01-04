@@ -112,9 +112,9 @@ void ServerList::readServerList()
 	base = scan;
 	continue;
       } else if (!strncmp(base, noticeIdentifier, strlen(noticeIdentifier))) {
-        printError(base);
-        base = scan;
-        continue;
+	printError(base);
+	base = scan;
+	continue;
       }
       // parse server info
       char *scan2, *name, *version, *infoServer, *address, *title;

@@ -85,9 +85,9 @@ namespace TankGeometryMgr {
 		     TankGeometryEnums::TankLOD lod);
 
   int getPartTriangleCount(TankGeometryEnums::TankShadow shadow,
-                           TankGeometryEnums::TankPart part,
-		           TankGeometryEnums::TankSize size,
-		           TankGeometryEnums::TankLOD lod);
+			   TankGeometryEnums::TankPart part,
+			   TankGeometryEnums::TankSize size,
+			   TankGeometryEnums::TankLOD lod);
 
   const float* getScaleFactor(TankGeometryEnums::TankSize size);
 }
@@ -112,7 +112,7 @@ namespace TankGeometryUtils {
   void doVertex3f(GLfloat x, GLfloat y, GLfloat z);
   void doNormal3f(GLfloat x, GLfloat y, GLfloat z);
   void doTexCoord2f(GLfloat x, GLfloat y);
-  
+
   //
   // NOTE:  these all return their triangle count
   //

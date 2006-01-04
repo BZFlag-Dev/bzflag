@@ -110,16 +110,17 @@ bool PlayerInfo::unpackEnter(void *buf, uint16_t &rejectCode, char *rejectMsg)
   buf = nboUnpackString(buf, email, EmailLen);
   buf = nboUnpackString(buf, token, TokenLen);
   buf = nboUnpackString(buf, clientVersion, VersionLen);
-  
+
   // terminate the strings
   callSign[CallSignLen - 1] = '\0';
   email[EmailLen - 1] = '\0';
   token[TokenLen - 1] = '\0';
   clientVersion[VersionLen - 1] = '\0';
   cleanEMail();
-  
+
   DEBUG2("Player %s [%d] sent version string: %s\n",
 	 callSign, playerIndex, clientVersion);
+
   // spoof filter holds "SERVER" for robust name comparisons
   if (serverSpoofingFilter.wordCount() == 0) {
     serverSpoofingFilter.addToFilter("SERVER", "");

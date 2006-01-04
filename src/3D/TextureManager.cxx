@@ -307,7 +307,7 @@ const ImageInfo& TextureManager::getInfo ( const char* name )
 
 
 bool TextureManager::getColorAverages(int texId, float rgba[4],
-                                      bool factorAlpha) const
+				      bool factorAlpha) const
 {
   TextureIDMap::const_iterator it = textureIDs.find(texId);
   if (it == textureIDs.end()) {
@@ -363,7 +363,7 @@ OpenGLTexture* TextureManager::loadTexture(FileTextureInit &init, bool reportFai
 
   OpenGLTexture *texture =
     new OpenGLTexture(width, height, image, init.filter, true);
-    
+
   delete[] image;
 
   return texture;

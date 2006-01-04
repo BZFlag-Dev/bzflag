@@ -15,7 +15,7 @@ for root in . .. ; do
 done
 
 if [ -r $root/include/config.h ] ; then
-  echo "$0 should be run only after a make maintianer-clean!"
+  echo "$0 should be run only after a make maintainer-clean!"
   exit 1
 fi
 myname=touchcopyright

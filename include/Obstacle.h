@@ -217,7 +217,7 @@ class Obstacle {
 
   /** This function resets the object ID counter for printing OBJ files */
   static void resetObjCounter();
-  
+
   // inside sceneNodes
   void addInsideSceneNode(SceneNode* node);
   void freeInsideSceneNodeList();
@@ -266,7 +266,7 @@ class Obstacle {
   protected:
     static int getObjCounter();
     static void incObjCounter();
- 
+
   protected:
     Extents extents;
     float pos[3];
@@ -280,7 +280,7 @@ class Obstacle {
   private:
     int insideNodeCount;
     SceneNode** insideNodes;
-  
+
   private:
     static int objCounter;
 };

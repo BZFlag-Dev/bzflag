@@ -88,7 +88,7 @@ World::~World()
   TRANSFORMMGR.clear();
   OBSTACLEMGR.clear();
   COLLISIONMGR.clear();
-  
+
   // revert the forced BZDB vars
   restoreRequiredGraphics();
 
@@ -693,15 +693,15 @@ void			World::updateWind(float /*dt*/)
 
   // pretty cheezy, should be fields and such
   const double gt = GameTime::getStepTime();
-  
+
   const double oneMinuteFactor = (1.0 / (60.0 * (M_PI * 2.0)));
   const float wsf = (float)(0.5 + (0.5 * cos(gt * 15.0f * oneMinuteFactor)));
   const float windSpeed = ((1.0f - wsf) * minWindSpeed) +
-                          (wsf * maxWindSpeed);
+			  (wsf * maxWindSpeed);
 
-  const float windAngle = (float)((M_PI * 2.0) * 
-                                  (cos(gt * 3.0f * oneMinuteFactor) + 
-                                   cos(gt * 10.0f * oneMinuteFactor)));
+  const float windAngle = (float)((M_PI * 2.0) *
+				  (cos(gt * 3.0f * oneMinuteFactor) +
+				   cos(gt * 10.0f * oneMinuteFactor)));
 
   wind[0] = windSpeed * cosf(windAngle);
   wind[1] = windSpeed * sinf(windAngle);
@@ -833,14 +833,14 @@ void			World::updateFlag(int index, float dt)
   if (flag.status != FlagOnTank) {
     flagNodes[index]->setWind(wind, dt);
     flagNodes[index]->setBillboard(true);
-  } 
+  }
   else {
     const Player* flagPlayer = NULL;
     for (int i = 0; i < curMaxPlayers; i++) {
       const Player* p = players[i];
       if (p && p->getId() == flag.owner) {
-        flagPlayer = p;
-        break;
+	flagPlayer = p;
+	break;
       }
     }
     if (flagPlayer != NULL) {
@@ -848,16 +848,16 @@ void			World::updateFlag(int index, float dt)
 	flagNodes[index]->setAngle(flagPlayer->getAngle());
 	flagNodes[index]->setBillboard(false);
       } else {
-        float myWind[3];
-        getWind(myWind, flagPlayer->getPosition());
-        const float* vel = flagPlayer->getVelocity();
-        myWind[0] -= vel[0];
-        myWind[1] -= vel[1];
-        if (flagPlayer->isFalling()) {
-          myWind[2] -= vel[2];
-        }
-        flagNodes[index]->setWind(myWind, dt);
-        flagNodes[index]->setBillboard(true);
+	float myWind[3];
+	getWind(myWind, flagPlayer->getPosition());
+	const float* vel = flagPlayer->getVelocity();
+	myWind[0] -= vel[0];
+	myWind[1] -= vel[1];
+	if (flagPlayer->isFalling()) {
+	  myWind[2] -= vel[2];
+	}
+	flagNodes[index]->setWind(myWind, dt);
+	flagNodes[index]->setBillboard(true);
       }
     } else {
       flagNodes[index]->setWind(wind, dt); // assumes homogeneous wind
@@ -975,7 +975,7 @@ static void writeBZDBvar (const std::string& name, void *userData)
       qmark = '"';
     }
     out << indent << "  -set " << name << " "
-                  << qmark << BZDB.get(name) << qmark << std::endl;
+		  << qmark << BZDB.get(name) << qmark << std::endl;
   }
   return;
 }

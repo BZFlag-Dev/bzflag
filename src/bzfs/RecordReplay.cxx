@@ -51,6 +51,7 @@ typedef __int64 s64;
 
 // common headers
 #include "global.h"
+#include "bzglob.h"
 #include "Pack.h"
 #include "GameTime.h"
 #include "StateDatabase.h"
@@ -141,6 +142,7 @@ static const u32 ReplayMagic       = 0x7272425A; // "rrBZ"
 static const u32 ReplayVersion     = 0x0001;
 static const u32 DefaultMaxBytes   = (16 * 1024 * 1024); // 16 Mbytes
 static const u32 DefaultUpdateRate = (10 * 1000000); // seconds
+static const int MaxListOutput     = 100;
 
 static std::string RecordDir = getRecordDirName();
 
@@ -653,9 +655,9 @@ void Record::sendHelp(int playerIndex)
   sendMessage(ServerPlayer, playerIndex, "  /record size <Mbytes>");
   sendMessage(ServerPlayer, playerIndex, "  /record rate <seconds>");
   sendMessage(ServerPlayer, playerIndex, "  /record stats");
-  sendMessage(ServerPlayer, playerIndex, "  /record list [-t | -n]");
   sendMessage(ServerPlayer, playerIndex, "  /record save <filename> [seconds]");
   sendMessage(ServerPlayer, playerIndex, "  /record file <filename>");
+  sendMessage(ServerPlayer, playerIndex, "  /record list [-t | -n | --] [pattern]");
   return;
 }
 
@@ -971,8 +973,63 @@ static bool sortFileName (const FileEntry& a, const FileEntry& b) {
 }
 
 
-bool Replay::sendFileList(int playerIndex, ReplayListSort sortBy)
+static bool parseListOptions(const char* opts,
+			     int& sortMode, std::string& pattern)
 {
+  // defaults
+  pattern = "*";
+  sortMode = Replay::SortNone;
+
+  // parse the opts
+  while (opts[0] != '\0') {
+    while ((opts[0] != '\0') && isspace(opts[0])) {
+      opts++; // eat whitespace
+    }
+    if (opts[0] == '-') {
+      if (opts[1] == '-') {
+	opts += 2;
+	break; // end of options
+      }
+      else if (opts[1] == 't') {
+	sortMode = Replay::SortByTime;
+	opts += 2;
+      }
+      else if (opts[1] == 'n') {
+	sortMode = Replay::SortByName;
+	opts += 2;
+      }
+      else {
+	return false; // unknown option
+      }
+    } else {
+      break;
+    }
+  }
+
+  while ((opts[0] != '\0') && isspace(opts[0])) {
+    opts++; // eat whitespace
+  }
+
+  // setup the globbing pattern
+  if (opts[0] != '\0') {
+    pattern = opts;
+    if (strstr(pattern.c_str(), "*") == NULL) {
+      pattern = "*" + pattern + "*";
+    }
+  }
+
+  return true;
+}
+
+
+bool Replay::sendFileList(int playerIndex, const char* options)
+{
+  int sortMode;
+  std::string pattern;
+  if (!parseListOptions(options, sortMode, pattern)) {
+    return false;
+  }
+
   std::vector<FileEntry> entries;
   if (!getFileList(playerIndex, entries)) {
     return false;
@@ -982,17 +1039,27 @@ bool Replay::sendFileList(int playerIndex, ReplayListSort sortBy)
   snprintf(buffer, MessageLen, "dir:  %s",RecordDir.c_str());
   sendMessage(ServerPlayer, playerIndex, buffer);
 
-  if (sortBy == SortByTime) {
+  if (sortMode == SortByTime) {
     std::sort (entries.begin(), entries.end(), sortFileTime);
-  } else if (sortBy == SortByName) {
+  } else if (sortMode == SortByName) {
     std::sort (entries.begin(), entries.end(), sortFileName);
   }
 
+  int entriesSent = 0;
   for (unsigned int i = 0; i < entries.size(); i++) {
     const FileEntry& entry = entries[i];
-    snprintf(buffer, MessageLen, "#%02i:  %-30s  [%9.1f seconds]", entry.entryNum + 1,
-	     entry.file.c_str(), entry.time);
-    sendMessage(ServerPlayer, playerIndex, buffer);
+    if (glob_match(pattern, entry.file)) {
+      entriesSent++;
+      snprintf(buffer, MessageLen, "#%02i:  %-30s  [%9.1f seconds]",
+	       entry.entryNum + 1, entry.file.c_str(), entry.time);
+      sendMessage(ServerPlayer, playerIndex, buffer);
+      if (entriesSent >= MaxListOutput) {
+	snprintf(buffer, MessageLen, "Not listing more then %i entries, "
+				     "try using pattern matching.", MaxListOutput);
+	sendMessage(ServerPlayer, playerIndex, buffer);
+	break;
+      }
+    }
   }
 
   return true;
@@ -1303,7 +1370,7 @@ bool Replay::playing()
 void Replay::sendHelp(int playerIndex)
 {
   sendMessage(ServerPlayer, playerIndex, "usage:");
-  sendMessage(ServerPlayer, playerIndex, "  /replay list [-t | -n]");
+  sendMessage(ServerPlayer, playerIndex, "  /replay list [-t | -n | --] [pattern]");
   sendMessage(ServerPlayer, playerIndex, "  /replay load <filename|#index>");
   sendMessage(ServerPlayer, playerIndex, "  /replay play");
   sendMessage(ServerPlayer, playerIndex, "  /replay loop");
@@ -1486,7 +1553,7 @@ static bool saveStates()
   savePlayersState();
   saveRabbitState();
   saveGameTimeState();
-  
+
   RecordUpdateTime = getRRtime();
 
   return true;
@@ -1692,12 +1759,12 @@ static bool saveVariablesState()
 static bool saveGameTimeState()
 {
   // FIXME: the packets that are sent out during replay will not
-  //        be properly lag compensated for the connections over
-  //        which they are sent.
-  //        - provide GameTime with an offset capability
-  //        - allow resetting of players' next GameTime update
-  //          (and do so during a replay state update)
-  //        - send GameTime packets out regardless of replay state
+  //	be properly lag compensated for the connections over
+  //	which they are sent.
+  //	- provide GameTime with an offset capability
+  //	- allow resetting of players' next GameTime update
+  //	  (and do so during a replay state update)
+  //	- send GameTime packets out regardless of replay state
   char buffer[MaxPacketLen];
   void* buf = GameTime::pack(buffer, 0.150f);
   int length = (char*)buf - buffer;
