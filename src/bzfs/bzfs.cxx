@@ -191,7 +191,7 @@ static int pwrite(NetHandler *handler, const void *b, int l)
 static void pwriteBroadcast(const void *b, int l, int mask)
 {
   int result;
-  std::list<NetHandler*>::const_iterator it, it1;
+  std::list<NetHandler*>::const_iterator it;
   // send message to everyone
   for (it = NetHandler::netConnections.begin();
        it != NetHandler::netConnections.end();) {
