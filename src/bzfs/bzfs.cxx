@@ -191,12 +191,12 @@ static int pwrite(NetHandler *handler, const void *b, int l)
 static void pwriteBroadcast(const void *b, int l, int mask)
 {
   int result;
-  std::list<NetHandler*>::const_iterator it;
+  std::list<NetHandler*>::const_iterator it, it1;
   // send message to everyone
   for (it = NetHandler::netConnections.begin();
-       it != NetHandler::netConnections.end();
-       it++) {
+       it != NetHandler::netConnections.end();) {
     NetHandler *handler = *it;
+    it++;
     if (handler->getClientKind() & mask) {
       result = handler->pwrite(b, l);
       if (result == -1) {
