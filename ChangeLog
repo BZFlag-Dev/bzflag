@@ -4,6 +4,8 @@
 BZFlag 2.0.5
 ------------
 
+* Prevent long distance tank warping through walls - Sean Morrison
+* Display paused state when screen capturing while playing - Sean Morrison
 * Added new logDetail plugin - Bernt Hansen
 * Fixed issue with denial-of-service message attacks - Sean Morrison
 * Support for -window on Mac command line executions - Sean Morrison
