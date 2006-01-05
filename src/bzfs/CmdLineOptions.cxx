@@ -130,7 +130,7 @@ const char *usageString =
 "[-synclocation] "
 "[-t] "
 "[-tftimeout <seconds>] "
-"[-time <seconds>] "
+"[-time {<seconds>|endTime}] "
 "[-timemanual] "
 "[-tk] "
 "[-tkkr <percent>] "
@@ -225,7 +225,7 @@ const char *extraUsageString =
 "\t-synclocation: synchronize latitude and longitude on all clients\n"
 "\t-t: allow teleporters\n"
 "\t-tftimeout: set timeout for team flag zapping (default=30)\n"
-"\t-time: set time limit on each game\n"
+"\t-time: set time limit on each game in format of either seconds or ending time in x[x]:[xx:[xx]] format\n"
 "\t-timemanual: countdown for timed games is started with /countdown\n"
 "\t-tk: player does not die when killing a teammate\n"
 "\t-tkkr: team-kills-to-wins percentage (1-100) for kicking tk-ing players\n"
@@ -1058,7 +1058,33 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       std::cerr << "using team flag timeout of " << options.teamFlagTimeout << " seconds" << std::endl;
     } else if (strcmp(argv[i], "-time") == 0) {
       checkArgc(1, i, argc, argv[i]);
-      options.timeLimit = (float)atof(argv[i]);
+      if (strchr(argv[i], ':')) {
+				std::vector<std::string> endTime = TextUtils::tokenize(argv[i], std::string(":"));
+				{
+					unsigned int sizer = endTime.size();
+					while (sizer != 3) {
+						endTime.push_back("00");
+						++sizer;
+					}
+					if (sizer > 3) {
+						std::cerr << "too many arguments to -time\n";
+						usage(argv[0]);
+					}
+				}
+				time_t tnow = time(0);
+				struct tm *now = localtime(&tnow);
+				unsigned int hour = now->tm_hour, min = now->tm_min, sec = now->tm_sec,
+										 cmdHour = atoi(endTime[0].c_str()),
+										 cmdMin = atoi(endTime[1].c_str()), cmdSec = atoi(endTime[2].c_str());
+				unsigned long secsToday = (hour * 3600) + (min * 60) + sec,
+											secsTill = (cmdHour * 3600) + (cmdMin * 60) + cmdSec;
+				if (secsToday > secsTill) //if the requested time has already past
+					options.timeLimit = (86400 - secsToday) + secsTill; //secs left today + till req. time
+				else
+					options.timeLimit = secsTill - secsToday;
+			}
+			else
+      	options.timeLimit = (float)atof(argv[i]);
       if (options.timeLimit <= 0.0f) {
 	// league matches are 30 min
 	options.timeLimit = 1800.0f;

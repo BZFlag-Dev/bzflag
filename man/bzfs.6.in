@@ -86,7 +86,7 @@ bzfs \- BZFlag game server
 [\fB\-synctime\fR]
 [\fB\-t\fR]
 [\fB\-tftimeout \fItime\-limit\fR]
-[\fB\-time \fItime\-limit\fR]
+[\fB\-time {\fItime\-limit\fR|\fIending-time\fR}]
 [\fB\-timemanual\fR]
 [\fB\-tk\fR]
 [\fB\-tkkr \fIpercent\fR]
@@ -450,8 +450,10 @@ of seconds that the flag should be left alone before it is reset. The
 default value is 30.
 .TP 
 \fB\-time \fItime\-limit\fR
-Sets a time limit on the game to \fItime\-limit\fR.  The game will be
-stopped \fItime\-limit\fR seconds after the first player connects.
+Sets a time limit on the game to \fItime\-limit\fR or \fIending-time\fR. The game will be
+stopped \fItime\-limit\fR seconds after the first player connects, or at \fending-time\fR,
+whichever is given. \fIending-time\fR does not need hour, minute, and second arguments,
+but if hour is only given, it must end in ':'. Each ungiven argument is set to 0.
 .TP 
 \fB\-timemanual\fR
 When using \fB\-time\fR, the countdown will start when the first player
