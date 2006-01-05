@@ -3114,12 +3114,17 @@ void			addShotPuff(const float* pos, float azimuth, float elevation)
   EFFECTS.addGMPuffEffect(0, pos, rots, NULL);
 }
 
-// update events from outside if they should be checked
-void		   updateEvents()
+// process pending input events
+void		   processInputEvents(float maxProcessingTime)
 {
   if (mainWindow && display) {
-    while (display->isEventPending() && !CommandsStandard::isQuit())
+    TimeKeeper start = TimeKeeper::getCurrent();
+    while (display->isEventPending() &&
+	   !CommandsStandard::isQuit() &&
+	   (TimeKeeper::getCurrent() - start < maxProcessingTime)) {
+      // process one event
       doEvent(display);
+    }
   }
 }
 
@@ -5859,10 +5864,8 @@ static void		playingLoop()
     }
     mainWindow->getWindow()->yieldCurrent();
 
-    // handle events
-    clockAdjust = 0.0f;
-    while (!CommandsStandard::isQuit() && display->isEventPending())
-      doEvent(display);
+    // handle pending events for some small fraction of time
+    processInputEvents(0.1f);
 
     if (mainWindow->haveJoystick()) {
       static const BzfKeyEvent::Button button_map[] = {
