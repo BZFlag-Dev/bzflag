@@ -642,6 +642,14 @@ static std::string cmdScreenshot(const std::string&,
     const unsigned long blength = h * w * 3 + h;    //size of b[] and br[]
     unsigned char* b = new unsigned char[blength];  //screen of pixels + column for filter type required by PNG - filtered data
 
+    // pause to prevent dt from accumulating until done screenshotting
+    LocalPlayer *myTank = LocalPlayer::getMyTank();
+    bool temp_paused = false;
+    if (myTank && !myTank->isPaused()) {
+      myTank->setPause(true);
+      temp_paused = true;
+    }
+
     //Prepare gamma table
     const bool gammaAdjust = BZDB.isSet("gamma");
     unsigned char gammaTable[256];
@@ -713,10 +721,16 @@ static std::string cmdScreenshot(const std::string&,
       }
     }
 
+    // let the user know we're paused while saving the file
+    if (temp_paused) {
+      drawFrame(0.0f);
+    }
+
     unsigned long zlength = blength + 15;	    //length of bz[], will be changed by zlib to the length of the compressed string contained therein
     unsigned char* bz = new unsigned char[zlength]; //just like b, but compressed; might get bigger, so give it room
     // compress b into bz
     compress2(bz, &zlength, b, blength, 5);
+
     temp = htonl(zlength);			  //(length) IDAT length after compression
     f->write((char*) &temp, 4);
     temp = htonl(PNGTAG("IDAT"));		   //(tag) IDAT
@@ -757,6 +771,14 @@ static std::string cmdScreenshot(const std::string&,
     char notify[128];
     snprintf(notify, 128, "%s: %dx%d", filename.c_str(), w, h);
     controlPanel->addMessage(notify);
+
+    // unpause to prevent dt from accumulating until done screenshotting
+    if (temp_paused) {
+      myTank->setPause(false);
+    }
+    // update the display regardless of pausing
+    drawFrame(0.0f);
+
   }
   return std::string();
 }
