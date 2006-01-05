@@ -127,6 +127,7 @@ const std::string StateDatabase::BZDB_HANDICAPVELAD	= std::string("_handicapVelA
 const std::string StateDatabase::BZDB_HANDICAPANGAD	= std::string("_handicapAngAd");
 const std::string StateDatabase::BZDB_HANDICAPSHOTAD	= std::string("_handicapShotAd");
 const std::string StateDatabase::BZDB_IDENTIFYRANGE	= std::string("_identifyRange");
+const std::string StateDatabase::BZDB_IDLETIME		= std::string("_idleTime");
 const std::string StateDatabase::BZDB_JUMPVELOCITY	= std::string("_jumpVelocity");
 const std::string StateDatabase::BZDB_LASERADVEL	= std::string("_laserAdVel");
 const std::string StateDatabase::BZDB_LASERADRATE	= std::string("_laserAdRate");
