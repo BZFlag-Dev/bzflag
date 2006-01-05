@@ -5865,6 +5865,7 @@ static void		playingLoop()
     mainWindow->getWindow()->yieldCurrent();
 
     // handle pending events for some small fraction of time
+    clockAdjust = 0.0f;
     processInputEvents(0.1f);
 
     if (mainWindow->haveJoystick()) {
