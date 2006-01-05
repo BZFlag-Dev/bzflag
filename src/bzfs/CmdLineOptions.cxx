@@ -34,6 +34,7 @@
 // for -pidfile option
 #ifdef _WIN32
 #include <process.h>
+#include "time.h"
 #else
 #include <sys/types.h>
 #include <unistd.h>
@@ -1079,9 +1080,9 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
 				unsigned long secsToday = (hour * 3600) + (min * 60) + sec,
 											secsTill = (cmdHour * 3600) + (cmdMin * 60) + cmdSec;
 				if (secsToday > secsTill) //if the requested time has already past
-					options.timeLimit = (86400 - secsToday) + secsTill; //secs left today + till req. time
+					options.timeLimit = (float)((86400 - secsToday) + secsTill); //secs left today + till req. time
 				else
-					options.timeLimit = secsTill - secsToday;
+					options.timeLimit = (float)(secsTill - secsToday);
 			}
 			else
       	options.timeLimit = (float)atof(argv[i]);
