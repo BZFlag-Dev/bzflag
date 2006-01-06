@@ -437,7 +437,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
     }
 
     // unstick if stuck for more than a half a second
-    if (TimeKeeper::getCurrent() - stuckStartTime > 0.5) {
+    if (obstacle && TimeKeeper::getCurrent() - stuckStartTime > 0.5) {
       stuckStartTime = TimeKeeper::getSunExplodeTime();
       // we are using a maximum value on time for frame to avoid lagging problem
       setDesiredSpeed(0.25f);
