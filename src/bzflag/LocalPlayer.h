@@ -156,7 +156,6 @@ private:
   static LocalPlayer*	mainPlayer;
   InputMethod	inputMethod;
   bool		inputChanged;
-  int		stuckFrameCount;
   bool		spawning;
   int		wingsFlapCount;
   bool		left;
@@ -168,6 +167,7 @@ private:
   bool		jumpPressed;
   int		deathPhyDrv;	// physics driver that caused death
   std::vector<const Obstacle*> insideBuildings;
+  TimeKeeper	stuckStartTime;
 };
 
 

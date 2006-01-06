@@ -49,7 +49,6 @@ LocalPlayer::LocalPlayer(const PlayerId& _id,
   nemesis(NULL),
   recipient(NULL),
   inputChanged(false),
-  stuckFrameCount(0),
   spawning(false),
   wingsFlapCount(0),
   left(false),
@@ -72,6 +71,8 @@ LocalPlayer::LocalPlayer(const PlayerId& _id,
   } else {
     setInputMethod(BZDB.get("activeInputDevice"));
   }
+
+  stuckStartTime = TimeKeeper::getSunExplodeTime();
 }
 
 LocalPlayer::~LocalPlayer()
@@ -409,10 +410,10 @@ void			LocalPlayer::doUpdateMotion(float dt)
   // move the tank up to the collision, adjust the velocity to
   // prevent interpenetration, and repeat.  avoid infinite loops
   // by only allowing a maximum number of repeats.
-  bool expelled;
+  bool expel;
   const Obstacle* obstacle;
   float timeStep = dt;
-  int stuck = false;
+  static int stuck = false;
   if (location != Dead && location != Exploding) {
     location = OnGround;
 
@@ -421,17 +422,23 @@ void			LocalPlayer::doUpdateMotion(float dt)
 
     // try to see if we are stuck on a building
     obstacle = getHitBuilding(newPos, newAzimuth, newPos, newAzimuth,
-			      phased, expelled);
+			      phased, expel);
 
-    if (obstacle && expelled) {
-      stuckFrameCount++;
+    if (obstacle && expel) {
+      // just got stuck?
+      if (!stuck) {
+	stuckStartTime = TimeKeeper::getCurrent();
+      }
       stuck = true;
     } else {
-      stuckFrameCount = 0;
+      // weee, we're free
+      stuckStartTime = TimeKeeper::getNullTime();
+      stuck = false;
     }
 
-    if (stuckFrameCount > 100) {
-      stuckFrameCount = 0;
+    // unstick if stuck for more than a half a second
+    if (TimeKeeper::getCurrent() - stuckStartTime > 0.5) {
+      stuckStartTime = TimeKeeper::getSunExplodeTime();
       // we are using a maximum value on time for frame to avoid lagging problem
       setDesiredSpeed(0.25f);
       float delta = dt > 0.1f ? 0.1f : dt;
@@ -483,9 +490,9 @@ void			LocalPlayer::doUpdateMotion(float dt)
 
     // see if we hit anything.  if not then we're done.
     obstacle = getHitBuilding(tmpPos, tmpAzimuth, newPos, newAzimuth,
-			      phased, expelled);
+			      phased, expel);
 
-    if (!obstacle || !expelled) break;
+    if (!obstacle || !expel) break;
 
     float obstacleTop = obstacle->getPosition()[2] + obstacle->getHeight();
     if ((oldLocation != InAir) && obstacle->isFlatTop() &&
@@ -498,8 +505,8 @@ void			LocalPlayer::doUpdateMotion(float dt)
       // drive over bumps
       const Obstacle* bumpObstacle = getHitBuilding(newPos, tmpAzimuth,
 						    newPos, newAzimuth,
-						    phased, expelled);
-      if (bumpObstacle == NULL) {
+						    phased, expel);
+      if (!bumpObstacle) {
 	move(newPos, getAngle());
 	newPos[0] += newVelocity[0] * (dt * 0.5f);
 	newPos[1] += newVelocity[1] * (dt * 0.5f);
@@ -529,19 +536,19 @@ void			LocalPlayer::doUpdateMotion(float dt)
       }
 
       // see if we hit anything
-      bool searchExpelled;
+      bool searchExpel;
       const Obstacle* searchObstacle =
 	getHitBuilding(tmpPos, tmpAzimuth, newPos, newAzimuth,
-		       phased, searchExpelled);
+		       phased, searchExpel);
 
-      if (!searchObstacle || !searchExpelled) {
+      if (!searchObstacle || !searchExpel) {
 	// if no hit then search latter half of time step
 	searchTime = t;
       } else if (searchObstacle) {
 	// if we hit a building then record which one and where
 	obstacle = searchObstacle;
 
-	expelled = searchExpelled;
+	expel = searchExpel;
 	hitAzimuth = newAzimuth;
 	hitPos[0] = newPos[0];
 	hitPos[1] = newPos[1];
@@ -572,7 +579,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
 
     // check for being on a building
     if ((newPos[2] > 0.0f) && (normal[2] > 0.001f)) {
-      if (location != Dead && location != Exploding && expelled) {
+      if (location != Dead && location != Exploding && expel) {
 	location = OnBuilding;
 	lastObstacle = obstacle;
       }
@@ -618,7 +625,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
 
   // pick new location if we haven't already done so
   if (location == OnGround) {
-    if (obstacle && (!expelled || stuck)) {
+    if (obstacle && (!expel || stuck)) {
       location = InBuilding;
     }
     else if (newPos[2] > 0.0f) {
@@ -684,7 +691,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
 
       // check for a hit on the other side
       const Obstacle* teleObs =
-	getHitBuilding(newPos, newAzimuth, newPos, newAzimuth, phased, expelled);
+	getHitBuilding(newPos, newAzimuth, newPos, newAzimuth, phased, expel);
       if (teleObs != NULL) {
 	// revert
 	memcpy (newPos, oldPosition, sizeof(float[3]));
@@ -844,36 +851,36 @@ void			LocalPlayer::doUpdateMotion(float dt)
 
 
 const Obstacle* LocalPlayer::getHitBuilding(const float* p, float a,
-					    bool phased, bool& expelled) const
+					    bool phased, bool& expel) const
 {
+  const bool hasOOflag = getFlag() == Flags::OscillationOverthruster;
   const float* dims = getDimensions();
   const Obstacle* obstacle =
     World::getWorld()->hitBuilding(p, a, dims[0], dims[1], dims[2]);
 
-  expelled = (obstacle != NULL);
-  if (expelled && phased)
-    expelled = (obstacle->getType() == WallObstacle::getClassName() ||
+  expel = (obstacle != NULL);
+  if (expel && phased)
+    expel = (obstacle->getType() == WallObstacle::getClassName() ||
 		obstacle->getType() == Teleporter::getClassName() ||
-		(getFlag() == Flags::OscillationOverthruster && desiredSpeed < 0.0f &&
-		 p[2] == 0.0f));
+		(hasOOflag && desiredSpeed < 0.0f && NEAR_ZERO(p[2], ZERO_TOLERANCE)));
   return obstacle;
 }
 
 
 const Obstacle* LocalPlayer::getHitBuilding(const float* oldP, float oldA,
 					    const float* p, float a,
-					    bool phased, bool& expelled)
+					    bool phased, bool& expel)
 {
   const bool hasOOflag = getFlag() == Flags::OscillationOverthruster;
   const float* dims = getDimensions();
   const Obstacle* obstacle = World::getWorld()->
     hitBuilding(oldP, oldA, p, a, dims[0], dims[1], dims[2], !hasOOflag);
 
-  expelled = (obstacle != NULL);
-  if (expelled && phased)
-    expelled = (obstacle->getType() == WallObstacle::getClassName() ||
+  expel = (obstacle != NULL);
+  if (expel && phased)
+    expel = (obstacle->getType() == WallObstacle::getClassName() ||
 		obstacle->getType() == Teleporter::getClassName() ||
-		(hasOOflag && desiredSpeed < 0.0f && p[2] == 0.0f));
+		(hasOOflag && desiredSpeed < 0.0f && NEAR_ZERO(p[2], ZERO_TOLERANCE)));
 
   if (obstacle != NULL) {
     if (obstacle->getType() == MeshFace::getClassName()) {
