@@ -7,7 +7,7 @@ Type=1
 Compiler=-D_DEVCPP=1 -D__GNUWIN32__ -D_CONSOLE -DWIN32 -D_MBCS -DINSIDE_BZ=1_@@_ -Wall -W_@@_
 CppCompiler=-DINSIDE_BZ=1 -D_DEVCPP=1 -D__GNUWIN32__ -D_CONSOLE -DWIN32 -D_MBCS -Wall -W_@@_
 Includes=..\Dev-C++;..\include;..\Dev-C++
-Linker=-lstdc++ -lcurldll -lares -lws2_32 -lwinmm -lkernel32 -luser32 -lgdi32 -lwinspool -lcomdlg32 -ladvapi32 -lshell32 -lole32 -loleaut32 -luuid_@@_
+Linker=-lstdc++ -lcurl -lares -lws2_32 -lwinmm -lkernel32 -luser32 -lgdi32 -lwinspool -lcomdlg32 -ladvapi32 -lshell32 -lole32 -loleaut32 -luuid_@@_
 Libs=..\Dev-C++
 UnitCount=218
 Folders="Header Files","Header Files/bzfs","Header Files/common","Header Files/game","Header Files/net","Header Files/regex","Resource Files","Source Files","Source Files/bzfs","Source Files/common","Source Files/date","Source Files/game","Source Files/net","Source Files/obstacle","Source Files/regex","Source Files/zlib"
