@@ -1,6 +1,14 @@
 recent bugs
 ------------
 
+- idbans do not respect the antiban permission
+
+- idbans report the wrong time remaining on a idbanlist
+
+- a banned registered player that gets added to both the banList and
+  idBanList is not listed in the latter on a idbanlist yet prevented
+  from joining even after the ban is removed from the banList.
+
 - someone broke the key-driving rotational acceleration dampening,
   feels like 1.7 driving again.
 
