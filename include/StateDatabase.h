@@ -244,7 +244,6 @@ public:
   static const std::string	BZDB_HANDICAPANGAD;
   static const std::string	BZDB_HANDICAPSHOTAD;
   static const std::string	BZDB_IDENTIFYRANGE;
-  static const std::string	BZDB_IDLETIME;
   static const std::string	BZDB_JUMPVELOCITY;
   static const std::string	BZDB_LASERADVEL;
   static const std::string	BZDB_LASERADRATE;
