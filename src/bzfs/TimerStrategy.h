@@ -41,7 +41,7 @@ public:
   virtual bool pause(const float delay = 0.0f);
   virtual bool resume(const float delay = 0.0f);
   
-  virtual BaseTimerStrategy action(TimeKeeper& tm) = 0;
+  virtual BaseTimerStrategy* action(TimeKeeper& tm) = 0;
   
 private:
   void update();
