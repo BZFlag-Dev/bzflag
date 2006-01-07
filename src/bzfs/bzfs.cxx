@@ -40,7 +40,6 @@
 #include "WorldInfo.h"
 #include "WorldWeapons.h"
 #include "BZWReader.h"
-#include "PackVars.h"
 #include "SpawnPosition.h"
 #include "DropGeometry.h"
 #include "commands.h"
@@ -993,6 +992,62 @@ static void sendNewPlayer(NetHandler *handler)
   directMessage(handler, MsgNewPlayer, (char*)buf - (char*)bufStart, bufStart);
 }
 
+/** class to send a bunch of BZDB variables via MsgSetVar.
+ * dtor does the actual send
+ */
+class PackVars
+{
+public:
+  PackVars(void *buffer, NetHandler *_handler) : bufStart(buffer)
+  {
+    buf = nboPackUShort(bufStart, 0);//placeholder
+    handler = _handler;
+    len = sizeof(uint16_t);
+    count = 0;
+  }
+
+  ~PackVars()
+  {
+    if (len > sizeof(uint16_t)) {
+      nboPackUShort(bufStart, count);
+      directMessage(handler, MsgSetVar, len, bufStart);
+    }
+  }
+
+  // callback forwarder
+  static void packIt(const std::string &key, void *pv)
+  {
+    reinterpret_cast<PackVars*>(pv)->sendPackVars(key);
+  }
+
+  void sendPackVars(const std::string &key)
+  {
+    std::string value = BZDB.get(key);
+    int pairLen = key.length() + 1 + value.length() + 1;
+    if ((pairLen + len) > (MaxPacketLen - 2*sizeof(uint16_t))) {
+      nboPackUShort(bufStart, count);
+      count = 0;
+      directMessage(handler, MsgSetVar, len, bufStart);
+      buf = nboPackUShort(bufStart, 0); //placeholder
+      len = sizeof(uint16_t);
+    }
+
+    buf = nboPackUByte(buf, key.length());
+    buf = nboPackString(buf, key.c_str(), key.length());
+    buf = nboPackUByte(buf, value.length());
+    buf = nboPackString(buf, value.c_str(), value.length());
+    len += pairLen;
+    count++;
+  }
+
+private:
+  void * const bufStart;
+  void *buf;
+  NetHandler *handler;
+  unsigned int len;
+  unsigned int count;
+};
+
 static void acceptClient()
 {
   // client (not a player yet) is requesting service.
@@ -1041,13 +1096,6 @@ static void acceptClient()
 
   buffer[8] = (uint8_t)playerIndex;
   send(fd, (const char*)buffer, sizeof(buffer), 0);
-
-  void *bufStart = getDirectMessageBuffer();
-  //send SetVars
-  { // scoping is mandatory
-    PackVars pv(bufStart, playerIndex);
-    BZDB.iterate(PackVars::packIt, &pv);
-  }
 }
 
 
@@ -3271,6 +3319,16 @@ static void handleCommand(const void *rawbuf, bool udp, NetHandler *handler)
       // data: <none>
       removePlayer(t, "left", false);
       break;
+
+    case MsgSetVar: {
+      void *bufStart = getDirectMessageBuffer();
+      //send SetVars
+      { // scoping is mandatory
+	PackVars pv(bufStart, handler);
+	BZDB.iterate(PackVars::packIt, &pv);
+      }
+      break;
+    }
 
     case MsgNegotiateFlags: {
       void *bufStart;

@@ -50,7 +50,6 @@
 
 // local implementation headers
 #include "FlagHistory.h"
-#include "PackVars.h"
 #include "Permissions.h"
 #include "RecordReplay.h"
 #include "bzfs.h"

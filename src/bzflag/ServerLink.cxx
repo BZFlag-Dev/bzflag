@@ -283,6 +283,9 @@ ServerLink::ServerLink(const Address& serverAddress, int port) :
     packetStream = fopen(getenv("BZFLAGSAVE"), "w");
     packetStartTime = TimeKeeper::getCurrent();
   }
+
+  send(MsgSetVar, 0, NULL);
+  
   return;
 
 done:
