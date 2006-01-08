@@ -386,15 +386,10 @@ void PlayerInfo::setAutoPilot(bool _autopilot) {
 bool PlayerInfo::isTooMuchIdling(float kickThresh) {
   bool idling = false;
   if ((state > PlayerInLimbo) && (team != ObserverTeam)) {
-    int idletime = (int)(now - lastupdate);
-    int pausetime = 0;
-    if (paused && now - pausedSince > idletime)
-      pausetime = (int)(now - pausedSince);
-    idletime = idletime > pausetime ? idletime : pausetime;
-    if (idletime
-	> (now - lastmsg < kickThresh ? 3 * kickThresh : kickThresh)) {
-      DEBUG1("Kicking player %s [%d] idle %d\n", callSign, playerIndex,
-	     idletime);
+    const float idletime = (now - lastupdate);
+    if (idletime > kickThresh) {
+      DEBUG1("Kicking player %s [%d] idle %d\n",
+             callSign, playerIndex, idletime);
       idling = true;
     }
   }
@@ -402,13 +397,15 @@ bool PlayerInfo::isTooMuchIdling(float kickThresh) {
 }
 
 bool PlayerInfo::hasStartedToNotRespond() {
-  float notRespondingTime = BZDB.eval(StateDatabase::BZDB_NOTRESPONDINGTIME);
+  const float notRespondingTime =
+    BZDB.eval(StateDatabase::BZDB_NOTRESPONDINGTIME);
   bool startingToNotRespond = false;
   if (state > PlayerInLimbo) {
     bool oldnr = notResponding;
     notResponding = (now - lastupdate) > notRespondingTime;
-    if (!oldnr && notResponding)
+    if (!oldnr && notResponding) {
       startingToNotRespond = true;
+    }
   }
   return startingToNotRespond;
 }
@@ -428,7 +425,9 @@ void PlayerInfo::setPlayedEarly(bool early) {
 }
 
 void PlayerInfo::updateIdleTime() {
-  lastupdate = now;
+  if (!paused) {
+    lastupdate = now;
+  }
 }
 
 void	PlayerInfo::setReplayState(PlayerReplayState _state) {
