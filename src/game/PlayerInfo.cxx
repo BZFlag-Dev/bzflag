@@ -388,8 +388,6 @@ bool PlayerInfo::isTooMuchIdling(float kickThresh) {
   if ((state > PlayerInLimbo) && (team != ObserverTeam)) {
     const float idletime = (now - lastupdate);
     if (idletime > kickThresh) {
-      DEBUG1("Kicking player %s [%d] idle %d\n",
-             callSign, playerIndex, idletime);
       idling = true;
     }
   }

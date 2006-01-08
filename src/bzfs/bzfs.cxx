@@ -3989,6 +3989,8 @@ static void doStuffOnPlayer(GameKeeper::Player &playerData)
 	= "You were kicked because you were idle too long";
       sendMessage(ServerPlayer, p,  message);
       removePlayer(p, "idling");
+      DEBUG1("Kicked player %s [%d] for idling (thresh = %f)\n",
+             playerData.player.getCallSign(), p, clOptions->idlekickthresh);
       return;
     }
   }
