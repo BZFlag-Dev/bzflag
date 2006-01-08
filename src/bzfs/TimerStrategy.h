@@ -47,7 +47,7 @@ private:
   void update();
   TimeKeeper startTime;
   TimeKeeper pauseTime;
-  float	pauseOffset;
+  float	offset;
   float _duration;
 };
 
@@ -68,4 +68,30 @@ private:
   void sendMsgTimeUpdate(float timeLeft);
 }
 
+class GameCountdownStrategy : public GameTimerStrategy {
+public:
+  GameCountdownStrategy (const float duration) : GameTimerStrategy(duration) {};
+  GameCountdownStrategy (const TimeKeeper endTime) : GameTimerStrategy(endTime) {};
+  ~GameCountdownStrategy() {};
+  
+  BaseTimerStrategy* action(TimeKeeper& tm)
+}
+
+class ManualCountdownStarterStrategy : public GameTimerStrategy {
+public:
+  ManualCountdownStarterStrategy (const float duration) : GameTimerStrategy(duration) {};
+  ManualCountdownStarterStrategy (const TimeKeeper endTime) : GameTimerStrategy(endTime) {};
+  ~ManualCountdownStarterStrategy() {};
+  
+  BaseTimerStrategy* action(TimeKeeper& tm)
+}
+
+class ManualCountdownStrategy : public GameTimerStrategy {
+public:
+  ManualCountdownStrategy (const float duration) : GameTimerStrategy(duration) {};
+  ManualCountdownStrategy (const TimeKeeper endTime) : GameTimerStrategy(endTime) {};
+  ~ManualCountdownStrategy() {};
+  
+  BaseTimerStrategy* action(TimeKeeper& tm)
+}
 #endif /* _TIMERSTRATEGY_H */
