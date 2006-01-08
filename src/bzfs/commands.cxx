@@ -14,10 +14,11 @@
 #pragma warning( 4:4786)
 #endif
 
+#include "common.h"
+
 // interface header
 #include "commands.h"
 
-#include "WorldEventManager.h"
 
 // system implementation headers
 #include <vector>
@@ -47,6 +48,7 @@
 #include "VotingArbiter.h"
 #include "global.h"
 #include "version.h"
+#include "WorldEventManager.h"
 
 // local implementation headers
 #include "FlagHistory.h"
@@ -172,6 +174,14 @@ public:
 class IdleStatCommand : ServerCommand {
 public:
   IdleStatCommand();
+
+  virtual bool operator() (const char	 *commandLine,
+			   GameKeeper::Player *playerData);
+};
+
+class IdleTimeCommand : ServerCommand {
+public:
+  IdleTimeCommand();
 
   virtual bool operator() (const char	 *commandLine,
 			   GameKeeper::Player *playerData);
@@ -436,6 +446,7 @@ static FlagCommand	  flagCommand;
 static LagWarnCommand     lagWarnCommand;
 static LagStatCommand     lagStatCommand;
 static IdleStatCommand    idleStatCommand;
+static IdleTimeCommand    idleTimeCommand;
 static FlagHistoryCommand flagHistoryCommand;
 static IdListCommand      idListCommand;
 static PlayerListCommand  playerListCommand;
@@ -497,11 +508,13 @@ CountdownCommand::CountdownCommand()     : ServerCommand("/countdown",
 FlagCommand::FlagCommand()		 : ServerCommand("/flag",
   "<reset|up|show> - reset, remove or show the flags") {}
 LagWarnCommand::LagWarnCommand()	 : ServerCommand("/lagwarn",
-  "<milliseconds> - change the maximum allowed lag time") {}
+  "[milliseconds] - display or set the maximum allowed lag time") {}
 LagStatCommand::LagStatCommand()	 : ServerCommand("/lagstats",
   "- list network delays, jitter and number of lost resp. out of order packets by player") {}
 IdleStatCommand::IdleStatCommand()       : ServerCommand("/idlestats",
   "- display the idle time in seconds for each player") {}
+IdleTimeCommand::IdleTimeCommand()       : ServerCommand("/idletime",
+  "[seconds] - display or set the idle time") {}
 FlagHistoryCommand::FlagHistoryCommand() : ServerCommand("/flaghistory",
   "- list what flags players have grabbed in the past") {}
 IdListCommand::IdListCommand()		 : ServerCommand("/idlist",
@@ -1494,6 +1507,50 @@ bool IdleStatCommand::operator() (const char	 *,
     reply = otherData->player.getIdleStat();
     if (reply != "")
       sendMessage(ServerPlayer, t, reply.c_str());
+  }
+  return true;
+}
+
+
+bool IdleTimeCommand::operator() (const char* message,
+				  GameKeeper::Player *playerData)
+{
+  int t = playerData->getIndex();
+
+  bool setting = false;
+  message += commandName.size();
+  while ((*message != '\0') && isspace(*message)) {
+    message++; // eat whitespace
+  }
+
+  float value;
+  if (*message != '\0') {
+    char* end;
+    value = (float) strtod(message, &end);
+    if (end != message) {
+      setting = true;
+    } else {
+      std::string reply = "bad time format: ";
+      reply += message;
+      sendMessage(ServerPlayer, t, reply.c_str());
+    }
+  }
+   
+  if (setting) { 
+    if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::lagwarn)) {
+      sendMessage(ServerPlayer, t,
+                  "You do not have permission to set the idletime");
+      return true;
+    } else {
+      clOptions->idlekickthresh = value;
+      char buf[256];
+      snprintf(buf, 256, "idletime set to: %.1f seconds\n", value);
+      sendMessage(ServerPlayer, t, buf);
+    }
+  } else {
+    char buf[256];
+    snprintf(buf, 256, "idletime is currently set to: %.1f seconds\n", value);
+    sendMessage(ServerPlayer, t, buf);
   }
   return true;
 }
