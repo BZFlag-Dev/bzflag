@@ -1549,7 +1549,8 @@ bool IdleTimeCommand::operator() (const char* message,
     }
   } else {
     char buf[256];
-    snprintf(buf, 256, "idletime is currently set to: %.1f seconds\n", value);
+    snprintf(buf, 256, "idletime is currently set to: %.1f seconds\n",
+             clOptions->idlekickthresh);
     sendMessage(ServerPlayer, t, buf);
   }
   return true;
