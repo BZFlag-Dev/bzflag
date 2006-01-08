@@ -423,7 +423,7 @@ void PlayerInfo::setPlayedEarly(bool early) {
 }
 
 void PlayerInfo::updateIdleTime() {
-  if (!paused) {
+  if (!paused && (state != PlayerDead)) {
     lastupdate = now;
   }
 }
