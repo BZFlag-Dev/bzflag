@@ -74,7 +74,7 @@ public:
   GameCountdownStrategy (const TimeKeeper endTime) : GameTimerStrategy(endTime) {};
   ~GameCountdownStrategy() {};
   
-  BaseTimerStrategy* action(TimeKeeper& tm)
+  BaseTimerStrategy* action(TimeKeeper& tm);
 }
 
 class ManualCountdownStarterStrategy : public GameTimerStrategy {
@@ -83,7 +83,7 @@ public:
   ManualCountdownStarterStrategy (const TimeKeeper endTime) : GameTimerStrategy(endTime) {};
   ~ManualCountdownStarterStrategy() {};
   
-  BaseTimerStrategy* action(TimeKeeper& tm)
+  BaseTimerStrategy* action(TimeKeeper& tm);
 }
 
 class ManualCountdownStrategy : public GameTimerStrategy {
@@ -92,6 +92,6 @@ public:
   ManualCountdownStrategy (const TimeKeeper endTime) : GameTimerStrategy(endTime) {};
   ~ManualCountdownStrategy() {};
   
-  BaseTimerStrategy* action(TimeKeeper& tm)
+  BaseTimerStrategy* action(TimeKeeper& tm);
 }
 #endif /* _TIMERSTRATEGY_H */
