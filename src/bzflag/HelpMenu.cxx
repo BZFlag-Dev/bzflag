@@ -295,13 +295,13 @@ Help2Menu::Help2Menu() : HelpMenu("General")
   listHUD.push_back(createLabel("red, green, blue, purple, and rogues (rogue tanks are black).  Destroying a"));
   listHUD.push_back(createLabel("player on another team scores a win, while being destroyed or destroying a"));
   listHUD.push_back(createLabel("teammate scores a loss.  Individual and aggregate team scores are tallied."));
-  listHUD.push_back(createLabel("Rogues have no teammates (not even other rogues),so they cannot shoot"));
+  listHUD.push_back(createLabel("Rogues have no teammates (not even other rogues), so they cannot shoot"));
   listHUD.push_back(createLabel("teammates and they don't have a team score."));
   listHUD.push_back(createLabel(""));
   listHUD.push_back(createLabel("There are three styles of play, determined by the server configuration:  capture-"));
   listHUD.push_back(createLabel("the-flag, rabbit-chase and free-for-all.  In free-for-all the object is simply to get the"));
-  listHUD.push_back(createLabel("highest score by shooting opponents.  The object in rabbit chase is to be the highest score"));
-  listHUD.push_back(createLabel("so that you have the white tank, then everyone is against you. The object in capture-the-flag is to"));
+  listHUD.push_back(createLabel("highest score by shooting opponents.  In rabbit chase, the white tank tries to stay alive"));
+  listHUD.push_back(createLabel("while all other tanks try to hunt and kill it. The object in capture-the-flag is to"));
   listHUD.push_back(createLabel("capture enemy flags while preventing opponents from capturing yours.  In this"));
   listHUD.push_back(createLabel("style, each team (but not rogues) has a team base and each team with at least"));
   listHUD.push_back(createLabel("one player has a team flag which has the color of the team.  To capture a flag,"));
