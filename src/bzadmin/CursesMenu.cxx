@@ -284,9 +284,9 @@ void PlayerCMItem::showItem(WINDOW* menuWin, int line, int col, int width,
   // score (wins-losses)[tks] callsign IP, reverse video if selected
   std::string name, ip;
   int wins, losses, tks;
-  int scorePad = 17;
-  int callsignPad = CallSignLen;
-  int attrPad = std::string("(Reg/Ident/Admin)").length();
+  unsigned int scorePad = 17;
+  unsigned int callsignPad = CallSignLen;
+  unsigned int attrPad = std::string("(Reg/Ident/Admin)").length();
   PlayerIdMap::const_iterator iter = playerMap.find(id);
   if (iter != playerMap.end()) {
     name = iter->second.name;
@@ -310,13 +310,13 @@ void PlayerCMItem::showItem(WINDOW* menuWin, int line, int col, int width,
     std::ostringstream oss;
     oss<<(wins - losses)<<" ("<<wins<<"-"<<losses<<")["<<tks<<"]";
     unsigned int streamLength = oss.str().size();
-    for (unsigned int i = 0; i < scorePad - streamLength; ++i)
+    for (unsigned int i = 0; i + streamLength < scorePad; ++i)
       oss<<' ';
     oss<<' '<<name;
-    for (unsigned int i = 0; i < callsignPad - name.size(); ++i)
+    for (unsigned int i = 0; i + name.size() < callsignPad; ++i)
       oss<<' ';
     oss<<' '<<attrstr;
-    for (unsigned int i = 0; i < attrPad - attrstr.size(); ++i)
+    for (unsigned int i = 0; i + attrstr.size() < attrPad; ++i)
       oss<<' ';
     streamLength = oss.str().size();
     if (selected)
