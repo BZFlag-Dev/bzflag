@@ -108,12 +108,12 @@ public:
     };
 
   enum GroupStates
-	{
-	  isGroup,  // we can check if this is a group or a player
-	  isDefault,   // mark default groups
-	  isReferenced, // do not allow to alter group perms once it's referenced
-	  lastState
-	};
+    {
+      isGroup,  // we can check if this is a group or a player
+      isDefault,   // mark default groups
+      isReferenced, // do not allow to alter group perms once it's referenced
+      lastState
+    };
 
   void	setName(const char* callSign);
 
@@ -148,7 +148,7 @@ public:
   void	grantPerm(AccessPerm right);
   void	revokePerm(AccessPerm right);
 
-	bool	hasCustomPerm(const char* right) const;
+  bool	hasCustomPerm(const char* right) const;
 
   bool	isRegistered() const;
   bool	isIdentifyRequired();
@@ -166,8 +166,8 @@ public:
   std::bitset<lastPerm>		explicitDenys;
   std::bitset<lastState>	groupState;
   std::vector<std::string>	groups;
+  std::vector<std::string>	customPerms;
 
-	std::vector<std::string> customPerms;
 private:
   bool				verified;
   TimeKeeper			loginTime;
