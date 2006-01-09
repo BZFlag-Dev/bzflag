@@ -4561,6 +4561,32 @@ int main(int argc, char **argv)
   if (userDatabaseFile.size())
     PlayerAccessInfo::readPermsFile(userDatabaseFile);
 
+  // warn noisily if nobody has SPAWN permission
+  bool serverAllowsSpawn = false;
+  // check groups (usually the EVERYONE or VERIFIED group has SPAWN)
+  for (PlayerAccessMap::iterator group = groupAccess.begin();
+       group != groupAccess.end(); ++group) {
+    if (  !group->second.explicitDenys.test(PlayerAccessInfo::spawn)
+	&& group->second.explicitAllows.test(PlayerAccessInfo::spawn)) {
+      serverAllowsSpawn = true;
+      break;
+    }
+  }
+  // hmm, no groups have it.  check all registered users...
+  if (!serverAllowsSpawn) {
+    for (PlayerAccessMap::iterator user = userDatabase.begin();
+         user != userDatabase.end(); ++user) {
+    if (  !user->second.explicitDenys.test(PlayerAccessInfo::spawn)
+	&& user->second.explicitAllows.test(PlayerAccessInfo::spawn)) {
+	serverAllowsSpawn = true;
+	break;
+      }
+    }
+  }
+  // eek, nobody can spawn!!
+  if (!serverAllowsSpawn)
+    std::cout << "WARNING: No players have the SPAWN permission!" << std::endl;
+
   // See if an ID flag is in the game.
   // If not, we could hide type info for all flags
   if (clOptions->flagCount[Flags::Identify] > 0) {

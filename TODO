@@ -21,8 +21,6 @@ THESE ARE LOWER PRIORITY
   - add option for public-servers to not use global logins?
     (if no passdb, then they only use global logins ie: no /register)
 
-* bzfs should error out if no users or groups have SPAWN
-
 * bzbb login names are used for global authentication. If the user changes
   bzbb login names (which is possible), this can cause problems Another user
   can take up the old name and get that user's permissions. Internal bzbb IDs
