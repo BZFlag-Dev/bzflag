@@ -466,6 +466,8 @@ void BZAdminClient::outputServerList() const {
 }
 
 void BZAdminClient::runLoop() {
+
+  sLink.sendVarRequest();
   std::string cmd;
   std::map<std::string, uint16_t>::iterator iter;
   ServerCode what(NoMessage);

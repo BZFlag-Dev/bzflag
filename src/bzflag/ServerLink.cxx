@@ -284,8 +284,6 @@ ServerLink::ServerLink(const Address& serverAddress, int port) :
     packetStartTime = TimeKeeper::getCurrent();
   }
 
-  send(MsgSetVar, 0, NULL);
-  
   return;
 
 done:
@@ -735,6 +733,11 @@ void ServerLink::sendHit(const PlayerId &source, const PlayerId &shooter,
   send(MsgHit, sizeof(msg), msg);
 }
 #endif
+
+void ServerLink::sendVarRequest()
+{
+  send(MsgSetVar, 0, NULL);
+}
 
 void			ServerLink::sendAlive(const PlayerId playerId)
 {

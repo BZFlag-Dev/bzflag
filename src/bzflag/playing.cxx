@@ -4556,6 +4556,8 @@ static void joinInternetGame(const struct in_addr *inAddress)
 
   serverLink = _serverLink;
 
+  serverLink->sendVarRequest();
+
   // assume everything's okay for now
   serverDied = false;
   serverError = false;
