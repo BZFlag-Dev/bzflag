@@ -165,6 +165,7 @@
 																								bool admin; // true if the user is an admin ( has the @ in his name, aka has ban perm)<br>
 																								bool op; // true if the user is an server operator ( has given the server /password)<br>
 																							    bzApiStrList groups; // a list of all the groups the user is a member of<br>
+																							    int lag; // the lag value of the user in ms<br>
 																							    int wins; // number of times this player has killed another<br>
 																							    int losses; // number of times this player has died<br>
 																							    int teamKills; // number of times the user has killed a teammate<br>
@@ -360,9 +361,35 @@
 														<p><strong>BZF_API bool bz_IPBanUser ( int playerIndex, const char* ip, int time, const 
 																char* reason )</strong><br>
 															Adds an entry to the main banlist with the specified data.</p>
+														<p><strong>BZF_API bool bz_IPUnbanUser ( const char* ip );</strong><br>
+															Removes an entry to the main banlist with the specified IP address.</p>
 														<p><strong>BZF_API bool bz_killPlayer ( int playerID, bool spawnOnBase );</strong><br>
 															Kills the specified player. If spawnOnBase is true, then the user will respawn 
 															back at his CTF base.</p>
+														<p><strong>BZF_API std::vector&lt;std::string&gt; bz_getReports( void );</strong><br>
+															Returns a vector of strings containing the raw contents of the reports. Only works when 
+                              reports are output to a file, not to a report pipe.</p>
+														<p>&nbsp;</p>
+														<p><span class="style4 style7">Lagwarn Functions </span></p>
+														<p><strong>BZF_API int bz_getLagWarn( void );</strong><br>
+															Returns the current lagwarn value in ms.
+														</p>
+														<p><strong>BZF_API bool bz_setLagWarn( int lagwarn );</strong><br>
+															Sets a new lagwarn value in ms.
+                            </p>
+														<p>&nbsp;</p>
+														<p><span class="style4 style7">Poll Functions </span></p>
+														<p><strong>BZF_API bool bz_pollVeto ( void );</strong><br>
+															Cancels any currently running poll.
+														</p>
+														<p>&nbsp;</p>
+														<p><span class="style4 style7">Help Functions </span></p>
+														<p><strong>BZF_API const std::vector<std::string> *bz_getHelpTopic( std::string name );</strong><br>
+															Returns a list of help topics.
+														</p>
+														<p><strong>BZF_API const std::vector&lt;std::string&gt; &bz_getHelpTopic( std::string name );</strong><br>
+															Returns the contents of a help topic
+                            </p>
 														<p>&nbsp;</p>
 														<p><span class="style4 style7">Spawn Functions </span></p>
 														<p><strong>BZF_API bool bz_getStandardSpawn ( int playeID, float pos[3], float *rot );</strong><br>

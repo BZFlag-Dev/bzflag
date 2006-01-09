@@ -1771,9 +1771,13 @@ static void addPlayer(int playerIndex, GameKeeper::Player *playerData)
   // call any on join events
   bz_PlayerJoinPartEventData	joinEventData;
   joinEventData.eventType = bz_ePlayerJoinEvent;
+  joinEventData.verified = playerData->accessInfo.isVerified();
+  joinEventData.globalUser = playerData->getBzIdentifier();
   joinEventData.playerID = playerIndex;
   joinEventData.team = convertTeam(playerData->player.getTeam());
   joinEventData.callsign = playerData->player.getCallSign();
+  joinEventData.email = playerData->player.getEMail();
+  joinEventData.ipAddress = playerData->netHandler->getTargetIP();
   joinEventData.time = TimeKeeper::getCurrent().getSeconds();
 
   if ((joinEventData.team != eNoTeam) && (joinEventData.callsign.size() != 0))	// don't give events if we don't have a real player slot
@@ -2007,9 +2011,13 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
   // call any on part events
   bz_PlayerJoinPartEventData partEventData;
   partEventData.eventType = bz_ePlayerPartEvent;
+  partEventData.verified = playerData->accessInfo.isVerified();
+  partEventData.globalUser = playerData->getBzIdentifier();
   partEventData.playerID = playerIndex;
   partEventData.team = convertTeam(playerData->player.getTeam());
   partEventData.callsign = playerData->player.getCallSign();
+  partEventData.email = playerData->player.getEMail();
+  partEventData.ipAddress = playerData->netHandler->getTargetIP();
   partEventData.time = TimeKeeper::getCurrent().getSeconds();
   if (reason)
     partEventData.reason = reason;

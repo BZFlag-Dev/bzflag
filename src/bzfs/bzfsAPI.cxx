@@ -18,6 +18,7 @@
 #include "WorldEventManager.h"
 #include "GameKeeper.h"
 #include "FlagInfo.h"
+#include "VotingArbiter.h"
 
 #include "commands.h"
 #include "SpawnPosition.h"
@@ -755,6 +756,8 @@ BZF_API bz_PlayerRecord * bz_getPlayerByIndex ( int index )
 	playerRecord->globalUser = player->authentication.isGlobal();
 
 	playerRecord->ipAddress = player->netHandler->getTargetIP();
+
+	playerRecord->lag = player->lagInfo.getLag();
 	playerRecord->update();
 	return playerRecord;
 }
@@ -1242,6 +1245,84 @@ BZF_API bool bz_IPBanUser ( int playerIndex, const char* ip, int time, const cha
 		return false;
 
 	return true;
+}
+
+BZF_API bool bz_IPUnbanUser ( const char* ip )
+{
+	// reload the banlist in case anyone else has added
+	clOptions->acl.load();
+
+	if (clOptions->acl.unban(ip))
+		clOptions->acl.save();
+	else
+		return false;
+
+	return true;
+}
+
+BZF_API std::vector<std::string> bz_getReports( void )
+{
+	std::vector<std::string> buffers;
+
+	// Are we reporting to a file?
+	if (clOptions->reportFile.size() == 0)
+		return buffers;
+
+	std::ifstream ifs(clOptions->reportFile.c_str(), std::ios::in);
+	if (ifs.fail()) {
+		return buffers;
+	}
+
+	std::string line;
+	
+	bool matched = false;
+	while (std::getline(ifs, line)) {
+		buffers.push_back(line);
+		//if (line.size() <= 0) {
+	}
+
+	return buffers;
+}
+
+BZF_API int bz_getLagWarn( void ) {
+	return int(clOptions->lagwarnthresh * 1000 + 0.5);
+}
+
+BZF_API bool bz_setLagWarn( int lagwarn ) {
+	clOptions->lagwarnthresh = (float) (lagwarn / 1000.0);
+	LagInfo::setThreshold(clOptions->lagwarnthresh,(float)clOptions->maxlagwarn);
+
+	return true;
+}
+
+BZF_API bool bz_pollVeto( void ) {
+	/* make sure that there is a poll arbiter */
+	if (BZDB.isEmpty("poll")) {
+		return false;
+	}
+
+	// only need to do this once
+	static VotingArbiter *arbiter = (VotingArbiter *)BZDB.getPointer("poll");
+
+	/* make sure there is an unexpired poll */
+	if ((arbiter != NULL) && !arbiter->knowsPoll()) {
+		return false;
+	}
+
+	/* poof */
+	arbiter->forgetPoll();
+
+	return true;
+}
+
+BZF_API const std::vector<std::string> &bz_getHelpTopics( void )
+{
+	return clOptions->textChunker.getChunkNames();
+}
+
+BZF_API const std::vector<std::string> *bz_getHelpTopic(std::string name)
+{
+	return clOptions->textChunker.getTextChunk(name);
 }
 
 BZF_API bool bz_registerCustomSlashCommand ( const char* command, bz_CustomSlashCommandHandler *handler )
