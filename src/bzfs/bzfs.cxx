@@ -2424,10 +2424,10 @@ static void playerAlive(int playerIndex)
   if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::spawn)) {
     sendMessage(ServerPlayer, playerIndex, "You do not have permission to spawn on this server.");
     sendMessage(ServerPlayer, playerIndex, "This server may require identification before you can join.");
-    sendMessage(ServerPlayer, playerIndex, "Please use /identify, or /register if you have not registerd your callsign or");
-    sendMessage(ServerPlayer, playerIndex, "register on http://my.BZFlag.org/bb/ and use that callsign/password.");
-	spawnAllowData.allow = false;
-	}
+    sendMessage(ServerPlayer, playerIndex, "Please register on http://my.bzflag.org/bb/ and use that callsign/password,");
+    sendMessage(ServerPlayer, playerIndex, "or use /register and /identify if this server does not allow global authentication.");
+    spawnAllowData.allow = false;
+  }
 
   if (playerData->player.isBot()
       && BZDB.isTrue(StateDatabase::BZDB_DISABLEBOTS)) {
@@ -2439,8 +2439,7 @@ static void playerAlive(int playerIndex)
   // check for any spawn allow events
   worldEventManager.callEvents(bz_eAllowSpawn,&spawnAllowData);
 
-  if(!spawnAllowData.allow)
-  {
+  if (!spawnAllowData.allow) {
     // client won't send another enter so kick em =(
     removePlayer(playerIndex, "Not allowed to spawn", true);
     return;
@@ -2502,10 +2501,10 @@ static void checkTeamScore(int playerIndex, int teamIndex)
     buf = nboPackUShort(buf, uint16_t(teamIndex));
     broadcastMessage(MsgScoreOver, (char*)buf-(char*)bufStart, bufStart);
     gameOver = true;
-	if (clOptions->oneGameOnly) {
-	  done = true;
-	  exitCode = 0;
-	}
+    if (clOptions->oneGameOnly) {
+      done = true;
+      exitCode = 0;
+    }
   }
 }
 
