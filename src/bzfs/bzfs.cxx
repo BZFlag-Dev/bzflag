@@ -493,7 +493,7 @@ static void sendPlayerUpdateB(GameKeeper::Player *playerData)
   void *buf      = playerData->packPlayerUpdate(bufStart);
 
   // send all players info about player[playerIndex]
-  relayMessage(MsgAddPlayer, (char*)buf - (char*)bufStart, bufStart);
+  broadcastMessage(MsgAddPlayer, (char*)buf - (char*)bufStart, bufStart);
 }
 
 static int sendPlayerUpdateD(NetHandler *handler,
