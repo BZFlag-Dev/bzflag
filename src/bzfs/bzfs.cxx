@@ -3879,7 +3879,8 @@ static void handleCommand(const void *rawbuf, bool udp, NetHandler *handler)
 	    // but don't actually kick
 	    if ((playerData->lastState.pos[2] != state.pos[2])
 	    ||  (playerData->lastState.velocity[2] != state.velocity[2])
-	    ||  ((state.status & PlayerState::Alive) == 0)) {
+	    ||  ((state.status & PlayerState::Alive) == 0)
+	    ||  (playerData->player.isPaused())) {
 	      logOnly = true;
 	    }
 
