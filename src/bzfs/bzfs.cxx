@@ -3760,9 +3760,11 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
 	    // If player is moving vertically, or not alive the speed checks
 	    // seem to be problematic. If this happens, just log it for now,
 	    // but don't actually kick
+            // don't kick if the player is paused, because problems if have V
 	    if ((playerData->lastState.pos[2] != state.pos[2])
 	    ||  (playerData->lastState.velocity[2] != state.velocity[2])
-	    ||  ((state.status & PlayerState::Alive) == 0)) {
+	    ||  ((state.status & PlayerState::Alive) == 0)
+	    ||  (playerData->player.isPaused())) {
 	      logOnly = true;
 	    }
 

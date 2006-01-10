@@ -4,6 +4,7 @@
 BZFlag 2.0.5
 ------------
 
+* Fix wrong kick if pausing having V and moving - Julio Jimenez
 * Prevent long distance tank warping through walls - Sean Morrison
 * Display paused state when screen capturing while playing - Sean Morrison
 * Added new logDetail plugin - Bernt Hansen
