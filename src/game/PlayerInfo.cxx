@@ -386,7 +386,7 @@ void PlayerInfo::setAutoPilot(bool _autopilot) {
 bool PlayerInfo::isTooMuchIdling(float kickThresh) {
   bool idling = false;
   if ((state > PlayerInLimbo) && (team != ObserverTeam)) {
-    const float idletime = (now - lastupdate);
+    const float idletime = (float)(now - lastupdate);
     if (idletime > kickThresh) {
       idling = true;
     }
