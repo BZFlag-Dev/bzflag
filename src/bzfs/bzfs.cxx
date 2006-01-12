@@ -4877,8 +4877,14 @@ int main(int argc, char **argv)
 	      /* regardless of whether or not the player was found, if the poll
 	       * is a ban poll, ban the weenie
 	       */
+
 	      if (action == "ban") {
+		// reload the banlist in case anyone else has added
+		clOptions->acl.load();
+
 		clOptions->acl.ban(realIP.c_str(), target.c_str(), clOptions->banTime);
+		clOptions->acl.save();
+
 	      }
 
 	      if ((action == "ban") || (action == "kick")) {
