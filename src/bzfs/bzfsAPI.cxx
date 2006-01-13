@@ -10,6 +10,9 @@
 * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 */
 
+// bzflag global header
+#include "global.h"
+
 // implementation wrapers for all the bzf_ API functions
 #include "bzfsAPI.h"
 
@@ -31,8 +34,6 @@
 #include "CustomWorld.h"
 
 #include "Permissions.h"
-
-#include "global.h"
 
 TimeKeeper synct = TimeKeeper::getCurrent();
 

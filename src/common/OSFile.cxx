@@ -14,6 +14,9 @@
   #pragma warning( disable : 4786 )  // Disable warning message
 #endif
 
+// BZFlag common header
+#include "common.h"
+
 // interface header
 #include "OSFile.h"
 
@@ -28,7 +31,6 @@
 #endif
 
 // local implementation headers
-#include "common.h"
 #include "TextUtils.h"
 
 typedef std::vector<std::string> fileNameList;

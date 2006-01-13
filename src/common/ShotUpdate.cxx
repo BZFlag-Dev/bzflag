@@ -10,12 +10,13 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+// BZFlag common header
+#include "common.h"
 
 // interface header
 #include "ShotUpdate.h"
 
 // implementation headers
-#include "common.h"
 #include "Pack.h"
 
 //
