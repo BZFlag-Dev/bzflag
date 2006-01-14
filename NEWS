@@ -4,6 +4,7 @@
 BZFlag 2.1.0
 ------------
 
+* Append screenshots after the highest numbered existing one - Ian Agar
 * Add /modcount to adjust countdown time from within game - Ian Agar
 * Fix wrong kick if pausing having V and moving - Julio Jimenez
 * Prevent bzfs denial-of-service infinite loop - Sean Morrison

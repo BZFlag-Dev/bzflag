@@ -627,6 +627,43 @@ static std::string cmdScreenshot(const std::string&,
     return "usage: screenshot";
 
   std::string filename = getScreenShotDirName();
+#ifndef _WIN32
+  std::vector<std::string> pattern;
+  pattern.push_back(filename + "*.png");
+  for (unsigned int i = 0; i < pattern.size(); i++) {
+    WIN32_FIND_DATA findData;
+    HANDLE h = FindFirstFile(pattern[i].c_str(), &findData);
+    if (h != INVALID_HANDLE_VALUE) {
+      std::string file;
+      while (FindNextFile(h, &findData)) {
+				file = findData.cFileName;
+				int number = atoi((file.substr(file.length()-8, 4)).c_str());
+				if (number > snap)
+					snap = number;
+      }
+    }
+  }
+#else
+  DIR *directory = opendir(filename.c_str());
+  if (directory) {
+  	struct dirent* contents;
+    std::string file, suffix;
+    while ((contents = readdir(directory))) {
+      file = contents->d_name;
+      if (file.length() > 4) {
+				suffix = file.substr(file.length()-4, 4);
+				if (TextUtils::compare_nocase(suffix, ".png") == 0) {
+					int number = atoi((file.substr(file.length()-8, 4)).c_str());
+					if (number > snap)
+						number = snap;
+				}
+      }
+    }
+    closedir(directory);
+  }
+#endif // _WIN32
+
+	++snap; //snap is equal to the greatest number, so one-up it
   filename += TextUtils::format("bzfi%04d.png", snap++);
 
   std::ostream* f = FILEMGR.createDataOutStream (filename.c_str(), true, true);
