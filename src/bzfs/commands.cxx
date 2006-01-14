@@ -1468,7 +1468,6 @@ bool JitterWarnCommand::operator() (const char  *message,
   }
   
   char reply[MessageLen] = {0};
-  std::cout << "message: " << message << std::endl;
   if (message[11] == ' ') {
     const char *maxlag = message + 12;
     clOptions->jitterwarnthresh = (float) (atoi(maxlag) / 1000.0);
