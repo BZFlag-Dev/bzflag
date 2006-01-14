@@ -70,6 +70,7 @@ public:
       lagwarn,
       listPerms,
       masterBan,
+      modCount,
       mute,
       playerList,
       poll,

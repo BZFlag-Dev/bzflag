@@ -4878,9 +4878,19 @@ int main(int argc, char **argv)
 	broadcastMessage (MsgTimeUpdate, (char *) buf - (char *) bufStart, bufStart);
       }
 
-      if ((timeLeft == 0.0f || newTimeElapsed - clOptions->timeElapsed >= 30.0f)
+      if ((timeLeft == 0.0f || newTimeElapsed - clOptions->timeElapsed >= 30.0f ||
+					 clOptions->addedTime != 0.0f)
 	  && !clOptions->countdownPaused) {
-	// send update every 30 seconds
+	// send update every 30 seconds, when the game is over, or when time adjusted
+	if (clOptions->addedTime != 0.0f) {
+		(timeLeft + clOptions->addedTime <= 0.0f) ? timeLeft = 0.0f : clOptions->timeLimit += clOptions->addedTime;
+		if (timeLeft > 0.0f) timeLeft += clOptions->addedTime;
+		//inform visitors about the change
+  	sendMessage(ServerPlayer, AllPlayers,
+								TextUtils::format("Adjusting the countdown by %f seconds",
+								clOptions->addedTime).c_str());
+		clOptions->addedTime = 0.0f; //reset
+	}
 	void *buf, *bufStart = getDirectMessageBuffer ();
 	buf = nboPackInt (bufStart, (int32_t) timeLeft);
 	broadcastMessage (MsgTimeUpdate, (char *) buf - (char *) bufStart, bufStart);

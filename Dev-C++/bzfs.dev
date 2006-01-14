@@ -16,7 +16,7 @@ PrivateResource=
 ResourceIncludes=
 MakeIncludes=
 Icon=
-ExeOutput=..\src\bzfs
+ExeOutput=..\
 ObjectOutput=..\src\bzfs
 OverrideOutput=0
 OverrideOutputName=bzfs.exe
@@ -27,7 +27,7 @@ CustomMakefile=
 IncludeVersionInfo=0
 SupportXPThemes=0
 CompilerSet=0
-CompilerSettings=0000000001100000001100
+CompilerSettings=0000000000000000001100
 
 [Unit1]
 FileName=..\src\bzfs\AccessControlList.cxx
