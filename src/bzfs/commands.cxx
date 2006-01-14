@@ -160,6 +160,14 @@ public:
 			   GameKeeper::Player *playerData);
 };
 
+class JitterWarnCommand : ServerCommand {
+public:
+  JitterWarnCommand();
+
+  virtual bool operator() (const char         *commandLine,
+			   GameKeeper::Player *playerData);
+};
+
 class LagStatCommand : ServerCommand {
 public:
   LagStatCommand();
@@ -441,6 +449,7 @@ static GameOverCommand    gameOverCommand;
 static CountdownCommand   countdownCommand;
 static FlagCommand	  flagCommand;
 static LagWarnCommand     lagWarnCommand;
+static JitterWarnCommand  jitterWarnCommand;
 static LagStatCommand     lagStatCommand;
 static IdleStatCommand    idleStatCommand;
 static FlagHistoryCommand flagHistoryCommand;
@@ -506,6 +515,8 @@ FlagCommand::FlagCommand()		 : ServerCommand("/flag",
   "<reset|up|show> - reset, remove or show the flags") {}
 LagWarnCommand::LagWarnCommand()	 : ServerCommand("/lagwarn",
   "<milliseconds> - change the maximum allowed lag time") {}
+JitterWarnCommand::JitterWarnCommand()	 : ServerCommand("/jitterwarn",
+  "<milliseconds> - change the maximum allowed jitter time") {}
 LagStatCommand::LagStatCommand()	 : ServerCommand("/lagstats",
   "- list network delays, jitter and number of lost resp. out of order packets by player") {}
 IdleStatCommand::IdleStatCommand()       : ServerCommand("/idlestats",
@@ -1446,6 +1457,32 @@ bool LagWarnCommand::operator() (const char	 *message,
   return true;
 }
 
+bool JitterWarnCommand::operator() (const char  *message,
+				    GameKeeper::Player *playerData)
+{
+  int t = playerData->getIndex();
+  if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::jitterwarn)) {
+    sendMessage(ServerPlayer, t,
+		"You do not have permission to run the jitterwarn command");
+    return true;
+  }
+  
+  char reply[MessageLen] = {0};
+  std::cout << "message: " << message << std::endl;
+  if (message[11] == ' ') {
+    const char *maxlag = message + 12;
+    clOptions->jitterwarnthresh = (float) (atoi(maxlag) / 1000.0);
+    snprintf(reply, MessageLen, "jitterwarn is now %d ms",
+	     int(clOptions->jitterwarnthresh * 1000 + 0.5));
+  } else {
+    snprintf(reply, MessageLen, "jitterwarn is set to %d ms",
+	     int(clOptions->jitterwarnthresh * 1000 + 0.5));
+  }
+  LagInfo::setJitterThreshold(clOptions->jitterwarnthresh,
+			      (float)clOptions->maxjitterwarn);
+  sendMessage(ServerPlayer, t, reply);
+  return true;
+}
 
 bool lagCompare(const GameKeeper::Player *a, const GameKeeper::Player *b)
 {

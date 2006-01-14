@@ -3093,6 +3093,21 @@ static void lagKick(int playerIndex)
   removePlayer(playerIndex, "lag", true);
 }
 
+static void jitterKick(int playerIndex)
+{
+  char message[MessageLen];
+  sprintf(message,
+	  "You have been kicked due to excessive jitter (you have been warned %d times).",
+	  clOptions->maxjitterwarn);
+  sendMessage(ServerPlayer, playerIndex, message);
+  GameKeeper::Player *playerData
+    = GameKeeper::Player::getPlayerByIndex(playerIndex);
+  snprintf(message, MessageLen,"Jitterkick: %s",
+	   playerData->player.getCallSign());
+  sendMessage(ServerPlayer, AdminPlayers, message);
+  removePlayer(playerIndex, "jitter", true);
+}
+
 
 static void adjustTolerances()
 {
@@ -3710,15 +3725,24 @@ static void handleCommand(const void *rawbuf, bool udp, NetHandler *handler)
       break;
 
     case MsgLagPing: {
-      bool warn, kick;
-      int lag = playerData->lagInfo.updatePingLag(buf, warn, kick);
+      bool warn, kick, jittwarn, jittkick;
+      playerData->lagInfo.updatePingLag(buf, warn, kick, jittwarn, jittkick);
       if (warn) {
 	char message[MessageLen];
 	sprintf(message,"*** Server Warning: your lag is too high (%d ms) ***",
-		lag);
+		playerData->lagInfo.getLag());
 	sendMessage(ServerPlayer, t, message);
 	if (kick)
 	  lagKick(t);
+      }
+      if (jittwarn) {
+	char message[MessageLen];
+	sprintf(message,
+		"*** Server Warning: your jitter is too high (%d ms) ***",
+		playerData->lagInfo.getJitter());
+	sendMessage(ServerPlayer, t, message);
+	if (jittkick)
+	  jitterKick(t);
       }
       break;
     }
@@ -4398,6 +4422,10 @@ int main(int argc, char **argv)
 
   // loading lag thresholds
   LagInfo::setThreshold(clOptions->lagwarnthresh,(float)clOptions->maxlagwarn);
+
+  // loading jitter thresholds
+  LagInfo::setJitterThreshold(clOptions->jitterwarnthresh,
+			      (float)clOptions->maxjitterwarn);
 
   // loading player callsign/email filters
   PlayerInfo::setFilterParameters(clOptions->filterCallsigns,
