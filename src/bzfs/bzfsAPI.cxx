@@ -1262,26 +1262,24 @@ BZF_API bool bz_IPUnbanUser ( const char* ip )
 
 BZF_API std::vector<std::string> bz_getReports( void )
 {
-	std::vector<std::string> buffers;
+  std::vector<std::string> buffers;
 
-	// Are we reporting to a file?
-	if (clOptions->reportFile.size() == 0)
-		return buffers;
+  // Are we reporting to a file?
+  if (clOptions->reportFile.size() == 0)
+    return buffers;
 
-	std::ifstream ifs(clOptions->reportFile.c_str(), std::ios::in);
-	if (ifs.fail()) {
-		return buffers;
-	}
+  std::ifstream ifs(clOptions->reportFile.c_str(), std::ios::in);
+  if (ifs.fail()) {
+    return buffers;
+  }
 
-	std::string line;
+  std::string line;
 	
-	bool matched = false;
-	while (std::getline(ifs, line)) {
-		buffers.push_back(line);
-		//if (line.size() <= 0) {
-	}
+  while (std::getline(ifs, line)) {
+    buffers.push_back(line);
+  }
 
-	return buffers;
+  return buffers;
 }
 
 BZF_API int bz_getLagWarn( void ) {
