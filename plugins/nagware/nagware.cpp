@@ -8,9 +8,9 @@
 BZ_GET_PLUGIN_VERSION
 
 #define NAGWAREPLUG_VER "1.00.00"
-#define MAX_PLAYERID 255
-#define EVENT_FREQUENCY 4      // number of seconds beween checks
-#define TIME_FACTOR    15
+#define MAX_PLAYERID    255
+#define EVENT_FREQUENCY 15      // number of seconds between checks
+#define TIME_FACTOR     60      // number of seconds per minute (useful to decrease for testing)
 
 
 // TODO: check for msgs > 128 chars and warn ( readConfig() )
