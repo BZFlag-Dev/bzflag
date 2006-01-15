@@ -818,6 +818,7 @@ AC_CONFIG_FILES(bzflag.info
 	plugins/shockwaveDeath/Makefile
 	plugins/vocaliser/Makefile
 	plugins/HoldTheFlag/Makefile
+	plugins/nagware/Makefile
 	plugins/doc/Makefile
 	plugins/vc71/Makefile
 	src/3D/Makefile

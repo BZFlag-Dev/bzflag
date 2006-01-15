@@ -10,6 +10,7 @@ SUBDIRS = \
 	python \
 	shockwaveDeath \
 	HoldTheFlag \
+	nagware \
 	vocaliser
 
 DIST_SUBDIRS = \
