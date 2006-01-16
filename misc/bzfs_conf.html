@@ -116,6 +116,16 @@
 						d.writeln("-lagdrop " + mainform.lag_drop_time.value + "<br/><br/>");
 					}
 
+                                       if (mainform.jitter_warn_time.value != 0) {
+                                               d.writeln("#Jitter Warning threshold time [ms]<br/>");
+                                               d.writeln("-jitterwarn " + mainform.jitter_warn_time.value + "<br/><br/>");
+                                       }
+
+                                       if (mainform.jitter_drop_time.value != 0) {
+                                               d.writeln("#Drop player after this many jitter warnings<br/>");
+                                               d.writeln("-jitterdrop " + mainform.jitter_drop_time.value + "<br/><br/>");
+                                       }
+
 					if (mainform.ban_list.value.length > 0) {
 						d.writeln("#Ban players based on ip addresses<br/>");
 						d.writeln("-ban \"" + mainform.ban_list.value + "\"<br/><br/>");
@@ -633,6 +643,12 @@
 							<td><input type="text" name="lag_drop_time" value="0" size="30" title="Drop player after this many lag warnings"/></td>
 						</tr>
 						<tr span="2">
+                                                       <td>Jitter Warn Time</td>
+                                                       <td><input type="text" name="jitter_warn_time" value="0" size="30" title="Jitter Warning threshold time [ms]"/></td>
+                                                       <td>Jitter Warn Drop Count</td>
+                                                       <td><input type="text" name="jitter_drop_time" value="0" size="30" title="Drop player after this many jitter warnings"/></td>
+                                               </tr>
+                                               <tr span="2">
 							<td>Ban List</td>
 							<td colspan="3"><input type="text" name="ban_list" size="100" title="Ban players based on ip addresses"/></td>
 						</tr>
