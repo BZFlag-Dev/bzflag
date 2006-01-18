@@ -23,6 +23,7 @@
 #include "FileManager.h"
 #include "DirectoryNames.h"
 #include "version.h"
+#include "bzglob.h"
 
 /* local implementation headers */
 #include "LocalPlayer.h"
@@ -627,44 +628,43 @@ static std::string cmdScreenshot(const std::string&,
     return "usage: screenshot";
 
   std::string filename = getScreenShotDirName();
+  const std::string prefix = "bzfi";
+  const std::string ext = ".png";
+  // if this is the first shot we've taken, scan the directory 
+  // and start numbering with the first available
+  if (snap == 0) {
+    std::string pattern = filename + prefix + "*" + ext;
 #ifdef _WIN32
-  std::vector<std::string> pattern;
-  pattern.push_back(filename + "*.png");
-  for (unsigned int i = 0; i < pattern.size(); i++) {
     WIN32_FIND_DATA findData;
-    HANDLE h = FindFirstFile(pattern[i].c_str(), &findData);
+    HANDLE h = FindFirstFile(pattern.c_str(), &findData);
     if (h != INVALID_HANDLE_VALUE) {
       std::string file;
       while (FindNextFile(h, &findData)) {
-				file = findData.cFileName;
-				int number = atoi((file.substr(file.length()-8, 4)).c_str());
-				if (number > snap)
-					snap = number;
+	file = findData.cFileName;
+	int number = atoi((file.substr(file.length()-8, 4)).c_str());
+	if (number > snap)
+	  snap = number;
       }
     }
-  }
 #else
-  DIR *directory = opendir(filename.c_str());
-  if (directory) {
-  	struct dirent* contents;
-    std::string file, suffix;
-    while ((contents = readdir(directory))) {
-      file = contents->d_name;
-      if (file.length() > 4) {
-				suffix = file.substr(file.length()-4, 4);
-				if (TextUtils::compare_nocase(suffix, ".png") == 0) {
-					int number = atoi((file.substr(file.length()-8, 4)).c_str());
-					if (number > snap)
-						number = snap;
-				}
+    DIR *directory = opendir(filename.c_str());
+    if (directory) {
+      struct dirent* contents;
+      std::string file, suffix;
+      while ((contents = readdir(directory))) {
+	file = contents->d_name;
+	if (glob_match(pattern, file)) {
+	  int number = atoi((file.substr(file.length()-8, 4)).c_str());
+	  if (number > snap)
+	    number = snap;
+	}
       }
+      closedir(directory);
     }
-    closedir(directory);
-  }
 #endif // _WIN32
+  }
 
-	++snap; //snap is equal to the greatest number, so one-up it
-  filename += TextUtils::format("bzfi%04d.png", snap++);
+  filename += prefix + TextUtils::format("%04d", ++snap) + ext;
 
   std::ostream* f = FILEMGR.createDataOutStream (filename.c_str(), true, true);
 
