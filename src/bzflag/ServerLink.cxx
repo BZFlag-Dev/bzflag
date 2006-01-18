@@ -826,7 +826,7 @@ void ServerLink::sendLagPing(char pingRequest[2])
   void* buf = msg;
 
   buf = nboPackUByte(buf, uint8_t(getId()));
-  buf = nboPackString(buf, pingRequest, sizeof(pingRequest));
+  buf = nboPackString(buf, pingRequest, 2);
 
   send(MsgLagPing, sizeof(msg), msg);
 }
