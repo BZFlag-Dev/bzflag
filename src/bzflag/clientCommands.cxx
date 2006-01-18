@@ -627,7 +627,7 @@ static std::string cmdScreenshot(const std::string&,
     return "usage: screenshot";
 
   std::string filename = getScreenShotDirName();
-#ifndef _WIN32
+#ifdef _WIN32
   std::vector<std::string> pattern;
   pattern.push_back(filename + "*.png");
   for (unsigned int i = 0; i < pattern.size(); i++) {
