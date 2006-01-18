@@ -10,6 +10,9 @@
 * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 */
 
+// common-interface headers
+#include "global.h"
+
 // implementation wrapers for all the bzf_ API functions
 #include "bzfsAPI.h"
 
@@ -32,9 +35,6 @@
 #include "CustomWorld.h"
 
 #include "Permissions.h"
-
-// common-interface headers
-#include "global.h"
 
 TimeKeeper synct = TimeKeeper::getCurrent();
 

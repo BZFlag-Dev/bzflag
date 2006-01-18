@@ -13,6 +13,9 @@
 #ifndef __FLAGINFO_H__
 #define __FLAGINFO_H__
 
+/* bzflag common header */
+#include "common.h"
+
 /* system headers */
 #include <stdlib.h>
 

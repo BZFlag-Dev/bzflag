@@ -17,6 +17,7 @@
 #include <sys/types.h>
 #include <vector>
 #include <string>
+#include <errno.h>
 #ifndef _WIN32
 #  include <unistd.h>
 #  include <dirent.h>
