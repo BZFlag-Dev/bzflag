@@ -27,6 +27,9 @@
 		#define BZF_API __declspec( dllimport )
 	#endif
 	#define BZF_PLUGIN_CALL
+	#ifndef strcasecmp
+		#define strcasecmp stricomp
+	#endif
 #else
 	#define BZF_API
 	#define BZF_PLUGIN_CALL extern "C"
