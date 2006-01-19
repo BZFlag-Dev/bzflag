@@ -248,7 +248,7 @@ void broadcastMessage(uint16_t code, int len, const void *msg, bool alsoTty)
   nboPackUShort(buf, code);
 
   // send message to everyone
-  int mask = NetHandler::clientBZFlag | NetHandler::clientBZBot;
+  int mask = NetHandler::clientBZFlag;
   if (alsoTty)
     mask |= NetHandler::clientBZAdmin;
   pwriteBroadcast(bufStart, len + 4, mask);

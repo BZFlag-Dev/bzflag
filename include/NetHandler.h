@@ -130,7 +130,6 @@ public:
   static const int     clientNone    = 0;
   static const int     clientBZAdmin = 1;
   static const int     clientBZFlag  = 2;
-  static const int     clientBZBot   = 4;
   void          setClientKind(int kind);
   int           getClientKind();
 

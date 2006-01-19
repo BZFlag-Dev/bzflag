@@ -249,8 +249,6 @@ void GameKeeper::Player::signingOn(bool ctf)
   lagInfo.reset();
   if (player.isChat())
     netHandler->setClientKind(NetHandler::clientBZAdmin);
-  else if (player.isBot())
-    netHandler->setClientKind(NetHandler::clientBZBot);
   else
     netHandler->setClientKind(NetHandler::clientBZFlag);
 }
