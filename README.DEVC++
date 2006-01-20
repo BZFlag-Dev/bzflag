@@ -17,7 +17,7 @@ is quite easy.
 
 3. Download libCURL, available from:
 
-    http://ileague.xoopiter.com/downloads/curl-7.11.1-win32-nossl-devel.zip
+    http://curl.haxx.se/download.html
 
    Installation is roughly the same as the SDL instructions below.
 
@@ -67,6 +67,14 @@ Dev-C++ currently exhibits a bug in which if any project is opened from inside D
 rather than launching the project file itself (double-clicking the project file's icon in
 Explorer, on Windows), it will fail to create a makefile and therefore cannot compile.
 This bug may not happen all the time, but it is present.
+
+==Linker cannot find "-lsdlmain"==
+If you get this error, you need to replace your SDL files with the ones downloadable from
+http://libsdl.org/ The package downloadable from the Dev-C++ update window will not fix this.
+
+==The linker gives errors about undefined references to cURL functions==
+You need to get either the source distribution or the binary distribution under the Win32 Generic
+category on http://curl.haxx.se/download.html Again, the Dev-C++ update window package will not fix this.
 
 =="xx" in Makefile==
 If you get an error regarding building "target 'xx'" and it references the makefile, go to
