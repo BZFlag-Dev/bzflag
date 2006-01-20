@@ -7,7 +7,7 @@
 
 BZ_GET_PLUGIN_VERSION
 
-#define NAGWAREPLUG_VER "1.00.00"
+#define NAGWAREPLUG_VER "1.00.01"
 #define MAX_PLAYERID    255
 #define EVENT_FREQUENCY 15      // number of seconds between checks
 #define TIME_FACTOR     60      // number of seconds per minute (useful to decrease for testing)
@@ -144,8 +144,10 @@ void tickEvent (float time)
   if (Config.kickMsg->time>0  && NumPlayers>=Config.minPlayers){  // kick someone !
     double kicktime = Config.kickMsg->time;
     for (x=0; x<=MaxUsedID; x++)
-      if (Players[x].isValid && !Players[x].isVerified && time>(Players[x].joinTime+kicktime))
+      if (Players[x].isValid && !Players[x].isVerified && time>(Players[x].joinTime+kicktime)){
         bz_kickUser (x, Config.kickMsg->msg.c_str(), true);
+        break;
+      }
   }
     
   NextEventTime = time + (float)EVENT_FREQUENCY;
