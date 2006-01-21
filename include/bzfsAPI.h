@@ -28,7 +28,7 @@
 	#endif
 	#define BZF_PLUGIN_CALL
 	#ifndef strcasecmp
-		#define strcasecmp stricomp
+		#define strcasecmp stricmp
 	#endif
 #else
 	#define BZF_API
