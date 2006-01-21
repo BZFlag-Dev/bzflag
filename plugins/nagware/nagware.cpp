@@ -279,7 +279,7 @@ bool checkPerms (int playerID, char *nagCmd, const char *permName)
     permName = "NAG";
   if (bz_hasPerm (playerID, permName))
     return true;
-  bz_sendTextMessagef (BZ_SERVER, BZ_ALLUSERS, "you need \"%s\" permission to do /nag %s", permName, nagCmd);
+  bz_sendTextMessagef (BZ_SERVER, playerID, "You need \"%s\" permission to do /nag %s", permName, nagCmd);
   return false;
 }
 
