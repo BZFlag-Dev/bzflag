@@ -1,5 +1,8 @@
 *)
 
+*) 1.00.02  (2006-01-21):
+  Send "You need X permission..." message only to the player
+  that tried to do /nag command.
 
 *) 1.00.01  (2006-01-20):
   Only kick one player at a time.
