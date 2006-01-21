@@ -550,7 +550,7 @@ SetGroupCommand::SetGroupCommand()       : ServerCommand("/setgroup",
 RemoveGroupCommand::RemoveGroupCommand() : ServerCommand("/removegroup",
   "<callsign> <group> - remove a user from a group") {}
 ReloadCommand::ReloadCommand()		 : ServerCommand("/reload",
-  "- reload the user, group, and password files") {}
+  "[all|groups|users|bans|helpfiles] - reload the user, group, password, and help files") {}
 PollCommand::PollCommand()		 : ServerCommand("/poll",
   "<ban|kick|vote|veto> <callsign> - interact and make requests of the bzflag voting system") {}
 VoteCommand::VoteCommand()		 : ServerCommand("/vote",
@@ -2258,7 +2258,7 @@ bool RemoveGroupCommand::operator() (const char* msg,
 }
 
 
-bool ReloadCommand::operator() (const char	 *,
+bool ReloadCommand::operator() (const char	 *message,
 				GameKeeper::Player *playerData)
 {
   int t = playerData->getIndex();
@@ -2268,59 +2268,139 @@ bool ReloadCommand::operator() (const char	 *,
     return true;
   }
 
-  // reload the text chunks
-  clOptions->textChunker.reload();
+  std::string arguments = &message[7]; /* skip "/reload" */
+  std::string cmd = "";
 
-  // reload the banlist
-  clOptions->acl.load();
+  DEBUG3("The arguments string is [%s]\n", arguments.c_str());
 
-  groupAccess.clear();
-  userDatabase.clear();
-  passwordDatabase.clear();
-  initGroups();
-  if (passFile.size())
-    readPassFile(passFile);
-  if (userDatabaseFile.size())
-    PlayerAccessInfo::readPermsFile(userDatabaseFile);
+  /* find the start of the command */
+  size_t startPosition = 0;
+  while ((startPosition < arguments.size()) &&
+	 (isspace(arguments[startPosition]))) {
+    startPosition++;
+  }
+
+  DEBUG3("Start position is %d\n", (int)startPosition);
+
+  /* find the end of the command */
+  size_t endPosition = startPosition + 1;
+  while ((endPosition < arguments.size()) &&
+	 (!isspace(arguments[endPosition]))) {
+    endPosition++;
+  }
+
+  DEBUG3("End position is %d\n", (int)endPosition);
+
+  /* stash the command ('all', etc) in lowercase to simplify comparison */
+  if ((startPosition != arguments.size()) &&
+      (endPosition > startPosition)) {
+    for (size_t i = startPosition; i < endPosition; i++) {
+      cmd += tolower(arguments[i]);
+    }
+  }
+
+  DEBUG3("Command is %s\n", cmd.c_str());
+
+  /* handle subcommands */
+
+  bool reload_bans = false;
+  bool reload_groups = false;
+  bool reload_users = false;
+  bool reload_helpfiles = false;
+  if ((cmd == "") || (cmd == "all")) {
+    DEBUG3("Reload all\n");
+    reload_bans = true;
+    reload_groups = true;
+    reload_users = true;
+    reload_helpfiles = true;
+  } else if (cmd == "bans") {
+    DEBUG3("Reload bans\n");
+    reload_bans = true;
+  } else if (cmd == "groups") {
+    DEBUG3("Reload groups\n");
+    reload_groups = true;
+  } else if (cmd == "users") {
+    DEBUG3("Reload users\n");
+    reload_users = true;
+  } else if (cmd == "helpfiles") {
+    DEBUG3("Reload helpfiles\n");
+    reload_helpfiles = true;
+  } else {
+    sendMessage(ServerPlayer, t, "Invalid option for the reload command");
+    sendMessage(ServerPlayer, t, "Usage: /reload [all|bans|helpfiles|groups|users]");
+    return true; // Bail out
+  }
+
+  if (reload_helpfiles) {
+    // reload the text chunks
+    DEBUG3("Reloading helpfiles\n");
+    clOptions->textChunker.reload();
+  }
+
+  if (reload_bans) {
+    // reload the banlist
+    DEBUG3("Reloading bans\n");
+    clOptions->acl.load();
+  }
+
+  if (reload_groups) {
+    DEBUG3("Reloading groups\n");
+    groupAccess.clear();
+    initGroups();
+  }
+
+  if (reload_users) {
+    DEBUG3("Reloading users and passwords\n");
+    userDatabase.clear();
+    passwordDatabase.clear();
+
+    if (passFile.size())
+      readPassFile(passFile);
+    if (userDatabaseFile.size())
+      PlayerAccessInfo::readPermsFile(userDatabaseFile);
+  }
+
   GameKeeper::Player::reloadAccessDatabase();
   sendMessage(ServerPlayer, t, "Databases reloaded");
 
-  // Validate all of the current players
+  if (reload_bans) {
+    // Validate all of the current players
 
-  std::string reason;
-  char kickmessage[MessageLen];
+    std::string reason;
+    char kickmessage[MessageLen];
+    
+    // Check host bans
+    GameKeeper::Player::setAllNeedHostbanChecked(true);
 
-  // Check host bans
-  GameKeeper::Player::setAllNeedHostbanChecked(true);
-
-  // Check IP bans
-  for (int i = 0; i < curMaxPlayers; i++) {
-    GameKeeper::Player *otherPlayer = GameKeeper::Player::getPlayerByIndex(i);
-    if (otherPlayer && !clOptions->acl.validate
-	(otherPlayer->netHandler->getIPAddress())) {
-      // operators can override antiperms
-      if (!playerData->accessInfo.isOperator()) {
-	// make sure this player isn't protected
-	GameKeeper::Player *p = GameKeeper::Player::getPlayerByIndex(i);
-	if ((p != NULL)
-	    && (p->accessInfo.hasPerm(PlayerAccessInfo::antiban))) {
-	  snprintf(kickmessage, MessageLen,
-		   "%s is protected from being banned (skipped).",
-		   p->player.getCallSign());
-	  sendMessage(ServerPlayer, t, kickmessage);
-	  continue;
+    // Check IP bans
+    for (int i = 0; i < curMaxPlayers; i++) {
+      GameKeeper::Player *otherPlayer = GameKeeper::Player::getPlayerByIndex(i);
+      if (otherPlayer && !clOptions->acl.validate
+	  (otherPlayer->netHandler->getIPAddress())) {
+	// operators can override antiperms
+	if (!playerData->accessInfo.isOperator()) {
+	  // make sure this player isn't protected
+	  GameKeeper::Player *p = GameKeeper::Player::getPlayerByIndex(i);
+	  if ((p != NULL)
+	      && (p->accessInfo.hasPerm(PlayerAccessInfo::antiban))) {
+	    snprintf(kickmessage, MessageLen,
+		     "%s is protected from being banned (skipped).",
+		     p->player.getCallSign());
+	    sendMessage(ServerPlayer, t, kickmessage);
+	    continue;
+	  }
 	}
-      }
-
-      snprintf(kickmessage, MessageLen,
-	       "You were banned from this server by %s",
-	       playerData->player.getCallSign());
-      sendMessage(ServerPlayer, i, kickmessage);
-      if (reason.length() > 0) {
-	snprintf(kickmessage, MessageLen, "Reason given: %s", reason.c_str());
+	
+	snprintf(kickmessage, MessageLen,
+		 "You were banned from this server by %s",
+		 playerData->player.getCallSign());
 	sendMessage(ServerPlayer, i, kickmessage);
+	if (reason.length() > 0) {
+	  snprintf(kickmessage, MessageLen, "Reason given: %s", reason.c_str());
+	  sendMessage(ServerPlayer, i, kickmessage);
+	}
+	removePlayer(i, "/ban");
       }
-      removePlayer(i, "/ban");
     }
   }
   return true;
