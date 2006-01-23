@@ -3467,13 +3467,17 @@ static void		checkEnvironment()
       // grab any and all flags i'm driving over
       const float* tpos = myTank->getPosition();
       const float radius = myTank->getRadius();
-      const float radius2 = (radius + BZDBCache::flagRadius) * (radius + BZDBCache::flagRadius);
+      const float radius2 = (radius + BZDBCache::flagRadius)
+	* (radius + BZDBCache::flagRadius);
       for (int i = 0; i < numFlags; i++) {
-	if (world->getFlag(i).type == Flags::Null || world->getFlag(i).status != FlagOnGround)
+	if (world->getFlag(i).type == Flags::Null
+	    || world->getFlag(i).status != FlagOnGround)
 	  continue;
 	const float* fpos = world->getFlag(i).position;
-	if ((fabs(tpos[2] - fpos[2]) < 0.1f) && ((tpos[0] - fpos[0]) * (tpos[0] - fpos[0]) +
-						 (tpos[1] - fpos[1]) * (tpos[1] - fpos[1]) < radius2)) {
+	if ((fabs(tpos[2] - fpos[2]) < 0.1f)
+	    && ((tpos[0] - fpos[0]) * (tpos[0] - fpos[0]) +
+		(tpos[1] - fpos[1]) * (tpos[1] - fpos[1]) < radius2)) {
+	  serverLink->sendPlayerUpdate(myTank);
 	  serverLink->sendGrabFlag(i);
 	  lastGrabSent=TimeKeeper::getTick();
 	}
