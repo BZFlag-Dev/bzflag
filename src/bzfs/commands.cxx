@@ -1402,13 +1402,30 @@ bool FlagCommand::operator() (const char	 *message,
     }
 
     if (gkPlayer && fi) {
-      const int flagLimit = clOptions->flagLimit[fi->flag.type];
-      clOptions->flagLimit[fi->flag.type] = -1;
-      fi->flag.status = FlagOnTank;
-      fi->grabs = 2;
-      dropFlag(*fi, gkPlayer->lastState.pos);
-      clOptions->flagLimit[fi->flag.type] = flagLimit;
+      // deal with the player's current flag (if applicable)
+      const int flagId = gkPlayer->player.getFlag();
+      if (flagId >= 0) {
+        FlagInfo& currentFlag = *FlagInfo::get(flagId);
+        if (currentFlag.flag.type->flagTeam != NoTeam) {
+          // drop team flags
+          dropFlag(currentFlag, gkPlayer->lastState.pos);
+        } else {
+          // reset non-team flags
+          resetFlag(currentFlag);
+        }
+      }
+      
+      // setup bzfs' state
+      fi->grab(gkPlayer->getIndex());
+      gkPlayer->player.setFlag(fi->getIndex());
+      
+      // send MsgGrabFlag
+      void *buf, *bufStart = getDirectMessageBuffer();
+      buf = nboPackUByte(bufStart, gkPlayer->getIndex());
+      buf = fi->pack(buf);
+      broadcastMessage(MsgGrabFlag, (char*)buf-(char*)bufStart, bufStart);
 
+      // send the annoucement
       char buffer[MessageLen];
       snprintf(buffer, MessageLen, "%s gave flag %s/%i to %s",
 	       playerData->player.getCallSign(),
