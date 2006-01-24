@@ -2358,9 +2358,9 @@ bool ReloadCommand::operator() (const char	 *message,
       readPassFile(passFile);
     if (userDatabaseFile.size())
       PlayerAccessInfo::readPermsFile(userDatabaseFile);
+    GameKeeper::Player::reloadAccessDatabase();
   }
 
-  GameKeeper::Player::reloadAccessDatabase();
   sendMessage(ServerPlayer, t, "Databases reloaded");
 
   if (reload_bans) {
