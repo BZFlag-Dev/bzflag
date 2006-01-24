@@ -2684,6 +2684,44 @@ void playerKilled(int victimIndex, int killerIndex, int reason,
   }
 }
 
+static void searchFlag(GameKeeper::Player &playerData)
+{
+  if (!playerData.player.isAlive()
+      || playerData.player.haveFlag())
+    return;
+
+  const PlayerId playerIndex = playerData.getIndex();
+
+  const float *tpos    = playerData.lastState.pos;
+  const float  radius  = BZDBCache::tankRadius + BZDBCache::flagRadius;
+  const float  radius2 = radius * radius;
+
+  for (int i = 0; i < numFlags; i++) {
+    FlagInfo &flag = *FlagInfo::get(i);
+    if (!flag.exist())
+      continue;
+    if (flag.flag.status != FlagOnGround)
+      continue;
+
+    const float *fpos = flag.flag.position;
+    if ((fabs(tpos[2] - fpos[2]) < 0.1f)
+	&& ((tpos[0] - fpos[0]) * (tpos[0] - fpos[0]) +
+	    (tpos[1] - fpos[1]) * (tpos[1] - fpos[1]) < radius2)) {
+      // okay, player can have it
+      flag.grab(playerIndex);
+      playerData.player.setFlag(flag.getIndex());
+
+      // send MsgGrabFlag
+      void *buf, *bufStart = getDirectMessageBuffer();
+      buf = nboPackUByte(bufStart, playerIndex);
+      buf = flag.pack(buf);
+      broadcastMessage(MsgGrabFlag, (char*)buf - (char*)bufStart, bufStart);
+      playerData.flagHistory.add(flag.flag.type);
+      break;
+    }
+  }
+}
+
 static void grabFlag(int playerIndex, FlagInfo &flag)
 {
   GameKeeper::Player *playerData
@@ -3946,6 +3984,8 @@ static void handleCommand(const void *rawbuf, bool udp, NetHandler *handler)
       // either
       if (playerData->player.isObserver())
  	break;
+
+      searchFlag(*playerData);
 
       relayPlayerPacket(t, len, rawbuf, code);
       break;
