@@ -10,7 +10,6 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-/* interface header */
 #include "common.h"
 
 #ifdef HAVE_GLEW
