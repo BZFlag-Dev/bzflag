@@ -1404,21 +1404,6 @@ static void addPlayer(int playerIndex, GameKeeper::Player *playerData)
   // check for a name clash
   bool resultEnter = playerData->loadEnterData(rejectCode, rejectMsg);
 
-  // call any on join events
-  bz_PlayerJoinPartEventData	joinEventData;
-  joinEventData.eventType = bz_ePlayerJoinEvent;
-  joinEventData.verified = playerData->accessInfo.isVerified();
-  joinEventData.globalUser = playerData->getBzIdentifier();
-  joinEventData.playerID = playerIndex;
-  joinEventData.team = convertTeam(playerData->player.getTeam());
-  joinEventData.callsign = playerData->player.getCallSign();
-  joinEventData.email = playerData->player.getEMail();
-  joinEventData.ipAddress = playerData->netHandler->getTargetIP();
-  joinEventData.time = TimeKeeper::getCurrent().getSeconds();
-
-  if ((joinEventData.team != eNoTeam) && (joinEventData.callsign.size() != 0))	// don't give events if we don't have a real player slot
-    worldEventManager.callEvents(bz_ePlayerJoinEvent,&joinEventData);
-
   // Name clash ... if the new player is not verified, reject it
   // We cannot have 2 players with same nick
   if (!resultEnter && playerData->_LSAState != GameKeeper::Player::verified) {
@@ -1783,6 +1768,20 @@ static void addPlayer(int playerIndex, GameKeeper::Player *playerData)
 
   sendPlayerInfo();
 
+  // call any on join events
+  bz_PlayerJoinPartEventData	joinEventData;
+  joinEventData.eventType = bz_ePlayerJoinEvent;
+  joinEventData.verified = playerData->accessInfo.isVerified();
+  joinEventData.globalUser = playerData->getBzIdentifier();
+  joinEventData.playerID = playerIndex;
+  joinEventData.team = convertTeam(playerData->player.getTeam());
+  joinEventData.callsign = playerData->player.getCallSign();
+  joinEventData.email = playerData->player.getEMail();
+  joinEventData.ipAddress = playerData->netHandler->getTargetIP();
+  joinEventData.time = TimeKeeper::getCurrent().getSeconds();
+
+  if ((joinEventData.team != eNoTeam) && (joinEventData.callsign.size() != 0))	// don't give events if we don't have a real player slot
+    worldEventManager.callEvents(bz_ePlayerJoinEvent,&joinEventData);
   if (spawnSoon)
     playerAlive(playerIndex);
 }
