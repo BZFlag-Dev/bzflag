@@ -3478,7 +3478,6 @@ static void		checkEnvironment()
 	    && ((tpos[0] - fpos[0]) * (tpos[0] - fpos[0]) +
 		(tpos[1] - fpos[1]) * (tpos[1] - fpos[1]) < radius2)) {
 	  serverLink->sendPlayerUpdate(myTank);
-	  serverLink->sendGrabFlag(i);
 	  lastGrabSent=TimeKeeper::getTick();
 	}
       }
