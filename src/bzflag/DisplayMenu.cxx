@@ -117,7 +117,7 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
       options->push_back(std::string("Off"));
       for (int i = 1; i < maxAnisotropy; i++) {
         char buffer[16];
-        snprintf(buffer, 16, "%i", i + 1);
+        snprintf(buffer, 16, "%i/%i", i + 1, maxAnisotropy);
         options->push_back(std::string(buffer));
       }
       option->update();
