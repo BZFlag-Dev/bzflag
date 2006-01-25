@@ -15,6 +15,12 @@
 
 /** this file contains headers necessary for opengl */
 
+// glew.h needs to come before gl.h, etc...
+#include "common.h"
+#ifdef HAVE_GLEW
+#include <GL/glew.h>
+#endif
+
 #ifdef __APPLE__
 #  include <OpenGL/OpenGL.h>
 #  include <OpenGL/gl.h>

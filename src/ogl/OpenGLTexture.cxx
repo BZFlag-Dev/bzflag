@@ -12,10 +12,6 @@
 
 #include "common.h"
 
-#ifdef HAVE_GLEW
-#include <GL/glew.h>
-#endif
-
 // system headers
 #include <string>
 
