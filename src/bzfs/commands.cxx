@@ -1400,6 +1400,15 @@ bool FlagCommand::operator() (const char	 *message,
       sendMessage(ServerPlayer, t, buffer);
       return true;
     }
+    
+    if (gkPlayer && !gkPlayer->player.isAlive()) {
+      char buffer[MessageLen];
+      snprintf(buffer, MessageLen,
+	       "/flag give: could player (%s) is not alive",
+               gkPlayer->player.getCallSign());
+      sendMessage(ServerPlayer, t, buffer);
+      return true;
+    }
 
     if (gkPlayer && fi) {
       // deal with the player's current flag (if applicable)
