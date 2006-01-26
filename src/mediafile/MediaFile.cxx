@@ -19,7 +19,6 @@
 #include <algorithm>
 
 /* common implementation headers */
-#include "FileManager.h"
 #include "CacheManager.h"
 
 
@@ -42,7 +41,7 @@ static void ConvertPath(std::string &path)
 
 #include <SDL/SDL_image.h>
 #include "StateDatabase.h"
-
+#include "FileManager.h"
 
 #include <sys/types.h>
 #include <sys/stat.h>
