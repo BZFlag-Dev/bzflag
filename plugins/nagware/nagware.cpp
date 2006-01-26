@@ -141,7 +141,7 @@ void tickEvent (float time)
       updatePlayerNextEvent (x, time);    
     }
   }  
-  if (Config.kickMsg->time>0  && NumPlayers>=Config.minPlayers){  // kick someone !
+  if (Config.kickMsg && Config.kickMsg->time>0  && NumPlayers>=Config.minPlayers){  // kick someone !
     double kicktime = Config.kickMsg->time;
     for (x=0; x<=MaxUsedID; x++)
       if (Players[x].isValid && !Players[x].isVerified && time>(Players[x].joinTime+kicktime)){
