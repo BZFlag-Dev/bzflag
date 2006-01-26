@@ -19,6 +19,7 @@
 #include <algorithm>
 
 /* common implementation headers */
+#include "FileManager.h"
 #include "CacheManager.h"
 
 
@@ -33,6 +34,184 @@ static void ConvertPath(std::string &path)
 //
 // MediaFile
 //
+
+/******************************************************************************/
+#if defined(HAVE_SDL) && defined(HAVE_SDL_IMAGE)
+/******************************************************************************/
+
+
+#include <SDL/SDL_image.h>
+#include "StateDatabase.h"
+
+
+#include <sys/types.h>
+#include <sys/stat.h>
+#ifndef _WIN32
+#  include <unistd.h>
+#endif
+
+static bool fileExists (const std::string& name)
+{
+  struct stat buf;
+#ifndef _WIN32
+  return (stat(name.c_str(), &buf) == 0);
+#else
+  // Windows sucks yet again, if there is a trailing  "\"
+  // at the end of the filename, _stat will return -1.
+  std::string dirname = name;
+  while (dirname.find_last_of('\\') == (dirname.size() - 1)) {
+    dirname.resize(dirname.size() - 1);
+  }
+  return (_stat(dirname.c_str(), (struct _stat *) &buf) == 0);
+#endif
+}  
+
+
+static bool checkExt(const std::string& base, const char* ext,
+                     std::string& result)
+{
+#ifndef _WIN32
+  const std::string sep = "/";
+#else
+  const std::string sep = "\\";
+#endif
+
+  result = base;
+  result += ext;
+  const std::string filename = result;
+  
+  const bool relative = !FILEMGR.isAbsolute(filename);
+
+  if (relative) {
+    // try directory stored in DB
+    if (BZDB.isSet("directory")) {
+      result = BZDB.get("directory") + sep + filename;
+      if (fileExists(result)) return true;
+    }
+
+    // try data directory
+    result = "data" + sep + filename;
+    if (fileExists(result)) return true;
+  }
+  
+  // try current directory (or absolute path)
+  result = filename;
+  if (fileExists(result)) return true;
+
+#if defined(INSTALL_DATA_DIR)
+  // try install directory
+  if (relative) {
+    result = INSTALL_DATA_DIR + sep + filename;
+    if (fileExists(result)) return true;
+  }
+#endif
+
+  return false;
+}
+
+
+/******************************************************************************/
+
+// From the header...
+// - Use delete[] to release the returned image.
+// - Returns NULL on failure. 
+// - Images are stored RGBA, left to right, bottom to top.
+
+unsigned char* MediaFile::readImage(std::string filename, int* w, int* h)
+{
+  DEBUG3("SDL_image::trying %s\n", filename.c_str());
+  
+  // get the absolute filename for cache textures
+  if (CACHEMGR.isCacheFileType(filename)) {
+    filename = CACHEMGR.getLocalName(filename);
+  }
+
+#ifdef WIN32
+  // cheat and make sure the file is a windows file path
+  ConvertPath(filename);
+#endif //WIN32
+
+  // try looking in different directories and appending
+  // supported extensions to find the source image file
+  std::string name;      
+  if (!checkExt(filename, "",     name) && 
+      !checkExt(filename, ".png", name) &&
+      !checkExt(filename, ".gif", name) &&
+      !checkExt(filename, ".bmp", name) &&
+      !checkExt(filename, ".pcx", name) &&
+      !checkExt(filename, ".tga", name) &&
+      !checkExt(filename, ".xpm", name) &&
+      !checkExt(filename, ".pbm", name) &&
+      !checkExt(filename, ".pgm", name) &&
+      !checkExt(filename, ".ppm", name) &&
+      !checkExt(filename, ".jpg", name) &&
+      !checkExt(filename, ".jpeg", name) &&
+      !checkExt(filename, ".tif", name) &&
+      !checkExt(filename, ".tiff", name)) {
+    return NULL;
+  }
+
+  DEBUG3("SDL_image::found %s\n", name.c_str());
+
+  SDL_Surface* surface;
+  surface = IMG_Load(name.c_str());
+  if (surface == NULL) {
+    return NULL;
+  }
+
+  DEBUG3("SDL_Image: loaded %s: %dx%d %dbpp\n",
+         filename.c_str(),
+         surface->w, surface->h, surface->format->BitsPerPixel);
+
+  // convert the format
+  SDL_PixelFormat fmt;
+  fmt.palette = NULL;
+  fmt.BitsPerPixel = 32;
+  fmt.BytesPerPixel = 4;
+  fmt.Rloss = fmt.Gloss = fmt.Bloss = fmt.Aloss = 0;
+  fmt.Rshift = fmt.Gshift = fmt.Bshift = fmt.Ashift = 0;
+  fmt.colorkey = 0;
+  fmt.alpha = 0;
+  // handle endianess
+  fmt.Rmask = fmt.Gmask = fmt.Bmask = fmt.Amask = 0;
+  ((unsigned char*)&fmt.Rmask)[0] = 0xff;
+  ((unsigned char*)&fmt.Gmask)[1] = 0xff;
+  ((unsigned char*)&fmt.Bmask)[2] = 0xff;
+  ((unsigned char*)&fmt.Amask)[3] = 0xff;
+  
+  SDL_Surface* rgba = SDL_ConvertSurface(surface, &fmt, SDL_SWSURFACE);
+  SDL_FreeSurface(surface);
+
+  // bail if the conversion failed
+  if (rgba == NULL) {
+    return NULL;
+  }
+
+  // copy the parameters
+  *w = rgba->w;
+  *h = rgba->h;
+
+  // copy the memory, with a vertical flip
+  const int rowlen = (rgba->w * 4);
+  const int imageSize = (rowlen * rgba->h);
+  unsigned char* image = new unsigned char[imageSize];
+  const unsigned char* source = (unsigned char*) rgba->pixels;
+  for (int i = 0; i < rgba->h; i++) {
+    memcpy(image + (rowlen * i),
+           source + (rowlen * (rgba->h - 1 - i)),
+           rowlen);
+  }
+
+  SDL_FreeSurface(rgba);
+
+  return image;
+}
+
+
+/******************************************************************************/
+#else // ! (HAVE_SDL && HAVE_SDL_IMAGE)
+/******************************************************************************/
+
 
 MediaFile::MediaFile(std::istream* _stream) : stream(_stream)
 {
@@ -236,6 +415,12 @@ unsigned char*		MediaFile::readImage(
   return image;
 }
 
+
+/******************************************************************************/
+#endif // (HAVE_SDL && HAVE_SDL_IMAGE)
+/******************************************************************************/
+
+
 /*
 float*		MediaFile::readSound(
 			const std::string& filename,
@@ -319,6 +504,7 @@ float*		MediaFile::readSound(
   return audio;
 }
 */
+
 
 // Local Variables: ***
 // mode:C++ ***
