@@ -118,7 +118,7 @@ static bool checkExt(const std::string& base, const char* ext,
 
 unsigned char* MediaFile::readImage(std::string filename, int* w, int* h)
 {
-  DEBUG3("SDL_image::trying %s\n", filename.c_str());
+  DEBUG3("SDL_image: trying %s\n", filename.c_str());
   
   // get the absolute filename for cache textures
   if (CACHEMGR.isCacheFileType(filename)) {
@@ -150,7 +150,7 @@ unsigned char* MediaFile::readImage(std::string filename, int* w, int* h)
     return NULL;
   }
 
-  DEBUG3("SDL_image::found %s\n", name.c_str());
+  DEBUG3("SDL_image: found %s\n", name.c_str());
 
   SDL_Surface* surface;
   surface = IMG_Load(name.c_str());
@@ -159,8 +159,7 @@ unsigned char* MediaFile::readImage(std::string filename, int* w, int* h)
   }
 
   DEBUG3("SDL_Image: loaded %s: %dx%d %dbpp\n",
-         filename.c_str(),
-         surface->w, surface->h, surface->format->BitsPerPixel);
+         name.c_str(), surface->w, surface->h, surface->format->BitsPerPixel);
 
   // convert the format
   SDL_PixelFormat fmt;
