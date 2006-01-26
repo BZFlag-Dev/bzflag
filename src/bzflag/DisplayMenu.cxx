@@ -97,30 +97,34 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
   options->push_back(std::string("Linear Mipmap Linear"));
   option->update();
   listHUD.push_back(option);
-  
-  anisotropic = false;
+
+  option = new HUDuiList;
+  option->setFontFace(fontFace);
+  option->setLabel("Anisotropic:");
+  option->setCallback(callback, (void*)"A");
+  options = &option->getList();
 #ifdef HAVE_GLEW
   if (GLEW_EXT_texture_filter_anisotropic) {
     static GLint maxAnisotropy = 1;
     glGetIntegerv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &maxAnisotropy);
     if (maxAnisotropy > 1) {
-      anisotropic = true;
-      option = new HUDuiList;
-      option->setFontFace(fontFace);
-      option->setLabel("Anisotropic:");
-      option->setCallback(callback, (void*)"A");
-      options = &option->getList();
       options->push_back(std::string("Off"));
       for (int i = 1; i < maxAnisotropy; i++) {
         char buffer[16];
         snprintf(buffer, 16, "%i/%i", i + 1, maxAnisotropy);
         options->push_back(std::string(buffer));
       }
-      option->update();
-      listHUD.push_back(option);
+    } else {
+      options->push_back(std::string("Unavailable"));
     }
+  } else {
+    options->push_back(std::string("Unavailable"));
   }
+#else
+  options->push_back(std::string("Unavailable"));
 #endif  
+  option->update();
+  listHUD.push_back(option);
 
   option = new HUDuiList;
   option->setFontFace(fontFace);
@@ -304,11 +308,9 @@ void			DisplayMenu::resize(int _width, int _height)
       ((HUDuiList*)listHUD[i++])->setIndex(0);
     }
     ((HUDuiList*)listHUD[i++])->setIndex(tm.getMaxFilter());
-    if (anisotropic) {
-      int aniso = BZDB.evalInt("aniso");
-      aniso = (aniso < 1) ? 1 : aniso;
-      ((HUDuiList*)listHUD[i++])->setIndex(BZDB.evalInt("aniso") - 1);
-    }
+    int aniso = BZDB.evalInt("aniso");
+    aniso = (aniso < 1) ? 1 : aniso;
+    ((HUDuiList*)listHUD[i++])->setIndex(BZDB.evalInt("aniso") - 1);
     ((HUDuiList*)listHUD[i++])->setIndex(renderer->useQuality());
     int shadowVal = 0;
     if (BZDBCache::shadows) {

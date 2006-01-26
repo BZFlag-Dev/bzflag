@@ -37,7 +37,6 @@ public:
   void resize(int width, int height);
   static void callback(HUDuiControl* w, void* data);
 private:
-  bool		anisotropic;
   FormatMenu*	formatMenu;
   HUDuiControl*	videoFormat;
   static int	gammaToIndex(float);
