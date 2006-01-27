@@ -2686,16 +2686,27 @@ void playerKilled(int victimIndex, int killerIndex, int reason,
 
 static void searchFlag(GameKeeper::Player &playerData)
 {
-  if (!playerData.player.isAlive()
-      || playerData.player.haveFlag())
+  if (!playerData.player.isAlive())
     return;
+
+  float radius = BZDBCache::tankRadius + BZDBCache::flagRadius;
+  bool  id     = false;
+
+  int flagId = playerData.player.getFlag();
+  if (flagId >= 0) {
+    FlagInfo &playerFlag = *FlagInfo::get(flagId);
+    if (playerFlag.flag.type != Flags::Identify)
+      return;
+    id     = true;
+    radius = BZDB.eval(StateDatabase::BZDB_IDENTIFYRANGE);
+  }
 
   const PlayerId playerIndex = playerData.getIndex();
 
-  const float *tpos    = playerData.lastState.pos;
-  const float  radius  = BZDBCache::tankRadius + BZDBCache::flagRadius;
-  const float  radius2 = radius * radius;
+  const float *tpos   = playerData.lastState.pos;
+  float       radius2 = radius * radius;
 
+  int closestFlag = -1;
   for (int i = 0; i < numFlags; i++) {
     FlagInfo &flag = *FlagInfo::get(i);
     if (!flag.exist())
@@ -2704,21 +2715,44 @@ static void searchFlag(GameKeeper::Player &playerData)
       continue;
 
     const float *fpos = flag.flag.position;
-    if ((fabs(tpos[2] - fpos[2]) < 0.1f)
-	&& ((tpos[0] - fpos[0]) * (tpos[0] - fpos[0]) +
-	    (tpos[1] - fpos[1]) * (tpos[1] - fpos[1]) < radius2)) {
-      // okay, player can have it
-      flag.grab(playerIndex);
-      playerData.player.setFlag(flag.getIndex());
+    float dist = (tpos[2] - fpos[2]) * (tpos[2] - fpos[2]);
+    if (!id && dist >= 0.01f)
+      continue;
+    dist += (tpos[0] - fpos[0]) * (tpos[0] - fpos[0])
+      + (tpos[1] - fpos[1]) * (tpos[1] - fpos[1]);
 
-      // send MsgGrabFlag
-      void *buf, *bufStart = getDirectMessageBuffer();
-      buf = nboPackUByte(bufStart, playerIndex);
-      buf = flag.pack(buf);
-      broadcastMessage(MsgGrabFlag, (char*)buf - (char*)bufStart, bufStart);
-      playerData.flagHistory.add(flag.flag.type);
-      break;
+    if (dist < radius2) {
+      radius2     = dist;
+      closestFlag = i;
+      if (!id)
+	break;
     }
+  }
+
+  if (closestFlag < 0) {
+    if (id)
+      playerData.setLastIdFlag(-1);
+    return;
+  }
+  FlagInfo &flag = *FlagInfo::get(closestFlag);
+  if (id) {
+    if (closestFlag != playerData.getLastIdFlag()) {
+      std::string message("Closest Flag: ");
+      message += flag.flag.type->flagName;
+      sendMessage(ServerPlayer, playerIndex, message.c_str());
+      playerData.setLastIdFlag(closestFlag);
+    }
+  } else {
+    // okay, player can have it
+    flag.grab(playerIndex);
+    playerData.player.setFlag(flag.getIndex());
+
+    // send MsgGrabFlag
+    void *buf, *bufStart = getDirectMessageBuffer();
+    buf = nboPackUByte(bufStart, playerIndex);
+    buf = flag.pack(buf);
+    broadcastMessage(MsgGrabFlag, (char*)buf - (char*)bufStart, bufStart);
+    playerData.flagHistory.add(flag.flag.type);
   }
 }
 

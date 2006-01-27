@@ -3483,32 +3483,6 @@ static void		checkEnvironment()
       }
     }
   }
-  else if (flagd == Flags::Identify) {
-    // identify closest flag
-    const float* tpos = myTank->getPosition();
-    std::string message("Closest Flag: ");
-    float minDist = BZDB.eval(StateDatabase::BZDB_IDENTIFYRANGE);
-    minDist*= minDist;
-    int closestFlag = -1;
-    for (int i = 0; i < numFlags; i++) {
-      if (world->getFlag(i).type == Flags::Null ||
-	  world->getFlag(i).status != FlagOnGround) continue;
-      const float* fpos = world->getFlag(i).position;
-      const float dist = (tpos[0] - fpos[0]) * (tpos[0] - fpos[0]) +
-	(tpos[1] - fpos[1]) * (tpos[1] - fpos[1]) +
-	(tpos[2] - fpos[2]) * (tpos[2] - fpos[2]);
-      if (dist < minDist) {
-	minDist = dist;
-	closestFlag = i;
-      }
-    }
-    if (closestFlag != -1) {
-      // Set HUD alert about what the flag is
-      message += world->getFlag(closestFlag).type->flagName;
-      hud->setAlert(2, message.c_str(), 0.5f,
-		    world->getFlag(closestFlag).type->endurance == FlagSticky);
-    }
-  }
 
   // see if i've been shot
   const ShotPath* hit = NULL;

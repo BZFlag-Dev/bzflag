@@ -122,6 +122,10 @@ public:
     bool           addShot(int id, int salt, FiringInfo &firingInfo);
     bool           removeShot(int id, int salt, FiringInfo &firingInfo);
     bool           updateShot(int id, int salt);
+
+    // To handle Identify
+    void           setLastIdFlag(int _idFlag);
+    int            getLastIdFlag();
     
     enum LSAState
       {
@@ -173,6 +177,8 @@ public:
     static bool       allNeedHostbanChecked;
     static int             maxShots;
     std::vector<ShotInfo> shotsInfo;
+
+    int                   idFlag;
   };
 
   class Flag {

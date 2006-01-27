@@ -46,7 +46,7 @@ GameKeeper::Player::Player(int _playerIndex,
 			   tcpCallback _clientCallback):
   player(_playerIndex), netHandler(_netHandler), lagInfo(&player),
   playerIndex(_playerIndex), closed(false), clientCallback(_clientCallback),
-  needThisHostbanChecked(false)
+  needThisHostbanChecked(false), idFlag(-1)
 {
   playerList[playerIndex] = this;
 
@@ -471,6 +471,14 @@ GameKeeper::Player *GameKeeper::Player::getFirstPlayer(NetHandler *_netHandler)
     if (playerList[i] && playerList[i]->netHandler == _netHandler)
       return playerList[i];
   return NULL;
+}
+
+void GameKeeper::Player::setLastIdFlag(int _idFlag) {
+  idFlag = _idFlag;
+}
+
+int GameKeeper::Player::getLastIdFlag() {
+  return idFlag;
 }
 
 // Local Variables: ***
