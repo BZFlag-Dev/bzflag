@@ -17,9 +17,9 @@ is quite easy.
 
 3. Download libCURL, available from:
 
-    http://curl.haxx.se/download.html
+    http://curl.haxx.se/latest.cgi?curl=win32-devel
 
-   Installation is roughly the same as the SDL instructions below.
+   Select the mirror closest to you to download.
 
 4. Build libares.dev FIRST by opening up the project file named such.
 
