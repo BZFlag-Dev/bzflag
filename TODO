@@ -311,5 +311,36 @@ THESE NEED TO WAIT FOR THE NEXT PROTOCOL BREAKAGE
 
 * Bot should share the TCP connection with the normal tank player, and should be allowed to increase / decrease number of it run-time
 
+THESE ARE NOT REALY TIED TO ANY VERSION OR PROTOCOL BUT ARE GOOD IDEAS THAT WE WANT TO DO
+
+* Make a simple non froum registration page that is linked from the main web page
+
+* Have the installer ask if the user wants to register on install, and take them to the reg page.
+
+* Have the game know what servers are reg only, and help the user get reged, if they arn't.
+
+* Make the server list page have multiple tabs to seperate games out by , game type, bandwith, players, shots, quality,
+  and other factors.
+  
+* Create a system where server operators can apply to be come "prefered" servers if they meet a set of requirements.
+  These requirements should include, being a global registration server, use of the master ban list, allowing the 
+  global admin team to admin the server, use of a standard language filter file, and bandwith and uptime requirements.
+  In exchange these servers are listed on the default "prefered" servers tab in game. This provides a set of servers
+  for new users to start in, and where everyone follows a default set of rules.
+  
+* Create a tab for local servers ( lan games )
+
+* Create a tab for user defined "favorate" servers ( bookmarks ).
+
+* Create some sort of server "rating" system like the movies use, to let players know what to expect.
+  Provide some way to overide and controll it at a list server level, as well as make it so the client
+  can filter out servers with ratings higher then it wants.
+  
+* Make the MOTD message able to send out client upgrade messages, where the game client will ask the user
+  if they wish to have the client download and install the new client. Then use Curl to get the new installer,
+  run it with a paramater, that tells it to auto run the game when it's done. This can be a good way to force people 
+  to upgrade.
+
+
 See the Task Tracker on Sourceforge (http://sourceforge.net/pm/?group_id=3248)
 for more todo items and future planning endeavors.
