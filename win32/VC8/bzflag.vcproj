@@ -3046,6 +3046,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\src\bzflag\NewVersionMenu.cxx"
+					>
+				</File>
+				<File
 					RelativePath="..\..\src\bzflag\OptionsMenu.cxx"
 					>
 				</File>
@@ -3265,6 +3269,10 @@
 			</File>
 			<File
 				RelativePath="..\..\src\bzflag\motd.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzflag\NewVersionMenu.h"
 				>
 			</File>
 			<File

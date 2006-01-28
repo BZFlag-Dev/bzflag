@@ -54,6 +54,7 @@ public:
   void addFormData(const char *key, const char *value);
 
   bool getFileTime(time_t &t);
+  bool getFileSize(double &size);
 
   virtual void collectData(char *ptr, int len);
   virtual void finalization(char *data, unsigned int length, bool good);

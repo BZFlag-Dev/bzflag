@@ -336,11 +336,6 @@ THESE ARE NOT REALY TIED TO ANY VERSION OR PROTOCOL BUT ARE GOOD IDEAS THAT WE W
   Provide some way to overide and controll it at a list server level, as well as make it so the client
   can filter out servers with ratings higher then it wants.
   
-* Make the MOTD message able to send out client upgrade messages, where the game client will ask the user
-  if they wish to have the client download and install the new client. Then use Curl to get the new installer,
-  run it with a paramater, that tells it to auto run the game when it's done. This can be a good way to force people 
-  to upgrade.
-
 
 See the Task Tracker on Sourceforge (http://sourceforge.net/pm/?group_id=3248)
 for more todo items and future planning endeavors.

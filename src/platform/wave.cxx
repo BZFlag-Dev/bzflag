@@ -10,8 +10,8 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include "wave.h"
 #include "common.h"
+#include "wave.h"
 #include <stdio.h>
 #include <string.h>
 

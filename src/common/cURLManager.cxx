@@ -343,6 +343,17 @@ bool cURLManager::getFileTime(time_t &t)
   return true;
 }
 
+bool cURLManager::getFileSize(double &size)
+{
+  CURLcode result;
+  result = curl_easy_getinfo(easyHandle, CURLINFO_SIZE_DOWNLOAD, &size);
+  if (result) {
+    DEBUG1("CURLINFO_SIZE_DOWNLOAD error %d : %s\n", result, errorBuffer);
+    return false;
+  }
+  return true;
+}
+
 void cURLManager::setTimeCondition(timeCondition condition, time_t &t)
 {
   CURLcode result;

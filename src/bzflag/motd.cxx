@@ -24,9 +24,12 @@
 #include "TextUtils.h"
 #include "AnsiCodes.h"
 #include "version.h"
+#include "bzglob.h"
 
 // local implementation headers
 #include "playing.h"
+#include "NewVersionMenu.h"
+#include "HUDDialogStack.h"
 
 typedef struct {
   std::string title;
@@ -34,6 +37,8 @@ typedef struct {
   std::string text;
   std::string version;
 } MOTD_message;
+
+static NewVersionMenu* nvMenu;
 
 void MessageOfTheDay::finalization(char *_data, unsigned int length, bool good)
 {
@@ -56,6 +61,11 @@ void MessageOfTheDay::finalization(char *_data, unsigned int length, bool good)
 	msg.date    = lines[i++];
 	msg.text    = lines[i++];
 	msg.version = lines[i].substr(lines[i].find(':') + 2);
+	// prep for globbing
+	if (msg.version == "0.0")
+	  msg.version = "*";
+	else
+	  msg.version += "*";
 	messages.push_back(msg);
       }
     }
@@ -67,20 +77,23 @@ void MessageOfTheDay::finalization(char *_data, unsigned int length, bool good)
   } else {
     MOTD_message msg;
     msg.text    = "<not available>";
-    msg.version = "0.0";
+    msg.version = "*";
     messages.push_back(msg);
   }
 
-  std::vector<std::string> versions;
-  versions.push_back("0.0");
-  versions.push_back(getMajorMinorVersion());
-  versions.push_back(getMajorMinorRevVersion());
-
   std::vector<std::string> msgs;
   for (i = 0; i < messages.size(); ++i)
-    for (j = 0; j < versions.size(); ++j)
-      if (messages[i].version == versions[j])
+    if (glob_match(messages[i].version, getAppVersion())) {
+      if (messages[i].title.substr(0, 9) == "UPGRADE: ") {
+	// new version released.  handle appropriately.
+	std::string announce = messages[i].title.substr(9, messages[i].title.length() - 9);
+	nvMenu = new NewVersionMenu(announce, messages[i].text, messages[i].date);
+	HUDDialogStack::get()->push(nvMenu);
+      } else {
+	// standard MOTD
 	msgs.push_back(messages[i].text);
+      }
+    }
 
   controlPanel->addMessage(ColorStrings[UnderlineColor]
 			   + ColorStrings[WhiteColor]
@@ -88,6 +101,7 @@ void MessageOfTheDay::finalization(char *_data, unsigned int length, bool good)
   for (j = 0; j < msgs.size(); ++j)
     controlPanel->addMessage(ColorStrings[WhiteColor] + "* " + msgs[j]);
 }
+
 
 void MessageOfTheDay::getURL(const std::string URL)
 {

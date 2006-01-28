@@ -21,7 +21,7 @@
 #include "HUDuiControl.h"
 #include "HUDuiTypeIn.h"
 
-/** this class provides options for setting the gui
+/** this class provides options for audio
  */
 class AudioMenu : public HUDDialog {
 public:
