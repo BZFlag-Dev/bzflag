@@ -14,9 +14,9 @@
 #include "NewVersionMenu.h"
 
 /* system headers */
-#include <direct.h>
 #include <stdio.h>
 #ifdef WIN32
+#include <direct.h>
 #include <process.h>
 #include <errno.h>
 #endif
@@ -35,10 +35,14 @@
 #include "CommandsStandard.h"
 
 /* as platforms get added to the automatic upgrade system, update this */
-#define AUTOUPGRADE (WIN32)
+#if defined(WIN32)
+  #define AUTOUPGRADE 1
+#else
+  #define AUTOUPGRADE 0
+#endif
 
 NewVersionMenu::NewVersionMenu(std::string announce, std::string url, std::string date) :
-byteTransferred(0), cURLManager()
+cURLManager(), byteTransferred(0)
 {
 #if AUTOUPGRADE
   // prep for possible download
@@ -141,13 +145,12 @@ void NewVersionMenu::collectData(char* ptr, int len)
   cURLManager::collectData(ptr, len);
   byteTransferred += len;
   snprintf(buffer, 128, "Downloading update: %d/%d KB", byteTransferred/1024, (int)size/1024);
-  DEBUG1(buffer);
   ((HUDuiLabel*)status)->setString(buffer);
 }
 
 void NewVersionMenu::finalization(char *data, unsigned int length, bool good)
 {
-  if (good) {
+  if (good && data) {
     if (length) {
       // received update.  Now what to do with it?
 #ifdef WIN32
