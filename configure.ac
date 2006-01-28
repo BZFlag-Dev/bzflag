@@ -98,13 +98,13 @@ fi
 AC_PROG_LN_S
 
 # disabled shared libraries in order to prevent double-compilation
-# FIXME: necessary until the flags are used properly.
 AC_DISABLE_SHARED
 
-if test x$enable_shared != xno ; then
+AC_ARG_ENABLE(plugins, [  --enable-plugins          turn on compilation of plugins])
+if test x$enable_plugins != xno ; then
    AC_DEFINE(_USE_BZ_API, 1, [Enable plugins])
 fi
-AM_CONDITIONAL(BUILD_PLUGINS, test "x$enable_shared" != "xno")
+AM_CONDITIONAL(BUILD_PLUGINS, test "x$enable_plugins" != "xno")
 
 # libtool shouldn't be generated until after LD is set.
 # AC_PROG_LIBTOOL goes poof in libtool 1.9, but that's not very
@@ -120,8 +120,8 @@ if test $HASPOD2MAN = no; then
   AC_MSG_WARN([some man pages will not be generated])
 fi
 AM_CONDITIONAL(HASPOD2MAN, test $HASPOD2MAN = yes)
-AC_SUBST(AR)
 AC_CHECK_PROG(AR, ar, ar)
+AC_SUBST(AR)
 AC_SUBST(AR_FLAGS)
 
 AC_CHECK_LIB(z, compress, BUILDZLIB=no, BUILDZLIB=yes)
@@ -835,10 +835,15 @@ LIBDIR="\$(top_srcdir)/lib"
 AC_SUBST(LIBDIR)
 
 
-AC_CONFIG_FILES(bzflag.info
+if test x$enable_plugins != xno ; then
+	AC_CONFIG_SUBDIRS(plugins)
+fi
+
+AC_CONFIG_FILES(
 	BZFlag.xcode/Makefile
 	Dev-C++/Makefile
 	Makefile
+	bzflag.info
 	bzflag.lsm
 	bzflag.spec
 	data/Makefile
@@ -869,22 +874,6 @@ AC_CONFIG_FILES(bzflag.info
 	package/rpm/Makefile
 	package/win32/Makefile
 	package/win32/nsis/Makefile
-	plugins/Makefile
-	plugins/RogueGenocide/Makefile
-	plugins/SAMPLE_PLUGIN/Makefile
-	plugins/airspawn/Makefile
-	plugins/chathistory/Makefile
-	plugins/hiddenAdmin/Makefile
-	plugins/killall/Makefile
-	plugins/logDetail/Makefile
-	plugins/playHistoryTracker/Makefile
-	plugins/python/Makefile
-	plugins/shockwaveDeath/Makefile
-	plugins/vocaliser/Makefile
-	plugins/HoldTheFlag/Makefile
-	plugins/nagware/Makefile
-	plugins/doc/Makefile
-	plugins/vc71/Makefile
 	src/3D/Makefile
 	src/Makefile
 	src/bzadmin/Makefile
@@ -914,7 +903,8 @@ AC_CONFIG_FILES(bzflag.info
 	tools/modeltool/Makefile
 	tools/modeltool/vc71/Makefile
 	win32/Makefile
-	win32/VC71/Makefile)
+	win32/VC71/Makefile
+)
 AC_OUTPUT
 
 # use AC_MSG_RESULT instead of AC_MSG_NOTIFY to support old autoconf
