@@ -78,7 +78,31 @@ if [ $? != 0 ] ; then
     exit 1
 fi
 
+curdir="`pwd`"
+cd "$PATH_TO_HERE/.."
+echo "Running autogen.sh, please wait..."
+if [ -f autogen.sh ] ; then
+    echo "sh autogen.sh >/dev/null 2>&1"
+    sh autogen.sh >/dev/null 2>&1
+    if [ $? != 0 ] ; then
+	echo "ERROR: autogen.sh failed"
+	exit 1
+    fi
+fi
+
+echo "Running configure, please wait..."
+if [ -f configure ] ; then
+    echo "./configure --enable-plugins >/dev/null 2>&1"
+    ./configure --enable-plugins >/dev/null 2>&1
+    if [ $? != 0 ] ; then
+	echo "ERROR: configure failed"
+	exit 1
+    fi
+fi
+
+cd "$curdir"
 
 echo "---"
 echo "New plug-in \"$ARG1\" is ready.  A directory for your plug-in was created."
+echo "Get started coding here: $PATH_TO_HERE/$ARG1"
 echo ""
