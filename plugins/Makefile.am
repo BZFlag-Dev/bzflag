@@ -22,6 +22,12 @@ DIST_SUBDIRS = \
 	vc71
 
 EXTRA_DIST = \
+	AUTHORS \
+	COPYING \
+	ChangeLog \
+	INSTALL \
+	NEWS \
+	README \
 	api_notes \
 	newplug.sh
 
