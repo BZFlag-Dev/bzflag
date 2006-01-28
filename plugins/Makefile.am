@@ -1,3 +1,6 @@
+AUTOMAKE_OPTIONS = 1.6 dist-zip dist-bzip2
+ACLOCAL_AMFLAGS = -I ../m4
+
 SUBDIRS = \
 	RogueGenocide \
 	SAMPLE_PLUGIN \
@@ -14,7 +17,7 @@ SUBDIRS = \
 	vocaliser
 
 DIST_SUBDIRS = \
-	$(SUBDIRS)	\
+	$(SUBDIRS) \
 	doc \
 	vc71
 
@@ -23,4 +26,5 @@ EXTRA_DIST = \
 	newplug.sh
 
 MAINTAINERCLEANFILES =	\
+	configure \
 	Makefile.in
