@@ -2,7 +2,7 @@ Someone needs to write a better README.
 
 Run the new_plug.sh script to start a new plugin:
 
-sh new_plug.sh
+sh newplug.sh
 
 
 NOTES on yon API
