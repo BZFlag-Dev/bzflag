@@ -10,6 +10,8 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+#include "common.h"
+
 /* interface header */
 #include "DisplayMenu.h"
 
@@ -93,6 +95,34 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
   options->push_back(std::string("Linear Mipmap Nearest"));
   options->push_back(std::string("Nearest Mipmap Linear"));
   options->push_back(std::string("Linear Mipmap Linear"));
+  option->update();
+  listHUD.push_back(option);
+
+  option = new HUDuiList;
+  option->setFontFace(fontFace);
+  option->setLabel("Anisotropic:");
+  option->setCallback(callback, (void*)"A");
+  options = &option->getList();
+#ifdef HAVE_GLEW
+  if (GLEW_EXT_texture_filter_anisotropic) {
+    static GLint maxAnisotropy = 1;
+    glGetIntegerv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &maxAnisotropy);
+    if (maxAnisotropy > 1) {
+      options->push_back(std::string("Off"));
+      for (int i = 1; i < maxAnisotropy; i++) {
+        char buffer[16];
+        snprintf(buffer, 16, "%i/%i", i + 1, maxAnisotropy);
+        options->push_back(std::string(buffer));
+      }
+    } else {
+      options->push_back(std::string("Unavailable"));
+    }
+  } else {
+    options->push_back(std::string("Unavailable"));
+  }
+#else
+  options->push_back(std::string("Unavailable"));
+#endif  
   option->update();
   listHUD.push_back(option);
 
@@ -278,6 +308,9 @@ void			DisplayMenu::resize(int _width, int _height)
       ((HUDuiList*)listHUD[i++])->setIndex(0);
     }
     ((HUDuiList*)listHUD[i++])->setIndex(tm.getMaxFilter());
+    int aniso = BZDB.evalInt("aniso");
+    aniso = (aniso < 1) ? 1 : aniso;
+    ((HUDuiList*)listHUD[i++])->setIndex(BZDB.evalInt("aniso") - 1);
     ((HUDuiList*)listHUD[i++])->setIndex(renderer->useQuality());
     int shadowVal = 0;
     if (BZDBCache::shadows) {
@@ -291,7 +324,7 @@ void			DisplayMenu::resize(int _width, int _height)
     if (debugLevel > 0) {
 #endif
       ((HUDuiList*)listHUD[i++])->setIndex(renderer->useHiddenLine() ? 1 : 0);
-      ((HUDuiList*)listHUD[i++])->setIndex(renderer->useWireframe() ? 1 : 0);
+      ((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("wireframe") ? 1 : 0);
       ((HUDuiList*)listHUD[i++])->setIndex(renderer->useDepthComplexity() ? 1
 					   : 0);
       ((HUDuiList*)listHUD[i++])->setIndex(BZDBCache::showCullingGrid ? 1 : 0);
@@ -358,6 +391,14 @@ void			DisplayMenu::callback(HUDuiControl* w, void* data) {
     sceneRenderer->notifyStyleChange();
     break;
   }
+  case 'A': {
+    int aniso = list->getIndex() + 1;
+    BZDB.setInt("aniso", aniso);
+    TextureManager& tm = TextureManager::instance();
+    tm.setMaxFilter(tm.getMaxFilter());
+    sceneRenderer->notifyStyleChange();
+    break;
+  }
   case '6':
     sceneRenderer->setQuality(list->getIndex());
     if (list->getIndex() > 3) {
@@ -380,7 +421,7 @@ void			DisplayMenu::callback(HUDuiControl* w, void* data) {
     sceneRenderer->setHiddenLine(list->getIndex() != 0);
     break;
   case 'b':
-    sceneRenderer->setWireframe(list->getIndex() != 0);
+    BZDB.setBool("wireframe", (list->getIndex() != 0));
     break;
   case 'c':
     sceneRenderer->setDepthComplexity(list->getIndex() != 0);

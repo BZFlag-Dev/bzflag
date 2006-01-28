@@ -430,18 +430,18 @@ AC_SUBST(GLIBS)
 # Check for the GLEW library (GL Extension Wrangler)
 AC_MSG_CHECKING([for GLEW library])
 tmpLIBS=$LIBS
-GLEWLIBS="-lGLEW"
-LIBS=$GLEWLIBS
+GLEW_LIBS="-lGLEW"
+LIBS=$GLEW_LIBS
 AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <GL/glew.h>]],
                                 [[glewInit()]])],
                [glew_check="yes"], [glew_check="no"])
 if test $glew_check = "yes"; then
   AC_DEFINE(HAVE_GLEW, 1, [GLEW library is available])
 else
-  GLEWLIBS=""
+  GLEW_LIBS=""
 fi
 AC_MSG_RESULT([$glew_check])
-AC_SUBST(GLEWLIBS)
+AC_SUBST(GLEW_LIBS)
 LIBS=$tmpLIBS
 
 case $host_os in
@@ -562,6 +562,23 @@ if test x$with_SDL = xyes; then
   AC_DEFINE(HAVE_SDL, 1, [Using SDL])
 fi
 AM_CONDITIONAL(HAVE_SDL, test x$with_SDL = xyes)
+
+# Check for the SDL_image library
+AC_MSG_CHECKING([for SDL_image library])
+tmpLIBS=$LIBS
+SDL_IMAGE_LIBS="-lSDL_image"
+LIBS=$SDL_IMAGE_LIBS
+AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <SDL/SDL_image.h>]],
+                                [[IMG_Load(NULL)]])],
+               [sdl_image_check="yes"], [sdl_image_check="no"])
+if test $sdl_image_check = "yes"; then
+  AC_DEFINE(HAVE_SDL_IMAGE, 1, [SDL_image library is available])
+else
+  SDL_IMAGE_LIBS=""
+fi
+AC_MSG_RESULT([$sdl_image_check])
+AC_SUBST(SDL_IMAGE_LIBS)
+LIBS=$tmpLIBS
 
 AC_ARG_ENABLE(debug, [  --enable-debug          turn on debugging])
 AM_CONDITIONAL(DEBUG, test x$enable_debug = xyes)
@@ -865,6 +882,7 @@ AC_CONFIG_FILES(bzflag.info
 	plugins/shockwaveDeath/Makefile
 	plugins/vocaliser/Makefile
 	plugins/HoldTheFlag/Makefile
+	plugins/nagware/Makefile
 	plugins/doc/Makefile
 	plugins/vc71/Makefile
 	src/3D/Makefile

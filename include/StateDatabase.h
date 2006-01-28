@@ -200,6 +200,7 @@ public:
   static const std::string	BZDB_AGILITYADVEL;
   static const std::string	BZDB_AGILITYTIMEWINDOW;
   static const std::string	BZDB_AGILITYVELDELTA;
+  static const std::string	BZDB_AMBIENTLIGHT;
   static const std::string	BZDB_ANGLETOLERANCE;
   static const std::string	BZDB_ANGULARAD;
   static const std::string	BZDB_AVENUESIZE;

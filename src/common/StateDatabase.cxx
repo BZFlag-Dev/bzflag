@@ -83,6 +83,7 @@ StateDatabase* Singleton<StateDatabase>::_instance = (StateDatabase*)0;
 const std::string StateDatabase::BZDB_AGILITYADVEL	= std::string("_agilityAdVel");
 const std::string StateDatabase::BZDB_AGILITYTIMEWINDOW	= std::string("_agilityTimeWindow");
 const std::string StateDatabase::BZDB_AGILITYVELDELTA	= std::string("_agilityVelDelta");
+const std::string StateDatabase::BZDB_AMBIENTLIGHT	= std::string("_ambientLight");
 const std::string StateDatabase::BZDB_ANGLETOLERANCE    = std::string("_angleTolerance");
 const std::string StateDatabase::BZDB_ANGULARAD		= std::string("_angularAd");
 const std::string StateDatabase::BZDB_AVENUESIZE	= std::string("_avenueSize");

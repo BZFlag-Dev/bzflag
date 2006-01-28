@@ -99,6 +99,7 @@ DefaultDBItem	defaultDBItems[] = {
   { "radarLodScale",		"1.0",			true,	StateDatabase::ReadWrite,	NULL },
   { "stencilShadows",		"0",			true,	StateDatabase::ReadWrite,	NULL },
   { "shadowAlpha",		"0.5",			true,	StateDatabase::ReadWrite,	NULL },
+  { "aniso",			"1",			true,	StateDatabase::ReadWrite,	NULL },
 
   // hidden graphics rendering params
   { "useDrawInfo",		"1",			true,	StateDatabase::ReadWrite,	NULL },

@@ -26,12 +26,15 @@
 		#define BZF_API __declspec( dllimport )
 	#endif
 	#define BZF_PLUGIN_CALL
+	#ifndef strcasecmp
+		#define strcasecmp stricmp
+	#endif
 #else
 	#define BZF_API
 	#define BZF_PLUGIN_CALL extern "C"
 #endif
 
-#define BZ_API_VERSION	14
+#define BZ_API_VERSION	15
 
 #define BZ_GET_PLUGIN_VERSION BZF_PLUGIN_CALL int bz_GetVersion ( void ) { return BZ_API_VERSION;}
 
@@ -407,6 +410,10 @@ public:
 	bz_eTeamType team;
 
 	bzApiString callsign;
+	bzApiString email;
+	bool verified;
+	bzApiString globalUser;
+	bzApiString ipAddress;
 	bzApiString reason;
 
 	double time;
@@ -820,6 +827,8 @@ public:
 		admin = false;
 		op=false;
 
+		lag = 0;
+
 		wins = 0;
 		losses = 0;
 	}
@@ -852,6 +861,8 @@ public:
 	bool admin;
 	bool op;
 	bzAPIStringList groups;
+
+	int lag;
 
 	int wins;
 	int losses;
@@ -926,6 +937,19 @@ BZF_API int bz_getDebugLevel ( void );
 // admin
 BZF_API bool bz_kickUser ( int playerIndex, const char* reason, bool notify );
 BZF_API bool bz_IPBanUser ( int playerIndex, const char* ip, int time, const char* reason );
+BZF_API bool bz_IPUnbanUser ( const char* ip );
+BZF_API std::vector<std::string> bz_getReports( void );
+
+// lagwarn
+BZF_API int bz_getLagWarn( void );
+BZF_API bool bz_setLagWarn( int lagwarn );
+
+// polls
+BZF_API bool bz_pollVeto( void );
+
+// help
+BZF_API const std::vector<std::string> &bz_getHelpTopics( void );
+BZF_API const std::vector<std::string> *bz_getHelpTopic( std::string name );
 
 // custom commands
 

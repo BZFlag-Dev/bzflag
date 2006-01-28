@@ -2282,7 +2282,6 @@ bool ReloadCommand::operator() (const char	 *,
   sendMessage(ServerPlayer, t, "Databases reloaded");
 
   // Validate all of the current players
-
   std::string reason;
   char kickmessage[MessageLen];
 
@@ -3159,7 +3158,7 @@ bool ModCountCommand::operator() (const char	*message,
     return true;
   }
 	
-	std::string messageText = &message[9];
+  std::string messageText = &message[9];
 
   // skip any leading whitespace
   while ((messageStart < messageText.size()) &&
@@ -3171,8 +3170,8 @@ bool ModCountCommand::operator() (const char	*message,
     sendMessage(ServerPlayer, t, "Usage: /modcount {+|-} SECONDS");
     return true;
   }
-	if (!countdownActive && countdownDelay <= 0) {
-		char reply[MessageLen] = {0};
+  if (!countdownActive && countdownDelay <= 0) {
+    char reply[MessageLen] = {0};
     snprintf(reply, MessageLen, "%s, there is no current countdown in progress", playerData->player.getCallSign());
     sendMessage(ServerPlayer, t, reply);
     return true;
@@ -3181,8 +3180,8 @@ bool ModCountCommand::operator() (const char	*message,
   messageText.erase(0, --messageStart);
   clOptions->addedTime += atof((messageText.c_str())); //remember to add the time
   
-	if (countdownDelay > 0) { //we are currently counting down to start
-		char reply[MessageLen] = {0};
+  if (countdownDelay > 0) { //we are currently counting down to start
+    char reply[MessageLen] = {0};
     snprintf(reply, MessageLen, "%s, the countdown will be adjusted by %f when the match starts",
 						 playerData->player.getCallSign(), clOptions->addedTime);
     sendMessage(ServerPlayer, t, reply);
@@ -3249,10 +3248,10 @@ void parseServerCommand(const char *message, int t)
     bzApiString APIMessage;
 	bzAPIStringList	APIParams;
 
-    for ( unsigned int i = 1; i < params.size(); i++)
+    for (unsigned int i = 1; i < params.size(); i++)
       APIParams.push_back(params[i]);
 
-    if ( strlen(message+1) > params[0].size())
+    if (strlen(message+1) > params[0].size())
       APIMessage = (message+params[0].size()+2);
 
     // see if we have a registerd custom command and call it
