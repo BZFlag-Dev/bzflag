@@ -1,6 +1,8 @@
 recent bugs
 ------------
 
+- OO stopped working recently 
+
 - idbans do not respect the antiban permission
 
 - idbans report the wrong time remaining on a idbanlist
