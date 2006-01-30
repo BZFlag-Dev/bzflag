@@ -14,7 +14,7 @@ RETVAL=0
 prog="bzfs"
 
 # Set this path to the place where you keep the bzfsd script
-bzfsd_path=/usr/local/bin/bzfsd
+bzfsd_path=/usr/local/bin/bzfs
 
 # Set this to your bzfs options
 bzfsopts="-conf /etc/bzfs.conf"
