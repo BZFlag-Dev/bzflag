@@ -17,7 +17,7 @@
 #include "common.h"
 
 // interface header
-#include "template.h"
+#include "Template.h"
 
 // system headers
 
