@@ -990,7 +990,7 @@ VERIFIED group.
 
 In addition, there are global groups available that persist
 network\-wide.  Users that register their callsigns on the BZFlag
-website at http://my.B ZFlag.org/bb/ have the ability to globally
+website at http://my.BZFlag.org/bb/ have the ability to globally
 authenticate by providing a password from within the client.  When
 they authenticate, bzfs will ask the list server if they belong to any
 of the groups listed in your group database file that are not prefixed
