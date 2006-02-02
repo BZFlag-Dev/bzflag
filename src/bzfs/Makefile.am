@@ -21,6 +21,8 @@ bzfs_SOURCES = \
 	Authentication.h \
 	BanCommands.cxx \
 	bzfsAPI.cxx \
+	bzfsMessages.h \
+	bzfsMessages.cxx \
 	BZWError.cxx \
 	BZWError.h \
 	BZWReader.cxx \

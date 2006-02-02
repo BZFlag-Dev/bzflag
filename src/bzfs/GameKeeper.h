@@ -160,6 +160,8 @@ public:
     Score	      score;
     // Authentication
     Authentication    authentication;
+	// logic class for server side players
+	bz_ServerSidePlayerHandler	*playerHandler;		
 
   private:
     static Player    *playerList[PlayerSlot];

@@ -48,6 +48,7 @@ GameKeeper::Player::Player(int _playerIndex,
   playerIndex(_playerIndex), closed(false), clientCallback(_clientCallback),
   needThisHostbanChecked(false), idFlag(-1)
 {
+  playerHandler = NULL;
   playerList[playerIndex] = this;
 
   lastState.order  = 0;

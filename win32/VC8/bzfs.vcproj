@@ -2402,6 +2402,16 @@
 				>
 			</File>
 		</Filter>
+		<Filter
+			Name="NetMessages"
+			Filter="">
+			<File
+				RelativePath="..\..\src\bzfs\bzfsMessages.cxx">
+			</File>
+			<File
+				RelativePath="..\..\src\bzfs\bzfsMessages.h">
+			</File>
+		</Filter>
 	</Files>
 	<Globals>
 	</Globals>

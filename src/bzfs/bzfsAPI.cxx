@@ -1950,6 +1950,16 @@ BZF_API bz_eTeamType bz_checkBaseAtPoint ( float pos[3] )
 	return convertTeam(whoseBase(pos[0],pos[1],pos[2]));
 }
 
+int bz_addServerSidePlayer ( bz_ServerSidePlayerHandler *handler )
+{
+	return -1;
+}
+
+bool bz_removeServerSidePlayer ( int player, bz_ServerSidePlayerHandler *handler )
+{
+	return false;
+}
+
 
 // Local Variables: ***
 // mode:C++ ***

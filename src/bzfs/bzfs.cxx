@@ -47,6 +47,7 @@
 #include "Filter.h"
 #include "WorldEventManager.h"
 #include "WorldGenerators.h"
+#include "bzfsMessages.h"
 
 // common implementation headers
 #include "Obstacle.h"
@@ -2173,7 +2174,10 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
     buf	= nboPackUShort(buf, 1);
     buf	= nboPackUShort(buf, MsgSuperKill);
     buf	= nboPackUByte(buf, uint8_t(playerIndex));
-    playerData->netHandler->pwrite(sMsgBuf, 5);
+	if (playerData->playerHandler)
+	  playerData->playerHandler->removed();
+	else
+	  playerData->netHandler->pwrite(sMsgBuf, 5);
   }
 
 
@@ -2204,11 +2208,8 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
       rejoinList.add (playerIndex);
     }
 
-    // tell everyone player has left
-    void *buf, *bufStart = getDirectMessageBuffer();
-    buf = nboPackUByte(bufStart, playerIndex);
-    broadcastMessage(MsgRemovePlayer, (char*)buf-(char*)bufStart, bufStart);
-
+	sendRemovePlayerMessage(playerIndex);
+ 
     // decrease team size
     int teamNum = int(playerData->player.getTeam());
     --team[teamNum].team.size;

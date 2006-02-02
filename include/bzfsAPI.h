@@ -1172,6 +1172,20 @@ BZF_API void bz_gameOver(int,int = -1);
 // info about the world
 BZF_API bz_eTeamType bz_checkBaseAtPoint ( float pos[3] );
 
+// server side player API
+
+class bz_ServerSidePlayerHandler
+{
+public:
+	virtual ~bz_ServerSidePlayerHandler(){};
+
+	virtual void removed ( void ) = 0;
+	virtual void playerRemoved ( int playerID ) = 0;
+};
+
+int bz_addServerSidePlayer ( bz_ServerSidePlayerHandler *handler );
+bool bz_removeServerSidePlayer ( int player, bz_ServerSidePlayerHandler *handler ); // you have to pass int he handler to ensure you "own" the player
+
 #endif //_BZFS_API_H_
 
 // Local Variables: ***
