@@ -614,7 +614,7 @@ BZF_API bool bz_removeEvent ( bz_eEventType eventType, bz_EventHandler* eventHan
 	return true;
 }
 
-BZF_API bool bz_updatePlayerData ( bz_PlayerRecord *playerRecord )
+BZF_API bool bz_updatePlayerData ( bz_BasePlayerRecord *playerRecord )
 {
 	if (!playerRecord)
 		return false;
@@ -737,11 +737,11 @@ BZF_API bool bz_getPlayerIndexList ( bzAPIIntList *playerList )
 	return playerList->size() > 0;
 }
 
-BZF_API bz_PlayerRecord * bz_getPlayerByIndex ( int index )
+BZF_API bz_BasePlayerRecord * bz_getPlayerByIndex ( int index )
 {
 	GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(index);
 
-	bz_PlayerRecord *playerRecord = new bz_PlayerRecord;
+	bz_BasePlayerRecord *playerRecord = new bz_BasePlayerRecord;
 
 	if (!player || !playerRecord)
 		return NULL;
@@ -760,7 +760,7 @@ BZF_API bz_PlayerRecord * bz_getPlayerByIndex ( int index )
 	return playerRecord;
 }
 
-BZF_API  bool bz_freePlayerRecord( bz_PlayerRecord *playerRecord )
+BZF_API  bool bz_freePlayerRecord( bz_BasePlayerRecord *playerRecord )
 {
 	if (playerRecord)
 		delete (playerRecord);
@@ -1631,7 +1631,7 @@ BZF_API void bz_updateListServer ( void )
 typedef struct
 {
 	std::string url;
-	bz_URLHandler	*handler;
+	bz_BaseURLHandler	*handler;
 	std::string postData;
 }trURLJob;
 
@@ -1647,7 +1647,7 @@ public:
 	{
 	}
 
-	void addJob ( const char* URL, bz_URLHandler *handler, const char* _postData )
+	void addJob ( const char* URL, bz_BaseURLHandler *handler, const char* _postData )
 	{
 		if (!URL)
 			return;
@@ -1738,7 +1738,7 @@ protected:
 
 BZ_APIURLManager	*bz_apiURLManager = NULL;
 
-BZF_API bool bz_addURLJob ( const char* URL, bz_URLHandler* handler, const char* postData )
+BZF_API bool bz_addURLJob ( const char* URL, bz_BaseURLHandler* handler, const char* postData )
 {
 	if (!URL)
 		return false;

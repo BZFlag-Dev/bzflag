@@ -911,7 +911,7 @@ bool PasswordCommand::operator() (const char	 *message,
       sendPlayerInfo();
       sendMessage(ServerPlayer, t, "You are now an administrator!");
       // Notify plugins of player authentication change
-      bz_PlayerAuthEventData commandData;
+      bz_PlayerAuthEventData_V1 commandData;
       commandData.playerID = t;
       worldEventManager.callEvents(bz_ePlayerAuthEvent, &commandData);
     } else {
@@ -1804,7 +1804,7 @@ bool IdentifyCommand::operator() (const char	 *message,
 	sendIPUpdate(t, -1);
 	sendPlayerInfo();
 	// Notify plugins of player authentication change
-	bz_PlayerAuthEventData commandData;
+	bz_PlayerAuthEventData_V1 commandData;
 	commandData.playerID = t;
 	worldEventManager.callEvents(bz_ePlayerAuthEvent, &commandData);
 
@@ -3220,7 +3220,7 @@ void parseServerCommand(const char *message, int t)
     return;
 
   // Notify plugins of slash command execution request
-  bz_SlashCommandEventData commandData;
+  bz_SlashCommandEventData_V1 commandData;
   commandData.from = t;
   commandData.message = message;
   commandData.time = TimeKeeper::getCurrent().getSeconds();
@@ -3262,7 +3262,7 @@ void parseServerCommand(const char *message, int t)
     }
 
     // lets see if anyone wants to handle the unhandled event
-    bz_UnknownSlashCommandEventData commandData1;
+    bz_UnknownSlashCommandEventData_V1 commandData1;
     commandData1.from = t;
     commandData1.message = message;
     commandData1.time = TimeKeeper::getCurrent().getSeconds();

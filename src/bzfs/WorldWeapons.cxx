@@ -236,7 +236,7 @@ void WorldWeaponGlobalEventHandler::process (bz_EventData *eventData)
   if (!eventData || eventData->eventType != bz_eCaptureEvent)
     return;
 
-  bz_CTFCaptureEventData *capEvent = (bz_CTFCaptureEventData*)eventData;
+  bz_CTFCaptureEventData_V1 *capEvent = (bz_CTFCaptureEventData_V1*)eventData;
 
   if ( capEvent->teamCapped != team )
 	  return;

@@ -113,9 +113,9 @@ bool load1Plugin ( std::string plugin, std::string config )
 	HINSTANCE	hLib = LoadLibrary(realPluginName.c_str());
 	if (hLib)
 	{
-		if (getPluginVersion(hLib) < BZ_API_VERSION)
+		if (getPluginVersion(hLib) > BZ_API_VERSION)
 		{
-			DEBUG1("Plugin:%s found but expects an older API version (%d), upgrade it\n",plugin.c_str(),getPluginVersion(hLib));
+			DEBUG1("Plugin:%s found but expects an newer API version (%d), upgrade your bzfs\n",plugin.c_str(),getPluginVersion(hLib));
 			FreeLibrary(hLib);
 			return false;
 		}
@@ -303,12 +303,12 @@ public:
 	virtual ~DynamicPluginCommands(){};
 	virtual bool handle ( int playerID, bzApiString _command, bzApiString _message, bzAPIStringList *params )
 	{
-		bz_PlayerRecord	record;
+		bz_BasePlayerRecord	record;
 
 		std::string command = _command.c_str();
 		std::string message = _message.c_str();
 
-		bz_PlayerRecord	*p = bz_getPlayerByIndex(playerID);
+		bz_BasePlayerRecord	*p = bz_getPlayerByIndex(playerID);
 		if (!p)
 			return false;
 

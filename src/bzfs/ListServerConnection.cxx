@@ -325,7 +325,7 @@ void ListServerLink::sendQueuedMessages()
   if (nextMessageType == ListServerLink::ADD) {
     DEBUG3("Queuing ADD message to list server\n");
 
-    bz_ListServerUpdateEvent	updateEvent;
+    bz_ListServerUpdateEvent_V1	updateEvent;
     updateEvent.address = publicizeAddress;
     updateEvent.description = publicizeDescription;
     updateEvent.groups = advertiseGroups;

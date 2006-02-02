@@ -34,7 +34,7 @@
 	#define BZF_PLUGIN_CALL extern "C"
 #endif
 
-#define BZ_API_VERSION	15
+#define BZ_API_VERSION	1
 
 #define BZ_GET_PLUGIN_VERSION BZF_PLUGIN_CALL int bz_GetVersion ( void ) { return BZ_API_VERSION;}
 
@@ -288,26 +288,33 @@ protected:
  BZF_API void bz_deleteStringList( bzAPIStringList * l );
 
 // event data types
-class bz_EventData
+class BZF_API bz_EventData
 {
 public:
-	bz_EventData(){eventType = bz_eNullEvent;}
+	bz_EventData()
+	{
+		version = 1;
+		eventType = bz_eNullEvent;
+	}
 	virtual ~bz_EventData(){};
+	virtual void update (){};
 
+	int				version;
 	bz_eEventType	eventType;
 };
 
-class bz_CTFCaptureEventData : public bz_EventData
+class BZF_API bz_CTFCaptureEventData_V1 : public bz_EventData
 {
 public:
-	bz_CTFCaptureEventData()
+	bz_CTFCaptureEventData_V1() : bz_EventData()
 	{
 		eventType = bz_eCaptureEvent;
 		teamCapped = eNoTeam;
 		teamCapping = eNoTeam;
 		playerCapping = -1;
 	}
-	virtual ~bz_CTFCaptureEventData(){};
+	virtual ~bz_CTFCaptureEventData_V1(){};
+	virtual void update (){bz_EventData::update();}
 
 	bz_eTeamType teamCapped;
 	bz_eTeamType teamCapping;
@@ -318,10 +325,10 @@ public:
 	double time;
 };
 
-class bz_PlayerDieEventData : public bz_EventData
+class BZF_API bz_PlayerDieEventData_V1 : public bz_EventData
 {
 public:
-	bz_PlayerDieEventData()
+	bz_PlayerDieEventData_V1() : bz_EventData()
 	{
 		eventType = bz_ePlayerDieEvent;
 		playerID = -1;
@@ -333,7 +340,8 @@ public:
 		rot = 0.0f;
 		time = 0.0;
 	}
-	virtual ~bz_PlayerDieEventData(){};
+	virtual ~bz_PlayerDieEventData_V1(){};
+	virtual void update (){bz_EventData::update();}
 
 	int playerID;
 	bz_eTeamType team;
@@ -346,10 +354,10 @@ public:
 	double time;
 };
 
-class bz_PlayerSpawnEventData : public bz_EventData
+class BZF_API bz_PlayerSpawnEventData_V1 : public bz_EventData
 {
 public:
-	bz_PlayerSpawnEventData()
+	bz_PlayerSpawnEventData_V1() : bz_EventData()
 	{
 		eventType = bz_ePlayerSpawnEvent;
 		playerID = -1;
@@ -360,7 +368,8 @@ public:
 		time = 0.0;
 	}
 
-	virtual ~bz_PlayerSpawnEventData(){};
+	virtual ~bz_PlayerSpawnEventData_V1(){};
+	virtual void update (){bz_EventData::update();}
 
 	int playerID;
 	bz_eTeamType team;
@@ -370,10 +379,10 @@ public:
 	double time;
 };
 
-class bz_ChatEventData : public bz_EventData
+class BZF_API bz_ChatEventData_V1 : public bz_EventData
 {
 public:
-	bz_ChatEventData()
+	bz_ChatEventData_V1() : bz_EventData()
 	{
 		eventType = bz_eChatMessageEvent;
 
@@ -383,7 +392,8 @@ public:
 		team = eNoTeam;
 	}
 
-	virtual ~bz_ChatEventData(){};
+	virtual ~bz_ChatEventData_V1(){};
+	virtual void update (){bz_EventData::update();}
 
 	int from;
 	int to;
@@ -393,10 +403,10 @@ public:
 	double time;
 };
 
-class bz_PlayerJoinPartEventData : public bz_EventData
+class BZF_API bz_PlayerJoinPartEventData_V1 : public bz_EventData
 {
 public:
-	bz_PlayerJoinPartEventData()
+	bz_PlayerJoinPartEventData_V1() : bz_EventData()
 	{
 		eventType = bz_ePlayerJoinEvent;
 
@@ -404,7 +414,8 @@ public:
 		team = eNoTeam;
 		time = 0.0;
 	}
-	virtual ~bz_PlayerJoinPartEventData(){};
+	virtual ~bz_PlayerJoinPartEventData_V1(){};
+	virtual void update (){bz_EventData::update();}
 
 	int playerID;
 	bz_eTeamType team;
@@ -419,10 +430,10 @@ public:
 	double time;
 };
 
-class bz_UnknownSlashCommandEventData : public bz_EventData
+class BZF_API bz_UnknownSlashCommandEventData_V1 : public bz_EventData
 {
 public:
-	bz_UnknownSlashCommandEventData()
+	bz_UnknownSlashCommandEventData_V1() : bz_EventData()
 	{
 		eventType = bz_eUnknownSlashCommand;
 		from = -1;
@@ -430,7 +441,8 @@ public:
 		time = 0;
 	}
 
-	virtual ~bz_UnknownSlashCommandEventData(){};
+	virtual ~bz_UnknownSlashCommandEventData_V1(){};
+	virtual void update (){bz_EventData::update();}
 
 	int from;
 
@@ -440,10 +452,10 @@ public:
 	double time;
 };
 
-class  bz_GetPlayerSpawnPosEventData : public bz_EventData
+class BZF_API bz_GetPlayerSpawnPosEventData_V1 : public bz_EventData
 {
 public:
-	bz_GetPlayerSpawnPosEventData()
+	bz_GetPlayerSpawnPosEventData_V1() : bz_EventData()
 	{
 		eventType = bz_eGetPlayerSpawnPosEvent;
 		playerID = -1;
@@ -456,7 +468,8 @@ public:
 		time = 0.0;
 	}
 
-	virtual ~bz_GetPlayerSpawnPosEventData(){};
+	virtual ~bz_GetPlayerSpawnPosEventData_V1(){};
+	virtual void update (){bz_EventData::update();}
 
 	int playerID;
 	bz_eTeamType team;
@@ -468,10 +481,10 @@ public:
 	double time;
 };
 
-class bz_AllowPlayerEventData : public bz_EventData
+class BZF_API bz_AllowPlayerEventData_V1 : public bz_EventData
 {
 public:
-	bz_AllowPlayerEventData()
+	bz_AllowPlayerEventData_V1() : bz_EventData()
 	{
 		eventType = bz_eAllowPlayer;
 		playerID = -1;
@@ -479,7 +492,8 @@ public:
 		time = 0.0;
 	}
 
-	virtual ~bz_AllowPlayerEventData(){};
+	virtual ~bz_AllowPlayerEventData_V1(){};
+	virtual void update (){bz_EventData::update();}
 
 	int playerID;
 	bzApiString callsign;
@@ -492,30 +506,32 @@ public:
 	double time;
 };
 
-class bz_TickEventData : public bz_EventData
+class BZF_API bz_TickEventData_V1 : public bz_EventData
 {
 public:
-	bz_TickEventData()
+	bz_TickEventData_V1() : bz_EventData()
 	{
 		eventType = bz_eTickEvent;
 		time = 0.0;
 	}
-	virtual ~bz_TickEventData(){};
+	virtual ~bz_TickEventData_V1(){};
+	virtual void update (){bz_EventData::update();}
 
 	double time;
 };
 
-class bz_GenerateWorldEventData : public bz_EventData
+class BZF_API bz_GenerateWorldEventData_V1 : public bz_EventData
 {
 public:
-	bz_GenerateWorldEventData()
+	bz_GenerateWorldEventData_V1() : bz_EventData()
 	{
 		eventType = bz_eGenerateWorldEvent;
 		handled = false;
 		ctf = false;
 		time = 0.0;
 	}
-	virtual ~bz_GenerateWorldEventData(){};
+	virtual ~bz_GenerateWorldEventData_V1(){};
+	virtual void update (){bz_EventData::update();}
 
 	bool handled;
 	bool ctf;
@@ -523,10 +539,10 @@ public:
 	double time;
 };
 
-class bz_GetPlayerInfoEventData : public bz_EventData
+class BZF_API bz_GetPlayerInfoEventData_V1 : public bz_EventData
 {
 public:
-	bz_GetPlayerInfoEventData()
+	bz_GetPlayerInfoEventData_V1() : bz_EventData()
 	{
 		eventType = bz_eGetPlayerInfoEvent;
 		playerID = -1;
@@ -536,7 +552,8 @@ public:
 		registered = false;
 		time = 0.0;
 	}
-	virtual ~bz_GetPlayerInfoEventData(){};
+	virtual ~bz_GetPlayerInfoEventData_V1(){};
+	virtual void update (){bz_EventData::update();}
 
 	int playerID;
 	bzApiString callsign;
@@ -550,17 +567,17 @@ public:
 	double time;
 };
 
-class bz_GetAutoTeamEventData : public bz_EventData
+class BZF_API bz_GetAutoTeamEventData_V1 : public bz_EventData
 {
 public:
-	bz_GetAutoTeamEventData()
+	bz_GetAutoTeamEventData_V1() : bz_EventData()
 	{
 		playeID = -1;
 		team = eNoTeam;
 		handled = false;
 	}
-
-	virtual ~bz_GetAutoTeamEventData(){};
+	virtual ~bz_GetAutoTeamEventData_V1(){};
+	virtual void update (){bz_EventData::update();}
 
 	int playeID;
 	bzApiString callsign;
@@ -569,10 +586,10 @@ public:
 	bool handled;
 };
 
-class  bz_AllowSpawnData : public bz_EventData
+class BZF_API bz_AllowSpawnData_V1 : public bz_EventData
 {
 public:
-	bz_AllowSpawnData()
+	bz_AllowSpawnData_V1() : bz_EventData()
 	{
 		eventType = bz_eAllowSpawn;
 		playerID = -1;
@@ -584,7 +601,8 @@ public:
 		time = 0.0;
 	}
 
-	virtual ~bz_AllowSpawnData(){};
+	virtual ~bz_AllowSpawnData_V1(){};
+	virtual void update (){bz_EventData::update();}
 
 	int playerID;
 	bz_eTeamType team;
@@ -594,17 +612,18 @@ public:
 	double time;
 };
 
-class  bz_ListServerUpdateEvent : public bz_EventData
+class BZF_API bz_ListServerUpdateEvent_V1 : public bz_EventData
 {
 public:
-	bz_ListServerUpdateEvent()
+	bz_ListServerUpdateEvent_V1() : bz_EventData()
 	{
 		eventType = bz_eListServerUpdateEvent;
 		handled = false;
 		time = 0.0;
 	}
 
-	virtual ~bz_ListServerUpdateEvent(){};
+	virtual ~bz_ListServerUpdateEvent_V1(){};
+	virtual void update (){bz_EventData::update();}
 
 	bzApiString		address;
 	bzApiString		description;
@@ -614,17 +633,18 @@ public:
 	double time;
 };
 
-class bz_BanEventData : public bz_EventData
+class BZF_API bz_BanEventData_V1 : public bz_EventData
 {
 public:
-	bz_BanEventData()
+	bz_BanEventData_V1() : bz_EventData()
 	{
 		eventType = bz_eBanEvent;
 		bannerID = -1;
 		banneeID = -1;
 		duration = -1;
 	}
-	virtual ~bz_BanEventData(){};
+	virtual ~bz_BanEventData_V1(){};
+	virtual void update (){bz_EventData::update();}
 
 	int bannerID;
 	int banneeID;
@@ -633,16 +653,17 @@ public:
 	bzApiString reason;
 };
 
-class bz_HostBanEventData : public bz_EventData
+class BZF_API bz_HostBanEventData_V1 : public bz_EventData
 {
 public:
-	bz_HostBanEventData()
+	bz_HostBanEventData_V1() : bz_EventData()
 	{
 		eventType = bz_eHostBanEvent;
 		bannerID = -1;
 		duration = -1;
 	}
-	virtual ~bz_HostBanEventData(){};
+	virtual ~bz_HostBanEventData_V1(){};
+	virtual void update (){bz_EventData::update();}
 
 	int bannerID;
 	int duration;
@@ -650,63 +671,67 @@ public:
 	bzApiString reason;
 };
 
-class bz_KickEventData : public bz_EventData
+class BZF_API bz_KickEventData_V1 : public bz_EventData
 {
 public:
-	bz_KickEventData()
+	bz_KickEventData_V1() : bz_EventData()
 	{
 		eventType = bz_eKickEvent;
 		kickerID = -1;
 		kickedID = -1;
 	}
-	virtual ~bz_KickEventData(){};
+	virtual ~bz_KickEventData_V1(){};
+	virtual void update (){bz_EventData::update();}
 
 	int kickerID;
 	int kickedID;
 	bzApiString reason;
 };
 
-class bz_KillEventData : public bz_EventData
+class BZF_API bz_KillEventData_V1 : public bz_EventData
 {
 public:
-	bz_KillEventData()
+	bz_KillEventData_V1()
 	{
 		eventType = bz_eKillEvent;
 		killerID = -1;
 		killedID = -1;
 	}
-	virtual ~bz_KillEventData(){};
+	virtual ~bz_KillEventData_V1(){};
+	virtual void update (){bz_EventData::update();}
 
 	int killerID;
 	int killedID;
 	bzApiString reason;
 };
 
-class bz_PlayerPausedEventData : public bz_EventData
+class BZF_API bz_PlayerPausedEventData_V1 : public bz_EventData
 {
 public:
-	bz_PlayerPausedEventData()
+	bz_PlayerPausedEventData_V1() : bz_EventData()
 	{
 		eventType = bz_ePlayerPausedEvent;
 		player = -1;
 		time = 0.0;
 	}
-	virtual ~bz_PlayerPausedEventData(){};
+	virtual ~bz_PlayerPausedEventData_V1(){};
+	virtual void update (){bz_EventData::update();}
 
 	int player;
 	double time;
 };
 
-class bz_MessageFilteredEventData : public bz_EventData
+class BZF_API bz_MessageFilteredEventData_V1 : public bz_EventData
 {
 public:
-	bz_MessageFilteredEventData()
+	bz_MessageFilteredEventData_V1() : bz_EventData()
 	{
 		eventType = bz_eMessagFilteredEvent;
 		player = -1;
 		time = 0.0;
 	}
-	virtual ~bz_MessageFilteredEventData(){};
+	virtual ~bz_MessageFilteredEventData_V1(){};
+	virtual void update (){bz_EventData::update();}
 
 	int player;
 	double time;
@@ -715,32 +740,34 @@ public:
 	bzApiString		filteredMessage;
 };
 
-class bz_GameStartEndEventData : public bz_EventData
+class BZF_API bz_GameStartEndEventData_V1 : public bz_EventData
 {
 public:
-	bz_GameStartEndEventData()
+	bz_GameStartEndEventData_V1() : bz_EventData()
 	{
 		eventType = bz_eGameStartEvent;
 		time = 0.0;
 		duration = 0.0;
 	}
-	virtual ~bz_GameStartEndEventData(){};
+	virtual ~bz_GameStartEndEventData_V1(){};
+	virtual void update (){bz_EventData::update();}
 
 	double time;
 	double duration;
 };
 
-class bz_SlashCommandEventData : public bz_EventData
+class BZF_API bz_SlashCommandEventData_V1 : public bz_EventData
 {
 public:
-	bz_SlashCommandEventData()
+	bz_SlashCommandEventData_V1() : bz_EventData()
 	{
 		eventType = bz_eSlashCommandEvent;
 		from = -1;
 		time = 0;
 	}
 
-	virtual ~bz_SlashCommandEventData(){};
+	virtual ~bz_SlashCommandEventData_V1(){};
+	virtual void update (){bz_EventData::update();}
 
 	int from;
 
@@ -750,24 +777,25 @@ public:
 };
 
 
-class bz_PlayerAuthEventData : public bz_EventData
+class BZF_API bz_PlayerAuthEventData_V1 : public bz_EventData
 {
 public:
-	bz_PlayerAuthEventData()
+	bz_PlayerAuthEventData_V1() : bz_EventData()
 	{
 		eventType = bz_ePlayerAuthEvent;
 		playerID = -1;
 	}
 
-	virtual ~bz_PlayerAuthEventData(){};
+	virtual ~bz_PlayerAuthEventData_V1(){};
+	virtual void update (){bz_EventData::update();}
 
 	int playerID;
 };
 
-class bz_ServerMsgEventData : public bz_EventData
+class BZF_API bz_ServerMsgEventData_V1 : public bz_EventData
 {
 public:
-	bz_ServerMsgEventData()
+	bz_ServerMsgEventData_V1() : bz_EventData()
 	{
 		eventType = bz_eServerMsgEvent;
 
@@ -776,7 +804,8 @@ public:
 		team = eNoTeam;
 	}
 
-	virtual ~bz_ServerMsgEventData(){};
+	virtual ~bz_ServerMsgEventData_V1(){};
+	virtual void update (){bz_EventData::update();}
 
 	int to;
 	bz_eTeamType team;
@@ -800,20 +829,20 @@ BZF_API bool bz_removeEvent ( bz_eEventType eventType, bz_EventHandler* eventHan
 
 // player info
 
-class bz_PlayerRecord;
+class bz_BasePlayerRecord;
 
 BZF_API bool bz_getPlayerIndexList ( bzAPIIntList *playerList );
-BZF_API bz_PlayerRecord *bz_getPlayerByIndex ( int index );
-BZF_API bool bz_updatePlayerData ( bz_PlayerRecord *playerRecord );
+BZF_API bz_BasePlayerRecord *bz_getPlayerByIndex ( int index );
+BZF_API bool bz_updatePlayerData ( bz_BasePlayerRecord *playerRecord );
 BZF_API bool bz_hasPerm ( int playerID, const char* perm );
 BZF_API bool bz_grantPerm ( int playerID, const char* perm );
 BZF_API bool bz_revokePerm ( int playerID, const char* perm );
-BZF_API bool bz_freePlayerRecord ( bz_PlayerRecord *playerRecord );
+BZF_API bool bz_freePlayerRecord ( bz_BasePlayerRecord *playerRecord );
 
-class bz_PlayerRecord
+class BZF_API bz_BasePlayerRecord
 {
 public:
-	bz_PlayerRecord()
+	bz_BasePlayerRecord()
 	{
 		playerID = -1;
 		team = eNoTeam;
@@ -831,9 +860,10 @@ public:
 
 		wins = 0;
 		losses = 0;
-	}
+		version = 1;
+	};
 
-	~bz_PlayerRecord(){};
+	~bz_BasePlayerRecord(){};
 
 	void update ( void ){bz_updatePlayerData(this);}	// call to update with current data
 
@@ -841,6 +871,7 @@ public:
 	bool grantPerm ( const char* perm ){return bz_grantPerm(playerID,perm);}
 	bool revokePerm ( const char* perm ){return bz_revokePerm(playerID,perm);}
 
+	int version;
 	int playerID;
 	bzApiString callsign;
 	bzApiString email;
@@ -927,7 +958,6 @@ BZF_API bool bz_setBZDBBool( const char* variable, bool val, int perms = 0, bool
 BZF_API bool bz_setBZDBInt( const char* variable, int val, int perms = 0, bool persistent = false  );
 
 BZF_API int bz_getBZDBVarList( bzAPIStringList	*varList );
-
 
 // logging
 BZF_API void bz_debugMessage ( int debugLevel, const char* message );
@@ -1096,16 +1126,20 @@ BZF_API void bz_resetTeamScore (bz_eTeamType team );
 BZF_API void bz_updateListServer ( void );
 
 // url API
-class bz_URLHandler
+class bz_BaseURLHandler
 {
 public:
-	virtual ~bz_URLHandler(){};
+	bz_BaseURLHandler(){version = 1;}
+	virtual ~bz_BaseURLHandler(){};
 	virtual void done ( const char* URL, void * data, unsigned int size, bool complete ) = 0;
 	virtual void timeout ( const char* /*URL*/, int /*errorCode*/ ){};
 	virtual void error ( const char* /*URL*/, int /*errorCode*/, const char * /*errorString*/ ){};
+
+protected:
+	int version;
 };
 
-BZF_API bool bz_addURLJob ( const char* URL, bz_URLHandler* handler = NULL, const char* postData = NULL );
+BZF_API bool bz_addURLJob ( const char* URL, bz_BaseURLHandler* handler = NULL, const char* postData = NULL );
 BZF_API bool bz_removeURLJob ( const char* URL );
 BZF_API bool bz_stopAllURLJobs ( void );
 

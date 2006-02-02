@@ -309,7 +309,7 @@ bool KickCommand::operator() (const char	 *message,
   if (i >= 0) {
 
     // call any plugin events registered for /kick
-    bz_KickEventData kickEvent;
+    bz_KickEventData_V1 kickEvent;
     kickEvent.kickerID = t;
     kickEvent.kickedID = i;
     kickEvent.reason = argv[2].c_str();
@@ -388,7 +388,7 @@ bool KillCommand::operator() (const char	 *message,
 
   if (i >= 0) {
     // call any plugin events registered for /kick
-    bz_KillEventData killEvent;
+    bz_KillEventData_V1 killEvent;
     killEvent.killerID = t;
     killEvent.killedID = i;
     if (argv.size() > 2)
@@ -656,7 +656,7 @@ bool BanCommand::operator() (const char	 *message,
   }
 
   // call any plugin events registered for /ban
-  bz_BanEventData banEvent;
+  bz_BanEventData_V1 banEvent;
   banEvent.bannerID = t;
   banEvent.ipAddress = ip.c_str();
   banEvent.reason = reason.c_str();
@@ -777,7 +777,7 @@ bool HostbanCommand::operator() (const char* message,
   }
 
   // call any plugin events registered for /hostban
-  bz_HostBanEventData hostBanEvent;
+  bz_HostBanEventData_V1 hostBanEvent;
   hostBanEvent.bannerID = t;
   hostBanEvent.hostPattern = hostpat.c_str();
   hostBanEvent.reason = reason.c_str();

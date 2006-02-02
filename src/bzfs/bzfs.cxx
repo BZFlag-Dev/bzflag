@@ -522,7 +522,7 @@ void sendPlayerInfo() {
 
     if (playerData->player.isPlaying()) {
       // see if any events want to update the playerInfo before it is sent out
-      bz_GetPlayerInfoEventData playerInfoData;
+      bz_GetPlayerInfoEventData_V1 playerInfoData;
       playerInfoData.playerID = i;
       playerInfoData.callsign = playerData->player.getCallSign();
       playerInfoData.team = convertTeam(playerData->player.getTeam());
@@ -790,7 +790,7 @@ static bool defineWorld()
     }
   } else {
     // check and see if anyone wants to define the world from an event
-    bz_GenerateWorldEventData	worldData;
+    bz_GenerateWorldEventData_V1	worldData;
     worldData.ctf  = clOptions->gameStyle & TeamFlagGameStyle;
     worldData.time = TimeKeeper::getCurrent().getSeconds();
 
@@ -1201,7 +1201,7 @@ void sendFilteredMessage(int sendingPlayer, PlayerId recipientPlayer, const char
 
 	if (strcmp(message,filtered) != 0)	// the filter did do something so barf a message
 	{
-		bz_MessageFilteredEventData	eventData;
+		bz_MessageFilteredEventData_V1	eventData;
 
 		eventData.player = sendingPlayer;
 		eventData.time = TimeKeeper::getCurrent().getSeconds();
@@ -1287,7 +1287,7 @@ void sendMessage(int playerIndex, PlayerId dstPlayer, const char *message)
 
     // Notify any plugins
     if (playerIndex == ServerPlayer) {
-      bz_ServerMsgEventData serverMsgData;
+      bz_ServerMsgEventData_V1 serverMsgData;
       serverMsgData.to = BZ_NULLUSER;
       serverMsgData.team = eAdministrators;
       serverMsgData.message = message;
@@ -1305,7 +1305,7 @@ void sendMessage(int playerIndex, PlayerId dstPlayer, const char *message)
 
     // Notify any plugins
     if (playerIndex == ServerPlayer) {
-      bz_ServerMsgEventData serverMsgData;
+      bz_ServerMsgEventData_V1 serverMsgData;
       serverMsgData.to = BZ_ALLUSERS;
       serverMsgData.message = message;
       serverMsgData.time = TimeKeeper::getCurrent().getSeconds();
@@ -1652,7 +1652,7 @@ static void addPlayer(int playerIndex, GameKeeper::Player *playerData)
   playerData->setNeedThisHostbanChecked(true);
 
   // see if any watchers don't want this guy
-  bz_AllowPlayerEventData allowData;
+  bz_AllowPlayerEventData_V1 allowData;
   allowData.callsign = playerData->player.getCallSign();
   allowData.ipAddress = playerData->netHandler->getTargetIP();
   allowData.playerID = playerIndex;
@@ -1667,7 +1667,7 @@ static void addPlayer(int playerIndex, GameKeeper::Player *playerData)
   // pick a team
   TeamColor t = autoTeamSelect(playerData->player.getTeam());
 
-  bz_GetAutoTeamEventData autoTeamData;
+  bz_GetAutoTeamEventData_V1 autoTeamData;
   autoTeamData.playeID = playerIndex;
   autoTeamData.team = convertTeam(t);
   autoTeamData.callsign = playerData->player.getCallSign();
@@ -1917,7 +1917,7 @@ static void addPlayer(int playerIndex, GameKeeper::Player *playerData)
   sendPlayerInfo();
 
   // call any on join events
-  bz_PlayerJoinPartEventData	joinEventData;
+  bz_PlayerJoinPartEventData_V1	joinEventData;
   joinEventData.eventType = bz_ePlayerJoinEvent;
   joinEventData.playerID = playerIndex;
   joinEventData.team = convertTeam(playerData->player.getTeam());
@@ -2097,7 +2097,7 @@ static void pausePlayer(int playerIndex, bool paused = true)
   buf = nboPackUByte(buf, paused);
   broadcastMessage(MsgPause, (char*)buf-(char*)bufStart, bufStart);
 
-  bz_PlayerPausedEventData	pauseEventData;
+  bz_PlayerPausedEventData_V1	pauseEventData;
   pauseEventData.player = playerIndex;
   pauseEventData.time = TimeKeeper::getCurrent().getSeconds();
 
@@ -2153,7 +2153,7 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
     return;
 
   // call any on part events
-  bz_PlayerJoinPartEventData partEventData;
+  bz_PlayerJoinPartEventData_V1 partEventData;
   partEventData.eventType = bz_ePlayerPartEvent;
   partEventData.playerID = playerIndex;
   partEventData.team = convertTeam(playerData->player.getTeam());
@@ -2417,7 +2417,7 @@ static void playerAlive(int playerIndex)
     return;
   }
 
-  bz_AllowSpawnData	spawnAllowData;
+  bz_AllowSpawnData_V1	spawnAllowData;
   spawnAllowData.playerID = playerIndex;
   spawnAllowData.team = convertTeam(playerData->player.getTeam());
 
@@ -2455,7 +2455,7 @@ static void playerAlive(int playerIndex)
      clOptions->gameStyle & TeamFlagGameStyle);
 
   // see if there is anyone to handle the spawn event, and if they want to change it.
-  bz_GetPlayerSpawnPosEventData	spawnData;
+  bz_GetPlayerSpawnPosEventData_V1	spawnData;
   spawnData.playerID = playerIndex;
   spawnData.team   = convertTeam(playerData->player.getTeam());
   spawnData.pos[0]   = spawnPosition.getX();
@@ -2476,7 +2476,7 @@ static void playerAlive(int playerIndex)
   broadcastMessage(MsgAlive, (char*)buf - (char*)bufStart, bufStart);
 
   // call any events for a playerspawn
-  bz_PlayerSpawnEventData	spawnEvent;
+  bz_PlayerSpawnEventData_V1	spawnEvent;
   spawnEvent.playerID = playerIndex;
   spawnEvent.team = convertTeam(playerData->player.getTeam());
 
@@ -2539,7 +2539,7 @@ void playerKilled(int victimIndex, int killerIndex, int reason,
   victim->setDead();
 
   // call any events for a playerdeath
-  bz_PlayerDieEventData	dieEvent;
+  bz_PlayerDieEventData_V1	dieEvent;
   dieEvent.playerID = victimIndex;
   dieEvent.team = convertTeam(victim->getTeam());
   dieEvent.killerID = killerIndex;
@@ -2916,7 +2916,7 @@ static void captureFlag(int playerIndex, TeamColor teamCaptured)
 		   false);
 
   // find any events for capturing the flags on the capped team or events for ANY team
-  bz_CTFCaptureEventData	eventData;
+  bz_CTFCaptureEventData_V1	eventData;
   eventData.teamCapped = convertTeam((TeamColor)teamIndex);
   eventData.teamCapping = convertTeam(teamCaptured);
   eventData.playerCapping = playerIndex;
@@ -3634,7 +3634,7 @@ static void handleCommand(const void *rawbuf, bool udp, NetHandler *handler)
       if (toData)
 		toTeam = toData->player.getTeam();
 
-      bz_ChatEventData chatData;
+      bz_ChatEventData_V1 chatData;
       chatData.from = t;
       chatData.to = BZ_NULLUSER;
 
@@ -4867,7 +4867,7 @@ int main(int argc, char **argv)
 	  }
 
 	  // fire off a game start event
-	  bz_GameStartEndEventData	gameData;
+	  bz_GameStartEndEventData_V1	gameData;
 	  gameData.eventType = bz_eGameStartEvent;
 	  gameData.time = TimeKeeper::getCurrent().getSeconds();
 	  gameData.duration = clOptions->timeLimit;
@@ -4895,7 +4895,7 @@ int main(int argc, char **argv)
 	clOptions->countdownPaused = false;
 
 	// fire off a game end event
-	bz_GameStartEndEventData	gameData;
+	bz_GameStartEndEventData_V1	gameData;
 	gameData.eventType = bz_eGameEndEvent;
 	gameData.time = TimeKeeper::getCurrent().getSeconds();
 	gameData.duration = clOptions->timeLimit;
@@ -5349,7 +5349,7 @@ int main(int argc, char **argv)
     world->getWorldWeapons().fire();
 
     // fire off a tick event
-    bz_TickEventData	tickData;
+    bz_TickEventData_V1	tickData;
     tickData.time = TimeKeeper::getCurrent().getSeconds();
     worldEventManager.callEvents(bz_eTickEvent,&tickData);
 
