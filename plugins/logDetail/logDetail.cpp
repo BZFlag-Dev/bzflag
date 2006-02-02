@@ -61,11 +61,11 @@ BZF_PLUGIN_CALL int bz_Unload ( void )
 
 void logDetail::process( bz_EventData *eventData )
 {
-  bz_ChatEventData *chatData = (bz_ChatEventData *) eventData;
-  bz_ServerMsgEventData *serverMsgData = (bz_ServerMsgEventData *) eventData;
-  bz_SlashCommandEventData *cmdData = (bz_SlashCommandEventData *) eventData;
-  bz_PlayerJoinPartEventData *joinPartData = (bz_PlayerJoinPartEventData *) eventData;
-  bz_PlayerAuthEventData *authData = (bz_PlayerAuthEventData *) eventData;
+  bz_ChatEventData_V1 *chatData = (bz_ChatEventData_V1 *) eventData;
+  bz_ServerMsgEventData_V1 *serverMsgData = (bz_ServerMsgEventData_V1 *) eventData;
+  bz_SlashCommandEventData_V1 *cmdData = (bz_SlashCommandEventData_V1 *) eventData;
+  bz_PlayerJoinPartEventData_V1 *joinPartData = (bz_PlayerJoinPartEventData_V1 *) eventData;
+  bz_PlayerAuthEventData_V1 *authData = (bz_PlayerAuthEventData_V1 *) eventData;
 
   if (eventData) {
     switch (eventData->eventType) {
@@ -74,7 +74,7 @@ void logDetail::process( bz_EventData *eventData )
 	// Tokenize the stream and check the first word
 	// /report -> MSG-REPORT
 	// anything -> MSG-COMMAND
-	if (strncasecmp( cmdData->message.c_str(), "/REPORT ", 8 ) == 0 ) {
+	if (strcasecmp( cmdData->message.c_str(), "/REPORT ") == 0 ) {
 	  cout << "MSG-REPORT ";
 	  displayCallsign( cmdData->from );
 	  cout << " " << cmdData->message.c_str()+8 << endl;
@@ -130,7 +130,7 @@ void logDetail::process( bz_EventData *eventData )
 	break;
       case bz_ePlayerJoinEvent:
 	{
-	  bz_PlayerRecord *player = bz_getPlayerByIndex( joinPartData->playerID );
+	  bz_BasePlayerRecord *player = bz_getPlayerByIndex( joinPartData->playerID );
 	  if (player) {
 	    cout << "PLAYER-JOIN ";
 	    displayCallsign( player->callsign );
@@ -162,7 +162,7 @@ void logDetail::process( bz_EventData *eventData )
 
 void logDetail::displayPlayerPrivs( int playerID )
 {
-  bz_PlayerRecord *player = bz_getPlayerByIndex( playerID );
+  bz_BasePlayerRecord *player = bz_getPlayerByIndex( playerID );
   if (player) {
     cout << " IP:" << player->ipAddress.c_str();
     if (player->verified ) cout << " VERIFIED";
@@ -182,7 +182,7 @@ void logDetail::displayCallsign( bzApiString callsign )
 
 void logDetail::displayCallsign( int playerID )
 {
-  bz_PlayerRecord *player = bz_getPlayerByIndex( playerID );
+  bz_BasePlayerRecord *player = bz_getPlayerByIndex( playerID );
   if (player) {
     cout << strlen( player->callsign.c_str() ) << ":";
     cout << player->callsign.c_str();
