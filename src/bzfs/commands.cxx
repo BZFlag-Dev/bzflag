@@ -3178,7 +3178,7 @@ bool ModCountCommand::operator() (const char	*message,
   }
   
   messageText.erase(0, --messageStart);
-  clOptions->addedTime += atof((messageText.c_str())); //remember to add the time
+  clOptions->addedTime += (float)atof((messageText.c_str())); //remember to add the time
   
   if (countdownDelay > 0) { //we are currently counting down to start
     char reply[MessageLen] = {0};
