@@ -45,7 +45,7 @@ void RogueGenoHandler::process ( bz_EventData *eventData )
   // wait for a tank death and start checking for genocide and rogues
   case bz_ePlayerDieEvent:
     {
-      bz_PlayerDieEventData	*dieData = (bz_PlayerDieEventData*)eventData;
+      bz_PlayerDieEventData_V1	*dieData = (bz_PlayerDieEventData_V1*)eventData;
       //if its not a genocide kill, dont care
       if (dieData->flagKilledWith != "G" )
 	break;
@@ -61,7 +61,7 @@ void RogueGenoHandler::process ( bz_EventData *eventData )
       for ( unsigned int i = 0; i < playerList->size(); i++)
       {
 	int targetID = (*playerList)[i];
-	bz_PlayerRecord *playRec = bz_getPlayerByIndex ( targetID );
+	bz_BasePlayerRecord *playRec = bz_getPlayerByIndex ( targetID );
 	if (!playRec) continue;
 
 	// the sucker is a spawned rogue, kill him.  This generates another death event,

@@ -65,7 +65,7 @@ void airspawn::process ( bz_EventData *eventData )
 
   case bz_eGetPlayerSpawnPosEvent:
     {
-      bz_GetPlayerSpawnPosEventData *spawn = (bz_GetPlayerSpawnPosEventData*)eventData;
+      bz_GetPlayerSpawnPosEventData_V1 *spawn = (bz_GetPlayerSpawnPosEventData_V1*)eventData;
 
       float randPos = rand()/(float)RAND_MAX;
       spawn->pos[2] += randPos * spawnRange;

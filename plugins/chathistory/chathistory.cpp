@@ -195,7 +195,7 @@ bool LastChatCommand::handle ( int playerID, bzApiString _command, bzApiString _
   std::string message = _message.c_str();
 
 
-  bz_PlayerRecord *fromPlayer = bz_getPlayerByIndex(playerID);
+  bz_BasePlayerRecord *fromPlayer = bz_getPlayerByIndex(playerID);
 
   if ( !fromPlayer->admin )
   {
@@ -252,9 +252,9 @@ bool LastChatCommand::handle ( int playerID, bzApiString _command, bzApiString _
 
 void ChatEvents::process ( bz_EventData *eventData )
 {
-  bz_ChatEventData	*chatEventData = (bz_ChatEventData*)eventData;
+  bz_ChatEventData_V1	*chatEventData = (bz_ChatEventData_V1*)eventData;
 
-  bz_PlayerRecord *fromPlayer = bz_getPlayerByIndex(chatEventData->from);
+  bz_BasePlayerRecord *fromPlayer = bz_getPlayerByIndex(chatEventData->from);
 
   std::string message = chatEventData->message.c_str();
 

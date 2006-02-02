@@ -89,11 +89,11 @@ void PlayHistoryTracker::process ( bz_EventData *eventData )
 
   case bz_ePlayerDieEvent:
     {
-      bz_PlayerDieEventData	*deathRecord = ( bz_PlayerDieEventData*)eventData;
+      bz_PlayerDieEventData_V1	*deathRecord = ( bz_PlayerDieEventData_V1*)eventData;
 
       std::string killerCallSign = "UNKNOWN";
 
-      bz_PlayerRecord	*killerData;
+      bz_BasePlayerRecord	*killerData;
 
       killerData = bz_getPlayerByIndex(deathRecord->killerID);
 
@@ -182,19 +182,19 @@ void PlayHistoryTracker::process ( bz_EventData *eventData )
     {
       trPlayerHistoryRecord playerRecord;
 
-      playerRecord.playerID = (( bz_PlayerJoinPartEventData*)eventData)->playerID;
-      playerRecord.callsign = (( bz_PlayerJoinPartEventData*)eventData)->callsign.c_str();
+      playerRecord.playerID = (( bz_PlayerJoinPartEventData_V1*)eventData)->playerID;
+      playerRecord.callsign = (( bz_PlayerJoinPartEventData_V1*)eventData)->callsign.c_str();
       playerRecord.spreeTotal = 0;
-      playerRecord.lastUpdateTime = (( bz_PlayerJoinPartEventData*)eventData)->time;
+      playerRecord.lastUpdateTime = (( bz_PlayerJoinPartEventData_V1*)eventData)->time;
       playerRecord.startTime = playerRecord.lastUpdateTime;
 
-      playerList[(( bz_PlayerJoinPartEventData*)eventData)->playerID] = playerRecord;
+      playerList[(( bz_PlayerJoinPartEventData_V1*)eventData)->playerID] = playerRecord;
     }
     break;
 
   case  bz_ePlayerPartEvent:
     {
-      std::map<int, trPlayerHistoryRecord >::iterator	itr = playerList.find( (( bz_PlayerJoinPartEventData*)eventData)->playerID );
+      std::map<int, trPlayerHistoryRecord >::iterator	itr = playerList.find( (( bz_PlayerJoinPartEventData_V1*)eventData)->playerID );
       if (itr != playerList.end())
 	playerList.erase(itr);
     }

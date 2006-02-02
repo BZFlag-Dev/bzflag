@@ -293,35 +293,35 @@ void Nagware::process ( bz_EventData *eventData )
 {
   // player JOIN
   if (eventData->eventType == bz_ePlayerJoinEvent) {
-    bz_PlayerJoinPartEventData *joinData = (bz_PlayerJoinPartEventData*)eventData;
+    bz_PlayerJoinPartEventData_V1 *joinData = (bz_PlayerJoinPartEventData_V1*)eventData;
     bz_debugMessagef(4, "+++ nagware: Player JOINED (ID:%d, TEAM:%d, CALLSIGN:%s)", joinData->playerID, joinData->team, joinData->callsign.c_str()); fflush (stdout);
-    bz_PlayerRecord *pr;
+    bz_BasePlayerRecord *pr;
     pr = bz_getPlayerByIndex ( joinData->playerID );
     listAdd (joinData->playerID, joinData->callsign.c_str(), joinData->team, pr==NULL? false: pr->verified, joinData->time);
     bz_freePlayerRecord (pr);
 
   // player PART
   } else if (eventData->eventType == bz_ePlayerPartEvent) {
-    bz_PlayerJoinPartEventData *joinData = (bz_PlayerJoinPartEventData*)eventData;
+    bz_PlayerJoinPartEventData_V1 *joinData = (bz_PlayerJoinPartEventData_V1*)eventData;
     bz_debugMessagef(4, "+++ nagware: Player PARTED (ID:%d, TEAM:%d, CALLSIGN:%s)", joinData->playerID, joinData->team, joinData->callsign.c_str()); fflush (stdout);
     listDel (joinData->playerID);
 
   // game START
   } else if (eventData->eventType == bz_eGameStartEvent) {
-    bz_GameStartEndEventData *msgData = (bz_GameStartEndEventData*)eventData;
+    bz_GameStartEndEventData_V1 *msgData = (bz_GameStartEndEventData_V1*)eventData;
     bz_debugMessagef(4, "+++ nagware: Game START (%f, %f)", msgData->time, msgData->duration); fflush (stdout);
     MatchStartTime = msgData->time;
 
   // game END
   } else if (eventData->eventType == bz_eGameEndEvent) {
-    bz_GameStartEndEventData *msgData = (bz_GameStartEndEventData*)eventData;
+    bz_GameStartEndEventData_V1 *msgData = (bz_GameStartEndEventData_V1*)eventData;
     bz_debugMessagef(4, "+++ nagware: Game END (%f, %f)", msgData->time, msgData->duration); fflush (stdout);
     MatchStartTime = 0.0f;
     // can determine length of match, and adjust event times if needed.
 
   // tick
   } else if (eventData->eventType == bz_eTickEvent) {
-    bz_TickEventData *msgData = (bz_TickEventData*)eventData;
+    bz_TickEventData_V1 *msgData = (bz_TickEventData_V1*)eventData;
     tickEvent (msgData->time);
 
   }
@@ -397,7 +397,7 @@ bool parseCommandLine (const char *cmdLine)
 
 BZF_PLUGIN_CALL int bz_Load (const char* cmdLine)
 {
-  bz_PlayerRecord *playerRecord;
+  bz_BasePlayerRecord *playerRecord;
   double now = bz_getCurrentTime();
   
   if (parseCommandLine (cmdLine))

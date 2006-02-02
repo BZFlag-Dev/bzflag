@@ -55,7 +55,7 @@ void HiddenAdmin::process ( bz_EventData *eventData )
   if (eventData->eventType != bz_eGetPlayerInfoEvent)
     return;
 
-  bz_GetPlayerInfoEventData	* infoData = (bz_GetPlayerInfoEventData*)eventData;
+  bz_GetPlayerInfoEventData_V1	* infoData = (bz_GetPlayerInfoEventData_V1*)eventData;
 
   infoData->admin = false;
 }

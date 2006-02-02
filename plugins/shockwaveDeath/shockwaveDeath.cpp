@@ -41,7 +41,7 @@ void SWDeathHandler::process ( bz_EventData *eventData )
   if (eventData->eventType != bz_ePlayerDieEvent)
     return;
 
-  bz_PlayerDieEventData *dieData = (bz_PlayerDieEventData*)eventData;
+  bz_PlayerDieEventData_V1 *dieData = (bz_PlayerDieEventData_V1*)eventData;
 
   int playerToUse = BZ_SERVER;
   if ( usePlayerForShot )

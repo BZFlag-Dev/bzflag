@@ -405,7 +405,7 @@ bool PlaysndCommand::handle ( int playerID, bzApiString _command, bzApiString _m
 
     trVoiceItem &item = voiceSet.items[tolower(message)];
 
-    bz_PlayerRecord	*playerInfo = bz_getPlayerByIndex(playerID);
+    bz_BasePlayerRecord	*playerInfo = bz_getPlayerByIndex(playerID);
     if (!playerInfo)
     {
       bz_debugMessage(1,"vocaliser plugin: bz_getPlayerByIndex failed");
@@ -428,7 +428,7 @@ bool PlaysndCommand::handle ( int playerID, bzApiString _command, bzApiString _m
 
 void VocaliserEvents::process ( bz_EventData *eventData )
 {
-  bz_PlayerJoinPartEventData	*joinPartData = (bz_PlayerJoinPartEventData*)eventData;
+  bz_PlayerJoinPartEventData_V1	*joinPartData = (bz_PlayerJoinPartEventData_V1*)eventData;
 
   switch( eventData->eventType)
   {
