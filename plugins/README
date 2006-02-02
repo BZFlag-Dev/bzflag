@@ -8,6 +8,7 @@ sh newplug.sh
 NOTES on yon API
 ==============================================================================
 
+* the API was updated to version all structures, the docs need to reflect this
 * export directory stuff so plugins can make/open files
 * add new "2.0" map objects to api
 * add event callbacks for the anti-cheat code sections
