@@ -49,17 +49,23 @@ HTFscore htfScore;
 
 bz_eTeamType HTFscore::colorNameToDef (const char *color)
 {
-  if (!strncasecmp (color, "gre", 3))
+  if (!color && (strlen(color)<3))
+	return eNoTeam;
+
+  char temp[4] = {0};
+  strncpy(temp,color,3);
+
+  if (!strcasecmp (color, "gre"))
     return eGreenTeam;
-  if (!strncasecmp (color, "red", 3))
+  if (!strcasecmp (color, "red"))
     return eRedTeam;
-  if (!strncasecmp (color, "pur", 3))
+  if (!strcasecmp (color, "pur"))
     return ePurpleTeam;
-  if (!strncasecmp (color, "blu", 3))
+  if (!strcasecmp (color, "blu"))
     return eBlueTeam;
-  if (!strncasecmp (color, "rog", 3))
+  if (!strcasecmp (color, "rog"))
     return eRogueTeam;
-  if (!strncasecmp (color, "obs", 3))
+  if (!strcasecmp (color, "obs"))
     return eObservers;
   return eNoTeam;
 }
@@ -237,7 +243,7 @@ void HTFscore::process ( bz_EventData *eventData )
   // player JOIN
   if (eventData->eventType == bz_ePlayerJoinEvent) {
     char msg[255];
-    bz_PlayerJoinPartEventData *joinData = (bz_PlayerJoinPartEventData*)eventData;
+    bz_PlayerJoinPartEventData_V1 *joinData = (bz_PlayerJoinPartEventData_V1*)eventData;
 bz_debugMessagef(3, "++++++ HTFscore: Player JOINED (ID:%d, TEAM:%d, CALLSIGN:%s)", joinData->playerID, joinData->team, joinData->callsign.c_str()); fflush (stdout);
     if (htfTeam!=eNoTeam && joinData->team!=htfTeam && joinData->team != eObservers){
       sprintf (msg, "HTF mode enabled, you must join the %s team to play", htfScore.colorDefToName(htfTeam));
@@ -249,7 +255,7 @@ bz_debugMessagef(3, "++++++ HTFscore: Player JOINED (ID:%d, TEAM:%d, CALLSIGN:%s
 
   // player PART
   } else if (eventData->eventType == bz_ePlayerPartEvent) {
-    bz_PlayerJoinPartEventData *joinData = (bz_PlayerJoinPartEventData*)eventData;
+    bz_PlayerJoinPartEventData_V1 *joinData = (bz_PlayerJoinPartEventData_V1*)eventData;
 bz_debugMessagef(3, "++++++ HTFscore: Player PARTED (ID:%d, TEAM:%d, CALLSIGN:%s)", joinData->playerID, joinData->team, joinData->callsign.c_str()); fflush (stdout);
 
     if (joinData->team == htfTeam)
@@ -257,18 +263,18 @@ bz_debugMessagef(3, "++++++ HTFscore: Player PARTED (ID:%d, TEAM:%d, CALLSIGN:%s
 
   // flag CAPTURE
   } else if (eventData->eventType == bz_eCaptureEvent) {
-    bz_CTFCaptureEventData *capData = (bz_CTFCaptureEventData*)eventData;
+    bz_CTFCaptureEventData_V1 *capData = (bz_CTFCaptureEventData_V1*)eventData;
     htfCapture (capData->playerCapping);
 
   // game START
   } else if (eventData->eventType == bz_eGameStartEvent) {
-    bz_GameStartEndEventData *msgData = (bz_GameStartEndEventData*)eventData;
+    bz_GameStartEndEventData_V1 *msgData = (bz_GameStartEndEventData_V1*)eventData;
 bz_debugMessagef(2, "++++++ HTFscore: Game START (%f, %f)", msgData->time, msgData->duration); fflush (stdout);
     htfStartGame ();
 
   // game END
   } else if (eventData->eventType == bz_eGameEndEvent) {
-    bz_GameStartEndEventData *msgData = (bz_GameStartEndEventData*)eventData;
+    bz_GameStartEndEventData_V1 *msgData = (bz_GameStartEndEventData_V1*)eventData;
 bz_debugMessagef(2, "++++++ HTFscore: Game END (%f, %f)", msgData->time, msgData->duration); fflush (stdout);
     htfEndGame ();
   }
@@ -330,9 +336,11 @@ bool commandLineHelp (void){
 
 bool parseCommandLine (const char *cmdLine)
 {
-  if (cmdLine==NULL || *cmdLine=='\0')
+  if (cmdLine==NULL || *cmdLine=='\0' || strlen(cmdLine) < 5 )
     return false;
-  if (strncasecmp (cmdLine, "TEAM=", 5) == 0){
+  char temp[6] = {0};
+  strncpy(temp,cmdLine,5);
+  if (strcasecmp (cmdLine, "TEAM=") == 0){
     if ((htfTeam = htfScore.colorNameToDef(cmdLine+5)) == eNoTeam)
       return commandLineHelp ();
   } else
@@ -343,7 +351,7 @@ bool parseCommandLine (const char *cmdLine)
 
 BZF_PLUGIN_CALL int bz_Load (const char* cmdLine)
 {
-  bz_PlayerRecord *playerRecord;
+  bz_BasePlayerRecord *playerRecord;
 
   if (parseCommandLine (cmdLine))
     return -1;
