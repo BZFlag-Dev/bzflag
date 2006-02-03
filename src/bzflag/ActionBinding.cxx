@@ -146,9 +146,9 @@ ActionBinding::ActionBinding() {
   defaultBinding.insert(BindingTable::value_type("O", "servercommand"));
   defaultBinding.insert(BindingTable::value_type("F", "toggle displayFlagHelp"));
   defaultBinding.insert(BindingTable::value_type("Page Up", "scrollpanel up_page"));
-  defaultBinding.insert(BindingTable::value_type("Wheel Up", "scrollpanel up"));
+  defaultBinding.insert(BindingTable::value_type("Wheel Up", "scrollpanel up 3"));
   defaultBinding.insert(BindingTable::value_type("Page Down", "scrollpanel down_page"));
-  defaultBinding.insert(BindingTable::value_type("Wheel Down", "scrollpanel down"));
+  defaultBinding.insert(BindingTable::value_type("Wheel Down", "scrollpanel down 3"));
   defaultBinding.insert(BindingTable::value_type("End", "scrollpanel bottom"));
   defaultBinding.insert(BindingTable::value_type("1", "set displayRadarRange 0.25"));
   defaultBinding.insert(BindingTable::value_type("2", "set displayRadarRange 0.5"));
