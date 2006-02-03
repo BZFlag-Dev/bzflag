@@ -41,9 +41,7 @@ void *PackPlayerInfo(void *buf, int playerIndex, uint8_t properties )
   return buf;
 }
 
-GameKeeper::Player::Player(int _playerIndex,
-			   NetHandler *_netHandler,
-			   tcpCallback _clientCallback):
+GameKeeper::Player::Player(int _playerIndex, NetHandler *_netHandler, tcpCallback _clientCallback):
   player(_playerIndex), netHandler(_netHandler), lagInfo(&player),
   playerIndex(_playerIndex), closed(false), clientCallback(_clientCallback),
   needThisHostbanChecked(false), idFlag(-1)
@@ -64,6 +62,29 @@ GameKeeper::Player::Player(int _playerIndex,
 #endif
   _LSAState = start;
   bzIdentifier = "";
+}
+
+GameKeeper::Player::Player(int _playerIndex, bz_ServerSidePlayerHandler *handler):
+player(_playerIndex), netHandler(NULL), lagInfo(&player),
+playerIndex(_playerIndex), closed(false), clientCallback(NULL),
+needThisHostbanChecked(false), idFlag(-1)
+{
+	playerHandler = handler;
+	playerList[playerIndex] = this;
+
+	lastState.order  = 0;
+	// Timestamp 0.0 -> not yet available
+	stateTimeStamp   = 0.0f;
+	gameTimeRate = GameTime::startRate;
+	gameTimeNext = TimeKeeper::getCurrent();
+#if defined(USE_THREADS)
+	int result = pthread_create(&thread, NULL, tcpRx, (void *)this);
+	if (result)
+		std::cerr << "Could not create thread" << std::endl;
+	refCount	 = 1;
+#endif
+	_LSAState = start;
+	bzIdentifier = "";
 }
 
 GameKeeper::Player::~Player()

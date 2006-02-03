@@ -66,9 +66,9 @@ class GameKeeper {
 public:
   class Player {
   public:
-    Player(int _playerIndex, NetHandler *_netHandler,
-	   tcpCallback _clientCallback);
-    ~Player();
+    Player(int _playerIndex, NetHandler *_netHandler, tcpCallback _clientCallback);
+	Player(int _playerIndex, bz_ServerSidePlayerHandler *handler);
+   ~Player();
 
     int	    getIndex();
     static int     getFreeIndex(int min, int max);

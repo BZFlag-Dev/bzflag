@@ -877,37 +877,52 @@ static void handleTcp(NetHandler &netPlayer, int i, const RxStatus e);
 
 static PlayerId getNewPlayer(NetHandler *netHandler)
 {
-  PlayerId playerIndex;
-
-  // find open slot in players list
-  PlayerId minPlayerId = 0, maxPlayerId = (PlayerId)MaxPlayers;
-  if (Replay::enabled()) {
-    minPlayerId = MaxPlayers;
-    maxPlayerId = MaxPlayers + ReplayObservers;
-  }
-  playerIndex = GameKeeper::Player::getFreeIndex(minPlayerId, maxPlayerId);
-
-  if (playerIndex >= maxPlayerId)
-    return 0xff;
-
-  if (playerIndex >= curMaxPlayers)
-    curMaxPlayers = playerIndex + 1;
+  PlayerId playerIndex = getNewPlayerID();
 
   new GameKeeper::Player(playerIndex, netHandler, handleTcp);
 
-  // if game was over and this is the first player then game is on
-  if (gameOver) {
-    int count = GameKeeper::Player::count();
-    if (count == 0) {
-      gameOver = false;
-      gameStartTime = TimeKeeper::getCurrent();
-      if (clOptions->timeLimit > 0.0f && !clOptions->timeManualStart) {
-	clOptions->timeElapsed = 0.0f;
-	countdownActive = true;
-      }
-    }
-  }
+  checkGameOn();
   return playerIndex;
+}
+
+PlayerId getNewPlayerID ( void )
+{
+	PlayerId playerIndex;
+
+	// find open slot in players list
+	PlayerId minPlayerId = 0, maxPlayerId = (PlayerId)MaxPlayers;
+	if (Replay::enabled()) {
+		minPlayerId = MaxPlayers;
+		maxPlayerId = MaxPlayers + ReplayObservers;
+	}
+	playerIndex = GameKeeper::Player::getFreeIndex(minPlayerId, maxPlayerId);
+
+	if (playerIndex >= maxPlayerId)
+		return 0xff;
+
+	if (playerIndex >= curMaxPlayers)
+		curMaxPlayers = playerIndex + 1;
+
+	return playerIndex;
+}
+
+void checkGameOn ( void )
+{
+	// if game was over and this is the first player then game is on
+	if (gameOver)
+	{
+		int count = GameKeeper::Player::count();
+		if (count == 0)
+		{
+			gameOver = false;
+			gameStartTime = TimeKeeper::getCurrent();
+			if (clOptions->timeLimit > 0.0f && !clOptions->timeManualStart)
+			{
+				clOptions->timeElapsed = 0.0f;
+				countdownActive = true;
+			}
+		}
+	}
 }
 
 static void sendNewPlayer(NetHandler *handler)

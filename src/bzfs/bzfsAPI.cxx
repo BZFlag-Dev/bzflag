@@ -1952,12 +1952,30 @@ BZF_API bz_eTeamType bz_checkBaseAtPoint ( float pos[3] )
 
 int bz_addServerSidePlayer ( bz_ServerSidePlayerHandler *handler )
 {
-	return -1;
+	PlayerId playerIndex = getNewPlayerID();
+	if (playerIndex >= 0xFF)
+		return -1;
+
+	new GameKeeper::Player(playerIndex, handler);
+
+	checkGameOn();
+
+	return playerIndex;
 }
 
-bool bz_removeServerSidePlayer ( int player, bz_ServerSidePlayerHandler *handler )
+bool bz_removeServerSidePlayer ( int playerID, bz_ServerSidePlayerHandler *handler )
 {
-	return false;
+	if (playerID < 0)
+		return false;
+
+	PlayerId	playerIndex = (PlayerId)playerID;
+	GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerIndex);
+
+	if (player->playerHandler != handler)
+		return false;
+
+	removePlayer(playerIndex,NULL,true);
+	return true;
 }
 
 

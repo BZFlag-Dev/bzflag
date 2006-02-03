@@ -1234,8 +1234,11 @@ public:
 	virtual void teamUpdate ( int count, bz_TeamInfoRecord **teamList ) = 0;
 };
 
+// *** NOTE *** support for server side players in incomplete.
+//              there WILL be crashes if you add one.
+//              this message will be removed when the code is complete.
 int bz_addServerSidePlayer ( bz_ServerSidePlayerHandler *handler );
-bool bz_removeServerSidePlayer ( int player, bz_ServerSidePlayerHandler *handler ); // you have to pass int he handler to ensure you "own" the player
+bool bz_removeServerSidePlayer ( int playerID, bz_ServerSidePlayerHandler *handler ); // you have to pass in the handler to ensure you "own" the player
 
 #endif //_BZFS_API_H_
 
