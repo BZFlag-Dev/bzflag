@@ -69,8 +69,8 @@ extern void  sendFlagUpdate(FlagInfo &flag);
 extern void  sendDrop(FlagInfo &flag);
 extern void  sendIPUpdate(int targetPlayer = -1, int playerIndex = -1);
 extern void  sendPlayerInfo(void);
-extern void  directMessage(int playerIndex, uint16_t code,
-			   int len, const void *msg);
+extern void  directMessage(int playerIndex, uint16_t code, int len, const void *msg);
+extern int directMessage(NetHandler *handler, uint16_t code, int len, const void *msg);
 extern int   getCurMaxPlayers();
 extern bool  areFoes(TeamColor team1, TeamColor team2);
 extern PingPacket getTeamCounts();
@@ -106,6 +106,7 @@ extern uint16_t	maxRealPlayers;
 extern float	   pluginWorldSize;
 extern float	   pluginWorldHeight;
 extern float	   pluginMaxWait;
+extern bool        isIdentifyFlagIn;
 
 #endif
 

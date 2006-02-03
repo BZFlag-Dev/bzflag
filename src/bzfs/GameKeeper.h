@@ -27,6 +27,7 @@
 #include "PlayerInfo.h"
 #include "PlayerState.h"
 #include "TimeKeeper.h"
+#include "bzfsAPI.h"
 
 // implementation-specific bzfs-specific headers
 #include "CmdLineOptions.h"

@@ -1174,6 +1174,21 @@ BZF_API bz_eTeamType bz_checkBaseAtPoint ( float pos[3] );
 
 // server side player API
 
+typedef struct 
+{
+	int index;
+	char type[2];
+	int status;
+	int endurance;
+	int owner;
+	float position[3];
+	float launchPosition[3];
+	float landingPosition[3];
+	float flightTime;
+	float flightEnd;
+	float initialVelocity;
+}bz_FlagUpdateRecord;
+
 class bz_ServerSidePlayerHandler
 {
 public:
@@ -1181,6 +1196,8 @@ public:
 
 	virtual void removed ( void ) = 0;
 	virtual void playerRemoved ( int playerID ) = 0;
+
+	virtual void flagUpdate ( int count, bz_FlagUpdateRecord** flagList );
 };
 
 int bz_addServerSidePlayer ( bz_ServerSidePlayerHandler *handler );

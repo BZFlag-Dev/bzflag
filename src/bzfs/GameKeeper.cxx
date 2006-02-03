@@ -286,6 +286,8 @@ void GameKeeper::Player::reloadAccessDatabase()
 void GameKeeper::Player::close()
 {
   closed = true;
+  if (playerHandler)		// noone "owns" use anymore
+	playerHandler = NULL;
 }
 
 bool GameKeeper::Player::clean()

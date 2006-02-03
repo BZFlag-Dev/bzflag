@@ -145,7 +145,7 @@ uint8_t rabbitIndex = NoPlayer;
 static RejoinList rejoinList;
 
 static TimeKeeper lastWorldParmChange;
-static bool       isIdentifyFlagIn = false;
+bool       isIdentifyFlagIn = false;
 static bool       playerHadWorld   = false;
 
 void sendFilteredMessage(int playerIndex, PlayerId dstPlayer, const char *message);
@@ -217,8 +217,7 @@ char *getDirectMessageBuffer()
 // FIXME? 4 bytes before msg must be valid memory, will get filled in with len+code
 // usually, the caller gets a buffer via getDirectMessageBuffer(), but for example
 // for MsgShotBegin the receiving buffer gets used directly
-static int directMessage(NetHandler *handler,
-			 uint16_t code, int len, const void *msg)
+int directMessage(NetHandler *handler, uint16_t code, int len, const void *msg)
 {
   // send message to one player
   void *bufStart = (char *)msg - 2*sizeof(uint16_t);
@@ -235,7 +234,7 @@ void directMessage(int playerIndex, uint16_t code, int len, const void *msg)
     = GameKeeper::Player::getPlayerByIndex(playerIndex);
   if (!playerData)
     return;
-  if (!playerData->netHandler)
+  if (!playerData->netHandler || playerData->playerHandler)
     return;
 
   directMessage(playerData->netHandler, code, len, msg);
@@ -400,47 +399,7 @@ static void sendPendingGameTime()
 // Update the player "playerIndex" with all the flags status
 static void sendFlagUpdate(int playerIndex)
 {
-  GameKeeper::Player *playerData
-    = GameKeeper::Player::getPlayerByIndex(playerIndex);
-  if (!playerData)
-    return;
-  int result;
-
-  void *buf, *bufStart = getDirectMessageBuffer();
-
-  buf = nboPackUShort(bufStart,0); //placeholder
-  int cnt = 0;
-  int length = sizeof(uint16_t);
-  for (int flagIndex = 0; flagIndex < numFlags; flagIndex++) {
-    FlagInfo &flag = *FlagInfo::get(flagIndex);
-    if (flag.exist()) {
-      if ((length + sizeof(uint16_t) + FlagPLen)
-	  > MaxPacketLen - 2*sizeof(uint16_t)) {
-	nboPackUShort(bufStart, cnt);
-	result = directMessage(playerData->netHandler, MsgFlagUpdate,
-			       (char*)buf - (char*)bufStart, bufStart);
-	if (result == -1)
-	  return;
-	cnt    = 0;
-	length = sizeof(uint16_t);
-	buf    = nboPackUShort(bufStart,0); //placeholder
-      }
-
-      bool hide
-	= (flag.flag.type->flagTeam == ::NoTeam)
-	&& !isIdentifyFlagIn
-	&& (flag.player == -1);
-      buf = flag.pack(buf, hide);
-      length += sizeof(uint16_t)+FlagPLen;
-      cnt++;
-    }
-  }
-
-  if (cnt > 0) {
-    nboPackUShort(bufStart, cnt);
-    result = directMessage(playerData->netHandler, MsgFlagUpdate,
-			   (char*)buf - (char*)bufStart, bufStart);
-  }
+  sendFlagUpdateMessage(playerIndex);
 }
 
 void sendTeamUpdate(int teamIndex1, int teamIndex2)
