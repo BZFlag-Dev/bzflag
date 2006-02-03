@@ -1198,15 +1198,15 @@ typedef struct
 
 typedef enum
 {
-	RegularPlayer,
-	RobotPlayer,
-	ObserverPlayer
-}bz_PlayerType;
+	eRegularPlayer,
+	eRobotPlayer,
+	eObserverPlayer
+}bz_ePlayerType;
 
 typedef struct 
 {
 	int index;
-	bz_PlayerType type;
+	bz_ePlayerType type;
 	bz_eTeamType team;
 	bz_ScoreRecord	score;
 	char			callsign[32];

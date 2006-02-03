@@ -144,7 +144,7 @@ void sendExistingPlayerUpdates ( int newPlayer )
 			bz_PlayerUpdateRecord	playerRecord;
 
 			playerRecord.index = i;
-			playerRecord.type = (bz_PlayerType)otherData->player.getType();
+			playerRecord.type = (bz_ePlayerType)otherData->player.getType();
 			playerRecord.team = convertTeam(otherData->player.getTeam());
 			playerRecord.score.wins = otherData->score.getWins();
 			playerRecord.score.losses = otherData->score.getLosses();
