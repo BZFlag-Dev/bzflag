@@ -4,6 +4,7 @@
 BZFlag 2.0.5
 ------------
 
+* Allow for longer help files (50 lines) - Angelina Carlton
 * Allow selective /reload of databases - Bernt Hansen
 * Fix wrong kick if pausing having V and moving - Julio Jimenez
 * Prevent long distance tank warping through walls - Sean Morrison
