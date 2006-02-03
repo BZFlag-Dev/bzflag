@@ -2,10 +2,14 @@
     DYNAMIC LINK LIBRARY : serverSideBotSample Project Overview
 ========================================================================
 
-This is the serverSideBotSample. It makes a serverSideBotSample_DESCRIPTION
+***** NOT A RELEASE PLUGIN ******
+***** TESTING ONLY *******
+***** WILL DO HORIBLE THINGS TO YOUR COMPUTER ********
 
-Replace every occurance of the term serverSideBotSample in every file in here
-with the name of your project.  Also open .sln and .vcproj files in a
-text editor and do a search and replace.  Then write a short readme with
-usage instructions or other details in this file.
+This is the sample server side bot plugin.
+
+it is just new under developmnet, so PLEASE don't use it, or at least expect
+it to work. It WILL crash on you. It will not do anything. The only reason
+it is in CVS is to make it easyer to work on. When the bot is complete
+this will be replaced with more info.
 
