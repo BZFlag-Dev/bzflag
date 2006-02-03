@@ -23,7 +23,12 @@ int					botPlayerID;
 
 BZF_PLUGIN_CALL int bz_Load ( const char* /*commandLine*/ )
 {
+
   bz_debugMessage(4,"serverSideBotSample plugin loaded");
+  bz_debugMessage(0,"******* WARNING. THE SERVER SIDE BOT PLUGIN IS UNSTABLE******");
+  bz_debugMessage(0,"******* IT CAN AND WILL CRASH YOUR SYSTEM ******");
+  bz_debugMessage(0,"******* THE CODE IS UNDER DEVELOPMENT ******");
+  bz_debugMessage(0,"******* DO NOT USE IT UNLESS YOU ARE SURE YOU KNOW WHAT YOU ARE DOING ******");
   bz_debugMessage(2,"adding one simple bot");
   botPlayerID = bz_addServerSidePlayer(&bot);
   return 0;
