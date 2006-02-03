@@ -4097,41 +4097,59 @@ static void doStuffOnPlayer(GameKeeper::Player &playerData)
   if (playerData._LSAState == GameKeeper::Player::required) {
      requestAuthentication = true;
      playerData._LSAState = GameKeeper::Player::requesting;
-  } else if (playerData.netHandler->reverseDNSDone()) {
-    if ((playerData._LSAState == GameKeeper::Player::verified)	||
-	(playerData._LSAState == GameKeeper::Player::timedOut)	||
-	(playerData._LSAState == GameKeeper::Player::failed)	||
-	(playerData._LSAState == GameKeeper::Player::notRequired)) {
-      addPlayer(p, &playerData);
-      playerData._LSAState = GameKeeper::Player::done;
-    }
+  }
+  else
+  {
+	 if ( !playerData.netHandler)
+	 {
+		playerData._LSAState = GameKeeper::Player::notRequired;
+	 }
+	 else
+	 {
+		if (playerData.netHandler->reverseDNSDone())
+		{
+			if ((playerData._LSAState == GameKeeper::Player::verified)	||
+				(playerData._LSAState == GameKeeper::Player::timedOut)	||
+				(playerData._LSAState == GameKeeper::Player::failed)	||
+				(playerData._LSAState == GameKeeper::Player::notRequired))
+			{
+				addPlayer(p, &playerData);
+				playerData._LSAState = GameKeeper::Player::done;
+			}
+		}
+	 }
   }
 
   // Check host bans
-  const char *hostname = playerData.netHandler->getHostname();
-  if (hostname && playerData.needsHostbanChecked()) {
-    if (!playerData.accessInfo.hasPerm(PlayerAccessInfo::antiban)) {
-      HostBanInfo hostInfo("*");
-      if (!clOptions->acl.hostValidate(hostname, &hostInfo)) {
-	std::string reason = "banned host for: ";
-	if (hostInfo.reason.size())
-	  reason += hostInfo.reason;
-	else
-	  reason += "General Ban";
+  if (!playerData.netHandler)
+	playerData.setNeedThisHostbanChecked(false);
+  else
+  {
+	const char *hostname = playerData.netHandler->getHostname();
+	if (hostname && playerData.needsHostbanChecked()) {
+		if (!playerData.accessInfo.hasPerm(PlayerAccessInfo::antiban)) {
+		HostBanInfo hostInfo("*");
+		if (!clOptions->acl.hostValidate(hostname, &hostInfo)) {
+		std::string reason = "banned host for: ";
+		if (hostInfo.reason.size())
+		reason += hostInfo.reason;
+		else
+		reason += "General Ban";
 
-	if (hostInfo.bannedBy.size()) {
-	  reason += " by ";
-	  reason += hostInfo.bannedBy;
-	}
+		if (hostInfo.bannedBy.size()) {
+		reason += " by ";
+		reason += hostInfo.bannedBy;
+		}
 
-	if (hostInfo.fromMaster)
-	  reason += " from the master server";
+		if (hostInfo.fromMaster)
+		reason += " from the master server";
 
-	rejectPlayer(p, RejectHostBanned, reason.c_str());
-	return;
-      }
-    }
-    playerData.setNeedThisHostbanChecked(false);
+		rejectPlayer(p, RejectHostBanned, reason.c_str());
+		return;
+		}
+		}
+		playerData.setNeedThisHostbanChecked(false);
+	  }
   }
 
   // update notResponding
@@ -4179,11 +4197,14 @@ static void doStuffOnPlayer(GameKeeper::Player &playerData)
     }
   }
 
-  // kick any clients that need to be
-  std::string reasonToKick = playerData.netHandler->reasonToKick();
-  if (reasonToKick != "") {
-    removePlayer(p, reasonToKick.c_str(), false);
-    return;
+  if (playerData.netHandler)
+  {
+	// kick any clients that need to be
+	std::string reasonToKick = playerData.netHandler->reasonToKick();
+	if (reasonToKick != "") {
+		removePlayer(p, reasonToKick.c_str(), false);
+		return;
+	}
   }
 }
 

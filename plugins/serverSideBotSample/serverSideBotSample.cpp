@@ -9,6 +9,7 @@ BZ_GET_PLUGIN_VERSION
 class SimpleBotHandler : public bz_ServerSidePlayerHandler
 {
 public:
+	virtual void added ( int playerID );
 	virtual void removed ( void );
 	virtual void playerRemoved ( int playerID );
 
@@ -36,30 +37,34 @@ BZF_PLUGIN_CALL int bz_Unload ( void )
   return 0;
 }
 
+void SimpleBotHandler::added ( int playerID )
+{
+	bz_debugMessage(3,"SimpleBotHandler::added");
+}
+
 void SimpleBotHandler::removed ( void )
 {
-
+	bz_debugMessage(3,"SimpleBotHandler::removed");
 }
 
 void SimpleBotHandler::playerRemoved ( int playerID )
 {
-
+	bz_debugMessage(3,"SimpleBotHandler::playerRemoved");
 }
-
 
 void SimpleBotHandler::flagUpdate ( int count, bz_FlagUpdateRecord **flagList )
 {
-
+	bz_debugMessage(3,"SimpleBotHandler::flagUpdate");
 }
 
 void SimpleBotHandler::playerUpdate ( bz_PlayerUpdateRecord *playerRecord )
 {
-
+	bz_debugMessage(3,"SimpleBotHandler::playerUpdate");
 }
 
 void SimpleBotHandler::teamUpdate ( int count, bz_TeamInfoRecord **teamList )
 {
-
+	bz_debugMessage(3,"SimpleBotHandler::teamUpdate");
 }
 
 

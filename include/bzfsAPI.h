@@ -1226,6 +1226,7 @@ class bz_ServerSidePlayerHandler
 public:
 	virtual ~bz_ServerSidePlayerHandler(){};
 
+	virtual void added ( int playerID ) = 0;
 	virtual void removed ( void ) = 0;
 	virtual void playerRemoved ( int playerID ) = 0;
 

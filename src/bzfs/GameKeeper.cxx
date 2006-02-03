@@ -85,6 +85,8 @@ needThisHostbanChecked(false), idFlag(-1)
 #endif
 	_LSAState = start;
 	bzIdentifier = "";
+
+	playerHandler->added(_playerIndex);
 }
 
 GameKeeper::Player::~Player()
