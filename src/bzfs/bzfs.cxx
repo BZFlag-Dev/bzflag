@@ -438,6 +438,19 @@ static int sendTeamUpdateD(NetHandler *handler)
 		       (char*)buf - (char*)bufStart, bufStart);
 }
 
+static int sendPlayerUpdateD(NetHandler *handler,
+							 GameKeeper::Player *otherData)
+{
+	if (!otherData->player.isPlaying())
+		return 0;
+
+	void *bufStart = getDirectMessageBuffer();
+	void *buf      = otherData->packPlayerUpdate(bufStart);
+
+	return directMessage(handler, MsgAddPlayer,
+		(char*)buf - (char*)bufStart, bufStart);
+}
+
 static void sendPlayerUpdateB(GameKeeper::Player *playerData)
 {
   if (!playerData->player.isPlaying())
@@ -448,19 +461,6 @@ static void sendPlayerUpdateB(GameKeeper::Player *playerData)
 
   // send all players info about player[playerIndex]
   broadcastMessage(MsgAddPlayer, (char*)buf - (char*)bufStart, bufStart);
-}
-
-static int sendPlayerUpdateD(NetHandler *handler,
-			     GameKeeper::Player *otherData)
-{
-  if (!otherData->player.isPlaying())
-    return 0;
-
-  void *bufStart = getDirectMessageBuffer();
-  void *buf      = otherData->packPlayerUpdate(bufStart);
-
-  return directMessage(handler, MsgAddPlayer,
-		       (char*)buf - (char*)bufStart, bufStart);
 }
 
 void sendPlayerInfo() {
@@ -1715,19 +1715,10 @@ static void addPlayer(int playerIndex, GameKeeper::Player *playerData)
       return;
     sendFlagUpdateMessage(playerIndex);
   }
-  if (!playerData->player.isBot()) {
+  if (!playerData->player.isBot())
+  {
+    sendExistingPlayerUpdates(playerIndex);
     GameKeeper::Player *otherData;
-    for (int i = 0; i < curMaxPlayers; i++) {
-      if (i == playerIndex)
-	continue;
-      otherData = GameKeeper::Player::getPlayerByIndex(i);
-      if (!otherData)
-	continue;
-      result = sendPlayerUpdateD(playerData->netHandler, otherData);
-      if (result < 0)
-	break;
-    }
-    
     if (clOptions->gameStyle & HandicapGameStyle) {
       int numHandicaps = 0;
 

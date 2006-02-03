@@ -15,6 +15,7 @@
 
 void sendRemovePlayerMessage ( int playerID );
 void sendFlagUpdateMessage ( int playerID );
+void sendExistingPlayerUpdates ( int newPlayer );
 
 #endif //_BZFS_MESSAGES_H_
 

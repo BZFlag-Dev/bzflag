@@ -1189,6 +1189,30 @@ typedef struct
 	float initialVelocity;
 }bz_FlagUpdateRecord;
 
+typedef struct 
+{
+	int wins;
+	int losses;
+	int tks;
+}bz_ScoreRecord;
+
+typedef enum
+{
+	RegularPlayer,
+	RobotPlayer,
+	ObserverPlayer
+}bz_PlayerType;
+
+typedef struct 
+{
+	int index;
+	bz_PlayerType type;
+	bz_eTeamType team;
+	bz_ScoreRecord	score;
+	char			callsign[32];
+	char			email[128];
+}bz_PlayerUpdateRecord;
+
 class bz_ServerSidePlayerHandler
 {
 public:
@@ -1197,7 +1221,8 @@ public:
 	virtual void removed ( void ) = 0;
 	virtual void playerRemoved ( int playerID ) = 0;
 
-	virtual void flagUpdate ( int count, bz_FlagUpdateRecord** flagList );
+	virtual void flagUpdate ( int count, bz_FlagUpdateRecord** flagList ) = 0;
+	virtual void playerUpdate ( bz_PlayerUpdateRecord *playerRecord ) = 0;
 };
 
 int bz_addServerSidePlayer ( bz_ServerSidePlayerHandler *handler );

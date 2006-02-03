@@ -17,6 +17,7 @@
 #include "GameKeeper.h"
 #include "bzfs.h"
 
+
 void sendRemovePlayerMessage ( int playerID )
 {
 	void *buf, *bufStart = getDirectMessageBuffer();
@@ -123,6 +124,50 @@ void sendFlagUpdateMessage ( int playerID )
 			nboPackUShort(bufStart, cnt);
 			result = directMessage(playerData->netHandler, MsgFlagUpdate,
 				(char*)buf - (char*)bufStart, bufStart);
+		}
+	}
+}
+
+void sendExistingPlayerUpdates ( int newPlayer )
+{
+	GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(newPlayer);
+
+	if (!playerData)
+		return;
+
+	GameKeeper::Player *otherData;
+	for (int i = 0; i < curMaxPlayers; i++)
+	{
+		if (i == newPlayer)
+			continue;
+		otherData = GameKeeper::Player::getPlayerByIndex(i);
+		if (!otherData ||!otherData->player.isPlaying())
+			continue;
+		if (playerData->playerHandler)
+		{
+			bz_PlayerUpdateRecord	playerRecord;
+
+			playerRecord.index = i;
+			playerRecord.type = (bz_PlayerType)otherData->player.getType();
+			playerRecord.team = convertTeam(otherData->player.getTeam());
+			playerRecord.score.wins = otherData->score.getWins();
+			playerRecord.score.losses = otherData->score.getLosses();
+			playerRecord.score.tks = otherData->score.getTKs();
+			memset(playerRecord.callsign,32,0);
+			memset(playerRecord.email,128,0);
+			strncpy(playerRecord.callsign,otherData->player.getCallSign(),31);
+			strncpy(playerRecord.email,otherData->player.getEMail(),127);
+
+			playerData->playerHandler->playerUpdate(&playerRecord);
+		}
+		else
+		{
+			void *bufStart = getDirectMessageBuffer();
+			void *buf      = otherData->packPlayerUpdate(bufStart);
+			int result = directMessage(playerData->netHandler, MsgAddPlayer,(char*)buf - (char*)bufStart, bufStart);
+
+			if (result < 0)
+				break;
 		}
 	}
 }
