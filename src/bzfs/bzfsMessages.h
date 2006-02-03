@@ -13,9 +13,17 @@
 #ifndef _BZFS_MESSAGES_H_
 #define _BZFS_MESSAGES_H_
 
+#include "global.h"
+#include "GameKeeper.h"
+#include "bzfs.h"
+
+// general messages sent to players ( local and remove )
 void sendRemovePlayerMessage ( int playerID );
 void sendFlagUpdateMessage ( int playerID );
 void sendExistingPlayerUpdates ( int newPlayer );
+
+// messages sent to just network users ( like client query )
+int sendPlayerUpdateDirect(NetHandler *handler, GameKeeper::Player *otherData);
 
 #endif //_BZFS_MESSAGES_H_
 

@@ -11,11 +11,7 @@
 */
 
 // bzflag global header
-#include "global.h"
-
 #include "bzfsMessages.h"
-#include "GameKeeper.h"
-#include "bzfs.h"
 
 
 void sendRemovePlayerMessage ( int playerID )
@@ -170,6 +166,19 @@ void sendExistingPlayerUpdates ( int newPlayer )
 				break;
 		}
 	}
+}
+
+// network only messages
+int sendPlayerUpdateDirect(NetHandler *handler, GameKeeper::Player *otherData)
+{
+	if (!otherData->player.isPlaying())
+		return 0;
+
+	void *bufStart = getDirectMessageBuffer();
+	void *buf      = otherData->packPlayerUpdate(bufStart);
+
+	return directMessage(handler, MsgAddPlayer,
+		(char*)buf - (char*)bufStart, bufStart);
 }
 
 // Local Variables: ***

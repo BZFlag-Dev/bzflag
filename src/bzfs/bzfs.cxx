@@ -437,20 +437,6 @@ static int sendTeamUpdateD(NetHandler *handler)
   return directMessage(handler, MsgTeamUpdate,
 		       (char*)buf - (char*)bufStart, bufStart);
 }
-
-static int sendPlayerUpdateD(NetHandler *handler,
-							 GameKeeper::Player *otherData)
-{
-	if (!otherData->player.isPlaying())
-		return 0;
-
-	void *bufStart = getDirectMessageBuffer();
-	void *buf      = otherData->packPlayerUpdate(bufStart);
-
-	return directMessage(handler, MsgAddPlayer,
-		(char*)buf - (char*)bufStart, bufStart);
-}
-
 static void sendPlayerUpdateB(GameKeeper::Player *playerData)
 {
   if (!playerData->player.isPlaying())
@@ -2331,7 +2317,7 @@ static void sendQueryPlayers(NetHandler *handler)
     otherData = GameKeeper::Player::getPlayerByIndex(i);
     if (!otherData)
       continue;
-    result = sendPlayerUpdateD(handler, otherData);
+    result = sendPlayerUpdateDirect(handler, otherData);
     if (result < 0)
       return;
   }
