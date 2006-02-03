@@ -28,6 +28,7 @@ BZFlag 2.1.0
 BZFlag 2.0.5
 ------------
 
+* Allow for longer help files (50 lines) - Angelina Carlton
 * Fixed issue with denial-of-service message attacks - Sean Morrison
 * Fixes for Bot on public server - Alfredo Tupone
 * Support for -window on Mac command line executions - Sean Morrison
