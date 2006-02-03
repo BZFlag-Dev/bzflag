@@ -1950,7 +1950,7 @@ BZF_API bz_eTeamType bz_checkBaseAtPoint ( float pos[3] )
 	return convertTeam(whoseBase(pos[0],pos[1],pos[2]));
 }
 
-int bz_addServerSidePlayer ( bz_ServerSidePlayerHandler *handler )
+BZF_API int bz_addServerSidePlayer ( bz_ServerSidePlayerHandler *handler )
 {
 	PlayerId playerIndex = getNewPlayerID();
 	if (playerIndex >= 0xFF)
@@ -1963,7 +1963,7 @@ int bz_addServerSidePlayer ( bz_ServerSidePlayerHandler *handler )
 	return playerIndex;
 }
 
-bool bz_removeServerSidePlayer ( int playerID, bz_ServerSidePlayerHandler *handler )
+BZF_API bool bz_removeServerSidePlayer ( int playerID, bz_ServerSidePlayerHandler *handler )
 {
 	if (playerID < 0)
 		return false;
