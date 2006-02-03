@@ -17,9 +17,11 @@
 #include <sys/types.h>
 #include <vector>
 #include <string>
+#include <string.h>
 #include <errno.h>
 #ifndef _WIN32
 #  include <unistd.h>
+#  include <signal.h>
 #  include <dirent.h>
 #  include <pwd.h>
 #  ifndef GUSI_20
@@ -386,8 +388,11 @@ void ServerStartMenu::execute()
     int arg = 0;
     args[arg++] = serverApp;
 
+#if defined(_WIN32)
     // always try a fallback port if default port is busy
+    // (unix-like OSes will instead try to kill off the old process)
     args[arg++] = "-pf";
+#endif
 
     // load the world map first, so that later arguments can
     // override any that are present in a map's "options" block
@@ -512,8 +517,31 @@ void ServerStartMenu::execute()
 #else /* defined(_WIN32) */
 
     // UNIX
-    pid_t pid = fork();
-    if (pid == -1) setStatus("Failed... cannot fork.");
+    static pid_t pid = -1;
+
+    // try to kill off the old process
+    if (pid != -1) {
+      int i;
+      for (i = 0; i < 12; i++) {
+        if (kill(pid, SIGTERM) == 0) {
+          TimeKeeper::sleep(0.25); // be gracious for max 3 seconds
+        } else {
+          if (errno == ESRCH) {
+            break; // the pid doesn't exist
+          }
+        }
+      }
+      if (i == 12) {
+        kill(pid, SIGKILL); // be brutal
+      }
+    }
+
+    // fork
+    pid = fork();
+    
+    if (pid == -1) {
+      setStatus("Failed... cannot fork.");
+    }
     else if (pid == 0) {
       // child process.  close down stdio.
       close(0);
@@ -531,13 +559,22 @@ void ServerStartMenu::execute()
     else if (pid != 0) {
       // parent process.  wait a bit and check if child died.
       TimeKeeper::sleep(1.0);
-      if (waitpid(pid, NULL, WNOHANG) != 0) {
-	setStatus("Failed.");
+      int pStatus;
+      if (waitpid(pid, &pStatus, WNOHANG) != 0) {
+	pid = -1;
+	char failBuf[64];
+        if (WIFEXITED(pStatus)) {
+          snprintf(failBuf, 64, "Failed (exit = %i).", WEXITSTATUS(pStatus));
+        } else if (WIFSIGNALED(pStatus)) {
+          snprintf(failBuf, 64, "Failed (signal = %i).", WTERMSIG(pStatus));
+        } else {
+          strcpy(failBuf, "Failed.");
+        }
+	setStatus(failBuf);
       } else {
 	setStatus("Server started.");
 	success = true;
       }
-
     }
 
 #endif /* defined(_WIN32) */
