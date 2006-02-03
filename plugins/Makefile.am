@@ -18,6 +18,7 @@ SUBDIRS = \
 
 DIST_SUBDIRS = \
 	$(SUBDIRS) \
+	serverSideBotSample \
 	doc \
 	vc71
 
