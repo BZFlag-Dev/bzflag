@@ -271,9 +271,12 @@ bool BindCommand::operator() (const char *commandLine)
   }
   
   if (both) {
+    KEYMGR.unbind(ev, true);
     KEYMGR.bind(ev, true, tokens[2]);
+    KEYMGR.unbind(ev, false);
     KEYMGR.bind(ev, false, tokens[2]);
   } else {
+    KEYMGR.unbind(ev, press);
     KEYMGR.bind(ev, press, tokens[2]);
   }
   
