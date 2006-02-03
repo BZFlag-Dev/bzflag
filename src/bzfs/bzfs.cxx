@@ -396,12 +396,6 @@ static void sendPendingGameTime()
 }
 
 
-// Update the player "playerIndex" with all the flags status
-static void sendFlagUpdate(int playerIndex)
-{
-  sendFlagUpdateMessage(playerIndex);
-}
-
 void sendTeamUpdate(int teamIndex1, int teamIndex2)
 {
   // If teamIndex1 is -1, send all teams
@@ -1719,7 +1713,7 @@ static void addPlayer(int playerIndex, GameKeeper::Player *playerData)
     result = sendTeamUpdateD(netHandler);
     if (result < 0)
       return;
-    sendFlagUpdate(playerIndex);
+    sendFlagUpdateMessage(playerIndex);
   }
   if (!playerData->player.isBot()) {
     GameKeeper::Player *otherData;
