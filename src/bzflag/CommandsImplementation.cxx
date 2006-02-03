@@ -238,9 +238,9 @@ bool CommandList::operator() (const char * /*cmdLine*/)
 static void printBindHelp()
 {
   addMessage(NULL, "usage: /bind <event> <press> <action>");
-  addMessage(NULL, "   key: (ex: \"Shift+Page Up\"");
-  addMessage(NULL, "   press: [up | down | both]");
-  addMessage(NULL, "   action: (ex:  \"scrollpanel up 6\"");
+  addMessage(NULL, "   event:   ex: \"Shift+Page Up\"");
+  addMessage(NULL, "   press:   up, down, or both");
+  addMessage(NULL, "   action:  ex: \"scrollpanel up 3\"");
 }
 
 bool BindCommand::operator() (const char *commandLine)
