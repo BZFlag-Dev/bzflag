@@ -425,18 +425,6 @@ void sendTeamUpdate(int teamIndex1, int teamIndex2)
 		   false);
 }
 
-static int sendTeamUpdateD(NetHandler *handler)
-{
-  // send all teams
-  void *buf, *bufStart = getDirectMessageBuffer();
-  buf = nboPackUByte(bufStart, CtfTeams);
-  for (int t = 0; t < CtfTeams; t++) {
-    buf = nboPackUShort(buf, t);
-    buf = team[t].team.pack(buf);
-  }
-  return directMessage(handler, MsgTeamUpdate,
-		       (char*)buf - (char*)bufStart, bufStart);
-}
 static void sendPlayerUpdateB(GameKeeper::Player *playerData)
 {
   if (!playerData->player.isPlaying())
@@ -1695,10 +1683,10 @@ static void addPlayer(int playerIndex, GameKeeper::Player *playerData)
   // send new player updates on each player, all existing flags, and all teams.
   // don't send robots any game info.  watch out for connection being closed
   // because of an error.
-  if (playerData->player.isHuman()) {
-    result = sendTeamUpdateD(netHandler);
-    if (result < 0)
-      return;
+  if (playerData->player.isHuman())
+  {
+    if (!sendTeamUpdateMessage(playerIndex))
+		return;
     sendFlagUpdateMessage(playerIndex);
   }
   if (!playerData->player.isBot())
@@ -2309,7 +2297,7 @@ static void sendQueryPlayers(NetHandler *handler)
     return;
 
   // now send the teams and players
-  result = sendTeamUpdateD(handler);
+  result = sendTeamUpdateDirect(handler);
   if (result < 0)
     return;
   GameKeeper::Player *otherData;

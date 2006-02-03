@@ -158,15 +158,43 @@ void sendExistingPlayerUpdates ( int newPlayer )
 		}
 		else
 		{
-			void *bufStart = getDirectMessageBuffer();
-			void *buf      = otherData->packPlayerUpdate(bufStart);
-			int result = directMessage(playerData->netHandler, MsgAddPlayer,(char*)buf - (char*)bufStart, bufStart);
-
-			if (result < 0)
+			if (sendPlayerUpdateDirect(playerData->netHandler,otherData) < 0)
 				break;
 		}
 	}
 }
+
+bool sendTeamUpdateMessage( int newPlayer )
+{
+	GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(newPlayer);
+
+	if (!playerData)
+		return false;
+
+	if (!playerData->playerHandler)
+		return sendTeamUpdateDirect(playerData->netHandler) > 0;
+	else
+	{
+		bz_TeamInfoRecord	**teams = (bz_TeamInfoRecord**)malloc(sizeof(bz_TeamInfoRecord*)*CtfTeams);
+		for (int t = 0; t < CtfTeams; t++)
+		{
+			teams[t] = new bz_TeamInfoRecord;
+
+			teams[t]->id = t;
+			teams[t]->size = team[t].team.size;
+			teams[t]->wins = team[t].team.won;
+			teams[t]->losses = team[t].team.won;
+		}
+		playerData->playerHandler->teamUpdate ( CtfTeams, teams );
+
+		for (int t = 0; t < CtfTeams; t++)
+			delete(teams[t]);
+
+		delete(teams);
+	}
+	return true;
+}
+
 
 // network only messages
 int sendPlayerUpdateDirect(NetHandler *handler, GameKeeper::Player *otherData)
@@ -180,6 +208,20 @@ int sendPlayerUpdateDirect(NetHandler *handler, GameKeeper::Player *otherData)
 	return directMessage(handler, MsgAddPlayer,
 		(char*)buf - (char*)bufStart, bufStart);
 }
+
+int sendTeamUpdateDirect(NetHandler *handler)
+{
+	// send all teams
+	void *buf, *bufStart = getDirectMessageBuffer();
+	buf = nboPackUByte(bufStart, CtfTeams);
+	for (int t = 0; t < CtfTeams; t++) {
+		buf = nboPackUShort(buf, t);
+		buf = team[t].team.pack(buf);
+	}
+	return directMessage(handler, MsgTeamUpdate,
+		(char*)buf - (char*)bufStart, bufStart);
+}
+
 
 // Local Variables: ***
 // mode:C++ ***

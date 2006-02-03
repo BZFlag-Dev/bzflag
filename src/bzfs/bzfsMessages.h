@@ -21,9 +21,11 @@
 void sendRemovePlayerMessage ( int playerID );
 void sendFlagUpdateMessage ( int playerID );
 void sendExistingPlayerUpdates ( int newPlayer );
+bool sendTeamUpdateMessage( int newPlayer );
 
 // messages sent to just network users ( like client query )
 int sendPlayerUpdateDirect(NetHandler *handler, GameKeeper::Player *otherData);
+int sendTeamUpdateDirect(NetHandler *handler);
 
 #endif //_BZFS_MESSAGES_H_
 

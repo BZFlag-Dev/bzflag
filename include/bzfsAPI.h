@@ -1213,6 +1213,14 @@ typedef struct
 	char			email[128];
 }bz_PlayerUpdateRecord;
 
+typedef struct 
+{
+	int id;
+	int size;
+	int	wins;
+	int losses;
+}bz_TeamInfoRecord;
+
 class bz_ServerSidePlayerHandler
 {
 public:
@@ -1221,8 +1229,9 @@ public:
 	virtual void removed ( void ) = 0;
 	virtual void playerRemoved ( int playerID ) = 0;
 
-	virtual void flagUpdate ( int count, bz_FlagUpdateRecord** flagList ) = 0;
+	virtual void flagUpdate ( int count, bz_FlagUpdateRecord **flagList ) = 0;
 	virtual void playerUpdate ( bz_PlayerUpdateRecord *playerRecord ) = 0;
+	virtual void teamUpdate ( int count, bz_TeamInfoRecord **teamList ) = 0;
 };
 
 int bz_addServerSidePlayer ( bz_ServerSidePlayerHandler *handler );
