@@ -48,7 +48,7 @@ void sendFlagUpdateMessage ( int playerID )
 			{
 				bz_FlagUpdateRecord	*flagRecord = new bz_FlagUpdateRecord;
 
-				bool hide = (flag.flag.type->flagTeam == ::NoTeam) && !isIdentifyFlagIn && (flag.player == -1);
+				bool hide = (flag.flag.type->flagTeam == ::NoTeam) && (flag.player == -1);
 				
 				flagRecord->index = flagIndex;
 
@@ -108,7 +108,7 @@ void sendFlagUpdateMessage ( int playerID )
 					buf    = nboPackUShort(bufStart,0); //placeholder
 				}
 
-				bool hide = (flag.flag.type->flagTeam == ::NoTeam) && !isIdentifyFlagIn && (flag.player == -1);
+				bool hide = (flag.flag.type->flagTeam == ::NoTeam) && (flag.player == -1);
 				buf = flag.pack(buf, hide);
 				length += sizeof(uint16_t)+FlagPLen;
 				cnt++;

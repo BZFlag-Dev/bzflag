@@ -145,7 +145,6 @@ uint8_t rabbitIndex = NoPlayer;
 static RejoinList rejoinList;
 
 static TimeKeeper lastWorldParmChange;
-bool       isIdentifyFlagIn = false;
 static bool       playerHadWorld   = false;
 
 void sendFilteredMessage(int playerIndex, PlayerId dstPlayer, const char *message);
@@ -334,7 +333,6 @@ void sendFlagUpdate(FlagInfo &flag)
   buf = nboPackUShort(bufStart,1);
   bool hide
     = (flag.flag.type->flagTeam == ::NoTeam)
-    && !isIdentifyFlagIn
     && (flag.player == -1);
   buf = flag.pack(buf, hide);
   broadcastMessage(MsgFlagUpdate, (char*)buf - (char*)bufStart, bufStart,
@@ -4585,16 +4583,6 @@ int main(int argc, char **argv)
   // eek, nobody can spawn!!
   if (!serverAllowsSpawn)
     std::cout << "WARNING: No players have the SPAWN permission!" << std::endl;
-
-  // See if an ID flag is in the game.
-  // If not, we could hide type info for all flags
-  if (clOptions->flagCount[Flags::Identify] > 0) {
-    isIdentifyFlagIn = true;
-  }
-  if ((clOptions->numExtraFlags > 0)
-      && !clOptions->flagDisallowed[Flags::Identify]) {
-    isIdentifyFlagIn = true;
-  }
 
   if (clOptions->startRecording) {
     Record::start(ServerPlayer);
