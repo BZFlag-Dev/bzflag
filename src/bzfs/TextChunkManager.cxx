@@ -54,7 +54,7 @@ StringVector TextChunk::parse()
   char buffer[MessageLen];
   std::ifstream in(fileName.c_str());
   if (in) {
-    for(int i = 0; (i < 20) && in.good(); i++) {
+    for(int i = 0; (i < 50) && in.good(); i++) {
       in.getline(buffer, MessageLen);
       if(!in.fail()){ // really read something
 	strings.push_back(buffer);
