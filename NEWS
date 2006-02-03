@@ -4,6 +4,9 @@
 BZFlag 2.1.0
 ------------
 
+* Flag hiding work even when Identity flag is on - Alfredo Tupone
+* Flag grabbing & identifying made server side - Alfredo Tupone
+* Jitter Kick - Thomas Stauer
 * Automatic prompting, download and installation of updates - Daniel Remenak
 * Append screenshots after the highest numbered existing one - Ian Agar
 * Add /modcount to adjust countdown time from within game - Ian Agar
