@@ -1841,7 +1841,7 @@ copy ..\..\src\bzfs\debug\*.exe ..\..\*.exe
 			Name="NetMessages"
 			Filter="">
 			<File
-				RelativePath="..\..\src\bzfs\bzfsClientMessages.cpp">
+				RelativePath="..\..\src\bzfs\bzfsClientMessages.cxx">
 			</File>
 			<File
 				RelativePath="..\..\src\bzfs\bzfsClientMessages.h">
