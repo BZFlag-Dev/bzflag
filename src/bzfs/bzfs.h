@@ -79,8 +79,12 @@ extern void       resetFlag(FlagInfo &flag);
 extern void       dropFlag(FlagInfo& flag, const float dropPos[3]);
 extern void       publicize();
 extern TeamColor  whoseBase(float x, float y, float z);
+
+
 void checkGameOn ( void );
 PlayerId getNewPlayerID ( void );
+bool validPlayerCallsign ( int playerIndex );
+void addPlayer(int playerIndex, GameKeeper::Player *playerData);
 
 // initialize permission groups
 extern void initGroups();

@@ -190,10 +190,104 @@ bool sendTeamUpdateMessage( int newPlayer )
 		for (int t = 0; t < CtfTeams; t++)
 			delete(teams[t]);
 
-		delete(teams);
+		free(teams);
 	}
 	return true;
 }
+
+void sendRejectPlayerMessage ( int playerID, uint16_t code , const char* reason )
+{
+	GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(playerID);
+
+	if (playerData->playerHandler)
+		playerData->playerHandler->playerRejected ( (bz_eRejectCodes)code,reason );
+	else
+	{
+		void *buf, *bufStart = getDirectMessageBuffer();
+		buf = nboPackUShort(bufStart, code);
+		buf = nboPackString(buf, reason, strlen(reason) + 1);
+		directMessage(playerID, MsgReject, sizeof (uint16_t) + MessageLen, bufStart);
+	}
+}
+
+bool sendAcceptPlayerMessage ( int playerID )
+{
+	GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(playerID);
+
+	if (playerData->playerHandler)
+		playerData->playerHandler->playerAccepted();
+	else
+	{
+		void *buf, *bufStart = getDirectMessageBuffer();
+		buf = nboPackUByte(bufStart, playerID);
+		int result = directMessage(playerData->netHandler, MsgAccept,(char*)buf-(char*)bufStart, bufStart);
+		if (result < 0)
+			return false;
+	}
+
+	return true;
+}
+
+void sendHandycapInfoUpdate (int playerID )
+{
+	GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(playerID);
+	if (!playerData)
+		return;
+
+	GameKeeper::Player *otherData;
+	if (clOptions->gameStyle & HandicapGameStyle) 
+	{
+		if (playerData->playerHandler)
+		{
+			std::vector<bz_HandycapUpdateRecord*>	handyList;
+			for (int i = 0; i < curMaxPlayers; i++)
+			{
+				otherData = GameKeeper::Player::getPlayerByIndex(i);
+				if (otherData)
+				{
+					bz_HandycapUpdateRecord *handyData = new bz_HandycapUpdateRecord;
+					handyData->player = i;
+					handyData->handycap = otherData->score.getHandicap();
+					handyList.push_back(handyData);
+				}
+
+				bz_HandycapUpdateRecord** handyPtrList = (bz_HandycapUpdateRecord**)malloc(sizeof(bz_HandycapUpdateRecord*)*handyList.size());
+				for ( int i = 0; i < (int)handyList.size(); i++)
+					handyPtrList[i] = handyList[i];
+
+				playerData->playerHandler->handycapUpdate((int)handyList.size(),handyPtrList);
+
+				free(handyPtrList);
+				for ( int i = 0; i < (int)handyList.size(); i++)
+					delete(handyList[i]);
+			}
+		}
+		else
+		{
+			int numHandicaps = 0;
+
+			// Send handicap for all players
+			void *bufStart = getDirectMessageBuffer();
+			void *buf = nboPackUByte(bufStart, numHandicaps);
+			for (int i = 0; i < curMaxPlayers; i++)
+			{
+				if (i != playerID)
+				{
+					otherData = GameKeeper::Player::getPlayerByIndex(i);
+					if (otherData)
+					{
+						numHandicaps++;
+						buf = nboPackUByte(buf, i);
+						buf = nboPackShort(buf, otherData->score.getHandicap());
+					}
+				}
+			}
+			nboPackUByte(bufStart, numHandicaps);
+			broadcastMessage(MsgHandicap, (char*)buf-(char*)bufStart, bufStart);
+		}
+	}
+}
+
 
 
 // network only messages

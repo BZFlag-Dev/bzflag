@@ -97,6 +97,124 @@ void *PlayerInfo::packId(void *buf) {
   return buf;
 }
 
+void PlayerInfo::setCallsign ( const char* text )
+{
+	if (!text)
+		return;
+
+	memset(callSign,0,CallSignLen);
+	if (strlen(text)>=CallSignLen)
+		strncpy(callSign,text,CallSignLen-1);
+	else
+		strcpy(callSign,text);
+}
+
+void PlayerInfo::setEmail ( const char* text )
+{
+	if (!text)
+		return;
+
+	memset(email,0,EmailLen);
+	if (strlen(text)>=EmailLen)
+		strncpy(email,text,EmailLen-1);
+	else
+		strcpy(email,text);
+}
+
+void PlayerInfo::setToken ( const char* text )
+{
+	if (!text)
+		return;
+
+	memset(token,0,TokenLen);
+	if (strlen(text)>=TokenLen)
+		strncpy(token,text,TokenLen-1);
+	else
+		strcpy(token,text);
+}
+
+void PlayerInfo::setClientVersion ( const char* text )
+{
+	if (!text)
+		return;
+
+	memset(clientVersion,0,VersionLen);
+	if (strlen(text)>=VersionLen)
+		strncpy(clientVersion,text,VersionLen-1);
+	else
+		strcpy(clientVersion,text);
+}
+
+bool PlayerInfo::processEnter ( uint16_t &rejectCode, char *rejectMsg )
+{
+	// terminate the strings
+	callSign[CallSignLen - 1] = '\0';
+	email[EmailLen - 1] = '\0';
+	token[TokenLen - 1] = '\0';
+	clientVersion[VersionLen - 1] = '\0';
+	cleanEMail();
+
+	DEBUG2("Player %s [%d] sent version string: %s\n",
+		callSign, playerIndex, clientVersion);
+
+	// spoof filter holds "SERVER" for robust name comparisons
+	if (serverSpoofingFilter.wordCount() == 0) {
+		serverSpoofingFilter.addToFilter("SERVER", "");
+	}
+
+	if (!isCallSignReadable()) {
+		DEBUG2("rejecting unreadable callsign: %s\n", callSign);
+		rejectCode   = RejectBadCallsign;
+		strcpy(rejectMsg, errorString.c_str());
+		return false;
+	}
+	// no spoofing the server name
+	if (serverSpoofingFilter.filter(callSign)) {
+		rejectCode   = RejectRepeatCallsign;
+		strcpy(rejectMsg, "The callsign specified is already in use.");
+		return false;
+	}
+	if (!isEMailReadable()) {
+		DEBUG2("rejecting unreadable player email: %s (%s)\n", callSign, email);
+		rejectCode   = RejectBadEmail;
+		strcpy(rejectMsg, "The e-mail was rejected.  Try a different e-mail.");
+		return false;
+	}
+
+	// make sure the callsign is not obscene/filtered
+	if (callSignFiltering) {
+		DEBUG2("checking callsign: %s\n",callSign);
+
+		char cs[CallSignLen];
+		memcpy(cs, callSign, sizeof(char) * CallSignLen);
+		if (filterData->filter(cs, simpleFiltering)) {
+			rejectCode = RejectBadCallsign;
+			strcpy(rejectMsg,
+				"The callsign was rejected. Try a different callsign.");
+			return false;
+		}
+	}
+
+	// make sure the email is not obscene/filtered
+	if (callSignFiltering) {
+		DEBUG2("checking email: %s\n", email);
+		char em[EmailLen];
+		memcpy(em, email, sizeof(char) * EmailLen);
+		if (filterData->filter(em, simpleFiltering)) {
+			rejectCode = RejectBadEmail;
+			strcpy(rejectMsg, "The e-mail was rejected. Try a different e-mail.");
+			return false;
+		}
+	}
+
+	if (token[0] == 0) {
+		strcpy(token, "NONE");
+	}
+	hasDoneEntering = true;
+
+	return true;
+}
+
 bool PlayerInfo::unpackEnter(void *buf, uint16_t &rejectCode, char *rejectMsg)
 {
   // data: type, team, name, email
@@ -111,71 +229,7 @@ bool PlayerInfo::unpackEnter(void *buf, uint16_t &rejectCode, char *rejectMsg)
   buf = nboUnpackString(buf, token, TokenLen);
   buf = nboUnpackString(buf, clientVersion, VersionLen);
 
-  // terminate the strings
-  callSign[CallSignLen - 1] = '\0';
-  email[EmailLen - 1] = '\0';
-  token[TokenLen - 1] = '\0';
-  clientVersion[VersionLen - 1] = '\0';
-  cleanEMail();
-
-  DEBUG2("Player %s [%d] sent version string: %s\n",
-	 callSign, playerIndex, clientVersion);
-
-  // spoof filter holds "SERVER" for robust name comparisons
-  if (serverSpoofingFilter.wordCount() == 0) {
-    serverSpoofingFilter.addToFilter("SERVER", "");
-  }
-
-  if (!isCallSignReadable()) {
-    DEBUG2("rejecting unreadable callsign: %s\n", callSign);
-    rejectCode   = RejectBadCallsign;
-    strcpy(rejectMsg, errorString.c_str());
-    return false;
-  }
-  // no spoofing the server name
-  if (serverSpoofingFilter.filter(callSign)) {
-    rejectCode   = RejectRepeatCallsign;
-    strcpy(rejectMsg, "The callsign specified is already in use.");
-    return false;
-  }
-  if (!isEMailReadable()) {
-    DEBUG2("rejecting unreadable player email: %s (%s)\n", callSign, email);
-    rejectCode   = RejectBadEmail;
-    strcpy(rejectMsg, "The e-mail was rejected.  Try a different e-mail.");
-    return false;
-  }
-
-  // make sure the callsign is not obscene/filtered
-  if (callSignFiltering) {
-    DEBUG2("checking callsign: %s\n",callSign);
-
-    char cs[CallSignLen];
-    memcpy(cs, callSign, sizeof(char) * CallSignLen);
-    if (filterData->filter(cs, simpleFiltering)) {
-      rejectCode = RejectBadCallsign;
-      strcpy(rejectMsg,
-	     "The callsign was rejected. Try a different callsign.");
-      return false;
-    }
-  }
-
-  // make sure the email is not obscene/filtered
-  if (callSignFiltering) {
-    DEBUG2("checking email: %s\n", email);
-    char em[EmailLen];
-    memcpy(em, email, sizeof(char) * EmailLen);
-    if (filterData->filter(em, simpleFiltering)) {
-      rejectCode = RejectBadEmail;
-      strcpy(rejectMsg, "The e-mail was rejected. Try a different e-mail.");
-      return false;
-    }
-  }
-
-  if (token[0] == 0) {
-    strcpy(token, "NONE");
-  }
-  hasDoneEntering = true;
-  return true;
+  return processEnter(rejectCode,rejectMsg);
 }
 
 const char *PlayerInfo::getCallSign() const {

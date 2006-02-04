@@ -123,6 +123,14 @@ public:
 
   PlayerType getType( void ) {return type;}
 
+  // only used by the server side bot API
+  void setCallsign ( const char* text );
+  void setEmail ( const char* text );
+  void setToken ( const char* text );
+  void setClientVersion ( const char* text );
+
+  bool processEnter ( uint16_t &rejectCode, char *rejectMsg );
+
 private:
 
   void	cleanEMail();

@@ -1950,16 +1950,39 @@ BZF_API bz_eTeamType bz_checkBaseAtPoint ( float pos[3] )
 	return convertTeam(whoseBase(pos[0],pos[1],pos[2]));
 }
 
+// server side bot API
+void bz_ServerSidePlayerHandler::setEntryData ( const char* callsign, const char* email, const char* token, const char* clientVersion )
+{
+	GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerID);
+
+	if (!player || player->playerHandler != this)
+		return;
+
+	player->player.setCallsign(callsign);
+	player->player.setEmail (email);
+	player->player.setToken (token );
+	player->player.setClientVersion (clientVersion);
+
+	uint16_t	code = 0;
+	char reason[512] = {0};
+	if (!player->player.processEnter(code,reason))
+		playerRejected ( (bz_eRejectCodes)code, reason );
+}
+
 BZF_API int bz_addServerSidePlayer ( bz_ServerSidePlayerHandler *handler )
 {
+	handler->playerID = -1;
+
 	PlayerId playerIndex = getNewPlayerID();
 	if (playerIndex >= 0xFF)
 		return -1;
 
-	new GameKeeper::Player(playerIndex, handler);
-
+	// make the player, check the game stuff, and don't do DNS stuff
+	GameKeeper::Player *player = new GameKeeper::Player(playerIndex, handler);
 	checkGameOn();
+	player->_LSAState = GameKeeper::Player::notRequired;
 
+	handler->playerID = playerIndex;
 	return playerIndex;
 }
 
@@ -1977,7 +2000,6 @@ BZF_API bool bz_removeServerSidePlayer ( int playerID, bz_ServerSidePlayerHandle
 	removePlayer(playerIndex,NULL,true);
 	return true;
 }
-
 
 // Local Variables: ***
 // mode:C++ ***

@@ -45,6 +45,7 @@ BZF_PLUGIN_CALL int bz_Unload ( void )
 void SimpleBotHandler::added ( int playerID )
 {
 	bz_debugMessage(3,"SimpleBotHandler::added");
+	setEntryData("someBot","bot@bzflag.org",NULL,"bot sample");
 }
 
 void SimpleBotHandler::removed ( void )

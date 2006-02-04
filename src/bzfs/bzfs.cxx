@@ -1264,12 +1264,9 @@ void sendMessage(int playerIndex, PlayerId dstPlayer, const char *message)
 
 static void rejectPlayer(int playerIndex, uint16_t code, const char *reason)
 {
-  void *buf, *bufStart = getDirectMessageBuffer();
-  buf = nboPackUShort(bufStart, code);
-  buf = nboPackString(buf, reason, strlen(reason) + 1);
-  directMessage(playerIndex, MsgReject, sizeof (uint16_t) + MessageLen, bufStart);
-  // Fixing security hole, because a client can ignore the reject message
-  // then he can avoid a ban, hostban...
+  // tell them they were rejected
+  sendRejectPlayerMessage(playerIndex,code,reason);
+  // remove player so he can not ignore the reject messaeg and, then can avoid a ban, hostban...
   removePlayer(playerIndex, "/rejected", true);
   return;
 }
@@ -1485,7 +1482,23 @@ static bool spawnSoon = false;
 
 static void playerAlive(int playerIndex);
 
-static void addPlayer(int playerIndex, GameKeeper::Player *playerData)
+bool validPlayerCallsign ( int playerIndex )
+{
+	GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(playerIndex);
+	if (clOptions->filterCallsigns)
+	{
+		int filterIndex = 0;
+		Filter::Action filterAction = filter.check(*playerData, filterIndex);
+		if (filterAction == Filter::DROP) 
+		{
+			rejectPlayer(playerIndex, RejectBadCallsign, "Unacceptable Callsign");
+			return false;
+		}
+	}
+	return true;
+}
+
+void addPlayer(int playerIndex, GameKeeper::Player *playerData)
 {
   uint16_t rejectCode;
   char rejectMsg[MessageLen];
@@ -1521,81 +1534,83 @@ static void addPlayer(int playerIndex, GameKeeper::Player *playerData)
       }
     }
   }
-
-  if (clOptions->filterCallsigns) {
-    int filterIndex = 0;
-    Filter::Action filterAction = filter.check(*playerData, filterIndex);
-    if (filterAction == Filter::DROP) {
-      rejectPlayer(playerIndex, RejectBadCallsign, "Player has been banned");
-      return;
-    }
-  }
+  if (!validPlayerCallsign(playerIndex))
+	  return;
 
   const bool playerIsAntiBanned =
     playerData->accessInfo.hasPerm(PlayerAccessInfo::antiban);
 
-  // check against the ip ban list
-  in_addr playerIP = playerData->netHandler->getIPAddress();
-  BanInfo info(playerIP);
-  if (!playerIsAntiBanned && !clOptions->acl.validate(playerIP,&info)) {
-    std::string rejectionMessage;
+  if(!playerData->playerHandler)	// no need to ban local players, if they arn't suposed to be here, don't load them
+  {
+	// check against the ip ban list
+	in_addr playerIP = playerData->netHandler->getIPAddress();
+	BanInfo info(playerIP);
+	if (!playerIsAntiBanned && !clOptions->acl.validate(playerIP,&info)) {
+		std::string rejectionMessage;
 
-    rejectionMessage = BanRefusalString;
-    if (info.reason.size ())
-      rejectionMessage += info.reason;
-    else
-      rejectionMessage += "General Ban";
+		rejectionMessage = BanRefusalString;
+		if (info.reason.size ())
+		rejectionMessage += info.reason;
+		else
+		rejectionMessage += "General Ban";
 
-    rejectionMessage += ColorStrings[WhiteColor];
-    if (info.bannedBy.size ()) {
-      rejectionMessage += " by ";
-      rejectionMessage += ColorStrings[BlueColor];
-      rejectionMessage += info.bannedBy;
-    }
+		rejectionMessage += ColorStrings[WhiteColor];
+		if (info.bannedBy.size ()) {
+		rejectionMessage += " by ";
+		rejectionMessage += ColorStrings[BlueColor];
+		rejectionMessage += info.bannedBy;
+		}
 
-    rejectionMessage += ColorStrings[GreenColor];
-    if (info.fromMaster)
-      rejectionMessage += " [you are on the master ban list]";
+		rejectionMessage += ColorStrings[GreenColor];
+		if (info.fromMaster)
+		rejectionMessage += " [you are on the master ban list]";
 
-    rejectPlayer (playerIndex, RejectIPBanned, rejectionMessage.c_str ());
-    return;
+		rejectPlayer (playerIndex, RejectIPBanned, rejectionMessage.c_str ());
+		return;
+	}
+
+	// check against the id ban list
+	const std::string& bzid = playerData->getBzIdentifier();
+	IdBanInfo idInfo("");
+	if (!playerIsAntiBanned && !clOptions->acl.idValidate(bzid.c_str(), &idInfo)) {
+		std::string rejectionMessage;
+
+		rejectionMessage = BanRefusalString;
+		if (idInfo.reason.size()) {
+		rejectionMessage += idInfo.reason;
+		} else {
+		rejectionMessage += "General Ban";
+		}
+
+		rejectionMessage += ColorStrings[WhiteColor];
+		if (idInfo.bannedBy.size()) {
+		rejectionMessage += " by ";
+		rejectionMessage += ColorStrings[BlueColor];
+		rejectionMessage += idInfo.bannedBy;
+		}
+
+		rejectionMessage += ColorStrings[GreenColor];
+		if (idInfo.fromMaster) {
+		rejectionMessage += " [from the master server]";
+		}
+		rejectPlayer(playerIndex, RejectIDBanned, rejectionMessage.c_str());
+		return;
+	}
+
+	// check against id and hostname ban lists (on the next cycle)
+	playerData->setNeedThisHostbanChecked(true);
   }
-
-  // check against the id ban list
-  const std::string& bzid = playerData->getBzIdentifier();
-  IdBanInfo idInfo("");
-  if (!playerIsAntiBanned && !clOptions->acl.idValidate(bzid.c_str(), &idInfo)) {
-    std::string rejectionMessage;
-
-    rejectionMessage = BanRefusalString;
-    if (idInfo.reason.size()) {
-      rejectionMessage += idInfo.reason;
-    } else {
-      rejectionMessage += "General Ban";
-    }
-
-    rejectionMessage += ColorStrings[WhiteColor];
-    if (idInfo.bannedBy.size()) {
-      rejectionMessage += " by ";
-      rejectionMessage += ColorStrings[BlueColor];
-      rejectionMessage += idInfo.bannedBy;
-    }
-
-    rejectionMessage += ColorStrings[GreenColor];
-    if (idInfo.fromMaster) {
-      rejectionMessage += " [from the master server]";
-    }
-    rejectPlayer(playerIndex, RejectIDBanned, rejectionMessage.c_str());
-    return;
-  }
-
-  // check against id and hostname ban lists (on the next cycle)
-  playerData->setNeedThisHostbanChecked(true);
+  else
+	  playerData->setNeedThisHostbanChecked(false);
 
   // see if any watchers don't want this guy
   bz_AllowPlayerEventData_V1 allowData;
   allowData.callsign = playerData->player.getCallSign();
-  allowData.ipAddress = playerData->netHandler->getTargetIP();
+  if(playerData->netHandler)
+	 allowData.ipAddress = playerData->netHandler->getTargetIP();
+  else
+	allowData.ipAddress = "local.player";
+
   allowData.playerID = playerIndex;
   allowData.time = TimeKeeper::getCurrent().getSeconds();
 
@@ -1624,21 +1639,24 @@ static void addPlayer(int playerIndex, GameKeeper::Player *playerData)
     numplayers += team[i].team.size;
   const int numplayersobs = numplayers + team[ObserverTeam].team.size;
 
-  // no quick rejoining, make 'em wait
-  // you can switch to observer immediately, or switch from observer
-  // to regular player immediately, but only if last time time you
-  // were a regular player isn't in the rejoin list. As well, this all
-  // only applies if the game isn't currently empty.
-  if ((playerData->player.getTeam() != ObserverTeam) &&
-      (GameKeeper::Player::count() >= 0)) {
-    float waitTime = rejoinList.waitTime (playerIndex);
-    if (waitTime > 0.0f) {
-      char buffer[MessageLen];
-      DEBUG2 ("Player %s [%d] rejoin wait of %.1f seconds\n",
-	      playerData->player.getCallSign(), playerIndex, waitTime);
-      snprintf (buffer, MessageLen, "You are unable to begin playing for %.1f seconds.", waitTime);
-      sendMessage(ServerPlayer, playerIndex, buffer);
-    }
+  if(!playerData->playerHandler)	// locals can rejoin as fast as they want
+  {
+	// no quick rejoining, make 'em wait
+	// you can switch to observer immediately, or switch from observer
+	// to regular player immediately, but only if last time time you
+	// were a regular player isn't in the rejoin list. As well, this all
+	// only applies if the game isn't currently empty.
+	if ((playerData->player.getTeam() != ObserverTeam) &&
+		(GameKeeper::Player::count() >= 0)) {
+		float waitTime = rejoinList.waitTime (playerIndex);
+		if (waitTime > 0.0f) {
+		char buffer[MessageLen];
+		DEBUG2 ("Player %s [%d] rejoin wait of %.1f seconds\n",
+			playerData->player.getCallSign(), playerIndex, waitTime);
+		snprintf (buffer, MessageLen, "You are unable to begin playing for %.1f seconds.", waitTime);
+		sendMessage(ServerPlayer, playerIndex, buffer);
+		}
+	}
   }
 
   // reject player if asks for bogus team or rogue and rogues aren't allowed
@@ -1669,13 +1687,8 @@ static void addPlayer(int playerIndex, GameKeeper::Player *playerData)
   }
   NetHandler *netHandler = playerData->netHandler;
 
-  // accept player
-  void *buf, *bufStart = getDirectMessageBuffer();
-  buf = nboPackUByte(bufStart, playerIndex);
-  int result = directMessage(netHandler, MsgAccept,
-			     (char*)buf-(char*)bufStart, bufStart);
-  if (result < 0)
-    return;
+  if (!sendAcceptPlayerMessage(playerIndex))
+	  return;
 
   // abort if we hung up on the client
   if (!GameKeeper::Player::getPlayerByIndex(playerIndex))
@@ -1705,26 +1718,7 @@ static void addPlayer(int playerIndex, GameKeeper::Player *playerData)
   if (!playerData->player.isBot())
   {
     sendExistingPlayerUpdates(playerIndex);
-    GameKeeper::Player *otherData;
-    if (clOptions->gameStyle & HandicapGameStyle) {
-      int numHandicaps = 0;
-
-      // Send handicap for all players
-      bufStart = getDirectMessageBuffer();
-      buf = nboPackUByte(bufStart, numHandicaps);
-      for (int i = 0; i < curMaxPlayers
-	     && GameKeeper::Player::getPlayerByIndex(playerIndex); i++)
-	if (i != playerIndex) {
-	  otherData = GameKeeper::Player::getPlayerByIndex(i);
-	  if (otherData) {
-	    numHandicaps++;
-	    buf = nboPackUByte(buf, i);
-	    buf = nboPackShort(buf, otherData->score.getHandicap());
-	  }
-	}
-      nboPackUByte(bufStart, numHandicaps);
-      broadcastMessage(MsgHandicap, (char*)buf-(char*)bufStart, bufStart);
-    }
+    sendHandycapInfoUpdate(playerIndex);
   }
 
   // if new player connection was closed (because of an error) then stop here
@@ -1742,6 +1736,8 @@ static void addPlayer(int playerIndex, GameKeeper::Player *playerData)
   sendIPUpdate(-1, playerIndex);
   sendIPUpdate(playerIndex, -1);
 
+  void *bufStart;
+  void *buf;
   // send rabbit information
   if (clOptions->gameStyle & int(RabbitChaseGameStyle)) {
     bufStart = getDirectMessageBuffer();
@@ -1764,7 +1760,7 @@ static void addPlayer(int playerIndex, GameKeeper::Player *playerData)
 
     bufStart = getDirectMessageBuffer();
     buf = nboPackInt(bufStart, (int32_t)timeLeft);
-    result = directMessage(playerData->netHandler, MsgTimeUpdate,
+    int result = directMessage(playerData->netHandler, MsgTimeUpdate,
 			   (char*)buf-(char*)bufStart, bufStart);
     if (result == -1)
       return;
@@ -4098,24 +4094,17 @@ static void doStuffOnPlayer(GameKeeper::Player &playerData)
   }
   else
   {
-	 if ( !playerData.netHandler)
-	 {
-		playerData._LSAState = GameKeeper::Player::notRequired;
-	 }
-	 else
-	 {
-		if (playerData.netHandler->reverseDNSDone())
+	if (playerData._LSAState == GameKeeper::Player::notRequired || playerData.netHandler->reverseDNSDone())
+	{
+		if ((playerData._LSAState == GameKeeper::Player::verified)	||
+			(playerData._LSAState == GameKeeper::Player::timedOut)	||
+			(playerData._LSAState == GameKeeper::Player::failed)	||
+			(playerData._LSAState == GameKeeper::Player::notRequired))
 		{
-			if ((playerData._LSAState == GameKeeper::Player::verified)	||
-				(playerData._LSAState == GameKeeper::Player::timedOut)	||
-				(playerData._LSAState == GameKeeper::Player::failed)	||
-				(playerData._LSAState == GameKeeper::Player::notRequired))
-			{
-				addPlayer(p, &playerData);
-				playerData._LSAState = GameKeeper::Player::done;
-			}
+			addPlayer(p, &playerData);
+			playerData._LSAState = GameKeeper::Player::done;
 		}
-	 }
+	}
   }
 
   // Check host bans

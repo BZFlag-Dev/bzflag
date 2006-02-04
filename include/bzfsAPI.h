@@ -1221,18 +1221,48 @@ typedef struct
 	int losses;
 }bz_TeamInfoRecord;
 
-class bz_ServerSidePlayerHandler
+typedef enum
+{
+	eRejectBadRequest,
+	eRejectBadTeam,
+	eRejectBadType,
+	eRejectBadEmail,
+	eRejectTeamFull,
+	eRejectServerFull,
+	eRejectBadCallsign,
+	eRejectRepeatCallsign,
+	eRejectRejoinWaitTime,
+	eRejectIPBanned,
+	eRejectHostBanned,
+	eRejectIDBanned
+}bz_eRejectCodes;
+
+typedef struct 
+{
+	int player;
+	int handycap;
+}bz_HandycapUpdateRecord;
+
+class BZF_API bz_ServerSidePlayerHandler
 {
 public:
 	virtual ~bz_ServerSidePlayerHandler(){};
 
-	virtual void added ( int playerID ) = 0;
-	virtual void removed ( void ) = 0;
-	virtual void playerRemoved ( int playerID ) = 0;
+	virtual void added ( int playerID ) = 0;	// you must call setEntryData when this is called.
+	virtual void removed ( void ){};
+	virtual void playerRemoved ( int playerID ){};
+	virtual void playerRejected ( bz_eRejectCodes code, const char* reason ){};
+	virtual void playerAccepted ( void ){};
 
-	virtual void flagUpdate ( int count, bz_FlagUpdateRecord **flagList ) = 0;
-	virtual void playerUpdate ( bz_PlayerUpdateRecord *playerRecord ) = 0;
-	virtual void teamUpdate ( int count, bz_TeamInfoRecord **teamList ) = 0;
+	virtual void flagUpdate ( int count, bz_FlagUpdateRecord **flagList ){};
+	virtual void playerUpdate ( bz_PlayerUpdateRecord *playerRecord ){};
+	virtual void teamUpdate ( int count, bz_TeamInfoRecord **teamList ){};
+	virtual void handycapUpdate ( int count, bz_HandycapUpdateRecord **handycapList ){};
+
+	int playerID;
+
+protected:
+	void setEntryData ( const char* callsign, const char* email, const char* token, const char* clientVersion );
 };
 
 // *** NOTE *** support for server side players in incomplete.
