@@ -17,6 +17,8 @@
 
 #define NOMINMAX 1
 
+#define AUTOUPGRADE 1
+
 #if defined(WIN32) && !defined(_WIN32)
 #   define _WIN32
 #endif

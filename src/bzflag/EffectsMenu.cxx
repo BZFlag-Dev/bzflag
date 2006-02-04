@@ -237,7 +237,7 @@ EffectsMenu::EffectsMenu()
   // Fancy effects VIII: rico effects
   option = new HUDuiList;
   option->setFontFace(MainMenu::getFontFace());
-  option->setLabel("  Ricocet Effect:");
+  option->setLabel("  Ricochet Effect:");
   option->setCallback(callback, (void*)"R");
   options = &option->getList();
   optbuf = EFFECTS.getRicoEffectTypes();

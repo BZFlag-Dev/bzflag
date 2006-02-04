@@ -5,11 +5,11 @@ Ver=1
 IsCpp=1
 Type=0
 Compiler=-D_DEVCPP=1 -D__GNUWIN32__ -D_WINDOWS -DWIN32 -D_MBCS_@@_
-CppCompiler=-D_DEVCPP=1 -D__GNUWIN32__ -D_WINDOWS -DWIN32 -D_MBCS_@@_ -Wall -W_@@_
+CppCompiler=-D_DEVCPP=1 -D__GNUWIN32__ -D_WINDOWS -DWIN32 -D_MBCS_@@_ -W_@@_
 Includes=..\Dev-C++;..\include;..\Dev-C++
 Linker=-lmingw32 -lstdc++ -lsdlmain -lsdl -lcurl -lares -lws2_32 -ldsound -lwinmm -lglu32 -lopengl32 -lkernel32 -luser32 -lgdi32 -lwinspool -lcomdlg32 -ladvapi32 -lshell32 -lole32 -loleaut32 -luuid -lodbc32 -lodbccp32_@@_
 Libs=..\Dev-C++
-UnitCount=447
+UnitCount=449
 Folders="Header Files","Header Files/3d","Header Files/bzflag","Header Files/bzflag/menus","Header Files/common","Header Files/game","Header Files/geometry","Header Files/mediafile","Header Files/net","Header Files/obstacle","Header Files/ogl","Header Files/platform","Header Files/regex","Header Files/scene","Header Files/zlib","Resource Files","Source Files","Source Files/3d","Source Files/bzflag","Source Files/bzflag/menus","Source Files/common","Source Files/game","Source Files/geometry","Source Files/mediafile","Source Files/models","Source Files/net","Source Files/obstacle","Source Files/ogl","Source Files/platform","Source Files/regex","Source Files/scene","Source Files/zlib"
 ObjFiles=
 PrivateResource=bzflag_private.rc
@@ -4478,9 +4478,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit449]
-FileName=..\src\c-ares\ares_expand_string.c
-CompileCpp=0
-Folder=Source Files/c-ares
+FileName=config.h
+CompileCpp=1
+Folder=Header Files
 Compile=1
 Link=1
 Priority=1000
@@ -4598,9 +4598,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit448]
-FileName=..\src\c-ares\ares_expand_name.c
-CompileCpp=0
-Folder=Source Files/c-ares
+FileName=..\src\bzflag\NewVersionMenu.cxx
+CompileCpp=1
+Folder=Source Files/bzflag/menus
 Compile=1
 Link=1
 Priority=1000

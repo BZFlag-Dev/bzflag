@@ -82,7 +82,7 @@ OptionsMenu::OptionsMenu() : guiOptionsMenu(NULL), effectsMenu(NULL),
 
   option = new HUDuiList;
   option->setFontFace(fontFace);
-  option->setLabel("Save identity:");
+  option->setLabel("Save Identity:");
   option->setCallback(callback, (void*)"i");
   options = &option->getList();
   options->push_back(std::string("No"));
