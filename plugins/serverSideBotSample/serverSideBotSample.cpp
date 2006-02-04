@@ -10,9 +10,9 @@ BZ_GET_PLUGIN_VERSION
 class SimpleBotHandler : public bz_ServerSidePlayerHandler , bz_EventHandler
 {
 public:
-	virtual void added ( int playerID );
+	virtual void added ( int playerIndex );
 	virtual void removed ( void );
-	virtual void playerRemoved ( int playerID );
+	virtual void playerRemoved ( int playerIndex );
 
 	virtual void flagUpdate ( int count, bz_FlagUpdateRecord **flagList );
 	virtual void playerUpdate ( bz_PlayerUpdateRecord *playerRecord );
@@ -47,7 +47,7 @@ BZF_PLUGIN_CALL int bz_Unload ( void )
   return 0;
 }
 
-void SimpleBotHandler::added ( int playerID )
+void SimpleBotHandler::added ( int playerIndex )
 {
 	bz_debugMessage(3,"SimpleBotHandler::added");
 	std::string name = "dante_";
@@ -62,7 +62,7 @@ void SimpleBotHandler::removed ( void )
 	bz_debugMessage(3,"SimpleBotHandler::removed");
 }
 
-void SimpleBotHandler::playerRemoved ( int playerID )
+void SimpleBotHandler::playerRemoved ( int playerIndex )
 {
 	bz_debugMessage(3,"SimpleBotHandler::playerRemoved");
 }

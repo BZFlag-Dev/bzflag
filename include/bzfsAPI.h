@@ -1249,9 +1249,9 @@ class BZF_API bz_ServerSidePlayerHandler
 public:
 	virtual ~bz_ServerSidePlayerHandler(){};
 
-	virtual void added ( int playerID ) = 0;	// you must call setEntryData when this is called.
+	virtual void added ( int playerIndex ) = 0;	// you must call setEntryData when this is called.
 	virtual void removed ( void ){};
-	virtual void playerRemoved ( int playerID ){};
+	virtual void playerRemoved ( int playerIndex ){};
 	virtual void playerRejected ( bz_eRejectCodes code, const char* reason ){};
 	virtual void playerAccepted ( void ){};
 
