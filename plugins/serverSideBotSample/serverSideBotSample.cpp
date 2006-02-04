@@ -2,11 +2,12 @@
 //
 
 #include "bzfsAPI.h"
+#include <string>
 
 BZ_GET_PLUGIN_VERSION
 
 
-class SimpleBotHandler : public bz_ServerSidePlayerHandler
+class SimpleBotHandler : public bz_ServerSidePlayerHandler , bz_EventHandler
 {
 public:
 	virtual void added ( int playerID );
@@ -16,6 +17,10 @@ public:
 	virtual void flagUpdate ( int count, bz_FlagUpdateRecord **flagList );
 	virtual void playerUpdate ( bz_PlayerUpdateRecord *playerRecord );
 	virtual void teamUpdate ( int count, bz_TeamInfoRecord **teamList );
+
+	virtual void process ( bz_EventData *eventData );
+
+protected:
 };
 
 SimpleBotHandler	bot;
@@ -29,7 +34,7 @@ BZF_PLUGIN_CALL int bz_Load ( const char* /*commandLine*/ )
   bz_debugMessage(0,"******* IT CAN AND WILL CRASH YOUR SYSTEM ******");
   bz_debugMessage(0,"******* THE CODE IS UNDER DEVELOPMENT ******");
   bz_debugMessage(0,"******* DO NOT USE IT UNLESS YOU ARE SURE YOU KNOW WHAT YOU ARE DOING ******");
-  bz_debugMessage(2,"adding one simple bot");
+  bz_debugMessage(2,"adding one simple bot, may the gods have mercy on your soul");
   botPlayerID = bz_addServerSidePlayer(&bot);
   return 0;
 }
@@ -45,11 +50,15 @@ BZF_PLUGIN_CALL int bz_Unload ( void )
 void SimpleBotHandler::added ( int playerID )
 {
 	bz_debugMessage(3,"SimpleBotHandler::added");
-	setEntryData("someBot","bot@bzflag.org",NULL,"bot sample",eAutomaticTeam);
+	std::string name = "dante_";
+	name += bz_format("%s",playerID);
+	setEntryData(name.c_str(),"dante@inferno.org",NULL,"bot sample",eAutomaticTeam);
+	bz_registerEvent ( bz_ePlayerSpawnEvent, this );
 }
 
 void SimpleBotHandler::removed ( void )
 {
+	bz_removeEvent ( bz_ePlayerSpawnEvent, this );
 	bz_debugMessage(3,"SimpleBotHandler::removed");
 }
 
@@ -72,6 +81,30 @@ void SimpleBotHandler::teamUpdate ( int count, bz_TeamInfoRecord **teamList )
 {
 	bz_debugMessage(3,"SimpleBotHandler::teamUpdate");
 }
+
+void SimpleBotHandler::process ( bz_EventData *eventData )
+{
+	switch(eventData->eventType)
+	{
+		case bz_ePlayerSpawnEvent:
+			{
+				bz_PlayerSpawnEventData_V1	*spawnEvent = (bz_PlayerSpawnEventData_V1*)eventData;
+
+				if (spawnEvent->playerID == playerID)
+					break;
+
+				bz_BasePlayerRecord * player = bz_getPlayerByIndex ( spawnEvent->playerID );
+				std::string message;
+				message = bz_format("well, look who droped in...%s",player->callsign.c_str());
+				bz_sendTextMessage(playerID,BZ_ALLUSERS,message.c_str());
+				bz_freePlayerRecord(player);
+			}
+			break;
+		default:
+			return;
+	}
+}
+
 
 
 // Local Variables: ***
