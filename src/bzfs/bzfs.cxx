@@ -48,6 +48,7 @@
 #include "WorldEventManager.h"
 #include "WorldGenerators.h"
 #include "bzfsMessages.h"
+#include "bzfsClientMessages.h"
 
 // common implementation headers
 #include "Obstacle.h"
@@ -63,7 +64,7 @@
 #endif
 
 // pass through the SELECT loop
-static bool dontWait = true;
+bool dontWait = true;
 
 // every ListServerReAddTime server add ourself to the list
 // server again.  this is in case the list server has reset
@@ -76,7 +77,6 @@ static const float FlagHalfLife = 10.0f;
 static const int InvalidPlayer = -1;
 
 float speedTolerance = 1.125f;
-static bool doSpeedChecks = true;
 
 // Command Line Options
 CmdLineOptions *clOptions;
@@ -105,8 +105,8 @@ uint16_t maxPlayers = MaxPlayers;
 uint16_t curMaxPlayers = 0;
 int debugLevel = 0;
 
-static float maxWorldHeight = 0.0f;
-static bool disableHeightChecks = false;
+float maxWorldHeight = 0.0f;
+CheatProtectionOptions	cheatProtectionOptions;
 
 char hexDigest[50];
 
@@ -653,7 +653,7 @@ static void serverStop()
 }
 
 
-static void relayPlayerPacket(int index, uint16_t len, const void *rawbuf, uint16_t code)
+void relayPlayerPacket(int index, uint16_t len, const void *rawbuf, uint16_t code)
 {
   if (Record::enabled()) {
     Record::addPacket(code, len, (char*)rawbuf + 4);
@@ -1247,7 +1247,7 @@ void sendMessage(int playerIndex, PlayerId dstPlayer, const char *message)
   }
 }
 
-static void rejectPlayer(int playerIndex, uint16_t code, const char *reason)
+void rejectPlayer(int playerIndex, uint16_t code, const char *reason)
 {
   // tell them they were rejected
   sendRejectPlayerMessage(playerIndex,code,reason);
@@ -2597,7 +2597,7 @@ void playerKilled(int victimIndex, int killerIndex, int reason,
   }
 }
 
-static void searchFlag(GameKeeper::Player &playerData)
+void searchFlag(GameKeeper::Player &playerData)
 {
   if (!playerData.player.isAlive())
     return;
@@ -3060,8 +3060,9 @@ static void adjustTolerances()
   }
 
   // check for physics driver disabling
-  disableHeightChecks = false;
-  bool disableSpeedChecks = false;
+  cheatProtectionOptions.doHeightChecks = true;
+  cheatProtectionOptions.doSpeedChecks = true;
+
   int i = 0;
   const PhysicsDriver* phydrv = PHYDRVMGR.getDriver(i);
   while (phydrv) {
@@ -3070,22 +3071,21 @@ static void adjustTolerances()
     if (!phydrv->getIsDeath()) {
       if (!phydrv->getIsSlide() &&
 	  ((v[0] != 0.0f) || (v[1] != 0.0f) || (av != 0.0f))) {
-	disableSpeedChecks = true;
+		cheatProtectionOptions.doSpeedChecks = false;
       }
       if (v[2] > 0.0f) {
-	disableHeightChecks = true;
+	cheatProtectionOptions.doHeightChecks = false;
       }
     }
     i++;
     phydrv = PHYDRVMGR.getDriver(i);
   }
 
-  if (disableSpeedChecks) {
-    doSpeedChecks = false;
+  if (!cheatProtectionOptions.doSpeedChecks) {
     speedTolerance = MAXFLOAT;
     DEBUG1("Warning: disabling speed checking due to physics drivers\n");
   }
-  if (disableHeightChecks) {
+  if (!cheatProtectionOptions.doHeightChecks) {
     DEBUG1("Warning: disabling height checking due to physics drivers\n");
   }
 
@@ -3188,88 +3188,25 @@ static void handleCommand(const void *rawbuf, bool udp, NetHandler *handler)
 
   uint16_t len, code;
   void *buf = (char *)rawbuf;
-  buf = nboUnpackUShort(buf, len);
-  buf = nboUnpackUShort(buf, code);
+  getGeneralMessageInfo(&buf,code,len);
   char buffer[MessageLen];
 
-  if (udp) {
-    switch (code) {
-    case MsgShotBegin:
-    case MsgShotEnd:
-    case MsgPlayerUpdate:
-    case MsgPlayerUpdateSmall:
-    case MsgGMUpdate:
-    case MsgUDPLinkRequest:
-    case MsgUDPLinkEstablished:
-    case MsgHit:
-      break;
-    default:
-      DEBUG1("Received packet type (%x) via udp, possible attack from %s\n",
-	     code, handler->getTargetIP());
-      return;
-    }
-  }
+  if (udp && isUDPAtackMessage(code))
+	  DEBUG1("Received packet type (%x) via udp, possible attack from %s\n", code, handler->getTargetIP());
 
   GameKeeper::Player *playerData = NULL;
 
   int t = 0;
-  switch (code) {
-  case MsgEnter:
-  case MsgExit:
-  case MsgAlive:
-  case MsgKilled:
-  case MsgGrabFlag:
-  case MsgDropFlag:
-  case MsgCaptureFlag:
-  case MsgShotEnd:
-  case MsgHit:
-  case MsgTeleport:
-  case MsgMessage:
-  case MsgTransferFlag:
-  case MsgPause:
-  case MsgAutoPilot:
-  case MsgLagPing:
-  case MsgKrbPrincipal:
-  case MsgKrbTicket:
-  case MsgNewRabbit:
-    uint8_t playerId;
-    buf        = nboUnpackUByte(buf, playerId);
-    playerData = GameKeeper::Player::getPlayerByIndex(playerId);
-    if (!playerData)
-      return;
-    if (playerData->netHandler != handler)
-      return;
-    t = playerId;
-    break;
-  default:
-    break;
-  }
+  playerData = getPlayerMessageInfo(&buf,code,t);
+  if (playerData && playerData->netHandler != handler)	// make sure they are who they say they are
+	  return;
 
   switch (code) {
     // player joining
-    case MsgEnter: {
-      uint16_t rejectCode;
-      char     rejectMsg[MessageLen];
-      if (!playerData->player.unpackEnter(buf, rejectCode, rejectMsg)) {
-	rejectPlayer(t, rejectCode, rejectMsg);
-	break;
-      }
-      playerData->accessInfo.setName(playerData->player.getCallSign());
-      std::string timeStamp = TimeKeeper::timestamp();
-      DEBUG1("Player %s [%d] has joined from %s at %s with token \"%s\"\n",
-	     playerData->player.getCallSign(),
-	     t, handler->getTargetIP(), timeStamp.c_str(),
-	     playerData->player.getToken());
-
-      if (!clOptions->publicizeServer) {
-	playerData->_LSAState = GameKeeper::Player::notRequired;
-      } else if (strlen(playerData->player.getCallSign())) {
-	playerData->_LSAState = GameKeeper::Player::required;
-      }
-      dontWait = true;
-      break;
-    }
-
+    case MsgEnter: 
+		dontWait = handleClientEnter(&buf,playerData);
+		break;
+  
     // player closing connection
     case MsgExit:
       // data: <none>
@@ -3681,204 +3618,9 @@ static void handleCommand(const void *rawbuf, bool udp, NetHandler *handler)
 
     // player is sending his position/speed (bulk data)
     case MsgPlayerUpdate:
-    case MsgPlayerUpdateSmall: {
-      float timestamp;
-      PlayerId id;
-      PlayerState state;
-
-      buf = nboUnpackFloat(buf, timestamp);
-      buf = nboUnpackUByte(buf, id);
-
-      playerData = GameKeeper::Player::getPlayerByIndex(id);
-      if (!playerData)
-	return;
-      if (playerData->netHandler != handler)
-	return;
-      t = id;
-
-      buf = state.unpack(buf, code);
-
-      // observer updates are not relayed
-      if (playerData->player.isObserver()) {
-	// skip all of the checks
-	playerData->setPlayerState(state, timestamp);
-	break;
-      }
-
-      // silently drop old packet
-      if (state.order <= playerData->lastState.order) {
-	break;
-      }
-
-      // Don't kick players up to 10 seconds after a world parm has changed,
-      TimeKeeper now = TimeKeeper::getCurrent();
-
-      if (now - lastWorldParmChange > 10.0f) {
-
-	// see if the player is too high
-	if (!disableHeightChecks) {
-
-	  static const float heightFudge = 1.10f; /* 10% */
-
-	  float wingsGravity = BZDB.eval(StateDatabase::BZDB_WINGSGRAVITY);
-	  float normalGravity = BZDBCache::gravity;
-	  if ((wingsGravity < 0.0f) && (normalGravity < 0.0f)) {
-
-	    float wingsMaxHeight = BZDB.eval(StateDatabase::BZDB_WINGSJUMPVELOCITY);
-	    wingsMaxHeight *= wingsMaxHeight;
-	    wingsMaxHeight *= (1 + BZDB.eval(StateDatabase::BZDB_WINGSJUMPCOUNT));
-	    wingsMaxHeight /= (-wingsGravity * 0.5f);
-
-	    float normalMaxHeight = BZDB.eval(StateDatabase::BZDB_JUMPVELOCITY);
-	    normalMaxHeight *= normalMaxHeight;
-	    normalMaxHeight /= (-normalGravity * 0.5f);
-
-	    float maxHeight;
-	    if (wingsMaxHeight > normalMaxHeight) {
-	      maxHeight = wingsMaxHeight;
-	    } else {
-	      maxHeight = normalMaxHeight;
-	    }
-
-	    // final adjustments
-	    maxHeight *= heightFudge;
-	    maxHeight += maxWorldHeight;
-
-	    if (state.pos[2] > maxHeight) {
-	      DEBUG1("Kicking Player %s [%d] jumped too high [max: %f height: %f]\n",
-		     playerData->player.getCallSign(), t, maxHeight, state.pos[2]);
-	      sendMessage(ServerPlayer, t, "Autokick: Player location was too high.");
-	      removePlayer(t, "too high", true);
-	      break;
-	    }
-	  }
-	}
-
-	// make sure the player is still in the map
-	// test all the map bounds + some fudge factor, just in case
-	static const float positionFudge = 10.0f; /* linear distance */
-	bool InBounds = true;
-	float worldSize = BZDBCache::worldSize;
-	if ( (state.pos[1] >= worldSize*0.5f + positionFudge) || (state.pos[1] <= -worldSize*0.5f - positionFudge)) {
-	  std::cout << "y position (" << state.pos[1] << ") is out of bounds (" << worldSize * 0.5f << " + " << positionFudge << ")" << std::endl;
-	  InBounds = false;
-	} else if ( (state.pos[0] >= worldSize*0.5f + positionFudge) || (state.pos[0] <= -worldSize*0.5f - positionFudge)) {
-	  std::cout << "x position (" << state.pos[0] << ") is out of bounds (" << worldSize * 0.5f << " + " << positionFudge << ")" << std::endl;
-	  InBounds = false;
-	}
-
-	static const float burrowFudge = 1.0f; /* linear distance */
-	if (state.pos[2]<BZDB.eval(StateDatabase::BZDB_BURROWDEPTH) - burrowFudge) {
-	  std::cout << "z depth (" << state.pos[2] << ") is less than burrow depth (" << BZDB.eval(StateDatabase::BZDB_BURROWDEPTH) << " - " << burrowFudge << ")" << std::endl;
-	  InBounds = false;
-	}
-
-	// kick em cus they are most likely cheating or using a buggy client
-	if (!InBounds)
-	{
-	  DEBUG1("Kicking Player %s [%d] Out of map bounds at position (%.2f,%.2f,%.2f)\n",
-		 playerData->player.getCallSign(), t,
-		 state.pos[0], state.pos[1], state.pos[2]);
-	  sendMessage(ServerPlayer, t, "Autokick: Player location was outside the playing area.");
-	  removePlayer(t, "Out of map bounds", true);
-	}
-
-	// Speed problems occur around flag drops, so don't check for
-	// a short period of time after player drops a flag. Currently
-	// 2 second, adjust as needed.
-	if (playerData->player.isFlagTransitSafe()) {
-
-	  // we'll be checking against the player's flag type
-	  int pFlag = playerData->player.getFlag();
-
-	  // check for highspeed cheat; if inertia is enabled, skip test for now
-	  if (BZDB.eval(StateDatabase::BZDB_INERTIALINEAR) == 0.0f) {
-	    // Doesn't account for going fast backwards, or jumping/falling
-	    float curPlanarSpeedSqr = state.velocity[0]*state.velocity[0] +
-				      state.velocity[1]*state.velocity[1];
-
-	    float maxPlanarSpeed = BZDBCache::tankSpeed;
-
-	    bool logOnly = false;
-
-	    // if tank is not driving cannot be sure it didn't toss
-	    // (V) in flight
-
-	    // if tank is not alive cannot be sure it didn't just toss
-	    // (V)
-	    if (pFlag >= 0) {
-	      FlagInfo &flag = *FlagInfo::get(pFlag);
-	      if (flag.flag.type == Flags::Velocity)
-		maxPlanarSpeed *= BZDB.eval(StateDatabase::BZDB_VELOCITYAD);
-	      else if (flag.flag.type == Flags::Thief)
-		maxPlanarSpeed *= BZDB.eval(StateDatabase::BZDB_THIEFVELAD);
-	      else if (flag.flag.type == Flags::Agility)
-		maxPlanarSpeed *= BZDB.eval(StateDatabase::BZDB_AGILITYADVEL);
-	      else if ((flag.flag.type == Flags::Burrow) &&
-		(playerData->lastState.pos[2] == state.pos[2]) &&
-		(playerData->lastState.velocity[2] == state.velocity[2]) &&
-		(state.pos[2] <= BZDB.eval(StateDatabase::BZDB_BURROWDEPTH)))
-		// if we have burrow and are not actively burrowing
-		// You may have burrow and still be above ground. Must
-		// check z in ground!!
-		maxPlanarSpeed *= BZDB.eval(StateDatabase::BZDB_BURROWSPEEDAD);
-	    }
-	    float maxPlanarSpeedSqr = maxPlanarSpeed * maxPlanarSpeed;
-
-	    // If player is moving vertically, or not alive the speed checks
-	    // seem to be problematic. If this happens, just log it for now,
-	    // but don't actually kick
-	    if ((playerData->lastState.pos[2] != state.pos[2])
-	    ||  (playerData->lastState.velocity[2] != state.velocity[2])
-	    ||  ((state.status & PlayerState::Alive) == 0)) {
-	      logOnly = true;
-	    }
-
-	    // allow a 10% tolerance level for speed if -speedtol is not sane
-	    if (doSpeedChecks) {
-	      float realtol = 1.1f;
-	      if (speedTolerance > 1.0f)
-		realtol = speedTolerance;
-	      maxPlanarSpeedSqr *= realtol;
-	      if (curPlanarSpeedSqr > maxPlanarSpeedSqr) {
-		if (logOnly) {
-		  DEBUG1("Logging Player %s [%d] tank too fast (tank: %f, allowed: %f){Dead or v[z] != 0}\n",
-		  playerData->player.getCallSign(), t,
-		  sqrt(curPlanarSpeedSqr), sqrt(maxPlanarSpeedSqr));
-		} else {
-		  DEBUG1("Kicking Player %s [%d] tank too fast (tank: %f, allowed: %f)\n",
-			 playerData->player.getCallSign(), t,
-			 sqrt(curPlanarSpeedSqr), sqrt(maxPlanarSpeedSqr));
-		  sendMessage(ServerPlayer, t, "Autokick: Player tank is moving too fast.");
-		  removePlayer(t, "too fast");
-		}
-		break;
-	      }
-	    }
-	  }
-	}
-      }
-
-      playerData->setPlayerState(state, timestamp);
-
-      // Player might already be dead and did not know it yet (e.g. teamkill)
-      // do not propogate
-      if (!playerData->player.isAlive() &&
-	  (state.status & short(PlayerState::Alive)))
-	break;
-
-      // observer shouldn't send bulk messages anymore, they used to
-      // when it was a server-only hack; but the check does not hurt,
-      // either
-      if (playerData->player.isObserver())
- 	break;
-
-      searchFlag(*playerData);
-
-	  //TODO for server bot, send the update to the handler, since this will skip users
-      relayPlayerPacket(t, len, rawbuf, code);
-      break;
-    }
+    case MsgPlayerUpdateSmall: 
+	 handlePlayerUpdate(&buf,code,playerData,rawbuf,len);
+	 break;
 
     case MsgGMUpdate:
       shotUpdate(buf, int(len), handler);
@@ -3943,8 +3685,8 @@ static void handleTcp(NetHandler &netPlayer, int i, const RxStatus e)
   case MsgPlayerUpdate:
   case MsgPlayerUpdateSmall: {
     float timestamp;
+	buf = nboUnpackUByte(buf, t);
     buf = nboUnpackFloat(buf, timestamp);
-    buf = nboUnpackUByte(buf, t);
     break;
   }
   default:
@@ -5326,6 +5068,12 @@ int main(int argc, char **argv)
 
   // done
   return exitCode;
+}
+
+bool worldStateChanging ( void )
+{
+	TimeKeeper now = TimeKeeper::getCurrent();
+	return (TimeKeeper::getCurrent() - lastWorldParmChange) <= 10.0f; 
 }
 
 // Local Variables: ***

@@ -688,8 +688,8 @@ void			ServerLink::sendPlayerUpdate(Player* player)
   const float timeStamp = float(TimeKeeper::getTick() - TimeKeeper::getNullTime());
   void* buf = msg;
   uint16_t code;
-  buf = nboPackFloat(buf, timeStamp);
   buf = nboPackUByte(buf, player->getId());
+  buf = nboPackFloat(buf, timeStamp);
 
   // code will be MsgPlayerUpdate or MsgPlayerUpdateSmall
   buf = player->pack(buf, code);

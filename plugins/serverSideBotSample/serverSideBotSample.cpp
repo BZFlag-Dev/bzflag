@@ -51,7 +51,7 @@ void SimpleBotHandler::added ( int playerID )
 {
 	bz_debugMessage(3,"SimpleBotHandler::added");
 	std::string name = "dante_";
-	name += bz_format("%s",playerID);
+	name += bz_format("%d",playerID);
 	setEntryData(name.c_str(),"dante@inferno.org",NULL,"bot sample",eAutomaticTeam);
 	bz_registerEvent ( bz_ePlayerSpawnEvent, this );
 }

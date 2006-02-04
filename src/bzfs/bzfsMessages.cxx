@@ -354,6 +354,63 @@ int sendTeamUpdateDirect(NetHandler *handler)
 }
 
 
+//messages sent TO the server
+void getGeneralMessageInfo ( void **buffer, uint16_t &code, uint16_t &len )
+{
+	*buffer = nboUnpackUShort(*buffer, len);
+	*buffer = nboUnpackUShort(*buffer, code);
+}
+
+GameKeeper::Player *getPlayerMessageInfo ( void **buffer, uint16_t &code, int &playerID )
+{
+	switch (code)
+	{
+		case MsgEnter:
+		case MsgExit:
+		case MsgAlive:
+		case MsgKilled:
+		case MsgGrabFlag:
+		case MsgDropFlag:
+		case MsgCaptureFlag:
+		case MsgShotEnd:
+		case MsgHit:
+		case MsgTeleport:
+		case MsgMessage:
+		case MsgTransferFlag:
+		case MsgPause:
+		case MsgAutoPilot:
+		case MsgLagPing:
+		case MsgKrbPrincipal:
+		case MsgKrbTicket:
+		case MsgNewRabbit:
+		case MsgPlayerUpdate:
+		case MsgPlayerUpdateSmall: 
+			uint8_t id;
+			*buffer  = nboUnpackUByte(*buffer, id);
+			playerID = id;
+			return GameKeeper::Player::getPlayerByIndex(playerID);
+	}
+	return NULL;
+}
+
+//utils
+bool isUDPAtackMessage ( uint16_t &code )
+{
+	switch (code)
+	{
+		case MsgShotBegin:
+		case MsgShotEnd:
+		case MsgPlayerUpdate:
+		case MsgPlayerUpdateSmall:
+		case MsgGMUpdate:
+		case MsgUDPLinkRequest:
+		case MsgUDPLinkEstablished:
+		case MsgHit:
+			return false;
+	}
+	return true;
+}
+
 // Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***

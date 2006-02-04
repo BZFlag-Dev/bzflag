@@ -2968,8 +2968,8 @@ static void		handlePlayerMessage(uint16_t code, uint16_t,
       PlayerId id;
       int32_t order;
       void *buf = msg;
+	  buf = nboUnpackUByte(buf, id);
       buf = nboUnpackFloat(buf, timestamp);
-      buf = nboUnpackUByte(buf, id);
       Player* tank = lookupPlayer(id);
       if (!tank || tank == myTank) break;
       nboUnpackInt(buf, order); // peek! don't update the msg pointer

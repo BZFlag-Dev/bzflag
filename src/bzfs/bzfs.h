@@ -85,6 +85,24 @@ void checkGameOn ( void );
 PlayerId getNewPlayerID ( void );
 bool validPlayerCallsign ( int playerIndex );
 void addPlayer(int playerIndex, GameKeeper::Player *playerData);
+void rejectPlayer(int playerIndex, uint16_t code, const char *reason);
+bool worldStateChanging ( void );
+void searchFlag(GameKeeper::Player &playerData);
+void relayPlayerPacket(int index, uint16_t len, const void *rawbuf, uint16_t code);
+
+typedef struct CheatProtectionOptions
+{
+	bool doHeightChecks;
+	bool doSpeedChecks;
+
+	CheatProtectionOptions()
+	{
+		doHeightChecks = true;
+		doSpeedChecks = true;
+	}
+}CheatProtectionOptions;
+
+extern CheatProtectionOptions	cheatProtectionOptions;
 
 // initialize permission groups
 extern void initGroups();
@@ -113,6 +131,10 @@ extern float	   pluginWorldSize;
 extern float	   pluginWorldHeight;
 extern float	   pluginMaxWait;
 extern bool        isIdentifyFlagIn;
+
+// this should not be hangin out here
+extern bool dontWait;
+extern float maxWorldHeight;
 
 #endif
 

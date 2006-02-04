@@ -26,10 +26,18 @@ void sendRejectPlayerMessage ( int playerID, uint16_t code , const char* reason 
 bool sendAcceptPlayerMessage ( int playerID );
 void sendHandycapInfoUpdate (int playerID );
 void sendAdminInfoMessage ( int aboutPlayer, int toPlayer, bool record = false );
+void broadcastPlayerStateUpdate ( void );
 
 // messages sent to just network users ( like client query )
 int sendPlayerUpdateDirect(NetHandler *handler, GameKeeper::Player *otherData);
 int sendTeamUpdateDirect(NetHandler *handler);
+
+// receving network messages
+void getGeneralMessageInfo ( void **buffer, uint16_t &code, uint16_t &len );
+GameKeeper::Player *getPlayerMessageInfo ( void **buffer, uint16_t &code, int &playerID );
+
+// utilitys
+bool isUDPAtackMessage ( uint16_t &code );
 
 #endif //_BZFS_MESSAGES_H_
 
