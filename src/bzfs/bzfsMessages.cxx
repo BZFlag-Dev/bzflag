@@ -13,7 +13,6 @@
 // bzflag global header
 #include "bzfsMessages.h"
 
-
 void sendRemovePlayerMessage ( int playerID )
 {
 	void *buf, *bufStart = getDirectMessageBuffer();
@@ -287,6 +286,44 @@ void sendHandycapInfoUpdate (int playerID )
 		}
 	}
 }
+
+void sendAdminInfoMessage ( int aboutPlayer, int toPlayer, bool record )
+{
+	GameKeeper::Player *aboutPlayerData = NULL;
+	GameKeeper::Player *toPlayerData = NULL;
+
+	aboutPlayerData = GameKeeper::Player::getPlayerByIndex(aboutPlayer);
+	if (!aboutPlayerData)
+		return;
+
+	if (!record)
+	{
+		toPlayerData = GameKeeper::Player::getPlayerByIndex(toPlayer);
+		if (!toPlayerData)
+			return;
+
+		if (toPlayerData->playerHandler)
+		{
+			if (!aboutPlayerData->netHandler)
+				toPlayerData->playerHandler->playeIPUpdate (aboutPlayer,"local.player");
+			else
+				toPlayerData->playerHandler->playeIPUpdate (aboutPlayer,aboutPlayerData->netHandler->getTargetIP());
+		}
+	}
+	
+	if (toPlayer || record)
+	{
+		void *buf, *bufStart = getDirectMessageBuffer();
+		buf = nboPackUByte(bufStart, 1);
+		buf = aboutPlayerData->packAdminInfo(buf);
+		if (!toPlayerData->playerHandler)
+			directMessage(toPlayer, MsgAdminInfo,(char*)buf - (char*)bufStart, bufStart);
+		
+		if (record)
+			Record::addPacket(MsgAdminInfo,(char*)buf - (char*)bufStart, bufStart, HiddenPacket);
+	}
+}
+
 
 
 

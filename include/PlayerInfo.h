@@ -128,6 +128,7 @@ public:
   void setEmail ( const char* text );
   void setToken ( const char* text );
   void setClientVersion ( const char* text );
+  void setType ( PlayerType playerType );
 
   bool processEnter ( uint16_t &rejectCode, char *rejectMsg );
 

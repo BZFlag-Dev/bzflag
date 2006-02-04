@@ -140,6 +140,7 @@ typedef enum
 
 typedef enum
 {
+	eAutomaticTeam = -2,
 	eNoTeam = -1,
 	eRogueTeam = 0,
 	eRedTeam,
@@ -1258,11 +1259,12 @@ public:
 	virtual void playerUpdate ( bz_PlayerUpdateRecord *playerRecord ){};
 	virtual void teamUpdate ( int count, bz_TeamInfoRecord **teamList ){};
 	virtual void handycapUpdate ( int count, bz_HandycapUpdateRecord **handycapList ){};
+	virtual void playeIPUpdate ( int player, const char* ipAddress ){};
 
 	int playerID;
 
 protected:
-	void setEntryData ( const char* callsign, const char* email, const char* token, const char* clientVersion );
+	void setEntryData ( const char* callsign, const char* email, const char* token, const char* clientVersion, bz_eTeamType team );
 };
 
 // *** NOTE *** support for server side players in incomplete.

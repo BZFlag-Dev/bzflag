@@ -145,6 +145,12 @@ void PlayerInfo::setClientVersion ( const char* text )
 		strcpy(clientVersion,text);
 }
 
+void PlayerInfo::setType ( PlayerType playerType )
+{
+	type = playerType;
+}
+
+
 bool PlayerInfo::processEnter ( uint16_t &rejectCode, char *rejectMsg )
 {
 	// terminate the strings

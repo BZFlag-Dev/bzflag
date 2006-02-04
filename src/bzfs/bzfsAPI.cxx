@@ -86,8 +86,11 @@ bz_eTeamType convertTeam ( TeamColor _team )
 		return eObservers;
 	case RabbitTeam:
 		return eRabbitTeam;
-        case HunterTeam:
-                return eHunterTeam;
+    case HunterTeam:
+        return eHunterTeam;
+	case AutomaticTeam:
+		return eAutomaticTeam;
+
 	}
 }
 
@@ -115,7 +118,9 @@ TeamColor convertTeam( bz_eTeamType _team )
 	case eRabbitTeam:
 		return RabbitTeam;
 	case eHunterTeam:
-                return HunterTeam;
+       return HunterTeam;
+	case eAutomaticTeam:
+		return AutomaticTeam;
 	}
 	return (TeamColor)_team;
 }
@@ -1951,13 +1956,15 @@ BZF_API bz_eTeamType bz_checkBaseAtPoint ( float pos[3] )
 }
 
 // server side bot API
-void bz_ServerSidePlayerHandler::setEntryData ( const char* callsign, const char* email, const char* token, const char* clientVersion )
+void bz_ServerSidePlayerHandler::setEntryData ( const char* callsign, const char* email, const char* token, const char* clientVersion, bz_eTeamType team )
 {
 	GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerID);
 
 	if (!player || player->playerHandler != this)
 		return;
 
+	player->player.setType(TankPlayer); // because we like to lie :)
+	player->player.setTeam(convertTeam(team));
 	player->player.setCallsign(callsign);
 	player->player.setEmail (email);
 	player->player.setToken (token );
@@ -1983,6 +1990,8 @@ BZF_API int bz_addServerSidePlayer ( bz_ServerSidePlayerHandler *handler )
 	player->_LSAState = GameKeeper::Player::notRequired;
 
 	handler->playerID = playerIndex;
+
+	handler->added(playerIndex);
 	return playerIndex;
 }
 

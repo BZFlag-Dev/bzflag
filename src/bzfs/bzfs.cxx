@@ -366,9 +366,9 @@ static int makeGameTime(void* bufStart, float lag)
 
 static void sendGameTime(GameKeeper::Player* gkPlayer)
 {
-  if (Replay::enabled()) {
+  if (Replay::enabled() || gkPlayer->playerHandler)
     return;
-  }
+
   if (gkPlayer != NULL) {
     void* buf = getDirectMessageBuffer();
     const float lag = gkPlayer->lagInfo.getLagAvg();
@@ -469,46 +469,31 @@ void sendIPUpdate(int targetPlayer, int playerIndex) {
   // playerIndex = -1: send info about all players
 
   GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(playerIndex);
-  if (playerIndex >= 0) {
-    if (!playerData || !playerData->player.isPlaying())
-      return;
-  }
+  if ((playerIndex >= 0) && (!playerData || !playerData->player.isPlaying()))
+    return;
 
   // send to who?
-  std::vector<int> receivers
-    = GameKeeper::Player::allowed(PlayerAccessInfo::playerList, targetPlayer);
+  std::vector<int> receivers = GameKeeper::Player::allowed(PlayerAccessInfo::playerList, targetPlayer);
 
-  // pack and send the message(s)
-  void *buf, *bufStart = getDirectMessageBuffer();
-  if (playerIndex >= 0) {
-    buf = nboPackUByte(bufStart, 1);
-    buf = playerData->packAdminInfo(buf);
-    for (unsigned int i = 0; i < receivers.size(); ++i) {
-      directMessage(receivers[i], MsgAdminInfo,
-		    (char*)buf - (char*)bufStart, bufStart);
-    }
-    if (Record::enabled()) {
-      Record::addPacket(MsgAdminInfo,
-			(char*)buf - (char*)bufStart, bufStart, HiddenPacket);
-    }
-  } else {
-    int ipsPerPackage = (MaxPacketLen - 3) / (PlayerIdPLen + 7);
-    int i, c = 0;
-    buf = nboPackUByte(bufStart, 0); // will be overwritten later
-    for (i = 0; i < curMaxPlayers; ++i) {
+  if (playerIndex >= 0)
+  {
+    for (unsigned int i = 0; i < receivers.size(); ++i)
+		sendAdminInfoMessage(playerIndex,receivers[i]);
+
+	if (Record::enabled())
+		sendAdminInfoMessage(playerIndex,-1,true);
+  }
+  else
+  {
+    int i, c = 0; 
+	for (i = 0; i < curMaxPlayers; ++i)
+	{
       playerData = GameKeeper::Player::getPlayerByIndex(i);
-      if (!playerData)
-	continue;
-      if (playerData->player.isPlaying()) {
-	buf = playerData->packAdminInfo(buf);
-	++c;
-      }
-      if (c == ipsPerPackage || ((i + 1 == curMaxPlayers) && c)) {
-	int size = (char*)buf - (char*)bufStart;
-	buf = nboPackUByte(bufStart, c);
-	c = 0;
-	for (unsigned int j = 0; j < receivers.size(); ++j)
-	  directMessage(receivers[j], MsgAdminInfo, size, bufStart);
+
+      if (playerData && playerData->player.isPlaying())
+	  {
+		  for (unsigned int j = 0; j < receivers.size(); ++j)
+			  sendAdminInfoMessage(i,receivers[j]);
       }
     }
   }
@@ -4094,15 +4079,23 @@ static void doStuffOnPlayer(GameKeeper::Player &playerData)
   }
   else
   {
-	if (playerData._LSAState == GameKeeper::Player::notRequired || playerData.netHandler->reverseDNSDone())
-	{
-		if ((playerData._LSAState == GameKeeper::Player::verified)	||
-			(playerData._LSAState == GameKeeper::Player::timedOut)	||
-			(playerData._LSAState == GameKeeper::Player::failed)	||
-			(playerData._LSAState == GameKeeper::Player::notRequired))
+	  if (!playerData.netHandler &&  playerData._LSAState != GameKeeper::Player::done)
+	  {
+		  addPlayer(p, &playerData);
+		  playerData._LSAState = GameKeeper::Player::done;
+	  }
+	  else if (playerData.netHandler)
+	  {
+		if (playerData.netHandler->reverseDNSDone())
 		{
-			addPlayer(p, &playerData);
-			playerData._LSAState = GameKeeper::Player::done;
+			if ((playerData._LSAState == GameKeeper::Player::verified)	||
+				(playerData._LSAState == GameKeeper::Player::timedOut)	||
+				(playerData._LSAState == GameKeeper::Player::failed)	||
+				(playerData._LSAState == GameKeeper::Player::notRequired))
+			{
+				addPlayer(p, &playerData);
+				playerData._LSAState = GameKeeper::Player::done;
+			}
 		}
 	}
   }
@@ -4159,33 +4152,33 @@ static void doStuffOnPlayer(GameKeeper::Player &playerData)
     }
   }
 
-  // send lag pings
-  bool warn;
-  bool kick;
-  int nextPingSeqno = playerData.lagInfo.getNextPingSeqno(warn, kick);
-  if (nextPingSeqno > 0) {
-    void *buf, *bufStart = getDirectMessageBuffer();
-    buf = nboPackUShort(bufStart, nextPingSeqno);
-    int result = directMessage(playerData.netHandler, MsgLagPing,
-			       (char*)buf - (char*)bufStart, bufStart);
-    if (result == -1)
-      return;
-    if (warn) {
-      char message[MessageLen];
-      sprintf(message, "*** Server Warning: your lag is too high (failed to return ping) ***");
-      sendMessage(ServerPlayer, p, message);
-      // Should recheck if player is still available
-      if (!GameKeeper::Player::getPlayerByIndex(p))
-	return;
-      if (kick) {
-	lagKick(p);
-	return;
-      }
-    }
-  }
-
   if (playerData.netHandler)
   {
+	// send lag pings
+	bool warn;
+	bool kick;
+	int nextPingSeqno = playerData.lagInfo.getNextPingSeqno(warn, kick);
+	if (nextPingSeqno > 0) {
+		void *buf, *bufStart = getDirectMessageBuffer();
+		buf = nboPackUShort(bufStart, nextPingSeqno);
+		int result = directMessage(playerData.netHandler, MsgLagPing,
+			(char*)buf - (char*)bufStart, bufStart);
+		if (result == -1)
+			return;
+		if (warn) {
+			char message[MessageLen];
+			sprintf(message, "*** Server Warning: your lag is too high (failed to return ping) ***");
+			sendMessage(ServerPlayer, p, message);
+			// Should recheck if player is still available
+			if (!GameKeeper::Player::getPlayerByIndex(p))
+				return;
+			if (kick) {
+				lagKick(p);
+				return;
+			}
+		}
+	}
+
 	// kick any clients that need to be
 	std::string reasonToKick = playerData.netHandler->reasonToKick();
 	if (reasonToKick != "") {
