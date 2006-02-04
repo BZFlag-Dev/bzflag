@@ -171,7 +171,7 @@ bool sendTeamUpdateMessage( int newPlayer )
 		return false;
 
 	if (!playerData->playerHandler)
-		return sendTeamUpdateDirect(playerData->netHandler) > 0;
+		return sendTeamUpdateDirect(playerData->netHandler) == 0;
 	else
 	{
 		bz_TeamInfoRecord	**teams = (bz_TeamInfoRecord**)malloc(sizeof(bz_TeamInfoRecord*)*CtfTeams);

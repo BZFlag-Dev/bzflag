@@ -666,7 +666,7 @@ static void relayPlayerPacket(int index, uint16_t len, const void *rawbuf, uint1
       continue;
     PlayerInfo& pi = playerData->player;
 
-    if (i != index && pi.isPlaying()) {
+    if (i != index && pi.isPlaying() && playerData->netHandler) {
       pwrite(playerData->netHandler, rawbuf, len + 4);
     }
   }
@@ -3875,6 +3875,7 @@ static void handleCommand(const void *rawbuf, bool udp, NetHandler *handler)
 
       searchFlag(*playerData);
 
+	  //TODO for server bot, send the update to the handler, since this will skip users
       relayPlayerPacket(t, len, rawbuf, code);
       break;
     }
@@ -5253,13 +5254,17 @@ int main(int argc, char **argv)
 	if (!playerData)
 	  continue;
 	netPlayer = playerData->netHandler;
-	// send whatever we have ... if any
-	if (netPlayer->pflush(&write_set) == -1) {
-	  removePlayer(i, "ECONNRESET/EPIPE", false);
-	  continue;
+	if(netPlayer)
+	{
+		// send whatever we have ... if any
+		if (netPlayer->pflush(&write_set) == -1)
+		{
+			removePlayer(i, "ECONNRESET/EPIPE", false);
+			continue;
+		}
+			playerData->handleTcpPacket(&read_set);
 	}
-	playerData->handleTcpPacket(&read_set);
-      }
+    }
     } else if (nfound < 0) {
       if (getErrno() != EINTR) {
 	// test code - do not uncomment, will cause big stuttering
