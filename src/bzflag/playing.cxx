@@ -2202,7 +2202,6 @@ static void		handleServerMessage(bool human, uint16_t code,
     }
 
     case MsgGrabFlag: {
-      // ROBOT -- FIXME -- robots don't grab flag at the moment
       PlayerId id;
       uint16_t flagIndex;
       msg = nboUnpackUByte(msg, id);
