@@ -231,6 +231,7 @@ void JoinMenu::execute()
 
     // let user know we're trying
     setStatus("Trying...");
+		HUDDialogStack::get()->setFailedMessage("");
 
     // schedule attempt to join game
     joinGame();
