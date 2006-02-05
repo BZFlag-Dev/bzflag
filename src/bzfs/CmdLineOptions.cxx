@@ -120,6 +120,7 @@ const char *usageString =
 "[-sa] "
 "[-sb] "
 "[-set <name> <value>] "
+"[-setforced <name> <value>] "
 "[-sl <id> <num>] "
 "[-spamtime <time>] "
 "[-spamwarn <warnAmt>] "
@@ -215,6 +216,7 @@ const char *extraUsageString =
 "\t-sa: insert antidote superflags\n"
 "\t-sb: allow tanks to respawn on buildings\n"
 "\t-set <name> <value>: set a BZDB variable's value\n"
+"\t-setforced <name> <value>: set a BZDB variable's value (whether it exists or not)\n"
 "\t-sl: limit flag <id> to <num> shots\n"
 "\t-spamtime <time>: make <time> be the required time in seconds between messages sent that are alike\n"
 "\t-spamwarn <warnAmt>: warn a spammer that sends messages before -spamtime times out <warnAmt> many times\n"
@@ -979,6 +981,14 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
 	std::cerr << "Unknown BZDB variable: " << name << std::endl;
 	exit (1);
       }
+      i++;
+      value = argv[i];
+      BZDB.set(name, value);
+      DEBUG1 ("set variable: %s = %s\n", name, BZDB.get(name).c_str());
+    } else if (strcmp(argv[i], "-setforced") == 0) {
+      const char *name, *value;
+      checkArgc(2, i, argc, argv[i]);
+      name = argv[i];
       i++;
       value = argv[i];
       BZDB.set(name, value);
