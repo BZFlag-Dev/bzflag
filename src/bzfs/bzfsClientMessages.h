@@ -19,6 +19,8 @@
 bool handleClientEnter ( void **buf, GameKeeper::Player *playerData );
 void handleClientExit ( GameKeeper::Player *playerData );
 void handleSetVar ( NetHandler *netHandler );
+void handleFlagNegotiation( NetHandler *handler, void **buf, int len );
+void handleWorldChunk( NetHandler *handler, void *buf );
 void handlePlayerUpdate ( void **buf, uint16_t &code, GameKeeper::Player *playerData, const void* rawbuf, int len );	//once relay is based on state, remove rawbuf
 
 #endif //_BZFS_CLIENT_MESSAGES_H_

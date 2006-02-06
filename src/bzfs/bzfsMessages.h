@@ -26,6 +26,7 @@ void sendRejectPlayerMessage ( int playerID, uint16_t code , const char* reason 
 bool sendAcceptPlayerMessage ( int playerID );
 void sendHandycapInfoUpdate (int playerID );
 void sendAdminInfoMessage ( int aboutPlayer, int toPlayer, bool record = false );
+void sendWorldChunk(NetHandler *handler, uint32_t ptr);
 void broadcastPlayerStateUpdate ( void );
 
 // messages sent to just network users ( like client query )

@@ -145,7 +145,7 @@ uint8_t rabbitIndex = NoPlayer;
 static RejoinList rejoinList;
 
 static TimeKeeper lastWorldParmChange;
-static bool       playerHadWorld   = false;
+bool       worldWasSentToAPlayer   = false;
 
 void sendFilteredMessage(int playerIndex, PlayerId dstPlayer, const char *message);
 static void dropPlayerFlag(GameKeeper::Player &playerData, const float dropPos[3]);
@@ -2141,28 +2141,6 @@ bool areFoes(TeamColor team1, TeamColor team2)
   return team1!=team2 || (team1==RogueTeam);
 }
 
-
-static void sendWorld(NetHandler *handler, uint32_t ptr)
-{
-  playerHadWorld = true;
-  // send another small chunk of the world database
-  assert((world != NULL) && (worldDatabase != NULL));
-  void *buf, *bufStart = getDirectMessageBuffer();
-  uint32_t size = MaxPacketLen - 2*sizeof(uint16_t) - sizeof(uint32_t);
-  uint32_t left = worldDatabaseSize - ptr;
-  if (ptr >= worldDatabaseSize) {
-    size = 0;
-    left = 0;
-  } else if (ptr + size >= worldDatabaseSize) {
-    size = worldDatabaseSize - ptr;
-    left = 0;
-  }
-  buf = nboPackUInt(bufStart, uint32_t(left));
-  buf = nboPackString(buf, (char*)worldDatabase + ptr, size);
-  directMessage(handler, MsgGetWorld, (char*)buf - (char*)bufStart, bufStart);
-}
-
-
 static void makeGameSettings()
 {
   void* buf = worldSettings;
@@ -3158,54 +3136,14 @@ static void handleCommand(const void *rawbuf, bool udp, NetHandler *handler)
 		handleSetVar(handler);
 		break;
 
-    case MsgNegotiateFlags: {
-      void *bufStart;
-      FlagTypeMap::iterator it;
-      FlagSet::iterator m_it;
-      FlagOptionMap hasFlag;
-      FlagSet missingFlags;
-      unsigned short numClientFlags = len/2;
-
-      /* Unpack incoming message containing the list of flags our client supports */
-      for (int i = 0; i < numClientFlags; i++) {
-	FlagType *fDesc;
-	buf = FlagType::unpack(buf, fDesc);
-	if (fDesc != Flags::Null)
-	  hasFlag[fDesc] = true;
-      }
-
-      /* Compare them to the flags this game might need, generating a list of missing flags */
-      for (it = FlagType::getFlagMap().begin();
-	   it != FlagType::getFlagMap().end(); ++it) {
-	if (!hasFlag[it->second]) {
-	   if (clOptions->flagCount[it->second] > 0)
-	     missingFlags.insert(it->second);
-	   if ((clOptions->numExtraFlags > 0) && !clOptions->flagDisallowed[it->second])
-	     missingFlags.insert(it->second);
-	}
-      }
-
-      /* Pack a message with the list of missing flags */
-      buf = bufStart = getDirectMessageBuffer();
-      for (m_it = missingFlags.begin(); m_it != missingFlags.end(); ++m_it) {
-	if ((*m_it) != Flags::Null)
-	  buf = (*m_it)->pack(buf);
-      }
-      directMessage(handler, MsgNegotiateFlags, (char*)buf-(char*)bufStart,
-		    bufStart);
-      break;
-    }
-
-
+    case MsgNegotiateFlags: 
+		handleFlagNegotiation(handler,&buf,len);
+		break;
 
     // player wants more of world database
-    case MsgGetWorld: {
-      // data: count (bytes read so far)
-      uint32_t ptr;
-      buf = nboUnpackUInt(buf, ptr);
-      sendWorld(handler, ptr);
-      break;
-    }
+    case MsgGetWorld:
+		handleWorldChunk(handler,buf);
+		break;
 
     case MsgWantSettings: {
       pwrite(handler, worldSettings, 4 + WorldSettingsSize);
@@ -4963,8 +4901,8 @@ int main(int argc, char **argv)
     // Clean pending players
     bool resetGame = GameKeeper::Player::clean();
 
-    if (resetGame && playerHadWorld) {
-      playerHadWorld = false;
+    if (resetGame && worldWasSentToAPlayer) {
+      worldWasSentToAPlayer = false;
       (clOptions->worldFile == "") && !Replay::enabled() && defineWorld();
     }
 

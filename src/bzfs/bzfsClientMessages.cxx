@@ -64,6 +64,57 @@ void handleSetVar ( NetHandler *netHandler )
 	BZDB.iterate(PackVars::packIt, &pv);
 }
 
+void handleFlagNegotiation( NetHandler *handler, void **buf, int len )
+{
+	if (!handler)
+		return;
+
+	void *bufStart;
+	FlagTypeMap::iterator it;
+	FlagSet::iterator m_it;
+	FlagOptionMap hasFlag;
+	FlagSet missingFlags;
+	unsigned short numClientFlags = len/2;
+
+	/* Unpack incoming message containing the list of flags our client supports */
+	for (int i = 0; i < numClientFlags; i++)
+	{
+		FlagType *fDesc;
+		*buf = FlagType::unpack(*buf, fDesc);
+		if (fDesc != Flags::Null)
+			hasFlag[fDesc] = true;
+	}
+
+	/* Compare them to the flags this game might need, generating a list of missing flags */
+	for (it = FlagType::getFlagMap().begin(); it != FlagType::getFlagMap().end(); ++it)
+	{
+		if (!hasFlag[it->second])
+		{
+			if (clOptions->flagCount[it->second] > 0)
+				missingFlags.insert(it->second);
+			if ((clOptions->numExtraFlags > 0) && !clOptions->flagDisallowed[it->second])
+				missingFlags.insert(it->second);
+		}
+	}
+
+	/* Pack a message with the list of missing flags */
+	void *buf2 = bufStart = getDirectMessageBuffer();
+	for (m_it = missingFlags.begin(); m_it != missingFlags.end(); ++m_it)
+	{
+		if ((*m_it) != Flags::Null)
+			buf2 = (*m_it)->pack(buf2);
+	}
+	directMessage(handler, MsgNegotiateFlags, (char*)buf2-(char*)bufStart, bufStart);
+}
+
+void handleWorldChunk( NetHandler *handler, void *buf )
+{
+	uint32_t ptr;	// data: count (bytes read so far)
+	buf = nboUnpackUInt(buf, ptr);
+
+	sendWorldChunk(handler, ptr);
+}
+
 void handlePlayerUpdate ( void **buf, uint16_t &code, GameKeeper::Player *playerData, const void *rawbuf, int len )
 {
 	if (!playerData)

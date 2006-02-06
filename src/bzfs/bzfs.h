@@ -131,6 +131,7 @@ extern float	   pluginWorldSize;
 extern float	   pluginWorldHeight;
 extern float	   pluginMaxWait;
 extern bool        isIdentifyFlagIn;
+extern bool        worldWasSentToAPlayer;
 
 // this should not be hangin out here
 extern bool dontWait;

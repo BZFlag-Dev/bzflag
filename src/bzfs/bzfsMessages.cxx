@@ -12,6 +12,7 @@
 
 // bzflag global header
 #include "bzfsMessages.h"
+#include <assert.h>
 
 void sendRemovePlayerMessage ( int playerID )
 {
@@ -353,6 +354,30 @@ int sendTeamUpdateDirect(NetHandler *handler)
 		(char*)buf - (char*)bufStart, bufStart);
 }
 
+void sendWorldChunk(NetHandler *handler, uint32_t ptr)
+{
+	worldWasSentToAPlayer = true;
+	// send another small chunk of the world database
+	assert((world != NULL) && (worldDatabase != NULL));
+
+	void *buf, *bufStart = getDirectMessageBuffer();
+	uint32_t size = MaxPacketLen - 2*sizeof(uint16_t) - sizeof(uint32_t);
+	uint32_t left = worldDatabaseSize - ptr;
+
+	if (ptr >= worldDatabaseSize)
+	{
+		size = 0;
+		left = 0;
+	}
+	else if (ptr + size >= worldDatabaseSize)
+	{
+		size = worldDatabaseSize - ptr;
+		left = 0;
+	}
+	buf = nboPackUInt(bufStart, uint32_t(left));
+	buf = nboPackString(buf, (char*)worldDatabase + ptr, size);
+	directMessage(handler, MsgGetWorld, (char*)buf - (char*)bufStart, bufStart);
+}
 
 //messages sent TO the server
 void getGeneralMessageInfo ( void **buffer, uint16_t &code, uint16_t &len )
