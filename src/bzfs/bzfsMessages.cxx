@@ -393,6 +393,48 @@ GameKeeper::Player *getPlayerMessageInfo ( void **buffer, uint16_t &code, int &p
 	return NULL;
 }
 
+PackVars::PackVars(void *buffer, NetHandler *_handler) : bufStart(buffer)
+{
+	buf = nboPackUShort(bufStart, 0);//placeholder
+	handler = _handler;
+	len = sizeof(uint16_t);
+	count = 0;
+}
+
+PackVars::~PackVars()
+{
+	if (len > sizeof(uint16_t)) {
+		nboPackUShort(bufStart, count);
+		directMessage(handler, MsgSetVar, len, bufStart);
+	}
+}
+
+// callback forwarder
+void PackVars::packIt(const std::string &key, void *pv)
+{
+	reinterpret_cast<PackVars*>(pv)->sendPackVars(key);
+}
+
+void PackVars::sendPackVars(const std::string &key)
+{
+	std::string value = BZDB.get(key);
+	int pairLen = key.length() + 1 + value.length() + 1;
+	if ((pairLen + len) > (MaxPacketLen - 2*sizeof(uint16_t))) {
+		nboPackUShort(bufStart, count);
+		count = 0;
+		directMessage(handler, MsgSetVar, len, bufStart);
+		buf = nboPackUShort(bufStart, 0); //placeholder
+		len = sizeof(uint16_t);
+	}
+
+	buf = nboPackUByte(buf, key.length());
+	buf = nboPackString(buf, key.c_str(), key.length());
+	buf = nboPackUByte(buf, value.length());
+	buf = nboPackString(buf, value.c_str(), value.length());
+	len += pairLen;
+	count++;
+};
+
 //utils
 bool isUDPAtackMessage ( uint16_t &code )
 {

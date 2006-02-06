@@ -36,6 +36,26 @@ int sendTeamUpdateDirect(NetHandler *handler);
 void getGeneralMessageInfo ( void **buffer, uint16_t &code, uint16_t &len );
 GameKeeper::Player *getPlayerMessageInfo ( void **buffer, uint16_t &code, int &playerID );
 
+/** class to send a bunch of BZDB variables via MsgSetVar.
+* dtor does the actual send
+*/
+class PackVars
+{
+public:
+	PackVars(void *buffer, NetHandler *_handler);
+	~PackVars();
+	// callback forwarder
+	static void packIt(const std::string &key, void *pv);
+	void sendPackVars(const std::string &key);
+
+private:
+	void * const bufStart;
+	void *buf;
+	NetHandler *handler;
+	unsigned int len;
+	unsigned int count;
+};
+
 // utilitys
 bool isUDPAtackMessage ( uint16_t &code );
 

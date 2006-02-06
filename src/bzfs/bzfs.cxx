@@ -918,62 +918,6 @@ static void sendNewPlayer(NetHandler *handler)
   directMessage(handler, MsgNewPlayer, (char*)buf - (char*)bufStart, bufStart);
 }
 
-/** class to send a bunch of BZDB variables via MsgSetVar.
- * dtor does the actual send
- */
-class PackVars
-{
-public:
-  PackVars(void *buffer, NetHandler *_handler) : bufStart(buffer)
-  {
-    buf = nboPackUShort(bufStart, 0);//placeholder
-    handler = _handler;
-    len = sizeof(uint16_t);
-    count = 0;
-  }
-
-  ~PackVars()
-  {
-    if (len > sizeof(uint16_t)) {
-      nboPackUShort(bufStart, count);
-      directMessage(handler, MsgSetVar, len, bufStart);
-    }
-  }
-
-  // callback forwarder
-  static void packIt(const std::string &key, void *pv)
-  {
-    reinterpret_cast<PackVars*>(pv)->sendPackVars(key);
-  }
-
-  void sendPackVars(const std::string &key)
-  {
-    std::string value = BZDB.get(key);
-    int pairLen = key.length() + 1 + value.length() + 1;
-    if ((pairLen + len) > (MaxPacketLen - 2*sizeof(uint16_t))) {
-      nboPackUShort(bufStart, count);
-      count = 0;
-      directMessage(handler, MsgSetVar, len, bufStart);
-      buf = nboPackUShort(bufStart, 0); //placeholder
-      len = sizeof(uint16_t);
-    }
-
-    buf = nboPackUByte(buf, key.length());
-    buf = nboPackString(buf, key.c_str(), key.length());
-    buf = nboPackUByte(buf, value.length());
-    buf = nboPackString(buf, value.c_str(), value.length());
-    len += pairLen;
-    count++;
-  }
-
-private:
-  void * const bufStart;
-  void *buf;
-  NetHandler *handler;
-  unsigned int len;
-  unsigned int count;
-};
-
 static void acceptClient()
 {
   // client (not a player yet) is requesting service.
@@ -3196,32 +3140,23 @@ static void handleCommand(const void *rawbuf, bool udp, NetHandler *handler)
 
   GameKeeper::Player *playerData = NULL;
 
-  int t = 0;
-  playerData = getPlayerMessageInfo(&buf,code,t);
+  int playerID = 0;
+  playerData = getPlayerMessageInfo(&buf,code,playerID);
   if (playerData && playerData->netHandler != handler)	// make sure they are who they say they are
 	  return;
 
   switch (code) {
-    // player joining
-    case MsgEnter: 
+    case MsgEnter:     // player joining
 		dontWait = handleClientEnter(&buf,playerData);
 		break;
   
-    // player closing connection
-    case MsgExit:
-      // data: <none>
-      removePlayer(t, "left", false);
-      break;
+    case MsgExit:    // player closing connection
+		handleClientExit(playerData);
+		break;
 
-    case MsgSetVar: {
-      void *bufStart = getDirectMessageBuffer();
-      //send SetVars
-      { // scoping is mandatory
-	PackVars pv(bufStart, handler);
-	BZDB.iterate(PackVars::packIt, &pv);
-      }
-      break;
-    }
+    case MsgSetVar: 
+		handleSetVar(handler);
+		break;
 
     case MsgNegotiateFlags: {
       void *bufStart;
@@ -3302,14 +3237,14 @@ static void handleCommand(const void *rawbuf, bool udp, NetHandler *handler)
     // player is coming alive
     case MsgAlive: {
       // player is on the waiting list
-      float waitTime = rejoinList.waitTime(t);
+      float waitTime = rejoinList.waitTime(playerID);
       if (waitTime > 0.0f) {
 	snprintf (buffer, MessageLen, "You are unable to begin playing for %.1f seconds.", waitTime);
-	sendMessage(ServerPlayer, t, buffer);
+	sendMessage(ServerPlayer, playerID, buffer);
 
 	// Make them pay dearly for trying to rejoin quickly
-	playerAlive(t);
-	playerKilled(t, t, 0, -1, Flags::Null, -1);
+	playerAlive(playerID);
+	playerKilled(playerID, playerID, 0, -1, Flags::Null, -1);
 
 	break;
       }
@@ -3318,7 +3253,7 @@ static void handleCommand(const void *rawbuf, bool udp, NetHandler *handler)
       if (clOptions->timeLimit>0.0f && !countdownActive) {
 	playerData->player.setPlayedEarly();
       }
-      playerAlive(t);
+      playerAlive(playerID);
       break;
     }
 
@@ -3348,7 +3283,7 @@ static void handleCommand(const void *rawbuf, bool udp, NetHandler *handler)
 	  break;
       }
       playerData->player.endShotCredit--;
-      playerKilled(t, lookupPlayer(killer), reason, shot, flagType, phydrv);
+      playerKilled(playerID, lookupPlayer(killer), reason, shot, flagType, phydrv);
 
       break;
     }
@@ -3367,11 +3302,11 @@ static void handleCommand(const void *rawbuf, bool udp, NetHandler *handler)
       // data: team whose territory flag was brought to
       uint16_t _team;
 
-      if (invalidPlayerAction(playerData->player, t, "capture a flag"))
+      if (invalidPlayerAction(playerData->player, playerID, "capture a flag"))
 	break;
 
       buf = nboUnpackUShort(buf, _team);
-      captureFlag(t, TeamColor(_team));
+      captureFlag(playerID, TeamColor(_team));
       break;
     }
 
@@ -3388,7 +3323,7 @@ static void handleCommand(const void *rawbuf, bool udp, NetHandler *handler)
 	break;
 
       // data: shooter id, shot number, reason
-      PlayerId sourcePlayer = t;
+      PlayerId sourcePlayer = playerID;
       int16_t shot;
       uint16_t reason;
       buf = nboUnpackShort(buf, shot);
@@ -3404,7 +3339,7 @@ static void handleCommand(const void *rawbuf, bool udp, NetHandler *handler)
       if (!playerData->player.isAlive())
 	break;
 
-      PlayerId hitPlayer = t;
+      PlayerId hitPlayer = playerID;
       PlayerId shooterPlayer;
       FiringInfo firingInfo;
       int16_t shot;
@@ -3434,12 +3369,12 @@ static void handleCommand(const void *rawbuf, bool udp, NetHandler *handler)
     case MsgTeleport: {
       uint16_t from, to;
 
-      if (invalidPlayerAction(playerData->player, t, "teleport"))
+      if (invalidPlayerAction(playerData->player, playerID, "teleport"))
 	break;
 
       buf = nboUnpackUShort(buf, from);
       buf = nboUnpackUShort(buf, to);
-      sendTeleport(t, from, to);
+      sendTeleport(playerID, from, to);
       break;
     }
 
@@ -3454,29 +3389,29 @@ static void handleCommand(const void *rawbuf, bool udp, NetHandler *handler)
       playerData->player.hasSent();
       if (dstPlayer == AllPlayers) {
 	DEBUG1("Player %s [%d] -> All: %s\n", playerData->player.getCallSign(),
-	       t, message);
+	       playerID, message);
       } else if (dstPlayer == AdminPlayers) {
 	DEBUG1("Player %s [%d] -> Admin: %s\n",
-	       playerData->player.getCallSign(), t, message);
+	       playerData->player.getCallSign(), playerID, message);
       } else if (dstPlayer > LastRealPlayer) {
 	DEBUG1("Player %s [%d] -> Team: %s\n",
-	       playerData->player.getCallSign(), t, message);
+	       playerData->player.getCallSign(), playerID, message);
       } else {
 	GameKeeper::Player *p = GameKeeper::Player::getPlayerByIndex(dstPlayer);
 	if (p != NULL) {
 	  DEBUG1("Player %s [%d] -> Player %s [%d]: %s\n",
-	       playerData->player.getCallSign(), t, p->player.getCallSign(), dstPlayer, message);
+	       playerData->player.getCallSign(), playerID, p->player.getCallSign(), dstPlayer, message);
 	} else {
 	      DEBUG1("Player %s [%d] -> Player Unknown [%d]: %s\n",
-	       playerData->player.getCallSign(), t, dstPlayer, message);
+	       playerData->player.getCallSign(), playerID, dstPlayer, message);
 	}
       }
       // check for spamming
-      if (checkSpam(message, playerData, t))
+      if (checkSpam(message, playerData, playerID))
 	break;
 
       // check for garbage
-      if (checkGarbage(message, playerData, t))
+      if (checkGarbage(message, playerData, playerID))
 	break;
 
       GameKeeper::Player *toData = GameKeeper::Player::getPlayerByIndex(dstPlayer);
@@ -3485,7 +3420,7 @@ static void handleCommand(const void *rawbuf, bool udp, NetHandler *handler)
 		toTeam = toData->player.getTeam();
 
       bz_ChatEventData_V1 chatData;
-      chatData.from = t;
+      chatData.from = playerID;
       chatData.to = BZ_NULLUSER;
 
 	  if (dstPlayer == AllPlayers)
@@ -3516,7 +3451,7 @@ static void handleCommand(const void *rawbuf, bool udp, NetHandler *handler)
     case MsgTransferFlag: {
       PlayerId from, to;
 
-      from = t;
+      from = playerID;
 
       buf = nboUnpackUByte(buf, to);
 
@@ -3565,7 +3500,7 @@ static void handleCommand(const void *rawbuf, bool udp, NetHandler *handler)
       break;
 
     case MsgNewRabbit: {
-      if (t == rabbitIndex)
+      if (playerID == rabbitIndex)
 	anointNewRabbit();
       break;
     }
@@ -3573,14 +3508,14 @@ static void handleCommand(const void *rawbuf, bool udp, NetHandler *handler)
     case MsgPause: {
       uint8_t pause;
       nboUnpackUByte(buf, pause);
-      pausePlayer(t, pause != 0);
+      pausePlayer(playerID, pause != 0);
       break;
     }
 
     case MsgAutoPilot: {
       uint8_t autopilot;
       nboUnpackUByte(buf, autopilot);
-      autopilotPlayer(t, autopilot != 0);
+      autopilotPlayer(playerID, autopilot != 0);
       break;
     }
 
@@ -3595,18 +3530,18 @@ static void handleCommand(const void *rawbuf, bool udp, NetHandler *handler)
 	char message[MessageLen];
 	sprintf(message,"*** Server Warning: your lag is too high (%d ms) ***",
 		playerData->lagInfo.getLag());
-	sendMessage(ServerPlayer, t, message);
+	sendMessage(ServerPlayer, playerID, message);
 	if (kick)
-	  lagKick(t);
+	  lagKick(playerID);
       }
       if (jittwarn) {
 	char message[MessageLen];
 	sprintf(message,
 		"*** Server Warning: your jitter is too high (%d ms) ***",
 		playerData->lagInfo.getJitter());
-	sendMessage(ServerPlayer, t, message);
+	sendMessage(ServerPlayer, playerID, message);
 	if (jittkick)
-	  jitterKick(t);
+	  jitterKick(playerID);
       }
       break;
     }
@@ -3640,7 +3575,7 @@ static void handleCommand(const void *rawbuf, bool udp, NetHandler *handler)
       playerData->passTCPMutex();
       // Not really the place here, but for initial testing we need something
       if (playerData->authentication.isTrusted())
-	sendMessage(ServerPlayer, t, "Welcome, we trust you");
+	sendMessage(ServerPlayer, playerID, "Welcome, we trust you");
       break;
 
     // unknown msg type

@@ -13,6 +13,7 @@
 // bzflag global header
 #include "bzfsClientMessages.h"
 #include "BZDBCache.h"
+#include "bzfsMessages.h"
 
 bool handleClientEnter(void **buf, GameKeeper::Player *playerData)
 {
@@ -45,6 +46,22 @@ bool handleClientEnter(void **buf, GameKeeper::Player *playerData)
 		playerData->_LSAState = GameKeeper::Player::required;
 
 	return true;
+}
+
+void handleClientExit ( GameKeeper::Player *playerData )
+{
+	// data: <none>
+	removePlayer(playerData->getIndex(), "left", false);
+}
+
+void handleSetVar ( NetHandler *netHandler )
+{
+	if (!netHandler)
+		return;
+
+	void *bufStart = getDirectMessageBuffer();
+	PackVars pv(bufStart, netHandler);
+	BZDB.iterate(PackVars::packIt, &pv);
 }
 
 void handlePlayerUpdate ( void **buf, uint16_t &code, GameKeeper::Player *playerData, const void *rawbuf, int len )
@@ -237,6 +254,7 @@ void handlePlayerUpdate ( void **buf, uint16_t &code, GameKeeper::Player *player
 	relayPlayerPacket(playerData->getIndex(), len, rawbuf, code);
 	return;
 }
+
 
 
 // Local Variables: ***
