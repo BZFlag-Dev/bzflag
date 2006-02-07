@@ -534,6 +534,66 @@ void bz_APIStringList::tokenize ( const char* in, const char* delims, int maxTok
 		data->list.push_back(bz_ApiString(list[i]));
 }
 
+//******************************bz_APIWorldObjectList********************************************
+
+class bz_APIWorldObjectList::dataBlob
+{
+public:
+	std::vector<bz_APIBaseWorldObject*> list;
+};
+
+bz_APIWorldObjectList::bz_APIWorldObjectList()
+{
+	data = new dataBlob;
+}
+
+bz_APIWorldObjectList::bz_APIWorldObjectList(const bz_APIWorldObjectList	&r)
+{
+	data = new dataBlob;
+	data->list = r.data->list;
+}
+
+bz_APIWorldObjectList::~bz_APIWorldObjectList()
+{
+	delete(data);
+}
+
+void bz_APIWorldObjectList::push_back ( bz_APIBaseWorldObject *value )
+{
+	data->list.push_back(value);
+}
+
+bz_APIBaseWorldObject *bz_APIWorldObjectList::get ( unsigned int i )
+{
+	return data->list[i];
+}
+
+const bz_APIBaseWorldObject* bz_APIWorldObjectList::operator[] (unsigned int i) const
+{
+	return data->list[i];
+}
+
+bz_APIWorldObjectList& bz_APIWorldObjectList::operator = ( const bz_APIWorldObjectList& r )
+{
+	data->list = r.data->list;
+	return *this;
+}
+
+unsigned int bz_APIWorldObjectList::size ( void )
+{
+	return data->list.size();
+}
+
+void bz_APIWorldObjectList::clear ( void )
+{
+	data->list.clear();
+}
+
+void bz_releaseWorldObjectList ( bz_APIWorldObjectList *objectList )
+{
+	if (objectList)
+		delete(objectList);
+}
 
 //******************************bzApiTextreList********************************************
 
@@ -1200,12 +1260,12 @@ BZF_API void bz_debugMessage ( int _debugLevel, const char* message )
 
 BZF_API void bz_debugMessagef ( int _debugLevel, const char* fmt, ... )
 {
-  char buffer[4096];
-  va_list args;
-  va_start(args, fmt);
-  vsnprintf(buffer, 4096, fmt, args);
-  va_end(args);
-  bz_debugMessage (_debugLevel, buffer);
+	char buffer[4096];
+	va_list args;
+	va_start(args, fmt);
+	vsnprintf(buffer, 4096, fmt, args);
+	va_end(args);
+	bz_debugMessage (_debugLevel, buffer);
 }
 
 BZF_API int bz_getDebugLevel ( void )
@@ -1536,6 +1596,123 @@ BZF_API bool bz_removeCustomMapObject ( const char* object )
 
 	removeCustomMapObject(object);
 	return true;
+}
+
+BZF_API void bz_getWorldSize( float *size, float *wallHeight )
+{
+	if (wallHeight)
+		*wallHeight = pluginWorldHeight;
+	if (size)
+		*size = pluginWorldSize;
+}
+
+BZF_API int bz_getWorldObjectCount( void )
+{
+	return world->getDatabaseSize();
+}
+
+BZF_API bz_APIWorldObjectList* bz_getWorldObjectList( void )
+{
+	bz_APIWorldObjectList *worldList = new bz_APIWorldObjectList;
+
+	// TODO:build that shit into a world
+
+	return worldList;
+}
+
+//-----------------------bz_APISolidWorldObject-----------------
+
+class bz_APISolidWorldObject_V1::dataBlob
+{
+public:
+	const Obstacle *obstacle;
+};
+
+bz_APISolidWorldObject_V1::bz_APISolidWorldObject_V1()
+{
+	data = new dataBlob;
+	data->obstacle = NULL;
+
+	memset(center,0,sizeof(float)*3);
+	memset(maxAABBox,0,sizeof(float)*3);
+	memset(minAABBox,0,sizeof(float)*3);
+	memset(rotation,0,sizeof(float)*3);
+	memset(maxBBox,0,sizeof(float)*3);
+	memset(minBBox,0,sizeof(float)*3);
+}
+
+bz_APISolidWorldObject_V1::~bz_APISolidWorldObject_V1()
+{
+	if (data)
+		delete(data);
+}
+
+
+void bz_APISolidWorldObject_V1::update ( void )
+{
+	if (!data || !minBBox)
+		return;
+}
+
+bz_eAPIColType getAPIMapObject ( InBuildingType colType, const Obstacle *obs, bz_APIBaseWorldObject **object )
+{
+	if (!obs)
+		return eNoCol;
+
+	bz_freeWorldObjectPtr(*object);
+
+	bool base = false;
+	switch(colType)
+	{
+		case NOT_IN_BUILDING:
+		case IN_BOX_DRIVETHROUGH:
+			return eNoCol;
+
+		case IN_BASE:
+			base = true;
+		case IN_BOX_NOTDRIVETHROUGH:
+		case IN_MESH:
+		case IN_MESHFACE:
+		case IN_PYRAMID:
+		case IN_TETRA:
+			if (object)
+			{
+				bz_APISolidWorldObject_V1	*solid = new bz_APISolidWorldObject_V1;
+				solid->data->obstacle = obs;
+				solid->update();
+				*object = solid;
+			}
+			return base ? eInBase : eInSolid;
+
+		case IN_TELEPORTER:
+			return eInTP;
+	}
+	return eNoCol;
+}
+
+bz_eAPIColType bz_cylinderInMapObject ( float pos[3], float height, float radius, bz_APIBaseWorldObject **object )
+{
+	if(!world)
+		return eNoCol;
+
+	const Obstacle *obs;
+	return getAPIMapObject(world->cylinderInBuilding(&obs,pos,radius,height),obs,object);;
+}
+
+bz_eAPIColType bz_boxInMapObject ( float pos[3], float size[3], float angle, bz_APIBaseWorldObject **object )
+{
+	if(!world)
+		return eNoCol;
+	const Obstacle *obs;
+	return getAPIMapObject(world->boxInBuilding(&obs,pos,angle,size[0],size[1],size[2]),obs,object);
+}
+
+void bz_freeWorldObjectPtr ( bz_APIBaseWorldObject *ptr )
+{
+	if (ptr)
+		delete(ptr);
+
+	ptr = NULL;
 }
 
 BZF_API bool bz_getPublic( void )

@@ -1094,6 +1094,97 @@ BZF_API bool bz_registerCustomMapObject ( const char* object, bz_CustomMapObject
 BZF_API bool bz_removeCustomMapObject ( const char* object );
 
 
+// info about the world
+typedef enum 
+{
+	eNullObject,
+	eSolidObject,
+	eTeleporterField,
+	eWorldWeapon
+}bz_eWorldObjectType;
+
+class BZF_API bz_APIBaseWorldObject
+{
+public:
+	bz_APIBaseWorldObject(){type = eNullObject;}
+	virtual ~bz_APIBaseWorldObject(){};
+	bz_eWorldObjectType type;
+};
+
+class BZF_API bz_APISolidWorldObject_V1 : public bz_APIBaseWorldObject
+{
+public:
+	bz_APISolidWorldObject_V1();
+	virtual ~bz_APISolidWorldObject_V1();
+
+	float center[3];
+	float maxAABBox[3];
+	float minAABBox[3];
+	float rotation[3];
+	float maxBBox[3];
+	float minBBox[3];
+
+	void update ( void ); 
+
+	class		dataBlob;
+	dataBlob	*data;
+};
+
+class BZF_API bz_APITeleporterField_V1 : public bz_APIBaseWorldObject
+{
+public:
+	bz_APITeleporterField_V1(){};
+	virtual ~bz_APITeleporterField_V1(){};
+
+	float center[3];
+	float maxAABBox[3];
+	float minAABBox[3];
+	float rotation[3];
+	float maxBBox[3];
+	float minBBox[3];
+
+	bz_ApiString name;
+	bz_APIStringList targets[2];
+};
+
+class BZF_API bz_APIWorldObjectList
+{
+public:
+	bz_APIWorldObjectList();
+	bz_APIWorldObjectList(const bz_APIWorldObjectList &r);
+	~bz_APIWorldObjectList();
+	void push_back ( bz_APIBaseWorldObject *value );
+	bz_APIBaseWorldObject *get ( unsigned int i );
+	const bz_APIBaseWorldObject* operator[] (unsigned int i) const;
+	bz_APIWorldObjectList& operator = ( const bz_APIWorldObjectList& r );
+	unsigned int size ( void );
+	void clear ( void );
+
+protected:
+	class dataBlob;
+	dataBlob *data;
+};
+
+BZF_API void bz_getWorldSize( float *size, float *wallHeight );
+BZF_API int bz_getWorldObjectCount( void );
+BZF_API bz_APIWorldObjectList* bz_getWorldObjectList( void );
+BZF_API void bz_releaseWorldObjectList( bz_APIWorldObjectList* list );
+
+// collision methods
+typedef enum
+{
+	eNoCol,
+	eInSolid,
+	eInBase,
+	eInTP
+}bz_eAPIColType;
+
+// these realy need to return the object they came from
+bz_eAPIColType bz_cylinderInMapObject ( float pos[3], float height, float radius, bz_APIBaseWorldObject **object );
+bz_eAPIColType bz_boxInMapObject ( float pos[3], float size[3], float angle, bz_APIBaseWorldObject **object );
+
+void bz_freeWorldObjectPtr ( bz_APIBaseWorldObject *ptr );
+
 // public server info
 BZF_API bool bz_getPublic( void );
 BZF_API bz_ApiString bz_getPublicAddr( void );
