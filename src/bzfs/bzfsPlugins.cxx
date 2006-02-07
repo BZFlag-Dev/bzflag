@@ -301,7 +301,7 @@ class DynamicPluginCommands : public bz_CustomSlashCommandHandler
 {
 public:
 	virtual ~DynamicPluginCommands(){};
-	virtual bool handle ( int playerID, bzApiString _command, bzApiString _message, bzAPIStringList *params )
+	virtual bool handle ( int playerID, bz_ApiString _command, bz_ApiString _message, bz_APIStringList *params )
 	{
 		bz_BasePlayerRecord	record;
 

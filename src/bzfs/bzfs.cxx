@@ -717,10 +717,14 @@ static bool defineWorld()
       float worldSize = BZDBCache::worldSize;
       if (pluginWorldSize > 0)
 	worldSize = pluginWorldSize;
+	  else
+		pluginWorldSize = worldSize;
 
       float wallHeight = BZDB.eval(StateDatabase::BZDB_WALLHEIGHT);
       if (pluginWorldHeight > 0)
 	wallHeight = pluginWorldHeight;
+	  else
+		  pluginWorldHeight = wallHeight;
 
       world->addWall(0.0f, 0.5f * worldSize, 0.0f, (float)(1.5 * M_PI), 0.5f * worldSize, wallHeight);
       world->addWall(0.5f * worldSize, 0.0f, 0.0f, (float)M_PI, 0.5f * worldSize, wallHeight);

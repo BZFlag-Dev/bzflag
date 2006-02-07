@@ -21,6 +21,7 @@
 #include "WorldEventManager.h"
 #include "GameKeeper.h"
 #include "FlagInfo.h"
+#include "VotingArbiter.h"
 
 #include "commands.h"
 #include "SpawnPosition.h"
@@ -56,7 +57,7 @@ void setBZMatFromAPIMat (BzMaterial &bzmat, bz_MaterialInfo* material )
 
 	for( unsigned int i = 0; i < material->textures.size();i++ )
 	{
-		bzApiString	name = material->textures[i].texture;
+		bz_ApiString	name = material->textures[i].texture;
 
 		bzmat.addTexture(std::string(name.c_str()));
 		bzmat.setCombineMode(material->textures[i].combineMode);
@@ -145,100 +146,100 @@ BZF_API int bz_APIVersion ( void )
 	return BZ_API_VERSION;
 }
 
-//******************************bzApiString********************************************
-class bzApiString::dataBlob
+//******************************bz_ApiString********************************************
+class bz_ApiString::dataBlob
 {
 public:
 	std::string str;
 };
 
-bzApiString::bzApiString()
+bz_ApiString::bz_ApiString()
 {
 	data = new dataBlob;
 }
 
-bzApiString::bzApiString(const char* c)
+bz_ApiString::bz_ApiString(const char* c)
 {
 	data = new dataBlob;
 	data->str = c;
 }
 
-bzApiString::bzApiString(const std::string &s)
+bz_ApiString::bz_ApiString(const std::string &s)
 {
 	data = new dataBlob;
 	data->str = s;
 }
 
-bzApiString::bzApiString(const bzApiString &r)
+bz_ApiString::bz_ApiString(const bz_ApiString &r)
 {
 	data = new dataBlob;
 	data->str = r.data->str;
 }
 
-bzApiString::~bzApiString()
+bz_ApiString::~bz_ApiString()
 {
 	delete(data);
 }
 
-bzApiString& bzApiString::operator = ( const bzApiString& r )
+bz_ApiString& bz_ApiString::operator = ( const bz_ApiString& r )
 {
 	data->str = r.data->str;
 	return *this;
 }
 
-bzApiString& bzApiString::operator = ( const std::string& r )
+bz_ApiString& bz_ApiString::operator = ( const std::string& r )
 {
 	data->str = r;
 	return *this;
 }
 
-bzApiString& bzApiString::operator = ( const char* r )
+bz_ApiString& bz_ApiString::operator = ( const char* r )
 {
 	data->str = r;
 	return *this;
 }
 
-bool bzApiString::operator == ( const bzApiString&r )
+bool bz_ApiString::operator == ( const bz_ApiString&r )
 {
 	return data->str == r.data->str;
 }
 
-bool bzApiString::operator == ( const std::string& r )
+bool bz_ApiString::operator == ( const std::string& r )
 {
 	return data->str == r;
 }
 
-bool bzApiString::operator == ( const char* r )
+bool bz_ApiString::operator == ( const char* r )
 {
 	return data->str == r;
 }
 
-bool bzApiString::operator != ( const bzApiString&r )
+bool bz_ApiString::operator != ( const bz_ApiString&r )
 {
 	return data->str != r.data->str;
 }
 
-bool bzApiString::operator != ( const std::string& r )
+bool bz_ApiString::operator != ( const std::string& r )
 {
 	return data->str != r;
 }
 
-bool bzApiString::operator != ( const char* r )
+bool bz_ApiString::operator != ( const char* r )
 {
 	return data->str != r;
 }
 
-unsigned int bzApiString::size ( void ) const
+unsigned int bz_ApiString::size ( void ) const
 {
 	return data->str.size();
 }
 
-const char* bzApiString::c_str(void) const
+const char* bz_ApiString::c_str(void) const
 {
 	return data->str.c_str();
 }
 
-void bzApiString::format(const char* fmt, ...)
+void bz_ApiString::format(const char* fmt, ...)
 {
 	va_list args;
 	va_start(args, fmt);
@@ -246,7 +247,7 @@ void bzApiString::format(const char* fmt, ...)
 	va_end(args);
 }
 
-void bzApiString::replaceAll ( const char* target, const char* with )
+void bz_ApiString::replaceAll ( const char* target, const char* with )
 {
 	if (!target)
 		return;
@@ -257,51 +258,51 @@ void bzApiString::replaceAll ( const char* target, const char* with )
 	data->str = TextUtils::replace_all(data->str,std::string(target),std::string(with));
 }
 
-void bzApiString::tolower ( void )
+void bz_ApiString::tolower ( void )
 {
 	data->str = TextUtils::tolower(data->str);
 }
 
-void bzApiString::toupper ( void )
+void bz_ApiString::toupper ( void )
 {
 	data->str = TextUtils::toupper(data->str);
 }
 
-//******************************bzAPIIntList********************************************
-class bzAPIIntList::dataBlob
+//******************************bz_APIIntList********************************************
+class bz_APIIntList::dataBlob
 {
 public:
 	std::vector<int>	list;
 };
 
-bzAPIIntList::bzAPIIntList()
+bz_APIIntList::bz_APIIntList()
 {
 	data = new dataBlob;
 }
 
-bzAPIIntList::bzAPIIntList(const bzAPIIntList	&r)
+bz_APIIntList::bz_APIIntList(const bz_APIIntList	&r)
 {
 	data = new dataBlob;
 	data->list = r.data->list;
 }
 
-bzAPIIntList::bzAPIIntList(const std::vector<int>	&r)
+bz_APIIntList::bz_APIIntList(const std::vector<int>	&r)
 {
 	data = new dataBlob;
 	data->list = r;
 }
 
-bzAPIIntList::~bzAPIIntList()
+bz_APIIntList::~bz_APIIntList()
 {
 	delete(data);
 }
 
-void bzAPIIntList::push_back ( int value )
+void bz_APIIntList::push_back ( int value )
 {
 	data->list.push_back(value);
 }
 
-int bzAPIIntList::get ( unsigned int i )
+int bz_APIIntList::get ( unsigned int i )
 {
 	if (i >= data->list.size())
 		return 0;
@@ -309,78 +310,78 @@ int bzAPIIntList::get ( unsigned int i )
 	return data->list[i];
 }
 
-const int& bzAPIIntList::operator[] (unsigned int i) const
+const int& bz_APIIntList::operator[] (unsigned int i) const
 {
 	return data->list[i];
 }
 
-bzAPIIntList& bzAPIIntList::operator = ( const bzAPIIntList& r )
+bz_APIIntList& bz_APIIntList::operator = ( const bz_APIIntList& r )
 {
 	data->list = r.data->list;
 	return *this;
 }
 
-bzAPIIntList& bzAPIIntList::operator = ( const std::vector<int>& r )
+bz_APIIntList& bz_APIIntList::operator = ( const std::vector<int>& r )
 {
 	data->list = r;
 	return *this;
 }
 
-unsigned int bzAPIIntList::size ( void )
+unsigned int bz_APIIntList::size ( void )
 {
 	return data->list.size();
 }
 
-void bzAPIIntList::clear ( void )
+void bz_APIIntList::clear ( void )
 {
 	data->list.clear();
 }
 
-BZF_API bzAPIIntList* bz_newIntList ( void )
+BZF_API bz_APIIntList* bz_newIntList ( void )
 {
-	return new bzAPIIntList;
+	return new bz_APIIntList;
 }
 
-BZF_API void bz_deleteIntList( bzAPIIntList * l )
+BZF_API void bz_deleteIntList( bz_APIIntList * l )
 {
 	delete(l);
 }
 
-//******************************bzAPIFloatList********************************************
-class bzAPIFloatList::dataBlob
+//******************************bz_APIFloatList********************************************
+class bz_APIFloatList::dataBlob
 {
 public:
 	std::vector<float>	list;
 };
 
-bzAPIFloatList::bzAPIFloatList()
+bz_APIFloatList::bz_APIFloatList()
 {
 	data = new dataBlob;
 }
 
-bzAPIFloatList::bzAPIFloatList(const bzAPIFloatList	&r)
+bz_APIFloatList::bz_APIFloatList(const bz_APIFloatList	&r)
 {
 	data = new dataBlob;
 	data->list = r.data->list;
 }
 
-bzAPIFloatList::bzAPIFloatList(const std::vector<float>	&r)
+bz_APIFloatList::bz_APIFloatList(const std::vector<float>	&r)
 {
 	data = new dataBlob;
 	data->list = r;
 }
 
-bzAPIFloatList::~bzAPIFloatList()
+bz_APIFloatList::~bz_APIFloatList()
 {
 	delete(data);
 }
 
-void bzAPIFloatList::push_back ( float value )
+void bz_APIFloatList::push_back ( float value )
 {
 	data->list.push_back(value);
 }
 
-float bzAPIFloatList::get ( unsigned int i )
+float bz_APIFloatList::get ( unsigned int i )
 {
 	if (i >= data->list.size())
 		return 0;
@@ -388,140 +389,140 @@ float bzAPIFloatList::get ( unsigned int i )
 	return data->list[i];
 }
 
-const float& bzAPIFloatList::operator[] (unsigned int i) const
+const float& bz_APIFloatList::operator[] (unsigned int i) const
 {
 	return data->list[i];
 }
 
-bzAPIFloatList& bzAPIFloatList::operator = ( const bzAPIFloatList& r )
+bz_APIFloatList& bz_APIFloatList::operator = ( const bz_APIFloatList& r )
 {
 	data->list = r.data->list;
 	return *this;
 }
 
-bzAPIFloatList& bzAPIFloatList::operator = ( const std::vector<float>& r )
+bz_APIFloatList& bz_APIFloatList::operator = ( const std::vector<float>& r )
 {
 	data->list = r;
 	return *this;
 }
 
-unsigned int bzAPIFloatList::size ( void )
+unsigned int bz_APIFloatList::size ( void )
 {
 	return data->list.size();
 }
 
-void bzAPIFloatList::clear ( void )
+void bz_APIFloatList::clear ( void )
 {
 	data->list.clear();
 }
 
-BZF_API bzAPIFloatList* bz_newFloatList ( void )
+BZF_API bz_APIFloatList* bz_newFloatList ( void )
 {
-	return new bzAPIFloatList;
+	return new bz_APIFloatList;
 }
 
-BZF_API void bz_deleteFloatList( bzAPIFloatList * l )
-{
-	if (l)
-		delete(l);
-}
-
-BZF_API bzAPIStringList* bz_newStringList ( void )
-{
-	return new bzAPIStringList;
-}
-
-BZF_API void bz_deleteStringList( bzAPIStringList * l )
+BZF_API void bz_deleteFloatList( bz_APIFloatList * l )
 {
 	if (l)
 		delete(l);
 }
 
-//******************************bzApiStringList********************************************
-class bzAPIStringList::dataBlob
+BZF_API bz_APIStringList* bz_newStringList ( void )
+{
+	return new bz_APIStringList;
+}
+
+BZF_API void bz_deleteStringList( bz_APIStringList * l )
+{
+	if (l)
+		delete(l);
+}
+
+//******************************bz_APIStringList********************************************
+class bz_APIStringList::dataBlob
 {
 public:
-	std::vector<bzApiString> list;
+	std::vector<bz_ApiString> list;
 };
 
 
-bzAPIStringList::bzAPIStringList()
+bz_APIStringList::bz_APIStringList()
 {
 	data = new dataBlob;
 }
 
-bzAPIStringList::bzAPIStringList(const bzAPIStringList	&r)
+bz_APIStringList::bz_APIStringList(const bz_APIStringList	&r)
 {
 	data = new dataBlob;
 	data->list = r.data->list;
 }
 
-bzAPIStringList::bzAPIStringList(const std::vector<std::string>	&r)
+bz_APIStringList::bz_APIStringList(const std::vector<std::string>	&r)
 {
 	data = new dataBlob;
 
 	for ( unsigned int i = 0; i < r.size(); i++)
 	{
 		std::string d = r[i];
-		data->list.push_back(bzApiString(d));
+		data->list.push_back(bz_ApiString(d));
 	}
 }
 
-bzAPIStringList::~bzAPIStringList()
+bz_APIStringList::~bz_APIStringList()
 {
 	delete(data);
 }
 
-void bzAPIStringList::push_back ( const bzApiString &value )
+void bz_APIStringList::push_back ( const bz_ApiString &value )
 {
 	data->list.push_back(value);
 }
 
-void bzAPIStringList::push_back ( const std::string &value )
+void bz_APIStringList::push_back ( const std::string &value )
 {
-	data->list.push_back(bzApiString(value));
+	data->list.push_back(bz_ApiString(value));
 }
 
-bzApiString bzAPIStringList::get ( unsigned int i )
+bz_ApiString bz_APIStringList::get ( unsigned int i )
 {
 	if (i >= data->list.size())
-		return bzApiString("");
+		return bz_ApiString("");
 
 	return data->list[i];
 }
 
-const bzApiString& bzAPIStringList::operator[] (unsigned int i) const
+const bz_ApiString& bz_APIStringList::operator[] (unsigned int i) const
 {
 	return data->list[i];
 }
 
-bzAPIStringList& bzAPIStringList::operator = ( const bzAPIStringList& r )
+bz_APIStringList& bz_APIStringList::operator = ( const bz_APIStringList& r )
 {
 	data->list = r.data->list;
 	return *this;
 }
 
-bzAPIStringList& bzAPIStringList::operator = ( const std::vector<std::string>& r )
+bz_APIStringList& bz_APIStringList::operator = ( const std::vector<std::string>& r )
 {
 	data->list.clear();
 
 	for ( unsigned int i = 0; i < r.size(); i++)
-		data->list.push_back(bzApiString(r[i]));
+		data->list.push_back(bz_ApiString(r[i]));
 
 	return *this;
 }
 
-unsigned int bzAPIStringList::size ( void )
+unsigned int bz_APIStringList::size ( void )
 {
 	return data->list.size();
 }
 
-void bzAPIStringList::clear ( void )
+void bz_APIStringList::clear ( void )
 {
 	data->list.clear();
 }
 
-void bzAPIStringList::tokenize ( const char* in, const char* delims, int maxTokens, bool useQuotes)
+void bz_APIStringList::tokenize ( const char* in, const char* delims, int maxTokens, bool useQuotes)
 {
 	clear();
 	if (!in || !delims)
@@ -530,61 +531,61 @@ void bzAPIStringList::tokenize ( const char* in, const char* delims, int maxToke
 	std::vector<std::string> list = TextUtils::tokenize(std::string(in),std::string(delims),maxTokens,useQuotes);
 
 	for ( unsigned int i = 0; i < list.size(); i++)
-		data->list.push_back(bzApiString(list[i]));
+		data->list.push_back(bz_ApiString(list[i]));
 }
 
 
 //******************************bzApiTextreList********************************************
 
-class bzAPITextureList::dataBlob
+class bz_APITextureList::dataBlob
 {
 public:
 	std::vector<bz_MaterialTexture> list;
 };
 
-bzAPITextureList::bzAPITextureList()
+bz_APITextureList::bz_APITextureList()
 {
 	data = new dataBlob;
 }
 
-bzAPITextureList::bzAPITextureList(const bzAPITextureList	&r)
+bz_APITextureList::bz_APITextureList(const bz_APITextureList	&r)
 {
 	data = new dataBlob;
 	data->list = r.data->list;
 }
 
-bzAPITextureList::~bzAPITextureList()
+bz_APITextureList::~bz_APITextureList()
 {
 	delete(data);
 }
 
-void bzAPITextureList::push_back ( bz_MaterialTexture &value )
+void bz_APITextureList::push_back ( bz_MaterialTexture &value )
 {
 	data->list.push_back(value);
 }
 
-bz_MaterialTexture bzAPITextureList::get ( unsigned int i )
+bz_MaterialTexture bz_APITextureList::get ( unsigned int i )
 {
 	return data->list[i];
 }
 
-const bz_MaterialTexture& bzAPITextureList::operator[] (unsigned int i) const
+const bz_MaterialTexture& bz_APITextureList::operator[] (unsigned int i) const
 {
 	return data->list[i];
 }
 
-bzAPITextureList& bzAPITextureList::operator = ( const bzAPITextureList& r )
+bz_APITextureList& bz_APITextureList::operator = ( const bz_APITextureList& r )
 {
 	data->list = r.data->list;
 	return *this;
 }
 
-unsigned int bzAPITextureList::size ( void )
+unsigned int bz_APITextureList::size ( void )
 {
 	return data->list.size();
 }
 
-void bzAPITextureList::clear ( void )
+void bz_APITextureList::clear ( void )
 {
 	data->list.clear();
 }
@@ -727,7 +728,7 @@ BZF_API bool bz_revokePerm ( int playerID, const char* perm  )
 	return true;
 }
 
-BZF_API bool bz_getPlayerIndexList ( bzAPIIntList *playerList )
+BZF_API bool bz_getPlayerIndexList ( bz_APIIntList *playerList )
 {
 	playerList->clear();
 
@@ -834,9 +835,9 @@ BZF_API bool bz_resetPlayerScore(int playerId)
 	return true;
 }
 
-BZF_API bzAPIStringList* bz_getGroupList ( void )
+BZF_API bz_APIStringList* bz_getGroupList ( void )
 {
-	bzAPIStringList *groupList = new bzAPIStringList;
+	bz_APIStringList *groupList = new bz_APIStringList;
 
 	PlayerAccessMap::iterator itr = groupAccess.begin();
 	while (itr != groupAccess.end()) {
@@ -846,9 +847,9 @@ BZF_API bzAPIStringList* bz_getGroupList ( void )
 	return groupList;
 }
 
-BZF_API bzAPIStringList* bz_getGroupPerms ( const char* group )
+BZF_API bz_APIStringList* bz_getGroupPerms ( const char* group )
 {
-	bzAPIStringList *permList = new bzAPIStringList;
+	bz_APIStringList *permList = new bz_APIStringList;
 
 	std::string groupName = group;
 	groupName = TextUtils::toupper(groupName);
@@ -959,7 +960,6 @@ BZF_API bool bz_sendTextMessagef (int from, int to, const char* fmt, ...)
   return bz_sendTextMessage (from, to, buffer);
 }
 
-
 BZF_API bool bz_sentFetchResMessage ( int playerID,  const char* URL )
 {
 	if (playerID == BZ_SERVER || !URL)
@@ -1044,12 +1044,12 @@ BZF_API double bz_getBZDBDouble ( const char* variable )
 	return BZDB.eval(std::string(variable));
 }
 
-BZF_API bzApiString bz_getBZDBString( const char* variable )
+BZF_API bz_ApiString bz_getBZDBString( const char* variable )
 {
 	if (!variable)
-		return bzApiString("");
+		return bz_ApiString("");
 
-	return bzApiString(BZDB.get(std::string(variable)));
+	return bz_ApiString(BZDB.get(std::string(variable)));
 }
 
 BZF_API bool bz_getBZDBBool( const char* variable )
@@ -1173,11 +1173,11 @@ BZF_API bool bz_setBZDBInt( const char* variable, int val, int perms, bool persi
 
 void bzdbIterator (const std::string& name, void* userData)
 {
-	bzAPIStringList	* varList = static_cast<bzAPIStringList*>(userData);
+	bz_APIStringList	* varList = static_cast<bz_APIStringList*>(userData);
 	varList->push_back(name);
 }
 
-BZF_API int bz_getBZDBVarList( bzAPIStringList	*varList )
+BZF_API int bz_getBZDBVarList( bz_APIStringList	*varList )
 {
 	if (!varList)
 		return -1;
@@ -1248,6 +1248,83 @@ BZF_API bool bz_IPBanUser ( int playerIndex, const char* ip, int time, const cha
 		return false;
 
 	return true;
+}
+
+BZF_API bz_APIStringList* bz_getReports( void )
+{
+	bz_APIStringList	*list = new bz_APIStringList;
+
+	// Are we reporting to a file?
+	if (clOptions->reportFile.size() == 0)
+		return list;
+
+	std::ifstream ifs(clOptions->reportFile.c_str(), std::ios::in);
+	if (ifs.fail()) 
+		return list;
+
+	std::string line;
+
+	while (std::getline(ifs, line)) 
+		list->push_back(line);
+
+	return list;
+}
+
+BZF_API int bz_getLagWarn( void )
+{
+	return (int)(clOptions->lagwarnthresh * 1000 + 0.5);
+}
+
+BZF_API bool bz_setLagWarn( int lagwarn )
+{
+	clOptions->lagwarnthresh = (float) (lagwarn / 1000.0);
+	LagInfo::setThreshold(clOptions->lagwarnthresh,(float)clOptions->maxlagwarn);
+	return true;
+}
+
+BZF_API bool bz_pollVeto( void )
+{
+	/* make sure that there is a poll arbiter */
+	if (BZDB.isEmpty(std::string("poll")))
+		return false;
+
+	// only need to do this once
+	void *ptr = BZDB.getPointer(std::string("poll"));
+
+	VotingArbiter *arbiter = (VotingArbiter *)ptr;
+
+	/* make sure there is an unexpired poll */
+	if ((arbiter != NULL) && !arbiter->knowsPoll())
+		return false;
+
+	/* poof */
+	arbiter->forgetPoll();
+
+	return true;
+}
+
+BZF_API bz_APIStringList* bz_getHelpTopics( void )
+{
+	bz_APIStringList	*list = new bz_APIStringList;
+
+	const std::vector<std::string> &r = clOptions->textChunker.getChunkNames();
+	for (unsigned int i = 0; i < r.size(); i++)
+		list->push_back(r[i]);
+	return list;
+}
+
+BZF_API bz_APIStringList* bz_getHelpTopic(const char* name)
+{
+	bz_APIStringList	*list = new bz_APIStringList;
+
+	std::string topicName;
+	if (name)
+		topicName = name;
+
+	const std::vector<std::string> *r = clOptions->textChunker.getTextChunk(topicName);
+	for (unsigned int i = 0; i < r->size(); i++)
+		list->push_back((*r)[i]);
+	return list;
 }
 
 BZF_API bool bz_registerCustomSlashCommand ( const char* command, bz_CustomSlashCommandHandler *handler )
@@ -1413,7 +1490,7 @@ BZF_API bool bz_addWorldWaterLevel( float level, bz_MaterialInfo *material )
 	return true;
 }
 
-BZF_API bool bz_addWorldWeapon( const char* _flagType, float *pos, float rot, float tilt, float initDelay, bzAPIFloatList &delays )
+BZF_API bool bz_addWorldWeapon( const char* _flagType, float *pos, float rot, float tilt, float initDelay, bz_APIFloatList &delays )
 {
 	if (!world || world->isFinisihed() || !_flagType )
 		return false;
@@ -1466,20 +1543,20 @@ BZF_API bool bz_getPublic( void )
 	return clOptions->publicizeServer;
 }
 
-BZF_API bzApiString bz_getPublicAddr( void )
+BZF_API bz_ApiString bz_getPublicAddr( void )
 {
 	if (!clOptions->publicizeServer)
-		return bzApiString("");
+		return bz_ApiString("");
 
-	return bzApiString(clOptions->publicizedAddress);
+	return bz_ApiString(clOptions->publicizedAddress);
 }
 
-BZF_API bzApiString bz_getPublicDescription( void )
+BZF_API bz_ApiString bz_getPublicDescription( void )
 {
 	if (!clOptions->publicizeServer)
-		return bzApiString("");
+		return bz_ApiString("");
 
-	return bzApiString(clOptions->publicizedTitle);
+	return bz_ApiString(clOptions->publicizedTitle);
 }
 
 BZF_API bool bz_sendPlayCustomLocalSound ( int playerID, const char* soundName )
@@ -1856,10 +1933,10 @@ BZF_API bool bz_setclipFieldInt( const char *_name, int data )
 	return existed;
 }
 
-BZF_API bzApiString bz_filterPath ( const char* path )
+BZF_API bz_ApiString bz_filterPath ( const char* path )
 {
 	if (path)
-		return bzApiString("");
+		return bz_ApiString("");
 
 	char *temp;
 	temp = (char*)malloc(strlen(path)+1);
@@ -1877,7 +1954,7 @@ BZF_API bzApiString bz_filterPath ( const char* path )
 
 		buf++;
 	}
-	bzApiString ret(temp);
+	bz_ApiString ret(temp);
 	free(temp);
 	return ret;
 }

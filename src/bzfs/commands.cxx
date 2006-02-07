@@ -3244,9 +3244,9 @@ void parseServerCommand(const char *message, int t)
     tmCustomSlashCommandMap::iterator itr =
       customCommands.find(TextUtils::tolower(params[0]));
 
-    bzApiString	command = params[0];
-    bzApiString APIMessage;
-	bzAPIStringList	APIParams;
+    bz_ApiString	command = params[0];
+    bz_ApiString APIMessage;
+	bz_APIStringList	APIParams;
 
     for (unsigned int i = 1; i < params.size(); i++)
       APIParams.push_back(params[i]);
