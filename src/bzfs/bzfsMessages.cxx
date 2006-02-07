@@ -458,7 +458,7 @@ void PackVars::sendPackVars(const std::string &key)
 	buf = nboPackString(buf, value.c_str(), value.length());
 	len += pairLen;
 	count++;
-};
+}
 
 //utils
 bool isUDPAtackMessage ( uint16_t &code )
