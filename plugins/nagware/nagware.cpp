@@ -62,7 +62,7 @@ class Nagware : public bz_EventHandler, public bz_CustomSlashCommandHandler
 {
   public:
     virtual void process ( bz_EventData *eventData );
-    virtual bool handle ( int playerID, bzApiString, bzApiString, bzAPIStringList*);
+    virtual bool handle ( int playerID, bz_ApiString, bz_ApiString, bz_APIStringList*);
 
   protected:
 
@@ -328,7 +328,7 @@ void Nagware::process ( bz_EventData *eventData )
 }
 
 // handle /nag command
-bool Nagware::handle ( int playerID, bzApiString cmd, bzApiString, bzAPIStringList* cmdParams )
+bool Nagware::handle ( int playerID, bz_ApiString cmd, bz_ApiString, bz_APIStringList* cmdParams )
 {
   char subCmd[6];
   if (strcasecmp (cmd.c_str(), "nag"))   // is it for me ?
@@ -404,7 +404,7 @@ BZF_PLUGIN_CALL int bz_Load (const char* cmdLine)
     return -1;
 
   // get current list of player indices ...
-  bzAPIIntList *playerList = bz_newIntList();
+  bz_APIIntList *playerList = bz_newIntList();
   bz_getPlayerIndexList (playerList);
   for (unsigned int i = 0; i < playerList->size(); i++){
     if ((playerRecord = bz_getPlayerByIndex (playerList->get(i))) != NULL){

@@ -54,7 +54,7 @@ void RogueGenoHandler::process ( bz_EventData *eventData )
 	break;
 
       // if the tank killed was a rogue, kill all rogues.
-      bzAPIIntList	*playerList = bz_newIntList();
+      bz_APIIntList	*playerList = bz_newIntList();
 
       bz_getPlayerIndexList(playerList);
 

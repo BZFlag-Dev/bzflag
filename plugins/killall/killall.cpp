@@ -9,7 +9,7 @@ BZ_GET_PLUGIN_VERSION
 class KillAll : public bz_CustomSlashCommandHandler
 {
 public:
-  virtual bool handle ( int playerID, bzApiString /*command*/, bzApiString /*message*/, bzAPIStringList* /*params*/ )
+  virtual bool handle ( int playerID, bz_ApiString /*command*/, bz_ApiString /*message*/, bz_APIStringList* /*params*/ )
   {
     bz_BasePlayerRecord *player = bz_getPlayerByIndex(playerID);
     if (!player)
@@ -27,7 +27,7 @@ public:
 
     bz_sendTextMessage(BZ_SERVER,BZ_ALLUSERS,msg.c_str());
 
-    bzAPIIntList *playerList = bz_newIntList();
+    bz_APIIntList *playerList = bz_newIntList();
 
     bz_getPlayerIndexList ( playerList );
 

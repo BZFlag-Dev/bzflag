@@ -28,7 +28,7 @@ public:
   virtual void process( bz_EventData *eventData );
 private:
   void displayPlayerPrivs( int playerID );
-  void displayCallsign( bzApiString callsign );
+  void displayCallsign( bz_ApiString callsign );
   void displayCallsign( int playerID );
   void displayTeam( bz_eTeamType team );
 };
@@ -174,7 +174,7 @@ void logDetail::displayPlayerPrivs( int playerID )
   }
 }
 
-void logDetail::displayCallsign( bzApiString callsign )
+void logDetail::displayCallsign( bz_ApiString callsign )
 {
   cout << strlen( callsign.c_str() ) << ":";
   cout << callsign.c_str();
