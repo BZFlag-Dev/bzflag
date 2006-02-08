@@ -33,6 +33,8 @@ need or use SSL. The SSL versions of libCurl have aditional
 library dependencys that need to be meet.
 Add the include directory and the lib as per the SDL instructions.
 
+If you wish to build bzAdmin you may also want to get PDCurses ( use google ).
+
 Then each time you want to build an installer
 
   * open win32\bzflag.dsw
@@ -42,3 +44,12 @@ Then each time you want to build an installer
 The installer is the bzflag executable in the dist folder.
 
 The instructions for building with Dev-C++ are enclosed in README.DEVC++
+
+If you are using Visual C++ 2005 EXPRESS edition, you will need to install
+a number of extra things before you can build. BZFlag will not build with 
+VC express editions "out of the box"
+
+You will need the windows platform SDK ( instructions http://msdn.microsoft.com/vstudio/express/visualc/usingpsdk/default.aspx )
+You will need the windows direct X SDK ( instructions at http://msdn.microsoft.com/directx/sdk/readmepage/default.aspx )
+You will need to also install libCURL and curses ( see above ).
+Use the VC8 proejcts in the windows diretory.
