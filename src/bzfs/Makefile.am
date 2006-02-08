@@ -25,6 +25,8 @@ bzfs_SOURCES = \
 	bzfsClientMessages.cxx \
 	bzfsMessages.h \
 	bzfsMessages.cxx \
+	bzfsPlayerStateVerify.h \
+	bzfsPlayerStateVerify.cxx \
 	BZWError.cxx \
 	BZWError.h \
 	BZWReader.cxx \

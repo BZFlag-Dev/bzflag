@@ -2418,6 +2418,16 @@
 				RelativePath="..\..\src\bzfs\bzfsMessages.h">
 			</File>
 		</Filter>
+		<Filter
+			Name="StateVerification"
+			Filter="">
+			<File
+				RelativePath="..\..\src\bzfs\bzfsPlayerStateVerify.cxx">
+			</File>
+			<File
+				RelativePath="..\..\src\bzfs\bzfsPlayerStateVerify.h">
+			</File>
+		</Filter>
 	</Files>
 	<Globals>
 	</Globals>
