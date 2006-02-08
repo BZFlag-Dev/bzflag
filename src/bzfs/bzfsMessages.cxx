@@ -379,6 +379,69 @@ void sendWorldChunk(NetHandler *handler, uint32_t ptr)
 	directMessage(handler, MsgGetWorld, (char*)buf - (char*)bufStart, bufStart);
 }
 
+void sendTextMessage ( int destPlayer, int sourcePlayer, const char* text, int len, bool broadcast, bool recordOnly)
+{
+	GameKeeper::Player *destPlayerData = GameKeeper::Player::getPlayerByIndex(destPlayer);
+	GameKeeper::Player *sourcePlayerData = GameKeeper::Player::getPlayerByIndex(sourcePlayer);
+
+	if (!destPlayerData && (!broadcast && !recordOnly) )
+		return;
+
+	if (destPlayerData->playerHandler && !recordOnly)
+	{
+		char *temp =(char*) malloc(len+1);
+		strncpy(temp,text,(size_t)len);
+		temp[len] = 0;
+		destPlayerData->playerHandler->textMessage ( destPlayer, sourcePlayer, temp );
+	}
+	
+	if (recordOnly || !destPlayerData->playerHandler || broadcast)
+	{
+		void *buf, *bufStart = getDirectMessageBuffer();
+		buf = nboPackUByte(bufStart, sourcePlayer);
+		buf = nboPackUByte(buf, destPlayer);
+		buf = nboPackString(buf, text, len);
+
+		((char*)bufStart)[MessageLen - 1] = '\0'; // always terminate
+
+		if(!broadcast)
+			directMessage(destPlayer, MsgMessage, len+2, bufStart);
+		else if (!recordOnly)
+		{
+			broadcastMessage(MsgMessage,len+2,bufStart);
+
+			// now do everyone who isn't a net player
+			for (int i = 0; i < curMaxPlayers; i++)
+			{
+				GameKeeper::Player* otherData = GameKeeper::Player::getPlayerByIndex(i);
+				if (otherData || otherData->playerHandler)
+					sendTextMessage(i,sourcePlayer,text,len);
+			}
+		}
+		else
+			Record::addPacket(MsgMessage, len+2, bufStart, HiddenPacket);
+	}
+}
+
+void sendMessageAlive ( int playerID, float pos[3], float rot )
+{
+	GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(playerID);
+
+	void *buf, *bufStart = getDirectMessageBuffer();
+	buf = nboPackUByte(bufStart, playerID);
+	buf = nboPackVector(buf, playerData->lastState.pos);
+	buf = nboPackFloat(buf, playerData->lastState.azimuth);
+	broadcastMessage(MsgAlive, (char*)buf - (char*)bufStart, bufStart);
+
+	// now do everyone who dosn't have network
+	for (int i = 0; i < curMaxPlayers; i++)
+	{
+		GameKeeper::Player* otherData = GameKeeper::Player::getPlayerByIndex(i);
+		if (otherData && otherData->playerHandler)
+			otherData->playerHandler->playerSpawned(playerID,pos,rot);
+	}
+}
+
 //messages sent TO the server
 void getGeneralMessageInfo ( void **buffer, uint16_t &code, uint16_t &len )
 {
@@ -458,6 +521,25 @@ void PackVars::sendPackVars(const std::string &key)
 	buf = nboPackString(buf, value.c_str(), value.length());
 	len += pairLen;
 	count++;
+}
+
+// net utils
+void broadcastMessage(uint16_t code, int len, const void *msg, bool alsoTty)
+{
+	void *bufStart = (char *)msg - 2*sizeof(uint16_t);
+	void *buf = nboPackUShort(bufStart, uint16_t(len));
+	nboPackUShort(buf, code);
+
+	// send message to everyone
+	int mask = NetHandler::clientBZFlag;
+	if (alsoTty)
+		mask |= NetHandler::clientBZAdmin;
+	pwriteBroadcast(bufStart, len + 4, mask);
+
+	// record the packet
+	if (Record::enabled()) {
+		Record::addPacket(code, len, msg);
+	}
 }
 
 //utils

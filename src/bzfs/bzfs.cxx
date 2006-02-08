@@ -142,7 +142,7 @@ WorldEventManager	worldEventManager;
 // FIXME: should be static, but needed by RecordReplay
 uint8_t rabbitIndex = NoPlayer;
 
-static RejoinList rejoinList;
+RejoinList rejoinList;
 
 static TimeKeeper lastWorldParmChange;
 bool       worldWasSentToAPlayer   = false;
@@ -187,7 +187,7 @@ static int pwrite(NetHandler *handler, const void *b, int l)
   return result;
 }
 
-static void pwriteBroadcast(const void *b, int l, int mask)
+void pwriteBroadcast(const void *b, int l, int mask)
 {
   int result;
   std::list<NetHandler*>::const_iterator it;
@@ -239,39 +239,20 @@ void directMessage(int playerIndex, uint16_t code, int len, const void *msg)
   directMessage(playerData->netHandler, code, len, msg);
 }
 
-
-void broadcastMessage(uint16_t code, int len, const void *msg, bool alsoTty)
-{
-  void *bufStart = (char *)msg - 2*sizeof(uint16_t);
-  void *buf = nboPackUShort(bufStart, uint16_t(len));
-  nboPackUShort(buf, code);
-
-  // send message to everyone
-  int mask = NetHandler::clientBZFlag;
-  if (alsoTty)
-    mask |= NetHandler::clientBZAdmin;
-  pwriteBroadcast(bufStart, len + 4, mask);
-
-  // record the packet
-  if (Record::enabled()) {
-    Record::addPacket(code, len, msg);
-  }
-}
-
 // relay message only for human. Bots will get message locally.
 static void relayMessage(uint16_t code, int len, const void *msg)
 {
-  void *bufStart = (char *)msg - 2*sizeof(uint16_t);
-  void *buf = nboPackUShort(bufStart, uint16_t(len));
-  nboPackUShort(buf, code);
+	void *bufStart = (char *)msg - 2*sizeof(uint16_t);
+	void *buf = nboPackUShort(bufStart, uint16_t(len));
+	nboPackUShort(buf, code);
 
-  // send message to human kind
-  pwriteBroadcast(bufStart, len + 4, NetHandler::clientBZFlag);
+	// send message to human kind
+	pwriteBroadcast(bufStart, len + 4, NetHandler::clientBZFlag);
 
-  // record the packet
-  if (Record::enabled()) {
-    Record::addPacket(code, len, msg);
-  }
+	// record the packet
+	if (Record::enabled()) {
+		Record::addPacket(code, len, msg);
+	}
 }
 
 
@@ -1121,46 +1102,42 @@ void sendMessage(int playerIndex, PlayerId dstPlayer, const char *message)
   if (message[0] == '/' && message[1] == '/')
     msg = &message[1];
 
-  if (msglen > MessageLen) {
-    DEBUG1("WARNING: Network message being sent is too long! "
-	   "(message is %d, cutoff at %d)\n", msglen, MessageLen);
+  if (msglen > MessageLen)
+  {
+    DEBUG1("WARNING: Network message being sent is too long! " "(message is %d, cutoff at %d)\n", msglen, MessageLen);
     msglen = MessageLen;
   }
 
-  void *buf, *bufStart = getDirectMessageBuffer();
-  buf = nboPackUByte(bufStart, playerIndex);
-  buf = nboPackUByte(buf, dstPlayer);
-  buf = nboPackString(buf, msg, msglen);
-
-  ((char*)bufStart)[MessageLen - 1] = '\0'; // always terminate
-
-  int len = 2 + msglen;
   bool broadcast = false;
 
-  if (dstPlayer <= LastRealPlayer) {
-    GameKeeper::Player *playerData
-      = GameKeeper::Player::getPlayerByIndex(dstPlayer);
-    if (playerData && !playerData->player.isBot()) {
-      directMessage(dstPlayer, MsgMessage, len, bufStart);
+  if (dstPlayer <= LastRealPlayer)
+  {
+    GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(dstPlayer);
+    if (playerData && !playerData->player.isBot())
+	{
+	  sendTextMessage(dstPlayer,playerIndex,msg,msglen);
       if (playerIndex <= LastRealPlayer && dstPlayer != playerIndex)
-	directMessage(playerIndex, MsgMessage, len, bufStart);
+		sendTextMessage(playerIndex,playerIndex,msg,msglen);
     }
   }
-  // FIXME this teamcolor <-> player id conversion is in several files now
-  else if (dstPlayer >= 244 && dstPlayer <= 250) {
+  else if (dstPlayer >= 244 && dstPlayer <= 250)  // FIXME this teamcolor <-> player id conversion is in several files now
+  {
     TeamColor _team = TeamColor(250 - dstPlayer);
     // send message to all team members only
     GameKeeper::Player *playerData;
     for (int i = 0; i < curMaxPlayers; i++)
-      if ((playerData = GameKeeper::Player::getPlayerByIndex(i))
-	  && playerData->player.isPlaying()
-	  && playerData->player.isTeam(_team))
-	directMessage(i, MsgMessage, len, bufStart);
-  } else if (dstPlayer == AdminPlayers){
+	{
+      if ((playerData = GameKeeper::Player::getPlayerByIndex(i)) && playerData->player.isPlaying() && playerData->player.isTeam(_team))
+		  sendTextMessage(i,playerIndex,msg,msglen);
+	}
+  }
+  else if (dstPlayer == AdminPlayers)
+  {
     // admin messages
 
     // Notify any plugins
-    if (playerIndex == ServerPlayer) {
+    if (playerIndex == ServerPlayer)
+	{
       bz_ServerMsgEventData_V1 serverMsgData;
       serverMsgData.to = BZ_NULLUSER;
       serverMsgData.team = eAdministrators;
@@ -1169,16 +1146,17 @@ void sendMessage(int playerIndex, PlayerId dstPlayer, const char *message)
       worldEventManager.callEvents(bz_eServerMsgEvent, &serverMsgData);
     }
 
-    std::vector<int> admins
-      = GameKeeper::Player::allowed(PlayerAccessInfo::adminMessageReceive);
+    std::vector<int> admins  = GameKeeper::Player::allowed(PlayerAccessInfo::adminMessageReceive);
     for (unsigned int i = 0; i < admins.size(); ++i)
-      directMessage(admins[i], MsgMessage, len, bufStart);
-
-  } else {
+		sendTextMessage(admins[i],playerIndex,msg,msglen);
+  }
+  else 
+  {
     // message to all players
 
     // Notify any plugins
-    if (playerIndex == ServerPlayer) {
+    if (playerIndex == ServerPlayer) 
+	{
       bz_ServerMsgEventData_V1 serverMsgData;
       serverMsgData.to = BZ_ALLUSERS;
       serverMsgData.message = message;
@@ -1186,12 +1164,13 @@ void sendMessage(int playerIndex, PlayerId dstPlayer, const char *message)
       worldEventManager.callEvents(bz_eServerMsgEvent, &serverMsgData);
     }
 
-    broadcastMessage(MsgMessage, len, bufStart);
+	sendTextMessage(-1,playerIndex,msg,msglen,true);
     broadcast = true;
   }
 
-  if (Record::enabled() && !broadcast) { // don't record twice
-    Record::addPacket(MsgMessage, len, bufStart, HiddenPacket);
+  if (Record::enabled() && !broadcast)// don't record twice
+  { 
+	  sendTextMessage(-1,playerIndex,msg,msglen,false,true);
   }
 }
 
@@ -1413,7 +1392,6 @@ static std::string evaluateString(const std::string &raw)
 
 static bool spawnSoon = false;
 
-static void playerAlive(int playerIndex);
 
 bool validPlayerCallsign ( int playerIndex )
 {
@@ -2231,10 +2209,9 @@ static void sendQueryPlayers(NetHandler *handler)
   }
 }
 
-static void playerAlive(int playerIndex)
+void playerAlive(int playerIndex)
 {
-  GameKeeper::Player *playerData
-    = GameKeeper::Player::getPlayerByIndex(playerIndex);
+  GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(playerIndex);
   if (!playerData)
     return;
 
@@ -2307,12 +2284,7 @@ static void playerAlive(int playerIndex)
   // update last position immediately
   playerData->setPlayerState(spawnData.pos, spawnData.rot);
 
-  // send MsgAlive
-  void *buf, *bufStart = getDirectMessageBuffer();
-  buf = nboPackUByte(bufStart, playerIndex);
-  buf = nboPackVector(buf, playerData->lastState.pos);
-  buf = nboPackFloat(buf, playerData->lastState.azimuth);
-  broadcastMessage(MsgAlive, (char*)buf - (char*)bufStart, bufStart);
+  sendMessageAlive(playerIndex,playerData->lastState.pos,playerData->lastState.azimuth);
 
   // call any events for a playerspawn
   bz_PlayerSpawnEventData_V1	spawnEvent;
@@ -3129,7 +3101,7 @@ static void handleCommand(const void *rawbuf, bool udp, NetHandler *handler)
 
   switch (code) {
     case MsgEnter:     // player joining
-		dontWait = handleClientEnter(&buf,playerData);
+		handleClientEnter(&buf,playerData);
 		break;
   
     case MsgExit:    // player closing connection
@@ -3177,27 +3149,9 @@ static void handleCommand(const void *rawbuf, bool udp, NetHandler *handler)
       break;
 
     // player is coming alive
-    case MsgAlive: {
-      // player is on the waiting list
-      float waitTime = rejoinList.waitTime(playerID);
-      if (waitTime > 0.0f) {
-	snprintf (buffer, MessageLen, "You are unable to begin playing for %.1f seconds.", waitTime);
-	sendMessage(ServerPlayer, playerID, buffer);
-
-	// Make them pay dearly for trying to rejoin quickly
-	playerAlive(playerID);
-	playerKilled(playerID, playerID, 0, -1, Flags::Null, -1);
-
-	break;
-      }
-
-      // player moved before countdown started
-      if (clOptions->timeLimit>0.0f && !countdownActive) {
-	playerData->player.setPlayedEarly();
-      }
-      playerAlive(playerID);
-      break;
-    }
+    case MsgAlive:
+		handleGameJoinRequest(playerData);
+		break;
 
     // player declaring self destroyed
     case MsgKilled: {

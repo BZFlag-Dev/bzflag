@@ -1345,17 +1345,20 @@ public:
 	virtual void playerRemoved ( int playerIndex ){};
 	virtual void playerRejected ( bz_eRejectCodes code, const char* reason ){};
 	virtual void playerAccepted ( void ){};
+	virtual void playerSpawned ( int player, float pos[3], float rot ){};
 
 	virtual void flagUpdate ( int count, bz_FlagUpdateRecord **flagList ){};
 	virtual void playerUpdate ( bz_PlayerUpdateRecord *playerRecord ){};
 	virtual void teamUpdate ( int count, bz_TeamInfoRecord **teamList ){};
 	virtual void handycapUpdate ( int count, bz_HandycapUpdateRecord **handycapList ){};
 	virtual void playeIPUpdate ( int player, const char* ipAddress ){};
+	virtual void textMessage ( int dest, int source, const char* text ){};
 
 	int playerID;
 
 protected:
-	void setEntryData ( const char* callsign, const char* email, const char* token, const char* clientVersion, bz_eTeamType team );
+	void setPlayerData ( const char* callsign, const char* email, const char* token, const char* clientVersion, bz_eTeamType team );
+	void joinGame ( void );
 };
 
 // *** NOTE *** support for server side players in incomplete.

@@ -17,6 +17,7 @@
 #include "bzfsAPI.h"
 
 #include "bzfs.h"
+#include "bzfsMessages.h"
 #include "WorldWeapons.h"
 #include "WorldEventManager.h"
 #include "GameKeeper.h"
@@ -1695,7 +1696,7 @@ bz_eAPIColType bz_cylinderInMapObject ( float pos[3], float height, float radius
 	if(!world)
 		return eNoCol;
 
-	const Obstacle *obs;
+	const Obstacle *obs = NULL;
 	return getAPIMapObject(world->cylinderInBuilding(&obs,pos,radius,height),obs,object);;
 }
 
@@ -1703,7 +1704,7 @@ bz_eAPIColType bz_boxInMapObject ( float pos[3], float size[3], float angle, bz_
 {
 	if(!world)
 		return eNoCol;
-	const Obstacle *obs;
+	const Obstacle *obs = NULL;
 	return getAPIMapObject(world->boxInBuilding(&obs,pos,angle,size[0],size[1],size[2]),obs,object);
 }
 
@@ -2210,7 +2211,7 @@ BZF_API bz_eTeamType bz_checkBaseAtPoint ( float pos[3] )
 }
 
 // server side bot API
-void bz_ServerSidePlayerHandler::setEntryData ( const char* callsign, const char* email, const char* token, const char* clientVersion, bz_eTeamType team )
+void bz_ServerSidePlayerHandler::setPlayerData ( const char* callsign, const char* email, const char* token, const char* clientVersion, bz_eTeamType team )
 {
 	GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerID);
 
@@ -2228,6 +2229,18 @@ void bz_ServerSidePlayerHandler::setEntryData ( const char* callsign, const char
 	char reason[512] = {0};
 	if (!player->player.processEnter(code,reason))
 		playerRejected ( (bz_eRejectCodes)code, reason );
+}
+
+void  bz_ServerSidePlayerHandler::joinGame ( void )
+{
+	GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerID);
+	if (!player)
+		return;
+
+	if (player->player.isAlive() ||player->player.isPlaying())
+		return;
+
+	playerAlive(playerID);
 }
 
 BZF_API int bz_addServerSidePlayer ( bz_ServerSidePlayerHandler *handler )

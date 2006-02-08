@@ -28,6 +28,7 @@
 #include "Address.h"
 #include "StateDatabase.h"
 #include "bzfsAPI.h"
+#include "bzfsMessages.h"
 
 // bzfs specific headers
 #include "bzfs.h"

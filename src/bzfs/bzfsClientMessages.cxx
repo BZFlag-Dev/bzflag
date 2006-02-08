@@ -15,10 +15,10 @@
 #include "BZDBCache.h"
 #include "bzfsMessages.h"
 
-bool handleClientEnter(void **buf, GameKeeper::Player *playerData)
+void handleClientEnter(void **buf, GameKeeper::Player *playerData)
 {
 	if (!playerData)
-		return false;
+		return;
 
 	uint16_t rejectCode;
 	char     rejectMsg[MessageLen];
@@ -26,7 +26,7 @@ bool handleClientEnter(void **buf, GameKeeper::Player *playerData)
 	if (!playerData->player.unpackEnter(*buf, rejectCode, rejectMsg))
 	{
 		rejectPlayer(playerData->getIndex(), rejectCode, rejectMsg);
-		return false;
+		return;
 	}
 
 	playerData->accessInfo.setName(playerData->player.getCallSign());
@@ -45,7 +45,7 @@ bool handleClientEnter(void **buf, GameKeeper::Player *playerData)
 	else if (strlen(playerData->player.getCallSign()))
 		playerData->_LSAState = GameKeeper::Player::required;
 
-	return true;
+	dontWait = true;
 }
 
 void handleClientExit ( GameKeeper::Player *playerData )
@@ -114,6 +114,29 @@ void handleWorldChunk( NetHandler *handler, void *buf )
 
 	sendWorldChunk(handler, ptr);
 }
+
+void handleGameJoinRequest( GameKeeper::Player *playerData )
+{
+	// player is on the waiting list
+	char buffer[MessageLen];
+	float waitTime = rejoinList.waitTime(playerData->getIndex());
+	if (waitTime > 0.0f)
+	{
+		snprintf (buffer, MessageLen, "You are unable to begin playing for %.1f seconds.", waitTime);
+		sendMessage(ServerPlayer, playerData->getIndex(), buffer);
+
+		// Make them pay dearly for trying to rejoin quickly
+		playerAlive(playerData->getIndex());
+		playerKilled(playerData->getIndex(), playerData->getIndex(), 0, -1, Flags::Null, -1);
+		return;
+	}
+
+	// player moved before countdown started
+	if (clOptions->timeLimit>0.0f && !countdownActive)
+		playerData->player.setPlayedEarly();
+	playerAlive(playerData->getIndex());
+}
+
 
 void handlePlayerUpdate ( void **buf, uint16_t &code, GameKeeper::Player *playerData, const void *rawbuf, int len )
 {

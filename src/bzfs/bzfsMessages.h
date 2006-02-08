@@ -28,10 +28,15 @@ void sendHandycapInfoUpdate (int playerID );
 void sendAdminInfoMessage ( int aboutPlayer, int toPlayer, bool record = false );
 void sendWorldChunk(NetHandler *handler, uint32_t ptr);
 void broadcastPlayerStateUpdate ( void );
+void sendTextMessage ( int destPlayer, int sourcePlayer, const char* text, int len, bool broadcast = false, bool recordOnly = false );
+void sendMessageAlive ( int playerID, float pos[3], float rot );
 
 // messages sent to just network users ( like client query )
 int sendPlayerUpdateDirect(NetHandler *handler, GameKeeper::Player *otherData);
 int sendTeamUpdateDirect(NetHandler *handler);
+
+// net message utils
+void  broadcastMessage(uint16_t code, int len, const void *msg, bool alsoTty = true);
 
 // receving network messages
 void getGeneralMessageInfo ( void **buffer, uint16_t &code, uint16_t &len );

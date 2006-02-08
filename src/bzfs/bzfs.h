@@ -43,6 +43,7 @@
 #include "GameKeeper.h"
 #include "FlagInfo.h"
 #include "WorldInfo.h"
+#include "RejoinList.h"
 
 extern void sendMessage(int	 playerIndex,
 			PlayerId    dstPlayer,
@@ -61,8 +62,6 @@ extern void sendPlayerMessage(GameKeeper::Player *playerData,
 			      PlayerId dstPlayer,
 			      const char *message);
 extern char *getDirectMessageBuffer();
-extern void  broadcastMessage(uint16_t code, int len, const void *msg,
-			      bool alsoTty = true);
 extern void  sendTeamUpdate(int teamIndex1 = -1,
 			    int teamIndex2 = -1);
 extern void  sendFlagUpdate(FlagInfo &flag);
@@ -89,6 +88,8 @@ void rejectPlayer(int playerIndex, uint16_t code, const char *reason);
 bool worldStateChanging ( void );
 void searchFlag(GameKeeper::Player &playerData);
 void relayPlayerPacket(int index, uint16_t len, const void *rawbuf, uint16_t code);
+void playerAlive(int playerIndex);
+void pwriteBroadcast(const void *b, int l, int mask);
 
 typedef struct CheatProtectionOptions
 {
@@ -132,6 +133,7 @@ extern float	   pluginWorldHeight;
 extern float	   pluginMaxWait;
 extern bool        isIdentifyFlagIn;
 extern bool        worldWasSentToAPlayer;
+extern RejoinList  rejoinList;
 
 // this should not be hangin out here
 extern bool dontWait;

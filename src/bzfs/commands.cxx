@@ -47,6 +47,7 @@
 #include "VotingArbiter.h"
 #include "global.h"
 #include "version.h"
+#include "bzfsMessages.h"
 
 // local implementation headers
 #include "FlagHistory.h"
