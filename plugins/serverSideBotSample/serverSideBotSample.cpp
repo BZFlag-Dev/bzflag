@@ -89,6 +89,8 @@ void SimpleBotHandler::process ( bz_EventData *eventData )
 	{
 		case bz_ePlayerSpawnEvent:
 			{
+				bz_debugMessage(3,"SimpleBotHandler::process bz_ePlayerSpawnEvent");
+
 				bz_PlayerSpawnEventData_V1	*spawnEvent = (bz_PlayerSpawnEventData_V1*)eventData;
 
 				if (spawnEvent->playerID == playerID)

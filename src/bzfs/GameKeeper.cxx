@@ -117,7 +117,7 @@ void GameKeeper::Player::updateLatency(float &waitTime)
   int p;
 
   for (p = 0; p < PlayerSlot; p++) {
-    if ((playerData = playerList[p]) && !playerData->closed) {
+    if ((playerData = playerList[p]) && !playerData->closed && playerData->netHandler) {
       // get time for next lagping
       playerData->lagInfo.updateLatency(waitTime);
     }
