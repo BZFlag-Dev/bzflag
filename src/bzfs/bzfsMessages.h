@@ -30,6 +30,8 @@ void sendWorldChunk(NetHandler *handler, uint32_t ptr);
 void broadcastPlayerStateUpdate ( void );
 void sendTextMessage ( int destPlayer, int sourcePlayer, const char* text, int len, bool broadcast = false, bool recordOnly = false );
 void sendMessageAlive ( int playerID, float pos[3], float rot );
+bool sendPlayerStateMessage( GameKeeper::Player *playerData, bool shortState);
+
 
 // messages sent to just network users ( like client query )
 int sendPlayerUpdateDirect(NetHandler *handler, GameKeeper::Player *otherData);
@@ -37,6 +39,7 @@ int sendTeamUpdateDirect(NetHandler *handler);
 
 // net message utils
 void  broadcastMessage(uint16_t code, int len, const void *msg, bool alsoTty = true);
+void setGeneralMessageInfo ( void **buffer, uint16_t &code, uint16_t &len );
 
 // receving network messages
 void getGeneralMessageInfo ( void **buffer, uint16_t &code, uint16_t &len );
@@ -64,6 +67,8 @@ private:
 
 // utilitys
 bool isUDPAtackMessage ( uint16_t &code );
+void playerStateToAPIState ( bz_PlayerUpdateState &apiState, PlayerState &playerState );
+void APIStateToplayerState ( PlayerState &playerState, bz_PlayerUpdateState &apiState );
 
 #endif //_BZFS_MESSAGES_H_
 

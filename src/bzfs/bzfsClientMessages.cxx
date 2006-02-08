@@ -138,7 +138,6 @@ void handleGameJoinRequest( GameKeeper::Player *playerData )
 	playerAlive(playerData->getIndex());
 }
 
-
 void handlePlayerUpdate ( void **buf, uint16_t &code, GameKeeper::Player *playerData, const void *rawbuf, int len )
 {
 	if (!playerData)
@@ -150,44 +149,38 @@ void handlePlayerUpdate ( void **buf, uint16_t &code, GameKeeper::Player *player
 	*buf = nboUnpackFloat(*buf, timestamp);
 	*buf = state.unpack(*buf,code);
 
-	// observer updates are not relayed
+	updatePlayerState (playerData,state,timestamp, code == MsgPlayerUpdateSmall);
+}
+
+bool updatePlayerState(GameKeeper::Player *playerData, PlayerState &state, float timeStamp, bool shortState)
+{
+	// observer updates are not relayed, or checked
 	if (playerData->player.isObserver())
 	{
 		// skip all of the checks
-		playerData->setPlayerState(state, timestamp);
-		return;
+		playerData->setPlayerState(state, timeStamp);
+		return true;
 	}
 
 	// silently drop old packet
 	if (state.order <= playerData->lastState.order)
-		return;
+		return true;
 
-	bool stateValid = validatePlayerState(playerData,state);
+	if(!validatePlayerState(playerData,state))
+		return false;
 
-	if(!stateValid)
-		return;
-
-	playerData->setPlayerState(state, timestamp);
+	playerData->setPlayerState(state, timeStamp);
 
 	// Player might already be dead and did not know it yet (e.g. teamkill)
 	// do not propogate
 	if (!playerData->player.isAlive() && (state.status & short(PlayerState::Alive)))
-		return;
-
-	// observer shouldn't send bulk messages anymore, they used to
-	// when it was a server-only hack; but the check does not hurt,
-	// either
-	if (playerData->player.isObserver())
-		return;
+		return true;
 
 	searchFlag(*playerData);
 
-	//TODO for server bot, send the update to the handler, since this will skip users
-	relayPlayerPacket(playerData->getIndex(), len, rawbuf, code);
-		return;
+	sendPlayerStateMessage(playerData,shortState);
+	return true;
 }
-
-
 
 // Local Variables: ***
 // mode:C++ ***

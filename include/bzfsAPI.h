@@ -833,6 +833,7 @@ BZF_API bool bz_removeEvent ( bz_eEventType eventType, bz_EventHandler* eventHan
 class bz_BasePlayerRecord;
 
 BZF_API bool bz_getPlayerIndexList ( bz_APIIntList *playerList );
+BZF_API bz_APIIntList *bz_getPlayerIndexList ( void );
 BZF_API bz_BasePlayerRecord *bz_getPlayerByIndex ( int index );
 BZF_API bool bz_updatePlayerData ( bz_BasePlayerRecord *playerRecord );
 BZF_API bool bz_hasPerm ( int playerID, const char* perm );
@@ -1303,7 +1304,7 @@ typedef struct
 	bz_ScoreRecord	score;
 	char			callsign[32];
 	char			email[128];
-}bz_PlayerUpdateRecord;
+}bz_PlayerInfoUpdateRecord;
 
 typedef struct 
 {
@@ -1335,6 +1336,39 @@ typedef struct
 	int handycap;
 }bz_HandycapUpdateRecord;
 
+typedef enum
+{
+	eDead,		// not alive, not paused, etc.
+	eAlive,				// player is alive
+	ePaused,			// player is paused
+	eExploding,			// currently blowing up
+	eTeleporting,		// teleported recently
+}bz_ePlayerStatus;
+
+typedef struct bz_PlayerUpdateState
+{
+	bz_ePlayerStatus	status;	
+	bool				falling;
+	bool				corssingWall;
+	float				pos[3];			// position of tank
+	float				velocity[3];	// velocity of tank
+	float				rotation;		// orientation of tank
+	float				angVel;			// angular velocity of tank
+	int					phydrv;			// physics driver
+
+	bz_PlayerUpdateState()
+	{
+		status = eAlive;
+		falling = false;
+		corssingWall = false;
+		pos[0] = pos[1] = pos[2] = 0;
+		velocity[0] = velocity[1] = velocity[2] = 0;
+		rotation = 0;
+		angVel = 0;
+		phydrv = -1;
+	}
+}bz_PlayerUpdateState;
+
 class BZF_API bz_ServerSidePlayerHandler
 {
 public:
@@ -1346,19 +1380,21 @@ public:
 	virtual void playerRejected ( bz_eRejectCodes code, const char* reason ){};
 	virtual void playerAccepted ( void ){};
 	virtual void playerSpawned ( int player, float pos[3], float rot ){};
+	virtual void textMessage ( int dest, int source, const char* text ){};
 
 	virtual void flagUpdate ( int count, bz_FlagUpdateRecord **flagList ){};
-	virtual void playerUpdate ( bz_PlayerUpdateRecord *playerRecord ){};
+	virtual void playerInfoUpdate ( bz_PlayerInfoUpdateRecord *playerRecord ){};
 	virtual void teamUpdate ( int count, bz_TeamInfoRecord **teamList ){};
 	virtual void handycapUpdate ( int count, bz_HandycapUpdateRecord **handycapList ){};
 	virtual void playeIPUpdate ( int player, const char* ipAddress ){};
-	virtual void textMessage ( int dest, int source, const char* text ){};
+	virtual void playerStateUpdate ( bz_PlayerUpdateState *playerState, float timestamp ){};
 
 	int playerID;
 
 protected:
 	void setPlayerData ( const char* callsign, const char* email, const char* token, const char* clientVersion, bz_eTeamType team );
 	void joinGame ( void );
+	void updateState ( bz_PlayerUpdateState *state );
 };
 
 // *** NOTE *** support for server side players in incomplete.

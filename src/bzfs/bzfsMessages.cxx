@@ -12,6 +12,7 @@
 
 // bzflag global header
 #include "bzfsMessages.h"
+#include "PlayerState.h"
 #include <assert.h>
 
 void sendRemovePlayerMessage ( int playerID )
@@ -141,7 +142,7 @@ void sendExistingPlayerUpdates ( int newPlayer )
 			continue;
 		if (playerData->playerHandler)
 		{
-			bz_PlayerUpdateRecord	playerRecord;
+			bz_PlayerInfoUpdateRecord	playerRecord;
 
 			playerRecord.index = i;
 			playerRecord.type = (bz_ePlayerType)otherData->player.getType();
@@ -154,7 +155,7 @@ void sendExistingPlayerUpdates ( int newPlayer )
 			strncpy(playerRecord.callsign,otherData->player.getCallSign(),31);
 			strncpy(playerRecord.email,otherData->player.getEMail(),127);
 
-			playerData->playerHandler->playerUpdate(&playerRecord);
+			playerData->playerHandler->playerInfoUpdate(&playerRecord);
 		}
 		else
 		{
@@ -325,9 +326,6 @@ void sendAdminInfoMessage ( int aboutPlayer, int toPlayer, bool record )
 	}
 }
 
-
-
-
 // network only messages
 int sendPlayerUpdateDirect(NetHandler *handler, GameKeeper::Player *otherData)
 {
@@ -440,6 +438,40 @@ void sendMessageAlive ( int playerID, float pos[3], float rot )
 		if (otherData && otherData->playerHandler)
 			otherData->playerHandler->playerSpawned(playerID,pos,rot);
 	}
+}
+
+bool sendPlayerStateMessage( GameKeeper::Player *playerData, bool shortState )
+{
+	// pack up the data and send it to the net players
+	uint16_t len = PlayerUpdatePLenMax;	// this len is dumb, it shoudl be the REAl len of the packet
+	uint16_t code = shortState ? MsgPlayerUpdateSmall : MsgPlayerUpdate;
+	void *buf, *bufStart = getDirectMessageBuffer();
+	buf = bufStart;
+	setGeneralMessageInfo(&buf,code,len);
+	buf  = nboPackUByte(buf, playerData->getIndex());
+	buf = nboPackFloat(buf, playerData->stateTimeStamp);
+	buf = playerData->lastState.pack(buf,code);
+
+	// send the packet to everyone else who is playing and NOT a server side bot
+	relayPlayerPacket(playerData->getIndex(), len, bufStart, code);
+
+	// bots need love too
+	bz_PlayerUpdateState	apiState;
+	playerStateToAPIState(apiState,playerData->lastState);
+	// now do everyone who dosn't have network
+	for (int i = 0; i < curMaxPlayers; i++)
+	{
+		GameKeeper::Player* otherData = GameKeeper::Player::getPlayerByIndex(i);
+		if (otherData && otherData->playerHandler && otherData->player.isPlaying())
+			otherData->playerHandler->playerStateUpdate(&apiState,playerData->stateTimeStamp);
+	}
+	return true;
+}
+
+void setGeneralMessageInfo ( void **buffer, uint16_t &code, uint16_t &len )
+{
+	*buffer = nboPackUShort(*buffer, len);
+	*buffer= nboPackUShort(*buffer, code);
 }
 
 //messages sent TO the server
@@ -558,6 +590,67 @@ bool isUDPAtackMessage ( uint16_t &code )
 			return false;
 	}
 	return true;
+}
+
+void playerStateToAPIState ( bz_PlayerUpdateState &apiState, PlayerState &playerState )
+{
+	apiState.status = eAlive;
+	if (playerState.status & PlayerState::DeadStatus)
+		apiState.status = eDead;
+	else if (playerState.status & PlayerState::Paused)
+		apiState.status = ePaused;
+	else if (playerState.status & PlayerState::Exploding)
+		apiState.status = eExploding;
+	else if (playerState.status & PlayerState::Teleporting)
+		apiState.status = eTeleporting;
+
+	apiState.falling = (playerState.status & PlayerState::Falling) != 0;
+	apiState.corssingWall = (playerState.status & PlayerState::CrossingWall) != 0;
+	apiState.phydrv = (playerState.status & PlayerState::OnDriver) ? playerState.phydrv : -1;
+	apiState.rotation = playerState.azimuth;
+	apiState.angVel = playerState.angVel;
+	memcpy(apiState.pos,playerState.pos,sizeof(float)*3);
+	memcpy(apiState.velocity,playerState.velocity,sizeof(float)*3);
+}
+
+void APIStateToplayerState ( PlayerState &playerState, bz_PlayerUpdateState &apiState )
+{
+	playerState.status = 0;
+	switch(apiState.status)
+	{
+		case eAlive:
+			playerState.status |= PlayerState::Alive;
+			break;
+		case eDead:
+			playerState.status |= PlayerState::DeadStatus;
+			break;
+		case ePaused:
+			playerState.status |= PlayerState::Paused;
+			break;
+		case eExploding:
+			playerState.status |= PlayerState::Exploding;
+			break;
+		case eTeleporting:
+			playerState.status |= PlayerState::Teleporting;
+			break;
+	}
+
+	if (apiState.falling)
+		playerState.status |=  PlayerState::Falling;
+
+	if (apiState.corssingWall)
+		playerState.status |=  PlayerState::CrossingWall;
+
+	if (apiState.phydrv != -1)
+	{
+		playerState.status |=  PlayerState::OnDriver;
+		playerState.phydrv = apiState.phydrv;
+	}
+
+	playerState.azimuth = apiState.rotation;
+	playerState.angVel = apiState.angVel;
+	memcpy(playerState.pos,apiState.pos,sizeof(float)*3);
+	memcpy(playerState.velocity,apiState.velocity,sizeof(float)*3);
 }
 
 // Local Variables: ***

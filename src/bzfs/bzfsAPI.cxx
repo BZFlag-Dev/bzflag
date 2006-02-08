@@ -18,6 +18,7 @@
 
 #include "bzfs.h"
 #include "bzfsMessages.h"
+#include "bzfsClientMessages.h"
 #include "WorldWeapons.h"
 #include "WorldEventManager.h"
 #include "GameKeeper.h"
@@ -802,6 +803,21 @@ BZF_API bool bz_getPlayerIndexList ( bz_APIIntList *playerList )
 		playerList->push_back(i);
 	}
 	return playerList->size() > 0;
+}
+
+BZF_API bz_APIIntList *bz_getPlayerIndexList ( void )
+{
+	 bz_APIIntList *playerList = new bz_APIIntList;
+
+	for (int i = 0; i < curMaxPlayers; i++)
+	{
+		GameKeeper::Player *p = GameKeeper::Player::getPlayerByIndex(i);
+		if ((p == NULL))
+			continue;
+
+		playerList->push_back(i);
+	}
+	return playerList;
 }
 
 BZF_API bz_BasePlayerRecord * bz_getPlayerByIndex ( int index )
@@ -2241,6 +2257,21 @@ void  bz_ServerSidePlayerHandler::joinGame ( void )
 		return;
 
 	playerAlive(playerID);
+	player->lastState.order = 0;
+}
+
+void bz_ServerSidePlayerHandler::updateState ( bz_PlayerUpdateState *state )
+{
+	GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerID);
+	if (!state || !player)
+		return;
+
+	// turn it into a real state and send it to the peeps
+	PlayerState playerState;
+	APIStateToplayerState(playerState,*state);
+	playerState.order = player->lastState.order+1;
+	float now = (float)TimeKeeper::getCurrent().getSeconds();
+	updatePlayerState(player,playerState,now,false);
 }
 
 BZF_API int bz_addServerSidePlayer ( bz_ServerSidePlayerHandler *handler )
