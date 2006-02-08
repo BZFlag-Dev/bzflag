@@ -387,7 +387,7 @@ void sendTextMessage ( int destPlayer, int sourcePlayer, const char* text, int l
 	if (!destPlayerData && (!broadcast && !recordOnly) )
 		return;
 
-	if (destPlayerData->playerHandler && !recordOnly)
+	if (destPlayerData && destPlayerData->playerHandler && !recordOnly)
 	{
 		char *temp =(char*) malloc(len+1);
 		strncpy(temp,text,(size_t)len);
@@ -395,7 +395,7 @@ void sendTextMessage ( int destPlayer, int sourcePlayer, const char* text, int l
 		destPlayerData->playerHandler->textMessage ( destPlayer, sourcePlayer, temp );
 	}
 	
-	if (recordOnly || !destPlayerData->playerHandler || broadcast)
+	if (recordOnly || (destPlayerData && !destPlayerData->playerHandler) || broadcast)
 	{
 		void *buf, *bufStart = getDirectMessageBuffer();
 		buf = nboPackUByte(bufStart, sourcePlayer);
