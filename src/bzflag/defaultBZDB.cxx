@@ -51,7 +51,6 @@ DefaultDBItem	defaultDBItems[] = {
   { "highlightPattern",		"",			true,	StateDatabase::ReadWrite,	NULL },
   { "killerhighlight",		"1",			true,	StateDatabase::ReadWrite,	NULL },
   { "serverCacheAge",		"0",			true,	StateDatabase::ReadWrite,	NULL },
-  { "slowKeyboard",		"0",			false,	StateDatabase::ReadWrite,	NULL },
   { "displayRadarFlags",	"1",			false,	StateDatabase::ReadWrite,	NULL },
   { "displayMainFlags",		"1",			false,	StateDatabase::ReadWrite,	NULL },
   { "displayScore",		"1",			true,	StateDatabase::ReadWrite,	NULL },
@@ -71,7 +70,6 @@ DefaultDBItem	defaultDBItems[] = {
   { "boxWallHighResTexRepeat",	"5.0",			true,	StateDatabase::ReadWrite,	NULL },
   { "pyrWallTexRepeat",		"3.0",			true,	StateDatabase::ReadWrite,	NULL },
   { "pyrWallHighResTexRepeat",	"8.0",			true,	StateDatabase::ReadWrite,	NULL },
-  { "allowInputChange",		"1",			true,	StateDatabase::ReadWrite,	NULL },
   { "pulseDepth",		"0.4",			true,	StateDatabase::ReadWrite,	NULL },
   { "pulseRate",		"1.0",			true,	StateDatabase::ReadWrite,	NULL },
   { "userRainScale",		"1.0",			true,	StateDatabase::ReadWrite,	NULL },
@@ -88,7 +86,6 @@ DefaultDBItem	defaultDBItems[] = {
   { "showCollisionGrid",	"0",			true,	StateDatabase::ReadWrite,	NULL },
   { "showCullingGrid",		"0",			true,	StateDatabase::ReadWrite,	NULL },
   { "showCoordinates",		"0",			true,	StateDatabase::ReadWrite,	NULL },
-  { "jumpTyping",		"1",			true,	StateDatabase::ReadWrite,	NULL },
   { "maxCacheMB",		"32",			true,	StateDatabase::ReadWrite,	NULL },
   { "doDownloads",		"1",			true,	StateDatabase::ReadWrite,	NULL },
   { "updateDownloads",		"0",			true,	StateDatabase::ReadWrite,	NULL },
@@ -100,6 +97,12 @@ DefaultDBItem	defaultDBItems[] = {
   { "stencilShadows",		"0",			true,	StateDatabase::ReadWrite,	NULL },
   { "shadowAlpha",		"0.5",			true,	StateDatabase::ReadWrite,	NULL },
   { "aniso",			"1",			true,	StateDatabase::ReadWrite,	NULL },
+
+  // input
+  { "allowInputChange",		"1",			true,	StateDatabase::ReadWrite,	NULL },
+  { "slowKeyboard",		"0",			false,	StateDatabase::ReadWrite,	NULL },
+  { "jumpTyping",		"1",			true,	StateDatabase::ReadWrite,	NULL },
+  { "slowBinoculars",		"1",			true,	StateDatabase::ReadWrite,	NULL },
 
   // hidden graphics rendering params
   { "useDrawInfo",		"1",			true,	StateDatabase::ReadWrite,	NULL },

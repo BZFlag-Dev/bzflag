@@ -136,7 +136,19 @@ InputMenu::InputMenu() : keyboardMapMenu(NULL)
   option->update();
   listHUD.push_back(option);
 
-  initNavigation(listHUD, 1,listHUD.size()-1);
+  option = new HUDuiList;
+  // tie the FOV into turning rate
+  option->setFontFace(fontFace);
+  option->setLabel("Slow turning with binoculars:");
+  option->setCallback(callback, (void*)"B");
+  options = &option->getList();
+  options->push_back(std::string("No"));
+  options->push_back(std::string("Yes"));
+  option->setIndex(BZDB.isTrue("slowBinoculars") ? 1 : 0);
+  option->update();
+  listHUD.push_back(option);
+
+  initNavigation(listHUD, 1, (int)listHUD.size() - 1);
 }
 
 InputMenu::~InputMenu()
@@ -255,6 +267,14 @@ void			InputMenu::callback(HUDuiControl* w, void* data) {
       }
       break;
 
+    /* Reduce turning rate with FOV */
+    case 'B':
+      {
+	bool fov = (selectedOption == "Yes");
+	BZDB.setBool("slowBinoculars", fov ? true : false);
+      }
+      break;
+
     /* Force feedback */
     case 'F':
       BZDB.set("forceFeedback", selectedOption);
@@ -287,7 +307,7 @@ void			InputMenu::resize(int _width, int _height)
   x = 0.5f * ((float)_width + 0.5f * titleWidth);
   y -= 0.6f * titleHeight;
   const float h = fm.getStrHeight(MainMenu::getFontFace(), fontSize, " ");
-  const int count = listHUD.size();
+  const int count = (int)listHUD.size();
   for (i = 1; i < count; i++) {
     listHUD[i]->setFontSize(fontSize);
     listHUD[i]->setPosition(x, y);

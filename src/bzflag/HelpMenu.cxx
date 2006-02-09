@@ -169,7 +169,7 @@ Help1Menu::Help1Menu() : HelpMenu("Controls")
   listHUD.push_back(createLabel(NULL, "Quit:"));
   listHUD.push_back(createLabel(NULL, "Scroll Message Log Backward:"));
   listHUD.push_back(createLabel(NULL, "Scroll Message Log Forward:"));
-  listHUD.push_back(createLabel(NULL, "Slow Keyboard Motion:"));
+  listHUD.push_back(createLabel(NULL, "Slow Motion:"));
   listHUD.push_back(createLabel(NULL, "Toggle Radar Flags:"));
   listHUD.push_back(createLabel(NULL, "Toggle Main Flags:"));
   listHUD.push_back(createLabel(NULL, "Silence/UnSilence:"));

@@ -764,17 +764,12 @@ static void doKey(const BzfKeyEvent& key, bool pressed) {
 
 static void		doMotion()
 {
-  float rotation = 0.0f, speed = 1.0f;
-  const int noMotionSize = hud->getNoMotionSize();
-  const int maxMotionSize = hud->getMaxMotionSize();
+  float rotation = 0.0f, speed = 0.0f;
+  int noMotionSize = hud->getNoMotionSize();
+  int maxMotionSize = hud->getMaxMotionSize();
 
   int keyboardRotation = myTank->getRotation();
   int keyboardSpeed    = myTank->getSpeed();
-  /* see if controls are reversed */
-  if (myTank->getFlag() == Flags::ReverseControls) {
-    keyboardRotation = -keyboardRotation;
-    keyboardSpeed    = -keyboardSpeed;
-  }
 
   // mouse is default steering method; query mouse pos always, not doing so
   // can lead to stuttering movement with X and software rendering (uncertain why)
@@ -785,28 +780,17 @@ static void		doMotion()
   // when the player bumps the mouse, LocalPlayer::getInputMethod return Mouse;
   // make it return Joystick when the user bumps the joystick
   if (mainWindow->haveJoystick()) {
+    int jx = 0, jy = 0;
+    mainWindow->getJoyPosition(jx, jy);
     if (myTank->getInputMethod() == LocalPlayer::Joystick) {
-      // if we're using the joystick right now, replace mouse coords with joystick coords
-      mainWindow->getJoyPosition(mx, my);
-    } else {
-      // if the joystick is not active, and we're not forced to some other input method,
-      // see if it's moved and autoswitch
-      if (BZDB.isTrue("allowInputChange")) {
-	int jx = 0, jy = 0;
-	mainWindow->getJoyPosition(jx, jy);
-	// if we aren't using the joystick, but it's moving, start using it
-	if ((jx < -noMotionSize * 2) || (jx > noMotionSize * 2)
-	    || (jy < -noMotionSize * 2) || (jy > noMotionSize * 2)) {
-	  myTank->setInputMethod(LocalPlayer::Joystick);
-	} // joystick motion
-      } // allowInputChange
-    } // getInputMethod == Joystick
-  } // mainWindow->Joystick
-
-  /* see if controls are reversed */
-  if (myTank->getFlag() == Flags::ReverseControls) {
-    mx = -mx;
-    my = -my;
+      // if we are using the joystick, use its coordinates
+      mx = jx; my = jy;
+    } else if (BZDB.isTrue("allowInputChange")) {
+      // if we aren't using the joystick, but it's moving, start using it
+      if ((jx < -100) || (jx > 100) || (jy < -100) || (jy > 100)) {
+        myTank->setInputMethod(LocalPlayer::Joystick);
+      }
+    }
   }
 
 #if defined(FREEZING)
@@ -820,28 +804,24 @@ static void		doMotion()
     rotation = (float)keyboardRotation;
     speed    = (float)keyboardSpeed;
     if (speed < 0.0f)
-      speed /= 2.0;
-
-    rotation *= BZDB.eval("displayFOV") / 60.0f;
-    if (BZDB.isTrue("slowKeyboard")) {
-      rotation *= 0.5f;
       speed *= 0.5f;
-    }
+
   } else { // both mouse and joystick
 
-      // calculate desired rotation
+    if (myTank->getInputMethod() == LocalPlayer::Joystick) {
+      noMotionSize = 0; // joystick deadzone is specified at platform level
+      maxMotionSize = 1000; // joysticks read 0 - 1000
+    }
+
+    // calculate desired rotation
     if (keyboardRotation && !devDriving) {
       rotation = float(keyboardRotation);
-      rotation *= BZDB.eval("displayFOV") / 60.0f;
-      if (BZDB.isTrue("slowKeyboard")) {
-	rotation *= 0.5f;
-      }
     } else if (mx < -noMotionSize) {
-      rotation = float(-mx - noMotionSize) / float(maxMotionSize);
+      rotation = float(-mx - noMotionSize) / float(maxMotionSize - noMotionSize);
       if (rotation > 1.0f)
 	rotation = 1.0f;
     } else if (mx > noMotionSize) {
-      rotation = -float(mx - noMotionSize) / float(maxMotionSize);
+      rotation = -float(mx - noMotionSize) / float(maxMotionSize - noMotionSize);
       if (rotation < -1.0f)
 	rotation = -1.0f;
     }
@@ -852,20 +832,32 @@ static void		doMotion()
       if (speed < 0.0f) {
 	speed *= 0.5f;
       }
-      if (BZDB.isTrue("slowKeyboard")) {
-	speed *= 0.5f;
-      }
     } else if (my < -noMotionSize) {
-      speed = float(-my - noMotionSize) / float(maxMotionSize);
+      speed = float(-my - noMotionSize) / float(maxMotionSize - noMotionSize);
       if (speed > 1.0f)
 	speed = 1.0f;
     } else if (my > noMotionSize) {
-      speed = -float(my - noMotionSize) / float(maxMotionSize);
+      speed = -float(my - noMotionSize) / float(maxMotionSize - noMotionSize);
       if (speed < -0.5f)
 	speed = -0.5f;
     } else {
       speed = 0.0f;
     }
+  }
+
+  /* FOV/Slow modifiers */
+  if (BZDB.isTrue("slowBinoculars")) {
+    rotation *= BZDB.eval("displayFOV") / 60.0f;
+  }
+  if (BZDB.isTrue("slowKeyboard")) {
+    rotation *= 0.5f;
+    speed *= 0.5f;
+  }
+
+  /* see if controls are reversed */
+  if (myTank->getFlag() == Flags::ReverseControls) {
+    rotation = -rotation;
+    speed = -speed;
   }
 
   myTank->setDesiredAngVel(rotation);
@@ -5847,6 +5839,8 @@ static void		playingLoop()
 	BzfKeyEvent::BZ_Button_8,
 	BzfKeyEvent::BZ_Button_9,
 	BzfKeyEvent::BZ_Button_10,
+	BzfKeyEvent::BZ_Button_11,
+	BzfKeyEvent::BZ_Button_12,
       };
 
       static unsigned long old_buttons = 0;

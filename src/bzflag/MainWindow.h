@@ -81,7 +81,7 @@ class MainWindow {
     // events instead because it means no round trip to the server
     // for these values that we need every frame.
     void		getMousePosition(int& mx, int& my) const;
-    void		getJoyPosition(int& mx, int& my) const;
+    void		getJoyPosition(int& jx, int& jy) const;
     unsigned long	getJoyButtonSet() const;
     void		getJoyDevices(std::vector<std::string> &list) const;
     void		getJoyDeviceAxes(std::vector<std::string> &list) const;

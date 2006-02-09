@@ -247,11 +247,9 @@ bool			MainWindow::haveJoystick() const
   return joystick->joystick();
 }
 
-void			MainWindow::getJoyPosition(int& mx, int& my) const
+void			MainWindow::getJoyPosition(int& jx, int& jy) const
 {
-  joystick->getJoy(mx, my);
-  mx = ((width >> 1) * mx) / (900);
-  my = ((height >> 1) * my) / (900);
+  joystick->getJoy(jx, jy);
 }
 
 unsigned long		  MainWindow::getJoyButtonSet() const

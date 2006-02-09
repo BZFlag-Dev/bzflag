@@ -93,7 +93,7 @@ KeyboardMapMenu::KeyboardMapMenu() : defaultKey(this), editing(-1), quickKeysMen
   controls.push_back(createLabel(NULL, "Fast Quit:"));
   controls.push_back(createLabel(NULL, "Scroll Backward:"));
   controls.push_back(createLabel(NULL, "Scroll Forward:"));
-  controls.push_back(createLabel(NULL, "Slow Keyboard Motion:"));
+  controls.push_back(createLabel(NULL, "Slow Motion:"));
   controls.push_back(createLabel(NULL, "Toggle Flags On Radar:"));
   controls.push_back(createLabel(NULL, "Toggle Flags On Field:"));
   controls.push_back(createLabel(NULL, "Silence/UnSilence Key:"));
