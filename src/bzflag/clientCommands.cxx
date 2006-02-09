@@ -921,14 +921,28 @@ static std::string cmdServerCommand(const std::string&,
 static std::string cmdScrollPanel(const std::string&,
 				  const CommandManager::ArgList& args, bool*)
 {
-  if (args.size() != 1)
-    return "usage: scrollpanel {up|down}\n";
+  if ((args.size() < 1) || (args.size() > 2)) {
+    return "usage: scrollpanel {up|up_page|down|down_page|top|bottom} [count]\n";
+  }
+  int count = 1;
+  int linecount = 2;
+  if (args.size() == 2) {
+    count = atoi(args[1].c_str());
+    linecount = count;
+  }
+  // whence - (0 = set, 1 = cur, 2 = end)
   if (args[0] == "up") {
-    controlPanel->setMessagesOffset(2,1);
+    controlPanel->setMessagesOffset(+linecount, 1 /* current */, false);
   } else if (args[0] == "down") {
-    controlPanel->setMessagesOffset(-2,1);
-  } else {
-    return "usage: scrollpanel {up|down}\n";
+    controlPanel->setMessagesOffset(-linecount, 1 /* current */, false);
+  } else if (args[0] == "up_page") {
+    controlPanel->setMessagesOffset(+count, 1 /* current */, true);
+  } else if (args[0] == "down_page") {
+    controlPanel->setMessagesOffset(-count, 1 /* current */, true);
+  } else if (args[0] == "top") {
+    controlPanel->setMessagesOffset(123456789, 0 /* set */, false);
+  } else if (args[0] == "bottom") {
+    controlPanel->setMessagesOffset(0, 0 /* set */, false);
   }
   return std::string();
 }

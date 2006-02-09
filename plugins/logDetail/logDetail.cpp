@@ -75,7 +75,6 @@ void logDetail::process( bz_EventData *eventData )
 	// Tokenize the stream and check the first word
 	// /report -> MSG-REPORT
 	// anything -> MSG-COMMAND
-
 	strncpy(temp, cmdData->message.c_str() , 8);
 
 	if (strcasecmp( temp, "/REPORT ") == 0 ) {

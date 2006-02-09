@@ -202,8 +202,8 @@ Help1Menu::Help1Menu() : HelpMenu("Controls")
   initKeymap("pause", 20);
   initKeymap("destruct", 21);
   initKeymap("quit", 22);
-  initKeymap("scrollpanel up", 23);
-  initKeymap("scrollpanel down", 24);
+  initKeymap("scrollpanel up_page", 23);
+  initKeymap("scrollpanel down_page", 24);
   initKeymap("toggle slowKeyboard", 25);
   initKeymap("toggleFlags radar", 26);
   initKeymap("toggleFlags main", 27);

@@ -65,6 +65,9 @@ void SaveWorldMenu::execute()
     status->setString("No world loaded to save");
   } else {
     std::string fullname;
+    BZDB.set("saveAsMeshes", "0");
+    BZDB.set("saveFlatFile", "0");
+    BZDB.set("saveAsOBJ",    "0");
     if (World::getWorld()->writeWorld(filename->getString(), fullname)) {
       std::string newLabel = "World Saved: ";
       newLabel += fullname;

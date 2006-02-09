@@ -24,6 +24,7 @@
 #include "CommandsStandard.h"
 #include "TextureManager.h"
 #include "DirectoryNames.h"
+#include "KeyManager.h"
 
 // local implementation headers
 #include "LocalCommand.h"
@@ -39,6 +40,12 @@
 class CommandList : LocalCommand {
   public:
     CommandList();
+    bool operator() (const char *commandLine);
+};
+
+class BindCommand : LocalCommand {
+  public:
+    BindCommand();
     bool operator() (const char *commandLine);
 };
 
@@ -123,6 +130,7 @@ class SaveWorldCommand : LocalCommand {
 
 // class instantiations
 static CommandList	  commandList;
+static BindCommand	  bindCommand;
 static SilenceCommand     silenceCommand;
 static UnsilenceCommand   unsilenceCommand;
 static DumpCommand	  dumpCommand;
@@ -139,6 +147,7 @@ static SaveWorldCommand   saveWorldCommand;
 
 
 // class constructors
+BindCommand::BindCommand() :		LocalCommand("/bind") {}
 CommandList::CommandList() :		LocalCommand("/cmds") {}
 DiffCommand::DiffCommand() :		LocalCommand("/diff") {}
 DumpCommand::DumpCommand() :		LocalCommand("/dumpvars") {}
@@ -219,6 +228,55 @@ bool CommandList::operator() (const char * /*cmdLine*/)
   const char* msg = "/?";
   strncpy(buffer, msg, MessageLen);
   serverLink->sendMessage(ServerPlayer, buffer);
+  return true;
+}
+
+
+static void printBindHelp()
+{
+  addMessage(NULL, "usage: /bind <event> <press> <action>");
+  addMessage(NULL, "   event:   ex: \"Shift+Page Up\"");
+  addMessage(NULL, "   press:   up, down, or both");
+  addMessage(NULL, "   action:  ex: \"scrollpanel up 3\"");
+}
+
+bool BindCommand::operator() (const char *commandLine)
+{
+  std::string params = commandLine + commandName.size();
+  std::vector<std::string> tokens = TextUtils::tokenize(params, " ", 3, true);
+  if (tokens.size() != 3) {
+    printBindHelp();
+    return true;
+  }
+  BzfKeyEvent ev;
+  if (!KEYMGR.stringToKeyEvent(tokens[0], ev)) {
+    printBindHelp();
+    addMessage(NULL, "could not find the key");
+    return true;
+  }
+  bool press, both = false;
+  if (tokens[1] == "up") {
+    press = true;
+  } else if (tokens[1] == "down") {
+    press = false;
+  } else if (tokens[1] == "both") {
+    both = true;
+  } else {
+    printBindHelp();
+    addMessage(NULL, "bad <press> type");
+    return true;
+  }
+  
+  if (both) {
+    KEYMGR.unbind(ev, true);
+    KEYMGR.bind(ev, true, tokens[2]);
+    KEYMGR.unbind(ev, false);
+    KEYMGR.bind(ev, false, tokens[2]);
+  } else {
+    KEYMGR.unbind(ev, press);
+    KEYMGR.bind(ev, press, tokens[2]);
+  }
+  
   return true;
 }
 

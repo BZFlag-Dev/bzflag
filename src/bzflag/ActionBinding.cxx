@@ -37,8 +37,7 @@ ActionBinding::ActionBinding() {
   wayToBindActions.insert(std::make_pair(std::string("send recipient"), press));
   wayToBindActions.insert(std::make_pair(std::string("send admin"), press));
   wayToBindActions.insert(std::make_pair(std::string("toggle displayScore"), press));
-  wayToBindActions.insert(std::make_pair(std::string("viewZoom toggle"),
-					 press));
+  wayToBindActions.insert(std::make_pair(std::string("viewZoom toggle"), press));
   wayToBindActions.insert(std::make_pair(std::string("viewZoom in"), press));
   wayToBindActions.insert(std::make_pair(std::string("viewZoom out"), press));
   wayToBindActions.insert(std::make_pair(std::string("pause"), press));
@@ -65,8 +64,7 @@ ActionBinding::ActionBinding() {
   wayToBindActions.insert(std::make_pair(std::string("drive reverse"), both));
   // End movement keys
 
-  wayToBindActions.insert(std::make_pair(std::string("roam cycle subject backward"),
-					 press));
+  wayToBindActions.insert(std::make_pair(std::string("roam cycle subject backward"), press));
   wayToBindActions.insert(std::make_pair(std::string("roam cycle subject forward"), press));
   wayToBindActions.insert(std::make_pair(std::string("roam cycle type forward"), press));
   wayToBindActions.insert(std::make_pair(std::string("roam zoom in"), both));
@@ -75,7 +73,10 @@ ActionBinding::ActionBinding() {
   wayToBindActions.insert(std::make_pair(std::string("servercommand"), press));
   wayToBindActions.insert(std::make_pair(std::string("toggle displayFlagHelp"), press));
   wayToBindActions.insert(std::make_pair(std::string("scrollpanel up"), press));
+  wayToBindActions.insert(std::make_pair(std::string("scrollpanel up_page"), press));
   wayToBindActions.insert(std::make_pair(std::string("scrollpanel down"), press));
+  wayToBindActions.insert(std::make_pair(std::string("scrollpanel down_page"), press));
+  wayToBindActions.insert(std::make_pair(std::string("scrollpanel bottom"), press));
   wayToBindActions.insert(std::make_pair(std::string("radarZoom in"), press));
   wayToBindActions.insert(std::make_pair(std::string("radarZoom out"), press));
   wayToBindActions.insert(std::make_pair(std::string("set displayRadarRange 0.25"), press));
@@ -87,14 +88,10 @@ ActionBinding::ActionBinding() {
   wayToBindActions.insert(std::make_pair(std::string("restart"), release));
   wayToBindActions.insert(std::make_pair(std::string("autopilot"), press));
 
-  wayToBindActions.insert(std::make_pair(std::string("messagepanel all"),
-					 press));
-  wayToBindActions.insert(std::make_pair(std::string("messagepanel chat"),
-					 press));
-  wayToBindActions.insert(std::make_pair(std::string("messagepanel server"),
-					 press));
-  wayToBindActions.insert(std::make_pair(std::string("messagepanel misc"),
-					 press));
+  wayToBindActions.insert(std::make_pair(std::string("messagepanel all"), press));
+  wayToBindActions.insert(std::make_pair(std::string("messagepanel chat"), press));
+  wayToBindActions.insert(std::make_pair(std::string("messagepanel server"), press));
+  wayToBindActions.insert(std::make_pair(std::string("messagepanel misc"), press));
 
   defaultBinding.insert(BindingTable::value_type("F12", "quit"));
   defaultBinding.insert(BindingTable::value_type("Left Mouse", "fire"));
@@ -148,10 +145,11 @@ ActionBinding::ActionBinding() {
   defaultBinding.insert(BindingTable::value_type("F11", "roam zoom normal"));
   defaultBinding.insert(BindingTable::value_type("O", "servercommand"));
   defaultBinding.insert(BindingTable::value_type("F", "toggle displayFlagHelp"));
-  defaultBinding.insert(BindingTable::value_type("Page Up", "scrollpanel up"));
-  defaultBinding.insert(BindingTable::value_type("Wheel Up", "scrollpanel up"));
-  defaultBinding.insert(BindingTable::value_type("Page Down", "scrollpanel down"));
-  defaultBinding.insert(BindingTable::value_type("Wheel Down", "scrollpanel down"));
+  defaultBinding.insert(BindingTable::value_type("Page Up", "scrollpanel up_page"));
+  defaultBinding.insert(BindingTable::value_type("Wheel Up", "scrollpanel up 3"));
+  defaultBinding.insert(BindingTable::value_type("Page Down", "scrollpanel down_page"));
+  defaultBinding.insert(BindingTable::value_type("Wheel Down", "scrollpanel down 3"));
+  defaultBinding.insert(BindingTable::value_type("End", "scrollpanel bottom"));
   defaultBinding.insert(BindingTable::value_type("1", "set displayRadarRange 0.25"));
   defaultBinding.insert(BindingTable::value_type("2", "set displayRadarRange 0.5"));
   defaultBinding.insert(BindingTable::value_type("3", "set displayRadarRange 1.0"));

@@ -56,7 +56,7 @@ class ControlPanel {
     void		setNumberOfFrameBuffers(int);
 
     void		addMessage(const std::string&, const int mode = 3);
-    void		setMessagesOffset(int offset, int whence);
+    void		setMessagesOffset(int offset, int whence, bool paged);
     void		setMessagesMode(int _messageMode);
     int		getMessagesMode() {return messageMode;};
     void		setStatus(const char*);
