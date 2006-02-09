@@ -51,13 +51,6 @@ extern void sendMessage(int	 playerIndex,
 extern void removePlayer(int	 playerIndex,
 			 const char *reason,
 			 bool	notify = true);
-extern void playerKilled(int	     victimIndex,
-			 int	     killerIndex,
-			 int	     reason,
-			 int16_t	 shotIndex,
-			 const FlagType *flagType,
-			 int	     phydrv,
-			 bool	    respawnOnBase = false);
 extern void sendPlayerMessage(GameKeeper::Player *playerData,
 			      PlayerId dstPlayer,
 			      const char *message);
@@ -90,6 +83,9 @@ void searchFlag(GameKeeper::Player &playerData);
 void relayPlayerPacket(int index, uint16_t len, const void *rawbuf, uint16_t code);
 void playerAlive(int playerIndex);
 void pwriteBroadcast(const void *b, int l, int mask);
+int pwrite(NetHandler *handler, const void *b, int l);
+int lookupPlayer(const PlayerId& id);
+void playerKilled(int victimIndex, int killerIndex, BlowedUpReason reason, int16_t shotIndex, const FlagType *flagType, int phydrv, bool respawnOnBase = false);
 
 typedef struct CheatProtectionOptions
 {

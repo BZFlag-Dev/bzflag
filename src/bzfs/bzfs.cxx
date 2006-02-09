@@ -176,7 +176,7 @@ static void dropHandler(NetHandler *handler, const char *reason)
   delete handler;
 }
 
-static int pwrite(NetHandler *handler, const void *b, int l)
+int pwrite(NetHandler *handler, const void *b, int l)
 {
   int result = handler->pwrite(b, l);
   if (result == -1) {
@@ -283,7 +283,7 @@ static void sendUDPupdate(NetHandler *handler)
   directMessage(handler, MsgUDPLinkRequest, 0, getDirectMessageBuffer());
 }
 
-static int lookupPlayer(const PlayerId& id)
+int lookupPlayer(const PlayerId& id)
 {
   if (id == ServerPlayer)
     return id;
@@ -2326,12 +2326,11 @@ static void checkTeamScore(int playerIndex, int teamIndex)
 //   It is taken as the index of the udp table when called by incoming message
 //   It is taken by killerIndex when autocalled, but only if != -1
 // killer could be InvalidPlayer or a number within [0 curMaxPlayer)
-void playerKilled(int victimIndex, int killerIndex, int reason,
-			int16_t shotIndex, const FlagType* flagType, int phydrv, bool respawnOnBase )
+void playerKilled(int victimIndex, int killerIndex, BlowedUpReason reason, int16_t shotIndex, const FlagType* flagType, int phydrv, bool respawnOnBase )
 {
   GameKeeper::Player *killerData = NULL;
-  GameKeeper::Player *victimData
-    = GameKeeper::Player::getPlayerByIndex(victimIndex);
+  GameKeeper::Player *victimData = GameKeeper::Player::getPlayerByIndex(victimIndex);
+  void *buf, *bufStart = getDirectMessageBuffer();
 
   if (!victimData || !victimData->player.isPlaying())
     return;
@@ -2341,11 +2340,11 @@ void playerKilled(int victimIndex, int killerIndex, int reason,
 
   // aliases for convenience
   // Warning: killer should not be used when killerIndex == InvalidPlayer or ServerPlayer
-  PlayerInfo *killer = realPlayer(killerIndex) ? &killerData->player : 0,
-	     *victim = &victimData->player;
+  PlayerInfo *killer = realPlayer(killerIndex) ? &killerData->player : 0, *victim = &victimData->player;
 
   // victim was already dead. keep score.
-  if (!victim->isAlive()) return;
+  if (!victim->isAlive())
+	  return;
 
   victim->setRestartOnBase(respawnOnBase);
   victim->setDead();
@@ -2355,8 +2354,10 @@ void playerKilled(int victimIndex, int killerIndex, int reason,
   dieEvent.playerID = victimIndex;
   dieEvent.team = convertTeam(victim->getTeam());
   dieEvent.killerID = killerIndex;
+
   if (killer)
     dieEvent.killerTeam = convertTeam(killer->getTeam());
+
   dieEvent.flagKilledWith = flagType->flagAbbv;
   victimData->getPlayerState(dieEvent.pos, dieEvent.rot);
 
@@ -2364,28 +2365,21 @@ void playerKilled(int victimIndex, int killerIndex, int reason,
 
   // killing rabbit or killing anything when I am a dead ex-rabbit is allowed
   bool teamkill = false;
-  if (killer) {
+  if (killer)
+  {
     const bool rabbitinvolved = killer->isARabbitKill(*victim);
     const bool foe = areFoes(victim->getTeam(), killer->getTeam());
     teamkill = !foe && !rabbitinvolved;
   }
 
-  // send MsgKilled
-  void *buf, *bufStart = getDirectMessageBuffer();
-  buf = nboPackUByte(bufStart, victimIndex);
-  buf = nboPackUByte(buf, killerIndex);
-  buf = nboPackShort(buf, reason);
-  buf = nboPackShort(buf, shotIndex);
-  buf = flagType->pack(buf);
-  if (reason == PhysicsDriverDeath) {
-    buf = nboPackInt(buf, phydrv);
-  }
-  broadcastMessage(MsgKilled, (char*)buf-(char*)bufStart, bufStart);
+  sendPlayerKilledMessage(victimIndex,killerIndex,reason,shotIndex,flagType,phydrv);
 
   // update tk-score
-  if ((victimIndex != killerIndex) && teamkill) {
+  if ((victimIndex != killerIndex) && teamkill)
+  {
     killerData->score.tK();
-    if (killerData->score.isTK()) {
+    if (killerData->score.isTK())
+	{
       char message[MessageLen];
       strcpy(message, "You have been automatically kicked for team killing" );
       sendMessage(ServerPlayer, killerIndex, message);
@@ -2402,89 +2396,104 @@ void playerKilled(int victimIndex, int killerIndex, int reason,
   victimData = GameKeeper::Player::getPlayerByIndex(victimIndex);
   // victimData will be NULL if the player has been kicked for TK'ing
   // so don't bother doing any score stuff for him
-  if (victimData != NULL) {
+  if (victimData != NULL)
+  {
     // change the player score
     bufStart = getDirectMessageBuffer();
     victimData->score.killedBy();
-    if (killer) {
-      if (victimIndex != killerIndex) {
-	if (teamkill) {
-	  if (clOptions->teamKillerDies)
-	    playerKilled(killerIndex, killerIndex, reason, -1, Flags::Null, -1);
-	  else
-	    killerData->score.killedBy();
-	} else {
-	  killerData->score.kill();
-	}
+    if (killer)
+	{
+      if (victimIndex != killerIndex)
+	  {
+	   if (teamkill)
+	   {
+	     if (clOptions->teamKillerDies)
+	      playerKilled(killerIndex, killerIndex, reason, -1, Flags::Null, -1);
+	     else
+	      killerData->score.killedBy();
+	   }
+	   else
+		killerData->score.kill();
       }
       buf = nboPackUByte(bufStart, 2);
       buf = nboPackUByte(buf, killerIndex);
       buf = killerData->score.pack(buf);
-    } else {
-      buf = nboPackUByte(bufStart, 1);
     }
+	else 
+      buf = nboPackUByte(bufStart, 1);
 
     buf = nboPackUByte(buf, victimIndex);
     buf = victimData->score.pack(buf);
     broadcastMessage(MsgScore, (char*)buf-(char*)bufStart, bufStart);
 
-    if (clOptions->gameStyle & HandicapGameStyle) {
+    if (clOptions->gameStyle & HandicapGameStyle)
+	{
       bufStart = getDirectMessageBuffer();
-      if (killer) {
-	buf = nboPackUByte(bufStart, 2);
-	buf = nboPackUByte(buf, killerIndex);
-	buf = nboPackShort(buf, killerData->score.getHandicap());
-      } else {
-	buf = nboPackUByte(bufStart, 1);
+      if (killer)
+	  {
+		buf = nboPackUByte(bufStart, 2);
+		buf = nboPackUByte(buf, killerIndex);
+		buf = nboPackShort(buf, killerData->score.getHandicap());
       }
+	  else
+		buf = nboPackUByte(bufStart, 1);
       buf = nboPackUByte(buf, victimIndex);
       buf = nboPackShort(buf, victimData->score.getHandicap());
       broadcastMessage(MsgHandicap, (char*)buf-(char*)bufStart, bufStart);
     }
 
     // see if the player reached the score limit
-    if (clOptions->maxPlayerScore != 0
-	&& killerIndex != InvalidPlayer
-	&& killerIndex != ServerPlayer
-	&& killerData->score.reached()) {
+    if (clOptions->maxPlayerScore != 0 && killerIndex != InvalidPlayer && killerIndex != ServerPlayer && killerData->score.reached())
+	{
       bufStart = getDirectMessageBuffer();
       buf = nboPackUByte(bufStart, killerIndex);
       buf = nboPackUShort(buf, uint16_t(NoTeam));
       broadcastMessage(MsgScoreOver, (char*)buf-(char*)bufStart, bufStart);
       gameOver = true;
-      if (clOptions->oneGameOnly) {
+      if (clOptions->oneGameOnly)
+	  {
         done = true;
         exitCode = 0;
       }
     }
   }
 
-  if (clOptions->gameStyle & int(RabbitChaseGameStyle)) {
+  if (clOptions->gameStyle & int(RabbitChaseGameStyle))
+  {
     if (victimIndex == rabbitIndex)
       anointNewRabbit(killerIndex);
-  } else {
+  }
+  else
+  {
     // change the team scores -- rogues don't have team scores.  don't
     // change team scores for individual player's kills in capture the
     // flag mode.
     // Team score is even not used on RabbitChase
     int winningTeam = (int)NoTeam;
-    if (!(clOptions->gameStyle & (TeamFlagGameStyle | RabbitChaseGameStyle))) {
+    if (!(clOptions->gameStyle & (TeamFlagGameStyle | RabbitChaseGameStyle)))
+	{
       int killerTeam = -1;
-      if (killer && victim->getTeam() == killer->getTeam()) {
-	if (!killer->isTeam(RogueTeam))
-	  if (killerIndex == victimIndex)
-	    team[int(victim->getTeam())].team.lost += 1;
+      if (killer && victim->getTeam() == killer->getTeam())
+	  {
+		if (!killer->isTeam(RogueTeam))
+		{
+			if (killerIndex == victimIndex)
+				team[int(victim->getTeam())].team.lost += 1;
+			else
+				team[int(victim->getTeam())].team.lost += 2;
+		}
+      }
 	  else
-	    team[int(victim->getTeam())].team.lost += 2;
-      } else {
-	if (killer && !killer->isTeam(RogueTeam)) {
-	  winningTeam = int(killer->getTeam());
-	  team[winningTeam].team.won++;
-	}
-	if (!victim->isTeam(RogueTeam))
-	  team[int(victim->getTeam())].team.lost++;
-	if (killer)
-	  killerTeam = killer->getTeam();
+	  {
+		if (killer && !killer->isTeam(RogueTeam))
+		{
+			winningTeam = int(killer->getTeam());
+			team[winningTeam].team.won++;
+		}
+		if (!victim->isTeam(RogueTeam))
+			team[int(victim->getTeam())].team.lost++;
+		if (killer)
+			killerTeam = killer->getTeam();
       }
       sendTeamUpdate(int(victim->getTeam()), killerTeam);
     }
@@ -3088,7 +3097,6 @@ static void handleCommand(const void *rawbuf, bool udp, NetHandler *handler)
   uint16_t len, code;
   void *buf = (char *)rawbuf;
   getGeneralMessageInfo(&buf,code,len);
-  char buffer[MessageLen];
 
   if (udp && isUDPAtackMessage(code))
 	  DEBUG1("Received packet type (%x) via udp, possible attack from %s\n", code, handler->getTargetIP());
@@ -3122,24 +3130,13 @@ static void handleCommand(const void *rawbuf, bool udp, NetHandler *handler)
 		handleWorldChunk(handler,buf);
 		break;
 
-    case MsgWantSettings: {
-      pwrite(handler, worldSettings, 4 + WorldSettingsSize);
-      break;
-    }
+    case MsgWantSettings:
+		handleWorldSettings(handler);
+		break;
 
-    case MsgWantWHash: {
-      void *obuf, *obufStart = getDirectMessageBuffer();
-      if (clOptions->cacheURL.size() > 0) {
-	obuf = nboPackString(obufStart, clOptions->cacheURL.c_str(),
-			    clOptions->cacheURL.size() + 1);
-	directMessage(handler, MsgCacheURL, (char*)obuf-(char*)obufStart,
-		      obufStart);
-      }
-      obuf = nboPackString(obufStart, hexDigest, strlen(hexDigest)+1);
-      directMessage(handler, MsgWantWHash, (char*)obuf-(char*)obufStart,
-		    obufStart);
-      break;
-    }
+    case MsgWantWHash: 
+		handleWorldHash(handler);
+		break;
 
     case MsgQueryGame:
       sendQueryGame(handler);
@@ -3149,41 +3146,13 @@ static void handleCommand(const void *rawbuf, bool udp, NetHandler *handler)
       sendQueryPlayers(handler);
       break;
 
-    // player is coming alive
-    case MsgAlive:
+    case MsgAlive:    // player is coming alive
 		handleGameJoinRequest(playerData);
 		break;
 
-    // player declaring self destroyed
-    case MsgKilled: {
-      if (playerData->player.isObserver())
-	break;
-      // data: id of killer, shot id of killer
-      PlayerId killer;
-      FlagType* flagType;
-      int16_t shot, reason;
-      int phydrv = -1;
-      buf = nboUnpackUByte(buf, killer);
-      buf = nboUnpackShort(buf, reason);
-      buf = nboUnpackShort(buf, shot);
-      buf = FlagType::unpack(buf, flagType);
-      if (reason == PhysicsDriverDeath) {
-	int32_t inPhyDrv;
-	buf = nboUnpackInt(buf, inPhyDrv);
-	phydrv = int(inPhyDrv);
-      }
-
-      // Sanity check on shot: Here we have the killer
-      if (killer != ServerPlayer) {
-	int si = (shot == -1 ? -1 : shot & 0x00FF);
-	if ((si < -1) || (si >= clOptions->maxShots))
-	  break;
-      }
-      playerData->player.endShotCredit--;
-      playerKilled(playerID, lookupPlayer(killer), reason, shot, flagType, phydrv);
-
-      break;
-    }
+    case MsgKilled: // player declaring self destroyed
+		handlePlayerKilled(playerData,buf);
+		break;
 
     // player requesting to drop flag
     case MsgDropFlag: {
@@ -3256,7 +3225,7 @@ static void handleCommand(const void *rawbuf, bool udp, NetHandler *handler)
 	}
 
 	if (!flagInfo || flagInfo->flag.type != Flags::Shield)
-	  playerKilled(hitPlayer, shooterPlayer, 1, shot,
+	  playerKilled(hitPlayer, shooterPlayer, GotShot, shot,
 		       firingInfo.flagType, false, false);
       }
       break;
@@ -4352,7 +4321,7 @@ int main(int argc, char **argv)
 			    bufStart);
 
 	      // kick 'em while they're down
-	      playerKilled(j, curMaxPlayers, 0, -1, Flags::Null, -1);
+	      playerKilled(j, curMaxPlayers, GotKilledMsg, -1, Flags::Null, -1);
 
 	      // be sure to reset the player!
 	      player->player.setDead();

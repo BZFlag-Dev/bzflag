@@ -1469,7 +1469,7 @@ BZF_API bool bz_killPlayer ( int playeID, bool spawnOnBase, int killerID, const 
 		flag = flagMap.find(std::string(flagType))->second;
 	}
 
-	playerKilled(playeID, killerID, 0, -1, flag ? flag : Flags::Null, -1,spawnOnBase);
+	playerKilled(playeID, killerID, GotKilledMsg, -1, flag ? flag : Flags::Null, -1,spawnOnBase);
 
 	return true;
 }

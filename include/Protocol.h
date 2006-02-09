@@ -173,12 +173,17 @@ const uint16_t		RejectIDBanned = 0x000B;
 // sound type codes
 const uint16_t		LocalCustomSound = 0x0001;
 
-
-// death by obstacle
-// FIXME: really a killed reason, NOT a message type.
-// should not be here at all, should be in BlowedUpReason
-const uint16_t		PhysicsDriverDeath = 0x7064;		// 'pd'
-
+enum BlowedUpReason {
+	GotKilledMsg,
+	GotShot,
+	GotRunOver,
+	GotCaptured,
+	GenocideEffect,
+	SelfDestruct,
+	WaterDeath,
+	PhysicsDriverDeath,
+	LastReason
+};
 
 // request for additional UDP link
 const uint16_t		MsgUDPLinkRequest = 0x6f66;		// 'of'

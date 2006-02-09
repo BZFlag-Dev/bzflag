@@ -31,6 +31,7 @@ void broadcastPlayerStateUpdate ( void );
 void sendTextMessage ( int destPlayer, int sourcePlayer, const char* text, int len, bool broadcast = false, bool recordOnly = false );
 void sendMessageAlive ( int playerID, float pos[3], float rot );
 bool sendPlayerStateMessage( GameKeeper::Player *playerData, bool shortState);
+void sendPlayerKilledMessage(int victimIndex, int killerIndex, BlowedUpReason reason, int16_t shotIndex, const FlagType*flagType, int phydrv);
 
 
 // messages sent to just network users ( like client query )

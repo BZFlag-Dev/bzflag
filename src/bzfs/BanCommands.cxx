@@ -427,7 +427,7 @@ bool KillCommand::operator() (const char	 *message,
       sendMessage(ServerPlayer, killEvent.killedID, killmessage);
     }
     // kill the player
-    playerKilled(killEvent.killedID, ServerPlayer, 0, -1, Flags::Null, -1);
+    playerKilled(killEvent.killedID, ServerPlayer, GotKilledMsg, -1, Flags::Null, -1);
 
   } else {
     char errormessage[MessageLen];

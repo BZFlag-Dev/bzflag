@@ -116,6 +116,60 @@ void handleWorldChunk( NetHandler *handler, void *buf )
 	sendWorldChunk(handler, ptr);
 }
 
+void handleWorldSettings( NetHandler *handler )
+{
+	if(handler)
+		pwrite(handler, worldSettings, 4 + WorldSettingsSize);
+}
+
+void handleWorldHash( NetHandler *handler )
+{
+	if(!handler)
+		return;
+
+	void *obuf, *obufStart = getDirectMessageBuffer();
+	if (clOptions->cacheURL.size() > 0)
+	{
+		obuf = nboPackString(obufStart, clOptions->cacheURL.c_str(), clOptions->cacheURL.size() + 1);
+		directMessage(handler, MsgCacheURL, (char*)obuf-(char*)obufStart, obufStart);
+	}
+	obuf = nboPackString(obufStart, hexDigest, strlen(hexDigest)+1);
+	directMessage(handler, MsgWantWHash, (char*)obuf-(char*)obufStart, obufStart);
+}
+
+void handlePlayerKilled ( GameKeeper::Player *playerData, void* buffer )
+{
+	if (!playerData || playerData->player.isObserver())
+		return;
+
+	// data: id of killer, shot id of killer
+	PlayerId killer;
+	FlagType* flagType;
+	int16_t shot, reason;
+	int phydrv = -1;
+
+	buffer = nboUnpackUByte(buffer, killer);
+	buffer = nboUnpackShort(buffer, reason);
+	buffer = nboUnpackShort(buffer, shot);
+	buffer = FlagType::unpack(buffer, flagType);
+
+	if (reason == PhysicsDriverDeath)
+	{
+		int32_t inPhyDrv;
+		buffer = nboUnpackInt(buffer, inPhyDrv);
+		phydrv = int(inPhyDrv);
+	}
+
+	if (killer != ServerPlayer)	// Sanity check on shot: Here we have the killer
+	{
+		int si = (shot == -1 ? -1 : shot & 0x00FF);
+		if ((si < -1) || (si >= clOptions->maxShots))
+			return;
+	}
+	playerData->player.endShotCredit--;
+	playerKilled(playerData->getIndex(), lookupPlayer(killer), (BlowedUpReason)reason, shot, flagType, phydrv);
+}
+
 void handleGameJoinRequest( GameKeeper::Player *playerData )
 {
 	// player is on the waiting list
@@ -128,7 +182,7 @@ void handleGameJoinRequest( GameKeeper::Player *playerData )
 
 		// Make them pay dearly for trying to rejoin quickly
 		playerAlive(playerData->getIndex());
-		playerKilled(playerData->getIndex(), playerData->getIndex(), 0, -1, Flags::Null, -1);
+		playerKilled(playerData->getIndex(), playerData->getIndex(), GotKilledMsg, -1, Flags::Null, -1);
 		return;
 	}
 

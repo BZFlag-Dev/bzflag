@@ -171,18 +171,6 @@ static float FarPlane = FarPlaneDefault;
 static float FarDeepPlane = FarDeepPlaneDefault;
 static float NearPlane = NearPlaneNormal;
 
-enum BlowedUpReason {
-  GotKilledMsg,
-  GotShot,
-  GotRunOver,
-  GotCaptured,
-  GenocideEffect,
-  SelfDestruct,
-  WaterDeath,
-  LastReason,
-  DeathTouch = PhysicsDriverDeath
-};
-
 static const char*	blowedUpMessage[] = {
   NULL,
   "Got shot by ",
@@ -3369,30 +3357,29 @@ static bool		gotBlowedUp(BaseLocalPlayer* tank,
     // tell server I'm dead in case it doesn't already know
     if (reason == GotShot || reason == GotRunOver ||
 	reason == GenocideEffect || reason == SelfDestruct ||
-	reason == WaterDeath || reason == DeathTouch)
+	reason == WaterDeath || reason == PhysicsDriverDeath)
       serverLink->sendKilled(tank->getId(), killer, reason, shotId, flagType,
 			     phydrv);
   }
 
   // print reason if it's my tank
-  if ((tank == myTank) &&
-      (((reason < LastReason) && blowedUpMessage[reason]) ||
-       (reason == PhysicsDriverDeath))) {
-
+  if ((tank == myTank) && (reason < LastReason ))
+  {
     std::string blowedUpNotice;
-    if (reason < LastReason) {
-      blowedUpNotice = blowedUpMessage[reason];
-    }
-    else if (reason == PhysicsDriverDeath) {
+    if (reason < PhysicsDriverDeath)
+	{
+		if (blowedUpMessage[reason])
+			blowedUpNotice = blowedUpMessage[reason];
+		else
+			blowedUpNotice = "Invalid reason";
+	}
+    else
+	{
       const PhysicsDriver* driver = PHYDRVMGR.getDriver(phydrv);
-      if (driver) {
-	blowedUpNotice = driver->getDeathMsg();
-      } else {
-	blowedUpNotice = "Killed by unknown obstacle";
-      }
-    }
-    else {
-      blowedUpNotice = "Invalid reason";
+      if (driver)
+		blowedUpNotice = driver->getDeathMsg();
+	  else
+		blowedUpNotice = "Killed by unknown obstacle";
     }
 
     // first, check if i'm the culprit
@@ -3524,7 +3511,7 @@ static void		checkEnvironment()
   }
   // if not dead yet, see if i'm sitting on death
   else if (myTank->getDeathPhysicsDriver() >= 0) {
-    gotBlowedUp(myTank, DeathTouch, ServerPlayer, NULL,
+    gotBlowedUp(myTank, PhysicsDriverDeath, ServerPlayer, NULL,
 		myTank->getDeathPhysicsDriver());
   }
   // if not dead yet, see if i've dropped below the death level
@@ -3990,7 +3977,7 @@ static void		checkEnvironment(RobotPlayer* tank)
   }
   // if not dead yet, see if i'm sitting on death
   else if (tank->getDeathPhysicsDriver() >= 0) {
-    gotBlowedUp(tank, DeathTouch, ServerPlayer, NULL,
+    gotBlowedUp(tank, PhysicsDriverDeath, ServerPlayer, NULL,
 		tank->getDeathPhysicsDriver());
   }
   // if not dead yet, see if the robot dropped below the death level

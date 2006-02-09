@@ -21,6 +21,9 @@ void handleClientExit ( GameKeeper::Player *playerData );
 void handleSetVar ( NetHandler *netHandler );
 void handleFlagNegotiation( NetHandler *handler, void **buf, int len );
 void handleWorldChunk( NetHandler *handler, void *buf );
+void handleWorldSettings( NetHandler *handler );
+void handleWorldHash( NetHandler *handler );
+void handlePlayerKilled( GameKeeper::Player *playerData, void* buffer );
 
 void handleGameJoinRequest( GameKeeper::Player *playerData );
 

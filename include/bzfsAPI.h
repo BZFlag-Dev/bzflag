@@ -1369,6 +1369,18 @@ typedef struct bz_PlayerUpdateState
 	}
 }bz_PlayerUpdateState;
 
+typedef enum 
+{
+	eGotKilled,
+	eGotShot,
+	eGotRunOver,
+	eGotCaptured,
+	eGenocideEffect,
+	eSelfDestruct,
+	eWaterDeath,
+	ePhysicsDriverDeath
+}bz_ePlayerDeathReason;
+
 class BZF_API bz_ServerSidePlayerHandler
 {
 public:
@@ -1381,6 +1393,8 @@ public:
 	virtual void playerAccepted ( void ){};
 	virtual void playerSpawned ( int player, float pos[3], float rot ){};
 	virtual void textMessage ( int dest, int source, const char* text ){};
+	virtual void playerKilledMessage(int victimIndex, int killerIndex, bz_ePlayerDeathReason reason, int shotIndex, const char *flagType, int phydrv){};
+
 
 	virtual void flagUpdate ( int count, bz_FlagUpdateRecord **flagList ){};
 	virtual void playerInfoUpdate ( bz_PlayerInfoUpdateRecord *playerRecord ){};
