@@ -66,6 +66,7 @@ void logDetail::process( bz_EventData *eventData )
   bz_SlashCommandEventData_V1 *cmdData = (bz_SlashCommandEventData_V1 *) eventData;
   bz_PlayerJoinPartEventData_V1 *joinPartData = (bz_PlayerJoinPartEventData_V1 *) eventData;
   bz_PlayerAuthEventData_V1 *authData = (bz_PlayerAuthEventData_V1 *) eventData;
+  char temp[9] = {0};
 
   if (eventData) {
     switch (eventData->eventType) {
@@ -74,7 +75,10 @@ void logDetail::process( bz_EventData *eventData )
 	// Tokenize the stream and check the first word
 	// /report -> MSG-REPORT
 	// anything -> MSG-COMMAND
-	if (strcasecmp( cmdData->message.c_str(), "/REPORT ") == 0 ) {
+
+	strncpy(temp, cmdData->message.c_str() , 8);
+
+	if (strcasecmp( temp, "/REPORT ") == 0 ) {
 	  cout << "MSG-REPORT ";
 	  displayCallsign( cmdData->from );
 	  cout << " " << cmdData->message.c_str()+8 << endl;
