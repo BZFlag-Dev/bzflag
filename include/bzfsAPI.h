@@ -1342,7 +1342,7 @@ typedef enum
 	eAlive,				// player is alive
 	ePaused,			// player is paused
 	eExploding,			// currently blowing up
-	eTeleporting,		// teleported recently
+	eTeleporting		// teleported recently
 }bz_ePlayerStatus;
 
 typedef struct bz_PlayerUpdateState
