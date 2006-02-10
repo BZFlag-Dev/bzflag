@@ -106,7 +106,7 @@ void SaveWorldMenu::resize(int _width, int _height)
   x = 0.5f * ((float)_width - 0.75f * titleWidth);
   y -= 0.6f * 3 * titleHeight;
   const float h = fm.getStrHeight(listHUD[1]->getFontFace(), fontSize, " ");
-  const int count = listHUD.size();
+  const int count = (const int)listHUD.size();
   int i;
   for (i = 1; i < count-1; i++) {
     listHUD[i]->setFontSize(fontSize);

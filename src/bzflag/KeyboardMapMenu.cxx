@@ -115,7 +115,7 @@ KeyboardMapMenu::KeyboardMapMenu() : defaultKey(this), editing(-1), quickKeysMen
   controls.push_back(createLabel(NULL, "Fullscreen:"));
   controls.push_back(quickKeys = createLabel(NULL, "Define Quick Keys"));
 
-  initNavigation(controls, 2, controls.size()-1);
+  initNavigation(controls, 2, (int)controls.size()-1);
 
   int i = 3;
   initkeymap("fire", i);
@@ -260,7 +260,7 @@ void KeyboardMapMenu::resize(int _width, int _height)
   y = topY;
   listHUD[2]->setFontSize(fontSize);
   const float h = fm.getStrHeight(fontFace, fontSize, " ");
-  const int count = listHUD.size() - 2;
+  const int count = (int)listHUD.size() - 2;
   const int mid = (count / 2);
 
   for (i = 2; i <= mid+1; i++) {

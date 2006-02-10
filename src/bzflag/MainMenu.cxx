@@ -96,7 +96,7 @@ void	  MainMenu::createControls()
   listHUD.push_back(quit);
 
   resize(HUDDialog::getWidth(), HUDDialog::getHeight());
-  initNavigation(listHUD, 2, listHUD.size() - 1);
+  initNavigation(listHUD, 2, (int)listHUD.size() - 1);
 
   // set focus back at the top in case the item we had selected does not exist anymore
   listHUD[2]->setFocus();
@@ -209,7 +209,7 @@ void			MainMenu::resize(int _width, int _height)
     = fm.getStrLength(fontFace, fontSize,
 		      ((HUDuiLabel*)listHUD[2])->getString());
   x = 0.5f * ((float)_width - firstWidth);
-  const int count = listHUD.size();
+  const int count = (const int)listHUD.size();
   for (int i = 2; i < count; i++) {
     HUDuiLabel* label = (HUDuiLabel*)listHUD[i];
     label->setFontSize(fontSize);

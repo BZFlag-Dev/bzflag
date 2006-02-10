@@ -571,7 +571,7 @@ inline void Player::setZpos (float z)
 
 inline int Player::getMaxShots() const
 {
-  return shots.size();
+  return (int)shots.size();
 }
 
 #endif /* __PLAYER_H__ */

@@ -260,7 +260,7 @@ ServerStartMenu::ServerStartMenu()
   failedMessage = createLabel("");
   controls.push_back(failedMessage);
 
-  initNavigation(controls, 1, controls.size()-3);
+  initNavigation(controls, 1, (int)controls.size()-3);
 
   // set settings
   loadSettings();
@@ -497,7 +497,7 @@ void ServerStartMenu::execute()
 #if defined(_WIN32)
 
     // Windows
-    int result = _spawnvp(_P_DETACH, serverCmd, (char* const*) args);
+    int result = (int)_spawnvp(_P_DETACH, serverCmd, (char* const*) args);
     if (result < 0) {
       if (errno == ENOENT)
 	setStatus("Failed... can't find server program.");
@@ -622,7 +622,7 @@ void ServerStartMenu::resize(int _width, int _height)
   x = 0.5f * (float)_width;
   y -= 0.6f * titleHeight;
   const float h = fm.getStrHeight(listHUD[1]->getFontFace(), fontSize, " ");
-  const int count = listHUD.size();
+  const int count = (const int)listHUD.size();
   for (int i = 1; i < count; i++) {
     if (listHUD[i] == start) {
       y -= 1.5f * h;

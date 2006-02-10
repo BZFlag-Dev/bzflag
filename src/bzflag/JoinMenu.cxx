@@ -131,7 +131,7 @@ JoinMenu::JoinMenu() : serverStartMenu(NULL), serverMenu(NULL)
   failedMessage->setString("");
   listHUD.push_back(failedMessage);
 
-  initNavigation(listHUD, 1, listHUD.size() - 3);
+  initNavigation(listHUD, 1, (int)listHUD.size() - 3);
 
   // cut teamIcon out of the nav loop
   team->setNext(server);
@@ -324,7 +324,7 @@ void JoinMenu::resize(int _width, int _height)
   y -= 0.6f * titleHeight;
   listHUD[1]->setFontSize(fontSize);
   const float h = fm.getStrHeight(MainMenu::getFontFace(), fontSize, "");
-  const int count = listHUD.size();
+  const int count = (const int)listHUD.size();
   for (int i = 1; i < count; i++) {
     listHUD[i]->setFontSize(fontSize);
     listHUD[i]->setPosition(x, y);

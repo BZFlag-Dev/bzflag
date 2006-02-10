@@ -52,7 +52,7 @@ LoginMenu::LoginMenu()
   login->setString("Login");
   list.push_back(login);
 
-  initNavigation(list, 1, list.size() - 1);
+  initNavigation(list, 1, (int)list.size() - 1);
 }
 
 LoginMenu::~LoginMenu()
@@ -100,7 +100,7 @@ void LoginMenu::resize(int width, int height)
   // reposition options
   x  = 0.5f * ((float)width - 0.5f * titleWidth);
   y -= 0.6f * titleHeight;
-  const int count = list.size();
+  const int count = (const int)list.size();
   const float h = fm.getStrHeight(MainMenu::getFontFace(), fontSize, " ");
   for (i = 1; i < count; i++) {
     list[i]->setFontSize(fontSize);

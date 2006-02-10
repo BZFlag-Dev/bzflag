@@ -213,7 +213,7 @@ void ServerMenu::setSelected(int index)
 {
   // clamp index
   if (index < 0)
-    index = serverList.size() - 1;
+    index = (int)serverList.size() - 1;
   else if (index != 0 && index >= (int)serverList.size())
     index = 0;
 
@@ -733,10 +733,10 @@ void			ServerMenu::updateStatus() {
     selectedIndex = -1;
     setSelected(0);
 
-    serversFound = serverList.size();
+    serversFound = (unsigned int)serverList.size();
   }
 
-  realServersFound = realServerList.size();
+  realServersFound = (unsigned int)realServerList.size();
 }
 
 

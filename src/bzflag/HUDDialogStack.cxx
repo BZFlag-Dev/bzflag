@@ -43,7 +43,7 @@ bool HUDDialogStack::isActive() const
 
 HUDDialog* HUDDialogStack::top() const
 {
-  const int index = stack.size();
+  const int index = (const int)stack.size();
   if (index == 0) return NULL;
   return stack[index - 1];
 }
@@ -52,7 +52,7 @@ void HUDDialogStack::push(HUDDialog* dialog)
 {
   if (!dialog) return;
   if (isActive()) {
-    const int index = stack.size() - 1;
+    const int index = (int)stack.size() - 1;
     stack[index]->setFocus(HUDui::getFocus());
     stack[index]->dismiss();
   }
@@ -69,7 +69,7 @@ void HUDDialogStack::push(HUDDialog* dialog)
 void HUDDialogStack::pop()
 {
   if (isActive()) {
-    const int index = stack.size() - 1;
+    const int index = (int)stack.size() - 1;
     stack[index]->setFocus(HUDui::getFocus());
     stack[index]->dismiss();
     std::vector<HUDDialog*>::iterator it = stack.begin();

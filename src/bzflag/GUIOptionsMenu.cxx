@@ -271,7 +271,7 @@ GUIOptionsMenu::GUIOptionsMenu()
   option->update();
   listHUD.push_back(option);
 
-  initNavigation(listHUD, 1, listHUD.size()-1);
+  initNavigation(listHUD, 1, (int)listHUD.size()-1);
 }
 
 GUIOptionsMenu::~GUIOptionsMenu()
@@ -305,7 +305,7 @@ void			GUIOptionsMenu::resize(int _width, int _height)
   x = 0.54f * (float)_width;
   y -= 0.6f * titleHeight;
   const float h = fm.getStrHeight(MainMenu::getFontFace(), fontSize, " ");
-  const int count = listHUD.size();
+  const int count = (const int)listHUD.size();
   for (int i = 1; i < count; i++) {
     listHUD[i]->setFontSize(fontSize);
     listHUD[i]->setPosition(x, y);
@@ -342,8 +342,8 @@ void			GUIOptionsMenu::resize(int _width, int _height)
     // underline color - find index of mode string in options
     const std::vector<std::string> &opts = ((HUDuiList*)listHUD[i])->getList();
     std::string uColor = BZDB.get("underlineColor");
-    ((HUDuiList*)listHUD[i++])->setIndex(std::find(opts.begin(), opts.end(), uColor) -
-					 opts.begin());
+    ((HUDuiList*)listHUD[i++])->setIndex((int)(std::find(opts.begin(), opts.end(), uColor) -
+					 opts.begin()));
 
     ((HUDuiList*)listHUD[i++])->setIndex(static_cast<int>
 					 (BZDB.eval("killerhighlight")));
