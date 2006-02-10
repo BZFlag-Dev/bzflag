@@ -148,7 +148,6 @@ static TimeKeeper lastWorldParmChange;
 bool       worldWasSentToAPlayer   = false;
 
 void sendFilteredMessage(int playerIndex, PlayerId dstPlayer, const char *message);
-static void dropPlayerFlag(GameKeeper::Player &playerData, const float dropPos[3]);
 static void dropAssignedFlag(int playerIndex);
 static std::string evaluateString(const std::string&);
 
@@ -1806,19 +1805,14 @@ void sendDrop(FlagInfo &flag)
 {
   // see if someone had grabbed flag.  tell 'em to drop it.
   const int playerIndex = flag.player;
-
-  GameKeeper::Player *playerData
-    = GameKeeper::Player::getPlayerByIndex(playerIndex);
+  GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(playerIndex);
   if (!playerData)
     return;
 
   flag.player      = -1;
   playerData->player.resetFlag();
 
-  void *bufStart = getDirectMessageBuffer();
-  void *buf      = nboPackUByte(bufStart, playerIndex);
-  buf	    = flag.pack(buf);
-  broadcastMessage(MsgDropFlag, (char*)buf-(char*)bufStart, bufStart);
+  sendDropFlagMessage(playerIndex,flag);
 }
 
 void zapFlag(FlagInfo &flag)
@@ -2576,8 +2570,7 @@ void dropFlag(FlagInfo& drpFlag, const float dropPos[3])
   const float maxZ = MAXFLOAT;
 
   float landing[3] = {pos[0], pos[1], pos[2]};
-  bool safelyDropped =
-	DropGeometry::dropTeamFlag(landing, minZ, maxZ, flagTeam);
+  bool safelyDropped = DropGeometry::dropTeamFlag(landing, minZ, maxZ, flagTeam);
 
   bool vanish;
 
@@ -2602,8 +2595,7 @@ void dropFlag(FlagInfo& drpFlag, const float dropPos[3])
     if (!world->getFlagDropPoint(&drpFlag, pos, landing)) {
       // try the center
       landing[0] = landing[1] = landing[2] = 0.0f;
-      safelyDropped =
-	DropGeometry::dropTeamFlag(landing, minZ, maxZ, flagTeam);
+      safelyDropped = DropGeometry::dropTeamFlag(landing, minZ, maxZ, flagTeam);
       if (!safelyDropped) {
 	// ok, we give up, send it home
 	TeamBases &teamBases = bases[flagTeam];
@@ -2631,18 +2623,15 @@ void dropFlag(FlagInfo& drpFlag, const float dropPos[3])
 
   // notify of new flag state
   sendFlagUpdate(drpFlag);
-
 }
 
 
-static void dropPlayerFlag(GameKeeper::Player &playerData, const float dropPos[3])
+void dropPlayerFlag(GameKeeper::Player &playerData, const float dropPos[3])
 {
   const int flagIndex = playerData.player.getFlag();
-  if (flagIndex < 0) {
+  if (flagIndex < 0)
     return;
-  }
   dropFlag(*FlagInfo::get(flagIndex), dropPos);
-  return;
 }
 
 
@@ -3122,13 +3111,9 @@ static void handleCommand(const void *rawbuf, bool udp, NetHandler *handler)
 		break;
 
     // player requesting to drop flag
-    case MsgDropFlag: {
-      // data: position of drop
-      float pos[3];
-      buf = nboUnpackVector(buf, pos);
-      dropPlayerFlag(*playerData, pos);
-      break;
-    }
+    case MsgDropFlag:
+		handlePlayerFlagDrop(playerData,buf);
+		break;
 
     // player has captured a flag
     case MsgCaptureFlag: {
@@ -4112,6 +4097,11 @@ int main(int argc, char **argv)
   int readySetGo = -1; // match countdown timer
   while (!done) {
 
+	// fire off a tick event
+	bz_TickEventData_V1	tickData;
+	tickData.time = TimeKeeper::getCurrent().getSeconds();
+	worldEventManager.callEvents(bz_eTickEvent,&tickData);
+
     // see if the octree needs to be reloaded
     world->checkCollisionManager();
 
@@ -4787,11 +4777,6 @@ int main(int argc, char **argv)
 
     // Fire world weapons
     world->getWorldWeapons().fire();
-
-    // fire off a tick event
-    bz_TickEventData_V1	tickData;
-    tickData.time = TimeKeeper::getCurrent().getSeconds();
-    worldEventManager.callEvents(bz_eTickEvent,&tickData);
 
     // Clean pending players
     bool resetGame = GameKeeper::Player::clean();

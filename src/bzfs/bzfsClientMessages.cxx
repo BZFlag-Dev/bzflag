@@ -236,6 +236,15 @@ bool updatePlayerState(GameKeeper::Player *playerData, PlayerState &state, float
 	return true;
 }
 
+void handlePlayerFlagDrop( GameKeeper::Player *playerData, void* buffer )
+{
+	// data: position of drop
+	float pos[3];
+	buffer = nboUnpackVector(buffer, pos);
+
+	dropPlayerFlag(*playerData, pos);
+}
+
 // Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***

@@ -24,6 +24,7 @@ void handleWorldChunk( NetHandler *handler, void *buf );
 void handleWorldSettings( NetHandler *handler );
 void handleWorldHash( NetHandler *handler );
 void handlePlayerKilled( GameKeeper::Player *playerData, void* buffer );
+void handlePlayerFlagDrop( GameKeeper::Player *playerData, void* buffer );
 
 void handleGameJoinRequest( GameKeeper::Player *playerData );
 

@@ -15,6 +15,31 @@
 #include "PlayerState.h"
 #include <assert.h>
 
+void flagToAPIFlag ( FlagInfo &flag, bz_FlagUpdateRecord *flagRecord )
+{
+	bool hide = (flag.flag.type->flagTeam == ::NoTeam) && (flag.player == -1);
+
+	flagRecord->index = flag.getIndex();
+
+	if (hide)
+	{
+		flagRecord->type[0] = 'P';
+		flagRecord->type[1] = 'Z';
+	}
+	else
+		strncpy(flagRecord->type,flag.flag.type->flagAbbv,2);
+
+	flagRecord->status = flag.flag.status;
+	flagRecord->endurance = flag.flag.endurance;
+	flagRecord->owner = flag.flag.owner;
+	flagRecord->position[0] = flag.flag.position[0];flagRecord->position[1] = flag.flag.position[1];flagRecord->position[2] = flag.flag.position[2];
+	flagRecord->launchPosition[0] = flag.flag.launchPosition[0];flagRecord->launchPosition[1] = flag.flag.launchPosition[1];flagRecord->launchPosition[2] = flag.flag.launchPosition[2];
+	flagRecord->landingPosition[0] = flag.flag.landingPosition[0];flagRecord->landingPosition[1] = flag.flag.landingPosition[1];flagRecord->landingPosition[2] = flag.flag.landingPosition[2];
+	flagRecord->flightTime = flag.flag.flightTime;
+	flagRecord->flightEnd = flag.flag.flightEnd;
+	flagRecord->initialVelocity = flag.flag.initialVelocity;
+}
+
 void sendRemovePlayerMessage ( int playerID )
 {
 	void *buf, *bufStart = getDirectMessageBuffer();
@@ -48,29 +73,7 @@ void sendFlagUpdateMessage ( int playerID )
 			if (flag.exist())
 			{
 				bz_FlagUpdateRecord	*flagRecord = new bz_FlagUpdateRecord;
-
-				bool hide = (flag.flag.type->flagTeam == ::NoTeam) && (flag.player == -1);
-				
-				flagRecord->index = flagIndex;
-
-				if (hide)
-				{
-					flagRecord->type[0] = 'P';
-					flagRecord->type[1] = 'Z';
-				}
-				else
-					strncpy(flagRecord->type,flag.flag.type->flagAbbv,2);
-
-				flagRecord->status = flag.flag.status;
-				flagRecord->endurance = flag.flag.endurance;
-				flagRecord->owner = flag.flag.owner;
-				flagRecord->position[0] = flag.flag.position[0];flagRecord->position[1] = flag.flag.position[1];flagRecord->position[2] = flag.flag.position[2];
-				flagRecord->launchPosition[0] = flag.flag.launchPosition[0];flagRecord->launchPosition[1] = flag.flag.launchPosition[1];flagRecord->launchPosition[2] = flag.flag.launchPosition[2];
-				flagRecord->landingPosition[0] = flag.flag.landingPosition[0];flagRecord->landingPosition[1] = flag.flag.landingPosition[1];flagRecord->landingPosition[2] = flag.flag.landingPosition[2];
-				flagRecord->flightTime = flag.flag.flightTime;
-				flagRecord->flightEnd = flag.flag.flightEnd;
-				flagRecord->initialVelocity = flag.flag.initialVelocity;
-
+				flagToAPIFlag(flag,flagRecord);
 				flagRecordList.push_back(flagRecord);
 			}
 		}
@@ -640,6 +643,25 @@ void sendScoreOverMessage( int playerID, TeamColor team )
 		if (otherData && otherData->playerHandler)
 			otherData->playerHandler->scoreLimitReached(playerID,convertTeam(team));
 	}
+}
+
+void sendDropFlagMessage ( int playerIndex, FlagInfo &flag )
+{
+	void *bufStart = getDirectMessageBuffer();
+	void *buf      = nboPackUByte(bufStart, playerIndex);
+	buf	    = flag.pack(buf);
+	broadcastMessage(MsgDropFlag, (char*)buf-(char*)bufStart, bufStart);
+
+	bz_FlagUpdateRecord		*flagRecord = new bz_FlagUpdateRecord;
+	flagToAPIFlag(flag,flagRecord);
+
+	for (int i = 0; i < curMaxPlayers; i++)
+	{
+		GameKeeper::Player* otherData = GameKeeper::Player::getPlayerByIndex(i);
+		if (otherData && otherData->playerHandler)
+			otherData->playerHandler->flagUpdate ( 1, &flagRecord );
+	}
+	delete(flagRecord);
 }
 
 void setGeneralMessageInfo ( void **buffer, uint16_t &code, uint16_t &len )

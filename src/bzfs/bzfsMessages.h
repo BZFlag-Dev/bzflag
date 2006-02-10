@@ -32,10 +32,11 @@ void sendWorldChunk(NetHandler *handler, uint32_t ptr);
 void broadcastPlayerStateUpdate ( void );
 void sendTextMessage ( int destPlayer, int sourcePlayer, const char* text, int len, bool broadcast = false, bool recordOnly = false );
 void sendMessageAlive ( int playerID, float pos[3], float rot );
-bool sendPlayerStateMessage( GameKeeper::Player *playerData, bool shortState);
-void sendPlayerKilledMessage(int victimIndex, int killerIndex, BlowedUpReason reason, int16_t shotIndex, const FlagType*flagType, int phydrv);
-void sendPlayerScoreUpdate( GameKeeper::Player *player );
-void sendScoreOverMessage( int playerID, TeamColor team  );
+bool sendPlayerStateMessage ( GameKeeper::Player *playerData, bool shortState);
+void sendPlayerKilledMessage (int victimIndex, int killerIndex, BlowedUpReason reason, int16_t shotIndex, const FlagType*flagType, int phydrv);
+void sendPlayerScoreUpdate ( GameKeeper::Player *player );
+void sendScoreOverMessage ( int playerID, TeamColor team  );
+void sendDropFlagMessage ( int playerIndex, FlagInfo &flag );
 
 // messages sent to just network users ( like client query )
 int sendPlayerUpdateDirect(NetHandler *handler, GameKeeper::Player *otherData);

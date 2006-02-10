@@ -2274,6 +2274,15 @@ void bz_ServerSidePlayerHandler::updateState ( bz_PlayerUpdateState *state )
 	updatePlayerState(player,playerState,now,false);
 }
 
+void bz_ServerSidePlayerHandler::dropFlag ( float pos[3] )
+{
+	GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerID);
+	if (!player)
+		return;
+
+	dropPlayerFlag(*player,pos);
+}
+
 BZF_API int bz_addServerSidePlayer ( bz_ServerSidePlayerHandler *handler )
 {
 	handler->playerID = -1;

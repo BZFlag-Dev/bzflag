@@ -84,6 +84,7 @@ void pwriteBroadcast(const void *b, int l, int mask);
 int pwrite(NetHandler *handler, const void *b, int l);
 int lookupPlayer(const PlayerId& id);
 void playerKilled(int victimIndex, int killerIndex, BlowedUpReason reason, int16_t shotIndex, const FlagType *flagType, int phydrv, bool respawnOnBase = false);
+void dropPlayerFlag(GameKeeper::Player &playerData, const float dropPos[3]);
 
 typedef struct CheatProtectionOptions
 {

@@ -1411,6 +1411,7 @@ protected:
 	void setPlayerData ( const char* callsign, const char* email, const char* token, const char* clientVersion, bz_eTeamType team );
 	void joinGame ( void );
 	void updateState ( bz_PlayerUpdateState *state );
+	void dropFlag ( float pos[3] );
 };
 
 // *** NOTE *** support for server side players in incomplete.
