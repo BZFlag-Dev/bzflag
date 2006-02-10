@@ -1388,7 +1388,7 @@ class BZF_API bz_ServerSidePlayerHandler
 public:
 	virtual ~bz_ServerSidePlayerHandler(){};
 
-	virtual void added ( int playerIndex ) = 0;	// you must call setEntryData when this is called.
+	virtual void added ( int player ) = 0;	// you must call setEntryData when this is called.
 	virtual void removed ( void ){};
 	virtual void playerRemoved ( int playerIndex ){};
 	virtual void playerRejected ( bz_eRejectCodes code, const char* reason ){};
@@ -1396,7 +1396,7 @@ public:
 	virtual void playerSpawned ( int player, float pos[3], float rot ){};
 	virtual void textMessage ( int dest, int source, const char* text ){};
 	virtual void playerKilledMessage( int victimIndex, int killerIndex, bz_ePlayerDeathReason reason, int shotIndex, const char *flagType, int phydrv ){};
-	virtual void scoreLimitReached ( int playerID, bz_eTeamType team ){};
+	virtual void scoreLimitReached ( int player, bz_eTeamType team ){};
 
 
 	virtual void flagUpdate ( int count, bz_FlagUpdateRecord **flagList ){};
