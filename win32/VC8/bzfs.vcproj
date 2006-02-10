@@ -2428,6 +2428,16 @@
 				RelativePath="..\..\src\bzfs\bzfsPlayerStateVerify.h">
 			</File>
 		</Filter>
+		<Filter
+			Name="ChatVerification"
+			Filter="">
+			<File
+				RelativePath="..\..\src\bzfs\bzfsChatVerify.cxx">
+			</File>
+			<File
+				RelativePath="..\..\src\bzfs\bzfsChatVerify.h">
+			</File>
+		</Filter>
 	</Files>
 	<Globals>
 	</Globals>

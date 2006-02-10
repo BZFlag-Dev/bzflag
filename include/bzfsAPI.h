@@ -53,7 +53,8 @@ typedef enum
 	bz_eZoneExitEvent,
 	bz_ePlayerJoinEvent,
 	bz_ePlayerPartEvent,
-	bz_eChatMessageEvent,
+	bz_eRawChatMessageEvent,		// before filter
+	bz_eFilteredChatMessageEvent,	// after filter
 	bz_eUnknownSlashCommand,
 	bz_eGetPlayerSpawnPosEvent,
 	bz_eGetAutoTeamEvent,
@@ -156,6 +157,7 @@ typedef enum
 #define BZ_SERVER		-2
 #define BZ_ALLUSERS		-1
 #define BZ_NULLUSER		-3
+
 
 #define BZ_BZDBPERM_NA		0
 #define BZ_BZDBPERM_USER	1
@@ -385,7 +387,7 @@ class BZF_API bz_ChatEventData_V1 : public bz_EventData
 public:
 	bz_ChatEventData_V1() : bz_EventData()
 	{
-		eventType = bz_eChatMessageEvent;
+		eventType = bz_eRawChatMessageEvent;
 
 		from = -1;
 		to = -1;
@@ -1412,6 +1414,8 @@ protected:
 	void joinGame ( void );
 	void updateState ( bz_PlayerUpdateState *state );
 	void dropFlag ( float pos[3] );
+	void sendChatMessage ( const char* text, int targetPlayer = BZ_ALLUSERS );
+	void sendTeamChatMessage ( const char* text, bz_eTeamType targetTeam );
 };
 
 // *** NOTE *** support for server side players in incomplete.

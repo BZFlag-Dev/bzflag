@@ -2283,6 +2283,48 @@ void bz_ServerSidePlayerHandler::dropFlag ( float pos[3] )
 	dropPlayerFlag(*player,pos);
 }
 
+void bz_ServerSidePlayerHandler::sendChatMessage ( const char* text, int targetPlayer)
+{
+	GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerID);
+	if (!player || !text)
+		return;
+
+	PlayerId dstPlayer = targetPlayer == BZ_ALLUSERS ? AllPlayers : targetPlayer;
+
+	if (dstPlayer > LastRealPlayer)
+		return;
+
+	sendPlayerMessage(player,dstPlayer, text);
+}
+
+void bz_ServerSidePlayerHandler::sendTeamChatMessage ( const char* text, bz_eTeamType targetTeam )
+{
+	GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerID);
+	if (!player || !text)
+		return;
+
+	PlayerId dstPlayer = AllPlayers;
+	
+	switch(targetTeam) 
+	{
+	case eRogueTeam:
+	case eRedTeam:
+	case eGreenTeam:
+	case eBlueTeam:
+	case ePurpleTeam:
+	case eRabbitTeam:
+	case eHunterTeam:
+		dstPlayer = 250+(int)targetTeam;
+		break;
+
+	case eAdministrators:
+		dstPlayer = AdminPlayers;
+		break;
+	}
+
+	sendPlayerMessage(player,dstPlayer, text);
+}
+
 BZF_API int bz_addServerSidePlayer ( bz_ServerSidePlayerHandler *handler )
 {
 	handler->playerID = -1;

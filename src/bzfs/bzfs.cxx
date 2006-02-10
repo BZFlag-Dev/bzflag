@@ -1004,10 +1004,29 @@ void sendPlayerMessage(GameKeeper::Player *playerData, PlayerId dstPlayer,
     return; // bail out
   }
 
-  // filter the message, and send it
-  sendFilteredMessage(srcPlayer, dstPlayer, message);
 
-  return;
+  bz_ChatEventData_V1 chatData;
+  chatData.from = srcPlayer;
+  chatData.to = BZ_NULLUSER;
+
+  if (dstPlayer == AllPlayers)
+	  chatData.to = BZ_ALLUSERS;
+  else if ( dstPlayer == AdminPlayers )
+	  chatData.team = eAdministrators;
+  else if ( dstPlayer > LastRealPlayer )
+	  chatData.team = convertTeam((TeamColor)(250-dstPlayer));
+  else
+	  chatData.to = dstPlayer;
+
+  chatData.message = message;
+  chatData.time = TimeKeeper::getCurrent().getSeconds();
+
+  // send any events that want to watch the chat
+  if (chatData.message.size())
+	  worldEventManager.callEvents(bz_eRawChatMessageEvent,&chatData);
+
+   if (chatData.message.size())
+	   sendFilteredMessage(srcPlayer, dstPlayer, chatData.message.c_str());
 }
 
 void sendFilteredMessage(int sendingPlayer, PlayerId recipientPlayer, const char *message)
@@ -1043,25 +1062,43 @@ void sendFilteredMessage(int sendingPlayer, PlayerId recipientPlayer, const char
   if (!senderData) {
     return;
   }
-  if (!senderData->accessInfo.hasPerm(PlayerAccessInfo::talk)) {
+  if (!senderData->accessInfo.hasPerm(PlayerAccessInfo::talk))
+  {
 
     // if the player were sending to is an admin
     GameKeeper::Player *recipientData = GameKeeper::Player::getPlayerByIndex(recipientPlayer);
 
     // don't care if they're real, just care if they're an admin
-    if (recipientData && recipientData->accessInfo.isOperator()) {
-      sendMessage(sendingPlayer, recipientPlayer, msg);
-      return;
-    } else if (recipientPlayer == AdminPlayers) {
-      sendMessage(sendingPlayer, recipientPlayer, msg);
+    if ( !(recipientData && recipientData->accessInfo.isOperator()) && (recipientPlayer != AdminPlayers) )
+	{
+	  sendMessage(ServerPlayer, sendingPlayer, "We're sorry, you are not allowed to talk!");
       return;
     }
-
-    sendMessage(ServerPlayer, sendingPlayer, "We're sorry, you are not allowed to talk!");
-    return; //bail out
   }
 
-  sendMessage(sendingPlayer, recipientPlayer, msg);
+  bz_ChatEventData_V1 chatData;
+  chatData.eventType = bz_eFilteredChatMessageEvent;
+  chatData.from = sendingPlayer;
+  chatData.to = BZ_NULLUSER;
+
+  if (recipientPlayer == AllPlayers)
+	  chatData.to = BZ_ALLUSERS;
+  else if ( recipientPlayer == AdminPlayers )
+	  chatData.team = eAdministrators;
+  else if ( recipientPlayer > LastRealPlayer )
+	  chatData.team = convertTeam((TeamColor)(250-recipientPlayer));
+  else
+	  chatData.to = recipientPlayer;
+
+  chatData.message = msg;
+  chatData.time = TimeKeeper::getCurrent().getSeconds();
+
+  // send any events that want to watch the chat
+  if (chatData.message.size())
+	  worldEventManager.callEvents(bz_eFilteredChatMessageEvent,&chatData);
+
+  if (chatData.message.size())
+	sendMessage(sendingPlayer, recipientPlayer, chatData.message.c_str());
 }
 
 void sendMessage(int playerIndex, PlayerId dstPlayer, const char *message)
@@ -2956,93 +2993,6 @@ static void adjustTolerances()
   return;
 }
 
-
-bool checkSpam(char* message, GameKeeper::Player* playerData, int t)
-{
-  PlayerInfo &player = playerData->player;
-  const std::string &oldMsg = player.getLastMsg();
-  float dt = (float)(TimeKeeper::getCurrent() - player.getLastMsgTime());
-
-  // don't consider whitespace
-  std::string newMsg = TextUtils::no_whitespace(message);
-
-  // if it's first message, or enough time since last message - can't
-  // be spam yet
-  if (oldMsg.length() > 0 && dt < clOptions->msgTimer) {
-    // might be spam, start doing comparisons
-    // does it match the last message? (disregarding whitespace and case)
-    if (TextUtils::compare_nocase(newMsg, oldMsg) == 0) {
-      player.incSpamWarns();
-      sendMessage(ServerPlayer, t, "***Server Warning: Please do not spam.");
-
-      // has this player already had his share of warnings?
-      if (player.getSpamWarns() > clOptions->spamWarnMax
-	  || clOptions->spamWarnMax == 0) {
-	sendMessage(ServerPlayer, t, "You were kicked because of spamming.");
-	DEBUG2("Kicking player %s [%d] for spamming too much: "
-	       "2 messages sent within %fs after %d warnings",
-	       player.getCallSign(), t, dt, player.getSpamWarns());
-	removePlayer(t, "spam", true);
-	return true;
-      }
-    }
-  }
-
-  // record this message for next time
-  player.setLastMsg(newMsg);
-  return false;
-}
-
-
-/** check the message being sent for invalid characters.  long
- *  unreadable messages are indicative of denial-of-service and crash
- *  attempts.  remove the player immediately, only modified clients
- *  should be sending such garbage messages.
- *
- *  that said, more than one badChar should be allowed since there
- *  might be two "magic byte" characters being used for backwards
- *  compatibility client-side message processing (as was used for the
- *  /me command at one point).
- */
-bool checkGarbage(char* message, GameKeeper::Player* playerData, int t)
-{
-  PlayerInfo &player = playerData->player;
-  static const int tooLong = MaxPacketLen / 2;
-  const int totalChars = strlen(message);
-
-  /* if the message is very long and looks like junk, give the user
-   * the boot.
-   */
-  if (totalChars > tooLong) {
-    int badChars = 0;
-    int i;
-
-    /* tally up the junk */
-    for (i=0; i < totalChars; i++) {
-      if (!TextUtils::isPrintable(message[i])) {
-	badChars++;
-      }
-    }
-
-    /* even once is once too many since they may be attempting to
-     * cause a crash, but allow a few anyways.
-     */
-    if (badChars > 5) {
-      sendMessage(ServerPlayer, t, "You were kicked because of a garbage message.");
-      DEBUG2("Kicking player %s [%d] for sending a garbage message: %d of %d non-printable chars",
-	     player.getCallSign(), t, badChars, totalChars);
-      removePlayer(t, "garbage");
-
-      // they're only happy when it rains
-      return true;
-    }
-  }
-
-  // the world is not enough
-  return false;
-}
-
-
 static void handleCommand(const void *rawbuf, bool udp, NetHandler *handler)
 {
   if (!rawbuf) {
@@ -3110,8 +3060,7 @@ static void handleCommand(const void *rawbuf, bool udp, NetHandler *handler)
 		handlePlayerKilled(playerData,buf);
 		break;
 
-    // player requesting to drop flag
-    case MsgDropFlag:
+    case MsgDropFlag:    // player requesting to drop flag
 		handlePlayerFlagDrop(playerData,buf);
 		break;
 
@@ -3197,73 +3146,8 @@ static void handleCommand(const void *rawbuf, bool udp, NetHandler *handler)
     }
 
     // player sending a message
-    case MsgMessage: {
-      // data: target player/team, message string
-      PlayerId dstPlayer;
-      char message[MessageLen];
-      buf = nboUnpackUByte(buf, dstPlayer);
-      buf = nboUnpackString(buf, message, sizeof(message));
-      message[MessageLen - 1] = '\0';
-      playerData->player.hasSent();
-      if (dstPlayer == AllPlayers) {
-	DEBUG1("Player %s [%d] -> All: %s\n", playerData->player.getCallSign(),
-	       playerID, message);
-      } else if (dstPlayer == AdminPlayers) {
-	DEBUG1("Player %s [%d] -> Admin: %s\n",
-	       playerData->player.getCallSign(), playerID, message);
-      } else if (dstPlayer > LastRealPlayer) {
-	DEBUG1("Player %s [%d] -> Team: %s\n",
-	       playerData->player.getCallSign(), playerID, message);
-      } else {
-	GameKeeper::Player *p = GameKeeper::Player::getPlayerByIndex(dstPlayer);
-	if (p != NULL) {
-	  DEBUG1("Player %s [%d] -> Player %s [%d]: %s\n",
-	       playerData->player.getCallSign(), playerID, p->player.getCallSign(), dstPlayer, message);
-	} else {
-	      DEBUG1("Player %s [%d] -> Player Unknown [%d]: %s\n",
-	       playerData->player.getCallSign(), playerID, dstPlayer, message);
-	}
-      }
-      // check for spamming
-      if (checkSpam(message, playerData, playerID))
-	break;
-
-      // check for garbage
-      if (checkGarbage(message, playerData, playerID))
-	break;
-
-      GameKeeper::Player *toData = GameKeeper::Player::getPlayerByIndex(dstPlayer);
-      int toTeam = -1;
-      if (toData)
-		toTeam = toData->player.getTeam();
-
-      bz_ChatEventData_V1 chatData;
-      chatData.from = playerID;
-      chatData.to = BZ_NULLUSER;
-
-	  if (dstPlayer == AllPlayers)
-		chatData.to = BZ_ALLUSERS;
-	  else if ( dstPlayer == AdminPlayers )
-		chatData.team = eAdministrators;
-	  else if ( dstPlayer > LastRealPlayer )
-		chatData.team =convertTeam((TeamColor)(250-dstPlayer));
-	  else
-		chatData.to = dstPlayer;
-
-
-      chatData.message = message;
-      chatData.time = TimeKeeper::getCurrent().getSeconds();
-
-      // send any events that want to watch the chat
-      // everyone
-      if ((strlen(message) < 2) || !((message[0] == '/') && (message[1] != '/')))
-	worldEventManager.callEvents(bz_eChatMessageEvent,&chatData);
-
-      // send the actual Message after all the callbacks have done there magic to it.
-      if (chatData.message.size())
-	sendPlayerMessage(playerData, dstPlayer, chatData.message.c_str());
-      break;
-    }
+    case MsgMessage: 
+		handlePlayerMessage(playerData,buf);
 
     // player has transferred flag to another tank
     case MsgTransferFlag: {

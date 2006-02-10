@@ -70,8 +70,8 @@ const int		ServerIdPLen = 8;
 const PlayerId		NoPlayer = 255;
 const PlayerId		AllPlayers = 254;
 const PlayerId		ServerPlayer = 253;
-const PlayerId		AdminPlayers = 252; // These two ids are unused at present
-const PlayerId		UnusedSpecialPlayer2 = 251; // Available for special needs in the future
+const PlayerId		AdminPlayers = 252;
+const PlayerId		UnusedSpecialPlayer2 = 251; // This id is unused at present and vailable for special needs in the future
 const PlayerId		LastRealPlayer = 243;
 
 class ServerId {

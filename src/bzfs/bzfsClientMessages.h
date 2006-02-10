@@ -25,10 +25,9 @@ void handleWorldSettings( NetHandler *handler );
 void handleWorldHash( NetHandler *handler );
 void handlePlayerKilled( GameKeeper::Player *playerData, void* buffer );
 void handlePlayerFlagDrop( GameKeeper::Player *playerData, void* buffer );
-
 void handleGameJoinRequest( GameKeeper::Player *playerData );
-
 void handlePlayerUpdate ( void **buf, uint16_t &code, GameKeeper::Player *playerData, const void* rawbuf, int len );	//once relay is based on state, remove rawbuf
+void handlePlayerMessage ( GameKeeper::Player *playerData, void* buffer );
 
 // util functions 
 bool updatePlayerState(GameKeeper::Player *playerData, PlayerState &state, float timeStamp, bool shortState);

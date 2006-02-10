@@ -15,6 +15,7 @@
 #include "BZDBCache.h"
 #include "bzfsMessages.h"
 #include "bzfsPlayerStateVerify.h"
+#include "bzfsChatVerify.h"
 
 void handleClientEnter(void **buf, GameKeeper::Player *playerData)
 {
@@ -243,6 +244,42 @@ void handlePlayerFlagDrop( GameKeeper::Player *playerData, void* buffer )
 	buffer = nboUnpackVector(buffer, pos);
 
 	dropPlayerFlag(*playerData, pos);
+}
+
+void handlePlayerMessage ( GameKeeper::Player *playerData, void* buffer )
+{
+	// data: target player/team, message string
+	PlayerId dstPlayer;
+	char message[MessageLen];
+
+	buffer = nboUnpackUByte(buffer, dstPlayer);
+	buffer = nboUnpackString(buffer, message, sizeof(message));
+	message[MessageLen - 1] = '\0';
+
+	playerData->player.hasSent();
+	if (dstPlayer == AllPlayers)
+		DEBUG1("Player %s [%d] -> All: %s\n", playerData->player.getCallSign(),playerData->getIndex(), message);
+	else if (dstPlayer == AdminPlayers)
+		DEBUG1("Player %s [%d] -> Admin: %s\n",playerData->player.getCallSign(), playerData->getIndex(), message);
+	else if (dstPlayer > LastRealPlayer)
+		DEBUG1("Player %s [%d] -> Team: %s\n",playerData->player.getCallSign(), playerData->getIndex(), message);
+	else
+	{
+		GameKeeper::Player *p = GameKeeper::Player::getPlayerByIndex(dstPlayer);
+		if (p != NULL)
+			DEBUG1("Player %s [%d] -> Player %s [%d]: %s\n",playerData->player.getCallSign(), playerData->getIndex(), p->player.getCallSign(), dstPlayer, message);
+		else 
+			DEBUG1("Player %s [%d] -> Player Unknown [%d]: %s\n", playerData->player.getCallSign(), playerData->getIndex(), dstPlayer, message);
+	}
+	// check for spamming
+	if (checkChatSpam(message, playerData, playerData->getIndex()))
+		return;
+
+	// check for garbage
+	if (checkChatGarbage(message, playerData, playerData->getIndex()))
+		return;
+
+	sendPlayerMessage(playerData, dstPlayer, message);
 }
 
 // Local Variables: ***
