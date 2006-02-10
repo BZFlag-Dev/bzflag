@@ -1393,7 +1393,8 @@ public:
 	virtual void playerAccepted ( void ){};
 	virtual void playerSpawned ( int player, float pos[3], float rot ){};
 	virtual void textMessage ( int dest, int source, const char* text ){};
-	virtual void playerKilledMessage(int victimIndex, int killerIndex, bz_ePlayerDeathReason reason, int shotIndex, const char *flagType, int phydrv){};
+	virtual void playerKilledMessage( int victimIndex, int killerIndex, bz_ePlayerDeathReason reason, int shotIndex, const char *flagType, int phydrv ){};
+	virtual void scoreLimitReached ( int playerID, bz_eTeamType team ){};
 
 
 	virtual void flagUpdate ( int count, bz_FlagUpdateRecord **flagList ){};
@@ -1401,7 +1402,8 @@ public:
 	virtual void teamUpdate ( int count, bz_TeamInfoRecord **teamList ){};
 	virtual void handycapUpdate ( int count, bz_HandycapUpdateRecord **handycapList ){};
 	virtual void playeIPUpdate ( int player, const char* ipAddress ){};
-	virtual void playerStateUpdate ( bz_PlayerUpdateState *playerState, float timestamp ){};
+	virtual void playerStateUpdate ( int player, bz_PlayerUpdateState *playerState, float timestamp ){};
+	virtual void playerScoreUpdate ( int player, int wins, int losses, int TKs ){};
 
 	int playerID;
 

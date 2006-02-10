@@ -1861,7 +1861,7 @@ BZF_API void bz_setTeamWins (bz_eTeamType _team, int wins )
 		return ;
 
 	team[teamIndex].team.won = wins;
-	sendTeamUpdate(teamIndex);
+	sendTeamUpdateMessageBroadcast(teamIndex);
 }
 
 BZF_API void bz_setTeamLosses (bz_eTeamType _team, int losses )
@@ -1872,7 +1872,7 @@ BZF_API void bz_setTeamLosses (bz_eTeamType _team, int losses )
 		return ;
 
 	team[teamIndex].team.lost = losses;
-	sendTeamUpdate(teamIndex);
+	sendTeamUpdateMessageBroadcast(teamIndex);
 }
 
 BZF_API void bz_resetTeamScore (bz_eTeamType _team )
@@ -1886,7 +1886,7 @@ BZF_API void bz_resetTeamScore (bz_eTeamType _team )
 	{
 		team[teamIndex].team.won = 0;
 		team[teamIndex].team.lost = 0;
-		sendTeamUpdate(teamIndex);
+		sendTeamUpdateMessageBroadcast(teamIndex);
 	}
 	else
 	{
@@ -1894,7 +1894,7 @@ BZF_API void bz_resetTeamScore (bz_eTeamType _team )
 		{
 			team[i].team.won = 0;
 			team[teamIndex].team.lost = 0;
-			sendTeamUpdate(i);
+			sendTeamUpdateMessageBroadcast(i);
 		}
 	}
 }

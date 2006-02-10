@@ -1156,7 +1156,7 @@ bool CountdownCommand::operator() (const char	 * message,
   for (int i = RedTeam; i <= PurpleTeam; i++) {
     team[i].team.lost = team[i].team.won = 0;
   }
-  sendTeamUpdate();
+  sendTeamUpdateMessageBroadcast();
 
   return true;
 }

@@ -375,36 +375,6 @@ static void sendPendingGameTime()
   return;
 }
 
-
-void sendTeamUpdate(int teamIndex1, int teamIndex2)
-{
-  // If teamIndex1 is -1, send all teams
-  // If teamIndex2 is -1, just send teamIndex1 team
-  // else send both teamIndex1 and teamIndex2 teams
-
-  void *buf, *bufStart = getDirectMessageBuffer();
-  if (teamIndex1 == -1) {
-    buf = nboPackUByte(bufStart, CtfTeams);
-    for (int t = 0; t < CtfTeams; t++) {
-      buf = nboPackUShort(buf, t);
-      buf = team[t].team.pack(buf);
-    }
-  } else if (teamIndex2 == -1) {
-    buf = nboPackUByte(bufStart, 1);
-    buf = nboPackUShort(buf, teamIndex1);
-    buf = team[teamIndex1].team.pack(buf);
-  } else {
-    buf = nboPackUByte(bufStart, 2);
-    buf = nboPackUShort(buf, teamIndex1);
-    buf = team[teamIndex1].team.pack(buf);
-    buf = nboPackUShort(buf, teamIndex2);
-    buf = team[teamIndex2].team.pack(buf);
-  }
-
-  broadcastMessage(MsgTeamUpdate, (char*)buf - (char*)bufStart, bufStart,
-		   false);
-}
-
 static void sendPlayerUpdateB(GameKeeper::Player *playerData)
 {
   if (!playerData->player.isPlaying())
@@ -1642,7 +1612,7 @@ void addPlayer(int playerIndex, GameKeeper::Player *playerData)
   sendPlayerUpdateB(playerData);
 
   // send update of info for team just joined
-  sendTeamUpdate(teamIndex);
+  sendTeamUpdateMessageBroadcast(teamIndex);
 
   // send IP update to everyone with PLAYERLIST permission
   sendIPUpdate(-1, playerIndex);
@@ -2072,7 +2042,7 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
     }
 
     // send team update
-    sendTeamUpdate(teamNum);
+    sendTeamUpdateMessageBroadcast(teamNum);
   }
 
   playerData->close();
@@ -2306,18 +2276,92 @@ void playerAlive(int playerIndex)
 
 static void checkTeamScore(int playerIndex, int teamIndex)
 {
-  if (clOptions->maxTeamScore == 0 || !Team::isColorTeam(TeamColor(teamIndex))) return;
-  if (team[teamIndex].team.won - team[teamIndex].team.lost >= clOptions->maxTeamScore) {
-    void *buf, *bufStart = getDirectMessageBuffer();
-    buf = nboPackUByte(bufStart, playerIndex);
-    buf = nboPackUShort(buf, uint16_t(teamIndex));
-    broadcastMessage(MsgScoreOver, (char*)buf-(char*)bufStart, bufStart);
+  if (clOptions->maxTeamScore == 0 || !Team::isColorTeam(TeamColor(teamIndex)))
+	  return;
+  if (team[teamIndex].team.won - team[teamIndex].team.lost >= clOptions->maxTeamScore)
+  {
+	sendScoreOverMessage(playerIndex, (TeamColor)teamIndex);
+
     gameOver = true;
-    if (clOptions->oneGameOnly) {
+    if (clOptions->oneGameOnly)
+	{
       done = true;
       exitCode = 0;
     }
   }
+}
+
+bool checkForTeamKill ( GameKeeper::Player* killer,  GameKeeper::Player* victim, bool &teamkill  )
+{
+	if(!victim || !killer)
+		return false;
+
+	// killing rabbit or killing anything when I am a dead ex-rabbit is allowed
+	teamkill = !areFoes(victim->player.getTeam(), killer->player.getTeam()) && !killer->player.isARabbitKill(victim->player);
+
+	// update tk-score
+	if ((victim->getIndex() != killer->getIndex()) && teamkill)
+	{
+		killer->score.tK();
+		if (killer->score.isTK())
+		{
+			char message[MessageLen];
+			strcpy(message, "You have been automatically kicked for team killing" );
+			sendMessage(ServerPlayer, killer->getIndex(), message);
+			snprintf(message, MessageLen, "Player %s removed: team killing", killer->player.getCallSign());
+			sendMessage(ServerPlayer, AdminPlayers, message);
+			removePlayer(killer->getIndex(), "teamkilling", true);
+			return true;
+		}
+	}
+	return false;
+}
+
+void updateScoresForKill(GameKeeper::Player* victim, GameKeeper::Player* killer, bool teamkill)
+{
+	// change the player score
+	if(victim)
+	{
+		victim->score.killedBy();
+		sendPlayerScoreUpdate(victim);
+	}
+	if (killer)
+	{
+		if (victim->getIndex() != killer->getIndex())
+		{
+			if (teamkill && !clOptions->teamKillerDies)
+				killer->score.killedBy();
+			else if (!teamkill)
+				killer->score.kill();
+		}
+		sendPlayerScoreUpdate(killer);
+	}
+}
+void updateHandycaps ( GameKeeper::Player* victim, GameKeeper::Player* killer )
+{
+	if (!(clOptions->gameStyle & HandicapGameStyle))
+		return;
+
+	if (killer)
+		sendSingleHandycapInfoUpdate(killer);
+	if (victim)
+		sendSingleHandycapInfoUpdate(victim);
+}
+
+void checkForScoreLimit ( GameKeeper::Player* killer )
+{
+	// see if the player reached the score limit
+	if (clOptions->maxPlayerScore != 0 && killer && killer->score.reached())
+	{
+		sendScoreOverMessage(killer->getIndex(), NoTeam);
+		
+		gameOver = true;
+		if (clOptions->oneGameOnly)
+		{
+			done = true;
+			exitCode = 0;
+		}
+	}
 }
 
 // FIXME - needs extra checks for killerIndex=ServerPlayer (world weapons)
@@ -2328,135 +2372,58 @@ static void checkTeamScore(int playerIndex, int teamIndex)
 // killer could be InvalidPlayer or a number within [0 curMaxPlayer)
 void playerKilled(int victimIndex, int killerIndex, BlowedUpReason reason, int16_t shotIndex, const FlagType* flagType, int phydrv, bool respawnOnBase )
 {
-  GameKeeper::Player *killerData = NULL;
-  GameKeeper::Player *victimData = GameKeeper::Player::getPlayerByIndex(victimIndex);
-  void *buf, *bufStart = getDirectMessageBuffer();
+	GameKeeper::Player *killerData = NULL;
+	GameKeeper::Player *victimData = GameKeeper::Player::getPlayerByIndex(victimIndex);
+	//  void *buf, *bufStart = getDirectMessageBuffer();
 
-  if (!victimData || !victimData->player.isPlaying())
-    return;
+	if (!victimData || !victimData->player.isPlaying())
+		return;
 
-  if (killerIndex != InvalidPlayer && killerIndex != ServerPlayer)
-    killerData = GameKeeper::Player::getPlayerByIndex(killerIndex);
+	if (killerIndex != InvalidPlayer && killerIndex != ServerPlayer)
+	killerData = GameKeeper::Player::getPlayerByIndex(killerIndex);
 
-  // aliases for convenience
-  // Warning: killer should not be used when killerIndex == InvalidPlayer or ServerPlayer
-  PlayerInfo *killer = realPlayer(killerIndex) ? &killerData->player : 0, *victim = &victimData->player;
+	// aliases for convenience
+	// Warning: killer should not be used when killerIndex == InvalidPlayer or ServerPlayer
+	PlayerInfo *killer = realPlayer(killerIndex) ? &killerData->player : 0, *victim = &victimData->player;
 
-  // victim was already dead. keep score.
-  if (!victim->isAlive())
-	  return;
+	// victim was already dead. keep score.
+	if (!victim->isAlive())
+		return;
 
-  victim->setRestartOnBase(respawnOnBase);
-  victim->setDead();
+	victim->setRestartOnBase(respawnOnBase);
+	victim->setDead();
 
-  // call any events for a playerdeath
-  bz_PlayerDieEventData_V1	dieEvent;
-  dieEvent.playerID = victimIndex;
-  dieEvent.team = convertTeam(victim->getTeam());
-  dieEvent.killerID = killerIndex;
+	// call any events for a playerdeath
+	bz_PlayerDieEventData_V1	dieEvent;
+	dieEvent.playerID = victimIndex;
+	dieEvent.team = convertTeam(victim->getTeam());
+	dieEvent.killerID = killerIndex;
 
-  if (killer)
-    dieEvent.killerTeam = convertTeam(killer->getTeam());
+	if (killer)
+	dieEvent.killerTeam = convertTeam(killer->getTeam());
 
-  dieEvent.flagKilledWith = flagType->flagAbbv;
-  victimData->getPlayerState(dieEvent.pos, dieEvent.rot);
+	dieEvent.flagKilledWith = flagType->flagAbbv;
+	victimData->getPlayerState(dieEvent.pos, dieEvent.rot);
 
-  worldEventManager.callEvents(bz_ePlayerDieEvent,&dieEvent);
+	worldEventManager.callEvents(bz_ePlayerDieEvent,&dieEvent);
 
-  // killing rabbit or killing anything when I am a dead ex-rabbit is allowed
-  bool teamkill = false;
-  if (killer)
-  {
-    const bool rabbitinvolved = killer->isARabbitKill(*victim);
-    const bool foe = areFoes(victim->getTeam(), killer->getTeam());
-    teamkill = !foe && !rabbitinvolved;
-  }
+	sendPlayerKilledMessage(victimIndex,killerIndex,reason,shotIndex,flagType,phydrv);
 
-  sendPlayerKilledMessage(victimIndex,killerIndex,reason,shotIndex,flagType,phydrv);
+	bool teamkill = false;
+	if(checkForTeamKill(killerData,victimData,teamkill))
+		killerData = NULL;
 
-  // update tk-score
-  if ((victimIndex != killerIndex) && teamkill)
-  {
-    killerData->score.tK();
-    if (killerData->score.isTK())
-	{
-      char message[MessageLen];
-      strcpy(message, "You have been automatically kicked for team killing" );
-      sendMessage(ServerPlayer, killerIndex, message);
-      snprintf(message, MessageLen, "Player %s removed: team killing", killerData->player.getCallSign());
-      sendMessage(ServerPlayer, AdminPlayers, message);
-      removePlayer(killerIndex, "teamkilling", true);
-    }
-  }
+	// zap flag player was carrying.  clients should send a drop flag
+	// message before sending a killed message, so this shouldn't happen.
+	zapFlagByPlayer(victimIndex);
 
-  // zap flag player was carrying.  clients should send a drop flag
-  // message before sending a killed message, so this shouldn't happen.
-  zapFlagByPlayer(victimIndex);
+	// if weTKed, and we didn't suicide, and we are killing TKers, then kill that bastard
+	if (teamkill &&  (victimIndex != killerIndex) && clOptions->teamKillerDies)
+		playerKilled(killerIndex, killerIndex, reason, -1, Flags::Null, -1);;
 
-  victimData = GameKeeper::Player::getPlayerByIndex(victimIndex);
-  // victimData will be NULL if the player has been kicked for TK'ing
-  // so don't bother doing any score stuff for him
-  if (victimData != NULL)
-  {
-    // change the player score
-    bufStart = getDirectMessageBuffer();
-    victimData->score.killedBy();
-    if (killer)
-	{
-      if (victimIndex != killerIndex)
-	  {
-	   if (teamkill)
-	   {
-	     if (clOptions->teamKillerDies)
-	      playerKilled(killerIndex, killerIndex, reason, -1, Flags::Null, -1);
-	     else
-	      killerData->score.killedBy();
-	   }
-	   else
-		killerData->score.kill();
-      }
-      buf = nboPackUByte(bufStart, 2);
-      buf = nboPackUByte(buf, killerIndex);
-      buf = killerData->score.pack(buf);
-    }
-	else 
-      buf = nboPackUByte(bufStart, 1);
-
-    buf = nboPackUByte(buf, victimIndex);
-    buf = victimData->score.pack(buf);
-    broadcastMessage(MsgScore, (char*)buf-(char*)bufStart, bufStart);
-
-    if (clOptions->gameStyle & HandicapGameStyle)
-	{
-      bufStart = getDirectMessageBuffer();
-      if (killer)
-	  {
-		buf = nboPackUByte(bufStart, 2);
-		buf = nboPackUByte(buf, killerIndex);
-		buf = nboPackShort(buf, killerData->score.getHandicap());
-      }
-	  else
-		buf = nboPackUByte(bufStart, 1);
-      buf = nboPackUByte(buf, victimIndex);
-      buf = nboPackShort(buf, victimData->score.getHandicap());
-      broadcastMessage(MsgHandicap, (char*)buf-(char*)bufStart, bufStart);
-    }
-
-    // see if the player reached the score limit
-    if (clOptions->maxPlayerScore != 0 && killerIndex != InvalidPlayer && killerIndex != ServerPlayer && killerData->score.reached())
-	{
-      bufStart = getDirectMessageBuffer();
-      buf = nboPackUByte(bufStart, killerIndex);
-      buf = nboPackUShort(buf, uint16_t(NoTeam));
-      broadcastMessage(MsgScoreOver, (char*)buf-(char*)bufStart, bufStart);
-      gameOver = true;
-      if (clOptions->oneGameOnly)
-	  {
-        done = true;
-        exitCode = 0;
-      }
-    }
-  }
+	updateScoresForKill(victimData,killerData,teamkill);
+	updateHandycaps(victimData,killerData);
+	checkForScoreLimit(killerData);
 
   if (clOptions->gameStyle & int(RabbitChaseGameStyle))
   {
@@ -2495,7 +2462,7 @@ void playerKilled(int victimIndex, int killerIndex, BlowedUpReason reason, int16
 		if (killer)
 			killerTeam = killer->getTeam();
       }
-      sendTeamUpdate(int(victim->getTeam()), killerTeam);
+      sendTeamUpdateMessageBroadcast(int(victim->getTeam()), killerTeam);
     }
 #ifdef PRINTSCORE
     dumpScore();
@@ -2765,7 +2732,7 @@ static void captureFlag(int playerIndex, TeamColor teamCaptured)
     team[winningTeam].team.won++;
   }
   team[teamIndex].team.lost++;
-  sendTeamUpdate(winningTeam, teamIndex);
+  sendTeamUpdateMessageBroadcast(winningTeam, teamIndex);
 #ifdef PRINTSCORE
   dumpScore();
 #endif

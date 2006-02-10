@@ -196,6 +196,101 @@ bool sendTeamUpdateMessage( int newPlayer )
 	return true;
 }
 
+void sendTeamUpdateMessageBroadcast( int teamIndex1, int teamIndex2 )
+{
+	// If teamIndex1 is -1, send all teams
+	// If teamIndex2 is -1, just send teamIndex1 team
+	// else send both teamIndex1 and teamIndex2 teams
+
+	void *buf, *bufStart = getDirectMessageBuffer();
+	if (teamIndex1 == -1)
+	{
+		buf = nboPackUByte(bufStart, CtfTeams);
+		for (int t = 0; t < CtfTeams; t++)
+		{
+			buf = nboPackUShort(buf, t);
+			buf = team[t].team.pack(buf);
+		}
+	}
+	else if (teamIndex2 == -1)
+	{
+		buf = nboPackUByte(bufStart, 1);
+		buf = nboPackUShort(buf, teamIndex1);
+		buf = team[teamIndex1].team.pack(buf);
+	}
+	else
+	{
+		buf = nboPackUByte(bufStart, 2);
+		buf = nboPackUShort(buf, teamIndex1);
+		buf = team[teamIndex1].team.pack(buf);
+		buf = nboPackUShort(buf, teamIndex2);
+		buf = team[teamIndex2].team.pack(buf);
+	}
+
+	broadcastMessage(MsgTeamUpdate, (char*)buf - (char*)bufStart, bufStart, false);
+
+	bz_TeamInfoRecord	**teams = NULL;
+	
+	int teamCount = 0;
+
+	if (teamIndex1 == -1)
+	{
+		teamCount = CtfTeams;
+		teams = (bz_TeamInfoRecord**)malloc(sizeof(bz_TeamInfoRecord*)*CtfTeams);
+		for (int t = 0; t < CtfTeams; t++)
+		{
+			teams[t] = new bz_TeamInfoRecord;
+
+			teams[t]->id = t;
+			teams[t]->size = team[t].team.size;
+			teams[t]->wins = team[t].team.won;
+			teams[t]->losses = team[t].team.won;
+		}
+	}
+	else if (teamIndex2 == -1)
+	{
+		teamCount = 1;
+		teams = (bz_TeamInfoRecord**)malloc(sizeof(bz_TeamInfoRecord*));
+
+		teams[0] = new bz_TeamInfoRecord;
+
+		teams[0]->id = teamIndex2;
+		teams[0]->size = team[teamIndex2].team.size;
+		teams[0]->wins = team[teamIndex2].team.won;
+	}
+	else
+	{
+		teamCount = 2;
+		teams = (bz_TeamInfoRecord**)malloc(sizeof(bz_TeamInfoRecord*)*2);
+
+		teams[0] = new bz_TeamInfoRecord;
+
+		teams[0]->id = teamIndex1;
+		teams[0]->size = team[teamIndex1].team.size;
+		teams[0]->wins = team[teamIndex1].team.won;
+
+		teams[1] = new bz_TeamInfoRecord;
+
+		teams[1]->id = teamIndex2;
+		teams[1]->size = team[teamIndex2].team.size;
+		teams[1]->wins = team[teamIndex2].team.won;
+
+	}
+
+	// now do everyone who dosn't have network
+	for (int i = 0; i < curMaxPlayers; i++)
+	{
+		GameKeeper::Player* otherData = GameKeeper::Player::getPlayerByIndex(i);
+		if (otherData && otherData->playerHandler)
+			otherData->playerHandler->teamUpdate ( teamCount, teams );
+	}
+
+	for (int t = 0; t < teamCount; t++)
+		delete(teams[t]);
+
+	free(teams);
+}
+
 void sendRejectPlayerMessage ( int playerID, uint16_t code , const char* reason )
 {
 	GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(playerID);
@@ -287,6 +382,31 @@ void sendHandycapInfoUpdate (int playerID )
 			broadcastMessage(MsgHandicap, (char*)buf-(char*)bufStart, bufStart);
 		}
 	}
+}
+
+void sendSingleHandycapInfoUpdate ( GameKeeper::Player* playerData )
+{
+	if (!playerData)
+		return;
+
+	void *buf, *bufStart = getDirectMessageBuffer();
+	buf = nboPackUByte(bufStart, 1);
+	buf = nboPackUByte(buf, playerData->getIndex());
+	buf = nboPackShort(buf, playerData->score.getHandicap());
+	broadcastMessage(MsgHandicap, (char*)buf-(char*)bufStart, bufStart);
+
+	bz_HandycapUpdateRecord *handyData = new bz_HandycapUpdateRecord;
+	handyData->player = playerData->getIndex();
+	handyData->handycap = playerData->score.getHandicap();
+
+	// now do everyone who dosn't have network
+	for (int i = 0; i < curMaxPlayers; i++)
+	{
+		GameKeeper::Player* otherData = GameKeeper::Player::getPlayerByIndex(i);
+		if (otherData && otherData->playerHandler)
+			otherData->playerHandler->handycapUpdate(1,&handyData);
+	}
+	delete(handyData);
 }
 
 void sendAdminInfoMessage ( int aboutPlayer, int toPlayer, bool record )
@@ -463,7 +583,7 @@ bool sendPlayerStateMessage( GameKeeper::Player *playerData, bool shortState )
 	{
 		GameKeeper::Player* otherData = GameKeeper::Player::getPlayerByIndex(i);
 		if (otherData && otherData->playerHandler && otherData->player.isPlaying())
-			otherData->playerHandler->playerStateUpdate(&apiState,playerData->stateTimeStamp);
+			otherData->playerHandler->playerStateUpdate(playerData->getIndex(),&apiState,playerData->stateTimeStamp);
 	}
 	return true;
 }
@@ -488,6 +608,37 @@ void sendPlayerKilledMessage(int victimIndex, int killerIndex, BlowedUpReason re
 		GameKeeper::Player* otherData = GameKeeper::Player::getPlayerByIndex(i);
 		if (otherData && otherData->playerHandler && otherData->player.isPlaying())
 			otherData->playerHandler->playerKilledMessage(victimIndex,killerIndex,(bz_ePlayerDeathReason)reason,shotIndex,flagType->flagAbbv,phydrv);
+	}
+}
+
+void sendPlayerScoreUpdate( GameKeeper::Player *player )
+{
+	void *buf, *bufStart = getDirectMessageBuffer();
+	buf = nboPackUByte(bufStart, 1);
+	buf = nboPackUByte(buf, player->getIndex());
+	buf = player->score.pack(buf);
+	broadcastMessage(MsgScore, (char*)buf-(char*)bufStart, bufStart);
+
+	for (int i = 0; i < curMaxPlayers; i++)
+	{
+		GameKeeper::Player* otherData = GameKeeper::Player::getPlayerByIndex(i);
+		if (otherData && otherData->playerHandler)
+			otherData->playerHandler->playerScoreUpdate(player->getIndex(),player->score.getWins(),player->score.getLosses(),player->score.getTKs());
+	}
+}
+
+void sendScoreOverMessage( int playerID, TeamColor team )
+{
+	void *buf,*bufStart = getDirectMessageBuffer();
+	buf = nboPackUByte(bufStart, playerID);
+	buf = nboPackUShort(buf, uint16_t(team));
+	broadcastMessage(MsgScoreOver, (char*)buf-(char*)bufStart, bufStart);
+
+	for (int i = 0; i < curMaxPlayers; i++)
+	{
+		GameKeeper::Player* otherData = GameKeeper::Player::getPlayerByIndex(i);
+		if (otherData && otherData->playerHandler)
+			otherData->playerHandler->scoreLimitReached(playerID,convertTeam(team));
 	}
 }
 

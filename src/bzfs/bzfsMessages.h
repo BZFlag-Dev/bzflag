@@ -22,9 +22,11 @@ void sendRemovePlayerMessage ( int playerID );
 void sendFlagUpdateMessage ( int playerID );
 void sendExistingPlayerUpdates ( int newPlayer );
 bool sendTeamUpdateMessage( int newPlayer );
+void sendTeamUpdateMessageBroadcast( int teamIndex1 = -1, int teamIndex2 = -1 );
 void sendRejectPlayerMessage ( int playerID, uint16_t code , const char* reason );
 bool sendAcceptPlayerMessage ( int playerID );
 void sendHandycapInfoUpdate (int playerID );
+void sendSingleHandycapInfoUpdate ( GameKeeper::Player* playerData );
 void sendAdminInfoMessage ( int aboutPlayer, int toPlayer, bool record = false );
 void sendWorldChunk(NetHandler *handler, uint32_t ptr);
 void broadcastPlayerStateUpdate ( void );
@@ -32,7 +34,8 @@ void sendTextMessage ( int destPlayer, int sourcePlayer, const char* text, int l
 void sendMessageAlive ( int playerID, float pos[3], float rot );
 bool sendPlayerStateMessage( GameKeeper::Player *playerData, bool shortState);
 void sendPlayerKilledMessage(int victimIndex, int killerIndex, BlowedUpReason reason, int16_t shotIndex, const FlagType*flagType, int phydrv);
-
+void sendPlayerScoreUpdate( GameKeeper::Player *player );
+void sendScoreOverMessage( int playerID, TeamColor team  );
 
 // messages sent to just network users ( like client query )
 int sendPlayerUpdateDirect(NetHandler *handler, GameKeeper::Player *otherData);
