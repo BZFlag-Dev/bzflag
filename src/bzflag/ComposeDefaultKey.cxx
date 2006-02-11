@@ -98,7 +98,8 @@ bool			ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
       }
 
       // record message in history
-      int i, mhLen = messageHistory.size();
+      const size_t mhLen = messageHistory.size();
+      size_t i;
       for (i = 0; i < mhLen; i++) {
 	if (messageHistory[i] == message) {
 	  messageHistory.erase(messageHistory.begin() + i);

@@ -533,10 +533,10 @@ void			World::makeMeshDrawMgrs()
   // make the display list managers for source meshes
   std::vector<MeshObstacle*> sourceMeshes;
   OBSTACLEMGR.getSourceMeshes(sourceMeshes);
-  unsigned int count = sourceMeshes.size();
+  const size_t count = sourceMeshes.size();
   drawInfoArray = new MeshDrawInfo*[count];
   drawInfoCount = 0;
-  for (unsigned int i = 0; i < count; i++) {
+  for (size_t i = 0; i < count; ++i) {
     MeshDrawInfo* di = (MeshDrawInfo*) sourceMeshes[i]->getDrawInfo();
     if ((di != NULL) && !di->isCopy()) {
       MeshDrawMgr* dm = new MeshDrawMgr(di);

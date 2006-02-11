@@ -424,19 +424,20 @@ BzfRegion*		RobotPlayer::findRegion(const float p[2],
 {
   nearest[0] = p[0];
   nearest[1] = p[1];
-  const int count = obstacleList->size();
-  for (int o = 0; o < count; o++)
-    if ((*obstacleList)[o]->isInside(p))
-      return (*obstacleList)[o];
+  const size_t count = obstacleList->size();
+  std::vector<BzfRegion*>::iterator itr;
+  for (itr = obstacleList->begin(); itr != obstacleList->end(); ++itr)
+    if ((*itr)->isInside(p))
+      return (*itr);
 
   // point is outside: find nearest region
   float      distance      = maxDistance;
   BzfRegion* nearestRegion = NULL;
-  for (int i = 0; i < count; i++) {
+  for (itr = obstacleList->begin(); itr != obstacleList->end(); ++itr) {
     float currNearest[2];
-    float currDistance = (*obstacleList)[i]->getDistance(p, currNearest);
+    float currDistance = (*itr)->getDistance(p, currNearest);
     if (currDistance < distance) {
-      nearestRegion = (*obstacleList)[i];
+      nearestRegion = (*itr);
       distance = currDistance;
       nearest[0] = currNearest[0];
       nearest[1] = currNearest[1];

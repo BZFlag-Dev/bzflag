@@ -24,14 +24,14 @@ HUDDialog::HUDDialog() : focus(NULL)
 HUDDialog::~HUDDialog()
 {
   // delete all controls left on list
-  const int count = list.size();
+  const int count = (const int)list.size();
   for (int i = 0; i < count; i++)
     delete list[i];
 }
 
 void			HUDDialog::render()
 {
-  const int count = list.size();
+  const int count = (const int)list.size();
   for (int i = 0; i < count; i++)
     list[i]->render();
 }
@@ -56,7 +56,7 @@ void HUDDialog::initNavigation(std::vector<HUDuiControl*> &listHUD,
 			       int start, int end)
 {
   int i;
-  const int count = listHUD.size();
+  const int count = (const int)listHUD.size();
 
   for (i = 0; i < start; i++) {
     listHUD[i]->setNext(listHUD[i]);

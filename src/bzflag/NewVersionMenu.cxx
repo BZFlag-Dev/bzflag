@@ -166,7 +166,7 @@ void NewVersionMenu::finalization(char *data, unsigned int length, bool good)
       char* args [2];
       args[0] = "temp-upgrade.exe";
       args[1] = NULL;
-      int result = _spawnvp(_P_DETACH, tempfile.c_str(), args);
+      const int result = (const int)_spawnvp(_P_DETACH, tempfile.c_str(), args);
       if (result < 0) {
 	if (errno == ENOENT)
 	  ((HUDuiLabel*)status)->setString("Failed... can't find upgrade installer.");

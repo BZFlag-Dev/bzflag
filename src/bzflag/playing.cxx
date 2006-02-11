@@ -455,8 +455,8 @@ void			removePlayingCallback(PlayingCallback _cb, void* data)
 
 static void		callPlayingCallbacks()
 {
-  const int count = playingCallbacks.size();
-  for (int i = 0; i < count; i++) {
+  const size_t count = playingCallbacks.size();
+  for (size_t i = 0; i < count; i++) {
     const PlayingCallbackItem& cb = playingCallbacks[i];
     (*cb.cb)(cb.data);
   }
@@ -3164,27 +3164,31 @@ void		   processInputEvents(float maxProcessingTime)
 static void		updateExplosions(float dt)
 {
   // update time of all explosions
-  int i;
-  const int count = explosions.size();
-  for (i = 0; i < count; i++) {
-    explosions[i]->updateTime(dt);
-  }
+  size_t i;
+  const size_t count = explosions.size();
 
-  // reap expired explosions
-  for (i = count - 1; i >= 0; i--) {
-    if (explosions[i]->isAtEnd()) {
-      delete explosions[i];
-      std::vector<BillboardSceneNode*>::iterator it = explosions.begin();
-      for(int j = 0; j < i; j++) it++;
-      explosions.erase(it);
+  if (count > 0) {
+    for (i = 0; i < count; i++) {
+      explosions[i]->updateTime(dt);
+    }
+
+    // reap expired explosions
+    for (i = count - 1; i > 0; i--) {
+      if (explosions[i]->isAtEnd()) {
+	delete explosions[i];
+	std::vector<BillboardSceneNode*>::iterator it = explosions.begin();
+	for (size_t j = 0; j < i; j++)
+	  it++;
+	explosions.erase(it);
+      }
     }
   }
 }
 
 static void		addExplosions(SceneDatabase* scene)
 {
-  const int count = explosions.size();
-  for (int i = 0; i < count; i++)
+  const size_t count = explosions.size();
+  for (size_t i = 0; i < count; i++)
     scene->addDynamicNode(explosions[i]);
 }
 
@@ -3763,8 +3767,8 @@ static void		addObstacle(std::vector<BzfRegion*>& rgnList, const Obstacle& obsta
   p[3][0] = c[0] - xx + yx;
   p[3][1] = c[1] - xy + yy;
 
-  int numRegions = rgnList.size();
-  for (int k = 0; k < numRegions; k++) {
+  size_t numRegions = rgnList.size();
+  for (size_t k = 0; k < numRegions; k++) {
     BzfRegion* region = rgnList[k];
     int side[4];
     if ((side[0] = region->classify(p[0], p[1])) == 1 ||
@@ -3781,7 +3785,7 @@ static void		addObstacle(std::vector<BzfRegion*>& rgnList, const Obstacle& obsta
       delete region;
       continue;
     }
-    for (int j = 0; j < 4; j++) {
+    for (size_t j = 0; j < 4; j++) {
       if (side[j] == -1) continue;		// to inside
       // split
       const float* p1 = p[j];
@@ -3799,9 +3803,9 @@ static void		makeObstacleList()
 {
   const float tankRadius = BZDBCache::tankRadius;
   int i;
-  const int count = obstacleList.size();
-  for (i = 0; i < count; i++)
-    delete obstacleList[i];
+  for (std::vector<BzfRegion*>::iterator itr = obstacleList.begin();
+       itr != obstacleList.end(); ++itr)
+    delete (*itr);
   obstacleList.clear();
 
   // FIXME -- shouldn't hard code game area
@@ -4314,7 +4318,7 @@ static void sendFlagNegotiation()
        i != FlagType::getFlagMap().end(); i++) {
     buf = (char*) i->second->pack(buf);
   }
-  serverLink->send(MsgNegotiateFlags, buf - msg, msg);
+  serverLink->send(MsgNegotiateFlags, (int)(buf - msg), msg);
 }
 
 
@@ -4393,9 +4397,9 @@ void		leaveGame()
   }
   numRobots = 0;
 
-  const int count = obstacleList.size();
-  for (i = 0; i < count; i++)
-    delete obstacleList[i];
+  for (std::vector<BzfRegion*>::iterator itr = obstacleList.begin();
+       itr != obstacleList.end(); ++itr)
+    delete (*itr);
   obstacleList.clear();
 #endif
 

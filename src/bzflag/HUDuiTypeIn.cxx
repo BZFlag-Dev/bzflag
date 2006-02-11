@@ -64,7 +64,7 @@ void			HUDuiTypeIn::setMaxLength(int _maxLength)
 void			HUDuiTypeIn::setString(const std::string& _string)
 {
   string = _string;
-  cursorPos = string.length();
+  cursorPos = (int)string.length();
   onSetFont();
 }
 
@@ -105,7 +105,7 @@ bool			HUDuiTypeIn::doKeyPress(const BzfKeyEvent& key)
       return true;
 
     case BzfKeyEvent::End:
-      cursorPos = string.length();
+      cursorPos = (int)string.length();
       return true;
 
     case BzfKeyEvent::Backspace:

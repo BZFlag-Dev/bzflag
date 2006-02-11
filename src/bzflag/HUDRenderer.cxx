@@ -433,7 +433,7 @@ void			HUDRenderer::setFlagHelp(FlagType* desc, float duration)
 
   // count the number of lines in the help message
   flagHelpLines = 0;
-  const int helpLength = flagHelpText.size();
+  const int helpLength = (const int)flagHelpText.size();
   const char* helpMsg = flagHelpText.c_str();
   for (int i = 0; i < helpLength; i++)
     if (helpMsg[i] == '\0')

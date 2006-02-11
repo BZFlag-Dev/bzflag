@@ -240,7 +240,7 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
     listHUD.push_back(label);
   }
 
-  initNavigation(listHUD, 1,listHUD.size()-1);
+  initNavigation(listHUD, 1, (int)listHUD.size()-1);
 }
 
 DisplayMenu::~DisplayMenu()
@@ -283,7 +283,7 @@ void			DisplayMenu::resize(int _width, int _height)
   x = 0.5f * ((float)_width);
   y -= 0.6f * titleHeight;
   const float h = fm.getStrHeight(fontFace, fontSize, " ");
-  const int count = listHUD.size();
+  const int count = (const int)listHUD.size();
   for (i = 1; i < count; i++) {
     listHUD[i]->setFontSize(fontSize);
     listHUD[i]->setPosition(x, y);

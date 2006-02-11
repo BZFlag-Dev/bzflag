@@ -47,10 +47,10 @@ void ControlPanelMessage::breakLines(float maxLength, int fontFace, float fontSi
 
   // get message and its length
   const char* msg = string.c_str();
-  int lineLen     = string.length();
+  int lineLen     = (int)string.length();
 
   // if there are tabs in the message, find the last one
-  int lastTab = string.rfind('\t');
+  int lastTab = (int)string.rfind('\t');
 
   lines.clear();
   numlines=0;
@@ -384,7 +384,7 @@ void			ControlPanel::render(SceneRenderer& _renderer)
 	    messageAreaPixels[3] - (showTabs ? int(lineHeight + 4) : 0) + ay);
 
   if (messageMode >= 0) {
-    i = messages[messageMode].size() - 1;
+    i = (int)messages[messageMode].size() - 1;
   } else {
     i = -1;
   }
@@ -406,7 +406,7 @@ void			ControlPanel::render(SceneRenderer& _renderer)
   for (j = 0; i >= 0 && j < maxLines; i--) {
     // draw each line of text
     int numLines = messages[messageMode][i].numlines;
-    int numStrings = messages[messageMode][i].lines.size();
+    int numStrings = (int)messages[messageMode][i].lines.size();
     int msgy = numLines - 1;
     int msgx = 0;
 
@@ -708,14 +708,14 @@ void			ControlPanel::setMessagesOffset(int offset, int whence, bool paged)
       if (offset < (int)messages[messageMode].size())
 	messagesOffset = offset;
       else
-	messagesOffset = messages[messageMode].size() - 1;
+	messagesOffset = (int)messages[messageMode].size() - 1;
       break;
     case 1:
       if (offset > 0) {
 	if (messagesOffset + offset < (int)messages[messageMode].size())
 	  messagesOffset += offset;
 	else
-	  messagesOffset = messages[messageMode].size() - 1;
+	  messagesOffset = (int)messages[messageMode].size() - 1;
       } else if (offset < 0) {
 	if (messagesOffset + offset >= 0)
 	  messagesOffset += offset;
@@ -831,9 +831,9 @@ void ControlPanel::saveMessages(const std::string& filename,
 
 
   // add to the appropriate tabs
-  const int msgCount = messages[MessageAll].size();
-  for (int i = 0; i < msgCount; i++) {
-    const std::string& line = messages[MessageAll][i].string;
+  std::deque<ControlPanelMessage>::const_iterator msg = messages[MessageAll].begin()++;
+  for (; msg != messages[MessageAll].end(); ++msg) {
+    const std::string& line = msg->string;
     if (stripAnsi) {
       fprintf(file, "%s\n", stripAnsiCodes(line).c_str());
     } else {

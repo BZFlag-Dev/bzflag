@@ -105,7 +105,7 @@ void HelpMenu::resize(int _width, int _height)
   // reposition options
   x = getLeftSide(_width, _height);
   y -= 1.5f * h;
-  const int count = listHUD.size();
+  const int count = (const int)listHUD.size();
   for (int i = 2; i < count; i++) {
     listHUD[i]->setFontSize(fontSize);
     listHUD[i]->setPosition(x, y);

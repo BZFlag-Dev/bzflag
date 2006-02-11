@@ -304,8 +304,8 @@ float GuidedMissileStrategy::checkHit(const BaseLocalPlayer* tank, float positio
   Ray tankLastMotion(lastTankPositionRaw, tankLastMotionRaw.getDirection());
 
   // check each segment
-  const int numSegments = segments.size();
-  int i = 0;
+  const size_t numSegments = segments.size();
+  size_t i = 0;
   // only test most recent segment if shot is from my tank
   if (numSegments > 1 && tank->getId() == getPath().getPlayer())
     i = numSegments - 1;

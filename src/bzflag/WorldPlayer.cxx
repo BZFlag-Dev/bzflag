@@ -68,7 +68,8 @@ bool			WorldPlayer::doEndShot(
 
 void			WorldPlayer::updateShots(float dt)
 {
-  for (int i = 0; i < (int)shots.size(); i++)
+  const size_t count = shots.size();
+  for (size_t i = 0; i < count; ++i)
     if (shots[i])
       shots[i]->update(dt);
 }
@@ -76,8 +77,8 @@ void			WorldPlayer::updateShots(float dt)
 void			WorldPlayer::addShots(SceneDatabase* scene,
 					bool colorblind) const
 {
-  const int count = shots.size();
-  for (int i = 0; i < count; i++) {
+  const size_t count = shots.size();
+  for (unsigned int i = 0; i < count; ++i) {
     ShotPath* shot = getShot(i);
     if (shot && !shot->isExpiring() && !shot->isExpired())
       shot->addShot(scene, colorblind);

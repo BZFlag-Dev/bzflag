@@ -217,7 +217,7 @@ private:
   static std::string	gameOverLabel;
   static std::string	autoPilotLabel;
   bool			dater;
-  unsigned int		lastTimeChange;
+  time_t		lastTimeChange;
   int			triangleCount;
   int			radarTriangleCount;
 };

@@ -83,7 +83,7 @@ void			SegmentedShotStrategy::update(float dt)
   currentTime += dt;
 
   // see if we've moved to another segment
-  const int numSegments = segments.size();
+  const int numSegments = (const int)segments.size();
   if (segment < numSegments && segments[segment].end <= currentTime) {
     lastSegment = segment;
     while (segment < numSegments && segments[segment].end <= currentTime) {
@@ -220,7 +220,7 @@ float			SegmentedShotStrategy::checkHit(const BaseLocalPlayer* tank,
 
   // check each segment in interval (prevTime,currentTime]
   const float dt = float(currentTime - prevTime);
-  const int numSegments = segments.size();
+  const int numSegments = (const int)segments.size();
   for (int i = lastSegment; i <= segment && i < numSegments; i++) {
     // can never hit your own first laser segment
     if (i == 0 && getPath().getFlag() == Flags::Laser &&
@@ -523,7 +523,7 @@ void			SegmentedShotStrategy::makeSegments(ObstacleEffect e)
   lastTime = startTime;
 
   // make bounding box for entire path
-  const int numSegments = segments.size();
+  const size_t numSegments = segments.size();
   if (numSegments > 0) {
     const ShotPathSegment& firstSeg = segments[0];
     bbox[0][0] = firstSeg.bbox[0][0];
@@ -532,8 +532,8 @@ void			SegmentedShotStrategy::makeSegments(ObstacleEffect e)
     bbox[1][0] = firstSeg.bbox[1][0];
     bbox[1][1] = firstSeg.bbox[1][1];
     bbox[1][2] = firstSeg.bbox[1][2];
-    for (i = 1; i < numSegments; i++) {
-      const ShotPathSegment& segm = segments[i];
+    for (size_t j = 1; j < numSegments; ++j) {
+      const ShotPathSegment& segm = segments[j];
       if (bbox[0][0] > segm.bbox[0][0]) bbox[0][0] = segm.bbox[0][0];
       if (bbox[1][0] < segm.bbox[1][0]) bbox[1][0] = segm.bbox[1][0];
       if (bbox[0][1] > segm.bbox[0][1]) bbox[0][1] = segm.bbox[0][1];
@@ -618,7 +618,7 @@ ThiefStrategy::ThiefStrategy(ShotPath *_path) :
   endTime = f.lifetime;
 
   // make thief scene nodes
-  const int numSegments = getSegments().size();
+  const int numSegments = (const int)(getSegments().size());
   thiefNodes = new LaserSceneNode*[numSegments];
 
   TextureManager &tm = TextureManager::instance();
@@ -642,8 +642,8 @@ ThiefStrategy::ThiefStrategy(ShotPath *_path) :
 
 ThiefStrategy::~ThiefStrategy()
 {
-  const int numSegments = getSegments().size();
-  for (int i = 0; i < numSegments; i++)
+  const size_t numSegments = (getSegments().size());
+  for (size_t i = 0; i < numSegments; i++)
     delete thiefNodes[i];
   delete[] thiefNodes;
 }
@@ -656,9 +656,9 @@ void			ThiefStrategy::update(float dt)
 
 void			ThiefStrategy::addShot(SceneDatabase* scene, bool)
 {
-  // laser is so fast we always show every segment
-  const int numSegments = getSegments().size();
-  for (int i = 0; i < numSegments; i++)
+  // thief is so fast we always show every segment
+  const size_t numSegments = (getSegments().size());
+  for (size_t i = 0; i < numSegments; i++)
     scene->addDynamicNode(thiefNodes[i]);
 }
 
@@ -666,9 +666,9 @@ void			ThiefStrategy::radarRender() const
 {
   // draw all segments
   const std::vector<ShotPathSegment>& segmts = getSegments();
-  const int numSegments = segmts.size();
+  const size_t numSegments = segmts.size();
   glBegin(GL_LINES);
-    for (int i = 0; i < numSegments; i++) {
+    for (size_t i = 0; i < numSegments; i++) {
       const ShotPathSegment& segm = segmts[i];
       const float* origin = segm.ray.getOrigin();
       const float* direction = segm.ray.getDirection();
@@ -779,7 +779,7 @@ LaserStrategy::LaserStrategy(ShotPath* _path) :
   endTime = f.lifetime;
 
   // make laser scene nodes
-  const int numSegments = getSegments().size();
+  const int numSegments = (const int)(getSegments().size());
   laserNodes = new LaserSceneNode*[numSegments];
   const LocalPlayer* myTank = LocalPlayer::getMyTank();
   TeamColor tmpTeam = (myTank->getFlag() == Flags::Colorblindness) ? RogueTeam : team;
@@ -807,8 +807,8 @@ LaserStrategy::LaserStrategy(ShotPath* _path) :
 
 LaserStrategy::~LaserStrategy()
 {
-  const int numSegments = getSegments().size();
-  for (int i = 0; i < numSegments; i++)
+  const size_t numSegments = getSegments().size();
+  for (size_t i = 0; i < numSegments; i++)
     delete laserNodes[i];
   delete[] laserNodes;
 }
@@ -822,8 +822,8 @@ void			LaserStrategy::update(float dt)
 void			LaserStrategy::addShot(SceneDatabase* scene, bool)
 {
   // laser is so fast we always show every segment
-  const int numSegments = getSegments().size();
-  for (int i = 0; i < numSegments; i++)
+  const size_t numSegments = getSegments().size();
+  for (size_t i = 0; i < numSegments; i++)
     scene->addDynamicNode(laserNodes[i]);
 }
 
@@ -831,9 +831,9 @@ void			LaserStrategy::radarRender() const
 {
   // draw all segments
   const std::vector<ShotPathSegment>& segmts = getSegments();
-  const int numSegments = segmts.size();
+  const size_t numSegments = segmts.size();
   glBegin(GL_LINES);
-    for (int i = 0; i < numSegments; i++) {
+    for (size_t i = 0; i < numSegments; i++) {
       const ShotPathSegment& segm = segmts[i];
       const float* origin = segm.ray.getOrigin();
       const float* direction = segm.ray.getDirection();

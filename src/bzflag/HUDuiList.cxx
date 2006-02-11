@@ -42,9 +42,12 @@ int			HUDuiList::getIndex() const
 
 void			HUDuiList::setIndex(int _index)
 {
-  if (_index < 0) index = 0;
-  else if (_index >= (int)list.size()) index = list.size() - 1;
-  else index = _index;
+  if (_index < 0)
+    index = 0;
+  else if (_index >= (int)list.size()) 
+    index = (int)list.size() - 1;
+  else
+    index = _index;
 }
 
 std::vector<std::string>&		HUDuiList::getList()
@@ -98,7 +101,7 @@ bool			HUDuiList::doKeyPress(const BzfKeyEvent& key)
 
       case BzfKeyEvent::Left:
 	if (index != -1) {
-	  if (--index < 0) index = list.size() - 1;
+	  if (--index < 0) index = (int)list.size() - 1;
 	  doCallback();
 	}
 	break;
@@ -119,7 +122,7 @@ bool			HUDuiList::doKeyPress(const BzfKeyEvent& key)
 
       case BzfKeyEvent::End:
 	if (index != -1) {
-	  index = list.size() - 1;
+	  index = (int)list.size() - 1;
 	  doCallback();
 	}
 	break;

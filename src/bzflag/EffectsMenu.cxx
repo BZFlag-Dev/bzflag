@@ -256,7 +256,7 @@ EffectsMenu::EffectsMenu()
   option->update();
   listHUD.push_back(option);
 
-  initNavigation(listHUD, 1, listHUD.size() - 1);
+  initNavigation(listHUD, 1, (int)listHUD.size() - 1);
 }
 
 
@@ -295,7 +295,7 @@ void EffectsMenu::resize(int _width, int _height)
   x = 0.5f * (float)_width;
   y -= 0.6f * titleHeight;
   const float h = fm.getStrHeight(MainMenu::getFontFace(), fontSize, " ");
-  const int count = listHUD.size();
+  const int count = (const int)listHUD.size();
   int i;
   for (i = 1; i < count; i++) {
     listHUD[i]->setFontSize(fontSize);

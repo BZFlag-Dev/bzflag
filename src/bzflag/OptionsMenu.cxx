@@ -96,7 +96,7 @@ OptionsMenu::OptionsMenu() : guiOptionsMenu(NULL), effectsMenu(NULL),
   label->setLabel("Save World");
   listHUD.push_back(label);
 
-  initNavigation(listHUD, 1, listHUD.size()-1);
+  initNavigation(listHUD, 1, (int)listHUD.size()-1);
 }
 
 OptionsMenu::~OptionsMenu()
@@ -160,7 +160,7 @@ void OptionsMenu::resize(int _width, int _height)
   // reposition options in two columns
   x = 0.5f * (float)_width;
   y -= 0.6f * titleHeight;
-  const int count = listHUD.size();
+  const int count = (const int)listHUD.size();
   const float h = fm.getStrHeight(MainMenu::getFontFace(), fontSize, " ");
   for (i = 1; i < count; i++) {
     HUDuiControl *ctl = listHUD[i];

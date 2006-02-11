@@ -364,7 +364,7 @@ void WeatherRenderer::set(void)
 
     int totalRain = rainCount;
     if (!_CULLING_RAIN)
-      totalRain = raindrops.size();
+      totalRain = (int)raindrops.size();
 
     if (totalRain < rainDensity) {
       for (int drops = totalRain; drops < rainDensity; drops++) {

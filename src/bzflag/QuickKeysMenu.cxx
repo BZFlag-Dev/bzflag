@@ -34,7 +34,7 @@ QuickKeysMenu::QuickKeysMenu()
   controls.push_back(createLabel("Send to All"));
   controls.push_back(createLabel("Send to Team"));
 
-  firstKeyControl = controls.size();
+  firstKeyControl = (int)controls.size();
 
   int i;
   for (i=1; i < 11; i++) {
@@ -47,7 +47,7 @@ QuickKeysMenu::QuickKeysMenu()
     controls.push_back(createInput(keyLabel));
   }
 
-  initNavigation(controls, firstKeyControl, controls.size()-1);
+  initNavigation(controls, firstKeyControl, (int)controls.size()-1);
 }
 
 QuickKeysMenu::~QuickKeysMenu()
@@ -154,7 +154,7 @@ void QuickKeysMenu::resize(int _width, int _height)
   y = topY;
   listHUD[4]->setFontSize(fontSize);
   const float h = fm.getStrHeight(fontFace, fontSize, " ");
-  const int count = listHUD.size() - firstKeyControl;
+  const int count = (int)listHUD.size() - firstKeyControl;
   const int mid = (count / 2) + firstKeyControl;
 
   for (i = firstKeyControl; i < mid; i++) {
