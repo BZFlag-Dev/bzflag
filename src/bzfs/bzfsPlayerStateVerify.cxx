@@ -188,6 +188,32 @@ bool validatePlayerState(GameKeeper::Player *playerData, PlayerState &state)
 	return true;
 }
 
+bool checkFlagCheats ( GameKeeper::Player *playerData, int teamIndex )
+{
+	bool foundACheat = false;
+	TeamColor base = whoseBase(playerData->lastState.pos[0], playerData->lastState.pos[1], playerData->lastState.pos[2]);
+	if ((teamIndex == playerData->player.getTeam() && base == playerData->player.getTeam()))
+	{
+		DEBUG1("Player %s [%d] might have sent MsgCaptureFlag for taking their own "
+		"flag onto their own base\n",
+		playerData->player.getCallSign(), playerData->getIndex());
+		foundACheat = true;
+	}
+
+	if ((teamIndex != playerData->player.getTeam() && base != playerData->player.getTeam()))
+	{
+		DEBUG1("Player %s [%d] (%s) might have tried to capture %s flag without "
+				"reaching their own base. (Player position: %f %f %f)\n",
+				playerData->player.getCallSign(), playerData->getIndex(),
+				Team::getName(playerData->player.getTeam()),
+				Team::getName((TeamColor)teamIndex),
+				playerData->lastState.pos[0], playerData->lastState.pos[1],
+				playerData->lastState.pos[2]);
+		foundACheat = true;
+	}
+
+	return foundACheat;
+}
 
 // Local Variables: ***
 // mode:C++ ***

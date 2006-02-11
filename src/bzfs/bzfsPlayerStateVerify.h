@@ -17,7 +17,8 @@
 #include "GameKeeper.h"
 #include "bzfs.h"
 
-bool validatePlayerState(GameKeeper::Player *playerData, PlayerState &state);
+bool validatePlayerState (GameKeeper::Player *playerData, PlayerState &state );
+bool checkFlagCheats ( GameKeeper::Player *playerData, int teamIndex );
 
 #endif //_BZFS_STATE_VERIFY_H_
 

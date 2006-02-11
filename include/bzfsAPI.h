@@ -1390,14 +1390,14 @@ public:
 
 	virtual void added ( int player ) = 0;	// you must call setEntryData when this is called.
 	virtual void removed ( void ){};
-	virtual void playerRemoved ( int playerIndex ){};
+	virtual void playerRemoved ( int player ){};
 	virtual void playerRejected ( bz_eRejectCodes code, const char* reason ){};
 	virtual void playerAccepted ( void ){};
 	virtual void playerSpawned ( int player, float pos[3], float rot ){};
 	virtual void textMessage ( int dest, int source, const char* text ){};
 	virtual void playerKilledMessage( int victimIndex, int killerIndex, bz_ePlayerDeathReason reason, int shotIndex, const char *flagType, int phydrv ){};
 	virtual void scoreLimitReached ( int player, bz_eTeamType team ){};
-
+	virtual void flagCaptured ( int player, int flag, bz_eTeamType team  ){};
 
 	virtual void flagUpdate ( int count, bz_FlagUpdateRecord **flagList ){};
 	virtual void playerInfoUpdate ( bz_PlayerInfoUpdateRecord *playerRecord ){};
@@ -1416,6 +1416,7 @@ protected:
 	void dropFlag ( float pos[3] );
 	void sendChatMessage ( const char* text, int targetPlayer = BZ_ALLUSERS );
 	void sendTeamChatMessage ( const char* text, bz_eTeamType targetTeam );
+	void captureFlag ( bz_eTeamType team );
 };
 
 // *** NOTE *** support for server side players in incomplete.

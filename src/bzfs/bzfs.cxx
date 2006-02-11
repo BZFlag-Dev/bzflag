@@ -49,6 +49,7 @@
 #include "WorldGenerators.h"
 #include "bzfsMessages.h"
 #include "bzfsClientMessages.h"
+#include "bzfsPlayerStateVerify.h"
 
 // common implementation headers
 #include "Obstacle.h"
@@ -2672,11 +2673,10 @@ void dropPlayerFlag(GameKeeper::Player &playerData, const float dropPos[3])
 }
 
 
-static void captureFlag(int playerIndex, TeamColor teamCaptured)
+void captureFlag(int playerIndex, TeamColor teamCaptured)
 {
-  GameKeeper::Player *playerData
-    = GameKeeper::Player::getPlayerByIndex(playerIndex);
-  if (!playerData)
+  GameKeeper::Player *playerData  = GameKeeper::Player::getPlayerByIndex(playerIndex);
+  if (!playerData || invalidPlayerAction(playerData->player, playerIndex, "capture a flag"))
     return;
 
   // Sanity check
@@ -2694,40 +2694,13 @@ static void captureFlag(int playerIndex, TeamColor teamCaptured)
   if (teamIndex == ::NoTeam)
     return;
 
-  { //cheat checking
-    TeamColor base = whoseBase(playerData->lastState.pos[0],
-			       playerData->lastState.pos[1],
-			       playerData->lastState.pos[2]);
-    if ((teamIndex == playerData->player.getTeam() &&
-	 base == playerData->player.getTeam()))	{
-      DEBUG1("Player %s [%d] might have sent MsgCaptureFlag for taking their own "
-	     "flag onto their own base\n",
-	     playerData->player.getCallSign(), playerIndex);
-      //return; //sanity check
-    }
-    if ((teamIndex != playerData->player.getTeam() &&
-	 base != playerData->player.getTeam())) {
-      DEBUG1("Player %s [%d] (%s) might have tried to capture %s flag without "
-	     "reaching their own base. (Player position: %f %f %f)\n",
-	     playerData->player.getCallSign(), playerIndex,
-	     Team::getName(playerData->player.getTeam()),
-	     Team::getName((TeamColor)teamIndex),
-	     playerData->lastState.pos[0], playerData->lastState.pos[1],
-	     playerData->lastState.pos[2]);
-    }
-  }
+  checkFlagCheats(playerData,teamIndex);
 
   // player no longer has flag and put flag back at it's base
   playerData->player.resetFlag();
   resetFlag(flag);
 
-  // send MsgCaptureFlag
-  void *buf, *bufStart = getDirectMessageBuffer();
-  buf = nboPackUByte(bufStart, playerIndex);
-  buf = nboPackUShort(buf, uint16_t(flagIndex));
-  buf = nboPackUShort(buf, uint16_t(teamCaptured));
-  broadcastMessage(MsgCaptureFlag, (char*)buf-(char*)bufStart, bufStart,
-		   false);
+  sendFlagCaptureMessage(playerIndex,flagIndex,teamCaptured);
 
   // find any events for capturing the flags on the capped team or events for ANY team
   bz_CTFCaptureEventData_V1	eventData;
@@ -2905,7 +2878,7 @@ static void sendTeleport(int playerIndex, uint16_t from, uint16_t to)
 /** observers and paused players should not be sending updates.. punish the
  * ones that are paused since they are probably cheating.
  */
-static bool invalidPlayerAction(PlayerInfo &p, int t, const char *action) {
+bool invalidPlayerAction(PlayerInfo &p, int t, const char *action) {
   if (p.isObserver() || p.isPaused()) {
     if (p.isPaused()) {
       char buffer[MessageLen];
@@ -3031,8 +3004,7 @@ static void handleCommand(const void *rawbuf, bool udp, NetHandler *handler)
 		handleFlagNegotiation(handler,&buf,len);
 		break;
 
-    // player wants more of world database
-    case MsgGetWorld:
+    case MsgGetWorld:    // player wants more of world database
 		handleWorldChunk(handler,buf);
 		break;
 
@@ -3064,18 +3036,9 @@ static void handleCommand(const void *rawbuf, bool udp, NetHandler *handler)
 		handlePlayerFlagDrop(playerData,buf);
 		break;
 
-    // player has captured a flag
-    case MsgCaptureFlag: {
-      // data: team whose territory flag was brought to
-      uint16_t _team;
-
-      if (invalidPlayerAction(playerData->player, playerID, "capture a flag"))
-	break;
-
-      buf = nboUnpackUShort(buf, _team);
-      captureFlag(playerID, TeamColor(_team));
-      break;
-    }
+    case MsgCaptureFlag:	// player has captured a flag
+		handleFlagCaputre(playerData,buf);
+		break;
 
     // shot fired
     case MsgShotBegin:

@@ -664,6 +664,24 @@ void sendDropFlagMessage ( int playerIndex, FlagInfo &flag )
 	delete(flagRecord);
 }
 
+void sendFlagCaptureMessage ( int playerIndex, int flagIndex, int teamCaptured )
+{
+	// send MsgCaptureFlag
+	void *buf, *bufStart = getDirectMessageBuffer();
+	buf = nboPackUByte(bufStart, playerIndex);
+	buf = nboPackUShort(buf, uint16_t(flagIndex));
+	buf = nboPackUShort(buf, uint16_t(teamCaptured));
+	broadcastMessage(MsgCaptureFlag, (char*)buf-(char*)bufStart, bufStart,false);
+
+	for (int i = 0; i < curMaxPlayers; i++)
+	{
+		GameKeeper::Player* otherData = GameKeeper::Player::getPlayerByIndex(i);
+		if (otherData && otherData->playerHandler)
+			otherData->playerHandler->flagCaptured ( playerIndex, flagIndex, convertTeam((TeamColor)teamCaptured) );
+	}
+}
+
+// utils to build new packets
 void setGeneralMessageInfo ( void **buffer, uint16_t &code, uint16_t &len )
 {
 	*buffer = nboPackUShort(*buffer, len);

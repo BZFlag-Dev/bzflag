@@ -2325,6 +2325,16 @@ void bz_ServerSidePlayerHandler::sendTeamChatMessage ( const char* text, bz_eTea
 	sendPlayerMessage(player,dstPlayer, text);
 }
 
+void bz_ServerSidePlayerHandler::captureFlag ( bz_eTeamType team )
+{
+	GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerID);
+	if (!player)
+		return;
+
+	::captureFlag(playerID, convertTeam(team));
+}
+
+
 BZF_API int bz_addServerSidePlayer ( bz_ServerSidePlayerHandler *handler )
 {
 	handler->playerID = -1;

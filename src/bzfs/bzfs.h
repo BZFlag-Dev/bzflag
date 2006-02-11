@@ -9,21 +9,15 @@
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
-
 #ifndef __BZFS_H__
 #define __BZFS_H__
-
 #ifdef _MSC_VER
 #pragma warning( 4 : 4786 )
 #endif
-
 // to dump score info to stdout
 #define PRINTSCORE to include code to dump score info to stdout
-
 #define SERVERLOGINMSG true
-
 #include "common.h"
-
 // must be before network.h because that defines a close() macro which
 // messes up fstreams.	luckily, we don't need to call the close() method
 // on any fstream.
@@ -31,12 +25,10 @@
 
 // must be before windows.h
 #include "network.h"
-
 // common interface headers
 #include "Address.h"
 #include "Flag.h"
 #include "Ping.h"
-
 // bzfs specific headers
 #include "TeamBases.h"
 #include "CmdLineOptions.h"
@@ -44,7 +36,6 @@
 #include "FlagInfo.h"
 #include "WorldInfo.h"
 #include "RejoinList.h"
-
 extern void sendMessage(int	 playerIndex,
 			PlayerId    dstPlayer,
 			const char *message);
@@ -69,8 +60,6 @@ extern void       resetFlag(FlagInfo &flag);
 extern void       dropFlag(FlagInfo& flag, const float dropPos[3]);
 extern void       publicize();
 extern TeamColor  whoseBase(float x, float y, float z);
-
-
 void checkGameOn ( void );
 PlayerId getNewPlayerID ( void );
 bool validPlayerCallsign ( int playerIndex );
@@ -85,19 +74,19 @@ int pwrite(NetHandler *handler, const void *b, int l);
 int lookupPlayer(const PlayerId& id);
 void playerKilled(int victimIndex, int killerIndex, BlowedUpReason reason, int16_t shotIndex, const FlagType *flagType, int phydrv, bool respawnOnBase = false);
 void dropPlayerFlag(GameKeeper::Player &playerData, const float dropPos[3]);
+void captureFlag(int playerIndex, TeamColor teamCaptured);
+bool invalidPlayerAction(PlayerInfo &p, int t, const char *action);
 
 typedef struct CheatProtectionOptions
 {
 	bool doHeightChecks;
 	bool doSpeedChecks;
-
 	CheatProtectionOptions()
 	{
 		doHeightChecks = true;
 		doSpeedChecks = true;
 	}
 }CheatProtectionOptions;
-
 extern CheatProtectionOptions	cheatProtectionOptions;
 
 // initialize permission groups
@@ -129,13 +118,11 @@ extern float	   pluginMaxWait;
 extern bool        isIdentifyFlagIn;
 extern bool        worldWasSentToAPlayer;
 extern RejoinList  rejoinList;
-
 // this should not be hangin out here
 extern bool dontWait;
 extern float maxWorldHeight;
 
 #endif
-
 // Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***
@@ -143,4 +130,25 @@ extern float maxWorldHeight;
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

@@ -37,6 +37,7 @@ void sendPlayerKilledMessage (int victimIndex, int killerIndex, BlowedUpReason r
 void sendPlayerScoreUpdate ( GameKeeper::Player *player );
 void sendScoreOverMessage ( int playerID, TeamColor team  );
 void sendDropFlagMessage ( int playerIndex, FlagInfo &flag );
+void sendFlagCaptureMessage ( int playerIndex, int flagIndex, int teamCaptured );
 
 // messages sent to just network users ( like client query )
 int sendPlayerUpdateDirect(NetHandler *handler, GameKeeper::Player *otherData);
