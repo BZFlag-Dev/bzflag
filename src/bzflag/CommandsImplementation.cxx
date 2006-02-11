@@ -185,7 +185,7 @@ bool CommandList::operator() (const char * /*cmdLine*/)
   unsigned int maxCmdLen = 0;
   for (i = 0; i < cmdCount; i++) {
     if (cmds[i]->size() > maxCmdLen) {
-      maxCmdLen = cmds[i]->size();
+      maxCmdLen = (unsigned int)(cmds[i]->size());
     }
   }
   maxCmdLen += 2; // add some padding
@@ -205,7 +205,7 @@ bool CommandList::operator() (const char * /*cmdLine*/)
 
   const char* prefix = ANSI_STR_FG_YELLOW ANSI_STR_PULSATING
 		       "[CLIENT->] " ANSI_STR_RESET;
-  const int prefixLen = strlen(prefix);
+  const int prefixLen = (const int)strlen(prefix);
 
   for (int row = 0; row < rows; row++) {
     cptr = buffer;

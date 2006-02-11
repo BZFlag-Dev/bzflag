@@ -549,7 +549,7 @@ void			dumpResources()
   int maxListSize = 1000000; //do even that many play bzflag?
   char buffer [bufferLength];
 
-  if ((int)list.size() < maxListSize) maxListSize = list.size();
+  if ((int)list.size() < maxListSize) maxListSize = (int)list.size();
   for (int i = 0; i < maxListSize; i++) {
     sprintf(buffer, "silencedPerson%d", i);
     BZDB.set(TextUtils::format("silencedPerson%d", i), list[i]);
@@ -595,8 +595,8 @@ static void createCacheSignature ()
   cacheTagName += "CACHEDIR.TAG";
   std::ostream* cacheTag = FILEMGR.createDataOutStream(cacheTagName, true, true);
   if (cacheTag != NULL) {
-    cacheTag->write(cacheSignature, strlen(cacheSignature));
-    cacheTag->write(cacheComment, strlen(cacheComment));
+    cacheTag->write(cacheSignature, (std::streamsize)strlen(cacheSignature));
+    cacheTag->write(cacheComment, (std::streamsize)strlen(cacheComment));
   }
   delete cacheTag;
 
@@ -654,7 +654,7 @@ int			main(int argc, char** argv)
   createCacheSignature();
 
   // initialize global objects and classes
-  bzfsrand(time(0));
+  bzfsrand((unsigned int)time(0));
 
     // set default DB entries
   for (unsigned int gi = 0; gi < numGlobalDBItems; ++gi) {

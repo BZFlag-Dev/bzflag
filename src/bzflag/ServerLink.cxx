@@ -121,7 +121,7 @@ ServerLink::ServerLink(const Address& serverAddress, int port) :
 
   // open connection to server.  first connect to given port.
   // don't wait too long.
-  int query = socket(AF_INET, SOCK_STREAM, 0);
+  int query = (int)socket(AF_INET, SOCK_STREAM, 0);
   if (query < 0) return;
 
   struct sockaddr_in addr;
@@ -590,7 +590,7 @@ void ServerLink::sendEnter(PlayerId _id, PlayerType type, TeamColor team,
   buf = (void*)((char*)buf + TokenLen);
   ::strncpy((char*)buf, getAppVersion(), VersionLen - 1);
   buf = (void*)((char*)buf + VersionLen);
-  send(MsgEnter, (char*)buf - msg, msg);
+  send(MsgEnter, (uint16_t)((char*)buf - msg), msg);
 }
 
 bool ServerLink::readEnter (std::string& reason,
@@ -677,7 +677,7 @@ void			ServerLink::sendKilled(const PlayerId victim,
     buf = nboPackInt(buf, phydrv);
   }
 
-  send(MsgKilled, (char*)buf - (char*)msg, msg);
+  send(MsgKilled, (uint16_t)((char*)buf - (char*)msg), msg);
 }
 
 void			ServerLink::sendPlayerUpdate(Player* player)
@@ -695,7 +695,7 @@ void			ServerLink::sendPlayerUpdate(Player* player)
   buf = player->pack(buf, code);
 
   // variable length
-  const int len = (char*)buf - (char*)msg;
+  const int len = (const int)((char*)buf - (char*)msg);
 
   send(code, len, msg);
 }
@@ -817,7 +817,7 @@ void ServerLink::sendMessage(const PlayerId& to, char message[MessageLen])
   buf = nboPackUByte(buf, uint8_t(to));
   buf = nboPackString(buf, message, MessageLen);
 
-  send(MsgMessage, (char *)buf - msg, msg);
+  send(MsgMessage, (uint16_t)((char *)buf - msg), msg);
 }
 
 void ServerLink::sendLagPing(char pingRequest[2])
@@ -842,7 +842,7 @@ void			ServerLink::sendUDPlinkRequest()
 
   struct sockaddr_in serv_addr;
 
-  if ((urecvfd = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
+  if ((urecvfd = (int)socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
     return; // we cannot comply
   }
 #if 1

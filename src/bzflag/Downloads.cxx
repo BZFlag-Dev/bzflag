@@ -217,9 +217,9 @@ void Downloads::startDownloads(bool doDownloads, bool updateDownloads,
   if (!referencing) {
     // Clear old cached texture
     // This is the first time is called after joining
-    int  texNo = cachedTexVector.size();
-    for (int i = 0; i < texNo; i++)
-      delete cachedTexVector[i];
+    std::vector<CachedTexture*>::iterator itr;
+    for (itr = cachedTexVector.begin(); itr != cachedTexVector.end(); ++itr)
+      delete (*itr);
     cachedTexVector.clear();
   }
 
@@ -262,9 +262,9 @@ void Downloads::finalizeDownloads()
 {
   textureDownloading = false;
 
-  int  texNo = cachedTexVector.size();
-  for (int i = 0; i < texNo; i++)
-    delete cachedTexVector[i];
+  std::vector<CachedTexture*>::iterator itr;
+  for (itr = cachedTexVector.begin(); itr != cachedTexVector.end(); ++itr)
+    delete (*itr);
   cachedTexVector.clear();
 
   CACHEMGR.saveIndex();

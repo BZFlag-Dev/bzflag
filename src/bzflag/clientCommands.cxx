@@ -776,20 +776,20 @@ static std::string cmdScreenshot(const std::string&,
     f->write((char*) &crc, 4);		       //(crc) write crc
 
     // tEXt chunk containing bzflag build/version
-    temp = htonl((int) 9 + strlen(getAppVersion()));//(length) tEXt is 9 + strlen(getAppVersion())
+    temp = htonl(9 + (int)strlen(getAppVersion())); //(length) tEXt is 9 + strlen(getAppVersion())
     f->write((char*) &temp, 4);
     temp = htonl(PNGTAG("tEXt"));		   //(tag) tEXt
     f->write((char*) &temp, 4);
     crc = crc32(crc = 0, (unsigned char*) &temp, 4);
     strcpy(reinterpret_cast<char*>(b), "Software"); //(data) Keyword
-    f->write(reinterpret_cast<char*>(b), strlen(reinterpret_cast<const char*>(b)));
-    crc = crc32(crc, b, strlen(reinterpret_cast<const char*>(b)));
+    f->write(reinterpret_cast<char*>(b), (unsigned)strlen(reinterpret_cast<const char*>(b)));
+    crc = crc32(crc, b, (unsigned)strlen(reinterpret_cast<const char*>(b)));
     tempByte = 0;				    //(data) Null character separator
     f->write(&tempByte, 1);
     crc = crc32(crc, (unsigned char*) &tempByte, 1);
-    strcpy((char*) b, getAppVersion());	     //(data) Text contents (build/version)
-    f->write(reinterpret_cast<char*>(b), strlen(reinterpret_cast<const char*>(b)));
-    crc = htonl(crc32(crc, b, strlen(reinterpret_cast<const char*>(b))));
+    strcpy((char*) b, getAppVersion());	       //(data) Text contents (build/version)
+    f->write(reinterpret_cast<char*>(b), (unsigned)strlen(reinterpret_cast<const char*>(b)));
+    crc = htonl(crc32(crc, b, (unsigned)strlen(reinterpret_cast<const char*>(b))));
     f->write((char*) &crc, 4);		       //(crc) write crc
 
     // IEND chunk
