@@ -172,7 +172,7 @@ BZF_PLUGIN_CALL int bz_Load ( const char* commandLine )
   bz_registerCustomSlashCommand("last",&lastChatCommand);
   bz_registerCustomSlashCommand("flushchat",&lastChatCommand);
 
-  bz_registerEvent(bz_eChatMessageEvent,&chatEvents);
+  bz_registerEvent(bz_eRawChatMessageEvent,&chatEvents);
 
   return 0;
 }
@@ -182,7 +182,7 @@ BZF_PLUGIN_CALL int bz_Unload ( void )
   bz_removeCustomSlashCommand("last");
   bz_removeCustomSlashCommand("flushchat");
 
-  bz_removeEvent(bz_eChatMessageEvent,&chatEvents);
+  bz_removeEvent(bz_eRawChatMessageEvent,&chatEvents);
 
   bz_debugMessage(4,"ChatEvents plugin unloaded");
   return 0;
@@ -266,7 +266,7 @@ void ChatEvents::process ( bz_EventData *eventData )
   default:
     break;
 
-  case bz_eChatMessageEvent:
+  case bz_eRawChatMessageEvent:
     std::map<std::string,tvChatHistory>::iterator itr = chatHistories.find(callsign);
     if (itr == chatHistories.end())
     {

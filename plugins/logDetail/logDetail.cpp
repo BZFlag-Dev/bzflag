@@ -38,7 +38,7 @@ logDetail logDetailHandler;
 BZF_PLUGIN_CALL int bz_Load ( const char* /*commandLine*/ )
 {
   bz_registerEvent(bz_eSlashCommandEvent, &logDetailHandler);
-  bz_registerEvent(bz_eChatMessageEvent, &logDetailHandler);
+  bz_registerEvent(bz_eRawChatMessageEvent, &logDetailHandler);
   bz_registerEvent(bz_eServerMsgEvent, &logDetailHandler);
   bz_registerEvent(bz_ePlayerJoinEvent, &logDetailHandler);
   bz_registerEvent(bz_ePlayerPartEvent, &logDetailHandler);
@@ -50,7 +50,7 @@ BZF_PLUGIN_CALL int bz_Load ( const char* /*commandLine*/ )
 BZF_PLUGIN_CALL int bz_Unload ( void )
 {
   bz_removeEvent(bz_eSlashCommandEvent, &logDetailHandler);
-  bz_removeEvent(bz_eChatMessageEvent, &logDetailHandler);
+  bz_removeEvent(bz_eRawChatMessageEvent, &logDetailHandler);
   bz_removeEvent(bz_eServerMsgEvent, &logDetailHandler);
   bz_removeEvent(bz_ePlayerJoinEvent, &logDetailHandler);
   bz_removeEvent(bz_ePlayerPartEvent, &logDetailHandler);
@@ -87,7 +87,7 @@ void logDetail::process( bz_EventData *eventData )
 	  cout << " " << cmdData->message.c_str()+1 << endl;
 	}
 	break;
-      case bz_eChatMessageEvent:
+      case bz_eRawChatMessageEvent:
 	if ((chatData->to == BZ_ALLUSERS) and (chatData->team == eNoTeam)) {
 	  cout << "MSG-BROADCAST ";
 	  displayCallsign( chatData->from );
