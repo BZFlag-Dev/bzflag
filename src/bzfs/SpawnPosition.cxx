@@ -53,7 +53,7 @@ SpawnPosition::SpawnPosition(int playerId, bool onGroundOnly, bool notNearEdges)
     safeSRRadius = tankRadius * BZDB.eval("_spawnSafeSRMod");
     safeDistance = tankRadius * BZDB.eval("_spawnSafeRadMod");
     const float size = BZDBCache::worldSize;
-    const float maxWorldHeight = world->getMaxWorldHeight();
+    const float _maxWorldHeight = world->getMaxWorldHeight();
 
     // keep track of how much time we spend searching for a location
     TimeKeeper start = TimeKeeper::getCurrent();
@@ -72,7 +72,7 @@ SpawnPosition::SpawnPosition(int playerId, bool onGroundOnly, bool notNearEdges)
 	  testPos[0] = ((float)bzfrand() - 0.5f) * (size - 2.0f * tankRadius);
 	  testPos[1] = ((float)bzfrand() - 0.5f) * (size - 2.0f * tankRadius);
 	}
-	testPos[2] = onGroundOnly ? 0.0f : ((float)bzfrand() * maxWorldHeight);
+	testPos[2] = onGroundOnly ? 0.0f : ((float)bzfrand() * _maxWorldHeight);
       }
       tries++;
 
@@ -81,7 +81,7 @@ SpawnPosition::SpawnPosition(int playerId, bool onGroundOnly, bool notNearEdges)
       if (waterLevel > minZ) {
 	minZ = waterLevel;
       }
-      float maxZ = maxWorldHeight;
+      float maxZ = _maxWorldHeight;
       if (onGroundOnly) {
 	maxZ = 0.0f;
       }
@@ -98,7 +98,7 @@ SpawnPosition::SpawnPosition(int playerId, bool onGroundOnly, bool notNearEdges)
 	    //Just drop the sucka in, and pray
 	    pos[0] = testPos[0];
 	    pos[1] = testPos[1];
-	    pos[2] = maxWorldHeight;
+	    pos[2] = _maxWorldHeight;
 	    DEBUG1("Warning: getSpawnLocation ran out of time, just dropping the sucker in\n");
 	  }
 	  break;

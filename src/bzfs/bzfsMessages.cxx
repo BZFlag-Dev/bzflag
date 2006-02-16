@@ -327,64 +327,59 @@ bool sendAcceptPlayerMessage ( int playerID )
 	return true;
 }
 
-void sendHandycapInfoUpdate (int playerID )
+void sendHandycapInfoUpdate(int playerID)
 {
-	GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(playerID);
-	if (!playerData)
-		return;
+  GameKeeper::Player *playerData
+    = GameKeeper::Player::getPlayerByIndex(playerID);
+  if (!playerData)
+    return;
 
-	GameKeeper::Player *otherData;
-	if (clOptions->gameStyle & HandicapGameStyle) 
-	{
-		if (playerData->playerHandler)
-		{
-			std::vector<bz_HandycapUpdateRecord*>	handyList;
-			for (int i = 0; i < curMaxPlayers; i++)
-			{
-				otherData = GameKeeper::Player::getPlayerByIndex(i);
-				if (otherData)
-				{
-					bz_HandycapUpdateRecord *handyData = new bz_HandycapUpdateRecord;
-					handyData->player = i;
-					handyData->handycap = otherData->score.getHandicap();
-					handyList.push_back(handyData);
-				}
-
-				bz_HandycapUpdateRecord** handyPtrList = (bz_HandycapUpdateRecord**)malloc(sizeof(bz_HandycapUpdateRecord*)*handyList.size());
-				for ( int i = 0; i < (int)handyList.size(); i++)
-					handyPtrList[i] = handyList[i];
-
-				playerData->playerHandler->handycapUpdate((int)handyList.size(),handyPtrList);
-
-				free(handyPtrList);
-				for ( int i = 0; i < (int)handyList.size(); i++)
-					delete(handyList[i]);
-			}
-		}
-		else
-		{
-			int numHandicaps = 0;
-
-			// Send handicap for all players
-			void *bufStart = getDirectMessageBuffer();
-			void *buf = nboPackUByte(bufStart, numHandicaps);
-			for (int i = 0; i < curMaxPlayers; i++)
-			{
-				if (i != playerID)
-				{
-					otherData = GameKeeper::Player::getPlayerByIndex(i);
-					if (otherData)
-					{
-						numHandicaps++;
-						buf = nboPackUByte(buf, i);
-						buf = nboPackShort(buf, otherData->score.getHandicap());
-					}
-				}
-			}
-			nboPackUByte(bufStart, numHandicaps);
-			broadcastMessage(MsgHandicap, (char*)buf-(char*)bufStart, bufStart);
-		}
+  GameKeeper::Player *otherData;
+  if (clOptions->gameStyle & HandicapGameStyle) {
+    if (playerData->playerHandler) {
+      std::vector<bz_HandycapUpdateRecord*> handyList;
+      for (int i = 0; i < curMaxPlayers; i++) {
+	otherData = GameKeeper::Player::getPlayerByIndex(i);
+	if (otherData) {
+	  bz_HandycapUpdateRecord *handyData = new bz_HandycapUpdateRecord;
+	  handyData->player   = i;
+	  handyData->handycap = otherData->score.getHandicap();
+	  handyList.push_back(handyData);
 	}
+
+	bz_HandycapUpdateRecord **handyPtrList
+	  = (bz_HandycapUpdateRecord**)malloc(sizeof(bz_HandycapUpdateRecord*)
+					      * handyList.size());
+	for (int j = 0; j < (int)handyList.size(); j++)
+	  handyPtrList[j] = handyList[j];
+
+	playerData->playerHandler->handycapUpdate((int)handyList.size(),
+						  handyPtrList);
+
+	free(handyPtrList);
+	for (int k = 0; k < (int)handyList.size(); k++)
+	  delete(handyList[k]);
+      }
+    } else {
+      int numHandicaps = 0;
+
+      // Send handicap for all players
+      void *bufStart = getDirectMessageBuffer();
+      void *buf      = nboPackUByte(bufStart, numHandicaps);
+      for (int i = 0; i < curMaxPlayers; i++) {
+	if (i != playerID) {
+	  otherData = GameKeeper::Player::getPlayerByIndex(i);
+	  if (otherData) {
+	    numHandicaps++;
+	    buf = nboPackUByte(buf, i);
+	    buf = nboPackShort(buf, otherData->score.getHandicap());
+	  }
+	}
+      }
+      nboPackUByte(bufStart, numHandicaps);
+      broadcastMessage(MsgHandicap, (char*)buf - (char*)bufStart, bufStart);
+    }
+  }
 }
 
 void sendSingleHandycapInfoUpdate ( GameKeeper::Player* playerData )
@@ -500,48 +495,47 @@ void sendWorldChunk(NetHandler *handler, uint32_t ptr)
 	directMessage(handler, MsgGetWorld, (char*)buf - (char*)bufStart, bufStart);
 }
 
-void sendTextMessage ( int destPlayer, int sourcePlayer, const char* text, int len, bool broadcast, bool recordOnly)
+void sendTextMessage(int destPlayer, int sourcePlayer, const char *text,
+		     int len, bool broadcast, bool recordOnly)
 {
-	GameKeeper::Player *destPlayerData = GameKeeper::Player::getPlayerByIndex(destPlayer);
-	GameKeeper::Player *sourcePlayerData = GameKeeper::Player::getPlayerByIndex(sourcePlayer);
+  GameKeeper::Player *destPlayerData
+    = GameKeeper::Player::getPlayerByIndex(destPlayer);
 
-	if (!destPlayerData && (!broadcast && !recordOnly) )
-		return;
+  if (!destPlayerData && (!broadcast && !recordOnly))
+    return;
 
-	if (destPlayerData && destPlayerData->playerHandler && !recordOnly)
-	{
-		char *temp =(char*) malloc(len+1);
-		strncpy(temp,text,(size_t)len);
-		temp[len] = 0;
-		destPlayerData->playerHandler->textMessage ( destPlayer, sourcePlayer, temp );
-	}
+  if (destPlayerData && destPlayerData->playerHandler && !recordOnly) {
+    char *temp =(char*)malloc(len+1);
+    strncpy(temp,text,(size_t)len);
+    temp[len] = 0;
+    destPlayerData->playerHandler->textMessage(destPlayer, sourcePlayer, temp);
+  }
 	
-	if (recordOnly || (destPlayerData && !destPlayerData->playerHandler) || broadcast)
-	{
-		void *buf, *bufStart = getDirectMessageBuffer();
-		buf = nboPackUByte(bufStart, sourcePlayer);
-		buf = nboPackUByte(buf, destPlayer);
-		buf = nboPackString(buf, text, len);
+  if (recordOnly || (destPlayerData && !destPlayerData->playerHandler)
+      || broadcast) {
+    void *buf, *bufStart = getDirectMessageBuffer();
+    buf = nboPackUByte(bufStart, sourcePlayer);
+    buf = nboPackUByte(buf, destPlayer);
+    buf = nboPackString(buf, text, len);
 
-		((char*)bufStart)[MessageLen - 1] = '\0'; // always terminate
+    ((char*)bufStart)[MessageLen - 1] = '\0'; // always terminate
 
-		if(!broadcast)
-			directMessage(destPlayer, MsgMessage, len+2, bufStart);
-		else if (!recordOnly)
-		{
-			broadcastMessage(MsgMessage,len+2,bufStart);
+    if (!broadcast) {
+      directMessage(destPlayer, MsgMessage, len+2, bufStart);
+    } else if (!recordOnly) {
+      broadcastMessage(MsgMessage, len + 2, bufStart);
 
-			// now do everyone who isn't a net player
-			for (int i = 0; i < curMaxPlayers; i++)
-			{
-				GameKeeper::Player* otherData = GameKeeper::Player::getPlayerByIndex(i);
-				if (otherData || otherData->playerHandler)
-					sendTextMessage(i,sourcePlayer,text,len);
-			}
-		}
-		else
-			Record::addPacket(MsgMessage, len+2, bufStart, HiddenPacket);
-	}
+      // now do everyone who isn't a net player
+      for (int i = 0; i < curMaxPlayers; i++) {
+	GameKeeper::Player* otherData
+	  = GameKeeper::Player::getPlayerByIndex(i);
+	if (otherData || otherData->playerHandler)
+	  sendTextMessage(i, sourcePlayer, text, len);
+      }
+    } else {
+      Record::addPacket(MsgMessage, len+2, bufStart, HiddenPacket);
+    }
+  }
 }
 
 void sendMessageAlive ( int playerID, float pos[3], float rot )
@@ -630,19 +624,19 @@ void sendPlayerScoreUpdate( GameKeeper::Player *player )
 	}
 }
 
-void sendScoreOverMessage( int playerID, TeamColor team )
+void sendScoreOverMessage(int playerID, TeamColor _team)
 {
-	void *buf,*bufStart = getDirectMessageBuffer();
-	buf = nboPackUByte(bufStart, playerID);
-	buf = nboPackUShort(buf, uint16_t(team));
-	broadcastMessage(MsgScoreOver, (char*)buf-(char*)bufStart, bufStart);
+  void *buf,*bufStart = getDirectMessageBuffer();
+  buf = nboPackUByte(bufStart, playerID);
+  buf = nboPackUShort(buf, uint16_t(_team));
+  broadcastMessage(MsgScoreOver, (char*)buf - (char*)bufStart, bufStart);
 
-	for (int i = 0; i < curMaxPlayers; i++)
-	{
-		GameKeeper::Player* otherData = GameKeeper::Player::getPlayerByIndex(i);
-		if (otherData && otherData->playerHandler)
-			otherData->playerHandler->scoreLimitReached(playerID,convertTeam(team));
-	}
+  for (int i = 0; i < curMaxPlayers; i++) {
+    GameKeeper::Player* otherData = GameKeeper::Player::getPlayerByIndex(i);
+    if (otherData && otherData->playerHandler)
+      otherData->playerHandler->scoreLimitReached(playerID,
+						  convertTeam(_team));
+  }
 }
 
 void sendDropFlagMessage ( int playerIndex, FlagInfo &flag )

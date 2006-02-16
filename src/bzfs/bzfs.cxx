@@ -416,36 +416,34 @@ void sendPlayerInfo() {
   broadcastMessage(MsgPlayerInfo, (char*)buf - (char*)bufStart, bufStart);
 }
 
-void sendIPUpdate(int targetPlayer, int playerIndex) {
+void sendIPUpdate(int targetPlayer, int playerIndex)
+{
   // targetPlayer = -1: send to all players with the PLAYERLIST permission
   // playerIndex = -1: send info about all players
 
-  GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(playerIndex);
+  GameKeeper::Player *playerData
+    = GameKeeper::Player::getPlayerByIndex(playerIndex);
   if ((playerIndex >= 0) && (!playerData || !playerData->player.isPlaying()))
     return;
 
   // send to who?
-  std::vector<int> receivers = GameKeeper::Player::allowed(PlayerAccessInfo::playerList, targetPlayer);
+  std::vector<int> receivers
+    = GameKeeper::Player::allowed(PlayerAccessInfo::playerList, targetPlayer);
 
-  if (playerIndex >= 0)
-  {
+  if (playerIndex >= 0) {
     for (unsigned int i = 0; i < receivers.size(); ++i)
-		sendAdminInfoMessage(playerIndex,receivers[i]);
+      sendAdminInfoMessage(playerIndex,receivers[i]);
 
-	if (Record::enabled())
-		sendAdminInfoMessage(playerIndex,-1,true);
-  }
-  else
-  {
-    int i, c = 0; 
-	for (i = 0; i < curMaxPlayers; ++i)
-	{
+    if (Record::enabled())
+      sendAdminInfoMessage(playerIndex,-1,true);
+  } else {
+    int i = 0; 
+    for (i = 0; i < curMaxPlayers; ++i) {
       playerData = GameKeeper::Player::getPlayerByIndex(i);
 
-      if (playerData && playerData->player.isPlaying())
-	  {
-		  for (unsigned int j = 0; j < receivers.size(); ++j)
-			  sendAdminInfoMessage(i,receivers[j]);
+      if (playerData && playerData->player.isPlaying()) {
+	for (unsigned int j = 0; j < receivers.size(); ++j)
+	  sendAdminInfoMessage(i,receivers[j]);
       }
     }
   }
@@ -1604,8 +1602,6 @@ void addPlayer(int playerIndex, GameKeeper::Player *playerData)
 		 "This team is full.  Try another team.");
     return ;
   }
-  NetHandler *netHandler = playerData->netHandler;
-
   if (!sendAcceptPlayerMessage(playerIndex))
 	  return;
 

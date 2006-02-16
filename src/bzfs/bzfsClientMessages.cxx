@@ -193,18 +193,20 @@ void handleGameJoinRequest( GameKeeper::Player *playerData )
 	playerAlive(playerData->getIndex());
 }
 
-void handlePlayerUpdate ( void **buf, uint16_t &code, GameKeeper::Player *playerData, const void *rawbuf, int len )
+void handlePlayerUpdate(void **buf, uint16_t &code,
+			GameKeeper::Player *playerData, const void *, int)
 {
-	if (!playerData)
-		return;
+  if (!playerData)
+    return;
 
-	float timestamp;
-	PlayerState state;
+  float       timestamp;
+  PlayerState state;
 
-	*buf = nboUnpackFloat(*buf, timestamp);
-	*buf = state.unpack(*buf,code);
+  *buf = nboUnpackFloat(*buf, timestamp);
+  *buf = state.unpack(*buf, code);
 
-	updatePlayerState (playerData,state,timestamp, code == MsgPlayerUpdateSmall);
+  updatePlayerState(playerData, state, timestamp,
+		    code == MsgPlayerUpdateSmall);
 }
 
 bool updatePlayerState(GameKeeper::Player *playerData, PlayerState &state, float timeStamp, bool shortState)

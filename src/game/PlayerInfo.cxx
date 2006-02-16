@@ -97,52 +97,52 @@ void *PlayerInfo::packId(void *buf) {
   return buf;
 }
 
-void PlayerInfo::setCallsign ( const char* text )
+void PlayerInfo::setCallsign(const char *text)
 {
-	if (!text)
-		return;
+  if (!text)
+    return;
 
-	memset(callSign,0,CallSignLen);
-	if (strlen(text)>=CallSignLen)
-		strncpy(callSign,text,CallSignLen-1);
-	else
-		strcpy(callSign,text);
+  memset(callSign, 0, CallSignLen);
+  if ((int)strlen(text) >= CallSignLen)
+    strncpy(callSign, text, CallSignLen - 1);
+  else
+    strcpy(callSign, text);
 }
 
-void PlayerInfo::setEmail ( const char* text )
+void PlayerInfo::setEmail(const char *text)
 {
-	if (!text)
-		return;
+  if (!text)
+    return;
 
-	memset(email,0,EmailLen);
-	if (strlen(text)>=EmailLen)
-		strncpy(email,text,EmailLen-1);
-	else
-		strcpy(email,text);
+  memset(email, 0, EmailLen);
+  if ((int)strlen(text) >= EmailLen)
+    strncpy(email, text, EmailLen - 1);
+  else
+    strcpy(email, text);
 }
 
-void PlayerInfo::setToken ( const char* text )
+void PlayerInfo::setToken(const char *text)
 {
-	if (!text)
-		return;
+  if (!text)
+    return;
 
-	memset(token,0,TokenLen);
-	if (strlen(text)>=TokenLen)
-		strncpy(token,text,TokenLen-1);
-	else
-		strcpy(token,text);
+  memset(token, 0, TokenLen);
+  if ((int)strlen(text) >= TokenLen)
+    strncpy(token, text, TokenLen - 1);
+  else
+    strcpy(token, text);
 }
 
-void PlayerInfo::setClientVersion ( const char* text )
+void PlayerInfo::setClientVersion(const char *text)
 {
-	if (!text)
-		return;
+  if (!text)
+    return;
 
-	memset(clientVersion,0,VersionLen);
-	if (strlen(text)>=VersionLen)
-		strncpy(clientVersion,text,VersionLen-1);
-	else
-		strcpy(clientVersion,text);
+  memset(clientVersion, 0, VersionLen);
+  if ((int)strlen(text) >= VersionLen)
+    strncpy(clientVersion, text, VersionLen - 1);
+  else
+    strcpy(clientVersion, text);
 }
 
 void PlayerInfo::setType ( PlayerType playerType )
