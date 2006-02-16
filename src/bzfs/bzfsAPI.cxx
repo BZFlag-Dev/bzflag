@@ -2227,24 +2227,87 @@ BZF_API bz_eTeamType bz_checkBaseAtPoint ( float pos[3] )
 }
 
 // server side bot API
-void bz_ServerSidePlayerHandler::setPlayerData ( const char* callsign, const char* email, const char* token, const char* clientVersion, bz_eTeamType team )
+void bz_ServerSidePlayerHandler::playerRemoved(int)
 {
-	GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerID);
+}
 
-	if (!player || player->playerHandler != this)
-		return;
+void bz_ServerSidePlayerHandler::playerRejected(bz_eRejectCodes, const char*)
+{
+}
 
-	player->player.setType(TankPlayer); // because we like to lie :)
-	player->player.setTeam(convertTeam(team));
-	player->player.setCallsign(callsign);
-	player->player.setEmail (email);
-	player->player.setToken (token );
-	player->player.setClientVersion (clientVersion);
+void bz_ServerSidePlayerHandler::playerSpawned(int, float[3], float)
+{
+}
 
-	uint16_t	code = 0;
-	char reason[512] = {0};
-	if (!player->player.processEnter(code,reason))
-		playerRejected ( (bz_eRejectCodes)code, reason );
+void bz_ServerSidePlayerHandler::textMessage(int, int, const char*)
+{
+}
+
+void bz_ServerSidePlayerHandler::playerKilledMessage(int, int,
+						     bz_ePlayerDeathReason,
+						     int, const char*, int)
+{
+}
+
+void bz_ServerSidePlayerHandler::scoreLimitReached(int, bz_eTeamType)
+{
+}
+
+void bz_ServerSidePlayerHandler::flagCaptured(int, int, bz_eTeamType)
+{
+}
+
+void bz_ServerSidePlayerHandler::flagUpdate(int, bz_FlagUpdateRecord**)
+{
+}
+
+void bz_ServerSidePlayerHandler::playerInfoUpdate(bz_PlayerInfoUpdateRecord*)
+{
+}
+
+void bz_ServerSidePlayerHandler::teamUpdate(int, bz_TeamInfoRecord**)
+{
+}
+
+void bz_ServerSidePlayerHandler::handycapUpdate(int, bz_HandycapUpdateRecord**)
+{
+}
+
+void bz_ServerSidePlayerHandler::playeIPUpdate(int, const char*)
+{
+}
+
+void bz_ServerSidePlayerHandler::playerStateUpdate(int, bz_PlayerUpdateState*,
+						   float)
+{
+}
+
+void bz_ServerSidePlayerHandler::playerScoreUpdate(int, int, int, int)
+{
+}
+
+void bz_ServerSidePlayerHandler::setPlayerData(const char  *callsign,
+					       const char  *email,
+					       const char  *token,
+					       const char  *clientVersion,
+					       bz_eTeamType _team)
+{
+  GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerID);
+
+  if (!player || player->playerHandler != this)
+    return;
+
+  player->player.setType(TankPlayer); // because we like to lie :)
+  player->player.setTeam(convertTeam(_team));
+  player->player.setCallsign(callsign);
+  player->player.setEmail(email);
+  player->player.setToken(token );
+  player->player.setClientVersion(clientVersion);
+
+  uint16_t code        = 0;
+  char     reason[512] = {0};
+  if (!player->player.processEnter(code, reason))
+    playerRejected((bz_eRejectCodes)code, reason);
 }
 
 void  bz_ServerSidePlayerHandler::joinGame ( void )
@@ -2297,41 +2360,44 @@ void bz_ServerSidePlayerHandler::sendChatMessage ( const char* text, int targetP
 	sendPlayerMessage(player,dstPlayer, text);
 }
 
-void bz_ServerSidePlayerHandler::sendTeamChatMessage ( const char* text, bz_eTeamType targetTeam )
+void bz_ServerSidePlayerHandler::sendTeamChatMessage(const char *text,
+						     bz_eTeamType targetTeam )
 {
-	GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerID);
-	if (!player || !text)
-		return;
+  GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerID);
+  if (!player || !text)
+    return;
 
-	PlayerId dstPlayer = AllPlayers;
+  PlayerId dstPlayer = AllPlayers;
 	
-	switch(targetTeam) 
-	{
-	case eRogueTeam:
-	case eRedTeam:
-	case eGreenTeam:
-	case eBlueTeam:
-	case ePurpleTeam:
-	case eRabbitTeam:
-	case eHunterTeam:
-		dstPlayer = 250+(int)targetTeam;
-		break;
+  switch(targetTeam) 
+    {
+    case eRogueTeam:
+    case eRedTeam:
+    case eGreenTeam:
+    case eBlueTeam:
+    case ePurpleTeam:
+    case eRabbitTeam:
+    case eHunterTeam:
+      dstPlayer = 250 + (int)targetTeam;
+      break;
 
-	case eAdministrators:
-		dstPlayer = AdminPlayers;
-		break;
-	}
+    case eAdministrators:
+      dstPlayer = AdminPlayers;
+      break;
+    default:
+      break;
+    }
 
-	sendPlayerMessage(player,dstPlayer, text);
+  sendPlayerMessage(player,dstPlayer, text);
 }
 
-void bz_ServerSidePlayerHandler::captureFlag ( bz_eTeamType team )
+void bz_ServerSidePlayerHandler::captureFlag(bz_eTeamType _team)
 {
-	GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerID);
-	if (!player)
-		return;
+  GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerID);
+  if (!player)
+    return;
 
-	::captureFlag(playerID, convertTeam(team));
+  ::captureFlag(playerID, convertTeam(_team));
 }
 
 

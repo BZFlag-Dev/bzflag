@@ -1386,37 +1386,44 @@ typedef enum
 class BZF_API bz_ServerSidePlayerHandler
 {
 public:
-	virtual ~bz_ServerSidePlayerHandler(){};
+  virtual ~bz_ServerSidePlayerHandler(){};
 
-	virtual void added ( int player ) = 0;	// you must call setEntryData when this is called.
-	virtual void removed ( void ){};
-	virtual void playerRemoved ( int player ){};
-	virtual void playerRejected ( bz_eRejectCodes code, const char* reason ){};
-	virtual void playerAccepted ( void ){};
-	virtual void playerSpawned ( int player, float pos[3], float rot ){};
-	virtual void textMessage ( int dest, int source, const char* text ){};
-	virtual void playerKilledMessage( int victimIndex, int killerIndex, bz_ePlayerDeathReason reason, int shotIndex, const char *flagType, int phydrv ){};
-	virtual void scoreLimitReached ( int player, bz_eTeamType team ){};
-	virtual void flagCaptured ( int player, int flag, bz_eTeamType team  ){};
+  // you must call setEntryData when this is called.
+  virtual void added(int player) = 0;
+  virtual void removed(void){};
+  virtual void playerRemoved(int player);
+  virtual void playerRejected(bz_eRejectCodes code, const char *reason);
+  virtual void playerAccepted(void){};
+  virtual void playerSpawned(int player, float pos[3], float rot);
+  virtual void textMessage(int dest, int source, const char *text);
+  virtual void playerKilledMessage(int victimIndex, int killerIndex,
+				   bz_ePlayerDeathReason reason, int shotIndex,
+				   const char *flagType, int phydrv);
+  virtual void scoreLimitReached(int player, bz_eTeamType team);
+  virtual void flagCaptured(int player, int flag, bz_eTeamType team);
 
-	virtual void flagUpdate ( int count, bz_FlagUpdateRecord **flagList ){};
-	virtual void playerInfoUpdate ( bz_PlayerInfoUpdateRecord *playerRecord ){};
-	virtual void teamUpdate ( int count, bz_TeamInfoRecord **teamList ){};
-	virtual void handycapUpdate ( int count, bz_HandycapUpdateRecord **handycapList ){};
-	virtual void playeIPUpdate ( int player, const char* ipAddress ){};
-	virtual void playerStateUpdate ( int player, bz_PlayerUpdateState *playerState, float timestamp ){};
-	virtual void playerScoreUpdate ( int player, int wins, int losses, int TKs ){};
+  virtual void flagUpdate(int count, bz_FlagUpdateRecord **flagList);
+  virtual void playerInfoUpdate(bz_PlayerInfoUpdateRecord *playerRecord);
+  virtual void teamUpdate(int count, bz_TeamInfoRecord **teamList);
+  virtual void handycapUpdate(int count,
+			      bz_HandycapUpdateRecord **handycapList);
+  virtual void playeIPUpdate(int player, const char *ipAddress);
+  virtual void playerStateUpdate(int player, bz_PlayerUpdateState *playerState,
+				 float timestamp);
+  virtual void playerScoreUpdate(int player, int wins, int losses, int TKs);
 
-	int playerID;
+  int playerID;
 
 protected:
-	void setPlayerData ( const char* callsign, const char* email, const char* token, const char* clientVersion, bz_eTeamType team );
-	void joinGame ( void );
-	void updateState ( bz_PlayerUpdateState *state );
-	void dropFlag ( float pos[3] );
-	void sendChatMessage ( const char* text, int targetPlayer = BZ_ALLUSERS );
-	void sendTeamChatMessage ( const char* text, bz_eTeamType targetTeam );
-	void captureFlag ( bz_eTeamType team );
+  void setPlayerData(const char *callsign, const char *email,
+		     const char *token, const char *clientVersion,
+		     bz_eTeamType team);
+  void joinGame(void);
+  void updateState(bz_PlayerUpdateState *state);
+  void dropFlag(float pos[3]);
+  void sendChatMessage(const char* text, int targetPlayer = BZ_ALLUSERS);
+  void sendTeamChatMessage(const char *text, bz_eTeamType targetTeam);
+  void captureFlag(bz_eTeamType team);
 };
 
 // *** NOTE *** support for server side players in incomplete.
