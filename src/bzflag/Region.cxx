@@ -154,7 +154,7 @@ int BzfRegion::classify(const float e1[2], const float e2[2]) const
     if (e < -0.00001) toRight++;
     else if (e <= 0.00001) onEdge++;
   }
-  if (toRight + onEdge == count) return 1;	// all to right
+  if (toRight + onEdge == (int)count) return 1; // all to right
   if (toRight != 0) return 0;			// not all to left -- split
   return -1;					// all to left
 }
