@@ -424,7 +424,6 @@ BzfRegion*		RobotPlayer::findRegion(const float p[2],
 {
   nearest[0] = p[0];
   nearest[1] = p[1];
-  const size_t count = obstacleList->size();
   std::vector<BzfRegion*>::iterator itr;
   for (itr = obstacleList->begin(); itr != obstacleList->end(); ++itr)
     if ((*itr)->isInside(p))
