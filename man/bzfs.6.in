@@ -832,11 +832,20 @@ Kill the player using slot 4 because teamkilling
 
 .TP 
 .B /lagwarn [\fItime\fR]
-Dynamic change the maximum allowed lag time. Example:
+Change the maximum allowed lag time. Example:
 .ft CW
 .nf
 .ne 2
 /lagwarn 300
+.ft R
+
+.TP 
+.B /lagdrop [\fIcount\fR]
+Change the number of lag warnings given before a player is kicked. Example:
+.ft CW
+.nf
+.ne 2
+/lagdrop 3
 .ft R
 
 .TP 
