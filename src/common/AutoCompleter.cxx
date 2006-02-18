@@ -193,6 +193,7 @@ void DefaultCompleter::setDefaults()
   registerWord("/idlestats");
   registerWord("/kick ");
   registerWord("/kill ");
+  registerWord("/lagdrop");
   registerWord("/lagstats");
   registerWord("/lagwarn ");
   registerWord("/localset ");

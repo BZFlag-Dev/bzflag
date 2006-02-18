@@ -56,6 +56,7 @@ private:
     LagStats,
     Report,
     LagWarn,
+    LagDrop,
     GameOver,
     CountDown,
     SuperKill,

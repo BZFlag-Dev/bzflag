@@ -155,6 +155,7 @@ void			ServerCommandKey::updatePrompt()
     case Shutdown: hud->setComposing("Shut Down Server", false); break;
     case SuperKill: hud->setComposing("Disconnect all Players", false); break;
     case LagWarn: hud->setComposing("Lag Warning threshold:", true); break;
+    case LagDrop: hud->setComposing("Maximum lag warnings:", true); break;
     case IdleStats: hud->setComposing("Idle Stats", false); break;
     case ClientQuery: hud->setComposing("Client Version Query", false); break;
     case LagStats: hud->setComposing("Lag / Ping Stats", false); break;
@@ -327,6 +328,7 @@ bool			ServerCommandKey::keyPress(const BzfKeyEvent& key)
       case Shutdown: sendMsg = "/shutdownserver"; break;
       case SuperKill: sendMsg = "/superkill"; break;
       case LagWarn: sendMsg = "/lagwarn " + message; break;
+      case LagDrop: sendMsg = "/lagdrop " + message; break;
       case IdleStats: sendMsg = "/idlestats"; break;
       case LagStats: sendMsg = "/lagstats"; break;
       case ClientQuery: sendMsg = "/clientquery"; break;
