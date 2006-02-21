@@ -197,6 +197,7 @@ AC_CHECK_HEADERS( \
 #Checks for types
 #AM_CHECK_TYPES(socklen_t)
 #AC_CHECK_TYPES(socklen_t)
+AC_C_BIGENDIAN
 AC_C_CONST
 
 AC_MSG_CHECKING([for socklen_t type])
@@ -208,11 +209,11 @@ if test $ac_cv_type_socklen_t != yes; then
     AC_MSG_CHECKING([for socklen_t equivalent])
     AC_CACHE_VAL([cv_socklen_t_equiv],
     [
- 	# Systems have either "struct sockaddr *" or
- 	# "void *" as the second argument to getpeername
- 	cv_socklen_t_equiv=
- 	for arg2 in "struct sockaddr" void; do
- 	  for t in int size_t unsigned long "unsigned long"; do
+	# Systems have either "struct sockaddr *" or
+	# "void *" as the second argument to getpeername
+	cv_socklen_t_equiv=
+	for arg2 in "struct sockaddr" void; do
+	  for t in int size_t unsigned long "unsigned long"; do
 	    AC_TRY_COMPILE([
 		#include <sys/types.h>
 		#include <sys/socket.h>
@@ -231,7 +232,7 @@ if test $ac_cv_type_socklen_t != yes; then
     ])
     AC_MSG_RESULT($cv_socklen_t_equiv)
     AC_DEFINE_UNQUOTED(socklen_t, $cv_socklen_t_equiv,
- 		       [type to use in place of socklen_t if not defined])
+		       [type to use in place of socklen_t if not defined])
 else
     AC_DEFINE(HAVE_SOCKLEN_T, 1, [if socklen_t is defined, make note of it])
 fi

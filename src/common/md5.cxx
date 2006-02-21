@@ -25,23 +25,21 @@
 #include <string.h>
 /* for stupid systems */
 #include <sys/types.h>
-/* for ntohl() */
-#include <netinet/in.h>
 
 #include "md5.h"
 
 #ifdef WORDS_BIGENDIAN
-void MD5::byteSwap(uint32_t *buf, unsigned words)
+void byteSwap(uint32_t *swbuf, unsigned words)
 {
-  uint8_t *p = (uint8_t *)buf;
+  uint8_t *p = (uint8_t *)swbuf;
 
   do {
-    *buf++ = (uint32_t)((unsigned)p[3] << 8 | p[2]) << 16 | ((unsigned)p[1] << 8 | p[0]);
+    *swbuf++ = (uint32_t)((unsigned)p[3] << 8 | p[2]) << 16 | ((unsigned)p[1] << 8 | p[0]);
     p += 4;
   } while (--words);
 }
 #else
-#define byteSwap(buf,words)
+#define byteSwap(swbuf,words)
 #endif
 
 // return hex representation of digest as string
@@ -87,7 +85,7 @@ void MD5::update(uint8_t const *inbuf, unsigned len)
   if ((bytes[0] = t + len) < t)
     bytes[1]++;  /* Carry from low to high */
 
-  t = 64 - (t & 0x3f);  /* Space available in ctx->in (at least 1) */
+  t = 64 - (t & 0x3f);  /* Space available in in (at least 1) */
   if (t > len) {
     memcpy((uint8_t *)in + 64 - t, inbuf, len);
     return;
@@ -118,7 +116,7 @@ void MD5::update(uint8_t const *inbuf, unsigned len)
  */
 void MD5::finalize()
 {
-  /* Number of bytes in ctx->in */
+  /* Number of bytes in in */
   int count = bytes[0] & 0x3f;
   uint8_t *p = (uint8_t *)in + count;
 
@@ -131,7 +129,7 @@ void MD5::finalize()
   if (count < 0) {
     /* Padding forces an extra block */
     memset(p, 0, count + 8);
-    byteSwap(ctx->in, 16);
+    byteSwap(in, 16);
     MD5::transform();
     p = (uint8_t *)in;
     count = 56;
