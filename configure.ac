@@ -198,6 +198,7 @@ AC_CHECK_HEADERS( \
 #Checks for types
 #AM_CHECK_TYPES(socklen_t)
 #AC_CHECK_TYPES(socklen_t)
+AC_C_BIGENDIAN
 AC_C_CONST
 
 AC_MSG_CHECKING([for socklen_t type])
