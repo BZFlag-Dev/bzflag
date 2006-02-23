@@ -10,4 +10,22 @@ Unix following ./autogen.sh && ./configure && make, or using the XCode
 project in the top-level directory to end up with a double-clickable
 BZFlag.app build.
 
+NOTICE: For the time being, you will need to run ./autogen.sh &&
+./configure on the command-line before the XCode project will work.
+
+You will also need to install the SDL framework before compiling.  SDL
+is available from http://libsdl.org
+
+http://www.libsdl.org/release/SDL-1.2.9.tar.gz should be the source
+download, there are also binary distributions available for Mac OS X
+also.
+
+The Xcode project in the SDL tarball will produce a usable universal
+or Intel library, but it needs to be configured to do so. The default
+architecture is set to 'ppc' in the Xcode project.  If you have an
+Intel Mac, that needs to be changed to 'ppc i386' or just 'i386'.
+
+Once that much is done, you should be set to build in either XCode or
+on the command line with 'make'.
+
 See the generic install instructions in README for more details.
