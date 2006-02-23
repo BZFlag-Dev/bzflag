@@ -107,6 +107,12 @@ extern float	   pluginWorldSize;
 extern float	   pluginWorldHeight;
 extern float	   pluginMaxWait;
 
+
+void pauseCountdown ( const char *pausedBy );
+void resumeCountdown ( const char *resumedBy );
+void resetTeamScores ( void );
+void startCountdown ( int delay, float limit, const char *buyWho );
+
 #endif
 
 // Local Variables: ***

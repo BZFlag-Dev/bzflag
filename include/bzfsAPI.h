@@ -1085,6 +1085,7 @@ BZF_API void bz_setTeamWins (bz_eTeamType team, int wins );
 BZF_API void bz_setTeamLosses (bz_eTeamType team, int losses );
 
 BZF_API void bz_resetTeamScore (bz_eTeamType team );
+BZF_API void bz_resetTeamScores ( void );
 
 // list server
 BZF_API void bz_updateListServer ( void );
@@ -1123,6 +1124,12 @@ BZF_API bool bz_saveRecBuf( const char * _filename, int seconds);
 BZF_API const char *bz_format(const char* fmt, ...);
 BZF_API const char *bz_toupper(const char* val );
 BZF_API const char *bz_tolower(const char* val );
+
+// game countdown
+BZF_API void bz_pauseCountdown ( const char *pausedBy );
+BZF_API void bz_resumeCountdown ( const char *resumedBy );
+BZF_API void bz_startCountdown ( int delay, float limit, const char *byWho );
+
 
 // server control
 BZF_API void bz_shutdown();

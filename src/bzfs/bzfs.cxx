@@ -517,6 +517,72 @@ void sendIPUpdate(int targetPlayer, int playerIndex) {
   }
 }
 
+void pauseCountdown ( const char *pausedBy )
+{
+	if (clOptions->countdownPaused)
+		return;
+
+	clOptions->countdownPaused = true;
+	if (pausedBy)
+		sendMessage(ServerPlayer, AllPlayers, TextUtils::format("Countdown paused by %s",pausedBy).c_str());
+	else
+		sendMessage(ServerPlayer, AllPlayers, "Countdown paused");
+}
+
+void resumeCountdown ( const char *resumedBy )
+{
+	if (!clOptions->countdownPaused)
+		return;
+
+	clOptions->countdownPaused = false;
+	if (resumedBy)
+		sendMessage(ServerPlayer, AllPlayers, TextUtils::format("Countdown resumed by %s",resumedBy).c_str());
+	else
+		sendMessage(ServerPlayer, AllPlayers, "Countdown resumed");
+}
+
+void resetTeamScores ( void )
+{
+	// reset team scores
+	for (int i = RedTeam; i <= PurpleTeam; i++) 
+	{
+		team[i].team.lost = team[i].team.won = 0;
+	}
+	sendTeamUpdate();
+}
+
+void startCountdown ( int delay, float limit, const char *buyWho )
+{
+	sendMessage(ServerPlayer, AllPlayers, TextUtils::format("Team scores reset, countdown started by %s.",buyWho).c_str());
+
+	clOptions->timeLimit = limit;
+	countdownDelay = delay;
+
+	// let everyone know what's going on
+	long int timeArray[4];
+	std::string matchBegins;
+	if (countdownDelay == 0)
+	{
+		matchBegins = "Match begins now!";
+	}
+	else
+	{
+		TimeKeeper::convertTime(countdownDelay, timeArray);
+		std::string countdowntime = TimeKeeper::printTime(timeArray);
+		matchBegins = TextUtils::format("Match begins in about %s", countdowntime.c_str());
+	}
+	sendMessage(ServerPlayer, AllPlayers, matchBegins.c_str());
+
+	TimeKeeper::convertTime(clOptions->timeLimit, timeArray);
+	std::string timelimit = TimeKeeper::printTime(timeArray);
+	matchBegins = TextUtils::format("Match duration is %s", timelimit.c_str());
+	sendMessage(ServerPlayer, AllPlayers, matchBegins.c_str());
+
+	// make sure the game always start unpaused
+	clOptions->countdownPaused = false;
+	countdownPauseStart = TimeKeeper::getNullTime();
+}
+
 PingPacket getTeamCounts()
 {
   if (gameOver) {

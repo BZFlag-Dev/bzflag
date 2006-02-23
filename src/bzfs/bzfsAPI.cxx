@@ -2028,6 +2028,26 @@ BZF_API bz_eTeamType bz_checkBaseAtPoint ( float pos[3] )
 	return convertTeam(whoseBase(pos[0],pos[1],pos[2]));
 }
 
+BZF_API void bz_pauseCountdown ( const char *pausedBy )
+{
+	pauseCountdown(pausedBy);
+}
+
+BZF_API void bz_resumeCountdown ( const char *resumedBy )
+{
+	resumeCountdown(resumedBy);
+}
+
+BZF_API void bz_resetTeamScores ( void )
+{
+	resetTeamScores();
+}
+
+BZF_API void bz_startCountdown ( int delay, float limit, const char *byWho )
+{
+	startCountdown(delay,limit,byWho);
+}
+
 
 // Local Variables: ***
 // mode:C++ ***
