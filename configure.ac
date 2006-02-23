@@ -820,11 +820,6 @@ AC_CHECK_FUNCS(\
 	wglGetCurrentContext \
 )
 
-AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
-#include <math.h>
-]], [[
-int i = std::isnan(0.0); i = i;
-]])],[AC_DEFINE(HAVE_STD__ISNAN, 1, [Define to 1 if you have a conforming std::isnan])],[])
 
 AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
 #include <algorithm>
