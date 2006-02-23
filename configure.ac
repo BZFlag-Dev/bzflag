@@ -10,7 +10,39 @@ dnl THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
 dnl IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
 dnl WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 dnl
+dnl $Id$
+dnl
+dnl ******************************************************************
+dnl ***                  BZFlag's configure.ac                    ***
+dnl ******************************************************************
+dnl
+dnl Herein lies the venerable GNU build system configure template for
+dnl BZFlag.  As best is reasonably possible, proper ordering and
+dnl separation of tests and settings should be maintained per the
+dnl recommended standard layout.  The tests should be added to the
+dnl rather clearly labeled sections below so that they are as dnl
+dnl follows:
+dnl
+dnl     0) information on the package
+dnl     1) check command-line arguments
+dnl     2) check programs
+dnl     3) check libraries
+dnl     4) check headers
+dnl     5) check types/structures
+dnl     6) check compiler characteristics
+dnl     7) check functions
+dnl     8) check system services
+dnl     9) output a summary
+dnl
+dnl You should use enable/disable arguments for build settings and
+dnl optional compilation components that are part of this package.
+dnl You specify with/without arguments for components that are not a
+dnl part of this package.
+dnl
+dnl TODO: This mess needs serious cleaning up.
+dnl
 
+dnl FIXME: this is old-style AC_INIT
 AC_INIT
 AC_CONFIG_SRCDIR(src/bzflag/bzflag.cxx)
 AC_REVISION($Revision $)
@@ -98,7 +130,12 @@ fi
 AC_PROG_LN_S
 
 # disabled shared libraries in order to prevent double-compilation
+<<<<<<< configure.ac
+# FIXME: necessary until the flags are used properly.
+# AC_DISABLE_SHARED
+=======
 AC_DISABLE_SHARED
+>>>>>>> 2.52
 
 AC_ARG_ENABLE(plugins, [  --enable-plugins          turn on compilation of plugins])
 if test x$enable_plugins != xno ; then
@@ -790,6 +827,12 @@ AC_CHECK_FUNCS(\
 	vsnprintf \
 	wglGetCurrentContext \
 )
+
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
+#include <math.h>
+]], [[
+int i = std::isnan(0.0); i = i;
+]])],[AC_DEFINE(HAVE_STD__ISNAN, 1, [Define to 1 if you have a conforming std::isnan])],[])
 
 AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
 #include <algorithm>
