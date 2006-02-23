@@ -261,7 +261,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "cp -pR data/* ${TEMP_ROOT}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/.\nfind ${TEMP_ROOT}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/. -regex '.*CVS.*' -type f -exec rm -f {} \\;\nfind ${TEMP_ROOT}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/. -name 'CVS' -type d | xargs rmdir\n";
+			shellScript = "cp -pR data/* ${BUILT_PRODUCTS_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/.\nfind ${BUILT_PRODUCTS_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/. -regex '.*CVS.*' -type f -exec rm -f {} \\;\nfind ${BUILT_PRODUCTS_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/. -name 'CVS' -type d | xargs rmdir\n";
 		};
 		1492F5CB079788480008E0BD = {
 			children = (
