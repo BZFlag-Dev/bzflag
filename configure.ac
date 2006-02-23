@@ -951,6 +951,12 @@ echo "LDFLAGS are $LDFLAGS"
 echo "CPPFLAGS are $CPPFLAGS $CONF_CPPFLAGS"
 echo "LIBS are $LIBS"
 
+
+dnl **********************
+dnl *** Report Summary ***
+dnl **********************
+
+AC_MSG_RESULT([Done.])
 AC_MSG_RESULT([])
 AC_MSG_RESULT([BZFlag-$BZFLAG_VERSION.$CONF_DATE with the following:])
 if test "x$CURSES_LIB" = x; then
