@@ -129,14 +129,6 @@ fi
 
 AC_PROG_LN_S
 
-# disabled shared libraries in order to prevent double-compilation
-<<<<<<< configure.ac
-# FIXME: necessary until the flags are used properly.
-# AC_DISABLE_SHARED
-=======
-AC_DISABLE_SHARED
->>>>>>> 2.52
-
 AC_ARG_ENABLE(plugins, [  --enable-plugins          turn on compilation of plugins])
 if test x$enable_plugins != xno ; then
    AC_DEFINE(_USE_BZ_API, 1, [Enable plugins])
