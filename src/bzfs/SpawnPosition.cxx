@@ -137,7 +137,7 @@ const bool SpawnPosition::isFacing(const float *enemyPos, const float enemyAzimu
 {
   // vector points from test to enemy
   float dx = enemyPos[0] - testPos[0];
-  float dy = enemyPos[0] - testPos[1];
+  float dy = enemyPos[1] - testPos[1];
   float angActual = atan2f (dy, dx);
   float diff = fmodf(enemyAzimuth - angActual, (float)M_PI * 2.0f);
 
