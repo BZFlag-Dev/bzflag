@@ -11,6 +11,14 @@ THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
 
 THESE ARE LOWER PRIORITY
 
+* When jumping, leave the tank in contact for a <put here a new BZD var name>
+  msec, so force could be applied even after the jump instant. Should fix
+  different behaviour when jumping with inertia, comparing low/high FPS
+  players.
+
+* Give the antidote flag server side, and check when player ask to drop a bad
+  flag.
+
 * Autopilot message should be send at player joining, otherwise we loose
   autopilot status for all the players, until they change their setting
 
