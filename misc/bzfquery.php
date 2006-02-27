@@ -31,6 +31,35 @@
 //  This will return an array that contains a list of server settings, players,
 //  player scores, and team scores.
 
+define("MsgQueryGame", 0x7167);			// 'qg'
+define("MsgQueryPlayers", 0x7170);		// 'qp'
+define("MsgTeamUpdate", 0x7475);			// 'tu'
+define("MsgAddPlayer", 0x6170);			// 'ap'
+
+$GLOBALS['debug'] = false;
+
+function readpacket(&$fp) {
+  $loop = 0;
+  $data = '';
+  while (strlen($data) < 4 && $loop < 8) {
+    $data .= fread($fp, 4 - strlen($data));
+    $loop++;
+  }
+
+  if (strlen($data) != 4) return false;
+
+  $return = unpack("nlen/ncode", $data);
+
+  $loop = 0;
+  $data = '';
+  while (strlen($data) < $return['len'] && $loop < 64) {
+    $data .= fread($fp, $return['len'] - strlen($data));
+    $loop++;
+  }
+  $return['data'] = $data;
+  return $return;
+}
+
 function bzfquery ($hostport) {
   list($server['host'], $server['port']) = split(":", $hostport, 2);
   $protocol = 'tcp';
@@ -51,8 +80,12 @@ function bzfquery ($hostport) {
     echo "$errstr ($errno)\n";
     return $server;
   }
-  $buffer=sockRead($fp, 9);
+  $buffer=fread($fp, 9);
   //var_dump($buffer);
+  if (strlen($buffer) != 9) {
+    echo "not a bzflag server";
+    return $server;
+  }
   # parse reply
   $server += unpack("a4magic/a4protocol/Cid", $buffer);
   //var_dump($server);
@@ -75,78 +108,112 @@ function bzfquery ($hostport) {
   }
 }
 
-function bzfquery1910 ($server,$fp) {
+function bzfquery1910 ($server,&$fp) {
   # MsgQueryGame + MsgQueryPlayers
   $request = pack("n2", 0, 0x7167);
   $request .= pack("n2", 0, 0x7170);
   //var_dump($request);
   fwrite($fp, $request);
-  $buffer=fread($fp, 40);
-  //var_dump($buffer);
-  $server += unpack("nlen/ncode/nstyle/nmaxPlayers/nmaxShots/nrogueSize/nredSize/ngreenSize/nblueSize/npurpleSize/nrogueMax/nredMax/ngreenMax/nblueMax/npurpleMax/nshakeWins/nshakeTimeout/nmaxPlayerScore/nmaxTeamScore/nmaxTime", $buffer);
 
-  # MsgQueryPlayers reply
-  $buffer=fread($fp, 8);
-  //var_dump(unpack("c8", $buffer));
-  $server += unpack("nlen/ncode/nnumTotalTeams/nnumPlayers", $buffer);
+  $loop = 0;
 
-  $buffer=fread($fp, 5);
-  $server += unpack("nlen/ncode/CnumTeams", $buffer);
-  //var_dump(unpack("c5", $buffer));
+  $have = Array();
+  $have['QueryGame'] = false;
+  $have['QueryPlayers'] = false;
+  $have['TeamUpdate'] = false;
+  $have['AllAddPlayer'] = false;
 
-  for ( $team = 0; $team < $server['numTeams']; $team++ ) {
-    $buffer=fread($fp, 8);
-    $server['team'][$team] = unpack("nnum/nsize/nwon/nlost", $buffer);
-  }
+  while (in_array(false, $have) && $loop < 64) {
+    $packet = readpacket($fp);
 
-  for ( $player = 0; $player < $server['numPlayers']; $player++ ) {
-    $buffer='';
-    # handle packet fragmentation - untested
-    while(strlen($buffer) < 175) {
-      $buffer .= fread($fp, 175 - strlen($buffer));
-      //echo strlen($buffer) . "\n";
+    if ($GLOBALS['debug']) {
+      echo "Length: " . $packet['len'] . "\n";
+      echo "Code: " . $packet['code'] . " (" . dechex($packet['code']) . ") [" . chr(hexdec(substr(dechex($packet['code']), 0, 2))) . chr(hexdec(substr(dechex($packet['code']), 2, 2)))  . "]\n";
+      echo "Data: " . $packet['data'] . "\n\n";
     }
-    $server['player'][$player] = unpack("nlen/ncode/Cid/ntype/nteam/nwon/nlost/ntks/a32sign/a128email", $buffer);
+
+    switch($packet['code']) {
+      case MsgQueryGame:
+        $server += unpack("nstyle/nmaxPlayers/nmaxShots/nrogueSize/nredSize/ngreenSize/nblueSize/npurpleSize/nrogueMax/nredMax/ngreenMax/nblueMax/npurpleMax/nshakeWins/nshakeTimeout/nmaxPlayerScore/nmaxTeamScore/nmaxTime", $packet['data']);
+        $have['QueryGame'] = true;
+        break;
+      case MsgQueryPlayers:
+        $server += unpack("nnumTotalTeams/nnumPlayers", $packet['data']);
+        $have['QueryPlayers'] = true;
+        if ($server['numPlayers'] == 0) $have['AllAddPlayer'] = true;
+        break;
+      case MsgTeamUpdate:
+        $server += unpack("CnumTeams", $packet['data']);
+        $packet['data'] = substr($packet['data'], 1);
+        for ( $team = 0; $team < $server['numTeams']; $team++ ) {
+          $server['team'][$team] = unpack("nnum/nsize/nwon/nlost", $packet['data']);
+          $packet['data'] = substr($packet['data'], 8);
+        }
+        $have['TeamUpdate'] = true;
+        break;
+      case MsgAddPlayer:
+        $player = unpack("Cid/ntype/nteam/nwon/nlost/ntks/a32sign/a128email", $packet['data']);
+        $server['player'][ $player['id'] ] = $player;
+        if (sizeof($server['player']) >= $server['numPlayers']) $have['AllAddPlayer'] = true;
+        break;
+    }
   }
+
   fclose($fp);
   return $server;
 }
 
-
-function bzfquery0026 ($server,$fp) {
+function bzfquery0026 ($server,&$fp) {
   # MsgQueryGame + MsgQueryPlayers
   $request = pack("n2", 0, 0x7167);
   $request .= pack("n2", 0, 0x7170);
   //var_dump($request);
   fwrite($fp, $request);
 
-  $buffer = sockRead($fp, 12);
-  $x = unpack ('nlen/ncode', $buffer);
-  if ($x['code'] == 26484)			// if MsgGameTime
-    $buffer = sockRead($fp, 46);
-  else
-    $buffer .= sockRead($fp, 34);
+  $loop = 0;
 
-  $server += unpack("nlen/ncode/nstyle/nmaxPlayers/nmaxShots/nrogueSize/nredSize/ngreenSize/nblueSize/npurpleSize/nobserverSize/nrogueMax/nredMax/ngreenMax/nblueMax/npurpleMax/nobserverMax/nshakeWins/nshakeTimeout/nmaxPlayerScore/nmaxTeamScore/nmaxTime/ntimeElapsed", $buffer);
+  $have = Array();
+  $have['QueryGame'] = false;
+  $have['QueryPlayers'] = false;
+  $have['TeamUpdate'] = false;
+  $have['AllAddPlayer'] = false;
 
-  # MsgQueryPlayers reply
-  $buffer=sockRead($fp, 8);
-  //var_dump(unpack("c8", $buffer));
-  $server += unpack("nlen/ncode/nnumTotalTeams/nnumPlayers", $buffer);
+  while (in_array(false, $have) && $loop < 64) {
+    $packet = readpacket($fp);
 
-  $buffer=sockRead($fp, 5);
-  $server += unpack("nlen/ncode/CnumTeams", $buffer);
-  //var_dump(unpack("c5", $buffer));
+    if ($GLOBALS['debug']) {
+      echo "Length: " . $packet['len'] . "\n";
+      echo "Code: " . $packet['code'] . " (" . dechex($packet['code']) . ") [" . chr(hexdec(substr(dechex($packet['code']), 0, 2))) . chr(hexdec(substr(dechex($packet['code']), 2, 2)))  . "]\n";
+      echo "Data: " . $packet['data'] . "\n\n";
+    }
 
-  for ( $team = 0; $team < $server['numTeams']; $team++ ) {
-    $buffer=sockRead($fp, 8);
-    $server['team'][$team] = unpack("nnum/nsize/nwon/nlost", $buffer);
+    switch($packet['code']) {
+      case MsgQueryGame:
+        $server += unpack("nstyle/nmaxPlayers/nmaxShots/nrogueSize/nredSize/ngreenSize/nblueSize/npurpleSize/nobserverSize/nrogueMax/nredMax/ngreenMax/nblueMax/npurpleMax/nobserverMax/nshakeWins/nshakeTimeout/nmaxPlayerScore/nmaxTeamScore/nmaxTime/ntimeElapsed", $packet['data']);
+        $have['QueryGame'] = true;
+        break;
+      case MsgQueryPlayers:
+        $server += unpack("nnumTotalTeams/nnumPlayers", $packet['data']);
+        $have['QueryPlayers'] = true;
+        if ($server['numPlayers'] == 0) $have['AllAddPlayer'] = true;
+        break;
+      case MsgTeamUpdate:
+        $server += unpack("CnumTeams", $packet['data']);
+        $packet['data'] = substr($packet['data'], 1);
+        for ( $team = 0; $team < $server['numTeams']; $team++ ) {
+          $server['team'][$team] = unpack("nnum/nsize/nwon/nlost", $packet['data']);
+          $packet['data'] = substr($packet['data'], 8);
+        }
+        $have['TeamUpdate'] = true;
+        break;
+      case MsgAddPlayer:
+        $player = unpack("Cid/ntype/nteam/nwon/nlost/ntks/a32sign/a128email", $packet['data']);
+        $server['player'][ $player['id'] ] = $player;
+        if (sizeof($server['player']) >= $server['numPlayers']) $have['AllAddPlayer'] = true;
+        break;
+    }
   }
 
-  for ( $player = 0; $player < $server['numPlayers']; $player++ ) {
-	$buffer = sockRead  ($fp, 175);
-    $server['player'][$player] = unpack("nlen/ncode/Cid/ntype/nteam/nwon/nlost/ntks/a32sign/a128email", $buffer);
-  }
   fclose($fp);
   return $server;
 }
@@ -257,16 +324,6 @@ function bzfdump ($server) {
   return;
 }
 
-
-function sockRead ($fd, $num ){
-	$rem = $num;
-	$ret = '';
-	while ( !feof ($fd) && $rem > 0){
-		$ret .= fread ($fd, $rem);
-		$rem = $num - strlen ($ret);
-	}
-	return $ret;
-}
 
 
 # Local Variables: ***
