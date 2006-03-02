@@ -1176,6 +1176,7 @@ void sendMessage(int playerIndex, PlayerId dstPlayer, const char *message)
   if (message[0] == '/' && message[1] == '/')
     msg = &message[1];
 
+  // Should cut the message 
   if (msglen > MessageLen) {
     DEBUG1("WARNING: Network message being sent is too long! "
 	   "(message is %d, cutoff at %d)\n", msglen, MessageLen);
@@ -1187,7 +1188,7 @@ void sendMessage(int playerIndex, PlayerId dstPlayer, const char *message)
   buf = nboPackUByte(buf, dstPlayer);
   buf = nboPackString(buf, msg, msglen);
 
-  ((char*)bufStart)[MessageLen - 1] = '\0'; // always terminate
+  ((char*)bufStart)[MessageLen - 1 + 2] = '\0'; // always terminate
 
   int len = 2 + msglen;
   bool broadcast = false;
