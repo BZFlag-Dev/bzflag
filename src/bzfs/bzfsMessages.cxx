@@ -518,7 +518,7 @@ void sendTextMessage(int destPlayer, int sourcePlayer, const char *text,
     buf = nboPackUByte(buf, destPlayer);
     buf = nboPackString(buf, text, len);
 
-    ((char*)bufStart)[MessageLen - 1] = '\0'; // always terminate
+    ((char*)bufStart)[MessageLen - 1 + 2] = '\0'; // always terminate
 
     if (!broadcast) {
       directMessage(destPlayer, MsgMessage, len+2, bufStart);
