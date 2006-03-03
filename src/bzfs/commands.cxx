@@ -575,7 +575,7 @@ ClientQueryCommand::ClientQueryCommand() : ServerCommand("/clientquery",
 RecordCommand::RecordCommand()		 : ServerCommand("/record",
   "[start|stop|size|list|rate..] - manage the bzflag record system") {}
 ReplayCommand::ReplayCommand()		 : ServerCommand("/replay",
-  "[ list [-t|-n] | load <filename|#index> | loop | play | skip [+/-seconds] | stats ] - intereact with recorded files") {}
+  "[ list [-t|-n] | load <filename|#index> | loop | play | skip [+/-seconds] | stats ] - interact with recorded files") {}
 SayCommand::SayCommand()		 : ServerCommand("/say",
   "[message] - generate a public message sent by the server") {}
 DateCommand::DateCommand()		 : DateTimeCommand("/date") {}
