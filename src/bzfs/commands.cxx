@@ -1716,24 +1716,19 @@ bool ReportCommand::operator() (const char	 *message,
     } else {
       std::string temp = std::string("**\"") + playerData->player.getCallSign() + "\" reports: " +
 			 (message + 8);
-      if (temp.size() <= (unsigned) MessageLen) {
-	sendMessage (ServerPlayer, AdminPlayers, temp.c_str());
-	return true;
-      }
       const std::vector<std::string> words = TextUtils::tokenize(temp, " \t");
       unsigned int cur = 0;
       const unsigned int wordsize = words.size();
+      std::string temp2;
       while (cur != wordsize) {
-	std::string temp2;
-	while (temp2.size() <= (unsigned) MessageLen &&
-	       cur != wordsize &&
-	       (temp2.size() + words[cur].size()) <= (unsigned) MessageLen) {
+	temp2.clear();
+	while (cur != wordsize &&
+	       (temp2.size() + words[cur].size() + 1 ) < (unsigned) MessageLen) {
 	    temp2 += words[cur] + " ";
 	    ++cur;
 	}
 	sendMessage (ServerPlayer, AdminPlayers, temp2.c_str());
       }
-      sendMessage (ServerPlayer, AdminPlayers, message);
       DEBUG1("Player %s [%d] has filed a report (time: %s).\n",
 	     playerData->player.getCallSign(), t, timeStr);
 
