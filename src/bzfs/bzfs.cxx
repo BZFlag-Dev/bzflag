@@ -3584,8 +3584,10 @@ int main(int argc, char **argv)
   int nfound;
   VotingArbiter *votingarbiter = (VotingArbiter *)NULL;
 
+#ifndef _WIN32
   setvbuf(stdout, (char *)NULL, _IOLBF, 0);
   setvbuf(stderr, (char *)NULL, _IOLBF, 0);
+#endif
 
   Record::init();
 
