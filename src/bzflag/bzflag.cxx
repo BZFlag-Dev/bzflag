@@ -772,6 +772,12 @@ int			main(int argc, char** argv)
     // ignore window name in config file (it's used internally)
     BZDB.unset("_window");
     BZDB.unset("_multisample");
+
+
+    // however, if the "__window" setting is enabled, let it through
+    if (BZDB.isSet("__window"))
+      if (BZDB.isTrue("__window"))
+        BZDB.set("_window", "1");
   }
 
   // use UDP? yes
