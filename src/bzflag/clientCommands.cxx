@@ -521,7 +521,7 @@ static std::string cmdViewZoom(const std::string&,
       fov = 15.0f;
     BZDB.setFloat("displayFOV", fov);
   } else if (args[0] == "toggle") {
-    if (fov < 15.5f) {
+    if (fov < 37.5) { // 60+15/2
       fov = 60.0f;
     } else {
       fov = 15.0f;
