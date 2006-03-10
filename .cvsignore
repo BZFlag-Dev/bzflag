@@ -12,6 +12,7 @@ config.sub
 configure
 depcomp
 install-sh
+libtool
 ltmain.sh
 missing
 mkinstalldirs
