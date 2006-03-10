@@ -78,7 +78,7 @@ KeyboardMapMenu::KeyboardMapMenu() : defaultKey(this), editing(-1), quickKeysMen
   controls.push_back(createLabel(NULL, "Send to Teammates:"));
   controls.push_back(createLabel(NULL, "Send to Nemesis:"));
   controls.push_back(createLabel(NULL, "Send to Recipient:"));
-	controls.push_back(createLabel(NULL, "Send to Admin:"));
+  controls.push_back(createLabel(NULL, "Send to Admin:"));
   controls.push_back(createLabel(NULL, "Jump:"));
   controls.push_back(createLabel(NULL, "Binoculars:"));
   controls.push_back(createLabel(NULL, "Toggle Score:"));
