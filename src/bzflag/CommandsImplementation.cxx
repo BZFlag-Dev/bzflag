@@ -14,7 +14,7 @@
 #include "common.h"
 
 // system implementation headers
-#include <cmath>
+#include <math.h>
 #include <ctype.h>
 
 // common implementation headers
@@ -370,14 +370,10 @@ static float parseFloatExpr(const std::string& str, bool zeroNan)
   BZDB.set("tmp", str);
   BZDB.setPersistent("tmp", false);
   float value = BZDB.eval("tmp");
-  if (!zeroNan) {
+  if (!zeroNan || !std::isnan(value)) {
     return value;
   } else {
-    if (!std::isnan(value)) {
-      return value;
-    } else {
-      return 0.0f;
-    }
+    return 0.0f;
   }
 }
 
