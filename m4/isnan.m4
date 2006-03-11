@@ -33,29 +33,16 @@ std::isnan(f);
 if test "x$bz_isnan_works" = "xyes" ; then
 	AC_DEFINE([HAVE_STD__ISNAN], [1], [Define to 1 if `std::isnan' is available])
 else
-	dnl try again looking in the __gnu_cxx extension namespace
+	dnl try again using just math.h, but include cmath in case it clobbers
 	AC_TRY_COMPILE([
-#ifdef HAVE_CMATH
-#  include <cmath>
-#endif
-], [
-float f = 0.0f;
-__gnu_cxx::isnan(f);
-], [bz_isnan_works=yes])
-	if test "x$bz_isnan_works" = "xyes" ; then
-		AC_DEFINE([HAVE___GNU_CXX__ISNAN], [1], [Define to 1 if `__gnu_cxx::isnan' is available])
-	else
-		dnl try again using just math.h, but include cmath in case it clobbers
-		AC_TRY_COMPILE([
 #include <cmath>
 #include <math.h>
 ], [
 float f = 0.0f;
 isnan(f);
 ], [bz_isnan_works=yes])
-		if test "x$bz_isnan_works" = "xyes" ; then
-			AC_DEFINE([HAVE_ISNAN], [1], [Define to 1 if `isnan' is available])
-		fi
+	if test "x$bz_isnan_works" = "xyes" ; then
+		AC_DEFINE([HAVE_ISNAN], [1], [Define to 1 if `isnan' is available])
 	fi
 fi
 
