@@ -23,7 +23,9 @@
 #include <netinet/in.h>
 #include <netdb.h>
 #include <arpa/nameser.h>
-#include <arpa/nameser_compat.h>
+#ifdef HAVE_ARPA_NAMESER_COMPAT_H
+#  include <arpa/nameser_compat.h>
+#endif
 #endif
 
 #include <stdlib.h>

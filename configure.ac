@@ -215,6 +215,7 @@ AC_CHECK_HEADERS( \
 	GL/glx.h \
 	SDL/SDL.h \
 	X11/Xlib.h \
+	arpa/nameser_compat.h \
 	bstring.h \
 	inttypes.h \
 	linux/input.h \
@@ -225,6 +226,7 @@ AC_CHECK_HEADERS( \
 	values.h \
 	dsound.h \
 )
+# nameser_compat.h used by src/c-ares
 
 #Checks for types
 #AM_CHECK_TYPES(socklen_t)
