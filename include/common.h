@@ -204,6 +204,8 @@ typedef unsigned char	uint8_t;
 
 #ifdef HAVE_STD__ISNAN
 #  define isnan std::isnan
+#elif defined(HAVE__ISNAN)
+#  define isnan _isnan
 #else
 #  ifndef HAVE_ISNAN
        template<typename Tp>

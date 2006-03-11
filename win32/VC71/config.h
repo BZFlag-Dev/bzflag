@@ -37,6 +37,9 @@
 /* Use modern template for std::count */
 #define HAVE_STD__COUNT 1
 
+/* On windows, isnan is really _isnan */
+#define HAVE__ISNAN 1
+
 /* We have float math functions */
 #define HAVE_ASINF 1
 #define HAVE_ATAN2F 1
