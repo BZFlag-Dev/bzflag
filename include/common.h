@@ -30,12 +30,14 @@
 #  include "win32.h"
 #endif
 
-// FIXME - is this really still needed?
-//#define BZ_FD_SET(fd, set) FD_SET((unsigned int)fd, set)
-
 #include <stdio.h>
 #include <stdlib.h> //needed for bzfrand
+
+#ifdef HAVE_CMATH
+#  include <cmath> // overrides stuff in math.h potentially
+#endif
 #include <math.h>
+
 
 extern int debugLevel;
 // Like verbose debug messages? level 0 for development only
@@ -123,11 +125,10 @@ extern int debugLevel;
 #  define	tanf		(float)tan
 #endif
 
+
 // random number stuff
 #define bzfrand()	((double)rand() / ((double)RAND_MAX + 1.0))
 #define bzfsrand(_s)	srand(_s)
-
-#if !defined(_WIN32)
 
 #ifndef __BEOS__
 #  ifdef HAVE_VALUES_H
@@ -141,7 +142,14 @@ extern int debugLevel;
 #  define MAXLONG LONG_MAX
 #endif /* __BEOS__ */
 
-#include <sys/types.h>
+#ifdef HAVE_SYS_TYPES_H
+#  include <sys/types.h>
+#endif
+
+// need some integer types
+#ifdef HAVE_INTTYPES_H
+#  include <inttypes.h>
+#endif
 
 #ifdef HAVE_STDINT_H
 #  include <stdint.h>
@@ -159,28 +167,25 @@ typedef signed int	int32_t;
 typedef uint_t		uint32_t;
 #endif
 
-#endif
-
 typedef unsigned char	uint8_t;
 
-#if defined( __BEOS__ )
 
 // missing constants
 
-#  ifndef MAXFLOAT
-#    define	MAXFLOAT	3.402823466e+38f
-#  endif
+#ifndef MAXFLOAT
+#  define	MAXFLOAT	3.402823466e+38f
+#endif
 
-#  ifndef M_PI
-#    define	M_PI		  3.14159265358979323846f
-#  endif
+#ifndef M_PI
+#  define	M_PI		3.14159265358979323846f
+#endif
 
-#  ifndef M_SQRT1_2
-#    define	M_SQRT1_2	0.70710678118654752440f
-#  endif
+#ifndef M_SQRT1_2
+#  define	M_SQRT1_2	0.70710678118654752440f
+#endif
 
-// need some integer types
-#  include <inttypes.h>
+
+#if defined( __BEOS__ )
 
 #  ifndef setenv
 #    define setenv(a,b,c)
@@ -195,6 +200,19 @@ typedef unsigned char	uint8_t;
 #  undef countof
 #endif
 #define countof(__x)   (sizeof(__x) / sizeof(__x[0]))
+
+
+#ifdef HAVE_STD__ISNAN
+#  define isnan std::isnan
+#else
+#  ifndef HAVE_ISNAN
+       template<typename Tp>
+       inline int isnan(Tp f)
+       {
+         return (f!=f);
+       }
+#  endif
+#endif
 
 #ifndef HAVE_STD__MAX
 #  ifdef max
