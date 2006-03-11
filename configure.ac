@@ -199,6 +199,7 @@ AC_MSG_RESULT([not found])
 AC_HEADER_STDC
 AC_LANG(C++)
 AC_CHECK_HEADERS( \
+	cmath \
 	cstdlib \
 	cstdio \
 	cstring \
@@ -215,9 +216,11 @@ AC_CHECK_HEADERS( \
 	SDL/SDL.h \
 	X11/Xlib.h \
 	bstring.h \
+	inttypes.h \
 	linux/input.h \
 	stdint.h \
 	sys/param.h \
+	sys/types.h \
 	unistd.h \
 	values.h \
 	dsound.h \
@@ -820,6 +823,8 @@ AC_CHECK_FUNCS(\
 	wglGetCurrentContext \
 )
 
+dnl test for isnan() presence
+BZ_FUNC_ISNAN
 
 AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
 #include <algorithm>
