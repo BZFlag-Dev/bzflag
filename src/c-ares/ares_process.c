@@ -388,7 +388,7 @@ static struct query *next_server(ares_channel channel, struct query *query, time
 {
   /* Advance to the next server or try. */
   query->server++;
-  for (; query->try < channel->tries; query->try++)
+  for (; query->atry < channel->tries; query->atry++)
     {
       for (; query->server < channel->nservers; query->server++)
 	{
@@ -461,8 +461,8 @@ void ares__send_query(ares_channel channel, struct query *query, time_t now)
 	  return;
 	}
       query->timeout = now
-	  + ((query->try == 0) ? channel->timeout
-	     : channel->timeout << query->try / channel->nservers);
+	  + ((query->atry == 0) ? channel->timeout
+	     : channel->timeout << query->atry / channel->nservers);
     }
 }
 
