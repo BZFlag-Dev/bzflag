@@ -39,7 +39,6 @@ static float treadTexCoordLen;
 static float wheelRadius;
 static float wheelWidth;
 static float wheelSpacing;
-static float wheelTexCoordLen;
 static float casingWidth;
 static float wheelInsideTexRad;
 static float wheelOutsideTexRad;
@@ -74,7 +73,6 @@ void TankGeometryUtils::setTreadStyle(int style)
   wheelRadius = treadRadius - (0.7f * treadThickness);
   wheelWidth = treadWidth * 0.9f;
   wheelSpacing = (fullLength - treadHeight) / 3.0f;
-  wheelTexCoordLen = 1.0f;
 
   casingWidth = treadWidth * 0.6f;
 
