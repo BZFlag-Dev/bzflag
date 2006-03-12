@@ -92,7 +92,7 @@ int ares_init_options(ares_channel *channelptr, struct ares_options *options,
   struct server_state *server;
   struct timeval tv;
 
-  channel = malloc(sizeof(struct ares_channeldata));
+  channel = (struct ares_channeldata *)malloc(sizeof(struct ares_channeldata));
   if (!channel)
     return ARES_ENOMEM;
 
@@ -196,7 +196,7 @@ static int init_by_options(ares_channel channel, struct ares_options *options,
   if ((optmask & ARES_OPT_SERVERS) && channel->nservers == -1)
     {
       channel->servers =
-	malloc(options->nservers * sizeof(struct server_state));
+	(struct server_state *)malloc(options->nservers * sizeof(struct server_state));
       if (!channel->servers && options->nservers != 0)
 	return ARES_ENOMEM;
       for (i = 0; i < options->nservers; i++)
@@ -209,7 +209,7 @@ static int init_by_options(ares_channel channel, struct ares_options *options,
    */
   if ((optmask & ARES_OPT_DOMAINS) && channel->ndomains == -1)
     {
-      channel->domains = malloc(options->ndomains * sizeof(char *));
+      channel->domains = (char **)malloc(options->ndomains * sizeof(char *));
       if (!channel->domains && options->ndomains != 0)
 	return ARES_ENOMEM;
       for (i = 0; i < options->ndomains; i++)
@@ -271,7 +271,7 @@ static int get_res_nt(HKEY hKey, const char *subkey, char **obuf)
   result = RegQueryValueEx(hKey, subkey, 0, NULL, NULL, &size);
   if ((result != ERROR_SUCCESS && result != ERROR_MORE_DATA) || !size)
     return 0;
-  *obuf = malloc(size+1);
+  *obuf = (char *)malloc(size+1);
   if (!*obuf)
     return 0;
 
@@ -674,7 +674,7 @@ static int init_by_defaults(ares_channel channel)
   if (channel->nservers == -1)
     {
       /* If nobody specified servers, try a local named. */
-      channel->servers = malloc(sizeof(struct server_state));
+      channel->servers = (struct server_state *)malloc(sizeof(struct server_state));
       if (!channel->servers)
 	return ARES_ENOMEM;
       channel->servers[0].addr.s_addr = htonl(INADDR_LOOPBACK);
@@ -689,12 +689,12 @@ static int init_by_defaults(ares_channel channel)
       if (gethostname(hostname, sizeof(hostname)) == -1
 	  || !strchr(hostname, '.'))
 	{
-	  channel->domains = malloc(0);
+	  channel->domains = (char **)malloc(0); /* ew. */
 	  channel->ndomains = 0;
 	}
       else
 	{
-	  channel->domains = malloc(sizeof(char *));
+	  channel->domains = (char **)malloc(sizeof(char *));
 	  if (!channel->domains)
 	    return ARES_ENOMEM;
 	  channel->ndomains = 0;
@@ -798,7 +798,7 @@ static int config_nameserver(struct server_state **servers, int *nservers,
     addr.s_addr = inet_addr(begin);
     if (addr.s_addr == INADDR_NONE)
       continue;
-    newserv = realloc(*servers, (*nservers + 1) * sizeof(struct server_state));
+    newserv = (struct server_state *)realloc(*servers, (*nservers + 1) * sizeof(struct server_state));
     if (!newserv)
       return ARES_ENOMEM;
     newserv[*nservers].addr = addr;
@@ -814,7 +814,7 @@ static int config_nameserver(struct server_state **servers, int *nservers,
   addr.s_addr = inet_addr(str);
   if (addr.s_addr == INADDR_NONE)
     return ARES_SUCCESS;
-  newserv = realloc(*servers, (*nservers + 1) * sizeof(struct server_state));
+  newserv = (struct server_state *)realloc(*servers, (*nservers + 1) * sizeof(struct server_state));
   if (!newserv)
     return ARES_ENOMEM;
   newserv[*nservers].addr = addr;
@@ -852,7 +852,7 @@ static int config_sortlist(struct apattern **sortlist, int *nsort,
 	    natural_mask(&pat);
 
 	  /* Add this pattern to our list. */
-	  newsort = realloc(*sortlist, (*nsort + 1) * sizeof(struct apattern));
+	  newsort = (struct apattern *)realloc(*sortlist, (*nsort + 1) * sizeof(struct apattern));
 	  if (!newsort)
 	    return ARES_ENOMEM;
 	  newsort[*nsort] = pat;
@@ -898,7 +898,7 @@ static int set_search(ares_channel channel, const char *str)
       n++;
     }
 
-  channel->domains = malloc(n * sizeof(char *));
+  channel->domains = (char **)malloc(n * sizeof(char *));
   if (!channel->domains && n)
     return ARES_ENOMEM;
 
@@ -911,7 +911,7 @@ static int set_search(ares_channel channel, const char *str)
       q = p;
       while (*q && !isspace((unsigned char)*q))
 	q++;
-      channel->domains[n] = malloc(q - p + 1);
+      channel->domains[n] = (char *)malloc(q - p + 1);
       if (!channel->domains[n])
 	return ARES_ENOMEM;
       memcpy(channel->domains[n], p, q - p);

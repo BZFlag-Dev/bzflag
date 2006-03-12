@@ -57,7 +57,7 @@ void ares_query(ares_channel channel, const char *name, int dnsclass,
     }
 
   /* Allocate and fill in the query structure. */
-  qquery = malloc(sizeof(struct qquery));
+  qquery = (struct qquery *)malloc(sizeof(struct qquery));
   if (!qquery)
     {
       ares_free_string(qbuf);

@@ -109,7 +109,7 @@ static void write_tcp_data(ares_channel channel, fd_set *write_fds, time_t now)
 	n++;
 
       /* Allocate iovecs so we can send all our data at once. */
-      vec = malloc(n * sizeof(struct iovec));
+      vec = (struct iovec *)malloc(n * sizeof(struct iovec));
       if (vec)
 	{
 	  /* Fill in the iovecs and send. */
@@ -217,7 +217,7 @@ static void read_tcp_data(ares_channel channel, fd_set *read_fds, time_t now)
 	       */
 	      server->tcp_length = server->tcp_lenbuf[0] << 8
 		| server->tcp_lenbuf[1];
-	      server->tcp_buffer = malloc(server->tcp_length);
+	      server->tcp_buffer = (unsigned char *)malloc(server->tcp_length);
 	      if (!server->tcp_buffer)
 		handle_error(channel, i, now);
 	      server->tcp_buffer_pos = 0;
@@ -427,7 +427,7 @@ void ares__send_query(ares_channel channel, struct query *query, time_t now)
 	      return;
 	    }
 	}
-      sendreq = calloc(sizeof(struct send_request), 1);
+      sendreq = (struct send_request *)calloc(sizeof(struct send_request), 1);
       if (!sendreq)
 	{
 	end_query(channel, query, ARES_ENOMEM, NULL, 0);

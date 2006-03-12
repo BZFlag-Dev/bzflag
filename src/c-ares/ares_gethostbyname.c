@@ -80,7 +80,7 @@ void ares_gethostbyname(ares_channel channel, const char *name, int family,
     return;
 
   /* Allocate and fill in the host query structure. */
-  hquery = malloc(sizeof(struct host_query));
+  hquery = (struct host_query *)malloc(sizeof(struct host_query));
   if (!hquery)
     {
       callback(arg, ARES_ENOMEM, NULL);
