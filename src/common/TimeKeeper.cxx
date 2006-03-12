@@ -202,7 +202,7 @@ void TimeKeeper::localTime(int *year, int *month, int* day, int* hour, int* min,
 
 // function for converting a float time (e.g. difference of two TimeKeepers)
 // into an array of ints
-const void TimeKeeper::convertTime(double raw, long int convertedTimes[])
+void TimeKeeper::convertTime(double raw, long int convertedTimes[]) // const
 {
   long int day, hour, min, sec, remainder;
   static const int secondsInDay = 86400;
