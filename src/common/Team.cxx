@@ -93,7 +93,7 @@ const char*		Team::getName(TeamColor team) // const
   }
 }
 
-const TeamColor	Team::getTeam(const std::string name) // const
+TeamColor	Team::getTeam(const std::string name) // const
 {
   if (name == Team::getName(AutomaticTeam)) {
     return AutomaticTeam;
