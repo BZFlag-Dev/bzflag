@@ -51,9 +51,9 @@ typedef struct {
 
 static FlagListType   FlagList;
 static PlayerListType PlayerList;
-static bool UseDNS = true;
+// static bool UseDNS = true;
 static bool Colorize = true;
-static bool ShowEmail = true;
+// static bool ShowEmail = true;
 static bool TrackState = true;
 
 static MsgStringList listMsgBasics (PacketInfo *pi);
@@ -184,9 +184,9 @@ void MsgStrings::reset ()
 {
   unsigned int i;
 
-  UseDNS = true;
+  //  UseDNS = true;
   Colorize = true;
-  ShowEmail = true;
+  //  ShowEmail = true;
   TrackState = true;
 
   FlagList.clear();
@@ -218,14 +218,14 @@ void MsgStrings::reset ()
 
 void MsgStrings::useDNS (bool value)
 {
-  UseDNS = value;
+  //  UseDNS = value;
   return;
 }
 
 
 void MsgStrings::showEmail (bool value)
 {
-  ShowEmail = value;
+  //  ShowEmail = value;
   return;
 }
 
