@@ -30,7 +30,7 @@
  * any fetched list of servers.  The list handles cacheing of those
  * server entries in case of list server unavailability.
  */
-class ServerList : cURLManager {
+class ServerList : private cURLManager {
 
 public:
   ServerList();

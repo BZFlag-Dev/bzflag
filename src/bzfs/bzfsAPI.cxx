@@ -1911,7 +1911,7 @@ typedef struct
 	std::string postData;
 }trURLJob;
 
-class BZ_APIURLManager :  cURLManager
+class BZ_APIURLManager : private cURLManager
 {
 public:
 	BZ_APIURLManager()

@@ -110,7 +110,7 @@ typedef struct
 	std::string		fileName;
 }trResourceItem;
 
-class ResourceGetter :  cURLManager
+class ResourceGetter :  private cURLManager
 {
 public:
 	ResourceGetter();

@@ -24,7 +24,7 @@
 
 
 // command classes used by the API
-class ShutdownCommand : ServerCommand {
+class ShutdownCommand : private ServerCommand {
 public:
 	ShutdownCommand();
 
@@ -32,7 +32,7 @@ public:
 		GameKeeper::Player *playerData);
 };
 
-class SuperkillCommand : ServerCommand {
+class SuperkillCommand : private ServerCommand {
 public:
 	SuperkillCommand();
 

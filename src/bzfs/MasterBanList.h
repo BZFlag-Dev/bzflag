@@ -16,7 +16,7 @@
 // common implementation headers
 #include "cURLManager.h"
 
-class MasterBanList : cURLManager {
+class MasterBanList : private cURLManager {
 public:
 const std::string& get ( const std::string URL );
 protected:

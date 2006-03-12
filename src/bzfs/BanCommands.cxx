@@ -27,7 +27,7 @@
 #include "bzfs.h"
 
 
-class KickCommand : ServerCommand {
+class KickCommand : private ServerCommand {
 public:
   KickCommand();
 
@@ -35,7 +35,7 @@ public:
 			   GameKeeper::Player *playerData);
 };
 
-class KillCommand : ServerCommand {
+class KillCommand : private ServerCommand {
 public:
   KillCommand();
 
@@ -43,7 +43,7 @@ public:
 			   GameKeeper::Player *playerData);
 };
 
-class BanListCommand : ServerCommand {
+class BanListCommand : private ServerCommand {
 public:
   BanListCommand();
 
@@ -51,7 +51,7 @@ public:
 			   GameKeeper::Player *playerData);
 };
 
-class CheckIPCommand : ServerCommand {
+class CheckIPCommand : private ServerCommand {
 public:
   CheckIPCommand();
 
@@ -59,7 +59,7 @@ public:
 			   GameKeeper::Player *playerData);
 };
 
-class HostbanListCommand : ServerCommand {
+class HostbanListCommand : private ServerCommand {
 public:
   HostbanListCommand();
 
@@ -67,7 +67,7 @@ public:
 			   GameKeeper::Player *playerData);
 };
 
-class IdBanListCommand : ServerCommand {
+class IdBanListCommand : private ServerCommand {
 public:
   IdBanListCommand();
 
@@ -75,7 +75,7 @@ public:
 			   GameKeeper::Player *playerData);
 };
 
-class BanCommand : ServerCommand {
+class BanCommand : private ServerCommand {
 public:
   BanCommand();
 
@@ -83,7 +83,7 @@ public:
 			   GameKeeper::Player *playerData);
 };
 
-class HostbanCommand : ServerCommand {
+class HostbanCommand : private ServerCommand {
 public:
   HostbanCommand();
 
@@ -91,7 +91,7 @@ public:
 			   GameKeeper::Player *playerData);
 };
 
-class IdBanCommand : ServerCommand {
+class IdBanCommand : private ServerCommand {
 public:
   IdBanCommand();
 
@@ -99,7 +99,7 @@ public:
 			   GameKeeper::Player *playerData);
 };
 
-class UnbanCommand : ServerCommand {
+class UnbanCommand : private ServerCommand {
 public:
   UnbanCommand();
 
@@ -107,7 +107,7 @@ public:
 			   GameKeeper::Player *playerData);
 };
 
-class HostUnbanCommand : ServerCommand {
+class HostUnbanCommand : private ServerCommand {
 public:
   HostUnbanCommand();
 
@@ -115,7 +115,7 @@ public:
 			   GameKeeper::Player *playerData);
 };
 
-class IdUnbanCommand : ServerCommand {
+class IdUnbanCommand : private ServerCommand {
 public:
   IdUnbanCommand();
 
@@ -123,7 +123,7 @@ public:
 			   GameKeeper::Player *playerData);
 };
 
-class MuteCommand : ServerCommand {
+class MuteCommand : private ServerCommand {
 public:
   MuteCommand();
 
@@ -131,7 +131,7 @@ public:
 			   GameKeeper::Player *playerData);
 };
 
-class UnmuteCommand : ServerCommand {
+class UnmuteCommand : private ServerCommand {
 public:
   UnmuteCommand();
 
@@ -139,7 +139,7 @@ public:
 			   GameKeeper::Player *playerData);
 };
 
-class MasterBanCommand : ServerCommand {
+class MasterBanCommand : private ServerCommand {
 public:
   MasterBanCommand();
 
