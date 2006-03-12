@@ -194,7 +194,6 @@ int FontManager::getFaceID(std::string faceName)
 
   FontFaceMap::iterator faceItr = faceNames.find(faceName);
 
-  int faceID = 0;
   if (faceItr == faceNames.end()) {
     // see if there is a default
     DEBUG4("Requested font %s not found, trying Default\n", faceName.c_str());
@@ -217,7 +216,7 @@ int FontManager::getFaceID(std::string faceName)
     }
   }
 
-  return faceID = faceItr->second;
+  return faceItr->second;
 }
 
 int FontManager::getNumFaces(void)
