@@ -201,7 +201,7 @@ void DynamicColor::finalize()
   for (int c = 0; c < 4; c++) {
     sequenceParams& seq = channels[c].sequence;
     for (unsigned int i = 0; i < seq.count; i++) {
-      if (seq.list[i] < colorMin) {
+      if ((int)seq.list[i] < colorMin) {
 	seq.list[i] = colorMin;
       } else if (seq.list[i] > colorMax) {
 	seq.list[i] = colorMax;
