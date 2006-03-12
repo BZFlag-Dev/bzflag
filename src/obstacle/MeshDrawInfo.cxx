@@ -802,7 +802,7 @@ bool MeshDrawInfo::parse(std::istream& input)
   TimeKeeper start = TimeKeeper::getCurrent();
 
   bool success = true;
-  bool allVBO = false;
+  //  bool allVBO = false;
   bool allDList = false;
 
   int i;
@@ -833,7 +833,7 @@ bool MeshDrawInfo::parse(std::istream& input)
       break;
     }
     else if (strcasecmp(cmd.c_str(), "vbo") == 0) {
-      allVBO = true;
+      //      allVBO = true;
     }
     else if (strcasecmp(cmd.c_str(), "dlist") == 0) {
       allDList = true;
