@@ -65,10 +65,10 @@ class MeshFragSceneNode : public WallSceneNode {
 	const GLfloat* getPosition() const { return sceneNode->getSphere(); }
 
       private:
-	void drawV() const; // draw with just vertices
-	void drawVT() const; // draw with texcoords
-	void drawVN() const; // draw with normals
-	void drawVTN() const; // draw with texcoords and normals
+	inline void drawV() const; // draw with just vertices
+	inline void drawVT() const; // draw with texcoords
+	inline void drawVN() const; // draw with normals
+	inline void drawVTN() const; // draw with texcoords and normals
 
 	void initDisplayList();
 	void freeDisplayList();
