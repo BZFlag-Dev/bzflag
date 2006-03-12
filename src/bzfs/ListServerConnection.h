@@ -27,7 +27,7 @@
 #include "TimeKeeper.h"
 #include "cURLManager.h"
 
-class ListServerLink : cURLManager {
+class ListServerLink : private cURLManager {
 public:
     // c'tor will fill list and local server information variables and
     // do an initial ADD

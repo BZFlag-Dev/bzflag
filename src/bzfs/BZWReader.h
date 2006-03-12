@@ -30,7 +30,7 @@
 class WorldFileObject;
 class WorldInfo;
 
-class BZWReader : cURLManager {
+class BZWReader : private cURLManager {
 public:
   BZWReader(std::string filename);
   ~BZWReader();

@@ -69,7 +69,7 @@ static void printAuthNotice();
 static bool checkAuthorizations(BzMaterialManager::TextureSet& set);
 
 
-class CachedTexture : cURLManager {
+class CachedTexture : private cURLManager {
 public:
   CachedTexture(const std::string &texUrl);
 

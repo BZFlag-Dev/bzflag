@@ -1494,7 +1494,7 @@ static void loadCachedWorld()
   downloadingInitialTexture  = true;
 }
 
-class WorldDownLoader : cURLManager {
+class WorldDownLoader : private cURLManager {
 public:
   void	 start(char * hexDigest);
 private:

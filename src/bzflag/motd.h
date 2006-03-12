@@ -22,7 +22,7 @@
 // common interface headers
 #include "cURLManager.h"
 
-class MessageOfTheDay : cURLManager {
+class MessageOfTheDay : private cURLManager {
 public:
 
   virtual void finalization(char *data, unsigned int length, bool good);
