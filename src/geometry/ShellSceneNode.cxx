@@ -26,7 +26,7 @@
 // FIXME (SceneRenderer.cxx is in src/bzflag)
 #include "SceneRenderer.h"
 
-#define	ShellRadius1_2	((const GLfloat)(M_SQRT1_2 * ShellRadius))
+#define	ShellRadius1_2	((GLfloat)(M_SQRT1_2 * ShellRadius))
 
 const GLfloat		ShellSceneNode::shellVertex[9][3] = {
 				{ 3.0f * ShellRadius, 0.0f, 0.0f },
