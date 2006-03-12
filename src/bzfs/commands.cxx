@@ -65,7 +65,7 @@
 
 tmCustomSlashCommandMap	customCommands;
 
-class MsgCommand : ServerCommand {
+class MsgCommand : public ServerCommand {
 public:
   MsgCommand();
 
@@ -73,7 +73,7 @@ public:
 			   GameKeeper::Player *playerData);
 };
 
-class ServerQueryCommand : ServerCommand {
+class ServerQueryCommand : public ServerCommand {
 public:
   ServerQueryCommand();
 
@@ -81,7 +81,7 @@ public:
 			   GameKeeper::Player *playerData);
 };
 
-class PartCommand : ServerCommand {
+class PartCommand : public ServerCommand {
 public:
   PartCommand();
 
@@ -89,7 +89,7 @@ public:
 			   GameKeeper::Player *playerData);
 };
 
-class QuitCommand : ServerCommand {
+class QuitCommand : public ServerCommand {
 public:
   QuitCommand();
 
@@ -97,7 +97,7 @@ public:
 			   GameKeeper::Player *playerData);
 };
 
-class UpTimeCommand : ServerCommand {
+class UpTimeCommand : public ServerCommand {
 public:
   UpTimeCommand();
 
@@ -105,7 +105,7 @@ public:
 			   GameKeeper::Player *playerData);
 };
 
-class PasswordCommand : ServerCommand {
+class PasswordCommand : public ServerCommand {
 public:
   PasswordCommand();
 
@@ -113,7 +113,7 @@ public:
 			   GameKeeper::Player *playerData);
 };
 
-class SetCommand : ServerCommand {
+class SetCommand : public ServerCommand {
 public:
   SetCommand();
 
@@ -121,7 +121,7 @@ public:
 			   GameKeeper::Player *playerData);
 };
 
-class ResetCommand : ServerCommand {
+class ResetCommand : public ServerCommand {
 public:
   ResetCommand();
 
@@ -129,7 +129,7 @@ public:
 			   GameKeeper::Player *playerData);
 };
 
-class GameOverCommand : ServerCommand {
+class GameOverCommand : public ServerCommand {
 public:
   GameOverCommand();
 
@@ -137,7 +137,7 @@ public:
 			   GameKeeper::Player *playerData);
 };
 
-class CountdownCommand : ServerCommand {
+class CountdownCommand : public ServerCommand {
 public:
   CountdownCommand();
 
@@ -145,7 +145,7 @@ public:
 			   GameKeeper::Player *playerData);
 };
 
-class FlagCommand : ServerCommand {
+class FlagCommand : public ServerCommand {
 public:
   FlagCommand();
 
@@ -153,7 +153,7 @@ public:
 			   GameKeeper::Player *playerData);
 };
 
-class LagWarnCommand : ServerCommand {
+class LagWarnCommand : public ServerCommand {
 public:
   LagWarnCommand();
 
@@ -161,7 +161,7 @@ public:
 			   GameKeeper::Player *playerData);
 };
 
-class JitterWarnCommand : ServerCommand {
+class JitterWarnCommand : public ServerCommand {
 public:
   JitterWarnCommand();
 
@@ -169,7 +169,7 @@ public:
 			   GameKeeper::Player *playerData);
 };
 
-class LagDropCommand : ServerCommand {
+class LagDropCommand : public ServerCommand {
 public:
   LagDropCommand();
 
@@ -177,7 +177,7 @@ public:
 			   GameKeeper::Player *playerData);
 };
 
-class LagStatCommand : ServerCommand {
+class LagStatCommand : public ServerCommand {
 public:
   LagStatCommand();
 
@@ -185,7 +185,7 @@ public:
 			   GameKeeper::Player *playerData);
 };
 
-class IdleStatCommand : ServerCommand {
+class IdleStatCommand : public ServerCommand {
 public:
   IdleStatCommand();
 
@@ -193,7 +193,7 @@ public:
 			   GameKeeper::Player *playerData);
 };
 
-class FlagHistoryCommand : ServerCommand {
+class FlagHistoryCommand : public ServerCommand {
 public:
   FlagHistoryCommand();
 
@@ -201,7 +201,7 @@ public:
 			   GameKeeper::Player *playerData);
 };
 
-class IdListCommand : ServerCommand {
+class IdListCommand : public ServerCommand {
 public:
   IdListCommand();
 
@@ -209,7 +209,7 @@ public:
 			   GameKeeper::Player *playerData);
 };
 
-class PlayerListCommand : ServerCommand {
+class PlayerListCommand : public ServerCommand {
 public:
   PlayerListCommand();
 
@@ -217,7 +217,7 @@ public:
 			   GameKeeper::Player *playerData);
 };
 
-class ReportCommand : ServerCommand {
+class ReportCommand : public ServerCommand {
 public:
   ReportCommand();
 
@@ -225,7 +225,7 @@ public:
 			   GameKeeper::Player *playerData);
 };
 
-class HelpCommand : ServerCommand {
+class HelpCommand : public ServerCommand {
 public:
   HelpCommand();
 
@@ -233,7 +233,7 @@ public:
 			   GameKeeper::Player *playerData);
 };
 
-class SendHelpCommand : ServerCommand {
+class SendHelpCommand : public ServerCommand {
 public:
   SendHelpCommand();
 
@@ -241,7 +241,7 @@ public:
 			  GameKeeper::Player *playerData);
 };
 
-class IdentifyCommand : ServerCommand {
+class IdentifyCommand : public ServerCommand {
 public:
   IdentifyCommand();
 
@@ -249,7 +249,7 @@ public:
 			   GameKeeper::Player *playerData);
 };
 
-class RegisterCommand : ServerCommand {
+class RegisterCommand : public ServerCommand {
 public:
   RegisterCommand();
 
@@ -257,7 +257,7 @@ public:
 			   GameKeeper::Player *playerData);
 };
 
-class GhostCommand : ServerCommand {
+class GhostCommand : public ServerCommand {
 public:
   GhostCommand();
 
@@ -265,7 +265,7 @@ public:
 			   GameKeeper::Player *playerData);
 };
 
-class DeregisterCommand : ServerCommand {
+class DeregisterCommand : public ServerCommand {
 public:
   DeregisterCommand();
 
@@ -273,7 +273,7 @@ public:
 			   GameKeeper::Player *playerData);
 };
 
-class SetPassCommand : ServerCommand {
+class SetPassCommand : public ServerCommand {
 public:
   SetPassCommand();
 
@@ -281,7 +281,7 @@ public:
 			   GameKeeper::Player *playerData);
 };
 
-class GroupListCommand : ServerCommand {
+class GroupListCommand : public ServerCommand {
 public:
   GroupListCommand();
 
@@ -289,7 +289,7 @@ public:
 			   GameKeeper::Player *playerData);
 };
 
-class ShowGroupCommand : ServerCommand {
+class ShowGroupCommand : public ServerCommand {
 public:
   ShowGroupCommand();
 
@@ -297,7 +297,7 @@ public:
 			   GameKeeper::Player *playerData);
 };
 
-class ShowPermsCommand : ServerCommand {
+class ShowPermsCommand : public ServerCommand {
 public:
   ShowPermsCommand();
 
@@ -305,7 +305,7 @@ public:
 			   GameKeeper::Player *playerData);
 };
 
-class GroupPermsCommand : ServerCommand {
+class GroupPermsCommand : public ServerCommand {
 public:
   GroupPermsCommand();
 
@@ -313,7 +313,7 @@ public:
 			   GameKeeper::Player *playerData);
 };
 
-class SetGroupCommand : ServerCommand {
+class SetGroupCommand : public ServerCommand {
 public:
   SetGroupCommand();
 
@@ -321,7 +321,7 @@ public:
 			   GameKeeper::Player *playerData);
 };
 
-class RemoveGroupCommand : ServerCommand {
+class RemoveGroupCommand : public ServerCommand {
 public:
   RemoveGroupCommand();
 
@@ -329,7 +329,7 @@ public:
 			   GameKeeper::Player *playerData);
 };
 
-class ReloadCommand : ServerCommand {
+class ReloadCommand : public ServerCommand {
 public:
   ReloadCommand();
 
@@ -337,7 +337,7 @@ public:
 			   GameKeeper::Player *playerData);
 };
 
-class PollCommand : ServerCommand {
+class PollCommand : public ServerCommand {
 public:
   PollCommand();
 
@@ -345,7 +345,7 @@ public:
 			   GameKeeper::Player *playerData);
 };
 
-class VoteCommand : ServerCommand {
+class VoteCommand : public ServerCommand {
 public:
   VoteCommand();
 
@@ -353,7 +353,7 @@ public:
 			   GameKeeper::Player *playerData);
 };
 
-class VetoCommand : ServerCommand {
+class VetoCommand : public ServerCommand {
 public:
   VetoCommand();
 
@@ -361,7 +361,7 @@ public:
 			   GameKeeper::Player *playerData);
 };
 
-class ViewReportCommand : ServerCommand {
+class ViewReportCommand : public ServerCommand {
 public:
   ViewReportCommand();
 
@@ -369,7 +369,7 @@ public:
 			   GameKeeper::Player *playerData);
 };
 
-class ModCountCommand : ServerCommand {
+class ModCountCommand : public ServerCommand {
 public:
   ModCountCommand();
 
@@ -377,7 +377,7 @@ public:
 			   GameKeeper::Player *playerData);
 };
 
-class ClientQueryCommand : ServerCommand {
+class ClientQueryCommand : public ServerCommand {
 public:
   ClientQueryCommand();
 
@@ -385,7 +385,7 @@ public:
 			   GameKeeper::Player *playerData);
 };
 
-class DateTimeCommand : ServerCommand {
+class DateTimeCommand : public ServerCommand {
 public:
 	DateTimeCommand();
   virtual bool operator() (const char	 *commandLine,
@@ -394,17 +394,17 @@ protected:
   DateTimeCommand(std::string _commandName) : ServerCommand(_commandName, "- display current server time") {};
 };
 
-class DateCommand : DateTimeCommand {
+class DateCommand : public DateTimeCommand {
 public:
   DateCommand();
 };
 
-class TimeCommand : DateTimeCommand {
+class TimeCommand : public DateTimeCommand {
 public:
   TimeCommand();
 };
 
-class RecordCommand : ServerCommand {
+class RecordCommand : public ServerCommand {
 public:
   RecordCommand();
 
@@ -412,7 +412,7 @@ public:
 			   GameKeeper::Player *playerData);
 };
 
-class ReplayCommand : ServerCommand {
+class ReplayCommand : public ServerCommand {
 public:
   ReplayCommand();
 
@@ -420,7 +420,7 @@ public:
 			   GameKeeper::Player *playerData);
 };
 
-class SayCommand : ServerCommand {
+class SayCommand : public ServerCommand {
 public:
   SayCommand();
 
@@ -428,7 +428,7 @@ public:
 			   GameKeeper::Player *playerData);
 };
 
-class CmdList : ServerCommand {
+class CmdList : public ServerCommand {
 public:
   CmdList();
 
@@ -436,7 +436,7 @@ public:
 			   GameKeeper::Player *playerData);
 };
 
-class CmdHelp : ServerCommand {
+class CmdHelp : public ServerCommand {
 public:
   CmdHelp();
 

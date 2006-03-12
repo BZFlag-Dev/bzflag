@@ -132,7 +132,7 @@ SpawnPosition::~SpawnPosition()
 {
 }
 
-const bool SpawnPosition::isFacing(const float *enemyPos, const float enemyAzimuth,
+bool SpawnPosition::isFacing(const float *enemyPos, const float enemyAzimuth,
 				   const float deviation) const
 {
   // vector points from test to enemy
@@ -153,7 +153,7 @@ const bool SpawnPosition::isFacing(const float *enemyPos, const float enemyAzimu
   }
 }
 
-const bool SpawnPosition::isImminentlyDangerous() const
+bool SpawnPosition::isImminentlyDangerous() const
 {
   GameKeeper::Player *playerData;
   for (int i = 0; i < curMaxPlayers; i++) {
@@ -196,7 +196,7 @@ const bool SpawnPosition::isImminentlyDangerous() const
   return false;
 }
 
-const float SpawnPosition::enemyProximityCheck(float &enemyAngle) const
+float SpawnPosition::enemyProximityCheck(float &enemyAngle) const
 {
   GameKeeper::Player *playerData;
   float worstDist = 1e12f; // huge number
@@ -226,7 +226,7 @@ const float SpawnPosition::enemyProximityCheck(float &enemyAngle) const
   return sqrtf(worstDist);
 }
 
-const float SpawnPosition::distanceFrom(const float* farPos) const
+float SpawnPosition::distanceFrom(const float* farPos) const
 {
   float dx = farPos[0] - testPos[0];
   float dy = farPos[1] - testPos[1];
