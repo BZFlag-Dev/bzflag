@@ -23,16 +23,16 @@ public:
   SpawnPosition(int playerId, bool onGroundOnly, bool notNearEdges);
   ~SpawnPosition();
 
-  const float getX() const;
-  const float getY() const;
-  const float getZ() const;
-  const float getAzimuth() const;
+  float getX() const;
+  float getY() const;
+  float getZ() const;
+  float getAzimuth() const;
 
 private:
-  const float enemyProximityCheck(float &enemyAngle) const;
-  const float distanceFrom(const float* farPos) const;
-  const bool  isImminentlyDangerous() const;
-  const bool  isFacing(const float *enemyPos, const float enemyAzimuth,
+  float enemyProximityCheck(float &enemyAngle) const;
+  float distanceFrom(const float* farPos) const;
+  bool  isImminentlyDangerous() const;
+  bool  isFacing(const float *enemyPos, const float enemyAzimuth,
 		       const float deviation) const;
 
   float	      azimuth;
@@ -48,22 +48,22 @@ private:
 
 };
 
-inline const float SpawnPosition::getX() const
+inline float SpawnPosition::getX() const
 {
   return pos[0];
 }
 
-inline const float SpawnPosition::getY() const
+inline float SpawnPosition::getY() const
 {
   return pos[1];
 }
 
-inline const float SpawnPosition::getZ() const
+inline float SpawnPosition::getZ() const
 {
   return pos[2];
 }
 
-inline const float SpawnPosition::getAzimuth() const
+inline float SpawnPosition::getAzimuth() const
 {
   return azimuth;
 }
