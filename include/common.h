@@ -32,10 +32,6 @@
 
 #include <stdio.h>
 #include <stdlib.h> //needed for bzfrand
-
-#ifdef HAVE_CMATH
-#  include <cmath> // overrides stuff in math.h potentially
-#endif
 #include <math.h>
 
 
@@ -153,21 +149,19 @@ extern int debugLevel;
 
 #ifdef HAVE_STDINT_H
 #  include <stdint.h>
-#endif
-
-#if defined(__linux) || (defined(__sgi) && !defined(__INTTYPES_MAJOR))
+#else
+#  if defined(__linux) || (defined(__sgi) && !defined(__INTTYPES_MAJOR))
 typedef u_int16_t	uint16_t;
 typedef u_int32_t	uint32_t;
-#endif
-
-#if defined(sun)
+#  endif
+#  if defined(sun)
 typedef signed short	int16_t;
 typedef ushort_t	uint16_t;
 typedef signed int	int32_t;
 typedef uint_t		uint32_t;
-#endif
-
+#  endif
 typedef unsigned char	uint8_t;
+#endif
 
 
 // missing constants
@@ -208,6 +202,9 @@ typedef unsigned char	uint8_t;
 #  define isnan _isnan
 #else
 #  ifndef HAVE_ISNAN
+#      ifdef isnan
+#        undef isnan
+#      endif
        template<typename Tp>
        inline int isnan(Tp f)
        {
