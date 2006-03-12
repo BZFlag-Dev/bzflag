@@ -17,7 +17,7 @@ or provide them directly to configure as is shown (and preferred)
 below:
 
 # to use the MIPSPro compiler
-./configure  CC="cc" CXX="CC" CXXFLAGS="-O2 -OPT:Olimit=32768 -DEFAULT:abi=o32:isa=mips3:proc=r5k -LANG:std -FE:template_in_elf_section -no_auto_include -ptused -prelink" CFLAGS="-O2 -OPT:Olimit=32768 -DEFAULT:abi=o32:isa=mips3:proc=r5k -LANG:std -no_autoinclude -ptused -prelink"
+./configure  CC="cc" CXX="CC" CXXFLAGS="-O2 -OPT:Olimit=32768 -DEFAULT:abi=o32:isa=mips3:proc=r5k -LANG:std -FE:template_in_elf_section -ptused -prelink" CFLAGS="-O2 -OPT:Olimit=32768 -DEFAULT:abi=o32:isa=mips3:proc=r5k -LANG:std -ptused -prelink"
 make
 
 If you try to boost the optimization to -O3, it is likely that the
@@ -31,6 +31,10 @@ build properly.  Without them, there will be serious problems linking
 the binaries with the template instantiations.  The options are not
 strictly necessary on the CFLAGS variable (they are required for
 CXXFLAGS), but don't hurt.
+
+You may want to use the -no_autoinclude option on the CXXFLAGS and
+CFLAGS if your version of the compiler supports that option if you run
+into an error, but it should not be necessary.
 
 The last problem that you may encounter on older IRIX systems is a
 problem in the curses.h header.  This problem will cause bzadmin to
