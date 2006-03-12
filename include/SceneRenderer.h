@@ -140,7 +140,7 @@ public:
   void			setSceneDatabase(SceneDatabase*);
 
   const Extents*	getVisualExtents() const;
-  const float		getLengthPerPixel() const;
+  float			getLengthPerPixel() const;
 
   int			getFrameTriangleCount() const;
 
@@ -280,7 +280,7 @@ inline ViewFrustum&		SceneRenderer::getViewFrustum()
   return frustum;
 }
 
-inline const float		SceneRenderer::getLengthPerPixel() const
+inline float			SceneRenderer::getLengthPerPixel() const
 {
   return lengthPerPixel;
 }
