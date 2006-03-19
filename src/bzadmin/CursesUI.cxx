@@ -132,6 +132,7 @@ bool CursesUI::checkCommand(std::string& str) {
     // delete last character
   case KEY_BACKSPACE:
   case KEY_DC:
+  case 8:
   case 127:
     cmd = cmd.substr(0, cmd.size() - 1);
     updateCmdWin();
