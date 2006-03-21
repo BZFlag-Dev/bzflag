@@ -49,7 +49,7 @@ extern int debugLevel;
 #define NEAR_ZERO(_value,_epsilon)  ( ((_value) > -_epsilon) && ((_value) < _epsilon) )
 
 // seven places of precision is pretty safe, so something less precise
-#if defined(FLT_EPSILON)
+#ifdef FLT_EPSILON
 #  define ZERO_TOLERANCE FLT_EPSILON
 #else
 #  define ZERO_TOLERANCE 1.0e-06f
@@ -66,7 +66,7 @@ extern int debugLevel;
 #ifdef HAVE__STRNICMP
 #  define strncasecmp _strnicmp
 #endif
-#if !defined(HAVE_VSNPRINTF)
+#ifndef HAVE_VSNPRINTF
 #  ifdef HAVE__VSNPRINTF
 #    define vsnprintf _vsnprintf
 #  else
@@ -179,16 +179,14 @@ typedef unsigned char	uint8_t;
 #endif
 
 
-#if defined( __BEOS__ )
-
+#ifdef __BEOS__
 #  ifndef setenv
 #    define setenv(a,b,c)
 #  endif
-
 #  ifndef putenv
 #    define putenv(a)
 #  endif
-#endif /* defined( __BEOS__ ) */
+#endif /* __BEOS__ */
 
 #ifdef countof
 #  undef countof
@@ -202,6 +200,7 @@ typedef unsigned char	uint8_t;
 #  define isnan _isnan
 #else
 #  ifndef HAVE_ISNAN
+#    ifdef __cplusplus
 #      ifdef isnan
 #        undef isnan
 #      endif
@@ -210,36 +209,47 @@ typedef unsigned char	uint8_t;
        {
          return (f!=f);
        }
-#  endif
-#endif
+#    else
+#      define isnan(f) ((f) != (f))
+#    endif /* __cplusplus */
+#  endif /* HAVE_ISNAN */
+#endif /* HAVE_STD__ISNAN */
 
 #ifndef HAVE_STD__MAX
-#  ifdef max
-#    undef max
-#  endif
-namespace std
-{
-  template<typename comparable>
-  inline const comparable& max(const comparable& a, const comparable& b)
-  {
-    return  a < b ? b : a;
-  }
-}
-#endif
+#  ifdef __cplusplus
+#    ifdef max
+#      undef max
+#    endif
+     namespace std
+     {
+       template<typename comparable>
+       inline const comparable& max(const comparable& a, const comparable& b)
+       {
+	 return  a < b ? b : a;
+       }
+     }
+#  else
+#    define max(a,b) a < b ? b : a
+#  endif /* __cplusplus */
+#endif /* HAVE_STD__MAX */
 
 #ifndef HAVE_STD__MIN
-#  ifdef min
-#    undef min
-#  endif
-namespace std
-{
-  template<typename comparable>
-  inline const comparable& min(const comparable& a, const comparable& b)
-  {
-    return b < a ? b : a;
-  }
-}
-#endif
+#  ifdef __cpluscplus
+#    ifdef min
+#      undef min
+#    endif
+     namespace std
+     {
+       template<typename comparable>
+       inline const comparable& min(const comparable& a, const comparable& b)
+       {
+	 return b < a ? b : a;
+       }
+     }
+#  else
+#    define min(a,b) b < a ? b : a
+#  endif /* __cplusplus */
+#endif /* HAVE_STD_MIN */
 
 #ifdef BUILD_REGEX
 #  include "bzregex.h"
@@ -247,9 +257,9 @@ namespace std
 #  include <regex.h>
 #else
 #  define regex_t void
-#endif
+#endif  /* BUILD_REGEX */
 
-#endif // BZF_COMMON_H
+#endif /* BZF_COMMON_H */
 
 
 // Local Variables: ***
