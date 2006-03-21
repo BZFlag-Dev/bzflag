@@ -1513,6 +1513,7 @@ static void loadCachedWorld()
     worldBuilder = NULL;
     delete[] localWorldDatabase;
     HUDDialogStack::get()->setFailedMessage("Error unpacking world database. Join canceled.");
+    remove(worldCachePath.c_str());
     joiningGame = false;
     return;
   }
