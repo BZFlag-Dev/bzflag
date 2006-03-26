@@ -26,19 +26,24 @@ When you want to build, set the active configuration to
 "BZFlag - Win32 SDL_Release" or "BZFlag - Win32 SDL_Debug"
 instead of the normal Win32 Release/Debug targets.
 
-You also need to have libCurl installed.
+You also need to have the following libs installed, and set up
+in your compiler/IDE
+
+libCurl;
 Download it from http://curl.haxx.se/libcurl/
 It is best if you do not get the SSL versions. Bzflag does not
 need or use SSL. The SSL versions of libCurl have aditional
 library dependencys that need to be meet.
 Add the include directory and the lib as per the SDL instructions.
 
-Then each time you want to build an installer
+pdcurses;
 
-  * open win32\bzflag.dsw
-  * select `Installer Release' as the active configuration
-  * build
+GLEW;
+download it from http://glew.sourceforge.net/
+make sure you get the current version.
 
-The installer is the bzflag executable in the dist folder.
+To build an installer you will need NSIS2 from http://nsis.sourceforge.net/Main_Page.
+
 
 The instructions for building with Dev-C++ are enclosed in README.DEVC++
+*NOTE* devC++ does not support plugins.
