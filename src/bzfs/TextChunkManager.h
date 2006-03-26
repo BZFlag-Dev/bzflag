@@ -29,14 +29,14 @@ class TextChunk {
   public:
     TextChunk();
     TextChunk(const TextChunk& tc);
-    TextChunk(const std::string& fileName, const int _max_lines = 50);
+    TextChunk(const std::string& fileName, const int _max_lines = -1);
 
     size_t size() const;
     const StringVector& getVector() const;
     bool reload();
 
   private:
-    StringVector parse(const int _max_lines = 50);
+    StringVector parse(const int _max_lines = -1);
 
   private:
     std::string fileName;

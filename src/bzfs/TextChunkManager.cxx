@@ -60,7 +60,6 @@ StringVector TextChunk::parse(const int _max_lines)
   StringVector strings;
   char buffer[BUFSIZ] = {0};
   std::ifstream in;
-
   int long_lines_encountered = 0;
 
   in.open(fileName.c_str());
@@ -88,7 +87,7 @@ StringVector TextChunk::parse(const int _max_lines)
     buffer[MessageLen - 1] = '\0';  // terminate/clamp all lines with/to MessageLen 
     strings.push_back(buffer);
     
-    if (i >= _max_lines) {
+    if ((_max_lines > 0) && (i >= _max_lines)) {
       snprintf(buffer, MessageLen, "WARNING: %s has more than %d lines, truncated.", fileName.c_str(), _max_lines);
       strings.push_back(buffer);
       break;
