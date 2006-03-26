@@ -29,17 +29,18 @@ class TextChunk {
   public:
     TextChunk();
     TextChunk(const TextChunk& tc);
-    TextChunk(const std::string& fileName);
+    TextChunk(const std::string& fileName, const int _max_lines = 50);
 
     size_t size() const;
     const StringVector& getVector() const;
     bool reload();
 
   private:
-    StringVector parse();
+    StringVector parse(const int _max_lines = 50);
 
   private:
     std::string fileName;
+    int maxLines;
     StringVector theVector;
 };
 
@@ -51,7 +52,7 @@ class TextChunkManager {
   public:
     // load the file fileName into the chunk specified by chunkname
     // if the chunkname is already taken it will *not* be replaced
-    bool parseFile(const std::string &fileName, const std::string &chunkName);
+    bool parseFile(const std::string &fileName, const std::string &chunkName, const int maxLines = 50);
 
     // get a chunk given a name of the chunk returns null if it can't find it
     const StringVector* getTextChunk(const std::string &chunkName) const;
