@@ -119,6 +119,7 @@ noinst_HEADERS =			\
 	Teleporter.h			\
 	TeleporterSceneNodeGenerator.h	\
 	TetraBuilding.h			\
+	TextChunkManager.h		\
 	TextUtils.h			\
 	TextureManager.h		\
 	TextureMatrix.h			\

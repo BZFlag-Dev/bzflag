@@ -27,6 +27,7 @@ libCommon_la_SOURCES  =			\
 	ShotUpdate.cxx			\
 	StateDatabase.cxx		\
 	Team.cxx			\
+	TextChunkManager.cxx		\
 	TextUtils.cxx			\
 	TimeBomb.cxx			\
 	TimeKeeper.cxx			\

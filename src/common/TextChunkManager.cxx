@@ -11,7 +11,7 @@
  */
 
 #ifdef _MSC_VER
-#pragma warning( 4: 4786)
+#pragma warning(4: 4786)
 #endif
 
 /* interface header */
