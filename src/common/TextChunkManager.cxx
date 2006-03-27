@@ -20,23 +20,24 @@
 /* system implementation headers */
 #include <fstream>
 
-/* common implementation headers */
-#include "global.h"
-
 
 /******************************************************************************/
 
-TextChunk::TextChunk()
+TextChunk::TextChunk() :
+  fileName(""),
+  maxLines(-1),
+  maxLineLength(-1)
 {
   // for the <map>[] operator
 }
 
 
-TextChunk::TextChunk(const std::string& _fileName, const int _max_lines)
+TextChunk::TextChunk(const std::string& _fileName, int _maxLines, int _maxLineLength)
 {
   fileName = _fileName;
-  maxLines = _max_lines;
-  theVector = parse(_max_lines);
+  maxLines = _maxLines;
+  maxLineLength = _maxLineLength;
+  theVector = parse(_maxLines);
   return;
 }
 
@@ -48,47 +49,43 @@ TextChunk::TextChunk(const TextChunk& tc)
   return;
 }
 
-#ifndef BZ_PARSE_BUFSIZE
-#    define BZ_PARSE_BUFSIZE MessageLen
-#endif
-#if BZ_PARSE_BUFSIZE < MessageLen
-#  error "BZ_PARSE_BUFSIZE is shorter than MessageLen"
-#endif
- 
+
+#define PARSE_BUFSIZE 4096 
 StringVector TextChunk::parse(const int _max_lines)
 {
   StringVector strings;
-  char buffer[BUFSIZ] = {0};
+  char buffer[PARSE_BUFSIZE] = {0};
   std::ifstream in;
   int long_lines_encountered = 0;
+  int maxMsg = maxLineLength < 0 ? PARSE_BUFSIZE : maxLineLength < PARSE_BUFSIZE ? maxLineLength : PARSE_BUFSIZE;
 
   in.open(fileName.c_str());
   if (!in || !in.is_open()) {
-    snprintf(buffer, MessageLen, "WARNING: unable to open %s", fileName.c_str());
+    snprintf(buffer, maxMsg, "WARNING: unable to open %s", fileName.c_str());
     strings.push_back(buffer);
     return strings;
   }
 
   for(int i = 0; in.good(); i++) {
-    
+
     // pull a line from the file
-    in.getline(buffer, BZ_PARSE_BUFSIZE);
+    in.getline(buffer, PARSE_BUFSIZE);
     
     if (in.fail()) {
-      snprintf(buffer, MessageLen, "WARNING: there was a problem reading %s", fileName.c_str());
+      snprintf(buffer, maxMsg, "WARNING: there was a problem reading %s", fileName.c_str());
       strings.push_back(buffer);
       break;
     }
 
-    if (strlen(buffer) > (size_t) MessageLen - 1) {
+    if (strlen(buffer) > (size_t) maxMsg - 1) {
       // line is too long, say something when we're done
       long_lines_encountered++;
     }
-    buffer[MessageLen - 1] = '\0';  // terminate/clamp all lines with/to MessageLen 
+    buffer[maxMsg - 1] = '\0';  // terminate/clamp all lines with/to maxLineLength 
     strings.push_back(buffer);
     
     if ((_max_lines > 0) && (i >= _max_lines)) {
-      snprintf(buffer, MessageLen, "WARNING: %s has more than %d lines, truncated.", fileName.c_str(), _max_lines);
+      snprintf(buffer, maxMsg, "WARNING: %s has more than %d lines, truncated.", fileName.c_str(), _max_lines);
       strings.push_back(buffer);
       break;
     }
@@ -96,7 +93,7 @@ StringVector TextChunk::parse(const int _max_lines)
 
   if (long_lines_encountered) {
     // at least one long line was encountered
-    snprintf(buffer, MessageLen, "WARNING: truncated %d long line%s from %s (limit of %d characters)", long_lines_encountered, long_lines_encountered == 1? "" : "s", fileName.c_str(), MessageLen - 1);
+    snprintf(buffer, maxMsg, "WARNING: truncated %d long line%s from %s (limit of %d characters)", long_lines_encountered, long_lines_encountered == 1? "" : "s", fileName.c_str(), maxMsg - 1);
     strings.push_back(buffer);
   }
 
@@ -129,9 +126,10 @@ const StringVector& TextChunk::getVector() const
 
 bool TextChunkManager::parseFile(const std::string &fileName,
 				 const std::string &chunkName,
-				 const int maxLines)
+				 const int maxLines,
+				 const int maxLineLength)
 {
-  TextChunk textChunk(fileName, maxLines);
+  TextChunk textChunk(fileName, maxLines, maxLineLength);
 
   if (textChunk.size() <= 0) {
     return false;

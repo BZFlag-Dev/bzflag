@@ -26,22 +26,23 @@ typedef std::vector<std::string> StringVector;
 
 // holds a vector of strings loaded from a file
 class TextChunk {
-  public:
-    TextChunk();
-    TextChunk(const TextChunk& tc);
-    TextChunk(const std::string& fileName, const int _max_lines = -1);
+public:
+  TextChunk();
+  TextChunk(const TextChunk& tc);
+  TextChunk(const std::string& fileName, const int _maxLines = -1, const int _maxLineLength = -1);
 
-    size_t size() const;
-    const StringVector& getVector() const;
-    bool reload();
+  size_t size() const;
+  const StringVector& getVector() const;
+  bool reload();
 
-  private:
-    StringVector parse(const int _max_lines = -1);
+private:
+  StringVector parse(const int _max_lines = -1);
 
-  private:
-    std::string fileName;
-    int maxLines;
-    StringVector theVector;
+private:
+  std::string fileName;
+  int maxLines;
+  int maxLineLength;
+  StringVector theVector;
 };
 
 // maintains a list of lists of strings, more or less a bunch
@@ -52,7 +53,7 @@ class TextChunkManager {
   public:
     // load the file fileName into the chunk specified by chunkname
     // if the chunkname is already taken it will *not* be replaced
-    bool parseFile(const std::string &fileName, const std::string &chunkName, const int maxLines = 50);
+    bool parseFile(const std::string &fileName, const std::string &chunkName, const int maxLines = -1, const int maxLineLength = -1);
 
     // get a chunk given a name of the chunk returns null if it can't find it
     const StringVector* getTextChunk(const std::string &chunkName) const;
