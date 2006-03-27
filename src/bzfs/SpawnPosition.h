@@ -15,7 +15,11 @@
 #ifndef __SPAWNPOSITION_H__
 #define __SPAWNPOSITION_H__
 
-#include "PlayerInfo.h"
+#include "common.h"
+
+/* inteface headers */
+#include "global.h"
+
 
 class SpawnPosition {
 

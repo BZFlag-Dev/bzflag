@@ -12,12 +12,13 @@
 
 // object that creates and contains a spawn position
 
-#include "common.h"
+/* interface header */
+#include "SpawnPosition.h"
 
+/* system headers */
 #include <string>
 
-#include "SpawnPosition.h"
-#include "DropGeometry.h"
+/* common headers */
 #include "Obstacle.h"
 #include "PlayerInfo.h"
 #include "PlayerState.h"
@@ -25,6 +26,7 @@
 #include "BZDBCache.h"
 
 // bzfs specific headers
+#include "DropGeometry.h"
 #include "bzfs.h"
 
 SpawnPosition::SpawnPosition(int playerId, bool onGroundOnly, bool notNearEdges) :
