@@ -826,13 +826,9 @@ void ControlPanel::saveMessages(const std::string& filename,
   }
 
   const time_t nowTime = time (NULL);
-  fprintf(file, "\n");
-  fprintf(file, "----------------------------------------"
-		"----------------------------------------\n");
+  fprintf(file, "\n----------------------------------------\n");
   fprintf(file, "Messages saved: %s", ctime(&nowTime));
-  fprintf(file, "----------------------------------------"
-		"----------------------------------------\n\n");
-
+  fprintf(file, "----------------------------------------\n\n");
 
   // add to the appropriate tabs
   std::deque<ControlPanelMessage>::const_iterator msg = messages[MessageAll].begin()++;
