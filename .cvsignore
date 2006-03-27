@@ -19,3 +19,4 @@ mkinstalldirs
 work
 *patch
 *diff
+libtool
