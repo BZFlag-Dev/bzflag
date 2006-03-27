@@ -195,8 +195,14 @@ typedef unsigned char	uint8_t;
 
 
 #ifdef HAVE_STD__ISNAN
+#  ifdef isnan
+#    undef isnan
+#  endif
 #  define isnan std::isnan
 #elif defined(HAVE__ISNAN)
+#  ifdef isnan
+#    undef isnan
+#  endif
 #  define isnan _isnan
 #else
 #  ifndef HAVE_ISNAN
@@ -229,6 +235,9 @@ typedef unsigned char	uint8_t;
        }
      }
 #  else
+#    ifdef max
+#      undef max
+#    endif
 #    define max(a,b) a < b ? b : a
 #  endif /* __cplusplus */
 #endif /* HAVE_STD__MAX */
@@ -247,6 +256,9 @@ typedef unsigned char	uint8_t;
        }
      }
 #  else
+#    ifdef min
+#      undef min
+#    endif
 #    define min(a,b) b < a ? b : a
 #  endif /* __cplusplus */
 #endif /* HAVE_STD_MIN */
