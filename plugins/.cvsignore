@@ -7,3 +7,10 @@ config.log
 config.status
 configure
 libtool
+config.guess
+config.sub
+depcomp
+install-sh
+ltmain.sh
+missing
+mkinstalldirs
