@@ -3,13 +3,16 @@ to do list for BZFlag
 
 THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
 
+* make sure there are no outstanding serious bugs (e.g. check OO)
+
+
+THESE ARE LOWER PRIORITY
+
 * add a command line option to let random worlds do an oncap weapon
   for CTF bases.
 
 * command line options that have -set <name> <value> equivalents should be
   reviewed and possibly eliminated
-
-THESE ARE LOWER PRIORITY
 
 * Hunters should be a separate team (not rogue).  Remove all the ugly
   hunter-color and hunter-teamkill hacks.  Needs protocol breakage.
