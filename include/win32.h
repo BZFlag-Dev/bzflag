@@ -72,6 +72,11 @@ typedef unsigned int	uint32_t;
 
 #  define PATH_MAX	MAX_PATH
 
+  namespace std {
+    template<typename _Tp>
+    int isnan(_Tp __f) { return _isnan((double)__f); }
+  }
+
 #endif // _MSC_VER
 #endif // __WIN32_H__
 
