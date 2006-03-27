@@ -48,6 +48,20 @@ SpawnPosition::SpawnPosition(int playerId, bool onGroundOnly, bool notNearEdges)
     base.getRandomPosition(pos[0], pos[1], pos[2]);
     playerData->player.setRestartOnBase(false);
   } else {
+    /* *** CTF spawn position selection occurs below here. ***
+     *
+     * The idea is to basically find a position that is the farthest
+     * away as possible from your enemies within a given timeframe.
+     * Since the random selection is occurring over a square that is
+     * slightly smaller than 0.6 times the world size, this usually
+     * results in players spawning near one of the four corners of a
+     * map.
+     *
+     * TODO: this should be a circle instead of square to prevent such
+     * predictibility and tendency to select those potentially
+     * dangerous corners.
+     */
+
     const float tankRadius = BZDBCache::tankRadius;
     safeSWRadius = (float)((BZDB.eval(StateDatabase::BZDB_SHOCKOUTRADIUS) + BZDBCache::tankRadius) * BZDB.eval("_spawnSafeSWMod"));
     safeSRRadius = tankRadius * BZDB.eval("_spawnSafeSRMod");
