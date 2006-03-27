@@ -109,8 +109,6 @@ bzfs_SOURCES = \
 	SpawnPosition.h \
 	TeamBases.cxx \
 	TeamBases.h \
-	TextChunkManager.cxx \
-	TextChunkManager.h \
 	WorldFileLocation.cxx \
 	WorldFileLocation.h \
 	WorldFileObject.cxx \

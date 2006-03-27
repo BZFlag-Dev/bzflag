@@ -25,10 +25,13 @@
 #include "Protocol.h"
 #include "Flag.h"
 #include "WordFilter.h"
+#include "TextChunkManager.h"
 
 /* bzfs-specific headers */
 #include "AccessControlList.h"
-#include "TextChunkManager.h"
+
+// avoid dependencies
+class EntryZones;
 
 // avoid dependencies
 class EntryZones;
