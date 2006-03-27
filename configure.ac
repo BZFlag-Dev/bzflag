@@ -42,10 +42,13 @@ dnl
 dnl TODO: This mess needs serious cleaning up.
 dnl
 
-dnl FIXME: this is old-style AC_INIT
-AC_INIT
+dnl Minimum version of autoconf required.  Should coincide with the
+dnl setting in the autogen.sh script.
+AC_PREREQ(2.52)
+
+AC_INIT(BZFlag, 2.1.6, [http://BZFlag.org], bzflag)
 AC_CONFIG_SRCDIR(src/bzflag/bzflag.cxx)
-AC_REVISION($Revision $)
+AC_REVISION($Revision$)
 
 AC_CONFIG_AUX_DIR(misc)
 
@@ -59,8 +62,14 @@ BZFLAG_DATE=`date -u +%Y-%m-%d`
 BZFLAG_VERSION="$MAJOR_VERSION.$MINOR_VERSION.$REV"
 echo "BZFlag-$BZFLAG_VERSION.$CONF_DATE"
 AC_CANONICAL_TARGET
-AM_INIT_AUTOMAKE(bzflag, $BZFLAG_VERSION)
-AM_CONFIG_HEADER(include/config.h)
+
+dnl Minimum version of automake required.  Should coincide with the
+dnl setting in the autogen.sh script.  Create the other archives
+dnl automatically when doing a make dist for convenience.
+AM_INIT_AUTOMAKE([1.6 dist-zip dist-bzip2])
+
+dnl all configured definitions get written here
+AM_CONFIG_HEADER([include/config.h])
 
 AC_SUBST(MAJOR_VERSION)
 AC_SUBST(MINOR_VERSION)
