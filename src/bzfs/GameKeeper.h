@@ -67,8 +67,8 @@ public:
   class Player {
   public:
     Player(int _playerIndex, NetHandler *_netHandler, tcpCallback _clientCallback);
-	Player(int _playerIndex, bz_ServerSidePlayerHandler *handler);
-   ~Player();
+    Player(int _playerIndex, bz_ServerSidePlayerHandler *handler);
+    ~Player();
 
     int	    getIndex();
     static int     getFreeIndex(int min, int max);
@@ -89,7 +89,7 @@ public:
     void	  *packPlayerInfo(void *buf);
     void	  *packPlayerUpdate(void *buf);
 
-		void		setPlayerAddMessage ( PlayerAddMessage &msg );
+    void		setPlayerAddMessage ( PlayerAddMessage &msg );
 
     void	   signingOn(bool ctf);
     void	   close();
@@ -161,8 +161,9 @@ public:
     Score	      score;
     // Authentication
     Authentication    authentication;
-	// logic class for server side players
-	bz_ServerSidePlayerHandler	*playerHandler;		
+
+    // logic class for server side players
+    bz_ServerSidePlayerHandler	*playerHandler;		
 
   private:
     static Player    *playerList[PlayerSlot];
