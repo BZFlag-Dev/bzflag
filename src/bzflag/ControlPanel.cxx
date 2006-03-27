@@ -830,11 +830,10 @@ void ControlPanel::saveMessages(const std::string& filename,
   fprintf(file, "Messages saved: %s", ctime(&nowTime));
   fprintf(file, "----------------------------------------\n\n");
 
-
   // add to the appropriate tabs
-  const int msgCount = messages[MessageAll].size();
-  for (int i = 0; i < msgCount; i++) {
-    const std::string& line = messages[MessageAll][i].string;
+  std::deque<ControlPanelMessage>::const_iterator msg = messages[MessageAll].begin()++;
+  for (; msg != messages[MessageAll].end(); ++msg) {
+    const std::string& line = msg->string;
     if (stripAnsi) {
       fprintf(file, "%s\n", stripAnsiCodes(line).c_str());
     } else {
