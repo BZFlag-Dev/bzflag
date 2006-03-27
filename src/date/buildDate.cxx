@@ -25,6 +25,7 @@
 #endif
 
 // version numbers - also update:
+//  configure.ac
 //  ChangeLog
 //  README
 //  package/win32/nsis/*.nsi
