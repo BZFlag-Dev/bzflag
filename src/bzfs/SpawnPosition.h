@@ -21,6 +21,10 @@
 #include "global.h"
 
 
+/** SpawnPosition represents a single spawn position and encapsulates
+ *  the logic for selecting that new position based on the map, world
+ *  configuration settings, and current game activity.
+ */
 class SpawnPosition {
 
 public:
@@ -67,6 +71,9 @@ inline const float SpawnPosition::getZ() const
   return pos[2];
 }
 
+/** returns the rotational orientation of this spawn position, from
+ *  facing 'North' in radians.
+ */
 inline const float SpawnPosition::getAzimuth() const
 {
   return azimuth;
