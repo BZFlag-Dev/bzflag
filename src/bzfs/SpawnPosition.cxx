@@ -30,6 +30,11 @@
 SpawnPosition::SpawnPosition(int playerId, bool onGroundOnly, bool notNearEdges) :
 		curMaxPlayers(getCurMaxPlayers())
 {
+  /* the player is coming to life, depending on who they are an what
+   * style map/configuration is being played determines how they will
+   * spawn.
+   */
+
   GameKeeper::Player *playerData
     = GameKeeper::Player::getPlayerByIndex(playerId);
   if (!playerData)
@@ -43,12 +48,18 @@ SpawnPosition::SpawnPosition(int playerId, bool onGroundOnly, bool notNearEdges)
       playerData->player.shouldRestartAtBase() &&
       (team >= RedTeam) && (team <= PurpleTeam) &&
       (bases.find(team) != bases.end())) {
+
+    /* if the player needs to spawn on a base, select a random
+     * position on one of their team's available bases.
+     */
+
     TeamBases &teamBases = bases[team];
     const TeamBase &base = teamBases.getRandomBase((int)(bzfrand() * 100));
     base.getRandomPosition(pos[0], pos[1], pos[2]);
     playerData->player.setRestartOnBase(false);
+
   } else {
-    /* *** CTF spawn position selection occurs below here. ***
+    /* *** "random" spawn position selection occurs below here. ***
      *
      * The idea is to basically find a position that is the farthest
      * away as possible from your enemies within a given timeframe.
