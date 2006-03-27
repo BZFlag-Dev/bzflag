@@ -186,7 +186,7 @@ const bool SpawnPosition::isFacing(const float *enemyPos, const float enemyAzimu
 const bool SpawnPosition::isImminentlyDangerous() const
 {
   GameKeeper::Player *playerData;
-  float twentyDegrees = (float)(M_PI / 9.0); /* +- 20 degrees, i.e. 40 degree arc */
+  float twentyDegrees = (float)(M_PI / 9.0); /* +- 10 degrees, i.e. 20 degree arc */
   for (int i = 0; i < curMaxPlayers; i++) {
     playerData = GameKeeper::Player::getPlayerByIndex(i);
     if (!playerData)
