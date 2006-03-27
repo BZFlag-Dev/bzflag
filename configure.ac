@@ -76,6 +76,11 @@ else
   AC_DEFINE_UNQUOTED(BZ_BUILD_USER, "anonymous", [User who compiled BZFlag])
 fi
 
+
+dnl ***********************
+dnl *** Check arguments ***
+dnl ***********************
+
 # check for kerberos option
 AC_ARG_WITH(kerberos, [  --with-kerberos	  with Kerberos support])
 
@@ -94,6 +99,10 @@ fi
 
 dnl FIXME: need to move the rest of the ARGs up here too
 
+
+dnl **************************
+dnl *** Check for programs ***
+dnl **************************
 
 # cannot override LD directly, so warn (configure will override it)
 if test "x$LD" != "x" ; then
@@ -195,7 +204,18 @@ AC_SUBST(KRB5_LIBS)
 AC_MSG_CHECKING([for artificial intelligence for bz's robots])
 AC_MSG_RESULT([not found])
 
-#Checks for headers
+
+dnl ***************************
+dnl *** Check for libraries ***
+dnl ***************************
+
+# FIXME: move library checks here
+
+
+dnl *************************
+dnl *** Check for headers ***
+dnl *************************
+
 AC_HEADER_STDC
 AC_LANG(C++)
 AC_CHECK_HEADERS( \
@@ -228,7 +248,11 @@ AC_CHECK_HEADERS( \
 )
 # nameser_compat.h used by src/c-ares
 
-#Checks for types
+
+dnl **********************************
+dnl *** Check for types/structures ***
+dnl **********************************
+
 #AM_CHECK_TYPES(socklen_t)
 #AC_CHECK_TYPES(socklen_t)
 AC_C_BIGENDIAN
@@ -647,6 +671,14 @@ if test x$enable_snapping != xno; then
   AC_DEFINE(SNAPPING, 1, [Enabling Snapping])
 fi
 
+
+dnl ******************************************
+dnl *** Check for compiler characteristics ***
+dnl ******************************************
+
+# FIXME: these checks below are not compiler characteristics other
+# than the FLAGS they set.
+
 AC_DEFINE_UNQUOTED(INSTALL_DATA_DIR, "$INSTALL_DATA_DIR",
 [Data file directory])
 case $host_os in
@@ -806,8 +838,10 @@ if test "x$search_paths_first_flag_works" = "xno" ; then
         LDFLAGS="$PRELDFLAGS"
 fi
 
+dnl ***************************
+dnl *** Check for functions ***
+dnl ***************************
 
-# Check for functions
 AC_CHECK_FUNCS(\
 	CGLGetCurrentContext \
 	Sleep \
@@ -849,6 +883,13 @@ int i = std::count(array, array + 5, 't'); i = i;
 std::count, otherwise old version of count template is assumed])],[])
 
 
+dnl *********************************
+dnl *** Check for system services ***
+dnl *********************************
+
+# FIXME: system service checks seem to be spread out everywhere above,
+# need to consolidate them to here.
+
 if test "x$with_kerberos" = "xyes" ; then
   have_krb5=no
   AC_MSG_CHECKING([for Kerberos functionality])
@@ -869,9 +910,13 @@ if test "x$with_kerberos" = "xyes" ; then
 fi
 AM_CONDITIONAL(HAVE_KRB5, test x$have_krb5 = xyes)
 
+
+dnl **************************************
+dnl *** Configure Makefiles and output ***
+dnl **************************************
+
 LIBDIR="\$(top_srcdir)/lib"
 AC_SUBST(LIBDIR)
-
 
 if test x$enable_plugins != xno ; then
 	AC_CONFIG_SUBDIRS(plugins)
