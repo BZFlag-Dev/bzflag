@@ -25,12 +25,13 @@
 #include "StateDatabase.h"
 #include "BZDBCache.h"
 
-// bzfs specific headers
+/* bzfs specific headers */
 #include "DropGeometry.h"
 #include "bzfs.h"
 
+
 SpawnPosition::SpawnPosition(int playerId, bool onGroundOnly, bool notNearEdges) :
-		curMaxPlayers(getCurMaxPlayers())
+  curMaxPlayers(getCurMaxPlayers())
 {
   /* the player is coming to life, depending on who they are an what
    * style map/configuration is being played determines how they will
@@ -159,8 +160,8 @@ SpawnPosition::~SpawnPosition()
 {
 }
 
-const bool SpawnPosition::isFacing(const float *enemyPos, const float enemyAzimuth,
-				   const float deviation) const
+bool SpawnPosition::isFacing(const float *enemyPos, const float enemyAzimuth,
+			     const float deviation) const
 {
   // vector points from test to enemy
   float dx = enemyPos[0] - testPos[0];
@@ -185,7 +186,7 @@ const bool SpawnPosition::isFacing(const float *enemyPos, const float enemyAzimu
   }
 }
 
-const bool SpawnPosition::isImminentlyDangerous() const
+bool SpawnPosition::isImminentlyDangerous() const
 {
   GameKeeper::Player *playerData;
   float twentyDegrees = (float)(M_PI / 9.0); /* +- 10 degrees, i.e. 20 degree arc */
@@ -229,7 +230,7 @@ const bool SpawnPosition::isImminentlyDangerous() const
   return false;
 }
 
-const float SpawnPosition::enemyProximityCheck(float &enemyAngle) const
+float SpawnPosition::enemyProximityCheck(float &enemyAngle) const
 {
   GameKeeper::Player *playerData;
   float worstDist = 1e12f; // huge number
@@ -259,7 +260,7 @@ const float SpawnPosition::enemyProximityCheck(float &enemyAngle) const
   return sqrtf(worstDist);
 }
 
-const float SpawnPosition::distanceFrom(const float* farPos) const
+float SpawnPosition::distanceFrom(const float* farPos) const
 {
   float dx = farPos[0] - testPos[0];
   float dy = farPos[1] - testPos[1];
