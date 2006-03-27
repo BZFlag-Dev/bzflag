@@ -47,10 +47,10 @@ void ControlPanelMessage::breakLines(float maxLength, int fontFace, float fontSi
 
   // get message and its length
   const char* msg = string.c_str();
-  int lineLen     = string.length();
+  int lineLen     = (int)string.length();
 
   // if there are tabs in the message, find the last one
-  int lastTab = string.rfind('\t');
+  int lastTab = (int)string.rfind('\t');
 
   lines.clear();
   numlines=0;
@@ -364,19 +364,23 @@ void			ControlPanel::render(SceneRenderer& _renderer)
     }
   }
 
-  // draw messages
-  //
-  // It works by first breaking the string into a vector of strings (done
-  //  elsewhere), each of which will fit the control panel, and tallying
-  //  the number of lines, then moving up the proper number of lines and
-  //  displaying downward -- that is, it kinda backtracks for each line
-  //  that will wrap.
-  //
-  //  messageAreaPixels[2] = Width of Message Window in Pixels
-  //  maxLines	     = Max messages lines that can be displayed
-  //  maxScrollPages       = This number * maxLines is the total maximum
-  //			 lines of messages (and scrollback). It is
-  //			 stored as a BZDB parameter.
+  /* draw messages
+   *
+   * It works by first breaking the string into a vector of strings
+   * (done elsewhere), each of which will fit the control panel, and
+   * tallying the number of lines, then moving up the proper number of
+   * lines and displaying downward -- that is, it kinda backtracks for
+   * each line that will wrap.
+   *
+   * messageAreaPixels[2] = Width of Message Window in Pixels.
+   *
+   * maxLines = Max messages lines that can be displayed at once per
+   * page.  This COULD be a BZDB parameter (but isn't).
+   *
+   * maxScrollPages = This number * maxLines is the total maximum
+   * lines of messages (and scrollback). It is stored as a BZDB
+   * parameter.
+   */
 
   glScissor(x + messageAreaPixels[0],
 	    y + messageAreaPixels[1],
@@ -384,7 +388,7 @@ void			ControlPanel::render(SceneRenderer& _renderer)
 	    messageAreaPixels[3] - (showTabs ? int(lineHeight + 4) : 0) + ay);
 
   if (messageMode >= 0) {
-    i = messages[messageMode].size() - 1;
+    i = (int)messages[messageMode].size() - 1;
   } else {
     i = -1;
   }
@@ -406,7 +410,7 @@ void			ControlPanel::render(SceneRenderer& _renderer)
   for (j = 0; i >= 0 && j < maxLines; i--) {
     // draw each line of text
     int numLines = messages[messageMode][i].numlines;
-    int numStrings = messages[messageMode][i].lines.size();
+    int numStrings = (int)messages[messageMode][i].lines.size();
     int msgy = numLines - 1;
     int msgx = 0;
 
@@ -708,14 +712,14 @@ void			ControlPanel::setMessagesOffset(int offset, int whence, bool paged)
       if (offset < (int)messages[messageMode].size())
 	messagesOffset = offset;
       else
-	messagesOffset = messages[messageMode].size() - 1;
+	messagesOffset = (int)messages[messageMode].size() - 1;
       break;
     case 1:
       if (offset > 0) {
 	if (messagesOffset + offset < (int)messages[messageMode].size())
 	  messagesOffset += offset;
 	else
-	  messagesOffset = messages[messageMode].size() - 1;
+	  messagesOffset = (int)messages[messageMode].size() - 1;
       } else if (offset < 0) {
 	if (messagesOffset + offset >= 0)
 	  messagesOffset += offset;
@@ -822,12 +826,9 @@ void ControlPanel::saveMessages(const std::string& filename,
   }
 
   const time_t nowTime = time (NULL);
-  fprintf(file, "\n");
-  fprintf(file, "----------------------------------------"
-		"----------------------------------------\n");
+  fprintf(file, "\n----------------------------------------\n");
   fprintf(file, "Messages saved: %s", ctime(&nowTime));
-  fprintf(file, "----------------------------------------"
-		"----------------------------------------\n\n");
+  fprintf(file, "----------------------------------------\n\n");
 
 
   // add to the appropriate tabs
