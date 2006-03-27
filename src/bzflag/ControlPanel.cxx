@@ -364,19 +364,23 @@ void			ControlPanel::render(SceneRenderer& _renderer)
     }
   }
 
-  // draw messages
-  //
-  // It works by first breaking the string into a vector of strings (done
-  //  elsewhere), each of which will fit the control panel, and tallying
-  //  the number of lines, then moving up the proper number of lines and
-  //  displaying downward -- that is, it kinda backtracks for each line
-  //  that will wrap.
-  //
-  //  messageAreaPixels[2] = Width of Message Window in Pixels
-  //  maxLines	     = Max messages lines that can be displayed
-  //  maxScrollPages       = This number * maxLines is the total maximum
-  //			 lines of messages (and scrollback). It is
-  //			 stored as a BZDB parameter.
+  /* draw messages
+   *
+   * It works by first breaking the string into a vector of strings
+   * (done elsewhere), each of which will fit the control panel, and
+   * tallying the number of lines, then moving up the proper number of
+   * lines and displaying downward -- that is, it kinda backtracks for
+   * each line that will wrap.
+   *
+   * messageAreaPixels[2] = Width of Message Window in Pixels.
+   *
+   * maxLines = Max messages lines that can be displayed at once per
+   * page.  This COULD be a BZDB parameter (but isn't).
+   *
+   * maxScrollPages = This number * maxLines is the total maximum
+   * lines of messages (and scrollback). It is stored as a BZDB
+   * parameter.
+   */
 
   glScissor(x + messageAreaPixels[0],
 	    y + messageAreaPixels[1],
