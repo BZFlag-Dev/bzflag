@@ -137,9 +137,14 @@ bool SpawnPosition::isFacing(const float *enemyPos, const float enemyAzimuth,
 {
   // vector points from test to enemy
   float dx = enemyPos[0] - testPos[0];
-  float dy = enemyPos[0] - testPos[1];
+  float dy = enemyPos[1] - testPos[1];
+  float dz = enemyPos[2] - testPos[2];
   float angActual = atan2f (dy, dx);
   float diff = fmodf(enemyAzimuth - angActual, (float)M_PI * 2.0f);
+
+  // Ignore tanks that are above or below us
+  if (fabs(dz) > 2.0f * BZDBCache::tankHeight )
+    return false;
 
   // now diff is between {-PI*2 and +PI*2}, and we're looking for values around
   // -PI or +PI, because that's when the enemy is facing the source.
@@ -156,6 +161,7 @@ bool SpawnPosition::isFacing(const float *enemyPos, const float enemyAzimuth,
 bool SpawnPosition::isImminentlyDangerous() const
 {
   GameKeeper::Player *playerData;
+  float twentyDegrees = (float)(M_PI / 9.0);
   for (int i = 0; i < curMaxPlayers; i++) {
     playerData = GameKeeper::Player::getPlayerByIndex(i);
     if (!playerData)
@@ -169,7 +175,7 @@ bool SpawnPosition::isImminentlyDangerous() const
 	const FlagType *ftype = finfo->flag.type;
 	// FIXME: any more?
 	if (ftype == Flags::Laser) {  // don't spawn in the line of sight of an L
-	  if (isFacing(enemyPos, enemyAngle, (float)(M_PI / 9.0))) { // he's looking within 20 degrees of spawn point
+	  if (isFacing(enemyPos, enemyAngle, twentyDegrees)) { // he's looking within 20 degrees of spawn point
 	    return true;	// eek, don't spawn here
 	  }
 	} else if (ftype == Flags::ShockWave) {  // don't spawn next to a SW
@@ -184,7 +190,7 @@ bool SpawnPosition::isImminentlyDangerous() const
       }
       // don't spawn in the line of sight of a normal-shot tank within a certain distance
       if (distanceFrom(enemyPos) < safeDistance) { // within danger zone?
-	if (isFacing(enemyPos, enemyAngle, (float)(M_PI / 9.0))) { //and he's looking at me
+	if (isFacing(enemyPos, enemyAngle, twentyDegrees)) { //and he's looking at me
 	  return true;
 	}
       }
