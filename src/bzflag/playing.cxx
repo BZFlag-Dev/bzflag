@@ -6663,23 +6663,23 @@ void			startPlaying(BzfDisplay* _display,
     controlPanel->addMessage(tmpString);
     // print author
     tmpString = ColorStrings[GreenColor];
-    tmpString += "Author:	  Chris Schoeneman  <crs23@bigfoot.com>";
+    tmpString += "Author: Chris Schoeneman <crs23@bigfoot.com>";
     controlPanel->addMessage(tmpString);
     // print maintainer
     tmpString = ColorStrings[CyanColor];
-    tmpString += "Maintainer:      Tim Riker	 <Tim@Rikers.org>";
+    tmpString += "Maintainer: Tim Riker <Tim@Rikers.org>";
     controlPanel->addMessage(tmpString);
     // print audio driver
     std::string audioStr;
     PlatformFactory::getMedia()->audioDriver(audioStr);
     if (tmpString != "") {
       tmpString = ColorStrings[BlueColor];
-      tmpString += "Audio Driver:    " + audioStr;
+      tmpString += "Audio Driver: " + audioStr;
       controlPanel->addMessage(tmpString);
     }
     // print GL renderer
     tmpString = ColorStrings[PurpleColor];
-    tmpString += "OpenGL Driver:   ";
+    tmpString += "OpenGL Driver: ";
     tmpString += (const char*)glGetString(GL_RENDERER);
     controlPanel->addMessage(tmpString);
   }
