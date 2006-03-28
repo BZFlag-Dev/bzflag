@@ -89,6 +89,8 @@ bzfs_SOURCES = \
 	ParseMaterial.h \
 	Permissions.h \
 	Permissions.cxx \
+	RandomSpawnPolicy.h \
+	RandomSpawnPolicy.cxx \
 	RecordReplay.cxx \
 	RecordReplay.h \
 	RejoinList.cxx \
@@ -97,6 +99,8 @@ bzfs_SOURCES = \
 	Score.cxx	\
 	ServerCommand.cxx		\
 	ServerCommand.h			\
+	SpawnPolicy.cxx	\
+	SpawnPolicy.h	\
 	SpawnPosition.cxx \
 	SpawnPosition.h \
 	TeamBases.cxx \
