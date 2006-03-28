@@ -83,7 +83,7 @@ void SpawnPolicy::getPosition(float pos[3], int playerId, bool onGroundOnly, boo
     safeSRRadius = tankRadius * BZDB.eval("_spawnSafeSRMod");
     safeDistance = tankRadius * BZDB.eval("_spawnSafeRadMod");
     const float size = BZDBCache::worldSize;
-    const float maxWorldHeight = world->getMaxWorldHeight();
+    const float maxHeight = world->getMaxWorldHeight();
 
     // keep track of how much time we spend searching for a location
     TimeKeeper start = TimeKeeper::getCurrent();
@@ -102,7 +102,7 @@ void SpawnPolicy::getPosition(float pos[3], int playerId, bool onGroundOnly, boo
 	  testPos[0] = ((float)bzfrand() - 0.5f) * (size - 2.0f * tankRadius);
 	  testPos[1] = ((float)bzfrand() - 0.5f) * (size - 2.0f * tankRadius);
 	}
-	testPos[2] = onGroundOnly ? 0.0f : ((float)bzfrand() * maxWorldHeight);
+	testPos[2] = onGroundOnly ? 0.0f : ((float)bzfrand() * maxHeight);
       }
       tries++;
 
@@ -111,7 +111,7 @@ void SpawnPolicy::getPosition(float pos[3], int playerId, bool onGroundOnly, boo
       if (waterLevel > minZ) {
 	minZ = waterLevel;
       }
-      float maxZ = maxWorldHeight;
+      float maxZ = maxHeight;
       if (onGroundOnly) {
 	maxZ = 0.0f;
       }
@@ -128,7 +128,7 @@ void SpawnPolicy::getPosition(float pos[3], int playerId, bool onGroundOnly, boo
 	    //Just drop the sucka in, and pray
 	    pos[0] = testPos[0];
 	    pos[1] = testPos[1];
-	    pos[2] = maxWorldHeight;
+	    pos[2] = maxHeight;
 	    DEBUG1("Warning: SpawnPolicy ran out of time, just dropping the sucker in\n");
 	  }
 	  break;
@@ -162,7 +162,7 @@ void SpawnPolicy::getAzimuth(float &azimuth)
   bool dangerous = isImminentlyDangerous();
   if (dangerous) {
     float enemyAngle;
-    float dist = enemyProximityCheck(enemyAngle);
+    (void)enemyProximityCheck(enemyAngle);
     azimuth = fmod((float)(enemyAngle + M_PI), (float)(2.0 * M_PI));
   } else {
     azimuth = (float)(bzfrand() * 2.0 * M_PI);

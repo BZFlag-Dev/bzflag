@@ -33,7 +33,7 @@ RandomSpawnPolicy::~RandomSpawnPolicy()
 {
 }
 
-void RandomSpawnPolicy::getPosition(float pos[3], int playerId, bool onGroundOnly, bool notNearEdges)
+void RandomSpawnPolicy::getPosition(float pos[3], int playerId, bool onGroundOnly, bool /*notNearEdges*/)
 {
   /* the player is coming to life, depending on who they are an what
    * style map/configuration is being played determines how they will
@@ -46,18 +46,18 @@ void RandomSpawnPolicy::getPosition(float pos[3], int playerId, bool onGroundOnl
     return;
 
   const PlayerInfo& pi = playerData->player;
-  TeamColor team = pi.getTeam();
+  TeamColor t = pi.getTeam();
 
   if (!BZDB.isTrue("freeCtfSpawns") &&
       playerData->player.shouldRestartAtBase() &&
-      (team >= RedTeam) && (team <= PurpleTeam) &&
-      (bases.find(team) != bases.end())) {
+      (t >= RedTeam) && (t <= PurpleTeam) &&
+      (bases.find(t) != bases.end())) {
 
     /* if the player needs to spawn on a base, select a random
      * position on one of their team's available bases.
      */
 
-    TeamBases &teamBases = bases[team];
+    TeamBases &teamBases = bases[t];
     const TeamBase &base = teamBases.getRandomBase((int)(bzfrand() * 100));
     base.getRandomPosition(pos[0], pos[1], pos[2]);
     playerData->player.setRestartOnBase(false);
@@ -70,7 +70,7 @@ void RandomSpawnPolicy::getPosition(float pos[3], int playerId, bool onGroundOnl
      */
 
     const float size = BZDBCache::worldSize;
-    const float maxWorldHeight = world->getMaxWorldHeight();
+    const float maxHeight = world->getMaxWorldHeight();
 
     // keep track of how much time we spend searching for a location
     TimeKeeper start = TimeKeeper::getCurrent();
@@ -81,7 +81,7 @@ void RandomSpawnPolicy::getPosition(float pos[3], int playerId, bool onGroundOnl
       if (!world->getPlayerSpawnPoint(&pi, pos)) {
 	pos[0] = ((float)bzfrand() - 0.5f) * size;
 	pos[1] = ((float)bzfrand() - 0.5f) * size;
-	pos[2] = onGroundOnly ? 0.0f : ((float)bzfrand() * maxWorldHeight);
+	pos[2] = onGroundOnly ? 0.0f : ((float)bzfrand() * maxHeight);
       }
       tries++;
 
@@ -90,7 +90,7 @@ void RandomSpawnPolicy::getPosition(float pos[3], int playerId, bool onGroundOnl
       if (waterLevel > minZ) {
 	minZ = waterLevel;
       }
-      float maxZ = maxWorldHeight;
+      float maxZ = maxHeight;
       if (onGroundOnly) {
 	maxZ = 0.0f;
       }
