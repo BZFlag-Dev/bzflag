@@ -3000,9 +3000,21 @@ static void shotFired(int playerIndex, void *buf, int len)
     }
   }
 
-   if (clOptions->maxZShotLimit > 0 && playerData->lastState.pos[2] > clOptions->maxZShotLimit) {
-	firingInfo.flagType = Flags::PhantomZone;
-	repack = true;
+   // ask the API if it wants to modify this shot
+	bz_ShotFiredEventData shotEvent;
+
+	shotEvent.pos[0] = shot.pos[0];
+	shotEvent.pos[1] = shot.pos[1];
+	shotEvent.pos[2] = shot.pos[2];
+
+	shotEvent.type = firingInfo.flagType->flagAbbv;
+
+	worldEventManager.callEvents(bz_eShotFiredEvent,&shotEvent);
+
+	if (shotEvent.changed)
+	{
+		firingInfo.flagType = Flag::getDescFromAbbreviation(shotEvent.type.c_str());
+		repack = true;
 	}
 
   // repack if changed

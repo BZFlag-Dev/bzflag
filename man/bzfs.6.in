@@ -48,7 +48,6 @@ bzfs \- BZFlag game server
 [\fB\-lagwarn \fR\fImilliseconds\fR]
 [\fB\-masterBanURL \fR\URL\fR]
 [\fB\-maxidle \fR\fIseconds\fR]
-[\fB\-maxshotz \fR\fIheight\fR]
 [\fB\-mp \fR{\fIcount\fR|[\fIrogue\-count\fR]\fB,\fR[\fIred\-count\fR]\fB,\fR[\fIgreen\-count\fR]\fB,\fR[\fIblue\-count\fR]\fB,\fR[\fIpurple\-count\fR],\fR[\fIobserver\-count\fR]}]
 [\fB\-mps \fR\fImax\-score\fR]
 [\fB\-ms \fIshots\fR]
@@ -263,9 +262,6 @@ This argument may be provided multiple times.
 Kick players that did not play longer than \fIseconds\fR. Pausing players are
 not kicked. If a player uttered a word recently, he will be kicked after
 thrice the given time.
-.TP 
-\fB\-maxshotz \fIheight\fR
-turn shots over this height into PZ shots, defaults to off. Must be a positive value.
 .TP 
 \fB\-mp\fR {\fIcount\fR|[\fIrogue\fR]\fB,\fR[\fIred\fR]\fB,\fR[\fIgreen\fR]\fB,\fR[\fIblue\fR]\fB,\fR[\fIpurple\fR],\fR[\fIobserver\fR]}
 Sets the maximum number of players, total or per team.  A single value sets

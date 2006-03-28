@@ -75,6 +75,7 @@ typedef enum
 	bz_eSlashCommandEvent,
 	bz_ePlayerAuthEvent,
 	bz_eServerMsgEvent,
+	bz_eShotFiredEvent,
 	bz_eLastEvent    //this is never used as an event, just show it's the last one
 }bz_eEventType;
 
@@ -784,6 +785,23 @@ public:
 	bzApiString message;
 
 	double time;
+};
+
+class bz_ShotFiredEventData : public bz_EventData
+{
+public:
+	bz_ShotFiredEventData()
+	{
+		eventType = bz_eShotFiredEvent;
+		pos[0] = pos[1] = pos[2] = 0;
+		changed = false;
+	}
+
+	virtual ~bz_ShotFiredEventData(){};
+
+	bool		changed;
+	float		pos[3];
+	bzApiString	type;
 };
 
 
