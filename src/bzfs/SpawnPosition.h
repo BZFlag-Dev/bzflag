@@ -15,13 +15,26 @@
 #ifndef __SPAWNPOSITION_H__
 #define __SPAWNPOSITION_H__
 
-#include "PlayerInfo.h"
+#include "common.h"
 
+/* local interface headers */
+#include "SpawnPolicy.h"
+
+
+/** SpawnPosition represents a single spawn position and encapsulates
+ *  the logic for selecting that new position based on the map, world
+ *  configuration settings, and current game activity.
+ */
 class SpawnPosition {
 
 public:
   SpawnPosition(int playerId, bool onGroundOnly, bool notNearEdges);
   ~SpawnPosition();
+
+  /** used to override the default spawn policy.  call this before
+   *  creating SpawnPosition objects.
+   */
+  static void setSpawnPolicy(SpawnPolicy* policy);
 
   float getX() const;
   float getY() const;
@@ -29,23 +42,11 @@ public:
   float getAzimuth() const;
 
 private:
-  float enemyProximityCheck(float &enemyAngle) const;
-  float distanceFrom(const float* farPos) const;
-  bool  isImminentlyDangerous() const;
-  bool  isFacing(const float *enemyPos, const float enemyAzimuth,
-		       const float deviation) const;
-
   float	      azimuth;
   float       pos[3];
 
-  TeamColor   team;
-  float       testPos[3];
-  int	      curMaxPlayers;
-
-  float	      safeSWRadius;
-  float	      safeSRRadius;
-  float	      safeDistance;
-
+  /* class data - determines how the pos and azimuth are determined */
+  static SpawnPolicy *policy;
 };
 
 inline float SpawnPosition::getX() const
@@ -63,12 +64,17 @@ inline float SpawnPosition::getZ() const
   return pos[2];
 }
 
+/** returns the rotational orientation of this spawn position, from
+ *  facing 'North' in radians.
+ */
 inline float SpawnPosition::getAzimuth() const
 {
   return azimuth;
 }
 
-#endif  //__SPAWNPOSITION_H__
+#else
+class SpawnPosition;
+#endif  /* __SPAWNPOSITION_H__ */
 
 // Local Variables: ***
 // mode:C++ ***
