@@ -3000,6 +3000,11 @@ static void shotFired(int playerIndex, void *buf, int len)
     }
   }
 
+   if (clOptions->maxZShotLimit > 0 && playerData->lastState.pos[2] > clOptions->maxZShotLimit) {
+	firingInfo.flagType = Flags::PhantomZone;
+	repack = true;
+	}
+
   // repack if changed
   if (repack)
     firingInfo.pack(buf);

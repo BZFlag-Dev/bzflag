@@ -86,6 +86,7 @@ const char *usageString =
 "[-loadplugin <pluginname,commandline>] "
 "[-masterBanURL <URL>]"
 "[-maxidle <time/s>] "
+"[-maxshotZ <height>]"
 "[-mp {<count>|[<count>][,<count>][,<count>][,<count>][,<count>][,<count>]}] "
 "[-mps <score>] "
 "[-ms <shots>] "
@@ -182,6 +183,7 @@ const char *extraUsageString =
 "\t-loadplugin: load the specified plugin with the specified commandline string\n"
 "\t-masterBanURL: URL to atempt to get the master ban list from <URL>\n"
 "\t-maxidle: idle kick threshhold [s]\n"
+"\t-maxshotz: height to turn shots into PZ shots at\n"
 "\t-mp: maximum players total or per team\n"
 "\t-mps: set player score limit on each game\n"
 "\t-ms: maximum simultaneous shots per player\n"
@@ -757,7 +759,10 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
     } else if (strcmp(argv[i], "-maxidle") == 0) {
       checkArgc(1, i, argc, argv[i]);
       options.idlekickthresh = (float) atoi(argv[i]);
-    } else if (strcmp(argv[i], "-mp") == 0) {
+	} else if (strcmp(argv[i], "-maxshotz") == 0) {
+		checkArgc(1, i, argc, argv[i]);
+		options.maxZShotLimit = (float) atof(argv[i]);
+	} else if (strcmp(argv[i], "-mp") == 0) {
       // set maximum number of players
       checkArgc(1, i, argc, argv[i]);
       if (playerCountArg == 0)

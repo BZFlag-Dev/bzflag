@@ -78,6 +78,7 @@ struct CmdLineOptions
     filterFilename(""), filterCallsigns(false), filterChat(false), filterSimple(false),
     banTime(300), voteTime(60), vetoTime(2), votesRequired(2),
     votePercentage(50.1f), voteRepeatTime(300),
+	maxZShotLimit(-1),
     autoTeam(false), citySize(5), cacheURL(""), cacheOut("")
   {
     int i;
@@ -157,7 +158,9 @@ struct CmdLineOptions
   bool			startRecording;
   bool			timestampLog;
   bool			timestampMicros;
-	bool			countdownPaused;
+  bool			countdownPaused;
+
+  float			maxZShotLimit;
 
   uint16_t		maxTeam[NumTeams];
   FlagNumberMap		flagCount;
