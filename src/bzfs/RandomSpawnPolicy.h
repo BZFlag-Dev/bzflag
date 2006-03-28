@@ -27,7 +27,7 @@ class RandomSpawnPolicy : public SpawnPolicy
 
 public:
   RandomSpawnPolicy();
-  ~RandomSpawnPolicy();
+  virtual ~RandomSpawnPolicy();
 
   virtual void getPosition(float pos[3], int playerId, bool onGroundOnly, bool notNearEdges);
   virtual void getAzimuth(float &azimuth);
