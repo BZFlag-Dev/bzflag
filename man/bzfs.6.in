@@ -850,7 +850,7 @@ Change the number of lag warnings given before a player is kicked. Example:
 
 .TP 
 .B /jitterwarn [\fItime\fR]
-Dynamic change the maximum allowed jitter time. Example:
+Change the maximum allowed jitter time. Example:
 .ft CW
 .nf
 .ne 2
