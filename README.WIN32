@@ -1,13 +1,17 @@
 README for Win32 platforms
 --------------------------
 
-Command line development tools on Win32 are in the stone age.
-NMAKE is bad but COMMAND.COM is infinitely worse.  So, for
-now, bzflag uses Microsoft Visual C++ or Dev-C++ project files.
+Bzflag uses Microsoft Visual C++ for it's 
+prebuilt binary releases ( version 7.1 aka ".NET 2003" )
+Project files are also provided for Visual C++ 8.0 and 
+useable by the free "visual C++ .net 2005 express edition".
+Visual Studio 6.0 support has been discontinued.
 It is also possible to build on Win32 using MinGW/MSYS or
-Cygwin, both of which use their own shells rather than
-COMMAND.COM; for details, see README.MINGW32 (for MinGW)
+Cygwin, both of which use the linux makefile systems; 
+for details, see README.MINGW32 (for MinGW)
 or the main README (for Cygwin).
+There is a DevX++ project available as well. Please see
+the devC++ readme for more info.
 
 So, to build bzflag on Win32, get Visual C++ or something
 that can read Visual C++ projects and workspaces.  Then:
@@ -16,7 +20,35 @@ Configure your executables in the Tools/Options/Directory menu.
 Click the Executables tab, and add the directory where the nsis
 installer builder is found.
 
-If you want to build with SDL:
+You also need to have libCurl installed.
+Download it from http://curl.haxx.se/libcurl/
+It is best if you do not get the SSL versions. Bzflag does not
+need or use SSL. The SSL versions of libCurl have aditional
+library dependencys that need to be meet.
+Add the include directory and the lib as per the SDL instructions.
+
+If you wish to build bzAdmin you may also want to get PDCurses ( use google ).
+
+Then each time you want to build an installer
+
+  * open win32\bzflag.dsw
+  * select `Installer Release' as the active configuration
+  * build
+
+The installer is the bzflag executable in the dist folder.
+
+The instructions for building with Dev-C++ are enclosed in README.DEVC++
+
+If you are using Visual C++ 2005 EXPRESS edition, you will need to install
+a number of extra things before you can build. BZFlag will not build with 
+VC express editions "out of the box"
+
+You will need the windows platform SDK ( instructions http://msdn.microsoft.com/vstudio/express/visualc/usingpsdk/default.aspx )
+You will need the windows direct X SDK ( instructions at http://msdn.microsoft.com/directx/sdk/readmepage/default.aspx )
+You will need to also install libCURL and curses ( see above ).
+Use the VC8 proejcts in the windows diretory.
+
+If you want to build with SDL ( not recomended ):
 Choose the Lib tab, and add SDLMain.lib and SDL.lib. These can be
 downloaded from libsdl.org. Also add the SDL include directory
 to the Includes tab.  Next copy SDL.dll to the directory
@@ -25,25 +57,5 @@ src/bzflag/SDL_Debug.
 When you want to build, set the active configuration to
 "BZFlag - Win32 SDL_Release" or "BZFlag - Win32 SDL_Debug"
 instead of the normal Win32 Release/Debug targets.
-
-You also need to have the following libs installed, and set up
-in your compiler/IDE
-
-libCurl;
-Download it from http://curl.haxx.se/libcurl/
-It is best if you do not get the SSL versions. Bzflag does not
-need or use SSL. The SSL versions of libCurl have aditional
-library dependencys that need to be meet.
-Add the include directory and the lib as per the SDL instructions.
-
-pdcurses;
-
-GLEW;
-download it from http://glew.sourceforge.net/
-make sure you get the current version.
-
-To build an installer you will need NSIS2 from http://nsis.sourceforge.net/Main_Page.
-
-
-The instructions for building with Dev-C++ are enclosed in README.DEVC++
-*NOTE* devC++ does not support plugins.
+note the standard builds are not done with SDL, as SDL
+does not provide all the same features as the native platform.
