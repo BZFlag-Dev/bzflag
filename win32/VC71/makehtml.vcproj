@@ -154,13 +154,44 @@
 	</References>
 	<Files>
 		<File
-			RelativePath="..\..\man\bzadmin.6s">
+			RelativePath="..\..\man\bzadmin.6.in">
+			<FileConfiguration
+				Name="Release|Win32">
+				<Tool
+					Name="VCCustomBuildTool"
+					CommandLine="..\..\man\man2html &lt; ..\..\man\bzadmin.6.in &gt; ..\..\man\bzadmin.html"
+					Outputs="..\..\man\bzadmin.html"/>
+			</FileConfiguration>
 		</File>
 		<File
-			RelativePath="..\..\man\bzflag.6s">
+			RelativePath="..\..\man\bzflag.6.in">
+			<FileConfiguration
+				Name="Release|Win32">
+				<Tool
+					Name="VCCustomBuildTool"
+					CommandLine="..\..\man\man2html &lt; ..\..\man\bzflag.6.in &gt; ..\..\man\bzflag.html"
+					Outputs="..\..\man\bzflag.html"/>
+			</FileConfiguration>
 		</File>
 		<File
-			RelativePath="..\..\man\bzfs.6s">
+			RelativePath="..\..\man\bzfs.6.in">
+			<FileConfiguration
+				Name="Release|Win32">
+				<Tool
+					Name="VCCustomBuildTool"
+					CommandLine="..\..\man\man2html &lt; ..\..\man\bzfs.6.in &gt; ..\..\man\bzfs.html"
+					Outputs="..\..\man\bzfs.html"/>
+			</FileConfiguration>
+		</File>
+		<File
+			RelativePath="..\..\man\bzw.5.in">
+			<FileConfiguration
+				Name="Release|Win32">
+				<Tool
+					Name="VCCustomBuildTool"
+					CommandLine="..\..\man\man2html &lt; ..\..\man\bzw.5.in &gt; ..\..\man\bzw.html"
+					Outputs="..\..\man\bzw.html"/>
+			</FileConfiguration>
 		</File>
 		<File
 			RelativePath="..\..\include\global.h">
