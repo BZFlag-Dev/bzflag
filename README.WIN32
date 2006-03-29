@@ -41,7 +41,10 @@ The instructions for building with Dev-C++ are enclosed in README.DEVC++
 
 If you are using Visual C++ 2005 EXPRESS edition, you will need to install
 a number of extra things before you can build. BZFlag will not build with 
-VC express editions "out of the box"
+VC express editions "out of the box".
+Also note that the VC8 project does not have the same setup as the VC7.1 does
+since it is not used for binarys. It will not convert the man pages
+into HTML automaticly, nor does it build a binary with the GLEW library.
 
 You will need the windows platform SDK ( instructions http://msdn.microsoft.com/vstudio/express/visualc/usingpsdk/default.aspx )
 You will need the windows direct X SDK ( instructions at http://msdn.microsoft.com/directx/sdk/readmepage/default.aspx )
