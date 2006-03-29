@@ -228,7 +228,7 @@ StateDatabase::Item::Item() : value(),
 //
 
 
-StateDatabase::StateDatabase() : debug(false)
+StateDatabase::StateDatabase() : debug(false), saveDefault(false)
 {
   // do nothing
 }
@@ -254,6 +254,9 @@ void			StateDatabase::set(const std::string& name,
 			    index->second.value != "No" &&
 			    index->second.value != "NO" &&
 			    index->second.value != "disable");
+
+	if (saveDefault)
+		index->second.defValue = value;
     notify(index);
   }
 }
@@ -549,7 +552,9 @@ void		     StateDatabase::setDebug(bool print) {
   debug = print;
 }
 
-
+void		     StateDatabase::setSaveDefault(bool save) {
+	saveDefault = save;
+}
 
 StateDatabase::ExpressionToken::ExpressionToken()
 {

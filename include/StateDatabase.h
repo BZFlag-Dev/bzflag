@@ -196,6 +196,9 @@ public:
    */
   bool			  getDebug() const;
 
+ // true if we are in a mode where we are seting values that are to be defaults ( config and world time )
+  void			  setSaveDefault(bool save);
+  bool			  getSaveDefault() const;
 
   static const std::string	BZDB_AGILITYADVEL;
   static const std::string	BZDB_AGILITYTIMEWINDOW;
@@ -401,12 +404,19 @@ private:
   typedef std::map<std::string,float> EvalMap;
   EvalMap			evalCache;
   bool			  debug;
+  bool			  saveDefault;
 };
 
 inline bool StateDatabase::getDebug() const
 {
   return debug;
 }
+
+inline bool StateDatabase::getSaveDefault() const
+{
+  return saveDefault;
+}
+
 
 std::istream& operator >> (std::istream& src, StateDatabase::Expression& dst);
 std::string& operator >> (std::string& src, StateDatabase::Expression& dst);

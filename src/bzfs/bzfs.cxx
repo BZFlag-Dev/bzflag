@@ -4310,9 +4310,15 @@ int main(int argc, char **argv)
 
   BZDBCache::init();
 
+  // any set in parse this is a default value
+  BZDB.setSaveDefault(true);
+
   // parse arguments  (finalized later)
   parse(argc, argv, *clOptions);
   setDebugTimestamp (clOptions->timestampLog, clOptions->timestampMicros);
+
+  // no more defaults
+  BZDB.setSaveDefault(false);
 
   if (clOptions->bzdbVars.length() > 0) {
     DEBUG1("Loading variables from %s\n", clOptions->bzdbVars.c_str());
