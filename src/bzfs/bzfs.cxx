@@ -1045,6 +1045,7 @@ void sendPlayerMessage(GameKeeper::Player *playerData, PlayerId dstPlayer,
 		       const char *message)
 {
   const PlayerId srcPlayer = playerData->getIndex();
+  std::string actionMsg = "";
 
   // reformat any '/me' action messages
   // this is here instead of in commands.cxx to allow player-player/player-channel targetted messages
@@ -1073,7 +1074,7 @@ void sendPlayerMessage(GameKeeper::Player *playerData, PlayerId dstPlayer,
     }
 
     // format and send it
-    std::string actionMsg = TextUtils::format("* %s %s\t*",
+    actionMsg = TextUtils::format("* %s %s\t*",
 				playerData->player.getCallSign(), message + 4);
     message = actionMsg.c_str();
   }
