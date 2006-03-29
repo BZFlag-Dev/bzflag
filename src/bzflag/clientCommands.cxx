@@ -628,12 +628,16 @@ static std::string cmdSend(const std::string&,
 static std::string cmdScreenshot(const std::string&,
 				 const CommandManager::ArgList& args, bool*)
 {
-  static int snap = 0;
+  int snap = atoi(BZDB.get(std::string("lastScreenshot")).c_str());
+  snap++;
+
   if (args.size() != 0)
     return "usage: screenshot";
 
   std::string filename = getScreenShotDirName();
-  filename += TextUtils::format("bzfi%04d.png", snap++);
+  filename += TextUtils::format("bzfi%04d.png", snap);
+
+  BZDB.setInt(std::string("lastScreenshot"),snap);
 
   std::ostream* f = FILEMGR.createDataOutStream (filename.c_str(), true, true);
 
