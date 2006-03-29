@@ -1967,9 +1967,9 @@ static void		handleServerMessage(bool human, uint16_t code,
 		   || (tank != ROAM.getTargetTank())))
 	      || BZDB.isTrue("enableLocalSpawnEffect")) {
 	    if (myTank->getFlag() != Flags::Colorblindness) {
-	      EFFECTS.addSpawnEffect(tank->getTeam(), pos);
+	      EFFECTS.addSpawnEffect(tank->getColor(), pos);
 	    } else {
-	      EFFECTS.addSpawnEffect((int)RogueTeam, pos);
+	      EFFECTS.addSpawnEffect(tank->getColor(), pos);
 	    }
 	  }
 	}
@@ -2050,7 +2050,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 	explodePos[2] = pos[2] + victimPlayer->getMuzzleHeight();
 	addTankExplosion(explodePos);
 
-	EFFECTS.addDeathEffect(victimPlayer->getTeam(), pos,
+	EFFECTS.addDeathEffect(victimPlayer->getColor(), pos,
 			       victimPlayer->getAngle());
       }
 
@@ -2357,7 +2357,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 	  explodePos[2] = pos[2] + player[i]->getMuzzleHeight();
 	  addTankExplosion(explodePos);
 
-	  EFFECTS.addDeathEffect(player[i]->getTeam(), pos, player[i]->getAngle());
+	  EFFECTS.addDeathEffect(player[i]->getColor(), pos, player[i]->getAngle());
 	}
       }
 
@@ -2434,7 +2434,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 		|| (!ROAM.getTargetTank())
 		|| (shooterid != ROAM.getTargetTank()->getId())
 		|| BZDB.isTrue("enableLocalShotEffect")) {
-	      EFFECTS.addShotEffect(shooter->getTeam(), shotPos,
+	      EFFECTS.addShotEffect(shooter->getColor(), shotPos,
 				    shooter->getAngle(),
 				    shooter->getVelocity());
 	    }
@@ -3293,7 +3293,7 @@ static bool		gotBlowedUp(BaseLocalPlayer* tank,
   if (reason != GotShot || flag != Flags::Shield) {
     // blow me up
     tank->explodeTank();
-    EFFECTS.addDeathEffect(tank->getTeam(), tank->getPosition(), tank->getAngle());
+    EFFECTS.addDeathEffect(tank->getColor(), tank->getPosition(), tank->getAngle());
 
    if (isViewTank(tank)) {
       if (reason == GotRunOver) {

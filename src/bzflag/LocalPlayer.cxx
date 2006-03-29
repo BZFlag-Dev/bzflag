@@ -739,7 +739,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
 
   if (justLanded) {
     setLandingSpeed(oldVelocity[2]);
-    EFFECTS.addLandEffect(getTeam(),newPos,getAngle());
+    EFFECTS.addLandEffect(getColor(),newPos,getAngle());
   }
   if (gettingSound) {
     const PhysicsDriver* phydriver = PHYDRVMGR.getDriver(getPhysicsDriver());
@@ -1254,7 +1254,7 @@ bool			LocalPlayer::fireShot()
   server->sendBeginShot(firingInfo);
 
   if (BZDB.isTrue("enableLocalShotEffect") && SceneRenderer::instance().useQuality() >= 2)
-    EFFECTS.addShotEffect(getTeam(), firingInfo.shot.pos, getAngle(), getVelocity());
+    EFFECTS.addShotEffect(getColor(), firingInfo.shot.pos, getAngle(), getVelocity());
 
   if (gettingSound) {
     if (firingInfo.flagType == Flags::ShockWave) {

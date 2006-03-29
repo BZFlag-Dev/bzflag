@@ -44,6 +44,7 @@ public:
 	virtual void setPos ( const float *pos, const float *rot );
 	virtual void setVel ( const float *vel );
 	virtual void setTeam ( int team );
+	virtual void setColor( const float *rgb );
 	virtual void setStartTime ( float time );
 
 	virtual void freeContext(void){};
@@ -58,6 +59,7 @@ protected:
 	float	rotation[3];
 	float velocity[3];
 	int		teamColor;
+	float	color[3];
 	float	startTime;
 	float	lifetime;
 	float	lastTime;
@@ -99,7 +101,7 @@ public:
 	virtual void draw ( const SceneRenderer& sr );
 
 private:
-	void drawRing(int n, float color[3], float coreAlpha);
+	void drawRing(int n, float coreAlpha);
 
 	float maxZ;
 	float ringRange;
@@ -231,31 +233,31 @@ public:
 	void rebuildContext(void);
 
 	// spawn flashes
-	void addSpawnEffect ( int team, const float* pos );
+	void addSpawnEffect ( const float* rgb, const float* pos );
 	std::vector<std::string> getSpawnEffectTypes ( void );
 
 	// shot flashes
-	void addShotEffect ( int team, const float* pos, float rot, const float* vel = NULL, int _type = -1 );
+	void addShotEffect ( const float* rgb, const float* pos, float rot, const float* vel = NULL, int _type = -1 );
 	std::vector<std::string> getShotEffectTypes ( void );
 
 	// gm puffs
-	void addGMPuffEffect ( int team, const float* pos, float rot[2], const float* vel = NULL );
+	void addGMPuffEffect ( const float* rgb, const float* pos, float rot[2], const float* vel = NULL );
 	std::vector<std::string> getGMPuffEffectTypes ( void );
 
 	// death effects
-	void addDeathEffect ( int team, const float* pos, float rot );
+	void addDeathEffect ( const float* rgb, const float* pos, float rot );
 	std::vector<std::string> getDeathEffectTypes ( void );
 
 	// landing effects
-	void addLandEffect ( int team, const float* pos, float rot );
+	void addLandEffect ( const float* rgb, const float* pos, float rot );
 	std::vector<std::string> getLandEffectTypes ( void );
 
 	// rico effect
-	void addRicoEffect ( int team, const float* pos, float rot[2], const float* vel = NULL );
+	void addRicoEffect ( const float* rgb, const float* pos, float rot[2], const float* vel = NULL );
 	std::vector<std::string> getRicoEffectTypes ( void );
 
 	// shot teleport effect
-	void addShotTeleportEffect ( int team, const float* pos, float rot[2], const float* vel = NULL );
+	void addShotTeleportEffect ( const float* rgb, const float* pos, float rot[2], const float* vel = NULL );
 	std::vector<std::string> getShotTeleportEffectTypes ( void );
 
 
