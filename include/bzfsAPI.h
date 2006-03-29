@@ -983,6 +983,7 @@ BZF_API bool bz_getStandardSpawn ( int playeID, float pos[3], float *rot );
 BZF_API bool bz_killPlayer ( int playeID, bool spawnOnBase, int killerID = -1, const char* flagID = NULL );
 
 // flags
+BZF_API bool bz_givePlayerFlag ( int playeID, const char* flagType, bool force );
 BZF_API bool bz_removePlayerFlag ( int playeID );
 BZF_API void bz_resetFlags ( bool onlyUnused );
 

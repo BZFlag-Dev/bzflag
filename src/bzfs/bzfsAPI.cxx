@@ -1393,6 +1393,91 @@ BZF_API bool bz_killPlayer ( int playeID, bool spawnOnBase, int killerID, const 
 	return true;
 }
 
+BZF_API bool bz_givePlayerFlag ( int playeID, const char* flagType, bool force )
+{
+	FlagInfo* fi = NULL;
+	GameKeeper::Player* gkPlayer = GameKeeper::Player::getPlayerByIndex(playeID);
+
+	if (gkPlayer != NULL)
+	{
+		FlagType* ft = Flag::getDescFromAbbreviation(flagType);
+		if (ft != Flags::Null)
+		{
+			// find unused and forced candidates
+			FlagInfo* unused = NULL;
+			FlagInfo* forced = NULL;
+			for (int i = 0; i < numFlags; i++)
+			{
+				FlagInfo* fi2 = FlagInfo::get(i);
+				if ((fi2 != NULL) && (fi2->flag.type == ft))
+				{
+					forced = fi2;
+					if (fi2->player < 0)
+					{
+						unused = fi2;
+						break;
+					}
+				}
+			}
+
+			// see if we need to force it
+			if (unused != NULL)
+				fi = unused;
+			else if (forced != NULL)
+			{
+				if (force)
+					fi = forced;
+				else  //all flags of this type are in use and force is set to false
+					return false;
+			}
+			else
+			{
+				//none of these flags exist in the game
+				return false;
+			}
+		}
+		else
+		{
+			//bogus flag
+			return false;
+		}
+	}
+	else //invald player
+		return false;
+
+	if (gkPlayer && fi)
+	{
+		// do not give flags to dead players
+		if (!gkPlayer->player.isAlive())
+			return false; //player is dead
+
+		// deal with the player's current flag (if applicable)
+		const int flagId = gkPlayer->player.getFlag();
+		if (flagId >= 0)
+		{
+			FlagInfo& currentFlag = *FlagInfo::get(flagId);
+			if (currentFlag.flag.type->flagTeam != NoTeam)
+				dropFlag(currentFlag, gkPlayer->lastState.pos);// drop team flags
+			else
+				resetFlag(currentFlag);// reset non-team flags
+		}		
+		// setup bzfs' state
+		fi->grab(gkPlayer->getIndex());
+		gkPlayer->player.setFlag(fi->getIndex());
+
+		// send MsgGrabFlag
+		void *buf, *bufStart = getDirectMessageBuffer();
+		buf = nboPackUByte(bufStart, gkPlayer->getIndex());
+		buf = fi->pack(buf);
+		broadcastMessage(MsgGrabFlag, (char*)buf-(char*)bufStart, bufStart);
+
+		//flag successfully given to player
+		return true;
+	}
+//just in case? (a "wtf" case)
+       return false;
+}
+
 BZF_API bool bz_removePlayerFlag ( int playeID )
 {
 	GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playeID);
