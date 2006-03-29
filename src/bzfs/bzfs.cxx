@@ -5000,16 +5000,26 @@ int main(int argc, char **argv)
 		  snprintf(message,  MessageLen, "/poll %s", action.c_str());
 		  removePlayer(v, message);
 		}
-	      } else if (action == "set") {
-		std::vector<std::string> args = TextUtils::tokenize(target.c_str(), " ", 2, true);
-		if (args.size() < 2) {
-		  DEBUG1("Poll set taking action: no action taken, not enough parameters (%s).\n",
-			 (args.size() > 0 ? args[0].c_str() : "No parameters."));
-		}
-		DEBUG1("Poll set taking action: setting %s to %s\n",
-		       args[0].c_str(), args[1].c_str());
-		BZDB.set(args[0], args[1], StateDatabase::Server);
-	      } else if (action == "reset") {
+	      }
+		  else if (action == "set")
+		  {
+			std::vector<std::string> args = TextUtils::tokenize(target.c_str(), " ", 2, true);
+			if ( args.size() < 2 )
+				DEBUG1("Poll set taking action: no action taken, not enough parameters (%s).\n", (args.size() > 0 ? args[0].c_str() : "No parameters."));
+			else
+			{
+				StateDatabase::Permission permission = BZDB.getPermission(args[0]);
+				if (!(BZDB.isSet(args[0]) && (permission == StateDatabase::ReadWrite || permission == StateDatabase::Locked))) 
+					DEBUG1("Poll set taking action: no action taken, variable cannot be set\n");
+				else
+				{
+					DEBUG1("Poll set taking action: setting %s to %s\n", args[0].c_str(), args[1].c_str());
+					BZDB.set(args[0], args[1], StateDatabase::Server);
+				}	
+			}
+	      }
+		  else if (action == "reset")
+		  {
 		DEBUG1("Poll flagreset taking action: resetting unused flags.\n");
 		for (int f = 0; f < numFlags; f++) {
 		  FlagInfo &flag = *FlagInfo::get(f);
