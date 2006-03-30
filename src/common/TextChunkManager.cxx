@@ -60,6 +60,7 @@ StringVector TextChunk::parse(const int _max_lines)
   int maxMsg = maxLineLength < 0 ? PARSE_BUFSIZE : maxLineLength < PARSE_BUFSIZE ? maxLineLength : PARSE_BUFSIZE;
 
   in.open(fileName.c_str());
+
   if (!in || !in.is_open()) {
     snprintf(buffer, maxMsg, "WARNING: unable to open %s", fileName.c_str());
     strings.push_back(buffer);
@@ -96,6 +97,8 @@ StringVector TextChunk::parse(const int _max_lines)
     snprintf(buffer, maxMsg, "WARNING: truncated %d long line%s from %s (limit of %d characters)", long_lines_encountered, long_lines_encountered == 1? "" : "s", fileName.c_str(), maxMsg - 1);
     strings.push_back(buffer);
   }
+
+  in.close();
 
   return strings;
 }
