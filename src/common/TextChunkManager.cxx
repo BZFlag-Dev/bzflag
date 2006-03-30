@@ -67,29 +67,21 @@ StringVector TextChunk::parse(const int _max_lines)
     return strings;
   }
 
-  for(int i = 0; in.good() && !in.eof(); i++) {
-
-    // for good measure.
-    in.clear();
+  for(int i = 0; in.good() && !in.eof() && (in.peek() != char_traits<char>::eof()); i++) {
 
     // pull a line from the file
     in.getline(buffer, PARSE_BUFSIZE);
     
     if (in.fail()) {
-      if (in.gcount() > 0) {
-	snprintf(buffer, maxMsg, "WARNING: File %s contains line(s) longer than %d", fileName.c_str(), PARSE_BUFSIZE);
+      if (in.gcount() == PARSE_BUFSIZE-1) {
+	snprintf(buffer, maxMsg, "WARNING: File %s contains line(s) longer than %d characters", fileName.c_str(), PARSE_BUFSIZE-1);
 	strings.push_back(buffer);
 	break;
-      } else if (in.eof()) {
-	snprintf(buffer, maxMsg, "WARNING: fail and eof on a getline? (gcount == %d)", in.gcount());
-	strings.push_back(buffer);
-	break;
-      } else if (in.bad()) {
-	snprintf(buffer, maxMsg, "WARNING: fail and bad on a getline? (gcount == %d)", in.gcount());
+      } else {
+	snprintf(buffer, maxMsg, "WARNING: Encountered an error while reading %s", fileName.c_str());
 	strings.push_back(buffer);
 	break;
       }
-	
     }
 
     if (strlen(buffer) > (size_t) maxMsg - 1) {
