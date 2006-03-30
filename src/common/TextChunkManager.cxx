@@ -66,7 +66,7 @@ StringVector TextChunk::parse(const int _max_lines)
     return strings;
   }
 
-  for(int i = 0; in.good(); i++) {
+  for(int i = 0; in.good() && !in.eof(); i++) {
 
     // pull a line from the file
     in.getline(buffer, PARSE_BUFSIZE);
@@ -87,11 +87,6 @@ StringVector TextChunk::parse(const int _max_lines)
     if ((_max_lines > 0) && (i >= _max_lines)) {
       snprintf(buffer, maxMsg, "WARNING: %s has more than %d lines, truncated.", fileName.c_str(), _max_lines);
       strings.push_back(buffer);
-      break;
-    }
-
-    // was that the last line?
-    if (in.eof()) {
       break;
     }
   } // end parsing for loop
