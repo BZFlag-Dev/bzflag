@@ -67,7 +67,7 @@ StringVector TextChunk::parse(const int _max_lines)
     return strings;
   }
 
-  for(int i = 0; in.good() && !in.eof() && (in.peek() != char_traits<char>::eof()); i++) {
+  for(int i = 0; in.good() && !in.eof() && (in.peek() != std::char_traits<char>::eof()); i++) {
 
     // pull a line from the file
     in.getline(buffer, PARSE_BUFSIZE);
