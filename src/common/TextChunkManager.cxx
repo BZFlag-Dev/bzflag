@@ -89,6 +89,11 @@ StringVector TextChunk::parse(const int _max_lines)
       strings.push_back(buffer);
       break;
     }
+
+    // was that the last line?
+    if (in.eof()) {
+      break;
+    }
   } // end parsing for loop
 
   if (long_lines_encountered) {
