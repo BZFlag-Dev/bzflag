@@ -839,6 +839,9 @@ copy ..\..\src\bzfs\debug\*.exe ..\..\*.exe
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath="..\..\src\bzfs\RandomSpawnPolicy.cxx">
+			</File>
+			<File
 				RelativePath="..\..\src\bzfs\RecordReplay.cxx">
 			</File>
 			<File
@@ -1723,6 +1726,9 @@ copy ..\..\src\bzfs\debug\*.exe ..\..\*.exe
 			</File>
 			<File
 				RelativePath="..\..\include\PlayerInfo.h">
+			</File>
+			<File
+				RelativePath="..\..\src\bzfs\RandomSpawnPolicy.h">
 			</File>
 			<File
 				RelativePath="..\..\src\bzfs\RecordReplay.h">
