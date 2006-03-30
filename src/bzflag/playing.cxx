@@ -3112,7 +3112,7 @@ void			addShotPuff(const float* pos, float azimuth, float elevation)
   }
 
   float rots[2] = {azimuth,elevation};
-  EFFECTS.addGMPuffEffect(0, pos, rots, NULL);
+  EFFECTS.addGMPuffEffect(pos, rots, NULL);
 }
 
 // process pending input events

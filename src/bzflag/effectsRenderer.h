@@ -241,7 +241,7 @@ public:
 	std::vector<std::string> getShotEffectTypes ( void );
 
 	// gm puffs
-	void addGMPuffEffect ( const float* rgb, const float* pos, float rot[2], const float* vel = NULL );
+	void addGMPuffEffect ( const float* pos, float rot[2], const float* vel = NULL );
 	std::vector<std::string> getGMPuffEffectTypes ( void );
 
 	// death effects
@@ -253,7 +253,7 @@ public:
 	std::vector<std::string> getLandEffectTypes ( void );
 
 	// rico effect
-	void addRicoEffect ( const float* rgb, const float* pos, float rot[2], const float* vel = NULL );
+	void addRicoEffect ( const float* pos, float rot[2], const float* vel = NULL );
 	std::vector<std::string> getRicoEffectTypes ( void );
 
 	// shot teleport effect

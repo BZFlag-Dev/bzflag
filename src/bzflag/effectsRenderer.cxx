@@ -192,7 +192,7 @@ std::vector<std::string> EffectsRenderer::getShotEffectTypes ( void )
 	return ret;
 }
 
-void EffectsRenderer::addGMPuffEffect ( const float* rgb, const float* pos, float rot[2], const float* vel)
+void EffectsRenderer::addGMPuffEffect ( const float* pos, float rot[2], const float* vel)
 {
 	if (!BZDB.isTrue("useFancyEffects"))
 		return;
@@ -224,8 +224,6 @@ void EffectsRenderer::addGMPuffEffect ( const float* rgb, const float* pos, floa
 		effect->setStartTime((float)TimeKeeper::getCurrent().getSeconds());
 		if (BZDB.isTrue("useVelOnShotEffects"))
 			effect->setVel(vel);
-		effect->setColor(rgb);
-
 		effectsList.push_back(effect);
 	}
 }
@@ -321,7 +319,7 @@ std::vector<std::string> EffectsRenderer::getLandEffectTypes ( void )
 	return ret;
 }
 
-void EffectsRenderer::addRicoEffect ( const float* rgb, const float* pos, float rot[2], const float* vel)
+void EffectsRenderer::addRicoEffect ( const float* pos, float rot[2], const float* vel)
 {
 	if (!BZDB.isTrue("useFancyEffects"))
 		return;
@@ -349,7 +347,6 @@ void EffectsRenderer::addRicoEffect ( const float* rgb, const float* pos, float 
 		effect->setStartTime((float)TimeKeeper::getCurrent().getSeconds());
 		if (BZDB.isTrue("useVelOnShotEffects"))
 			effect->setVel(vel);
-		effect->setColor(rgb);
 
 		effectsList.push_back(effect);
 	}
