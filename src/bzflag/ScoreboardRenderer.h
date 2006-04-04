@@ -70,9 +70,9 @@ protected:
   void		hudColor3fv(const GLfloat*);
   void		renderTeamScores (float y, float x, float dy);
   void		renderScoreboard(void);
-  void	  renderCtfFlags (void);
+  void          renderCtfFlags (void);
   void		drawPlayerScore(const Player*,
-				  float x1, float x2, float x3, float xs, float y, bool huntInd);
+		    float x1, float x2, float x3, float xs, float y, int emailLen, bool huntInd);
   static const char *sortLabels[SORT_MAXNUM+2];
   static int  sortMode;
   static bool alwaysShowTeamScore;

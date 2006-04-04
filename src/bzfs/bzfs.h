@@ -122,6 +122,12 @@ extern RejoinList  rejoinList;
 extern bool dontWait;
 extern float maxWorldHeight;
 
+
+void pauseCountdown ( const char *pausedBy );
+void resumeCountdown ( const char *resumedBy );
+void resetTeamScores ( void );
+void startCountdown ( int delay, float limit, const char *buyWho );
+
 #endif
 // Local Variables: ***
 // mode:C++ ***

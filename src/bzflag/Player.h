@@ -73,6 +73,13 @@ public:
   float		getLocalNormalizedScore() const;
   short		getScore() const;
   const float*	getDimensions() const;
+
+#ifndef BUILDING_BZADMIN
+  inline const float*	getColor() const
+  {
+	  return color;
+  }
+#endif
   short		getRabbitScore() const;
   short		getLocalWins() const;
   short		getLocalLosses() const;

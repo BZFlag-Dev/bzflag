@@ -60,21 +60,28 @@ StringVector TextChunk::parse(const int _max_lines)
   int maxMsg = maxLineLength < 0 ? PARSE_BUFSIZE : maxLineLength < PARSE_BUFSIZE ? maxLineLength : PARSE_BUFSIZE;
 
   in.open(fileName.c_str());
+
   if (!in || !in.is_open()) {
     snprintf(buffer, maxMsg, "WARNING: unable to open %s", fileName.c_str());
     strings.push_back(buffer);
     return strings;
   }
 
-  for(int i = 0; in.good(); i++) {
+  for(int i = 0; in.good() && !in.eof() && (in.peek() != std::char_traits<char>::eof()); i++) {
 
     // pull a line from the file
     in.getline(buffer, PARSE_BUFSIZE);
     
     if (in.fail()) {
-      snprintf(buffer, maxMsg, "WARNING: there was a problem reading %s", fileName.c_str());
-      strings.push_back(buffer);
-      break;
+      if (in.gcount() == PARSE_BUFSIZE-1) {
+	snprintf(buffer, maxMsg, "WARNING: File %s contains line(s) longer than %d characters", fileName.c_str(), PARSE_BUFSIZE-1);
+	strings.push_back(buffer);
+	break;
+      } else {
+	snprintf(buffer, maxMsg, "WARNING: Encountered an error while reading %s", fileName.c_str());
+	strings.push_back(buffer);
+	break;
+      }
     }
 
     if (strlen(buffer) > (size_t) maxMsg - 1) {
@@ -96,6 +103,8 @@ StringVector TextChunk::parse(const int _max_lines)
     snprintf(buffer, maxMsg, "WARNING: truncated %d long line%s from %s (limit of %d characters)", long_lines_encountered, long_lines_encountered == 1? "" : "s", fileName.c_str(), maxMsg - 1);
     strings.push_back(buffer);
   }
+
+  in.close();
 
   return strings;
 }

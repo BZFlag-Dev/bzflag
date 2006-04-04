@@ -3,6 +3,13 @@ to do list for BZFlag
 
 THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
 
+* make sure there are no outstanding serious bugs (e.g. check OO)
+
+* prepare for 2.0.6 release.  planned for 2006.04.01.
+
+
+THESE ARE LOWER PRIORITY
+
 * add a command line option to let random worlds do an oncap weapon
   for CTF bases.
 

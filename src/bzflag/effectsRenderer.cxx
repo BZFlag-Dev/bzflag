@@ -30,7 +30,6 @@ static void drawRingXY(float rad, float z, float topsideOffset = 0,
 		       float bottomUV = 0, float topUV = 1.0f,
 		       int segments = 32);
 static void RadialToCartesian(float angle, float rad, float *pos);
-static void getSpawnTeamColor(int teamColor, float *color);
 
 #define deg2Rad 0.017453292519943295769236907684886f
 
@@ -93,7 +92,7 @@ void EffectsRenderer::rebuildContext(void)
 		effectsList[i]->rebuildContext();
 }
 
-void EffectsRenderer::addSpawnEffect ( int team, const float* pos )
+void EffectsRenderer::addSpawnEffect ( const float* rgb, const float* pos )
 {
 	if (!BZDB.isTrue("useFancyEffects"))
 		return;
@@ -123,7 +122,7 @@ void EffectsRenderer::addSpawnEffect ( int team, const float* pos )
 	{
 		effect->setPos(pos,NULL);
 		effect->setStartTime((float)TimeKeeper::getCurrent().getSeconds());
-		effect->setTeam(team);
+		effect->setColor(rgb);
 		effectsList.push_back(effect);
 	}
 }
@@ -139,7 +138,7 @@ std::vector<std::string> EffectsRenderer::getSpawnEffectTypes ( void )
 	return ret;
 }
 
-void EffectsRenderer::addShotEffect ( int team, const float* pos, float rot, const float *vel, int _type)
+void EffectsRenderer::addShotEffect (  const float* rgb, const float* pos, float rot, const float *vel, int _type)
 {
 	if (!BZDB.isTrue("useFancyEffects"))
 		return;
@@ -165,8 +164,8 @@ void EffectsRenderer::addShotEffect ( int team, const float* pos, float rot, con
 			break;
 		case 3:
 			// composite effect
-			addShotEffect(team, pos, rot, vel,1);
-			addShotEffect(team, pos, rot, vel,2);
+			addShotEffect(rgb, pos, rot, vel,1);
+			addShotEffect(rgb, pos, rot, vel,2);
 			break;
 	}
 
@@ -176,7 +175,7 @@ void EffectsRenderer::addShotEffect ( int team, const float* pos, float rot, con
 		effect->setStartTime((float)TimeKeeper::getCurrent().getSeconds());
 		if (BZDB.isTrue("useVelOnShotEffects"))
 			effect->setVel(vel);
-		effect->setTeam(team);
+		effect->setColor(rgb);
 
 		effectsList.push_back(effect);
 	}
@@ -193,7 +192,7 @@ std::vector<std::string> EffectsRenderer::getShotEffectTypes ( void )
 	return ret;
 }
 
-void EffectsRenderer::addGMPuffEffect ( int team, const float* pos, float rot[2], const float* vel)
+void EffectsRenderer::addGMPuffEffect ( const float* pos, float rot[2], const float* vel)
 {
 	if (!BZDB.isTrue("useFancyEffects"))
 		return;
@@ -225,8 +224,6 @@ void EffectsRenderer::addGMPuffEffect ( int team, const float* pos, float rot[2]
 		effect->setStartTime((float)TimeKeeper::getCurrent().getSeconds());
 		if (BZDB.isTrue("useVelOnShotEffects"))
 			effect->setVel(vel);
-		effect->setTeam(team);
-
 		effectsList.push_back(effect);
 	}
 }
@@ -241,7 +238,7 @@ std::vector<std::string> EffectsRenderer::getGMPuffEffectTypes ( void )
 	return ret;
 }
 
-void EffectsRenderer::addDeathEffect ( int team, const float* pos, float rot )
+void EffectsRenderer::addDeathEffect ( const float* rgb, const float* pos, float rot )
 {
 	if (!BZDB.isTrue("useFancyEffects"))
 		return;
@@ -267,7 +264,7 @@ void EffectsRenderer::addDeathEffect ( int team, const float* pos, float rot )
 	{
 		effect->setPos(pos,rots);
 		effect->setStartTime((float)TimeKeeper::getCurrent().getSeconds());
-		effect->setTeam(team);
+		effect->setColor(rgb);
 		effectsList.push_back(effect);
 	}
 }
@@ -282,7 +279,7 @@ std::vector<std::string> EffectsRenderer::getDeathEffectTypes ( void )
 }
 
 // landing effects
-void EffectsRenderer::addLandEffect ( int team, const float* pos, float rot )
+void EffectsRenderer::addLandEffect ( const float* rgb, const float* pos, float rot )
 {
 	if (!BZDB.isTrue("useFancyEffects"))
 		return;
@@ -308,7 +305,7 @@ void EffectsRenderer::addLandEffect ( int team, const float* pos, float rot )
 	{
 		effect->setPos(pos,rots);
 		effect->setStartTime((float)TimeKeeper::getCurrent().getSeconds());
-		effect->setTeam(team);
+		effect->setColor(rgb);
 		effectsList.push_back(effect);
 	}
 }
@@ -322,7 +319,7 @@ std::vector<std::string> EffectsRenderer::getLandEffectTypes ( void )
 	return ret;
 }
 
-void EffectsRenderer::addRicoEffect ( int team, const float* pos, float rot[2], const float* vel)
+void EffectsRenderer::addRicoEffect ( const float* pos, float rot[2], const float* vel)
 {
 	if (!BZDB.isTrue("useFancyEffects"))
 		return;
@@ -350,7 +347,6 @@ void EffectsRenderer::addRicoEffect ( int team, const float* pos, float rot[2], 
 		effect->setStartTime((float)TimeKeeper::getCurrent().getSeconds());
 		if (BZDB.isTrue("useVelOnShotEffects"))
 			effect->setVel(vel);
-		effect->setTeam(team);
 
 		effectsList.push_back(effect);
 	}
@@ -366,7 +362,7 @@ std::vector<std::string> EffectsRenderer::getRicoEffectTypes ( void )
 	return ret;
 }
 
-void EffectsRenderer::addShotTeleportEffect ( int team, const float* pos, float rot[2], const float* vel)
+void EffectsRenderer::addShotTeleportEffect ( const float* pos, float rot[2], const float* vel)
 {
 	if (!BZDB.isTrue("useFancyEffects"))
 		return;
@@ -394,8 +390,6 @@ void EffectsRenderer::addShotTeleportEffect ( int team, const float* pos, float 
 		effect->setStartTime((float)TimeKeeper::getCurrent().getSeconds());
 		if (BZDB.isTrue("useVelOnShotEffects"))
 			effect->setVel(vel);
-		effect->setTeam(team);
-
 		effectsList.push_back(effect);
 	}
 }
@@ -455,6 +449,13 @@ void BasicEffect::setVel ( const float *vel )
 void BasicEffect::setTeam ( int team )
 {
 	teamColor = team;
+}
+
+void BasicEffect::setColor ( const float *rgb )
+{
+	color[0] = rgb[0];
+	color[1] = rgb[1];
+	color[2] = rgb[2];
 }
 
 void BasicEffect::setStartTime ( float time )
@@ -522,10 +523,6 @@ void StdSpawnEffect::draw(const SceneRenderer &)
 
 	ringState.setState();
 
-	float color[3] = {0};
-
-	getSpawnTeamColor(teamColor,color);
-
 	float ageParam = age/lifetime;
 
 	glColor4f(color[0],color[1],color[2],1.0f-(age/lifetime));
@@ -563,10 +560,6 @@ void ConeSpawnEffect::draw(const SceneRenderer &)
 	glTranslatef(position[0],position[1],position[2]+0.1f);
 
 	ringState.setState();
-
-	float color[3] = {0};
-
-	getSpawnTeamColor(teamColor,color);
 
 	glColor4f(color[0],color[1],color[2],1.0f-(age/lifetime));
 	glDepthMask(0);
@@ -619,9 +612,6 @@ void RingSpawnEffect::draw(const SceneRenderer &)
 
 	ringState.setState();
 
-	float color[3] = {0};
-	getSpawnTeamColor(teamColor, color);
-
 	glDepthMask(0);
 
 	ringRange = lifetime / 4.0f;  // first 3/4ths of the life are rings, last is fade
@@ -634,14 +624,14 @@ void RingSpawnEffect::draw(const SceneRenderer &)
 		coreAlpha = 1.0f - ((age - bigRange) / (lifetime - bigRange));
 
 	for (int n = 0; n < 4; ++n)
-		drawRing(n, color, coreAlpha);
+		drawRing(n, coreAlpha);
 
 	glColor4f(1,1,1,1);
 	glDepthMask(1);
 	glPopMatrix();
 }
 
-void RingSpawnEffect::drawRing(int n, float color[3], float coreAlpha)
+void RingSpawnEffect::drawRing(int n, float coreAlpha)
 {
 	float posZ = 0;
 	float alpha;
@@ -721,7 +711,6 @@ void StdShotEffect::draw(const SceneRenderer &)
 
 	ringState.setState();
 
-	float color[3] = {0};
 	color[0] = color[1] = color[2] = 1;
 
 	float alpha = 0.5f-(age/lifetime);
@@ -791,7 +780,6 @@ void FlashShotEffect::draw(const SceneRenderer &)
 
 	ringState.setState();
 
-	float color[3] = {0};
 	color[0] = color[1] = color[2] = 1;
 
 	float alpha = 0.8f-(age/lifetime);
@@ -885,7 +873,6 @@ void StdDeathEffect::draw(const SceneRenderer &)
 
 	ringState.setState();
 
-	float color[3] = {0};
 	color[0] = 108.0f/256.0f;
 	color[1] = 16.0f/256.0f;
 	color[2] = 16.0f/256.0f;
@@ -895,7 +882,6 @@ void StdDeathEffect::draw(const SceneRenderer &)
 	deltas[0] = 1.0f - color[0];
 	deltas[1] = 1.0f - color[1];
 	deltas[2] = 1.0f - color[2];
-
 
 	float ageParam = age/lifetime;
 
@@ -970,11 +956,9 @@ void StdLandEffect::draw(const SceneRenderer &)
 
 	ringState.setState();
 
-	float color[3] = {1,1,1};
-
-	//getSpawnTeamColor(teamColor,color);
-
-//	float ageParam = age/lifetime;
+	color[0] = 1;
+	color[1] = 1;
+	color[2] = 1;
 
 	glColor4f(color[0],color[1],color[2],1.0f-(age/lifetime));
 	glDepthMask(0);
@@ -1041,7 +1025,6 @@ void StdGMPuffEffect::draw(const SceneRenderer &)
 
 	ringState.setState();
 
-	float color[3] = {0};
 	color[0] = color[1] = color[2] = 1;
 
 	float alpha = 0.5f-(age/lifetime);
@@ -1064,7 +1047,6 @@ StdRicoEffect::StdRicoEffect() : BasicEffect()
 	texture = TextureManager::instance().getTextureID("blend_flash",false);
 	lifetime = 0.5f;
 	radius = 0.25f;
-
 
 	OpenGLGStateBuilder gstate;
 	gstate.reset();
@@ -1113,7 +1095,6 @@ void StdRicoEffect::draw(const SceneRenderer &)
 
 	ringState.setState();
 
-	float color[3] = {0};
 	color[0] = color[1] = color[2] = 1;
 
 	float alpha = 0.5f-(age/lifetime);
@@ -1186,7 +1167,6 @@ void StdShotTeleportEffect::draw(const SceneRenderer &)
 
 	ringState.setState();
 
-	float color[3] = {0};
 	color[0] = color[1] = color[2] = 1;
 
 	float alpha = 1.0f;
@@ -1357,46 +1337,6 @@ static void drawRingYZ(float rad, float z, float topsideOffset, float bottomUV,
 		glVertex3f(0,thispos[1],clampedZ(thispos[0],ZOffset));
 
 		glEnd();
-	}
-}
-
-static void getSpawnTeamColor(int teamColor, float *color)
-{
-	switch(teamColor)
-	{
-	default:
-		color[0] = color[1] = color[2] = 1;
-		break;
-
-	case BlueTeam:
-		color[0] = 0.35f;
-		color[1] = 0.35f;
-		color[2] = 1;
-		break;
-
-	case GreenTeam:
-		color[0] = 0.25f;
-		color[1] = 1;
-		color[2] = 0.25f;
-		break;
-
-	case RedTeam:
-		color[0] = 1;
-		color[1] = 0.35f;
-		color[2] = 0.35f;
-		break;
-
-	case PurpleTeam:
-		color[0] = 1;
-		color[1] = 0.35f;
-		color[2] = 1.0f;
-		break;
-
-	case RogueTeam:
-		color[0] = 0.5;
-		color[1] = 0.5f;
-		color[2] = 0.5f;
-		break;
 	}
 }
 

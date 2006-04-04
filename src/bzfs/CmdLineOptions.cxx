@@ -761,7 +761,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
     } else if (strcmp(argv[i], "-maxidle") == 0) {
       checkArgc(1, i, argc, argv[i]);
       options.idlekickthresh = (float) atoi(argv[i]);
-    } else if (strcmp(argv[i], "-mp") == 0) {
+	} else if (strcmp(argv[i], "-mp") == 0) {
       // set maximum number of players
       checkArgc(1, i, argc, argv[i]);
       if (playerCountArg == 0)

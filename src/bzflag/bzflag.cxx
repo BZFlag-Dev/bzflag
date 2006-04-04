@@ -222,7 +222,10 @@ static void		parse(int argc, char** argv)
     } else if (strcmp(argv[i], "-config") == 0) {
       checkArgc(i, argc, argv[i]);
       // the setting has already been done in parseConfigName()
-    } else if ((strcmp(argv[i], "-d") == 0) ||
+	} else if (strcmp(argv[i], "-configdir") == 0) {
+		checkArgc(i, argc, argv[i]);
+		// the setting has already been done in parseConfigName()
+	} else if ((strcmp(argv[i], "-d") == 0) ||
 	       (strcmp(argv[i], "-debug") == 0)) {
       debugLevel++;
     } else if ((strcmp(argv[i], "-dir") == 0) ||
@@ -772,6 +775,12 @@ int			main(int argc, char** argv)
     // ignore window name in config file (it's used internally)
     BZDB.unset("_window");
     BZDB.unset("_multisample");
+
+
+    // however, if the "__window" setting is enabled, let it through
+    if (BZDB.isSet("__window"))
+      if (BZDB.isTrue("__window"))
+        BZDB.set("_window", "1");
   }
 
   // use UDP? yes

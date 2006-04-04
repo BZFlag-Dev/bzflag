@@ -524,7 +524,7 @@ CountdownCommand::CountdownCommand()     : ServerCommand("/countdown",
 FlagCommand::FlagCommand()		 : ServerCommand("/flag",
   "<reset|up|show> - reset, remove or show the flags") {}
 LagWarnCommand::LagWarnCommand()	 : ServerCommand("/lagwarn",
-  "<milliseconds> - change the maximum allowed lag time") {}
+  "[milliseconds] - display or set the maximum allowed lag time") {}
 LagDropCommand::LagDropCommand()       : ServerCommand("/lagdrop",
   "[count] - display or set the number of warings before a player is kicked") {}
 JitterWarnCommand::JitterWarnCommand()	 : ServerCommand("/jitterwarn",
@@ -582,7 +582,7 @@ ClientQueryCommand::ClientQueryCommand() : ServerCommand("/clientquery",
 RecordCommand::RecordCommand()		 : ServerCommand("/record",
   "[start|stop|size|list|rate..] - manage the bzflag record system") {}
 ReplayCommand::ReplayCommand()		 : ServerCommand("/replay",
-  "[list|load|play|skip +-seconds] - intereact with recorded files") {}
+  "[ list [-t|-n] | load <filename|#index> | loop | play | skip [+/-seconds] | stats ] - interact with recorded files") {}
 SayCommand::SayCommand()		 : ServerCommand("/say",
   "[message] - generate a public message sent by the server") {}
 ModCountCommand::ModCountCommand()		 : ServerCommand("/modcount",
@@ -1078,48 +1078,60 @@ bool CountdownCommand::operator() (const char	 * message,
   }
 
   // if the timelimit is not set .. don't countdown
-  if (clOptions->timeLimit > 1.0f) {
+  if (clOptions->timeLimit > 1.0f) 
+  {
     std::vector<std::string> parts = TextUtils::tokenize(message, " \t",2);
 
-    if (parts.size() > 1) {
+    if (parts.size() > 1)
+	{
       // we have an argument
+      if (parts[1] == "pause")
+	  {
+		// pause the countdown
+		if (!countdownActive)
+		{
+			sendMessage(ServerPlayer, t, "There is no active game to pause");
+			return true;
+		}
+		else if (clOptions->countdownPaused)
+		{
+			sendMessage(ServerPlayer, t, "The game is already paused");
+			return true;
+		}
 
-      if (parts[1] == "pause") {
-	// pause the countdown
-	if (!countdownActive) {
-	  sendMessage(ServerPlayer, t, "There is no active game to pause");
-	  return true;
-	} else if (clOptions->countdownPaused) {
-	  sendMessage(ServerPlayer, t, "The game is already paused");
-	  return true;
-	}
-	clOptions->countdownPaused = true;
-	sendMessage(ServerPlayer, AllPlayers, TextUtils::format("Countdown paused by %s",playerData->player.getCallSign()).c_str());
-	return true;
-      } else if (parts[1] == "resume") {
-	// resume countdown if it was paused before
-	if (!clOptions->countdownPaused) {
-	  sendMessage(ServerPlayer, t, "The game is not paused");
-	  return true;
-	}
-	clOptions->countdownPaused = false;
-	sendMessage(ServerPlayer, AllPlayers, TextUtils::format("Countdown resumed by %s",playerData->player.getCallSign()).c_str());
-	return true;
-
-      } else {
-	// so it's the countdown delay? else tell the player how to use /countdown
-	std::istringstream timespec(message+10);
-	if (!(timespec >> countdownDelay)) {
-	  sendMessage(ServerPlayer, t, "Usage: /countdown [<seconds>|pause|resume]");
-	  return true;
-	}
+		pauseCountdown(playerData->player.getCallSign());
+		return true;
       }
-    } else {
+	  else if (parts[1] == "resume")
+	  {
+		// resume countdown if it was paused before
+		if (!clOptions->countdownPaused)
+		{
+			sendMessage(ServerPlayer, t, "The game is not paused");
+			return true;
+		}
+		resumeCountdown(playerData->player.getCallSign());
+		return true;
+      }
+	  else
+	  {
+		// so it's the countdown delay? else tell the player how to use /countdown
+		std::istringstream timespec(message+10);
+		if (!(timespec >> countdownDelay))
+		{
+			sendMessage(ServerPlayer, t, "Usage: /countdown [<seconds>|pause|resume]");
+			return true;
+		}
+      }
+    }
+	else
+	{
       countdownDelay = 10;
     }
 
     // cancel here if a game is already running
-    if (countdownActive) {
+    if (countdownActive)
+	{
       sendMessage(ServerPlayer, t, "A game is already in progress");
       countdownDelay = -1;
       return true;
@@ -1127,47 +1139,26 @@ bool CountdownCommand::operator() (const char	 * message,
 
     // limit/sanity check
     const int max_delay = 120;
-    if (countdownDelay > max_delay) {
+    if (countdownDelay > max_delay)
+	{
       sendMessage(ServerPlayer, t, TextUtils::format("Countdown set to %d instead of %d", max_delay, countdownDelay).c_str());
       countdownDelay = max_delay;
-    } else if (countdownDelay < 0) {
+    }
+	else if (countdownDelay < 0)
+	{
       sendMessage(ServerPlayer, t, TextUtils::format("Countdown set to 0 instead of %d", countdownDelay).c_str());
       countdownDelay = 0;
     }
 
-    sendMessage(ServerPlayer, AllPlayers, TextUtils::format("Team scores reset, countdown started by %s.",playerData->player.getCallSign()).c_str());
-
-    // let everyone know what's going on
-    long int timeArray[4];
-    std::string matchBegins;
-    if (countdownDelay == 0) {
-      matchBegins = "Match begins now!";
-    } else {
-      TimeKeeper::convertTime(countdownDelay, timeArray);
-      std::string countdowntime = TimeKeeper::printTime(timeArray);
-      matchBegins = TextUtils::format("Match begins in about %s", countdowntime.c_str());
-    }
-    sendMessage(ServerPlayer, AllPlayers, matchBegins.c_str());
-
-    TimeKeeper::convertTime(clOptions->timeLimit, timeArray);
-    std::string timelimit = TimeKeeper::printTime(timeArray);
-    matchBegins = TextUtils::format("Match duration is %s", timelimit.c_str());
-    sendMessage(ServerPlayer, AllPlayers, matchBegins.c_str());
-
-    // make sure the game always start unpaused
-    clOptions->countdownPaused = false;
-    countdownPauseStart = TimeKeeper::getNullTime();
-
-  } else {
+	startCountdown ( countdownDelay, clOptions->timeLimit, playerData->player.getCallSign() );
+  }
+  else 
+  {
     sendMessage(ServerPlayer, AllPlayers, "Team scores reset.");
     sendMessage(ServerPlayer, t, "The server is not configured for timed matches.");
   }
 
-  // reset team scores
-  for (int i = RedTeam; i <= PurpleTeam; i++) {
-    team[i].team.lost = team[i].team.won = 0;
-  }
-  sendTeamUpdateMessageBroadcast();
+  resetTeamScores();
 
   return true;
 }
@@ -1518,7 +1509,6 @@ bool LagDropCommand::operator() (const char      *message,
   return true;
 }
 
-
 bool lagCompare(const GameKeeper::Player *a, const GameKeeper::Player *b)
 {
   if (a->player.isObserver() && !b->player.isObserver())
@@ -1695,24 +1685,19 @@ bool ReportCommand::operator() (const char	 *message,
     } else {
       std::string temp = std::string("**\"") + playerData->player.getCallSign() + "\" reports: " +
 			 (message + 8);
-      if (temp.size() <= (unsigned) MessageLen) {
-	sendMessage (ServerPlayer, AdminPlayers, temp.c_str());
-	return true;
-      }
       const std::vector<std::string> words = TextUtils::tokenize(temp, " \t");
       unsigned int cur = 0;
       const unsigned int wordsize = words.size();
+      std::string temp2;
       while (cur != wordsize) {
-	std::string temp2;
-	while (temp2.size() <= (unsigned) MessageLen &&
-	       cur != wordsize &&
-	       (temp2.size() + words[cur].size()) <= (unsigned) MessageLen) {
+	temp2.clear();
+	while (cur != wordsize &&
+	       (temp2.size() + words[cur].size() + 1 ) < (unsigned) MessageLen) {
 	    temp2 += words[cur] + " ";
 	    ++cur;
 	}
 	sendMessage (ServerPlayer, AdminPlayers, temp2.c_str());
       }
-      sendMessage (ServerPlayer, AdminPlayers, message);
       DEBUG1("Player %s [%d] has filed a report (time: %s).\n",
 	     playerData->player.getCallSign(), t, timeStr);
 

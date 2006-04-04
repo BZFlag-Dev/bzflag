@@ -12,28 +12,11 @@ B<FONT SIZE="4">ZFLAG</FONT> R<FONT SIZE="4">EADME</FONT>
 This is the README file for the Windows version of BZFlag.
 </P>
 <P>
-<A HREF="http://BZFlag.SourceForge.net/">BZFlag</A> is a network
-multiplayer 3D tank battle game.  You can play against several
-other people anywhere on a TCP/IP based network, including the
-Internet.  BZFlag is freeware;  please read the file COPYING
-found where you installed BZFlag.
-</P>
+<A HREF="http://BZFlag.SourceForge.net/">BZFlag</A> is a network multiplayer 3D tank battle game. You can play against several other people anywhere on the Internet. BZFlag is freeware and Open Source; please read the file COPYING found where you installed BZFlag.</P>
 <HR>
 <H3>R<FONT SIZE="2">EQUIREMENTS</FONT></H3>
-<P>
-BZFlag should run well on a Windows 95/98/NT/2000/XP system with 32MB RAM,
-though 64MB is recommended.  Later versions of Windows will naturally
-require more memory.  Any graphics card will work but a
-3D graphics card with OpenGL acceleration is highly recommended.
-A sound card with DirectSound support is optional.  A network
-card or a modem with PPP software (such as Dial-up Networking, provided
-with Windows) is required.
-</P>
-<P>
-BZFlag requires, but does not come with, three free "libraries."  Note
-that Windows 98 and later ship with these libraries, so unless you are
-using Windows 95 or NT4, you should not need to download them.
-<UL>
+<P>BZFlag should run well on a Windows 95/98/NT/2000/XP system with 64MB RAM, though 128MB is recommended. Current versions of Windows may require more memory. Any graphics card will work but a 3D graphics card with OpenGL acceleration is highly recommended.. A network card or a modem with a connection to the internet is required. BZflag requires at least DirectX 7.0 or higher to run. Windows XP ships with acceptable versions of all DLLs and librarys, and users of it should not have to download or install anything other then the game.</P>
+<P>BZFlag requires, but does not come with, three free &quot;libraries.&quot; Note that Windows 98 and later ship with these libraries, so unless you are using Windows 95 or NT4, Most users do NOT need to download them.<UL>
     <LI><A HREF="ftp://ftp.microsoft.com/softlib/mslfiles/opengl95.exe">OpenGL</A>
 	-- a vendor neutral, platform independent 3D graphics library
     <LI><A HREF="http://www.microsoft.com/directx/homeuser/downloads/default.asp">DirectX</A>
@@ -44,15 +27,18 @@ using Windows 95 or NT4, you should not need to download them.
 The easiest way to find out if you have the necessary libraries installed
 is to run <B>bzflag.exe</B> (you can find a shortcut in your start menu if
 you chose to install one).  Look for these errors:
-<UL>
+
+		<UL>
     <LI>OPENGL32.DLL not found -- install OpenGL
     <LI>DSOUND.DLL not found -- install DirectX
     <LI>WS2_32.DLL not found -- install Winsock 2
 </UL>
-</P>
-<HR>
-<H3>U<FONT SIZE="2">NINSTALLING</FONT></H3>
-<P>
+		<HR>
+		<h3><font size="2">Global Registration</font></h3>
+		<p>Many game servers require users to be globally registered to play. Global registration is free and handled by the official BZFlag forums. Please go to <a href="http://my.bzflag.org/bb/"><font size="2" face="Arial">http://my.bzflag.org/bb/</a> to create a global account. A valid e-maill address is required.</p>
+		<hr>
+		<h3><FONT SIZE="2">UNINSTALLING</FONT></h3>
+		<P>
 Run Add/Remove Programs (from the control panel), select BZFlag, and
 press Add/Remove....
 </P>
@@ -127,21 +113,18 @@ Shadows are off.
 </P>
 <P>
 If the game runs but the rendering is wrong, your OpenGL driver
-is broken.  It is <B>not</B> a problem with BZFlag.  Try getting the
-latest OpenGL drivers from your card manufacturer (or even the
-latest reference drivers from the chipset manufacturer).  The
-freeware <A HREF="http://mesa3d.sourceforge.net/">Mesa library</A>
-accelerates OpenGL on 3Dfx cards.<BR>
-Useful links:<BR>
-<A HREF="http://www.nvidia.com/content/drivers/drivers.asp">nVidia
+is broken.  It is <B>not</B> a problem with BZFlag. Try getting the latest OpenGL drivers from your card manufacturer (or even the latest reference drivers from the chipset manufacturer). .<BR>
+		</P>
+		<p><strong>99%</strong> of graphic problems are caused by <strong>old or incompatible</strong> <strong> video drivers</strong>. The video drivers that come with windows are <strong>never</strong> current and do not provide the OpenGL functions BZFlag needs. Always get the current driver for your video card from the chipset company. This is almost always nVidia or ATI. see the links below; If you are on a laptop you will have to get the current driver from your laptop manufacturer.</p>
+		<p>Common video chipsets:<BR>
+			<A HREF="http://www.nvidia.com/content/drivers/drivers.asp">nVidia
 accelerated reference drivers</A><BR>
-<A HREF="http://www.ati.com/support/driver.html">ATI accelerated
+			<A HREF="http://www.ati.com/support/driver.html">ATI accelerated
 drivers</A><BR>
-<A HREF="http://www.matrox.com/mga/support/drivers/home.cfm">Matrox
+			<A HREF="http://www.matrox.com/mga/support/drivers/home.cfm">Matrox
 accelerated drivers</A><BR>
-<A HREF="http://download.sis.com/index1.htm">SiS reference drivers</A>
-</P>
-<P>
+			<A HREF="http://download.sis.com/index1.htm">SiS reference drivers</A></p>
+		<P>
 BZFlag prints the renderer name when it starts up in the message
 window.  If it says `Generic' then you're using software only.
 You either haven't installed the OpenGL ICD correctly, or you are
@@ -195,11 +178,7 @@ servers or they're running on nonstandard ports.  Either `Start
 Server' or enter the server host name and port manually on the
 `Join Game' menu then Connect.
 </P>
-<P>
-If you're using BZFlag over a modem, you'll need to run PPP (usually
-in the form of Windows' Dial-up Networking) before starting BZFlag.
-BZFlag only uses TCP/IP networking;  PPP makes TCP/IP work over your modem.
-</P>
+<P>If you're using BZFlag over a modem, you'll need to start Windows' Dial-up Networking and connect to the internet before starting BZFlag. .</P>
 <P>
 Visit the <A HREF="http://BZFlag.SourceForge.net/">BZFlag
 Home Page</A> for more information and online help.

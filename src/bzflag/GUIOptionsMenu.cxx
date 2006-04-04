@@ -271,6 +271,15 @@ GUIOptionsMenu::GUIOptionsMenu()
   option->update();
   listHUD.push_back(option);
 
+  // set email display length
+  option = new HUDuiList;
+  option->setFontFace(fontFace);
+  option->setLabel("Email Display Length:");
+  option->setCallback(callback, (void*)"E");
+  option->createSlider(32+1);
+  option->update();
+  listHUD.push_back(option);
+
   initNavigation(listHUD, 1, (int)listHUD.size()-1);
 }
 
@@ -355,6 +364,10 @@ void			GUIOptionsMenu::resize(int _width, int _height)
 							  ("timedate")));
     ((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("displayReloadTimer") ? 1
 					 : 0);
+    if (BZDB.isTrue("hideEmails"))
+      ((HUDuiList*)listHUD[i++])->setIndex(0);
+    else                                         
+      ((HUDuiList*)listHUD[i++])->setIndex((int)BZDB.eval("emailDispLen") / 4);
   }
 }
 
@@ -487,6 +500,11 @@ void			GUIOptionsMenu::callback(HUDuiControl* w, void* data)
 
     case 'q':
       ScoreboardRenderer::setAlwaysTeamScore(list->getIndex() ? true : false);
+      break;
+
+    case 'E':
+      BZDB.set("emailDispLen",  TextUtils::format("%d", list->getIndex() * 4));
+      BZDB.set("hideEmails", list->getIndex() ? "0" : "1");
       break;
 
   }

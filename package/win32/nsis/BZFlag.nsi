@@ -6,7 +6,7 @@
 ;BZFlag Version Variables
 
   !define VER_MAJOR 2.0
-  !define VER_MINOR .5b5
+  !define VER_MINOR .5b7
 
 ;--------------------------------
 ;Compression options
@@ -140,6 +140,9 @@ Section "!BZFlag (Required)" BZFlag
   ; Add some DLL files
   SetOutPath $INSTDIR
   File ..\..\..\libcurl.dll
+  File ..\..\..\zlibwapi.dll
+  File ..\..\..\curses2.dll
+  File ..\..\..\glew32.dll
 
   ; See http://msdn.microsoft.com/library/default.asp?url=/library/en-us/vclib/html/_crt_c_run.2d.time_libraries.asp
   ; "An application should use and redistribute msvcr71.dll [and msvcp71.dll], and it should avoid placing a copy or using an existing copy of msvcr71.dll in the system directory. Instead, the application should keep a copy of msvcr71.dll [and msvcp71.dll] in its application directory with the program executable."

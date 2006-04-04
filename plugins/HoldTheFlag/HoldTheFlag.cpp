@@ -9,7 +9,10 @@
 
 BZ_GET_PLUGIN_VERSION
 
-#define HOLDTHEFLAG_VER "1.00.01"
+#define HOLDTHEFLAG_VER "1.00.02"
+#define DO_FLAG_RESET 1
+#define DEFAULT_TEAM eGreenTeam
+
 
 #define MAX_PLAYERID 255
 
@@ -19,6 +22,7 @@ typedef struct {
   int  score;
   char callsign[22];
   double  joinTime;
+  int capNum;
 } HtfPlayer;
 
 HtfPlayer Players[MAX_PLAYERID+1];
@@ -26,7 +30,7 @@ std::map<std::string, HtfPlayer> leftDuringMatch;
 bool matchActive = false;
 bool htfEnabled = true;
 bz_eTeamType htfTeam = eNoTeam;
-int PlayerLastCapped = -1;
+int nextCapNum = 0;
 int NumPlayers=0;
 int Leader;
 
@@ -103,6 +107,7 @@ bool listAdd (int playerID, const char *callsign)
     return false;
   Players[playerID].score = 0;
   Players[playerID].isValid = true;
+  Players[playerID].capNum = -1;
   strncpy (Players[playerID].callsign, callsign, 20);
   ++NumPlayers;
   return true;
@@ -111,8 +116,6 @@ bool listAdd (int playerID, const char *callsign)
 bool listDel (int playerID){
   if (playerID>MAX_PLAYERID || playerID<0 || !Players[playerID].isValid)
     return false;
-  if (PlayerLastCapped == playerID)
-    PlayerLastCapped = -1;
   Players[playerID].isValid = false;
   --NumPlayers;
   return true;
@@ -125,19 +128,18 @@ int sort_compare (const void *_p1, const void *_p2){
 
   if (Players[p1].score != Players[p2].score)
     return Players[p2].score - Players[p1].score;
-  if (p1 == PlayerLastCapped)
-    return -1;
-  if (p2 == PlayerLastCapped)
-    return 1;
+  return Players[p2].capNum - Players[p1].capNum;
   return 0;
 }
 
 
 
-// SORT !!!
+
 void dispScores (int who)
 {
   int sortList[MAX_PLAYERID+1];	 // do HtfPlayer *   !!
+  int playerLastCapped = -1;
+  int lastCapnum = -1;
   int x = 0;
 
   if (!htfEnabled)
@@ -146,8 +148,13 @@ void dispScores (int who)
   Leader = -1;
   if (NumPlayers<1)
     return;
+
   for (int i=0; i<MAX_PLAYERID; i++){
     if (Players[i].isValid) {
+      if (Players[i].capNum > lastCapnum){
+        playerLastCapped = i;
+        lastCapnum = Players[i].capNum;
+      }
       sortList[x++] = i;
     }
   }
@@ -157,16 +164,19 @@ void dispScores (int who)
   for (int i=0; i<NumPlayers; i++){
     x = sortList[i];
     bz_sendTextMessagef(BZ_SERVER, who, "%20.20s :%3d %c", Players[x].callsign, Players[x].score,
-			x == PlayerLastCapped ? '*' : ' ');
+			x == playerLastCapped ? '*' : ' ');
   }
   Leader = sortList[0];
 }
 
+
 void resetScores (void)
 {
-  for (int i=0; i<MAX_PLAYERID; i++)
+  for (int i=0; i<MAX_PLAYERID; i++){
     Players[i].score = 0;
-  PlayerLastCapped = -1;
+    Players[i].capNum = -1;
+  }
+  nextCapNum = 0;
 }
 
 
@@ -174,9 +184,14 @@ void htfCapture (int who)
 {
   if (!htfEnabled)
     return;
+    
+#if DO_FLAG_RESET
+  bz_resetFlags ( false );
+#endif    
+    
   bz_sendTextMessagef (BZ_SERVER, BZ_ALLUSERS, "HTF FLAG CAPTURED by %s", Players[who].callsign);
   ++Players[who].score;
-  PlayerLastCapped = who;
+  Players[who].capNum = nextCapNum++;
   dispScores(BZ_ALLUSERS);
 }
 
@@ -184,22 +199,29 @@ void htfStartGame (void)
 {
   if (!htfEnabled)
     return;
+
+// TODO: clear leftDuringMatch
   resetScores();
   matchActive = true;
   bz_sendTextMessage(BZ_SERVER, BZ_ALLUSERS, "HTF MATCH has begun, good luck!");
 }
 
+
 void htfEndGame (void)
 {
-  if (!htfEnabled || !matchActive)
-    return;
-  dispScores(BZ_ALLUSERS);
+  if (htfEnabled && matchActive){
+    dispScores(BZ_ALLUSERS);
+    bz_sendTextMessage(BZ_SERVER, BZ_ALLUSERS, "HTF MATCH has ended.");
+    if (Leader >= 0)
+      bz_sendTextMessagef(BZ_SERVER, BZ_ALLUSERS, "%s is the WINNER !", Players[Leader].callsign);
+  }
+
   matchActive = false;
-  bz_sendTextMessage(BZ_SERVER, BZ_ALLUSERS, "HTF MATCH has ended.");
-  if (Leader >= 0)
-    bz_sendTextMessagef(BZ_SERVER, BZ_ALLUSERS, "%s is the WINNER !", Players[Leader].callsign);
+
+// TODO: clear leftDuringMatch
 
 }
+
 
 void sendHelp (int who)
 {
@@ -211,7 +233,9 @@ void sendHelp (int who)
 
 void htfStats (int who)
 {
-  bz_sendTextMessage(BZ_SERVER, who, "Sorry, player stats not implemented yet.");
+  bz_sendTextMessagef(BZ_SERVER, who, "HTF plugin version %s", HOLDTHEFLAG_VER);
+  bz_sendTextMessagef(BZ_SERVER, who,  "  Team: %s", htfScore.colorDefToName(htfTeam));
+  bz_sendTextMessagef(BZ_SERVER, who,  "  Flag Reset: %s" , DO_FLAG_RESET ? "ENabled":"DISabled");
 }
 
 
@@ -338,9 +362,8 @@ bool parseCommandLine (const char *cmdLine)
 {
   if (cmdLine==NULL || *cmdLine=='\0' || strlen(cmdLine) < 5 )
     return false;
-  char temp[6] = {0};
-  strncpy(temp,cmdLine,5);
-  if (strcasecmp (cmdLine, "TEAM=") == 0){
+  htfTeam = eGreenTeam;
+  if (strncasecmp (cmdLine, "TEAM=", 5) == 0){
     if ((htfTeam = htfScore.colorNameToDef(cmdLine+5)) == eNoTeam)
       return commandLineHelp ();
   } else

@@ -3,8 +3,9 @@ EXTRA_DIST =	\
 	copying.rtf		\
 	DisableCheck.bmp	\
 	EnableCheck.bmp		\
-	header.bmp		\
 	side.bmp		\
+	copying.rtf		\
+	header.bmp		\
 	uninstall.ico
 
 MAINTAINERCLEANFILES = \

@@ -94,7 +94,9 @@
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
-				Name="VCCustomBuildTool"/>
+				Name="VCCustomBuildTool"
+				CommandLine="copy release\man2html.exe ..\..\man\*.exe"
+				Outputs="..\..\man\man2html.exe"/>
 			<Tool
 				Name="VCLinkerTool"
 				OutputFile=".\Release/man2html.exe"

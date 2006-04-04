@@ -165,7 +165,12 @@ DefaultDBItem	defaultDBItems[] = {
   { "httpTimeout",		"15",			true,	StateDatabase::ReadWrite,	NULL },
 
   // hud drawing
-  { "hudGUIBorderOpacityFactor","0.75",			true,	StateDatabase::ReadWrite,	NULL }
+  { "hudGUIBorderOpacityFactor","0.75",			true,	StateDatabase::ReadWrite,	NULL },
+  { "hideEmails",		"0",			true,	StateDatabase::ReadWrite,	NULL },
+  { "emailDispLen",		"32",			true,	StateDatabase::ReadWrite,	NULL },
+
+  // last screenshot
+  { "lastScreenshot",		"0",			true,	StateDatabase::ReadWrite,	NULL }
 };
 
 

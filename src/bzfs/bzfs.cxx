@@ -449,6 +449,72 @@ void sendIPUpdate(int targetPlayer, int playerIndex)
   }
 }
 
+void pauseCountdown ( const char *pausedBy )
+{
+	if (clOptions->countdownPaused)
+		return;
+
+	clOptions->countdownPaused = true;
+	if (pausedBy)
+		sendMessage(ServerPlayer, AllPlayers, TextUtils::format("Countdown paused by %s",pausedBy).c_str());
+	else
+		sendMessage(ServerPlayer, AllPlayers, "Countdown paused");
+}
+
+void resumeCountdown ( const char *resumedBy )
+{
+	if (!clOptions->countdownPaused)
+		return;
+
+	clOptions->countdownPaused = false;
+	if (resumedBy)
+		sendMessage(ServerPlayer, AllPlayers, TextUtils::format("Countdown resumed by %s",resumedBy).c_str());
+	else
+		sendMessage(ServerPlayer, AllPlayers, "Countdown resumed");
+}
+
+void resetTeamScores ( void )
+{
+	// reset team scores
+	for (int i = RedTeam; i <= PurpleTeam; i++) 
+	{
+		team[i].team.lost = team[i].team.won = 0;
+	}
+	sendTeamUpdateMessageBroadcast();
+}
+
+void startCountdown ( int delay, float limit, const char *buyWho )
+{
+	sendMessage(ServerPlayer, AllPlayers, TextUtils::format("Team scores reset, countdown started by %s.",buyWho).c_str());
+
+	clOptions->timeLimit = limit;
+	countdownDelay = delay;
+
+	// let everyone know what's going on
+	long int timeArray[4];
+	std::string matchBegins;
+	if (countdownDelay == 0)
+	{
+		matchBegins = "Match begins now!";
+	}
+	else
+	{
+		TimeKeeper::convertTime(countdownDelay, timeArray);
+		std::string countdowntime = TimeKeeper::printTime(timeArray);
+		matchBegins = TextUtils::format("Match begins in about %s", countdowntime.c_str());
+	}
+	sendMessage(ServerPlayer, AllPlayers, matchBegins.c_str());
+
+	TimeKeeper::convertTime(clOptions->timeLimit, timeArray);
+	std::string timelimit = TimeKeeper::printTime(timeArray);
+	matchBegins = TextUtils::format("Match duration is %s", timelimit.c_str());
+	sendMessage(ServerPlayer, AllPlayers, matchBegins.c_str());
+
+	// make sure the game always start unpaused
+	clOptions->countdownPaused = false;
+	countdownPauseStart = TimeKeeper::getNullTime();
+}
+
 PingPacket getTeamCounts()
 {
   if (gameOver) {
@@ -940,6 +1006,7 @@ void sendPlayerMessage(GameKeeper::Player *playerData, PlayerId dstPlayer,
 		       const char *message)
 {
   const PlayerId srcPlayer = playerData->getIndex();
+  std::string actionMsg = "";
 
   // reformat any '/me' action messages
   // this is here instead of in commands.cxx to allow player-player/player-channel targetted messages
@@ -968,7 +1035,7 @@ void sendPlayerMessage(GameKeeper::Player *playerData, PlayerId dstPlayer,
     }
 
     // format and send it
-    std::string actionMsg = TextUtils::format("* %s %s\t*",
+    actionMsg = TextUtils::format("* %s %s\t*",
 				playerData->player.getCallSign(), message + 4);
     message = actionMsg.c_str();
   }
@@ -1108,11 +1175,21 @@ void sendMessage(int playerIndex, PlayerId dstPlayer, const char *message)
   if (message[0] == '/' && message[1] == '/')
     msg = &message[1];
 
-  if (msglen > MessageLen)
-  {
-    DEBUG1("WARNING: Network message being sent is too long! " "(message is %d, cutoff at %d)\n", msglen, MessageLen);
+  // Should cut the message 
+  if (msglen > MessageLen) {
+    DEBUG1("WARNING: Network message being sent is too long! "
+	   "(message is %d, cutoff at %d)\n", msglen, MessageLen);
     msglen = MessageLen;
   }
+
+  void *buf, *bufStart = getDirectMessageBuffer();
+  buf = nboPackUByte(bufStart, playerIndex);
+  buf = nboPackUByte(buf, dstPlayer);
+  buf = nboPackString(buf, msg, msglen);
+
+  ((char*)bufStart)[MessageLen - 1 + 2] = '\0'; // always terminate
+
+  int len = 2 + msglen;
 
   bool broadcast = false;
 
@@ -2829,6 +2906,29 @@ static void shotFired(void *buf, int len, NetHandler *handler)
     } // end is limit
   } // end of player has flag
 
+  bool repack = false;
+
+    // ask the API if it wants to modify this shot
+	bz_ShotFiredEventData shotEvent;
+
+	shotEvent.pos[0] = firingInfo.shot.pos[0];
+	shotEvent.pos[1] = firingInfo.shot.pos[1];
+	shotEvent.pos[2] = firingInfo.shot.pos[2];
+
+	shotEvent.type = firingInfo.flagType->flagAbbv;
+
+	worldEventManager.callEvents(bz_eShotFiredEvent,&shotEvent);
+
+	if (shotEvent.changed)
+	{
+		firingInfo.flagType = Flag::getDescFromAbbreviation(shotEvent.type.c_str());
+		repack = true;
+	}
+
+  // repack if changed
+  if (repack)
+    firingInfo.pack(buf);
+
   relayMessage(MsgShotBegin, len, buf);
 
 }
@@ -3653,9 +3753,15 @@ int main(int argc, char **argv)
 
   BZDBCache::init();
 
+  // any set in parse this is a default value
+  BZDB.setSaveDefault(true);
+
   // parse arguments  (finalized later)
   parse(argc, argv, *clOptions);
   setDebugTimestamp (clOptions->timestampLog, clOptions->timestampMicros);
+
+  // no more defaults
+  BZDB.setSaveDefault(false);
 
   if (clOptions->bzdbVars.length() > 0) {
     DEBUG1("Loading variables from %s\n", clOptions->bzdbVars.c_str());
@@ -4382,16 +4488,26 @@ int main(int argc, char **argv)
 		  snprintf(message,  MessageLen, "/poll %s", action.c_str());
 		  removePlayer(v, message, true);
 		}
-	      } else if (action == "set") {
-		std::vector<std::string> args = TextUtils::tokenize(target.c_str(), " ", 2, true);
-		if (args.size() < 2) {
-		  DEBUG1("Poll set taking action: no action taken, not enough parameters (%s).\n",
-			 (args.size() > 0 ? args[0].c_str() : "No parameters."));
-		}
-		DEBUG1("Poll set taking action: setting %s to %s\n",
-		       args[0].c_str(), args[1].c_str());
-		BZDB.set(args[0], args[1], StateDatabase::Server);
-	      } else if (action == "reset") {
+	      }
+		  else if (action == "set")
+		  {
+			std::vector<std::string> args = TextUtils::tokenize(target.c_str(), " ", 2, true);
+			if ( args.size() < 2 )
+				DEBUG1("Poll set taking action: no action taken, not enough parameters (%s).\n", (args.size() > 0 ? args[0].c_str() : "No parameters."));
+			else
+			{
+				StateDatabase::Permission permission = BZDB.getPermission(args[0]);
+				if (!(BZDB.isSet(args[0]) && (permission == StateDatabase::ReadWrite || permission == StateDatabase::Locked))) 
+					DEBUG1("Poll set taking action: no action taken, variable cannot be set\n");
+				else
+				{
+					DEBUG1("Poll set taking action: setting %s to %s\n", args[0].c_str(), args[1].c_str());
+					BZDB.set(args[0], args[1], StateDatabase::Server);
+				}	
+			}
+	      }
+		  else if (action == "reset")
+		  {
 		DEBUG1("Poll flagreset taking action: resetting unused flags.\n");
 		for (int f = 0; f < numFlags; f++) {
 		  FlagInfo &flag = *FlagInfo::get(f);

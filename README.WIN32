@@ -1,13 +1,14 @@
 README for Win32 platforms
 --------------------------
 
-Bzflag uses Microsoft Visual C++ for it's 
-prebuilt binary releases ( version 7.1 aka ".NET 2003" )
+BZFlag uses Microsoft Visual C++ for it's 
+rebuilt binary releases ( version 7.1 aka ".NET 2003" )
 Project files are also provided for Visual C++ 8.0 and 
 useable by the free "visual C++ .net 2005 express edition".
 Visual Studio 6.0 support has been discontinued.
+
 It is also possible to build on Win32 using MinGW/MSYS or
-Cygwin, both of which use the linux makefile systems; 
+Cygwin, both of which use the Linux make file systems; 
 for details, see README.MINGW32 (for MinGW)
 or the main README (for Cygwin).
 There is a DevX++ project available as well. Please see
@@ -23,32 +24,25 @@ installer builder is found.
 You also need to have libCurl installed.
 Download it from http://curl.haxx.se/libcurl/
 It is best if you do not get the SSL versions. Bzflag does not
-need or use SSL. The SSL versions of libCurl have aditional
-library dependencys that need to be meet.
+need or use SSL. The SSL versions of libCurl have additional
+library dependencies that need to be meet.
 Add the include directory and the lib as per the SDL instructions.
 
-If you wish to build bzAdmin you may also want to get PDCurses ( use google ).
-
-Then each time you want to build an installer
-
-  * open win32\bzflag.dsw
-  * select `Installer Release' as the active configuration
-  * build
-
-The installer is the bzflag executable in the dist folder.
-
-The instructions for building with Dev-C++ are enclosed in README.DEVC++
+If you wish to build bzAdmin you may also want to get PDCurses ( use Google ).
 
 If you are using Visual C++ 2005 EXPRESS edition, you will need to install
 a number of extra things before you can build. BZFlag will not build with 
-VC express editions "out of the box"
+VC express editions "out of the box".
+Also note that the VC8 project does not have the same setup as the VC7.1 does
+since it is not used for binaries. It will not convert the man pages
+into HTML automatically, nor does it build a binary with the GLEW library.
 
 You will need the windows platform SDK ( instructions http://msdn.microsoft.com/vstudio/express/visualc/usingpsdk/default.aspx )
 You will need the windows direct X SDK ( instructions at http://msdn.microsoft.com/directx/sdk/readmepage/default.aspx )
 You will need to also install libCURL and curses ( see above ).
-Use the VC8 proejcts in the windows diretory.
+Use the VC8 projects in the windows directory.
 
-If you want to build with SDL ( not recomended ):
+If you want to build with SDL ( not recommended ):
 Choose the Lib tab, and add SDLMain.lib and SDL.lib. These can be
 downloaded from libsdl.org. Also add the SDL include directory
 to the Includes tab.  Next copy SDL.dll to the directory

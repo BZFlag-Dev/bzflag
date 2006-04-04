@@ -20,5 +20,5 @@ MAINTAINERCLEANFILES = \
 	Makefile.in
 
 LDADD = \
-	$(top_srcdir)/src/common/libCommon.a
+	$(top_srcdir)/src/common/libCommon.la
 

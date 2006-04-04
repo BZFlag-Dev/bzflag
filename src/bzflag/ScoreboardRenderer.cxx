@@ -8,6 +8,8 @@
  * THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ *
+ * $Id$
  */
 
 
@@ -394,6 +396,7 @@ void			ScoreboardRenderer::renderScoreboard(void)
 {
   int i=0;
   int numPlayers;
+  int emailLen;
   Player** players;
   Player*  player;
   bool haveObs = false;
@@ -468,6 +471,8 @@ void			ScoreboardRenderer::renderScoreboard(void)
     }
   }
 
+
+  emailLen = BZDB.getIntClamped ("emailDispLen", 0, 128);
   huntSelectEvent = false;
   huntPositionEvent = 0;
   numHunted = 0;
@@ -480,9 +485,9 @@ void			ScoreboardRenderer::renderScoreboard(void)
       haveObs = true;
     }
     if (huntState==HUNT_SELECTING && i==huntPosition)
-      drawPlayerScore(player, x1, x2, x3, xs, (float)y, true);
+      drawPlayerScore(player, x1, x2, x3, xs, (float)y, emailLen, true);
     else
-      drawPlayerScore(player, x1, x2, x3, xs, (float)y, false);
+      drawPlayerScore(player, x1, x2, x3, xs, (float)y, emailLen, false);
     y -= dy;
     ++i;
   }
@@ -507,8 +512,16 @@ void      ScoreboardRenderer::stringAppendNormalized (std::string *s, float n)
 }
 
 
+std::string continuedString (std::string s, unsigned int len){
+  if ( s.size() == len  )
+    s[len-1] = '~';
+  return s;
+}
+
+
 void			ScoreboardRenderer::drawPlayerScore(const Player* player,
-			    float x1, float x2, float x3, float xs, float y, bool huntCursor)
+			    float x1, float x2, float x3, float xs, float y, 
+                            int emailLen, bool huntCursor)
 {
   // score
   char score[40], kills[40];
@@ -584,9 +597,13 @@ void			ScoreboardRenderer::drawPlayerScore(const Player* player,
   // callsign
   playerInfo += player->getCallSign();
   // email in parenthesis
-  if (player->getEmailAddress()[0] != '\0' && !BZDB.isTrue("hideEmails")) {
+  if (player->getEmailAddress()[0] != '\0' && emailLen>0) {
     playerInfo += " (";
-    playerInfo += player->getEmailAddress();
+
+//    playerInfo += std::string (player->getEmailAddress(), 0, emailLen);
+    playerInfo += continuedString (std::string (player->getEmailAddress(), 0, emailLen), emailLen);
+
+
     playerInfo += ")";
   }
   // carried flag

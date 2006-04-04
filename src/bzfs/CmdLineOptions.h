@@ -33,9 +33,6 @@
 // avoid dependencies
 class EntryZones;
 
-// avoid dependencies
-class EntryZones;
-
 /* constants provided for general consumption */
 const int MaxPlayers = 200;
 const int MaxShots = 20;

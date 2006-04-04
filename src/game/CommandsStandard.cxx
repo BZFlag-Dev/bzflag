@@ -252,13 +252,17 @@ static std::string		cmdUnbind(const std::string&,
 static std::string		cmdToggle(const std::string&,
 					  const CommandManager::ArgList& args, bool*)
 {
-  if (args.size() != 1)
-    return "usage: toggle <name>";
+  if ((args.size() < 1) || (args.size() > 3)) {
+    return "usage: toggle <name> [first [second]]";
+  }
   const std::string& name = args[0];
-  if (BZDB.isTrue(name))
-    BZDB.set(name, "0", StateDatabase::User);
-  else
-    BZDB.set(name, "1", StateDatabase::User);
+  if (args.size() == 1) {
+    BZDB.set(name, BZDB.isTrue(name) ? "0" : "1");
+  } else if (args.size() == 2) {
+    BZDB.set(name, BZDB.isTrue(name) ? "0" : args[1]);
+  } else {
+    BZDB.set(name, (BZDB.get(name) == args[1]) ? args[2] : args[1]);
+  }
   return std::string();
 }
 
@@ -277,6 +281,24 @@ static std::string cmdMult(const std::string&, const CommandManager::ArgList& ar
   return std::string();
 }
 
+static std::string cmdAdd(const std::string&, const CommandManager::ArgList& args, bool*)
+{
+  if (args.size() != 2) {
+    return "usage: add <name> <value>";
+  }
+  float value;
+  if (sscanf(BZDB.get(args[0]).c_str(), "%f", &value) != 1) {
+    value = 0.0f;
+  }
+  float amount;
+  if (sscanf(args[1].c_str(), "%f", &amount) != 1) {
+    amount = 0.0f;
+  }
+  value += amount;
+  BZDB.set(args[0], TextUtils::format("%f", value), StateDatabase::User);
+  return std::string();
+}
+
 //
 // command name to function mapping
 //
@@ -289,8 +311,9 @@ const struct CommandsItem commands[] = {
   { "unset",	&cmdUnset,	"unset <name>:  unset a variable" },
   { "bind",	&cmdBind,	"bind <button-name> {up|down} <command> <args>...: bind a key" },
   { "unbind",	&cmdUnbind,	"unbind <button-name> {up|down}:  unbind a key" },
-  { "toggle",	&cmdToggle,	"toggle <name>:  toggle truth value of a variable" },
-  { "mult",	&cmdMult,	"mult <name> <value>:  multiply a variable by an amount" }
+  { "toggle",	&cmdToggle,	"toggle <name> [first [second]]:  toggle value of a variable" },
+  { "mult",	&cmdMult,	"mult <name> <value>:  multiply a variable by an amount" },
+  { "add",	&cmdAdd,	"add <name> <value>:  add an amount to a variable" }
 };
 // FIXME -- may want a cmd to cycle through a list
 

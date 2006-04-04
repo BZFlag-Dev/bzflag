@@ -46,7 +46,6 @@ void SpawnPosition::setSpawnPolicy(SpawnPolicy *_policy)
   SpawnPosition::policy = _policy;
 }
 
-
 // Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***

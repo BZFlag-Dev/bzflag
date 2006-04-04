@@ -111,7 +111,7 @@ void			SegmentedShotStrategy::update(float dt)
 	      rots[0] = atan2f(dir[1], dir[0]);
 	      rots[1] = atan2f(dir[2], horiz);
 
-	      EFFECTS.addRicoEffect(0, pos, rots);
+	      EFFECTS.addRicoEffect( pos, rots);
 	      break;
 	    }
 	  case ShotPathSegment::Boundary:
@@ -130,7 +130,7 @@ void			SegmentedShotStrategy::update(float dt)
 	      rots[1] = atan2f(dir[2], horiz);
 
 	      const float* pos = segments[segment].ray.getOrigin();
-	      EFFECTS.addShotTeleportEffect(0, pos, rots);
+	      EFFECTS.addShotTeleportEffect( pos, rots);
 	    }
 	    break;
 	}

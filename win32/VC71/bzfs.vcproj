@@ -839,6 +839,9 @@ copy ..\..\src\bzfs\debug\*.exe ..\..\*.exe
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath="..\..\src\bzfs\RandomSpawnPolicy.cxx">
+			</File>
+			<File
 				RelativePath="..\..\src\bzfs\RecordReplay.cxx">
 			</File>
 			<File
@@ -849,6 +852,9 @@ copy ..\..\src\bzfs\debug\*.exe ..\..\*.exe
 			</File>
 			<File
 				RelativePath="..\..\src\bzfs\ServerCommand.cxx">
+			</File>
+			<File
+				RelativePath="..\..\src\bzfs\SpawnPolicy.cxx">
 			</File>
 			<File
 				RelativePath="..\..\src\bzfs\SpawnPosition.cxx">
@@ -1722,6 +1728,9 @@ copy ..\..\src\bzfs\debug\*.exe ..\..\*.exe
 				RelativePath="..\..\include\PlayerInfo.h">
 			</File>
 			<File
+				RelativePath="..\..\src\bzfs\RandomSpawnPolicy.h">
+			</File>
+			<File
 				RelativePath="..\..\src\bzfs\RecordReplay.h">
 			</File>
 			<File
@@ -1734,13 +1743,13 @@ copy ..\..\src\bzfs\debug\*.exe ..\..\*.exe
 				RelativePath="..\..\src\bzfs\ServerCommand.h">
 			</File>
 			<File
+				RelativePath="..\..\src\bzfs\SpawnPolicy.h">
+			</File>
+			<File
 				RelativePath="..\..\src\bzfs\SpawnPosition.h">
 			</File>
 			<File
 				RelativePath="..\..\src\bzfs\TeamBases.h">
-			</File>
-			<File
-				RelativePath="..\..\src\bzfs\TextChunkManager.h">
 			</File>
 			<File
 				RelativePath="..\..\include\WorldEventManager.h">
