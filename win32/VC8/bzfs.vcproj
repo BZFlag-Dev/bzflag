@@ -4,6 +4,7 @@
 	Version="8.00"
 	Name="bzfs"
 	ProjectGUID="{7FA170AC-5A33-41FC-9B3D-02F9E5173B0E}"
+	RootNamespace="bzfs"
 	>
 	<Platforms>
 		<Platform
@@ -1156,78 +1157,16 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\bzfs\SpawnPolicy.cxx"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\bzfs\SpawnPosition.cxx"
 				>
 			</File>
 			<File
 				RelativePath="..\..\src\bzfs\TeamBases.cxx"
 				>
-			</File>
-			<File
-				RelativePath="..\..\src\bzfs\TextChunkManager.cxx"
-				>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="2"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="0"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-						BasicRuntimeChecks="3"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="KRB5 Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="0"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-						BasicRuntimeChecks="3"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="release_modern|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="2"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="release_modern_p3|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="2"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release_pdcurses|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="2"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
 			</File>
 			<Filter
 				Name="world"
@@ -2337,15 +2276,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\bzfs\SpawnPolicy.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\bzfs\SpawnPosition.h"
 				>
 			</File>
 			<File
 				RelativePath="..\..\src\bzfs\TeamBases.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\bzfs\TextChunkManager.h"
 				>
 			</File>
 			<File
@@ -2404,38 +2343,46 @@
 		</Filter>
 		<Filter
 			Name="NetMessages"
-			Filter="">
+			>
 			<File
-				RelativePath="..\..\src\bzfs\bzfsClientMessages.cxx">
+				RelativePath="..\..\src\bzfs\bzfsClientMessages.cxx"
+				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzfs\bzfsClientMessages.h">
+				RelativePath="..\..\src\bzfs\bzfsClientMessages.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzfs\bzfsMessages.cxx">
+				RelativePath="..\..\src\bzfs\bzfsMessages.cxx"
+				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzfs\bzfsMessages.h">
+				RelativePath="..\..\src\bzfs\bzfsMessages.h"
+				>
 			</File>
 		</Filter>
 		<Filter
 			Name="StateVerification"
-			Filter="">
+			>
 			<File
-				RelativePath="..\..\src\bzfs\bzfsPlayerStateVerify.cxx">
+				RelativePath="..\..\src\bzfs\bzfsPlayerStateVerify.cxx"
+				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzfs\bzfsPlayerStateVerify.h">
+				RelativePath="..\..\src\bzfs\bzfsPlayerStateVerify.h"
+				>
 			</File>
 		</Filter>
 		<Filter
 			Name="ChatVerification"
-			Filter="">
+			>
 			<File
-				RelativePath="..\..\src\bzfs\bzfsChatVerify.cxx">
+				RelativePath="..\..\src\bzfs\bzfsChatVerify.cxx"
+				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzfs\bzfsChatVerify.h">
+				RelativePath="..\..\src\bzfs\bzfsChatVerify.h"
+				>
 			</File>
 		</Filter>
 	</Files>

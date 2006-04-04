@@ -1631,6 +1631,10 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath="..\..\src\common\TextChunkManager.cxx"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\common\TextUtils.cxx"
 				>
 			</File>
@@ -2041,6 +2045,10 @@
 			</File>
 			<File
 				RelativePath="..\..\include\Team.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\TextChunkManager.h"
 				>
 			</File>
 			<File
