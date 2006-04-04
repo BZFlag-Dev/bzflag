@@ -7,7 +7,7 @@
 
 BZ_GET_PLUGIN_VERSION
 
-#define NAGWAREPLUG_VER "1.00.01"
+#define NAGWAREPLUG_VER "1.00.03"
 #define MAX_PLAYERID    255
 #define EVENT_FREQUENCY 15      // number of seconds between checks
 #define TIME_FACTOR     60      // number of seconds per minute (useful to decrease for testing)
@@ -29,6 +29,7 @@ typedef struct st_MsgEnt MsgEnt;
 typedef struct {
   char permName[31];
   bool enableObs;
+  bool countObs;
   int  minPlayers;
   MsgEnt *kickMsg;
   std::vector <MsgEnt *> nagMsgs;
@@ -51,6 +52,7 @@ typedef struct {
 
 NagPlayer Players[MAX_PLAYERID+1];
 int       NumPlayers=0;
+int       NumObservers=0;
 int       MaxUsedID=0;
 bool      NagEnabled = true;
 double    MatchStartTime = 0;
@@ -134,22 +136,24 @@ void tickEvent (float time)
   int x;
   if (time < NextEventTime || !NagEnabled || MatchStartTime!=0.0)
     return;
-    
   for (x=0; x<=MaxUsedID; x++){
     if (Players[x].isValid && !Players[x].isVerified && Players[x].nextEventTime>=0 && time>Players[x].nextEventTime){
       sendNagMessage(x, &Players[x].nextEventMsg->msg);
       updatePlayerNextEvent (x, time);    
     }
   }  
-  if (Config.kickMsg && Config.kickMsg->time>0  && NumPlayers>=Config.minPlayers){  // kick someone !
+  x = NumPlayers;
+  if (Config.countObs)
+    x += NumObservers;
+  if (Config.kickMsg && Config.kickMsg->time>0  && x>=Config.minPlayers){  // kick someone !
     double kicktime = Config.kickMsg->time;
     for (x=0; x<=MaxUsedID; x++)
-      if (Players[x].isValid && !Players[x].isVerified && time>(Players[x].joinTime+kicktime)){
+      if (Players[x].isValid && !Players[x].isVerified && time>(Players[x].joinTime+kicktime)
+      &&  (Config.enableObs || Players[x].team!=eObservers)){
         bz_kickUser (x, Config.kickMsg->msg.c_str(), true);
         break;
       }
   }
-    
   NextEventTime = time + (float)EVENT_FREQUENCY;
 }
 
@@ -176,8 +180,10 @@ void nagShowConfig (int who)
   
   bz_sendTextMessage(BZ_SERVER, who, "nagware plugin configuration .........");
   bz_sendTextMessagef(BZ_SERVER, who, "perm name: %s", Config.permName);
-  bz_sendTextMessagef(BZ_SERVER, who, "min players: %d", Config.minPlayers);
-   if (Config.enableObs)
+  bz_sendTextMessagef(BZ_SERVER, who, "min players: %d %s", Config.minPlayers, 
+      Config.countObs?"(including observers)":"");
+
+  if (Config.enableObs)
     bz_sendTextMessage(BZ_SERVER, who, "Observer kick is ENABLED");
   else      
     bz_sendTextMessage(BZ_SERVER, who, "Observer kick is DISABLED");
@@ -216,7 +222,9 @@ void nagList (int who)
     }
   }
   if (numUnverified == 0)
-    bz_sendTextMessage (BZ_SERVER, who, "--- NO unverified players.");
+    bz_sendTextMessage (BZ_SERVER, who, "  --- NO unverified players ---");
+  bz_sendTextMessagef (BZ_SERVER, who, "Players: %d   Observers:%d   TOTAL: %d", NumPlayers, NumObservers,
+                      NumPlayers+NumObservers);
 }
 
 
@@ -253,7 +261,12 @@ bool listAdd (int playerID, const char *callsign, bz_eTeamType team, bool verifi
     Players[playerID].nextEventTime = time + (Config.nagMsgs[0]->time);
     Players[playerID].nextEventMsg = Config.nagMsgs[0];
   }
-  ++NumPlayers;
+
+  if (team == eObservers)
+    ++NumObservers;
+  else  
+    ++NumPlayers;
+  
   if (playerID > MaxUsedID)
     MaxUsedID = playerID;
   return true;
@@ -264,7 +277,10 @@ bool listDel (int playerID)
   if (playerID>MAX_PLAYERID || playerID<0 || !Players[playerID].isValid)
     return false;
   Players[playerID].isValid = false;
-  --NumPlayers;
+  if (Players[playerID].team == eObservers)
+    --NumObservers;
+  else  
+    --NumPlayers;
   return true;
 }
 
@@ -512,6 +528,7 @@ bool readConfig (char *filename, NagConfig *cfg, int playerID){
   // install defaults ...
   strcpy (cfg->permName, "NAG");
   cfg->enableObs = false;
+  cfg->countObs = true;
   cfg->minPlayers = 0;
   cfg->msgSuffix = "";
   cfg->nagMsgs.clear();    
@@ -534,6 +551,11 @@ bool readConfig (char *filename, NagConfig *cfg, int playerID){
         cfg->enableObs = true;
       else
         cfg->enableObs = false;
+    } else if (!strcasecmp (key, "countobs")){ 
+      if ( !strcasecmp(val, "yes") || !strcasecmp(val, "true") )
+        cfg->countObs = true;
+      else
+        cfg->countObs = false;
     } else if (!strcasecmp (key, "minplayers")){ 
       if (sscanf (val, "%d", &cfg->minPlayers)!=1 || cfg->minPlayers<1 || cfg->minPlayers>100)
         return configError ("Invalid minplayers value", lineNum, playerID, cfile); 

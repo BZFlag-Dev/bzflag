@@ -1,4 +1,5 @@
-*)
+*) 1.00.03  (2006-03-04)
+  Added option for including/excluding observers from player count trigger.
 
 *) 1.00.02  (2006-01-21):
   Send "You need X permission..." message only to the player
