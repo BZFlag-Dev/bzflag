@@ -21,6 +21,7 @@ BZFlag 2.0.5
 * Show shot reload indicators when driving with a tank - Daniel Remenak
 * Fix misc/bzfquery.pl to handle MsgGameTime - Tegan, Mark Thomas
 * Simple server list searching - Daniel Remenak
+* Added GUI option for email display length - Mark Thomas
 
 BZFlag 2.0.4  "Shiny" (2005-09-30)
 ----------------------------------
