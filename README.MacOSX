@@ -1,13 +1,55 @@
-README for Mac OS X platforms
------------------------------
+BZFlag README for Mac OS X
+==========================
 
-BZFlag should run rather nicely on Mac OS X.  As of BZFlag 2.0, the
-Mac OS X port of BZFlag is feature-wise complete and equivalent to the
-other fully-supported platforms.
+BZFlag generally runs rather nicely on Mac OS X.  As of BZFlag 2.0,
+the Mac OS X port of BZFlag is feature-wise complete and equivalent to
+the other fully-supported platforms.
+
+Included below are instructions on installing BZFlag both from a
+binary and from a source distribution.  See the project site downloads
+http://sourceforge.net/project/showfiles.php?group_id=3248&package_id=53923
+to obtain the latest binary distribution of BZFlag for Mac OS X.
+
+Binary Distribution
+-------------------
+
+If you've obtained a binary distribution of BZFlag, installation
+should be a simple matter of copying the icon provided in the disk
+mounting image (the .dmg) to your Applications folder.  If you cannot
+run the client at all (e.g. it starts to a black screen), you can try
+several things:
+
+  1) Remove any existing BZFlag directory in your personal application
+     support folder:  rm -rf "~/Library/Application Support/BZFlag"
+
+  2) Switch to a lower resolution before running the game.  Some older
+     cards don't have enough memory to run BZFlag (8+ is preferred) at
+     higher resolutions.
+
+  3) Run the binary directly by using Terminal:
+     /Applications/BZFlag-2.0.4.app/Contents/MacOS/BZFlag
+
+If you still have issues running the game, please submit a bug report
+to the project site bug tracker:
+
+  http://sourceforge.net/tracker/?group_id=3248&atid=103248
+
+If the game starts but unexpectedly crashes or locks up your system,
+please file a bug report with the details of what is occuring.  You
+can try turning off the Lighting option in the game to see if that
+helps with the crashes.
+
+Source Distribution
+-------------------
 
 BZFlag may be built either using the same instructions as those for
 Unix following ./autogen.sh && ./configure && make, or using the XCode
 project in the top-level directory to end up with a double-clickable
 BZFlag.app build.
 
-See the generic install instructions in README for more details.
+If you're compiling from source, it's expected that you have some
+understanding of how to compile applications on the command line.  In
+general, source distributions are not supported for CVS checkouts.
+They are only supported for regular source release distributions.
+
+See the instructions in README and INSTALL for more details.
