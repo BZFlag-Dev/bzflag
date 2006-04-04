@@ -362,7 +362,7 @@ std::vector<std::string> EffectsRenderer::getRicoEffectTypes ( void )
 	return ret;
 }
 
-void EffectsRenderer::addShotTeleportEffect ( const float* rgb, const float* pos, float rot[2], const float* vel)
+void EffectsRenderer::addShotTeleportEffect ( const float* pos, float rot[2], const float* vel)
 {
 	if (!BZDB.isTrue("useFancyEffects"))
 		return;
@@ -390,8 +390,6 @@ void EffectsRenderer::addShotTeleportEffect ( const float* rgb, const float* pos
 		effect->setStartTime((float)TimeKeeper::getCurrent().getSeconds());
 		if (BZDB.isTrue("useVelOnShotEffects"))
 			effect->setVel(vel);
-		effect->setColor(rgb);
-
 		effectsList.push_back(effect);
 	}
 }

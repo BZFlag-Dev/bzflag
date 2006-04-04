@@ -257,7 +257,7 @@ public:
 	std::vector<std::string> getRicoEffectTypes ( void );
 
 	// shot teleport effect
-	void addShotTeleportEffect ( const float* rgb, const float* pos, float rot[2], const float* vel = NULL );
+	void addShotTeleportEffect ( const float* pos, float rot[2], const float* vel = NULL );
 	std::vector<std::string> getShotTeleportEffectTypes ( void );
 
 

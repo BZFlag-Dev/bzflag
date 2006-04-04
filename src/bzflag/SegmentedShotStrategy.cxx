@@ -132,7 +132,7 @@ void			SegmentedShotStrategy::update(float dt)
 	      rots[1] = atan2f(dir[2], horiz);
 
 	      const float* pos = segments[segment].ray.getOrigin();
-	      EFFECTS.addShotTeleportEffect(0, pos, rots);
+	      EFFECTS.addShotTeleportEffect( pos, rots);
 	    }
 	    break;
 	}
