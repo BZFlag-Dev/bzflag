@@ -409,3 +409,16 @@ b) you are behind a firewall or a desktop firewall (e.g. ZoneAlarm)
    your firewall(extreme solution) for the game, for more intelligent 
    desktop firewalls set them up to let UDP port 17200 to 17220 through.
 
+
+Notes on "CHEAT" servers
+=============
+While the license for bzflag allows users to run any server modification
+that they wish, or to modify the code in any way. We ask that people do not
+publish or host "cheat" type clients or servers that ruin the game for people.
+We understand the desire to expand and modify the game and it's sources, so we
+ask that anyone wishing to run a game that uses modified code or logic on
+a different network protocol then the current public release. This will let
+moded games be played, and prevent moded clients from being used on public un-moded
+games. The bzflag project administrators reserve the right to remove public listing
+of any game servers that do not follow this rule. We also reserve the right to
+remove any global accounts or access to public services at any time.
