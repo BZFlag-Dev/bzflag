@@ -31,6 +31,12 @@ static void ConvertPath(std::string &path)
 
 
 //
+// Disable SDL_image, support for now
+//
+#undef HAVE_SDL_IMAGE
+
+
+//
 // MediaFile
 //
 
@@ -118,8 +124,6 @@ static bool checkExt(const std::string& base, const char* ext,
 
 unsigned char* MediaFile::readImage(std::string filename, int* w, int* h)
 {
-  DEBUG3("SDL_image: trying %s\n", filename.c_str());
-  
   // get the absolute filename for cache textures
   if (CACHEMGR.isCacheFileType(filename)) {
     filename = CACHEMGR.getLocalName(filename);
@@ -147,19 +151,21 @@ unsigned char* MediaFile::readImage(std::string filename, int* w, int* h)
       !checkExt(filename, ".jpeg", name) &&
       !checkExt(filename, ".tif", name) &&
       !checkExt(filename, ".tiff", name)) {
+    DEBUG3("SDL_image: could not find %s\n", filename.c_str());
     return NULL;
   }
-
-  DEBUG3("SDL_image: found %s\n", name.c_str());
 
   SDL_Surface* surface;
   surface = IMG_Load(name.c_str());
   if (surface == NULL) {
+    DEBUG3("SDL_image: could not load %s\n", name.c_str());
     return NULL;
   }
 
-  DEBUG3("SDL_Image: loaded %s: %dx%d %dbpp\n",
-         name.c_str(), surface->w, surface->h, surface->format->BitsPerPixel);
+  // save for debugging
+  const int origWidth = surface->w;
+  const int origHeight = surface->h;
+  const int origBpp = surface->format->BitsPerPixel;
 
   // convert the format
   SDL_PixelFormat fmt;
@@ -182,6 +188,8 @@ unsigned char* MediaFile::readImage(std::string filename, int* w, int* h)
 
   // bail if the conversion failed
   if (rgba == NULL) {
+    DEBUG3("SDL_Image: rgba conversion failed: %s: %dx%d %dbpp\n",
+           name.c_str(), origWidth, origHeight, origBpp);
     return NULL;
   }
 
@@ -199,6 +207,9 @@ unsigned char* MediaFile::readImage(std::string filename, int* w, int* h)
            source + (rowlen * (rgba->h - 1 - i)),
            rowlen);
   }
+
+  DEBUG3("SDL_Image: loaded %s: %dx%d %dbpp\n",
+         name.c_str(), origWidth, origHeight, origBpp);
 
   SDL_FreeSurface(rgba);
 
@@ -330,10 +341,12 @@ unsigned char*		MediaFile::readImage(
   if (CACHEMGR.isCacheFileType(filename)) {
     filename = CACHEMGR.getLocalName(filename);
   }
+  
 #ifdef WIN32
   // cheat and make sure the file is a windows file path
   ConvertPath(filename);
 #endif //WIN32
+
   // try opening file as an image
   std::istream* stream;
   ImageFile* file = NULL;
