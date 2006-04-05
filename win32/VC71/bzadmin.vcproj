@@ -40,10 +40,11 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="ws2_32.lib winmm.lib odbc32.lib odbccp32.lib libcurl.lib"
+				AdditionalDependencies="pdcurses.lib ws2_32.lib winmm.lib odbc32.lib odbccp32.lib libcurl.lib"
 				OutputFile=".\..\..\src\bzadmin\Debug/bzadmin.exe"
 				LinkIncremental="0"
 				SuppressStartupBanner="TRUE"
+				IgnoreDefaultLibraryNames="libcmt"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile=".\..\..\src\bzadmin\Debug/bzadmin.pdb"
 				SubSystem="1"
@@ -53,7 +54,10 @@
 				TypeLibraryName=".\..\..\src\bzadmin\Debug/bzadmin.tlb"
 				HeaderFileName=""/>
 			<Tool
-				Name="VCPostBuildEventTool"/>
+				Name="VCPostBuildEventTool"
+				CommandLine="copy..\..\src\bzadmin\debug\*.exe ..\..\*.exe
+copy ..\..\src\bzadmin\debug\*.pdb ..\..\*.pdb
+"/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
 			<Tool
@@ -88,7 +92,7 @@
 				OptimizeForProcessor="2"
 				OptimizeForWindowsApplication="TRUE"
 				AdditionalIncludeDirectories="..\..\win32,..\..\include,..\..\src\bzflag,.\"
-				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE; _HAVE_CURSES_H"
+				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
 				StringPooling="TRUE"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="TRUE"
@@ -117,7 +121,8 @@
 				TypeLibraryName=".\..\..\src\bzadmin/bzadmin.tlb"
 				HeaderFileName=""/>
 			<Tool
-				Name="VCPostBuildEventTool"/>
+				Name="VCPostBuildEventTool"
+				CommandLine="copy..\..\src\bzadmin\*.exe ..\..\*.exe"/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
 			<Tool
