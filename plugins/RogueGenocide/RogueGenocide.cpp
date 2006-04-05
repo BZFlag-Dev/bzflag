@@ -14,15 +14,20 @@ public:
   virtual void process ( bz_EventData *eventData );
 
   virtual bool autoDelete ( void ) { return false;} // this will be used for more then one event
-protected:
+
+  bool noSuicide;
 };
 
 RogueGenoHandler	rogueGenoHandler;
 
-BZF_PLUGIN_CALL int bz_Load ( const char* /*commandLine*/ )
+BZF_PLUGIN_CALL int bz_Load ( const char* commandLine )
 {
   bz_debugMessage(4,"rogueGenocide plugin loaded");
   bz_registerEvent(bz_ePlayerDieEvent,&rogueGenoHandler);
+
+  std::string param = commandLine;
+
+  rogueGenoHandler.noSuicide = (param == "nosuicide");
 
   return 0;
 }
@@ -52,6 +57,9 @@ void RogueGenoHandler::process ( bz_EventData *eventData )
       // if the tank killed was not a rogue, let the server/client do the normal killing
       if (dieData->team != eRogueTeam )
 	break;
+      // option to disallow rogues getting points for shooting themselves
+      if ( noSuicide && dieData->killerID == dieData->playerID )
+        break;
 
       // if the tank killed was a rogue, kill all rogues.
       bzAPIIntList	*playerList = bz_newIntList();
