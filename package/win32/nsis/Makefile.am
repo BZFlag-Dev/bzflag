@@ -1,5 +1,6 @@
 EXTRA_DIST =	\
 	BZFlag.nsi	\
+	bzflag.exe.manifest	\
 	DisableCheck.bmp	\
 	EnableCheck.bmp		\
 	side.bmp		\

@@ -118,7 +118,8 @@ Section "!BZFlag (Required)" BZFlag
   SetOutPath $INSTDIR
   ; Put file there
   File ..\..\..\src\bzflag\bzflag.exe
-
+  File bzflag.exe.manifest
+  
   ; make the data dir
   SetOutPath $INSTDIR\data
   File ..\..\..\data\*.*
@@ -141,7 +142,6 @@ Section "!BZFlag (Required)" BZFlag
   SetOutPath $INSTDIR
   File ..\..\..\libcurl.dll
   File ..\..\..\zlibwapi.dll
-  File ..\..\..\curses2.dll
   File ..\..\..\glew32.dll
 
   ; See http://msdn.microsoft.com/library/default.asp?url=/library/en-us/vclib/html/_crt_c_run.2d.time_libraries.asp
