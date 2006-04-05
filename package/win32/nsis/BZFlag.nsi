@@ -183,7 +183,7 @@ Section "BZAdmin" BZAdmin
   File ..\..\..\src\bzadmin\bzadmin.exe
 
   ; Add some DLL files
-  ;SetOutPath $INSTDIR
+  ;SetOutPath $INSTDIR\
   ;File ..\..\..\curses.dll
 
   ; Add to the doc dir
@@ -212,10 +212,13 @@ SectionGroup "BZFlag Server" BZFlagServer
     File ..\..\..\src\bzfs\bzfs.exe
 
     ; add to the data dir
-    SetOutPath $INSTDIR
+    SetOutPath $INSTDIR\misc
     File ..\..\..\misc\hix.bzw
     File ..\..\..\misc\bzfs.conf
     File ..\..\..\misc\bzfs_conf.html
+    File ..\..\..\misc\groups.conf
+    File ..\..\..\misc\multilingualSwearList.txt
+    File ..\..\..\misc\vars.txt
 
     ; Add to the doc dir
     SetOutPath $INSTDIR\doc
@@ -229,9 +232,9 @@ SectionGroup "BZFlag Server" BZFlagServer
       CreateDirectory "$SMPROGRAMS\$STARTMENU_FOLDER\Server"
       CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Server\Start Server (Simple Jump Teleport 1 shot).lnk" "$INSTDIR\bzfs.exe" "-p 5154 -j -t -s 32 +s 16 -h" "$INSTDIR\bzflag.exe" 0
       CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Server\Start Server (Simple Jump Teleport 3 shots).lnk" "$INSTDIR\bzfs.exe" "-p 5154 -j -t -ms 3 -s 32 +s 16 -h" "$INSTDIR\bzflag.exe" 0
-      CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Server\Start Server (HIX [Public] FFA).lnk" "$INSTDIR\bzfs.exe" '-p 5154 -j -tkkr 80 -fb -ms 3 -s 32 +s 16 -world HIX.bzw -public "Lazy Users HIX FFA Server"' "$INSTDIR\bzflag.exe" 0
-      CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Server\Start Server (HIX [Public] CTF).lnk" "$INSTDIR\bzfs.exe" '-p 5154 -c -j -fb -world HIX.bzw -public "Lazy Users HIX CTF Server"' "$INSTDIR\bzflag.exe" 0
-      CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Server\BZFS Configuration Builder.lnk" "$INSTDIR\bzfs_conf.html" "" "" 0
+      CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Server\Start Server (HIX [Public] FFA).lnk" "$INSTDIR\bzfs.exe" '-p 5154 -j -tkkr 80 -fb -ms 3 -s 32 +s 16 -world misc\HIX.bzw -public "Lazy Users HIX FFA Server"' "$INSTDIR\bzflag.exe" 0
+      CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Server\Start Server (HIX [Public] CTF).lnk" "$INSTDIR\bzfs.exe" '-p 5154 -c -j -fb -world misc\HIX.bzw -public "Lazy Users HIX CTF Server"' "$INSTDIR\bzflag.exe" 0
+      CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Server\BZFS Configuration Builder.lnk" "$INSTDIR\misc\bzfs_conf.html" "" "" 0
 
       SetOutPath $INSTDIR\doc
       CreateDirectory "$SMPROGRAMS\$STARTMENU_FOLDER\Doc"
@@ -303,6 +306,7 @@ Section "Uninstall"
   ; remove files
   Delete $INSTDIR\*.*
   Delete $INSTDIR\doc\*.*
+  Delete $INSTDIR\misc\*.*
   Delete $INSTDIR\data\*.*
   Delete $INSTDIR\data\fonts\*.*
   Delete $INSTDIR\data\l10n\*.*
@@ -317,6 +321,7 @@ Section "Uninstall"
   RMDir "$INSTDIR\data\l10n"
   RMDir "$INSTDIR\data\fonts"
   RMDir "$INSTDIR\data"
+  RMDir "$INSTDIR\misc"
   RMDir "$INSTDIR\doc"
   RMDir "$INSTDIR"
   
