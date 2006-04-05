@@ -217,7 +217,6 @@ SectionGroup "BZFlag Server" BZFlagServer
     File ..\..\..\misc\bzfs.conf
     File ..\..\..\misc\bzfs_conf.html
     File ..\..\..\misc\groups.conf
-    File ..\..\..\misc\multilingualSwearList.txt
     File ..\..\..\misc\vars.txt
 
     ; Add to the doc dir
