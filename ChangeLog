@@ -4,6 +4,11 @@
 BZFlag 2.0.5
 ------------
 
+* Special Effects use tank color, not team color =  Karsten Behrmann, Jeff Myers
+* /reset uses the values from the config and the map as default - Jeff Myers ( from patch )
+* Sreenshots now remember where they left off - Jeff Myers, Thomas Sowell 
+* Have windows dump std::error out to a file - Jeff Myers
+* Various API enhancmentes - Jeff Myers and others ( from patches )
 * Not applauding when capturing his own flag - Alfredo Tupone
 * Fixing crash on invalid captured flag - Alfredo Tupone
 * Fixed bots on a public server - Alfredo Tupone
