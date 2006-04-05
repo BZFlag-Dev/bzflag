@@ -4,6 +4,11 @@
 BZFlag 2.0.5
 ------------
 
+* Not applauding when capturing his own flag - Alfredo Tupone
+* Fixing crash on invalid captured flag - Alfredo Tupone
+* Fixed bots on a public server - Alfredo Tupone
+* Don't send admin the server password when wrong - Alfredo Tupone
+* Client config file can be saved on request - Alfredo Tupone
 * Allow for longer help files (50 lines) - Angelina Carlton
 * Allow selective /reload of databases - Bernt Hansen
 * Fix wrong kick if pausing having V and moving - Julio Jimenez
