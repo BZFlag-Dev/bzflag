@@ -7,3 +7,4 @@ TryExec=bzflag
 Exec=bzflag
 Categories=Game;ActionGame
 Icon=@DATADIR@bzflag-48x48.png
+Commont=A free multiplayer 3D tank battle game
