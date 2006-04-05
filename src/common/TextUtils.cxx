@@ -305,6 +305,17 @@ namespace TextUtils
     }
     return position;
   }
+  
+  // return a copy of a string, truncated to specified length, 
+  //    make last char a '`' if truncation took place
+  std::string str_trunc_continued (const std::string &text, int len)
+  {
+    std::string retstr = std::string (text, 0, len);
+    if ( retstr.size() == (unsigned int)len  )
+      retstr[len-1] = '~';
+    return retstr;
+  }
+    
 }
 
 // Local Variables: ***

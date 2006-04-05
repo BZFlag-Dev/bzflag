@@ -360,6 +360,11 @@ namespace TextUtils {
   /** lookup for an un-escaped separator
    */
   int unescape_lookup(const std::string &text, char escaper, char sep);
+
+  /** return a copy of a string, truncated to specified length, 
+   *  make last char a '~' if truncation took place
+   */  
+  std::string str_trunc_continued (const std::string &text, int len);
 }
 
 
