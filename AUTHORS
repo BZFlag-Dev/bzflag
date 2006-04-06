@@ -1,75 +1,266 @@
+                                                 -*- coding: utf-8 -*-
 BZFlag Contributors
 ===================
 
-BZFlag was written mainly by
+The BZFlag development team would like to thank the many people who
+have contributed to BZFlag over the years.  The game was initially and
+primarily written by Chris Schoeneman in 1992 while he was a Masters
+student at the Cornell Program of Computer Graphics.  In 1999, Chris
+Schoeneman trasferred copyright and maintainership of the game over to
+Tim Riker, whom continues in that role today.  Since the project was
+released as open source software around roughly the same time, a
+considerable number of other developers and contributors have become a
+part of the project as well.
+
+Over the project's lifetime, there have been many contributors to
+BZFlag.  Listed below are the various individuals and groups that have
+provided their time, energy, and input.  The contributors are
+characterized into different groups to indicate the level and type of
+involvement with the project: core developers, developers, code
+contributors, servers & infrastructure, corporate & organizational
+support, and special thanks.  For each section, the contributors are
+listed in chronological order with the earliest contributors listed
+first.
+
+
+CORE DEVELOPERS
+---------------
+
+Among all the developers are a core set of individuals that have
+dedicated themselves to the improvement of the game at some point in
+time, making a substantial and sustained impact on the game's
+development and on-going maintenance.  If you review the commit logs,
+these are the names you will likely see the most.
 
 Chris Schoeneman <crs23@bigfoot.com>
-
-
-It is now copyright and maintained by
-
+	Active: 1992-2000
+Jeff Myers (JeffM2501, Patlabor221) <JeffM2501@users.sourceforge.net>
+	Active: 1997-Current
 Tim Riker <Tim@Rikers.org>
-
-
-Many others have contributed over time
-
-Daniel Léonard <fork@videotron.ca>
-Jeremiah "CobraA1" Moss <jeremiah_moss@cobraa1.com>
-Frank Siegert <frank@this.net>
-Frank "Chestal" Thilo <thilo@unix-ag.org>
-Colin Bayer <vogon_jeltz@users.sourceforge.net>
-David Trowbridge <davidtrowbridge@users.sourceforge.net>
-Daryll Strauss <daryll@daryll.net> - original Linux port
-Dave Brosius <dave@mebigfatguy.com>
-Sean Morrison <learner@brlcad.org>
-Alfredo Tupone <alfredo@tupone.it>
+	Active: 1999-2005
+Frank Thilo (chestal) <thilo@unix-ag.org>
+	Active: 2001-2004
+David Trowbridge (purple_cow, captain_proton) <davidtrowbridge@users.sourceforge.net>
+	Active: 2001-2004
+Dave Brosius (MrApathyCream) <dave@mebigfatguy.com>
+	Active: 2001-2005
+Sean Morrison (brlcad, learner) <learner@brlcad.org>
+	Active: 2003-Current
+Alfredo Tupone (c3po) <alfredo@tupone.it>
+	Active: 2003-Current
 Daniel Remenak <dtremenak@users.sourceforge.net>
+	Active: 2003-Current
+Dave Rodgers (trepan)
+	Active: 2003-Current
+
+
+DEVELOPERS
+----------
+
+The developers of BZFlag are a widely diverse group of individuals
+from all around the world.  These individuals have made multiple
+significant contributions to the game on a sustained basis.  They
+become actively involved in the development discussions, and have
+otherwise actively helped to keep the game evolving and improving.
+
+-- 1992 --
+Chris Schoeneman <crs23@bigfoot.com>
+-- 1997 --
 Jeff Myers <JeffM2501@users.sourceforge.net>
+-- 1999 --
+Tim Riker <Tim@Rikers.org>
+-- 2000 --
+Colin Bayer <vogon_jeltz@users.sourceforge.net>
+-- 2001 --
+Jeremiah Moss (CobraA1) <jeremiah_moss@cobraa1.com>
+Frank Thilo (chestal) <thilo@unix-ag.org>
+David Trowbridge (captain_proton, purple_cow) <davidtrowbridge@users.sourceforge.net>
+Dave Brosius (MrApathyCream) <dave@mebigfatguy.com>
+-- 2003 --
+Lars Luthman
+Sean Morrison (learner, brlcad) <learner@brlcad.org>
+Alfredo Tupone (c3po) <alfredo@tupone.it>
+Daniel Remenak <dtremenak@users.sourceforge.net>
+Dave Rodgers (trepan)
+Bryan Jennings (bryjen)
+-- 2004 --
+Ian Agar (lan56)
+Julio Jimenez (_Manu_, jujibo)
+-- 2005 --
+Mark Thomas (menotume)
+-- 2006 --
 
 
-Original credits include several others who deserve mention for their
-contributions:
+CODE CONTRIBUTORS
+-----------------
 
-  Bjorn Augustsson
-  Tamar Cohen
-  Phillip Ezolt
-  David Hoeferlin
-  Tom Hubina
-  Dan Kartch
-  Jed Lengyel
-  Jeff Myers
-  Tim Olson
-  Brian Smits
-  Greg Spencer
-  Andrew White
-  Nafees Bin Zafar
+Code contributors includes individuals that have made useful yet
+limited source code contributions to the game.  The range of
+contributions varies greatly here with some providing simple one-time
+patches and others providing several complex modifications.
+Regardless, these individuals are generally not involved in the
+on-going game development (yet).  They have nonetheless provided some
+valued source code contribution to the game and certainly deserve
+mention and appreciation for their involvement.
 
-Special thanks go to:
+-- 1993 --
+Phillip Ezolt
+Björn Augustsson
+Jed Lengyel
+-- 1997 --
+David Hoeferlin
+Andrew White
+Tim Olson
+Tom Hubina
+-- 1999 --
+Stea Greene
+Erik Andersen
+-- 2000 --
+Daniel Léonard <fork@videotron.ca>
+Daryll Strauss <daryll@daryll.net>
+-- 2001 --
+Frank Siegert <frank@this.net>
+Eric Anholt
+Kris Verbeeck
+Darrell Walisser
+Nick Sayer
+Valery Fouques
+Pier Donini
+Mathias Gumz
+-- 2002 --
+Sal Gonzalez
+Harry Dodgson
+Janne Hassinen
+Chris Walters
+Andrew Greig
+Kefin Avila
+Janne Hassinen
+Andrea Mathis
+-- 2003 --
+Isak Styf
+Michael Hoffman
+David Wollner (jbdigriz)
+Justin Zaun
+Adam Krell
+François Revol (mmu_man)
+Micah Dowty (scanline)
+Dennis Pedersen (dmp)
+Bernt Hansen (bthansen)
+-- 2004 --
+Nils McCarthy (shkoo)
+Scott Wichser
+Andrew Heyn
+-- 2005 --
+Steve Krenzel (sgk284)
+Simon Richard Grint
+Angelina Carlton (bzgirl)
+Fred Cods
+Andrew Keyser
+Frank Evers (pimpinella)
+Nathan Goings
+Karsten Behrmann
+Harry Keller
+Garrett Padera
+Mike Weisenborn (orange)
+Joshua Rogers
+Daniel Mulford
+David Vuorio
+-- 2006 --
+Thomas Stauer
 
-  Kevin Novins
-  Rick Pasetto
-  Adam Rosen
-  Erin Shaw
-  Ben Trumbore
-  Don Greenberg
+
+SERVERS AND INFRASTRUCTURE
+--------------------------
+
+Open Source Technology Group, Inc.
+  SourceForge.net project resources
+
+Tim Riker
+  original list server
+
+Cameron Mandrake (nidhoggr)
+  current list server
 
 
-hoeferlin, hubina, myers, olson are people Chris does not know that contributed
-code to 1.7
+CORPORATE AND ORGANIZATION SUPPORT
+----------------------------------
 
-kartch, lengyel, smits, spencer were in the cornell graphics grad program when
-chris was
+Below are organizational entities that have provided direct support to
+the game either through direct funding, legal and licensing support,
+network and hardware resources, or distribution channels.
 
-lengyel added the jumping.
+SGI
+  (formerly named Silicon Graphics, Inc.)
+
+Free Software Foundation
+  GNU General Public License
+  GNU Lesser General Public License
+
+XiGraphics
+
+Package distribution providers
+  Debian, FreeBSD, Gentoo
+
+Open Source Technology Group, Inc.
+  SourceForge project services
+
+Peer-Directed Projects Center
+  Freenode IRC network
+
+
+SPECIAL THANKS
+--------------
+
+Some people deserve special thanks for their involvement in the game
+that cannot be categorized into the other sections.  This includes
+individuals that were intrumental in getting the game started, keeping
+it alive, and otherwise encouraging the spirit of the game.  This also
+includes artists, web designers, and others working towards improving
+the BZFlag community.
+
+Tamar Cohen
+Dan Kartch
+Brian Smits
+Greg Spencer
+Kevin Novins
+Rick Pasetto
+Ben Trumbore
+Erin Shaw
+Don Greenberg
+Adam Rosen
+Nafees Bin Zafar
+Harry Keller
+
+
+NOTES
+-----
+
+hoeferlin, hubina, myers, olson are people Chris does not know that
+contributed code to 1.7
+
+kartch, lengyel, smits, spencer were in the cornell graphics grad
+program when chris was
+
+lengyel added the jumping
 
 strauss ported to the 3Dfx cards
 
 cohen is a friend of chris' from cornell who made the tank models
 
-novins, pasetto, trumbore, shaw were also graphics grad students, but didn't
-contribute code.
+novins, pasetto, trumbore, shaw were also graphics grad students, but
+didn't contribute code
 
-shaw was chris' officemate and graciously put up with all the noise from the
-game
+shaw was chris' officemate and graciously put up with all the noise
+from the game
 
 rosen was a former coworker with some good suggestions
+
+trowbridge began work on bzedit circa 1999
+
+Harry Keller has creted much of the website and in game logo artwork used today.
+
+---
+If any corrections or additions need to be made, please contact one of
+the active core developers.  Additionally, you may send inquiries,
+suggestions, and comments to the developer mailing list:
+bzflag-devel@lists.sourceforge.net
