@@ -137,8 +137,6 @@ class World {
 
     void		freeInsideNodes() const;
 
-    void		enforceRequiredGraphics();
-
   private:
     // disallow copy and assignment
 			World(const World&);
@@ -146,9 +144,6 @@ class World {
 
     void		freeFlags();
     void		freeMeshDrawMgrs();
-
-    void		setupRequiredGraphics();
-    void		restoreRequiredGraphics();
 
   private:
     short		gameStyle;
