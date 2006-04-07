@@ -1189,8 +1189,6 @@ void sendMessage(int playerIndex, PlayerId dstPlayer, const char *message)
 
   ((char*)bufStart)[MessageLen - 1 + 2] = '\0'; // always terminate
 
-  int len = 2 + msglen;
-
   bool broadcast = false;
 
   if (dstPlayer <= LastRealPlayer)

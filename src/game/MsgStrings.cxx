@@ -216,14 +216,14 @@ void MsgStrings::reset ()
 }
 
 
-void MsgStrings::useDNS (bool value)
+void MsgStrings::useDNS (bool /*value*/)
 {
   //  UseDNS = value;
   return;
 }
 
 
-void MsgStrings::showEmail (bool value)
+void MsgStrings::showEmail (bool /*value*/)
 {
   //  ShowEmail = value;
   return;
