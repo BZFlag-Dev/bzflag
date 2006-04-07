@@ -818,12 +818,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
 	options.wksPort = ServerPort;
       else
 	options.useGivenPort = true;
-    } else if (strcmp(argv[i], "-passdb") == 0) {
-      checkFromWorldFile(argv[i], fromWorldFile);
-      checkArgc(1, i, argc, argv[i]);
-      passFile = argv[i];
-      std::cerr << "using password file \"" << argv[i] << "\"" << std::endl;
-    } else if (strcmp(argv[i], "-passwd") == 0 || strcmp(argv[i], "-password") == 0) {
+    }  else if (strcmp(argv[i], "-passwd") == 0 || strcmp(argv[i], "-password") == 0) {
       checkFromWorldFile(argv[i], fromWorldFile);
       checkArgc(1, i, argc, argv[i]);
       // at least put password someplace that ps won't see

@@ -261,17 +261,7 @@ void ListServerLink::finalization(char *data, unsigned int length, bool good)
 	      }
 	    } else {
 	      playerData->_LSAState = GameKeeper::Player::failed;
-	      sendMessage(ServerPlayer, playerIndex, "Global login rejected. "
-			  "This callsign is registered locally on this "
-			  "server.");
-	      sendMessage(ServerPlayer, playerIndex,
-			  "If the local account is yours, "
-			  "/identify, /deregister and reconnnect, "
-			  "or ask an admin for the LOCAL.GLOBAL group.");
-	      sendMessage(ServerPlayer, playerIndex,
-			  "If it is not yours, please ask an admin "
-			  "to deregister it so that you may use your global "
-			  "callsign.");
+	      sendMessage(ServerPlayer, playerIndex, "Global login rejected.");
 	    }
 	  } else {
 	    playerData->_LSAState = GameKeeper::Player::notRequired;

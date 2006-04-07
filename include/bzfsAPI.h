@@ -84,7 +84,6 @@ typedef enum
 #define bz_perm_adminMessageReceive  "adminMessageReceive"
 #define bz_perm_adminMessageSend  "adminMessageSend"
 #define bz_perm_antiban   "antiban"
-#define bz_perm_antideregister   "antideregister"
 #define bz_perm_antikick   "antikick"
 #define bz_perm_antikill   "antikill"
 #define bz_perm_antipoll   "antipoll"

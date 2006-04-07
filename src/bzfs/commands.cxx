@@ -241,41 +241,9 @@ public:
 			  GameKeeper::Player *playerData);
 };
 
-class IdentifyCommand : public ServerCommand {
-public:
-  IdentifyCommand();
-
-  virtual bool operator() (const char	 *commandLine,
-			   GameKeeper::Player *playerData);
-};
-
-class RegisterCommand : public ServerCommand {
-public:
-  RegisterCommand();
-
-  virtual bool operator() (const char	 *commandLine,
-			   GameKeeper::Player *playerData);
-};
-
 class GhostCommand : public ServerCommand {
 public:
   GhostCommand();
-
-  virtual bool operator() (const char	 *commandLine,
-			   GameKeeper::Player *playerData);
-};
-
-class DeregisterCommand : public ServerCommand {
-public:
-  DeregisterCommand();
-
-  virtual bool operator() (const char	 *commandLine,
-			   GameKeeper::Player *playerData);
-};
-
-class SetPassCommand : public ServerCommand {
-public:
-  SetPassCommand();
 
   virtual bool operator() (const char	 *commandLine,
 			   GameKeeper::Player *playerData);
@@ -468,11 +436,7 @@ static PlayerListCommand  playerListCommand;
 static ReportCommand      ReportCommand;
 static HelpCommand	  helpCommand;
 static SendHelpCommand    sendHelpCommand;
-static IdentifyCommand    identifyCommand;
-static RegisterCommand    registerCommand;
 static GhostCommand       ghostCommand;
-static DeregisterCommand  deregisterCommand;
-static SetPassCommand     setPassCommand;
 static GroupListCommand   groupListCommand;
 static ShowGroupCommand   showGroupCommand;
 static ShowPermsCommand   showPermsCommand;
@@ -545,16 +509,8 @@ HelpCommand::HelpCommand()		 : ServerCommand("/help",
   "<help page> - display the specified help page") {}
 SendHelpCommand::SendHelpCommand()       : ServerCommand("/sendhelp",
   "<#slot|PlayerName|\"Player Name\"> <help page> - send the specified help page to a user") {}
-IdentifyCommand::IdentifyCommand()       : ServerCommand("/identify",
-  "<password> - log in to a registered callsign") {}
-RegisterCommand::RegisterCommand()       : ServerCommand("/register",
-  "<password> - register your current callsign to the specified password") {}
 GhostCommand::GhostCommand()	     : ServerCommand("/ghost",
   "<callsign> <password> - kick off an impersonating player or ghost") {}
-DeregisterCommand::DeregisterCommand()   : ServerCommand("/deregister",
-  "[callsign] - deregister another user's callsign, or your if no callsign specified") {}
-SetPassCommand::SetPassCommand()	 : ServerCommand("/setpass",
-  "<newpass> - change your password setting the new specified") {}
 GroupListCommand::GroupListCommand()     : ServerCommand("/grouplist",
   "- list the available user groups") {}
 ShowGroupCommand::ShowGroupCommand()     : ServerCommand("/showgroup",
@@ -1794,89 +1750,10 @@ bool HelpCommand::operator() (const char *message, GameKeeper::Player *playerDat
   return true;
 }
 
-
-bool IdentifyCommand::operator() (const char	 *message,
-				  GameKeeper::Player *playerData)
-{
-  int t = playerData->getIndex();
-  if (!passFile.size()){
-    sendMessage(ServerPlayer, t, "/identify command disabled");
-    return true;
-  }
-  // player is trying to send an ID
-  if (playerData->accessInfo.isVerified()) {
-    sendMessage(ServerPlayer, t, "You have already identified");
-  } else if (playerData->accessInfo.gotAccessFailure()) {
-    sendMessage(ServerPlayer, t, "You have attempted to identify too many times");
-  } else {
-    // get their info
-    if (!playerData->accessInfo.isRegistered()) {
-      // not in DB, tell them to reg
-      sendMessage(ServerPlayer, t, "This callsign is not registered,"
-		  " please register it with a /register command");
-    } else {
-      if (playerData->accessInfo.isPasswordMatching(message + 10)) {
-	sendMessage(ServerPlayer, t, "Password Accepted, welcome back.");
-
-	// get their real info
-	playerData->accessInfo.setPermissionRights();
-
-	// if they have the PLAYERLIST permission, send the IP list
-	sendIPUpdate(t, -1);
-	sendPlayerInfo();
-	// Notify plugins of player authentication change
-	bz_PlayerAuthEventData_V1 commandData;
-	commandData.playerID = t;
-	worldEventManager.callEvents(bz_ePlayerAuthEvent, &commandData);
-
-      } else {
-	playerData->accessInfo.setLoginFail();
-	sendMessage(ServerPlayer, t, "Identify Failed, please make sure"
-		    " your password was correct");
-      }
-    }
-  }
-  return true;
-}
-
-
-bool RegisterCommand::operator() (const char	 *message,
-				  GameKeeper::Player *playerData)
-{
-  int t = playerData->getIndex();
-  if (!passFile.size()){
-    sendMessage(ServerPlayer, t, "/register command disabled");
-    return true;
-  }
-  if (playerData->accessInfo.isVerified()) {
-    sendMessage(ServerPlayer, t, "You have already registered and"
-		" identified this callsign");
-  } else {
-    if (playerData->accessInfo.isRegistered()) {
-      sendMessage(ServerPlayer, t, "This callsign is already registered,"
-		  " if it is yours /identify to login");
-    } else {
-      if (strlen(message) > 12) {
-	playerData->accessInfo.storeInfo(message + 10);
-	sendMessage(ServerPlayer, t, "Callsign registration confirmed,"
-		    " please /identify to login");
-      } else {
-	sendMessage(ServerPlayer, t, "Your password must be 3 or more characters");
-      }
-    }
-  }
-  return true;
-}
-
-
 bool GhostCommand::operator() (const char	 *message,
 			       GameKeeper::Player *playerData)
 {
   int t = playerData->getIndex();
-  if (!passFile.size()){
-    sendMessage(ServerPlayer, t, "/ghost command disabled");
-    return true;
-  }
   char *p1 = (char*)strchr(message + 1, '\"');
   char *p2 = 0;
   if (p1) p2 = strchr(p1 + 1, '\"');
@@ -1912,95 +1789,6 @@ bool GhostCommand::operator() (const char	 *message,
   }
   return true;
 }
-
-
-bool DeregisterCommand::operator() (const char	 *message,
-				    GameKeeper::Player *playerData)
-{
-  int t = playerData->getIndex();
-  if (!passFile.size()){
-    sendMessage(ServerPlayer, t, "/deregister command disabled");
-    return true;
-  }
-  if (!playerData->accessInfo.isVerified()) {
-    sendMessage(ServerPlayer, t, "You must be registered and verified to run the deregister command");
-    return true;
-  }
-
-  if (strlen(message) == 11) {
-    // removing own callsign
-    passwordDatabase.erase(playerData->accessInfo.getName());
-    userDatabase.erase(playerData->accessInfo.getName());
-    PlayerAccessInfo::updateDatabases();
-    sendMessage(ServerPlayer, t, "Your callsign has been deregistered");
-  } else if (strlen(message) > 12
-	     && playerData->accessInfo.hasPerm(PlayerAccessInfo::setAll)) {
-    char reply[MessageLen];
-
-    // removing someone else's
-    std::string name = message + 12;
-    makeupper(name);
-    if (userExists(name)) {
-
-      // operators can override antiperms
-      if (!playerData->accessInfo.isOperator()) {
-	// make sure this player isn't protected
-	int v = GameKeeper::Player::getPlayerIDByName(name);
-	GameKeeper::Player *p = GameKeeper::Player::getPlayerByIndex(v);
-	if ((p != NULL) && (p->accessInfo.hasPerm(PlayerAccessInfo::antideregister))) {
-	  snprintf(reply, MessageLen, "%s is protected from being deregistered.", p->player.getCallSign());
-	  sendMessage(ServerPlayer, t, reply);
-	  return true;
-	}
-      }
-
-      passwordDatabase.erase(name);
-      userDatabase.erase(name);
-      PlayerAccessInfo::updateDatabases();
-
-      snprintf(reply, MessageLen, "%s has been deregistered", name.c_str());
-      sendMessage(ServerPlayer, t, reply);
-    } else {
-      snprintf(reply, MessageLen, "user %s does not exist", name.c_str());
-      sendMessage(ServerPlayer, t, reply);
-    }
-  } else if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::setAll)) {
-    sendMessage(ServerPlayer, t, "You do not have permission to deregister this user");
-  }
-
-  return true;
-}
-
-
-bool SetPassCommand::operator() (const char	 *message,
-				 GameKeeper::Player *playerData)
-{
-  int t = playerData->getIndex();
-  if (!passFile.size()){
-    sendMessage(ServerPlayer, t, "/setpass command disabled");
-    return true;
-  }
-  if (!playerData->accessInfo.isVerified()) {
-    sendMessage(ServerPlayer, t, "You must be registered and verified to run the setpass command");
-    return true;
-  }
-
-  size_t startPosition = 7;
-  /* skip any leading whitespace */
-  while (isspace(message[++startPosition]))
-    ;
-  if (startPosition == strlen(message) || !isspace(message[8])) {
-    sendMessage(ServerPlayer, t, "Not enough parameters: usage /setpass PASSWORD");
-    return true;
-  }
-  std::string pass = message + startPosition;
-  playerData->accessInfo.setPasswd(pass);
-  char text[MessageLen];
-  snprintf(text, MessageLen, "Your password is now set to \"%s\"", pass.c_str());
-  sendMessage(ServerPlayer, t, text);
-  return true;
-}
-
 
 bool GroupListCommand::operator() (const char	 *,
 				   GameKeeper::Player *playerData)
@@ -2295,8 +2083,6 @@ bool ReloadCommand::operator() (const char	 *,
   userDatabase.clear();
   passwordDatabase.clear();
   initGroups();
-  if (passFile.size())
-    readPassFile(passFile);
   if (userDatabaseFile.size())
     PlayerAccessInfo::readPermsFile(userDatabaseFile);
   GameKeeper::Player::reloadAccessDatabase();

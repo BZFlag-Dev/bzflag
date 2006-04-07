@@ -46,7 +46,6 @@ public:
       adminMessageReceive,
       adminMessageSend,
       antiban,
-      antideregister,
       antikick,
       antikill,
       antipoll,
@@ -192,7 +191,6 @@ extern PlayerAccessMap	userDatabase;
 extern PasswordMap	passwordDatabase;
 
 extern std::string		groupsFile;
-extern std::string		passFile;
 extern std::string		userDatabaseFile;
 
 inline void makeupper(std::string& str)
@@ -206,8 +204,6 @@ bool verifyUserPassword(const std::string &nick, const std::string &pass);
 std::string nameFromPerm(PlayerAccessInfo::AccessPerm perm);
 PlayerAccessInfo::AccessPerm permFromName(const std::string &name);
 void parsePermissionString(const std::string &permissionString, std::bitset<PlayerAccessInfo::lastPerm> &perms);
-bool readPassFile(const std::string &filename);
-bool writePassFile(const std::string &filename);
 
 uint8_t GetPlayerProperties( bool registered, bool verified, bool admin );
 

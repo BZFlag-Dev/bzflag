@@ -3,6 +3,13 @@ to do list for BZFlag
 
 THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
 
+* local register and identify have been removed. we need to implement
+  a new way that uses the internal password, somehow encyrpted.
+  or just say it's global or nothing
+  
+* /ghost should be removed, we should auto ghost people when the login
+  with global auth
+
 * make sure there are no outstanding serious bugs (e.g. check OO)
 
 * prepare for 2.0.6 release.  planned for 2006.04.01.

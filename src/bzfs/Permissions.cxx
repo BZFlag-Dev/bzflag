@@ -346,7 +346,6 @@ std::string nameFromPerm(PlayerAccessInfo::AccessPerm perm)
     case PlayerAccessInfo::adminMessageReceive: return "adminMessageReceive";
     case PlayerAccessInfo::adminMessageSend: return "adminMessageSend";
     case PlayerAccessInfo::antiban : return "antiban";
-    case PlayerAccessInfo::antideregister : return "antideregister";
     case PlayerAccessInfo::antikick : return "antikick";
     case PlayerAccessInfo::antikill : return "antikill";
     case PlayerAccessInfo::antipoll : return "antipoll";
@@ -413,7 +412,6 @@ PlayerAccessInfo::AccessPerm permFromName(const std::string &name)
   if (name == "ADMINMESSAGERECEIVE") return PlayerAccessInfo::adminMessageReceive;
   if (name == "ADMINMESSAGESEND") return PlayerAccessInfo::adminMessageSend;
   if (name == "ANTIBAN") return PlayerAccessInfo::antiban;
-  if (name == "ANTIDEREGISTER") return PlayerAccessInfo::antideregister;
   if (name == "ANTIKICK") return PlayerAccessInfo::antikick;
   if (name == "ANTIKILL") return PlayerAccessInfo::antikill;
   if (name == "ANTIPOLL") return PlayerAccessInfo::antipoll;
@@ -574,45 +572,6 @@ void parsePermissionString(const std::string &permissionString, PlayerAccessInfo
 }
 
 
-bool readPassFile(const std::string &filename)
-{
-  std::ifstream in(filename.c_str());
-  if (!in)
-    return false;
-
-  std::string line;
-  while (std::getline(in, line)) {
-    // Should look at an unescaped ':'
-    int colonpos = TextUtils::unescape_lookup(line, '\\', ':');
-    if (colonpos == -1)
-      continue;
-    {
-      std::string name = TextUtils::unescape(line.substr(0, colonpos), '\\');
-      std::string pass = line.substr(colonpos + 1);
-      makeupper(name);
-      setUserPassword(name.c_str(), pass.c_str());
-    }
-  }
-
-  return (passwordDatabase.size() > 0);
-}
-
-bool writePassFile(const std::string &filename)
-{
-  std::ofstream out(filename.c_str());
-  if (!out)
-    return false;
-  PasswordMap::iterator itr = passwordDatabase.begin();
-  while (itr != passwordDatabase.end()) {
-    if (itr->second != "*") {
-      out << TextUtils::escape(itr->first, '\\') << ':' << itr->second << std::endl;
-    }
-    itr++;
-  }
-  out.close();
-  return true;
-}
-
 bool PlayerAccessInfo::readGroupsFile(const std::string &filename)
 {
   std::ifstream in(filename.c_str());
@@ -744,13 +703,10 @@ bool PlayerAccessInfo::writePermsFile(const std::string &filename)
 }
 
 std::string		groupsFile;
-std::string		passFile;
 std::string		userDatabaseFile;
 
 void PlayerAccessInfo::updateDatabases()
 {
-  if (passFile.size())
-    writePassFile(passFile);
   if (userDatabaseFile.size())
     writePermsFile(userDatabaseFile);
 }

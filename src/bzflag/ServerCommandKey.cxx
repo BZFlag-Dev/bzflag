@@ -335,7 +335,6 @@ bool			ServerCommandKey::keyPress(const BzfKeyEvent& key)
       case FlagHistory: sendMsg = "/flaghistory"; break;
       case Password: sendMsg = "/password "+ message; break;
       case Report: sendMsg = "/report "+ message; break;
-      case Register: sendMsg = "/register "+ message; break;
       case Identify: sendMsg = "/identify "+ message; break;
       case Setpass: sendMsg = "/setpass "+ message; break;
       case Grouplist: sendMsg = "/grouplist"; break;

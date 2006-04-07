@@ -169,7 +169,6 @@ void DefaultCompleter::setDefaults()
   registerWord("/countdown");
   registerWord("/clientquery");
   registerWord("/date");
-  registerWord("/deregister");
   registerWord("/dumpvars");
   registerWord("/flag ");
   registerWord("reset");
@@ -189,7 +188,6 @@ void DefaultCompleter::setDefaults()
   registerWord("/idunban ");
   registerWord("/idbanlist");
   registerWord("/idlist");
-  registerWord("/identify ");
   registerWord("/idlestats");
   registerWord("/kick ");
   registerWord("/kill ");
@@ -213,7 +211,6 @@ void DefaultCompleter::setDefaults()
   registerWord("stats");
   registerWord("file");
   registerWord("save");
-  registerWord("/register ");
   registerWord("/reload");
   registerWord("/masterban"); // also uses list
   registerWord("reload");

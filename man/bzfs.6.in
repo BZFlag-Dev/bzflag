@@ -1130,7 +1130,7 @@ REJOIN	allows instant rejoin, regardless of _rejoinTime
 .br 
 REMOVEPERMS	/removegroup
 .br 
-REQUIREIDENTIFY	user must /identify when using this locally registered callsign
+REQUIREIDENTIFY	user must use global registration
 .br 
 SAY	/say
 .br 
@@ -1161,15 +1161,6 @@ VETO	/veto
 VOTE	/vote
 
 .TP 
-.B /identify \fIpassword\fR
-Log in to a registered callsign
-
-.TP 
-.B /deregister [\fIcallsign\fR]
-With an argument, it deregisters another user's callsign. Without, it
-removes your own registration.
-
-.TP 
 .B /ghost \fIcallsign\fR \fIpassword\fR
 Kicks off an impersonating player or ghost
 
@@ -1186,12 +1177,6 @@ Lists the permissions for each group
 Forces the server to flush any bans from the master server. If reload is specified
 instead of flush, also reloads bans from the the internet. Local bans are unaffected.
 This command requires the UNBAN permision.
-
-.TP 
-.B /register \fIpassword\fR
-Register your current callsign to the specified password. Passwords
-must be at least 3 characters long, and the callsign may not contain
-quotes or other non\-alphanumeric/space characters
 
 .TP 
 .B /reload
