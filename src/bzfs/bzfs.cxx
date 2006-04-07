@@ -1623,28 +1623,6 @@ static void addPlayer(int playerIndex, GameKeeper::Player *playerData)
     }
   }
 
-  // playing clients must be better then 2.0.4 for 'advanced' graphics servers
-  if ((playerData->player.getTeam() != ObserverTeam) &&
-      ((clOptions->gameStyle & RequireGraphics) != 0)) {
-    const int minMajor = 2;
-    const int minMinor = 0;
-    const int minRevision = 5;
-    int major, minor, rev;
-    playerData->player.getClientVersionNumbers(major, minor, rev);
-    if ((major < minMajor) ||
-	((major == minMajor) &&
-	 ((minor < minMinor) ||
-	  ((minor == minMinor) &&
-	   (rev < minRevision))))) {
-      char buffer[256];
-      snprintf(buffer, 256,
-	       "This server requires a client version %i.%i.%i or higher.",
-	       minMajor, minMinor, minRevision);
-      rejectPlayer(playerIndex, RejectBadRequest, buffer);
-      return;
-    }
-  }
-
   // reject player if asks for bogus team or rogue and rogues aren't allowed
   // or if the team is full or if the server is full
   if (!playerData->player.isHuman() && !playerData->player.isBot()) {

@@ -31,7 +31,7 @@ static void ConvertPath(std::string &path)
 
 
 //
-// Disable SDL_image, support for now
+// Disable SDL_image support, for now
 //
 #undef HAVE_SDL_IMAGE
 

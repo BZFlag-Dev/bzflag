@@ -91,9 +91,6 @@ World::~World()
   OBSTACLEMGR.clear();
   COLLISIONMGR.clear();
 
-  // revert the forced BZDB vars
-  restoreRequiredGraphics();
-
   return;
 }
 
@@ -1257,37 +1254,6 @@ RemotePlayer* World::getCurrentRabbit() const
     }
   }
   return NULL;
-}
-
-
-void World::setupRequiredGraphics()
-{
-  oldFogEffect = BZDB.evalInt("fogEffect");
-  oldUseDrawInfo = BZDB.isTrue("useDrawInfo");
-  enforceRequiredGraphics();
-  return;
-}
-
-
-void World::restoreRequiredGraphics()
-{
-  if ((gameStyle & RequireGraphics) != 0) {
-    BZDB.setInt("fogEffect", oldFogEffect);
-    BZDB.setBool("useDrawInfo", oldUseDrawInfo);
-  }
-  return;
-}
-
-
-void World::enforceRequiredGraphics()
-{
-  if ((gameStyle & RequireGraphics) != 0) {
-    if (BZDB.evalInt("fogEffect") < 1) {
-      BZDB.set("fogEffect", "1");
-    }
-    BZDB.set("useDrawInfo", "1");
-  }
-  return;
 }
 
 
