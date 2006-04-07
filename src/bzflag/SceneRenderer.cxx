@@ -100,6 +100,7 @@ SceneRenderer::SceneRenderer() :
 				useDepthComplexityOn(false),
 				useWireframeOn(false),
 				useHiddenLineOn(false),
+				panelOpacity(0.3f),
 				radarSize(4),
 				maxMotionFactor(5),
 				useFogHack(false),
