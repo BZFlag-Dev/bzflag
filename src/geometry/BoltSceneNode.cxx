@@ -136,11 +136,7 @@ void			BoltSceneNode::notifyStyleChange()
   OpenGLGStateBuilder builder(gstate);
   builder.enableTexture(texturing);
   if (BZDBCache::blend) {
-    if (RENDERER.useQuality() >= 3) {
-      builder.setBlending(GL_SRC_ALPHA, GL_ONE);
-    } else {
-      builder.setBlending(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    }
+    builder.setBlending(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     builder.setStipple(1.0f);
     builder.setAlphaFunc();
     if (!texturing) builder.setShading(GL_SMOOTH);
