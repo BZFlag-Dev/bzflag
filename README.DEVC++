@@ -22,18 +22,14 @@ is quite easy.
    Select the mirror closest to you to download.
 	 Installation is roughly the same as the SDL instructions below.
 
-4. Build libares.dev FIRST by opening up the project file named such.
-
-5. Open up the corresponding project files (only build on at a time), included in the "Dev-C++"
+4. Open up the corresponding project files (only build on at a time), included in the "Dev-C++"
    directory. Note that each project uses an individual project file,
    so no two can be combined.
 
-6. Let the opened project compile (this may take several minutes, depending on your computer).
+5. Let the opened project compile (this may take several minutes, depending on your computer).
 
-7. The binary and object files should be in each project's corresponding main source
-   directory, such as src/bzflag/ for BZFlag client. libares.a (built from libares.dev)
-   is in /Dev-C++/, and is recommended that it be moved to the /lib/ folder of your copy
-   of Dev-C++ IDE.
+6. The binary and object files should be in each project's corresponding main source
+   directory, such as src/bzflag/ for BZFlag client.
 
 Project files were maintained using Dev-C++ 4.9.9.2
 
@@ -60,7 +56,9 @@ It is only a few megabytes, and is cross-platform. Remember to download the "dev
 one for MinGW32 so it works nicely (however, a VC++ one may also work, but it is not recommended), if you
 are on Windows, otherwise download the one for GCC on Linux. Place
 the .a files in your "/lib/" directory of Dev-C++ (or MinGW32 dir), and the headers in
-"/include/". Also, make sure you put the dynamic library for SDL (i.e., "SDL.dll" on Windows)
+"/include/". For libcURL, place the folder named "/curl/", containing .h files, into the "/include/" of
+Dev-C++, like stated above. Follow same instructions as for SDL for libcURL's .a files. Also, make sure
+you put all included dynamic libraries from SDL and libcURL (for example, "SDL.dll" on Windows)
 somewhere in your PATH environment variable (on Windows), such as "c:\WINDOWS\".
 On Linux, place it in a directory that it knows to look in.
 
