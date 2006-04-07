@@ -296,14 +296,9 @@ void			BillboardSceneNode::notifyStyleChange()
   if (show) {
     OpenGLGStateBuilder builder(gstate);
     if (hasAlpha) {
-      if (RENDERER.useQuality() >= 3) {
-	builder.setBlending(GL_SRC_ALPHA, GL_ONE);
-      } else {
-	builder.setBlending(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-      }
+      builder.setBlending(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
       builder.setAlphaFunc();
-    }
-    else {
+    } else {
       builder.resetBlending();
       builder.resetAlphaFunc();
     }
