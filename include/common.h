@@ -33,6 +33,7 @@
 #include <stdio.h>
 #include <stdlib.h> //needed for bzfrand
 #include <math.h>
+#include <cmath>
 
 
 extern int debugLevel;
@@ -220,6 +221,7 @@ typedef unsigned char	uint8_t;
 #    endif /* __cplusplus */
 #  endif /* HAVE_ISNAN */
 #endif /* HAVE_STD__ISNAN */
+
 
 #ifndef HAVE_STD__MAX
 #  ifdef __cplusplus
