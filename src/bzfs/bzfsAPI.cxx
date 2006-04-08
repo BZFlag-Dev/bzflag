@@ -1109,8 +1109,10 @@ void setVarPerms ( const char* variable, int perms, bool persistent)
 			break;
 		case BZ_BZDBPERM_SERVER:
 			BZDB.setPermission(std::string(variable),StateDatabase::Locked);
+			break;
 		default:
 			BZDB.setPermission(std::string(variable),StateDatabase::ReadOnly);
+			break;;
 		}
 	}
 	BZDB.setPersistent(std::string(variable),persistent);
