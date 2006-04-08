@@ -13,6 +13,7 @@
 #ifdef _MSC_VER
 #pragma warning(4: 4786)
 #endif
+#include "common.h"
 
 // interface header
 #include "BZDBCache.h"
@@ -60,6 +61,13 @@ float BZDBCache::flagPoleWidth;
 float BZDBCache::maxLOD;
 
 float BZDBCache::hudGUIBorderOpacityFactor;
+
+float getGoodPosValue (float oldNum, float inNum )
+{
+	if (std::isnan(inNum) || inNum > 0.0f)
+		return oldNum;
+	return inNum;
+}
 
 void BZDBCache::init()
 {
@@ -111,18 +119,18 @@ void BZDBCache::init()
   drawMountains = BZDB.isTrue(StateDatabase::BZDB_DRAWMOUNTAINS);
   drawSky = BZDB.isTrue(StateDatabase::BZDB_DRAWSKY);
 
-  maxLOD = BZDB.eval(StateDatabase::BZDB_MAXLOD);
-  worldSize = BZDB.eval(StateDatabase::BZDB_WORLDSIZE);
-  radarLimit = BZDB.eval(StateDatabase::BZDB_RADARLIMIT);
-  gravity = BZDB.eval(StateDatabase::BZDB_GRAVITY);
-  tankWidth = BZDB.eval(StateDatabase::BZDB_TANKWIDTH);
-  tankLength = BZDB.eval(StateDatabase::BZDB_TANKLENGTH);
-  tankHeight = BZDB.eval(StateDatabase::BZDB_TANKHEIGHT);
-  tankSpeed = BZDB.eval(StateDatabase::BZDB_TANKSPEED);
-  tankRadius = BZDB.eval(StateDatabase::BZDB_TANKRADIUS);
-  flagRadius = BZDB.eval(StateDatabase::BZDB_FLAGRADIUS);
-  flagPoleSize = BZDB.eval(StateDatabase::BZDB_FLAGPOLESIZE);
-  flagPoleWidth = BZDB.eval(StateDatabase::BZDB_FLAGPOLEWIDTH);
+  maxLOD = getGoodPosValue(maxLOD,BZDB.eval(StateDatabase::BZDB_MAXLOD));
+  worldSize = getGoodPosValue(worldSize,BZDB.eval(StateDatabase::BZDB_WORLDSIZE));
+  radarLimit = getGoodPosValue(radarLimit,BZDB.eval(StateDatabase::BZDB_RADARLIMIT));
+  gravity = getGoodPosValue(gravity,BZDB.eval(StateDatabase::BZDB_GRAVITY));
+  tankWidth = getGoodPosValue(tankWidth,BZDB.eval(StateDatabase::BZDB_TANKWIDTH));
+  tankLength = getGoodPosValue(tankLength,BZDB.eval(StateDatabase::BZDB_TANKLENGTH));
+  tankHeight = getGoodPosValue(tankHeight,BZDB.eval(StateDatabase::BZDB_TANKHEIGHT));
+  tankSpeed = getGoodPosValue(tankSpeed,BZDB.eval(StateDatabase::BZDB_TANKSPEED));
+  tankRadius = getGoodPosValue(tankRadius,BZDB.eval(StateDatabase::BZDB_TANKRADIUS));
+  flagRadius = getGoodPosValue(flagRadius,BZDB.eval(StateDatabase::BZDB_FLAGRADIUS));
+  flagPoleSize = getGoodPosValue(flagPoleSize,BZDB.eval(StateDatabase::BZDB_FLAGPOLESIZE));
+  flagPoleWidth = getGoodPosValue(flagPoleWidth,BZDB.eval(StateDatabase::BZDB_FLAGPOLEWIDTH));
 
   update();
 }
@@ -192,28 +200,28 @@ void BZDBCache::serverCallback(const std::string& name, void *)
     drawSky = BZDB.isTrue(StateDatabase::BZDB_DRAWSKY);
   }
   else if (name == StateDatabase::BZDB_MAXLOD) {
-    maxLOD = BZDB.eval(StateDatabase::BZDB_MAXLOD);
+    maxLOD = getGoodPosValue(maxLOD,BZDB.eval(StateDatabase::BZDB_MAXLOD));
   }
   else if (name == StateDatabase::BZDB_WORLDSIZE) {
-    worldSize = BZDB.eval(StateDatabase::BZDB_WORLDSIZE);
+    worldSize = getGoodPosValue(worldSize,BZDB.eval(StateDatabase::BZDB_WORLDSIZE));
   }
   else if (name == StateDatabase::BZDB_RADARLIMIT) {
-    radarLimit = BZDB.eval(StateDatabase::BZDB_RADARLIMIT);
+    radarLimit = getGoodPosValue(radarLimit,BZDB.eval(StateDatabase::BZDB_RADARLIMIT));
   }
   else if (name == StateDatabase::BZDB_GRAVITY) {
-    gravity = BZDB.eval(StateDatabase::BZDB_GRAVITY);
+    gravity = getGoodPosValue(gravity,BZDB.eval(StateDatabase::BZDB_GRAVITY));
   }
   else if (name == StateDatabase::BZDB_TANKWIDTH) {
-    tankWidth = BZDB.eval(StateDatabase::BZDB_TANKWIDTH);
+    tankWidth = getGoodPosValue(tankWidth,BZDB.eval(StateDatabase::BZDB_TANKWIDTH));
   }
   else if (name == StateDatabase::BZDB_TANKLENGTH) {
-    tankLength = BZDB.eval(StateDatabase::BZDB_TANKLENGTH);
+    tankLength = getGoodPosValue(tankLength,BZDB.eval(StateDatabase::BZDB_TANKLENGTH));
   }
   else if (name == StateDatabase::BZDB_TANKHEIGHT) {
-    tankHeight = BZDB.eval(StateDatabase::BZDB_TANKHEIGHT);
+    tankHeight = getGoodPosValue(tankHeight,BZDB.eval(StateDatabase::BZDB_TANKHEIGHT));
   }
   else if (name == StateDatabase::BZDB_TANKSPEED) {
-    tankSpeed = BZDB.eval(StateDatabase::BZDB_TANKSPEED);
+    tankSpeed = getGoodPosValue(tankSpeed,BZDB.eval(StateDatabase::BZDB_TANKSPEED));
   }
 // Why only in update() ?
 //  else if (name == StateDatabase::BZDB_FLAGRADIUS) {
