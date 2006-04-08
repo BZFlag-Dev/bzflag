@@ -69,6 +69,13 @@ float getGoodPosValue (float oldNum, float inNum )
 	return inNum;
 }
 
+float getGoodNonZeroValue (float oldNum, float inNum )
+{
+	if (std::isnan(inNum) || inNum != 0.0f)
+		return oldNum;
+	return inNum;
+}
+
 void BZDBCache::init()
 {
   // Client-side variables
@@ -119,10 +126,10 @@ void BZDBCache::init()
   drawMountains = BZDB.isTrue(StateDatabase::BZDB_DRAWMOUNTAINS);
   drawSky = BZDB.isTrue(StateDatabase::BZDB_DRAWSKY);
 
-  maxLOD = getGoodPosValue(maxLOD,BZDB.eval(StateDatabase::BZDB_MAXLOD));
+  maxLOD = BZDB.eval(StateDatabase::BZDB_MAXLOD);
   worldSize = getGoodPosValue(worldSize,BZDB.eval(StateDatabase::BZDB_WORLDSIZE));
-  radarLimit = getGoodPosValue(radarLimit,BZDB.eval(StateDatabase::BZDB_RADARLIMIT));
-  gravity = getGoodPosValue(gravity,BZDB.eval(StateDatabase::BZDB_GRAVITY));
+  radarLimit = BZDB.eval(StateDatabase::BZDB_RADARLIMIT);
+  gravity = getGoodNonZeroValue(gravity,BZDB.eval(StateDatabase::BZDB_GRAVITY));
   tankWidth = getGoodPosValue(tankWidth,BZDB.eval(StateDatabase::BZDB_TANKWIDTH));
   tankLength = getGoodPosValue(tankLength,BZDB.eval(StateDatabase::BZDB_TANKLENGTH));
   tankHeight = getGoodPosValue(tankHeight,BZDB.eval(StateDatabase::BZDB_TANKHEIGHT));
@@ -200,16 +207,16 @@ void BZDBCache::serverCallback(const std::string& name, void *)
     drawSky = BZDB.isTrue(StateDatabase::BZDB_DRAWSKY);
   }
   else if (name == StateDatabase::BZDB_MAXLOD) {
-    maxLOD = getGoodPosValue(maxLOD,BZDB.eval(StateDatabase::BZDB_MAXLOD));
+    maxLOD = BZDB.eval(StateDatabase::BZDB_MAXLOD);
   }
   else if (name == StateDatabase::BZDB_WORLDSIZE) {
     worldSize = getGoodPosValue(worldSize,BZDB.eval(StateDatabase::BZDB_WORLDSIZE));
   }
   else if (name == StateDatabase::BZDB_RADARLIMIT) {
-    radarLimit = getGoodPosValue(radarLimit,BZDB.eval(StateDatabase::BZDB_RADARLIMIT));
+    radarLimit = BZDB.eval(StateDatabase::BZDB_RADARLIMIT);
   }
   else if (name == StateDatabase::BZDB_GRAVITY) {
-    gravity = getGoodPosValue(gravity,BZDB.eval(StateDatabase::BZDB_GRAVITY));
+    gravity = getGoodNonZeroValue(gravity,BZDB.eval(StateDatabase::BZDB_GRAVITY));
   }
   else if (name == StateDatabase::BZDB_TANKWIDTH) {
     tankWidth = getGoodPosValue(tankWidth,BZDB.eval(StateDatabase::BZDB_TANKWIDTH));

@@ -4,6 +4,8 @@
 BZFlag 2.0.5
 ------------
 
+* /set _tankSpeed and other tank and world based variables will no longer accept 
+  invalid values. - Jeff Myers
 * Special Effects use tank color, not team color =  Karsten Behrmann, Jeff Myers
 * /reset uses the values from the config and the map as default - Jeff Myers ( from patch )
 * Sreenshots now remember where they left off - Jeff Myers, Thomas Sowell 

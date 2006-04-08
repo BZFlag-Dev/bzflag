@@ -45,8 +45,6 @@ recent bugs
 - Bad BZDB: some BZDB variables are not range checked:
   "/set _syncTime -" goes boom on the client side.
   (StateDatabase::ExpressionToken::operator=, StateDatabase.cxx:890)
- "/set _tankSpeed foo" if you set the tank speed to something
-  non numeric the server and clients crash.
 
 - Material properties for mesh containers are not adjusted by
   ObstacleModifier, and will not save correctly if using saveFlatFile.
