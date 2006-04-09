@@ -378,7 +378,7 @@ static float parseFloatExpr(const std::string& str, bool zeroNan)
   if (!zeroNan) {
     return value;
   } else {
-    if (!std::isnan(value)) {
+    if (!isnan(value)) {
       return value;
     } else {
       return 0.0f;
@@ -398,8 +398,8 @@ static bool varIsEqual(const std::string& name)
   const std::string defexp = BZDB.getDefault(name);
   const float val = BZDB.eval(name);
   const float defval = parseFloatExpr(defexp, false);
-  const bool valNaN = (std::isnan(val) != 0);
-  const bool defNaN = (std::isnan(defval) != 0);
+  const bool valNaN = (isnan(val) != 0);
+  const bool defNaN = (isnan(defval) != 0);
 
   if (valNaN != defNaN) {
     return false;
