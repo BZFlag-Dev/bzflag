@@ -14,6 +14,7 @@
 #pragma warning(4: 4786)
 #endif
 #include "common.h"
+#include <cmath>
 
 // interface header
 #include "BZDBCache.h"
@@ -62,18 +63,26 @@ float BZDBCache::maxLOD;
 
 float BZDBCache::hudGUIBorderOpacityFactor;
 
-float getGoodPosValue (float oldNum, float inNum )
+static float getGoodPosValue (float oldVal, const std::string var )
 {
-	if (std::isnan(inNum) || inNum > 0.0f)
-		return oldNum;
-	return inNum;
+	float newVal = BZDB.eval(var);
+	if (std::isnan(newVal) || newVal < 0.0f)	// it's bad
+	{
+		BZDB.setFloat(var,oldVal,BZDB.getPermission(var));
+		return oldVal;
+	}
+	return newVal;
 }
 
-float getGoodNonZeroValue (float oldNum, float inNum )
+static float getGoodNonZeroValue (float oldVal, const std::string var )
 {
-	if (std::isnan(inNum) || inNum != 0.0f)
-		return oldNum;
-	return inNum;
+	float newVal = BZDB.eval(var);
+	if (std::isnan(newVal) || newVal == 0.0f)	// it's bad
+	{
+		BZDB.setFloat(var,oldVal,BZDB.getPermission(var));
+			return oldVal;
+	}
+	return newVal;
 }
 
 void BZDBCache::init()
@@ -127,17 +136,17 @@ void BZDBCache::init()
   drawSky = BZDB.isTrue(StateDatabase::BZDB_DRAWSKY);
 
   maxLOD = BZDB.eval(StateDatabase::BZDB_MAXLOD);
-  worldSize = getGoodPosValue(worldSize,BZDB.eval(StateDatabase::BZDB_WORLDSIZE));
+  worldSize = getGoodPosValue(worldSize,StateDatabase::BZDB_WORLDSIZE);
   radarLimit = BZDB.eval(StateDatabase::BZDB_RADARLIMIT);
-  gravity = getGoodNonZeroValue(gravity,BZDB.eval(StateDatabase::BZDB_GRAVITY));
-  tankWidth = getGoodPosValue(tankWidth,BZDB.eval(StateDatabase::BZDB_TANKWIDTH));
-  tankLength = getGoodPosValue(tankLength,BZDB.eval(StateDatabase::BZDB_TANKLENGTH));
-  tankHeight = getGoodPosValue(tankHeight,BZDB.eval(StateDatabase::BZDB_TANKHEIGHT));
-  tankSpeed = getGoodPosValue(tankSpeed,BZDB.eval(StateDatabase::BZDB_TANKSPEED));
-  tankRadius = getGoodPosValue(tankRadius,BZDB.eval(StateDatabase::BZDB_TANKRADIUS));
-  flagRadius = getGoodPosValue(flagRadius,BZDB.eval(StateDatabase::BZDB_FLAGRADIUS));
-  flagPoleSize = getGoodPosValue(flagPoleSize,BZDB.eval(StateDatabase::BZDB_FLAGPOLESIZE));
-  flagPoleWidth = getGoodPosValue(flagPoleWidth,BZDB.eval(StateDatabase::BZDB_FLAGPOLEWIDTH));
+  gravity = getGoodNonZeroValue(gravity,StateDatabase::BZDB_GRAVITY);
+  tankWidth = getGoodPosValue(tankWidth,StateDatabase::BZDB_TANKWIDTH);
+  tankLength = getGoodPosValue(tankLength,StateDatabase::BZDB_TANKLENGTH);
+  tankHeight = getGoodPosValue(tankHeight,StateDatabase::BZDB_TANKHEIGHT);
+  tankSpeed = getGoodPosValue(tankSpeed,StateDatabase::BZDB_TANKSPEED);
+  tankRadius = getGoodPosValue(tankRadius,StateDatabase::BZDB_TANKRADIUS);
+  flagRadius = getGoodPosValue(flagRadius,StateDatabase::BZDB_FLAGRADIUS);
+  flagPoleSize = getGoodPosValue(flagPoleSize,StateDatabase::BZDB_FLAGPOLESIZE);
+  flagPoleWidth = getGoodPosValue(flagPoleWidth,StateDatabase::BZDB_FLAGPOLEWIDTH);
 
   update();
 }
@@ -210,35 +219,35 @@ void BZDBCache::serverCallback(const std::string& name, void *)
     maxLOD = BZDB.eval(StateDatabase::BZDB_MAXLOD);
   }
   else if (name == StateDatabase::BZDB_WORLDSIZE) {
-    worldSize = getGoodPosValue(worldSize,BZDB.eval(StateDatabase::BZDB_WORLDSIZE));
+    worldSize = getGoodPosValue(worldSize,StateDatabase::BZDB_WORLDSIZE);
   }
   else if (name == StateDatabase::BZDB_RADARLIMIT) {
     radarLimit = BZDB.eval(StateDatabase::BZDB_RADARLIMIT);
   }
   else if (name == StateDatabase::BZDB_GRAVITY) {
-    gravity = getGoodNonZeroValue(gravity,BZDB.eval(StateDatabase::BZDB_GRAVITY));
+    gravity = getGoodNonZeroValue(gravity,StateDatabase::BZDB_GRAVITY);
   }
   else if (name == StateDatabase::BZDB_TANKWIDTH) {
-    tankWidth = getGoodPosValue(tankWidth,BZDB.eval(StateDatabase::BZDB_TANKWIDTH));
+    tankWidth = getGoodPosValue(tankWidth,StateDatabase::BZDB_TANKWIDTH);
   }
   else if (name == StateDatabase::BZDB_TANKLENGTH) {
-    tankLength = getGoodPosValue(tankLength,BZDB.eval(StateDatabase::BZDB_TANKLENGTH));
+    tankLength = getGoodPosValue(tankLength,StateDatabase::BZDB_TANKLENGTH);
   }
   else if (name == StateDatabase::BZDB_TANKHEIGHT) {
-    tankHeight = getGoodPosValue(tankHeight,BZDB.eval(StateDatabase::BZDB_TANKHEIGHT));
+    tankHeight = getGoodPosValue(tankHeight,StateDatabase::BZDB_TANKHEIGHT);
   }
   else if (name == StateDatabase::BZDB_TANKSPEED) {
-    tankSpeed = getGoodPosValue(tankSpeed,BZDB.eval(StateDatabase::BZDB_TANKSPEED));
+    tankSpeed = getGoodPosValue(tankSpeed,StateDatabase::BZDB_TANKSPEED);
   }
 // Why only in update() ?
 //  else if (name == StateDatabase::BZDB_FLAGRADIUS) {
 //    flagRadius = BZDB.eval(StateDatabase::BZDB_FLAGRADIUS);
 //  }
   else if (name == StateDatabase::BZDB_FLAGPOLESIZE) {
-    flagPoleSize = BZDB.eval(StateDatabase::BZDB_FLAGPOLESIZE);
+    flagPoleSize = getGoodPosValue(flagPoleSize,StateDatabase::BZDB_FLAGPOLESIZE);
   }
   else if (name == StateDatabase::BZDB_FLAGPOLEWIDTH) {
-    flagPoleWidth = BZDB.eval(StateDatabase::BZDB_FLAGPOLEWIDTH);
+    flagPoleWidth = getGoodPosValue(flagPoleWidth,StateDatabase::BZDB_FLAGPOLEWIDTH);
   }
 }
 
