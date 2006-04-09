@@ -2688,7 +2688,6 @@ static void		handleServerMessage(bool human, uint16_t code,
 	} else if (srcPlayer == myTank) {
 	  // don't play sounds for messages from self
 	    playSound = false;
-	  }
 	}
 	
 	// direct message to or from me
