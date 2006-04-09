@@ -30,12 +30,11 @@
 #  include "win32.h"
 #endif
 
-// FIXME - is this really still needed?
-//#define BZ_FD_SET(fd, set) FD_SET((unsigned int)fd, set)
-
 #include <stdio.h>
 #include <stdlib.h> //needed for bzfrand
 #include <math.h>
+#include <cmath>
+
 
 extern int debugLevel;
 // Like verbose debug messages? level 0 for development only
@@ -51,7 +50,7 @@ extern int debugLevel;
 #define NEAR_ZERO(_value,_epsilon)  ( ((_value) > -_epsilon) && ((_value) < _epsilon) )
 
 // seven places of precision is pretty safe, so something less precise
-#if defined(FLT_EPSILON)
+#ifdef FLT_EPSILON
 #  define ZERO_TOLERANCE FLT_EPSILON
 #else
 #  define ZERO_TOLERANCE 1.0e-06f
@@ -68,7 +67,7 @@ extern int debugLevel;
 #ifdef HAVE__STRNICMP
 #  define strncasecmp _strnicmp
 #endif
-#if !defined(HAVE_VSNPRINTF)
+#ifndef HAVE_VSNPRINTF
 #  ifdef HAVE__VSNPRINTF
 #    define vsnprintf _vsnprintf
 #  else
@@ -123,11 +122,10 @@ extern int debugLevel;
 #  define	tanf		(float)tan
 #endif
 
+
 // random number stuff
 #define bzfrand()	((double)rand() / ((double)RAND_MAX + 1.0))
 #define bzfsrand(_s)	srand(_s)
-
-#if !defined(_WIN32)
 
 #ifndef __BEOS__
 #  ifdef HAVE_VALUES_H
@@ -141,88 +139,131 @@ extern int debugLevel;
 #  define MAXLONG LONG_MAX
 #endif /* __BEOS__ */
 
-#include <sys/types.h>
+#ifdef HAVE_SYS_TYPES_H
+#  include <sys/types.h>
+#endif
+
+// need some integer types
+#ifdef HAVE_INTTYPES_H
+#  include <inttypes.h>
+#endif
 
 #ifdef HAVE_STDINT_H
 #  include <stdint.h>
-#endif
-
-#if defined(__linux) || (defined(__sgi) && !defined(__INTTYPES_MAJOR))
+#else
+#  if defined(__linux) || (defined(__sgi) && !defined(__INTTYPES_MAJOR))
 typedef u_int16_t	uint16_t;
 typedef u_int32_t	uint32_t;
-#endif
-
-#if defined(sun)
+#  endif
+#  if defined(sun)
 typedef signed short	int16_t;
 typedef ushort_t	uint16_t;
 typedef signed int	int32_t;
 typedef uint_t		uint32_t;
-#endif
-
-#endif
-
+#  endif
 typedef unsigned char	uint8_t;
+#endif
 
-#if defined( __BEOS__ )
 
 // missing constants
 
-#  ifndef MAXFLOAT
-#    define	MAXFLOAT	3.402823466e+38f
-#  endif
+#ifndef MAXFLOAT
+#  define	MAXFLOAT	3.402823466e+38f
+#endif
 
-#  ifndef M_PI
-#    define	M_PI		  3.14159265358979323846f
-#  endif
+#ifndef M_PI
+#  define	M_PI		3.14159265358979323846f
+#endif
 
-#  ifndef M_SQRT1_2
-#    define	M_SQRT1_2	0.70710678118654752440f
-#  endif
+#ifndef M_SQRT1_2
+#  define	M_SQRT1_2	0.70710678118654752440f
+#endif
 
-// need some integer types
-#  include <inttypes.h>
 
+#ifdef __BEOS__
 #  ifndef setenv
 #    define setenv(a,b,c)
 #  endif
-
 #  ifndef putenv
 #    define putenv(a)
 #  endif
-#endif /* defined( __BEOS__ ) */
+#endif /* __BEOS__ */
 
 #ifdef countof
 #  undef countof
 #endif
 #define countof(__x)   (sizeof(__x) / sizeof(__x[0]))
 
-#ifndef HAVE_STD__MAX
-#  ifdef max
-#    undef max
+
+#ifdef HAVE_STD__ISNAN
+#  ifdef isnan
+#    undef isnan
 #  endif
-namespace std
-{
-  template<typename comparable>
-  inline const comparable& max(const comparable& a, const comparable& b)
-  {
-    return  a < b ? b : a;
-  }
-}
-#endif
+#  define isnan std::isnan
+#elif defined(HAVE__ISNAN)
+#  ifdef isnan
+#    undef isnan
+#  endif
+#  define isnan _isnan
+#else
+#  ifndef HAVE_ISNAN
+#    ifdef __cplusplus
+#      ifdef isnan
+#        undef isnan
+#      endif
+       template<typename Tp>
+       inline int isnan(Tp f)
+       {
+         return (f!=f);
+       }
+#    else
+#      define isnan(f) ((f) != (f))
+#    endif /* __cplusplus */
+#  endif /* HAVE_ISNAN */
+#endif /* HAVE_STD__ISNAN */
+
+
+#ifndef HAVE_STD__MAX
+#  ifdef __cplusplus
+#    ifdef max
+#      undef max
+#    endif
+     namespace std
+     {
+       template<typename comparable>
+       inline const comparable& max(const comparable& a, const comparable& b)
+       {
+	 return  a < b ? b : a;
+       }
+     }
+#  else
+#    ifdef max
+#      undef max
+#    endif
+#    define max(a,b) a < b ? b : a
+#  endif /* __cplusplus */
+#endif /* HAVE_STD__MAX */
 
 #ifndef HAVE_STD__MIN
-#  ifdef min
-#    undef min
-#  endif
-namespace std
-{
-  template<typename comparable>
-  inline const comparable& min(const comparable& a, const comparable& b)
-  {
-    return b < a ? b : a;
-  }
-}
-#endif
+#  ifdef __cpluscplus
+#    ifdef min
+#      undef min
+#    endif
+     namespace std
+     {
+       template<typename comparable>
+       inline const comparable& min(const comparable& a, const comparable& b)
+       {
+	 return b < a ? b : a;
+       }
+     }
+#  else
+#    ifdef min
+#      undef min
+#    endif
+#    define min(a,b) b < a ? b : a
+#  endif /* __cplusplus */
+#endif /* HAVE_STD_MIN */
 
 #ifdef BUILD_REGEX
 #  include "bzregex.h"
@@ -230,9 +271,9 @@ namespace std
 #  include <regex.h>
 #else
 #  define regex_t void
-#endif
+#endif  /* BUILD_REGEX */
 
-#endif // BZF_COMMON_H
+#endif /* BZF_COMMON_H */
 
 
 // Local Variables: ***
