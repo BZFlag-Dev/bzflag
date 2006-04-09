@@ -33,7 +33,9 @@
 #include <stdio.h>
 #include <stdlib.h> //needed for bzfrand
 #include <math.h>
-#include <cmath>
+#ifdef __cplusplus
+#  include <cmath>
+#endif
 
 
 extern int debugLevel;
