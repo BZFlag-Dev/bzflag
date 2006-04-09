@@ -2678,12 +2678,21 @@ static void		handleServerMessage(bool human, uint16_t code,
 	  text = text.substr(2, text.size() - 4);
 	}
 
+	// play a sound on a message not from self or server
+	bool playSound = true;
+	if (fromServer) {
+	  // play no sounds from server if beeping is turned off
+	  if (!BZDB.isTrue("beepOnServerMsg")) {
+	    playSound = false;
+	  }
+	} else if (srcPlayer == myTank) {
+	  // don't play sounds for messages from self
+	    playSound = false;
+	  }
+	}
+	
 	// direct message to or from me
 	if (dstPlayer) {
-	  //if (fromServer && (origText == "You are now an administrator!"
-	  //		     || origText == "Password Accepted, welcome back."))
-	  //admin = true;
-
 	  // talking to myself? that's strange
 	  if (dstPlayer == myTank && srcPlayer == myTank) {
 	    fullMsg = text;
@@ -2713,12 +2722,6 @@ static void		handleServerMessage(bool human, uint16_t code,
 	      if (srcPlayer)
 		myTank->setRecipient(srcPlayer);
 
-	      // play a sound on a private message not from self or server
-
-		  bool playSound = !fromServer;
-		  if (BZDB.isSet("beepOnServerMsg") && BZDB.isTrue("beepOnServerMsg"))
-			  playSound = true;
-
 	      if (playSound) {
 		static TimeKeeper lastMsg = TimeKeeper::getSunGenesisTime();
 		if (TimeKeeper::getTick() - lastMsg > 2.0f)
@@ -2727,12 +2730,12 @@ static void		handleServerMessage(bool human, uint16_t code,
 	      }
 	    }
 	  }
-	} else {
+	} else { // !dstPlayer
 	  // team / admin message
 	  if (toAdmin) {
 
-	    // play a sound on a private message not from self or server
-	    if (!fromServer) {
+	    // play a sound on a private message
+	    if (playSound) {
 	      static TimeKeeper lastMsg = TimeKeeper::getSunGenesisTime();
 	      if (TimeKeeper::getTick() - lastMsg > 2.0f)
 		playLocalSound( SFX_MESSAGE_ADMIN );
@@ -2740,9 +2743,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 	    }
 
 	    fullMsg += "[Admin] ";
-	  }
-
-	  if (dstTeam != NoTeam) {
+	  } else if (dstTeam != NoTeam) {
 #ifdef BWSUPPORT
 	    fullMsg = "[to ";
 	    fullMsg += Team::getName(TeamColor(dstTeam));
@@ -2751,8 +2752,8 @@ static void		handleServerMessage(bool human, uint16_t code,
 	    fullMsg += "[Team] ";
 #endif
 
-	    // play a sound if I didn't send the message
-	    if (srcPlayer != myTank) {
+	    // play a sound on a team message
+	    if (playSound) {
 	      static TimeKeeper lastMsg = TimeKeeper::getSunGenesisTime();
 	      if (TimeKeeper::getTick() - lastMsg > 2.0f)
 		playLocalSound(SFX_MESSAGE_TEAM);
