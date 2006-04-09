@@ -4929,7 +4929,7 @@ static void setupFarPlane()
     }
   } else {
     const float dist = BZDB.eval("_cullDist");
-    if (!std::isnan(dist) && (dist > 0.0f)) {
+    if (!isnan(dist) && (dist > 0.0f)) {
       farDist = dist;
     } else {
       // default far plane
@@ -6092,7 +6092,7 @@ static void		playingLoop()
     if (BZDB.isTrue("saveEnergy")) {
       static TimeKeeper lastTime = TimeKeeper::getCurrent();
       const float fpsLimit = BZDB.eval("fpsLimit");
-      if ((fpsLimit >= 1.0f) && !std::isnan(fpsLimit)) {
+      if ((fpsLimit >= 1.0f) && !isnan(fpsLimit)) {
 	const float elapsed = float(TimeKeeper::getCurrent() - lastTime);
 	if (elapsed > 0.0f) {
 	  const float period = (1.0f / fpsLimit);
