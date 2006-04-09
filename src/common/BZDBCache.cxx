@@ -66,7 +66,7 @@ float BZDBCache::hudGUIBorderOpacityFactor;
 static float getGoodPosValue (float oldVal, const std::string var )
 {
 	float newVal = BZDB.eval(var);
-	if (std::isnan(newVal) || newVal < 0.0f)	// it's bad
+	if (std::isnan(newVal) || newVal <= 0.0f)	// it's bad
 	{
 		BZDB.setFloat(var,oldVal,BZDB.getPermission(var));
 		return oldVal;
