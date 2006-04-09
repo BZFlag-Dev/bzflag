@@ -744,6 +744,9 @@ AC_CHECK_FUNCS(\
 	wglGetCurrentContext \
 )
 
+dnl test for isnan() presence
+BZ_FUNC_ISNAN
+
 AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
 #include <algorithm>
 ]], [[
