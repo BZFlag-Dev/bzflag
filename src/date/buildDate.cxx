@@ -45,7 +45,7 @@
 
 // DEVEL | STABLE | MAINT
 #ifndef BZ_BUILD_TYPE
-#  define BZ_BUILD_TYPE		"RC1"
+#  define BZ_BUILD_TYPE		"STABLE"
 #endif
 
 const char *bzfcopyright = "Copyright (c) 1993 - 2006 Tim Riker";
