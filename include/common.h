@@ -17,9 +17,8 @@
 #ifndef BZF_COMMON_H
 #define	BZF_COMMON_H
 
-/* this should always be the very FIRST header */
-
-#ifdef _DEVCPP /* the Dev-C++ build is acting very stubborn; this is (hopefully) -temporary- */
+// this should always be the very FIRST header
+#ifdef _DEVCPP //the Dev-C++ build is acting very stubborn; this is (hopefully) -temporary-
 # include_next "config.h"
 #else
 # include "config.h"
@@ -32,7 +31,7 @@
 #endif
 
 #include <stdio.h>
-#include <stdlib.h> /* needed for bzfrand */
+#include <stdlib.h> //needed for bzfrand
 #include <math.h>
 #ifdef __cplusplus
 #  include <cmath>
@@ -40,7 +39,7 @@
 
 
 extern int debugLevel;
-/* Like verbose debug messages? level 0 for development only */
+// Like verbose debug messages? level 0 for development only
 #define DEBUG0 formatDebug
 #define DEBUG1 if (debugLevel >= 1) formatDebug
 #define DEBUG2 if (debugLevel >= 2) formatDebug
@@ -52,14 +51,14 @@ extern int debugLevel;
 */
 #define NEAR_ZERO(_value,_epsilon)  ( ((_value) > -_epsilon) && ((_value) < _epsilon) )
 
-/* seven places of precision is pretty safe, so something less precise */
+// seven places of precision is pretty safe, so something less precise
 #ifdef FLT_EPSILON
 #  define ZERO_TOLERANCE FLT_EPSILON
 #else
 #  define ZERO_TOLERANCE 1.0e-06f
 #endif
 
-/* Might we be BSDish? sys/param.h has BSD defined if so */
+// Might we be BSDish? sys/param.h has BSD defined if so
 #ifdef HAVE_SYS_PARAM_H
 #  include <sys/param.h>
 #endif
@@ -78,7 +77,7 @@ extern int debugLevel;
 #  endif
 #endif
 
-/* some platforms don't have float versions of the math library */
+// some platforms don't have float versions of the math library
 #ifndef HAVE_ASINF
 #  define	asinf		(float)asin
 #endif
@@ -126,7 +125,7 @@ extern int debugLevel;
 #endif
 
 
-/* random number stuff */
+// random number stuff
 #define bzfrand()	((double)rand() / ((double)RAND_MAX + 1.0))
 #define bzfsrand(_s)	srand(_s)
 
@@ -146,7 +145,7 @@ extern int debugLevel;
 #  include <sys/types.h>
 #endif
 
-/* need some integer types */
+// need some integer types
 #ifdef HAVE_INTTYPES_H
 #  include <inttypes.h>
 #endif
@@ -168,7 +167,7 @@ typedef unsigned char	uint8_t;
 #endif
 
 
-/* missing constants */
+// missing constants
 
 #ifndef MAXFLOAT
 #  define	MAXFLOAT	3.402823466e+38f
@@ -279,11 +278,10 @@ typedef unsigned char	uint8_t;
 #endif /* BZF_COMMON_H */
 
 
-/* Local Variables: ***
- * mode: C++ ***
- * tab-width: 8 ***
- * c-basic-offset: 2 ***
- * indent-tabs-mode: t ***
- * End: ***
- * ex: shiftwidth=2 tabstop=8
- */
+// Local Variables: ***
+// mode: C++ ***
+// tab-width: 8 ***
+// c-basic-offset: 2 ***
+// indent-tabs-mode: t ***
+// End: ***
+// ex: shiftwidth=2 tabstop=8
