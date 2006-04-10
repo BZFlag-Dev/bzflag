@@ -1,13 +1,12 @@
 			     BZFlag Release Notes
 			     ====================
 
-BZFlag 2.0.6
-------------
+BZFlag 2.0.6  "Good enough for now" (2006-04-09)
+------------------------------------------------
 
-* /set _tankSpeed and other tank and world based variables will no longer accept 
-  invalid values. - Jeff Myers
-* Special Effects use tank color, not team color =  Karsten Behrmann, Jeff Myers
-* /reset uses the values from the config and the map as default - Jeff Myers ( from patch )
+* game variables no longer accept invalid values. - Jeff Myers
+* Special Effects use tank (was team) color - Karsten Behrmann, Jeff Myers
+* /reset uses the values from the config and the map as default - Jeff Myers
 * Sreenshots now remember where they left off - Jeff Myers, Thomas Sowell 
 * Have windows dump std::error out to a file - Jeff Myers
 * Various API enhancmentes - Jeff Myers and others ( from patches )
