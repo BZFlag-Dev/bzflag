@@ -106,6 +106,13 @@ if test x$with_SDL != xno; then
   with_SDL=yes
 fi
 
+# check whether plugins are desired
+AC_ARG_ENABLE(plugins, [  --enable-plugins          turn on compilation of plugins])
+if test x$enable_plugins != xno ; then
+   AC_DEFINE(_USE_BZ_API, 1, [Enable plugins])
+fi
+AM_CONDITIONAL(BUILD_PLUGINS, test "x$enable_plugins" != "xno")
+
 dnl FIXME: need to move the rest of the ARGs up here too
 
 
@@ -131,12 +138,6 @@ if test "$CCACHE" ; then
 fi
 
 AC_CHECK_TOOL(WINDRES, windres, :)
-
-AC_ARG_ENABLE(plugins, [  --enable-plugins          turn on compilation of plugins])
-if test x$enable_plugins != xno ; then
-   AC_DEFINE(_USE_BZ_API, 1, [Enable plugins])
-fi
-AM_CONDITIONAL(BUILD_PLUGINS, test "x$enable_plugins" != "xno")
 
 # libtool shouldn't be generated until after LD is set.
 # AC_PROG_LIBTOOL goes poof in libtool 1.9, but that's not very
