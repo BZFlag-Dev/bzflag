@@ -346,8 +346,6 @@ cannot proceed.  A checklist of items to be completed follows:
 
 - All code is committed to CVS
 
-- misc/cvs2cl.pl -b -T should be run to update the ChangeLog.
-
 - NEWS includes a comment for all items added since the previous
   release, preferably denoting who made what changes.
 
@@ -364,7 +362,9 @@ cannot proceed.  A checklist of items to be completed follows:
 
 - Update and commit ChangeLog for changes since the last release.  Use
   YYYY-MM-DD date of the previous release, available in the NEWS file.
+  cvs2cl.pl method is preferred but either should do.
 
+  misc/cvs2cl.pl -b -T          --OR--
   rcs2log -h users.sourceforge.net -r "-d>YYYY-MM-DD" > ChangeLog
 
 - Perform a "make distcheck" on multiple (preferably all) platforms.
