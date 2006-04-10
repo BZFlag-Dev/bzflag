@@ -4,6 +4,7 @@
 BZFlag 2.1.0
 ------------
 
+* Researched and updated BZFlag contributors documentation - Sean Morrison
 * Message sounds consistenly don't play when from self - Sean Morrison
 * Input fixes and improvements (see ChangeLog) - Daniel Remenak, Workaphobia
 * Flag hiding work even when Identity flag is on - Alfredo Tupone
