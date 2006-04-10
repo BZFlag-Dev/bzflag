@@ -4333,6 +4333,7 @@ int main(int argc, char **argv)
       if (votingarbiter->knowsPoll()) {
 	char message[MessageLen];
 
+	std::string pollRequester = votingarbiter->getPollRequestor();
 	std::string target = votingarbiter->getPollTarget();
 	std::string action = votingarbiter->getPollAction();
 	std::string realIP = votingarbiter->getPollTargetIP();
@@ -4444,8 +4445,10 @@ int main(int argc, char **argv)
 	      /* regardless of whether or not the player was found, if the poll
 	       * is a ban poll, ban the weenie
 	       */
-	      if (action == "ban") {
-		clOptions->acl.ban(realIP.c_str(), target.c_str(), clOptions->banTime);
+	      if (action == "ban")
+		  {
+			 std::string reason = TextUtils::format("%s from a poll ban",target.c_str());
+			clOptions->acl.ban(realIP.c_str(), pollRequester.c_str(), clOptions->banTime, reason.c_str());
 	      }
 
 	      if ((action == "ban") || (action == "kick")) {
