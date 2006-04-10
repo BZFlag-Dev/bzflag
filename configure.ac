@@ -122,30 +122,15 @@ fi
 AC_PROG_MAKE_SET
 AC_PROG_CC
 AC_PROG_CXX
+AC_PROG_LN_S
 
 AC_PATH_PROG(CCACHE, ccache)
-if test "$CCACHE"
-then
+if test "$CCACHE" ; then
   CC="ccache $CC"
   CXX="ccache $CXX"
 fi
 
 AC_CHECK_TOOL(WINDRES, windres, :)
-
-dnl On SGI systems, figure out if we are using MIPSPro compiler
-using_mipspro=no
-if test "$build_vendor" = "sgi" ; then
-    AC_MSG_CHECKING([whether we are using the MIPSPro compiler])
-    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[]],
-	[[#if defined(sgi) && !defined(__GNUC__) && defined(_COMPILER_VERSION)
-this line should cause a compile failure when building with the MIPSpro compiler;
-#endif
-int main() { return 0; }
-    ]])],[using_mipspro=no],[using_mipspro=yes])
-    AC_MSG_RESULT([$using_mipspro])
-fi
-
-AC_PROG_LN_S
 
 AC_ARG_ENABLE(plugins, [  --enable-plugins          turn on compilation of plugins])
 if test x$enable_plugins != xno ; then
@@ -349,7 +334,6 @@ case $host_os in
      *) irix=false;;
 esac
 AM_CONDITIONAL(IRIX, $irix)
-AM_CONDITIONAL(BUGGY_MIPSPRO, test "x$using_mipspro" = "xyes")
 
 case $host_os in
      cygwin|mingw32*|windows**) win32=true;;
