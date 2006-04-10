@@ -389,7 +389,7 @@ cannot proceed.  A checklist of items to be completed follows:
   SourceForge.
 
 - Increment and commit the version number in the CVS source
-  configure.in file so that later builds are immediately
+  configure.ac file so that later builds are immediately
   distinguished.
 
 - Notify the following (at least):
@@ -397,8 +397,11 @@ cannot proceed.  A checklist of items to be completed follows:
 bzflag-users@lists.SourceForge.net
 news on http://BZFlag.org/
 news on http://sourceforge.net/projects/bzflag/
-http://slashdot.org/
 http://freshmeat.net/projects/bzflag/ (rank BZFlag here!)
+
+- Optionally notify the following:
+
+http://slashdot.org/
 http://happypenguin.org/ (BZFlag is now #2 in the ratings!)
 news@linuxgames.com - http://LinuxGames.com/
 John Gowin <jgowin@linuxorbit.com> (thanx for the review!)
