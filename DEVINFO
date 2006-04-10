@@ -362,6 +362,11 @@ cannot proceed.  A checklist of items to be completed follows:
 - Update package/win32/nsis/*.nsi (for windows) with appropriate
   version numbers
 
+- Update and commit ChangeLog for changes since the last release.  Use
+  YYYY-MM-DD date of the previous release, available in the NEWS file.
+
+  rcs2log -h users.sourceforge.net -r "-d>YYYY-MM-DD" > ChangeLog
+
 - Perform a "make distcheck" on multiple (preferably all) platforms.
   This will verify that a proper source distribution can be made.
   Also verify that all non-autotools builds build properly.
