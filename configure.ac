@@ -90,6 +90,9 @@ dnl ***********************
 dnl *** Check arguments ***
 dnl ***********************
 
+# provide a with-curses option, test for curses
+MP_WITH_CURSES
+
 # check for kerberos option
 AC_ARG_WITH(kerberos, [  --with-kerberos	  with Kerberos support])
 
@@ -113,7 +116,42 @@ if test x$enable_plugins != xno ; then
 fi
 AM_CONDITIONAL(BUILD_PLUGINS, test "x$enable_plugins" != "xno")
 
-dnl FIXME: need to move the rest of the ARGs up here too
+# check whether threads are desired
+AC_ARG_ENABLE(threads, [  --enable-threads        build with thread])
+if test x$enable_threads = xyes; then
+   AC_DEFINE(USE_THREADS, 1, [Use threads])
+   CONF_CPPFLAGS="$CONF_CPPFLAGS -D_REENTRANT"
+   LDFLAGS="$LDFLAGS -lpthread"
+fi
+
+# do we want bzadmin?
+AC_ARG_ENABLE(bzadmin, [  --disable-bzadmin       do not build text client])
+
+# build a binary set to stop functioning after some date
+AC_ARG_ENABLE(timebomb, [  --enable-timebomb       build exp Date])
+if test x$enable_timebomb = xyes; then
+   AC_DEFINE(TIME_BOMB, "3/13/1998", [Time Bomb expiration])
+fi
+
+AC_ARG_ENABLE(robots, [  --disable-robots        disable robots])
+if test x$enable_robots != xno; then
+  AC_DEFINE(ROBOT, 1, [Enabling Robots])
+fi
+
+AC_ARG_ENABLE(snapping, [  --disable-snapping      disable snapping])
+if test x$enable_snapping != xno; then
+  AC_DEFINE(SNAPPING, 1, [Enabling Snapping])
+fi
+
+AC_ARG_ENABLE(debug, [  --enable-debug          turn on debugging])
+AM_CONDITIONAL(DEBUG, test x$enable_debug = xyes)
+if test x$enable_debug = xyes; then
+   AC_DEFINE(DEBUG_RENDERING, 1, [Debug Rendering])
+   AC_ARG_ENABLE(profiling, [  --enable-profiling      turn on profiling])
+fi
+
+# do we want the bzflag  client?
+AC_ARG_ENABLE(client, [  --disable-client        servers-only build])
 
 
 dnl **************************
@@ -130,6 +168,9 @@ AC_PROG_MAKE_SET
 AC_PROG_CC
 AC_PROG_CXX
 AC_PROG_LN_S
+AC_CHECK_PROG(AR, ar, ar)
+AC_SUBST(AR)
+AC_SUBST(AR_FLAGS)
 
 AC_PATH_PROG(CCACHE, ccache)
 if test "$CCACHE" ; then
@@ -147,18 +188,11 @@ AC_LIBTOOL_DLOPEN
 AC_PROG_LIBTOOL
 AC_SUBST(LIBTOOL_DEPS)
 
-
 AC_CHECK_PROG(HASPOD2MAN, pod2man, yes, no)
 if test $HASPOD2MAN = no; then
   AC_MSG_WARN([some man pages will not be generated])
 fi
 AM_CONDITIONAL(HASPOD2MAN, test $HASPOD2MAN = yes)
-AC_CHECK_PROG(AR, ar, ar)
-AC_SUBST(AR)
-AC_SUBST(AR_FLAGS)
-
-AC_CHECK_LIB(z, compress, BUILDZLIB=no, BUILDZLIB=yes)
-AM_CONDITIONAL(BUILDZLIB, test $BUILDZLIB = yes)
 
   #checking for libcurl library
   MY_CURL
@@ -205,6 +239,18 @@ dnl *** Check for libraries ***
 dnl ***************************
 
 # FIXME: move library checks here
+
+AC_CHECK_LIB(z, compress, BUILDZLIB=no, BUILDZLIB=yes)
+AM_CONDITIONAL(BUILDZLIB, test $BUILDZLIB = yes)
+
+AC_CHECK_LIB(cares, ares_init, BUILDCARES=no, BUILDCARES=yes)
+AM_CONDITIONAL(BUILDCARES, test $BUILDCARES = yes)
+if test "x$BUILDCARES" = "xyes" ; then
+      AC_MSG_WARN([using an internal c-ares lib.])
+      AC_MSG_WARN([Consider installing an updated library at system level])
+      AC_MSG_WARN([link is http://daniel.haxx.se/projects/c-ares/])
+fi
+
 
 
 dnl *************************
@@ -549,42 +595,6 @@ AC_SUBST(INSTALL_DATA_DIR)
 desktopdir=`eval echo $datadir/applications`
 AC_SUBST(desktopdir)
 
-AC_ARG_ENABLE(threads, [  --enable-threads        build with thread])
-if test x$enable_threads = xyes; then
-   AC_DEFINE(USE_THREADS, 1, [Use threads])
-   CONF_CPPFLAGS="$CONF_CPPFLAGS -D_REENTRANT"
-   LDFLAGS="$LDFLAGS -lpthread"
-fi
-
-AC_CHECK_LIB(cares, ares_init, BUILDCARES=no, BUILDCARES=yes)
-AM_CONDITIONAL(BUILDCARES, test $BUILDCARES = yes)
-if test "x$BUILDCARES" = "xyes" ; then
-      AC_MSG_WARN([using an internal c-ares lib.])
-      AC_MSG_WARN([Consider installing an updated library at system level])
-      AC_MSG_WARN([link is http://daniel.haxx.se/projects/c-ares/])
-fi
-
-
-MP_WITH_CURSES
-# do we want bzadmin?
-AC_ARG_ENABLE(bzadmin, [  --disable-bzadmin       do not build text client])
-if test x$enable_bzadmin != xno; then
-    if test "x$CURSES_LIB" = x; then
-      AC_MSG_WARN([could not find a curses library, will build bzadmin without curses])
-    fi
-    AM_CONDITIONAL(BZADMIN_INCLUDED, true)
-else
-  AM_CONDITIONAL(BZADMIN_INCLUDED, false)
-fi
-AM_CONDITIONAL(HAVE_CURSES, test "x$CURSES_LIB" != x)
-AC_SUBST(CURSES_LIB)
-
-
-AC_ARG_ENABLE(timebomb, [  --enable-timebomb       build exp Date])
-if test x$enable_timebomb = xyes; then
-   AC_DEFINE(TIME_BOMB, "3/13/1998", [Time Bomb expiration])
-fi
-
 savedLIBS=$LIBS
 LIBS="$GLIBS $LIBS"
 AC_LANG(C)
@@ -632,38 +642,6 @@ fi
 AC_MSG_RESULT([$sdl_image_check])
 AC_SUBST(SDL_IMAGE_LIBS)
 LIBS=$tmpLIBS
-
-AC_ARG_ENABLE(debug, [  --enable-debug          turn on debugging])
-AM_CONDITIONAL(DEBUG, test x$enable_debug = xyes)
-if test x$enable_debug = xyes; then
-   AC_DEFINE(DEBUG_RENDERING, 1, [Debug Rendering])
-   AC_ARG_ENABLE(profiling, [  --enable-profiling      turn on profiling])
-fi
-
-AC_ARG_ENABLE(client, [  --disable-client        servers-only build])
-if test x$enable_client != xno; then
-  if test "$ac_cv_search_gluScaleImage" = no; then
-    AC_MSG_WARN(
-    [Client build has been requested, but GL is not fully available (missing gl.h)
-     ... disabling client generation])
-    AM_CONDITIONAL(CLIENT_INCLUDED, false)
-    enable_client=no
-  else
-    AM_CONDITIONAL(CLIENT_INCLUDED, true)
-  fi
-else
-  AM_CONDITIONAL(CLIENT_INCLUDED, false)
-fi
-
-AC_ARG_ENABLE(robots, [  --disable-robots        disable robots])
-if test x$enable_robots != xno; then
-  AC_DEFINE(ROBOT, 1, [Enabling Robots])
-fi
-
-AC_ARG_ENABLE(snapping, [  --disable-snapping      disable snapping])
-if test x$enable_snapping != xno; then
-  AC_DEFINE(SNAPPING, 1, [Enabling Snapping])
-fi
 
 
 dnl ******************************************
@@ -903,6 +881,33 @@ if test "x$with_kerberos" = "xyes" ; then
   fi
 fi
 AM_CONDITIONAL(HAVE_KRB5, test x$have_krb5 = xyes)
+
+# if the client was enabled, make sure we have GL
+if test x$enable_client != xno; then
+  if test "$ac_cv_search_gluScaleImage" = no; then
+    AC_MSG_WARN(
+    [Client build has been requested, but GL is not fully available (missing gl.h)
+     ... disabling client generation])
+    AM_CONDITIONAL(CLIENT_INCLUDED, false)
+    enable_client=no
+  else
+    AM_CONDITIONAL(CLIENT_INCLUDED, true)
+  fi
+else
+  AM_CONDITIONAL(CLIENT_INCLUDED, false)
+fi
+
+# if bzadmin was enabled, make sure we have curses.
+if test x$enable_bzadmin != xno; then
+    if test "x$CURSES_LIB" = x; then
+      AC_MSG_WARN([could not find a curses library, will build bzadmin without curses])
+    fi
+    AM_CONDITIONAL(BZADMIN_INCLUDED, true)
+else
+  AM_CONDITIONAL(BZADMIN_INCLUDED, false)
+fi
+AM_CONDITIONAL(HAVE_CURSES, test "x$CURSES_LIB" != x)
+AC_SUBST(CURSES_LIB)
 
 
 dnl **************************************
