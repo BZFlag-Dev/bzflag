@@ -22,6 +22,7 @@
 #include "FontManager.h"
 #include "BZDBCache.h"
 #include "OpenGLGState.h"
+#include "TextUtils.h"
 
 /* local implementation headers */
 #include "LocalPlayer.h"
@@ -512,12 +513,6 @@ void      ScoreboardRenderer::stringAppendNormalized (std::string *s, float n)
 }
 
 
-std::string continuedString (std::string s, unsigned int len){
-  if ( s.size() == len  )
-    s[len-1] = '~';
-  return s;
-}
-
 
 void			ScoreboardRenderer::drawPlayerScore(const Player* player,
 			    float x1, float x2, float x3, float xs, float y, 
@@ -599,11 +594,7 @@ void			ScoreboardRenderer::drawPlayerScore(const Player* player,
   // email in parenthesis
   if (player->getEmailAddress()[0] != '\0' && emailLen>0) {
     playerInfo += " (";
-
-//    playerInfo += std::string (player->getEmailAddress(), 0, emailLen);
-    playerInfo += continuedString (std::string (player->getEmailAddress(), 0, emailLen), emailLen);
-
-
+    playerInfo += TextUtils::str_trunc_continued (player->getEmailAddress(), emailLen);
     playerInfo += ")";
   }
   // carried flag
