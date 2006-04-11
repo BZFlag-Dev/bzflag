@@ -53,6 +53,7 @@ class World {
     bool		allowShakeWins() const;
     bool		allowRabbit() const;
     bool		allowHandicap() const;
+	bool		allowTeams() const;
     float		getWaterLevel() const;
     const BzMaterial*	getWaterMaterial() const;
     const BzMaterial*	getLinkMaterial() const;
@@ -193,6 +194,12 @@ class World {
 //
 // World
 //
+
+inline 	bool	World::allowTeams() const
+{
+	return (gameStyle & short(TrueFFAGameStyle)) == 0;
+}
+
 
 inline bool		World::allowTeamFlags() const
 {

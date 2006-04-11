@@ -76,6 +76,7 @@ void playerKilled(int victimIndex, int killerIndex, BlowedUpReason reason, int16
 void dropPlayerFlag(GameKeeper::Player &playerData, const float dropPos[3]);
 void captureFlag(int playerIndex, TeamColor teamCaptured);
 bool invalidPlayerAction(PlayerInfo &p, int t, const char *action);
+bool allowTeams ( void );
 
 typedef struct CheatProtectionOptions
 {

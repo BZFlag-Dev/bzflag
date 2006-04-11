@@ -2192,6 +2192,9 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
 // are the two teams foes with the current game style?
 bool areFoes(TeamColor team1, TeamColor team2)
 {
+	if (!allowTeams())
+		return true;
+
   return team1!=team2 || (team1==RogueTeam);
 }
 
@@ -2391,9 +2394,14 @@ static void checkTeamScore(int playerIndex, int teamIndex)
   }
 }
 
+bool allowTeams ( void )
+{
+	return !(clOptions->gameStyle & TrueFFAGameStyle);
+}
+
 bool checkForTeamKill ( GameKeeper::Player* killer,  GameKeeper::Player* victim, bool &teamkill  )
 {
-	if(!victim || !killer)
+	if(!allowTeams() || !victim || !killer)
 		return false;
 
 	// killing rabbit or killing anything when I am a dead ex-rabbit is allowed
@@ -2500,7 +2508,7 @@ void playerKilled(int victimIndex, int killerIndex, BlowedUpReason reason, int16
 	dieEvent.killerID = killerIndex;
 
 	if (killer)
-	dieEvent.killerTeam = convertTeam(killer->getTeam());
+		dieEvent.killerTeam = convertTeam(killer->getTeam());
 
 	dieEvent.flagKilledWith = flagType->flagAbbv;
 	victimData->getPlayerState(dieEvent.pos, dieEvent.rot);

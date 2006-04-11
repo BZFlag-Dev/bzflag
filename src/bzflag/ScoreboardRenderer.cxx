@@ -206,7 +206,7 @@ void	ScoreboardRenderer::render(bool forceDisplay)
     if (getHuntState() == HUNT_SELECTING){      // 'S' pressed while selecting ...
       exitSelectState ();
     }
-    if (BZDB.isTrue("alwaysShowTeamScores")){
+	if (BZDB.isTrue("alwaysShowTeamScores") && World::getWorld()->allowTeams()){
       OpenGLGState::resetState();
       renderTeamScores(winWidth, winY,
 	    FontManager::instance().getStrHeight(minorFontFace, minorFontSize, " "));
@@ -500,7 +500,9 @@ void			ScoreboardRenderer::renderScoreboard(void)
   }
 
   delete[] players;
-  renderTeamScores(winWidth, y0, dy);
+
+  if (World::getWorld()->allowTeams())
+	renderTeamScores(winWidth, y0, dy);
 }
 
 

@@ -130,6 +130,7 @@ const char *usageString =
 "[-synctime] "
 "[-synclocation] "
 "[-t] "
+"[-tffa] "
 "[-tftimeout <seconds>] "
 "[-time {<seconds>|endTime}] "
 "[-timemanual] "
@@ -229,6 +230,7 @@ const char *extraUsageString =
 "\t-synctime: synchronize time of day on all clients\n"
 "\t-synclocation: synchronize latitude and longitude on all clients\n"
 "\t-t: allow teleporters\n"
+"\t-tffa: teamless free-for-all game stye\n"
 "\t-tftimeout: set timeout for team flag zapping (default=30)\n"
 "\t-time: set time limit on each game in format of either seconds or ending time in x[x]:[xx:[xx]] format\n"
 "\t-timemanual: countdown for timed games is started with /countdown\n"
@@ -1061,7 +1063,15 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       options.useTeleporters = true;
       if (options.worldFile != "")
 	std::cerr << "-t is meaningless when using a custom world, ignoring" << std::endl;
-    } else if (strcmp(argv[i], "-tftimeout") == 0) {
+	} else if (strcmp(argv[i], "-tffa") == 0) {
+		// capture the flag style
+		options.gameStyle |= int(TrueFFAGameStyle);
+		if (options.gameStyle & int(RabbitChaseGameStyle)) {
+			options.gameStyle &= ~int(RabbitChaseGameStyle);
+			std::cerr << "True Free-for-all incompatible with Rabbit Chase" << std::endl;
+			std::cerr << "True Free-for-all assumed" << std::endl;
+		}
+	}else if (strcmp(argv[i], "-tftimeout") == 0) {
       // use team flag timeout
       checkArgc(1, i, argc, argv[i]);
       options.teamFlagTimeout = atoi(argv[i]);

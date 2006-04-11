@@ -701,7 +701,7 @@ static void doKeyPlaying(const BzfKeyEvent& key, bool pressed, bool haveBinding)
       char name[32];
       int msgno = (key.button - BzfKeyEvent::F1) + 1;
       PlayerId  to;
-      if (key.shift == BzfKeyEvent::ControlKey) {
+      if (key.shift == BzfKeyEvent::ControlKey && world->allowTeams()) {
 	sprintf(name, "quickTeamMessage%d", msgno);
 	to = myTank->getTeam();
       } else {
@@ -2044,9 +2044,8 @@ static void		handleServerMessage(bool human, uint16_t code,
 	  killerLocal->endShot(shotId, true);
 	}
 	if (victimPlayer && killerLocal != victimPlayer) {
-	  if ((victimPlayer->getTeam() == killerLocal->getTeam()) &&
-	      (killerLocal->getTeam() != RogueTeam) &&
-              !(killerPlayer == myTank && wasRabbit)) {
+		if ((victimPlayer->getTeam() == killerLocal->getTeam()) && (killerLocal->getTeam() != RogueTeam) && !(killerPlayer == myTank && wasRabbit) && World::getWorld()->allowTeams())
+	  {
             // teamkill
 	    if (killerPlayer == myTank) {
 	      hud->setAlert(1, "Don't kill teammates!!!", 3.0f, true);
@@ -2060,7 +2059,9 @@ static void		handleServerMessage(bool human, uint16_t code,
 		serverLink->sendMessage(victimPlayer->getId(), meaculpa);
 	      }
 	    }
-	  } else {
+	  }
+	  else
+	  {
 	    // enemy
 	    if (myTank->isAutoPilot()) {
 	      if (killerPlayer) {
@@ -2115,7 +2116,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 	}
 	else {
 	  std::string playerStr;
-	  if ((killerPlayer->getTeam() == victimPlayer->getTeam()) &&
+	  if (World::getWorld()->allowTeams() && (killerPlayer->getTeam() == victimPlayer->getTeam()) &&
 	      (killerPlayer->getTeam() != RogueTeam) &&
 	      (killerPlayer->getTeam() != ObserverTeam)) {
 	    playerStr += "teammate ";
@@ -2153,17 +2154,20 @@ static void		handleServerMessage(bool human, uint16_t code,
 	}
       }
 
-      // blow up if killer has genocide flag and i'm on same team as victim
-      // (and we're not rogues, unless in rabbit mode)
-      if (human && killerPlayer && victimPlayer && victimPlayer != myTank &&
-	  (victimPlayer->getTeam() == myTank->getTeam()) &&
-	  (myTank->getTeam() != RogueTeam) && shotId >= 0) {
-	// now see if shot was fired with a GenocideFlag
-	const ShotPath* shot = killerPlayer->getShot(int(shotId));
-	if (shot && shot->getFlag() == Flags::Genocide) {
-	  gotBlowedUp(myTank, GenocideEffect, killerPlayer->getId());
-	}
-      }
+	  if (World::getWorld()->allowTeams())	// geno only works in team games :)
+	  {
+		// blow up if killer has genocide flag and i'm on same team as victim
+		// (and we're not rogues, unless in rabbit mode)
+		if (human && killerPlayer && victimPlayer && victimPlayer != myTank &&
+		(victimPlayer->getTeam() == myTank->getTeam()) &&
+		(myTank->getTeam() != RogueTeam) && shotId >= 0) {
+		// now see if shot was fired with a GenocideFlag
+		const ShotPath* shot = killerPlayer->getShot(int(shotId));
+		if (shot && shot->getFlag() == Flags::Genocide) {
+		gotBlowedUp(myTank, GenocideEffect, killerPlayer->getId());
+		}
+		}
+	  }
 
 #ifdef ROBOT
       // blow up robots on victim's team if shot was genocide

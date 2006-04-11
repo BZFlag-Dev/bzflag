@@ -584,8 +584,16 @@ static std::string cmdSend(const std::string&,
     msgDestination = AllPlayers;
     composePrompt = "Send to all: ";
   } else if (args[0] == "team") {
-    msgDestination = myTank->getTeam();
-    composePrompt = "Send to teammates: ";
+	if (World::getWorld()->allowTeams())
+	{
+		msgDestination = myTank->getTeam();
+		composePrompt = "Send to teammates: ";
+	}
+	else
+	{
+		msgDestination = AllPlayers;
+		composePrompt = "Send to all: ";
+	}
   } else if (args[0] == "nemesis") {
     const Player* nemesis = myTank->getNemesis();
     if (!nemesis)

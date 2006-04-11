@@ -87,6 +87,7 @@ bzfs \- BZFlag game server
 [\fB\-sw \fIcount\fR]
 [\fB\-synctime\fR]
 [\fB\-t\fR]
+[\fB\-tffa\fR]
 [\fB\-tftimeout \fItime\-limit\fR]
 [\fB\-time {\fItime\-limit\fR|\fIending-time\fR}]
 [\fB\-timemanual\fR]
@@ -449,6 +450,9 @@ the clients.
 .TP 
 .B \-t
 Adds teleporters to the game.
+.TP 
+.B \-tffa
+Enables the True\-Free\-for\-All style game. This is a teamless game mode.
 .TP 
 \fB\-tftimeout \fItime\-limit\fR
 If the last player in a team leaves while someone else is carrying the team
