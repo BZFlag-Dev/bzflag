@@ -381,6 +381,7 @@ case $host_os in
      *) irix=false;;
 esac
 AM_CONDITIONAL(IRIX, $irix)
+AM_CONDITIONAL(BUGGY_MIPSPRO, test "x$using_mipspro" = "xyes")
 
 case $host_os in
      cygwin|mingw32*|windows**) win32=true;;
