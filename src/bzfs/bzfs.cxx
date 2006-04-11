@@ -2396,7 +2396,7 @@ static void checkTeamScore(int playerIndex, int teamIndex)
 
 bool allowTeams ( void )
 {
-	return !(clOptions->gameStyle & TrueFFAGameStyle);
+	return !(clOptions->gameStyle & OpenFFAGameStyle);
 }
 
 bool checkForTeamKill ( GameKeeper::Player* killer,  GameKeeper::Player* victim, bool &teamkill  )

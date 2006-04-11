@@ -197,7 +197,7 @@ class World {
 
 inline 	bool	World::allowTeams() const
 {
-	return (gameStyle & short(TrueFFAGameStyle)) == 0;
+	return (gameStyle & short(OpenFFAGameStyle)) == 0;
 }
 
 

@@ -431,8 +431,8 @@ void ServerMenu::pick()
     ((HUDuiLabel*)listHUD[9])->setString("Classic Capture-the-Flag");
   else if (ping.gameStyle & RabbitChaseGameStyle)
     ((HUDuiLabel*)listHUD[9])->setString("Rabbit Chase");
-  else if (ping.gameStyle & TrueFFAGameStyle)
-	  ((HUDuiLabel*)listHUD[9])->setString("Free-For-All");
+  else if (ping.gameStyle & OpenFFAGameStyle)
+	  ((HUDuiLabel*)listHUD[9])->setString("Open (Teamless) Free-For-All");
   else
     ((HUDuiLabel*)listHUD[9])->setString("Team Free-For-All");
 

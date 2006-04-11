@@ -78,10 +78,10 @@ const int		MaxMotionSize = 37;		// motion zone size
 
 // game styles
 enum GameStyle {
-  TeamFFAGameStyle =	 0x0000,
+  TeamFFAGameStyle =	 0x0000, // team free-for-all
   ClassicCTFGameStyle =	 0x0001, // capture the flag
   SuperFlagGameStyle =	 0x0002, // superflags allowed
-  TrueFFAGameStyle =	 0x0004, // used to be rogue, but now we have rogue maxplayers
+  OpenFFAGameStyle =	 0x0004, // Teamless free-for-all
   JumpingGameStyle =	 0x0008, // jumping allowed
   InertiaGameStyle =	 0x0010, // momentum for all
   RicochetGameStyle =	 0x0020, // all shots ricochet

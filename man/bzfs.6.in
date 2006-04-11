@@ -54,6 +54,7 @@ bzfs \- BZFlag game server
 [\fB\-ms \fIshots\fR]
 [\fB\-mts \fR\fImax\-score\fR]
 [\fB\-noMasterBanlist\fR]
+[\fB\-offa\fR]
 [\fB\-p \fIport\fR]
 [\fB\-passdb \fIfile\fR]
 [\fB\-passwd \fIpassword\fR]
@@ -87,7 +88,6 @@ bzfs \- BZFlag game server
 [\fB\-sw \fIcount\fR]
 [\fB\-synctime\fR]
 [\fB\-t\fR]
-[\fB\-tffa\fR]
 [\fB\-tftimeout \fItime\-limit\fR]
 [\fB\-time {\fItime\-limit\fR|\fIending-time\fR}]
 [\fB\-timemanual\fR]
@@ -287,6 +287,10 @@ declared the winner and the game is over.
 .B \-noMasterBanlist
 Server will not attempt to load the master ban list from the internet.
 .TP 
+.B \-offa
+Enables the Open\-Free\-for\-All style game. This is a teamless mode, similar to 
+the classic deathmatch in other games.
+.TP 
 \fB\-p \fIport\fR
 Listen for game connections on \fIport\fR instead of the default port.
 Use \fB\-help\fR to print the default port, or use \fB\-d\fR debug printing.
@@ -450,9 +454,6 @@ the clients.
 .TP 
 .B \-t
 Adds teleporters to the game.
-.TP 
-.B \-tffa
-Enables the True\-Free\-for\-All style game. This is a teamless game mode.
 .TP 
 \fB\-tftimeout \fItime\-limit\fR
 If the last player in a team leaves while someone else is carrying the team
