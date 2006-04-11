@@ -170,7 +170,7 @@ void* WorldBuilder::unpack(void* buf)
   world->links.doLinking();
 
   // make the team bases
-  if (world->gameStyle & TeamFlagGameStyle) {
+  if (world->gameStyle & ClassicCTFGameStyle) {
     const ObstacleList& bases = OBSTACLEMGR.getBases();
     for (i = 0; i < bases.size(); i++) {
       const BaseBuilding* base = (const BaseBuilding*) bases[i];

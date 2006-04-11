@@ -196,7 +196,7 @@ class World {
 
 inline bool		World::allowTeamFlags() const
 {
-  return (gameStyle & short(TeamFlagGameStyle)) != 0;
+  return (gameStyle & short(ClassicCTFGameStyle)) != 0;
 }
 
 inline bool		World::allowSuperFlags() const

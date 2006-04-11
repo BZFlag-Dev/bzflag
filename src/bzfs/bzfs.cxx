@@ -705,7 +705,7 @@ static bool defineWorld()
     world = reader->defineWorldFromFile();
     delete reader;
 
-    if (clOptions->gameStyle & TeamFlagGameStyle) {
+    if (clOptions->gameStyle & ClassicCTFGameStyle) {
       for (int i = RedTeam; i <= PurpleTeam; i++) {
 	if ((clOptions->maxTeam[i] > 0) && bases.find(i) == bases.end()) {
 	  std::cerr << "base was not defined for "
@@ -718,14 +718,14 @@ static bool defineWorld()
   } else {
     // check and see if anyone wants to define the world from an event
     bz_GenerateWorldEventData_V1	worldData;
-    worldData.ctf  = clOptions->gameStyle & TeamFlagGameStyle;
+    worldData.ctf  = clOptions->gameStyle & ClassicCTFGameStyle;
     worldData.time = TimeKeeper::getCurrent().getSeconds();
 
     world = new WorldInfo;
     worldEventManager.callEvents(bz_eGenerateWorldEvent, &worldData);
     if (!worldData.handled) {
       delete world;
-      if (clOptions->gameStyle & TeamFlagGameStyle)
+      if (clOptions->gameStyle & ClassicCTFGameStyle)
 	world = defineTeamWorld();
       else
 	world = defineRandomWorld();
@@ -837,7 +837,7 @@ static bool saveWorldCache()
 
 TeamColor whoseBase(float x, float y, float z)
 {
-  if (!(clOptions->gameStyle & TeamFlagGameStyle))
+  if (!(clOptions->gameStyle & ClassicCTFGameStyle))
     return NoTeam;
 
   float highest = -1;
@@ -1685,7 +1685,7 @@ void addPlayer(int playerIndex, GameKeeper::Player *playerData)
     return;
 
   // player is signing on (has already connected via addClient).
-  playerData->signingOn((clOptions->gameStyle & TeamFlagGameStyle) != 0);
+  playerData->signingOn((clOptions->gameStyle & ClassicCTFGameStyle) != 0);
 
   // update team state and if first player on team, reset it's score
   int teamIndex = int(playerData->player.getTeam());
@@ -1759,7 +1759,7 @@ void addPlayer(int playerIndex, GameKeeper::Player *playerData)
   // if first player on team add team's flag
   if (team[teamIndex].team.size == 1
       && Team::isColorTeam((TeamColor)teamIndex)) {
-    if (clOptions->gameStyle & int(TeamFlagGameStyle)) {
+    if (clOptions->gameStyle & int(ClassicCTFGameStyle)) {
       int flagid = FlagInfo::lookupFirstTeamFlag(teamIndex);
       if (flagid >= 0 && !FlagInfo::get(flagid)->exist()) {
 	// reset those flags
@@ -2128,7 +2128,7 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
     // is carrying it
     if (Team::isColorTeam((TeamColor)teamNum)
 	&& team[teamNum].team.size == 0 &&
-	(clOptions->gameStyle & int(TeamFlagGameStyle))) {
+	(clOptions->gameStyle & int(ClassicCTFGameStyle))) {
       int flagid = FlagInfo::lookupFirstTeamFlag(teamNum);
       if (flagid >= 0) {
 	GameKeeper::Player *otherData;
@@ -2339,7 +2339,7 @@ void playerAlive(int playerIndex)
   SpawnPosition spawnPosition
     (playerIndex,
      (!clOptions->respawnOnBuildings) || (playerData->player.isBot()),
-     clOptions->gameStyle & TeamFlagGameStyle);
+     clOptions->gameStyle & ClassicCTFGameStyle);
 
   // see if there is anyone to handle the spawn event, and if they want to change it.
   bz_GetPlayerSpawnPosEventData_V1	spawnData;
@@ -2537,7 +2537,7 @@ void playerKilled(int victimIndex, int killerIndex, BlowedUpReason reason, int16
     // flag mode.
     // Team score is even not used on RabbitChase
     int winningTeam = (int)NoTeam;
-    if (!(clOptions->gameStyle & (TeamFlagGameStyle | RabbitChaseGameStyle)))
+    if (!(clOptions->gameStyle & (ClassicCTFGameStyle | RabbitChaseGameStyle)))
 	{
       int killerTeam = -1;
       if (killer && victim->getTeam() == killer->getTeam())
@@ -4200,7 +4200,7 @@ int main(int argc, char **argv)
 
 	  // kill any players that are playing already
 	  GameKeeper::Player *player;
-	  if (clOptions->gameStyle & int(TeamFlagGameStyle)) {
+	  if (clOptions->gameStyle & int(ClassicCTFGameStyle)) {
 	    for (int j = 0; j < curMaxPlayers; j++) {
 	      void *buf, *bufStart = getDirectMessageBuffer();
 	      player = GameKeeper::Player::getPlayerByIndex(j);
@@ -4576,7 +4576,7 @@ int main(int argc, char **argv)
     }
 
     // check team flag timeouts
-    if (clOptions->gameStyle & TeamFlagGameStyle) {
+    if (clOptions->gameStyle & ClassicCTFGameStyle) {
       for (i = RedTeam; i < CtfTeams; ++i) {
 	if (team[i].flagTimeout - tm < 0 && team[i].team.size == 0) {
 	  int flagid = FlagInfo::lookupFirstTeamFlag(i);

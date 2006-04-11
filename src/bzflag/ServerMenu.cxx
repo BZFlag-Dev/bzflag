@@ -242,7 +242,7 @@ void ServerMenu::setSelected(int index)
 	  if ((server.ping.observerMax == 16) &&
 	      (server.ping.maxPlayers == 200)) {
 	    fullLabel += ANSI_STR_FG_CYAN "*  "; // replay
-	  } else if (gameStyle & TeamFlagGameStyle) {
+	  } else if (gameStyle & ClassicCTFGameStyle) {
 	    fullLabel += ANSI_STR_FG_RED "*  "; // ctf
 	  } else if (gameStyle & RabbitChaseGameStyle) {
 	    fullLabel += ANSI_STR_FG_WHITE "*  "; // white rabbit
@@ -297,7 +297,7 @@ void ServerMenu::setSelected(int index)
 	  // colorize servers: many shots->red, jumping->green, CTF->blue
 	  const float rf = std::min(1.0f, logf(server.ping.maxShots) / logf(20.0f));
 	  const float gf = gameStyle & JumpingGameStyle ? 1.0f : 0.0f;
-	  const float bf = gameStyle & TeamFlagGameStyle ? 1.0f : 0.0f;
+	  const float bf = gameStyle & ClassicCTFGameStyle ? 1.0f : 0.0f;
 	  label->setColor(0.5f + rf * 0.5f, 0.5f + gf * 0.5f, 0.5f + bf * 0.5f);
 	}
 
@@ -427,12 +427,14 @@ void ServerMenu::pick()
   else
     ((HUDuiLabel*)listHUD[8])->setString("{1} Shots", &args );
 
-  if (ping.gameStyle & TeamFlagGameStyle)
-    ((HUDuiLabel*)listHUD[9])->setString("Capture-the-Flag");
+  if (ping.gameStyle & ClassicCTFGameStyle)
+    ((HUDuiLabel*)listHUD[9])->setString("Classic Capture-the-Flag");
   else if (ping.gameStyle & RabbitChaseGameStyle)
     ((HUDuiLabel*)listHUD[9])->setString("Rabbit Chase");
+  else if (ping.gameStyle & TrueFFAGameStyle)
+	  ((HUDuiLabel*)listHUD[9])->setString("Free-For-All");
   else
-    ((HUDuiLabel*)listHUD[9])->setString("Free-style");
+    ((HUDuiLabel*)listHUD[9])->setString("Team Free-For-All");
 
   if (ping.gameStyle & SuperFlagGameStyle)
     ((HUDuiLabel*)listHUD[10])->setString("Super Flags");

@@ -153,7 +153,7 @@ const char *extraUsageString =
 "\t-badwords: bad-world file\n"
 "\t-ban ip{,ip}*: ban players based on ip address\n"
 "\t-banfile: specify a file to load and store the banlist in\n"
-"\t-c: capture-the-flag style game,\n"
+"\t-c: classic capture-the-flag style game,\n"
 "\t-cache: url to get binary formatted world\n"
 "\t-cacheout: generate a binary cache file\n"
 "\t-conf: configuration file\n"
@@ -575,7 +575,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       }
     } else if (strcmp(argv[i], "-c") == 0) {
       // capture the flag style
-      options.gameStyle |= int(TeamFlagGameStyle);
+      options.gameStyle |= int(ClassicCTFGameStyle);
       if (options.gameStyle & int(RabbitChaseGameStyle)) {
 	options.gameStyle &= ~int(RabbitChaseGameStyle);
 	std::cerr << "Capture the flag incompatible with Rabbit Chase" << std::endl;
@@ -607,7 +607,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       // CTF with random world
       options.randomCTF = true;
       // capture the flag style
-      options.gameStyle |= int(TeamFlagGameStyle);
+      options.gameStyle |= int(ClassicCTFGameStyle);
       if (options.gameStyle & int(RabbitChaseGameStyle)) {
 	options.gameStyle &= ~int(RabbitChaseGameStyle);
 	std::cerr << "Capture the flag incompatible with Rabbit Chase" << std::endl;
@@ -903,8 +903,8 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
     } else if (strcmp(argv[i], "-rabbit") == 0) {
       // rabbit chase style
       options.gameStyle |= int(RabbitChaseGameStyle);
-      if (options.gameStyle & int(TeamFlagGameStyle)) {
-	options.gameStyle &= ~int(TeamFlagGameStyle);
+      if (options.gameStyle & int(ClassicCTFGameStyle)) {
+	options.gameStyle &= ~int(ClassicCTFGameStyle);
 	std::cerr << "Rabbit Chase incompatible with Capture the flag" << std::endl;
 	std::cerr << "Rabbit Chase assumed" << std::endl;;
       }
@@ -1270,7 +1270,7 @@ void finalizeParsing(int /*argc*/, char **argv,
     forbidden.insert(Flags::Colorblindness);
     forbidden.insert(Flags::Masquerade);
   }
-  if ((options.gameStyle & TeamFlagGameStyle) == 0) {
+  if ((options.gameStyle & ClassicCTFGameStyle) == 0) {
     forbidden.insert(Flags::RedTeam);
     forbidden.insert(Flags::GreenTeam);
     forbidden.insert(Flags::BlueTeam);
@@ -1307,7 +1307,7 @@ void finalizeParsing(int /*argc*/, char **argv,
   };
 
   // make sure there is at least one team flag for each active team
-  if (options.gameStyle & TeamFlagGameStyle) {
+  if (options.gameStyle & ClassicCTFGameStyle) {
     for (int col = RedTeam; col <= PurpleTeam; col++) {
       if ((options.maxTeam[col] > 0) &&
 	  (options.numTeamFlags[col] <= 0) &&
@@ -1351,7 +1351,7 @@ void finalizeParsing(int /*argc*/, char **argv,
   // allocate space for extra flags
   numFlags = options.numExtraFlags;
   // allocate space for team flags
-  if (options.gameStyle & TeamFlagGameStyle) {
+  if (options.gameStyle & ClassicCTFGameStyle) {
     for (int col = RedTeam; col <= PurpleTeam; col++) {
       if (options.maxTeam[col] > 0) {
 	numFlags += options.numTeamFlags[col];
@@ -1379,7 +1379,7 @@ void finalizeParsing(int /*argc*/, char **argv,
 
   // add team flags (ordered)
   int f = 0;
-  if (options.gameStyle & TeamFlagGameStyle) {
+  if (options.gameStyle & ClassicCTFGameStyle) {
     if (options.maxTeam[RedTeam] > 0) {
       f = addZoneTeamFlags(f, Flags::RedTeam, entryZones, forbidden);
       for (int n = 0; n < options.numTeamFlags[RedTeam]; n++) {
@@ -1445,7 +1445,7 @@ void finalizeParsing(int /*argc*/, char **argv,
   }
 
   // sum the sources of team flags
-  if (options.gameStyle & TeamFlagGameStyle) {
+  if (options.gameStyle & ClassicCTFGameStyle) {
     for (int col = RedTeam; col <= PurpleTeam; col++) {
       options.numTeamFlags[col] += zoneTeamFlagCounts[col];
     }
@@ -1454,7 +1454,7 @@ void finalizeParsing(int /*argc*/, char **argv,
 
   // debugging
   DEBUG1("style: %x\n", options.gameStyle);
-  if (options.gameStyle & int(TeamFlagGameStyle))
+  if (options.gameStyle & int(ClassicCTFGameStyle))
     DEBUG1("  capture the flag\n");
   if (options.gameStyle & int(RabbitChaseGameStyle))
     DEBUG1("  rabbit chase\n");
