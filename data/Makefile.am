@@ -1,4 +1,4 @@
-SUBDIRS = l10n fonts
+SUBDIRS = l10n fonts skins
 
 EXTRA_DIST =			\
 	automatic_icon.png	\

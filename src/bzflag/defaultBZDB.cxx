@@ -134,14 +134,14 @@ DefaultDBItem	defaultDBItems[] = {
   { "baseWallTexture",		"basewall",		true,	StateDatabase::ReadWrite,	NULL },
 
   // team prefixes
-  { "redTeamPrefix",		"red_",			true,	StateDatabase::ReadWrite,	NULL },
-  { "blueTeamPrefix",		"blue_",		true,	StateDatabase::ReadWrite,	NULL },
-  { "greenTeamPrefix",		"green_",		true,	StateDatabase::ReadWrite,	NULL },
-  { "purpleTeamPrefix",		"purple_",		true,	StateDatabase::ReadWrite,	NULL },
-  { "rabbitTeamPrefix",		"rabbit_",		true,	StateDatabase::ReadWrite,	NULL },
-  { "hunterTeamPrefix",		"hunter_",		true,	StateDatabase::ReadWrite,	NULL },
-  { "rogueTeamPrefix",		"rogue_",		true,	StateDatabase::ReadWrite,	NULL },
-  { "observerTeamPrefix",	"observer_",		true,	StateDatabase::ReadWrite,	NULL },
+  { "redTeamPrefix",		"skins/red/",			true,	StateDatabase::ReadWrite,	NULL },
+  { "blueTeamPrefix",		"skins/blue/",		true,	StateDatabase::ReadWrite,	NULL },
+  { "greenTeamPrefix",		"skins/green/",		true,	StateDatabase::ReadWrite,	NULL },
+  { "purpleTeamPrefix",		"skins/purple/",		true,	StateDatabase::ReadWrite,	NULL },
+  { "rabbitTeamPrefix",		"skins/rabbit/",		true,	StateDatabase::ReadWrite,	NULL },
+  { "hunterTeamPrefix",		"skins/hunter/",		true,	StateDatabase::ReadWrite,	NULL },
+  { "rogueTeamPrefix",		"skins/rogue/",		true,	StateDatabase::ReadWrite,	NULL },
+  { "observerTeamPrefix",	"skins/observer/",		true,	StateDatabase::ReadWrite,	NULL },
 
   // type prefixes
   { "superPrefix",		"super_",		true,	StateDatabase::ReadWrite,	NULL },

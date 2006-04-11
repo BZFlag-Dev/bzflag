@@ -918,14 +918,14 @@ static void writeDefaultOBJMaterials(std::ostream& out)
     {"telefront",	"telelink.png",		{1.0f, 0.0f, 0.0f, 0.5f}},
     {"teleback",	"telelink.png",		{0.0f, 1.0f, 0.0f, 0.5f}},
     {"telerim",		"caution.png",		{1.0f, 1.0f, 0.0f, 0.5f}},
-    {"basetop_team1",	"red_basetop.png",	{1.0f, 0.8f, 0.8f, 1.0f}},
-    {"basewall_team1",	"red_basewall.png",	{1.0f, 0.8f, 0.8f, 1.0f}},
-    {"basetop_team2",	"green_basetop.png",	{0.8f, 1.0f, 0.8f, 1.0f}},
-    {"basewall_team2",	"green_basewall.png",	{0.8f, 1.0f, 0.8f, 1.0f}},
-    {"basetop_team3",	"blue_basetop.png",	{0.8f, 0.8f, 1.0f, 1.0f}},
-    {"basewall_team3",	"blue_basewall.png",	{0.8f, 0.8f, 1.0f, 1.0f}},
-    {"basetop_team4",	"purple_basetop.png",	{1.0f, 0.8f, 1.0f, 1.0f}},
-    {"basewall_team4",	"purple_basewall.png",	{1.0f, 0.8f, 1.0f, 1.0f}}
+    {"basetop_team1",	"red\basetop.png",	{1.0f, 0.8f, 0.8f, 1.0f}},
+    {"basewall_team1",	"red\basewall.png",	{1.0f, 0.8f, 0.8f, 1.0f}},
+    {"basetop_team2",	"green\basetop.png",	{0.8f, 1.0f, 0.8f, 1.0f}},
+    {"basewall_team2",	"green\basewall.png",	{0.8f, 1.0f, 0.8f, 1.0f}},
+    {"basetop_team3",	"blue\basetop.png",	{0.8f, 0.8f, 1.0f, 1.0f}},
+    {"basewall_team3",	"blue\basewall.png",	{0.8f, 0.8f, 1.0f, 1.0f}},
+    {"basetop_team4",	"purple\basetop.png",	{1.0f, 0.8f, 1.0f, 1.0f}},
+    {"basewall_team4",	"purple\basewall.png",	{1.0f, 0.8f, 1.0f, 1.0f}}
   };
   const int count = sizeof(defaultMats) / sizeof(defaultMats[0]);
   BzMaterial mat;
