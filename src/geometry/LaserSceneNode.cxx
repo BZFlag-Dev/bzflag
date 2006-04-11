@@ -44,12 +44,23 @@ LaserSceneNode::LaserSceneNode(const GLfloat pos[3], const GLfloat forward[3]) :
   OpenGLGStateBuilder builder(gstate);
   builder.setCulling(GL_NONE);
   gstate = builder.getState();
+
+  first = false;
+  setColor(1,1,1);
 }
 
 LaserSceneNode::~LaserSceneNode()
 {
   // do nothing
 }
+
+void	LaserSceneNode::setColor ( GLfloat r, GLfloat g, GLfloat b )
+{
+	color[0] = r;
+	color[1] = g;
+	color[2] = b;
+}
+
 
 void			LaserSceneNode::setTexture(const int texture)
 {
@@ -115,6 +126,54 @@ LaserSceneNode::LaserRenderNode::~LaserRenderNode()
 }
 
 void			LaserSceneNode::LaserRenderNode::render()
+{
+	if (RENDERER.useQuality() >= _EXPEREMENTAL_QUALITY)
+		renderGeoLaser();
+	else
+		renderFlatLaser();
+}
+
+
+void LaserSceneNode::LaserRenderNode::renderGeoLaser ( void )
+{
+	const GLfloat length = sceneNode->length;
+	const GLfloat* sphere = sceneNode->getSphere();
+	glPushMatrix();
+	glTranslatef(sphere[0], sphere[1], sphere[2]);
+	glRotatef(sceneNode->azimuth, 0.0f, 0.0f, 1.0f);
+	glRotatef(sceneNode->elevation, 0.0f, 1.0f, 0.0f);
+	glRotatef(90, 0.0f, 1.0f, 0.0f);
+
+	glDisable(GL_TEXTURE_2D);
+
+	myColor4f(sceneNode->color[0], sceneNode->color[1], sceneNode->color[2], 0.5f);
+	gluCylinder(gluNewQuadric(),0.125f,0.5f,length,10,1);
+	addTriangleCount(20);
+
+	myColor4f(sceneNode->color[0], sceneNode->color[1], sceneNode->color[2], 0.35f);
+	gluCylinder(gluNewQuadric(),0.25f,0.5f,length,16,1);
+	addTriangleCount(32);
+
+	myColor4f(sceneNode->color[0], sceneNode->color[1], sceneNode->color[2], 0.25f);
+	gluCylinder(gluNewQuadric(),0.5f,0.5f,length,24,1);
+	addTriangleCount(48);
+
+	myColor4f(sceneNode->color[0], sceneNode->color[1], sceneNode->color[2], 0.10f);
+	gluCylinder(gluNewQuadric(),0.75f,0.75f,length,32,1);
+	addTriangleCount(64);
+
+	if (sceneNode->first)
+	{
+		myColor4f(sceneNode->color[0], sceneNode->color[1], sceneNode->color[2], 0.125f);
+		gluSphere(gluNewQuadric(),1.5f,32,32);
+		addTriangleCount(32*32*2);
+	}
+
+	glEnable(GL_TEXTURE_2D);
+	glPopMatrix();
+}
+
+void			LaserSceneNode::LaserRenderNode::renderFlatLaser()
 {
   const GLfloat length = sceneNode->length;
   const GLfloat* sphere = sceneNode->getSphere();

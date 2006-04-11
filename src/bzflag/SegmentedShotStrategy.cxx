@@ -801,6 +801,12 @@ LaserStrategy::LaserStrategy(ShotPath* _path) :
     laserNodes[i] = new LaserSceneNode(ray.getOrigin(), dir);
     if (texture >= 0)
       laserNodes[i]->setTexture(texture);
+
+	const float *color = Team::getRadarColor(tmpTeam);
+	laserNodes[i]->setColor(color[0],color[1],color[2]);
+
+	if (i == 0)
+		laserNodes[i]->setFirst();
   }
   setCurrentSegment(numSegments - 1);
 }
