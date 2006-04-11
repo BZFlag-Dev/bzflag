@@ -96,7 +96,7 @@ SceneRenderer::SceneRenderer() :
 				scene(NULL),
 				background(NULL),
 				abgr(false),
-				useQualityValue(2),
+				useQualityValue(_HIGH_QUALITY),
 				useDepthComplexityOn(false),
 				useWireframeOn(false),
 				useHiddenLineOn(false),
@@ -268,7 +268,7 @@ void SceneRenderer::setQuality(int value)
 
   notifyStyleChange();
 
-  if (useQualityValue >= 2) {
+  if (useQualityValue >= _HIGH_QUALITY) {
     glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
     glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
     // GL_NICEST for polygon smoothing seems to make some drivers
@@ -280,28 +280,28 @@ void SceneRenderer::setQuality(int value)
     glHint(GL_POLYGON_SMOOTH_HINT, GL_FASTEST);
   }
 
-  if (useQualityValue >= 3)
+  if (useQualityValue >= _HIGH_QUALITY)
     TankSceneNode::setMaxLOD(-1);
-  else if (useQualityValue >= 1)
+  else if (useQualityValue >= _MEDIUM_QUALITY)
     TankSceneNode::setMaxLOD(3);
   else
     TankSceneNode::setMaxLOD(2);
 
-  if (useQualityValue >= 3)
+  if (useQualityValue >= _HIGH_QUALITY)
     BZDB.set("flagChunks","32");
-  else if (useQualityValue >= 2)
+  else if (useQualityValue >= _MEDIUM_QUALITY)
     BZDB.set("flagChunks","12");
   else
     BZDB.set("flagChunks","8");
 
-  if (useQualityValue >= 3)
+  if (useQualityValue >= _HIGH_QUALITY)
     BZDB.set("moonSegments","64");
-  else if (useQualityValue >= 2)
+  else if (useQualityValue >= _MEDIUM_QUALITY)
     BZDB.set("moonSegments","24");
   else
     BZDB.set("moonSegments","12");
 
-  if (useQualityValue > 0) {
+  if (useQualityValue > _LOW_QUALITY) {
     // this can be modified by OpenGLMaterial
     glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, GL_TRUE);
   } else {
@@ -314,13 +314,13 @@ void SceneRenderer::setQuality(int value)
   // It was mainlined in OpenGL Version 1.2
   // (there's also the GL_EXT_separate_specular_color extension)
 #ifdef GL_LIGHT_MODEL_COLOR_CONTROL
-  if (useQualityValue >= 2)
+  if (useQualityValue >= _MEDIUM_QUALITY)
     glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL, GL_SEPARATE_SPECULAR_COLOR);
   else
     glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL, GL_SINGLE_COLOR);
 #  else // in case someone includes <GL/glext.h> at some point
 #  ifdef GL_LIGHT_MODEL_COLOR_CONTROL_EXT
-  if (useQualityValue >= 2)
+  if (useQualityValue >= _MEDIUM_QUALITY)
     glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL_EXT,
 		  GL_SEPARATE_SPECULAR_COLOR_EXT);
   else
@@ -512,7 +512,7 @@ void SceneRenderer::getGroundUV(const float p[2], float uv[2]) const
     if (BZDB.isSet("groundTexRepeat"))
       repeat = BZDB.eval("groundTexRepeat");
 
-    if (useQualityValue >= 3)
+    if (useQualityValue >= _HIGH_QUALITY)
       repeat = BZDB.eval("groundHighResTexRepeat");
 
   uv[0] = repeat * p[0];
@@ -753,7 +753,7 @@ void SceneRenderer::render(bool _lastFrame, bool _sameFrame,
   // fog setup
   mapFog = setupMapFog();
   const bool reallyUseFogHack = !mapFog && useFogHack &&
-				(useQualityValue >= 2);
+				(useQualityValue >= _MEDIUM_QUALITY);
   if (reallyUseFogHack) {
     renderPreDimming();
   }
@@ -810,7 +810,7 @@ void SceneRenderer::render(bool _lastFrame, bool _sameFrame,
       glMatrixMode(GL_MODELVIEW);
       glLoadIdentity();
       // if low quality then use stipple -- it's probably much faster
-      if (BZDBCache::blend && (useQualityValue >= 2)) {
+      if (BZDBCache::blend && (useQualityValue >= _MEDIUM_QUALITY)) {
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glEnable(GL_BLEND);
 	glColor4fv(mirrorColor);
@@ -830,7 +830,7 @@ void SceneRenderer::render(bool _lastFrame, bool _sameFrame,
       frustum.executeView();
       frustum.executeProjection();
       const float extent = BZDBCache::worldSize * 10.0f;
-      if (BZDBCache::blend && (useQualityValue >= 2)) {
+      if (BZDBCache::blend && (useQualityValue >= _MEDIUM_QUALITY)) {
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glEnable(GL_BLEND);
 	glColor4fv(mirrorColor);
@@ -1202,7 +1202,7 @@ void SceneRenderer::renderPostDimming()
     glColor4f(color[0], color[1], color[2], density);
 
     // if low quality then use stipple -- it's probably much faster
-    if (BZDBCache::blend && (useQualityValue >= 2)) {
+    if (BZDBCache::blend && (useQualityValue >= _MEDIUM_QUALITY)) {
       glEnable(GL_BLEND);
       glRectf(-1.0f, -1.0f, 1.0f, 1.0f);
       glDisable(GL_BLEND);

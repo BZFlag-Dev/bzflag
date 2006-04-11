@@ -553,7 +553,7 @@ void BackgroundRenderer::renderSky(SceneRenderer& renderer, bool fullWindow,
   if (!BZDBCache::drawSky) {
     return;
   }
-  if (renderer.useQuality() > 0) {
+  if (renderer.useQuality() > _LOW_QUALITY) {
     drawSky(renderer, mirror);
   } else {
     // low detail -- draw as damn fast as ya can, ie cheat.  use glClear()
@@ -601,7 +601,7 @@ void BackgroundRenderer::renderSky(SceneRenderer& renderer, bool fullWindow,
 void BackgroundRenderer::renderGround(SceneRenderer& renderer,
 				      bool fullWindow)
 {
-  if (renderer.useQuality() > 0) {
+  if (renderer.useQuality() > _LOW_QUALITY) {
     drawGround();
   } else {
     // low detail -- draw as damn fast as ya can, ie cheat.  use glClear()
@@ -654,7 +654,7 @@ void BackgroundRenderer::renderGroundEffects(SceneRenderer& renderer,
   // drawn after it.  also use projection with very far clipping plane.
 
   // only draw the grid lines if texturing is disabled
-  if (!BZDBCache::texture || (renderer.useQuality() <= 0)) {
+  if (!BZDBCache::texture || (renderer.useQuality() <= _LOW_QUALITY)) {
     drawGroundGrid(renderer);
   }
 
@@ -669,7 +669,7 @@ void BackgroundRenderer::renderGroundEffects(SceneRenderer& renderer,
     // kilometers away.
     if (BZDBCache::blend && BZDBCache::lighting &&
 	!drawingMirror && BZDBCache::drawGroundLights) {
-      if (BZDBCache::tesselation && (renderer.useQuality() >= 3)) {
+      if (BZDBCache::tesselation && (renderer.useQuality() >= _HIGH_QUALITY)) {
 //	  (BZDB.get(StateDatabase::BZDB_FOGMODE) == "none")) {
 	// not really tesselation, but it is tied to the "Best" lighting,
 	// avoid on foggy maps, because the blending function accumulates
@@ -680,7 +680,7 @@ void BackgroundRenderer::renderGroundEffects(SceneRenderer& renderer,
       }
     }
 
-    if (renderer.useQuality() > 1) {
+    if (renderer.useQuality() > _MEDIUM_QUALITY) {
       // light the mountains (so that they get dark when the sun goes down).
       // don't do zbuffer test since they occlude all drawn before them and
       // are occluded by all drawn after.
@@ -915,7 +915,7 @@ void BackgroundRenderer::drawSky(SceneRenderer& renderer, bool mirror)
 {
   glPushMatrix();
 
-  const bool doSkybox = haveSkybox && (renderer.useQuality() >= 2);
+  const bool doSkybox = haveSkybox && (renderer.useQuality() >= _HIGH_QUALITY);
 
   if (!doSkybox) {
     // rotate sky so that horizon-point-toward-sun-color is actually
@@ -1052,7 +1052,7 @@ void BackgroundRenderer::drawGround()
       groundGState[styleIndex].setState();
     }
 
-    if (RENDERER.useQuality() >= 3) {
+    if (RENDERER.useQuality() >= _HIGH_QUALITY) {
       drawGroundCentered();
     } else {
       glCallList(simpleGroundList[styleIndex]);

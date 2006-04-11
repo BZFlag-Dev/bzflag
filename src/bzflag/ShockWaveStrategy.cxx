@@ -33,7 +33,7 @@ ShockWaveStrategy::ShockWaveStrategy(ShotPath *_path) :
 
   // make scene node
   const float* pos = _path->getPosition();
-  if (RENDERER.useQuality() >= 3) {
+  if (RENDERER.useQuality() >= _HIGH_QUALITY) {
     shockNode = new SphereLodSceneNode(pos, radius);
     shockNode->setShockWave(true);
   } else {
@@ -51,7 +51,7 @@ ShockWaveStrategy::ShockWaveStrategy(ShotPath *_path) :
   }
 
   const float* c = Team::getRadarColor(team);
-  if (RENDERER.useQuality() >= 3) {
+  if (RENDERER.useQuality() >= _HIGH_QUALITY) {
     shockNode->setColor(c[0], c[1], c[2], 0.5f);
   } else {
     shockNode->setColor(c[0], c[1], c[2], 0.75f);
@@ -86,7 +86,7 @@ void ShockWaveStrategy::update(float dt)
   const float* c = Team::getRadarColor(currentTeam);
 
   // fade old-style shockwaves
-  if (RENDERER.useQuality() >= 3) {
+  if (RENDERER.useQuality() >= _HIGH_QUALITY) {
     shockNode->setColor(c[0], c[1], c[2], 0.5f);
   } else {
     const float shockIn = BZDB.eval(StateDatabase::BZDB_SHOCKINRADIUS);

@@ -113,7 +113,7 @@ EighthDimShellNode::ShellRenderNode::ShellRenderNode(RenderNode *node,
   renderNode = node;
 
   OpenGLGStateBuilder gb = *gs;
-  if (BZDBCache::blend && (RENDERER.useQuality() >= 3)) {
+  if (BZDBCache::blend && (RENDERER.useQuality() >= _HIGH_QUALITY)) {
     gb.setBlending(GL_ONE, GL_ONE);
   } else {
     gb.resetBlending();
@@ -143,7 +143,7 @@ void EighthDimShellNode::ShellRenderNode::render()
 //  glEnable(GL_COLOR_LOGIC_OP);
 //  glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_FALSE);
 
-  if (BZDBCache::blend && RENDERER.useQuality() >= 3) {
+  if (BZDBCache::blend && RENDERER.useQuality() >= _HIGH_QUALITY) {
     renderNode->render();
   }
 

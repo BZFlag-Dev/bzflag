@@ -1944,7 +1944,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 	  }
 	}
 
-	if (SceneRenderer::instance().useQuality() >= 2) {
+	if (SceneRenderer::instance().useQuality() >= _MEDIUM_QUALITY) {
 	  if (((tank != myTank)
 	       && ((ROAM.getMode() != Roaming::roamViewFP)
 		   || (tank != ROAM.getTargetTank())))
@@ -2397,7 +2397,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 	if (shooter && player[shooterid]->getId() == shooterid) {
 	  shooter->addShot(firingInfo);
 
-	  if (SceneRenderer::instance().useQuality() >= 2) {
+	  if (SceneRenderer::instance().useQuality() >= _MEDIUM_QUALITY) {
 	    float shotPos[3];
 	    shooter->getMuzzle(shotPos);
 
@@ -3052,8 +3052,8 @@ bool			addExplosion(const float* _pos,
   // ignore if no prototypes available;
   if (prototypeExplosions.size() == 0) return false;
 
-  // don't show explosions if quality isn't high
-  if (sceneRenderer->useQuality() < 2) return false;
+  // don't show explosions if quality isn't at least medium
+  if (sceneRenderer->useQuality() < _MEDIUM_QUALITY) return false;
 
   // don't add explosion if blending or texture mapping are off
   if (!BZDBCache::blend || !BZDBCache::texture)

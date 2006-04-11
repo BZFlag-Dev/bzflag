@@ -183,7 +183,7 @@ SceneDatabaseBuilder::SceneDatabaseBuilder(const SceneRenderer* _renderer) :
 
 
   // lower maximum tank lod if lowdetail is true
-  if (renderer->useQuality() == 0)
+  if (renderer->useQuality() == _LOW_QUALITY)
     TankSceneNode::setMaxLOD(2);
 }
 
@@ -385,7 +385,7 @@ void SceneDatabaseBuilder::addBox(SceneDatabase* db, BoxBuilding& o)
   useColorTexture[1] = boxTopTexture >= 0;
 
   float texutureFactor = BZDB.eval("boxWallTexRepeat");
-  if (renderer->useQuality() >= 3)
+  if (renderer->useQuality() >= _HIGH_QUALITY)
     texutureFactor = BZDB.eval("boxWallHighResTexRepeat");
 
   while ((node = ((part < 4) ? nodeGen->getNextNode(
@@ -457,7 +457,7 @@ void SceneDatabaseBuilder::addPyramid(SceneDatabase* db, PyramidBuilding& o)
 
   // Using boxTexHeight since it's (currently) the same and it's already available
   float textureFactor = BZDB.eval("pyrWallTexRepeat");
-  if (renderer->useQuality() >= 3)
+  if (renderer->useQuality() >= _HIGH_QUALITY)
     textureFactor = BZDB.eval("pyrWallHighResTexRepeat");
 
   while ((node = nodeGen->getNextNode(-textureFactor * boxTexHeight,

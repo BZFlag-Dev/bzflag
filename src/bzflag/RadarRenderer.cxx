@@ -408,7 +408,7 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
 
     glColor3f(1.0f, 1.0f, 1.0f);
 
-    if ((noiseTexture >= 0) && (renderer.useQuality() > 0)) {
+    if ((noiseTexture >= 0) && (renderer.useQuality() > _LOW_QUALITY)) {
 
       const int sequences = 10;
 
@@ -449,7 +449,7 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
     }
 
     else if ((noiseTexture >= 0) && BZDBCache::texture &&
-	     (renderer.useQuality() == 0)) {
+	     (renderer.useQuality() == _LOW_QUALITY)) {
       glEnable(GL_TEXTURE_2D);
       tm.bind(noiseTexture);
 
@@ -495,7 +495,7 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
     } else {
       useTankDimensions = false;
     }
-    if (useTankDimensions && (renderer.useQuality() >= 3)) {
+    if (useTankDimensions && (renderer.useQuality() >= _HIGH_QUALITY)) {
       useTankModels = true;
     } else {
       useTankModels = false;

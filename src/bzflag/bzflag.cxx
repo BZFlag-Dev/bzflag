@@ -1198,7 +1198,7 @@ int			main(int argc, char** argv)
     BZDB.set("texture", tm.getMaxFilterName());
 
     BZDB.set("texturereplace", (!BZDBCache::lighting &&
-	      RENDERER.useQuality() < 2) ? "1" : "0");
+	      RENDERER.useQuality() < _MEDIUM_QUALITY) ? "1" : "0");
     BZDB.setPersistent("texturereplace", false);
     if (BZDB.isSet("view")) {
       RENDERER.setViewType(SceneRenderer::Normal);

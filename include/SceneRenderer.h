@@ -55,6 +55,10 @@ public:
   float		color[3];
 };
 
+#define _LOW_QUALITY 0
+#define _MEDIUM_QUALITY 1
+#define _HIGH_QUALITY 2
+#define _EXPEREMENTAL_QUALITY 3
 
 class SceneRenderer : public Singleton<SceneRenderer>
 {

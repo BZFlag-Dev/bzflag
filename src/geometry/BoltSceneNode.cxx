@@ -136,7 +136,7 @@ void			BoltSceneNode::notifyStyleChange()
   OpenGLGStateBuilder builder(gstate);
   builder.enableTexture(texturing);
   if (BZDBCache::blend) {
-	if (RENDERER.useQuality() >=3 )
+	if (RENDERER.useQuality() >=_EXPEREMENTAL_QUALITY )
 		builder.setBlending(GL_SRC_ALPHA, GL_ONE);
 	else
 		builder.setBlending(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);

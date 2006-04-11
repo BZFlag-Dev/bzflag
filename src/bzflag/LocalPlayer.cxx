@@ -1220,7 +1220,7 @@ bool			LocalPlayer::fireShot()
   server->sendPlayerUpdate(this);
   server->sendBeginShot(firingInfo);
 
-  if (BZDB.isTrue("enableLocalShotEffect") && SceneRenderer::instance().useQuality() >= 2)
+  if (BZDB.isTrue("enableLocalShotEffect") && SceneRenderer::instance().useQuality() >= _MEDIUM_QUALITY)
     EFFECTS.addShotEffect(getColor(), firingInfo.shot.pos, getAngle(), getVelocity());
 
   if (gettingSound) {
