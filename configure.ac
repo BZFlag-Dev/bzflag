@@ -932,6 +932,15 @@ AC_CONFIG_FILES(
 	data/Makefile
 	data/fonts/Makefile
 	data/l10n/Makefile
+	data/skins/Makefile
+	data/skins/red/Makefile
+	data/skins/green/Makefile
+	data/skins/blue/Makefile
+	data/skins/purple/Makefile
+	data/skins/hunter/Makefile
+	data/skins/rabbit/Makefile
+	data/skins/rogue/Makefile
+	data/skins/observer/Makefile
 	debian/Makefile
 	doc/Makefile
 	doc/faq/Makefile
