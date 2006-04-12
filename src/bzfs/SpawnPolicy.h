@@ -46,7 +46,6 @@ private:
   /* temp, internal use */
   TeamColor   team;
   float       testPos[3];
-  int	      curMaxPlayers;
   
   float safeSWRadius;
   float safeSRRadius;

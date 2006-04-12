@@ -25,8 +25,7 @@
 #include "DropGeometry.h"
 
 
-SpawnPolicy::SpawnPolicy() :
-  curMaxPlayers(getCurMaxPlayers())
+SpawnPolicy::SpawnPolicy()
 {
 }
 
@@ -201,7 +200,7 @@ bool SpawnPolicy::isImminentlyDangerous() const
 {
   GameKeeper::Player *playerData;
   float twentyDegrees = (float)(M_PI / 9.0); /* +- 10 degrees, i.e. 20 degree arc */
-  for (int i = 0; i < curMaxPlayers; i++) {
+  for (int i = 0; i < getCurMaxPlayers(); i++) {
     playerData = GameKeeper::Player::getPlayerByIndex(i);
     if (!playerData)
       continue;
@@ -248,7 +247,7 @@ float SpawnPolicy::enemyProximityCheck(float &enemyAngle) const
   float worstDist = 1e12f; // huge number
   bool noEnemy    = true;
 
-  for (int i = 0; i < curMaxPlayers; i++) {
+  for (int i = 0; i < getCurMaxPlayers(); i++) {
     playerData = GameKeeper::Player::getPlayerByIndex(i);
     if (!playerData)
       continue;
