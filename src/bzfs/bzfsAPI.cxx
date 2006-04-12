@@ -2042,13 +2042,21 @@ BZF_API bzApiString bz_filterPath ( const char* path )
 	return ret;
 }
 
-BZF_API bool bz_saveRecBuf( const char * _filename, int seconds = 0 )
+BZF_API bool bz_saveRecBuf( const char * _filename, int seconds )
 {
 	if (!Record::enabled() || !_filename)
 		return false;
 
 	bool result = Record::saveBuffer( ServerPlayer, _filename, seconds);
 	return result;
+}
+
+BZF_API bool bz_startRecBuf( void )
+{
+	if (!Record::enabled())
+		return false;
+
+	return Record::start(ServerPlayer);
 }
 
 BZF_API const char *bz_format(const char* fmt, ...)

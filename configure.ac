@@ -836,6 +836,7 @@ AC_CONFIG_FILES(bzflag.info
 	plugins/logDetail/Makefile
 	plugins/playHistoryTracker/Makefile
 	plugins/python/Makefile
+	plugins/recodmatch/Makefile
 	plugins/shockwaveDeath/Makefile
 	plugins/vocaliser/Makefile
 	plugins/HoldTheFlag/Makefile
