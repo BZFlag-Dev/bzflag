@@ -1022,7 +1022,16 @@ bool SuperkillCommand::operator() (const char	 *,
 	}
   for (int i = 0; i < curMaxPlayers; i++)
     removePlayer(i, "/superkill");
-  gameOver = true;
+  if (!gameOver)
+  {
+	  gameOver = true;
+	  // fire off a game end event
+	  bz_GameStartEndEventData	gameData;
+	  gameData.eventType = bz_eGameEndEvent;
+	  gameData.time = TimeKeeper::getCurrent().getSeconds();
+	  gameData.duration = clOptions->timeLimit;
+	  worldEventManager.callEvents(bz_eGameEndEvent,&gameData);
+  }
   if (clOptions->timeManualStart)
     countdownActive = false;
   return true;
@@ -1048,6 +1057,14 @@ bool GameOverCommand::operator() (const char	 *,
     countdownPauseStart = TimeKeeper::getNullTime();
     clOptions->countdownPaused = false;
   }
+
+  // fire off a game end event
+  bz_GameStartEndEventData	gameData;
+  gameData.eventType = bz_eGameEndEvent;
+  gameData.time = TimeKeeper::getCurrent().getSeconds();
+  gameData.duration = clOptions->timeLimit;
+  worldEventManager.callEvents(bz_eGameEndEvent,&gameData);
+
   return true;
 }
 
