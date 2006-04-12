@@ -1431,7 +1431,7 @@ bool FlagCommand::operator() (const char	 *message,
         return true;
       }
 
-      // deal with the player's current flag (if applicable)
+      // deal with the player's current flag
       const int flagId = gkPlayer->player.getFlag();
       if (flagId >= 0) {
         FlagInfo& currentFlag = *FlagInfo::get(flagId);
@@ -1444,6 +1444,18 @@ bool FlagCommand::operator() (const char	 *message,
         }
       }
       
+      // deal with the flag's current player (for forced gives)
+      if (fi->player >= 0) {
+        GameKeeper::Player* fPlayer = GameKeeper::Player::getPlayerByIndex(fi->player);
+        if (fPlayer) {
+          void *bufStart = getDirectMessageBuffer();
+          void *buf = nboPackUByte(bufStart, fi->player);
+          buf = fi->pack(buf);
+          broadcastMessage(MsgDropFlag, (char*)buf - (char*)bufStart, bufStart);
+        }
+        fPlayer->player.setFlag(-1);
+      }
+      
       // setup bzfs' state
       fi->grab(gkPlayer->getIndex());
       gkPlayer->player.setFlag(fi->getIndex());
@@ -1452,7 +1464,7 @@ bool FlagCommand::operator() (const char	 *message,
       void *buf, *bufStart = getDirectMessageBuffer();
       buf = nboPackUByte(bufStart, gkPlayer->getIndex());
       buf = fi->pack(buf);
-      broadcastMessage(MsgGrabFlag, (char*)buf-(char*)bufStart, bufStart);
+      broadcastMessage(MsgGrabFlag, (char*)buf - (char*)bufStart, bufStart);
 
       // send the annoucement
       char buffer[MessageLen];
