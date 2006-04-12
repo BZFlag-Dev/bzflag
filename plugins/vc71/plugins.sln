@@ -35,6 +35,10 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "nagware", "..\nagware\nagwa
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "recordmatch", "..\recordmatch\recordmatch.vcproj", "{1F43075E-8AF6-486F-AEDF-6B350A6CE141}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfiguration) = preSolution
 		Debug = Debug
@@ -99,6 +103,14 @@ Global
 		{B629554E-D0E9-4400-909B-7130F116E15D}.release_modern.Build.0 = release_modern|Win32
 		{B629554E-D0E9-4400-909B-7130F116E15D}.release_modern_p3.ActiveCfg = release_modern_p3|Win32
 		{B629554E-D0E9-4400-909B-7130F116E15D}.release_modern_p3.Build.0 = release_modern_p3|Win32
+		{1F43075E-8AF6-486F-AEDF-6B350A6CE141}.Debug.ActiveCfg = Debug|Win32
+		{1F43075E-8AF6-486F-AEDF-6B350A6CE141}.Debug.Build.0 = Debug|Win32
+		{1F43075E-8AF6-486F-AEDF-6B350A6CE141}.Release.ActiveCfg = Release|Win32
+		{1F43075E-8AF6-486F-AEDF-6B350A6CE141}.Release.Build.0 = Release|Win32
+		{1F43075E-8AF6-486F-AEDF-6B350A6CE141}.release_modern.ActiveCfg = release_modern|Win32
+		{1F43075E-8AF6-486F-AEDF-6B350A6CE141}.release_modern.Build.0 = release_modern|Win32
+		{1F43075E-8AF6-486F-AEDF-6B350A6CE141}.release_modern_p3.ActiveCfg = release_modern_p3|Win32
+		{1F43075E-8AF6-486F-AEDF-6B350A6CE141}.release_modern_p3.Build.0 = release_modern_p3|Win32
 		{1F43075E-8AF6-486F-AEDF-6B350A6CE141}.Debug.ActiveCfg = Debug|Win32
 		{1F43075E-8AF6-486F-AEDF-6B350A6CE141}.Debug.Build.0 = Debug|Win32
 		{1F43075E-8AF6-486F-AEDF-6B350A6CE141}.Release.ActiveCfg = Release|Win32
