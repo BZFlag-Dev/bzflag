@@ -12,7 +12,7 @@ ResourceIncludes=
 MakeIncludes=
 Compiler=-D_DEVCPP=1 -Wall -W_@@_
 CppCompiler=-D_DEVCPP=1 -Wall -W_@@_
-Linker=-lstdc++ -lcurses -lcurl -lwsock32 -lwinmm -lregex_@@_
+Linker=-lstdc++ -lcurses -lcurl -lwsock32 -lwinmm_@@_
 IsCpp=1
 Icon=
 ExeOutput=..\src\bzadmin
