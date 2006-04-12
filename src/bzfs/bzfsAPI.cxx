@@ -2247,6 +2247,14 @@ BZF_API bool bz_saveRecBuf( const char * _filename, int seconds = 0 )
 	return result;
 }
 
+BZF_API bool bz_startRecBuf( void )
+{
+	if (!Record::enabled())
+		return false;
+
+	return Record::start(ServerPlayer);
+}
+
 BZF_API const char *bz_format(const char* fmt, ...)
 {
 	static std::string result;

@@ -1272,6 +1272,7 @@ BZF_API bz_ApiString bz_filterPath ( const char* path );
 
 // Record-Replay
 BZF_API bool bz_saveRecBuf( const char * _filename, int seconds);
+BZF_API bool bz_startRecBuf( void );
 
 // cheap Text Utils
 BZF_API const char *bz_format(const char* fmt, ...);
