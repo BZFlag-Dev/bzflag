@@ -200,7 +200,8 @@ bool SpawnPolicy::isImminentlyDangerous() const
 {
   GameKeeper::Player *playerData;
   float twentyDegrees = (float)(M_PI / 9.0); /* +- 10 degrees, i.e. 20 degree arc */
-  for (int i = 0; i < getCurMaxPlayers(); i++) {
+  int curmax = getCurMaxPlayers();
+  for (int i = 0; i < curmax; i++) {
     playerData = GameKeeper::Player::getPlayerByIndex(i);
     if (!playerData)
       continue;
@@ -246,8 +247,8 @@ float SpawnPolicy::enemyProximityCheck(float &enemyAngle) const
   GameKeeper::Player *playerData;
   float worstDist = 1e12f; // huge number
   bool noEnemy    = true;
-
-  for (int i = 0; i < getCurMaxPlayers(); i++) {
+  int curmax = getCurMaxPlayers();
+  for (int i = 0; i < ; i++) {
     playerData = GameKeeper::Player::getPlayerByIndex(i);
     if (!playerData)
       continue;
