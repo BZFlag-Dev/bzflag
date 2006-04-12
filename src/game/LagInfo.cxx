@@ -56,10 +56,10 @@ void LagInfo::getLagStats(char* msg, bool isAdmin) const
 
   int numchars;
   if (isAdmin)
-    numchars = sprintf(msg, "[%3d] %24.24s: %3d", info->getPlayerIndex(), 
+    numchars = sprintf(msg, "[%3d] %-24.24s: %3d", info->getPlayerIndex(), 
           TextUtils::str_trunc_continued (info->getCallSign(), 22).c_str(), lag);
   else
-    numchars = sprintf(msg, "%24.24s: %3d", 
+    numchars = sprintf(msg, "%-24.24s: %3d", 
           TextUtils::str_trunc_continued (info->getCallSign(), 22).c_str(), lag);
 
   if (info->isObserver()) {
