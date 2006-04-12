@@ -31,6 +31,10 @@ is quite easy.
 6. The binary and object files should be in each project's corresponding main source
    directory, such as src/bzflag/ for BZFlag client.
 
+*If you want to build bzadmin-pdcurses.dev, make sure you have pdcurses or a similiar
+curses library installed. Get the package from http://prdownloads.sourceforge.net/pdcurses/pdc27_ming_w32.zip?download
+(make sure you always use that URL or get version 2.7), and install like libcURL and libSDL (see below).
+
 Project files were maintained using Dev-C++ 4.9.9.2
 
 The latest version of Dev-C++ (at this time) has been used to create and maintain these project
