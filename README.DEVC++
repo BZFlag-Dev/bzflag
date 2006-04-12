@@ -34,6 +34,10 @@ is quite easy.
    is in /Dev-C++/, and is recommended that it be moved to the /lib/ folder of your copy
    of Dev-C++ IDE, although it is not necessary.
 
+*If you want to build bzadmin-pdcurses.dev, make sure you have pdcurses or a similiar
+curses library installed. Get the package from http://prdownloads.sourceforge.net/pdcurses/pdc27_ming_w32.zip?download
+(make sure you always use that URL or get version 2.7), and install like libcURL and libSDL (see below).
+
 Project files were maintained using Dev-C++ 4.9.9.2
 
 The latest version of Dev-C++ (at this time) has been used to create and maintain these project
