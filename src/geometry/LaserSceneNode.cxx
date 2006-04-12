@@ -47,6 +47,7 @@ LaserSceneNode::LaserSceneNode(const GLfloat pos[3], const GLfloat forward[3]) :
 
   first = false;
   setColor(1,1,1);
+  setCenterColor(1,1,1);
 }
 
 LaserSceneNode::~LaserSceneNode()
@@ -61,6 +62,12 @@ void	LaserSceneNode::setColor ( GLfloat r, GLfloat g, GLfloat b )
 	color[2] = b;
 }
 
+void		LaserSceneNode::setCenterColor ( GLfloat r, GLfloat g, GLfloat b )
+{
+	centerColor[0] = r;
+	centerColor[1] = g;
+	centerColor[2] = b;
+}
 
 void			LaserSceneNode::setTexture(const int texture)
 {
@@ -147,7 +154,7 @@ void LaserSceneNode::LaserRenderNode::renderGeoLaser ( void )
 	glDisable(GL_TEXTURE_2D);
 
 	//myColor4f(sceneNode->color[0], sceneNode->color[1], sceneNode->color[2], 0.85f);
-	myColor4f(1, 1, 1, 0.85f);
+	myColor4f(sceneNode->centerColor[0], sceneNode->centerColor[1], sceneNode->centerColor[2], 0.85f);
 	gluCylinder(gluNewQuadric(),0.0625f,0.0625f,length,10,1);
 	addTriangleCount(20);
 
@@ -159,20 +166,20 @@ void LaserSceneNode::LaserRenderNode::renderGeoLaser ( void )
 	gluCylinder(gluNewQuadric(),0.2f,0.2f,length,24,1);
 	addTriangleCount(48);
 
-/*	myColor4f(sceneNode->color[0], sceneNode->color[1], sceneNode->color[2], 0.125f);
-	gluCylinder(gluNewQuadric(),0.6f,0.6f,length,32,1);
-	addTriangleCount(64); */
+	myColor4f(sceneNode->color[0], sceneNode->color[1], sceneNode->color[2], 0.125f);
+	gluCylinder(gluNewQuadric(),0.4f,0.4f,length,32,1);
+	addTriangleCount(64);
 
 	myColor4f(sceneNode->color[0], sceneNode->color[1], sceneNode->color[2], 0.125f);
 	if (sceneNode->first)
 	{
-		gluSphere(gluNewQuadric(),1.0f,32,32);
+		gluSphere(gluNewQuadric(),0.5f,32,32);
 		addTriangleCount(32*32*2);
 	}
 	else
 	{
-		//gluSphere(gluNewQuadric(),0.75f,12,12);
-	//	addTriangleCount(12*12*2);
+		gluSphere(gluNewQuadric(),0.5f,12,12);
+		addTriangleCount(12*12*2);
 	}
 
 	glEnable(GL_TEXTURE_2D);

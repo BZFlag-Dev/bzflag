@@ -34,6 +34,7 @@ class LaserSceneNode : public SceneNode {
     void		addRenderNodes(SceneRenderer&);
 	
 	void		setColor ( GLfloat r, GLfloat g, GLfloat b );
+	void		setCenterColor ( GLfloat r, GLfloat g, GLfloat b );
 	void		setFirst ( void ) {first = true;}
   protected:
     class LaserRenderNode : public RenderNode {
@@ -49,6 +50,7 @@ class LaserSceneNode : public SceneNode {
 	static GLfloat	geom[6][2];
     };
 	float color[3];
+	float centerColor[3];
 	bool first;
     friend class LaserRenderNode;
 

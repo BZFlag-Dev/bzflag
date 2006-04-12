@@ -641,6 +641,7 @@ ThiefStrategy::ThiefStrategy(ShotPath *_path) :
 		thiefNodes[i]->setFirst();
 
 	thiefNodes[i]->setColor(0,1,1);
+	thiefNodes[i]->setCenterColor(0,0,0);
   }
   setCurrentSegment(numSegments - 1);
 }
