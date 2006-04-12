@@ -637,7 +637,7 @@ ThiefStrategy::ThiefStrategy(ShotPath *_path) :
     if (texture >= 0)
       thiefNodes[i]->setTexture(texture);
 
-	if (i = 0)
+	if (i == 0)
 		thiefNodes[i]->setFirst();
 
 	thiefNodes[i]->setColor(0,1,1);
