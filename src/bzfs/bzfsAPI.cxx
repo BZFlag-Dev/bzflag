@@ -2249,7 +2249,7 @@ BZF_API bool bz_saveRecBuf( const char * _filename, int seconds = 0 )
 
 BZF_API bool bz_startRecBuf( void )
 {
-	if (!Record::enabled())
+	if (Record::enabled())
 		return false;
 
 	return Record::start(ServerPlayer);
