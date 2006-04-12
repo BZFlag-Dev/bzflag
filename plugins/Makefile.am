@@ -14,7 +14,8 @@ SUBDIRS = \
 	shockwaveDeath \
 	HoldTheFlag \
 	nagware \
-	vocaliser
+	vocaliser \
+	recordmatch
 
 DIST_SUBDIRS = \
 	$(SUBDIRS) \

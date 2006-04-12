@@ -197,6 +197,7 @@ AC_CONFIG_FILES([
 	hiddenAdmin/Makefile
 	killall/Makefile
 	logDetail/Makefile
+	recordmatch/Makefile
 	nagware/Makefile
 	playHistoryTracker/Makefile
 	python/Makefile
@@ -227,4 +228,5 @@ AC_MSG_RESULT([  nagware - Annoy users until they register])
 AC_MSG_RESULT([  playHistoryTracker - Maintain statistics on players])
 AC_MSG_RESULT([  shockwaveDeath - Creates deadly shockwaves when players die])
 AC_MSG_RESULT([  vocaliser - oddly named curiosity])
+AC_MSG_RESULT([  recordmatch - makes countdown record games to a file])
 AC_MSG_RESULT([])
