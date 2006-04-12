@@ -1,7 +1,7 @@
 [Project]
 FileName=bzadmin-pdcurses.dev
 Name=bzadmin-pdcurses
-UnitCount=44
+UnitCount=48
 Type=1
 Ver=1
 ObjFiles=
@@ -481,6 +481,46 @@ BuildCmd=
 FileName=..\src\common\cURLManager.cxx
 CompileCpp=1
 Folder=Source Files/Common
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit45]
+FileName=..\src\regex\regfree.c
+CompileCpp=0
+Folder=Source Files
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit46]
+FileName=..\src\regex\regcomp.c
+CompileCpp=0
+Folder=Source Files
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit47]
+FileName=..\src\regex\regerror.c
+CompileCpp=0
+Folder=Source Files
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit48]
+FileName=..\src\regex\regexec.c
+CompileCpp=0
+Folder=Source Files
 Compile=1
 Link=1
 Priority=1000
