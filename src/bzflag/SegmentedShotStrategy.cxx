@@ -636,6 +636,11 @@ ThiefStrategy::ThiefStrategy(ShotPath *_path) :
     thiefNodes[i] = new LaserSceneNode(ray.getOrigin(), dir);
     if (texture >= 0)
       thiefNodes[i]->setTexture(texture);
+
+	if (i = 0)
+		thiefNodes[i]->setFirst();
+
+	thiefNodes[i]->setColor(0,1,1);
   }
   setCurrentSegment(numSegments - 1);
 }

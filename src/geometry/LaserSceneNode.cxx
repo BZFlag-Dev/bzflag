@@ -148,20 +148,20 @@ void LaserSceneNode::LaserRenderNode::renderGeoLaser ( void )
 
 	//myColor4f(sceneNode->color[0], sceneNode->color[1], sceneNode->color[2], 0.85f);
 	myColor4f(1, 1, 1, 0.85f);
-	gluCylinder(gluNewQuadric(),0.125f,0.125f,length,10,1);
+	gluCylinder(gluNewQuadric(),0.0625f,0.0625f,length,10,1);
 	addTriangleCount(20);
 
 	myColor4f(sceneNode->color[0], sceneNode->color[1], sceneNode->color[2], 0.125f);
-	gluCylinder(gluNewQuadric(),0.2f,0.2f,length,16,1);
+	gluCylinder(gluNewQuadric(),0.1f,0.1f,length,16,1);
 	addTriangleCount(32);
 
 	myColor4f(sceneNode->color[0], sceneNode->color[1], sceneNode->color[2], 0.125f);
-	gluCylinder(gluNewQuadric(),0.4f,0.4f,length,24,1);
+	gluCylinder(gluNewQuadric(),0.2f,0.2f,length,24,1);
 	addTriangleCount(48);
 
-	myColor4f(sceneNode->color[0], sceneNode->color[1], sceneNode->color[2], 0.125f);
+/*	myColor4f(sceneNode->color[0], sceneNode->color[1], sceneNode->color[2], 0.125f);
 	gluCylinder(gluNewQuadric(),0.6f,0.6f,length,32,1);
-	addTriangleCount(64);
+	addTriangleCount(64); */
 
 	myColor4f(sceneNode->color[0], sceneNode->color[1], sceneNode->color[2], 0.125f);
 	if (sceneNode->first)
@@ -171,8 +171,8 @@ void LaserSceneNode::LaserRenderNode::renderGeoLaser ( void )
 	}
 	else
 	{
-		gluSphere(gluNewQuadric(),0.75f,12,12);
-		addTriangleCount(12*12*2);
+		//gluSphere(gluNewQuadric(),0.75f,12,12);
+	//	addTriangleCount(12*12*2);
 	}
 
 	glEnable(GL_TEXTURE_2D);
