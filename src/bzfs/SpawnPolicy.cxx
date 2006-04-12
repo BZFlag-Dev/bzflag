@@ -248,7 +248,7 @@ float SpawnPolicy::enemyProximityCheck(float &enemyAngle) const
   float worstDist = 1e12f; // huge number
   bool noEnemy    = true;
   int curmax = getCurMaxPlayers();
-  for (int i = 0; i < ; i++) {
+  for (int i = 0; i < curmax; i++) {
     playerData = GameKeeper::Player::getPlayerByIndex(i);
     if (!playerData)
       continue;
