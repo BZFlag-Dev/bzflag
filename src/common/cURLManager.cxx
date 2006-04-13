@@ -56,6 +56,11 @@ cURLManager::cURLManager()
     DEBUG1("CURLOPT_ERRORBUFFER error: %d\n", result);
   }
 
+  result = curl_easy_setopt(easyHandle, CURLOPT_FORBID_REUSE, (long)1);
+  if (result != CURLE_OK) {
+    DEBUG1("CURLOPT_FORBID_REUSE error: %d\n", result);
+  }
+
   result = curl_easy_setopt(easyHandle, CURLOPT_NOSIGNAL, true);
   if (result != CURLE_OK) {
     DEBUG1("CURLOPT_NOSIGNAL error %d : %s\n", result, errorBuffer);
