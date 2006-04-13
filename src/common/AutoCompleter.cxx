@@ -189,6 +189,8 @@ void DefaultCompleter::setDefaults()
   registerWord("/idbanlist");
   registerWord("/idlist");
   registerWord("/idlestats");
+  registerWord("/jitterdrop");
+  registerWord("/jitterwarn");
   registerWord("/kick ");
   registerWord("/kill ");
   registerWord("/lagdrop");

@@ -863,6 +863,15 @@ Change the maximum allowed jitter time. Example:
 .ft R
 
 .TP
+.B /jitterdrop [\fIcount\fR]
+Change the number of jitter warnings given before a player is kicked. Example:
+.ft CW
+.nf
+.ne 2
+/jitterdrop 3
+.ft R
+
+.TP
 .B /mute {\fI#slot\fR|\fIcallsign\fR}
 Allows a server admin to remove the ability for a player to communicate with
 other players. Once muted the player may only talk to admins on the server.
