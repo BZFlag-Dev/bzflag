@@ -355,9 +355,9 @@ inline bool isViewTank(Player* tank)
 {
   return ((tank != NULL) &&
 	  (tank == LocalPlayer::getMyTank()) ||
-	   (ROAM.isRoaming()
-	    && (ROAM.getMode() == Roaming::roamViewFP)
-	    && (ROAM.getTargetTank() == tank)));
+	  (ROAM.isRoaming()
+	   && (ROAM.getMode() == Roaming::roamViewFP)
+	   && (ROAM.getTargetTank() == tank)));
 }
 
 
@@ -627,7 +627,7 @@ static bool		doKeyCommon(const BzfKeyEvent& key, bool pressed)
 	}
 	return true;
 
-      // for testing forced recreation of OpenGL context
+	// for testing forced recreation of OpenGL context
 #if defined(DEBUG_RENDERING)
       case 'X':
 	if (pressed && ((shiftKeyStatus & BzfKeyEvent::AltKey) != 0)) {
@@ -1183,9 +1183,9 @@ static Player*		addPlayer(PlayerId id, void* msg, int showMessage)
   if (i < 0) {
     printError (TextUtils::format ("Invalid player identification (%d)", i));
     std::
-	cerr <<
-	"WARNING: invalid player identification when adding player with id "
-	<< i << std::endl;
+      cerr <<
+      "WARNING: invalid player identification when adding player with id "
+	   << i << std::endl;
     return NULL;
   }
 
@@ -1596,8 +1596,8 @@ static bool processWorldChunk(void *buf, uint16_t len, int bytesLeft)
     cacheOut->write((char *)buf, len);
   HUDDialogStack::get()->setFailedMessage
     (TextUtils::format
-		  ("Downloading World (%2d%% complete/%d kb remaining)...",
-		   (100 * doneSize / totalSize), bytesLeft / 1024).c_str());
+     ("Downloading World (%2d%% complete/%d kb remaining)...",
+      (100 * doneSize / totalSize), bytesLeft / 1024).c_str());
   return bytesLeft == 0;
 }
 
@@ -1643,7 +1643,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 
 	  item.filePath = PlatformFactory::getMedia ()->getMediaDirectory ();
 	  std::vector < std::string > temp =
-	      TextUtils::tokenize (item.URL, std::string ("/"));
+	    TextUtils::tokenize (item.URL, std::string ("/"));
 
 	  item.fileName = temp[temp.size () - 1];
 	  item.filePath += item.fileName;
@@ -2044,33 +2044,33 @@ static void		handleServerMessage(bool human, uint16_t code,
 	  killerLocal->endShot(shotId, true);
 	}
 	if (victimPlayer && killerLocal != victimPlayer) {
-		if ((victimPlayer->getTeam() == killerLocal->getTeam()) && (killerLocal->getTeam() != RogueTeam) && !(killerPlayer == myTank && wasRabbit) && World::getWorld()->allowTeams())
-	  {
-            // teamkill
-	    if (killerPlayer == myTank) {
-	      hud->setAlert(1, "Don't kill teammates!!!", 3.0f, true);
-	      playLocalSound(SFX_KILL_TEAM);
-	      if (myTank->isAutoPilot()) {
-		char meaculpa[MessageLen];
-		memset(meaculpa, 0, MessageLen);
-		strncpy(meaculpa,
-			"sorry, i'm just a silly machine",
-			MessageLen);
-		serverLink->sendMessage(victimPlayer->getId(), meaculpa);
+	  if ((victimPlayer->getTeam() == killerLocal->getTeam()) && (killerLocal->getTeam() != RogueTeam) && !(killerPlayer == myTank && wasRabbit) && World::getWorld()->allowTeams())
+	    {
+	      // teamkill
+	      if (killerPlayer == myTank) {
+		hud->setAlert(1, "Don't kill teammates!!!", 3.0f, true);
+		playLocalSound(SFX_KILL_TEAM);
+		if (myTank->isAutoPilot()) {
+		  char meaculpa[MessageLen];
+		  memset(meaculpa, 0, MessageLen);
+		  strncpy(meaculpa,
+			  "sorry, i'm just a silly machine",
+			  MessageLen);
+		  serverLink->sendMessage(victimPlayer->getId(), meaculpa);
+		}
 	      }
 	    }
-	  }
 	  else
-	  {
-	    // enemy
-	    if (myTank->isAutoPilot()) {
-	      if (killerPlayer) {
-		const ShotPath* shot = killerPlayer->getShot(int(shotId));
-		if (shot != NULL)
-		  teachAutoPilot(shot->getFlag(), 1);
+	    {
+	      // enemy
+	      if (myTank->isAutoPilot()) {
+		if (killerPlayer) {
+		  const ShotPath* shot = killerPlayer->getShot(int(shotId));
+		  if (shot != NULL)
+		    teachAutoPilot(shot->getFlag(), 1);
+		}
 	      }
 	    }
-	  }
 	}
       }
 
@@ -2154,20 +2154,20 @@ static void		handleServerMessage(bool human, uint16_t code,
 	}
       }
 
-	  if (World::getWorld()->allowTeams())	// geno only works in team games :)
-	  {
-		// blow up if killer has genocide flag and i'm on same team as victim
-		// (and we're not rogues, unless in rabbit mode)
-		if (human && killerPlayer && victimPlayer && victimPlayer != myTank &&
-		(victimPlayer->getTeam() == myTank->getTeam()) &&
-		(myTank->getTeam() != RogueTeam) && shotId >= 0) {
-		// now see if shot was fired with a GenocideFlag
-		const ShotPath* shot = killerPlayer->getShot(int(shotId));
-		if (shot && shot->getFlag() == Flags::Genocide) {
-		gotBlowedUp(myTank, GenocideEffect, killerPlayer->getId());
-		}
-		}
+      if (World::getWorld()->allowTeams())	// geno only works in team games :)
+	{
+	  // blow up if killer has genocide flag and i'm on same team as victim
+	  // (and we're not rogues, unless in rabbit mode)
+	  if (human && killerPlayer && victimPlayer && victimPlayer != myTank &&
+	      (victimPlayer->getTeam() == myTank->getTeam()) &&
+	      (myTank->getTeam() != RogueTeam) && shotId >= 0) {
+	    // now see if shot was fired with a GenocideFlag
+	    const ShotPath* shot = killerPlayer->getShot(int(shotId));
+	    if (shot && shot->getFlag() == Flags::Genocide) {
+	      gotBlowedUp(myTank, GenocideEffect, killerPlayer->getId());
+	    }
 	  }
+	}
 
 #ifdef ROBOT
       // blow up robots on victim's team if shot was genocide
@@ -2691,7 +2691,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 	  }
 	} else if (srcPlayer == myTank) {
 	  // don't play sounds for messages from self
-	    playSound = false;
+	  playSound = false;
 	}
 	
 	// direct message to or from me
@@ -2899,33 +2899,33 @@ static void		handleServerMessage(bool human, uint16_t code,
       break;
     }
 
-  case MsgNewPlayer:
-    uint8_t id;
-    msg = nboUnpackUByte(msg, id);
+    case MsgNewPlayer:
+      uint8_t id;
+      msg = nboUnpackUByte(msg, id);
 #ifdef ROBOT
-    int i;
-    for (i = 0; i < MAX_ROBOTS; i++)
-      if (!robots[i])
+      int i;
+      for (i = 0; i < MAX_ROBOTS; i++)
+	if (!robots[i])
+	  break;
+      if (i >= MAX_ROBOTS) {
+	DEBUG1("Too much bots requested\n");
 	break;
-    if (i >= MAX_ROBOTS) {
-      DEBUG1("Too much bots requested\n");
-      break;
-    }
-    char callsign[CallSignLen];
-    snprintf(callsign, CallSignLen, "%s%2.2d", myTank->getCallSign(), i);
-    robots[i] = new RobotPlayer(id, callsign, serverLink,
-				myTank->getEmailAddress());
-    robots[i]->setTeam(AutomaticTeam);
-    serverLink->sendEnter(id, ComputerPlayer, robots[i]->getTeam(),
-			  robots[i]->getCallSign(),
-			  robots[i]->getEmailAddress(), "");
-    if (!numRobots) {
-      makeObstacleList();
-      RobotPlayer::setObstacleList(&obstacleList);
-    }
-    numRobots++;
+      }
+      char callsign[CallSignLen];
+      snprintf(callsign, CallSignLen, "%s%2.2d", myTank->getCallSign(), i);
+      robots[i] = new RobotPlayer(id, callsign, serverLink,
+				  myTank->getEmailAddress());
+      robots[i]->setTeam(AutomaticTeam);
+      serverLink->sendEnter(id, ComputerPlayer, robots[i]->getTeam(),
+			    robots[i]->getCallSign(),
+			    robots[i]->getEmailAddress(), "");
+      if (!numRobots) {
+	makeObstacleList();
+	RobotPlayer::setObstacleList(&obstacleList);
+      }
+      numRobots++;
 #endif
-    break;
+      break;
 
       // inter-player relayed message
     case MsgPlayerUpdate:
@@ -2953,7 +2953,7 @@ static void		handlePlayerMessage(uint16_t code, uint16_t,
       PlayerId id;
       int32_t order;
       void *buf = msg;
-	  buf = nboUnpackUByte(buf, id);
+      buf = nboUnpackUByte(buf, id);
       buf = nboUnpackFloat(buf, timestamp);
       Player* tank = lookupPlayer(id);
       if (!tank || tank == myTank) break;
@@ -3002,7 +3002,7 @@ static void		handlePlayerMessage(uint16_t code, uint16_t,
       break;
     }
 
-    // just echo lag ping message
+      // just echo lag ping message
     case MsgLagPing:
       serverLink->sendLagPing((char *)msg);
       break;
@@ -3336,7 +3336,7 @@ static bool		gotBlowedUp(BaseLocalPlayer* tank,
     tank->explodeTank();
     EFFECTS.addDeathEffect(tank->getColor(), tank->getPosition(), tank->getAngle());
 
-   if (isViewTank(tank)) {
+    if (isViewTank(tank)) {
       if (reason == GotRunOver) {
 	playLocalSound(SFX_RUNOVER);
       } else {
@@ -3373,59 +3373,59 @@ static bool		gotBlowedUp(BaseLocalPlayer* tank,
 
   // print reason if it's my tank
   if ((tank == myTank) && (reason < LastReason ))
-  {
-    std::string blowedUpNotice;
-    if (reason < PhysicsDriverDeath)
+    {
+      std::string blowedUpNotice;
+      if (reason < PhysicsDriverDeath)
 	{
-		if (blowedUpMessage[reason])
-			blowedUpNotice = blowedUpMessage[reason];
-		else
-			blowedUpNotice = "Invalid reason";
-	}
-    else
-	{
-      const PhysicsDriver* driver = PHYDRVMGR.getDriver(phydrv);
-      if (driver)
-		blowedUpNotice = driver->getDeathMsg();
+	  if (blowedUpMessage[reason])
+	    blowedUpNotice = blowedUpMessage[reason];
 	  else
-		blowedUpNotice = "Killed by unknown obstacle";
-    }
+	    blowedUpNotice = "Invalid reason";
+	}
+      else
+	{
+	  const PhysicsDriver* driver = PHYDRVMGR.getDriver(phydrv);
+	  if (driver)
+	    blowedUpNotice = driver->getDeathMsg();
+	  else
+	    blowedUpNotice = "Killed by unknown obstacle";
+	}
 
-    // first, check if i'm the culprit
-    if (reason == GotShot && getLocalPlayer(killer) == myTank) {
-      blowedUpNotice = "Shot myself";
-    } else {
-      // 1-4 are messages sent when the player dies because of someone else
-      if (reason >= GotShot && reason <= GenocideEffect) {
-	Player *killerPlayer = lookupPlayer(killer);
-	if (!killerPlayer) {
-	  blowedUpNotice = "Killed by the server";
-	} else {
-
-	  // matching the team-display style of other kill messages
-	  TeamColor team = killerPlayer->getTeam();
-	  if (hit)
-	    team = hit->getTeam();
-	  if ((myTank->getTeam() == team) &&
-	      (team != RogueTeam) && (team != ObserverTeam)) {
-	    blowedUpNotice += "teammate " ;
-	    blowedUpNotice += killerPlayer->getCallSign();
+      // first, check if i'm the culprit
+      if (reason == GotShot && getLocalPlayer(killer) == myTank) {
+	blowedUpNotice = "Shot myself";
+      } else {
+	// 1-4 are messages sent when the player dies because of someone else
+	if (reason >= GotShot && reason <= GenocideEffect) {
+	  Player *killerPlayer = lookupPlayer(killer);
+	  if (!killerPlayer) {
+	    blowedUpNotice = "Killed by the server";
 	  } else {
-	    blowedUpNotice += killerPlayer->getCallSign();
-	    blowedUpNotice += " (";
-	    blowedUpNotice += Team::getName(killerPlayer->getTeam());
-	    blowedUpNotice += ")";
-	    if (flagType != Flags::Null) {
-	      blowedUpNotice += " with ";
-	      blowedUpNotice += flagType->flagAbbv;
+
+	    // matching the team-display style of other kill messages
+	    TeamColor team = killerPlayer->getTeam();
+	    if (hit)
+	      team = hit->getTeam();
+	    if ((myTank->getTeam() == team) &&
+		(team != RogueTeam) && (team != ObserverTeam)) {
+	      blowedUpNotice += "teammate " ;
+	      blowedUpNotice += killerPlayer->getCallSign();
+	    } else {
+	      blowedUpNotice += killerPlayer->getCallSign();
+	      blowedUpNotice += " (";
+	      blowedUpNotice += Team::getName(killerPlayer->getTeam());
+	      blowedUpNotice += ")";
+	      if (flagType != Flags::Null) {
+		blowedUpNotice += " with ";
+		blowedUpNotice += flagType->flagAbbv;
+	      }
 	    }
 	  }
 	}
       }
+      hud->setAlert(0, blowedUpNotice.c_str(), 4.0f, true);
+      controlPanel->addMessage(blowedUpNotice);
     }
-    hud->setAlert(0, blowedUpNotice.c_str(), 4.0f, true);
-    controlPanel->addMessage(blowedUpNotice);
-  }
 
   // make sure shot is terminated locally (if not globally) so it can't
   // hit me again if I had the shield flag.  this is important for the
@@ -3598,7 +3598,7 @@ void setTarget()
     // see if it's inside lock-on angle (if we're trying to lock-on)
     if (a < BZDB.eval(StateDatabase::BZDB_LOCKONANGLE) &&	// about 8.5 degrees
 	((myTank->getFlag() == Flags::GuidedMissile) ||		// am i locking on?
-	  tankHasShotType(myTank, Flags::GuidedMissile)) &&
+	 tankHasShotType(myTank, Flags::GuidedMissile)) &&
 	player[i]->getFlag() != Flags::Stealth &&		// can't lock on stealth
 	!player[i]->isPaused() &&				// can't lock on paused
 	!player[i]->isNotResponding() &&			// can't lock on not responding
@@ -3711,7 +3711,7 @@ static void		setHuntTarget()
 
   if (bestTarget->isHunted() && myTank->getFlag() != Flags::Blindness &&
       myTank->getFlag() != Flags::Colorblindness &&
-			bestTarget->getFlag() != Flags::Stealth) {
+      bestTarget->getFlag() != Flags::Stealth) {
     if (myTank->getTarget() == NULL) { // Don't interfere with GM lock display
       std::string msg("SPOTTED: ");
       msg += bestTarget->getCallSign();
@@ -4139,7 +4139,7 @@ static void enteringServer(void *buf)
 
   if ((myTank->getTeam() == ObserverTeam) || devDriving) {
     ROAM.setMode(Roaming::roamViewFP);
-//    ROAM.resetCamera();
+    //    ROAM.resetCamera();
   } else {
     ROAM.setMode(Roaming::roamViewDisabled);
   }
@@ -4387,8 +4387,8 @@ void		leaveGame()
 
   //  controlPanel->setRadarRenderer(NULL);
   /*
-  delete radar;
-  radar = NULL;
+    delete radar;
+    radar = NULL;
   */
 
 #if defined(ROBOT)
@@ -4782,7 +4782,7 @@ static bool trackPlayerShot(Player* target,
       const ShotPath* spTmp = target->getShot(s);
       if (spTmp != NULL) {
 	const float t = float(spTmp->getReloadTime() -
-	  (spTmp->getCurrentTime() - spTmp->getStartTime()));
+			      (spTmp->getCurrentTime() - spTmp->getStartTime()));
 	if ((t > 0.0f) && (t < remaining)) {
 	  sp = spTmp;
 	  remaining = t;
@@ -4858,7 +4858,7 @@ static void setupFarPlane()
   FarDeepPlane = FarPlane * FarDeepPlaneScale;
 
   const bool mapFog = (BZDB.get(StateDatabase::BZDB_FOGMODE) != "none") &&
-		      BZDB.isTrue("fogEffect");
+    BZDB.isTrue("fogEffect");
 
   float farDist = FarPlane;
 
@@ -4985,7 +4985,7 @@ void drawFrame(const float dt)
 	  targetPoint[0] = target->getPosition()[0];
 	  targetPoint[1] = target->getPosition()[1];
 	  targetPoint[2] = target->getPosition()[2] +
-			   target->getMuzzleHeight();
+	    target->getMuzzleHeight();
 	}
 	// camera following target
 	else if (ROAM.getMode() == Roaming::roamViewFollow) {
@@ -5080,7 +5080,7 @@ void drawFrame(const float dt)
       // add my tank if required
       const bool inCockpit = (!devDriving || (ROAM.getMode() == Roaming::roamViewFP));
       const bool showMyTreads = showTreads ||
-				(devDriving && (ROAM.getMode() != Roaming::roamViewFP));
+	(devDriving && (ROAM.getMode() != Roaming::roamViewFP));
       myTank->addToScene(scene, myTank->getTeam(),
 			 inCockpit, seerView,
 			 showMyTreads, showMyTreads /*showIDL*/);
@@ -5119,9 +5119,9 @@ void drawFrame(const float dt)
 	  }
 
 	  const bool inCockpt  = ROAM.isRoaming() && !devDriving &&
-				 (ROAM.getMode() == Roaming::roamViewFP) &&
-				 ROAM.getTargetTank() &&
-				 (ROAM.getTargetTank()->getId() == i);
+	    (ROAM.getMode() == Roaming::roamViewFP) &&
+	    ROAM.getTargetTank() &&
+	    (ROAM.getTargetTank()->getId() == i);
 	  const bool showPlayer = !inCockpt || showTreads;
 
 	  // add player tank if required
@@ -5170,7 +5170,7 @@ void drawFrame(const float dt)
     }
     sceneRenderer->setDim(HUDDialogStack::get()->isActive() || insideDim ||
 			  (myTank && !ROAM.isRoaming() && !devDriving) &&
-			   !myTank->isAlive() && !myTank->isExploding());
+			  !myTank->isAlive() && !myTank->isExploding());
 
     // turn on panel dimming when showing the menu (both radar and chat)
     if (HUDDialogStack::get()->isActive()) {
@@ -5918,7 +5918,7 @@ static void		playingLoop()
     // notify if input changed
     if ((myTank != NULL) && (myTank->queryInputChange() == true)) {
       controlPanel->addMessage(
-	LocalPlayer::getInputMethodName(myTank->getInputMethod()) + " movement");
+			       LocalPlayer::getInputMethodName(myTank->getInputMethod()) + " movement");
     }
 
     // update other tank's shots
@@ -6098,7 +6098,7 @@ static float		timeConfiguration(bool useZBuffer)
   TimeKeeper startTime = TimeKeeper::getCurrent();
   sceneRenderer->setExposed();
   sceneRenderer->render();
- // glFinish();
+  // glFinish();
   TimeKeeper endTime = TimeKeeper::getCurrent();
 
   // turn off depth buffer
@@ -6583,9 +6583,9 @@ void			startPlaying(BzfDisplay* _display,
     info.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
     GetVersionEx(&info);
     DEBUG1("Running on Windows %s%d.%d %s\n",
-      (info.dwPlatformId == VER_PLATFORM_WIN32_NT) ? "NT " : "",
-      info.dwMajorVersion, info.dwMinorVersion,
-      info.szCSDVersion);
+	   (info.dwPlatformId == VER_PLATFORM_WIN32_NT) ? "NT " : "",
+	   info.dwMajorVersion, info.dwMinorVersion,
+	   info.szCSDVersion);
   }
 #endif
 
