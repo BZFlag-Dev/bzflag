@@ -11,7 +11,7 @@ PrivateResource=
 ResourceIncludes=
 MakeIncludes=
 Compiler=-D_DEVCPP=1 -Wall -W -DBUILDING_BZADMIN=1_@@_
-CppCompiler=-D_DEVCPP=1 -Wall -W -DBUILDING_BZADMIN=1_@@_
+CppCompiler=-D_DEVCPP=1 -W -DBUILDING_BZADMIN=1_@@_
 Linker=-lstdc++ -lcurl -lares -lwsock32 -lwinmm_@@_
 IsCpp=1
 Icon=
@@ -499,7 +499,7 @@ BuildCmd=
 
 [Unit46]
 FileName=..\src\regex\regfree.c
-CompileCpp=1
+CompileCpp=0
 Folder=Source Files/regex
 Compile=1
 Link=1
@@ -509,7 +509,7 @@ BuildCmd=
 
 [Unit47]
 FileName=..\src\regex\regcomp.c
-CompileCpp=1
+CompileCpp=0
 Folder=Source Files/regex
 Compile=1
 Link=1
@@ -519,7 +519,7 @@ BuildCmd=
 
 [Unit48]
 FileName=..\src\regex\regerror.c
-CompileCpp=1
+CompileCpp=0
 Folder=Source Files/regex
 Compile=1
 Link=1
@@ -529,7 +529,7 @@ BuildCmd=
 
 [Unit49]
 FileName=..\src\regex\regexec.c
-CompileCpp=1
+CompileCpp=0
 Folder=Source Files/regex
 Compile=1
 Link=1
