@@ -20,7 +20,7 @@ Save the state of the current player's "first"
 	On First CTF show them the rules
 	On First Team kill tell them it's bad
 	On First Sever list tell them about servers	
-	Etc…
+	Etc...
 
 Put the registration requirements of the game into the game mode ( open, limited, reg only )
 
@@ -76,7 +76,7 @@ Split out team from color (lets the server do more).
 
 Make the tank easy to draw anywhere (like in the menu ).
 
-Make the installer ask if you want to reg, and explain why it's a good thing™
+Make the installer ask if you want to reg, and explain why it's a good thing(tm)
 
 Make a method where the client can open a URL in a browser on each OS ( security? )
 
