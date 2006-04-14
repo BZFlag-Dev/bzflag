@@ -381,6 +381,20 @@ case $host_os in
      *) irix=false;;
 esac
 AM_CONDITIONAL(IRIX, $irix)
+
+dnl On SGI systems, figure out if we are using MIPSPro compiler
+using_mipspro=no
+if test "$build_vendor" = "sgi" ; then
+   AC_MSG_CHECKING([whether we are using the MIPSPro compiler])
+   AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[]],
+	[[#if defined(sgi) && !defined(__GNUC__) && defined(_COMPILER_VERSION)
+this line should cause a compile failure when building with the MIPSpro compiler;
+#endif
+int main() { return 0; }
+    ]])],[using_mipspro=no],[using_mipspro=yes])
+    AC_MSG_RESULT([$using_mipspro])
+fi
+
 AM_CONDITIONAL(BUGGY_MIPSPRO, test "x$using_mipspro" = "xyes")
 
 case $host_os in
