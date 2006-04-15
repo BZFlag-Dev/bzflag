@@ -412,7 +412,7 @@ BasicEffect::BasicEffect()
 	position[0] = position[1] = position[2] = 0.0f;
 	rotation[0] = rotation[1] = rotation[2] = 0.0f;
 	velocity[0] = velocity[1] = velocity[2] = 0.0f;
-	teamColor = -1;
+	color[0] = color[1] = color[2] = 0.0f;
 	startTime = (float)TimeKeeper::getCurrent().getSeconds();
 
 	lifetime = 0;
@@ -445,10 +445,6 @@ void BasicEffect::setVel ( const float *vel )
 		velocity[1] = vel[1];
 		velocity[2] = vel[2];
 	}
-}
-void BasicEffect::setTeam ( int team )
-{
-	teamColor = team;
 }
 
 void BasicEffect::setColor ( const float *rgb )
@@ -1170,10 +1166,6 @@ void StdShotTeleportEffect::draw(const SceneRenderer &)
 	color[0] = color[1] = color[2] = 1;
 
 	float alpha = 1.0f;
-//	if ( age/lifetime < 0.5f)
-//		alpha = 1.0f-(age/lifetime*2.0);
-	if (alpha < 0.000001f)
-		alpha = 0.000001f;
 
 	glColor4f(color[0],color[1],color[2],alpha);
 	glDepthMask(0);

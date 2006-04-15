@@ -1249,7 +1249,6 @@ RemotePlayer* World::getCurrentRabbit() const
   return NULL;
 }
 
-
 void World::setPlayersSize(int _playersSize)
 {
   playersSize = _playersSize;

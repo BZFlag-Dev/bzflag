@@ -40,6 +40,7 @@ THESE ARE LOWER PRIORITY
 
 * look closely at how local and global logins / groups interact:
   - add option for non-public servers to use global logins? (match servers)
+         [this was done with the -advertise bzfs option in 2.0.5]
   - add option for public-servers to not use global logins?
     (if no passdb, then they only use global logins ie: no /register)
 

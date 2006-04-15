@@ -2725,6 +2725,10 @@ static void		handleServerMessage(bool human, uint16_t code,
 	      if (srcPlayer)
 		myTank->setRecipient(srcPlayer);
 
+	      // play a sound on a private message not from self or server
+	      bool playSound = !fromServer;
+	      if (BZDB.isSet("beepOnServerMsg") && BZDB.isTrue("beepOnServerMsg"))
+		playSound = true;
 	      if (playSound) {
 		static TimeKeeper lastMsg = TimeKeeper::getSunGenesisTime();
 		if (TimeKeeper::getTick() - lastMsg > 2.0f)

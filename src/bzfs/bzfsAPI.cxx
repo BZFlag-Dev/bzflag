@@ -1189,8 +1189,10 @@ void setVarPerms ( const char* variable, int perms, bool persistent)
 			break;
 		case BZ_BZDBPERM_SERVER:
 			BZDB.setPermission(std::string(variable),StateDatabase::Locked);
+			break;
 		default:
 			BZDB.setPermission(std::string(variable),StateDatabase::ReadOnly);
+			break;;
 		}
 	}
 	BZDB.setPersistent(std::string(variable),persistent);
@@ -2238,7 +2240,7 @@ BZF_API bz_ApiString bz_filterPath ( const char* path )
 	return ret;
 }
 
-BZF_API bool bz_saveRecBuf( const char * _filename, int seconds = 0 )
+BZF_API bool bz_saveRecBuf( const char * _filename, int seconds )
 {
 	if (!Record::enabled() || !_filename)
 		return false;

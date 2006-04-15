@@ -1397,12 +1397,50 @@ bool FlagCommand::operator() (const char	 *message,
     }
 
     if (gkPlayer && fi) {
-      const int flagLimit = clOptions->flagLimit[fi->flag.type];
-      clOptions->flagLimit[fi->flag.type] = -1;
-      fi->flag.status = FlagOnTank;
-      fi->grabs = 2;
-      dropFlag(*fi, gkPlayer->lastState.pos);
-      clOptions->flagLimit[fi->flag.type] = flagLimit;
+      // do not give flags to dead players
+      if (!gkPlayer->player.isAlive()) {
+        char buffer[MessageLen];
+        snprintf(buffer, MessageLen,
+                 "/flag give: player (%s) is not alive",
+                 gkPlayer->player.getCallSign());
+        sendMessage(ServerPlayer, t, buffer);
+        return true;
+      }
+
+      // deal with the player's current flag
+      const int flagId = gkPlayer->player.getFlag();
+      if (flagId >= 0) {
+        FlagInfo& currentFlag = *FlagInfo::get(flagId);
+        if (currentFlag.flag.type->flagTeam != NoTeam) {
+          // drop team flags
+          dropFlag(currentFlag, gkPlayer->lastState.pos);
+        } else {
+          // reset non-team flags
+          resetFlag(currentFlag);
+        }
+      }
+      
+      // deal with the flag's current player (for forced gives)
+      if (fi->player >= 0) {
+        GameKeeper::Player* fPlayer = GameKeeper::Player::getPlayerByIndex(fi->player);
+        if (fPlayer) {
+          void *bufStart = getDirectMessageBuffer();
+          void *buf = nboPackUByte(bufStart, fi->player);
+          buf = fi->pack(buf);
+          broadcastMessage(MsgDropFlag, (char*)buf - (char*)bufStart, bufStart);
+        }
+        fPlayer->player.setFlag(-1);
+      }
+      
+      // setup bzfs' state
+      fi->grab(gkPlayer->getIndex());
+      gkPlayer->player.setFlag(fi->getIndex());
+      
+      // send MsgGrabFlag
+      void *buf, *bufStart = getDirectMessageBuffer();
+      buf = nboPackUByte(bufStart, gkPlayer->getIndex());
+      buf = fi->pack(buf);
+      broadcastMessage(MsgGrabFlag, (char*)buf - (char*)bufStart, bufStart);
 
       char buffer[MessageLen];
       snprintf(buffer, MessageLen, "%s gave flag %s/%i to %s",

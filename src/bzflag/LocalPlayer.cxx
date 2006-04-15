@@ -173,7 +173,7 @@ void LocalPlayer::doSlideMotion(float dt, float slideTime,
 
   // BURROW and AGILITY will not be taken into account
   const FlagType* flag = getFlag();
-  float maxSpeed = BZDB.eval(StateDatabase::BZDB_TANKSPEED);
+  float maxSpeed = BZDBCache::tankSpeed;
   if (flag == Flags::Velocity) {
     maxSpeed *= BZDB.eval(StateDatabase::BZDB_VELOCITYAD);
   } else if (flag == Flags::Thief) {

@@ -29,7 +29,10 @@ is quite easy.
 
 6. Let the opened project compile (this may take several minutes, depending on your computer).
 
-7. The binary (executable) and object files should be in each project's corresponding main source
+7. The binary and object files should be in each project's corresponding main source
+   directory, such as src/bzflag/ for BZFlag client.
+
+8. The binary (executable) and object files should be in each project's corresponding main source
    directory, such as src/bzflag/ for BZFlag client. libares.a (built from libares.dev)
    is in /Dev-C++/, and is recommended that it be moved to the /lib/ folder of your copy
    of Dev-C++ IDE, although it is not necessary.
@@ -64,6 +67,21 @@ uncomment the #define in the config.h file in the /Dev-C++/ directory.
 Some of the project files instruct the compiler to optimize to a mild extent, so
 compilation might be a small bit slower than normal compilation, but it is worth it and not
 very noticeable or annoying.
+
+SDL is needed for the current building style, which is considerably smaller
+than DirectX SDK, and is available from:
+
+    www.libsdl.org
+
+It is only a few megabytes, and is cross-platform. Remember to download the "devel"
+one for MinGW32 so it works nicely (however, a VC++ one may also work, but it is not recommended), if you
+are on Windows, otherwise download the one for GCC on Linux. Place
+the .a files in your "/lib/" directory of Dev-C++ (or MinGW32 dir), and the headers in
+"/include/". For libcURL, place the folder named "/curl/", containing .h files, into the "/include/" of
+Dev-C++, like stated above. Follow same instructions as for SDL for libcURL's .a files. Also, make sure
+you put all included dynamic libraries from SDL and libcURL (for example, "SDL.dll" on Windows)
+somewhere in your PATH environment variable (on Windows), such as "c:\WINDOWS\".
+On Linux, place it in a directory that it knows to look in.
 
 Dev-C++ currently exhibits a bug in which if any project is opened from inside Dev-C++,
 rather than launching the project file itself (double-clicking the project file's icon in

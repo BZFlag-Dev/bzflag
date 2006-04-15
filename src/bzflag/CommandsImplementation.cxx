@@ -373,7 +373,11 @@ static float parseFloatExpr(const std::string& str, bool zeroNan)
   if (!zeroNan || !isnan(value)) {
     return value;
   } else {
-    return 0.0f;
+    if (!isnan(value)) {
+      return value;
+    } else {
+      return 0.0f;
+    }
   }
 }
 

@@ -43,7 +43,6 @@ public:
 
 	virtual void setPos ( const float *pos, const float *rot );
 	virtual void setVel ( const float *vel );
-	virtual void setTeam ( int team );
 	virtual void setColor( const float *rgb );
 	virtual void setStartTime ( float time );
 
@@ -58,7 +57,6 @@ protected:
 	float	position[3];
 	float	rotation[3];
 	float velocity[3];
-	int		teamColor;
 	float	color[3];
 	float	startTime;
 	float	lifetime;

@@ -365,7 +365,6 @@ namespace TextUtils {
    *  make last char a '~' if truncation took place
    */  
   std::string str_trunc_continued (const std::string &text, int len);
-
 }
 
 #endif // __TEXTUTILS_H__
