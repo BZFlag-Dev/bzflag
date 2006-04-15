@@ -475,17 +475,17 @@ static bool lookForFlag(float &rotation, float &speed)
       continue;
 
     if (world->getFlag(i).type->flagTeam != NoTeam)
-		teamFlag = i;
+      teamFlag = i;
     const float* fpos = world->getFlag(i).position;
     if (fpos[2] == pos[2]) {
       float dist = TargetingUtils::getTargetDistance(pos, fpos);
       bool isTargetObscured = TargetingUtils::isLocationObscured(pos, fpos);
       if (isTargetObscured)
-		dist *= 1.25f;
+	dist *= 1.25f;
 
       if ((dist < 200.0f) && (dist < minDist)) {
-		minDist = dist;
-		closestFlag = i;
+	minDist = dist;
+	closestFlag = i;
       }
     }
   }
@@ -495,8 +495,8 @@ static bool lookForFlag(float &rotation, float &speed)
   if (closestFlag != -1) {
     if (minDist < 10.0f) {
       if (myTank->getFlag() != Flags::Null) {
-		serverLink->sendDropFlag(myTank->getPosition());
-		handleFlagDropped(myTank);
+	serverLink->sendDropFlag(myTank->getPosition());
+	handleFlagDropped(myTank);
       }
     }
 
@@ -550,17 +550,18 @@ static bool navigate(float &rotation, float &speed)
     if (temp == NULL) {
       serverLink->sendDropFlag(myTank->getPosition());
       handleFlagDropped(myTank);
-    }
-    if ((((int) *(world->getBase(myTank->getTeam())) + 2
-	  >= (int) *(myTank->getPosition()))
-	 || (temp[0] == pos[0] && temp[1] == pos[1])) &&
-	myTank->getFlag()->flagTeam == myTank->getTeam()) {
-      serverLink->sendDropFlag(myTank->getPosition());
-      handleFlagDropped(myTank);
     } else {
-      float baseAzimuth = TargetingUtils::getTargetAzimuth(pos, temp);
-      rotation = TargetingUtils::getTargetRotation(myAzimuth, baseAzimuth);
-      speed = (float)(M_PI/2.0 - fabs(rotation));
+      if ((((int) *(world->getBase(myTank->getTeam())) + 2
+	    >= (int) *(myTank->getPosition()))
+	   || (temp[0] == pos[0] && temp[1] == pos[1])) &&
+	  myTank->getFlag()->flagTeam == myTank->getTeam()) {
+	serverLink->sendDropFlag(myTank->getPosition());
+	handleFlagDropped(myTank);
+      } else {
+	float baseAzimuth = TargetingUtils::getTargetAzimuth(pos, temp);
+	rotation = TargetingUtils::getTargetRotation(myAzimuth, baseAzimuth);
+	speed = (float)(M_PI/2.0 - fabs(rotation));
+      }
     }
   } else {
     speed = 1.0f;

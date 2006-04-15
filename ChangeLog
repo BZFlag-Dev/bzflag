@@ -7,6 +7,13 @@ fixes should be applied.  There is no intention of releasing a 2.0.8
 at this time.
 *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***
 
+BZFlag 2.0.8
+------------
+
+* Client and server now close http connections correctly - Daniel Remenak
+* Fixed crash when rogue autopilot picks up a team flag - Daniel Remenak
+* Fixed spawnpoint selection regression - Sean Morrison
+
 BZFlag 2.0.6  "Good enough for now" (2006-04-09)
 ------------------------------------------------
 
