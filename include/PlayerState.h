@@ -10,76 +10,77 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef BZF_PLAYERSTATE_H
-	#define BZF_PLAYERSTATE_H
+#ifndef	BZF_PLAYERSTATE_H
+#define	BZF_PLAYERSTATE_H
 
-	#include "common.h"
-	#include "Address.h"
+#include "common.h"
+#include "Address.h"
 
 // 54 bytes
-const int PlayerUpdatePLenMax = sizeof( float ) +  // timestamp
-PlayerIdPLen +  // player id
-sizeof( int32_t ) +  // order
-sizeof( int16_t ) +  // status
-sizeof( float ) *3+ // position			(or int16_t * 3)
-sizeof( float ) *3+ // velocity			(or int16_t * 3)
-sizeof( float ) +  // angle			(or int16_t)
-sizeof( float ) +  // angular velocity		(or int16_t)
-sizeof( int16_t ) +  // jump jets			(conditional)
-sizeof( int32_t ) +  // physics driver		(conditional)
-sizeof( int16_t ) +  // user speed			(conditional)
-sizeof( int16_t ) +  // user angular velocity	(conditional)
-sizeof( uint8_t ); // sounds			(conditional)
+const int PlayerUpdatePLenMax =
+			sizeof(float)		+ // timestamp
+			PlayerIdPLen		+ // player id
+			sizeof(int32_t)	+ // order
+			sizeof(int16_t)	+ // status
+			sizeof(float) * 3	+ // position			(or int16_t * 3)
+			sizeof(float) * 3	+ // velocity			(or int16_t * 3)
+			sizeof(float)		+ // angle			(or int16_t)
+			sizeof(float)		+ // angular velocity		(or int16_t)
+			sizeof(int16_t)	+ // jump jets			(conditional)
+			sizeof(int32_t)	+ // physics driver		(conditional)
+			sizeof(int16_t)	+ // user speed			(conditional)
+			sizeof(int16_t)	+ // user angular velocity	(conditional)
+			sizeof(uint8_t);	  // sounds			(conditional)
 
 class PlayerState
 {
-public:
-	enum PStatus
-	{
-		// bit masks
-		DeadStatus = 0,  // not alive, not paused, etc.
-		Alive = ( 1 << 0 ),  // player is alive
-		Paused = ( 1 << 1 ),  // player is paused
-		Exploding = ( 1 << 2 ),  // currently blowing up
-		Teleporting = ( 1 << 3 ),  // teleported recently
-		FlagActive = ( 1 << 4 ),  // flag special powers active
-		CrossingWall = ( 1 << 5 ),  // tank crossing building wall
-		Falling = ( 1 << 6 ),  // tank accel'd by gravity
-		OnDriver = ( 1 << 7 ),  // tank is on a physics driver
-		UserInputs = ( 1 << 8 ),  // user speed and angvel are sent
-		JumpJets = ( 1 << 9 ),  // tank has jump jets on
-		PlaySound = ( 1 << 10 ) // play one or more sounds
-	};
+  public:
+    enum PStatus {			// bit masks
+      DeadStatus =      0,		// not alive, not paused, etc.
+      Alive =		(1 << 0),	// player is alive
+      Paused =		(1 << 1),	// player is paused
+      Exploding =       (1 << 2),	// currently blowing up
+      Teleporting =     (1 << 3),	// teleported recently
+      FlagActive =      (1 << 4),	// flag special powers active
+      CrossingWall =    (1 << 5),	// tank crossing building wall
+      Falling =		(1 << 6),	// tank accel'd by gravity
+      OnDriver =	(1 << 7),	// tank is on a physics driver
+      UserInputs =	(1 << 8),	// user speed and angvel are sent
+      JumpJets =	(1 << 9),	// tank has jump jets on
+      PlaySound =	(1 << 10)	// play one or more sounds
+    };
 
-	enum PStatusSounds
-	{
-		NoSounds = 0, JumpSound = ( 1 << 0 ), WingsSound = ( 1 << 1 ), BounceSound = ( 1 << 2 )
-	};
+    enum PStatusSounds {
+      NoSounds =	0,
+      JumpSound =	(1 << 0),
+      WingsSound =	(1 << 1),
+      BounceSound =	(1 << 2)
+    };
 
 
-	PlayerState();
-	void *pack( void *, uint16_t &code );
-	void *unpack( void *, uint16_t code );
+    PlayerState();
+    void*	pack(void*, uint16_t& code);
+    void*	unpack(void*, uint16_t code);
 
-	long order; // packet ordering
-	short status; // see PStatus enum
-	float pos[3]; // position of tank
-	float velocity[3]; // velocity of tank
-	float azimuth; // orientation of tank
-	float angVel; // angular velocity of tank
-	int phydrv; // physics driver
+    long	order;		// packet ordering
+    short	status;		// see PStatus enum
+    float	pos[3];		// position of tank
+    float	velocity[3];	// velocity of tank
+    float	azimuth;	// orientation of tank
+    float	angVel;		// angular velocity of tank
+    int		phydrv;		// physics driver
 
-	// the following are to be used only for drawing
-	float userSpeed; // user's desired angular velocity
-	float userAngVel; // angular velocity of tank
-	float jumpJetsScale; // angular velocity of tank
+    // the following are to be used only for drawing
+    float	userSpeed;	// user's desired angular velocity
+    float	userAngVel;	// angular velocity of tank
+    float	jumpJetsScale;	// angular velocity of tank
 
-	// used to avoid awkward remote bouncy sounds
-	uint8_t sounds; // for playing sounds
+    // used to avoid awkward remote bouncy sounds
+    uint8_t	sounds;		// for playing sounds
 };
 
 
-#endif 
+#endif
 
 // Local Variables: ***
 // mode:C++ ***

@@ -11,31 +11,29 @@
  */
 
 #ifndef __COMMANDSSTANDARD_H__
-	#define __COMMANDSSTANDARD_H__
+#define __COMMANDSSTANDARD_H__
 
 /* common interface headers */
-	#include "CommandManager.h"
+#include "CommandManager.h"
 
 
-struct CommandsItem
-{
+struct CommandsItem {
 public:
-	const char *name;
-	CommandManager::CommandFunction func;
-	const char *help;
+  const char* name;
+  CommandManager::CommandFunction func;
+  const char* help;
 };
 extern const struct CommandsItem commands[];
 
 
 /** standard commands
  */
-class CommandsStandard
-{
+class CommandsStandard {
 public:
-	static void add();
-	static void remove();
-	static void quit();
-	static bool isQuit();
+  static void		add();
+  static void		remove();
+  static void		quit();
+  static bool		isQuit();
 };
 
 

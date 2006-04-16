@@ -21,102 +21,87 @@
 // common implementation headers
 #include "ErrorHandler.h"
 
-BzfJoystick::BzfJoystick(){}
-
-BzfJoystick::~BzfJoystick(){}
-
-void BzfJoystick::initJoystick( const char *joystickName )
+BzfJoystick::BzfJoystick()
 {
-	/* if the name is null, 'off', or unset, don't init */
-	if( !joystickName || ( strcasecmp( joystickName, "off" ) == 0 ) || ( strcmp( joystickName, "" ) == 0 ))
-	{
-		return ;
-	}
-
-	std::vector < std::string > args;
-	args.push_back( joystickName );
-	printError( "Joystick '{1}' not supported...", &args );
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-unsigned long BzfJoystick::getJoyButtons()
+BzfJoystick::~BzfJoystick()
 {
-	return 0;
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-bool BzfJoystick::joystick()const
+void			BzfJoystick::initJoystick(const char* joystickName)
 {
-	return false;
+  /* if the name is null, 'off', or unset, don't init */
+  if (!joystickName || (strcasecmp(joystickName, "off") == 0) || (strcmp(joystickName, "") == 0)) {
+    return;
+  }
+
+  std::vector<std::string> args;
+  args.push_back(joystickName);
+  printError("Joystick '{1}' not supported...", &args);
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-void BzfJoystick::getJoy( int &x, int &y )
+unsigned long		BzfJoystick::getJoyButtons()
 {
-	x = y = 0;
+  return 0;
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-void BzfJoystick::getJoyDevices( std::vector < std::string >  &list )const
+bool			BzfJoystick::joystick() const
 {
-	list.clear();
+  return false;
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-void BzfJoystick::getJoyDeviceAxes( std::vector < std::string >  &list )const
+void			BzfJoystick::getJoy(int& x, int& y)
 {
-	list.clear();
-	list.push_back( "default" );
+  x = y = 0;
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-bool BzfJoystick::ffHasRumble()const
+void		    BzfJoystick::getJoyDevices(std::vector<std::string>
+						 &list) const
 {
-	return false;
+  list.clear();
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-void BzfJoystick::ffRumble( int, float, float, float, float ){}
-
-bool BzfJoystick::ffHasDirectional()const
+void		    BzfJoystick::getJoyDeviceAxes(std::vector<std::string>
+						  &list) const
 {
-	return false;
+  list.clear();
+  list.push_back("default");
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
+bool		    BzfJoystick::ffHasRumble() const
+{
+  return false;
+}
 
-void BzfJoystick::ffDirectionalConstant( int, float, float, float, float, float ){}
+void		    BzfJoystick::ffRumble(int, float, float, float, float)
+{
+}
 
-void BzfJoystick::ffDirectionalPeriodic( int, float, float, float, float, float, float, PeriodicType ){}
+bool		    BzfJoystick::ffHasDirectional() const
+{
+  return false;
+}
 
-void BzfJoystick::ffDirectionalResistance( float, float, float, ResistanceType ){}
+void		    BzfJoystick::ffDirectionalConstant(int, float, float, float, float, float)
+{
+}
 
-void BzfJoystick::setXAxis( const std::string ){}
+void		    BzfJoystick::ffDirectionalPeriodic(int, float, float, float, float, float, float, PeriodicType)
+{
+}
 
-void BzfJoystick::setYAxis( const std::string ){}
+void		    BzfJoystick::ffDirectionalResistance(float, float, float, ResistanceType)
+{
+}
+
+void		    BzfJoystick::setXAxis(const std::string)
+{
+}
+
+void		    BzfJoystick::setYAxis(const std::string)
+{
+}
 
 // Local Variables: ***
 // mode:C++ ***
@@ -125,3 +110,4 @@ void BzfJoystick::setYAxis( const std::string ){}
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
+

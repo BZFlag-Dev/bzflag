@@ -11,31 +11,27 @@
  */
 
 #ifndef __CUSTOM_PHYSICS_DRIVER_H__
-	#define __CUSTOM_PHYSICS_DRIVER_H__
+#define __CUSTOM_PHYSICS_DRIVER_H__
 
 /* interface header */
-	#include "WorldFileObject.h"
+#include "WorldFileObject.h"
 
 /* common headers */
-	#include "PhysicsDriver.h"
+#include "PhysicsDriver.h"
 
-class CustomPhysicsDriver: public WorldFileObject
-{
-public:
-	CustomPhysicsDriver();
-	~CustomPhysicsDriver();
-	virtual bool read( const char *cmd, std::istream &input );
-	virtual void writeToManager()const;
-	bool usesManager()
-	{
-		return true;
-	} 
+class CustomPhysicsDriver : public WorldFileObject {
+  public:
+    CustomPhysicsDriver();
+    ~CustomPhysicsDriver();
+    virtual bool read(const char *cmd, std::istream& input);
+    virtual void writeToManager() const;
+    bool usesManager() { return true; }
 
-private:
-	mutable PhysicsDriver *driver;
+  private:
+    mutable PhysicsDriver* driver;
 };
 
-#endif /* __CUSTOM_PHYSICS_DRIVER_H__ */
+#endif  /* __CUSTOM_PHYSICS_DRIVER_H__ */
 
 // Local variables: ***
 // mode: C++ ***

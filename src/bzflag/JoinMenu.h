@@ -10,69 +10,68 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef __JOINMENU_H__
-	#define __JOINMENU_H__
+#ifndef	__JOINMENU_H__
+#define	__JOINMENU_H__
 
-	#include "common.h"
+#include "common.h"
 
 /* system interface headers */
-	#include <vector>
-	#include <string>
+#include <vector>
+#include <string>
 
 /* common interface headers */
-	#include "global.h"
+#include "global.h"
 
 /* local interface headers */
-	#include "HUDDialog.h"
-	#include "HUDuiDefaultKey.h"
-	#include "HUDuiControl.h"
-	#include "HUDuiLabel.h"
-	#include "HUDuiList.h"
-	#include "HUDuiTypeIn.h"
-	#include "HUDuiTextureLabel.h"
+#include "HUDDialog.h"
+#include "HUDuiDefaultKey.h"
+#include "HUDuiControl.h"
+#include "HUDuiLabel.h"
+#include "HUDuiList.h"
+#include "HUDuiTypeIn.h"
+#include "HUDuiTextureLabel.h"
 
 class ServerStartMenu;
 class ServerMenu;
 
-class JoinMenu: public HUDDialog
-{
-public:
-	JoinMenu();
-	~JoinMenu();
+class JoinMenu : public HUDDialog {
+  public:
+			JoinMenu();
+			~JoinMenu();
 
-	HUDuiDefaultKey *getDefaultKey();
+    HUDuiDefaultKey*	getDefaultKey();
 
-	void show();
-	void execute();
-	void dismiss();
-	void resize( int width, int height );
-	void updateTeamTexture();
+    void		show();
+    void		execute();
+    void		dismiss();
+    void		resize(int width, int height);
+    void		updateTeamTexture();
 
-private:
-	static void teamCallback( HUDuiControl *, void* );
-	TeamColor getTeam()const;
-	void setTeam( TeamColor );
-	void setStatus( const char *, const std::vector < std::string >  *parms = NULL );
-	void setFailedMessage( const char *msg );
-	void loadInfo();
+  private:
+    static void		teamCallback(HUDuiControl*, void*);
+    TeamColor		getTeam() const;
+    void		setTeam(TeamColor);
+    void		setStatus(const char*, const std::vector<std::string> *parms = NULL);
+    void		setFailedMessage(const char* msg);
+    void		loadInfo();
 
-private:
-	float center;
-	HUDuiTypeIn *callsign;
-	HUDuiTypeIn *password;
-	HUDuiTypeIn *email;
-	HUDuiList *team;
-	HUDuiTextureLabel *teamIcon;
-	HUDuiTypeIn *server;
-	HUDuiTypeIn *port;
-	HUDuiLabel *status;
-	HUDuiLabel *startServer;
-	HUDuiLabel *findServer;
-	HUDuiLabel *connectLabel;
-	HUDuiLabel *failedMessage;
-	ServerStartMenu *serverStartMenu;
-	ServerMenu *serverMenu;
-	static JoinMenu *activeMenu;
+  private:
+    float		center;
+    HUDuiTypeIn*	callsign;
+    HUDuiTypeIn*	password;
+    HUDuiTypeIn*	email;
+    HUDuiList*		team;
+    HUDuiTextureLabel*  teamIcon;
+    HUDuiTypeIn*	server;
+    HUDuiTypeIn*	port;
+    HUDuiLabel*		status;
+    HUDuiLabel*		startServer;
+    HUDuiLabel*		findServer;
+    HUDuiLabel*		connectLabel;
+    HUDuiLabel*		failedMessage;
+    ServerStartMenu*	serverStartMenu;
+    ServerMenu*		serverMenu;
+    static JoinMenu*	activeMenu;
 };
 
 

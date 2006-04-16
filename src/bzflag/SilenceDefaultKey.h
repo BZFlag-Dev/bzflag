@@ -12,20 +12,19 @@
 
 
 #ifndef __SILENCEDEFAULTKEY_H__
-	#define __SILENCEDEFAULTKEY_H__
+#define __SILENCEDEFAULTKEY_H__
 
-	#include "HUDuiDefaultKey.h"
+#include "HUDuiDefaultKey.h"
 
 
-class SilenceDefaultKey: public HUDuiDefaultKey
-{
+class SilenceDefaultKey : public HUDuiDefaultKey {
 public:
-	SilenceDefaultKey();
-	bool keyPress( const BzfKeyEvent & );
-	bool keyRelease( const BzfKeyEvent & );
+  SilenceDefaultKey();
+  bool		keyPress(const BzfKeyEvent&);
+  bool		keyRelease(const BzfKeyEvent&);
 };
 
-#endif 
+#endif
 
 // Local Variables: ***
 // mode:C++ ***
@@ -34,3 +33,4 @@ public:
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
+

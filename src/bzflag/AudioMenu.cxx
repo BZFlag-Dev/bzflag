@@ -32,167 +32,148 @@
 
 AudioMenu::AudioMenu()
 {
-	// add controls
-	std::vector < HUDuiControl * >  &listHUD = getControls();
-	std::string currentDriver = BZDB.get( "audioDriver" );
-	std::string currentDevice = BZDB.get( "audioDevice" );
+  // add controls
+  std::vector<HUDuiControl*>& listHUD = getControls();
+  std::string currentDriver = BZDB.get("audioDriver");
+  std::string currentDevice = BZDB.get("audioDevice");
 
-	HUDuiLabel *label = new HUDuiLabel;
-	label->setFontFace( MainMenu::getFontFace());
-	label->setString( "Audio Settings" );
-	listHUD.push_back( label );
+  HUDuiLabel* label = new HUDuiLabel;
+  label->setFontFace(MainMenu::getFontFace());
+  label->setString("Audio Settings");
+  listHUD.push_back(label);
 
-	HUDuiList *option = new HUDuiList;
+  HUDuiList* option = new HUDuiList;
 
-	option = new HUDuiList;
-	std::vector < std::string >  *options;
+  option = new HUDuiList;
+  std::vector<std::string>* options;
 
-	// Sound Volume
-	option = new HUDuiList;
-	option->setFontFace( MainMenu::getFontFace());
-	option->setLabel( "Sound Volume:" );
-	option->setCallback( callback, ( void* )"s" );
-	options = &option->getList();
-	if( isSoundOpen())
-	{
-		options->push_back( std::string( "Off" ));
-		option->createSlider( 10 );
-	}
-	else
-	{
-		options->push_back( std::string( "Unavailable" ));
-	}
-	option->update();
-	listHUD.push_back( option );
+  // Sound Volume
+  option = new HUDuiList;
+  option->setFontFace(MainMenu::getFontFace());
+  option->setLabel("Sound Volume:");
+  option->setCallback(callback, (void*)"s");
+  options = &option->getList();
+  if (isSoundOpen()) {
+    options->push_back(std::string("Off"));
+    option->createSlider(10);
+  } else {
+    options->push_back(std::string("Unavailable"));
+  }
+  option->update();
+  listHUD.push_back(option);
 
-	/* Right now only SDL_Media has a setDriver function.
-	Disable driver selection for others as it gets saved in config
-	and can screw things up if you switch from non-SDL to SDL build.
-	If more platforms get setDriver functions, they can be added. */
+/* Right now only SDL_Media has a setDriver function.
+   Disable driver selection for others as it gets saved in config
+   and can screw things up if you switch from non-SDL to SDL build.
+   If more platforms get setDriver functions, they can be added. */
 
-	// Driver
+  // Driver
 #ifdef HAVE_SDL
-	driver = new HUDuiTypeIn;
-	driver->setFontFace( MainMenu::getFontFace());
-	driver->setLabel( "Driver:" );
-	driver->setMaxLength( 10 );
-	driver->setString( currentDriver );
-	listHUD.push_back( driver );
-#else 
-	driver = NULL;
+  driver = new HUDuiTypeIn;
+  driver->setFontFace(MainMenu::getFontFace());
+  driver->setLabel("Driver:");
+  driver->setMaxLength(10);
+  driver->setString(currentDriver);
+  listHUD.push_back(driver);
+#else
+  driver = NULL;
 #endif // HAVE_SDL
 
-	// Device
+  // Device
 #ifdef HAVE_SDL
-	device = new HUDuiTypeIn;
-	device->setFontFace( MainMenu::getFontFace());
-	device->setLabel( "Device:" );
-	device->setMaxLength( 10 );
-	device->setString( currentDevice );
-	listHUD.push_back( device );
-#else 
-	device = NULL;
+  device = new HUDuiTypeIn;
+  device->setFontFace(MainMenu::getFontFace());
+  device->setLabel("Device:");
+  device->setMaxLength(10);
+  device->setString(currentDevice);
+  listHUD.push_back(device);
+#else
+  device = NULL;
 #endif // HAVE_SDL
 
-	// Remotes Sounds
-	option = new HUDuiList;
-	option->setFontFace( MainMenu::getFontFace());
-	option->setLabel( "Remote Sounds:" );
-	option->setCallback( callback, ( void* )"r" );
-	options = &option->getList();
-	options->push_back( std::string( "Off" ));
-	options->push_back( std::string( "On" ));
-	option->update();
-	listHUD.push_back( option );
+  // Remotes Sounds
+  option = new HUDuiList;
+  option->setFontFace(MainMenu::getFontFace());
+  option->setLabel("Remote Sounds:");
+  option->setCallback(callback, (void*)"r");
+  options = &option->getList();
+  options->push_back(std::string("Off"));
+  options->push_back(std::string("On"));
+  option->update();
+  listHUD.push_back(option);
 
-	initNavigation( listHUD, 1, ( int )listHUD.size() - 1 );
+  initNavigation(listHUD, 1, (int)listHUD.size() - 1);
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-AudioMenu::~AudioMenu(){}
-
-void AudioMenu::execute()
+AudioMenu::~AudioMenu()
 {
-	HUDuiControl *_focus = HUDui::getFocus();
-	if( _focus == driver )
-	{
-		BZDB.set( "audioDriver", driver->getString().c_str());
-	}
-	else if( _focus == device )
-	{
-		BZDB.set( "audioDevice", device->getString().c_str());
-	}
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-void AudioMenu::resize( int _width, int _height )
+void			AudioMenu::execute()
 {
-	HUDDialog::resize( _width, _height );
-	int i;
+  HUDuiControl* _focus = HUDui::getFocus();
+  if (_focus == driver) {
+    BZDB.set("audioDriver", driver->getString().c_str());
+  } else if (_focus == device) {
+    BZDB.set("audioDevice", device->getString().c_str());
+  }
+}
 
-	// use a big font for title, smaller font for the rest
-	const float titleFontSize = ( float )_height / 15.0f;
-	const float fontSize = ( float )_height / 45.0f;
-	FontManager &fm = FontManager::instance();
-	int fontFace = MainMenu::getFontFace();
+void			AudioMenu::resize(int _width, int _height)
+{
+  HUDDialog::resize(_width, _height);
+  int i;
 
-	// reposition title
-	std::vector < HUDuiControl * >  &listHUD = getControls();
-	HUDuiLabel *title = ( HUDuiLabel* )listHUD[0];
-	title->setFontSize( titleFontSize );
-	const float titleWidth = fm.getStrLength( fontFace, titleFontSize, title->getString());
-	const float titleHeight = fm.getStrHeight( fontFace, titleFontSize, " " );
-	float x = 0.5f *(( float )_width - titleWidth );
-	float y = ( float )_height - titleHeight;
-	title->setPosition( x, y );
+  // use a big font for title, smaller font for the rest
+  const float titleFontSize = (float)_height / 15.0f;
+  const float fontSize = (float)_height / 45.0f;
+  FontManager &fm = FontManager::instance();
+  int fontFace = MainMenu::getFontFace();
 
-	// reposition options
-	x = 0.5f *(( float )_width );
-	y -= 0.6f * titleHeight;
-	const float h = fm.getStrHeight( fontFace, fontSize, " " );
-	const int count = ( const int )listHUD.size();
-	for( i = 1; i < count; i++ )
-	{
-		listHUD[i]->setFontSize( fontSize );
-		listHUD[i]->setPosition( x, y );
-		y -= 1.0f * h;
-	}
+  // reposition title
+  std::vector<HUDuiControl*>& listHUD = getControls();
+  HUDuiLabel* title = (HUDuiLabel*)listHUD[0];
+  title->setFontSize(titleFontSize);
+  const float titleWidth = fm.getStrLength(fontFace, titleFontSize, title->getString());
+  const float titleHeight = fm.getStrHeight(fontFace, titleFontSize, " ");
+  float x = 0.5f * ((float)_width - titleWidth);
+  float y = (float)_height - titleHeight;
+  title->setPosition(x, y);
 
-	i = 1;
-	// sound
-	(( HUDuiList* )listHUD[i++] )->setIndex( getSoundVolume());
+  // reposition options
+  x = 0.5f * ((float)_width);
+  y -= 0.6f * titleHeight;
+  const float h = fm.getStrHeight(fontFace, fontSize, " ");
+  const int count = (const int)listHUD.size();
+  for (i = 1; i < count; i++) {
+    listHUD[i]->setFontSize(fontSize);
+    listHUD[i]->setPosition(x, y);
+    y -= 1.0f * h;
+  }
+
+  i = 1;
+  // sound
+  ((HUDuiList*)listHUD[i++])->setIndex(getSoundVolume());
 #ifdef HAVE_SDL
-	i++; // driver
-	i++; // device
+  i++; // driver
+  i++; // device
 #endif // HAVE_SDL
-	(( HUDuiList* )listHUD[i++] )->setIndex( BZDB.isTrue( "remoteSounds" ) ? 1 : 0 );
+  ((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("remoteSounds") ? 1 : 0);
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-void AudioMenu::callback( HUDuiControl *w, void *data )
-{
-	HUDuiList *list = ( HUDuiList* )w;
-	std::vector < std::string >  *options = &list->getList();
-	std::string selectedOption = ( *options )[list->getIndex()];
-	switch((( const char* )data )[0] )
-	{
-		case 's':
-			BZDB.set( "volume", TextUtils::format( "%d", list->getIndex()));
-			setSoundVolume( list->getIndex());
-			break;
-		case 'r':
-			BZDB.setBool( "remoteSounds", ( list->getIndex() == 0 ) ? false : true );
-			break;
-	}
+void			AudioMenu::callback(HUDuiControl* w, void* data) {
+  HUDuiList* list = (HUDuiList*)w;
+  std::vector<std::string> *options = &list->getList();
+  std::string selectedOption = (*options)[list->getIndex()];
+  switch (((const char*)data)[0]) {
+    case 's':
+      BZDB.set("volume", TextUtils::format("%d", list->getIndex()));
+      setSoundVolume(list->getIndex());
+      break;
+    case 'r':
+      BZDB.setBool("remoteSounds", (list->getIndex() == 0) ? false : true);
+      break;
+  }
 }
 
 

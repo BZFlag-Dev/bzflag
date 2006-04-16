@@ -10,24 +10,24 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef GLCOLLECT_H
-	#define GLCOLLECT_H
+#ifndef	GLCOLLECT_H
+#define	GLCOLLECT_H
 
-	#include "bzfgl.h"
+#include "bzfgl.h"
 
 class GLCollect
 {
 public:
-	GLCollect( GLenum en );
-	~GLCollect();
+  GLCollect( GLenum en );
+  ~GLCollect();
 private:
-	GLCollect( const GLCollect &c );
-	GLCollect &operator = ( const GLCollect &c );
+  GLCollect( const GLCollect &c );
+  GLCollect& operator=( const GLCollect &c );
 
-	static int count;
+  static int count;
 };
 
-#endif 
+#endif
 
 // Local Variables: ***
 // mode:C++ ***
@@ -36,3 +36,4 @@ private:
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
+

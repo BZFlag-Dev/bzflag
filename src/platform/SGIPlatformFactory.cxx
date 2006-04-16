@@ -16,71 +16,48 @@
 #include "XWindow.h"
 #include "SGIMedia.h"
 
-PlatformFactory *PlatformFactory::getInstance()
+PlatformFactory*	PlatformFactory::getInstance()
 {
-	if( !instance )
-		instance = new SGIPlatformFactory;
-	return instance;
+  if (!instance) instance = new SGIPlatformFactory;
+  return instance;
 }
-
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
 
 SGIPlatformFactory::SGIPlatformFactory()
 {
-	// do nothing
+  // do nothing
 }
-
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
 
 SGIPlatformFactory::~SGIPlatformFactory()
 {
-	// do nothing
+  // do nothing
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-BzfDisplay *SGIPlatformFactory::createDisplay( const char *name, const char* )
+BzfDisplay*		SGIPlatformFactory::createDisplay(
+				const char* name, const char*)
 {
-	XDisplay *display = new XDisplay( name, new SGIDisplayMode );
-	if( !display || !display->isValid())
-	{
-		delete display;
-		return NULL;
-	}
-	return display;
+  XDisplay* display = new XDisplay(name, new SGIDisplayMode);
+  if (!display || !display->isValid()) {
+    delete display;
+    return NULL;
+  }
+  return display;
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-BzfVisual *SGIPlatformFactory::createVisual( const BzfDisplay *display )
+BzfVisual*		SGIPlatformFactory::createVisual(
+				const BzfDisplay* display)
 {
-	return new XVisual(( const XDisplay* )display );
+  return new XVisual((const XDisplay*)display);
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-BzfWindow *SGIPlatformFactory::createWindow( const BzfDisplay *display, BzfVisual *visual )
+BzfWindow*		SGIPlatformFactory::createWindow(
+				const BzfDisplay* display, BzfVisual* visual)
 {
-	return new XWindow(( const XDisplay* )display, ( XVisual* )visual );
+  return new XWindow((const XDisplay*)display, (XVisual*)visual);
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-BzfMedia *SGIPlatformFactory::createMedia()
+BzfMedia*		SGIPlatformFactory::createMedia()
 {
-	return new SGIMedia;
+  return new SGIMedia;
 }
 
 // Local Variables: ***
@@ -90,3 +67,4 @@ BzfMedia *SGIPlatformFactory::createMedia()
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
+

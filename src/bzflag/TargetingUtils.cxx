@@ -24,164 +24,125 @@
 
 // These routines are 2 dimensional
 
-float TargetingUtils::normalizeAngle( float ang )
+float TargetingUtils::normalizeAngle(float ang)
 {
-	if( ang <  - 1.0f * M_PI )
-		ang += ( float )( 2.0 *M_PI );
-	if( ang > 1.0f *M_PI )
-		ang -= ( float )( 2.0 *M_PI );
-	return ang;
+  if (ang < -1.0f * M_PI) ang += (float)(2.0 * M_PI);
+  if (ang > 1.0f * M_PI) ang -= (float)(2.0 * M_PI);
+  return ang;
 }
-
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
 
 void TargetingUtils::getUnitVector( const float *src, const float *target, float unitVector[3] )
 {
-	unitVector[0] = target[0] - src[0];
-	unitVector[1] = target[1] - src[1];
-	unitVector[2] = 0.0f;
+  unitVector[0] = target[0] - src[0];
+  unitVector[1] = target[1] - src[1];
+  unitVector[2] = 0.0f;
 
-	float len = ( float )sqrt( unitVector[0] *unitVector[0] + unitVector[1] *unitVector[1] );
+  float len = (float) sqrt(unitVector[0] * unitVector[0] +
+			   unitVector[1] * unitVector[1]);
 
-	if( len == 0.0f )
-		return ;
+  if (len == 0.0f)
+	  return;
 
-	unitVector[0] /= len;
-	unitVector[1] /= len;
+  unitVector[0] /= len;
+  unitVector[1] /= len;
 }
-
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
 
 void TargetingUtils::get3DUnitVector( const float *src, const float *target, float unitVector[3] )
 {
-	unitVector[0] = target[0] - src[0];
-	unitVector[1] = target[1] - src[1];
-	unitVector[2] = target[2] - src[1];
+  unitVector[0] = target[0] - src[0];
+  unitVector[1] = target[1] - src[1];
+  unitVector[2] = target[2] - src[1];
 
-	float len = ( float )sqrt( unitVector[0] *unitVector[0] + unitVector[1] *unitVector[1] + unitVector[2] *unitVector[2] );
+  float len = (float) sqrt(unitVector[0] * unitVector[0] +
+			   unitVector[1] * unitVector[1] +
+			     unitVector[2] * unitVector[2]);
 
-	if( len == 0.0f )
-		return ;
+  if (len == 0.0f)
+	  return;
 
-	unitVector[0] /= len;
-	unitVector[1] /= len;
-	unitVector[2] /= len;
+  unitVector[0] /= len;
+  unitVector[1] /= len;
+  unitVector[2] /= len;
 }
-
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
 
 float TargetingUtils::getTargetDistance( const float *src, const float *target )
 {
-	float vec[2];
+  float vec[2];
 
-	vec[0] = target[0] - src[0];
-	vec[1] = target[1] - src[1];
+  vec[0] = target[0] - src[0];
+  vec[1] = target[1] - src[1];
 
-	return ( float )sqrt( vec[0] *vec[0] + vec[1] *vec[1] );
+  return (float) sqrt(vec[0] * vec[0] +
+		      vec[1] * vec[1]);
 }
-
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
 
 float TargetingUtils::getTargetAzimuth( const float *src, const float *target )
 {
-	return atan2f(( target[1] - src[1] ), ( target[0] - src[0] ));
+  return atan2f((target[1] - src[1]), (target[0] - src[0]));
 }
-
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
 
 float TargetingUtils::getTargetRotation( const float startAzimuth, float targetAzimuth )
 {
-	float targetRotation = targetAzimuth - startAzimuth;
-	if( targetRotation <  - 1.0f * M_PI )
-		targetRotation += ( float )( 2.0 *M_PI );
-	if( targetRotation > 1.0f *M_PI )
-		targetRotation -= ( float )( 2.0 *M_PI );
+  float targetRotation = targetAzimuth - startAzimuth;
+  if (targetRotation < -1.0f * M_PI) targetRotation += (float)(2.0 * M_PI);
+  if (targetRotation > 1.0f * M_PI) targetRotation -= (float)(2.0 * M_PI);
 
-	return targetRotation;
+  return targetRotation;
 }
-
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
 
 float TargetingUtils::getTargetAngleDifference( const float *src, float srcAzimuth, const float *target )
 {
-	float targetUnitVector[3];
-	float srcUnitVector[3];
+  float targetUnitVector[3];
+  float srcUnitVector[3];
 
-	getUnitVector( src, target, targetUnitVector );
+  getUnitVector(src, target, targetUnitVector);
 
-	srcUnitVector[0] = cosf( srcAzimuth );
-	srcUnitVector[1] = sinf( srcAzimuth );
-	srcUnitVector[2] = 0.0f;
+  srcUnitVector[0] = cosf(srcAzimuth);
+  srcUnitVector[1] = sinf(srcAzimuth);
+  srcUnitVector[2] = 0.0f;
 
-	return acos( targetUnitVector[0] *srcUnitVector[0] + targetUnitVector[1] *srcUnitVector[1] );
+  return acos( targetUnitVector[0]*srcUnitVector[0] + targetUnitVector[1]*srcUnitVector[1] );
 }
-
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
 
 bool TargetingUtils::isLocationObscured( const float *src, const float *target )
 {
-	float dir[3];
+  float dir[3];
 
-	getUnitVector( src, target, dir );
+  getUnitVector(src, target, dir);
 
-	Ray tankRay( src, dir );
-	float targetDistance = getTargetDistance( src, target );
-	const Obstacle *building = ShotStrategy::getFirstBuilding( tankRay,  - 0.5f, targetDistance );
-	return building != NULL;
+  Ray tankRay( src, dir );
+  float targetDistance = getTargetDistance(src, target);
+  const Obstacle *building = ShotStrategy::getFirstBuilding(tankRay, -0.5f, targetDistance);
+  return building != NULL;
 }
-
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
 
 float TargetingUtils::getOpenDistance( const float *src, const float azimuth )
 {
-	float t = MAXFLOAT; //Some constant?
+  float t = MAXFLOAT; //Some constant?
 
-	float dir[3] = 
-	{
-		cosf( azimuth ), sinf( azimuth ), 0.0f
-	};
-	*(( float* ) &src[2] ) += 0.1f; //Don't hit building because your sitting on one
-	Ray tankRay( src, dir );
-	*(( float* ) &src[2] ) -= 0.1f;
-	ShotStrategy::getFirstBuilding( tankRay,  - 0.5f, t );
-	return t;
+  float dir[3] = { cosf(azimuth), sinf(azimuth), 0.0f };
+  *((float *) &src[2]) += 0.1f; //Don't hit building because your sitting on one
+  Ray tankRay( src, dir );
+  *((float *) &src[2]) -= 0.1f;
+  ShotStrategy::getFirstBuilding(tankRay, -0.5f, t);
+  return t;
 }
-
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
 
 bool TargetingUtils::getFirstCollisionPoint( const float *src, const float *target, float *collisionPt )
 {
-	float t = MAXFLOAT;
-	float dir[3];
-	get3DUnitVector( src, target, dir );
+  float t = MAXFLOAT;
+  float dir[3];
+  get3DUnitVector(src, target, dir);
 
-	Ray tankRay( src, dir );
-	const Obstacle *building = ShotStrategy::getFirstBuilding( tankRay, 0.0f, t );
-	if( building == NULL )
-		return false;
+  Ray tankRay( src, dir );
+  const Obstacle *building = ShotStrategy::getFirstBuilding(tankRay, 0.0f, t);
+  if (building == NULL)
+	  return false;
 
-	collisionPt[0] = src[0] + dir[0] *t;
-	collisionPt[1] = src[1] + dir[1] *t;
-	collisionPt[2] = src[2] + dir[2] *t;
-	return true;
+  collisionPt[0] = src[0] + dir[0] * t;
+  collisionPt[1] = src[1] + dir[1] * t;
+  collisionPt[2] = src[2] + dir[2] * t;
+  return true;
 }
 
 // Local Variables: ***

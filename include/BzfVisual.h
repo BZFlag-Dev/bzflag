@@ -16,31 +16,32 @@
  */
 
 #ifndef BZF_VISUAL_H
-	#define BZF_VISUAL_H
+#define	BZF_VISUAL_H
 
-	#include "common.h"
+#include "common.h"
 
-class BzfVisual
-{
-public:
-	BzfVisual();
-	virtual ~BzfVisual();
+class BzfVisual {
+  public:
+			BzfVisual();
+    virtual		~BzfVisual();
 
-	virtual void setLevel( int level ) = 0;
-	virtual void setDoubleBuffer( bool ) = 0;
-	virtual void setIndex( int minDepth ) = 0;
-	virtual void setRGBA( int minRed, int minGreen, int minBlue, int minAlpha ) = 0;
-	virtual void setDepth( int minDepth ) = 0;
-	virtual void setStencil( int minDepth ) = 0;
-	virtual void setAccum( int minRed, int minGreen, int minBlue, int minAlpha ) = 0;
-	virtual void setStereo( bool ) = 0;
-	virtual void setMultisample( int minSamples ) = 0;
+    virtual void	setLevel(int level) = 0;
+    virtual void	setDoubleBuffer(bool) = 0;
+    virtual void	setIndex(int minDepth) = 0;
+    virtual void	setRGBA(int minRed, int minGreen,
+				int minBlue, int minAlpha) = 0;
+    virtual void	setDepth(int minDepth) = 0;
+    virtual void	setStencil(int minDepth) = 0;
+    virtual void	setAccum(int minRed, int minGreen,
+				int minBlue, int minAlpha) = 0;
+    virtual void	setStereo(bool) = 0;
+    virtual void	setMultisample(int minSamples) = 0;
 
-	virtual bool build() = 0;
+    virtual bool	build() = 0;
 
-private:
-	BzfVisual( const BzfVisual & );
-	BzfVisual &operator = ( const BzfVisual & );
+  private:
+			BzfVisual(const BzfVisual&);
+    BzfVisual&		operator=(const BzfVisual&);
 };
 
 #endif // BZF_VISUAL_H
@@ -52,3 +53,4 @@ private:
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
+

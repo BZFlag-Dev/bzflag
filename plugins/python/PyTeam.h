@@ -13,23 +13,23 @@
 #include <Python.h>
 
 #ifndef __PYTHON_TEAM_H__
-	#define __PYTHON_TEAM_H__
+#define __PYTHON_TEAM_H__
 
 namespace Python
 {
 
-	class Team
-	{
+class Team
+{
 public:
-		Team();
-		PyObject *GetSubModule();
+  Team ();
+  PyObject *GetSubModule ();
 private:
-		PyObject *module;
-	};
+  PyObject *module;
+};
 
 };
 
-#endif 
+#endif
 
 // Local Variables: ***
 // mode:C++ ***
@@ -38,3 +38,4 @@ private:
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
+

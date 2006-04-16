@@ -11,34 +11,33 @@
  */
 
 #ifndef __CUSTOMBASE_H__
-	#define __CUSTOMBASE_H__
+#define __CUSTOMBASE_H__
 
-	#include "common.h"
+#include "common.h"
 
 /* interface header */
-	#include "WorldFileObstacle.h"
+#include "WorldFileObstacle.h"
 
 /* system interface headers */
-	#include <iostream>
+#include <iostream>
 
 /* local interface headers */
-	#include "WorldInfo.h"
+#include "WorldInfo.h"
 
 
-class CustomBase: public WorldFileObstacle
-{
-public:
-	CustomBase();
-	virtual bool read( const char *cmd, std::istream & );
-	virtual void writeToGroupDef( GroupDefinition* )const;
+class CustomBase : public WorldFileObstacle {
+  public:
+    CustomBase();
+    virtual bool read(const char *cmd, std::istream&);
+    virtual void writeToGroupDef(GroupDefinition*) const;
 
-protected:
-	int color;
-	bool triggerWorldWep;
-	std::string worldWepType;
+  protected:
+    int color;
+    bool triggerWorldWep;
+    std::string worldWepType;
 };
 
-#endif /* __CUSTOMBASE_H__ */
+#endif  /* __CUSTOMBASE_H__ */
 
 // Local variables: ***
 // mode:C++ ***

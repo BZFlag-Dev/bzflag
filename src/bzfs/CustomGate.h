@@ -11,35 +11,34 @@
  */
 
 #ifndef __CUSTOMGATE_H__
-	#define __CUSTOMGATE_H__
+#define __CUSTOMGATE_H__
 
-	#include "common.h"
+#include "common.h"
 
 /* interface header */
-	#include "WorldFileObstacle.h"
+#include "WorldFileObstacle.h"
 
 /* system interface headers */
-	#include <string>
-	#include <iostream>
+#include <string>
+#include <iostream>
 
 /* local interface headers */
-	#include "WorldInfo.h"
+#include "WorldInfo.h"
 
 
-class CustomGate: public WorldFileObstacle
-{
-public:
-	CustomGate( const char *telename );
-	virtual bool read( const char *cmd, std::istream & );
-	virtual void writeToGroupDef( GroupDefinition* )const;
+class CustomGate : public WorldFileObstacle {
+  public:
+    CustomGate(const char* telename);
+    virtual bool read(const char *cmd, std::istream&);
+    virtual void writeToGroupDef(GroupDefinition*) const;
 
-protected:
-	std::string telename;
-	float border;
-	bool horizontal;
+  protected:
+    std::string telename;
+    float border;
+    bool horizontal;
 };
 
-#endif /* __CUSTOMGATE_H__ */
+#endif  /* __CUSTOMGATE_H__ */
 
 // Local variables: ***
 // mode:C++ ***

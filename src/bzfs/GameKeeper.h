@@ -11,288 +11,260 @@
  */
 
 #ifndef __GAMEKEEPER_H__
-	#define __GAMEKEEPER_H__
+#define __GAMEKEEPER_H__
 
 // bzflag global header
-	#include "common.h"
+#include "common.h"
 
 // system headers
-	#include <vector>
-	#include <string>
-	#if defined(USE_THREADS)
-		#include <pthread.h>
-	#endif 
+#include <vector>
+#include <string>
+#if defined(USE_THREADS)
+#include <pthread.h>
+#endif
 
 // common interface headers
-	#include "PlayerInfo.h"
-	#include "PlayerState.h"
-	#include "TimeKeeper.h"
-	#include "bzfsAPI.h"
+#include "PlayerInfo.h"
+#include "PlayerState.h"
+#include "TimeKeeper.h"
+#include "bzfsAPI.h"
 
 // implementation-specific bzfs-specific headers
-	#include "CmdLineOptions.h"
-	#include "FlagHistory.h"
-	#include "Permissions.h"
-	#include "LagInfo.h"
-	#include "Score.h"
-	#include "RecordReplay.h"
-	#include "NetHandler.h"
-	#include "Authentication.h"
-	#include "messages.h"
-	#include "ShotUpdate.h"
+#include "CmdLineOptions.h"
+#include "FlagHistory.h"
+#include "Permissions.h"
+#include "LagInfo.h"
+#include "Score.h"
+#include "RecordReplay.h"
+#include "NetHandler.h"
+#include "Authentication.h"
+#include "messages.h"
+#include "ShotUpdate.h"
 
 struct FiringInfo;
-class ShotInfo
-{
+class ShotInfo {
 public:
-	ShotInfo(): present( false ){}
-	;
+  ShotInfo() : present(false) {};
 
-	FiringInfo firingInfo;
-	int salt;
-	float expireTime;
-	bool present;
-	bool running;
+  FiringInfo firingInfo;
+  int        salt;
+  float      expireTime;
+  bool       present;
+  bool       running;
 };
 
 
 const int PlayerSlot = MaxPlayers + ReplayObservers;
 
-typedef void( *tcpCallback )( NetHandler &netPlayer, int i, const RxStatus e );
+typedef void (*tcpCallback)(NetHandler &netPlayer, int i, const RxStatus e);
 
 /** This class is meant to be the container of all the global entity that lives
-into the game and methods to act globally on those.
-Up to now it contain players. Flag class is only there as a TODO
- */
-class GameKeeper
-{
+    into the game and methods to act globally on those.
+    Up to now it contain players. Flag class is only there as a TODO
+*/
+class GameKeeper {
 public:
-	class Player
-	{
-public:
-		Player( int _playerIndex, NetHandler *_netHandler, tcpCallback _clientCallback );
-		Player( int _playerIndex, bz_ServerSidePlayerHandler *handler );
-		~Player();
+  class Player {
+  public:
+    Player(int _playerIndex, NetHandler *_netHandler, tcpCallback _clientCallback);
+    Player(int _playerIndex, bz_ServerSidePlayerHandler *handler);
+    ~Player();
 
-		int getIndex();
-		static int getFreeIndex( int min, int max );
-		static Player *getPlayerByIndex( int _playerIndex );
-		static Player *getFirstPlayer( NetHandler *_netHandler );
-		static int count();
-		static void updateLatency( float &waitTime );
-		static void dumpScore();
-		static int anointRabbit( int oldRabbit );
-		static std::vector < int > allowed( PlayerAccessInfo::AccessPerm right, int targetPlayer =  - 1 );
-		static int getPlayerIDByName( const std::string &name );
-		static void reloadAccessDatabase();
+    int	    getIndex();
+    static int     getFreeIndex(int min, int max);
+    static Player *getPlayerByIndex(int _playerIndex);
+    static Player *getFirstPlayer(NetHandler *_netHandler);
+    static int     count();
+    static void    updateLatency(float &waitTime);
+    static void    dumpScore();
+    static int     anointRabbit(int oldRabbit);
+    static std::vector<int> allowed(PlayerAccessInfo::AccessPerm right,
+				    int targetPlayer = -1);
+    static int     getPlayerIDByName(const std::string &name);
+    static void    reloadAccessDatabase();
 
-		bool loadEnterData( uint16_t &rejectCode, char *rejectMsg );
-		void *packAdminInfo( void *buf );
-		void *packPlayerInfo( void *buf );
-		void *packPlayerUpdate( void *buf );
+    bool	   loadEnterData(uint16_t &rejectCode,
+				 char *rejectMsg);
+    void	  *packAdminInfo(void *buf);
+    void	  *packPlayerInfo(void *buf);
+    void	  *packPlayerUpdate(void *buf);
 
-		void setPlayerAddMessage( PlayerAddMessage &msg );
+    void		setPlayerAddMessage ( PlayerAddMessage &msg );
 
-		void signingOn( bool ctf );
-		void close();
-		static bool clean();
-		void handleTcpPacket( fd_set *set );
-	#if defined(USE_THREADS)
-		void handleTcpPacketT();
-	#endif 
-		static void passTCPMutex();
-		static void freeTCPMutex();
+    void	   signingOn(bool ctf);
+    void	   close();
+    static bool    clean();
+    void	   handleTcpPacket(fd_set *set);
+#if defined(USE_THREADS)
+    void	   handleTcpPacketT();
+#endif
+    static void    passTCPMutex();
+    static void    freeTCPMutex();
 
-		// For hostban checking, to avoid check and check again
-		static void setAllNeedHostbanChecked( bool set );
-		void setNeedThisHostbanChecked( bool set );
-		bool needsHostbanChecked();
+    // For hostban checking, to avoid check and check again
+    static void    setAllNeedHostbanChecked(bool set);
+    void	   setNeedThisHostbanChecked(bool set);
+    bool	   needsHostbanChecked();
 
-		// To handle player State
-		void setPlayerState( float pos[3], float azimuth );
-		void getPlayerState( float pos[3], float &azimuth );
-		void setPlayerState( PlayerState state, float timestamp );
+    // To handle player State
+    void	   setPlayerState(float pos[3], float azimuth);
+    void	   getPlayerState(float pos[3], float &azimuth);
+    void	   setPlayerState(PlayerState state, float timestamp);
 
-		void setBzIdentifier( const std::string &id );
-		const std::string &getBzIdentifier()const;
+    void	   setBzIdentifier(const std::string& id);
+    const std::string& getBzIdentifier() const;
 
-		// When is the player's next GameTime?
-		const TimeKeeper &getNextGameTime()const;
-		void updateNextGameTime();
+    // When is the player's next GameTime?
+    const TimeKeeper&	getNextGameTime() const;
+    void		updateNextGameTime();
 
-		// To handle shot
-		static void setMaxShots( int _maxShots );
-		bool addShot( int id, int salt, FiringInfo &firingInfo );
-		bool removeShot( int id, int salt, FiringInfo &firingInfo );
-		bool updateShot( int id, int salt );
+    // To handle shot
+    static void    setMaxShots(int _maxShots);
+    bool           addShot(int id, int salt, FiringInfo &firingInfo);
+    bool           removeShot(int id, int salt, FiringInfo &firingInfo);
+    bool           updateShot(int id, int salt);
 
-		// To handle Identify
-		void setLastIdFlag( int _idFlag );
-		int getLastIdFlag();
+    // To handle Identify
+    void           setLastIdFlag(int _idFlag);
+    int            getLastIdFlag();
+    
+    enum LSAState
+      {
+	start,
+	notRequired,
+	required,
+	requesting,
+	checking,
+	timedOut,
+	failed,
+	verified,
+	done
+      } _LSAState;
 
-		enum LSAState
-		{
-			start, notRequired, required, requesting, checking, timedOut, failed, verified, done
-		} _LSAState;
+    // players
+    PlayerInfo	      player;
+    // Net Handler
+    NetHandler       *netHandler;
+    // player lag info
+    LagInfo	      lagInfo;
+    // player access
+    PlayerAccessInfo  accessInfo;
+    // Last known position, vel, etc
+    PlayerState       lastState;
+    float	      stateTimeStamp;
+    // GameTime update
+    float	      gameTimeRate;
+    TimeKeeper	      gameTimeNext;
+    // FlagHistory
+    FlagHistory       flagHistory;
+    // Score
+    Score	      score;
+    // Authentication
+    Authentication    authentication;
 
-		// players
-		PlayerInfo player;
-		// Net Handler
-		NetHandler *netHandler;
-		// player lag info
-		LagInfo lagInfo;
-		// player access
-		PlayerAccessInfo accessInfo;
-		// Last known position, vel, etc
-		PlayerState lastState;
-		float stateTimeStamp;
-		// GameTime update
-		float gameTimeRate;
-		TimeKeeper gameTimeNext;
-		// FlagHistory
-		FlagHistory flagHistory;
-		// Score
-		Score score;
-		// Authentication
-		Authentication authentication;
+    // logic class for server side players
+    bz_ServerSidePlayerHandler	*playerHandler;		
 
-		// logic class for server side players
-		bz_ServerSidePlayerHandler *playerHandler;
+  private:
+    static Player    *playerList[PlayerSlot];
+    int		      playerIndex;
+    bool	      closed;
+    tcpCallback       clientCallback;
+    std::string	      bzIdentifier;
+#if defined(USE_THREADS)
+    pthread_t		   thread;
+    static pthread_mutex_t mutex;
+    int			   refCount;
+#endif
+    bool	      needThisHostbanChecked;
+    // In case you want recheck all condition on all players
+    static bool       allNeedHostbanChecked;
+    static int             maxShots;
+    std::vector<ShotInfo> shotsInfo;
 
-private:
-		static Player *playerList[PlayerSlot];
-		int playerIndex;
-		bool closed;
-		tcpCallback clientCallback;
-		std::string bzIdentifier;
-	#if defined(USE_THREADS)
-		pthread_t thread;
-		static pthread_mutex_t mutex;
-		int refCount;
-	#endif 
-		bool needThisHostbanChecked;
-		// In case you want recheck all condition on all players
-		static bool allNeedHostbanChecked;
-		static int maxShots;
-		std::vector < ShotInfo > shotsInfo;
+    int                   idFlag;
+  };
 
-		int idFlag;
-	};
-
-	class Flag{}
-	;
+  class Flag {
+  };
 };
 
 inline int GameKeeper::Player::getIndex()
 {
-	return playerIndex;
-} 
-
-inline GameKeeper::Player *GameKeeper::Player::getPlayerByIndex( int _playerIndex )
-{
-	if( _playerIndex < 0 || _playerIndex >= PlayerSlot )
-		return NULL;
-	if( !playerList[_playerIndex] )
-		return NULL;
-	if( playerList[_playerIndex]->closed )
-		return NULL;
-	return playerList[_playerIndex];
+  return playerIndex;
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-void *PackPlayerInfo( void *buf, int playerIndex, uint8_t properties );
-
-	#if defined(USE_THREADS)
-inline void GameKeeper::Player::handleTcpPacket( fd_set* )
+inline GameKeeper::Player *GameKeeper::Player::getPlayerByIndex(int
+								_playerIndex)
 {
-	;
-};
-	#endif 
+  if (_playerIndex < 0 || _playerIndex >= PlayerSlot)
+    return NULL;
+  if (!playerList[_playerIndex])
+    return NULL;
+  if (playerList[_playerIndex]->closed)
+    return NULL;
+  return playerList[_playerIndex];
+}
+
+void *PackPlayerInfo(void *buf, int playerIndex, uint8_t properties );
+
+#if defined(USE_THREADS)
+inline void GameKeeper::Player::handleTcpPacket(fd_set *) {;};
+#endif
 
 inline void GameKeeper::Player::passTCPMutex()
 {
-	#if defined(USE_THREADS)
-	int result = pthread_mutex_lock( &mutex );
-	if( result )
-		std::cerr << "Could not lock mutex" << std::endl;
-	#endif 
+#if defined(USE_THREADS)
+  int result = pthread_mutex_lock(&mutex);
+  if (result)
+    std::cerr << "Could not lock mutex" << std::endl;
+#endif
 }
-
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
 
 inline void GameKeeper::Player::freeTCPMutex()
 {
-	#if defined(USE_THREADS)
-	int result = pthread_mutex_unlock( &mutex );
-	if( result )
-		std::cerr << "Could not unlock mutex" << std::endl;
-	#endif 
+#if defined(USE_THREADS)
+  int result = pthread_mutex_unlock(&mutex);
+  if (result)
+    std::cerr << "Could not unlock mutex" << std::endl;
+#endif
 }
 
 // For hostban checking, to avoid check and check again
-inline void GameKeeper::Player::setAllNeedHostbanChecked( bool set )
+inline void GameKeeper::Player::setAllNeedHostbanChecked(bool set)
 {
-	allNeedHostbanChecked = set;
+  allNeedHostbanChecked = set;
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-inline void GameKeeper::Player::setNeedThisHostbanChecked( bool set )
+inline void GameKeeper::Player::setNeedThisHostbanChecked(bool set)
 {
-	needThisHostbanChecked = set;
+  needThisHostbanChecked = set;
 }
-
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
 
 inline bool GameKeeper::Player::needsHostbanChecked()
 {
-	return ( allNeedHostbanChecked || needThisHostbanChecked );
+  return (allNeedHostbanChecked || needThisHostbanChecked);
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
 
-
-inline void GameKeeper::Player::setBzIdentifier( const std::string &id )
+inline void GameKeeper::Player::setBzIdentifier(const std::string& id)
 {
-	bzIdentifier = id;
+  bzIdentifier = id;
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-inline const std::string &GameKeeper::Player::getBzIdentifier()const
+inline const std::string& GameKeeper::Player::getBzIdentifier() const
 {
-	return bzIdentifier;
+  return bzIdentifier;
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
 
-
-inline const TimeKeeper &GameKeeper::Player::getNextGameTime()const
+inline const TimeKeeper& GameKeeper::Player::getNextGameTime() const
 {
-	return gameTimeNext;
+  return gameTimeNext;
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
 
-
-#endif 
+#endif
 
 // Local Variables: ***
 // mode:C++ ***

@@ -15,73 +15,59 @@
  */
 
 #ifndef BZF_SDLMEDIA_H
-	#define BZF_SDLMEDIA_H
-	#include "BzfMedia.h"
-	#include "bzfSDL.h"
-	#include <string>
+#define	BZF_SDLMEDIA_H
+#include "BzfMedia.h"
+#include "bzfSDL.h"
+#include <string>
 
-class SDLMedia: public BzfMedia
-{
-public:
-	SDLMedia();
-	~SDLMedia(){}
-	;
+class SDLMedia : public BzfMedia {
+  public:
+			SDLMedia();
+			~SDLMedia() {};
 
-	double stopwatch( bool );
-	bool openAudio();
-	void closeAudio();
-	bool startAudioThread( void( * )( void* ), void* )
-	{
-		return false;
-	};
-	void stopAudioThread(){}
-	;
-	bool hasAudioThread()const
-	{
-		return true;
-	};
-	void startAudioCallback( bool( *proc )( void ));
-	bool hasAudioCallback()const
-	{
-		return true;
-	};
+    double		stopwatch(bool);
+    bool		openAudio();
+    void		closeAudio();
+    bool		startAudioThread(void (*)(void*), void*)
+			  {return false;};
+    void		stopAudioThread() {};
+    bool		hasAudioThread() const {return true;};
+    void		startAudioCallback(bool (*proc)(void));
+    bool		hasAudioCallback() const {return true;};
 
-	void writeSoundCommand( const void *, int );
-	bool readSoundCommand( void *, int );
-	int getAudioOutputRate()const;
-	int getAudioBufferSize()const;
-	int getAudioBufferChunkSize()const;
-	bool isAudioTooEmpty()const
-	{
-		return true;
-	};
-	void writeAudioFrames( const float *samples, int numFrames );
-	void audioSleep( bool, double ){}
-	;
-	void setDriver( std::string driverName );
-	void setDevice( std::string deviceName );
-	float *doReadSound( const std::string &filename, int &numFrames, int &rate )const;
-	void audioDriver( std::string &driverName );
+    void		writeSoundCommand(const void*, int);
+    bool		readSoundCommand(void*, int);
+    int			getAudioOutputRate() const;
+    int			getAudioBufferSize() const;
+    int			getAudioBufferChunkSize() const;
+    bool		isAudioTooEmpty() const {return true;};
+    void		writeAudioFrames(const float* samples, int numFrames);
+    void		audioSleep(bool, double) {};
+    void		setDriver(std::string driverName);
+    void		setDevice(std::string deviceName);
+    float*		doReadSound(const std::string& filename,
+				    int& numFrames, int& rate) const;
+    void		audioDriver(std::string& driverName);
 
-private:
-	void fillAudio( Uint8 *, int );
-	static void fillAudioWrapper( void *, Uint8 *, int );
-	bool tooEmpty()const;
+  private:
+    void		fillAudio (Uint8 *, int);
+    static void	 fillAudioWrapper (void *, Uint8 *, int);
+    bool		tooEmpty() const;
 
-private:
-	bool audioReady;
-	int audioOutputRate;
-	int audioBufferSize;
+  private:
+    bool		audioReady;
+    int			audioOutputRate;
+    int			audioBufferSize;
 
-	short *outputBuffer;
-	int sampleToSend; // next sample to send on outputBuffer
+    short*		outputBuffer;
+    int		 sampleToSend;  // next sample to send on outputBuffer
 
-	Uint32 stopwatchTime;
+    Uint32		stopwatchTime;
 
-	char cmdQueue[2048]; // space to save temporary command
-	int cmdFill; // from 0 to cmdFill
+    char		cmdQueue[2048]; // space to save temporary command
+    int		 cmdFill;	// from 0 to cmdFill
 
-	bool( *userCallback )( void );
+    bool		(*userCallback)(void);
 };
 
 #endif // BZF_SDLMEDIA_H
@@ -93,3 +79,4 @@ private:
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
+

@@ -11,31 +11,27 @@
  */
 
 #ifndef __CUSTOM_MATERIAL_H__
-	#define __CUSTOM_MATERIAL_H__
+#define __CUSTOM_MATERIAL_H__
 
 /* interface header */
-	#include "WorldFileObject.h"
+#include "WorldFileObject.h"
 
 /* common headers */
-	#include "BzMaterial.h"
+#include "BzMaterial.h"
 
-class CustomMaterial: public WorldFileObject
-{
-public:
-	CustomMaterial();
-	~CustomMaterial();
-	virtual bool read( const char *cmd, std::istream &input );
-	virtual void writeToManager()const;
-	bool usesManager()
-	{
-		return true;
-	} 
+class CustomMaterial : public WorldFileObject {
+  public:
+    CustomMaterial();
+    ~CustomMaterial();
+    virtual bool read(const char *cmd, std::istream& input);
+    virtual void writeToManager() const;
+    bool usesManager() { return true; }
 
-private:
-	mutable BzMaterial material;
+  private:
+    mutable BzMaterial material;
 };
 
-#endif /* __CUSTOM_MATERIAL_H__ */
+#endif  /* __CUSTOM_MATERIAL_H__ */
 
 // Local variables: ***
 // mode: C++ ***

@@ -13,64 +13,62 @@
 // Provide BZFS with a list server connection
 
 #ifndef __LISTSERVERCONNECTION_H__
-	#define __LISTSERVERCONNECTION_H__
+#define __LISTSERVERCONNECTION_H__
 
 /* common header */
-	#include "common.h"
+#include "common.h"
 
 /* system headers */
-	#include <string>
+#include <string>
 
 /* common interface headers */
-	#include "Address.h"
-	#include "Ping.h"
-	#include "TimeKeeper.h"
-	#include "cURLManager.h"
+#include "Address.h"
+#include "Ping.h"
+#include "TimeKeeper.h"
+#include "cURLManager.h"
 
-class ListServerLink: private cURLManager
-{
+class ListServerLink : private cURLManager {
 public:
-	// c'tor will fill list and local server information variables and
-	// do an initial ADD
-	ListServerLink( std::string listServerURL, std::string publicizedAddress, std::string publicizedTitle, std::string advertiseGroups );
-	// c'tor with no arguments called when we don't want to use a list server.
-	ListServerLink();
-	// d'tor will REMOVE server and close connection
-	~ListServerLink();
+    // c'tor will fill list and local server information variables and
+    // do an initial ADD
+    ListServerLink(std::string listServerURL, std::string publicizedAddress,
+		   std::string publicizedTitle, std::string advertiseGroups);
+    // c'tor with no arguments called when we don't want to use a list server.
+    ListServerLink();
+    // d'tor will REMOVE server and close connection
+    ~ListServerLink();
 
-	enum MessageType
-	{
-		NONE, ADD, REMOVE
-	} nextMessageType;
-	TimeKeeper lastAddTime;
+    enum MessageType {NONE, ADD, REMOVE} nextMessageType;
+    TimeKeeper lastAddTime;
 
-	// connection functions
-	void queueMessage( MessageType type );
+    // connection functions
+    void queueMessage(MessageType type);
 
 private:
-	static const int NotConnected;
+    static const int NotConnected;
 
-	// list server information
-	Address address;
-	int port;
-	std::string hostname;
-	std::string pathname;
+    // list server information
+    Address address;
+    int port;
+    std::string hostname;
+    std::string pathname;
 
-	// local server information
-	Address localAddress;
-	bool publicizeServer;
-	std::string publicizeAddress;
-	std::string publicizeDescription;
-	std::string advertiseGroups;
+    // local server information
+    Address localAddress;
+    bool publicizeServer;
+    std::string publicizeAddress;
+    std::string publicizeDescription;
+    std::string advertiseGroups;
 
-	virtual void finalization( char *data, unsigned int length, bool good );
+    virtual void finalization(char *data, unsigned int length, bool good);
 
-	// messages to send, used by sendQueuedMessages
-	void addMe( PingPacket pingInfo, std::string publicizedAddress, std::string publicizedTitle, std::string advertiseGroups );
-	void removeMe( std::string publicizedAddress );
-	void sendQueuedMessages();
+    // messages to send, used by sendQueuedMessages
+    void addMe(PingPacket pingInfo, std::string publicizedAddress,
+	       std::string publicizedTitle, std::string advertiseGroups);
+    void removeMe(std::string publicizedAddress);
+    void sendQueuedMessages();
 
-	bool queuedRequest;
+  bool queuedRequest;
 };
 #endif //__LISTSERVERCONNECTION_H__
 

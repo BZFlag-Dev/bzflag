@@ -11,46 +11,41 @@
  */
 
 #ifndef __FILTER_H__
-	#define __FILTER_H__
+#define __FILTER_H__
 
 // bzflag global header
-	#include "common.h"
+#include "common.h"
 
 // System headers
-	#include <vector>
-	#include <string>
+#include <vector>
+#include <string>
 
 // implementation-specific bzfs-specific headers
-	#include "GameKeeper.h"
+#include "GameKeeper.h"
 
-class Filter
-{
-public:
-	enum Action
-	{
-		ACCEPT, DROP, STOP
-	};
+class Filter {
+ public:
+  enum Action {ACCEPT, DROP, STOP};
 
-	Filter();
+  Filter();
 
-	/** This function loads a ban filter from a file, if it has been set. */
-	void load();
-	/** This function clear the filter list */
-	void clear();
-	/** This function check if a player has to be accepted or dropped.
-	player is the Player to match,
-	index is the rule index, starting from 0
-	Return the action to be performed on match, or end */
-	Action check( GameKeeper::Player &player, int &index );
+  /** This function loads a ban filter from a file, if it has been set. */
+  void load();
+  /** This function clear the filter list */
+  void clear();
+  /** This function check if a player has to be accepted or dropped.
+      player is the Player to match,
+      index is the rule index, starting from 0
+      Return the action to be performed on match, or end */
+  Action check(GameKeeper::Player &player, int &index);
 private:
-	struct FilterItem
-	{
-		int hostId;
-		int netMask;
-		std::string principal;
-		Action action;
-	};
-	std::vector < FilterItem > filterList;
+  struct FilterItem {
+    int	 hostId;
+    int	 netMask;
+    std::string principal;
+    Action      action;
+  };
+  std::vector<FilterItem> filterList;
 };
 
 #endif /* __FILTER_H__ */
@@ -62,3 +57,4 @@ private:
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
+

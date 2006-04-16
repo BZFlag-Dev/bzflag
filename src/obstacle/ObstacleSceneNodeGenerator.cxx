@@ -17,16 +17,13 @@
 // ObstacleSceneNodeGenerator
 //
 
-ObstacleSceneNodeGenerator::ObstacleSceneNodeGenerator(): node( 0 )
+ObstacleSceneNodeGenerator::ObstacleSceneNodeGenerator() :
+				node(0)
 {
-	// do nothing
+  // do nothing
 }
-
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
 
 ObstacleSceneNodeGenerator::~ObstacleSceneNodeGenerator()
 {
-	// do nothing
+  // do nothing
 }

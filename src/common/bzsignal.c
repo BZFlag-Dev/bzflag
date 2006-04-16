@@ -14,37 +14,34 @@
 
 /* Unix systems implemnt signal() differently */
 /* modified from "UNIX Network Programming" */
-SIG_PF bzSignal( int signo, SIG_PF func )
+SIG_PF bzSignal(int signo, SIG_PF func)
 {
 #ifdef _WIN32
-	return signal( signo, func );
+  return signal(signo, func);
 #else /* _WIN32 */
-	struct sigaction act, oact;
+  struct sigaction act, oact;
 
-	act.sa_handler = func;
-	sigemptyset( &act.sa_mask );
-	#ifdef SA_NODEFER
-	act.sa_flags = SA_NODEFER;
-	#else 
-	act.sa_flags = 0;
-	#endif 
-	if( signo == SIGALRM )
-	{
-	#ifdef SA_INTERRUPT
-		/* SunOS 4.x */
-		act.sa_flags |= SA_INTERRUPT;
-	#endif 
-	} 
-	else
-	{
-	#ifdef SA_RESTART
-		/* SVR4, 4.4BSD */
-		act.sa_flags |= SA_RESTART;
-	#endif 
-	}
-	if( sigaction( signo, &act, &oact ) < 0 )
-		return SIG_ERR;
-	return oact.sa_handler;
+  act.sa_handler = func;
+  sigemptyset(&act.sa_mask);
+#ifdef SA_NODEFER
+  act.sa_flags = SA_NODEFER;
+#else
+  act.sa_flags = 0;
+#endif
+  if (signo == SIGALRM) {
+#ifdef SA_INTERRUPT
+    /* SunOS 4.x */
+    act.sa_flags |= SA_INTERRUPT;
+#endif
+  } else {
+#ifdef SA_RESTART
+    /* SVR4, 4.4BSD */
+    act.sa_flags |= SA_RESTART;
+#endif
+  }
+  if (sigaction(signo, &act, &oact) < 0)
+    return SIG_ERR;
+  return oact.sa_handler;
 #endif /* _WIN32 */
 }
 
@@ -56,4 +53,4 @@ SIG_PF bzSignal( int signo, SIG_PF func )
  * indent-tabs-mode: t ***
  * End: ***
  * ex: shiftwidth=2 tabstop=8
-  */
+ */

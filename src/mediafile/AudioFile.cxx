@@ -16,76 +16,49 @@
 // AudioFile
 //
 
-AudioFile::AudioFile( std::istream *_stream ): MediaFile( _stream ), open( false )
+AudioFile::AudioFile(std::istream* _stream) : MediaFile(_stream), open(false)
 {
-	// do nothing
+  // do nothing
 }
-
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
 
 AudioFile::~AudioFile()
 {
-	// do nothing
+  // do nothing
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-void AudioFile::init( int _framesPerSecond, int _numChannels, int _numFrames, int _sampWidth )
+void		AudioFile::init(int _framesPerSecond, int _numChannels,
+				int _numFrames, int _sampWidth)
 {
-	open = true;
-	framesPerSecond = _framesPerSecond;
-	numChannels = _numChannels;
-	numFrames = _numFrames;
-	sampWidth = _sampWidth;
+  open	    = true;
+  framesPerSecond = _framesPerSecond;
+  numChannels     = _numChannels;
+  numFrames       = _numFrames;
+  sampWidth       = _sampWidth;
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-bool AudioFile::isOpen()const
+bool		AudioFile::isOpen() const
 {
-	return open;
+  return open;
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-int AudioFile::getFramesPerSecond()const
+int		AudioFile::getFramesPerSecond() const
 {
-	return framesPerSecond;
+  return framesPerSecond;
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-int AudioFile::getNumChannels()const
+int		AudioFile::getNumChannels() const
 {
-	return numChannels;
+  return numChannels;
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-int AudioFile::getNumFrames()const
+int		AudioFile::getNumFrames() const
 {
-	return numFrames;
+  return numFrames;
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-int AudioFile::getSampleWidth()const
+int		AudioFile::getSampleWidth() const
 {
-	return sampWidth;
+  return sampWidth;
 }
 
 // Local Variables: ***
@@ -95,3 +68,4 @@ int AudioFile::getSampleWidth()const
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
+

@@ -15,39 +15,38 @@
  *	of a box building.
  */
 
-#ifndef BZF_EIGHTHD_BOX_SCENE_NODE_H
-	#define BZF_EIGHTHD_BOX_SCENE_NODE_H
+#ifndef	BZF_EIGHTHD_BOX_SCENE_NODE_H
+#define	BZF_EIGHTHD_BOX_SCENE_NODE_H
 
-	#include "common.h"
-	#include "EighthDimSceneNode.h"
+#include "common.h"
+#include "EighthDimSceneNode.h"
 
-class EighthDBoxSceneNode: public EighthDimSceneNode
-{
-public:
-	EighthDBoxSceneNode( const float pos[3], const float size[3], float rotation );
-	~EighthDBoxSceneNode();
+class EighthDBoxSceneNode : public EighthDimSceneNode {
+  public:
+			EighthDBoxSceneNode(const float pos[3],
+					const float size[3], float rotation);
+			~EighthDBoxSceneNode();
 
-	void notifyStyleChange();
-	void addRenderNodes( SceneRenderer & );
+    void		notifyStyleChange();
+    void		addRenderNodes(SceneRenderer&);
 
-protected:
-	class EighthDBoxRenderNode: public RenderNode
-	{
-public:
-		EighthDBoxRenderNode( const EighthDBoxSceneNode *, const float pos[3], const float size[3], float rotation );
-		~EighthDBoxRenderNode();
-		void render();
-		const GLfloat *getPosition()const
-		{
-			return sceneNode->getSphere();
-} private:
-		const EighthDBoxSceneNode *sceneNode;
-		GLfloat corner[8][3];
-	};
+  protected:
+    class EighthDBoxRenderNode : public RenderNode {
+      public:
+			EighthDBoxRenderNode(const EighthDBoxSceneNode*,
+				const float pos[3],
+				const float size[3], float rotation);
+			~EighthDBoxRenderNode();
+	void		render();
+	const GLfloat*	getPosition() const { return sceneNode->getSphere(); }
+      private:
+	const EighthDBoxSceneNode* sceneNode;
+	GLfloat		corner[8][3];
+    };
 
-private:
-	OpenGLGState gstate;
-	EighthDBoxRenderNode renderNode;
+  private:
+    OpenGLGState	 gstate;
+    EighthDBoxRenderNode renderNode;
 };
 
 #endif // BZF_EIGHTHD_BOX_SCENE_NODE_H
@@ -59,3 +58,4 @@ private:
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
+

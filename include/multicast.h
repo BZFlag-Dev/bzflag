@@ -14,17 +14,17 @@
  * Broadcast socket utility functions
  */
 
-#ifndef __MULTICAST_H__
-	#define __MULTICAST_H__
+#ifndef	__MULTICAST_H__
+#define	__MULTICAST_H__
 
-	#include "common.h"
+#include "common.h"
 
 /* system headers */
-	#include <sys/types.h>
+#include <sys/types.h>
 
 /* common headers */
-	#include "network.h"
-	#include "Address.h"
+#include "network.h"
+#include "Address.h"
 
 
 /** openBroadcast:
@@ -35,12 +35,15 @@
  *	file descriptor of socket if successful
  *	-1 if failed
  */
-int openBroadcast( int port, const char *service, struct sockaddr_in *addr );
-int closeBroadcast( int fd );
-int sendBroadcast( int fd, const void *buffer, int bufferLength, const struct sockaddr_in* );
-int recvBroadcast( int fd, void *buffer, int bufferLength, struct sockaddr_in* );
+int			openBroadcast(int port, const char* service,
+					struct sockaddr_in* addr);
+int			closeBroadcast(int fd);
+int			sendBroadcast(int fd, const void* buffer,
+				int bufferLength, const struct sockaddr_in*);
+int			recvBroadcast(int fd, void* buffer,
+				int bufferLength, struct sockaddr_in*);
 
-#endif // __MULTICAST_H__
+#endif  // __MULTICAST_H__
 
 // Local Variables: ***
 // mode: C++ ***

@@ -15,38 +15,37 @@
  */
 
 #ifndef BZF_LINUXDISPLAY_H
-	#define BZF_LINUXDISPLAY_H
+#define	BZF_LINUXDISPLAY_H
 
-	#include "XDisplay.h"
-	#if defined(XF86VIDMODE_EXT)
-		#define USE_XF86VIDMODE_EXT
-		#define private c_private
-		#include <X11/extensions/xf86vmode.h>
-		#undef private
-	#endif 
+#include "XDisplay.h"
+#if defined(XF86VIDMODE_EXT)
+#define USE_XF86VIDMODE_EXT
+#define private c_private
+#include <X11/extensions/xf86vmode.h>
+#undef private
+#endif
 
-class LinuxDisplayMode: public XDisplayMode
-{
-public:
-	#if defined(USE_XF86VIDMODE_EXT)
-	LinuxDisplayMode();
-	~LinuxDisplayMode();
+class LinuxDisplayMode : public XDisplayMode {
+  public:
+#if defined(USE_XF86VIDMODE_EXT)
+			LinuxDisplayMode();
+			~LinuxDisplayMode();
 
-	ResInfo **init( XDisplay *owner, int &num, int &current );
-	bool set( int );
-	bool setDefault( int );
+    ResInfo**		init(XDisplay* owner, int& num, int& current);
+    bool		set(int);
+    bool		setDefault(int);
 
-private:
-	bool doSet( int, bool position );
+  private:
+    bool		doSet(int, bool position);
 
-private:
-	XDisplay *display;
-	int numResolutions;
-	int lastResolution;
-	XF86VidModeModeInfo **resolutions;
-	int origNumResolutions;
-	XF86VidModeModeInfo **origResolutions;
-	#endif 
+  private:
+    XDisplay*		display;
+    int			numResolutions;
+    int			lastResolution;
+    XF86VidModeModeInfo** resolutions;
+    int			origNumResolutions;
+    XF86VidModeModeInfo** origResolutions;
+#endif
 };
 
 #endif // BZF_LINUXDISPLAY_H
@@ -58,3 +57,4 @@ private:
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
+

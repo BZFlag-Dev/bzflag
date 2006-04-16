@@ -11,47 +11,47 @@
  */
 
 #ifndef __COMMANDS_H__
-	#define __COMMANDS_H__
+#define __COMMANDS_H__
 
 // implementation-specific bzflag headers
-	#include "GameKeeper.h"
+#include "GameKeeper.h"
 
-	#include "TextUtils.h"
-	#include <string>
-	#include <map>
-	#include "bzfsAPI.h"
-	#include "ServerCommand.h"
+#include "TextUtils.h"
+#include <string>
+#include <map>
+#include "bzfsAPI.h"
+#include "ServerCommand.h"
 
 
 // command classes used by the API
-class ShutdownCommand: private ServerCommand
-{
+class ShutdownCommand : private ServerCommand {
 public:
 	ShutdownCommand();
 
-	virtual bool operator()( const char *commandLine, GameKeeper::Player *playerData );
+	virtual bool operator() (const char	 *commandLine,
+		GameKeeper::Player *playerData);
 };
 
-class SuperkillCommand: private ServerCommand
-{
+class SuperkillCommand : private ServerCommand {
 public:
 	SuperkillCommand();
 
-	virtual bool operator()( const char *commandLine, GameKeeper::Player *playerData );
+	virtual bool operator() (const char	 *commandLine,
+		GameKeeper::Player *playerData);
 };
 
 // parser for the server commands
-void parseServerCommand( const char *message, int dstPlayerId );
+void parseServerCommand(const char *message, int dstPlayerId);
 
-typedef std::map < std::string, bz_CustomSlashCommandHandler * > tmCustomSlashCommandMap;
+typedef std::map<std::string, bz_CustomSlashCommandHandler*>	tmCustomSlashCommandMap;
 
-void registerCustomSlashCommand( std::string command, bz_CustomSlashCommandHandler *handler );
-void removeCustomSlashCommand( std::string command );
+void registerCustomSlashCommand ( std::string command, bz_CustomSlashCommandHandler* handler );
+void removeCustomSlashCommand ( std::string command );
 
 extern ShutdownCommand shutdownCommand;
 extern SuperkillCommand superkillCommand;
 
-#endif 
+#endif
 
 // Local Variables: ***
 // mode: C++ ***

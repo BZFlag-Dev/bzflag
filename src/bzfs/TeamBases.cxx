@@ -11,8 +11,8 @@
  */
 
 #ifdef _MSC_VER
-	#pragma warning(4:4786)
-#endif 
+#pragma warning(4:4786)
+#endif
 
 #include "Protocol.h"
 #include "TeamBases.h"
@@ -21,156 +21,122 @@
 
 TeamBases::TeamBases()
 {
-	color = RedTeam;
+    color = RedTeam;
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-TeamBases::TeamBases( TeamColor team, bool initDefault )
+TeamBases::TeamBases(TeamColor team, bool initDefault)
 {
-	color = team;
+    color = team;
 
-	if( !initDefault )
-		return ;
+    if (!initDefault)
+      return;
 
-	float worldSize = BZDBCache::worldSize;
-	float baseSize = BZDB.eval( StateDatabase::BZDB_BASESIZE );
+    float worldSize = BZDBCache::worldSize;
+    float baseSize = BZDB.eval(StateDatabase::BZDB_BASESIZE);
 
-	teamBases.resize( 1 );
-	TeamBase &teamBase = teamBases[0];
-	switch( team )
-	{
-		case RedTeam:
-			teamBase.position[0] = (  - worldSize + baseSize ) / 2.0f;
-			teamBase.position[1] = 0.0f;
-			break;
+    teamBases.resize(1);
+    TeamBase &teamBase = teamBases[0];
+    switch (team)
+    {
+      case RedTeam:
+	teamBase.position[0] = (-worldSize + baseSize) / 2.0f;
+	teamBase.position[1] = 0.0f;
+      break;
 
-		case GreenTeam:
-			teamBase.position[0] = ( worldSize - baseSize ) / 2.0f;
-			teamBase.position[1] = 0.0f;
-			break;
+      case GreenTeam:
+	teamBase.position[0] = (worldSize - baseSize) / 2.0f;
+	teamBase.position[1] = 0.0f;
+      break;
 
-		case BlueTeam:
-			teamBase.position[0] = 0.0f;
-			teamBase.position[1] = (  - worldSize + baseSize ) / 2.0f;
-			break;
+      case BlueTeam:
+	teamBase.position[0] = 0.0f;
+	teamBase.position[1] = (-worldSize + baseSize) / 2.0f;
+      break;
 
-		case PurpleTeam:
-			teamBase.position[0] = 0.0f;
-			teamBase.position[1] = ( worldSize - baseSize ) / 2.0f;
-			break;
+      case PurpleTeam:
+	teamBase.position[0] = 0.0f;
+	teamBase.position[1] = (worldSize - baseSize) / 2.0f;
+      break;
 
-		default:
-			// no valid team, should throw here if we could
-			break;
-	}
+      default:
+	// no valid team, should throw here if we could
+	break;
+    }
 
-	teamBase.position[2] = 0.0f;
-	teamBase.rotation = 0.0f;
-	teamBase.size[0] = baseSize / 2.0f;
-	teamBase.size[1] = baseSize / 2.0f;
-	teamBase.size[2] = 0.0f;
+    teamBase.position[2] = 0.0f;
+    teamBase.rotation = 0.0f;
+    teamBase.size[0] = baseSize / 2.0f;
+    teamBase.size[1] = baseSize / 2.0f;
+    teamBase.size[2] = 0.0f;
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-void TeamBases::addBase( const float *position, const float *_size, float rotation )
+void TeamBases::addBase(const float *position, const float *_size,
+			float rotation )
 {
-	TeamBase base( position, _size, rotation );
-	teamBases.push_back( base );
+  TeamBase base(position, _size, rotation);
+  teamBases.push_back(base);
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-int TeamBases::size()const
+int TeamBases::size() const
 {
-	return teamBases.size();
+  return teamBases.size();
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-TeamColor TeamBases::getTeam()const
+TeamColor TeamBases::getTeam() const
 {
-	return color;
+  return color;
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-const float *TeamBases::getBasePosition( int base )const
+const float *TeamBases::getBasePosition( int base ) const
 {
-	if(( base < 0 ) || ( base >= ( int )teamBases.size()))
-		base = 0;
+  if ((base < 0) || (base >= (int)teamBases.size()))
+    base = 0;
 
-	return teamBases[base].position;
+  return teamBases[base].position;
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-float TeamBases::findBaseZ( float x, float y, float z )const
+float TeamBases::findBaseZ( float x, float y, float z ) const
 {
-	for( TeamBaseList::const_iterator it = teamBases.begin(); it != teamBases.end(); ++it )
-	{
-		const float *pos = it->position;
-		const float *_size = it->size;
-		float rotation = it->rotation;
-		float nx = x - pos[0];
-		float ny = y - pos[1];
-		if( nx == 0.0f )
-			nx = 1.0f;
-		float rx = ( float )( cosf( atanf( ny / nx ) - rotation ) *sqrt(( ny *ny ) + ( nx *nx )));
-		float ry = ( float )( sinf( atanf( ny / nx ) - rotation ) *sqrt(( ny *ny ) + ( nx *nx )));
+  for (TeamBaseList::const_iterator it = teamBases.begin(); it != teamBases.end(); ++it) {
+    const float *pos  = it->position;
+    const float *_size = it->size;
+    float rotation = it->rotation;
+    float nx = x - pos[0];
+    float ny = y - pos[1];
+    if (nx == 0.0f)
+      nx = 1.0f;
+    float rx = (float)(cosf(atanf(ny/nx)-rotation) * sqrt((ny * ny) + (nx * nx)));
+    float ry = (float)(sinf(atanf(ny/nx)-rotation) * sqrt((ny * ny) + (nx * nx)));
 
 
-		if( fabsf( rx ) < _size[0] && fabsf( ry ) < _size[1] && pos[2] <= z )
-			return pos[2];
-	}
+    if (fabsf(rx) < _size[0] &&
+	fabsf(ry) < _size[1] &&
+	pos[2] <= z)
+      return pos[2];
+  }
 
-	return  - 1.0f;
+  return -1.0f;
 }
-
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
 
 const TeamBase &TeamBases::getRandomBase( int id )
 {
-	return teamBases[id % teamBases.size()];
+  return teamBases[id % teamBases.size()];
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-TeamBase::TeamBase( const float *pos, const float *siz, float rot )
+TeamBase::TeamBase(const float *pos, const float *siz, float rot)
 {
-	memcpy( &position, pos, sizeof position );
-	memcpy( &size, siz, sizeof size );
-	rotation = rot;
+  memcpy(&position, pos, sizeof position);
+  memcpy(&size, siz, sizeof size);
+  rotation = rot;
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-void TeamBase::getRandomPosition( float &x, float &y, float &z )const
+void TeamBase::getRandomPosition( float &x, float &y, float &z ) const
 {
-	float deltaX = ( size[0] - 2.0f * BZDBCache::tankRadius )*(( float )bzfrand() - 0.5f );
-	float deltaY = ( size[1] - 2.0f * BZDBCache::tankRadius )*(( float )bzfrand() - 0.5f );
-	x = position[0] + deltaX * cosf( rotation ) - deltaY * sinf( rotation );
-	y = position[1] + deltaX * sinf( rotation ) + deltaY * cosf( rotation );
-	z = position[2] + size[2];
+  float deltaX = (size[0] - 2.0f * BZDBCache::tankRadius) * ((float)bzfrand() - 0.5f);
+  float deltaY = (size[1] - 2.0f * BZDBCache::tankRadius) * ((float)bzfrand() - 0.5f);
+  x = position[0] + deltaX * cosf(rotation) - deltaY * sinf(rotation);
+  y = position[1] + deltaX * sinf(rotation) + deltaY * cosf(rotation);
+  z = position[2] + size[2];
 }
 
 // Local Variables: ***

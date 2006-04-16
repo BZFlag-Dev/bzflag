@@ -11,57 +11,56 @@
  */
 
 #ifndef __CUSTOM_MESH_H__
-	#define __CUSTOM_MESH_H__
+#define __CUSTOM_MESH_H__
 
 /* interface header */
-	#include "WorldFileObstacle.h"
+#include "WorldFileObstacle.h"
 
 /* local interface headers */
-	#include "WorldInfo.h"
-	#include "CustomMeshFace.h"
+#include "WorldInfo.h"
+#include "CustomMeshFace.h"
 
 /* common interface headers */
-	#include "BzMaterial.h"
-	#include "MeshObstacle.h"
-	#include "vectors.h"
+#include "BzMaterial.h"
+#include "MeshObstacle.h"
+#include "vectors.h"
 
 /* system headers */
-	#include <string>
-	#include <vector>
+#include <string>
+#include <vector>
 
 
-class CustomMesh: public WorldFileObstacle
-{
-public:
-	CustomMesh();
-	~CustomMesh();
-	virtual bool read( const char *cmd, std::istream &input );
-	virtual void writeToGroupDef( GroupDefinition* )const;
+class CustomMesh : public WorldFileObstacle {
+  public:
+    CustomMesh();
+    ~CustomMesh();
+    virtual bool read(const char *cmd, std::istream& input);
+    virtual void writeToGroupDef(GroupDefinition*) const;
 
-private:
+  private:
 
-	BzMaterial material; // holds current defaults
+    BzMaterial material; // holds current defaults
 
-	std::vector < char > checkTypes;
-	std::vector < cfvec3 > checkPoints;
-	std::vector < cfvec3 > vertices;
-	std::vector < cfvec3 > normals;
-	std::vector < cfvec2 > texcoords;
+    std::vector<char> checkTypes;
+    std::vector<cfvec3> checkPoints;
+    std::vector<cfvec3> vertices;
+    std::vector<cfvec3> normals;
+    std::vector<cfvec2> texcoords;
 
-	int phydrv;
-	bool noclusters;
-	bool smoothBounce;
-	bool decorative;
+    int phydrv;
+    bool noclusters;
+    bool smoothBounce;
+    bool decorative;
 
-	std::vector < std::string > lodOptions;
-	class MeshDrawInfo *drawInfo;
+    std::vector<std::string> lodOptions;
+    class MeshDrawInfo* drawInfo;
 
-	CustomMeshFace *face;
-	std::vector < CustomMeshFace * > faces;
+    CustomMeshFace* face;
+    std::vector<CustomMeshFace*> faces;
 };
 
 
-#endif /* __CUSTOM_MESH_H__ */
+#endif  /* __CUSTOM_MESH_H__ */
 
 // Local variables: ***
 // mode: C++ ***

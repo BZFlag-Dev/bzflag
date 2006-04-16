@@ -10,55 +10,54 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef __MAINMENU_H__
-	#define __MAINMENU_H__
+#ifndef	__MAINMENU_H__
+#define	__MAINMENU_H__
 
-	#include "common.h"
+#include "common.h"
 
-	#include "HUDDialog.h"
-	#include "HUDuiControl.h"
-	#include "HUDuiDefaultKey.h"
+#include "HUDDialog.h"
+#include "HUDuiControl.h"
+#include "HUDuiDefaultKey.h"
 
 class JoinMenu;
-	#ifdef HAVE_KRB5
+#ifdef HAVE_KRB5
 class LoginMenu;
-	#endif 
+#endif
 class OptionsMenu;
 class QuitMenu;
 
 /** MainMenu is the main menu
  */
-class MainMenu: public HUDDialog
-{
+class MainMenu : public HUDDialog {
 public:
-	MainMenu();
-	~MainMenu();
+  MainMenu();
+  ~MainMenu();
 
-	HUDuiDefaultKey *getDefaultKey();
-	void execute();
-	void resize( int width, int height );
-	void createControls();
+  HUDuiDefaultKey* getDefaultKey();
+  void execute();
+  void resize(int width, int height);
+  void createControls();
 
-	static const int getFontFace();
+  static const int getFontFace();
 
 private:
 
-	HUDuiControl *createLabel( const char *string );
+  HUDuiControl* createLabel(const char* string);
 
-	HUDuiControl *join;
-	HUDuiControl *login;
-	HUDuiControl *options;
-	HUDuiControl *help;
-	HUDuiControl *leave;
-	HUDuiControl *save;
-	HUDuiControl *quit;
+  HUDuiControl*	join;
+  HUDuiControl*	login;
+  HUDuiControl*	options;
+  HUDuiControl*	help;
+  HUDuiControl*	leave;
+  HUDuiControl*	save;
+  HUDuiControl*	quit;
 
-	JoinMenu *joinMenu;
-	#ifdef HAVE_KRB5
-	LoginMenu *loginMenu;
-	#endif 
-	OptionsMenu *optionsMenu;
-	QuitMenu *quitMenu;
+  JoinMenu*	joinMenu;
+#ifdef HAVE_KRB5
+  LoginMenu*	loginMenu;
+#endif
+  OptionsMenu*	optionsMenu;
+  QuitMenu*	quitMenu;
 };
 
 

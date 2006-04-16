@@ -15,82 +15,73 @@
  */
 
 #ifndef BZF_DISPLAY_H
-	#define BZF_DISPLAY_H
+#define	BZF_DISPLAY_H
 
-	#include "common.h"
+#include "common.h"
 
 class BzfEvent;
 
-class BzfDisplay
-{
-public:
-	BzfDisplay();
-	virtual ~BzfDisplay();
+class BzfDisplay {
+  public:
+			BzfDisplay();
+    virtual		~BzfDisplay();
 
-	virtual bool isValid()const = 0;
-	virtual bool isEventPending()const = 0;
-	virtual bool getEvent( BzfEvent & )const = 0;
-	virtual bool peekEvent( BzfEvent & )const = 0;
+    virtual bool	isValid() const = 0;
+    virtual bool	isEventPending() const = 0;
+    virtual bool	getEvent(BzfEvent&) const = 0;
+    virtual bool	peekEvent(BzfEvent&) const = 0;
 
-	virtual bool hasGetKeyMode()
-	{
-		return false;
-	};
-	virtual void getModState( bool &shift, bool &control, bool &alt )
-	{
-		shift = false;
-		control = false;
-		alt = false;
-	};
+    virtual bool	hasGetKeyMode() {return false;};
+    virtual void	getModState(bool &shift, bool &control, bool &alt) {
+      shift = false; control = false; alt = false;};
 
-	int getWidth()const;
-	int getHeight()const;
-	void setFullScreenFormat( int );
+    int			getWidth() const;
+    int			getHeight() const;
+    void		setFullScreenFormat(int);
 
-	void setPassthroughSize( int w, int h );
-	int getPassthroughWidth()const;
-	int getPassthroughHeight()const;
+    void		setPassthroughSize(int w, int h);
+    int			getPassthroughWidth() const;
+    int			getPassthroughHeight() const;
 
-public:
-	class ResInfo
-	{
-public:
-		ResInfo( const char *name, int w, int h, int r );
-		~ResInfo();
-public:
-		char *name;
-		int width;
-		int height;
-		int refresh;
-	};
+  public:
+    class ResInfo {
+      public:
+			ResInfo(const char* name, int w, int h, int r);
+			~ResInfo();
+      public:
+	char*		name;
+	int		width;
+	int		height;
+	int		refresh;
+    };
 
-	int getNumResolutions()const;
-	const ResInfo *getResolution( int index )const;
-	int getResolution()const;
-	int getDefaultResolution()const;
-	bool setResolution( int index );
-	bool setDefaultResolution();
-	int findResolution( const char *name )const;
-	bool isValidResolution( int index )const;
+    int			getNumResolutions() const;
+    const ResInfo*	getResolution(int index) const;
+    int			getResolution() const;
+    int			getDefaultResolution() const;
+    bool		setResolution(int index);
+    bool		setDefaultResolution();
+    int			findResolution(const char* name) const;
+    bool		isValidResolution(int index) const;
 
-protected:
-	void initResolutions( ResInfo **, int num, int current );
+  protected:
+    void		initResolutions(ResInfo**, int num, int current);
 
-private:
-	BzfDisplay( const BzfDisplay & );
-	BzfDisplay &operator = ( const BzfDisplay & );
+  private:
+			BzfDisplay(const BzfDisplay&);
+    BzfDisplay&		operator=(const BzfDisplay&);
 
-	virtual bool doSetResolution( int ) = 0;
-	virtual bool doSetDefaultResolution();
+    virtual bool	doSetResolution(int) = 0;
+    virtual bool	doSetDefaultResolution();
 
-private:
-	int passWidth, passHeight;
-	int numResolutions;
-	int defaultResolution;
-	int currentResolution;
-	ResInfo **resolutions;
-protected:
-	int modeIndex;
+  private:
+    int			passWidth, passHeight;
+    int			numResolutions;
+    int			defaultResolution;
+    int			currentResolution;
+    ResInfo**		resolutions;
+  protected:
+    int		 modeIndex;
 };
 
 #endif // BZF_DISPLAY_H
@@ -102,3 +93,4 @@ protected:
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
+

@@ -10,41 +10,41 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef BZF_OBSTACLE_MODIFIER_H
-	#define BZF_OBSTACLE_MODIFIER_H
+#ifndef	BZF_OBSTACLE_MODIFIER_H
+#define	BZF_OBSTACLE_MODIFIER_H
 
 // common headers
-	#include "BzMaterial.h"
+#include "BzMaterial.h"
 
 class Obstacle;
 class GroupInstance;
 
 
-class ObstacleModifier
-{
-public:
-	ObstacleModifier();
-	ObstacleModifier( const ObstacleModifier &obsMod, const GroupInstance &grpinst );
-	~ObstacleModifier();
-	void init();
+class ObstacleModifier {
+  public:
+    ObstacleModifier();
+    ObstacleModifier(const ObstacleModifier& obsMod,
+		     const GroupInstance& grpinst);
+    ~ObstacleModifier();
+    void init();
 
-	void execute( Obstacle *obstacle )const;
+    void execute(Obstacle* obstacle) const;
 
-	void getMaterialMap( const MaterialSet &matSet, MaterialMap &matMap )const;
+    void getMaterialMap(const MaterialSet& matSet, MaterialMap& matMap) const;
 
-private:
-	bool modifyTeam; // only for bases
-	int team;
-	bool modifyColor; // modify by tinting
-	float tint[4];
-	bool modifyPhysicsDriver; // only replaces valid physics drivers
-	int phydrv;
-	bool modifyMaterial; // swaps the whole thing
-	const BzMaterial *material;
-	MaterialMap matMap;
+  private:
+    bool modifyTeam; // only for bases
+    int team;
+    bool modifyColor; // modify by tinting
+    float tint[4];
+    bool modifyPhysicsDriver; // only replaces valid physics drivers
+    int phydrv;
+    bool modifyMaterial; // swaps the whole thing
+    const BzMaterial* material;
+    MaterialMap matMap;
 
-	bool driveThrough;
-	bool shootThrough;
+    bool driveThrough;
+    bool shootThrough;
 };
 
 
@@ -57,3 +57,4 @@ private:
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
+

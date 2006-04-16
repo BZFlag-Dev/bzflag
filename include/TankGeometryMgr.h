@@ -14,125 +14,138 @@
  *	Generates the display lists for TankSceneNodes
  */
 
-#ifndef BZF_TANK_GEOMETRY_MGR_H
-	#define BZF_TANK_GEOMETRY_MGR_H
+#ifndef	BZF_TANK_GEOMETRY_MGR_H
+#define	BZF_TANK_GEOMETRY_MGR_H
 
-	#include "common.h"
-	#include "SceneNode.h"
+#include "common.h"
+#include "SceneNode.h"
 
 
-namespace TankGeometryEnums
-{
+namespace TankGeometryEnums {
 
-	enum TankShadow
-	{
-		ShadowOff = 0, ShadowOn, LastTankShadow
-	};
+  enum TankShadow {
+    ShadowOff = 0,
+    ShadowOn,
+    LastTankShadow
+  };
 
-	enum TankLOD
-	{
-		LowTankLOD = 0, MedTankLOD, HighTankLOD, LastTankLOD
-	};
+  enum TankLOD {
+    LowTankLOD = 0,
+    MedTankLOD,
+    HighTankLOD,
+    LastTankLOD
+  };
 
-	enum TankSize
-	{
-		Normal = 0, Obese, Tiny, Narrow, Thief, LastTankSize
-	};
+  enum TankSize {
+    Normal = 0,
+    Obese,
+    Tiny,
+    Narrow,
+    Thief,
+    LastTankSize
+  };
 
-	enum TankPart
-	{
-		Body = 0, Barrel, Turret, LeftCasing, RightCasing, 
+  enum TankPart {
+    Body = 0,
+    Barrel,
+    Turret,
+    LeftCasing,
+    RightCasing,
 
-		LeftTread,  // animated parts
-		RightTread, LeftWheel0, LeftWheel1, LeftWheel2, LeftWheel3, RightWheel0, RightWheel1, RightWheel2, RightWheel3, 
+    LeftTread, // animated parts
+    RightTread,
+    LeftWheel0,
+    LeftWheel1,
+    LeftWheel2,
+    LeftWheel3,
+    RightWheel0,
+    RightWheel1,
+    RightWheel2,
+    RightWheel3,
 
-		LastTankPart, BasicTankParts = LeftTread, LowTankParts = LeftTread, MedTankParts = LeftTread, HighTankParts = LastTankPart
-	};
+    LastTankPart,
+    BasicTankParts = LeftTread,
+    LowTankParts = LeftTread,
+    MedTankParts = LeftTread,
+    HighTankParts = LastTankPart
+  };
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
 
+namespace TankGeometryMgr {
 
-namespace TankGeometryMgr
-{
+  void init();
+  void kill();
+  void buildLists();
+  void deleteLists();
 
-	void init();
-	void kill();
-	void buildLists();
-	void deleteLists();
+  GLuint getPartList(TankGeometryEnums::TankShadow shadow,
+		     TankGeometryEnums::TankPart part,
+		     TankGeometryEnums::TankSize size,
+		     TankGeometryEnums::TankLOD lod);
 
-	GLuint getPartList( TankGeometryEnums::TankShadow shadow, TankGeometryEnums::TankPart part, TankGeometryEnums::TankSize size, TankGeometryEnums::TankLOD lod );
+  int getPartTriangleCount(TankGeometryEnums::TankShadow shadow,
+			   TankGeometryEnums::TankPart part,
+			   TankGeometryEnums::TankSize size,
+			   TankGeometryEnums::TankLOD lod);
 
-	int getPartTriangleCount( TankGeometryEnums::TankShadow shadow, TankGeometryEnums::TankPart part, TankGeometryEnums::TankSize size, TankGeometryEnums::TankLOD lod );
-
-	const float *getScaleFactor( TankGeometryEnums::TankSize size );
+  const float* getScaleFactor(TankGeometryEnums::TankSize size);
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
 
+namespace TankGeometryUtils {
 
-namespace TankGeometryUtils
-{
+  enum TreadStyle {
+    Covered = 0,
+    Exposed = 1
+  };
+  void setTreadStyle(int style);
 
-	enum TreadStyle
-	{
-		Covered = 0, Exposed = 1
-	};
-	void setTreadStyle( int style );
+  // degrees / meter
+  float getWheelScale();
+  // texcoords / meter
+  float getTreadScale();
+  // texcoords
+  float getTreadTexLen();
 
-	// degrees / meter
-	float getWheelScale();
-	// texcoords / meter
-	float getTreadScale();
-	// texcoords
-	float getTreadTexLen();
+  // help to scale vertices and normals
+  void doVertex3f(GLfloat x, GLfloat y, GLfloat z);
+  void doNormal3f(GLfloat x, GLfloat y, GLfloat z);
+  void doTexCoord2f(GLfloat x, GLfloat y);
 
-	// help to scale vertices and normals
-	void doVertex3f( GLfloat x, GLfloat y, GLfloat z );
-	void doNormal3f( GLfloat x, GLfloat y, GLfloat z );
-	void doTexCoord2f( GLfloat x, GLfloat y );
+  //
+  // NOTE:  these all return their triangle count
+  //
 
-	//
-	// NOTE:  these all return their triangle count
-	//
+  // lowtank geometry builder
+  int buildLowBody (void);
+  int buildLowTurret (void);
+  int buildLowLCasing (void);
+  int buildLowRCasing (void);
+  int buildLowBarrel (void);
 
-	// lowtank geometry builder
-	int buildLowBody( void );
-	int buildLowTurret( void );
-	int buildLowLCasing( void );
-	int buildLowRCasing( void );
-	int buildLowBarrel( void );
+  // medtank geometry builder
+  int buildMedBody (void);
+  int buildMedTurret (void);
+  int buildMedLCasing (void);
+  int buildMedRCasing (void);
+  int buildMedBarrel (void);
 
-	// medtank geometry builder
-	int buildMedBody( void );
-	int buildMedTurret( void );
-	int buildMedLCasing( void );
-	int buildMedRCasing( void );
-	int buildMedBarrel( void );
+  // hightank geometry builder
+  int buildHighBody (void);
+  int buildHighBarrel (void);
+  int buildHighTurret (void);
+  int buildHighLCasing (void);
+  int buildHighRCasing (void);
 
-	// hightank geometry builder
-	int buildHighBody( void );
-	int buildHighBarrel( void );
-	int buildHighTurret( void );
-	int buildHighLCasing( void );
-	int buildHighRCasing( void );
-
-	// animated geometry builder
-	int buildHighLCasingAnim( void );
-	int buildHighRCasingAnim( void );
-	int buildHighLTread( int divs );
-	int buildHighRTread( int divs );
-	int buildHighLWheel( int wheel, float angle, int divs );
-	int buildHighRWheel( int wheel, float angle, int divs );
+  // animated geometry builder
+  int buildHighLCasingAnim (void);
+  int buildHighRCasingAnim (void);
+  int buildHighLTread (int divs);
+  int buildHighRTread (int divs);
+  int buildHighLWheel (int wheel, float angle, int divs);
+  int buildHighRWheel (int wheel, float angle, int divs);
 }
-
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
 
 
 #endif // BZF_TANK_GEOMETRY_MGR_H
@@ -145,3 +158,4 @@ namespace TankGeometryUtils
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
+

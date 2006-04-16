@@ -11,30 +11,29 @@
  */
 
 #ifndef BZF_WAVE_AUDIO_FILE_H
-	#define BZF_WAVE_AUDIO_FILE_H
+#define BZF_WAVE_AUDIO_FILE_H
 
-	#include "AudioFile.h"
+#include "AudioFile.h"
 
 /** This class represents a WAVE file. It implements the read() function from
-AudioFile. */
-class WaveAudioFile: public AudioFile
-{
+    AudioFile. */
+class WaveAudioFile : public AudioFile {
 public:
-	WaveAudioFile( std::istream* );
-	virtual ~WaveAudioFile();
+  WaveAudioFile(std::istream*);
+  virtual ~WaveAudioFile();
 
-	/** This function returns the default extension of WAVE audio files. */
-	static std::string getExtension();
+  /** This function returns the default extension of WAVE audio files. */
+  static std::string	getExtension();
 
-	/** This function reads data from a WAVE file. */
-	virtual bool read( void *buffer, int numFrames );
+  /** This function reads data from a WAVE file. */
+  virtual bool		read(void* buffer, int numFrames);
 
 protected:
-	bool readHeader( char *tag, uint32_t *length );
-	bool findChunk( const char *tag, uint32_t *length );
+  bool			readHeader(char* tag, uint32_t* length);
+  bool			findChunk(const char* tag, uint32_t* length);
 };
 
-#endif 
+#endif
 
 
 // Local Variables: ***
@@ -44,3 +43,4 @@ protected:
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
+

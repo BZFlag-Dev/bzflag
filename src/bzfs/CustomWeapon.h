@@ -11,54 +11,50 @@
  */
 
 #ifndef __CUSTOMWEAPON_H__
-	#define __CUSTOMWEAPON_H__
+#define __CUSTOMWEAPON_H__
 
-	#include "common.h"
+#include "common.h"
 
 /* system interface headers */
-	#include <iostream>
-	#include <vector>
+#include <iostream>
+#include <vector>
 
 /* common interface headers */
-	#include "Flag.h"
-	#include "TimeKeeper.h"
+#include "Flag.h"
+#include "TimeKeeper.h"
 
 /* local interface headers */
-	#include "WorldFileLocation.h"
-	#include "WorldInfo.h"
-	#include "WorldEventManager.h"
+#include "WorldFileLocation.h"
+#include "WorldInfo.h"
+#include "WorldEventManager.h"
 
 
-class CustomWeapon: public WorldFileLocation
-{
-public:
-	CustomWeapon();
-	virtual bool read( const char *cmd, std::istream & );
-	virtual void writeToWorld( WorldInfo* )const;
-	virtual bool usesGroupDef()
-	{
-		return false;
-	} 
+class CustomWeapon : public WorldFileLocation {
+  public:
+    CustomWeapon();
+    virtual bool read(const char *cmd, std::istream&);
+    virtual void writeToWorld(WorldInfo*) const;
+    virtual bool usesGroupDef() { return false; }
 
-	static const float minWeaponDelay;
+    static const float minWeaponDelay;
 
-protected:
+  protected:
 
-	FlagType *type;
+    FlagType *type;
 
-	float initdelay;
-	std::vector < float > delay;
+    float initdelay;
+    std::vector<float> delay;
 
-	float tilt;
-	TeamColor teamColor;
+    float tilt;
+    TeamColor teamColor;
 
-	int eventTeam;
-	bz_eEventType triggerType;
+    int eventTeam;
+    bz_eEventType triggerType;
 
-	static TimeKeeper sync;
+    static TimeKeeper sync;
 };
 
-#endif /* __CUSTOMWEAPON_H__ */
+#endif  /* __CUSTOMWEAPON_H__ */
 
 // Local variables: ***
 // mode: C++ ***

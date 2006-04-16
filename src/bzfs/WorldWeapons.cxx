@@ -11,8 +11,8 @@
  */
 
 #ifdef _MSC_VER
-	#pragma warning( 4: 4786 )
-#endif 
+#pragma warning( 4: 4786 )
+#endif
 
 // class-interface header
 #include "WorldWeapons.h"
@@ -33,257 +33,228 @@
 // bzfs specific headers
 #include "bzfs.h"
 
-extern bz_eTeamType convertTeam( TeamColor team );
+extern bz_eTeamType convertTeam ( TeamColor team );
 extern TeamColor convertTeam( bz_eTeamType team );
 
-static int fireWorldWepReal( FlagType *type, float lifetime, PlayerId player, TeamColor teamColor, float *pos, float tilt, float dir, int shotID, float dt )
+static int fireWorldWepReal(FlagType* type, float lifetime, PlayerId player,
+			    TeamColor teamColor, float *pos, float tilt, float dir,
+			    int shotID, float dt)
 {
-	void *buf,  *bufStart = getDirectMessageBuffer();
+  void *buf, *bufStart = getDirectMessageBuffer();
 
-	FiringInfo firingInfo;
-	firingInfo.timeSent = ( float )TimeKeeper::getCurrent().getSeconds();
-	firingInfo.flagType = type;
-	firingInfo.lifetime = lifetime;
-	firingInfo.shot.player = player;
-	memmove( firingInfo.shot.pos, pos, 3 *sizeof( float ));
-	const float shotSpeed = BZDB.eval( StateDatabase::BZDB_SHOTSPEED );
-	const float tiltFactor = cosf( tilt );
-	firingInfo.shot.vel[0] = shotSpeed * tiltFactor * cosf( dir );
-	firingInfo.shot.vel[1] = shotSpeed * tiltFactor * sinf( dir );
-	firingInfo.shot.vel[2] = shotSpeed * sinf( tilt );
-	firingInfo.shot.id = shotID;
-	firingInfo.shot.dt = dt;
+  FiringInfo firingInfo;
+  firingInfo.timeSent = (float)TimeKeeper::getCurrent().getSeconds();
+  firingInfo.flagType = type;
+  firingInfo.lifetime = lifetime;
+  firingInfo.shot.player = player;
+  memmove(firingInfo.shot.pos, pos, 3 * sizeof(float));
+  const float shotSpeed = BZDB.eval(StateDatabase::BZDB_SHOTSPEED);
+  const float tiltFactor = cosf(tilt);
+  firingInfo.shot.vel[0] = shotSpeed * tiltFactor * cosf(dir);
+  firingInfo.shot.vel[1] = shotSpeed * tiltFactor * sinf(dir);
+  firingInfo.shot.vel[2] = shotSpeed * sinf(tilt);
+  firingInfo.shot.id = shotID;
+  firingInfo.shot.dt = dt;
 
-	firingInfo.shot.team = teamColor;
+  firingInfo.shot.team = teamColor;
 
-	buf = firingInfo.pack( bufStart );
+  buf = firingInfo.pack(bufStart);
 
-	if( BZDB.isTrue( StateDatabase::BZDB_WEAPONS ))
-	{
-		broadcastMessage( MsgWShotBegin, ( char* )buf - ( char* )bufStart, bufStart );
-	}
-	return shotID;
+  if (BZDB.isTrue(StateDatabase::BZDB_WEAPONS)) {
+    broadcastMessage(MsgWShotBegin, (char *)buf - (char *)bufStart, bufStart);
+  }
+  return shotID;
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
 
 
-
-WorldWeapons::WorldWeapons(): worldShotId( 0 ){}
+WorldWeapons::WorldWeapons()
+: worldShotId(0)
+{
+}
 
 
 WorldWeapons::~WorldWeapons()
 {
-	clear();
+  clear();
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
 
-
-void WorldWeapons::clear( void )
+void WorldWeapons::clear(void)
 {
-	for( std::vector < Weapon * > ::iterator it = weapons.begin(); it != weapons.end(); ++it )
-	{
-		Weapon *w =  *it;
-		delete w;
-	}
-	weapons.clear();
+  for (std::vector<Weapon*>::iterator it = weapons.begin();
+       it != weapons.end(); ++it) {
+    Weapon *w = *it;
+    delete w;
+  }
+  weapons.clear();
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
 
-
-float WorldWeapons::nextTime()
+float WorldWeapons::nextTime ()
 {
-	TimeKeeper nextShot = TimeKeeper::getSunExplodeTime();
-	for( std::vector < Weapon * > ::iterator it = weapons.begin(); it != weapons.end(); ++it )
-	{
-		Weapon *w =  *it;
-		if( w->nextTime <= nextShot )
-		{
-			nextShot = w->nextTime;
-		}
-	}
-	return ( float )( nextShot - TimeKeeper::getCurrent());
+  TimeKeeper nextShot = TimeKeeper::getSunExplodeTime();
+  for (std::vector<Weapon*>::iterator it = weapons.begin();
+       it != weapons.end(); ++it) {
+    Weapon *w = *it;
+    if (w->nextTime <= nextShot) {
+      nextShot = w->nextTime;
+    }
+  }
+  return (float)(nextShot - TimeKeeper::getCurrent());
 }
-
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
 
 
 void WorldWeapons::fire()
 {
-	TimeKeeper nowTime = TimeKeeper::getCurrent();
+  TimeKeeper nowTime = TimeKeeper::getCurrent();
 
-	for( std::vector < Weapon * > ::iterator it = weapons.begin(); it != weapons.end(); ++it )
-	{
-		Weapon *w =  *it;
-		if( w->nextTime <= nowTime )
-		{
+  for (std::vector<Weapon*>::iterator it = weapons.begin();
+       it != weapons.end(); ++it) {
+    Weapon *w = *it;
+    if (w->nextTime <= nowTime) {
 
-			fireWorldWepReal(( FlagType* )w->type, BZDB.eval( StateDatabase::BZDB_RELOADTIME ), ServerPlayer, w->teamColor, w->origin, w->tilt, w->direction, getNewWorldShotID(), 0 );
+      fireWorldWepReal((FlagType*)w->type, BZDB.eval(StateDatabase::BZDB_RELOADTIME),
+		       ServerPlayer, w->teamColor, w->origin, w->tilt, w->direction,
+		       getNewWorldShotID(), 0);
 
-			//Set up timer for next shot, and eat any shots that have been missed
-			while( w->nextTime <= nowTime )
-			{
-				w->nextTime += w->delay[w->nextDelay];
-				w->nextDelay++;
-				if( w->nextDelay == ( int )w->delay.size())
-				{
-					w->nextDelay = 0;
-				}
-			}
-		}
+      //Set up timer for next shot, and eat any shots that have been missed
+      while (w->nextTime <= nowTime) {
+	w->nextTime += w->delay[w->nextDelay];
+	w->nextDelay++;
+	if (w->nextDelay == (int)w->delay.size()) {
+	  w->nextDelay = 0;
 	}
+      }
+    }
+  }
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
 
-
-void WorldWeapons::add( const FlagType *type, const float *origin, float direction, float tilt, TeamColor teamColor, float initdelay, const std::vector < float >  &delay, TimeKeeper &sync )
+void WorldWeapons::add(const FlagType *type, const float *origin,
+		       float direction, float tilt, TeamColor teamColor,
+		       float initdelay, const std::vector<float> &delay,
+		       TimeKeeper &sync)
 {
-	Weapon *w = new Weapon();
-	w->type = type;
-	w->teamColor = teamColor;
-	memmove( &w->origin, origin, 3 *sizeof( float ));
-	w->direction = direction;
-	w->tilt = tilt;
-	w->nextTime = sync;
-	w->nextTime += initdelay;
-	w->initDelay = initdelay;
-	w->nextDelay = 0;
-	w->delay = delay;
+  Weapon *w = new Weapon();
+  w->type = type;
+  w->teamColor = teamColor;
+  memmove(&w->origin, origin, 3*sizeof(float));
+  w->direction = direction;
+  w->tilt = tilt;
+  w->nextTime = sync;
+  w->nextTime += initdelay;
+  w->initDelay = initdelay;
+  w->nextDelay = 0;
+  w->delay = delay;
 
-	weapons.push_back( w );
+  weapons.push_back(w);
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
 
-
-unsigned int WorldWeapons::count( void )
+unsigned int WorldWeapons::count(void)
 {
-	return weapons.size();
+  return weapons.size();
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
 
-
-void *WorldWeapons::pack( void *buf )const
+void * WorldWeapons::pack(void *buf) const
 {
-	buf = nboPackUInt( buf, weapons.size());
+  buf = nboPackUInt(buf, weapons.size());
 
-	for( unsigned int i = 0; i < weapons.size(); i++ )
-	{
-		const Weapon *w = ( const Weapon* )weapons[i];
-		buf = w->type->pack( buf );
-		buf = nboPackVector( buf, w->origin );
-		buf = nboPackFloat( buf, w->direction );
-		buf = nboPackFloat( buf, w->initDelay );
-		buf = nboPackUShort( buf, w->delay.size());
-		for( unsigned int j = 0; j < w->delay.size(); j++ )
-		{
-			buf = nboPackFloat( buf, w->delay[j] );
-		}
-	}
-	return buf;
+  for (unsigned int i=0 ; i < weapons.size(); i++) {
+    const Weapon *w = (const Weapon *) weapons[i];
+    buf = w->type->pack (buf);
+    buf = nboPackVector(buf, w->origin);
+    buf = nboPackFloat(buf, w->direction);
+    buf = nboPackFloat(buf, w->initDelay);
+    buf = nboPackUShort(buf, w->delay.size());
+    for (unsigned int j = 0; j < w->delay.size(); j++) {
+      buf = nboPackFloat(buf, w->delay[j]);
+    }
+  }
+  return buf;
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
 
-
-int WorldWeapons::packSize( void )const
+int WorldWeapons::packSize(void) const
 {
-	int fullSize = 0;
+  int fullSize = 0;
 
-	fullSize += sizeof( uint32_t );
+  fullSize += sizeof(uint32_t);
 
-	for( unsigned int i = 0; i < weapons.size(); i++ )
-	{
-		const Weapon *w = ( const Weapon* )weapons[i];
-		fullSize += FlagType::packSize; // flag type
-		fullSize += sizeof( float[3] ); // pos
-		fullSize += sizeof( float ); // direction
-		fullSize += sizeof( float ); // init delay
-		fullSize += sizeof( uint16_t ); // delay count
-		for( unsigned int j = 0; j < w->delay.size(); j++ )
-		{
-			fullSize += sizeof( float );
-		}
-	}
+  for (unsigned int i=0 ; i < weapons.size(); i++) {
+    const Weapon *w = (const Weapon *) weapons[i];
+    fullSize += FlagType::packSize; // flag type
+    fullSize += sizeof(float[3]); // pos
+    fullSize += sizeof(float);    // direction
+    fullSize += sizeof(float);    // init delay
+    fullSize += sizeof(uint16_t); // delay count
+    for (unsigned int j = 0; j < w->delay.size(); j++) {
+      fullSize += sizeof(float);
+    }
+  }
 
-	return fullSize;
+  return fullSize;
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
 
-
-int WorldWeapons::getNewWorldShotID( void )
+int WorldWeapons::getNewWorldShotID(void)
 {
-	if( worldShotId > _MAX_WORLD_SHOTS )
-	{
-		worldShotId = 0;
-	}
-	return worldShotId++;
+  if (worldShotId > _MAX_WORLD_SHOTS) {
+    worldShotId = 0;
+  }
+  return worldShotId++;
 }
 
 
 //----------WorldWeaponGlobalEventHandler---------------------
 // where we do the world weapon handling for event based shots since they are not really done by the "world"
 
-WorldWeaponGlobalEventHandler::WorldWeaponGlobalEventHandler( FlagType *_type, const float *_origin, float _direction, float _tilt, TeamColor teamColor )
+WorldWeaponGlobalEventHandler::WorldWeaponGlobalEventHandler(FlagType *_type,
+							     const float *_origin,
+							     float _direction,
+							     float _tilt,
+							     TeamColor teamColor )
 {
-	type = _type;
-	if( _origin )
-		memcpy( origin, _origin, sizeof( float ) *3 );
-	else
-		origin[0] = origin[1] = origin[2] = 0.0f;
+  type = _type;
+  if (_origin)
+    memcpy(origin,_origin,sizeof(float)*3);
+  else
+    origin[0] = origin[1] = origin[2] = 0.0f;
 
-	direction = _direction;
-	tilt = _tilt;
-	team = convertTeam( teamColor );
+  direction = _direction;
+  tilt = _tilt;
+  team = convertTeam(teamColor);
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-WorldWeaponGlobalEventHandler::~WorldWeaponGlobalEventHandler(){}
-
-void WorldWeaponGlobalEventHandler::process( bz_EventData *eventData )
+WorldWeaponGlobalEventHandler::~WorldWeaponGlobalEventHandler()
 {
-	if( !eventData || eventData->eventType != bz_eCaptureEvent )
-		return ;
+}
 
-	bz_CTFCaptureEventData_V1 *capEvent = ( bz_CTFCaptureEventData_V1* )eventData;
+void WorldWeaponGlobalEventHandler::process (bz_EventData *eventData)
+{
+  if (!eventData || eventData->eventType != bz_eCaptureEvent)
+    return;
 
-	if( capEvent->teamCapped != team )
-		return ;
+  bz_CTFCaptureEventData_V1 *capEvent = (bz_CTFCaptureEventData_V1*)eventData;
 
-	fireWorldWepReal( type, BZDB.eval( StateDatabase::BZDB_RELOADTIME ), ServerPlayer, RogueTeam, origin, tilt, direction, world->getWorldWeapons().getNewWorldShotID(), 0 );
+  if ( capEvent->teamCapped != team )
+	  return;
+
+  fireWorldWepReal(type, BZDB.eval(StateDatabase::BZDB_RELOADTIME),
+		   ServerPlayer, RogueTeam, origin, tilt, direction,
+		   world->getWorldWeapons().getNewWorldShotID(),0);
 }
 
 
 // for bzfsAPI: it needs to be global
-int fireWorldWep( FlagType *type, float lifetime, PlayerId player, float *pos, float tilt, float direction, int shotID, float dt )
+int fireWorldWep(FlagType* type, float lifetime, PlayerId player,
+			float *pos, float tilt, float direction,
+			int shotID, float dt)
 {
-	return fireWorldWepReal( type, lifetime, player, RogueTeam, pos, tilt, direction, shotID, dt );
+  return fireWorldWepReal(type, lifetime, player, RogueTeam,
+			  pos, tilt, direction, shotID, dt);
 }
 
 

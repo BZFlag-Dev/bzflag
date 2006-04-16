@@ -11,24 +11,19 @@
  */
 
 #ifndef BZF_ROOF_TOPS_H
-	#define BZF_ROOF_TOPS_H
+#define BZF_ROOF_TOPS_H
 
 // common header
-	#include "common.h"
+#include "common.h"
 
-namespace RoofTops
-{
+namespace RoofTops {
 
-	void load();
-	void clear();
+  void load();
+  void clear();
 
-	// returns 0.0f if there are no buildings
-	float getTopHeight( float x, float y, float maxHeight );
+  // returns 0.0f if there are no buildings
+  float getTopHeight(float x, float y, float maxHeight);
 }
-
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
 
 
 #endif // BZF_ROOF_TOPS_H
@@ -41,3 +36,4 @@ namespace RoofTops
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
+

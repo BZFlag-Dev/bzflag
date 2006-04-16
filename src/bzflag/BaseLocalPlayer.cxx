@@ -17,106 +17,86 @@
 #include "BZDBCache.h"
 
 
-BaseLocalPlayer::BaseLocalPlayer( const PlayerId &_id, const char *name, const char *_email ): Player( _id, RogueTeam, name, _email, TankPlayer ), lastTime( TimeKeeper::getTick()), salt( 0 )
+BaseLocalPlayer::BaseLocalPlayer(const PlayerId& _id,
+				 const char* name, const char* _email) :
+  Player(_id, RogueTeam, name, _email, TankPlayer),
+  lastTime(TimeKeeper::getTick()),
+  salt(0)
 {
-	lastPosition[0] = 0.0f;
-	lastPosition[1] = 0.0f;
-	lastPosition[2] = 0.0f;
-	bbox[0][0] = bbox[1][0] = 0.0f;
-	bbox[0][1] = bbox[1][1] = 0.0f;
-	bbox[0][2] = bbox[1][2] = 0.0f;
+  lastPosition[0] = 0.0f;
+  lastPosition[1] = 0.0f;
+  lastPosition[2] = 0.0f;
+  bbox[0][0] = bbox[1][0] = 0.0f;
+  bbox[0][1] = bbox[1][1] = 0.0f;
+  bbox[0][2] = bbox[1][2] = 0.0f;
 }
-
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
 
 BaseLocalPlayer::~BaseLocalPlayer()
 {
-	// do nothing
+  // do nothing
 }
-
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
 
 int BaseLocalPlayer::getSalt()
 {
-	salt = ( salt + 1 ) &127;
-	return salt << 8;
+  salt = (salt + 1) & 127;
+  return salt << 8;
 }
-
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
 
 void BaseLocalPlayer::update()
 {
-	// save last position
-	const float *oldPosition = getPosition();
-	lastPosition[0] = oldPosition[0];
-	lastPosition[1] = oldPosition[1];
-	lastPosition[2] = oldPosition[2];
+  // save last position
+  const float* oldPosition = getPosition();
+  lastPosition[0] = oldPosition[0];
+  lastPosition[1] = oldPosition[1];
+  lastPosition[2] = oldPosition[2];
 
-	// update by time step
-	float dt = float( TimeKeeper::getTick() - lastTime );
-	lastTime = TimeKeeper::getTick();
-	if( dt < 0.001f )
-		dt = 0.001f;
-	doUpdateMotion( dt );
+  // update by time step
+  float dt = float(TimeKeeper::getTick() - lastTime);
+  lastTime = TimeKeeper::getTick();
+  if (dt < 0.001f) dt = 0.001f;
+  doUpdateMotion(dt);
 
-	// compute motion's bounding box around center of tank
-	const float *newVelocity = getVelocity();
-	bbox[0][0] = bbox[1][0] = oldPosition[0];
-	bbox[0][1] = bbox[1][1] = oldPosition[1];
-	bbox[0][2] = bbox[1][2] = oldPosition[2];
-	if( newVelocity[0] > 0.0f )
-		bbox[1][0] += dt * newVelocity[0];
-	else
-		bbox[0][0] += dt * newVelocity[0];
-	if( newVelocity[1] > 0.0f )
-		bbox[1][1] += dt * newVelocity[1];
-	else
-		bbox[0][1] += dt * newVelocity[1];
-	if( newVelocity[2] > 0.0f )
-		bbox[1][2] += dt * newVelocity[2];
-	else
-		bbox[0][2] += dt * newVelocity[2];
+  // compute motion's bounding box around center of tank
+  const float* newVelocity = getVelocity();
+  bbox[0][0] = bbox[1][0] = oldPosition[0];
+  bbox[0][1] = bbox[1][1] = oldPosition[1];
+  bbox[0][2] = bbox[1][2] = oldPosition[2];
+  if (newVelocity[0] > 0.0f)
+    bbox[1][0] += dt * newVelocity[0];
+  else
+    bbox[0][0] += dt * newVelocity[0];
+  if (newVelocity[1] > 0.0f)
+    bbox[1][1] += dt * newVelocity[1];
+  else
+    bbox[0][1] += dt * newVelocity[1];
+  if (newVelocity[2] > 0.0f)
+    bbox[1][2] += dt * newVelocity[2];
+  else
+    bbox[0][2] += dt * newVelocity[2];
 
-	// expand bounding box to include entire tank
-	float size = BZDBCache::tankRadius;
-	if( getFlag() == Flags::Obesity )
-		size *= BZDB.eval( StateDatabase::BZDB_OBESEFACTOR );
-	else if( getFlag() == Flags::Tiny )
-		size *= BZDB.eval( StateDatabase::BZDB_TINYFACTOR );
-	else if( getFlag() == Flags::Thief )
-		size *= BZDB.eval( StateDatabase::BZDB_THIEFTINYFACTOR );
-	bbox[0][0] -= size;
-	bbox[1][0] += size;
-	bbox[0][1] -= size;
-	bbox[1][1] += size;
-	bbox[1][2] += BZDBCache::tankHeight;
+  // expand bounding box to include entire tank
+  float size = BZDBCache::tankRadius;
+  if (getFlag() == Flags::Obesity) size *= BZDB.eval(StateDatabase::BZDB_OBESEFACTOR);
+  else if (getFlag() == Flags::Tiny) size *= BZDB.eval(StateDatabase::BZDB_TINYFACTOR);
+  else if (getFlag() == Flags::Thief) size *= BZDB.eval(StateDatabase::BZDB_THIEFTINYFACTOR);
+  bbox[0][0] -= size;
+  bbox[1][0] += size;
+  bbox[0][1] -= size;
+  bbox[1][1] += size;
+  bbox[1][2] += BZDBCache::tankHeight;
 
-	// do remaining update stuff
-	doUpdate( dt );
+  // do remaining update stuff
+  doUpdate(dt);
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-Ray BaseLocalPlayer::getLastMotion()const
+Ray BaseLocalPlayer::getLastMotion() const
 {
-	return Ray( lastPosition, getVelocity());
+  return Ray(lastPosition, getVelocity());
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-const float( *BaseLocalPlayer::getLastMotionBBox()const )[3]
+const float (*BaseLocalPlayer::getLastMotionBBox() const)[3]
 {
-	return bbox;
+  return bbox;
 }
 
 

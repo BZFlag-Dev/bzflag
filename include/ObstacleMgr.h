@@ -10,20 +10,20 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef BZF_OBSTACLE_MGR_H
-	#define BZF_OBSTACLE_MGR_H
+#ifndef	BZF_OBSTACLE_MGR_H
+#define	BZF_OBSTACLE_MGR_H
 
-	#include "common.h"
+#include "common.h"
 
 // system headers
-	#include <string>
-	#include <vector>
-	#include <iostream>
+#include <string>
+#include <vector>
+#include <iostream>
 
 // common headers
-	#include "ObstacleList.h"
-	#include "MeshTransform.h"
-	#include "BzMaterial.h"
+#include "ObstacleList.h"
+#include "MeshTransform.h"
+#include "BzMaterial.h"
 
 // avoid nasty dependencies
 class Obstacle;
@@ -44,54 +44,54 @@ class ObstacleModifier;
 // - uses a group definition and a transform to produce obstacles
 //
 
-class GroupInstance
-{
+class GroupInstance {
 
-	friend class ObstacleModifier;
+  friend class ObstacleModifier;
 
-public:
-	GroupInstance( const std::string &groupdef );
-	GroupInstance();
-	~GroupInstance();
-	void init();
+  public:
+    GroupInstance(const std::string& groupdef);
+    GroupInstance();
+    ~GroupInstance();
+    void init();
 
-	void setName( const std::string &name );
-	void setTeam( int team );
-	void setTint( const float tint[4] );
-	void setPhysicsDriver( int phydrv );
-	void setTransform( const MeshTransform & );
-	void setMaterial( const BzMaterial* );
-	void setDriveThrough();
-	void setShootThrough();
-	void addMaterialSwap( const BzMaterial *src, const BzMaterial *dst );
+    void setName(const std::string& name);
+    void setTeam(int team);
+    void setTint(const float tint[4]);
+    void setPhysicsDriver(int phydrv);
+    void setTransform(const MeshTransform&);
+    void setMaterial(const BzMaterial*);
+    void setDriveThrough();
+    void setShootThrough();
+    void addMaterialSwap(const BzMaterial* src,
+			 const BzMaterial* dst);
 
-	const std::string &getName()const;
+    const std::string& getName() const;
 
-	const std::string &getGroupDef()const;
-	const MeshTransform &getTransform()const;
+    const std::string& getGroupDef() const;
+    const MeshTransform& getTransform() const;
 
-	void *pack( void* );
-	void *unpack( void* );
-	int packSize();
+    void *pack(void*);
+    void *unpack(void*);
+    int packSize();
 
-	void print( std::ostream &out, const std::string &indent )const;
+    void print(std::ostream& out, const std::string& indent) const;
 
-private:
-	std::string groupdef;
+  private:
+    std::string groupdef;
 
-	std::string name;
-	MeshTransform transform;
-	bool modifyTeam;
-	int team;
-	bool modifyColor;
-	float tint[4];
-	bool modifyPhysicsDriver;
-	int phydrv;
-	bool modifyMaterial;
-	const BzMaterial *material;
-	bool driveThrough;
-	bool shootThrough;
-	MaterialMap matMap;
+    std::string name;
+    MeshTransform transform;
+    bool modifyTeam;
+    int team;
+    bool modifyColor;
+    float tint[4];
+    bool modifyPhysicsDriver;
+    int phydrv;
+    bool modifyMaterial;
+    const BzMaterial* material;
+    bool driveThrough;
+    bool shootThrough;
+    MaterialMap matMap;
 };
 
 
@@ -100,87 +100,86 @@ private:
 // - defines an obstacle group
 //
 
-class GroupDefinition
-{
-public:
-	GroupDefinition( const std::string &name );
-	~GroupDefinition();
+class GroupDefinition {
+  public:
+    GroupDefinition(const std::string& name);
+    ~GroupDefinition();
 
-	enum ObstacleTypes
-	{
-		wallType = 0, boxType, pyrType, baseType, teleType, meshType, arcType, coneType, sphereType, tetraType, ObstacleTypeCount
-	};
+    enum ObstacleTypes {
+      wallType = 0,
+      boxType,
+      pyrType,
+      baseType,
+      teleType,
+      meshType,
+      arcType,
+      coneType,
+      sphereType,
+      tetraType,
+      ObstacleTypeCount
+    };
 
-	void addObstacle( Obstacle *obstacle );
-	void addGroupInstance( GroupInstance *group );
+    void addObstacle(Obstacle* obstacle);
+    void addGroupInstance(GroupInstance* group);
 
-	void clear(); // delete the list and the obstacles
-	void tighten(); // reduce memory usage
+    void clear(); // delete the list and the obstacles
+    void tighten(); // reduce memory usage
 
-	void sort( int( *compare )( const void *a, const void *b ));
+    void sort(int (*compare)(const void* a, const void* b));
 
-	void makeGroups( const MeshTransform &xform, const ObstacleModifier &obsMod )const;
+    void makeGroups(const MeshTransform& xform,
+		    const ObstacleModifier& obsMod) const;
 
-	void replaceBasesWithBoxes();
-	void deleteInvalidObstacles();
+    void replaceBasesWithBoxes();
+    void deleteInvalidObstacles();
 
-	const std::string &getName()const;
-	const ObstacleList &getList( int type )const;
-	const std::vector < GroupInstance * >  &getGroups()const;
+    const std::string& getName() const;
+    const ObstacleList& getList(int type) const;
+    const std::vector<GroupInstance*>& getGroups() const;
 
-	// Get the list of meshes that came from the world file.
-	// This includes the meshes in group definitions, even if
-	// they have never been instantiated.
-	void getSourceMeshes( std::vector < MeshObstacle * >  &meshes )const;
+    // Get the list of meshes that came from the world file.
+    // This includes the meshes in group definitions, even if
+    // they have never been instantiated.
+    void getSourceMeshes(std::vector<MeshObstacle*>& meshes) const;
 
-	int packSize()const;
-	void *pack( void* )const;
-	void *unpack( void* );
+    int packSize() const;
+    void *pack(void*) const;
+    void *unpack(void*);
 
-	void printGrouped( std::ostream &out, const std::string &indent )const;
-	void printFlatFile( std::ostream &out, const std::string &indent )const;
+    void printGrouped(std::ostream& out, const std::string& indent) const;
+    void printFlatFile(std::ostream& out, const std::string& indent) const;
 
-public:
-	static void clearDepthName();
+  public:
+    static void clearDepthName();
 
-private:
-	Obstacle *newObstacle( int type );
-	void makeTeleName( Obstacle *obs, unsigned int pos )const;
-	void appendGroupName( const GroupInstance *group )const;
+  private:
+    Obstacle* newObstacle(int type);
+    void makeTeleName(Obstacle* obs, unsigned int pos) const;
+    void appendGroupName(const GroupInstance* group) const;
 
-private:
-	std::string name;
+  private:
+    std::string name;
 
-	ObstacleList lists[ObstacleTypeCount];
-	std::vector < GroupInstance * > groups;
+    ObstacleList lists[ObstacleTypeCount];
+    std::vector<GroupInstance*>		groups;
 
-	mutable bool active; // for recursion checking
+    mutable bool active; // for recursion checking
 
-private:
-	static std::string depthName;
+  private:
+    static std::string depthName;
 };
 
-inline const std::string &GroupDefinition::getName()const
+inline const std::string& GroupDefinition::getName() const
 {
-	return name;
+  return name;
 }
-
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-inline const ObstacleList &GroupDefinition::getList( int type )const
+inline const ObstacleList& GroupDefinition::getList(int type) const
 {
-	return lists[type];
+  return lists[type];
 }
-
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-inline const std::vector < GroupInstance * >  &GroupDefinition::getGroups()const
+inline const std::vector<GroupInstance*>& GroupDefinition::getGroups() const
 {
-	return groups;
+  return groups;
 }
 
 
@@ -189,150 +188,96 @@ inline const std::vector < GroupInstance * >  &GroupDefinition::getGroups()const
 // - utility class to keep track of group definitions
 //
 
-class GroupDefinitionMgr
-{
-public:
-	GroupDefinitionMgr();
-	~GroupDefinitionMgr();
+class GroupDefinitionMgr {
+  public:
+    GroupDefinitionMgr();
+    ~GroupDefinitionMgr();
 
-	void clear(); // delete the lists and the obstacles
-	void tighten(); // reduce memory usage
-	void makeWorld(); // make the local obstacles for the groups
-	void replaceBasesWithBoxes();
+    void clear(); // delete the lists and the obstacles
+    void tighten(); // reduce memory usage
+    void makeWorld(); // make the local obstacles for the groups
+    void replaceBasesWithBoxes();
 
-	void addWorldObstacle( Obstacle *obstacle );
-	void addGroupDef( GroupDefinition *groupdef );
+    void addWorldObstacle(Obstacle* obstacle);
+    void addGroupDef(GroupDefinition* groupdef);
 
-	GroupDefinition *findGroupDef( const std::string &name )const;
+    GroupDefinition* findGroupDef(const std::string& name) const;
 
-	// Get the list of meshes that came from the world file.
-	// This includes the meshes in group definitions, even if
-	// they have never been instantiated.
-	void getSourceMeshes( std::vector < MeshObstacle * >  &meshes )const;
+    // Get the list of meshes that came from the world file.
+    // This includes the meshes in group definitions, even if
+    // they have never been instantiated.
+    void getSourceMeshes(std::vector<MeshObstacle*>& meshes) const;
 
-	const GroupDefinition *getWorld()const;
+    const GroupDefinition* getWorld() const;
 
-	// convenience functions
-	const ObstacleList &getWalls()const;
-	const ObstacleList &getBoxes()const;
-	const ObstacleList &getPyrs()const;
-	const ObstacleList &getBases()const;
-	const ObstacleList &getTeles()const;
-	const ObstacleList &getMeshes()const;
-	const ObstacleList &getArcs()const;
-	const ObstacleList &getCones()const;
-	const ObstacleList &getSpheres()const;
-	const ObstacleList &getTetras()const;
+    // convenience functions
+    const ObstacleList& getWalls() const;
+    const ObstacleList& getBoxes() const;
+    const ObstacleList& getPyrs() const;
+    const ObstacleList& getBases() const;
+    const ObstacleList& getTeles() const;
+    const ObstacleList& getMeshes() const;
+    const ObstacleList& getArcs() const;
+    const ObstacleList& getCones() const;
+    const ObstacleList& getSpheres() const;
+    const ObstacleList& getTetras() const;
 
-	int packSize()const;
-	void *pack( void* )const;
-	void *unpack( void* );
+    int packSize() const;
+    void *pack(void*) const;
+    void *unpack(void*);
 
-	void print( std::ostream &out, const std::string &indent )const;
+    void print(std::ostream& out, const std::string& indent) const;
 
-private:
-	GroupDefinition world;
-	std::vector < GroupDefinition * > list;
+  private:
+    GroupDefinition world;
+    std::vector<GroupDefinition*> list;
 };
 
-inline const GroupDefinition *GroupDefinitionMgr::getWorld()const
+inline const GroupDefinition* GroupDefinitionMgr::getWorld() const
 {
-	return  &world;
+  return &world;
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-inline const ObstacleList &GroupDefinitionMgr::getWalls()const
+inline const ObstacleList& GroupDefinitionMgr::getWalls() const
 {
-	return world.getList( GroupDefinition::wallType );
+  return world.getList(GroupDefinition::wallType);
 }
-
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-inline const ObstacleList &GroupDefinitionMgr::getBoxes()const
+inline const ObstacleList& GroupDefinitionMgr::getBoxes() const
 {
-	return world.getList( GroupDefinition::boxType );
+  return world.getList(GroupDefinition::boxType);
 }
-
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-inline const ObstacleList &GroupDefinitionMgr::getPyrs()const
+inline const ObstacleList& GroupDefinitionMgr::getPyrs() const
 {
-	return world.getList( GroupDefinition::pyrType );
+  return world.getList(GroupDefinition::pyrType);
 }
-
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-inline const ObstacleList &GroupDefinitionMgr::getBases()const
+inline const ObstacleList& GroupDefinitionMgr::getBases() const
 {
-	return world.getList( GroupDefinition::baseType );
+  return world.getList(GroupDefinition::baseType);
 }
-
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-inline const ObstacleList &GroupDefinitionMgr::getTeles()const
+inline const ObstacleList& GroupDefinitionMgr::getTeles() const
 {
-	return world.getList( GroupDefinition::teleType );
+  return world.getList(GroupDefinition::teleType);
 }
-
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-inline const ObstacleList &GroupDefinitionMgr::getMeshes()const
+inline const ObstacleList& GroupDefinitionMgr::getMeshes() const
 {
-	return world.getList( GroupDefinition::meshType );
+  return world.getList(GroupDefinition::meshType);
 }
-
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-inline const ObstacleList &GroupDefinitionMgr::getArcs()const
+inline const ObstacleList& GroupDefinitionMgr::getArcs() const
 {
-	return world.getList( GroupDefinition::arcType );
+  return world.getList(GroupDefinition::arcType);
 }
-
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-inline const ObstacleList &GroupDefinitionMgr::getCones()const
+inline const ObstacleList& GroupDefinitionMgr::getCones() const
 {
-	return world.getList( GroupDefinition::coneType );
+  return world.getList(GroupDefinition::coneType);
 }
-
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-inline const ObstacleList &GroupDefinitionMgr::getSpheres()const
+inline const ObstacleList& GroupDefinitionMgr::getSpheres() const
 {
-	return world.getList( GroupDefinition::sphereType );
+  return world.getList(GroupDefinition::sphereType);
 }
-
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-inline const ObstacleList &GroupDefinitionMgr::getTetras()const
+inline const ObstacleList& GroupDefinitionMgr::getTetras() const
 {
-	return world.getList( GroupDefinition::tetraType );
+  return world.getList(GroupDefinition::tetraType);
 }
-
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
 
 
 extern GroupDefinitionMgr OBSTACLEMGR;
@@ -348,3 +293,4 @@ extern GroupDefinitionMgr OBSTACLEMGR;
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
+

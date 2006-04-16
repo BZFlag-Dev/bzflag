@@ -16,97 +16,70 @@
 // local interface headers
 #include "HUDuiControl.h"
 
-HUDDialog::HUDDialog(): focus( NULL )
+HUDDialog::HUDDialog() : focus(NULL)
 {
-	height = width = 0;
+  height = width = 0;
 }
-
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
 
 HUDDialog::~HUDDialog()
 {
-	// delete all controls left on list
-	const int count = ( const int )list.size();
-	for( int i = 0; i < count; i++ )
-		delete list[i];
+  // delete all controls left on list
+  const int count = (const int)list.size();
+  for (int i = 0; i < count; i++)
+    delete list[i];
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-void HUDDialog::render()
+void			HUDDialog::render()
 {
-	const int count = ( const int )list.size();
-	for( int i = 0; i < count; i++ )
-		list[i]->render();
+  const int count = (const int)list.size();
+  for (int i = 0; i < count; i++)
+    list[i]->render();
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-void HUDDialog::resize( int _width, int _height )
+void			HUDDialog::resize(int _width, int _height)
 {
-	width = _width;
-	height = _height;
+  width		= _width;
+  height	= _height;
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-HUDuiControl *HUDDialog::getFocus()const
+HUDuiControl*		HUDDialog::getFocus() const
 {
-	return focus;
+  return focus;
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-void HUDDialog::setFocus( HUDuiControl *_focus )
+void			HUDDialog::setFocus(HUDuiControl* _focus)
 {
-	focus = _focus;
+  focus = _focus;
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-void HUDDialog::initNavigation( std::vector < HUDuiControl * >  &listHUD, int start, int end )
+void HUDDialog::initNavigation(std::vector<HUDuiControl*> &listHUD,
+			       int start, int end)
 {
-	int i;
-	const int count = ( const int )listHUD.size();
+  int i;
+  const int count = (const int)listHUD.size();
 
-	for( i = 0; i < start; i++ )
-	{
-		listHUD[i]->setNext( listHUD[i] );
-		listHUD[i]->setPrev( listHUD[i] );
-	}
+  for (i = 0; i < start; i++) {
+    listHUD[i]->setNext(listHUD[i]);
+    listHUD[i]->setPrev(listHUD[i]);
+  }
 
-	if( start < end )
-	{
-		listHUD[start]->setNext( listHUD[start + 1] );
-		listHUD[start]->setPrev( listHUD[end] );
-		for( i = start + 1; i < end; i++ )
-		{
-			listHUD[i]->setNext( listHUD[i + 1] );
-			listHUD[i]->setPrev( listHUD[i - 1] );
-		}
-		listHUD[end]->setNext( listHUD[start] );
-		listHUD[end]->setPrev( listHUD[end - 1] );
-	}
+  if (start < end) {
+    listHUD[start]->setNext(listHUD[start+1]);
+    listHUD[start]->setPrev(listHUD[end]);
+    for (i = start+1; i < end; i++) {
+	listHUD[i]->setNext(listHUD[i+1]);
+	listHUD[i]->setPrev(listHUD[i-1]);
+    }
+    listHUD[end]->setNext(listHUD[start]);
+    listHUD[end]->setPrev(listHUD[end-1]);
+  }
 
-	for( i = end + 1; i < count; i++ )
-	{
-		listHUD[i]->setNext( listHUD[i] );
-		listHUD[i]->setPrev( listHUD[i] );
-	}
+  for (i = end+1; i < count; i++) {
+    listHUD[i]->setNext(listHUD[i]);
+    listHUD[i]->setPrev(listHUD[i]);
+  }
 
-	setFocus( listHUD[start] );
+  setFocus(listHUD[start]);
 }
 
 

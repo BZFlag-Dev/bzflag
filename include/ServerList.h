@@ -11,63 +11,62 @@
  */
 
 #ifndef __SERVERLIST_H__
-	#define __SERVERLIST_H__
+#define __SERVERLIST_H__
 
-	#include "common.h"
+#include "common.h"
 
 /* system interface headers */
-	#include <vector>
+#include <vector>
 
 /* common interface headers */
-	#include "ListServer.h"
-	#include "StartupInfo.h"
-	#include "ServerItem.h"
-	#include "ServerListCache.h"
-	#include "cURLManager.h"
+#include "ListServer.h"
+#include "StartupInfo.h"
+#include "ServerItem.h"
+#include "ServerListCache.h"
+#include "cURLManager.h"
 
 
 /** The ServerList class contains links to the list server as well as
  * any fetched list of servers.  The list handles cacheing of those
  * server entries in case of list server unavailability.
  */
-class ServerList: private cURLManager
-{
+class ServerList : private cURLManager {
 
 public:
-	ServerList();
-	virtual ~ServerList();
+  ServerList();
+  virtual ~ServerList();
 
-	void checkEchos( StartupInfo *_info );
-	void startServerPings( StartupInfo *_info );
-	bool searchActive()const;
-	bool serverFound()const;
-	const std::vector < ServerItem >  &getServers();
-	std::vector < ServerItem > ::size_type size();
-	int updateFromCache();
-	void collectData( char *ptr, int len );
-	void finalization( char *data, unsigned int length, bool good );
+  void checkEchos(StartupInfo *_info);
+  void startServerPings(StartupInfo *_info);
+  bool searchActive() const;
+  bool serverFound() const;
+  const std::vector<ServerItem>& getServers();
+  std::vector<ServerItem>::size_type size();
+  int updateFromCache();
+  void collectData(char *ptr, int len);
+  void finalization(char *data, unsigned int length, bool good);
 
 public:
-	void addToList( ServerItem &, bool doCache = false );
-	void clear();
+  void addToList(ServerItem&, bool doCache=false);
+  void clear();
 
 private:
-	void readServerList();
-	void addToListWithLookup( ServerItem & );
-	void addCacheToList();
-	void _shutDown();
+  void readServerList();
+  void addToListWithLookup(ServerItem&);
+  void addCacheToList();
+  void _shutDown();
 
 private:
-	bool addedCacheToList;
-	int phase;
-	std::vector < ServerItem > servers;
-	ServerListCache *serverCache;
-	int pingBcastSocket;
-	struct sockaddr_in pingBcastAddr;
-	StartupInfo *startupInfo;
+  bool addedCacheToList;
+  int phase;
+  std::vector<ServerItem> servers;
+  ServerListCache* serverCache;
+  int pingBcastSocket;
+  struct sockaddr_in pingBcastAddr;
+  StartupInfo *startupInfo;
 };
 
-#endif /* __SERVERLIST_H__ */
+#endif  /* __SERVERLIST_H__ */
 
 // Local Variables: ***
 // mode: C++ ***

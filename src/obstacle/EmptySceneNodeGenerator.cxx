@@ -17,11 +17,13 @@
 // EmptySceneNodeGenerator
 //
 
-EmptySceneNodeGenerator::~EmptySceneNodeGenerator(){}
-
-WallSceneNode *EmptySceneNodeGenerator::getNextNode( float, float, bool )
+EmptySceneNodeGenerator::~EmptySceneNodeGenerator()
 {
-	return NULL;
+}
+
+WallSceneNode* EmptySceneNodeGenerator::getNextNode(float, float, bool)
+{
+  return NULL;
 }
 
 // Local Variables: ***

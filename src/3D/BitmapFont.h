@@ -11,37 +11,33 @@
  */
 
 #ifndef _BITMAP_FONT_H_
-	#define _BITMAP_FONT_H_
+#define _BITMAP_FONT_H_
 
 /* common header */
-	#include "common.h"
+#include "common.h"
 
 /* interface headers */
-	#include "ImageFont.h"
-	#include "bzfgl.h"
-	#include "OpenGLGState.h"
+#include "ImageFont.h"
+#include "bzfgl.h"
+#include "OpenGLGState.h"
 
-class BitmapFont: public ImageFont
-{
+class BitmapFont : public ImageFont {
 public:
-	BitmapFont();
-	virtual ~BitmapFont();
+  BitmapFont();
+  virtual ~BitmapFont();
 
-	virtual void build();
-	virtual bool isBuilt()const
-	{
-		return loaded;
-	} 
+  virtual void build();
+  virtual bool isBuilt() const {return loaded;}
 
-	virtual void filter( bool dofilter );
-	virtual void drawString( float scale, GLfloat color[4], const char *str, int len );
+  virtual void filter(bool dofilter);
+  virtual void drawString(float scale, GLfloat color[4], const char *str, int len);
 
-	virtual void free();
+  virtual void free();
 
 private:
-	OpenGLGState gstate;
-	unsigned char *bitmaps[MAX_TEXTURE_FONT_CHARS];
-	bool loaded;
+  OpenGLGState gstate;
+  unsigned char *bitmaps[MAX_TEXTURE_FONT_CHARS];
+  bool	loaded;
 };
 
 #endif //_BITMAP_FONT_H_
@@ -53,3 +49,4 @@ private:
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
+

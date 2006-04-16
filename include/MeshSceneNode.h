@@ -16,12 +16,12 @@
  *	Does not support level of detail.
  */
 
-#ifndef BZF_MESH_SCENE_NODE_H
-	#define BZF_MESH_SCENE_NODE_H
+#ifndef	BZF_MESH_SCENE_NODE_H
+#define	BZF_MESH_SCENE_NODE_H
 
-	#include "common.h"
-	#include "bzfgl.h"
-	#include "SceneNode.h"
+#include "common.h"
+#include "bzfgl.h"
+#include "SceneNode.h"
 
 //
 // NOTES:
@@ -42,92 +42,89 @@ class ViewFrustum;
 class RenderNode;
 
 
-class MeshSceneNode: public SceneNode
-{
-public:
-	MeshSceneNode( const MeshObstacle *mesh );
-	~MeshSceneNode();
+class MeshSceneNode : public SceneNode {
+  public:
+    MeshSceneNode(const MeshObstacle* mesh);
+    ~MeshSceneNode();
 
-	// virtual functions from SceneNode
+    // virtual functions from SceneNode
 
-	void notifyStyleChange();
+    void notifyStyleChange();
 
-	bool cull( const ViewFrustum & )const;
-	bool inAxisBox( const Extents &exts )const;
+    bool cull(const ViewFrustum&) const;
+    bool inAxisBox(const Extents& exts) const;
 
-	void addShadowNodes( SceneRenderer & );
-	void addRenderNodes( SceneRenderer & );
-	void renderRadar();
+    void addShadowNodes(SceneRenderer&);
+    void addRenderNodes(SceneRenderer&);
+    void renderRadar();
 
-	void getRenderNodes( std::vector < RenderSet >  &rnodes );
+    void getRenderNodes(std::vector<RenderSet>& rnodes);
 
-	void makeXFormList();
-	void freeXFormList();
-	static void initContext( void *data );
-	static void freeContext( void *data );
+    void makeXFormList();
+    void freeXFormList();
+    static void initContext(void* data);
+    static void freeContext(void* data);
 
-	static void setLodScale( int pixelsX, float fovx, int pixelsY, float fovy );
-	static void setRadarLodScale( float lengthPerPixel );
+    static void setLodScale(int pixelsX, float fovx,
+			    int pixelsY, float fovy);
+    static void setRadarLodScale(float lengthPerPixel);
 
-private:
-	const MeshObstacle *mesh;
+  private:
+    const MeshObstacle* mesh;
 
-	MeshDrawMgr *drawMgr;
-	const MeshDrawInfo *drawInfo;
+    MeshDrawMgr* drawMgr;
+    const MeshDrawInfo* drawInfo;
 
-	bool animRepos;
+    bool animRepos;
 
-	// transform display list
-	GLuint xformList;
+    // transform display list
+    GLuint xformList;
 
-	struct MeshMaterial
-	{
-		const BzMaterial *bzmat;
-		OpenGLGState gstate;
-		GLfloat color[4];
-		const GLfloat *colorPtr;
-		bool drawRadar;
-		bool drawShadow;
-		bool needsSorting;
-		bool animRepos;
-	};
+    struct MeshMaterial {
+      const BzMaterial* bzmat;
+      OpenGLGState gstate;
+      GLfloat color[4];
+      const GLfloat* colorPtr;
+      bool drawRadar;
+      bool drawShadow;
+      bool needsSorting;
+      bool animRepos;
+    };
 
-	struct SetNode
-	{
-		int set;
-		MeshMaterial meshMat;
-		// basic render nodes
-		RenderNode *node;
-		RenderNode *radarNode;
-	};
+    struct SetNode {
+      int set;
+      MeshMaterial meshMat;
+      // basic render nodes
+      RenderNode* node;
+      RenderNode* radarNode;
+    };
 
-	struct LodNode
-	{
-		int count;
-		SetNode *sets;
-	};
+    struct LodNode {
+      int count;
+      SetNode* sets;
+    };
 
-	// Level Of Detail (LOD) information
-	int lodCount;
-	LodNode *lods;
-	float *lodLengths;
+    // Level Of Detail (LOD) information
+    int lodCount;
+    LodNode* lods;
+    float* lodLengths;
 
-	// Radar LODs
-	int radarCount;
-	LodNode *radarLods;
-	float *radarLengths;
+    // Radar LODs
+    int radarCount;
+    LodNode* radarLods;
+    float* radarLengths;
 
-	static float LodScale;
-	static float RadarLodScale;
+    static float LodScale;
+    static float RadarLodScale;
 
-private:
-	void updateMaterial( MeshMaterial *mat );
-	const BzMaterial *convertMaterial( const BzMaterial *bzmat );
-	int calcNormalLod( const ViewFrustum & );
-	int calcShadowLod( const ViewFrustum & );
-	int calcRadarLod();
+  private:
+    void updateMaterial(MeshMaterial* mat);
+    const BzMaterial* convertMaterial(const BzMaterial* bzmat);
+    int calcNormalLod(const ViewFrustum&);
+    int calcShadowLod(const ViewFrustum&);
+    int calcRadarLod();
 
-	friend class MeshSceneNodeMgr;
+  friend class MeshSceneNodeMgr;
 };
 
 
@@ -140,3 +137,4 @@ private:
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
+

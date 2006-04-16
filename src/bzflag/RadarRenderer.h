@@ -15,115 +15,103 @@
  *	Encapsulates drawing a radar
  */
 
-#ifndef BZF_RADAR_RENDERER_H
-	#define BZF_RADAR_RENDERER_H
+#ifndef	BZF_RADAR_RENDERER_H
+#define	BZF_RADAR_RENDERER_H
 
-	#include "common.h"
-	#include "bzfgl.h"
-	#include "Obstacle.h"
+#include "common.h"
+#include "bzfgl.h"
+#include "Obstacle.h"
 
 
 class SceneRenderer;
 class World;
 class ShotPath;
 
-class RadarRenderer
-{
-public:
-	RadarRenderer( const SceneRenderer &, World *_world );
-	void setWorld( World *_world );
+class RadarRenderer {
+  public:
+			RadarRenderer(const SceneRenderer&, World* _world);
+    void		setWorld(World* _world);
 
-	void setControlColor( const GLfloat *color = NULL );
+    void		setControlColor(const GLfloat *color = NULL);
 
-	int getX()const;
-	int getY()const;
-	int getWidth()const;
-	int getHeight()const;
+    int			getX() const;
+    int			getY() const;
+    int			getWidth() const;
+    int			getHeight() const;
 
-	void setShape( int x, int y, int w, int h );
-	void setJammed( bool = true );
+    void		setShape(int x, int y, int w, int h);
+    void		setJammed(bool = true);
 
-	void setDimming( float newDimming );
+    void		setDimming(float newDimming);
 
-	void render( SceneRenderer &, bool blank, bool observer );
+    void		render(SceneRenderer&, bool blank, bool observer);
 
-	void renderFrame( SceneRenderer & );
+    void		renderFrame(SceneRenderer&);
 
-	void renderObstacles( bool fastRadar, float range );
-	void renderWalls();
-	void renderBoxPyrMesh();
-	void renderBoxPyrMeshFast( float range );
-	void renderBasesAndTeles();
+    void		renderObstacles(bool fastRadar, float range);
+    void		renderWalls();
+    void		renderBoxPyrMesh();
+    void		renderBoxPyrMeshFast(float range);
+    void		renderBasesAndTeles();
 
-	int getFrameTriangleCount()const;
+    int			getFrameTriangleCount() const;
 
-private:
-	// no copying
-	RadarRenderer( const RadarRenderer & );
-	RadarRenderer &operator = ( const RadarRenderer & );
+  private:
+    // no copying
+    RadarRenderer(const RadarRenderer&);
+    RadarRenderer&	operator=(const RadarRenderer&);
 
-	void drawShot( const ShotPath* );
-	void drawTank( const float pos[3], const class Player *player );
-	void drawFancyTank( const class Player *player );
-	void drawFlag( const float pos[3] );
-	void drawFlagOnTank( const float pos[3] );
+    void		drawShot(const ShotPath*);
+    void		drawTank(const float pos[3],
+				 const class Player* player);
+    void		drawFancyTank(const class Player* player);
+    void		drawFlag(const float pos[3]);
+    void		drawFlagOnTank(const float pos[3]);
 
-	static float colorScale( const float z, const float h );
-	static float transScale( const float z, const float h );
+    static float	colorScale(const float z, const float h);
+    static float	transScale(const float z, const float h);
 
-private:
-	World *world;
-	int x, y;
-	int w, h;
-	float dimming;
-	float ps;
-	float range;
-	double decay;
-	GLfloat teamColor[3];
-	bool smooth;
-	bool jammed;
-	bool multiSampled;
-	bool useTankModels;
-	bool useTankDimensions;
-	int triangleCount;
-	static const float colorFactor;
+  private:
+    World*		world;
+    int			x, y;
+    int			w, h;
+    float		dimming;
+    float		ps;
+    float		range;
+    double		decay;
+    GLfloat		teamColor[3];
+    bool		smooth;
+    bool		jammed;
+    bool		multiSampled;
+    bool		useTankModels;
+    bool		useTankDimensions;
+    int			triangleCount;
+    static const float	colorFactor;
 };
 
 //
 // RadarRenderer
 //
 
-inline int RadarRenderer::getX()const
+inline int		RadarRenderer::getX() const
 {
-	return x;
-} 
-
-inline int RadarRenderer::getY()const
-{
-	return y;
+  return x;
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-inline int RadarRenderer::getWidth()const
+inline int		RadarRenderer::getY() const
 {
-	return w;
+  return y;
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-inline int RadarRenderer::getHeight()const
+inline int		RadarRenderer::getWidth() const
 {
-	return h;
+  return w;
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
+inline int		RadarRenderer::getHeight() const
+{
+  return h;
+}
 
 #endif // BZF_RADAR_RENDERER_H
 
@@ -134,3 +122,4 @@ inline int RadarRenderer::getHeight()const
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
+

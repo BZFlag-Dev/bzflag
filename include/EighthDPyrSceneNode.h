@@ -15,39 +15,38 @@
  *	of a pyramid building.
  */
 
-#ifndef BZF_EIGHTHD_PYR_SCENE_NODE_H
-	#define BZF_EIGHTHD_PYR_SCENE_NODE_H
+#ifndef	BZF_EIGHTHD_PYR_SCENE_NODE_H
+#define	BZF_EIGHTHD_PYR_SCENE_NODE_H
 
-	#include "common.h"
-	#include "EighthDimSceneNode.h"
+#include "common.h"
+#include "EighthDimSceneNode.h"
 
-class EighthDPyrSceneNode: public EighthDimSceneNode
-{
-public:
-	EighthDPyrSceneNode( const float pos[3], const float size[3], float rotation );
-	~EighthDPyrSceneNode();
+class EighthDPyrSceneNode : public EighthDimSceneNode {
+  public:
+			EighthDPyrSceneNode(const float pos[3],
+					const float size[3], float rotation);
+			~EighthDPyrSceneNode();
 
-	void notifyStyleChange();
-	void addRenderNodes( SceneRenderer & );
+    void		notifyStyleChange();
+    void		addRenderNodes(SceneRenderer&);
 
-protected:
-	class EighthDPyrRenderNode: public RenderNode
-	{
-public:
-		EighthDPyrRenderNode( const EighthDPyrSceneNode *, const float pos[3], const float size[3], float rotation );
-		~EighthDPyrRenderNode();
-		void render();
-		const GLfloat *getPosition()const
-		{
-			return sceneNode->getSphere();
-} private:
-		const EighthDPyrSceneNode *sceneNode;
-		GLfloat corner[5][3];
-	};
+  protected:
+    class EighthDPyrRenderNode : public RenderNode {
+      public:
+			EighthDPyrRenderNode(const EighthDPyrSceneNode*,
+				const float pos[3],
+				const float size[3], float rotation);
+			~EighthDPyrRenderNode();
+	void		render();
+	const GLfloat*	getPosition() const { return sceneNode->getSphere(); }
+      private:
+	const EighthDPyrSceneNode* sceneNode;
+	GLfloat		corner[5][3];
+    };
 
-private:
-	OpenGLGState gstate;
-	EighthDPyrRenderNode renderNode;
+  private:
+    OpenGLGState	 gstate;
+    EighthDPyrRenderNode renderNode;
 };
 
 #endif // BZF_EIGHTHD_PYR_SCENE_NODE_H
@@ -59,3 +58,4 @@ private:
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
+

@@ -16,92 +16,63 @@
 #include "SDLJoystick.h"
 #include "EvdevJoystick.h"
 
-PlatformFactory *PlatformFactory::getInstance()
+PlatformFactory* PlatformFactory::getInstance()
 {
-	if( !instance )
-		instance = new SdlPlatformFactory;
-	return instance;
+  if (!instance)
+    instance = new SdlPlatformFactory;
+  return instance;
 }
-
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
 
 SdlPlatformFactory::SdlPlatformFactory()
 {
-	// do nothing
+  // do nothing
 }
-
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
 
 SdlPlatformFactory::~SdlPlatformFactory()
 {
-	// do nothing
+  // do nothing
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-BzfDisplay *SdlPlatformFactory::createDisplay( const char *, const char* )
+BzfDisplay* SdlPlatformFactory::createDisplay(const char*, const char*)
 {
-	SDLDisplay *display = new SDLDisplay();
-	if( !display || !display->isValid())
-	{
-		delete display;
-		return NULL;
-	}
-	return display;
+  SDLDisplay* display = new SDLDisplay();
+  if (!display || !display->isValid()) {
+    delete display;
+    return NULL;
+  }
+  return display;
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-BzfVisual *SdlPlatformFactory::createVisual( const BzfDisplay *display )
+BzfVisual* SdlPlatformFactory::createVisual(const BzfDisplay* display)
 {
-	return new SDLVisual(( const SDLDisplay* )display );
+  return new SDLVisual((const SDLDisplay*)display);
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-BzfWindow *SdlPlatformFactory::createWindow( const BzfDisplay *display, BzfVisual *visual )
+BzfWindow* SdlPlatformFactory::createWindow(const BzfDisplay* display,
+					    BzfVisual* visual)
 {
-	return new SDLWindow(( const SDLDisplay* )display, ( SDLVisual* )visual );
+  return new SDLWindow((const SDLDisplay*)display, (SDLVisual*)visual);
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-BzfMedia *SdlPlatformFactory::createMedia()
+BzfMedia* SdlPlatformFactory::createMedia()
 {
-	return new SDLMedia;
+  return new SDLMedia;
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-BzfJoystick *SdlPlatformFactory::createJoystick()
+BzfJoystick* SdlPlatformFactory::createJoystick()
 {
-	/* Use EvdevJoystick instead of SDLJoystick if we can.
-	 * It has minor improvements in axis mapping and joystick
-	 * enumeration, but the big selling point so far is that it
-	 * supports force feedback.
-	 */
+  /* Use EvdevJoystick instead of SDLJoystick if we can.
+   * It has minor improvements in axis mapping and joystick
+   * enumeration, but the big selling point so far is that it
+   * supports force feedback.
+   */
 #ifdef HAVE_LINUX_INPUT_H
-	if( EvdevJoystick::isEvdevAvailable())
-		return new EvdevJoystick;
-#endif 
+  if (EvdevJoystick::isEvdevAvailable())
+    return new EvdevJoystick;
+#endif
 
-	return new SDLJoystick;
+  return new SDLJoystick;
 }
-
 // Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***
@@ -109,3 +80,4 @@ BzfJoystick *SdlPlatformFactory::createJoystick()
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
+

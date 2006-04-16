@@ -10,26 +10,25 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef BZF_WORLD_PLAYER_H
-	#define BZF_WORLD_PLAYER_H
+#ifndef	BZF_WORLD_PLAYER_H
+#define	BZF_WORLD_PLAYER_H
 
-	#include "common.h"
-	#include "Player.h"
-	#include "ShotPath.h"
-	#include <vector>
+#include "common.h"
+#include "Player.h"
+#include "ShotPath.h"
+#include <vector>
 
-class WorldPlayer: public Player
-{
-public:
-	WorldPlayer();
-	~WorldPlayer();
+class WorldPlayer : public Player {
+  public:
+			WorldPlayer();
+			~WorldPlayer();
 
-	void addShot( const FiringInfo & );
-	void updateShots( float dt );
-	void addShots( SceneDatabase *scene, bool colorblind )const;
+    void		addShot(const FiringInfo&);
+    void		updateShots(float dt);
+    void		addShots(SceneDatabase* scene, bool colorblind) const;
 
-private:
-	bool doEndShot( int index, bool isHit, float *pos );
+  private:
+    bool		doEndShot(int index, bool isHit, float* pos);
 };
 
 #endif // BZF_WORLD_PLAYER_H
@@ -41,3 +40,4 @@ private:
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
+

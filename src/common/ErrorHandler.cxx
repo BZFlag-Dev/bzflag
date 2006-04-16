@@ -25,61 +25,51 @@
 #include "BundleMgr.h"
 #include "Bundle.h"
 
-static ErrorCallback errorCallback = NULL;
+static ErrorCallback	errorCallback = NULL;
 
-ErrorCallback setErrorCallback( ErrorCallback cb )
+ErrorCallback		setErrorCallback(ErrorCallback cb)
 {
-	ErrorCallback oldErrorCallback = errorCallback;
-	errorCallback = cb;
-	return oldErrorCallback;
+  ErrorCallback oldErrorCallback = errorCallback;
+  errorCallback = cb;
+  return oldErrorCallback;
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-void printError( const std::string &fmt, const std::vector < std::string >  *parms )
+void			printError(const std::string &fmt, const std::vector<std::string> *parms)
 {
-	std::string msg;
-	Bundle *pBdl = BundleMgr::getCurrentBundle();
-	if( !pBdl )
-		return ;
+  std::string msg;
+  Bundle *pBdl = BundleMgr::getCurrentBundle();
+  if (!pBdl)
+    return;
 
-	if(( parms != NULL ) && ( parms->size() > 0 ))
-		msg = pBdl->formatMessage( fmt, parms );
-	else
-		msg = pBdl->getLocalString( fmt );
+  if ((parms != NULL) && (parms->size() > 0))
+    msg = pBdl->formatMessage(fmt, parms);
+  else
+    msg = pBdl->getLocalString(fmt);
 
-	if( errorCallback )
-		( *errorCallback )( msg.c_str());
+  if (errorCallback) (*errorCallback)(msg.c_str());
 #if defined(_WIN32)
-	else
-	{
-		OutputDebugString( msg.c_str());
-		OutputDebugString( "\n" );
-	}
-#else 
-	else
-		std::cerr << msg << std::endl;
-#endif 
+  else { OutputDebugString(msg.c_str()); OutputDebugString("\n"); }
+#else
+  else std::cerr << msg << std::endl;
+#endif
 }
 
 //
 // special error handler.  shows a message box on Windows.
 //
 
-void printFatalError( const char *fmt, ... )
+void			printFatalError(const char* fmt, ...)
 {
-	char buffer[1024];
-	va_list args;
-	va_start( args, fmt );
-	vsprintf( buffer, fmt, args );
-	va_end( args );
+  char buffer[1024];
+  va_list args;
+  va_start(args, fmt);
+  vsprintf(buffer, fmt, args);
+  va_end(args);
 #if defined(_WIN32)
-	MessageBox( NULL, buffer, "BZFlag Error", MB_OK | MB_ICONERROR | MB_TASKMODAL );
-#else 
-	std::cerr << buffer << std::endl;
-#endif 
+  MessageBox(NULL, buffer, "BZFlag Error", MB_OK | MB_ICONERROR | MB_TASKMODAL);
+#else
+  std::cerr << buffer << std::endl;
+#endif
 }
 
 
@@ -90,3 +80,4 @@ void printFatalError( const char *fmt, ... )
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
+

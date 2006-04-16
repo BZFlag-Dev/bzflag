@@ -17,7 +17,7 @@
 #include <stdlib.h>
 #include "ares.h"
 
-void ares_free_string( void *str )
+void ares_free_string(void *str)
 {
-	free( str );
+  free(str);
 }

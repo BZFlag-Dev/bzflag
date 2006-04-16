@@ -11,12 +11,12 @@
  */
 
 #ifndef __SPAWNPOLICY_H__
-	#define __SPAWNPOLICY_H__
+#define __SPAWNPOLICY_H__
 
-	#include "common.h"
+#include "common.h"
 
 /* common interface headers */
-	#include "global.h"  /* for TeamColor */
+#include "global.h"  /* for TeamColor */
 
 
 /** a SpawnPolicy is used to determine a new SpawnPosition.  Policies
@@ -29,30 +29,30 @@ class SpawnPolicy
 {
 
 public:
-	SpawnPolicy();
-	virtual ~SpawnPolicy();
+  SpawnPolicy();
+  virtual ~SpawnPolicy();
 
-	virtual void getPosition( float pos[3], int playerId, bool onGroundOnly, bool notNearEdges );
-	virtual void getAzimuth( float &azimuth );
-
+  virtual void getPosition(float pos[3], int playerId, bool onGroundOnly, bool notNearEdges);
+  virtual void getAzimuth(float &azimuth);
+  
 protected:
-	virtual bool isImminentlyDangerous()const;
+  virtual bool isImminentlyDangerous() const;
 
-private:
-	float enemyProximityCheck( float &enemyAngle )const;
-	float distanceFrom( const float *farPos )const;
-	bool isFacing( const float *enemyPos, const float enemyAzimuth, const float deviation )const;
+private:  
+  float enemyProximityCheck(float &enemyAngle) const;
+  float distanceFrom(const float *farPos) const;
+  bool  isFacing(const float *enemyPos, const float enemyAzimuth, const float deviation) const;
 
-	/* temp, internal use */
-	TeamColor team;
-	float testPos[3];
-
-	float safeSWRadius;
-	float safeSRRadius;
-	float safeDistance;
+  /* temp, internal use */
+  TeamColor   team;
+  float       testPos[3];
+  
+  float safeSWRadius;
+  float safeSRRadius;
+  float safeDistance;
 };
 
-#endif /*__SPAWNPOLICY_H__ */
+#endif  /*__SPAWNPOLICY_H__ */
 
 // Local Variables: ***
 // mode: C++ ***

@@ -18,70 +18,66 @@
  */
 
 #ifndef __SHOTSTRATEGY_H__
-	#define __SHOTSTRATEGY_H__
+#define __SHOTSTRATEGY_H__
 
-	#include "common.h"
+#include "common.h"
 
 /* common interface headers */
-	#include "Ray.h"
-	#include "Obstacle.h"
-	#include "Teleporter.h"
-	#include "SceneDatabase.h"
+#include "Ray.h"
+#include "Obstacle.h"
+#include "Teleporter.h"
+#include "SceneDatabase.h"
 
 /* local interface headers */
-	#include "BaseLocalPlayer.h"
-	#include "ShotPath.h"
+#include "BaseLocalPlayer.h"
+#include "ShotPath.h"
 
 class ShotPath;
 
-class ShotStrategy
-{
-public:
-	ShotStrategy( ShotPath* );
-	virtual ~ShotStrategy();
+class ShotStrategy {
+  public:
+			ShotStrategy(ShotPath*);
+    virtual		~ShotStrategy();
 
-	virtual void update( float dt ) = 0;
-	virtual float checkHit( const BaseLocalPlayer *, float pos[3] )const = 0;
-	virtual bool isStoppedByHit()const;
-	virtual void addShot( SceneDatabase *, bool colorblind ) = 0;
-	virtual void expire();
-	virtual void radarRender()const = 0;
+    virtual void	update(float dt) = 0;
+    virtual float	checkHit(const BaseLocalPlayer*, float pos[3]) const = 0;
+    virtual bool	isStoppedByHit() const;
+    virtual void	addShot(SceneDatabase*, bool colorblind) = 0;
+    virtual void	expire();
+    virtual void	radarRender() const = 0;
 
-	// first part of message must be the
-	// ShotUpdate portion of FiringInfo.
-	virtual void sendUpdate( const FiringInfo & )const;
+    // first part of message must be the
+    // ShotUpdate portion of FiringInfo.
+    virtual void	sendUpdate(const FiringInfo&) const;
 
-	// update shot based on message.  code is the message code.  msg
-	// points to the part of the message after the ShotUpdate portion.
-	virtual void readUpdate( uint16_t code, void *msg );
+    // update shot based on message.  code is the message code.  msg
+    // points to the part of the message after the ShotUpdate portion.
+    virtual void	readUpdate(uint16_t code, void* msg);
 
-	static const Obstacle *getFirstBuilding( const Ray &, float min, float &t );
-	static void reflect( float *v, const float *n ); // const
+    static const Obstacle*	getFirstBuilding(const Ray&, float min, float& t);
+    static void		reflect(float* v, const float* n); // const
 
-protected:
-	const ShotPath &getPath()const;
-	FiringInfo &getFiringInfo( ShotPath* )const;
-	void setReloadTime( float )const;
-	void setPosition( const float* )const;
-	void setVelocity( const float* )const;
-	void setExpiring()const;
-	void setExpired()const;
+  protected:
+    const ShotPath&	getPath() const;
+    FiringInfo&		getFiringInfo(ShotPath*) const;
+    void		setReloadTime(float) const;
+    void		setPosition(const float*) const;
+    void		setVelocity(const float*) const;
+    void		setExpiring() const;
+    void		setExpired() const;
 
-	const Teleporter *getFirstTeleporter( const Ray &, float min, float &t, int &f )const;
-	bool getGround( const Ray &, float min, float &t )const;
+    const Teleporter*	getFirstTeleporter(const Ray&, float min,
+							float& t, int& f) const;
+    bool		getGround(const Ray&, float min, float &t) const;
 
-private:
-	ShotPath *path;
+  private:
+    ShotPath*		path;
 };
 
-inline const ShotPath &ShotStrategy::getPath()const
+inline const ShotPath&	ShotStrategy::getPath() const
 {
-	return  *path;
+  return *path;
 }
-
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
 
 
 #endif /* __SHOTSTRATEGY_H__ */

@@ -10,45 +10,39 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 #ifndef __WORLDFILEOBJECT_H__
-	#define __WORLDFILEOBJECT_H__
+#define __WORLDFILEOBJECT_H__
 
 // system headers
-	#include <iostream>
-	#include <vector>
-	#include <string>
+#include <iostream>
+#include <vector>
+#include <string>
 
 
 class WorldInfo;
 class GroupDefinition;
 
 
-class WorldFileObject
-{
-public:
-	WorldFileObject();
-	virtual ~WorldFileObject(){}
+class WorldFileObject {
+  public:
+    WorldFileObject();
+    virtual ~WorldFileObject() { }
 
-	virtual bool read( const char *cmd, std::istream & );
+    virtual bool read(const char *cmd, std::istream&);
 
-	virtual bool usesManager()
-	{
-		return false;
-	} virtual bool usesGroupDef()
-	{
-		return true;
-	}
-	virtual void writeToWorld( WorldInfo* )const;
-	virtual void writeToManager()const;
-	virtual void writeToGroupDef( GroupDefinition* )const;
+    virtual bool usesManager() { return false; }
+    virtual bool usesGroupDef() { return true; }
+    virtual void writeToWorld(WorldInfo*) const;
+    virtual void writeToManager() const;
+    virtual void writeToGroupDef(GroupDefinition*) const;
 
-protected:
-	std::string name;
+  protected:
+    std::string name;
 };
 
 
-void emptyWorldFileObjectList( std::vector < WorldFileObject * >  &wlist );
+void emptyWorldFileObjectList(std::vector<WorldFileObject*>& wlist);
 
-#endif /* __WORLDFILEOBJECT_H__ */
+#endif  /* __WORLDFILEOBJECT_H__ */
 
 // Local variables: ***
 // mode:C++ ***

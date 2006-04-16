@@ -11,43 +11,44 @@
  */
 
 #ifndef __SERVERCOMMAND_H__
-	#define __SERVERCOMMAND_H__
+#define __SERVERCOMMAND_H__
 
 // bzflag global header
-	#include "common.h"
+#include "common.h"
 
 /* system headers */
-	#include <string>
-	#include <map>
+#include <string>
+#include <map>
 
 // local implementation headers
-	#include "GameKeeper.h"
+#include "GameKeeper.h"
 
-class ServerCommand
-{
-public:
+class ServerCommand {
+ public:
 
-	static bool execute( const char *commandToken, GameKeeper::Player *playerData );
+  static bool execute(const char	 *commandToken,
+		      GameKeeper::Player *playerData);
 
-	std::string getHelp();
+  std::string getHelp();
 
-	virtual bool operator()( const char *commandLine, GameKeeper::Player *playerData );
+  virtual bool operator () (const char	 *commandLine,
+			    GameKeeper::Player *playerData);
 
 
-protected:
+ protected:
 
-	ServerCommand( std::string _commandName, std::string _oneLineHelp = "" );
-	virtual ~ServerCommand();
+  ServerCommand(std::string _commandName, std::string _oneLineHelp = "");
+  virtual ~ServerCommand();
 
-	std::string commandName;
-	std::string oneLineHelp;
+  std::string commandName;
+  std::string oneLineHelp;
 
-	typedef std::map < std::string, ServerCommand * > MapOfCommands;
+  typedef std::map<std::string, ServerCommand *> MapOfCommands;
 
-	static MapOfCommands *getMapRef();
+  static MapOfCommands *getMapRef();
 };
 
-#endif 
+#endif
 
 // Local Variables: ***
 // mode: C++ ***

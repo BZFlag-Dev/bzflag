@@ -15,24 +15,24 @@
  */
 
 #ifndef BZF_ERROR_HANDLER_H
-	#define BZF_ERROR_HANDLER_H
+#define	BZF_ERROR_HANDLER_H
 
 // common header first
-	#include "common.h"
+#include "common.h"
 
 // system headers
-	#include <vector>
-	#include <string>
+#include <vector>
+#include <string>
 
 // local implementation headers
-	#include "common.h"
-	#include "Bundle.h"
+#include "common.h"
+#include "Bundle.h"
 
-typedef void( *ErrorCallback )( const char* );
+typedef void		(*ErrorCallback)(const char*);
 
-ErrorCallback setErrorCallback( ErrorCallback );
-void printError( const std::string &fmt, const std::vector < std::string >  *parms = NULL );
-void printFatalError( const char *fmt, ... );
+ErrorCallback		setErrorCallback(ErrorCallback);
+void			printError(const std::string &fmt, const std::vector<std::string> *parms = NULL);
+void			printFatalError(const char* fmt, ...);
 
 #endif // BZF_ERROR_HANDLER_H
 
@@ -43,3 +43,4 @@ void printFatalError( const char *fmt, ... );
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
+

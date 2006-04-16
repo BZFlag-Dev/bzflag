@@ -20,61 +20,43 @@
 // common implementation headers
 #include "bzfgl.h"
 
-ViewFrustum::ViewFrustum(){}
+ViewFrustum::ViewFrustum()
+{
+}
 
 ViewFrustum::~ViewFrustum()
 {
-	// do nothing
+  // do nothing
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-void ViewFrustum::executeProjection()const
+void			ViewFrustum::executeProjection() const
 {
-	glMatrixMode( GL_PROJECTION );
-	glLoadMatrixf( projectionMatrix );
-	glMatrixMode( GL_MODELVIEW );
+  glMatrixMode(GL_PROJECTION);
+  glLoadMatrixf(projectionMatrix);
+  glMatrixMode(GL_MODELVIEW);
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-void ViewFrustum::executeDeepProjection()const
+void			ViewFrustum::executeDeepProjection() const
 {
-	glMatrixMode( GL_PROJECTION );
-	glLoadMatrixf( deepProjectionMatrix );
-	glMatrixMode( GL_MODELVIEW );
+  glMatrixMode(GL_PROJECTION);
+  glLoadMatrixf(deepProjectionMatrix);
+  glMatrixMode(GL_MODELVIEW);
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-void ViewFrustum::executeView()const
+void			ViewFrustum::executeView() const
 {
-	glMultMatrixf( viewMatrix );
+  glMultMatrixf(viewMatrix);
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-void ViewFrustum::executeOrientation()const
+void			ViewFrustum::executeOrientation() const
 {
-	glMultMatrixf( viewMatrix );
-	glTranslatef( eye[0], eye[1], eye[2] );
+  glMultMatrixf(viewMatrix);
+  glTranslatef(eye[0], eye[1], eye[2]);
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-void ViewFrustum::executeBillboard()const
+void			ViewFrustum::executeBillboard() const
 {
-	glMultMatrixf( billboardMatrix );
+  glMultMatrixf(billboardMatrix);
 }
 
 // Local Variables: ***
@@ -84,3 +66,4 @@ void ViewFrustum::executeBillboard()const
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
+

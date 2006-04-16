@@ -11,47 +11,47 @@
  */
 
 #ifndef __NEWVERSIONMENU_H__
-	#define __NEWVERSIONMENU_H__
+#define __NEWVERSIONMENU_H__
 
 /* common interface headers */
-	#include "HUDDialog.h"
-	#include "cURLManager.h"
+#include "HUDDialog.h"
+#include "cURLManager.h"
 
 /* local interface headers */
-	#include "MenuDefaultKey.h"
-	#include "HUDuiControl.h"
-	#include "HUDuiTypeIn.h"
+#include "MenuDefaultKey.h"
+#include "HUDuiControl.h"
+#include "HUDuiTypeIn.h"
 
 
 /** this class provides options for setting the gui
  */
-class NewVersionMenu: public HUDDialog, cURLManager
-{
+class NewVersionMenu : public HUDDialog, cURLManager {
 public:
-	NewVersionMenu( std::string announce, std::string url, std::string date );
-	~NewVersionMenu();
+  NewVersionMenu(std::string announce, std::string url, std::string date);
+  ~NewVersionMenu();
 
-	HUDuiDefaultKey *getDefaultKey()
-	{
-		return MenuDefaultKey::getInstance();
-	} void execute();
-	void resize( int width, int height );
+  HUDuiDefaultKey* getDefaultKey()
+  {
+    return MenuDefaultKey::getInstance();
+  }
+  void execute();
+  void resize(int width, int height);
 
-	// cURL download
-	void finalization( char *data, unsigned int length, bool good );
+  // cURL download
+  void finalization(char *data, unsigned int length, bool good);
 
 private:
-	// no default constructor
-	NewVersionMenu();
+  // no default constructor
+  NewVersionMenu();
 
-	// cURL status
-	void collectData( char *ptr, int len );
-	int byteTransferred;
+  // cURL status
+  void collectData(char* ptr, int len);
+  int byteTransferred;
 
-	// menu items
-	HUDuiControl *yes;
-	HUDuiControl *no;
-	HUDuiControl *status;
+  // menu items
+  HUDuiControl* yes;
+  HUDuiControl* no;
+  HUDuiControl* status;
 };
 
 #endif

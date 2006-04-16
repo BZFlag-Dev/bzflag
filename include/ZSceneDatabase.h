@@ -14,58 +14,57 @@
  *	Database of geometry to render using Z-buffer algorithm
  */
 
-#ifndef BZF_Z_SCENE_DATABASE_H
-	#define BZF_Z_SCENE_DATABASE_H
+#ifndef	BZF_Z_SCENE_DATABASE_H
+#define	BZF_Z_SCENE_DATABASE_H
 
-	#include "common.h"
-	#include "SceneDatabase.h"
+#include "common.h"
+#include "SceneDatabase.h"
 
-class ZSceneDatabase: public SceneDatabase
-{
-	friend class ZSceneIterator;
-public:
-	ZSceneDatabase();
-	~ZSceneDatabase();
+class ZSceneDatabase : public SceneDatabase {
+  friend class ZSceneIterator;
+  public:
+			ZSceneDatabase();
+			~ZSceneDatabase();
 
-	// returns true if the node would have been deleted
-	bool addStaticNode( SceneNode *, bool dontFree );
-	void addDynamicNode( SceneNode* );
-	void addDynamicSphere( SphereSceneNode* );
-	void finalizeStatics();
-	void removeDynamicNodes();
-	void removeAllNodes();
-	bool isOrdered();
+    // returns true if the node would have been deleted
+    bool		addStaticNode(SceneNode*, bool dontFree);
+    void		addDynamicNode(SceneNode*);
+    void		addDynamicSphere(SphereSceneNode*);
+    void		finalizeStatics();
+    void		removeDynamicNodes();
+    void		removeAllNodes();
+    bool		isOrdered();
 
-	void updateNodeStyles();
-	void addLights( SceneRenderer &renderer );
-	void addShadowNodes( SceneRenderer &renderer );
-	void addRenderNodes( SceneRenderer &renderer );
-	void renderRadarNodes( const ViewFrustum & );
+    void		updateNodeStyles();
+    void		addLights(SceneRenderer& renderer);
+    void		addShadowNodes(SceneRenderer &renderer);
+    void		addRenderNodes(SceneRenderer& renderer);
+    void		renderRadarNodes(const ViewFrustum&);
 
-	void drawCuller();
-	void setOccluderManager( int );
+    void		drawCuller();
+    void		setOccluderManager(int);
 
-	const Extents *getVisualExtents()const;
+    const Extents*	getVisualExtents() const;
 
-private:
-	void setupCullList();
-	void makeCuller();
+  private:
+    void		setupCullList();
+    void		makeCuller();
 
-private:
-	int staticCount;
-	int staticSize;
-	SceneNode **staticList;
+  private:
+    int			staticCount;
+    int			staticSize;
+    SceneNode**		staticList;
 
-	int dynamicCount;
-	int dynamicSize;
-	SceneNode **dynamicList;
+    int			dynamicCount;
+    int			dynamicSize;
+    SceneNode**		dynamicList;
 
-	int culledCount;
-	SceneNode **culledList;
+    int			culledCount;
+    SceneNode**	 culledList;
 
-	class Octree *octree;
-	int cullDepth;
-	int cullElements;
+    class Octree*       octree;
+    int			cullDepth;
+    int			cullElements;
 
 };
 
@@ -79,3 +78,4 @@ private:
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
+

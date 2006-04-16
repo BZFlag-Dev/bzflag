@@ -23,25 +23,17 @@
 
 SceneDatabase::SceneDatabase()
 {
-	// do nothing
+  // do nothing
 }
-
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
 
 SceneDatabase::~SceneDatabase()
 {
-	// do nothing
+  // do nothing
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-void SceneDatabase::setOccluderManager( int )
+void SceneDatabase::setOccluderManager(int)
 {
-	// do nothing
+  // do nothing
 }
 
 
@@ -52,3 +44,4 @@ void SceneDatabase::setOccluderManager( int )
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
+

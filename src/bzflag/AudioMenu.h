@@ -11,33 +11,33 @@
  */
 
 #ifndef __AUDIOMENU_H__
-	#define __AUDIOMENU_H__
+#define __AUDIOMENU_H__
 
 /* common interface headers */
-	#include "HUDDialog.h"
+#include "HUDDialog.h"
 
 /* local interface headers */
-	#include "MenuDefaultKey.h"
-	#include "HUDuiControl.h"
-	#include "HUDuiTypeIn.h"
+#include "MenuDefaultKey.h"
+#include "HUDuiControl.h"
+#include "HUDuiTypeIn.h"
 
 /** this class provides options for audio
  */
-class AudioMenu: public HUDDialog
-{
+class AudioMenu : public HUDDialog {
 public:
-	AudioMenu();
-	~AudioMenu();
+  AudioMenu();
+  ~AudioMenu();
 
-	HUDuiDefaultKey *getDefaultKey()
-	{
-		return MenuDefaultKey::getInstance();
-	} void execute();
-	void resize( int width, int height );
-	static void callback( HUDuiControl *w, void *data );
+  HUDuiDefaultKey* getDefaultKey()
+  {
+    return MenuDefaultKey::getInstance();
+  }
+  void execute();
+  void resize(int width, int height);
+  static void callback(HUDuiControl* w, void* data);
 private:
-	HUDuiTypeIn *driver;
-	HUDuiTypeIn *device;
+  HUDuiTypeIn*	driver;
+  HUDuiTypeIn*	device;
 };
 
 

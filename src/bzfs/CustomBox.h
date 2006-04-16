@@ -10,23 +10,22 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 #ifndef __CUSTOMBOX_H__
-	#define __CUSTOMBOX_H__
+#define __CUSTOMBOX_H__
 
 /* interface header */
-	#include "WorldFileObstacle.h"
+#include "WorldFileObstacle.h"
 
 /* local implementation headers */
-	#include "WorldInfo.h"
+#include "WorldInfo.h"
 
 
-class CustomBox: public WorldFileObstacle
-{
-public:
-	CustomBox();
-	virtual void writeToGroupDef( GroupDefinition* )const;
+class CustomBox : public WorldFileObstacle {
+  public:
+    CustomBox();
+    virtual void writeToGroupDef(GroupDefinition*) const;
 };
 
-#endif /* __CUSTOMBOX_H__ */
+#endif  /* __CUSTOMBOX_H__ */
 
 // Local variables: ***
 // mode: C++ ***

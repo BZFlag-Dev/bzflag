@@ -27,133 +27,101 @@
 
 #define ROAM (Roaming::instance())
 
-class Roaming: public Singleton < Roaming > 
-{
+class Roaming : public Singleton<Roaming> {
 public:
-	Roaming(); // c'tor
+  Roaming(); // c'tor
 
-	enum RoamingView
-	{
-		roamViewDisabled = 0, roamViewFree, roamViewTrack, roamViewFollow, roamViewFP, roamViewFlag, roamViewCount
-	};
-	bool isRoaming( void )const;
-	RoamingView getMode( void )const;
-	void setMode( RoamingView newView );
+  enum RoamingView {
+    roamViewDisabled = 0,
+    roamViewFree,
+    roamViewTrack,
+    roamViewFollow,
+    roamViewFP,
+    roamViewFlag,
+    roamViewCount
+  };
+  bool isRoaming(void) const;
+  RoamingView getMode(void) const;
+  void setMode(RoamingView newView);
 
-	enum RoamingTarget
-	{
-		next = 0, previous, explicitSet
-	};
-	void changeTarget( RoamingTarget target, int explicitIndex = 0 );
-	/* if view is in any mode in which they are not valid,
-	getTargetTank and getTargetFlag will return NULL.  Otherwise
-	they return the index of the object that you're
-	tracking/following/driving with */
-	Player *getTargetTank( void )const;
-	Flag *getTargetFlag( void )const;
+  enum RoamingTarget {
+    next = 0,
+    previous,
+    explicitSet
+  };
+  void changeTarget(RoamingTarget target, int explicitIndex = 0);
+  /* if view is in any mode in which they are not valid,
+     getTargetTank and getTargetFlag will return NULL.  Otherwise
+     they return the index of the object that you're
+     tracking/following/driving with */
+  Player* getTargetTank(void) const;
+  Flag*   getTargetFlag(void) const;
 
-	void buildRoamingLabel( void );
-	std::string getRoamingLabel( void )const;
+  void buildRoamingLabel(void);
+  std::string getRoamingLabel(void) const;
 
-	struct RoamingCamera
-	{
-		float pos[3];
-		float theta;
-		float phi;
-		float zoom;
-	};
-	void setCamera( RoamingCamera *newCam );
-	void resetCamera( void );
-	/* note that dc is a camera structure of *changes* (thus dc)
-	not new values */
-	void updatePosition( RoamingCamera *dc, float dt );
-	const RoamingCamera *const getCamera( void )const;
-	void setZoom( float newZoom );
-	float getZoom( void )const;
+  struct RoamingCamera {
+    float pos[3];
+    float theta;
+    float phi;
+    float zoom;
+  };
+  void setCamera(RoamingCamera* newCam);
+  void resetCamera(void);
+  /* note that dc is a camera structure of *changes* (thus dc)
+     not new values */
+  void updatePosition(RoamingCamera* dc, float dt);
+  const RoamingCamera* const getCamera(void) const;
+  void setZoom(float newZoom);
+  float getZoom(void) const;
 
 protected:
-	friend class Singleton < Roaming > ;
+  friend class Singleton<Roaming>;
 
 private:
-	RoamingView view;
-	RoamingCamera camera;
-	int targetManual;
-	int targetWinner;
-	int targetFlag;
-	std::string roamingLabel;
+  RoamingView view;
+  RoamingCamera camera;
+  int targetManual;
+  int targetWinner;
+  int targetFlag;
+  std::string roamingLabel;
 };
 
-inline bool Roaming::isRoaming( void )const
-{
-	return ( view > roamViewDisabled );
-} 
-
-inline Roaming::RoamingView Roaming::getMode( void )const
-{
-	return view;
+inline bool Roaming::isRoaming(void) const {
+  return (view > roamViewDisabled);
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-inline float Roaming::getZoom()const
-{
-	return camera.zoom;
+inline Roaming::RoamingView Roaming::getMode(void) const {
+  return view;
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-inline void Roaming::setZoom( float newZoom )
-{
-	camera.zoom = newZoom;
+inline float Roaming::getZoom() const {
+  return camera.zoom;
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-inline std::string Roaming::getRoamingLabel( void )const
-{
-	return roamingLabel;
+inline void Roaming::setZoom(float newZoom) {
+  camera.zoom = newZoom;
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-inline Player *Roaming::getTargetTank()const
-{
-	return getPlayerByIndex( targetWinner );
+inline std::string Roaming::getRoamingLabel(void) const {
+  return roamingLabel;
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-inline Flag *Roaming::getTargetFlag()const
-{
-	World *world = World::getWorld();
-	if( !world )
-		return NULL;
-	else
-		return  &( world->getFlag( targetFlag ));
+inline Player* Roaming::getTargetTank() const {
+  return getPlayerByIndex(targetWinner);
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-inline const Roaming::RoamingCamera *const Roaming::getCamera()const
-{
-	return  &camera;
+inline Flag* Roaming::getTargetFlag() const {
+  World* world = World::getWorld();
+  if (!world)
+    return NULL;
+  else
+    return &(world->getFlag(targetFlag));
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
+inline const Roaming::RoamingCamera* const Roaming::getCamera() const {
+  return &camera;
+}
 
 const bool devDriving = false;
 

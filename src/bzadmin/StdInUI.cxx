@@ -11,8 +11,8 @@
  */
 
 #ifdef _MSC_VER
-	#pragma warning( 4: 4786)
-#endif 
+#pragma warning( 4: 4786)
+#endif
 
 /* interface header */
 #include "StdInUI.h"
@@ -22,35 +22,28 @@
 
 
 // add this UI to the map
-UIAdder StdInUI::uiAdder( "stdin", &StdInUI::creator );
+UIAdder StdInUI::uiAdder("stdin", &StdInUI::creator);
 
 
-StdInUI::StdInUI( BZAdminClient &c ): BZAdminUI( c ){
+StdInUI::StdInUI(BZAdminClient& c) : BZAdminUI(c) {
 
 }
 
 
-bool StdInUI::checkCommand( std::string &str )
-{
-	if( std::cin.eof())
-	{
-		str = "/quit";
-		return true;
-	}
-	std::getline( std::cin, str );
-	if( str == "" )
-		return false;
-	return true;
+bool StdInUI::checkCommand(std::string& str) {
+  if (std::cin.eof()) {
+    str = "/quit";
+    return true;
+  }
+  std::getline(std::cin, str);
+  if (str == "")
+    return false;
+  return true;
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
 
-
-BZAdminUI *StdInUI::creator( BZAdminClient &client )
-{
-	return new StdInUI( client );
+BZAdminUI* StdInUI::creator(BZAdminClient& client) {
+  return new StdInUI(client);
 }
 
 // Local Variables: ***

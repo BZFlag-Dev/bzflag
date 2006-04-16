@@ -11,151 +11,128 @@
  */
 
 #ifndef __OCTREE_H__
-	#define __OCTREE_H__
+#define __OCTREE_H__
 
-	#include "SceneNode.h"
-	#include "Frustum.h"
-	#include "Extents.h"
+#include "SceneNode.h"
+#include "Frustum.h"
+#include "Extents.h"
 
 
 class OctreeNode;
 
 
-class Octree
-{
+class Octree {
 
-public:
+  public:
 
-	Octree();
-	~Octree();
+    Octree();
+    ~Octree();
 
-	void clear();
+    void clear ();
 
-	void addNodes( SceneNode **list, int listSize, int depth, int elements );
+    void addNodes (SceneNode** list, int listSize, int depth, int elements);
 
-	int getFrustumList( SceneNode **list, int listSize, const Frustum *frustum )const;
-	int getShadowList( SceneNode **list, int listSize, int planeCount, const float( *planes )[4] )const;
-	int getRadarList( SceneNode **list, int listSize, const Frustum *frustum )const;
+    int getFrustumList (SceneNode** list, int listSize,
+			const Frustum* frustum) const;
+    int getShadowList (SceneNode** list, int listSize,
+		       int planeCount, const float (*planes)[4]) const;
+    int getRadarList (SceneNode** list, int listSize,
+		      const Frustum* frustum) const;
 
-	void setOccluderManager( int );
+    void setOccluderManager(int);
 
-	void draw()const;
+    void draw () const;
 
-	const Extents *getVisualExtents()const;
+    const Extents* getVisualExtents() const;
 
 
-private:
-	// methods
-	void getExtents( SceneNode **list, int listSize );
+  private: // methods
+    void getExtents(SceneNode** list, int listSize);
 
-private:
-	// data
-	OctreeNode *root;
-	Extents extents;
-	Extents visualExtents;
+  private: // data
+    OctreeNode* root;
+    Extents extents;
+    Extents visualExtents;
 };
 
 
 
-class OctreeNode
-{
+class OctreeNode {
 
-public:
+  public:
 
-	OctreeNode( unsigned char depth, const Extents &exts, SceneNode **list, int listSize );
-	~OctreeNode();
+    OctreeNode(unsigned char depth, const Extents& exts,
+	       SceneNode** list, int listSize);
+    ~OctreeNode();
 
-	void getFrustumList()const;
-	void getShadowList()const;
-	void getRadarList()const;
-	void getFullyVisible()const;
-	void getFullyVisibleOcclude()const;
-	void getFullyShadow()const;
-	OctreeNode *getChild( int child );
+    void getFrustumList () const;
+    void getShadowList () const;
+    void getRadarList () const;
+    void getFullyVisible () const;
+    void getFullyVisibleOcclude () const;
+    void getFullyShadow () const;
+    OctreeNode* getChild (int child);
 
-	int getCount()const; // number of nodes in this and subnodes
-	int getChildren()const; // number of children
-	int getListSize()const; // number of nodes in this node
-	SceneNode **getList()const; // list of nodes
-	const Extents &getExtents()const;
+    int getCount() const;    // number of nodes in this and subnodes
+    int getChildren() const; // number of children
+    int getListSize() const; // number of nodes in this node
+    SceneNode** getList() const;     // list of nodes
+    const Extents& getExtents() const;
 
-	void tallyStats();
-	void draw();
+    void tallyStats();
+    void draw ();
 
-private:
+  private:
 
-	void makeChildren();
-	void resizeCell();
+    void makeChildren ();
+    void resizeCell ();
 
-	enum CullLevel
-	{
-		NoCull, PartialCull, FullCull
-	};
+    enum CullLevel {
+      NoCull,
+      PartialCull,
+      FullCull
+    };
 
-	unsigned char depth;
-	Extents extents;
-	unsigned char childCount;
-	OctreeNode *children[8];
-	OctreeNode *squeezed[8];
-	int count; // number of nodes in this and subnodes
-	int listSize;
-	SceneNode **list;
+    unsigned char depth;
+    Extents extents;
+    unsigned char childCount;
+    OctreeNode* children[8];
+    OctreeNode* squeezed[8];
+    int count;  // number of nodes in this and subnodes
+    int listSize;
+    SceneNode** list;
 };
 
 
-inline int OctreeNode::getCount()const
+inline int OctreeNode::getCount() const
 {
-	return count;
+  return count;
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-inline SceneNode **OctreeNode::getList()const
+inline SceneNode** OctreeNode::getList() const
 {
-	return list;
+  return list;
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-inline int OctreeNode::getListSize()const
+inline int OctreeNode::getListSize() const
 {
-	return listSize;
+  return listSize;
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-inline int OctreeNode::getChildren()const
+inline int OctreeNode::getChildren() const
 {
-	return childCount;
+  return childCount;
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-inline OctreeNode *OctreeNode::getChild( int child )
+inline OctreeNode* OctreeNode::getChild (int child)
 {
-	return children[child];
+  return children[child];
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-inline const Extents *Octree::getVisualExtents()const
+inline const Extents* Octree::getVisualExtents() const
 {
-	return  &visualExtents;
+  return &visualExtents;
 }
-
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
 
 
 #endif // __OCTREE_H__

@@ -11,36 +11,36 @@
  */
 
 #ifndef __DISPLAYMENU_H__
-	#define __DISPLAYMENU_H__
+#define __DISPLAYMENU_H__
 
-	#include "common.h"
+#include "common.h"
 
 /* common interface headers */
-	#include "HUDDialog.h"
+#include "HUDDialog.h"
 
 /* local interface headers */
-	#include "MenuDefaultKey.h"
-	#include "FormatMenu.h"
+#include "MenuDefaultKey.h"
+#include "FormatMenu.h"
 
 /** this class provides options for setting the gui
  */
-class DisplayMenu: public HUDDialog
-{
+class DisplayMenu : public HUDDialog {
 public:
-	DisplayMenu();
-	~DisplayMenu();
+  DisplayMenu();
+  ~DisplayMenu();
 
-	HUDuiDefaultKey *getDefaultKey()
-	{
-		return MenuDefaultKey::getInstance();
-	} void execute();
-	void resize( int width, int height );
-	static void callback( HUDuiControl *w, void *data );
+  HUDuiDefaultKey* getDefaultKey()
+  {
+    return MenuDefaultKey::getInstance();
+  }
+  void execute();
+  void resize(int width, int height);
+  static void callback(HUDuiControl* w, void* data);
 private:
-	FormatMenu *formatMenu;
-	HUDuiControl *videoFormat;
-	static int gammaToIndex( float );
-	static float indexToGamma( int );
+  FormatMenu*	formatMenu;
+  HUDuiControl*	videoFormat;
+  static int	gammaToIndex(float);
+  static float	indexToGamma(int);
 };
 
 extern void setSceneDatabase();

@@ -11,28 +11,25 @@
  */
 
 #ifndef __FLAGHISTORY_H__
-	#define __FLAGHISTORY_H__
+#define __FLAGHISTORY_H__
 
 // bzflag global header
-	#include "global.h"
+#include "global.h"
 
 // system headers
-	#include <vector>
+#include <vector>
 
 // bzflag library headers
-	#include "Flag.h"
+#include "Flag.h"
 
-class FlagHistory
-{
-public:
-	void clear();
-	void get( char message[] );
-	void add( FlagType *type );
-	std::vector < FlagType * > get( void )
-	{
-		return flagHistory;
-} private:
-	std::vector < FlagType * > flagHistory;
+class FlagHistory {
+ public:
+  void clear();
+  void get(char message[]);
+  void add(FlagType* type);
+  std::vector<FlagType*> get(void) { return flagHistory;}
+ private:
+  std::vector<FlagType*> flagHistory;
 };
 
 #endif /* __FLAGHISTORY_H__ */
@@ -44,3 +41,4 @@ public:
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
+

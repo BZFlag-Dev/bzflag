@@ -17,127 +17,73 @@
 #include "Pack.h"
 
 float Score::tkKickRatio = 3.0;
-int Score::score = 999;
-bool Score::randomRanking = false;
+int   Score::score       = 999;
+bool  Score::randomRanking = false;
 
-Score::Score(): wins( 0 ), losses( 0 ), tks( 0 ){}
-
-void Score::dump()
-{
-	std::cout << wins << '-' << losses;
+Score::Score(): wins(0), losses(0), tks(0) {
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-float Score::ranking()
-{
-	if( randomRanking )
-		return ( float )bzfrand();
-
-	// otherwise do score-based ranking
-	int sum = wins + losses;
-	if( sum == 0 )
-		return 0.5;
-	float average = ( float )wins / ( float )sum;
-	// IIRC that is how wide is the gaussian
-	float penalty = ( 1.0f - 0.5f / sqrt(( float )sum ));
-	return average *penalty;
+void Score::dump() {
+  std::cout << wins << '-' << losses;
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
+float Score::ranking() {
+  if (randomRanking)
+    return (float)bzfrand();
 
-bool Score::isTK()
-{
-	// arbitrary 3
-	return ( tks >= 3 ) && ( tkKickRatio > 0 ) && (( wins == 0 ) || ( tks *100 / wins > tkKickRatio ));
+  // otherwise do score-based ranking
+  int sum = wins + losses;
+  if (sum == 0)
+    return 0.5;
+  float average = (float)wins/(float)sum;
+  // IIRC that is how wide is the gaussian
+  float penalty = (1.0f - 0.5f / sqrt((float)sum));
+  return average * penalty;
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-void Score::tK()
-{
-	tks++;
+bool Score::isTK() {
+  // arbitrary 3
+  return (tks >= 3) && (tkKickRatio > 0)
+    && ((wins == 0) || (tks * 100 / wins > tkKickRatio));
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-void Score::killedBy()
-{
-	losses++;
+void Score::tK() {
+  tks++;
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-void Score::kill()
-{
-	wins++;
+void Score::killedBy() {
+  losses++;
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-void *Score::pack( void *buf )
-{
-	buf = nboPackUShort( buf, wins );
-	buf = nboPackUShort( buf, losses );
-	buf = nboPackUShort( buf, tks );
-	return buf;
+void Score::kill() {
+  wins++;
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-bool Score::reached()
-{
-	return wins - losses >= score;
+void *Score::pack(void *buf) {
+  buf = nboPackUShort(buf, wins);
+  buf = nboPackUShort(buf, losses);
+  buf = nboPackUShort(buf, tks);
+  return buf;
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-void Score::setTeamKillRatio( int _tkKickRatio )
-{
-	tkKickRatio = ( float )_tkKickRatio;
+bool Score::reached() {
+  return wins - losses >= score;
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-void Score::setWinLimit( int _score )
-{
-	score = _score;
+void Score::setTeamKillRatio(int _tkKickRatio) {
+  tkKickRatio = (float)_tkKickRatio;
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-void Score::setRandomRanking()
-{
-	randomRanking = true;
+void Score::setWinLimit(int _score) {
+  score = _score;
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
+void Score::setRandomRanking() {
+  randomRanking = true;
+}
 
-int Score::getHandicap()
-{
-	return losses - wins;
+int Score::getHandicap() {
+  return losses - wins;
 }
 
 // Local Variables: ***

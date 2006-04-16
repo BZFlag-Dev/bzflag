@@ -18,750 +18,564 @@
 #include "Intersect.h"
 #include "MeshTransform.h"
 
-const char *PyramidBuilding::typeName = "PyramidBuilding";
+const char*		PyramidBuilding::typeName = "PyramidBuilding";
 
 PyramidBuilding::PyramidBuilding()
 {
-	// do nothing
+  // do nothing
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-PyramidBuilding::PyramidBuilding( const float *p, float a, float w, float b, float h, bool drive, bool shoot ): Obstacle( p, a, w, b, h, drive, shoot )
+PyramidBuilding::PyramidBuilding(const float* p, float a,
+				float w, float b, float h, bool drive, bool shoot) :
+				Obstacle(p, a, w, b, h,drive,shoot)
 {
-	finalize();
-	return ;
+  finalize();
+  return;
 }
-
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
 
 PyramidBuilding::~PyramidBuilding()
 {
-	// do nothing
+  // do nothing
 }
-
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
 
 void PyramidBuilding::finalize()
 {
-	Obstacle::setExtents();
-	return ;
+  Obstacle::setExtents();
+  return;
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-Obstacle *PyramidBuilding::copyWithTransform( const MeshTransform &xform )const
+Obstacle* PyramidBuilding::copyWithTransform(const MeshTransform& xform) const
 {
-	float newPos[3], newSize[3], newAngle;
-	memcpy( newPos, pos, sizeof( float[3] ));
-	memcpy( newSize, size, sizeof( float[3] ));
-	newAngle = angle;
+  float newPos[3], newSize[3], newAngle;
+  memcpy(newPos, pos, sizeof(float[3]));
+  memcpy(newSize, size, sizeof(float[3]));
+  newAngle = angle;
 
-	MeshTransform::Tool tool( xform );
-	bool flipped;
-	tool.modifyOldStyle( newPos, newSize, newAngle, flipped );
+  MeshTransform::Tool tool(xform);
+  bool flipped;
+  tool.modifyOldStyle(newPos, newSize, newAngle, flipped);
 
-	PyramidBuilding *copy = new PyramidBuilding( newPos, newAngle, newSize[0], newSize[1], newSize[2], driveThrough, shootThrough );
+  PyramidBuilding* copy =
+    new PyramidBuilding(newPos, newAngle, newSize[0], newSize[1], newSize[2],
+			driveThrough, shootThrough);
 
-	copy->ZFlip = !( getZFlip() == flipped );
+  copy->ZFlip = !(getZFlip() == flipped);
 
-	return copy;
+  return copy;
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-const char *PyramidBuilding::getType()const
+const char*		PyramidBuilding::getType() const
 {
-	return typeName;
+  return typeName;
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-const char *PyramidBuilding::getClassName() // const
+const char*		PyramidBuilding::getClassName() // const
 {
-	return typeName;
+  return typeName;
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-float PyramidBuilding::intersect( const Ray &r )const
+float			PyramidBuilding::intersect(const Ray& r) const
 {
-	return timeRayHitsPyramids( r, getPosition(), getRotation(), getWidth(), getBreadth(), getHeight(), getZFlip());
+  return timeRayHitsPyramids(r, getPosition(), getRotation(),
+			     getWidth(), getBreadth(), getHeight(),
+			     getZFlip());
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-void PyramidBuilding::getNormal( const float *p, float *n )const
+void			PyramidBuilding::getNormal(const float* p,
+							float* n) const
 {
-	// get normal in z = const plane
-	const float s = shrinkFactor( p[2] );
-	getNormalRect( p, getPosition(), getRotation(), s *getWidth(), s *getBreadth(), n );
+  // get normal in z = const plane
+  const float s = shrinkFactor(p[2]);
+  getNormalRect(p, getPosition(), getRotation(),
+			s * getWidth(), s * getBreadth(), n);
 
-	// make sure we are not way above or way below it
-	// above is good so we can drive on it when it's fliped
-	float top = getPosition()[2] + getHeight();
-	float bottom = getPosition()[2];
+  // make sure we are not way above or way below it
+  // above is good so we can drive on it when it's fliped
+  float top =  getPosition()[2] + getHeight();
+  float bottom = getPosition()[2];
 
-	if( s == 0 )
-	{
-		if( this->getZFlip())
-		{
-			if( p[2] >= top )
-			{
-				n[0] = n[1] = 0;
-				n[2] = 1;
-				return ;
-			}
-		}
-		else
-		{
-			if( p[2] <= bottom )
-			{
-				n[0] = n[1] = 0;
-				n[2] =  - 1;
-				return ;
-			}
-		}
-	}
+  if (s ==0) {
+    if (this->getZFlip()) {
+      if (p[2] >= top) {
+	n[0] = n[1] = 0;
+	n[2] = 1;
+	return;
+      }
+    } else {
+      if (p[2] <= bottom) {
+	n[0] = n[1] = 0;
+	n[2] = -1;
+	return;
+      }
+    }
+  }
 
-	// now angle it due to slope of wall
-	// FIXME -- this assumes the pyramid has a square base!
-	const float h = 1.0f / hypotf( getHeight(), getWidth());
-	n[0] *= h * getHeight();
-	n[1] *= h * getHeight();
-	n[2] = h * getWidth();
+  // now angle it due to slope of wall
+  // FIXME -- this assumes the pyramid has a square base!
+  const float h = 1.0f / hypotf(getHeight(), getWidth());
+  n[0] *= h * getHeight();
+  n[1] *= h * getHeight();
+  n[2] = h * getWidth();
 
-	if( this->getZFlip())
-		n[2] *=  - 1;
+  if (this->getZFlip())
+    n[2] *= -1;
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-void PyramidBuilding::get3DNormal( const float *p, float *n )const
+void			PyramidBuilding::get3DNormal(const float* p,
+						     float* n) const
 {
-	const float epsilon = ZERO_TOLERANCE;
+  const float epsilon = ZERO_TOLERANCE;
 
-	// get normal in z = const plane
-	const float s = shrinkFactor( p[2] );
-	getNormalRect( p, getPosition(), getRotation(), s *getWidth(), s *getBreadth(), n );
+  // get normal in z = const plane
+  const float s = shrinkFactor(p[2]);
+  getNormalRect(p, getPosition(), getRotation(),
+		s * getWidth(), s * getBreadth(), n);
 
-	// make sure we are not way above or way below it
-	// above is good so we can drive on it when it's flipped
-	float top = getPosition()[2] + getHeight();
-	float bottom = getPosition()[2];
+  // make sure we are not way above or way below it
+  // above is good so we can drive on it when it's flipped
+  float top =  getPosition()[2]+getHeight();
+  float bottom = getPosition()[2];
 
-	if( s == 0 )
-	{
-		if( getZFlip())
-		{
-			if( p[2] >= top )
-			{
-				n[0] = n[1] = 0;
-				n[2] = 1;
-				return ;
-			}
-		}
-		else
-		{
-			if( p[2] <= bottom )
-			{
-				n[0] = n[1] = 0;
-				n[2] =  - 1;
-				return ;
-			}
-		}
-	}
+  if (s == 0) {
+    if (getZFlip()) {
+      if (p[2] >= top) {
+	n[0] = n[1] = 0;
+	n[2] = 1;
+	return;
+      }
+    } else {
+      if (p[2] <= bottom) {
+	n[0] = n[1] = 0;
+	n[2] = -1;
+	return;
+      }
+    }
+  }
 
-	if( s >= 1.0f - epsilon )
-	{
-		n[0] = n[1] = 0;
-		if( getZFlip())
-		{
-			n[2] = 1;
-		}
-		else
-		{
-			n[2] =  - 1;
-		}
-		return ;
-	}
+  if (s >= 1.0f - epsilon) {
+    n[0] = n[1] = 0;
+    if (getZFlip()) {
+      n[2] = 1;
+    } else {
+      n[2] = -1;
+    }
+    return;
+  }
 
-	// now angle it due to slope of wall
-	// we figure out if it was an X or Y wall that was hit
-	// by checking the normal returned from getNormalRect()
-	// FIXME -- fugly beyond belief
-	float baseLength = getWidth();
-	const float normalAngle = atan2f( n[1], n[0] );
-	const float rightAngle = fabsf( fmodf( normalAngle - getRotation() + ( float )( M_PI / 2.0 ), ( float )M_PI ));
-	if(( rightAngle < 0.1 ) || ( rightAngle > ( M_PI - 0.1 )))
-	{
-		baseLength = getBreadth();
-	}
-	const float h = 1.0f / hypotf( getHeight(), baseLength );
-	n[0] *= h * getHeight();
-	n[1] *= h * getHeight();
-	n[2] = h * baseLength;
+  // now angle it due to slope of wall
+  // we figure out if it was an X or Y wall that was hit
+  // by checking the normal returned from getNormalRect()
+  // FIXME -- fugly beyond belief
+  float baseLength = getWidth();
+  const float normalAngle = atan2f(n[1], n[0]);
+  const float rightAngle = fabsf(fmodf(normalAngle - getRotation() + (float)(M_PI/2.0), (float)M_PI));
+  if ((rightAngle < 0.1) || (rightAngle > (M_PI - 0.1))) {
+    baseLength = getBreadth();
+  }
+  const float h = 1.0f / hypotf(getHeight(), baseLength);
+  n[0] *= h * getHeight();
+  n[1] *= h * getHeight();
+  n[2]  = h * baseLength;
 
-	if( this->getZFlip())
-		n[2] *=  - 1;
+  if (this->getZFlip())
+    n[2] *= -1;
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-bool PyramidBuilding::inCylinder( const float *p, float radius, float height )const
+bool			PyramidBuilding::inCylinder(const float* p,
+						float radius, float height) const
 {
-	// really rough -- doesn't decrease size with height
-	return ( p[2] < ( getPosition()[2] + getHeight())) && (( p[2] + height ) >= getPosition()[2] ) && testRectCircle( getPosition(), getRotation(), getWidth(), getBreadth(), p, radius );
+  // really rough -- doesn't decrease size with height
+  return (p[2] < (getPosition()[2] + getHeight()))
+  &&     ((p[2]+height) >= getPosition()[2])
+  &&     testRectCircle(getPosition(), getRotation(), getWidth(), getBreadth(), p, radius);
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-bool PyramidBuilding::inBox( const float *p, float a, float dx, float dy, float height )const
+bool			PyramidBuilding::inBox(const float* p, float a,
+						float dx, float dy, float height) const
 {
-	// Tank is below pyramid ?
-	if( p[2] + height < getPosition()[2] )
-		return false;
-	// Tank is above pyramid ?
-	if( p[2] >= getPosition()[2] + getHeight())
-		return false;
-	// Could be inside. Then check collision with the rectangle at object height
-	// This is a rectangle reduced by shrinking but pass the height that we are
-	// not so sure where collision can be
-	const float s = shrinkFactor( p[2], height );
-	return testRectRect( getPosition(), getRotation(), s *getWidth(), s *getBreadth(), p, a, dx, dy );
+  // Tank is below pyramid ?
+  if (p[2] + height < getPosition()[2])
+    return false;
+  // Tank is above pyramid ?
+  if (p[2] >= getPosition()[2] + getHeight())
+    return false;
+  // Could be inside. Then check collision with the rectangle at object height
+  // This is a rectangle reduced by shrinking but pass the height that we are
+  // not so sure where collision can be
+  const float s = shrinkFactor(p[2], height);
+  return testRectRect(getPosition(), getRotation(),
+		      s * getWidth(), s * getBreadth(), p, a, dx, dy);
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-bool PyramidBuilding::inMovingBox( const float *, float, const float *p, float _angle, float dx, float dy, float dz )const
+bool PyramidBuilding::inMovingBox(const float*, float,
+				  const float* p, float _angle,
+				  float dx, float dy, float dz) const
 {
-	return inBox( p, _angle, dx, dy, dz );
+  return inBox (p, _angle, dx, dy, dz);
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-bool PyramidBuilding::isCrossing( const float *p, float a, float dx, float dy, float height, float *plane )const
+bool			PyramidBuilding::isCrossing(const float* p, float a,
+					float dx, float dy, float height, float* plane) const
 {
-	// if not inside or contained then not crossing
-	if( !inBox( p, a, dx, dy, height ) || testRectInRect( getPosition(), getRotation(), getWidth(), getBreadth(), p, a, dx, dy ))
-		return false;
-	if( !plane )
-		return true;
+  // if not inside or contained then not crossing
+  if (!inBox(p, a, dx, dy, height) ||
+      testRectInRect(getPosition(), getRotation(),
+		     getWidth(), getBreadth(), p, a, dx, dy))
+    return false;
+  if (!plane) return true;
 
-	// it's crossing -- choose which wall is being crossed (this
-	// is a guestimate, should really do a careful test).  just
-	// see which wall the point is closest to.
-	const float *p2 = getPosition();
-	const float a2 = getRotation();
-	const float c = cosf(  - a2 ), s = sinf(  - a2 );
-	const float x = c *( p[0] - p2[0] ) - s *( p[1] - p2[1] );
-	const float y = c *( p[1] - p2[1] ) + s *( p[0] - p2[0] );
-	float pw[2];
-	if( fabsf( fabsf( x ) - getWidth()) < fabsf( fabsf( y ) - getBreadth()))
-	{
-		plane[0] = (( x < 0.0 ) ?  - cosf( a2 ): cosf( a2 ));
-		plane[1] = (( x < 0.0 ) ?  - sinf( a2 ): sinf( a2 ));
-		pw[0] = p2[0] + getWidth() *plane[0];
-		pw[1] = p2[1] + getWidth() *plane[1];
-	}
-	else
-	{
-		plane[0] = (( y < 0.0 ) ? sinf( a2 ):  - sinf( a2 ));
-		plane[1] = (( y < 0.0 ) ?  - cosf( a2 ): cosf( a2 ));
-		pw[0] = p2[0] + getBreadth() *plane[0];
-		pw[1] = p2[1] + getBreadth() *plane[1];
-	}
+  // it's crossing -- choose which wall is being crossed (this
+  // is a guestimate, should really do a careful test).  just
+  // see which wall the point is closest to.
+  const float* p2 = getPosition();
+  const float a2 = getRotation();
+  const float c = cosf(-a2), s = sinf(-a2);
+  const float x = c * (p[0] - p2[0]) - s * (p[1] - p2[1]);
+  const float y = c * (p[1] - p2[1]) + s * (p[0] - p2[0]);
+  float pw[2];
+  if (fabsf(fabsf(x) - getWidth()) < fabsf(fabsf(y) - getBreadth())) {
+    plane[0] = ((x < 0.0) ? -cosf(a2) : cosf(a2));
+    plane[1] = ((x < 0.0) ? -sinf(a2) : sinf(a2));
+    pw[0] = p2[0] + getWidth() * plane[0];
+    pw[1] = p2[1] + getWidth() * plane[1];
+  } else {
+    plane[0] = ((y < 0.0) ? sinf(a2) : -sinf(a2));
+    plane[1] = ((y < 0.0) ? -cosf(a2) : cosf(a2));
+    pw[0] = p2[0] + getBreadth() * plane[0];
+    pw[1] = p2[1] + getBreadth() * plane[1];
+  }
 
-	// now finish off plane equation (FIXME -- assumes a square base)
-	const float h = 1.0f / hypotf( getHeight(), getWidth());
-	plane[0] *= h * getHeight();
-	plane[1] *= h * getHeight();
-	plane[2] = h * getWidth();
-	plane[3] =  - ( plane[0] *pw[0] + plane[1] *pw[1] );
-	return true;
+  // now finish off plane equation (FIXME -- assumes a square base)
+  const float h = 1.0f / hypotf(getHeight(), getWidth());
+  plane[0] *= h * getHeight();
+  plane[1] *= h * getHeight();
+  plane[2] = h * getWidth();
+  plane[3] = -(plane[0] * pw[0] + plane[1] * pw[1]);
+  return true;
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-bool PyramidBuilding::getHitNormal( const float *pos1, float, const float *pos2, float, float, float, float height, float *normal )const
+bool			PyramidBuilding::getHitNormal(
+				const float* pos1, float,
+				const float* pos2, float,
+				float, float, float height,
+				float* normal) const
 {
-	// pyramids height and flipping
-	// normalize height sign and report that in flip
-	float oHeight = getHeight();
-	bool flip = getZFlip();
-	if( oHeight < 0 )
-	{
-		flip = !flip;
-		oHeight =  - oHeight;
-	}
+  // pyramids height and flipping
+  // normalize height sign and report that in flip
+  float oHeight = getHeight();
+  bool  flip    = getZFlip();
+  if (oHeight < 0) {
+    flip    = !flip;
+    oHeight = -oHeight;
+  }
 
-	// get Bottom and Top of building
-	float oBottom = getPosition()[2];
-	float oTop = oBottom + oHeight;
+  // get Bottom and Top of building
+  float oBottom = getPosition()[2];
+  float oTop    = oBottom + oHeight;
 
-	// get higher and lower point of base of colliding object
-	float objHigh = pos1[2];
-	float objLow = pos2[2];
-	if( objHigh < objLow )
-	{
-		float temp = objHigh;
-		objHigh = objLow;
-		objLow = temp;
-	}
+  // get higher and lower point of base of colliding object
+  float objHigh = pos1[2];
+  float objLow  = pos2[2];
+  if (objHigh < objLow) {
+    float temp = objHigh;
+    objHigh    = objLow;
+    objLow     = temp;
+  }
 
-	normal[0] = normal[1] = 0;
-	if( flip && objHigh >= oTop )
-	{
-		// base of higher object is over the plateau
-		normal[2] = 1;
-		return true;
-	}
-	else if( !flip && objLow + height < oBottom )
-	{
-		// top of lower object is below the base
-		normal[2] =  - 1;
-		return true;
-	}
+  normal[0] = normal[1] = 0;
+  if (flip && objHigh >= oTop) {
+    // base of higher object is over the plateau
+    normal[2] = 1;
+    return true;
+  } else if (!flip && objLow + height < oBottom) {
+    // top of lower object is below the base
+    normal[2] = -1;
+    return true;
+  }
 
-	// get normal in z = const plane
-	const float s = shrinkFactor( pos1[2], height );
+  // get normal in z = const plane
+  const float s = shrinkFactor(pos1[2], height);
 
-	getNormalRect( pos1, getPosition(), getRotation(), s *getWidth(), s *getBreadth(), normal );
+  getNormalRect(pos1, getPosition(), getRotation(),
+		s * getWidth(), s * getBreadth(), normal);
 
-	// now angle it due to slope of wall
-	// FIXME -- this assumes the pyramid has a square base!
-	const float h = 1.0f / hypotf( oHeight, getWidth());
-	normal[0] *= h * oHeight;
-	normal[1] *= h * oHeight;
-	normal[2] = h * getWidth();
+  // now angle it due to slope of wall
+  // FIXME -- this assumes the pyramid has a square base!
+  const float h = 1.0f / hypotf(oHeight, getWidth());
+  normal[0] *= h * oHeight;
+  normal[1] *= h * oHeight;
+  normal[2]  = h * getWidth();
 
-	if( flip )
-		normal[2] =  - normal[2];
-	return true;
+  if (flip)
+    normal[2] = -normal[2];
+  return true;
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-void PyramidBuilding::getCorner( int index, float *_pos )const
+void			PyramidBuilding::getCorner(int index,
+						   float* _pos) const
 {
-	const float *base = getPosition();
-	const float c = cosf( getRotation());
-	const float s = sinf( getRotation());
-	const float w = getWidth();
-	const float h = getBreadth();
-	const float top = getHeight() + base[2];
-	switch( index )
-	{
-		case 0:
-			_pos[0] = base[0] + c * w - s * h;
-			_pos[1] = base[1] + s * w + c * h;
-			if( getZFlip())
-				_pos[2] = top;
-			else
-				_pos[2] = base[2];
-			break;
-		case 1:
-			_pos[0] = base[0] - c * w - s * h;
-			_pos[1] = base[1] - s * w + c * h;
-			if( getZFlip())
-				_pos[2] = top;
-			else
-				_pos[2] = base[2];
-			break;
-		case 2:
-			_pos[0] = base[0] - c * w + s * h;
-			_pos[1] = base[1] - s * w - c * h;
-			if( getZFlip())
-				_pos[2] = top;
-			else
-				_pos[2] = base[2];
-			break;
-		case 3:
-			_pos[0] = base[0] + c * w + s * h;
-			_pos[1] = base[1] + s * w - c * h;
-			if( getZFlip())
-				_pos[2] = top;
-			else
-				_pos[2] = base[2];
-			break;
-		case 4:
-			_pos[0] = base[0];
-			_pos[1] = base[1];
-			if( getZFlip())
-				_pos[2] = base[2];
-			else
-				_pos[2] = top;
-			break;
-	}
+  const float* base = getPosition();
+  const float c = cosf(getRotation());
+  const float s = sinf(getRotation());
+  const float w = getWidth();
+  const float h = getBreadth();
+  const float top  = getHeight() + base[2];
+  switch (index) {
+    case 0:
+      _pos[0] = base[0] + c * w - s * h;
+      _pos[1] = base[1] + s * w + c * h;
+      if (getZFlip())
+	_pos[2] = top;
+      else
+	_pos[2] = base[2];
+      break;
+    case 1:
+      _pos[0] = base[0] - c * w - s * h;
+      _pos[1] = base[1] - s * w + c * h;
+      if (getZFlip())
+	_pos[2] = top;
+      else
+	_pos[2] = base[2];
+      break;
+    case 2:
+      _pos[0] = base[0] - c * w + s * h;
+      _pos[1] = base[1] - s * w - c * h;
+      if (getZFlip())
+	_pos[2] = top;
+      else
+	_pos[2] = base[2];
+      break;
+    case 3:
+      _pos[0] = base[0] + c * w + s * h;
+      _pos[1] = base[1] + s * w - c * h;
+      if (getZFlip())
+	_pos[2] = top;
+      else
+	_pos[2] = base[2];
+      break;
+    case 4:
+      _pos[0] = base[0];
+      _pos[1] = base[1];
+      if (getZFlip())
+	_pos[2] = base[2];
+      else
+	_pos[2] = top;
+      break;
+  }
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-float PyramidBuilding::shrinkFactor( float z, float height )const
+float			PyramidBuilding::shrinkFactor(float z,
+						      float height) const
 {
-	float shrink;
+  float shrink;
 
-	// Normalize Height and flip to have height > 0
-	float oHeight = getHeight();
-	bool flip = getZFlip();
-	if( oHeight < 0 )
-	{
-		flip = !flip;
-		oHeight =  - oHeight;
-	}
+  // Normalize Height and flip to have height > 0
+  float oHeight = getHeight();
+  bool  flip    = getZFlip();
+  if (oHeight < 0) {
+    flip    = !flip;
+    oHeight = - oHeight;
+  }
 
-	// Remove heights bias
-	const float *_pos = getPosition();
-	z -= _pos[2];
-	if( oHeight <= ZERO_TOLERANCE )
-	{
-		shrink = 1.0f;
-	}
-	else
-	{
-		// Normalize heights
-		z /= oHeight;
+ // Remove heights bias
+  const float *_pos = getPosition();
+  z -= _pos[2];
+  if (oHeight <= ZERO_TOLERANCE) {
+    shrink = 1.0f;
+  } else {
+    // Normalize heights
+    z /= oHeight;
 
-		// if flipped the bigger intersection is at top of the object
-		if( flip )
-		{
-			// Normalize the object height, we have not done yet
-			z += height / oHeight;
-		}
+    // if flipped the bigger intersection is at top of the object
+    if (flip) {
+      // Normalize the object height, we have not done yet
+      z += height / oHeight;
+    }
 
-		// shrink is that
-		if( flip )
-		{
-			shrink = z;
-		}
-		else
-		{
-			shrink = 1.0f - z;
-		}
-	}
+    // shrink is that
+    if (flip) {
+      shrink = z;
+    } else {
+      shrink = 1.0f - z;
+    }
+  }
 
-	// clamp in 0 .. 1
-	if( shrink < 0.0 )
-		shrink = 0.0;
-	else if( shrink > 1.0 )
-		shrink = 1.0;
+  // clamp in 0 .. 1
+  if (shrink < 0.0)
+    shrink = 0.0;
+  else if (shrink > 1.0)
+    shrink = 1.0;
 
-	return shrink;
+  return shrink;
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-bool PyramidBuilding::isFlatTop()const
+bool			PyramidBuilding::isFlatTop() const
 {
-	return getZFlip();
+  return getZFlip();
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
 
 
-
-void *PyramidBuilding::pack( void *buf )const
+void* PyramidBuilding::pack(void* buf) const
 {
-	buf = nboPackVector( buf, pos );
-	buf = nboPackFloat( buf, angle );
-	buf = nboPackVector( buf, size );
+  buf = nboPackVector(buf, pos);
+  buf = nboPackFloat(buf, angle);
+  buf = nboPackVector(buf, size);
 
-	unsigned char stateByte = 0;
-	stateByte |= isDriveThrough() ? _DRIVE_THRU : 0;
-	stateByte |= isShootThrough() ? _SHOOT_THRU : 0;
-	stateByte |= getZFlip() ? _FLIP_Z : 0;
-	buf = nboPackUByte( buf, stateByte );
+  unsigned char stateByte = 0;
+  stateByte |= isDriveThrough() ? _DRIVE_THRU : 0;
+  stateByte |= isShootThrough() ? _SHOOT_THRU : 0;
+  stateByte |= getZFlip() ? _FLIP_Z : 0;
+  buf = nboPackUByte(buf, stateByte);
 
-	return buf;
+  return buf;
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
 
-
-void *PyramidBuilding::unpack( void *buf )
+void* PyramidBuilding::unpack(void* buf)
 {
-	buf = nboUnpackVector( buf, pos );
-	buf = nboUnpackFloat( buf, angle );
-	buf = nboUnpackVector( buf, size );
+  buf = nboUnpackVector(buf, pos);
+  buf = nboUnpackFloat(buf, angle);
+  buf = nboUnpackVector(buf, size);
 
-	unsigned char stateByte;
-	buf = nboUnpackUByte( buf, stateByte );
-	driveThrough = ( stateByte &_DRIVE_THRU ) != 0;
-	shootThrough = ( stateByte &_SHOOT_THRU ) != 0;
-	ZFlip = ( stateByte &_FLIP_Z ) != 0;
+  unsigned char stateByte;
+  buf = nboUnpackUByte(buf, stateByte);
+  driveThrough = (stateByte & _DRIVE_THRU) != 0;
+  shootThrough = (stateByte & _SHOOT_THRU) != 0;
+  ZFlip = (stateByte & _FLIP_Z) != 0;
 
-	finalize();
+  finalize();
 
-	return buf;
+  return buf;
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
 
-
-int PyramidBuilding::packSize()const
+int PyramidBuilding::packSize() const
 {
-	int fullSize = 0;
-	fullSize += sizeof( float[3] ); // pos
-	fullSize += sizeof( float[3] ); // size
-	fullSize += sizeof( float ); // rotation
-	fullSize += sizeof( uint8_t ); // state bits
-	return fullSize;
+  int fullSize = 0;
+  fullSize += sizeof(float[3]); // pos
+  fullSize += sizeof(float[3]); // size
+  fullSize += sizeof(float);    // rotation
+  fullSize += sizeof(uint8_t);  // state bits
+  return fullSize;
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
 
-
-void PyramidBuilding::print( std::ostream &out, const std::string &indent )const
+void PyramidBuilding::print(std::ostream& out, const std::string& indent) const
 {
-	out << indent << "pyramid" << std::endl;
-	const float *_pos = getPosition();
-	out << indent << "  position " << _pos[0] << " " << _pos[1] << " " << _pos[2] << std::endl;
-	out << indent << "  size " << getWidth() << " " << getBreadth() << " " << getHeight() << std::endl;
-	out << indent << "  rotation " << (( getRotation() *180.0 ) / M_PI ) << std::endl;
-	if( getZFlip())
-	{
-		out << indent << "  flipz" << std::endl;
-	}
+  out << indent << "pyramid" << std::endl;
+  const float *_pos = getPosition();
+  out << indent << "  position " << _pos[0] << " " << _pos[1] << " "
+				 << _pos[2] << std::endl;
+  out << indent << "  size " << getWidth() << " " << getBreadth()
+			     << " " << getHeight() << std::endl;
+  out << indent << "  rotation " << ((getRotation() * 180.0) / M_PI)
+				 << std::endl;
+  if (getZFlip()) {
+    out << indent << "  flipz" << std::endl;
+  }
 
-	if( isPassable())
-	{
-		out << indent << "  passable" << std::endl;
-	}
-	else
-	{
-		if( isDriveThrough())
-		{
-			out << indent << "  drivethrough" << std::endl;
-		}
-		if( isShootThrough())
-		{
-			out << indent << "  shootthrough" << std::endl;
-		}
-	}
-	out << indent << "end" << std::endl;
-	return ;
+  if (isPassable()) {
+    out << indent << "  passable" << std::endl;
+  } else {
+    if (isDriveThrough()) {
+      out << indent << "  drivethrough" << std::endl;
+    }
+    if (isShootThrough()) {
+      out << indent << "  shootthrough" << std::endl;
+    }
+  }
+  out << indent << "end" << std::endl;
+  return;
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
 
-
-static void outputFloat( std::ostream &out, float value )
+static void outputFloat(std::ostream& out, float value)
 {
-	char buffer[32];
-	snprintf( buffer, 30, " %.8f", value );
-	out << buffer;
-	return ;
+  char buffer[32];
+  snprintf(buffer, 30, " %.8f", value);
+  out << buffer;
+  return;
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-void PyramidBuilding::printOBJ( std::ostream &out, const std::string & /*indent*/ )const
+void PyramidBuilding::printOBJ(std::ostream& out, const std::string& /*indent*/) const
 {
-	int i;
-	float verts[5][3] = 
-	{
-		{
-			 - 1.0f,  - 1.0f, 0.0f
-		}
+  int i;
+  float verts[5][3] = {
+    {-1.0f, -1.0f, 0.0f},
+    {+1.0f, -1.0f, 0.0f},
+    {+1.0f, +1.0f, 0.0f},
+    {-1.0f, +1.0f, 0.0f},
+    { 0.0f,  0.0f, 1.0f}
+  };
+  const float sqrt1_2 = (float)M_SQRT1_2;
+  float norms[5][3] = {
+    {0.0f, -sqrt1_2, +sqrt1_2}, {+sqrt1_2, 0.0f, +sqrt1_2},
+    {0.0f, +sqrt1_2, +sqrt1_2}, {-sqrt1_2, 0.0f, +sqrt1_2},
+    {0.0f, 0.0f, -1.0f}
+  };
+  const float* s = getSize();
+  const float k = 1.0f / 8.0f;
+  float txcds[7][2] = {
+    {0.0f, 0.0f}, {k*s[0], 0.0f}, {k*s[0], k*s[1]}, {0.0f, k*s[1]},
+    {0.5f*k*s[0], k*sqrtf(s[0]*s[0]+s[2]*s[2])},
+    {k*s[1], 0.0f}, {0.5f*k*s[1], k*sqrtf(s[1]*s[1]+s[2]*s[2])}
+  };
+  MeshTransform xform;
+  const float degrees = getRotation() * (float)(180.0 / M_PI);
+  const float zAxis[3] = {0.0f, 0.0f, +1.0f};
+  if (getZFlip()) {
+    const float xAxis[3] = {1.0f, 0.0f, 0.0f};
+    xform.addSpin(180.0f, xAxis);
+    xform.addShift(zAxis);
+  }
+  xform.addScale(getSize());
+  xform.addSpin(degrees, zAxis);
+  xform.addShift(getPosition());
+  xform.finalize();
+  MeshTransform::Tool xtool(xform);
+  for (i = 0; i < 5; i++) {
+    xtool.modifyVertex(verts[i]);
+  }
+  for (i = 0; i < 5; i++) {
+    xtool.modifyNormal(norms[i]);
+  }
 
-		, 
-		{
-			 + 1.0f,  - 1.0f, 0.0f
-		}
+  out << "# OBJ - start pyramid" << std::endl;
+  out << "o bzpyr_" << getObjCounter() << std::endl;
 
-		, 
-		{
-			 + 1.0f,  + 1.0f, 0.0f
-		}
+  for (i = 0; i < 5; i++) {
+    out << "v";
+    outputFloat(out, verts[i][0]);
+    outputFloat(out, verts[i][1]);
+    outputFloat(out, verts[i][2]);
+    out << std::endl;
+  }
+  for (i = 0; i < 7; i++) {
+    out << "vt";
+    outputFloat(out, txcds[i][0]);
+    outputFloat(out, txcds[i][1]);
+    out << std::endl;
+  }
+  for (i = 0; i < 5; i++) {
+    out << "vn";
+    outputFloat(out, norms[i][0]);
+    outputFloat(out, norms[i][1]);
+    outputFloat(out, norms[i][2]);
+    out << std::endl;
+  }
+  out << "usemtl pyrwall" << std::endl;
+  out << "f -1/-1/-5 -5/-7/-5 -4/-6/-5" << std::endl;
+  out << "f -1/-3/-4 -4/-7/-4 -3/-2/-4" << std::endl;
+  out << "f -1/-1/-3 -3/-7/-3 -2/-6/-3" << std::endl;
+  out << "f -1/-3/-2 -2/-7/-2 -5/-2/-2" << std::endl;
+  out << "f -2/-7/-1 -3/-6/-1 -4/-5/-1 -5/-4/-1" << std::endl;
 
-		, 
-		{
-			 - 1.0f,  + 1.0f, 0.0f
-		}
+  out << std::endl;
 
-		, 
-		{
-			0.0f, 0.0f, 1.0f
-		}
-	};
-	const float sqrt1_2 = ( float )M_SQRT1_2;
-	float norms[5][3] = 
-	{
-		{
-			0.0f,  - sqrt1_2,  + sqrt1_2
-		}
+  incObjCounter();
 
-		, 
-		{
-			 + sqrt1_2, 0.0f,  + sqrt1_2
-		}
-
-		, 
-		{
-			0.0f,  + sqrt1_2,  + sqrt1_2
-		}
-
-		, 
-		{
-			 - sqrt1_2, 0.0f,  + sqrt1_2
-		}
-
-		, 
-		{
-			0.0f, 0.0f,  - 1.0f
-		}
-	};
-	const float *s = getSize();
-	const float k = 1.0f / 8.0f;
-	float txcds[7][2] = 
-	{
-		{
-			0.0f, 0.0f
-		}
-
-		, 
-		{
-			k *s[0], 0.0f
-		}
-
-		, 
-		{
-			k *s[0], k *s[1]
-		}
-
-		, 
-		{
-			0.0f, k *s[1]
-		}
-
-		, 
-		{
-			0.5f *k * s[0], k *sqrtf( s[0] *s[0] + s[2] *s[2] )
-		}
-
-		, 
-		{
-			k *s[1], 0.0f
-		}
-
-		, 
-		{
-			0.5f *k * s[1], k *sqrtf( s[1] *s[1] + s[2] *s[2] )
-		}
-	};
-	MeshTransform xform;
-	const float degrees = getRotation()*( float )( 180.0 / M_PI );
-	const float zAxis[3] = 
-	{
-		0.0f, 0.0f,  + 1.0f
-	};
-	if( getZFlip())
-	{
-		const float xAxis[3] = 
-		{
-			1.0f, 0.0f, 0.0f
-		};
-		xform.addSpin( 180.0f, xAxis );
-		xform.addShift( zAxis );
-	}
-	xform.addScale( getSize());
-	xform.addSpin( degrees, zAxis );
-	xform.addShift( getPosition());
-	xform.finalize();
-	MeshTransform::Tool xtool( xform );
-	for( i = 0; i < 5; i++ )
-	{
-		xtool.modifyVertex( verts[i] );
-	}
-	for( i = 0; i < 5; i++ )
-	{
-		xtool.modifyNormal( norms[i] );
-	}
-
-	out << "# OBJ - start pyramid" << std::endl;
-	out << "o bzpyr_" << getObjCounter() << std::endl;
-
-	for( i = 0; i < 5; i++ )
-	{
-		out << "v";
-		outputFloat( out, verts[i][0] );
-		outputFloat( out, verts[i][1] );
-		outputFloat( out, verts[i][2] );
-		out << std::endl;
-	}
-	for( i = 0; i < 7; i++ )
-	{
-		out << "vt";
-		outputFloat( out, txcds[i][0] );
-		outputFloat( out, txcds[i][1] );
-		out << std::endl;
-	}
-	for( i = 0; i < 5; i++ )
-	{
-		out << "vn";
-		outputFloat( out, norms[i][0] );
-		outputFloat( out, norms[i][1] );
-		outputFloat( out, norms[i][2] );
-		out << std::endl;
-	}
-	out << "usemtl pyrwall" << std::endl;
-	out << "f -1/-1/-5 -5/-7/-5 -4/-6/-5" << std::endl;
-	out << "f -1/-3/-4 -4/-7/-4 -3/-2/-4" << std::endl;
-	out << "f -1/-1/-3 -3/-7/-3 -2/-6/-3" << std::endl;
-	out << "f -1/-3/-2 -2/-7/-2 -5/-2/-2" << std::endl;
-	out << "f -2/-7/-1 -3/-6/-1 -4/-5/-1 -5/-4/-1" << std::endl;
-
-	out << std::endl;
-
-	incObjCounter();
-
-	return ;
+  return;
 }
 
 
@@ -772,3 +586,4 @@ void PyramidBuilding::printOBJ( std::ostream &out, const std::string & /*indent*
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
+

@@ -26,44 +26,37 @@
 
 CustomPyramid::CustomPyramid()
 {
-	size[0] = size[1] = BZDB.eval( StateDatabase::BZDB_PYRBASE );
-	size[2] = BZDB.eval( StateDatabase::BZDB_PYRHEIGHT );
-	flipZ = false;
+  size[0] = size[1] = BZDB.eval(StateDatabase::BZDB_PYRBASE);
+  size[2] = BZDB.eval(StateDatabase::BZDB_PYRHEIGHT);
+  flipZ = false;
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-bool CustomPyramid::read( const char *cmd, std::istream &input )
+bool CustomPyramid::read(const char *cmd, std::istream& input)
 {
-	if( strcasecmp( cmd, "flipz" ) == 0 )
-		flipZ = true;
-	else
-		return WorldFileObstacle::read( cmd, input );
-	return true;
+  if (strcasecmp(cmd, "flipz") == 0)
+    flipZ = true;
+  else
+    return WorldFileObstacle::read(cmd, input);
+  return true;
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
 
-
-void CustomPyramid::writeToGroupDef( GroupDefinition *groupdef )const
+void CustomPyramid::writeToGroupDef(GroupDefinition *groupdef) const
 {
-	bool flipit = flipZ;
-	if( size[2] < 0.0f )
-	{
-		flipit = true;
-	}
+  bool flipit = flipZ;
+  if (size[2] < 0.0f) {
+    flipit = true;
+  }
 
-	PyramidBuilding *pyr = new PyramidBuilding( pos, rotation, fabsf( size[0] ), fabsf( size[1] ), fabsf( size[2] ), driveThrough, shootThrough );
-	if( flipit )
-	{
-		pyr->setZFlip();
-	}
+  PyramidBuilding* pyr =
+    new PyramidBuilding(pos, rotation,
+			fabsf(size[0]), fabsf(size[1]), fabsf(size[2]),
+			driveThrough, shootThrough);
+  if (flipit) {
+    pyr->setZFlip();
+  }
 
-	groupdef->addObstacle( pyr );
+  groupdef->addObstacle(pyr);
 }
 
 // Local variables: ***

@@ -11,44 +11,44 @@
  */
 
 #ifndef __INPUTMENU_H__
-	#define __INPUTMENU_H__
+#define __INPUTMENU_H__
 
-	#include "common.h"
+#include "common.h"
 
 /* common interface headers */
-	#include "HUDDialog.h"
+#include "HUDDialog.h"
 
 /* local interface headers */
-	#include "MenuDefaultKey.h"
-	#include "KeyboardMapMenu.h"
-	#include "HUDuiControl.h"
-	#include "HUDuiList.h"
-	#include "HUDuiDefaultKey.h"
+#include "MenuDefaultKey.h"
+#include "KeyboardMapMenu.h"
+#include "HUDuiControl.h"
+#include "HUDuiList.h"
+#include "HUDuiDefaultKey.h"
 
 
 /** this class provides options for setting the gui
  */
-class InputMenu: public HUDDialog
-{
+class InputMenu : public HUDDialog {
 public:
-	InputMenu();
-	~InputMenu();
+  InputMenu();
+  ~InputMenu();
 
-	HUDuiDefaultKey *getDefaultKey()
-	{
-		return MenuDefaultKey::getInstance();
-	} void execute();
-	void resize( int width, int height );
-	static void callback( HUDuiControl *w, void *data );
+  HUDuiDefaultKey* getDefaultKey()
+  {
+    return MenuDefaultKey::getInstance();
+  }
+  void execute();
+  void resize(int width, int height);
+  static void callback(HUDuiControl* w, void* data);
 
-	void fillJSOptions();
+  void fillJSOptions();
 
 private:
-	HUDuiControl *keyMapping;
-	HUDuiList *activeInput;
-	HUDuiList *jsx;
-	HUDuiList *jsy;
-	KeyboardMapMenu *keyboardMapMenu;
+  HUDuiControl*	   keyMapping;
+  HUDuiList*	   activeInput;
+  HUDuiList*	   jsx;
+  HUDuiList*	   jsy;
+  KeyboardMapMenu* keyboardMapMenu;
 };
 
 

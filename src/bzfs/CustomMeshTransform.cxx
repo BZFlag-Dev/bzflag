@@ -24,111 +24,85 @@
 
 CustomMeshTransform::CustomMeshTransform()
 {
-	transform = new MeshTransform;
-	return ;
+  transform = new MeshTransform;
+  return;
 }
-
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
 
 
 CustomMeshTransform::~CustomMeshTransform()
 {
-	delete transform;
-	return ;
+  delete transform;
+  return;
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
 
-
-bool CustomMeshTransform::read( const char *cmd, std::istream &input )
+bool CustomMeshTransform::read(const char *cmd, std::istream& input)
 {
-	if( strcasecmp( "shift", cmd ) == 0 )
-	{
-		float data[3];
-		if( !( input >> data[0] >> data[1] >> data[2] ))
-		{
-			std::cout << "parameters errors " << std::endl;
-			return false;
-		}
-		transform->addShift( data );
-	}
-	else if( strcasecmp( "scale", cmd ) == 0 )
-	{
-		float data[3];
-		if( !( input >> data[0] >> data[1] >> data[2] ))
-		{
-			std::cout << "parameters errors " << std::endl;
-			return false;
-		}
-		transform->addScale( data );
-	}
-	else if( strcasecmp( "shear", cmd ) == 0 )
-	{
-		float data[3];
-		if( !( input >> data[0] >> data[1] >> data[2] ))
-		{
-			std::cout << "parameters errors " << std::endl;
-			return false;
-		}
-		transform->addShear( data );
-	}
-	else if( strcasecmp( "spin", cmd ) == 0 )
-	{
-		float data[4];
-		if( !( input >> data[0] >> data[1] >> data[2] >> data[3] ))
-		{
-			std::cout << "parameters errors " << std::endl;
-			return false;
-		}
-		transform->addSpin( data[0], &data[1] );
-	}
-	else if( strcasecmp( "xform", cmd ) == 0 )
-	{
-		std::string _name;
-		if( !( input >> _name ))
-		{
-			std::cout << "parameters errors " << std::endl;
-			return false;
-		}
-		int xform = TRANSFORMMGR.findTransform( _name );
-		if( xform ==  - 1 )
-		{
-			std::cout << "couldn't find Transform: " << _name << std::endl;
-		}
-		else
-		{
-			transform->addReference( xform );
-		}
-	}
-	else
-	{
-		// NOTE: we don't use a WorldFileObstacle
-		return WorldFileObject::read( cmd, input );
-	}
+  if (strcasecmp ("shift", cmd) == 0) {
+    float data[3];
+    if (!(input >> data[0] >> data[1] >> data[2])) {
+      std::cout << "parameters errors " << std::endl;
+      return false;
+    }
+    transform->addShift(data);
+  }
+  else if (strcasecmp ("scale", cmd) == 0) {
+    float data[3];
+    if (!(input >> data[0] >> data[1] >> data[2])) {
+      std::cout << "parameters errors " << std::endl;
+      return false;
+    }
+    transform->addScale(data);
+  }
+  else if (strcasecmp ("shear", cmd) == 0) {
+    float data[3];
+    if (!(input >> data[0] >> data[1] >> data[2])) {
+      std::cout << "parameters errors " << std::endl;
+      return false;
+    }
+    transform->addShear(data);
+  }
+  else if (strcasecmp ("spin", cmd) == 0) {
+    float data[4];
+    if (!(input >> data[0] >> data[1] >> data[2] >> data[3])) {
+      std::cout << "parameters errors " << std::endl;
+      return false;
+    }
+    transform->addSpin(data[0], &data[1]);
+  }
+  else if (strcasecmp ("xform", cmd) == 0) {
+    std::string _name;
+    if (!(input >> _name)) {
+      std::cout << "parameters errors " << std::endl;
+      return false;
+    }
+    int xform = TRANSFORMMGR.findTransform(_name);
+    if (xform == -1) {
+      std::cout << "couldn't find Transform: " << _name << std::endl;
+    } else {
+      transform->addReference(xform);
+    }
+  }
+  else {
+    // NOTE: we don't use a WorldFileObstacle
+    return WorldFileObject::read(cmd, input);
+  }
 
-	return true;
+  return true;
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
 
-
-void CustomMeshTransform::writeToManager()const
+void CustomMeshTransform::writeToManager() const
 {
-	transform->setName( name );
-	if(( name.size() > 0 ) && ( TRANSFORMMGR.findTransform( name ) >= 0 ))
-	{
-		std::cout << "warning: duplicate transform" << " (" << name << ")" << std::endl;
-	}
-	transform->finalize();
-	TRANSFORMMGR.addTransform( transform );
-	transform = NULL;
-	return ;
+  transform->setName(name);
+  if ((name.size() > 0) && (TRANSFORMMGR.findTransform(name) >= 0)) {
+    std::cout << "warning: duplicate transform"
+	      << " (" << name << ")" << std::endl;
+  }
+  transform->finalize();
+  TRANSFORMMGR.addTransform(transform);
+  transform = NULL;
+  return;
 }
 
 

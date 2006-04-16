@@ -11,49 +11,48 @@
  */
 
 #ifndef STDBOTHUI_H
-	#define STDBOTHUI_H
+#define STDBOTHUI_H
 
 /* interface headers */
-	#include "BZAdminUI.h"
-	#include "UIMap.h"
+#include "BZAdminUI.h"
+#include "UIMap.h"
 
 
 class BZAdminClient;
 
 
 /** This interface is a combination of StdInUI and StdOutUI. It reads commands
-from stdin and prints the output from the server to stdout. This
-requires polling of the stdin file descriptor, which isn't defined in
-standard C or C++, which means that this might not work well on all
-systems. It should work on most UNIX-like systems though. */
-class StdBothUI: public BZAdminUI
-{
+    from stdin and prints the output from the server to stdout. This
+    requires polling of the stdin file descriptor, which isn't defined in
+    standard C or C++, which means that this might not work well on all
+    systems. It should work on most UNIX-like systems though. */
+class StdBothUI : public BZAdminUI {
 public:
-	StdBothUI( BZAdminClient &c );
-	virtual void outputMessage( const std::string &msg, ColorCode color );
-	virtual bool checkCommand( std::string &str );
+  StdBothUI(BZAdminClient& c);
+  virtual void outputMessage(const std::string& msg, ColorCode color);
+  virtual bool checkCommand(std::string& str);
 
-	/** This function returns a pointer to a dynamically allocated
-	StdBothUI object. */
-	static BZAdminUI *creator( BZAdminClient & );
+  /** This function returns a pointer to a dynamically allocated
+      StdBothUI object. */
+  static BZAdminUI* creator(BZAdminClient&);
 
-protected:
+ protected:
 
-	static UIAdder uiAdder;
+  static UIAdder uiAdder;
 
-	bool atEOF;
+  bool atEOF;
 
-	#ifdef _WIN32
-public:
-	HANDLE console;
-	HANDLE readEvent, processedEvent;
-	HANDLE thread;
-	char buffer[MessageLen + 1];
-	int pos;
-	#endif 
+#ifdef _WIN32
+ public:
+  HANDLE console;
+  HANDLE readEvent, processedEvent;
+  HANDLE thread;
+  char buffer[MessageLen + 1];
+  int pos;
+#endif
 };
 
-#endif 
+#endif
 
 // Local Variables: ***
 // mode:C++ ***

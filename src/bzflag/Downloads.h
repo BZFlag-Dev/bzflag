@@ -11,31 +11,28 @@
  */
 
 #ifndef DOWNLOADS_H
-	#define DOWNLOADS_H
+#define DOWNLOADS_H
 
-	#include "common.h"
+#include "common.h"
 
 /* system interface headers */
-	#include <string>
+#include <string>
 
 
-namespace Downloads
-{
-	void startDownloads( bool doDownloads, bool updateDownloads, bool referencing );
-	void finalizeDownloads();
-	void removeTextures(); // free the downloaded GL textures
-	bool requestFinalized();
+namespace Downloads {
+  void startDownloads(bool doDownloads,
+		      bool updateDownloads,
+		      bool referencing);
+  void finalizeDownloads();
+  void removeTextures(); // free the downloaded GL textures
+  bool requestFinalized();
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-bool authorizedServer( const std::string &hostname );
-bool parseHostname( const std::string &url, std::string &hostname );
+bool authorizedServer(const std::string& hostname);
+bool parseHostname(const std::string& url, std::string& hostname);
 
 
-#endif 
+#endif
 
 // Local Variables: ***
 // mode: C++ ***

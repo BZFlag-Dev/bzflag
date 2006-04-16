@@ -14,30 +14,30 @@
 #include "bzfsAPI.h"
 
 #ifndef __PYTHON_WORLD_BOX_H__
-	#define __PYTHON_WORLD_BOX_H__
+#define __PYTHON_WORLD_BOX_H__
 
 namespace Python
 {
-	namespace World
-	{
+namespace World
+{
 
-		typedef struct
-		{
-			PyObject_HEAD 
+typedef struct
+{
+  PyObject_HEAD
 
-			float pos[3];
-			float rot;
-			float scale[3];
-			bool drive_through;
-			bool shoot_through;
-		} Box;
+  float pos[3];
+  float rot;
+  float scale[3];
+  bool drive_through;
+  bool shoot_through;
+} Box;
 
-		PyObject *CreateBox();
+PyObject *CreateBox ();
 
-	};
+};
 };
 
-#endif 
+#endif
 
 // Local Variables: ***
 // mode:C++ ***
@@ -46,3 +46,4 @@ namespace Python
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
+

@@ -11,59 +11,54 @@
  */
 
 #ifndef ACCESS_LIST_H
-	#define ACCESS_LIST_H
+#define ACCESS_LIST_H
 
-	#include <stdio.h>
-	#include <string>
-	#include <vector>
+#include <stdio.h>
+#include <string>
+#include <vector>
 
-class AccessList
-{
-public:
-	AccessList( const std::string &filename, const char *content );
-	~AccessList();
+class AccessList {
+  public:
+    AccessList(const std::string& filename, const char* content);
+    ~AccessList();
 
-	bool reload();
+    bool reload();
 
-	bool alwaysAuthorized()const;
-	bool authorized( const std::vector < std::string >  &strings )const;
+    bool alwaysAuthorized() const;
+    bool authorized(const std::vector<std::string>& strings) const;
 
-	const std::string &getFileName()const;
+    const std::string& getFileName() const;
 
-private:
-	bool computeAlwaysAuth()const;
-	void makeContent( const char *content )const;
+  private:
+    bool computeAlwaysAuth() const;
+    void makeContent(const char* content) const;
 
-private:
-	std::string filename;
-	bool alwaysAuth;
+  private:
+    std::string filename;
+    bool alwaysAuth;
 
-	enum AccessType
-	{
-		invalid, allow,  // simple globbing
-		deny, allow_regex,  // regular expressions
-		deny_regex
-	};
-	typedef struct
-	{
-		AccessType type;
-		std::string pattern;
-	} AccessPattern;
+    enum AccessType {
+      invalid,
+      allow,		// simple globbing
+      deny,
+      allow_regex,	// regular expressions
+      deny_regex
+    };
+    typedef struct {
+      AccessType type;
+      std::string pattern;
+    } AccessPattern;
 
-	std::vector < AccessPattern > patterns;
+    std::vector<AccessPattern> patterns;
 };
 
-inline bool AccessList::alwaysAuthorized()const
+inline bool AccessList::alwaysAuthorized() const
 {
-	return alwaysAuth;
+  return alwaysAuth;
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
 
-
-#endif 
+#endif
 
 /*
  * Local Variables: ***
@@ -73,4 +68,4 @@ inline bool AccessList::alwaysAuthorized()const
  * indent-tabs-mode: t ***
  * End: ***
  * ex: shiftwidth=2 tabstop=8
-  */
+ */

@@ -10,33 +10,32 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef __FLASHCLOCK_H__
-	#define __FLASHCLOCK_H__
+#ifndef	__FLASHCLOCK_H__
+#define	__FLASHCLOCK_H__
 
 /* common interface headers */
-	#include "TimeKeeper.h"
+#include "TimeKeeper.h"
 
 
 /**
  * FlashClock
  *	keeps track of time for something that flashes
  */
-class FlashClock
-{
-public:
-	FlashClock();
-	~FlashClock();
+class FlashClock {
+  public:
+			FlashClock();
+			~FlashClock();
 
-	void setClock( float time );
-	void setClock( float time, float onTime, float offTime );
+    void		setClock(float time);
+    void		setClock(float time, float onTime, float offTime);
 
-	bool isOn();
+    bool		isOn();
 
-private:
-	TimeKeeper startTime;
-	float duration;
-	float onDuration;
-	float flashDuration;
+  private:
+    TimeKeeper		startTime;
+    float		duration;
+    float		onDuration;
+    float		flashDuration;
 };
 
 

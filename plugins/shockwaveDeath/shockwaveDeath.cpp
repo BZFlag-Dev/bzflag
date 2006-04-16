@@ -4,63 +4,55 @@
 #include "bzfsAPI.h"
 #include <string>
 
-BZ_GET_PLUGIN_VERSION 
+BZ_GET_PLUGIN_VERSION
 
 // event handler callback
-class SWDeathHandler: public bz_EventHandler
+class SWDeathHandler : public bz_EventHandler
 {
 public:
-	virtual void process( bz_EventData *eventData );
+  virtual void	process ( bz_EventData *eventData );
 
-	bool usePlayerForShot;
+  bool		usePlayerForShot;
 };
 
-SWDeathHandler swDeathHandler;
+SWDeathHandler	swDeathHandler;
 
-BZF_PLUGIN_CALL int bz_Load( const char *commandLine )
+BZF_PLUGIN_CALL int bz_Load ( const char* commandLine )
 {
-	bz_debugMessage( 4, "shockwaveDeath plugin loaded" );
+  bz_debugMessage(4,"shockwaveDeath plugin loaded");
 
-	bz_registerEvent( bz_ePlayerDieEvent, &swDeathHandler );
+  bz_registerEvent(bz_ePlayerDieEvent,&swDeathHandler);
 
-	std::string param = commandLine;
+  std::string param = commandLine;
 
-	swDeathHandler.usePlayerForShot = ( param == "usevictim" );
-	return 0;
+  swDeathHandler.usePlayerForShot = (param == "usevictim");
+  return 0;
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-BZF_PLUGIN_CALL int bz_Unload( void )
+BZF_PLUGIN_CALL int bz_Unload ( void )
 {
-	bz_removeEvent( bz_ePlayerDieEvent, &swDeathHandler );
-	bz_debugMessage( 4, "shockwaveDeath plugin unloaded" );
-	return 0;
+  bz_removeEvent(bz_ePlayerDieEvent,&swDeathHandler);
+  bz_debugMessage(4,"shockwaveDeath plugin unloaded");
+  return 0;
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-void SWDeathHandler::process( bz_EventData *eventData )
+void SWDeathHandler::process ( bz_EventData *eventData )
 {
-	if( eventData->eventType != bz_ePlayerDieEvent )
-		return ;
+  if (eventData->eventType != bz_ePlayerDieEvent)
+    return;
 
-	bz_PlayerDieEventData_V1 *dieData = ( bz_PlayerDieEventData_V1* )eventData;
+  bz_PlayerDieEventData_V1 *dieData = (bz_PlayerDieEventData_V1*)eventData;
 
-	int playerToUse = BZ_SERVER;
-	if( usePlayerForShot )
-		playerToUse = dieData->playerID;
+  int playerToUse = BZ_SERVER;
+  if ( usePlayerForShot )
+    playerToUse = dieData->playerID;
 
-	float reloadTime = ( float )bz_getBZDBDouble( "_reloadTime" );
+  float reloadTime = (float)bz_getBZDBDouble("_reloadTime");
 
-	if( bz_BZDBItemExists( "_swDeathReloadFactor" ) && bz_getBZDBDouble( "_swDeathReloadFactor" ) > 0 )
-		reloadTime *= ( float )bz_getBZDBDouble( "_swDeathReloadFactor" );
+  if (bz_BZDBItemExists("_swDeathReloadFactor") && bz_getBZDBDouble("_swDeathReloadFactor") > 0)
+    reloadTime *= (float)bz_getBZDBDouble("_swDeathReloadFactor");
 
-	bz_fireWorldWep( "SW", reloadTime, playerToUse, dieData->pos, 0, 0, 0, 0.0f );
+  bz_fireWorldWep("SW",reloadTime,playerToUse,dieData->pos,0,0,0,0.0f);
 }
 
 // Local Variables: ***
@@ -70,3 +62,4 @@ void SWDeathHandler::process( bz_EventData *eventData )
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
+

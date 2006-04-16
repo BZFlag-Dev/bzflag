@@ -16,66 +16,43 @@
 // ImageFile
 //
 
-ImageFile::ImageFile( std::istream *_stream ): MediaFile( _stream ), open( false )
+ImageFile::ImageFile(std::istream* _stream) : MediaFile(_stream), open(false)
 {
-	// do nothing
+  // do nothing
 }
-
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
 
 ImageFile::~ImageFile()
 {
-	// do nothing
+  // do nothing
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-void ImageFile::init( int _numChannels, int _width, int _height )
+void			ImageFile::init(int _numChannels,
+					int _width, int _height)
 {
-	open = true;
-	numChannels = _numChannels;
-	width = _width;
-	height = _height;
+  open	= true;
+  numChannels = _numChannels;
+  width       = _width;
+  height      = _height;
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-bool ImageFile::isOpen()const
+bool			ImageFile::isOpen() const
 {
-	return open;
+  return open;
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-int ImageFile::getNumChannels()const
+int			ImageFile::getNumChannels() const
 {
-	return numChannels;
+  return numChannels;
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-int ImageFile::getWidth()const
+int			ImageFile::getWidth() const
 {
-	return width;
+  return width;
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-int ImageFile::getHeight()const
+int			ImageFile::getHeight() const
 {
-	return height;
+  return height;
 }
 
 // Local Variables: ***
@@ -85,3 +62,4 @@ int ImageFile::getHeight()const
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
+

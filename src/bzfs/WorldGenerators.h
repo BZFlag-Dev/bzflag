@@ -11,7 +11,7 @@
  */
 
 #ifndef __WORLD_GENERATORS_H__
-	#define __WORLD_GENERATORS_H__
+#define __WORLD_GENERATORS_H__
 
 class WorldInfo;
 

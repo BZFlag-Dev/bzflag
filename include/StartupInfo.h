@@ -10,38 +10,38 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef __STARTUPINFO_H__
-	#define __STARTUPINFO_H__
+#ifndef	__STARTUPINFO_H__
+#define	__STARTUPINFO_H__
 
-	#include "common.h"
+#include "common.h"
 
 /* system interface headers */
-	#include <string>
+#include <string>
 
 /* common interface headers */
-	#include "Team.h"
+#include "Team.h"
 
 
 class StartupInfo
 {
 public:
-	StartupInfo();
-	~StartupInfo();
+  StartupInfo();
+  ~StartupInfo();
 
-	bool hasConfiguration;
-	bool autoConnect;
-	char serverName[80];
-	int serverPort;
-	bool useUDPconnection;
-	TeamColor team;
-	char callsign[CallSignLen];
-	char password[PasswordLen];
-	char token[TokenLen];
-	char email[EmailLen];
-	std::string listServerURL;
-	int listServerPort;
-	bool joystick;
-	std::string joystickName;
+  bool hasConfiguration;
+  bool autoConnect;
+  char serverName[80];
+  int serverPort;
+  bool useUDPconnection;
+  TeamColor team;
+  char callsign[CallSignLen];
+  char password[PasswordLen];
+  char token[TokenLen];
+  char email[EmailLen];
+  std::string listServerURL;
+  int listServerPort;
+  bool joystick;
+  std::string joystickName;
 };
 
 

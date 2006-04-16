@@ -15,211 +15,166 @@
 
 /* implementation system headers */
 #ifndef _WIN32
-	#include <stdlib.h>
-	#include <unistd.h>
-	#include <sys/types.h>
-	#include <pwd.h>
-#else // _WIN32
-	#include <sys/types.h>
-	#include <sys/stat.h>
-	#include <stdio.h>
-	#include <direct.h>
-	#include <shlobj.h>
-#endif // _WIN32
+#  include <stdlib.h>
+#  include <unistd.h>
+#  include <sys/types.h>
+#  include <pwd.h>
+#else   // _WIN32
+#  include <sys/types.h>
+#  include <sys/stat.h>
+#  include <stdio.h>
+#  include <direct.h>
+#  include <shlobj.h>
+#endif  // _WIN32
 #if defined(__APPLE__)
-	#include <CoreServices/CoreServices.h>
-#endif 
+#  include <CoreServices/CoreServices.h>
+#endif
 
 
 // NOTE: terminate all strings with '/' or '\\'
 
-std::string configDir( bool set, const char *str )
+std::string configDir(bool set, const char *str)
 {
-	static std::string customConfigDir = std::string( "" );
-	if( set )
-	{
-		customConfigDir = std::string( str );
-	}
-	return customConfigDir;
+  static std::string customConfigDir = std::string("");
+  if (set) {
+    customConfigDir = std::string(str);
+  }
+  return customConfigDir;
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
 
-
-void setCustomConfigDir( const char *str )
+void			setCustomConfigDir(const char *str)
 {
-	configDir( 1, str );
+  configDir(1, str);
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
 
-
-std::string getConfigDirName( const char *versionName )
+std::string		getConfigDirName( const char* versionName )
 {
-	std::string customConfigDir = configDir( 0, NULL );
+  std::string customConfigDir = configDir(0, NULL);
 
-	if( customConfigDir.size() > 0 )
-		return customConfigDir;
+  if (customConfigDir.size() > 0)
+    return customConfigDir;
 
 #if defined(_WIN32)
-	std::string name( "C:" );
-	char dir[MAX_PATH];
-	ITEMIDLIST *idl;
-	if( SUCCEEDED( SHGetSpecialFolderLocation( NULL, CSIDL_PERSONAL, &idl )))
-	{
-		if( SHGetPathFromIDList( idl, dir ))
-		{
-			struct stat statbuf;
-			if( stat( dir, &statbuf ) == 0 && ( statbuf.st_mode &_S_IFDIR ) != 0 )
-				name = dir;
-		}
+  std::string name("C:");
+  char dir[MAX_PATH];
+  ITEMIDLIST* idl;
+  if (SUCCEEDED(SHGetSpecialFolderLocation(NULL, CSIDL_PERSONAL, &idl))) {
+    if (SHGetPathFromIDList(idl, dir)) {
+      struct stat statbuf;
+      if (stat(dir, &statbuf) == 0 && (statbuf.st_mode & _S_IFDIR) != 0)
+	name = dir;
+    }
 
-		IMalloc *shalloc;
-		if( SUCCEEDED( SHGetMalloc( &shalloc )))
-		{
-			shalloc->Free( idl );
-			shalloc->Release();
-		} 
-	}
+    IMalloc* shalloc;
+    if (SUCCEEDED(SHGetMalloc(&shalloc))) {
+      shalloc->Free(idl);
+      shalloc->Release();
+    }
+  }
 
-	// yes your suposed to have the "my" in front of it. I know it's silly, but it's the MS way.
-	name += "\\My BZFlag Files\\";
-	if( versionName )
-	{
-		name += versionName;
-		name += "\\";
-	}
-	customConfigDir = name;
-	return name;
+  // yes your suposed to have the "my" in front of it. I know it's silly, but it's the MS way.
+  name += "\\My BZFlag Files\\";
+  if (versionName) {
+    name += versionName;
+    name += "\\";
+  }
+  customConfigDir = name;
+  return name;
 
 #elif defined(__APPLE__)
-	std::string name;
-	::FSRef libraryFolder;
-	::OSErr err;
-	err = ::FSFindFolder( ::kUserDomain, ::kApplicationSupportFolderType, true, &libraryFolder );
-	if( err == ::noErr )
-	{
-		char buff[1024];
-		err = ::FSRefMakePath( &libraryFolder, ( UInt8* )buff, sizeof( buff ));
-		if( err == ::noErr )
-		{
-			std::strcat( buff, "/BZFlag/" );
-			if( versionName )
-			{
-				std::strcat( buff, versionName );
-				std::strcat( buff, "/" );
-			}
-			name = buff;
-		}
-	}
-	customConfigDir = name;
-	return name;
-#else 
-	std::string name;
-	struct passwd *pwent = getpwuid( getuid());
-	if( pwent && pwent->pw_dir )
-	{
-		name += std::string( pwent->pw_dir );
-		name += "/";
-	} name += ".bzf/";
-	if( versionName )
-	{
-		name += versionName;
-		name += "/";
-	}
-	customConfigDir = name;
-	return name;
-#endif 
+  std::string name;
+  ::FSRef libraryFolder;
+  ::OSErr err;
+  err = ::FSFindFolder(::kUserDomain, ::kApplicationSupportFolderType, true, &libraryFolder);
+  if(err == ::noErr) {
+    char buff[1024];
+    err = ::FSRefMakePath(&libraryFolder, (UInt8*)buff, sizeof(buff));
+    if(err == ::noErr) {
+      std::strcat(buff, "/BZFlag/");
+      if (versionName) {
+	std::strcat(buff, versionName);
+	std::strcat(buff, "/");
+      }
+     name = buff;
+    }
+  }
+  customConfigDir = name;
+  return name;
+#else
+  std::string name;
+  struct passwd *pwent = getpwuid(getuid());
+  if (pwent && pwent->pw_dir) {
+    name += std::string(pwent->pw_dir);
+    name += "/";
+  }
+  name += ".bzf/";
+  if (versionName) {
+    name += versionName;
+    name += "/";
+  }
+  customConfigDir = name;
+  return name;
+#endif
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-static std::string setupString( std::string dir )
+static std::string		setupString(std::string dir)
 {
-	std::string name = getConfigDirName();
-	name += dir;
-	name += DirectorySeparator;
-	return name;
+  std::string name = getConfigDirName();
+  name += dir;
+  name += DirectorySeparator;
+  return name;
 }
-
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
 
 std::string getCacheDirName()
 {
-	std::string name = getConfigDirName();
-	name += "cache";
+  std::string name = getConfigDirName();
+  name += "cache";
 #if !defined (_WIN32) && !defined (__APPLE__)
-	// add in hostname on UNIX
-	// FIXME should be able to share the cache
-	if( getenv( "HOST" ))
-	{
-		name += ".";
-		name += getenv( "HOST" );
-	}
-#endif 
-	name += DirectorySeparator;
-	return name;
+  // add in hostname on UNIX
+  // FIXME should be able to share the cache
+  if (getenv("HOST")) {
+    name += ".";
+    name += getenv("HOST");
+  }
+#endif
+  name += DirectorySeparator;
+  return name;
 }
-
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
 
 
 std::string getRecordDirName()
 {
-	return setupString( "recordings" );
+  return setupString("recordings");
 }
-
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
 
 std::string getScreenShotDirName()
 {
-	return setupString( "screenshots" );
+  return setupString("screenshots");
 }
-
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
 
 std::string getTempDirName()
 {
-	// FIXME: needs something for Windows and maybe other platforms
+// FIXME: needs something for Windows and maybe other platforms
 #if defined(_WIN32)
-	std::string name = getConfigDirName();
-	name += "temp";
-#else 
-	std::string name;
-	if( getenv( "TMPDIR" ))
-	{
-		name = getenv( "TMPDIR" );
-	}
-	else
-	{
-		name = "/tmp";
-	}
-#endif 
-	name += DirectorySeparator;
-	return name;
+  std::string name = getConfigDirName();
+  name += "temp";
+#else
+  std::string name;
+  if (getenv("TMPDIR")) {
+    name = getenv("TMPDIR");
+  } else {
+    name = "/tmp";
+  }
+#endif
+  name += DirectorySeparator;
+  return name;
 }
-
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
 
 std::string getWorldDirName()
 {
-	return setupString( "worlds" );
+  return setupString("worlds");
 }
 
 // Local Variables: ***

@@ -15,25 +15,24 @@
  */
 
 #ifndef BZF_SOLARISPLATFORM_FACTORY_H
-	#define BZF_SOLARISPLATFORM_FACTORY_H
+#define	BZF_SOLARISPLATFORM_FACTORY_H
 
-	#include "PlatformFactory.h"
+#include "PlatformFactory.h"
 
-class SolarisPlatformFactory: public PlatformFactory
-{
-public:
-	SolarisPlatformFactory();
-	~SolarisPlatformFactory();
+class SolarisPlatformFactory : public PlatformFactory {
+  public:
+			SolarisPlatformFactory();
+			~SolarisPlatformFactory();
 
-	BzfDisplay *createDisplay( const char *name, const char* );
-	BzfVisual *createVisual( const BzfDisplay* );
-	BzfWindow *createWindow( const BzfDisplay *, BzfVisual* );
+    BzfDisplay*		createDisplay(const char* name, const char*);
+    BzfVisual*		createVisual(const BzfDisplay*);
+    BzfWindow*		createWindow(const BzfDisplay*, BzfVisual*);
 
-private:
-	SolarisPlatformFactory( const SolarisPlatformFactory & );
-	SolarisPlatformFactory &operator = ( const SolarisPlatformFactory & );
+  private:
+			SolarisPlatformFactory(const SolarisPlatformFactory&);
+    SolarisPlatformFactory&	operator=(const SolarisPlatformFactory&);
 
-	BzfMedia *createMedia();
+    BzfMedia*		createMedia();
 };
 
 #endif // BZF_SOLARISPLATFORM_FACTORY_H
@@ -45,3 +44,4 @@ private:
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
+

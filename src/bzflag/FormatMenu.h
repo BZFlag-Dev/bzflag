@@ -11,68 +11,65 @@
  */
 
 #ifndef __FORMATMENU_H__
-	#define __FORMATMENU_H__
+#define __FORMATMENU_H__
 
 /* common interface headers */
-	#include "BzfEvent.h"
+#include "BzfEvent.h"
 
 /* local interface headers */
-	#include "HUDDialog.h"
-	#include "HUDuiLabel.h"
-	#include "HUDuiDefaultKey.h"
-	#include "MenuDefaultKey.h"
+#include "HUDDialog.h"
+#include "HUDuiLabel.h"
+#include "HUDuiDefaultKey.h"
+#include "MenuDefaultKey.h"
 
 
 class FormatMenu;
 
-class FormatMenuDefaultKey: public MenuDefaultKey
-{
+class FormatMenuDefaultKey : public MenuDefaultKey {
 public:
-	FormatMenuDefaultKey( FormatMenu *_menu ): menu( _menu ){}
-	~FormatMenuDefaultKey(){}
+  FormatMenuDefaultKey(FormatMenu* _menu) :
+    menu(_menu) { }
+  ~FormatMenuDefaultKey() { }
 
-	bool keyPress( const BzfKeyEvent & );
-	bool keyRelease( const BzfKeyEvent & );
+  bool keyPress(const BzfKeyEvent&);
+  bool keyRelease(const BzfKeyEvent&);
 
 private:
-	FormatMenu *menu;
+  FormatMenu* menu;
 };
 
-class FormatMenu: public HUDDialog
-{
+class FormatMenu : public HUDDialog {
 public:
-	FormatMenu();
-	~FormatMenu();
+  FormatMenu();
+  ~FormatMenu();
 
-	HUDuiDefaultKey *getDefaultKey()
-	{
-		return  &defaultKey;
-	} int getSelected()const;
-	void setSelected( int );
-	void show();
-	void execute();
-	void resize( int width, int height );
+  HUDuiDefaultKey*	getDefaultKey() { return &defaultKey; }
+  int			getSelected() const;
+  void			setSelected(int);
+  void			show();
+  void			execute();
+  void			resize(int width, int height);
 
-	void setFormat( bool test );
+  void			setFormat(bool test);
 
 public:
-	static const int NumItems;
+  static const int	NumItems;
 
 private:
-	void addLabel( const char *msg, const char *_label );
+  void			addLabel(const char* msg, const char* _label);
 
 private:
-	FormatMenuDefaultKey defaultKey;
-	int numFormats;
-	float center;
+  FormatMenuDefaultKey	defaultKey;
+  int			numFormats;
+  float			center;
 
-	HUDuiLabel *currentLabel;
-	HUDuiLabel *pageLabel;
-	int selectedIndex;
-	bool *badFormats;
+  HUDuiLabel*		currentLabel;
+  HUDuiLabel*		pageLabel;
+  int			selectedIndex;
+  bool*			badFormats;
 
-	static const int NumColumns;
-	static const int NumReadouts;
+  static const int	NumColumns;
+  static const int	NumReadouts;
 };
 
 

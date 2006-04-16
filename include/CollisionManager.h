@@ -10,16 +10,16 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef __COLLISION_GRID__
-	#define __COLLISION_GRID__
+#ifndef	__COLLISION_GRID__
+#define	__COLLISION_GRID__
 
-	#include "common.h"
+#include "common.h"
 
 // system headers
-	#include <vector>
+#include <vector>
 
 // common headers
-	#include "Extents.h"
+#include "Extents.h"
 
 class Ray;
 class Obstacle;
@@ -30,211 +30,167 @@ class BaseBuilding;
 class Teleporter;
 
 
-typedef struct
-{
-	int count;
-	Obstacle **list;
+typedef struct {
+  int count;
+  Obstacle** list;
 } ObsList;
 
-typedef union
-{
-	ObsList array[6];
-	struct
-	{
-		ObsList boxes;
-		ObsList bases;
-		ObsList pyrs;
-		ObsList teles;
-		ObsList faces;
-		ObsList meshes;
-	} named;
-}
+typedef union {
+  ObsList array[6];
+  struct {
+    ObsList boxes;
+    ObsList bases;
+    ObsList pyrs;
+    ObsList teles;
+    ObsList faces;
+    ObsList meshes;
+  } named;
+} SplitObsList;
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-SplitObsList;
-
-typedef struct
-{
-	int count;
-	class ColDetNode **list;
-}
-
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-ColDetNodeList;
+typedef struct {
+  int count;
+  class ColDetNode** list;
+} ColDetNodeList;
 
 
 // well you know my name is Simon, and I like to do drawings
-typedef void( *DrawLinesFunc )( int pointCount, float( *points )[3], int color );
+typedef void (*DrawLinesFunc)
+  (int pointCount, float (*points)[3], int color);
 
 
-class CollisionManager
-{
+class CollisionManager {
 
-public:
+  public:
 
-	CollisionManager();
-	~CollisionManager();
+    CollisionManager();
+    ~CollisionManager();
 
-	void load();
-	void clear();
+    void load ();
+    void clear ();
 
-	// some basics
-	bool needReload()const; // octree parameter has changed
-	int getObstacleCount()const; // total number of obstacles
-	const Extents &getWorldExtents()const;
+    // some basics
+    bool needReload() const;	 // octree parameter has changed
+    int getObstacleCount() const;    // total number of obstacles
+    const Extents& getWorldExtents() const;
 
 
-	// test against an axis aligned bounding box
-	const ObsList *axisBoxTest( const Extents &extents );
+    // test against an axis aligned bounding box
+    const ObsList* axisBoxTest (const Extents& extents);
 
-	// test against a cylinder
-	const ObsList *cylinderTest( const float *pos, float radius, float height )const;
-	// test against a box
-	const ObsList *boxTest( const float *pos, float angle, float dx, float dy, float dz )const;
-	// test against a moving box
-	const ObsList *movingBoxTest( const float *oldPos, float oldAngle, const float *pos, float angle, float dx, float dy, float dz )const;
-	// test against a Ray
-	const ObsList *rayTest( const Ray *ray, float timeLeft )const;
+    // test against a cylinder
+    const ObsList* cylinderTest (const float *pos,
+				 float radius, float height) const;
+    // test against a box
+    const ObsList* boxTest (const float* pos, float angle,
+			    float dx, float dy, float dz) const;
+    // test against a moving box
+    const ObsList* movingBoxTest (const float* oldPos, float oldAngle,
+				  const float* pos, float angle,
+				  float dx, float dy, float dz) const;
+    // test against a Ray
+    const ObsList* rayTest (const Ray* ray, float timeLeft) const;
 
-	// test against a Ray (and return a list of ColDetNodes)
-	const ColDetNodeList *rayTestNodes( const Ray *ray, float timeLeft )const;
+    // test against a Ray (and return a list of ColDetNodes)
+    const ColDetNodeList* rayTestNodes (const Ray* ray, float timeLeft) const;
 
-	// test against a box and return a split list
-	//const SplitObsList *boxTestSplit (const float* pos, float angle,
-	//				  float dx, float dy, float dz) const;
+    // test against a box and return a split list
+    //const SplitObsList *boxTestSplit (const float* pos, float angle,
+    //				  float dx, float dy, float dz) const;
 
-	// drawing function
-	void draw( DrawLinesFunc drawLinesFunc );
+    // drawing function
+    void draw (DrawLinesFunc drawLinesFunc);
 
-private:
+  private:
 
-	void setExtents( ObsList *list ); // gather the extents
+    void setExtents(ObsList* list); // gather the extents
 
-	class ColDetNode *root; // the root of the octree
+    class ColDetNode* root;   // the root of the octree
 
-	float worldSize;
-	Extents gridExtents;
-	Extents worldExtents;
+    float worldSize;
+    Extents gridExtents;
+    Extents worldExtents;
 };
 
 extern CollisionManager COLLISIONMGR;
 
 
-class ColDetNode
-{
-public:
-	ColDetNode( unsigned char depth, const Extents &exts, ObsList *fullList );
-	~ColDetNode();
+class ColDetNode {
+  public:
+    ColDetNode(unsigned char depth, const Extents& exts, ObsList *fullList);
+    ~ColDetNode();
 
-	int getCount()const;
-	const ObsList *getList()const;
-	const Extents &getExtents()const;
-	float getInTime()const;
-	float getOutTime()const;
+    int getCount() const;
+    const ObsList* getList() const;
+    const Extents& getExtents() const;
+    float getInTime() const;
+    float getOutTime() const;
 
-	// these fill in the FullList return list
-	void axisBoxTest( const Extents &extents )const;
-	void boxTest( const float *pos, float angle, float dx, float dy, float dz )const;
-	void rayTest( const Ray *ray, float timeLeft )const;
-	void rayTestNodes( const Ray *ray, float timeLeft )const;
+    // these fill in the FullList return list
+    void axisBoxTest (const Extents& extents) const;
+    void boxTest (const float* pos, float angle, float dx, float dy, float dz) const;
+    void rayTest (const Ray* ray, float timeLeft) const;
+    void rayTestNodes (const Ray* ray, float timeLeft) const;
 
-	// this fills in the SplitList return list
-	// (FIXME: not yet implemented, boxTestSplit might be useful for radar)
-	//void boxTestSplit (const float* pos, float angle, float dx, float dy, float dz) const;
+    // this fills in the SplitList return list
+    // (FIXME: not yet implemented, boxTestSplit might be useful for radar)
+    //void boxTestSplit (const float* pos, float angle, float dx, float dy, float dz) const;
 
-	void tallyStats();
-	void draw( DrawLinesFunc drawLinesFunc );
+    void tallyStats();
+    void draw(DrawLinesFunc drawLinesFunc);
 
-private:
-	void makeChildren();
-	void resizeCell();
+  private:
+    void makeChildren ();
+    void resizeCell ();
 
-	unsigned char depth;
-	int count;
-	Extents extents;
-	unsigned char childCount;
-	ColDetNode *children[8];
-	ObsList fullList;
-	mutable float inTime, outTime;
+    unsigned char depth;
+    int count;
+    Extents extents;
+    unsigned char childCount;
+    ColDetNode* children[8];
+    ObsList fullList;
+    mutable float inTime, outTime;
 };
 
 
-inline int ColDetNode::getCount()const
+inline int ColDetNode::getCount() const
 {
-	return count;
+  return count;
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-inline const ObsList *ColDetNode::getList()const
+inline const ObsList* ColDetNode::getList() const
 {
-	return  &fullList;
+  return &fullList;
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-inline const Extents &ColDetNode::getExtents()const
+inline const Extents& ColDetNode::getExtents() const
 {
-	return extents;
+  return extents;
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-inline float ColDetNode::getInTime()const
+inline float ColDetNode::getInTime() const
 {
-	return inTime;
+  return inTime;
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-inline float ColDetNode::getOutTime()const
+inline float ColDetNode::getOutTime() const
 {
-	return outTime;
+  return outTime;
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
 
-
-inline int CollisionManager::getObstacleCount()const
+inline int CollisionManager::getObstacleCount() const
 {
-	if( root == NULL )
-	{
-		return 0;
-	}
-	else
-	{
-		return root->getCount();
-	}
+  if (root == NULL) {
+    return 0;
+  } else {
+    return root->getCount();
+  }
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-inline const Extents &CollisionManager::getWorldExtents()const
+inline const Extents& CollisionManager::getWorldExtents() const
 {
-	return worldExtents;
+  return worldExtents;
 }
-
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
 
 
 #endif /* __COLLISION_GRID__ */

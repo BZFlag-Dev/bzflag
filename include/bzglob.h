@@ -11,14 +11,14 @@
  */
 
 #ifndef BZ_GLOB_H
-	#define BZ_GLOB_H
+#define BZ_GLOB_H
 
-	#include <string>
+#include <string>
 
-extern bool glob_match( const char *pattern, const char *string );
-extern bool glob_match( const std::string &pattern, const std::string &string );
+extern bool glob_match(const char* pattern, const char* string);
+extern bool glob_match(const std::string& pattern, const std::string& string);
 
-#endif 
+#endif
 
 /*
  * Local Variables: ***
@@ -28,4 +28,4 @@ extern bool glob_match( const std::string &pattern, const std::string &string );
  * indent-tabs-mode: t ***
  * End: ***
  * ex: shiftwidth=2 tabstop=8
-  */
+ */

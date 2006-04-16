@@ -11,27 +11,26 @@
  */
 
 #ifndef __BOXSCENENODEGENERATOR_H__
-	#define __BOXSCENENODEGENERATOR_H__
+#define __BOXSCENENODEGENERATOR_H__
 
-	#include "ObstacleSceneNodeGenerator.h"
-	#include "BoxBuilding.h"
+#include "ObstacleSceneNodeGenerator.h"
+#include "BoxBuilding.h"
 
-class BoxSceneNodeGenerator: public ObstacleSceneNodeGenerator
-{
-	friend class SceneDatabaseBuilder;
-public:
-	~BoxSceneNodeGenerator();
+class BoxSceneNodeGenerator : public ObstacleSceneNodeGenerator {
+  friend class SceneDatabaseBuilder;
+  public:
+			~BoxSceneNodeGenerator();
 
-	WallSceneNode *getNextNode( float, float, bool );
+    WallSceneNode*	getNextNode(float, float, bool);
 
-protected:
-	BoxSceneNodeGenerator( const BoxBuilding* );
+  protected:
+			BoxSceneNodeGenerator(const BoxBuilding*);
 
-private:
-	const BoxBuilding *box;
+  private:
+    const BoxBuilding*	box;
 };
 
-#endif 
+#endif
 
 // Local Variables: ***
 // mode:C++ ***
@@ -40,3 +39,4 @@ private:
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
+

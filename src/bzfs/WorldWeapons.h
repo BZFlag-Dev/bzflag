@@ -11,83 +11,86 @@
  */
 
 #ifndef __WORLDWEAPON_H__
-	#define __WORLDWEAPON_H__
+#define __WORLDWEAPON_H__
 
-	#ifdef _MSC_VER
-		#pragma warning(4:4786)
-	#endif 
+#ifdef _MSC_VER
+#pragma warning(4:4786)
+#endif
 
 /* common header */
-	#include "common.h"
+#include "common.h"
 
 /* system headers */
-	#include <vector>
+#include <vector>
 
 /* common interface headers */
-	#include "Flag.h"
-	#include "TimeKeeper.h"
+#include "Flag.h"
+#include "TimeKeeper.h"
 
-	#include "WorldEventManager.h"
+#include "WorldEventManager.h"
 
-	#define _MAX_WORLD_SHOTS 30
+#define _MAX_WORLD_SHOTS 30
 
 /** WorldWeapons is a container class that holds weapons
  */
 class WorldWeapons
 {
 public:
-	WorldWeapons();
-	~WorldWeapons();
-	void fire();
-	void add( const FlagType *type, const float *origin, float direction, float tilt, TeamColor teamColor, float initdelay, const std::vector < float >  &delay, TimeKeeper &sync );
-	float nextTime();
-	void clear();
-	unsigned int count(); // returns the number of world weapons
-	int packSize()const;
-	void *pack( void *buf )const;
+  WorldWeapons();
+  ~WorldWeapons();
+  void fire();
+  void add(const FlagType *type, const float *origin,
+	   float direction, float tilt, TeamColor teamColor,
+	   float initdelay, const std::vector<float> &delay,
+	   TimeKeeper &sync);
+  float nextTime();
+  void clear();
+  unsigned int count(); // returns the number of world weapons
+  int packSize() const;
+  void *pack(void *buf) const;
 
-	int getNewWorldShotID( void );
+  int getNewWorldShotID ( void );
 
 private:
-	struct Weapon
-	{
-		const FlagType *type;
-		TeamColor teamColor;
-		float origin[3];
-		float direction;
-		float tilt;
-		float initDelay;
-		std::vector < float > delay;
-		TimeKeeper nextTime;
-		int nextDelay;
-	};
+  struct Weapon
+  {
+    const FlagType	*type;
+    TeamColor		teamColor;
+    float		origin[3];
+    float		direction;
+    float		tilt;
+    float	initDelay;
+    std::vector<float>  delay;
+    TimeKeeper		nextTime;
+    int			nextDelay;
+  };
 
-	std::vector < Weapon * > weapons;
-	int worldShotId;
+  std::vector<Weapon*> weapons;
+  int worldShotId;
 
-	WorldWeapons( const WorldWeapons &w );
-	WorldWeapons &operator = ( const WorldWeapons &w )const;
+  WorldWeapons( const WorldWeapons &w);
+  WorldWeapons& operator=(const WorldWeapons &w) const;
 };
 
-class WorldWeaponGlobalEventHandler: public bz_EventHandler
+class WorldWeaponGlobalEventHandler : public bz_EventHandler
 {
 public:
-	WorldWeaponGlobalEventHandler( FlagType *type, const float *origin, float direction, float tilt, TeamColor teamColor );
+	WorldWeaponGlobalEventHandler(FlagType *type, const float *origin,float direction, float tilt,TeamColor teamColor );
 	virtual ~WorldWeaponGlobalEventHandler();
 
-	virtual void process( bz_EventData *eventData );
+	virtual void process ( bz_EventData *eventData );
 
 protected:
-	FlagType *type;
-	float origin[3];
-	float direction;
-	float tilt;
-	bz_eTeamType team;
+	FlagType	*type;
+	float		origin[3];
+	float		direction;
+	float		tilt;
+	bz_eTeamType	team;
 };
 
-int fireWorldWep( FlagType *type, float lifetime, PlayerId player, float *pos, float tilt, float direction, int shotID, float dt );
+int fireWorldWep ( FlagType* type, float lifetime, PlayerId player, float *pos, float tilt, float direction, int shotID, float dt );
 
-#endif 
+#endif
 
 // Local Variables: ***
 // mode:C++ ***

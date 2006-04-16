@@ -11,21 +11,21 @@
  */
 
 #ifndef __BZFSDL_H__
-	#define __BZFSDL_H__
+#define __BZFSDL_H__
 
 /** this file contains headers necessary for SDL */
 
-	#ifdef HAVE_SDL
-		#ifdef HAVE_SDL_SDL_H
-			#include <SDL/SDL.h>
-			#include <SDL/SDL_thread.h>
-			#include <SDL/SDL_getenv.h>
-		#else // autotools adds an SDL-specific include path
-			#include "SDL.h"
-			#include "SDL_thread.h"
-			#include "SDL_getenv.h"
-		#endif //HAVE_SDL_SDL_H
-	#endif //HAVE_SDL
+#ifdef HAVE_SDL
+#  ifdef HAVE_SDL_SDL_H
+#    include <SDL/SDL.h>
+#    include <SDL/SDL_thread.h>
+#    include <SDL/SDL_getenv.h>
+#  else // autotools adds an SDL-specific include path
+#    include "SDL.h"
+#    include "SDL_thread.h"
+#    include "SDL_getenv.h"
+#  endif //HAVE_SDL_SDL_H
+#endif //HAVE_SDL
 
 #endif /* __BZFSDL_H__ */
 

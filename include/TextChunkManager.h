@@ -11,66 +11,64 @@
  */
 
 #ifndef __TEXTCHUNKMANAGER_H__
-	#define __TEXTCHUNKMANAGER_H__
+#define __TEXTCHUNKMANAGER_H__
 
-	#include "common.h"
+#include "common.h"
 
 /* system interface headers */
-	#include <vector>
-	#include <map>
-	#include <string>
+#include <vector>
+#include <map>
+#include <string>
 
 
-typedef std::vector < std::string > StringVector;
+typedef std::vector<std::string> StringVector;
 
 
 // holds a vector of strings loaded from a file
-class TextChunk
-{
+class TextChunk {
 public:
-	TextChunk();
-	TextChunk( const TextChunk &tc );
-	TextChunk( const std::string &fileName, const int _maxLines =  - 1, const int _maxLineLength =  - 1 );
+  TextChunk();
+  TextChunk(const TextChunk& tc);
+  TextChunk(const std::string& fileName, const int _maxLines = -1, const int _maxLineLength = -1);
 
-	size_t size()const;
-	const StringVector &getVector()const;
-	bool reload();
-
-private:
-	StringVector parse( const int _max_lines =  - 1 );
+  size_t size() const;
+  const StringVector& getVector() const;
+  bool reload();
 
 private:
-	std::string fileName;
-	int maxLines;
-	int maxLineLength;
-	StringVector theVector;
+  StringVector parse(const int _max_lines = -1);
+
+private:
+  std::string fileName;
+  int maxLines;
+  int maxLineLength;
+  StringVector theVector;
 };
 
 // maintains a list of lists of strings, more or less a bunch
 // of files that can be read into and managed by this class.
 // chunkname is the name that is used to index into this list.
 // note that there is no delete function as of yet.
-class TextChunkManager
-{
-public:
-	// load the file fileName into the chunk specified by chunkname
-	// if the chunkname is already taken it will *not* be replaced
-	bool parseFile( const std::string &fileName, const std::string &chunkName, const int maxLines =  - 1, const int maxLineLength =  - 1 );
+class TextChunkManager {
+  public:
+    // load the file fileName into the chunk specified by chunkname
+    // if the chunkname is already taken it will *not* be replaced
+    bool parseFile(const std::string &fileName, const std::string &chunkName, const int maxLines = -1, const int maxLineLength = -1);
 
-	// get a chunk given a name of the chunk returns null if it can't find it
-	const StringVector *getTextChunk( const std::string &chunkName )const;
+    // get a chunk given a name of the chunk returns null if it can't find it
+    const StringVector* getTextChunk(const std::string &chunkName) const;
 
-	// get the list of current stored chunk names
-	const StringVector &getChunkNames()const;
+    // get the list of current stored chunk names
+    const StringVector& getChunkNames() const;
 
-	// reload all of the text chunks from their source files
-	// (if a file's reload fails, we keep the old data)
-	void reload();
+    // reload all of the text chunks from their source files
+    // (if a file's reload fails, we keep the old data)
+    void reload();
 
-private:
-	typedef std::map < std::string, TextChunk > TextChunkMap;
-	TextChunkMap theChunks; // a mapping of names of chunks to chunks
-	StringVector chunkNames; // vector of all the names of the chunks
+  private:
+    typedef std::map<std::string, TextChunk> TextChunkMap;
+    TextChunkMap theChunks; // a mapping of names of chunks to chunks
+    StringVector chunkNames; // vector of all the names of the chunks
 };
 
 #endif /* __TEXTCHUNKMANAGER_H__ */
@@ -82,3 +80,4 @@ private:
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
+

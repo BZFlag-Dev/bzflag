@@ -11,32 +11,32 @@
  */
 
 #ifndef __EFFECTSMENU_H__
-	#define __EFFECTSMENU_H__
+#define __EFFECTSMENU_H__
 
-	#include "common.h"
+#include "common.h"
 
 /* common interface headers */
-	#include "HUDDialog.h"
+#include "HUDDialog.h"
 
 /* local interface headers */
-	#include "MenuDefaultKey.h"
-	#include "HUDuiDefaultKey.h"
+#include "MenuDefaultKey.h"
+#include "HUDuiDefaultKey.h"
 
 
 /** this class provides options for setting the gui
  */
-class EffectsMenu: public HUDDialog
-{
+class EffectsMenu : public HUDDialog {
 public:
-	EffectsMenu();
-	~EffectsMenu();
+  EffectsMenu();
+  ~EffectsMenu();
 
-	HUDuiDefaultKey *getDefaultKey()
-	{
-		return MenuDefaultKey::getInstance();
-	} void execute();
-	void resize( int width, int height );
-	static void callback( HUDuiControl *w, void *data );
+  HUDuiDefaultKey* getDefaultKey()
+  {
+    return MenuDefaultKey::getInstance();
+  }
+  void execute();
+  void resize(int width, int height);
+  static void callback(HUDuiControl* w, void* data);
 
 private:
 };

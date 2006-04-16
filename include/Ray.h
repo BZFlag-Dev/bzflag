@@ -10,30 +10,29 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef BZF_RAY_H
-	#define BZF_RAY_H
+#ifndef	BZF_RAY_H
+#define	BZF_RAY_H
 
-	#include "common.h"
-	#include <string.h> // for memset()
+#include "common.h"
+#include <string.h> // for memset()
 
 /** Encapsulates a semi-infinite ray. */
 
-class Ray
-{
-public:
-	Ray();
-	Ray( const float *o, const float *d );
-	Ray( const Ray & );
-	~Ray();
-	Ray &operator = ( const Ray & );
+class Ray {
+  public:
+			Ray();
+			Ray(const float* o, const float* d);
+			Ray(const Ray&);
+			~Ray();
+    Ray&		operator=(const Ray&);
 
-	const float *getOrigin()const;
-	const float *getDirection()const;
-	void getPoint( float t, float p[3] )const;
+    const float*	getOrigin() const;
+    const float*	getDirection() const;
+    void		getPoint(float t, float p[3]) const;
 
-private:
-	float o[3];
-	float d[3];
+  private:
+    float		o[3];
+    float		d[3];
 };
 
 //
@@ -42,39 +41,23 @@ private:
 
 inline Ray::Ray()
 {
-	memset( o, 0, sizeof( float ) *3 );
+  memset(o, 0, sizeof(float) * 3);
 }
-
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
 
 inline Ray::~Ray()
 {
-	// do nothing
+  // do nothing
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-inline const float *Ray::getOrigin()const
+inline const float*	Ray::getOrigin() const
 {
-	return o;
+  return o;
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-inline const float *Ray::getDirection()const
+inline const float*	Ray::getDirection() const
 {
-	return d;
+  return d;
 }
-
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
 
 #endif // BZF_RAY_H
 
@@ -85,3 +68,4 @@ inline const float *Ray::getDirection()const
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
+

@@ -11,47 +11,47 @@
  */
 
 #ifndef __ROSTER_H__
-	#define __ROSTER_H__
+#define __ROSTER_H__
 
 // common - 1st
-	#include "common.h"
+#include "common.h"
 
 /* system interface headers */
-	#include <vector>
-	#include <string>
+#include <vector>
+#include <string>
 
 /* common interface headers */
-	#include "global.h"
-	#include "Team.h"
+#include "global.h"
+#include "Team.h"
 
 /* local interface headers */
-	#include "RobotPlayer.h"
-	#include "BaseLocalPlayer.h"
-	#include "RemotePlayer.h"
+#include "RobotPlayer.h"
+#include "BaseLocalPlayer.h"
+#include "RemotePlayer.h"
 
 
 //
 // misc utility routines
 //
 
-typedef std::vector < std::string > NameList;
+typedef std::vector<std::string> NameList;
 
 extern int curMaxPlayers;
-extern RemotePlayer **player;
-extern int playerSize;
-extern RobotPlayer *robots[MAX_ROBOTS];
+extern RemotePlayer** player;
+extern int            playerSize;
+extern RobotPlayer* robots[MAX_ROBOTS];
 extern int numRobots;
 
 extern NameList silencePlayers;
 
 
-Player *lookupPlayer( PlayerId id );
-int lookupPlayerIndex( PlayerId id );
-Player *getPlayerByIndex( int index );
-Player *getPlayerByName( const char *name );
-BaseLocalPlayer *getLocalPlayer( PlayerId id );
-TeamColor PlayerIdToTeam( PlayerId id );
-PlayerId TeamToPlayerId( TeamColor team );
+Player*			lookupPlayer(PlayerId id);
+int			lookupPlayerIndex(PlayerId id);
+Player*			getPlayerByIndex(int index);
+Player*			getPlayerByName(const char* name);
+BaseLocalPlayer*	getLocalPlayer(PlayerId id);
+TeamColor		PlayerIdToTeam(PlayerId id);
+PlayerId		TeamToPlayerId(TeamColor team);
 
 #endif /* __ROSTER_H__ */
 

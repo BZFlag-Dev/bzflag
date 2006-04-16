@@ -11,24 +11,23 @@
  */
 
 #ifndef __BASESCENENODEGENERATOR_H__
-	#define __BASESCENENODEGENERATOR_H__
+#define __BASESCENENODEGENERATOR_H__
 
-	#include "ObstacleSceneNodeGenerator.h"
-	#include "BaseBuilding.h"
+#include "ObstacleSceneNodeGenerator.h"
+#include "BaseBuilding.h"
 
-class BaseSceneNodeGenerator: public ObstacleSceneNodeGenerator
-{
-	friend class SceneDatabaseBuilder;
-	~BaseSceneNodeGenerator();
-public:
-	WallSceneNode *getNextNode( float, float, bool );
-protected:
-	BaseSceneNodeGenerator( const BaseBuilding* );
-private:
-	const BaseBuilding *base;
+class BaseSceneNodeGenerator : public ObstacleSceneNodeGenerator {
+  friend class SceneDatabaseBuilder;
+			~BaseSceneNodeGenerator();
+  public:
+    WallSceneNode*	getNextNode(float, float, bool);
+  protected:
+			BaseSceneNodeGenerator(const BaseBuilding *);
+  private:
+    const BaseBuilding *base;
 };
 
-#endif 
+#endif
 
 // Local Variables: ***
 // mode:C++ ***

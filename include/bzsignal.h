@@ -14,26 +14,20 @@
 
 #if !defined(__sgi)
 /* some platforms don't have a SIG_PF type. */
-	#ifndef SIG_PF
-typedef void( *SIG_PF )( int );
-	#endif 
+#ifndef SIG_PF
+typedef void (*SIG_PF)(int);
+#endif
 #endif /* defined(__sgi) */
 
 #ifdef __cplusplus
-extern "C"
-{
-#endif 
+extern "C" {
+#endif
 
-	SIG_PF bzSignal( int signo, SIG_PF func );
+SIG_PF bzSignal(int signo, SIG_PF func);
 
 #ifdef __cplusplus
 }
-
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-#endif 
+#endif
 
 /*
  * Local Variables: ***
@@ -43,4 +37,4 @@ extern "C"
  * indent-tabs-mode: t ***
  * End: ***
  * ex: shiftwidth=2 tabstop=8
-  */
+ */

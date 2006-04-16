@@ -11,31 +11,27 @@
  */
 
 #ifndef __CUSTOM_DYNAMIC_COLOR_H__
-	#define __CUSTOM_DYNAMIC_COLOR_H__
+#define __CUSTOM_DYNAMIC_COLOR_H__
 
 /* interface header */
-	#include "WorldFileObject.h"
+#include "WorldFileObject.h"
 
 /* common headers */
-	#include "DynamicColor.h"
+#include "DynamicColor.h"
 
-class CustomDynamicColor: public WorldFileObject
-{
-public:
-	CustomDynamicColor();
-	~CustomDynamicColor();
-	virtual bool read( const char *cmd, std::istream &input );
-	virtual void writeToManager()const;
-	bool usesManager()
-	{
-		return true;
-	} 
+class CustomDynamicColor : public WorldFileObject {
+  public:
+    CustomDynamicColor();
+    ~CustomDynamicColor();
+    virtual bool read(const char *cmd, std::istream& input);
+    virtual void writeToManager() const;
+    bool usesManager() { return true; }
 
-private:
-	mutable DynamicColor *color;
+  private:
+    mutable DynamicColor* color;
 };
 
-#endif /* __CUSTOM_DYNAMIC_COLOR_H__ */
+#endif  /* __CUSTOM_DYNAMIC_COLOR_H__ */
 
 // Local variables: ***
 // mode: C++ ***

@@ -11,51 +11,49 @@
  */
 
 #ifndef _MESH_DRAW_MGR_H_
-	#define _MESH_DRAW_MGR_H_
+#define _MESH_DRAW_MGR_H_
 
-	#include "bzfgl.h"
-	#include "MeshDrawInfo.h"
+#include "bzfgl.h"
+#include "MeshDrawInfo.h"
 
-class MeshDrawMgr
-{
-public:
-	MeshDrawMgr( const MeshDrawInfo *drawInfo );
-	~MeshDrawMgr();
+class MeshDrawMgr {
+  public:
+    MeshDrawMgr(const MeshDrawInfo* drawInfo);
+    ~MeshDrawMgr();
 
-	void executeSet( int lod, int set, bool normals, bool texcoords );
-	void executeSetGeometry( int lod, int set );
+    void executeSet(int lod, int set, bool normals, bool texcoords);
+    void executeSetGeometry(int lod, int set);
 
-	static void disableArrays();
-	static void init();
-	static void kill();
+    static void disableArrays();
+    static void init();
+    static void kill();
 
-private:
-	void rawExecuteCommands( int lod, int set );
-	static void rawDisableArrays();
+  private:
+    void rawExecuteCommands(int lod, int set);
+    static void rawDisableArrays();
 
-	void makeLists();
-	void freeLists();
-	static void initContext( void *data );
-	static void freeContext( void *data );
+    void makeLists();
+    void freeLists();
+    static void initContext(void* data);
+    static void freeContext(void* data);
 
-private:
-	const MeshDrawInfo *drawInfo;
+  private:
+    const MeshDrawInfo* drawInfo;
 
-	const DrawLod *drawLods;
-	const GLfloat *vertices;
-	const GLfloat *normals;
-	const GLfloat *texcoords;
+    const DrawLod* drawLods;
+    const GLfloat* vertices;
+    const GLfloat* normals;
+    const GLfloat* texcoords;
 
-	struct LodList
-	{
-		int count;
-		GLuint *setLists;
-	};
+    struct LodList {
+      int count;
+      GLuint* setLists;
+    };
 
-	int lodCount;
-	LodList *lodLists;
+    int lodCount;
+    LodList* lodLists;
 
-	static GLuint unloadList;
+    static GLuint unloadList;
 };
 
 #endif // _MESH_DRAW_MGR_H_
@@ -67,3 +65,4 @@ private:
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
+

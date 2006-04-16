@@ -14,140 +14,111 @@
  *	Encapsulates an OpenGL (point or directional) light source.
  */
 
-#ifndef BZF_OPENGL_LIGHT_H
-	#define BZF_OPENGL_LIGHT_H
+#ifndef	BZF_OPENGL_LIGHT_H
+#define	BZF_OPENGL_LIGHT_H
 
 // common goes first
-	#include "common.h"
+#include "common.h"
 
 // system headers
-	#include <vector>
+#include <vector>
 
 // common headers
-	#include "bzfgl.h"
-	#include "ViewFrustum.h"
+#include "bzfgl.h"
+#include "ViewFrustum.h"
 
 
-class OpenGLLight
-{
-public:
-	OpenGLLight();
-	OpenGLLight( const OpenGLLight & );
-	~OpenGLLight();
-	OpenGLLight &operator = ( const OpenGLLight & );
+class OpenGLLight {
+  public:
+			OpenGLLight();
+			OpenGLLight(const OpenGLLight&);
+			~OpenGLLight();
+    OpenGLLight&	operator=(const OpenGLLight&);
 
-	const GLfloat *getPosition()const;
-	const GLfloat *getColor()const;
-	const GLfloat *getAttenuation()const;
-	GLfloat getMaxDist()const;
+    const GLfloat*	getPosition() const;
+    const GLfloat*	getColor() const;
+    const GLfloat*	getAttenuation() const;
+    GLfloat		getMaxDist() const;
 
-	void setDirection( const GLfloat *xyz );
-	void setPosition( const GLfloat *xyz );
-	void setColor( GLfloat r, GLfloat g, GLfloat b );
-	void setColor( const GLfloat *rgb );
-	void setAttenuation( const GLfloat *clq );
-	void setAttenuation( int index, GLfloat value );
+    void		setDirection(const GLfloat* xyz);
+    void		setPosition(const GLfloat* xyz);
+    void		setColor(GLfloat r, GLfloat g, GLfloat b);
+    void		setColor(const GLfloat* rgb);
+    void		setAttenuation(const GLfloat* clq);
+    void		setAttenuation(int index, GLfloat value);
 
-	void calculateImportance( const ViewFrustum &frustum );
-	GLfloat getImportance()const;
+    void		calculateImportance(const ViewFrustum& frustum);
+    GLfloat		getImportance() const;
 
-	void setOnlyReal( bool value );
-	bool getOnlyReal()const;
-	void setOnlyGround( bool value );
-	bool getOnlyGround()const;
+    void		setOnlyReal(bool value);
+    bool		getOnlyReal() const;
+    void		setOnlyGround(bool value);
+    bool		getOnlyGround() const;
 
-	void execute( int index, bool useList )const;
+    void		execute(int index, bool useList) const;
 
-	static GLint getMaxLights();
-	static void enableLight( int index, bool on ); // const
+    static GLint	getMaxLights();
+    static void		enableLight(int index, bool on); // const
 
-protected:
-	void makeLists();
-	void freeLists();
-	void genLight( GLenum light )const;
+  protected:
+    void		makeLists();
+    void		freeLists();
+    void		genLight(GLenum light) const;
 
-private:
-	static void freeContext( void* );
-	static void initContext( void* );
+  private:
+    static void		freeContext(void*);
+    static void		initContext(void*);
 
-private:
-	GLfloat pos[4];
-	GLfloat color[4];
-	GLfloat atten[3];
-	GLfloat maxDist;
-	GLfloat importance;
-	bool onlyReal;
-	bool onlyGround;
-	GLuint *lists;
-	static GLint maxLights;
+  private:
+    GLfloat		pos[4];
+    GLfloat		color[4];
+    GLfloat		atten[3];
+    GLfloat		maxDist;
+    GLfloat		importance;
+    bool		onlyReal;
+    bool		onlyGround;
+    GLuint*		lists;
+    static GLint	maxLights;
 };
 
 //
 // OpenGLLight
 //
 
-inline const GLfloat *OpenGLLight::getPosition()const
+inline const GLfloat*	OpenGLLight::getPosition() const
 {
-	return pos;
+  return pos;
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-inline const GLfloat *OpenGLLight::getColor()const
+inline const GLfloat*	OpenGLLight::getColor() const
 {
-	return color;
+  return color;
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-inline const GLfloat *OpenGLLight::getAttenuation()const
+inline const GLfloat*	OpenGLLight::getAttenuation() const
 {
-	return atten;
+  return atten;
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-inline GLfloat OpenGLLight::getMaxDist()const
+inline GLfloat		OpenGLLight::getMaxDist() const
 {
-	return maxDist;
+  return maxDist;
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-inline GLfloat OpenGLLight::getImportance()const
+inline GLfloat		 OpenGLLight::getImportance() const
 {
-	return importance;
+  return importance;
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-inline bool OpenGLLight::getOnlyReal()const
+inline bool		 OpenGLLight::getOnlyReal() const
 {
-	return onlyReal;
+  return onlyReal;
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-inline bool OpenGLLight::getOnlyGround()const
+inline bool		 OpenGLLight::getOnlyGround() const
 {
-	return onlyGround;
+  return onlyGround;
 }
-
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
 
 
 #endif // BZF_OPENGL_LIGHT_H
@@ -159,3 +130,4 @@ inline bool OpenGLLight::getOnlyGround()const
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
+

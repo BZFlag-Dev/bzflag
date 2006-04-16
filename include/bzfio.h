@@ -15,23 +15,23 @@
  */
 
 #ifndef BZF_MYIO
-	#define BZF_MYIO
+#define BZF_MYIO
 
-	#include "common.h"
+#include "common.h"
 
-void setDebugTimestamp( bool enable, bool doMicros );
-void formatDebug( const char *fmt, ... );
+void setDebugTimestamp (bool enable, bool doMicros);
+void formatDebug(const char* fmt, ...);
 
 /* egcs headers on linux define NULL as (void*)0.  that's a no no in C++. */
-	#if defined(NULL)
-		#undef NULL
-	#endif 
-	#define NULL 0
+#if defined(NULL)
+#  undef NULL
+#endif
+#define NULL 0
 
 /* insert any other broken OS conditionals here */
-	#include <iostream>
+#include <iostream>
 
-#endif 
+#endif
 
 
 
@@ -44,3 +44,4 @@ void formatDebug( const char *fmt, ... );
  * End: ***
  * ex: shiftwidth=2 tabstop=8
  */
+

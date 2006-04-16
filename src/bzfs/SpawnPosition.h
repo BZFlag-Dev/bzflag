@@ -13,81 +13,68 @@
 // object that creates and contains a spawn position
 
 #ifndef __SPAWNPOSITION_H__
-	#define __SPAWNPOSITION_H__
+#define __SPAWNPOSITION_H__
 
-	#include "common.h"
+#include "common.h"
 
 /* local interface headers */
-	#include "SpawnPolicy.h"
+#include "SpawnPolicy.h"
 
 
 /** SpawnPosition represents a single spawn position and encapsulates
  *  the logic for selecting that new position based on the map, world
  *  configuration settings, and current game activity.
  */
-class SpawnPosition
-{
+class SpawnPosition {
 
 public:
-	SpawnPosition( int playerId, bool onGroundOnly, bool notNearEdges );
-	~SpawnPosition();
+  SpawnPosition(int playerId, bool onGroundOnly, bool notNearEdges);
+  ~SpawnPosition();
 
-	/** used to override the default spawn policy.  call this before
-	 *  creating SpawnPosition objects.
-	 */
-	static void setSpawnPolicy( SpawnPolicy *policy );
+  /** used to override the default spawn policy.  call this before
+   *  creating SpawnPosition objects.
+   */
+  static void setSpawnPolicy(SpawnPolicy* policy);
 
-	float getX()const;
-	float getY()const;
-	float getZ()const;
-	float getAzimuth()const;
+  float getX() const;
+  float getY() const;
+  float getZ() const;
+  float getAzimuth() const;
 
 private:
-	float azimuth;
-	float pos[3];
+  float	      azimuth;
+  float       pos[3];
 
-	/* class data - determines how the pos and azimuth are determined */
-	static SpawnPolicy *policy;
+  /* class data - determines how the pos and azimuth are determined */
+  static SpawnPolicy *policy;
 };
 
-inline float SpawnPosition::getX()const
+inline float SpawnPosition::getX() const
 {
-	return pos[0];
+  return pos[0];
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-inline float SpawnPosition::getY()const
+inline float SpawnPosition::getY() const
 {
-	return pos[1];
+  return pos[1];
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-inline float SpawnPosition::getZ()const
+inline float SpawnPosition::getZ() const
 {
-	return pos[2];
+  return pos[2];
 }
 
 /** returns the rotational orientation of this spawn position, from
  *  facing 'North' in radians.
  */
-inline float SpawnPosition::getAzimuth()const
+inline float SpawnPosition::getAzimuth() const
 {
-	return azimuth;
+  return azimuth;
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-#else 
+#else
 class SpawnPosition;
-#endif /* __SPAWNPOSITION_H__ */
+#endif  /* __SPAWNPOSITION_H__ */
 
 // Local Variables: ***
 // mode:C++ ***

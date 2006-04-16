@@ -24,197 +24,179 @@
 #include "LocalPlayer.h"
 #include "Roster.h"
 
-ShotStats::ShotStats(): HUDDialog()
+ShotStats::ShotStats() : HUDDialog()
 {
-	std::vector < HUDuiControl * >  &listHUD = getControls();
+  std::vector<HUDuiControl*>& listHUD = getControls();
 
-	// add title
-	createLabel( "Shot Statistics", listHUD );
+  // add title
+  createLabel("Shot Statistics", listHUD);
 
-	// key
-	createLabel( "Shots Hit/Fired", listHUD );
+  // key
+  createLabel("Shots Hit/Fired", listHUD);
 
-	columns = 11;
-	rows = 0;
+  columns = 11;
+  rows = 0;
 
-	// section headings (upper)
-	createLabel( "", listHUD );
-	createLabel( "", listHUD );
-	createLabel( "", listHUD );
-	createLabel( "", listHUD );
-	createLabel( "", listHUD );
-	createLabel( "", listHUD );
-	createLabel( "Super", listHUD );
-	createLabel( "Shock", listHUD );
-	createLabel( "", listHUD );
-	createLabel( "Fave.", listHUD );
-	createLabel( "Best", listHUD );
-	++rows;
+  // section headings (upper)
+  createLabel("", listHUD);
+  createLabel("", listHUD);
+  createLabel("", listHUD);
+  createLabel("", listHUD);
+  createLabel("", listHUD);
+  createLabel("", listHUD);
+  createLabel("Super", listHUD);
+  createLabel("Shock", listHUD);
+  createLabel("", listHUD);
+  createLabel("Fave.", listHUD);
+  createLabel("Best", listHUD);
+  ++rows;
 
-	// section headings (lower)
-	createLabel( "Player", listHUD );
-	createLabel( "Hit%", listHUD );
-	createLabel( "Total", listHUD );
-	createLabel( "Norm", listHUD );
-	createLabel( "GM", listHUD );
-	createLabel( "Laser", listHUD );
-	createLabel( "Bullet", listHUD );
-	createLabel( "Wave", listHUD );
-	createLabel( "Thief", listHUD );
-	createLabel( "Flag", listHUD );
-	createLabel( "Flag", listHUD );
-	++rows;
+  // section headings (lower)
+  createLabel("Player", listHUD);
+  createLabel("Hit%", listHUD);
+  createLabel("Total", listHUD);
+  createLabel("Norm", listHUD);
+  createLabel("GM", listHUD);
+  createLabel("Laser", listHUD);
+  createLabel("Bullet", listHUD);
+  createLabel("Wave", listHUD);
+  createLabel("Thief", listHUD);
+  createLabel("Flag", listHUD);
+  createLabel("Flag", listHUD);
+  ++rows;
 
-	// my statistics first
-	LocalPlayer *myTank = LocalPlayer::getMyTank();
-	if( myTank->getTeam() != ObserverTeam )
-	{
-		addStats(( Player* )myTank, listHUD );
-	}
+  // my statistics first
+  LocalPlayer* myTank = LocalPlayer::getMyTank();
+  if (myTank->getTeam() != ObserverTeam) {
+    addStats((Player*)myTank, listHUD);
+  }
 
-	// add statistics for each player
-	for( int i = 0; i < curMaxPlayers; ++i )
-	{
-		if( player[i] && ( player[i]->getTeam() != ObserverTeam ))
-		{
-			addStats(( Player* )player[i], listHUD );
-		}
-	}
+  // add statistics for each player
+  for (int i = 0; i < curMaxPlayers; ++i) {
+    if (player[i] && (player[i]->getTeam() != ObserverTeam)) {
+      addStats((Player*)player[i], listHUD);
+    }
+  }
 
-	resize( HUDDialog::getWidth(), HUDDialog::getHeight());
-	initNavigation( listHUD, 1, 1 );
+  resize(HUDDialog::getWidth(), HUDDialog::getHeight());
+  initNavigation(listHUD, 1, 1);
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-ShotStats::~ShotStats(){}
-
-void ShotStats::createLabel( const std::string &str, std::vector < HUDuiControl * >  &_list )
+ShotStats::~ShotStats()
 {
-	HUDuiLabel *control = new HUDuiLabel;
-	control->setFontFace( getFontFace());
-	control->setString( str );
-	_list.push_back( control );
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-void ShotStats::addStats( Player *_player, std::vector < HUDuiControl * >  &_list )
+void ShotStats::createLabel(const std::string &str,
+			    std::vector<HUDuiControl*> &_list)
 {
-	const ShotStatistics *stats = _player->getShotStatistics();
-	createLabel( _player->getCallSign(), _list );
-
-	createLabel( TextUtils::format( "%2d%%", stats->getTotalPerc()), _list );
-	createLabel( TextUtils::format( "%d/%d", stats->getTotalHit(), stats->getTotalFired()), _list );
-	createLabel( TextUtils::format( "%d/%d", stats->getNormalHit(), stats->getNormalFired()), _list );
-	createLabel( TextUtils::format( "%d/%d", stats->getGMHit(), stats->getGMFired()), _list );
-	createLabel( TextUtils::format( "%d/%d", stats->getLHit(), stats->getLFired()), _list );
-	createLabel( TextUtils::format( "%d/%d", stats->getSBHit(), stats->getSBFired()), _list );
-	createLabel( TextUtils::format( "%d/%d", stats->getSWHit(), stats->getSWFired()), _list );
-	createLabel( TextUtils::format( "%d/%d", stats->getTHHit(), stats->getTHFired()), _list );
-
-	std::string flagName = stats->getFavoriteFlag()->flagAbbv;
-	if( flagName.empty())
-		flagName = "None";
-	createLabel( flagName, _list );
-
-	flagName = stats->getBestFlag()->flagAbbv;
-	if( flagName.empty())
-		flagName = "None";
-	createLabel( flagName, _list );
-
-	++rows;
+  HUDuiLabel* control = new HUDuiLabel;
+  control->setFontFace(getFontFace());
+  control->setString(str);
+  _list.push_back(control);
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-const int ShotStats::getFontFace()
+void ShotStats::addStats(Player *_player, std::vector<HUDuiControl*> &_list)
 {
-	// create font
-	return FontManager::instance().getFaceID( BZDB.get( "sansSerifFont" ));
+  const ShotStatistics* stats = _player->getShotStatistics();
+  createLabel(_player->getCallSign(), _list);
+
+  createLabel(TextUtils::format("%2d%%", stats->getTotalPerc()), _list);
+  createLabel(TextUtils::format("%d/%d", stats->getTotalHit(),
+				stats->getTotalFired()),  _list);
+  createLabel(TextUtils::format("%d/%d", stats->getNormalHit(),
+				stats->getNormalFired()), _list);
+  createLabel(TextUtils::format("%d/%d", stats->getGMHit(),
+				stats->getGMFired()),     _list);
+  createLabel(TextUtils::format("%d/%d", stats->getLHit(),
+				stats->getLFired()),      _list);
+  createLabel(TextUtils::format("%d/%d", stats->getSBHit(),
+				stats->getSBFired()),     _list);
+  createLabel(TextUtils::format("%d/%d", stats->getSWHit(),
+				stats->getSWFired()),     _list);
+  createLabel(TextUtils::format("%d/%d", stats->getTHHit(),
+				stats->getTHFired()),     _list);
+
+  std::string flagName = stats->getFavoriteFlag()->flagAbbv;
+  if (flagName.empty())
+    flagName = "None";
+  createLabel(flagName, _list);
+
+  flagName = stats->getBestFlag()->flagAbbv;
+  if (flagName.empty())
+    flagName = "None";
+  createLabel(flagName, _list);
+
+  ++rows;
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-HUDuiDefaultKey *ShotStats::getDefaultKey()
+const int		ShotStats::getFontFace()
 {
-	return ShotStatsDefaultKey::getInstance();
+  // create font
+  return FontManager::instance().getFaceID(BZDB.get("sansSerifFont"));
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-void ShotStats::execute()
+HUDuiDefaultKey*	ShotStats::getDefaultKey()
 {
-	HUDDialogStack::get()->pop();
+  return ShotStatsDefaultKey::getInstance();
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-void ShotStats::resize( int _width, int _height )
+void			ShotStats::execute()
 {
-	HUDDialog::resize( _width, _height );
+  HUDDialogStack::get()->pop();
+}
 
-	// Reposition everything -- that's gonna be a challenge!
+void			ShotStats::resize(int _width, int _height)
+{
+  HUDDialog::resize(_width, _height);
 
-	FontManager &fm = FontManager::instance();
+  // Reposition everything -- that's gonna be a challenge!
 
-	// set up table
-	// total width / (number of columns + 3 columns extra for player name + 2 columns margin)
-	const float columnWidth = _width / ( columns + 5.0f );
-	const float fontSize = ( float )columnWidth / 6;
-	const float rowHeight = fm.getStrHeight( getFontFace(), fontSize, " " ) *1.2f;
+  FontManager &fm = FontManager::instance();
 
-	// center title
-	const float titleFontSize = ( float )_height / 15.0f;
-	std::vector < HUDuiControl * >  &listHUD = getControls();
-	HUDuiLabel *title = ( HUDuiLabel* )listHUD[0];
-	title->setFontSize( titleFontSize );
-	const float titleWidth = fm.getStrLength( getFontFace(), titleFontSize, title->getString());
-	const float titleHeight = fm.getStrHeight( getFontFace(), titleFontSize, " " );
-	const float titleY = ( float )_height - titleHeight;
-	float x = 0.5f *(( float )_width - titleWidth );
-	float y = titleY;
-	title->setPosition( x, y );
+  // set up table
+  // total width / (number of columns + 3 columns extra for player name + 2 columns margin)
+  const float columnWidth = _width / (columns + 5.0f);
+  const float fontSize = (float) columnWidth / 6;
+  const float rowHeight = fm.getStrHeight(getFontFace(), fontSize, " ") * 1.2f;
 
-	// center key
-	HUDuiLabel *key = ( HUDuiLabel* )listHUD[1];
-	key->setFontSize( fontSize );
-	const float keyCenter = (( columns / 2 ) + 4 ) *columnWidth;
-	const float keyWidth = fm.getStrLength( getFontFace(), fontSize, key->getString());
-	const float keyY = titleY - 2 * fm.getStrHeight( getFontFace(), fontSize, " " );
-	y = keyY;
-	x = keyCenter - 0.5f * keyWidth;
-	key->setPosition( x, y );
+  // center title
+  const float titleFontSize = (float)_height / 15.0f;
+  std::vector<HUDuiControl*>& listHUD = getControls();
+  HUDuiLabel* title = (HUDuiLabel*)listHUD[0];
+  title->setFontSize(titleFontSize);
+  const float titleWidth = fm.getStrLength(getFontFace(), titleFontSize, title->getString());
+  const float titleHeight = fm.getStrHeight(getFontFace(), titleFontSize, " ");
+  const float titleY = (float)_height - titleHeight;
+  float x = 0.5f * ((float)_width - titleWidth);
+  float y = titleY;
+  title->setPosition(x, y);
 
-	for( int i = 2; i < ( int )listHUD.size(); ++i )
-	{
-		// determine row & column (i - 2 to account for title & key)
-		int row = ( i - 2 ) / columns;
-		int column = ( i - 2 ) - ( columns *row ) + 1;
-		// account for 3 extra columns in player name
-		if( column > 1 )
-			column = column + 3;
+  // center key
+  HUDuiLabel* key = (HUDuiLabel*)listHUD[1];
+  key->setFontSize(fontSize);
+  const float keyCenter = ((columns / 2) + 4) * columnWidth;
+  const float keyWidth = fm.getStrLength(getFontFace(), fontSize, key->getString());
+  const float keyY = titleY - 2 * fm.getStrHeight(getFontFace(), fontSize, " ");
+  y = keyY;
+  x = keyCenter - 0.5f * keyWidth;
+  key->setPosition(x, y);
 
-		// find coordinates corresponding to this row & column
-		x = column * columnWidth;
-		y = keyY - ( row + 1 ) *rowHeight;
+  for (int i = 2; i < (int)listHUD.size(); ++i) {
+    // determine row & column (i - 2 to account for title & key)
+    int row = (i - 2) / columns;
+    int column = (i - 2) - (columns * row) + 1;
+    // account for 3 extra columns in player name
+    if (column > 1)
+      column = column + 3;
 
-		// move label to the specified coordinates
-		listHUD[i]->setFontSize( fontSize );
-		listHUD[i]->setPosition( x, y );
-	}
+    // find coordinates corresponding to this row & column
+    x = column * columnWidth;
+    y = keyY - (row + 1) * rowHeight;
+
+    // move label to the specified coordinates
+    listHUD[i]->setFontSize(fontSize);
+    listHUD[i]->setPosition(x, y);
+  }
 
 }
 
@@ -225,3 +207,4 @@ void ShotStats::resize( int _width, int _height )
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
+

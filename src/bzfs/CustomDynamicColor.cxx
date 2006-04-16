@@ -25,151 +25,125 @@
 
 CustomDynamicColor::CustomDynamicColor()
 {
-	color = new DynamicColor;
-	return ;
+  color = new DynamicColor;
+  return;
 }
-
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
 
 
 CustomDynamicColor::~CustomDynamicColor()
 {
-	delete color;
-	return ;
+  delete color;
+  return;
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
 
-
-bool CustomDynamicColor::read( const char *cmd, std::istream &input )
+bool CustomDynamicColor::read(const char *cmd, std::istream& input)
 {
-	int channel =  - 1;
+  int channel = -1;
 
-	if( strcasecmp( "red", cmd ) == 0 )
-	{
-		channel = 0;
-	}
-	else if( strcasecmp( "green", cmd ) == 0 )
-	{
-		channel = 1;
-	}
-	else if( strcasecmp( "blue", cmd ) == 0 )
-	{
-		channel = 2;
-	}
-	else if( strcasecmp( "alpha", cmd ) == 0 )
-	{
-		channel = 3;
-	}
-	else
-	{
-		// NOTE: we don't use a WorldFileObstacle
-		return WorldFileObject::read( cmd, input );
-	}
+  if (strcasecmp ("red", cmd) == 0) {
+    channel = 0;
+  }
+  else if (strcasecmp ("green", cmd) == 0) {
+    channel = 1;
+  }
+  else if (strcasecmp ("blue", cmd) == 0) {
+    channel = 2;
+  }
+  else if (strcasecmp ("alpha", cmd) == 0) {
+    channel = 3;
+  }
+  else {
+    // NOTE: we don't use a WorldFileObstacle
+    return WorldFileObject::read(cmd, input);
+  }
 
-	// in case WorldFileObject() at a later date
-	if( channel < 0 )
-	{
-		std::cout << "unknown color channel" << std::endl;
-		return false;
-	}
+  // in case WorldFileObject() at a later date
+  if (channel < 0) {
+    std::cout << "unknown color channel" << std::endl;
+    return false;
+  }
 
-	std::string args;
-	std::string command;
-	std::getline( input, args );
-	std::istringstream parms( args );
-	input.putback( '\n' );
+  std::string args;
+  std::string command;
+  std::getline(input, args);
+  std::istringstream parms(args);
+  input.putback('\n');
 
-	if( !( parms >> command ))
-	{
-		std::cout << "missing parameter type for " << cmd << " channel" << std::endl;
-		return false;
-	}
+  if (!(parms >> command)) {
+    std::cout << "missing parameter type for "
+	      << cmd << " channel" << std::endl;
+    return false;
+  }
 
-	if( strcasecmp( command.c_str(), "limits" ) == 0 )
-	{
-		float min, max;
-		if( !( parms >> min >> max ))
-		{
-			std::cout << "missing limits for " << cmd << " channel" << std::endl;
-			return false;
-		}
-		color->setLimits( channel, min, max );
-	}
-	else if( strcasecmp( command.c_str(), "sinusoid" ) == 0 )
-	{
-		float data[3];
-		if( !( parms >> data[0] >> data[1] >> data[2] ))
-		{
-			std::cout << "missing sinusoid parameters for " << cmd << " channel" << std::endl;
-			return false;
-		}
-		color->addSinusoid( channel, data );
-	}
-	else if( strcasecmp( command.c_str(), "clampup" ) == 0 )
-	{
-		float data[3];
-		if( !( parms >> data[0] >> data[1] >> data[2] ))
-		{
-			std::cout << "missing clampup parameters for " << cmd << " channel" << std::endl;
-			return false;
-		}
-		color->addClampUp( channel, data );
-	}
-	else if( strcasecmp( command.c_str(), "clampdown" ) == 0 )
-	{
-		float data[3];
-		if( !( parms >> data[0] >> data[1] >> data[2] ))
-		{
-			std::cout << "missing clampdown parameters for " << cmd << " channel" << std::endl;
-			return false;
-		}
-		color->addClampDown( channel, data );
-	}
-	else if( strcasecmp( command.c_str(), "sequence" ) == 0 )
-	{
-		float period, offset;
-		std::vector < char > list;
-		if( !( parms >> period >> offset ))
-		{
-			std::cout << "missing sequence period for " << cmd << " channel" << std::endl;
-			return false;
-		}
-		int tmp;
-		while( parms >> tmp )
-		{
-			list.push_back(( char )tmp );
-		}
-		color->setSequence( channel, period, offset, list );
-	}
-	else
-	{
-		return false;
-	}
+  if (strcasecmp (command.c_str(), "limits") == 0) {
+    float min, max;
+    if (!(parms >> min >> max)) {
+      std::cout << "missing limits for " << cmd << " channel" << std::endl;
+      return false;
+    }
+    color->setLimits(channel, min, max);
+  }
+  else if (strcasecmp (command.c_str(), "sinusoid") == 0) {
+    float data[3];
+    if (!(parms >> data[0] >> data[1] >> data[2])) {
+      std::cout << "missing sinusoid parameters for " << cmd << " channel"
+		<< std::endl;
+      return false;
+    }
+    color->addSinusoid(channel, data);
+  }
+  else if (strcasecmp (command.c_str(), "clampup") == 0) {
+    float data[3];
+    if (!(parms >> data[0] >> data[1] >> data[2])) {
+      std::cout << "missing clampup parameters for " << cmd << " channel"
+		<< std::endl;
+      return false;
+    }
+    color->addClampUp(channel, data);
+  }
+  else if (strcasecmp (command.c_str(), "clampdown") == 0) {
+    float data[3];
+    if (!(parms >> data[0] >> data[1] >> data[2])) {
+      std::cout << "missing clampdown parameters for " << cmd << " channel"
+		<< std::endl;
+      return false;
+    }
+    color->addClampDown(channel, data);
+  }
+  else if (strcasecmp (command.c_str(), "sequence") == 0) {
+    float period, offset;
+    std::vector<char> list;
+    if (!(parms >> period >> offset)) {
+      std::cout << "missing sequence period for " << cmd << " channel"
+		<< std::endl;
+      return false;
+    }
+    int tmp;
+    while (parms >> tmp) {
+      list.push_back((char)tmp);
+    }
+    color->setSequence(channel, period, offset, list);
+  }
+  else {
+    return false;
+  }
 
-	return true;
+  return true;
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
 
-
-void CustomDynamicColor::writeToManager()const
+void CustomDynamicColor::writeToManager() const
 {
-	color->setName( name );
-	if(( name.size() > 0 ) && ( DYNCOLORMGR.findColor( name ) >= 0 ))
-	{
-		std::cout << "warning: duplicate dynamic color" << " (" << name << ")" << std::endl;
-	}
-	color->finalize();
-	DYNCOLORMGR.addColor( color );
-	color = NULL;
-	return ;
+  color->setName(name);
+  if ((name.size() > 0) && (DYNCOLORMGR.findColor(name) >= 0)) {
+    std::cout << "warning: duplicate dynamic color"
+	      << " (" << name << ")" << std::endl;
+  }
+  color->finalize();
+  DYNCOLORMGR.addColor (color);
+  color = NULL;
+  return;
 }
 
 

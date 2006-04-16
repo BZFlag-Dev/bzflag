@@ -11,31 +11,27 @@
  */
 
 #ifndef __CUSTOM_TEXUTRE_MATRIX_H__
-	#define __CUSTOM_TEXUTRE_MATRIX_H__
+#define __CUSTOM_TEXUTRE_MATRIX_H__
 
 /* interface header */
-	#include "WorldFileObject.h"
+#include "WorldFileObject.h"
 
 /* common headers */
-	#include "TextureMatrix.h"
+#include "TextureMatrix.h"
 
-class CustomTextureMatrix: public WorldFileObject
-{
-public:
-	CustomTextureMatrix();
-	~CustomTextureMatrix();
-	virtual bool read( const char *cmd, std::istream &input );
-	virtual void writeToManager()const;
-	bool usesManager()
-	{
-		return true;
-	} 
+class CustomTextureMatrix : public WorldFileObject {
+  public:
+    CustomTextureMatrix();
+    ~CustomTextureMatrix();
+    virtual bool read(const char *cmd, std::istream& input);
+    virtual void writeToManager() const;
+    bool usesManager() { return true; }
 
-private:
-	mutable TextureMatrix *texmat;
+  private:
+    mutable TextureMatrix* texmat;
 };
 
-#endif /* __CUSTOM_TEXUTRE_MATRIX_H__ */
+#endif  /* __CUSTOM_TEXUTRE_MATRIX_H__ */
 
 // Local variables: ***
 // mode: C++ ***

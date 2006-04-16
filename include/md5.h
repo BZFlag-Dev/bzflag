@@ -23,16 +23,16 @@
  * header definitions; now uses stuff from dpkg's config.h
  *  - Ian Jackson <ian@chiark.greenend.org.uk>.
  * Still in the public domain.
- */
+*/
 
 #ifndef BZF_MD5_H
-	#define BZF_MD5_H
+#define BZF_MD5_H
 
-	#include "common.h"
+#include "common.h"
 
 /* system interface headers */
-	#include <string>
-	#include <iostream>
+#include <string>
+#include <iostream>
 
 
 // a small class for calculating MD5 hashes of strings or byte arrays
@@ -48,24 +48,24 @@
 class MD5
 {
 public:
-	uint8_t digest[16];
-	MD5();
-	MD5( const std::string &text );
-	void update( const unsigned char *buf, uint32_t length );
-	void finalize();
-	std::string hexdigest()const;
-	friend std::ostream &operator << ( std::ostream &, MD5 md5 );
+  uint8_t digest[16];
+  MD5();
+  MD5(const std::string& text);
+  void update(const unsigned char *buf, uint32_t length);
+  void finalize();
+  std::string hexdigest() const;
+  friend std::ostream& operator<<(std::ostream&, MD5 md5);
 
 private:
-	uint32_t buf[4];
-	uint32_t bytes[2];
-	uint32_t in[16];
-	bool finalized;
-	void init( void );
-	void transform( void );
+  uint32_t buf[4];
+  uint32_t bytes[2];
+  uint32_t in[16];
+  bool finalized;
+  void init(void);
+  void transform(void);
 };
 
-#endif 
+#endif
 
 // Local Variables: ***
 // mode:C++ ***

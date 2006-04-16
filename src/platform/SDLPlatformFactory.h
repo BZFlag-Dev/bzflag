@@ -15,25 +15,24 @@
  */
 
 #ifndef BZF_SDL_PLATFORM_FACTORY_H
-	#define BZF_SDL_PLATFORM_FACTORY_H
+#define	BZF_SDL_PLATFORM_FACTORY_H
 
-	#include "PlatformFactory.h"
+#include "PlatformFactory.h"
 
-class SdlPlatformFactory: public PlatformFactory
-{
-public:
-	SdlPlatformFactory();
-	~SdlPlatformFactory();
+class SdlPlatformFactory : public PlatformFactory {
+ public:
+  SdlPlatformFactory();
+  ~SdlPlatformFactory();
 
-	BzfDisplay *createDisplay( const char *name, const char* );
-	BzfVisual *createVisual( const BzfDisplay* );
-	BzfWindow *createWindow( const BzfDisplay *, BzfVisual* );
-	BzfMedia *createMedia();
-	BzfJoystick *createJoystick();
+  BzfDisplay*		createDisplay(const char* name, const char*);
+  BzfVisual*		createVisual(const BzfDisplay*);
+  BzfWindow*		createWindow(const BzfDisplay*, BzfVisual*);
+  BzfMedia*		createMedia();
+  BzfJoystick*		createJoystick();
 
-private:
-	SdlPlatformFactory( const SdlPlatformFactory & );
-	SdlPlatformFactory &operator = ( const SdlPlatformFactory & );
+ private:
+  SdlPlatformFactory(const SdlPlatformFactory&);
+  SdlPlatformFactory& operator=(const SdlPlatformFactory&);
 };
 
 #endif // BZF_SDL_PLATFORM_FACTORY_H
@@ -45,3 +44,4 @@ private:
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
+

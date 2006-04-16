@@ -11,64 +11,64 @@
  */
 
 #ifndef BZF_AUDIO_FILE_H
-	#define BZF_AUDIO_FILE_H
+#define BZF_AUDIO_FILE_H
 
-	#include "MediaFile.h"
+#include "MediaFile.h"
 
 
 /** This ABC represents an audio file. It has subclasses for different audio
-formats. */
-class AudioFile: public MediaFile
-{
+    formats. */
+class AudioFile : public MediaFile {
 public:
-	/** Close the audio file. This does *not* destroy the stream. */
-	virtual ~AudioFile();
+  /** Close the audio file. This does *not* destroy the stream. */
+  virtual ~AudioFile();
 
-	// note -- all concrete AudioFile types should have a method to
-	// return the default file extension for files in the format:
-	// static std::string getExtension();
+  // note -- all concrete AudioFile types should have a method to
+  // return the default file extension for files in the format:
+  // static std::string getExtension();
 
-	/** Read more sample data into buffer. Samples are in left, right
-	order for stereo files. Samples are in host byte order.
-	Client must not attempt to read past last sample. Returns
-	false on error. A frame is one sample for each channel.
-	@c buffer must be @c numFrames * @c getNumChannels() *
-	@c getSampleWidth() bytes at least. */
-	virtual bool read( void *buffer, int numFrames ) = 0;
+  /** Read more sample data into buffer. Samples are in left, right
+      order for stereo files. Samples are in host byte order.
+      Client must not attempt to read past last sample. Returns
+      false on error. A frame is one sample for each channel.
+      @c buffer must be @c numFrames * @c getNumChannels() *
+      @c getSampleWidth() bytes at least. */
+  virtual bool read(void* buffer, int numFrames) = 0;
 
-	/** Returns true if the stream was successfully opened as an audio file. */
-	bool isOpen()const;
+  /** Returns true if the stream was successfully opened as an audio file. */
+  bool isOpen() const;
 
-	/** Get the frame rate of the audio file. A frame is one sample
-	for each channel. */
-	int getFramesPerSecond()const;
+  /** Get the frame rate of the audio file. A frame is one sample
+      for each channel. */
+  int			getFramesPerSecond() const;
 
-	/** Get the number of channels in the audio file. */
-	int getNumChannels()const;
+  /** Get the number of channels in the audio file. */
+  int			getNumChannels() const;
 
-	/** Get the number of frames in the audio file. A frame is one sample
-	for each channel. */
-	int getNumFrames()const;
+  /** Get the number of frames in the audio file. A frame is one sample
+      for each channel. */
+  int			getNumFrames() const;
 
-	/** Get the sample width of the audio file, in bytes. */
-	int getSampleWidth()const;
+  /** Get the sample width of the audio file, in bytes. */
+  int			getSampleWidth() const;
 
 protected:
-	AudioFile( std::istream* );
+  AudioFile(std::istream*);
 
-	// save info about the stream.  called by the derived c'tor.
-	// don't call this if the stream is not an audio file.
-	void init( int framesPerSecond, int numChannels, int numFrames, int sampWidth );
+  // save info about the stream.  called by the derived c'tor.
+  // don't call this if the stream is not an audio file.
+  void			init(int framesPerSecond, int numChannels,
+			     int numFrames, int sampWidth);
 
 private:
-	bool open;
-	int framesPerSecond;
-	int numChannels;
-	int numFrames;
-	int sampWidth;
+  bool			open;
+  int			framesPerSecond;
+  int			numChannels;
+  int			numFrames;
+  int			sampWidth;
 };
 
-#endif 
+#endif
 
 
 // Local Variables: ***
@@ -78,3 +78,4 @@ private:
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
+

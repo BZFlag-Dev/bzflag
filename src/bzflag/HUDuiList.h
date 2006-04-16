@@ -16,39 +16,38 @@
  *  a set) control.
  */
 
-#ifndef __HUDUILIST_H__
-	#define __HUDUILIST_H__
+#ifndef	__HUDUILIST_H__
+#define	__HUDUILIST_H__
 
 // ancestor class
-	#include "HUDuiControl.h"
+#include "HUDuiControl.h"
 
-	#include <string>
-	#include <vector>
+#include <string>
+#include <vector>
 
-	#include "BzfEvent.h"
+#include "BzfEvent.h"
 
-class HUDuiList: public HUDuiControl
-{
-public:
-	HUDuiList();
-	~HUDuiList();
+class HUDuiList : public HUDuiControl {
+  public:
+			HUDuiList();
+			~HUDuiList();
 
-	int getIndex()const;
-	void setIndex( int );
+    int			getIndex() const;
+    void		setIndex(int);
 
-	void createSlider( int );
+    void		createSlider(int);
 
-	std::vector < std::string >  &getList();
-	void update();
+    std::vector<std::string>&	getList();
+    void		update();
 
-protected:
-	bool doKeyPress( const BzfKeyEvent & );
-	bool doKeyRelease( const BzfKeyEvent & );
-	void doRender();
+  protected:
+    bool		doKeyPress(const BzfKeyEvent&);
+    bool		doKeyRelease(const BzfKeyEvent&);
+    void		doRender();
 
-private:
-	int index;
-	std::vector < std::string > list;
+  private:
+    int			index;
+    std::vector<std::string>	list;
 };
 
 #endif // __HUDUILIST_H__

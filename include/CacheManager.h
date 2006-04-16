@@ -11,52 +11,50 @@
  */
 
 #ifndef CACHE_MANAGER_H
-	#define CACHE_MANAGER_H
+#define CACHE_MANAGER_H
 
-	#include <time.h>
-	#include <string>
-	#include <vector>
+#include <time.h>
+#include <string>
+#include <vector>
 
-class CacheManager
-{
-public:
-	CacheManager();
-	~CacheManager();
+class CacheManager {
+  public:
+    CacheManager();
+    ~CacheManager();
 
-	typedef struct
-	{
-		std::string url;
-		time_t usedDate;
-		std::string name;
-		int size;
-		time_t date;
-		std::string key;
-	} CacheRecord;
+    typedef struct {
+      std::string url;
+      time_t usedDate;
+      std::string name;
+      int size;
+      time_t date;
+      std::string key;
+    } CacheRecord;
 
-	bool isCacheFileType( const std::string name )const;
-	std::string getLocalName( const std::string name )const;
+    bool isCacheFileType(const std::string name) const;
+    std::string getLocalName(const std::string name) const;
 
-	bool loadIndex();
-	bool saveIndex();
+    bool loadIndex();
+    bool saveIndex();
 
-	bool findURL( const std::string &url, CacheRecord &record );
-	bool addFile( CacheRecord &rec, const void *data );
+    bool findURL(const std::string& url, CacheRecord& record);
+    bool addFile(CacheRecord& rec, const void* data);
 
-	std::vector < CacheRecord > getCacheList()const;
+    std::vector<CacheRecord> getCacheList() const;
 
-	void limitCacheSize();
+    void limitCacheSize();
 
-private:
-	int findRecord( const std::string &url );
+  private:
+    int findRecord(const std::string& url);
 
-private:
-	std::string indexName;
-	std::vector < CacheRecord > records;
+  private:
+    std::string indexName;
+    std::vector<CacheRecord> records;
 };
 
 extern CacheManager CACHEMGR;
 
-#endif 
+#endif
 
 /*
  * Local Variables: ***
@@ -66,4 +64,4 @@ extern CacheManager CACHEMGR;
  * indent-tabs-mode: t ***
  * End: ***
  * ex: shiftwidth=2 tabstop=8
-  */
+ */

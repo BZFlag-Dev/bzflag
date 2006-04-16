@@ -11,14 +11,20 @@
  */
 
 #ifndef COLORS_H
-	#define COLORS_H
+#define COLORS_H
 
-enum ColorCode
-{
-	Default = 0, White, Red, Green, Blue, Purple, Yellow, Cyan
+enum ColorCode {
+  Default = 0,
+  White,
+  Red,
+  Green,
+  Blue,
+  Purple,
+  Yellow,
+  Cyan
 };
 
-#endif 
+#endif
 
 // Local Variables: ***
 // mode:C++ ***
@@ -27,3 +33,4 @@ enum ColorCode
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
+

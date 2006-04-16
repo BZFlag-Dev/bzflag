@@ -26,19 +26,18 @@
 
 CustomBox::CustomBox()
 {
-	size[0] = size[1] = BZDB.eval( StateDatabase::BZDB_BOXBASE );
-	size[2] = BZDB.eval( StateDatabase::BZDB_BOXHEIGHT );
+  size[0] = size[1] = BZDB.eval(StateDatabase::BZDB_BOXBASE);
+  size[2] = BZDB.eval(StateDatabase::BZDB_BOXHEIGHT);
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
 
-
-void CustomBox::writeToGroupDef( GroupDefinition *groupdef )const
+void CustomBox::writeToGroupDef(GroupDefinition *groupdef) const
 {
-	BoxBuilding *box = new BoxBuilding( pos, rotation, fabsf( size[0] ), fabsf( size[1] ), fabsf( size[2] ), driveThrough, shootThrough );
-	groupdef->addObstacle( box );
+  BoxBuilding* box =
+    new BoxBuilding(pos, rotation,
+		    fabsf(size[0]), fabsf(size[1]), fabsf(size[2]),
+		    driveThrough, shootThrough);
+  groupdef->addObstacle(box);
 }
 
 // Local variables: ***

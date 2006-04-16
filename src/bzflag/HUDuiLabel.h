@@ -15,39 +15,38 @@
  *	User interface class for the heads-up display's label (text display) control
  */
 
-#ifndef __HUDUILABEL_H__
-	#define __HUDUILABEL_H__
+#ifndef	__HUDUILABEL_H__
+#define	__HUDUILABEL_H__
 
 // ancestor class
-	#include "HUDuiControl.h"
+#include "HUDuiControl.h"
 
-	#include <string>
-	#include <vector>
+#include <string>
+#include <vector>
 
-	#include "BzfEvent.h"
+#include "BzfEvent.h"
 
-class HUDuiLabel: public HUDuiControl
-{
-public:
-	HUDuiLabel();
-	~HUDuiLabel();
+class HUDuiLabel : public HUDuiControl {
+  public:
+			HUDuiLabel();
+			~HUDuiLabel();
 
-	std::string getString()const;
-	void setString( const std::string &, const std::vector < std::string >  *_params = NULL );
-	void setDarker( bool d ); // render darker than usual when not in focus
-	void setColor( GLfloat r, GLfloat g, GLfloat b );
+    std::string		getString() const;
+    void		setString(const std::string&, const std::vector<std::string> *_params = NULL);
+    void		setDarker(bool d); // render darker than usual when not in focus
+    void		setColor(GLfloat r, GLfloat g, GLfloat b);
 
-protected:
-	void onSetFont();
-	bool doKeyPress( const BzfKeyEvent & );
-	bool doKeyRelease( const BzfKeyEvent & );
-	void doRender();
+  protected:
+    void		onSetFont();
+    bool		doKeyPress(const BzfKeyEvent&);
+    bool		doKeyRelease(const BzfKeyEvent&);
+    void		doRender();
 
-private:
-	std::string string;
-	std::vector < std::string >  *params;
-	bool darker;
-	GLfloat color[3];
+  private:
+    std::string		string;
+    std::vector<std::string> *params;
+    bool		darker;
+    GLfloat		color[3];
 };
 
 #endif // __HUDUILABEL_H__

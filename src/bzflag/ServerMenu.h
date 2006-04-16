@@ -11,88 +11,85 @@
  */
 
 #ifndef __SERVERMENU_H__
-	#define __SERVERMENU_H__
+#define __SERVERMENU_H__
 
 // ancestor classes
-	#include "MenuDefaultKey.h"
-	#include "HUDDialog.h"
+#include "MenuDefaultKey.h"
+#include "HUDDialog.h"
 
 /* system interface headers */
-	#include <string>
-	#include <vector>
+#include <string>
+#include <vector>
 
 /* common interface headers */
-	#include "BzfEvent.h"
-	#include "ServerItem.h"
-	#include "ServerList.h"
+#include "BzfEvent.h"
+#include "ServerItem.h"
+#include "ServerList.h"
 
 /* local interface headers */
-	#include "HUDuiDefaultKey.h"
-	#include "HUDuiLabel.h"
-	#include "HUDuiTypeIn.h"
+#include "HUDuiDefaultKey.h"
+#include "HUDuiLabel.h"
+#include "HUDuiTypeIn.h"
 
 class ServerMenu;
 
-class ServerMenuDefaultKey: public MenuDefaultKey
-{
+class ServerMenuDefaultKey : public MenuDefaultKey {
 public:
-	ServerMenuDefaultKey( ServerMenu *_menu ): menu( _menu ){}
-	~ServerMenuDefaultKey(){}
+  ServerMenuDefaultKey(ServerMenu* _menu) :
+    menu(_menu) { }
+  ~ServerMenuDefaultKey() { }
 
-	bool keyPress( const BzfKeyEvent & );
-	bool keyRelease( const BzfKeyEvent & );
+  bool keyPress(const BzfKeyEvent&);
+  bool keyRelease(const BzfKeyEvent&);
 
 private:
-	ServerMenu *menu;
+  ServerMenu* menu;
 };
 
-class ServerMenu: public HUDDialog
-{
+class ServerMenu : public HUDDialog {
 public:
-	ServerMenu();
-	~ServerMenu(){}
+  ServerMenu();
+  ~ServerMenu() { }
 
-	HUDuiDefaultKey *getDefaultKey()
-	{
-		return  &defaultKey;
-	} int getSelected()const;
-	void setSelected( int );
-	void show();
-	void execute();
-	void dismiss();
-	void resize( int width, int height );
-	static void playingCB( void* );
-	void updateStatus();
+  HUDuiDefaultKey* getDefaultKey() { return &defaultKey; }
+  int getSelected() const;
+  void setSelected(int);
+  void show();
+  void execute();
+  void dismiss();
+  void resize(int width, int height);
+  static void playingCB(void*);
+  void updateStatus();
 
-	bool getFind()const;
-	void setFind( bool mode );
+  bool getFind() const;
+  void setFind(bool mode);
 
-	static const int NumItems;
+  static const int NumItems;
 
 private:
-	void addLabel( const char *str, const char *label );
-	void setStatus( const char *, const std::vector < std::string >  *parms = NULL );
-	void pick();
+  void addLabel(const char* str, const char* label);
+  void setStatus(const char*, const std::vector<std::string> *parms = NULL);
+  void pick();
 
-	ServerItem &serversAt( int index );
+  ServerItem& serversAt(int index);
 
 private:
-	ServerList realServerList;
-	ServerList serverList;
-	ServerMenuDefaultKey defaultKey;
-	HUDuiLabel *status;
+  ServerList realServerList;
+  ServerList serverList;
+  ServerMenuDefaultKey	defaultKey;
+  HUDuiLabel* status;
 
-	HUDuiLabel *pageLabel;
-	int selectedIndex;
-	unsigned int serversFound;
-	unsigned int realServersFound;
+  HUDuiLabel* pageLabel;
+  int selectedIndex;
+  unsigned int serversFound;
+  unsigned int realServersFound;
 
-	HUDuiTypeIn *search;
-	bool findMode;
-	std::string filter;
-	std::string lastFilter;
+  HUDuiTypeIn* search;
+  bool findMode;
+  std::string filter;
+  std::string lastFilter;
 
-	static const int NumReadouts;
+  static const int NumReadouts;
 };
 
 

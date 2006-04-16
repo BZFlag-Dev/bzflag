@@ -15,49 +15,48 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #if !defined(AFX_TEXTTOOLDOC_H__6A92404E_2B4E_4B78_B4D5_CAF3F80BB16F__INCLUDED_)
-	#define AFX_TEXTTOOLDOC_H__6A92404E_2B4E_4B78_B4D5_CAF3F80BB16F__INCLUDED_
+#define AFX_TEXTTOOLDOC_H__6A92404E_2B4E_4B78_B4D5_CAF3F80BB16F__INCLUDED_
 
-	#if _MSC_VER > 1000
-		#pragma once
-	#endif // _MSC_VER > 1000
+#if _MSC_VER > 1000
+#pragma once
+#endif // _MSC_VER > 1000
 
 
-class CTextToolDoc: public CDocument
+class CTextToolDoc : public CDocument
 {
-protected:
-	// create from serialization only
+protected: // create from serialization only
 	CTextToolDoc();
-	DECLARE_DYNCREATE( CTextToolDoc )
+	DECLARE_DYNCREATE(CTextToolDoc)
 
-	// Attributes
+// Attributes
 public:
 
-	// Operations
+// Operations
 public:
 
-	// Overrides
+// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CTextToolDoc)
-public:
+	public:
 	virtual BOOL OnNewDocument();
-	virtual void Serialize( CArchive &ar );
+	virtual void Serialize(CArchive& ar);
 	//}}AFX_VIRTUAL
 
-	// Implementation
+// Implementation
 public:
 	virtual ~CTextToolDoc();
-	#ifdef _DEBUG
-	virtual void AssertValid()const;
-	virtual void Dump( CDumpContext &dc )const;
-	#endif 
+#ifdef _DEBUG
+	virtual void AssertValid() const;
+	virtual void Dump(CDumpContext& dc) const;
+#endif
 
 protected:
 
-	// Generated message map functions
+// Generated message map functions
 protected:
 	//{{AFX_MSG(CTextToolDoc)
-	// NOTE - the ClassWizard will add and remove member functions here.
-	//    DO NOT EDIT what you see in these blocks of generated code !
+		// NOTE - the ClassWizard will add and remove member functions here.
+		//    DO NOT EDIT what you see in these blocks of generated code !
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 };

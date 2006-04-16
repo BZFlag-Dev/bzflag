@@ -17,38 +17,39 @@
 #include <sys/types.h>
 
 #ifdef HAVE_SYS_TIME_H
-	#include <sys/time.h>
-#endif 
+#include <sys/time.h>
+#endif
 
 #include "ares.h"
 #include "ares_private.h"
 
-int ares_fds( ares_channel channel, fd_set *read_fds, fd_set *write_fds )
+int ares_fds(ares_channel channel, fd_set *read_fds, fd_set *write_fds)
 {
-	struct server_state *server;
-	int i, nfds;
+  struct server_state *server;
+  int i, nfds;
 
-	/* No queries, no file descriptors. */
-	if( !channel->queries )
-		return 0;
+  /* No queries, no file descriptors. */
+  if (!channel->queries)
+    return 0;
 
-	nfds = 0;
-	for( i = 0; i < channel->nservers; i++ )
+  nfds = 0;
+  for (i = 0; i < channel->nservers; i++)
+    {
+      server = &channel->servers[i];
+      if (server->udp_socket != ARES_SOCKET_BAD)
 	{
-		server = &channel->servers[i];
-		if( server->udp_socket != ARES_SOCKET_BAD )
-		{
-			FD_SET( server->udp_socket, read_fds );
-			if(( int )server->udp_socket >= nfds )
-				nfds = ( int )( server->udp_socket + 1 );
-		} if( server->tcp_socket != ARES_SOCKET_BAD )
-		{
-			FD_SET( server->tcp_socket, read_fds );
-			if( server->qhead )
-				FD_SET( server->tcp_socket, write_fds );
-			if(( int )server->tcp_socket >= nfds )
-				nfds = ( int )( server->tcp_socket + 1 );
-		}
+	  FD_SET(server->udp_socket, read_fds);
+	  if ((int)server->udp_socket >= nfds)
+	    nfds = (int)(server->udp_socket + 1);
 	}
-	return nfds;
+      if (server->tcp_socket != ARES_SOCKET_BAD)
+	{
+	  FD_SET(server->tcp_socket, read_fds);
+	  if (server->qhead)
+	    FD_SET(server->tcp_socket, write_fds);
+	  if ((int)server->tcp_socket >= nfds)
+	    nfds = (int)(server->tcp_socket + 1);
+	}
+    }
+  return nfds;
 }

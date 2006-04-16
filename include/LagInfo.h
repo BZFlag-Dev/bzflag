@@ -11,80 +11,80 @@
  */
 
 #ifndef __LAGINFO_H__
-	#define __LAGINFO_H__
+#define __LAGINFO_H__
 
-	#include "PlayerInfo.h"
+#include "PlayerInfo.h"
 
 /** This class monitors the lag time for each client
- */
-class LagInfo
-{
+*/
+class LagInfo {
 public:
-	/** A default constructor.
-	It needs a pointer to the Player basic Info,
-	 */
-	LagInfo( PlayerInfo *_info );
+  /** A default constructor.
+      It needs a pointer to the Player basic Info,
+   */
+  LagInfo(PlayerInfo *_info);
 
-	/** Resetting lag value
-	 */
-	void reset();
-	/** Getting lag value (in milliseconds)
-	 */
-	int getLag()const;
-	/** Getting jitter value (in milliseconds)
-	 */
-	int getJitter()const;
-	/** Get the floating point value of the lag (in seconds)
-	 */
-	float getLagAvg()const;
-	/** Get a printable version of lag statistics
-	 */
-	void getLagStats( char *msg, bool isAdmin )const;
-	/** functions to be called whenever a playerUpdate or ping message arrives
-	 */
-	void updatePingLag( void *buf, bool &warn, bool &kick, bool &jittwarn, bool &jittkick );
-	void updateLag( float timestamp, bool ooo );
-	/** get the ping seqno, if need to send one now!
-	 */
-	int getNextPingSeqno( bool &warn, bool &kick );
-	/** update the latency
-	 */
-	void updateLatency( float &waitTime );
-	/** set the threshold for warning/kicking
-	 */
-	static void setThreshold( float _threshold, float _max );
-	static void setJitterThreshold( float _jitterthreshold, float _max );
+  /** Resetting lag value
+  */
+  void	reset();
+  /** Getting lag value (in milliseconds)
+  */
+  int	getLag() const;
+  /** Getting jitter value (in milliseconds)
+  */
+  int	getJitter() const;
+  /** Get the floating point value of the lag (in seconds)
+  */
+  float	getLagAvg() const;
+  /** Get a printable version of lag statistics
+  */
+  void	getLagStats(char* msg, bool isAdmin) const;
+  /** functions to be called whenever a playerUpdate or ping message arrives
+   */
+  void	updatePingLag(void *buf, bool &warn, bool &kick,
+		      bool &jittwarn, bool &jittkick);
+  void	updateLag(float timestamp, bool ooo);
+  /** get the ping seqno, if need to send one now!
+   */
+  int	getNextPingSeqno(bool &warn, bool &kick);
+  /** update the latency
+   */
+  void	updateLatency(float &waitTime);
+  /** set the threshold for warning/kicking
+   */
+  static void setThreshold(float _threshold, float _max);
+  static void setJitterThreshold(float _jitterthreshold, float _max);
 private:
-	PlayerInfo *info;
-	// lag measurement
-	float lagavg;
-	float jitteravg;
-	float lostavg;
-	float lagalpha;
-	float jitteralpha;
-	float lostalpha;
-	int lagcount;
-	int laglastwarn;
-	int lagwarncount;
-	int jittercount;
-	int jitterlastwarn;
-	int jitterwarncount;
-	bool pingpending;
-	TimeKeeper nextping;
-	TimeKeeper lastping;
-	TimeKeeper lastupdate;
-	int pingseqno;
-	int pingssent;
-	// jitter measurement
-	float lasttimestamp;
+  PlayerInfo *info;
+  // lag measurement
+  float       lagavg;
+  float       jitteravg;
+  float       lostavg;
+  float       lagalpha;
+  float       jitteralpha;
+  float       lostalpha;
+  int	 lagcount;
+  int	 laglastwarn;
+  int	 lagwarncount;
+  int    jittercount;
+  int    jitterlastwarn;
+  int    jitterwarncount;
+  bool	pingpending;
+  TimeKeeper  nextping;
+  TimeKeeper  lastping;
+  TimeKeeper  lastupdate;
+  int	 pingseqno;
+  int	 pingssent;
+  // jitter measurement
+  float       lasttimestamp;
 
-	static float threshold;
-	static float jitterthreshold;
-	static float max;
-	static float jittermax;
+  static float threshold;
+  static float jitterthreshold;
+  static float max;
+  static float jittermax;
 };
 
-#endif 
+#endif
 
 // Local Variables: ***
 // mode:C++ ***

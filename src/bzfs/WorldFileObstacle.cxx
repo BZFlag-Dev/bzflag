@@ -11,8 +11,8 @@
  */
 
 #ifdef _MSC_VER
-	#pragma warning( 4: 4786 )
-#endif 
+#pragma warning( 4: 4786 )
+#endif
 
 #include "common.h"
 #include <math.h>
@@ -21,26 +21,22 @@
 
 WorldFileObstacle::WorldFileObstacle()
 {
-	driveThrough = false;
-	shootThrough = false;
+  driveThrough = false;
+  shootThrough = false;
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
 
-
-bool WorldFileObstacle::read( const char *cmd, std::istream &input )
+bool WorldFileObstacle::read(const char *cmd, std::istream& input)
 {
-	if( strcasecmp( cmd, "drivethrough" ) == 0 )
-		driveThrough = true;
-	else if( strcasecmp( cmd, "shootthrough" ) == 0 )
-		shootThrough = true;
-	else if( strcasecmp( cmd, "passable" ) == 0 )
-		driveThrough = shootThrough = true;
-	else
-		return WorldFileLocation::read( cmd, input );
-	return true;
+  if (strcasecmp(cmd, "drivethrough") == 0)
+    driveThrough = true;
+  else if (strcasecmp(cmd, "shootthrough") == 0)
+    shootThrough = true;
+  else if (strcasecmp(cmd, "passable") == 0)
+    driveThrough = shootThrough = true;
+  else
+    return WorldFileLocation::read(cmd, input);
+  return true;
 }
 
 // Local variables: ***

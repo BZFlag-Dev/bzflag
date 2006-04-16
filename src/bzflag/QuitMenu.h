@@ -10,50 +10,43 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef __QUITMENU_H__
-	#define __QUITMENU_H__
+#ifndef	__QUITMENU_H__
+#define __QUITMENU_H__
 
 /* system interface headers */
 
 /* common interface headers */
-	#include "BzfEvent.h"
-	#include "CommandsStandard.h"
+#include "BzfEvent.h"
+#include "CommandsStandard.h"
 
 /* local interface headers */
-	#include "MenuDefaultKey.h"
-	#include "HUDDialog.h"
-	#include "HUDuiDefaultKey.h"
+#include "MenuDefaultKey.h"
+#include "HUDDialog.h"
+#include "HUDuiDefaultKey.h"
 
 
-class QuitMenuDefaultKey: public MenuDefaultKey
-{
+class QuitMenuDefaultKey : public MenuDefaultKey {
 public:
-	QuitMenuDefaultKey(){}
-	~QuitMenuDefaultKey(){}
+  QuitMenuDefaultKey() { }
+  ~QuitMenuDefaultKey() { }
 
-	bool keyPress( const BzfKeyEvent & );
-	bool keyRelease( const BzfKeyEvent & );
+  bool keyPress(const BzfKeyEvent&);
+  bool keyRelease(const BzfKeyEvent&);
 
 };
 
 
-class QuitMenu: public HUDDialog
-{
+class QuitMenu : public HUDDialog {
 public:
-	QuitMenu();
-	~QuitMenu();
+  QuitMenu();
+  ~QuitMenu();
 
-	HUDuiDefaultKey *getDefaultKey()
-	{
-		return  &defaultKey;
-	} void execute()
-	{
-		CommandsStandard::quit();
-	}
-	void resize( int width, int height );
+  HUDuiDefaultKey* getDefaultKey() { return &defaultKey; }
+  void execute() { CommandsStandard::quit(); }
+  void resize(int width, int height);
 
 private:
-	QuitMenuDefaultKey defaultKey;
+  QuitMenuDefaultKey defaultKey;
 
 };
 

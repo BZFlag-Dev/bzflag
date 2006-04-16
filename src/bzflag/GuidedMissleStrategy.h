@@ -11,55 +11,54 @@
  */
 
 #ifndef __GUIDEDMISSLESTRATEGY_H__
-	#define __GUIDEDMISSLESTRATEGY_H__
+#define __GUIDEDMISSLESTRATEGY_H__
 
 /* interface header */
-	#include "ShotStrategy.h"
+#include "ShotStrategy.h"
 
 /* system interface headers */
-	#include <vector>
+#include <vector>
 
 /* common interface headers */
-	#include "SceneDatabase.h"
-	#include "TimeKeeper.h"
-	#include "BoltSceneNode.h"
+#include "SceneDatabase.h"
+#include "TimeKeeper.h"
+#include "BoltSceneNode.h"
 
 /* local interface headers */
-	#include "BaseLocalPlayer.h"
-	#include "ShotPathSegment.h"
+#include "BaseLocalPlayer.h"
+#include "ShotPathSegment.h"
 
 
-class GuidedMissileStrategy: public ShotStrategy
-{
-public:
-	GuidedMissileStrategy( ShotPath* );
-	~GuidedMissileStrategy();
+class GuidedMissileStrategy : public ShotStrategy {
+  public:
+			GuidedMissileStrategy(ShotPath*);
+			~GuidedMissileStrategy();
 
-	void update( float dt );
-	float checkHit( const BaseLocalPlayer *, float[3] )const;
-	void sendUpdate( const FiringInfo & )const;
-	void readUpdate( uint16_t, void* );
-	void addShot( SceneDatabase *, bool colorblind );
-	void expire();
-	void radarRender()const;
+    void		update(float dt);
+    float		checkHit(const BaseLocalPlayer*, float[3]) const;
+    void		sendUpdate(const FiringInfo&) const;
+    void		readUpdate(uint16_t, void*);
+    void		addShot(SceneDatabase*, bool colorblind);
+    void		expire();
+    void		radarRender() const;
 
-private:
-	float checkBuildings( const Ray &ray );
+  private:
+    float		checkBuildings(const Ray& ray);
 
-private:
-	TimeKeeper prevTime;
-	TimeKeeper currentTime;
-	std::vector < ShotPathSegment > segments;
-	int renderTimes;
-	float azimuth;
-	float elevation;
-	float nextPos[3];
-	BoltSceneNode *ptSceneNode;
+  private:
+    TimeKeeper		prevTime;
+    TimeKeeper		currentTime;
+    std::vector<ShotPathSegment>	segments;
+    int			renderTimes;
+    float		azimuth;
+    float		elevation;
+    float		nextPos[3];
+    BoltSceneNode*	ptSceneNode;
 
-	float puffTime;
-	TimeKeeper lastPuff;
-	bool needUpdate;
-	PlayerId lastTarget;
+		float	puffTime;
+		TimeKeeper lastPuff;
+    bool		needUpdate;
+    PlayerId		lastTarget;
 };
 
 

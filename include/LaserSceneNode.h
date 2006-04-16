@@ -14,57 +14,52 @@
  *	Encapsulates information for rendering a laser beam.
  */
 
-#ifndef BZF_LASER_SCENE_NODE_H
-	#define BZF_LASER_SCENE_NODE_H
+#ifndef	BZF_LASER_SCENE_NODE_H
+#define	BZF_LASER_SCENE_NODE_H
 
-	#include "common.h"
-	#include "SceneNode.h"
+#include "common.h"
+#include "SceneNode.h"
 
-class LaserSceneNode: public SceneNode
-{
-public:
-	LaserSceneNode( const GLfloat pos[3], const GLfloat forward[3] );
-	~LaserSceneNode();
+class LaserSceneNode : public SceneNode {
+  public:
+			LaserSceneNode(const GLfloat pos[3],
+					const GLfloat forward[3]);
+			~LaserSceneNode();
 
-	void setTexture( const int );
+    void		setTexture(const int);
 
-	bool cull( const ViewFrustum & )const;
+    bool		cull(const ViewFrustum&) const;
 
-	void notifyStyleChange();
-	void addRenderNodes( SceneRenderer & );
-
-	void setColor( GLfloat r, GLfloat g, GLfloat b );
-	void setCenterColor( GLfloat r, GLfloat g, GLfloat b );
-	void setFirst( void )
-	{
-		first = true;
-} protected:
-	class LaserRenderNode: public RenderNode
-	{
-public:
-		LaserRenderNode( const LaserSceneNode* );
-		~LaserRenderNode();
-		void render();
-		const GLfloat *getPosition()const
-		{
-			return sceneNode->getSphere();
-} private:
-		void renderFlatLaser( void );
-		void renderGeoLaser( void );
-		const LaserSceneNode *sceneNode;
-		static GLfloat geom[6][2];
-	};
+    void		notifyStyleChange();
+    void		addRenderNodes(SceneRenderer&);
+	
+	void		setColor ( GLfloat r, GLfloat g, GLfloat b );
+	void		setCenterColor ( GLfloat r, GLfloat g, GLfloat b );
+	void		setFirst ( void ) {first = true;}
+  protected:
+    class LaserRenderNode : public RenderNode {
+      public:
+			LaserRenderNode(const LaserSceneNode*);
+			~LaserRenderNode();
+	void		render();
+	const GLfloat*	getPosition() const { return sceneNode->getSphere(); }
+      private:
+	void renderFlatLaser ( void );
+	void renderGeoLaser ( void );
+	const LaserSceneNode* sceneNode;
+	static GLfloat	geom[6][2];
+    };
 	float color[3];
 	float centerColor[3];
 	bool first;
-	friend class LaserRenderNode;
+    friend class LaserRenderNode;
 
-private:
-	GLfloat azimuth, elevation;
-	GLfloat length;
-	bool texturing;
-	OpenGLGState gstate;
-	LaserRenderNode renderNode;
+  private:
+    GLfloat		azimuth, elevation;
+    GLfloat		length;
+    bool		texturing;
+    OpenGLGState	gstate;
+    LaserRenderNode	renderNode;
 
 };
 
@@ -77,3 +72,4 @@ private:
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
+

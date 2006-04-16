@@ -11,38 +11,34 @@
  */
 
 #ifndef __CUSTOMLINK_H__
-	#define __CUSTOMLINK_H__
+#define __CUSTOMLINK_H__
 
-	#include "common.h"
+#include "common.h"
 
 /* interface header */
-	#include "WorldFileObject.h"
+#include "WorldFileObject.h"
 
 /* system interface headers */
-	#include <iostream>
-	#include <string>
+#include <iostream>
+#include <string>
 
 /* local interface headers */
-	#include "WorldInfo.h"
+#include "WorldInfo.h"
 
 
-class CustomLink: public WorldFileObject
-{
-public:
-	CustomLink();
-	virtual bool read( const char *cmd, std::istream &input );
-	virtual void writeToWorld( WorldInfo* )const;
-	virtual bool usesGroupDef()
-	{
-		return false;
-	} 
+class CustomLink : public WorldFileObject {
+  public:
+    CustomLink();
+    virtual bool read(const char *cmd, std::istream& input);
+    virtual void writeToWorld(WorldInfo*) const;
+    virtual bool usesGroupDef() { return false; }
 
-protected:
-	std::string from;
-	std::string to;
+  protected:
+    std::string from;
+    std::string to;
 };
 
-#endif /* __CUSTOMLINK_H__ */
+#endif  /* __CUSTOMLINK_H__ */
 
 // Local variables: ***
 // mode: C++ ***

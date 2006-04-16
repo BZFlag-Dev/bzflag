@@ -11,42 +11,42 @@
  */
 
 #ifndef __CACHEMENU_H__
-	#define __CACHEMENU_H__
+#define __CACHEMENU_H__
 
-	#include "common.h"
+#include "common.h"
 
 
 /* local interface headers */
-	#include "MenuDefaultKey.h"
-	#include "HUDDialog.h"
-	#include "HUDuiLabel.h"
-	#include "HUDuiTypeIn.h"
-	#include "HUDuiDefaultKey.h"
+#include "MenuDefaultKey.h"
+#include "HUDDialog.h"
+#include "HUDuiLabel.h"
+#include "HUDuiTypeIn.h"
+#include "HUDuiDefaultKey.h"
 
 
 /** this class provides options for setting the gui
  */
-class CacheMenu: public HUDDialog
-{
-public:
-	CacheMenu();
-	~CacheMenu();
+class CacheMenu : public HUDDialog {
+  public:
+    CacheMenu();
+    ~CacheMenu();
 
-	HUDuiDefaultKey *getDefaultKey()
-	{
-		return MenuDefaultKey::getInstance();
-	} void execute();
-	void resize( int width, int height );
-	void setFailedMessage( const char *msg );
-	static void callback( HUDuiControl *w, void *data );
+    HUDuiDefaultKey* getDefaultKey()
+    {
+      return MenuDefaultKey::getInstance();
+    }
+    void execute();
+    void resize(int width, int height);
+    void setFailedMessage(const char* msg);
+    static void callback(HUDuiControl* w, void* data);
 
-private:
-	float center;
-	HUDuiLabel *failedMessage;
-	HUDuiTypeIn *cacheSize;
-	HUDuiControl *updateDownloadCache;
-	HUDuiControl *clearDownloadCache;
-	HUDuiControl *clearServerListCache;
+  private:
+    float center;
+    HUDuiLabel* failedMessage;
+    HUDuiTypeIn* cacheSize;
+    HUDuiControl* updateDownloadCache;
+    HUDuiControl* clearDownloadCache;
+    HUDuiControl* clearServerListCache;
 };
 
 

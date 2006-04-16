@@ -11,45 +11,45 @@
  */
 
 #ifndef __BASELOCALPLAYER_H__
-	#define __BASELOCALPLAYER_H__
+#define __BASELOCALPLAYER_H__
 
 // common - 1st one
-	#include "common.h"
+#include "common.h"
 
 /* common interface headers */
-	#include "Ray.h"
-	#include "TimeKeeper.h"
+#include "Ray.h"
+#include "TimeKeeper.h"
 
 /* local interface headers */
-	#include "Player.h"
-	#include "ShotPath.h"
+#include "Player.h"
+#include "ShotPath.h"
 
 
-class BaseLocalPlayer: public Player
-{
-public:
-	BaseLocalPlayer( const PlayerId &, const char *name, const char *email );
-	~BaseLocalPlayer();
+class BaseLocalPlayer : public Player {
+ public:
+  BaseLocalPlayer(const PlayerId&, const char* name, const char* email);
+  ~BaseLocalPlayer();
 
-	void update();
-	Ray getLastMotion()const;
-	const float( *getLastMotionBBox()const )[3];
+  void update();
+  Ray getLastMotion() const;
+  const float (*getLastMotionBBox() const)[3];
 
-	virtual void explodeTank() = 0;
-	virtual bool checkHit( const Player *source, const ShotPath * &hit, float &minTime )const = 0;
-protected:
-	int getSalt();
-	virtual void doUpdate( float dt ) = 0;
-	virtual void doUpdateMotion( float dt ) = 0;
+  virtual void explodeTank() = 0;
+  virtual bool checkHit(const Player* source,
+			const ShotPath*& hit, float& minTime) const = 0;
+ protected:
+  int getSalt();
+  virtual void doUpdate(float dt) = 0;
+  virtual void doUpdateMotion(float dt) = 0;
 
-protected:
-	TimeKeeper lastTime;
-	float lastPosition[3];
-	// bbox of last motion
-	float bbox[2][3];
+ protected:
+  TimeKeeper lastTime;
+  float lastPosition[3];
+  // bbox of last motion
+  float bbox[2][3];
 
-private:
-	int salt;
+ private:
+  int salt;
 };
 
 

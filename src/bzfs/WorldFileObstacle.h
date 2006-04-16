@@ -10,24 +10,23 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 #ifndef __WORLDFILEOBSTACLE_H__
-	#define __WORLDFILEOBSTACLE_H__
+#define __WORLDFILEOBSTACLE_H__
 
 // system headers
-	#include <iostream>
+#include <iostream>
 
 // bzfs-specific headers
-	#include "WorldFileLocation.h"
+#include "WorldFileLocation.h"
 
 
-class WorldFileObstacle: public WorldFileLocation
-{
+class WorldFileObstacle : public WorldFileLocation {
 public:
-	WorldFileObstacle();
-	virtual bool read( const char *cmd, std::istream & );
+  WorldFileObstacle();
+  virtual bool read(const char *cmd, std::istream&);
 
 protected:
-	bool driveThrough;
-	bool shootThrough;
+  bool driveThrough;
+  bool shootThrough;
 };
 
 #endif /* __WORLDFILEOBSTACLE_H__ */

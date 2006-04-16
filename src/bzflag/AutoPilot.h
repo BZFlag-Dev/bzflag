@@ -10,16 +10,16 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef BZF_AUTOPILOT_H
-	#define BZF_AUTOPILOT_H
+#ifndef	BZF_AUTOPILOT_H
+#define	BZF_AUTOPILOT_H
 
-	#include "common.h"
+#include "common.h"
 
 // common headers
-	#include "Flag.h"
+#include "Flag.h"
 
-void doAutoPilot( float &rotation, float &speed );
-void teachAutoPilot( FlagType *, int );
+void doAutoPilot(float &rotation, float &speed);
+void teachAutoPilot(FlagType *, int);
 
 #endif // BZF_AUTOPILOT_H
 

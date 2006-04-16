@@ -16,185 +16,137 @@
 #ifdef HAVE_SDL
 
 /* interface headers */
-	#include "SDLJoystick.h"
+#include "SDLJoystick.h"
 
 /* system headers */
-	#include <vector>
-	#include <string>
-	#include <string.h>
-	#include <ctype.h>
+#include <vector>
+#include <string>
+#include <string.h>
+#include <ctype.h>
 
 /* implementation headers */
-	#include "ErrorHandler.h"
-	#include "TextUtils.h"
-	#include "bzfSDL.h"
+#include "ErrorHandler.h"
+#include "TextUtils.h"
+#include "bzfSDL.h"
 
-SDLJoystick::SDLJoystick(): joystickID( NULL )
+SDLJoystick::SDLJoystick() : joystickID(NULL)
 {
-	if( SDL_InitSubSystem( SDL_INIT_JOYSTICK ) ==  - 1 )
-	{
-		std::vector < std::string > args;
-		args.push_back( SDL_GetError());
-		printError( "Could not initialize SDL Joystick subsystem: %s.\n", &args );
-	};
-	xAxis = 0;
-	yAxis = 1;
+  if (SDL_InitSubSystem(SDL_INIT_JOYSTICK) == -1) {
+    std::vector<std::string> args;
+    args.push_back(SDL_GetError());
+    printError("Could not initialize SDL Joystick subsystem: %s.\n", &args);
+  };
+  xAxis = 0;
+  yAxis = 1;
 }
-
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
 
 SDLJoystick::~SDLJoystick()
 {
-	SDL_QuitSubSystem( SDL_INIT_JOYSTICK );
+  SDL_QuitSubSystem(SDL_INIT_JOYSTICK);
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-void SDLJoystick::initJoystick( const char *joystickName )
+void			SDLJoystick::initJoystick(const char* joystickName)
 {
-	if( !strcasecmp( joystickName, "off" ) || !strcmp( joystickName, "" ))
-	{
-		if( joystickID != NULL )
-		{
-			SDL_JoystickClose( joystickID );
-			joystickID = NULL;
-		}
-		return ;
-	}
-	char num = joystickName[0];
-	int i = ( int )num - '0';
-	if( !isdigit( num ) || i >= SDL_NumJoysticks())
-	{
-		printError( "No supported SDL joysticks were found." );
-		joystickID = NULL;
-		return ;
-	}
-	joystickID = SDL_JoystickOpen( i );
-	if( joystickID == NULL )
-		return ;
-	if( SDL_JoystickNumAxes( joystickID ) < 2 )
-	{
-		SDL_JoystickClose( joystickID );
-		printError( "Joystick has less then 2 axes:\n" );
-		joystickID = NULL;
-		return ;
-	}
-	joystickButtons = SDL_JoystickNumButtons( joystickID );
+  if (!strcasecmp(joystickName, "off") || !strcmp(joystickName, "")) {
+    if (joystickID != NULL) {
+      SDL_JoystickClose(joystickID);
+      joystickID = NULL;
+    }
+    return;
+  }
+  char num = joystickName[0];
+  int  i   = (int)num - '0';
+  if (!isdigit(num) || i >= SDL_NumJoysticks()) {
+    printError("No supported SDL joysticks were found.");
+    joystickID = NULL;
+    return;
+  }
+  joystickID = SDL_JoystickOpen(i);
+  if (joystickID == NULL)
+    return;
+  if (SDL_JoystickNumAxes(joystickID) < 2) {
+    SDL_JoystickClose(joystickID);
+    printError("Joystick has less then 2 axes:\n");
+    joystickID = NULL;
+    return;
+  }
+  joystickButtons = SDL_JoystickNumButtons(joystickID);
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-bool SDLJoystick::joystick()const
+bool			SDLJoystick::joystick() const
 {
-	return joystickID != NULL;
+  return joystickID != NULL;
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-void SDLJoystick::getJoy( int &x, int &y )
+void			SDLJoystick::getJoy(int& x, int& y)
 {
-	x = y = 0;
+  x = y = 0;
 
-	if( !joystickID )
-		return ;
+  if (!joystickID)
+    return;
 
-	SDL_JoystickUpdate();
-	x = SDL_JoystickGetAxis( joystickID, xAxis );
-	y = SDL_JoystickGetAxis( joystickID, yAxis );
+  SDL_JoystickUpdate();
+  x = SDL_JoystickGetAxis(joystickID, xAxis);
+  y = SDL_JoystickGetAxis(joystickID, yAxis);
 
-	x = x * 1000 / 32768;
-	y = y * 1000 / 32768;
+  x = x * 1000 / 32768;
+  y = y * 1000 / 32768;
 
-	// ballistic
-	x = ( x *abs( x )) / 1000;
-	y = ( y *abs( y )) / 1000;
+  // ballistic
+  x = (x * abs(x)) / 1000;
+  y = (y * abs(y)) / 1000;
 
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-unsigned long SDLJoystick::getJoyButtons()
+unsigned long		SDLJoystick::getJoyButtons()
 {
-	unsigned long buttons = 0;
+  unsigned long buttons = 0;
 
-	if( !joystickID )
-		return 0;
+  if (!joystickID)
+    return 0;
 
-	SDL_JoystickUpdate();
-	for( int i = 0; i < joystickButtons; i++ )
-		buttons |= SDL_JoystickGetButton( joystickID, i ) << i;
+  SDL_JoystickUpdate();
+  for (int i = 0; i < joystickButtons; i++)
+    buttons |= SDL_JoystickGetButton(joystickID, i) << i;
 
-	return buttons;
+  return buttons;
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-void SDLJoystick::getJoyDevices( std::vector < std::string >  &list )const
+void		    SDLJoystick::getJoyDevices(std::vector<std::string>
+						 &list) const
 {
-	int numJoystick = SDL_NumJoysticks();
-	if( numJoystick > 9 )
-	//user would have to be insane to have this many anyway
-		numJoystick = 9;
-	int i;
-	for( i = 0; i < numJoystick; i++ )
-	{
-		char joystickName[50]; //only room for so much on the menu
-		snprintf( joystickName, 50, "%d - %s", i, SDL_JoystickName( i ));
-		list.push_back( joystickName );
-	}
+  int numJoystick = SDL_NumJoysticks();
+  if (numJoystick > 9) //user would have to be insane to have this many anyway
+    numJoystick = 9;
+  int i;
+  for (i = 0; i < numJoystick; i++) {
+    char joystickName[50]; //only room for so much on the menu
+    snprintf(joystickName, 50, "%d - %s", i, SDL_JoystickName(i));
+    list.push_back(joystickName);
+  }
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-void SDLJoystick::getJoyDeviceAxes( std::vector < std::string >  &list )const
+void		    SDLJoystick::getJoyDeviceAxes(std::vector<std::string> &list) const
 {
-	if( !joystickID )
-		return ;
-	list.clear();
-	// number all the axes and send them off
-	for( int i = 0; i < SDL_JoystickNumAxes( joystickID ); ++i )
-	{
-		list.push_back( TextUtils::format( "%d", i ));
-	}
+  if (!joystickID) return;
+  list.clear();
+  // number all the axes and send them off
+  for (int i = 0; i < SDL_JoystickNumAxes(joystickID); ++i) {
+    list.push_back(TextUtils::format("%d", i));
+  }
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-void SDLJoystick::setXAxis( const std::string axis )
+void		    SDLJoystick::setXAxis(const std::string axis)
 {
-	xAxis = atoi( axis.c_str());
+  xAxis = atoi(axis.c_str());
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-void SDLJoystick::setYAxis( const std::string axis )
+void		    SDLJoystick::setYAxis(const std::string axis)
 {
-	yAxis = atoi( axis.c_str());
+  yAxis = atoi(axis.c_str());
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-#endif 
+#endif
 
 // Local Variables: ***
 // mode:C++ ***

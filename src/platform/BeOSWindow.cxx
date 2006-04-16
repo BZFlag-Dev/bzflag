@@ -36,733 +36,544 @@ class MyGLWindow;
 
 /****** MyGLView ******/
 
-class MyGLView: public BGLView
-{
+class MyGLView : public BGLView {
 public:
-	MyGLView( MyGLWindow *win, BRect rect, char *name );
-	~MyGLView();
-	void MouseDown( BPoint where );
-	void MouseUp( BPoint where );
-	void MouseMoved( BPoint where, uint32 code, const BMessage *a_message );
+  MyGLView(MyGLWindow *win, BRect rect, char *name);
+  ~MyGLView();
+  void MouseDown(BPoint where);
+  void MouseUp(BPoint where);
+  void MouseMoved(BPoint where, uint32 code, const BMessage *a_message);
 
-	void PostBzfEvent( void );
+  void PostBzfEvent(void);
 private:
-	MyGLWindow *win;
+  MyGLWindow *win;
 };
 
 /****** MyGLWindow ******/
 
-class MyGLWindow: public BDirectWindow
-{
+class MyGLWindow : public BDirectWindow {
 public:
-	MyGLWindow( BeOSWindow *beosWindow, BRect frame, const char *title, window_type type, uint32 flags, uint32 workspace = B_CURRENT_WORKSPACE );
+  MyGLWindow(BeOSWindow		*beosWindow,
+	     BRect		frame,
+	     const char	*title,
+	     window_type	type,
+	     uint32		flags,
+	     uint32		workspace = B_CURRENT_WORKSPACE);
 
-	virtual bool QuitRequested( void );
-	virtual void MessageReceived( BMessage *msg );
-	virtual void FrameResized( float width, float height );
-	virtual void DirectConnected( direct_buffer_info *info );
-	virtual void DeviceInfo( uint32 device_id, uint32 monitor, const char *name, bool depth, bool stencil, bool accum );
+  virtual bool QuitRequested(void);
+  virtual void MessageReceived(BMessage *msg);
+  virtual void FrameResized(float width, float height);
+  virtual void DirectConnected(direct_buffer_info *info);
+  virtual void DeviceInfo(uint32 device_id, uint32 monitor, const char *name, bool depth, bool stencil, bool accum);
 
-	/* same api as DirectGLWindow */
-	void MakeCurrent();
-	void ReleaseCurrent();
-	void YieldCurrent();
-	bool IsCurrent();
-	void SwapBuffers();
+  /* same api as DirectGLWindow */
+  void MakeCurrent();
+  void ReleaseCurrent();
+  void YieldCurrent();
+  bool IsCurrent();
+  void SwapBuffers();
 
-	MyGLView *GetGLView()const
-	{
-		return glv;
-	};
-	void PostBzfEvent( void );
+  MyGLView *GetGLView() const { return glv; };
+  void PostBzfEvent(void);
 
 private:
-	friend class MyGLView;
-	BzfEvent bzfEvent;
-	BeOSWindow *ref;
-	MyGLView *glv;
+  friend class MyGLView;
+  BzfEvent		bzfEvent;
+  BeOSWindow		*ref;
+  MyGLView		*glv;
 };
 
 /****** MyGLView implementation ******/
 
-MyGLView::MyGLView( MyGLWindow *win, BRect rect, char *name ): BGLView( rect, name, B_FOLLOW_NONE, 0, BGL_RGB | BGL_DEPTH | BGL_DOUBLE )
+MyGLView::MyGLView(MyGLWindow *win, BRect rect, char *name)
+  : BGLView(rect, name, B_FOLLOW_NONE, 0, BGL_RGB | BGL_DEPTH | BGL_DOUBLE)
 {
-	this->win = win;
-} 
+  this->win = win;
+}
 
-MyGLView::~MyGLView(){
+MyGLView::~MyGLView()
+{
 
 }
 
-void MyGLView::MouseDown( BPoint where )
+void MyGLView::MouseDown(BPoint where)
 {
-	int32 buttons, modifiers;
-	BPoint p;
-	BMessage *msg = win->CurrentMessage();
-	if( !msg )
-		return ;
-	msg->FindInt32( "buttons", &buttons );
-	msg->FindInt32( "modifiers", &modifiers );
-	win->bzfEvent.type = BzfEvent::KeyDown;
-	win->bzfEvent.keyDown.ascii = 0;
-	win->bzfEvent.keyDown.button = ( buttons == B_PRIMARY_MOUSE_BUTTON ) ? ( BzfKeyEvent::LeftMouse ): ( BzfKeyEvent::RightMouse );
-	win->bzfEvent.keyDown.shift = 0;
-	win->PostBzfEvent();
+  int32 buttons, modifiers;
+  BPoint p;
+  BMessage *msg = win->CurrentMessage();
+  if (!msg)
+    return;
+  msg->FindInt32("buttons", &buttons);
+  msg->FindInt32("modifiers", &modifiers);
+  win->bzfEvent.type = BzfEvent::KeyDown;
+  win->bzfEvent.keyDown.ascii = 0;
+  win->bzfEvent.keyDown.button = (buttons == B_PRIMARY_MOUSE_BUTTON)?(BzfKeyEvent::LeftMouse):(BzfKeyEvent::RightMouse);
+  win->bzfEvent.keyDown.shift = 0;
+  win->PostBzfEvent();
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-void MyGLView::MouseUp( BPoint where )
+void MyGLView::MouseUp(BPoint where)
 {
-	int32 buttons, modifiers;
-	BPoint p;
-	BMessage *msg = win->CurrentMessage();
-	if( !msg )
-		return ;
-	msg->FindInt32( "buttons", &buttons );
-	msg->FindInt32( "modifiers", &modifiers );
-	win->bzfEvent.type = BzfEvent::KeyUp;
-	win->bzfEvent.keyUp.ascii = 0;
-	win->bzfEvent.keyUp.button = ( buttons == B_PRIMARY_MOUSE_BUTTON ) ? ( BzfKeyEvent::LeftMouse ): ( BzfKeyEvent::RightMouse );
-	win->bzfEvent.keyUp.shift = 0;
-	win->PostBzfEvent();
+  int32 buttons, modifiers;
+  BPoint p;
+  BMessage *msg = win->CurrentMessage();
+  if (!msg)
+    return;
+  msg->FindInt32("buttons", &buttons);
+  msg->FindInt32("modifiers", &modifiers);
+  win->bzfEvent.type = BzfEvent::KeyUp;
+  win->bzfEvent.keyUp.ascii = 0;
+  win->bzfEvent.keyUp.button = (buttons == B_PRIMARY_MOUSE_BUTTON)?(BzfKeyEvent::LeftMouse):(BzfKeyEvent::RightMouse);
+  win->bzfEvent.keyUp.shift = 0;
+  win->PostBzfEvent();
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-void MyGLView::MouseMoved( BPoint where, uint32 code, const BMessage *a_message )
+void MyGLView::MouseMoved(BPoint where, uint32 code, const BMessage *a_message)
 {
-	BPoint p;
-	if( !a_message )
-		return ;
-	a_message->FindPoint( "where", &p );
-	win->bzfEvent.type = BzfEvent::MouseMove;
-	win->bzfEvent.mouseMove.x = ( int )p.x;
-	win->bzfEvent.mouseMove.y = ( int )p.y;
-	win->PostBzfEvent();
+  BPoint p;
+  if (!a_message)
+    return;
+  a_message->FindPoint("where", &p);
+  win->bzfEvent.type = BzfEvent::MouseMove;
+  win->bzfEvent.mouseMove.x = (int)p.x;
+  win->bzfEvent.mouseMove.y = (int)p.y;
+  win->PostBzfEvent();
 }
 
 /****** MyGLWindow implementation ******/
 
-MyGLWindow::MyGLWindow( BeOSWindow *beosWindow, BRect frame, const char *title, window_type type, uint32 flags, uint32 workspace ): BDirectWindow( frame, title, type, flags, workspace )
+MyGLWindow::MyGLWindow(BeOSWindow *beosWindow, BRect frame, const char *title, window_type type, uint32 flags, uint32 workspace)
+  : BDirectWindow(frame, title, type, flags, workspace)
 {
-	ref = beosWindow;
-	bzfEvent.window = ref;
-	glv = new MyGLView( this, Bounds(), "MyGLView" );
-	AddChild( glv );
+  ref = beosWindow;
+  bzfEvent.window = ref;
+  glv = new MyGLView(this, Bounds(), "MyGLView");
+  AddChild(glv);
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-bool MyGLWindow::QuitRequested( void )
+bool MyGLWindow::QuitRequested(void)
 {
-	glv->EnableDirectMode( false );
-	bzfEvent.type = BzfEvent::Quit;
-	PostBzfEvent();
-	// Let the application close us.
-	//  be_app->PostMessage(B_QUIT_REQUESTED);
-	return false;
+  glv->EnableDirectMode(false);
+  bzfEvent.type = BzfEvent::Quit;
+  PostBzfEvent();
+  // Let the application close us.
+  //  be_app->PostMessage(B_QUIT_REQUESTED);
+  return false;
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-void MyGLWindow::MessageReceived( BMessage *msg )
+void MyGLWindow::MessageReceived(BMessage *msg)
 {
-	BPoint p;
-	int32 raw_char;
-	int32 buttons;
-	int32 modifiers;
-	//printf("MyGLWindow::MessageReceived()\n");
-	msg->PrintToStream();
-	switch( msg->what )
-	{
-		/* B_MOUSE* aren't catched when there is a BView */
-		case B_MOUSE_MOVED:
-			msg->FindPoint( "where", &p );
-			bzfEvent.type = BzfEvent::MouseMove;
-			bzfEvent.mouseMove.x = ( int )p.x;
-			bzfEvent.mouseMove.y = ( int )p.y;
-			break;
-		case B_MOUSE_DOWN:
-			msg->FindInt32( "buttons", &buttons );
-			msg->FindInt32( "modifiers", &modifiers );
-			bzfEvent.type = BzfEvent::KeyDown;
-			bzfEvent.keyDown.ascii = 0;
-			bzfEvent.keyDown.button = ( buttons == B_PRIMARY_MOUSE_BUTTON ) ? ( BzfKeyEvent::LeftMouse ): ( BzfKeyEvent::RightMouse );
-			bzfEvent.keyDown.shift = 0;
-			break;
-		case B_MOUSE_UP:
-			msg->FindInt32( "buttons", &buttons );
-			msg->FindInt32( "modifiers", &modifiers );
-			bzfEvent.type = BzfEvent::KeyUp;
-			bzfEvent.keyUp.ascii = 0;
-			bzfEvent.keyUp.button = ( buttons == B_PRIMARY_MOUSE_BUTTON ) ? ( BzfKeyEvent::LeftMouse ): ( BzfKeyEvent::RightMouse );
-			bzfEvent.keyUp.shift = 0;
-			break;
-		case B_KEY_DOWN:
-		case B_KEY_UP:
-			{
-				int byteslen;
-				msg->FindInt32( "modifiers", &modifiers );
-				msg->FindInt32( "raw_char", &raw_char );
-				const char *bytes = msg->FindString( "bytes" );
-				byteslen = strlen( bytes );
-				if( msg->what == B_KEY_DOWN )
-					bzfEvent.type = BzfEvent::KeyDown;
-				else
-					bzfEvent.type = BzfEvent::KeyUp;
-				bzfEvent.keyDown.button = BzfKeyEvent::NoButton;
-				bzfEvent.keyDown.ascii = 0;
-				bzfEvent.keyDown.shift = 0;
-				MSGDBG(( "### raw_char = 0x%08lx\n", raw_char ));
-				switch( raw_char )
-				{
-				case B_ESCAPE:
-					bzfEvent.keyDown.ascii = '\033';
-					break;
-				case B_RETURN:
-					bzfEvent.keyDown.ascii = '\r';
-					break; // CR sux, LF rulz
-				case B_SPACE:
-					bzfEvent.keyDown.ascii = ' ';
-					break;
-				case B_HOME:
-					bzfEvent.keyDown.button = BzfKeyEvent::Home;
-					break;
-				case B_END:
-					bzfEvent.keyDown.button = BzfKeyEvent::End;
-					break;
-				case B_LEFT_ARROW:
-					bzfEvent.keyDown.button = BzfKeyEvent::Left;
-					break;
-				case B_RIGHT_ARROW:
-					bzfEvent.keyDown.button = BzfKeyEvent::Right;
-					break;
-				case B_UP_ARROW:
-					bzfEvent.keyDown.button = BzfKeyEvent::Up;
-					break;
-				case B_DOWN_ARROW:
-					bzfEvent.keyDown.button = BzfKeyEvent::Down;
-					break;
-				case B_PAGE_UP:
-					bzfEvent.keyDown.button = BzfKeyEvent::PageUp;
-					break;
-				case B_PAGE_DOWN:
-					bzfEvent.keyDown.button = BzfKeyEvent::PageDown;
-					break;
-				case B_INSERT:
-					bzfEvent.keyDown.button = BzfKeyEvent::Insert;
-					break;
-				case B_DELETE:
-					bzfEvent.keyDown.button = BzfKeyEvent::Delete;
-					break;
-				default:
-					if( byteslen == 1 )
-					{
-						MSGDBG(( "default char '%c'\n", bytes[0] ));
-						bzfEvent.keyDown.ascii = bytes[0];
-					}
-					else if( byteslen == 2 && bytes[0] == B_FUNCTION_KEY )
-					{
-						if( bytes[1] >= B_F1_KEY && bytes[1] < B_PRINT_KEY )
-						{
-							bzfEvent.keyDown.button = BzfKeyEvent::F1 + bytes[1] - B_F1_KEY;
-						}
-						else if( bytes[1] < B_PAUSE_KEY )
-						{
-							bzfEvent.keyDown.button = BzfKeyEvent::Pause;
-						}
-					}
-					else
-					{
-						BDirectWindow::MessageReceived( msg );
-						return ;
-					}
-					break;
-				}
-			}
-			break;
-		default:
-			BDirectWindow::MessageReceived( msg );
-			return ;
+  BPoint p;
+  int32 raw_char;
+  int32 buttons;
+  int32 modifiers;
+  //printf("MyGLWindow::MessageReceived()\n");
+  msg->PrintToStream();
+  switch (msg->what) {
+    /* B_MOUSE* aren't catched when there is a BView */
+  case B_MOUSE_MOVED:
+    msg->FindPoint("where", &p);
+    bzfEvent.type = BzfEvent::MouseMove;
+    bzfEvent.mouseMove.x = (int)p.x;
+    bzfEvent.mouseMove.y = (int)p.y;
+    break;
+  case B_MOUSE_DOWN:
+    msg->FindInt32("buttons", &buttons);
+    msg->FindInt32("modifiers", &modifiers);
+    bzfEvent.type = BzfEvent::KeyDown;
+    bzfEvent.keyDown.ascii = 0;
+    bzfEvent.keyDown.button = (buttons == B_PRIMARY_MOUSE_BUTTON)?(BzfKeyEvent::LeftMouse):(BzfKeyEvent::RightMouse);
+    bzfEvent.keyDown.shift = 0;
+    break;
+  case B_MOUSE_UP:
+    msg->FindInt32("buttons", &buttons);
+    msg->FindInt32("modifiers", &modifiers);
+    bzfEvent.type = BzfEvent::KeyUp;
+    bzfEvent.keyUp.ascii = 0;
+    bzfEvent.keyUp.button = (buttons == B_PRIMARY_MOUSE_BUTTON)?(BzfKeyEvent::LeftMouse):(BzfKeyEvent::RightMouse);
+    bzfEvent.keyUp.shift = 0;
+    break;
+  case B_KEY_DOWN:
+  case B_KEY_UP:
+    {
+      int byteslen;
+      msg->FindInt32("modifiers", &modifiers);
+      msg->FindInt32("raw_char", &raw_char);
+      const char *bytes = msg->FindString("bytes");
+      byteslen = strlen(bytes);
+      if (msg->what == B_KEY_DOWN)
+	bzfEvent.type = BzfEvent::KeyDown;
+      else
+	bzfEvent.type = BzfEvent::KeyUp;
+      bzfEvent.keyDown.button = BzfKeyEvent::NoButton;
+      bzfEvent.keyDown.ascii = 0;
+      bzfEvent.keyDown.shift = 0;
+      MSGDBG(("### raw_char = 0x%08lx\n", raw_char));
+      switch (raw_char) {
+      case B_ESCAPE: bzfEvent.keyDown.ascii = '\033'; break;
+      case B_RETURN: bzfEvent.keyDown.ascii = '\r'; break; // CR sux, LF rulz
+      case B_SPACE: bzfEvent.keyDown.ascii = ' '; break;
+      case B_HOME: bzfEvent.keyDown.button = BzfKeyEvent::Home; break;
+      case B_END: bzfEvent.keyDown.button = BzfKeyEvent::End; break;
+      case B_LEFT_ARROW: bzfEvent.keyDown.button = BzfKeyEvent::Left; break;
+      case B_RIGHT_ARROW: bzfEvent.keyDown.button = BzfKeyEvent::Right; break;
+      case B_UP_ARROW: bzfEvent.keyDown.button = BzfKeyEvent::Up; break;
+      case B_DOWN_ARROW: bzfEvent.keyDown.button = BzfKeyEvent::Down; break;
+      case B_PAGE_UP: bzfEvent.keyDown.button = BzfKeyEvent::PageUp; break;
+      case B_PAGE_DOWN: bzfEvent.keyDown.button = BzfKeyEvent::PageDown; break;
+      case B_INSERT: bzfEvent.keyDown.button = BzfKeyEvent::Insert; break;
+      case B_DELETE: bzfEvent.keyDown.button = BzfKeyEvent::Delete; break;
+      default:
+	if (byteslen == 1) {
+	  MSGDBG(("default char '%c'\n", bytes[0]));
+	  bzfEvent.keyDown.ascii = bytes[0];
+	} else if (byteslen == 2 && bytes[0] == B_FUNCTION_KEY) {
+	  if (bytes[1] >= B_F1_KEY && bytes[1] < B_PRINT_KEY) {
+	    bzfEvent.keyDown.button = BzfKeyEvent::F1 + bytes[1] - B_F1_KEY;
+	  } else if (bytes[1] < B_PAUSE_KEY) {
+	    bzfEvent.keyDown.button = BzfKeyEvent::Pause;
+	  }
+	} else {
+	  BDirectWindow::MessageReceived(msg);
+	  return;
 	}
-	PostBzfEvent();
+	break;
+      }
+    }
+    break;
+  default:
+    BDirectWindow::MessageReceived(msg);
+    return;
+  }
+  PostBzfEvent();
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-void MyGLWindow::FrameResized( float width, float height )
+void MyGLWindow::FrameResized(float width, float height)
 {
-	bzfEvent.type = BzfEvent::Resize;
-	bzfEvent.resize.width = ( int )width;
-	bzfEvent.resize.height = ( int )height;
-	PostBzfEvent();
-	BDirectWindow::FrameResized( width, height );
+  bzfEvent.type = BzfEvent::Resize;
+  bzfEvent.resize.width = (int)width;
+  bzfEvent.resize.height = (int)height;
+  PostBzfEvent();
+  BDirectWindow::FrameResized(width, height);
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-void MyGLWindow::DirectConnected( direct_buffer_info *info )
+void MyGLWindow::DirectConnected(direct_buffer_info *info)
 {
-	if( glv )
-	{
-		glv->DirectConnected( info );
-		glv->EnableDirectMode( true );
-	}
+  if (glv) {
+    glv->DirectConnected(info);
+    glv->EnableDirectMode(true);
+  }
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
 
-
-void MyGLWindow::DeviceInfo( uint32 device_id, uint32 monitor, const char *name, bool depth, bool stencil, bool accum )
+void MyGLWindow::DeviceInfo(uint32 device_id, uint32 monitor, const char *name, bool depth, bool stencil, bool accum)
 {
-	/*
-	if (device_id != BGL_DEVICE_SOFTWARE &&
-	ref->openglDevice == BGL_DEVICE_SOFTWARE) {
-	ref->openglDevice = device_id;
+  /*
+    if (device_id != BGL_DEVICE_SOFTWARE &&
+    ref->openglDevice == BGL_DEVICE_SOFTWARE) {
+    ref->openglDevice = device_id;
 
-	printf("Using OpenGL device #%ld: %s\n", device_id, name);
-	}
-	 */
+    printf("Using OpenGL device #%ld: %s\n", device_id, name);
+    }
+  */
 }
-
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
 
 void MyGLWindow::MakeCurrent()
 {
-	glv->LockGL();
+  glv->LockGL();
 }
-
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
 
 void MyGLWindow::ReleaseCurrent()
 {
-	glv->UnlockGL();
+  glv->UnlockGL();
 }
-
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
 
 void MyGLWindow::YieldCurrent()
 {
-	glv->UnlockGL();
-	glv->LockGL();
+  glv->UnlockGL();
+  glv->LockGL();
 }
-
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
 
 bool MyGLWindow::IsCurrent()
 {
-	return true;
+  return true;
 }
-
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
 
 void MyGLWindow::SwapBuffers()
 {
-	glv->SwapBuffers();
+  glv->SwapBuffers();
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-void MyGLWindow::PostBzfEvent( void )
+void MyGLWindow::PostBzfEvent(void)
 {
-	(( BeOSDisplay* )ref->display )->postBzfEvent( bzfEvent );
+  ((BeOSDisplay *)ref->display)->postBzfEvent(bzfEvent);
 }
 
 /****** BeOSWindow ******/
 
-BeOSWindow::BeOSWindow( const BeOSDisplay *_display, const BeOSVisual *_visual ): BzfWindow( _display ), display( _display ), visual( _visual ), 
-//openglDevice(BGL_DEVICE_SOFTWARE),
-oglContextInitialized( false ), currentOglContext(  - 1 )
+BeOSWindow::BeOSWindow(const BeOSDisplay* _display, const BeOSVisual* _visual) :
+  BzfWindow(_display),
+  display(_display),
+  visual(_visual),
+  //openglDevice(BGL_DEVICE_SOFTWARE),
+  oglContextInitialized(false),
+  currentOglContext(-1)
 {
-	bWindow = new MyGLWindow( this, BRect( 50, 50, 640+50, 480+50 ), "bzflag", B_TITLED_WINDOW, B_OUTLINE_RESIZE | B_QUIT_ON_WINDOW_CLOSE | B_NOT_RESIZABLE | B_NOT_ZOOMABLE );
-	if( !bWindow )
-		return ;
-	//utilView = new BView(BRect(0, 0, 0, 0), "utilview", B_FOLLOW_NONE, B_WILL_DRAW);
-	//if (!utilView)
-	//	return;
-	utilView = bWindow->GetGLView();
-	//bWindow->AddChild(utilView); /* for getMouse() */
-	makeContext();
-	//	bWindow->ReleaseCurrent();
+  bWindow = new MyGLWindow(this, BRect(50, 50, 640+50, 480+50), "bzflag", B_TITLED_WINDOW,
+			   B_OUTLINE_RESIZE | B_QUIT_ON_WINDOW_CLOSE | B_NOT_RESIZABLE | B_NOT_ZOOMABLE);
+  if (!bWindow)
+    return;
+  //utilView = new BView(BRect(0, 0, 0, 0), "utilview", B_FOLLOW_NONE, B_WILL_DRAW);
+  //if (!utilView)
+  //	return;
+  utilView = bWindow->GetGLView();
+  //bWindow->AddChild(utilView); /* for getMouse() */
+  makeContext();
+  //	bWindow->ReleaseCurrent();
 }
-
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
 
 BeOSWindow::~BeOSWindow()
 {
-	if( !bWindow )
-		return ;
-	bWindow->Lock();
-	bWindow->Quit();
-	//delete bWindow; //Quit() DOES delete !!
+  if (!bWindow)
+    return;
+  bWindow->Lock();
+  bWindow->Quit();
+  //delete bWindow; //Quit() DOES delete !!
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-bool BeOSWindow::isValid()const
+bool					BeOSWindow::isValid() const
 {
-	return ( bWindow != NULL && utilView != NULL );
+  return (bWindow != NULL && utilView != NULL);
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-void BeOSWindow::showWindow( bool on )
+void					BeOSWindow::showWindow(bool on)
 {
-	MSGDBG(( "BeOSWindow::showWindow(%s)\n", on ? "true" : "false" ));
-	//	bWindow->Lock();
-	thread_id tid = find_thread( NULL );
-	if( tid == currentOglContext )
-		bWindow->ReleaseCurrent();
+  MSGDBG(("BeOSWindow::showWindow(%s)\n", on?"true":"false"));
+  //	bWindow->Lock();
+  thread_id tid = find_thread(NULL);
+  if (tid == currentOglContext)
+    bWindow->ReleaseCurrent();
 
-	if( on )
-		bWindow->Show();
-	else
-		bWindow->Hide();
+  if (on)
+    bWindow->Show();
+  else
+    bWindow->Hide();
 
-	if( tid == currentOglContext )
-		bWindow->MakeCurrent();
-	/*
-	bWindow->Lock();
-	bWindow->Sync();
-	bWindow->Unlock();
-	 */
-	MSGDBG(( "< BeOSWindow::showWindow()\n" ));
+  if (tid == currentOglContext)
+    bWindow->MakeCurrent();
+  /*
+    bWindow->Lock();
+    bWindow->Sync();
+    bWindow->Unlock();
+  */
+  MSGDBG(("< BeOSWindow::showWindow()\n"));
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-void BeOSWindow::getPosition( int &x, int &y )
+void					BeOSWindow::getPosition(int& x, int& y)
 {
-	BRect rect;
-	bWindow->Lock();
-	rect = bWindow->Frame();
-	bWindow->Unlock();
-	x = ( int )rect.left;
-	y = ( int )rect.top;
+  BRect rect;
+  bWindow->Lock();
+  rect = bWindow->Frame();
+  bWindow->Unlock();
+  x = (int)rect.left;
+  y = (int)rect.top;
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-void BeOSWindow::getSize( int &width, int &height )const
+void					BeOSWindow::getSize(int& width, int& height) const
 {
-	BRect rect;
-	bWindow->Lock();
-	rect = bWindow->Frame();
-	bWindow->Unlock();
-	width = ( int )rect.right - ( int )rect.left;
-	height = ( int )rect.bottom - ( int )rect.top;
+  BRect rect;
+  bWindow->Lock();
+  rect = bWindow->Frame();
+  bWindow->Unlock();
+  width = (int)rect.right - (int)rect.left;
+  height = (int)rect.bottom - (int)rect.top;
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-void BeOSWindow::setTitle( const char *title )
+void					BeOSWindow::setTitle(const char* title)
 {
-	bWindow->Lock();
-	bWindow->SetTitle( title );
-	bWindow->Unlock();
+  bWindow->Lock();
+  bWindow->SetTitle(title);
+  bWindow->Unlock();
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-void BeOSWindow::setPosition( int x, int y )
+void					BeOSWindow::setPosition(int x, int y)
 {
-	bWindow->Lock();
-	bWindow->MoveTo(( float )x, ( float )y );
-	bWindow->Unlock();
+  bWindow->Lock();
+  bWindow->MoveTo((float)x, (float)y);
+  bWindow->Unlock();
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-void BeOSWindow::setSize( int width, int height )
+void					BeOSWindow::setSize(int width, int height)
 {
-	bWindow->Lock();
-	bWindow->ResizeTo(( float )width, ( float )height );
-	bWindow->Unlock();
+  bWindow->Lock();
+  bWindow->ResizeTo((float)width, (float)height);
+  bWindow->Unlock();
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-void BeOSWindow::setMinSize( int width, int height )
+void					BeOSWindow::setMinSize(int width, int height)
 {
-	float minW, maxW, minH, maxH;
-	bWindow->Lock();
-	bWindow->GetSizeLimits( &minW, &maxW, &minH, &maxH );
-	bWindow->SetSizeLimits( width, maxW, height, maxH );
-	bWindow->Unlock();
+  float minW, maxW, minH, maxH;
+  bWindow->Lock();
+  bWindow->GetSizeLimits(&minW, &maxW, &minH, &maxH);
+  bWindow->SetSizeLimits(width, maxW, height, maxH);
+  bWindow->Unlock();
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-void BeOSWindow::setFullscreen()
+void					BeOSWindow::setFullscreen()
 {
-	bWindow->Lock();
-	// FIXME
-	bWindow->Unlock();
+  bWindow->Lock();
+  // FIXME
+  bWindow->Unlock();
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-void BeOSWindow::warpMouse( int x, int y )
+void					BeOSWindow::warpMouse(int x, int y)
 {
-	int px, py;
-	getPosition( px, py );
-	set_mouse_position( px + x, py + y );
+  int px, py;
+  getPosition(px, py);
+  set_mouse_position(px+x, py+y);
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-void BeOSWindow::getMouse( int &x, int &y )const
+void					BeOSWindow::getMouse(int& x, int& y) const
 {
-	BPoint point;
-	uint32 buttons;
-	if( utilView )
-	{
-		bWindow->Lock();
-		utilView->GetMouse( &point, &buttons );
-		bWindow->Unlock();
-		x = ( int )point.x;
-		y = ( int )point.y;
-	}
+  BPoint point;
+  uint32 buttons;
+  if (utilView) {
+    bWindow->Lock();
+    utilView->GetMouse(&point, &buttons);
+    bWindow->Unlock();
+    x = (int)point.x;
+    y = (int)point.y;
+  }
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-void BeOSWindow::grabMouse()
+void					BeOSWindow::grabMouse()
 {
-	// FIXME
+  // FIXME
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-void BeOSWindow::ungrabMouse()
+void					BeOSWindow::ungrabMouse()
 {
-	// FIXME
+  // FIXME
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-void BeOSWindow::showMouse()
+void					BeOSWindow::showMouse()
 {
-	// FIXME
+  // FIXME
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-void BeOSWindow::hideMouse()
+void					BeOSWindow::hideMouse()
 {
-	// FIXME
+  // FIXME
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-void BeOSWindow::setGamma( float newGamma )
+void					BeOSWindow::setGamma(float newGamma)
 {
-	// FIXME
+  // FIXME
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-float BeOSWindow::getGamma()const
+float					BeOSWindow::getGamma() const
 {
-	return 1.0f;
+  return 1.0f;
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-bool BeOSWindow::hasGammaControl()const
+bool					BeOSWindow::hasGammaControl() const
 {
-	// FIXME
-	return false;
-	//	return useColormap || hasGamma || has3DFXGamma;
+  // FIXME
+  return false;
+  //	return useColormap || hasGamma || has3DFXGamma;
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-void BeOSWindow::makeCurrent()
+void					BeOSWindow::makeCurrent()
 {
-	MSGDBG(( "BeOSWindow::makeCurrent()\n" ));
-	if( !oglContextInitialized )
-		return ;
-	if( bWindow != NULL )
-	{
-		thread_id tid = find_thread( NULL );
-		//		bWindow->Lock();
-		/* deadlocks... */
-		//		bWindow->ReleaseCurrent();
-		if( tid != currentOglContext )
-		{
-			MSGDBG(( "bWindow->MakeCurrent()\n" ));
-			bWindow->MakeCurrent();
-			currentOglContext = tid;
-		}
-		//		bWindow->Unlock();
-	}
+  MSGDBG(("BeOSWindow::makeCurrent()\n"));
+  if (!oglContextInitialized)
+    return;
+  if (bWindow != NULL) {
+    thread_id tid = find_thread(NULL);
+    //		bWindow->Lock();
+    /* deadlocks... */
+    //		bWindow->ReleaseCurrent();
+    if (tid != currentOglContext) {
+      MSGDBG(("bWindow->MakeCurrent()\n"));
+      bWindow->MakeCurrent();
+      currentOglContext = tid;
+    }
+    //		bWindow->Unlock();
+  }
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
 
-
-void BeOSWindow::yieldCurrent()
+void					BeOSWindow::yieldCurrent()
 {
-	MSGDBG(( "BeOSWindow::yieldCurrent()\n" ));
-	if( !oglContextInitialized )
-		return ;
-	if( bWindow != NULL )
-	{
-		thread_id tid = find_thread( NULL );
-		if( tid == currentOglContext )
-		{
-			MSGDBG(( "bWindow->YieldCurrent()\n" ));
-			//			bWindow->YieldCurrent();
+  MSGDBG(("BeOSWindow::yieldCurrent()\n"));
+  if (!oglContextInitialized)
+    return;
+  if (bWindow != NULL) {
+    thread_id tid = find_thread(NULL);
+    if (tid == currentOglContext) {
+      MSGDBG(("bWindow->YieldCurrent()\n"));
+      //			bWindow->YieldCurrent();
 
-			bWindow->ReleaseCurrent();
-			snooze( 10000 );
-			bWindow->MakeCurrent();
-		}
-	}
+      bWindow->ReleaseCurrent();
+      snooze(10000);
+      bWindow->MakeCurrent();
+    }
+  }
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-void BeOSWindow::releaseCurrent()
+void					BeOSWindow::releaseCurrent()
 {
-	MSGDBG(( "BeOSWindow::releaseCurrent()\n" ));
-	if( !oglContextInitialized )
-		return ;
-	if( bWindow != NULL )
-	{
-		thread_id tid = find_thread( NULL );
-		if( tid == currentOglContext )
-		{
-			MSGDBG(( "bWindow->ReleaseCurrent()\n" ));
-			bWindow->ReleaseCurrent();
-			currentOglContext =  - 1;
-		}
-	}
+  MSGDBG(("BeOSWindow::releaseCurrent()\n"));
+  if (!oglContextInitialized)
+    return;
+  if (bWindow != NULL) {
+    thread_id tid = find_thread(NULL);
+    if (tid == currentOglContext) {
+      MSGDBG(("bWindow->ReleaseCurrent()\n"));
+      bWindow->ReleaseCurrent();
+      currentOglContext = -1;
+    }
+  }
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-void BeOSWindow::swapBuffers()
+void					BeOSWindow::swapBuffers()
 {
-	if( bWindow != NULL && oglContextInitialized )
-	{
-		bWindow->SwapBuffers();
-	}
+  if (bWindow != NULL && oglContextInitialized) {
+    bWindow->SwapBuffers();
+  }
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-void BeOSWindow::makeContext()
+void					BeOSWindow::makeContext()
 {
-	MSGDBG(( "BeOSWindow::makeContext()\n" ));
-	if( oglContextInitialized )
-		return ;
-	//uint32 minColor = BGL_ANY | (visual->doubleBuffer?BGL_DOUBLE:BGL_SINGLE);
-	if( bWindow == NULL )
-		return ;
-	bWindow->Lock();
+  MSGDBG(("BeOSWindow::makeContext()\n"));
+  if (oglContextInitialized)
+    return;
+  //uint32 minColor = BGL_ANY | (visual->doubleBuffer?BGL_DOUBLE:BGL_SINGLE);
+  if (bWindow == NULL)
+    return;
+  bWindow->Lock();
 
-	//bWindow->EnumerateDevices( BGL_MONITOR_PRIMARY, minColor, BGL_ANY, BGL_NONE, BGL_NONE );
-	//bWindow->InitializeGL( openglDevice, minColor, BGL_ANY, BGL_NONE, BGL_NONE );
+  //bWindow->EnumerateDevices( BGL_MONITOR_PRIMARY, minColor, BGL_ANY, BGL_NONE, BGL_NONE );
+  //bWindow->InitializeGL( openglDevice, minColor, BGL_ANY, BGL_NONE, BGL_NONE );
 
-	//	bWindow->SaveDebuggingInfo("/boot/home/bzf_ogl_debug_log.txt");
+  //	bWindow->SaveDebuggingInfo("/boot/home/bzf_ogl_debug_log.txt");
 
-	bWindow->Unlock();
+  bWindow->Unlock();
 
-	oglContextInitialized = true;
-	//showWindow(true);
-	makeCurrent();
-	//	OpenGLGState::init();
-	OpenGLGState::initContext();
+  oglContextInitialized = true;
+  //showWindow(true);
+  makeCurrent();
+  //	OpenGLGState::init();
+  OpenGLGState::initContext();
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-void BeOSWindow::freeContext()
+void					BeOSWindow::freeContext()
 {
-	MSGDBG(( "BeOSWindow::freeContext()\n" ));
-	// release context data
-	//	OpenGLGState::freeContext();
-	//bWindow->ReleaseCurrent();
-	releaseCurrent();
+  MSGDBG(("BeOSWindow::freeContext()\n"));
+  // release context data
+  //	OpenGLGState::freeContext();
+  //bWindow->ReleaseCurrent();
+  releaseCurrent();
 }
 
 
@@ -773,3 +584,4 @@ void BeOSWindow::freeContext()
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
+

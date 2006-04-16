@@ -4,11 +4,11 @@
 //
 
 #ifndef _MODEL_H_
-	#define _MODEL_H_
+#define _MODEL_H_
 
-	#include <string>
-	#include <vector>
-	#include <map>
+#include <string>
+#include <vector>
+#include <map>
 
 extern std::string texdir;
 extern std::string groupName;
@@ -19,7 +19,7 @@ extern bool useSpecular;
 extern bool useShininess;
 extern bool useEmission;
 extern bool useNormals;
-extern bool useTexcoords;
+extern bool useTexcoords ;
 extern bool flipYZ;
 extern bool useSmoothBounce;
 extern float shineFactor;
@@ -28,119 +28,105 @@ extern float globalShift[3];
 
 extern float maxShineExponent; // OpenGL minimum shininess
 
-extern std::vector < std::string > bspMaterialSkips; // materials to skip in a bsp map
+extern std::vector<std::string> bspMaterialSkips; // materials to skip in a bsp map
 
-typedef std::vector < int > tvIndexList;
+typedef std::vector<int> tvIndexList;
 
 typedef enum
 {
-	eXAxis, eYAxis, eZAxis
-} teModelAxis;
+	eXAxis,
+	eYAxis,
+	eZAxis
+}teModelAxis;
 
 class CTexCoord
 {
 public:
-	CTexCoord()
-	{
-		u = v = 0;
-	} ~CTexCoord(){}
-	;
-	float u, v;
+	CTexCoord(){u = v = 0;}
+	~CTexCoord(){};
+	float u,v;
 
-	bool same( const CTexCoord &c )
+	bool same ( const CTexCoord &c )
 	{
-		return u == c.u && v == c.v;
+		return u == c.u && v ==c.v;
 	}
 };
 
-typedef std::vector < CTexCoord > tvTexCoordList;
+typedef std::vector<CTexCoord> tvTexCoordList;
 
 class CVertex
 {
 public:
-	CVertex()
-	{
-		x = y = z = 0;
-	} ~CVertex(){}
-	;
-	float x, y, z;
+	CVertex(){x = y = z = 0;}
+	~CVertex(){};
+	float x,y,z;
 
-	float get( teModelAxis axis )
+	float get ( teModelAxis axis )
 	{
-		switch( axis )
+		switch (axis)
 		{
-			case eXAxis:
-				return x;
-			case eYAxis:
-				return y;
-			default:
-				return z;
+		case eXAxis:
+			return x;
+		case eYAxis:
+			return y;
+		default:
+			return z;
 		}
 	}
 
-	void translate( float val, teModelAxis axis )
+	void translate ( float val, teModelAxis axis )
 	{
-		switch( axis )
+		switch (axis)
 		{
-			case eXAxis:
-				x += val;
-				return ;
-			case eYAxis:
-				y += val;
-				return ;
-			case eZAxis:
-				z += val;
+		case eXAxis:
+			x += val;
+			return;
+		case eYAxis:
+			y += val;
+			return;
+		case eZAxis:
+			z += val;
 		}
 	}
 
-	bool same( const CVertex &v )
+	bool same ( const CVertex &v )
 	{
 		return x == v.x && y == v.y && z == v.z;
 	}
 };
 
-typedef std::vector < CVertex > tvVertList;
+typedef std::vector<CVertex> tvVertList;
 
 class CFace
 {
 public:
-	CFace(){}
-	;
-	~CFace(){}
-	;
+	CFace(){};
+	~CFace(){};
 
 	std::string material;
 	tvIndexList verts;
-	tvIndexList normals;
-	tvIndexList texCoords;
+	tvIndexList	normals;
+	tvIndexList	texCoords;
 
-	void clear( void )
-	{
-		verts.clear();
-		normals.clear();
-		texCoords.clear();
-	} 
+	void clear ( void ) {verts.clear();normals.clear();texCoords.clear();}
 };
-typedef std::vector < CFace > tvFaceList;
+typedef std::vector<CFace> tvFaceList;
 
 
 class CMaterial
 {
 public:
-	CMaterial()
-	{
-		clear();
-	} ~CMaterial(){}
-	;
+	CMaterial(){clear();}
+	~CMaterial(){};
 
 	std::string texture;
-	float ambient[4];
-	float diffuse[4];
-	float specular[4];
-	float emission[4];
-	float shine;
+	float		ambient[4];
+	float		diffuse[4];
+	float		specular[4];
+	float		emission[4];
+	float		shine;
 
-	void clear( void )
+	void clear ( void )
 	{
 		texture = "";
 		ambient[0] = ambient[1] = ambient[2] = 0.2f;
@@ -155,63 +141,61 @@ public:
 	}
 };
 
-typedef std::map < std::string, CMaterial > tmMaterialMap;
+typedef std::map<std::string,CMaterial> tmMaterialMap;
 
 class CMesh
 {
 public:
-	CMesh(){}
-	;
-	~CMesh(){}
-	;
+	CMesh(){};
+	~CMesh(){};
 
-	tvVertList verts;
-	tvVertList normals;
-	tvTexCoordList texCoords;
+	tvVertList		verts;
+	tvVertList		normals;
+	tvTexCoordList	texCoords;
 
 	std::string name;
-	tvFaceList faces;
+	tvFaceList	faces;
 
-	float getMaxAxisValue( teModelAxis axis )
+	float getMaxAxisValue ( teModelAxis axis )
 	{
-		if( !valid())
+		if (!valid())
 			return 0.0f;
 
-		float pt = verts[0].get( axis );
+		float pt = verts[0].get(axis);
 
-		for( unsigned int i = 0; i < verts.size(); i++ )
-			if( verts[i].get( axis ) > pt )
-				pt = verts[i].get( axis );
-
-		return pt;
-	} 
-
-	float getMinAxisValue( teModelAxis axis )
-	{
-		if( !valid())
-			return 0.0f;
-
-		float pt = verts[0].get( axis );
-
-		for( unsigned int i = 0; i < verts.size(); i++ )
-			if( verts[i].get( axis ) < pt )
-				pt = verts[i].get( axis );
+		for ( unsigned int i = 0; i < verts.size(); i++ )
+			if ( verts[i].get(axis) > pt)
+				pt = verts[i].get(axis);
 
 		return pt;
 	}
 
-	void translate( float value, teModelAxis axis )
+	float getMinAxisValue ( teModelAxis axis )
 	{
-		for( unsigned int i = 0; i < verts.size(); i++ )
-			verts[i].translate( value, axis );
+		if (!valid())
+			return 0.0f;
+
+		float pt = verts[0].get(axis);
+
+		for ( unsigned int i = 0; i < verts.size(); i++ )
+			if ( verts[i].get(axis) < pt)
+				pt = verts[i].get(axis);
+
+		return pt;
 	}
 
-	bool valid( void )
+	void translate ( float value, teModelAxis axis )
+	{
+		for ( unsigned int i = 0; i < verts.size(); i++ )
+			verts[i].translate(value,axis);
+	}
+
+	bool valid ( void )
 	{
 		return faces.size() != 0;
 	}
 
-	void clear( void )
+	void clear ( void )
 	{
 		faces.clear();
 		verts.clear();
@@ -219,55 +203,49 @@ public:
 		texCoords.clear();
 		name = "";
 	}
-	void reindex( void );
+	void reindex ( void );
 };
 
-typedef std::vector < CMesh > tvMeshList;
+typedef std::vector<CMesh> tvMeshList;
 
 
 class CCustomObject
 {
 public:
 	std::string name;
-	std::vector < std::string > params;
+	std::vector<std::string> params;
 
-	void clear( void )
-	{
-		params.clear();
-		name = "";
-	} 
+	void clear ( void ) {params.clear();name="";}
 };
 
-typedef std::vector < CCustomObject > tvCustomObjectList;
+typedef std::vector<CCustomObject> tvCustomObjectList;
 
 class CModel
 {
 public:
-	CModel(){}
-	;
-	~CModel(){}
-	;
+	CModel(){};
+	~CModel(){};
 
-	tmMaterialMap materials;
-	tvMeshList meshes;
-	tvCustomObjectList customObjects;
+	tmMaterialMap	materials;
+	tvMeshList		meshes;
+	tvCustomObjectList	customObjects;
 
-	void pushAboveAxis( teModelAxis axis )
+	void pushAboveAxis ( teModelAxis axis )
 	{
-		if( !meshes.size())
-			return ;
+		if (!meshes.size())
+			return;
 
-		float minValue = meshes[0].getMinAxisValue( axis );
+		float minValue = meshes[0].getMinAxisValue(axis);
 
-		for( unsigned int i = 0; i < meshes.size(); i++ )
-			if( minValue > meshes[i].getMinAxisValue( axis ))
-				minValue = meshes[i].getMinAxisValue( axis );
+		for ( unsigned int i = 0; i < meshes.size(); i++ )
+			if ( minValue > meshes[i].getMinAxisValue(axis))
+				minValue = meshes[i].getMinAxisValue(axis);
 
-		for( unsigned int i = 0; i < meshes.size(); i++ )
-			meshes[i].translate(  - minValue, axis );
-	} 
+		for ( unsigned int i = 0; i < meshes.size(); i++ )
+			meshes[i].translate(-minValue,axis);
+	}
 
-	void clear( void )
+	void clear ( void )
 	{
 		meshes.clear();
 		materials.clear();
@@ -277,3 +255,4 @@ public:
 
 
 #endif // _MODEL_H_
+

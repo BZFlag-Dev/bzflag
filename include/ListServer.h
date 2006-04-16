@@ -11,29 +11,28 @@
  */
 
 #ifndef __LISTSERVER_H__
-	#define __LISTSERVER_H__
+#define __LISTSERVER_H__
 
-	#include "common.h"
+#include "common.h"
 
 /* system interface headers */
-	#include <string>
+#include <string>
 
 /* common interface headers */
-	#include "Address.h"
+#include "Address.h"
 
 
-const int MaxListServers = 5;
-typedef struct _ListServer
-{
-	Address address;
-	int port;
-	int socket;
-	int phase;
-	std::string hostname;
-	std::string pathname;
-	int failures;
-	int bufferSize;
-	char buffer[1024];
+const int       MaxListServers = 5;
+typedef struct _ListServer {
+    Address		address;
+    int			port;
+    int			socket;
+    int			phase;
+    std::string	 hostname;
+    std::string	 pathname;
+    int			failures;
+    int			bufferSize;
+    char		buffer[1024];
 } ListServer;
 
 

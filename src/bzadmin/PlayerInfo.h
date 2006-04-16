@@ -11,36 +11,35 @@
  */
 
 #ifndef PLAYERINFO_H
-	#define PLAYERINFO_H
+#define PLAYERINFO_H
 
-	#include <map>
+#include <map>
 
-	#include "Address.h"
-	#include "global.h"
+#include "Address.h"
+#include "global.h"
 
 
 /** This struct stores information about a player that is relevant to
-bzadmin. */
-struct PlayerInfo
-{
-	PlayerInfo(){}
-	PlayerInfo( const std::string &n ): name( n ){}
-	std::string name;
-	std::string ip;
-	TeamColor team;
-	int wins;
-	int losses;
-	int tks;
-	bool isRegistered;
-	bool isVerified;
-	bool isAdmin;
+    bzadmin. */
+struct PlayerInfo {
+  PlayerInfo() {}
+  PlayerInfo(const std::string& n) : name(n) { }
+  std::string name;
+  std::string ip;
+  TeamColor team;
+  int wins;
+  int losses;
+  int tks;
+  bool isRegistered;
+  bool isVerified;
+  bool isAdmin;
 };
 
 
-typedef std::map < PlayerId, PlayerInfo > PlayerIdMap;
+typedef std::map<PlayerId, PlayerInfo> PlayerIdMap;
 
 
-#endif 
+#endif
 
 // Local Variables: ***
 // mode:C++ ***
@@ -49,3 +48,4 @@ typedef std::map < PlayerId, PlayerInfo > PlayerIdMap;
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
+

@@ -10,41 +10,40 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef __SERVERITEM_H__
-	#define __SERVERITEM_H__
+#ifndef  __SERVERITEM_H__
+#define  __SERVERITEM_H__
 
-	#include "common.h"
+#include "common.h"
 
 /* system interface headers */
-	#include <iostream>
-	#include <string>
-	#include <time.h>
+#include <iostream>
+#include <string>
+#include <time.h>
 
 /* common interface headers */
-	#include "Ping.h"
+#include "Ping.h"
 
 
-class ServerItem
-{
+class ServerItem {
 
 public:
-	void writeToFile( std::ostream &out )const; // serialize out
-	bool readFromFile( std::istream &in ); // serialize in
-	void setUpdateTime(); // set last updated to now
-	int getPlayerCount()const;
-	time_t getAgeMinutes()const;
-	time_t getAgeSeconds()const;
-	std::string getAgeString()const; // nifty formated age string
-	time_t getNow()const; // current time
-	bool operator < ( const ServerItem &right );
+  void		writeToFile(std::ostream& out) const; // serialize out
+  bool		readFromFile(std::istream& in); // serialize in
+  void		setUpdateTime(); // set last updated to now
+  int		getPlayerCount() const;
+  time_t	getAgeMinutes() const;
+  time_t	getAgeSeconds() const;
+  std::string	getAgeString() const; // nifty formated age string
+  time_t	getNow() const; // current time
+  bool		operator<(const ServerItem &right);
 private:
-	unsigned int getSortFactor()const;
+  unsigned int	getSortFactor() const;
 public:
-	std::string name;
-	std::string description;
-	PingPacket ping;
-	bool cached; // was I cached ?
-	time_t updateTime; // last time I was updated
+  std::string	name;
+  std::string	description;
+  PingPacket	ping;
+  bool		cached; // was I cached ?
+  time_t	updateTime; // last time I was updated
 };
 
 #endif /* __SERVERITEM_H__ */

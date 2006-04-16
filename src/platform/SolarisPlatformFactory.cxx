@@ -16,71 +16,48 @@
 #include "XWindow.h"
 #include "SolarisMedia.h"
 
-PlatformFactory *PlatformFactory::getInstance()
+PlatformFactory*	PlatformFactory::getInstance()
 {
-	if( !instance )
-		instance = new SolarisPlatformFactory;
-	return instance;
+  if (!instance) instance = new SolarisPlatformFactory;
+  return instance;
 }
-
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
 
 SolarisPlatformFactory::SolarisPlatformFactory()
 {
-	// do nothing
+  // do nothing
 }
-
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
 
 SolarisPlatformFactory::~SolarisPlatformFactory()
 {
-	// do nothing
+  // do nothing
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-BzfDisplay *SolarisPlatformFactory::createDisplay( const char *name, const char* )
+BzfDisplay*		SolarisPlatformFactory::createDisplay(
+				const char* name, const char*)
 {
-	XDisplay *display = new XDisplay( name );
-	if( !display || !display->isValid())
-	{
-		delete display;
-		return NULL;
-	}
-	return display;
+  XDisplay* display = new XDisplay(name);
+  if (!display || !display->isValid()) {
+    delete display;
+    return NULL;
+  }
+  return display;
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-BzfVisual *SolarisPlatformFactory::createVisual( const BzfDisplay *display )
+BzfVisual*		SolarisPlatformFactory::createVisual(
+				const BzfDisplay* display)
 {
-	return new XVisual(( const XDisplay* )display );
+  return new XVisual((const XDisplay*)display);
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-BzfWindow *SolarisPlatformFactory::createWindow( const BzfDisplay *display, BzfVisual *visual )
+BzfWindow*		SolarisPlatformFactory::createWindow(
+				const BzfDisplay* display, BzfVisual* visual)
 {
-	return new XWindow(( const XDisplay* )display, ( XVisual* )visual );
+  return new XWindow((const XDisplay*)display, (XVisual*)visual);
 }
 
-//-------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------
-
-BzfMedia *SolarisPlatformFactory::createMedia()
+BzfMedia*		SolarisPlatformFactory::createMedia()
 {
-	return new SolarisMedia;
+  return new SolarisMedia;
 }
 
 // Local Variables: ***
@@ -90,3 +67,4 @@ BzfMedia *SolarisPlatformFactory::createMedia()
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
+
