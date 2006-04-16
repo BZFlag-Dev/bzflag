@@ -3,18 +3,22 @@
 
 #include "bzfsAPI.h"
 
-BZ_GET_PLUGIN_VERSION
+BZ_GET_PLUGIN_VERSION 
 
-BZF_PLUGIN_CALL int bz_Load ( const char* /*commandLine*/ )
+BZF_PLUGIN_CALL int bz_Load( const char * /*commandLine*/ )
 {
-  bz_debugMessage(4,"SAMPLE_PLUGIN plugin loaded");
-  return 0;
+	bz_debugMessage( 4, "SAMPLE_PLUGIN plugin loaded" );
+	return 0;
 }
 
-BZF_PLUGIN_CALL int bz_Unload ( void )
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+BZF_PLUGIN_CALL int bz_Unload( void )
 {
-  bz_debugMessage(4,"SAMPLE_PLUGIN plugin unloaded");
-  return 0;
+	bz_debugMessage( 4, "SAMPLE_PLUGIN plugin unloaded" );
+	return 0;
 }
 
 // Local Variables: ***
@@ -24,4 +28,3 @@ BZF_PLUGIN_CALL int bz_Unload ( void )
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

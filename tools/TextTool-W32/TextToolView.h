@@ -15,84 +15,92 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #if !defined(AFX_TEXTTOOLVIEW_H__5B35C5FE_29CA_4874_B1D3_14B6CBEDDF53__INCLUDED_)
-#define AFX_TEXTTOOLVIEW_H__5B35C5FE_29CA_4874_B1D3_14B6CBEDDF53__INCLUDED_
+	#define AFX_TEXTTOOLVIEW_H__5B35C5FE_29CA_4874_B1D3_14B6CBEDDF53__INCLUDED_
 
-#if _MSC_VER > 1000
-#pragma once
-#endif // _MSC_VER > 1000
+	#if _MSC_VER > 1000
+		#pragma once
+	#endif // _MSC_VER > 1000
 
 typedef struct
 {
-  int iStartX;
-  int iEndX;
-  int iStartY;
-  int iEndY;
+	int iStartX;
+	int iEndX;
+	int iStartY;
+	int iEndY;
 } trGlyphExtents;
 
-class CTextToolView : public CView
+class CTextToolView: public CView
 {
-protected: // create from serialization only
-  CTextToolView();
-  DECLARE_DYNCREATE(CTextToolView)
+protected:
+	// create from serialization only
+	CTextToolView();
+	DECLARE_DYNCREATE( CTextToolView )
 
-// Attributes
+	// Attributes
 public:
-  CTextToolDoc* GetDocument();
+	CTextToolDoc *GetDocument();
 
-  CFont		*m_pFont;
-  ABC		m_aWidths[256];
-  int		m_iMaxTextureWidth;
-  int		m_iTextureZStep;
-  int		m_iFontPointSize;
+	CFont *m_pFont;
+	ABC m_aWidths[256];
+	int m_iMaxTextureWidth;
+	int m_iTextureZStep;
+	int m_iFontPointSize;
 
-  int		m_iMaxY;
-  int		m_iCharacterHeight;
-  trGlyphExtents	m_arGlyphExtents[256];
+	int m_iMaxY;
+	int m_iCharacterHeight;
+	trGlyphExtents m_arGlyphExtents[256];
 
-  int		iLogicalPixelsY;
+	int iLogicalPixelsY;
 
-// Operations
+	// Operations
 public:
 
-// Overrides
-  // ClassWizard generated virtual function overrides
-  //{{AFX_VIRTUAL(CTextToolView)
-  public:
-  virtual void OnDraw(CDC* pDC);  // overridden to draw this view
-  virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
-  virtual void OnInitialUpdate();
-  protected:
-  virtual BOOL OnPreparePrinting(CPrintInfo* pInfo);
-  virtual void OnBeginPrinting(CDC* pDC, CPrintInfo* pInfo);
-  virtual void OnEndPrinting(CDC* pDC, CPrintInfo* pInfo);
-  //}}AFX_VIRTUAL
-
-// Implementation
+	// Overrides
+	// ClassWizard generated virtual function overrides
+	//{{AFX_VIRTUAL(CTextToolView)
 public:
-  virtual ~CTextToolView();
-#ifdef _DEBUG
-  virtual void AssertValid() const;
-  virtual void Dump(CDumpContext& dc) const;
-#endif
+	virtual void OnDraw( CDC *pDC ); // overridden to draw this view
+	virtual BOOL PreCreateWindow( CREATESTRUCT &cs );
+	virtual void OnInitialUpdate();
+protected:
+	virtual BOOL OnPreparePrinting( CPrintInfo *pInfo );
+	virtual void OnBeginPrinting( CDC *pDC, CPrintInfo *pInfo );
+	virtual void OnEndPrinting( CDC *pDC, CPrintInfo *pInfo );
+	//}}AFX_VIRTUAL
+
+	// Implementation
+public:
+	virtual ~CTextToolView();
+	#ifdef _DEBUG
+	virtual void AssertValid()const;
+	virtual void Dump( CDumpContext &dc )const;
+	#endif 
 
 protected:
 
-// Generated message map functions
+	// Generated message map functions
 protected:
-  //{{AFX_MSG(CTextToolView)
-  afx_msg BOOL OnEraseBkgnd(CDC* pDC);
-  afx_msg void OnFontSetfont();
-  void DoFontSavefontfiles(CString filename);
-  afx_msg void OnFontSavefontfiles();
-  afx_msg void OnBatchProcessing();
-  //}}AFX_MSG
-  DECLARE_MESSAGE_MAP()
+	//{{AFX_MSG(CTextToolView)
+	afx_msg BOOL OnEraseBkgnd( CDC *pDC );
+	afx_msg void OnFontSetfont();
+	void DoFontSavefontfiles( CString filename );
+	afx_msg void OnFontSavefontfiles();
+	afx_msg void OnBatchProcessing();
+	//}}AFX_MSG
+	DECLARE_MESSAGE_MAP()
 };
 
-#ifndef _DEBUG  // debug version in TextToolView.cpp
-inline CTextToolDoc* CTextToolView::GetDocument()
-   { return (CTextToolDoc*)m_pDocument; }
-#endif
+	#ifndef _DEBUG  // debug version in TextToolView.cpp
+inline CTextToolDoc *CTextToolView::GetDocument()
+{
+	return ( CTextToolDoc* )m_pDocument;
+}
+
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+	#endif 
 
 /////////////////////////////////////////////////////////////////////////////
 

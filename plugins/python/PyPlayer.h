@@ -14,23 +14,23 @@
 #include "bzfsAPI.h"
 
 #ifndef __PYTHON_PLAYER_H__
-#define __PYTHON_PLAYER_H__
+	#define __PYTHON_PLAYER_H__
 
 namespace Python
 {
 
-typedef struct
-{
-  PyObject_HEAD
+	typedef struct
+	{
+		PyObject_HEAD 
 
-  bz_PlayerRecord *record;
-} Player;
+		bz_PlayerRecord *record;
+	} Player;
 
-PyObject *CreatePlayer (int id);
+	PyObject *CreatePlayer( int id );
 
 };
 
-#endif
+#endif 
 
 // Local Variables: ***
 // mode:C++ ***
@@ -39,4 +39,3 @@ PyObject *CreatePlayer (int id);
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

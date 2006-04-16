@@ -14,21 +14,21 @@
 #include "bzfsAPI.h"
 
 #ifndef __PYTHON_BZDB_H__
-#define __PYTHON_BZDB_H__
+	#define __PYTHON_BZDB_H__
 
 namespace Python
 {
 
-typedef struct
-{
-  PyObject_HEAD
-} BZDB;
+	typedef struct
+	{
+		PyObject_HEAD
+	} BZDB;
 
-PyObject *CreateBZDB ();
+	PyObject *CreateBZDB();
 
 };
 
-#endif
+#endif 
 
 // Local Variables: ***
 // mode:C++ ***
@@ -37,4 +37,3 @@ PyObject *CreateBZDB ();
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

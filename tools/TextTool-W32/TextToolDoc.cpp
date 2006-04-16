@@ -19,21 +19,21 @@
 #include "TextToolDoc.h"
 
 #ifdef _DEBUG
-#define new DEBUG_NEW
-#undef THIS_FILE
+	#define new DEBUG_NEW
+	#undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
-#endif
+#endif 
 
 /////////////////////////////////////////////////////////////////////////////
 // CTextToolDoc
 
-IMPLEMENT_DYNCREATE(CTextToolDoc, CDocument)
+IMPLEMENT_DYNCREATE( CTextToolDoc, CDocument )
 
-BEGIN_MESSAGE_MAP(CTextToolDoc, CDocument)
-  //{{AFX_MSG_MAP(CTextToolDoc)
-    // NOTE - the ClassWizard will add and remove mapping macros here.
-    //    DO NOT EDIT what you see in these blocks of generated code!
-  //}}AFX_MSG_MAP
+BEGIN_MESSAGE_MAP( CTextToolDoc, CDocument )
+//{{AFX_MSG_MAP(CTextToolDoc)
+// NOTE - the ClassWizard will add and remove mapping macros here.
+//    DO NOT EDIT what you see in these blocks of generated code!
+//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -41,22 +41,24 @@ END_MESSAGE_MAP()
 
 CTextToolDoc::CTextToolDoc()
 {
-  // TODO: add one-time construction code here
+	// TODO: add one-time construction code here
 }
 
-CTextToolDoc::~CTextToolDoc()
-{
-}
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+CTextToolDoc::~CTextToolDoc(){}
 
 BOOL CTextToolDoc::OnNewDocument()
 {
-  if (!CDocument::OnNewDocument())
-    return FALSE;
+	if( !CDocument::OnNewDocument())
+		return FALSE;
 
-  // TODO: add reinitialization code here
-  // (SDI documents will reuse this document)
+	// TODO: add reinitialization code here
+	// (SDI documents will reuse this document)
 
-  return TRUE;
+	return TRUE;
 }
 
 
@@ -64,31 +66,40 @@ BOOL CTextToolDoc::OnNewDocument()
 /////////////////////////////////////////////////////////////////////////////
 // CTextToolDoc serialization
 
-void CTextToolDoc::Serialize(CArchive& ar)
+void CTextToolDoc::Serialize( CArchive &ar )
 {
-  if (ar.IsStoring())
-  {
-    // TODO: add storing code here
-  }
-  else
-  {
-    // TODO: add loading code here
-  }
+	if( ar.IsStoring())
+	{
+		// TODO: add storing code here
+	}
+	else
+	{
+		// TODO: add loading code here
+	}
 }
 
 /////////////////////////////////////////////////////////////////////////////
 // CTextToolDoc diagnostics
 
 #ifdef _DEBUG
-void CTextToolDoc::AssertValid() const
+void CTextToolDoc::AssertValid()const
 {
-  CDocument::AssertValid();
+	CDocument::AssertValid();
 }
 
-void CTextToolDoc::Dump(CDumpContext& dc) const
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+void CTextToolDoc::Dump( CDumpContext &dc )const
 {
-  CDocument::Dump(dc);
+	CDocument::Dump( dc );
 }
+
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
 #endif //_DEBUG
 
 /////////////////////////////////////////////////////////////////////////////
@@ -101,4 +112,3 @@ void CTextToolDoc::Dump(CDumpContext& dc) const
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

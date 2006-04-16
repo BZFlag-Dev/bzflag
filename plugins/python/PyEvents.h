@@ -14,46 +14,30 @@
 #include "bzfsAPI.h"
 
 #ifndef __PYTHON_EVENTS_H__
-#define __PYTHON_EVENTS_H__
+	#define __PYTHON_EVENTS_H__
 
 namespace Python
 {
 
-class BZFlag;
+	class BZFlag;
 
-class Handler : public bz_EventHandler
-{
+	class Handler: public bz_EventHandler
+	{
 public:
-  virtual void process (bz_EventData *eventData) = 0;
-  BZFlag *parent;
+		virtual void process( bz_EventData *eventData ) = 0;
+		BZFlag *parent;
 
 protected:
-  void emit (PyObject *arglist, int event);
-};
+		void emit( PyObject *arglist, int event );
+	};
 
-#define PY_HANDLER(x) class x : public Handler { public: virtual void process (bz_EventData *eventData); };
-PY_HANDLER(CaptureHandler)
-PY_HANDLER(DieHandler)
-PY_HANDLER(SpawnHandler)
-PY_HANDLER(ZoneEntryHandler)
-PY_HANDLER(ZoneExitHandler)
-PY_HANDLER(JoinHandler)
-PY_HANDLER(PartHandler)
-PY_HANDLER(ChatHandler)
-PY_HANDLER(UnknownSlashHandler)
-PY_HANDLER(GetSpawnPosHandler)
-PY_HANDLER(GetAutoTeamHandler)
-PY_HANDLER(AllowPlayerHandler)
-PY_HANDLER(TickHandler)
-PY_HANDLER(GenerateWorldHandler)
-PY_HANDLER(GetPlayerInfoHandler)
-PY_HANDLER(AllowSpawnHandler)
-PY_HANDLER(ListServerUpdateHandler)
-#undef PY_HANDLER
+	#define PY_HANDLER(x) class x : public Handler { public: virtual void process (bz_EventData *eventData); };
+	PY_HANDLER( CaptureHandler )PY_HANDLER( DieHandler )PY_HANDLER( SpawnHandler )PY_HANDLER( ZoneEntryHandler )PY_HANDLER( ZoneExitHandler )PY_HANDLER( JoinHandler )PY_HANDLER( PartHandler )PY_HANDLER( ChatHandler )PY_HANDLER( UnknownSlashHandler )PY_HANDLER( GetSpawnPosHandler )PY_HANDLER( GetAutoTeamHandler )PY_HANDLER( AllowPlayerHandler )PY_HANDLER( TickHandler )PY_HANDLER( GenerateWorldHandler )PY_HANDLER( GetPlayerInfoHandler )PY_HANDLER( AllowSpawnHandler )PY_HANDLER( ListServerUpdateHandler )
+	#undef PY_HANDLER
 
 };
 
-#endif
+#endif 
 
 // Local Variables: ***
 // mode:C++ ***
@@ -62,4 +46,3 @@ PY_HANDLER(ListServerUpdateHandler)
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

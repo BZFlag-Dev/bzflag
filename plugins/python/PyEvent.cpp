@@ -16,34 +16,33 @@
 namespace Python
 {
 
-Event::Event ()
-{
-  module = Py_InitModule3 ("BZFlag.Event", NULL, NULL);
+	Event::Event()
+	{
+		module = Py_InitModule3( "BZFlag.Event", NULL, NULL );
 
-  // This module just contains all those fiddly little event IDs
-  PyModule_AddIntConstant (module, "Null",			bz_eNullEvent);
-  PyModule_AddIntConstant (module, "Capture",			bz_eCaptureEvent);
-  PyModule_AddIntConstant (module, "PlayerDie",			bz_ePlayerDieEvent);
-  PyModule_AddIntConstant (module, "PlayerSpawn",		bz_ePlayerSpawnEvent);
-  PyModule_AddIntConstant (module, "ZoneEntry",			bz_eZoneEntryEvent);
-  PyModule_AddIntConstant (module, "ZoneExit",			bz_eZoneExitEvent);
-  PyModule_AddIntConstant (module, "PlayerJoin",		bz_ePlayerJoinEvent);
-  PyModule_AddIntConstant (module, "PlayerPart",		bz_ePlayerPartEvent);
-  PyModule_AddIntConstant (module, "ChatMessage",		bz_eChatMessageEvent);
-  PyModule_AddIntConstant (module, "UnknownSlashCommand",	bz_eUnknownSlashCommand);
-  PyModule_AddIntConstant (module, "GetPlayerSpawnPosition",	bz_eGetPlayerSpawnPosEvent);
-  PyModule_AddIntConstant (module, "GetAutoTeam",		bz_eGetAutoTeamEvent);
-  PyModule_AddIntConstant (module, "AllowPlayer",		bz_eAllowPlayer);
-  PyModule_AddIntConstant (module, "Tick",			bz_eTickEvent);
-  PyModule_AddIntConstant (module, "GenerateWorld",		bz_eGenerateWorldEvent);
-  PyModule_AddIntConstant (module, "GetPlayerInfo",		bz_eGetPlayerInfoEvent);
-}
+		// This module just contains all those fiddly little event IDs
+		PyModule_AddIntConstant( module, "Null", bz_eNullEvent );
+		PyModule_AddIntConstant( module, "Capture", bz_eCaptureEvent );
+		PyModule_AddIntConstant( module, "PlayerDie", bz_ePlayerDieEvent );
+		PyModule_AddIntConstant( module, "PlayerSpawn", bz_ePlayerSpawnEvent );
+		PyModule_AddIntConstant( module, "ZoneEntry", bz_eZoneEntryEvent );
+		PyModule_AddIntConstant( module, "ZoneExit", bz_eZoneExitEvent );
+		PyModule_AddIntConstant( module, "PlayerJoin", bz_ePlayerJoinEvent );
+		PyModule_AddIntConstant( module, "PlayerPart", bz_ePlayerPartEvent );
+		PyModule_AddIntConstant( module, "ChatMessage", bz_eChatMessageEvent );
+		PyModule_AddIntConstant( module, "UnknownSlashCommand", bz_eUnknownSlashCommand );
+		PyModule_AddIntConstant( module, "GetPlayerSpawnPosition", bz_eGetPlayerSpawnPosEvent );
+		PyModule_AddIntConstant( module, "GetAutoTeam", bz_eGetAutoTeamEvent );
+		PyModule_AddIntConstant( module, "AllowPlayer", bz_eAllowPlayer );
+		PyModule_AddIntConstant( module, "Tick", bz_eTickEvent );
+		PyModule_AddIntConstant( module, "GenerateWorld", bz_eGenerateWorldEvent );
+		PyModule_AddIntConstant( module, "GetPlayerInfo", bz_eGetPlayerInfoEvent );
+	}
 
-PyObject *
-Event::GetSubModule ()
-{
-  return module;
-}
+	PyObject *Event::GetSubModule()
+	{
+		return module;
+	}
 
 }
 
@@ -54,4 +53,3 @@ Event::GetSubModule ()
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

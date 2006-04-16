@@ -44,410 +44,495 @@ float maxShineExponent = 128.0f; // OpenGL minimum shininess
 
 
 float globalScale = 1.0f;
-float globalShift[3] = {0,0,0};
-std::vector<std::string> bspMaterialSkips; // materials to skip in a bsp map
-
-
-static void writeBZW  ( CModel &model, std::string file )
+float globalShift[3] = 
 {
-	if (model.meshes.size() < 1 )
-		return;
+	0, 0, 0
+};
+std::vector < std::string > bspMaterialSkips; // materials to skip in a bsp map
 
-	FILE *fp = fopen (file.c_str(),"wt");
-	if (!fp)
-		return;
 
-	if (useMaterials) {
-	  tmMaterialMap::iterator materialItr = model.materials.begin();
-		while ( materialItr != model.materials.end() )
+static void writeBZW( CModel &model, std::string file )
+{
+	if( model.meshes.size() < 1 )
+		return ;
+
+	FILE *fp = fopen( file.c_str(), "wt" );
+	if( !fp )
+		return ;
+
+	if( useMaterials )
+	{
+		tmMaterialMap::iterator materialItr = model.materials.begin();
+		while( materialItr != model.materials.end())
 		{
 			CMaterial &material = materialItr->second;
-			fprintf (fp,"material\n  name %s\n",materialItr->first.c_str());
-			if ( material.texture.size()) {
-			  std::string texName = texdir + material.texture;
+			fprintf( fp, "material\n  name %s\n", materialItr->first.c_str());
+			if( material.texture.size())
+			{
+				std::string texName = texdir + material.texture;
 				// change the extension to png
-				char *p = strrchr(texName.c_str(), '.');
-				if (p) {
-					texName.resize(p - texName.c_str());
+				char *p = strrchr( texName.c_str(), '.' );
+				if( p )
+				{
+					texName.resize( p - texName.c_str());
 					texName += ".png";
-				} else {
-				  texName += ".png";
 				}
-			  fprintf (fp,"  texture %s\n", texName.c_str());
-			} else {
-				fprintf (fp,"  notextures\n");
+				else
+				{
+					texName += ".png";
+				}
+				fprintf( fp, "  texture %s\n", texName.c_str());
 			}
-			if (useAmbient)
-				fprintf (fp,"  ambient %f %f %f %f\n", material.ambient[0], material.ambient[1], material.ambient[2], material.ambient[3]);
-			if (useDiffuse)
-				fprintf (fp,"  diffuse %f %f %f %f\n", material.diffuse[0], material.diffuse[1], material.diffuse[2], material.diffuse[3]);
-			if (useSpecular)
-				fprintf (fp,"  specular %f %f %f %f\n", material.specular[0], material.specular[1], material.specular[2], material.specular[3]);
-			if (useShininess)
-				fprintf (fp,"  shininess %f\n", material.shine);
-			if (useEmission)
-				fprintf (fp,"  emission %f %f %f %f\n", material.emission[0], material.emission[1], material.emission[2], material.emission[3]);
+			else
+			{
+				fprintf( fp, "  notextures\n" );
+			}
+			if( useAmbient )
+				fprintf( fp, "  ambient %f %f %f %f\n", material.ambient[0], material.ambient[1], material.ambient[2], material.ambient[3] );
+			if( useDiffuse )
+				fprintf( fp, "  diffuse %f %f %f %f\n", material.diffuse[0], material.diffuse[1], material.diffuse[2], material.diffuse[3] );
+			if( useSpecular )
+				fprintf( fp, "  specular %f %f %f %f\n", material.specular[0], material.specular[1], material.specular[2], material.specular[3] );
+			if( useShininess )
+				fprintf( fp, "  shininess %f\n", material.shine );
+			if( useEmission )
+				fprintf( fp, "  emission %f %f %f %f\n", material.emission[0], material.emission[1], material.emission[2], material.emission[3] );
 
-			fprintf (fp,"end\n\n");
+			fprintf( fp, "end\n\n" );
 
 			materialItr++;
 		}
-		fprintf (fp,"\n");
+		fprintf( fp, "\n" );
 	}
 
-	if (groupName.size() > 0) {
-	  fprintf (fp, "define %s\n", groupName.c_str());
-	}
-
-	tvMeshList::iterator	meshItr = model.meshes.begin();
-
-	while ( meshItr != model.meshes.end() )
+	if( groupName.size() > 0 )
 	{
-		CMesh	&mesh = *meshItr;
+		fprintf( fp, "define %s\n", groupName.c_str());
+	}
+
+	tvMeshList::iterator meshItr = model.meshes.begin();
+
+	while( meshItr != model.meshes.end())
+	{
+		CMesh &mesh =  *meshItr;
 
 		mesh.reindex();
 
-		fprintf (fp,"mesh # %s\n", mesh.name.c_str());
+		fprintf( fp, "mesh # %s\n", mesh.name.c_str());
 
-		fprintf (fp,"# vertices: %d\n", (int)mesh.verts.size());
-		fprintf (fp,"# normals: %d\n", (int)mesh.normals.size());
-		fprintf (fp,"# texcoords: %d\n", (int)mesh.texCoords.size());
-		fprintf (fp,"# faces: %d\n\n", (int) mesh.faces.size());
+		fprintf( fp, "# vertices: %d\n", ( int )mesh.verts.size());
+		fprintf( fp, "# normals: %d\n", ( int )mesh.normals.size());
+		fprintf( fp, "# texcoords: %d\n", ( int )mesh.texCoords.size());
+		fprintf( fp, "# faces: %d\n\n", ( int )mesh.faces.size());
 
-		if (useSmoothBounce)
-			fprintf (fp,"  smoothbounce\n");
+		if( useSmoothBounce )
+			fprintf( fp, "  smoothbounce\n" );
 
 		tvVertList::iterator vertItr = mesh.verts.begin();
-		while ( vertItr != mesh.verts.end() )
+		while( vertItr != mesh.verts.end())
 		{
-			fprintf (fp,"  vertex %f %f %f\n", vertItr->x*globalScale+globalShift[0],vertItr->y*globalScale+globalShift[1],vertItr->z*globalScale+globalShift[2]);
+			fprintf( fp, "  vertex %f %f %f\n", vertItr->x *globalScale + globalShift[0], vertItr->y *globalScale + globalShift[1], vertItr->z *globalScale + globalShift[2] );
 			vertItr++;
 		}
 
 		vertItr = mesh.normals.begin();
-		while ( vertItr != mesh.normals.end() )
+		while( vertItr != mesh.normals.end())
 		{
 			// normalise all normals before writing them
-			float dist = sqrt(vertItr->x*vertItr->x+vertItr->y*vertItr->y+vertItr->z*vertItr->z);
-			fprintf (fp,"  normal %f %f %f\n", vertItr->x/dist,vertItr->y/dist,vertItr->z/dist);
+			float dist = sqrt( vertItr->x *vertItr->x + vertItr->y *vertItr->y + vertItr->z *vertItr->z );
+			fprintf( fp, "  normal %f %f %f\n", vertItr->x / dist, vertItr->y / dist, vertItr->z / dist );
 			vertItr++;
 		}
 
 		tvTexCoordList::iterator uvItr = mesh.texCoords.begin();
-		while ( uvItr != mesh.texCoords.end() )
+		while( uvItr != mesh.texCoords.end())
 		{
-			fprintf (fp,"  texcoord %f %f\n", uvItr->u,uvItr->v);
+			fprintf( fp, "  texcoord %f %f\n", uvItr->u, uvItr->v );
 			uvItr++;
 		}
 
 
-		tvFaceList::iterator	faceItr = mesh.faces.begin();
-		while ( faceItr != mesh.faces.end() )
+		tvFaceList::iterator faceItr = mesh.faces.begin();
+		while( faceItr != mesh.faces.end())
 		{
-			CFace	&face = *faceItr;
+			CFace &face =  *faceItr;
 
-			fprintf (fp,"  face\n");
+			fprintf( fp, "  face\n" );
 
-			tvIndexList::iterator	indexItr = face.verts.begin();
-			fprintf (fp,"    vertices");
-			while ( indexItr != face.verts.end() )
-				fprintf(fp," %d",*indexItr++);
-			fprintf (fp,"\n");
+			tvIndexList::iterator indexItr = face.verts.begin();
+			fprintf( fp, "    vertices" );
+			while( indexItr != face.verts.end())
+				fprintf( fp, " %d",  *indexItr++ );
+			fprintf( fp, "\n" );
 
-      if (useNormals && (face.normals.size() > 0)) {
+			if( useNormals && ( face.normals.size() > 0 ))
+			{
 				indexItr = face.normals.begin();
-				fprintf (fp,"    normals");
-				while ( indexItr != face.normals.end() )
-					fprintf(fp," %d",*indexItr++);
-				fprintf (fp,"\n");
+				fprintf( fp, "    normals" );
+				while( indexItr != face.normals.end())
+					fprintf( fp, " %d",  *indexItr++ );
+				fprintf( fp, "\n" );
 			}
 
-      if (useTexcoords && (face.texCoords.size() > 0)) {
+			if( useTexcoords && ( face.texCoords.size() > 0 ))
+			{
 				indexItr = face.texCoords.begin();
-				fprintf (fp,"    texcoords");
-				while ( indexItr != face.texCoords.end() )
-					fprintf(fp," %d",*indexItr++);
-				fprintf (fp,"\n");
+				fprintf( fp, "    texcoords" );
+				while( indexItr != face.texCoords.end())
+					fprintf( fp, " %d",  *indexItr++ );
+				fprintf( fp, "\n" );
 			}
 
-			if (useMaterials && (face.material.size() > 0)) {
-			  fprintf (fp, "    matref %s\n", face.material.c_str());
+			if( useMaterials && ( face.material.size() > 0 ))
+			{
+				fprintf( fp, "    matref %s\n", face.material.c_str());
 			}
 
-			fprintf (fp,"  endface\n");
+			fprintf( fp, "  endface\n" );
 
 			faceItr++;
 		}
 
-		fprintf (fp,"end\n\n");
+		fprintf( fp, "end\n\n" );
 		meshItr++;
 	}
 
-	if (groupName.size() > 0) {
-	  fprintf (fp, "enddef # %s\n", groupName.c_str());
+	if( groupName.size() > 0 )
+	{
+		fprintf( fp, "enddef # %s\n", groupName.c_str());
 	}
 
 	// do the custom objects.
 
-	for ( unsigned int i = 0; i < model.customObjects.size(); i++ )
+	for( unsigned int i = 0; i < model.customObjects.size(); i++ )
 	{
-		fprintf (fp, "%s\n", model.customObjects[i].name.c_str());
-		for (unsigned int j = 0; j < model.customObjects[i].params.size(); j++ )
-			fprintf (fp, "  %s\n", model.customObjects[i].params[j].c_str());
-		fprintf (fp, "end\n\n");
+		fprintf( fp, "%s\n", model.customObjects[i].name.c_str());
+		for( unsigned int j = 0; j < model.customObjects[i].params.size(); j++ )
+			fprintf( fp, "  %s\n", model.customObjects[i].params[j].c_str());
+		fprintf( fp, "end\n\n" );
 	}
 
-	fclose(fp);
+	fclose( fp );
 }
 
-static int  dumpUsage ( char *exeName, const char* reason )
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+static int dumpUsage( char *exeName, const char *reason )
 {
-	printf("\n%s\n\n", VersionString);
-	printf("error: %s\n\n",reason);
-	printf("usage: %s <input_file_name> [options]\n\n", exeName);
-	printf("       -g <name>  : use group definition\n");
-	printf("       -tx <dir>  : set texture prefix\n");
-	printf("       -sm	: use the smoothbounce property\n");
-	printf("       -yz	: flip y and z coordinates\n");
-	printf("       -n	 : disable normals\n");
-	printf("       -t	 : disable texture coordinates\n");
-	printf("       -m	 : disable materials\n");
-	printf("       -a	 : disable ambient coloring\n");
-	printf("       -d	 : disable diffuse coloring\n");
-	printf("       -s	 : disable specular coloring\n");
-	printf("       -sh	: disable shininess\n");
-	printf("       -sf <val>  : shine multiplier\n");
-	printf("       -e	 : disable emission coloring\n\n");
-	printf("       -gx <val>  : scale the model by this factor\n\n");
-	printf("       -gsx <val> : shift the map by this value in X\n\n");
-	printf("       -gsy <val> : shift the map by this value in Y\n\n");
-	printf("       -gsz <val> : shift the map by this value in Z\n\n");
-	printf("       -bspskip <val> : skip faces with this material when importing a bsp\n\n");
+	printf( "\n%s\n\n", VersionString );
+	printf( "error: %s\n\n", reason );
+	printf( "usage: %s <input_file_name> [options]\n\n", exeName );
+	printf( "       -g <name>  : use group definition\n" );
+	printf( "       -tx <dir>  : set texture prefix\n" );
+	printf( "       -sm	: use the smoothbounce property\n" );
+	printf( "       -yz	: flip y and z coordinates\n" );
+	printf( "       -n	 : disable normals\n" );
+	printf( "       -t	 : disable texture coordinates\n" );
+	printf( "       -m	 : disable materials\n" );
+	printf( "       -a	 : disable ambient coloring\n" );
+	printf( "       -d	 : disable diffuse coloring\n" );
+	printf( "       -s	 : disable specular coloring\n" );
+	printf( "       -sh	: disable shininess\n" );
+	printf( "       -sf <val>  : shine multiplier\n" );
+	printf( "       -e	 : disable emission coloring\n\n" );
+	printf( "       -gx <val>  : scale the model by this factor\n\n" );
+	printf( "       -gsx <val> : shift the map by this value in X\n\n" );
+	printf( "       -gsy <val> : shift the map by this value in Y\n\n" );
+	printf( "       -gsz <val> : shift the map by this value in Z\n\n" );
+	printf( "       -bspskip <val> : skip faces with this material when importing a bsp\n\n" );
 	return 1;
 }
 
-int main(int argc, char* argv[])
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+int main( int argc, char *argv[] )
 {
 	std::string input;
 	std::string extenstion = "OBJ";
 	std::string output;
 
 	// make sure we have all the right stuff
-	if ( argc < 2)
-		return dumpUsage(argv[0],"No input file specified");
+	if( argc < 2 )
+		return dumpUsage( argv[0], "No input file specified" );
 
 	// get the input file
 	// check argv for
-	if ( argv[1][0] == '\"' )
+	if( argv[1][0] == '\"' )
 	{
 		argv[1]++;
-		argv[1][strlen(argv[1])-1] = 0;
+		argv[1][strlen( argv[1] ) - 1] = 0;
 	}
 	input = argv[1];
 
 	// see if it has an extenstion
-	char *p = strrchr(argv[1],'.');
-	if (p)
-		extenstion = p+1;
+	char *p = strrchr( argv[1], '.' );
+	if( p )
+		extenstion = p + 1;
 
-	if (!p) {
+	if( !p )
+	{
 		output = input + ".bzw";
-	} else {
+	}
+	else
+	{
 		*p = '\0'; // clip the old extension
-		output = argv[1] + std::string(".bzw");
+		output = argv[1] + std::string( ".bzw" );
 	}
 
-	for ( int i = 2; i < argc; i++) {
+	for( int i = 2; i < argc; i++ )
+	{
 		std::string command = argv[i];
-		command = TextUtils::tolower(command);
+		command = TextUtils::tolower( command );
 
-		if (command == "-yz") {
+		if( command == "-yz" )
+		{
 			flipYZ = true;
 		}
-		else if (command == "-g") {
-		  if ((i + 1) < argc) {
-			  i++;
-			  groupName = argv[i];
-			} else {
-			  printf ("missing -g argument\n");
+		else if( command == "-g" )
+		{
+			if(( i + 1 ) < argc )
+			{
+				i++;
+				groupName = argv[i];
+			}
+			else
+			{
+				printf( "missing -g argument\n" );
 			}
 		}
-		else if (command == "-tx") {
-		  if ((i + 1) < argc) {
-			  i++;
-			  texdir = argv[i];
-			  if (texdir[texdir.size()] != '/') {
-			    texdir += '/';
+		else if( command == "-tx" )
+		{
+			if(( i + 1 ) < argc )
+			{
+				i++;
+				texdir = argv[i];
+				if( texdir[texdir.size()] != '/' )
+				{
+					texdir += '/';
 				}
-			} else {
-			  printf ("missing -tx argument\n");
+			}
+			else
+			{
+				printf( "missing -tx argument\n" );
 			}
 		}
-		else if (command == "-sm") {
+		else if( command == "-sm" )
+		{
 			useSmoothBounce = true;
 		}
-		else if (command == "-n") {
+		else if( command == "-n" )
+		{
 			useNormals = false;
 		}
-		else if (command == "-t") {
+		else if( command == "-t" )
+		{
 			useTexcoords = false;
 		}
-		else if (command == "-m") {
+		else if( command == "-m" )
+		{
 			useMaterials = false;
 		}
-		else if (command == "-a") {
+		else if( command == "-a" )
+		{
 			useAmbient = false;
 		}
-		else if (command == "-d") {
+		else if( command == "-d" )
+		{
 			useDiffuse = false;
 		}
-		else if (command == "-s") {
+		else if( command == "-s" )
+		{
 			useSpecular = false;
 		}
-		else if (command == "-sh") {
+		else if( command == "-sh" )
+		{
 			useShininess = false;
 		}
-		else if (command == "-sf") {
-		  if ((i + 1) < argc) {
-			  i++;
-			  shineFactor = (float)atof(argv[i]);
-			} else {
-			  printf ("missing -sf argument\n");
+		else if( command == "-sf" )
+		{
+			if(( i + 1 ) < argc )
+			{
+				i++;
+				shineFactor = ( float )atof( argv[i] );
+			}
+			else
+			{
+				printf( "missing -sf argument\n" );
 			}
 		}
-		else if (command == "-e") {
+		else if( command == "-e" )
+		{
 			useEmission = false;
 		}
-		else if (command == "-gx"){
-			if ((i + 1) < argc) {
+		else if( command == "-gx" )
+		{
+			if(( i + 1 ) < argc )
+			{
 				i++;
-				globalScale = (float)atof(argv[i]);
-			} else {
-				printf ("missing -gx argument\n");
+				globalScale = ( float )atof( argv[i] );
+			}
+			else
+			{
+				printf( "missing -gx argument\n" );
 			}
 		}
-		else if (command == "-gsx"){
-			if ((i + 1) < argc) {
+		else if( command == "-gsx" )
+		{
+			if(( i + 1 ) < argc )
+			{
 				i++;
-				globalShift[0] = (float)atof(argv[i]);
-			} else {
-				printf ("missing -gsx argument\n");
+				globalShift[0] = ( float )atof( argv[i] );
+			}
+			else
+			{
+				printf( "missing -gsx argument\n" );
 			}
 		}
-		else if (command == "-gsy"){
-			if ((i + 1) < argc) {
+		else if( command == "-gsy" )
+		{
+			if(( i + 1 ) < argc )
+			{
 				i++;
-				globalShift[1] = (float)atof(argv[i]);
-			} else {
-				printf ("missing -gsy argument\n");
+				globalShift[1] = ( float )atof( argv[i] );
+			}
+			else
+			{
+				printf( "missing -gsy argument\n" );
 			}
 		}
-		else if (command == "-gsz"){
-			if ((i + 1) < argc) {
+		else if( command == "-gsz" )
+		{
+			if(( i + 1 ) < argc )
+			{
 				i++;
-				globalShift[2] = (float)atof(argv[i]);
-			} else {
-				printf ("missing -gsz argument\n");
+				globalShift[2] = ( float )atof( argv[i] );
+			}
+			else
+			{
+				printf( "missing -gsz argument\n" );
 			}
 		}
-		else if (command == "-bspskip"){
-			if ((i + 1) < argc) {
+		else if( command == "-bspskip" )
+		{
+			if(( i + 1 ) < argc )
+			{
 				i++;
-				bspMaterialSkips.push_back(std::string(argv[i]));
-			} else {
-				printf ("missing -bspskip argument\n");
+				bspMaterialSkips.push_back( std::string( argv[i] ));
+			}
+			else
+			{
+				printf( "missing -bspskip argument\n" );
 			}
 		}
 	}
 	// make a model
 
-	CModel	model;
+	CModel model;
 
-	if ( TextUtils::tolower(extenstion) == "obj" )
+	if( TextUtils::tolower( extenstion ) == "obj" )
 	{
-		readOBJ(model,input);
+		readOBJ( model, input );
 	}
-	else if ( TextUtils::tolower(extenstion) == "bsp" )
+	else if( TextUtils::tolower( extenstion ) == "bsp" )
 	{
-		Quake3Level	level;
-		level.loadFromFile(input.c_str());
-		level.dumpToModel(model);
+		Quake3Level level;
+		level.loadFromFile( input.c_str());
+		level.dumpToModel( model );
 	}
 	else
 	{
-		printf("unknown input format\n");
+		printf( "unknown input format\n" );
 		return 2;
 	}
 
-	model.pushAboveAxis(eZAxis);
+	model.pushAboveAxis( eZAxis );
 
-	if (model.meshes.size() > 0) {
-		writeBZW(model,output);
-		printf("%s file %s converted to BZW as %s\n", extenstion.c_str(),input.c_str(),output.c_str());
-	} else {
-		printf("no valid meshes written from %s\n", input.c_str());
+	if( model.meshes.size() > 0 )
+	{
+		writeBZW( model, output );
+		printf( "%s file %s converted to BZW as %s\n", extenstion.c_str(), input.c_str(), output.c_str());
+	}
+	else
+	{
+		printf( "no valid meshes written from %s\n", input.c_str());
 	}
 
 	return 0;
 }
 
-static int getNewIndex ( CVertex &vert, tvVertList &vertList )
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+static int getNewIndex( CVertex &vert, tvVertList &vertList )
 {
 	tvVertList::iterator itr = vertList.begin();
 
 	int count = 0;
-	while ( itr != vertList.end() )
+	while( itr != vertList.end())
 	{
-		if ( itr->same(vert) )
+		if( itr->same( vert ))
 			return count;
 		count++;
 		itr++;
 	}
-	vertList.push_back(vert);
+	vertList.push_back( vert );
 	return count;
 }
 
-static int getNewIndex ( CTexCoord &vert, tvTexCoordList &vertList )
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+static int getNewIndex( CTexCoord &vert, tvTexCoordList &vertList )
 {
 	tvTexCoordList::iterator itr = vertList.begin();
 
 	int count = 0;
-	while ( itr != vertList.end() )
+	while( itr != vertList.end())
 	{
-		if ( itr->same(vert) )
+		if( itr->same( vert ))
 			return count;
 		count++;
 		itr++;
 	}
-	vertList.push_back(vert);
+	vertList.push_back( vert );
 	return count;
 }
 
-void CMesh::reindex ( void )
-{
-	tvVertList		temp_verts;
-	tvVertList		temp_normals;
-	tvTexCoordList	temp_texCoords;
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
-	tvFaceList::iterator	faceItr = faces.begin();
-	while ( faceItr != faces.end() )
+void CMesh::reindex( void )
+{
+	tvVertList temp_verts;
+	tvVertList temp_normals;
+	tvTexCoordList temp_texCoords;
+
+	tvFaceList::iterator faceItr = faces.begin();
+	while( faceItr != faces.end())
 	{
-		CFace	&face = *faceItr;
-		CFace	newFace;
+		CFace &face =  *faceItr;
+		CFace newFace;
 
 		newFace.material = face.material;
 
 		tvIndexList::iterator indexItr = face.verts.begin();
-		while ( indexItr != face.verts.end() )
-			newFace.verts.push_back(getNewIndex(verts[*indexItr++],temp_verts));
+		while( indexItr != face.verts.end())
+			newFace.verts.push_back( getNewIndex( verts[ *indexItr++], temp_verts ));
 
 		indexItr = face.normals.begin();
-		while ( indexItr != face.normals.end() )
-			newFace.normals.push_back(getNewIndex(normals[*indexItr++],temp_normals));
+		while( indexItr != face.normals.end())
+			newFace.normals.push_back( getNewIndex( normals[ *indexItr++], temp_normals ));
 
 		indexItr = face.texCoords.begin();
-		while ( indexItr != face.texCoords.end() )
-			newFace.texCoords.push_back(getNewIndex(texCoords[*indexItr++],temp_texCoords));
+		while( indexItr != face.texCoords.end())
+			newFace.texCoords.push_back( getNewIndex( texCoords[ *indexItr++], temp_texCoords ));
 
 		*faceItr = newFace;
 		faceItr++;
@@ -456,5 +541,3 @@ void CMesh::reindex ( void )
 	normals = temp_normals;
 	texCoords = temp_texCoords;
 }
-
-
