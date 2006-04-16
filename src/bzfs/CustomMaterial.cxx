@@ -27,50 +27,66 @@
 
 CustomMaterial::CustomMaterial()
 {
-  return;
+	return ;
 }
+
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
 
 CustomMaterial::~CustomMaterial()
 {
-  return;
+	return ;
 }
 
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
-bool CustomMaterial::read(const char *cmd, std::istream& input)
+
+bool CustomMaterial::read( const char *cmd, std::istream &input )
 {
-  bool materror;
+	bool materror;
 
-  if (parseMaterials(cmd, input, &material, 1, materror)) {
-    if (materror) {
-      return false;
-    }
-  }
-  else {
-    return WorldFileObject::read(cmd, input);
-  }
+	if( parseMaterials( cmd, input, &material, 1, materror ))
+	{
+		if( materror )
+		{
+			return false;
+		}
+	}
+	else
+	{
+		return WorldFileObject::read( cmd, input );
+	}
 
-  return true;
+	return true;
 }
 
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
-void CustomMaterial::writeToManager() const
+
+void CustomMaterial::writeToManager()const
 {
-  material.setName(name);
+	material.setName( name );
 
-  if ((name.size() > 0) && (MATERIALMGR.findMaterial(name) != NULL)) {
-    std::cout << "warning: duplicate material name"
-	      << " (" << name << ")" << std::endl;
-    std::cout << "	 the first material will be used" << std::endl;
-  }
+	if(( name.size() > 0 ) && ( MATERIALMGR.findMaterial( name ) != NULL ))
+	{
+		std::cout << "warning: duplicate material name" << " (" << name << ")" << std::endl;
+		std::cout << "	 the first material will be used" << std::endl;
+	}
 
-  const BzMaterial* matref = MATERIALMGR.addMaterial(&material);
+	const BzMaterial *matref = MATERIALMGR.addMaterial( &material );
 
-  int index = MATERIALMGR.getIndex(matref);
-  if (index < 0) {
-    std::cout << "CustomMaterial::write: material didn't register" << std::endl;
-  }
-  return;
+	int index = MATERIALMGR.getIndex( matref );
+	if( index < 0 )
+	{
+		std::cout << "CustomMaterial::write: material didn't register" << std::endl;
+	}
+	return ;
 }
 
 

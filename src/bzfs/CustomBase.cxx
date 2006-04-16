@@ -21,40 +21,57 @@
 
 CustomBase::CustomBase()
 {
-  pos[0] = pos[1] = pos[2] = 0.0f;
-  rotation = 0.0f;
-  size[0] = size[1] = BZDB.eval(StateDatabase::BZDB_BASESIZE);
-  color = 0;
+	pos[0] = pos[1] = pos[2] = 0.0f;
+	rotation = 0.0f;
+	size[0] = size[1] = BZDB.eval( StateDatabase::BZDB_BASESIZE );
+	color = 0;
 
-  triggerWorldWep = false;
-  worldWepType = "SW";
+	triggerWorldWep = false;
+	worldWepType = "SW";
 }
 
-
-bool CustomBase::read(const char *cmd, std::istream& input) {
-  if (strcmp(cmd, "color") == 0) {
-    input >> color;
-    if ((color <= 0) || (color >= CtfTeams))
-      return false;
-  } else if (strcmp(cmd, "oncap") == 0) {
-    triggerWorldWep = true;
-    input >> worldWepType;
-  } else {
-    if (!WorldFileObstacle::read(cmd, input))
-      return false;
-  }
-  return true;
-}
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
 
-void CustomBase::writeToGroupDef(GroupDefinition *groupdef) const
+bool CustomBase::read( const char *cmd, std::istream &input )
 {
-  float absSize[3] = { fabsf(size[0]), fabsf(size[1]), fabsf(size[2]) };
-  BaseBuilding* base = new BaseBuilding(pos, rotation, absSize, color);
-  groupdef->addObstacle(base);
+	if( strcmp( cmd, "color" ) == 0 )
+	{
+		input >> color;
+		if(( color <= 0 ) || ( color >= CtfTeams ))
+			return false;
+	}
+	else if( strcmp( cmd, "oncap" ) == 0 )
+	{
+		triggerWorldWep = true;
+		input >> worldWepType;
+	}
+	else
+	{
+		if( !WorldFileObstacle::read( cmd, input ))
+			return false;
+	}
+	return true;
+}
 
-  if (triggerWorldWep)
-    worldEventManager.addEvent(bz_eCaptureEvent,new WorldWeaponGlobalEventHandler(Flag::getDescFromAbbreviation(worldWepType.c_str()), pos, rotation, 0,(TeamColor)color));
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+
+void CustomBase::writeToGroupDef( GroupDefinition *groupdef )const
+{
+	float absSize[3] = 
+	{
+		fabsf( size[0] ), fabsf( size[1] ), fabsf( size[2] )
+	};
+	BaseBuilding *base = new BaseBuilding( pos, rotation, absSize, color );
+	groupdef->addObstacle( base );
+
+	if( triggerWorldWep )
+		worldEventManager.addEvent( bz_eCaptureEvent, new WorldWeaponGlobalEventHandler( Flag::getDescFromAbbreviation( worldWepType.c_str()), pos, rotation, 0, ( TeamColor )color ));
 }
 
 // Local variables: ***

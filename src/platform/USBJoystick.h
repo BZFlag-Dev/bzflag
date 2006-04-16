@@ -20,40 +20,41 @@
 #include "common.h"
 
 #ifdef USBJOYSTICK
-#include "BzfJoystick.h"
-#include <X11/Intrinsic.h>
-#include <fcntl.h>
-#include <unistd.h>
-#include <vector>
-#include <string>
+	#include "BzfJoystick.h"
+	#include <X11/Intrinsic.h>
+	#include <fcntl.h>
+	#include <unistd.h>
+	#include <vector>
+	#include <string>
 
-#include <stdio.h>
+	#include <stdio.h>
 
-#define MAX_AXIS 3
+	#define MAX_AXIS 3
 
-class USBJoystick : public BzfJoystick {
+class USBJoystick: public BzfJoystick
+{
 public:
 	USBJoystick();
 	~USBJoystick();
-    void	initJoystick(const char* joystickName);
-    bool	joystick() const;
-    void	getJoy(int& x, int& y);
-    unsigned long getJoyButtons();
-    void	getJoyDevices(std::vector<std::string> &list) const;
+	void initJoystick( const char *joystickName );
+	bool joystick()const;
+	void getJoy( int &x, int &y );
+	unsigned long getJoyButtons();
+	void getJoyDevices( std::vector < std::string >  &list )const;
 
 private:
-    void    poll();
-    int	    num_axis;
-    int	    axis[MAX_AXIS];
-    int	    axis_scale[MAX_AXIS];
-    int	    axis_const[MAX_AXIS];
-    unsigned long buttons;
-    bool    status;
-    int	    fd;
-    struct  hid_item *hids;
-    char    *data_buf;
-    int	    data_buf_size;
-    int	    data_buf_offset;
+	void poll();
+	int num_axis;
+	int axis[MAX_AXIS];
+	int axis_scale[MAX_AXIS];
+	int axis_const[MAX_AXIS];
+	unsigned long buttons;
+	bool status;
+	int fd;
+	struct hid_item *hids;
+	char *data_buf;
+	int data_buf_size;
+	int data_buf_offset;
 };
 
 #endif //USBJOYSTICK
@@ -66,4 +67,3 @@ private:
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

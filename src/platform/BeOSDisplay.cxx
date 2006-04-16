@@ -17,98 +17,133 @@
 #include <stdio.h>
 #include <string.h>
 
-BeOSDisplay::BeOSDisplay(const char* displayName, const char*) :
-  BzfDisplay()
+BeOSDisplay::BeOSDisplay( const char *displayName, const char* ): BzfDisplay()
 {
-  printf("BeOSDisplay::BeOSDisplay()\n");
-  /* this port will be checked by BeOSDisplay for events, and fed by the BWindow */
-  eventPort = create_port(50, "bzflag_event_port"); /* should check for errors */
+	printf( "BeOSDisplay::BeOSDisplay()\n" );
+	/* this port will be checked by BeOSDisplay for events, and fed by the BWindow */
+	eventPort = create_port( 50, "bzflag_event_port" ); /* should check for errors */
 
-  // get resolutions
-  bScreen = new BScreen;
-  if (isValid()) {
-    int numModes, currentMode;
-    ResInfo** resInfo = NULL;
-    display_mode dm;
+	// get resolutions
+	bScreen = new BScreen;
+	if( isValid())
+	{
+		int numModes, currentMode;
+		ResInfo **resInfo = NULL;
+		display_mode dm;
 
-    // if no modes then make default
-    if (!resInfo) {
-      resInfo = new ResInfo*[1];
-      bScreen->GetMode(&dm);
-      resInfo[0] = new ResInfo("default", dm.virtual_width, dm.virtual_height, 0);
-      numModes = 1;
-      currentMode = 0;
-    }
-    printf("default rez\n");
-    // register modes
-    initResolutions(resInfo, numModes, currentMode);
-  }
+		// if no modes then make default
+		if( !resInfo )
+		{
+			resInfo = new ResInfo *[1];
+			bScreen->GetMode( &dm );
+			resInfo[0] = new ResInfo( "default", dm.virtual_width, dm.virtual_height, 0 );
+			numModes = 1;
+			currentMode = 0;
+		}
+		printf( "default rez\n" );
+		// register modes
+		initResolutions( resInfo, numModes, currentMode );
+	}
 }
+
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
 BeOSDisplay::~BeOSDisplay()
 {
-  printf("BeOSDisplay::~BeOSDisplay()\n");
-  /* some cleanup */
-  delete_port(eventPort);
+	printf( "BeOSDisplay::~BeOSDisplay()\n" );
+	/* some cleanup */
+	delete_port( eventPort );
 
-  //setDefaultResolution();
-  delete bScreen;
+	//setDefaultResolution();
+	delete bScreen;
 }
 
-bool					BeOSDisplay::isValid() const
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+bool BeOSDisplay::isValid()const
 {
-  printf("BeOSDisplay::isValid() %d\n", (int)bScreen->IsValid());
-  return bScreen->IsValid();
+	printf( "BeOSDisplay::isValid() %d\n", ( int )bScreen->IsValid());
+	return bScreen->IsValid();
 }
 
-bool					BeOSDisplay::isEventPending() const
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+bool BeOSDisplay::isEventPending()const
 {
-  if (beosWin && beosWin->currentOglContext == find_thread(NULL)) {
-    beosWin->yieldCurrent();
-  }
-  //  snooze(10000);
-  return (port_buffer_size_etc(eventPort, B_TIMEOUT, 0LL) > 0);
+	if( beosWin && beosWin->currentOglContext == find_thread( NULL ))
+	{
+		beosWin->yieldCurrent();
+	}
+	//  snooze(10000);
+	return ( port_buffer_size_etc( eventPort, B_TIMEOUT, 0LL ) > 0 );
 }
 
-bool					BeOSDisplay::peekEvent(BzfEvent& event) const
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+bool BeOSDisplay::peekEvent( BzfEvent &event )const
 {
-  return false;
+	return false;
 }
 
-bool					BeOSDisplay::getEvent(BzfEvent& event) const
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+bool BeOSDisplay::getEvent( BzfEvent &event )const
 {
-  //printf("BeOSDisplay::getEvent()\n");
-  bool is_current_ogl = false;
-  status_t err;
-  int32 what;
-  if (beosWin && beosWin->currentOglContext == find_thread(NULL)) {
-    is_current_ogl = true;
-    beosWin->releaseCurrent();
-  }
-  err = read_port_etc(eventPort, &what, (void *)&event, sizeof(BzfEvent), B_TIMEOUT, 0LL);
-  if (is_current_ogl)
-    beosWin->makeCurrent();
-  //printf("<BeOSDisplay::getEvent()\n");
-  return (err >= B_OK);
+	//printf("BeOSDisplay::getEvent()\n");
+	bool is_current_ogl = false;
+	status_t err;
+	int32 what;
+	if( beosWin && beosWin->currentOglContext == find_thread( NULL ))
+	{
+		is_current_ogl = true;
+		beosWin->releaseCurrent();
+	}
+	err = read_port_etc( eventPort, &what, ( void* ) &event, sizeof( BzfEvent ), B_TIMEOUT, 0LL );
+	if( is_current_ogl )
+		beosWin->makeCurrent();
+	//printf("<BeOSDisplay::getEvent()\n");
+	return ( err >= B_OK );
 }
 
-void				BeOSDisplay::postBzfEvent(BzfEvent &event)
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+void BeOSDisplay::postBzfEvent( BzfEvent &event )
 {
-  int32 what = 'BzfE';
-  write_port_etc(eventPort, what, (void *)&event, sizeof(BzfEvent), B_TIMEOUT, 10000LL);
+	int32 what = 'BzfE';
+	write_port_etc( eventPort, what, ( void* ) &event, sizeof( BzfEvent ), B_TIMEOUT, 10000LL );
 }
 
-bool					BeOSDisplay::doSetDefaultResolution()
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+bool BeOSDisplay::doSetDefaultResolution()
 {
-  return true;
+	return true;
 }
 
-bool					BeOSDisplay::doSetResolution(int index)
-{
-  // try setting the format
-  const bool changed  = true;
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
-  return changed;
+bool BeOSDisplay::doSetResolution( int index )
+{
+	// try setting the format
+	const bool changed = true;
+
+	return changed;
 }
 
 
@@ -119,4 +154,3 @@ bool					BeOSDisplay::doSetResolution(int index)
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

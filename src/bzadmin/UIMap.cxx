@@ -11,20 +11,19 @@
  */
 
 #ifdef _MSC_VER
-#pragma warning( 4: 4786)
-#endif
+	#pragma warning( 4: 4786)
+#endif 
 
 #include "UIMap.h"
 
 // initialize the singleton
-template <>
-UIMap* Singleton<UIMap>::_instance = (UIMap*)0;
+template <> UIMap *Singleton<UIMap>::_instance = ( UIMap* )0;
 
-UIMap::UIMap() {
-}
+UIMap::UIMap(){}
 
-UIAdder::UIAdder(const std::string& name, UICreator creator) {
-  UIMap::instance()[name] = creator;
+UIAdder::UIAdder( const std::string &name, UICreator creator )
+{
+	UIMap::instance()[name] = creator;
 }
 
 

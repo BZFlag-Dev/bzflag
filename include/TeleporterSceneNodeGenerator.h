@@ -11,26 +11,27 @@
  */
 
 #ifndef __TELEPORTERSCENENODEGENERATOR_H__
-#define __TELEPORTERSCENENODEGENERATOR_H__
+	#define __TELEPORTERSCENENODEGENERATOR_H__
 
-#include "ObstacleSceneNodeGenerator.h"
-#include "Teleporter.h"
+	#include "ObstacleSceneNodeGenerator.h"
+	#include "Teleporter.h"
 
-class TeleporterSceneNodeGenerator : public ObstacleSceneNodeGenerator {
-  friend class SceneDatabaseBuilder;
-  public:
-			~TeleporterSceneNodeGenerator();
+class TeleporterSceneNodeGenerator: public ObstacleSceneNodeGenerator
+{
+	friend class SceneDatabaseBuilder;
+public:
+	~TeleporterSceneNodeGenerator();
 
-    WallSceneNode*	getNextNode(float, float, bool);
+	WallSceneNode *getNextNode( float, float, bool );
 
-  protected:
-			TeleporterSceneNodeGenerator(const Teleporter*);
+protected:
+	TeleporterSceneNodeGenerator( const Teleporter* );
 
-  private:
-    const Teleporter*	teleporter;
+private:
+	const Teleporter *teleporter;
 };
 
-#endif
+#endif 
 
 // Local Variables: ***
 // mode:C++ ***
@@ -39,4 +40,3 @@ class TeleporterSceneNodeGenerator : public ObstacleSceneNodeGenerator {
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

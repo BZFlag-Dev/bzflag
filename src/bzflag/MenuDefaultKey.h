@@ -10,27 +10,28 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef	__MENUDEFAULTKEY_H__
-#define	__MENUDEFAULTKEY_H__
+#ifndef __MENUDEFAULTKEY_H__
+	#define __MENUDEFAULTKEY_H__
 
 /* common interface headers */
-#include "BzfEvent.h"
+	#include "BzfEvent.h"
 
 /* local interface headers */
-#include "HUDuiDefaultKey.h"
+	#include "HUDuiDefaultKey.h"
 
-class MenuDefaultKey : public HUDuiDefaultKey {
+class MenuDefaultKey: public HUDuiDefaultKey
+{
 public:
-  MenuDefaultKey();
-  ~MenuDefaultKey();
+	MenuDefaultKey();
+	~MenuDefaultKey();
 
-  bool keyPress(const BzfKeyEvent&);
-  bool keyRelease(const BzfKeyEvent&);
+	bool keyPress( const BzfKeyEvent & );
+	bool keyRelease( const BzfKeyEvent & );
 
-  static MenuDefaultKey* getInstance();
+	static MenuDefaultKey *getInstance();
 
 private:
-  static MenuDefaultKey instance;
+	static MenuDefaultKey instance;
 };
 
 

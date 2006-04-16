@@ -11,33 +11,34 @@
  */
 
 #ifndef __CUSTOM_GROUP_H__
-#define __CUSTOM_GROUP_H__
+	#define __CUSTOM_GROUP_H__
 
-#include "common.h"
+	#include "common.h"
 
 /* system interface headers */
-#include <string>
-#include <vector>
-#include <iostream>
+	#include <string>
+	#include <vector>
+	#include <iostream>
 
 /* local interface headers */
-#include "WorldInfo.h"
-#include "WorldFileObstacle.h"
+	#include "WorldInfo.h"
+	#include "WorldFileObstacle.h"
 
 class GroupInstance;
 
-class CustomGroup : public WorldFileObstacle {
-  public:
-    CustomGroup(const std::string& groupdef);
-    ~CustomGroup();
-    virtual bool read(const char *cmd, std::istream&);
-    virtual void writeToGroupDef(GroupDefinition*) const;
+class CustomGroup: public WorldFileObstacle
+{
+public:
+	CustomGroup( const std::string &groupdef );
+	~CustomGroup();
+	virtual bool read( const char *cmd, std::istream & );
+	virtual void writeToGroupDef( GroupDefinition* )const;
 
-  protected:
-    mutable GroupInstance* group;
+protected:
+	mutable GroupInstance *group;
 };
 
-#endif  /* __CUSTOM_GROUP_H__ */
+#endif /* __CUSTOM_GROUP_H__ */
 
 // Local variables: ***
 // mode: C++ ***

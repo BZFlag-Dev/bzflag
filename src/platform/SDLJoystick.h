@@ -15,30 +15,31 @@
  */
 
 #ifndef BZF_SDLJOY_H
-#define	BZF_SDLJOY_H
+	#define BZF_SDLJOY_H
 
-#include "BzfJoystick.h"
-#include "bzfSDL.h"
+	#include "BzfJoystick.h"
+	#include "bzfSDL.h"
 
-class SDLJoystick : public BzfJoystick {
-  public:
-		SDLJoystick();
-		~SDLJoystick();
+class SDLJoystick: public BzfJoystick
+{
+public:
+	SDLJoystick();
+	~SDLJoystick();
 
-    void	initJoystick(const char* joystickName);
-    bool	joystick() const;
-    void	getJoy(int& x, int& y);
-    unsigned long getJoyButtons();
-    void	getJoyDevices(std::vector<std::string> &list) const;
-    void	getJoyDeviceAxes(std::vector<std::string> &list) const;
-    void	setXAxis(const std::string axis);
-    void	setYAxis(const std::string axis);
+	void initJoystick( const char *joystickName );
+	bool joystick()const;
+	void getJoy( int &x, int &y );
+	unsigned long getJoyButtons();
+	void getJoyDevices( std::vector < std::string >  &list )const;
+	void getJoyDeviceAxes( std::vector < std::string >  &list )const;
+	void setXAxis( const std::string axis );
+	void setYAxis( const std::string axis );
 
-  private:
-    SDL_Joystick		*joystickID;
-    int			 joystickButtons;
-    int			 xAxis;
-    int			 yAxis;
+private:
+	SDL_Joystick *joystickID;
+	int joystickButtons;
+	int xAxis;
+	int yAxis;
 };
 
 #endif // BZF_SDLJOY_H

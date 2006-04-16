@@ -11,30 +11,31 @@
  */
 
 #ifndef __ENTRYZONE_H__
-#define __ENTRYZONE_H__
+	#define __ENTRYZONE_H__
 
 // common should be the 1st one
-#include "common.h"
+	#include "common.h"
 
 // system headers
-#include <vector>
+	#include <vector>
 
 // common headers
-#include "Flag.h"
-#include "global.h"
+	#include "Flag.h"
+	#include "global.h"
 
-class EntryZone {
-  public:
-    EntryZone();
-    void* unpack(void*);
+class EntryZone
+{
+public:
+	EntryZone();
+	void *unpack( void* );
 
-  public:
-    float pos[3];
-    float size[3];
-    float rot;
-    std::vector<FlagType*> flags;
-    std::vector<TeamColor> teams;
-    std::vector<TeamColor> safety;
+public:
+	float pos[3];
+	float size[3];
+	float rot;
+	std::vector < FlagType * > flags;
+	std::vector < TeamColor > teams;
+	std::vector < TeamColor > safety;
 };
 
 

@@ -25,62 +25,84 @@ static const unsigned int minListSize = 1;
 
 ObstacleList::ObstacleList()
 {
-  list = NULL;
-  clear();
-  return;
+	list = NULL;
+	clear();
+	return ;
 }
+
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
 
 ObstacleList::~ObstacleList()
 {
-  delete[] list;
-  return;
+	delete []list;
+	return ;
 }
+
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
 
 void ObstacleList::clear()
 {
-  delete[] list;
-  listCount = 0;
-  listSize = minListSize;
-  list = new Obstacle*[listSize];
-  return;
+	delete []list;
+	listCount = 0;
+	listSize = minListSize;
+	list = new Obstacle *[listSize];
+	return ;
 }
 
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
-void ObstacleList::push_back(Obstacle* obs)
+
+void ObstacleList::push_back( Obstacle *obs )
 {
-  listCount++;
-  if (listCount > listSize) {
-    listSize = 2 * listSize;
-    Obstacle** tmpList = new Obstacle*[listSize];
-    memcpy (tmpList, list, (listCount - 1) * sizeof(Obstacle*));
-    delete[] list;
-    list = tmpList;
-  }
-  list[listCount - 1] = obs;
-  return;
+	listCount++;
+	if( listCount > listSize )
+	{
+		listSize = 2 * listSize;
+		Obstacle **tmpList = new Obstacle *[listSize];
+		memcpy( tmpList, list, ( listCount - 1 ) *sizeof( Obstacle* ));
+		delete []list;
+		list = tmpList;
+	}
+	list[listCount - 1] = obs;
+	return ;
 }
+
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
 
 void ObstacleList::tighten()
 {
-  if ((listSize == listCount) || (listCount < minListSize)) {
-    return;
-  }
-  listSize = listCount;
-  Obstacle** tmpList = new Obstacle*[listSize];
-  memcpy (tmpList, list, listCount * sizeof(Obstacle*));
-  delete[] list;
-  list = tmpList;
-  return;
+	if(( listSize == listCount ) || ( listCount < minListSize ))
+	{
+		return ;
+	}
+	listSize = listCount;
+	Obstacle **tmpList = new Obstacle *[listSize];
+	memcpy( tmpList, list, listCount *sizeof( Obstacle* ));
+	delete []list;
+	list = tmpList;
+	return ;
 }
 
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
-void ObstacleList::sort(int (*compare)(const void* a, const void* b))
+
+void ObstacleList::sort( int( *compare )( const void *a, const void *b ))
 {
-  qsort(list, listCount, sizeof(Obstacle*), compare);
-  return;
+	qsort( list, listCount, sizeof( Obstacle* ), compare );
+	return ;
 }
 
 
@@ -91,6 +113,3 @@ void ObstacleList::sort(int (*compare)(const void* a, const void* b))
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-
-
-

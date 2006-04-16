@@ -10,27 +10,28 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
- #ifndef __PYRAMIDSCENENODEGENERATOR_H__
- #define __PYRAMIDSCENENODEGENERATOR_H__
+#ifndef __PYRAMIDSCENENODEGENERATOR_H__
+	#define __PYRAMIDSCENENODEGENERATOR_H__
 
- #include "ObstacleSceneNodeGenerator.h"
- #include "PyramidBuilding.h"
+	#include "ObstacleSceneNodeGenerator.h"
+	#include "PyramidBuilding.h"
 
- class PyramidSceneNodeGenerator : public ObstacleSceneNodeGenerator {
-  friend class SceneDatabaseBuilder;
-  public:
-			~PyramidSceneNodeGenerator();
+class PyramidSceneNodeGenerator: public ObstacleSceneNodeGenerator
+{
+	friend class SceneDatabaseBuilder;
+public:
+	~PyramidSceneNodeGenerator();
 
-    WallSceneNode*	getNextNode(float, float, bool);
+	WallSceneNode *getNextNode( float, float, bool );
 
-  protected:
-			PyramidSceneNodeGenerator(const PyramidBuilding*);
+protected:
+	PyramidSceneNodeGenerator( const PyramidBuilding* );
 
-  private:
-    const PyramidBuilding*	pyramid;
+private:
+	const PyramidBuilding *pyramid;
 };
 
-#endif
+#endif 
 
 // Local Variables: ***
 // mode:C++ ***

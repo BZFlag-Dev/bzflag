@@ -11,27 +11,31 @@
  */
 
 #ifndef __CUSTOM_OBSTACLE_TRANSFORM_H__
-#define __CUSTOM_OBSTACLE_TRANSFORM_H__
+	#define __CUSTOM_OBSTACLE_TRANSFORM_H__
 
 /* interface header */
-#include "WorldFileObject.h"
+	#include "WorldFileObject.h"
 
 /* common headers */
-#include "MeshTransform.h"
+	#include "MeshTransform.h"
 
-class CustomMeshTransform : public WorldFileObject {
-  public:
-    CustomMeshTransform();
-    ~CustomMeshTransform();
-    virtual bool read(const char *cmd, std::istream& input);
-    virtual void writeToManager() const;
-    bool usesManager() { return true; }
+class CustomMeshTransform: public WorldFileObject
+{
+public:
+	CustomMeshTransform();
+	~CustomMeshTransform();
+	virtual bool read( const char *cmd, std::istream &input );
+	virtual void writeToManager()const;
+	bool usesManager()
+	{
+		return true;
+	} 
 
-  private:
-    mutable MeshTransform* transform;
+private:
+	mutable MeshTransform *transform;
 };
 
-#endif  /* __CUSTOM_OBSTACLE_TRANSFORM_H__ */
+#endif /* __CUSTOM_OBSTACLE_TRANSFORM_H__ */
 
 // Local variables: ***
 // mode: C++ ***

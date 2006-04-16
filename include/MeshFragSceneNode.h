@@ -16,12 +16,12 @@
  *	Does not support level of detail.
  */
 
-#ifndef	BZF_MESH_FRAG_SCENE_NODE_H
-#define	BZF_MESH_FRAG_SCENE_NODE_H
+#ifndef BZF_MESH_FRAG_SCENE_NODE_H
+	#define BZF_MESH_FRAG_SCENE_NODE_H
 
-#include "common.h"
-#include "WallSceneNode.h"
-#include "BzMaterial.h"
+	#include "common.h"
+	#include "WallSceneNode.h"
+	#include "BzMaterial.h"
 
 //
 // NOTES:
@@ -34,67 +34,74 @@
 
 class MeshFace;
 
-class MeshFragSceneNode : public WallSceneNode {
+class MeshFragSceneNode: public WallSceneNode
+{
 
-  public:
-    MeshFragSceneNode(int faceCount, const MeshFace** faces);
-    ~MeshFragSceneNode();
+public:
+	MeshFragSceneNode( int faceCount, const MeshFace **faces );
+	~MeshFragSceneNode();
 
-    // virtual functions from SceneNode
-    bool cull(const ViewFrustum&) const;
-    void addShadowNodes(SceneRenderer&);
-    void addRenderNodes(SceneRenderer&);
-    void renderRadar();
-
-    // virtual functions from WallSceneNode
-    bool inAxisBox(const Extents& exts) const;
-
-    void getRenderNodes(std::vector<RenderSet>& rnodes);
-
-  protected:
-    class Geometry : public RenderNode {
-      public:
-	Geometry(MeshFragSceneNode* node);
-	~Geometry();
-
-	void init();
-	void setStyle(int _style) { style = _style; }
-	void render();
+	// virtual functions from SceneNode
+	bool cull( const ViewFrustum & )const;
+	void addShadowNodes( SceneRenderer & );
+	void addRenderNodes( SceneRenderer & );
 	void renderRadar();
-	void renderShadow();
-	const GLfloat* getPosition() const { return sceneNode->getSphere(); }
 
-      private:
-	inline void drawV() const; // draw with just vertices
-	inline void drawVT() const; // draw with texcoords
-	inline void drawVN() const; // draw with normals
-	inline void drawVTN() const; // draw with texcoords and normals
+	// virtual functions from WallSceneNode
+	bool inAxisBox( const Extents &exts )const;
 
-	void initDisplayList();
-	void freeDisplayList();
-	static void initContext(void *data);
-	static void freeContext(void *data);
+	void getRenderNodes( std::vector < RenderSet >  &rnodes );
 
-      private:
-	int style;
-	GLuint list;
-	MeshFragSceneNode* sceneNode;
-    };
+protected:
+	class Geometry: public RenderNode
+	{
+public:
+		Geometry( MeshFragSceneNode *node );
+		~Geometry();
 
-  private:
-    Geometry renderNode;
+		void init();
+		void setStyle( int _style )
+		{
+			style = _style;
+		} void render();
+		void renderRadar();
+		void renderShadow();
+		const GLfloat *getPosition()const
+		{
+			return sceneNode->getSphere();
+		}
 
-    GLint faceCount;
-    const MeshFace** faces;
+private:
+		inline void drawV()const; // draw with just vertices
+		inline void drawVT()const; // draw with texcoords
+		inline void drawVN()const; // draw with normals
+		inline void drawVTN()const; // draw with texcoords and normals
 
-    bool noRadar;
-    bool noShadow;
-    GLint arrayCount;
-    GLfloat* vertices;
-    GLfloat* normals;
-    GLfloat* texcoords;
+		void initDisplayList();
+		void freeDisplayList();
+		static void initContext( void *data );
+		static void freeContext( void *data );
 
-  friend class MeshFragSceneNode::Geometry;
+private:
+		int style;
+		GLuint list;
+		MeshFragSceneNode *sceneNode;
+	};
+
+private:
+	Geometry renderNode;
+
+	GLint faceCount;
+	const MeshFace **faces;
+
+	bool noRadar;
+	bool noShadow;
+	GLint arrayCount;
+	GLfloat *vertices;
+	GLfloat *normals;
+	GLfloat *texcoords;
+
+	friend class MeshFragSceneNode::Geometry;
 };
 
 
@@ -107,4 +114,3 @@ class MeshFragSceneNode : public WallSceneNode {
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

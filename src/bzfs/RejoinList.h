@@ -11,28 +11,29 @@
  */
 
 #ifndef __REJOIN_LIST_H__
-#define __REJOIN_LIST_H__
+	#define __REJOIN_LIST_H__
 
 /* common header */
-#include "common.h"
+	#include "common.h"
 
 /* system headers */
-#include <list>
+	#include <list>
 
-class RejoinList {
-  public:
-    RejoinList ();
-    ~RejoinList ();
+class RejoinList
+{
+public:
+	RejoinList();
+	~RejoinList();
 
-    bool add (int playerIndex);
-    float waitTime (int playerIndex);
+	bool add( int playerIndex );
+	float waitTime( int playerIndex );
 
-  private:
-    std::list<struct RejoinNode*> queue;
+private:
+	std::list < struct RejoinNode * > queue;
 };
 
 
-#endif  /* __REJOIN_LIST_H__ */
+#endif /* __REJOIN_LIST_H__ */
 
 // Local Variables: ***
 // mode: C++ ***

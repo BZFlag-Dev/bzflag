@@ -11,26 +11,27 @@
  */
 
 #ifndef __CUSTOMPYRAMID_H__
-#define __CUSTOMPYRAMID_H__
+	#define __CUSTOMPYRAMID_H__
 
 /* interface header */
-#include "WorldFileObstacle.h"
+	#include "WorldFileObstacle.h"
 
 /* local interface header */
-#include "WorldInfo.h"
+	#include "WorldInfo.h"
 
 
-class CustomPyramid : public WorldFileObstacle {
-  public:
-    CustomPyramid();
-    virtual bool read(const char *cmd, std::istream& input);
-    virtual void writeToGroupDef(GroupDefinition*) const;
+class CustomPyramid: public WorldFileObstacle
+{
+public:
+	CustomPyramid();
+	virtual bool read( const char *cmd, std::istream &input );
+	virtual void writeToGroupDef( GroupDefinition* )const;
 
-  private:
-    bool flipZ;
+private:
+	bool flipZ;
 };
 
-#endif  /* __CUSTOMPYRAMID_H__ */
+#endif /* __CUSTOMPYRAMID_H__ */
 
 // Local variables: ***
 // mode: C++ ***

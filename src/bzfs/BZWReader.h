@@ -11,54 +11,54 @@
  */
 
 #ifndef __BZWREADER_H__
-#define __BZWREADER_H__
+	#define __BZWREADER_H__
 
 // bzflag common header
-#include "common.h"
+	#include "common.h"
 
-#include "network.h"
+	#include "network.h"
 
 // system headers
-#include <iostream>
-#include <string>
-#include <vector>
+	#include <iostream>
+	#include <string>
+	#include <vector>
 
 /* bzflag common headers */
-#include "BZWError.h"
-#include "cURLManager.h"
+	#include "BZWError.h"
+	#include "cURLManager.h"
 
 class WorldFileObject;
 class WorldInfo;
 
-class BZWReader : private cURLManager {
+class BZWReader: private cURLManager
+{
 public:
-  BZWReader(std::string filename);
-  ~BZWReader();
+	BZWReader( std::string filename );
+	~BZWReader();
 
-  // external interface
-  WorldInfo *defineWorldFromFile();
+	// external interface
+	WorldInfo *defineWorldFromFile();
 
 private:
-  // functions for internal use
-  void readToken(char *buffer, int n);
-  bool readWorldStream(std::vector<WorldFileObject*>& wlist,
-		       class GroupDefinition* groupDef);
-  void finalization(char *data, unsigned int length, bool good);
+	// functions for internal use
+	void readToken( char *buffer, int n );
+	bool readWorldStream( std::vector < WorldFileObject * >  &wlist, class GroupDefinition *groupDef );
+	void finalization( char *data, unsigned int length, bool good );
 
-  // stream to open
-  std::string location;
-  std::istream *input;
+	// stream to open
+	std::string location;
+	std::istream *input;
 
-  // data/dependent objects
-  BZWError *errorHandler;
+	// data/dependent objects
+	BZWError *errorHandler;
 
-  // no default constructor
-  BZWReader();
+	// no default constructor
+	BZWReader();
 
-  std::string httpData;
+	std::string httpData;
 };
 
-#endif
+#endif 
 
 // Local Variables: ***
 // mode:C++ ***

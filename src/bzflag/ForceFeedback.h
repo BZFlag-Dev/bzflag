@@ -11,21 +11,26 @@
  */
 
 #ifndef __FORCE_FEEDBACK_H__
-#define __FORCE_FEEDBACK_H__
+	#define __FORCE_FEEDBACK_H__
 
 /* All functions in this namespace start playing a force feedback
  * effect if we have a FF-enabled joystick connected and the user
  * has enabled force feedback.
  */
-namespace ForceFeedback {
+namespace ForceFeedback
+{
 
-  void death();
-  void shotFired();
-  void laserFired();
-  void shockwaveFired();
-  void solidMatterFriction();
+	void death();
+	void shotFired();
+	void laserFired();
+	void shockwaveFired();
+	void solidMatterFriction();
 
 }
+
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
 #endif /* __FORCE_FEEDBACK_H__ */
 

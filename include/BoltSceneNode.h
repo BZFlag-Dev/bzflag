@@ -14,78 +14,82 @@
  *	Encapsulates information for rendering a ball lighting bolt.
  */
 
-#ifndef	BZF_BOLT_SCENE_NODE_H
-#define	BZF_BOLT_SCENE_NODE_H
+#ifndef BZF_BOLT_SCENE_NODE_H
+	#define BZF_BOLT_SCENE_NODE_H
 
-#include "common.h"
-#include "ShotSceneNode.h"
-#include "OpenGLLight.h"
+	#include "common.h"
+	#include "ShotSceneNode.h"
+	#include "OpenGLLight.h"
 
-class BoltSceneNode : public ShotSceneNode {
-  public:
-			BoltSceneNode(const GLfloat pos[3]);
-			~BoltSceneNode();
+class BoltSceneNode: public ShotSceneNode
+{
+public:
+	BoltSceneNode( const GLfloat pos[3] );
+	~BoltSceneNode();
 
-    void		setFlares(bool);
-    void		setSize(float radius);
-    void		setColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a = 1.0f);
-    void		setTextureColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a = 1.0f);
-    void		setColor(const GLfloat* rgb);
-    void		setTexture(const int);
-    void		setTextureAnimation(int cu, int cv);
+	void setFlares( bool );
+	void setSize( float radius );
+	void setColor( GLfloat r, GLfloat g, GLfloat b, GLfloat a = 1.0f );
+	void setTextureColor( GLfloat r, GLfloat g, GLfloat b, GLfloat a = 1.0f );
+	void setColor( const GLfloat *rgb );
+	void setTexture( const int );
+	void setTextureAnimation( int cu, int cv );
 
-    bool		getColorblind() const;
-    void		setColorblind(bool);
+	bool getColorblind()const;
+	void setColorblind( bool );
 
-    void		move(const GLfloat pos[3], const GLfloat forward[3]);
-    void		addLight(SceneRenderer&);
+	void move( const GLfloat pos[3], const GLfloat forward[3] );
+	void addLight( SceneRenderer & );
 
-    void		notifyStyleChange();
-    void		addRenderNodes(SceneRenderer&);
+	void notifyStyleChange();
+	void addRenderNodes( SceneRenderer & );
 
-  protected:
-    class BoltRenderNode : public RenderNode {
-      public:
-			BoltRenderNode(const BoltSceneNode*);
-			~BoltRenderNode();
-	void		setColor(const GLfloat* rgba);
-  void    setTextureColor(const GLfloat* rgba);
-	void		render();
-	const GLfloat*	getPosition() const { return sceneNode->getSphere(); }
-	void		setAnimation(int cu, int cv);
-      private:
-	const BoltSceneNode* sceneNode;
-	int		u, v, cu, cv;
-	GLfloat		du, dv;
-	GLfloat		mainColor[4];
-	GLfloat		innerColor[4];
-	GLfloat		outerColor[4];
-	GLfloat		coronaColor[4];
-	GLfloat		flareColor[4];
-  GLfloat		textureColor[4];
-	int		numFlares;
-	float		theta[6];
-	float		phi[6];
+protected:
+	class BoltRenderNode: public RenderNode
+	{
+public:
+		BoltRenderNode( const BoltSceneNode* );
+		~BoltRenderNode();
+		void setColor( const GLfloat *rgba );
+		void setTextureColor( const GLfloat *rgba );
+		void render();
+		const GLfloat *getPosition()const
+		{
+			return sceneNode->getSphere();
+		} void setAnimation( int cu, int cv );
+private:
+		const BoltSceneNode *sceneNode;
+		int u, v, cu, cv;
+		GLfloat du, dv;
+		GLfloat mainColor[4];
+		GLfloat innerColor[4];
+		GLfloat outerColor[4];
+		GLfloat coronaColor[4];
+		GLfloat flareColor[4];
+		GLfloat textureColor[4];
+		int numFlares;
+		float theta[6];
+		float phi[6];
 
-	static GLfloat	core[9][2];
-	static GLfloat	corona[8][2];
-	static const GLfloat ring[8][2];
-	static const GLfloat CoreFraction;
-	static const GLfloat FlareSize;
-	static const GLfloat FlareSpread;
-    };
-    friend class BoltRenderNode;
+		static GLfloat core[9][2];
+		static GLfloat corona[8][2];
+		static const GLfloat ring[8][2];
+		static const GLfloat CoreFraction;
+		static const GLfloat FlareSize;
+		static const GLfloat FlareSpread;
+	};
+	friend class BoltRenderNode;
 
-  private:
-    bool		drawFlares;
-    bool		texturing;
-    bool		colorblind;
-    float		size;
-    GLfloat		color[4];
-    OpenGLLight		light;
-    OpenGLGState	gstate;
-    OpenGLGState	colorblindGState;
-    BoltRenderNode	renderNode;
+private:
+	bool drawFlares;
+	bool texturing;
+	bool colorblind;
+	float size;
+	GLfloat color[4];
+	OpenGLLight light;
+	OpenGLGState gstate;
+	OpenGLGState colorblindGState;
+	BoltRenderNode renderNode;
 };
 
 #endif // BZF_BOLT_SCENE_NODE_H
@@ -97,4 +101,3 @@ class BoltSceneNode : public ShotSceneNode {
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

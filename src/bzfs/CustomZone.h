@@ -10,15 +10,15 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 #ifndef __CUSTOMZONE_H__
-#define __CUSTOMZONE_H__
+	#define __CUSTOMZONE_H__
 
 /* interface header */
-#include "WorldFileLocation.h"
+	#include "WorldFileLocation.h"
 
 /* system headers */
-#include <vector>
-#include <string>
-#include <map>
+	#include <vector>
+	#include <string>
+	#include <map>
 
 /* local implementation headers */
 //#include "WorldInfo.h"
@@ -26,72 +26,88 @@ class WorldInfo;
 class FlagType;
 
 
-typedef std::vector<std::string> QualifierList;
-typedef std::map<FlagType*, int> ZoneFlagMap; // type, count
+typedef std::vector < std::string > QualifierList;
+typedef std::map < FlagType *, int > ZoneFlagMap; // type, count
 
 
-class CustomZone : public WorldFileLocation {
-  public:
-    CustomZone();
+class CustomZone: public WorldFileLocation
+{
+public:
+	CustomZone();
 
-    virtual bool read(const char *cmd, std::istream&);
-    virtual void writeToWorld(WorldInfo*) const;
-    virtual bool usesGroupDef() { return false; }
+	virtual bool read( const char *cmd, std::istream & );
+	virtual void writeToWorld( WorldInfo* )const;
+	virtual bool usesGroupDef()
+	{
+		return false;
+	} 
 
-    // make a safety zone for all team flags (on the ground)
-    void addFlagSafety(float x, float y, WorldInfo* worldInfo);
+	// make a safety zone for all team flags (on the ground)
+	void addFlagSafety( float x, float y, WorldInfo *worldInfo );
 
-    const QualifierList &getQualifiers() const;
-    const ZoneFlagMap& getZoneFlagMap() const;
+	const QualifierList &getQualifiers()const;
+	const ZoneFlagMap &getZoneFlagMap()const;
 
-    float getArea() const;
-    void getRandomPoint(float *pt) const;
-    float getDistToPoint (const float *pos) const;
+	float getArea()const;
+	void getRandomPoint( float *pt )const;
+	float getDistToPoint( const float *pos )const;
 
-  public:
-    static const std::string& getFlagIdQualifier(int flagId);
-    static int getFlagIdFromQualifier(const std::string&);
+public:
+	static const std::string &getFlagIdQualifier( int flagId );
+	static int getFlagIdFromQualifier( const std::string & );
 
-    static const std::string& getFlagTypeQualifier(FlagType* flagType);
-    static FlagType* getFlagTypeFromQualifier(const std::string&);
+	static const std::string &getFlagTypeQualifier( FlagType *flagType );
+	static FlagType *getFlagTypeFromQualifier( const std::string & );
 
-    static const std::string& getFlagSafetyQualifier(int team);
-    static int getFlagSafetyFromQualifier(const std::string&);
+	static const std::string &getFlagSafetyQualifier( int team );
+	static int getFlagSafetyFromQualifier( const std::string & );
 
-    static const std::string& getPlayerTeamQualifier(int team);
-    static int getPlayerTeamFromQualifier(const std::string&);
+	static const std::string &getPlayerTeamQualifier( int team );
+	static int getPlayerTeamFromQualifier( const std::string & );
 
-  private:
-    void addZoneFlagCount(FlagType* flagType, int count);
+private:
+	void addZoneFlagCount( FlagType *flagType, int count );
 
-  private:
-    ZoneFlagMap zoneFlagMap;
-    QualifierList qualifiers;
+private:
+	ZoneFlagMap zoneFlagMap;
+	QualifierList qualifiers;
 };
 
 
-inline const QualifierList& CustomZone::getQualifiers() const
+inline const QualifierList &CustomZone::getQualifiers()const
 {
-  return qualifiers;
+	return qualifiers;
 }
 
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
-inline const ZoneFlagMap& CustomZone::getZoneFlagMap() const
+
+inline const ZoneFlagMap &CustomZone::getZoneFlagMap()const
 {
-  return zoneFlagMap;
+	return zoneFlagMap;
 }
 
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
-inline float CustomZone::getArea() const
+
+inline float CustomZone::getArea()const
 {
-  float x = (size[0] >= 1.0f) ? size[0] : 1.0f;
-  float y = (size[1] >= 1.0f) ? size[1] : 1.0f;
-  float z = (size[2] >= 1.0f) ? size[2] : 1.0f;
-  return (x * y * z);
+	float x = ( size[0] >= 1.0f ) ? size[0]: 1.0f;
+	float y = ( size[1] >= 1.0f ) ? size[1]: 1.0f;
+	float z = ( size[2] >= 1.0f ) ? size[2]: 1.0f;
+	return ( x *y * z );
 }
 
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
-#endif  /* __CUSTOMZONE_H__ */
+
+#endif /* __CUSTOMZONE_H__ */
 
 // Local variables: ***
 // mode: C++ ***

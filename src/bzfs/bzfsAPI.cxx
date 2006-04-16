@@ -1,14 +1,14 @@
 /* bzflag
-* Copyright (c) 1993 - 2006 Tim Riker
-*
-* This package is free software;  you can redistribute it and/or
-* modify it under the terms of the license found in the file
-* named COPYING that should have accompanied this file.
-*
-* THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
-* IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
-* WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-*/
+ * Copyright (c) 1993 - 2006 Tim Riker
+ *
+ * This package is free software;  you can redistribute it and/or
+ * modify it under the terms of the license found in the file
+ * named COPYING that should have accompanied this file.
+ *
+ * THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
+ * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ */
 
 // bzflag global header
 #include "global.h"
@@ -41,109 +41,121 @@
 TimeKeeper synct = TimeKeeper::getCurrent();
 
 // utility functions
-void setBZMatFromAPIMat (BzMaterial &bzmat, bz_MaterialInfo* material )
+void setBZMatFromAPIMat( BzMaterial &bzmat, bz_MaterialInfo *material )
 {
-	if (!material)
-		return;
+	if( !material )
+		return ;
 
-	bzmat.setName(std::string(material->name.c_str()));
-	bzmat.setAmbient(material->ambient);
-	bzmat.setDiffuse(material->diffuse);
-	bzmat.setSpecular(material->specular);
-	bzmat.setEmission(material->emisive);
-	bzmat.setShininess(material->shine);
+	bzmat.setName( std::string( material->name.c_str()));
+	bzmat.setAmbient( material->ambient );
+	bzmat.setDiffuse( material->diffuse );
+	bzmat.setSpecular( material->specular );
+	bzmat.setEmission( material->emisive );
+	bzmat.setShininess( material->shine );
 
-	bzmat.setNoCulling(!material->culling);
-	bzmat.setNoSorting(!material->sorting);
-	bzmat.setAlphaThreshold(material->alphaThresh);
+	bzmat.setNoCulling( !material->culling );
+	bzmat.setNoSorting( !material->sorting );
+	bzmat.setAlphaThreshold( material->alphaThresh );
 
-	for( unsigned int i = 0; i < material->textures.size();i++ )
+	for( unsigned int i = 0; i < material->textures.size(); i++ )
 	{
-		bz_ApiString	name = material->textures[i].texture;
+		bz_ApiString name = material->textures[i].texture;
 
-		bzmat.addTexture(std::string(name.c_str()));
-		bzmat.setCombineMode(material->textures[i].combineMode);
-		bzmat.setUseTextureAlpha(material->textures[i].useAlpha);
-		bzmat.setUseColorOnTexture(material->textures[i].useColorOnTexture);
-		bzmat.setUseSphereMap(material->textures[i].useSphereMap);
+		bzmat.addTexture( std::string( name.c_str()));
+		bzmat.setCombineMode( material->textures[i].combineMode );
+		bzmat.setUseTextureAlpha( material->textures[i].useAlpha );
+		bzmat.setUseColorOnTexture( material->textures[i].useColorOnTexture );
+		bzmat.setUseSphereMap( material->textures[i].useSphereMap );
 	}
 }
 
-bz_eTeamType convertTeam ( TeamColor _team )
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+bz_eTeamType convertTeam( TeamColor _team )
 {
-	switch (_team)
+	switch( _team )
 	{
-	default:
-		return eNoTeam;
-	case RogueTeam:
-		return eRogueTeam;
-	case RedTeam:
-		return eRedTeam;
-	case GreenTeam:
-		return eGreenTeam;
-	case BlueTeam:
-		return eBlueTeam;
-	case PurpleTeam:
-		return ePurpleTeam;
-	case ObserverTeam:
-		return eObservers;
-	case RabbitTeam:
-		return eRabbitTeam;
-    case HunterTeam:
-        return eHunterTeam;
-	case AutomaticTeam:
-		return eAutomaticTeam;
+		default:
+			return eNoTeam;
+		case RogueTeam:
+			return eRogueTeam;
+		case RedTeam:
+			return eRedTeam;
+		case GreenTeam:
+			return eGreenTeam;
+		case BlueTeam:
+			return eBlueTeam;
+		case PurpleTeam:
+			return ePurpleTeam;
+		case ObserverTeam:
+			return eObservers;
+		case RabbitTeam:
+			return eRabbitTeam;
+		case HunterTeam:
+			return eHunterTeam;
+		case AutomaticTeam:
+			return eAutomaticTeam;
 
 	}
 }
+
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
 TeamColor convertTeam( bz_eTeamType _team )
 {
-	if (_team > eObservers)
+	if( _team > eObservers )
 		return NoTeam;
 
-	switch (_team)
+	switch( _team )
 	{
-	default:
-		return NoTeam;
-	case eRogueTeam:
-		return RogueTeam;
-	case eRedTeam:
-		return RedTeam;
-	case eGreenTeam:
-		return GreenTeam;
-	case eBlueTeam:
-		return BlueTeam;
-	case ePurpleTeam:
-		return PurpleTeam;
-	case eObservers:
-		return ObserverTeam;
-	case eRabbitTeam:
-		return RabbitTeam;
-	case eHunterTeam:
-       return HunterTeam;
-	case eAutomaticTeam:
-		return AutomaticTeam;
+		default:
+			return NoTeam;
+		case eRogueTeam:
+			return RogueTeam;
+		case eRedTeam:
+			return RedTeam;
+		case eGreenTeam:
+			return GreenTeam;
+		case eBlueTeam:
+			return BlueTeam;
+		case ePurpleTeam:
+			return PurpleTeam;
+		case eObservers:
+			return ObserverTeam;
+		case eRabbitTeam:
+			return RabbitTeam;
+		case eHunterTeam:
+			return HunterTeam;
+		case eAutomaticTeam:
+			return AutomaticTeam;
 	}
-	return (TeamColor)_team;
+	return ( TeamColor )_team;
 }
 
-void broadcastPlayerScoreUpdate ( int playerID )
-{
-	GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerID);
-	if (!player)
-		return;
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
-	void *buf, *bufStart;
+void broadcastPlayerScoreUpdate( int playerID )
+{
+	GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex( playerID );
+	if( !player )
+		return ;
+
+	void *buf,  *bufStart;
 	bufStart = getDirectMessageBuffer();
-	buf = nboPackUByte(bufStart, 1);
-	buf = nboPackUByte(buf, playerID);
-	buf = player->score.pack(buf);
-	broadcastMessage(MsgScore, (char*)buf-(char*)bufStart, bufStart);
+	buf = nboPackUByte( bufStart, 1 );
+	buf = nboPackUByte( buf, playerID );
+	buf = player->score.pack( buf );
+	broadcastMessage( MsgScore, ( char* )buf - ( char* )bufStart, bufStart );
 }
 
 //******************************Versioning********************************************
-BZF_API int bz_APIVersion ( void )
+BZF_API int bz_APIVersion( void )
 {
 	return BZ_API_VERSION;
 }
@@ -160,121 +172,197 @@ bz_ApiString::bz_ApiString()
 	data = new dataBlob;
 }
 
-bz_ApiString::bz_ApiString(const char* c)
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+bz_ApiString::bz_ApiString( const char *c )
 {
 	data = new dataBlob;
 	data->str = c;
 }
 
-bz_ApiString::bz_ApiString(const std::string &s)
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+bz_ApiString::bz_ApiString( const std::string &s )
 {
 	data = new dataBlob;
 	data->str = s;
 }
 
-bz_ApiString::bz_ApiString(const bz_ApiString &r)
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+bz_ApiString::bz_ApiString( const bz_ApiString &r )
 {
 	data = new dataBlob;
 	data->str = r.data->str;
 }
 
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
 bz_ApiString::~bz_ApiString()
 {
-	delete(data);
+	delete ( data );
 }
 
-bz_ApiString& bz_ApiString::operator = ( const bz_ApiString& r )
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+bz_ApiString &bz_ApiString::operator = ( const bz_ApiString &r )
 {
 	data->str = r.data->str;
-	return *this;
+	return  *this;
 }
 
-bz_ApiString& bz_ApiString::operator = ( const std::string& r )
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+bz_ApiString &bz_ApiString::operator = ( const std::string &r )
 {
 	data->str = r;
-	return *this;
+	return  *this;
 }
 
-bz_ApiString& bz_ApiString::operator = ( const char* r )
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+bz_ApiString &bz_ApiString::operator = ( const char *r )
 {
 	data->str = r;
-	return *this;
+	return  *this;
 }
 
-bool bz_ApiString::operator == ( const bz_ApiString&r )
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+bool bz_ApiString::operator == ( const bz_ApiString &r )
 {
 	return data->str == r.data->str;
 }
 
-bool bz_ApiString::operator == ( const std::string& r )
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+bool bz_ApiString::operator == ( const std::string &r )
 {
 	return data->str == r;
 }
 
-bool bz_ApiString::operator == ( const char* r )
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+bool bz_ApiString::operator == ( const char *r )
 {
 	return data->str == r;
 }
 
-bool bz_ApiString::operator != ( const bz_ApiString&r )
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+bool bz_ApiString::operator != ( const bz_ApiString &r )
 {
 	return data->str != r.data->str;
 }
 
-bool bz_ApiString::operator != ( const std::string& r )
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+bool bz_ApiString::operator != ( const std::string &r )
 {
 	return data->str != r;
 }
 
-bool bz_ApiString::operator != ( const char* r )
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+bool bz_ApiString::operator != ( const char *r )
 {
 	return data->str != r;
 }
 
-unsigned int bz_ApiString::size ( void ) const
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+unsigned int bz_ApiString::size( void )const
 {
 	return data->str.size();
 }
 
-const char* bz_ApiString::c_str(void) const
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+const char *bz_ApiString::c_str( void )const
 {
 	return data->str.c_str();
 }
 
-void bz_ApiString::format(const char* fmt, ...)
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+void bz_ApiString::format( const char *fmt, ... )
 {
 	va_list args;
-	va_start(args, fmt);
-	data->str = TextUtils::vformat(fmt, args);
-	va_end(args);
+	va_start( args, fmt );
+	data->str = TextUtils::vformat( fmt, args );
+	va_end( args );
 }
 
-void bz_ApiString::replaceAll ( const char* target, const char* with )
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+void bz_ApiString::replaceAll( const char *target, const char *with )
 {
-	if (!target)
-		return;
+	if( !target )
+		return ;
 
-	if (!with)
-		return;
+	if( !with )
+		return ;
 
-	data->str = TextUtils::replace_all(data->str,std::string(target),std::string(with));
+	data->str = TextUtils::replace_all( data->str, std::string( target ), std::string( with ));
 }
 
-void bz_ApiString::tolower ( void )
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+void bz_ApiString::tolower( void )
 {
-	data->str = TextUtils::tolower(data->str);
+	data->str = TextUtils::tolower( data->str );
 }
 
-void bz_ApiString::toupper ( void )
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+void bz_ApiString::toupper( void )
 {
-	data->str = TextUtils::toupper(data->str);
+	data->str = TextUtils::toupper( data->str );
 }
 
 //******************************bz_APIIntList********************************************
 class bz_APIIntList::dataBlob
 {
 public:
-	std::vector<int>	list;
+	std::vector < int > list;
 };
 
 bz_APIIntList::bz_APIIntList()
@@ -282,78 +370,126 @@ bz_APIIntList::bz_APIIntList()
 	data = new dataBlob;
 }
 
-bz_APIIntList::bz_APIIntList(const bz_APIIntList	&r)
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+bz_APIIntList::bz_APIIntList( const bz_APIIntList &r )
 {
 	data = new dataBlob;
 	data->list = r.data->list;
 }
 
-bz_APIIntList::bz_APIIntList(const std::vector<int>	&r)
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+bz_APIIntList::bz_APIIntList( const std::vector < int >  &r )
 {
 	data = new dataBlob;
 	data->list = r;
 }
 
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
 bz_APIIntList::~bz_APIIntList()
 {
-	delete(data);
+	delete ( data );
 }
 
-void bz_APIIntList::push_back ( int value )
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+void bz_APIIntList::push_back( int value )
 {
-	data->list.push_back(value);
+	data->list.push_back( value );
 }
 
-int bz_APIIntList::get ( unsigned int i )
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+int bz_APIIntList::get( unsigned int i )
 {
-	if (i >= data->list.size())
+	if( i >= data->list.size())
 		return 0;
 
 	return data->list[i];
 }
 
-const int& bz_APIIntList::operator[] (unsigned int i) const
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+const int &bz_APIIntList::operator[]( unsigned int i )const
 {
 	return data->list[i];
 }
 
-bz_APIIntList& bz_APIIntList::operator = ( const bz_APIIntList& r )
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+bz_APIIntList &bz_APIIntList::operator = ( const bz_APIIntList &r )
 {
 	data->list = r.data->list;
-	return *this;
+	return  *this;
 }
 
-bz_APIIntList& bz_APIIntList::operator = ( const std::vector<int>& r )
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+bz_APIIntList &bz_APIIntList::operator = ( const std::vector < int >  &r )
 {
 	data->list = r;
-	return *this;
+	return  *this;
 }
 
-unsigned int bz_APIIntList::size ( void )
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+unsigned int bz_APIIntList::size( void )
 {
 	return data->list.size();
 }
 
-void bz_APIIntList::clear ( void )
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+void bz_APIIntList::clear( void )
 {
 	data->list.clear();
 }
 
-BZF_API bz_APIIntList* bz_newIntList ( void )
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+BZF_API bz_APIIntList *bz_newIntList( void )
 {
 	return new bz_APIIntList;
 }
 
-BZF_API void bz_deleteIntList( bz_APIIntList * l )
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+BZF_API void bz_deleteIntList( bz_APIIntList *l )
 {
-	delete(l);
+	delete ( l );
 }
 
 //******************************bz_APIFloatList********************************************
 class bz_APIFloatList::dataBlob
 {
 public:
-	std::vector<float>	list;
+	std::vector < float > list;
 };
 
 bz_APIFloatList::bz_APIFloatList()
@@ -361,90 +497,146 @@ bz_APIFloatList::bz_APIFloatList()
 	data = new dataBlob;
 }
 
-bz_APIFloatList::bz_APIFloatList(const bz_APIFloatList	&r)
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+bz_APIFloatList::bz_APIFloatList( const bz_APIFloatList &r )
 {
 	data = new dataBlob;
 	data->list = r.data->list;
 }
 
-bz_APIFloatList::bz_APIFloatList(const std::vector<float>	&r)
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+bz_APIFloatList::bz_APIFloatList( const std::vector < float >  &r )
 {
 	data = new dataBlob;
 	data->list = r;
 }
 
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
 bz_APIFloatList::~bz_APIFloatList()
 {
-	delete(data);
+	delete ( data );
 }
 
-void bz_APIFloatList::push_back ( float value )
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+void bz_APIFloatList::push_back( float value )
 {
-	data->list.push_back(value);
+	data->list.push_back( value );
 }
 
-float bz_APIFloatList::get ( unsigned int i )
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+float bz_APIFloatList::get( unsigned int i )
 {
-	if (i >= data->list.size())
+	if( i >= data->list.size())
 		return 0;
 
 	return data->list[i];
 }
 
-const float& bz_APIFloatList::operator[] (unsigned int i) const
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+const float &bz_APIFloatList::operator[]( unsigned int i )const
 {
 	return data->list[i];
 }
 
-bz_APIFloatList& bz_APIFloatList::operator = ( const bz_APIFloatList& r )
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+bz_APIFloatList &bz_APIFloatList::operator = ( const bz_APIFloatList &r )
 {
 	data->list = r.data->list;
-	return *this;
+	return  *this;
 }
 
-bz_APIFloatList& bz_APIFloatList::operator = ( const std::vector<float>& r )
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+bz_APIFloatList &bz_APIFloatList::operator = ( const std::vector < float >  &r )
 {
 	data->list = r;
-	return *this;
+	return  *this;
 }
 
-unsigned int bz_APIFloatList::size ( void )
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+unsigned int bz_APIFloatList::size( void )
 {
 	return data->list.size();
 }
 
-void bz_APIFloatList::clear ( void )
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+void bz_APIFloatList::clear( void )
 {
 	data->list.clear();
 }
 
-BZF_API bz_APIFloatList* bz_newFloatList ( void )
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+BZF_API bz_APIFloatList *bz_newFloatList( void )
 {
 	return new bz_APIFloatList;
 }
 
-BZF_API void bz_deleteFloatList( bz_APIFloatList * l )
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+BZF_API void bz_deleteFloatList( bz_APIFloatList *l )
 {
-	if (l)
-		delete(l);
+	if( l )
+		delete ( l );
 }
 
-BZF_API bz_APIStringList* bz_newStringList ( void )
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+BZF_API bz_APIStringList *bz_newStringList( void )
 {
 	return new bz_APIStringList;
 }
 
-BZF_API void bz_deleteStringList( bz_APIStringList * l )
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+BZF_API void bz_deleteStringList( bz_APIStringList *l )
 {
-	if (l)
-		delete(l);
+	if( l )
+		delete ( l );
 }
 
 //******************************bz_APIStringList********************************************
 class bz_APIStringList::dataBlob
 {
 public:
-	std::vector<bz_ApiString> list;
+	std::vector < bz_ApiString > list;
 };
 
 
@@ -453,87 +645,135 @@ bz_APIStringList::bz_APIStringList()
 	data = new dataBlob;
 }
 
-bz_APIStringList::bz_APIStringList(const bz_APIStringList	&r)
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+bz_APIStringList::bz_APIStringList( const bz_APIStringList &r )
 {
 	data = new dataBlob;
 	data->list = r.data->list;
 }
 
-bz_APIStringList::bz_APIStringList(const std::vector<std::string>	&r)
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+bz_APIStringList::bz_APIStringList( const std::vector < std::string >  &r )
 {
 	data = new dataBlob;
 
-	for ( unsigned int i = 0; i < r.size(); i++)
+	for( unsigned int i = 0; i < r.size(); i++ )
 	{
 		std::string d = r[i];
-		data->list.push_back(bz_ApiString(d));
+		data->list.push_back( bz_ApiString( d ));
 	}
 }
 
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
 bz_APIStringList::~bz_APIStringList()
 {
-	delete(data);
+	delete ( data );
 }
 
-void bz_APIStringList::push_back ( const bz_ApiString &value )
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+void bz_APIStringList::push_back( const bz_ApiString &value )
 {
-	data->list.push_back(value);
+	data->list.push_back( value );
 }
 
-void bz_APIStringList::push_back ( const std::string &value )
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+void bz_APIStringList::push_back( const std::string &value )
 {
-	data->list.push_back(bz_ApiString(value));
+	data->list.push_back( bz_ApiString( value ));
 }
 
-bz_ApiString bz_APIStringList::get ( unsigned int i )
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+bz_ApiString bz_APIStringList::get( unsigned int i )
 {
-	if (i >= data->list.size())
-		return bz_ApiString("");
+	if( i >= data->list.size())
+		return bz_ApiString( "" );
 
 	return data->list[i];
 }
 
-const bz_ApiString& bz_APIStringList::operator[] (unsigned int i) const
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+const bz_ApiString &bz_APIStringList::operator[]( unsigned int i )const
 {
 	return data->list[i];
 }
 
-bz_APIStringList& bz_APIStringList::operator = ( const bz_APIStringList& r )
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+bz_APIStringList &bz_APIStringList::operator = ( const bz_APIStringList &r )
 {
 	data->list = r.data->list;
-	return *this;
+	return  *this;
 }
 
-bz_APIStringList& bz_APIStringList::operator = ( const std::vector<std::string>& r )
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+bz_APIStringList &bz_APIStringList::operator = ( const std::vector < std::string >  &r )
 {
 	data->list.clear();
 
-	for ( unsigned int i = 0; i < r.size(); i++)
-		data->list.push_back(bz_ApiString(r[i]));
+	for( unsigned int i = 0; i < r.size(); i++ )
+		data->list.push_back( bz_ApiString( r[i] ));
 
-	return *this;
+	return  *this;
 }
 
-unsigned int bz_APIStringList::size ( void )
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+unsigned int bz_APIStringList::size( void )
 {
 	return data->list.size();
 }
 
-void bz_APIStringList::clear ( void )
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+void bz_APIStringList::clear( void )
 {
 	data->list.clear();
 }
 
-void bz_APIStringList::tokenize ( const char* in, const char* delims, int maxTokens, bool useQuotes)
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+void bz_APIStringList::tokenize( const char *in, const char *delims, int maxTokens, bool useQuotes )
 {
 	clear();
-	if (!in || !delims)
-		return;
+	if( !in || !delims )
+		return ;
 
-	std::vector<std::string> list = TextUtils::tokenize(std::string(in),std::string(delims),maxTokens,useQuotes);
+	std::vector < std::string > list = TextUtils::tokenize( std::string( in ), std::string( delims ), maxTokens, useQuotes );
 
-	for ( unsigned int i = 0; i < list.size(); i++)
-		data->list.push_back(bz_ApiString(list[i]));
+	for( unsigned int i = 0; i < list.size(); i++ )
+		data->list.push_back( bz_ApiString( list[i] ));
 }
 
 //******************************bz_APIWorldObjectList********************************************
@@ -541,7 +781,7 @@ void bz_APIStringList::tokenize ( const char* in, const char* delims, int maxTok
 class bz_APIWorldObjectList::dataBlob
 {
 public:
-	std::vector<bz_APIBaseWorldObject*> list;
+	std::vector < bz_APIBaseWorldObject * > list;
 };
 
 bz_APIWorldObjectList::bz_APIWorldObjectList()
@@ -549,52 +789,88 @@ bz_APIWorldObjectList::bz_APIWorldObjectList()
 	data = new dataBlob;
 }
 
-bz_APIWorldObjectList::bz_APIWorldObjectList(const bz_APIWorldObjectList	&r)
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+bz_APIWorldObjectList::bz_APIWorldObjectList( const bz_APIWorldObjectList &r )
 {
 	data = new dataBlob;
 	data->list = r.data->list;
 }
 
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
 bz_APIWorldObjectList::~bz_APIWorldObjectList()
 {
-	delete(data);
+	delete ( data );
 }
 
-void bz_APIWorldObjectList::push_back ( bz_APIBaseWorldObject *value )
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+void bz_APIWorldObjectList::push_back( bz_APIBaseWorldObject *value )
 {
-	data->list.push_back(value);
+	data->list.push_back( value );
 }
 
-bz_APIBaseWorldObject *bz_APIWorldObjectList::get ( unsigned int i )
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+bz_APIBaseWorldObject *bz_APIWorldObjectList::get( unsigned int i )
 {
 	return data->list[i];
 }
 
-const bz_APIBaseWorldObject* bz_APIWorldObjectList::operator[] (unsigned int i) const
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+const bz_APIBaseWorldObject *bz_APIWorldObjectList::operator[]( unsigned int i )const
 {
 	return data->list[i];
 }
 
-bz_APIWorldObjectList& bz_APIWorldObjectList::operator = ( const bz_APIWorldObjectList& r )
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+bz_APIWorldObjectList &bz_APIWorldObjectList::operator = ( const bz_APIWorldObjectList &r )
 {
 	data->list = r.data->list;
-	return *this;
+	return  *this;
 }
 
-unsigned int bz_APIWorldObjectList::size ( void )
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+unsigned int bz_APIWorldObjectList::size( void )
 {
 	return data->list.size();
 }
 
-void bz_APIWorldObjectList::clear ( void )
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+void bz_APIWorldObjectList::clear( void )
 {
 	data->list.clear();
 }
 
-void bz_releaseWorldObjectList ( bz_APIWorldObjectList *objectList )
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+void bz_releaseWorldObjectList( bz_APIWorldObjectList *objectList )
 {
-	if (objectList)
-		delete(objectList);
+	if( objectList )
+		delete ( objectList );
 }
 
 //******************************bzApiTextreList********************************************
@@ -602,7 +878,7 @@ void bz_releaseWorldObjectList ( bz_APIWorldObjectList *objectList )
 class bz_APITextureList::dataBlob
 {
 public:
-	std::vector<bz_MaterialTexture> list;
+	std::vector < bz_MaterialTexture > list;
 };
 
 bz_APITextureList::bz_APITextureList()
@@ -610,104 +886,152 @@ bz_APITextureList::bz_APITextureList()
 	data = new dataBlob;
 }
 
-bz_APITextureList::bz_APITextureList(const bz_APITextureList	&r)
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+bz_APITextureList::bz_APITextureList( const bz_APITextureList &r )
 {
 	data = new dataBlob;
 	data->list = r.data->list;
 }
 
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
 bz_APITextureList::~bz_APITextureList()
 {
-	delete(data);
+	delete ( data );
 }
 
-void bz_APITextureList::push_back ( bz_MaterialTexture &value )
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+void bz_APITextureList::push_back( bz_MaterialTexture &value )
 {
-	data->list.push_back(value);
+	data->list.push_back( value );
 }
 
-bz_MaterialTexture bz_APITextureList::get ( unsigned int i )
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+bz_MaterialTexture bz_APITextureList::get( unsigned int i )
 {
 	return data->list[i];
 }
 
-const bz_MaterialTexture& bz_APITextureList::operator[] (unsigned int i) const
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+const bz_MaterialTexture &bz_APITextureList::operator[]( unsigned int i )const
 {
 	return data->list[i];
 }
 
-bz_APITextureList& bz_APITextureList::operator = ( const bz_APITextureList& r )
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+bz_APITextureList &bz_APITextureList::operator = ( const bz_APITextureList &r )
 {
 	data->list = r.data->list;
-	return *this;
+	return  *this;
 }
 
-unsigned int bz_APITextureList::size ( void )
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+unsigned int bz_APITextureList::size( void )
 {
 	return data->list.size();
 }
 
-void bz_APITextureList::clear ( void )
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+void bz_APITextureList::clear( void )
 {
 	data->list.clear();
 }
 
-bz_MaterialInfo* bz_anewMaterial ( void )
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+bz_MaterialInfo *bz_anewMaterial( void )
 {
 	return new bz_MaterialInfo;
 }
 
-void bz_deleteMaterial ( bz_MaterialInfo *material )
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+void bz_deleteMaterial( bz_MaterialInfo *material )
 {
-	if (material)
-		delete(material);
+	if( material )
+		delete ( material );
 }
 
 // events
-BZF_API bool bz_registerEvent ( bz_eEventType eventType, bz_EventHandler* eventHandler )
+BZF_API bool bz_registerEvent( bz_eEventType eventType, bz_EventHandler *eventHandler )
 {
-	if (!eventHandler)
+	if( !eventHandler )
 		return false;
 
-	worldEventManager.addEvent(eventType,eventHandler);
+	worldEventManager.addEvent( eventType, eventHandler );
 	return true;
 }
 
-BZF_API bool bz_removeEvent ( bz_eEventType eventType, bz_EventHandler* eventHandler )
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+BZF_API bool bz_removeEvent( bz_eEventType eventType, bz_EventHandler *eventHandler )
 {
-	if (!eventHandler)
+	if( !eventHandler )
 		return false;
 
-	worldEventManager.removeEvent(eventType,eventHandler);
+	worldEventManager.removeEvent( eventType, eventHandler );
 	return true;
 }
 
-BZF_API bool bz_updatePlayerData ( bz_BasePlayerRecord *playerRecord )
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+BZF_API bool bz_updatePlayerData( bz_BasePlayerRecord *playerRecord )
 {
-	if (!playerRecord)
+	if( !playerRecord )
 		return false;
 
-	GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerRecord->playerID);
-	if (!player)
+	GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex( playerRecord->playerID );
+	if( !player )
 		return false;
 
-	memcpy(playerRecord->pos, player->lastState.pos, sizeof(float) * 3);
+	memcpy( playerRecord->pos, player->lastState.pos, sizeof( float ) *3 );
 
 	playerRecord->rot = player->lastState.azimuth;
 
 	int flagid = player->player.getFlag();
-	FlagInfo *flagInfo = FlagInfo::get(flagid);
+	FlagInfo *flagInfo = FlagInfo::get( flagid );
 
 	std::string label;
-	if (flagInfo && flagInfo->flag.type)
+	if( flagInfo && flagInfo->flag.type )
 		label = flagInfo->flag.type->label();
 	playerRecord->currentFlag = label;
 
-	std::vector<FlagType*>	flagHistoryList = player->flagHistory.get();
+	std::vector < FlagType * > flagHistoryList = player->flagHistory.get();
 
 	playerRecord->flagHistory.clear();
-	for ( unsigned int i = 0; i < flagHistoryList.size(); i ++)
-		playerRecord->flagHistory.push_back(flagHistoryList[i]->label());
+	for( unsigned int i = 0; i < flagHistoryList.size(); i++ )
+		playerRecord->flagHistory.push_back( flagHistoryList[i]->label());
 
 	playerRecord->groups.clear();
 	playerRecord->groups = player->accessInfo.groups;
@@ -723,116 +1047,140 @@ BZF_API bool bz_updatePlayerData ( bz_BasePlayerRecord *playerRecord )
 	return true;
 }
 
-BZF_API bool bz_hasPerm ( int playerID, const char* perm )
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+BZF_API bool bz_hasPerm( int playerID, const char *perm )
 {
-	if (!perm)
+	if( !perm )
 		return false;
 
-	GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerID);
-	if (!player)
+	GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex( playerID );
+	if( !player )
 		return false;
 
 	std::string permName = perm;
 
-	permName = TextUtils::toupper(permName);
+	permName = TextUtils::toupper( permName );
 
-	PlayerAccessInfo::AccessPerm realPerm =  permFromName(permName);
+	PlayerAccessInfo::AccessPerm realPerm = permFromName( permName );
 
-	if (realPerm != PlayerAccessInfo::lastPerm)
-		return player->accessInfo.hasPerm(realPerm);
+	if( realPerm != PlayerAccessInfo::lastPerm )
+		return player->accessInfo.hasPerm( realPerm );
 	else
-		return player->accessInfo.hasCustomPerm(permName.c_str());
+		return player->accessInfo.hasCustomPerm( permName.c_str());
 }
 
-BZF_API bool bz_grantPerm ( int playerID, const char* perm  )
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+BZF_API bool bz_grantPerm( int playerID, const char *perm )
 {
-	if (!perm)
+	if( !perm )
 		return false;
 
-	GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerID);
+	GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex( playerID );
 
-	if (!player)
+	if( !player )
 		return false;
 
 	std::string permName = perm;
 
-	permName = TextUtils::toupper(permName);
+	permName = TextUtils::toupper( permName );
 
-	PlayerAccessInfo::AccessPerm realPerm =  permFromName(permName);
+	PlayerAccessInfo::AccessPerm realPerm = permFromName( permName );
 
-	if (realPerm == PlayerAccessInfo::lastPerm)
+	if( realPerm == PlayerAccessInfo::lastPerm )
 		return false;
 
-	player->accessInfo.grantPerm(realPerm);
+	player->accessInfo.grantPerm( realPerm );
 	return true;
 }
 
-BZF_API bool bz_revokePerm ( int playerID, const char* perm  )
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+BZF_API bool bz_revokePerm( int playerID, const char *perm )
 {
-	if (!perm)
+	if( !perm )
 		return false;
 
-	GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerID);
+	GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex( playerID );
 
-	if (!player)
+	if( !player )
 		return false;
 
 	std::string permName = perm;
 
-	permName = TextUtils::toupper(permName);
+	permName = TextUtils::toupper( permName );
 
-	PlayerAccessInfo::AccessPerm realPerm =  permFromName(permName);
+	PlayerAccessInfo::AccessPerm realPerm = permFromName( permName );
 
-	if (realPerm == PlayerAccessInfo::lastPerm)
+	if( realPerm == PlayerAccessInfo::lastPerm )
 		return false;
 
-	player->accessInfo.revokePerm(realPerm);
+	player->accessInfo.revokePerm( realPerm );
 	return true;
 }
 
-BZF_API bool bz_getPlayerIndexList ( bz_APIIntList *playerList )
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+BZF_API bool bz_getPlayerIndexList( bz_APIIntList *playerList )
 {
 	playerList->clear();
 
-	for (int i = 0; i < curMaxPlayers; i++)
+	for( int i = 0; i < curMaxPlayers; i++ )
 	{
-		GameKeeper::Player *p = GameKeeper::Player::getPlayerByIndex(i);
-		if ((p == NULL))
+		GameKeeper::Player *p = GameKeeper::Player::getPlayerByIndex( i );
+		if(( p == NULL ))
 			continue;
 
-		playerList->push_back(i);
+		playerList->push_back( i );
 	}
 	return playerList->size() > 0;
 }
 
-BZF_API bz_APIIntList *bz_getPlayerIndexList ( void )
-{
-	 bz_APIIntList *playerList = new bz_APIIntList;
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
-	for (int i = 0; i < curMaxPlayers; i++)
+BZF_API bz_APIIntList *bz_getPlayerIndexList( void )
+{
+	bz_APIIntList *playerList = new bz_APIIntList;
+
+	for( int i = 0; i < curMaxPlayers; i++ )
 	{
-		GameKeeper::Player *p = GameKeeper::Player::getPlayerByIndex(i);
-		if ((p == NULL))
+		GameKeeper::Player *p = GameKeeper::Player::getPlayerByIndex( i );
+		if(( p == NULL ))
 			continue;
 
-		playerList->push_back(i);
+		playerList->push_back( i );
 	}
 	return playerList;
 }
 
-BZF_API bz_BasePlayerRecord * bz_getPlayerByIndex ( int index )
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+BZF_API bz_BasePlayerRecord *bz_getPlayerByIndex( int index )
 {
-	GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(index);
+	GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex( index );
 
 	bz_BasePlayerRecord *playerRecord = new bz_BasePlayerRecord;
 
-	if (!player || !playerRecord)
+	if( !player || !playerRecord )
 		return NULL;
 
 	playerRecord->callsign = player->player.getCallSign();
-	playerRecord->email =  player->player.getEMail();
+	playerRecord->email = player->player.getEMail();
 	playerRecord->playerID = index;
-	playerRecord->team = convertTeam(player->player.getTeam());
+	playerRecord->team = convertTeam( player->player.getTeam());
 
 	playerRecord->spawned = player->player.isAlive();
 	playerRecord->verified = player->accessInfo.isVerified();
@@ -843,485 +1191,621 @@ BZF_API bz_BasePlayerRecord * bz_getPlayerByIndex ( int index )
 	return playerRecord;
 }
 
-BZF_API  bool bz_freePlayerRecord( bz_BasePlayerRecord *playerRecord )
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+BZF_API bool bz_freePlayerRecord( bz_BasePlayerRecord *playerRecord )
 {
-	if (playerRecord)
-		delete (playerRecord);
+	if( playerRecord )
+		delete ( playerRecord );
 
 	return true;
 }
 
-BZF_API bool bz_setPlayerWins (int playerId, int wins)
-{
-	GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerId);
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
-	if (!player)
+BZF_API bool bz_setPlayerWins( int playerId, int wins )
+{
+	GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex( playerId );
+
+	if( !player )
 		return false;
 
-	player->score.setWins(wins);
-	broadcastPlayerScoreUpdate(playerId);
+	player->score.setWins( wins );
+	broadcastPlayerScoreUpdate( playerId );
 	return true;
 }
 
-BZF_API bool bz_setPlayerOperator (int playerId)
-{
-	GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerId);
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
-	if (!player)
+BZF_API bool bz_setPlayerOperator( int playerId )
+{
+	GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex( playerId );
+
+	if( !player )
 		return false;
 
 	player->accessInfo.setOperator();
 	return true;
 }
 
-BZF_API bool bz_setPlayerLosses (int playerId, int losses)
-{
-	GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerId);
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
-	if (!player)
+BZF_API bool bz_setPlayerLosses( int playerId, int losses )
+{
+	GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex( playerId );
+
+	if( !player )
 		return false;
 
-	player->score.setLosses(losses);
-	broadcastPlayerScoreUpdate(playerId);
+	player->score.setLosses( losses );
+	broadcastPlayerScoreUpdate( playerId );
 	return true;
 }
 
-BZF_API bool bz_setPlayerTKs(int playerId, int tks)
-{
-	GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerId);
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
-	if (!player)
+BZF_API bool bz_setPlayerTKs( int playerId, int tks )
+{
+	GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex( playerId );
+
+	if( !player )
 		return false;
 
-	player->score.setTKs(tks);
-	broadcastPlayerScoreUpdate(playerId);
+	player->score.setTKs( tks );
+	broadcastPlayerScoreUpdate( playerId );
 	return true;
 }
 
-BZF_API bool bz_resetPlayerScore(int playerId)
-{
-	GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerId);
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
-	if (!player)
+BZF_API bool bz_resetPlayerScore( int playerId )
+{
+	GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex( playerId );
+
+	if( !player )
 		return false;
 
-	player->score.setWins(0);
-	player->score.setLosses(0);
-	player->score.setTKs(0);
-	broadcastPlayerScoreUpdate(playerId);
+	player->score.setWins( 0 );
+	player->score.setLosses( 0 );
+	player->score.setTKs( 0 );
+	broadcastPlayerScoreUpdate( playerId );
 	return true;
 }
 
-BZF_API bz_APIStringList* bz_getGroupList ( void )
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+BZF_API bz_APIStringList *bz_getGroupList( void )
 {
 	bz_APIStringList *groupList = new bz_APIStringList;
 
 	PlayerAccessMap::iterator itr = groupAccess.begin();
-	while (itr != groupAccess.end()) {
-		groupList->push_back(itr->first);
+	while( itr != groupAccess.end())
+	{
+		groupList->push_back( itr->first );
 		itr++;
 	}
 	return groupList;
 }
 
-BZF_API bz_APIStringList* bz_getGroupPerms ( const char* group )
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+BZF_API bz_APIStringList *bz_getGroupPerms( const char *group )
 {
 	bz_APIStringList *permList = new bz_APIStringList;
 
 	std::string groupName = group;
-	groupName = TextUtils::toupper(groupName);
-	PlayerAccessMap::iterator itr = groupAccess.find(groupName);
-	if (itr == groupAccess.end())
+	groupName = TextUtils::toupper( groupName );
+	PlayerAccessMap::iterator itr = groupAccess.find( groupName );
+	if( itr == groupAccess.end())
 		return permList;
 
-	for (int i = 0; i < PlayerAccessInfo::lastPerm; i++)
+	for( int i = 0; i < PlayerAccessInfo::lastPerm; i++ )
 	{
-		if (itr->second.explicitAllows.test(i) && !itr->second.explicitDenys.test(i) )
-			permList->push_back(nameFromPerm((PlayerAccessInfo::AccessPerm)i));
+		if( itr->second.explicitAllows.test( i ) && !itr->second.explicitDenys.test( i ))
+			permList->push_back( nameFromPerm(( PlayerAccessInfo::AccessPerm )i ));
 	}
 
-	for(unsigned int c = 0; c < itr->second.customPerms.size(); c++)
-		permList->push_back(TextUtils::toupper(itr->second.customPerms[c]));
+	for( unsigned int c = 0; c < itr->second.customPerms.size(); c++ )
+		permList->push_back( TextUtils::toupper( itr->second.customPerms[c] ));
 
 	return permList;
 }
 
-BZF_API bool bz_groupAllowPerm ( const char* group, const char* perm )
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+BZF_API bool bz_groupAllowPerm( const char *group, const char *perm )
 {
 	std::string permName = perm;
-	permName = TextUtils::toupper(permName);
+	permName = TextUtils::toupper( permName );
 
-	PlayerAccessInfo::AccessPerm realPerm =  permFromName(permName);
+	PlayerAccessInfo::AccessPerm realPerm = permFromName( permName );
 
 	// find the group
 	std::string groupName = group;
-	groupName = TextUtils::toupper(groupName);
-	PlayerAccessMap::iterator itr = groupAccess.find(groupName);
-	if (itr == groupAccess.end())
+	groupName = TextUtils::toupper( groupName );
+	PlayerAccessMap::iterator itr = groupAccess.find( groupName );
+	if( itr == groupAccess.end())
 		return false;
 
-	if (realPerm != PlayerAccessInfo::lastPerm)
-		return itr->second.explicitAllows.test(realPerm);
+	if( realPerm != PlayerAccessInfo::lastPerm )
+		return itr->second.explicitAllows.test( realPerm );
 	else
 	{
-		for(unsigned int i = 0; i < itr->second.customPerms.size(); i++)
+		for( unsigned int i = 0; i < itr->second.customPerms.size(); i++ )
 		{
-			if ( permName == TextUtils::toupper(itr->second.customPerms[i]) )
+			if( permName == TextUtils::toupper( itr->second.customPerms[i] ))
 				return true;
 		}
 	}
 	return false;
 }
 
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
-BZF_API bool bz_sendTextMessage(int from, int to, const char* message)
+
+BZF_API bool bz_sendTextMessage( int from, int to, const char *message )
 {
-	if (!message)
+	if( !message )
 		return false;
 
 	int playerIndex;
 	PlayerId dstPlayer = AllPlayers;
-	if ( to != BZ_ALLUSERS)
-		dstPlayer = (PlayerId)to;
+	if( to != BZ_ALLUSERS )
+		dstPlayer = ( PlayerId )to;
 
-	if (from == BZ_SERVER)
+	if( from == BZ_SERVER )
 		playerIndex = ServerPlayer;
 	else
 		playerIndex = from;
 
-	sendMessage(playerIndex, dstPlayer, message);
+	sendMessage( playerIndex, dstPlayer, message );
 	return true;
 }
 
-BZF_API bool bz_sendTextMessage(int from, bz_eTeamType to, const char* message)
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+BZF_API bool bz_sendTextMessage( int from, bz_eTeamType to, const char *message )
 {
-	switch(to)
+	switch( to )
 	{
-	case eNoTeam:
-		return false;
+		case eNoTeam:
+			return false;
 
-	default:
-	case eRogueTeam:
-	case eRedTeam:
-	case eGreenTeam:
-	case eBlueTeam:
-	case ePurpleTeam:
-	case eRabbitTeam:
-	case eHunterTeam:
-	case eObservers:
-		return bz_sendTextMessage(from,250-(int)to,message);
+		default:
+		case eRogueTeam:
+		case eRedTeam:
+		case eGreenTeam:
+		case eBlueTeam:
+		case ePurpleTeam:
+		case eRabbitTeam:
+		case eHunterTeam:
+		case eObservers:
+			return bz_sendTextMessage( from, 250-( int )to, message );
 
-	case eAdministrators:
-		return bz_sendTextMessage(from,AdminPlayers,message);
+		case eAdministrators:
+			return bz_sendTextMessage( from, AdminPlayers, message );
 	}
 }
 
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
-BZF_API bool bz_sendTextMessagef (int from, bz_eTeamType to, const char* fmt, ...)
+
+BZF_API bool bz_sendTextMessagef( int from, bz_eTeamType to, const char *fmt, ... )
 {
-  char buffer[1024];
-  va_list args;
-  va_start(args, fmt);
-  vsnprintf(buffer, 1024, fmt, args);
-  va_end(args);
-  return bz_sendTextMessage (from, to, buffer);
+	char buffer[1024];
+	va_list args;
+	va_start( args, fmt );
+	vsnprintf( buffer, 1024, fmt, args );
+	va_end( args );
+	return bz_sendTextMessage( from, to, buffer );
 }
 
-BZF_API bool bz_sendTextMessagef (int from, int to, const char* fmt, ...)
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+BZF_API bool bz_sendTextMessagef( int from, int to, const char *fmt, ... )
 {
-  char buffer[1024];
-  va_list args;
-  va_start(args, fmt);
-  vsnprintf(buffer, 1024, fmt, args);
-  va_end(args);
-  return bz_sendTextMessage (from, to, buffer);
+	char buffer[1024];
+	va_list args;
+	va_start( args, fmt );
+	vsnprintf( buffer, 1024, fmt, args );
+	va_end( args );
+	return bz_sendTextMessage( from, to, buffer );
 }
 
-BZF_API bool bz_sentFetchResMessage ( int playerID,  const char* URL )
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+BZF_API bool bz_sentFetchResMessage( int playerID, const char *URL )
 {
-	if (playerID == BZ_SERVER || !URL)
+	if( playerID == BZ_SERVER || !URL )
 		return false;
 
 	teResourceType resType = eFile;
 
-	std::vector<std::string> temp = TextUtils::tokenize(TextUtils::tolower(std::string(URL)),std::string("."));
+	std::vector < std::string > temp = TextUtils::tokenize( TextUtils::tolower( std::string( URL )), std::string( "." ));
 
-	std::string ext = temp[temp.size()-1];
-	if (ext == "wav")
+	std::string ext = temp[temp.size() - 1];
+	if( ext == "wav" )
 		resType = eSound;
 
-	void *buf, *bufStart = getDirectMessageBuffer();
-	buf = nboPackUShort(bufStart, (short)resType);
-	buf = nboPackUShort(buf, (unsigned short)strlen(URL));
-	buf = nboPackString(buf, URL,strlen(URL));
+	void *buf,  *bufStart = getDirectMessageBuffer();
+	buf = nboPackUShort( bufStart, ( short )resType );
+	buf = nboPackUShort( buf, ( unsigned short )strlen( URL ));
+	buf = nboPackString( buf, URL, strlen( URL ));
 
-	if (playerID == BZ_ALLUSERS)
-		broadcastMessage(MsgFetchResources, (char*)buf - (char*)bufStart, bufStart);
+	if( playerID == BZ_ALLUSERS )
+		broadcastMessage( MsgFetchResources, ( char* )buf - ( char* )bufStart, bufStart );
 	else
-		directMessage(playerID,MsgFetchResources, (char*)buf - (char*)bufStart, bufStart);
+		directMessage( playerID, MsgFetchResources, ( char* )buf - ( char* )bufStart, bufStart );
 
 	return true;
 }
 
-BZF_API bool bz_fireWorldWep ( const char* flagType, float lifetime, int fromPlayer, float *pos, float tilt, float direction, int shotID, float dt )
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+BZF_API bool bz_fireWorldWep( const char *flagType, float lifetime, int fromPlayer, float *pos, float tilt, float direction, int shotID, float dt )
 {
-	if (!pos || !flagType)
+	if( !pos || !flagType )
 		return false;
 
 	FlagTypeMap &flagMap = FlagType::getFlagMap();
-	if (flagMap.find(std::string(flagType)) == flagMap.end())
+	if( flagMap.find( std::string( flagType )) == flagMap.end())
 		return false;
 
-	FlagType *flag = flagMap.find(std::string(flagType))->second;
+	FlagType *flag = flagMap.find( std::string( flagType ))->second;
 
 	PlayerId player;
-	if ( fromPlayer == BZ_SERVER )
+	if( fromPlayer == BZ_SERVER )
 		player = ServerPlayer;
 	else
 		player = fromPlayer;
 
 	int realShotID = shotID;
-	if ( realShotID == 0)
+	if( realShotID == 0 )
 		realShotID = world->getWorldWeapons().getNewWorldShotID();
 
-	return fireWorldWep(flag,lifetime,player,pos,tilt,direction,realShotID,dt) == realShotID;
+	return fireWorldWep( flag, lifetime, player, pos, tilt, direction, realShotID, dt ) == realShotID;
 }
 
 // time API
-BZF_API double bz_getCurrentTime ( void )
+BZF_API double bz_getCurrentTime( void )
 {
 	return TimeKeeper::getCurrent().getSeconds();
 }
 
-BZF_API float bz_getMaxWaitTime ( void )
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+BZF_API float bz_getMaxWaitTime( void )
 {
 	return pluginMaxWait;
 }
 
-BZF_API void bz_setMaxWaitTime ( float time )
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+BZF_API void bz_setMaxWaitTime( float time )
 {
-	if ( pluginMaxWait > time)
+	if( pluginMaxWait > time )
 		pluginMaxWait = time;
 }
 
-BZF_API void bz_getLocaltime ( bz_localTime	*ts )
-{
-	if (!ts)
-		return;
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
-	TimeKeeper::localTime(&ts->year,&ts->month,&ts->day,&ts->hour,&ts->minute,&ts->second,&ts->daylightSavings);
+BZF_API void bz_getLocaltime( bz_localTime *ts )
+{
+	if( !ts )
+		return ;
+
+	TimeKeeper::localTime( &ts->year, &ts->month, &ts->day, &ts->hour, &ts->minute, &ts->second, &ts->daylightSavings );
 }
 
 // info
-BZF_API double bz_getBZDBDouble ( const char* variable )
+BZF_API double bz_getBZDBDouble( const char *variable )
 {
-	if (!variable)
+	if( !variable )
 		return 0.0;
 
-	return BZDB.eval(std::string(variable));
+	return BZDB.eval( std::string( variable ));
 }
 
-BZF_API bz_ApiString bz_getBZDBString( const char* variable )
-{
-	if (!variable)
-		return bz_ApiString("");
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
-	return bz_ApiString(BZDB.get(std::string(variable)));
+BZF_API bz_ApiString bz_getBZDBString( const char *variable )
+{
+	if( !variable )
+		return bz_ApiString( "" );
+
+	return bz_ApiString( BZDB.get( std::string( variable )));
 }
 
-BZF_API bool bz_getBZDBBool( const char* variable )
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+BZF_API bool bz_getBZDBBool( const char *variable )
 {
-	if (!variable)
+	if( !variable )
 		return false;
 
-	return BZDB.eval(std::string(variable)) > 0.0;
+	return BZDB.eval( std::string( variable )) > 0.0;
 }
 
-BZF_API int bz_getBZDBInt( const char* variable )
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+BZF_API int bz_getBZDBInt( const char *variable )
 {
-	return (int)BZDB.eval(std::string(variable));
+	return ( int )BZDB.eval( std::string( variable ));
 }
 
-BZF_API int bz_getBZDBItemPerms( const char* variable )
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+BZF_API int bz_getBZDBItemPerms( const char *variable )
 {
-	if (!bz_BZDBItemExists(variable))
+	if( !bz_BZDBItemExists( variable ))
 		return BZ_BZDBPERM_NA;
 
-	switch(BZDB.getPermission(std::string(variable)))
+	switch( BZDB.getPermission( std::string( variable )))
 	{
-	case StateDatabase::ReadWrite:
-		return BZ_BZDBPERM_USER;
+		case StateDatabase::ReadWrite: return BZ_BZDBPERM_USER;
 
-	case StateDatabase::Locked:
-		return BZ_BZDBPERM_SERVER;
+		case StateDatabase::Locked: return BZ_BZDBPERM_SERVER;
 
-	case StateDatabase::ReadOnly:
-		return BZ_BZDBPERM_CLIENT;
+		case StateDatabase::ReadOnly: return BZ_BZDBPERM_CLIENT;
 
-	default:
-		return BZ_BZDBPERM_NA;
+		default:
+			return BZ_BZDBPERM_NA;
 	}
 }
 
-BZF_API bool bz_getBZDBItemPesistent( const char* variable )
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+BZF_API bool bz_getBZDBItemPesistent( const char *variable )
 {
-	if (!bz_BZDBItemExists(variable))
+	if( !bz_BZDBItemExists( variable ))
 		return false;
 
-	return BZDB.isPersistent(std::string(variable));
+	return BZDB.isPersistent( std::string( variable ));
 }
 
-BZF_API bool bz_BZDBItemExists( const char* variable )
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+BZF_API bool bz_BZDBItemExists( const char *variable )
 {
-	if (!variable)
+	if( !variable )
 		return false;
 
-	return BZDB.isSet(std::string(variable));
+	return BZDB.isSet( std::string( variable ));
 }
 
-void setVarPerms ( const char* variable, int perms, bool persistent)
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+void setVarPerms( const char *variable, int perms, bool persistent )
 {
-	if (perms != BZ_BZDBPERM_NA)
+	if( perms != BZ_BZDBPERM_NA )
 	{
-		switch(perms) {
-		case BZ_BZDBPERM_USER:
-			BZDB.setPermission(std::string(variable),StateDatabase::ReadWrite);
-			break;
-		case BZ_BZDBPERM_SERVER:
-			BZDB.setPermission(std::string(variable),StateDatabase::Locked);
-			break;
-		default:
-			BZDB.setPermission(std::string(variable),StateDatabase::ReadOnly);
-			break;;
+		switch( perms )
+		{
+			case BZ_BZDBPERM_USER:
+				BZDB.setPermission( std::string( variable ), StateDatabase::ReadWrite );
+				break;
+			case BZ_BZDBPERM_SERVER:
+				BZDB.setPermission( std::string( variable ), StateDatabase::Locked );
+				break;
+			default:
+				BZDB.setPermission( std::string( variable ), StateDatabase::ReadOnly );
+				break;
+				;
 		}
 	}
-	BZDB.setPersistent(std::string(variable),persistent);
+	BZDB.setPersistent( std::string( variable ), persistent );
 }
 
-BZF_API bool bz_setBZDBDouble ( const char* variable, double val, int perms, bool persistent)
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+BZF_API bool bz_setBZDBDouble( const char *variable, double val, int perms, bool persistent )
 {
-	if (!variable)
+	if( !variable )
 		return false;
 
-	bool exists = BZDB.isSet(std::string(variable));
+	bool exists = BZDB.isSet( std::string( variable ));
 
-	BZDB.set(std::string(variable),TextUtils::format("%f",val));
-	setVarPerms(variable,perms,persistent);
+	BZDB.set( std::string( variable ), TextUtils::format( "%f", val ));
+	setVarPerms( variable, perms, persistent );
 
 	return !exists;
 }
 
-BZF_API bool bz_setBZDBString( const char* variable, const char *val, int perms, bool persistent )
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+BZF_API bool bz_setBZDBString( const char *variable, const char *val, int perms, bool persistent )
 {
-	if (!variable || !val)
+	if( !variable || !val )
 		return false;
 
-	bool exists = BZDB.isSet(std::string(variable));
+	bool exists = BZDB.isSet( std::string( variable ));
 
-	BZDB.set(std::string(variable),std::string(val));
-	setVarPerms(variable,perms,persistent);
+	BZDB.set( std::string( variable ), std::string( val ));
+	setVarPerms( variable, perms, persistent );
 
 	return !exists;
 }
 
-BZF_API bool bz_setBZDBBool( const char* variable, bool val, int perms, bool persistent )
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+BZF_API bool bz_setBZDBBool( const char *variable, bool val, int perms, bool persistent )
 {
-	if (!variable)
+	if( !variable )
 		return false;
 
-	bool exists = BZDB.isSet(std::string(variable));
+	bool exists = BZDB.isSet( std::string( variable ));
 
-	BZDB.set(std::string(variable),TextUtils::format("%d",val));
-	setVarPerms(variable,perms,persistent);
+	BZDB.set( std::string( variable ), TextUtils::format( "%d", val ));
+	setVarPerms( variable, perms, persistent );
 
 	return !exists;
 }
 
-BZF_API bool bz_setBZDBInt( const char* variable, int val, int perms, bool persistent )
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+BZF_API bool bz_setBZDBInt( const char *variable, int val, int perms, bool persistent )
 {
-	if (!variable)
+	if( !variable )
 		return false;
 
-	bool exists = BZDB.isSet(std::string(variable));
+	bool exists = BZDB.isSet( std::string( variable ));
 
-	BZDB.set(std::string(variable),TextUtils::format("%d",val));
-	setVarPerms(variable,perms,persistent);
+	BZDB.set( std::string( variable ), TextUtils::format( "%d", val ));
+	setVarPerms( variable, perms, persistent );
 
 	return !exists;
 }
 
-void bzdbIterator (const std::string& name, void* userData)
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+void bzdbIterator( const std::string &name, void *userData )
 {
-	bz_APIStringList	* varList = static_cast<bz_APIStringList*>(userData);
-	varList->push_back(name);
+	bz_APIStringList *varList = static_cast < bz_APIStringList * > ( userData );
+	varList->push_back( name );
 }
 
-BZF_API int bz_getBZDBVarList( bz_APIStringList	*varList )
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+BZF_API int bz_getBZDBVarList( bz_APIStringList *varList )
 {
-	if (!varList)
-		return -1;
+	if( !varList )
+		return  - 1;
 
 	varList->clear();
-	BZDB.iterate(&bzdbIterator,varList);
-	return (int)varList->size();
+	BZDB.iterate( &bzdbIterator, varList );
+	return ( int )varList->size();
 }
 
 
 // logging
-BZF_API void bz_debugMessage ( int _debugLevel, const char* message )
+BZF_API void bz_debugMessage( int _debugLevel, const char *message )
 {
-	if (!message)
-		return;
+	if( !message )
+		return ;
 
-	if (debugLevel >= _debugLevel)
-		formatDebug("%s\n",message);
+	if( debugLevel >= _debugLevel )
+		formatDebug( "%s\n", message );
 }
 
-BZF_API void bz_debugMessagef ( int _debugLevel, const char* fmt, ... )
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+BZF_API void bz_debugMessagef( int _debugLevel, const char *fmt, ... )
 {
 	char buffer[4096];
 	va_list args;
-	va_start(args, fmt);
-	vsnprintf(buffer, 4096, fmt, args);
-	va_end(args);
-	bz_debugMessage (_debugLevel, buffer);
+	va_start( args, fmt );
+	vsnprintf( buffer, 4096, fmt, args );
+	va_end( args );
+	bz_debugMessage( _debugLevel, buffer );
 }
 
-BZF_API int bz_getDebugLevel ( void )
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+BZF_API int bz_getDebugLevel( void )
 {
 	return debugLevel;
 }
 
 // admin
-BZF_API bool bz_kickUser ( int playerIndex, const char* reason, bool notify )
+BZF_API bool bz_kickUser( int playerIndex, const char *reason, bool notify )
 {
-	GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerIndex);
-	if (!player || !reason)
+	GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex( playerIndex );
+	if( !player || !reason )
 		return false;
 
-	if (notify)
+	if( notify )
 	{
-		std::string msg = std::string("You have been kicked from the server for: ") + reason;
-		sendMessage(ServerPlayer, playerIndex, msg.c_str());
+		std::string msg = std::string( "You have been kicked from the server for: " ) + reason;
+		sendMessage( ServerPlayer, playerIndex, msg.c_str());
 
 		msg = player->player.getCallSign();
-		msg += std::string(" was kicked for:") + reason;
-		sendMessage(ServerPlayer, AdminPlayers, msg.c_str());
+		msg += std::string( " was kicked for:" ) + reason;
+		sendMessage( ServerPlayer, AdminPlayers, msg.c_str());
 	}
-	removePlayer(playerIndex,reason);
+	removePlayer( playerIndex, reason );
 	return true;
 }
 
-BZF_API bool bz_IPBanUser ( int playerIndex, const char* ip, int time, const char* reason )
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+BZF_API bool bz_IPBanUser( int playerIndex, const char *ip, int time, const char *reason )
 {
-	GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerIndex);
-	if (!player || !reason || !ip)
+	GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex( playerIndex );
+	if( !player || !reason || !ip )
 		return false;
 
 	// reload the banlist in case anyone else has added
 	clOptions->acl.load();
 
-	if (clOptions->acl.ban(ip, player->player.getCallSign(), time,reason))
+	if( clOptions->acl.ban( ip, player->player.getCallSign(), time, reason ))
 		clOptions->acl.save();
 	else
 		return false;
@@ -1329,51 +1813,67 @@ BZF_API bool bz_IPBanUser ( int playerIndex, const char* ip, int time, const cha
 	return true;
 }
 
-BZF_API bz_APIStringList* bz_getReports( void )
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+BZF_API bz_APIStringList *bz_getReports( void )
 {
-	bz_APIStringList	*list = new bz_APIStringList;
+	bz_APIStringList *list = new bz_APIStringList;
 
 	// Are we reporting to a file?
-	if (clOptions->reportFile.size() == 0)
+	if( clOptions->reportFile.size() == 0 )
 		return list;
 
-	std::ifstream ifs(clOptions->reportFile.c_str(), std::ios::in);
-	if (ifs.fail()) 
+	std::ifstream ifs( clOptions->reportFile.c_str(), std::ios::in );
+	if( ifs.fail())
 		return list;
 
 	std::string line;
 
-	while (std::getline(ifs, line)) 
-		list->push_back(line);
+	while( std::getline( ifs, line ))
+		list->push_back( line );
 
 	return list;
 }
 
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
 BZF_API int bz_getLagWarn( void )
 {
-	return (int)(clOptions->lagwarnthresh * 1000 + 0.5);
+	return ( int )( clOptions->lagwarnthresh *1000+0.5 );
 }
+
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
 BZF_API bool bz_setLagWarn( int lagwarn )
 {
-	clOptions->lagwarnthresh = (float) (lagwarn / 1000.0);
-	LagInfo::setThreshold(clOptions->lagwarnthresh,(float)clOptions->maxlagwarn);
+	clOptions->lagwarnthresh = ( float )( lagwarn / 1000.0 );
+	LagInfo::setThreshold( clOptions->lagwarnthresh, ( float )clOptions->maxlagwarn );
 	return true;
 }
+
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
 BZF_API bool bz_pollVeto( void )
 {
 	/* make sure that there is a poll arbiter */
-	if (BZDB.isEmpty(std::string("poll")))
+	if( BZDB.isEmpty( std::string( "poll" )))
 		return false;
 
 	// only need to do this once
-	void *ptr = BZDB.getPointer(std::string("poll"));
+	void *ptr = BZDB.getPointer( std::string( "poll" ));
 
-	VotingArbiter *arbiter = (VotingArbiter *)ptr;
+	VotingArbiter *arbiter = ( VotingArbiter* )ptr;
 
 	/* make sure there is an unexpired poll */
-	if ((arbiter != NULL) && !arbiter->knowsPoll())
+	if(( arbiter != NULL ) && !arbiter->knowsPoll())
 		return false;
 
 	/* poof */
@@ -1382,120 +1882,146 @@ BZF_API bool bz_pollVeto( void )
 	return true;
 }
 
-BZF_API bz_APIStringList* bz_getHelpTopics( void )
-{
-	bz_APIStringList	*list = new bz_APIStringList;
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
-	const std::vector<std::string> &r = clOptions->textChunker.getChunkNames();
-	for (unsigned int i = 0; i < r.size(); i++)
-		list->push_back(r[i]);
+BZF_API bz_APIStringList *bz_getHelpTopics( void )
+{
+	bz_APIStringList *list = new bz_APIStringList;
+
+	const std::vector < std::string >  &r = clOptions->textChunker.getChunkNames();
+	for( unsigned int i = 0; i < r.size(); i++ )
+		list->push_back( r[i] );
 	return list;
 }
 
-BZF_API bz_APIStringList* bz_getHelpTopic(const char* name)
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+BZF_API bz_APIStringList *bz_getHelpTopic( const char *name )
 {
-	bz_APIStringList	*list = new bz_APIStringList;
+	bz_APIStringList *list = new bz_APIStringList;
 
 	std::string topicName;
-	if (name)
+	if( name )
 		topicName = name;
 
-	const std::vector<std::string> *r = clOptions->textChunker.getTextChunk(topicName);
-	for (unsigned int i = 0; i < r->size(); i++)
-		list->push_back((*r)[i]);
+	const std::vector < std::string >  *r = clOptions->textChunker.getTextChunk( topicName );
+	for( unsigned int i = 0; i < r->size(); i++ )
+		list->push_back(( *r )[i] );
 	return list;
 }
 
-BZF_API bool bz_registerCustomSlashCommand ( const char* command, bz_CustomSlashCommandHandler *handler )
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+BZF_API bool bz_registerCustomSlashCommand( const char *command, bz_CustomSlashCommandHandler *handler )
 {
-	if (!command || !handler)
+	if( !command || !handler )
 		return false;
 
-	registerCustomSlashCommand(std::string(command),handler);
+	registerCustomSlashCommand( std::string( command ), handler );
 	return true;
 }
 
-BZF_API bool bz_removeCustomSlashCommand ( const char* command )
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+BZF_API bool bz_removeCustomSlashCommand( const char *command )
 {
-	if (!command)
+	if( !command )
 		return false;
 
-	removeCustomSlashCommand(std::string(command));
+	removeCustomSlashCommand( std::string( command ));
 	return true;
 }
 
-BZF_API bool bz_getStandardSpawn ( int playeID, float pos[3], float *rot )
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+BZF_API bool bz_getStandardSpawn( int playeID, float pos[3], float *rot )
 {
-	GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playeID);
-	if (!player)
+	GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex( playeID );
+	if( !player )
 		return false;
 
 	// get the spawn position
-	SpawnPosition* spawnPosition = new SpawnPosition(playeID,
-		(!clOptions->respawnOnBuildings) || (player->player.isBot()),
-		clOptions->gameStyle & ClassicCTFGameStyle);
+	SpawnPosition *spawnPosition = new SpawnPosition( playeID, ( !clOptions->respawnOnBuildings ) || ( player->player.isBot()), clOptions->gameStyle &ClassicCTFGameStyle );
 
 	pos[0] = spawnPosition->getX();
 	pos[1] = spawnPosition->getY();
 	pos[2] = spawnPosition->getZ();
-	if (rot)
+	if( rot )
 		*rot = spawnPosition->getAzimuth();
 
 	return true;
 }
 
-BZF_API bool bz_killPlayer ( int playeID, bool spawnOnBase, int killerID, const char* flagType  )
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+BZF_API bool bz_killPlayer( int playeID, bool spawnOnBase, int killerID, const char *flagType )
 {
-	GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playeID);
-	if (!player)
+	GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex( playeID );
+	if( !player )
 		return false;
 
-	if (!player->player.isAlive())
+	if( !player->player.isAlive())
 		return false;
 
-	if (killerID == -1)
+	if( killerID ==  - 1 )
 	{
 		player->player.setDead();
-		player->player.setRestartOnBase(spawnOnBase);
-		zapFlagByPlayer(playeID);
+		player->player.setRestartOnBase( spawnOnBase );
+		zapFlagByPlayer( playeID );
 		return true;
 	}
 
 	FlagType *flag = NULL;
-	if ( flagType )
+	if( flagType )
 	{
 		FlagTypeMap &flagMap = FlagType::getFlagMap();
-		if (flagMap.find(std::string(flagType)) == flagMap.end())
+		if( flagMap.find( std::string( flagType )) == flagMap.end())
 			return false;
 
-		flag = flagMap.find(std::string(flagType))->second;
+		flag = flagMap.find( std::string( flagType ))->second;
 	}
 
-	playerKilled(playeID, killerID, GotKilledMsg, -1, flag ? flag : Flags::Null, -1,spawnOnBase);
+	playerKilled( playeID, killerID, GotKilledMsg,  - 1, flag ? flag : Flags::Null,  - 1, spawnOnBase );
 
 	return true;
 }
 
-BZF_API bool bz_givePlayerFlag ( int playeID, const char* flagType, bool force )
-{
-	FlagInfo* fi = NULL;
-	GameKeeper::Player* gkPlayer = GameKeeper::Player::getPlayerByIndex(playeID);
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
-	if (gkPlayer != NULL)
+BZF_API bool bz_givePlayerFlag( int playeID, const char *flagType, bool force )
+{
+	FlagInfo *fi = NULL;
+	GameKeeper::Player *gkPlayer = GameKeeper::Player::getPlayerByIndex( playeID );
+
+	if( gkPlayer != NULL )
 	{
-		FlagType* ft = Flag::getDescFromAbbreviation(flagType);
-		if (ft != Flags::Null)
+		FlagType *ft = Flag::getDescFromAbbreviation( flagType );
+		if( ft != Flags::Null )
 		{
 			// find unused and forced candidates
-			FlagInfo* unused = NULL;
-			FlagInfo* forced = NULL;
-			for (int i = 0; i < numFlags; i++)
+			FlagInfo *unused = NULL;
+			FlagInfo *forced = NULL;
+			for( int i = 0; i < numFlags; i++ )
 			{
-				FlagInfo* fi2 = FlagInfo::get(i);
-				if ((fi2 != NULL) && (fi2->flag.type == ft))
+				FlagInfo *fi2 = FlagInfo::get( i );
+				if(( fi2 != NULL ) && ( fi2->flag.type == ft ))
 				{
 					forced = fi2;
-					if (fi2->player < 0)
+					if( fi2->player < 0 )
 					{
 						unused = fi2;
 						break;
@@ -1504,13 +2030,14 @@ BZF_API bool bz_givePlayerFlag ( int playeID, const char* flagType, bool force )
 			}
 
 			// see if we need to force it
-			if (unused != NULL)
+			if( unused != NULL )
 				fi = unused;
-			else if (forced != NULL)
+			else if( forced != NULL )
 			{
-				if (force)
+				if( force )
 					fi = forced;
-				else  //all flags of this type are in use and force is set to false
+				else
+				//all flags of this type are in use and force is set to false
 					return false;
 			}
 			else
@@ -1525,156 +2052,200 @@ BZF_API bool bz_givePlayerFlag ( int playeID, const char* flagType, bool force )
 			return false;
 		}
 	}
-	else //invald player
+	else
+	//invald player
 		return false;
 
-	if (gkPlayer && fi)
+	if( gkPlayer && fi )
 	{
 		// do not give flags to dead players
-		if (!gkPlayer->player.isAlive())
-			return false; //player is dead
+		if( !gkPlayer->player.isAlive())
+			return false;
+		//player is dead
 
 		// deal with the player's current flag (if applicable)
 		const int flagId = gkPlayer->player.getFlag();
-		if (flagId >= 0)
+		if( flagId >= 0 )
 		{
-			FlagInfo& currentFlag = *FlagInfo::get(flagId);
-			if (currentFlag.flag.type->flagTeam != NoTeam)
-				dropFlag(currentFlag, gkPlayer->lastState.pos);// drop team flags
+			FlagInfo &currentFlag =  *FlagInfo::get( flagId );
+			if( currentFlag.flag.type->flagTeam != NoTeam )
+				dropFlag( currentFlag, gkPlayer->lastState.pos );
+			// drop team flags
 			else
-				resetFlag(currentFlag);// reset non-team flags
-		}		
+				resetFlag( currentFlag );
+			// reset non-team flags
+		}
 		// setup bzfs' state
-		fi->grab(gkPlayer->getIndex());
-		gkPlayer->player.setFlag(fi->getIndex());
+		fi->grab( gkPlayer->getIndex());
+		gkPlayer->player.setFlag( fi->getIndex());
 
 		// send MsgGrabFlag
-		void *buf, *bufStart = getDirectMessageBuffer();
-		buf = nboPackUByte(bufStart, gkPlayer->getIndex());
-		buf = fi->pack(buf);
-		broadcastMessage(MsgGrabFlag, (char*)buf-(char*)bufStart, bufStart);
+		void *buf,  *bufStart = getDirectMessageBuffer();
+		buf = nboPackUByte( bufStart, gkPlayer->getIndex());
+		buf = fi->pack( buf );
+		broadcastMessage( MsgGrabFlag, ( char* )buf - ( char* )bufStart, bufStart );
 
 		//flag successfully given to player
 		return true;
 	}
-//just in case? (a "wtf" case)
-       return false;
+	//just in case? (a "wtf" case)
+	return false;
 }
 
-BZF_API bool bz_removePlayerFlag ( int playeID )
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+BZF_API bool bz_removePlayerFlag( int playeID )
 {
-	GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playeID);
-	if (!player)
+	GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex( playeID );
+	if( !player )
 		return false;
 
-	if (!player->player.isAlive())
+	if( !player->player.isAlive())
 		return false;
 
-	zapFlagByPlayer(playeID);
+	zapFlagByPlayer( playeID );
 
 	return true;
 }
 
-BZF_API void bz_resetFlags ( bool onlyUnused )
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+BZF_API void bz_resetFlags( bool onlyUnused )
 {
-	for (int i = 0; i < numFlags; i++)
+	for( int i = 0; i < numFlags; i++ )
 	{
-		FlagInfo &flag = *FlagInfo::get(i);
+		FlagInfo &flag =  *FlagInfo::get( i );
 		// see if someone had grabbed flag,
 		const int playerIndex = flag.player;
-		if (!onlyUnused || (playerIndex == -1))
+		if( !onlyUnused || ( playerIndex ==  - 1 ))
 		{
-			if (playerIndex != -1)
-				sendDrop(flag);
+			if( playerIndex !=  - 1 )
+				sendDrop( flag );
 
-			resetFlag(flag);
+			resetFlag( flag );
 		}
 	}
 }
 
-BZF_API bool bz_addWorldBox ( float *pos, float rot, float* scale, bz_WorldObjectOptions options )
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+BZF_API bool bz_addWorldBox( float *pos, float rot, float *scale, bz_WorldObjectOptions options )
 {
-	if (!world || world->isFinisihed() || !pos || !scale)
+	if( !world || world->isFinisihed() || !pos || !scale )
 		return false;
 
-	world->addBox(pos[0],pos[1],pos[2],rot,scale[0],scale[1],scale[2],options.driveThru,options.shootThru);
+	world->addBox( pos[0], pos[1], pos[2], rot, scale[0], scale[1], scale[2], options.driveThru, options.shootThru );
 	return true;
 }
 
-BZF_API bool bz_addWorldPyramid ( float *pos, float rot, float* scale, bool fliped, bz_WorldObjectOptions options )
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+BZF_API bool bz_addWorldPyramid( float *pos, float rot, float *scale, bool fliped, bz_WorldObjectOptions options )
 {
-	if (!world || world->isFinisihed() || !pos || !scale)
+	if( !world || world->isFinisihed() || !pos || !scale )
 		return false;
 
-	world->addPyramid(pos[0],pos[1],pos[2],rot,scale[0],scale[1],scale[2],options.driveThru,options.shootThru,fliped);
+	world->addPyramid( pos[0], pos[1], pos[2], rot, scale[0], scale[1], scale[2], options.driveThru, options.shootThru, fliped );
 	return true;
 }
 
-BZF_API bool bz_addWorldBase( float *pos, float rot, float* scale, int teamIndex, bz_WorldObjectOptions options )
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+BZF_API bool bz_addWorldBase( float *pos, float rot, float *scale, int teamIndex, bz_WorldObjectOptions options )
 {
-	if (!world || world->isFinisihed() || !pos || !scale)
+	if( !world || world->isFinisihed() || !pos || !scale )
 		return false;
 
-	world->addBase(pos,rot,scale,teamIndex,options.driveThru,options.shootThru);
+	world->addBase( pos, rot, scale, teamIndex, options.driveThru, options.shootThru );
 	return true;
 }
 
-BZF_API bool bz_addWorldTeleporter ( float *pos, float rot, float* scale, float border, bz_WorldObjectOptions options )
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+BZF_API bool bz_addWorldTeleporter( float *pos, float rot, float *scale, float border, bz_WorldObjectOptions options )
 {
-	if (!world || world->isFinisihed() || !pos || !scale)
+	if( !world || world->isFinisihed() || !pos || !scale )
 		return false;
 
-	world->addTeleporter(pos[0],pos[1],pos[2],rot,scale[0],scale[1],scale[2],border,false,options.driveThru,options.shootThru);
+	world->addTeleporter( pos[0], pos[1], pos[2], rot, scale[0], scale[1], scale[2], border, false, options.driveThru, options.shootThru );
 	return true;
 }
+
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
 BZF_API bool bz_addWorldLink( int from, int to )
 {
-	if (!world || world->isFinisihed() )
+	if( !world || world->isFinisihed())
 		return false;
 
-	world->addLink(from,to);
+	world->addLink( from, to );
 	return true;
 }
+
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
 BZF_API bool bz_addWorldWaterLevel( float level, bz_MaterialInfo *material )
 {
-	if (!world || world->isFinisihed() )
+	if( !world || world->isFinisihed())
 		return false;
 
-	if (!material)
+	if( !material )
 	{
-		world->addWaterLevel(level,NULL);
+		world->addWaterLevel( level, NULL );
 		return true;
 	}
 
-	BzMaterial	bzmat;
-	setBZMatFromAPIMat(bzmat,material);
-	world->addWaterLevel(level,MATERIALMGR.addMaterial(&bzmat));
+	BzMaterial bzmat;
+	setBZMatFromAPIMat( bzmat, material );
+	world->addWaterLevel( level, MATERIALMGR.addMaterial( &bzmat ));
 	return true;
 }
 
-BZF_API bool bz_addWorldWeapon( const char* _flagType, float *pos, float rot, float tilt, float initDelay, bz_APIFloatList &delays )
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+BZF_API bool bz_addWorldWeapon( const char *_flagType, float *pos, float rot, float tilt, float initDelay, bz_APIFloatList &delays )
 {
-	if (!world || world->isFinisihed() || !_flagType )
+	if( !world || world->isFinisihed() || !_flagType )
 		return false;
 
 	std::string flagType = _flagType;
 
 	FlagTypeMap &flagMap = FlagType::getFlagMap();
-	if (flagMap.find(std::string(flagType)) == flagMap.end())
+	if( flagMap.find( std::string( flagType )) == flagMap.end())
 		return false;
 
-	FlagType *flag = flagMap.find(std::string(flagType))->second;
+	FlagType *flag = flagMap.find( std::string( flagType ))->second;
 
-	std::vector<float> realDelays;
+	std::vector < float > realDelays;
 
-	for(unsigned int i = 0; i < delays.size(); i++)
-		realDelays.push_back(delays.get(i));
+	for( unsigned int i = 0; i < delays.size(); i++ )
+		realDelays.push_back( delays.get( i ));
 
-	world->addWeapon(flag, pos, rot, tilt, RogueTeam, initDelay, realDelays, synct);
+	world->addWeapon( flag, pos, rot, tilt, RogueTeam, initDelay, realDelays, synct );
 	return true;
 }
+
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
 BZF_API bool bz_setWorldSize( float size, float wallHeight )
 {
@@ -1684,38 +2255,58 @@ BZF_API bool bz_setWorldSize( float size, float wallHeight )
 	return true;
 }
 
-BZF_API bool bz_registerCustomMapObject ( const char* object, bz_CustomMapObjectHandler *handler )
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+BZF_API bool bz_registerCustomMapObject( const char *object, bz_CustomMapObjectHandler *handler )
 {
-	if (!object || !handler)
+	if( !object || !handler )
 		return false;
 
-	registerCustomMapObject(object,handler);
+	registerCustomMapObject( object, handler );
 	return true;
 }
 
-BZF_API bool bz_removeCustomMapObject ( const char* object )
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+BZF_API bool bz_removeCustomMapObject( const char *object )
 {
-	if (!object)
+	if( !object )
 		return false;
 
-	removeCustomMapObject(object);
+	removeCustomMapObject( object );
 	return true;
 }
+
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
 BZF_API void bz_getWorldSize( float *size, float *wallHeight )
 {
-	if (wallHeight)
+	if( wallHeight )
 		*wallHeight = pluginWorldHeight;
-	if (size)
+	if( size )
 		*size = pluginWorldSize;
 }
+
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
 BZF_API int bz_getWorldObjectCount( void )
 {
 	return world->getDatabaseSize();
 }
 
-BZF_API bz_APIWorldObjectList* bz_getWorldObjectList( void )
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+BZF_API bz_APIWorldObjectList *bz_getWorldObjectList( void )
 {
 	bz_APIWorldObjectList *worldList = new bz_APIWorldObjectList;
 
@@ -1737,36 +2328,48 @@ bz_APISolidWorldObject_V1::bz_APISolidWorldObject_V1()
 	data = new dataBlob;
 	data->obstacle = NULL;
 
-	memset(center,0,sizeof(float)*3);
-	memset(maxAABBox,0,sizeof(float)*3);
-	memset(minAABBox,0,sizeof(float)*3);
-	memset(rotation,0,sizeof(float)*3);
-	memset(maxBBox,0,sizeof(float)*3);
-	memset(minBBox,0,sizeof(float)*3);
+	memset( center, 0, sizeof( float ) *3 );
+	memset( maxAABBox, 0, sizeof( float ) *3 );
+	memset( minAABBox, 0, sizeof( float ) *3 );
+	memset( rotation, 0, sizeof( float ) *3 );
+	memset( maxBBox, 0, sizeof( float ) *3 );
+	memset( minBBox, 0, sizeof( float ) *3 );
 }
+
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
 bz_APISolidWorldObject_V1::~bz_APISolidWorldObject_V1()
 {
-	if (data)
-		delete(data);
+	if( data )
+		delete ( data );
 }
 
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
-void bz_APISolidWorldObject_V1::update ( void )
+
+void bz_APISolidWorldObject_V1::update( void )
 {
-	if (!data || !minBBox)
-		return;
+	if( !data || !minBBox )
+		return ;
 }
 
-bz_eAPIColType getAPIMapObject ( InBuildingType colType, const Obstacle *obs, bz_APIBaseWorldObject **object )
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+bz_eAPIColType getAPIMapObject( InBuildingType colType, const Obstacle *obs, bz_APIBaseWorldObject **object )
 {
-	if (!obs)
+	if( !obs )
 		return eNoCol;
 
-	bz_freeWorldObjectPtr(*object);
+	bz_freeWorldObjectPtr( *object );
 
 	bool base = false;
-	switch(colType)
+	switch( colType )
 	{
 		case NOT_IN_BUILDING:
 		case IN_BOX_DRIVETHROUGH:
@@ -1779,9 +2382,9 @@ bz_eAPIColType getAPIMapObject ( InBuildingType colType, const Obstacle *obs, bz
 		case IN_MESHFACE:
 		case IN_PYRAMID:
 		case IN_TETRA:
-			if (object)
+			if( object )
 			{
-				bz_APISolidWorldObject_V1	*solid = new bz_APISolidWorldObject_V1;
+				bz_APISolidWorldObject_V1 *solid = new bz_APISolidWorldObject_V1;
 				solid->data->obstacle = obs;
 				solid->update();
 				*object = solid;
@@ -1794,299 +2397,363 @@ bz_eAPIColType getAPIMapObject ( InBuildingType colType, const Obstacle *obs, bz
 	return eNoCol;
 }
 
-bz_eAPIColType bz_cylinderInMapObject ( float pos[3], float height, float radius, bz_APIBaseWorldObject **object )
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+bz_eAPIColType bz_cylinderInMapObject( float pos[3], float height, float radius, bz_APIBaseWorldObject **object )
 {
-	if(!world)
+	if( !world )
 		return eNoCol;
 
 	const Obstacle *obs = NULL;
-	return getAPIMapObject(world->cylinderInBuilding(&obs,pos,radius,height),obs,object);;
+	return getAPIMapObject( world->cylinderInBuilding( &obs, pos, radius, height ), obs, object );
+	;
 }
 
-bz_eAPIColType bz_boxInMapObject ( float pos[3], float size[3], float angle, bz_APIBaseWorldObject **object )
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+bz_eAPIColType bz_boxInMapObject( float pos[3], float size[3], float angle, bz_APIBaseWorldObject **object )
 {
-	if(!world)
+	if( !world )
 		return eNoCol;
 	const Obstacle *obs = NULL;
-	return getAPIMapObject(world->boxInBuilding(&obs,pos,angle,size[0],size[1],size[2]),obs,object);
+	return getAPIMapObject( world->boxInBuilding( &obs, pos, angle, size[0], size[1], size[2] ), obs, object );
 }
 
-void bz_freeWorldObjectPtr ( bz_APIBaseWorldObject *ptr )
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+void bz_freeWorldObjectPtr( bz_APIBaseWorldObject *ptr )
 {
-	if (ptr)
-		delete(ptr);
+	if( ptr )
+		delete ( ptr );
 
 	ptr = NULL;
 }
+
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
 BZF_API bool bz_getPublic( void )
 {
 	return clOptions->publicizeServer;
 }
 
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
 BZF_API bz_ApiString bz_getPublicAddr( void )
 {
-	if (!clOptions->publicizeServer)
-		return bz_ApiString("");
+	if( !clOptions->publicizeServer )
+		return bz_ApiString( "" );
 
-	return bz_ApiString(clOptions->publicizedAddress);
+	return bz_ApiString( clOptions->publicizedAddress );
 }
+
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
 BZF_API bz_ApiString bz_getPublicDescription( void )
 {
-	if (!clOptions->publicizeServer)
-		return bz_ApiString("");
+	if( !clOptions->publicizeServer )
+		return bz_ApiString( "" );
 
-	return bz_ApiString(clOptions->publicizedTitle);
+	return bz_ApiString( clOptions->publicizedTitle );
 }
 
-BZF_API bool bz_sendPlayCustomLocalSound ( int playerID, const char* soundName )
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+BZF_API bool bz_sendPlayCustomLocalSound( int playerID, const char *soundName )
 {
-	if (playerID == BZ_SERVER || !soundName)
+	if( playerID == BZ_SERVER || !soundName )
 		return false;
 
-	void *buf, *bufStart = getDirectMessageBuffer();
-	buf = nboPackUShort(bufStart, LocalCustomSound);
-	buf = nboPackUShort(buf, (unsigned short)strlen(soundName));
-	buf = nboPackString(buf, soundName,strlen(soundName));
-	if (playerID == BZ_ALLUSERS)
-		broadcastMessage(MsgCustomSound, (char*)buf - (char*)bufStart, bufStart);
+	void *buf,  *bufStart = getDirectMessageBuffer();
+	buf = nboPackUShort( bufStart, LocalCustomSound );
+	buf = nboPackUShort( buf, ( unsigned short )strlen( soundName ));
+	buf = nboPackString( buf, soundName, strlen( soundName ));
+	if( playerID == BZ_ALLUSERS )
+		broadcastMessage( MsgCustomSound, ( char* )buf - ( char* )bufStart, bufStart );
 	else
-		directMessage(playerID,MsgCustomSound, (char*)buf - (char*)bufStart, bufStart);
+		directMessage( playerID, MsgCustomSound, ( char* )buf - ( char* )bufStart, bufStart );
 
 	return true;
 }
 
 // custom pluginHandler
-BZF_API bool bz_registerCustomPluginHandler ( const char* extension, bz_APIPluginHandler *handler )
+BZF_API bool bz_registerCustomPluginHandler( const char *extension, bz_APIPluginHandler *handler )
 {
-	if (!extension || !handler)
+	if( !extension || !handler )
 		return false;
 
 	std::string ext = extension;
 
 #ifdef _USE_BZ_API
-	return registerCustomPluginHandler( ext,handler);
-#else
+	return registerCustomPluginHandler( ext, handler );
+#else 
 	std::cerr << "This BZFlag server does not support plugins." << std::endl;
 	return false;
-#endif
+#endif 
 }
 
-BZF_API bool bz_removeCustomPluginHandler ( const char* extension, bz_APIPluginHandler *handler )
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+BZF_API bool bz_removeCustomPluginHandler( const char *extension, bz_APIPluginHandler *handler )
 {
-	if (!extension || !handler)
+	if( !extension || !handler )
 		return false;
 
 	std::string ext = extension;
 
 #ifdef _USE_BZ_API
-	return removeCustomPluginHandler( ext,handler);
-#else
+	return removeCustomPluginHandler( ext, handler );
+#else 
 	std::cerr << "This BZFlag server does not support plugins." << std::endl;
 	return false;
-#endif
+#endif 
 }
 
 // team info
-BZF_API int bz_getTeamCount ( bz_eTeamType _team )
+BZF_API int bz_getTeamCount( bz_eTeamType _team )
 {
-	int teamIndex = (int)convertTeam(_team);
+	int teamIndex = ( int )convertTeam( _team );
 
 	int count = 0;
-	if ( teamIndex < 0 || teamIndex >= NumTeams)
+	if( teamIndex < 0 || teamIndex >= NumTeams )
 		return 0;
 
-	for (int i = 0; i < curMaxPlayers; i++)
+	for( int i = 0; i < curMaxPlayers; i++ )
 	{
-		GameKeeper::Player *p = GameKeeper::Player::getPlayerByIndex(i);
-		if ((p == NULL))
+		GameKeeper::Player *p = GameKeeper::Player::getPlayerByIndex( i );
+		if(( p == NULL ))
 			continue;
 
-		if (p->player.getTeam() == teamIndex)
+		if( p->player.getTeam() == teamIndex )
 			count++;
 	}
 
 	return count;
 }
 
-BZF_API int bz_getTeamScore ( bz_eTeamType _team )
-{
-	int teamIndex = (int)convertTeam(_team);
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
-	if ( teamIndex < 0 || teamIndex >= NumTeams)
+BZF_API int bz_getTeamScore( bz_eTeamType _team )
+{
+	int teamIndex = ( int )convertTeam( _team );
+
+	if( teamIndex < 0 || teamIndex >= NumTeams )
 		return 0;
 
 	return team[teamIndex].team.won - team[teamIndex].team.lost;
 }
 
-BZF_API int bz_getTeamWins ( bz_eTeamType _team )
-{
-	int teamIndex = (int)convertTeam(_team);
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
-	if ( teamIndex < 0 || teamIndex >= NumTeams)
+BZF_API int bz_getTeamWins( bz_eTeamType _team )
+{
+	int teamIndex = ( int )convertTeam( _team );
+
+	if( teamIndex < 0 || teamIndex >= NumTeams )
 		return 0;
 
-	return team[teamIndex].team.won ;
+	return team[teamIndex].team.won;
 }
 
-BZF_API int bz_getTeamLosses ( bz_eTeamType _team )
-{
-	int teamIndex = (int)convertTeam(_team);
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
-	if ( teamIndex < 0 || teamIndex >= NumTeams)
+BZF_API int bz_getTeamLosses( bz_eTeamType _team )
+{
+	int teamIndex = ( int )convertTeam( _team );
+
+	if( teamIndex < 0 || teamIndex >= NumTeams )
 		return 0;
 
 	return team[teamIndex].team.lost;
 }
 
-BZF_API void bz_setTeamWins (bz_eTeamType _team, int wins )
-{
-	int teamIndex = (int)convertTeam(_team);
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
-	if ( teamIndex < 0 || teamIndex >= NumTeams)
+BZF_API void bz_setTeamWins( bz_eTeamType _team, int wins )
+{
+	int teamIndex = ( int )convertTeam( _team );
+
+	if( teamIndex < 0 || teamIndex >= NumTeams )
 		return ;
 
 	team[teamIndex].team.won = wins;
-	sendTeamUpdateMessageBroadcast(teamIndex);
+	sendTeamUpdateMessageBroadcast( teamIndex );
 }
 
-BZF_API void bz_setTeamLosses (bz_eTeamType _team, int losses )
-{
-	int teamIndex = (int)convertTeam(_team);
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
-	if ( teamIndex < 0 || teamIndex >= NumTeams)
+BZF_API void bz_setTeamLosses( bz_eTeamType _team, int losses )
+{
+	int teamIndex = ( int )convertTeam( _team );
+
+	if( teamIndex < 0 || teamIndex >= NumTeams )
 		return ;
 
 	team[teamIndex].team.lost = losses;
-	sendTeamUpdateMessageBroadcast(teamIndex);
+	sendTeamUpdateMessageBroadcast( teamIndex );
 }
 
-BZF_API void bz_resetTeamScore (bz_eTeamType _team )
-{
-	int teamIndex = (int)convertTeam(_team);
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
-	if ( teamIndex >= NumTeams)
+BZF_API void bz_resetTeamScore( bz_eTeamType _team )
+{
+	int teamIndex = ( int )convertTeam( _team );
+
+	if( teamIndex >= NumTeams )
 		return ;
 
-	if ( teamIndex >= 0 )
+	if( teamIndex >= 0 )
 	{
 		team[teamIndex].team.won = 0;
 		team[teamIndex].team.lost = 0;
-		sendTeamUpdateMessageBroadcast(teamIndex);
+		sendTeamUpdateMessageBroadcast( teamIndex );
 	}
 	else
 	{
-		for ( int i =0; i < NumTeams; i++)
+		for( int i = 0; i < NumTeams; i++ )
 		{
 			team[i].team.won = 0;
 			team[teamIndex].team.lost = 0;
-			sendTeamUpdateMessageBroadcast(i);
+			sendTeamUpdateMessageBroadcast( i );
 		}
 	}
 }
 
-BZF_API void bz_updateListServer ( void )
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+BZF_API void bz_updateListServer( void )
 {
 	publicize();
 }
 
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
 typedef struct
 {
 	std::string url;
-	bz_BaseURLHandler	*handler;
+	bz_BaseURLHandler *handler;
 	std::string postData;
-}trURLJob;
+} trURLJob;
 
-class BZ_APIURLManager : private cURLManager
+class BZ_APIURLManager: private cURLManager
 {
 public:
 	BZ_APIURLManager()
 	{
 		doingStuff = false;
-	}
+	} 
 
-	virtual ~BZ_APIURLManager()
+	virtual ~BZ_APIURLManager(){}
+
+	void addJob( const char *URL, bz_BaseURLHandler *handler, const char *_postData )
 	{
-	}
+		if( !URL )
+			return ;
 
-	void addJob ( const char* URL, bz_BaseURLHandler *handler, const char* _postData )
-	{
-		if (!URL)
-			return;
-
-		trURLJob	job;
+		trURLJob job;
 		job.url = URL;
 		job.handler = handler;
-		if (_postData)
+		if( _postData )
 			job.postData = _postData;
 
-		jobs.push_back(job);
+		jobs.push_back( job );
 
-		if (!doingStuff)
+		if( !doingStuff )
 			doJob();
 	}
 
-	void removeJob ( const char* URL )
+	void removeJob( const char *URL )
 	{
-		if (!URL)
-			return;
+		if( !URL )
+			return ;
 
 		std::string url = URL;
 
-		for ( unsigned int i = 0; i < jobs.size(); i++ )
+		for( unsigned int i = 0; i < jobs.size(); i++ )
 		{
-			if ( jobs[i].url == url)
+			if( jobs[i].url == url )
 			{
-				if ( i == 0 )
+				if( i == 0 )
 				{
 					removeHandle();
 				}
-				jobs.erase(jobs.begin()+i);
+				jobs.erase( jobs.begin() + i );
 				i = jobs.size() + 1;
 			}
 		}
 	}
 
-	void flush ( void )
+	void flush( void )
 	{
 		removeHandle();
 		jobs.clear();
 		doingStuff = false;
 	}
 
-	virtual void finalization(char *data, unsigned int length, bool good)
+	virtual void finalization( char *data, unsigned int length, bool good )
 	{
-		if (!jobs.size() || !doingStuff)
-			return;	// we are suposed to be done
+		if( !jobs.size() || !doingStuff )
+			return ;
+		// we are suposed to be done
 
 		// this is who we are suposed to be geting
 		trURLJob job = jobs[0];
-		jobs.erase(jobs.begin());
-		if (good && job.handler)
-			job.handler->done(job.url.c_str(),data,length,good);
-		else if (job.handler)
-			job.handler->error(job.url.c_str(),1,"badness");
+		jobs.erase( jobs.begin());
+		if( good && job.handler )
+			job.handler->done( job.url.c_str(), data, length, good );
+		else if( job.handler )
+			job.handler->error( job.url.c_str(), 1, "badness" );
 
 		// do the next one if we must
 		doJob();
 	}
 
 protected:
-	void doJob ( void )
+	void doJob( void )
 	{
-		if ( !jobs.size() )
+		if( !jobs.size())
 			doingStuff = false;
 		else
 		{
 			trURLJob job = jobs[0];
 			doingStuff = true;
-			setURL(job.url);
+			setURL( job.url );
 
-			if ( job.postData.size())
+			if( job.postData.size())
 			{
 				setHTTPPostMode();
-				setPostMode(job.postData);
+				setPostMode( job.postData );
 			}
 			else
 				setGetMode();
@@ -2095,39 +2762,47 @@ protected:
 		}
 	}
 
-	std::vector<trURLJob>	jobs;
+	std::vector < trURLJob > jobs;
 	bool doingStuff;
 };
 
-BZ_APIURLManager	*bz_apiURLManager = NULL;
+BZ_APIURLManager *bz_apiURLManager = NULL;
 
-BZF_API bool bz_addURLJob ( const char* URL, bz_BaseURLHandler* handler, const char* postData )
+BZF_API bool bz_addURLJob( const char *URL, bz_BaseURLHandler *handler, const char *postData )
 {
-	if (!URL)
+	if( !URL )
 		return false;
 
-	if (!bz_apiURLManager)
+	if( !bz_apiURLManager )
 		bz_apiURLManager = new BZ_APIURLManager;
 
-	bz_apiURLManager->addJob(URL,handler,postData);
+	bz_apiURLManager->addJob( URL, handler, postData );
 	return true;
 }
 
-BZF_API bool bz_removeURLJob ( const char* URL )
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+BZF_API bool bz_removeURLJob( const char *URL )
 {
-	if (!URL)
+	if( !URL )
 		return false;
 
-	if (!bz_apiURLManager)
+	if( !bz_apiURLManager )
 		bz_apiURLManager = new BZ_APIURLManager;
 
-	bz_apiURLManager->removeJob(URL);
+	bz_apiURLManager->removeJob( URL );
 	return true;
 }
 
-BZF_API bool bz_stopAllURLJobs ( void )
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+BZF_API bool bz_stopAllURLJobs( void )
 {
-	if (!bz_apiURLManager)
+	if( !bz_apiURLManager )
 		bz_apiURLManager = new BZ_APIURLManager;
 
 	bz_apiURLManager->flush();
@@ -2135,21 +2810,25 @@ BZF_API bool bz_stopAllURLJobs ( void )
 }
 
 // inter plugin communication
-std::map<std::string,std::string>	globalPluginData;
+std::map < std::string, std::string > globalPluginData;
 
-BZF_API bool bz_clipFieldExists ( const char *_name )
+BZF_API bool bz_clipFieldExists( const char *_name )
 {
-	if (!_name)
+	if( !_name )
 		return false;
 
 	std::string name = _name;
 
-	return globalPluginData.find(name) != globalPluginData.end();
+	return globalPluginData.find( name ) != globalPluginData.end();
 }
 
-BZF_API const char* bz_getclipFieldString ( const char *_name )
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+BZF_API const char *bz_getclipFieldString( const char *_name )
 {
-	if (!bz_clipFieldExists(_name))
+	if( !bz_clipFieldExists( _name ))
 		return NULL;
 
 	std::string name = _name;
@@ -2157,397 +2836,468 @@ BZF_API const char* bz_getclipFieldString ( const char *_name )
 	return globalPluginData[name].c_str();
 }
 
-BZF_API float bz_getclipFieldFloat ( const char *_name )
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+BZF_API float bz_getclipFieldFloat( const char *_name )
 {
-	if (!bz_clipFieldExists(_name))
+	if( !bz_clipFieldExists( _name ))
 		return 0.0f;
 
 	std::string name = _name;
 
-	return (float)atof(globalPluginData[name].c_str());
+	return ( float )atof( globalPluginData[name].c_str());
 
 }
 
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
 BZF_API int bz_getclipFieldInt( const char *_name )
 {
-	if (!bz_clipFieldExists(_name))
+	if( !bz_clipFieldExists( _name ))
 		return 0;
 
 	std::string name = _name;
 
-	return atoi(globalPluginData[name].c_str());
+	return atoi( globalPluginData[name].c_str());
 }
 
-BZF_API bool bz_setclipFieldString ( const char *_name, const char* data )
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+BZF_API bool bz_setclipFieldString( const char *_name, const char *data )
 {
-	bool existed = bz_clipFieldExists(_name);
-	if (!data)
+	bool existed = bz_clipFieldExists( _name );
+	if( !data )
 		return false;
 
 	std::string name = _name;
 
-	globalPluginData[name] = std::string(data);
+	globalPluginData[name] = std::string( data );
 	return existed;
 }
 
-BZF_API bool bz_setclipFieldFloat ( const char *_name, float data )
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+BZF_API bool bz_setclipFieldFloat( const char *_name, float data )
 {
-	bool existed = bz_clipFieldExists(_name);
-	if (!data)
+	bool existed = bz_clipFieldExists( _name );
+	if( !data )
 		return false;
 
 	std::string name = _name;
 
-	globalPluginData[name] = TextUtils::format("%f",data);
+	globalPluginData[name] = TextUtils::format( "%f", data );
 	return existed;
 }
+
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
 BZF_API bool bz_setclipFieldInt( const char *_name, int data )
 {
-	bool existed = bz_clipFieldExists(_name);
-	if (!data)
+	bool existed = bz_clipFieldExists( _name );
+	if( !data )
 		return false;
 
 	std::string name = _name;
 
-	globalPluginData[name] = TextUtils::format("%d",data);
+	globalPluginData[name] = TextUtils::format( "%d", data );
 	return existed;
 }
 
-BZF_API bz_ApiString bz_filterPath ( const char* path )
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+BZF_API bz_ApiString bz_filterPath( const char *path )
 {
-	if (path)
-		return bz_ApiString("");
+	if( path )
+		return bz_ApiString( "" );
 
 	char *temp;
-	temp = (char*)malloc(strlen(path)+1);
+	temp = ( char* )malloc( strlen( path ) + 1 );
 
-	strcpy(temp,path);
+	strcpy( temp, path );
 
 	// replace anything but alphanumeric charcters or dots in filename by '_'
 	// should be safe on every supported platform
 
-	char * buf = temp;
-	while (*buf != '\0')
+	char *buf = temp;
+	while( *buf != '\0' )
 	{
-		if ( !isalnum(*buf) ||  *buf != '.' )
+		if( !isalnum( *buf ) ||  *buf != '.' )
 			*buf = '_';
 
 		buf++;
 	}
-	bz_ApiString ret(temp);
-	free(temp);
+	bz_ApiString ret( temp );
+	free( temp );
 	return ret;
 }
 
-BZF_API bool bz_saveRecBuf( const char * _filename, int seconds )
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+BZF_API bool bz_saveRecBuf( const char *_filename, int seconds )
 {
-	if (!Record::enabled() || !_filename)
+	if( !Record::enabled() || !_filename )
 		return false;
 
-	bool result = Record::saveBuffer( ServerPlayer, _filename, seconds);
+	bool result = Record::saveBuffer( ServerPlayer, _filename, seconds );
 	return result;
 }
 
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
 BZF_API bool bz_startRecBuf( void )
 {
-	if (Record::enabled())
+	if( Record::enabled())
 		return false;
 
-	return Record::start(ServerPlayer);
+	return Record::start( ServerPlayer );
 }
 
-BZF_API const char *bz_format(const char* fmt, ...)
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+BZF_API const char *bz_format( const char *fmt, ... )
 {
 	static std::string result;
 	va_list args;
-	va_start(args, fmt);
-	result = TextUtils::vformat(fmt, args);
-	va_end(args);
+	va_start( args, fmt );
+	result = TextUtils::vformat( fmt, args );
+	va_end( args );
 	return result.c_str();
 }
 
-BZF_API const char *bz_toupper(const char* val )
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+BZF_API const char *bz_toupper( const char *val )
 {
 	static std::string temp;
-	if (!val)
+	if( !val )
 		return NULL;
 
-	temp	 =	TextUtils::toupper(std::string(val));
+	temp = TextUtils::toupper( std::string( val ));
 	return temp.c_str();
 }
 
-BZF_API const char *bz_tolower(const char* val )
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+BZF_API const char *bz_tolower( const char *val )
 {
 	static std::string temp;
-	if (!val)
+	if( !val )
 		return NULL;
 
-	temp	 =	TextUtils::tolower(std::string(val));
+	temp = TextUtils::tolower( std::string( val ));
 	return temp.c_str();
 }
 
 // server control
 BZF_API void bz_shutdown()
 {
-	shutdownCommand(NULL,NULL);
+	shutdownCommand( NULL, NULL );
 }
+
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
 BZF_API void bz_superkill()
 {
-	superkillCommand(NULL,NULL);
+	superkillCommand( NULL, NULL );
 }
 
-BZF_API void bz_gameOver(int playerIdx, int teamIdx)
-{
-	void *buf, *bufStart = getDirectMessageBuffer();
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
-	buf = nboPackUByte(bufStart, playerIdx);
-	buf = nboPackUShort(buf, uint16_t( teamIdx == -1 ? NoTeam : teamIdx ));
-	broadcastMessage(MsgScoreOver, (char*)buf - (char*)bufStart, bufStart);
+BZF_API void bz_gameOver( int playerIdx, int teamIdx )
+{
+	void *buf,  *bufStart = getDirectMessageBuffer();
+
+	buf = nboPackUByte( bufStart, playerIdx );
+	buf = nboPackUShort( buf, uint16_t( teamIdx ==  - 1 ? NoTeam : teamIdx ));
+	broadcastMessage( MsgScoreOver, ( char* )buf - ( char* )bufStart, bufStart );
 
 	gameOver = true;
 
-	if (clOptions->timeManualStart)
+	if( clOptions->timeManualStart )
 	{
-	  countdownActive = false;
-	  countdownPauseStart = TimeKeeper::getNullTime();
-	  clOptions->countdownPaused = false;
+		countdownActive = false;
+		countdownPauseStart = TimeKeeper::getNullTime();
+		clOptions->countdownPaused = false;
 	}
 }
 
-BZF_API bz_eTeamType bz_checkBaseAtPoint ( float pos[3] )
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+BZF_API bz_eTeamType bz_checkBaseAtPoint( float pos[3] )
 {
-	return convertTeam(whoseBase(pos[0],pos[1],pos[2]));
+	return convertTeam( whoseBase( pos[0], pos[1], pos[2] ));
 }
 
 // server side bot API
-void bz_ServerSidePlayerHandler::playerRemoved(int)
+void bz_ServerSidePlayerHandler::playerRemoved( int ){}
+
+void bz_ServerSidePlayerHandler::playerRejected( bz_eRejectCodes, const char* ){}
+
+void bz_ServerSidePlayerHandler::playerSpawned( int, float[3], float ){}
+
+void bz_ServerSidePlayerHandler::textMessage( int, int, const char* ){}
+
+void bz_ServerSidePlayerHandler::playerKilledMessage( int, int, bz_ePlayerDeathReason, int, const char *, int ){}
+
+void bz_ServerSidePlayerHandler::scoreLimitReached( int, bz_eTeamType ){}
+
+void bz_ServerSidePlayerHandler::flagCaptured( int, int, bz_eTeamType ){}
+
+void bz_ServerSidePlayerHandler::flagUpdate( int, bz_FlagUpdateRecord ** ){}
+
+void bz_ServerSidePlayerHandler::playerInfoUpdate( bz_PlayerInfoUpdateRecord* ){}
+
+void bz_ServerSidePlayerHandler::teamUpdate( int, bz_TeamInfoRecord ** ){}
+
+void bz_ServerSidePlayerHandler::handycapUpdate( int, bz_HandycapUpdateRecord ** ){}
+
+void bz_ServerSidePlayerHandler::playeIPUpdate( int, const char* ){}
+
+void bz_ServerSidePlayerHandler::playerStateUpdate( int, bz_PlayerUpdateState *, float ){}
+
+void bz_ServerSidePlayerHandler::playerScoreUpdate( int, int, int, int ){}
+
+void bz_ServerSidePlayerHandler::setPlayerData( const char *callsign, const char *email, const char *token, const char *clientVersion, bz_eTeamType _team )
 {
+	GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex( playerID );
+
+	if( !player || player->playerHandler != this )
+		return ;
+
+	player->player.setType( TankPlayer ); // because we like to lie :)
+	player->player.setTeam( convertTeam( _team ));
+	player->player.setCallsign( callsign );
+	player->player.setEmail( email );
+	player->player.setToken( token );
+	player->player.setClientVersion( clientVersion );
+
+	uint16_t code = 0;
+	char reason[512] = 
+	{
+		0
+	};
+	if( !player->player.processEnter( code, reason ))
+		playerRejected(( bz_eRejectCodes )code, reason );
 }
 
-void bz_ServerSidePlayerHandler::playerRejected(bz_eRejectCodes, const char*)
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+void bz_ServerSidePlayerHandler::joinGame( void )
 {
-}
+	GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex( playerID );
+	if( !player )
+		return ;
 
-void bz_ServerSidePlayerHandler::playerSpawned(int, float[3], float)
-{
-}
+	if( player->player.isAlive() || player->player.isPlaying())
+		return ;
 
-void bz_ServerSidePlayerHandler::textMessage(int, int, const char*)
-{
-}
-
-void bz_ServerSidePlayerHandler::playerKilledMessage(int, int,
-						     bz_ePlayerDeathReason,
-						     int, const char*, int)
-{
-}
-
-void bz_ServerSidePlayerHandler::scoreLimitReached(int, bz_eTeamType)
-{
-}
-
-void bz_ServerSidePlayerHandler::flagCaptured(int, int, bz_eTeamType)
-{
-}
-
-void bz_ServerSidePlayerHandler::flagUpdate(int, bz_FlagUpdateRecord**)
-{
-}
-
-void bz_ServerSidePlayerHandler::playerInfoUpdate(bz_PlayerInfoUpdateRecord*)
-{
-}
-
-void bz_ServerSidePlayerHandler::teamUpdate(int, bz_TeamInfoRecord**)
-{
-}
-
-void bz_ServerSidePlayerHandler::handycapUpdate(int, bz_HandycapUpdateRecord**)
-{
-}
-
-void bz_ServerSidePlayerHandler::playeIPUpdate(int, const char*)
-{
-}
-
-void bz_ServerSidePlayerHandler::playerStateUpdate(int, bz_PlayerUpdateState*,
-						   float)
-{
-}
-
-void bz_ServerSidePlayerHandler::playerScoreUpdate(int, int, int, int)
-{
-}
-
-void bz_ServerSidePlayerHandler::setPlayerData(const char  *callsign,
-					       const char  *email,
-					       const char  *token,
-					       const char  *clientVersion,
-					       bz_eTeamType _team)
-{
-  GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerID);
-
-  if (!player || player->playerHandler != this)
-    return;
-
-  player->player.setType(TankPlayer); // because we like to lie :)
-  player->player.setTeam(convertTeam(_team));
-  player->player.setCallsign(callsign);
-  player->player.setEmail(email);
-  player->player.setToken(token );
-  player->player.setClientVersion(clientVersion);
-
-  uint16_t code        = 0;
-  char     reason[512] = {0};
-  if (!player->player.processEnter(code, reason))
-    playerRejected((bz_eRejectCodes)code, reason);
-}
-
-void  bz_ServerSidePlayerHandler::joinGame ( void )
-{
-	GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerID);
-	if (!player)
-		return;
-
-	if (player->player.isAlive() ||player->player.isPlaying())
-		return;
-
-	playerAlive(playerID);
+	playerAlive( playerID );
 	player->lastState.order = 0;
 }
 
-void bz_ServerSidePlayerHandler::updateState ( bz_PlayerUpdateState *state )
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+void bz_ServerSidePlayerHandler::updateState( bz_PlayerUpdateState *state )
 {
-	GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerID);
-	if (!state || !player)
-		return;
+	GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex( playerID );
+	if( !state || !player )
+		return ;
 
 	// turn it into a real state and send it to the peeps
 	PlayerState playerState;
-	APIStateToplayerState(playerState,*state);
-	playerState.order = player->lastState.order+1;
-	float now = (float)TimeKeeper::getCurrent().getSeconds();
-	updatePlayerState(player,playerState,now,false);
+	APIStateToplayerState( playerState,  *state );
+	playerState.order = player->lastState.order + 1;
+	float now = ( float )TimeKeeper::getCurrent().getSeconds();
+	updatePlayerState( player, playerState, now, false );
 }
 
-void bz_ServerSidePlayerHandler::dropFlag ( float pos[3] )
-{
-	GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerID);
-	if (!player)
-		return;
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
-	dropPlayerFlag(*player,pos);
+void bz_ServerSidePlayerHandler::dropFlag( float pos[3] )
+{
+	GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex( playerID );
+	if( !player )
+		return ;
+
+	dropPlayerFlag( *player, pos );
 }
 
-void bz_ServerSidePlayerHandler::sendChatMessage ( const char* text, int targetPlayer)
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+void bz_ServerSidePlayerHandler::sendChatMessage( const char *text, int targetPlayer )
 {
-	GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerID);
-	if (!player || !text)
-		return;
+	GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex( playerID );
+	if( !player || !text )
+		return ;
 
 	PlayerId dstPlayer = targetPlayer == BZ_ALLUSERS ? AllPlayers : targetPlayer;
 
-	if (dstPlayer > LastRealPlayer)
-		return;
+	if( dstPlayer > LastRealPlayer )
+		return ;
 
-	sendPlayerMessage(player,dstPlayer, text);
+	sendPlayerMessage( player, dstPlayer, text );
 }
 
-void bz_ServerSidePlayerHandler::sendTeamChatMessage(const char *text,
-						     bz_eTeamType targetTeam )
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+void bz_ServerSidePlayerHandler::sendTeamChatMessage( const char *text, bz_eTeamType targetTeam )
 {
-  GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerID);
-  if (!player || !text)
-    return;
+	GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex( playerID );
+	if( !player || !text )
+		return ;
 
-  PlayerId dstPlayer = AllPlayers;
-	
-  switch(targetTeam) 
-    {
-    case eRogueTeam:
-    case eRedTeam:
-    case eGreenTeam:
-    case eBlueTeam:
-    case ePurpleTeam:
-    case eRabbitTeam:
-    case eHunterTeam:
-      dstPlayer = 250 + (int)targetTeam;
-      break;
+	PlayerId dstPlayer = AllPlayers;
 
-    case eAdministrators:
-      dstPlayer = AdminPlayers;
-      break;
-    default:
-      break;
-    }
+	switch( targetTeam )
+	{
+		case eRogueTeam:
+		case eRedTeam:
+		case eGreenTeam:
+		case eBlueTeam:
+		case ePurpleTeam:
+		case eRabbitTeam:
+		case eHunterTeam:
+			dstPlayer = 250+( int )targetTeam;
+			break;
 
-  sendPlayerMessage(player,dstPlayer, text);
+		case eAdministrators:
+			dstPlayer = AdminPlayers;
+			break;
+		default:
+			break;
+	}
+
+	sendPlayerMessage( player, dstPlayer, text );
 }
 
-void bz_ServerSidePlayerHandler::captureFlag(bz_eTeamType _team)
-{
-  GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerID);
-  if (!player)
-    return;
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
-  ::captureFlag(playerID, convertTeam(_team));
+void bz_ServerSidePlayerHandler::captureFlag( bz_eTeamType _team )
+{
+	GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex( playerID );
+	if( !player )
+		return ;
+
+	::captureFlag( playerID, convertTeam( _team ));
 }
 
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
-BZF_API int bz_addServerSidePlayer ( bz_ServerSidePlayerHandler *handler )
+
+BZF_API int bz_addServerSidePlayer( bz_ServerSidePlayerHandler *handler )
 {
-	handler->playerID = -1;
+	handler->playerID =  - 1;
 
 	PlayerId playerIndex = getNewPlayerID();
-	if (playerIndex >= 0xFF)
-		return -1;
+	if( playerIndex >= 0xFF )
+		return  - 1;
 
 	// make the player, check the game stuff, and don't do DNS stuff
-	GameKeeper::Player *player = new GameKeeper::Player(playerIndex, handler);
+	GameKeeper::Player *player = new GameKeeper::Player( playerIndex, handler );
 	checkGameOn();
 	player->_LSAState = GameKeeper::Player::notRequired;
 
 	handler->playerID = playerIndex;
 
-	handler->added(playerIndex);
+	handler->added( playerIndex );
 	return playerIndex;
 }
 
-BZF_API bool bz_removeServerSidePlayer ( int playerID, bz_ServerSidePlayerHandler *handler )
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+BZF_API bool bz_removeServerSidePlayer( int playerID, bz_ServerSidePlayerHandler *handler )
 {
-	if (playerID < 0)
+	if( playerID < 0 )
 		return false;
 
-	PlayerId	playerIndex = (PlayerId)playerID;
-	GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerIndex);
+	PlayerId playerIndex = ( PlayerId )playerID;
+	GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex( playerIndex );
 
-	if (player->playerHandler != handler)
+	if( player->playerHandler != handler )
 		return false;
 
-	removePlayer(playerIndex,NULL,true);
+	removePlayer( playerIndex, NULL, true );
 	return true;
 }
 
-BZF_API void bz_pauseCountdown ( const char *pausedBy )
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+BZF_API void bz_pauseCountdown( const char *pausedBy )
 {
-	pauseCountdown(pausedBy);
+	pauseCountdown( pausedBy );
 }
 
-BZF_API void bz_resumeCountdown ( const char *resumedBy )
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+BZF_API void bz_resumeCountdown( const char *resumedBy )
 {
-	resumeCountdown(resumedBy);
+	resumeCountdown( resumedBy );
 }
 
-BZF_API void bz_resetTeamScores ( void )
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+BZF_API void bz_resetTeamScores( void )
 {
 	resetTeamScores();
 }
 
-BZF_API void bz_startCountdown ( int delay, float limit, const char *byWho )
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+BZF_API void bz_startCountdown( int delay, float limit, const char *byWho )
 {
-	startCountdown(delay,limit,byWho);
+	startCountdown( delay, limit, byWho );
 }
 
 // Local Variables: ***

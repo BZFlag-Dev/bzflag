@@ -28,252 +28,313 @@
 //
 
 
-const char* TetraBuilding::typeName = "TetraBuilding";
+const char *TetraBuilding::typeName = "TetraBuilding";
 
 
 TetraBuilding::TetraBuilding()
 {
-  return;
+	return ;
 }
 
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
-TetraBuilding::TetraBuilding(const MeshTransform& xform,
-			     const float _vertices[4][3],
-			     const float _normals[4][3][3],
-			     const float _texcoords[4][3][2],
-			     const bool _useNormals[4],
-			     const bool _useTexcoords[4],
-			     const BzMaterial* _materials[4],
-			     bool drive, bool shoot)
+
+TetraBuilding::TetraBuilding( const MeshTransform &xform, const float _vertices[4][3], const float _normals[4][3][3], const float _texcoords[4][3][2], const bool _useNormals[4], const bool _useTexcoords[4], const BzMaterial *_materials[4], bool drive, bool shoot )
 {
-  // tetra specific parameters
-  memcpy (vertices, _vertices, sizeof(vertices));
-  memcpy (normals, _normals, sizeof(normals));
-  memcpy (texcoords, _texcoords, sizeof(texcoords));
-  memcpy (useNormals, _useNormals, sizeof(useNormals));
-  memcpy (useTexcoords, _useTexcoords, sizeof(useTexcoords));
-  memcpy (materials, _materials, sizeof(materials));
-  transform = xform;
+	// tetra specific parameters
+	memcpy( vertices, _vertices, sizeof( vertices ));
+	memcpy( normals, _normals, sizeof( normals ));
+	memcpy( texcoords, _texcoords, sizeof( texcoords ));
+	memcpy( useNormals, _useNormals, sizeof( useNormals ));
+	memcpy( useTexcoords, _useTexcoords, sizeof( useTexcoords ));
+	memcpy( materials, _materials, sizeof( materials ));
+	transform = xform;
 
-  // common obstace parameters
-  driveThrough = drive;
-  shootThrough = shoot;
+	// common obstace parameters
+	driveThrough = drive;
+	shootThrough = shoot;
 
-  finalize();
+	finalize();
 
-  return;
+	return ;
 }
+
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
 
 TetraBuilding::~TetraBuilding()
 {
-  return;
+	return ;
 }
 
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
-Obstacle* TetraBuilding::copyWithTransform(const MeshTransform& xform) const
+
+Obstacle *TetraBuilding::copyWithTransform( const MeshTransform &xform )const
 {
-  MeshTransform tmpXform = transform;
-  tmpXform.append(xform);
+	MeshTransform tmpXform = transform;
+	tmpXform.append( xform );
 
-  TetraBuilding* copy =
-    new TetraBuilding(tmpXform, vertices, normals, texcoords,
-		      useNormals, useTexcoords, (const BzMaterial**)materials,
-		      driveThrough, shootThrough);
-  return copy;
+	TetraBuilding *copy = new TetraBuilding( tmpXform, vertices, normals, texcoords, useNormals, useTexcoords, ( const BzMaterial ** )materials, driveThrough, shootThrough );
+	return copy;
 }
+
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
 
 void TetraBuilding::finalize()
 {
-  return;
+	return ;
 }
 
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
-MeshObstacle* TetraBuilding::makeMesh()
+
+MeshObstacle *TetraBuilding::makeMesh()
 {
-  MeshObstacle* mesh;
-  checkVertexOrder();
+	MeshObstacle *mesh;
+	checkVertexOrder();
 
-  // setup the coordinates
-  int i;
-  std::vector<char> checkTypes;
-  std::vector<cfvec3> checkPoints;
-  std::vector<cfvec3> verts;
-  std::vector<cfvec3> norms;
-  std::vector<cfvec2> texcds;
+	// setup the coordinates
+	int i;
+	std::vector < char > checkTypes;
+	std::vector < cfvec3 > checkPoints;
+	std::vector < cfvec3 > verts;
+	std::vector < cfvec3 > norms;
+	std::vector < cfvec2 > texcds;
 
-  // setup the inside check point
-  float center[3] = {0.0f, 0.0f, 0.0f};
-  for (i = 0; i < 4; i++) {
-    center[0] += vertices[i][0];
-    center[1] += vertices[i][1];
-    center[2] += vertices[i][2];
-  }
-  center[0] *= 0.25f;
-  center[1] *= 0.25f;
-  center[2] *= 0.25f;
-  checkPoints.push_back(center);
-  checkTypes.push_back(MeshObstacle::CheckInside);
+	// setup the inside check point
+	float center[3] = 
+	{
+		0.0f, 0.0f, 0.0f
+	};
+	for( i = 0; i < 4; i++ )
+	{
+		center[0] += vertices[i][0];
+		center[1] += vertices[i][1];
+		center[2] += vertices[i][2];
+	}
+	center[0] *= 0.25f;
+	center[1] *= 0.25f;
+	center[2] *= 0.25f;
+	checkPoints.push_back( center );
+	checkTypes.push_back( MeshObstacle::CheckInside );
 
-  for (i = 0; i < 4; i++) {
-    verts.push_back(vertices[i]);
-  }
+	for( i = 0; i < 4; i++ )
+	{
+		verts.push_back( vertices[i] );
+	}
 
-  mesh = new MeshObstacle(transform,
-			  checkTypes, checkPoints, verts, norms, texcds,
-			  4, false, false, driveThrough, shootThrough);
+	mesh = new MeshObstacle( transform, checkTypes, checkPoints, verts, norms, texcds, 4, false, false, driveThrough, shootThrough );
 
-  // add the faces to the mesh
-  std::vector<int> vlist;
-  std::vector<int> nlist;
-  std::vector<int> tlist;
+	// add the faces to the mesh
+	std::vector < int > vlist;
+	std::vector < int > nlist;
+	std::vector < int > tlist;
 
-  push3Ints(vlist, 0, 2, 1);
-  addFace(mesh, vlist, nlist, tlist, materials[0], -1);
-  push3Ints(vlist, 0, 1, 3);
-  addFace(mesh, vlist, nlist, tlist, materials[1], -1);
-  push3Ints(vlist, 1, 2, 3);
-  addFace(mesh, vlist, nlist, tlist, materials[2], -1);
-  push3Ints(vlist, 2, 0, 3);
-  addFace(mesh, vlist, nlist, tlist, materials[3], -1);
+	push3Ints( vlist, 0, 2, 1 );
+	addFace( mesh, vlist, nlist, tlist, materials[0],  - 1 );
+	push3Ints( vlist, 0, 1, 3 );
+	addFace( mesh, vlist, nlist, tlist, materials[1],  - 1 );
+	push3Ints( vlist, 1, 2, 3 );
+	addFace( mesh, vlist, nlist, tlist, materials[2],  - 1 );
+	push3Ints( vlist, 2, 0, 3 );
+	addFace( mesh, vlist, nlist, tlist, materials[3],  - 1 );
 
-  // wrap it up
-  mesh->finalize();
+	// wrap it up
+	mesh->finalize();
 
-  if (!mesh->isValid()) {
-    delete mesh;
-    mesh = NULL;
-  }
-  return mesh;
+	if( !mesh->isValid())
+	{
+		delete mesh;
+		mesh = NULL;
+	}
+	return mesh;
 }
+
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
 
 void TetraBuilding::checkVertexOrder()
 {
-  int v, a;
+	int v, a;
 
-  // make sure the the planes are facing outwards
-  float edge[3][3]; // edges from vertex 0
-  for (v = 0; v < 3; v++) {
-    for (a = 0; a < 3; a++) {
-      edge[v][a] = vertices[v+1][a] - vertices[0][a];
-    }
-  }
-  float cross[3];
-  vec3cross(cross, edge[0], edge[1]);
+	// make sure the the planes are facing outwards
+	float edge[3][3]; // edges from vertex 0
+	for( v = 0; v < 3; v++ )
+	{
+		for( a = 0; a < 3; a++ )
+		{
+			edge[v][a] = vertices[v + 1][a] - vertices[0][a];
+		}
+	}
+	float cross[3];
+	vec3cross( cross, edge[0], edge[1] );
 
-  const float dot = vec3dot (cross, edge[2]);
+	const float dot = vec3dot( cross, edge[2] );
 
-  // swap vertices 1 & 2 if we are out of order
-  if (dot < 0.0f) {
-    float tmpVertex[3];
-    memcpy (tmpVertex, vertices[1], sizeof(tmpVertex));
-    memcpy (vertices[1], vertices[2], sizeof(vertices[1]));
-    memcpy (vertices[2], tmpVertex, sizeof(vertices[2]));
+	// swap vertices 1 & 2 if we are out of order
+	if( dot < 0.0f )
+	{
+		float tmpVertex[3];
+		memcpy( tmpVertex, vertices[1], sizeof( tmpVertex ));
+		memcpy( vertices[1], vertices[2], sizeof( vertices[1] ));
+		memcpy( vertices[2], tmpVertex, sizeof( vertices[2] ));
 
-    float tmpNormals[4][3];
-    memcpy (tmpNormals, normals[1], sizeof(tmpNormals));
-    memcpy (normals[1], normals[2], sizeof(normals[1]));
-    memcpy (normals[2], tmpNormals, sizeof(normals[2]));
+		float tmpNormals[4][3];
+		memcpy( tmpNormals, normals[1], sizeof( tmpNormals ));
+		memcpy( normals[1], normals[2], sizeof( normals[1] ));
+		memcpy( normals[2], tmpNormals, sizeof( normals[2] ));
 
-    float tmpTexcoords[3][2];
-    memcpy (tmpTexcoords, texcoords[1], sizeof(tmpTexcoords));
-    memcpy (texcoords[1], texcoords[2], sizeof(texcoords[1]));
-    memcpy (texcoords[2], tmpTexcoords, sizeof(texcoords[2]));
+		float tmpTexcoords[3][2];
+		memcpy( tmpTexcoords, texcoords[1], sizeof( tmpTexcoords ));
+		memcpy( texcoords[1], texcoords[2], sizeof( texcoords[1] ));
+		memcpy( texcoords[2], tmpTexcoords, sizeof( texcoords[2] ));
 
-    bool tmpBool = useNormals[1];
-    useNormals[1] = useNormals[2];
-    useNormals[2] = tmpBool;
+		bool tmpBool = useNormals[1];
+		useNormals[1] = useNormals[2];
+		useNormals[2] = tmpBool;
 
-    tmpBool = useTexcoords[1];
-    useTexcoords[1] = useTexcoords[2];
-    useTexcoords[2] = tmpBool;
+		tmpBool = useTexcoords[1];
+		useTexcoords[1] = useTexcoords[2];
+		useTexcoords[2] = tmpBool;
 
-    const BzMaterial* tmpMat = materials[1];
-    materials[1] = materials[2];
-    materials[2] = tmpMat;
-  }
+		const BzMaterial *tmpMat = materials[1];
+		materials[1] = materials[2];
+		materials[2] = tmpMat;
+	}
 
-  return;
+	return ;
 }
 
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
-const char* TetraBuilding::getType() const
+
+const char *TetraBuilding::getType()const
 {
-  return typeName;
+	return typeName;
 }
 
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
-const char* TetraBuilding::getClassName() // const
+
+const char *TetraBuilding::getClassName() // const
 {
-  return typeName;
+	return typeName;
 }
 
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
-bool TetraBuilding::isValid() const
+
+bool TetraBuilding::isValid()const
 {
-  return true;
+	return true;
 }
 
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
-float TetraBuilding::intersect(const Ray&) const
+
+float TetraBuilding::intersect( const Ray & )const
 {
-  assert(false);
-  return -1.0f;
+	assert( false );
+	return  - 1.0f;
 }
 
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
-void TetraBuilding::get3DNormal(const float*, float*) const
+
+void TetraBuilding::get3DNormal( const float *, float* )const
 {
-  assert(false);
-  return;
+	assert( false );
+	return ;
 }
 
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
-void TetraBuilding::getNormal(const float*, float*) const
+
+void TetraBuilding::getNormal( const float *, float* )const
 {
-  assert(false);
-  return;
+	assert( false );
+	return ;
 }
 
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
-bool TetraBuilding::getHitNormal(const float*, float, const float*, float,
-			       float, float, float, float*) const
+
+bool TetraBuilding::getHitNormal( const float *, float, const float *, float, float, float, float, float* )const
 {
-  assert(false);
-  return false;
+	assert( false );
+	return false;
 }
 
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
-bool TetraBuilding::inCylinder(const float*,float, float) const
+
+bool TetraBuilding::inCylinder( const float *, float, float )const
 {
-  assert(false);
-  return false;
+	assert( false );
+	return false;
 }
 
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
-bool TetraBuilding::inBox(const float*, float, float, float, float) const
+
+bool TetraBuilding::inBox( const float *, float, float, float, float )const
 {
-  assert(false);
-  return false;
+	assert( false );
+	return false;
 }
 
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
-bool TetraBuilding::inMovingBox(const float*, float, const float*, float,
-			      float, float, float) const
+
+bool TetraBuilding::inMovingBox( const float *, float, const float *, float, float, float, float )const
 {
-  assert(false);
-  return false;
+	assert( false );
+	return false;
 }
 
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
-bool TetraBuilding::isCrossing(const float* /*p*/, float /*angle*/,
-			  float /*dx*/, float /*dy*/, float /*height*/,
-			  float* /*_plane*/) const
+
+bool TetraBuilding::isCrossing( const float * /*p*/, float /*angle*/, float /*dx*/, float /*dy*/, float /*height*/, float * /*_plane*/ )const
 {
-  assert(false);
-  return false;
+	assert( false );
+	return false;
 }
 
 
@@ -284,215 +345,267 @@ bool TetraBuilding::isCrossing(const float* /*p*/, float /*angle*/,
 // Packing stuff
 //
 
-static void pack4Bools (unsigned char* byte, const bool bools[4])
+static void pack4Bools( unsigned char *byte, const bool bools[4] )
 {
-  *byte = 0;
-  for (int i = 0; i < 4; i++) {
-    if (bools[i]) {
-      *byte = *byte | (1 << i);
-    }
-  }
-  return;
+	*byte = 0;
+	for( int i = 0; i < 4; i++ )
+	{
+		if( bools[i] )
+		{
+			*byte =  *byte | ( 1 << i );
+		}
+	}
+	return ;
 }
 
-static void unpack4Bools (unsigned char byte, bool bools[4])
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+static void unpack4Bools( unsigned char byte, bool bools[4] )
 {
-  for (int i = 0; i < 4; i++) {
-    if (byte & (1 << i)) {
-      bools[i] = true;
-    } else {
-      bools[i] = false;
-    }
-  }
-  return;
+	for( int i = 0; i < 4; i++ )
+	{
+		if( byte &( 1 << i ))
+		{
+			bools[i] = true;
+		}
+		else
+		{
+			bools[i] = false;
+		}
+	}
+	return ;
 }
 
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
-void *TetraBuilding::pack(void* buf) const
+
+void *TetraBuilding::pack( void *buf )const
 {
-  int v;
+	int v;
 
-  // pack the state byte
-  unsigned char stateByte = 0;
-  stateByte |= isDriveThrough() ? (1 << 0) : 0;
-  stateByte |= isShootThrough() ? (1 << 1) : 0;
-  buf = nboPackUByte(buf, stateByte);
+	// pack the state byte
+	unsigned char stateByte = 0;
+	stateByte |= isDriveThrough() ? ( 1 << 0 ): 0;
+	stateByte |= isShootThrough() ? ( 1 << 1 ): 0;
+	buf = nboPackUByte( buf, stateByte );
 
-  // pack the transform
-  buf = transform.pack(buf);
+	// pack the transform
+	buf = transform.pack( buf );
 
-  // pack the vertices
-  for (v = 0; v < 4; v++) {
-    buf = nboPackVector(buf, vertices[v]);
-  }
+	// pack the vertices
+	for( v = 0; v < 4; v++ )
+	{
+		buf = nboPackVector( buf, vertices[v] );
+	}
 
-  // pack the normals
-  unsigned char useNormalsByte;
-  pack4Bools (&useNormalsByte, useNormals);
-  buf = nboPackUByte(buf, useNormalsByte);
-  for (v = 0; v < 4; v++) {
-    if (useNormals[v]) {
-      for (int i = 0; i < 3; i++) {
-	buf = nboPackVector(buf, normals[v][i]);
-      }
-    }
-  }
+	// pack the normals
+	unsigned char useNormalsByte;
+	pack4Bools( &useNormalsByte, useNormals );
+	buf = nboPackUByte( buf, useNormalsByte );
+	for( v = 0; v < 4; v++ )
+	{
+		if( useNormals[v] )
+		{
+			for( int i = 0; i < 3; i++ )
+			{
+				buf = nboPackVector( buf, normals[v][i] );
+			}
+		}
+	}
 
-  // pack the texcoords
-  unsigned char useTexcoordsByte;
-  pack4Bools (&useTexcoordsByte, useTexcoords);
-  buf = nboPackUByte(buf, useTexcoordsByte);
-  for (v = 0; v < 4; v++) {
-    if (useTexcoords[v]) {
-      for (int i = 0; i < 3; i++) {
-	buf = nboPackFloat(buf, texcoords[v][i][0]);
-	buf = nboPackFloat(buf, texcoords[v][i][1]);
-      }
-    }
-  }
+	// pack the texcoords
+	unsigned char useTexcoordsByte;
+	pack4Bools( &useTexcoordsByte, useTexcoords );
+	buf = nboPackUByte( buf, useTexcoordsByte );
+	for( v = 0; v < 4; v++ )
+	{
+		if( useTexcoords[v] )
+		{
+			for( int i = 0; i < 3; i++ )
+			{
+				buf = nboPackFloat( buf, texcoords[v][i][0] );
+				buf = nboPackFloat( buf, texcoords[v][i][1] );
+			}
+		}
+	}
 
-  // pack the materials
-  for (v = 0; v < 4; v++) {
-    int matindex = MATERIALMGR.getIndex(materials[v]);
-    buf = nboPackInt(buf, matindex);
-  }
+	// pack the materials
+	for( v = 0; v < 4; v++ )
+	{
+		int matindex = MATERIALMGR.getIndex( materials[v] );
+		buf = nboPackInt( buf, matindex );
+	}
 
-  return buf;
+	return buf;
 }
 
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
-void *TetraBuilding::unpack(void* buf)
+
+void *TetraBuilding::unpack( void *buf )
 {
-  int v;
+	int v;
 
-  // unpack the state byte
-  unsigned char stateByte;
-  buf = nboUnpackUByte(buf, stateByte);
-  driveThrough = (stateByte & (1 << 0)) != 0;
-  shootThrough = (stateByte & (1 << 1)) != 0;
+	// unpack the state byte
+	unsigned char stateByte;
+	buf = nboUnpackUByte( buf, stateByte );
+	driveThrough = ( stateByte &( 1 << 0 )) != 0;
+	shootThrough = ( stateByte &( 1 << 1 )) != 0;
 
-  // unpack the transform
-  buf = transform.unpack(buf);
+	// unpack the transform
+	buf = transform.unpack( buf );
 
-  // unpack the vertices
-  for (v = 0; v < 4; v++) {
-    buf = nboUnpackVector(buf, vertices[v]);
-  }
+	// unpack the vertices
+	for( v = 0; v < 4; v++ )
+	{
+		buf = nboUnpackVector( buf, vertices[v] );
+	}
 
-  // unpack the normals
-  unsigned char useNormalsByte;
-  buf = nboUnpackUByte(buf, useNormalsByte);
-  unpack4Bools (useNormalsByte, useNormals);
-  for (v = 0; v < 4; v++) {
-    if (useNormals[v]) {
-      for (int i = 0; i < 3; i++) {
-	buf = nboUnpackVector(buf, normals[v][i]);
-      }
-    }
-  }
+	// unpack the normals
+	unsigned char useNormalsByte;
+	buf = nboUnpackUByte( buf, useNormalsByte );
+	unpack4Bools( useNormalsByte, useNormals );
+	for( v = 0; v < 4; v++ )
+	{
+		if( useNormals[v] )
+		{
+			for( int i = 0; i < 3; i++ )
+			{
+				buf = nboUnpackVector( buf, normals[v][i] );
+			}
+		}
+	}
 
-  // unpack the texcoords
-  unsigned char useTexcoordsByte;
-  buf = nboUnpackUByte(buf, useTexcoordsByte);
-  unpack4Bools (useTexcoordsByte, useTexcoords);
-  for (v = 0; v < 4; v++) {
-    if (useTexcoords[v]) {
-      for (int i = 0; i < 3; i++) {
-	buf = nboUnpackFloat(buf, texcoords[v][i][0]);
-	buf = nboUnpackFloat(buf, texcoords[v][i][1]);
-      }
-    }
-  }
+	// unpack the texcoords
+	unsigned char useTexcoordsByte;
+	buf = nboUnpackUByte( buf, useTexcoordsByte );
+	unpack4Bools( useTexcoordsByte, useTexcoords );
+	for( v = 0; v < 4; v++ )
+	{
+		if( useTexcoords[v] )
+		{
+			for( int i = 0; i < 3; i++ )
+			{
+				buf = nboUnpackFloat( buf, texcoords[v][i][0] );
+				buf = nboUnpackFloat( buf, texcoords[v][i][1] );
+			}
+		}
+	}
 
-  // unpack the materials
-  for (v = 0; v < 4; v++) {
-    int32_t matindex;
-    buf = nboUnpackInt(buf, matindex);
-    materials[v] = MATERIALMGR.getMaterial(matindex);
-  }
+	// unpack the materials
+	for( v = 0; v < 4; v++ )
+	{
+		int32_t matindex;
+		buf = nboUnpackInt( buf, matindex );
+		materials[v] = MATERIALMGR.getMaterial( matindex );
+	}
 
-  finalize();
+	finalize();
 
-  return buf;
+	return buf;
 }
 
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
-int TetraBuilding::packSize() const
+
+int TetraBuilding::packSize()const
 {
-  int v;
-  int fullSize = transform.packSize();
-  // state byte
-  fullSize = fullSize + sizeof(unsigned char);
-  // vectors
-  fullSize = fullSize + (4 * sizeof(float[3]));
-  // normals
-  fullSize = fullSize + sizeof(unsigned char);
-  for (v = 0; v < 4; v++) {
-    if (useNormals[v]) {
-      fullSize = fullSize + sizeof(float[3][3]);
-    }
-  }
-  // texcoords
-  fullSize = fullSize + sizeof(unsigned char);
-  for (v = 0; v < 4; v++) {
-    if (useTexcoords[v]) {
-      fullSize = fullSize + sizeof(float[3][2]);
-    }
-  }
-  // materials
-  fullSize = fullSize + sizeof(int32_t[4]);
+	int v;
+	int fullSize = transform.packSize();
+	// state byte
+	fullSize = fullSize + sizeof( unsigned char );
+	// vectors
+	fullSize = fullSize + ( 4 *sizeof( float[3] ));
+	// normals
+	fullSize = fullSize + sizeof( unsigned char );
+	for( v = 0; v < 4; v++ )
+	{
+		if( useNormals[v] )
+		{
+			fullSize = fullSize + sizeof( float[3][3] );
+		}
+	}
+	// texcoords
+	fullSize = fullSize + sizeof( unsigned char );
+	for( v = 0; v < 4; v++ )
+	{
+		if( useTexcoords[v] )
+		{
+			fullSize = fullSize + sizeof( float[3][2] );
+		}
+	}
+	// materials
+	fullSize = fullSize + sizeof( int32_t[4] );
 
-  return fullSize;
+	return fullSize;
 }
 
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
-void TetraBuilding::print(std::ostream& out, const std::string& indent) const
+
+void TetraBuilding::print( std::ostream &out, const std::string &indent )const
 {
-  int i;
+	int i;
 
-  out << indent << "tetra" << std::endl;
+	out << indent << "tetra" << std::endl;
 
-  transform.printTransforms(out, "");
+	transform.printTransforms( out, "" );
 
-  // write the vertex information
-  for (i = 0; i < 4; i++) {
-    const float* vertex = vertices[i];
-    out << indent << "\tvertex " << vertex[0] << " " << vertex[1] << " "
-				 << vertex[2] << std::endl;
-    if (useNormals[i]) {
-      for (int j = 0; j < 3; j++) {
-	const float* normal = normals[i][j];
-	out << indent << "\tnormal " << normal[0] << " " << normal[1] << " "
-				     << normal[2] << std::endl;
-      }
-    }
-    if (useTexcoords[i]) {
-      for (int j = 0; j < 3; j++) {
-	const float* texcoord = texcoords[i][j];
-	out << indent << "\tnormal " << texcoord[0] << " "
-				     << texcoord[1] << " "
-				     << texcoord[2] << std::endl;
-      }
-    }
-    out << "\tmatref ";
-    MATERIALMGR.printReference(out, materials[i]);
-    out << std::endl;
-  }
+	// write the vertex information
+	for( i = 0; i < 4; i++ )
+	{
+		const float *vertex = vertices[i];
+		out << indent << "\tvertex " << vertex[0] << " " << vertex[1] << " " << vertex[2] << std::endl;
+		if( useNormals[i] )
+		{
+			for( int j = 0; j < 3; j++ )
+			{
+				const float *normal = normals[i][j];
+				out << indent << "\tnormal " << normal[0] << " " << normal[1] << " " << normal[2] << std::endl;
+			}
+		}
+		if( useTexcoords[i] )
+		{
+			for( int j = 0; j < 3; j++ )
+			{
+				const float *texcoord = texcoords[i][j];
+				out << indent << "\tnormal " << texcoord[0] << " " << texcoord[1] << " " << texcoord[2] << std::endl;
+			}
+		}
+		out << "\tmatref ";
+		MATERIALMGR.printReference( out, materials[i] );
+		out << std::endl;
+	}
 
-  // write the regular stuff
-  if (isPassable()) {
-    out << indent << "\tpassable" << std::endl;
-  } else {
-    if (isDriveThrough()) {
-      out << indent << "\tdrivethrough" << std::endl;
-    }
-    if (isShootThrough()) {
-      out << indent << "\tshootthrough" << std::endl;
-    }
-  }
-  out << indent << "end" << std::endl;
+	// write the regular stuff
+	if( isPassable())
+	{
+		out << indent << "\tpassable" << std::endl;
+	}
+	else
+	{
+		if( isDriveThrough())
+		{
+			out << indent << "\tdrivethrough" << std::endl;
+		}
+		if( isShootThrough())
+		{
+			out << indent << "\tshootthrough" << std::endl;
+		}
+	}
+	out << indent << "end" << std::endl;
 
-  return;
+	return ;
 }
 
 
@@ -503,4 +616,3 @@ void TetraBuilding::print(std::ostream& out, const std::string& indent) const
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

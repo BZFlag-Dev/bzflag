@@ -30,119 +30,132 @@
 /******************************************************************************/
 
 
-OpaqueRenderNode::OpaqueRenderNode(MeshDrawMgr* _drawMgr,
-				   GLuint* _xformList, bool _normalize,
-				   const GLfloat* _color,
-				   int _lod, int _set,
-				   const Extents* _exts, int tris)
+OpaqueRenderNode::OpaqueRenderNode( MeshDrawMgr *_drawMgr, GLuint *_xformList, bool _normalize, const GLfloat *_color, int _lod, int _set, const Extents *_exts, int tris )
 {
-  drawMgr = _drawMgr;
-  xformList = _xformList;
-  normalize = _normalize;
-  lod = _lod;
-  set = _set;
-  color = _color;
-  exts = _exts;
-  triangles = tris;
+	drawMgr = _drawMgr;
+	xformList = _xformList;
+	normalize = _normalize;
+	lod = _lod;
+	set = _set;
+	color = _color;
+	exts = _exts;
+	triangles = tris;
 }
+
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
 
 void OpaqueRenderNode::render()
 {
-  const bool switchLights = (exts != NULL);
-  if (switchLights) {
-    RENDERER.disableLights(exts->mins, exts->maxs);
-  }
+	const bool switchLights = ( exts != NULL );
+	if( switchLights )
+	{
+		RENDERER.disableLights( exts->mins, exts->maxs );
+	}
 
-  // set the color
-  myColor4fv(color);
+	// set the color
+	myColor4fv( color );
 
-  // do the transformation
-  if (*xformList != INVALID_GL_LIST_ID) {
-    glPushMatrix();
-    glCallList(*xformList);
-  }
-  if (normalize) {
-    glEnable(GL_NORMALIZE);
-  }
+	// do the transformation
+	if( *xformList != INVALID_GL_LIST_ID )
+	{
+		glPushMatrix();
+		glCallList( *xformList );
+	}
+	if( normalize )
+	{
+		glEnable( GL_NORMALIZE );
+	}
 
-  // draw the elements
-  drawMgr->executeSet(lod, set, BZDBCache::lighting, BZDBCache::texture);
+	// draw the elements
+	drawMgr->executeSet( lod, set, BZDBCache::lighting, BZDBCache::texture );
 
-  // undo the transformation
-  if (normalize) {
-    glDisable(GL_NORMALIZE);
-  }
-  if (*xformList != INVALID_GL_LIST_ID) {
-    glPopMatrix();
-  }
+	// undo the transformation
+	if( normalize )
+	{
+		glDisable( GL_NORMALIZE );
+	}
+	if( *xformList != INVALID_GL_LIST_ID )
+	{
+		glPopMatrix();
+	}
 
-  if (switchLights) {
-    RENDERER.reenableLights();
-  }
+	if( switchLights )
+	{
+		RENDERER.reenableLights();
+	}
 
-  addTriangleCount(triangles);
+	addTriangleCount( triangles );
 
-  return;
+	return ;
 }
+
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
 
 void OpaqueRenderNode::renderRadar()
 {
-  if (*xformList != INVALID_GL_LIST_ID) {
-    glPushMatrix();
-    glCallList(*xformList);
-  }
-  drawMgr->executeSetGeometry(lod, set);
-  if (*xformList != INVALID_GL_LIST_ID) {
-    glPopMatrix();
-  }
+	if( *xformList != INVALID_GL_LIST_ID )
+	{
+		glPushMatrix();
+		glCallList( *xformList );
+	}
+	drawMgr->executeSetGeometry( lod, set );
+	if( *xformList != INVALID_GL_LIST_ID )
+	{
+		glPopMatrix();
+	}
 
-  addTriangleCount(triangles);
+	addTriangleCount( triangles );
 
-  return;
+	return ;
 }
+
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
 
 void OpaqueRenderNode::renderShadow()
 {
-  if (*xformList != INVALID_GL_LIST_ID) {
-    glPushMatrix();
-    glCallList(*xformList);
-  }
-  drawMgr->executeSetGeometry(lod, set);
-  if (*xformList != INVALID_GL_LIST_ID) {
-    glPopMatrix();
-  }
+	if( *xformList != INVALID_GL_LIST_ID )
+	{
+		glPushMatrix();
+		glCallList( *xformList );
+	}
+	drawMgr->executeSetGeometry( lod, set );
+	if( *xformList != INVALID_GL_LIST_ID )
+	{
+		glPopMatrix();
+	}
 
-  addTriangleCount(triangles);
+	addTriangleCount( triangles );
 
-  return;
+	return ;
 }
 
 
 /******************************************************************************/
 
-AlphaGroupRenderNode::AlphaGroupRenderNode(MeshDrawMgr* _drawMgr,
-					   GLuint* _xformList,
-					   bool _normalize,
-					   const GLfloat* _color,
-					   int _lod, int _set,
-					   const Extents* _exts,
-					   const GLfloat _pos[3],
-					   int _triangles) :
-    OpaqueRenderNode(_drawMgr, _xformList, _normalize,
-		     _color, _lod, _set, _exts, _triangles)
+AlphaGroupRenderNode::AlphaGroupRenderNode( MeshDrawMgr *_drawMgr, GLuint *_xformList, bool _normalize, const GLfloat *_color, int _lod, int _set, const Extents *_exts, const GLfloat _pos[3], int _triangles ): OpaqueRenderNode( _drawMgr, _xformList, _normalize, _color, _lod, _set, _exts, _triangles )
 {
-  memcpy(pos, _pos, sizeof(GLfloat[3]));
-  return;
+	memcpy( pos, _pos, sizeof( GLfloat[3] ));
+	return ;
 }
 
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
-void AlphaGroupRenderNode::setPosition(const GLfloat* _pos)
+
+void AlphaGroupRenderNode::setPosition( const GLfloat *_pos )
 {
-  memcpy(pos, _pos, sizeof(GLfloat[3]));
-  return;
+	memcpy( pos, _pos, sizeof( GLfloat[3] ));
+	return ;
 }
 
 

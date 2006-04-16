@@ -11,29 +11,29 @@
  */
 
 #ifndef __RANDOMSPAWNPOLICY_H__
-#define __RANDOMSPAWNPOLICY_H__
+	#define __RANDOMSPAWNPOLICY_H__
 
-#include "common.h"
+	#include "common.h"
 
 /* common interface headers */
-#include "SpawnPolicy.h"
+	#include "SpawnPolicy.h"
 
 
 /** a RandomSpawnPolicy is a SpawnPolicy that just generates a purely
  *  random (yet hopefully still valid) position and drops you there.
  */
-class RandomSpawnPolicy : public SpawnPolicy 
+class RandomSpawnPolicy: public SpawnPolicy
 {
 
 public:
-  RandomSpawnPolicy();
-  virtual ~RandomSpawnPolicy();
+	RandomSpawnPolicy();
+	virtual ~RandomSpawnPolicy();
 
-  virtual void getPosition(float pos[3], int playerId, bool onGroundOnly, bool notNearEdges);
-  virtual void getAzimuth(float &azimuth);
+	virtual void getPosition( float pos[3], int playerId, bool onGroundOnly, bool notNearEdges );
+	virtual void getAzimuth( float &azimuth );
 };
 
-#endif  /*__RANDOMSPAWNPOLICY_H__ */
+#endif /*__RANDOMSPAWNPOLICY_H__ */
 
 // Local Variables: ***
 // mode: C++ ***

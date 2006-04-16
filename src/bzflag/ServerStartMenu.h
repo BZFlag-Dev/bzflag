@@ -11,52 +11,54 @@
  */
 
 #ifndef __SERVERSTARTMENU_H__
-#define __SERVERSTARTMENU_H__
+	#define __SERVERSTARTMENU_H__
 
-#include "common.h"
+	#include "common.h"
 
 /* interface header */
-#include "HUDDialog.h"
+	#include "HUDDialog.h"
 
 /* system interface headers */
-#include <vector>
-#include <string>
-#include <map>
+	#include <vector>
+	#include <string>
+	#include <map>
 
 /* local interface headers */
-#include "HUDuiDefaultKey.h"
-#include "HUDuiList.h"
-#include "HUDuiLabel.h"
+	#include "HUDuiDefaultKey.h"
+	#include "HUDuiList.h"
+	#include "HUDuiLabel.h"
 
-class ServerStartMenu : public HUDDialog {
+class ServerStartMenu: public HUDDialog
+{
 public:
-  ServerStartMenu();
-  ~ServerStartMenu();
+	ServerStartMenu();
+	~ServerStartMenu();
 
-  HUDuiDefaultKey* getDefaultKey();
-  void execute();
-  void show();
-  void dismiss();
-  void resize(int width, int height);
+	HUDuiDefaultKey *getDefaultKey();
+	void execute();
+	void show();
+	void dismiss();
+	void resize( int width, int height );
 
-  static const char* getSettings() { return settings; }
-  static void setSettings(const char*);
-
-private:
-  HUDuiList* createList(const char*);
-  HUDuiLabel* createLabel(const char*);
-  void setStatus(const char*, const std::vector<std::string> *parms = NULL);
-  void loadSettings();
-  void scanWorldFiles (const std::string& searchDir,
-		       std::vector<std::string>* items);
+	static const char *getSettings()
+	{
+		return settings;
+	} static void setSettings( const char* );
 
 private:
-  float center;
-  HUDuiLabel* start;
-  HUDuiLabel* status;
-  HUDuiLabel* failedMessage;
-  static char settings[];
-  std::map<std::string, std::string> worldFiles;
+	HUDuiList *createList( const char* );
+	HUDuiLabel *createLabel( const char* );
+	void setStatus( const char *, const std::vector < std::string >  *parms = NULL );
+	void loadSettings();
+	void scanWorldFiles( const std::string &searchDir, std::vector < std::string >  *items );
+
+private:
+	float center;
+	HUDuiLabel *start;
+	HUDuiLabel *status;
+	HUDuiLabel *failedMessage;
+	static char settings[];
+	std::map < std::string, std::string > worldFiles;
 };
 
 

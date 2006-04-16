@@ -11,9 +11,9 @@
  */
 
 #ifndef __STARS_H__
-#define __STARS_H__
+	#define __STARS_H__
 
-#include "common.h"
+	#include "common.h"
 
 /** array of star positions */
 extern const float stars[][6];

@@ -22,93 +22,135 @@ HUDDialogStack HUDDialogStack::globalStack;
 
 HUDDialogStack::HUDDialogStack()
 {
-  // do nothing
+	// do nothing
 }
+
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
 HUDDialogStack::~HUDDialogStack()
 {
-  if (getMainWindow())
-    getMainWindow()->getWindow()->removeResizeCallback(resize, this);
+	if( getMainWindow())
+		getMainWindow()->getWindow()->removeResizeCallback( resize, this );
 }
 
-HUDDialogStack* HUDDialogStack::get()
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+HUDDialogStack *HUDDialogStack::get()
 {
-  return &globalStack;
+	return  &globalStack;
 }
 
-bool HUDDialogStack::isActive() const
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+bool HUDDialogStack::isActive()const
 {
-  return stack.size() != 0;
+	return stack.size() != 0;
 }
 
-HUDDialog* HUDDialogStack::top() const
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+HUDDialog *HUDDialogStack::top()const
 {
-  const int index = (const int)stack.size();
-  if (index == 0) return NULL;
-  return stack[index - 1];
+	const int index = ( const int )stack.size();
+	if( index == 0 )
+		return NULL;
+	return stack[index - 1];
 }
 
-void HUDDialogStack::push(HUDDialog* dialog)
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+void HUDDialogStack::push( HUDDialog *dialog )
 {
-  if (!dialog) return;
-  if (isActive()) {
-    const int index = (int)stack.size() - 1;
-    stack[index]->setFocus(HUDui::getFocus());
-    stack[index]->dismiss();
-  }
-  else {
-    getMainWindow()->getWindow()->addResizeCallback(resize, this);
-  }
-  stack.push_back(dialog);
-  HUDui::setDefaultKey(dialog->getDefaultKey());
-  HUDui::setFocus(dialog->getFocus());
-  dialog->resize(getMainWindow()->getWidth(), getMainWindow()->getHeight());
-  dialog->show();
+	if( !dialog )
+		return ;
+	if( isActive())
+	{
+		const int index = ( int )stack.size() - 1;
+		stack[index]->setFocus( HUDui::getFocus());
+		stack[index]->dismiss();
+	}
+	else
+	{
+		getMainWindow()->getWindow()->addResizeCallback( resize, this );
+	}
+	stack.push_back( dialog );
+	HUDui::setDefaultKey( dialog->getDefaultKey());
+	HUDui::setFocus( dialog->getFocus());
+	dialog->resize( getMainWindow()->getWidth(), getMainWindow()->getHeight());
+	dialog->show();
 }
+
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
 void HUDDialogStack::pop()
 {
-  if (isActive()) {
-    const int index = (int)stack.size() - 1;
-    stack[index]->setFocus(HUDui::getFocus());
-    stack[index]->dismiss();
-    std::vector<HUDDialog*>::iterator it = stack.begin();
-    for(int i = 0; i < index; i++) it++;
-    stack.erase(it);
-    if (index > 0) {
-      HUDDialog* dialog = stack[index - 1];
-      HUDui::setDefaultKey(dialog->getDefaultKey());
-      HUDui::setFocus(dialog->getFocus());
-      dialog->resize(getMainWindow()->getWidth(),
-		     getMainWindow()->getHeight());
-      dialog->show();
-    }
-    else {
-      HUDui::setDefaultKey(NULL);
-      HUDui::setFocus(NULL);
-      getMainWindow()->getWindow()->removeResizeCallback(resize, this);
-    }
-  }
+	if( isActive())
+	{
+		const int index = ( int )stack.size() - 1;
+		stack[index]->setFocus( HUDui::getFocus());
+		stack[index]->dismiss();
+		std::vector < HUDDialog * > ::iterator it = stack.begin();
+		for( int i = 0; i < index; i++ )
+			it++;
+		stack.erase( it );
+		if( index > 0 )
+		{
+			HUDDialog *dialog = stack[index - 1];
+			HUDui::setDefaultKey( dialog->getDefaultKey());
+			HUDui::setFocus( dialog->getFocus());
+			dialog->resize( getMainWindow()->getWidth(), getMainWindow()->getHeight());
+			dialog->show();
+		}
+		else
+		{
+			HUDui::setDefaultKey( NULL );
+			HUDui::setFocus( NULL );
+			getMainWindow()->getWindow()->removeResizeCallback( resize, this );
+		}
+	}
 }
+
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
 void HUDDialogStack::render()
 {
-  if (isActive())
-    stack[stack.size() - 1]->render();
+	if( isActive())
+		stack[stack.size() - 1]->render();
 }
 
-void HUDDialogStack::resize(void* _self)
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+void HUDDialogStack::resize( void *_self )
 {
-  HUDDialogStack* self = (HUDDialogStack*)_self;
-  if (self->isActive())
-    self->top()->resize(getMainWindow()->getWidth(),
-			getMainWindow()->getHeight());
+	HUDDialogStack *self = ( HUDDialogStack* )_self;
+	if( self->isActive())
+		self->top()->resize( getMainWindow()->getWidth(), getMainWindow()->getHeight());
 }
 
-void HUDDialogStack::setFailedMessage(const char *msg)
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+void HUDDialogStack::setFailedMessage( const char *msg )
 {
-  if (isActive())
-    stack[stack.size() - 1]->setFailedMessage(msg);
+	if( isActive())
+		stack[stack.size() - 1]->setFailedMessage( msg );
 }
 
 // Local Variables: ***

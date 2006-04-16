@@ -15,50 +15,51 @@
  */
 
 #ifndef BZF_BASE_RESOURCES_H
-#define	BZF_BASE_RESOURCES_H
+	#define BZF_BASE_RESOURCES_H
 
-#include "common.h"
+	#include "common.h"
 
-#include <vector>
-#include <string>
+	#include <vector>
+	#include <string>
 
 class std::ostream;
 
-class BaseResources {
-  public:
-			BaseResources();
-			BaseResources(const BaseResources&);
-			~BaseResources();
-    BaseResources&	operator=(const BaseResources&);
+class BaseResources
+{
+public:
+	BaseResources();
+	BaseResources( const BaseResources & );
+	~BaseResources();
+	BaseResources &operator = ( const BaseResources & );
 
-    bool		hasName(const std::string&) const;
-    const std::vector<std::string>& getNames() const;
+	bool hasName( const std::string & )const;
+	const std::vector < std::string >  &getNames()const;
 
-    void		addName(const std::string&);
+	void addName( const std::string & );
 
-  protected:
-  static std::ostream&	print(std::ostream&, const std::string& name,
-					const char* format, ...); // const
-    static bool	match(const std::string& wildName,
-					const std::string& name); // const
-  private:
-    static int		doMatch(const char* pattern,
-					const char* string); // const
-    static int		matchStar(const char* pattern,
-					const char* string); // const
+protected:
+	static std::ostream &print( std::ostream &, const std::string &name, const char *format, ... ); // const
+	static bool match( const std::string &wildName, const std::string &name ); // const
+private:
+	static int doMatch( const char *pattern, const char *string ); // const
+	static int matchStar( const char *pattern, const char *string ); // const
 
-  private:
-    std::vector<std::string>	names;
+private:
+	std::vector < std::string > names;
 };
 
 //
 // BaseResources
 //
 
-inline const std::vector<std::string>&	BaseResources::getNames() const
+inline const std::vector < std::string >  &BaseResources::getNames()const
 {
-  return names;
+	return names;
 }
+
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
 #endif // BZF_BASE_RESOURCES_H
 
@@ -69,4 +70,3 @@ inline const std::vector<std::string>&	BaseResources::getNames() const
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

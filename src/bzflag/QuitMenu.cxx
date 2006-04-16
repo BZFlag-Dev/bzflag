@@ -21,79 +21,90 @@
 #include "HUDuiLabel.h"
 
 
-bool QuitMenuDefaultKey::keyPress(const BzfKeyEvent& key)
+bool QuitMenuDefaultKey::keyPress( const BzfKeyEvent &key )
 {
-  if (key.ascii == 'Y' || key.ascii == 'y') {
-    CommandsStandard::quit();
-    return true;
-  }
-  return MenuDefaultKey::keyPress(key);
+	if( key.ascii == 'Y' || key.ascii == 'y' )
+	{
+		CommandsStandard::quit();
+		return true;
+	}
+	return MenuDefaultKey::keyPress( key );
 }
 
-bool QuitMenuDefaultKey::keyRelease(const BzfKeyEvent& key)
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+bool QuitMenuDefaultKey::keyRelease( const BzfKeyEvent &key )
 {
-  if (key.ascii == 'Y' || key.ascii == 'y')
-    return true;
-  return MenuDefaultKey::keyRelease(key);
+	if( key.ascii == 'Y' || key.ascii == 'y' )
+		return true;
+	return MenuDefaultKey::keyRelease( key );
 }
+
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
 
 QuitMenu::QuitMenu()
 {
-  // add controls
-  std::vector<HUDuiControl*>& listHUD = getControls();
-  HUDuiLabel* label;
+	// add controls
+	std::vector < HUDuiControl * >  &listHUD = getControls();
+	HUDuiLabel *label;
 
-  label = new HUDuiLabel;
-  label->setFontFace(MainMenu::getFontFace());
-  label->setString("Enter to quit, Esc to resume");
-  listHUD.push_back(label);
+	label = new HUDuiLabel;
+	label->setFontFace( MainMenu::getFontFace());
+	label->setString( "Enter to quit, Esc to resume" );
+	listHUD.push_back( label );
 
-  label = new HUDuiLabel;
-  label->setFontFace(MainMenu::getFontFace());
-  label->setString("Really quit?");
-  listHUD.push_back(label);
+	label = new HUDuiLabel;
+	label->setFontFace( MainMenu::getFontFace());
+	label->setString( "Really quit?" );
+	listHUD.push_back( label );
 
-  initNavigation(listHUD, 1, 1);
+	initNavigation( listHUD, 1, 1 );
 }
 
-QuitMenu::~QuitMenu()
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+QuitMenu::~QuitMenu(){}
+
+void QuitMenu::resize( int _width, int _height )
 {
-}
+	HUDDialog::resize( _width, _height );
 
-void QuitMenu::resize(int _width, int _height)
-{
-  HUDDialog::resize(_width, _height);
+	// use a big font
+	float fontSize = ( float )_height / 15.0f;
+	float smallFontSize = ( float )_height / 54.0f;
+	float x, y;
+	FontManager &fm = FontManager::instance();
+	const int fontFace = MainMenu::getFontFace();
 
-  // use a big font
-  float fontSize = (float)_height / 15.0f;
-  float smallFontSize = (float)_height / 54.0f;
-  float x, y;
-  FontManager &fm = FontManager::instance();
-  const int fontFace = MainMenu::getFontFace();
+	// heights
+	const float fontHeight = fm.getStrHeight( fontFace, fontSize, " " );
+	const float smallFontHeight = fm.getStrHeight( fontFace, smallFontSize, " " );
 
-  // heights
-  const float fontHeight = fm.getStrHeight(fontFace, fontSize, " ");
-  const float smallFontHeight = fm.getStrHeight(fontFace, smallFontSize, " ");
+	// get stuff
+	std::vector < HUDuiControl * >  &listHUD = getControls();
+	HUDuiLabel *label = ( HUDuiLabel* )listHUD[0];
 
-  // get stuff
-  std::vector<HUDuiControl*>& listHUD = getControls();
-  HUDuiLabel* label = (HUDuiLabel*)listHUD[0];
+	// help message
+	label->setFontSize( smallFontSize );
+	const float stringWidth = fm.getStrLength( fontFace, smallFontSize, label->getString());
+	x = 0.5f *(( float )_width - stringWidth );
+	y = ( float )_height - fontHeight - 1.5f * smallFontHeight;
+	label->setPosition( x, y );
 
-  // help message
-  label->setFontSize(smallFontSize);
-  const float stringWidth = fm.getStrLength(fontFace, smallFontSize, label->getString());
-  x = 0.5f * ((float)_width - stringWidth);
-  y = (float)_height - fontHeight - 1.5f * smallFontHeight;
-  label->setPosition(x, y);
-
-  // quit message
-  label = (HUDuiLabel*)listHUD[1];
-  label->setFontSize(fontSize);
-  const float labelWidth = fm.getStrLength(fontFace, fontSize, label->getString());
-  x = 0.5f * ((float)_width - labelWidth);
-  y = (float)_height - 3.5f * fontHeight;
-  label->setPosition(x, y);
+	// quit message
+	label = ( HUDuiLabel* )listHUD[1];
+	label->setFontSize( fontSize );
+	const float labelWidth = fm.getStrLength( fontFace, fontSize, label->getString());
+	x = 0.5f *(( float )_width - labelWidth );
+	y = ( float )_height - 3.5f * fontHeight;
+	label->setPosition( x, y );
 }
 
 

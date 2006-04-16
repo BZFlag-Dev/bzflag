@@ -19,85 +19,116 @@
 // common implementation headers
 #include "ErrorHandler.h"
 
-BzfWindow::BzfWindow(const BzfDisplay* _display) : display(_display)
+BzfWindow::BzfWindow( const BzfDisplay *_display ): display( _display ){}
+
+BzfWindow::~BzfWindow(){}
+
+void BzfWindow::setFullscreen( bool on )
 {
+	if( on )
+		setFullscreen();
 }
 
-BzfWindow::~BzfWindow()
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+void BzfWindow::callExposeCallbacks()const
 {
+	const int count = exposeCallbacks.size();
+	for( int i = 0; i < count; i++ )
+	{
+		const BzfWindowCB &cb = exposeCallbacks[i];
+		( *cb.cb )( cb.data );
+	}
 }
 
-void BzfWindow::setFullscreen(bool on) {
-  if (on)
-    setFullscreen();
-}
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
-void			BzfWindow::callExposeCallbacks() const
+void BzfWindow::addExposeCallback( void( *_cb )( void* ), void *data )
 {
-  const int count = exposeCallbacks.size();
-  for (int i = 0; i < count; i++) {
-    const BzfWindowCB& cb = exposeCallbacks[i];
-    (*cb.cb)(cb.data);
-  }
+	BzfWindowCB cb;
+	cb.cb = _cb;
+	cb.data = data;
+	exposeCallbacks.push_back( cb );
 }
 
-void			BzfWindow::addExposeCallback(
-				void (*_cb)(void*), void* data)
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+void BzfWindow::removeExposeCallback( void( *_cb )( void* ), void *data )
 {
-  BzfWindowCB cb;
-  cb.cb = _cb;
-  cb.data = data;
-  exposeCallbacks.push_back(cb);
+	std::vector < BzfWindowCB > ::iterator it = exposeCallbacks.begin();
+	for( ; it != exposeCallbacks.end(); it++ )
+	{
+		if(( it->cb == _cb ) && ( it->data == data ))
+		{
+			exposeCallbacks.erase( it );
+			break;
+		}
+	}
 }
 
-void			BzfWindow::removeExposeCallback(
-				void (*_cb)(void*), void* data)
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+void BzfWindow::callResizeCallbacks()const
 {
-  std::vector<BzfWindowCB>::iterator it = exposeCallbacks.begin();
-  for(; it != exposeCallbacks.end(); it++) {
-    if((it->cb == _cb) && (it->data == data)) {
-      exposeCallbacks.erase(it);
-      break;
-    }
-  }
+	const int count = resizeCallbacks.size();
+	for( int i = 0; i < count; i++ )
+	{
+		const BzfWindowCB &cb = resizeCallbacks[i];
+		( *cb.cb )( cb.data );
+	}
 }
 
-void			BzfWindow::callResizeCallbacks() const
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+void BzfWindow::addResizeCallback( void( *_cb )( void* ), void *data )
 {
-  const int count = resizeCallbacks.size();
-  for (int i = 0; i < count; i++) {
-    const BzfWindowCB& cb = resizeCallbacks[i];
-    (*cb.cb)(cb.data);
-  }
+	BzfWindowCB cb;
+	cb.cb = _cb;
+	cb.data = data;
+	resizeCallbacks.push_back( cb );
 }
 
-void			BzfWindow::addResizeCallback(
-				void (*_cb)(void*), void* data)
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+void BzfWindow::removeResizeCallback( void( *_cb )( void* ), void *data )
 {
-  BzfWindowCB cb;
-  cb.cb = _cb;
-  cb.data = data;
-  resizeCallbacks.push_back(cb);
+	std::vector < BzfWindowCB > ::iterator it = resizeCallbacks.begin();
+	for( ; it != resizeCallbacks.end(); it++ )
+	{
+		if(( it->cb == _cb ) && ( it->data == data ))
+		{
+			resizeCallbacks.erase( it );
+			break;
+		}
+	}
 }
 
-void			BzfWindow::removeResizeCallback(
-				void (*_cb)(void*), void* data)
-{
-  std::vector<BzfWindowCB>::iterator it = resizeCallbacks.begin();
-  for(; it != resizeCallbacks.end(); it++) {
-    if((it->cb == _cb) && (it->data == data)) {
-      resizeCallbacks.erase(it);
-      break;
-    }
-  }
-}
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
-void			BzfWindow::yieldCurrent(void)
+void BzfWindow::yieldCurrent( void )
 {
 	// do nothing
 }
 
-void			BzfWindow::releaseCurrent(void)
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+void BzfWindow::releaseCurrent( void )
 {
 	// do nothing
 }
@@ -109,4 +140,3 @@ void			BzfWindow::releaseCurrent(void)
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

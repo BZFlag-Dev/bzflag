@@ -25,135 +25,177 @@
 // HUDuiList
 //
 
-HUDuiList::HUDuiList() : HUDuiControl(), index(-1)
+HUDuiList::HUDuiList(): HUDuiControl(), index(  - 1 )
 {
-  // do nothing
+	// do nothing
 }
+
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
 HUDuiList::~HUDuiList()
 {
-  // do nothing
+	// do nothing
 }
 
-int			HUDuiList::getIndex() const
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+int HUDuiList::getIndex()const
 {
-  return index;
+	return index;
 }
 
-void			HUDuiList::setIndex(int _index)
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+void HUDuiList::setIndex( int _index )
 {
-  if (_index < 0)
-    index = 0;
-  else if (_index >= (int)list.size()) 
-    index = (int)list.size() - 1;
-  else
-    index = _index;
+	if( _index < 0 )
+		index = 0;
+	else if( _index >= ( int )list.size())
+		index = ( int )list.size() - 1;
+	else
+		index = _index;
 }
 
-std::vector<std::string>&		HUDuiList::getList()
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+std::vector < std::string >  &HUDuiList::getList()
 {
-  return list;
+	return list;
 }
 
-void			HUDuiList::update()
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+void HUDuiList::update()
 {
-  setIndex(index);
+	setIndex( index );
 }
 
-void			HUDuiList::createSlider(const int numValues)
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+void HUDuiList::createSlider( const int numValues )
 {
-  // create a slider with numValues options
-  /* createSlider(4) does the equivalent of
-     options->push_back(std::string("[O---]"));
-     options->push_back(std::string("[-O--]"));
-     options->push_back(std::string("[--O-]"));
-     options->push_back(std::string("[---O]"));
-  */
-  std::vector<std::string> &options = getList();
+	// create a slider with numValues options
+	/* createSlider(4) does the equivalent of
+	options->push_back(std::string("[O---]"));
+	options->push_back(std::string("[-O--]"));
+	options->push_back(std::string("[--O-]"));
+	options->push_back(std::string("[---O]"));
+	 */
+	std::vector < std::string >  &options = getList();
 
-  std::string line(numValues + 2, '-');
-  line[0] = '[';
-  line[numValues + 1] = ']';
+	std::string line( numValues + 2, '-' );
+	line[0] = '[';
+	line[numValues + 1] = ']';
 
-  for (int i = 0; i < numValues; i++) {
-    if (i > 0) line[i] = '-';
-    line[i + 1] = 'O';
-    options.push_back(line);
-  }
-}
-
-bool			HUDuiList::doKeyPress(const BzfKeyEvent& key)
-{
-  if (key.ascii == '\t') {
-    HUDui::setFocus(getNext());
-    return true;
-  }
-
-  if (key.ascii == 0)
-    switch (key.button) {
-      case BzfKeyEvent::Up:
-	HUDui::setFocus(getPrev());
-	break;
-
-      case BzfKeyEvent::Down:
-	HUDui::setFocus(getNext());
-	break;
-
-      case BzfKeyEvent::Left:
-	if (index != -1) {
-	  if (--index < 0) index = (int)list.size() - 1;
-	  doCallback();
+	for( int i = 0; i < numValues; i++ )
+	{
+		if( i > 0 )
+			line[i] = '-';
+		line[i + 1] = 'O';
+		options.push_back( line );
 	}
-	break;
+}
 
-      case BzfKeyEvent::Right:
-	if (index != -1) {
-	  if (++index >= (int)list.size()) index = 0;
-	  doCallback();
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+bool HUDuiList::doKeyPress( const BzfKeyEvent &key )
+{
+	if( key.ascii == '\t' )
+	{
+		HUDui::setFocus( getNext());
+		return true;
 	}
-	break;
 
-      case BzfKeyEvent::Home:
-	if (index != -1) {
-	  index = 0;
-	  doCallback();
+	if( key.ascii == 0 )
+	switch( key.button )
+	{
+		case BzfKeyEvent::Up: HUDui::setFocus( getPrev());
+		break;
+
+		case BzfKeyEvent::Down: HUDui::setFocus( getNext());
+		break;
+
+		case BzfKeyEvent::Left: if( index !=  - 1 )
+		{
+			if( --index < 0 )
+				index = ( int )list.size() - 1;
+			doCallback();
+		}
+		break;
+
+		case BzfKeyEvent::Right: if( index !=  - 1 )
+		{
+			if( ++index >= ( int )list.size())
+				index = 0;
+			doCallback();
+		}
+		break;
+
+		case BzfKeyEvent::Home: if( index !=  - 1 )
+		{
+			index = 0;
+			doCallback();
+		}
+		break;
+
+		case BzfKeyEvent::End: if( index !=  - 1 )
+		{
+			index = ( int )list.size() - 1;
+			doCallback();
+		}
+		break;
+
+		default:
+			return false;
 	}
-	break;
 
-      case BzfKeyEvent::End:
-	if (index != -1) {
-	  index = (int)list.size() - 1;
-	  doCallback();
+	switch( key.ascii )
+	{
+		case 13:
+		case 27:
+			return false;
 	}
-	break;
 
-      default:
+	return true;
+}
+
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+bool HUDuiList::doKeyRelease( const BzfKeyEvent & )
+{
+	// ignore key releases
 	return false;
-    }
-
-  switch (key.ascii) {
-    case 13:
-    case 27:
-      return false;
-  }
-
-  return true;
 }
 
-bool			HUDuiList::doKeyRelease(const BzfKeyEvent&)
-{
-  // ignore key releases
-  return false;
-}
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
-void			HUDuiList::doRender()
+void HUDuiList::doRender()
 {
-  Bundle *bdl = BundleMgr::getCurrentBundle();
-  if (index != -1 && getFontFace() >= 0) {
-    glColor3fv(hasFocus() ? textColor : dimTextColor);
-    FontManager &fm = FontManager::instance();
-    fm.drawString(getX(), getY(), 0, getFontFace(), getFontSize(), bdl->getLocalString(list[index]));
-  }
+	Bundle *bdl = BundleMgr::getCurrentBundle();
+	if( index !=  - 1 && getFontFace() >= 0 )
+	{
+		glColor3fv( hasFocus() ? textColor : dimTextColor );
+		FontManager &fm = FontManager::instance();
+		fm.drawString( getX(), getY(), 0, getFontFace(), getFontSize(), bdl->getLocalString( list[index] ));
+	}
 }
 
 // Local Variables: ***
@@ -163,4 +205,3 @@ void			HUDuiList::doRender()
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

@@ -15,63 +15,62 @@
  */
 
 #ifndef BZF_LINUXMEDIA_H
-#define	BZF_LINUXMEDIA_H
+	#define BZF_LINUXMEDIA_H
 
-#include "BzfMedia.h"
-#include <stdio.h>
-#include <unistd.h>
+	#include "BzfMedia.h"
+	#include <stdio.h>
+	#include <unistd.h>
 
-class LinuxMedia : public BzfMedia {
-  public:
-			LinuxMedia();
-			~LinuxMedia();
+class LinuxMedia: public BzfMedia
+{
+public:
+	LinuxMedia();
+	~LinuxMedia();
 
-    double		stopwatch(bool);
-    bool		openAudio();
-    void		closeAudio();
-    bool		startAudioThread(void (*)(void*), void*);
-    void		stopAudioThread();
-    bool		hasAudioThread() const;
-    void		writeSoundCommand(const void*, int);
-    bool		readSoundCommand(void*, int);
-    int			getAudioOutputRate() const;
-    int			getAudioBufferSize() const;
-    int			getAudioBufferChunkSize() const;
-    bool		isAudioTooEmpty() const;
-    void		writeAudioFrames(const float* samples, int numFrames);
-    void		audioSleep(bool checkLowWater, double maxTime);
+	double stopwatch( bool );
+	bool openAudio();
+	void closeAudio();
+	bool startAudioThread( void( * )( void* ), void* );
+	void stopAudioThread();
+	bool hasAudioThread()const;
+	void writeSoundCommand( const void *, int );
+	bool readSoundCommand( void *, int );
+	int getAudioOutputRate()const;
+	int getAudioBufferSize()const;
+	int getAudioBufferChunkSize()const;
+	bool isAudioTooEmpty()const;
+	void writeAudioFrames( const float *samples, int numFrames );
+	void audioSleep( bool checkLowWater, double maxTime );
 
-  private:
-    bool		checkForAudioHardware();
-    bool		openAudioHardware();
-    bool		openIoctl(int cmd, void* value, bool req = true);
-    static void		audioThreadInit(void*);
+private:
+	bool checkForAudioHardware();
+	bool openAudioHardware();
+	bool openIoctl( int cmd, void *value, bool req = true );
+	static void audioThreadInit( void* );
 
-    void		writeAudioFrames8Bit(
-				const float* samples, int numFrames);
-    void		writeAudioFrames16Bit(
-				const float* samples, int numFrames);
+	void writeAudioFrames8Bit( const float *samples, int numFrames );
+	void writeAudioFrames16Bit( const float *samples, int numFrames );
 
-    static double	getTime();
+	static double getTime();
 
-  private:
-    bool		audioReady;
-    int			audioOutputRate;
-    int			audioBufferSize;
-    int			audioLowWaterMark;
-    int			maxFd;
-    int			audioPortFd;
-    int			queueIn, queueOut;
-    short*		outputBuffer;
-    pid_t		childProcID;
-    double		stopwatchTime;
-    bool		audio8Bit;
+private:
+	bool audioReady;
+	int audioOutputRate;
+	int audioBufferSize;
+	int audioLowWaterMark;
+	int maxFd;
+	int audioPortFd;
+	int queueIn, queueOut;
+	short *outputBuffer;
+	pid_t childProcID;
+	double stopwatchTime;
+	bool audio8Bit;
 
-    bool		noSetFragment;
-    bool		getospaceBroken;
-    int			chunksPending;
-    double		chunkTime;
-    double		chunksPerSecond;
+	bool noSetFragment;
+	bool getospaceBroken;
+	int chunksPending;
+	double chunkTime;
+	double chunksPerSecond;
 };
 
 #endif // BZF_LINUXMEDIA_H
@@ -83,4 +82,3 @@ class LinuxMedia : public BzfMedia {
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

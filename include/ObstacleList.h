@@ -10,50 +10,66 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef	BZF_OBSTACLE_LIST_H
-#define	BZF_OBSTACLE_LIST_H
+#ifndef BZF_OBSTACLE_LIST_H
+	#define BZF_OBSTACLE_LIST_H
 
-#include "common.h"
+	#include "common.h"
 
 
 class Obstacle;
 
-class ObstacleList {
-  public:
-    ObstacleList();
-    ~ObstacleList();
+class ObstacleList
+{
+public:
+	ObstacleList();
+	~ObstacleList();
 
-    void clear();
-    void tighten();
-    void push_back(Obstacle* obs);
-    void remove(unsigned int index);
-    void sort(int (*compare)(const void* a, const void* b));
+	void clear();
+	void tighten();
+	void push_back( Obstacle *obs );
+	void remove( unsigned int index );
+	void sort( int( *compare )( const void *a, const void *b ));
 
-    unsigned int size() const;
-    Obstacle* operator[](int index) const;
+	unsigned int size()const;
+	Obstacle *operator[]( int index )const;
 
-  private:
-    unsigned int listSize;
-    unsigned int listCount;
-    Obstacle** list;
+private:
+	unsigned int listSize;
+	unsigned int listCount;
+	Obstacle **list;
 };
 
-inline unsigned int ObstacleList::size() const
+inline unsigned int ObstacleList::size()const
 {
-  return listCount;
+	return listCount;
 }
-inline Obstacle* ObstacleList::operator[](int index) const
+
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+inline Obstacle *ObstacleList::operator[]( int index )const
 {
-  return list[index];
+	return list[index];
 }
-inline void ObstacleList::remove(unsigned int index)
+
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+inline void ObstacleList::remove( unsigned int index )
 {
-  if ((index < listCount) && (listCount > 0)) {
-    listCount--;
-    list[index] = list[listCount]; // order is not preserved
-  }
-  return;
+	if(( index < listCount ) && ( listCount > 0 ))
+	{
+		listCount--;
+		list[index] = list[listCount]; // order is not preserved
+	}
+	return ;
 }
+
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
 #endif // BZF_OBSTACLE_LIST_H
 
@@ -65,4 +81,3 @@ inline void ObstacleList::remove(unsigned int index)
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

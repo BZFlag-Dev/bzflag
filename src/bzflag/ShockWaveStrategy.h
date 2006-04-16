@@ -11,36 +11,37 @@
  */
 
 #ifndef __SHOCKWAVESTRATEGY_H__
-#define __SHOCKWAVESTRATEGY_H__
+	#define __SHOCKWAVESTRATEGY_H__
 
 /* interface header */
-#include "ShotStrategy.h"
+	#include "ShotStrategy.h"
 
 /* common interface headers */
-#include "SceneDatabase.h"
-#include "SphereSceneNode.h"
+	#include "SceneDatabase.h"
+	#include "SphereSceneNode.h"
 
 /* local interface headers */
-#include "BaseLocalPlayer.h"
-#include "ShotPath.h"
+	#include "BaseLocalPlayer.h"
+	#include "ShotPath.h"
 
 
-class ShockWaveStrategy : public ShotStrategy {
-  public:
-			ShockWaveStrategy(ShotPath*);
-			~ShockWaveStrategy();
+class ShockWaveStrategy: public ShotStrategy
+{
+public:
+	ShockWaveStrategy( ShotPath* );
+	~ShockWaveStrategy();
 
-    void		update(float dt);
-    float		checkHit(const BaseLocalPlayer*, float[3]) const;
-    bool		isStoppedByHit() const;
-    void		addShot(SceneDatabase*, bool colorblind);
-    void		radarRender() const;
+	void update( float dt );
+	float checkHit( const BaseLocalPlayer *, float[3] )const;
+	bool isStoppedByHit()const;
+	void addShot( SceneDatabase *, bool colorblind );
+	void radarRender()const;
 
-  private:
-    SphereSceneNode*	shockNode;
-    float		radius;
-    float		radius2;
-    TeamColor		team;
+private:
+	SphereSceneNode *shockNode;
+	float radius;
+	float radius2;
+	TeamColor team;
 };
 
 

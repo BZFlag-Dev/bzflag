@@ -10,37 +10,36 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef	__REMOTEPLAYER_H__
-#define	__REMOTEPLAYER_H__
+#ifndef __REMOTEPLAYER_H__
+	#define __REMOTEPLAYER_H__
 
-#include "common.h"
+	#include "common.h"
 
 /* interface header */
-#include "Player.h"
+	#include "Player.h"
 
 /* common interface headers */
-#include "global.h"
-#include "ShotUpdate.h"
+	#include "global.h"
+	#include "ShotUpdate.h"
 
 /* local interface headers */
-#include "ShotPath.h"
+	#include "ShotPath.h"
 
 
-class RemotePlayer : public Player {
+class RemotePlayer: public Player
+{
 public:
-  RemotePlayer(const PlayerId&, TeamColor team,
-	       const char* name, const char* email,
-	       const PlayerType);
-  ~RemotePlayer();
+	RemotePlayer( const PlayerId &, TeamColor team, const char *name, const char *email, const PlayerType );
+	~RemotePlayer();
 
-  void addShot(FiringInfo&);
-  void updateShots(float dt);
+	void addShot( FiringInfo & );
+	void updateShots( float dt );
 
 private:
-  bool doEndShot(int index, bool isHit, float* pos);
+	bool doEndShot( int index, bool isHit, float *pos );
 
 private:
-  int numShots;
+	int numShots;
 };
 
 

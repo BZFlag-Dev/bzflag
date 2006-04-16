@@ -14,79 +14,66 @@
  *	Encapsulates a tetrahederon in the game environment.
  */
 
-#ifndef	BZF_TETRA_BUILDING_H
-#define	BZF_TETRA_BUILDING_H
+#ifndef BZF_TETRA_BUILDING_H
+	#define BZF_TETRA_BUILDING_H
 
-#include "common.h"
-#include <string>
-#include "Obstacle.h"
-#include "MeshObstacle.h"
-#include "MeshTransform.h"
-#include "BzMaterial.h"
+	#include "common.h"
+	#include <string>
+	#include "Obstacle.h"
+	#include "MeshObstacle.h"
+	#include "MeshTransform.h"
+	#include "BzMaterial.h"
 
-class TetraBuilding : public Obstacle {
-  public:
+class TetraBuilding: public Obstacle
+{
+public:
 
-    TetraBuilding();
-    TetraBuilding(const MeshTransform& transform,
-		  const float vertices[4][3], const float normals[4][3][3],
-		  const float texCoords[4][3][2], const bool useNormals[4],
-		  const bool useTexCoords[4], const BzMaterial* materials[4],
-		  bool drive = false, bool shoot = false);
-    ~TetraBuilding();
+	TetraBuilding();
+	TetraBuilding( const MeshTransform &transform, const float vertices[4][3], const float normals[4][3][3], const float texCoords[4][3][2], const bool useNormals[4], const bool useTexCoords[4], const BzMaterial *materials[4], bool drive = false, bool shoot = false );
+	~TetraBuilding();
 
-    Obstacle* copyWithTransform(const MeshTransform&) const;
+	Obstacle *copyWithTransform( const MeshTransform & )const;
 
-    MeshObstacle* makeMesh();
+	MeshObstacle *makeMesh();
 
-    void		finalize();
+	void finalize();
 
-    const char*		getType() const;
-    static const char*	getClassName(); // const
-    bool		isValid() const;
+	const char *getType()const;
+	static const char *getClassName(); // const
+	bool isValid()const;
 
-    float		intersect(const Ray&) const;
-    void		getNormal(const float* p, float* n) const;
-    void		get3DNormal(const float* p, float* n) const;
+	float intersect( const Ray & )const;
+	void getNormal( const float *p, float *n )const;
+	void get3DNormal( const float *p, float *n )const;
 
-    bool		inCylinder(const float* p, float radius, float height) const;
-    bool		inBox(const float* p, float angle,
-			      float halfWidth, float halfBreadth, float height) const;
-    bool		inMovingBox(const float* oldP, float oldAngle,
-				    const float *newP, float newAngle,
-				    float halfWidth, float halfBreadth, float height) const;
-    bool		isCrossing(const float* p, float angle,
-				   float halfWidth, float halfBreadth, float height,
-				   float* plane) const;
+	bool inCylinder( const float *p, float radius, float height )const;
+	bool inBox( const float *p, float angle, float halfWidth, float halfBreadth, float height )const;
+	bool inMovingBox( const float *oldP, float oldAngle, const float *newP, float newAngle, float halfWidth, float halfBreadth, float height )const;
+	bool isCrossing( const float *p, float angle, float halfWidth, float halfBreadth, float height, float *plane )const;
 
-    bool		getHitNormal(
-				const float* pos1, float azimuth1,
-				const float* pos2, float azimuth2,
-				float halfWidth, float halfBreadth,
-				float height,
-				float* normal) const;
+	bool getHitNormal( const float *pos1, float azimuth1, const float *pos2, float azimuth2, float halfWidth, float halfBreadth, float height, float *normal )const;
 
-    void		getCorner(int index, float* pos) const;
+	void getCorner( int index, float *pos )const;
 
-    int packSize() const;
-    void *pack(void*) const;
-    void *unpack(void*);
+	int packSize()const;
+	void *pack( void* )const;
+	void *unpack( void* );
 
-    void print(std::ostream& out, const std::string& indent) const;
+	void print( std::ostream &out, const std::string &indent )const;
 
-  private:
-    void checkVertexOrder();
+private:
+	void checkVertexOrder();
 
-  private:
-    static const char*	typeName;
+private:
+	static const char *typeName;
 
-    MeshTransform transform;
-    float vertices[4][3];
-    float normals[4][3][3];
-    float texcoords[4][3][2];
-    bool useNormals[4];
-    bool useTexcoords[4];
-    const BzMaterial* materials[4];
+	MeshTransform transform;
+	float vertices[4][3];
+	float normals[4][3][3];
+	float texcoords[4][3][2];
+	bool useNormals[4];
+	bool useTexcoords[4];
+	const BzMaterial *materials[4];
 };
 
 
@@ -99,4 +86,3 @@ class TetraBuilding : public Obstacle {
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

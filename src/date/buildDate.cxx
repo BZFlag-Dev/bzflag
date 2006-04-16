@@ -21,8 +21,8 @@
 
 // opaque version number increments on protocol incompatibility
 #ifndef BZ_PROTO_VERSION
-#define BZ_PROTO_VERSION	"0037"
-#endif
+	#define BZ_PROTO_VERSION	"1001"
+#endif 
 
 // version numbers - also update:
 //  configure.ac
@@ -33,23 +33,23 @@
 //  tools/TextTool-W32/TextTool.rc
 //  win32/VC6/installer.dsp
 #ifndef BZ_MAJOR_VERSION
-#  define BZ_MAJOR_VERSION	2
-#endif
+	#define BZ_MAJOR_VERSION	2
+#endif 
 
 #ifndef BZ_MINOR_VERSION
-#  define BZ_MINOR_VERSION	1
-#endif
+	#define BZ_MINOR_VERSION	9
+#endif 
 
 #ifndef BZ_REV
-#  define BZ_REV		7
-#endif
+	#define BZ_REV		0
+#endif 
 
 // DEVEL | STABLE | MAINT
 #ifndef BZ_BUILD_TYPE
-#  define BZ_BUILD_TYPE		"DEVEL"
-#endif
+	#define BZ_BUILD_TYPE		"EXP"
+#endif 
 
-const char *bzfcopyright = "Copyright (c) 1993 - 2006 Tim Riker";
+const char *bzfcopyright = "Copyright (c) 1993 - 2006 BZFlag Development Group";
 
 
 //
@@ -72,94 +72,120 @@ const char *bzfcopyright = "Copyright (c) 1993 - 2006 Tim Riker";
 /* yes this is horible but it needs to be done to get it right */
 /* windows should pull from a resouce */
 /* *nix gets this from the passed from my the Makefile */
-char buildDate[] = {__DATE__};
+char buildDate[] = 
+{
+	__DATE__
+};
 
 int getBuildDate()
 {
-  int year = 1900, month = 0, day = 0;
-  char monthStr[512];
-  sscanf(buildDate, "%s %d %d", monthStr, &day, &year);
+	int year = 1900, month = 0, day = 0;
+	char monthStr[512];
+	sscanf( buildDate, "%s %d %d", monthStr, &day, &year );
 
-  // we want it not as a name but a number
-  if (strcmp(monthStr, "Jan") == 0)
-    month = 1;
-  else if (strcmp(monthStr, "Feb") == 0)
-    month = 2;
-  else if (strcmp(monthStr, "Mar") == 0)
-    month = 3;
-  else if (strcmp(monthStr, "Apr") == 0)
-    month = 4;
-  else if (strcmp(monthStr, "May") == 0)
-    month = 5;
-  else if (strcmp(monthStr, "Jun") == 0)
-    month = 6;
-  else if (strcmp(monthStr, "Jul") == 0)
-    month = 7;
-  else if (strcmp(monthStr, "Aug") == 0)
-    month = 8;
-  else if (strcmp(monthStr, "Sep") == 0)
-    month = 9;
-  else if (strcmp(monthStr, "Oct") == 0)
-    month = 10;
-  else if (strcmp(monthStr, "Nov") == 0)
-    month = 11;
-  else if (strcmp(monthStr, "Dec") == 0)
-    month = 12;
+	// we want it not as a name but a number
+	if( strcmp( monthStr, "Jan" ) == 0 )
+		month = 1;
+	else if( strcmp( monthStr, "Feb" ) == 0 )
+		month = 2;
+	else if( strcmp( monthStr, "Mar" ) == 0 )
+		month = 3;
+	else if( strcmp( monthStr, "Apr" ) == 0 )
+		month = 4;
+	else if( strcmp( monthStr, "May" ) == 0 )
+		month = 5;
+	else if( strcmp( monthStr, "Jun" ) == 0 )
+		month = 6;
+	else if( strcmp( monthStr, "Jul" ) == 0 )
+		month = 7;
+	else if( strcmp( monthStr, "Aug" ) == 0 )
+		month = 8;
+	else if( strcmp( monthStr, "Sep" ) == 0 )
+		month = 9;
+	else if( strcmp( monthStr, "Oct" ) == 0 )
+		month = 10;
+	else if( strcmp( monthStr, "Nov" ) == 0 )
+		month = 11;
+	else if( strcmp( monthStr, "Dec" ) == 0 )
+		month = 12;
 
-  return (year*10000) + (month*100)+ day;
+	return ( year *10000 ) + ( month *100 ) + day;
 }
-#endif
+
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+#endif 
 // down here so above gets created
 #include "version.h"
 
-const char*		getProtocolVersion()
+const char *getProtocolVersion()
 {
-  static std::string protVersion = BZ_PROTO_VERSION;
-  return protVersion.c_str();
+	static std::string protVersion = BZ_PROTO_VERSION;
+	return protVersion.c_str();
 }
 
-const char*		getServerVersion()
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+const char *getServerVersion()
 {
-  static std::string serverVersion = std::string("BZFS") + getProtocolVersion();
-  return serverVersion.c_str();
+	static std::string serverVersion = std::string( "BZFS" ) + getProtocolVersion();
+	return serverVersion.c_str();
 }
 
-const char*		getMajorMinorVersion()
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+const char *getMajorMinorVersion()
 {
-  static std::string	version = "";
-  if (!version.size()){
-    std::ostringstream	versionStream;
-    versionStream << BZ_MAJOR_VERSION << "." << BZ_MINOR_VERSION;
-    version = versionStream.str();
-  }
-  return version.c_str();
+	static std::string version = "";
+	if( !version.size())
+	{
+		std::ostringstream versionStream;
+		versionStream << BZ_MAJOR_VERSION << "." << BZ_MINOR_VERSION;
+		version = versionStream.str();
+	}
+	return version.c_str();
 }
 
-const char*		getMajorMinorRevVersion()
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+const char *getMajorMinorRevVersion()
 {
-  static std::string	version = "";
-  if (!version.size()){
-    std::ostringstream	versionStream;
-    versionStream << BZ_MAJOR_VERSION << "." << BZ_MINOR_VERSION << "." << BZ_REV;
-    version = versionStream.str();
-  }
-  return version.c_str();
+	static std::string version = "";
+	if( !version.size())
+	{
+		std::ostringstream versionStream;
+		versionStream << BZ_MAJOR_VERSION << "." << BZ_MINOR_VERSION << "." << BZ_REV;
+		version = versionStream.str();
+	}
+	return version.c_str();
 }
 
-const char*		getAppVersion()
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+const char *getAppVersion()
 {
-  static std::string	appVersion = "";
-  if (!appVersion.size()){
-    std::ostringstream	appVersionStream;
-    // TODO add current platform, release, cpu, etc
-    appVersionStream << getMajorMinorRevVersion() << "." << BZ_BUILD_DATE
-	<< "-" << BZ_BUILD_TYPE << "-" << BZ_BUILD_OS;
+	static std::string appVersion = "";
+	if( !appVersion.size())
+	{
+		std::ostringstream appVersionStream;
+		// TODO add current platform, release, cpu, etc
+		appVersionStream << getMajorMinorRevVersion() << "." << BZ_BUILD_DATE << "-" << BZ_BUILD_TYPE << "-" << BZ_BUILD_OS;
 #ifdef HAVE_SDL
-    appVersionStream << "-SDL";
-#endif
-    appVersion = appVersionStream.str();
-  }
-  return appVersion.c_str();
+		appVersionStream << "-SDL";
+#endif 
+		appVersion = appVersionStream.str();
+	}
+	return appVersion.c_str();
 }
 
 // Local Variables: ***

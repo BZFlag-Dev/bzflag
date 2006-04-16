@@ -15,43 +15,44 @@
  *	User interface class for the heads-up display's editable input control.
  */
 
-#ifndef	__HUDUITYPEIN_H__
-#define	__HUDUITYPEIN_H__
+#ifndef __HUDUITYPEIN_H__
+	#define __HUDUITYPEIN_H__
 
-#include "common.h"
+	#include "common.h"
 
 /* system interface headers */
-#include <string>
+	#include <string>
 
 /* common interface headers */
-#include "BzfEvent.h"
-#include "HUDuiControl.h"
+	#include "BzfEvent.h"
+	#include "HUDuiControl.h"
 
 
-class HUDuiTypeIn : public HUDuiControl {
-  public:
-			HUDuiTypeIn();
-			~HUDuiTypeIn();
+class HUDuiTypeIn: public HUDuiControl
+{
+public:
+	HUDuiTypeIn();
+	~HUDuiTypeIn();
 
-    void		setObfuscation(bool on);
-    int			getMaxLength() const;
-    std::string		getString() const;
+	void setObfuscation( bool on );
+	int getMaxLength()const;
+	std::string getString()const;
 
-    void		setMaxLength(int);
-    void		setString(const std::string&);
-    void		setEditing(bool _allowEdit);
+	void setMaxLength( int );
+	void setString( const std::string & );
+	void setEditing( bool _allowEdit );
 
-  protected:
-    bool		doKeyPress(const BzfKeyEvent&);
-    bool		doKeyRelease(const BzfKeyEvent&);
-    void		doRender();
+protected:
+	bool doKeyPress( const BzfKeyEvent & );
+	bool doKeyRelease( const BzfKeyEvent & );
+	void doRender();
 
-  private:
-    int			maxLength;
-    std::string		string;
-    int			cursorPos;
-    bool		allowEdit;
-    bool		obfuscate;
+private:
+	int maxLength;
+	std::string string;
+	int cursorPos;
+	bool allowEdit;
+	bool obfuscate;
 };
 
 #endif // __HUDUITYPEIN_H__

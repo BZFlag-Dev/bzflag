@@ -11,27 +11,28 @@
  */
 
 #ifndef __WALLSCENENODEGENERATOR_H__
-#define __WALLSCENENODEGENERATOR_H__
+	#define __WALLSCENENODEGENERATOR_H__
 
-#include "ObstacleSceneNodeGenerator.h"
-#include "WallObstacle.h"
+	#include "ObstacleSceneNodeGenerator.h"
+	#include "WallObstacle.h"
 
-class WallSceneNodeGenerator : public ObstacleSceneNodeGenerator {
-  friend class SceneDatabaseBuilder;
+class WallSceneNodeGenerator: public ObstacleSceneNodeGenerator
+{
+	friend class SceneDatabaseBuilder;
 
-  public:
-			~WallSceneNodeGenerator();
+public:
+	~WallSceneNodeGenerator();
 
-    WallSceneNode*	getNextNode(float, float, bool);
+	WallSceneNode *getNextNode( float, float, bool );
 
-  protected:
-			WallSceneNodeGenerator(const WallObstacle*);
+protected:
+	WallSceneNodeGenerator( const WallObstacle* );
 
-  private:
-    const WallObstacle*	wall;
+private:
+	const WallObstacle *wall;
 };
 
-#endif
+#endif 
 
 // Local Variables: ***
 // mode:C++ ***

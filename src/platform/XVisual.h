@@ -15,50 +15,49 @@
  */
 
 #ifndef BZF_XVISUAL_H
-#define	BZF_XVISUAL_H
+	#define BZF_XVISUAL_H
 
-#include "BzfVisual.h"
-#include "XDisplay.h"
-#include <X11/Xlib.h>
-#include <X11/Xutil.h>
+	#include "BzfVisual.h"
+	#include "XDisplay.h"
+	#include <X11/Xlib.h>
+	#include <X11/Xutil.h>
 
-class XVisual : public BzfVisual {
-  public:
-			XVisual(const XDisplay*);
-			~XVisual();
+class XVisual: public BzfVisual
+{
+public:
+	XVisual( const XDisplay* );
+	~XVisual();
 
-    void		setLevel(int level);
-    void		setDoubleBuffer(bool);
-    void		setIndex(int minDepth);
-    void		setRGBA(int minRed, int minGreen,
-				int minBlue, int minAlpha);
-    void		setDepth(int minDepth);
-    void		setStencil(int minDepth);
-    void		setAccum(int minRed, int minGreen,
-				int minBlue, int minAlpha);
-    void		setStereo(bool);
-    void		setMultisample(int minSamples);
+	void setLevel( int level );
+	void setDoubleBuffer( bool );
+	void setIndex( int minDepth );
+	void setRGBA( int minRed, int minGreen, int minBlue, int minAlpha );
+	void setDepth( int minDepth );
+	void setStencil( int minDepth );
+	void setAccum( int minRed, int minGreen, int minBlue, int minAlpha );
+	void setStereo( bool );
+	void setMultisample( int minSamples );
 
-    bool		build();
+	bool build();
 
-    // for other X stuff
-    XVisualInfo*	get();
+	// for other X stuff
+	XVisualInfo *get();
 
-  protected:
-    int			findAttribute(int attribute) const;
-    void		appendAttribute(int attribute, int value);
-    void		removeAttribute(int index);
-    void		editAttribute(int index, int value);
+protected:
+	int findAttribute( int attribute )const;
+	void appendAttribute( int attribute, int value );
+	void removeAttribute( int index );
+	void editAttribute( int index, int value );
 
-    bool		matchRequirements(XVisualInfo*) const;
-    static bool		visualClassIsBetter(int thisBetter, int thanThis);
+	bool matchRequirements( XVisualInfo* )const;
+	static bool visualClassIsBetter( int thisBetter, int thanThis );
 
-  private:
-    XDisplay::Rep*	display;
-    bool		multisampleExt;
-    int			attributes[65];
-    int			attributeCount;
-    XVisualInfo*	visual;
+private:
+	XDisplay::Rep *display;
+	bool multisampleExt;
+	int attributes[65];
+	int attributeCount;
+	XVisualInfo *visual;
 };
 
 #endif // BZF_XVISUAL_H
@@ -70,4 +69,3 @@ class XVisual : public BzfVisual {
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

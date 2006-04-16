@@ -25,44 +25,59 @@
 
 MenuDefaultKey MenuDefaultKey::instance;
 
-MenuDefaultKey::MenuDefaultKey() { }
-MenuDefaultKey::~MenuDefaultKey() { }
+MenuDefaultKey::MenuDefaultKey(){}
+MenuDefaultKey::~MenuDefaultKey(){}
 
-MenuDefaultKey* MenuDefaultKey::getInstance()
+MenuDefaultKey *MenuDefaultKey::getInstance()
 {
-  return &instance;
+	return  &instance;
 }
 
-bool MenuDefaultKey::keyPress(const BzfKeyEvent& key)
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+bool MenuDefaultKey::keyPress( const BzfKeyEvent &key )
 {
-  switch (key.ascii) {
-    case 27:	// escape
-      playLocalSound(SFX_DROP_FLAG);
-      HUDDialogStack::get()->pop();
-      return true;
+	switch( key.ascii )
+	{
+		case 27:
+			// escape
+			playLocalSound( SFX_DROP_FLAG );
+			HUDDialogStack::get()->pop();
+			return true;
 
-    case 13:	// return
-      playLocalSound(SFX_GRAB_FLAG);
-      HUDDialogStack::get()->top()->execute();
-      return true;
-  }
+		case 13:
+			// return
+			playLocalSound( SFX_GRAB_FLAG );
+			HUDDialogStack::get()->top()->execute();
+			return true;
+	}
 
-  if (KEYMGR.get(key, true) == "quit") {
-    CommandsStandard::quit();
-    return true;
-  }
+	if( KEYMGR.get( key, true ) == "quit" )
+	{
+		CommandsStandard::quit();
+		return true;
+	}
 
-  return false;
+	return false;
 }
 
-bool MenuDefaultKey::keyRelease(const BzfKeyEvent& key)
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+bool MenuDefaultKey::keyRelease( const BzfKeyEvent &key )
 {
-  switch (key.ascii) {
-    case 27:	// escape
-    case 13:	// return
-      return true;
-  }
-  return false;
+	switch( key.ascii )
+	{
+		case 27:
+			// escape
+		case 13:
+			// return
+			return true;
+	}
+	return false;
 }
 
 

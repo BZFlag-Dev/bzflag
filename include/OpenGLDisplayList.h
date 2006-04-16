@@ -14,44 +14,46 @@
  *	Encapsulates an OpenGL display list.
  */
 
-#ifndef	BZF_OPENGL_DISPLAYLIST_H
-#define	BZF_OPENGL_DISPLAYLIST_H
+#ifndef BZF_OPENGL_DISPLAYLIST_H
+	#define BZF_OPENGL_DISPLAYLIST_H
 
-#include "common.h"
-#include "bzfgl.h"
+	#include "common.h"
+	#include "bzfgl.h"
 
-class OpenGLDisplayList {
-  public:
-			OpenGLDisplayList();
-			OpenGLDisplayList(const OpenGLDisplayList&);
-			~OpenGLDisplayList();
-    OpenGLDisplayList&	operator=(const OpenGLDisplayList&);
+class OpenGLDisplayList
+{
+public:
+	OpenGLDisplayList();
+	OpenGLDisplayList( const OpenGLDisplayList & );
+	~OpenGLDisplayList();
+	OpenGLDisplayList &operator = ( const OpenGLDisplayList & );
 
-    bool		operator==(const OpenGLDisplayList&) const;
-    bool		operator!=(const OpenGLDisplayList&) const;
-    bool		operator<(const OpenGLDisplayList&) const;
-    bool		isValid() const;
-    GLuint		getList() const;
+	bool operator == ( const OpenGLDisplayList & )const;
+	bool operator != ( const OpenGLDisplayList & )const;
+	bool operator < ( const OpenGLDisplayList & )const;
+	bool isValid()const;
+	GLuint getList()const;
 
-    void		begin();
-    void		end();
-    void		execute();
+	void begin();
+	void end();
+	void execute();
 
-  private:
-    class Rep {
-      public:
-			Rep();
-			~Rep();
-      public:
-	int		refCount;
-	GLuint		list;
-    };
+private:
+	class Rep
+	{
+public:
+		Rep();
+		~Rep();
+public:
+		int refCount;
+		GLuint list;
+	};
 
-    void		ref();
-    bool		unref();
+	void ref();
+	bool unref();
 
-  private:
-    Rep*		rep;
+private:
+	Rep *rep;
 };
 
 #endif // BZF_OPENGL_DISPLAYLIST_H
@@ -63,4 +65,3 @@ class OpenGLDisplayList {
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

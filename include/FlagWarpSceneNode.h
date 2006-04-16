@@ -15,42 +15,46 @@
  *	that appears when a flag is coming or going.
  */
 
-#ifndef	BZF_FLAG_WARP_SCENE_NODE_H
-#define	BZF_FLAG_WARP_SCENE_NODE_H
+#ifndef BZF_FLAG_WARP_SCENE_NODE_H
+	#define BZF_FLAG_WARP_SCENE_NODE_H
 
-#include "common.h"
-#include "SceneNode.h"
+	#include "common.h"
+	#include "SceneNode.h"
 
-class FlagWarpSceneNode : public SceneNode {
-  public:
-			FlagWarpSceneNode(const GLfloat pos[3]);
-			~FlagWarpSceneNode();
+class FlagWarpSceneNode: public SceneNode
+{
+public:
+	FlagWarpSceneNode( const GLfloat pos[3] );
+	~FlagWarpSceneNode();
 
-    void		setSizeFraction(GLfloat);
+	void setSizeFraction( GLfloat );
 
-    GLfloat		getDistance(const GLfloat*) const;
-    void		move(const GLfloat pos[3]);
+	GLfloat getDistance( const GLfloat* )const;
+	void move( const GLfloat pos[3] );
 
-    void		notifyStyleChange();
-    void		addRenderNodes(SceneRenderer&);
+	void notifyStyleChange();
+	void addRenderNodes( SceneRenderer & );
 
-  protected:
-    class FlagWarpRenderNode : public RenderNode {
-      public:
-			FlagWarpRenderNode(const FlagWarpSceneNode*);
-			~FlagWarpRenderNode();
-	void		render();
-	const GLfloat*	getPosition() const { return sceneNode->getSphere(); }
-      private:
-	const FlagWarpSceneNode* sceneNode;
-    };
-    friend class FlagWarpRenderNode;
+protected:
+	class FlagWarpRenderNode: public RenderNode
+	{
+public:
+		FlagWarpRenderNode( const FlagWarpSceneNode* );
+		~FlagWarpRenderNode();
+		void render();
+		const GLfloat *getPosition()const
+		{
+			return sceneNode->getSphere();
+} private:
+		const FlagWarpSceneNode *sceneNode;
+	};
+	friend class FlagWarpRenderNode;
 
-  private:
-    GLfloat		size;
-    OpenGLGState	gstate;
-    FlagWarpRenderNode	renderNode;
-    static const GLfloat color[7][3];
+private:
+	GLfloat size;
+	OpenGLGState gstate;
+	FlagWarpRenderNode renderNode;
+	static const GLfloat color[7][3];
 };
 
 #endif // BZF_FLAG_WARP_SCENE_NODE_H
@@ -62,4 +66,3 @@ class FlagWarpSceneNode : public SceneNode {
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

@@ -11,54 +11,58 @@
  */
 
 #ifndef __ARES_HANDLER_H__
-#define __ARES_HANDLER_H__
+	#define __ARES_HANDLER_H__
 
 // bzflag global header
-#include "global.h"
+	#include "global.h"
 
 /* common implementation headers */
-#include "network.h"
+	#include "network.h"
 
-extern "C" {
-#include "ares.h"
+extern "C"
+{
+	#include "ares.h"
 }
 
-class AresHandler {
- public:
-  AresHandler();
-  ~AresHandler();
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
-  enum ResolutionStatus {
-    None = 0,
-    Failed,
-    HbAPending,
-    HbASucceeded,
-    HbNPending,
-    HbNSucceeded
-  };
+class AresHandler
+{
+public:
+	AresHandler();
+	~AresHandler();
 
-  void		queryHostname(struct sockaddr *clientAddr);
-  void		queryHost(char *hostName);
-  const char   *getHostname();
-  ResolutionStatus getHostAddress(struct in_addr *clientAddr);
-  void		setFd(fd_set *read_set, fd_set *write_set, int &maxFile);
-  void		process(fd_set *read_set, fd_set *write_set);
-  ResolutionStatus getStatus() {return status;};
- private:
-  static void	staticCallback(void *arg, int statusCallback,
-			     struct hostent *hostent);
-  void		callback(int status, struct hostent *hostent);
-  // peer's network hostname (malloc/free'd)
-  char	       *hostname;
-  in_addr	hostAddress;
-  ares_channel	aresChannel;
-  ResolutionStatus status;
-  bool		aresFailed;
+	enum ResolutionStatus
+	{
+		None = 0, Failed, HbAPending, HbASucceeded, HbNPending, HbNSucceeded
+	};
 
-  struct in_addr requestedAddress;
+	void queryHostname( struct sockaddr *clientAddr );
+	void queryHost( char *hostName );
+	const char *getHostname();
+	ResolutionStatus getHostAddress( struct in_addr *clientAddr );
+	void setFd( fd_set *read_set, fd_set *write_set, int &maxFile );
+	void process( fd_set *read_set, fd_set *write_set );
+	ResolutionStatus getStatus()
+	{
+		return status;
+	};
+private:
+	static void staticCallback( void *arg, int statusCallback, struct hostent *hostent );
+	void callback( int status, struct hostent *hostent );
+	// peer's network hostname (malloc/free'd)
+	char *hostname;
+	in_addr hostAddress;
+	ares_channel aresChannel;
+	ResolutionStatus status;
+	bool aresFailed;
+
+	struct in_addr requestedAddress;
 };
 
-#endif
+#endif 
 
 // Local Variables: ***
 // mode:C++ ***
@@ -67,4 +71,3 @@ class AresHandler {
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

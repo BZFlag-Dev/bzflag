@@ -11,28 +11,29 @@
  */
 
 #ifndef __COMMANDS_H__
-#define __COMMANDS_H__
+	#define __COMMANDS_H__
 
 // common - 1st
-#include "common.h"
+	#include "common.h"
 
 /* common interface headers */
-#include "CommandManager.h"
+	#include "CommandManager.h"
 
 
-typedef struct CommandListItem {
-  const char* name;
-  CommandManager::CommandFunction func;
-  const char* help;
+typedef struct CommandListItem
+{
+	const char *name;
+	CommandManager::CommandFunction func;
+	const char *help;
 } CmdListItem;
 
 /* FIXME -- gcc is not liking array type with sizeof() without size
  * for some reason */
-#ifdef SNAPPING
+	#ifdef SNAPPING
 extern const CmdListItem commandList[26];
-#else
+	#else 
 extern const CmdListItem commandList[25];
-#endif
+	#endif 
 
 #endif /* __COMMANDS_H__ */
 

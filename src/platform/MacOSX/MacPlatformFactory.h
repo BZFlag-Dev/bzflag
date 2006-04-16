@@ -15,35 +15,35 @@
  */
 
 #ifndef BZF_WINPLATFORM_FACTORY_H
-#define BZF_WINPLATFORM_FACTORY_H
+	#define BZF_WINPLATFORM_FACTORY_H
 
-#include "PlatformFactory.h"
+	#include "PlatformFactory.h"
 
-class MacPlatformFactory : public PlatformFactory
+class MacPlatformFactory: public PlatformFactory
 {
-  public:
-    MacPlatformFactory();
-    ~MacPlatformFactory();
+public:
+	MacPlatformFactory();
+	~MacPlatformFactory();
 
-    BzfDisplay* createDisplay(const char* name, const char* videoFormat);
-    BzfVisual* createVisual(const BzfDisplay*);
-    BzfWindow* createWindow(const BzfDisplay*, BzfVisual*);
+	BzfDisplay *createDisplay( const char *name, const char *videoFormat );
+	BzfVisual *createVisual( const BzfDisplay* );
+	BzfWindow *createWindow( const BzfDisplay *, BzfVisual* );
 
-#ifdef HAVE_SDL
-    BzfJoystick* createJoystick();
-#endif
+	#ifdef HAVE_SDL
+	BzfJoystick *createJoystick();
+	#endif 
 
-  private:
-    //MacPlatformFactory(const MacPlatformFactory&);
-    //MacPlatformFactory&  operator=(const MacPlatformFactory&);
+private:
+	//MacPlatformFactory(const MacPlatformFactory&);
+	//MacPlatformFactory&  operator=(const MacPlatformFactory&);
 
-    BzfMedia* createMedia();
+	BzfMedia *createMedia();
 
-  private:
-    BzfWindow *window;
-    BzfDisplay *display;
-    BzfVisual *visual;
-    BzfMedia *media;
+private:
+	BzfWindow *window;
+	BzfDisplay *display;
+	BzfVisual *visual;
+	BzfMedia *media;
 };
 
 #endif // BZF_WINPLATFORM_FACTORY_H
@@ -55,4 +55,3 @@ class MacPlatformFactory : public PlatformFactory
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

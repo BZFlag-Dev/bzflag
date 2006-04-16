@@ -25,115 +25,158 @@
 // HUDuiLabel
 //
 
-HUDuiLabel::HUDuiLabel() : HUDuiControl()
+HUDuiLabel::HUDuiLabel(): HUDuiControl()
 {
-  darker = false;
-  params = NULL;
-  color[0] = textColor[0];
-  color[1] = textColor[1];
-  color[2] = textColor[2];
+	darker = false;
+	params = NULL;
+	color[0] = textColor[0];
+	color[1] = textColor[1];
+	color[2] = textColor[2];
 }
+
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
 HUDuiLabel::~HUDuiLabel()
 {
-  if (params)
-    delete params;
+	if( params )
+		delete params;
 }
 
-std::string		HUDuiLabel::getString() const
-{
-  std::string theString;
-  Bundle *bdl = BundleMgr::getCurrentBundle();
-  if (params)
-    theString = bdl->formatMessage(string, params);
-  else
-    theString = bdl->getLocalString(string);
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
-  return theString;
+std::string HUDuiLabel::getString()const
+{
+	std::string theString;
+	Bundle *bdl = BundleMgr::getCurrentBundle();
+	if( params )
+		theString = bdl->formatMessage( string, params );
+	else
+		theString = bdl->getLocalString( string );
+
+	return theString;
 }
 
-void			HUDuiLabel::setString(const std::string& _string, const std::vector<std::string> *_params)
-{
-  string = _string;
-  if (_params) {
-    if (params != NULL)
-      delete params;
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
-    params = new std::vector<std::string>(*_params);
-  }
-  onSetFont();
+void HUDuiLabel::setString( const std::string &_string, const std::vector < std::string >  *_params )
+{
+	string = _string;
+	if( _params )
+	{
+		if( params != NULL )
+			delete params;
+
+		params = new std::vector < std::string > ( *_params );
+	}
+	onSetFont();
 }
 
-void			HUDuiLabel::onSetFont()
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+void HUDuiLabel::onSetFont()
 {
-  HUDuiControl::onSetFont();
+	HUDuiControl::onSetFont();
 }
 
-bool			HUDuiLabel::doKeyPress(const BzfKeyEvent& key)
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+bool HUDuiLabel::doKeyPress( const BzfKeyEvent &key )
 {
-  if (key.ascii == 0) switch (key.button) {
-    case BzfKeyEvent::Up:
-      HUDui::setFocus(getPrev());
-      break;
+	if( key.ascii == 0 )
+	switch( key.button )
+	{
+		case BzfKeyEvent::Up: HUDui::setFocus( getPrev());
+		break;
 
-    case BzfKeyEvent::Down:
-      HUDui::setFocus(getNext());
-      break;
+		case BzfKeyEvent::Down: HUDui::setFocus( getNext());
+		break;
 
-    default:
-      return false;
-  }
+		default:
+			return false;
+	}
 
-  if (key.ascii == '\t') {
-    HUDui::setFocus(getNext());
-    return true;
-  }
+	if( key.ascii == '\t' )
+	{
+		HUDui::setFocus( getNext());
+		return true;
+	}
 
-  switch (key.ascii) {
-    case 13:
-    case 27:
-      return false;
-  }
-  return true;
+	switch( key.ascii )
+	{
+		case 13:
+		case 27:
+			return false;
+	}
+	return true;
 }
 
-bool			HUDuiLabel::doKeyRelease(const BzfKeyEvent&)
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+bool HUDuiLabel::doKeyRelease( const BzfKeyEvent & )
 {
-  return false;
+	return false;
 }
 
-void			HUDuiLabel::setDarker(bool d)
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+void HUDuiLabel::setDarker( bool d )
 {
-  darker = d;
+	darker = d;
 }
 
-void			HUDuiLabel::setColor(GLfloat r, GLfloat g, GLfloat b)
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+void HUDuiLabel::setColor( GLfloat r, GLfloat g, GLfloat b )
 {
-  color[0] = r;
-  color[1] = g;
-  color[2] = b;
+	color[0] = r;
+	color[1] = g;
+	color[2] = b;
 }
 
-void			HUDuiLabel::doRender()
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+void HUDuiLabel::doRender()
 {
-  if (getFontFace() < 0) {
-    return;
-  }
-  // render string
-  FontManager &fm = FontManager::instance();
-  float darkness;
-  if (hasFocus()) {
-    darkness = 1.0f;
-  } else if (!darker) {
-    darkness = 0.7f;
-  } else {
-    darkness = 0.4f;
-  }
-  fm.setDarkness(darkness);
-  fm.drawString(getX(), getY(), 0,
-		getFontFace(), getFontSize(),
-		getString(), color);
-  fm.setDarkness(1.0f);
+	if( getFontFace() < 0 )
+	{
+		return ;
+	}
+	// render string
+	FontManager &fm = FontManager::instance();
+	float darkness;
+	if( hasFocus())
+	{
+		darkness = 1.0f;
+	}
+	else if( !darker )
+	{
+		darkness = 0.7f;
+	}
+	else
+	{
+		darkness = 0.4f;
+	}
+	fm.setDarkness( darkness );
+	fm.drawString( getX(), getY(), 0, getFontFace(), getFontSize(), getString(), color );
+	fm.setDarkness( 1.0f );
 }
 
 // Local Variables: ***
@@ -143,4 +186,3 @@ void			HUDuiLabel::doRender()
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

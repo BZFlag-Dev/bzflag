@@ -11,33 +11,34 @@
  */
 
 #ifndef BZF_SGI_IMAGE_FILE_H
-#define BZF_SGI_IMAGE_FILE_H
+	#define BZF_SGI_IMAGE_FILE_H
 
-#include "ImageFile.h"
+	#include "ImageFile.h"
 
 
 /** This class represents a SGI image file. It implements read() from
-    ImageFile. */
-class SGIImageFile : public ImageFile {
+ImageFile. */
+class SGIImageFile: public ImageFile
+{
 public:
-  SGIImageFile(std::istream*);
-  virtual ~SGIImageFile();
+	SGIImageFile( std::istream* );
+	virtual ~SGIImageFile();
 
-  /** This function returns the default extension of SGI image files. */
-  static std::string	getExtension();
+	/** This function returns the default extension of SGI image files. */
+	static std::string getExtension();
 
-  /** This function reads image data from a SGI image file. */
-  virtual bool		read(void* buffer);
+	/** This function reads image data from a SGI image file. */
+	virtual bool read( void *buffer );
 
 protected:
-  bool			readVerbatim(void* buffer);
-  bool			readRLE(void* buffer);
+	bool readVerbatim( void *buffer );
+	bool readRLE( void *buffer );
 
 private:
-  bool			isVerbatim;
+	bool isVerbatim;
 };
 
-#endif
+#endif 
 
 // Local Variables: ***
 // mode:C++ ***
@@ -46,4 +47,3 @@ private:
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

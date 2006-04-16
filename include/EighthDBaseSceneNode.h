@@ -16,34 +16,35 @@
  */
 
 #ifndef BZF_EIGHTHD_BASE_SCENE_NODE_H
-#define BZF_EIGHTHD_BASE_SCENE_NODE_H
+	#define BZF_EIGHTHD_BASE_SCENE_NODE_H
 
-#include "common.h"
-#include "EighthDimSceneNode.h"
+	#include "common.h"
+	#include "EighthDimSceneNode.h"
 
-class EighthDBaseSceneNode : public EighthDimSceneNode {
-  public:
-			EighthDBaseSceneNode(const float pos[3],
-					const float size[3], float rotation);
-			~EighthDBaseSceneNode();
-    void		notifyStyleChange();
-    void		addRenderNodes(SceneRenderer&);
-  protected:
-    class EighthDBaseRenderNode : public RenderNode {
-      public:
-			EighthDBaseRenderNode(const EighthDBaseSceneNode *,
-				const float pos[3],
-				const float size[3], float rotation);
-			~EighthDBaseRenderNode();
-	void		render();
-	const GLfloat *	getPosition() const { return sceneNode->getSphere(); }
-      private:
-	const EighthDBaseSceneNode *sceneNode;
-	GLfloat corner[8][3];
-    };
-  private:
-    OpenGLGState	  gstate;
-    EighthDBaseRenderNode renderNode;
+class EighthDBaseSceneNode: public EighthDimSceneNode
+{
+public:
+	EighthDBaseSceneNode( const float pos[3], const float size[3], float rotation );
+	~EighthDBaseSceneNode();
+	void notifyStyleChange();
+	void addRenderNodes( SceneRenderer & );
+protected:
+	class EighthDBaseRenderNode: public RenderNode
+	{
+public:
+		EighthDBaseRenderNode( const EighthDBaseSceneNode *, const float pos[3], const float size[3], float rotation );
+		~EighthDBaseRenderNode();
+		void render();
+		const GLfloat *getPosition()const
+		{
+			return sceneNode->getSphere();
+} private:
+		const EighthDBaseSceneNode *sceneNode;
+		GLfloat corner[8][3];
+	};
+private:
+	OpenGLGState gstate;
+	EighthDBaseRenderNode renderNode;
 };
 
 #endif // BZF_EIGHTHD_BASE_SCENE_NODE_H
@@ -55,4 +56,3 @@ class EighthDBaseSceneNode : public EighthDimSceneNode {
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

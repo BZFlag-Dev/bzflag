@@ -11,22 +11,22 @@
  */
 
 #ifndef __TRIANGULATE_H__
-#define __TRIANGULATE_H__
+	#define __TRIANGULATE_H__
 
 
 /* system interface headers */
-#include <vector>
+	#include <vector>
 
 
-typedef struct {
-  int indices[3];
+typedef struct
+{
+	int indices[3];
 } TriIndices;
 
-extern void triangulateFace(int count, const float* const* verts,
-			    std::vector<TriIndices>& tris);
+extern void triangulateFace( int count, const float *const * verts, std::vector < TriIndices >  &tris );
 
 
-#endif  /* __TRIANGULATE_H__ */
+#endif /* __TRIANGULATE_H__ */
 
 // Local variables: ***
 // mode: C++ ***

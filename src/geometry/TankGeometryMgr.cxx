@@ -39,48 +39,61 @@ using namespace TankGeometryUtils;
 // ---------------
 
 // the display lists
-static GLuint displayLists[LastTankShadow][LastTankLOD]
-			  [LastTankSize][LastTankPart];
+static GLuint displayLists[LastTankShadow][LastTankLOD][LastTankSize][LastTankPart];
 
 // triangle counds
-static int partTriangles[LastTankShadow][LastTankLOD]
-			[LastTankSize][LastTankPart];
+static int partTriangles[LastTankShadow][LastTankLOD][LastTankSize][LastTankPart];
 
 // the scaling factors
-static GLfloat scaleFactors[LastTankSize][3] = {
-  {1.0f, 1.0f, 1.0f},   // Normal
-  {1.0f, 1.0f, 1.0f},   // Obese
-  {1.0f, 1.0f, 1.0f},   // Tiny
-  {1.0f, 0.001f, 1.0f}, // Narrow
-  {1.0f, 1.0f, 1.0f}    // Thief
+static GLfloat scaleFactors[LastTankSize][3] = 
+{
+	{
+		1.0f, 1.0f, 1.0f
+	}
+
+	,  // Normal
+	{
+		1.0f, 1.0f, 1.0f
+	}
+
+	,  // Obese
+	{
+		1.0f, 1.0f, 1.0f
+	}
+
+	,  // Tiny
+	{
+		1.0f, 0.001f, 1.0f
+	}
+
+	,  // Narrow
+	{
+		1.0f, 1.0f, 1.0f
+	} // Thief
 };
 // the current scaling factors
-static const float* currentScaleFactor = scaleFactors[Normal];
+static const float *currentScaleFactor = scaleFactors[Normal];
 
 // the current shadow mode (used to remove glNormal3f and glTexcoord2f calls)
 static TankShadow shadowMode = ShadowOn;
 
 // arrays of functions to avoid large switch statements
-typedef int (*partFunction)(void);
-static const partFunction partFunctions[LastTankLOD][BasicTankParts] = {
-  { buildLowBody,
-    buildLowBarrel,
-    buildLowTurret,
-    buildLowLCasing,
-    buildLowRCasing
-  },
-  { buildMedBody,
-    buildMedBarrel,
-    buildMedTurret,
-    buildMedLCasing,
-    buildMedRCasing
-  },
-  { buildHighBody,
-    buildHighBarrel,
-    buildHighTurret,
-    buildHighLCasing,
-    buildHighRCasing
-  }
+typedef int( *partFunction )( void );
+static const partFunction partFunctions[LastTankLOD][BasicTankParts] = 
+{
+	{
+		buildLowBody, buildLowBarrel, buildLowTurret, buildLowLCasing, buildLowRCasing
+	}
+
+	, 
+	{
+		buildMedBody, buildMedBarrel, buildMedTurret, buildMedLCasing, buildMedRCasing
+	}
+
+	, 
+	{
+		buildHighBody, buildHighBarrel, buildHighTurret, buildHighLCasing, buildHighRCasing
+	}
 };
 
 
@@ -88,9 +101,9 @@ static const partFunction partFunctions[LastTankLOD][BasicTankParts] = {
 // -------------------------
 
 static void setupScales();
-static void freeContext(void *data);
-static void initContext(void *data);
-static void bzdbCallback(const std::string& str, void *data);
+static void freeContext( void *data );
+static void initContext( void *data );
+static void bzdbCallback( const std::string &str, void *data );
 
 
 /****************************************************************************/
@@ -101,183 +114,241 @@ static void bzdbCallback(const std::string& str, void *data);
 
 void TankGeometryMgr::init()
 {
-  // initialize the lists to invalid
-  for (int shadow = 0; shadow < LastTankShadow; shadow++) {
-    for (int lod = 0; lod < LastTankLOD; lod++) {
-      for (int size = 0; size < LastTankSize; size++) {
-	for (int part = 0; part < LastTankPart; part++) {
-	  displayLists[shadow][lod][size][part] = INVALID_GL_LIST_ID;
-	  partTriangles[shadow][lod][size][part] = 0;
+	// initialize the lists to invalid
+	for( int shadow = 0; shadow < LastTankShadow; shadow++ )
+	{
+		for( int lod = 0; lod < LastTankLOD; lod++ )
+		{
+			for( int size = 0; size < LastTankSize; size++ )
+			{
+				for( int part = 0; part < LastTankPart; part++ )
+				{
+					displayLists[shadow][lod][size][part] = INVALID_GL_LIST_ID;
+					partTriangles[shadow][lod][size][part] = 0;
+				}
+			}
+		}
 	}
-      }
-    }
-  }
 
-  // install the BZDB callbacks
-  // This MUST be done after BZDB has been initialized in main()
-  BZDB.addCallback (StateDatabase::BZDB_OBESEFACTOR, bzdbCallback, NULL);
-  BZDB.addCallback (StateDatabase::BZDB_TINYFACTOR, bzdbCallback, NULL);
-  BZDB.addCallback (StateDatabase::BZDB_THIEFTINYFACTOR, bzdbCallback, NULL);
-  BZDB.addCallback ("animatedTreads", bzdbCallback, NULL);
+	// install the BZDB callbacks
+	// This MUST be done after BZDB has been initialized in main()
+	BZDB.addCallback( StateDatabase::BZDB_OBESEFACTOR, bzdbCallback, NULL );
+	BZDB.addCallback( StateDatabase::BZDB_TINYFACTOR, bzdbCallback, NULL );
+	BZDB.addCallback( StateDatabase::BZDB_THIEFTINYFACTOR, bzdbCallback, NULL );
+	BZDB.addCallback( "animatedTreads", bzdbCallback, NULL );
 
-  // install the context initializer
-  OpenGLGState::registerContextInitializer (freeContext, initContext, NULL);
+	// install the context initializer
+	OpenGLGState::registerContextInitializer( freeContext, initContext, NULL );
 
-  // setup the scaleFactors
-  setupScales();
+	// setup the scaleFactors
+	setupScales();
 
-  return;
+	return ;
 }
+
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
 
 void TankGeometryMgr::kill()
 {
-  // remove the BZDB callbacks
-  BZDB.removeCallback (StateDatabase::BZDB_OBESEFACTOR, bzdbCallback, NULL);
-  BZDB.removeCallback (StateDatabase::BZDB_TINYFACTOR, bzdbCallback, NULL);
-  BZDB.removeCallback (StateDatabase::BZDB_THIEFTINYFACTOR, bzdbCallback, NULL);
-  BZDB.removeCallback ("animatedTreads", bzdbCallback, NULL);
+	// remove the BZDB callbacks
+	BZDB.removeCallback( StateDatabase::BZDB_OBESEFACTOR, bzdbCallback, NULL );
+	BZDB.removeCallback( StateDatabase::BZDB_TINYFACTOR, bzdbCallback, NULL );
+	BZDB.removeCallback( StateDatabase::BZDB_THIEFTINYFACTOR, bzdbCallback, NULL );
+	BZDB.removeCallback( "animatedTreads", bzdbCallback, NULL );
 
-  // remove the context initializer callback
-  OpenGLGState::unregisterContextInitializer(freeContext, initContext, NULL);
+	// remove the context initializer callback
+	OpenGLGState::unregisterContextInitializer( freeContext, initContext, NULL );
 
-  return;
+	return ;
 }
+
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
 
 void TankGeometryMgr::deleteLists()
 {
-  // delete the lists that have been aquired
-  for (int shadow = 0; shadow < LastTankShadow; shadow++) {
-    for (int lod = 0; lod < LastTankLOD; lod++) {
-      for (int size = 0; size < LastTankSize; size++) {
-	for (int part = 0; part < LastTankPart; part++) {
-	  GLuint& list = displayLists[shadow][lod][size][part];
-	  if (list != INVALID_GL_LIST_ID) {
-	    glDeleteLists(list, 1);
-	    list = INVALID_GL_LIST_ID;
-	  }
+	// delete the lists that have been aquired
+	for( int shadow = 0; shadow < LastTankShadow; shadow++ )
+	{
+		for( int lod = 0; lod < LastTankLOD; lod++ )
+		{
+			for( int size = 0; size < LastTankSize; size++ )
+			{
+				for( int part = 0; part < LastTankPart; part++ )
+				{
+					GLuint &list = displayLists[shadow][lod][size][part];
+					if( list != INVALID_GL_LIST_ID )
+					{
+						glDeleteLists( list, 1 );
+						list = INVALID_GL_LIST_ID;
+					}
+				}
+			}
+		}
 	}
-      }
-    }
-  }
-  return;
+	return ;
 }
+
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
 
 void TankGeometryMgr::buildLists()
 {
-  // setup the tread style
-  setTreadStyle(BZDB.evalInt("treadStyle"));
+	// setup the tread style
+	setTreadStyle( BZDB.evalInt( "treadStyle" ));
 
-  // setup the scale factors
-  setupScales();
-  currentScaleFactor = scaleFactors[Normal];
-  const bool animated = BZDBCache::animatedTreads;
+	// setup the scale factors
+	setupScales();
+	currentScaleFactor = scaleFactors[Normal];
+	const bool animated = BZDBCache::animatedTreads;
 
-  // setup the quality level
-  const int divisionLevels[4][2] = { // wheel divs, tread divs
-    {4, 4},   // low
-    {8, 16},  // med
-    {12, 24}, // high
-    {16, 32}  // experimental
-  };
-  int quality = RENDERER.useQuality();
-  if (quality < _LOW_QUALITY) {
-    quality = _LOW_QUALITY;
-  } else if (quality > _EXPEREMENTAL_QUALITY) {
-    quality = _EXPEREMENTAL_QUALITY;
-  }
-  int wheelDivs = divisionLevels[quality][0];
-  int treadDivs = divisionLevels[quality][1];
+	// setup the quality level
+	const int divisionLevels[4][2] = 
+	{
+		// wheel divs, tread divs
+		{
+			4, 4
+		}
 
-  for (int shadow = 0; shadow < LastTankShadow; shadow++) {
-    for (int lod = 0; lod < LastTankLOD; lod++) {
-      for (int size = 0; size < LastTankSize; size++) {
+		,  // low
+		{
+			8, 16
+		}
 
-	// only do the basics, unless we're making an animated tank
-	int lastPart = BasicTankParts;
-	if (animated) {
-	  lastPart = HighTankParts;
+		,  // med
+		{
+			12, 24
+		}
+
+		,  // high
+		{
+			16, 32
+		} // experimental
+	};
+	int quality = RENDERER.useQuality();
+	if( quality < _LOW_QUALITY )
+	{
+		quality = _LOW_QUALITY;
 	}
+	else if( quality > _EXPEREMENTAL_QUALITY )
+	{
+		quality = _EXPEREMENTAL_QUALITY;
+	}
+	int wheelDivs = divisionLevels[quality][0];
+	int treadDivs = divisionLevels[quality][1];
 
-	// set the shadow mode for the doNormal3f() and doTexcoord2f() calls
-	shadowMode = (TankShadow) shadow;
+	for( int shadow = 0; shadow < LastTankShadow; shadow++ )
+	{
+		for( int lod = 0; lod < LastTankLOD; lod++ )
+		{
+			for( int size = 0; size < LastTankSize; size++ )
+			{
 
-	for (int part = 0; part < lastPart; part++) {
+				// only do the basics, unless we're making an animated tank
+				int lastPart = BasicTankParts;
+				if( animated )
+				{
+					lastPart = HighTankParts;
+				}
 
-	  GLuint& list = displayLists[shadow][lod][size][part];
-	  int& count = partTriangles[shadow][lod][size][part];
+				// set the shadow mode for the doNormal3f() and doTexcoord2f() calls
+				shadowMode = ( TankShadow )shadow;
 
-	  // get a new OpenGL display list
-	  list = glGenLists(1);
-	  glNewList(list, GL_COMPILE);
+				for( int part = 0; part < lastPart; part++ )
+				{
 
-	  // setup the scale factor
-	  currentScaleFactor = scaleFactors[size];
+					GLuint &list = displayLists[shadow][lod][size][part];
+					int &count = partTriangles[shadow][lod][size][part];
 
-	  if ((part <= Turret) || (!animated)) {
-	    // the basic parts
-	    count = partFunctions[lod][part]();
-	  } else {
-	    // the animated parts
-	    if (part == LeftCasing) {
-	      count = buildHighLCasingAnim();
-	    }
-	    else if (part == RightCasing) {
-	      count = buildHighRCasingAnim();
-	    }
-	    else if (part == LeftTread) {
-	      count = buildHighLTread(treadDivs);
-	    }
-	    else if (part == RightTread) {
-	      count = buildHighRTread(treadDivs);
-	    }
-	    else if ((part >= LeftWheel0) && (part <= LeftWheel3)) {
-	      int wheel = part - LeftWheel0;
-	      count = buildHighLWheel(wheel, (float)wheel * (float)(M_PI / 2.0),
-				      wheelDivs);
-	    }
-	    else if ((part >= RightWheel0) && (part <= RightWheel3)) {
-	      int wheel = part - RightWheel0;
-	      count = buildHighRWheel(wheel, (float)wheel * (float)(M_PI / 2.0),
-				      wheelDivs);
-	    }
-	  }
+					// get a new OpenGL display list
+					list = glGenLists( 1 );
+					glNewList( list, GL_COMPILE );
 
-	  // end of the list
-	  glEndList();
+					// setup the scale factor
+					currentScaleFactor = scaleFactors[size];
 
-	} // part
-      } // size
-    } // lod
-  } // shadow
+					if(( part <= Turret ) || ( !animated ))
+					{
+						// the basic parts
+						count = partFunctions[lod][part]();
+					}
+					else
+					{
+						// the animated parts
+						if( part == LeftCasing )
+						{
+							count = buildHighLCasingAnim();
+						}
+						else if( part == RightCasing )
+						{
+							count = buildHighRCasingAnim();
+						}
+						else if( part == LeftTread )
+						{
+							count = buildHighLTread( treadDivs );
+						}
+						else if( part == RightTread )
+						{
+							count = buildHighRTread( treadDivs );
+						}
+						else if(( part >= LeftWheel0 ) && ( part <= LeftWheel3 ))
+						{
+							int wheel = part - LeftWheel0;
+							count = buildHighLWheel( wheel, ( float )wheel *( float )( M_PI / 2.0 ), wheelDivs );
+						}
+						else if(( part >= RightWheel0 ) && ( part <= RightWheel3 ))
+						{
+							int wheel = part - RightWheel0;
+							count = buildHighRWheel( wheel, ( float )wheel *( float )( M_PI / 2.0 ), wheelDivs );
+						}
+					}
 
-  return;
+					// end of the list
+					glEndList();
+
+				} // part
+			} // size
+		} // lod
+	} // shadow
+
+	return ;
 }
 
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
-GLuint TankGeometryMgr::getPartList(TankGeometryEnums::TankShadow shadow,
-				    TankGeometryEnums::TankPart part,
-				    TankGeometryEnums::TankSize size,
-				    TankGeometryEnums::TankLOD lod)
+
+GLuint TankGeometryMgr::getPartList( TankGeometryEnums::TankShadow shadow, TankGeometryEnums::TankPart part, TankGeometryEnums::TankSize size, TankGeometryEnums::TankLOD lod )
 {
-  return displayLists[shadow][lod][size][part];
+	return displayLists[shadow][lod][size][part];
 }
 
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
-int TankGeometryMgr::getPartTriangleCount(TankGeometryEnums::TankShadow sh,
-					  TankGeometryEnums::TankPart part,
-					  TankGeometryEnums::TankSize size,
-					  TankGeometryEnums::TankLOD lod)
+
+int TankGeometryMgr::getPartTriangleCount( TankGeometryEnums::TankShadow sh, TankGeometryEnums::TankPart part, TankGeometryEnums::TankSize size, TankGeometryEnums::TankLOD lod )
 {
-  return partTriangles[sh][lod][size][part];
+	return partTriangles[sh][lod][size][part];
 }
 
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
-const float* TankGeometryMgr::getScaleFactor(TankSize size)
+
+const float *TankGeometryMgr::getScaleFactor( TankSize size )
 {
-  return scaleFactors[size];
+	return scaleFactors[size];
 }
 
 
@@ -287,65 +358,77 @@ const float* TankGeometryMgr::getScaleFactor(TankSize size)
 // ---------------
 
 
-static void bzdbCallback(const std::string& /*name*/, void * /*data*/)
+static void bzdbCallback( const std::string & /*name*/, void * /*data*/ )
 {
-  deleteLists();
-  buildLists();
-  return;
+	deleteLists();
+	buildLists();
+	return ;
 }
 
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
-static void freeContext(void * /*data*/)
+
+static void freeContext( void * /*data*/ )
 {
-  // delete all of the lists
-  deleteLists();
-  return;
+	// delete all of the lists
+	deleteLists();
+	return ;
 }
 
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
-static void initContext(void * /*data*/)
+
+static void initContext( void * /*data*/ )
 {
-  buildLists();
-  return;
+	buildLists();
+	return ;
 }
+
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
 
 static void setupScales()
 {
-  float scale;
+	float scale;
 
-  scaleFactors[Normal][0] = BZDBCache::tankLength;
-  scale = (float)atof(BZDB.getDefault(StateDatabase::BZDB_TANKLENGTH).c_str());
-  scaleFactors[Normal][0] /= scale;
+	scaleFactors[Normal][0] = BZDBCache::tankLength;
+	scale = ( float )atof( BZDB.getDefault( StateDatabase::BZDB_TANKLENGTH ).c_str());
+	scaleFactors[Normal][0] /= scale;
 
-  scaleFactors[Normal][1] = BZDBCache::tankWidth;
-  scale = (float)atof(BZDB.getDefault(StateDatabase::BZDB_TANKWIDTH).c_str());
-  scaleFactors[Normal][1] /= scale;
+	scaleFactors[Normal][1] = BZDBCache::tankWidth;
+	scale = ( float )atof( BZDB.getDefault( StateDatabase::BZDB_TANKWIDTH ).c_str());
+	scaleFactors[Normal][1] /= scale;
 
-  scaleFactors[Normal][2] = BZDBCache::tankHeight;
-  scale = (float)atof(BZDB.getDefault(StateDatabase::BZDB_TANKHEIGHT).c_str());
-  scaleFactors[Normal][2] /= scale;
+	scaleFactors[Normal][2] = BZDBCache::tankHeight;
+	scale = ( float )atof( BZDB.getDefault( StateDatabase::BZDB_TANKHEIGHT ).c_str());
+	scaleFactors[Normal][2] /= scale;
 
-  scale = BZDB.eval(StateDatabase::BZDB_OBESEFACTOR);
-  scaleFactors[Obese][0] = scale * scaleFactors[Normal][0];
-  scaleFactors[Obese][1] = scale * scaleFactors[Normal][1];
-  scaleFactors[Obese][2] = scaleFactors[Normal][2];
+	scale = BZDB.eval( StateDatabase::BZDB_OBESEFACTOR );
+	scaleFactors[Obese][0] = scale * scaleFactors[Normal][0];
+	scaleFactors[Obese][1] = scale * scaleFactors[Normal][1];
+	scaleFactors[Obese][2] = scaleFactors[Normal][2];
 
-  scale = BZDB.eval(StateDatabase::BZDB_TINYFACTOR);
-  scaleFactors[Tiny][0] = scale * scaleFactors[Normal][0];
-  scaleFactors[Tiny][1] = scale * scaleFactors[Normal][1];
-  scaleFactors[Tiny][2] = scaleFactors[Normal][2];
+	scale = BZDB.eval( StateDatabase::BZDB_TINYFACTOR );
+	scaleFactors[Tiny][0] = scale * scaleFactors[Normal][0];
+	scaleFactors[Tiny][1] = scale * scaleFactors[Normal][1];
+	scaleFactors[Tiny][2] = scaleFactors[Normal][2];
 
-  scale = BZDB.eval(StateDatabase::BZDB_THIEFTINYFACTOR);
-  scaleFactors[Thief][0] = scale * scaleFactors[Normal][0];
-  scaleFactors[Thief][1] = scale * scaleFactors[Normal][1];
-  scaleFactors[Thief][2] = scaleFactors[Normal][2];
+	scale = BZDB.eval( StateDatabase::BZDB_THIEFTINYFACTOR );
+	scaleFactors[Thief][0] = scale * scaleFactors[Normal][0];
+	scaleFactors[Thief][1] = scale * scaleFactors[Normal][1];
+	scaleFactors[Thief][2] = scaleFactors[Normal][2];
 
-  scaleFactors[Narrow][0] = scaleFactors[Normal][0];
-  scaleFactors[Narrow][1] = 0.001f;
-  scaleFactors[Narrow][2] = scaleFactors[Normal][2];
+	scaleFactors[Narrow][0] = scaleFactors[Normal][0];
+	scaleFactors[Narrow][1] = 0.001f;
+	scaleFactors[Narrow][2] = scaleFactors[Normal][2];
 
-  return;
+	return ;
 }
 
 
@@ -355,44 +438,55 @@ static void setupScales()
 // ---------------------------
 
 
-void TankGeometryUtils::doVertex3f(GLfloat x, GLfloat y, GLfloat z)
+void TankGeometryUtils::doVertex3f( GLfloat x, GLfloat y, GLfloat z )
 {
-  const float* scale = currentScaleFactor;
-  x = x * scale[0];
-  y = y * scale[1];
-  z = z * scale[2];
-  glVertex3f(x, y, z);
-  return;
+	const float *scale = currentScaleFactor;
+	x = x * scale[0];
+	y = y * scale[1];
+	z = z * scale[2];
+	glVertex3f( x, y, z );
+	return ;
 }
 
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
-void TankGeometryUtils::doNormal3f(GLfloat x, GLfloat y, GLfloat z)
+
+void TankGeometryUtils::doNormal3f( GLfloat x, GLfloat y, GLfloat z )
 {
-  if (shadowMode == ShadowOn) {
-    return;
-  }
-  const float* scale = currentScaleFactor;
-  GLfloat sx = x * scale[0];
-  GLfloat sy = y * scale[1];
-  GLfloat sz = z * scale[2];
-  const GLfloat d = sqrtf ((sx * sx) + (sy * sy) + (sz * sz));
-  if (d > 1.0e-5f) {
-    x *= scale[0] / d;
-    y *= scale[1] / d;
-    z *= scale[2] / d;
-  }
-  glNormal3f(x, y, z);
-  return;
+	if( shadowMode == ShadowOn )
+	{
+		return ;
+	}
+	const float *scale = currentScaleFactor;
+	GLfloat sx = x * scale[0];
+	GLfloat sy = y * scale[1];
+	GLfloat sz = z * scale[2];
+	const GLfloat d = sqrtf(( sx *sx ) + ( sy *sy ) + ( sz *sz ));
+	if( d > 1.0e-5f )
+	{
+		x *= scale[0] / d;
+		y *= scale[1] / d;
+		z *= scale[2] / d;
+	}
+	glNormal3f( x, y, z );
+	return ;
 }
 
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
-void TankGeometryUtils::doTexCoord2f(GLfloat x, GLfloat y)
+
+void TankGeometryUtils::doTexCoord2f( GLfloat x, GLfloat y )
 {
-  if (shadowMode == ShadowOn) {
-    return;
-  }
-  glTexCoord2f(x, y);
-  return;
+	if( shadowMode == ShadowOn )
+	{
+		return ;
+	}
+	glTexCoord2f( x, y );
+	return ;
 }
 
 
@@ -403,4 +497,3 @@ void TankGeometryUtils::doTexCoord2f(GLfloat x, GLfloat y)
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

@@ -11,31 +11,32 @@
  */
 
 #ifndef __COMPOSEDEFAULTKEY_H__
-#define __COMPOSEDEFAULTKEY_H__
+	#define __COMPOSEDEFAULTKEY_H__
 
-#include "common.h"
+	#include "common.h"
 
 /* system interface headers */
-#include <deque>
+	#include <deque>
 
 /* common interface headers */
-#include "BzfEvent.h"
-#include "HUDuiDefaultKey.h"
+	#include "BzfEvent.h"
+	#include "HUDuiDefaultKey.h"
 
 
-typedef std::deque<std::string> MessageQueue;
+typedef std::deque < std::string > MessageQueue;
 
 extern MessageQueue messageHistory;
-extern unsigned int	messageHistoryIndex;
+extern unsigned int messageHistoryIndex;
 
-class ComposeDefaultKey : public HUDuiDefaultKey {
+class ComposeDefaultKey: public HUDuiDefaultKey
+{
 public:
-  bool		keyPress(const BzfKeyEvent&);
-  bool		keyRelease(const BzfKeyEvent&);
+	bool keyPress( const BzfKeyEvent & );
+	bool keyRelease( const BzfKeyEvent & );
 };
 
 
-#endif
+#endif 
 
 // Local Variables: ***
 // mode: C++ ***

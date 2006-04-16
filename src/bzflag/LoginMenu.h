@@ -10,30 +10,31 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef	__LOGINMENU_H__
-#define	__LOGINMENU_H__
+#ifndef __LOGINMENU_H__
+	#define __LOGINMENU_H__
 
-#include "common.h"
+	#include "common.h"
 
 /* local interface headers */
-#include "HUDDialog.h"
-#include "HUDuiLabel.h"
-#include "HUDuiTypeIn.h"
+	#include "HUDDialog.h"
+	#include "HUDuiLabel.h"
+	#include "HUDuiTypeIn.h"
 
-class LoginMenu : public HUDDialog {
- public:
-  LoginMenu();
-  ~LoginMenu();
+class LoginMenu: public HUDDialog
+{
+public:
+	LoginMenu();
+	~LoginMenu();
 
-  HUDuiDefaultKey  *getDefaultKey();
+	HUDuiDefaultKey *getDefaultKey();
 
-  void		    execute();
-  void		    resize(int width, int height);
+	void execute();
+	void resize( int width, int height );
 
- private:
-  HUDuiTypeIn*	    username;
-  HUDuiTypeIn*	    password;
-  HUDuiLabel*	    login;
+private:
+	HUDuiTypeIn *username;
+	HUDuiTypeIn *password;
+	HUDuiLabel *login;
 };
 
 #endif /* __LOGINMENU_H__ */

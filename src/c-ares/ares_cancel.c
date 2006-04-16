@@ -21,23 +21,22 @@
  * the given channel. It does NOT kill the channel, use ares_destroy() for
  * that.
  */
-void ares_cancel(ares_channel channel)
+void ares_cancel( ares_channel channel )
 {
-  struct query *query, *next;
-  int i;
+	struct query *query,  *next;
+	int i;
 
-  for (query = channel->queries; query; query = next)
-  {
-    next = query->next;
-    query->callback(query->arg, ARES_ETIMEOUT, NULL, 0);
-    free(query->tcpbuf);
-    free(query->skip_server);
-    free(query);
-  }
-  channel->queries = NULL;
-  if (!(channel->flags & ARES_FLAG_STAYOPEN))
-  {
-    for (i = 0; i < channel->nservers; i++)
-      ares__close_sockets(&channel->servers[i]);
-  }
+	for( query = channel->queries; query; query = next )
+	{
+		next = query->next;
+		query->callback( query->arg, ARES_ETIMEOUT, NULL, 0 );
+		free( query->tcpbuf );
+		free( query->skip_server );
+		free( query );
+	} channel->queries = NULL;
+	if( !( channel->flags &ARES_FLAG_STAYOPEN ))
+	{
+		for( i = 0; i < channel->nservers; i++ )
+			ares__close_sockets( &channel->servers[i] );
+	}
 }

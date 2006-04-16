@@ -15,51 +15,55 @@
  *	object.
  */
 
-#ifndef	BZF_PHOTON_TORPEDO_SCENE_NODE_H
-#define	BZF_PHOTON_TORPEDO_SCENE_NODE_H
+#ifndef BZF_PHOTON_TORPEDO_SCENE_NODE_H
+	#define BZF_PHOTON_TORPEDO_SCENE_NODE_H
 
-#include "common.h"
-#include "ShotSceneNode.h"
-#include "OpenGLLight.h"
+	#include "common.h"
+	#include "ShotSceneNode.h"
+	#include "OpenGLLight.h"
 
-class PhotonTorpedoSceneNode : public ShotSceneNode {
-  public:
-			PhotonTorpedoSceneNode(const GLfloat pos[3]);
-			~PhotonTorpedoSceneNode();
+class PhotonTorpedoSceneNode: public ShotSceneNode
+{
+public:
+	PhotonTorpedoSceneNode( const GLfloat pos[3] );
+	~PhotonTorpedoSceneNode();
 
-    void		move(const GLfloat pos[3], const GLfloat forward[3]);
-    void		addLight(SceneRenderer&);
+	void move( const GLfloat pos[3], const GLfloat forward[3] );
+	void addLight( SceneRenderer & );
 
-    void		notifyStyleChange();
-    void		addRenderNodes(SceneRenderer&);
+	void notifyStyleChange();
+	void addRenderNodes( SceneRenderer & );
 
-  protected:
-    class PTRenderNode : public RenderNode {
-      public:
-			PTRenderNode(const PhotonTorpedoSceneNode*);
-			~PTRenderNode();
-	void		render();
-	const GLfloat*	getPosition() const { return sceneNode->getSphere(); }
-      private:
-	const PhotonTorpedoSceneNode* sceneNode;
-	int		numFlares;
-	float		theta[6];
-	float		phi[6];
+protected:
+	class PTRenderNode: public RenderNode
+	{
+public:
+		PTRenderNode( const PhotonTorpedoSceneNode* );
+		~PTRenderNode();
+		void render();
+		const GLfloat *getPosition()const
+		{
+			return sceneNode->getSphere();
+} private:
+		const PhotonTorpedoSceneNode *sceneNode;
+		int numFlares;
+		float theta[6];
+		float phi[6];
 
-	static GLfloat	 core[9][2];
-	static GLfloat	 corona[8][2];
-	static const GLfloat ring[8][2];
-    };
-    friend class PTRenderNode;
+		static GLfloat core[9][2];
+		static GLfloat corona[8][2];
+		static const GLfloat ring[8][2];
+	};
+	friend class PTRenderNode;
 
-  private:
-    OpenGLLight		light;
-    OpenGLGState	gstate;
-    PTRenderNode	renderNode;
-    static const GLfloat CoreSize;
-    static const GLfloat CoronaSize;
-    static const GLfloat FlareSize;
-    static const GLfloat FlareSpread;
+private:
+	OpenGLLight light;
+	OpenGLGState gstate;
+	PTRenderNode renderNode;
+	static const GLfloat CoreSize;
+	static const GLfloat CoronaSize;
+	static const GLfloat FlareSize;
+	static const GLfloat FlareSpread;
 };
 
 #endif // BZF_PHOTON_TORPEDO_SCENE_NODE_H
@@ -71,4 +75,3 @@ class PhotonTorpedoSceneNode : public ShotSceneNode {
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

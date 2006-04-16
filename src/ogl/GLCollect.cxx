@@ -16,12 +16,16 @@ int GLCollect::count = 0;
 
 GLCollect::GLCollect( GLenum en )
 {
-  if (count++ == 0)
-    glBegin( en );
+	if( count++ == 0 )
+		glBegin( en );
 }
+
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
 GLCollect::~GLCollect()
 {
-  if (--count == 0)
-    glEnd();
+	if( --count == 0 )
+		glEnd();
 }

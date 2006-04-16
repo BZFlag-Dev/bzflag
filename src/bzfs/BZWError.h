@@ -11,36 +11,43 @@
  */
 
 #ifndef __BZWERROR_H__
-#define __BZWERROR_H__
+	#define __BZWERROR_H__
 
-#include "common.h"
+	#include "common.h"
 
 /* implementation-specific system headers */
-#include <string>
+	#include <string>
 
 
-class BZWError {
+class BZWError
+{
 
 public:
-  BZWError(std::string _location);
-  ~BZWError();
+	BZWError( std::string _location );
+	~BZWError();
 
-  /* return false if error reporting failed, true otherwise */
-  bool fatalError(std::string errorMsg, int line);
-  bool warning(std::string warningMsg, int line);
+	/* return false if error reporting failed, true otherwise */
+	bool fatalError( std::string errorMsg, int line );
+	bool warning( std::string warningMsg, int line );
 
-  /* status */
-  bool hasHadError() {return hadError;};
-  bool hasHadWarning() {return hadWarning;};
+	/* status */
+	bool hasHadError()
+	{
+		return hadError;
+	};
+	bool hasHadWarning()
+	{
+		return hadWarning;
+	};
 
 private:
-  /* data */
-  bool hadError;
-  bool hadWarning;
-  std::string location;
+	/* data */
+	bool hadError;
+	bool hadWarning;
+	std::string location;
 
-  /* no public default constructor */
-  BZWError();
+	/* no public default constructor */
+	BZWError();
 };
 
 #endif //__BZWERROR_H__

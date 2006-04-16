@@ -10,30 +10,31 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 #ifndef __WORLDFILELOCATION_H__
-#define __WORLDFILELOCATION_H__
+	#define __WORLDFILELOCATION_H__
 
 // system headers
-#include <iostream>
+	#include <iostream>
 
 // bzfs-specific headers
-#include "WorldFileObject.h"
-#include "MeshTransform.h"
+	#include "WorldFileObject.h"
+	#include "MeshTransform.h"
 
 
-class WorldFileLocation : public WorldFileObject {
+class WorldFileLocation: public WorldFileObject
+{
 public:
-  WorldFileLocation();
-  virtual bool read(const char *cmd, std::istream&);
-  virtual void writeToWorld(WorldInfo*) const;
-  void *pack(void *buf) const;
+	WorldFileLocation();
+	virtual bool read( const char *cmd, std::istream & );
+	virtual void writeToWorld( WorldInfo* )const;
+	void *pack( void *buf )const;
 protected:
-  float pos[3];
-  float rotation;
-  float size[3];
-  MeshTransform transform;
+	float pos[3];
+	float rotation;
+	float size[3];
+	MeshTransform transform;
 };
 
-inline void WorldFileLocation::writeToWorld(WorldInfo*) const {}
+inline void WorldFileLocation::writeToWorld( WorldInfo* )const{}
 
 #endif /* __WORLDFILELOCATION_H__ */
 

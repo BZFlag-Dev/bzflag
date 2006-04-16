@@ -11,132 +11,146 @@
  */
 
 #ifndef _TRANSFORM_H_
-#define _TRANSFORM_H_
+	#define _TRANSFORM_H_
 
 
-#include <string>
-#include <vector>
-#include <iostream>
+	#include <string>
+	#include <vector>
+	#include <iostream>
 
-enum TransformType {
-  ShiftTransform = 0,
-  ScaleTransform = 1,
-  ShearTransform = 2,
-  SpinTransform  = 3,
-  IndexTransform = 4,
-  LastTransform
+enum TransformType
+{
+	ShiftTransform = 0, ScaleTransform = 1, ShearTransform = 2, SpinTransform = 3, IndexTransform = 4, LastTransform
 };
 
-typedef struct {
-  TransformType type;
-  int index;
-  float data[4];
+typedef struct
+{
+	TransformType type;
+	int index;
+	float data[4];
 } TransformData;
 
-class MeshTransform {
-  public:
-    MeshTransform();
-    ~MeshTransform();
+class MeshTransform
+{
+public:
+	MeshTransform();
+	~MeshTransform();
 
-    MeshTransform& operator=(const MeshTransform& transform);
-    void append(const MeshTransform& transform);
-    void prepend(const MeshTransform& transform);
+	MeshTransform &operator = ( const MeshTransform &transform );
+	void append( const MeshTransform &transform );
+	void prepend( const MeshTransform &transform );
 
-    bool setName(const std::string& name);
-    void addShift(const float shift[3]);
-    void addScale(const float scale[3]);
-    void addShear(const float shear[3]);
-    void addSpin(const float degrees, const float normal[3]);
-    void addReference(int transform);
+	bool setName( const std::string &name );
+	void addShift( const float shift[3] );
+	void addScale( const float scale[3] );
+	void addShear( const float shear[3] );
+	void addSpin( const float degrees, const float normal[3] );
+	void addReference( int transform );
 
-    bool isValid();
-    void finalize();
+	bool isValid();
+	void finalize();
 
-    const std::string& getName() const;
+	const std::string &getName()const;
 
-    int packSize() const;
-    void* pack(void*) const;
-    void* unpack(void*);
+	int packSize()const;
+	void *pack( void* )const;
+	void *unpack( void* );
 
-    void print(std::ostream& out, const std::string& indent) const;
-    void printTransforms(std::ostream& out, const std::string& indent) const;
+	void print( std::ostream &out, const std::string &indent )const;
+	void printTransforms( std::ostream &out, const std::string &indent )const;
 
-  private:
+private:
 
-    std::string name;
-    std::vector<TransformData> transforms;
+	std::string name;
+	std::vector < TransformData > transforms;
 
-  public:
-    class Tool {
-      public:
-	Tool(const MeshTransform& transform);
-	~Tool();
+public:
+	class Tool
+	{
+public:
+		Tool( const MeshTransform &transform );
+		~Tool();
 
-	bool isInverted() const;
-	bool isSkewed() const; // scaled or sheared
-	void modifyVertex(float vertex[3]) const;
-	void modifyNormal(float normal[3]) const;
-	void modifyOldStyle(float pos[3], float size[3],
-			    float& angle, bool& flipz) const;
-	const float* getMatrix() const;
+		bool isInverted()const;
+		bool isSkewed()const; // scaled or sheared
+		void modifyVertex( float vertex[3] )const;
+		void modifyNormal( float normal[3] )const;
+		void modifyOldStyle( float pos[3], float size[3], float &angle, bool &flipz )const;
+		const float *getMatrix()const;
 
-      private:
-	void processTransforms(const std::vector<TransformData>& transforms);
+private:
+		void processTransforms( const std::vector < TransformData >  &transforms );
 
-	bool empty;
-	bool inverted;
-	bool skewed;
-	float vertexMatrix[4][4];
-	float normalMatrix[3][3];
-    };
+		bool empty;
+		bool inverted;
+		bool skewed;
+		float vertexMatrix[4][4];
+		float normalMatrix[3][3];
+	};
 
-  friend class MeshTransform::Tool;
+	friend class MeshTransform::Tool;
 };
 
-inline bool MeshTransform::Tool::isInverted() const
+inline bool MeshTransform::Tool::isInverted()const
 {
-  return inverted;
+	return inverted;
+} 
+
+inline bool MeshTransform::Tool::isSkewed()const
+{
+	return skewed;
 }
 
-inline bool MeshTransform::Tool::isSkewed() const
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+inline const float *MeshTransform::Tool::getMatrix()const
 {
-  return skewed;
+	return ( const float* )vertexMatrix;
 }
 
-inline const float* MeshTransform::Tool::getMatrix() const
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+
+class MeshTransformManager
 {
-  return (const float*)vertexMatrix;
-}
+public:
+	MeshTransformManager();
+	~MeshTransformManager();
+	void update();
+	void clear();
+	int addTransform( MeshTransform *driver );
+	int findTransform( const std::string &name )const;
+	const MeshTransform *getTransform( int id )const;
 
+	int packSize()const;
+	void *pack( void* )const;
+	void *unpack( void* );
 
-class MeshTransformManager {
-  public:
-    MeshTransformManager();
-    ~MeshTransformManager();
-    void update();
-    void clear();
-    int addTransform(MeshTransform* driver);
-    int findTransform(const std::string& name) const;
-    const MeshTransform* getTransform(int id) const;
+	void print( std::ostream &out, const std::string &indent )const;
 
-    int packSize() const;
-    void* pack(void*) const;
-    void* unpack(void*);
-
-    void print(std::ostream& out, const std::string& indent) const;
-
-  private:
-    std::vector<MeshTransform*> transforms;
+private:
+	std::vector < MeshTransform * > transforms;
 };
 
-inline const MeshTransform* MeshTransformManager::getTransform(int id) const
+inline const MeshTransform *MeshTransformManager::getTransform( int id )const
 {
-  if ((id >= 0) && (id < (int)transforms.size())) {
-    return transforms[id];
-  } else {
-    return NULL;
-  }
+	if(( id >= 0 ) && ( id < ( int )transforms.size()))
+	{
+		return transforms[id];
+	}
+	else
+	{
+		return NULL;
+	}
 }
+
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
 
 extern MeshTransformManager TRANSFORMMGR;
@@ -151,4 +165,3 @@ extern MeshTransformManager TRANSFORMMGR;
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

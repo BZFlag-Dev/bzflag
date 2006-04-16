@@ -24,45 +24,58 @@
 
 ShotStatsDefaultKey ShotStatsDefaultKey::instance;
 
-ShotStatsDefaultKey::ShotStatsDefaultKey() { }
-ShotStatsDefaultKey::~ShotStatsDefaultKey() { }
+ShotStatsDefaultKey::ShotStatsDefaultKey(){}
+ShotStatsDefaultKey::~ShotStatsDefaultKey(){}
 
-ShotStatsDefaultKey* ShotStatsDefaultKey::getInstance()
+ShotStatsDefaultKey *ShotStatsDefaultKey::getInstance()
 {
-  return &instance;
+	return  &instance;
 }
 
-bool ShotStatsDefaultKey::keyPress(const BzfKeyEvent& key)
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+bool ShotStatsDefaultKey::keyPress( const BzfKeyEvent &key )
 {
-  // special keys to get out
-  switch (key.ascii) {
-    case 27:	// escape
-      HUDDialogStack::get()->pop();
-      return true;
-    case 13:	// return
-      HUDDialogStack::get()->top()->execute();
-      return true;
-  }
-  if (key.button == BzfKeyEvent::Home) {
-    HUDDialogStack::get()->pop();
-    return true;
-  }
+	// special keys to get out
+	switch( key.ascii )
+	{
+		case 27:
+			// escape
+			HUDDialogStack::get()->pop();
+			return true;
+		case 13:
+			// return
+			HUDDialogStack::get()->top()->execute();
+			return true;
+	}
+	if( key.button == BzfKeyEvent::Home )
+	{
+		HUDDialogStack::get()->pop();
+		return true;
+	}
 
-  // allow all commands to run
-  std::string keyCommand = KEYMGR.get(key, true);
-  if (keyCommand != "") {
-    CMDMGR.run(keyCommand);
-    return true;
-  }
+	// allow all commands to run
+	std::string keyCommand = KEYMGR.get( key, true );
+	if( keyCommand != "" )
+	{
+		CMDMGR.run( keyCommand );
+		return true;
+	}
 
-  // all other keys return
-  HUDDialogStack::get()->pop();
-  return true;
+	// all other keys return
+	HUDDialogStack::get()->pop();
+	return true;
 }
 
-bool ShotStatsDefaultKey::keyRelease(const BzfKeyEvent& /* key */)
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+bool ShotStatsDefaultKey::keyRelease( const BzfKeyEvent & /* key */ )
 {
-  return true;
+	return true;
 }
 
 

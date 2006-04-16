@@ -17,52 +17,51 @@
 #include <string>
 #include <iostream>
 
-BZWError::BZWError(std::string _location) :
-	  hadError(false), hadWarning(false), location(_location)
+BZWError::BZWError( std::string _location ): hadError( false ), hadWarning( false ), location( _location ){}
+
+BZWError::~BZWError(){}
+
+bool BZWError::fatalError( std::string errorMsg, int line )
 {
+	// toggle flag
+	hadError = true;
+
+	// sanity
+	if( line < 0 )
+		return false;
+	if( errorMsg == "" )
+		errorMsg = "unspecified error";
+
+	// report error
+	std::cout << location << ": error";
+	if( line != 0 )
+		std::cout << " (line " << line << ")";
+	std::cout << ": " << errorMsg << std::endl << std::flush;
+	return true;
 }
 
-BZWError::~BZWError()
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+bool BZWError::warning( std::string warningMsg, int line )
 {
-}
+	// toggle flag
+	hadWarning = true;
 
-bool BZWError::fatalError(std::string errorMsg, int line)
-{
-  // toggle flag
-  hadError = true;
+	// sanity
+	if( line < 0 )
+		return false;
+	if( warningMsg == "" )
+		warningMsg = "unspecified warning";
 
-  // sanity
-  if (line < 0)
-    return false;
-  if (errorMsg == "")
-    errorMsg = "unspecified error";
+	// report warning
+	std::cout << location << ": warning";
+	if( line != 0 )
+		std::cout << " (line " << line << ")";
+	std::cout << ": " << warningMsg << std::endl << std::flush;
 
-  // report error
-  std::cout << location << ": error";
-  if (line != 0)
-    std::cout << " (line " << line << ")" ;
-  std::cout << ": " << errorMsg << std::endl << std::flush;
-  return true;
-}
-
-bool BZWError::warning(std::string warningMsg, int line)
-{
-  // toggle flag
-  hadWarning = true;
-
-  // sanity
-  if (line < 0)
-    return false;
-  if (warningMsg == "")
-    warningMsg = "unspecified warning";
-
-  // report warning
-  std::cout << location << ": warning";
-  if (line != 0)
-    std::cout << " (line " << line << ")" ;
-  std::cout << ": " << warningMsg << std::endl << std::flush;
-
-  return true;
+	return true;
 }
 
 // Local Variables: ***

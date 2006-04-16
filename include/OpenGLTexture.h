@@ -38,116 +38,119 @@
  * <, <=, >, >= define an arbitrary ordering of textures.
  */
 
-#ifndef	BZF_OPENGL_TEXTURE_H
-#define	BZF_OPENGL_TEXTURE_H
+#ifndef BZF_OPENGL_TEXTURE_H
+	#define BZF_OPENGL_TEXTURE_H
 
-#include "common.h"
-#include <string>
-#include "bzfgl.h"
+	#include "common.h"
+	#include <string>
+	#include "bzfgl.h"
 
-class OpenGLTexture {
-  public:
-    enum Filter {
-			Off,
-			Nearest,
-			Linear,
-			NearestMipmapNearest,
-			LinearMipmapNearest,
-			NearestMipmapLinear,
-			LinearMipmapLinear,
-			Max = LinearMipmapLinear,
-			Default = Max
-    };
+class OpenGLTexture
+{
+public:
+	enum Filter
+	{
+		Off, Nearest, Linear, NearestMipmapNearest, LinearMipmapNearest, NearestMipmapLinear, LinearMipmapLinear, Max = LinearMipmapLinear, Default = Max
+	};
 
-			OpenGLTexture(int width, int height,
-					const GLvoid* pixels,
-					Filter maxFilter = Linear,
-					bool repeat = true,
-					int internalFormat = 0);
-			~OpenGLTexture();
-    bool		hasAlpha() const;
+	OpenGLTexture( int width, int height, const GLvoid *pixels, Filter maxFilter = Linear, bool repeat = true, int internalFormat = 0 );
+	~OpenGLTexture();
+	bool hasAlpha()const;
 
-    void		execute();
+	void execute();
 
-    float		getAspectRatio() const;
-    int			getWidth() const;
-    int			getHeight() const;
+	float getAspectRatio()const;
+	int getWidth()const;
+	int getHeight()const;
 
-    Filter		getFilter();
-    void		setFilter(Filter);
+	Filter getFilter();
+	void setFilter( Filter );
 
-    bool		getColorAverages(float rgbaRaw[4],
-					 bool factorAlpha) const;
+	bool getColorAverages( float rgbaRaw[4], bool factorAlpha )const;
 
-    void		freeContext();
-    void		initContext();
+	void freeContext();
+	void initContext();
 
 
-    static int		getFilterCount();
-    static const char*	getFilterName(Filter id);
-    static const char**	getFilterNames();
+	static int getFilterCount();
+	static const char *getFilterName( Filter id );
+	static const char **getFilterNames();
 
-    static Filter	getMaxFilter();
-    static void		setMaxFilter(Filter);
+	static Filter getMaxFilter();
+	static void setMaxFilter( Filter );
 
-  private:
-			OpenGLTexture(const OpenGLTexture&);
-    OpenGLTexture&	operator=(const OpenGLTexture&);
+private:
+	OpenGLTexture( const OpenGLTexture & );
+	OpenGLTexture &operator = ( const OpenGLTexture & );
 
-    bool		operator==(const OpenGLTexture&) const;
-    bool		operator!=(const OpenGLTexture&) const;
-    bool		operator<(const OpenGLTexture&) const;
-    int			getBestFormat( int width, int height,
-					const GLvoid* pixels);
-    void		bind();
-    bool		setupImage(const GLubyte* pixels);
+	bool operator == ( const OpenGLTexture & )const;
+	bool operator != ( const OpenGLTexture & )const;
+	bool operator < ( const OpenGLTexture & )const;
+	int getBestFormat( int width, int height, const GLvoid *pixels );
+	void bind();
+	bool setupImage( const GLubyte *pixels );
 
-    void* operator new(size_t s) { return ::operator new(s);}
-    void  operator delete(void *p) {::operator delete(p);}
+	void *operator new( size_t s )
+	{
+		return ::operator new( s );
+	}
+	void operator delete ( void *p )
+	{
+		::operator delete ( p );
+	}
 
-    bool	alpha;
-    const int	width;
-    const int	height;
-    GLint	scaledWidth;
-    GLint	scaledHeight;
-    GLubyte*	image;
-    GLubyte*	imageMemory;
-    bool	repeat;
-    int		internalFormat;
-    GLuint	list;
-    Filter	filter;
+	bool alpha;
+	const int width;
+	const int height;
+	GLint scaledWidth;
+	GLint scaledHeight;
+	GLubyte *image;
+	GLubyte *imageMemory;
+	bool repeat;
+	int internalFormat;
+	GLuint list;
+	Filter filter;
 
-    static Filter	maxFilter;
+	static Filter maxFilter;
 
-    static const int	filterCount;
-    static const char*	configFilterNames[];
+	static const int filterCount;
+	static const char *configFilterNames[];
 
-    static const GLenum	minifyFilter[];
-    static const GLenum	magnifyFilter[];
+	static const GLenum minifyFilter[];
+	static const GLenum magnifyFilter[];
 
-    static void		static_freeContext(void *that);
-    static void		static_initContext(void *that);
+	static void static_freeContext( void *that );
+	static void static_initContext( void *that );
 
-    friend class TextureManager;
+	friend class TextureManager;
 };
 
 //
 // OpenGLTexture
 //
 
-inline bool		OpenGLTexture::hasAlpha() const
+inline bool OpenGLTexture::hasAlpha()const
 {
-  return alpha;
+	return alpha;
+} 
+
+inline int OpenGLTexture::getWidth()const
+{
+	return width;
 }
 
-inline int		OpenGLTexture::getWidth() const
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+inline int OpenGLTexture::getHeight()const
 {
-  return width;
+	return height;
 }
-inline int		OpenGLTexture::getHeight() const
-{
-  return height;
-}
+
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
 #endif // BZF_OPENGL_TEXTURE_H
 
@@ -158,4 +161,3 @@ inline int		OpenGLTexture::getHeight() const
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

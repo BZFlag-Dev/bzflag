@@ -11,8 +11,8 @@
  */
 
 #ifdef _MSC_VER
-#pragma warning( 4: 4786 )
-#endif
+	#pragma warning( 4: 4786 )
+#endif 
 
 #include "common.h"
 
@@ -26,51 +26,69 @@
 
 WorldFileObject::WorldFileObject()
 {
-  name = "";
+	name = "";
 }
 
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
-bool WorldFileObject::read(const char *cmd, std::istream& input)
+
+bool WorldFileObject::read( const char *cmd, std::istream &input )
 {
-  if (strcasecmp(cmd, "name") == 0) {
-    input >> name;
-    return true;
-  }
-  return false;
+	if( strcasecmp( cmd, "name" ) == 0 )
+	{
+		input >> name;
+		return true;
+	}
+	return false;
 }
 
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
-void WorldFileObject::writeToWorld(WorldInfo*) const
+
+void WorldFileObject::writeToWorld( WorldInfo* )const
 {
-  std::cout << "ERROR: writeToWorld() called improperly" << std::endl;
-  return;
+	std::cout << "ERROR: writeToWorld() called improperly" << std::endl;
+	return ;
 }
 
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
-void WorldFileObject::writeToManager() const
+
+void WorldFileObject::writeToManager()const
 {
-  std::cout << "ERROR: writeToManager() called improperly" << std::endl;
-  return;
+	std::cout << "ERROR: writeToManager() called improperly" << std::endl;
+	return ;
 }
 
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
-void WorldFileObject::writeToGroupDef(GroupDefinition*) const
+
+void WorldFileObject::writeToGroupDef( GroupDefinition* )const
 {
-  std::cout << "ERROR: writeToGroupDef() called improperly" << std::endl;
-  return;
+	std::cout << "ERROR: writeToGroupDef() called improperly" << std::endl;
+	return ;
 }
 
 
 /** delete all of the world file objects from a vector list
  */
 
-void emptyWorldFileObjectList(std::vector<WorldFileObject*>& wlist)
+void emptyWorldFileObjectList( std::vector < WorldFileObject * >  &wlist )
 {
-  const int n = wlist.size();
-  for (int i = 0; i < n; ++i) {
-    delete wlist[i];
-  }
-  wlist.clear();
+	const int n = wlist.size();
+	for( int i = 0; i < n; ++i )
+	{
+		delete wlist[i];
+	}
+	wlist.clear();
 }
 
 

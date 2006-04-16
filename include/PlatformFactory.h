@@ -15,9 +15,9 @@
  */
 
 #ifndef BZF_PLATFORM_FACTORY_H
-#define	BZF_PLATFORM_FACTORY_H
+	#define BZF_PLATFORM_FACTORY_H
 
-#include "common.h"
+	#include "common.h"
 
 class BzfDisplay;
 class BzfVisual;
@@ -25,29 +25,29 @@ class BzfWindow;
 class BzfMedia;
 class BzfJoystick;
 
-class PlatformFactory {
-  public:
-			PlatformFactory();
-    virtual		~PlatformFactory();
+class PlatformFactory
+{
+public:
+	PlatformFactory();
+	virtual ~PlatformFactory();
 
-    virtual BzfDisplay*	 createDisplay(const char* name,
-				const char* videoFormat) = 0;
-    virtual BzfVisual*	 createVisual(const BzfDisplay*) = 0;
-    virtual BzfWindow*	 createWindow(const BzfDisplay*, BzfVisual*) = 0;
-    virtual BzfJoystick* createJoystick();
+	virtual BzfDisplay *createDisplay( const char *name, const char *videoFormat ) = 0;
+	virtual BzfVisual *createVisual( const BzfDisplay* ) = 0;
+	virtual BzfWindow *createWindow( const BzfDisplay *, BzfVisual* ) = 0;
+	virtual BzfJoystick *createJoystick();
 
-    static PlatformFactory*	getInstance();
-    static BzfMedia*		getMedia();
+	static PlatformFactory *getInstance();
+	static BzfMedia *getMedia();
 
-  private:
-			PlatformFactory(const PlatformFactory&);
-    PlatformFactory&	operator=(const PlatformFactory&);
+private:
+	PlatformFactory( const PlatformFactory & );
+	PlatformFactory &operator = ( const PlatformFactory & );
 
-    virtual BzfMedia*	createMedia() = 0;
+	virtual BzfMedia *createMedia() = 0;
 
-  private:
-    static PlatformFactory*	instance;
-    static BzfMedia*		media;
+private:
+	static PlatformFactory *instance;
+	static BzfMedia *media;
 };
 
 #endif // BZF_PLATFORM_FACTORY_H
@@ -59,4 +59,3 @@ class PlatformFactory {
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

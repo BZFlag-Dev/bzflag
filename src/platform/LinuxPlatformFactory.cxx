@@ -16,71 +16,98 @@
 #include "XWindow.h"
 #include "LinuxMedia.h"
 #if defined(USBJOYSTICK)
-  #include "USBJoystick.h"
+	#include "USBJoystick.h"
 #elif defined(XIJOYSTICK)
-  #include "XIJoystick.h"
-#else
-  #include "EvdevJoystick.h"
-#endif
+	#include "XIJoystick.h"
+#else 
+	#include "EvdevJoystick.h"
+#endif 
 
-PlatformFactory*	PlatformFactory::getInstance()
+PlatformFactory *PlatformFactory::getInstance()
 {
-  if (!instance) instance = new LinuxPlatformFactory;
-  return instance;
+	if( !instance )
+		instance = new LinuxPlatformFactory;
+	return instance;
 }
+
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
 LinuxPlatformFactory::LinuxPlatformFactory()
 {
-  // do nothing
+	// do nothing
 }
+
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
 LinuxPlatformFactory::~LinuxPlatformFactory()
 {
-  // do nothing
+	// do nothing
 }
 
-BzfDisplay*		LinuxPlatformFactory::createDisplay(
-				const char* name, const char*)
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+BzfDisplay *LinuxPlatformFactory::createDisplay( const char *name, const char* )
 {
-  XDisplay* display = new XDisplay(name, new LinuxDisplayMode);
-  if (!display || !display->isValid()) {
-    delete display;
-    return NULL;
-  }
-  return display;
+	XDisplay *display = new XDisplay( name, new LinuxDisplayMode );
+	if( !display || !display->isValid())
+	{
+		delete display;
+		return NULL;
+	}
+	return display;
 }
 
-BzfVisual*		LinuxPlatformFactory::createVisual(
-				const BzfDisplay* display)
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+BzfVisual *LinuxPlatformFactory::createVisual( const BzfDisplay *display )
 {
-  return new XVisual((const XDisplay*)display);
+	return new XVisual(( const XDisplay* )display );
 }
 
-BzfWindow*		LinuxPlatformFactory::createWindow(
-				const BzfDisplay* display, BzfVisual* visual)
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+BzfWindow *LinuxPlatformFactory::createWindow( const BzfDisplay *display, BzfVisual *visual )
 {
-  return new XWindow((const XDisplay*)display, (XVisual*)visual);
+	return new XWindow(( const XDisplay* )display, ( XVisual* )visual );
 }
 
-BzfJoystick*		LinuxPlatformFactory::createJoystick()
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+BzfJoystick *LinuxPlatformFactory::createJoystick()
 {
 #if defined(USBJOYSTICK)
-  // only works for USB joysticks under *BSD
-  return new USBJoystick;
+	// only works for USB joysticks under *BSD
+	return new USBJoystick;
 #elif defined(XIJOYSTICK)
-  // XInput Joystick
-  return new XIJoystick;
+	// XInput Joystick
+	return new XIJoystick;
 #elif defined(HAVE_LINUX_INPUT_H)
-  // Event device joystick
-  return new EvdevJoystick;
-#else
-  return new BzfJoystick;
-#endif
+	// Event device joystick
+	return new EvdevJoystick;
+#else 
+	return new BzfJoystick;
+#endif 
 }
 
-BzfMedia*		LinuxPlatformFactory::createMedia()
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+BzfMedia *LinuxPlatformFactory::createMedia()
 {
-  return new LinuxMedia;
+	return new LinuxMedia;
 }
 
 // Local Variables: ***
@@ -90,4 +117,3 @@ BzfMedia*		LinuxPlatformFactory::createMedia()
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

@@ -11,64 +11,65 @@
  */
 
 #ifndef BZF_MACMEDIA_H
-#define  BZF_MACMEDIA_H
+	#define BZF_MACMEDIA_H
 
-#include "BzfMedia.h"
+	#include "BzfMedia.h"
 
-#include <Carbon/Carbon.h>
-#include <queue>
+	#include <Carbon/Carbon.h>
+	#include <queue>
 
 
 using std::queue;
 
-class MacMedia : public BzfMedia {
-  public:
-    MacMedia();
-    ~MacMedia();
+class MacMedia: public BzfMedia
+{
+public:
+	MacMedia();
+	~MacMedia();
 
-    double stopwatch(bool);
+	double stopwatch( bool );
 
-    bool openAudio();
-    void closeAudio();
+	bool openAudio();
+	void closeAudio();
 
-    bool isAudioBrainDead() const;
-    bool startAudioThread(void (*)(void*), void *);
-    void stopAudioThread();
-    bool hasAudioThread() const;
-    bool isAudioTooEmpty() const;
+	bool isAudioBrainDead()const;
+	bool startAudioThread( void( * )( void* ), void* );
+	void stopAudioThread();
+	bool hasAudioThread()const;
+	bool isAudioTooEmpty()const;
 
-    void writeAudioFrames(const float *, int);
-    void writeSoundCommand(const void*, int);
-    bool readSoundCommand(void*, int);
+	void writeAudioFrames( const float *, int );
+	void writeSoundCommand( const void *, int );
+	bool readSoundCommand( void *, int );
 
-    int getAudioOutputRate() const;
-    int getAudioBufferSize() const;
-    int getAudioBufferChunkSize() const;
+	int getAudioOutputRate()const;
+	int getAudioBufferSize()const;
+	int getAudioBufferChunkSize()const;
 
-    void audioSleep(bool, double);
+	void audioSleep( bool, double );
 
-    void  writeAudio(void);
+	void writeAudio( void );
 
-    //unsigned char* doReadImage(const char*, int&, int&, int&) const;
+	//unsigned char* doReadImage(const char*, int&, int&, int&) const;
 
-  private:
+private:
 
-    SndCommand command;
-    SndChannelPtr channel;
-    //CmpSoundHeader header;
-    ExtSoundHeader header;
-    SndCallBackUPP callback;
-    OSErr error;
+	SndCommand command;
+	SndChannelPtr channel;
+	//CmpSoundHeader header;
+	ExtSoundHeader header;
+	SndCallBackUPP callback;
+	OSErr error;
 
-    void (*audio_proc)(void*);
+	void( *audio_proc )( void* );
 
-    SInt16 *buffer;
-    SInt16 *rpos;
-    SInt16 *wpos;
+	SInt16 *buffer;
+	SInt16 *rpos;
+	SInt16 *wpos;
 
-    int num_samples;
+	int num_samples;
 
-    queue<char*> command_queue;
+	queue < char * > command_queue;
 };
 
 #endif // BZF_MACMEDIA_H
@@ -80,4 +81,3 @@ class MacMedia : public BzfMedia {
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

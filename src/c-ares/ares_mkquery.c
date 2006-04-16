@@ -17,14 +17,14 @@
 #include <sys/types.h>
 
 #if defined(WIN32) && !defined(WATT32)
-#include "nameser.h"
-#else
-#include <netinet/in.h>
-#include <arpa/nameser.h>
-#ifdef HAVE_ARPA_NAMESER_COMPAT_H
-#include <arpa/nameser_compat.h>
-#endif
-#endif
+	#include "nameser.h"
+#else 
+	#include <netinet/in.h>
+	#include <arpa/nameser.h>
+	#ifdef HAVE_ARPA_NAMESER_COMPAT_H
+		#include <arpa/nameser_compat.h>
+	#endif 
+#endif 
 
 #include <stdlib.h>
 #include <string.h>
@@ -79,85 +79,84 @@
  * be thought of as the root domain).
  */
 
-int ares_mkquery(const char *name, int dnsclass, int type, unsigned short id,
-		 int rd, unsigned char **buf, int *buflen)
+int ares_mkquery( const char *name, int dnsclass, int type, unsigned short id, int rd, unsigned char **buf, int *buflen )
 {
-  int len;
-  unsigned char *q;
-  const char *p;
+	int len;
+	unsigned char *q;
+	const char *p;
 
-  /* Compute the length of the encoded name so we can check buflen.
-   * Start counting at 1 for the zero-length label at the end. */
-  len = 1;
-  for (p = name; *p; p++)
-    {
-      if (*p == '\\' && *(p + 1) != 0)
-	p++;
-      len++;
-    }
-  /* If there are n periods in the name, there are n + 1 labels, and
-   * thus n + 1 length fields, unless the name is empty or ends with a
-   * period.  So add 1 unless name is empty or ends with a period.
-   */
-  if (*name && *(p - 1) != '.')
-    len++;
-
-  *buflen = len + HFIXEDSZ + QFIXEDSZ;
-  *buf = (unsigned char *)malloc(*buflen);
-  if (!*buf)
-      return ARES_ENOMEM;
-
-  /* Set up the header. */
-  q = *buf;
-  memset(q, 0, HFIXEDSZ);
-  DNS_HEADER_SET_QID(q, id);
-  DNS_HEADER_SET_OPCODE(q, QUERY);
-  DNS_HEADER_SET_RD(q, (rd) ? 1 : 0);
-  DNS_HEADER_SET_QDCOUNT(q, 1);
-
-  /* A name of "." is a screw case for the loop below, so adjust it. */
-  if (strcmp(name, ".") == 0)
-    name++;
-
-  /* Start writing out the name after the header. */
-  q += HFIXEDSZ;
-  while (*name)
-    {
-      if (*name == '.')
-	return ARES_EBADNAME;
-
-      /* Count the number of bytes in this label. */
-      len = 0;
-      for (p = name; *p && *p != '.'; p++)
+	/* Compute the length of the encoded name so we can check buflen.
+	 * Start counting at 1 for the zero-length label at the end. */
+	len = 1;
+	for( p = name;  *p; p++ )
 	{
-	  if (*p == '\\' && *(p + 1) != 0)
-	    p++;
-	  len++;
+		if( *p == '\\' && *( p + 1 ) != 0 )
+			p++;
+		len++;
 	}
-      if (len > MAXLABEL)
-	return ARES_EBADNAME;
+	/* If there are n periods in the name, there are n + 1 labels, and
+	 * thus n + 1 length fields, unless the name is empty or ends with a
+	 * period.  So add 1 unless name is empty or ends with a period.
+	 */
+	if( *name && *( p - 1 ) != '.' )
+		len++;
 
-      /* Encode the length and copy the data. */
-      *q++ = len;
-      for (p = name; *p && *p != '.'; p++)
+	*buflen = len + HFIXEDSZ + QFIXEDSZ;
+	*buf = ( unsigned char* )malloc( *buflen );
+	if( ! *buf )
+		return ARES_ENOMEM;
+
+	/* Set up the header. */
+	q =  *buf;
+	memset( q, 0, HFIXEDSZ );
+	DNS_HEADER_SET_QID( q, id );
+	DNS_HEADER_SET_OPCODE( q, QUERY );
+	DNS_HEADER_SET_RD( q, ( rd ) ? 1 : 0 );
+	DNS_HEADER_SET_QDCOUNT( q, 1 );
+
+	/* A name of "." is a screw case for the loop below, so adjust it. */
+	if( strcmp( name, "." ) == 0 )
+		name++;
+
+	/* Start writing out the name after the header. */
+	q += HFIXEDSZ;
+	while( *name )
 	{
-	  if (*p == '\\' && *(p + 1) != 0)
-	    p++;
-	  *q++ = *p;
+		if( *name == '.' )
+			return ARES_EBADNAME;
+
+		/* Count the number of bytes in this label. */
+		len = 0;
+		for( p = name;  *p &&  *p != '.'; p++ )
+		{
+			if( *p == '\\' && *( p + 1 ) != 0 )
+				p++;
+			len++;
+		}
+		if( len > MAXLABEL )
+			return ARES_EBADNAME;
+
+		/* Encode the length and copy the data. */
+		*q++ = len;
+		for( p = name;  *p &&  *p != '.'; p++ )
+		{
+			if( *p == '\\' && *( p + 1 ) != 0 )
+				p++;
+			*q++ =  *p;
+		}
+
+		/* Go to the next label and repeat, unless we hit the end. */
+		if( ! *p )
+			break;
+		name = p + 1;
 	}
 
-      /* Go to the next label and repeat, unless we hit the end. */
-      if (!*p)
-	break;
-      name = p + 1;
-    }
+	/* Add the zero-length label at the end. */
+	*q++ = 0;
 
-  /* Add the zero-length label at the end. */
-  *q++ = 0;
+	/* Finish off the question with the type and class. */
+	DNS_QUESTION_SET_TYPE( q, type );
+	DNS_QUESTION_SET_CLASS( q, dnsclass );
 
-  /* Finish off the question with the type and class. */
-  DNS_QUESTION_SET_TYPE(q, type);
-  DNS_QUESTION_SET_CLASS(q, dnsclass);
-
-  return ARES_SUCCESS;
+	return ARES_SUCCESS;
 }

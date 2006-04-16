@@ -11,19 +11,19 @@
  */
 
 #ifndef __EMPTYSCENENODEGENERATOR_H__
-#define __EMPTYSCENENODEGENERATOR_H__
+	#define __EMPTYSCENENODEGENERATOR_H__
 
-#include "ObstacleSceneNodeGenerator.h"
+	#include "ObstacleSceneNodeGenerator.h"
 
-class EmptySceneNodeGenerator : public ObstacleSceneNodeGenerator {
-  public:
-    virtual		~EmptySceneNodeGenerator();
+class EmptySceneNodeGenerator: public ObstacleSceneNodeGenerator
+{
+public:
+	virtual ~EmptySceneNodeGenerator();
 
-    virtual WallSceneNode* getNextNode(float uRepeats, float vRepeats,
-				       bool lod);
+	virtual WallSceneNode *getNextNode( float uRepeats, float vRepeats, bool lod );
 };
 
-#endif
+#endif 
 
 // Local Variables: ***
 // mode:C++ ***

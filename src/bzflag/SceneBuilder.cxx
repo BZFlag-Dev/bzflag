@@ -50,615 +50,916 @@
 // SceneDatabaseBuilder
 //
 
-static const GLfloat	black[3] = { 0.0f, 0.0f, 0.0f };
-
-const GLfloat		SceneDatabaseBuilder::wallColors[4][4] = {
-				{ 0.5f, 0.5f, 0.5f, 1.0f },
-				{ 0.4f, 0.4f, 0.4f, 1.0f },
-				{ 0.5f, 0.5f, 0.5f, 1.0f },
-				{ 0.6f, 0.6f, 0.6f, 1.0f }
-			};
-const GLfloat		SceneDatabaseBuilder::wallModulateColors[4][4] = {
-				{ 0.5f, 0.5f, 0.5f, 1.0f },
-				{ 0.4f, 0.4f, 0.4f, 1.0f },
-				{ 0.5f, 0.5f, 0.5f, 1.0f },
-				{ 0.6f, 0.6f, 0.6f, 1.0f }
-			};
-const GLfloat		SceneDatabaseBuilder::wallLightedColors[1][4] = {
-				{ 0.5f, 0.5f, 0.5f, 1.0f }
-			};
-const GLfloat		SceneDatabaseBuilder::wallLightedModulateColors[1][4] = {
-				{ 0.5f, 0.5f, 0.5f, 1.0f }
-			};
-
-const GLfloat		SceneDatabaseBuilder::boxColors[6][4] = {
-				{ 0.75f, 0.25f, 0.25f, 1.0f },
-				{ 0.63f, 0.25f, 0.25f, 1.0f },
-				{ 0.75f, 0.25f, 0.25f, 1.0f },
-				{ 0.75f, 0.375f, 0.375f, 1.0f },
-				{ 0.875f, 0.5f, 0.5f, 1.0f },
-				{ 0.275f, 0.2f, 0.2f, 1.0f }
-			};
-const GLfloat		SceneDatabaseBuilder::boxModulateColors[6][4] = {
-				{ 0.75f, 0.75f, 0.75f, 1.0f },
-				{ 0.63f, 0.63f, 0.63f, 1.0f },
-				{ 0.75f, 0.75f, 0.75f, 1.0f },
-				{ 0.69f, 0.69f, 0.69f, 1.0f },
-				{ 0.875f, 0.875f, 0.875f, 1.0f },
-				{ 0.375f, 0.375f, 0.375f, 1.0f }
-			};
-const GLfloat		SceneDatabaseBuilder::boxLightedColors[6][4] = {
-				{ 0.75f, 0.25f, 0.25f, 1.0f },
-				{ 0.75f, 0.25f, 0.25f, 1.0f },
-				{ 0.75f, 0.25f, 0.25f, 1.0f },
-				{ 0.75f, 0.25f, 0.25f, 1.0f },
-				{ 0.875f, 0.5f, 0.5f, 1.0f },
-				{ 0.875f, 0.5f, 0.5f, 1.0f }
-			};
-const GLfloat		SceneDatabaseBuilder::boxLightedModulateColors[6][4] = {
-				{ 0.75f, 0.75f, 0.75f, 1.0f },
-				{ 0.75f, 0.75f, 0.75f, 1.0f },
-				{ 0.75f, 0.75f, 0.75f, 1.0f },
-				{ 0.75f, 0.75f, 0.75f, 1.0f },
-				{ 0.875f, 0.875f, 0.875f, 1.0f },
-				{ 0.875f, 0.875f, 0.875f, 1.0f }
-			};
-
-const GLfloat		SceneDatabaseBuilder::pyramidColors[5][4] = {
-				{ 0.25f, 0.25f, 0.63f, 1.0f },
-				{ 0.13f, 0.13f, 0.51f, 1.0f },
-				{ 0.25f, 0.25f, 0.63f, 1.0f },
-				{ 0.375f, 0.375f, 0.75f, 1.0f },
-				{ 0.175f, 0.175f, 0.35f, 1.0f }
-			};
-
-const GLfloat		SceneDatabaseBuilder::pyramidModulateColors[5][4] = {
-				{ 0.25f, 0.25f, 0.63f, 1.0f },
-				{ 0.13f, 0.13f, 0.51f, 1.0f },
-				{ 0.25f, 0.25f, 0.63f, 1.0f },
-				{ 0.375f, 0.375f, 0.75f, 1.0f },
-				{ 0.175f, 0.175f, 0.35f, 1.0f }
-			};
-const GLfloat		SceneDatabaseBuilder::pyramidLightedColors[5][4] = {
-				{ 0.25f, 0.25f, 0.63f, 1.0f },
-				{ 0.25f, 0.25f, 0.63f, 1.0f },
-				{ 0.25f, 0.25f, 0.63f, 1.0f },
-				{ 0.25f, 0.25f, 0.63f, 1.0f },
-				{ 0.25f, 0.25f, 0.63f, 1.0f }
-			};
-const GLfloat		SceneDatabaseBuilder::pyramidLightedModulateColors[5][4] = {
-				{ 0.25f, 0.25f, 0.63f, 1.0f },
-				{ 0.25f, 0.25f, 0.63f, 1.0f },
-				{ 0.25f, 0.25f, 0.63f, 1.0f },
-				{ 0.25f, 0.25f, 0.63f, 1.0f },
-				{ 0.25f, 0.25f, 0.63f, 1.0f }
-			};
-
-const GLfloat		SceneDatabaseBuilder::teleporterColors[3][4] = {
-				{ 1.0f, 0.875f, 0.0f, 1.0f },
-				{ 0.9f, 0.8f, 0.0f, 1.0f },
-				{ 0.0f, 0.0f, 0.0f, 0.5f }
-			};
-const GLfloat		SceneDatabaseBuilder::teleporterModulateColors[3][4] = {
-				{ 1.0f, 1.0f, 1.0f, 1.0f },
-				{ 0.9f, 0.9f, 0.9f, 1.0f },
-				{ 0.0f, 0.0f, 0.0f, 0.5f }
-			};
-const GLfloat		SceneDatabaseBuilder::teleporterLightedColors[3][4] = {
-				{ 1.0f, 0.875f, 0.0f, 1.0f },
-				{ 1.0f, 0.875f, 0.0f, 1.0f },
-				{ 0.0f, 0.0f, 0.0f, 0.5f }
-			};
-const GLfloat		SceneDatabaseBuilder::teleporterLightedModulateColors[3][4] = {
-				{ 1.0f, 1.0f, 1.0f, 1.0f },
-				{ 1.0f, 1.0f, 1.0f, 1.0f },
-				{ 0.0f, 0.0f, 0.0f, 0.5f }
-			};
-
-
-SceneDatabaseBuilder::SceneDatabaseBuilder(const SceneRenderer* _renderer) :
-				renderer(_renderer),
-				wallMaterial(black, black, 0.0f),
-				boxMaterial(black, black, 0.0f),
-				pyramidMaterial(black, black, 0.0f),
-				teleporterMaterial(black, black, 0.0f)
+static const GLfloat black[3] = 
 {
-  // FIXME -- should get texture heights from resources
+	0.0f, 0.0f, 0.0f
+};
 
-  TextureManager &tm = TextureManager::instance();
+const GLfloat SceneDatabaseBuilder::wallColors[4][4] = 
+{
+	{
+		0.5f, 0.5f, 0.5f, 1.0f
+	}
+
+	, 
+	{
+		0.4f, 0.4f, 0.4f, 1.0f
+	}
+
+	, 
+	{
+		0.5f, 0.5f, 0.5f, 1.0f
+	}
+
+	, 
+	{
+		0.6f, 0.6f, 0.6f, 1.0f
+	}
+};
+const GLfloat SceneDatabaseBuilder::wallModulateColors[4][4] = 
+{
+	{
+		0.5f, 0.5f, 0.5f, 1.0f
+	}
+
+	, 
+	{
+		0.4f, 0.4f, 0.4f, 1.0f
+	}
+
+	, 
+	{
+		0.5f, 0.5f, 0.5f, 1.0f
+	}
+
+	, 
+	{
+		0.6f, 0.6f, 0.6f, 1.0f
+	}
+};
+const GLfloat SceneDatabaseBuilder::wallLightedColors[1][4] = 
+{
+	{
+		0.5f, 0.5f, 0.5f, 1.0f
+	}
+};
+const GLfloat SceneDatabaseBuilder::wallLightedModulateColors[1][4] = 
+{
+	{
+		0.5f, 0.5f, 0.5f, 1.0f
+	}
+};
+
+const GLfloat SceneDatabaseBuilder::boxColors[6][4] = 
+{
+	{
+		0.75f, 0.25f, 0.25f, 1.0f
+	}
+
+	, 
+	{
+		0.63f, 0.25f, 0.25f, 1.0f
+	}
+
+	, 
+	{
+		0.75f, 0.25f, 0.25f, 1.0f
+	}
+
+	, 
+	{
+		0.75f, 0.375f, 0.375f, 1.0f
+	}
+
+	, 
+	{
+		0.875f, 0.5f, 0.5f, 1.0f
+	}
+
+	, 
+	{
+		0.275f, 0.2f, 0.2f, 1.0f
+	}
+};
+const GLfloat SceneDatabaseBuilder::boxModulateColors[6][4] = 
+{
+	{
+		0.75f, 0.75f, 0.75f, 1.0f
+	}
+
+	, 
+	{
+		0.63f, 0.63f, 0.63f, 1.0f
+	}
+
+	, 
+	{
+		0.75f, 0.75f, 0.75f, 1.0f
+	}
+
+	, 
+	{
+		0.69f, 0.69f, 0.69f, 1.0f
+	}
+
+	, 
+	{
+		0.875f, 0.875f, 0.875f, 1.0f
+	}
+
+	, 
+	{
+		0.375f, 0.375f, 0.375f, 1.0f
+	}
+};
+const GLfloat SceneDatabaseBuilder::boxLightedColors[6][4] = 
+{
+	{
+		0.75f, 0.25f, 0.25f, 1.0f
+	}
+
+	, 
+	{
+		0.75f, 0.25f, 0.25f, 1.0f
+	}
+
+	, 
+	{
+		0.75f, 0.25f, 0.25f, 1.0f
+	}
+
+	, 
+	{
+		0.75f, 0.25f, 0.25f, 1.0f
+	}
+
+	, 
+	{
+		0.875f, 0.5f, 0.5f, 1.0f
+	}
+
+	, 
+	{
+		0.875f, 0.5f, 0.5f, 1.0f
+	}
+};
+const GLfloat SceneDatabaseBuilder::boxLightedModulateColors[6][4] = 
+{
+	{
+		0.75f, 0.75f, 0.75f, 1.0f
+	}
+
+	, 
+	{
+		0.75f, 0.75f, 0.75f, 1.0f
+	}
+
+	, 
+	{
+		0.75f, 0.75f, 0.75f, 1.0f
+	}
+
+	, 
+	{
+		0.75f, 0.75f, 0.75f, 1.0f
+	}
+
+	, 
+	{
+		0.875f, 0.875f, 0.875f, 1.0f
+	}
+
+	, 
+	{
+		0.875f, 0.875f, 0.875f, 1.0f
+	}
+};
+
+const GLfloat SceneDatabaseBuilder::pyramidColors[5][4] = 
+{
+	{
+		0.25f, 0.25f, 0.63f, 1.0f
+	}
+
+	, 
+	{
+		0.13f, 0.13f, 0.51f, 1.0f
+	}
+
+	, 
+	{
+		0.25f, 0.25f, 0.63f, 1.0f
+	}
+
+	, 
+	{
+		0.375f, 0.375f, 0.75f, 1.0f
+	}
+
+	, 
+	{
+		0.175f, 0.175f, 0.35f, 1.0f
+	}
+};
+
+const GLfloat SceneDatabaseBuilder::pyramidModulateColors[5][4] = 
+{
+	{
+		0.25f, 0.25f, 0.63f, 1.0f
+	}
+
+	, 
+	{
+		0.13f, 0.13f, 0.51f, 1.0f
+	}
+
+	, 
+	{
+		0.25f, 0.25f, 0.63f, 1.0f
+	}
+
+	, 
+	{
+		0.375f, 0.375f, 0.75f, 1.0f
+	}
+
+	, 
+	{
+		0.175f, 0.175f, 0.35f, 1.0f
+	}
+};
+const GLfloat SceneDatabaseBuilder::pyramidLightedColors[5][4] = 
+{
+	{
+		0.25f, 0.25f, 0.63f, 1.0f
+	}
+
+	, 
+	{
+		0.25f, 0.25f, 0.63f, 1.0f
+	}
+
+	, 
+	{
+		0.25f, 0.25f, 0.63f, 1.0f
+	}
+
+	, 
+	{
+		0.25f, 0.25f, 0.63f, 1.0f
+	}
+
+	, 
+	{
+		0.25f, 0.25f, 0.63f, 1.0f
+	}
+};
+const GLfloat SceneDatabaseBuilder::pyramidLightedModulateColors[5][4] = 
+{
+	{
+		0.25f, 0.25f, 0.63f, 1.0f
+	}
+
+	, 
+	{
+		0.25f, 0.25f, 0.63f, 1.0f
+	}
+
+	, 
+	{
+		0.25f, 0.25f, 0.63f, 1.0f
+	}
+
+	, 
+	{
+		0.25f, 0.25f, 0.63f, 1.0f
+	}
+
+	, 
+	{
+		0.25f, 0.25f, 0.63f, 1.0f
+	}
+};
+
+const GLfloat SceneDatabaseBuilder::teleporterColors[3][4] = 
+{
+	{
+		1.0f, 0.875f, 0.0f, 1.0f
+	}
+
+	, 
+	{
+		0.9f, 0.8f, 0.0f, 1.0f
+	}
+
+	, 
+	{
+		0.0f, 0.0f, 0.0f, 0.5f
+	}
+};
+const GLfloat SceneDatabaseBuilder::teleporterModulateColors[3][4] = 
+{
+	{
+		1.0f, 1.0f, 1.0f, 1.0f
+	}
+
+	, 
+	{
+		0.9f, 0.9f, 0.9f, 1.0f
+	}
+
+	, 
+	{
+		0.0f, 0.0f, 0.0f, 0.5f
+	}
+};
+const GLfloat SceneDatabaseBuilder::teleporterLightedColors[3][4] = 
+{
+	{
+		1.0f, 0.875f, 0.0f, 1.0f
+	}
+
+	, 
+	{
+		1.0f, 0.875f, 0.0f, 1.0f
+	}
+
+	, 
+	{
+		0.0f, 0.0f, 0.0f, 0.5f
+	}
+};
+const GLfloat SceneDatabaseBuilder::teleporterLightedModulateColors[3][4] = 
+{
+	{
+		1.0f, 1.0f, 1.0f, 1.0f
+	}
+
+	, 
+	{
+		1.0f, 1.0f, 1.0f, 1.0f
+	}
+
+	, 
+	{
+		0.0f, 0.0f, 0.0f, 0.5f
+	}
+};
 
 
-  // make styles -- first the outer wall
-  int wallTexture = tm.getTextureID( "wall" );
-  wallTexWidth = wallTexHeight = 10.0f;
-  if (wallTexture>=0)
-    wallTexWidth = tm.GetAspectRatio(wallTexture) * wallTexHeight;
+SceneDatabaseBuilder::SceneDatabaseBuilder( const SceneRenderer *_renderer ): renderer( _renderer ), wallMaterial( black, black, 0.0f ), boxMaterial( black, black, 0.0f ), pyramidMaterial( black, black, 0.0f ), teleporterMaterial( black, black, 0.0f )
+{
+	// FIXME -- should get texture heights from resources
+
+	TextureManager &tm = TextureManager::instance();
 
 
-  // make box styles
-  int boxTexture = tm.getTextureID( "boxwall" );
-  boxTexWidth = boxTexHeight = 0.2f * BZDB.eval(StateDatabase::BZDB_BOXHEIGHT);
-  if (boxTexture>=0)
-    boxTexWidth = tm.GetAspectRatio(boxTexture) * boxTexHeight;
+	// make styles -- first the outer wall
+	int wallTexture = tm.getTextureID( "wall" );
+	wallTexWidth = wallTexHeight = 10.0f;
+	if( wallTexture >= 0 )
+		wallTexWidth = tm.GetAspectRatio( wallTexture ) *wallTexHeight;
 
 
-  // lower maximum tank lod if lowdetail is true
-  if (renderer->useQuality() == _LOW_QUALITY)
-    TankSceneNode::setMaxLOD(2);
+	// make box styles
+	int boxTexture = tm.getTextureID( "boxwall" );
+	boxTexWidth = boxTexHeight = 0.2f * BZDB.eval( StateDatabase::BZDB_BOXHEIGHT );
+	if( boxTexture >= 0 )
+		boxTexWidth = tm.GetAspectRatio( boxTexture ) *boxTexHeight;
+
+
+	// lower maximum tank lod if lowdetail is true
+	if( renderer->useQuality() == _LOW_QUALITY )
+		TankSceneNode::setMaxLOD( 2 );
 }
+
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
 
 SceneDatabaseBuilder::~SceneDatabaseBuilder()
 {
-  // do nothing
+	// do nothing
 }
 
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
-SceneDatabase* SceneDatabaseBuilder::make(const World* world)
+
+SceneDatabase *SceneDatabaseBuilder::make( const World *world )
 {
-  // set LOD flags
-  const bool doLODs = BZDBCache::lighting && BZDBCache::zbuffer;
-  wallLOD = baseLOD = boxLOD = pyramidLOD = teleporterLOD = doLODs;
+	// set LOD flags
+	const bool doLODs = BZDBCache::lighting && BZDBCache::zbuffer;
+	wallLOD = baseLOD = boxLOD = pyramidLOD = teleporterLOD = doLODs;
 
-  // pick type of database
-  SceneDatabase* db;
-  if (BZDBCache::zbuffer)
-    db = new ZSceneDatabase;
-  else
-    db = new BSPSceneDatabase;
-  // FIXME -- when making BSP tree, try several shuffles for best tree
+	// pick type of database
+	SceneDatabase *db;
+	if( BZDBCache::zbuffer )
+		db = new ZSceneDatabase;
+	else
+		db = new BSPSceneDatabase;
+	// FIXME -- when making BSP tree, try several shuffles for best tree
 
-  if (!world) {
-    return db;
-  }
+	if( !world )
+	{
+		return db;
+	}
 
-  // free any prior inside nodes
-  world->freeInsideNodes();
+	// free any prior inside nodes
+	world->freeInsideNodes();
 
 
-  // add nodes to database
-  unsigned int i;
+	// add nodes to database
+	unsigned int i;
 
-  const ObstacleList& walls = OBSTACLEMGR.getWalls();
-  for (i = 0; i < walls.size(); i++) {
-    addWall(db, *((WallObstacle*) walls[i]));
-  }
+	const ObstacleList &walls = OBSTACLEMGR.getWalls();
+	for( i = 0; i < walls.size(); i++ )
+	{
+		addWall( db, *(( WallObstacle* )walls[i] ));
+	}
 
-  const ObstacleList& boxes = OBSTACLEMGR.getBoxes();
-  for (i = 0; i < boxes.size(); i++) {
-    addBox (db, *((BoxBuilding*) boxes[i]));
-  }
+	const ObstacleList &boxes = OBSTACLEMGR.getBoxes();
+	for( i = 0; i < boxes.size(); i++ )
+	{
+		addBox( db, *(( BoxBuilding* )boxes[i] ));
+	}
 
-  const ObstacleList& bases = OBSTACLEMGR.getBases();
-  for (i = 0; i < bases.size(); i++) {
-    addBase (db, *((BaseBuilding*) bases[i]));
-  }
+	const ObstacleList &bases = OBSTACLEMGR.getBases();
+	for( i = 0; i < bases.size(); i++ )
+	{
+		addBase( db, *(( BaseBuilding* )bases[i] ));
+	}
 
-  const ObstacleList& pyramids = OBSTACLEMGR.getPyrs();
-  for (i = 0; i < pyramids.size(); i++) {
-    addPyramid (db, *((PyramidBuilding*) pyramids[i]));
-  }
+	const ObstacleList &pyramids = OBSTACLEMGR.getPyrs();
+	for( i = 0; i < pyramids.size(); i++ )
+	{
+		addPyramid( db, *(( PyramidBuilding* )pyramids[i] ));
+	}
 
-  const ObstacleList& teles = OBSTACLEMGR.getTeles();
-  for (i = 0; i < teles.size(); i++) {
-    addTeleporter (db, *((Teleporter*) teles[i]), world);
-  }
+	const ObstacleList &teles = OBSTACLEMGR.getTeles();
+	for( i = 0; i < teles.size(); i++ )
+	{
+		addTeleporter( db, *(( Teleporter* )teles[i] ), world );
+	}
 
-  const ObstacleList& meshes = OBSTACLEMGR.getMeshes();
-  for (i = 0; i < meshes.size(); i++) {
-    addMesh (db, (MeshObstacle*) meshes[i]);
-  }
+	const ObstacleList &meshes = OBSTACLEMGR.getMeshes();
+	for( i = 0; i < meshes.size(); i++ )
+	{
+		addMesh( db, ( MeshObstacle* )meshes[i] );
+	}
 
-  // add the water level node
-  addWaterLevel(db, world);
+	// add the water level node
+	addWaterLevel( db, world );
 
-  db->finalizeStatics();
+	db->finalizeStatics();
 
-  return db;
+	return db;
 }
 
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
-void SceneDatabaseBuilder::addWaterLevel(SceneDatabase* db,
-					 const World* world)
+
+void SceneDatabaseBuilder::addWaterLevel( SceneDatabase *db, const World *world )
 {
-  float plane[4] = { 0.0f, 0.0f, 1.0f, 0.0f };
-  const float level = world->getWaterLevel();
-  plane[3] = -level;
+	float plane[4] = 
+	{
+		0.0f, 0.0f, 1.0f, 0.0f
+	};
+	const float level = world->getWaterLevel();
+	plane[3] =  - level;
 
-  // don't draw it if it isn't active
-  if (level < 0.0f) {
-    return;
-  }
+	// don't draw it if it isn't active
+	if( level < 0.0f )
+	{
+		return ;
+	}
 
-  // setup the vertex and texture coordinates
-  float size = BZDBCache::worldSize;
-  GLfloat3Array v(4);
-  GLfloat3Array n(0);
-  GLfloat2Array t(4);
-  v[0][0] = v[0][1] = v[1][1] = v[3][0] = -size/2.0f;
-  v[1][0] = v[2][0] = v[2][1] = v[3][1] = +size/2.0f;
-  v[0][2] = v[1][2] = v[2][2] = v[3][2] = level;
-  t[0][0] = t[0][1] = t[1][1] = t[3][0] = 0.0f;
-  t[1][0] = t[2][0] = t[2][1] = t[3][1] = 2.0f;
+	// setup the vertex and texture coordinates
+	float size = BZDBCache::worldSize;
+	GLfloat3Array v( 4 );
+	GLfloat3Array n( 0 );
+	GLfloat2Array t( 4 );
+	v[0][0] = v[0][1] = v[1][1] = v[3][0] =  - size / 2.0f;
+	v[1][0] = v[2][0] = v[2][1] = v[3][1] =  + size / 2.0f;
+	v[0][2] = v[1][2] = v[2][2] = v[3][2] = level;
+	t[0][0] = t[0][1] = t[1][1] = t[3][0] = 0.0f;
+	t[1][0] = t[2][0] = t[2][1] = t[3][1] = 2.0f;
 
-  // get the material
-  const BzMaterial* mat = world->getWaterMaterial();
-  const bool noRadar = mat->getNoRadar();
-  const bool noShadow = mat->getNoShadow();
+	// get the material
+	const BzMaterial *mat = world->getWaterMaterial();
+	const bool noRadar = mat->getNoRadar();
+	const bool noShadow = mat->getNoShadow();
 
-  MeshPolySceneNode* node =
-    new MeshPolySceneNode(plane, noRadar, noShadow, v, n, t);
+	MeshPolySceneNode *node = new MeshPolySceneNode( plane, noRadar, noShadow, v, n, t );
 
-  // setup the material
-  MeshSceneNodeGenerator::setupNodeMaterial(node, mat);
+	// setup the material
+	MeshSceneNodeGenerator::setupNodeMaterial( node, mat );
 
-  db->addStaticNode(node, false);
+	db->addStaticNode( node, false );
 
-  return;
+	return ;
 }
 
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
-void SceneDatabaseBuilder::addWall(SceneDatabase* db, const WallObstacle& o)
+
+void SceneDatabaseBuilder::addWall( SceneDatabase *db, const WallObstacle &o )
 {
-  if (o.getHeight() <= 0.0f) {
-    return;
-  }
+	if( o.getHeight() <= 0.0f )
+	{
+		return ;
+	}
 
-  int part = 0;
-  WallSceneNode* node;
-  ObstacleSceneNodeGenerator* nodeGen = new WallSceneNodeGenerator (&o);
+	int part = 0;
+	WallSceneNode *node;
+	ObstacleSceneNodeGenerator *nodeGen = new WallSceneNodeGenerator( &o );
 
-  TextureManager &tm = TextureManager::instance();
-  int wallTexture = -1;
+	TextureManager &tm = TextureManager::instance();
+	int wallTexture =  - 1;
 
-  bool  useColorTexture = false;
+	bool useColorTexture = false;
 
-  // try object, standard, then default
-  if (o.userTextures[0].size())
-    wallTexture = tm.getTextureID(o.userTextures[0].c_str(),false);
-  if (wallTexture < 0)
-    wallTexture = tm.getTextureID( "wall" );
-  else
-    useColorTexture = wallTexture >= 0;
+	// try object, standard, then default
+	if( o.userTextures[0].size())
+		wallTexture = tm.getTextureID( o.userTextures[0].c_str(), false );
+	if( wallTexture < 0 )
+		wallTexture = tm.getTextureID( "wall" );
+	else
+		useColorTexture = wallTexture >= 0;
 
-  while ((node = nodeGen->getNextNode(o.getBreadth() / wallTexWidth,
-				o.getHeight() / wallTexHeight, wallLOD))) {
-    node->setColor(wallColors[part]);
-    node->setModulateColor(wallModulateColors[part]);
-    node->setLightedColor(wallLightedColors[0]);
-    node->setLightedModulateColor(wallLightedModulateColors[0]);
-    node->setMaterial(wallMaterial);
-    node->setTexture(wallTexture);
-    node->setUseColorTexture(useColorTexture);
+	while(( node = nodeGen->getNextNode( o.getBreadth() / wallTexWidth, o.getHeight() / wallTexHeight, wallLOD )))
+	{
+		node->setColor( wallColors[part] );
+		node->setModulateColor( wallModulateColors[part] );
+		node->setLightedColor( wallLightedColors[0] );
+		node->setLightedModulateColor( wallLightedModulateColors[0] );
+		node->setMaterial( wallMaterial );
+		node->setTexture( wallTexture );
+		node->setUseColorTexture( useColorTexture );
 
-    db->addStaticNode(node, false);
-    part = (part + 1) % 5;
-  }
-  delete nodeGen;
+		db->addStaticNode( node, false );
+		part = ( part + 1 ) % 5;
+	}
+	delete nodeGen;
 }
 
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
-void SceneDatabaseBuilder::addMesh(SceneDatabase* db, MeshObstacle* mesh)
+
+void SceneDatabaseBuilder::addMesh( SceneDatabase *db, MeshObstacle *mesh )
 {
-  WallSceneNode* node;
-  MeshSceneNodeGenerator* nodeGen = new MeshSceneNodeGenerator (mesh);
+	WallSceneNode *node;
+	MeshSceneNodeGenerator *nodeGen = new MeshSceneNodeGenerator( mesh );
 
-  while ((node = nodeGen->getNextNode(wallLOD))) {
-    // make the inside node
-    const bool ownTheNode = db->addStaticNode(node, true);
-    // The BSP can split a MeshPolySceneNode and then delete it, which is
-    // not good for the EighthDimShellNode's referencing scheme. If the
-    // BSP would have split and then deleted this node, ownTheNode will
-    // return true, and the EighthDimShellNode will then own the node.
-    EighthDimShellNode* inode = new EighthDimShellNode(node, ownTheNode);
-    mesh->addInsideSceneNode(inode);
-  }
-  delete nodeGen;
+	while(( node = nodeGen->getNextNode( wallLOD )))
+	{
+		// make the inside node
+		const bool ownTheNode = db->addStaticNode( node, true );
+		// The BSP can split a MeshPolySceneNode and then delete it, which is
+		// not good for the EighthDimShellNode's referencing scheme. If the
+		// BSP would have split and then deleted this node, ownTheNode will
+		// return true, and the EighthDimShellNode will then own the node.
+		EighthDimShellNode *inode = new EighthDimShellNode( node, ownTheNode );
+		mesh->addInsideSceneNode( inode );
+	}
+	delete nodeGen;
 }
 
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
-void SceneDatabaseBuilder::addBox(SceneDatabase* db, BoxBuilding& o)
+
+void SceneDatabaseBuilder::addBox( SceneDatabase *db, BoxBuilding &o )
 {
-  // this assumes boxes have six parts:  four sides, a roof, and a bottom.
-  int part = 0;
-  WallSceneNode* node;
-  ObstacleSceneNodeGenerator* nodeGen = new BoxSceneNodeGenerator(&o);
-  TextureManager &tm = TextureManager::instance();
-  int    boxTexture = -1;
-  bool  useColorTexture[2] = {false,false};
+	// this assumes boxes have six parts:  four sides, a roof, and a bottom.
+	int part = 0;
+	WallSceneNode *node;
+	ObstacleSceneNodeGenerator *nodeGen = new BoxSceneNodeGenerator( &o );
+	TextureManager &tm = TextureManager::instance();
+	int boxTexture =  - 1;
+	bool useColorTexture[2] = 
+	{
+		false, false
+	};
 
-  // try object, standard, then default
-  if (o.userTextures[0].size())
-    boxTexture = tm.getTextureID(o.userTextures[0].c_str(),false);
-  if (boxTexture < 0)
-    boxTexture = tm.getTextureID(BZDB.get("boxWallTexture").c_str(),true);
+	// try object, standard, then default
+	if( o.userTextures[0].size())
+		boxTexture = tm.getTextureID( o.userTextures[0].c_str(), false );
+	if( boxTexture < 0 )
+		boxTexture = tm.getTextureID( BZDB.get( "boxWallTexture" ).c_str(), true );
 
-  useColorTexture[0] = boxTexture >= 0;
+	useColorTexture[0] = boxTexture >= 0;
 
-  int boxTopTexture = -1;
+	int boxTopTexture =  - 1;
 
-  if (o.userTextures[1].size())
-    boxTopTexture = tm.getTextureID(o.userTextures[1].c_str(),false);
-  if (boxTopTexture < 0)
-    boxTopTexture = tm.getTextureID(BZDB.get("boxTopTexture").c_str(),true);
+	if( o.userTextures[1].size())
+		boxTopTexture = tm.getTextureID( o.userTextures[1].c_str(), false );
+	if( boxTopTexture < 0 )
+		boxTopTexture = tm.getTextureID( BZDB.get( "boxTopTexture" ).c_str(), true );
 
-  useColorTexture[1] = boxTopTexture >= 0;
+	useColorTexture[1] = boxTopTexture >= 0;
 
-  float texutureFactor = BZDB.eval("boxWallTexRepeat");
-  if (renderer->useQuality() >= _HIGH_QUALITY)
-    texutureFactor = BZDB.eval("boxWallHighResTexRepeat");
+	float texutureFactor = BZDB.eval( "boxWallTexRepeat" );
+	if( renderer->useQuality() >= _HIGH_QUALITY )
+		texutureFactor = BZDB.eval( "boxWallHighResTexRepeat" );
 
-  while ((node = ((part < 4) ? nodeGen->getNextNode(
-				-texutureFactor*boxTexWidth,
-				-texutureFactor*boxTexWidth, boxLOD) :
-    // I'm using boxTexHeight for roof since textures are same
-    // size and this number is available
-				nodeGen->getNextNode(
-				-boxTexHeight,
-				-boxTexHeight, boxLOD)))) {
-    node->setColor(boxColors[part]);
-    node->setModulateColor(boxModulateColors[part]);
-    node->setLightedColor(boxLightedColors[part]);
-    node->setLightedModulateColor(boxLightedModulateColors[part]);
-    node->setMaterial(boxMaterial);
-    if (part < 4){
-      node->setTexture(boxTexture);
-      node->setUseColorTexture(useColorTexture[0]);
-    }
-    else{
-      node->setTexture(boxTopTexture);
-      node->setUseColorTexture(useColorTexture[1]);
-    }
+	while(( node = (( part < 4 ) ? nodeGen->getNextNode(  - texutureFactor * boxTexWidth,  - texutureFactor * boxTexWidth, boxLOD ): 
+	// I'm using boxTexHeight for roof since textures are same
+	// size and this number is available
+	nodeGen->getNextNode(  - boxTexHeight,  - boxTexHeight, boxLOD ))))
+	{
+		node->setColor( boxColors[part] );
+		node->setModulateColor( boxModulateColors[part] );
+		node->setLightedColor( boxLightedColors[part] );
+		node->setLightedModulateColor( boxLightedModulateColors[part] );
+		node->setMaterial( boxMaterial );
+		if( part < 4 )
+		{
+			node->setTexture( boxTexture );
+			node->setUseColorTexture( useColorTexture[0] );
+		}
+		else
+		{
+			node->setTexture( boxTopTexture );
+			node->setUseColorTexture( useColorTexture[1] );
+		}
 
 #ifdef SHELL_INSIDE_NODES
-    const bool ownTheNode = db->addStaticNode(node, true);
-    EighthDimShellNode* inode = new EighthDimShellNode(node, ownTheNode);
-    o.addInsideSceneNode(inode);
-#else
-    db->addStaticNode(node, false);
+		const bool ownTheNode = db->addStaticNode( node, true );
+		EighthDimShellNode *inode = new EighthDimShellNode( node, ownTheNode );
+		o.addInsideSceneNode( inode );
+#else 
+		db->addStaticNode( node, false );
 #endif // SHELL_INSIDE_NODES
 
-    part = (part + 1) % 6;
-  }
+		part = ( part + 1 ) % 6;
+	}
 
 #ifndef SHELL_INSIDE_NODES
-  // add the inside node
-  GLfloat obstacleSize[3];
-  obstacleSize[0] = o.getWidth();
-  obstacleSize[1] = o.getBreadth();
-  obstacleSize[2] = o.getHeight();
-  SceneNode* inode =
-    new EighthDBoxSceneNode(o.getPosition(), obstacleSize, o.getRotation());
-  o.addInsideSceneNode(inode);
+	// add the inside node
+	GLfloat obstacleSize[3];
+	obstacleSize[0] = o.getWidth();
+	obstacleSize[1] = o.getBreadth();
+	obstacleSize[2] = o.getHeight();
+	SceneNode *inode = new EighthDBoxSceneNode( o.getPosition(), obstacleSize, o.getRotation());
+	o.addInsideSceneNode( inode );
 #endif // SHELL_INSIDE_NODES
 
-  delete nodeGen;
+	delete nodeGen;
 }
 
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
-void SceneDatabaseBuilder::addPyramid(SceneDatabase* db, PyramidBuilding& o)
+
+void SceneDatabaseBuilder::addPyramid( SceneDatabase *db, PyramidBuilding &o )
 {
-  // this assumes pyramids have four parts:  four sides
-  int part = 0;
-  WallSceneNode* node;
-  ObstacleSceneNodeGenerator* nodeGen = new PyramidSceneNodeGenerator(&o);
+	// this assumes pyramids have four parts:  four sides
+	int part = 0;
+	WallSceneNode *node;
+	ObstacleSceneNodeGenerator *nodeGen = new PyramidSceneNodeGenerator( &o );
 
-  TextureManager &tm = TextureManager::instance();
-  int pyramidTexture = -1;
+	TextureManager &tm = TextureManager::instance();
+	int pyramidTexture =  - 1;
 
-  bool useColorTexture = false;
-  // try object, standard, then default
-  if (o.userTextures[0].size())
-    pyramidTexture = tm.getTextureID(o.userTextures[0].c_str(),false);
-  if (pyramidTexture < 0)
-    pyramidTexture = tm.getTextureID(BZDB.get("pyrWallTexture").c_str(),false);
+	bool useColorTexture = false;
+	// try object, standard, then default
+	if( o.userTextures[0].size())
+		pyramidTexture = tm.getTextureID( o.userTextures[0].c_str(), false );
+	if( pyramidTexture < 0 )
+		pyramidTexture = tm.getTextureID( BZDB.get( "pyrWallTexture" ).c_str(), false );
 
-  useColorTexture = pyramidTexture >= 0;
+	useColorTexture = pyramidTexture >= 0;
 
-  // Using boxTexHeight since it's (currently) the same and it's already available
-  float textureFactor = BZDB.eval("pyrWallTexRepeat");
-  if (renderer->useQuality() >= _HIGH_QUALITY)
-    textureFactor = BZDB.eval("pyrWallHighResTexRepeat");
+	// Using boxTexHeight since it's (currently) the same and it's already available
+	float textureFactor = BZDB.eval( "pyrWallTexRepeat" );
+	if( renderer->useQuality() >= _HIGH_QUALITY )
+		textureFactor = BZDB.eval( "pyrWallHighResTexRepeat" );
 
-  while ((node = nodeGen->getNextNode(-textureFactor * boxTexHeight,
-				-textureFactor * boxTexHeight,
-				pyramidLOD))) {
-    node->setColor(pyramidColors[part]);
-    node->setModulateColor(pyramidModulateColors[part]);
-    node->setLightedColor(pyramidLightedColors[part]);
-    node->setLightedModulateColor(pyramidLightedModulateColors[part]);
-    node->setMaterial(pyramidMaterial);
-    node->setTexture(pyramidTexture);
-    node->setUseColorTexture(useColorTexture);
+	while(( node = nodeGen->getNextNode(  - textureFactor * boxTexHeight,  - textureFactor * boxTexHeight, pyramidLOD )))
+	{
+		node->setColor( pyramidColors[part] );
+		node->setModulateColor( pyramidModulateColors[part] );
+		node->setLightedColor( pyramidLightedColors[part] );
+		node->setLightedModulateColor( pyramidLightedModulateColors[part] );
+		node->setMaterial( pyramidMaterial );
+		node->setTexture( pyramidTexture );
+		node->setUseColorTexture( useColorTexture );
 
 #ifdef SHELL_INSIDE_NODES
-    const bool ownTheNode = db->addStaticNode(node, true);
-    EighthDimShellNode* inode = new EighthDimShellNode(node, ownTheNode);
-    o.addInsideSceneNode(inode);
-#else
-    db->addStaticNode(node, false);
+		const bool ownTheNode = db->addStaticNode( node, true );
+		EighthDimShellNode *inode = new EighthDimShellNode( node, ownTheNode );
+		o.addInsideSceneNode( inode );
+#else 
+		db->addStaticNode( node, false );
 #endif // SHELL_INSIDE_NODES
 
-    part = (part + 1) % 5;
-  }
+		part = ( part + 1 ) % 5;
+	}
 
 #ifndef SHELL_INSIDE_NODES
-  // add the inside node
-  GLfloat obstacleSize[3];
-  obstacleSize[0] = o.getWidth();
-  obstacleSize[1] = o.getBreadth();
-  obstacleSize[2] = o.getHeight();
-  SceneNode* inode =
-    new EighthDPyrSceneNode(o.getPosition(), obstacleSize, o.getRotation());
-  o.addInsideSceneNode(inode);
+	// add the inside node
+	GLfloat obstacleSize[3];
+	obstacleSize[0] = o.getWidth();
+	obstacleSize[1] = o.getBreadth();
+	obstacleSize[2] = o.getHeight();
+	SceneNode *inode = new EighthDPyrSceneNode( o.getPosition(), obstacleSize, o.getRotation());
+	o.addInsideSceneNode( inode );
 #endif // SHELL_INSIDE_NODES
 
-  delete nodeGen;
+	delete nodeGen;
 }
 
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
-void SceneDatabaseBuilder::addBase(SceneDatabase *db, BaseBuilding &o)
+
+void SceneDatabaseBuilder::addBase( SceneDatabase *db, BaseBuilding &o )
 {
-  WallSceneNode* node;
-  ObstacleSceneNodeGenerator* nodeGen = new BaseSceneNodeGenerator(&o);
+	WallSceneNode *node;
+	ObstacleSceneNodeGenerator *nodeGen = new BaseSceneNodeGenerator( &o );
 
-  TextureManager &tm = TextureManager::instance();
-  int   boxTexture = -1;
+	TextureManager &tm = TextureManager::instance();
+	int boxTexture =  - 1;
 
-  bool  useColorTexture[2] = {false,false};
+	bool useColorTexture[2] = 
+	{
+		false, false
+	};
 
-  // try object, standard, then default
-  if (o.userTextures[0].size())
-    boxTexture = tm.getTextureID(o.userTextures[0].c_str(),false);
-  if (boxTexture < 0) {
-    std::string teamBase = Team::getImagePrefix((TeamColor)o.getTeam());
-    teamBase += BZDB.get("baseWallTexture");
-    boxTexture = tm.getTextureID(teamBase.c_str(),false);
-  }
-  if (boxTexture < 0)
-    boxTexture = tm.getTextureID( BZDB.get("boxWallTexture").c_str() );
+	// try object, standard, then default
+	if( o.userTextures[0].size())
+		boxTexture = tm.getTextureID( o.userTextures[0].c_str(), false );
+	if( boxTexture < 0 )
+	{
+		std::string teamBase = Team::getImagePrefix(( TeamColor )o.getTeam());
+		teamBase += BZDB.get( "baseWallTexture" );
+		boxTexture = tm.getTextureID( teamBase.c_str(), false );
+	}
+	if( boxTexture < 0 )
+		boxTexture = tm.getTextureID( BZDB.get( "boxWallTexture" ).c_str());
 
-  useColorTexture[0] = boxTexture >= 0;
+	useColorTexture[0] = boxTexture >= 0;
 
-  int   baseTopTexture = -1;
+	int baseTopTexture =  - 1;
 
-  if (o.userTextures[1].size())
-    baseTopTexture = tm.getTextureID(o.userTextures[1].c_str(),false);
-  if (baseTopTexture < 0) {
-    std::string teamBase = Team::getImagePrefix((TeamColor)o.getTeam());
-    teamBase += BZDB.get("baseTopTexture").c_str();
-    baseTopTexture = tm.getTextureID(teamBase.c_str(),false);
-  }
-  if (baseTopTexture < 0)
-    baseTopTexture = -1;
-  else
-    useColorTexture[1] = baseTopTexture >= 0;
+	if( o.userTextures[1].size())
+		baseTopTexture = tm.getTextureID( o.userTextures[1].c_str(), false );
+	if( baseTopTexture < 0 )
+	{
+		std::string teamBase = Team::getImagePrefix(( TeamColor )o.getTeam());
+		teamBase += BZDB.get( "baseTopTexture" ).c_str();
+		baseTopTexture = tm.getTextureID( teamBase.c_str(), false );
+	}
+	if( baseTopTexture < 0 )
+		baseTopTexture =  - 1;
+	else
+		useColorTexture[1] = baseTopTexture >= 0;
 
-  // this assumes bases have 6 parts - if they don't, it still works
-  int part = 0;
-  // repeat the textue once for the top and bottom, else use the old messed up way
-  // There are 3 cases for the texture ordering:
-  // 1. getNextNode() only returns the top texture
-  // 2. getNextNode() returns the top texture(0), and the 4 sides(1-4)
-  // 3. getNextNode() returns the top texture(0), and the 4 sides(1-4), and the bottom(5)
-  while ((node = ( ((part % 5) == 0) ? nodeGen->getNextNode(1,1, boxLOD) :
-				      nodeGen->getNextNode(o.getBreadth(),
-							   o.getHeight(),
-							   boxLOD)))) {
-    if ((part % 5) != 0) {
-      node->setColor(boxColors[part - 2]);
-      node->setModulateColor(boxModulateColors[part - 2]);
-      node->setLightedColor(boxLightedColors[part - 2]);
-      node->setLightedModulateColor(boxLightedModulateColors[part - 2]);
-      node->setMaterial(boxMaterial);
-      node->setTexture(boxTexture);
-      node->setUseColorTexture(useColorTexture[0]);
-    }
-    else{
-      if (useColorTexture[1]) {  // only set the texture if we have one and are using it
-	node->setTexture(baseTopTexture);
-	node->setUseColorTexture(useColorTexture[1]);
-      }
-    }
-    part++;
+	// this assumes bases have 6 parts - if they don't, it still works
+	int part = 0;
+	// repeat the textue once for the top and bottom, else use the old messed up way
+	// There are 3 cases for the texture ordering:
+	// 1. getNextNode() only returns the top texture
+	// 2. getNextNode() returns the top texture(0), and the 4 sides(1-4)
+	// 3. getNextNode() returns the top texture(0), and the 4 sides(1-4), and the bottom(5)
+	while(( node = ((( part % 5 ) == 0 ) ? nodeGen->getNextNode( 1, 1, boxLOD ): nodeGen->getNextNode( o.getBreadth(), o.getHeight(), boxLOD ))))
+	{
+		if(( part % 5 ) != 0 )
+		{
+			node->setColor( boxColors[part - 2] );
+			node->setModulateColor( boxModulateColors[part - 2] );
+			node->setLightedColor( boxLightedColors[part - 2] );
+			node->setLightedModulateColor( boxLightedModulateColors[part - 2] );
+			node->setMaterial( boxMaterial );
+			node->setTexture( boxTexture );
+			node->setUseColorTexture( useColorTexture[0] );
+		}
+		else
+		{
+			if( useColorTexture[1] )
+			{
+				// only set the texture if we have one and are using it
+				node->setTexture( baseTopTexture );
+				node->setUseColorTexture( useColorTexture[1] );
+			}
+		}
+		part++;
 
 #ifdef SHELL_INSIDE_NODES
-    const bool ownTheNode = db->addStaticNode(node, true);
-    EighthDimShellNode* inode = new EighthDimShellNode(node, ownTheNode);
-    o.addInsideSceneNode(inode);
-#else
-    db->addStaticNode(node, false);
+		const bool ownTheNode = db->addStaticNode( node, true );
+		EighthDimShellNode *inode = new EighthDimShellNode( node, ownTheNode );
+		o.addInsideSceneNode( inode );
+#else 
+		db->addStaticNode( node, false );
 #endif // SHELL_INSIDE_NODES
-  }
+	}
 
 #ifndef SHELL_INSIDE_NODES
-  // add the inside node
-  GLfloat obstacleSize[3];
-  obstacleSize[0] = o.getWidth();
-  obstacleSize[1] = o.getBreadth();
-  obstacleSize[2] = o.getHeight();
-  SceneNode* inode = new
-    EighthDBaseSceneNode(o.getPosition(), obstacleSize, o.getRotation());
-  o.addInsideSceneNode(inode);
+	// add the inside node
+	GLfloat obstacleSize[3];
+	obstacleSize[0] = o.getWidth();
+	obstacleSize[1] = o.getBreadth();
+	obstacleSize[2] = o.getHeight();
+	SceneNode *inode = new EighthDBaseSceneNode( o.getPosition(), obstacleSize, o.getRotation());
+	o.addInsideSceneNode( inode );
 #endif // SHELL_INSIDE_NODES
 
-  delete nodeGen;
+	delete nodeGen;
 }
 
-void SceneDatabaseBuilder::addTeleporter(SceneDatabase* db,
-					 const Teleporter& o,
-					 const World* world)
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+void SceneDatabaseBuilder::addTeleporter( SceneDatabase *db, const Teleporter &o, const World *world )
 {
-  // this assumes teleporters have fourteen parts:  12 border sides, 2 faces
-  int part = 0;
-  WallSceneNode* node;
-  ObstacleSceneNodeGenerator* nodeGen = new TeleporterSceneNodeGenerator(&o);
+	// this assumes teleporters have fourteen parts:  12 border sides, 2 faces
+	int part = 0;
+	WallSceneNode *node;
+	ObstacleSceneNodeGenerator *nodeGen = new TeleporterSceneNodeGenerator( &o );
 
-  TextureManager &tm = TextureManager::instance();
-  int	     teleporterTexture = -1;
+	TextureManager &tm = TextureManager::instance();
+	int teleporterTexture =  - 1;
 
-  bool  useColorTexture = false;
+	bool useColorTexture = false;
 
-  // try object, standard, then default
-  if (o.userTextures[0].size())
-    teleporterTexture = tm.getTextureID(o.userTextures[0].c_str(),false);
-  if (teleporterTexture < 0)
-    teleporterTexture = tm.getTextureID(BZDB.get("cautionTexture").c_str(),true);
+	// try object, standard, then default
+	if( o.userTextures[0].size())
+		teleporterTexture = tm.getTextureID( o.userTextures[0].c_str(), false );
+	if( teleporterTexture < 0 )
+		teleporterTexture = tm.getTextureID( BZDB.get( "cautionTexture" ).c_str(), true );
 
-  useColorTexture = teleporterTexture >= 0;
+	useColorTexture = teleporterTexture >= 0;
 
-  int numParts = o.isHorizontal() ? 18 : 14;
+	int numParts = o.isHorizontal() ? 18 : 14;
 
-  while ((node = nodeGen->getNextNode(1.0, o.getHeight() / o.getBreadth(),
-							teleporterLOD))) {
-    if (o.isHorizontal ()) {
-      if (part >= 0 && part <= 15) {
-	node->setColor (teleporterColors[0]);
-	node->setModulateColor (teleporterModulateColors[0]);
-	node->setLightedColor (teleporterLightedColors[0]);
-	node->setLightedModulateColor (teleporterLightedModulateColors[0]);
-	node->setMaterial (teleporterMaterial);
-	node->setTexture (teleporterTexture);
-	node->setUseColorTexture (useColorTexture);
-      }
-    }
-    else {
-      if (part >= 0 && part <= 1) {
-	node->setColor (teleporterColors[0]);
-	node->setModulateColor (teleporterModulateColors[0]);
-	node->setLightedColor (teleporterLightedColors[0]);
-	node->setLightedModulateColor (teleporterLightedModulateColors[0]);
-	node->setMaterial (teleporterMaterial);
-	node->setTexture (teleporterTexture);
-	node->setUseColorTexture (useColorTexture);
-      }
-      else if (part >= 2 && part <= 11) {
-	node->setColor (teleporterColors[1]);
-	node->setModulateColor (teleporterModulateColors[1]);
-	node->setLightedColor (teleporterLightedColors[1]);
-	node->setLightedModulateColor (teleporterLightedModulateColors[1]);
-	node->setMaterial (teleporterMaterial);
-	node->setTexture (teleporterTexture);
-	node->setUseColorTexture (useColorTexture);
-      }
-    }
+	while(( node = nodeGen->getNextNode( 1.0, o.getHeight() / o.getBreadth(), teleporterLOD )))
+	{
+		if( o.isHorizontal())
+		{
+			if( part >= 0 && part <= 15 )
+			{
+				node->setColor( teleporterColors[0] );
+				node->setModulateColor( teleporterModulateColors[0] );
+				node->setLightedColor( teleporterLightedColors[0] );
+				node->setLightedModulateColor( teleporterLightedModulateColors[0] );
+				node->setMaterial( teleporterMaterial );
+				node->setTexture( teleporterTexture );
+				node->setUseColorTexture( useColorTexture );
+			}
+		}
+		else
+		{
+			if( part >= 0 && part <= 1 )
+			{
+				node->setColor( teleporterColors[0] );
+				node->setModulateColor( teleporterModulateColors[0] );
+				node->setLightedColor( teleporterLightedColors[0] );
+				node->setLightedModulateColor( teleporterLightedModulateColors[0] );
+				node->setMaterial( teleporterMaterial );
+				node->setTexture( teleporterTexture );
+				node->setUseColorTexture( useColorTexture );
+			}
+			else if( part >= 2 && part <= 11 )
+			{
+				node->setColor( teleporterColors[1] );
+				node->setModulateColor( teleporterModulateColors[1] );
+				node->setLightedColor( teleporterLightedColors[1] );
+				node->setLightedModulateColor( teleporterLightedModulateColors[1] );
+				node->setMaterial( teleporterMaterial );
+				node->setTexture( teleporterTexture );
+				node->setUseColorTexture( useColorTexture );
+			}
+		}
 
-    db->addStaticNode(node, false);
-    part = (part + 1) % numParts;
-  }
+		db->addStaticNode( node, false );
+		part = ( part + 1 ) % numParts;
+	}
 
-  MeshPolySceneNode* linkNode;
-  const BzMaterial* mat = world->getLinkMaterial();
+	MeshPolySceneNode *linkNode;
+	const BzMaterial *mat = world->getLinkMaterial();
 
-  linkNode = MeshSceneNodeGenerator::getMeshPolySceneNode(o.getBackLink());
-  MeshSceneNodeGenerator::setupNodeMaterial(linkNode, mat);
-  db->addStaticNode(linkNode, false);
+	linkNode = MeshSceneNodeGenerator::getMeshPolySceneNode( o.getBackLink());
+	MeshSceneNodeGenerator::setupNodeMaterial( linkNode, mat );
+	db->addStaticNode( linkNode, false );
 
-  linkNode = MeshSceneNodeGenerator::getMeshPolySceneNode(o.getFrontLink());
-  MeshSceneNodeGenerator::setupNodeMaterial(linkNode, mat);
-  db->addStaticNode(linkNode, false);
+	linkNode = MeshSceneNodeGenerator::getMeshPolySceneNode( o.getFrontLink());
+	MeshSceneNodeGenerator::setupNodeMaterial( linkNode, mat );
+	db->addStaticNode( linkNode, false );
 
-  delete nodeGen;
+	delete nodeGen;
 }
 
 // Local Variables: ***
@@ -668,4 +969,3 @@ void SceneDatabaseBuilder::addTeleporter(SceneDatabase* db,
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

@@ -10,26 +10,27 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef	__SHOTSTATSDEFAULTKEY_H__
-#define	__SHOTSTATSDEFAULTKEY_H__
+#ifndef __SHOTSTATSDEFAULTKEY_H__
+	#define __SHOTSTATSDEFAULTKEY_H__
 
 /* common interface headers */
-#include "BzfEvent.h"
+	#include "BzfEvent.h"
 
 /* local interface headers */
-#include "HUDuiDefaultKey.h"
+	#include "HUDuiDefaultKey.h"
 
-class ShotStatsDefaultKey : public HUDuiDefaultKey {
+class ShotStatsDefaultKey: public HUDuiDefaultKey
+{
 public:
-  ShotStatsDefaultKey();
-  ~ShotStatsDefaultKey();
+	ShotStatsDefaultKey();
+	~ShotStatsDefaultKey();
 
-  bool keyPress(const BzfKeyEvent&);
-  bool keyRelease(const BzfKeyEvent&);
-  static ShotStatsDefaultKey* getInstance();
+	bool keyPress( const BzfKeyEvent & );
+	bool keyRelease( const BzfKeyEvent & );
+	static ShotStatsDefaultKey *getInstance();
 
 private:
-  static ShotStatsDefaultKey instance;
+	static ShotStatsDefaultKey instance;
 };
 
 

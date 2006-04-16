@@ -16,26 +16,31 @@
  *      Time is stored as microseconds since the epoch.
  */
 
-#ifndef	BZF_GAME_TIME_H
-#define	BZF_GAME_TIME_H
+#ifndef BZF_GAME_TIME_H
+	#define BZF_GAME_TIME_H
 
-#include "common.h"
+	#include "common.h"
 
 
-namespace GameTime {
-  void reset();
-  void update();
+namespace GameTime
+{
+	void reset();
+	void update();
 
-  void setStepTime();
-  double getStepTime();
+	void setStepTime();
+	double getStepTime();
 
-  int packSize();
-  void* pack(void *, float lag);
-  void* unpack(void *);
+	int packSize();
+	void *pack( void *, float lag );
+	void *unpack( void* );
 
-  const float startRate = 1.0f;
-  const float finalRate = 10.0f;
+	const float startRate = 1.0f;
+	const float finalRate = 10.0f;
 }
+
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
 
 #endif // BZF_GAME_TIME_H

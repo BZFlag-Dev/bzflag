@@ -15,36 +15,49 @@
  *      plane. Occluders are never rendered.
  */
 
-#ifndef	BZF_OCCLUDER_SCENE_NODE_H
-#define	BZF_OCCLUDER_SCENE_NODE_H
+#ifndef BZF_OCCLUDER_SCENE_NODE_H
+	#define BZF_OCCLUDER_SCENE_NODE_H
 
-#include "common.h"
+	#include "common.h"
 
 // common implementation headers
-#include "SceneNode.h"
-#include "MeshFace.h"
+	#include "SceneNode.h"
+	#include "MeshFace.h"
 
-class OccluderSceneNode : public SceneNode {
+class OccluderSceneNode: public SceneNode
+{
 
-  public:
-    OccluderSceneNode(const MeshFace* face);
-    ~OccluderSceneNode();
+public:
+	OccluderSceneNode( const MeshFace *face );
+	~OccluderSceneNode();
 
-    // virtual functions from SceneNode
-    bool cull(const ViewFrustum&) const;
-    bool inAxisBox(const Extents& exts) const;
-    void addShadowNodes(SceneRenderer&) { return; }
-    void addRenderNodes(SceneRenderer&) { return; }
-    void renderRadar() { return; }
+	// virtual functions from SceneNode
+	bool cull( const ViewFrustum & )const;
+	bool inAxisBox( const Extents &exts )const;
+	void addShadowNodes( SceneRenderer & )
+	{
+		return ;
+	} void addRenderNodes( SceneRenderer & )
+	{
+		return ;
+	}
+	void renderRadar()
+	{
+		return ;
+	}
 
-    int getVertexCount () const
-      { return vertexCount; }
-    const GLfloat* getVertex (int vertex) const
-      { return vertices[vertex]; }
+	int getVertexCount()const
+	{
+		return vertexCount;
+	}
+	const GLfloat *getVertex( int vertex )const
+	{
+		return vertices[vertex];
+	}
 
-  private:
-    int vertexCount;
-    GLfloat3* vertices;
+private:
+	int vertexCount;
+	GLfloat3 *vertices;
 };
 
 
@@ -57,4 +70,3 @@ class OccluderSceneNode : public SceneNode {
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

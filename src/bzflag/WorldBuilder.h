@@ -10,44 +10,43 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef	__WORLDBUILDER_H__
-#define	__WORLDBUILDER_H__
+#ifndef __WORLDBUILDER_H__
+	#define __WORLDBUILDER_H__
 
-#include "common.h"
+	#include "common.h"
 
 /* local interface headers */
-#include "World.h"
+	#include "World.h"
 
 
 /** builds a bzlfag world
  */
-class WorldBuilder {
-  public:
-			WorldBuilder();
-			~WorldBuilder();
+class WorldBuilder
+{
+public:
+	WorldBuilder();
+	~WorldBuilder();
 
-    void*		unpack(void*);
-    void	       *unpackGameSettings(void*);
+	void *unpack( void* );
+	void *unpackGameSettings( void* );
 
-    World*		getWorld();
-    World*		peekWorld();	// doesn't give up ownership
+	World *getWorld();
+	World *peekWorld(); // doesn't give up ownership
 
-    void		setGameStyle(short gameStyle);
-    void		setMaxPlayers(int maxPlayers);
-    void		setMaxShots(int maxSimultaneousShots);
-    void		setMaxFlags(int maxFlags);
-    void		setShakeTimeout(float timeout) const;
-    void		setShakeWins(int wins) const;
-    void		setBase(TeamColor team,
-				const float* pos, float rotation,
-				float w, float b, float h);
+	void setGameStyle( short gameStyle );
+	void setMaxPlayers( int maxPlayers );
+	void setMaxShots( int maxSimultaneousShots );
+	void setMaxFlags( int maxFlags );
+	void setShakeTimeout( float timeout )const;
+	void setShakeWins( int wins )const;
+	void setBase( TeamColor team, const float *pos, float rotation, float w, float b, float h );
 
-  private:
-    void		preGetWorld();
+private:
+	void preGetWorld();
 
-  private:
-    bool		owned;
-    World*		world;
+private:
+	bool owned;
+	World *world;
 };
 
 

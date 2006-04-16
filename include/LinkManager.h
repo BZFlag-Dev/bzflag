@@ -14,59 +14,61 @@
  *	Encapsulates an OpenGL (point or directional) light source.
  */
 
-#ifndef	BZF_LINK_MANAGER_H
-#define	BZF_LINK_MANAGER_H
+#ifndef BZF_LINK_MANAGER_H
+	#define BZF_LINK_MANAGER_H
 
 // common goes first
-#include "common.h"
+	#include "common.h"
 
 // system headers
-#include <string>
-#include <vector>
-#include <iostream>
+	#include <string>
+	#include <vector>
+	#include <iostream>
 
-class LinkManager {
+class LinkManager
+{
 
-  public:
+public:
 
-    LinkManager();
-    ~LinkManager();
+	LinkManager();
+	~LinkManager();
 
-    void clear();
+	void clear();
 
-    void addLink(int src, int dst);
-    void addLink(const std::string& src, const std::string& dst);
+	void addLink( int src, int dst );
+	void addLink( const std::string &src, const std::string &dst );
 
-    void doLinking();
+	void doLinking();
 
-    int getTeleportTarget(int source) const;
-    int getTeleportTarget(int source, unsigned int seed) const;
+	int getTeleportTarget( int source )const;
+	int getTeleportTarget( int source, unsigned int seed )const;
 
-    int packSize() const;
-    void* pack(void*) const;
-    void* unpack(void*);
+	int packSize()const;
+	void *pack( void* )const;
+	void *unpack( void* );
 
-    void print(std::ostream& out, const std::string& indent) const;
+	void print( std::ostream &out, const std::string &indent )const;
 
-  private:
+private:
 
-    void makeLinkName(int number, std::string& name);
-    void findTelesByName(const std::string& name,
-			 std::vector<int>& list) const;
+	void makeLinkName( int number, std::string &name );
+	void findTelesByName( const std::string &name, std::vector < int >  &list )const;
 
-  private:
+private:
 
-    typedef struct {
-      std::string src;
-      std::string dst;
-    } LinkNameSet;
+	typedef struct
+	{
+		std::string src;
+		std::string dst;
+	} LinkNameSet;
 
-    typedef struct {
-      std::vector<int> dsts;
-    } LinkNumberSet;
+	typedef struct
+	{
+		std::vector < int > dsts;
+	} LinkNumberSet;
 
-    std::vector<LinkNameSet>	linkNames;
-    std::vector<LinkNumberSet>	linkNumbers;
+	std::vector < LinkNameSet > linkNames;
+	std::vector < LinkNumberSet > linkNumbers;
 };
 
 
@@ -80,4 +82,3 @@ class LinkManager {
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

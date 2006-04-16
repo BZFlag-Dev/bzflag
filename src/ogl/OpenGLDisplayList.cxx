@@ -17,15 +17,20 @@
 // OpenGLDisplayList::Rep
 //
 
-OpenGLDisplayList::Rep::Rep() : refCount(1), list(0)
+OpenGLDisplayList::Rep::Rep(): refCount( 1 ), list( 0 )
 {
-  // do nothing
+	// do nothing
 }
+
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
 OpenGLDisplayList::Rep::~Rep()
 {
-  // free OpenGL display list
-  if (list) glDeleteLists(list, 1);
+	// free OpenGL display list
+	if( list )
+		glDeleteLists( list, 1 );
 }
 
 //
@@ -34,87 +39,139 @@ OpenGLDisplayList::Rep::~Rep()
 
 OpenGLDisplayList::OpenGLDisplayList()
 {
-  rep = new Rep;
+	rep = new Rep;
 }
 
-OpenGLDisplayList::OpenGLDisplayList(const OpenGLDisplayList& list)
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+OpenGLDisplayList::OpenGLDisplayList( const OpenGLDisplayList &list )
 {
-  rep = list.rep;
-  ref();
+	rep = list.rep;
+	ref();
 }
+
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
 OpenGLDisplayList::~OpenGLDisplayList()
 {
-  if (unref()) delete rep;
+	if( unref())
+		delete rep;
 }
 
-OpenGLDisplayList&	OpenGLDisplayList::operator=(
-				const OpenGLDisplayList& list)
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+OpenGLDisplayList &OpenGLDisplayList::operator = ( const OpenGLDisplayList &list )
 {
-  if (rep != list.rep) {
-    if (unref()) delete rep;
-    rep = list.rep;
-    ref();
-  }
-  return *this;
+	if( rep != list.rep )
+	{
+		if( unref())
+			delete rep;
+		rep = list.rep;
+		ref();
+	}
+	return  *this;
 }
 
-bool			OpenGLDisplayList::operator==(
-				const OpenGLDisplayList& list) const
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+bool OpenGLDisplayList::operator == ( const OpenGLDisplayList &list )const
 {
-  // follow test compares undefined display lists equal even if
-  // the reps are different.
-  return rep->list == list.rep->list;
+	// follow test compares undefined display lists equal even if
+	// the reps are different.
+	return rep->list == list.rep->list;
 }
 
-bool			OpenGLDisplayList::operator!=(
-				const OpenGLDisplayList& list) const
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+bool OpenGLDisplayList::operator != ( const OpenGLDisplayList &list )const
 {
-  return rep->list != list.rep->list;
+	return rep->list != list.rep->list;
 }
 
-bool			OpenGLDisplayList::operator<(
-				const OpenGLDisplayList& list) const
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+bool OpenGLDisplayList::operator < ( const OpenGLDisplayList &list )const
 {
-  return rep->list < list.rep->list;
+	return rep->list < list.rep->list;
 }
 
-bool			OpenGLDisplayList::isValid() const
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+bool OpenGLDisplayList::isValid()const
 {
-  return rep->list != 0;
+	return rep->list != 0;
 }
 
-GLuint			OpenGLDisplayList::getList() const
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+GLuint OpenGLDisplayList::getList()const
 {
-  return rep->list;
+	return rep->list;
 }
 
-void			OpenGLDisplayList::begin()
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+void OpenGLDisplayList::begin()
 {
-  if (rep->list == 0) {
-    rep->list = glGenLists(1);
-  }
-  glNewList(rep->list, GL_COMPILE);
+	if( rep->list == 0 )
+	{
+		rep->list = glGenLists( 1 );
+	}
+	glNewList( rep->list, GL_COMPILE );
 }
 
-void			OpenGLDisplayList::end()
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+void OpenGLDisplayList::end()
 {
-  glEndList();
+	glEndList();
 }
 
-void			OpenGLDisplayList::execute()
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+void OpenGLDisplayList::execute()
 {
-  glCallList(rep->list);
+	glCallList( rep->list );
 }
 
-void			OpenGLDisplayList::ref()
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+void OpenGLDisplayList::ref()
 {
-  ++rep->refCount;
+	++rep->refCount;
 }
 
-bool			OpenGLDisplayList::unref()
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+bool OpenGLDisplayList::unref()
 {
-  return --rep->refCount == 0;
+	return --rep->refCount == 0;
 }
 
 // Local Variables: ***
@@ -124,4 +181,3 @@ bool			OpenGLDisplayList::unref()
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

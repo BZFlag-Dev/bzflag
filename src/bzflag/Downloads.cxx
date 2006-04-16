@@ -34,362 +34,421 @@ static int runs = 0;
 
 
 // FIXME - someone write a better explanation
-static const char DownloadContent[] =
-  "#\n"
-  "# This file controls the access to servers for downloads.\n"
-  "# Patterns are attempted in order against both the hostname\n"
-  "# and ip. The first matching pattern sets the state. If no\n"
-  "# patterns are matched, then the server is authorized. There\n"
-  "# are four types of matches:\n"
-  "#\n"
-  "#   simple globbing (* and ?)\n"
-  "#     allow\n"
-  "#     deny\n"
-  "#\n"
-  "#   regular expressions\n"
-  "#     allow_regex\n"
-  "#     deny_regex\n"
-  "#\n"
-  "\n"
-  "#\n"
-  "# To authorize all servers, remove the last 3 lines.\n"
-  "#\n"
-  "\n"
-  "allow *.bzflag.bz\n"
-  "allow *.bzflag.org\n"
-  "deny *\n";
+static const char DownloadContent[] = "#\n""# This file controls the access to servers for downloads.\n""# Patterns are attempted in order against both the hostname\n""# and ip. The first matching pattern sets the state. If no\n""# patterns are matched, then the server is authorized. There\n""# are four types of matches:\n""#\n""#   simple globbing (* and ?)\n""#     allow\n""#     deny\n""#\n""#   regular expressions\n""#     allow_regex\n""#     deny_regex\n""#\n""\n""#\n""# To authorize all servers, remove the last 3 lines.\n""#\n""\n""allow *.bzflag.bz\n""allow *.bzflag.org\n""deny *\n";
 
-static AccessList DownloadAccessList("DownloadAccess.txt", DownloadContent);
+static AccessList DownloadAccessList( "DownloadAccess.txt", DownloadContent );
 
-static bool       textureDownloading = false;
+static bool textureDownloading = false;
 
 
 // Function Prototypes
 static void printAuthNotice();
-static bool checkAuthorizations(BzMaterialManager::TextureSet& set);
+static bool checkAuthorizations( BzMaterialManager::TextureSet &set );
 
 
-class CachedTexture : private cURLManager {
+class CachedTexture: private cURLManager
+{
 public:
-  CachedTexture(const std::string &texUrl);
+	CachedTexture( const std::string &texUrl );
 
-  virtual void finalization(char *data, unsigned int length, bool good);
+	virtual void finalization( char *data, unsigned int length, bool good );
 
-  static void  setParams(bool check, long timeout);
-  static int   activeTransfer();
+	static void setParams( bool check, long timeout );
+	static int activeTransfer();
 private:
 
-  virtual void collectData(char* ptr, int len);
+	virtual void collectData( char *ptr, int len );
 
-  std::string	       url;
-  static bool	       checkForCache;
-  static long	       httpTimeout;
-  static int		textureCounter;
-  static int				byteTransferred;
-  bool		      timeRequest;
+	std::string url;
+	static bool checkForCache;
+	static long httpTimeout;
+	static int textureCounter;
+	static int byteTransferred;
+	bool timeRequest;
 };
-bool CachedTexture::checkForCache   = false;
-long CachedTexture::httpTimeout     = 0;
+bool CachedTexture::checkForCache = false;
+long CachedTexture::httpTimeout = 0;
 int CachedTexture::textureCounter = 0;
 int CachedTexture::byteTransferred = 0;
 
-CachedTexture::CachedTexture(const std::string &texUrl) : cURLManager()
+CachedTexture::CachedTexture( const std::string &texUrl ): cURLManager()
 {
-  CacheManager::CacheRecord oldrec;
+	CacheManager::CacheRecord oldrec;
 
-  setURL(texUrl);
-  url	 = texUrl;
+	setURL( texUrl );
+	url = texUrl;
 
-  // use the cache?
-  bool cached = CACHEMGR.findURL(texUrl, oldrec);
-  if (cached && !checkForCache) {
-    // use the cached file
-    MATERIALMGR.setTextureLocal(texUrl, oldrec.name);
-  } else {
-    textureCounter++;
-    if (httpTimeout > 0.0)
-      setTimeout(httpTimeout);
-    setRequestFileTime(true);
-    timeRequest = cached;
-    std::string msg = ColorStrings[GreyColor];
-    msg	    += "downloading: " + url;
-    addMessage(NULL, msg);
-    if (cached) {
-      // use the cached file -- just in case
-      MATERIALMGR.setTextureLocal(url, oldrec.name);
-      setTimeCondition(ModifiedSince, oldrec.date);
-    }
-    addHandle();
-  }
+	// use the cache?
+	bool cached = CACHEMGR.findURL( texUrl, oldrec );
+	if( cached && !checkForCache )
+	{
+		// use the cached file
+		MATERIALMGR.setTextureLocal( texUrl, oldrec.name );
+	}
+	else
+	{
+		textureCounter++;
+		if( httpTimeout > 0.0 )
+			setTimeout( httpTimeout );
+		setRequestFileTime( true );
+		timeRequest = cached;
+		std::string msg = ColorStrings[GreyColor];
+		msg += "downloading: " + url;
+		addMessage( NULL, msg );
+		if( cached )
+		{
+			// use the cached file -- just in case
+			MATERIALMGR.setTextureLocal( url, oldrec.name );
+			setTimeCondition( ModifiedSince, oldrec.date );
+		}
+		addHandle();
+	}
 }
 
-void CachedTexture::setParams(bool check, long timeout)
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+void CachedTexture::setParams( bool check, long timeout )
 {
-  checkForCache   = check;
-  httpTimeout     = timeout;
-  textureCounter  = 0;
-  byteTransferred = 0;
+	checkForCache = check;
+	httpTimeout = timeout;
+	textureCounter = 0;
+	byteTransferred = 0;
 }
 
-void CachedTexture::finalization(char *data, unsigned int length, bool good)
-{
-  time_t filetime;
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
-  textureCounter--;
-  if (good) {
-    if (length) {
-      getFileTime(filetime);
-      // CACHEMGR generates name, usedDate, and key
-      CacheManager::CacheRecord rec;
-      rec.url  = url;
-      rec.size = length;
-      rec.date = filetime;
-      CACHEMGR.addFile(rec, data);
-      const std::string localname = CACHEMGR.getLocalName(url);
-      TextureManager& TEXMGR = TextureManager::instance();
-      if (TEXMGR.isLoaded(localname)) {
-	TEXMGR.reloadTextureImage(localname); // reload with the new image
-      }
-      MATERIALMGR.setTextureLocal(url, localname);
-    }
-  } else {
-    CacheManager::CacheRecord rec;
-    if (CACHEMGR.findURL(url, rec)) {
-      MATERIALMGR.setTextureLocal(url, rec.name);
-    } else {
-      MATERIALMGR.setTextureLocal(url, "");
-    }
-  }
+void CachedTexture::finalization( char *data, unsigned int length, bool good )
+{
+	time_t filetime;
+
+	textureCounter--;
+	if( good )
+	{
+		if( length )
+		{
+			getFileTime( filetime );
+			// CACHEMGR generates name, usedDate, and key
+			CacheManager::CacheRecord rec;
+			rec.url = url;
+			rec.size = length;
+			rec.date = filetime;
+			CACHEMGR.addFile( rec, data );
+			const std::string localname = CACHEMGR.getLocalName( url );
+			TextureManager &TEXMGR = TextureManager::instance();
+			if( TEXMGR.isLoaded( localname ))
+			{
+				TEXMGR.reloadTextureImage( localname ); // reload with the new image
+			}
+			MATERIALMGR.setTextureLocal( url, localname );
+		}
+	}
+	else
+	{
+		CacheManager::CacheRecord rec;
+		if( CACHEMGR.findURL( url, rec ))
+		{
+			MATERIALMGR.setTextureLocal( url, rec.name );
+		}
+		else
+		{
+			MATERIALMGR.setTextureLocal( url, "" );
+		}
+	}
 }
+
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
 int CachedTexture::activeTransfer()
 {
-  return textureCounter;
+	return textureCounter;
 }
 
-void CachedTexture::collectData(char* ptr, int len)
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+void CachedTexture::collectData( char *ptr, int len )
 {
-  char buffer[128];
+	char buffer[128];
 
-  if(runs == 0)
-	  totalTex = textureCounter;
+	if( runs == 0 )
+		totalTex = textureCounter;
 
-  cURLManager::collectData(ptr, len);
-  byteTransferred += len;
+	cURLManager::collectData( ptr, len );
+	byteTransferred += len;
 
-  //Make it so it counts textures in reverse order (0 to max instead of max to 0)
-  currentTex = totalTex - textureCounter + 1;
+	//Make it so it counts textures in reverse order (0 to max instead of max to 0)
+	currentTex = totalTex - textureCounter + 1;
 
-  //Turn bytes into kilobytes
-  sprintf (buffer, "Downloading texture (%d of %d): %d KB", currentTex, totalTex, byteTransferred/1024);
-  runs++;
+	//Turn bytes into kilobytes
+	sprintf( buffer, "Downloading texture (%d of %d): %d KB", currentTex, totalTex, byteTransferred / 1024 );
+	runs++;
 
-  HUDDialogStack::get()->setFailedMessage(buffer);
+	HUDDialogStack::get()->setFailedMessage( buffer );
 }
 
-static std::vector<CachedTexture*> cachedTexVector;
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
-void Downloads::startDownloads(bool doDownloads, bool updateDownloads,
-			       bool referencing)
+static std::vector < CachedTexture * > cachedTexVector;
+
+void Downloads::startDownloads( bool doDownloads, bool updateDownloads, bool referencing )
 {
-  totalTex = 0;
-  currentTex = 0;
-  runs = 0;
+	totalTex = 0;
+	currentTex = 0;
+	runs = 0;
 
-  CACHEMGR.loadIndex();
-  CACHEMGR.limitCacheSize();
+	CACHEMGR.loadIndex();
+	CACHEMGR.limitCacheSize();
 
-  DownloadAccessList.reload();
+	DownloadAccessList.reload();
 
-  BzMaterialManager::TextureSet set;
-  BzMaterialManager::TextureSet::iterator set_it;
-  MATERIALMGR.makeTextureList(set, referencing);
+	BzMaterialManager::TextureSet set;
+	BzMaterialManager::TextureSet::iterator set_it;
+	MATERIALMGR.makeTextureList( set, referencing );
 
-  float timeout = 15;
-  if (BZDB.isSet("httpTimeout")) {
-    timeout = BZDB.eval("httpTimeout");
-  }
-  CachedTexture::setParams(updateDownloads, (long)timeout);
-
-  // check hosts' access permissions
-  bool authNotice = checkAuthorizations(set);
-
-  if (!referencing) {
-    // Clear old cached texture
-    // This is the first time is called after joining
-    std::vector<CachedTexture*>::iterator itr;
-    for (itr = cachedTexVector.begin(); itr != cachedTexVector.end(); ++itr)
-      delete (*itr);
-    cachedTexVector.clear();
-  }
-
-  if (doDownloads)
-    for (set_it = set.begin(); set_it != set.end(); set_it++) {
-      const std::string& texUrl = set_it->c_str();
-      if (CACHEMGR.isCacheFileType(texUrl)) {
-	if (!referencing)
-	  MATERIALMGR.setTextureLocal(texUrl, "");
-	cachedTexVector.push_back(new CachedTexture(texUrl));
-      }
-    }
-  else
-    for (set_it = set.begin(); set_it != set.end(); set_it++) {
-      const std::string& texUrl = set_it->c_str();
-      if (CACHEMGR.isCacheFileType(texUrl)) {
-
-	// use the cache?
-	CacheManager::CacheRecord oldrec;
-	if (CACHEMGR.findURL(texUrl, oldrec)) {
-	  // use the cached file
-	  MATERIALMGR.setTextureLocal(texUrl, oldrec.name);
-	} else {
-	  // bail here if we can't download
-	  MATERIALMGR.setTextureLocal(texUrl, "");
-	  std::string msg = ColorStrings[GreyColor];
-	  msg += "not downloading: " + texUrl;
-	  addMessage(NULL, msg);
+	float timeout = 15;
+	if( BZDB.isSet( "httpTimeout" ))
+	{
+		timeout = BZDB.eval( "httpTimeout" );
 	}
-      }
-    }
+	CachedTexture::setParams( updateDownloads, ( long )timeout );
 
-  if (authNotice) {
-    printAuthNotice();
-  }
-  textureDownloading = true;
+	// check hosts' access permissions
+	bool authNotice = checkAuthorizations( set );
+
+	if( !referencing )
+	{
+		// Clear old cached texture
+		// This is the first time is called after joining
+		std::vector < CachedTexture * > ::iterator itr;
+		for( itr = cachedTexVector.begin(); itr != cachedTexVector.end(); ++itr )
+			delete ( *itr );
+		cachedTexVector.clear();
+	}
+
+	if( doDownloads )
+	for( set_it = set.begin(); set_it != set.end(); set_it++ )
+	{
+		const std::string &texUrl = set_it->c_str();
+		if( CACHEMGR.isCacheFileType( texUrl ))
+		{
+			if( !referencing )
+				MATERIALMGR.setTextureLocal( texUrl, "" );
+			cachedTexVector.push_back( new CachedTexture( texUrl ));
+		}
+	}
+	else
+	for( set_it = set.begin(); set_it != set.end(); set_it++ )
+	{
+		const std::string &texUrl = set_it->c_str();
+		if( CACHEMGR.isCacheFileType( texUrl ))
+		{
+
+			// use the cache?
+			CacheManager::CacheRecord oldrec;
+			if( CACHEMGR.findURL( texUrl, oldrec ))
+			{
+				// use the cached file
+				MATERIALMGR.setTextureLocal( texUrl, oldrec.name );
+			}
+			else
+			{
+				// bail here if we can't download
+				MATERIALMGR.setTextureLocal( texUrl, "" );
+				std::string msg = ColorStrings[GreyColor];
+				msg += "not downloading: " + texUrl;
+				addMessage( NULL, msg );
+			}
+		}
+	}
+
+	if( authNotice )
+	{
+		printAuthNotice();
+	}
+	textureDownloading = true;
 }
+
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
 void Downloads::finalizeDownloads()
 {
-  textureDownloading = false;
+	textureDownloading = false;
 
-  std::vector<CachedTexture*>::iterator itr;
-  for (itr = cachedTexVector.begin(); itr != cachedTexVector.end(); ++itr)
-    delete (*itr);
-  cachedTexVector.clear();
+	std::vector < CachedTexture * > ::iterator itr;
+	for( itr = cachedTexVector.begin(); itr != cachedTexVector.end(); ++itr )
+		delete ( *itr );
+	cachedTexVector.clear();
 
-  CACHEMGR.saveIndex();
+	CACHEMGR.saveIndex();
 }
+
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
 bool Downloads::requestFinalized()
 {
-  return textureDownloading && (CachedTexture::activeTransfer() == 0);
+	return textureDownloading && ( CachedTexture::activeTransfer() == 0 );
 }
+
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
 void Downloads::removeTextures()
 {
-  BzMaterialManager::TextureSet set;
-  BzMaterialManager::TextureSet::iterator set_it;
-  MATERIALMGR.makeTextureList(set, false /* ignore referencing */);
+	BzMaterialManager::TextureSet set;
+	BzMaterialManager::TextureSet::iterator set_it;
+	MATERIALMGR.makeTextureList( set, false /* ignore referencing */ );
 
-  TextureManager& TEXMGR = TextureManager::instance();
+	TextureManager &TEXMGR = TextureManager::instance();
 
-  for (set_it = set.begin(); set_it != set.end(); set_it++) {
-    const std::string& texUrl = set_it->c_str();
-    if (CACHEMGR.isCacheFileType(texUrl)) {
-      const std::string& localname = CACHEMGR.getLocalName(texUrl);
-      if (TEXMGR.isLoaded(localname)) {
-	TEXMGR.removeTexture(localname);
-      }
-    }
-  }
+	for( set_it = set.begin(); set_it != set.end(); set_it++ )
+	{
+		const std::string &texUrl = set_it->c_str();
+		if( CACHEMGR.isCacheFileType( texUrl ))
+		{
+			const std::string &localname = CACHEMGR.getLocalName( texUrl );
+			if( TEXMGR.isLoaded( localname ))
+			{
+				TEXMGR.removeTexture( localname );
+			}
+		}
+	}
 
-  return;
+	return ;
 }
+
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
 
 static void printAuthNotice()
 {
-  std::string msg = ColorStrings[WhiteColor];
-  msg += "NOTE: ";
-  msg += ColorStrings[GreyColor];
-  msg += "download access is controlled by ";
-  msg += ColorStrings[YellowColor];
-  msg += DownloadAccessList.getFileName();
-  addMessage(NULL, msg);
-  return;
+	std::string msg = ColorStrings[WhiteColor];
+	msg += "NOTE: ";
+	msg += ColorStrings[GreyColor];
+	msg += "download access is controlled by ";
+	msg += ColorStrings[YellowColor];
+	msg += DownloadAccessList.getFileName();
+	addMessage( NULL, msg );
+	return ;
 }
 
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
-bool authorizedServer(const std::string& hostname)
+
+bool authorizedServer( const std::string &hostname )
 {
-  // Don't do here a DNS lookup, it can block the client
-  // DNS is temporary removed until someone code it unblocking
+	// Don't do here a DNS lookup, it can block the client
+	// DNS is temporary removed until someone code it unblocking
 
-  // make the list of strings to check
-  std::vector<std::string> nameAndIp;
-  if (hostname.size() > 0) {
-    nameAndIp.push_back(hostname);
-  }
+	// make the list of strings to check
+	std::vector < std::string > nameAndIp;
+	if( hostname.size() > 0 )
+	{
+		nameAndIp.push_back( hostname );
+	}
 
-  return DownloadAccessList.authorized(nameAndIp);
+	return DownloadAccessList.authorized( nameAndIp );
 }
 
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
-bool parseHostname(const std::string& url, std::string& hostname)
+
+bool parseHostname( const std::string &url, std::string &hostname )
 {
-  std::string protocol, path, ip;
-  int port;
-  if (BzfNetwork::parseURL(url, protocol, hostname, port, path)) {
-    if ((protocol == "http") || (protocol == "ftp")) {
-      return true;
-    }
-  }
-  return false;
+	std::string protocol, path, ip;
+	int port;
+	if( BzfNetwork::parseURL( url, protocol, hostname, port, path ))
+	{
+		if(( protocol == "http" ) || ( protocol == "ftp" ))
+		{
+			return true;
+		}
+	}
+	return false;
 }
 
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
-static bool checkAuthorizations(BzMaterialManager::TextureSet& set)
+
+static bool checkAuthorizations( BzMaterialManager::TextureSet &set )
 {
-  // avoid the DNS lookup
-  if (DownloadAccessList.alwaysAuthorized()) {
-    return false;
-  }
+	// avoid the DNS lookup
+	if( DownloadAccessList.alwaysAuthorized())
+	{
+		return false;
+	}
 
-  bool hostFailed = false;
+	bool hostFailed = false;
 
-  BzMaterialManager::TextureSet::iterator set_it;
+	BzMaterialManager::TextureSet::iterator set_it;
 
-  std::map<std::string, bool> hostAccess;
-  std::map<std::string, bool>::iterator host_it;
+	std::map < std::string, bool > hostAccess;
+	std::map < std::string, bool > ::iterator host_it;
 
-  // get the list of hosts to check
-  for (set_it = set.begin(); set_it != set.end(); set_it++) {
-    const std::string& url = *set_it;
-    std::string hostname;
-    if (parseHostname(url, hostname)) {
-      hostAccess[hostname] = true;
-    }
-  }
+	// get the list of hosts to check
+	for( set_it = set.begin(); set_it != set.end(); set_it++ )
+	{
+		const std::string &url =  *set_it;
+		std::string hostname;
+		if( parseHostname( url, hostname ))
+		{
+			hostAccess[hostname] = true;
+		}
+	}
 
-  // check the hosts
-  for (host_it = hostAccess.begin(); host_it != hostAccess.end(); host_it++) {
-    const std::string& host = host_it->first;
-    host_it->second = authorizedServer(host);
-  }
+	// check the hosts
+	for( host_it = hostAccess.begin(); host_it != hostAccess.end(); host_it++ )
+	{
+		const std::string &host = host_it->first;
+		host_it->second = authorizedServer( host );
+	}
 
-  // clear any unauthorized urls
-  set_it = set.begin();
-  while (set_it != set.end()) {
-    BzMaterialManager::TextureSet::iterator next_it = set_it;
-    next_it++;
-    const std::string& url = *set_it;
-    std::string hostname;
-    if (parseHostname(url, hostname) && !hostAccess[hostname]) {
-      hostFailed = true;
-      // send a message
-      std::string msg = ColorStrings[RedColor];
-      msg += "local denial: ";
-      msg += ColorStrings[GreyColor];
-      msg += url;
-      addMessage(NULL, msg);
-      // remove the url
-      MATERIALMGR.setTextureLocal(url, "");
-      set.erase(set_it);
-    }
-    set_it = next_it;
-  }
+	// clear any unauthorized urls
+	set_it = set.begin();
+	while( set_it != set.end())
+	{
+		BzMaterialManager::TextureSet::iterator next_it = set_it;
+		next_it++;
+		const std::string &url =  *set_it;
+		std::string hostname;
+		if( parseHostname( url, hostname ) && !hostAccess[hostname] )
+		{
+			hostFailed = true;
+			// send a message
+			std::string msg = ColorStrings[RedColor];
+			msg += "local denial: ";
+			msg += ColorStrings[GreyColor];
+			msg += url;
+			addMessage( NULL, msg );
+			// remove the url
+			MATERIALMGR.setTextureLocal( url, "" );
+			set.erase( set_it );
+		}
+		set_it = next_it;
+	}
 
-  return hostFailed;
+	return hostFailed;
 }
 
 

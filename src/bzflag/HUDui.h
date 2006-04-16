@@ -15,27 +15,28 @@
  *	User interface class for the heads-up display and menu system.
  */
 
-#ifndef	__HUDUI_H__
-#define	__HUDUI_H__
+#ifndef __HUDUI_H__
+	#define __HUDUI_H__
 
-#include "BzfEvent.h"
-#include "HUDuiControl.h"
-#include "HUDuiDefaultKey.h"
+	#include "BzfEvent.h"
+	#include "HUDuiControl.h"
+	#include "HUDuiDefaultKey.h"
 
-class HUDui {
-  public:
-    static HUDuiControl* getFocus();
-    static void		setFocus(HUDuiControl*);
+class HUDui
+{
+public:
+	static HUDuiControl *getFocus();
+	static void setFocus( HUDuiControl* );
 
-    static HUDuiDefaultKey* getDefaultKey();
-    static void		setDefaultKey(HUDuiDefaultKey*);
+	static HUDuiDefaultKey *getDefaultKey();
+	static void setDefaultKey( HUDuiDefaultKey* );
 
-    static bool	keyPress(const BzfKeyEvent&);
-    static bool	keyRelease(const BzfKeyEvent&);
+	static bool keyPress( const BzfKeyEvent & );
+	static bool keyRelease( const BzfKeyEvent & );
 
-  private:
-    static HUDuiControl *focus;
-    static HUDuiDefaultKey* defaultKey;
+private:
+	static HUDuiControl *focus;
+	static HUDuiDefaultKey *defaultKey;
 };
 
 #endif // __HUDUI_H__

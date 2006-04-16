@@ -19,86 +19,156 @@
 /* private */
 
 /* protected */
-bool Country::isValid(int)
+bool Country::isValid( int )
 {
-  return false;
+	return false;
 }
-bool Country::isValid(const std::string &)
+
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+bool Country::isValid( const std::string & )
 {
-  return false;
+	return false;
 }
 
 /* public: */
 
-Country::Country(std::string)
+Country::Country( std::string ){}
+Country::~Country(){}
+
+int Country::number()const
 {
-}
-Country::~Country()
-{
+	return 0;
 }
 
-int Country::number() const
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+std::string Country::iso2()const
 {
-  return 0;
-}
-std::string Country::iso2() const
-{
-  return "";
-}
-std::string Country::iso3() const
-{
-  return "";
-}
-std::string Country::englishName() const
-{
-  return "";
-}
-std::string Country::frenchName() const
-{
-  return "";
+	return "";
 }
 
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
-int Country::number(int country)
+std::string Country::iso3()const
 {
-  // XXX - validate number
-  return country;
+	return "";
 }
-int Country::number(const std::string& )
+
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+std::string Country::englishName()const
 {
-  return 0;
+	return "";
 }
-std::string Country::iso2(int)
+
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+std::string Country::frenchName()const
 {
-  return "";
+	return "";
 }
-std::string Country::iso2(const std::string &)
+
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+
+int Country::number( int country )
 {
-  return "";
+	// XXX - validate number
+	return country;
 }
-std::string Country::iso3(int)
+
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+int Country::number( const std::string & )
 {
-  return "";
+	return 0;
 }
-std::string Country::iso3(const std::string& )
+
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+std::string Country::iso2( int )
 {
-  return "";
+	return "";
 }
-std::string Country::englishName(int)
+
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+std::string Country::iso2( const std::string & )
 {
-  return "";
+	return "";
 }
-std::string Country::englishName(const std::string& )
+
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+std::string Country::iso3( int )
 {
-  return "";
+	return "";
 }
-std::string Country::frenchName(int)
+
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+std::string Country::iso3( const std::string & )
 {
-  return "";
+	return "";
 }
-std::string Country::frenchName(const std::string& )
+
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+std::string Country::englishName( int )
 {
-  return "";
+	return "";
+}
+
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+std::string Country::englishName( const std::string & )
+{
+	return "";
+}
+
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+std::string Country::frenchName( int )
+{
+	return "";
+}
+
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+std::string Country::frenchName( const std::string & )
+{
+	return "";
 }
 
 
@@ -109,4 +179,3 @@ std::string Country::frenchName(const std::string& )
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

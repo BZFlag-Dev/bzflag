@@ -17,44 +17,66 @@
 #include <math.h>
 
 
-FlashClock::FlashClock() : duration(0.0f), onDuration(0.0f), flashDuration(0.0f)
+FlashClock::FlashClock(): duration( 0.0f ), onDuration( 0.0f ), flashDuration( 0.0f )
 {
-  // do nothing
+	// do nothing
 }
+
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
 FlashClock::~FlashClock()
 {
-  // do nothing
+	// do nothing
 }
 
-void FlashClock::setClock(float _duration)
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+void FlashClock::setClock( float _duration )
 {
-  setClock(_duration, 0.0f, 0.0f);
+	setClock( _duration, 0.0f, 0.0f );
 }
 
-void FlashClock::setClock(float _duration, float onTime, float offTime)
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+void FlashClock::setClock( float _duration, float onTime, float offTime )
 {
-  startTime = TimeKeeper::getTick();
-  duration = _duration;
-  if (onTime <= 0.0f || offTime <= 0.0f) {
-    onDuration = 0.0f;
-    flashDuration = 0.0f;
-  } else {
-    onDuration = onTime;
-    flashDuration = onTime + offTime;
-  }
+	startTime = TimeKeeper::getTick();
+	duration = _duration;
+	if( onTime <= 0.0f || offTime <= 0.0f )
+	{
+		onDuration = 0.0f;
+		flashDuration = 0.0f;
+	}
+	else
+	{
+		onDuration = onTime;
+		flashDuration = onTime + offTime;
+	}
 }
+
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
 bool FlashClock::isOn()
 {
-  if (duration == 0.0f) return false;
-  const float dt = float(TimeKeeper::getTick() - startTime);
-  if (duration > 0.0f && dt >= duration) {
-    duration = 0.0f;
-    return false;
-  }
-  if (flashDuration == 0.0f) return true;
-  return (fmodf(dt, flashDuration) < onDuration);
+	if( duration == 0.0f )
+		return false;
+	const float dt = float( TimeKeeper::getTick() - startTime );
+	if( duration > 0.0f && dt >= duration )
+	{
+		duration = 0.0f;
+		return false;
+	}
+	if( flashDuration == 0.0f )
+		return true;
+	return ( fmodf( dt, flashDuration ) < onDuration );
 }
 
 

@@ -20,40 +20,51 @@
 LocalCommand::MapOfCommands *LocalCommand::mapOfCommands = NULL;
 
 
-LocalCommand::LocalCommand(std::string _commandName)
-  : commandName(_commandName)
+LocalCommand::LocalCommand( std::string _commandName ): commandName( _commandName )
 {
-  if (!mapOfCommands)
-    mapOfCommands = new MapOfCommands;
-  (*mapOfCommands)[commandName] = this;
+	if( !mapOfCommands )
+		mapOfCommands = new MapOfCommands;
+	( *mapOfCommands )[commandName] = this;
 }
+
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
 
 LocalCommand::~LocalCommand()
 {
-  (*mapOfCommands).erase(commandName);
+	( *mapOfCommands ).erase( commandName );
 }
 
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
-bool LocalCommand::execute(const char *commandLine)
+
+bool LocalCommand::execute( const char *commandLine )
 {
-  if (!mapOfCommands)
-    return false;
-  int i;
-  for (i = 0; commandLine[i] && !isspace(commandLine[i]); i++);
-  std::string commandToken(commandLine, i);
+	if( !mapOfCommands )
+		return false;
+	int i;
+	for( i = 0; commandLine[i] && !isspace( commandLine[i] ); i++ )
+		;
+	std::string commandToken( commandLine, i );
 
-  std::map<std::string, LocalCommand *>::iterator it
-    = (*mapOfCommands).find(commandToken);
-  if (it == (*mapOfCommands).end())
-    return false;
-  return (*(it->second))(commandLine);
+	std::map < std::string, LocalCommand * > ::iterator it = ( *mapOfCommands ).find( commandToken );
+	if( it == ( *mapOfCommands ).end())
+		return false;
+	return ( *( it->second ))( commandLine );
 }
 
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
-bool LocalCommand::operator() (const char *)
+
+bool LocalCommand::operator()( const char* )
 {
-  return true;
+	return true;
 }
 
 

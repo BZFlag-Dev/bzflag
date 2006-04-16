@@ -11,92 +11,97 @@
  */
 
 #ifndef _TEXTURE_MATRIX_H_
-#define _TEXTURE_MATRIX_H_
+	#define _TEXTURE_MATRIX_H_
 
-#include "common.h"
+	#include "common.h"
 
 /* system interface headers */
-#include <string>
-#include <vector>
-#include <iostream>
+	#include <string>
+	#include <vector>
+	#include <iostream>
 
 
-class TextureMatrix {
-  public:
-    TextureMatrix();
-    ~TextureMatrix();
+class TextureMatrix
+{
+public:
+	TextureMatrix();
+	~TextureMatrix();
 
-    void finalize();
+	void finalize();
 
-    const float* getMatrix() const;
-    bool setName (const std::string& name);
+	const float *getMatrix()const;
+	bool setName( const std::string &name );
 
-    // the static parameters
-    void setStaticSpin (float rotation);
-    void setStaticShift (float u, float v);
-    void setStaticScale (float u, float v);
-    void setStaticCenter (float u, float v);
+	// the static parameters
+	void setStaticSpin( float rotation );
+	void setStaticShift( float u, float v );
+	void setStaticScale( float u, float v );
+	void setStaticCenter( float u, float v );
 
-    // the dynamic parameters
-    void setDynamicSpin (float freq);
-    void setDynamicShift (float uFreq, float vFreq);
-    void setDynamicScale (float uFreq, float vFreq,
-			  float uSize, float vSize);
-    void setDynamicCenter (float u, float v);
+	// the dynamic parameters
+	void setDynamicSpin( float freq );
+	void setDynamicShift( float uFreq, float vFreq );
+	void setDynamicScale( float uFreq, float vFreq, float uSize, float vSize );
+	void setDynamicCenter( float u, float v );
 
-    void update(double time);
-    const std::string& getName() const;
+	void update( double time );
+	const std::string &getName()const;
 
-    int packSize() const;
-    void* pack(void*) const;
-    void* unpack(void*);
+	int packSize()const;
+	void *pack( void* )const;
+	void *unpack( void* );
 
-    void print(std::ostream& out, const std::string& indent) const;
+	void print( std::ostream &out, const std::string &indent )const;
 
-  private:
-    std::string name;
-    // time invariant
-    bool useStatic;
-    float staticMatrix[3][2];
-    float rotation;
-    float uFixedShift, vFixedShift;
-    float uFixedScale, vFixedScale;
-    float uFixedCenter, vFixedCenter;
-    // time varying
-    bool useDynamic;
-    float spinFreq;
-    float uShiftFreq, vShiftFreq;
-    float uScaleFreq, vScaleFreq;
-    float uScale, vScale;
-    float uCenter, vCenter;
-    // the final result
-    float matrix[4][4];
+private:
+	std::string name;
+	// time invariant
+	bool useStatic;
+	float staticMatrix[3][2];
+	float rotation;
+	float uFixedShift, vFixedShift;
+	float uFixedScale, vFixedScale;
+	float uFixedCenter, vFixedCenter;
+	// time varying
+	bool useDynamic;
+	float spinFreq;
+	float uShiftFreq, vShiftFreq;
+	float uScaleFreq, vScaleFreq;
+	float uScale, vScale;
+	float uCenter, vCenter;
+	// the final result
+	float matrix[4][4];
 };
 
-inline const float* TextureMatrix::getMatrix() const
+inline const float *TextureMatrix::getMatrix()const
 {
-  return (const float*) matrix;
+	return ( const float* )matrix;
 }
 
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
-class TextureMatrixManager {
-  public:
-    TextureMatrixManager();
-    ~TextureMatrixManager();
-    void update();
-    void clear();
-    int addMatrix(TextureMatrix* matrix);
-    int findMatrix(const std::string& name) const;
-    const TextureMatrix* getMatrix(int id) const;
 
-    int packSize() const;
-    void* pack(void*) const;
-    void* unpack(void*);
+class TextureMatrixManager
+{
+public:
+	TextureMatrixManager();
+	~TextureMatrixManager();
+	void update();
+	void clear();
+	int addMatrix( TextureMatrix *matrix );
+	int findMatrix( const std::string &name )const;
+	const TextureMatrix *getMatrix( int id )const;
 
-    void print(std::ostream& out, const std::string& indent) const;
+	int packSize()const;
+	void *pack( void* )const;
+	void *unpack( void* );
 
-  private:
-    std::vector<TextureMatrix*> matrices;
+	void print( std::ostream &out, const std::string &indent )const;
+
+private:
+	std::vector < TextureMatrix * > matrices;
 };
 
 extern TextureMatrixManager TEXMATRIXMGR;
@@ -110,4 +115,3 @@ extern TextureMatrixManager TEXMATRIXMGR;
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

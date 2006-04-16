@@ -17,14 +17,14 @@
 #include <sys/types.h>
 
 #if defined(WIN32) && !defined(WATT32)
-#include "nameser.h"
-#else
-#include <netinet/in.h>
-#include <arpa/nameser.h>
-#ifdef HAVE_ARPA_NAMESER_COMPAT_H
-#include <arpa/nameser_compat.h>
-#endif
-#endif
+	#include "nameser.h"
+#else 
+	#include <netinet/in.h>
+	#include <arpa/nameser.h>
+	#ifdef HAVE_ARPA_NAMESER_COMPAT_H
+		#include <arpa/nameser_compat.h>
+	#endif 
+#endif 
 
 #include <string.h>
 #include <stdlib.h>
@@ -36,34 +36,29 @@
  * are the characters of the string. The returned result will be NULL
  * terminated.
  */
-int ares_expand_string(const unsigned char *encoded,
-		       const unsigned char *abuf,
-		       int alen,
-		       unsigned char **s,
-		       long *enclen)
+int ares_expand_string( const unsigned char *encoded, const unsigned char *abuf, int alen, unsigned char **s, long *enclen )
 {
-  unsigned char *q;
-  long len;
-  if (encoded == abuf+alen)
-    return ARES_EBADSTR;
+	unsigned char *q;
+	long len;
+	if( encoded == abuf + alen )
+		return ARES_EBADSTR;
 
-  len = *encoded;
-  if (encoded+len+1 > abuf+alen)
-    return ARES_EBADSTR;
+	len =  *encoded;
+	if( encoded + len + 1 > abuf + alen )
+		return ARES_EBADSTR;
 
-  encoded++;
+	encoded++;
 
-  *s = (unsigned char*)malloc(len+1);
-  if (*s == NULL)
-    return ARES_ENOMEM;
-  q = *s;
-  strncpy((char *)q, (char *)encoded, len);
-  q[len] = '\0';
+	*s = ( unsigned char* )malloc( len + 1 );
+	if( *s == NULL )
+		return ARES_ENOMEM;
+	q =  *s;
+	strncpy(( char* )q, ( char* )encoded, len );
+	q[len] = '\0';
 
-  *s = q;
+	*s = q;
 
-  *enclen = len+1;
+	*enclen = len + 1;
 
-  return ARES_SUCCESS;
+	return ARES_SUCCESS;
 }
-

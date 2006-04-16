@@ -31,260 +31,384 @@
 //
 
 // init static members
-const GLfloat		HUDuiControl::dimTextColor[3] = { 0.7f, 0.7f, 0.7f };
-const GLfloat		HUDuiControl::moreDimTextColor[3] = { 0.4f, 0.4f, 0.4f };
-const GLfloat		HUDuiControl::textColor[3] = { 1.0f, 1.0f, 1.0f };
-OpenGLGState*		HUDuiControl::gstate = NULL;
-int		HUDuiControl::arrow = -1;
-int			HUDuiControl::arrowFrame = 0;
-TimeKeeper		HUDuiControl::lastTime;
-int			HUDuiControl::totalCount = 0;
-
-HUDuiControl::HUDuiControl() : showingFocus(true),
-				fontFace(-1), fontSize(11),
-				x(0.0f), y(0.0f),
-				width(1.0f), height(1.0f),
-				fontHeight(11.0f),
-				desiredLabelWidth(0.0f),
-				trueLabelWidth(0.0f),
-				prev(this), next(this),
-				cb(NULL), userData(NULL)
+const GLfloat HUDuiControl::dimTextColor[3] = 
 {
-  if (totalCount == 0) {
-    // load arrow texture
-    TextureManager &tm = TextureManager::instance();
-    arrow = tm.getTextureID( "menu_arrow" );
+	0.7f, 0.7f, 0.7f
+};
+const GLfloat HUDuiControl::moreDimTextColor[3] = 
+{
+	0.4f, 0.4f, 0.4f
+};
+const GLfloat HUDuiControl::textColor[3] = 
+{
+	1.0f, 1.0f, 1.0f
+};
+OpenGLGState *HUDuiControl::gstate = NULL;
+int HUDuiControl::arrow =  - 1;
+int HUDuiControl::arrowFrame = 0;
+TimeKeeper HUDuiControl::lastTime;
+int HUDuiControl::totalCount = 0;
 
-    // make gstate for focus arrow
-    gstate = new OpenGLGState;
-    OpenGLGStateBuilder builder(*gstate);
-    builder.setTexture(arrow);
-    builder.setBlending();
-//    builder.setSmoothing();
-    //builder.setTextureEnvMode(GL_REPLACE);
-    *gstate = builder.getState();
+HUDuiControl::HUDuiControl(): showingFocus( true ), fontFace(  - 1 ), fontSize( 11 ), x( 0.0f ), y( 0.0f ), width( 1.0f ), height( 1.0f ), fontHeight( 11.0f ), desiredLabelWidth( 0.0f ), trueLabelWidth( 0.0f ), prev( this ), next( this ), cb( NULL ), userData( NULL )
+{
+	if( totalCount == 0 )
+	{
+		// load arrow texture
+		TextureManager &tm = TextureManager::instance();
+		arrow = tm.getTextureID( "menu_arrow" );
 
-    // get start time for animation
-    lastTime = TimeKeeper::getCurrent();
-  }
+		// make gstate for focus arrow
+		gstate = new OpenGLGState;
+		OpenGLGStateBuilder builder( *gstate );
+		builder.setTexture( arrow );
+		builder.setBlending();
+		//    builder.setSmoothing();
+		//builder.setTextureEnvMode(GL_REPLACE);
+		*gstate = builder.getState();
 
-  totalCount++;
+		// get start time for animation
+		lastTime = TimeKeeper::getCurrent();
+	}
+
+	totalCount++;
 }
+
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
 HUDuiControl::~HUDuiControl()
 {
-  if (--totalCount == 0) {
-    delete gstate;
-    arrow = -1;
-    gstate = NULL;
-  }
+	if( --totalCount == 0 )
+	{
+		delete gstate;
+		arrow =  - 1;
+		gstate = NULL;
+	}
 }
 
-float			HUDuiControl::getLabelWidth() const
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+float HUDuiControl::getLabelWidth()const
 {
-  return desiredLabelWidth;
+	return desiredLabelWidth;
 }
 
-std::string		HUDuiControl::getLabel() const
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+std::string HUDuiControl::getLabel()const
 {
-  return BundleMgr::getCurrentBundle()->getLocalString(label);
+	return BundleMgr::getCurrentBundle()->getLocalString( label );
 }
 
-int			HUDuiControl::getFontFace() const
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+int HUDuiControl::getFontFace()const
 {
-  return fontFace;
+	return fontFace;
 }
 
-float			HUDuiControl::getFontSize() const
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+float HUDuiControl::getFontSize()const
 {
-  return fontSize;
+	return fontSize;
 }
 
-HUDuiControl*		HUDuiControl::getPrev() const
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+HUDuiControl *HUDuiControl::getPrev()const
 {
-  return prev;
+	return prev;
 }
 
-HUDuiControl*		HUDuiControl::getNext() const
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+HUDuiControl *HUDuiControl::getNext()const
 {
-  return next;
+	return next;
 }
 
-HUDuiCallback		HUDuiControl::getCallback() const
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+HUDuiCallback HUDuiControl::getCallback()const
 {
-  return cb;
+	return cb;
 }
 
-void*			HUDuiControl::getUserData() const
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+void *HUDuiControl::getUserData()const
 {
-  return userData;
+	return userData;
 }
 
-void			HUDuiControl::setPosition(float _x, float _y)
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+void HUDuiControl::setPosition( float _x, float _y )
 {
-  x = _x;
-  y = _y;
+	x = _x;
+	y = _y;
 }
 
-void			HUDuiControl::setSize(float _width, float _height)
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+void HUDuiControl::setSize( float _width, float _height )
 {
-  width = _width;
-  height = _height;
+	width = _width;
+	height = _height;
 }
 
-void			HUDuiControl::setLabelWidth(float labelWidth)
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+void HUDuiControl::setLabelWidth( float labelWidth )
 {
-  desiredLabelWidth = labelWidth;
+	desiredLabelWidth = labelWidth;
 }
 
-void			HUDuiControl::setLabel(const std::string& _label)
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+void HUDuiControl::setLabel( const std::string &_label )
 {
 
-  label = _label;
-  if (fontFace >= 0) {
-    FontManager &fm = FontManager::instance();
-    trueLabelWidth = fm.getStrLength(fontFace, fontSize, getLabel() + "99");
-  }
+	label = _label;
+	if( fontFace >= 0 )
+	{
+		FontManager &fm = FontManager::instance();
+		trueLabelWidth = fm.getStrLength( fontFace, fontSize, getLabel() + "99" );
+	}
 }
 
-void			HUDuiControl::setFontFace(int _fontFace)
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+void HUDuiControl::setFontFace( int _fontFace )
 {
-  fontFace = _fontFace;
-  onSetFont();
+	fontFace = _fontFace;
+	onSetFont();
 }
 
-void			HUDuiControl::setFontSize(float size)
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+void HUDuiControl::setFontSize( float size )
 {
-  fontSize = size;
-  onSetFont();
+	fontSize = size;
+	onSetFont();
 }
 
-void			HUDuiControl::setPrev(HUDuiControl* _prev)
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+void HUDuiControl::setPrev( HUDuiControl *_prev )
 {
-  if (!_prev) prev = this;
-  else prev = _prev;
+	if( !_prev )
+		prev = this;
+	else
+		prev = _prev;
 }
 
-void			HUDuiControl::setNext(HUDuiControl* _next)
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+void HUDuiControl::setNext( HUDuiControl *_next )
 {
-  if (!_next) next = this;
-  else next = _next;
+	if( !_next )
+		next = this;
+	else
+		next = _next;
 }
 
-void			HUDuiControl::setCallback(HUDuiCallback _cb, void* _ud)
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+void HUDuiControl::setCallback( HUDuiCallback _cb, void *_ud )
 {
-  cb = _cb;
-  userData = _ud;
+	cb = _cb;
+	userData = _ud;
 }
 
-void			HUDuiControl::onSetFont()
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+void HUDuiControl::onSetFont()
 {
-  if (fontFace >= 0) {
-    FontManager &fm = FontManager::instance();
-    fontHeight = fm.getStrHeight(fontFace, fontSize, getLabel());
-    trueLabelWidth = fm.getStrLength(fontFace, fontSize, getLabel() + "99");
-  } else {
-    fontHeight = 11.0f;
-    trueLabelWidth = 0.0f;
-  }
+	if( fontFace >= 0 )
+	{
+		FontManager &fm = FontManager::instance();
+		fontHeight = fm.getStrHeight( fontFace, fontSize, getLabel());
+		trueLabelWidth = fm.getStrLength( fontFace, fontSize, getLabel() + "99" );
+	}
+	else
+	{
+		fontHeight = 11.0f;
+		trueLabelWidth = 0.0f;
+	}
 }
 
-bool			HUDuiControl::hasFocus() const
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+bool HUDuiControl::hasFocus()const
 {
-  return this == HUDui::getFocus();
+	return this == HUDui::getFocus();
 }
 
-void			HUDuiControl::setFocus()
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+void HUDuiControl::setFocus()
 {
-  HUDui::setFocus(this);
+	HUDui::setFocus( this );
 }
 
-void			HUDuiControl::showFocus(bool _showingFocus)
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+void HUDuiControl::showFocus( bool _showingFocus )
 {
-  showingFocus = _showingFocus;
+	showingFocus = _showingFocus;
 }
 
-void			HUDuiControl::doCallback()
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+void HUDuiControl::doCallback()
 {
-  if (cb) (*cb)(this, userData);
+	if( cb )
+		( *cb )( this, userData );
 }
 
-void			HUDuiControl::renderFocus()
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+void HUDuiControl::renderFocus()
 {
-  float fh2;
+	float fh2;
 
-  TextureManager &tm = TextureManager::instance();
-  const ImageInfo &info = tm.getInfo(arrow);
+	TextureManager &tm = TextureManager::instance();
+	const ImageInfo &info = tm.getInfo( arrow );
 
-  if (gstate->isTextured()) { // assumes there are w/h frames of animation h x h in each image
-    float imageSize = (float)info.y;
-    int uFrames = 1;
-    if (imageSize != 0)
-      uFrames = int(info.x/imageSize); // 4;
-    int vFrames = 1; // 4;
-    float du = 1.0f / (float)uFrames;
-    float dv = 1.0f / (float)vFrames;
+	if( gstate->isTextured())
+	{
+		// assumes there are w/h frames of animation h x h in each image
+		float imageSize = ( float )info.y;
+		int uFrames = 1;
+		if( imageSize != 0 )
+			uFrames = int( info.x / imageSize );
+		// 4;
+		int vFrames = 1; // 4;
+		float du = 1.0f / ( float )uFrames;
+		float dv = 1.0f / ( float )vFrames;
 
-    float u = (float)(arrowFrame % uFrames) / (float)uFrames;
-    float v = (float)(arrowFrame / uFrames) / (float)vFrames;
-    fh2 = floorf(1.5f * fontHeight) - 1.0f; // this really should not scale the image based on the font,
-    gstate->setState();			    // best would be to load an image for each size
-    glColor3f(1.0f, 1.0f, 1.0f);
-    float imageXShift = 0.5f;
-    float imageYShift = -fh2 * 0.2f;
-    float outputSize = fh2;
-    glBegin(GL_QUADS);
-      glTexCoord2f(u, v);
-      glVertex2f(x + imageXShift - outputSize, y + imageYShift);
-      glTexCoord2f(u + du, v);
-      glVertex2f(x + imageXShift , y + imageYShift);
-      glTexCoord2f(u + du, v + dv);
-      glVertex2f(x + imageXShift , y + outputSize + imageYShift);
-      glTexCoord2f(u, v + dv);
-      glVertex2f(x + imageXShift - outputSize, y + outputSize + imageYShift);
-    glEnd();
+		float u = ( float )( arrowFrame % uFrames ) / ( float )uFrames;
+		float v = ( float )( arrowFrame / uFrames ) / ( float )vFrames;
+		fh2 = floorf( 1.5f *fontHeight ) - 1.0f; // this really should not scale the image based on the font,
+		gstate->setState(); // best would be to load an image for each size
+		glColor3f( 1.0f, 1.0f, 1.0f );
+		float imageXShift = 0.5f;
+		float imageYShift =  - fh2 * 0.2f;
+		float outputSize = fh2;
+		glBegin( GL_QUADS );
+		glTexCoord2f( u, v );
+		glVertex2f( x + imageXShift - outputSize, y + imageYShift );
+		glTexCoord2f( u + du, v );
+		glVertex2f( x + imageXShift, y + imageYShift );
+		glTexCoord2f( u + du, v + dv );
+		glVertex2f( x + imageXShift, y + outputSize + imageYShift );
+		glTexCoord2f( u, v + dv );
+		glVertex2f( x + imageXShift - outputSize, y + outputSize + imageYShift );
+		glEnd();
 
-    TimeKeeper nowTime = TimeKeeper::getCurrent();
-    if (nowTime - lastTime > 0.07f) {
-      lastTime = nowTime;
-      if (++arrowFrame == uFrames * vFrames) arrowFrame = 0;
-    }
-  } else {
-    fh2 = floorf(0.5f * fontHeight);
-    gstate->setState();
-    glColor3f(1.0f, 1.0f, 1.0f);
-    glBegin(GL_TRIANGLES);
-      glVertex2f(x - fh2 - fontHeight, y + fontHeight - 1.0f);
-      glVertex2f(x - fh2 - fontHeight, y);
-      glVertex2f(x - fh2 - 1.0f, y + 0.5f * (fontHeight - 1.0f));
-    glEnd();
+		TimeKeeper nowTime = TimeKeeper::getCurrent();
+		if( nowTime - lastTime > 0.07f )
+		{
+			lastTime = nowTime;
+			if( ++arrowFrame == uFrames *vFrames )
+				arrowFrame = 0;
+		}
+	}
+	else
+	{
+		fh2 = floorf( 0.5f *fontHeight );
+		gstate->setState();
+		glColor3f( 1.0f, 1.0f, 1.0f );
+		glBegin( GL_TRIANGLES );
+		glVertex2f( x - fh2 - fontHeight, y + fontHeight - 1.0f );
+		glVertex2f( x - fh2 - fontHeight, y );
+		glVertex2f( x - fh2 - 1.0f, y + 0.5f *( fontHeight - 1.0f ));
+		glEnd();
 
-    glColor3f(0.0f, 0.0f, 0.0f);
-    glBegin(GL_LINE_LOOP);
-      glVertex2f(x - fh2 - fontHeight, y + fontHeight - 1.0f);
-      glVertex2f(x - fh2 - fontHeight, y);
-      glVertex2f(x - fh2 - 1.0f, y + 0.5f * (fontHeight - 1.0f));
-    glEnd();
-  }
+		glColor3f( 0.0f, 0.0f, 0.0f );
+		glBegin( GL_LINE_LOOP );
+		glVertex2f( x - fh2 - fontHeight, y + fontHeight - 1.0f );
+		glVertex2f( x - fh2 - fontHeight, y );
+		glVertex2f( x - fh2 - 1.0f, y + 0.5f *( fontHeight - 1.0f ));
+		glEnd();
+	}
 }
 
-void			HUDuiControl::renderLabel()
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+void HUDuiControl::renderLabel()
 {
-  std::string theLabel = getLabel();
-  if (theLabel.length() > 0 && fontFace >= 0) {
-    FontManager &fm = FontManager::instance();
-    const float dx = (desiredLabelWidth > trueLabelWidth)
-      ? desiredLabelWidth : trueLabelWidth;
-    fm.drawString(x - dx, y, 0, fontFace, fontSize, theLabel);
-  }
+	std::string theLabel = getLabel();
+	if( theLabel.length() > 0 && fontFace >= 0 )
+	{
+		FontManager &fm = FontManager::instance();
+		const float dx = ( desiredLabelWidth > trueLabelWidth ) ? desiredLabelWidth : trueLabelWidth;
+		fm.drawString( x - dx, y, 0, fontFace, fontSize, theLabel );
+	}
 }
 
-void			HUDuiControl::render()
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+void HUDuiControl::render()
 {
-  if (hasFocus() && showingFocus) renderFocus();
-  glColor3fv(hasFocus() ? textColor : dimTextColor);
-  renderLabel();
-  doRender();
+	if( hasFocus() && showingFocus )
+		renderFocus();
+	glColor3fv( hasFocus() ? textColor : dimTextColor );
+	renderLabel();
+	doRender();
 }
 
 
@@ -295,4 +419,3 @@ void			HUDuiControl::render()
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

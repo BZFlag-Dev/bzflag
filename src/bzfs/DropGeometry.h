@@ -11,21 +11,22 @@
  */
 
 #ifndef __DROP_GEOMETRY_H__
-#define __DROP_GEOMETRY_H__
+	#define __DROP_GEOMETRY_H__
 
 
 class WorldInfo;
 
 
-namespace DropGeometry {
+namespace DropGeometry
+{
 
-  bool dropFlag (float pos[3], float minZ, float maxZ);
-  bool dropPlayer (float pos[3], float minZ, float maxZ);
-  bool dropTeamFlag (float pos[3], float minZ, float maxZ, int team);
-}
+	bool dropFlag( float pos[3], float minZ, float maxZ );
+	bool dropPlayer( float pos[3], float minZ, float maxZ );
+	bool dropTeamFlag( float pos[3], float minZ, float maxZ, int team );
+} 
 
 
-#endif  /* __DROP_GEOMETRY_H__ */
+#endif /* __DROP_GEOMETRY_H__ */
 
 // Local variables: ***
 // mode: C++ ***

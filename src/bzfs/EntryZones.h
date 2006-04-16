@@ -11,57 +11,52 @@
  */
 
 #ifndef __ENTRYZONES_H__
-#define __ENTRYZONES_H__
+	#define __ENTRYZONES_H__
 
 /* common header */
-#include "common.h"
+	#include "common.h"
 
 /* common interface headers */
-#include "Flag.h"
+	#include "Flag.h"
 
 // bzfs-specific headers
-#include "CustomZone.h"
+	#include "CustomZone.h"
 
 
-typedef std::vector<CustomZone> ZoneList;
-typedef std::vector<std::pair<int,float> > QPairList;
-typedef std::map<std::string, QPairList> QualifierMap;
+typedef std::vector < CustomZone > ZoneList;
+typedef std::vector < std::pair < int, float >  > QPairList;
+typedef std::map < std::string, QPairList > QualifierMap;
 
 
 class EntryZones
 {
-  public:
-    EntryZones();
+public:
+	EntryZones();
 
-    void addZone( const CustomZone *zone );
-    void addZoneFlag(int zone, int flagId);
+	void addZone( const CustomZone *zone );
+	void addZoneFlag( int zone, int flagId );
 
-    void calculateQualifierLists();
+	void calculateQualifierLists();
 
-    bool getZonePoint(const std::string &qualifier, float *pt) const;
-    bool getSafetyPoint(const std::string &qualifier,
-			const float *pos, float *pt) const;
+	bool getZonePoint( const std::string &qualifier, float *pt )const;
+	bool getSafetyPoint( const std::string &qualifier, const float *pos, float *pt )const;
 
-    bool getRandomPoint(const std::string &qual, float *pt) const;
-    bool getClosePoint(const std::string &qual, const float pos[3],
-		       float *pt) const;
+	bool getRandomPoint( const std::string &qual, float *pt )const;
+	bool getClosePoint( const std::string &qual, const float pos[3], float *pt )const;
 
-    const ZoneList& getZoneList() const;
+	const ZoneList &getZoneList()const;
 
-    int packSize() const;
-    void *pack(void *buf) const;
+	int packSize()const;
+	void *pack( void *buf )const;
 
-  private:
-    ZoneList zones;
-    QualifierMap qmap;
+private:
+	ZoneList zones;
+	QualifierMap qmap;
 
-    void makeSplitLists (int zone,
-			 std::vector<FlagType*> &flags,
-			 std::vector<TeamColor> &teams,
-			 std::vector<TeamColor> &safety) const;
+	void makeSplitLists( int zone, std::vector < FlagType * >  &flags, std::vector < TeamColor >  &teams, std::vector < TeamColor >  &safety )const;
 };
 
-#endif
+#endif 
 
 // Local Variables: ***
 // mode:C++ ***
@@ -70,4 +65,3 @@ class EntryZones
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

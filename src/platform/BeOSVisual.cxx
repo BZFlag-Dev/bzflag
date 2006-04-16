@@ -12,79 +12,102 @@
 
 #include "BeOSVisual.h"
 
-BeOSVisual::BeOSVisual(const BeOSDisplay* _display) :
-								display(_display),
-								color(0),
-								depth(0),
-								stencil(0),
-								accum(0),
-								flags(0),
-								doubleBuffer(false)
+BeOSVisual::BeOSVisual( const BeOSDisplay *_display ): display( _display ), color( 0 ), depth( 0 ), stencil( 0 ), accum( 0 ), flags( 0 ), doubleBuffer( false ){}
+
+BeOSVisual::~BeOSVisual(){}
+
+void BeOSVisual::setLevel( int level )
 {
+	/*
+	if (level < 0) pfd.iLayerType = PFD_UNDERLAY_PLANE;
+	else if (level > 0) pfd.iLayerType = PFD_OVERLAY_PLANE;
+	else pfd.iLayerType = PFD_MAIN_PLANE;
+	 */
 }
 
-BeOSVisual::~BeOSVisual()
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+void BeOSVisual::setDoubleBuffer( bool on )
 {
+	doubleBuffer = on;
 }
 
-void					BeOSVisual::setLevel(int level)
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+void BeOSVisual::setIndex( int minDepth )
 {
-/*
-  if (level < 0) pfd.iLayerType = PFD_UNDERLAY_PLANE;
-  else if (level > 0) pfd.iLayerType = PFD_OVERLAY_PLANE;
-  else pfd.iLayerType = PFD_MAIN_PLANE;
-*/
+	// ?
+	//  pfd.iPixelType = PFD_TYPE_COLORINDEX;
+	//  pfd.cColorBits = minDepth;
 }
 
-void					BeOSVisual::setDoubleBuffer(bool on)
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+void BeOSVisual::setRGBA( int minRed, int minGreen, int minBlue, int minAlpha )
 {
-  doubleBuffer = on;
+	// ?
+	//  pfd.iPixelType = PFD_TYPE_RGBA;
+	//  pfd.cColorBits = minRed + minGreen + minBlue + minAlpha;
 }
 
-void					BeOSVisual::setIndex(int minDepth)
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+void BeOSVisual::setDepth( int minDepth )
 {
-// ?
-//  pfd.iPixelType = PFD_TYPE_COLORINDEX;
-//  pfd.cColorBits = minDepth;
+	depth = minDepth;
 }
 
-void					BeOSVisual::setRGBA(int minRed, int minGreen,
-								int minBlue, int minAlpha)
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+void BeOSVisual::setStencil( int minDepth )
 {
-// ?
-//  pfd.iPixelType = PFD_TYPE_RGBA;
-//  pfd.cColorBits = minRed + minGreen + minBlue + minAlpha;
+	stencil = minDepth;
 }
 
-void					BeOSVisual::setDepth(int minDepth)
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+void BeOSVisual::setAccum( int minRed, int minGreen, int minBlue, int minAlpha )
 {
-  depth = minDepth;
+	accum = minRed + minGreen + minBlue + minAlpha;
 }
 
-void					BeOSVisual::setStencil(int minDepth)
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+void BeOSVisual::setStereo( bool on )
 {
-  stencil = minDepth;
+	// do nothing
 }
 
-void					BeOSVisual::setAccum(int minRed, int minGreen,
-								int minBlue, int minAlpha)
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+void BeOSVisual::setMultisample( int )
 {
-  accum = minRed + minGreen + minBlue + minAlpha;
+	// do nothing
 }
 
-void					BeOSVisual::setStereo(bool on)
-{
-  // do nothing
-}
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
-void					BeOSVisual::setMultisample(int)
+bool BeOSVisual::build()
 {
-  // do nothing
-}
-
-bool					BeOSVisual::build()
-{
-  return true;
+	return true;
 }
 
 
@@ -95,4 +118,3 @@ bool					BeOSVisual::build()
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

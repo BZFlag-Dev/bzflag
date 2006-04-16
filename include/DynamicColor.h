@@ -11,115 +11,128 @@
  */
 
 #ifndef _DYNAMIC_COLOR_H_
-#define _DYNAMIC_COLOR_H_
+	#define _DYNAMIC_COLOR_H_
 
-#include "common.h"
+	#include "common.h"
 
 /* system interface headers */
-#include <string>
-#include <vector>
-#include <iostream>
+	#include <string>
+	#include <vector>
+	#include <iostream>
 
 
-typedef struct sequenceList {
-  float period;
-  float offset;
-  char* list;
-  unsigned int count;
+typedef struct sequenceList
+{
+	float period;
+	float offset;
+	char *list;
+	unsigned int count;
 } sequenceParams;
 
-typedef struct {
-  float period;
-  float offset;
-  float weight;
+typedef struct
+{
+	float period;
+	float offset;
+	float weight;
 } sinusoidParams;
 
-typedef struct {
-  float period;
-  float offset;
-  float width;
+typedef struct
+{
+	float period;
+	float offset;
+	float width;
 } clampParams;
 
-class DynamicColor {
-  public:
-    DynamicColor();
-    ~DynamicColor();
+class DynamicColor
+{
+public:
+	DynamicColor();
+	~DynamicColor();
 
-    enum SequenceState {
-      colorMin = 0,
-      colorMid = 1,
-      colorMax = 2
-    };
+	enum SequenceState
+	{
+		colorMin = 0, colorMid = 1, colorMax = 2
+	};
 
-    bool setName(const std::string& name);
-    void setLimits(int channel, float min, float max);
-    void setSequence(int channel, float period, float offset,
-		     std::vector<char>& list);
-    void addSinusoid(int channel, const float sinusoid[3]);
-    void addClampUp(int channel, const float clampUp[3]);
-    void addClampDown(int channel, const float clampDown[3]);
+	bool setName( const std::string &name );
+	void setLimits( int channel, float min, float max );
+	void setSequence( int channel, float period, float offset, std::vector < char >  &list );
+	void addSinusoid( int channel, const float sinusoid[3] );
+	void addClampUp( int channel, const float clampUp[3] );
+	void addClampDown( int channel, const float clampDown[3] );
 
-    void finalize();
-    void update(double time);
+	void finalize();
+	void update( double time );
 
-    bool canHaveAlpha() const;
-    const float* getColor() const;
-    const std::string& getName() const;
+	bool canHaveAlpha()const;
+	const float *getColor()const;
+	const std::string &getName()const;
 
-    int packSize() const;
-    void* pack(void*) const;
-    void* unpack(void*);
+	int packSize()const;
+	void *pack( void* )const;
+	void *unpack( void* );
 
-    void print(std::ostream& out, const std::string& indent) const;
+	void print( std::ostream &out, const std::string &indent )const;
 
-  private:
-    static const float minPeriod;
+private:
+	static const float minPeriod;
 
-    std::string name;
-    float color[4];
+	std::string name;
+	float color[4];
 
-    typedef struct {
-      float minValue, maxValue;
-      float totalWeight; // tally of sinusoid weights
-      sequenceParams sequence;
-      std::vector<sinusoidParams> sinusoids;
-      std::vector<clampParams> clampUps;
-      std::vector<clampParams> clampDowns;
-    } ChannelParams;
+	typedef struct
+	{
+		float minValue, maxValue;
+		float totalWeight; // tally of sinusoid weights
+		sequenceParams sequence;
+		std::vector < sinusoidParams > sinusoids;
+		std::vector < clampParams > clampUps;
+		std::vector < clampParams > clampDowns;
+	} ChannelParams;
 
-    ChannelParams channels[4];
+	ChannelParams channels[4];
 
-    bool possibleAlpha;
+	bool possibleAlpha;
 };
 
-inline bool DynamicColor::canHaveAlpha() const
+inline bool DynamicColor::canHaveAlpha()const
 {
-  return possibleAlpha;
+	return possibleAlpha;
 }
 
-inline const float* DynamicColor::getColor() const {
-  return color;
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+inline const float *DynamicColor::getColor()const
+{
+	return color;
 }
 
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
-class DynamicColorManager {
-  public:
-    DynamicColorManager();
-    ~DynamicColorManager();
-    void update();
-    void clear();
-    int addColor(DynamicColor* dyncolor);
-    int findColor(const std::string& name) const;
-    const DynamicColor* getColor(int id) const;
 
-    int packSize() const;
-    void* pack(void*) const;
-    void* unpack(void*);
+class DynamicColorManager
+{
+public:
+	DynamicColorManager();
+	~DynamicColorManager();
+	void update();
+	void clear();
+	int addColor( DynamicColor *dyncolor );
+	int findColor( const std::string &name )const;
+	const DynamicColor *getColor( int id )const;
 
-    void print(std::ostream& out, const std::string& indent) const;
+	int packSize()const;
+	void *pack( void* )const;
+	void *unpack( void* );
 
-  private:
-    std::vector<DynamicColor*> colors;
+	void print( std::ostream &out, const std::string &indent )const;
+
+private:
+	std::vector < DynamicColor * > colors;
 };
 
 extern DynamicColorManager DYNCOLORMGR;
@@ -134,4 +147,3 @@ extern DynamicColorManager DYNCOLORMGR;
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

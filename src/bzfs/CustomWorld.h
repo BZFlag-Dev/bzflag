@@ -11,38 +11,42 @@
  */
 
 #ifndef __CUSTOMWORLD_H__
-#define __CUSTOMWORLD_H__
+	#define __CUSTOMWORLD_H__
 
-#include "common.h"
+	#include "common.h"
 
 /* interface header */
-#include "WorldFileObject.h"
+	#include "WorldFileObject.h"
 
 /* system interface headers */
-#include <iostream>
+	#include <iostream>
 
 /* local interface headers */
-#include "WorldInfo.h"
+	#include "WorldInfo.h"
 
 
-class CustomWorld : public WorldFileObject {
-  public:
-    CustomWorld();
-    virtual bool read(const char *cmd, std::istream&);
-    virtual void writeToWorld(WorldInfo*) const;
-    virtual bool usesGroupDef() { return false; }
+class CustomWorld: public WorldFileObject
+{
+public:
+	CustomWorld();
+	virtual bool read( const char *cmd, std::istream & );
+	virtual void writeToWorld( WorldInfo* )const;
+	virtual bool usesGroupDef()
+	{
+		return false;
+	} 
 
-  protected:
-    double _size;
-    double _fHeight;
+protected:
+	double _size;
+	double _fHeight;
 };
 
 
-extern std::map<std::string,bz_CustomMapObjectHandler*>	customObjectMap;
+extern std::map < std::string, bz_CustomMapObjectHandler * > customObjectMap;
 
-void registerCustomMapObject ( const char* object, bz_CustomMapObjectHandler *handler );
-void removeCustomMapObject ( const char* object );
-#endif  /* __CUSTOMWORLD_H__ */
+void registerCustomMapObject( const char *object, bz_CustomMapObjectHandler *handler );
+void removeCustomMapObject( const char *object );
+#endif /* __CUSTOMWORLD_H__ */
 
 // Local variables: ***
 // mode: C++ ***

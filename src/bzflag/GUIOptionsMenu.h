@@ -11,34 +11,34 @@
  */
 
 #ifndef __GUIOPTIONSMENU_H__
-#define __GUIOPTIONSMENU_H__
+	#define __GUIOPTIONSMENU_H__
 
-#include "common.h"
+	#include "common.h"
 
 /* common interface headers */
-#include "HUDDialog.h"
+	#include "HUDDialog.h"
 
 /* local interface headers */
-#include "MenuDefaultKey.h"
-#include "HUDuiDefaultKey.h"
+	#include "MenuDefaultKey.h"
+	#include "HUDuiDefaultKey.h"
 
 
 /** this class provides options for setting the gui
  */
-class GUIOptionsMenu : public HUDDialog {
+class GUIOptionsMenu: public HUDDialog
+{
 public:
-  GUIOptionsMenu();
-  ~GUIOptionsMenu();
+	GUIOptionsMenu();
+	~GUIOptionsMenu();
 
-  HUDuiDefaultKey* getDefaultKey()
-  {
-    return MenuDefaultKey::getInstance();
-  }
-  void execute();
-  void resize(int width, int height);
-  static void callback(HUDuiControl* w, void* data);
+	HUDuiDefaultKey *getDefaultKey()
+	{
+		return MenuDefaultKey::getInstance();
+	} void execute();
+	void resize( int width, int height );
+	static void callback( HUDuiControl *w, void *data );
 
-  static const int maxRadarSize = 30;
+	static const int maxRadarSize = 30;
 
 private:
 };

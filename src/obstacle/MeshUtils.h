@@ -11,62 +11,73 @@
  */
 
 #ifndef __MESH_UTILS_H__
-#define __MESH_UTILS_H__
+	#define __MESH_UTILS_H__
 
 
 /* system interface headers */
-#include <vector>
+	#include <vector>
 
 /* common interface headers */
-#include "MeshObstacle.h"
-#include "BzMaterial.h"
+	#include "MeshObstacle.h"
+	#include "BzMaterial.h"
 
 
-static inline void push2Ints(std::vector<int>& list, int i0, int i1)
+static inline void push2Ints( std::vector < int >  &list, int i0, int i1 )
 {
-  list.push_back(i0);
-  list.push_back(i1);
-  return;
+	list.push_back( i0 );
+	list.push_back( i1 );
+	return ;
 }
 
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
-static inline void push3Ints(std::vector<int>& list, int i0, int i1, int i2)
+
+static inline void push3Ints( std::vector < int >  &list, int i0, int i1, int i2 )
 {
-  list.push_back(i0);
-  list.push_back(i1);
-  list.push_back(i2);
-  return;
+	list.push_back( i0 );
+	list.push_back( i1 );
+	list.push_back( i2 );
+	return ;
 }
 
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
-static inline void push4Ints(std::vector<int>& list, int i0, int i1, int i2, int i3)
+
+static inline void push4Ints( std::vector < int >  &list, int i0, int i1, int i2, int i3 )
 {
-  list.push_back(i0);
-  list.push_back(i1);
-  list.push_back(i2);
-  list.push_back(i3);
-  return;
+	list.push_back( i0 );
+	list.push_back( i1 );
+	list.push_back( i2 );
+	list.push_back( i3 );
+	return ;
 }
 
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
-static inline void addFace(MeshObstacle* mesh,
-			   std::vector<int>& verticesList,
-			   std::vector<int>& normalsList,
-			   std::vector<int>& texcoordsList,
-			   const BzMaterial* material, int phydrv)
+
+static inline void addFace( MeshObstacle *mesh, std::vector < int >  &verticesList, std::vector < int >  &normalsList, std::vector < int >  &texcoordsList, const BzMaterial *material, int phydrv )
 {
-  // use the mesh defaults for smoothBounce, driveThrough, and shootThough
-  const BzMaterial* matref = MATERIALMGR.addMaterial(material);
-  mesh->addFace(verticesList, normalsList, texcoordsList, matref, phydrv,
-		false, false, false, false, false);
-  verticesList.clear();
-  normalsList.clear();
-  texcoordsList.clear();
-  return;
+	// use the mesh defaults for smoothBounce, driveThrough, and shootThough
+	const BzMaterial *matref = MATERIALMGR.addMaterial( material );
+	mesh->addFace( verticesList, normalsList, texcoordsList, matref, phydrv, false, false, false, false, false );
+	verticesList.clear();
+	normalsList.clear();
+	texcoordsList.clear();
+	return ;
 }
 
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
-#endif  /* __MESH_UTILS_H__ */
+
+#endif /* __MESH_UTILS_H__ */
 
 // Local variables: ***
 // mode: C++ ***

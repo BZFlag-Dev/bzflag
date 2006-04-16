@@ -10,35 +10,37 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef	__REGIONPRIORITYQUEUE_H__
-#define	__REGIONPRIORITYQUEUE_H__
+#ifndef __REGIONPRIORITYQUEUE_H__
+	#define __REGIONPRIORITYQUEUE_H__
 
 /* local interface headers */
-#include "Region.h"
+	#include "Region.h"
 
 
-class RegionPriorityQueue {
- public:
-  RegionPriorityQueue();
-  ~RegionPriorityQueue();
+class RegionPriorityQueue
+{
+public:
+	RegionPriorityQueue();
+	~RegionPriorityQueue();
 
-  void insert(BzfRegion* region, float priority);
-  BzfRegion* remove();
-  void removeAll();
-  bool isEmpty() const;
+	void insert( BzfRegion *region, float priority );
+	BzfRegion *remove();
+	void removeAll();
+	bool isEmpty()const;
 
- private:
-  struct Node {
-    public:
-     Node(BzfRegion* region, float priority);
-    public:
-     Node* next;
-     BzfRegion*	region;
-     float priority;
-  };
+private:
+	struct Node
+	{
+public:
+		Node( BzfRegion *region, float priority );
+public:
+		Node *next;
+		BzfRegion *region;
+		float priority;
+	};
 
- private:
-  Node* head;
+private:
+	Node *head;
 };
 
 

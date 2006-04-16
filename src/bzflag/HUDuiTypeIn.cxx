@@ -26,164 +26,205 @@
 // HUDuiTypeIn
 //
 
-HUDuiTypeIn::HUDuiTypeIn()
-: HUDuiControl(), maxLength(0), cursorPos(0)
+HUDuiTypeIn::HUDuiTypeIn(): HUDuiControl(), maxLength( 0 ), cursorPos( 0 )
 {
-  allowEdit = true; // allow editing by default
-  obfuscate = false;
+	allowEdit = true; // allow editing by default
+	obfuscate = false;
 }
 
-HUDuiTypeIn::~HUDuiTypeIn()
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+HUDuiTypeIn::~HUDuiTypeIn(){}
+
+void HUDuiTypeIn::setObfuscation( bool on )
 {
+	obfuscate = on;
 }
 
-void		HUDuiTypeIn::setObfuscation(bool on)
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+int HUDuiTypeIn::getMaxLength()const
 {
-  obfuscate = on;
+	return maxLength;
 }
 
-int			HUDuiTypeIn::getMaxLength() const
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+std::string HUDuiTypeIn::getString()const
 {
-  return maxLength;
+	return string;
 }
 
-std::string		HUDuiTypeIn::getString() const
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+void HUDuiTypeIn::setMaxLength( int _maxLength )
 {
-  return string;
+	maxLength = _maxLength;
+	string = string.substr( 0, maxLength );
+	if( cursorPos > maxLength )
+		cursorPos = maxLength;
+	onSetFont();
 }
 
-void			HUDuiTypeIn::setMaxLength(int _maxLength)
-{
-  maxLength = _maxLength;
-  string = string.substr(0, maxLength);
-  if (cursorPos > maxLength)
-    cursorPos = maxLength;
-  onSetFont();
-}
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
-void			HUDuiTypeIn::setString(const std::string& _string)
+void HUDuiTypeIn::setString( const std::string &_string )
 {
-  string = _string;
-  cursorPos = (int)string.length();
-  onSetFont();
+	string = _string;
+	cursorPos = ( int )string.length();
+	onSetFont();
 }
 
 // allows composing, otherwise not
-void			HUDuiTypeIn::setEditing(bool _allowEdit)
+void HUDuiTypeIn::setEditing( bool _allowEdit )
 {
-  allowEdit = _allowEdit;
+	allowEdit = _allowEdit;
 }
 
-bool			HUDuiTypeIn::doKeyPress(const BzfKeyEvent& key)
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+bool HUDuiTypeIn::doKeyPress( const BzfKeyEvent &key )
 {
-  static const char backspace = '\b';	// ^H
-  static const char whitespace = ' ';
+	static const char backspace = '\b'; // ^H
+	static const char whitespace = ' ';
 
-  if (!allowEdit) return false; //or return true ??
-  char c = key.ascii;
-  if (c == 0) switch (key.button) {
-    case BzfKeyEvent::Up:
-      HUDui::setFocus(getPrev());
-      return true;
+	if( !allowEdit )
+		return false;
+	//or return true ??
+	char c = key.ascii;
+	if( c == 0 )
+	switch( key.button )
+	{
+		case BzfKeyEvent::Up: HUDui::setFocus( getPrev());
+		return true;
 
-    case BzfKeyEvent::Down:
-      HUDui::setFocus(getNext());
-      return true;
+		case BzfKeyEvent::Down: HUDui::setFocus( getNext());
+		return true;
 
-    case BzfKeyEvent::Left:
-      if (cursorPos > 0)
-	cursorPos--;
-      return true;
+		case BzfKeyEvent::Left: if( cursorPos > 0 )
+			cursorPos--;
+		return true;
 
-    case BzfKeyEvent::Right:
-      if (cursorPos < (int)string.length())
-	cursorPos++;
-      return true;
+		case BzfKeyEvent::Right: if( cursorPos < ( int )string.length())
+			cursorPos++;
+		return true;
 
-    case BzfKeyEvent::Home:
-      cursorPos = 0;
-      return true;
+		case BzfKeyEvent::Home: cursorPos = 0;
+		return true;
 
-    case BzfKeyEvent::End:
-      cursorPos = (int)string.length();
-      return true;
+		case BzfKeyEvent::End: cursorPos = ( int )string.length();
+		return true;
 
-    case BzfKeyEvent::Backspace:
-      c = backspace;
-      break;
+		case BzfKeyEvent::Backspace: c = backspace;
+		break;
 
-    case BzfKeyEvent::Delete:
-      if (cursorPos < (int)string.length()) {
-	cursorPos++;
-	c = backspace;
-      } else {
+		case BzfKeyEvent::Delete: if( cursorPos < ( int )string.length())
+		{
+			cursorPos++;
+			c = backspace;
+		}
+		else
+		{
+			return true;
+		}
+		break;
+
+		default:
+			return false;
+	}
+
+	if( c == '\t' )
+	{
+		HUDui::setFocus( getNext());
+		return true;
+	}
+	if( !isprint( c ) && c != backspace )
+		return false;
+
+	if( c == backspace )
+	{
+		if( cursorPos == 0 )
+			goto noRoom;
+
+		cursorPos--;
+		string = string.substr( 0, cursorPos ) + string.substr( cursorPos + 1, string.length() - cursorPos + 1 );
+		onSetFont();
+	}
+	else
+	{
+		if( isspace( c ))
+			c = whitespace;
+		if(( int )string.length() == maxLength )
+			goto noRoom;
+
+		string = string.substr( 0, cursorPos ) + c + string.substr( cursorPos, string.length() - cursorPos );
+		cursorPos++;
+		onSetFont();
+	}
 	return true;
-      }
-      break;
 
-    default:
-      return false;
-  }
-
-  if (c == '\t') {
-    HUDui::setFocus(getNext());
-    return true;
-  }
-  if (!isprint(c) && c != backspace)
-    return false;
-
-  if (c == backspace) {
-    if (cursorPos == 0) goto noRoom;
-
-    cursorPos--;
-    string = string.substr(0, cursorPos) + string.substr(cursorPos + 1, string.length() - cursorPos + 1);
-    onSetFont();
-  } else {
-    if (isspace(c)) c = whitespace;
-    if ((int)string.length() == maxLength) goto noRoom;
-
-    string = string.substr(0, cursorPos) + c + string.substr( cursorPos, string.length() - cursorPos);
-    cursorPos++;
-    onSetFont();
-  }
-  return true;
-
-noRoom:
-  // ring bell?
-  return true;
+	noRoom: 
+	// ring bell?
+	return true;
 }
 
-bool			HUDuiTypeIn::doKeyRelease(const BzfKeyEvent& key)
-{
-  if (key.ascii == '\t' || !isprint(key.ascii))	// ignore non-printing and tab
-    return false;
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
-  // slurp up releases
-  return true;
+bool HUDuiTypeIn::doKeyRelease( const BzfKeyEvent &key )
+{
+	if( key.ascii == '\t' || !isprint( key.ascii ))
+	// ignore non-printing and tab
+		return false;
+
+	// slurp up releases
+	return true;
 }
 
-void			HUDuiTypeIn::doRender()
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+void HUDuiTypeIn::doRender()
 {
-  if (getFontFace() < 0) return;
+	if( getFontFace() < 0 )
+		return ;
 
-  // render string
-  glColor3fv(hasFocus() ? textColor : dimTextColor);
+	// render string
+	glColor3fv( hasFocus() ? textColor : dimTextColor );
 
-  FontManager &fm = FontManager::instance();
-  std::string renderStr;
-  if (obfuscate) {
-    renderStr.append(string.size(), '*');
-  } else {
-    renderStr = string;
-  }
-  fm.drawString(getX(), getY(), 0, getFontFace(), getFontSize(), renderStr);
+	FontManager &fm = FontManager::instance();
+	std::string renderStr;
+	if( obfuscate )
+	{
+		renderStr.append( string.size(), '*' );
+	}
+	else
+	{
+		renderStr = string;
+	}
+	fm.drawString( getX(), getY(), 0, getFontFace(), getFontSize(), renderStr );
 
-  // find the position of where to draw the input cursor
-  float start = fm.getStrLength(getFontFace(), getFontSize(), renderStr.substr(0, cursorPos));
+	// find the position of where to draw the input cursor
+	float start = fm.getStrLength( getFontFace(), getFontSize(), renderStr.substr( 0, cursorPos ));
 
-  if (HUDui::getFocus() == this && allowEdit) {
-    fm.drawString(getX() + start, getY(), 0, getFontFace(), getFontSize(), "_");
-  }
+	if( HUDui::getFocus() == this && allowEdit )
+	{
+		fm.drawString( getX() + start, getY(), 0, getFontFace(), getFontSize(), "_" );
+	}
 }
 
 // Local Variables: ***
@@ -193,4 +234,3 @@ void			HUDuiTypeIn::doRender()
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

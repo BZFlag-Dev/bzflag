@@ -1,15 +1,15 @@
 
 /* bzflag
-* Copyright (c) 1993 - 2006 Tim Riker
-*
-* This package is free software;  you can redistribute it and/or
-* modify it under the terms of the license found in the file
-* named COPYING that should have accompanied this file.
-*
-* THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
-* IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
-* WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-*/
+ * Copyright (c) 1993 - 2006 Tim Riker
+ *
+ * This package is free software;  you can redistribute it and/or
+ * modify it under the terms of the license found in the file
+ * named COPYING that should have accompanied this file.
+ *
+ * THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
+ * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ */
 
 /* interface header */
 #include "messages.h"
@@ -27,29 +27,39 @@
 
 PlayerAddMessage::PlayerAddMessage()
 {
-	playerID = -1;
-	team = -1;
-	type = -1;
+	playerID =  - 1;
+	team =  - 1;
+	type =  - 1;
 	wins = 0;
 	losses = 0;
 	tks = 0;
 }
 
-bool PlayerAddMessage::unpack ( void* buf )
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+bool PlayerAddMessage::unpack( void *buf )
 {
 	unsigned char id;
 	uint16_t _team, _type, _wins, _losses, _tks;
-	char _callsign[_CallSignLen] = {0};
-	char _email[_EmailLen] = {0};
+	char _callsign[_CallSignLen] = 
+	{
+		0
+	};
+	char _email[_EmailLen] = 
+	{
+		0
+	};
 
-	buf = nboUnpackUByte(buf, id);
-	buf = nboUnpackUShort(buf, _type);
-	buf = nboUnpackUShort(buf, _team);
-	buf = nboUnpackUShort(buf, _wins);
-	buf = nboUnpackUShort(buf, _losses);
-	buf = nboUnpackUShort(buf, _tks);
-	buf = nboUnpackString(buf, _callsign, _CallSignLen);
-	buf = nboUnpackString(buf, _email, _EmailLen);
+	buf = nboUnpackUByte( buf, id );
+	buf = nboUnpackUShort( buf, _type );
+	buf = nboUnpackUShort( buf, _team );
+	buf = nboUnpackUShort( buf, _wins );
+	buf = nboUnpackUShort( buf, _losses );
+	buf = nboUnpackUShort( buf, _tks );
+	buf = nboUnpackString( buf, _callsign, _CallSignLen );
+	buf = nboUnpackString( buf, _email, _EmailLen );
 
 	playerID = id;
 	team = _team;
@@ -64,11 +74,21 @@ bool PlayerAddMessage::unpack ( void* buf )
 	return true;
 }
 
-void*  PlayerAddMessage::pack ( void* buf )
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+void *PlayerAddMessage::pack( void *buf )
 {
 	uint16_t _team, _type, _wins, _losses, _tks;
-	char _callsign[_CallSignLen] = {0};
-	char _email[_EmailLen] = {0};
+	char _callsign[_CallSignLen] = 
+	{
+		0
+	};
+	char _email[_EmailLen] = 
+	{
+		0
+	};
 
 	unsigned char id;
 
@@ -79,18 +99,18 @@ void*  PlayerAddMessage::pack ( void* buf )
 	_losses = losses;
 	_tks = tks;
 
-	strncpy(_callsign,callsign.c_str(),callsign.size() > _CallSignLen-1 ? _CallSignLen-1 :  callsign.size());
-	strncpy(_email,email.c_str(),email.size() > _EmailLen-1 ? _EmailLen-1 :  email.size());
+	strncpy( _callsign, callsign.c_str(), callsign.size() > _CallSignLen - 1 ? _CallSignLen - 1: callsign.size());
+	strncpy( _email, email.c_str(), email.size() > _EmailLen - 1 ? _EmailLen - 1: email.size());
 
-	buf = nboPackUByte(buf, id);
-	buf = nboPackUShort(buf, _type);
-	buf = nboPackUShort(buf, _type);
-	buf = nboPackUShort(buf, _team);
-	buf = nboPackUShort(buf, _wins);
-	buf = nboPackUShort(buf, _losses);
-	buf = nboPackUShort(buf, _tks);
-	buf = nboPackString(buf, _callsign, _CallSignLen);
-	buf = nboPackString(buf, _email, _EmailLen);
+	buf = nboPackUByte( buf, id );
+	buf = nboPackUShort( buf, _type );
+	buf = nboPackUShort( buf, _type );
+	buf = nboPackUShort( buf, _team );
+	buf = nboPackUShort( buf, _wins );
+	buf = nboPackUShort( buf, _losses );
+	buf = nboPackUShort( buf, _tks );
+	buf = nboPackString( buf, _callsign, _CallSignLen );
+	buf = nboPackString( buf, _email, _EmailLen );
 
 	return buf;
 }

@@ -17,21 +17,21 @@
 #include <stdlib.h>
 
 #if !defined(WIN32) || defined(WATT32)
-#include <netdb.h>
-#endif
+	#include <netdb.h>
+#endif 
 
 #include "ares.h"
 #include "ares_private.h" /* for memdebug */
 
-void ares_free_hostent(struct hostent *host)
+void ares_free_hostent( struct hostent *host )
 {
-  char **p;
+	char **p;
 
-  free(host->h_name);
-  for (p = host->h_aliases; *p; p++)
-    free(*p);
-  free(host->h_aliases);
-  free(host->h_addr_list[0]);
-  free(host->h_addr_list);
-  free(host);
+	free( host->h_name );
+	for( p = host->h_aliases;  *p; p++ )
+		free( *p );
+	free( host->h_aliases );
+	free( host->h_addr_list[0] );
+	free( host->h_addr_list );
+	free( host );
 }

@@ -14,10 +14,10 @@
 //    A short description of the module's function
 
 #ifndef TEMPLATE_H
-#define TEMPLATE_H
+	#define TEMPLATE_H
 
 
-#include "common.h"
+	#include "common.h"
 
 // system headers
 
@@ -38,4 +38,4 @@
  * indent-tabs-mode: t ***
  * End: ***
  * ex: shiftwidth=2 tabstop=8
- */
+  */

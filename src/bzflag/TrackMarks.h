@@ -11,41 +11,46 @@
  */
 
 #ifndef BZF_TRACKS_H
-#define BZF_TRACKS_H
+	#define BZF_TRACKS_H
 
 // BZFlag common header
-#include "common.h"
+	#include "common.h"
 
 class SceneDatabase;
 
-namespace TrackMarks {
+namespace TrackMarks
+{
 
-  void init();
-  void kill();
-  void clear();
-  void update(float dt);
-  void addSceneNodes(SceneDatabase* scene);
-  void notifyStyleChange();
-  void renderGroundTracks();   // zbuffer is not used
-  void renderObstacleTracks(); // zbuffer is used
+	void init();
+	void kill();
+	void clear();
+	void update( float dt );
+	void addSceneNodes( SceneDatabase *scene );
+	void notifyStyleChange();
+	void renderGroundTracks(); // zbuffer is not used
+	void renderObstacleTracks(); // zbuffer is used
 
-  bool addMark(const float pos[3], float scale, float angle, int phydrv);
+	bool addMark( const float pos[3], float scale, float angle, int phydrv );
 
-  void setUserFade(float);
-  float getUserFade();
+	void setUserFade( float );
+	float getUserFade();
 
-  enum AirCullStyle {
-    NoAirCull     = 0,
-    InitAirCull   = (1 << 0), // cull for initial air mark conditions
-    PhyDrvAirCull = (1 << 1), // cull for physics driver effects
-    FullAirCull   = (InitAirCull | PhyDrvAirCull)
-  };
+	enum AirCullStyle
+	{
+		NoAirCull = 0, InitAirCull = ( 1 << 0 ),  // cull for initial air mark conditions
+		PhyDrvAirCull = ( 1 << 1 ),  // cull for physics driver effects
+		FullAirCull = ( InitAirCull | PhyDrvAirCull )
+	};
 
-  void setAirCulling(AirCullStyle style);
-  AirCullStyle getAirCulling();
+	void setAirCulling( AirCullStyle style );
+	AirCullStyle getAirCulling();
 
-  const float updateTime = (1.0f / 20.0f);
+	const float updateTime = ( 1.0f / 20.0f );
 }
+
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
 
 #endif // BZF_TRACKS_H
@@ -58,4 +63,3 @@ namespace TrackMarks {
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

@@ -15,122 +15,138 @@
  *	User interface class and functions for the basic HUD UI control.
  */
 
-#ifndef	__HUDUICONTROL_H__
-#define	__HUDUICONTROL_H__
+#ifndef __HUDUICONTROL_H__
+	#define __HUDUICONTROL_H__
 
 /* common header */
-#include "common.h"
+	#include "common.h"
 
 /* system headers */
-#include <string>
+	#include <string>
 
 // common interface headers
-#include "BzfEvent.h"
-#include "OpenGLGState.h"
-#include "TimeKeeper.h"
+	#include "BzfEvent.h"
+	#include "OpenGLGState.h"
+	#include "TimeKeeper.h"
 
 class HUDuiControl;
 
-typedef void		(*HUDuiCallback)(HUDuiControl*, void*);
+typedef void( *HUDuiCallback )( HUDuiControl *, void* );
 
-class HUDuiControl {
-  friend class HUDui;
-  public:
-			HUDuiControl();
-    virtual		~HUDuiControl();
+class HUDuiControl
+{
+	friend class HUDui;
+public:
+	HUDuiControl();
+	virtual ~HUDuiControl();
 
-    float		getX() const;
-    float		getY() const;
-    float		getWidth() const;
-    float		getHeight() const;
-    float		getLabelWidth() const;
-    std::string		getLabel() const;
-    int			getFontFace() const;
-    float		getFontSize() const;
-    HUDuiControl*	getPrev() const;
-    HUDuiControl*	getNext() const;
-    HUDuiCallback	getCallback() const;
-    void*		getUserData() const;
+	float getX()const;
+	float getY()const;
+	float getWidth()const;
+	float getHeight()const;
+	float getLabelWidth()const;
+	std::string getLabel()const;
+	int getFontFace()const;
+	float getFontSize()const;
+	HUDuiControl *getPrev()const;
+	HUDuiControl *getNext()const;
+	HUDuiCallback getCallback()const;
+	void *getUserData()const;
 
-    void		setPosition(float x, float y);
-    void		setSize(float width, float height);
-    void		setLabelWidth(float width);
-    void		setLabel(const std::string& label);
-    void		setFontFace(int face);
-    void		setFontSize(float size);
-    void		setPrev(HUDuiControl*);
-    void		setNext(HUDuiControl*);
-    void		setCallback(HUDuiCallback, void*);
+	void setPosition( float x, float y );
+	void setSize( float width, float height );
+	void setLabelWidth( float width );
+	void setLabel( const std::string &label );
+	void setFontFace( int face );
+	void setFontSize( float size );
+	void setPrev( HUDuiControl* );
+	void setNext( HUDuiControl* );
+	void setCallback( HUDuiCallback, void* );
 
-    bool		hasFocus() const;
-    void		setFocus();
-    void		showFocus(bool);
+	bool hasFocus()const;
+	void setFocus();
+	void showFocus( bool );
 
-    void		render();
+	void render();
 
-    static int  getArrow() { return arrow; }
+	static int getArrow()
+	{
+		return arrow;
+	} 
 
-  protected:
-    virtual void	onSetFont();
-    virtual bool	doKeyPress(const BzfKeyEvent&) = 0;
-    virtual bool	doKeyRelease(const BzfKeyEvent&) = 0;
-    virtual void	doRender() = 0;
+protected:
+	virtual void onSetFont();
+	virtual bool doKeyPress( const BzfKeyEvent & ) = 0;
+	virtual bool doKeyRelease( const BzfKeyEvent & ) = 0;
+	virtual void doRender() = 0;
 
-    void		renderFocus();
-    void		renderLabel();
+	void renderFocus();
+	void renderLabel();
 
-    void		doCallback();
+	void doCallback();
 
-    static const GLfloat	dimTextColor[3];
-    static const GLfloat	moreDimTextColor[3];
-    static const GLfloat	textColor[3];
+	static const GLfloat dimTextColor[3];
+	static const GLfloat moreDimTextColor[3];
+	static const GLfloat textColor[3];
 
-  private:
-    bool		showingFocus;
-    int			fontFace;
-    float		fontSize;
-    float		x, y;
-    float		width, height;
-    float		fontHeight;
-    float		desiredLabelWidth, trueLabelWidth;
-    std::string		label;
-    HUDuiControl*	prev, *next;
-    HUDuiCallback	cb;
-    void*		userData;
-    static OpenGLGState* gstate;
-    static int	  arrow;
-    static int		arrowFrame;
-    static TimeKeeper	lastTime;
-    static int		totalCount;
+private:
+	bool showingFocus;
+	int fontFace;
+	float fontSize;
+	float x, y;
+	float width, height;
+	float fontHeight;
+	float desiredLabelWidth, trueLabelWidth;
+	std::string label;
+	HUDuiControl *prev,  *next;
+	HUDuiCallback cb;
+	void *userData;
+	static OpenGLGState *gstate;
+	static int arrow;
+	static int arrowFrame;
+	static TimeKeeper lastTime;
+	static int totalCount;
 };
 
 //
 // inline functions
 //
 
-inline
-float			HUDuiControl::getX() const
+inline float HUDuiControl::getX()const
 {
-  return x;
+	return x;
 }
 
-inline
-float			HUDuiControl::getY() const
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+inline float HUDuiControl::getY()const
 {
-  return y;
+	return y;
 }
 
-inline
-float			HUDuiControl::getWidth() const
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+inline float HUDuiControl::getWidth()const
 {
-  return width;
+	return width;
 }
 
-inline
-float			HUDuiControl::getHeight() const
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+inline float HUDuiControl::getHeight()const
 {
-  return height;
+	return height;
 }
+
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
 #endif // __HUDUICONTROL_H__
 

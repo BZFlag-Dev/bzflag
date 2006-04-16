@@ -19,103 +19,129 @@
 
 NameList silencePlayers;
 int curMaxPlayers = 0;
-RemotePlayer** player = NULL;
-int            playerSize = 0;
-RobotPlayer* robots[MAX_ROBOTS];
+RemotePlayer **player = NULL;
+int playerSize = 0;
+RobotPlayer *robots[MAX_ROBOTS];
 int numRobots = 0;
 
 
-Player* lookupPlayer(PlayerId id)
+Player *lookupPlayer( PlayerId id )
 {
-  // check my tank first
+	// check my tank first
 
-  LocalPlayer *myTank = LocalPlayer::getMyTank();
-  if (myTank && myTank->getId() == id)
-    return myTank;
+	LocalPlayer *myTank = LocalPlayer::getMyTank();
+	if( myTank && myTank->getId() == id )
+		return myTank;
 
-  if (id == ServerPlayer) {
-    World* world = World::getWorld();
-    if (world)
-      return world->getWorldWeapons();
-    else
-      return NULL;
-  }
+	if( id == ServerPlayer )
+	{
+		World *world = World::getWorld();
+		if( world )
+			return world->getWorldWeapons();
+		else
+			return NULL;
+	}
 
-  if (id < curMaxPlayers && player[id] && player[id]->getId() == id)
-    return player[id];
+	if( id < curMaxPlayers && player[id] && player[id]->getId() == id )
+		return player[id];
 
-  // it's nobody we know about
-  return NULL;
+	// it's nobody we know about
+	return NULL;
 }
 
-int lookupPlayerIndex(PlayerId id)
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+int lookupPlayerIndex( PlayerId id )
 {
-  // check my tank first
+	// check my tank first
 
-  if (LocalPlayer::getMyTank()->getId() == id)
-    return -2;
+	if( LocalPlayer::getMyTank()->getId() == id )
+		return  - 2;
 
-  if (id == ServerPlayer)
-    return ServerPlayer;
+	if( id == ServerPlayer )
+		return ServerPlayer;
 
-  if (id < curMaxPlayers && player[id] && player[id]->getId() == id)
-    return id;
+	if( id < curMaxPlayers && player[id] && player[id]->getId() == id )
+		return id;
 
-  // it's nobody we know about
-  return -1;
+	// it's nobody we know about
+	return  - 1;
 }
 
-Player* getPlayerByIndex(int index)
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+Player *getPlayerByIndex( int index )
 {
-  if (index == -2)
-    return LocalPlayer::getMyTank();
-  if (index == ServerPlayer)
-    return World::getWorld()->getWorldWeapons();
-  if (index == -1 || index >= curMaxPlayers)
-    return NULL;
-  return player[index];
+	if( index ==  - 2 )
+		return LocalPlayer::getMyTank();
+	if( index == ServerPlayer )
+		return World::getWorld()->getWorldWeapons();
+	if( index ==  - 1 || index >= curMaxPlayers )
+		return NULL;
+	return player[index];
 }
 
-Player* getPlayerByName(const char* name)
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+Player *getPlayerByName( const char *name )
 {
-  for (int i = 0; i < curMaxPlayers; i++)
-    if (player[i] && strcmp( player[i]->getCallSign(), name ) == 0)
-      return player[i];
-  World *world = World::getWorld();
-  if (!world)
-    return NULL;
-  WorldPlayer *worldWeapons = world->getWorldWeapons();
-  if (strcmp(worldWeapons->getCallSign(), name) == 0)
-    return worldWeapons;
-  return NULL;
+	for( int i = 0; i < curMaxPlayers; i++ )
+		if( player[i] && strcmp( player[i]->getCallSign(), name ) == 0 )
+			return player[i];
+	World *world = World::getWorld();
+	if( !world )
+		return NULL;
+	WorldPlayer *worldWeapons = world->getWorldWeapons();
+	if( strcmp( worldWeapons->getCallSign(), name ) == 0 )
+		return worldWeapons;
+	return NULL;
 }
 
-BaseLocalPlayer* getLocalPlayer(PlayerId id)
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+BaseLocalPlayer *getLocalPlayer( PlayerId id )
 {
-  LocalPlayer *myTank = LocalPlayer::getMyTank();
-  if (myTank->getId() == id) return myTank;
+	LocalPlayer *myTank = LocalPlayer::getMyTank();
+	if( myTank->getId() == id )
+		return myTank;
 #ifdef ROBOT
-  for (int i = 0; i < numRobots; i++)
-    if (robots[i] && robots[i]->getId() == id)
-      return robots[i];
-#endif
-  return NULL;
+	for( int i = 0; i < numRobots; i++ )
+		if( robots[i] && robots[i]->getId() == id )
+			return robots[i];
+#endif 
+	return NULL;
 }
 
-TeamColor PlayerIdToTeam(PlayerId id)
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+TeamColor PlayerIdToTeam( PlayerId id )
 {
-  if (id >= 244 && id <= 250)
-    return TeamColor(250 - id);
-  else
-    return NoTeam;
+	if( id >= 244 && id <= 250 )
+		return TeamColor( 250-id );
+	else
+		return NoTeam;
 }
 
-PlayerId TeamToPlayerId(TeamColor team)
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+PlayerId TeamToPlayerId( TeamColor team )
 {
-  if (team == NoTeam)
-    return NoPlayer;
-  else
-    return 250 - team;
+	if( team == NoTeam )
+		return NoPlayer;
+	else
+		return 250-team;
 }
 
 

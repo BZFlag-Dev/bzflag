@@ -14,18 +14,19 @@
  *	Interface for shot scene nodes.
  */
 
-#ifndef	BZF_SHOT_SCENE_NODE_H
-#define	BZF_SHOT_SCENE_NODE_H
+#ifndef BZF_SHOT_SCENE_NODE_H
+	#define BZF_SHOT_SCENE_NODE_H
 
-#include "common.h"
-#include "SceneNode.h"
+	#include "common.h"
+	#include "SceneNode.h"
 
-class ShotSceneNode : public SceneNode {
-  public:
-			ShotSceneNode() { }
-			~ShotSceneNode() { }
+class ShotSceneNode: public SceneNode
+{
+public:
+	ShotSceneNode(){}
+	~ShotSceneNode(){}
 
-    virtual void	move(const GLfloat pos[3], const GLfloat forward[3])=0;
+	virtual void move( const GLfloat pos[3], const GLfloat forward[3] ) = 0;
 };
 
 #endif // BZF_SHOT_SCENE_NODE_H
@@ -37,4 +38,3 @@ class ShotSceneNode : public SceneNode {
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

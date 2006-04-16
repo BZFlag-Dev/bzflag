@@ -11,44 +11,44 @@
  */
 
 #ifndef __CUSTOM_SPHERE_H__
-#define __CUSTOM_SPHERE_H__
+	#define __CUSTOM_SPHERE_H__
 
 /* interface header */
-#include "WorldFileObstacle.h"
+	#include "WorldFileObstacle.h"
 
 /* local interface headers */
-#include "WorldInfo.h"
+	#include "WorldInfo.h"
 
 /* common interface headers */
-#include "BzMaterial.h"
+	#include "BzMaterial.h"
 
 
-class CustomSphere : public WorldFileObstacle {
-  public:
-    CustomSphere();
-    ~CustomSphere();
-    virtual bool read(const char *cmd, std::istream& input);
-    virtual void writeToGroupDef(GroupDefinition*) const;
+class CustomSphere: public WorldFileObstacle
+{
+public:
+	CustomSphere();
+	~CustomSphere();
+	virtual bool read( const char *cmd, std::istream &input );
+	virtual void writeToGroupDef( GroupDefinition* )const;
 
-  private:
-    enum {
-      Edge,
-      Bottom,
-      MaterialCount
-    };
-    static const char* sideNames[MaterialCount];
+private:
+	enum
+	{
+		Edge, Bottom, MaterialCount
+	};
+	static const char *sideNames[MaterialCount];
 
-    int divisions;
-    float texsize[2];
-    bool hemisphere;
-    int phydrv;
-    bool useNormals;
-    bool smoothBounce;
-    BzMaterial materials[MaterialCount];
+	int divisions;
+	float texsize[2];
+	bool hemisphere;
+	int phydrv;
+	bool useNormals;
+	bool smoothBounce;
+	BzMaterial materials[MaterialCount];
 };
 
 
-#endif  /* __CUSTOM_SPHERE_H__ */
+#endif /* __CUSTOM_SPHERE_H__ */
 
 // Local variables: ***
 // mode: C++ ***

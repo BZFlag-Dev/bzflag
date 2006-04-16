@@ -20,37 +20,36 @@
 #include "Protocol.h"
 
 
-StartupInfo::StartupInfo() : hasConfiguration(false),
-			     autoConnect(false),
-			     serverPort(ServerPort),
-			     team(AutomaticTeam),
-			     listServerURL(DefaultListServerURL),
-			     listServerPort(ServerPort + 1)
+StartupInfo::StartupInfo(): hasConfiguration( false ), autoConnect( false ), serverPort( ServerPort ), team( AutomaticTeam ), listServerURL( DefaultListServerURL ), listServerPort( ServerPort + 1 )
 {
-  strcpy(serverName, "");
-  strcpy(callsign, "");
-  strcpy(password, "");
-  strcpy(email, "default");
-  joystickName = "joystick";
-  joystick = false;
+	strcpy( serverName, "" );
+	strcpy( callsign, "" );
+	strcpy( password, "" );
+	strcpy( email, "default" );
+	joystickName = "joystick";
+	joystick = false;
 }
+
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
 StartupInfo::~StartupInfo()
 {
-  hasConfiguration = false;
-  autoConnect = false;
-  memset(serverName, 0, 80);
-  serverPort = -1;
-  useUDPconnection = false;
-  team = NoTeam;
-  memset(callsign, 0, CallSignLen);
-  memset(password, 0, PasswordLen);
-  memset(token, 0, TokenLen);
-  memset(email, 0, EmailLen);
-  listServerURL = "";
-  listServerPort = 0;
-  joystick = false;
-  joystickName = "";
+	hasConfiguration = false;
+	autoConnect = false;
+	memset( serverName, 0, 80 );
+	serverPort =  - 1;
+	useUDPconnection = false;
+	team = NoTeam;
+	memset( callsign, 0, CallSignLen );
+	memset( password, 0, PasswordLen );
+	memset( token, 0, TokenLen );
+	memset( email, 0, EmailLen );
+	listServerURL = "";
+	listServerPort = 0;
+	joystick = false;
+	joystickName = "";
 }
 
 // Local Variables: ***

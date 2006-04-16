@@ -18,31 +18,37 @@
 #include "HUDRenderer.h"
 #include "playing.h"
 
-void setFlagHelp(const std::string& name, void*)
+void setFlagHelp( const std::string &name, void* )
 {
-  if (LocalPlayer::getMyTank() == NULL)
-    return;
-  static const float FlagHelpDuration = 60.0f;
-  if (BZDB.isTrue(name))
-    hud->setFlagHelp(LocalPlayer::getMyTank()->getFlag(), FlagHelpDuration);
-  else
-    hud->setFlagHelp(Flags::Null, 0.0);
+	if( LocalPlayer::getMyTank() == NULL )
+		return ;
+	static const float FlagHelpDuration = 60.0f;
+	if( BZDB.isTrue( name ))
+		hud->setFlagHelp( LocalPlayer::getMyTank()->getFlag(), FlagHelpDuration );
+	else
+		hud->setFlagHelp( Flags::Null, 0.0 );
 }
 
-void setDepthBuffer(const std::string& name, void*)
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+void setDepthBuffer( const std::string &name, void* )
 {
-  /* if zbuffer was set and not available, unset it */
-  if (BZDB.isTrue(name)) {
-    GLint value;
-    glGetIntegerv(GL_DEPTH_BITS, &value);
-    if (value == 0) {
-      // temporarily remove ourself
-      BZDB.removeCallback(name, setDepthBuffer, NULL);
-      BZDB.set(name, "0");
-      // add it again
-      BZDB.addCallback(name, setDepthBuffer, NULL);
-    }
-  }
+	/* if zbuffer was set and not available, unset it */
+	if( BZDB.isTrue( name ))
+	{
+		GLint value;
+		glGetIntegerv( GL_DEPTH_BITS, &value );
+		if( value == 0 )
+		{
+			// temporarily remove ourself
+			BZDB.removeCallback( name, setDepthBuffer, NULL );
+			BZDB.set( name, "0" );
+			// add it again
+			BZDB.addCallback( name, setDepthBuffer, NULL );
+		}
+	}
 }
 
 // Local Variables: ***
@@ -52,4 +58,3 @@ void setDepthBuffer(const std::string& name, void*)
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

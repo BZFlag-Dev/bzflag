@@ -73,13 +73,13 @@
 // define our OS
 
 #ifndef BZ_BUILD_OS
-  #ifdef _DEBUG
-    #define DEBUG
-	#define DEBUG_RENDERING
-    #define BZ_BUILD_OS			"W32VC8D"
-  #else
-    #define BZ_BUILD_OS			"W32VC8"
-  #endif //_DEBUG
+	#ifdef _DEBUG
+		#define DEBUG
+		#define DEBUG_RENDERING
+		#define BZ_BUILD_OS			"W32VC8D"
+	#else 
+		#define BZ_BUILD_OS			"W32VC8"
+	#endif //_DEBUG
 #endif //BZ_BUILD_OS
 
 /* Define to 1 if you have the `WaitForSingleObject' function. */
@@ -113,6 +113,14 @@
 #define HAVE_STD__MAX 1
 
 #ifndef DEBUG_TRACE
-#define DEBUG_TRACE
-inline void W32_DEBUG_TRACE (const char* buffer ) {printf("%s",buffer);}
+	#define DEBUG_TRACE
+inline void W32_DEBUG_TRACE( const char *buffer )
+{
+	printf( "%s", buffer );
+}
+
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
 #endif

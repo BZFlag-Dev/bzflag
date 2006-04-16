@@ -11,77 +11,43 @@
  */
 
 #ifndef __SERVERCOMMANDKEY_H__
-#define __SERVERCOMMANDKEY_H__
+	#define __SERVERCOMMANDKEY_H__
 
 // Ancestor class
-#include "HUDuiDefaultKey.h"
+	#include "HUDuiDefaultKey.h"
 
-#include <string>
-#include "Address.h"
+	#include <string>
+	#include "Address.h"
 
-class ServerCommandKey : public HUDuiDefaultKey {
+class ServerCommandKey: public HUDuiDefaultKey
+{
 public:
-  ServerCommandKey();
-  bool		keyPress(const BzfKeyEvent&);
-  bool		keyRelease(const BzfKeyEvent&);
-  void		init();
-  void		adminInit();
-  void		nonAdminInit();
+	ServerCommandKey();
+	bool keyPress( const BzfKeyEvent & );
+	bool keyRelease( const BzfKeyEvent & );
+	void init();
+	void adminInit();
+	void nonAdminInit();
 private:
-  std::string		makePattern(const InAddr& address);
-  void		updatePrompt();
+	std::string makePattern( const InAddr &address );
+	void updatePrompt();
 
 private:
-  enum Mode {
-    Kick,
-    Kill,
-    BanIp,
-    Ban1,
-    Ban2,
-    Ban3,
-    Showgroup,
-    Setgroup,
-    Removegroup,
-    Ghost,
-    Unban,
-    Banlist,
-    Playerlist,
-    FlagReset,
-    FlagUnusedReset,
-    FlagUp,
-    FlagShow,
-    FlagHistory,
-    IdleStats,
-    ClientQuery,
-    LagStats,
-    Report,
-    LagWarn,
-    LagDrop,
-    GameOver,
-    CountDown,
-    SuperKill,
-    Shutdown,
-    Register,
-    Identify,
-    Setpass,
-    Grouplist,
-    Groupperms,
-    Vote,
-    Poll,
-    Veto,
-    Password  // leave this as the last item
-  };
+	enum Mode
+	{
+		Kick, Kill, BanIp, Ban1, Ban2, Ban3, Showgroup, Setgroup, Removegroup, Ghost, Unban, Banlist, Playerlist, FlagReset, FlagUnusedReset, FlagUp, FlagShow, FlagHistory, IdleStats, ClientQuery, LagStats, Report, LagWarn, LagDrop, GameOver, CountDown, SuperKill, Shutdown, Register, Identify, Setpass, Grouplist, Groupperms, Vote, Poll, Veto, Password  // leave this as the last item
+	};
 
-  Mode mode;
-  int startIndex;
-  const int numModes;
-  const int numNonAdminModes;
-  static const Mode nonAdminModes[8];
+	Mode mode;
+	int startIndex;
+	const int numModes;
+	const int numNonAdminModes;
+	static const Mode nonAdminModes[8];
 
 
 };
 
-#endif
+#endif 
 
 // Local Variables: ***
 // mode:C++ ***
@@ -90,4 +56,3 @@ private:
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

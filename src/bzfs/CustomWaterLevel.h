@@ -11,28 +11,31 @@
  */
 
 #ifndef __CUSTOM_WATER_LEVEL_H__
-#define __CUSTOM_WATER_LEVEL_H__
+	#define __CUSTOM_WATER_LEVEL_H__
 
 /* interface header */
-#include "WorldFileObject.h"
+	#include "WorldFileObject.h"
 
 /* common headers */
-#include "BzMaterial.h"
+	#include "BzMaterial.h"
 
-class CustomWaterLevel : public WorldFileObject {
-  public:
-    CustomWaterLevel();
-    ~CustomWaterLevel();
-    virtual bool read(const char *cmd, std::istream& input);
-    virtual void writeToWorld(WorldInfo*) const;
-    virtual bool usesGroupDef() { return false; }
-  private:
-    float height;
-    bool modedMaterial;
-    mutable BzMaterial material;
+class CustomWaterLevel: public WorldFileObject
+{
+public:
+	CustomWaterLevel();
+	~CustomWaterLevel();
+	virtual bool read( const char *cmd, std::istream &input );
+	virtual void writeToWorld( WorldInfo* )const;
+	virtual bool usesGroupDef()
+	{
+		return false;
+} private:
+	float height;
+	bool modedMaterial;
+	mutable BzMaterial material;
 };
 
-#endif  /* __CUSTOM_WATER_LEVEL_H__ */
+#endif /* __CUSTOM_WATER_LEVEL_H__ */
 
 // Local variables: ***
 // mode: C++ ***

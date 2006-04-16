@@ -10,13 +10,13 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef	BZF_BZFLAG_H
-#define	BZF_BZFLAG_H
+#ifndef BZF_BZFLAG_H
+	#define BZF_BZFLAG_H
 
-#include "common.h"
+	#include "common.h"
 
 // system includes
-#include <string>
+	#include <string>
 
 extern void dumpResources();
 
@@ -24,11 +24,11 @@ extern bool echoToConsole;
 extern bool echoAnsi;
 extern std::string alternateConfig;
 extern const char *argv0;
-extern struct tm   userTime;
+extern struct tm userTime;
 
-#ifdef ROBOT
+	#ifdef ROBOT
 extern int numRobotTanks;
-#endif
+	#endif 
 
 #endif // BZF_BZFLAG_H
 

@@ -11,45 +11,51 @@
  */
 
 #ifndef __OBSTACLESCENENODEGENERATOR_H__
-#define __OBSTACLESCENENODEGENERATOR_H__
+	#define __OBSTACLESCENENODEGENERATOR_H__
 
 class WallSceneNode;
 
 class ObstacleSceneNodeGenerator
 {
-  public:
-    virtual		~ObstacleSceneNodeGenerator();
+public:
+	virtual ~ObstacleSceneNodeGenerator();
 
-    virtual WallSceneNode* getNextNode(float uRepeats, float vRepeats,
-							bool lod) = 0;
+	virtual WallSceneNode *getNextNode( float uRepeats, float vRepeats, bool lod ) = 0;
 
-  protected:
-			ObstacleSceneNodeGenerator();
-    int			getNodeNumber() const;
-    int			incNodeNumber();
+protected:
+	ObstacleSceneNodeGenerator();
+	int getNodeNumber()const;
+	int incNodeNumber();
 
-  private:
-    // no duplication
-			ObstacleSceneNodeGenerator(const
-					ObstacleSceneNodeGenerator&);
-    ObstacleSceneNodeGenerator&	operator=(const ObstacleSceneNodeGenerator&);
+private:
+	// no duplication
+	ObstacleSceneNodeGenerator( const ObstacleSceneNodeGenerator & );
+	ObstacleSceneNodeGenerator &operator = ( const ObstacleSceneNodeGenerator & );
 
-  private:
-    int			node;
+private:
+	int node;
 };
 
-inline int		ObstacleSceneNodeGenerator::getNodeNumber() const
+inline int ObstacleSceneNodeGenerator::getNodeNumber()const
 {
-  return node;
+	return node;
 }
 
-inline int		ObstacleSceneNodeGenerator::incNodeNumber()
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+inline int ObstacleSceneNodeGenerator::incNodeNumber()
 {
-  return ++node;
+	return ++node;
 }
 
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
-#endif
+
+#endif 
 
 // Local Variables: ***
 // mode:C++ ***

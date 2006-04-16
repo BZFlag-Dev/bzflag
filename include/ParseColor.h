@@ -11,15 +11,15 @@
  */
 
 #ifndef _PARSE_COLOR_H_
-#define _PARSE_COLOR_H_
+	#define _PARSE_COLOR_H_
 
 
-#include <string>
-#include <iostream>
+	#include <string>
+	#include <iostream>
 
-extern bool parseColorCString(const char* str, float color[4]);
-extern bool parseColorString(const std::string& str, float color[4]);
-extern bool parseColorStream(std::istream& input, float color[4]);
+extern bool parseColorCString( const char *str, float color[4] );
+extern bool parseColorString( const std::string &str, float color[4] );
+extern bool parseColorStream( std::istream &input, float color[4] );
 
 
 #endif // _PARSE_COLOR_H_
@@ -32,4 +32,3 @@ extern bool parseColorStream(std::istream& input, float color[4]);
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

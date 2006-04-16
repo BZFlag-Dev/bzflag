@@ -16,43 +16,57 @@
 #include "BzfMedia.h"
 #include "BzfJoystick.h"
 
-PlatformFactory*	PlatformFactory::instance = 0;
-BzfMedia*		PlatformFactory::media = 0;
+PlatformFactory *PlatformFactory::instance = 0;
+BzfMedia *PlatformFactory::media = 0;
 
 PlatformFactory::PlatformFactory()
 {
 #ifdef HAVE_SDL
-  Uint32 flags = 0;
-#ifdef DEBUG
-  flags |= SDL_INIT_NOPARACHUTE;
-#endif
-  if (SDL_Init(flags) == -1) {
-    printFatalError("Could not initialize SDL: %s.\n", SDL_GetError());
-    exit(-1);
-  };
-#endif
+	Uint32 flags = 0;
+	#ifdef DEBUG
+	flags |= SDL_INIT_NOPARACHUTE;
+	#endif 
+	if( SDL_Init( flags ) ==  - 1 )
+	{
+		printFatalError( "Could not initialize SDL: %s.\n", SDL_GetError());
+		exit(  - 1 );
+	};
+#endif 
 }
+
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
 PlatformFactory::~PlatformFactory()
 {
 #ifdef HAVE_SDL
-  if (media)
-    media->closeAudio();
-  SDL_Quit();
-#endif
-  delete media;
+	if( media )
+		media->closeAudio();
+	SDL_Quit();
+#endif 
+	delete media;
 }
 
-BzfJoystick*		PlatformFactory::createJoystick()
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+BzfJoystick *PlatformFactory::createJoystick()
 {
-  // if a platform doesn't have a native joystick impl., bzfjoystick provides defaults.
-  return new BzfJoystick();
+	// if a platform doesn't have a native joystick impl., bzfjoystick provides defaults.
+	return new BzfJoystick();
 }
 
-BzfMedia*		PlatformFactory::getMedia()
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+BzfMedia *PlatformFactory::getMedia()
 {
-  if (!media) media = getInstance()->createMedia();
-  return media;
+	if( !media )
+		media = getInstance()->createMedia();
+	return media;
 }
 
 // Local Variables: ***
@@ -62,4 +76,3 @@ BzfMedia*		PlatformFactory::getMedia()
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

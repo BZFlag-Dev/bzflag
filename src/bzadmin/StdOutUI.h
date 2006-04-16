@@ -11,38 +11,39 @@
  */
 
 #ifndef STDOUTUI_H
-#define STDOUTUI_H
+	#define STDOUTUI_H
 
-#include "common.h"
+	#include "common.h"
 
 /* system interface headers */
-#include <string>
+	#include <string>
 
 /* common interface headers */
-#include "Address.h"
-#include "BZAdminUI.h"
-#include "global.h"
-#include "UIMap.h"
+	#include "Address.h"
+	#include "BZAdminUI.h"
+	#include "global.h"
+	#include "UIMap.h"
 
 
 /** This class is an interface for bzadmin that reads commands from stdin. */
-class StdOutUI : public BZAdminUI {
+class StdOutUI: public BZAdminUI
+{
 public:
 
-  StdOutUI(BZAdminClient& c);
+	StdOutUI( BZAdminClient &c );
 
-  virtual void outputMessage(const std::string& msg, ColorCode color);
+	virtual void outputMessage( const std::string &msg, ColorCode color );
 
-  /** This function returns a pointer to a dynamically allocated
-      StdOutUI object. */
-  static BZAdminUI* creator(BZAdminClient&);
+	/** This function returns a pointer to a dynamically allocated
+	StdOutUI object. */
+	static BZAdminUI *creator( BZAdminClient & );
 
 protected:
 
-  static UIAdder uiAdder;
+	static UIAdder uiAdder;
 };
 
-#endif
+#endif 
 
 // Local Variables: ***
 // mode:C++ ***

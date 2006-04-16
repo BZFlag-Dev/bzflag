@@ -10,73 +10,67 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 #ifndef __BZFS_H__
-#define __BZFS_H__
-#ifdef _MSC_VER
-#pragma warning( 4 : 4786 )
-#endif
+	#define __BZFS_H__
+	#ifdef _MSC_VER
+		#pragma warning( 4 : 4786 )
+	#endif 
 // to dump score info to stdout
-#define PRINTSCORE to include code to dump score info to stdout
-#define SERVERLOGINMSG true
-#include "common.h"
+	#define PRINTSCORE to include code to dump score info to stdout
+	#define SERVERLOGINMSG true
+	#include "common.h"
 // must be before network.h because that defines a close() macro which
 // messes up fstreams.	luckily, we don't need to call the close() method
 // on any fstream.
-#include <fstream>
+	#include <fstream>
 
 // must be before windows.h
-#include "network.h"
+	#include "network.h"
 // common interface headers
-#include "Address.h"
-#include "Flag.h"
-#include "Ping.h"
+	#include "Address.h"
+	#include "Flag.h"
+	#include "Ping.h"
 // bzfs specific headers
-#include "TeamBases.h"
-#include "CmdLineOptions.h"
-#include "GameKeeper.h"
-#include "FlagInfo.h"
-#include "WorldInfo.h"
-#include "RejoinList.h"
-extern void sendMessage(int	 playerIndex,
-			PlayerId    dstPlayer,
-			const char *message);
-extern void removePlayer(int	 playerIndex,
-			 const char *reason,
-			 bool	notify = true);
-extern void sendPlayerMessage(GameKeeper::Player *playerData,
-			      PlayerId dstPlayer,
-			      const char *message);
+	#include "TeamBases.h"
+	#include "CmdLineOptions.h"
+	#include "GameKeeper.h"
+	#include "FlagInfo.h"
+	#include "WorldInfo.h"
+	#include "RejoinList.h"
+extern void sendMessage( int playerIndex, PlayerId dstPlayer, const char *message );
+extern void removePlayer( int playerIndex, const char *reason, bool notify = true );
+extern void sendPlayerMessage( GameKeeper::Player *playerData, PlayerId dstPlayer, const char *message );
 extern char *getDirectMessageBuffer();
-extern void  sendFlagUpdate(FlagInfo &flag);
-extern void  sendDrop(FlagInfo &flag);
-extern void  sendIPUpdate(int targetPlayer = -1, int playerIndex = -1);
-extern void  sendPlayerInfo(void);
-extern void  directMessage(int playerIndex, uint16_t code, int len, const void *msg);
-extern int directMessage(NetHandler *handler, uint16_t code, int len, const void *msg);
-extern int   getCurMaxPlayers();
-extern bool  areFoes(TeamColor team1, TeamColor team2);
+extern void sendFlagUpdate( FlagInfo &flag );
+extern void sendDrop( FlagInfo &flag );
+extern void sendIPUpdate( int targetPlayer =  - 1, int playerIndex =  - 1 );
+extern void sendPlayerInfo( void );
+extern void directMessage( int playerIndex, uint16_t code, int len, const void *msg );
+extern int directMessage( NetHandler *handler, uint16_t code, int len, const void *msg );
+extern int getCurMaxPlayers();
+extern bool areFoes( TeamColor team1, TeamColor team2 );
 extern PingPacket getTeamCounts();
-extern void       zapFlagByPlayer(int playerIndex);
-extern void       resetFlag(FlagInfo &flag);
-extern void       dropFlag(FlagInfo& flag, const float dropPos[3]);
-extern void       publicize();
-extern TeamColor  whoseBase(float x, float y, float z);
-void checkGameOn ( void );
-PlayerId getNewPlayerID ( void );
-bool validPlayerCallsign ( int playerIndex );
-void addPlayer(int playerIndex, GameKeeper::Player *playerData);
-void rejectPlayer(int playerIndex, uint16_t code, const char *reason);
-bool worldStateChanging ( void );
-void searchFlag(GameKeeper::Player &playerData);
-void relayPlayerPacket(int index, uint16_t len, const void *rawbuf, uint16_t code);
-void playerAlive(int playerIndex);
-void pwriteBroadcast(const void *b, int l, int mask);
-int pwrite(NetHandler *handler, const void *b, int l);
-int lookupPlayer(const PlayerId& id);
-void playerKilled(int victimIndex, int killerIndex, BlowedUpReason reason, int16_t shotIndex, const FlagType *flagType, int phydrv, bool respawnOnBase = false);
-void dropPlayerFlag(GameKeeper::Player &playerData, const float dropPos[3]);
-void captureFlag(int playerIndex, TeamColor teamCaptured);
-bool invalidPlayerAction(PlayerInfo &p, int t, const char *action);
-bool allowTeams ( void );
+extern void zapFlagByPlayer( int playerIndex );
+extern void resetFlag( FlagInfo &flag );
+extern void dropFlag( FlagInfo &flag, const float dropPos[3] );
+extern void publicize();
+extern TeamColor whoseBase( float x, float y, float z );
+void checkGameOn( void );
+PlayerId getNewPlayerID( void );
+bool validPlayerCallsign( int playerIndex );
+void addPlayer( int playerIndex, GameKeeper::Player *playerData );
+void rejectPlayer( int playerIndex, uint16_t code, const char *reason );
+bool worldStateChanging( void );
+void searchFlag( GameKeeper::Player &playerData );
+void relayPlayerPacket( int index, uint16_t len, const void *rawbuf, uint16_t code );
+void playerAlive( int playerIndex );
+void pwriteBroadcast( const void *b, int l, int mask );
+int pwrite( NetHandler *handler, const void *b, int l );
+int lookupPlayer( const PlayerId &id );
+void playerKilled( int victimIndex, int killerIndex, BlowedUpReason reason, int16_t shotIndex, const FlagType *flagType, int phydrv, bool respawnOnBase = false );
+void dropPlayerFlag( GameKeeper::Player &playerData, const float dropPos[3] );
+void captureFlag( int playerIndex, TeamColor teamCaptured );
+bool invalidPlayerAction( PlayerInfo &p, int t, const char *action );
+bool allowTeams( void );
 
 typedef struct CheatProtectionOptions
 {
@@ -86,50 +80,56 @@ typedef struct CheatProtectionOptions
 	{
 		doHeightChecks = true;
 		doSpeedChecks = true;
-	}
-}CheatProtectionOptions;
-extern CheatProtectionOptions	cheatProtectionOptions;
+	} 
+}
+
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+CheatProtectionOptions;
+extern CheatProtectionOptions cheatProtectionOptions;
 
 // initialize permission groups
 extern void initGroups();
 
 extern BasesList bases;
 extern CmdLineOptions *clOptions;
-extern uint16_t	curMaxPlayers;
-extern bool	    done;
-extern bool	    gameOver;
-extern TeamInfo	team[NumTeams];
-extern int	     numFlags;
-extern bool	    countdownActive;
-extern int	     countdownDelay;
-extern TimeKeeper      countdownPauseStart;
-extern char	    hexDigest[50];
-extern WorldInfo      *world;
-extern char	   *worldDatabase;
-extern uint32_t	worldDatabaseSize;
-extern char	    worldSettings[4 + WorldSettingsSize];
-extern uint8_t	 rabbitIndex;
-extern float	   speedTolerance;
-extern bool	    handlePings;
-extern uint16_t	maxPlayers;
-extern uint16_t	maxRealPlayers;
-extern float	   pluginWorldSize;
-extern float	   pluginWorldHeight;
-extern float	   pluginMaxWait;
-extern bool        isIdentifyFlagIn;
-extern bool        worldWasSentToAPlayer;
-extern RejoinList  rejoinList;
+extern uint16_t curMaxPlayers;
+extern bool done;
+extern bool gameOver;
+extern TeamInfo team[NumTeams];
+extern int numFlags;
+extern bool countdownActive;
+extern int countdownDelay;
+extern TimeKeeper countdownPauseStart;
+extern char hexDigest[50];
+extern WorldInfo *world;
+extern char *worldDatabase;
+extern uint32_t worldDatabaseSize;
+extern char worldSettings[4+WorldSettingsSize];
+extern uint8_t rabbitIndex;
+extern float speedTolerance;
+extern bool handlePings;
+extern uint16_t maxPlayers;
+extern uint16_t maxRealPlayers;
+extern float pluginWorldSize;
+extern float pluginWorldHeight;
+extern float pluginMaxWait;
+extern bool isIdentifyFlagIn;
+extern bool worldWasSentToAPlayer;
+extern RejoinList rejoinList;
 // this should not be hangin out here
 extern bool dontWait;
 extern float maxWorldHeight;
 
 
-void pauseCountdown ( const char *pausedBy );
-void resumeCountdown ( const char *resumedBy );
-void resetTeamScores ( void );
-void startCountdown ( int delay, float limit, const char *buyWho );
+void pauseCountdown( const char *pausedBy );
+void resumeCountdown( const char *resumedBy );
+void resetTeamScores( void );
+void startCountdown( int delay, float limit, const char *buyWho );
 
-#endif
+#endif 
 // Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***
@@ -137,25 +137,3 @@ void startCountdown ( int delay, float limit, const char *buyWho );
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

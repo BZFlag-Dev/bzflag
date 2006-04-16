@@ -20,13 +20,13 @@
  * operator+=() allows a time in seconds to be added to a TimeKeeper.
  */
 
-#ifndef	BZF_TIME_KEEPER_H
-#define	BZF_TIME_KEEPER_H
+#ifndef BZF_TIME_KEEPER_H
+	#define BZF_TIME_KEEPER_H
 
-#include "common.h"
+	#include "common.h"
 
 /* system interface headers */
-#include <string>
+	#include <string>
 
 
 /** TimeKeeper keeps time.  It's useful to determine how much time has
@@ -35,124 +35,161 @@
  * calls to getCurrent and subtract the second from the first to get an
  * elapsed float time value.
  */
-class TimeKeeper {
+class TimeKeeper
+{
 public:
-  TimeKeeper();
-  TimeKeeper(const TimeKeeper&);
-  ~TimeKeeper();
-  TimeKeeper&		operator=(const TimeKeeper&);
+	TimeKeeper();
+	TimeKeeper( const TimeKeeper & );
+	~TimeKeeper();
+	TimeKeeper &operator = ( const TimeKeeper & );
 
-  double		operator-(const TimeKeeper&) const;
-  bool			operator<=(const TimeKeeper&) const;
-  TimeKeeper&		operator+=(double);
-  TimeKeeper&		operator+=(const TimeKeeper&);
+	double operator - ( const TimeKeeper & )const;
+	bool operator <= ( const TimeKeeper & )const;
+	TimeKeeper &operator += ( double );
+	TimeKeeper &operator += ( const TimeKeeper & );
 
 	// make a TimeKeeper with seconds = NULL act like unset
 	// Fixme: must this be defined here? didn't work for me outside the class
-	inline operator void*()
+	inline operator void *()
 	{
-		if (seconds > 0.0)
+		if( seconds > 0.0 )
 			return this;
 		else
 			return NULL;
-	}
+	} 
 
-  /** returns how many seconds have elapsed since epoch, Jan 1, 1970 */
-  double       getSeconds(void) const;
+	/** returns how many seconds have elapsed since epoch, Jan 1, 1970 */
+	double getSeconds( void )const;
 
-  /** returns a timekeeper representing the current time */
-  static const TimeKeeper&	getCurrent(void);
+	/** returns a timekeeper representing the current time */
+	static const TimeKeeper &getCurrent( void );
 
-  /** returns a timekeeper representing the time of program execution */
-  static const TimeKeeper&	getStartTime(void);
+	/** returns a timekeeper representing the time of program execution */
+	static const TimeKeeper &getStartTime( void );
 
-  /** sets the time to the current time (recalculates) */
-  static void			setTick(void);
-  /** returns a timekeeper that is updated periodically via setTick */
-  static const TimeKeeper&	getTick(void); // const
+	/** sets the time to the current time (recalculates) */
+	static void setTick( void );
+	/** returns a timekeeper that is updated periodically via setTick */
+	static const TimeKeeper &getTick( void ); // const
 
-  /** returns a timekeeper representing +Inf */
-  static const TimeKeeper&	getSunExplodeTime(void);
-  /** returns a timekeeper representing -Inf */
-  static const TimeKeeper&	getSunGenesisTime(void);
-  /** returns a timekeeper representing an unset timekeeper */
-  static const TimeKeeper&	getNullTime(void);
+	/** returns a timekeeper representing +Inf */
+	static const TimeKeeper &getSunExplodeTime( void );
+	/** returns a timekeeper representing -Inf */
+	static const TimeKeeper &getSunGenesisTime( void );
+	/** returns a timekeeper representing an unset timekeeper */
+	static const TimeKeeper &getNullTime( void );
 
 
-  /** returns the local time */
-  static void localTime(int *year = NULL, int *month = NULL, int* day = NULL, int* hour = NULL, int* min = NULL, int* sec = NULL, bool* dst = NULL);
+	/** returns the local time */
+	static void localTime( int *year = NULL, int *month = NULL, int *day = NULL, int *hour = NULL, int *min = NULL, int *sec = NULL, bool *dst = NULL );
 
-  /** returns a string of the local time */
-  static const char		*timestamp(void);
+	/** returns a string of the local time */
+	static const char *timestamp( void );
 
-  static void localTime( int &day);
+	static void localTime( int &day );
 
-  /** converts a time difference into an array of integers
-      representing days, hours, minutes, seconds */
-  static void			convertTime(double raw, long int convertedTimes[]);
-  /** prints an integer-array time difference in human-readable form */
-  static const std::string	printTime(long int timeValue[]);
-  /** prints an float time difference in human-readable form */
-  static const std::string	printTime(double diff);
+	/** converts a time difference into an array of integers
+	representing days, hours, minutes, seconds */
+	static void convertTime( double raw, long int convertedTimes[] );
+	/** prints an integer-array time difference in human-readable form */
+	static const std::string printTime( long int timeValue[] );
+	/** prints an float time difference in human-readable form */
+	static const std::string printTime( double diff );
 
-  /** sleep for a given number of floating point seconds */
-  static void			sleep(double secs); //const
+	/** sleep for a given number of floating point seconds */
+	static void sleep( double secs ); //const
 
 private:
-  double		seconds;
+	double seconds;
 };
 
 //
 // TimeKeeper
 //
 
-inline TimeKeeper::TimeKeeper() : seconds(0.0)
+inline TimeKeeper::TimeKeeper(): seconds( 0.0 )
 {
-  // do nothing
+	// do nothing
 }
 
-inline TimeKeeper::TimeKeeper(const TimeKeeper& t) :
-  seconds(t.seconds)
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+inline TimeKeeper::TimeKeeper( const TimeKeeper &t ): seconds( t.seconds )
 {
-  // do nothing
+	// do nothing
 }
+
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
 inline TimeKeeper::~TimeKeeper()
 {
-  // do nothing
+	// do nothing
 }
 
-inline TimeKeeper&	TimeKeeper::operator=(const TimeKeeper& t)
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+inline TimeKeeper &TimeKeeper::operator = ( const TimeKeeper &t )
 {
-  seconds = t.seconds;
-  return *this;
+	seconds = t.seconds;
+	return  *this;
 }
 
-inline double		TimeKeeper::operator-(const TimeKeeper& t) const
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+inline double TimeKeeper::operator - ( const TimeKeeper &t )const
 {
-  return seconds - t.seconds;
+	return seconds - t.seconds;
 }
 
-inline TimeKeeper&	TimeKeeper::operator+=(double dt)
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+inline TimeKeeper &TimeKeeper::operator += ( double dt )
 {
-  seconds += dt;
-  return *this;
-}
-inline TimeKeeper&	TimeKeeper::operator+=(const TimeKeeper& t)
-{
-  seconds += t.seconds;
-  return *this;
+	seconds += dt;
+	return  *this;
 }
 
-inline bool		TimeKeeper::operator<=(const TimeKeeper& t) const
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+inline TimeKeeper &TimeKeeper::operator += ( const TimeKeeper &t )
 {
-  return seconds <= t.seconds;
+	seconds += t.seconds;
+	return  *this;
 }
 
-inline double		TimeKeeper::getSeconds(void) const
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+inline bool TimeKeeper::operator <= ( const TimeKeeper &t )const
 {
-  return seconds;
+	return seconds <= t.seconds;
 }
+
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
+
+inline double TimeKeeper::getSeconds( void )const
+{
+	return seconds;
+}
+
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
 
 #endif // BZF_TIME_KEEPER_H

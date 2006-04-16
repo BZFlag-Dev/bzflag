@@ -15,41 +15,43 @@
  */
 
 #ifndef BZF_BEOSDISPLAY_H
-#define BZF_BEOSDISPLAY_H
+	#define BZF_BEOSDISPLAY_H
 
-#include <Screen.h>
+	#include <Screen.h>
 
-#include "BzfDisplay.h"
+	#include "BzfDisplay.h"
 
 class BzfKeyEvent;
 class Resolution;
 class BeOSWindow;
 
-class BeOSDisplay : public BzfDisplay {
+class BeOSDisplay: public BzfDisplay
+{
 public:
-  BeOSDisplay(const char* displayName, const char* videoFormat);
-  ~BeOSDisplay();
+	BeOSDisplay( const char *displayName, const char *videoFormat );
+	~BeOSDisplay();
 
-  bool				isValid() const;
-  bool				isEventPending() const;
-  bool				getEvent(BzfEvent&) const;
-  bool				peekEvent(BzfEvent&) const;
+	bool isValid()const;
+	bool isEventPending()const;
+	bool getEvent( BzfEvent & )const;
+	bool peekEvent( BzfEvent & )const;
 
-  void				postBzfEvent(BzfEvent&);
-
-private:
-  BeOSDisplay(const BeOSDisplay&);
-  BeOSDisplay&			operator=(const BeOSDisplay&);
-
-  bool				doSetResolution(int);
-  bool				doSetDefaultResolution();
+	void postBzfEvent( BzfEvent & );
 
 private:
-  BScreen				*bScreen;
-  /* Event stuff */
-  port_id				eventPort;
-public: //XXX
-  BeOSWindow			*beosWin;
+	BeOSDisplay( const BeOSDisplay & );
+	BeOSDisplay &operator = ( const BeOSDisplay & );
+
+	bool doSetResolution( int );
+	bool doSetDefaultResolution();
+
+private:
+	BScreen *bScreen;
+	/* Event stuff */
+	port_id eventPort;
+public:
+	//XXX
+	BeOSWindow *beosWin;
 };
 
 #endif // BZF_BEOSDISPLAY_H
@@ -61,4 +63,3 @@ public: //XXX
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

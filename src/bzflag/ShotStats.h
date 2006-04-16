@@ -10,37 +10,38 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef	__SHOTSTATS_H__
-#define	__SHOTSTATS_H__
+#ifndef __SHOTSTATS_H__
+	#define __SHOTSTATS_H__
 
-#include "common.h"
+	#include "common.h"
 
-#include "HUDDialog.h"
-#include "HUDuiControl.h"
-#include "HUDuiDefaultKey.h"
+	#include "HUDDialog.h"
+	#include "HUDuiControl.h"
+	#include "HUDuiDefaultKey.h"
 
 class Player;
 
 /** ShotStats displays a set of statistics on player's shots and accuracies
  */
-class ShotStats : public HUDDialog {
+class ShotStats: public HUDDialog
+{
 public:
-  ShotStats();
-  ~ShotStats();
+	ShotStats();
+	~ShotStats();
 
-  HUDuiDefaultKey* getDefaultKey();
-  void resize(int width, int height);
-  void execute(void);
-  void addStats(Player* player, std::vector<HUDuiControl*>& list);
+	HUDuiDefaultKey *getDefaultKey();
+	void resize( int width, int height );
+	void execute( void );
+	void addStats( Player *player, std::vector < HUDuiControl * >  &list );
 
-  static const int getFontFace();
+	static const int getFontFace();
 
 private:
 
-  void createLabel(const std::string &str, std::vector<HUDuiControl*>& list);
+	void createLabel( const std::string &str, std::vector < HUDuiControl * >  &list );
 
-  int rows;
-  int columns;
+	int rows;
+	int columns;
 
 };
 

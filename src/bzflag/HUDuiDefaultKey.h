@@ -15,18 +15,19 @@
  *	User interface class for the heads-up display.
  */
 
-#ifndef	__HUDUIDEFAULTKEY_H__
-#define	__HUDUIDEFAULTKEY_H__
+#ifndef __HUDUIDEFAULTKEY_H__
+	#define __HUDUIDEFAULTKEY_H__
 
-#include "BzfEvent.h"
+	#include "BzfEvent.h"
 
-class HUDuiDefaultKey {
-  public:
-			HUDuiDefaultKey();
-    virtual		~HUDuiDefaultKey();
+class HUDuiDefaultKey
+{
+public:
+	HUDuiDefaultKey();
+	virtual ~HUDuiDefaultKey();
 
-    virtual bool	keyPress(const BzfKeyEvent&);
-    virtual bool	keyRelease(const BzfKeyEvent&);
+	virtual bool keyPress( const BzfKeyEvent & );
+	virtual bool keyRelease( const BzfKeyEvent & );
 };
 
 #endif // __HUDUIDEFAULTKEY_H__

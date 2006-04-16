@@ -14,12 +14,16 @@
 
 BzfVisual::BzfVisual()
 {
-  // do nothing
+	// do nothing
 }
+
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
 BzfVisual::~BzfVisual()
 {
-  // do nothing
+	// do nothing
 }
 
 // Local Variables: ***
@@ -29,4 +33,3 @@ BzfVisual::~BzfVisual()
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

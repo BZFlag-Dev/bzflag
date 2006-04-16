@@ -34,49 +34,67 @@
 
 void RoofTops::load()
 {
-  return;
+	return ;
 }
+
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
 
 void RoofTops::clear()
 {
-  return;
+	return ;
 }
 
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
-float RoofTops::getTopHeight(float x, float y, float maxHeight)
+
+float RoofTops::getTopHeight( float x, float y, float maxHeight )
 {
-  const float zSpeed = -1.0f;
+	const float zSpeed =  - 1.0f;
 
-  // setup the test ray
-  const float dir[3] = { 0.0f, 0.0f, zSpeed };
-  const float org[3] = { x, y, maxHeight };
-  Ray ray(org, dir);
+	// setup the test ray
+	const float dir[3] = 
+	{
+		0.0f, 0.0f, zSpeed
+	};
+	const float org[3] = 
+	{
+		x, y, maxHeight
+	};
+	Ray ray( org, dir );
 
-  // get the obstacle list
-  const ObsList* olist = COLLISIONMGR.rayTest (&ray, MAXFLOAT);
+	// get the obstacle list
+	const ObsList *olist = COLLISIONMGR.rayTest( &ray, MAXFLOAT );
 
-  float minTime = MAXFLOAT;
+	float minTime = MAXFLOAT;
 
-  for (int i = 0; i < olist->count; i++) {
-    const Obstacle* obs = olist->list[i];
-    const float t = obs->intersect(ray);
-    if (obs->getType() == Teleporter::getClassName()) {
-      // the physics for teles is whacked, imho
-      continue;
-    }
-    else if ((t > 0.0f) && (t < minTime)) {
-      minTime = t;
-    }
-  }
+	for( int i = 0; i < olist->count; i++ )
+	{
+		const Obstacle *obs = olist->list[i];
+		const float t = obs->intersect( ray );
+		if( obs->getType() == Teleporter::getClassName())
+		{
+			// the physics for teles is whacked, imho
+			continue;
+		}
+		else if(( t > 0.0f ) && ( t < minTime ))
+		{
+			minTime = t;
+		}
+	}
 
-  float height = maxHeight + (minTime * zSpeed);
+	float height = maxHeight + ( minTime *zSpeed );
 
-  if (height < 0.0f) {
-    height = 0.0f;
-  }
+	if( height < 0.0f )
+	{
+		height = 0.0f;
+	}
 
-  return height;
+	return height;
 }
 
 
@@ -87,4 +105,3 @@ float RoofTops::getTopHeight(float x, float y, float maxHeight)
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

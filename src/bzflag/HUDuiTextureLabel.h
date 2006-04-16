@@ -16,31 +16,37 @@
  *  label controls.
  */
 
-#ifndef	__HUDUITEXTURELABEL_H__
-#define	__HUDUITEXTURELABEL_H__
+#ifndef __HUDUITEXTURELABEL_H__
+	#define __HUDUITEXTURELABEL_H__
 
-#include "HUDuiLabel.h"
-#include "OpenGLGState.h"
+	#include "HUDuiLabel.h"
+	#include "OpenGLGState.h"
 
-class HUDuiTextureLabel : public HUDuiLabel {
-  public:
-			HUDuiTextureLabel();
-			~HUDuiTextureLabel();
+class HUDuiTextureLabel: public HUDuiLabel
+{
+public:
+	HUDuiTextureLabel();
+	~HUDuiTextureLabel();
 
-    void		setTexture(const int);
-    int			getTexture();
+	void setTexture( const int );
+	int getTexture();
 
-  protected:
-    void		doRender();
+protected:
+	void doRender();
 
-  private:
-    OpenGLGState	gstate;
-    int		texture;
+private:
+	OpenGLGState gstate;
+	int texture;
 };
 
-inline int HUDuiTextureLabel::getTexture() {
-  return texture;
+inline int HUDuiTextureLabel::getTexture()
+{
+	return texture;
 }
+
+//-------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------
 
 #endif // __HUDUITEXTURELABEL_H__
 
