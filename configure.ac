@@ -234,7 +234,7 @@ fi
 AC_MSG_RESULT([$ac_ff_effect_directional]) 
 
 case $host_os in
-     linux*|freebsd*|netbsd*|dragonfly*) linux=true;;
+     linux*|kfreebsd*|freebsd*|netbsd*|dragonfly*) linux=true;;
      *) linux=false;;
 esac
 AM_CONDITIONAL(LINUX, $linux)
