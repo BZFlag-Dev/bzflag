@@ -6,7 +6,7 @@
 #export DH_VERBOSE=1
 
 # This is the debhelper compatibility version to use.
-export DH_COMPAT=3
+export DH_COMPAT=4
 
 build: build-stamp
 build-stamp:
@@ -20,6 +20,7 @@ ifneq (,$(findstring debug,$(DEB_BUILD_OPTIONS)))
 else
 	case "$(DEB_BUILD_ARCH)" in \
 		i386) ./configure --prefix=/usr --host=i486-pc-linux-gnu ;; \
+		amd64) CFLAGS=-m64 CXXFLAGS=-m64 ./configure --prefix=/usr ;; \
 		*) ./configure --prefix=/usr ;; \
 	esac
 endif
