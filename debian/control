@@ -3,7 +3,8 @@ Section: games
 Priority: optional
 Maintainer: Tim Riker <Tim@Rikers.org>
 Standards-Version: 3.6.1
-Build-Depends: debhelper (>= 3), groff-base, xlibs-dev, xlibmesa-gl-dev | libgl-dev, libglu1-xorg-dev | libglu-dev, libsdl1.2-dev | libsdl-dev, libncurses5-dev | libncurses-dev, libcurl3-openssl-dev | libcurl3-dev | libcurl-dev, bc
+Build-Depends: debhelper (>= 4), groff-base, xlibmesa-gl-dev | libgl-dev, libglu1-xorg-dev | libglu-dev, libsdl1.2-dev | libsdl-dev, libncurses5-dev | libncurses-dev, libcurl3-openssl-dev | libcurl3-dev | libcurl-dev
+
 
 Package: bzflag
 Architecture: any
