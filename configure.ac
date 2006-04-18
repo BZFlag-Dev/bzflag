@@ -143,11 +143,16 @@ if test x$enable_snapping != xno; then
   AC_DEFINE(SNAPPING, 1, [Enabling Snapping])
 fi
 
-AC_ARG_ENABLE(debug, [  --enable-debug          turn on debugging])
-AM_CONDITIONAL(DEBUG, test x$enable_debug = xyes)
+# debugging and profiling
+AC_ARG_ENABLE(debug,     [  --enable-debug          turn on debugging])
+AC_ARG_ENABLE(profiling, [  --enable-profiling      turn on profiling])
+# profiling requires debugging
+if test x$enable_profiling = xyes; then
+  enable_debug=yes
+fi
 if test x$enable_debug = xyes; then
-   AC_DEFINE(DEBUG_RENDERING, 1, [Debug Rendering])
-   AC_ARG_ENABLE(profiling, [  --enable-profiling      turn on profiling])
+  AC_DEFINE(DEBUG, 1, [Debugging])
+  AC_DEFINE(DEBUG_RENDERING, 1, [Debug Rendering])
 fi
 
 # do we want the bzflag  client?
