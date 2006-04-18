@@ -664,6 +664,110 @@
 				CommandLine="copy ..\..\src\bzflag\*.exe ..\..\*.exe"
 			/>
 		</Configuration>
+		<Configuration
+			Name="Debug_pdcurses|Win32"
+			OutputDirectory="$(ConfigurationName)"
+			IntermediateDirectory="$(ConfigurationName)"
+			ConfigurationType="1"
+			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
+			UseOfMFC="0"
+			ATLMinimizesCRunTimeLibraryUsage="false"
+			CharacterSet="2"
+			WholeProgramOptimization="1"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+				PreprocessorDefinitions="_DEBUG"
+				MkTypLibCompatible="true"
+				SuppressStartupBanner="true"
+				TargetEnvironment="1"
+				TypeLibraryName=".\..\..\src\bzflag\debug/bzflag.tlb"
+				HeaderFileName=""
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="0"
+				InlineFunctionExpansion="0"
+				WholeProgramOptimization="false"
+				AdditionalIncludeDirectories="..\..\include,..\..\win32,.\"
+				PreprocessorDefinitions="_WINDOWS;WIN32;_DEBUG"
+				BasicRuntimeChecks="3"
+				RuntimeLibrary="3"
+				RuntimeTypeInfo="true"
+				PrecompiledHeaderFile=".\..\..\src\bzflag\debug/bzflag.pch"
+				AssemblerListingLocation=".\..\..\src\bzflag\debug/"
+				ObjectFile=".\..\..\src\bzflag\debug/"
+				ProgramDataBaseFileName=".\..\..\src\bzflag\debug/"
+				WarningLevel="3"
+				WarnAsError="false"
+				SuppressStartupBanner="true"
+				Detect64BitPortabilityProblems="true"
+				DebugInformationFormat="4"
+				CompileAs="0"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="_DEBUG"
+				Culture="1033"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLinkerTool"
+				IgnoreImportLibrary="false"
+				AdditionalDependencies="dinput.lib dxguid.lib ws2_32.lib dsound.lib winmm.lib libcurl.lib glu32.lib opengl32.lib odbc32.lib odbccp32.lib"
+				OutputFile="..\..\src\bzflag\debug\bzflag.exe"
+				LinkIncremental="2"
+				SuppressStartupBanner="true"
+				AdditionalLibraryDirectories="..\..\src\3D\debug"
+				GenerateDebugInformation="true"
+				ProgramDatabaseFile=".\..\..\src\bzflag\debug/bzflag.pdb"
+				SubSystem="2"
+				LinkTimeCodeGeneration="0"
+				TargetMachine="1"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCWebDeploymentTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+				CommandLine="copy..\..\src\bzflag\debug\*.exe ..\..\*.exe&#x0D;&#x0A;copy ..\..\src\bzflag\debug\*.pdb ..\..\*.pdb&#x0D;&#x0A;copy debug\*.pdb ..\..\*.pdb&#x0D;&#x0A;"
+			/>
+		</Configuration>
 	</Configurations>
 	<References>
 	</References>
@@ -745,6 +849,17 @@
 						PreprocessorDefinitions=""
 					/>
 				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug_pdcurses|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						Optimization="0"
+						AdditionalIncludeDirectories=""
+						PreprocessorDefinitions=""
+						BasicRuntimeChecks="3"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\bzflag.rc"
@@ -796,6 +911,15 @@
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Release_pdcurses|Win32"
+					>
+					<Tool
+						Name="VCResourceCompilerTool"
+						PreprocessorDefinitions=""
+						AdditionalIncludeDirectories="\Documents and Settings\JeffM\Desktop\bzflag\win32"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug_pdcurses|Win32"
 					>
 					<Tool
 						Name="VCResourceCompilerTool"
@@ -867,6 +991,17 @@
 						Optimization="2"
 						AdditionalIncludeDirectories=""
 						PreprocessorDefinitions=""
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug_pdcurses|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						Optimization="0"
+						AdditionalIncludeDirectories=""
+						PreprocessorDefinitions=""
+						BasicRuntimeChecks="3"
 					/>
 				</FileConfiguration>
 			</File>
@@ -967,6 +1102,17 @@
 						PreprocessorDefinitions=""
 					/>
 				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug_pdcurses|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						Optimization="0"
+						AdditionalIncludeDirectories=""
+						PreprocessorDefinitions=""
+						BasicRuntimeChecks="3"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\..\src\bzflag\motd.cxx"
@@ -1041,6 +1187,17 @@
 						PreprocessorDefinitions=""
 					/>
 				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug_pdcurses|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						Optimization="0"
+						AdditionalIncludeDirectories=""
+						PreprocessorDefinitions=""
+						BasicRuntimeChecks="3"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\..\src\bzflag\Roaming.cxx"
@@ -1113,6 +1270,17 @@
 						Optimization="2"
 						AdditionalIncludeDirectories=""
 						PreprocessorDefinitions=""
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug_pdcurses|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						Optimization="0"
+						AdditionalIncludeDirectories=""
+						PreprocessorDefinitions=""
+						BasicRuntimeChecks="3"
 					/>
 				</FileConfiguration>
 			</File>
@@ -1191,6 +1359,17 @@
 						Optimization="2"
 						AdditionalIncludeDirectories=""
 						PreprocessorDefinitions=""
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug_pdcurses|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						Optimization="0"
+						AdditionalIncludeDirectories=""
+						PreprocessorDefinitions=""
+						BasicRuntimeChecks="3"
 					/>
 				</FileConfiguration>
 			</File>
@@ -1274,6 +1453,17 @@
 							PreprocessorDefinitions=""
 						/>
 					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug_pdcurses|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="0"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions=""
+							BasicRuntimeChecks="3"
+						/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\..\src\bzflag\ControlPanel.cxx"
@@ -1340,6 +1530,17 @@
 							PreprocessorDefinitions=""
 						/>
 					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug_pdcurses|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="0"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions=""
+							BasicRuntimeChecks="3"
+						/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\..\src\bzflag\daylight.cxx"
@@ -1404,6 +1605,17 @@
 							Optimization="2"
 							AdditionalIncludeDirectories=""
 							PreprocessorDefinitions=""
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug_pdcurses|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="0"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions=""
+							BasicRuntimeChecks="3"
 						/>
 					</FileConfiguration>
 				</File>
@@ -1476,6 +1688,17 @@
 							PreprocessorDefinitions=""
 						/>
 					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug_pdcurses|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="0"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions=""
+							BasicRuntimeChecks="3"
+						/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\..\src\bzflag\HUDRenderer.cxx"
@@ -1540,6 +1763,17 @@
 							Optimization="2"
 							AdditionalIncludeDirectories=""
 							PreprocessorDefinitions=""
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug_pdcurses|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="0"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions=""
+							BasicRuntimeChecks="3"
 						/>
 					</FileConfiguration>
 				</File>
@@ -1608,6 +1842,17 @@
 							PreprocessorDefinitions=""
 						/>
 					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug_pdcurses|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="0"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions=""
+							BasicRuntimeChecks="3"
+						/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\..\src\bzflag\HUDuiControl.cxx"
@@ -1672,6 +1917,17 @@
 							Optimization="2"
 							AdditionalIncludeDirectories=""
 							PreprocessorDefinitions=""
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug_pdcurses|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="0"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions=""
+							BasicRuntimeChecks="3"
 						/>
 					</FileConfiguration>
 				</File>
@@ -1740,6 +1996,17 @@
 							PreprocessorDefinitions=""
 						/>
 					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug_pdcurses|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="0"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions=""
+							BasicRuntimeChecks="3"
+						/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\..\src\bzflag\HUDuiLabel.cxx"
@@ -1804,6 +2071,17 @@
 							Optimization="2"
 							AdditionalIncludeDirectories=""
 							PreprocessorDefinitions=""
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug_pdcurses|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="0"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions=""
+							BasicRuntimeChecks="3"
 						/>
 					</FileConfiguration>
 				</File>
@@ -1872,6 +2150,17 @@
 							PreprocessorDefinitions=""
 						/>
 					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug_pdcurses|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="0"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions=""
+							BasicRuntimeChecks="3"
+						/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\..\src\bzflag\HUDuiTextureLabel.cxx"
@@ -1936,6 +2225,17 @@
 							Optimization="2"
 							AdditionalIncludeDirectories=""
 							PreprocessorDefinitions=""
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug_pdcurses|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="0"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions=""
+							BasicRuntimeChecks="3"
 						/>
 					</FileConfiguration>
 				</File>
@@ -2004,6 +2304,17 @@
 							PreprocessorDefinitions=""
 						/>
 					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug_pdcurses|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="0"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions=""
+							BasicRuntimeChecks="3"
+						/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\..\src\bzflag\RadarRenderer.cxx"
@@ -2068,6 +2379,17 @@
 							Optimization="2"
 							AdditionalIncludeDirectories=""
 							PreprocessorDefinitions=""
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug_pdcurses|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="0"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions=""
+							BasicRuntimeChecks="3"
 						/>
 					</FileConfiguration>
 				</File>
@@ -2136,6 +2458,17 @@
 							PreprocessorDefinitions=""
 						/>
 					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug_pdcurses|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="0"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions=""
+							BasicRuntimeChecks="3"
+						/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\..\src\bzflag\SceneRenderer.cxx"
@@ -2200,6 +2533,17 @@
 							Optimization="2"
 							AdditionalIncludeDirectories=""
 							PreprocessorDefinitions=""
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug_pdcurses|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="0"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions=""
+							BasicRuntimeChecks="3"
 						/>
 					</FileConfiguration>
 				</File>
@@ -2268,6 +2612,17 @@
 							PreprocessorDefinitions=""
 						/>
 					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug_pdcurses|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="0"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions=""
+							BasicRuntimeChecks="3"
+						/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\..\src\bzflag\stars.cxx"
@@ -2332,6 +2687,17 @@
 							Optimization="2"
 							AdditionalIncludeDirectories=""
 							PreprocessorDefinitions=""
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug_pdcurses|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="0"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions=""
+							BasicRuntimeChecks="3"
 						/>
 					</FileConfiguration>
 				</File>
@@ -2416,6 +2782,17 @@
 							PreprocessorDefinitions=""
 						/>
 					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug_pdcurses|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="0"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions=""
+							BasicRuntimeChecks="3"
+						/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\..\src\bzflag\Player.cxx"
@@ -2482,6 +2859,17 @@
 							PreprocessorDefinitions=""
 						/>
 					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug_pdcurses|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="0"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions=""
+							BasicRuntimeChecks="3"
+						/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\..\src\bzflag\playing.cxx"
@@ -2546,6 +2934,17 @@
 							Optimization="2"
 							AdditionalIncludeDirectories=""
 							PreprocessorDefinitions=""
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug_pdcurses|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="0"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions=""
+							BasicRuntimeChecks="3"
 						/>
 					</FileConfiguration>
 				</File>
@@ -2618,6 +3017,17 @@
 							PreprocessorDefinitions=""
 						/>
 					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug_pdcurses|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="0"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions=""
+							BasicRuntimeChecks="3"
+						/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\..\src\bzflag\RobotPlayer.cxx"
@@ -2682,6 +3092,17 @@
 							Optimization="2"
 							AdditionalIncludeDirectories=""
 							PreprocessorDefinitions=""
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug_pdcurses|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="0"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions=""
+							BasicRuntimeChecks="3"
 						/>
 					</FileConfiguration>
 				</File>
@@ -2762,6 +3183,17 @@
 							PreprocessorDefinitions=""
 						/>
 					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug_pdcurses|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="0"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions=""
+							BasicRuntimeChecks="3"
+						/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\..\src\bzflag\WorldBuilder.cxx"
@@ -2830,6 +3262,17 @@
 							Optimization="2"
 							AdditionalIncludeDirectories=""
 							PreprocessorDefinitions=""
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug_pdcurses|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="0"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions=""
+							BasicRuntimeChecks="3"
 						/>
 					</FileConfiguration>
 				</File>
@@ -2913,6 +3356,17 @@
 								PreprocessorDefinitions=""
 							/>
 						</FileConfiguration>
+						<FileConfiguration
+							Name="Debug_pdcurses|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								Optimization="0"
+								AdditionalIncludeDirectories=""
+								PreprocessorDefinitions=""
+								BasicRuntimeChecks="3"
+							/>
+						</FileConfiguration>
 					</File>
 					<File
 						RelativePath="..\..\src\bzflag\ShotPathSegment.cxx"
@@ -2981,6 +3435,17 @@
 								Optimization="2"
 								AdditionalIncludeDirectories=""
 								PreprocessorDefinitions=""
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Debug_pdcurses|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								Optimization="0"
+								AdditionalIncludeDirectories=""
+								PreprocessorDefinitions=""
+								BasicRuntimeChecks="3"
 							/>
 						</FileConfiguration>
 					</File>

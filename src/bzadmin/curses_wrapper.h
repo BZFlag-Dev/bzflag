@@ -94,6 +94,7 @@ inline int cr_waddstr(WINDOW* w, const char* str) {
 #  define XCURSES
 #  include <xcurses.h>
 #else
+#  define NOMACROS 1
 #  include <curses.h>
 #endif
 
@@ -113,35 +114,41 @@ inline int cr_waddstr(WINDOW* w, const char* str) {
 #define COLOR_BGDEFAULT COLOR_BLACK
 #define COLOR_FGDEFAULT COLOR_WHITE
 
-// stop ugly macros from polluting our namespace (pdcurses doesn't use
-// the NOMACROS preprocessor variable)
-#undef erase
-inline int erase() {
-  return werase(stdscr);
-}
+// old pdcurses requires some workarounds
+#if (!defined(PDC_BUILD) || PDC_BUILD < 2800)
+  // stop ugly macros from polluting our namespace (pdcurses doesn't use
+  // the NOMACROS preprocessor variable)
+  #undef erase
+  inline int erase() {
+    return werase(stdscr);
+  }
 
-#undef clear
-inline int clear() {
-  return wclear(stdscr);
-}
+  #undef clear
+  inline int clear() {
+    return wclear(stdscr);
+  }
 
-#undef move
-inline int move(int y, int x) {
-  return wmove(stdscr, y, x);
-}
+  #undef move
+  inline int move(int y, int x) {
+    return wmove(stdscr, y, x);
+  }
 
-#undef nonl
-inline int nonl() {
-  return OK;
-}
+  #undef nonl
+  inline int nonl() {
+    return OK;
+  }
 
-// wrap some functions to make it compatible with ncurses
-inline int pd_waddstr(WINDOW* w, const char* str) {
-  char* newStr = new char[strlen(str) + 1];
-  strcpy(newStr, str);
-  return waddstr(w, newStr);
-}
-#define waddstr(W, C) pd_waddstr(W, C)
+  // wrap some functions to make it compatible with ncurses
+  inline int pd_waddstr(WINDOW* w, const char* str) {
+    char* newStr = new char[strlen(str) + 1];
+    strcpy(newStr, str);
+    return waddstr(w, newStr);
+  }
+  #define waddstr(W, C) pd_waddstr(W, C)
+
+  // wresize needs to preserve the pointer to the window
+  #define wresize(w, l, c) ((w = resize_window(w, l, c)) ? OK : ERR)
+#endif // old pdcurses
 
 #ifdef XCURSES
 inline int pd_endwin() {
@@ -151,10 +158,6 @@ inline int pd_endwin() {
 }
 #define endwin pd_endwin
 #endif // XCURSES
-
-inline int wresize(WINDOW* w, int lines, int cols) {
-  return (resize_window(w, lines, cols) != NULL);
-}
 
 inline int resizeterm(int lines, int cols) {
   return resize_term(lines, cols);

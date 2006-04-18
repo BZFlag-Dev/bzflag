@@ -150,10 +150,10 @@ BZAdminClient::ServerCode BZAdminClient::checkMessage() {
     PlayerIdMap::const_iterator it;
     std::string victimName, killerName;
     Address a;
-		if (((*(messageMask.find(code))).second) || (code == MsgSetVar ||
-				code == MsgRemovePlayer || code == MsgAddPlayer || code == MsgAdminInfo ||
-				code == MsgPlayerInfo))
-    	switch (code) {
+    if (code == MsgSetVar || code == MsgRemovePlayer || 
+        code == MsgAddPlayer || code == MsgAdminInfo ||
+        code == MsgPlayerInfo || (*(messageMask.find(code))).second)
+    switch (code) {
 
     case MsgNewRabbit:
 	vbuf = nboUnpackUByte(vbuf, p);
