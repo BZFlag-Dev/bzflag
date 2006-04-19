@@ -2,13 +2,6 @@ SUBDIRS = l10n fonts skins
 
 EXTRA_DIST =			\
 	automatic_icon.png	\
-	blue_basetop.png	\
-	blue_basewall.png	\
-	blue_bolt.png		\
-	blue_icon.png		\
-	blue_laser.png		\
-	blue_super_bolt.png	\
-	blue_tank.png		\
 	blend_flash.png		\
 	boom.wav		\
 	bounce.wav		\
@@ -33,19 +26,8 @@ EXTRA_DIST =			\
 	flag_won.wav		\
 	flap.wav		\
 	frog.png		\
-	green_basetop.png	\
-	green_basewall.png	\
-	green_bolt.png		\
-	green_icon.png		\
-	green_laser.png		\
-	green_super_bolt.png	\
-	green_tank.png		\
 	hunt.wav		\
 	hunt_select.wav		\
-	hunter_bolt.png		\
-	hunter_laser.png	\
-	hunter_super_bolt.png	\
-	hunter_tank.png		\
 	jump.wav		\
 	jumpjets.png		\
 	killteam.wav		\
@@ -63,38 +45,14 @@ EXTRA_DIST =			\
 	mountain1.png		\
 	mountain2.png		\
 	mountain3.png		\
-	observer_icon.png	\
 	phantom.wav		\
 	pop.wav			\
 	puddle.png		\
-	purple_basetop.png	\
-	purple_basewall.png	\
-	purple_bolt.png		\
-	purple_icon.png		\
-	purple_laser.png	\
-	purple_super_bolt.png	\
-	purple_tank.png		\
 	pyrwall.png		\
-	rabbit_bolt.png		\
-	rabbit_laser.png	\
-	rabbit_super_bolt.png	\
-	rabbit_tank.png		\
 	radar.png		\
 	raindrop.png		\
-	red_basetop.png		\
-	red_basewall.png	\
-	red_bolt.png		\
-	red_icon.png		\
-	red_laser.png		\
-	red_super_bolt.png	\
-	red_tank.png		\
 	ricochet.wav		\
 	roof.png		\
-	rogue_bolt.png		\
-	rogue_icon.png		\
-	rogue_laser.png		\
-	rogue_super_bolt.png	\
-	rogue_tank.png		\
 	shock.wav		\
 	snowflake.png		\
 	spree1.wav		\
