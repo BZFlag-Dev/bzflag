@@ -31,6 +31,14 @@ BZFlag 2.1.6
 * bzadmin require less network bandwidth - Alfredo Tupone
 * Inertia setting are bzdb vars now - Alfredo Tupone
 
+BZFlag 2.0.7
+------------
+
+* Replaced admin message sound - Sean Morrison
+* Client and server now close http connections correctly - Daniel Remenak
+* Fixed crash when rogue autopilot picks up a team flag - Daniel Remenak
+* Fixed spawnpoint selection regression - Sean Morrison
+
 BZFlag 2.0.6  "Good enough for now" (2006-04-09)
 ------------------------------------------------
 
