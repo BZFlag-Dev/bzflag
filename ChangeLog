@@ -3,13 +3,13 @@
 
 *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***
 No development is scheduled to continue on this branch.  Only bug
-fixes should be applied.  There is no intention of releasing a 2.0.8
-at this time.
+fixes should be applied.
 *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***
 
-BZFlag 2.0.8
+BZFlag 2.0.7
 ------------
 
+* Replaced admin message sound - Sean Morrison
 * Client and server now close http connections correctly - Daniel Remenak
 * Fixed crash when rogue autopilot picks up a team flag - Daniel Remenak
 * Fixed spawnpoint selection regression - Sean Morrison
