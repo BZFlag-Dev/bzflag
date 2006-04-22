@@ -2528,9 +2528,11 @@ void playerKilled(int victimIndex, int killerIndex, BlowedUpReason reason, int16
 	if (teamkill &&  (victimIndex != killerIndex) && clOptions->teamKillerDies)
 		playerKilled(killerIndex, killerIndex, reason, -1, Flags::Null, -1);;
 
-	updateScoresForKill(victimData,killerData,teamkill);
-	updateHandycaps(victimData,killerData);
-	checkForScoreLimit(killerData);
+	if (!respawnOnBase){
+		updateScoresForKill(victimData,killerData,teamkill);
+		updateHandycaps(victimData,killerData);
+		checkForScoreLimit(killerData);
+	}
 
   if (clOptions->gameStyle & int(RabbitChaseGameStyle))
   {
