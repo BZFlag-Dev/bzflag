@@ -1,4 +1,5 @@
-EXTRA_DIST = \
+l10ndir = $(BZFLAG_DATA)/l10n
+l10n_DATA = \
 	bzflag_cs_CZ.po	\
 	bzflag_da.po	\
 	bzflag_de.po	\
@@ -12,20 +13,11 @@ EXTRA_DIST = \
 	bzflag_nl.po	\
 	bzflag_pt.po	\
 	bzflag_sv.po	\
-	bzflag_xx.po	\
+	bzflag_xx.po
+
+EXTRA_DIST = \
+	$(l10n_DATA) \
 	ISO-639-2_values_8bits.txt
 
 MAINTAINERCLEANFILES = \
 	Makefile.in
-
-install-data-local: $(EXTRA_DIST)
-	$(mkinstalldirs) $(DESTDIR)$(datadir)/bzflag/l10n
-	@list='$(EXTRA_DIST)'; for p in $$list; do \
-	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
-	  f="`echo $$p | sed -e 's|^.*/||'`"; \
-	  echo " $(INSTALL_DATA) $$d$$p $(DESTDIR)$(datadir)/bzflag/l10n/$$f";\
-	  $(INSTALL_DATA) $$d$$p $(DESTDIR)$(datadir)/bzflag/l10n/$$f; \
-	done
-
-uninstall-local:
-	rm -rf $(DESTDIR)$(datadir)/bzflag/l10n/*

@@ -1,2 +1,10 @@
-SUBDIRS = blue red green purple rogue hunter rabbit observer
+SUBDIRS = \
+	blue \
+	green \
+	hunter \
+	observer \
+	purple \
+	rabbit \
+	red \
+	rogue
 

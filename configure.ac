@@ -610,10 +610,8 @@ esac
 if test $prefix = NONE; then
 	prefix=$ac_default_prefix
 fi
-INSTALL_DATA_DIR=`eval echo $datadir/bzflag`
-AC_SUBST(INSTALL_DATA_DIR)
-desktopdir=`eval echo $datadir/applications`
-AC_SUBST(desktopdir)
+BZFLAG_DATA=`eval echo $datadir/bzflag`
+AC_SUBST(BZFLAG_DATA)
 
 savedLIBS=$LIBS
 LIBS="$GLIBS $LIBS"
@@ -671,7 +669,7 @@ dnl ******************************************
 # FIXME: these checks below are not compiler characteristics other
 # than the FLAGS they set.
 
-AC_DEFINE_UNQUOTED(INSTALL_DATA_DIR, "$INSTALL_DATA_DIR",
+AC_DEFINE_UNQUOTED(BZFLAG_DATA, "$BZFLAG_DATA",
 [Data file directory])
 case $host_os in
      linux*)
@@ -985,23 +983,24 @@ AC_CONFIG_FILES(
 	package/rpm/Makefile
 	package/win32/Makefile
 	package/win32/nsis/Makefile
+	plugins/HoldTheFlag/Makefile
 	plugins/Makefile
 	plugins/RogueGenocide/Makefile
 	plugins/SAMPLE_PLUGIN/Makefile
 	plugins/airspawn/Makefile
 	plugins/chathistory/Makefile
+	plugins/doc/Makefile
 	plugins/hiddenAdmin/Makefile
 	plugins/killall/Makefile
 	plugins/logDetail/Makefile
+	plugins/nagware/Makefile
 	plugins/playHistoryTracker/Makefile
 	plugins/python/Makefile
 	plugins/recordmatch/Makefile
+	plugins/serverSideBotSample/Makefile
 	plugins/shockwaveDeath/Makefile
-	plugins/vocaliser/Makefile
-	plugins/HoldTheFlag/Makefile
-	plugins/nagware/Makefile
-	plugins/doc/Makefile
 	plugins/vc71/Makefile
+	plugins/vocaliser/Makefile
 	src/3D/Makefile
 	src/Makefile
 	src/bzadmin/Makefile

@@ -57,9 +57,9 @@ unsigned char*		BzfMedia::readImage(const std::string& filename,
   image = doReadImage(filename, width, height, depth);
   if (image) return image;
 
-#if defined(INSTALL_DATA_DIR)
+#if defined(BZFLAG_DATA)
   // try standard-mediaDir/filename
-  name = makePath(INSTALL_DATA_DIR, filename);
+  name = makePath(BZFLAG_DATA, filename);
   image = doReadImage(name, width, height, depth);
   if (image) return image;
 #endif
@@ -74,9 +74,9 @@ unsigned char*		BzfMedia::readImage(const std::string& filename,
   image = doReadImage(name, width, height, depth);
   if (image) return image;
 
-#if defined(INSTALL_DATA_DIR)
+#if defined(BZFLAG_DATA)
   // try standard-mediaDir/filename with replaced extension
-  name = makePath(INSTALL_DATA_DIR, filename);
+  name = makePath(BZFLAG_DATA, filename);
   name = replaceExtension(name, getImageExtension());
   image = doReadImage(name, width, height, depth);
   if (image) return image;
@@ -139,9 +139,9 @@ float*			BzfMedia::readSound(const std::string& filename,
   sound = doReadSound(filename, numFrames, rate);
   if (sound) return sound;
 
-#if defined(INSTALL_DATA_DIR)
+#if defined(BZFLAG_DATA)
   // try standard-mediaDir/filename
-  name = makePath(INSTALL_DATA_DIR, filename);
+  name = makePath(BZFLAG_DATA, filename);
   sound = doReadSound(name, numFrames, rate);
   if (sound) return sound;
 #endif
@@ -156,9 +156,9 @@ float*			BzfMedia::readSound(const std::string& filename,
   sound = doReadSound(name, numFrames, rate);
   if (sound) return sound;
 
-#if defined(INSTALL_DATA_DIR)
+#if defined(BZFLAG_DATA)
   // try mediaDir/filename with replaced extension
-  name = makePath(INSTALL_DATA_DIR, filename);
+  name = makePath(BZFLAG_DATA, filename);
   name = replaceExtension(name, getSoundExtension());
   sound = doReadSound(name, numFrames, rate);
   if (sound) return sound;

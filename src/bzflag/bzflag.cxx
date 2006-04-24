@@ -962,7 +962,7 @@ int			main(int argc, char** argv)
     // It's only checking existence of l10n directory
     DIR *localedir = opendir("data/l10n/");
     if (localedir == NULL) {
-      PlatformFactory::getMedia()->setMediaDirectory(INSTALL_DATA_DIR);
+      PlatformFactory::getMedia()->setMediaDirectory(BZFLAG_DATA);
     } else {
       closedir(localedir);
     }

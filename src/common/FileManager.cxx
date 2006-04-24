@@ -82,9 +82,9 @@ std::istream*			FileManager::createDataInStream(
   }
 
   // try install directory
-#if defined(INSTALL_DATA_DIR)
+#if defined(BZFLAG_DATA)
   if (relative) {
-    std::ifstream* stream = new std::ifstream(catPath(INSTALL_DATA_DIR,
+    std::ifstream* stream = new std::ifstream(catPath(BZFLAG_DATA,
 					      filename).c_str(), mode);
     if (stream && *stream)
       return stream;

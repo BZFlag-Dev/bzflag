@@ -103,10 +103,10 @@ static bool checkExt(const std::string& base, const char* ext,
   result = filename;
   if (fileExists(result)) return true;
 
-#if defined(INSTALL_DATA_DIR)
+#if defined(BZFLAG_DATA)
   // try install directory
   if (relative) {
-    result = INSTALL_DATA_DIR + sep + filename;
+    result = BZFLAG_DATA + sep + filename;
     if (fileExists(result)) return true;
   }
 #endif

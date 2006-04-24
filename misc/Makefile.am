@@ -39,6 +39,7 @@ EXTRA_DIST =				\
 
 bzflag.desktop: bzflag.desktop.in
 	sed 's|\@DATADIR\@|$(DESTDIR)$(datadir)/bzflag/|' $< > $@
+desktopdir = $(DESTDIR)$(datadir)/applications
 desktop_DATA = bzflag.desktop
 
 MAINTAINERCLEANFILES =	\

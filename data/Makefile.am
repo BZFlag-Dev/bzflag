@@ -1,6 +1,7 @@
 SUBDIRS = l10n fonts skins
 
-EXTRA_DIST =			\
+bzflagdir = $(BZFLAG_DATA)
+bzflag_DATA = \
 	automatic_icon.png	\
 	blend_flash.png		\
 	boom.wav		\
@@ -72,17 +73,8 @@ EXTRA_DIST =			\
 	water.png		\
 	zone_ground.png
 
+EXTRA_DIST = \
+	$(bzflag_DATA)
+
 MAINTAINERCLEANFILES =	\
 	Makefile.in
-
-install-data-local: $(EXTRA_DIST)
-	$(mkinstalldirs) $(DESTDIR)$(datadir)/bzflag
-	@list='$(EXTRA_DIST)'; for p in $$list; do \
-	if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
-	  f="`echo $$p | sed -e 's|^.*/||'`"; \
-	  echo " $(INSTALL_DATA) $$d$$p $(DESTDIR)$(datadir)/bzflag/$$f"; \
-	  $(INSTALL_DATA) $$d$$p $(DESTDIR)$(datadir)/bzflag/$$f; \
-	done
-
-uninstall-local:
-	rm -rf $(DESTDIR)$(datadir)/bzflag/*

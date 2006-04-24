@@ -115,7 +115,7 @@ verbosity.
 Looks for data files in \fIdirectory\fR first.  This defaults to a
 directory named \fIdata\fR in the current directory.  If not found
 there, the game looks for data files in the current directory, then
-in the default installation location \fI@INSTALL_DATA_DIR@\fR.
+in the default installation location \fI@BZFLAG_DATA@\fR.
 .TP 
 .B \-config
 Specify the configuration file to load. The name is relative to the
