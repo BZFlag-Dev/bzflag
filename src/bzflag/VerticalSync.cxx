@@ -34,7 +34,7 @@ void verticalSync() { return; }
 void verticalSync()
 {
   if (GLXEW_SGI_video_sync) {
-    const GLuint skips = BZDB.evalInt("vsync");
+    const int skips = BZDB.evalInt("vsync");
     if (skips > 0) {
       GLuint frameCount;
       if (glXGetVideoSyncSGI(&frameCount) == 0) {
