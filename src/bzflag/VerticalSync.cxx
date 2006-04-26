@@ -25,22 +25,22 @@
 void verticalSync() { return; }
 #else
 
+
 #ifndef unix
 void verticalSync() { return; }
 #else
+
 
 #include <GL/glxew.h>
 
 void verticalSync()
 {
   if (GLXEW_SGI_video_sync) {
-    const int skips = BZDB.evalInt("vsync");
-    if (skips > 0) {
+    const int vsync = BZDB.evalInt("vsync");
+    if (vsync > 0) {
       GLuint frameCount;
       if (glXGetVideoSyncSGI(&frameCount) == 0) {
-        const int div = skips + 1;
-        const int rem = (frameCount + skips) % div;
-        glXWaitVideoSyncSGI(div, rem, &frameCount);
+        glXWaitVideoSyncSGI(vsync, frameCount % vsync, &frameCount);
       }
     }
   }
@@ -49,6 +49,8 @@ void verticalSync()
 
 
 #endif // unix
+
+
 #endif // HAVE_GLEW
 
 
