@@ -21,14 +21,14 @@
 #include "StateDatabase.h"
 
 
-#ifndef HAVE_GLEW
-void verticalSync() { return; }
-#else
+/*********************/
+#if defined(HAVE_GLEW)
+/*********************/
 
 
-#ifndef unix
-void verticalSync() { return; }
-#else
+/////////////////
+#if defined(unix)
+/////////////////
 
 
 #include <GL/glxew.h>
@@ -48,10 +48,58 @@ void verticalSync()
 }
 
 
-#endif // unix
+/////////////////////
+#elif defined(_WIN32)
+/////////////////////
 
 
+#include <GL/wglew.h>
+
+void verticalSync()
+{
+  if (WGLEW_EXT_swap_control) {
+    const int vsync = BZDB.evalInt("vsync");
+    if (vsync >= 0) {
+      const int current = wglGetSwapIntervalEXT();
+      if (vsync != current) {
+        wglSwapIntervalEXT(vsync);
+      }
+    }
+  }
+  return;
+}
+
+
+///////////////////////////
+#else // not unix or _WIN32
+///////////////////////////
+
+
+void verticalSync()
+{
+  return;
+}
+
+
+///////////////////////
+#endif // unix / _WIN32
+///////////////////////
+
+
+/*****************/
+#else // HAVE_GLEW
+/*****************/
+
+
+void verticalSync()
+{
+  return;
+}
+
+
+/******************/
 #endif // HAVE_GLEW
+/******************/
 
 
 // Local Variables: ***
