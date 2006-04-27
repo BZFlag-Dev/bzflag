@@ -1,442 +1,190 @@
-# This is generic Portuguese
 
-msgid "Join Game"
-msgstr "Junte O Jogo"
+msgid "pt_br"
+msgstr "Portugues (Brasil)"
 
-msgid "pt"
-msgstr "Portuguese"
+msgid "translator"
+msgstr "moonpix"
 
-#msgid "translator"
+
+
+############ general
+
+#msgid "yes"
+#msgstr "sim"
+
+#msgid "Yes"
+#msgstr "Sim"
+
+#msgid "no"
+#msgstr "nao"
+
+#msgid "No"
+#msgstr "Nao"
+
+#msgid "on"
+#msgstr "ativado"
+
+#msgid "On"
+#msgstr "Ativado"
+
+#msgid "off"
+#msgstr "desativado"
+
+#msgid "Off"
+#msgstr "Desativado"
+
+#msgid "None"
+#msgstr "Nenhum"
+
+#msgid "Normal"
+#msgstr "Normal"
+
+#msgid "Fast"
+#msgstr "Rapido"
+
+#msgid "Best"
+#msgstr "Melhor"
+
+#msgid "Enhanced"
+#msgstr "Avancado"
+
+#msgid "Low"
+#msgstr "Baixa"
+
+#msgid "Medium"
+#msgstr "Media"
+
+#msgid "High"
+#msgstr "Alta"
+
+msgid "Not available"
+msgstr "Nao disponivel"
+
+msgid "Unavailable"
+msgstr "Nao disponivel"
+
+#msgid "Left"
+#msgstr "Esquerda"
+
+#msgid "Right"
+#msgstr "Direita"
+
+msgid "Cyan"
+msgstr "Ciano"
+
+msgid "Grey"
+msgstr "Cinza"
+
+msgid "Text"
+msgstr "Texto"
+
+msgid "Pulsating"
+msgstr "Pulsante"
+
+msgid "Underline"
+msgstr "Sublinhado"
+
+#msgid "time"
+#msgstr "hora"
+
+#msgid "date"
+#msgstr "data"
+
+#msgid "both"
+#msgstr "ambos"
+
+
+
+############ main menu
+
+#msgid "BZFlag"
 #msgstr ""
-
-msgid "Find Server"
-msgstr "Usuário Do Achado"
-
-msgid "Connect"
-msgstr "Conecta"
-
-#msgid "Callsign:"
-#msgstr ""
-
-msgid "Team:"
-msgstr "Equipe"
-
-msgid "Server:"
-msgstr "Usuário:"
-
-msgid "Port:"
-msgstr "Porto:"
-
-msgid "Start Server"
-msgstr "Do Usuário"
 
 msgid "Up/Down arrows to move, Enter to select, Esc to dismiss"
-msgstr "setas up/Down a mover-se, entra para selecionar, Esc para demitir"
+msgstr "Setas cima/baixo para mover, Enter para selecionar, Esc para dispensar"
+
+msgid "Join Game"
+msgstr "Entrar"
 
 msgid "Options"
-msgstr "Opções"
+msgstr "Opcoes"
 
 msgid "Help"
 msgstr "Ajuda"
 
+msgid "Leave Game"
+msgstr "Abandonar partida"
+
 msgid "Quit"
-msgstr "Parado"
+msgstr "Sair"
 
-#msgid "on"
-#msgstr ""
 
-#msgid "Dithering:"
-#msgstr ""
 
-#msgid "off"
-#msgstr ""
+############ join menu
 
-#msgid "Off"
-#msgstr ""
+msgid "Find Server"
+msgstr "Encontrar servidor"
 
-#msgid "On"
-#msgstr ""
+msgid "Connect"
+msgstr "Conectar"
 
-#msgid "Blending:"
-#msgstr ""
+msgid "Callsign:"
+msgstr "Codinome:"
 
-msgid "Smoothing:"
-msgstr "Que alisa"
+msgid "Password:"
+msgstr "Senha:"
 
-#msgid "Lighting:"
-#msgstr ""
+msgid "Team:"
+msgstr "Equipe:"
 
-msgid "Texturing:"
-msgstr "Que texturing"
+msgid "Observer"
+msgstr "Observador"
 
-msgid "Nearest"
-msgstr "O mais próximo"
+msgid "Automatic"
+msgstr "Automatico"
 
-#msgid "Linear"
-#msgstr ""
-
-msgid "Nearest Mipmap Nearest"
-msgstr "O Mipmap o mais próximo o mais próximo"
-
-msgid "Linear Mipmap Nearest"
-msgstr "Mipmap linear o mais próximo"
-
-msgid "Nearest Mipmap Linear"
-msgstr "Mipmap o mais próximo linear"
-
-msgid "Linear Mipmap Linear"
-msgstr "Mipmap linear linear"
-
-msgid "Quality:"
-msgstr "Qualidade"
-
-msgid "Low"
-msgstr "Baixo"
-
-msgid "Medium"
-msgstr "Meio"
-
-msgid "High"
-msgstr "Elevado"
-
-msgid "Shadows:"
-msgstr "Sombras:"
-
-msgid "Depth Buffer:"
-msgstr "Amortecedor profundidade:"
-
-msgid "Not available"
-msgstr "Nao disponível"
-
-msgid "Change Video Format"
-msgstr "Muda o formato video"
-
-msgid "Brightness:"
-msgstr "Brilho:"
-
-msgid "Sound Volume:"
-msgstr "Volume sadio:"
-
-#msgid "Off / Backup Mode"
-#msgstr ""
-
-#msgid "5 Minutes"
-#msgstr ""
-
-#msgid "15 Minutes"
-#msgstr ""
-
-#msgid "30 Minutes"
-#msgstr ""
-
-#msgid "1 Hour"
-#msgstr ""
-
-#msgid "5 Hours"
-#msgstr ""
-
-#msgid "15 Hours"
-#msgstr ""
-
-#msgid "1 day"
-#msgstr ""
-
-#msgid "15 days"
-#msgstr ""
-
-#msgid "30 days"
-#msgstr ""
-
-msgid "UDP network connection:"
-msgstr "Conexão de rede UDP:"
-
-#msgid "Server List Cache:"
-#msgstr ""
-
-#msgid "Clear Server List Cache"
-#msgstr ""
-
-msgid "Change Key Mapping"
-msgstr "Muda a chave que traça"
-
-msgid "GUI Options"
-msgstr "Opções GUI"
-
-msgid "Enhanced radar:"
-msgstr "realçou o radar:"
-
-msgid "Controlpanel & Score FontSize:"
-msgstr "Controlpanel & contagem FontSize:"
-
-#msgid "normal"
-#msgstr ""
-
-msgid "bigger"
-msgstr "mais grande"
-
-msgid "Radar & Panel Opacity:"
-msgstr "Opacidade radar & do painel:"
-
-msgid "Colored shots on radar:"
-msgstr "Tiros coloridos no radar"
-
-msgid "Radar Shot Length:"
-msgstr "Comprimento do tiro radar:"
-
-#msgid "Radar & Panel Size:"
-#msgstr ""
-
-#msgid "Mouse Box Size:"
-#msgstr ""
-
-#msgid "Control panel coloring:"
-#msgstr ""
-
-#msgid "Underline color:"
-#msgstr ""
-
-#msgid "Killer Highlight:"
-#msgstr ""
-
-msgid "Page Down for next page"
-msgstr "Pagina para baixo para a página seguinte"
-
-msgid "Page Up for previous page"
-msgstr "Pagina acima para a página precedente"
-
-#msgid "Rogue"
-#msgstr ""
+msgid "Rogue"
+msgstr "Individual"
 
 msgid "Red Team"
-msgstr "Equipe vermelha"
+msgstr "Vermelho"
 
 msgid "Green Team"
-msgstr "Equipe verde"
+msgstr "Verde"
 
 msgid "Blue Team"
-msgstr "Equipe azul"
+msgstr "Azul"
 
 msgid "Purple Team"
-msgstr "Equipe roxa"
+msgstr "Roxa"
 
-msgid "Enter to quit, Esc to resume"
-msgstr "Entra para parar, Esc a recomeçar"
+msgid "Server:"
+msgstr "Servidor:"
 
-msgid "Really quit?"
-msgstr "Parado realmente?"
+msgid "Port:"
+msgstr "Porta:"
 
-msgid "Video Format"
-msgstr "Formato video"
+msgid "Email:"
+msgstr "Email:"
 
-msgid "Current Format:"
-msgstr "Formato atual:"
+msgid "Start Server"
+msgstr "Iniciar servidor local"
 
-msgid "Key Mapping"
-msgstr "Chave que traça"
 
-msgid "Reset Defaults"
-msgstr "Restauração opta"
 
-msgid "Fire shot:"
-msgstr "Fogo disparou:"
+############ find server menu
 
-msgid "Drop flag:"
-msgstr "Bandeira gota:"
-
-msgid "Identify/Lock On:"
-msgstr "Identify/Lock sobre"
-
-msgid "Radar Short:"
-msgstr "Short radar:"
-
-msgid "Radar Medium:"
-msgstr "<eio radar:"
-
-msgid "Radar Long:"
-msgstr "Radar por muito tempo:"
-
-msgid "Send to All:"
-msgstr "Emite a tudo:"
-
-msgid "Send to Teammates:"
-msgstr "Emite a Teammates:"
-
-msgid "Send to Nemesis:"
-msgstr "Emite a Nemesis:"
-
-msgid "Send to Recipient:"
-msgstr "Emite ao receptor:"
-
-msgid "Jump:"
-msgstr "Salto:"
-
-msgid "Binoculars:"
-msgstr "Binóculos:"
-
-msgid "Toggle Score:"
-msgstr "Contagem de alavanca:"
-
-msgid "Tank Labels:"
-msgstr "Etiquetas tanque:"
-
-msgid "Flag Help:"
-msgstr "Ajuda bandeira"
-
-msgid "Time Forward:"
-msgstr "Tempo para diante:"
-
-msgid "Time Backward:"
-msgstr "Tempo para trás:"
-
-#msgid "Pause/Resume:"
-#msgstr ""
-
-#msgid "Self Destruct/Cancel:"
-#msgstr ""
-
-#msgid "SelfDestruct/Cancel:"
-#msgstr ""
-
-msgid "Fast Quit:"
-msgstr "Rápidos parados:"
-
-msgid "Scroll Backward:"
-msgstr "Scroll para trás:"
-
-msgid "Scroll Forward:"
-msgstr "Scroll para diante:"
-
-msgid "Slow Keyboard Motion:"
-msgstr "Movimento lento do teclado:"
-
-msgid "loading {1}"
-msgstr "Carregamento {1}"
-
-msgid "controls tank motion"
-msgstr "Posição do movimento"
-
-msgid "Mouse Position:"
-msgstr "Controla rato:"
-
-msgid "fires shot"
-msgstr "da bandeira gotas"
-
-#msgid "drops flag (if not bad)"
-#msgstr ""
-
-msgid "identifies player (locks on GM)"
-msgstr "identifica o jogador (fechamentos no GM)"
-
-msgid "jump (if allowed)"
-msgstr "salto (se reservado)"
-
-msgid "short radar range"
-msgstr "escala curta do radar"
-
-msgid "medium radar range"
-msgstr "escala média do radar"
-
-msgid "long radar range"
-msgstr "escala longa do radar"
-
-msgid "toggle binoculars"
-msgstr "binóculos de alavanca"
-
-msgid "toggle heads-up flag help"
-msgstr "ajuda de alavanca da bandeira das cabeças-acima"
-
-msgid "send message to teammates"
-msgstr "emite a mensagem aos teammates"
-
-msgid "send message to everybody"
-msgstr "emite a mensagem a todos"
-
-msgid "send message to nemesis"
-msgstr "emite a mensagem ao nemesis"
-
-msgid "send message to recipient"
-msgstr "emite a mensagem ao receptor"
-
-msgid "toggle score sheet"
-msgstr "folha de alavanca da contagem"
-
-msgid "toggle tank labels"
-msgstr "tanque de alavanca etiqueta"
-
-msgid "set time of day backward"
-msgstr "ajustou a hora inversa"
-
-msgid "set time of day forward"
-msgstr "ajustou msgid para diante"
-
-#msgid "pause/resume"
-#msgstr ""
-
-#msgid "quit"
-#msgstr ""
-
-#msgid "self Destruct/Cancel"
-#msgstr ""
-
-msgid "scroll message log backward"
-msgstr "registro de mensagem scroll para trás"
-
-msgid "scroll message log forward"
-msgstr "registro de mensagem scroll para diante"
-
-#msgid "Slow Keyboard Motion"
-#msgstr ""
-
-#msgid "Toggle Radar Flags"
-#msgstr ""
-
-#msgid "Toggle Main Flags"
-#msgstr ""
-
-#msgid "Silence/UnSilence"
-#msgstr ""
-
-#msgid "Server Admin"
-#msgstr ""
-
-#msgid "Hunt"
-#msgstr ""
-
-#msgid "autopilot enabled"
-#msgstr ""
-
-#msgid "autopilot disabled"
-#msgstr ""
-
-#msgid "show/dismiss menu"
-#msgstr ""
-
-#msgid "Esc:"
-#msgstr ""
-
-msgid "Maintainer:"
-msgstr "Mantedor:"
-
-msgid "Original Author:"
-msgstr "Autor original:"
-
-msgid "Code Contributors:"
-msgstr "Contribuinte código"
-
-msgid "Tank Models:"
-msgstr "Modelos tanque"
-
-msgid "Special Thanks:"
-msgstr "Agradecimentos especiais"
-
-msgid "Send:"
-msgstr "Emite:"
+msgid "Can't open list server: {1}"
+msgstr "Nao foi possivel acessar lista de servidores: {1}"
 
 msgid "Servers"
-msgstr "Usuários"
+msgstr "Servidores"
 
 msgid "Players"
 msgstr "Jogadores"
+
+msgid "Rogue"
+msgstr "Individual"
 
 msgid "Red"
 msgstr "Vermelho"
@@ -448,64 +196,554 @@ msgid "Blue"
 msgstr "Azul"
 
 msgid "Purple"
-msgstr "Eoxo"
+msgstr "Roxo"
 
-msgid "Controls"
-msgstr "Controla"
+msgid "Observers"
+msgstr "Plateia"
 
-#msgid "General"
-#msgstr ""
+msgid "{1} Shot"
+msgstr "{1} Tiro"
 
-msgid "Environment"
-msgstr "Ambiente"
-
-msgid "Flags I"
-msgstr "Embandeira I"
-
-msgid "Flags II"
-msgstr "Embandeira II"
-
-msgid "Flags III"
-msgstr "Embandeira III"
-
-#msgid "Readouts I"
-#msgstr ""
-
-#msgid "Readouts II"
-#msgstr ""
-
-msgid "Credits"
-msgstr "Credita"
-
-msgid "Press Enter to select and T to test a format. Esc to exit."
-msgstr "Entra para selecionar e T para testar um formato. Esc à saída"
+msgid "{1} Shots"
+msgstr "{1} Tiros"
 
 msgid "Free-style"
-msgstr "Livre-estilo"
+msgstr "Estilo livre"
 
 msgid "Capture-the-Flag"
-msgstr "Captur-da-Bandeira"
+msgstr "Captura de bandeira"
 
-#msgid "Rabbit Chase"
-#msgstr ""
+msgid "Rabbit Chase"
+msgstr "Caca ao coelho"
 
 msgid "Super Flags"
-msgstr "Bandeiras super"
+msgstr "Super bandeiras"
 
 msgid "Antidote Flags"
-msgstr "Antidote embandeira"
+msgstr "Bandeiras antidoto"
+
+msgid "{1} sec To Drop Bad Flag"
+msgstr "{1}seg larga bandeira ruim"
+
+msgid "{1} secs To Drop Bad Flag"
+msgstr "{1}seg larga bandeira ruim"
+
+msgid "{1} Win Drops Bad Flag"
+msgstr "{1}pt larga bandeira ruim"
+
+msgid "{1} Wins Drops Bad Flag"
+msgstr "{1}pt larga bandeira ruim"
+
+msgid "Jumping"
+msgstr "Saltos"
+
+msgid "Ricochet"
+msgstr "Ricochete"
+
+msgid "Handicap"
+msgstr "Handicap"
+
+msgid "Time limit: {1}"
+msgstr "Tempo limite: {1}"
+
+msgid "Max team score: {1}"
+msgstr "Max score equipe: {1}"
+
+msgid "Max player score: {1}"
+msgstr "Max score jogador: {1}"
+
+msgid "Servers found: {1}"
+msgstr "Servidores encontrados: {1}"
+
+msgid "Page {1} of {2}"
+msgstr "Pagina {1} de {2}"
+
+
+
+############ connect menu
 
 msgid "Trying..."
-msgstr "Que tenta..."
+msgstr "Tentando..."
+
+msgid "Error connecting to server."
+msgstr "Erro na conexao com o servidor."
+
+msgid "Connection failed."
+msgstr "Conexao falhou."
+
+msgid "Rogues not allowed.  Try another team."
+msgstr "Individual nao permitido. Tente outro time."
+
+msgid "This team is full.  Try another team."
+msgstr "Este time esta cheio. Tente outro time."
+
+msgid "This game is full.  Try again later."
+msgstr "Este time esta cheio. Tente novamente mais tarde."
+
+msgid "Game is full or over.  Try again later."
+msgstr "Jogo cheio ou terminado. Tente novamente mais tarde."
+
+#msgid "Error downloading world database"
+#msgstr ""
+
+msgid "Server forced a disconnect"
+msgstr "Servidor forcou desconexao"
+
+
+
+############ start server menu
+
+msgid "Style:"
+msgstr "Tipo:"
+
+msgid "Capture the flag"
+msgstr "Captura de bandeira (CTF)"
+
+msgid "Server started."
+msgstr "Servidor local iniciado."
+
+
+
+############ options menu
+
+msgid "Input Settings"
+msgstr "Controles"
+
+msgid "Audio Settings"
+msgstr "Audio"
+
+msgid "Display Settings"
+msgstr "Video"
+
+msgid "GUI Settings"
+msgstr "Interface"
+
+msgid "Effects Settings"
+msgstr "Efeitos"
+
+msgid "Cache Settings"
+msgstr "Cache"
+
+msgid "Save identity:"
+msgstr "Salvar identidade:"
+
+msgid "Username and password"
+msgstr "Codinome e senha"
+
+msgid "Username only"
+msgstr "Apenas codinome"
+
+msgid "UDP network connection:"
+msgstr "Conexao UDP:"
+
+msgid "Save World"
+msgstr "Salvar mapa & configuracoes"
+
+
+
+############ input menu
+
+msgid "Change Key Mapping"
+msgstr "Alterar teclas de jogo"
+
+
+
+############ key map menu
+
+msgid "Key Mapping"
+msgstr "Teclas de jogo"
+
+msgid "Use up/down arrows to navigate, enter key to enter edit mode"
+msgstr "Use setas cima/baixo para navegar, ENTER para editar"
+
+msgid "Reset Defaults"
+msgstr "Restaurar padroes"
+
+msgid "Fire shot:"
+msgstr "Disparar tiro:"
+
+msgid "Drop flag:"
+msgstr "Largar bandeira:"
+
+msgid "Identify/Lock On:"
+msgstr "Identificar/enquadrar alvo:"
+
+msgid "Radar Short:"
+msgstr "Radar proximo:"
+
+msgid "Radar Medium:"
+msgstr "Radar medio:"
+
+msgid "Radar Long:"
+msgstr "Radar amplo:"
+
+msgid "Send to All:"
+msgstr "Enviar a todos:"
+
+msgid "Send to Teammates:"
+msgstr "Enviar a equipe:"
+
+msgid "Send to Nemesis:"
+msgstr "Enviar a nemesis:"
+
+msgid "Send to Recipient:"
+msgstr "Enviar a jogador:"
+
+msgid "Send to Admin:"
+msgstr "Enviar a admin:"
+
+msgid "Jump:"
+msgstr "Salto:"
+
+msgid "Binoculars:"
+msgstr "Binoculos:"
+
+msgid "Toggle Score:"
+msgstr "Ativar/desativar score:"
+
+msgid "Toggle Radar:"
+msgstr "Ativar/desativar radar:"
+
+msgid "Toggle Console:"
+msgstr "Ativar/desativar painel:"
+
+msgid "Tank Labels:"
+msgstr "Rotulos dos tanques:"
+
+msgid "Flag Help:"
+msgstr "Ajuda da bandeira:"
+
+msgid "Time Forward:"
+msgstr "Avancar tempo:"
+
+msgid "Time Backward:"
+msgstr "Retroceder tempo:"
+
+#msgid "Pause/Resume:"
+#msgstr ""
+
+msgid "Self Destruct/Cancel:"
+msgstr "Auto-destruicao/cancelar:"
+
+msgid "SelfDestruct/Cancel:"
+msgstr "Auto-destruicao/cancelar:"
+
+msgid "Fast Quit:"
+msgstr "Sair rapidamente:"
+
+msgid "Scroll Backward:"
+msgstr "Rolar para tras:"
+
+msgid "Scroll Forward:"
+msgstr "Rolar para frente:"
+
+msgid "Slow Keyboard Motion:"
+msgstr "Movimento lento do teclado:"
+
+msgid "Toggle Flags On Radar:"
+msgstr "Ativar/desativar bandeiras no radar:"
+
+msgid "Toggle Flags On Field:"
+msgstr "Ativar/desativar bandeiras no campo:"
+
+msgid "Silence/UnSilence Key:"
+msgstr "Silenciar/DeSilenciar:"
+
+msgid "Server Command Key:"
+msgstr "Commando de servidor:"
+
+msgid "Hunt Key:"
+msgstr "Marcar:"
+
+msgid "AutoPilot Key:"
+msgstr "Piloto automatico:"
+
+msgid "Main Message Tab:"
+msgstr "Tabela principal:"
+
+msgid "Chat Message Tab:"
+msgstr "Tabela de conversa:"
+
+msgid "Server Message Tab:"
+msgstr "Tabela de servidor:"
+
+msgid "Misc Message Tab:"
+msgstr "Tabela misc:"
+
+msgid "Forward Key:"
+msgstr "Frente:"
+
+msgid "Reverse Key:"
+msgstr "Re:"
+
+msgid "Left Key:"
+msgstr "Esquerda:"
+
+msgid "Right Key:"
+msgstr "Direita:"
+
+msgid "Restart:"
+msgstr "Recomecar:"
+
+msgid "Iconify:"
+msgstr "Iconizar:"
+
+msgid "Fullscreen:"
+msgstr "Tela cheia:"
+
+msgid "Define Quick Keys"
+msgstr "Definir teclas repidas"
+
+
+
+############ audio menu
+
+msgid "Sound Volume:"
+msgstr "Volume do som:"
+
+msgid "Remote Sounds:"
+msgstr "Sons remotos:"
+
+
+
+############ display menu
+
+msgid "Dithering:"
+msgstr "Realcador:"
+
+msgid "Blending:"
+msgstr "Misturador:"
+
+msgid "Smoothing:"
+msgstr "Suavizador:"
+
+msgid "Lighting:"
+msgstr "Efeitos de luz:"
+
+msgid "Texturing:"
+msgstr "Texturas:"
+
+msgid "Nearest"
+msgstr "Nearest"
+
+msgid "Linear"
+msgstr "Linear"
+
+msgid "Nearest Mipmap Nearest"
+msgstr "Nearest Mipmap Nearest"
+
+msgid "Linear Mipmap Nearest"
+msgstr "Linear Mipmap Nearest"
+
+msgid "Nearest Mipmap Linear"
+msgstr "Nearest Mipmap Linear"
+
+msgid "Linear Mipmap Linear"
+msgstr "Linear Mipmap Linear"
+
+msgid "Quality:"
+msgstr "Qualidade:"
+
+msgid "Shadows:"
+msgstr "Sombras:"
+
+msgid "Depth Buffer:"
+msgstr "Buffer de profundidade:"
+
+msgid "Brightness:"
+msgstr "Brilho:"
+
+msgid "Change Video Format"
+msgstr "Mudar formato de video"
+
+
+
+############ video format menu
+
+msgid "Video Format"
+msgstr "Formato de video"
+
+msgid "Press Enter to select and T to test a format. Esc to exit."
+msgstr "Pressione Enter para selecionar e T para testar um formato. Esc para sair."
+
+msgid "Current Format:"
+msgstr "Formato atual:"
+
+
+
+############ GUI menu
+
+msgid "Radar Style:"
+msgstr "Tipo de radar:"
+
+msgid "Scoreboard Font Size:"
+msgstr "Tamanho das fontes do score:"
+
+msgid "ControlPanel Font Size:"
+msgstr "Tamanho das fontes do painel:"
+
+msgid "Radar & Panel Opacity:"
+msgstr "Opacidade do radar & painel:"
+
+msgid "Colored shots on radar:"
+msgstr "Tiros coloridos no radar:"
+
+msgid "Radar Shot Length:"
+msgstr "Comprimento do tiro no radar:"
+
+msgid "Radar Shot Size:"
+msgstr "Tamanho do tiro no radar:"
+
+msgid "Radar Shot Line:"
+msgstr "Linha do tiro no radar:"
+
+msgid "Leading"
+msgstr "Flecha"
+
+msgid "Lagging"
+msgstr "Rabo"
+
+msgid "Radar & Panel Size:"
+msgstr "Tamanho do radar & painel:"
+
+msgid "Mouse Box Size:"
+msgstr "Tamanho da caixa do mouse:"
+
+msgid "Locale:"
+msgstr "Idioma:"
+
+msgid "Control panel tabs:"
+msgstr "Orelhas do painel:"
+
+msgid "Control panel coloring:"
+msgstr "Cores do painel:"
+
+msgid "Underline color:"
+msgstr "Cor de sublinhamento:"
+
+msgid "Killer Highlight:"
+msgstr "Realce do matador:"
+
+msgid "Pulsation Rate:"
+msgstr "Taxa de pulsacao:"
+
+msgid "Pulsation Depth:"
+msgstr "Profundidade de pulsacao:"
+
+msgid "Time / Date Display:"
+msgstr "Exibicao de hora/data:"
+
+
+
+############ effects menu
+
+msgid "Rain:"
+msgstr "Chuva:"
+
+msgid "Mirror:"
+msgstr "Espelho:"
+
+#msgid "Display Treads:"
+#msgstr ""
+
+#msgid "Animated Treads:"
+#msgstr ""
+
+#msgid "Track Marks:"
+#msgstr ""
+
+#msgid "Track Mark Culling:"
+#msgstr ""
+
+
+
+############ cache menu
+
+msgid "Server List Cache:"
+msgstr "Cache de lista de servidores:"
+
+msgid "Off / Backup Mode"
+msgstr "Desativado / modo backup"
+
+msgid "5 Minutes"
+msgstr "5 minutos"
+
+msgid "15 Minutes"
+msgstr "15 minutos"
+
+msgid "30 Minutes"
+msgstr "30 minutos"
+
+msgid "1 Hour"
+msgstr "1 hora"
+
+msgid "5 Hours"
+msgstr "5 horas"
+
+msgid "15 Hours"
+msgstr "15 horas"
+
+msgid "1 day"
+msgstr "1 dia"
+
+msgid "15 days"
+msgstr "15 dias"
+
+msgid "30 days"
+msgstr "30 dias"
+
+msgid "Clear Server List Cache"
+msgstr "Limpar cache de lista de servidores"
+
+
+
+############ quit menu
+
+msgid "Enter to quit, Esc to resume"
+msgstr "Enter para sair, Esc para continuar"
+
+msgid "Really quit?"
+msgstr "Tem certeza que deseja sair?"
+
+
+
+############ game display
+
+msgid "cannot load texture: {1}"
+msgstr "nao foi possivel carregar textura: {1}"
+
+msgid "loading {1}"
+msgstr "carregando {1}"
+
+msgid "Pausing in"
+msgstr "Pausando em"
+
+msgid "Press Pause to resume"
+msgstr "Pressione Pause para continuar"
+
+msgid "autopilot enabled"
+msgstr "piloto automatico ativado"
+
+msgid "autopilot disabled"
+msgstr "piloto automatico desativado"
+
+msgid "AutoPilot on"
+msgstr "Piloto automatico ligado"
 
 msgid "Press %s to start"
-msgstr "Pressiona %s para começar"
+msgstr "Pressione %s para iniciar"
 
 msgid "Dead"
-msgstr "Inoperante"
+msgstr "Morto"
 
-#msgid "%.1f"
-#msgstr ""
+msgid "Shot myself"
+msgstr "Atingido por si mesmo"
+
+msgid "Got shot by "
+msgstr "Atingido por "
+
+msgid "got skewred by"
+msgstr "demulido por"
 
 msgid "Ready"
 msgstr "Pronto"
@@ -513,1249 +751,551 @@ msgstr "Pronto"
 msgid "Reloaded in %.1f"
 msgstr "Recarregado em %.1f"
 
+msgid "SPOTTED"
+msgstr "Marcado"
+
+msgid "Hunt"
+msgstr "Marcar"
+
 msgid "Sealed"
 msgstr "Selado"
 
-#msgid "Zoned"
-#msgstr ""
+msgid "Zoned"
+msgstr "Zoneado"
 
-#msgid "You are now the rabbit."
-#msgstr ""
+msgid "Score"
+msgstr "Pontos"
 
-#msgid "Servers found: {1}"
-#msgstr ""
+msgid "Kills"
+msgstr "Acertos"
 
-#msgid "{1} Shot"
-#msgstr ""
+msgid "Player"
+msgstr "Jogador"
 
-#msgid "{1} Shots"
-#msgstr ""
+msgid "Team Score"
+msgstr "Score equipe"
 
-#msgid "Score"
-#msgstr ""
+msgid "You are now the rabbit."
+msgstr "Agora voce eh o coelho."
 
-#msgid "{1} sec To Drop Bad Flag"
-#msgstr ""
 
-#msgid "{1} secs To Drop Bad Flag"
-#msgstr ""
+### BZFS Messages
 
-#msgid "{1} Win Drops Bad Flag"
-#msgstr ""
+msgid "You are now an administrator!"
+msgstr "Voce eh agora administrador."
 
-#msgid "{1} Wins Drops Bad Flag"
-#msgstr ""
+msgid "Wrong Password!"
+msgstr "Senha errada."
 
-#msgid "Time limit: {1}"
-#msgstr ""
+msgid "unknown command"
+msgstr "comando desconhecido"
 
-#msgid "Max team score: {1}"
-#msgstr ""
+msgid "Countdown started."
+msgstr "Contagem regressiva iniciada."
 
-#msgid "Max player score: {1}"
-#msgstr ""
+msgid "IP pattern added to banlist"
+msgstr "IP adicionado a banlist."
 
-#msgid "Page {1} of {2}"
-#msgstr ""
+msgid "malformed address"
+msgstr "endereco errado"
 
-#msgid "openBroadcast: No udp service {1}"
-#msgstr ""
+msgid "removed IP pattern"
+msgstr "IP removido"
 
-#msgid "Server did send endpoint information, UDP connection up"
-#msgstr ""
 
-#msgid "joystick '{1}' not supported..."
-#msgstr ""
-
-#msgid "Ignoring Finder argument '{1}'"
-#msgstr ""
-
-#msgid "Can't open list server: {1}"
-#msgstr ""
-
-#msgid "Server sent downlink endpoint information, port {1}"
-#msgstr ""
-
-#msgid "Server sent UDP request, UDP up. Info: [{1}:{2}:{3}]"
-#msgstr ""
-
-#msgid "Communication error joining game [Wrong Code {1}]."
-#msgstr ""
-
-#msgid "Configuration file:  Error on line {1}: Stream failure"
-#msgstr ""
-
-#msgid "Configuration file:  Error on line {1}: Line too long"
-#msgstr ""
-
-#msgid "Network: Created local UDP downlink port {1}"
-#msgstr ""
-
-#msgid "More Info: [{1}:{2}:{3}]"
-#msgstr ""
-
-#msgid "msgid "
-#msgstr ""
-
-#msgid "cannot load texture: {1}"
-#msgstr ""
-
-#msgid "Connection failed."
-#msgstr ""
-
-#msgid "Server forced a disconnect"
-#msgstr ""
-
-#msgid "Rogues not allowed.  Try another team."
-#msgstr ""
-
-#msgid "This team is full.  Try another team."
-#msgstr ""
-
-#msgid "This game is full.  Try again later."
-#msgstr ""
-
-#msgid "Game is full or over.  Try again later."
-#msgstr ""
-
-#msgid "Error connecting to server."
-#msgstr ""
-
-#msgid "Error downloading world database"
-#msgstr ""
-
-#msgid "Kills"
-#msgstr ""
-
-#msgid "Team Score"
-#msgstr ""
-
-#msgid "Player"
-#msgstr ""
-
-# Super Flags
+### Super Flags
 
 msgid "High Speed"
 msgstr "Alta velocidade"
 
-#msgid "Locale:"
+msgid "Quick Turn"
+msgstr "Virada rapida"
+
+#msgid "Oscillation Overthruster"
 #msgstr ""
 
-msgid "Quick Turn"
-msgstr "Volta rápida "
-
-msgid "Oscillation Overthruster"
-msgstr "Oscilação Overthruster"
-
 msgid "Rapid Fire"
-msgstr "Fogo rápido"
+msgstr "Tiros rapidos"
 
 msgid "Machine Gun"
-msgstr "Injetor máquina"
+msgstr "Metralhadora"
 
 msgid "Guided Missile"
-msgstr "Míssil guiado"
+msgstr "Missil guiado"
 
 #msgid "Laser"
 #msgstr ""
 
-#msgid "Ricochet"
-#msgstr ""
-
 msgid "Super Bullet"
-msgstr "Bala super"
+msgstr "Super bala"
 
 msgid "Invisible Bullet"
-msgstr "Bala invisível"
+msgstr "Bala invisivel"
 
-#msgid "Stealth"
-#msgstr ""
+msgid "Stealth"
+msgstr "Invisibilidade no radar"
 
 msgid "Tiny"
-msgstr "Minúsculo"
+msgstr "Minusculo"
 
-#msgid "Narrow"
-#msgstr ""
+msgid "Narrow"
+msgstr "Esguio"
 
 msgid "Shield"
-msgstr "Protetor"
+msgstr "Escudo"
 
 #msgid "Steamroller"
-#msgstr ""
+#msgstr "Atropelador"
 
 msgid "Shock Wave"
-msgstr "Onda choque"
+msgstr "Onda de choque"
 
 msgid "Phantom Zone"
-msgstr "Zona phantom"
+msgstr "Zona fantasma"
 
-#msgid "Genocide"
-#msgstr ""
-
-msgid "Jumping"
-msgstr "Que salta"
+msgid "Genocide"
+msgstr "Genocidio"
 
 msgid "Identify"
-msgstr "Identifica"
+msgstr "Identificador"
 
 msgid "Cloaking"
-msgstr "Que cloaking"
+msgstr "Invisibilidade"
 
 #msgid "Colorblindness"
 #msgstr ""
 
-#msgid "Obesity"
-#msgstr ""
+msgid "Obesity"
+msgstr "Obesidade"
 
 msgid "Left Turn Only"
-msgstr "Volta esquerda somente"
+msgstr "Somente curva a esquerda"
 
 msgid "Right Turn Only"
-msgstr "Colta direita somente"
+msgstr "Somente curva a direita"
 
 #msgid "Momentum"
 #msgstr ""
 
-#msgid "Blindness"
-#msgstr ""
+msgid "Blindness"
+msgstr "Cegueira"
 
 msgid "Jamming"
-msgstr "Que atola"
+msgstr "Sabotagem"
 
 msgid "Wide Angle"
-msgstr "Ângulo largo"
+msgstr "Angulo amplo"
 
-# Flag help
+
+### Flag help
 
 msgid "You have no flag."
-msgstr "Você não tem nenhuma bandeira"
+msgstr "Voce nao tem nenhuma bandeira."
 
 msgid "Your team's flag:  prevent other teams from capturing it!"
-msgstr "Bandeira sua equipe: impeça que outras equipes a capturem!"
+msgstr "Bandeira de seu time: impeca que outras equipes a capturem."
 
 msgid "Opponent's team flag:  take it to your base to capture it!"
-msgstr "Faça exame d a sua base para capturá-la"
+msgstr "Bandeira do time oponente: leva-a ate sua base para captura-la."
 
-#msgid "Velocity (V):  Tank moves faster.  Outrun bad guys."
-#msgstr ""
+msgid "Velocity (V):  Tank moves faster.  Outrun bad guys."
+msgstr "Velocidade (V): O tanque se movimenta mais rapido. Deixe os viloes na poeira."
 
-#msgid "Useless"
-#msgstr ""
+msgid "Useless"
+msgstr "Inutil"
 
-#msgid "Thief"
-#msgstr ""
+msgid "Thief"
+msgstr "Ladrao"
 
-#msgid "Masquerade"
-#msgstr ""
+msgid "Masquerade"
+msgstr "Mascarador"
 
 #msgid "Seer"
 #msgstr ""
 
-#msgid "Burrow"
-#msgstr ""
+msgid "Burrow"
+msgstr "Enterrador"
 
-#msgid "Angular velocity (A): Tank turns faster.  Dodge quicker."
-#msgstr ""
+msgid "Angular velocity (A): Tank turns faster.  Dodge quicker."
+msgstr "Velocidade angular (A): O tanque gira mais rapidamente. Desvie mais rapido."
 
-#msgid "Team flag:  If it's yours, prevent other teams from taking it.  If it's not take it to your base to capture it!"
-#msgstr ""
+msgid "Team flag:  If it's yours, prevent other teams from taking it.  If it's not take it to your base to capture it!"
+msgstr "Bandeira de time: Se eh sua, previna outros times de pega-la. Caso contrario, carregue-a ate sua base para captura-la."
 
-#msgid "Oscillation Overthruster (OO):  Can drive through buildings.  Can't backup or shoot while inside."
-#msgstr ""
+msgid "Oscillation Overthruster (OO):  Can drive through buildings.  Can't backup or shoot while inside."
+msgstr "Oscillation Overthruster (OO): Atravessa objetos.  Nao eh possivel dar re ou atirar enquanto estiver atravessando."
 
-#msgid "rapid Fire (F):  Shoots more often.  Shells go faster but not as far."
-#msgstr ""
+msgid "rapid Fire (F):  Shoots more often.  Shells go faster but not as far."
+msgstr "Tiros rapidos (F): Atira com mais frequencia. Arcadas mais rapidas, porem mais curtas."
 
-#msgid "Machine Gun (MG):  Very fast reload and very short range."
-#msgstr ""
+msgid "Machine Gun (MG):  Very fast reload and very short range."
+msgstr "Metralhadora (MG): Disparos/recarga super-rapidos e alcance curto."
 
-#msgid "Guided Missile (GM):  Shots track a target.  Lock on with right button.  Can lock on or retarget after firing."
-#msgstr ""
+msgid "Guided Missile (GM):  Shots track a target.  Lock on with right button.  Can lock on or retarget after firing."
+msgstr "Missil guiado (GM): Tiros perseguem um alvo. Enquadra com botao da direita."
 
-#msgid "Laser (L):  Shoots a laser.  Infinite speed and range but long reload time."
-#msgstr ""
+msgid "Laser (L):  Shoots a laser.  Infinite speed and range but long reload time."
+msgstr "Laser (L): Velocidade e alcance infinitos porem longo tempo de recarga."
 
-#msgid "Ricochet (R):  Shots bounce off walls.  Don't shoot yourself!"
-#msgstr ""
+msgid "Ricochet (R):  Shots bounce off walls.  Don't shoot yourself!"
+msgstr "Ricochet (R): Tiros ricocheteiam nos muros. Nao atire em voce mesmo."
 
-#msgid "SuperBullet (SB):  Shoots through buildings.  Can kill Phantom Zone."
-#msgstr ""
+msgid "SuperBullet (SB):  Shoots through buildings.  Can kill Phantom Zone."
+msgstr "SuperBala (SB): Tiros atravessam objetos. Podem acertar Zona Fantasma."
 
-#msgid "Invisible Bullet (IB):  Your shots don't appear on other radars.  Can still see them out window."
-#msgstr ""
+msgid "Invisible Bullet (IB):  Your shots don't appear on other radars.  Can still see them out window."
+msgstr "Bala Invisivel (IB): Seus tiros nao aparecem no radar."
 
-#msgid "STealth (ST):  Tank is invisible on radar.  Shots are still visible.  Sneak up behind enemies!"
-#msgstr ""
+msgid "STealth (ST):  Tank is invisible on radar.  Shots are still visible.  Sneak up behind enemies!"
+msgstr "Invisivel (ST): Tanque invisivel no radar. Surprenda seus inimigos por tras."
 
-#msgid "Tiny (T):  Tank is small and can get through small openings.  Very hard to hit."
-#msgstr ""
+msgid "Tiny (T):  Tank is small and can get through small openings.  Very hard to hit."
+msgstr "Minusculo (T): Tanque menor, atravessa pequenas aberturas. Muito dificil de atingir."
 
-#msgid "Narrow (N):  Tank is super thin.  Very hard to hit from front but is normal size from side.  Can get through small openings."
-#msgstr ""
+msgid "Narrow (N):  Tank is super thin.  Very hard to hit from front but is normal size from side.  Can get through small openings."
+msgstr "Esguio (N): Tanque super-fino. Muito dificil de atingir pela frente porem normal pelo lado. Atravessa pequenas aberturas."
 
-#msgid "SHield (SH):  Getting hit only drops flag.  Flag flys an extra-long time."
-#msgstr ""
+msgid "SHield (SH):  Getting hit only drops flag.  Flag flys an extra-long time."
+msgstr "Escudo (SH): Ao ser atingido apenas perde a bandeira. A bandeira ainda permanece por alguns instantes."
 
-#msgid "SteamRoller (SR):  Destroys tanks you touch but you have to get really close."
-#msgstr ""
+msgid "SteamRoller (SR):  Destroys tanks you touch but you have to get really close."
+msgstr "Atropelador (SR):  Destroi os tanques em que voce toca, mas eh preciso chegar muito perto."
 
-#msgid "Shock Wave (SW):  Firing destroys all tanks nearby.  Don't kill teammates!  Can kill tanks on/in buildings."
-#msgstr ""
+msgid "Shock Wave (SW):  Firing destroys all tanks nearby.  Don't kill teammates!  Can kill tanks on/in buildings."
+msgstr "Onda de choque (SW): Tiro destroi todos os tanques proximos. Nao destrua seus companheiros de time. Destroi tanques sobre/dentro de objetos."
 
-#msgid "Phantom Zone (PZ):  Teleporting toggles Zoned effect.  Zoned tank can drive through buildings.  Zoned tank can't shoot or be shot (except by superbullet and shock wave)."
-#msgstr ""
+msgid "Phantom Zone (PZ):  Teleporting toggles Zoned effect.  Zoned tank can drive through buildings.  Zoned tank can't shoot or be shot (except by superbullet and shock wave)."
+msgstr "Zona fantasma (PZ): Teleportacao ativa efeito zoneado. Tanque zoneado pode dirigir atraves de objetos, porem nao pode atirar nem ser atingido (exceto por super bala ou onda de choque)."
 
-#msgid "Genocide (G):  Killing one tank kills that tank's whole team."
-#msgstr ""
+msgid "Genocide (G):  Killing one tank kills that tank's whole team."
+msgstr "Genocidio (G): Ao matar um tanque mata todo o time daquele tanque."
 
-#msgid "JumPing (JP):  Tank can jump.  Use Tab key.  Can't steer in the air."
-#msgstr ""
+msgid "JumPing (JP):  Tank can jump.  Use Tab key.  Can't steer in the air."
+msgstr "Salto (JP): Tanque pode pular. Use a tecla TAB. Nao pode planar no ar."
 
-#msgid "IDentify (ID):  Identifies type of nearest flag."
-#msgstr ""
+msgid "IDentify (ID):  Identifies type of nearest flag."
+msgstr "IDentificador (ID): Identifica a bandeira mais proxima."
 
-#msgid "CLoaking (CL):  Makes your tank invisible out-the-window.  Still visible on radar."
-#msgstr ""
-
-msgid "Velocity (+V):  Tank moves faster.  Outrun bad guys."
-msgstr "Velocidade (+V): O tanque move-se mais rapidamente. Guys do bad de Outrun"
-
-msgid "Angular velocity (+A):  Tank turns faster.  Dodge quicker."
-msgstr "Velocidade angular (+A): O tanque gira mais rapidamente. Rodeio mais rapidamente."
-
-msgid "Oscillation Overthruster (+OO):  Can drive through buildings.  Can't backup or shoot while inside."
-msgstr "Oscilação Overthruster (+OO): Pode dirigir através dos edifícios. Não pode backup ou o tiro quando para dentro."
-
-msgid "rapid Fire (+F):  Shoots more often.  Shells go faster but not as far."
-msgstr "fogo rápido (+F): Dispara mais frequentemente. Os escudos vão mais rapidamente mas não como distante."
-
-msgid "Machine Gun (+MG):  Very fast reload and very short range."
-msgstr "Injetor máquina (+MG)"
-
-msgid "Guided Missile (+GM):  Shots track a target.  Lock on with right button.  Can lock on or retarget after firing."
-msgstr "Míssil guiado (+GM): Os tiros seguem um alvo. Trave sobre com tecla direita. Pode travar sobre ou o retarget após o acendimento."
-
-msgid "Laser (+L):  Shoots a laser.  Infinite speed and range but long reload time."
-msgstr "Laser(+L): Dispara em um laser. Velocidade e escala infinita mas tempo longo do reload."
-
-msgid "Ricochet (+R):  Shots bounce off walls.  Don't shoot yourself!"
-msgstr "Ricochet (+R):  "
-
-msgid "SuperBullet (+SB):  Shoots through buildings.  Can kill Phantom Zone."
-msgstr "SuperBullet (+SB):  Tiros através dos edifícios. Pode matar a zona phantom"
-
-msgid "Invisible Bullet (+IB):  Your shots don't appear on other radars.  Can still see them out window."
-msgstr "Bala invisível (+IB): Seus tiros não aparecem em outros radares. Pode imóvel vê-los para fora da janela."
-
-msgid "STealth (+ST):  Tank is invisible on radar.  Shots are still visible.  Sneak up behind enemies!"
-msgstr "STealth (+ST): O tanque é invisível no radar. Os tiros são ainda visíveis. Sneak acima atrás dos inimigos!"
-
-msgid "Tiny (+T):  Tank is small and can get through small openings.  Very hard to hit."
-msgstr "minúsculo (+T): O tanque é pequeno e pode começar com as aberturas pequenas. Muito duramente para bater,"
-
-msgid "Narrow (+N):  Tank is super thin.  Very hard to hit from front but is normal size from side.  Can get through small openings."
-msgstr "Narrow (+N): O tanque é fino super. Muito duramente bater da parte dianteira mas é tamanho normal do lado. Pode começar através do protetor pequeno do msgid das aberturas."
-
-msgid "SHield (+SH):  Getting hit only drops flag.  Flag flys an extra-long time."
-msgstr "Protetor (+SH): Começando somente a bandeira batida das gotas. Flys da bandeira uma estadia extra-long."
-
-msgid "SteamRoller (+SR):  Destroys tanks you touch but you have to get really close."
-msgstr "SteamRoller (+SR): Destrói os tanques que você toca mas você tem que começar realmente próximo."
-
-msgid "Shock Wave (+SW):  Firing destroys all tanks nearby.  Don't kill teammates!  Can kill tanks on/in buildings."
-msgstr "Onda choque (+SW): O acendimento destrói todos os tanques próximo. Não mate teammates! Pode matar edifícios dos tanques on/in."
-
-msgid "Phantom Zone (+PZ):  Teleporting toggles Zoned effect.  Zoned tank can drive through buildings.  Zoned tank can't shoot or be shot (except by superbullet and shock wave)."
-msgstr "Zona phantom (+PZ): Efeito zoned toggles teleporting. O tanque zoned pode dirigir através dos edifícios. O tanque zoned não pode disparar ou ser o tiro (exceto pela onda do superbullet e de choque)."
-
-msgid "Genocide (+G):  Killing one tank kills that tank's whole team."
-msgstr "Genocide (+G): Matando equipe inteira de um tanque do tanque matanças esse."
-
-msgid "JumPing (+JP):  Tank can jump.  Use Tab key.  Can't steer in the air."
-msgstr "Que salta (+JP): O tanque pode saltar. Use a chave de aba. Não pode dirigir no ar,"
-
-msgid "IDentify (+ID):  Identifies type of nearest flag."
-msgstr "Identifica (+ID): Identifica o tipo da bandeira a mais próxima."
-
-msgid "CLoaking (+CL):  Makes your tank invisible out-the-window.  Still visible on radar."
-msgstr "CLoaking (+CL): Faz a seu tanque a para fora-$$$-janela invisível. Ainda visível no radar."
+msgid "CLoaking (CL):  Makes your tank invisible out-the-window.  Still visible on radar."
+msgstr "Invisibilidade (CL): Torna seu tanque invisivel, porem ainda visivel ao radar."
 
 msgid "ColorBlindness (-CB):  Can't tell team colors.  Don't shoot teammates!"
-msgstr "ColorBlindness (-CB): Não pode dizer cores da equipe. Não dispare em teammates!"
+msgstr "ColorBlindness (-CB): Nao diferencia cores de times.  Nao atire em seus companheiros."
 
 msgid "Obesity (-O):  Tank becomes very large.  Can't fit through teleporters."
-msgstr "Obesity (-O): O tanque torna-se muito grande. Não pode caber com os teleporters."
+msgstr "Obesidade (-O): O tanque se torna muito largo. Nao consegue passar por teleportadores."
 
 msgid "left turn only (- <-):  Can't turn right."
-msgstr "a volta esquerda somente (- <-): não pode girar para a direita."
+msgstr "Somente curva a esquerda (- <-): nao consegue girar para a direita."
 
 msgid "right turn only (- ->):  Can't turn left."
-msgstr "a volta direita somente (- ->): não pode girar à esquerda."
+msgstr "Somente curva a direita (- ->): nao consegue girar para a esquerda."
 
 msgid "Momentum (-M):  Tank has inertia.  Acceleration is limited."
-msgstr "Momentum (-M): O tanque tem a inércia. O acceleration é limitado."
+msgstr "Momentum (-M): O tanque tem inercia. Aceleracao limitada."
 
 msgid "Blindness (-B):  Can't see out window.  Radar still works."
-msgstr "Blindness (-B): Não pode ver para fora da janela. Do radar trabalhos ainda."
+msgstr "Cegueira (-B): Nao enxerga pela janela. Radar ainda funciona."
 
 msgid "JaMming (-JM):  Radar doesn't work.  Can still see."
-msgstr "Que atola (-JM): O radar não trabalha. Pode imóvel ver."
+msgstr "Sabotagem (-JM): O radar nao funciona. Ainda eh possivel enxergar pela janela."
 
 msgid "Wide Angle (-WA):  Fish-eye lens distorts view."
-msgstr "ângulo largo (-WA): a lente do Peixe-olho distorce a vista."
+msgstr "Angulo amplo (-WA): lentes olhos-de-peixe distorcem a vista."
 
-#Help 2 Strings
+
+############ help menu
+
+msgid "Controls"
+msgstr "Controles"
+
+msgid "Page Down for next page"
+msgstr "Page Down para pagina seguinte"
+
+msgid "Page Up for previous page"
+msgstr "Page Up para pagina anterior"
+
+
+msgid "General"
+msgstr "Geral"
 
 msgid "BZFlag is a multi-player networked tank battle game.  There are five teams:"
-msgstr "BZFlag é um jogo networked multi-player da batalha do tanque. Há cinco equipes:"
+msgstr "BZFlag eh um jogo de rede multi-player de batalha de tanques. Existem cinco times:"
 
 msgid "red, green, blue, purple, and rogues (rogue tanks are black).  Destroying a"
-msgstr "vermelho, verde, azul, roxo, e rogues (os tanques do rogue são pretos). Destruir"
+msgstr "vermelho, verde, azul, roxo, e rogues (os tanques rogue sao pretos). Destruir um"
 
 msgid "player on another team scores a win, while being destroyed or destroying a"
-msgstr "jogador em uma outra equipe marca uma vitória, ao ser destruído ou destruir"
+msgstr "jogador em uma outra equipe marca um ponto, enquanto ao ser destruido ou destruir"
 
 msgid "teammate scores a loss.  Individual and aggregate team scores are tallied."
-msgstr "reammate marca uma perda. As contagens individuais e agregadas da equipe são registradas."
-
-#msgid "Angular velocity (+A): Tank turns faster.  Dodge quicker."
-#msgstr ""
+msgstr "um companheiro marca uma perda. As contagens individuais e agregadas da equipe sao registradas."
 
 msgid "Rogues have no teammates (not even other rogues),so they cannot shoot"
-msgstr "Rogues não tem nenhum teammates (não o nivelar o outro rogues), assim que não pode disparar"
+msgstr "Rogues nao tem companheiros de time (nem mesmo outros rogues), entao nao podem atirar"
 
 msgid "teammates and they don't have a team score."
-msgstr "teammates e ele não tem uma contagem da equipe."
+msgstr "em companheiros de time e nao tem um score de time."
 
-msgid "There are two styles of play, determined by the server configuration:  capture-"
-msgstr "lá é dois estilos do jogo, determinados pela configuração do usuário: captação - "
+msgid "There are three styles of play, determined by the server configuration:  capture-"
+msgstr "Existem 2 tipos de jogo, determinados pela configuracao do servidor: captura de"
 
-#msgid "the-flag and free-for-all.  In free-for-all the object is simply to get the"
-#msgstr ""
+msgid "the-flag, rabbit-chase and free-for-all.  In free-for-all the object is simply to get the"
+msgstr "bandeira (CTF), caca ao coelho e estilo livre. No estilo livre o objetivo eh simplesmente conseguir"
 
-msgid "highest score by shooting opponents.  The object in capture-the-flag is to"
-msgstr "a contagem a mais elevada disparando em oponentes. O objeto na captur-$$$-bandeira está a"
+msgid "highest score by shooting opponents.  The object in rabbit chase is to be the highest score"
+msgstr "a contagem mais alta atirando contra oponentes. O objetivo na caca ao coelho eh ter o maior score"
+
+msgid "so that you have the white tank, then everyone is against you. The object in capture-the-flag is to"
+msgstr "com o tanque branco, entao todos jogam contra voce. O objetivo em CTF eh capturar"
 
 msgid "capture enemy flags while preventing opponents from capturing yours.  In this"
-msgstr "bandeiras inimigas captação ao impedir que os oponentes capturem seu. Nisto "
+msgstr "bandeiras inimigas e prevenir a captura da sua. Neste modo, cada equipe"
 
 msgid "style, each team (but not rogues) has a team base and each team with at least"
-msgstr "estilo, cada equipe (mas não rogues) tem uma base da equipe e cada equipe com ao menos"
+msgstr "(exceto rogues) tem uma base e cada time com pelo menos um jogador"
 
 msgid "one player has a team flag which has the color of the team.  To capture a flag,"
-msgstr "um jogador tem uma bandeira da equipe que tenha a cor da equipe. Para capturar uma bandeira"
+msgstr "tem uma bandeira com a cor de seu time. Para capturar uma bandeira,"
 
 msgid "you must grab it and bring it back to your team base (you must be on the ground"
-msgstr "você deve agarrá-lo e trazê-lo para trás a sua base da equipe (você deve estar na terra"
+msgstr "voce deve pega-la e leva-la de volta ate sua base (voce precisa estar no chao"
 
 msgid "in your base to register the capture).  Capturing a flag destroys all the players"
-msgstr "em sua base para registar a captação). Capturar uma bandeira destrói todos os jogadores"
+msgstr "para registrar a captura). A captura destroi todos os jogadores daquele"
 
 msgid "on that team and gives your team score a bonus;  the players will restart on"
-msgstr "equipe e dá a sua contagem da equipe um bônus; os jogadores reiniciarão em "
-
-#msgid "Stealth (+ST):  Tank is invisible on radar.  Shots are still visible.  Sneak up behind enemies!"
-#msgstr ""
+msgstr "time e da a seu time um ponto no score; os jogadores irao reiniciar em"
 
 msgid "their team base.  Taking your flag onto an enemy base counts as a capture against"
-msgstr "sua base da equipe. Fazer exame de sua bandeira em uma base inimiga conta como uma captação de encontro"
+msgstr "sua base. Levando sua propria bandeira a uma base inimiga conta como captura contra"
 
 msgid "your team but not for the enemy team."
-msgstr "o ambiente do mundo contem uma parede exterior e diversos edifícios."
+msgstr "seu time mas nao para o time inimigo."
 
-#Help 3 Strings
+
+msgid "Environment"
+msgstr "Ambiente"
 
 msgid "The world environment contains an outer wall and several buildings."
-msgstr "exterior o ambiente do mundo contem uma parede e diversos edifícios."
+msgstr "O ambiente 'mundo' contem um muro externo e diversos objetos."
 
 msgid "You cannot go outside the outer wall (you can't even jump over it)."
-msgstr "você não pode ir fora da parede exterior (você não pode mesmo a saltar sobre)."
+msgstr "Voce nao pode sair do muro externo (nem mesmo saltar sobre)."
 
 msgid "You cannot normally drive or shoot through buildings."
-msgstr "que você não pode normalmente dirigir ou disparar através dos edifícios."
+msgstr "Voce normalmente nao pode dirigir ou atirar atraves de objetos."
 
 msgid "The server may be configured to include teleporters:  large transparent"
-msgstr "o usuário pode ser configurarado para incluir teleporters: transparente grande"
+msgstr "O servidor pode estar configurado para incluir teleportadores: largas e transparentes"
 
 msgid "black slabs.  Objects entering one side of a teleporter are instantly"
-msgstr "lajes pretas do msgid. Os objetos que incorporam um lado de um teleporter são imediatamente"
+msgstr "placas pretas. Objetos que entram por um lado de um teleportador sao instantaneamente"
 
 msgid "moved to one side of another (or possibly the same) teleporter.  The"
-msgstr "moveu-se para um lado de um outros (ou possivelmente mesmos) teleporter."
+msgstr "movidos para o outro lado de outro (ou mesmo o proprio) teleportador. A"
 
 msgid "teleport is reversible;  reentering the same side of the destination"
-msgstr "teleport é reversível; reentering o mesmo lado do destino"
+msgstr "teleportagem eh reversivel; entrando pelo mesmo lado do teleportador"
 
 msgid "teleporter brings you back to where you started.  Teleport connections"
-msgstr "teleporter trá-lo para trás a onde você começou. Teleport conexões"
+msgstr "o leva de volta para onde voce comecou. Conexoes com teleportadores"
 
 msgid "are fixed at the start of the game and don't change during the game."
-msgstr "é fixo no início do jogo e não muda durante o jogo."
+msgstr "sao fixadas no inicio do jogo e nao mudam no decorrer da partida."
 
 msgid "The connections are always the same in the capture-the-flag style."
-msgstr "as conexões está sempre o mesmo no estilo da captur-$$$-bandeira."
+msgstr "As conexoes sao sempre as mesmas no modo CTF."
 
 msgid "Each side of a teleporter teleports independently of the other side."
-msgstr "que cada lado de um teleporter teleports independentemente do outro lado."
+msgstr "Cada lado do teleportador teleporta independentemente do outro lado."
 
 msgid "It's possible for a teleporter to teleport to the opposite side of"
-msgstr "é possível para um teleporter teleport ao lado oposto"
+msgstr "Eh possivel para um teleportador teleportar para o lado oposto de"
 
 msgid "itself.  Such a thru-teleporter acts almost as if it wasn't there."
-msgstr "próprio. Tal a através -teleporter dos atos quase como se não estava lá."
+msgstr "si mesmo. Tais teleportadores atuam quase como se nao estivessem ali."
 
 msgid "A teleporter can also teleport to the same side of itself.  This is a"
-msgstr "que um teleporter pode também teleport ao mesmo lado dse. Este é um"
+msgstr "Um teleportador pode tambem teleportar para o mesmo lado de si mesmo. Isso"
 
 msgid "reverse teleporter.  Shooting at a reverse teleporter is likely to be"
-msgstr "teleporter reverso. Disparar em um teleporter reverso é provável ser"
+msgstr "se chama teleportador reverso. Disparar contra este eh possivelmente"
 
 msgid "self destructive;  shooting a laser at one is invariably fatal."
-msgstr "self destrutivo: disparar em um laser em um é invariàvel fatal."
+msgstr "auto-destrutivo: disparar um laser contra este eh invariavelmente fatal."
 
-# Help 4 Strings
+
+msgid "Flags"
+msgstr "Bandeiras"
 
 msgid "Flags come in two varieties:  team flags and super flags.  Team flags"
-msgstr "Bandeiras vêm em duas variedades: bandeiras da equipe e bandeiras super. A equipe embandeira"
+msgstr "Bandeiras possuem 2 variacoes: bandeiras de time e super bandeiras. As de time"
 
 msgid "are used only in the capture-the-flag style.  The server may also be"
-msgstr "é usado somente no estilo da captur-$$$-bandeira. O usuário pode também ser"
+msgstr "sao usadas somente no modo CTF. O servidor pode tambem ser"
 
 msgid "configured to supply super flags, which give your tank some advantage"
-msgstr "configurarou para fornecer as bandeiras super, que dão a seu tanque"
+msgstr "configurado para fornecer super bandeiras, que dao ao seu tanque certas vantagens"
 
 msgid "or disadvantage.  You normally can't tell which until you pick one up,"
-msgstr "ou desvantagem. Você normalmente não pode dizer qual até que você escolha um acima,"
+msgstr "ou desvantagens. Normalmente nao eh possivel dizer qual ate que voce pegue uma,"
 
 msgid "but good flags generally outnumber bad flags two to one."
-msgstr "mas as bandeiras boas outnumber geralmente as bandeiras dois a uma do bad."
+msgstr "mas as bandeiras boas geralmente se encontram em quantidade 2 vezes maior que as ruins."
 
 msgid "Team flags are not allowed to be in Bad Places.  Bad Places are:  on"
-msgstr "as bandeiras equipe não são permitidas estar em lugares maus. Os lugares maus são: em "
+msgstr "As bandeiras de time nao sao permitidas em lugares ruins. Lugares ruins sao: sobre"
 
 msgid "a building or on an enemy base.  Team flags dropped in a Bad Place are"
-msgstr "um edifício ou em uma base inimiga. As bandeiras da equipe deixadas cair em um lugar mau são"
+msgstr "um objeto ou base inimiga. Bandeiras de time largadas sobre lugares ruins sao"
 
 msgid "moved to a safety position.  Captured flags are placed back on their"
-msgstr "movido para uma posição de segurança. As bandeiras capturadas são colocadas para trás em seu"
+msgstr "movidas para um lugar seguro. Bandeiras capturadas sao devolvidas as suas"
 
 msgid "team base.  Super flags dropped above a building always disappear."
-msgstr "As bandeiras super deixaram cair acima de um edifício desaparecem sempre."
+msgstr "bases. Super bandeiras largadas sobre objetos sempre desaparecem."
 
 msgid "A random good super flag will remain for up to 4 possessions.  After"
-msgstr "uma bandeira super boa aleatória remanescerá para até 4 possessões. Após o"
+msgstr "Uma super bandeira aleatoria ira permanecer por 4 posses. Depois"
 
 msgid "that it'll disappear and will eventually be replaced by a new random"
-msgstr "esse desaparecerá e será substituído eventualmente"
+msgstr "desaparecera e sera eventualmente reposta por uma nova aleatoria"
 
 msgid "flag.  Bad random super flags disappear after the first possession."
-msgstr "bandeira. As bandeiras super aleatórias más desaparecem após a primeira possessão."
+msgstr "bandeira. Bandeiras ruins aleatorias desaparecem depois de possuidas uma vez."
 
 msgid "Bad super flags can't normally be dropped.  The server can be set to"
-msgstr "as bandeiras super más. não podem normalmente ser deixadas cair. O usuário pode ser ajustado a"
+msgstr "Bandeiras ruins nao podem normalmente ser largadas intencionalmente. O servidor pode tambem ser configurado para"
 
 msgid "automatically drop the flag for you after some time, after you destroy"
-msgstr "deixa cair automaticamente a bandeira para você após alguma hora, depois que você destrói"
+msgstr "automaticamente remover a bandeira apos algum tempo, depois de voce destruir"
 
 msgid "a certain number of enemies, and/or when you grab an antidote flag."
-msgstr "um determinado número dos inimigos, e/ou quando você agarrar uma bandeira do antidote."
+msgstr "um certo numero de inimigos, e/ou quando voce pega uma bandeira antidoto."
 
 msgid "Antidote flags are yellow and only appear when you have a bad flag."
-msgstr "bandeiras antidote é amarelo e aparece somente quando você tem uma bandeira má."
+msgstr "Bandeiras antidoto sao amarelas e apenas aparecem quando voce tem uma bandeira ruim."
 
-# Help 5 Strings
 
-msgid "Good Flags:"
-msgstr "Bandeiras boas:"
-
-msgid "boosts top speed"
-msgstr "impulsiona a velocidade superior"
-
-msgid "High Speed (V)"
-msgstr "Alta velocidade (V)"
-
-msgid "boosts turn rate"
-msgstr "taxa da volta impulsos"
-
-msgid "Quick Turn (A)"
-msgstr "Volta rápida (A)"
-
-msgid "can drive through buildings"
-msgstr "pode dirigir através dos edifícios"
-
-msgid "Oscillation Overthruster (OO)"
-msgstr "Oscilação Overthruster (OO)"
-
-msgid "faster shots more often"
-msgstr "tiros mais rápidos mais frequentemente"
-
-msgid "Rapid Fire (F)"
-msgstr "Fogo rápido (f)"
-
-msgid "very fast reload, very short range"
-msgstr "reload muito rápido, escala muito curta"
-
-msgid "Machine Gun (MG)"
-msgstr "Injetor Máquina (MG)"
-
-msgid "shots guide themselves (right mouse locks on)"
-msgstr "guia ela mesma tiros (fechamentos direitos do rato sobre)"
-
-msgid "Guided Missile (GM)"
-msgstr "Míssil Guiado (GM)"
-
-msgid "infinite shot speed and range, long reload time"
-msgstr "velocidade do tiro e escala infinitas, tempo longo do reload"
-
-#msgid "Laser (L)"
-#msgstr ""
-
-msgid "shots ricochet"
-msgstr "ricochet tiros"
-
-msgid "Ricochet (R)"
-msgstr "Ricochet (R)"
-
-msgid "shoots through buildings"
-msgstr "tiros através dos edifícios"
-
-msgid "Super Bullet (SB)"
-msgstr "Bala Super (SB)"
-
-msgid "tank invisible on enemy radar"
-msgstr "tanque invisível no radar inimigo"
-
-msgid "Stealth (ST)"
-msgstr "Stealth (ST)"
-
-msgid "tank invisible out the window"
-msgstr "tanque invisível para fora da janela"
-
-msgid "Cloaking (CL)"
-msgstr "Cloaking (CL)"
-
-msgid "shots invisible on radar"
-msgstr "tiros invisíveis no radar"
-
-msgid "Invisible Bullet (IB)"
-msgstr "Bala Invisível (IB)"
-
-msgid "tank becomes smaller"
-msgstr "tanque transforma-se"
-
-msgid "Tiny (T)"
-msgstr "Tiny (T)"
-
-msgid "tank becomes paper thin"
-msgstr "tanque minúsculo transforma-se fino de papel"
-
-msgid "Narrow (N)"
-msgstr "Narrow (N)"
-
-msgid "getting hit just drops the flag"
-msgstr "começando a gotas justas batidas a bandeira"
-
-msgid "Shield (SH)"
-msgstr "Protetor (SH)"
-
-msgid "destroy tanks by touching them"
-msgstr "destrua os tanques tocando os"
-
-msgid "Steamroller (SR)"
-msgstr "Steamroller (SR)"
-
-msgid "expanding spherical shell of destruction"
-msgstr "escudo esférico de expansão da destruição"
-
-msgid "Shock Wave (SW)"
-msgstr "Onda Choque (SW)"
-
-# Help 6 Strings
-
-
-msgid "teleport to enter/leave zone"
-msgstr "teleport à zona de enter/leave"
-
-msgid "Phantom Zone (PZ)"
-msgstr "Zona Phantom (PZ)"
-
-msgid "destroys player and all player's teammates"
-msgstr "destrói teammates de jogador e de todo o jogador"
-
-#msgid "Genocide (G)"
-#msgstr ""
-
-msgid "allows tank to jump"
-msgstr "permite que o tanque salte"
-
-msgid "Jumping (JP)"
-msgstr "Salte (JP)"
-
-msgid "shows type of nearest superflag"
-msgstr "tipo mostras do superflag o mais próximo"
-
-msgid "Identify (ID)"
-msgstr "Identifique (ID)"
-
-msgid "Bad Flags:"
-msgstr "Bandeiras Más"
-
-msgid "can't identify tanks"
-msgstr "não pode identificar os tanques"
-
-msgid "Colorblindness (CB)"
-msgstr "Colorblindness (CB)"
-
-msgid "makes tank very large"
-msgstr "faz obesity muito grande do tanque"
-
-#msgid "Obesity (O)"
-#msgstr ""
-
-msgid "tank can't turn right"
-msgstr "tanque não pode girar para a direita"
-
-msgid "Left Turn Only (<-)"
-msgstr "Volta Esquerda Somente (<-)"
-
-msgid "tank can't turn left"
-msgstr "tanque da volta esquerda somente não pode girar à esquerda "
-
-msgid "Right Turn Only (->)"
-msgstr "Volta Direita Somente (->)"
-
-msgid "tank has lots of momentum"
-msgstr "tanque tem lotes do momentum"
-
-#msgid "Momentum (M)"
-#msgstr ""
-
-msgid "can't see out the window"
-msgstr "não pode ver para fora da janela"
-
-#msgid "Blindness (B)"
-#msgstr ""
-
-msgid "can't see anything on radar"
-msgstr "não pode ver qualquer coisa no radar"
-
-msgid "Jamming (JM)"
-msgstr "Atolando (JM)"
-
-msgid "fish eye view out the window"
-msgstr "pesque a vista do olho para fora da janela"
-
-msgid "Wide Angle (WA)"
-msgstr "Ângulo Largo (WA)"
-
-# Help 7 Strings
+msgid "Readouts I"
+msgstr ""
 
 msgid "The radar is on the left side of the control panel.  It shows an overhead"
-msgstr "o radar está no lado esquerdo do painel de controle. Mostra umas despesas gerais"
+msgstr "O radar se encontra no lado esquerdo do painel. Exibe uma vista geral"
 
 msgid "x-ray view of the game.  Buildings and the outer wall are shown in light"
-msgstr "vista raio X do jogo. Os edifícios e a parede exterior são mostrados na luz"
+msgstr "raio X do jogo. Objetos e muro externo sao exibidos em azul claro."
 
 msgid "blue.  Team bases are outlined in the team color.  Teleporters are short"
-msgstr "azul. As bases da equipe são esboçadas na cor da equipe. Teleporters é curto"
+msgstr "Bases dos times sao contornadas pelas suas respectivas cores. Teleportadores sao"
 
 msgid "yellow lines.  Tanks are dots in the tank's team color, except rogues are"
-msgstr "linhas amarelas. Os tanques são pontos na cor da equipe do tanque, a não ser que os rogues sejam"
+msgstr "pequenas linhas amarelas. Tanques sao pontos das cores de seus times, exceto rogues"
 
 msgid "yellow.  The size of the tank's dot is a rough indication of the tank's"
-msgstr "amarelo. O tamanho do ponto do tanque é uma indicação áspera do tanque"
+msgstr "(amarelos). O tamanho do ponto do tanque eh uma indicacao breve de sua altitude:"
 
 msgid "altitude:  higher tanks have larger dots.  Flags are small crosses.  Team"
-msgstr "altura: uns tanques mais elevados têm pontos maiores. As bandeiras são cruzes pequenas. Equipe"
-
-#msgid "Toggle Radar Flags:"
-#msgstr ""
-
-#msgid "Toggle Main Flags:"
-#msgstr ""
-
-#msgid "Silience/UnSilence"
-#msgstr ""
-
-#msgid "Silience/UnSilence Key:"
-#msgstr ""
-
-#msgid "Server Command Key:"
-#msgstr ""
-
-#msgid "self destruct/cancel"
-#msgstr ""
-
-# Start serveru
-# Start server
-#msgid "yes"
-#msgstr ""
-
-#msgid "no"
-#msgstr ""
-
-#msgid "Style:"
-#msgstr ""
-
-#msgid "Free for All"
-#msgstr ""
-
-#msgid "Capture the Flag"
-#msgstr ""
-
-#msgid "Max Players:"
-#msgstr ""
-
-#msgid "Max Shots:"
-#msgstr ""
-
-#msgid "Teleporters:"
-#msgstr ""
-
-#msgid "Ricochet:"
-#msgstr ""
-
-#msgid "Jumping:"
-#msgstr ""
-
-#msgid "Superflags:"
-#msgstr ""
-
-#msgid "all flags"
-#msgstr ""
-
-#msgid "good flags only"
-#msgstr ""
-
-#msgid "Max Superflags:"
-#msgstr ""
-
-#msgid "Bad Flag Antidote:"
-#msgstr ""
-
-#msgid "Bad Flag Time Limit:"
-#msgstr ""
-
-#msgid "no limit"
-#msgstr ""
-
-#msgid "15 seconds"
-#msgstr ""
-
-#msgid "30 seconds"
-#msgstr ""
-
-#msgid "60 seconds"
-#msgstr ""
-
-#msgid "180 seconds"
-#msgstr ""
-
-#msgid "Bad Flag Win Limit:"
-#msgstr ""
-
-#msgid "drop after 1 win"
-#msgstr ""
-
-#msgid "drop after 2 wins"
-#msgstr ""
-
-#msgid "drop after 3 wins"
-#msgstr ""
-
-#msgid "Server Visibility:"
-#msgstr ""
-
-#msgid "local host only (ttl=0)"
-#msgstr ""
-
-#msgid "subnet only (ttl=1)"
-#msgstr ""
-
-#msgid "local area (ttl=8)"
-#msgstr ""
-
-#msgid "site (ttl=32)"
-#msgstr ""
-
-#msgid "organization (ttl=64)"
-#msgstr ""
-
-#msgid "continent (ttl=128)"
-#msgstr ""
-
-#msgid "world (ttl=255)"
-#msgstr ""
-
-#msgid "Game Over:"
-#msgstr ""
-
-#msgid "never"
-#msgstr ""
-
-#msgid "after 5 minutes"
-#msgstr ""
-
-#msgid "after 15 minutes"
-#msgstr ""
-
-#msgid "after 60 minutes"
-#msgstr ""
-
-#msgid "after 3 hours"
-#msgstr ""
-
-#msgid "when a player gets +3"
-#msgstr ""
-
-#msgid "when a player gets +10"
-#msgstr ""
-
-#msgid "when a player gets +25"
-#msgstr ""
-
-#msgid "when a team gets +3"
-#msgstr ""
-
-#msgid "when a team gets +10"
-#msgstr ""
-
-#msgid "when a team gets +25"
-#msgstr ""
-
-#msgid "when a team gets +100"
-#msgstr ""
-
-#msgid "Server Reset:"
-#msgstr ""
-
-#msgid "no, quit after game"
-#msgstr ""
-
-#msgid "yes, reset for more games"
-#msgstr ""
+msgstr "tanques em lugares altos possuem pontos largos. Bandeira sao pequenas cruzes. Bandeiras"
 
 msgid "flags are in the team color, superflags are white, and the antidote flag"
-msgstr "bandeiras estão na cor da equipe, os superflags são brancos, e a bandeira do antidote"
+msgstr "de times sao da mesma cor do time, super bandeiras sao brancas, bandeiras antidoto"
 
 msgid "is yellow.  Shots are small dots (or lines or circles, for lasers and"
-msgstr "é amarelo. Os tiros são pontos pequenos (ou linhas ou círculos, para lasers e"
-
-#msgid "cyan"
-#msgstr ""
-
-#msgid "grey"
-#msgstr ""
-
-#msgid "text"
-#msgstr ""
+msgstr "amarelas. Tiros sao pequenos pontos (ou linhas ou circulos para lasers e"
 
 msgid "shock waves, respectively).  Your tank is always dead center and forward"
-msgstr "ondas choque, respectivamente). Seu tanque é sempre centro e para diante inoperantes"
-
-#msgid "None"
-#msgstr ""
-
-#msgid "Pulsating"
-#msgstr ""
-
-#msgid "Underline"
-#msgstr ""
-
-# Identifikace vlajek
-# Flags identification
-#msgid "Closest Flag: High Speed"
-#msgstr ""
-
-#msgid "Closest Flag: Quick Turn"
-#msgstr ""
-
-#msgid "Closest Flag: Oscillation Overthurster"
-#msgstr ""
-
-#msgid "Closest Flag: Rapid Fire"
-#msgstr ""
-
-#msgid "Closest Flag: Machine Gun"
-#msgstr ""
-
-#msgid "Closest Flag: Guided Missile"
-#msgstr ""
-
-#msgid "Closest Flag: Laser"
-#msgstr ""
-
-#msgid "Closest Flag: Ricochet"
-#msgstr ""
-
-#msgid "Closest Flag: Super Bullet"
-#msgstr ""
-
-#msgid "Closest Flag: Stealth"
-#msgstr ""
-
-#msgid "Closest Flag: Cloaking"
-#msgstr ""
-
-#msgid "Closest Flag: Invisible Bullet"
-#msgstr ""
-
-#msgid "Closest Flag: Tiny"
-#msgstr ""
-
-#msgid "Closest Flag: Narrow"
-#msgstr ""
-
-#msgid "Closest Flag: Shield"
-#msgstr ""
-
-#msgid "Closest Flag: Steamroller"
-#msgstr ""
-
-#msgid "Closest Flag: Shock Wave"
-#msgstr ""
-
-#msgid "Closest Flag: Phantom Zone"
-#msgstr ""
-
-#msgid "Closest Flag: Genocide"
-#msgstr ""
-
-#msgid "Closest Flag: Jumping"
-#msgstr ""
-
-#msgid "Closest Flag: Identify"
-#msgstr ""
-
-#msgid "Closest Flag: Colorblindness"
-#msgstr ""
-
-#msgid "Closest Flag: Obesity"
-#msgstr ""
-
-#msgid "Closest Flag: Left Turn Only"
-#msgstr ""
-
-#msgid "Closest Flag: Right Turn Only"
-#msgstr ""
-
-#msgid "Closest Flag: Momentum"
-#msgstr ""
-
-#msgid "Closest Flag: Blindness"
-#msgstr ""
-
-#msgid "Closest Flag: Jamming"
-#msgstr ""
-
-#msgid "Closest Flag: Wide Angle"
-#msgstr ""
-
-# Ostatni
-# Other
-#msgid "Server started."
-#msgstr ""
-
-#msgid "Shot myself"
-#msgstr ""
-
-# !!! Hlaseni nize nelze prelozit :-(
-# !!! Messages below cannot be translated :-(
-
-# Informace o vlajce, kterou sebrali hraci
-# Informations about flags grabbed by opponents
-#msgid "grabbed High Speed flag"
-#msgstr ""
-
-#msgid "grabbed Quick Turn flag"
-#msgstr ""
-
-#msgid "grabbed Oscillation Overthurster flag"
-#msgstr ""
-
-#msgid "grabbed Rapid Fire flag"
-#msgstr ""
-
-#msgid "grabbed Machine Gun flag"
-#msgstr ""
-
-#msgid "grabbed Guided Missile flag"
-#msgstr ""
-
-#msgid "grabbed Laser flag"
-#msgstr ""
-
-#msgid "grabbed Ricochet flag"
-#msgstr ""
-
-#msgid "grabbed Super Bullet flag"
-#msgstr ""
-
-#msgid "grabbed Stealth flag"
-#msgstr ""
-
-#msgid "grabbed Cloaking flag"
-#msgstr ""
-
-#msgid "grabbed Invisible Bullet flag"
-#msgstr ""
-
-#msgid "grabbed Tiny flag"
-#msgstr ""
-
-#msgid "grabbed Narrow flag"
-#msgstr ""
-
-#msgid "grabbed Shield flag"
-#msgstr ""
-
-#msgid "grabbed Steamroller flag"
-#msgstr ""
-
-#msgid "grabbed Shock Wave flag"
-#msgstr ""
-
-#msgid "grabbed Phantom Zone flag"
-#msgstr ""
-
-#msgid "grabbed Genocide flag"
-#msgstr ""
-
-#msgid "grabbed Jumping flag"
-#msgstr ""
-
-#msgid "grabbed Identify flag"
-#msgstr ""
-
-#msgid "rabbed Colorblindness flag"
-#msgstr ""
-
-#msgid "grabbed Obesity flag"
-#msgstr ""
-
-#msgid "grabbed Left Turn Only flag"
-#msgstr ""
-
-#msgid "grabbed Right Turn Only flag"
-#msgstr ""
-
-#msgid "grabbed Momentum flag"
-#msgstr ""
-
-#msgid "grabbed Blindness flag"
-#msgstr ""
-
-#msgid "grabbed Jamming flag"
-#msgstr ""
-
-#msgid "grabbed Wide Angle flag"
-#msgstr ""
-
-# Ostatni hlasky, ktere nelze prelozit
-# Other messages that cannot be translated
-#msgid "Pausing in"
-#msgstr ""
-
-#msgid "Press Pause to resume"
-#msgstr ""
-
-#msgid "Got shot by "
-#msgstr ""
-
-#msgid "got skewred by "
-#msgstr ""
+msgstr "ondas de choque respectivamente). Seu tanque fica sempre ao centro e a frente"
 
 msgid "is always up on the radar.  The yellow V is your field of view.  North"
-msgstr "está sempre acima no radar. O V amarelo é seu campo de vista. Norte"
+msgstr "fica sempre acima no radar. O V amarelo eh seu campo de visao. Norte"
 
 msgid "is indicated by the letter N."
-msgstr "é indicado pela letra N."
+msgstr "eh indicado pela letra N."
 
 msgid "The heads-up-display (HUD) has several displays.  The two boxes in the"
-msgstr "cabeça-acima-indique (HUD) tem diversas exposições. As duas caixas no"
+msgstr "O heads-up-display (HUD) tem diveras disposi�oes. As duas caixas no"
 
 msgid "center of the view are the motion control boxes;  within the small box"
-msgstr "centro da vista é as caixas de controle do movimento; dentro da caixa pequena"
+msgstr "centro da vista sao as caixas de locomocao; dentro da caixa pequena"
 
 msgid "your tank won't move, outside the large box you don't move any faster than"
-msgstr "seu tanque não se moverá, fora da caixa que grande você não se move mais rapidamente do que"
+msgstr "seu tanque nao se movimenta, fora da caixa larga voce nao se move mais rapidamente"
 
 msgid "at the edge of the large box.  Moving the mouse above or below the small"
-msgstr "na borda da caixa grande. Movendo o rato acima ou abaixo do pequeno"
+msgstr "que nas bordas da caixa grande. Ao movimentar o mouse acima ou abaixo da caixa pequena"
 
 msgid "box moves forward or backward, respectively.  Similarly for left and right."
-msgstr "caixa move-se para a frente ou para trás, respectivamente. Similarmente para esquerdo e direito."
+msgstr "movimenta o tanque para frente ou para tras, respectivamente. Assim como ocorre para esquerda/direita."
 
 msgid "The distance away from the small box determines the speed."
-msgstr "a distância away da caixa pequena determina a velocidade."
+msgstr "A distancia da caixa pequena determina a velocidade."
 
-# Help 8 Strings
 
+msgid "Readouts II"
+msgstr ""
 
 msgid "Above the larger box is a tape showing your current heading.  North is"
-msgstr "acima da caixa maior está uma fita adesiva que mostra sua corrente"
+msgstr "Acima da caixa grande fica uma faixa mostrando seu destino atual. Norte eh"
 
 msgid "0, east is 90, etc.  If jumping is allowed or you have the jumping flag,"
-msgstr "0, leste são 90, etc.. Se saltar for permitido ou você tiver a bandeira saltando"
+msgstr "0, leste 90, etc. Se saltos sao permitidos ou voce tiver a bandeira de salto,"
 
 msgid "an altitude tape appears to the right of the larger box."
-msgstr "uma fita adesiva da altura aparece à direita da caixa maior."
+msgstr "uma faixa de altitude aparece a direita da caixa maior."
 
 msgid "Small colored diamonds or arrows may appear on the heading tape.  An"
-msgstr "os diamantes ou as setas coloridas pequenas podem aparecer na fita adesiva do título."
+msgstr "Pequenos diamantes coloridos ou setas podem aparecer na faixa superior. Uma"
 
 msgid "arrow pointing left means that a particular flag is to your left, an"
-msgstr "meios esquerdos apontando que uma bandeira particular é a sua esquerda"
+msgstr "seta apontado para a esquerda significa que uma bandeira especifica esta a sua esquerda,"
 
 msgid "arrow pointing right means that the flag is to your right, and a diamond"
-msgstr "seta que aponta para a direita significa que a bandeira é a sua direita, e um diamante"
+msgstr "uma seta que aponta para a direita significa que a bandeira esta a sua direita, e um diamante"
 
 msgid "indicates the heading to the flag by its position on the heading tape."
-msgstr "indica o título à bandeira por sua posição na fita adesiva do título."
+msgstr "indica o caminho para a bandeira pela sua posicao na faixa superior."
 
 msgid "In capture-the-flag mode a marker always shows where your team flag is."
-msgstr "na modalidade da captur-da-bandeira um marcador mostra sempre onde sua bandeira da equipe está"
+msgstr "No modo CTF uma marcacao sempre mostra onde a bandeira de seu time esta."
 
 msgid "A yellow marker shows the way to the antidote flag."
-msgstr "um marcador amarelo mostra a maneira à bandeira do antidote."
+msgstr "Um marcador amarelo mostra o caminho para a bandeira antidoto."
 
 msgid "At the top of the display are, from left to right, your callsign and"
-msgstr "no alto da exposição está, da esquerda para a direita, seu callsign e"
+msgstr "No topo do display se encontra, da esquerda para a direita, seu codinome e"
 
 msgid "score, your status, and the flag you have.  Your callsign is in the"
-msgstr "contagem, seu status, e a bandeira que você tem. Seu callsign está no"
+msgstr "pontuacao, seu status, e a bandeira que voce tem. Seu codinome esta na cor"
 
 msgid "color of your team.  Your status is one of:  ready, dead, sealed, zoned"
-msgstr "cor de sua equipe. Seu status é uma de: pronto, inoperante, selado, zoned"
+msgstr "de seu time. Seu status pode ser: pronto, inoperante, selado, zoned"
 
 msgid "or reloading (showing the time until reloaded).  It can also show the"
-msgstr "ou recarregando (que mostra o tempo até recarregado). Pode também mostrar"
+msgstr "ou recarregando (mostrando o tempo ate recarregado). Pode tambem exibir o"
 
 msgid "time until a bad flag is dropped (if there's a time limit)."
-msgstr "tempo até que uma bandeira má estiver deixada cair (se há um limite de tempo)."
+msgstr "tempo ate que uma bandeira ruim seja largada (se existe um limite)."
 
 msgid "Other informational messages may occasionally flash on the HUD."
-msgstr "outras mensagens informativas podem ocasionalmente piscar no HUD."
+msgstr "Outras mensagens informativas podem ocasionalmente ser exibidas no HUD."
 
-# BZFS Messages
 
-msgid "You are now an administrator!"
-msgstr "você é agora um administrador!"
+msgid "Credits"
+msgstr "Creditos"
 
-msgid "Wrong Password!"
-msgstr "senha errada!"
+msgid "Maintainer:"
+msgstr "Encarregado:"
 
-#msgid "unknown command"
-#msgstr ""
+msgid "Original Author:"
+msgstr "Autor original:"
 
-msgid "Countdown started."
-msgstr "comando desconhecido"
+msgid "Code Contributors:"
+msgstr "Contribuidores de programacao:"
 
-msgid "IP pattern added to banlist"
-msgstr "contagem regressiva começada teste padrão IP adicionou ao banlist"
+msgid "Tank Models:"
+msgstr "Modelos de tanque:"
 
-msgid "malformed address"
-msgstr "endereço malformed"
-
-msgid "removed IP pattern"
-msgstr "teste padrão removido do IP"
+msgid "Special Thanks:"
+msgstr "Agradecimentos especiais:"
