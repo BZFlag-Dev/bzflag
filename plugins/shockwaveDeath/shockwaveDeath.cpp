@@ -11,8 +11,6 @@ class SWDeathHandler : public bz_EventHandler
 {
 public:
   virtual void	process ( bz_EventData *eventData );
-
-  bool		usePlayerForShot;
 };
 
 SWDeathHandler	swDeathHandler;
@@ -23,9 +21,6 @@ BZF_PLUGIN_CALL int bz_Load ( const char* commandLine )
 
   bz_registerEvent(bz_ePlayerDieEvent,&swDeathHandler);
 
-  std::string param = commandLine;
-
-  swDeathHandler.usePlayerForShot = (param == "usevictim");
   return 0;
 }
 
@@ -43,16 +38,12 @@ void SWDeathHandler::process ( bz_EventData *eventData )
 
   bz_PlayerDieEventData_V1 *dieData = (bz_PlayerDieEventData_V1*)eventData;
 
-  int playerToUse = BZ_SERVER;
-  if ( usePlayerForShot )
-    playerToUse = dieData->playerID;
-
   float reloadTime = (float)bz_getBZDBDouble("_reloadTime");
 
   if (bz_BZDBItemExists("_swDeathReloadFactor") && bz_getBZDBDouble("_swDeathReloadFactor") > 0)
     reloadTime *= (float)bz_getBZDBDouble("_swDeathReloadFactor");
 
-  bz_fireWorldWep("SW",reloadTime,playerToUse,dieData->pos,0,0,0,0.0f);
+  bz_fireWorldWep("SW",reloadTime,dieData->pos,0,0,0,0.0f);
 }
 
 // Local Variables: ***

@@ -943,7 +943,7 @@ BZF_API bool bz_sendTextMessagef(int from, bz_eTeamType to, const char* fmt, ...
 BZF_API bool bz_sentFetchResMessage ( int playerID,  const char* URL );
 
 // world weapons
-BZF_API bool bz_fireWorldWep ( const char* flagType, float lifetime, int fromPlayer, float *pos, float tilt, float direction, int shotID , float dt );
+BZF_API bool bz_fireWorldWep ( const char* flagType, float lifetime, float *pos, float tilt, float direction, int shotID , float dt );
 
 // time API
 BZF_API double bz_getCurrentTime ( void );

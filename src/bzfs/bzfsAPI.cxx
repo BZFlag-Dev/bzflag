@@ -1063,7 +1063,7 @@ BZF_API bool bz_sentFetchResMessage ( int playerID,  const char* URL )
 	return true;
 }
 
-BZF_API bool bz_fireWorldWep ( const char* flagType, float lifetime, int fromPlayer, float *pos, float tilt, float direction, int shotID, float dt )
+BZF_API bool bz_fireWorldWep ( const char* flagType, float lifetime, float *pos, float tilt, float direction, int shotID, float dt )
 {
 	if (!pos || !flagType)
 		return false;
@@ -1074,17 +1074,11 @@ BZF_API bool bz_fireWorldWep ( const char* flagType, float lifetime, int fromPla
 
 	FlagType *flag = flagMap.find(std::string(flagType))->second;
 
-	PlayerId player;
-	if ( fromPlayer == BZ_SERVER )
-		player = ServerPlayer;
-	else
-		player = fromPlayer;
-
 	int realShotID = shotID;
 	if ( realShotID == 0)
 		realShotID = world->getWorldWeapons().getNewWorldShotID();
 
-	return fireWorldWep(flag,lifetime,player,pos,tilt,direction,realShotID,dt) == realShotID;
+	return fireWorldWep(flag,lifetime,ServerPlayer,pos,tilt,direction,realShotID,dt) == realShotID;
 }
 
 // time API
