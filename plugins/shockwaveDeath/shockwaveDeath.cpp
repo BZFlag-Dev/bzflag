@@ -11,8 +11,6 @@ class SWDeathHandler : public bz_EventHandler
 {
 public:
   virtual void	process ( bz_EventData *eventData );
-
-  bool		usePlayerForShot;
 };
 
 SWDeathHandler	swDeathHandler;
@@ -25,7 +23,8 @@ BZF_PLUGIN_CALL int bz_Load ( const char* commandLine )
 
   std::string param = commandLine;
 
-  swDeathHandler.usePlayerForShot = (param == "usevictim");
+  if (param == "usevictim")
+	  bz_debugMessage(0,"shockwaveDeath plugin no longer takes any paramaters");
   return 0;
 }
 
@@ -44,8 +43,6 @@ void SWDeathHandler::process ( bz_EventData *eventData )
   bz_PlayerDieEventData *dieData = (bz_PlayerDieEventData*)eventData;
 
   int playerToUse = BZ_SERVER;
-  if ( usePlayerForShot )
-    playerToUse = dieData->playerID;
 
   float reloadTime = (float)bz_getBZDBDouble("_reloadTime");
 
