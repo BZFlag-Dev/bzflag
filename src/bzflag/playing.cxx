@@ -156,7 +156,9 @@ static void		enteringServer(void *buf);
 static void		joinInternetGame2();
 static void		cleanWorldCache();
 static void		markOld(std::string &fileName);
+#ifdef ROBOT
 static void		setRobotTarget(RobotPlayer* robot);
+#endif
 
 static ResourceGetter	*resourceDownloader = NULL;
 
@@ -1935,6 +1937,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 	  if (!myTank->isAutoPilot())
 	    mainWindow->warpMouse();
 	  hud->setAltitudeTape(World::getWorld()->allowJumping());
+#ifdef ROBOT
 	} else if (tank->getPlayerType() == ComputerPlayer) {
 	  for (int r = 0; r < numRobots; r++) {
 	    if (robots[r] && robots[r]->getId() == playerIndex) {
@@ -1943,6 +1946,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 	      break;
 	    }
 	  }
+#endif
 	}
 
 	if (SceneRenderer::instance().useQuality() >= _MEDIUM_QUALITY) {
@@ -2302,13 +2306,14 @@ static void		handleServerMessage(bool human, uint16_t code,
 	gotBlowedUp(myTank, GotCaptured, id);
       }
 
+#ifdef ROBOT
       //kill all my robots if they are on the captured team
       for (int r = 0; r < numRobots; r++) {
 	if (robots[r] && robots[r]->getTeam() == capturedTeam) {
 	  gotBlowedUp(robots[r], GotCaptured, robots[r]->getId());
 	}
       }
-
+#endif
 
       // everybody who's alive on capture team will be blowing up
       // but we're not going to get an individual notification for
