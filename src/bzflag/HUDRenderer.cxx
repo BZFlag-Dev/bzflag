@@ -913,7 +913,6 @@ void			HUDRenderer::renderHighResCracks()
 	
 	glLineWidth(5.0);
 	hudColor4f(1.0f, 1.0f, 1.0f,0.25f);
-	glBegin(GL_LINES);
 	for (int i = 0; i < HUDNumCracks; i++)
 	{
 		glLineWidth(5.0);
