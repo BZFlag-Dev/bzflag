@@ -84,7 +84,8 @@ void Roaming::changeTarget(Roaming::RoamingTarget target, int explicitIndex) {
       targetFlag = explicitIndex;
       found = true;
     } else {
-      int i, j;
+      int i = 1;
+      int j = 1;
       const int maxFlags = world->getMaxFlags();
       for (i = 1; i < maxFlags; ++i) {
 	if (target == next) {
@@ -105,7 +106,8 @@ void Roaming::changeTarget(Roaming::RoamingTarget target, int explicitIndex) {
       targetManual = targetWinner = explicitIndex;
       found = true;
     } else {
-      int i, j;
+      int i = 0;
+      int j = 0;
       for (i = 0; i < world->getCurMaxPlayers(); ++i) {
 	if (target == next) {
 	  j = (targetManual + i + 2) % (world->getCurMaxPlayers() + 1) - 1;

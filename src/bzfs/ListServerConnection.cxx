@@ -126,7 +126,7 @@ void ListServerLink::finalization(char *data, unsigned int length, bool good)
       // this is a reply to an authentication request ?
       bool  authReply  = false;
 
-      char *callsign;
+      char *callsign = '\0';
       if (strncmp(base, tokGoodIdentifier, strlen(tokGoodIdentifier)) == 0) {
 	callsign = base + strlen(tokGoodIdentifier);
 	registered = true;
@@ -207,7 +207,7 @@ void ListServerLink::finalization(char *data, unsigned int length, bool good)
 */
       if (authReply) {
 	DEBUG3("Got: %s", base);
-	char *group;
+	char *group = '\0';
 	// Isolate callsign from groups
 	if (verified) {
 	  group = callsign;

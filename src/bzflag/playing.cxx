@@ -4245,7 +4245,7 @@ static void cleanWorldCache()
     if (directory) {
       struct dirent* contents;
       struct stat statbuf;
-      time_t oldestTime;
+      time_t oldestTime = time(NULL);
       while ((contents = readdir(directory))) {
 	const std::string filename = contents->d_name;
 	const std::string fullname = worldPath + filename;
