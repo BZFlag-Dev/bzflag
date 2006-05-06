@@ -147,6 +147,8 @@ DefaultCompleter	completer;
 
 char			messageMessage[PlayerIdPLen + MessageLen];
 
+double			lastObserverUpdateTime = -1;
+
 static void		setHuntTarget();
 static void		setTankFlags();
 static void*		handleMsgSetVars(void *msg);
@@ -6059,9 +6061,29 @@ static void		playingLoop()
     // play the sounds
     updateSound();
 
+
+	double heartbeatTime = 30.0f;
+	bool sendUpdate = myTank && myTank->isDeadReckoningWrong();
+	if ( myTank && myTank->getTeam() == ObserverTeam )
+	{
+		if (BZDB.isTrue("sendObserverHeartbeat"))
+		{
+			if (BZDB.isSet("observerHeartbeat"))
+				heartbeatTime = BZDB.eval("observerHeartbeat");
+			if (lastObserverUpdateTime + heartbeatTime < TimeKeeper::getCurrent().getSeconds())
+			{
+				lastObserverUpdateTime = TimeKeeper::getCurrent().getSeconds();
+				sendUpdate = true;
+			}
+			else
+				sendUpdate = false;
+		}
+		else
+			sendUpdate = false;
+
+	}
     // send my data
-    if (myTank && myTank->isDeadReckoningWrong() &&
-	(myTank->getTeam() != ObserverTeam)) {
+    if ( sendUpdate) {
       // also calls setDeadReckoning()
       serverLink->sendPlayerUpdate(myTank);
     }
@@ -6368,6 +6390,8 @@ void			startPlaying(BzfDisplay* _display,
   display = _display;
   sceneRenderer = &renderer;
   mainWindow = &sceneRenderer->getWindow();
+
+  lastObserverUpdateTime = TimeKeeper::getCurrent().getSeconds();
 
   // register some commands
   for (unsigned int c = 0; c < countof(commandList); ++c) {
