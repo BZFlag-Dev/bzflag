@@ -9,6 +9,8 @@ fixes should be applied.
 BZFlag 2.0.7
 ------------
 
+* Add an option to send out a UDP heartbeat message for observers behind flakey
+  routers - Jeff Myers
 * Replaced admin message sound - Sean Morrison
 * Client and server now close http connections correctly - Daniel Remenak
 * Fixed crash when rogue autopilot picks up a team flag - Daniel Remenak
