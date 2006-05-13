@@ -1,0 +1,132 @@
+This document is just a repository for some ideas for future versions. Nothing is approved, or set in stone, but just an idea to be shared.
+
+
+2.1 ideas
+
+Add a new modal type dialog plane. Text would be framed in a border, be on top of all other things (including menus) and require user action to remove. Provide modes for, OK, OK/Cancel, and Yes/No type boxes. App needs to know what was chosen.
+
+Look into taking the hard coded strings out of the software and pulling them from some sort of string resource system.
+
+Add Player Setup menu item.
+	Move Call sign, password to this new menu
+ 	Add Preferences for preferred FFA color and CTF/TeamFFA team.
+	Show the tank for each choice (little spinner)
+	Let them save these settings in user profiles.
+
+Save the state of the current player's "first"
+	On first launch, show welcome screen and tell them about registration
+	On first FFA show them the rules
+	On First TeamFFA show them the rules
+	On First CTF show them the rules
+	On First Team kill tell them it's bad
+	On First Sever list tell them about servers	
+	Etc...
+
+Put the registration requirements of the game into the game mode ( open, limited, reg only )
+
+Make sure public servers can advertise to reg only.
+
+Add "trueFFA" game mode. FFA where color doesn't mater ( like a normal death match ). Let the game go till score limits, and reset.
+
+Change +s to be game mode sensitive and not add stupid flags ( don't add geno, or the mind affecters in true FFA, don't do PZ when no teleporters, etc.. )
+
+Hide the cursor in the menu and show the menu controls on each menu page (lower right).
+
+Let the server trigger effects from a message.
+
+Add option to make the outer walls "bouncy" when you hit them
+
+Add options to make all walls "bouncy" when you hit them.
+
+Make the outer walls have a thickness.
+
+Make the laser be round.
+
+Move all current experimental effects into "high", make all new effects be experimental.
+
+Simplify texture menu (High, med, low)
+
+Get radar updates from messages, not player pos ( allows server to change how radar works ).
+
+Change the HUD so that it doesn't need the cursor, but shows the speed and acceleration of each axis. Add a real target sight.
+
+Add a HUD based warning that shows the direction of a near miss (flash warning when you almost died, in a kind of halo style).
+
+Put a HUD "lock on" box over the target you are locked onto.
+
+Show a HUD marker for team mates on the HUD
+
+Show a HUD marker that shows where the team flag is  ( on the compass ).
+
+Make the HUD target sight turn a "bad" color when you are aiming at a team mate.
+
+HUD indicator for vertical speed.
+
+Add an antenna to the tanks
+
+Add a little "radio beacon" on the antenna when someone does a chat.
+
+Add a mode that will not let you shoot when aiming at a team mate (default to on? )
+
+Add a server mode that just let's shots go thru teamies, or just doesn't do any friendly fire damage.
+
+Let TrueFFA players pick any color (even the rabbit ones, and add some more).
+
+Split out team from color (lets the server do more).
+
+Make the tank easy to draw anywhere (like in the menu ).
+
+Make the installer ask if you want to reg, and explain why it's a good thing(tm)
+
+Make a method where the client can open a URL in a browser on each OS ( security? )
+
+Add "TrueCTF" game option. Flags snap to the base. Your flag must be at your base to cap other team. Dropped team flag warps to base on teamie touch. On a cap, 5 second countdown with no scoring, then a forced respawn for everyone.
+
+Make the server able to do respawns of people with out killing them
+
+Make server able to send players to the prespawn "limbo" but not let them spawn ( for game modes, as well as a command to let admins "hold" people while they talk to them )
+
+Let the server set the prespawn limimbo message ( default is the RC to spawn ).
+
+Add new effects
+
+Add accell/ decell effects (burning tread)
+
+Add burrow trail
+
+Add burrow sparks
+
+Add steamroller sparks
+
+Add prims for sphere, torus, and partial torus for effects use.
+
+Add a collision effect.
+
+Add some sparks of the shot color to rico
+
+Make the GM be a missile, add some real smoke to it.
+
+Jump flash needs to be faster and taller.
+
+Land s/b wider not taller, and have multiple flashes that come out. Make the speed and size get faster/larger on a bigger fall.
+
+Add some contrails to long falls.
+
+Death effect sucks, make use torus, and add more flashes. Maybe different effect for ground vs. air death.
+
+Ring spawn effect sucks, add a "digital" type cylinder around the tank
+
+Let effects set tank spawn to grow, fade, or pop.
+
+
+
+
+
+
+
+
+
+
+
+
+

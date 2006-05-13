@@ -1,0 +1,349 @@
+[Project]
+FileName=libares.dev
+Name=libares
+Ver=1
+IsCpp=1
+Type=2
+Compiler=-D__GNUWIN32__ -W -DWIN32 -DNDEBUG -D_MBCS -D_LIB_@@_
+CppCompiler=-D__GNUWIN32__ -W -DWIN32 -DNDEBUG -D_MBCS -D_LIB_@@_
+Includes=..\..
+Linker=_@@_
+Libs=
+UnitCount=30
+Folders="Header Files","Source Files"
+ObjFiles=
+PrivateResource=
+ResourceIncludes=
+MakeIncludes=
+Icon=
+ExeOutput=
+ObjectOutput=
+OverrideOutput=1
+OverrideOutputName=libares.a
+HostApplication=
+CommandLine=
+UseCustomMakefile=0
+CustomMakefile=
+IncludeVersionInfo=0
+SupportXPThemes=0
+CompilerSet=0
+CompilerSettings=0000000001010000001100
+
+[Unit1]
+FileName=..\src\c-ares\ares_parse_a_reply.c
+Folder=Source Files
+Compile=1
+CompileCpp=0
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit2]
+FileName=..\src\c-ares\ares_parse_ptr_reply.c
+Folder=Source Files
+Compile=1
+CompileCpp=0
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit3]
+FileName=..\src\c-ares\ares_process.c
+Folder=Source Files
+Compile=1
+CompileCpp=0
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit4]
+FileName=..\src\c-ares\ares_query.c
+Folder=Source Files
+Compile=1
+CompileCpp=0
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit5]
+FileName=..\src\c-ares\ares_search.c
+Folder=Source Files
+Compile=1
+CompileCpp=0
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit6]
+FileName=..\src\c-ares\ares_send.c
+Folder=Source Files
+Compile=1
+CompileCpp=0
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit7]
+FileName=..\src\c-ares\ares_strerror.c
+Folder=Source Files
+Compile=1
+CompileCpp=0
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit8]
+FileName=..\src\c-ares\ares_timeout.c
+Folder=Source Files
+Compile=1
+CompileCpp=0
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit9]
+FileName=..\src\c-ares\ares_version.c
+Folder=Source Files
+Compile=1
+CompileCpp=0
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit10]
+FileName=..\src\c-ares\windows_port.c
+Folder=Source Files
+Compile=1
+CompileCpp=0
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit11]
+FileName=..\src\c-ares\ares__close_sockets.c
+Folder=Source Files
+Compile=1
+CompileCpp=0
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit12]
+FileName=..\src\c-ares\ares__get_hostent.c
+Folder=Source Files
+Compile=1
+CompileCpp=0
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit13]
+FileName=..\src\c-ares\ares__read_line.c
+Folder=Source Files
+Compile=1
+CompileCpp=0
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit14]
+FileName=..\src\c-ares\ares_cancel.c
+Folder=Source Files
+Compile=1
+CompileCpp=0
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=$(CC) -c ares_cancel.c -o ares_cancel.o $(CFLAGS)
+
+[Unit15]
+FileName=..\src\c-ares\ares_destroy.c
+Folder=Source Files
+Compile=1
+CompileCpp=0
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit16]
+FileName=..\src\c-ares\ares_expand_name.c
+Folder=Source Files
+Compile=1
+CompileCpp=0
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit17]
+FileName=..\src\c-ares\ares_expand_string.c
+Folder=Source Files
+Compile=1
+CompileCpp=0
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit18]
+FileName=..\src\c-ares\ares_fds.c
+Folder=Source Files
+Compile=1
+CompileCpp=0
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit19]
+FileName=..\src\c-ares\ares_free_hostent.c
+Folder=Source Files
+Compile=1
+CompileCpp=0
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit20]
+FileName=..\src\c-ares\ares_free_string.c
+Folder=Source Files
+Compile=1
+CompileCpp=0
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit21]
+FileName=..\src\c-ares\ares_gethostbyaddr.c
+Folder=Source Files
+Compile=1
+CompileCpp=0
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit22]
+FileName=..\src\c-ares\ares_gethostbyname.c
+Folder=Source Files
+Compile=1
+CompileCpp=0
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit23]
+FileName=..\src\c-ares\ares_init.c
+Folder=Source Files
+Compile=1
+CompileCpp=0
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit24]
+FileName=..\src\c-ares\ares_mkquery.c
+Folder=Source Files
+Compile=1
+CompileCpp=0
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit25]
+FileName=..\src\c-ares\ares.h
+Folder=Header Files
+Compile=1
+CompileCpp=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[VersionInfo]
+Major=0
+Minor=1
+Release=1
+Build=1
+LanguageID=1033
+CharsetID=1252
+CompanyName=
+FileVersion=0.1
+FileDescription=Developed using the Dev-C++ IDE
+InternalName=
+LegalCopyright=
+LegalTrademarks=
+OriginalFilename=areslib.a
+ProductName=areslib
+ProductVersion=0.1
+AutoIncBuildNr=0
+
+[Unit26]
+FileName=..\src\c-ares\ares_dns.h
+CompileCpp=1
+Folder=Header Files
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit27]
+FileName=..\src\c-ares\ares_private.h
+CompileCpp=1
+Folder=Header Files
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit28]
+FileName=..\src\c-ares\ares_version.h
+CompileCpp=1
+Folder=Header Files
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit29]
+FileName=..\src\c-ares\nameser.h
+CompileCpp=1
+Folder=Header Files
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit30]
+FileName=..\src\c-ares\setup.h
+CompileCpp=1
+Folder=Header Files
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
