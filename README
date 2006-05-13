@@ -57,9 +57,9 @@ IRC channel on irc.freenode.net or to the bzflag-dev mailing list as
 to where the current development activity resides.  If you're familiar
 enough, anonymous CVS access is provided:
 
-    cvs -d:pserver:anonymous@cvs.sf.net:/cvsroot/bzflag login
+    cvs -d:pserver:anonymous@bzflag.cvs.sourceforge.net:/cvsroot/bzflag login
 [ press return for no password ]
-    cvs -z3 -d:pserver:anonymous@cvs.sf.net co -P bzflag
+    cvs -z3 -d:pserver:anonymous@bzflag.cvs.sourceforge.net co -P bzflag
 
 
 Compiling and Installation
