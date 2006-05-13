@@ -554,7 +554,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
     } else if (strcmp(argv[i], "-advertise") == 0) {
       checkArgc(1, i, argc, argv[i]);
       if (checkCommaList (argv[i], 2048))
-	      std::cerr << "Invalid group list for -advertise" << std::endl;
+	std::cerr << "Invalid group list for -advertise" << std::endl;
       else
 	options.advertiseGroups = argv[i];
     } else if (strcmp(argv[i], "-autoTeam") == 0) {
