@@ -3,8 +3,9 @@
 
 				 
 *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***
-No development is scheduled to continue on this branch.  Only bug
-fixes should be applied.
+No development is scheduled to continue on this branch.  Only SUPER
+critical bug fixes should be applied. New development goes into
+HEAD as 2.1 for release as 2.2
 *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***
 
 BZFlag 2.0.9
