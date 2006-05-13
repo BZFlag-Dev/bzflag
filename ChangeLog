@@ -9,6 +9,7 @@ fixes should be applied.
 BZFlag 2.0.7
 ------------
 
+* Add a plugin to record matches - Jeff Myers.
 * Add an option to send out a UDP heartbeat message for observers behind flakey
   routers - Jeff Myers
 * Replaced admin message sound - Sean Morrison
