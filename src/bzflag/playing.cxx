@@ -84,7 +84,6 @@
 #include "sound.h"
 #include "ShotStats.h"
 #include "TrackMarks.h"
-#include "VerticalSync.h"
 #include "World.h"
 #include "WorldBuilder.h"
 #include "HUDui.h"
@@ -5507,8 +5506,6 @@ void drawFrame(const float dt)
 
       glPopMatrix();
     }
-
-    verticalSync();
 
     mainWindow->getWindow()->swapBuffers();
 

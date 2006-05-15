@@ -97,7 +97,6 @@ DefaultDBItem	defaultDBItems[] = {
   { "stencilShadows",		"0",			true,	StateDatabase::ReadWrite,	NULL },
   { "shadowAlpha",		"0.5",			true,	StateDatabase::ReadWrite,	NULL },
   { "aniso",			"1",			true,	StateDatabase::ReadWrite,	NULL },
-  { "vsync",			"-1",			true,	StateDatabase::ReadWrite,	NULL },
 
   // input
   { "allowInputChange",		"1",			true,	StateDatabase::ReadWrite,	NULL },

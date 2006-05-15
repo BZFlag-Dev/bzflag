@@ -163,8 +163,6 @@ bzflag_SOURCES =			\
 	TargetingUtils.h		\
 	TrackMarks.cxx			\
 	TrackMarks.h			\
-	VerticalSync.cxx		\
-	VerticalSync.h			\
 	Weapon.cxx			\
 	Weapon.h			\
 	WeatherRenderer.h		\
