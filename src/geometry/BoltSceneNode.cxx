@@ -30,7 +30,7 @@
 // FIXME (SceneRenderer.cxx is in src/bzflag)
 #include "SceneRenderer.h"
 
-BoltSceneNode::BoltSceneNode(const GLfloat pos[3]) :
+BoltSceneNode::BoltSceneNode(const GLfloat pos[3], const GLfloat vel[3]) :
 				drawFlares(false),
 				texturing(false),
 				colorblind(false),
@@ -49,9 +49,12 @@ BoltSceneNode::BoltSceneNode(const GLfloat pos[3]) :
   light.setAttenuation(2, 0.03f);
 
   // prepare geometry
-  move(pos, NULL);
+  move(pos, vel);
   setSize(size);
   setColor(1.0f, 1.0f, 1.0f);
+
+ // azimuth = (float)(180.0 / M_PI*atan2f(vel[1], vel[0]));
+  //elevation = (float)(-180.0 / M_PI*atan2f(vel[2], hypotf(vel[0],vel[1])));
 }
 
 BoltSceneNode::~BoltSceneNode()
@@ -117,11 +120,16 @@ void			BoltSceneNode::setTextureAnimation(int cu, int cv)
   renderNode.setAnimation(cu, cv);
 }
 
-void			BoltSceneNode::move(const GLfloat pos[3],
-							const GLfloat[3])
+void			BoltSceneNode::move(const GLfloat pos[3], const GLfloat vel[3] )
 {
   setCenter(pos);
   light.setPosition(pos);
+
+  if (vel)
+  {
+	  azimuth = (float)(180.0 / M_PI*atan2f(vel[1], vel[0]));
+	  elevation = (float)(-180.0 / M_PI*atan2f(vel[2], hypotf(vel[0],vel[1])));
+  }
 }
 
 void			BoltSceneNode::addLight(
@@ -264,6 +272,45 @@ void			BoltSceneNode::BoltRenderNode::setColor(
   flareColor[3] = (rgba[3] == 1.0f )? 0.667f : rgba[3];
 }
 
+void		BoltSceneNode::BoltRenderNode::renderGeoBolt()
+{
+	const GLfloat length = 1.0;
+	const GLfloat* sphere = sceneNode->getSphere();
+	glPushMatrix();
+//	glTranslatef(sphere[0], sphere[1], sphere[2]);
+	glRotatef(sceneNode->azimuth, 1.0f, 0.0f, 0.0f);
+//	glRotatef(sceneNode->elevation, 0.0f, 1.0f, 0.0f);
+	glRotatef(90, 0.0f, 1.0f, 0.0f);
+
+	glDisable(GL_TEXTURE_2D);
+
+	float baseRadius = 2.0f;
+
+	myColor4f(sceneNode->color[0], sceneNode->color[1], sceneNode->color[2], 0.85f);
+
+	//myColor4f(sceneNode->color[0], sceneNode->color[1], sceneNode->color[2], 0.85f);
+	gluCylinder(gluNewQuadric(),0.0625f*baseRadius,0.0625f*baseRadius,length,10,1);
+	addTriangleCount(20);
+
+	myColor4f(sceneNode->color[0], sceneNode->color[1], sceneNode->color[2], 0.125f);
+	gluCylinder(gluNewQuadric(),0.1f*baseRadius,0.1f*baseRadius,length,16,1);
+	addTriangleCount(32);
+
+	myColor4f(sceneNode->color[0], sceneNode->color[1], sceneNode->color[2], 0.125f);
+	gluCylinder(gluNewQuadric(),0.2f*baseRadius,0.2f*baseRadius,length,24,1);
+	addTriangleCount(48);
+
+	myColor4f(sceneNode->color[0], sceneNode->color[1], sceneNode->color[2], 0.125f);
+	gluCylinder(gluNewQuadric(),0.4f*baseRadius,0.4f*baseRadius,length,32,1);
+	addTriangleCount(64);
+
+//	myColor4f(sceneNode->color[0], sceneNode->color[1], sceneNode->color[2], 0.125f);
+
+	glEnable(GL_TEXTURE_2D);
+
+	glPopMatrix();
+}
+
 void			BoltSceneNode::BoltRenderNode::render()
 {
   const float u0 = (float)u * du;
@@ -272,167 +319,170 @@ void			BoltSceneNode::BoltRenderNode::render()
   const GLfloat* sphere = sceneNode->getSphere();
   glPushMatrix();
     glTranslatef(sphere[0], sphere[1], sphere[2]);
-    RENDERER.getViewFrustum().executeBillboard();
-    glScalef(sceneNode->size, sceneNode->size, sceneNode->size);
+	if (0 && !sceneNode->drawFlares && RENDERER.useQuality() >= _EXPEREMENTAL_QUALITY)
+		renderGeoBolt();
+	else
+	{
+		RENDERER.getViewFrustum().executeBillboard();
+		glScalef(sceneNode->size, sceneNode->size, sceneNode->size);
+		// draw some flares
+		if (sceneNode->drawFlares) {
+		if (!RENDERER.isSameFrame()) {
+		numFlares = 3 + int(3.0f * (float)bzfrand());
+		for (int i = 0; i < numFlares; i++) {
+		theta[i] = (float)(2.0 * M_PI * bzfrand());
+		phi[i] = (float)bzfrand() - 0.5f;
+		phi[i] *= (float)(2.0 * M_PI * fabsf(phi[i]));
+		}
+		}
 
-    // draw some flares
-    if (sceneNode->drawFlares) {
-      if (!RENDERER.isSameFrame()) {
-	numFlares = 3 + int(3.0f * (float)bzfrand());
-	for (int i = 0; i < numFlares; i++) {
-	  theta[i] = (float)(2.0 * M_PI * bzfrand());
-	  phi[i] = (float)bzfrand() - 0.5f;
-	  phi[i] *= (float)(2.0 * M_PI * fabsf(phi[i]));
+		if (sceneNode->texturing) glDisable(GL_TEXTURE_2D);
+		myColor4fv(flareColor);
+		if (!BZDBCache::blend) myStipple(flareColor[3]);
+		glBegin(GL_QUADS);
+		for (int i = 0; i < numFlares; i++) {
+		// pick random direction in 3-space.  picking a random theta with
+		// a uniform distribution is fine, but doing so with phi biases
+		// the directions toward the poles.  my correction doesn't remove
+		// the bias completely, but moves it towards the equator, which is
+		// really where i want it anyway cos the flares are more noticeable
+		// there.
+		const GLfloat c = FlareSize * GLfloat(cosf(phi[i]));
+		const GLfloat s = FlareSize * GLfloat(sinf(phi[i]));
+		glVertex3fv(core[0]);
+		glVertex3f(c * cosf(theta[i]-FlareSpread), c * sinf(theta[i]-FlareSpread), s);
+		glVertex3f(2.0f * c * cosf(theta[i]), 2.0f * c * sinf(theta[i]), 2.0f * s);
+		glVertex3f(c * cosf(theta[i]+FlareSpread), c * sinf(theta[i]+FlareSpread), s);
+		}
+		glEnd();
+		if (sceneNode->texturing) glEnable(GL_TEXTURE_2D);
+
+		addTriangleCount(numFlares * 2);
+		}
+
+		if (sceneNode->texturing) {
+		// draw billboard square
+		myColor4fv(textureColor); // 1.0f all
+		glBegin(GL_QUADS);
+		glTexCoord2f(   u0,    v0);
+		glVertex2f  (-1.0f, -1.0f);
+		glTexCoord2f(du+u0,    v0);
+		glVertex2f  ( 1.0f, -1.0f);
+		glTexCoord2f(du+u0, dv+v0);
+		glVertex2f  ( 1.0f,  1.0f);
+		glTexCoord2f(   u0, dv+v0);
+		glVertex2f  (-1.0f,  1.0f);
+		glEnd();
+		addTriangleCount(2);
+		}
+
+		else if (BZDBCache::blend) {
+		// draw corona
+		glBegin(GL_QUAD_STRIP);
+		myColor4fv(mainColor);
+		glVertex2fv(core[1]);
+		myColor4fv(outerColor);
+		glVertex2fv(corona[0]);
+		myColor4fv(mainColor);
+		glVertex2fv(core[2]);
+		myColor4fv(outerColor);
+		glVertex2fv(corona[1]);
+		myColor4fv(mainColor);
+		glVertex2fv(core[3]);
+		myColor4fv(outerColor);
+		glVertex2fv(corona[2]);
+		myColor4fv(mainColor);
+		glVertex2fv(core[4]);
+		myColor4fv(outerColor);
+		glVertex2fv(corona[3]);
+		myColor4fv(mainColor);
+		glVertex2fv(core[5]);
+		myColor4fv(outerColor);
+		glVertex2fv(corona[4]);
+		myColor4fv(mainColor);
+		glVertex2fv(core[6]);
+		myColor4fv(outerColor);
+		glVertex2fv(corona[5]);
+		myColor4fv(mainColor);
+		glVertex2fv(core[7]);
+		myColor4fv(outerColor);
+		glVertex2fv(corona[6]);
+		myColor4fv(mainColor);
+		glVertex2fv(core[8]);
+		myColor4fv(outerColor);
+		glVertex2fv(corona[7]);
+		myColor4fv(mainColor);
+		glVertex2fv(core[1]);
+		myColor4fv(outerColor);
+		glVertex2fv(corona[0]);
+		glEnd(); // 18 verts -> 16 tris
+
+		// draw core
+		glBegin(GL_TRIANGLE_FAN);
+		myColor4fv(innerColor);
+		glVertex2fv(core[0]);
+		myColor4fv(mainColor);
+		glVertex2fv(core[1]);
+		glVertex2fv(core[2]);
+		glVertex2fv(core[3]);
+		glVertex2fv(core[4]);
+		glVertex2fv(core[5]);
+		glVertex2fv(core[6]);
+		glVertex2fv(core[7]);
+		glVertex2fv(core[8]);
+		glVertex2fv(core[1]);
+		glEnd(); // 10 verts -> 8 tris
+
+		addTriangleCount(24);
+		}
+
+		else {
+		// draw corona
+		myColor4fv(coronaColor);
+		myStipple(coronaColor[3]);
+		glBegin(GL_QUAD_STRIP);
+		glVertex2fv(core[1]);
+		glVertex2fv(corona[0]);
+		glVertex2fv(core[2]);
+		glVertex2fv(corona[1]);
+		glVertex2fv(core[3]);
+		glVertex2fv(corona[2]);
+		glVertex2fv(core[4]);
+		glVertex2fv(corona[3]);
+		glVertex2fv(core[5]);
+		glVertex2fv(corona[4]);
+		glVertex2fv(core[6]);
+		glVertex2fv(corona[5]);
+		glVertex2fv(core[7]);
+		glVertex2fv(corona[6]);
+		glVertex2fv(core[8]);
+		glVertex2fv(corona[7]);
+		glVertex2fv(core[1]);
+		glVertex2fv(corona[0]);
+		glEnd(); // 18 verts -> 16 tris
+
+		// draw core
+		myStipple(1.0f);
+		glBegin(GL_TRIANGLE_FAN);
+		myColor4fv(innerColor);
+		glVertex2fv(core[0]);
+		myColor4fv(mainColor);
+		glVertex2fv(core[1]);
+		glVertex2fv(core[2]);
+		glVertex2fv(core[3]);
+		glVertex2fv(core[4]);
+		glVertex2fv(core[5]);
+		glVertex2fv(core[6]);
+		glVertex2fv(core[7]);
+		glVertex2fv(core[8]);
+		glVertex2fv(core[1]);
+		glEnd(); // 10 verts -> 8 tris
+
+		myStipple(0.5f);
+
+		addTriangleCount(24);
+		}
 	}
-      }
-
-      if (sceneNode->texturing) glDisable(GL_TEXTURE_2D);
-      myColor4fv(flareColor);
-      if (!BZDBCache::blend) myStipple(flareColor[3]);
-      glBegin(GL_QUADS);
-      for (int i = 0; i < numFlares; i++) {
-	// pick random direction in 3-space.  picking a random theta with
-	// a uniform distribution is fine, but doing so with phi biases
-	// the directions toward the poles.  my correction doesn't remove
-	// the bias completely, but moves it towards the equator, which is
-	// really where i want it anyway cos the flares are more noticeable
-	// there.
-	const GLfloat c = FlareSize * GLfloat(cosf(phi[i]));
-	const GLfloat s = FlareSize * GLfloat(sinf(phi[i]));
-	glVertex3fv(core[0]);
-	glVertex3f(c * cosf(theta[i]-FlareSpread), c * sinf(theta[i]-FlareSpread), s);
-	glVertex3f(2.0f * c * cosf(theta[i]), 2.0f * c * sinf(theta[i]), 2.0f * s);
-	glVertex3f(c * cosf(theta[i]+FlareSpread), c * sinf(theta[i]+FlareSpread), s);
-      }
-      glEnd();
-      if (sceneNode->texturing) glEnable(GL_TEXTURE_2D);
-
-      addTriangleCount(numFlares * 2);
-    }
-
-    if (sceneNode->texturing) {
-      // draw billboard square
-      myColor4fv(textureColor); // 1.0f all
-      glBegin(GL_QUADS);
-      glTexCoord2f(   u0,    v0);
-      glVertex2f  (-1.0f, -1.0f);
-      glTexCoord2f(du+u0,    v0);
-      glVertex2f  ( 1.0f, -1.0f);
-      glTexCoord2f(du+u0, dv+v0);
-      glVertex2f  ( 1.0f,  1.0f);
-      glTexCoord2f(   u0, dv+v0);
-      glVertex2f  (-1.0f,  1.0f);
-      glEnd();
-      addTriangleCount(2);
-    }
-
-    else if (BZDBCache::blend) {
-      // draw corona
-      glBegin(GL_QUAD_STRIP);
-      myColor4fv(mainColor);
-      glVertex2fv(core[1]);
-      myColor4fv(outerColor);
-      glVertex2fv(corona[0]);
-      myColor4fv(mainColor);
-      glVertex2fv(core[2]);
-      myColor4fv(outerColor);
-      glVertex2fv(corona[1]);
-      myColor4fv(mainColor);
-      glVertex2fv(core[3]);
-      myColor4fv(outerColor);
-      glVertex2fv(corona[2]);
-      myColor4fv(mainColor);
-      glVertex2fv(core[4]);
-      myColor4fv(outerColor);
-      glVertex2fv(corona[3]);
-      myColor4fv(mainColor);
-      glVertex2fv(core[5]);
-      myColor4fv(outerColor);
-      glVertex2fv(corona[4]);
-      myColor4fv(mainColor);
-      glVertex2fv(core[6]);
-      myColor4fv(outerColor);
-      glVertex2fv(corona[5]);
-      myColor4fv(mainColor);
-      glVertex2fv(core[7]);
-      myColor4fv(outerColor);
-      glVertex2fv(corona[6]);
-      myColor4fv(mainColor);
-      glVertex2fv(core[8]);
-      myColor4fv(outerColor);
-      glVertex2fv(corona[7]);
-      myColor4fv(mainColor);
-      glVertex2fv(core[1]);
-      myColor4fv(outerColor);
-      glVertex2fv(corona[0]);
-      glEnd(); // 18 verts -> 16 tris
-
-      // draw core
-      glBegin(GL_TRIANGLE_FAN);
-      myColor4fv(innerColor);
-      glVertex2fv(core[0]);
-      myColor4fv(mainColor);
-      glVertex2fv(core[1]);
-      glVertex2fv(core[2]);
-      glVertex2fv(core[3]);
-      glVertex2fv(core[4]);
-      glVertex2fv(core[5]);
-      glVertex2fv(core[6]);
-      glVertex2fv(core[7]);
-      glVertex2fv(core[8]);
-      glVertex2fv(core[1]);
-      glEnd(); // 10 verts -> 8 tris
-
-      addTriangleCount(24);
-    }
-
-    else {
-      // draw corona
-      myColor4fv(coronaColor);
-      myStipple(coronaColor[3]);
-      glBegin(GL_QUAD_STRIP);
-      glVertex2fv(core[1]);
-      glVertex2fv(corona[0]);
-      glVertex2fv(core[2]);
-      glVertex2fv(corona[1]);
-      glVertex2fv(core[3]);
-      glVertex2fv(corona[2]);
-      glVertex2fv(core[4]);
-      glVertex2fv(corona[3]);
-      glVertex2fv(core[5]);
-      glVertex2fv(corona[4]);
-      glVertex2fv(core[6]);
-      glVertex2fv(corona[5]);
-      glVertex2fv(core[7]);
-      glVertex2fv(corona[6]);
-      glVertex2fv(core[8]);
-      glVertex2fv(corona[7]);
-      glVertex2fv(core[1]);
-      glVertex2fv(corona[0]);
-      glEnd(); // 18 verts -> 16 tris
-
-      // draw core
-      myStipple(1.0f);
-      glBegin(GL_TRIANGLE_FAN);
-      myColor4fv(innerColor);
-      glVertex2fv(core[0]);
-      myColor4fv(mainColor);
-      glVertex2fv(core[1]);
-      glVertex2fv(core[2]);
-      glVertex2fv(core[3]);
-      glVertex2fv(core[4]);
-      glVertex2fv(core[5]);
-      glVertex2fv(core[6]);
-      glVertex2fv(core[7]);
-      glVertex2fv(core[8]);
-      glVertex2fv(core[1]);
-      glEnd(); // 10 verts -> 8 tris
-
-      myStipple(0.5f);
-
-      addTriangleCount(24);
-    }
-
   glPopMatrix();
 
   if (RENDERER.isLastFrame()) {

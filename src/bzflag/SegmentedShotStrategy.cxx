@@ -50,7 +50,7 @@ SegmentedShotStrategy::SegmentedShotStrategy(ShotPath* _path, bool useSuperTextu
   }
 
   // initialize scene nodes
-  boltSceneNode = new BoltSceneNode(_path->getPosition());
+  boltSceneNode = new BoltSceneNode(_path->getPosition(),_path->getVelocity());
 
   const float* c = Team::getRadarColor(team);
   if (faint) {

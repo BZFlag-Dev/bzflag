@@ -23,7 +23,7 @@
 
 class BoltSceneNode : public ShotSceneNode {
   public:
-			BoltSceneNode(const GLfloat pos[3]);
+			BoltSceneNode(const GLfloat pos[3], const GLfloat vel[3]);
 			~BoltSceneNode();
 
     void		setFlares(bool);
@@ -49,8 +49,9 @@ class BoltSceneNode : public ShotSceneNode {
 			BoltRenderNode(const BoltSceneNode*);
 			~BoltRenderNode();
 	void		setColor(const GLfloat* rgba);
-  void    setTextureColor(const GLfloat* rgba);
+	void		setTextureColor(const GLfloat* rgba);
 	void		render();
+	void		renderGeoBolt();
 	const GLfloat*	getPosition() const { return sceneNode->getSphere(); }
 	void		setAnimation(int cu, int cv);
       private:
@@ -86,6 +87,8 @@ class BoltSceneNode : public ShotSceneNode {
     OpenGLGState	gstate;
     OpenGLGState	colorblindGState;
     BoltRenderNode	renderNode;
+
+	GLfloat		azimuth, elevation;
 };
 
 #endif // BZF_BOLT_SCENE_NODE_H

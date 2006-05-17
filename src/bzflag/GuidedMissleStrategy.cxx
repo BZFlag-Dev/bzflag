@@ -35,7 +35,7 @@ GuidedMissileStrategy::GuidedMissileStrategy(ShotPath* _path) :
   renderTimes(0),
   needUpdate(true)
 {
-  ptSceneNode = new BoltSceneNode(_path->getPosition());
+  ptSceneNode = new BoltSceneNode(_path->getPosition(),_path->getVelocity());
   TextureManager &tm = TextureManager::instance();
   int texture = tm.getTextureID("missile");
 
