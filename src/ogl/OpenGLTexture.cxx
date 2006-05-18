@@ -361,12 +361,11 @@ int OpenGLTexture::getBestFormat(int _width, int _height, const GLvoid* pixels)
   static const bool hasTextureExt = true;
 
   // see if all pixels are r=g=b=a.  if so return intensity format.
-  // SGI IMPACT and 3Dfx systems don't support GL_INTENSITY.
+  // SGI IMPACT systems don't support GL_INTENSITY.
   const char* const glRenderer = (const char*)glGetString(GL_RENDERER);
   static bool noIntensity =
     ((glRenderer == NULL) ||
-     (strncmp(glRenderer, "IMPACT", 6) == 0) ||
-     (strncmp(glRenderer, "3Dfx", 4) == 0));
+     (strncmp(glRenderer, "IMPACT", 6) == 0));
   if (!noIntensity) {
     bool useIntensity = false;
     if (hasTextureExt && useLuminance) {

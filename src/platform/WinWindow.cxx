@@ -36,7 +36,6 @@ WinWindow::WinWindow(const WinDisplay* _display, WinVisual* _visual) :
 				inactiveDueToDeactivateAll(false),
 				useColormap(false),
 				hasGamma(false),
-				has3DFXGamma(false),
 				gammaVal(1.0f),
 				prev(NULL),
 				next(NULL)
@@ -213,7 +212,7 @@ void			WinWindow::hideMouse()
 
 void			WinWindow::setGamma(float newGamma)
 {
-  if (!useColormap && !hasGamma && !has3DFXGamma)
+  if (!useColormap && !hasGamma)
     return;
 
   // save gamma
@@ -242,7 +241,7 @@ float			WinWindow::getGamma() const
 
 bool			WinWindow::hasGammaControl() const
 {
-  return useColormap || hasGamma || has3DFXGamma;
+  return useColormap || hasGamma;
 }
 
 void			WinWindow::makeCurrent()
@@ -357,19 +356,10 @@ void			WinWindow::destroyChild()
   }
 }
 
-typedef BOOL		(*GammaRamp3DFX)(HDC, LPVOID);
-
 void			WinWindow::getGammaRamps(WORD* ramps)
 {
   if (hDCChild == NULL)
     return;
-
-  // see if we've got the 3Dfx gamma ramp extension
-  PROC proc = wglGetProcAddress("wglGetDeviceGammaRamp3DFX");
-  if (proc != NULL) {
-    GammaRamp3DFX wglGetDeviceGammaRamp3DFX = (GammaRamp3DFX)proc;
-    has3DFXGamma = wglGetDeviceGammaRamp3DFX(hDCChild, ramps + 3 * 256) != FALSE;
-  }
 
   // get device gamma ramps
   hasGamma = GetDeviceGammaRamp(hDCChild, ramps) != FALSE;
@@ -379,14 +369,6 @@ void			WinWindow::setGammaRamps(const WORD* ramps)
 {
   if (hDCChild == NULL)
     return;
-
-  if (has3DFXGamma) {
-    PROC proc = wglGetProcAddress("wglSetDeviceGammaRamp3DFX");
-    if (proc != NULL) {
-      GammaRamp3DFX wglSetDeviceGammaRamp3DFX = (GammaRamp3DFX)proc;
-      wglSetDeviceGammaRamp3DFX(hDCChild, (LPVOID)(ramps + 3 * 256));
-    }
-  }
 
   if (hasGamma)
     SetDeviceGammaRamp(hDCChild, (LPVOID)ramps);

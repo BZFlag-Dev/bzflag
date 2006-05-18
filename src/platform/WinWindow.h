@@ -92,7 +92,6 @@ class WinWindow : public BzfWindow {
     bool		inactiveDueToDeactivateAll;
     bool		useColormap;
     bool		hasGamma;
-    bool		has3DFXGamma;
     float		gammaVal;
     WORD		origGammaRamps[6 * 256];
     PIXELFORMATDESCRIPTOR pfd;

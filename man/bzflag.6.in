@@ -88,22 +88,6 @@ manual page (bzfs.6) for details on starting a new server, public or
 private.  
 .SS Options
 .TP 15
-.B \-3dfx
-For Mesa users with a pass\-through 3Dfx card, e.g. a Voodoo or
-Voodoo 2 based card.  This sets the MESA_GLX_FX environment
-variable to use fullscreen pass\-through mode.  Use \fB\-geometry\fR
-to use a resolution other than 640x480 on the pass\-through card.
-You should not use this option with \fB\-window\fR.
-.TP 
-.B \-no3dfx
-For Mesa users with a pass\-through 3Dfx card, such as Voodoo or
-Voodoo 2 based cards.  This unsets the MESA_GLX_FX environment
-variable so that the pass\-through card isn't used.  Use this
-option if MESA_GLX_FX is normally set in your environment and
-you don't want bzflag to use the pass\-through card.  This option
-is only a convenience;  you can achieve the same effect by
-unsetting MESA_GLX_FX in your environment.
-.TP 
 \fB\-anonymous\fR
 Uses the email address \fIanonymous\fR instead of \fIusername@hostname\fR.
 .TP 
@@ -133,13 +117,7 @@ stdout.txt on windows
 .B \-echoAnsi
 Copies all message window output like -echo preserving the ANSI
 color coding on *nix, same as -echo on windows.
-.TP 
-\fB\-geometry\fI width\fR\fBx\fR\fIheight\fR[{\fB+\fR|\fB\-\fR}x{\fB+\fR|\fB\-\fR}y]
-This specifies the size and, optionally, the position of the window. It
-can be used with or without the \fB\-window\fR option. It may be necessary
-to use this on some systems when bzflag cannot correctly determine the
-display size.
-.TP 
+.TP
 \fB\-latitude\fI latitude\fR
 Uses \fIlatitude\fR when computing celestial object positions.
 .TP 
@@ -194,8 +172,9 @@ half. \fIanaglyph\fR supports red\-cyan stereo viewing glasses. Note that
 setting an unsupported view option will often lead to BZFlag not running
 successfully. To correct this, run with \-view normal.
 .TP 
-.B \-window
-Runs the application in a window instead of full screen.
+.B \-window\fI width\fR\fBx\fR\fIheight
+Runs the application in a window instead of full screen. Specify the widht and height of the 
+window after the option.
 .TP 
 \fB\-zbuffer\fR {\fIon\fR | \fIoff\fR}
 When \fIoff\fR is chosen the game will not attempt to allocate a

@@ -160,7 +160,6 @@ LONG WINAPI		WinDisplay::Rep::windowProc(HWND hwnd, UINT msg,
 WinDisplay::WinDisplay(const char* displayName, const char*) :
 				rep(NULL),
 				hwnd(NULL),
-				using3Dfx(false),
 				fullWidth(0),
 				fullHeight(0),
 				resolutions(NULL),
@@ -168,14 +167,6 @@ WinDisplay::WinDisplay(const char* displayName, const char*) :
 				charCode(0)
 {
   rep = new Rep(displayName);
-
-  // see if we're using a 3Dfx card.  if so we'll skip the resolution
-  // picking later.
-  using3Dfx = (GetModuleHandle("glide2x.dll") != NULL);
-  if (using3Dfx) {
-    fullWidth = getPassthroughWidth();
-    fullHeight = getPassthroughHeight();
-  }
 
   // get resolutions
   if (isValid() && !isFullScreenOnly()) {
@@ -208,7 +199,7 @@ WinDisplay::~WinDisplay()
 
 bool			WinDisplay::isFullScreenOnly() const
 {
-  return using3Dfx;
+  return false;
 }
 
 int			WinDisplay::getFullWidth() const
