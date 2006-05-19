@@ -17,6 +17,15 @@
 
 #define	ADV(_b, _t)	((void*)(((char*)(_b)) + sizeof(_t)))
 
+//
+// Unions
+//
+
+union floatintuni {
+  float floatval;
+  uint32_t intval;
+};
+
 
 //
 // Buffer Overrun Checks
@@ -93,9 +102,12 @@ void*			nboPackUInt(void* b, uint32_t v)
 void*			nboPackFloat(void* b, float v)
 {
   // hope that float is a 4 byte IEEE 754 standard encoding
-  uint32_t x = htonl(*((uint32_t*)&v));
-  ::memcpy(b, &x, sizeof(float));
-  return ADV(b, float);
+  floatintuni u;
+  u.floatval = v;
+
+  uint32_t x = (uint32_t)htonl(u.intval);
+  ::memcpy(b, &x, sizeof(uint32_t));
+  return ADV(b, uint32_t);
 }
 
 void*			nboPackVector(void* b, const float *v)
@@ -229,9 +241,10 @@ void*			nboUnpackFloat(void* b, float& v)
   // hope that float is a 4 byte IEEE 754 standard encoding
   uint32_t x;
   ::memcpy(&x, b, sizeof(uint32_t));
-  const uint32_t y = (uint32_t)ntohl(x);
-  v = *((float*)&y);
-  return ADV(b, float);
+  floatintuni u;
+  u.intval = (uint32_t)ntohl(x);
+  v = u.floatval;
+  return ADV(b, uint32_t);
 }
 
 void*			nboUnpackVector(void* b, float *v)
