@@ -591,22 +591,6 @@ esac
 # AC_CHECK_LIB(vorbisfile, ov_open, [ALIBS="-lvorbisfile $ALIBS"], [], $ALIBS)
 # AC_SUBST(ALIBS)
 
-case $host_os in
-     macos|darwin*)
-	if test x$with_SDL = xyes; then
-	    LIBS="$LIBS -framework Carbon -framework Cocoa -framework OpenGL"
-	else
-	    LIBS="$LIBS -framework Carbon -framework AGL"
-	fi
-	;;
-     irix)
-	if test x$host_cpu = xmips64; then
-	   LDFLAGS="$LDFLAGS -L$(ROOT)/usr/lib32"
-	else
-	   LDFLAGS="$LDFLAGS -L$(ROOT)/usr/lib"
-	fi
-	;;
-esac
 if test $prefix = NONE; then
 	prefix=$ac_default_prefix
 fi
@@ -660,6 +644,24 @@ fi
 AC_MSG_RESULT([$sdl_image_check])
 AC_SUBST(SDL_IMAGE_LIBS)
 LIBS=$tmpLIBS
+
+# dumb temp hacks to add missing linkage stuff
+case $host_os in
+     macos|darwin*)
+	if test x$with_SDL = xyes; then
+	    LIBS="$LIBS -framework Carbon -framework Cocoa -framework OpenGL"
+	else
+	    LIBS="$LIBS -framework Carbon -framework AGL"
+	fi
+	;;
+     irix)
+	if test x$host_cpu = xmips64; then
+	   LDFLAGS="$LDFLAGS -L$(ROOT)/usr/lib32"
+	else
+	   LDFLAGS="$LDFLAGS -L$(ROOT)/usr/lib"
+	fi
+	;;
+esac
 
 
 dnl ******************************************
