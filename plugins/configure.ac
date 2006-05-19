@@ -41,7 +41,7 @@ AC_INIT(BZFlag Plugins, 14, [http://BZFlag.org], bzflag-plugins)
 AC_CONFIG_SRCDIR(SAMPLE_PLUGIN/SAMPLE_PLUGIN.cpp)
 AC_REVISION($Revision $)
 
-AC_CONFIG_AUX_DIR(../misc)
+AC_CONFIG_AUX_DIR([.])
 
 # force locale setting to C so things like date output as expected
 LC_ALL=C
