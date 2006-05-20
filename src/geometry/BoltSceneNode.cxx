@@ -35,7 +35,11 @@ BoltSceneNode::BoltSceneNode(const GLfloat pos[3], const GLfloat vel[3]) :
 				texturing(false),
 				colorblind(false),
 				size(1.0f),
-				renderNode(this)
+				renderNode(this),
+				length(1.0f),
+				azimuth(0),
+				elevation(0),
+				phasingShot(false)
 {
   OpenGLGStateBuilder builder(gstate);
   builder.setBlending();
@@ -53,8 +57,6 @@ BoltSceneNode::BoltSceneNode(const GLfloat pos[3], const GLfloat vel[3]) :
   setSize(size);
   setColor(1.0f, 1.0f, 1.0f);
 
- // azimuth = (float)(180.0 / M_PI*atan2f(vel[1], vel[0]));
-  //elevation = (float)(-180.0 / M_PI*atan2f(vel[2], hypotf(vel[0],vel[1])));
 }
 
 BoltSceneNode::~BoltSceneNode()
@@ -127,8 +129,14 @@ void			BoltSceneNode::move(const GLfloat pos[3], const GLfloat vel[3] )
 
   if (vel)
   {
-	  azimuth = (float)(180.0 / M_PI*atan2f(vel[1], vel[0]));
-	  elevation = (float)(-180.0 / M_PI*atan2f(vel[2], hypotf(vel[0],vel[1])));
+	  float vec[3];
+	  length = sqrt(vel[0]*vel[0]+vel[1]*vel[1]+vel[2]*vel[2]);
+	  vec[0] = vel[0]/length;
+	  vec[1] = vel[1]/length;
+	  vec[2] = vel[2]/length;
+
+	  azimuth = (float)(180.0 / M_PI*atan2f(vec[1], vec[0]));
+	  elevation = (float)(-180.0 / M_PI*atan2f(vec[2], hypotf(vec[0],vec[1])));
   }
 }
 
@@ -272,39 +280,88 @@ void			BoltSceneNode::BoltRenderNode::setColor(
   flareColor[3] = (rgba[3] == 1.0f )? 0.667f : rgba[3];
 }
 
+void		BoltSceneNode::BoltRenderNode::renderGeoPill( float radius, float length, int segments )
+{
+	float lenMinusRads = length - radius*2;
+	glPushMatrix();
+
+	// 4 parts of the first hemesphere
+	gluCylinder(gluNewQuadric(),0,radius*0.43589,radius*0.1f,segments,1);
+	addTriangleCount(segments);
+	glTranslatef(0,0,radius*0.1f);
+
+	gluCylinder(gluNewQuadric(),radius*0.43589,radius*0.66144,radius*0.15f,segments,1);
+	addTriangleCount(segments);
+	glTranslatef(0,0,radius*0.15f);
+
+	gluCylinder(gluNewQuadric(),radius*0.66144f,radius*0.86603f,radius*0.25f,segments,1);
+	addTriangleCount(segments);
+	glTranslatef(0,0,radius*0.25f);
+
+	gluCylinder(gluNewQuadric(),radius*0.86603,radius,radius*0.5f,segments,1);
+	addTriangleCount(segments);
+	glTranslatef(0,0,radius*0.5f);
+
+	// the "shaft"
+	if (lenMinusRads > 0)
+	{
+		gluCylinder(gluNewQuadric(),radius,radius,lenMinusRads,segments,1);
+		addTriangleCount(segments);
+		glTranslatef(0,0,lenMinusRads);
+	}
+
+	// 4 parts of the last hemesphere
+	gluCylinder(gluNewQuadric(),radius,radius*0.86603,radius*0.5f,segments,1);
+	addTriangleCount(segments);
+	glTranslatef(0,0,radius*0.5f);
+
+	gluCylinder(gluNewQuadric(),radius*0.86603f,radius*0.66144f,radius*0.25f,segments,1);
+	addTriangleCount(segments);
+	glTranslatef(0,0,radius*0.25f);
+
+	gluCylinder(gluNewQuadric(),radius*0.66144,radius*0.43589,radius*0.15f,segments,1);
+	addTriangleCount(segments);
+	glTranslatef(0,0,radius*0.15f);
+
+	gluCylinder(gluNewQuadric(),radius*0.43589,0,radius*0.1f,segments,1);
+	addTriangleCount(segments);
+	glTranslatef(0,0,radius*0.1f);
+
+	glPopMatrix();
+}
+
 void		BoltSceneNode::BoltRenderNode::renderGeoBolt()
 {
-	const GLfloat length = 1.0;
+	GLfloat len = sceneNode->length * 0.0075f;
+	float baseRadius = 5.0f;
+	len *= baseRadius;
 	const GLfloat* sphere = sceneNode->getSphere();
 	glPushMatrix();
-//	glTranslatef(sphere[0], sphere[1], sphere[2]);
-	glRotatef(sceneNode->azimuth, 1.0f, 0.0f, 0.0f);
-//	glRotatef(sceneNode->elevation, 0.0f, 1.0f, 0.0f);
+	glRotatef(sceneNode->azimuth, 0.0f, 0.0f, 1.0f);
+	glRotatef(sceneNode->elevation, 0.0f, 1.0f, 0.0f);
 	glRotatef(90, 0.0f, 1.0f, 0.0f);
+//	glTranslatef(0, 0, -len);
+
+	float alphaMod = 1.0f;
+	if (sceneNode->phasingShot)
+		alphaMod = 0.75f;
 
 	glDisable(GL_TEXTURE_2D);
 
-	float baseRadius = 2.0f;
+	float coreBleed = 5.5f;
 
-	myColor4f(sceneNode->color[0], sceneNode->color[1], sceneNode->color[2], 0.85f);
+	myColor4f(sceneNode->color[0]*coreBleed, sceneNode->color[1]*coreBleed, sceneNode->color[2]*coreBleed, 0.85f*alphaMod);
 
-	//myColor4f(sceneNode->color[0], sceneNode->color[1], sceneNode->color[2], 0.85f);
-	gluCylinder(gluNewQuadric(),0.0625f*baseRadius,0.0625f*baseRadius,length,10,1);
-	addTriangleCount(20);
+	renderGeoPill(0.0625f*baseRadius,len,10);
 
 	myColor4f(sceneNode->color[0], sceneNode->color[1], sceneNode->color[2], 0.125f);
-	gluCylinder(gluNewQuadric(),0.1f*baseRadius,0.1f*baseRadius,length,16,1);
-	addTriangleCount(32);
+	renderGeoPill(0.1f*baseRadius,len,16);
 
 	myColor4f(sceneNode->color[0], sceneNode->color[1], sceneNode->color[2], 0.125f);
-	gluCylinder(gluNewQuadric(),0.2f*baseRadius,0.2f*baseRadius,length,24,1);
-	addTriangleCount(48);
+	renderGeoPill(0.2f*baseRadius,len,24);
 
 	myColor4f(sceneNode->color[0], sceneNode->color[1], sceneNode->color[2], 0.125f);
-	gluCylinder(gluNewQuadric(),0.4f*baseRadius,0.4f*baseRadius,length,32,1);
-	addTriangleCount(64);
-
-//	myColor4f(sceneNode->color[0], sceneNode->color[1], sceneNode->color[2], 0.125f);
+	renderGeoPill(0.3f*baseRadius,len,32);
 
 	glEnable(GL_TEXTURE_2D);
 
@@ -319,7 +376,7 @@ void			BoltSceneNode::BoltRenderNode::render()
   const GLfloat* sphere = sceneNode->getSphere();
   glPushMatrix();
     glTranslatef(sphere[0], sphere[1], sphere[2]);
-	if (0 && !sceneNode->drawFlares && RENDERER.useQuality() >= _EXPEREMENTAL_QUALITY)
+	if (!sceneNode->drawFlares && RENDERER.useQuality() >= _EXPEREMENTAL_QUALITY)
 		renderGeoBolt();
 	else
 	{

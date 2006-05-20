@@ -66,6 +66,8 @@ SegmentedShotStrategy::SegmentedShotStrategy(ShotPath* _path, bool useSuperTextu
     imageName += BZDB.get("superPrefix");
   imageName += BZDB.get("boltTexture");
 
+  boltSceneNode->phasingShot = useSuperTexture;
+
   int texture = tm.getTextureID(imageName.c_str());
   if (texture >= 0)
     boltSceneNode->setTexture(texture);
