@@ -2251,6 +2251,14 @@ BZF_API bool bz_startRecBuf( void )
 	return Record::start(ServerPlayer);
 }
 
+BZF_API bool bz_stopRecBuf( void )
+{
+	if (Record::enabled())
+		return false;
+
+	return Record::stop(ServerPlayer);
+}
+
 BZF_API const char *bz_format(const char* fmt, ...)
 {
 	static std::string result;

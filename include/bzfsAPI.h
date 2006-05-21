@@ -575,6 +575,7 @@ class BZF_API bz_GetAutoTeamEventData_V1 : public bz_EventData
 public:
 	bz_GetAutoTeamEventData_V1() : bz_EventData()
 	{
+		eventType = bz_eGetAutoTeamEvent;
 		playeID = -1;
 		team = eNoTeam;
 		handled = false;
@@ -1273,6 +1274,7 @@ BZF_API bz_ApiString bz_filterPath ( const char* path );
 // Record-Replay
 BZF_API bool bz_saveRecBuf( const char * _filename, int seconds);
 BZF_API bool bz_startRecBuf( void );
+BZF_API bool bz_stopRecBuf( void );
 
 // cheap Text Utils
 BZF_API const char *bz_format(const char* fmt, ...);
