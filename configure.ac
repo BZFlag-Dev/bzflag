@@ -941,7 +941,7 @@ if test x$enable_plugins != xno ; then
 	AC_CONFIG_SUBDIRS(plugins)
 fi
 
-AC_CONFIG_FILES(
+AC_CONFIG_FILES([
 	BZFlag.xcode/Makefile
 	Dev-C++/Makefile
 	Makefile
@@ -1033,7 +1033,8 @@ AC_CONFIG_FILES(
 	tools/modeltool/vc71/Makefile
 	MSVC/Makefile
 	MSVC/VC71/Makefile
-	MSVC/VC8/Makefile)
+	MSVC/VC8/Makefile
+])
 AC_OUTPUT
 
 # use AC_MSG_RESULT instead of AC_MSG_NOTIFY to support old autoconf
