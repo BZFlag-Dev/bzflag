@@ -550,22 +550,19 @@ static std::string cmdMessagePanel(const std::string&,
   if (args.size() != 1)
     return "usage: messagepanel {all|chat|server|misc}";
 
-  int oldMode = controlPanel->getMessagesMode();
-  int newMode;
+  int mode = 0;
   if (args[0] == "all")
-    newMode = 0;
+    mode = 0;
   else if (args[0] == "chat")
-    newMode = 1;
+    mode = 1;
   else if (args[0] == "server")
-    newMode = 2;
+    mode = 2;
   else if (args[0] == "misc")
-    newMode = 3;
+    mode = 3;
   else
     return "usage: messagepanel {all|chat|server|misc}";
 
-  if (newMode == oldMode)
-    newMode = -1;
-  controlPanel->setMessagesMode(newMode);
+  controlPanel->setMessagesMode(mode);
 
   return std::string();
 }
