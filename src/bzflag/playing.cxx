@@ -3412,8 +3412,8 @@ static bool		gotBlowedUp(BaseLocalPlayer* tank,
 	    TeamColor team = killerPlayer->getTeam();
 	    if (hit)
 	      team = hit->getTeam();
-	    if ((myTank->getTeam() == team) &&
-		(team != RogueTeam) && (team != ObserverTeam)) {
+	    if (World::getWorld()->allowTeams() && (myTank->getTeam() == team) && (team != RogueTeam) && (team != ObserverTeam))
+		{
 	      blowedUpNotice += "teammate " ;
 	      blowedUpNotice += killerPlayer->getCallSign();
 	    } else {
