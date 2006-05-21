@@ -329,7 +329,7 @@
 				Optimization="2"
 				InlineFunctionExpansion="1"
 				AdditionalIncludeDirectories="..\..\win32,..\..\include,..\..\src\bzflag,.\"
-				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE; _HAVE_CURSES_H;BUILDING_BZADMIN"
+				PreprocessorDefinitions="WIN32;WIN64;NDEBUG;_CONSOLE; _HAVE_CURSES_H;BUILDING_BZADMIN"
 				StringPooling="true"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"

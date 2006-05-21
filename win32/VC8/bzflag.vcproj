@@ -357,7 +357,7 @@
 				Optimization="2"
 				InlineFunctionExpansion="1"
 				AdditionalIncludeDirectories="..\..\include,..\..\win32,.\"
-				PreprocessorDefinitions="_WINDOWS;WIN32;NDEBUG"
+				PreprocessorDefinitions="_WINDOWS;WIN32;NDEBUG;WIN64"
 				StringPooling="true"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
