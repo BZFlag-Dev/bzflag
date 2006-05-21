@@ -651,7 +651,7 @@ case $host_os in
 	if test x$with_SDL = xyes; then
 	    LIBS="$LIBS -framework Carbon -framework Cocoa -framework OpenGL"
 	else
-	    LIBS="$LIBS -framework Carbon -framework AGL"
+	    LIBS="$LIBS -framework Carbon -framework AGL -framework OpenGL"
 	fi
 	;;
      irix)
