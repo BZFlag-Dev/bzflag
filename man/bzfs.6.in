@@ -45,6 +45,7 @@ bzfs \- BZFlag game server
 [\fB\-j\fR]
 [\fB\-lagdrop \fIwarn\-count\fR]
 [\fB\-lagwarn \fR\fImilliseconds\fR]
+[\fB\-loadplugin \fR\fIplugin\fR]
 [\fB\-jitterdrop \fIwarn\-count\fR]
 [\fB\-jitterwarn \fR\fImilliseconds\fR]
 [\fB\-masterBanURL \fR\URL\fR]
@@ -248,6 +249,12 @@ Kicks players after \fIwarn\-count\fR lag warnings.
 .TP 
 \fB\-lagwarn \fImilliseconds\fR
 Send warnings to players that lag more than \fImilliseconds\fR.
+.TP 
+\fB\-loadplugin \fIplugin\fR
+loads the dynamic plugin \fIplugin\fR, it is not nessisary to have the OS
+specific plugin extension (DLL, SO) in the name, the sever will add it
+automaticly. Some plugins take a paramater after the plugin name
+it will be specified after a , after the name, i.e. -loadpluing myplugin,myoptions.
 .TP 
 \fB\-jitterdrop \fIwarn\-count\fR
 Kicks players after \fIwarn\-count\fR jitter warnings.
