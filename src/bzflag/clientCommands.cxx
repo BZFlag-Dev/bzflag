@@ -561,6 +561,10 @@ static std::string cmdMessagePanel(const std::string&,
     mode = 3;
   else
     return "usage: messagepanel {all|chat|server|misc}";
+    
+  if (!BZDB.isTrue("displayConsole")) {
+    BZDB.setBool("displayConsole", true);
+  }
 
   controlPanel->setMessagesMode(mode);
 
