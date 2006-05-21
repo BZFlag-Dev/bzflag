@@ -366,7 +366,7 @@ void ServerMenu::pick()
     }
   } else {  // not an old item, set players #s to info we have
     sprintf(buf, "%d/%d", ping.rogueCount + ping.redCount + ping.greenCount +
-	ping.blueCount + ping.purpleCount + ping.observerCount, ping.maxPlayers);
+	ping.blueCount + ping.purpleCount, ping.maxPlayers);
     ((HUDuiLabel*)listHUD[1])->setLabel(buf);
 
     if (ping.rogueMax == 0)
