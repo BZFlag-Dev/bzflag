@@ -1,25 +1,29 @@
-Building BZFlag and its associated projects in Dev-C++ on Windows or Linux
-is quite easy.
+Building BZFlag and its associated projects in Dev-C++/CodeBlocks on Windows or Linux
+is quite easy. **NOTE: Building on Linux is, for the most part, supported. However, small tweaks
+							will need to be made, such as changing macros defined in the command line, or unlinking
+							libwsock32.a, as well as a few other small, easy things to change.
 
-1. Download the latest version of Dev-C++. You can download it from:
+1. Download the latest version of either Dev-C++ or CodeBlocks. Dev-C++ is only for Windows, however,
+	 CodeBlocks is for both Linux and Windows.
+	 You can download it from:
 
-    http://sf.net/projects/dev-cpp
-
-   Releases are under "Binaries". Download the release containing MinGW32, which
-   should be the file entitled, "devcppXXXsetup.exe" (replace XXX with a version number).
-   If there is none, it should be quite obvious anyway.
+    Dev-C++: http://sf.net/projects/dev-cpp
+		CodeBlocks: http://www.codeblocks.org/downloads.shtml
+		
+	 Download releases that come with GCC/MinGW32.
 
 2. Download the latest version of SDL, available from:
 
     http://libsdl.org/
 
-    Download the "devel" version for MinGW32. Installation instructions are below.
+    Download the "devel" version for MinGW32 (Windows) or GCC (Linux). Installation instructions are below.
 
 3. Download libCURL, available from:
 
-    http://curl.haxx.se/latest.cgi?curl=win32-devel
+    http://curl.haxx.se/download.html
 
-   Select the mirror closest to you to download.
+   Select the non-SSL "libcurl" (not "binary") distribution for your operating system.
+	 Windows users should use the distributions under "Win32 Generic" section.
 
 4. Build libares.dev FIRST by opening up the project file named such.
 
@@ -33,9 +37,9 @@ is quite easy.
    directory, such as src/bzflag/ for BZFlag client.
 
 8. The binary (executable) and object files should be in each project's corresponding main source
-   directory, such as src/bzflag/ for BZFlag client. libares.a (built from libares.dev)
-   is in /Dev-C++/, and is recommended that it be moved to the /lib/ folder of your copy
-   of Dev-C++ IDE, although it is not necessary.
+   directory, such as /src/bzflag/ for BZFlag client. libares.a (built from libares.dev)
+   is in BZFlag's /Dev-C++/, and is recommended that it be moved to the /lib/ folder of your copy
+   of GCC/MinGW32 directory, although it is not necessary.
 
 *If you want to build bzadmin-pdcurses.dev, make sure you have pdcurses or a similiar
 curses library installed. Get the package from http://prdownloads.sourceforge.net/pdcurses/pdc27_ming_w32.zip?download
@@ -43,26 +47,26 @@ curses library installed. Get the package from http://prdownloads.sourceforge.ne
 
 Project files were maintained using Dev-C++ 4.9.9.2
 
-The latest version of Dev-C++ (at this time) has been used to create and maintain these project
+The latest version of Dev-C++/CodeBlocks(at this time) has been used to create and maintain these project
 files, so older versions may not necessarily work (but they may, but it is best just
-to get the latest or the above version). The version of MinGW32 that Dev-C++
+to get the latest or the above version). The version of MinGW32/GCC that Dev-C++/CodeBlocks
 uses should not matter as long as it is reasonably up to date (at this time, 3.2.x is
 a good minimum for best performance let alone errorless compilation). MinGW32 is distributed
 with Dev-C++.
 
 ==Where to put the downloaded libSDL and libcURL files==
-Place the .a files in your "/lib/" directory of Dev-C++ (or MinGW32 dir), and the headers in
+Place the .a files in your "/lib/" directory of MinGW32/GCC, and the headers in
 "/include/". For libcURL, keep the header files in the directory named "/curl/", which is what the .h
 files came in. Also, make sure you put the dynamic library for SDL and libcURL (i.e., "SDL.dll" on Windows for DSL)
 somewhere in your PATH environment variable (on Windows), such as "c:\WINDOWS\".
 If there is no .dll's, move on. On Linux, place them in a directory that it knows to look in.
-*The "/lib/" directory of Dev-C++ is probably at "C:\Dev-C++\" on Windows. If you don't know
+*The "/lib/" directory of Dev-C++/CodeBlocks is probably at "C:\Dev-C++\" on Windows. If you don't know
 where to put the header files ("include" files) and the library (.a) files, just put them in the
 BZFlag "/Dev-C++/" folder where the project files are. There is no difference.
 
 
 The default build is no Kerberos library, but to enable it, all you do is
-uncomment the #define in the config.h file in the /Dev-C++/ directory.
+uncomment the #define in the config.h file in the BZFlag /Dev-C++/ directory.
 
 Some of the project files instruct the compiler to optimize to a mild extent, so
 compilation might be a small bit slower than normal compilation, but it is worth it and not
@@ -76,9 +80,9 @@ than DirectX SDK, and is available from:
 It is only a few megabytes, and is cross-platform. Remember to download the "devel"
 one for MinGW32 so it works nicely (however, a VC++ one may also work, but it is not recommended), if you
 are on Windows, otherwise download the one for GCC on Linux. Place
-the .a files in your "/lib/" directory of Dev-C++ (or MinGW32 dir), and the headers in
+the .a files in your "/lib/" directory of your MinGW32/GCC distribution, and the headers in
 "/include/". For libcURL, place the folder named "/curl/", containing .h files, into the "/include/" of
-Dev-C++, like stated above. Follow same instructions as for SDL for libcURL's .a files. Also, make sure
+MinGW32/GCC, like stated above. Follow same instructions as for SDL for libcURL's .a files. Also, make sure
 you put all included dynamic libraries from SDL and libcURL (for example, "SDL.dll" on Windows)
 somewhere in your PATH environment variable (on Windows), such as "c:\WINDOWS\".
 On Linux, place it in a directory that it knows to look in.
@@ -90,7 +94,7 @@ This bug may not happen all the time, but it is present.
 
 ==Linker cannot find "-lsdlmain"==
 If you get this error, you need to replace your SDL files with the ones downloadable from
-http://libsdl.org/ *Note: the libSDL package downloadable from the Dev-C++ update window will not fix this.
+http://libsdl.org/ *Note: the libSDL package downloadable from the Dev-C++/CodeBlocks update window will not fix this.
 
 ==The linker gives errors about undefined references to cURL functions==
 You need to complete step 
@@ -104,14 +108,14 @@ compiling.
 ==Linker Errors==
 If compilation includes linking errors, and you are using CVS source code, it may be temporary
 and due to the project files not being updated yet for new BZFlag source files. Make sure you
-also have the latest Dev-C++ files from CVS. If you are using release source code, it most likely
+also have the latest Dev-C++/CodeBlocks files from CVS. If you are using release source code, it most likely
 is due to the library (.a) files of your compiler. Make sure you have properly installed your compiler,
 and have the correct library files in the correct place, and of the correct version that matches your compiler.
-Also, your Dev-C++ configuration and setup (more specifically, that of MinGW32/GCC) may be the problem. If
-you have updated ANY part of your MinGW32/GCC from the version(s) that shipped with the original Dev-C++ release
+Also, your Dev-C++/CodeBlocks configuration and setup (more specifically, that of MinGW32/GCC) may be the problem. If
+you have updated ANY part of your MinGW32/GCC from the version(s) that shipped with the original Dev-C++/CodeBlocks release
 package that you originally downloaded, this may be it. If you get linker errors regarding undefined things that relate
 to C++, rather than BZFlag (you can usually tell by the names listed in the errors), then your compiler setup and files
-are the cause. Try reinstalling Dev-C++ or using the original compiler files that shipped with Dev-C++.
+are the cause. Try reinstalling Dev-C++/CodeBlocks or using the original compiler files that shipped with Dev-C++.
 
 ==Building BZAdmin with Curses==
 If you want to use the given project file to compile BZAdmin using
@@ -138,6 +142,9 @@ Dev-C++:
     *http://www.bloodshed.net
     *http://sf.net/projects/dev-cpp
 
+CodeBlocks:
+		*http://www.codeblocks.org
+	
 MinGW32:
     *http://www.mingw.org
     *http://sf.net/projects/mingw32
