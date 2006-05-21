@@ -349,9 +349,23 @@ void		BoltSceneNode::BoltRenderNode::renderGeoBolt()
 
 	glDisable(GL_TEXTURE_2D);
 
-	float coreBleed = 5.5f;
+	float coreBleed = 2.5f;
+	float minimumChannelVal = 0.35f;
+	float coreColor[3];
 
-	myColor4f(sceneNode->color[0]*coreBleed, sceneNode->color[1]*coreBleed, sceneNode->color[2]*coreBleed, 0.85f*alphaMod);
+	coreColor[0] = sceneNode->color[0]*coreBleed;
+	if (coreColor[0] < minimumChannelVal)
+		coreColor[0] = minimumChannelVal;
+
+	coreColor[1] = sceneNode->color[1]*coreBleed;
+	if (coreColor[1] < minimumChannelVal)
+		coreColor[1] = minimumChannelVal;
+
+	coreColor[2] = sceneNode->color[0]*coreBleed;
+	if (coreColor[2] < minimumChannelVal)
+		coreColor[2] = minimumChannelVal;
+
+	myColor4f(coreColor[0], coreColor[1], coreColor[2], 0.85f*alphaMod);
 	renderGeoPill(baseRadius,len,16);
 
 	float radInc = 1.5f*baseRadius - baseRadius;
