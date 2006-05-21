@@ -1,4 +1,4 @@
-README for Win32 platforms
+README for Windows (x32 and x64) platforms
 --------------------------
 
 BZFlag uses Microsoft Visual C++ for its prebuilt binary 
@@ -7,14 +7,14 @@ are also provided for Visual C++ 8.0 which are also
 useable by the free "visual C++ .net 2005 express edition".
 Visual Studio 6.0 support has been discontinued.
 
-It is also possible to build on Win32 using MinGW/MSYS or
+It is also possible to build on Windows using MinGW/MSYS or
 Cygwin, both of which use a unix-like make file system; 
 for details, see README.MINGW32 (for MinGW)or the main 
 README (for Cygwin).
 There is a Dev-C++ project available as well. Please see
 the README.DEVC++ for more info.
 
-So, to build bzflag on Win32, get Visual C++ or something
+So, to build bzflag on Windows, get Visual C++ or something
 that can read Visual C++ projects and workspaces.  Then:
 
 Configure your executables in the Tools/Options/Directory menu.
@@ -47,7 +47,7 @@ You will need the windows platform SDK
 You will need the windows DirectX SDK
   (instructions at http://msdn.microsoft.com/directx/sdk/readmepage/default.aspx)
 You will need to also install libCURL and curses (see above).
-Use the VC8 projects in the win32 directory.
+Use the VC8 projects in the MSVC directory.
 
 If you want to build with SDL (not recommended):
 Choose the Lib tab, and add SDLMain.lib and SDL.lib. These can be
@@ -57,6 +57,9 @@ that bzflag is running from, e.g. src/bzflag/SDL_Release or
 src/bzflag/SDL_Debug.
 When you want to build, set the active configuration to
 "BZFlag - Win32 SDL_Release" or "BZFlag - Win32 SDL_Debug"
-instead of the normal Win32 Release/Debug targets.
+instead of the normal Windows Release/Debug targets.
 note the standard builds are not done with SDL, as SDL
 does not provide all the same features as the native platform.
+
+If you wish to build for 64 bit Windows, you must use MSCV 8.0 (visual c++ .net 2005 ),
+and use the 64 bit targets.
