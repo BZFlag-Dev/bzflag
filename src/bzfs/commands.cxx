@@ -582,6 +582,15 @@ bool CmdList::operator() (const char*, GameKeeper::Player *playerData)
       commands.push_back(&cmd);
     }
   }
+  // add in the custom commands
+  tmCustomSlashCommandMap::iterator itr = customCommands.begin();
+  while(itr != customCommands.end())
+  {
+	  const std::string &cmd = itr->first;
+	  commands.push_back(&cmd);
+	  itr++;
+  }
+
   const int cmdCount = (int)commands.size();
 
   // get the maximum length
@@ -644,29 +653,36 @@ bool CmdHelp::operator() (const char	 *message,
   int t = playerData->getIndex();
   MapOfCommands::iterator it;
   MapOfCommands &commandMap = *getMapRef();
-  for (it = commandMap.begin(); it != commandMap.end(); it++) {
+  for (it = commandMap.begin(); it != commandMap.end(); it++)
+  {
     std::string master = it->first;
     master.resize(i);
-    if (master == commandToken) {
+    if (master == commandToken)
+	{
       matching++;
       none = false;
     }
   }
   if (none)
-    sendMessage(ServerPlayer, t,
-		("No command starting with " + commandToken).c_str());
+    sendMessage(ServerPlayer, t, ("No command starting with " + commandToken).c_str());
   else
-    for (it = commandMap.begin(); it != commandMap.end(); it++) {
-      std::string master = it->first;
-      master.resize(i);
-      if (master == commandToken)
-	if (matching > 1 || listOnly) {
-	  sendMessage(ServerPlayer, t, it->second->getHelp().c_str());
-	} else {
-	  std::string commandLine = it->first + (message + i + 1);
-	  return (*(it->second))(commandLine.c_str(), playerData);
-	}
+  {
+    for (it = commandMap.begin(); it != commandMap.end(); it++)
+	{
+		std::string master = it->first;
+		master.resize(i);
+		if (master == commandToken)
+		{
+			if (matching > 1 || listOnly) 
+				sendMessage(ServerPlayer, t, it->second->getHelp().c_str());
+			else 
+			{
+				std::string commandLine = it->first + (message + i + 1);
+				return (*(it->second))(commandLine.c_str(), playerData);
+			}
+		}
     }
+  }
   return true;
 }
 
@@ -3138,8 +3154,8 @@ void parseServerCommand(const char *message, int t)
     if (params.size() == 0)
       return;
 
-    tmCustomSlashCommandMap::iterator itr =
-      customCommands.find(TextUtils::tolower(params[0]));
+	std::string temp = "/" +  params[0];
+    tmCustomSlashCommandMap::iterator itr = customCommands.find(TextUtils::tolower(temp));
 
     bz_ApiString	command = params[0];
     bz_ApiString APIMessage;
@@ -3176,15 +3192,18 @@ void parseServerCommand(const char *message, int t)
 
 void registerCustomSlashCommand(std::string command, bz_CustomSlashCommandHandler* handler)
 {
-  if (handler)
-    customCommands[TextUtils::tolower(command)] = handler;
+	if (!handler && !command.size())
+		return;
+	 std::string realCommand = "/" + command;
+	customCommands[TextUtils::tolower(realCommand)] = handler;
 }
 
 void removeCustomSlashCommand(std::string command)
 {
-  tmCustomSlashCommandMap::iterator itr = customCommands.find(TextUtils::tolower(command));
-  if (itr != customCommands.end())
-    customCommands.erase(itr);
+	std::string realCommand = "/" + command;
+	tmCustomSlashCommandMap::iterator itr = customCommands.find(TextUtils::tolower(realCommand));
+	if (itr != customCommands.end())
+		customCommands.erase(itr);
 }
 
 
