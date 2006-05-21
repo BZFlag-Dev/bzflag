@@ -1616,6 +1616,7 @@ void addPlayer(int playerIndex, GameKeeper::Player *playerData)
   TeamColor t = autoTeamSelect(playerData->player.getTeam());
 
   bz_GetAutoTeamEventData_V1 autoTeamData;
+  autoTeamData.eventType = bz_eGetAutoTeamEvent;
   autoTeamData.playeID = playerIndex;
   autoTeamData.team = convertTeam(t);
   autoTeamData.callsign = playerData->player.getCallSign();
