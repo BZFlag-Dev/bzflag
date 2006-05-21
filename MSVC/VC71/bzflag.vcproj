@@ -603,9 +603,6 @@ copy debug\*.pdb ..\..\*.pdb
 				RelativePath="..\..\src\bzflag\TrackMarks.cxx">
 			</File>
 			<File
-				RelativePath="..\..\src\bzflag\VerticalSync.cxx">
-			</File>
-			<File
 				RelativePath="..\..\src\bzflag\Weapon.cxx">
 			</File>
 			<Filter
@@ -1928,9 +1925,6 @@ copy debug\*.pdb ..\..\*.pdb
 			</File>
 			<File
 				RelativePath="..\..\include\version.h">
-			</File>
-			<File
-				RelativePath="..\..\src\bzflag\VerticalSync.h">
 			</File>
 			<File
 				RelativePath="..\..\src\bzflag\Weapon.h">
