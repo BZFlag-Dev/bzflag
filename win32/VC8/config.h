@@ -73,13 +73,23 @@
 // define our OS
 
 #ifndef BZ_BUILD_OS
-  #ifdef _DEBUG
-    #define DEBUG
-	#define DEBUG_RENDERING
-    #define BZ_BUILD_OS			"W32VC8D"
-  #else
-    #define BZ_BUILD_OS			"W32VC8"
-  #endif //_DEBUG
+	#ifdef WIN64
+		#ifdef _DEBUG
+			#define DEBUG
+			#define DEBUG_RENDERING
+			#define BZ_BUILD_OS			"W64VC8D"
+		#else
+			#define BZ_BUILD_OS			"W64VC8"
+		#endif //_DEBUG
+	#else
+		#ifdef _DEBUG
+			#define DEBUG
+			#define DEBUG_RENDERING
+			#define BZ_BUILD_OS			"W32VC8D"
+		#else
+			#define BZ_BUILD_OS			"W32VC8"
+		#endif //_DEBUG
+	#endif // WIN64
 #endif //BZ_BUILD_OS
 
 /* Define to 1 if you have the `WaitForSingleObject' function. */
