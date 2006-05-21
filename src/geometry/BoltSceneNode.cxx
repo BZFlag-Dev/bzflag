@@ -332,36 +332,48 @@ void		BoltSceneNode::BoltRenderNode::renderGeoPill( float radius, float length, 
 
 void		BoltSceneNode::BoltRenderNode::renderGeoBolt()
 {
-	GLfloat len = sceneNode->length * 0.0075f;
-	float baseRadius = 5.0f;
-	len *= baseRadius;
+	// bzdb these 2? they controll the shot size
+	float lenMod = 0.035f;
+	float baseRadius = 0.325f;
+
+	GLfloat len = sceneNode->length * lenMod;
 	const GLfloat* sphere = sceneNode->getSphere();
 	glPushMatrix();
 	glRotatef(sceneNode->azimuth, 0.0f, 0.0f, 1.0f);
 	glRotatef(sceneNode->elevation, 0.0f, 1.0f, 0.0f);
 	glRotatef(90, 0.0f, 1.0f, 0.0f);
-//	glTranslatef(0, 0, -len);
 
 	float alphaMod = 1.0f;
 	if (sceneNode->phasingShot)
-		alphaMod = 0.75f;
+		alphaMod = 0.85f;
 
 	glDisable(GL_TEXTURE_2D);
 
 	float coreBleed = 5.5f;
 
 	myColor4f(sceneNode->color[0]*coreBleed, sceneNode->color[1]*coreBleed, sceneNode->color[2]*coreBleed, 0.85f*alphaMod);
+	renderGeoPill(baseRadius,len,16);
 
-	renderGeoPill(0.0625f*baseRadius,len,10);
-
+	float radInc = 1.5f*baseRadius - baseRadius;
+	glPushMatrix();
+	glTranslatef(0, 0, -radInc*0.5f);
 	myColor4f(sceneNode->color[0], sceneNode->color[1], sceneNode->color[2], 0.125f);
-	renderGeoPill(0.1f*baseRadius,len,16);
+	renderGeoPill(1.5f*baseRadius,len+radInc,25);
+	glPopMatrix();
 
+	radInc = 2.7f*baseRadius - baseRadius;
+	glPushMatrix();
+	glTranslatef(0, 0, -radInc*0.5f);
 	myColor4f(sceneNode->color[0], sceneNode->color[1], sceneNode->color[2], 0.125f);
-	renderGeoPill(0.2f*baseRadius,len,24);
+	renderGeoPill(2.7f*baseRadius,len+radInc,32);
+	glPopMatrix();
 
+	radInc = 3.8f*baseRadius - baseRadius;
+	glPushMatrix();
+	glTranslatef(0, 0,-radInc*0.5f);
 	myColor4f(sceneNode->color[0], sceneNode->color[1], sceneNode->color[2], 0.125f);
-	renderGeoPill(0.3f*baseRadius,len,32);
+	renderGeoPill(3.8f*baseRadius,len+radInc,48);
+	glPopMatrix();
 
 	glEnable(GL_TEXTURE_2D);
 
