@@ -1608,65 +1608,57 @@ static void makeObstacleList();
 static std::vector<BzfRegion*>	obstacleList;  // for robots
 #endif
 
-static void		handleServerMessage(bool human, uint16_t code,
-					    uint16_t len, void* msg)
+void handleResourceFetch (void* msg)
 {
-  std::vector<std::string> args;
-  bool checkScores = false;
-  static WordFilter *wordfilter = (WordFilter *)BZDB.getPointer("filter");
+	if (BZDB.isSet ("_noRemoteFiles") && BZDB.isTrue ("_noRemoteFiles"))
+		return;
 
-  switch (code) {
-
-    case MsgFetchResources:
-      if (BZDB.isSet ("_noRemoteFiles") && BZDB.isTrue ("_noRemoteFiles")) {
-	break;
-      }
-      else {
 	uint16_t numItems;
 	void *buf;
 
 	buf = nboUnpackUShort (msg, numItems);    // the type
 
-	for (int i = 0; i < numItems; i++) {
-	  uint16_t itemType;
-	  char buffer[MessageLen];
-	  uint16_t stringLen;
-	  trResourceItem item;
+	for (int i = 0; i < numItems; i++)
+	{
+		uint16_t itemType;
+		char buffer[MessageLen];
+		uint16_t stringLen;
+		trResourceItem item;
 
-	  buf = nboUnpackUShort (buf, itemType);
-	  item.resType = (teResourceType) itemType;
+		buf = nboUnpackUShort (buf, itemType);
+		item.resType = (teResourceType) itemType;
 
-	  // URL
-	  buf = nboUnpackUShort (buf, stringLen);
-	  buf = nboUnpackString (buf, buffer, stringLen);
+		// URL
+		buf = nboUnpackUShort (buf, stringLen);
+		buf = nboUnpackString (buf, buffer, stringLen);
 
-	  buffer[stringLen] = '\0';
-	  item.URL = buffer;
+		buffer[stringLen] = '\0';
+		item.URL = buffer;
 
-	  item.filePath = PlatformFactory::getMedia ()->getMediaDirectory ();
-	  std::vector < std::string > temp =
-	    TextUtils::tokenize (item.URL, std::string ("/"));
+		item.filePath = PlatformFactory::getMedia ()->getMediaDirectory ();
+		std::vector < std::string > temp =
+			TextUtils::tokenize (item.URL, std::string ("/"));
 
-	  item.fileName = temp[temp.size () - 1];
-	  item.filePath += item.fileName;
+		item.fileName = temp[temp.size () - 1];
+		item.filePath += item.fileName;
 
-	  std::string hostname;
-	  parseHostname (item.URL, hostname);
-	  if (authorizedServer (hostname)) {
-	    if (!resourceDownloader)
-	      resourceDownloader = new ResourceGetter;
-	    resourceDownloader->addResource (item);
-	  }
+		std::string hostname;
+		parseHostname (item.URL, hostname);
+		if (authorizedServer (hostname))
+		{
+			if (!resourceDownloader)
+				resourceDownloader = new ResourceGetter;
+			resourceDownloader->addResource (item);
+		}
 	}
-      }
-      break;
+}
 
-    case MsgCustomSound:
-      // bail out if we don't want to do remote sounds
-      if (BZDB.isSet ("_noRemoteSounds") && BZDB.isTrue ("_noRemoteSounds")) {
-	break;
-      }
-      else {
+void handleCustomSound ( void *msg )
+{
+	// bail out if we don't want to do remote sounds
+	if (BZDB.isSet ("_noRemoteSounds") && BZDB.isTrue ("_noRemoteSounds"))
+		return;
+
 	void *buf;
 	char buffer[MessageLen];
 	uint16_t soundType;
@@ -1681,41 +1673,65 @@ static void		handleServerMessage(bool human, uint16_t code,
 	soundName = buffer;
 
 	if (soundType == LocalCustomSound)
-	  playLocalSound (soundName);
-      }
+		playLocalSound (soundName);
+}
+
+void handleSuperKill ( void *msg )
+{
+	uint8_t id;
+	nboUnpackUByte(msg, id);
+	if (!myTank || myTank->getId() == id || id == 0xff)
+	{
+		serverError = true;
+		printError("Server forced a disconnect");
+#ifdef ROBOT
+	}
+	else
+	{
+		int i;
+		for (i = 0; i < MAX_ROBOTS; i++)
+		{
+			if (robots[i] && robots[i]->getId() == id)
+				break;
+		}
+		if (i >= MAX_ROBOTS)
+			return;
+		delete robots[i];
+		robots[i] = NULL;
+		numRobots--;
+#endif
+	}
+}
+
+
+static void		handleServerMessage(bool human, uint16_t code,
+					    uint16_t len, void* msg)
+{
+  std::vector<std::string> args;
+  bool checkScores = false;
+  static WordFilter *wordfilter = (WordFilter *)BZDB.getPointer("filter");
+
+  switch (code)
+  {
+    case MsgFetchResources:
+      handleResourceFetch(msg);
+      break;
+
+    case MsgCustomSound:
+      handleCustomSound(msg);
       break;
 
     case MsgUDPLinkEstablished:
-      // server got our initial UDP packet
-      serverLink->enableOutboundUDP();
+      serverLink->enableOutboundUDP();      // server got our initial UDP packet
       break;
 
     case MsgUDPLinkRequest:
-      // we got server's initial UDP packet
-      serverLink->confirmIncomingUDP();
+      serverLink->confirmIncomingUDP();      // we got server's initial UDP packet
       break;
 
-    case MsgSuperKill: {
-      uint8_t id;
-      nboUnpackUByte(msg, id);
-      if (!myTank || myTank->getId() == id || id == 0xff) {
-	serverError = true;
-	printError("Server forced a disconnect");
-#ifdef ROBOT
-      } else {
-	int i;
-	for (i = 0; i < MAX_ROBOTS; i++)
-	  if (robots[i] && robots[i]->getId() == id)
-	    break;
-	if (i >= MAX_ROBOTS)
-	  break;
-	delete robots[i];
-	robots[i] = NULL;
-	numRobots--;
-#endif
-      }
+    case MsgSuperKill: 
+		handleSuperKill(msg);
       break;
-    }
 
     case MsgAccept:
       break;
