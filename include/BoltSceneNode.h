@@ -54,7 +54,8 @@ class BoltSceneNode : public ShotSceneNode {
 	void		setTextureColor(const GLfloat* rgba);
 	void		render();
 	void		renderGeoBolt();
-	void		renderGeoPill( float radius, float length, int segments);
+	void		renderGeoGMBolt();
+	void		renderGeoPill( float radius, float length, int segments, float endRad = -1);
 
 	const GLfloat*	getPosition() const { return sceneNode->getSphere(); }
 	void		setAnimation(int cu, int cv);

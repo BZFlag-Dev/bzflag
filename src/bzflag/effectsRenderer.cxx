@@ -719,7 +719,7 @@ void StdShotEffect::draw(const SceneRenderer &)
 	glColor4f(color[0],color[1],color[2],alpha);
 	glDepthMask(0);
 
-	drawRingYZ(radius,0.5f /*+ (age * 0.125f)*/,1.0f+age*5,0.65f,pos[2],1.0f,32,20.0f);
+	drawRingYZ(radius,0.5f /*+ (age * 0.125f)*/,1.0f+age*5,0.65f,pos[2],1.0f,32,5.0f);
 
 	glColor4f(1,1,1,1);
 	glDepthMask(1);

@@ -280,52 +280,133 @@ void			BoltSceneNode::BoltRenderNode::setColor(
   flareColor[3] = (rgba[3] == 1.0f )? 0.667f : rgba[3];
 }
 
-void		BoltSceneNode::BoltRenderNode::renderGeoPill( float radius, float length, int segments )
+void		BoltSceneNode::BoltRenderNode::renderGeoPill( float radius, float length, int segments, float endRad )
 {
-	float lenMinusRads = length - radius*2;
 	glPushMatrix();
 
-	// 4 parts of the first hemesphere
-	gluCylinder(gluNewQuadric(),0,radius*0.43589,radius*0.1f,segments,1);
-	addTriangleCount(segments);
-	glTranslatef(0,0,radius*0.1f);
+	float assRadius = radius;
+	if (endRad >= 0)
+		assRadius = endRad;
 
-	gluCylinder(gluNewQuadric(),radius*0.43589,radius*0.66144,radius*0.15f,segments,1);
-	addTriangleCount(segments);
-	glTranslatef(0,0,radius*0.15f);
+	float lenMinusRads = length - (radius+assRadius);
 
-	gluCylinder(gluNewQuadric(),radius*0.66144f,radius*0.86603f,radius*0.25f,segments,1);
-	addTriangleCount(segments);
-	glTranslatef(0,0,radius*0.25f);
+	if (assRadius > 0)
+	{
+		// 4 parts of the first hemesphere
+		gluCylinder(gluNewQuadric(),0,assRadius*0.43589,assRadius*0.1f,segments,1);
+		addTriangleCount(segments);
+		glTranslatef(0,0,assRadius*0.1f);
 
-	gluCylinder(gluNewQuadric(),radius*0.86603,radius,radius*0.5f,segments,1);
-	addTriangleCount(segments);
-	glTranslatef(0,0,radius*0.5f);
+		gluCylinder(gluNewQuadric(),assRadius*0.43589,assRadius*0.66144,assRadius*0.15f,segments,1);
+		addTriangleCount(segments);
+		glTranslatef(0,0,assRadius*0.15f);
+
+		gluCylinder(gluNewQuadric(),assRadius*0.66144f,assRadius*0.86603f,assRadius*0.25f,segments,1);
+		addTriangleCount(segments);
+		glTranslatef(0,0,assRadius*0.25f);
+
+		gluCylinder(gluNewQuadric(),assRadius*0.86603,assRadius,assRadius*0.5f,segments,1);
+		addTriangleCount(segments);
+		glTranslatef(0,0,assRadius*0.5f);
+	}
 
 	// the "shaft"
 	if (lenMinusRads > 0)
 	{
-		gluCylinder(gluNewQuadric(),radius,radius,lenMinusRads,segments,1);
+		gluCylinder(gluNewQuadric(),assRadius,radius,lenMinusRads,segments,1);
 		addTriangleCount(segments);
 		glTranslatef(0,0,lenMinusRads);
 	}
 
-	// 4 parts of the last hemesphere
-	gluCylinder(gluNewQuadric(),radius,radius*0.86603,radius*0.5f,segments,1);
-	addTriangleCount(segments);
-	glTranslatef(0,0,radius*0.5f);
+	if (radius > 0)
+	{
+		// 4 parts of the last hemesphere
+		gluCylinder(gluNewQuadric(),radius,radius*0.86603,radius*0.5f,segments,1);
+		addTriangleCount(segments);
+		glTranslatef(0,0,radius*0.5f);
 
-	gluCylinder(gluNewQuadric(),radius*0.86603f,radius*0.66144f,radius*0.25f,segments,1);
-	addTriangleCount(segments);
-	glTranslatef(0,0,radius*0.25f);
+		gluCylinder(gluNewQuadric(),radius*0.86603f,radius*0.66144f,radius*0.25f,segments,1);
+		addTriangleCount(segments);
+		glTranslatef(0,0,radius*0.25f);
 
-	gluCylinder(gluNewQuadric(),radius*0.66144,radius*0.43589,radius*0.15f,segments,1);
-	addTriangleCount(segments);
-	glTranslatef(0,0,radius*0.15f);
+		gluCylinder(gluNewQuadric(),radius*0.66144,radius*0.43589,radius*0.15f,segments,1);
+		addTriangleCount(segments);
+		glTranslatef(0,0,radius*0.15f);
 
-	gluCylinder(gluNewQuadric(),radius*0.43589,0,radius*0.1f,segments,1);
-	addTriangleCount(segments);
-	glTranslatef(0,0,radius*0.1f);
+		gluCylinder(gluNewQuadric(),radius*0.43589,0,radius*0.1f,segments,1);
+		addTriangleCount(segments);
+		glTranslatef(0,0,radius*0.1f);
+	}
+
+	glPopMatrix();
+}
+
+void		BoltSceneNode::BoltRenderNode::renderGeoGMBolt()
+{
+	// bzdb these 2? they controll the shot size
+	float lenMod = 0.025f;
+	float baseRadius = 0.2f;
+
+	GLfloat len = sceneNode->length * lenMod;
+	//	const GLfloat* sphere = sceneNode->getSphere();
+	glPushMatrix();
+	glRotatef(sceneNode->azimuth, 0.0f, 0.0f, 1.0f);
+	glRotatef(sceneNode->elevation, 0.0f, 1.0f, 0.0f);
+	glRotatef(90, 0.0f, 1.0f, 0.0f);
+
+	float alphaMod = 1.0f;
+	if (sceneNode->phasingShot)
+		alphaMod = 0.85f;
+
+	glDisable(GL_TEXTURE_2D);
+
+	float coreBleed = 4.5f;
+	float minimumChannelVal = 0.45f;
+	float coreColor[3];
+
+	coreColor[0] = sceneNode->color[0]*coreBleed;
+	if (coreColor[0] < minimumChannelVal)
+		coreColor[0] = minimumChannelVal;
+
+	coreColor[1] = sceneNode->color[1]*coreBleed;
+	if (coreColor[1] < minimumChannelVal)
+		coreColor[1] = minimumChannelVal;
+
+	coreColor[2] = sceneNode->color[2]*coreBleed;
+	if (coreColor[2] < minimumChannelVal)
+		coreColor[2] = minimumChannelVal;
+
+	glPushMatrix();
+	myColor4f(1, 1, 1, 0.85f*alphaMod);
+	glTranslatef(0, 0, len-baseRadius);
+	gluSphere(gluNewQuadric(),baseRadius*0.75f,6,6);
+	addTriangleCount(6*6);
+	glPopMatrix();
+
+	myColor4f(coreColor[0], coreColor[1], coreColor[2], 0.85f*alphaMod);
+	renderGeoPill(baseRadius,len,16,baseRadius*0.25f);
+
+	float radInc = 1.5f*baseRadius - baseRadius;
+	glPushMatrix();
+	glTranslatef(0, 0, -radInc*0.5f);
+	myColor4f(sceneNode->color[0], sceneNode->color[1], sceneNode->color[2], 0.5f);
+	renderGeoPill(1.5f*baseRadius,len+radInc,25,1.5f*baseRadius*0.25f);
+	glPopMatrix();
+
+	glPushMatrix();
+	myColor4f(1, 1, 1, 0.125f);
+	glTranslatef(0, 0, len*0.125f);
+	gluCylinder(gluNewQuadric(),3.0f*baseRadius,1.75f*baseRadius,len*0.35f,16,1);
+	addTriangleCount(16);
+
+	glTranslatef(0, 0, len*0.5f);
+	gluCylinder(gluNewQuadric(),2.5f*baseRadius,1.5f*baseRadius,len*0.25f,16,1);
+	addTriangleCount(16);
+
+	glPopMatrix();
+
+
+	glEnable(GL_TEXTURE_2D);
 
 	glPopMatrix();
 }
@@ -402,8 +483,13 @@ void			BoltSceneNode::BoltRenderNode::render()
   const GLfloat* sphere = sceneNode->getSphere();
   glPushMatrix();
     glTranslatef(sphere[0], sphere[1], sphere[2]);
-	if (!sceneNode->drawFlares && RENDERER.useQuality() >= _EXPERIMENTAL_QUALITY)
-		renderGeoBolt();
+	if ( RENDERER.useQuality() >= _EXPERIMENTAL_QUALITY)
+	{
+		if (!sceneNode->drawFlares)
+			renderGeoBolt();
+		else
+			renderGeoGMBolt();
+	}
 	else
 	{
 		RENDERER.getViewFrustum().executeBillboard();
