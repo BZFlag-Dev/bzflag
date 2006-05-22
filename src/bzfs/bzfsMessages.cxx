@@ -532,7 +532,7 @@ void sendTextMessage(int destPlayer, int sourcePlayer, const char *text,
       for (int i = 0; i < curMaxPlayers; i++) {
 	GameKeeper::Player* otherData
 	  = GameKeeper::Player::getPlayerByIndex(i);
-	if (otherData || otherData->playerHandler)
+	if (otherData && otherData->playerHandler)
 	  sendTextMessage(i, sourcePlayer, text, len);
       }
     } else {

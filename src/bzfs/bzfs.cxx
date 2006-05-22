@@ -1245,7 +1245,7 @@ void sendMessage(int playerIndex, PlayerId dstPlayer, const char *message)
       worldEventManager.callEvents(bz_eServerMsgEvent, &serverMsgData);
     }
 
-	sendTextMessage(-1,playerIndex,msg,msglen,true);
+	sendTextMessage(AllPlayers,playerIndex,msg,msglen,true);
     broadcast = true;
   }
 
