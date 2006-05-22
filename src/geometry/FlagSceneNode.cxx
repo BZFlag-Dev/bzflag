@@ -559,8 +559,8 @@ void FlagSceneNode::setTexture(const int texture)
 void FlagSceneNode::notifyStyleChange()
 {
   const int quality = RENDERER.useQuality();
-  geoPole = (quality >= 1);
-  realFlag = (quality >= 3);
+  geoPole = (quality >= _MEDIUM_QUALITY);
+  realFlag = (quality >= _EXPERIMENTAL_QUALITY);
 
   texturing = BZDBCache::texture && BZDBCache::blend;
   OpenGLGStateBuilder builder(gstate);
