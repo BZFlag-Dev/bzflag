@@ -29,6 +29,9 @@ static void drawRingYZ(float rad, float z, float topsideOffset = 0,
 static void drawRingXY(float rad, float z, float topsideOffset = 0,
 		       float bottomUV = 0, float topUV = 1.0f,
 		       int segments = 32, float uScale = 2.0f);
+
+static void drawRingZ (float innerRad, float outerRad, float innerUV = 0.0f , float outerUV = 1.0f, float ZOffset = 0, int segments = 32, float uScale = 1.0f );
+
 static void RadialToCartesian(float angle, float rad, float *pos);
 
 #define deg2Rad 0.017453292519943295769236907684886f
@@ -825,7 +828,7 @@ void FlashShotEffect::draw(const SceneRenderer &)
 StdDeathEffect::StdDeathEffect() : BasicEffect()
 {
 	texture = TextureManager::instance().getTextureID("blend_flash",false);
-	lifetime = 1.5f;
+	lifetime = 1.25f;
 	radius = 2.0f;
 
 
@@ -856,7 +859,7 @@ bool StdDeathEffect::update ( float time )
 	// we live another day
 	// do stuff that maybe need to be done every time to animage
 
-	radius += deltaTime*20;
+	radius += deltaTime*25;
 	return false;
 }
 
@@ -881,9 +884,9 @@ void StdDeathEffect::draw(const SceneRenderer &)
 
 	float ageParam = age/lifetime;
 
-	float alpha = 1.0f-(ageParam*0.5f);
-	if (alpha < 0.005f)
-		alpha = 0.005f;
+	float alpha = 1.0f-ageParam;
+	if (alpha < 0.00f)
+		alpha = 0.00f;
 
 	color[0] += deltas[0] *ageParam;
 	color[1] += deltas[1] *ageParam;
@@ -897,8 +900,12 @@ void StdDeathEffect::draw(const SceneRenderer &)
 	drawRingXY(radius*0.75f,1.5f + (ageParam/1.0f * 10),0.5f*age,0.5f);
 	drawRingXY(radius,-0.5f,0.5f+ age,0.5f);
 
-	glRotatef(90,0,0,1);
-	drawRingYZ(radius,3,0,0,position[2]+0.5f);
+	glRotatef(5,0,1,0);
+	drawRingZ(radius,radius+(radius*0.45f));
+	glRotatef(-5,0,1,0);
+	drawRingZ(radius,radius+(radius*0.25f));
+	glRotatef(-5,0,1,0);
+	drawRingZ(radius,radius+(radius*0.25f));
 	glPopMatrix();
 
 	glColor4f(1,1,1,1);
@@ -1200,7 +1207,6 @@ static void drawRingXY(float rad, float z, float topsideOffset, float bottomUV,
 
 		float thispos[2];
 		float nextPos[2];
-
 		float thispos2[2];
 		float nextPos2[2];
 
@@ -1267,6 +1273,60 @@ static float clampedZ(float z, float offset)
 	return -offset;
 }
 
+static void drawRingZ (float innerRad, float outerRad, float innerUV, float outerUV, float ZOffset, int segments, float uScale )
+{
+	for ( int i = 0; i < segments; i ++)
+	{
+		float thisAng = 360.0f/segments * i;
+		float nextAng = 360.0f/segments * (i+1);
+		if ( i+1 >= segments )
+			nextAng = 0;
+
+		float thisposR1[2];
+		float thisposR2[2];
+		float nextPosR1[2];
+		float nextPosR2[2];
+
+		RadialToCartesian(thisAng,innerRad,thisposR1);
+		RadialToCartesian(thisAng,outerRad,thisposR2);
+		RadialToCartesian(nextAng,innerRad,nextPosR1);
+		RadialToCartesian(nextAng,outerRad,nextPosR2);
+
+
+		glBegin(GL_QUADS);
+		float thisU = thisAng/360.0f*uScale;
+		float nextU = nextAng/360.0f*uScale;
+
+		// the "left" Side
+		glNormal3f(-1,0,0);
+		glTexCoord2f(thisU,innerUV);
+		glVertex3f(0,thisposR1[1],clampedZ(thisposR1[0],ZOffset));
+
+		glTexCoord2f(nextU,innerUV);
+		glVertex3f(0,nextPosR1[1],clampedZ(nextPosR1[0],ZOffset));
+
+		glTexCoord2f(nextU,outerUV);
+		glVertex3f(0,nextPosR2[1],clampedZ(nextPosR2[0],ZOffset));
+
+		glTexCoord2f(thisU,outerUV);
+		glVertex3f(0,thisposR2[1],clampedZ(thisposR2[0],ZOffset));
+
+		// the "right" side
+		glNormal3f(1,0,0);
+		glTexCoord2f(thisU,innerUV);
+		glVertex3f(0,thisposR1[1],clampedZ(thisposR1[0],ZOffset));
+
+		glTexCoord2f(thisU,outerUV);
+		glVertex3f(0,thisposR2[1],clampedZ(thisposR2[0],ZOffset));
+	
+		glTexCoord2f(nextU,outerUV);
+		glVertex3f(0,nextPosR2[1],clampedZ(nextPosR2[0],ZOffset));
+
+		glTexCoord2f(nextU,innerUV);
+		glVertex3f(0,nextPosR1[1],clampedZ(nextPosR1[0],ZOffset));
+		glEnd();
+	}
+}
 
 static void drawRingYZ(float rad, float z, float topsideOffset, float bottomUV,
 		       float ZOffset, float topUV, int segments, float uScale)
@@ -1280,7 +1340,6 @@ static void drawRingYZ(float rad, float z, float topsideOffset, float bottomUV,
 
 		float thispos[2];
 		float nextPos[2];
-
 		float thispos2[2];
 		float nextPos2[2];
 
