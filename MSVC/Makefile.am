@@ -1,5 +1,6 @@
-SUBDIRS = VC71 \
-	    VC8
+SUBDIRS = \
+	VC71 \
+	VC8
 
 EXTRA_DIST =	\
 	bzflag.ico	\
