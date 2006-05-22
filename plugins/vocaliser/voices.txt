@@ -1,7 +1,0 @@
-voice M2
-description Unreal Male #2
-URLBase http://my.bzflag.org/resources/sounds/voices/ut/M2/
-URLExtension wav
-prefeix M2-
-all gotim "Got 'im" gotim
-endvoice
