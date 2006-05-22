@@ -3212,6 +3212,7 @@ static void handleCommand(const void *rawbuf, bool udp, NetHandler *handler)
     // player sending a message
     case MsgMessage: 
 		handlePlayerMessage(playerData,buf);
+		break;
 
     // player has transferred flag to another tank
     case MsgTransferFlag: {
