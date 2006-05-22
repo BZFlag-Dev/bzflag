@@ -20,55 +20,83 @@
 #include "common.h"
 #include "SceneNode.h"
 
-const int maxChunks = 20;
+
+const int maxFlagLODs = 9; // max 256 quads
+
+
+class FlagPhase;
+
+
 class FlagSceneNode : public SceneNode {
+
+  friend class FlagRenderNode;
+  
   public:
-			FlagSceneNode(const GLfloat pos[3]);
-			~FlagSceneNode();
+    FlagSceneNode(const GLfloat pos[3]);
+    ~FlagSceneNode();
 
-    static void		waveFlag(float dt);
-    static void		freeFlag();
+    static void waveFlags();
+    static void setTimeStep(float dt);
 
-    void		move(const GLfloat pos[3]);
-    void		setAngle(GLfloat angle);
-    void		setWind(const GLfloat wind[3], float dt);
-    void		setBillboard(bool billboard);
+    void move(const GLfloat pos[3]);
+    void setAngle(GLfloat angle);
+    void setWind(const GLfloat wind[3], float dt);
+    void setFlat(bool flat);
 
-    const GLfloat*	getColor() const { return color; }
-    void		setColor(GLfloat r, GLfloat g,
-				 GLfloat b, GLfloat a = 1.0f);
-    void		setColor(const GLfloat* rgba);
-    void		setTexture(const int);
+    void setColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a = 1.0f);
+    void setColor(const GLfloat* rgba);
+    void setTexture(const int);
+    const GLfloat* getColor() const { return color; }
 
-    void		notifyStyleChange();
-    void		addRenderNodes(SceneRenderer&);
-    void		addShadowNodes(SceneRenderer&);
+    void addRenderNodes(SceneRenderer&); // also computes the LOD
+    void addShadowNodes(SceneRenderer&);
 
-    bool		cullShadow(int planeCount,
-				   const float (*planes)[4]) const;
+    void notifyStyleChange();
+    
+    bool cullShadow(int planeCount, const float (*planes)[4]) const;
+    
   protected:
     class FlagRenderNode : public RenderNode {
       public:
-			FlagRenderNode(const FlagSceneNode*);
-			~FlagRenderNode();
-	void		render();
-	const GLfloat*	getPosition() const { return sceneNode->getSphere(); }
+        FlagRenderNode(const FlagSceneNode*);
+        ~FlagRenderNode();
+
+        void render();
+        void renderShadow();
+
+        const GLfloat* getPosition() const { return sceneNode->getSphere(); }
+
       private:
-	const FlagSceneNode* sceneNode;
-	int	     waveReference;
+        void renderFancyPole();
+
+      private:
+        const FlagSceneNode* sceneNode;
+        bool isShadow;
     };
-    friend class FlagRenderNode;
+
 
   private:
-    bool		billboard;
+    int calcLOD(const SceneRenderer&);
+    int calcShadowLOD(const SceneRenderer&);
+		
+  private:
+    FlagPhase*		phase;
+
+    int			lod;
+    int			shadowLOD;
+    
+    bool		flat;
+    bool		translucent;
+    bool		texturing;
     GLfloat		angle;
     GLfloat		tilt;
     GLfloat		hscl;
     GLfloat		color[4];
-    bool		transparent;
-    bool		texturing;
     OpenGLGState	gstate;
     FlagRenderNode	renderNode;
+
+    static const int	minPoleLOD;
+    static const float	lodLengths[maxFlagLODs];
 };
 
 #endif // BZF_FLAG_SCENE_NODE_H

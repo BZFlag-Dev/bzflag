@@ -30,6 +30,7 @@
 #include "ParseColor.h"
 #include "BZDBCache.h"
 #include "MeshSceneNode.h"
+#include "FlagSceneNode.h"
 
 /* FIXME - local implementation dependancies */
 #include "BackgroundRenderer.h"
@@ -288,12 +289,13 @@ void SceneRenderer::setQuality(int value)
   else
     TankSceneNode::setMaxLOD(2);
 
-  if (useQualityValue >= _HIGH_QUALITY)
-    BZDB.set("flagChunks","32");
-  else if (useQualityValue >= _MEDIUM_QUALITY)
-    BZDB.set("flagChunks","12");
-  else
-    BZDB.set("flagChunks","8");
+  if (useQualityValue >= _EXPERIMENTAL_QUALITY) {
+    BZDB.set("maxFlagLOD", "8"); // 256 quads
+  } else if (useQualityValue >= _HIGH_QUALITY) {
+    BZDB.set("maxFlagLOD", "6"); //  64 quads
+  } else {
+    BZDB.set("maxFlagLOD", "4"); //  16 quads
+  }
 
   if (useQualityValue >= _HIGH_QUALITY)
     BZDB.set("moonSegments","64");
@@ -892,6 +894,10 @@ void SceneRenderer::renderScene(bool /*_lastFrame*/, bool /*_sameFrame*/,
 
   // get the obstacle sceneNodes and shadowNodes
   getRenderNodes();
+
+  // update the required flag phases
+  // (after the sceneNodes have been added, before the rendering)
+  FlagSceneNode::waveFlags();
 
   // prepare transforms
   // note -- lights should not be positioned before view is set

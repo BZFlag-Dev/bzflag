@@ -185,8 +185,8 @@ void TankGeometryMgr::buildLists()
   int quality = RENDERER.useQuality();
   if (quality < _LOW_QUALITY) {
     quality = _LOW_QUALITY;
-  } else if (quality > _EXPEREMENTAL_QUALITY) {
-    quality = _EXPEREMENTAL_QUALITY;
+  } else if (quality > _EXPERIMENTAL_QUALITY) {
+    quality = _EXPERIMENTAL_QUALITY;
   }
   int wheelDivs = divisionLevels[quality][0];
   int treadDivs = divisionLevels[quality][1];

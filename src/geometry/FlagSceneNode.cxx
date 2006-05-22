@@ -21,231 +21,468 @@
 #include <math.h>
 
 // common implementation headers
+#include "vectors.h"
 #include "OpenGLGState.h"
 #include "OpenGLMaterial.h"
+#include "ViewFrustum.h"
+#include "SceneRenderer.h"
 #include "StateDatabase.h"
 #include "BZDBCache.h"
 
-// local implementation headers
-#include "ViewFrustum.h"
 
-// FIXME (SceneRenderer.cxx is in src/bzflag)
-#include "SceneRenderer.h"
+// FIXME - flag geometry would benefit from VBOs
+// FIXME - DL/VBO's for the "fancy pole"? (alpha is the prob)
+// FIXME - pole visibility based on LOD is not quite right
+// FIXME - had to remove the LOD'ed spherical pole and cylindrical pole cap
 
 
-static const int	waveLists = 8;		// GL list count
-static int		flagChunks = 8;		// draw flag as 8 quads
-static bool		geoPole = false;	// draw the pole as quads
-static bool		realFlag = false;	// don't use billboarding
-static bool		flagLists = false;	// use display lists
-static int		triCount = 0;		// number of rendered triangles
+static const int maxFlagLOD   = (maxFlagLODs - 1); 
+static const int maxFlagQuads = (1 << maxFlagLOD);
+static const int maxFlagVerts = 2 * (maxFlagQuads + 1);
 
-static const GLfloat	Unit = 0.8f;		// meters
-static const GLfloat	Width = 1.5f * Unit;
-static const GLfloat	Height = Unit;
+static bool geoPole = false;	// draw the pole as quads
+static bool realFlag = false;	// don't use billboarding
+
+static const GLfloat Unit = 0.8f;
+static const GLfloat Width = 1.5f * Unit;
+static const GLfloat Height = Unit;
+
+static const GLfloat specular[4] = {0.3f, 0.3f, 0.3f, 1.0f};
+static const GLfloat emission[4] = {0.0f, 0.0f, 0.0f, 1.0f};
 
 
 /******************************************************************************/
-
 //
-// WaveGeometry  (local helper class)
+// FlagPhase  (local class)
 //
 
-class WaveGeometry {
+static const int maxFlagPhases = 8;
+
+
+class FlagPhase {
   public:
-    WaveGeometry();
 
-    void refer() { refCount++; }
-    void unrefer() { refCount--; }
+    static FlagPhase*	getPhase();
+    static void		setTimeStep(float dt);
+    static void		updatePhases();
 
-    void waveFlag(float dt);
-    void freeFlag();
+    // return the triangle count
+    int render(int lod) const;
+    int renderShadow(int lod) const;
 
-    void execute() const;
-    void executeNoList() const;
+    void updateMaxLOD(int);
+    
+  private: 
+    FlagPhase();
+    ~FlagPhase();
+
+    void update(float dt);
 
   private:
-    int refCount;
+    int maxLOD;
+    int activeLOD;
+
     float ripple1;
     float ripple2;
 
-    GLuint glList;
-    GLfloat verts[(maxChunks + 1) * 2][3];
-    GLfloat txcds[(maxChunks + 1) * 2][2];
+    GLfloat verts[maxFlagVerts][3];
+    GLfloat norms[maxFlagVerts][3];
+    GLfloat txcds[maxFlagVerts][2];
 
+  private:
+    static void makeIndices();
+    static void freeIndices();
+    
+  private:
+    static FlagPhase phases[maxFlagPhases];
+    
+    static GLushort* indices[maxFlagLODs];
+    static int elementCounts[maxFlagLODs];
+
+    static int counter;
+    static float timeStep;
     static const float RippleSpeed1;
     static const float RippleSpeed2;
 };
 
 
-const float WaveGeometry::RippleSpeed1 = (float)(2.4 * M_PI);
-const float WaveGeometry::RippleSpeed2 = (float)(1.724 * M_PI);
+/******************************************************************************/
+//
+// FlagPhase static data
+//
 
 
-inline void WaveGeometry::executeNoList() const
+GLushort* FlagPhase::indices[maxFlagLODs] = { NULL };
+int FlagPhase::elementCounts[maxFlagLODs];
+
+FlagPhase FlagPhase::phases[maxFlagPhases];
+
+int FlagPhase::counter = 0;
+float FlagPhase::timeStep = 0.0f;
+const float FlagPhase::RippleSpeed1 = (float)(2.4 * M_PI);
+const float FlagPhase::RippleSpeed2 = (float)(1.724 * M_PI);
+
+
+/******************************************************************************/
+//
+// FlagPhase static functions
+//
+
+FlagPhase* FlagPhase::getPhase()
 {
-  glDisableClientState(GL_NORMAL_ARRAY);
+  counter = (counter + 1) % maxFlagPhases;
+  return &phases[counter];
+}
+
+
+void FlagPhase::updatePhases()
+{
+  // not really required
+  if (BZDBCache::maxFlagLOD < 0) {
+    BZDB.setInt("maxFlagLOD", 0);
+  } else if (BZDBCache::maxFlagLOD > maxFlagLOD) {
+    BZDB.setInt("maxFlagLOD", maxFlagLOD);
+  }
+  
+  for (int i = 0; i < maxFlagPhases; i++) {
+    phases[i].update(timeStep);
+  }
+  return;
+}
+
+
+void FlagPhase::setTimeStep(float _dt)
+{
+  timeStep = _dt;
+  return;
+}
+
+
+void FlagPhase::makeIndices()
+{
+  // NOTE: binary interleaved patterns for different LODs
+  //       - used as element indices to glDrawElements
+  //       - used as reverse mapping indices (it works out that way)
+
+  int quads = 1; // doubled at the end of the 'for' loop
+
+  for (int i = 0; i < maxFlagLODs; i++) {
+
+    const int elements = 2 * ((1 << i) + 1);
+    elementCounts[i] = elements;
+    
+    indices[i] = new GLushort[elements];
+    indices[i][0] = 0;
+    indices[i][1] = 1;
+    indices[i][elements - 2] = 2;
+    indices[i][elements - 1] = 3;
+
+    int skip = quads;
+    int element = 2;
+    while (skip > 1) {
+      int pos = skip / 2;
+      while (pos <= quads) {
+        indices[i][pos*2] = (element * 2);
+        indices[i][pos*2+1] = (element * 2) + 1;
+        element++;
+        pos = pos + skip;
+      }
+      skip = skip / 2;
+    }
+    
+    quads *= 2;
+  }
+
+  return; 
+}
+
+
+void FlagPhase::freeIndices()
+{
+  for (int i = 0; i < maxFlagLODs; i++) {
+    delete[] indices[i];
+  }
+  return;
+}
+
+
+/******************************************************************************/
+//
+// FlagPhase member functions
+//
+
+FlagPhase::FlagPhase()
+{
+  maxLOD = -1;
+  activeLOD = 0;
+
+  const float myFrac = (float)(this - phases) / (float)maxFlagPhases;
+  ripple1 = (float)(1.0 * M_PI * myFrac);
+  ripple2 = (float)(2.0 * M_PI * myFrac);
+
+  if (this == phases) {
+    makeIndices();
+  }
+  
+  return;
+}
+
+
+FlagPhase::~FlagPhase()
+{
+  if (this == phases) {
+    freeIndices();
+  }
+  return;
+}
+
+
+inline void FlagPhase::updateMaxLOD(int lod)
+{
+  if (lod > maxLOD) {
+    maxLOD = lod;
+  }
+  return;
+}
+
+
+inline int FlagPhase::render(int lod) const
+{
+  if (lod > activeLOD) {
+    lod = activeLOD;
+  }
+  const int count = elementCounts[lod];
   glVertexPointer(3, GL_FLOAT, 0, verts);
+  glNormalPointer(GL_FLOAT, 0, norms);
   glTexCoordPointer(2, GL_FLOAT, 0, txcds);
-  glDrawArrays(GL_QUAD_STRIP, 0, (flagChunks + 1) * 2);
-  glEnableClientState(GL_NORMAL_ARRAY);
-  return;
+  glDrawElements(GL_QUAD_STRIP, count, GL_UNSIGNED_SHORT, indices[lod]);
+  return count;
 }
 
-inline void WaveGeometry::execute() const
+
+inline int FlagPhase::renderShadow(int lod) const
 {
-  if (flagLists) {
-    glCallList(glList);
-  } else {
-    executeNoList();
+  if (lod > activeLOD) {
+    lod = activeLOD;
   }
-  return;
+  const int count = elementCounts[lod];
+  glVertexPointer(3, GL_FLOAT, 0, verts);
+  glDrawElements(GL_QUAD_STRIP, count, GL_UNSIGNED_SHORT, indices[lod]);
+  return count;
 }
 
 
-WaveGeometry::WaveGeometry() : refCount(0)
+void FlagPhase::update(float dt)
 {
-  glList = INVALID_GL_LIST_ID;
-  ripple1 = (float)(2.0 * M_PI * bzfrand());
-  ripple2 = (float)(2.0 * M_PI * bzfrand());
-  return;
-}
+  if (maxLOD < 0) {
+    return; // no flags in the current view use this phase
+  }
+  
+  activeLOD = maxLOD;
+  if (activeLOD > BZDBCache::maxFlagLOD) {
+    activeLOD = BZDBCache::maxFlagLOD;
+  }
+  maxLOD = -1; // reset it
 
-void WaveGeometry::waveFlag(float dt)
-{
+  const int quads = (1 << activeLOD);
+  
+  const GLushort* lookup = indices[activeLOD];
+
   int i;
-  if (!refCount) {
-    return;
-  }
+  
   ripple1 += dt * RippleSpeed1;
-  if (ripple1 >= 2.0f * M_PI) {
+  if (ripple1 >= (float)(2.0 * M_PI)) {
     ripple1 -= (float)(2.0 * M_PI);
   }
+
   ripple2 += dt * RippleSpeed2;
-  if (ripple2 >= 2.0f * M_PI) {
+  if (ripple2 >= (float)(2.0 * M_PI)) {
     ripple2 -= (float)(2.0 * M_PI);
   }
+
   float sinRipple2  = sinf(ripple2);
-  float sinRipple2S = sinf((float)(ripple2 + 1.16 * M_PI));
-  float	wave0[maxChunks];
-  float	wave1[maxChunks];
-  float	wave2[maxChunks];
-  for (i = 0; i <= flagChunks; i++) {
-    const float x      = float(i) / float(flagChunks);
+  float sinRipple2S = sinf((float)(ripple2 + (1.16 * M_PI)));
+  float	wave0[maxFlagQuads + 1];
+  float	wave1[maxFlagQuads + 1];
+  float	wave2[maxFlagQuads + 1];
+
+  for (i = 0; i <= quads; i++) {
+    const float x      = float(i) / float(quads);
     const float damp   = 0.1f * x;
-    const float angle1 = (float)(ripple1 - 4.0 * M_PI * x);
-    const float angle2 = (float)(angle1 - 0.28 * M_PI);
+    const float angle1 = (float)(ripple1 - (4.0 * M_PI * x));
+    const float angle2 = (float)(angle1 - (0.28 * M_PI));
 
     wave0[i] = damp * sinf(angle1);
     wave1[i] = damp * (sinf(angle2) + sinRipple2S);
     wave2[i] = wave0[i] + damp * sinRipple2;
   }
+
   float base = BZDBCache::flagPoleSize;
-  for (i = 0; i <= flagChunks; i++) {
-    const float x      = float(i) / float(flagChunks);
+  for (i = 0; i <= quads; i++) {
+    const float x      = float(i) / float(quads);
     const float shift1 = wave0[i];
-    verts[i*2][0] = verts[i*2+1][0] = Width * x;
+
+    const int it = lookup[i*2];
+    const int ib = lookup[i*2+1];
+    
+    verts[it][0] = Width * x;
+    verts[ib][0] = Width * x;
     if (realFlag) {
       // flag pole is Z axis
-      verts[i*2][1] = wave1[i];
-      verts[i*2+1][1] = wave2[i];
-      verts[i*2][2] = base + Height - shift1;
-      verts[i*2+1][2] = base - shift1;
+      verts[it][1] = wave1[i];
+      verts[ib][1] = wave2[i];
+      verts[it][2] = base + Height - shift1;
+      verts[ib][2] = base - shift1;
     } else {
       // flag pole is Y axis
-      verts[i*2][1] = base + Height - shift1;
-      verts[i*2+1][1] = base - shift1;
-      verts[i*2][2] = wave1[i];
-      verts[i*2+1][2] = wave2[i];
+      verts[it][1] = base + Height - shift1;
+      verts[ib][1] = base - shift1;
+      verts[it][2] = wave1[i];
+      verts[ib][2] = wave2[i];
     }
-    txcds[i*2][0] = txcds[i*2+1][0] = x;
-    txcds[i*2][1] = 1.0f;
-    txcds[i*2+1][1] = 0.0f;
+    txcds[it][0] = x;
+    txcds[ib][0] = x;
+    txcds[it][1] = 1.0f;
+    txcds[ib][1] = 0.0f;
   }
 
-  // make a GL display list if desired
-  if (flagLists) {
-    glList = glGenLists(1);
-    glNewList(glList, GL_COMPILE);
-    executeNoList();
-    glEndList();
-  } else {
-    glList = INVALID_GL_LIST_ID;
+  // generate the lighting normals  
+  if (realFlag && BZDBCache::lighting) {
+    fvec3  upEdges[maxFlagQuads + 1];
+    fvec3 topEdges[maxFlagQuads + 1];
+    fvec3 botEdges[maxFlagQuads + 1];
+    for (i = 0; i < quads; i++) {
+      const int ue = lookup[i * 2];
+      const int us = lookup[i * 2 + 1];
+      vec3sub(upEdges[i], verts[ue], verts[us]);
+      const int ts = lookup[i * 2];
+      const int te = lookup[i * 2 + 2];
+      vec3sub(topEdges[i], verts[te], verts[ts]);
+      const int bs = lookup[i * 2 + 1];
+      const int be = lookup[i * 2 + 2 + 1];
+      vec3sub(botEdges[i], verts[be], verts[bs]);
+    }
+    norms[0][0] = norms[1][0] = 0.0f;
+    norms[0][1] = norms[1][1] = -1.0f;
+    norms[0][2] = norms[1][2] = 0.0f;
+    const int lastTop = lookup[quads*2];
+    const int lastBot = lookup[quads*2+1];
+    norms[lastTop][0] = norms[lastBot][0] = 0.0f;
+    norms[lastTop][1] = norms[lastBot][1] = -1.0f;
+    norms[lastTop][2] = norms[lastBot][2] = 0.0f;
+    for (i = 1; i < quads; i++) {
+      fvec3 n0, n1, na;
+      vec3cross(n0, topEdges[i-1], upEdges[i]);
+      vec3cross(n1, topEdges[i], upEdges[i]);
+      vec3add(na, n0, n1);
+      const float tlen = sqrtf(vec3dot(na, na));
+      const int it = lookup[i*2];
+      if (tlen > 0.0f) {
+        norms[it][0] = na[0] / tlen;
+        norms[it][1] = na[1] / tlen;
+        norms[it][2] = na[2] / tlen;
+      } else {
+        norms[it][0] = 0.0f;
+        norms[it][1] = -1.0f;
+        norms[it][2] = 0.0f;
+      }
+      vec3cross(n0, botEdges[i-1], upEdges[i]);
+      vec3cross(n1, botEdges[i], upEdges[i]);
+      vec3add(na, n0, n1);
+      const float blen = sqrtf(vec3dot(na, na));
+      const int ib = lookup[i*2+1];
+      if (blen > 0.0f) {
+        norms[ib][0] = na[0] / blen;
+        norms[ib][1] = na[1] / blen;
+        norms[ib][2] = na[2] / blen;
+      } else {
+        norms[ib][0] = 0.0f;
+        norms[ib][1] = -1.0f;
+        norms[ib][2] = 0.0f;
+      }
+    }
   }
-
-  triCount = flagChunks * 2;
-
   return;
 }
-
-
-void WaveGeometry::freeFlag()
-{
-  if ((refCount > 0) && (glList != INVALID_GL_LIST_ID)) {
-    glDeleteLists(glList, 1);
-  }
-  return;
-}
-
-
-WaveGeometry allWaves[waveLists];
 
 
 /******************************************************************************/
-
 //
 // FlagSceneNode
 //
 
-FlagSceneNode::FlagSceneNode(const GLfloat pos[3]) :
-				billboard(true),
-				angle(0.0f),
-				tilt(0.0f),
-				hscl(1.0f),
-				transparent(false),
-				texturing(false),
-				renderNode(this)
+// length per pixel thresholds (last one is ignored)
+const float FlagSceneNode::lodLengths[maxFlagLODs] = {
+  0.6400f, 0.3200f, 0.1600f,
+  0.0800f, 0.0400f, 0.0200f,
+  0.0100f, 0.0050f, 0.0025f
+};
+
+const int FlagSceneNode::minPoleLOD = 3;
+
+
+FlagSceneNode::FlagSceneNode(const GLfloat pos[3]) : renderNode(this)
 {
+  phase = FlagPhase::getPhase();
+  
+  lod = 0;
+  shadowLOD = 0;
+  
+  angle = 0.0f;
+  tilt = 0.0f;
+  hscl = 1.0f;
+  flat = false;
+  translucent = false;
+  texturing = false;
   setColor(1.0f, 1.0f, 1.0f, 1.0f);
   setCenter(pos);
   setRadius(6.0f * Unit * Unit);
+
+  return;
 }
+
 
 FlagSceneNode::~FlagSceneNode()
 {
-  // do nothing
+  return;
 }
 
-void			FlagSceneNode::waveFlag(float dt)
+
+void FlagSceneNode::setTimeStep(float dt)
 {
-  flagLists = BZDB.isTrue("flagLists");
-  for (int i = 0; i < waveLists; i++) {
-    allWaves[i].waveFlag(dt);
-  }
+  // this is stupid
+  FlagPhase::setTimeStep(dt);
+  return;
 }
 
-void			FlagSceneNode::freeFlag()
+
+void FlagSceneNode::waveFlags()
 {
-  for (int i = 0; i < waveLists; i++) {
-    allWaves[i].freeFlag();
-  }
+  // This should be done after the flags
+  // have passed through addRenderNodes(),
+  // but before they are rendered.
+  FlagPhase::updatePhases();
+  return;
 }
 
-void			FlagSceneNode::move(const GLfloat pos[3])
+
+void FlagSceneNode::move(const GLfloat pos[3])
 {
   setCenter(pos);
+  return;
 }
 
 
-void			FlagSceneNode::setAngle(GLfloat _angle)
+void FlagSceneNode::setAngle(GLfloat _angle)
 {
   angle = (float)(_angle * 180.0 / M_PI);
   tilt = 0.0f;
   hscl = 1.0f;
+  return;
 }
 
 
-void			FlagSceneNode::setWind(const GLfloat wind[3], float dt)
+void FlagSceneNode::setWind(const GLfloat wind[3], float dt)
 {
   if (!realFlag) {
     angle = atan2f(wind[1], wind[0]) * (float)(180.0 / M_PI);
@@ -253,8 +490,8 @@ void			FlagSceneNode::setWind(const GLfloat wind[3], float dt)
     hscl = 1.0f;
   } else {
     // the angle points from the end of the flag to the pole
-    const float cos_val = cosf(angle * (float)(M_PI / 180.0f));
-    const float sin_val = sinf(angle * (float)(M_PI / 180.0f));
+    const float cos_val = cosf(angle * (float)(M_PI / 180.0));
+    const float sin_val = sinf(angle * (float)(M_PI / 180.0));
     const float force = (wind[0] * sin_val) - (wind[1] * cos_val);
     const float angleScale = 25.0f;
     angle = fmodf(angle + (force * dt * angleScale), 360.0f);
@@ -280,53 +517,60 @@ void			FlagSceneNode::setWind(const GLfloat wind[3], float dt)
 }
 
 
-void			FlagSceneNode::setBillboard(bool _billboard)
+void FlagSceneNode::setFlat(bool value)
 {
-  billboard = _billboard;
+  flat = value;
+  return;
 }
 
-void			FlagSceneNode::setColor(
-				GLfloat r, GLfloat g, GLfloat b, GLfloat a)
+
+void FlagSceneNode::setColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a)
 {
   color[0] = r;
   color[1] = g;
   color[2] = b;
   color[3] = a;
-  transparent = (color[3] != 1.0f);
+  translucent = (color[3] != 1.0f);
+  return;
 }
 
-void			FlagSceneNode::setColor(const GLfloat* rgba)
+
+void FlagSceneNode::setColor(const GLfloat* rgba)
 {
   color[0] = rgba[0];
   color[1] = rgba[1];
   color[2] = rgba[2];
   color[3] = rgba[3];
-  transparent = (color[3] != 1.0f);
+  translucent = (color[3] != 1.0f);
+  return;
 }
 
-void			FlagSceneNode::setTexture(const int texture)
+
+void FlagSceneNode::setTexture(const int texture)
 {
   OpenGLGStateBuilder builder(gstate);
   builder.setTexture(texture);
   builder.enableTexture(texture>=0);
   gstate = builder.getState();
+  return;
 }
 
-void			FlagSceneNode::notifyStyleChange()
+
+void FlagSceneNode::notifyStyleChange()
 {
   const int quality = RENDERER.useQuality();
-  geoPole = (quality >= _MEDIUM_QUALITY);
-  realFlag = (quality >= _HIGH_QUALITY);
+  geoPole = (quality >= 1);
+  realFlag = (quality >= 3);
 
   texturing = BZDBCache::texture && BZDBCache::blend;
   OpenGLGStateBuilder builder(gstate);
   builder.enableTexture(texturing);
 
-  if (transparent) {
+  if (translucent) {
     if (BZDBCache::blend) {
       builder.setBlending(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
       builder.setStipple(1.0f);
-    } else if (transparent) {
+    } else if (translucent) {
       builder.resetBlending();
       builder.setStipple(0.5f);
     }
@@ -341,29 +585,84 @@ void			FlagSceneNode::notifyStyleChange()
     }
   }
 
-  if (billboard && !realFlag) {
+  if (realFlag && BZDBCache::lighting) {
+    OpenGLMaterial glmat(specular, emission, 64.0f);
+    builder.setMaterial(glmat);
+  } else {
+    builder.enableMaterial(false);
+  }
+
+  if (!flat && !realFlag) {
     builder.setCulling(GL_BACK);
   } else {
     builder.setCulling(GL_NONE);
   }
+  
   gstate = builder.getState();
 
-  flagChunks = BZDBCache::flagChunks;
-  if (flagChunks >= maxChunks) {
-    flagChunks = maxChunks - 1;
+  return;
+}
+
+
+inline int FlagSceneNode::calcLOD(const SceneRenderer& renderer)
+{
+  const ViewFrustum& vf = renderer.getViewFrustum();
+  const float* s = getSphere();
+  const float* e = vf.getEye();
+  const float* d = vf.getDirection();
+  const float dist = (d[0] * (s[0] - e[0])) +
+		     (d[1] * (s[1] - e[1])) +
+		     (d[2] * (s[2] - e[2]));
+
+  const float lpp = dist * renderer.getLengthPerPixel();
+
+  int i;  
+  for (i = 0; i < maxFlagLOD; i++) {
+    if (lpp > lodLengths[i]) {
+      return i;
+    }
   }
+  return i;
+}
+
+
+inline int FlagSceneNode::calcShadowLOD(const SceneRenderer& renderer)
+{
+  const float* s = getSphere();
+  const float* e = renderer.getViewFrustum().getEye();
+  const float* d = renderer.getSunDirection();
+  fvec3 gap, cross;
+  vec3sub(gap, s, e);
+  vec3cross(cross, gap, d);
+  const float dist = sqrtf(vec3dot(cross, cross));
+  
+  const float lpp = dist * renderer.getLengthPerPixel();
+
+  int i;  
+  for (i = 0; i < maxFlagLOD; i++) {
+    if (lpp > lodLengths[i]) {
+      return i;
+    }
+  }
+  return i;
 }
 
 
 void FlagSceneNode::addRenderNodes(SceneRenderer& renderer)
 {
   renderer.addRenderNode(&renderNode, &gstate);
+  lod = calcLOD(renderer);
+  phase->updateMaxLOD(lod);
+  return;
 }
 
 
 void FlagSceneNode::addShadowNodes(SceneRenderer& renderer)
 {
   renderer.addShadowNode(&renderNode);
+  shadowLOD = calcShadowLOD(renderer);
+  phase->updateMaxLOD(shadowLOD);
+  return;
 }
 
 
@@ -382,50 +681,183 @@ bool FlagSceneNode::cullShadow(int planeCount, const float (*planes)[4]) const
 
 
 /******************************************************************************/
-
 //
 // FlagSceneNode::FlagRenderNode
 //
 
-FlagSceneNode::FlagRenderNode::FlagRenderNode(
-				const FlagSceneNode* _sceneNode) :
-				sceneNode(_sceneNode)
+FlagSceneNode::FlagRenderNode::FlagRenderNode(const FlagSceneNode* _sceneNode)
 {
-  waveReference = (int)((double)waveLists * bzfrand());
-  if (waveReference >= waveLists)
-    waveReference = waveLists - 1;
-  allWaves[waveReference].refer();
+  sceneNode = _sceneNode;
+  isShadow = false;
+  return;
 }
+
 
 FlagSceneNode::FlagRenderNode::~FlagRenderNode()
 {
-  allWaves[waveReference].unrefer();
+  return;
 }
 
 
-void			FlagSceneNode::FlagRenderNode::render()
+void FlagSceneNode::FlagRenderNode::renderFancyPole()
+{
+  const bool lighting = realFlag && BZDBCache::lighting;
+  const float poleWidth = BZDBCache::flagPoleWidth;
+  const float base = BZDBCache::flagPoleSize;
+  
+  const float pw = poleWidth;
+  const float pw2 = 2.0f * poleWidth;
+  const float topHeight = base + Height;
+  const float baseHeight = pw2;
+  const float sqrt1_2 = 0.70710678f;
+  const float sqrt1_3 = 0.57735027f;
+
+  // the pole base      
+  if (!isShadow) {
+    glColor4f(0.25f, 0.25f, 0.5f, sceneNode->color[3]); // blue
+  }
+  glBegin(GL_QUAD_STRIP);
+  {
+    glVertex3f(-pw2, 0.0f, baseHeight);
+    glVertex3f(-pw2, 0.0f, 0.0f);
+    glNormal3f(-sqrt1_2, -sqrt1_2, 0.0f);
+    glVertex3f(0.0f, -pw2, baseHeight);
+    glVertex3f(0.0f, -pw2, 0.0f);
+    glNormal3f(+sqrt1_2, -sqrt1_2, 0.0f);
+    glVertex3f(+pw2, 0.0f, baseHeight);
+    glVertex3f(+pw2, 0.0f, 0.0f);
+    glNormal3f(+sqrt1_2, +sqrt1_2, 0.0f);
+    glVertex3f(0.0f, +pw2, baseHeight);
+    glVertex3f(0.0f, +pw2, 0.0f);
+    glNormal3f(-sqrt1_2, +sqrt1_2, 0.0f);
+    glVertex3f(-pw2, 0.0f, baseHeight);
+    glVertex3f(-pw2, 0.0f, 0.0f);
+  }
+  glEnd();
+  glBegin(GL_QUADS);
+  {
+    glVertex3f(-pw2, 0.0f, baseHeight);
+    glVertex3f(0.0f, -pw2, baseHeight);
+    glVertex3f(+pw2, 0.0f, baseHeight);
+    glVertex3f(0.0f, +pw2, baseHeight);
+  }
+  glEnd();
+  addTriangleCount(10);
+
+  // the pole cap      
+  if (!isShadow) {
+    glColor4f(0.5f, 0.5f, 0.25f, sceneNode->color[3]); // yellow
+    if (lighting) {
+      const float yellow[4] = {0.4f, 0.4f, 0.2f, 1.0f};
+      glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, yellow);
+    }
+  }
+  const float bot = topHeight;
+  const float mid = topHeight + pw;
+  const float peak = topHeight + (3.0f * pw);
+  glBegin(GL_QUAD_STRIP);
+  {
+    glVertex3f(-pw, 0.0f, bot);
+    glVertex3f(-pw2, 0.0f, mid);
+    glNormal3f(-sqrt1_3, -sqrt1_3, -sqrt1_3);
+    glVertex3f(0.0f, -pw, bot);
+    glVertex3f(0.0f, -pw2, mid);
+    glNormal3f(+sqrt1_3, -sqrt1_3, -sqrt1_3);
+    glVertex3f(+pw, 0.0f, bot);
+    glVertex3f(+pw2, 0.0f, mid);
+    glNormal3f(+sqrt1_3, +sqrt1_3, -sqrt1_3);
+    glVertex3f(0.0f, +pw, bot);
+    glVertex3f(0.0f, +pw2, mid);
+    glNormal3f(-sqrt1_3, +sqrt1_3, -sqrt1_3);
+    glVertex3f(-pw, 0.0f, bot);
+    glVertex3f(-pw2, 0.0f, mid);
+  }
+  glEnd();
+  glBegin(GL_TRIANGLE_FAN);
+  {
+    glVertex3f(0.0f, 0.0f, peak);
+    glVertex3f(-pw2, 0.0f, mid);
+    glNormal3f(-sqrt1_3, -sqrt1_3, +sqrt1_3);
+    glVertex3f(0.0f, -pw2, mid);
+    glNormal3f(+sqrt1_3, -sqrt1_3, +sqrt1_3);
+    glVertex3f(+pw2, 0.0f, mid);
+    glNormal3f(+sqrt1_3, +sqrt1_3, +sqrt1_3);
+    glVertex3f(0.0f, +pw2, mid);
+    glNormal3f(-sqrt1_3, +sqrt1_3, +sqrt1_3);
+    glVertex3f(-pw2, 0.0f, mid);
+  }
+  glEnd();
+  addTriangleCount(12);
+
+  // the pole
+  if (!isShadow) {
+    glColor4f(0.1f, 0.1f, 0.1f, sceneNode->color[3]); // dark grey
+    if (lighting) {
+      const float black[4] = {0.0f, 0.0f, 0.0f, 1.0f};
+      glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, black);
+      glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, emission);
+    }
+  }
+  glBegin(GL_QUAD_STRIP);
+  {
+    glVertex3f(-poleWidth, 0.0f, baseHeight);
+    glVertex3f(-poleWidth, 0.0f, topHeight);
+    glNormal3f(-sqrt1_2, -sqrt1_2, 0.0f);
+    glVertex3f(0.0f, -poleWidth, baseHeight);
+    glVertex3f(0.0f, -poleWidth, topHeight);
+    glNormal3f(+sqrt1_2, -sqrt1_2, 0.0f);
+    glVertex3f(+poleWidth, 0.0f, baseHeight);
+    glVertex3f(+poleWidth, 0.0f, topHeight);
+    glNormal3f(+sqrt1_2, +sqrt1_2, 0.0f);
+    glVertex3f(0.0f, +poleWidth, baseHeight);
+    glVertex3f(0.0f, +poleWidth, topHeight);
+    glNormal3f(-sqrt1_2, +sqrt1_2, 0.0f);
+    glVertex3f(-poleWidth, 0.0f, baseHeight);
+    glVertex3f(-poleWidth, 0.0f, topHeight);
+  }
+  glEnd();
+  addTriangleCount(8);
+  if (!isShadow && lighting) {
+    glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, specular);
+  }
+  return;
+}
+
+
+void FlagSceneNode::FlagRenderNode::render()
 {
   float base = BZDBCache::flagPoleSize;
   float poleWidth = BZDBCache::flagPoleWidth;
+  const bool flat = sceneNode->flat;
   const bool texturing = sceneNode->texturing;
-  const bool billboard = sceneNode->billboard;
-  const bool transparent = sceneNode->transparent;
-
+  const bool translucent = sceneNode->translucent;
   const GLfloat* sphere = sceneNode->getSphere();
+  const FlagPhase* phase = sceneNode->phase;
+  const int lod = isShadow ? sceneNode->shadowLOD : sceneNode->lod;
 
-  myColor4fv(sceneNode->color);
-
-  if (!BZDBCache::blend && (transparent || texturing)) {
-    myStipple(sceneNode->color[3]);
+  if (!isShadow) {
+    glColor4fv(sceneNode->color);
+    if (!BZDBCache::blend && (translucent || texturing)) {
+      myStipple(sceneNode->color[3]);
+    }
   }
 
   glPushMatrix();
   {
     glTranslatef(sphere[0], sphere[1], sphere[2]);
+    
+    if (realFlag) {
 
-    if (billboard && realFlag) {
-      // the pole
+      // the flag
+      if (!isShadow) {
+        glEnable(GL_NORMALIZE);
+        glShadeModel(GL_SMOOTH);
+        glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
+      }
       glRotatef(sceneNode->angle + 180.0f, 0.0f, 0.0f, 1.0f);
+      if (flat) {
+        glScalef(1.0f, 0.0f, 1.0f); // flatten along Y axis
+      }
       const float tilt = sceneNode->tilt;
       const float hscl = sceneNode->hscl;
       static GLfloat shear[16] = {hscl, 0.0f, tilt, 0.0f,
@@ -436,43 +868,41 @@ void			FlagSceneNode::FlagRenderNode::render()
       shear[2] = tilt; // pulls the flag up or down
       glPushMatrix();
       glMultMatrixf(shear);
-      allWaves[waveReference].execute();
-      addTriangleCount(triCount);
+      if (!isShadow) {
+        addTriangleCount(phase->render(lod));
+      } else {
+        addTriangleCount(phase->renderShadow(lod));
+      }
       glPopMatrix();
 
-      myColor4f(0.0f, 0.0f, 0.0f, sceneNode->color[3]);
-
-      if (texturing) {
-	glDisable(GL_TEXTURE_2D);
+      if (!isShadow) {
+        glDisable(GL_NORMALIZE);
+        glShadeModel(GL_FLAT);
+        glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_FALSE);
+        if (texturing) {
+          glDisable(GL_TEXTURE_2D);
+        }
       }
 
-      // the pole
-      const float topHeight = base + Height;
-      glBegin(GL_QUAD_STRIP);
-      {
-	glVertex3f(-poleWidth, 0.0f, 0.0f);
-	glVertex3f(-poleWidth, 0.0f, topHeight);
-	glVertex3f(0.0f, -poleWidth, 0.0f);
-	glVertex3f(0.0f, -poleWidth, topHeight);
-	glVertex3f(+poleWidth, 0.0f, 0.0f);
-	glVertex3f(+poleWidth, 0.0f, topHeight);
-	glVertex3f(0.0f, +poleWidth, 0.0f);
-	glVertex3f(0.0f, +poleWidth, topHeight);
-	glVertex3f(-poleWidth, 0.0f, 0.0f);
-	glVertex3f(-poleWidth, 0.0f, topHeight);
+      // draw the pole, if close enough
+      if (lod >= minPoleLOD) {
+        renderFancyPole();
       }
-      glEnd();
-      addTriangleCount(8);
     }
     else {
-      if (billboard) {
-	RENDERER.getViewFrustum().executeBillboard();
-	allWaves[waveReference].execute();
-	addTriangleCount(triCount);
-      } else {
+      if (!flat) {
+        RENDERER.getViewFrustum().executeBillboard();
+        if (!isShadow) {
+          addTriangleCount(phase->render(lod));
+        } else {
+          addTriangleCount(phase->renderShadow(lod));
+        }
+      }
+      else {
 	glRotatef(sceneNode->angle + 180.0f, 0.0f, 0.0f, 1.0f);
 	glRotatef(90.0f, 1.0f, 0.0f, 0.0f);
 	glBegin(GL_QUADS);
+	{
 	  glTexCoord2f(0.0f, 0.0f);
 	  glVertex3f(0.0f, base, 0.0f);
 	  glTexCoord2f(1.0f, 0.0f);
@@ -481,14 +911,16 @@ void			FlagSceneNode::FlagRenderNode::render()
 	  glVertex3f(Width, base + Height, 0.0f);
 	  glTexCoord2f(0.0f, 1.0f);
 	  glVertex3f(0.0f, base + Height, 0.0f);
+        }
 	glEnd();
 	addTriangleCount(2);
       }
 
-      myColor4f(0.0f, 0.0f, 0.0f, sceneNode->color[3]);
-
-      if (texturing) {
-	glDisable(GL_TEXTURE_2D);
+      if (!isShadow) {
+        glColor4f(0.0f, 0.0f, 0.0f, sceneNode->color[3]);
+        if (texturing) {
+          glDisable(GL_TEXTURE_2D);
+        }
       }
 
       if (geoPole) {
@@ -514,12 +946,25 @@ void			FlagSceneNode::FlagRenderNode::render()
   }
   glPopMatrix();
 
-  if (texturing) {
-    glEnable(GL_TEXTURE_2D);
+  if (!isShadow) {
+    if (texturing) {
+      glEnable(GL_TEXTURE_2D);
+    }
+    if (!BZDBCache::blend && translucent) {
+      myStipple(0.5f);
+    }
   }
-  if (!BZDBCache::blend && transparent) {
-    myStipple(0.5f);
-  }
+
+  return;
+}
+
+
+void FlagSceneNode::FlagRenderNode::renderShadow()
+{
+  isShadow = true;
+  render();
+  isShadow = false;
+  return;  
 }
 
 

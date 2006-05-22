@@ -31,15 +31,15 @@
 #include "SceneRenderer.h"
 
 BoltSceneNode::BoltSceneNode(const GLfloat pos[3], const GLfloat vel[3]) :
+				phasingShot(false),
 				drawFlares(false),
 				texturing(false),
 				colorblind(false),
 				size(1.0f),
 				renderNode(this),
-				length(1.0f),
 				azimuth(0),
 				elevation(0),
-				phasingShot(false)
+				length(1.0f)
 {
   OpenGLGStateBuilder builder(gstate);
   builder.setBlending();
@@ -152,7 +152,7 @@ void			BoltSceneNode::notifyStyleChange()
   OpenGLGStateBuilder builder(gstate);
   builder.enableTexture(texturing);
   if (BZDBCache::blend) {
-    if (RENDERER.useQuality() >=_EXPEREMENTAL_QUALITY )
+    if (RENDERER.useQuality() >=_EXPERIMENTAL_QUALITY )
       builder.setBlending(GL_SRC_ALPHA, GL_ONE);
     else
       builder.setBlending(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -337,7 +337,7 @@ void		BoltSceneNode::BoltRenderNode::renderGeoBolt()
 	float baseRadius = 0.225f;
 
 	GLfloat len = sceneNode->length * lenMod;
-	const GLfloat* sphere = sceneNode->getSphere();
+//	const GLfloat* sphere = sceneNode->getSphere();
 	glPushMatrix();
 	glRotatef(sceneNode->azimuth, 0.0f, 0.0f, 1.0f);
 	glRotatef(sceneNode->elevation, 0.0f, 1.0f, 0.0f);
@@ -402,7 +402,7 @@ void			BoltSceneNode::BoltRenderNode::render()
   const GLfloat* sphere = sceneNode->getSphere();
   glPushMatrix();
     glTranslatef(sphere[0], sphere[1], sphere[2]);
-	if (!sceneNode->drawFlares && RENDERER.useQuality() >= _EXPEREMENTAL_QUALITY)
+	if (!sceneNode->drawFlares && RENDERER.useQuality() >= _EXPERIMENTAL_QUALITY)
 		renderGeoBolt();
 	else
 	{

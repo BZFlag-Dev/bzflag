@@ -1010,7 +1010,7 @@ class bz_CustomSlashCommandHandler
 public:
 	virtual ~bz_CustomSlashCommandHandler(){};
 	virtual bool handle ( int playerID, bz_ApiString command, bz_ApiString message, bz_APIStringList *params ) = 0;
-	virtual const char* help ( bz_ApiString command ){return NULL;}
+	virtual const char* help ( bz_ApiString /* command */ ){return NULL;}
 };
 
 BZF_API bool bz_registerCustomSlashCommand ( const char* command, bz_CustomSlashCommandHandler *handler );

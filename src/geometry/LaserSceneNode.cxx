@@ -134,7 +134,7 @@ LaserSceneNode::LaserRenderNode::~LaserRenderNode()
 
 void			LaserSceneNode::LaserRenderNode::render()
 {
-	if (RENDERER.useQuality() >= _EXPEREMENTAL_QUALITY)
+	if (RENDERER.useQuality() >= _EXPERIMENTAL_QUALITY)
 		renderGeoLaser();
 	else
 		renderFlatLaser();

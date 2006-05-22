@@ -3053,7 +3053,7 @@ static void		updateFlags(float dt)
     }
     world->updateFlag(i, dt);
   }
-  FlagSceneNode::waveFlag(dt);
+  FlagSceneNode::setTimeStep(dt);
 }
 
 bool			addExplosion(const float* _pos,
@@ -6033,8 +6033,6 @@ static void		playingLoop()
       sendRobotUpdates();
     }
 #endif
-
-    FlagSceneNode::freeFlag();
 
     cURLManager::perform();
 

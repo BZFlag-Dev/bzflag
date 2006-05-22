@@ -894,7 +894,7 @@ void			HUDRenderer::renderTankLabels(SceneRenderer& renderer)
 
 void			HUDRenderer::renderCracks()
 {
-	if (RENDERER.useQuality() >= _EXPEREMENTAL_QUALITY )
+	if (RENDERER.useQuality() >= _EXPERIMENTAL_QUALITY )
 		renderHighResCracks();
 	else
 		renderClasicCracks();

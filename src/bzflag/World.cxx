@@ -829,7 +829,7 @@ void			World::updateFlag(int index, float dt)
   // setup the flag angle
   if (flag.status != FlagOnTank) {
     flagNodes[index]->setWind(wind, dt);
-    flagNodes[index]->setBillboard(true);
+    flagNodes[index]->setFlat(false);
   }
   else {
     const Player* flagPlayer = NULL;
@@ -843,7 +843,7 @@ void			World::updateFlag(int index, float dt)
     if (flagPlayer != NULL) {
       if (flag.type == Flags::Narrow) {
 	flagNodes[index]->setAngle(flagPlayer->getAngle());
-	flagNodes[index]->setBillboard(false);
+	flagNodes[index]->setFlat(true);
       } else {
 	float myWind[3];
 	getWind(myWind, flagPlayer->getPosition());
@@ -854,11 +854,11 @@ void			World::updateFlag(int index, float dt)
 	  myWind[2] -= vel[2];
 	}
 	flagNodes[index]->setWind(myWind, dt);
-	flagNodes[index]->setBillboard(true);
+	flagNodes[index]->setFlat(false);
       }
     } else {
       flagNodes[index]->setWind(wind, dt); // assumes homogeneous wind
-      flagNodes[index]->setBillboard(true);
+      flagNodes[index]->setFlat(false);
     }
   }
 }
