@@ -1002,7 +1002,6 @@ AC_CONFIG_FILES([
 	plugins/serverSideBotSample/Makefile
 	plugins/shockwaveDeath/Makefile
 	plugins/vc71/Makefile
-	plugins/vocaliser/Makefile
 	src/3D/Makefile
 	src/Makefile
 	src/bzadmin/Makefile
