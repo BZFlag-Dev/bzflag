@@ -21,6 +21,8 @@ bzflag_SOURCES =			\
 	ActionBinding.h			\
 	AudioMenu.cxx			\
 	AudioMenu.h			\
+	AutoHunt.cxx			\
+	AutoHunt.h			\
 	AutoPilot.cxx			\
 	AutoPilot.h			\
 	BackgroundRenderer.cxx		\

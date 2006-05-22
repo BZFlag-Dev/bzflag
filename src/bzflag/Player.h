@@ -118,6 +118,8 @@ public:
   void		resetNotResponding();
   bool		isHunted() const;
   void		setHunted(bool _hunted);
+  bool		isAutoHunted() const;
+  void		setAutoHunted(bool _hunted);
   bool		isAutoPilot() const;
   void		setAutoPilot(bool = true);
   bool		isAdmin() const;
@@ -205,6 +207,7 @@ private:
   // data not communicated with other players
   bool			notResponding;
   bool			hunted;
+  bool			autoHunted;
 
   // credentials
   PlayerId		id;
@@ -523,6 +526,16 @@ inline bool		Player::isHunted() const
 inline void		Player::setHunted(bool _hunted)
 {
   hunted = _hunted;
+}
+
+inline bool		Player::isAutoHunted() const
+{
+  return autoHunted;
+}
+
+inline void		Player::setAutoHunted(bool _hunted)
+{
+  autoHunted = _hunted;
 }
 
 inline bool		Player::isAdmin() const

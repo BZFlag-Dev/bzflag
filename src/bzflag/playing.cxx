@@ -32,6 +32,7 @@
 #include "AccessList.h"
 #include "AnsiCodes.h"
 #include "AresHandler.h"
+#include "AutoHunt.h"
 #include "BackgroundRenderer.h"
 #include "BaseBuilding.h"
 #include "BillboardSceneNode.h"
@@ -6027,6 +6028,9 @@ static void		playingLoop()
     if (world) {
       world->updateAnimations(dt);
     }
+
+    // update AutoHunt
+    AutoHunt::update();
 
     // prep the HUD
     prepareTheHUD();

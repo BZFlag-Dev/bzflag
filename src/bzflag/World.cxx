@@ -34,6 +34,7 @@
 #include "GameTime.h"
 #include "WallObstacle.h"
 #include "MeshObstacle.h"
+#include "LocalPlayer.h"
 
 //
 // World
@@ -833,11 +834,17 @@ void			World::updateFlag(int index, float dt)
   }
   else {
     const Player* flagPlayer = NULL;
-    for (int i = 0; i < curMaxPlayers; i++) {
-      const Player* p = players[i];
-      if (p && p->getId() == flag.owner) {
-	flagPlayer = p;
-	break;
+    const Player* myTank = (const Player*) LocalPlayer::getMyTank();
+    if (myTank && (myTank->getId() == flag.owner)) {
+      flagPlayer = myTank;
+    }
+    else {
+      for (int i = 0; i < curMaxPlayers; i++) {
+        const Player* p = players[i];
+        if (p && p->getId() == flag.owner) {
+          flagPlayer = p;
+          break;
+        }
       }
     }
     if (flagPlayer != NULL) {
