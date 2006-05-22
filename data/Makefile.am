@@ -46,6 +46,9 @@ bzflag_DATA = \
 	mountain1.png		\
 	mountain2.png		\
 	mountain3.png		\
+	mountain4.png		\
+	mountain5.png		\
+	mountain6.png		\
 	phantom.wav		\
 	pop.wav			\
 	puddle.png		\
