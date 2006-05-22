@@ -71,7 +71,7 @@ class FlagPhase {
     int renderShadow(int lod) const;
 
     void updateMaxLOD(int);
-    
+
   private: 
     FlagPhase();
     ~FlagPhase();
@@ -92,10 +92,10 @@ class FlagPhase {
   private:
     static void makeIndices();
     static void freeIndices();
-    
+
   private:
     static FlagPhase phases[maxFlagPhases];
-    
+
     static GLushort* indices[maxFlagLODs];
     static int elementCounts[maxFlagLODs];
 
@@ -143,7 +143,7 @@ void FlagPhase::updatePhases()
   } else if (BZDBCache::maxFlagLOD > maxFlagLOD) {
     BZDB.setInt("maxFlagLOD", maxFlagLOD);
   }
-  
+
   for (int i = 0; i < maxFlagPhases; i++) {
     phases[i].update(timeStep);
   }
@@ -170,7 +170,7 @@ void FlagPhase::makeIndices()
 
     const int elements = 2 * ((1 << i) + 1);
     elementCounts[i] = elements;
-    
+
     indices[i] = new GLushort[elements];
     indices[i][0] = 0;
     indices[i][1] = 1;
@@ -189,8 +189,14 @@ void FlagPhase::makeIndices()
       }
       skip = skip / 2;
     }
-    
+
     quads *= 2;
+
+    printf("flaglod[%i]:", i);
+    for (int j = 0; j < elements; j++) {
+      printf(" %i", indices[i][j]);
+    }
+    printf("\n");
   }
 
   return; 
@@ -223,7 +229,7 @@ FlagPhase::FlagPhase()
   if (this == phases) {
     makeIndices();
   }
-  
+
   return;
 }
 
@@ -251,11 +257,22 @@ inline int FlagPhase::render(int lod) const
   if (lod > activeLOD) {
     lod = activeLOD;
   }
+
   const int count = elementCounts[lod];
   glVertexPointer(3, GL_FLOAT, 0, verts);
   glNormalPointer(GL_FLOAT, 0, norms);
   glTexCoordPointer(2, GL_FLOAT, 0, txcds);
+
+#ifndef HAVE_GLEW
   glDrawElements(GL_QUAD_STRIP, count, GL_UNSIGNED_SHORT, indices[lod]);
+#else
+  if (GLEW_EXT_draw_range_elements) {
+    glDrawRangeElements(GL_QUAD_STRIP, 0, count - 1, count, GL_UNSIGNED_SHORT, indices[lod]);
+  } else {
+    glDrawElements(GL_QUAD_STRIP, count, GL_UNSIGNED_SHORT, indices[lod]);
+  }
+#endif
+
   return count;
 }
 
@@ -265,9 +282,20 @@ inline int FlagPhase::renderShadow(int lod) const
   if (lod > activeLOD) {
     lod = activeLOD;
   }
+
   const int count = elementCounts[lod];
   glVertexPointer(3, GL_FLOAT, 0, verts);
+
+#ifndef HAVE_GLEW
   glDrawElements(GL_QUAD_STRIP, count, GL_UNSIGNED_SHORT, indices[lod]);
+#else
+  if (GLEW_EXT_draw_range_elements) {
+    glDrawRangeElements(GL_QUAD_STRIP, 0, count - 1, count, GL_UNSIGNED_SHORT, indices[lod]);
+  } else {
+    glDrawElements(GL_QUAD_STRIP, count, GL_UNSIGNED_SHORT, indices[lod]);
+  }
+#endif
+
   return count;
 }
 
@@ -277,7 +305,7 @@ void FlagPhase::update(float dt)
   if (maxLOD < 0) {
     return; // no flags in the current view use this phase
   }
-  
+
   activeLOD = maxLOD;
   if (activeLOD > BZDBCache::maxFlagLOD) {
     activeLOD = BZDBCache::maxFlagLOD;
@@ -285,11 +313,11 @@ void FlagPhase::update(float dt)
   maxLOD = -1; // reset it
 
   const int quads = (1 << activeLOD);
-  
+
   const GLushort* lookup = indices[activeLOD];
 
   int i;
-  
+
   ripple1 += dt * RippleSpeed1;
   if (ripple1 >= (float)(2.0 * M_PI)) {
     ripple1 -= (float)(2.0 * M_PI);
@@ -324,7 +352,7 @@ void FlagPhase::update(float dt)
 
     const int it = lookup[i*2];
     const int ib = lookup[i*2+1];
-    
+
     verts[it][0] = Width * x;
     verts[ib][0] = Width * x;
     if (realFlag) {
@@ -424,10 +452,10 @@ const int FlagSceneNode::minPoleLOD = 3;
 FlagSceneNode::FlagSceneNode(const GLfloat pos[3]) : renderNode(this)
 {
   phase = FlagPhase::getPhase();
-  
+
   lod = 0;
   shadowLOD = 0;
-  
+
   angle = 0.0f;
   tilt = 0.0f;
   hscl = 1.0f;
@@ -597,7 +625,7 @@ void FlagSceneNode::notifyStyleChange()
   } else {
     builder.setCulling(GL_NONE);
   }
-  
+
   gstate = builder.getState();
 
   return;
@@ -635,7 +663,7 @@ inline int FlagSceneNode::calcShadowLOD(const SceneRenderer& renderer)
   vec3sub(gap, s, e);
   vec3cross(cross, gap, d);
   const float dist = sqrtf(vec3dot(cross, cross));
-  
+
   const float lpp = dist * renderer.getLengthPerPixel();
 
   int i;  
@@ -704,7 +732,7 @@ void FlagSceneNode::FlagRenderNode::renderFancyPole()
   const bool lighting = realFlag && BZDBCache::lighting;
   const float poleWidth = BZDBCache::flagPoleWidth;
   const float base = BZDBCache::flagPoleSize;
-  
+
   const float pw = poleWidth;
   const float pw2 = 2.0f * poleWidth;
   const float topHeight = base + Height;
@@ -845,7 +873,7 @@ void FlagSceneNode::FlagRenderNode::render()
   glPushMatrix();
   {
     glTranslatef(sphere[0], sphere[1], sphere[2]);
-    
+
     if (realFlag) {
 
       // the flag
