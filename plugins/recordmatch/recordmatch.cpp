@@ -62,6 +62,7 @@ void GameStartEndHandler::process( bz_EventData *eventData )
 			std::string recFile = path + filename;
 			
 			bz_saveRecBuf(recFile.c_str(),0);
+			bz_stopRecBuf();
 
 			started = false;
 		}
