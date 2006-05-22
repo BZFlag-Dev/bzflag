@@ -14,7 +14,6 @@ SUBDIRS = \
 	shockwaveDeath \
 	HoldTheFlag \
 	nagware \
-	vocaliser \
 	recordmatch
 
 DIST_SUBDIRS = \
