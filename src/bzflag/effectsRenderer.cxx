@@ -25,10 +25,10 @@ EffectsRenderer* Singleton<EffectsRenderer>::_instance = (EffectsRenderer*)0;
 // utils for geo
 static void drawRingYZ(float rad, float z, float topsideOffset = 0,
 		       float bottomUV = 0, float ZOffset = 0,
-		       float topUV = 1.0f, int segments = 32);
+		       float topUV = 1.0f, int segments = 32, float uScale = 2.0f);
 static void drawRingXY(float rad, float z, float topsideOffset = 0,
 		       float bottomUV = 0, float topUV = 1.0f,
-		       int segments = 32);
+		       int segments = 32, float uScale = 2.0f);
 static void RadialToCartesian(float angle, float rad, float *pos);
 
 #define deg2Rad 0.017453292519943295769236907684886f
@@ -476,8 +476,8 @@ bool BasicEffect::update( float time )
 //******************StdSpawnEffect****************
 StdSpawnEffect::StdSpawnEffect() : BasicEffect()
 {
-	texture = TextureManager::instance().getTextureID("blend_flash",false);
-	lifetime = 2.0f;
+	texture = TextureManager::instance().getTextureID("wavy_flare",false);
+	lifetime = 1.5f;
 	radius = 1.75f;
 
 	OpenGLGStateBuilder gstate;
@@ -507,7 +507,7 @@ bool StdSpawnEffect::update ( float time )
 	// we live another day
 	// do stuff that maybe need to be done every time to animage
 
-	radius += deltaTime*5;
+	radius += deltaTime*7;
 	return false;
 }
 
@@ -524,9 +524,9 @@ void StdSpawnEffect::draw(const SceneRenderer &)
 	glColor4f(color[0],color[1],color[2],1.0f-(age/lifetime));
 	glDepthMask(0);
 
-	drawRingXY(radius*0.1f,2.5f+(age*2));
+	drawRingXY(radius*0.1f,2.5f+(age*2),0,0,1.0f,32,5.0f);
 	drawRingXY(radius*0.5f,1.5f + (ageParam/1.0f * 2),0.5f,0.5f);
-	drawRingXY(radius,2);
+	drawRingXY(radius,2,0,0,1.0f,32,1.0f);
 
 	glColor4f(1,1,1,1);
 	glDepthMask(1);
@@ -656,7 +656,7 @@ void RingSpawnEffect::drawRing(int n, float coreAlpha)
 //******************StdShotEffect****************
 StdShotEffect::StdShotEffect() : BasicEffect()
 {
-	texture = TextureManager::instance().getTextureID("blend_flash",false);
+	texture = TextureManager::instance().getTextureID("wavy_flare",false);
 	lifetime = 1.5f;
 	radius = 0.125f;
 
@@ -716,7 +716,7 @@ void StdShotEffect::draw(const SceneRenderer &)
 	glColor4f(color[0],color[1],color[2],alpha);
 	glDepthMask(0);
 
-	drawRingYZ(radius,0.5f /*+ (age * 0.125f)*/,1.0f+age*5,0.65f,pos[2]);
+	drawRingYZ(radius,0.5f /*+ (age * 0.125f)*/,1.0f+age*5,0.65f,pos[2],1.0f,32,20.0f);
 
 	glColor4f(1,1,1,1);
 	glDepthMask(1);
@@ -1189,7 +1189,7 @@ static void RadialToCartesian(float angle, float rad, float *pos)
 }
 
 static void drawRingXY(float rad, float z, float topsideOffset, float bottomUV,
-		       float topUV, int segments )
+		       float topUV, int segments, float uScale )
 {
 	for ( int i = 0; i < segments; i ++)
 	{
@@ -1215,41 +1215,44 @@ static void drawRingXY(float rad, float z, float topsideOffset, float bottomUV,
 		RadialToCartesian(thisAng,rad+topsideOffset,thispos2);
 		RadialToCartesian(nextAng,rad+topsideOffset,nextPos2);
 
+		float thisU = thisAng/360.0f*uScale;
+		float nextU = nextAng/360.0f*uScale;
+
 		glBegin(GL_QUADS);
 
 		// the "inside"
 		glNormal3f(-thisNormal[0],-thisNormal[1],-thisNormal[2]);
-		glTexCoord2f(0,bottomUV);
+		glTexCoord2f(thisU,bottomUV);
 		glVertex3f(thispos[0],thispos[1],0);
 
 		glNormal3f(-nextNormal[0],-nextNormal[1],-nextNormal[2]);
-		glTexCoord2f(1,bottomUV);
+		glTexCoord2f(nextU,bottomUV);
 		glVertex3f(nextPos[0],nextPos[1],0);
 
 		glNormal3f(-nextNormal[0],-nextNormal[1],-nextNormal[2]);
-		glTexCoord2f(1,topUV);
+		glTexCoord2f(nextU,topUV);
 		glVertex3f(nextPos2[0],nextPos2[1],z);
 
 		glNormal3f(-thisNormal[0],-thisNormal[1],-thisNormal[2]);
-		glTexCoord2f(0,topUV);
+		glTexCoord2f(thisU,topUV);
 		glVertex3f(thispos2[0],thispos2[1],z);
 
 		// the "outside"
 
 		glNormal3f(thisNormal[0],thisNormal[1],thisNormal[2]);
-		glTexCoord2f(0,topUV);
+		glTexCoord2f(thisU,topUV);
 		glVertex3f(thispos2[0],thispos2[1],z);
 
 		glNormal3f(nextNormal[0],nextNormal[1],nextNormal[2]);
-		glTexCoord2f(1,topUV);
+		glTexCoord2f(nextU,topUV);
 		glVertex3f(nextPos2[0],nextPos2[1],z);
 
 		glNormal3f(nextNormal[0],nextNormal[1],nextNormal[2]);
-		glTexCoord2f(1,bottomUV);
+		glTexCoord2f(nextU,bottomUV);
 		glVertex3f(nextPos[0],nextPos[1],0);
 
 		glNormal3f(thisNormal[0],thisNormal[1],thisNormal[2]);
-		glTexCoord2f(0,bottomUV);
+		glTexCoord2f(thisU,bottomUV);
 		glVertex3f(thispos[0],thispos[1],0);
 
 		glEnd();
@@ -1264,8 +1267,9 @@ static float clampedZ(float z, float offset)
 	return -offset;
 }
 
+
 static void drawRingYZ(float rad, float z, float topsideOffset, float bottomUV,
-		       float ZOffset, float topUV, int segments)
+		       float ZOffset, float topUV, int segments, float uScale)
 {
 	for ( int i = 0; i < segments; i ++)
 	{
@@ -1292,40 +1296,42 @@ static void drawRingYZ(float rad, float z, float topsideOffset, float bottomUV,
 		RadialToCartesian(nextAng,rad+topsideOffset,nextPos2);
 
 		glBegin(GL_QUADS);
+		float thisU = thisAng/360.0f*uScale;
+		float nextU = nextAng/360.0f*uScale;
 
 		// the "inside"
 		glNormal3f(-thisNormal[0],-thisNormal[1],-thisNormal[2]);
-		glTexCoord2f(0,bottomUV);
+		glTexCoord2f(thisU,bottomUV);
 		glVertex3f(0,thispos[1],clampedZ(thispos[0],ZOffset));
 
 		glNormal3f(-nextNormal[0],-nextNormal[1],-nextNormal[2]);
-		glTexCoord2f(1,bottomUV);
+		glTexCoord2f(nextU,bottomUV);
 		glVertex3f(0,nextPos[1],clampedZ(nextPos[0],ZOffset));
 
 		glNormal3f(-nextNormal[0],-nextNormal[1],-nextNormal[2]);
-		glTexCoord2f(1,topUV);
+		glTexCoord2f(nextU,topUV);
 		glVertex3f(z,nextPos2[1],clampedZ(nextPos2[0],ZOffset));
 
 		glNormal3f(-thisNormal[0],-thisNormal[1],-thisNormal[2]);
-		glTexCoord2f(0,topUV);
+		glTexCoord2f(thisU,topUV);
 		glVertex3f(z,thispos2[1],clampedZ(thispos2[0],ZOffset));
 
 		// the "outside"
 
 		glNormal3f(thisNormal[0],thisNormal[1],thisNormal[2]);
-		glTexCoord2f(0,topUV);
+		glTexCoord2f(thisU,topUV);
 		glVertex3f(z,thispos2[1],clampedZ(thispos2[0],ZOffset));
 
 		glNormal3f(nextNormal[0],nextNormal[1],nextNormal[2]);
-		glTexCoord2f(1,topUV);
+		glTexCoord2f(nextU,topUV);
 		glVertex3f(z,nextPos2[1],clampedZ(nextPos2[0],ZOffset));
 
 		glNormal3f(nextNormal[0],nextNormal[1],nextNormal[2]);
-		glTexCoord2f(1,bottomUV);
+		glTexCoord2f(nextU,bottomUV);
 		glVertex3f(0,nextPos[1],clampedZ(nextPos[0],ZOffset));
 
 		glNormal3f(thisNormal[0],thisNormal[1],thisNormal[2]);
-		glTexCoord2f(0,bottomUV);
+		glTexCoord2f(thisU,bottomUV);
 		glVertex3f(0,thispos[1],clampedZ(thispos[0],ZOffset));
 
 		glEnd();
