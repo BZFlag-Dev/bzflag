@@ -115,21 +115,16 @@ static void parse(const std::string& cmd)
     DEBUG3("  Token: %-10s", token.c_str());
 
     bool useRange = true;
-    const int len = (int)token.size();
-    if ((len > 0) && (token[len - 1] == '%')) {
-      useRange = true;
-      token.resize(len - 1);
-    }
     
     // parse the level
     int level = 1;
-    const int len2 = (int)token.size();
-    if (len2 >= 2) {
-      if (token[len2 - 2] == '#') {
-        int number = token[len2 - 1] - '0';
+    const int len = (int)token.size();
+    if (len >= 2) {
+      if (token[len - 2] == '#') {
+        int number = token[len - 1] - '0';
         if ((number >= 0) && (number <= 9)) {
           level = number;
-          token.resize(len2 - 2);
+          token.resize(len - 2);
           useRange = false;
         } else {
           errors.push_back(tokens[i]);
