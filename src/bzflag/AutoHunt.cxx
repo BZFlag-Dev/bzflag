@@ -611,8 +611,8 @@ const char* AutoHunt::getColorString(int level)
     case 6: return ANSI_STR_FG_ORANGE;
     case 7: return ANSI_STR_FG_RED;
     case 8: return ANSI_STR_FG_WHITE;
-    case 9: return ANSI_STR_FG_WHITE;
-    default: return ANSI_STR_FG_WHITE ANSI_STR_UNDERLINE;
+    case 9: return ANSI_STR_FG_WHITE ANSI_STR_UNDERLINE;
+    default: return ANSI_STR_FG_BLACK;
   }
 }
 
