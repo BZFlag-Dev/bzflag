@@ -587,7 +587,7 @@ static std::string cmdSend(const std::string&,
   } else if (args[0] == "team") {
 	if (World::getWorld()->allowTeams())
 	{
-		msgDestination = myTank->getTeam();
+		msgDestination = TeamToPlayerId(myTank->getTeam());
 		composePrompt = "Send to teammates: ";
 	}
 	else
