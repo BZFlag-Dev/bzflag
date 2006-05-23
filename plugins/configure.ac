@@ -205,7 +205,6 @@ AC_CONFIG_FILES([
 	python/Makefile
 	shockwaveDeath/Makefile
 	vc71/Makefile
-	vocaliser/Makefile
 ])
 
 AC_OUTPUT
@@ -229,6 +228,5 @@ AC_MSG_RESULT([  logDetail - Extensive logging support])
 AC_MSG_RESULT([  nagware - Annoy users until they register])
 AC_MSG_RESULT([  playHistoryTracker - Maintain statistics on players])
 AC_MSG_RESULT([  shockwaveDeath - Creates deadly shockwaves when players die])
-AC_MSG_RESULT([  vocaliser - oddly named curiosity])
 AC_MSG_RESULT([  recordmatch - makes countdown record games to a file])
 AC_MSG_RESULT([])
