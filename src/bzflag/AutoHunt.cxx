@@ -146,7 +146,7 @@ static Player* findEnemyLeader()
   for (int i = 0; i < maxPlayers; i++) {
     Player* p = players[i];
     if ((p != NULL) && isEnemy(p)) {
-      const int pScore = p->getWins();
+      const int pScore = p->getScore();
       if (pScore > maxScore) {
         leader = p;
         maxScore = pScore;
