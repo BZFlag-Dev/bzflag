@@ -26,6 +26,7 @@
 
 /* local implementation headers */
 #include "LocalPlayer.h"
+#include "AutoHunt.h"
 #include "World.h"
 #include "sound.h"
 
@@ -661,26 +662,31 @@ void			ScoreboardRenderer::drawPlayerScore(const Player* player,
   // draw huntEnabled status
   if (player->isHunted()) {
     std::string huntStr = ColorStrings[WhiteColor];
+    if (huntCursor && huntAddMode) {
+      huntStr += ColorStrings[PulsatingColor];
+    }
     huntStr += "Hunt->";
     fm.drawString(xs - huntedArrowWidth, y, 0, minorFontFace, minorFontSize,
 		  huntStr.c_str());
-  } else if (player->isAutoHunted()) {
-    std::string huntStr = ColorStrings[WhiteColor];
-    huntStr += "Auto->";
-    fm.drawString(xs - huntedArrowWidth, y, 0, minorFontFace, minorFontSize,
-		  huntStr.c_str());
-  } else if (huntCursor && !huntAddMode) {
-    std::string huntStr = ColorStrings[WhiteColor];
-    huntStr += ColorStrings[PulsatingColor];
-    huntStr += "->";
-    fm.drawString(xs - huntArrowWidth, y, 0, minorFontFace, minorFontSize,
-		  huntStr.c_str());
   }
-  if (huntCursor && huntAddMode) {
+  else if (huntCursor && huntAddMode) {
     std::string huntStr = ColorStrings[WhiteColor];
     huntStr += ColorStrings[PulsatingColor];
     huntStr += "@>";
     fm.drawString(xs - huntPlusesWidth, y, 0, minorFontFace, minorFontSize,
+                  huntStr.c_str());
+  }
+  else if (huntCursor && !huntAddMode) {
+    std::string huntStr = ColorStrings[WhiteColor];
+    huntStr += ColorStrings[PulsatingColor];
+    huntStr += "->";
+    fm.drawString(xs - huntArrowWidth, y, 0, minorFontFace, minorFontSize,
+                  huntStr.c_str());
+  }
+  else if (player->getAutoHuntLevel()) {
+    std::string huntStr = AutoHunt::getColorString(player->getAutoHuntLevel());
+    huntStr += "Auto->";
+    fm.drawString(xs - huntedArrowWidth, y, 0, minorFontFace, minorFontSize,
 		  huntStr.c_str());
   }
 }

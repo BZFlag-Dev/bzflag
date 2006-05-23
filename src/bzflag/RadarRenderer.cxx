@@ -33,6 +33,7 @@
 #include "World.h"
 #include "FlashClock.h"
 #include "ShotPath.h"
+#include "AutoHunt.h"
 
 
 static FlashClock flashTank;
@@ -613,7 +614,7 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
 			     Flags::Colorblindness ? RogueTeam : player->getTeam()));
       }
       // If this tank is hunted flash it on the radar
-      if ((player->isHunted() || player->isAutoHunted())
+      if ((player->isHunted() || player->getAutoHuntLevel())
           && myTank->getFlag() != Flags::Colorblindness) {
 	if (flashTank.isOn()) {
 	  if (!toggleTank) {

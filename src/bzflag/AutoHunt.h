@@ -11,8 +11,18 @@
  */
 
 
+#include "common.h"
+
+// system headers
+#include <string>
+
+
 namespace AutoHunt {
   void update();
+  int getMaxLevel();
+  int getRadarLevel();
+  const char* getColorString(int level);
+  const float* getColorVector(int level);
 }
 
 
