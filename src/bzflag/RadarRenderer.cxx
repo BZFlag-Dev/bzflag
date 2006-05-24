@@ -450,7 +450,9 @@ static bool checkDrawFlags()
   }
   // pick the automatic mode
   const FlagType* ft = myTank->getFlag();
-  if ((ft == Flags::Null) || (ft->flagQuality == FlagBad)) {
+  if ((ft == Flags::Null)     ||
+      (ft == Flags::Identify) ||
+      (ft->flagQuality == FlagBad)) { 
     return true;
   }
   return false;
