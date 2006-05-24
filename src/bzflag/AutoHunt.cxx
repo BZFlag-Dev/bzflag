@@ -51,6 +51,7 @@
 class HuntInfo {
   public:
     HuntInfo() {}
+    bool active() const { return (coords.size() > 0); }
     std::map<int, float> coords;  // level, proximity
 };
 typedef std::map<const FlagType*, HuntInfo> FlagHuntInfoMap;
@@ -75,6 +76,7 @@ class HuntRange {
 
 // static data
 static FlagPairMap FlagPairs;
+static HuntInfo TkHuntInfo;
 static HuntInfo RatioHuntInfo;
 static HuntInfo LeaderHuntInfo;
 static int MaxLevel = 0;
@@ -90,6 +92,7 @@ static int getHuntInfoLevel(const HuntInfo&, float dist);
 static float distBetweenPlayers(const Player*, const Player*);
 static bool isEnemy(const Player*);
 static bool isBeatingMe(const Player*);
+static bool isTeamKiller(const Player* p, float ratio);
 static Player* findEnemyLeader();
 static void printMaps();
 
@@ -102,6 +105,7 @@ static void parse(const std::string& cmd)
 
   HuntRange range;
   FlagPairs.clear();
+  TkHuntInfo.coords.clear();
   RatioHuntInfo.coords.clear();
   LeaderHuntInfo.coords.clear();
   RadarLevel = 1;
@@ -171,6 +175,15 @@ static void parse(const std::string& cmd)
     else if (token == "RESET") {
       range.reset();
       DEBUG3("(range reset)\n");
+    }
+    else if (token == "TK") {
+      if (useRange) {
+        setupHuntInfoRange(TkHuntInfo, range);
+        DEBUG3("(tk/range)\n");
+      } else {
+        TkHuntInfo.coords[level] = proximity;
+        DEBUG3("(tk/%i/%f)\n", level, proximity);
+      }
     }
     else if (token == "RATIO") {
       if (useRange) {
@@ -298,6 +311,12 @@ static void printMaps()
     }
   }
 
+  DEBUG3("Tk:\n");
+  const HuntInfo& thi = TkHuntInfo;
+  for (cit = thi.coords.begin(); cit != thi.coords.end(); cit++) {
+    DEBUG3("  level: %i, dist: %f\n", cit->first, cit->second);
+  }
+
   DEBUG3("Ratio:\n");
   const HuntInfo& rhi = RatioHuntInfo;
   for (cit = rhi.coords.begin(); cit != rhi.coords.end(); cit++) {
@@ -390,6 +409,20 @@ static bool isBeatingMe(const Player* p)
 
 /******************************************************************************/
 
+static bool isTeamKiller(const Player* p, float tkRatio)
+{
+  if (tkRatio > 0.0) {
+    if (((p->getWins() > 0) && (p->getTKRatio() > tkRatio)) ||
+        ((p->getWins() == 0) && (p->getTeamKills() >= 3))) {
+      return true;
+    }
+  }
+  return false;
+}
+                            
+
+/******************************************************************************/
+                            
 static void clearPlayers()
 {
   World* world = World::getWorld();
@@ -463,7 +496,11 @@ static void huntPlayers()
     return;
   }
   const bool observer = (myTank->getTeam() == ObserverTeam);
+  
+  // for detecting team killers
+  const float tkWarnRatio = BZDB.eval("tkwarnratio");
 
+  // setup the paired flag map
   const FlagType* myFlagType = myTank->getFlag();
   const FlagHuntInfoMap* pairedMap = NULL;
   if (myFlagType != Flags::Null) {
@@ -473,18 +510,26 @@ static void huntPlayers()
     }
   }
 
+  // setup the solo flag map
   const FlagHuntInfoMap& soloMap = FlagPairs[Flags::Null];
 
-  // set the autohunt status based on active flag types and ratio
+  // setup hunt level based on player status
   for (int i = 0; i < maxPlayers; i++) {
+
     Player* p = players[i];
-    if ((p != NULL) && (isEnemy(p) || observer)) {
-      // get the distance
-      const float dist = distBetweenPlayers(myTank, p);
-      // flag type
-      FlagType* ft = p->getFlag();
-      if (ft != Flags::Null) {
-        // solo flag type
+    if (p == NULL) {
+      continue;
+    }
+    const bool myEnemy = isEnemy(p);
+
+    // get the distance
+    const float dist = distBetweenPlayers(myTank, p);
+
+    // flag type
+    FlagType* ft = p->getFlag();
+    if (ft != Flags::Null) {
+      // solo flag type
+      if (myEnemy || observer) {
         FlagHuntInfoMap::const_iterator sit = soloMap.find(ft);
         if (sit != soloMap.end()) {
           const HuntInfo& hi = sit->second;
@@ -493,34 +538,44 @@ static void huntPlayers()
             p->setAutoHuntLevel(level);
           }
         }
-        // paired flag type
-        if ((pairedMap != NULL) && !observer) {
-          FlagHuntInfoMap::const_iterator pit = pairedMap->find(ft);
-          if (pit != pairedMap->end()) {
-            const HuntInfo& hi = pit->second;
-            const int level = getHuntInfoLevel(hi, dist);
-            if (level > p->getAutoHuntLevel()) {
-              p->setAutoHuntLevel(level);
-            }
+      }
+      // paired flag type
+      if (myEnemy && (pairedMap != NULL)) {
+        FlagHuntInfoMap::const_iterator pit = pairedMap->find(ft);
+        if (pit != pairedMap->end()) {
+          const HuntInfo& hi = pit->second;
+          const int level = getHuntInfoLevel(hi, dist);
+          if (level > p->getAutoHuntLevel()) {
+            p->setAutoHuntLevel(level);
           }
         }
       }
-      // player ratio
-      if (isBeatingMe(p) && !observer) {
-        const int level = getHuntInfoLevel(RatioHuntInfo, dist);
-        if (level > p->getAutoHuntLevel()) {
-          p->setAutoHuntLevel(level);
-        }
+    }
+
+    // player ratio
+    if (myEnemy && RatioHuntInfo.active() && isBeatingMe(p)) {
+      const int level = getHuntInfoLevel(RatioHuntInfo, dist);
+      if (level > p->getAutoHuntLevel()) {
+        p->setAutoHuntLevel(level);
       }
-      // update MaxLevel
-      if (p->getAutoHuntLevel() > MaxLevel) {
-        MaxLevel = p->getAutoHuntLevel();
+    }
+
+    // teamkill ratio
+    if (!myEnemy && TkHuntInfo.active() && isTeamKiller(p, tkWarnRatio)) {
+      const int level = getHuntInfoLevel(TkHuntInfo, dist);
+      if (level > p->getAutoHuntLevel()) {
+        p->setAutoHuntLevel(level);
       }
+    }
+
+    // update MaxLevel
+    if (p->getAutoHuntLevel() > MaxLevel) {
+      MaxLevel = p->getAutoHuntLevel();
     }
   }
 
   // set the autohunt status based on score leadership
-  if (LeaderHuntInfo.coords.size() > 0) {
+  if (LeaderHuntInfo.active()) {
     Player* leader = findEnemyLeader();
     if (leader != NULL) {
       const float dist = distBetweenPlayers(myTank, leader);
