@@ -1182,76 +1182,36 @@ void sendMessage(int playerIndex, PlayerId dstPlayer, const char *message)
     msglen = MessageLen;
   }
 
-  void *buf, *bufStart = getDirectMessageBuffer();
-  buf = nboPackUByte(bufStart, playerIndex);
-  buf = nboPackUByte(buf, dstPlayer);
-  buf = nboPackString(buf, msg, msglen);
-
-  ((char*)bufStart)[MessageLen - 1 + 2] = '\0'; // always terminate
-
-  bool broadcast = false;
-
-  if (dstPlayer <= LastRealPlayer)
+  // Notify any plugins
+  if (playerIndex == ServerPlayer)
   {
-    GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(dstPlayer);
-    if (playerData && !playerData->player.isBot())
-	{
-	  sendTextMessage(dstPlayer,playerIndex,msg,msglen);
-      if (playerIndex <= LastRealPlayer && dstPlayer != playerIndex)
-		sendTextMessage(playerIndex,playerIndex,msg,msglen);
+    bz_ServerMsgEventData_V1 serverMsgData;
+    switch (dstPlayer) {
+      case AdminPlayers:
+        serverMsgData.to = BZ_NULLUSER;
+        serverMsgData.team = eAdministrators;
+        break;
+      case AllPlayers:
+        serverMsgData.to = BZ_ALLUSERS;
+        break;
+      default:
+        if (dstPlayer <= LastRealPlayer) {
+          serverMsgData.to = dstPlayer;
+        } else {
+          serverMsgData.to = BZ_NULLUSER;
+          serverMsgData.team = convertTeam(TeamColor(250 - dstPlayer));	// FIXME this teamcolor <-> player id conversion is in several files now
+        }
     }
-  }
-  else if (dstPlayer >= 244 && dstPlayer <= 250)  // FIXME this teamcolor <-> player id conversion is in several files now
-  {
-    TeamColor _team = TeamColor(250 - dstPlayer);
-    // send message to all team members only
-    GameKeeper::Player *playerData;
-    for (int i = 0; i < curMaxPlayers; i++)
-	{
-      if ((playerData = GameKeeper::Player::getPlayerByIndex(i)) && playerData->player.isPlaying() && playerData->player.isTeam(_team))
-		  sendTextMessage(i,playerIndex,msg,msglen);
-	}
-  }
-  else if (dstPlayer == AdminPlayers)
-  {
-    // admin messages
-
-    // Notify any plugins
-    if (playerIndex == ServerPlayer)
-	{
-      bz_ServerMsgEventData_V1 serverMsgData;
-      serverMsgData.to = BZ_NULLUSER;
-      serverMsgData.team = eAdministrators;
-      serverMsgData.message = message;
-      serverMsgData.time = TimeKeeper::getCurrent().getSeconds();
-      worldEventManager.callEvents(bz_eServerMsgEvent, &serverMsgData);
-    }
-
-    std::vector<int> admins  = GameKeeper::Player::allowed(PlayerAccessInfo::adminMessageReceive);
-    for (unsigned int i = 0; i < admins.size(); ++i)
-		sendTextMessage(admins[i],playerIndex,msg,msglen);
-  }
-  else 
-  {
-    // message to all players
-
-    // Notify any plugins
-    if (playerIndex == ServerPlayer) 
-	{
-      bz_ServerMsgEventData_V1 serverMsgData;
-      serverMsgData.to = BZ_ALLUSERS;
-      serverMsgData.message = message;
-      serverMsgData.time = TimeKeeper::getCurrent().getSeconds();
-      worldEventManager.callEvents(bz_eServerMsgEvent, &serverMsgData);
-    }
-
-	sendTextMessage(AllPlayers,playerIndex,msg,msglen,true);
-    broadcast = true;
+    serverMsgData.message = message;
+    serverMsgData.time = TimeKeeper::getCurrent().getSeconds();
+    worldEventManager.callEvents(bz_eServerMsgEvent, &serverMsgData);
   }
 
-  if (Record::enabled() && !broadcast)// don't record twice
+  sendTextMessage(dstPlayer, playerIndex, msg, msglen);
+
+  if (Record::enabled() && !(dstPlayer == AllPlayers)) // don't record twice
   { 
-	  sendTextMessage(-1,playerIndex,msg,msglen,false,true);
+    sendTextMessage(-1, playerIndex, msg, msglen, true);
   }
 }
 

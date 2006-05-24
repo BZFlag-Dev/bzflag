@@ -30,7 +30,7 @@ void sendSingleHandycapInfoUpdate ( GameKeeper::Player* playerData );
 void sendAdminInfoMessage ( int aboutPlayer, int toPlayer, bool record = false );
 void sendWorldChunk(NetHandler *handler, uint32_t ptr);
 void broadcastPlayerStateUpdate ( void );
-void sendTextMessage ( int destPlayer, int sourcePlayer, const char* text, int len, bool broadcast = false, bool recordOnly = false );
+void sendTextMessage ( int destPlayer, int sourcePlayer, const char* text, int len, bool recordOnly = false );
 void sendMessageAlive ( int playerID, float pos[3], float rot );
 bool sendPlayerStateMessage ( GameKeeper::Player *playerData, bool shortState);
 void sendPlayerKilledMessage (int victimIndex, int killerIndex, BlowedUpReason reason, int16_t shotIndex, const FlagType*flagType, int phydrv);
