@@ -26,6 +26,8 @@
 class SceneRenderer;
 class World;
 class ShotPath;
+class Player;
+
 
 class RadarRenderer {
   public:
@@ -62,9 +64,9 @@ class RadarRenderer {
     RadarRenderer&	operator=(const RadarRenderer&);
 
     void		drawShot(const ShotPath*);
-    void		drawTank(const float pos[3],
-				 const class Player* player);
-    void		drawFancyTank(const class Player* player);
+    void		drawTank(const Player* player, bool allowFancy);
+    void		drawFancyTank(const Player* player);
+    void		drawHuntLevel(const Player* player, float heightBoxSize);
     void		drawFlag(const float pos[3]);
     void		drawFlagOnTank(const float pos[3]);
 

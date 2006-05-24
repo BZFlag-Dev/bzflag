@@ -27,17 +27,14 @@
 #include "BoxBuilding.h"
 #include "PyramidBuilding.h"
 #include "MeshObstacle.h"
+#include "TimeKeeper.h"
 
 // local implementation headers
 #include "LocalPlayer.h"
 #include "World.h"
-#include "FlashClock.h"
 #include "ShotPath.h"
 #include "AutoHunt.h"
 
-
-static FlashClock flashTank;
-static bool toggleTank = false;
 
 const float RadarRenderer::colorFactor = 40.0f;
 
@@ -107,9 +104,11 @@ void RadarRenderer::drawShot(const ShotPath* shot)
 }
 
 
-void RadarRenderer::drawTank(const float pos[3], const Player* player)
+void RadarRenderer::drawTank(const Player* player, bool allowFancy)
 {
   glPushMatrix();
+
+  const float* pos = player->getPosition();  
 
   // 'ps' is pixel scale, setup in render()
   const float tankRadius = BZDBCache::tankRadius;
@@ -131,7 +130,7 @@ void RadarRenderer::drawTank(const float pos[3], const Player* player)
   glTranslatef(pos[0], pos[1], 0.0f);
 
   // draw the tank
-  if ((player == NULL) || !useTankDimensions) {
+  if (!allowFancy || !useTankDimensions) {
     // align to the screen axes
     glRotatef(float(myAngle * 180.0 / M_PI), 0.0f, 0.0f, 1.0f);
     glRectf(-size, -size, +size, +size);
@@ -154,16 +153,19 @@ void RadarRenderer::drawTank(const float pos[3], const Player* player)
 
   // adjust with height box size
   const float boxHeight = BZDB.eval(StateDatabase::BZDB_BOXHEIGHT);
-  size = size * (1.0f + (0.5f * (pos[2] / boxHeight)));
+  const float hbSize = size * (1.0f + (0.5f * (pos[2] / boxHeight)));
 
   // draw the height box
   glBegin(GL_LINE_STRIP);
-  glVertex2f(-size, 0.0f);
-  glVertex2f(0.0f, -size);
-  glVertex2f(+size, 0.0f);
-  glVertex2f(0.0f, +size);
-  glVertex2f(-size, 0.0f);
+  glVertex2f(-hbSize, 0.0f);
+  glVertex2f(0.0f, -hbSize);
+  glVertex2f(+hbSize, 0.0f);
+  glVertex2f(0.0f, +hbSize);
+  glVertex2f(-hbSize, 0.0f);
   glEnd();
+  
+  // draw the AutoHunt indicator
+  drawHuntLevel(player, hbSize);
 
   glPopMatrix();
 }
@@ -198,6 +200,77 @@ void RadarRenderer::drawFancyTank(const Player* player)
 
   if (smooth) {
     glEnable(GL_BLEND);
+  }
+
+  return;
+}
+
+
+void RadarRenderer::drawHuntLevel(const Player* player, float hbSize)
+{
+  const int huntLevel = player->getAutoHuntLevel();
+  if (huntLevel < 4) {
+    return;
+  }
+
+  const float hlf = (float)huntLevel;
+  const float hlr = (hlf - 1.0f) / 8.0f; // 0 to 1
+
+//    glLineWidth(1.0f + (hlr * 2.0f));
+
+  if (!smooth) {
+    glEnable(GL_BLEND);
+  }
+
+  // vary the translucency
+  const float huntAlpha = 0.25f + (hlr * 0.75f);
+  
+  bool blink = false;  
+  if (huntLevel > 6) {
+    const double diffTime = TimeKeeper::getTick() - TimeKeeper::getStartTime();
+    const float thresh = 0.5f;
+    const float rate = (1.0f / (1.0f + hlr));
+    blink = fmodf((float)diffTime, rate) > (rate * thresh);
+  }
+
+  if (blink) {
+    glColor4f(0.0f, 0.8f, 0.9f, huntAlpha);
+  } else {
+    glColor4f(1.0f, 1.0f, 1.0f, huntAlpha);
+  }
+  
+  float s = (float)M_SQRT1_2 * hbSize;
+  float check = ps * 5.0f;
+  if (s < check) {
+    s = check;
+  }
+  const float gap = 0.4f;
+  const float b = s * (1.0f - gap);
+
+  // draw the corners
+  glBegin(GL_LINE_STRIP);
+  glVertex2f(+s, +b);
+  glVertex2f(+s, +s);
+  glVertex2f(+b, +s);
+  glEnd();
+  glBegin(GL_LINE_STRIP);
+  glVertex2f(-s, -b);
+  glVertex2f(-s, -s);
+  glVertex2f(-b, -s);
+  glEnd();
+  glBegin(GL_LINE_STRIP);
+  glVertex2f(-b, +s);
+  glVertex2f(-s, +s);
+  glVertex2f(-s, +b);
+  glEnd();
+  glBegin(GL_LINE_STRIP);
+  glVertex2f(+b, -s);
+  glVertex2f(+s, -s);
+  glVertex2f(+s, -b);
+  glEnd();
+
+  if (!smooth) {
+    glDisable(GL_BLEND);
   }
 
   return;
@@ -567,6 +640,9 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
       }
     }
 
+    // used for blinking tanks
+    const double diffTime = TimeKeeper::getTick() - TimeKeeper::getStartTime();
+
     // draw other tanks (and any flags on them)
     // note about flag drawing.  each line segment is drawn twice
     // (once in each direction);  this degrades the antialiasing
@@ -613,27 +689,23 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
 	glColor3fv(Team::getRadarColor(myTank->getFlag() ==
 			     Flags::Colorblindness ? RogueTeam : player->getTeam()));
       }
+
       // If this tank is hunted flash it on the radar
-      if ((player->isHunted() || player->getAutoHuntLevel())
-          && myTank->getFlag() != Flags::Colorblindness) {
-	if (flashTank.isOn()) {
-	  if (!toggleTank) {
-	    float flashcolor[3];
-	    flashcolor[0] = 0.0f;
-	    flashcolor[1] = 0.8f;
-	    flashcolor[2] = 0.9f;
-	    glColor3fv(flashcolor);
-	  }
-	} else {
-	  toggleTank = !toggleTank;
-	  flashTank.setClock(0.2f);
-	}
-      }
-      if (!observer) {
-	drawTank(position, NULL);
-      } else {
-	drawTank(position, player);
-      }
+      int huntLevel = player->isHunted() ? 9 : player->getAutoHuntLevel();  
+      if ((huntLevel > 0) && (myTank->getFlag() != Flags::Colorblindness)) {
+        const float hlf = (float)huntLevel;
+        const float thresh = 0.5f; // + ((9.0f - hlf) / 20.0f);
+        const float rate = (6.0f / (9.0f + hlf));
+        const bool blink = fmodf((float)diffTime, rate) > (rate * thresh);
+        const float blinkColor[3] = {0.0f, 0.8f, 0.9f};
+        if (blink) {
+          glColor3fv(blinkColor);
+        } else {
+          glColor3fv(Team::getRadarColor(player->getTeam()));
+        }
+      } 
+
+      drawTank(player, observer);
     }
 
     bool coloredShot = BZDB.isTrue("coloredradarshots");
@@ -724,7 +796,7 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
 
       // my tank
       glColor3f(1.0f, 1.0f, 1.0f);
-      drawTank(myPos, myTank);
+      drawTank(myTank, true);
     }
 
     if (dimming > 0.0f) {
