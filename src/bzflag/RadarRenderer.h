@@ -66,7 +66,8 @@ class RadarRenderer {
     void		drawShot(const ShotPath*);
     void		drawTank(const Player* player, bool allowFancy);
     void		drawFancyTank(const Player* player);
-    void		drawHuntLevel(const Player* player, float heightBoxSize);
+    void		drawHuntLevel(const Player* player,
+                                      float tankSize, float heightBoxSize);
     void		drawFlag(const float pos[3]);
     void		drawFlagOnTank(const float pos[3]);
 

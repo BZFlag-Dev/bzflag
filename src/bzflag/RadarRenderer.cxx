@@ -165,7 +165,7 @@ void RadarRenderer::drawTank(const Player* player, bool allowFancy)
   glEnd();
   
   // draw the AutoHunt indicator
-  drawHuntLevel(player, hbSize);
+  drawHuntLevel(player, size, hbSize);
 
   glPopMatrix();
 }
@@ -206,7 +206,8 @@ void RadarRenderer::drawFancyTank(const Player* player)
 }
 
 
-void RadarRenderer::drawHuntLevel(const Player* player, float hbSize)
+void RadarRenderer::drawHuntLevel(const Player* player,
+                                  float tankSize, float heightBoxSize)
 {
   const int huntLevel = player->getAutoHuntLevel();
   if (huntLevel < 4) {
@@ -238,11 +239,15 @@ void RadarRenderer::drawHuntLevel(const Player* player, float hbSize)
   } else {
     glColor4f(1.0f, 1.0f, 1.0f, huntAlpha);
   }
-  
-  float s = (float)M_SQRT1_2 * hbSize;
-  float check = ps * 5.0f;
+
+  float s = (float)M_SQRT1_2 * heightBoxSize;
+  const float check = ps * 5.0f;
   if (s < check) {
     s = check;
+  }
+  const float check2 = tankSize + (0.5f * check);
+  if (s < check2) {
+    s = check2;
   }
   const float gap = 0.4f;
   const float b = s * (1.0f - gap);
