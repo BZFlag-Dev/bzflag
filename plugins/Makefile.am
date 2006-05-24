@@ -1,5 +1,5 @@
 AUTOMAKE_OPTIONS = 1.6 dist-zip dist-bzip2
-ACLOCAL_AMFLAGS = -I ../m4
+ACLOCAL_AMFLAGS = -I m4
 
 SUBDIRS = \
 	RogueGenocide \
@@ -20,6 +20,7 @@ DIST_SUBDIRS = \
 	$(SUBDIRS) \
 	serverSideBotSample \
 	doc \
+	m4 \
 	vc71
 
 EXTRA_DIST = \
