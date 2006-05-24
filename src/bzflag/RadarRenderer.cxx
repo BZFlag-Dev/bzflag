@@ -47,6 +47,7 @@ RadarRenderer::RadarRenderer(const SceneRenderer&, World* _world)
     dimming(0.0f),
     decay(0.01f),
     jammed(false),
+    colorblind(false),
     multiSampled(false)
 {
 
@@ -165,7 +166,9 @@ void RadarRenderer::drawTank(const Player* player, bool allowFancy)
   glEnd();
   
   // draw the AutoHunt indicator
-  drawHuntLevel(player, size, hbSize);
+  if (!colorblind) {
+    drawHuntLevel(player, size, hbSize);
+  }
 
   glPopMatrix();
 }
@@ -223,9 +226,6 @@ void RadarRenderer::drawHuntLevel(const Player* player,
     glEnable(GL_BLEND);
   }
 
-  // vary the translucency
-  const float huntAlpha = 0.25f + (hlr * 0.75f);
-  
   bool blink = false;  
   if (huntLevel > 6) {
     const double diffTime = TimeKeeper::getTick() - TimeKeeper::getStartTime();
@@ -233,46 +233,78 @@ void RadarRenderer::drawHuntLevel(const Player* player,
     const float rate = (1.0f / (1.0f + hlr));
     blink = fmodf((float)diffTime, rate) > (rate * thresh);
   }
-
+  float color[4];
   if (blink) {
-    glColor4f(0.0f, 0.8f, 0.9f, huntAlpha);
+    color[0] = 0.0f;
+    color[1] = 0.8f;
+    color[2] = 0.9f;
   } else {
-    glColor4f(1.0f, 1.0f, 1.0f, huntAlpha);
+    color[0] = 1.0f;
+    color[1] = 1.0f;
+    color[2] = 1.0f;
   }
 
+  // vary the translucency
+  color[3] = 0.25f + (hlr * 0.75f);
+
+  glColor4fv(color);
+  
+  // setup the geometry
   float s = (float)M_SQRT1_2 * heightBoxSize;
-  const float check = ps * 5.0f;
-  if (s < check) {
-    s = check;
+  const float spacing = ps * 2.5f;
+  const float check1 = spacing * 2.0f;
+  if (s < check1) {
+    s = check1;
   }
-  const float check2 = tankSize + (0.5f * check);
+  const float check2 = tankSize + spacing;
   if (s < check2) {
     s = check2;
   }
   const float gap = 0.4f;
-  const float b = s * (1.0f - gap);
+  float b = s * (1.0f - gap);
 
   // draw the corners
-  glBegin(GL_LINE_STRIP);
-  glVertex2f(+s, +b);
-  glVertex2f(+s, +s);
-  glVertex2f(+b, +s);
-  glEnd();
-  glBegin(GL_LINE_STRIP);
-  glVertex2f(-s, -b);
-  glVertex2f(-s, -s);
-  glVertex2f(-b, -s);
-  glEnd();
-  glBegin(GL_LINE_STRIP);
-  glVertex2f(-b, +s);
-  glVertex2f(-s, +s);
-  glVertex2f(-s, +b);
-  glEnd();
-  glBegin(GL_LINE_STRIP);
-  glVertex2f(+b, -s);
-  glVertex2f(+s, -s);
-  glVertex2f(+s, -b);
-  glEnd();
+  int sets = 1;
+  if (huntLevel > 5) { sets = 2; }
+  if (huntLevel > 7) { sets = 3; }
+
+  float bDelta = spacing; // setup for X patter, 0 for square pattern
+  if ((huntLevel == 7) || (huntLevel == 9)) { bDelta = 0.0f; }
+  
+  const float alphaDelta = color[3] * ((1.0f - 0.25f) / (float)sets);
+  
+  int i = 1;
+  while (true) {
+    glBegin(GL_LINE_STRIP);
+    glVertex2f(+s, +b);
+    glVertex2f(+s, +s);
+    glVertex2f(+b, +s);
+    glEnd();
+    glBegin(GL_LINE_STRIP);
+    glVertex2f(-s, -b);
+    glVertex2f(-s, -s);
+    glVertex2f(-b, -s);
+    glEnd();
+    glBegin(GL_LINE_STRIP);
+    glVertex2f(-b, +s);
+    glVertex2f(-s, +s);
+    glVertex2f(-s, +b);
+    glEnd();
+    glBegin(GL_LINE_STRIP);
+    glVertex2f(+b, -s);
+    glVertex2f(+s, -s);
+    glVertex2f(+s, -b);
+    glEnd();
+
+    if (i >= sets) {
+      break;
+    }
+    i++;
+    s += spacing;
+    b += bDelta;
+    color[3] -= alphaDelta;
+    glColor4fv(color);
+  }
 
   if (!smooth) {
     glDisable(GL_BLEND);
@@ -553,6 +585,9 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
 
   // only draw if there's a local player and a world
   else if (myTank) {
+
+    colorblind = (myTank->getFlag() == Flags::Colorblindness);
+
     // if decay is sufficiently small then boost it so it's more
     // likely a jammed radar will get a few good frames closely
     // spaced in time.  value of 1 guarantees at least two good
@@ -647,7 +682,7 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
 
     // used for blinking tanks
     const double diffTime = TimeKeeper::getTick() - TimeKeeper::getStartTime();
-
+    
     // draw other tanks (and any flags on them)
     // note about flag drawing.  each line segment is drawn twice
     // (once in each direction);  this degrades the antialiasing
@@ -679,7 +714,7 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
 	const float dimfactor = 0.4f;
 
 	const float *color;
-	if (myTank->getFlag() == Flags::Colorblindness) {
+	if (colorblind) {
 	  color = Team::getRadarColor(RogueTeam);
 	} else {
 	  color = Team::getRadarColor(player->getTeam());
@@ -691,13 +726,13 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
 	dimmedcolor[2] = color[2] * dimfactor;
 	glColor3fv(dimmedcolor);
       } else {
-	glColor3fv(Team::getRadarColor(myTank->getFlag() ==
-			     Flags::Colorblindness ? RogueTeam : player->getTeam()));
+        const TeamColor team = colorblind ? RogueTeam : player->getTeam();
+	glColor3fv(Team::getRadarColor(team));
       }
 
       // If this tank is hunted flash it on the radar
       int huntLevel = player->isHunted() ? 9 : player->getAutoHuntLevel();  
-      if ((huntLevel > 0) && (myTank->getFlag() != Flags::Colorblindness)) {
+      if ((huntLevel > 0) && !colorblind) {
         const float hlf = (float)huntLevel;
         const float thresh = 0.5f; // + ((9.0f - hlf) / 20.0f);
         const float rate = (6.0f / (9.0f + hlf));
@@ -725,10 +760,11 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
 	if (shot && (shot->getFlag() != Flags::InvisibleBullet || iSeeAll)) {
 	  const float *shotcolor;
 	  if (coloredShot) {
-	    if (myTank->getFlag() == Flags::Colorblindness)
+	    if (colorblind) {
 	      shotcolor = Team::getRadarColor(RogueTeam);
-	    else
+            } else {
 	      shotcolor = Team::getRadarColor(player->getTeam());
+            }
 	    const float cs = colorScale(shot->getPosition()[2], muzzleHeight);
 	    glColor3f(shotcolor[0] * cs, shotcolor[1] * cs, shotcolor[2] * cs);
 	  } else {
