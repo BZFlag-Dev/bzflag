@@ -40,9 +40,18 @@ std::string		ScoreboardRenderer::teamScoreSpacingLabel("88 (888-888) 88");
 std::string		ScoreboardRenderer::teamCountSpacingLabel("888");
 std::string		ScoreboardRenderer::playerLabel("Player");
 
-// NOTE: order of sort labels must match SORT_ consts
-const char *ScoreboardRenderer::sortLabels[] = {
-  "[Score]", "[Normalized Score]", "[Callsign]", "[Team Kills]", "[TK ratio]", "[Team]", "[1on1]", NULL};
+// NOTE: order of sort labels must match Sort enums
+const char* ScoreboardRenderer::sortLabels[SortTypeCount + 1] = {
+  "[Score]",
+  "[Normalized Score]",
+  "[Callsign]",
+  "[Team Kills]",
+  "[TK ratio]",
+  "[Team]",
+  "[1on1]",
+  "[HuntLevel]",
+  NULL
+};
 int ScoreboardRenderer::sortMode = 0;
 bool ScoreboardRenderer::alwaysShowTeamScore = 0;
 
@@ -61,7 +70,7 @@ ScoreboardRenderer::ScoreboardRenderer() :
   messageColor[0] = 1.0f;
   messageColor[1] = 1.0f;
   messageColor[2] = 1.0f;
-  sortMode = BZDB.getIntClamped("scoreboardSort", 0, SORT_MAXNUM);
+  sortMode = BZDB.getIntClamped("scoreboardSort", 0, SortTypeCount - 1);
   alwaysShowTeamScore = (BZDB.getIntClamped("alwaysShowTeamScore", 0, 1) != 0);
 }
 
@@ -87,7 +96,7 @@ ScoreboardRenderer::~ScoreboardRenderer()
 }
 
 
-const char  **ScoreboardRenderer::getSortLabels ()
+const char** ScoreboardRenderer::getSortLabels ()
 {
   return sortLabels;
 }
@@ -417,7 +426,7 @@ void			ScoreboardRenderer::renderScoreboard(void)
   hudColor3fv(messageColor);
 
   std::string psLabel = bdl->getLocalString(playerLabel);
-  if (sortMode != SORT_SCORE){
+  if (sortMode != SortScore){
     psLabel += "  ";
     psLabel += sortLabels[sortMode];
   }
@@ -633,11 +642,11 @@ void			ScoreboardRenderer::drawPlayerScore(const Player* player,
     playerInfo += "[auto]";
 
 #if DEBUG_SHOWRATIOS
-  if (sortMode == SORT_NORMALIZED)
+  if (sortMode == SortNormalized)
     stringAppendNormalized (&playerInfo, player->getNormalizedScore());
-  else if (sortMode == SORT_MYRATIO)
+  else if (sortMode == SortMyRatio)
     stringAppendNormalized (&playerInfo, player->getLocalNormalizedScore());
-  else if (sortMode == SORT_TKRATIO)
+  else if (sortMode == SortTkRatio)
     stringAppendNormalized (&playerInfo, player->getTKRatio());
 #endif
 
@@ -692,16 +701,17 @@ void			ScoreboardRenderer::drawPlayerScore(const Player* player,
 
 
 // get current 'leader' (NULL if no player)
-Player*   ScoreboardRenderer::getLeader(std::string *label) {
+Player* ScoreboardRenderer::getLeader(std::string *label)
+{
   int sortType=sortMode;
 
-  if (sortMode==SORT_CALLSIGN || sortMode==SORT_MYRATIO || sortMode==SORT_TEAM){
-    sortType = SORT_SCORE;
+  if (sortMode==SortCallsign || sortMode==SortMyRatio || sortMode==SortTeam){
+    sortType = SortScore;
   }
   if (label != NULL){
-    if (sortMode==SORT_TKS)
+    if (sortMode==SortTKs)
       *label = "TK Leader ";
-    else if (sortMode==SORT_TKRATIO)
+    else if (sortMode==SortTkRatio)
       *label = "TK Ratio Leader ";
     else
       *label = "Leader ";
@@ -787,41 +797,48 @@ Player **  ScoreboardRenderer::newSortedList (int sortType, bool obsLast, int *_
     for (i=0; i<numPlayers; i++){
       p = sorter[i].player;
       switch (sortType){
-	case SORT_TKS:
+	case SortTKs:
 	  sorter[i].i1 = p->getTeamKills();
 	  sorter[i].i2 = 0 - (int)(p->getNormalizedScore() * 100000);
 	  break;
-	case SORT_TKRATIO:
+	case SortTkRatio:
 	  sorter[i].i1 = (int)(p->getTKRatio() * 1000);
 	  sorter[i].i2 = 0 - (int)(p->getNormalizedScore() * 100000);
 	  break;
-	case SORT_TEAM:
+	case SortTeam:
 	  sorter[i].i1 = p->getTeam();
 	  sorter[i].i2 = (int)(p->getNormalizedScore() * 100000);
 	  break;
-	case SORT_MYRATIO:
+	case SortMyRatio:
 	  if (p == myTank)
 	    sorter[i].i1 = -100001;
 	  else
 	    sorter[i].i1 = 0 - (int)(p->getLocalNormalizedScore() * 100000);
 	  sorter[i].i2 = (int)(p->getNormalizedScore() * 100000);
 	  break;
-	case SORT_NORMALIZED:
+	case SortNormalized:
 	  sorter[i].i1 = (int)(p->getNormalizedScore() * 100000);
 	  sorter[i].i2 = 0;
 	  break;
-	case SORT_CALLSIGN:
+	case SortCallsign:
 	  sorter[i].cp = p->getCallSign();
 	  break;
-	default:
+	case SortHuntLevel: {
+	  const int huntLevel = p->getAutoHuntLevel();
+	  sorter[i].i1 = p->isHunted() ? 10 : huntLevel;
+	  sorter[i].i2 = p->getScore();
+	  break;
+        }
+	default: {
 	  if (world->allowRabbit())
 	    sorter[i].i1 = p->getRabbitScore();
 	  else
 	    sorter[i].i1 = p->getScore();
 	  sorter[i].i2 = 0;
+        }
       }
     }
-    if (sortType == SORT_CALLSIGN)
+    if (sortType == SortCallsign)
       qsort (sorter, numPlayers, sizeof(sortEntry), sortCompareCp);
     else
       qsort (sorter, numPlayers, sizeof(sortEntry), sortCompareI2);

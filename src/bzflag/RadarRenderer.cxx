@@ -439,6 +439,24 @@ void RadarRenderer::renderFrame(SceneRenderer& renderer)
 }
 
 
+static bool checkDrawFlags()
+{
+  if (!BZDB.isTrue("autoFlagDisplay")) {
+    return BZDB.isTrue("displayRadarFlags");
+  }
+  const LocalPlayer *myTank = LocalPlayer::getMyTank();
+  if (!myTank) {
+    return BZDB.isTrue("displayRadarFlags");
+  }
+  // pick the automatic mode
+  const FlagType* ft = myTank->getFlag();
+  if ((ft == Flags::Null) || (ft->flagQuality == FlagBad)) {
+    return true;
+  }
+  return false;
+}
+
+
 void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
 {
   RenderNode::resetTriangleCount();
@@ -779,7 +797,7 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
     // draw them in reverse order so that the team flags
     // (which come first), are drawn on top of the normal flags.
     const int maxFlags = world->getMaxFlags();
-    const bool drawNormalFlags = BZDB.isTrue("displayRadarFlags");
+    const bool drawNormalFlags = checkDrawFlags();
     for (i = (maxFlags - 1); i >= 0; i--) {
       const Flag& flag = world->getFlag(i);
       // don't draw flags that don't exist or are on a tank

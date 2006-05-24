@@ -57,14 +57,17 @@ public:
   static void    setSort (int _sortby);
   static int     getSort ();
   static const char **getSortLabels();
-  static const int SORT_SCORE = 0;
-  static const int SORT_NORMALIZED = 1;
-  static const int SORT_CALLSIGN = 2;
-  static const int SORT_TKS = 3;
-  static const int SORT_TKRATIO = 4;
-  static const int SORT_TEAM = 5;
-  static const int SORT_MYRATIO = 6;
-  static const int SORT_MAXNUM = SORT_MYRATIO;
+  enum SortingTypes {
+    SortScore = 0,
+    SortNormalized,
+    SortCallsign,
+    SortTKs,
+    SortTkRatio,
+    SortTeam,
+    SortMyRatio,
+    SortHuntLevel,
+    SortTypeCount
+  };
 
 protected:
   void		hudColor3fv(const GLfloat*);
@@ -73,7 +76,7 @@ protected:
   void          renderCtfFlags (void);
   void		drawPlayerScore(const Player*,
 		    float x1, float x2, float x3, float xs, float y, int emailLen, bool huntInd);
-  static const char *sortLabels[SORT_MAXNUM+2];
+  static const char* sortLabels[SortTypeCount + 1];
   static int  sortMode;
   static bool alwaysShowTeamScore;
   void   stringAppendNormalized (std::string *s, float n);
@@ -94,9 +97,9 @@ private:
   float winHeight;
 
   GLfloat	messageColor[3];
-  int		  minorFontFace;
+  int		minorFontFace;
   float		minorFontSize;
-  int		  labelsFontFace;
+  int		labelsFontFace;
   float		labelsFontSize;
 
   bool		dim;

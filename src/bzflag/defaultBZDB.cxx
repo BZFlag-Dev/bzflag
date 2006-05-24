@@ -99,6 +99,7 @@ DefaultDBItem	defaultDBItems[] = {
   { "shadowAlpha",		"0.5",			true,	StateDatabase::ReadWrite,	NULL },
   { "aniso",			"1",			true,	StateDatabase::ReadWrite,	NULL },
   { "autohunt",			"",			true,	StateDatabase::ReadWrite,	NULL },
+  { "autoFlagDisplay",		"0",			true,	StateDatabase::ReadWrite,	NULL },
 
   // input
   { "allowInputChange",		"1",			true,	StateDatabase::ReadWrite,	NULL },
