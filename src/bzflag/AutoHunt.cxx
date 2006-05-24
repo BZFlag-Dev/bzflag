@@ -161,12 +161,12 @@ static void parse(const std::string& cmd)
     else if (token == "MIN") {
       range.minLevel = level;
       range.minProximity = proximity;
-      DEBUG3("(range min)\n");
+      DEBUG3("(range min/%i/%f)\n", level, proximity);
     }
     else if (token == "MAX") {
       range.maxLevel = level;
       range.maxProximity = proximity;
-      DEBUG3("(range max)\n");
+      DEBUG3("(range max/%i/%f)\n", level, proximity);
     }
     else if (token == "RESET") {
       range.reset();
@@ -236,8 +236,6 @@ static void parse(const std::string& cmd)
     }
   }
 
-  printMaps();
-
   if (errors.size() > 0) {
     std::string parseError = "AutoHunt: ";
     parseError += cmd;
@@ -299,11 +297,13 @@ static void printMaps()
       }
     }
   }
+
   DEBUG3("Ratio:\n");
   const HuntInfo& rhi = RatioHuntInfo;
   for (cit = rhi.coords.begin(); cit != rhi.coords.end(); cit++) {
     DEBUG3("  level: %i, dist: %f\n", cit->first, cit->second);
   }
+
   DEBUG3("Leader:\n");
   const HuntInfo& lhi = RatioHuntInfo;
   for (cit = lhi.coords.begin(); cit != lhi.coords.end(); cit++) {
@@ -462,6 +462,7 @@ static void huntPlayers()
   if (myTank == NULL) {
     return;
   }
+  const bool observer = (myTank->getTeam() == ObserverTeam);
 
   const FlagType* myFlagType = myTank->getFlag();
   const FlagHuntInfoMap* pairedMap = NULL;
@@ -477,7 +478,7 @@ static void huntPlayers()
   // set the autohunt status based on active flag types and ratio
   for (int i = 0; i < maxPlayers; i++) {
     Player* p = players[i];
-    if ((p != NULL) && isEnemy(p)) {
+    if ((p != NULL) && (isEnemy(p) || observer)) {
       // get the distance
       const float dist = distBetweenPlayers(myTank, p);
       // flag type
@@ -493,7 +494,7 @@ static void huntPlayers()
           }
         }
         // paired flag type
-        if (pairedMap != NULL) {
+        if ((pairedMap != NULL) && !observer) {
           FlagHuntInfoMap::const_iterator pit = pairedMap->find(ft);
           if (pit != pairedMap->end()) {
             const HuntInfo& hi = pit->second;
@@ -505,7 +506,7 @@ static void huntPlayers()
         }
       }
       // player ratio
-      if (isBeatingMe(p)) {
+      if (isBeatingMe(p) && !observer) {
         const int level = getHuntInfoLevel(RatioHuntInfo, dist);
         if (level > p->getAutoHuntLevel()) {
           p->setAutoHuntLevel(level);
@@ -590,6 +591,7 @@ void AutoHunt::update()
   if (active != current) {
     active = current;
     parse(active);
+    printMaps(); // for debugging
   }
 
   huntPlayers();
