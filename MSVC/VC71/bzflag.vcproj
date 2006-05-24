@@ -302,6 +302,12 @@ copy debug\*.pdb ..\..\*.pdb
 				RelativePath="..\..\src\bzflag\ActionBinding.cxx">
 			</File>
 			<File
+				RelativePath="..\..\src\bzflag\AutoHunt.cxx">
+			</File>
+			<File
+				RelativePath="..\..\src\bzflag\AutoHunt.h">
+			</File>
+			<File
 				RelativePath="..\..\src\bzflag\AutoPilot.cxx">
 			</File>
 			<File
