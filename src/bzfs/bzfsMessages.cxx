@@ -715,6 +715,15 @@ void sendFlagCaptureMessage ( int playerIndex, int flagIndex, int teamCaptured )
 	}
 }
 
+void sendRabbitUpdate ( int playerIndex, unsigned char mode )
+{
+	void *buf, *bufStart = getDirectMessageBuffer();
+
+	buf = nboPackUByte(bufStart, playerIndex);
+	buf = nboPackUByte(bufStart, mode);
+	broadcastMessage(MsgNewRabbit, (char*)buf-(char*)bufStart, bufStart);
+}
+
 // utils to build new packets
 void setGeneralMessageInfo ( void **buffer, uint16_t &code, uint16_t &len )
 {

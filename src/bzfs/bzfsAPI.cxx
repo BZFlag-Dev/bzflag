@@ -2552,6 +2552,42 @@ BZF_API void bz_startCountdown ( int delay, float limit, const char *byWho )
 	startCountdown(delay,limit,byWho);
 }
 
+BZF_API void bz_newRabbit( int player, bool swap )
+{
+	if (playerID < 0)
+		return false;
+
+	PlayerId	playerIndex = (PlayerId)playerID;
+	GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerIndex);
+
+	if (swap)
+		GameKeeper::Player::getPlayerByIndex(rabbitIndex)->player.wasARabbit();
+
+	player->player.setTeam(RabbitTeam);
+	rabbitIndex = playerIndex;
+
+	sendRabbitUpdate(playerIndex,swap ? 0 : 1);
+}
+
+BZF_API void bz_removeRabbit( int player )
+{
+	if (playerID < 0)
+		return false;
+
+	PlayerId	playerIndex = (PlayerId)playerID;
+	GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerIndex);
+
+	player->player.wasARabbit();
+
+	player->player.setTeam(HunterTeam);
+
+	if (playerIndex == rabbitIndex)
+		rabbitIndex = NoPlayer;
+
+	sendRabbitUpdate(playerIndex,2);
+}
+
+
 // Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***

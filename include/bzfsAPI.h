@@ -76,6 +76,8 @@ typedef enum
 	bz_ePlayerAuthEvent,
 	bz_eServerMsgEvent,
 	bz_eShotFiredEvent,
+	bz_eAnointRabbitEvent,
+	bz_eNewRabbitEvent,
 	bz_eLastEvent    //this is never used as an event, just show it's the last one
 }bz_eEventType;
 
@@ -818,21 +820,54 @@ public:
 	double time;
 };
 
-class bz_ShotFiredEventData : public bz_EventData
+class bz_ShotFiredEventData_V1 : public bz_EventData
 {
 public:
-	bz_ShotFiredEventData()
+	bz_ShotFiredEventData_V1() : bz_EventData()
 	{
 		eventType = bz_eShotFiredEvent;
 		pos[0] = pos[1] = pos[2] = 0;
 		changed = false;
 	}
 
-	virtual ~bz_ShotFiredEventData(){};
+	virtual ~bz_ShotFiredEventData_V1(){};
+	virtual void update (){bz_EventData::update();}
 
 	bool		changed;
 	float		pos[3];
 	bz_ApiString	type;
+};
+
+class bz_AnointRabbitEventData_V1 : public bz_EventData
+{
+public:
+	bz_AnointRabbitEventData_V1() : bz_EventData()
+	{
+		eventType = bz_eAnointRabbitEvent;
+		newRabbit = -1;
+		swap = true;
+	}
+
+	virtual ~bz_AnointRabbitEventData_V1(){};
+	virtual void update (){bz_EventData::update();}
+
+	int newRabbit;
+	bool	swap;
+};
+
+class bz_NewRabbitEventData_V1 : public bz_EventData
+{
+public:
+	bz_NewRabbitEventData_V1() : bz_EventData()
+	{
+		eventType = bz_eNewRabbitEvent;
+		newRabbit = -1;
+	}
+
+	virtual ~bz_NewRabbitEventData_V1(){};
+	virtual void update (){bz_EventData::update();}
+
+	int newRabbit;
 };
 
 
@@ -1286,11 +1321,15 @@ BZF_API void bz_pauseCountdown ( const char *pausedBy );
 BZF_API void bz_resumeCountdown ( const char *resumedBy );
 BZF_API void bz_startCountdown ( int delay, float limit, const char *byWho );
 
-
 // server control
 BZF_API void bz_shutdown();
 BZF_API void bz_superkill();
 BZF_API void bz_gameOver(int,int = -1);
+
+// rabbit control
+BZF_API void bz_newRabbit( int player, bool swap );
+BZF_API void bz_removeRabbit( int player );
+
 
 // info about the world
 BZF_API bz_eTeamType bz_checkBaseAtPoint ( float pos[3] );

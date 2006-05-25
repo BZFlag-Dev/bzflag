@@ -1914,38 +1914,51 @@ static void dropAssignedFlag(int playerIndex) {
 
 static void anointNewRabbit(int killerId = NoPlayer)
 {
-  GameKeeper::Player *killerData
-    = GameKeeper::Player::getPlayerByIndex(killerId);
-  GameKeeper::Player *oldRabbitData
-    = GameKeeper::Player::getPlayerByIndex(rabbitIndex);
+  GameKeeper::Player *killerData = GameKeeper::Player::getPlayerByIndex(killerId);
+  GameKeeper::Player *oldRabbitData = GameKeeper::Player::getPlayerByIndex(rabbitIndex);
   int oldRabbit = rabbitIndex;
   rabbitIndex = NoPlayer;
 
   if (clOptions->rabbitSelection == KillerRabbitSelection)
+  {
     // check to see if the rabbit was just killed by someone; if so, make them the rabbit if they're still around.
-    if (killerId != oldRabbit && killerData && killerData->player.isPlaying()
-	&& killerData->player.canBeRabbit())
+    if (killerId != oldRabbit && killerData && killerData->player.isPlaying() && killerData->player.canBeRabbit())
       rabbitIndex = killerId;
+  }
 
   if (rabbitIndex == NoPlayer)
     rabbitIndex = GameKeeper::Player::anointRabbit(oldRabbit);
+	
+  // pass the rabbits to the API let it mod it if it wants
+  bz_AnointRabbitEventData_V1	anoitData;
+  anoitData.newRabbit = rabbitIndex;
+  if (anoitData.newRabbit == NoPlayer)
+	  anoitData.newRabbit = -1;
+  anoitData.swap = true;
+  
+  worldEventManager.callEvents(bz_eAnointRabbitEvent,&anoitData);
 
-  if (rabbitIndex != oldRabbit) {
-    DEBUG3("rabbitIndex is set to %d\n", rabbitIndex);
-    if (oldRabbitData) {
+  if (anoitData.newRabbit != oldRabbit)
+  {
+	  DEBUG3("rabbitIndex is set to %d\n", anoitData.newRabbit);
+    if (oldRabbitData && anoitData.swap)
       oldRabbitData->player.wasARabbit();
+
+    if (anoitData.newRabbit != -1) 
+	{
+		GameKeeper::Player *rabbitData = GameKeeper::Player::getPlayerByIndex(anoitData.newRabbit);
+		rabbitData->player.setTeam(RabbitTeam);
+
+		sendRabbitUpdate(rabbitIndex,anoitData.swap ? 0 : 1);
     }
-    if (rabbitIndex != NoPlayer) {
-      GameKeeper::Player *rabbitData
-	= GameKeeper::Player::getPlayerByIndex(rabbitIndex);
-      rabbitData->player.setTeam(RabbitTeam);
-      void *buf, *bufStart = getDirectMessageBuffer();
-      buf = nboPackUByte(bufStart, rabbitIndex);
-	  // swap mode
-	  buf = nboPackUByte(bufStart, 0);
-    broadcastMessage(MsgNewRabbit, (char*)buf-(char*)bufStart, bufStart);
-    }
-  } else {
+
+	bz_NewRabbitEventData_V1	newRabbitData;
+
+	newRabbitData.newRabbit = anoitData.newRabbit;
+	worldEventManager.callEvents(bz_eNewRabbitEvent,&newRabbitData);
+  }
+  else 
+  {
     DEBUG3("no other than old rabbit to choose from, rabbitIndex is %d\n",
 	   rabbitIndex);
   }
