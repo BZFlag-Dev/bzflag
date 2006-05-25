@@ -2253,7 +2253,7 @@ BZF_API bool bz_startRecBuf( void )
 
 BZF_API bool bz_stopRecBuf( void )
 {
-	if (Record::enabled())
+	if (!Record::enabled())
 		return false;
 
 	return Record::stop(ServerPlayer);
