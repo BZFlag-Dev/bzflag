@@ -2554,16 +2554,23 @@ BZF_API void bz_startCountdown ( int delay, float limit, const char *byWho )
 
 BZF_API void bz_newRabbit( int player, bool swap )
 {
-	if (playerID < 0)
-		return false;
+	if (player < 0)
+		return;
 
-	PlayerId	playerIndex = (PlayerId)playerID;
-	GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerIndex);
+	PlayerId	playerIndex = (PlayerId)player;
+	GameKeeper::Player *playerRec = GameKeeper::Player::getPlayerByIndex(playerIndex);
+
+	if (!playerRec)
+		return;
 
 	if (swap)
-		GameKeeper::Player::getPlayerByIndex(rabbitIndex)->player.wasARabbit();
+	{
+		GameKeeper::Player *rabbit = GameKeeper::Player::getPlayerByIndex(rabbitIndex);
+		if (rabbit)
+			rabbit->player.wasARabbit();
+	}
 
-	player->player.setTeam(RabbitTeam);
+	playerRec->player.setTeam(RabbitTeam);
 	rabbitIndex = playerIndex;
 
 	sendRabbitUpdate(playerIndex,swap ? 0 : 1);
@@ -2571,21 +2578,42 @@ BZF_API void bz_newRabbit( int player, bool swap )
 
 BZF_API void bz_removeRabbit( int player )
 {
-	if (playerID < 0)
-		return false;
+	if (player < 0)
+		return;
 
-	PlayerId	playerIndex = (PlayerId)playerID;
-	GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerIndex);
+	PlayerId	playerIndex = (PlayerId)player;
+	GameKeeper::Player *playerRec = GameKeeper::Player::getPlayerByIndex(playerIndex);
 
-	player->player.wasARabbit();
+	if (!player)
+		return;
 
-	player->player.setTeam(HunterTeam);
+	playerRec->player.wasARabbit();
+
+	playerRec->player.setTeam(HunterTeam);
 
 	if (playerIndex == rabbitIndex)
 		rabbitIndex = NoPlayer;
 
 	sendRabbitUpdate(playerIndex,2);
 }
+
+BZF_API void bz_changeTeam( int player, bz_eTeamType team )
+{
+	if (player < 0)
+		return;
+
+	PlayerId	playerIndex = (PlayerId)player;
+	GameKeeper::Player *playerRec = GameKeeper::Player::getPlayerByIndex(playerIndex);
+
+	if (!playerRec)
+		return;
+
+	TeamColor realTeam = convertTeam(team);
+	playerRec->player.setTeam(realTeam);
+
+	sendSetTeam(playerIndex,realTeam);
+}
+
 
 
 // Local Variables: ***

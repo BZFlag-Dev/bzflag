@@ -1330,6 +1330,9 @@ BZF_API void bz_gameOver(int,int = -1);
 BZF_API void bz_newRabbit( int player, bool swap );
 BZF_API void bz_removeRabbit( int player );
 
+// team control
+BZF_API void bz_changeTeam( int player, bz_eTeamType team );
+
 
 // info about the world
 BZF_API bz_eTeamType bz_checkBaseAtPoint ( float pos[3] );

@@ -724,6 +724,16 @@ void sendRabbitUpdate ( int playerIndex, unsigned char mode )
 	broadcastMessage(MsgNewRabbit, (char*)buf-(char*)bufStart, bufStart);
 }
 
+void sendSetTeam ( int playerIndex, int team )
+{
+	void *buf, *bufStart = getDirectMessageBuffer();
+
+	buf = nboPackUByte(bufStart, playerIndex);
+	buf = nboPackUByte(bufStart, team);
+	broadcastMessage(MsgSetTeam, (char*)buf-(char*)bufStart, bufStart);
+}
+
+
 // utils to build new packets
 void setGeneralMessageInfo ( void **buffer, uint16_t &code, uint16_t &len )
 {

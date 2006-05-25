@@ -2892,7 +2892,7 @@ static void shotFired(void *buf, int len, NetHandler *handler)
   bool repack = false;
 
     // ask the API if it wants to modify this shot
-	bz_ShotFiredEventData shotEvent;
+	bz_ShotFiredEventData_V1 shotEvent;
 
 	shotEvent.pos[0] = firingInfo.shot.pos[0];
 	shotEvent.pos[1] = firingInfo.shot.pos[1];

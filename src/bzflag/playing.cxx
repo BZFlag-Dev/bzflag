@@ -2458,6 +2458,22 @@ static void handleNewRabbit ( void *msg, uint16_t /*len*/ )
 #endif
 }
 
+static void handleSetTeam ( void *msg, uint16_t len )
+{
+	if ( len < 2 )
+		return;
+
+	PlayerId id;
+	msg = nboUnpackUByte(msg, id);
+	
+	TeamColor	team;
+	msg = nboUnpackUByte(msg, team);
+
+	Player *player = lookupPlayer(id);
+
+	player->changeTeam(team);
+}
+
 static void		handleServerMessage(bool human, uint16_t code,
 					    uint16_t len, void* msg)
 {
@@ -2467,7 +2483,12 @@ static void		handleServerMessage(bool human, uint16_t code,
 
   switch (code)
   {
-    case MsgFetchResources:
+
+	case MsgSetTeam:
+		handleSetTeam(msg,len);
+		break;
+
+	case MsgFetchResources:
 		handleResourceFetch(msg);
 		break;
 
